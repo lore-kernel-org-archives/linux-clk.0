@@ -1,73 +1,97 @@
-Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 974692EEE9B
-	for <linux-clk@vger.kernel.org>; Fri,  5 Jun 2026 13:39:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780666755; cv=none; b=QBlnEU8l6nBjyydZVhJmwljsoVmfdyZANh1fK2oaQyth+Vyzzp1HL9WPfEd7RfaKGxdtw11rJBLXn1sKMquit970xpeaBOXcKlQqbE+KKRoOtUpj9ASA1LQBPDnCEZpBduaWa7/b+gQeUSiF8ZUi93tMFbtxmfTZm/bLQCn6Oh4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780666755; c=relaxed/simple;
-	bh=neuVlX5E09C2CCGMgZEk9w7Fn/XLCZt+ud6kGcA9fkQ=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21F8F3D1CDB
+	for <linux-clk@vger.kernel.org>; Fri,  5 Jun 2026 14:45:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.218.45
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1780670705; cv=pass; b=ehgKbDHZkRL/I7ItKysSBnHK/j7S/7ZukyiBt95HN2U3kI2r7BNH0Qf+vBHBfFq4nRJoQDkqnxBiJo3TDElP8YJ9ViofLd67W+TPRcjW08SZ1dgwOfDIXSq86t5NjEFRvjatRI6KAa01vnXngrbabWfj5IkmC6yi2nTEHXSiCTE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1780670705; c=relaxed/simple;
+	bh=V99FgU+T9GXepKQjZbwcvobP8EXHRxrvdmdHmWGWLss=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gnhqGEx3fRt79Dwkbe4J/mEgAXxhFwfqYhOu28K233JrGfks+pDJfjyAShyZebC2P6CpMxHGbYgoldDH/dvY+nBNxKdJZrCG1cbuVT2+ZMAn7KpldQZJJWBgzyZZUrV6Dx4W9U8icPUSqwowso/IsERRedEraO3jKI9SoOBHcG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	 To:Cc:Content-Type; b=d99rhLC6TV1+S7we2w5PESp7nAnasggH7/PANfjpcAJ7R7yC6xkIKMSy+Dp8kAy9Z/IqhZspdFhPqhp5PDlbiInBpV0aZwoJdVW6sBqsnKD0bR3XcU3WqrVAf9RLyG7XWq1+EpOBtT0k3FGvav4cD7y+iVNoOUzofZvgAhQmbsc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QDEG+Jds; arc=pass smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-59eb57ed4cbso662850e0c.0
-        for <linux-clk@vger.kernel.org>; Fri, 05 Jun 2026 06:39:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780666752; x=1781271552;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QDEG+Jds"
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-bec43ee8ff0so291156666b.1
+        for <linux-clk@vger.kernel.org>; Fri, 05 Jun 2026 07:45:01 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1780670700; cv=none;
+        d=google.com; s=arc-20240605;
+        b=HMqIy3qMkPo/+4ymNEBzQ79VhJlYxdUVjb3qgc63RlKztTbhFG34LuxXnsNxUF3LYL
+         v7ALkUv7lc9rvLSQHCOHVOsFd5y5EESVg6Z0h7m/5oSq+wKmYELr5+TwXgo2n4Fm/bcf
+         AS7yX+QjFyr7ugWlSmwX+X6iCs5pBSH6Vxg7vvKK9QrXJB03IBaabQRacMmIBSeHD4LN
+         SU1vh9fcNzCW/ANqLBDu6Ky8X5CiKkV7XB05kmE5+ASwtAAw0PxXkSMFpdm4cGsR+hxF
+         69hFy/rnEaFGgHly/uXcTJF4bQj3WyNYtkKL8VuOAJUslXWW8nNvVYr1PRnzjAmoszZY
+         Ir6g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=fcZIkbRV/9Yp73cfd2Dm5cvs461vRsgl4cer6irrsmM=;
+        fh=t7nb3GRh+YXAMf8fJgD6Jwn7viKGt0pPZph4UrkWomo=;
+        b=aIQs8yvbjYqe8t/pIDVfiI/zKu2qN2Dp3B/1mE2BlfUHXsoBN414rh//mvhFOZBacy
+         CpHLBZGZgnTJNxQZHna/Ein0Hgn+FYTiOimpQWoz5Y+Djywf6u49aeK1obl8I0SdUjZ5
+         qioM9x1r9PotIl/uudd6A6EJwgVUQTBkAqQOPD6tT1VRxdWiLl8NDMY20mP07yqQELu4
+         eboVzaoi5kPMHvk+RRwPvMV4rxyc9XoFWEbvaFw/xeMAbY5D7FTDitSo4durmBiMYzp9
+         uOomMy0W5MLws2tYype75HRZvM5kNRu6dtOJE23FKQGfEbme7Lo8ecph8guq1CN41GM7
+         0ZiQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1780670700; x=1781275500; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ng6MztXRVUw+6gX3lTf5HZ3/GBPHOvI81OwZahcGNXA=;
-        b=jMrwJ/fyCfZ1TwHWpymqNnxg/rFjxED3qTwScYB1CZ4RNCrHthNTQ5isAbIKr8lPO0
-         FttdG4KsUcuhUO8JMIb1yZrPXgeIExUrUhPzSN0/PPPlcDEIB9fdJtTNOh62i7lR0Y5e
-         Nqig/tGHCzgDj02RFhwubpdkJYBPcEu1f2y322sI8Mrl8mlN2+PTlOsPhbjU3WdI0mR1
-         rrZ8QwtjPaKVcHKIAKHbHtmF5Q/QpLcbeZ1dlCbwhtfrG6SiqbQOqCnmq96RFLEm3Hec
-         2iI2SFQIlnAYpEf5WGW5Rzl/rRy7wjfHkZR7ZzvEz8Cm+2mUmKMRvbGuu1+cQmxxxMPi
-         ORmg==
-X-Forwarded-Encrypted: i=1; AFNElJ+nztvWnSkQytDS1xGLuD76qbHQnjxBD/fKKKc9dtNCF/V6SGtZ7A3oKQKWfqDhn4Bgnkr7E77n4Ac=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcSSojQzH2sCwZ9oE8x5Ojq7nIdb2Vz6KeENmwG0qikFBL15s5
-	CMWSxInTTj0l/ghOIfjDr+Fl8h9bVFFJ2Y86sE7g525eJ5oeR+hIfS7e7TBeHp8d
-X-Gm-Gg: Acq92OHuw4+ms+pwgROT0twU7TmvIaHFGlpcUthtpibRGdBibpOJM2fq+9eqc1ZcAkP
-	4NBOsdKgDsXm1qeEowie6I+fOpEzjuHGz734qyq7qXLlvaNmXrMecTgY5zRQxg2dfh2mmDw7xpY
-	L45/VIR8EtaxsZCiPbDqVGL11sPi7FzpJcYawPjPQvb972WDJCRdCF23j1xnTLM93E7ZT0wdQZt
-	di2vKl+O/j8T3x0f3myaMh71HprnpTtb623KCA7WB04igsXE84m3OvJBvZTo5EY9Lb3oISYj+hl
-	IPxdAYX9OGH+F+zHogIn7kTd7XAw9FKuoMUvju3Euo0KXMH9CBoAp9jhVdUQdWyT6YXFbS/um+z
-	6fvPGRmtO2qQPNnDm1I/gds54yuBqIj4nh3v58FziC4hm5fZzud3NHhKCxniN2akQNHWoCWSBkv
-	ApaMoGJzyY4TolLS0CfEu53YnNNA4ohVZxE4PkVgYRAqN7O84Q9ykBkF/Iiq4wfztMNnQ8KDaau
-	+Q=
-X-Received: by 2002:a05:6122:1d4d:b0:56c:d623:896e with SMTP id 71dfb90a1353d-5ac53c974b0mr1650547e0c.14.1780666752572;
-        Fri, 05 Jun 2026 06:39:12 -0700 (PDT)
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com. [209.85.221.178])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5a6ddacc48bsm7730196e0c.18.2026.06.05.06.39.10
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Jun 2026 06:39:11 -0700 (PDT)
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-59dc1714d44so614669e0c.3
-        for <linux-clk@vger.kernel.org>; Fri, 05 Jun 2026 06:39:10 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ9FDvdxx4DFfykqNBElmS5oVXjXPPvkt6I+hqAvhoHtomDJ3ApzjeYGm5L5ucnYvW/evs/n1ST0E3s=@vger.kernel.org
-X-Received: by 2002:a05:6122:2895:b0:5a1:19d4:a363 with SMTP id
- 71dfb90a1353d-5ac4da02fb1mr1517139e0c.3.1780666750627; Fri, 05 Jun 2026
- 06:39:10 -0700 (PDT)
+        bh=fcZIkbRV/9Yp73cfd2Dm5cvs461vRsgl4cer6irrsmM=;
+        b=QDEG+JdsCi/nGhsGKHWrmakZCAAAKH94mJTgHAZsugCteBQLJ25F//75ar+srWpCPd
+         4A44v/U3CUW6nqTQRd/qKB+M+kFmeYbE9+nlRqymKwDmadGXMH6dBGJmZdWsAmVxrAT7
+         KQDiapY7mTQSL0SPpNNwC/gfnu5wSLuXrg8ImJufJh/kr6HXBKRo/DFW97P7T+zTTvvH
+         TkDi9uk8k2lvgiv36m4CuHV0WEy+hy7MPDtcbXT2e8UbponLrOXhgjoSA2oV1gzmuamT
+         4TGt6CiJV/ngqyzr6vxhrNQYyd/D0/IeX/v+xbt9Emomtg/Slf1iJYdzIdejRULLkKiu
+         rlXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1780670700; x=1781275500;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=fcZIkbRV/9Yp73cfd2Dm5cvs461vRsgl4cer6irrsmM=;
+        b=tCe4byrD0uHsD/itS4l8dfSFnJb9wo8ckMqZMgEkFmF0SVogit2NNNA4PhgB9vwck+
+         2HQP2hwbZFHEJ2Rvq7nS2O+8EFHxxmCrcJZ0YhK7zNw1QvuWeoLrj+GgilHneHHJPD20
+         e4NuHmZtLE+oLVslHA1e9iRhyHszbuoCJdnwT52Hmfv1Rov4VVspeHV/ULhlSW6rFSMv
+         +dFYLq+wcXsoKvUJr8Q7GsdkQ4YO2IM2vTAz8CRRGcIdy6u7Khq+XaNKR9WgpkMeH8PS
+         v9a2ZJwnvFc2BW3zSI+Ze9tnFALt8VFt2OOFiY1sTVJd7dQUQ8vkce/5uTCLw0Y41WDq
+         4xaQ==
+X-Forwarded-Encrypted: i=1; AFNElJ9pM3++bxfJkJFk1uhESg8KU/jg/JiFAEscCKvGP38obhKcl0dkLZTmcV06H5sARXv0l8l0cog7X0s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhG8I85l9hLR2nNymTigbffsusvRQLsT1jEBubmzUQMK+8JHtc
+	FV72b4g+clGT53e/+B6LuwhqhFca/s4F3Ogfs0Ye5mSOGPW8FQSXRQZ0AJTz7CHZNDpkaRzhoeZ
+	s4CxKewS+tU63K6uqCY6WCSFJltxfqL0=
+X-Gm-Gg: Acq92OGE24xB9/o9AOr7WASa66cyYaSWXYANQqt6gtOgw95arIgpDSI9Qy1objXR14R
+	J+A4HKnCN1DLoRuaKUfNBx9UpVZ20bORM5SwtYGZNtZF/wvY4/0QqVB2VmHLn+vmY7IOlWbDbdo
+	xtM+JgK1yUPVYLAL8H7+RlWmgxYcziZoYtHGCcsWxax7pDJK++mCoz/3ssIVxqC4s+PPUd67CNO
+	Nd5hs7RCyH3k8K0Jjfu7lgMcnSxewdCL4h/NBEtkPXYe/+fp8fcWO0sLxfGHPNXgWlBm4jK0fLn
+	3nmnAHwSxIPU19CMhOLOLaTiIqQG26T5ypsgRgefv5ekonlJ6wlDqQoTs/2XC4Ch5VPj8xac0Om
+	Z13o=
+X-Received: by 2002:a17:907:972a:b0:bdb:5c26:d499 with SMTP id
+ a640c23a62f3a-bf3a8a06e97mr148149566b.22.1780670700008; Fri, 05 Jun 2026
+ 07:45:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260511191910.1945705-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20260511191910.1945705-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20260511191910.1945705-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 5 Jun 2026 15:38:59 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXh6YhDp7nEra3GbrR9hkhqqj15UXnv0DHeei=mj56XJQ@mail.gmail.com>
-X-Gm-Features: AVVi8CesdJciMHdsefYeL2Id77B4Nq_zyNVq-BWBcQxt_zUG2CODWutZURFB3Cs
-Message-ID: <CAMuHMdXh6YhDp7nEra3GbrR9hkhqqj15UXnv0DHeei=mj56XJQ@mail.gmail.com>
-Subject: Re: [PATCH 4/4] clk: renesas: r9a09g077: Add LCDC and PLL3 clock
- support for RZ/T2H display pipeline
-To: Prabhakar <prabhakar.csengg@gmail.com>
+References: <20260511191910.1945705-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20260511191910.1945705-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdWVjvdX2Ve-Sf91oJoCWcO-fF-363ytO66Pr=SBA69N+g@mail.gmail.com>
+In-Reply-To: <CAMuHMdWVjvdX2Ve-Sf91oJoCWcO-fF-363ytO66Pr=SBA69N+g@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Fri, 5 Jun 2026 15:44:32 +0100
+X-Gm-Features: AVVi8CcZWc8NSzDAQ_aVku7QXQXrcmHdaazPbFgpm7kgo3ZnjYI1QxUBkTayMTw
+Message-ID: <CA+V-a8uYEOB2DcOjQ63hLDW-vYxGLTpphvDXyAwV3g1-GrHhgA@mail.gmail.com>
+Subject: Re: [PATCH 1/4] clk: renesas: rzv2h-cpg: Use per-SoC PLL reference
+ frequency for calculations
+To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
 	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
 	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
@@ -76,206 +100,113 @@ Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Prabhakar,
+Hi Geert,
 
-On Mon, 11 May 2026 at 21:19, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Thank you for the review.
+
+On Fri, Jun 5, 2026 at 2:37=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68k=
+.org> wrote:
 >
-> Add the clock definitions and PLL logic required to supply the LCDC
-> (VSPD/FCPVD/DU) blocks on the RZ/T2H (R9A09G077) SoC. The RZ/T2H display
-> subsystem depends on a dedicated PLL (PLL3) and a set of new derived
-> clocks.
+> Hi Prabhakar,
 >
-> Introduce a new PLL clock type and implement rate recalculation,
-> programming and locking sequences for PLL3 using the RZ/T2H specific
-> divider and VCO limits. Add the corresponding muxes and divider entries,
-> expose the LCDC core clock, and register the LCDC module clock using the
-> correct PCLK parent.
+> On Mon, 11 May 2026 at 21:19, Prabhakar <prabhakar.csengg@gmail.com> wrot=
+e:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Use a per-SoC PLL reference input frequency for PLL parameter
+> > calculations instead of relying on the hardcoded 24MHz constant.
+> >
+> > Add an input_fref field to struct rzv2h_pll_limits and derive the PLL
+> > reference frequency from it in rzv2h_get_pll_pars(). Fall back to the
+> > existing 24MHz value when no SoC-specific input is provided.
+> >
+> > This allows the existing PLL divider calculation logic to be reused
+> > unchanged on SoCs such as RZ/T2H, which use a 48MHz PLL reference
+> > input instead of the 24MHz reference used on RZ/V2H(P), while keeping
+> > current RZ/V2H(P) behaviour intact.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 >
-> This enables the RZ/T2H clock driver to generate the display pipeline
-> clocking tree needed by the DU and VSP-based composition engines, allowing
-> upcoming display support to be integrated without duplicating CPG logic.
+> Thanks for your patch!
 >
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-
-Thanks for your patch!
-
-> --- a/drivers/clk/renesas/Kconfig
-> +++ b/drivers/clk/renesas/Kconfig
-> @@ -218,10 +218,12 @@ config CLK_R9A09G057
->  config CLK_R9A09G077
->         bool "RZ/T2H clock support" if COMPILE_TEST
->         select CLK_RENESAS_CPG_MSSR
-> +       select CLK_RZV2H
-
-That includes a lot. Perhaps spin off the required functionality in a
-separate file, like CLK_RCAR_CPG_LIB?
-That would impact the MODULE_IMPORT_NS("RZV2H_CPG") in
-drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c, too, though.
-
+> > --- a/drivers/clk/renesas/rzv2h-cpg.c
+> > +++ b/drivers/clk/renesas/rzv2h-cpg.c
+> > @@ -242,6 +242,7 @@ struct rzv2h_plldsi_div_clk {
+> >  bool rzv2h_get_pll_pars(const struct rzv2h_pll_limits *limits,
+> >                         struct rzv2h_pll_pars *pars, u64 freq_millihz)
+> >  {
+> > +       unsigned long input_fref =3D limits->input_fref ?: RZ_V2H_OSC_C=
+LK_IN_MEGA;
+> >         u64 fout_min_millihz =3D mul_u32_u32(limits->fout.min, MILLI);
+> >         u64 fout_max_millihz =3D mul_u32_u32(limits->fout.max, MILLI);
+> >         struct rzv2h_pll_pars p, best;
 >
->  config CLK_R9A09G087
->         bool "RZ/N2H clock support" if COMPILE_TEST
->         select CLK_RENESAS_CPG_MSSR
-> +       select CLK_RZV2H
+> > --- a/include/linux/clk/renesas.h
+> > +++ b/include/linux/clk/renesas.h
+> > @@ -53,6 +53,8 @@ static inline void rzg2l_cpg_dsi_div_set_divider(u8 d=
+ivider, int target) { }
+> >   * various parameters used to configure a PLL. These limits ensure
+> >   * the PLL operates within valid and stable ranges.
+> >   *
+> > + * @input_fref: Reference input frequency to the PLL (in MHz)
 >
->  config CLK_SH73A0
->         bool "SH-Mobile AG5 clock support" if COMPILE_TEST
-> diff --git a/drivers/clk/renesas/r9a09g077-cpg.c b/drivers/clk/renesas/r9a09g077-cpg.c
-> index f777601a23b9..48052e7b93fd 100644
-> --- a/drivers/clk/renesas/r9a09g077-cpg.c
-> +++ b/drivers/clk/renesas/r9a09g077-cpg.c
-
-> @@ -66,11 +73,26 @@
->  #define DIVSCI2ASYNC   CONF_PACK(SCKCR3, 10, 2)
->  #define DIVSCI3ASYNC   CONF_PACK(SCKCR3, 12, 2)
->  #define DIVSCI4ASYNC   CONF_PACK(SCKCR3, 14, 2)
-> +#define LCDCDIVSEL     CONF_PACK(SCKCR3, 20, 4)
-> +
-> +#define PLL3EN         FIELD_PREP_CONST(OFFSET_MASK, (0xc0))
-> +
-> +#define CPG_PLLEN              BIT(0)
-
-CPG_PLL_EN_EN, for consistency with CPG_PLL_MON_LOCK below?
-
-> +#define CPG_PLL3_VCO_CTR0(x)   ((x) + 0x4)
-> +#define CPG_PLL3_VCO_CTR0_PDIV GENMASK(21, 16)
-> +#define CPG_PLL3_VCO_CTR0_MDIV GENMASK(9, 0)
-> +#define CPG_PLL3_VCO_CTR1(x)   ((x) + 0x8)
-> +#define CPG_PLL3_VCO_CTR1_KDIV GENMASK(31, 16)
-> +#define CPG_PLL3_VCO_CTR1_SDIV GENMASK(2, 0)
-> +#define CPG_PLL_MON(x)         ((x) - 0x10)
-> +#define CPG_PLL_MON_LOCK       BIT(0)
-
-So all registers are calculated based on the CPG_PLL3EN register
-address...
-
+> Iff there is a default, it should be documented here?
 >
->  enum rzt2h_clk_types {
->         CLK_TYPE_RZT2H_DIV = CLK_TYPE_CUSTOM,   /* Clock with divider */
->         CLK_TYPE_RZT2H_MUX,                     /* Clock with clock source selector */
->         CLK_TYPE_RZT2H_FSELXSPI,                /* Clock with FSELXSPIn source selector */
-> +       CLK_TYPE_RZT2H_PLL3,                    /* PLL3 Clock */
-> +       CLK_TYPE_RZT2H_LCDCDIV,                 /* LCDC divider clock */
->  };
+Agreed.
+
+> > + *
+> >   * @fout: Output frequency range (in MHz)
+> >   * @fout.min: Minimum allowed output frequency
+> >   * @fout.max: Maximum allowed output frequency
+> > @@ -78,6 +80,8 @@ static inline void rzg2l_cpg_dsi_div_set_divider(u8 d=
+ivider, int target) { }
+> >   * @k.max: Maximum delta-sigma value
+> >   */
+> >  struct rzv2h_pll_limits {
+> > +       u32 input_fref;
+> > +
+> >         struct {
+> >                 u32 min;
+> >                 u32 max;
+> > @@ -156,6 +160,7 @@ struct rzv2h_pll_div_pars {
+> >
+> >  #define RZV2H_CPG_PLL_DSI_LIMITS(name)                                =
+ \
+> >         static const struct rzv2h_pll_limits (name) =3D {              =
+   \
+> > +               .input_fref =3D 24 * MEGA,                             =
+   \
 >
->  #define DEF_DIV(_name, _id, _parent, _conf, _dtable) \
-> @@ -83,10 +105,51 @@ enum rzt2h_clk_types {
->  #define DEF_DIV_FSELXSPI(_name, _id, _parent, _conf, _dtable) \
->         DEF_TYPE(_name, _id, CLK_TYPE_RZT2H_FSELXSPI, .conf = _conf, \
->                  .parent = _parent, .dtable = _dtable, .flag = 0)
-> +#define DEF_PLL3(_name, _id, _parent, _conf) \
-> +       DEF_TYPE(_name, _id, CLK_TYPE_RZT2H_PLL3, .conf = _conf, \
-> +                .parent = _parent)
-> +#define DEF_DIV_LCDC(_name, _id, _parent, _conf, _dtable) \
-> +       DEF_TYPE(_name, _id, CLK_TYPE_RZT2H_LCDCDIV, .conf = _conf, \
-> +                .parent = _parent, .dtable = _dtable, .flag = CLK_SET_RATE_PARENT)
-
-I assume you can't reuse DEF_DIV() because you need the extra accuracy
-from interfacing with rzv2h_get_pll_divs_pars()?
-
-> +
-> +struct pll_clk {
-> +       void __iomem *reg;
-
-This is the PLLxEN register address, from which all other register
-addresses are calculated: pllen?
-
-> +       const struct rzv2h_pll_limits *limits;
-> +       struct device *dev;
-> +       struct rzv2h_pll_pars pll_parameters;
-> +       struct clk_hw hw;
-> +       unsigned long cur_rate;
-> +};
-> +
-> +#define to_pll(_hw)    container_of(_hw, struct pll_clk, hw)
-> +
-> +struct r9a09g077_lcdc_div_clk {
-> +       const struct clk_div_table *dtable;
-> +       void __iomem *reg;
-> +       struct device *dev;
-> +       struct clk_hw hw;
-> +       u32 conf;
-> +       u8 divider;
-> +};
-> +
-> +#define to_lcdc_div_clk(_hw) \
-> +       container_of(_hw, struct r9a09g077_lcdc_div_clk, hw)
-> +
-> +#define RZT2H_MAX_LCDC_DIV_TABLES      16
-> +
-> +static const struct rzv2h_pll_limits r9a09g077_cpg_pll3_limits = {
-> +       .input_fref = 48 * MEGA,
-> +       .fout = { .min = 25 * MEGA, .max = 430 * MEGA },
-> +       .fvco = { .min = 1600 * MEGA, .max = 3200 * MEGA },
-> +       .m = { .min = 0x40, .max = 0x3ff },
-> +       .p = { .min = 0x2, .max = 0x8 },
-> +       .s = { .min = 0x0, .max = 0x6 },
-> +       .k = { .min = -32768, .max = 32767 },
-> +};
+> Why add this if 24 * MEGA is the default value anyway?
+> Why not do the same for the two similar RZ/G3E macros?
+> Perhaps the default handling and the RZ_V2H_OSC_CLK_IN_MEGA macro
+> should just be dropped?
 >
->  enum clk_ids {
->         /* Core Clock Outputs exported to DT */
-> -       LAST_DT_CORE_CLK = R9A09G077_PCLKCAN,
-> +       LAST_DT_CORE_CLK = R9A09G077_LCDC_CLKD,
+Agreed. I will drop this change and get rid of RZ_V2H_OSC_CLK_IN_MEGA mcro.
+
+Cheers,
+Prabhakar
+
+> >                 .fout =3D { .min =3D 25 * MEGA, .max =3D 375 * MEGA }, =
+       \
+> >                 .fvco =3D { .min =3D 1600 * MEGA, .max =3D 3200 * MEGA =
+},     \
+> >                 .m =3D { .min =3D 64, .max =3D 533 },                  =
+       \
 >
->         /* External Input Clocks */
->         CLK_EXTAL,
-
-> @@ -242,6 +335,8 @@ static const struct cpg_core_clk r9a09g077_core_clks[] __initconst = {
->                          FSELXSPI1, dtable_6_8_16_32_64),
->         DEF_MUX("PCLKCAN", R9A09G077_PCLKCAN, FSELCANFD,
->                 sel_clk_pll4d3_div10_div20, ARRAY_SIZE(sel_clk_pll4d3_div10_div20), 0),
-> +       DEF_DIV_LCDC("LCDCDIV", R9A09G077_LCDC_CLKD, CLK_SEL_CLK_PLL3, LCDCDIVSEL,
-
-"LCDC_CLKD"
-
-
-> +                    dtable_2_32),
->  };
+> Gr{oetje,eeting}s,
 >
->  static const struct mssr_mod_clk r9a09g077_mod_clks[] __initconst = {
-
-> @@ -481,6 +577,272 @@ r9a09g077_cpg_fselxspi_div_clk_register(struct device *dev,
->         return hw->clk;
->  }
+>                         Geert
 >
-> +static unsigned long r9a09g077_cpg_pll3_clk_recalc_rate(struct clk_hw *hw,
-> +                                                       unsigned long parent_rate)
-> +{
-> +       struct pll_clk *pll_clk = to_pll(hw);
-> +       unsigned int ctr0, ctr1;
-
-u32
-
-> +       u8 pdiv, sdiv;
-> +       u64 rate;
-> +       u16 mdiv;
-> +       s16 kdiv;
-> +
-> +       ctr0 = readl(CPG_PLL3_VCO_CTR0(pll_clk->reg));
-> +       ctr1 = readl(CPG_PLL3_VCO_CTR1(pll_clk->reg));
-> +
-> +       pdiv = FIELD_GET(CPG_PLL3_VCO_CTR0_PDIV, ctr0);
-> +       mdiv = FIELD_GET(CPG_PLL3_VCO_CTR0_MDIV, ctr0);
-> +       kdiv = (s16)FIELD_GET(CPG_PLL3_VCO_CTR1_KDIV, ctr1);
-> +       sdiv = FIELD_GET(CPG_PLL3_VCO_CTR1_SDIV, ctr1);
-> +
-> +       rate = mul_u64_u32_shr(parent_rate, (mdiv << 16) + kdiv, 16 + sdiv);
-> +
-> +       return DIV_ROUND_CLOSEST_ULL(rate, pdiv);
-> +}
-
-The rest LGTM.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
+8k.org
+>
+> In personal conversations with technical people, I call myself a hacker. =
+But
+> when I'm talking to journalists I just say "programmer" or something like=
+ that.
+>                                 -- Linus Torvalds
