@@ -1,101 +1,71 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BDE91C695;
-	Fri,  5 Jun 2026 04:40:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CAA93090C4;
+	Fri,  5 Jun 2026 05:57:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780634430; cv=none; b=BuRaE485cmn6PJbchaRVEkkF9LpV6O0AzNesjtfwIDqy/8Kkx0AqqbfsJxEhbloaaP9edKEl1AWc+65FpuGb3TcF0ZlDQwZirmMAKQCbU932/q0d7/WS1ZAUsnkvHkHIkViv8iw171+PZjAqIJVI8YU5EPXUgod1Z8as4qtf8lQ=
+	t=1780639054; cv=none; b=d7hrmoCiCkMviNAA72fw2NtnYYgLKPY5I02t9sjZ1upVtjk1QGoTCGa5d/8yKVCcWw/N1Yb2pOktYnpkTEvzdsX59LcGi8jMMzRyFv31XZktqu/ASKsb/cDjR+8QOsySLKaBm+I6iJtyTk25WstvGo/uOYQjPbI/0wWb6xEnpRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780634430; c=relaxed/simple;
-	bh=5yyYdbG4LLvfv9ADFGAks93a3lOTTuhBHDmwdoYJJiw=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=bfIxmTeDWNSdBmVku38UDEuOLQyv0DBDYRF0/1jd73DjrjQnAxC69g3anvF0a5HngJ8MMjuV0mG+ouFCHBbvTnDD7nPob9bVjOf1KPrWTDs3dfjsKUr7FgINvlE8UZQ3r58qL2BKLCYf1XgMmuW7nPHBVA4lrsIGh1buReTXwyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kKvmEULJ; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1780639054; c=relaxed/simple;
+	bh=5MVQ2p40vp6/QuhT7atlUTGbDhz+7cq4Ty0b8OtLJVw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HjrXgPJR13D/VdxTtPEh335aMu9BhZDO/2i8OoLiwhZFWnz5TCn7xdYwhtA1whDxRRlH+ZQDhpF30BwMQrkxz0vwnHne90vr+DMFRaWjWL6TF+XOyu2dy1bMPCSfaLDn90bAI9MopWGlTxYei0b/4e8hm0uwFXQ8rKJNH1IJwy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=ScIhBV1w; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kKvmEULJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EDED1F00898;
-	Fri,  5 Jun 2026 04:40:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780634429;
-	bh=Hfuoa9jIuBFMW7E7dnxe8T1BD0cJPfKif5I8kRk0YR8=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject;
-	b=kKvmEULJ7k4W6M7l2R2DdTfBcWiv0oeOJHdyQ8wtW/gqxZP73gQj+0tC3Svu9Os3j
-	 Q/Qv/P2Gcq854KBftl+pLJ/1Q2v1sa1usPXvsytOoiDExeIqcXtbNBboJnkXlEOJTS
-	 zYH4reXji8g1GXsXRgZ4WIKxQkGn2IV4Kpv8niLVc9r5gS847CUZH5W9kBw87mbcU0
-	 Wm5JcEo0lSdnp8lQb+6e5VO7nZ+fZzoI1Ifz01jzEgreWORC9X/CazoozwFsK1OTYU
-	 KSrbMbon3ACLkL1RI0YskPiJ9VtAB7/Uf+uZsgbtNI3f4HQK34I8LgyZ1cqBaTJPRj
-	 f9XssrQ3bO4cQ==
-Date: Thu, 04 Jun 2026 23:40:28 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="ScIhBV1w"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=ZH
+	gu+JGrqQgPjnjWztMAItH0/+Es2yqtkSf5YhCP5lY=; b=ScIhBV1wn6Wd2Y2nj5
+	32IxZhtDYc9xy9z/x19InoZJT13v7EHUXSYZ7OMRSAut/F4Jc2GCpAmY8KaC3lWQ
+	1H1H/3WU5FjaduQUJUI5umsvo9eNhNrH2+dQUYNofQS+uKFsZ5DblOhtuQzLo2hw
+	lWQ1efhWNAIzYJDiEFDPrttAI=
+Received: from haiyue-pc.localdomain (unknown [])
+	by gzsmtp1 (Coremail) with SMTP id PCgvCgAXkGE7ZSJqxsLwAQ--.65168S2;
+	Fri, 05 Jun 2026 13:57:16 +0800 (CST)
+From: Haiyue Wang <haiyuewa@163.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-aspeed@lists.ozlabs.org
+Cc: Haiyue Wang <haiyuewa@163.com>
+Subject: [PATCH v4 0/2] Fix aspeed-video driver load failure
+Date: Fri,  5 Jun 2026 13:52:41 +0800
+Message-ID: <20260605055712.118501-1-haiyuewa@163.com>
+X-Mailer: git-send-email 2.54.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: krzk+dt@kernel.org, cix-kernel-upstream@cixtech.com, sboyd@kernel.org, 
- conor+dt@kernel.org, mturquette@baylibre.com, bmasney@redhat.com, 
- devicetree@vger.kernel.org, p.zabel@pengutronix.de, gary.yang@cixtech.com, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-clk@vger.kernel.org
-To: joakim.zhang@cixtech.com
-In-Reply-To: <20260605032225.523669-2-joakim.zhang@cixtech.com>
-References: <20260605032225.523669-1-joakim.zhang@cixtech.com>
- <20260605032225.523669-2-joakim.zhang@cixtech.com>
-Message-Id: <178063442819.2077907.17839637858773523685.robh@kernel.org>
-Subject: Re: [PATCH v2 1/5] dt-bindings: soc: cix,sky1-system-control: add
- audss system control
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PCgvCgAXkGE7ZSJqxsLwAQ--.65168S2
+X-Coremail-Antispam: 1Uf129KBjvdXoW7Xw1fZw4xXr4UKw1rCFykKrg_yoW3KFXE9w
+	1xGwn5JrykAFWj9F1F9F4qywn8KryYkrn5Aryjqry7ua4ayr90gFZ7Gas3Xw1UWa97AFs0
+	ya15WwsxZrn0gjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRK-eOJUUUUU==
+X-CM-SenderInfo: 5kdl53xhzdqiywtou0bp/xtbC7xyL9moiZTyazAAA3J
 
+v4:
+  - No code change, re-send with cover letter for more than one patch
+v3: https://lore.kernel.org/all/20260302011651.94682-1-haiyuewa@163.com/ 
+  - Drop 'Fixes:' tag in header file patch.
+v2: https://lore.kernel.org/all/20260227151602.829-1-haiyuewa@163.com/
+  - Fix checkpatch.pl warning, and send dt-bindings as single patch as
+    the submitting-patches guide.
+v1: https://lore.kernel.org/all/20260227123837.70079-1-haiyuewa@163.com/
 
-On Fri, 05 Jun 2026 11:22:21 +0800, joakim.zhang@cixtech.com wrote:
-> From: Joakim Zhang <joakim.zhang@cixtech.com>
-> 
-> The Cix Sky1 Audio Subsystem (AUDSS) groups audio-related clock, reset
-> and control registers in a dedicated CRU block. Software reset lines are
-> exposed on the syscon parent via #reset-cells, following the same model
-> as the existing Sky1 FCH and S5 system control bindings.
-> 
-> Add the cix,sky1-audss-system-control compatible to
-> cix,sky1-system-control.yaml for the MFD/syscon parent node, and define
-> AUDSS software reset indices in
-> include/dt-bindings/reset/cix,sky1-audss-system-control.h for I2S, HDA,
-> DMAC, mailbox, watchdog and timer blocks.
-> 
-> Signed-off-by: Joakim Zhang <joakim.zhang@cixtech.com>
-> ---
->  .../soc/cix/cix,sky1-system-control.yaml      | 39 ++++++++++++++++---
->  .../reset/cix,sky1-audss-system-control.h     | 27 +++++++++++++
->  2 files changed, 61 insertions(+), 5 deletions(-)
->  create mode 100644 include/dt-bindings/reset/cix,sky1-audss-system-control.h
-> 
+Haiyue Wang (2):
+  dt-bindings: clock: ast2600: Add reset definition for video
+  ARM: dts: aspeed: add 'resets' to video node
 
-My bot found errors running 'make dt_binding_check' on your patch:
+ arch/arm/boot/dts/aspeed/aspeed-g4.dtsi   | 1 +
+ arch/arm/boot/dts/aspeed/aspeed-g5.dtsi   | 1 +
+ arch/arm/boot/dts/aspeed/aspeed-g6.dtsi   | 1 +
+ include/dt-bindings/clock/ast2600-clock.h | 1 +
+ 4 files changed, 4 insertions(+)
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/cix/cix,sky1-system-control.yaml: Unresolvable reference: /schemas/clock/cix,sky1-audss-clock.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/cix/cix,sky1-system-control.example.dtb: system-controller@7110000 (cix,sky1-audss-system-control): clock-controller: False schema does not allow {'compatible': ['cix,sky1-audss-clock'], 'power-domains': [[4294967295, 0]], '#clock-cells': 1, 'clocks': [[4294967295, 0], [4294967295, 1], [4294967295, 2], [4294967295, 3], [4294967295, 4], [4294967295, 5]], 'clock-names': ['audio_clk0', 'audio_clk1', 'audio_clk2', 'audio_clk3', 'audio_clk4', 'audio_clk5'], 'resets': [[4294967295, 0]]}
-	from schema $id: http://devicetree.org/schemas/soc/cix/cix,sky1-system-control.yaml
-Documentation/devicetree/bindings/soc/cix/cix,sky1-system-control.example.dtb: /example-1/system-controller@7110000/clock-controller: failed to match any schema with compatible: ['cix,sky1-audss-clock']
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.kernel.org/project/devicetree/patch/20260605032225.523669-2-joakim.zhang@cixtech.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+-- 
+2.54.0
 
