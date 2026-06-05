@@ -1,72 +1,72 @@
-Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41])
+Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com [209.85.222.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D043279DB1
-	for <linux-clk@vger.kernel.org>; Fri,  5 Jun 2026 13:38:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9D0040E8C7
+	for <linux-clk@vger.kernel.org>; Fri,  5 Jun 2026 13:38:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780666712; cv=none; b=Bua8dzMXhP16i7WfTyxh76s6manyIpC9VvbNy5ybl4/7Db7KinDC8upr52B+Bj1TzgKKNioVkecPSUh3ZQhp/aWiauaX+eO/2LlZEoNDHd1Szwzo5XqPKR7w+DDmsctr/C6ciup3E86GlKQhblUluJTRiOnyweQyBs0gc5LTaFY=
+	t=1780666738; cv=none; b=oUZnanUP8fBt8SGHgjU+9/crJYXmx6km8uZ4uDc1CCYg9k39HvAi8+F2m97HXoEnTN77lqoOAXkxQYTNpXWQpHccjHNoeemzw1UfGprWImIfYVA7yarQqNnZXa0am0U2zTT8HyoleovDK4xABQligweCpVkQ7J3ETGUdgscH/OM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780666712; c=relaxed/simple;
-	bh=CFF3h2aKCRs0mVERo0w9Jab73K/yL/FpUgQ+LRq2KzQ=;
+	s=arc-20240116; t=1780666738; c=relaxed/simple;
+	bh=FBNPG9V/1qWiz8sOxK8CKje3/Q9dzTuF8Px0Wy6/lMM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ifuDgMiN22TQCxpiUG+FuxVHHqBRxh7Y4cFRdhtn3lmfRdXs5QoPmLZm4mpI4d+YnjlZa3ucYCECOIE33+8mkbIveY3mdQXMiLbpGVmBGi8syVsn7+Si4CdusgIkJ6fuWtrsicb+XZq9cQHhNZ2liCiqiDza+pKmyjoKFL2DsUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.41
+	 To:Cc:Content-Type; b=mdQaO+iDkMuDtfUKecT9NkTKqtQBVB2MtH23XuLTcMwOKIqK0OQ3x4mtk1NWDbX7TMJ0XAaM4zj+hpgEkZDkWxmahMjbv7IUn8zBZV7I5h0TlJH7TR76sHMqx0tJbWYPTaIuJtB1tD5txXI/d/KlDcdOTGTTuwOnzo3ZZPgTqd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-9640111c168so621906241.2
-        for <linux-clk@vger.kernel.org>; Fri, 05 Jun 2026 06:38:30 -0700 (PDT)
+Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-9640111c168so622051241.2
+        for <linux-clk@vger.kernel.org>; Fri, 05 Jun 2026 06:38:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780666710; x=1781271510;
+        d=1e100.net; s=20251104; t=1780666737; x=1781271537;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7/NHmMIAbF26BQ6q+U+2X1MzRNnwP89We/x5SvIc/NU=;
-        b=f4Ps2fzFlg5iWayPpS0EIcnZxt5LOo1b3bC/PwbksHf3YL2pmI35wT3nEt+RXEdWDO
-         tyenzY6wrdpfwoz/jgtd9vkq3Y477ej+93vOiyokxjd4rdAjYIPOHP+ZE6EqqcqktBzr
-         suTQcT36j7YxtOGf2vCn5ZiGuIKLPInvCEoaTDv3Bid4EGiZw+hxqWHfR6pGUxWpXlh5
-         1RwAntSd03LDQ86KXuNqUXtN6yoLPGrYkahBN0BHTHiAkTOSTi+f+ocmB47kF7lFOEtf
-         X7ITtDDnIeW4iebA3ELnP1h4sK6kjlyIF0RogJU2KJUCV0J5cfXcq07L9y8pmEzY+zjX
-         dRhg==
-X-Forwarded-Encrypted: i=1; AFNElJ/EOmXAZAL5YZIqCAavkDAhI5Xeq+eyGH+G4hOv8YNEc6LDyKOOxTEhEsYM/zK+sNy351dIYphJ0IE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqnhMs6u2Ij8XHv0ROOwuM+lgARYsZ1WaovJtJYkrIfOFIVGz+
-	WnRozEtjLL5nSQfMmrwArLIlU5MeqRxcs23G0rcQQyHG6ka0PxD8BsrASOjddfF9
-X-Gm-Gg: Acq92OGdZ8SYp5V6q1amU36jJ1deL+IRplr24PctW1GZgEIndiiZ/DTszDmXNQp18h7
-	RTIFfTObMU0OYwaQ8edDADqMM2Va3od6k7dOu8ODBBpaLQQjO0c1I5MdVEfkw/ev3atJvCcClnT
-	wI1u6VEwj8QWHnZXU8wKP/Mwa6YHq+eKtIgE9Ni7HBWcsAODBuJEnDmjw90x9Zn6WHnHtpLWAm2
-	YEIxIDZ4siBdOrJdR2ZQ+XHmq4krxj8Yr6OHiC6JAl7ZwNWUGrbq9fLZI3mc3o0lSDyAqPwKqc9
-	/jDzgifTgyc6oSWXsm3/pmJaDNIZTJYEme1CZfIbLLbggHLqIxtXWsygd3J0gE1Kl2FAuMm5Jum
-	HrNzVwWd6zx0jJevd1xhY+LhIMyhk29o4tvA1e4fPWtX/7UzieQ1h3uiyaKisU3xcosLpli8WrW
-	Cjk8xLgUWJabCIMT9sowwZoLnQiT0sY8/RAYJZrdVvGe5CzHEwuGjSTm/v4SYNY3GAJ8DkyGkpZ
-	XE8lxApfN0g+w==
-X-Received: by 2002:a05:6102:32c3:b0:639:3b08:d64c with SMTP id ada2fe7eead31-6fef353f3a7mr1719514137.13.1780666709947;
-        Fri, 05 Jun 2026 06:38:29 -0700 (PDT)
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com. [209.85.221.175])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-96413f91f22sm6619078241.5.2026.06.05.06.38.29
+        bh=s3BFc1Io0VDxVIM/lXxZrvbjyw3H3uz5gUx8im1vWJQ=;
+        b=r0poH3N6kb38J362xSdw08lagNBQaaXd7l9gWOF1ak14EtW3UZQVgKukPxjeK2sNA/
+         NX8Xa+suQ4Nj1n2Fr6IPZivEZYU+crpwgKZi/tNi59Aj6iNK7nSMQIRqtov72hItyz3f
+         4ME5ruDMwCNaq2wLDUQaJeCweAW/NXCPbgEaAN72zduWVjysl+X3dim9IKB6XVMKElzP
+         2iLwirezAhQRERMIs9x2BOuFeo/7Zd0TGIgklN6QHec5NBhIPFmXWU3fpWc40azx/wXJ
+         tW/4U4IXwZcg248Fanixadz6hVH1ATNVT258IGBNcQLcJ0LuxU2Ruk+ByLixObK3krtn
+         sB7A==
+X-Forwarded-Encrypted: i=1; AFNElJ/wb5u/JjSe+eu9OAEOCbWz2RrIwxyg2H1nFf/sPqywI+I+dfUxa0xJh0Viq2DTXAK7DV/qjNWCk4A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwT00h4eGfZrQ0aq2lumvEBuerK9qedxbQK6usSoPWLJDVeQCQ1
+	8o2LbIHQZV6LxI55SgrrISQhgjxQQdXQHUVhpPnxOjMHuUXyLNCsGy+LVCd5LYmt
+X-Gm-Gg: Acq92OEwMG2BLapzzjLWZw9edz1RIFAY30oXw9fkNFdt8RRqj3pyewYuFdZyqvmi1jZ
+	0SG5M8JR9Cea0ynAOFiBNG/O6EASGAWxr+AQO+fwivgJh/3KSoSBE6gg2D4yQVfAuhiBteGgBAF
+	wbGJUb1b14xDz7dsl1h5/c9TpU2XiXMAwkJSMn6A9Y1ZKcOZc1DCKaEBdqldIo/9VvVd3eb3Xif
+	L8Mc/o4ie2lEPqhjxQOxmUYmCTESxWAQyQeIee4YKlQrAMKJxLp9RmNLX6nfCvFtrdQceZ23hFp
+	3e/M0v1VwxbZbr/0Jky6sGS0WpP4RTz72GQLxabTgpW0b5JGNR6wTejxPDxa4wlJtBioE7+1lYj
+	P0x9FWi8Fd8lYiyMI4Un4BbgXrfLSFo3byHN0GER1dJeyMdv3Bet2YyZCsik4KVO24+CMb8lptY
+	ZZ2Xads7Qu4jy2MMEGKZcJpW6yIilx6meXPvDze4krWGr+QxqzwxQ6niDGFmkIzshvAqIQm9u20
+	E3f1FMmOkTK6w==
+X-Received: by 2002:a05:6102:e0c:b0:62f:357a:3297 with SMTP id ada2fe7eead31-6feef474e29mr1769292137.5.1780666736896;
+        Fri, 05 Jun 2026 06:38:56 -0700 (PDT)
+Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com. [209.85.221.177])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-6eb36325d59sm7866551137.0.2026.06.05.06.38.56
         for <linux-clk@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Jun 2026 06:38:29 -0700 (PDT)
-Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-59dc1714d44so614152e0c.3
-        for <linux-clk@vger.kernel.org>; Fri, 05 Jun 2026 06:38:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ8t5WMqzv5/kiEP27Dl646ehCmqMYkuIbKTrh370CKJDui4HBeWLxXsObAsMSLMatMbJC/57Ruch+c=@vger.kernel.org
-X-Received: by 2002:a05:6102:6447:b0:6f0:3c5c:76a with SMTP id
- ada2fe7eead31-6fede2771c1mr1647286137.0.1780666709130; Fri, 05 Jun 2026
- 06:38:29 -0700 (PDT)
+        Fri, 05 Jun 2026 06:38:56 -0700 (PDT)
+Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-59dc1714d44so614464e0c.3
+        for <linux-clk@vger.kernel.org>; Fri, 05 Jun 2026 06:38:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ80uR8uzT3wlptVTCEVBmiRrVd5QXWphNjOPAn+FUpP6ZcG0KaVpz2mgX/VIAQkanZ/hujzztoP1H8=@vger.kernel.org
+X-Received: by 2002:a05:6122:3d45:b0:573:a779:62cf with SMTP id
+ 71dfb90a1353d-5ac4f952082mr1666770e0c.7.1780666736147; Fri, 05 Jun 2026
+ 06:38:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260511191910.1945705-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20260511191910.1945705-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20260511191910.1945705-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20260511191910.1945705-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20260511191910.1945705-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20260511191910.1945705-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 5 Jun 2026 15:38:18 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVBT7NFYCC-NrSxV7+Y1+76ZPc_ikGK5keRLCXEs-2_8A@mail.gmail.com>
-X-Gm-Features: AVVi8CclYwL9WKaFhvlLy2AwgRj6jcLeq2B2Tj0Wg7PaSGMN4PnbodDRHC61qUc
-Message-ID: <CAMuHMdVBT7NFYCC-NrSxV7+Y1+76ZPc_ikGK5keRLCXEs-2_8A@mail.gmail.com>
-Subject: Re: [PATCH 2/4] clk: renesas: cpg-mssr: Add table-driven MSTP
- dummy-read delay for LCDC on RZ/T2H
+Date: Fri, 5 Jun 2026 15:38:44 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWO=u=kEAYSqywiMkvjCcBHXVfLL7na7kwEFsuaWKMToQ@mail.gmail.com>
+X-Gm-Features: AVVi8CdVv3RVEHPhsDaqredkoNGzyv__zq92-0m6DeV88WQhNmXx0Ns2Vk-vkl8
+Message-ID: <CAMuHMdWO=u=kEAYSqywiMkvjCcBHXVfLL7na7kwEFsuaWKMToQ@mail.gmail.com>
+Subject: Re: [PATCH 3/4] dt-bindings: clock: renesas,r9a09g077/87: Add
+ LCDC_CLKD clock ID
 To: Prabhakar <prabhakar.csengg@gmail.com>
 Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
 	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
@@ -77,189 +77,16 @@ Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Prabhakar,
-
 On Mon, 11 May 2026 at 21:19, Prabhakar <prabhakar.csengg@gmail.com> wrote:
 > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 >
-> Per the RZ/T2H hardware manual, to secure processing after release from
-> the module-stop state, dummy read the same MSTPCRm register at least
-> seven times for most IP blocks, at least 100 times for LCDC and at
-> least 300 times for RTC before proceeding with subsequent processing.
->
-> The existing udelay(10) satisfies the seven dummy-read requirement for
-> most IP blocks. Extend this to support per-IP dummy-read requirements
-> by introducing a table-driven lookup, rzt2h_mstp_delay_table, where
-> each entry records the MSTPCRm register index, bit position and the
-> minimum dummy-read count from the hardware manual, converted to
-> microseconds via RZT2H_MSTP_READS_TO_US().
->
-> Introduce cpg_rzt2h_mstp_get_delay_us() to replace the open-coded
-> udelay(10) calls. In cpg_mstp_clock_endisable() the exact register and
-> bit are known so the lookup matches on both fields. In
-> cpg_mssr_resume_noirq() the register is known but not the individual
-> bit, so pass RZT2H_MSTP_ANY_BIT causing the lookup to match on the
-> register alone and return the delay for the first matching entry.
->
-> Add an entry for LCDC which requires at least 100 dummy reads. Adding
-> support for further IP blocks with non-default requirements only needs
-> a new entry in rzt2h_mstp_delay_table with no logic changes needed.
+> Add the LCDC clockd (LCDC_CLKD) definition for the Renesas RZ/T2H
+> (R9A09G077) and RZ/N2H (R9A09G087) SoCs. LCDC_CLKD is used as the
+> operating clock for LCDC.
 >
 > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Thanks for your patch!
-
-> --- a/drivers/clk/renesas/renesas-cpg-mssr.c
-> +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-> @@ -96,6 +96,24 @@ static const u16 mstpcr_for_gen4[] = {
->  #define RZT2H_MSTPCR_BLOCK(x)          ((x) >> RZT2H_MSTPCR_BLOCK_SHIFT)
->  #define RZT2H_MSTPCR_OFFSET(x)         ((x) & RZT2H_MSTPCR_OFFSET_MASK)
->
-> +/* Dummy read counts as specified by the RZ/T2H hardware manual */
-> +#define RZT2H_MSTP_DEFAULT_DUMMY_READS 7
-> +#define RZT2H_MSTP_LCDC_DUMMY_READS    100
-> +
-> +/*
-> + * Time per dummy read in nanoseconds, derived from the original udelay(10)
-> + * which was used to satisfy the 7 dummy-read requirement:
-> + * 10000 ns / 7 reads = 1429 ns per read.
-> + */
-> +#define RZT2H_MSTP_DUMMY_READ_NS       1429
-> +#define RZT2H_MSTP_READS_TO_US(n)      (((n) * RZT2H_MSTP_DUMMY_READ_NS) / 1000)
-
-IMHO this is overly complicated and hard to follow...
-
-> +#define RZT2H_MSTP_DEFAULT_DELAY_US    RZT2H_MSTP_READS_TO_US(RZT2H_MSTP_DEFAULT_DUMMY_READS)
-
-i.e. this is just 10 again?
-
-> +
-> +#define RZT2H_MSTPCRM_INDEX            12
-> +#define RZT2H_MSTPCRM04_LCDC           4
-
-Everywhere else (DEF_MOD(), DTS) we refer to module clocks using the
-sparse base-10 combined number, i.e. "1204", so I think it would be
-better to do the same here.
-
-> +
-> +#define RZT2H_MSTP_ANY_BIT             U32_MAX
-> +
->  static const u16 mstpcr_for_rzt2h[] = {
->         RZT2H_MSTPCR(0, 0x300), /* MSTPCRA */
->         RZT2H_MSTPCR(0, 0x304), /* MSTPCRB */
-> @@ -113,6 +131,35 @@ static const u16 mstpcr_for_rzt2h[] = {
->         RZT2H_MSTPCR(1, 0x334), /* MSTPCRN */
->  };
->
-> +/**
-> + * struct rzt2h_mstp_delay_entry - MSTP dummy-read requirement for RZ/T2H
-> + *
-> + * @reg: Index into control_regs[]. Exact match.
-> + * @bit: MSTP bit position, or RZT2H_MSTP_ANY_BIT for register-level match.
-> + * @delay_us: Computed delay in microseconds to satisfy the dummy read requirement.
-> + */
-> +struct rzt2h_mstp_delay_entry {
-> +       u32 reg;
-> +       u32 bit;
-
-The sparse base-10 combined number or packed index would need just a
-single u32...
-
-> +       u32 delay_us;
-> +};
-> +
-> +/*
-> + * Per RZ/T2H HW manual: to secure processing after release from the
-> + * module-stop state, dummy read the same register at least seven times
-> + * (except RTC and LCDC) after writing to initiate release from the
-> + * module-stop state. For RTC, dummy read at least 300 times and for
-> + * LCDC, at least 100 times.
-> + *
-> + * Instead of performing the actual dummy reads, an equivalent delay is
-> + * added using udelay(), computed from the required read count via
-> + * RZT2H_MSTP_READS_TO_US().
-> + */
-> +static const struct rzt2h_mstp_delay_entry rzt2h_mstp_delay_table[] = {
-> +       { RZT2H_MSTPCRM_INDEX, RZT2H_MSTPCRM04_LCDC,
-> +         RZT2H_MSTP_READS_TO_US(RZT2H_MSTP_LCDC_DUMMY_READS) },
-
-"210" (us)?
-
-> +};
-> +
->  /*
->   * Standby Control Register offsets (RZ/A)
->   * Base address is FRQCR register
-> @@ -253,6 +300,20 @@ static void cpg_rzt2h_mstp_write(struct cpg_mssr_priv *priv, u16 offset, u32 val
->         writel(value, base + RZT2H_MSTPCR_OFFSET(offset));
->  }
->
-> +static unsigned int cpg_rzt2h_mstp_get_delay_us(u32 reg, u32 bit)
-> +{
-> +       unsigned int i;
-> +
-> +       for (i = 0; i < ARRAY_SIZE(rzt2h_mstp_delay_table); i++) {
-> +               const struct rzt2h_mstp_delay_entry *e = &rzt2h_mstp_delay_table[i];
-> +
-> +               if (e->reg == reg && (e->bit == bit || bit == RZT2H_MSTP_ANY_BIT))
-> +                       return e->delay_us;
-> +       }
-
-Given there are only two modules (LCDC and RTC) that need special
-handling, a table sounds like overkill to me.
-For exact matching, a switch() statement with two entries and a default
-would do.
-For wildcard bit matching, perhaps you can use a mask?
-
-    unsigned int mask = bit_valid ? GENMASK(31, 0) : GENMASK(31, 5));
-
-    if (idx == (MOD_CLK_PACK(1204) & mask)) {
-            /* LCDC needs 300 dummy reads, or 210 us */
-            return 210;
-    } else if (idx == (MOD_CLK_PACK(605) & mask)) {
-            /* RTC needs 100 dummy reads, or 70 us */
-            return 70;
-    } else {
-            /* default 7 dummy reads, or 10 us */
-            return 10;
-    }
-
-What do you think?
-
-> +
-> +       return RZT2H_MSTP_DEFAULT_DELAY_US;
-
-You might as well just do the udelay() here, too.
-
-> +}
-> +
->  static int cpg_mstp_clock_endisable(struct clk_hw *hw, bool enable)
->  {
->         struct mstp_clock *clock = to_mstp_clock(hw);
-> @@ -312,7 +373,7 @@ static int cpg_mstp_clock_endisable(struct clk_hw *hw, bool enable)
->                  * register, we simply add a delay after the read operation.
->                  */
->                 cpg_rzt2h_mstp_read(priv, priv->control_regs[reg]);
-> -               udelay(10);
-> +               udelay(cpg_rzt2h_mstp_get_delay_us(reg, bit));
-
-In this function, you do have the packed clock index (clock->index).
-
->                 return 0;
->         }
->
-> @@ -1142,7 +1203,7 @@ static int cpg_mssr_resume_noirq(struct device *dev)
->                         cpg_rzt2h_mstp_write(priv, priv->control_regs[reg], newval);
->                         /* See cpg_mstp_clock_endisable() on why this is necessary. */
->                         cpg_rzt2h_mstp_read(priv, priv->control_regs[reg]);
-> -                       udelay(10);
-> +                       udelay(cpg_rzt2h_mstp_get_delay_us(reg, RZT2H_MSTP_ANY_BIT));
-
-Here you don't have it, but idx = reg * 32, and bit_valid = false;
-
->                         continue;
->                 } else
->                         writel(newval, priv->pub.base0 + priv->control_regs[reg]);
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Gr{oetje,eeting}s,
 
