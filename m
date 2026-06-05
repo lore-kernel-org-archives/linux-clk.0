@@ -1,89 +1,160 @@
-Received: from mxb.seznam.cz (mxb.seznam.cz [77.75.76.89])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B0B73F4823;
-	Fri,  5 Jun 2026 13:06:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=77.75.76.89
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F27B247291
+	for <linux-clk@vger.kernel.org>; Fri,  5 Jun 2026 13:37:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780664816; cv=none; b=LsdwV9allOSvYWQ51KTCrjExEnSHXZ+0xqTl7MDHIviob9Wy+KOstlcJgprGJkTeNULlK57uJ++k0TiIMo/2GI3QEWTZs8OvvJP2DSMhOzAfilyWJFVDCEBUoDu+m3zM9uG6wt3sjTTM51csj0l5EmpyWTA/SF+ANQfZ5ExVvSc=
+	t=1780666678; cv=none; b=RJG81DlOhzDcOYi/kikYfOdD4tiLkqmqJO2akZXfLtEb0cYRUlvUaGJXp0p4yJqR6m8Zs6mA+zDUAMXq5/UhDdkRnk4kQe2KkYUaKyERuy62Ahortql0Wvld1bhfaxLB/sOnvaJDAXuN40zSLuHnRqGo9aE2O+VnNDv8khNXsPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780664816; c=relaxed/simple;
-	bh=XMajIsvHqpv3hmWWRWZMQiL2sHr6MW5RUNsGsl9FiiA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hM3mlrhx8qvxxiQBVh2x1FPZllBLQxh2iILZ7yHFj4jdvu4CgMnRjAC371+vPLfBPvXCbTIPvHuM3jAVo3Pp8dhVnmppBg8jRWASIarPcZM6cszoB7D8n8yPPolRjaa8sHZSU1GkAuHhfDA9nNnXMUx8UW8SFC9+4u37ai6zAOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loebl.cz; spf=none smtp.mailfrom=loebl.cz; dkim=pass (2048-bit key) header.d=emailprofi.seznam.cz header.i=@emailprofi.seznam.cz header.b=Q13nkptH; arc=none smtp.client-ip=77.75.76.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loebl.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=loebl.cz
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=emailprofi.seznam.cz header.i=@emailprofi.seznam.cz header.b="Q13nkptH"
-Received: from email.seznam.cz
-	by smtpc-mxb-55bd7c95dc-fndnd
-	(smtpc-mxb-55bd7c95dc-fndnd [2a02:598:96:8a00::1200:50a])
-	id 1b24221e00b6afca1fc19b9c;
-	Fri, 05 Jun 2026 15:06:44 +0200 (CEST)
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=emailprofi.seznam.cz; s=szn1; t=1780664804;
-	bh=ogwE3fqSYZJi/QI+DqmGkfHwrGgNJVgIJA9enEY8GNU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding;
-	b=Q13nkptHWkaX2bLvPPjf8HP2ozaHgRtbrC/sJjy+Dkip+M93QzblOfqRKJjZw9giS
-	 v2LC8dPzbAYfOKsTS3UWuR1H81vzyTCWLehVce8bIgfqqbZZEtXnc7HO1kZFMeIh55
-	 hBO9kKq3OMiqz47SEYtCIbrTUfB0GNrgt0TiocqSp2JJ880GX4P3rla5XaeZivY1/K
-	 RiXRNMpXk8tgrFQoT2sEN+NNL0bqdX4fufhtwU+o+pqfgaMddrAMq2TyCTZMPDmwn7
-	 plc1H5iEqg0lrTQOXl97os3CiFM7p2vPdVoCsPx9sJyn7wE11+SI1NlXXQ0/qbcrTP
-	 RHInxjZYwTBfg==
-Received: from localhost (109-81-118-220.rct.o2.cz [109.81.118.220])
-	by smtpd-relay-6f9c9f69dc-qpzjn (szn-email-smtpd/2.0.74) with ESMTPA
-	id 1b88d614-33d1-4da9-8dfd-02224292b969;
-	Fri, 05 Jun 2026 15:03:44 +0200
-From: =?UTF-8?q?Pavel=20L=C3=B6bl?= <pavel@loebl.cz>
-To: Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney@redhat.com>,
-	Michal Simek <michal.simek@amd.com>
-Cc: linux-clk@vger.kernel.org,
-	=?UTF-8?q?Pavel=20L=C3=B6bl?= <pavel@loebl.cz>,
-	stable@vger.kernel.org
-Subject: [PATCH] clk: clocking-wizard: fix integer overflow in rate calculation
-Date: Fri,  5 Jun 2026 15:03:40 +0200
-Message-ID: <20260605130340.3549582-1-pavel@loebl.cz>
-X-Mailer: git-send-email 2.53.0
+	s=arc-20240116; t=1780666678; c=relaxed/simple;
+	bh=2aZEH0J2VU5XhjSzChfxXZtpAytXZoxQRRnO59GhRp0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BedFJwNhSAV0AQSOf+eirMDOVkyvVsjaDHH3Xec94kB3WrvF7Nwiv2KzTV4DIat5TV4oeX1+a3GXrgGn9N/oEtKI+jgMkxuQ7Otao/VMXYPMEZNRQ2OJuJTtb8eYiEkPjXdItWtM3ZnM+xoraD7YfqwFnzyicH+W0ZLNksD3mro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-963849a4611so596772241.3
+        for <linux-clk@vger.kernel.org>; Fri, 05 Jun 2026 06:37:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1780666675; x=1781271475;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+mbWYv3/oYKk7SXXBsDpY1xgHffMAZJ0Tb8VCAbQ5qE=;
+        b=mTiwzyI0073K0u0ZDGkBJkDDWUA9a3h35+AOQ0vYZBwDIPt9gm840PlJsOT7f7Pi0P
+         bIYepiyEsiU9w0UWuHl8sCtdnpk+8YfXUwJLxwb5NyMAUtr1rjEmbgAdfwFGz46voA6o
+         RdkHcaERKmYAz4tdOaf7VVfDQbdGk/DJHPaCkRdp3BYjzplB8eCFRplPnbcRt5TNh2xa
+         mQ15Mgk3aJPOZ3XJa2CsWvRyy12n8dZyiDfIneAcD1+7vtWMO7FTDQ2TRzddzPIYagN5
+         WB44f/Ccw262VtkRC8DPJ/TbUCkE+gpWTqzmx2oRGROwYd+ZEWnb63Ne6WdEoqC+5SJ7
+         upfQ==
+X-Forwarded-Encrypted: i=1; AFNElJ9x3TfGQwcu7Y/9FETwePwyZFvZ7jtyDDOoT0LP8DbwGgnRGr6KDKQ/OHT80RACCy/1vw8IBASYkhk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyC5Lm08LnuVGMQm6CIM2nX8VwAzv4UrDFgzuIabYjeZ7dBwREu
+	sIRol5wCKzg59+d6DpZVCemRaTdKETPGpxEW+8TyjzJPBJfzAb3YZA8aPXBPRUkQ
+X-Gm-Gg: Acq92OF6hqznrORk1FuB47ya5t0MNHCYFtN2Y2iXF8zfCudwzxzQTlE34uY6Ko28Pax
+	bjThg+KqEudtldlefzXFkbv044UiiMCbx7oUX4tWuQ4bmjWEEwQSHdQlBEPOKHTpQ3j7o+t07Fq
+	5X1ldk26WM3T9QQqWTeXV0Jn5uU05iVGiNl638oOpLOGq+d6mtJIgvezOO0xpQXL7f3pUiuviuU
+	qloKZsaltK/EBPMGXZxiXhNNOJ/ISfXTK83uPv+umcecjRgmFVuf7NceHNRhZJeHGa4Czuekdww
+	o5AjPtvnv5cfOJ+g43clTMVYP/g9qIUrOp7qTpiSvAC2TnZGSgJzFP/SECW6zu4ZbuZOs6nTHjP
+	0U9HeKqyPdJRSM4G1iV88kGULLdPHDRvuqVI5z9CY8VEsrEibaqMvyVv27M62CbLZxyZW/xTw9p
+	zV2L6CfjxMX/7qpCAqihv6bMPHqdwMicldG5uRhguwOTgoiFB5LIGjSqHsIoA4Pp/3Io7N5w47m
+	kc=
+X-Received: by 2002:a05:6122:d87:b0:59f:8ddb:2fc1 with SMTP id 71dfb90a1353d-5ac55be8a83mr1569700e0c.7.1780666675077;
+        Fri, 05 Jun 2026 06:37:55 -0700 (PDT)
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com. [209.85.221.171])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5a6dc44da2fsm7672872e0c.9.2026.06.05.06.37.53
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Jun 2026 06:37:54 -0700 (PDT)
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-59ccf81e74bso608549e0c.3
+        for <linux-clk@vger.kernel.org>; Fri, 05 Jun 2026 06:37:53 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ8ngWLRSFY5heZ1kE7f0HgSnyeDqD/E63auxgixMPE44hrlgoprFxSuSAA/iJwlB0THN4En1veslFo=@vger.kernel.org
+X-Received: by 2002:a05:6122:4b05:b0:5a0:9ad4:7016 with SMTP id
+ 71dfb90a1353d-5ac57e02261mr1463187e0c.10.1780666673234; Fri, 05 Jun 2026
+ 06:37:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20260511191910.1945705-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20260511191910.1945705-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20260511191910.1945705-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 5 Jun 2026 15:37:40 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWVjvdX2Ve-Sf91oJoCWcO-fF-363ytO66Pr=SBA69N+g@mail.gmail.com>
+X-Gm-Features: AVVi8CftNp2l3YTCG72NkTVwV1FmtccWLHXsNjSPXXHE1Sq7KdRdjdvppMf_SNw
+Message-ID: <CAMuHMdWVjvdX2Ve-Sf91oJoCWcO-fF-363ytO66Pr=SBA69N+g@mail.gmail.com>
+Subject: Re: [PATCH 1/4] clk: renesas: rzv2h-cpg: Use per-SoC PLL reference
+ frequency for calculations
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-When using driver on Zynq-7000 (32-bit) determine_rate calculation
-overflows. For instance requesting 32MHz with 100MHz parent clock
-results in 100000000*(4*1000+0) 32-bit multiplication.
+Hi Prabhakar,
 
-Replace the expression with mult_frac which is already used in
-clk_wzrd_recalc_ratef.
+On Mon, 11 May 2026 at 21:19, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Use a per-SoC PLL reference input frequency for PLL parameter
+> calculations instead of relying on the hardcoded 24MHz constant.
+>
+> Add an input_fref field to struct rzv2h_pll_limits and derive the PLL
+> reference frequency from it in rzv2h_get_pll_pars(). Fall back to the
+> existing 24MHz value when no SoC-specific input is provided.
+>
+> This allows the existing PLL divider calculation logic to be reused
+> unchanged on SoCs such as RZ/T2H, which use a 48MHz PLL reference
+> input instead of the 24MHz reference used on RZ/V2H(P), while keeping
+> current RZ/V2H(P) behaviour intact.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Cc: stable@vger.kernel.org
-Fixes: 7681f64e6404 ("clk: clocking-wizard: calculate dividers fractional parts")
-Signed-off-by: Pale Löbl <pavel@loebl.cz>
----
- drivers/clk/xilinx/clk-xlnx-clock-wizard.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Thanks for your patch!
 
-diff --git a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c b/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
-index 4a0136349f71..dbef983eb425 100644
---- a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
-+++ b/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
-@@ -663,8 +663,8 @@ static int clk_wzrd_determine_rate_all(struct clk_hw *hw,
- 	d = divider->d;
- 	o = divider->o;
- 
--	req->rate = div_u64(req->best_parent_rate * (m * 1000 + divider->m_frac),
--			    d * (o * 1000 + divider->o_frac));
-+	req->rate = mult_frac(req->best_parent_rate, m * 1000 + divider->m_frac,
-+			      d * (o * 1000 + divider->o_frac));
- 	return 0;
- }
- 
--- 
-2.53.0
+> --- a/drivers/clk/renesas/rzv2h-cpg.c
+> +++ b/drivers/clk/renesas/rzv2h-cpg.c
+> @@ -242,6 +242,7 @@ struct rzv2h_plldsi_div_clk {
+>  bool rzv2h_get_pll_pars(const struct rzv2h_pll_limits *limits,
+>                         struct rzv2h_pll_pars *pars, u64 freq_millihz)
+>  {
+> +       unsigned long input_fref = limits->input_fref ?: RZ_V2H_OSC_CLK_IN_MEGA;
+>         u64 fout_min_millihz = mul_u32_u32(limits->fout.min, MILLI);
+>         u64 fout_max_millihz = mul_u32_u32(limits->fout.max, MILLI);
+>         struct rzv2h_pll_pars p, best;
 
+> --- a/include/linux/clk/renesas.h
+> +++ b/include/linux/clk/renesas.h
+> @@ -53,6 +53,8 @@ static inline void rzg2l_cpg_dsi_div_set_divider(u8 divider, int target) { }
+>   * various parameters used to configure a PLL. These limits ensure
+>   * the PLL operates within valid and stable ranges.
+>   *
+> + * @input_fref: Reference input frequency to the PLL (in MHz)
+
+Iff there is a default, it should be documented here?
+
+> + *
+>   * @fout: Output frequency range (in MHz)
+>   * @fout.min: Minimum allowed output frequency
+>   * @fout.max: Maximum allowed output frequency
+> @@ -78,6 +80,8 @@ static inline void rzg2l_cpg_dsi_div_set_divider(u8 divider, int target) { }
+>   * @k.max: Maximum delta-sigma value
+>   */
+>  struct rzv2h_pll_limits {
+> +       u32 input_fref;
+> +
+>         struct {
+>                 u32 min;
+>                 u32 max;
+> @@ -156,6 +160,7 @@ struct rzv2h_pll_div_pars {
+>
+>  #define RZV2H_CPG_PLL_DSI_LIMITS(name)                                 \
+>         static const struct rzv2h_pll_limits (name) = {                 \
+> +               .input_fref = 24 * MEGA,                                \
+
+Why add this if 24 * MEGA is the default value anyway?
+Why not do the same for the two similar RZ/G3E macros?
+Perhaps the default handling and the RZ_V2H_OSC_CLK_IN_MEGA macro
+should just be dropped?
+
+>                 .fout = { .min = 25 * MEGA, .max = 375 * MEGA },        \
+>                 .fvco = { .min = 1600 * MEGA, .max = 3200 * MEGA },     \
+>                 .m = { .min = 64, .max = 533 },                         \
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
