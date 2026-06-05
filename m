@@ -1,136 +1,180 @@
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D2137DE90;
-	Fri,  5 Jun 2026 07:01:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7D4043D4E6
+	for <linux-clk@vger.kernel.org>; Fri,  5 Jun 2026 07:42:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780642874; cv=none; b=M9mR4EU//e6Y2Pn9nKMppI6dQ4qCZwUnsV4S9u7MNpzSQYIMgsRGzDF6hezUTAL4LEry+f3JSGQ9DdSAp91AHFsakn9ztZjGvaghT/Y9iX7f8wOd9PymO1JDCfKl4MHysiniXoerrPOitIXcSaP0fOg7xkxeAXuHDjBuROYXvJI=
+	t=1780645343; cv=none; b=lB3OKkfN5cBr91Mj6q1br8F2HPysrHfnRMtFiPw5X3jAW7qecmMq5XmY9TBbUnSQArLb6P6m/U8K6+CmBErz+2FTnh/+V38YSpl13HBmwY6QKJdsehWteg3wS+hfpvMvwthPZjknb2N/+2p4XZzYkI1z9T9g3lMS6bSQLehU7tE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780642874; c=relaxed/simple;
-	bh=60xrDe66k4ro+KvVbaFJv2mj9P8kpFvqUKywbpSaqwI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=CfR/2rcHDALFb9cKk00kr9rjgGeBYSt+CCztkh6gDzZr5rLxhA0A3iJNZ/l1wC/8TV1HeZAz8G5T24SqUPXdjtlVVU3Y46OgvzrMVZvVomEUWfJwyTA3MsSUZlnP+rpuvUgFsQH/1zVv02abscmdnoyvWW7sAbtgJE3zUsf+B90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=JdHrpnDO; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=eYEFdiXU; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="JdHrpnDO";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="eYEFdiXU"
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4gWsm66mFWz9vJQ;
-	Fri,  5 Jun 2026 09:01:10 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1780642871;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5AisOK8s0MrDK37/TSGMnTNdk0xSn+SbMsbMUZ0nmfk=;
-	b=JdHrpnDOYCj2thOK1j2uixDXieb+46nyuy9pggdoRq9ZmunnyGBU4yK4sQwIvzHXYpxMnU
-	/jYA2ihhzuwJR9d2mhWdVOLRuYmfOCCBucoYXa5khSwDTK+GWNoeh0MkpJ9fqpdWLhGkqz
-	ZjKRFTqNSHSseMskqKqmsS5e4nOgpKQue4rjiDG0kenW0Q2qx5m2SDCnaZQMXNP+JpXFlD
-	GroEL7ugJNhbViNlNupCZyOUJqoMKXpnR91GYZyNUeddBAVFquBt38bgBWQivA4XRijC5r
-	DaPoQHdXAqL3rJzQuazzo4JzVDQYihRXzuFmrtX08+gP0eKnMpjEbg7d9bn5WQ==
-From: Maurice Hieronymus <mhi@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1780642869;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5AisOK8s0MrDK37/TSGMnTNdk0xSn+SbMsbMUZ0nmfk=;
-	b=eYEFdiXUTttRaoD+Afyd77elgOXcd3PbYltjw5qY1wPSxqjrh0bAcBU4fi8ViG/wGiFoLL
-	WLB95UAcV9UXQr7AmrW3OmfvHzbLVw2IzxSDelnbt4EIMddcPPNU7v+oM4+AxEgVEKdmUv
-	AEhf0qkm0ASOCl0fsmfyH4ztqA5UDc47pAFHR8iZzNTLgJPGNcvKjvVX8U42QESQnIX6Iz
-	BdcWageqTOo3PEwTcK9ysLezZjHQ4P2EgUWjUi8i8ivnHWGrQDYtnuP3Xr3q77hb+bcIU7
-	ITtyQF7JJNn5kCWc4ZYqpXBIP8CbKST5L8+nkNQtsSCOWgX40kpsjR5H2+PPMQ==
-Date: Fri, 05 Jun 2026 09:00:00 +0200
-Subject: [PATCH v2 2/2] pwm: th1520: Lock clock rate with
- clk_rate_exclusive_get
+	s=arc-20240116; t=1780645343; c=relaxed/simple;
+	bh=e5UX+o3Ku7JIQHG4csWXu1S6QXVTcVMCPLgKWMI7c8Y=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Vtz6duzyzDU1NTUWeVhXEiosmfqR1oCXM5+7ezO0+OlGs/Qqei9Sgur+1MDpUBiPK1Utp45h05UNYCec99/7cNic+pvI/QpDG9tx4iftbaW08SiBox4xuCVudW5n9YiOuFtViMvnJ7FC5UMl4j8AMPMlOwDSpyc/mcZe6Yd0bqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1wVPBx-0001an-EM; Fri, 05 Jun 2026 09:42:09 +0200
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1wVPBw-001Cpv-25;
+	Fri, 05 Jun 2026 09:42:08 +0200
+Received: from pza by lupine with local (Exim 4.98.2)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1wVPBw-000000002rx-2NXJ;
+	Fri, 05 Jun 2026 09:42:08 +0200
+Message-ID: <78e26b2459b89b107b24bf9f86d251ba16be3848.camel@pengutronix.de>
+Subject: Re: [PATCH v2 4/5] clk: cix: add sky1 audss clock controller
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: joakim.zhang@cixtech.com, mturquette@baylibre.com, sboyd@kernel.org, 
+	bmasney@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, 	gary.yang@cixtech.com
+Cc: cix-kernel-upstream@cixtech.com, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Date: Fri, 05 Jun 2026 09:42:08 +0200
+In-Reply-To: <20260605032225.523669-5-joakim.zhang@cixtech.com>
+References: <20260605032225.523669-1-joakim.zhang@cixtech.com>
+	 <20260605032225.523669-5-joakim.zhang@cixtech.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-0+deb13u1 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260605-rate-exclusive-get-th1520-v2-2-695640bf7249@mailbox.org>
-References: <20260605-rate-exclusive-get-th1520-v2-0-695640bf7249@mailbox.org>
-In-Reply-To: <20260605-rate-exclusive-get-th1520-v2-0-695640bf7249@mailbox.org>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
- Boqun Feng <boqun@kernel.org>, Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
- Danilo Krummrich <dakr@kernel.org>, Drew Fustini <fustini@kernel.org>, 
- Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
- Michal Wilczynski <m.wilczynski@samsung.com>, 
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Cc: linux-clk@vger.kernel.org, rust-for-linux@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
- linux-pwm@vger.kernel.org, Maurice Hieronymus <mhi@mailbox.org>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1780642818; l=1573;
- i=mhi@mailbox.org; s=20260525; h=from:subject:message-id;
- bh=60xrDe66k4ro+KvVbaFJv2mj9P8kpFvqUKywbpSaqwI=;
- b=WGnFX7PcxbBDEWUXjmEwNTBR0kSfl2DufCpeg/+PtLA111qvEc4g/HvbvGFUtb8xe+w8VJkIJ
- ajVQyrtia3FCoSl7ss/PX3cylicvjwS9bby/KwyEGzgtYLN+c49u4L1
-X-Developer-Key: i=mhi@mailbox.org; a=ed25519;
- pk=AHlEkGG3hpXZHntlEzF42Ip/LFyXWOgsNUvaHqAnV80=
-X-MBO-RS-ID: 0b9247bacab9cefd338
-X-MBO-RS-META: 3b51q85kj4buq3xszfzwttb54czpc51w
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-The driver derives period and duty cycle from the clock rate read at
-probe, so a later rate change would silently miscompute waveforms.
-Switch to the new ExclusiveClk wrapper to hold the rate for the lifetime
-of the driver data and drop the corresponding TODO.
+On Fr, 2026-06-05 at 11:22 +0800, joakim.zhang@cixtech.com wrote:
+> From: Joakim Zhang <joakim.zhang@cixtech.com>
+>=20
+> Add a platform driver for the Cix Sky1 Audio Subsystem (AUDSS) internal
+> clock controller. The driver binds to a cix,sky1-audss-clock device tree
+> node under the AUDSS syscon, obtains the parent regmap via
+> syscon_node_to_regmap(), and registers mux/divider/gate composite clocks
+> for DSP, SRAM, HDA, DMAC, watchdog, timer, mailbox and I2S outputs. Six
+> SoC-level audio reference clocks are brought up as inputs to the tree.
+>=20
+> Signed-off-by: Joakim Zhang <joakim.zhang@cixtech.com>
+> ---
+>  drivers/clk/Kconfig              |    1 +
+>  drivers/clk/Makefile             |    1 +
+>  drivers/clk/cix/Kconfig          |   16 +
+>  drivers/clk/cix/Makefile         |    3 +
+>  drivers/clk/cix/clk-sky1-audss.c | 1129 ++++++++++++++++++++++++++++++
+>  5 files changed, 1150 insertions(+)
+>  create mode 100644 drivers/clk/cix/Kconfig
+>  create mode 100644 drivers/clk/cix/Makefile
+>  create mode 100644 drivers/clk/cix/clk-sky1-audss.c
+>=20
+[...]
+> diff --git a/drivers/clk/cix/clk-sky1-audss.c b/drivers/clk/cix/clk-sky1-=
+audss.c
+> new file mode 100644
+> index 000000000000..899452d5ed14
+> --- /dev/null
+> +++ b/drivers/clk/cix/clk-sky1-audss.c
+> @@ -0,0 +1,1129 @@
+[...]
+> +/* register sky1 audio subsystem clocks */
+> +static int sky1_audss_clk_probe(struct platform_device *pdev)
+> +{
+> +	const struct sky1_audss_clks_devtype_data *devtype_data;
+> +	struct sky1_audss_clks_priv *priv;
+> +	struct device_node *parent_np;
+> +	struct device *dev =3D &pdev->dev;
+> +	struct reset_control *rst_noc;
+> +	struct clk_hw **clk_table;
+> +	struct regmap *regmap_cru;
+> +	int i, ret;
+> +
+> +	parent_np =3D of_get_parent(pdev->dev.of_node);
+> +	regmap_cru =3D syscon_node_to_regmap(parent_np);
+> +	of_node_put(parent_np);
+> +	if (IS_ERR(regmap_cru))
+> +		return dev_err_probe(dev, PTR_ERR(regmap_cru),
+> +				     "unable to get audss cru regmap");
+> +
+> +	devtype_data =3D device_get_match_data(dev);
+> +	if (!devtype_data)
+> +		return -ENODEV;
+> +
+> +	priv =3D devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+> +	if (!priv)
+> +		return -ENOMEM;
+> +
+> +	spin_lock_init(&priv->lock);
+> +
+> +	priv->clk_data =3D devm_kzalloc(&pdev->dev,
+> +				      struct_size(priv->clk_data, hws, AUDSS_MAX_CLKS),
+> +				      GFP_KERNEL);
+> +	if (!priv->clk_data)
+> +		return -ENOMEM;
+> +
+> +	priv->clk_data->num =3D AUDSS_MAX_CLKS;
+> +	clk_table =3D priv->clk_data->hws;
+> +
+> +	priv->dev =3D dev;
+> +	priv->regmap_cru =3D regmap_cru;
+> +	priv->devtype_data =3D devtype_data;
+> +
+> +	ret =3D sky1_audss_clks_get(priv);
+> +	if (ret)
+> +		return ret;
+> +
+> +	rst_noc =3D devm_reset_control_get(dev, NULL);
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-Signed-off-by: Maurice Hieronymus <mhi@mailbox.org>
----
- drivers/pwm/pwm_th1520.rs | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+Please use devm_reset_control_get_exclusive() directly.
 
-diff --git a/drivers/pwm/pwm_th1520.rs b/drivers/pwm/pwm_th1520.rs
-index ddd44a5ce497..19e8621bc52c 100644
---- a/drivers/pwm/pwm_th1520.rs
-+++ b/drivers/pwm/pwm_th1520.rs
-@@ -22,7 +22,7 @@
- 
- use core::ops::Deref;
- use kernel::{
--    clk::Clk,
-+    clk::{Clk, ExclusiveClk},
-     device::{Bound, Core, Device},
-     devres,
-     io::{
-@@ -93,7 +93,7 @@ struct Th1520WfHw {
- struct Th1520PwmDriverData {
-     #[pin]
-     iomem: devres::Devres<IoMem<TH1520_PWM_REG_SIZE>>,
--    clk: Clk,
-+    clk: ExclusiveClk,
- }
- 
- impl pwm::PwmOps for Th1520PwmDriverData {
-@@ -328,10 +328,8 @@ fn probe(
-         let clk = Clk::get(dev, None)?;
- 
-         clk.prepare_enable()?;
-+        let clk = clk.rate_exclusive_get()?;
- 
--        // TODO: Get exclusive ownership of the clock to prevent rate changes.
--        // The Rust equivalent of `clk_rate_exclusive_get()` is not yet available.
--        // This should be updated once it is implemented.
-         let rate_hz = clk.rate().as_hz();
-         if rate_hz == 0 {
-             dev_err!(dev, "Clock rate is zero\n");
+[...]
+> +static int __maybe_unused sky1_audss_clk_runtime_suspend(struct device *=
+dev)
+> +{
+> +	struct sky1_audss_clks_priv *priv =3D dev_get_drvdata(dev);
+> +	const struct sky1_audss_clks_devtype_data *devtype_data =3D priv->devty=
+pe_data;
+> +	unsigned long flags;
+> +	int i;
+> +
+> +	spin_lock_irqsave(&priv->lock, flags);
+> +	for (i =3D 0; i < devtype_data->reg_save_size; i++)
+> +		regmap_read(priv->regmap_cru,
+> +			    devtype_data->reg_save[i][0], &devtype_data->reg_save[i][1]);
+> +	spin_unlock_irqrestore(&priv->lock, flags);
+> +
+> +	sky1_audss_clks_disable(priv);
+> +
+> +	return 0;
+> +}
+> +
+> +static int __maybe_unused sky1_audss_clk_runtime_resume(struct device *d=
+ev)
+> +{
+> +	struct sky1_audss_clks_priv *priv =3D dev_get_drvdata(dev);
+> +	const struct sky1_audss_clks_devtype_data *devtype_data =3D priv->devty=
+pe_data;
+> +	unsigned long flags;
+> +	int i, ret;
+> +
+> +	ret =3D sky1_audss_clks_enable(priv);
+> +	if (ret) {
+> +		dev_err(dev, "failed to enable clocks\n");
+> +		return ret;
+> +	}
+> +
+> +	reset_control_deassert(priv->rst_noc);
 
--- 
-2.51.2
+Deasserted on resume but not asserted on suspend, is this on purpose?
 
+regards
+Philipp
