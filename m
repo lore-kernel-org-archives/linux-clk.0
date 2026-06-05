@@ -1,89 +1,51 @@
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mxb.seznam.cz (mxb.seznam.cz [77.75.76.89])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAAEA4D991E
-	for <linux-clk@vger.kernel.org>; Fri,  5 Jun 2026 12:11:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B0B73F4823;
+	Fri,  5 Jun 2026 13:06:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=77.75.76.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780661485; cv=none; b=DfnCVKreRJjIBop82vOYuWGzhVCB9L8Ik8KOH2qom8j6mnhIv8gK9AjlBq4GRCQr3XhF8y3LOi1e7BkH0IihBZM+An48ak+BEBfX9/AftMqPgodV+cpbT0OoirF1CYtHdUNumk5Ljx5l1IdM4Y4LzR3MH6cyJDMoJ8noQyOVsBc=
+	t=1780664816; cv=none; b=LsdwV9allOSvYWQ51KTCrjExEnSHXZ+0xqTl7MDHIviob9Wy+KOstlcJgprGJkTeNULlK57uJ++k0TiIMo/2GI3QEWTZs8OvvJP2DSMhOzAfilyWJFVDCEBUoDu+m3zM9uG6wt3sjTTM51csj0l5EmpyWTA/SF+ANQfZ5ExVvSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780661485; c=relaxed/simple;
-	bh=5RoN9ngqvHdCpUoddEnCEeh8fZSHGeByQdCtjfNZBdU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Tao9vY0t+Qd0GT8YIUeeUZdQ264lWDABfhN2tnL7q9VtvJbjqlxZAuU7J5pBKjJ5eT/jzCL3BqSfHvDPJOfcdrHV8VSCtQjF3/Yw26poRjQR+BCIrrGVdPU8ARL91HEg5s9zrKUr50bxHSdI9xxAqUghgPcMBLEHaOYHaQcONKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k7MaFxVL; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1780664816; c=relaxed/simple;
+	bh=XMajIsvHqpv3hmWWRWZMQiL2sHr6MW5RUNsGsl9FiiA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hM3mlrhx8qvxxiQBVh2x1FPZllBLQxh2iILZ7yHFj4jdvu4CgMnRjAC371+vPLfBPvXCbTIPvHuM3jAVo3Pp8dhVnmppBg8jRWASIarPcZM6cszoB7D8n8yPPolRjaa8sHZSU1GkAuHhfDA9nNnXMUx8UW8SFC9+4u37ai6zAOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loebl.cz; spf=none smtp.mailfrom=loebl.cz; dkim=pass (2048-bit key) header.d=emailprofi.seznam.cz header.i=@emailprofi.seznam.cz header.b=Q13nkptH; arc=none smtp.client-ip=77.75.76.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loebl.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=loebl.cz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k7MaFxVL"
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-36da151a152so1331373a91.1
-        for <linux-clk@vger.kernel.org>; Fri, 05 Jun 2026 05:11:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1780661484; x=1781266284; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5RoN9ngqvHdCpUoddEnCEeh8fZSHGeByQdCtjfNZBdU=;
-        b=k7MaFxVLLkHHjZFRumQ6HJtJtN0CUkWylRKdZx/dInv/cuHogVjAsaINPot+y+il1p
-         QEbygVdF0VVeKwZ0xNc/b7shhfX0tD44qTmZMcufmeJ/naFrZS8frCXY9LLyoMrm1ZSc
-         qsPDK/YIwQKY50dOy6cyrzWP03v05Jv1ULNLYWwCF12eyiLgZW+YKuGJYGuosVPzWcjG
-         3oYwr26PTMtTLQRxnnjRdkKMfMQFd/yd9Z4qmepaJLHRH9oZ/ICarcXH27wvH0h620GY
-         +XJcDCVYRg9qa3ud1s/Z9UUWw1JGbipCI7RnFKFpMXwMgGIpO4Qt8vhzq9B29q+tJNGO
-         gZrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780661484; x=1781266284;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=5RoN9ngqvHdCpUoddEnCEeh8fZSHGeByQdCtjfNZBdU=;
-        b=Q2BxBsuU0H9szX/xmVF3C3kEfgd+jQVYbFFleoTZiQGuXdP/cuqremyUJG0+8z1K7Z
-         wE37LjzcI6/l/X9Fx+i3/2AkywCGZFMXB3Q/AiMtdFtEEPgUc6q1xJ1xOs+VwL+gnDEf
-         zQ7wQ31husvdtXC1Fb7n8O/+/nK/OssUNw2gz06555P62EK6pvK1uogi+i8Dt4I+LEiG
-         cpsJexNiSM9X71PT4HIxW0cSGSSgLO59+mSsq/mXvs5AzJgh98jhoywxjdj9b+QVZI/G
-         m7jpeJre4kIy/W5UK5/5u8px2TomEXSXNNMj0w3NbV0zktT2UEsPBWAWhoX+f8rx5Zt0
-         yDIQ==
-X-Forwarded-Encrypted: i=1; AFNElJ+IbKE9mfE08Czj6CuUej0d5rQYGJ6XF9DunDA0QNlybJhht8npi5xxE5+SDFLt85fCpiitTyYslVQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzgb8srlP+7IRfGDys7J0mx5W+wNYEQ+xPxm185OjFg6+r1wdgT
-	yeheLStdKWOUNXrNc5gj+anXDZSJ+YG7V6yqY+qya/uC+AiGdlshykvM
-X-Gm-Gg: Acq92OEsVC31SaItt/WVekmjz43SkjfqBzJtMwd1ROiqjt2UEQLvt94ox/aakaLkbiu
-	h4LtmBt93ABnyHEIVg/PbgwJyS+XxIzCyMyZ68cM46p2UTQlKSIu+R2+a+MAtH/vMuJtu36m6pb
-	38frC4NLPmDnZrk+Iql9pgtkUIEWh2Hg0e+Jmet9Lh1xtroCvFVGMGreCufzggswZOCVYVQ3ulG
-	FSmpQpmyQKFBYxzUQISQLnY9PLU/leXuMst2EdWX5qDLu5iKN3y6k/y9JEF8wZ9C3n6h75ZQcHB
-	aSNRKmllcM+8Vnp0TCfiaIqzK6nIXlcowwEyRDxYiu5N0C6x5vIcFpZYdTp4ayoOXt3tFu9GBts
-	macntPGYbvk3kJq3MCkPcEzRUpg+lnMXF7O70xyBhIae9P3H8EjpXoWZMkCNfycrpAQOj8OLYoq
-	mWuMhtiIjVMDOnxlXNuGr0Hl9ZDzacxgXEwaibXrQGPHF5KQMjH+RWoxbWoV+fmhTe9xjqbYR/g
-	iBuTTol3zV4iLk+4D1j5AFoaz4T1/F7YeT4LyTbMyeeObjsjIoBAg==
-X-Received: by 2002:a17:90a:d40b:b0:36b:9798:4f6a with SMTP id 98e67ed59e1d1-370eee04b8cmr3336521a91.10.1780661483873;
-        Fri, 05 Jun 2026 05:11:23 -0700 (PDT)
-Received: from lord-daniel-VivoBook-ASUSLaptop-K3502ZA-S3502ZA.. ([2405:201:2011:e829:4eb5:db6e:9a22:fd31])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-36f6bf903fasm6300497a91.2.2026.06.05.05.11.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jun 2026 05:11:23 -0700 (PDT)
-From: Piyush Patle <piyushpatle228@gmail.com>
-To: Marek Vasut <marek.vasut@mailbox.org>,
-	dri-devel@lists.freedesktop.org
-Cc: Liu Ying <victor.liu@nxp.com>,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Shawn Guo <shawnguo@kernel.org>,
-	Fabio Estevam <festevam@gmail.com>,
-	Peng Fan <peng.fan@nxp.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Abel Vesa <abelvesa@kernel.org>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>
-Subject: Re: [PATCH 00/39] Add i.MX95 DPU/DSI/LVDS support
-Date: Fri,  5 Jun 2026 17:41:05 +0530
-Message-ID: <20260605121112.27866-1-piyushpatle228@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251011170213.128907-1-marek.vasut@mailbox.org>
-References: <20251011170213.128907-1-marek.vasut@mailbox.org>
+	dkim=pass (2048-bit key) header.d=emailprofi.seznam.cz header.i=@emailprofi.seznam.cz header.b="Q13nkptH"
+Received: from email.seznam.cz
+	by smtpc-mxb-55bd7c95dc-fndnd
+	(smtpc-mxb-55bd7c95dc-fndnd [2a02:598:96:8a00::1200:50a])
+	id 1b24221e00b6afca1fc19b9c;
+	Fri, 05 Jun 2026 15:06:44 +0200 (CEST)
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=emailprofi.seznam.cz; s=szn1; t=1780664804;
+	bh=ogwE3fqSYZJi/QI+DqmGkfHwrGgNJVgIJA9enEY8GNU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding;
+	b=Q13nkptHWkaX2bLvPPjf8HP2ozaHgRtbrC/sJjy+Dkip+M93QzblOfqRKJjZw9giS
+	 v2LC8dPzbAYfOKsTS3UWuR1H81vzyTCWLehVce8bIgfqqbZZEtXnc7HO1kZFMeIh55
+	 hBO9kKq3OMiqz47SEYtCIbrTUfB0GNrgt0TiocqSp2JJ880GX4P3rla5XaeZivY1/K
+	 RiXRNMpXk8tgrFQoT2sEN+NNL0bqdX4fufhtwU+o+pqfgaMddrAMq2TyCTZMPDmwn7
+	 plc1H5iEqg0lrTQOXl97os3CiFM7p2vPdVoCsPx9sJyn7wE11+SI1NlXXQ0/qbcrTP
+	 RHInxjZYwTBfg==
+Received: from localhost (109-81-118-220.rct.o2.cz [109.81.118.220])
+	by smtpd-relay-6f9c9f69dc-qpzjn (szn-email-smtpd/2.0.74) with ESMTPA
+	id 1b88d614-33d1-4da9-8dfd-02224292b969;
+	Fri, 05 Jun 2026 15:03:44 +0200
+From: =?UTF-8?q?Pavel=20L=C3=B6bl?= <pavel@loebl.cz>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney@redhat.com>,
+	Michal Simek <michal.simek@amd.com>
+Cc: linux-clk@vger.kernel.org,
+	=?UTF-8?q?Pavel=20L=C3=B6bl?= <pavel@loebl.cz>,
+	stable@vger.kernel.org
+Subject: [PATCH] clk: clocking-wizard: fix integer overflow in rate calculation
+Date: Fri,  5 Jun 2026 15:03:40 +0200
+Message-ID: <20260605130340.3549582-1-pavel@loebl.cz>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -91,24 +53,37 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Marek, Liu Ying,=0D
-=0D
-I brought this series up on the i.MX95 15x15 FRDM (IT6263 LVDS-to-HDMI on=0D
-LVDS ch1). It mostly works, but I ran into a few issues around DI routing,=
-=0D
-LVDS format handling, and DC enable sequencing which needed rework before=0D
-HDMI would come up reliably on the board.=0D
-=0D
-I don't see a v2 of the series and things seem to have been quiet since=0D
-November. Are you planning to post an updated version?=0D
-=0D
-I've accumulated a fair amount of rework while getting this running on the=
-=0D
-FRDM. If you're not planning a v2, I can clean things up and send one based=
-=0D
-on the current series.=0D
-=0D
-Thanks,=0D
-Piyush=0D
+When using driver on Zynq-7000 (32-bit) determine_rate calculation
+overflows. For instance requesting 32MHz with 100MHz parent clock
+results in 100000000*(4*1000+0) 32-bit multiplication.
+
+Replace the expression with mult_frac which is already used in
+clk_wzrd_recalc_ratef.
+
+Cc: stable@vger.kernel.org
+Fixes: 7681f64e6404 ("clk: clocking-wizard: calculate dividers fractional parts")
+Signed-off-by: Pale Löbl <pavel@loebl.cz>
+---
+ drivers/clk/xilinx/clk-xlnx-clock-wizard.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c b/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
+index 4a0136349f71..dbef983eb425 100644
+--- a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
++++ b/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
+@@ -663,8 +663,8 @@ static int clk_wzrd_determine_rate_all(struct clk_hw *hw,
+ 	d = divider->d;
+ 	o = divider->o;
+ 
+-	req->rate = div_u64(req->best_parent_rate * (m * 1000 + divider->m_frac),
+-			    d * (o * 1000 + divider->o_frac));
++	req->rate = mult_frac(req->best_parent_rate, m * 1000 + divider->m_frac,
++			      d * (o * 1000 + divider->o_frac));
+ 	return 0;
+ }
+ 
+-- 
+2.53.0
+
