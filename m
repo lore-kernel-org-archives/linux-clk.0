@@ -1,114 +1,71 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mail-43166.protonmail.ch (mail-43166.protonmail.ch [185.70.43.166])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2D152E2F0E;
-	Thu,  4 Jun 2026 19:08:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4001B3BBFDF
+	for <linux-clk@vger.kernel.org>; Fri,  5 Jun 2026 00:55:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.166
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780600108; cv=none; b=t8mGtK01qKvp01nzk/RNiqeZNwW8lkw/967NpUp9t1sww8bSVHVXfo6CLMvX/jBkpg4/EfR4a5nwLz+7nJxs9N8QdPtuLVz7UOKJKL4+7TGYjgVchv+qRxtnqvAHtG+rvwfR8dH9i7vDCQp8rmDfjynNKWRBo0d5LJCtmEYoFmc=
+	t=1780620960; cv=none; b=dwHfldgbJp6+k5ppGsnx7z7IMh2U622YogMBBmhXClVlrGGRc8sxoS6LMh1OhEQ3SawF+/TVIInyVjkqS06aq4CefN4nryFnwJya2p0Nb8JU4gtWiI1qSiCIDE0hup3dmheYUvdtShTXFWeMGlVteZrDun4Y4DTVfnere8gowPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780600108; c=relaxed/simple;
-	bh=3839TWDSUe1P7pOKL9JfzoW8I/Nn5f4LylCDPI4dY8k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dif2h4gjlY6rM3lHNfuAB+UerVCt8YhvUFg4WSrGolkoikksvD5dH5G0TVNxkDKLxM3c0R3RI4SaAQ4mpsq6uQy/KJ2Ql+kBUmGY+na6+OwvUzYxprMSKBE5Ut3byku0uz1TEsqGXTbwhEAYrcU49VzSe2ac4BzXWrZH934Uqkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FdUkE6JJ; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1780620960; c=relaxed/simple;
+	bh=sxquBZx0t5h7mUqD4ZdzXSu4g7vPg1HNi1UCLHJlBQ4=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=EVcgKlLNZ/z+sv/SpS+zalVSHg49gpg4Zobw9Ofq2SIcq4aDzWVpXMLDPjILw6kpTLgl/V6BOgabBG6h7ahePQRcCU+FRuUAkAcczu7hjlHHjeG0VIfCcOnVyaM/Pugyd/loMYjKONvOr9vjnz2PR9panqDimcbceBRj9aonln4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=B6dlvx61; arc=none smtp.client-ip=185.70.43.166
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FdUkE6JJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DDC11F00893;
-	Thu,  4 Jun 2026 19:08:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780600106;
-	bh=QziTJtSzI9d2Wug3PhNrMSYttkC98VQHP4HWNoHk/ng=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=FdUkE6JJMAFKlfzbTkkqPO2+i4oPfQ3RzD34sQCfkyK9opJIqcEtUXH1RHQsRY2tc
-	 limHJ7NSCkbr128mi4mYQQ296aLUHU7OoMBaoLf+rzVmKbrLeZjeEYSeSjswytdQks
-	 HApooDfds1zkMoBjXHCjXB8kLTOBCsVaJZHSiGZ5pv4G65R4WcK25Z12KPX1VFKp3y
-	 5fWlIei5GzASQ0P45K2OFZW0/glN0bAjJMYtITL7qi1VO0mdbMem+Q6YP7grDP40Pk
-	 hau/FByfdCDtJ91usmQjlcW7I9UAdJ9vKe1Si2hbZuTh2eRqSnLfUbTGMjsMeAVsbj
-	 Tr51WycYcnQ7A==
-Date: Thu, 4 Jun 2026 14:08:25 -0500
-From: Rob Herring <robh@kernel.org>
-To: Taniya Das <taniya.das@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
-	Imran Shaik <imran.shaik@oss.qualcomm.com>,
-	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 2/4] dt-bindings: clock: qcom: Add EVA clock and reset
- controller for Glymur SoC
-Message-ID: <20260604190825.GA1030648-robh@kernel.org>
-References: <20260526-evacc_glymur-v1-0-b61c7755c403@oss.qualcomm.com>
- <20260526-evacc_glymur-v1-2-b61c7755c403@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="B6dlvx61"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1780620951; x=1780880151;
+	bh=pXWjnuE5TYeSrab+2gCEGBFcQs2drj3wOwPxsv+Rz+Q=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=B6dlvx61Fj99Lgh0CAfO8AwpikHHy25KeMdCYXA93svM/6muJwUtlv3P67J0zeYoF
+	 VgAl8qCbjwsqfhDqH766PNqI+OLgGbotKFLeGqdVhgfmzhYsbsK1oFwTNFnLeFM8Y4
+	 uFjOzhN8lEChRfsJfosKoYtWHwcm+73gPL0T7DegsDf1E/niXC4Qq0jbFMsVOAVa2z
+	 yPl6v5EYdF+FEUiVVK1IhJ/fHCW7lQmhIT4LkMvv8xU8ImtNH2kTj6P7cH0uHn25m+
+	 +L+O4yzuuRVjhBIv4k1DnQiSeC5/PrLa8AarYC5HxuiiErtsy8mbGMiY1mQIkH8/Ck
+	 ZFJeLM6GB0WJg==
+Date: Fri, 05 Jun 2026 00:55:45 +0000
+To: andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org
+From: Phillip Varney <pbvarney@protonmail.com>
+Cc: bmasney@redhat.com, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Phillip Varney <pbvarney@protonmail.com>
+Subject: [PATCH] clk: qcom: a53: Corrected frequency multiplier for 1152MHz
+Message-ID: <20260605005502.313928-1-pbvarney@protonmail.com>
+Feedback-ID: 5539158:user:proton
+X-Pm-Message-ID: 0a985e75bfc505b31fd0aedcf509c13f245e84ec
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260526-evacc_glymur-v1-2-b61c7755c403@oss.qualcomm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 26, 2026 at 10:59:45AM +0530, Taniya Das wrote:
-> Add the device tree bindings for the enhanced video analytics(EVA) clock
-> controller which is required on Qualcomm Glymur SoC. The controller
-> provides clocks, resets and power domains for the EVA subsystem.
-> 
-> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
-> ---
->  .../bindings/clock/qcom,glymur-evacc.yaml          | 76 ++++++++++++++++++++++
->  include/dt-bindings/clock/qcom,glymur-evacc.h      | 38 +++++++++++
->  2 files changed, 114 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,glymur-evacc.yaml b/Documentation/devicetree/bindings/clock/qcom,glymur-evacc.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..8315e3ce82ecfefb5413ce1c42843adb0bce50d7
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,glymur-evacc.yaml
-> @@ -0,0 +1,76 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/qcom,glymur-evacc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm EVA Clock & Reset Controller on Glymur SoC
-> +
-> +maintainers:
-> +  - Taniya Das <taniya.das@oss.qualcomm.com>
-> +
-> +description: |
-> +  Qualcomm EVA clock control module which supports the clocks, resets and
-> +  power domains for the EVA instances on Glymur SoC.
-> +
-> +  See also:
-> +  - include/dt-bindings/clock/qcom,glymur-evacc.h
-> +
-> +properties:
-> +  compatible:
-> +    const: qcom,glymur-evacc
-> +
-> +  clocks:
-> +    items:
-> +      - description: Interface clock from GCC
-> +      - description: Board XO source
-> +      - description: Board XO_A source
-> +      - description: Sleep clock source
-> +
-> +  power-domains:
-> +    description:
-> +      Power domains required for the clock controller to operate
+The 1152MHz frequency entry for the a53 currently selects a multiplier of 6=
+2, giving 1190MHz. This changes the mulitiplier to 60 giving the intended 1=
+152MHz.
 
-Drop. That's any power domain...
+Signed-off-by: Phillip Varney <pbvarney@protonmail.com>
+---
+ drivers/clk/qcom/a53-pll.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-With that,
+diff --git a/drivers/clk/qcom/a53-pll.c b/drivers/clk/qcom/a53-pll.c
+index 724a642311e5..0549b214fcfc 100644
+--- a/drivers/clk/qcom/a53-pll.c
++++ b/drivers/clk/qcom/a53-pll.c
+@@ -20,7 +20,7 @@
+ static const struct pll_freq_tbl a53pll_freq[] =3D {
+ =09{  998400000, 52, 0x0, 0x1, 0 },
+ =09{ 1094400000, 57, 0x0, 0x1, 0 },
+-=09{ 1152000000, 62, 0x0, 0x1, 0 },
++=09{ 1152000000, 60, 0x0, 0x1, 0 },
+ =09{ 1209600000, 63, 0x0, 0x1, 0 },
+ =09{ 1248000000, 65, 0x0, 0x1, 0 },
+ =09{ 1363200000, 71, 0x0, 0x1, 0 },
+--=20
+2.54.0
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+
