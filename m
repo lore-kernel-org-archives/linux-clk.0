@@ -1,208 +1,198 @@
-Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.74])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9413A2F531F;
-	Sat,  6 Jun 2026 06:31:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42691250C06
+	for <linux-clk@vger.kernel.org>; Sat,  6 Jun 2026 11:15:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780727502; cv=none; b=bYjxkb2c5fCuMynpO+j7x0PzrXk9pRtMR1jC9fSK2XTGXTCLaAbwXkuGAuZFj5Qd6ZWUvBowpY1/vFg4EMLe31o1nK9mzQUJncOqLx546wwgdWytLchotX3NZJBrgCodO6ObCaRbF80gYzghhA3qYbpNWLkbJdfOjaJXcfkSilI=
+	t=1780744547; cv=none; b=E57Yvo0A26dEK4PFyP/P0guECJ1qjDAJz8VvHqCfSTQlBTLGL4O21Jpld9j+MhljoKrXART7EbqP/uAIjif8/Zv5+A6ow92lJp6s+ZgvkGoFLocQ+cGiL1ToKFM7UtczfRp1cw++1sLYMiuJ5KwKOCVT+4YBfmupQFAqO0wDfzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780727502; c=relaxed/simple;
-	bh=QD72RYIoIp1ck83PJExb8ilYoyJogkNSWka3tVGMtPk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bDIiQLOH74CaI9ZenubK8wWyRpfk6kqyW1J5TN4fP8UQopHs1J6ON11lr6m+FhuCPTMdyD1YDc2sTCbqsJps35VWTUoBxRah+M/Wzvc+q+qJQ4lAHr25o4AkbC6jImYKlBW+zpbSIVMcyk/1t/XTbXzWKY+Cj0hVhY8/+s8PLa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oldschoolsolutions.biz; spf=pass smtp.mailfrom=oldschoolsolutions.biz; dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b=eZF3Rf5M; arc=none smtp.client-ip=217.72.192.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oldschoolsolutions.biz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oldschoolsolutions.biz
+	s=arc-20240116; t=1780744547; c=relaxed/simple;
+	bh=35T4RPwZtKj/AACr5jC/VoJ/dH+ywt4DKiJkh67GbEk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WwE99v/Lj8xzrlpdMAVvzbCmFzngNDQB9S6ndr3armajiZG6Gv57eEz5lB/dCepU5nbMUxNl77Tyxx1Al7nMXsX9J05KfprQnRwmdF83BBhvhNQKrUZvlDkdjpZic8n7iCT1IxZlgwUw6hs/Z5TwItWPbta/fwXRfVGk3pasOPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=DcpkRi+g; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=gqJiVuvk; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b="eZF3Rf5M"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="DcpkRi+g";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="gqJiVuvk"
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 65661Qsl665347
+	for <linux-clk@vger.kernel.org>; Sat, 6 Jun 2026 11:15:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=rY52lz044eYyFkQnD9+hzUtj
+	rn2eYKc4Hi2FnVBYibs=; b=DcpkRi+gJXJapy0wslv31vjpyEXwHfmFUKqAivZf
+	SLpclcrQ7pyr2zaHCGLzImnznEy3ipjG1uiI/vjwJChVTpAOt/Lq3gzqt3B9vhBb
+	sk+STm1QkGawJ/1TZy3SORBCjvpIYEu37Cz0gjZ8UIyeVn5KG9EmNnQ3X0JrHwjm
+	atLbAYNCYU0mdnj5itXTZVTOyost3TswOld7MnS/nfl6v3N44E42kFHCOHlAVQUn
+	D4Ao8ehQphWG75DhMTf+9XxRngTVyQiqYwbvqOKbb2zQzsiPs8tj3qsJH/Oh73W5
+	pJShzb6EHWue4l3gRZk/Zkzhn0Ue4K+PX3kjOWqjNx3uQg==
+Received: from mail-vs1-f71.google.com (mail-vs1-f71.google.com [209.85.217.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4embx68tbt-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Sat, 06 Jun 2026 11:15:44 +0000 (GMT)
+Received: by mail-vs1-f71.google.com with SMTP id ada2fe7eead31-6798c46f723so1762235137.1
+        for <linux-clk@vger.kernel.org>; Sat, 06 Jun 2026 04:15:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=oldschoolsolutions.biz; s=s1-ionos; t=1780727481; x=1781332281;
-	i=jens.glathe@oldschoolsolutions.biz;
-	bh=bS4GE3WsMKBfWI4zSltXx9GLVgFb72jinFbbXEsfmXY=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=eZF3Rf5Ms1V14C49XLBO5OgFr5HnclnlJkiPSGvWRpxZaOxxmTBxOMxM9sRhh2D7
-	 N+ZhTWxYynsRaUUx1n/5Fhs6UYT0Qd3Zi1f9n0dA6wHWcZ6xdppO/EJH7204N2LEz
-	 5PhPU2VNHVpq/mRgRU5Dz149BRuunhFwu48pBeyoE8rPgteyY/v7d5rTLaFqI0JYP
-	 vd3zk/bTOGvcddX5UV6VlccdCBkpWJEWdGMFKCX19hH3Dscats7/fOudnBW0tYF37
-	 H8QmQPIq0wdY7UUdIaAmTyGSmbZjM04DNhE8NSQdxi9jViQh6fn2ZZjpkK6HEprG2
-	 64d6nbAzXuKeKHVTmg==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from client.hidden.invalid by mrelayeu.kundenserver.de (mreue109
- [212.227.15.183]) with ESMTPSA (Nemesis) id 1M7sQ8-1wZaET0swk-00GI6Y; Sat, 06
- Jun 2026 08:25:47 +0200
-Message-ID: <b732e65f-5963-4598-a341-06338044d90c@oldschoolsolutions.biz>
-Date: Sat, 6 Jun 2026 08:25:45 +0200
+        d=oss.qualcomm.com; s=google; t=1780744543; x=1781349343; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rY52lz044eYyFkQnD9+hzUtjrn2eYKc4Hi2FnVBYibs=;
+        b=gqJiVuvk9uA7ZjMvBvjPmiKQzW85f0OxEhyFIkF2NxehkbqB3wYgxULdw5kklRByRm
+         uDvsim6w7vRps0CHWz6BWDSH9gXS38rMa7/ICBYaNOexhLXCoQagMbE2PEDxCXRLDaPQ
+         hXo3Ab1+jTPYWqyem4opoZeeAYnMqbIQH1i0ByUENSjJBAFptGPJLRCbUOtfhipuH/rf
+         zaUr4uFsgCZVluaf/ifs1Egf/QcN9xDvXMg2O+wd0dMat4tCivGqOs2wJBtmBQ+l0LPx
+         XEs/+QiS0iviDKGJi81EMKI4hVANvNKNhdyGTk8bTEvHypWb+v+eAHptkWBfLuqHoDID
+         7KBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1780744543; x=1781349343;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rY52lz044eYyFkQnD9+hzUtjrn2eYKc4Hi2FnVBYibs=;
+        b=DeNa08gmyBK4Gb8degd5p7z9pp8Moz63VeN4Or/VWNb0dKe/eNr1U/BUstiG5SKwOQ
+         isTvIWYPfDK7PJxrzzvc7uPyrPKZyshWWa6vtkan8NbpHUHJG9tf65EUB1wEDwDBLL8m
+         oWuE1eLu52EQJOMcqDQfF/YfqFZ0UD+rF3jVmlEjhHxmt2v2WNesQ/ogUSnfiOljVeHQ
+         M8YwGT2nX7STmS8LDO7e4+umS0RcT3ZmoLxxTk7wT9mN0hTNbAouwloQaxLtMxIDkJr4
+         A7Nd3KOUZBKQE6iLZBlgKvZv8P2fc7BcJYQLnIuN+IGAOEc44B96QnqAozKMxil77SZr
+         K8pw==
+X-Forwarded-Encrypted: i=1; AFNElJ/pLU0K8BNn6TErPizBh08VVJr+0ov72Q0H8RkUUs45AILJWD46yJg5aacLW/Yj4jJceoTniTRdtK4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvzNl1vOU9sAoSfkaKlPBXEunYGeAXX+3l2UEa2WjeZWnqqbKg
+	cfZa9K5d7AQh0M206ZJDgbU4vbncx+6M3LVLDlufvrwB0MZEkX9vKLV0cP58hcc4gIal/vAae8i
+	ou4C0u2rG4Pi8By8q+uYhLAUHTuQEERwMsLiWD5XvX6+I4OoIsYNN4INuryRvuk0=
+X-Gm-Gg: Acq92OEwBDdoOqaj0PgJWPqi9FOkvIxPnBOtjB7hhxarXMTPtGkZotH2zZFhdcYfPtZ
+	ELrLLJsSN9X+LqqpPB056Kh4K1qx7ZQzPpw0NnL6LfY0BpfOauyoxS9V8uW9EHDINjFxhziLwbD
+	jZO593tVrIlWOKGrCLWFcOtoCNAs1BRPDcqtQmW+GPzOyE3K6k4pisDblwoL2mqnn+g1cVYbyqc
+	hentrE9nlxT3m27/LSgiUzoKHmcKHIhfVawrESV1MM8J4BEjxasLWpoFx31Aav8pgYaFWzLaTcM
+	DQYFcQ5ZNotUvj2X3Hp6pI8FEeecmfE5TpW95PZXezPT1WVbu9GJxSzn5f3+oB4+aWkcNcIsJX+
+	d/rF5SWcpab2DX8z2PAOHU92QA4+CrJelo0N65vA+V5ZlupzC6HJZoa9fATJA5aN7pbFNDCjf2r
+	aCajgrlU+bMHDAYgoblaGatF0QIlO7+t2dCEeA5FKDg5/9jA==
+X-Received: by 2002:a05:6102:3e27:b0:65a:fcea:5a8 with SMTP id ada2fe7eead31-6fef75ccdf8mr3760608137.3.1780744543592;
+        Sat, 06 Jun 2026 04:15:43 -0700 (PDT)
+X-Received: by 2002:a05:6102:3e27:b0:65a:fcea:5a8 with SMTP id ada2fe7eead31-6fef75ccdf8mr3760598137.3.1780744543178;
+        Sat, 06 Jun 2026 04:15:43 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5aa7b990486sm2354393e87.68.2026.06.06.04.15.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 06 Jun 2026 04:15:42 -0700 (PDT)
+Date: Sat, 6 Jun 2026 14:15:40 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Brian Masney <bmasney@redhat.com>
+Cc: Saravana Kannan <saravanak@kernel.org>, Abel Vesa <abelvesa@kernel.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Hans de Goede <johannes.goede@oss.qualcomm.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 2/4] clk: qcom: common: introduce qcom_cc_sync_state()
+Message-ID: <xtrvgetj3ybwuceez6mymxw4cwa6sqeycoz2hs2zztozeb4oyb@uuhtzbludmzv>
+References: <20260603-clk-sync-state-v1-0-457120eed200@redhat.com>
+ <20260603-clk-sync-state-v1-2-457120eed200@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH 3/4] clk: qcom: convert from icc_sync_state() to
- qcom_cc_sync_state()
-To: Brian Masney <bmasney@redhat.com>, Saravana Kannan
- <saravanak@kernel.org>, Abel Vesa <abelvesa@kernel.org>,
- Maxime Ripard <mripard@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>,
- Bjorn Andersson <andersson@kernel.org>,
- Hans de Goede <johannes.goede@oss.qualcomm.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org
-References: <20260603-clk-sync-state-v1-0-457120eed200@redhat.com>
- <20260603-clk-sync-state-v1-3-457120eed200@redhat.com>
-Content-Language: en-US
-From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-In-Reply-To: <20260603-clk-sync-state-v1-3-457120eed200@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:ZvVLlbYB4mzAxb+is+mQ+9XCJQD4nL/esL+d947X+LTvUfeAWua
- KL9snhW9hprGIBggXoO+5tx96bX61whZulsmgDxYnFcZ3CMbJoey2+cwIBa9/KcZHOL3wQa
- oLaagrvJ+oy5iilYTUROtczqaLgLiINxrmOlsg1Vl7t/l2fDZyWZxbOgKIziNIxkTrKF2nI
- /CZ2MKtakTErRwa1nC/iQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:uZ9no4EwEr4=;RkGoveC8OhaPAEKL9kwd0kfFAsZ
- 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
- 4ICZMAFPDjT67zxIHnjk9Ra8AIh8w=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260603-clk-sync-state-v1-2-457120eed200@redhat.com>
+X-Authority-Analysis: v=2.4 cv=cvmrVV4i c=1 sm=1 tr=0 ts=6a240160 cx=c_pps
+ a=P2rfLEam3zuxRRdjJWA2cw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=FelO9ux0wxsA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=yx91gb_oNiZeI1HMLzn7:22 a=20KFwNOVAAAA:8
+ a=jABXd_slnFCNTMqTTkEA:9 a=CjuIK1q_8ugA:10 a=ODZdjJIeia2B_SHc_B0f:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjA2MDExMCBTYWx0ZWRfX1p2NzRTyk3rX
+ HUNnoGJs4mhuoYhIXpW8P/xfEjbZ71C/dp7FAxGLwEtOJaF02ukC51s3n56RceuBwnp4NPJD/NB
+ vw85NHdx3jFfx0wasOiTqn/so6HOPTbdOZ+8HLiCNaeIioY++dJg2FuQ07JtfM7OuXrp9X2Swim
+ c7aCHqInN5ee3LfmslbS8iJBfjkx3YirrrSnnYHW+7C910hFQrW+z6BwJLDWcahVlSuFyuvmX4d
+ 2lQrTNcN8S62PLOkMOorVEX1qGc2CivX8Hs6Ypg5L1q2CbOAGmQ8CuSMWjrp/nIu88w0rxn9Mlu
+ iBTyzigor7noZABjt64vxdWRp6Ia/6tvrsule/OUf2k5w3ANNH+wgmD8JMlsHYxaoF+6+iL7O9l
+ T7jZInHaDw9L6BiPWSktD7Ec8o0sghkKQ/zYTdiYfRp653aY3tHETqyOmAmLKC4NPt64yyIOaij
+ kgi8lnZlKc+G0ZP8Jhw==
+X-Proofpoint-GUID: qYJ0Dpnyu1CUH4R97ozPrebL_9T_rhBw
+X-Proofpoint-ORIG-GUID: qYJ0Dpnyu1CUH4R97ozPrebL_9T_rhBw
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
+ definitions=2026-06-06_02,2026-06-05_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 spamscore=0 lowpriorityscore=0 priorityscore=1501 bulkscore=0
+ suspectscore=0 phishscore=0 clxscore=1015 malwarescore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2605210000 definitions=main-2606060110
 
-On 03.06.26 16:21, Brian Masney wrote:
-> Convert all of the qcom clk drivers from icc_sync_state() to
-> qcom_cc_sync_state().
->
+On Wed, Jun 03, 2026 at 10:21:47AM -0400, Brian Masney wrote:
+> Several qcom clk providers currently have a sync_state helper set to
+> icc_sync_state(). With an upcoming change to the clk framework, if
+> sync_state is not defined for the device, then the clk framework sets it
+> to clk_sync_state().
+> 
+> Clk providers that require their own sync_state will need to call the
+> framework level clk_sync_state(). Let's introduce a new common helper
+> qcom_cc_sync_state() that calls icc_sync_state() and clk_sync_state().
+> 
 > Signed-off-by: Brian Masney <bmasney@redhat.com>
 > ---
-[...]
->  =20
-> diff --git a/drivers/clk/qcom/clk-cbf-8996.c b/drivers/clk/qcom/clk-cbf-=
-8996.c
-> index 0b40ed601f9a..0d920bd5a992 100644
-> --- a/drivers/clk/qcom/clk-cbf-8996.c
-> +++ b/drivers/clk/qcom/clk-cbf-8996.c
-> @@ -6,7 +6,6 @@
->   #include <linux/clk.h>
->   #include <linux/clk-provider.h>
->   #include <linux/interconnect-clk.h>
-> -#include <linux/interconnect-provider.h>
->   #include <linux/of.h>
->   #include <linux/module.h>
->   #include <linux/platform_device.h>
-> @@ -249,7 +248,7 @@ static void qcom_msm8996_cbf_icc_remove(struct platf=
-orm_device *pdev)
->  =20
->
-Hi Brian, thank you for the patch set. To successfully build there seems=
-=20
-to be a header missing. I tested this in my tree on Thinkbook 16 G7 QOY=20
-and Ideapad Slim3x 15Q8X10 without adverse effects, looking good.
+>  drivers/clk/qcom/common.c | 9 +++++++++
+>  drivers/clk/qcom/common.h | 1 +
+>  2 files changed, 10 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+> index eec369d2173b..31382c49c948 100644
+> --- a/drivers/clk/qcom/common.c
+> +++ b/drivers/clk/qcom/common.c
+> @@ -3,12 +3,14 @@
+>   * Copyright (c) 2013-2014, The Linux Foundation. All rights reserved.
+>   */
+>  
+> +#include <linux/clk.h>
+>  #include <linux/export.h>
+>  #include <linux/module.h>
+>  #include <linux/regmap.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/clk-provider.h>
+>  #include <linux/interconnect-clk.h>
+> +#include <linux/interconnect-provider.h>
+>  #include <linux/pm_runtime.h>
+>  #include <linux/reset-controller.h>
+>  #include <linux/of.h>
+> @@ -464,5 +466,12 @@ int qcom_cc_probe_by_index(struct platform_device *pdev, int index,
+>  }
+>  EXPORT_SYMBOL_GPL(qcom_cc_probe_by_index);
+>  
+> +void qcom_cc_sync_state(struct device *dev)
+> +{
+> +	icc_sync_state(dev);
 
-jglathe@tb16-jg:~$ sudo dmesg|grep "unused clocks"
-[=C2=A0 =C2=A0 0.492547] clk: Disabling unused clocks not associated with =
-a device
-[=C2=A0 =C2=A0 1.178818] clk-rpmh 17500000.rsc:clock-controller: clk: Disa=
-bling=20
-unused clocks
-[=C2=A0 =C2=A0 1.314479] qcom-edp-phy aec5a00.phy: clk: Disabling unused c=
-locks
-[=C2=A0 =C2=A0 1.327608] tcsrcc-x1e80100 1fc0000.clock-controller: clk: Di=
-sabling=20
-unused clocks
-[=C2=A0 =C2=A0 1.544869] qcom-qmp-combo-phy fdf000.phy: clk: Disabling unu=
-sed clocks
-[=C2=A0 =C2=A0 1.614767] qcom-qmp-usb-phy 88e5000.phy: clk: Disabling unus=
-ed clocks
-[=C2=A0 =C2=A0 1.616222] qcom-qmp-usb-phy 88e3000.phy: clk: Disabling unus=
-ed clocks
-[=C2=A0 =C2=A0 1.690273] qcom-qmp-combo-phy fd5000.phy: clk: Disabling unu=
-sed clocks
-[=C2=A0 =C2=A0 1.726354] qcom-qmp-pcie-phy 1bfc000.phy: clk: Disabling unu=
-sed clocks
-[=C2=A0 =C2=A010.956342] qcom-qmp-pcie-phy 1c0e000.phy: clk: Disabling unu=
-sed clocks
-[=C2=A0 =C2=A015.858926] q6prm-lpass-clock=20
-6800000.remoteproc:glink-edge:gpr:service@2:clock-controller: clk:=20
-Disabling unused clocks
-[=C2=A0 =C2=A015.867120] rx_macro 6ac0000.codec: clk: Disabling unused clo=
-cks
-[=C2=A0 =C2=A015.867990] wsa_macro 6aa0000.codec: clk: Disabling unused cl=
-ocks
-[=C2=A0 =C2=A015.868589] va_macro 6d44000.codec: clk: Disabling unused clo=
-cks
-[=C2=A0 =C2=A015.970465] wsa_macro 6b00000.codec: clk: Disabling unused cl=
-ocks
-[=C2=A0 =C2=A015.973614] tx_macro 6ae0000.codec: clk: Disabling unused clo=
-cks
+Only if desc->icc_hws != 0, otherwise it will mess the interconnect
+internals. You might need to set drvdata to desc.
 
-Tested-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+> +	clk_sync_state(dev);
+> +}
+> +EXPORT_SYMBOL_GPL(qcom_cc_sync_state);
+> +
+>  MODULE_LICENSE("GPL v2");
+>  MODULE_DESCRIPTION("QTI Common Clock module");
+> diff --git a/drivers/clk/qcom/common.h b/drivers/clk/qcom/common.h
+> index 6f2406f8839e..ee448163b1fc 100644
+> --- a/drivers/clk/qcom/common.h
+> +++ b/drivers/clk/qcom/common.h
+> @@ -88,5 +88,6 @@ extern int qcom_cc_probe(struct platform_device *pdev,
+>  			 const struct qcom_cc_desc *desc);
+>  extern int qcom_cc_probe_by_index(struct platform_device *pdev, int index,
+>  				  const struct qcom_cc_desc *desc);
+> +extern void qcom_cc_sync_state(struct device *dev);
+>  
+>  #endif
+> 
+> -- 
+> 2.54.0
+> 
 
-with best regards,
-
-Jens
-
-=2D--
- From ac259285bc626800d5f1216bd5b276ada99295bd Mon Sep 17 00:00:00 2001
-From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-Date: Thu, 4 Jun 2026 22:03:20 +0200
-Subject: [PATCH] clk: qcom: clk-cbf-8996: Include common.h for
- =C2=A0qcom_cc_sync_state
-
-After switching to qcom_cc_sync_state in the clk sync_state series,
-clk-cbf-8996.c was missing the declaration. Fix build error by
-including common.h.
-
-Fixes: 20260603-clk-sync-state series
-
-Signed-off-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-=2D--
- =C2=A0drivers/clk/qcom/clk-cbf-8996.c | 1 +
- =C2=A01 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/qcom/clk-cbf-8996.c=20
-b/drivers/clk/qcom/clk-cbf-8996.c
-index 0d920bd5a9929..6abc70ebf6f19 100644
-=2D-- a/drivers/clk/qcom/clk-cbf-8996.c
-+++ b/drivers/clk/qcom/clk-cbf-8996.c
-@@ -10,6 +10,7 @@
- =C2=A0#include <linux/module.h>
- =C2=A0#include <linux/platform_device.h>
- =C2=A0#include <linux/regmap.h>
-+#include "common.h"
-
- =C2=A0#include <dt-bindings/interconnect/qcom,msm8996-cbf.h>
-
-=2D-=20
-
-2.53.0
-
-
+-- 
+With best wishes
+Dmitry
