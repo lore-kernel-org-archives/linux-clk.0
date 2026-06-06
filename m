@@ -1,212 +1,208 @@
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21F8F3D1CDB
-	for <linux-clk@vger.kernel.org>; Fri,  5 Jun 2026 14:45:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.218.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780670705; cv=pass; b=ehgKbDHZkRL/I7ItKysSBnHK/j7S/7ZukyiBt95HN2U3kI2r7BNH0Qf+vBHBfFq4nRJoQDkqnxBiJo3TDElP8YJ9ViofLd67W+TPRcjW08SZ1dgwOfDIXSq86t5NjEFRvjatRI6KAa01vnXngrbabWfj5IkmC6yi2nTEHXSiCTE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780670705; c=relaxed/simple;
-	bh=V99FgU+T9GXepKQjZbwcvobP8EXHRxrvdmdHmWGWLss=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d99rhLC6TV1+S7we2w5PESp7nAnasggH7/PANfjpcAJ7R7yC6xkIKMSy+Dp8kAy9Z/IqhZspdFhPqhp5PDlbiInBpV0aZwoJdVW6sBqsnKD0bR3XcU3WqrVAf9RLyG7XWq1+EpOBtT0k3FGvav4cD7y+iVNoOUzofZvgAhQmbsc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QDEG+Jds; arc=pass smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9413A2F531F;
+	Sat,  6 Jun 2026 06:31:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.74
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1780727502; cv=none; b=bYjxkb2c5fCuMynpO+j7x0PzrXk9pRtMR1jC9fSK2XTGXTCLaAbwXkuGAuZFj5Qd6ZWUvBowpY1/vFg4EMLe31o1nK9mzQUJncOqLx546wwgdWytLchotX3NZJBrgCodO6ObCaRbF80gYzghhA3qYbpNWLkbJdfOjaJXcfkSilI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1780727502; c=relaxed/simple;
+	bh=QD72RYIoIp1ck83PJExb8ilYoyJogkNSWka3tVGMtPk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bDIiQLOH74CaI9ZenubK8wWyRpfk6kqyW1J5TN4fP8UQopHs1J6ON11lr6m+FhuCPTMdyD1YDc2sTCbqsJps35VWTUoBxRah+M/Wzvc+q+qJQ4lAHr25o4AkbC6jImYKlBW+zpbSIVMcyk/1t/XTbXzWKY+Cj0hVhY8/+s8PLa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oldschoolsolutions.biz; spf=pass smtp.mailfrom=oldschoolsolutions.biz; dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b=eZF3Rf5M; arc=none smtp.client-ip=217.72.192.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oldschoolsolutions.biz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oldschoolsolutions.biz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QDEG+Jds"
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-bec43ee8ff0so291156666b.1
-        for <linux-clk@vger.kernel.org>; Fri, 05 Jun 2026 07:45:01 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1780670700; cv=none;
-        d=google.com; s=arc-20240605;
-        b=HMqIy3qMkPo/+4ymNEBzQ79VhJlYxdUVjb3qgc63RlKztTbhFG34LuxXnsNxUF3LYL
-         v7ALkUv7lc9rvLSQHCOHVOsFd5y5EESVg6Z0h7m/5oSq+wKmYELr5+TwXgo2n4Fm/bcf
-         AS7yX+QjFyr7ugWlSmwX+X6iCs5pBSH6Vxg7vvKK9QrXJB03IBaabQRacMmIBSeHD4LN
-         SU1vh9fcNzCW/ANqLBDu6Ky8X5CiKkV7XB05kmE5+ASwtAAw0PxXkSMFpdm4cGsR+hxF
-         69hFy/rnEaFGgHly/uXcTJF4bQj3WyNYtkKL8VuOAJUslXWW8nNvVYr1PRnzjAmoszZY
-         Ir6g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=fcZIkbRV/9Yp73cfd2Dm5cvs461vRsgl4cer6irrsmM=;
-        fh=t7nb3GRh+YXAMf8fJgD6Jwn7viKGt0pPZph4UrkWomo=;
-        b=aIQs8yvbjYqe8t/pIDVfiI/zKu2qN2Dp3B/1mE2BlfUHXsoBN414rh//mvhFOZBacy
-         CpHLBZGZgnTJNxQZHna/Ein0Hgn+FYTiOimpQWoz5Y+Djywf6u49aeK1obl8I0SdUjZ5
-         qioM9x1r9PotIl/uudd6A6EJwgVUQTBkAqQOPD6tT1VRxdWiLl8NDMY20mP07yqQELu4
-         eboVzaoi5kPMHvk+RRwPvMV4rxyc9XoFWEbvaFw/xeMAbY5D7FTDitSo4durmBiMYzp9
-         uOomMy0W5MLws2tYype75HRZvM5kNRu6dtOJE23FKQGfEbme7Lo8ecph8guq1CN41GM7
-         0ZiQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b="eZF3Rf5M"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1780670700; x=1781275500; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fcZIkbRV/9Yp73cfd2Dm5cvs461vRsgl4cer6irrsmM=;
-        b=QDEG+JdsCi/nGhsGKHWrmakZCAAAKH94mJTgHAZsugCteBQLJ25F//75ar+srWpCPd
-         4A44v/U3CUW6nqTQRd/qKB+M+kFmeYbE9+nlRqymKwDmadGXMH6dBGJmZdWsAmVxrAT7
-         KQDiapY7mTQSL0SPpNNwC/gfnu5wSLuXrg8ImJufJh/kr6HXBKRo/DFW97P7T+zTTvvH
-         TkDi9uk8k2lvgiv36m4CuHV0WEy+hy7MPDtcbXT2e8UbponLrOXhgjoSA2oV1gzmuamT
-         4TGt6CiJV/ngqyzr6vxhrNQYyd/D0/IeX/v+xbt9Emomtg/Slf1iJYdzIdejRULLkKiu
-         rlXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780670700; x=1781275500;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=fcZIkbRV/9Yp73cfd2Dm5cvs461vRsgl4cer6irrsmM=;
-        b=tCe4byrD0uHsD/itS4l8dfSFnJb9wo8ckMqZMgEkFmF0SVogit2NNNA4PhgB9vwck+
-         2HQP2hwbZFHEJ2Rvq7nS2O+8EFHxxmCrcJZ0YhK7zNw1QvuWeoLrj+GgilHneHHJPD20
-         e4NuHmZtLE+oLVslHA1e9iRhyHszbuoCJdnwT52Hmfv1Rov4VVspeHV/ULhlSW6rFSMv
-         +dFYLq+wcXsoKvUJr8Q7GsdkQ4YO2IM2vTAz8CRRGcIdy6u7Khq+XaNKR9WgpkMeH8PS
-         v9a2ZJwnvFc2BW3zSI+Ze9tnFALt8VFt2OOFiY1sTVJd7dQUQ8vkce/5uTCLw0Y41WDq
-         4xaQ==
-X-Forwarded-Encrypted: i=1; AFNElJ9pM3++bxfJkJFk1uhESg8KU/jg/JiFAEscCKvGP38obhKcl0dkLZTmcV06H5sARXv0l8l0cog7X0s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhG8I85l9hLR2nNymTigbffsusvRQLsT1jEBubmzUQMK+8JHtc
-	FV72b4g+clGT53e/+B6LuwhqhFca/s4F3Ogfs0Ye5mSOGPW8FQSXRQZ0AJTz7CHZNDpkaRzhoeZ
-	s4CxKewS+tU63K6uqCY6WCSFJltxfqL0=
-X-Gm-Gg: Acq92OGE24xB9/o9AOr7WASa66cyYaSWXYANQqt6gtOgw95arIgpDSI9Qy1objXR14R
-	J+A4HKnCN1DLoRuaKUfNBx9UpVZ20bORM5SwtYGZNtZF/wvY4/0QqVB2VmHLn+vmY7IOlWbDbdo
-	xtM+JgK1yUPVYLAL8H7+RlWmgxYcziZoYtHGCcsWxax7pDJK++mCoz/3ssIVxqC4s+PPUd67CNO
-	Nd5hs7RCyH3k8K0Jjfu7lgMcnSxewdCL4h/NBEtkPXYe/+fp8fcWO0sLxfGHPNXgWlBm4jK0fLn
-	3nmnAHwSxIPU19CMhOLOLaTiIqQG26T5ypsgRgefv5ekonlJ6wlDqQoTs/2XC4Ch5VPj8xac0Om
-	Z13o=
-X-Received: by 2002:a17:907:972a:b0:bdb:5c26:d499 with SMTP id
- a640c23a62f3a-bf3a8a06e97mr148149566b.22.1780670700008; Fri, 05 Jun 2026
- 07:45:00 -0700 (PDT)
+	d=oldschoolsolutions.biz; s=s1-ionos; t=1780727481; x=1781332281;
+	i=jens.glathe@oldschoolsolutions.biz;
+	bh=bS4GE3WsMKBfWI4zSltXx9GLVgFb72jinFbbXEsfmXY=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=eZF3Rf5Ms1V14C49XLBO5OgFr5HnclnlJkiPSGvWRpxZaOxxmTBxOMxM9sRhh2D7
+	 N+ZhTWxYynsRaUUx1n/5Fhs6UYT0Qd3Zi1f9n0dA6wHWcZ6xdppO/EJH7204N2LEz
+	 5PhPU2VNHVpq/mRgRU5Dz149BRuunhFwu48pBeyoE8rPgteyY/v7d5rTLaFqI0JYP
+	 vd3zk/bTOGvcddX5UV6VlccdCBkpWJEWdGMFKCX19hH3Dscats7/fOudnBW0tYF37
+	 H8QmQPIq0wdY7UUdIaAmTyGSmbZjM04DNhE8NSQdxi9jViQh6fn2ZZjpkK6HEprG2
+	 64d6nbAzXuKeKHVTmg==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from client.hidden.invalid by mrelayeu.kundenserver.de (mreue109
+ [212.227.15.183]) with ESMTPSA (Nemesis) id 1M7sQ8-1wZaET0swk-00GI6Y; Sat, 06
+ Jun 2026 08:25:47 +0200
+Message-ID: <b732e65f-5963-4598-a341-06338044d90c@oldschoolsolutions.biz>
+Date: Sat, 6 Jun 2026 08:25:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260511191910.1945705-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20260511191910.1945705-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdWVjvdX2Ve-Sf91oJoCWcO-fF-363ytO66Pr=SBA69N+g@mail.gmail.com>
-In-Reply-To: <CAMuHMdWVjvdX2Ve-Sf91oJoCWcO-fF-363ytO66Pr=SBA69N+g@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Fri, 5 Jun 2026 15:44:32 +0100
-X-Gm-Features: AVVi8CcZWc8NSzDAQ_aVku7QXQXrcmHdaazPbFgpm7kgo3ZnjYI1QxUBkTayMTw
-Message-ID: <CA+V-a8uYEOB2DcOjQ63hLDW-vYxGLTpphvDXyAwV3g1-GrHhgA@mail.gmail.com>
-Subject: Re: [PATCH 1/4] clk: renesas: rzv2h-cpg: Use per-SoC PLL reference
- frequency for calculations
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH 3/4] clk: qcom: convert from icc_sync_state() to
+ qcom_cc_sync_state()
+To: Brian Masney <bmasney@redhat.com>, Saravana Kannan
+ <saravanak@kernel.org>, Abel Vesa <abelvesa@kernel.org>,
+ Maxime Ripard <mripard@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Hans de Goede <johannes.goede@oss.qualcomm.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org
+References: <20260603-clk-sync-state-v1-0-457120eed200@redhat.com>
+ <20260603-clk-sync-state-v1-3-457120eed200@redhat.com>
+Content-Language: en-US
+From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+In-Reply-To: <20260603-clk-sync-state-v1-3-457120eed200@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:ZvVLlbYB4mzAxb+is+mQ+9XCJQD4nL/esL+d947X+LTvUfeAWua
+ KL9snhW9hprGIBggXoO+5tx96bX61whZulsmgDxYnFcZ3CMbJoey2+cwIBa9/KcZHOL3wQa
+ oLaagrvJ+oy5iilYTUROtczqaLgLiINxrmOlsg1Vl7t/l2fDZyWZxbOgKIziNIxkTrKF2nI
+ /CZ2MKtakTErRwa1nC/iQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:uZ9no4EwEr4=;RkGoveC8OhaPAEKL9kwd0kfFAsZ
+ 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
+ 4ICZMAFPDjT67zxIHnjk9Ra8AIh8w=
 
-Hi Geert,
+On 03.06.26 16:21, Brian Masney wrote:
+> Convert all of the qcom clk drivers from icc_sync_state() to
+> qcom_cc_sync_state().
+>
+> Signed-off-by: Brian Masney <bmasney@redhat.com>
+> ---
+[...]
+>  =20
+> diff --git a/drivers/clk/qcom/clk-cbf-8996.c b/drivers/clk/qcom/clk-cbf-=
+8996.c
+> index 0b40ed601f9a..0d920bd5a992 100644
+> --- a/drivers/clk/qcom/clk-cbf-8996.c
+> +++ b/drivers/clk/qcom/clk-cbf-8996.c
+> @@ -6,7 +6,6 @@
+>   #include <linux/clk.h>
+>   #include <linux/clk-provider.h>
+>   #include <linux/interconnect-clk.h>
+> -#include <linux/interconnect-provider.h>
+>   #include <linux/of.h>
+>   #include <linux/module.h>
+>   #include <linux/platform_device.h>
+> @@ -249,7 +248,7 @@ static void qcom_msm8996_cbf_icc_remove(struct platf=
+orm_device *pdev)
+>  =20
+>
+Hi Brian, thank you for the patch set. To successfully build there seems=
+=20
+to be a header missing. I tested this in my tree on Thinkbook 16 G7 QOY=20
+and Ideapad Slim3x 15Q8X10 without adverse effects, looking good.
 
-Thank you for the review.
+jglathe@tb16-jg:~$ sudo dmesg|grep "unused clocks"
+[=C2=A0 =C2=A0 0.492547] clk: Disabling unused clocks not associated with =
+a device
+[=C2=A0 =C2=A0 1.178818] clk-rpmh 17500000.rsc:clock-controller: clk: Disa=
+bling=20
+unused clocks
+[=C2=A0 =C2=A0 1.314479] qcom-edp-phy aec5a00.phy: clk: Disabling unused c=
+locks
+[=C2=A0 =C2=A0 1.327608] tcsrcc-x1e80100 1fc0000.clock-controller: clk: Di=
+sabling=20
+unused clocks
+[=C2=A0 =C2=A0 1.544869] qcom-qmp-combo-phy fdf000.phy: clk: Disabling unu=
+sed clocks
+[=C2=A0 =C2=A0 1.614767] qcom-qmp-usb-phy 88e5000.phy: clk: Disabling unus=
+ed clocks
+[=C2=A0 =C2=A0 1.616222] qcom-qmp-usb-phy 88e3000.phy: clk: Disabling unus=
+ed clocks
+[=C2=A0 =C2=A0 1.690273] qcom-qmp-combo-phy fd5000.phy: clk: Disabling unu=
+sed clocks
+[=C2=A0 =C2=A0 1.726354] qcom-qmp-pcie-phy 1bfc000.phy: clk: Disabling unu=
+sed clocks
+[=C2=A0 =C2=A010.956342] qcom-qmp-pcie-phy 1c0e000.phy: clk: Disabling unu=
+sed clocks
+[=C2=A0 =C2=A015.858926] q6prm-lpass-clock=20
+6800000.remoteproc:glink-edge:gpr:service@2:clock-controller: clk:=20
+Disabling unused clocks
+[=C2=A0 =C2=A015.867120] rx_macro 6ac0000.codec: clk: Disabling unused clo=
+cks
+[=C2=A0 =C2=A015.867990] wsa_macro 6aa0000.codec: clk: Disabling unused cl=
+ocks
+[=C2=A0 =C2=A015.868589] va_macro 6d44000.codec: clk: Disabling unused clo=
+cks
+[=C2=A0 =C2=A015.970465] wsa_macro 6b00000.codec: clk: Disabling unused cl=
+ocks
+[=C2=A0 =C2=A015.973614] tx_macro 6ae0000.codec: clk: Disabling unused clo=
+cks
 
-On Fri, Jun 5, 2026 at 2:37=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68k=
-.org> wrote:
->
-> Hi Prabhakar,
->
-> On Mon, 11 May 2026 at 21:19, Prabhakar <prabhakar.csengg@gmail.com> wrot=
-e:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Use a per-SoC PLL reference input frequency for PLL parameter
-> > calculations instead of relying on the hardcoded 24MHz constant.
-> >
-> > Add an input_fref field to struct rzv2h_pll_limits and derive the PLL
-> > reference frequency from it in rzv2h_get_pll_pars(). Fall back to the
-> > existing 24MHz value when no SoC-specific input is provided.
-> >
-> > This allows the existing PLL divider calculation logic to be reused
-> > unchanged on SoCs such as RZ/T2H, which use a 48MHz PLL reference
-> > input instead of the 24MHz reference used on RZ/V2H(P), while keeping
-> > current RZ/V2H(P) behaviour intact.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Thanks for your patch!
->
-> > --- a/drivers/clk/renesas/rzv2h-cpg.c
-> > +++ b/drivers/clk/renesas/rzv2h-cpg.c
-> > @@ -242,6 +242,7 @@ struct rzv2h_plldsi_div_clk {
-> >  bool rzv2h_get_pll_pars(const struct rzv2h_pll_limits *limits,
-> >                         struct rzv2h_pll_pars *pars, u64 freq_millihz)
-> >  {
-> > +       unsigned long input_fref =3D limits->input_fref ?: RZ_V2H_OSC_C=
-LK_IN_MEGA;
-> >         u64 fout_min_millihz =3D mul_u32_u32(limits->fout.min, MILLI);
-> >         u64 fout_max_millihz =3D mul_u32_u32(limits->fout.max, MILLI);
-> >         struct rzv2h_pll_pars p, best;
->
-> > --- a/include/linux/clk/renesas.h
-> > +++ b/include/linux/clk/renesas.h
-> > @@ -53,6 +53,8 @@ static inline void rzg2l_cpg_dsi_div_set_divider(u8 d=
-ivider, int target) { }
-> >   * various parameters used to configure a PLL. These limits ensure
-> >   * the PLL operates within valid and stable ranges.
-> >   *
-> > + * @input_fref: Reference input frequency to the PLL (in MHz)
->
-> Iff there is a default, it should be documented here?
->
-Agreed.
+Tested-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
 
-> > + *
-> >   * @fout: Output frequency range (in MHz)
-> >   * @fout.min: Minimum allowed output frequency
-> >   * @fout.max: Maximum allowed output frequency
-> > @@ -78,6 +80,8 @@ static inline void rzg2l_cpg_dsi_div_set_divider(u8 d=
-ivider, int target) { }
-> >   * @k.max: Maximum delta-sigma value
-> >   */
-> >  struct rzv2h_pll_limits {
-> > +       u32 input_fref;
-> > +
-> >         struct {
-> >                 u32 min;
-> >                 u32 max;
-> > @@ -156,6 +160,7 @@ struct rzv2h_pll_div_pars {
-> >
-> >  #define RZV2H_CPG_PLL_DSI_LIMITS(name)                                =
- \
-> >         static const struct rzv2h_pll_limits (name) =3D {              =
-   \
-> > +               .input_fref =3D 24 * MEGA,                             =
-   \
->
-> Why add this if 24 * MEGA is the default value anyway?
-> Why not do the same for the two similar RZ/G3E macros?
-> Perhaps the default handling and the RZ_V2H_OSC_CLK_IN_MEGA macro
-> should just be dropped?
->
-Agreed. I will drop this change and get rid of RZ_V2H_OSC_CLK_IN_MEGA mcro.
+with best regards,
 
-Cheers,
-Prabhakar
+Jens
 
-> >                 .fout =3D { .min =3D 25 * MEGA, .max =3D 375 * MEGA }, =
-       \
-> >                 .fvco =3D { .min =3D 1600 * MEGA, .max =3D 3200 * MEGA =
-},     \
-> >                 .m =3D { .min =3D 64, .max =3D 533 },                  =
-       \
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
-8k.org
->
-> In personal conversations with technical people, I call myself a hacker. =
-But
-> when I'm talking to journalists I just say "programmer" or something like=
- that.
->                                 -- Linus Torvalds
+=2D--
+ From ac259285bc626800d5f1216bd5b276ada99295bd Mon Sep 17 00:00:00 2001
+From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+Date: Thu, 4 Jun 2026 22:03:20 +0200
+Subject: [PATCH] clk: qcom: clk-cbf-8996: Include common.h for
+ =C2=A0qcom_cc_sync_state
+
+After switching to qcom_cc_sync_state in the clk sync_state series,
+clk-cbf-8996.c was missing the declaration. Fix build error by
+including common.h.
+
+Fixes: 20260603-clk-sync-state series
+
+Signed-off-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+=2D--
+ =C2=A0drivers/clk/qcom/clk-cbf-8996.c | 1 +
+ =C2=A01 file changed, 1 insertion(+)
+
+diff --git a/drivers/clk/qcom/clk-cbf-8996.c=20
+b/drivers/clk/qcom/clk-cbf-8996.c
+index 0d920bd5a9929..6abc70ebf6f19 100644
+=2D-- a/drivers/clk/qcom/clk-cbf-8996.c
++++ b/drivers/clk/qcom/clk-cbf-8996.c
+@@ -10,6 +10,7 @@
+ =C2=A0#include <linux/module.h>
+ =C2=A0#include <linux/platform_device.h>
+ =C2=A0#include <linux/regmap.h>
++#include "common.h"
+
+ =C2=A0#include <dt-bindings/interconnect/qcom,msm8996-cbf.h>
+
+=2D-=20
+
+2.53.0
+
+
