@@ -1,115 +1,88 @@
-Received: from mailtransmit05.runbox.com (mailtransmit05.runbox.com [185.226.149.38])
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DDFA3C0A1D;
-	Sat,  6 Jun 2026 20:27:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B17C01FE47B
+	for <linux-clk@vger.kernel.org>; Sun,  7 Jun 2026 04:43:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780777646; cv=none; b=o6+wmmRv5uWOmk2eJV4PWfHo6RoSS8PPwYNFUqymqvgB98hnMrCakqXmm8CyCrazYB0J/zhAtldkd/cT3qqz8wxpB6ktFsZ8NrM3TT5ycajuTvuyUeo0iDpSw2WQ53uxYTRG2/TduToRjgaq1lvV9SDRqJaW1BpTgoxxQ2t4OEc=
+	t=1780807400; cv=none; b=hAgyCcw8PFvWEJ5m51Z3+pe8nQc4wA2p9zd+9hntltKcUTTSy6a2pqs/AqrMVa/FZ2ramUX40gem2W1pHYZ8fpTrDYvrKj247dl8vUhP8SMoVtOePq/TV2XAmoXbBZrru7g9cdCD/C5SqHbbNDm2hBW/cnmwtDsumjIAf4r+Pu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780777646; c=relaxed/simple;
-	bh=Z8BhDAA/5J1h7pKvkQWkO78M1jmQ+SppQVyUT60dv7k=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=I3rrXKtrYR2uuFUMlYKZzGVU13s4zkkMjknSOd8cttFJEohp28paHC45lW/CzOcoLBd6t+LxyOqJLMlx4Mue0Q/6dG+kltLSdgXu/ipYa7CKZfCwRvXN8XYK27SDOPoDUv5ikM0L2vidDxsv5BctYRMkpQJQ5h2H+tl8p9naOK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=runbox.com; dkim=pass (2048-bit key) header.d=runbox.com header.i=@runbox.com header.b=avS67snj; arc=none smtp.client-ip=185.226.149.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=runbox.com
+	s=arc-20240116; t=1780807400; c=relaxed/simple;
+	bh=Dd9Jrs9HlP7jZkQXx3mkWpkdTCHX2H4RXixCJvaWed8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k/EGqirn0PrWawhgZRGMnkRdq6ABpDa3g1+/Hq6/ngBKPVMmXjZFa+wkeDpBj+oK6/xOrn/ObTzZB24M8FfCwkgjSIojK/L0KQZi1+rEZvJsvfZUhfM7PVWaiuGPM4Agd/IGJtBPAVGY05coGxQjgj+G864M2OQAWuW21RUwnfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool; spf=pass smtp.mailfrom=packett.cool; dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b=bSk7wk1X; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=packett.cool
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=runbox.com header.i=@runbox.com header.b="avS67snj"
-Received: from mailtransmit02.runbox ([10.9.9.162] helo=aibo.runbox.com)
-	by mailtransmit05.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.93)
-	(envelope-from <david.laight.linux_spam@runbox.com>)
-	id 1wVxbs-007cGB-GC; Sat, 06 Jun 2026 22:27:12 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=runbox.com;
-	 s=selector1; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:
-	Subject:Cc:To:From; bh=tVrxHagyiN7+Sk4EZn18sJM4wcXexSjb7mWF03ybYZg=; b=avS67s
-	nj63m5fSykrYbvM1t91XuG7HHhXHfPqs8n+sQxPQR2NE631xpPX5xf0iAeRjRrbUZtUcl6TGVia/U
-	pax+SIBUOZkfS6jzTrQB5rmN9zz07x7FVcdFIj91hpVGQo1x0tEhvhIBnXksT6PTu4stbSwYwffyr
-	6VaC1h7XxT/5MwPehI3oWhSBsZTtgOaH2B1ZapyTlhP2u/aRZfZqKNonwmxYBhUoDJ/hd+g/O5dGp
-	Vy+/mJfmDTn4gaiNxvz6D16EsrEEWx0gQXiDXL82V/PHXR5oy4x1Ry+xZLDMW5p3xRBocvqeDLOaQ
-	CEUNJOIbBsB2yAA4N3MzgzwGzneQ==;
-Received: from [10.9.9.72] (helo=submission01.runbox)
-	by mailtransmit02.runbox with esmtp (Exim 4.86_2)
-	(envelope-from <david.laight.linux_spam@runbox.com>)
-	id 1wVxbs-0000tU-6q; Sat, 06 Jun 2026 22:27:12 +0200
-Received: by submission01.runbox with esmtpsa  [Authenticated ID (1493616)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.95)
-	id 1wVxbn-006V18-IP;
-	Sat, 06 Jun 2026 22:27:07 +0200
-From: david.laight.linux@gmail.com
-To: Kees Cook <kees@kernel.org>,
-	linux-hardening@vger.kernel.org,
-	Arnd Bergmann <arnd@kernel.org>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	David Laight <david.laight.linux@gmail.com>
-Subject: [PATCH next] drivers/clk/clk_test: Use strscpy() to copy the test description
-Date: Sat,  6 Jun 2026 21:26:29 +0100
-Message-Id: <20260606202633.5018-35-david.laight.linux@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b="bSk7wk1X"
+Message-ID: <2f6dbc37-7ee5-4cef-b39e-455494fb31fd@packett.cool>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=packett.cool;
+	s=key1; t=1780807394;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7joSm0+uHvv2hAYIoyujknuutXHNZcAC8aA6ciTS3Pw=;
+	b=bSk7wk1XQkNAGQS5xfIVD6KD97lK+TDYwZFkcvMaQJ8fIYR/M478GG8zX0a6cdGocG6XPq
+	6EJdcuIiLtKtkGLGMuJpKUtl2y2hnTNMWIMuJU7qt9qsWRVJCPjI3eo948x7NP1yeROr+w
+	uuUiDcuD4fzHTVjyXKh6o0J2R4VTjNb4TLUZwYZlqUrVtNulDa6XHyFm6xfqpW0fmgeeno
+	L83bhyPH4YjLgP6LziKuLVl4BwADxArL191Yfd0DsEZZAL1T88FZJvvp8pVx8FmhU6K4p/
+	JqAapF+fQDCbnhDvgU2MzuegJEmhtAm7/R2rJo6zfl0KaIJqPwqpjTOveb1Gpw==
+Date: Sun, 7 Jun 2026 01:43:06 -0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Subject: Re: [PATCH 2/4] clk: qcom: common: introduce qcom_cc_sync_state()
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Brian Masney <bmasney@redhat.com>
+Cc: Saravana Kannan <saravanak@kernel.org>, Abel Vesa <abelvesa@kernel.org>,
+ Maxime Ripard <mripard@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Hans de Goede <johannes.goede@oss.qualcomm.com>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+References: <20260603-clk-sync-state-v1-0-457120eed200@redhat.com>
+ <20260603-clk-sync-state-v1-2-457120eed200@redhat.com>
+ <xtrvgetj3ybwuceez6mymxw4cwa6sqeycoz2hs2zztozeb4oyb@uuhtzbludmzv>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Val Packett <val@packett.cool>
+In-Reply-To: <xtrvgetj3ybwuceez6mymxw4cwa6sqeycoz2hs2zztozeb4oyb@uuhtzbludmzv>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-From: David Laight <david.laight.linux@gmail.com>
 
-The buffer length is known to be KUNIT_PARAM_DESC_SIZE
+On 6/6/26 8:15 AM, Dmitry Baryshkov wrote:
+> On Wed, Jun 03, 2026 at 10:21:47AM -0400, Brian Masney wrote:
+>> Several qcom clk providers currently have a sync_state helper set to
+>> icc_sync_state(). With an upcoming change to the clk framework, if
+>> sync_state is not defined for the device, then the clk framework sets it
+>> to clk_sync_state().
+>> [..]
+>> @@ -464,5 +466,12 @@ int qcom_cc_probe_by_index(struct platform_device *pdev, int index,
+>>   }
+>>   EXPORT_SYMBOL_GPL(qcom_cc_probe_by_index);
+>>   
+>> +void qcom_cc_sync_state(struct device *dev)
+>> +{
+>> +	icc_sync_state(dev);
+> Only if desc->icc_hws != 0, otherwise it will mess the interconnect
+> internals. You might need to set drvdata to desc.
 
-Signed-off-by: David Laight <david.laight.linux@gmail.com>
----
-This is one of a group of patches that remove potentially unbounded
-strcpy() calls.
+Hmm…
 
-They are mostly replaced by strscpy() or, when strlen() has just been
-called, with memcpy() (usually including the '\0').
+Currently icc_sync_state does not seem to use the dev argument at all.
 
-Calls with copy string literals into arrays are left unchanged.
-They are safe and easily detected as such.
+How would something get messed up, now or whenever icc_sync_state 
+changes? o.0
 
-The changes were made by getting the compiler to detect the calls and
-then fixing the code by hand.
 
-Note that all the changes are only compile tested.
-
-Some Makefiles were changed to allow files to contain strcpy().
-As well as 'difficult to fix' files, this included 'show' functions
-as they really need to use sysfs_emit() or seq_printf().
-
-All the patches are being sent individually to avoid very long cc lists.
-Apologies for the terse commit messages and likely unexpected tags.
-(There are about 100 patches in total.)
-
- drivers/clk/clk_test.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
-index b1961daac5e2..1d8cf902d3a0 100644
---- a/drivers/clk/clk_test.c
-+++ b/drivers/clk/clk_test.c
-@@ -2232,7 +2232,7 @@ static void
- clk_leaf_mux_set_rate_parent_determine_rate_test_case_to_desc(
- 		const struct clk_leaf_mux_set_rate_parent_determine_rate_test_case *t, char *desc)
- {
--	strcpy(desc, t->desc);
-+	strscpy(desc, t->desc, KUNIT_PARAM_DESC_SIZE);
- }
- 
- static const struct clk_leaf_mux_set_rate_parent_determine_rate_test_case
-@@ -2644,7 +2644,7 @@ static void
- clk_register_clk_parent_data_test_case_to_desc(
- 		const struct clk_register_clk_parent_data_test_case *t, char *desc)
- {
--	strcpy(desc, t->desc);
-+	strscpy(desc, t->desc, KUNIT_PARAM_DESC_SIZE);
- }
- 
- static const struct clk_register_clk_parent_data_test_case
--- 
-2.39.5
+Thanks,
+~val
 
