@@ -1,71 +1,94 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from sender4-op-o11.zoho.com (sender4-op-o11.zoho.com [136.143.188.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F869257452;
-	Mon,  8 Jun 2026 10:49:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780915800; cv=none; b=odcsk+FcpVreRVGDqBpYcQbvovPCziz2yVuCQT/R5KR7hgZ/q1AGnXjMw6rOyd0VhppFbjR9/QxrFu+tdorlPEcsY3if0K2jpb0TjkubpCPObZBMdCZI0abTZy0vi/mxK0qCjnfUa9ZIpucLRKqN8t684go2Ii1accZqfFwnSa4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780915800; c=relaxed/simple;
-	bh=TgZOcp+iFLyRNDHRgEgDH5b56zLWoGs0mQCuL6FJ0Qo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RDNAIm2NAqPdkyhhBE05ei5pKMLYHmn2sfYcmF5oe8fa++berEmowDZBQoZ+C1++W40jIH+tkSwlZShXl9Z8RU/2HnLvUCUux09WVorBHHWEcgyvpLyX1D9mXfUpjRPKPRlxIWefBALLc+UDwcfNjJtuSNyA2AxyD9+CN7/Fz5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OwK6gkCl; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E55DF3A1C9;
+	Mon,  8 Jun 2026 11:09:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1780916943; cv=pass; b=DXqt2aq9PDw4ixuojwaXi7IbeIth2tps57uw+sxrrv99fVPmwDCZirW+rISDY5DuU1F82B+Ae7gSSgkDBg5ynyO9XVm3qRcZMLFqAfd6yZxe1grWAXn/QHNOkguCtJqxKMHCU6Q48CVwvNB9t2lxYs56idEAUy5a1l/whuhG0Qc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1780916943; c=relaxed/simple;
+	bh=/tb7o9YfkkFDiV4LOWCcRHi0hE5qmxAuEKieOm6ZjM4=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=DhcCGkzbux5QtNURONniIDxE011gRZZZCPUQ9oMewRkffkKpDyfi6QRZDkFXxTvwOMIL18k2MrBA1RFGfO3ZucOlNy4X2CNx0aglM1pAzphgYU/Do0csIxcWrEWkncs/aaC/z19XkqdxKcbw7cqcGL5kzmhjwOEy5soSGPAoK1o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=XUGTWHrn; arc=pass smtp.client-ip=136.143.188.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OwK6gkCl"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C7B71F00893;
-	Mon,  8 Jun 2026 10:49:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780915799;
-	bh=jsumRobjSohWTQpwnHB0WvPFkGiqjZq7WYyNasPTipc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=OwK6gkClry94Qq+PYrRXOAi2ShOAuEtX7oKSWr/A3ER1ZzBKJr7pkhBgfK7UXOTZA
-	 E+10LQORgc+b+IQN5TC9DLwphcplNs9QGHeu7SHBZOKYBXuL0HQqj6LmFtAYquGTKO
-	 hakmVIvYjVdDaU5VYq8XhJ9/0kZtgI2n86bfojRFu/YIFVImc4UkEPYkS19LlZLtU5
-	 S5FqKLlS5DSR0B3V7vl1LmKIzP/j9WfZuMJk/s268bIbqRmAV0U4EwphMca14IaWR9
-	 Se5r+gHpNdXk/oAWTO4e5J7h0VcpT4KOGewFVvk2ySRjNR0/g/dkTitMMTUv+0+5H7
-	 hyX7qK60GTpew==
-Date: Mon, 8 Jun 2026 12:49:55 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Imran Shaik <imran.shaik@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney@redhat.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Ajit Pandey <ajit.pandey@oss.qualcomm.com>, Taniya Das <taniya.das@oss.qualcomm.com>, 
-	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 2/4] dt-bindings: clock: qcom: Add Qualcomm Shikra Audio
- Core Clock Controller
-Message-ID: <20260608-snobbish-kakapo-of-dignity-f7bbff@quoll>
-References: <20260605-shikra-audiocorecc-v1-0-7ee6b5f2d928@oss.qualcomm.com>
- <20260605-shikra-audiocorecc-v1-2-7ee6b5f2d928@oss.qualcomm.com>
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="XUGTWHrn"
+ARC-Seal: i=1; a=rsa-sha256; t=1780916906; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=V77ohDi1FU5qxxWvH1DRlpHx1d9WApt+1XamxW/ICSlhNOMRJJN8mlsDRjM7Hb1QScMIugYflwgv+/w4KK2xaJiCpmo8Z0DtBAvBzJCyoV5ALBVxAJKM8LbVXiVvvcLxFhZ1Qhed0ho/Icg5gctGqt9zydRhZ4NCH2dL4kdVsOQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1780916906; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=/tb7o9YfkkFDiV4LOWCcRHi0hE5qmxAuEKieOm6ZjM4=; 
+	b=Zi5G9hxbP9Yi5Me8h0nhyCvq3v0pcxHHCF0KfYJ9GvBunaLDhwzHyIAwzG6dCMgLuYwWl9JbUjASPu5A1O+tfLjZ+vn3VTaVW70NirKcCd+go6Fyf2Hn2vv+fPG5vg1FrnaHsebU3oebSdXVQF1zU24e7DmizBJP+5aAJ6P63ac=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1780916906;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=/tb7o9YfkkFDiV4LOWCcRHi0hE5qmxAuEKieOm6ZjM4=;
+	b=XUGTWHrn0sgfDLuXq/gh6I9o9DPgvj+iImqlEtKZz50yGBUGuYMoGASst237rYA5
+	bwnqdwuGBWCqvuHfXQ/jgTF77oyI5aZMd0QmkRIUq+KYVj2ZH+fWjdUeXZ4qbZ9Eec8
+	XK33KVVUfuhepLk+GSg4HxQWeV5OVBtwOLa3+4fQ=
+Received: by mx.zohomail.com with SMTPS id 1780916903731652.9798968643184;
+	Mon, 8 Jun 2026 04:08:23 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260605-shikra-audiocorecc-v1-2-7ee6b5f2d928@oss.qualcomm.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH v2 0/2] rust: clk: Add ExclusiveClk and use it in
+ pwm-th1520
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20260605-rate-exclusive-get-th1520-v2-0-695640bf7249@mailbox.org>
+Date: Mon, 8 Jun 2026 08:08:04 -0300
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Boqun Feng <boqun@kernel.org>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Drew Fustini <fustini@kernel.org>,
+ Guo Ren <guoren@kernel.org>,
+ Fu Wei <wefu@redhat.com>,
+ Michal Wilczynski <m.wilczynski@samsung.com>,
+ =?utf-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ linux-clk@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org,
+ linux-pwm@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <140FE1B3-73CA-45EA-B978-648A1A48B577@collabora.com>
+References: <20260605-rate-exclusive-get-th1520-v2-0-695640bf7249@mailbox.org>
+To: Maurice Hieronymus <mhi@mailbox.org>
+X-Mailer: Apple Mail (2.3826.700.81)
+X-ZohoMailClient: External
 
-On Fri, Jun 05, 2026 at 04:56:31PM +0530, Imran Shaik wrote:
-> Add device tree bindings for the Audio Core Clock Controller (AUDIOCORECC)
-> on Qualcomm Shikra SoC. The AUDIOCORECC clocks and resets support differs
-> across variants based on Audio subsystem enablement as follows:
-> 
-> CQM (qcom,shikra-cqm-audiocorecc): need clocks and resets; audio on APPS
-> CQS (qcom,shikra-cqs-audiocorecc): need resets only; audio on Modem
-> IQS: no clocks/resets needed; no SoundWire codecs
-> 
-> To handle these requirements, variant-specific compatibles are introduced.
+Hi Maurice,
 
-No. These are the same devices. You do not get different compatibles.
+There is some ongoing work to convert Clks to a type state pattern [0]
 
+I wonder if you would be willing to rebase on top of that?
+I can push a new version if so.
 
-Best regards,
-Krzysztof
+It seems like we are mostly in agreement with that series, and only
+a few nits are missing.
 
+=E2=80=94 Daniel
+
+[0]: =
+https://lore.kernel.org/rust-for-linux/20260107-clk-type-state-v3-0-77d3e3=
+ee59c2@collabora.com/=
