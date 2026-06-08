@@ -1,91 +1,77 @@
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C6173B7B96
-	for <linux-clk@vger.kernel.org>; Mon,  8 Jun 2026 10:08:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E50C63BBFC0;
+	Mon,  8 Jun 2026 10:09:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780913323; cv=none; b=hyURuzKzsFH68O2M5Hv2jZyZMfTrrY8dchC1fs/ArEaFz2qTxMtWPhp1GCn8cdoI5n3eMYQBTsQra6OwFAIL04R6xcOH1fxGp97m0fRjQHlyUUt3Bt5gOiApMbuXfwl7rX7RXZlnySBHS7WEJviPmQtokalxRzPWV0Rc4zDZkyw=
+	t=1780913374; cv=none; b=P3GduMOpl/NrvpfS2IraZmwdQzEqiWVH61GQZzygQ3hAztYZ1XdV26QYSMUyn/Q52kdLb+f8mRj/zGklBYkt27RQ96dSUeFK/27XFLiDF0G2zvgS6ycFo2QShvvr5zAfaJ7Vp0do8inLlBJP7q+uoGnY9F4f5yniEVYrQNfBAX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780913323; c=relaxed/simple;
-	bh=UaS8P+BnNs30Wx3OCTtg2sP9AlLlbx00rCICGw91jA4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=TIK1PYrO0LvBZQBr7C16qMQwLJnGPH/f2Z5h3ZOoA4B8kRKcvmkJBzFpV5pBW3GymX+nF84oqYBzLgeEG1qVl3sLiMMFgsjoUzrgBVp71NsR1DLxW7jBfuen+HMmGKHjeGCVL527OuWUtK9adcj8O9uqe5F8rce+DKUt2mEjZkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=cLoF5su3; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1780913374; c=relaxed/simple;
+	bh=wMDtO/cDts3xeMi9leP4OEShjXkS85yEH1bxWmue25w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=isFtJlgOWcao+ZVvr45m5zRKxD/4svEB/nwIGjkzEDqiRFkRXufK75W5mLGXVVjwzGmpp5IT1fulNAngEW66XCLmcsfTlE+oRIjYVEdzeTh4W5YNPYRa13d2I1YSfH8yrCym+jESEea/QA0XaY40ETaot02SmxoSWv9odKQCC8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EzHPUQZ/; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="cLoF5su3"
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20260608100839euoutp02626883d5781ee22f4ff73bb386fb4e64~3Ezp4h-WC1482414824euoutp02y
-	for <linux-clk@vger.kernel.org>; Mon,  8 Jun 2026 10:08:39 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20260608100839euoutp02626883d5781ee22f4ff73bb386fb4e64~3Ezp4h-WC1482414824euoutp02y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1780913319;
-	bh=ScX6tmH+TYFIA4SdeDcX5TAQpdwZEO/9NVN1KgaB3hw=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=cLoF5su3stWT+hb6nfTtHwBwrrKHZLRDbQwUroh5t+iFCfiCUD0Z8tIlOkamuIlxG
-	 qeOHzEJ58YbyS317GkjyofK7fQ13HHHwF0legf9LOkfvpwVI1TCV7BT/w9fiu/TkE8
-	 lOCBfrOUmSVswJYFE8RtOExm4LjdPdpKByrpZFPY=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20260608100839eucas1p26efb0e1085dba36943f16284a4fee98b~3EzpgqhjL2726127261eucas1p2t;
-	Mon,  8 Jun 2026 10:08:39 +0000 (GMT)
-Received: from [192.168.1.44] (unknown [106.210.136.40]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20260608100838eusmtip2364ad82459e2916175d35315bdcac074~3EzoopYD61119811198eusmtip2K;
-	Mon,  8 Jun 2026 10:08:38 +0000 (GMT)
-Message-ID: <2c036c0e-8246-4e55-90b0-97ba8ef46115@samsung.com>
-Date: Mon, 8 Jun 2026 12:08:37 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EzHPUQZ/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C9091F00893;
+	Mon,  8 Jun 2026 10:09:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1780913373;
+	bh=NpFVBiI+19HzqKpQF9wCH1KUEXst5vp7+7mzspMB+Is=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=EzHPUQZ/H9mJMDvg4EteP4jYMthG5cRVZdvN+nj8lU098EMhZ8UREtBOcK2WGy20/
+	 pv/cPydlRfQZH8rCX/LpDW6t18a5xzTTRIWb3IA9/y/9kM/K1YQnNHAnw0S/cBuyw2
+	 5jTdHrYrn3Y6bBnsy+reYQWZar7D3h2XK2MJE+yKQLmMYjRP0wBj2HOZ4rw1AZ/ezN
+	 g268Uw++nIdOKvQM1khTbttnt5nY527rDcQQn6b4p2g9lI9s08dfVaQ4eb3GJEdCsR
+	 dfi0rdfGUSX7lrvfguK7OiLOi35t8ROp04aclNqKLczuqchq48d1qlU6jM+JB4yHNy
+	 VuZN+dnFB/Eig==
+Date: Mon, 8 Jun 2026 12:09:29 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Herman van Hazendonk <github.com@herrie.org>
+Cc: sboyd@kernel.org, Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/2] clk: qcom: gcc-msm8660: register PLL4_VOTE for LPASS
+Message-ID: <20260608-amazing-brilliant-zebu-4acaa7@quoll>
+References: <20260602042747.277270-1-github.com@herrie.org>
+ <20260602042747.277270-3-github.com@herrie.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] pwm: th1520: Lock clock rate with
- clk_rate_exclusive_get
-To: Maurice Hieronymus <mhi@mailbox.org>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda
-	<ojeda@kernel.org>, Boqun Feng <boqun@kernel.org>, Gary Guo
-	<gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
-	<bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, Andreas
-	Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor
-	Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Drew Fustini
-	<fustini@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
-	=?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Cc: linux-clk@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-pwm@vger.kernel.org
-Content-Language: en-US
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-In-Reply-To: <20260605-rate-exclusive-get-th1520-v2-2-695640bf7249@mailbox.org>
-Content-Transfer-Encoding: 7bit
-X-CMS-MailID: 20260608100839eucas1p26efb0e1085dba36943f16284a4fee98b
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20260605070115eucas1p14ef31f75a9597be42bda6c6597fc7e38
-X-EPHeader: CA
-X-CMS-RootMailID: 20260605070115eucas1p14ef31f75a9597be42bda6c6597fc7e38
-References: <20260605-rate-exclusive-get-th1520-v2-0-695640bf7249@mailbox.org>
-	<CGME20260605070115eucas1p14ef31f75a9597be42bda6c6597fc7e38@eucas1p1.samsung.com>
-	<20260605-rate-exclusive-get-th1520-v2-2-695640bf7249@mailbox.org>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20260602042747.277270-3-github.com@herrie.org>
 
-
-
-On 6/5/26 09:00, Maurice Hieronymus wrote:
-> The driver derives period and duty cycle from the clock rate read at
-> probe, so a later rate change would silently miscompute waveforms.
-> Switch to the new ExclusiveClk wrapper to hold the rate for the lifetime
-> of the driver data and drop the corresponding TODO.
+On Tue, Jun 02, 2026 at 06:27:45AM +0200, Herman van Hazendonk wrote:
+> Add the CPU-side software vote register for LPASS PLL4. PLL4 itself
+> lives in the LCC (Low Power Audio Subsystem clock controller); GCC
+> holds the apps-processor vote in PLL_ENA_SC0 (0x34c0) BIT(4). The
+> LCC driver references "pll4" as the parent of its slimbus / SAIF /
+> audio mclk roots, so without this vote PLL4 is gated off when the
+> apps processor is the only consumer and LCC clocks silently fail to
+> enable.
 > 
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> Signed-off-by: Maurice Hieronymus <mhi@mailbox.org>
+> Expose it as a single clk_regmap with clk_pll_vote_ops and append
+> the dt-binding ID at the next free slot (258) after the existing
+> PLL12 (257), so DT ABI for boards already using the prior header is
+> preserved.
+> 
+> Signed-off-by: Herman van Hazendonk <github.com@herrie.org>
 > ---
->  drivers/pwm/pwm_th1520.rs | 8 +++-----
->  1 file changed, 3 insertions(+), 5 deletions(-)
-> 
+>  drivers/clk/qcom/gcc-msm8660.c               | 15 +++++++++++++++
+>  include/dt-bindings/clock/qcom,gcc-msm8660.h |  1 +
 
-Reviewed-by: Michal Wilczynski <m.wilczynski@samsung.com>
+You need to slow down with your patches. I see so many similar issues
+and I don't know if I already commented on this or not.
+
+And run the checkpatch finally.
+
+Best regards,
+Krzysztof
 
