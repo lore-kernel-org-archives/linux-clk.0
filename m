@@ -1,193 +1,196 @@
-Received: from mail-244106.protonmail.ch (mail-244106.protonmail.ch [109.224.244.106])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E67FA33FE2F
-	for <linux-clk@vger.kernel.org>; Mon,  8 Jun 2026 11:09:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D74C2335BA7
+	for <linux-clk@vger.kernel.org>; Mon,  8 Jun 2026 12:23:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780916976; cv=none; b=ZsAPl/F0MJu08HLBXtj7EehDmFIS7fkfxAPsFXAaZpMIYSqXsTSbo29yI5uL8H3wci4kIlvSvNAOcgdLXeQewSDrpHj6vrlHAyXqMgr1jamZysFCyrzvToXoOz+7YbmCxQ6ABjOTK3xez6o7dzYEk2BYGLNB/qKYQaklaripQOw=
+	t=1780921384; cv=none; b=LTA9ndpsiTJ+bgC+CjwgTevTMkFc7sSOWj93t4T3fOK5UbT+LflFGPZnoW25VeBfU6M8+F1I2R0sj89Fd4rtaBIZLHnZuZ85hfVCRbEu6d5o0Hs/QrGDLlQwzlNis8HT6FdAEgekPzB8v50J4vMoKO/D7XyfPV1yDRl4f07jODc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780916976; c=relaxed/simple;
-	bh=ulh0evGVPPNjBy7iwCTYBFGX/Ds4y8hHb8LHBFs/1Uo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UUscd/HZZdzKIJVDlNzb6icNP1IWO6ufWnM9Zv53u5+X6WCU5sAjrjpeht8NVCRGvdYAArfVk9oTG/dmS8AxropVS0bngGqTqyCkv3WcGuf+J65RfzLlr5xn2aeLMh0jots0j8b5sEMuqiZ9BW0hxNEooIgRd6HNu26D5w32er4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (2048-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=NsXeS3L0; arc=none smtp.client-ip=109.224.244.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=onurozkan.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
+	s=arc-20240116; t=1780921384; c=relaxed/simple;
+	bh=4F7gY46dZri99qm2y2Zpu2VG+g8+kLFHTgK5fDVba4o=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=WUq0TN9pPm5PGnaF7UWkRZe9CvQ2meb3UX6O76d1GdkzsqwbkZP0KtNG3CXE0FdT4RarU6mbF95Bwon6srsCqOa4geRjgvB/0u6nJuxkuU6Go2ZjyCyP7EW71Ng5G5n87ShoOwF3bSHQLdthH2MVXnRNtNsLytS2fcTqeX7b2fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ijMABQTa; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=CxI+Ko1u; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="NsXeS3L0"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
-	s=protonmail; t=1780916965; x=1781176165;
-	bh=yE0kow4cPVmFeFmEU4SXwVIDnwzfPDzpouaEmX4Fpfg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:From:To:
-	 Cc:Date:Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=NsXeS3L04i15iimqeQaZUZYdMfXHdM6AtyVzrrKg6DzkZAeUqnoVni7BzJWv9tRFy
-	 md3+OCdXghTfJSoR7pe0a32hH6HbsE3/WiSon673+Vzdp7zjehk0QrZuFh8V7JUADg
-	 VagBPktDkP4duqhHP0LKSf3pbngkzHAxrYI/+t66RRB2Nbbi/cMmjkNTxluw+wB1sz
-	 EqHNtng0Aw6ptyHkF0y/b0/bBKW/ke9ZZxYQ0Sym5HHdXGxDoN8veFLY/PYa/aUXO+
-	 QXLE2vECd+/1NoVCBvSNLCAPl+xobUREhrcqv0ZNrJ1kW7+EgxZHeVY7vGViw7Bi+N
-	 haetP5ApFakYg==
-X-Pm-Submission-Id: 4gYq755lFlz2ScNk
-From: =?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>
-To: Maurice Hieronymus <mhi@mailbox.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Boqun Feng <boqun@kernel.org>,
-	Gary Guo <gary@garyguo.net>,
-	=?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Drew Fustini <fustini@kernel.org>,
-	Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>,
-	Michal Wilczynski <m.wilczynski@samsung.com>,
-	=?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	linux-clk@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-pwm@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] rust: clk: Add ExclusiveClk wrapper for clk_rate_exclusive_get
-Date: Mon,  8 Jun 2026 14:09:13 +0300
-Message-ID: <20260608110920.422773-1-work@onurozkan.dev>
-X-Mailer: git-send-email 2.51.2
-In-Reply-To: <20260605-rate-exclusive-get-th1520-v2-1-695640bf7249@mailbox.org>
-References: <20260605-rate-exclusive-get-th1520-v2-0-695640bf7249@mailbox.org> <20260605-rate-exclusive-get-th1520-v2-1-695640bf7249@mailbox.org>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ijMABQTa";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="CxI+Ko1u"
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 658BC1sn3455365
+	for <linux-clk@vger.kernel.org>; Mon, 8 Jun 2026 12:23:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=X69rCPirG+wBx93FbgpUBH
+	+X44jjs27nxgLICDNALu8=; b=ijMABQTaxlkG5CoaiFIbilzWulZfKOFKJ3edg7
+	T7fiEOcJ5FkuUNbA0EpTyExj130oK4sOtEHyNKGV5oy3kLffUs7VoE2VZXrWOnJ6
+	Rs8PXmS48Th0JojL394nNYpUWQnhuEt4NLpbTAU+fLQgt6ozTxnkbkOHxqZLTb/u
+	NAGID/003G1SmxJCkGYENBEqoRC2Zo9aHxmndf2x+mTdprItuIBsK2cUt8mNxwbY
+	Sy67X2VyaWUIaZKB0VoPfzkz1QPGVAcLv7nNUSq+dUA7qIx8Ha9YPjyN4t4bL3yy
+	LwnbYFzI4uvTrYbV/lhoSqYHmQ1gFs/GHSz5ftMtCLasnOUQ==
+Received: from mail-yw1-f197.google.com (mail-yw1-f197.google.com [209.85.128.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4entr0guvk-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Mon, 08 Jun 2026 12:23:01 +0000 (GMT)
+Received: by mail-yw1-f197.google.com with SMTP id 00721157ae682-7e9c004b182so85433397b3.0
+        for <linux-clk@vger.kernel.org>; Mon, 08 Jun 2026 05:23:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1780921381; x=1781526181; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=X69rCPirG+wBx93FbgpUBH+X44jjs27nxgLICDNALu8=;
+        b=CxI+Ko1uBfG6kX1hjG4FNmvMUPX4DHgRepfQn/12rbI+xellNQ4cNfIaBvtuT8iSc+
+         8cYchYTdiMaQ3/GlKL8P6ul4RBwzLyovoramP+B1GCeBHM+yTw4r6ZuI7dCn7VXHY3z0
+         ao9rhiDFQ8pswlD5zpXtEa+7XCUIuy44yplf3F5/1FQCkrcm/GvjhNRBKOEaylJQnqv+
+         BwA+CAGnBQQLXlX2pb03B4FGzKp57MTm7Id4dqhJNlwXCunkTh972AI9ChBs82Vgp4dE
+         LXjhvP4s9SA+U3nWX6LjRQcEZvAS+gQBwFYHqwefmpLY1zTnOlHKCTatEA2v/7nBnDHX
+         snkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1780921381; x=1781526181;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X69rCPirG+wBx93FbgpUBH+X44jjs27nxgLICDNALu8=;
+        b=ByASqwvOT63udMRcVYJwVUp5nyPFKR51mB2ixPhuKymNlS2Ktv05K27NIu0RbcQHr0
+         ZjKFjtHdLPM3YS0k9O/TBrYjU1ZxGgqxr/nEm1ryP/x6X0j+k/9QUblrXgen9mEga/pN
+         OcryqzulOV26oQ0TsrELUIqk5wlt6hIj0yWc3EeevBQq0DrtV+bn9guLi2k+1VKq+je2
+         TECtdIqy4i4bLHSNBR3s3LeAgpQmFRVCZqs4qDOOXRAheqhyxJ3EChxM8ULQN6QlYgzl
+         FySkxQJtT4a7gozPOkFMAL0lQ1nt3OQdCpvt6dDagJ4gFO2x251fWBudoJXgnoGxs6Os
+         bLYA==
+X-Forwarded-Encrypted: i=1; AFNElJ8eCvahHQE0+MB2EwUuDd2nTS4FNUc9yi5QAUINR2CrA9um0BRLBTlUqQwrtcsohllIXnnmGkHaI3c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQYhIxGwHJtEwb9VVe8ekpFR8NriHwCBQ0ilMnitZizWR0ffFJ
+	fTFelHFtsLi6gKOd2sAfGlE3EeQTQHAKqvpI+3whODKNYL94X9SrSBKHfg86nx2z2Ju8A1roPKr
+	7cyfEFQqckcmTLBhNGoYq5aN7VmioyVgOg03eAiVYXN3mHqAd68iMUcV3SxotgNU=
+X-Gm-Gg: Acq92OGqlQLBFmaSX6o1uM0+gOuP3S1v7xAsC+0N9DgNopuaYIBlXYiaObYq76X1Owm
+	BTrKHJhdboV70E+6Nl0gsJrleeTqkq63GgY+uj/KSz/PTnXiQTHIFZXAWn0UN7qYyeyVhh7+UYF
+	SfFQVZshnLQQ2BgkiOwE6pQuKAsn3ACt1gdra+3NeiohHkLYKyqkkp9UEZ3JiQ2qF/FTLeO5jQL
+	s9O1G/G0j7rilVcgdJyu963Cx0lJVZMVI/BqOowxyDvWgilIEa2uFCxEqSVh0BJm+kEiA0o+pbL
+	mNP64YebKdonjlGCNp1NqSwzccXD27S28jbw2GaOZB+E/ySdwHzJR9eiuhy5ap7GR9xUao91h6j
+	BuGKdODQ0iIirMS9egv3G+1VerSB7psI8mLg+nPtXLEHaMLI29GzAjloSm4Ktb1k=
+X-Received: by 2002:a05:690c:b15:b0:7d1:cd93:c8f1 with SMTP id 00721157ae682-7ed0c22f784mr142914967b3.21.1780921381067;
+        Mon, 08 Jun 2026 05:23:01 -0700 (PDT)
+X-Received: by 2002:a05:690c:b15:b0:7d1:cd93:c8f1 with SMTP id 00721157ae682-7ed0c22f784mr142914587b3.21.1780921380568;
+        Mon, 08 Jun 2026 05:23:00 -0700 (PDT)
+Received: from hu-imrashai-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-7ea20ea8186sm84076257b3.4.2026.06.08.05.22.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jun 2026 05:23:00 -0700 (PDT)
+From: Imran Shaik <imran.shaik@oss.qualcomm.com>
+Subject: [PATCH v5 0/4] clk: qcom: Add RPMCC and GCC support for the
+ Qualcomm Shikra SoC
+Date: Mon, 08 Jun 2026 17:51:48 +0530
+Message-Id: <20260608-shikra-gcc-rpmcc-clks-v5-0-94cefe092ee3@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAN2zJmoC/4XNwa7CIBAF0F8xrMVMgSmtq/cfLy6AgiXaVuG9R
+ mP6745udCFxc5M7yT1zY9mn6DPbrm4s+TnmOI1UcL1irjfj3vPYUWcCRA1KtDz38ZAM3zvH02m
+ gdMdD5gJa5bsQgrTAaHtKPsTL0/3dUe9j/pvS9flmrh7Xb+JcceBOuk5rxMZq8zPlvDn/m6Obh
+ mFDwR7wLF4YQlPCBGGNFLKxRiiooYDJF1ZDVcIkYbp2CjFgh7otYOodwxKmCDNgtA1WKSI/YMu
+ y3AFGD3NjqAEAAA==
+X-Change-ID: 20260429-shikra-gcc-rpmcc-clks-2094edfff3b0
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Brian Masney <bmasney@redhat.com>
+Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+        Taniya Das <taniya.das@oss.qualcomm.com>,
+        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        Imran Shaik <imran.shaik@oss.qualcomm.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjA4MDExNiBTYWx0ZWRfXxR1B5luuOze7
+ yYfcE7Dyvgeh/k7AqRj30oVt34EtbpvYv7XcnkH8xbbBAYbf8JQ4Rep9tCjz/eThu8o+H6NihJ9
+ zWLyJuhwLZNy76wxpIzIR8ThwiZEdeIv1TehipvOvKm1To39oJ78zqdM+e2/bDl9ePBCQquJxXj
+ b7xvys5Zs899ATVXd9H97CiduPz6h/o8FtTEOX9M2z0gyENcBV6ezExnQbDfHqJDwe/2D+H52Gc
+ UkAoQTalw++qnYoVGC+C3vzFibafydSFhjBN/mMghi93zhrMj5irwzwAzzdbCxhvusQQSL57gtU
+ nSEJZHF5dSdWpguxvVl9d9izRriWeOyGN8bYkw4UNkglngqTRrDaBPwnfegOJn8KL3cRP/EtPdO
+ 3zeAzIa5jqN524oDwkhKYnuDvQe6exQvU0PEAvQfSpWf28UUxGbNdbu2b298F5KYcGf7tQYZY7v
+ AplTJk/rBBZ60rCElhQ==
+X-Proofpoint-ORIG-GUID: QXy0xV74NcKEiz7MtvR5Rmxeych1vQ2Z
+X-Proofpoint-GUID: QXy0xV74NcKEiz7MtvR5Rmxeych1vQ2Z
+X-Authority-Analysis: v=2.4 cv=VowTxe2n c=1 sm=1 tr=0 ts=6a26b425 cx=c_pps
+ a=0mLRTIufkjop4KoA/9S1MA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=FelO9ux0wxsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=3WHJM1ZQz_JShphwDgj5:22
+ a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=byt2Oo71_RUV7fr4z6gA:9 a=QEXdDO2ut3YA:10
+ a=WgItmB6HBUc_1uVUp3mg:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
+ definitions=2026-06-08_03,2026-06-05_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 spamscore=0 phishscore=0 priorityscore=1501
+ lowpriorityscore=0 malwarescore=0 suspectscore=0 bulkscore=0 clxscore=1015
+ adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2605210000
+ definitions=main-2606080116
 
-On Fri, 05 Jun 2026 08:59:59 +0200=0D
-Maurice Hieronymus <mhi@mailbox.org> wrote:=0D
-=0D
-> Add Rust bindings for clk_rate_exclusive_get() and=0D
-> clk_rate_exclusive_put().=0D
-> =0D
-> Clk::rate_exclusive_get() consumes the Clk and returns an ExclusiveClk;=0D
-> the matching put is issued from its Drop impl. ExclusiveClk derefs to=0D
-> Clk so existing rate / prepare / enable APIs remain available on the=0D
-> locked handle.=0D
-> =0D
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>=0D
-> Signed-off-by: Maurice Hieronymus <mhi@mailbox.org>=0D
-> ---=0D
->  rust/kernel/clk.rs | 60 ++++++++++++++++++++++++++++++++++++++++++++++++=
-++++++=0D
->  1 file changed, 60 insertions(+)=0D
-> =0D
-> diff --git a/rust/kernel/clk.rs b/rust/kernel/clk.rs=0D
-> index 7abbd0767d8c..f834f4833f18 100644=0D
-> --- a/rust/kernel/clk.rs=0D
-> +++ b/rust/kernel/clk.rs=0D
-> @@ -249,6 +249,22 @@ pub fn set_rate(&self, rate: Hertz) -> Result {=0D
->              // [`clk_set_rate`].=0D
->              to_result(unsafe { bindings::clk_set_rate(self.as_raw(), rat=
-e.as_hz()) })=0D
->          }=0D
-> +=0D
-> +        /// Acquire exclusive control over the clock's rate.=0D
-> +        ///=0D
-> +        /// Consumes the [`Clk`] and returns an [`ExclusiveClk`] that re=
-leases the exclusivity=0D
-> +        /// when dropped. While held, no other consumer may change the c=
-lock's rate.=0D
-> +        ///=0D
-> +        /// Equivalent to the kernel's [`clk_rate_exclusive_get`] API. M=
-ust not be called from=0D
-> +        /// atomic context.=0D
-> +        ///=0D
-> +        /// [`clk_rate_exclusive_get`]: https://docs.kernel.org/core-api=
-/kernel-api.html#c.clk_rate_exclusive_get=0D
-> +        pub fn rate_exclusive_get(self) -> Result<ExclusiveClk> {=0D
-> +            // SAFETY: By the type invariants, self.as_raw() is a valid =
-argument for=0D
-> +            // [`clk_rate_exclusive_get`].=0D
-> +            to_result(unsafe { bindings::clk_rate_exclusive_get(self.as_=
-raw()) })?;=0D
-> +            Ok(ExclusiveClk(self))=0D
-> +        }=0D
-=0D
-We usually inline FFI wrappers.=0D
-=0D
->      }=0D
->  =0D
->      impl Drop for Clk {=0D
-> @@ -329,6 +345,50 @@ fn deref(&self) -> &Clk {=0D
->              &self.0=0D
->          }=0D
->      }=0D
-> +=0D
-> +    /// A [`Clk`] with exclusive control over its rate.=0D
-> +    ///=0D
-> +    /// While an [`ExclusiveClk`] exists, no other consumer of the same =
-clock may change its rate.=0D
-> +    /// Obtained by calling [`Clk::rate_exclusive_get`]; the exclusivity=
- is released automatically=0D
-> +    /// when the value is dropped, after which the inner [`Clk`] is drop=
-ped as usual.=0D
-> +    ///=0D
-> +    /// # Invariants=0D
-> +    ///=0D
-> +    /// An [`ExclusiveClk`] instance owns a [`Clk`] for which `clk_rate_=
-exclusive_get` has been=0D
-> +    /// called and the matching `clk_rate_exclusive_put` has not yet bee=
-n called.=0D
-> +    ///=0D
-> +    /// # Examples=0D
-> +    ///=0D
-> +    /// ```=0D
-> +    /// use kernel::clk::{Clk, ExclusiveClk};=0D
-> +    /// use kernel::device::Device;=0D
-> +    /// use kernel::error::Result;=0D
-> +    ///=0D
-> +    /// fn lock_rate(dev: &Device) -> Result<ExclusiveClk> {=0D
-> +    ///     let clk =3D Clk::get(dev, None)?;=0D
-> +    ///     clk.prepare_enable()?;=0D
-> +    ///     clk.rate_exclusive_get()=0D
-> +    /// }=0D
-> +    /// ```=0D
-> +    pub struct ExclusiveClk(Clk);=0D
-> +=0D
-> +    // Make [`ExclusiveClk`] behave like [`Clk`].=0D
-> +    impl Deref for ExclusiveClk {=0D
-> +        type Target =3D Clk;=0D
-> +=0D
-> +        fn deref(&self) -> &Clk {=0D
-> +            &self.0=0D
-> +        }=0D
-> +    }=0D
-> +=0D
-> +    impl Drop for ExclusiveClk {=0D
-> +        fn drop(&mut self) {=0D
-> +            // SAFETY: By the type invariants, self.as_raw() is a valid =
-argument for=0D
-> +            // [`clk_rate_exclusive_put`] and balances the [`clk_rate_ex=
-clusive_get`] call from=0D
-> +            // [`Clk::rate_exclusive_get`].=0D
-=0D
-I think [`...`] wouldn't work on regular comments. They are only for=0D
-doc-comments.=0D
-=0D
-Thanks,=0D
-Onur=0D
-=0D
-> +            unsafe { bindings::clk_rate_exclusive_put(self.as_raw()) };=
-=0D
-> +        }=0D
-> +    }=0D
->  }=0D
->  =0D
->  #[cfg(CONFIG_COMMON_CLK)]=0D
-> =0D
-> -- =0D
-> 2.51.2=0D
-> =0D
+This series adds support for the Global Clock Controller (GCC) and
+RPM-managed clocks on Qualcomm Shikra SoC.
+
+Qualcomm Shikra SoC details:
+ - https://lore.kernel.org/all/20260428-shikra-socid-v1-0-6ff16bad5ea2@oss.qualcomm.com/
+
+Signed-off-by: Imran Shaik <imran.shaik@oss.qualcomm.com>
+---
+Changes in v5:
+- Added missing RF_CLK1/RF_CLK2 clocks support for Agatti [Dmitry],
+- Fixed RF_CLK2 rate to 38.4MHz, applicable for both Agatti and Shikra.
+- Dropped Shikra RPMCC driver patch.
+- Updated Shikra RPMCC bindings to use Agatti RPMCC fallback compatible,
+  as Agatti and Shikra has same RPMCC clocks with above changes.
+- Link to v4: https://lore.kernel.org/r/20260605-shikra-gcc-rpmcc-clks-v4-0-a0a7bfb44455@oss.qualcomm.com
+
+Changes in v4:
+- Updated GCC critical cbcrs list to add GCC LPASS clocks which are
+  required for Audiocorecc register access.
+- Link to v3: https://lore.kernel.org/r/20260601-shikra-gcc-rpmcc-clks-v3-0-76c455f5d579@oss.qualcomm.com
+
+Changes in v3:
+- Squashed GCC USB3 DP PHY reset support changes and picked the R-by tags
+  from the following GCC USB reset series.
+  - https://lore.kernel.org/all/20260526-shikra-gcc-usb-resets-v1-0-6d9e7fee2998@oss.qualcomm.com/
+- Added R-By tag received on v2
+- Link to v2: https://lore.kernel.org/r/20260508-shikra-gcc-rpmcc-clks-v2-0-83238ba24060@oss.qualcomm.com
+
+Changes in v2:
+- Dropped defconfig patch and enabled driver from Kconfig [Krzysztof]
+- Updated GCC bindings and driver patches
+- Added R-By tags received on v1
+- Link to v1: https://lore.kernel.org/r/20260429-shikra-gcc-rpmcc-clks-v1-0-c3cd77558b7a@oss.qualcomm.com
+
+---
+Imran Shaik (4):
+      dt-bindings: clock: qcom,rpmcc: Add Qualcomm Shikra SoC RPMCC
+      dt-bindings: clock: qcom: Add Qualcomm Shikra SoC Global Clock Controller
+      clk: qcom: smd-rpm: Add missing RF_CLK1/RF_CLK2 clocks support on Agatti
+      clk: qcom: Add Global clock controller support on Qualcomm Shikra SoC
+
+ .../devicetree/bindings/clock/qcom,rpmcc.yaml      |   65 +-
+ .../devicetree/bindings/clock/qcom,shikra-gcc.yaml |   70 +
+ drivers/clk/qcom/Kconfig                           |   10 +
+ drivers/clk/qcom/Makefile                          |    1 +
+ drivers/clk/qcom/clk-smd-rpm.c                     |    5 +
+ drivers/clk/qcom/gcc-shikra.c                      | 4431 ++++++++++++++++++++
+ include/dt-bindings/clock/qcom,shikra-gcc.h        |  263 ++
+ 7 files changed, 4816 insertions(+), 29 deletions(-)
+---
+base-commit: b99ae45861eccff1e1d8c7b05a13650be805d437
+change-id: 20260429-shikra-gcc-rpmcc-clks-2094edfff3b0
+
+Best regards,
+-- 
+Imran Shaik <imran.shaik@oss.qualcomm.com>
+
