@@ -1,88 +1,85 @@
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 722B93A9628;
-	Mon,  8 Jun 2026 20:59:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B3F93B38BD
+	for <linux-clk@vger.kernel.org>; Mon,  8 Jun 2026 22:43:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780952400; cv=none; b=kmXzPK+qJbCTUBe6g1t9IRIYUYWJSKOPz6r9YX27r582QuNTdXgmRBDpvRcs4QjnR+j9VTeGBTSyNDkcrmzWAwSg+fkKK7ApEIHg6OWAz6rJJzZ2kQfYQBWxsVoQedO5MoJXCSrKPKzAYYbB2aEs0l+DJ0csxk8Fmm6qo1mJbVo=
+	t=1780958638; cv=none; b=oadHJ36haDABFzt0Gcr/du+58PZlv/qatMsJ5T6XeiK0laLyGEu9bfgZ/R1UL7WT33bo/4HLGebJGW9Uj74su9FFOgjF/EkwVj2HPUzSTFcHyybfHyRyLPbelPBN9DfOzrGe4Kgk4WdKFlHovgafjFEkUl2g+K5OR306t3XNXY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780952400; c=relaxed/simple;
-	bh=U+OfQweIOD1gShe2+QuxUov9IeGEl5ViBFprqcyr6fc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=WkqZd7NvIe7UpGiCH5sRUcThSo7NTl2zOwSn/rEm5Hb+NSQCuIzQ4+LjgrlowTaaYOp5McjCwuYtc2pbt/rA7eP7FRHT0VvtvoFNFmnVXR+a3+TYwmPr3H7XjDaz9xDUW+tNYxHwUzVCPs4ALK7zxKcFUp8tpldwEButsJX8kzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=t+EDzGgf; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1780958638; c=relaxed/simple;
+	bh=A0aMEuooSpehlxvLLcCYGZi3/rId/udlnvg3u80kiOo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=l9rqlYaSDr266Ogp4C3LQaOMxbH32sft5SYlaBLEUrGOcKWZqURvcwXhBP/gEZuaDBwLQuopbtAd37VsweQIbvlVR0Mzl4nmygPfdxCQQmhEqIDFUuVHyyMbT0c+WjcABnsAAypELLZHZ9frboc10353LL0Wm/OZiMEFUW/6oto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GV5Su1Br; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="t+EDzGgf"
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4gZ4DP2HrGz9tgY;
-	Mon,  8 Jun 2026 22:59:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1780952389;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=U+OfQweIOD1gShe2+QuxUov9IeGEl5ViBFprqcyr6fc=;
-	b=t+EDzGgfSG0GZyqmiau5dOYEo2iquULVn1WY5kaoOiTUQLbnyd+XOiLbbHhU+PSqDz+LPx
-	F0x3PnkQYGji0n60ArWtDXnCapCtxIyEUvslOaayKtf8gwY3CE85Fv4MQFF5I5ZxLcu+8d
-	dHPTHBD10/43Cy7LXLo+kZTOxlV5nz5hrDHZ2nCADHPrKwYGhcUmk2aWXIo/QD93eMTTaL
-	WuLTjOuQ0l2QcUBjij1awUA5Tso8H/7a/35ZEHxSRl2utkFR5hqIN4u5hwzsaA70lsrfVi
-	LCiDpv/KkEhuBwur7VfmQpGwXDP7sr7usxqhJs+o93vDOqiIZ+VXFj/HCaSUsQ==
-Message-ID: <e99b78d7aea835ab2960517e0c308b08538146ea.camel@mailbox.org>
-Subject: Re: [PATCH v2 0/2] rust: clk: Add ExclusiveClk and use it in
- pwm-th1520
-From: Maurice Hieronymus <mhi@mailbox.org>
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>,  Miguel Ojeda <ojeda@kernel.org>, Boqun Feng
- <boqun@kernel.org>, Gary Guo <gary@garyguo.net>,  =?ISO-8859-1?Q?Bj=F6rn?=
- Roy Baron	 <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg	 <a.hindborg@kernel.org>, Alice Ryhl
- <aliceryhl@google.com>, Trevor Gross	 <tmgross@umich.edu>, Danilo Krummrich
- <dakr@kernel.org>, Drew Fustini	 <fustini@kernel.org>, Guo Ren
- <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,  Michal Wilczynski
- <m.wilczynski@samsung.com>, Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?=
- <ukleinek@kernel.org>, 	linux-clk@vger.kernel.org,
- rust-for-linux@vger.kernel.org, 	linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org, 	linux-pwm@vger.kernel.org
-Date: Mon, 08 Jun 2026 22:59:36 +0200
-In-Reply-To: <140FE1B3-73CA-45EA-B978-648A1A48B577@collabora.com>
-References: 
-	<20260605-rate-exclusive-get-th1520-v2-0-695640bf7249@mailbox.org>
-	 <140FE1B3-73CA-45EA-B978-648A1A48B577@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GV5Su1Br"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 251551F008A2
+	for <linux-clk@vger.kernel.org>; Mon,  8 Jun 2026 22:43:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1780958636;
+	bh=yO33fZb1LjugzRw+G0ggE1zSXDOM86JcqH727KoL53Q=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=GV5Su1Br5SvCs/rJNXXZeLpyhUFI3jQikNovCcx5qQfodSUdXRHSVw7DWxNCJL3KT
+	 Ou1iT5jrVoWXlUuZ2Gvf+gJ9/3gVWTc42TyvGOdXuAir8y1XTOQGaUMi6Cwxw5zqkj
+	 MWv2oDZUFskzYtIx4Qk/BmlliyCwfAld4Us+jiDYSGykz5OxNPICZnBG6Mlqf+Ymzt
+	 omLwRHUBR72YpNwsMTp6K0HaG5OxXpCoK7fb36r1AMVz4EqT4uHJMwXb5m10bBmQsW
+	 wefup+Aa0hpns1Hue0lbWvYs8BdM1RjR6gbkmq6De1rCAuFKglyfGY74YQOGd1yaDG
+	 +dYmx5GlgXleg==
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-39677242021so48002501fa.1
+        for <linux-clk@vger.kernel.org>; Mon, 08 Jun 2026 15:43:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ8Zo7vG69QRuzRT/iRFlQyw34ATsmWjyG6sjzF6a9YgdENnx+OO1kHVWZgNfSSO5vUwr5pQcx9qcZk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGeoGM1fT5BByzuJFSbT6+8ImuLXuC3oYyXVFQ+BOuE76oDS8O
+	ssDwHARymg02pNEJQ77b90o/ojbenFRBbjZmD2EIrbqovjyeBjKtzRqHbU29blVKGjOug1MUbFQ
+	sI3jTpG0FydaaYk/4ojWFfQK16vbBo44=
+X-Received: by 2002:a2e:a715:0:b0:396:b398:5990 with SMTP id
+ 38308e7fff4ca-396d0802544mr31409431fa.10.1780958634795; Mon, 08 Jun 2026
+ 15:43:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MBO-RS-ID: 4419fd374748a8af19f
-X-MBO-RS-META: 8quwtpkkm6yeim94go9bw3qkw9e67cnd
+References: <20260602-pdm_clk_gp_mnd_v1-v1-0-1522662b6c53@oss.qualcomm.com> <20260602-pdm_clk_gp_mnd_v1-v1-3-1522662b6c53@oss.qualcomm.com>
+In-Reply-To: <20260602-pdm_clk_gp_mnd_v1-v1-3-1522662b6c53@oss.qualcomm.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Tue, 9 Jun 2026 00:43:42 +0200
+X-Gmail-Original-Message-ID: <CAD++jLnqCipTxkOhiwQhKFymOxu1HOTbHzLbNrGTOkCO33y8Vg@mail.gmail.com>
+X-Gm-Features: AVVi8CdznhrC7lojiEVCZUJLtYjgr49qwHSYBFLmYEj8dqSmxJu9YBHItYZ4E9Y
+Message-ID: <CAD++jLnqCipTxkOhiwQhKFymOxu1HOTbHzLbNrGTOkCO33y8Vg@mail.gmail.com>
+Subject: Re: [PATCH 3/5] pinctrl: qcom: Add gp_mn mux function for QCS8300,
+ SA8775P and SC7280
+To: Taniya Das <taniya.das@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Richard Cochran <richardcochran@gmail.com>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Ajit Pandey <ajit.pandey@oss.qualcomm.com>, Imran Shaik <imran.shaik@oss.qualcomm.com>, 
+	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 2026-06-08 at 08:08 -0300, Daniel Almeida wrote:
-> Hi Maurice,
->=20
-> There is some ongoing work to convert Clks to a type state pattern
-> [0]
->=20
-> I wonder if you would be willing to rebase on top of that?
-> I can push a new version if so.
-Definitely! Just let me know when you pushed a new version. Thanks for
-that.
->=20
-> It seems like we are mostly in agreement with that series, and only
-> a few nits are missing.
->=20
-> =E2=80=94 Daniel
->=20
-> [0]:
-> https://lore.kernel.org/rust-for-linux/20260107-clk-type-state-v3-0-77d3e=
-3ee59c2@collabora.com/
+On Tue, Jun 2, 2026 at 5:22=E2=80=AFPM Taniya Das <taniya.das@oss.qualcomm.=
+com> wrote:
+
+> Add the gp_mn pin mux function to the TLMM pin controllers for the
+> QCS8300, SA8775P and SC7280 SoCs. This function exposes the GP M/N
+> divider clock output on a dedicated GPIO pin, allowing the clock signal
+> to be routed externally.
+>
+> - QCS8300: gpio32
+> - SA8775P: gpio35
+> - SC7280:  gpio60
+>
+> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+
+This looks all right and no-one is saying anything about it, should
+I just apply this one patch to the pin control tree? It doesn't seem
+to have any dependencies.
+
+Yours,
+Linus Walleij
