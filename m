@@ -1,57 +1,49 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3490A3E0258;
-	Mon,  8 Jun 2026 15:10:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A15973E0C73;
+	Mon,  8 Jun 2026 15:10:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780931404; cv=none; b=lk0PB0E+HcAqa7NgCnG8uRmqKq4tWW35bQ9TSD/4zXPrYA5FW+3INlG+dt9EvedDSCLSAUwuD7gQt7BH3Jzq0xxPKfU9k5bUtDdN5scEO5WjwhZwwR21SrNTu0pqQcmTD31jayQ/7ce1riIyj6lSYgHujJT/k2WWF4dGe9Mp6t4=
+	t=1780931405; cv=none; b=ad9US6romTAhb3gy4sgSOUSmg0ihQQ/ha+/dFXlqr5fmY5i4k6Da92b7nt72Q4YZR5gg6asd+vI3B71uPqyzZH+BE+zn/wGYSsg9GdlmMB4xPJKGmTYO+0qTEDLF1kClvbWHDvhMUwU935eFwVXDVooGMRV+/cSTgWBi43911UE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780931404; c=relaxed/simple;
-	bh=lXKFYYj8fWN66Btae4jWvy7jW/waZAZvIR1T9Z//2Eg=;
+	s=arc-20240116; t=1780931405; c=relaxed/simple;
+	bh=lKhMFaF7SoHcR9+d2yQvVGTv039v5i90jFkig/r6o68=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Rmg8FR7IMeIn38RS9p4EHtfnvZuV56pWbFj+RRWpUdiL1ubwX0Gfuu6XkM6SW5T6X2RwH1oNu7ILZ5tJdC+xQ1cAPZIdAt/FvpKauI284bWnKSzYRcj1xnTEEvfjqWiEr1PL6Nwbs5/vk2Bftq2JxUCeLG6DS4PQYPK9EcZA2ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UvPUq4l7; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version:Content-Type; b=eksVoqlrBek+l3uxU0gFBMPW6cLEx0ze7Qrqbj0q+aggLcH4FB549Zmjeku4vX3Lo4VZ4/7sD3seTkK4OA8UQvIFfz5Jn0E5ERrit1fshud8U9TAjzKFX7neNBVwMHZI52m7B5HuSd+ta0RQaditZwkQdlU4SjmeMwfGoPVZc3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yq/DqXFE; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UvPUq4l7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 455031F00893;
-	Mon,  8 Jun 2026 15:10:01 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yq/DqXFE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 566311F0089B;
+	Mon,  8 Jun 2026 15:10:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780931403;
-	bh=WoPmnZwGksa0gV99/tFnhEoJaknJZPJyFNF84ueiGrU=;
+	s=k20260515; t=1780931404;
+	bh=rhqJfRINulrdxXTK9fYh9Ep1Zir4DVzNWwSqx6ltEPY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=UvPUq4l7u5HFGGQFAfNSUhM9KA0o6q45l3BRD1uwzFoNA9FKtmGDpBjg4rgViqDFv
-	 bTLa6TIQ8havBe+MKW2y9xopgGI786SBY0qCZ8IrcRQ+nkWemQ4PgS+GK/vFJxxc4W
-	 nMnjVS+Tfx9ptPx8mnKItlVe9A24ggNSdopd4aN52wtCLJgYkt8n6uWjwjnwcHUjRC
-	 tXd+40F+u6e21A0XyxNTakMBPhO4BNSFqK8yENFa7OUmsGVrRzBOfSllXAwbkdRAsc
-	 UckKL/cCmEPly9J2gelCo2WMeMVqFzhHGgSZtQAIRt1aHiK4TlKEQIIoJEif3JHdTL
-	 /t+pXIM+MSWLw==
+	b=Yq/DqXFETxHtbhPivSk2QBS3kIzH2eS5w++cHgSFCVQsqexBvX5kTuxW/aG4OYnQO
+	 vykiyIn7KrFfpII6FWAz27qAJWEBy78m12WvKEWYzg39zXosJuxW8O6eC8Zx1bbEGk
+	 ymZj84bc5MIicqZ1G5PUsP7xzSTyreQfTaiBd3QfQhOt1j7xu/sBpCZADllGbiy4ZI
+	 NAGBeLEBTwML4ozcytQI/qtQRrQqsFUjcjokwRGOGXgupthRj7ydIu53zvnPbFs8Wa
+	 0NFAOwIm2OkJIJ+oXOG+nOHgdpNamxuE3Ovq1KfDBd/c+zICyCRjN3mmQaj7z9aM6S
+	 R+TGrwjxqyYeQ==
 From: Bjorn Andersson <andersson@kernel.org>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
 	Taniya Das <taniya.das@oss.qualcomm.com>,
-	Jagadeesh Kona <quic_jkona@quicinc.com>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+	Konrad Dybcio <konradybcio@kernel.org>
+Cc: usb4-upstream@oss.qualcomm.com,
+	linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-	Abel Vesa <abel.vesa@oss.qualcomm.com>
-Subject: Re: (subset) [PATCH v5 0/6] Add support for videocc and camcc on X1P42100 platform
-Date: Mon,  8 Jun 2026 10:09:54 -0500
-Message-ID: <178093139440.244194.708127474354141769.b4-ty@kernel.org>
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH] clk: qcom: regmap-phy-mux: Rework the implementation
+Date: Mon,  8 Jun 2026 10:09:55 -0500
+Message-ID: <178093139446.244194.9422100472802070367.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260507-purwa-videocc-camcc-v5-0-fc3af4130282@oss.qualcomm.com>
-References: <20260507-purwa-videocc-camcc-v5-0-fc3af4130282@oss.qualcomm.com>
+In-Reply-To: <20260409-topic-phy_fastclk-v1-1-6b4aaee56b90@oss.qualcomm.com>
+References: <20260409-topic-phy_fastclk-v1-1-6b4aaee56b90@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -62,30 +54,22 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Thu, 07 May 2026 11:08:25 +0530, Jagadeesh Kona wrote:
-> Add support for video and camera clock controllers on
-> X1P42100 platform.
+On Thu, 09 Apr 2026 13:57:45 +0200, Konrad Dybcio wrote:
+> The sole reason this hw exists is to let the branch clock downstream of
+> it keep running, with the PHY disengaged. This is not possible with the
+> current implementation, as the enabled status is hijacked to mean
+> "enabled" = "use fast/PHY source" and "disabled" = "use XO source".
 > 
-> The purwa(X1P42100) platform includes the hamoa dtsi file
-> and camcc node is already posted upstream on hamoa(X1E80100)
-> platform in Bryan's series[1]. Hence included the camcc node
-> patch[PATCH 06/15] from Bryan's series[1] and extended it for
-> purwa(X1P42100).
+> This is an issue, since the mux enable state follows that of the child
+> branch, making the desired "child enabled, MUX @ XO" combination
+> impossible.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/6] dt-bindings: clock: qcom: Add X1P42100 video clock controller
-      commit: 9ae38c69196e7edd367fe55a3db676a33cc735dc
-[2/6] dt-bindings: clock: qcom: Add X1P42100 camera clock controller
-      commit: 97a5e120be5d3d7cf7d221b8703921046b73f0d2
-[3/6] clk: qcom: videocc-x1p42100: Add support for video clock controller
-      commit: cfc34906768cb8ee2c6ab0dc83f0a57cc6410d59
-[4/6] clk: qcom: camcc-x1e80100: Add support for camera QDSS debug clocks
-      commit: 1e6ae74ac6f28ace7a0eb84897c6e17bb044e5de
-[5/6] clk: qcom: camcc-x1p42100: Add support for camera clock controller
-      commit: 10524682d1b8e1cf2e83afe3bcabd2cc69a0a5c4
+[1/1] clk: qcom: regmap-phy-mux: Rework the implementation
+      commit: e108373c54fbc844b7f541c6fd7ecb31772afd3c
 
 Best regards,
 -- 
