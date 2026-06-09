@@ -1,86 +1,87 @@
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F0C849250B
-	for <linux-clk@vger.kernel.org>; Tue,  9 Jun 2026 15:32:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7D3D49251C
+	for <linux-clk@vger.kernel.org>; Tue,  9 Jun 2026 15:33:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781019181; cv=none; b=NCitYNvhzthA2Jkd2Ls9xT3XB0X5FdHWhKovqBijleIv6sJep4EdrkOvtNUX+DUWyeLu5x5OL21iWKEkWRG19h3yb6tH6VsfAyCnJNRUAZqkJbvvehyVo5AimjYmdpp/1aRCu61vxCPU4P5Wl1vfB55f3HuFNd+TNU4bVRpFZ1A=
+	t=1781019182; cv=none; b=MtxxLB4cw2Q6yfRdREuIuwWCko0rwArnIPFB3dix+/9CWBblYsdo+eQ/ymasvs2zOPUte85vDE9ngd45MTYpV9hCnBB2A7V3p+Y19nGtcZd8WIBRf2JZO2CoE/OHQ6ugZJVyhRgyX9YOuKTSJCLJEd7VafNwM9CTUKJj4DN2quA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781019181; c=relaxed/simple;
-	bh=q59UObcAMY1V9mVGqT7Dy3nTkUBnxvxsdcJF9VMZOXM=;
+	s=arc-20240116; t=1781019182; c=relaxed/simple;
+	bh=Uj6PFrl95EPjQd87MKegbK48MLKZBpNQFspDgHqgLnQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=EwDM4mtR7iHGbJU309xEhwb2r/Fqy+FvsCmJCtqHun7g838fTDYwz9zG7pnNbx/TU07yEtQp20S8Ye9ljMY9bXjkTPDt3ZnwAUjVj2pJ8SxWjLH1X707vB7HM/oUU29R/xeuBdJe1WopaR3B6xJqN0V1uaPCefkUI3n3cMEMFW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=phqT9WP1; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=c5tgcVkS; arc=none smtp.client-ip=205.220.180.131
+	 In-Reply-To:To:Cc; b=czQHiHnCNyVkRwsz38OvOh+VIuDr714FQkguncdO0gn18wrumMgFfV1wa5XsJ++HUs0XuADC+cXaOzuqoO5CZRr5cEWeNV57s9ilNKt34ipAYas7hg7/HYbP9y16RKTzp7MVKQczTotAqyaI3zuGVNj9I9kyZrtYPsL4PFEK78g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=AifkM7NZ; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=gSf5Ym1W; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="phqT9WP1";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="c5tgcVkS"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 659ClTIX2693928
-	for <linux-clk@vger.kernel.org>; Tue, 9 Jun 2026 15:32:58 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="AifkM7NZ";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="gSf5Ym1W"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 659Cmn2P2700911
+	for <linux-clk@vger.kernel.org>; Tue, 9 Jun 2026 15:33:00 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	42OvwCVR1sO2H7O8XUidUVQnaR3TpDPd+Mconx0OdVU=; b=phqT9WP19YZ3PBZG
-	Ry+l8ez+MNmRPCEHhtLLYAaQ4q6WYu+DJwpwBgefChLkYCgKPapBHKkIcoPjXaHh
-	ToGDIH+HPiLNQX1O7/uuI11JVkIr5kQEyUoSPmpuqJpBj18JhtzJOW39OQp1zDc8
-	7ek0QutbgrrvkRN/j/0RpcEAYOSvCz748ecdrKH15XjBTfGlDQyZ1fGDIaJmNCJu
-	D9szeagm6zcCBsTQUvt2lGNoRmSFvfhmmrYKabMnxb5jvL14ZaWBAglXRXe68QvA
-	Zg4VFjgFsjARaUi5kde2FtY81lQJgHzEUObxScY8qQvqg5PIlBzwCjeHGIh8HvzI
-	9Dtj7A==
-Received: from mail-ot1-f70.google.com (mail-ot1-f70.google.com [209.85.210.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4epg3v1sad-1
+	o1XQNwY2YBqOGM0jRhuo+EDi7V+lOXGtju1Q/2Fompg=; b=AifkM7NZ9iZ99pWd
+	ao9SnQgrrvukCnyKPeglzkfjpf/yxO9T7LG1qhxTrXhGrBa1ivhsF6q04bX0PuMP
+	dvrgW8FYt3GWBUgSXnMbsxqMLQ/JTOeR1tEN6t/cIA/6UQwUSqloVAOqL/ryYN5t
+	W6qZ/Vs5aUZjTboEDG3uHrInclObm1Vu2Dkb0vQyYvxm2Za0LETFPucTXkR2ePyf
+	1KJ8P3S92vxe05E1X1c0d6R9U/8c/rHwK89r/yOI3rSMzN/eioVm++QFcZNcUIsT
+	0CU76o/rtE6NKDJSxVTFbSobUky6qjc5mS6GO527v9n1AuXbZtG/YEfb1RHcz+D/
+	ujYEpQ==
+Received: from mail-ot1-f71.google.com (mail-ot1-f71.google.com [209.85.210.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4epeeat7pt-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Tue, 09 Jun 2026 15:32:58 +0000 (GMT)
-Received: by mail-ot1-f70.google.com with SMTP id 46e09a7af769-7e6ed99d4dbso4927806a34.0
-        for <linux-clk@vger.kernel.org>; Tue, 09 Jun 2026 08:32:57 -0700 (PDT)
+	for <linux-clk@vger.kernel.org>; Tue, 09 Jun 2026 15:32:59 +0000 (GMT)
+Received: by mail-ot1-f71.google.com with SMTP id 46e09a7af769-7e6d78299e9so11749651a34.0
+        for <linux-clk@vger.kernel.org>; Tue, 09 Jun 2026 08:32:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1781019177; x=1781623977; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1781019179; x=1781623979; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=42OvwCVR1sO2H7O8XUidUVQnaR3TpDPd+Mconx0OdVU=;
-        b=c5tgcVkSa+HfKlIBgXW+NLoFZBc4xRcuKlv8fSbi6+crEXKWJF4d/Ix+QDzJ4nxwmI
-         xEz8pUSR0Qof+A6C1oijgG/zKdj8W7Qt6iNsrZ0bc0r2k0P9JmO5xzWoBBipMvKn5dp8
-         EzCQO+CJKLOr0joTeElynfDSI95tFC6sTVs7ruTxLCrLIS81K9yz7Q2QNWRc+Gv9zfvX
-         Kxtguz+9jd67pWO8ig3Nd1zJNL2sevPPufie1hD0QxBvHiwLJQCylP1qHjX3N4OaivL6
-         2oXRuEkVeq5qCgYH04ffirNuKr8NRuI/QcWtnYpNUEghoPaYIeQ1KuNPt8L59zxT/F1M
-         HleA==
+        bh=o1XQNwY2YBqOGM0jRhuo+EDi7V+lOXGtju1Q/2Fompg=;
+        b=gSf5Ym1WFdK64pxZaMv8X60627EzkqQg69F8vXZH9cNEbZqzc+vlP/OCzSLxqIPRbR
+         P3jKJlUTA+22vNClkFt/ryiMGhrnW9NTjy7PlGbyzl8SSG5YX1QZyc4RNyOEMvWOHD/1
+         uHmP9V+eMleptU2Ta5nVafimg/ju851FLPsQ7UN1fGctu/abeUxbFzxXvtLyl+QFIGdE
+         XHoSj0Kn+SlgPGg8Eb81dwRv6GbDdHaKWgvzrxNBc66ATqN6ZBgqrPBi4+lIliRqwH+/
+         acN1kPgVCTk8gBC3ZSfj+sgMvvQ3jguPBjHLn7dYr2ySBpQRzahNd82slvLt41oBTPAi
+         fzbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781019177; x=1781623977;
+        d=1e100.net; s=20251104; t=1781019179; x=1781623979;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=42OvwCVR1sO2H7O8XUidUVQnaR3TpDPd+Mconx0OdVU=;
-        b=V/M/rc50QsyLp+PENluaRRO7/0Zk2tMMl1WEg7r6ZWhQMhyGghjEdjvyTAWWD8YYW4
-         jqmZLtOcNyfdj0chaTaaCYFgfPIaXI6RTQXJlt140zofb+dnuGMW1BAKDfZEmnhiB5B2
-         pwduoyODtnsZui0sRVoBD9aZwkOmfpXuLrAWqG3M/cdTnTUWSWEBi9ED+V8K8i3TgI9z
-         6JMk7Iw7SxKjE6AVXlSLbCs1Vl06Vi0RXyNPEmsL18ULDv6WBWT4N8MezQP/9eQupG+J
-         QvBFzSftk20D5/TujntI3OstBy5IyXNdK+CxAoK82L7JbrZDxzitrXlFM7ENpzuSj/EO
-         WNsA==
-X-Forwarded-Encrypted: i=1; AFNElJ8zd8/KWjuBygUSPcA9zpWog/ma9unDehc3ThksSNxYFXkK8Ik4oRLFaK+448UO598oQ5b9MzjD3x8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxxENMzoqWaNYpRBpXBF+b1J9I7VYmBosp23kE1ZIr+4djaeaz
-	I1SFMN4OhS9cgRU/l56+H/h9pNHp3ED3xBjnzW2KCY3J4gotWJOjDyvFGdNI2HnwSSRGhj4KPS7
-	zXk6m9yTAOGDv782tBCcz7Qp+JYhxPiXry173S0Ht9r6UmCzJfJbz9eiY8ZcN3TI=
-X-Gm-Gg: Acq92OFxmwQOYN9rgdYaQ8dVJWhiO/1aRCiiLcfLGCo0QgKUykZ70/DIMhgn9u4EO9M
-	aNLUIRlHa7RwoJifmzf1ouBFZhoYva8kLjMfOgVrpWDzVK1+FWDJuHeQNXIPIuvcvbQd4+s72ks
-	J9w/FC+HbKnJKL/SO9SgWYU/ROODTVcqKc1wPJIHmV9GiFXZ0wAjsQpsBrMKazHBH3T3EtQoY55
-	/cSjfF6B9saLkvPM8AbHi4/VdTQkfnTw8joXlVHEnBH7rJjab9QfSWkrmrpu7hCrY6NhV9F/orp
-	r75fH2m4j2X+cqlKrsjAXKbqskYUWQWcHu772oUVC/q0v8+eDSiNQ3UdqsN11FLgl5YOzO6NDuu
-	xilkKENoR1a0vUcD5fUd2LnMPvfRG920XqJRZS9wz1VJ6fBs9nSD0Mwjo
-X-Received: by 2002:a05:6830:4122:b0:7e4:230:96ca with SMTP id 46e09a7af769-7e70c7fe87bmr14981520a34.21.1781019177297;
-        Tue, 09 Jun 2026 08:32:57 -0700 (PDT)
-X-Received: by 2002:a05:6830:4122:b0:7e4:230:96ca with SMTP id 46e09a7af769-7e70c7fe87bmr14981455a34.21.1781019176804;
-        Tue, 09 Jun 2026 08:32:56 -0700 (PDT)
+        bh=o1XQNwY2YBqOGM0jRhuo+EDi7V+lOXGtju1Q/2Fompg=;
+        b=eBdQ2qsGv+q4sCp805alfahN6Ylx10EiWfkX1GPwO75RiMop+SRGIXtryMu/wyxtj3
+         pA9cQpy5WRnpxM1JVarjvu8c2tiGax0l0u7/MN0s/PIEJ34jpNFnCxqSg+AQlb/sKIZN
+         27vQMEHOXcwZzfxEDTVFYarvRXZrTKlxoC4HnMb8aOTLnDRW5mh+06RR8Xe521DxyAuo
+         pIMpHiSQmupKm89EKOkaEUhjA/WSSas5RWcmnDQDq86/hlixrxx5M7PVk8a4y8JvDY/W
+         EbMa5cbufD96fMXgBWit9wknB4Kz5BiSZtKgx0HEBXoSjCzBARQsYoDR9Q993mNpUki7
+         xdyQ==
+X-Forwarded-Encrypted: i=1; AFNElJ83E+7Gou/imMH7EBMeqpitcOb1+dBGMRDDutd9XO8dI6VJROLIBdEgJTufRp/rOYtYEKqPW8v1d9A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXDuZAbZkgahP/lSokBXKuNPJDrcyxjyGlWGMSYW1ySSWOIhaa
+	4ngAtbNaTh94l4heQW2zVQmuqf88PPmUmaqToVs0i0n/vA10W8nBXRQcmu8slvgH2sD9yelQeF8
+	AfuVfhQ3rpvWpWE8vG7eL1Fi/vAYymq/Q9/IaD3T6fkpsoQtb/gyXsd4Rf8yFFqc=
+X-Gm-Gg: Acq92OGyoq9ZdfbjIY+h17W6eSC6DdwgyojlXOx2mo2ZNYB0KIFT7ItwzXkz46ofOCD
+	We5kiTQ53Av/VoIHR1+RA99e0n9wtgtHHx0JafZWR1PdvTixPt4RVsHw4Vh41FIzx2lQsFfqhqu
+	vM1e7PGIv8ny18wvVP5h6yUaI/m2vo0+vIRKAySApKv02Ud6sxovKWI41G0bKRMnbJjmOYq1djN
+	olUNZw9DV5spta6irGUNQxKqZpzaF4+whwf7JQoU7tlI0n9srvp04p3gXWJaDC4j+Q/2WM5NPeS
+	tApAI0U+UXZ3Ja1eB6nWqpBc6E8ZzXlA1akKj7424Xwcx/pO2RTKVjWLK6lXn80KM5S9OPyuH4y
+	b6qEBDOnk3k1Qzx4eUjBRBFGLf6esBdnqabyWx74O/SQsZKunQblOoV4P
+X-Received: by 2002:a05:6830:d0e:b0:7e6:ee6d:cb1f with SMTP id 46e09a7af769-7e750a6177cmr2734358a34.0.1781019179089;
+        Tue, 09 Jun 2026 08:32:59 -0700 (PDT)
+X-Received: by 2002:a05:6830:d0e:b0:7e6:ee6d:cb1f with SMTP id 46e09a7af769-7e750a6177cmr2734319a34.0.1781019178707;
+        Tue, 09 Jun 2026 08:32:58 -0700 (PDT)
 Received: from [127.0.1.1] ([178.197.222.150])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4601f368e9fsm60938203f8f.37.2026.06.09.08.32.55
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4601f368e9fsm60938203f8f.37.2026.06.09.08.32.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jun 2026 08:32:55 -0700 (PDT)
+        Tue, 09 Jun 2026 08:32:57 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Date: Tue, 09 Jun 2026 17:32:39 +0200
-Subject: [PATCH v2 5/7] clk: qcom: Add defaults for desired arm64 drivers
+Date: Tue, 09 Jun 2026 17:32:40 +0200
+Subject: [PATCH v2 6/7] ARM/arm64: defconfig: Drop redundant Qualcomm clock
+ entries
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -89,7 +90,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260609-clk-qcom-defaults-v2-5-0c67c06dca11@oss.qualcomm.com>
+Message-Id: <20260609-clk-qcom-defaults-v2-6-0c67c06dca11@oss.qualcomm.com>
 References: <20260609-clk-qcom-defaults-v2-0-0c67c06dca11@oss.qualcomm.com>
 In-Reply-To: <20260609-clk-qcom-defaults-v2-0-0c67c06dca11@oss.qualcomm.com>
 To: Bjorn Andersson <andersson@kernel.org>,
@@ -100,364 +101,242 @@ Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=12135;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5559;
  i=krzysztof.kozlowski@oss.qualcomm.com; h=from:subject:message-id;
- bh=q59UObcAMY1V9mVGqT7Dy3nTkUBnxvxsdcJF9VMZOXM=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBqKDIZsX//lnNginh/112o7kzseEdW/GcurQm4o
- vfrZcHVZveJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaigyGQAKCRDBN2bmhouD
- 1/jsD/4lg8zhI7ncEqMz7tMOkQ4qJMeqjR2MrLcBt4fPCV3GNqpzfgsaIJcgpQflvPajLK+Qx8n
- azRRvLyF6CBvfbBHH7qll5XnUzjmu4eelU+ePxV4dJPErJPduO1WywVhvLKjnwZ+sDuqvnPVHIs
- 1BMmbVuhp6kAJKtuea6HW0dDbsbfmnuYbTTv0IHO2EoNJSqedRimNtnDI69cwupTdKz9BGOmf54
- sl+tjBCm/LXLkC1ftGRL+duf9XHxqfD7Aett9TFc8L+gCxNmtFMvVEFf4+25pptObmCNqYEIT/G
- pDtFWxlNEEZf7vNr084MHucctIxKFTZmKXYRKCSvN2EIOolnlbfFvWdYwJKJ5sXOmpBNY7cxoh+
- a6Ma4Ef4/Gev1Lysk8Ro84pG4CikBacS0aB/JqrEg+CakqmNt7FHPjCbzPd6xinC5WXk2fRZLFM
- XZXv6zcbr7+VSsYTV27j5oV436jaT/ywsOVS6+XGOECv6oCee1jP01fyGja0GuL9KmeVxoHIInn
- cb4FyEuC0AwNFS09MQUq2IpRtWsyQGhxXsY6rFdtSrDbdwXtnSUlRmmDp9MJtIRHh7KP7HyCeDh
- wMIG7u1wNM9FoNVdXdc7LBnXrbh83nAnV4ZzRHcSXTBUUocze0AVW9TwBm0meTkzg7S5Ba2ljgz
- dmccxhapvWWTVdQ==
+ bh=Uj6PFrl95EPjQd87MKegbK48MLKZBpNQFspDgHqgLnQ=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBqKDIaasrpps8plpO8eUL7uj+vrkyr5NJqiG5pd
+ Wg/6jbyMPGJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaigyGgAKCRDBN2bmhouD
+ 18GLD/9V5YMYTXnI7PGpkkBM6NstQ3L1GOhxbzbVXDOfXHuHH3wav1Y1Kdy8wDKpEdLFCRnCknw
+ nELlwEf96Mcxhf2IvZOXciUL8icfIsUmKuguqAzMSapwmRjCaQZAvYlSwkS+s48gAx0p3WqRswj
+ HVEdTat2LMH+SUVO3M89c2lHxG4zN9G1dXMx5Ri728nv27wN4LrOzj1owi5MDdQapyJXKZuvoTs
+ vTBhrM1YHQghuQsNAb4zcyXsnY50iVX/lvg0Q3QlDkUIC4PYfCNE+lm9TwvPTdamPRN2SYbDayW
+ we5DV3Bb+UbR+Is2YjvM/qH3GcPLdvC4mhNCdYpFFNnoqhTmg8O4gn2PIAbC/kSFpkhao4GFeDM
+ PCkET17DWu0Ch+ZwE2PBGmI0cFjnF6qx2BrHpgPZKFFMOAA+tkNK33Fv/bY/JVVrUfqq/OKnvgG
+ 6QEjC7XnhZeB86bc3fjQES6ldyh+G85zVQkQ9957D+BjyztH5YCCCnmra/rnfvYWaBa8rPQMUc0
+ 4yGWmtai2qK1ffy/W+DGEGx/gGec0bjQ0jpwzIg2KD/6po/ftgnkXkjtjSEdcQl56ezMpwFPKgm
+ T1S2uUhGQ6T1icUGlu5tTemKOK2bW4Gn8tMDIleOVzapi+4MaiOwdwWn5lNp1pR7uq6GuSPT1W/
+ XRPlJyuYR2TwoFQ==
 X-Developer-Key: i=krzysztof.kozlowski@oss.qualcomm.com; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-X-Authority-Analysis: v=2.4 cv=St6gLvO0 c=1 sm=1 tr=0 ts=6a28322a cx=c_pps
- a=7uPEO8VhqeOX8vTJ3z8K6Q==:117 a=jO6dYz2E5lbJ9Xj+xBc9tQ==:17
+X-Proofpoint-ORIG-GUID: NvyUCHo1IxeeFX0wfoRsElrcQPGV9WEa
+X-Authority-Analysis: v=2.4 cv=Iey3n2qa c=1 sm=1 tr=0 ts=6a28322b cx=c_pps
+ a=OI0sxtj7PyCX9F1bxD/puw==:117 a=jO6dYz2E5lbJ9Xj+xBc9tQ==:17
  a=IkcTkHD0fZMA:10 a=FelO9ux0wxsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=rJkE3RaqiGZ5pbrm-msn:22
- a=EUspDBNiAAAA:8 a=oRM-sv2Ew5iZelD02ewA:9 a=_dTl747PDKSlraET:21
- a=QEXdDO2ut3YA:10 a=EXS-LbY8YePsIyqnH6vw:22
-X-Proofpoint-ORIG-GUID: 8uNHbVr-mvQOJqO_TajYvzSI5Yk0Fe-_
-X-Proofpoint-GUID: 8uNHbVr-mvQOJqO_TajYvzSI5Yk0Fe-_
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjA5MDE0NyBTYWx0ZWRfX52T0UVivVkhN
- XLvES7ei1dJmIMa8a5k3WonpeonosCwRPhhbIsw2jRWfHznRUgO5TPA1QYHvMtNZ5hJ17GGbBEC
- D/+ptTL4sF19OMkJlh1CGOHHJzDBNrvuVLfRdUs2tN6vNw5VcQllHNnJ8iPj6cMFhu5seWoiP3h
- aJYqCH2xjQEIZzzTTXoKioNdeYblI23zIXDcUkTjhbVF96ocN8mgmoMDPZ67QHMrkCcjkJVBWtB
- odLNuGjPS3BR0yz3kaJTNOwrISYz+g5VglOgCogHU2W/4GNREeUVr9ilHyrLQuJZ73GwbLyJaZt
- 7UTINyisAHJ3iiS89N59dkOeGqxMJtkCHQTu4R2KWL+fL+pTjB5DVsBg4+IP/1CQiwDGcwIehLq
- ahFITxyx8O7CtELtGpYTLDy0OmQdTBOJrw8jl5AGBWmQzD/wMqmFD0ztvKq4EUcAc71+DqNEXog
- Fz0fN1MXEoR+gRC/WbA==
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_glEPmIy2e8OvE2BGh3C:22
+ a=EUspDBNiAAAA:8 a=yyKv-1BC-DQKXCkl3jQA:9 a=QEXdDO2ut3YA:10
+ a=Z1Yy7GAxqfX1iEi80vsk:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjA5MDE0NyBTYWx0ZWRfX3s60YjCZjz1Y
+ Ffe0u4D0yItU5/tImqlKtAi345KHAJICPaLIMRGSNH8EqUevhOzFRDETsyWakeXiMtR3wrVBNuI
+ lNwN5q1SJn/kH7hpo9muU/v6gg8n7+B18Q3aELhMQLqVh0ZyZmevdfWxMOwpgcIlyKyhltmGwLT
+ REPJCoi17fHQff+RxRv+BcgWJjAGU6IzVqLkbZTAzazyW4YcUGoE/T3vJPaGKjKFPKsp21QG7al
+ oqqMfYAllfDGoHx7IySZvDJafRoG7MqICbjad4BMrTr+B58Xymwp0vH8joAsQ9HqApwGbkrK3E/
+ ocKXUQS70XEtoTPIYXBXpAZuDYLsGSHykhGk7ZrA761NIFnOWbOEVg2+Y3gmjtnP1pegnOg9KzP
+ Yq+c7kFXjYttX4IQZmJ2p5zN3iKaP7+axIFafjb7tNU3ropq9KQ+pNX1phfAgJt3fd/6Zr/ne2Q
+ YH8gAv2U0Zi3o6pVO0Q==
+X-Proofpoint-GUID: NvyUCHo1IxeeFX0wfoRsElrcQPGV9WEa
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
  definitions=2026-06-09_03,2026-06-09_02,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 malwarescore=0 suspectscore=0 adultscore=0 lowpriorityscore=0
- clxscore=1015 spamscore=0 bulkscore=0 phishscore=0 priorityscore=1501
+ lowpriorityscore=0 spamscore=0 bulkscore=0 phishscore=0 clxscore=1015
+ priorityscore=1501 adultscore=0 suspectscore=0 impostorscore=0 malwarescore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.22.0-2605210000 definitions=main-2606090147
 
-Clock controller drivers are essential for booting up SoCs and are not
-really optional for a given platform.  Kernel should not ask users
-choice of drivers when that choice is obvious and known to the
-developers that answer should be 'yes' or 'module'.
-
-Enable drivers for upstreamed or being upstreamed SoCs, which are not
-yed enabled in defconfig: Glymur, Hawi, Nord, MSM8976, MSM8998 (GPU CC),
-SC7180, SC8180X, SC8280XP, SC7280, SDM660, QDU1000, SM4450, SM7150,
-SM8150, SM8450, SM6125, SM6375.  Note that main GCC clock controller
-drivers are usually already enabled for these.
+Drop all drivers from defconfig which have defaults in Kconfig.  Drop
+also MDM_LCC_9615 which is gone since commit bac4675a4d1b ("clk: qcom:
+drop lcc-mdm9615 in favour of lcc-msm8960").
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
 ---
 
+Depends on clock patches - this can wait a cycle.
+
 Changes in v2:
-1. Add defaults for: MSM_GCC_8976, MSM_GPUCC_8998, SDM_GCC_660,
-   SDM_MMCC_660, SDM_GPUCC_660, HAWI
-
-2. Drop the Konrad RB tag, considering above a significant change.
+1. New patch (split from previous)
 ---
- drivers/clk/qcom/Kconfig | 36 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+ arch/arm/configs/multi_v7_defconfig |   9 ---
+ arch/arm/configs/qcom_defconfig     |  14 -----
+ arch/arm64/configs/defconfig        | 112 ------------------------------------
+ 3 files changed, 135 deletions(-)
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index ed969553649c..9afd4d752f3a 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -73,6 +73,7 @@ config CLK_GLYMUR_GPUCC
- 	tristate "GLYMUR Graphics Clock Controller"
- 	depends on ARM64 || COMPILE_TEST
- 	select CLK_GLYMUR_GCC
-+	default m if ARCH_QCOM
- 	help
- 	  Support for the graphics clock controller on GLYMUR devices.
- 	  Say Y if you want to support graphics controller devices and
-@@ -91,6 +92,7 @@ config CLK_GLYMUR_VIDEOCC
- 	tristate "Glymur Video Clock Controller"
- 	depends on ARM64 || COMPILE_TEST
- 	select CLK_GLYMUR_GCC
-+	default m if ARCH_QCOM
- 	help
- 	  Support for the video clock controller on Glymur devices.
- 	  Say Y if you want to support video devices and functionality such as
-@@ -161,6 +163,7 @@ config CLK_NORD_GCC
- 	tristate "Nord Global Clock Controller"
- 	depends on ARM64 || COMPILE_TEST
- 	select QCOM_GDSC
-+	default ARCH_QCOM
- 	help
- 	  Support for the global clock controller on Nord devices.
- 	  Say Y if you want to use peripheral devices such as UART,
-@@ -328,6 +331,7 @@ config CLK_HAWI_GCC
- 	tristate "Hawi Global Clock Controller"
- 	depends on ARM64 || COMPILE_TEST
- 	select QCOM_GDSC
-+	default ARCH_QCOM
- 	help
- 	  Support for the global clock controller on Hawi devices.
- 	  Say Y if you want to use peripheral devices such as UART, SPI,
-@@ -336,6 +340,7 @@ config CLK_HAWI_GCC
- config CLK_HAWI_TCSRCC
- 	tristate "Hawi TCSR Clock Controller"
- 	depends on ARM64 || COMPILE_TEST
-+	default m if ARCH_QCOM
- 	help
- 	  Support for the TCSR clock controller on Hawi devices.
- 	  Say Y if you want to use peripheral devices such as PCIe, USB, UFS.
-@@ -661,6 +666,7 @@ config MSM_MMCC_8974
- config MSM_GCC_8976
- 	tristate "MSM8956/76 Global Clock Controller"
- 	select QCOM_GDSC
-+	default ARCH_QCOM if ARM64
- 	help
- 	  Support for the global clock controller on msm8956/76 devices.
- 	  Say Y if you want to use peripheral devices such as UART, SPI,
-@@ -716,6 +722,7 @@ config MSM_GPUCC_8998
- 	tristate "MSM8998 Graphics Clock Controller"
- 	select MSM_GCC_8998
- 	select QCOM_GDSC
-+	default m if ARCH_QCOM && ARM64
- 	help
- 	  Support for the graphics clock controller on MSM8998 devices.
- 	  Say Y if you want to support graphics controller devices and
-@@ -785,6 +792,7 @@ config QCS_GCC_404
- config CLK_NORD_TCSRCC
- 	tristate "Nord TCSR Clock Controller"
- 	depends on ARM64 || COMPILE_TEST
-+	default m if ARCH_QCOM
- 	help
- 	  Support for the TCSR clock controller on Nord devices.
- 	  Say Y if you want to use peripheral devices such as PCIe, USB, UFS etc.
-@@ -845,6 +853,7 @@ config SC_CAMCC_7180
- 	tristate "SC7180 Camera Clock Controller"
- 	depends on ARM64 || COMPILE_TEST
- 	select SC_GCC_7180
-+	default m if ARCH_QCOM
- 	help
- 	  Support for the camera clock controller on Qualcomm Technologies, Inc
- 	  SC7180 devices.
-@@ -866,6 +875,7 @@ config SC_CAMCC_8180X
- 	tristate "SC8180X Camera Clock Controller"
- 	depends on ARM64 || COMPILE_TEST
- 	select SC_GCC_8180X
-+	default m if ARCH_QCOM
- 	help
- 	  Support for the camera clock controller on Qualcomm Technologies, Inc
- 	  SC8180X devices.
-@@ -898,6 +908,7 @@ config SC_DISPCC_7180
- 	tristate "SC7180 Display Clock Controller"
- 	depends on ARM64 || COMPILE_TEST
- 	select SC_GCC_7180
-+	default m if ARCH_QCOM
- 	help
- 	  Support for the display clock controller on Qualcomm Technologies, Inc
- 	  SC7180 devices.
-@@ -1014,6 +1025,7 @@ config SC_GPUCC_7180
- 	tristate "SC7180 Graphics Clock Controller"
- 	depends on ARM64 || COMPILE_TEST
- 	select SC_GCC_7180
-+	default m if ARCH_QCOM
- 	help
- 	  Support for the graphics clock controller on SC7180 devices.
- 	  Say Y if you want to support graphics controller devices and
-@@ -1043,6 +1055,7 @@ config SC_LPASSCC_7280
- 	tristate "SC7280 Low Power Audio Subsystem (LPASS) Clock Controller"
- 	depends on ARM64 || COMPILE_TEST
- 	select SC_GCC_7280
-+	default m if ARCH_QCOM
- 	help
- 	  Support for the LPASS clock controller on SC7280 devices.
- 	  Say Y if you want to use the LPASS branch clocks of the LPASS clock
-@@ -1084,6 +1097,7 @@ config SC_VIDEOCC_7180
- 	tristate "SC7180 Video Clock Controller"
- 	depends on ARM64 || COMPILE_TEST
- 	select SC_GCC_7180
-+	default m if ARCH_QCOM
- 	help
- 	  Support for the video clock controller on SC7180 devices.
- 	  Say Y if you want to support video devices and functionality such as
-@@ -1112,6 +1126,7 @@ config SDM_GCC_660
- 	tristate "SDM660 Global Clock Controller"
- 	depends on ARM64 || COMPILE_TEST
- 	select QCOM_GDSC
-+	default m if ARCH_QCOM
- 	help
- 	  Support for the global clock controller on SDM660 devices.
- 	  Say Y if you want to use peripheral devices such as UART, SPI,
-@@ -1122,6 +1137,7 @@ config SDM_MMCC_660
- 	depends on ARM64 || COMPILE_TEST
- 	select SDM_GCC_660
- 	select QCOM_GDSC
-+	default m if ARCH_QCOM
- 	help
- 	  Support for the multimedia clock controller on SDM660 devices.
- 	  Say Y if you want to support multimedia devices such as display,
-@@ -1132,6 +1148,7 @@ config SDM_GPUCC_660
- 	depends on ARM64 || COMPILE_TEST
- 	select SDM_GCC_660
- 	select QCOM_GDSC
-+	default m if ARCH_QCOM
- 	help
- 	  Support for the graphics clock controller on SDM630/636/660 devices.
- 	  Say Y if you want to support graphics controller devices and
-@@ -1165,6 +1182,7 @@ config QDU_ECPRICC_1000
- 	tristate "QDU1000/QRU1000 ECPRI Clock Controller"
- 	depends on ARM64 || COMPILE_TEST
- 	select QDU_GCC_1000
-+	default m if ARCH_QCOM
- 	help
- 	  Support for the ECPRI clock controller on QDU1000 and
- 	  QRU1000 devices. Say Y if you want to support the ECPRI
-@@ -1254,6 +1272,7 @@ config SM_CAMCC_4450
- 	tristate "SM4450 Camera Clock Controller"
- 	depends on ARM64 || COMPILE_TEST
- 	select SM_GCC_4450
-+	default m if ARCH_QCOM
- 	help
- 	  Support for the camera clock controller on SM4450 devices.
- 	  Say Y if you want to support camera devices and camera functionality.
-@@ -1271,6 +1290,7 @@ config SM_CAMCC_7150
- 	tristate "SM7150 Camera Clock Controller"
- 	depends on ARM64 || COMPILE_TEST
- 	select SM_GCC_7150
-+	default m if ARCH_QCOM
- 	help
- 	  Support for the camera clock controller on SM7150 devices.
- 	  Say Y if you want to support camera devices and camera functionality.
-@@ -1288,6 +1308,7 @@ config SM_CAMCC_8150
- 	tristate "SM8150 Camera Clock Controller"
- 	depends on ARM64 || COMPILE_TEST
- 	select SM_GCC_8150
-+	default m if ARCH_QCOM
- 	help
- 	  Support for the camera clock controller on Qualcomm Technologies, Inc
- 	  SM8150 devices.
-@@ -1307,6 +1328,7 @@ config SM_CAMCC_8450
- 	tristate "SM8450 Camera Clock Controller"
- 	depends on ARM64 || COMPILE_TEST
- 	select SM_GCC_8450
-+	default m if ARCH_QCOM
- 	help
- 	  Support for the camera clock controller on SM8450 or SM8475 devices.
- 	  Say Y if you want to support camera devices and camera functionality.
-@@ -1344,6 +1366,7 @@ config SM_DISPCC_4450
- 	tristate "SM4450 Display Clock Controller"
- 	depends on ARM64 || COMPILE_TEST
- 	depends on SM_GCC_4450
-+	default m if ARCH_QCOM
- 	help
- 	  Support for the display clock controller on Qualcomm Technologies, Inc
- 	  SM4450 devices.
-@@ -1365,6 +1388,7 @@ config SM_DISPCC_6125
- 	tristate "SM6125 Display Clock Controller"
- 	depends on ARM64 || COMPILE_TEST
- 	depends on SM_GCC_6125
-+	default m if ARCH_QCOM
- 	help
- 	  Support for the display clock controller on Qualcomm Technologies, Inc
- 	  SM6125 devices.
-@@ -1375,6 +1399,7 @@ config SM_DISPCC_7150
- 	tristate "SM7150 Display Clock Controller"
- 	depends on ARM64 || COMPILE_TEST
- 	depends on SM_GCC_7150
-+	default m if ARCH_QCOM
- 	help
- 	  Support for the display clock controller on Qualcomm Technologies, Inc
- 	  SM7150 devices.
-@@ -1407,6 +1432,7 @@ config SM_DISPCC_6375
- 	tristate "SM6375 Display Clock Controller"
- 	depends on ARM64 || COMPILE_TEST
- 	depends on SM_GCC_6375
-+	default m if ARCH_QCOM
- 	help
- 	  Support for the display clock controller on Qualcomm Technologies, Inc
- 	  SM6375 devices.
-@@ -1482,6 +1508,7 @@ config SM_GCC_6125
- 	tristate "SM6125 Global Clock Controller"
- 	depends on ARM64 || COMPILE_TEST
- 	select QCOM_GDSC
-+	default ARCH_QCOM
- 	help
- 	  Support for the global clock controller on SM6125 devices.
- 	  Say Y if you want to use peripheral devices such as UART,
-@@ -1501,6 +1528,7 @@ config SM_GCC_6375
- 	tristate "SM6375 Global Clock Controller"
- 	depends on ARM64 || COMPILE_TEST
- 	select QCOM_GDSC
-+	default ARCH_QCOM
- 	help
- 	  Support for the global clock controller on SM6375 devices.
- 	  Say Y if you want to use peripheral devices such as UART,
-@@ -1510,6 +1538,7 @@ config SM_GCC_7150
- 	tristate "SM7150 Global Clock Controller"
- 	depends on ARM64 || COMPILE_TEST
- 	select QCOM_GDSC
-+	default ARCH_QCOM
- 	help
- 	  Support for the global clock controller on SM7150 devices.
- 	  Say Y if you want to use peripheral devices such as UART,
-@@ -1600,6 +1629,7 @@ config SM_GPUCC_4450
- 	tristate "SM4450 Graphics Clock Controller"
- 	depends on ARM64 || COMPILE_TEST
- 	select SM_GCC_4450
-+	default m if ARCH_QCOM
- 	help
- 	  Support for the graphics clock controller on SM4450 devices.
- 	  Say Y if you want to support graphics controller devices and
-@@ -1619,6 +1649,7 @@ config SM_GPUCC_6125
- 	tristate "SM6125 Graphics Clock Controller"
- 	select SM_GCC_6125
- 	depends on ARM64 || COMPILE_TEST
-+	default m if ARCH_QCOM
- 	help
- 	  Support for the graphics clock controller on SM6125 devices.
- 	  Say Y if you want to support graphics controller devices and
-@@ -1628,6 +1659,7 @@ config SM_GPUCC_6375
- 	tristate "SM6375 Graphics Clock Controller"
- 	select SM_GCC_6375
- 	depends on ARM64 || COMPILE_TEST
-+	default m if ARCH_QCOM
- 	help
- 	  Support for the graphics clock controller on SM6375 devices.
- 	  Say Y if you want to support graphics controller devices and
-@@ -1728,6 +1760,7 @@ config SM_LPASSCC_6115
- 	tristate "SM6115 Low Power Audio Subsystem (LPASS) Clock Controller"
- 	depends on ARM64 || COMPILE_TEST
- 	select SM_GCC_6115
-+	default m if ARCH_QCOM
- 	help
- 	  Support for the LPASS clock controller on SM6115 devices.
- 	  Say Y if you want to toggle LPASS-adjacent resets within
-@@ -1788,6 +1821,7 @@ config SM_VIDEOCC_7150
- 	depends on ARM64 || COMPILE_TEST
- 	select SM_GCC_7150
- 	select QCOM_GDSC
-+	default m if ARCH_QCOM
- 	help
- 	  Support for the video clock controller on SM7150 devices.
- 	  Say Y if you want to support video devices and functionality such as
-@@ -1810,6 +1844,7 @@ config SM_VIDEOCC_8150
- 	depends on ARM64 || COMPILE_TEST
- 	select SM_GCC_8150
- 	select QCOM_GDSC
-+	default m if ARCH_QCOM
- 	help
- 	  Support for the video clock controller on SM8150 devices.
- 	  Say Y if you want to support video devices and functionality such as
-@@ -1831,6 +1866,7 @@ config SM_VIDEOCC_8350
- 	depends on ARM64 || COMPILE_TEST
- 	depends on SM_GCC_8350 || SC_GCC_8280XP
- 	select QCOM_GDSC
-+	default m if ARCH_QCOM
- 	help
- 	  Support for the video clock controller on SM8350 or SC8280XP devices.
- 	  Say Y if you want to support video devices and functionality such as
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index 2891eeba9032..e075da05c7e0 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -1095,15 +1095,6 @@ CONFIG_COMMON_CLK_S2MPS11=m
+ CONFIG_CLK_TWL=m
+ CONFIG_CLK_RASPBERRYPI=y
+ CONFIG_COMMON_CLK_QCOM=y
+-CONFIG_QCOM_A53PLL=y
+-CONFIG_QCOM_CLK_APCS_MSM8916=y
+-CONFIG_QCOM_CLK_RPM=y
+-CONFIG_QCOM_CLK_SMD_RPM=y
+-CONFIG_APQ_MMCC_8084=y
+-CONFIG_MSM_GCC_8660=y
+-CONFIG_MSM_GCC_8916=y
+-CONFIG_MSM_MMCC_8960=y
+-CONFIG_MSM_MMCC_8974=y
+ CONFIG_HWSPINLOCK=y
+ CONFIG_HWSPINLOCK_OMAP=y
+ CONFIG_HWSPINLOCK_QCOM=y
+diff --git a/arch/arm/configs/qcom_defconfig b/arch/arm/configs/qcom_defconfig
+index 03309b89ea4c..5316126fb41e 100644
+--- a/arch/arm/configs/qcom_defconfig
++++ b/arch/arm/configs/qcom_defconfig
+@@ -205,20 +205,6 @@ CONFIG_DMADEVICES=y
+ CONFIG_QCOM_BAM_DMA=y
+ CONFIG_STAGING=y
+ CONFIG_COMMON_CLK_QCOM=y
+-CONFIG_QCOM_A7PLL=y
+-CONFIG_QCOM_CLK_APCS_SDX55=y
+-CONFIG_QCOM_CLK_RPM=y
+-CONFIG_QCOM_CLK_SMD_RPM=y
+-CONFIG_QCOM_CLK_RPMH=y
+-CONFIG_APQ_MMCC_8084=y
+-CONFIG_IPQ_GCC_4019=y
+-CONFIG_IPQ_LCC_806X=y
+-CONFIG_MSM_GCC_8660=y
+-CONFIG_MSM_LCC_8960=y
+-CONFIG_MDM_LCC_9615=y
+-CONFIG_MSM_MMCC_8960=y
+-CONFIG_MSM_MMCC_8974=y
+-CONFIG_SDX_GCC_55=y
+ CONFIG_HWSPINLOCK=y
+ CONFIG_HWSPINLOCK_QCOM=y
+ CONFIG_MAILBOX=y
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index cb753cc0f5a4..91c8e9435dd6 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -1458,126 +1458,14 @@ CONFIG_COMMON_CLK_MT8192_SCP_ADSP=y
+ CONFIG_COMMON_CLK_MT8192_VDECSYS=y
+ CONFIG_COMMON_CLK_MT8192_VENCSYS=y
+ CONFIG_COMMON_CLK_QCOM=y
+-CONFIG_CLK_ELIZA_DISPCC=m
+-CONFIG_CLK_ELIZA_GCC=y
+-CONFIG_CLK_ELIZA_TCSRCC=m
+-CONFIG_CLK_GLYMUR_DISPCC=m
+-CONFIG_CLK_GLYMUR_GCC=y
+-CONFIG_CLK_GLYMUR_TCSRCC=m
+-CONFIG_CLK_KAANAPALI_CAMCC=m
+-CONFIG_CLK_KAANAPALI_DISPCC=m
+-CONFIG_CLK_KAANAPALI_GCC=y
+-CONFIG_CLK_KAANAPALI_GPUCC=m
+-CONFIG_CLK_KAANAPALI_TCSRCC=m
+-CONFIG_CLK_KAANAPALI_VIDEOCC=m
+-CONFIG_CLK_X1E80100_CAMCC=m
+-CONFIG_CLK_X1E80100_DISPCC=m
+-CONFIG_CLK_X1E80100_GCC=y
+-CONFIG_CLK_X1E80100_GPUCC=m
+-CONFIG_CLK_X1E80100_TCSRCC=y
+-CONFIG_CLK_X1P42100_GPUCC=m
+-CONFIG_CLK_QCM2290_GPUCC=m
+-CONFIG_QCOM_A53PLL=y
+-CONFIG_QCOM_CLK_APCS_MSM8916=y
+-CONFIG_QCOM_CLK_APCC_MSM8996=y
+-CONFIG_QCOM_CLK_SMD_RPM=y
+-CONFIG_QCOM_CLK_RPMH=y
+-CONFIG_IPQ_APSS_6018=y
+-CONFIG_IPQ_CMN_PLL=m
+-CONFIG_IPQ_GCC_5018=y
+-CONFIG_IPQ_GCC_5210=y
+-CONFIG_IPQ_GCC_5332=y
+-CONFIG_IPQ_GCC_5424=y
+-CONFIG_IPQ_GCC_6018=y
+-CONFIG_IPQ_GCC_8074=y
+-CONFIG_IPQ_GCC_9574=y
+-CONFIG_IPQ_NSSCC_5424=m
+-CONFIG_IPQ_NSSCC_9574=m
+-CONFIG_MSM_GCC_8916=y
+-CONFIG_MSM_GCC_8953=y
+-CONFIG_MSM_MMCC_8994=m
+-CONFIG_MSM_GCC_8994=y
+-CONFIG_MSM_GCC_8996=y
+-CONFIG_MSM_MMCC_8996=m
+-CONFIG_MSM_GCC_8998=y
+-CONFIG_MSM_MMCC_8998=m
+-CONFIG_QCM_GCC_2290=y
+-CONFIG_QCM_DISPCC_2290=m
+-CONFIG_QCS_DISPCC_615=m
+-CONFIG_QCS_CAMCC_615=m
+-CONFIG_QCS_GCC_404=y
+-CONFIG_SA_CAMCC_8775P=m
+-CONFIG_QCS_GCC_8300=y
+-CONFIG_QCS_GCC_615=y
+-CONFIG_QCS_GPUCC_615=m
+-CONFIG_QCS_VIDEOCC_615=m
+-CONFIG_SC_CAMCC_7280=m
+-CONFIG_SC_CAMCC_8280XP=m
+-CONFIG_SA_DISPCC_8775P=m
+-CONFIG_SC_DISPCC_7280=m
+-CONFIG_SC_DISPCC_8280XP=m
+-CONFIG_SA_GCC_8775P=y
+-CONFIG_SA_GPUCC_8775P=m
+-CONFIG_SC_GCC_7180=y
+-CONFIG_SC_GCC_7280=y
+-CONFIG_SC_GCC_8180X=y
+-CONFIG_SC_GCC_8280XP=y
+-CONFIG_SC_GPUCC_7280=m
+-CONFIG_SC_GPUCC_8280XP=m
+-CONFIG_SC_LPASSCC_8280XP=m
+-CONFIG_SC_LPASS_CORECC_7280=m
+-CONFIG_SC_VIDEOCC_7280=m
+-CONFIG_SDM_CAMCC_845=m
+-CONFIG_QDU_GCC_1000=y
+ CONFIG_SDM_GPUCC_845=y
+ CONFIG_SDM_VIDEOCC_845=y
+ CONFIG_SDM_DISPCC_845=y
+-CONFIG_SDM_LPASSCC_845=m
+-CONFIG_SDX_GCC_75=y
+-CONFIG_SM_CAMCC_6350=m
+-CONFIG_SM_CAMCC_MILOS=m
+-CONFIG_SM_CAMCC_8250=m
+-CONFIG_SM_CAMCC_8550=m
+-CONFIG_SM_CAMCC_8650=m
+-CONFIG_SM_CAMCC_8750=m
+-CONFIG_SM_DISPCC_6115=m
+ CONFIG_SM_DISPCC_8250=y
+-CONFIG_SM_DISPCC_6350=m
+-CONFIG_SM_DISPCC_MILOS=m
+-CONFIG_SM_DISPCC_8450=m
+-CONFIG_SM_DISPCC_8550=m
+-CONFIG_SM_DISPCC_8750=m
+-CONFIG_SM_GCC_4450=y
+-CONFIG_SM_GCC_6115=y
+-CONFIG_SM_GCC_6350=y
+-CONFIG_SM_GCC_MILOS=y
+-CONFIG_SM_GCC_8350=y
+-CONFIG_SM_GCC_8450=y
+-CONFIG_SM_GCC_8550=y
+-CONFIG_SM_GCC_8650=y
+-CONFIG_SM_GCC_8750=y
+-CONFIG_SM_GPUCC_6115=m
+-CONFIG_SM_GPUCC_6350=m
+-CONFIG_SM_GPUCC_MILOS=m
+ CONFIG_SM_GPUCC_8150=y
+ CONFIG_SM_GPUCC_8250=y
+-CONFIG_SM_GPUCC_8350=m
+-CONFIG_SM_GPUCC_8450=m
+-CONFIG_SM_GPUCC_8550=m
+-CONFIG_SM_GPUCC_8650=m
+-CONFIG_SM_GPUCC_8750=m
+-CONFIG_SM_TCSRCC_8550=y
+-CONFIG_SM_TCSRCC_8650=y
+-CONFIG_SM_TCSRCC_8750=m
+-CONFIG_SA_VIDEOCC_8775P=m
+-CONFIG_SM_VIDEOCC_6350=m
+-CONFIG_SM_VIDEOCC_MILOS=m
+ CONFIG_SM_VIDEOCC_8250=y
+-CONFIG_SM_VIDEOCC_8550=m
+-CONFIG_SM_VIDEOCC_8750=m
+ CONFIG_QCOM_HFPLL=y
+-CONFIG_CLK_GFM_LPASS_SM8250=m
+-CONFIG_SM_VIDEOCC_8450=m
+ CONFIG_CLK_RCAR_USB2_CLOCK_SEL=y
+ CONFIG_CLK_RENESAS_VBATTB=m
+ CONFIG_EXYNOS_ACPM_CLK=m
 
 -- 
 2.53.0
