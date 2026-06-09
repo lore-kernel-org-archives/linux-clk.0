@@ -1,87 +1,87 @@
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A3AB47F2D4
-	for <linux-clk@vger.kernel.org>; Tue,  9 Jun 2026 15:03:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE06447D92E
+	for <linux-clk@vger.kernel.org>; Tue,  9 Jun 2026 15:03:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781017406; cv=none; b=r1RTiYFC4MZ9Q7QoZI/Yrqd1fRcZEeSSbqI7U3qUDUZNRaJvV68uXhxoivljpTgm3RD8URxYfkD2tWDakBUsJjX090HJYKcrwPkfUJabTUoZCHG5TVJM7GGTbd13uGavwCZ8pwsQ3G1MQ8rRcRzDPqnwFUUXdQBzxTpYM9CPGWg=
+	t=1781017413; cv=none; b=ALDkKWdJmFC42OzfjlENW6GeFa37RXHf/RUK0TdZKytqPjqp0jWJ5AfFeQEfQ5c8S4WYy577jT7kMJ/1nkeY4ozrTnVUPTOnuDckX3PXzyHI89CQbY40amawTsmLYtM3bb1rB4H9W7gj7qPOhAlbFQEYklqMkvOKnfgmmjQvwrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781017406; c=relaxed/simple;
-	bh=X7A8BvifHg9AJtoStT7CZzf1oH5NsdlyLLNOS9sNvUo=;
+	s=arc-20240116; t=1781017413; c=relaxed/simple;
+	bh=rlFCWQcanslrA/o0YmzQE+0Yp6rS1h1RG1O0pid+VLg=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=k2e6nu0ODAbEEm6E/hVlSXohEdqY3LfB1LLIAxk60Dc9x8tGJ0mzzA77iZTCANP6icSvu2j0oENdloYoPXZCUyjrcasJNw7VkZETDDN2dAAqI9DmT30ajAkgyBwwFy9qmxpPKebLNn9wrgNsOMF96m5xItuc6pm2y84zwNbs2l0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=P1k7XNYv; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=DwKTQya8; arc=none smtp.client-ip=205.220.180.131
+	 In-Reply-To:To:Cc; b=QWkZ7pxOE7AXEeGvVfcnB9Oecpo1r69YrjkBEe79IcPgbAzUjsuvCiu1+IG2IOtWxqdwqx6Rw9KjzPFGaPWvxJJXsIVDFWxr+bYIvtoejFBVL84/0rXiJToLos3UYij5T1SDVVnBo4jI6e32XsegrrUXpR+Qt2qtELpeGTb/ijg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=eiDR65Yx; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=hWBXVRu1; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="P1k7XNYv";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="DwKTQya8"
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 659ClaAX2706270
-	for <linux-clk@vger.kernel.org>; Tue, 9 Jun 2026 15:03:24 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="eiDR65Yx";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="hWBXVRu1"
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 659CnImj2668349
+	for <linux-clk@vger.kernel.org>; Tue, 9 Jun 2026 15:03:30 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Lu5u9GFsbziq+/TkOaetbPmiQkrUsx3PaJxt/gHkQ94=; b=P1k7XNYvWkjAlAtm
-	n4ayrXTq4wktwI9mgcGcvab+oAlzTpu82qdlvu+oqB2rbm5fKbOKUJ96ylfkKjbM
-	ChUEQHmQCb5NNKixFLdOKUBiFRAyQ2zH9NT+m2J3lyfxMAmIFEAi61+XylEodkzu
-	sz1pSHctu9SQcT0eJoZljjhFYh1VrQk3zWbC1JKWoA2qjE8A5Eau8oGsRP7gdEXR
-	OalDIBkqZo5lfyDdjBh0wfyaRMtYiMJ6sg8oiH4OUYlWBj37H3OaBB60fGYmD7xe
-	+XohJakXa6CRYlrDUMjPOdnQkZZKSlA0b1kEbAeUON/AIAv+zEyQiZuNE1UT5jcP
-	C+hzCw==
+	I11RGicB5B0uqTAOQxVSQKzmIY09TbJDV2DLa5aUlkc=; b=eiDR65YxSjDbc/mt
+	wAxGBmFSFzjnz/l24tCEJGjUPHfB96VL0c4kwBnRbUTzkbeBupsAFMbr9DhceA4e
+	wCVcNCuK1EHt4phb4+R7mCP9LO2CniMNjRVJh07A9hlFRjJLTxtvyFWZq8nhg0r4
+	gCT7mJtg2wrkYq0dUweow+oB9teDA1j15dluJtfjOE1ImHGS5tbSKsboJDXxTPwC
+	bu4ehnUTD9MlAZzUayTbJ6NwWC7vu6Cl1wfuKCip41ncLxMQVFE3HQuqrNZTBwDg
+	8oqkIxKUn7DV1rqtIaSiiMyppBDOdAHxJS6Fs6v5zCKptEa86oKGAErOr9G4xFEq
+	ZeqeOw==
 Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4epfdt1u9x-1
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4epe25t669-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Tue, 09 Jun 2026 15:03:24 +0000 (GMT)
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-84245e2bb00so5112809b3a.1
-        for <linux-clk@vger.kernel.org>; Tue, 09 Jun 2026 08:03:24 -0700 (PDT)
+	for <linux-clk@vger.kernel.org>; Tue, 09 Jun 2026 15:03:30 +0000 (GMT)
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-842b0dd8107so3156974b3a.0
+        for <linux-clk@vger.kernel.org>; Tue, 09 Jun 2026 08:03:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1781017403; x=1781622203; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1781017410; x=1781622210; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Lu5u9GFsbziq+/TkOaetbPmiQkrUsx3PaJxt/gHkQ94=;
-        b=DwKTQya8ozhVOnLyuEP9bH2FI0SMVMyD90qGtL64F9BYPE8m+WULsK9HAGG0t/jruN
-         IUd4bEx62xh+SvnCjd05Bs39VkAwGOeB+493qGkWI1T7dVueZif1smCHVN8EUgk1IIsq
-         Iou4pElpkcY5VvcXXUMmKiHQMBF1zTd7KROrnYlZqcsSIEJTMVp6buEkkGZNCuSx1mjJ
-         mDtBAaNNkyOwT0tZ7yO10JYHp0U7quWARlPv4WrR5xeUI5HMgm8kyObO9Ks2CbKq9jZe
-         4txWNDbO6DJPFXMgRDQ/cAjOVQUt5hXYPxqXjcUfkcQRpJ6+4rdJvpEuae8ImuFUm/sT
-         2V9g==
+        bh=I11RGicB5B0uqTAOQxVSQKzmIY09TbJDV2DLa5aUlkc=;
+        b=hWBXVRu1X3XMEc5fRvDgN/8oMPtzbPsAcL4DhfaZMcioZ8yJroyv6TqxMVXNZzp+y5
+         OkvpVRd8FJf0Jyg2yu+Vha4XDqUh3J+4ufFfrY9fMcF+9ZhDOHsTshUKkG7ccJv3b11N
+         QXupRHVlh4YB9rIx2jg74+HK7jtlqiHANvvwK0CnjuYbNlmOok4Er7WmXEFXBKivBUQw
+         dJl7aoa5Trj3Q2lltmtLWk4jY32SP8Eh5r0mIH6a4XkgRTx3nurfOow8DaujusFdp4BG
+         5rEP8fAGsJwzZxB6Wj9AKtnoJ+1aa2RvEpEsK2P65pMM1t4Ld6DAkCQA9TpZuFSv1H6B
+         P6FQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781017403; x=1781622203;
+        d=1e100.net; s=20251104; t=1781017410; x=1781622210;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=Lu5u9GFsbziq+/TkOaetbPmiQkrUsx3PaJxt/gHkQ94=;
-        b=QKBjGNnqnW+SruO/gXvAyj2bHBaWuG00R6Idou+KH2XFuI0wkNVcpe7Hj18SYHiWOI
-         SGKujToSM5rVHC9lV7t8iZjTJZ+M1zkpsli8iTSgiTnW7jWHj/5/9mjS/YiGNtQvz6k+
-         8tiMn5N21I0F+BBN6nsq6JLj29KEuA/YTKFTlRZguJGTBchGPQrwUMfYGq5lI5/klYqh
-         t22yoqrG8Gvf6RyNhTvbeT9OF2bkyRfz+e9Y0uiZ2LkE6Qg/YgWQxk/pjdyIjhEzTy5y
-         XN5bPXOGrqozD1aDpPkgb7SK2+Hs6sqd/WotpUqPZtoW6lxC4S4VTl2ForN24hozJfQs
-         soWg==
-X-Forwarded-Encrypted: i=1; AFNElJ+3PGnXo0+5RS5zbYkldymlAp6pOjO3c402N2RoQaoQEMlBTdfdiLChF2kK5cYtUUeZPPRsG42EM0Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeNQHpFo9HL7JXmKzPgzvaBtkIBuZcUA8vqMX2OMmfCMSwb9Vu
-	a94Mu3a9WoHCn1C03FhXANOMgomwFqiDgWAnY6UyI9kvwobDa83cv7Qwsii6NWDHIVoUN99V18w
-	e02roj0cHKlr4RROrRlJyayY6Jt5Sz++T6JAPETZ3bqRQ4dXrB2RJznXgHrbgjyk=
-X-Gm-Gg: Acq92OHc7QBLH+Qjw3O+d98/Wby3dVNSN1lm+duJ04nv0ADM4WYE5PCWOuhAOe0Yof3
-	UBTsZni9QemLlGeEy0/8b1S1+j0Qag3Wl2cDm5SFIt7pbwYOKb5vKoLqXv5Xs4B/kffz1dbXsMw
-	3BXuzoN6ZIm10gINzi6tOH0qO+Pc0JS+NXsjjrPr1VoLbET3PAuk7nmBPICauiRdyb0oLiNDR1H
-	YbAgAGlvtHpJyyh8FMwnBTpNaIY7UP0m88l2780FV5MIW/tX3DNw0dS9+7VibIDXt49dlx6DxRl
-	GCZV7ZdQw+7mMlRculIEICAS5wfXVnJqs+Xgz5069v9w/aH19Rypsu+Ceo4KxSAdWzKuKr0bsoX
-	bTgq9W8hlDiTszu07h3au560k6rys5vwFfPn7FYFfxlWVzgtyyo9WHiTF
-X-Received: by 2002:a05:6a00:4216:b0:835:41f3:f440 with SMTP id d2e1a72fcca58-842b0e5d0ecmr22209073b3a.14.1781017402850;
-        Tue, 09 Jun 2026 08:03:22 -0700 (PDT)
-X-Received: by 2002:a05:6a00:4216:b0:835:41f3:f440 with SMTP id d2e1a72fcca58-842b0e5d0ecmr22208978b3a.14.1781017402222;
-        Tue, 09 Jun 2026 08:03:22 -0700 (PDT)
+        bh=I11RGicB5B0uqTAOQxVSQKzmIY09TbJDV2DLa5aUlkc=;
+        b=POcoEjarfodYZ7fDjo+rHThjFuCUOG3V9xTqsdj0NDrbS0wzG5MedwDyJVlw/474YC
+         NNXorMOHk2GtxkA1R65Pwicbs8FqTKvBQqXrpHF8kyTj67veSeg7aUZMVSwh5mqG1BPo
+         YSJs7geMhlBalyPfbhqGwKvcIlqk0Ag/6Vs616gLkQLPJlCUjSaMeZbX4gX8ZmZXuWwm
+         cU87qdXVSjCNAllXhqqJIn8Qzi2Z9RLx9n1IKqz1lFO2ryPhNhGD0OQ7G8uqvFuTjezs
+         rItWwalnPyc48Pa2N1KQpA6yqqkO4uqr0cnVkQM/suWZuYoIJbEyrNUVklTnw3ufAQBj
+         5kBw==
+X-Forwarded-Encrypted: i=1; AFNElJ9C6dS6v8VW/ZuzncqvVoEnC4AQoWKBkVx1rl5oEqoNHThVSTvvVBuaE1bCyU7lTSfbWg1Wi9IesAE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxs0SD2O4vOcietVGdABbjbCSUUThiYr8XtpfR5Ga5uFKFsHXrZ
+	jGXaHwQPc4qwbPmU18PWkv5DjcvpfKHxagOPF/R9m1wDqfFL3acvx0OiR2IwwcoeBqEC2Kd2GoH
+	uxFPbbYp/CnWNLufzauORCBmQostjWKmX21Y8e20QfJ0cTFV3ufLP+C/BQO3uazA=
+X-Gm-Gg: Acq92OHkFkYyLf3aYB5hwEc8LPOgHQqVhBq7OKoKjvxBFURVIgTmMl/jPxaUbJzOSBh
+	H7sX5JD0tPHLipnKeu6H4Qc9TqeRN4WY4pA4HATEdv3usVWZ4kU7kdLB521VBk3DynxoNfiRwIP
+	JQK89VUfddcIEzCsaY6A0qL87puvs1ATpRVBryMaBggXAdb2gBFjgrcnBD+wlsN9Pm11FyfKKqY
+	esYYRTj8hd7kArfLo+w/vY1wbuNL0vr4mDLfp185Kv/goqmJPLM+GwfkoWh3d/nnvzQxAkDLRaV
+	bnI+HCiNcxjPEYCn/HP7eQyRh08ac87l5tWkQ27mldq8sBEMLxWQ89SLDTnxWpHexwNLabT5DC9
+	8eQwGKb17EB0n8pVH2X+UG196HHODqXWnMmRouVUbNtT88DTQsv28qtQm
+X-Received: by 2002:a05:6a00:b807:b0:82c:e9cc:f61d with SMTP id d2e1a72fcca58-842b0e1cee2mr20960786b3a.9.1781017409432;
+        Tue, 09 Jun 2026 08:03:29 -0700 (PDT)
+X-Received: by 2002:a05:6a00:b807:b0:82c:e9cc:f61d with SMTP id d2e1a72fcca58-842b0e1cee2mr20960686b3a.9.1781017408671;
+        Tue, 09 Jun 2026 08:03:28 -0700 (PDT)
 Received: from hu-tdas-hyd.qualcomm.com ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-842828d6bd1sm26987659b3a.44.2026.06.09.08.03.16
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-842828d6bd1sm26987659b3a.44.2026.06.09.08.03.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jun 2026 08:03:21 -0700 (PDT)
+        Tue, 09 Jun 2026 08:03:28 -0700 (PDT)
 From: Taniya Das <taniya.das@oss.qualcomm.com>
-Date: Tue, 09 Jun 2026 20:32:53 +0530
-Subject: [PATCH v6 2/7] dt-bindings: clock: qcom: document the Eliza GPU
- Clock Controller
+Date: Tue, 09 Jun 2026 20:32:54 +0530
+Subject: [PATCH v6 3/7] dt-bindings: clock: qcom: Add support for CAMCC for
+ Eliza
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -90,7 +90,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260609-b4-eliza_mm_cc_v6-v6-2-17df09e5940c@oss.qualcomm.com>
+Message-Id: <20260609-b4-eliza_mm_cc_v6-v6-3-17df09e5940c@oss.qualcomm.com>
 References: <20260609-b4-eliza_mm_cc_v6-v6-0-17df09e5940c@oss.qualcomm.com>
 In-Reply-To: <20260609-b4-eliza_mm_cc_v6-v6-0-17df09e5940c@oss.qualcomm.com>
 To: Bjorn Andersson <andersson@kernel.org>,
@@ -113,123 +113,279 @@ Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
         Taniya Das <taniya.das@oss.qualcomm.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 X-Mailer: b4 0.15-dev-aa3f6
-X-Proofpoint-ORIG-GUID: _VfpLMVqZf6m8KBIxs0lqFL3Hptsy3W5
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjA5MDE0MyBTYWx0ZWRfX/aJSlK2sRudD
- HyCYRB9HFl49ildVXa6YOtmaF0BamuBxMC00UO0f9gWcKrpdkXmVBPJO8OqFoF4N13zYG1MSm9q
- SW9YQt64g41rsyAz84j2N20NhXkCHPWq9HT9i/ruFZn1NVNyAz4XZ8v4QvjTKZhFczYExfAfVnm
- EDQjUV6gkFWSJ6tQYkNqCpd9whkLaFzDe5xz+hQzdkLK3LiO2NTqDWRhNL+3NZN9UDvnEjzHlez
- tNmSDeE0Gu4AcFt8z3DH84ysIv9DSwWfFCBHm9My4k2NlY1MdAxtoZe9Xrbax0LZKJ7q0C420tW
- ix8ffNNrGIqwhXJtPWiuz682OuimOXxrk/4RuoQzXRNQOVxNEo1+f6Ty3DDpRJn+vKiF98ng2sN
- QMMrcx6OmRbUmXX/HwXUShJ3UDQAqtHQ3heaYQsqtvCplH96UY4e6tDGAh0VMVWFc13kKOm8dGC
- 0gbuZr2RtCSvZHd6yIw==
-X-Proofpoint-GUID: _VfpLMVqZf6m8KBIxs0lqFL3Hptsy3W5
-X-Authority-Analysis: v=2.4 cv=doTrzVg4 c=1 sm=1 tr=0 ts=6a282b3c cx=c_pps
+X-Proofpoint-ORIG-GUID: q1X5PZ8mNOg_xQ2UGznpa58-wgYedBEa
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjA5MDE0MyBTYWx0ZWRfX1pJCCofgtJps
+ tkOMDWP3gzsI0VfGGeEWF5J60Q3SZ1Fhw0Tu02RRVRTpHoWGZScu1KYorcHmLDspeu/1J81rNrU
+ hApI3kI4o8pl1dqFLQWqHZ/StV4zm9RF/FavSjKisZhhnpYySKWT5PkQzTSjTtRfzUGQYS3W/lv
+ U5fnyKBCAr2wc0kc4/4WxKOC/GEbp6YMrpYDI4XAsOGHBcBWz0mT5lNW9SCdOU5bJWBI8P1rEDc
+ LjLn0BJKdJCYLw+nyJixOEWYrv8nYIKIypSrYd/YsKXQJNS8Bs32xZ2mrM7GG2mINZ/eRLm3goQ
+ iLU6rdxFan7L1u4UhgLmCy8ilulzlr0OoJ9nfTeqryhWTVO4ai4CNfb5zMQBbSxwe1VhhXiu9V5
+ zaqVqSO17Klow4Gl8LBbODiyK4zGPjDETsCCdRIM/Cb7qJY9PW0pNBFZ3wiCoZ+bZdX7rtmVCfo
+ yZIHSJW0o96mUJM9Snw==
+X-Proofpoint-GUID: q1X5PZ8mNOg_xQ2UGznpa58-wgYedBEa
+X-Authority-Analysis: v=2.4 cv=LoqiDHdc c=1 sm=1 tr=0 ts=6a282b42 cx=c_pps
  a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
  a=IkcTkHD0fZMA:10 a=FelO9ux0wxsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=gowsoOTTUOVcmtlkKump:22
- a=EUspDBNiAAAA:8 a=eqSiwPykCNIpSPSkj8oA:9 a=QEXdDO2ut3YA:10
- a=OpyuDcXvxspvyRM73sMx:22
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=3WHJM1ZQz_JShphwDgj5:22
+ a=EUspDBNiAAAA:8 a=6H0WHjuAAAAA:8 a=E4wYszUKohIvJGSh0HwA:9 a=QEXdDO2ut3YA:10
+ a=OpyuDcXvxspvyRM73sMx:22 a=Soq9LBFxuPC4vsCAQt-j:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
  definitions=2026-06-09_03,2026-06-09_02,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 spamscore=0 bulkscore=0 lowpriorityscore=0 priorityscore=1501
- impostorscore=0 phishscore=0 clxscore=1015 malwarescore=0 adultscore=0
+ lowpriorityscore=0 spamscore=0 bulkscore=0 phishscore=0 impostorscore=0
+ adultscore=0 suspectscore=0 malwarescore=0 clxscore=1015 priorityscore=1501
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.22.0-2605210000 definitions=main-2606090143
 
-Add bindings documentation for the Eliza Graphics Clock Controller.
+Eliza camera clock controller is on CX and MX rails similar to Milos.
+Add compatible string for Eliza camera and camera BIST clock
+controller to the existing Milos camcc binding and add the
+dt-bindings header for Eliza.
+
+The camera clock controller provides power domains, so 'power-domain-cells'
+must be present in the device tree node. Add this to required properties
+to enforce it in the binding schema.
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
 ---
- .../bindings/clock/qcom,sm8450-gpucc.yaml          |  3 ++
- include/dt-bindings/clock/qcom,eliza-gpucc.h       | 51 ++++++++++++++++++++++
- 2 files changed, 54 insertions(+)
+ .../bindings/clock/qcom,milos-camcc.yaml           |  12 +-
+ .../dt-bindings/clock/qcom,eliza-cambistmclkcc.h   |  32 +++++
+ include/dt-bindings/clock/qcom,eliza-camcc.h       | 151 +++++++++++++++++++++
+ 3 files changed, 193 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-gpucc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-gpucc.yaml
-index fdbdf605ee695637512ce4f98c9b6fcfacb9154f..734bab762a30800bda94c726f48013679f9ec542 100644
---- a/Documentation/devicetree/bindings/clock/qcom,sm8450-gpucc.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-gpucc.yaml
-@@ -15,6 +15,7 @@ description: |
-   domains on Qualcomm SoCs.
+diff --git a/Documentation/devicetree/bindings/clock/qcom,milos-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,milos-camcc.yaml
+index f63149ecf3e1b98e60dba27093737ec84b66a899..57c596314ffca7902d21a3718d70219aa65ee01e 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,milos-camcc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,milos-camcc.yaml
+@@ -8,16 +8,23 @@ title: Qualcomm Camera Clock & Reset Controller on Milos
  
-   See also:
-+    include/dt-bindings/clock/qcom,eliza-gpucc.h
-     include/dt-bindings/clock/qcom,glymur-gpucc.h
-     include/dt-bindings/clock/qcom,kaanapali-gpucc.h
-     include/dt-bindings/clock/qcom,milos-gpucc.h
-@@ -30,6 +31,7 @@ description: |
+ maintainers:
+   - Luca Weiss <luca.weiss@fairphone.com>
++  - Taniya Das <taniya.das@oss.qualcomm.com>
+ 
+ description: |
+   Qualcomm camera clock control module provides the clocks, resets and power
+   domains on Milos.
+ 
+-  See also: include/dt-bindings/clock/qcom,milos-camcc.h
++  See also:
++    include/dt-bindings/clock/qcom,eliza-cambistmclkcc.h
++    include/dt-bindings/clock/qcom,eliza-camcc.h
++    include/dt-bindings/clock/qcom,milos-camcc.h
+ 
  properties:
    compatible:
-     enum:
-+      - qcom,eliza-gpucc
-       - qcom,glymur-gpucc
-       - qcom,kaanapali-gpucc
-       - qcom,milos-gpucc
-@@ -71,6 +73,7 @@ allOf:
-         compatible:
-           contains:
-             enum:
-+              - qcom,eliza-gpucc
-               - qcom,sm8750-gpucc
-     then:
-       required:
-diff --git a/include/dt-bindings/clock/qcom,eliza-gpucc.h b/include/dt-bindings/clock/qcom,eliza-gpucc.h
+-    const: qcom,milos-camcc
++    enum:
++      - qcom,eliza-cambistmclkcc
++      - qcom,eliza-camcc
++      - qcom,milos-camcc
+ 
+   clocks:
+     items:
+@@ -28,6 +35,7 @@ properties:
+ required:
+   - compatible
+   - clocks
++  - '#power-domain-cells'
+ 
+ allOf:
+   - $ref: qcom,gcc.yaml#
+diff --git a/include/dt-bindings/clock/qcom,eliza-cambistmclkcc.h b/include/dt-bindings/clock/qcom,eliza-cambistmclkcc.h
 new file mode 100644
-index 0000000000000000000000000000000000000000..c3d9b7827325c5b8db696d1d95b4876e17c01c83
+index 0000000000000000000000000000000000000000..7b8b285f18d2714393885149fc97c715b3fbb042
 --- /dev/null
-+++ b/include/dt-bindings/clock/qcom,eliza-gpucc.h
-@@ -0,0 +1,51 @@
++++ b/include/dt-bindings/clock/qcom,eliza-cambistmclkcc.h
+@@ -0,0 +1,32 @@
 +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
 +/*
 + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
 + */
 +
-+#ifndef _DT_BINDINGS_CLK_QCOM_GPU_CC_ELIZA_H
-+#define _DT_BINDINGS_CLK_QCOM_GPU_CC_ELIZA_H
++#ifndef _DT_BINDINGS_CLK_QCOM_CAM_BIST_MCLK_CC_ELIZA_H
++#define _DT_BINDINGS_CLK_QCOM_CAM_BIST_MCLK_CC_ELIZA_H
 +
-+/* GPU_CC clocks */
-+#define GPU_CC_AHB_CLK						0
-+#define GPU_CC_CRC_AHB_CLK					1
-+#define GPU_CC_CX_ACCU_SHIFT_CLK				2
-+#define GPU_CC_CX_FF_CLK					3
-+#define GPU_CC_CX_GMU_CLK					4
-+#define GPU_CC_CXO_AON_CLK					5
-+#define GPU_CC_CXO_CLK						6
-+#define GPU_CC_DEMET_CLK					7
-+#define GPU_CC_DEMET_DIV_CLK_SRC				8
-+#define GPU_CC_FF_CLK_SRC					9
-+#define GPU_CC_FREQ_MEASURE_CLK					10
-+#define GPU_CC_GMU_CLK_SRC					11
-+#define GPU_CC_HLOS1_VOTE_GPU_SMMU_CLK				12
-+#define GPU_CC_HUB_AON_CLK					13
-+#define GPU_CC_HUB_CLK_SRC					14
-+#define GPU_CC_HUB_CX_INT_CLK					15
-+#define GPU_CC_MEMNOC_GFX_CLK					16
-+#define GPU_CC_MND1X_0_GFX3D_CLK				17
-+#define GPU_CC_MND1X_1_GFX3D_CLK				18
-+#define GPU_CC_PLL0						19
-+#define GPU_CC_PLL1						20
-+#define GPU_CC_SLEEP_CLK					21
-+#define GPU_CC_XO_CLK_SRC					22
-+#define GPU_CC_XO_DIV_CLK_SRC					23
++/* CAM_BIST_MCLK_CC clocks */
++#define CAM_BIST_MCLK_CC_MCLK0_CLK				0
++#define CAM_BIST_MCLK_CC_MCLK0_CLK_SRC				1
++#define CAM_BIST_MCLK_CC_MCLK1_CLK				2
++#define CAM_BIST_MCLK_CC_MCLK1_CLK_SRC				3
++#define CAM_BIST_MCLK_CC_MCLK2_CLK				4
++#define CAM_BIST_MCLK_CC_MCLK2_CLK_SRC				5
++#define CAM_BIST_MCLK_CC_MCLK3_CLK				6
++#define CAM_BIST_MCLK_CC_MCLK3_CLK_SRC				7
++#define CAM_BIST_MCLK_CC_MCLK4_CLK				8
++#define CAM_BIST_MCLK_CC_MCLK4_CLK_SRC				9
++#define CAM_BIST_MCLK_CC_MCLK5_CLK				10
++#define CAM_BIST_MCLK_CC_MCLK5_CLK_SRC				11
++#define CAM_BIST_MCLK_CC_MCLK6_CLK				12
++#define CAM_BIST_MCLK_CC_MCLK6_CLK_SRC				13
++#define CAM_BIST_MCLK_CC_MCLK7_CLK				14
++#define CAM_BIST_MCLK_CC_MCLK7_CLK_SRC				15
++#define CAM_BIST_MCLK_CC_PLL0					16
++#define CAM_BIST_MCLK_CC_PLL_TEST_CLK				17
++#define CAM_BIST_MCLK_CC_PLL_TEST_DIV_CLK_SRC			18
++#define CAM_BIST_MCLK_CC_SLEEP_CLK				19
++#define CAM_BIST_MCLK_CC_SLEEP_CLK_SRC				20
 +
-+/* GPU_CC power domains */
-+#define GPU_CC_CX_GDSC						0
-+#define GPU_CC_GX_GDSC						1
++#endif
+diff --git a/include/dt-bindings/clock/qcom,eliza-camcc.h b/include/dt-bindings/clock/qcom,eliza-camcc.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..d85ef9777d08d12ec349d57f6da5e76a305404f8
+--- /dev/null
++++ b/include/dt-bindings/clock/qcom,eliza-camcc.h
+@@ -0,0 +1,151 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
++ */
 +
-+/* GPU_CC resets */
-+#define GPU_CC_ACD_BCR						0
-+#define GPU_CC_CB_BCR						1
-+#define GPU_CC_CX_BCR						2
-+#define GPU_CC_FAST_HUB_BCR					3
-+#define GPU_CC_FF_BCR						4
-+#define GPU_CC_GFX3D_AON_BCR					5
-+#define GPU_CC_GMU_BCR						6
-+#define GPU_CC_GX_BCR						7
-+#define GPU_CC_RBCPR_BCR					8
-+#define GPU_CC_XO_BCR						9
++#ifndef _DT_BINDINGS_CLK_QCOM_CAM_CC_ELIZA_H
++#define _DT_BINDINGS_CLK_QCOM_CAM_CC_ELIZA_H
++
++/* CAM_CC clocks */
++#define CAM_CC_CAM_TOP_AHB_CLK					0
++#define CAM_CC_CAM_TOP_FAST_AHB_CLK				1
++#define CAM_CC_CAMNOC_DCD_XO_CLK				2
++#define CAM_CC_CAMNOC_NRT_AXI_CLK				3
++#define CAM_CC_CAMNOC_NRT_CRE_CLK				4
++#define CAM_CC_CAMNOC_NRT_IPE_NPS_CLK				5
++#define CAM_CC_CAMNOC_NRT_OFE_ANCHOR_CLK			6
++#define CAM_CC_CAMNOC_NRT_OFE_HDR_CLK				7
++#define CAM_CC_CAMNOC_NRT_OFE_MAIN_CLK				8
++#define CAM_CC_CAMNOC_RT_AXI_CLK				9
++#define CAM_CC_CAMNOC_RT_AXI_CLK_SRC				10
++#define CAM_CC_CAMNOC_RT_IFE_LITE_CLK				11
++#define CAM_CC_CAMNOC_RT_TFE_0_BAYER_CLK			12
++#define CAM_CC_CAMNOC_RT_TFE_0_MAIN_CLK				13
++#define CAM_CC_CAMNOC_RT_TFE_1_BAYER_CLK			14
++#define CAM_CC_CAMNOC_RT_TFE_1_MAIN_CLK				15
++#define CAM_CC_CAMNOC_RT_TFE_2_BAYER_CLK			16
++#define CAM_CC_CAMNOC_RT_TFE_2_MAIN_CLK				17
++#define CAM_CC_CAMNOC_XO_CLK					18
++#define CAM_CC_CCI_0_CLK					19
++#define CAM_CC_CCI_0_CLK_SRC					20
++#define CAM_CC_CCI_1_CLK					21
++#define CAM_CC_CCI_1_CLK_SRC					22
++#define CAM_CC_CCI_2_CLK					23
++#define CAM_CC_CCI_2_CLK_SRC					24
++#define CAM_CC_CORE_AHB_CLK					25
++#define CAM_CC_CPHY_RX_CLK_SRC					26
++#define CAM_CC_CRE_AHB_CLK					27
++#define CAM_CC_CRE_CLK						28
++#define CAM_CC_CRE_CLK_SRC					29
++#define CAM_CC_CSI0PHYTIMER_CLK					30
++#define CAM_CC_CSI0PHYTIMER_CLK_SRC				31
++#define CAM_CC_CSI1PHYTIMER_CLK					32
++#define CAM_CC_CSI1PHYTIMER_CLK_SRC				33
++#define CAM_CC_CSI2PHYTIMER_CLK					34
++#define CAM_CC_CSI2PHYTIMER_CLK_SRC				35
++#define CAM_CC_CSI3PHYTIMER_CLK					36
++#define CAM_CC_CSI3PHYTIMER_CLK_SRC				37
++#define CAM_CC_CSI4PHYTIMER_CLK					38
++#define CAM_CC_CSI4PHYTIMER_CLK_SRC				39
++#define CAM_CC_CSI5PHYTIMER_CLK					40
++#define CAM_CC_CSI5PHYTIMER_CLK_SRC				41
++#define CAM_CC_CSID_CLK						42
++#define CAM_CC_CSID_CLK_SRC					43
++#define CAM_CC_CSID_CSIPHY_RX_CLK				44
++#define CAM_CC_CSIPHY0_CLK					45
++#define CAM_CC_CSIPHY1_CLK					46
++#define CAM_CC_CSIPHY2_CLK					47
++#define CAM_CC_CSIPHY3_CLK					48
++#define CAM_CC_CSIPHY4_CLK					49
++#define CAM_CC_CSIPHY5_CLK					50
++#define CAM_CC_DRV_AHB_CLK					51
++#define CAM_CC_DRV_XO_CLK					52
++#define CAM_CC_FAST_AHB_CLK_SRC					53
++#define CAM_CC_GDSC_CLK						54
++#define CAM_CC_ICP_0_AHB_CLK					55
++#define CAM_CC_ICP_0_CLK					56
++#define CAM_CC_ICP_0_CLK_SRC					57
++#define CAM_CC_ICP_1_AHB_CLK					58
++#define CAM_CC_ICP_1_CLK					59
++#define CAM_CC_ICP_1_CLK_SRC					60
++#define CAM_CC_IFE_LITE_AHB_CLK					61
++#define CAM_CC_IFE_LITE_CLK					62
++#define CAM_CC_IFE_LITE_CLK_SRC					63
++#define CAM_CC_IFE_LITE_CPHY_RX_CLK				64
++#define CAM_CC_IFE_LITE_CSID_CLK				65
++#define CAM_CC_IFE_LITE_CSID_CLK_SRC				66
++#define CAM_CC_IPE_NPS_AHB_CLK					67
++#define CAM_CC_IPE_NPS_CLK					68
++#define CAM_CC_IPE_NPS_CLK_SRC					69
++#define CAM_CC_IPE_NPS_FAST_AHB_CLK				70
++#define CAM_CC_IPE_PPS_CLK					71
++#define CAM_CC_IPE_PPS_FAST_AHB_CLK				72
++#define CAM_CC_JPEG_0_CLK					73
++#define CAM_CC_JPEG_1_CLK					74
++#define CAM_CC_JPEG_CLK_SRC					75
++#define CAM_CC_OFE_AHB_CLK					76
++#define CAM_CC_OFE_ANCHOR_CLK					77
++#define CAM_CC_OFE_ANCHOR_FAST_AHB_CLK				78
++#define CAM_CC_OFE_CLK_SRC					79
++#define CAM_CC_OFE_HDR_CLK					80
++#define CAM_CC_OFE_HDR_FAST_AHB_CLK				81
++#define CAM_CC_OFE_MAIN_CLK					82
++#define CAM_CC_OFE_MAIN_FAST_AHB_CLK				83
++#define CAM_CC_PLL0						84
++#define CAM_CC_PLL0_OUT_EVEN					85
++#define CAM_CC_PLL0_OUT_ODD					86
++#define CAM_CC_PLL1						87
++#define CAM_CC_PLL1_OUT_EVEN					88
++#define CAM_CC_PLL2						89
++#define CAM_CC_PLL2_OUT_EVEN					90
++#define CAM_CC_PLL3						91
++#define CAM_CC_PLL3_OUT_EVEN					92
++#define CAM_CC_PLL4						93
++#define CAM_CC_PLL4_OUT_EVEN					94
++#define CAM_CC_PLL5						95
++#define CAM_CC_PLL5_OUT_EVEN					96
++#define CAM_CC_PLL6						97
++#define CAM_CC_PLL6_OUT_EVEN					98
++#define CAM_CC_PLL6_OUT_ODD					99
++#define CAM_CC_QDSS_DEBUG_CLK					100
++#define CAM_CC_QDSS_DEBUG_CLK_SRC				101
++#define CAM_CC_QDSS_DEBUG_XO_CLK				102
++#define CAM_CC_SLEEP_CLK					103
++#define CAM_CC_SLEEP_CLK_SRC					104
++#define CAM_CC_SLOW_AHB_CLK_SRC					105
++#define CAM_CC_TFE_0_BAYER_CLK					106
++#define CAM_CC_TFE_0_BAYER_FAST_AHB_CLK				107
++#define CAM_CC_TFE_0_CLK_SRC					108
++#define CAM_CC_TFE_0_MAIN_CLK					109
++#define CAM_CC_TFE_0_MAIN_FAST_AHB_CLK				110
++#define CAM_CC_TFE_1_BAYER_CLK					111
++#define CAM_CC_TFE_1_BAYER_FAST_AHB_CLK				112
++#define CAM_CC_TFE_1_CLK_SRC					113
++#define CAM_CC_TFE_1_MAIN_CLK					114
++#define CAM_CC_TFE_1_MAIN_FAST_AHB_CLK				115
++#define CAM_CC_TFE_2_BAYER_CLK					116
++#define CAM_CC_TFE_2_BAYER_FAST_AHB_CLK				117
++#define CAM_CC_TFE_2_CLK_SRC					118
++#define CAM_CC_TFE_2_MAIN_CLK					119
++#define CAM_CC_TFE_2_MAIN_FAST_AHB_CLK				120
++#define CAM_CC_XO_CLK_SRC					121
++
++/* CAM_CC power domains */
++#define CAM_CC_IPE_0_GDSC					0
++#define CAM_CC_OFE_GDSC						1
++#define CAM_CC_TFE_0_GDSC					2
++#define CAM_CC_TFE_1_GDSC					3
++#define CAM_CC_TFE_2_GDSC					4
++#define CAM_CC_TITAN_TOP_GDSC					5
++
++/* CAM_CC resets */
++#define CAM_CC_DRV_BCR						0
++#define CAM_CC_ICP_BCR						1
++#define CAM_CC_IPE_0_BCR					2
++#define CAM_CC_OFE_BCR						3
++#define CAM_CC_QDSS_DEBUG_BCR					4
++#define CAM_CC_TFE_0_BCR					5
++#define CAM_CC_TFE_1_BCR					6
++#define CAM_CC_TFE_2_BCR					7
 +
 +#endif
 
