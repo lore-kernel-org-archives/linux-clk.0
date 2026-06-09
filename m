@@ -1,213 +1,142 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 934B2481AAD
-	for <linux-clk@vger.kernel.org>; Tue,  9 Jun 2026 16:42:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E08BC40D572
+	for <linux-clk@vger.kernel.org>; Tue,  9 Jun 2026 22:44:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781023335; cv=none; b=K/76c5vxH/u9sg6Et9dD+As15HUj4ZKvoYlO2N1K3wcv5yWVtL8vkIC3z+q/gW/JwQdy5dnmvX0Q+e7CDH5OewORKEcsdNCHIRhDKZPBkQYkom7LnivMheIQrSW+XFF9OQ0g1NT3wubj+tjeUyc0umPiTzDMVBBW1Z/hqwZb/to=
+	t=1781045068; cv=none; b=c2bSqbCv/vknxCpk17iEP3/JzsN0Max2bmNo2fdCOHjwtYIsc7FMe8J8GPPdaNg3wwNILljadpl+kUmUvbt8MN66xl0Uf4H6jgJQmlJEpaBjuP9dLiLJ3UAxLHzAsOzFoe5t67WD7TM1ZkFJhCC23xAkpNmwE9/vEp/2o0VPHXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781023335; c=relaxed/simple;
-	bh=99KrLILEF2FMsqh1wD5ix4ZSC/c0+z6tUPRPcB/xSnE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mFee62uBs3Mgxd8Oyje82ACqXQHAOLlK7DNI4jFUgsk3pdrUOcB3K6nTjU8Mq/L4d84qr2r6KsvthLv2qJ72y/f8wzKWPyKz7ssQXdUIZJm4B4bpdLuxoXEmjFTlZi0UAi0mx3AJifoek3QEZePDZBrdxmgbmh5mCBW2178QLrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R74uSwk/; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1781045068; c=relaxed/simple;
+	bh=b1QsQawgbuLn9oDBIpfMHuUH3etBXQf7S4IHcuVmTfQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LhutpPIls9QqGE5l4O/PTWuY0Osv6dQ+eizJjf2CaAGrzpiA9U8l5NSIGU4Eo8RraK07L5cvteL71DCry3CI6n8xHWabd8YHmazdFUOLpFJVj+ykLH4TQV+sxSvDqDXkm7OJ+NLLbN6FNUF7aFLK25ZYIPMP0B4CV6RdR9HMN3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=JVZX0trk; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Kt2yuGTq; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R74uSwk/"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-490b43e2b95so47781955e9.0
-        for <linux-clk@vger.kernel.org>; Tue, 09 Jun 2026 09:42:14 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="JVZX0trk";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Kt2yuGTq"
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 659ME3Rr3502515
+	for <linux-clk@vger.kernel.org>; Tue, 9 Jun 2026 22:44:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=Zzd7A46gEHe0q2QQUgtIlo22
+	z4kZx3py7wq1qUJgP84=; b=JVZX0trkHX/NEWC8ru2zdcL3JhWVjfWpxOKvadZ6
+	GUwUuiRYCO1XQ4pbmYFZWr80r1PFWDTVUG/8r6eh105t2bsB+3H+To5AVLx7Wq+i
+	xC6qzGdOzXuE6bqfpBgqIom0EylZ/CJ11IrGEoBBTNM1c9xQO7tdUPjB5z1fdmPR
+	HrBMdCTy6yZyfLzK7UldnWyJ2K9PmZ+iQGVAtfOYiOnMekwnNxg8AAJYh72+KXFh
+	j2e2fxGnauyCbfFzHvjjRJ4c1NOaw9zDGB3Jub/4YpcpW0yyTfNULqqwU8EMlfAt
+	lEC31VrpNgUH5MYAOtughHK2WgVIbMMgg6OPw449Qv78gQ==
+Received: from mail-vs1-f69.google.com (mail-vs1-f69.google.com [209.85.217.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4epg3wkp68-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Tue, 09 Jun 2026 22:44:26 +0000 (GMT)
+Received: by mail-vs1-f69.google.com with SMTP id ada2fe7eead31-6a2b8b91dc5so2551250137.2
+        for <linux-clk@vger.kernel.org>; Tue, 09 Jun 2026 15:44:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1781023333; x=1781628133; darn=vger.kernel.org;
-        h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ltcN6lrCBn1i7VizWEDzmvqmfmSuDzvei1Fc92HuNdU=;
-        b=R74uSwk/1mn+Y95ALM1apeml3hcYrjv4EjrOvM+kdRXYl19ZSmMZfIDXNcAludAxQI
-         YHq5AOGCc2ON5Rvg9d4y54yMFxxM2tNXA2HC2MlLNbchf2NAhdP4ZE56gwL4mYWk9c1Z
-         pxsypRpK0sjfsCojfH2qWgUekXnqBWxd4038E0W15P3x9NNRPfFpfPXr1AbH/YUG1Rd6
-         wbApfCGuXzs2kYueC/kfmVHan9xGLBUbVopemtbhP/EVI1E6t0IsyTrkioAL9Kp3TUsk
-         fuj1xKtTnSMWq+LFtYUaSAJRgn9b5Wp7TUQ9Z5sil/eiPta4x7FvTBG/pVo8ES8bk7gw
-         u0ZA==
+        d=oss.qualcomm.com; s=google; t=1781045065; x=1781649865; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Zzd7A46gEHe0q2QQUgtIlo22z4kZx3py7wq1qUJgP84=;
+        b=Kt2yuGTqyCsDoYBBF7AykJc/bUzcshQJ1oRU8mlUT30wmgJ1PPy7EoEuE+GolvMzJ0
+         lQHIjI/0ndgoy5SfuaKNGU0k0rMMRQ77ljxK1FrTq2/P7PjoEbZyputKVGTj7fEz66AE
+         cfnOyH/W1tUi5925sOc/SeM1S2tBd2dw5ZWr9PVvGykPqHm4PeyOpDF1I9pfx2oOtz1L
+         DbDp/FADMP1RpNGiDyGoq6SZgLvqTzf9UUfDsqIFu7cfSYs4fXcdC+RqmVv2yhz00ywJ
+         jxCQD5omkCBK3EhKbfhHdBNNH+U/5v0/dY5BXBbd7R1bo6COSzLvDN8RGrdW+pECnVpJ
+         hLXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781023333; x=1781628133;
-        h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
-         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ltcN6lrCBn1i7VizWEDzmvqmfmSuDzvei1Fc92HuNdU=;
-        b=hP+g/n6jjIPBYTXwhV59+cuPE4VEF+gaAEw9zGMUvKIpcY1CLxZT65nYuZd4WijvOW
-         TKxyNWibzIEJEZeHM8MJw4MrnHRGQ2WlnzAhjxz7elZ+cBJWMaJliY1S9qg8GB3InJWB
-         vjNWzzhfJG+acRa3YsT2dnbrlIO8+Q1/LMzVaUDXGr/f0JpJRZ2tFEIfXKUHBwWvlm9X
-         WVLsoWuHzF5BbmtEkNSfc+LwIDA5tRPzJVlb4tTLXVYjziaKOccDf/fu2jVJoHDKNQZY
-         zxDc3c9JQsTqGKNju5RdnKbfsU2h8cklTr3mROr80qEmDCIgu/xBL6YH4Ifc6ZGENJ1a
-         Q67w==
-X-Gm-Message-State: AOJu0YyPGviioPol9BuE7+dQRrNlbUi5ZciMK68Gzqfi3FIUtSIiWHCB
-	JQ/MpHCAsprLSvXpTzLiMYpk0e0MD29R8UD5JSEcREcU2letqEJJJQGrU/4BJkdDRWI=
-X-Gm-Gg: Acq92OESPrTOEmUttiAwthVw87P//4KyytSyY7PEYQDrk6kCJXipwOKTNTVNNXFt1Ps
-	KZkN/IAGuVroMSLwc27Yq0lWbEwPLLhjVXPPB5wf7psNqHBhf61BSxcpP9OngfqNk9q/vPvGArZ
-	+tEFBZKrsDQ0nRVEglSHik9lnEw5yziBj4Z14fZJ8HAnVFIThUvWbsLHyR1yTtrAlFhzoHET6kv
-	28BroUZnJzqA2YbJMeHG/R6QNCLroVBEGjwRTrTWrwyDZTZVcEqsYEO7c4Z93LOO3KFJBJ9XYF1
-	X/nYyOkP2AlW6zt7F+Wl7p+uPgG/CjeRmOpovnwub5PjR40e+r81lrsHKHMRCwupt4u00QI3LFF
-	3wDLG9+5+KFY4YfWbySZC5Ivi49gkOiMZ2oku8Emo5ffQA20BAyyybaZclu4wP+PmXyxS757+uY
-	efPsZymo6WbB5dszdx0/UwwvhhDpjKYDfLfsbpltVElSLkJn0xAw==
-X-Received: by 2002:a05:600c:529b:b0:490:5380:f2cb with SMTP id 5b1f17b1804b1-490c2528b6amr352314605e9.0.1781023332863;
-        Tue, 09 Jun 2026 09:42:12 -0700 (PDT)
-Received: from silicon.doe.home ([197.250.227.145])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-46059346676sm2398593f8f.26.2026.06.09.09.42.09
+        d=1e100.net; s=20251104; t=1781045065; x=1781649865;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Zzd7A46gEHe0q2QQUgtIlo22z4kZx3py7wq1qUJgP84=;
+        b=eyS/D1ofbyj3q45+JryA0byj7mfsUjPjNl8K30igR720mk5Pt9GDcZxy7wmg0LAJOm
+         mmXZkXodXL7LqR2AlmcLZwifdLDHoTVMEg15NFvWYbFScREfa524GO0dO35q4dvEpJzW
+         hqtmC68Xh+g1HJIhsrxJznxchRZcjcV8ALNAlCFb+4V1DEOsq5PmJR9EFhMqIyjrQtC0
+         IRXWK/gAj8As24cdkofv83kZw/BJ2PUdttfXIhv3lOJpEvABZ2pxGpIA53k9c7jK4ytE
+         +UXM3l3Ls2oLnzqnWCzyNP6RbZq9obkjRuqouM+cxVN1kbFuzYpGj4SX+9kW2cu12G8r
+         kQBA==
+X-Forwarded-Encrypted: i=1; AFNElJ8iqQlJNywfQ1cmC/+tZBAd0bF5vVGtgaO1v36+Jxmpid5hrQCXL8B4MzaeyMXtC5iiqp7aLiKZUQ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTk3hxPDkq+0CcCamzzZWwuema8xrO38k11kYYrLVNRobIUjgi
+	XAccye4eii1Shsfo0+ovX95DfdNnWsLeWJe4UfqFWBdbY7VI4lZCCOKqKqHF4IRAmqgaixR0Gyf
+	e0hpwBIEgznKTSwJ+Fz3bxPZippoovLN8Qb18Mmxu+7ZVYG4Ljn41ohDHYuj/2w4=
+X-Gm-Gg: Acq92OGsKvIHigy2/KxMOEoFSeaQiaaMzVIPrUK7JOi9w2qg5KCKABxHyU1K229A64J
+	ijcuJj1tHNX0WvsFyUmbUCxTFMT3matSkQCZyLQMuqbYQLaA0sM4bKKhRYsU7RRWdlot44/9cPx
+	qyn4q4rhuhPhSK0vL7m0Qb12GeVv9HAGPbc9Z1vFLXafl4KnQZ5sdyUjySpzoRLxsC6bI47eGz3
+	KX1VAVaKps7zJaWAQ6TB4OVh2TJzxOgaPfwKSbF+OHMXJMq4/fW7nO//tOLKhttbjSxVNRA2bu9
+	FxcoxCT2gcskZLGdqRVbhij6cvQ1RaqCQrpW661zzPQuv/84tq37q2RqMojYFg6RexmMWcwhYf9
+	aCVFE34Iu/6+r3C9G2osroNZxsfNjwPPx4weg1FKyPX+hanAvwJIp3D5yBVPmgtX3F44NxS6KhY
+	dka5YzYw==
+X-Received: by 2002:a05:6102:5e87:b0:6a2:cf9a:a5f3 with SMTP id ada2fe7eead31-6fef26ce86amr12937892137.0.1781045065066;
+        Tue, 09 Jun 2026 15:44:25 -0700 (PDT)
+X-Received: by 2002:a05:6102:5e87:b0:6a2:cf9a:a5f3 with SMTP id ada2fe7eead31-6fef26ce86amr12937882137.0.1781045064675;
+        Tue, 09 Jun 2026 15:44:24 -0700 (PDT)
+Received: from umbar.lan (87-92-245-163.rev.dnainternet.fi. [87.92.245.163])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-396ac2d5ec0sm57509621fa.33.2026.06.09.15.44.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jun 2026 09:42:12 -0700 (PDT)
-From: Stefan =?UTF-8?B?RMO2c2luZ2Vy?= <stefandoesinger@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Brian Masney <bmasney@redhat.com>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH RFC v3 0/5] ZTE zx297520v3 clock bindings and driver
-Date: Tue, 09 Jun 2026 19:42:02 +0300
-Message-ID: <QsCV4VffTSWWBp014o7Pkg@gmail.com>
-In-Reply-To: <f92114a3658185b57bffe546c0f4079a9d39afce.camel@pengutronix.de>
-References:
- <20260529-zx29clk-v3-0-c7fe54ea388f@gmail.com> <2062167.PYKUYFuaPT@strix>
- <f92114a3658185b57bffe546c0f4079a9d39afce.camel@pengutronix.de>
+        Tue, 09 Jun 2026 15:44:22 -0700 (PDT)
+Date: Wed, 10 Jun 2026 01:44:17 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 2/7] clk: qcom: Restrict A7PLL and IPQ4019 GCC to ARM
+Message-ID: <nnygotjru5ximoea73xhqwfjsjpditmhonvf7lmugn73dc3mqb@rl7agcusn5i5>
+References: <20260609-clk-qcom-defaults-v2-0-0c67c06dca11@oss.qualcomm.com>
+ <20260609-clk-qcom-defaults-v2-2-0c67c06dca11@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPartFLf7VarUTpi_4IXxXYdobw";
- micalg="pgp-sha256"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260609-clk-qcom-defaults-v2-2-0c67c06dca11@oss.qualcomm.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjA5MDIxNCBTYWx0ZWRfXx8GFzT5wUBcw
+ ogGH7FhIC26hk2/7EjPmFs/qELjIIQ46+GFy94Qxqxw5PeeGcXfK8PkRa9ohE1/ChCBFdBfSqMb
+ oH0zSPSGxNXDiGErg7+pSd21ZKwabltORYERcRsSL8XD0SuxTI4AxH5xHH0HCWYcqYosbr8LbE5
+ aF5iALcjmwdCV1onOSScIASftvpRFNt2TlSthYQX9Fxwx93PoXtlKtyfMXWEfoodkr8wss2nKRo
+ Il+tOnE0K7I3GIJm6LJJDMF2vYvIMbkpehT+TiH65iv5Iyh9yy9fELnmHjtKYAs2zuA6r1BEJxr
+ 4mrM7AyuOdQjlK14oQi2OvHqQH2XhyUeRKNewK2WYP+SVrr5mQXq7k3XWPX8tlIgQcbupKP/BTv
+ EQr1CI2D32U9Vn2FqveOFgTrTx5SFHCkwno0CQtoB42zSomoJYBoORVHid/XW2BVZjZaam2A7OC
+ Tnye7A8xqotIxd7ZvwQ==
+X-Authority-Analysis: v=2.4 cv=csWrVV4i c=1 sm=1 tr=0 ts=6a28974a cx=c_pps
+ a=5HAIKLe1ejAbszaTRHs9Ug==:117 a=+WgfKLcscl3VAWRHYO56eA==:17
+ a=kj9zAlcOel0A:10 a=FelO9ux0wxsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=yOCtJkima9RkubShWh1s:22
+ a=EUspDBNiAAAA:8 a=_Y7Jz4vysGH1ZB7Bx6UA:9 a=CjuIK1q_8ugA:10
+ a=gYDTvv6II1OnSo0itH1n:22
+X-Proofpoint-GUID: YOw1LtI9tBLUyBte5jLzVE1B0GoVfUGZ
+X-Proofpoint-ORIG-GUID: YOw1LtI9tBLUyBte5jLzVE1B0GoVfUGZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
+ definitions=2026-06-09_04,2026-06-09_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 clxscore=1015 spamscore=0 adultscore=0 lowpriorityscore=0
+ malwarescore=0 impostorscore=0 phishscore=0 suspectscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2605210000 definitions=main-2606090214
 
---nextPartFLf7VarUTpi_4IXxXYdobw
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
-From: Stefan =?UTF-8?B?RMO2c2luZ2Vy?= <stefandoesinger@gmail.com>
-Subject: Re: [PATCH RFC v3 0/5] ZTE zx297520v3 clock bindings and driver
-Date: Tue, 09 Jun 2026 19:42:02 +0300
-Message-ID: <QsCV4VffTSWWBp014o7Pkg@gmail.com>
-In-Reply-To: <f92114a3658185b57bffe546c0f4079a9d39afce.camel@pengutronix.de>
-MIME-Version: 1.0
-
-Hi Philipp,
-
-I did some more reading and checked past clock driver submissions. This email 
-is to check if I understood it right.
-
-Am Donnerstag, 4. Juni 2026, 18:23:01 Ostafrikanische Zeit schrieb Philipp 
-Zabel:
-> > The register lock because all LSP and at least one TOP register contains
-> > both clocks and resets.
+On Tue, Jun 09, 2026 at 05:32:36PM +0200, Krzysztof Kozlowski wrote:
+> IPQ4019 is ARM 32-bit only SoC and QCOM_A7PLL is used only on SDX55 and
+> SDX65, which are 32-bit as well.
 > 
-> That could be solved with regmap.
-
-This will require me to change the clk component to use regmaps too. There's 
-no regmap equivalent to clk-{div,gate,mux}.c, so I'll need my own. qcom and 
-meson have similar drivers already, so I'd likely copy one of them. Is there a 
-particular reason why there isn't a regmap equivalent of clk-{div,gate,mux}.c?
-
-Another hypothetical solution is a custom regmap implementation that locks my 
-clk driver's lock. I see that only in imx/clk-imx8ulp-sim-lpav.c.
-
-However, the topclk region also has a stray register that controls if a 
-watchdog timeout resets the board. So there's no good way past a syscon 
-compatible and syscon generated regmap anyway.
-
-Afaics syscon regmaps only support a single IO region, so I'd likely revert 
-back to the topclk/matrixclk split with different bindings, bite the other 
-bullet and list all 50 or so PLL outputs as clocks passed from top to matrix.
-
-Which gives a device tree setup like this:
-
-topcrm: something@13b000 {
-	compatible = "zte,zx297520v3-topcrm", "syscon", "simple-mfd";
-	reg = <0x0013b000 0x400>;
-	#address-cells = <1>;
-	#size-cells = <1>;
-	ranges;
-
-	topclk: clock-controller@0 {
-		compatible = "zte,zx297520v3-topclk";
-		reg = <0x0 0x400>;
-		#clock-cells = <1>;
-		#reset-cells = <1>;
-		clocks = <&osc26m>, <&osc32k>;
-		clock-names = "osc26m", "osc32k";
-	};
-
-	reboot {
-		compatible = "syscon-reboot";
-		offset = <0x0>;
-		mask = <0x1>;
-	};
-};
-
-watchdog_t18: watchdog@148000 {
-	compatible = "zte,zx297520-wdt";
-	reg = <0x00148000 0x20>;
-	clocks = <&topclk ZX297520V3_WDT_T18_WCLK>, <&topclk 
-ZX297520V3_WDT_T18_PCLK>;
-	clock-names = "wclk", "pclk";
-	resets = <&topclk ZX297520V3_WDT_T18_RESET>;
-	zte,wdt-reset-sysctrl = <&topcrm 0x2c 0x3 0x3>;
-};
-
-(I did not attempt to build this, might have typos)
-
-And the reset controller will be an aux-bus child of the clock controller. I 
-could make the reset controller its own device with its own bindings, but that 
-would misrepresent the hardware.
-
-Did I understand this correctly?
-
-For some reason in my dev tree the reset sysctrl works even though my clock 
-driver does not use the syscon compatible nor manually create a regmap.
-
-> > Shared register definition: in the case of the LSP clocks breaking up the
-> > composite definition would sacrifice readability.
+> Do not allow building them for ARM64 to make built kernels smaller and
+> user choices easier.
 > 
-> That is a matter of perspective.
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 > 
-> I had a harder time validating that the resets[] array is properly
-> initialized from the two different composite arrays because of the
-> unordered reset_ids, and some remaining resets[] being filled via code.
 
-I do have a sanity check loop for that.
-
-> It would be much simpler if you split the reset definitions out into a
-> single, separate, const array, indexed by reset id. In fact,
-> I would suggest this even if you don't intend to move the reset code.
-
-I had to collect the clocks and resets from all over ZTE's kernel and U-Boot 
-sources plus manual testing, so maybe I am a bit too attached to seeing all 
-controls for a given device in one place. If the reset controls move to a 
-different file, the composite structure becomes less useful, so I'll probably 
-split it up and just list single div, gates and regs.
-
---nextPartFLf7VarUTpi_4IXxXYdobw
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iQJPBAABCAA5FiEEQxb0tqoFWyeVMl1sPRO8yFRPGiIFAmooQlobFIAAAAAABAAO
-bWFudTIsMi41KzEuMTIsMywyAAoJED0TvMhUTxoiKesQAJRepE5jSEE8unaib32O
-EpI63wWhBCKBNi9UCv8iIeAt61Av/y7m/U19SEHHCCyv2IdoH8hhqoPLjcJjt+/v
-UsWNcEujOPf+JbRRRtSP2UyoirW5rsoYHEMOTuMfJSBvk2/SIrTApo7AwDhV59rb
-nJ/MZI9DtTBOGF3CV+vuc9qPWtO8hntdu+jlLeg7TmUSkqtJJZEjknUKZdBZGpDQ
-NSd2dY7wHnf7RhLEP73OBXwm9ebely5izLtAyNiDltkDAOAjJXZibKzRbZ/bPgdz
-XkiQ854wIcynNBQPEaDwsHu4tAzpQSBd6qrZzAzrGn/Nw7XCBvTT3rD2xGhJUEU6
-KUJmfCYzS+5dpY1tfSvsstPruM936JzgH6EBCpY0pQjvrs+QdW1lEMrT1NE890rC
-shggbu9bGsS714qLLk54JffkJlpwTAPlObtNqOdyQH22cAvZvKfZ5cZY+rJzdoAs
-2+d6glovGoZ1aJDGU8WhE9nnlKVgTYObenacdL+fedcfBKo0AwRc8Bu5EYnvn4DP
-v+IKyecGKLWSiudu0Jh8oH3uguoKGpFHlZtXcd0jpLn6h7VvS3wqU3LeBpKRu6Em
-Q04ptHCtkq5eJZBqHFBuBWbfT0XfkAF3sVmZqMxq7/SrzT1e3xJ3apVLcdo9u9Fe
-b8l88Dq5BUMzyvr1kCAAFtGj
-=8F5V
------END PGP SIGNATURE-----
-
---nextPartFLf7VarUTpi_4IXxXYdobw--
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
 
-
+-- 
+With best wishes
+Dmitry
