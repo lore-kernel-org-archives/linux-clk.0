@@ -1,151 +1,355 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F3C53EB81D
-	for <linux-clk@vger.kernel.org>; Tue,  9 Jun 2026 09:16:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780996599; cv=none; b=pGJwN6KvQaM67Difn1SwzLLNV3e8d6F97huCyCRgZwOrEchltxP6oS+ph2HRT/3svEcclAs/7vReB9EGcaRfySwBzxUnkxZ4PezZSgICkyN4XFO4HcwxC6Ym2qG94dLbgvFwtYmNtPQMK2wifjRfOHMuWMjw4qmMygpOtxv5rMQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780996599; c=relaxed/simple;
-	bh=isX958zSg2weCUOrt880uhtGmT7uXK/ufEmrKrSlE7M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Xa1WVNCgy0a1SpJqBTRPZqkh/mab/F4vB6SvJS6qqXUDYAdfdDqoo3PuQlPDDzGL7Di+GreB7aL0CUEC42BNubILuJNvV2QQ9OR9dJviGiKj5w7KKAUuQts5MOxuNGBXKtJgPR5D4W7Rdat7rkn+M/9mfmunex84czHC54ODHoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gsycXEnY; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=BsVI+d2r; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA9FD3E7BD5
+	for <linux-clk@vger.kernel.org>; Tue,  9 Jun 2026 09:23:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1780996985; cv=pass; b=hiDkl17jVluvOOh/Ffv8tjRB5uDkJNGmPLjvQ6QeE4CKn3xpxHPmUpexCvBQmJZVYdpIB59ZSk5cuKLULl74ZwCtxHf548DzEda55+TgsoSURgRh63JNJDyRMlrAVZIK2QfMB6AJ0+qj8/MRXmxlyBZuGqfK7vajdV/5RWc9B0M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1780996985; c=relaxed/simple;
+	bh=dsTfQXdWXveui6Dm6dnofvs2mvgUGCQBF9A4gl7pVtI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KvyK/ZcTmvX4ppt8csp43foc7ukUA2ij5VvApX9DOgPldKJY/gzDfiGq7j1TKp9ngew3/RqqSjL7N3MbhaqlpccfQxXQBLxIjsRcMESK2Uy0OwPNOY2+HlCiPFd8HV0PMJe6ihz/0LedxgXLpjnfr/hAGMf3b2UQGXiDCxjf93U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lqR9IIvD; arc=pass smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gsycXEnY";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="BsVI+d2r"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6597rqLo2001556
-	for <linux-clk@vger.kernel.org>; Tue, 9 Jun 2026 09:16:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	OWNRlfBgWHU0YDJT3pveKgimyyr6c63+7FmfgNT8RX4=; b=gsycXEnY+gGlSHSG
-	44GbfRCLFUTs8Ocv60TdGtX3LrCLh+W/978alP4D99a6prBr3mL6rPPyg2Bw6i9i
-	z+vvAMkG14gJngkEHj4fo3Yn8868hIZz+FNeRic4WI2Wz3oLDOjcSdhx+sbjfyMs
-	nq6MdWrZbolfNuJQHUyyLG5BmHYcB301th6HVeBwUCgxxhBcmoHfBnbcgJE8lqD9
-	+xg306g+ZLnRqcKsQHTyZIXyZ7Ji1c16RncXanlCBO3M3KmGcGHBPEranIZQd+3I
-	PELwtSoV0mfaL6x08GWhmNMvjtj2Tqx90T2/sz5jLC1B2/xraNOT3GdstAD253LU
-	sBYh3A==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4epe25rhx6-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Tue, 09 Jun 2026 09:16:35 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-5176d949c58so136097341cf.0
-        for <linux-clk@vger.kernel.org>; Tue, 09 Jun 2026 02:16:35 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lqR9IIvD"
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-45ef779c1c2so3577092f8f.1
+        for <linux-clk@vger.kernel.org>; Tue, 09 Jun 2026 02:23:03 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1780996982; cv=none;
+        d=google.com; s=arc-20240605;
+        b=TeRVgIaeJWt1nMhr/vw23HaJQda70COZMjbRryXHkOa3M5sXhveIuV78ZDRofQf32p
+         J8d4m7+RBRCZ0Lm+0Pug3MXdBekFDBU8BHgXULWGJm8QU52+IB1vd8+B0iagfQmBOM3t
+         CqUHbIBVSDjjHDmedzQXMlLw7Cq2HlIZinSPwRQf28SBb62cBrVqeBcnc87S0zAo2NmQ
+         wgxxO/GBxAiUvba1pUvLs4o29mggqaEKkaWB4UH/5sX3wD9KQyY3s+F+eKPSIkaABuQR
+         FXa/yNjR+iv/p/LhXSac9t4WbMR0ZY2ozG/lkr9/SHBDMm9hd7rVD1k19ATPf8hCbsRC
+         AweQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=OIEEiASgL7Q2k4J2FB54QvTgD+CBIsfvndbp4S4JS6Y=;
+        fh=f4Wbszp1t4AraV9jumuhtQ9qC6fVodmprbj/xCkkoOw=;
+        b=PjfO9ghmVjettPOJmjgsIy3NQQb9XgfCoX0kAMWrfVgplem/qJOF52qPC30Tn+xfP3
+         RZIkXbCP51wFbPw2oq3BFp+hE9JTqWLn1xDYVLGc0C1Oe/Kxcu6OqUlddFT3ZKSQQXZO
+         OK0FrwyrIpkLGfoux/Z+VKraL0vwBTjAIowI4HptaAUCYyDxW9oaJRZ01OxGMTELXGH5
+         YSgJpti+hD21WaxI9EAQp+u3sm0PDpMdeQOFHD7pZT0o+WDgN0eN1efjGNh9+W/qFhec
+         OdbwyFFIoZVi3gMgHjzWraxPAfsBzUF3Qn6qE7LrwyPmXoOr+hQTBoI2YgOHcOpfxz7Q
+         oeDg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1780996595; x=1781601395; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1780996982; x=1781601782; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=OWNRlfBgWHU0YDJT3pveKgimyyr6c63+7FmfgNT8RX4=;
-        b=BsVI+d2rez2C5KBB456ExnPiAko1s5RrWCLt56YYz+kW4eYnb/sM/20NpooSvkPA01
-         HT3dzmaz0FJv4F29iBJeLZrBemSSa4DQBEGCP6CyZADjp+TMwp7SVTN9+O16N4ZbR0Lt
-         C2P2E1rttvDBSuMccbqpNUZ0EADGqunJKno+EEV7KDu1Dhjxx0I2kEW64DBHl/bBSZUy
-         1SXtcxQWUAZGNYeqNCzQBXn7jrfbGruYLg1+OgPYcl25SfKHzJJ5eUbYqx8wbfuvjBvS
-         Vo8Ds2kYFnYpi78VYdGHD7lT8iMQBIXIeAN8Eww2aTaBixSGFRktNFOGjVdA6+8xwhM9
-         Jy5Q==
+        bh=OIEEiASgL7Q2k4J2FB54QvTgD+CBIsfvndbp4S4JS6Y=;
+        b=lqR9IIvDLVq4SQqkwFkyfVhZXEFJrofjb3QPfGz7CQLSvAyUIOfh0YmrCFzwVG+mya
+         YtRRhcbV1Z+hGTd6OMuCjW4Ri+ow8x2DEchuIVGAy+y9SrJpc4tFLI6Coq/zEhgdx9s3
+         zrYm7+c1rh8MM9kgHuAZUDzPLqkNhHF+51gbZvDGxMD08Go+K3LmdFXsl1a5GrPZwgE8
+         bW9todlOEDBLzwHvWWKM4fVwVtGG5Y2CUTMSC+gvJWKgvZqVUhARYB1kDffZ1HSxL2Pz
+         QNUQuE9bbpVqawKR4DFyujDa/aLzf/ttQmCiskJp+RN1iqXdndjIJYV/vzOD5YYUwdMr
+         3M/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780996595; x=1781601395;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+        d=1e100.net; s=20251104; t=1780996982; x=1781601782;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=OWNRlfBgWHU0YDJT3pveKgimyyr6c63+7FmfgNT8RX4=;
-        b=SjnltsDZSU1Dmyo6dwTweURf1EGGiCknDtV9jZL1k9irN40k+ZEqM3EN/SjnDYip4H
-         05zce+wkUNZJ3FAqZgspbun+jwcI0Vp7Ge1U/z2rmQxl3xtX/V+t/B+cfuHRu98GPj6t
-         /A3leeHzLWxFM0ewskBKlp62czJoWGlhbbmPeQ78LWeNdn690YzVAJJCgDE4KZw7g3LM
-         gU+1mIt3/W6/lQf2VgE1lDNqgNybmxY//P1G9gRCx/ahRD5hif7hc7/xB4A8mDPqwgGv
-         dWfDzGTha1F7gxlaJe8hdkeo0TDnZfLc60xrTxI94zfZh5jWDywAu+JNZl0LzswZcptu
-         zjsQ==
-X-Gm-Message-State: AOJu0Yw+pyOEy2dBhyFLtfEowewMDXQZx6VWlhn4IfziKCAjKSrPmDI1
-	E7QouXdNOUEXJu2SunfrKtYgthCo9Ow/t3/aYosip5PNxBKF/dTSkgSrJXJXJh5ZWUwFhpxhr2R
-	CnPJ08vJeOsAnFsGwwq/9ZdSWyyJB4/m0tH6OerelDJCIbyJ9/m8H6um3w/hx0Zg=
-X-Gm-Gg: Acq92OFg/BbfaIoosSCrNlRxN6jgrh1rUq+ThpB+60p5bkkNYdkk7bAhApB5SrCch4w
-	zR8fU9/FJ5P4B4RSWu9I2cl6Tlf1pR+69ZFxy6mPwFiZX5D9LjSg1Pot7dL787D5ALXCRWMKarP
-	kjlH+yOLzs4zPGxqjcViQpYuxALXd7FYtHjSGU4IdtT5rrsFte9d1YwEDbBYNK9u64lYyzT6RBC
-	uIHlL6JKQuPBjdADw0UTgKUdVr9MaqTAynBT2EnPpun29HDmqi+hes8Bvx/lpWZ5b2bKMpZI6AO
-	iion/NalpX5r8bW9mTIPXmMIFEagQT6oJe1BcSlhiXvq7jwG6Gnx5Du3qDOjZ2WF0vbCEAKtFoV
-	ghRQOYGAof8znN7v5/irp0E2pRYYCPtOLaBG53+XG1Az/U/n0Q38MInw=
-X-Received: by 2002:a05:622a:6096:b0:517:7217:6737 with SMTP id d75a77b69052e-51795afe9e0mr272600151cf.33.1780996595041;
-        Tue, 09 Jun 2026 02:16:35 -0700 (PDT)
-X-Received: by 2002:a05:622a:6096:b0:517:7217:6737 with SMTP id d75a77b69052e-51795afe9e0mr272599901cf.33.1780996594578;
-        Tue, 09 Jun 2026 02:16:34 -0700 (PDT)
-Received: from hackbox.tail37bb1b.ts.net ([86.121.7.18])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4601f2e4004sm60912430f8f.9.2026.06.09.02.16.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jun 2026 02:16:33 -0700 (PDT)
-From: Abel Vesa <abel.vesa@oss.qualcomm.com>
-To: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
-        Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>, Jacky Bai <ping.bai@nxp.com>
-Cc: linux-clk@vger.kernel.org, imx@lists.linux.dev,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3] clk: imx: Add audio PLL debugfs for K-divider control
-Date: Tue,  9 Jun 2026 12:16:18 +0300
-Message-ID: <178099655221.2098924.12939836605538533758.b4-ty@b4>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20260604-imx8m_pll_debugfs-v3-1-4e331ebc85d7@nxp.com>
-References: <20260604-imx8m_pll_debugfs-v3-1-4e331ebc85d7@nxp.com>
+        bh=OIEEiASgL7Q2k4J2FB54QvTgD+CBIsfvndbp4S4JS6Y=;
+        b=PcTRpJKEQaKMrVf7ZCiM9lSnnnmX/h6c6DBtdk7LtFGSMtsvq7PXPeE3YM4MkBjj0b
+         xj2Do3+V9Oflu6RHqzvvWae8M0PUaeH3vteAnupMQUQMSty0L4KqWVZ/wb+ekVXEzchk
+         wLq2S9UpNlcPBVxPVryCbKVnTa0BYHkdZYc2A7T/Kq1wf+9p9xxEHi1OjBjxYVmlCJJx
+         mrzRlJuxkgz/x55Bd/SPLNxn3zhJt16Q+YmmN2o1DX08TEo35DUW9A96nBNrl+0uzRv9
+         rHZMxZIOJM44sZ1CJgtu44I25DebgsunFq8LfZur5vLADIW/MJXnr4dtmOmJWAqBLLrn
+         1Rag==
+X-Forwarded-Encrypted: i=1; AFNElJ8diwv2YCx6KqzjZw79TcidWY5fYJxwWv1/z4tg1RSUQO2VwG3iBnB2fiRWOh6lha0eVEk+0femqHA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwSndiP1coEnD/RR/0UHWuqfPxmVDNzQ9U7A3VZokjPelSTaJx
+	ynMoggiuJ+TXSBcYNLNww2dKfqQr5YXXZsgNlD6dFi4y1pLPI45YOAYsX/CVSGSoHqogMMDCwgD
+	/cfN/jPCz9dVCK3U5IAoodq1KjYG+2Mo=
+X-Gm-Gg: Acq92OGoSvErUM+AMHvy765IEOYPO2SevteA+5pqO20W3DHeS2ZTsiYheDPaPqK5CWP
+	M2Ldug9NJgCvGyl9wv2k5FCSGuy1SLdhC4BmqrSG5mynnn+CIfkvVtT5TaqOIllSkSNs2bRQuQm
+	aBolkCm3saXbWi+0C7uJZV5MPt0exgIg774LMeojYxFklcxcmABfLZ4q8rdAl0LOG0+VOoNBegD
+	c1zCsupGW/ozDSiC5fdn8TdjNswfMk4+pLff45UNRGcDCvFO/tirzivskpCZ+pDvxj/uk1fZ3AZ
+	OeulXSK82CnNU/fMP9bybyrdAUT2sjTdJYzt5wjKNLmKdVLoRHTVFtOZvoZ1d9XsGEhzGCaBFt1
+	qvH8=
+X-Received: by 2002:a5d:504e:0:b0:45e:f302:95b with SMTP id
+ ffacd0b85a97d-46030767c03mr21925116f8f.37.1780996981886; Tue, 09 Jun 2026
+ 02:23:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: 8XszZ4TbZKV5mBls1aa5Gj6YQ_xMGhgL
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjA5MDA4NSBTYWx0ZWRfXyCysrnoWZPFx
- e5HtwVqgEnBC249qbGpLLgyOLYSKIUscxK0KklN2BOqZU4DBzsuUvCDKrmUE6MLcV7L/2Y9S4Qj
- FMFLsYCxikKhiQPITAEmOKpdc6PlfTQptKUNWvBb0LgRPPEAai4oRLp20UhYDqGvl6ESZwi9NRv
- FX6EE6xKnrxmKGldYZ80Tt0wMUWi5ZXIsLzva5SNwB1EDH6yoirF4bJxPgLkaPS1eTOA1KVdU9M
- 3HYFmUIJZHuCh0JpZzl3W2AQY6VWXm1M2CP9V0A0rKN7/fWJSeGosY6pY4dKWci3RmX5aoXIeJ4
- GTy1fkkxKtGp4K32eBqa1ibF/y1dpjqxobGRT1Ke399RfLYCnXpYDSn48XWVG5OvfbXSV9k4StX
- Th/eddacHAwWR6JfxrjT1cQZKQA5KwPUxVre6/l8wLK7pDBHkyF5wXOUMoIw0s6vGA0Tf9MRKEh
- i19Vbw2mzjdAJPha7ZA==
-X-Proofpoint-GUID: 8XszZ4TbZKV5mBls1aa5Gj6YQ_xMGhgL
-X-Authority-Analysis: v=2.4 cv=LoqiDHdc c=1 sm=1 tr=0 ts=6a27d9f3 cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=BSZ3G9h0/EKbgBlQZBbU/w==:17
- a=IkcTkHD0fZMA:10 a=FelO9ux0wxsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=3WHJM1ZQz_JShphwDgj5:22
- a=EUspDBNiAAAA:8 a=1NP200KD9VQfxfjUtC4A:9 a=QEXdDO2ut3YA:10
- a=dawVfQjAaf238kedN5IG:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
- definitions=2026-06-09_02,2026-06-09_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 spamscore=0 bulkscore=0 phishscore=0 impostorscore=0
- adultscore=0 suspectscore=0 malwarescore=0 clxscore=1015 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2605210000 definitions=main-2606090085
+References: <20260511191910.1945705-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20260511191910.1945705-5-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdXh6YhDp7nEra3GbrR9hkhqqj15UXnv0DHeei=mj56XJQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdXh6YhDp7nEra3GbrR9hkhqqj15UXnv0DHeei=mj56XJQ@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Tue, 9 Jun 2026 10:22:35 +0100
+X-Gm-Features: AVVi8CeeObicykNnGA2iNO64dGKHVIYZcZfOf-WaYEjsA4Aa85keX4ByqxRaSc0
+Message-ID: <CA+V-a8ujd4CJmPkRoHfwrmC-gEA98xm3N9ANacKdHZM-6CX_tw@mail.gmail.com>
+Subject: Re: [PATCH 4/4] clk: renesas: r9a09g077: Add LCDC and PLL3 clock
+ support for RZ/T2H display pipeline
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Geert,
 
-On Thu, 04 Jun 2026 21:48:01 +0800, Jacky Bai wrote:
-> Add debugfs support for runtime tuning of the audio PLL K divider,
-> which enables fine-grained frequency adjustments for audio PLL.
-> This is used for:
->   - Audio clock calibration and testing
->   - Debugging audio synchronization issues
-> 
-> Two debug interfaces are exported to userspace:
->   - delta_k: It is used to adjust the K divider in PLL based on small
->     steps
->   - pll_parameter: It is used for get PLL's current M-divider,
->     P-divider, S-divider & K-divider setting in PLL register
-> 
-> [...]
+Thank you for the review.
 
-Applied, thanks!
+On Fri, Jun 5, 2026 at 2:39=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68k=
+.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Mon, 11 May 2026 at 21:19, Prabhakar <prabhakar.csengg@gmail.com> wrot=
+e:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Add the clock definitions and PLL logic required to supply the LCDC
+> > (VSPD/FCPVD/DU) blocks on the RZ/T2H (R9A09G077) SoC. The RZ/T2H displa=
+y
+> > subsystem depends on a dedicated PLL (PLL3) and a set of new derived
+> > clocks.
+> >
+> > Introduce a new PLL clock type and implement rate recalculation,
+> > programming and locking sequences for PLL3 using the RZ/T2H specific
+> > divider and VCO limits. Add the corresponding muxes and divider entries=
+,
+> > expose the LCDC core clock, and register the LCDC module clock using th=
+e
+> > correct PCLK parent.
+> >
+> > This enables the RZ/T2H clock driver to generate the display pipeline
+> > clocking tree needed by the DU and VSP-based composition engines, allow=
+ing
+> > upcoming display support to be integrated without duplicating CPG logic=
+.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Thanks for your patch!
+>
+> > --- a/drivers/clk/renesas/Kconfig
+> > +++ b/drivers/clk/renesas/Kconfig
+> > @@ -218,10 +218,12 @@ config CLK_R9A09G057
+> >  config CLK_R9A09G077
+> >         bool "RZ/T2H clock support" if COMPILE_TEST
+> >         select CLK_RENESAS_CPG_MSSR
+> > +       select CLK_RZV2H
+>
+> That includes a lot. Perhaps spin off the required functionality in a
+> separate file, like CLK_RCAR_CPG_LIB?
+> That would impact the MODULE_IMPORT_NS("RZV2H_CPG") in
+> drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c, too, though.
+>
+Ok I will create a rzv2h-cpg-lib.c and incremently switch the DSI
+driver to use this new lib.
 
-[1/1] clk: imx: Add audio PLL debugfs for K-divider control
-      commit: b3dcc8c608fbb6352bd94932ba935f2078c9090d
+> >
+> >  config CLK_R9A09G087
+> >         bool "RZ/N2H clock support" if COMPILE_TEST
+> >         select CLK_RENESAS_CPG_MSSR
+> > +       select CLK_RZV2H
+> >
+> >  config CLK_SH73A0
+> >         bool "SH-Mobile AG5 clock support" if COMPILE_TEST
+> > diff --git a/drivers/clk/renesas/r9a09g077-cpg.c b/drivers/clk/renesas/=
+r9a09g077-cpg.c
+> > index f777601a23b9..48052e7b93fd 100644
+> > --- a/drivers/clk/renesas/r9a09g077-cpg.c
+> > +++ b/drivers/clk/renesas/r9a09g077-cpg.c
+>
+> > @@ -66,11 +73,26 @@
+> >  #define DIVSCI2ASYNC   CONF_PACK(SCKCR3, 10, 2)
+> >  #define DIVSCI3ASYNC   CONF_PACK(SCKCR3, 12, 2)
+> >  #define DIVSCI4ASYNC   CONF_PACK(SCKCR3, 14, 2)
+> > +#define LCDCDIVSEL     CONF_PACK(SCKCR3, 20, 4)
+> > +
+> > +#define PLL3EN         FIELD_PREP_CONST(OFFSET_MASK, (0xc0))
+> > +
+> > +#define CPG_PLLEN              BIT(0)
+>
+> CPG_PLL_EN_EN, for consistency with CPG_PLL_MON_LOCK below?
+>
+Ok.
 
-Best regards,
--- 
-Abel Vesa <abel.vesa@oss.qualcomm.com>
+> > +#define CPG_PLL3_VCO_CTR0(x)   ((x) + 0x4)
+> > +#define CPG_PLL3_VCO_CTR0_PDIV GENMASK(21, 16)
+> > +#define CPG_PLL3_VCO_CTR0_MDIV GENMASK(9, 0)
+> > +#define CPG_PLL3_VCO_CTR1(x)   ((x) + 0x8)
+> > +#define CPG_PLL3_VCO_CTR1_KDIV GENMASK(31, 16)
+> > +#define CPG_PLL3_VCO_CTR1_SDIV GENMASK(2, 0)
+> > +#define CPG_PLL_MON(x)         ((x) - 0x10)
+> > +#define CPG_PLL_MON_LOCK       BIT(0)
+>
+> So all registers are calculated based on the CPG_PLL3EN register
+> address...
+>
+Yes.
+
+> >
+> >  enum rzt2h_clk_types {
+> >         CLK_TYPE_RZT2H_DIV =3D CLK_TYPE_CUSTOM,   /* Clock with divider=
+ */
+> >         CLK_TYPE_RZT2H_MUX,                     /* Clock with clock sou=
+rce selector */
+> >         CLK_TYPE_RZT2H_FSELXSPI,                /* Clock with FSELXSPIn=
+ source selector */
+> > +       CLK_TYPE_RZT2H_PLL3,                    /* PLL3 Clock */
+> > +       CLK_TYPE_RZT2H_LCDCDIV,                 /* LCDC divider clock *=
+/
+> >  };
+> >
+> >  #define DEF_DIV(_name, _id, _parent, _conf, _dtable) \
+> > @@ -83,10 +105,51 @@ enum rzt2h_clk_types {
+> >  #define DEF_DIV_FSELXSPI(_name, _id, _parent, _conf, _dtable) \
+> >         DEF_TYPE(_name, _id, CLK_TYPE_RZT2H_FSELXSPI, .conf =3D _conf, =
+\
+> >                  .parent =3D _parent, .dtable =3D _dtable, .flag =3D 0)
+> > +#define DEF_PLL3(_name, _id, _parent, _conf) \
+> > +       DEF_TYPE(_name, _id, CLK_TYPE_RZT2H_PLL3, .conf =3D _conf, \
+> > +                .parent =3D _parent)
+> > +#define DEF_DIV_LCDC(_name, _id, _parent, _conf, _dtable) \
+> > +       DEF_TYPE(_name, _id, CLK_TYPE_RZT2H_LCDCDIV, .conf =3D _conf, \
+> > +                .parent =3D _parent, .dtable =3D _dtable, .flag =3D CL=
+K_SET_RATE_PARENT)
+>
+> I assume you can't reuse DEF_DIV() because you need the extra accuracy
+> from interfacing with rzv2h_get_pll_divs_pars()?
+>
+Yep, thats correct.
+
+> > +
+> > +struct pll_clk {
+> > +       void __iomem *reg;
+>
+> This is the PLLxEN register address, from which all other register
+> addresses are calculated: pllen?
+>
+Yes.
+
+> > +       const struct rzv2h_pll_limits *limits;
+> > +       struct device *dev;
+> > +       struct rzv2h_pll_pars pll_parameters;
+> > +       struct clk_hw hw;
+> > +       unsigned long cur_rate;
+> > +};
+> > +
+> > +#define to_pll(_hw)    container_of(_hw, struct pll_clk, hw)
+> > +
+> > +struct r9a09g077_lcdc_div_clk {
+> > +       const struct clk_div_table *dtable;
+> > +       void __iomem *reg;
+> > +       struct device *dev;
+> > +       struct clk_hw hw;
+> > +       u32 conf;
+> > +       u8 divider;
+> > +};
+> > +
+> > +#define to_lcdc_div_clk(_hw) \
+> > +       container_of(_hw, struct r9a09g077_lcdc_div_clk, hw)
+> > +
+> > +#define RZT2H_MAX_LCDC_DIV_TABLES      16
+> > +
+> > +static const struct rzv2h_pll_limits r9a09g077_cpg_pll3_limits =3D {
+> > +       .input_fref =3D 48 * MEGA,
+> > +       .fout =3D { .min =3D 25 * MEGA, .max =3D 430 * MEGA },
+> > +       .fvco =3D { .min =3D 1600 * MEGA, .max =3D 3200 * MEGA },
+> > +       .m =3D { .min =3D 0x40, .max =3D 0x3ff },
+> > +       .p =3D { .min =3D 0x2, .max =3D 0x8 },
+> > +       .s =3D { .min =3D 0x0, .max =3D 0x6 },
+> > +       .k =3D { .min =3D -32768, .max =3D 32767 },
+> > +};
+> >
+> >  enum clk_ids {
+> >         /* Core Clock Outputs exported to DT */
+> > -       LAST_DT_CORE_CLK =3D R9A09G077_PCLKCAN,
+> > +       LAST_DT_CORE_CLK =3D R9A09G077_LCDC_CLKD,
+> >
+> >         /* External Input Clocks */
+> >         CLK_EXTAL,
+>
+> > @@ -242,6 +335,8 @@ static const struct cpg_core_clk r9a09g077_core_clk=
+s[] __initconst =3D {
+> >                          FSELXSPI1, dtable_6_8_16_32_64),
+> >         DEF_MUX("PCLKCAN", R9A09G077_PCLKCAN, FSELCANFD,
+> >                 sel_clk_pll4d3_div10_div20, ARRAY_SIZE(sel_clk_pll4d3_d=
+iv10_div20), 0),
+> > +       DEF_DIV_LCDC("LCDCDIV", R9A09G077_LCDC_CLKD, CLK_SEL_CLK_PLL3, =
+LCDCDIVSEL,
+>
+> "LCDC_CLKD"
+>
+Ok.
+
+>
+> > +                    dtable_2_32),
+> >  };
+> >
+> >  static const struct mssr_mod_clk r9a09g077_mod_clks[] __initconst =3D =
+{
+>
+> > @@ -481,6 +577,272 @@ r9a09g077_cpg_fselxspi_div_clk_register(struct de=
+vice *dev,
+> >         return hw->clk;
+> >  }
+> >
+> > +static unsigned long r9a09g077_cpg_pll3_clk_recalc_rate(struct clk_hw =
+*hw,
+> > +                                                       unsigned long p=
+arent_rate)
+> > +{
+> > +       struct pll_clk *pll_clk =3D to_pll(hw);
+> > +       unsigned int ctr0, ctr1;
+>
+> u32
+>
+Ok.
+
+Cheers,
+Prabhakar
+
+> > +       u8 pdiv, sdiv;
+> > +       u64 rate;
+> > +       u16 mdiv;
+> > +       s16 kdiv;
+> > +
+> > +       ctr0 =3D readl(CPG_PLL3_VCO_CTR0(pll_clk->reg));
+> > +       ctr1 =3D readl(CPG_PLL3_VCO_CTR1(pll_clk->reg));
+> > +
+> > +       pdiv =3D FIELD_GET(CPG_PLL3_VCO_CTR0_PDIV, ctr0);
+> > +       mdiv =3D FIELD_GET(CPG_PLL3_VCO_CTR0_MDIV, ctr0);
+> > +       kdiv =3D (s16)FIELD_GET(CPG_PLL3_VCO_CTR1_KDIV, ctr1);
+> > +       sdiv =3D FIELD_GET(CPG_PLL3_VCO_CTR1_SDIV, ctr1);
+> > +
+> > +       rate =3D mul_u64_u32_shr(parent_rate, (mdiv << 16) + kdiv, 16 +=
+ sdiv);
+> > +
+> > +       return DIV_ROUND_CLOSEST_ULL(rate, pdiv);
+> > +}
+>
+> The rest LGTM.
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
+8k.org
+>
+> In personal conversations with technical people, I call myself a hacker. =
+But
+> when I'm talking to journalists I just say "programmer" or something like=
+ that.
+>                                 -- Linus Torvalds
