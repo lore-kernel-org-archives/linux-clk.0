@@ -1,64 +1,64 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D76C3FC5A8
-	for <linux-clk@vger.kernel.org>; Tue,  9 Jun 2026 10:59:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB79F3FF1DC
+	for <linux-clk@vger.kernel.org>; Tue,  9 Jun 2026 10:59:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781002776; cv=none; b=ULI0Zt/V3ekDg37NZwus8KwhsHgdRtiSYOTLMuJqoxW5E7Nq2Da7PmUJHQGjsKbOWu6NNd/vR0ttkeCyOIc/lcnCt8nnjG3cx/bnGhes4t+9lXV/YthRC4bjRGAKX+LaXqN5quehw1Qpf2sPqso05GyYaM+ckHS6tEoP6KG+Hp4=
+	t=1781002780; cv=none; b=mE0rLESxd+A9e3ZoKuflh6HpIzpS0OKJo/q0Xdsqiejq5dPnaRcmVYzLyDyAekoP3jQ4u5zrlHWkezY1HwIB6kaGO0s9VfyoBzfVe5VlCp6ILosAj7Uzk3MAPGhayIplJRgwHLAEq+CZyMm/SyMzQckLVUqquriVCOkS0BntRMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781002776; c=relaxed/simple;
-	bh=ZvmNBM0dEycs0ZSV4pUzv9neHna2gcQfukCmjf+ujfI=;
+	s=arc-20240116; t=1781002780; c=relaxed/simple;
+	bh=HgihmDlKr2QK/mcPnPCL8YjKGQ/ZiI8kjepFcybdaIA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=US9Ij/hVmv2f9TLsyEN5H3Kax69CQRr4A2v7fFK9q0kWqkJuz5l7Av7MCfKG1/AEPIsamfZtTIk7jG4x2wCj3xcgjgVVrAhMEBAZq2hu6RjbhftNDxRZmByB0DpwrpoacUlSAsjATWOT9NPMI10TsnQDW0z/fN0n8Oj/N9K9ImE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JDlkAepP; arc=none smtp.client-ip=209.85.128.49
+	 MIME-Version; b=jBBFoAEmPrK+U0N6lWZhiN8kscoOjWcHIDCDtskJy4AHplIbHwwXSp6SGEaWy2YqSLXRoJ51BOHhThK0zmNHEF6rK0+PGR9elB1guX8ODM7eb+ac99oPF3F1zyix9/ffBQtXrQorIHx+JZgblAvGl9+r0vQIR8ozuLKHx/eXUZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SuRrv1Zb; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JDlkAepP"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-490b4a8e28bso44553245e9.1
-        for <linux-clk@vger.kernel.org>; Tue, 09 Jun 2026 03:59:35 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SuRrv1Zb"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-490ae94a89eso45619085e9.1
+        for <linux-clk@vger.kernel.org>; Tue, 09 Jun 2026 03:59:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1781002774; x=1781607574; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1781002776; x=1781607576; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZlQ7E/EZea6BzD4lH08QBVmk0H9Rm37lQbjREjZTGMs=;
-        b=JDlkAepPL6igXebSuZNnSCed6C97w9eP9LvgJm4sRlpSaLy8A8Cult3HhCTSc8lpAM
-         NO6zZHYtz58v0YuwKqYHUI5TuGZ5sRNw7wrZNyreeva/rAAbibeUq+SFSal5wPvW5980
-         +t9uUgsj/vhQ/vq5EIcGtKTME7eB8Vq+R18pLiUlBe74wGRGfEz0L4YjwM2GtBIsNQAf
-         OaxzdfIvYC+148CdKlycwDDRiYwzR8S/kwhgEFI7oT4mMyi2qQw4zpeTWQpod0Opmcr4
-         lFiU5LuFTxWjIO/jz6+AMhXXErCKvQLlFNhjM8S1AWqvET/I0sQBH6M2GFtk2YN1nNJg
-         AnOA==
+        bh=PmgiihUZ6uoCNDtqz9w4h1EIfJ0KMoxHrsdIwToPLvM=;
+        b=SuRrv1ZbESdpB7MkrZaYu28s6Qa4repjIx6ydmsGKOuZ+gRZ5Cyl3FwbMLI7IhkYkE
+         SozjV/QY2WlGNiUYswC2VWpPuPzFpMHCRmX3ZO4Smcm3295BUPiHoZRw60Hl4GWqRajR
+         c4SSeahCtiitVj3YCyb7F14mafqokwxvJEPDkTIp4RbNVEHr7+hstbXVpPAHHlGAJgM/
+         DcB+aHxNmtUWEGaMK1SqLFdxch4KFYBXrSo8/n6JNufbPB+EB0+zkGI0+pQ+S+0tIBnA
+         PDMi4nUgpuzXGR2Ll8rstAiG7utkreV6W4PtbaSegoaPz74DZthaPXiW6EOTILSgOwpw
+         NWaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781002774; x=1781607574;
+        d=1e100.net; s=20251104; t=1781002776; x=1781607576;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=ZlQ7E/EZea6BzD4lH08QBVmk0H9Rm37lQbjREjZTGMs=;
-        b=oYIwPZ7c2b4a/3dTlCQnHFSlXI631VsTZ8qV7ZogZ+jRLPFBLS9nhL84o7Bbe6ZhcP
-         8ACRJ5TVk24+DAXOaYTQcZtsD+Ij4OrbbEu1XbF3CXMAgAi4HTZCIXkrS5LBTf2RWX3Y
-         A7aFNU+J3ocLk/pESF7ThwcnVyw+GeBZtRfJVMcFBTr326zuvXFxCPSlPDC3max003Vy
-         SiZI/f3Ug5l+x6iPtLUK4u7I7GdzCt4ztr+URjiRwZiEXpeW+ZWgovktHcL265MPp78F
-         xVaoC/nCgZWnKkFBS1n9p2O5x8aHOSiMqxjdTgpDxmfRYhajBioXcRp8Wgt1Ow83x+Gu
-         XGpQ==
-X-Forwarded-Encrypted: i=1; AFNElJ+zr7B600ihda8MgliMVtHHzt1cJQyvn1kVPbtIVnrgeRuqBDY5BUKfVHeZsbEstZPdRZtXodfouvI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzI7PICLjeE/w7kvkZfnAMiakrr3sgDBoFR0VsBYyBixzrZXTzz
-	UsbOGxhfioPlwTXKYDEqfGHTmTY97gPtzadImnF/NOA2U1seo7mUWK8SRSdAbmF0
-X-Gm-Gg: Acq92OHfqDa1z/8Tk92lgEz/3SRqi7SWvDFeS4MEYqMCXGteJ7iaR4VD3equalZUaU7
-	Co3M63qfZCtMIYNKukyHsf5Dxxcv7gENihQkm4nuozSGBFof6/3v4kJril07HWUIZZ8UenpAgjv
-	2DGKRXJuaJl94K+DFLpgh97b/ExitRMti27enFOBCDBst3vEYrw1QRSWXzvMtcB+EIwJTUE38Dp
-	Xkcy8Jrx9lehRo0jQ4EhK7q9w/YEF9Re0yekeHOXzpsNxA8TzVEqJ+Qth8VL9ZzdqfZ4A4A4iU0
-	MSabTH0qVuUulT6f624D6FQAsD95Zi7869X9sL2d+z24G8AO1hHn0g6NpKu3+WrdBlGshqKegD9
-	p5rpfMCC7V96frDFyzVMiSglaGfl0r5Vk/kzdJhQ8SrHqj5vt5Zi9QicpvSawXW+VaXDhrUVmHx
-	nl7GerHoHloVJYp9vcmPeqbB//u9Gcfa4d7CgrTabxANIqgUaQuLn9DukdoEejPpl7ZhOvi76aw
-	HN6p8PY85hwVpzhxsmOnSE/qcgUsa9HVc3UxHZE8TcKECI39mVcL3wnkQ==
-X-Received: by 2002:a05:600c:4e4b:b0:490:bfda:7d7e with SMTP id 5b1f17b1804b1-490c258999amr335438365e9.3.1781002773647;
-        Tue, 09 Jun 2026 03:59:33 -0700 (PDT)
+        bh=PmgiihUZ6uoCNDtqz9w4h1EIfJ0KMoxHrsdIwToPLvM=;
+        b=ObnLQCmOt9segtEUwQtsfAFwZ3k4p2huZ2o12n4pfD/htOoHYBL3N4TkpOxHMWr7p6
+         REcETNglWuJmJWUTd8BrqyaxW0P5EZEJa1Okr9ewYnD5rfV4HVy73CIsQNkrLENaBHXs
+         Rrg+l2c5eIUSWYMlxpt9gEWEDcEYhnFUTrpv/xjH2tpJjWJe0Xl/00PYTWx/wQcJ+595
+         uzDoxlOwFVfRukUEkGgxewdPL8C9g2X+xZJDM7KoFL5+C+tEBt8Uyv6nvfGpgdLxc/Wi
+         UskZ4p5LUDep80m3SFrZ/79xtpnC2o1TV6ZifGYNqe4UpL7gOl59YkS3Z+tbwS4J32m9
+         v/gw==
+X-Forwarded-Encrypted: i=1; AFNElJ9yKLSaPwKM7NqSoQxW1rvKMbi9T8xBxFzoQMWGAekZTYROTPLkG6FvNGgoSyhrI3cloQRQYAKWGzM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxPR6tI5PnQdZcjnoo1tjiafEaXBPIWNXsvCa59IUW4UqtNICb
+	WUoSDiSIodUos36UGLLYBKkBTnhRYUiV1DfMrToS3e4v+XS+ouKsO5ew
+X-Gm-Gg: Acq92OFGWdm9hydZSbaMI04di6BgZgw5fmynTv5cb5HoMcWBbtJPcog3hlWSXt3Kr5f
+	U1UgTPC2+36Ec+6+xcPVywSUYY+upT7PV0r/VsEpnKuq/wM1WRLrULnF3z/Vdm55fKtJ8Wu2SXR
+	1rp7ZYMGKAZHAL0D+5Q6SZpub/9nqmX380wavZp4erxMPrhKG6zMi1dBIKFPLrHeKiNitO+koZi
+	JfkqivUb5UykgGMdeAz2UtijkWx20Wln6Pdieih/CDgNiSyNXwto7+kYv+vwhJRUzYDU+rasDde
+	EPQOVnpZL4cYAbOt9G5rTcCzfxnvYSu/YTBL8kAdr4etE7YtBrTs15QSBdl7RWUR9FY6Ax/l5X1
+	a33Pc0L3wBKp7tOleK1j0Z5unn9b/wUJCW1D1b5z/4oRjYuGMyU+KhMQ4Wik17PfBo3UNS3htVw
+	+UHzcNUQ0s5fe6+rJMOl55qBQB/l7aQHQL+rv6tgvpF3We1o9doHiwXIvZIn51+fL8or2O8+6Tn
+	dzQ3b5dQjC1abm6ui21tsPBw+YZtYhX/Su1BuMZSQiepxMSqPgs5LEKuA==
+X-Received: by 2002:a05:600c:5248:b0:490:c024:2ec8 with SMTP id 5b1f17b1804b1-490c2522657mr319373935e9.0.1781002775725;
+        Tue, 09 Jun 2026 03:59:35 -0700 (PDT)
 Received: from iku.example.org ([2a06:5906:61b:2d00:2b2d:6009:3bbe:fb84])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-490bc3d663csm524250635e9.11.2026.06.09.03.59.32
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-490bc3d663csm524250635e9.11.2026.06.09.03.59.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jun 2026 03:59:32 -0700 (PDT)
+        Tue, 09 Jun 2026 03:59:35 -0700 (PDT)
 From: Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -76,11 +76,10 @@ Cc: linux-kernel@vger.kernel.org,
 	Prabhakar <prabhakar.csengg@gmail.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: [PATCH v2 3/5] dt-bindings: clock: renesas,r9a09g077/87: Add LCDC_CLKD clock ID
-Date: Tue,  9 Jun 2026 11:59:22 +0100
-Message-ID: <20260609105924.962573-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2 5/5] clk: renesas: r9a09g077: Add LCDC and PLL3 clock support for RZ/T2H display pipeline
+Date: Tue,  9 Jun 2026 11:59:24 +0100
+Message-ID: <20260609105924.962573-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20260609105924.962573-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20260609105924.962573-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -94,43 +93,548 @@ Content-Transfer-Encoding: 8bit
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Add the LCDC clockd (LCDC_CLKD) definition for the Renesas RZ/T2H
-(R9A09G077) and RZ/N2H (R9A09G087) SoCs. LCDC_CLKD is used as the
-operating clock for LCDC.
+Add the clock definitions and PLL logic required to supply the LCDC
+(VSPD/FCPVD/DU) blocks on the RZ/T2H (R9A09G077) SoC. The RZ/T2H display
+subsystem depends on a dedicated PLL (PLL3) and a set of new derived
+clocks.
+
+Introduce a new PLL clock type and implement rate recalculation,
+programming and locking sequences for PLL3 using the RZ/T2H specific
+divider and VCO limits. Add the corresponding muxes and divider entries,
+expose the LCDC core clock, and register the LCDC module clock using the
+correct PCLK parent.
+
+This enables the RZ/T2H clock driver to generate the display pipeline
+clocking tree needed by the DU and VSP-based composition engines, allowing
+upcoming display support to be integrated without duplicating CPG logic.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 v1->v2:
-- Added Acked-by and Reviewed-by tags.
+- Switched to use the new library
+- Kconfig now selects CLK_RZV2H_CPG_LIB
+- Renamed CPG_PLLEN to CPG_PLL_EN_EN
+- Renamed LCDCDIV to LCDC_CLKD
+- Changed ctr0/1 in r9a09g077_cpg_pll3_clk_recalc_rate() to use u32
 ---
- include/dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h | 1 +
- include/dt-bindings/clock/renesas,r9a09g087-cpg-mssr.h | 1 +
- 2 files changed, 2 insertions(+)
+ drivers/clk/renesas/Kconfig         |   2 +
+ drivers/clk/renesas/r9a09g077-cpg.c | 369 +++++++++++++++++++++++++++-
+ 2 files changed, 370 insertions(+), 1 deletion(-)
 
-diff --git a/include/dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h b/include/dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h
-index c4863e444458..f6cb8d649a46 100644
---- a/include/dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h
-+++ b/include/dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h
-@@ -34,5 +34,6 @@
- #define R9A09G077_XSPI_CLK0		22
- #define R9A09G077_XSPI_CLK1		23
- #define R9A09G077_PCLKCAN		24
-+#define R9A09G077_LCDC_CLKD		25
+diff --git a/drivers/clk/renesas/Kconfig b/drivers/clk/renesas/Kconfig
+index 7659550b8566..5c0238e878b7 100644
+--- a/drivers/clk/renesas/Kconfig
++++ b/drivers/clk/renesas/Kconfig
+@@ -218,10 +218,12 @@ config CLK_R9A09G057
+ config CLK_R9A09G077
+ 	bool "RZ/T2H clock support" if COMPILE_TEST
+ 	select CLK_RENESAS_CPG_MSSR
++	select CLK_RZV2H_CPG_LIB
  
- #endif /* __DT_BINDINGS_CLOCK_RENESAS_R9A09G077_CPG_H__ */
-diff --git a/include/dt-bindings/clock/renesas,r9a09g087-cpg-mssr.h b/include/dt-bindings/clock/renesas,r9a09g087-cpg-mssr.h
-index 0d53f1e65077..312e563b322e 100644
---- a/include/dt-bindings/clock/renesas,r9a09g087-cpg-mssr.h
-+++ b/include/dt-bindings/clock/renesas,r9a09g087-cpg-mssr.h
-@@ -34,5 +34,6 @@
- #define R9A09G087_XSPI_CLK0		22
- #define R9A09G087_XSPI_CLK1		23
- #define R9A09G087_PCLKCAN		24
-+#define R9A09G087_LCDC_CLKD		25
+ config CLK_R9A09G087
+ 	bool "RZ/N2H clock support" if COMPILE_TEST
+ 	select CLK_RENESAS_CPG_MSSR
++	select CLK_RZV2H_CPG_LIB
  
- #endif /* __DT_BINDINGS_CLOCK_RENESAS_R9A09G087_CPG_H__ */
+ config CLK_SH73A0
+ 	bool "SH-Mobile AG5 clock support" if COMPILE_TEST
+diff --git a/drivers/clk/renesas/r9a09g077-cpg.c b/drivers/clk/renesas/r9a09g077-cpg.c
+index f777601a23b9..975578efd4cf 100644
+--- a/drivers/clk/renesas/r9a09g077-cpg.c
++++ b/drivers/clk/renesas/r9a09g077-cpg.c
+@@ -8,16 +8,23 @@
+ 
+ #include <linux/bitfield.h>
+ #include <linux/clk-provider.h>
++#include <linux/clk/renesas.h>
+ #include <linux/device.h>
+ #include <linux/init.h>
++#include <linux/io.h>
++#include <linux/iopoll.h>
+ #include <linux/kernel.h>
+ #include <linux/math.h>
++#include <linux/module.h>
+ #include <linux/types.h>
++#include <linux/units.h>
+ 
+ #include <dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h>
+ #include <dt-bindings/clock/renesas,r9a09g087-cpg-mssr.h>
+ #include "renesas-cpg-mssr.h"
+ 
++MODULE_IMPORT_NS("RZV2H_CPG");
++
+ #define RZT2H_REG_BLOCK_SHIFT	11
+ #define RZT2H_REG_OFFSET_MASK	GENMASK(10, 0)
+ #define RZT2H_REG_CONF(block, offset)	(((block) << RZT2H_REG_BLOCK_SHIFT) | \
+@@ -66,11 +73,26 @@
+ #define DIVSCI2ASYNC	CONF_PACK(SCKCR3, 10, 2)
+ #define DIVSCI3ASYNC	CONF_PACK(SCKCR3, 12, 2)
+ #define DIVSCI4ASYNC	CONF_PACK(SCKCR3, 14, 2)
++#define LCDCDIVSEL	CONF_PACK(SCKCR3, 20, 4)
++
++#define PLL3EN		FIELD_PREP_CONST(OFFSET_MASK, (0xc0))
++
++#define CPG_PLL_EN_EN		BIT(0)
++#define CPG_PLL3_VCO_CTR0(x)	((x) + 0x4)
++#define CPG_PLL3_VCO_CTR0_PDIV	GENMASK(21, 16)
++#define CPG_PLL3_VCO_CTR0_MDIV	GENMASK(9, 0)
++#define CPG_PLL3_VCO_CTR1(x)	((x) + 0x8)
++#define CPG_PLL3_VCO_CTR1_KDIV	GENMASK(31, 16)
++#define CPG_PLL3_VCO_CTR1_SDIV	GENMASK(2, 0)
++#define CPG_PLL_MON(x)		((x) - 0x10)
++#define CPG_PLL_MON_LOCK	BIT(0)
+ 
+ enum rzt2h_clk_types {
+ 	CLK_TYPE_RZT2H_DIV = CLK_TYPE_CUSTOM,	/* Clock with divider */
+ 	CLK_TYPE_RZT2H_MUX,			/* Clock with clock source selector */
+ 	CLK_TYPE_RZT2H_FSELXSPI,		/* Clock with FSELXSPIn source selector */
++	CLK_TYPE_RZT2H_PLL3,			/* PLL3 Clock */
++	CLK_TYPE_RZT2H_LCDCDIV,			/* LCDC divider clock */
+ };
+ 
+ #define DEF_DIV(_name, _id, _parent, _conf, _dtable) \
+@@ -83,10 +105,51 @@ enum rzt2h_clk_types {
+ #define DEF_DIV_FSELXSPI(_name, _id, _parent, _conf, _dtable) \
+ 	DEF_TYPE(_name, _id, CLK_TYPE_RZT2H_FSELXSPI, .conf = _conf, \
+ 		 .parent = _parent, .dtable = _dtable, .flag = 0)
++#define DEF_PLL3(_name, _id, _parent, _conf) \
++	DEF_TYPE(_name, _id, CLK_TYPE_RZT2H_PLL3, .conf = _conf, \
++		 .parent = _parent)
++#define DEF_DIV_LCDC(_name, _id, _parent, _conf, _dtable) \
++	DEF_TYPE(_name, _id, CLK_TYPE_RZT2H_LCDCDIV, .conf = _conf, \
++		 .parent = _parent, .dtable = _dtable, .flag = CLK_SET_RATE_PARENT)
++
++struct pll_clk {
++	void __iomem *reg;
++	const struct rzv2h_pll_limits *limits;
++	struct device *dev;
++	struct rzv2h_pll_pars pll_parameters;
++	struct clk_hw hw;
++	unsigned long cur_rate;
++};
++
++#define to_pll(_hw)	container_of(_hw, struct pll_clk, hw)
++
++struct r9a09g077_lcdc_div_clk {
++	const struct clk_div_table *dtable;
++	void __iomem *reg;
++	struct device *dev;
++	struct clk_hw hw;
++	u32 conf;
++	u8 divider;
++};
++
++#define to_lcdc_div_clk(_hw) \
++	container_of(_hw, struct r9a09g077_lcdc_div_clk, hw)
++
++#define RZT2H_MAX_LCDC_DIV_TABLES	16
++
++static const struct rzv2h_pll_limits r9a09g077_cpg_pll3_limits = {
++	.input_fref = 48 * MEGA,
++	.fout = { .min = 25 * MEGA, .max = 430 * MEGA },
++	.fvco = { .min = 1600 * MEGA, .max = 3200 * MEGA },
++	.m = { .min = 0x40, .max = 0x3ff },
++	.p = { .min = 0x2, .max = 0x8 },
++	.s = { .min = 0x0, .max = 0x6 },
++	.k = { .min = -32768, .max = 32767 },
++};
+ 
+ enum clk_ids {
+ 	/* Core Clock Outputs exported to DT */
+-	LAST_DT_CORE_CLK = R9A09G077_PCLKCAN,
++	LAST_DT_CORE_CLK = R9A09G077_LCDC_CLKD,
+ 
+ 	/* External Input Clocks */
+ 	CLK_EXTAL,
+@@ -96,10 +159,12 @@ enum clk_ids {
+ 	CLK_PLL0,
+ 	CLK_PLL1,
+ 	CLK_PLL2,
++	CLK_PLL3,
+ 	CLK_PLL4,
+ 	CLK_SEL_CLK_PLL0,
+ 	CLK_SEL_CLK_PLL1,
+ 	CLK_SEL_CLK_PLL2,
++	CLK_SEL_CLK_PLL3,
+ 	CLK_SEL_CLK_PLL4,
+ 	CLK_PLL4D1,
+ 	CLK_PLL4D1_DIV3,
+@@ -107,6 +172,7 @@ enum clk_ids {
+ 	CLK_PLL4D3,
+ 	CLK_PLL4D3_DIV10,
+ 	CLK_PLL4D3_DIV20,
++	CLK_PLL4D50,
+ 	CLK_SCI0ASYNC,
+ 	CLK_SCI1ASYNC,
+ 	CLK_SCI2ASYNC,
+@@ -119,6 +185,7 @@ enum clk_ids {
+ 	CLK_SPI3ASYNC,
+ 	CLK_DIVSELXSPI0_SCKCR,
+ 	CLK_DIVSELXSPI1_SCKCR,
++	CLK_LCDDIVSEL,
+ 
+ 	/* Module Clocks */
+ 	MOD_CLK_BASE,
+@@ -130,6 +197,26 @@ static const struct clk_div_table dtable_1_2[] = {
+ 	{0, 0},
+ };
+ 
++static const struct clk_div_table dtable_2_32[] = {
++	{0, 2},
++	{1, 4},
++	{2, 6},
++	{3, 8},
++	{4, 10},
++	{5, 12},
++	{6, 14},
++	{7, 16},
++	{8, 18},
++	{9, 20},
++	{10, 22},
++	{11, 24},
++	{12, 26},
++	{13, 28},
++	{14, 30},
++	{15, 32},
++	{0, 0},
++};
++
+ static const struct clk_div_table dtable_6_8_16_32_64[] = {
+ 	{6, 64},
+ 	{5, 32},
+@@ -152,6 +239,7 @@ static const struct clk_div_table dtable_24_25_30_32[] = {
+ static const char * const sel_clk_pll0[] = { ".loco", ".pll0" };
+ static const char * const sel_clk_pll1[] = { ".loco", ".pll1" };
+ static const char * const sel_clk_pll2[] = { ".loco", ".pll2" };
++static const char * const sel_clk_pll3[] = { ".loco", ".pll3" };
+ static const char * const sel_clk_pll4[] = { ".loco", ".pll4" };
+ static const char * const sel_clk_pll4d1_div3_div4[] = { ".pll4d1_div3", ".pll4d1_div4" };
+ static const char * const sel_clk_pll4d3_div10_div20[] = { ".pll4d3_div10", ".pll4d3_div20" };
+@@ -173,10 +261,14 @@ static const struct cpg_core_clk r9a09g077_core_clks[] __initconst = {
+ 		sel_clk_pll1, ARRAY_SIZE(sel_clk_pll1), CLK_MUX_READ_ONLY),
+ 	DEF_MUX(".sel_clk_pll2", CLK_SEL_CLK_PLL2, SEL_PLL,
+ 		sel_clk_pll2, ARRAY_SIZE(sel_clk_pll2), CLK_MUX_READ_ONLY),
++	DEF_MUX(".sel_clk_pll3", CLK_SEL_CLK_PLL3, SEL_PLL,
++		sel_clk_pll3, ARRAY_SIZE(sel_clk_pll3), CLK_MUX_READ_ONLY),
+ 	DEF_MUX(".sel_clk_pll4", CLK_SEL_CLK_PLL4, SEL_PLL,
+ 		sel_clk_pll4, ARRAY_SIZE(sel_clk_pll4), CLK_MUX_READ_ONLY),
+ 
+ 	DEF_FIXED(".pll4d1", CLK_PLL4D1, CLK_SEL_CLK_PLL4, 1, 1),
++	DEF_FIXED(".pll4d50", CLK_PLL4D50, CLK_SEL_CLK_PLL4, 50, 1),
++	DEF_PLL3(".pll3", CLK_PLL3, CLK_PLL4D50, PLL3EN),
+ 	DEF_FIXED(".pll4d1_div3", CLK_PLL4D1_DIV3, CLK_PLL4D1, 3, 1),
+ 	DEF_FIXED(".pll4d1_div4", CLK_PLL4D1_DIV4, CLK_PLL4D1, 4, 1),
+ 	DEF_FIXED(".pll4d3", CLK_PLL4D3, CLK_SEL_CLK_PLL4, 3, 1),
+@@ -229,6 +321,7 @@ static const struct cpg_core_clk r9a09g077_core_clks[] __initconst = {
+ 	DEF_FIXED("PCLKL", R9A09G077_CLK_PCLKL, CLK_SEL_CLK_PLL1, 16, 1),
+ 	DEF_FIXED("PCLKAH", R9A09G077_CLK_PCLKAH, CLK_PLL4D1, 6, 1),
+ 	DEF_FIXED("PCLKAM", R9A09G077_CLK_PCLKAM, CLK_PLL4D1, 12, 1),
++	DEF_FIXED("PCLKAL", R9A09G077_CLK_PCLKAL, CLK_PLL4D1, 24, 1),
+ 	DEF_FIXED("SDHI_CLKHS", R9A09G077_SDHI_CLKHS, CLK_SEL_CLK_PLL2, 1, 1),
+ 	DEF_FIXED("USB_CLK", R9A09G077_USB_CLK, CLK_PLL4D1, 48, 1),
+ 	DEF_FIXED("ETCLKA", R9A09G077_ETCLKA, CLK_SEL_CLK_PLL1, 5, 1),
+@@ -242,6 +335,8 @@ static const struct cpg_core_clk r9a09g077_core_clks[] __initconst = {
+ 			 FSELXSPI1, dtable_6_8_16_32_64),
+ 	DEF_MUX("PCLKCAN", R9A09G077_PCLKCAN, FSELCANFD,
+ 		sel_clk_pll4d3_div10_div20, ARRAY_SIZE(sel_clk_pll4d3_div10_div20), 0),
++	DEF_DIV_LCDC("LCDC_CLKD", R9A09G077_LCDC_CLKD, CLK_SEL_CLK_PLL3, LCDCDIVSEL,
++		     dtable_2_32),
+ };
+ 
+ static const struct mssr_mod_clk r9a09g077_mod_clks[] __initconst = {
+@@ -272,6 +367,7 @@ static const struct mssr_mod_clk r9a09g077_mod_clks[] __initconst = {
+ 	DEF_MOD("sci5fck", 600, CLK_SCI5ASYNC),
+ 	DEF_MOD("iic2", 601, R9A09G077_CLK_PCLKL),
+ 	DEF_MOD("spi3", 602, CLK_SPI3ASYNC),
++	DEF_MOD("lcdc", 1204, R9A09G077_CLK_PCLKAL),
+ 	DEF_MOD("sdhi0", 1212, R9A09G077_CLK_PCLKAM),
+ 	DEF_MOD("sdhi1", 1213, R9A09G077_CLK_PCLKAM),
+ };
+@@ -481,6 +577,272 @@ r9a09g077_cpg_fselxspi_div_clk_register(struct device *dev,
+ 	return hw->clk;
+ }
+ 
++static unsigned long r9a09g077_cpg_pll3_clk_recalc_rate(struct clk_hw *hw,
++							unsigned long parent_rate)
++{
++	struct pll_clk *pll_clk = to_pll(hw);
++	u32 ctr0, ctr1;
++	u8 pdiv, sdiv;
++	u64 rate;
++	u16 mdiv;
++	s16 kdiv;
++
++	ctr0 = readl(CPG_PLL3_VCO_CTR0(pll_clk->reg));
++	ctr1 = readl(CPG_PLL3_VCO_CTR1(pll_clk->reg));
++
++	pdiv = FIELD_GET(CPG_PLL3_VCO_CTR0_PDIV, ctr0);
++	mdiv = FIELD_GET(CPG_PLL3_VCO_CTR0_MDIV, ctr0);
++	kdiv = (s16)FIELD_GET(CPG_PLL3_VCO_CTR1_KDIV, ctr1);
++	sdiv = FIELD_GET(CPG_PLL3_VCO_CTR1_SDIV, ctr1);
++
++	rate = mul_u64_u32_shr(parent_rate, (mdiv << 16) + kdiv, 16 + sdiv);
++
++	return DIV_ROUND_CLOSEST_ULL(rate, pdiv);
++}
++
++static int r9a09g077_cpg_pll3_determine_rate(struct clk_hw *hw,
++					     struct clk_rate_request *req)
++{
++	struct pll_clk *pll_clk = to_pll(hw);
++	u64 rate_millihz;
++
++	if (req->rate == pll_clk->cur_rate)
++		return 0;
++
++	rate_millihz = mul_u32_u32(req->rate, MILLI);
++	if (!rzv2h_cpg_get_pll_pars(pll_clk->limits, &pll_clk->pll_parameters,
++				    rate_millihz)) {
++		dev_dbg(pll_clk->dev,
++			"failed to determine rate for req->rate: %lu\n",
++			req->rate);
++		return -EINVAL;
++	}
++	req->rate = DIV_ROUND_CLOSEST_ULL(pll_clk->pll_parameters.freq_millihz, MILLI);
++	pll_clk->cur_rate = req->rate;
++
++	return 0;
++}
++
++static int r9a09g077_cpg_pll3_set_rate(struct clk_hw *hw, unsigned long rate,
++				       unsigned long parent_rate)
++{
++	struct pll_clk *pll_clk = to_pll(hw);
++	struct rzv2h_pll_pars *params = &pll_clk->pll_parameters;
++	void __iomem *offset = pll_clk->reg;
++	u32 val;
++	int ret;
++
++	/* Put PLL into standby mode */
++	writel(0, offset);
++	ret = readl_poll_timeout_atomic(CPG_PLL_MON(offset),
++					val, !(val & CPG_PLL_MON_LOCK),
++					100, 2000);
++	if (ret) {
++		dev_err(pll_clk->dev, "Failed to put PLL into standby mode");
++		return ret;
++	}
++
++	/* Output clock setting 1 */
++	val = readl(CPG_PLL3_VCO_CTR0(offset));
++	FIELD_MODIFY(CPG_PLL3_VCO_CTR0_MDIV, &val, params->m);
++	FIELD_MODIFY(CPG_PLL3_VCO_CTR0_PDIV, &val, params->p);
++	writel(val, CPG_PLL3_VCO_CTR0(offset));
++
++	/* Output clock setting 2 */
++	val = readl(CPG_PLL3_VCO_CTR1(offset));
++	FIELD_MODIFY(CPG_PLL3_VCO_CTR1_KDIV, &val, params->k);
++	FIELD_MODIFY(CPG_PLL3_VCO_CTR1_SDIV, &val, params->s);
++	writel(val, CPG_PLL3_VCO_CTR1(offset));
++
++	writel(CPG_PLL_EN_EN, offset);
++
++	/* PLL normal mode transition, output clock stability check */
++	ret = readl_poll_timeout_atomic(CPG_PLL_MON(offset),
++					val, (val & CPG_PLL_MON_LOCK),
++					100, 2000);
++	if (ret) {
++		writel(0, offset);
++		dev_err(pll_clk->dev, "Failed to put PLL into normal mode");
++		return ret;
++	}
++
++	return 0;
++}
++
++static const struct clk_ops r9a09g077_cpg_pll3_ops = {
++	.recalc_rate = r9a09g077_cpg_pll3_clk_recalc_rate,
++	.determine_rate = r9a09g077_cpg_pll3_determine_rate,
++	.set_rate = r9a09g077_cpg_pll3_set_rate,
++};
++
++static struct clk * __init
++r9a09g077_cpg_pll3_clk_register(struct device *dev,
++				const struct cpg_core_clk *core,
++				void __iomem *addr,
++				struct cpg_mssr_pub *pub,
++				const struct rzv2h_pll_limits *limits)
++{
++	struct clk_init_data init = {};
++	const struct clk *parent;
++	const char *parent_name;
++	struct pll_clk *pll_clk;
++	int ret;
++
++	parent = pub->clks[core->parent];
++	if (IS_ERR(parent))
++		return ERR_CAST(parent);
++
++	pll_clk = devm_kzalloc(dev, sizeof(*pll_clk), GFP_KERNEL);
++	if (!pll_clk)
++		return ERR_PTR(-ENOMEM);
++
++	parent_name = __clk_get_name(parent);
++	init.name = core->name;
++	init.ops = &r9a09g077_cpg_pll3_ops;
++	init.parent_names = &parent_name;
++	init.num_parents = 1;
++
++	pll_clk->dev = dev;
++	pll_clk->hw.init = &init;
++	pll_clk->reg = addr;
++	pll_clk->limits = limits;
++
++	ret = devm_clk_hw_register(dev, &pll_clk->hw);
++	if (ret)
++		return ERR_PTR(ret);
++
++	return pll_clk->hw.clk;
++}
++
++static int r9a09g077_cpg_lcdc_div_determine_rate(struct clk_hw *hw,
++						 struct clk_rate_request *req)
++{
++	struct r9a09g077_lcdc_div_clk *dsi_div = to_lcdc_div_clk(hw);
++	struct pll_clk *pll_clk = to_pll(clk_hw_get_parent(clk_hw_get_parent(hw)));
++	u8 table[RZT2H_MAX_LCDC_DIV_TABLES] = { 0 };
++	struct rzv2h_pll_div_pars dsi_params;
++	const struct clk_div_table *div;
++	unsigned int i = 0;
++	u64 freq_millihz;
++
++	for (div = dsi_div->dtable; div->div; div++) {
++		if (i >= RZT2H_MAX_LCDC_DIV_TABLES)
++			return -EINVAL;
++		table[i++] = div->div;
++	}
++
++	freq_millihz = mul_u32_u32(req->rate, MILLI);
++
++	if (!rzv2h_cpg_get_pll_divs_pars(pll_clk->limits, &dsi_params, table,
++					 i, freq_millihz)) {
++		dev_err(dsi_div->dev,
++			"LCDC divider failed to determine rate for req->rate: %lu\n",
++			req->rate);
++		return -EINVAL;
++	}
++
++	req->rate = DIV_ROUND_CLOSEST_ULL(dsi_params.div.freq_millihz, MILLI);
++	req->best_parent_rate = req->rate * dsi_params.div.divider_value;
++	dsi_div->divider = dsi_params.div.divider_value;
++	pll_clk->cur_rate = req->best_parent_rate;
++	pll_clk->pll_parameters = dsi_params.pll;
++
++	return 0;
++}
++
++static int r9a09g077_cpg_lcdc_div_set_rate(struct clk_hw *hw,
++					   unsigned long rate,
++					   unsigned long parent_rate)
++{
++	struct r9a09g077_lcdc_div_clk *dsi_div = to_lcdc_div_clk(hw);
++	const struct clk_div_table *clkt;
++	bool divider_found = false;
++	u32 val, shift;
++
++	for (clkt = dsi_div->dtable; clkt->div; clkt++) {
++		if (clkt->div == dsi_div->divider) {
++			divider_found = true;
++			break;
++		}
++	}
++
++	if (!divider_found)
++		return -EINVAL;
++
++	shift = GET_SHIFT(dsi_div->conf);
++	val = readl(dsi_div->reg);
++	val &= ~(clk_div_mask(GET_WIDTH(dsi_div->conf)) << shift);
++	val |= clkt->val << shift;
++	writel(val, dsi_div->reg);
++
++	return 0;
++}
++
++static unsigned long
++r9a09g077_cpg_lcdc_div_recalc_rate(struct clk_hw *hw,
++				   unsigned long parent_rate)
++{
++	struct r9a09g077_lcdc_div_clk *dsi_div = to_lcdc_div_clk(hw);
++	u32 div;
++
++	div = readl(dsi_div->reg);
++	div >>= GET_SHIFT(dsi_div->conf);
++	div &= clk_div_mask(GET_WIDTH(dsi_div->conf));
++	div = dsi_div->dtable[div].div;
++
++	return DIV_ROUND_CLOSEST_ULL(parent_rate, div);
++}
++
++static const struct clk_ops r9a09g077_cpg_lcdc_div_ops = {
++	.recalc_rate = r9a09g077_cpg_lcdc_div_recalc_rate,
++	.determine_rate = r9a09g077_cpg_lcdc_div_determine_rate,
++	.set_rate = r9a09g077_cpg_lcdc_div_set_rate,
++};
++
++static struct clk * __init
++r9a09g077_cpg_lcdc_div_clk_register(struct device *dev,
++				    const struct cpg_core_clk *core,
++				    void __iomem *addr,
++				    struct cpg_mssr_pub *pub)
++{
++	struct r9a09g077_lcdc_div_clk *clk_hw_data;
++	struct clk **clks = pub->clks;
++	struct clk_init_data init;
++	const struct clk *parent;
++	const char *parent_name;
++	struct clk_hw *hw;
++	int ret;
++
++	parent = clks[core->parent];
++	if (IS_ERR(parent))
++		return ERR_CAST(parent);
++
++	clk_hw_data = devm_kzalloc(dev, sizeof(*clk_hw_data), GFP_KERNEL);
++	if (!clk_hw_data)
++		return ERR_PTR(-ENOMEM);
++
++	clk_hw_data->dtable = core->dtable;
++	clk_hw_data->reg = addr;
++	clk_hw_data->conf = core->conf;
++	clk_hw_data->dev = dev;
++	clk_hw_data->divider = 32; /* Initialize divider for LCDC */
++
++	parent_name = __clk_get_name(parent);
++	init.name = core->name;
++	init.ops = &r9a09g077_cpg_lcdc_div_ops;
++	init.flags = core->flag;
++	init.parent_names = &parent_name;
++	init.num_parents = 1;
++
++	hw = &clk_hw_data->hw;
++	hw->init = &init;
++	ret = devm_clk_hw_register(dev, hw);
++	if (ret)
++		return ERR_PTR(ret);
++
++	return hw->clk;
++}
++
+ static struct clk * __init
+ r9a09g077_cpg_clk_register(struct device *dev, const struct cpg_core_clk *core,
+ 			   const struct cpg_mssr_info *info,
+@@ -497,6 +859,11 @@ r9a09g077_cpg_clk_register(struct device *dev, const struct cpg_core_clk *core,
+ 		return r9a09g077_cpg_mux_clk_register(dev, core, addr, pub);
+ 	case CLK_TYPE_RZT2H_FSELXSPI:
+ 		return r9a09g077_cpg_fselxspi_div_clk_register(dev, core, addr, pub);
++	case CLK_TYPE_RZT2H_PLL3:
++		return r9a09g077_cpg_pll3_clk_register(dev, core, pub->base1 + offset,
++						       pub, &r9a09g077_cpg_pll3_limits);
++	case CLK_TYPE_RZT2H_LCDCDIV:
++		return r9a09g077_cpg_lcdc_div_clk_register(dev, core, addr, pub);
+ 	default:
+ 		return ERR_PTR(-EINVAL);
+ 	}
 -- 
 2.54.0
 
