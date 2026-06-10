@@ -1,32 +1,32 @@
 Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE5F533260B;
-	Wed, 10 Jun 2026 23:24:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF13A349CF1;
+	Wed, 10 Jun 2026 23:24:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781133849; cv=none; b=NubvnISpail9kdkqtbRmvtpfeYqF1/orJG9RWH3GkOl2Td3L1dy1tae+fBBmwjc1pE4nJjVf0ZtXPVMPa01zCsmJyYPazUR2XawlQqFwsNeNR8Vakqx7844YK/prjrHxouR2ZDDhVe6sCTx4kdPBeMXqHtFEH9osUhzeQzBO2vc=
+	t=1781133889; cv=none; b=Z/odLK5LOJ67QajOHtYsQmImQ1ZLc6olLWYJcC0EuRGPZ8ixYxraoavIbh2yJ6/HLciQ/vGiqaOV093gwgC0NTLhJnFQs4InKHKugu4H3lP5KLju0vC9ldrstkoGkCG4R4TigNX70UaaOauLOJe8cuHpi8iFAnXJTNPhtMQjxs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781133849; c=relaxed/simple;
-	bh=1VgXq/psbzPZ5ujKREwdsJzxQTcDhvTF80CsspVxDH0=;
+	s=arc-20240116; t=1781133889; c=relaxed/simple;
+	bh=9s/l5AiqUNvUNOZoPIDF3lS1pmtc+PdVGWkmA9rNMqo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iS8nBuJL8mFB67s1bfJwTAUNyWLp7tbjHsDNx1kF2dZ4Sp05KzVccK+SLxFCtn3cEohqeN1pPDQOB9XC/FCr6YMH2Zab9nrrchxwfLI62rofnLklNLGbWM89GpPBj5oSDKt3vM5VrTy/wJh5/J/+i5lYbjWfcztdKbe68Q/6VhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Cs87tXWK; arc=none smtp.client-ip=213.167.242.64
+	 Content-Type:Content-Disposition:In-Reply-To; b=XLrolNAQy+yrmrQsV7O7szm4bFF2I83VoZcyT57o3wrdjpkMNgOstPAIkm4ICPxV54Vm7VIhrHjSPieiQRjQffGxzOzW+B063xzO/b0ZZwL4om2dSfK4Q31YlbDNQiz8IAZfV+0aobWiPw6ij1VNaFPCbd8JozdrpqeEGl+iBHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=X8agLC/r; arc=none smtp.client-ip=213.167.242.64
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Cs87tXWK"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="X8agLC/r"
 Received: from killaraus.ideasonboard.com (2001-14ba-70f3-e800--a06.rev.dnainternet.fi [IPv6:2001:14ba:70f3:e800::a06])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 86A02228;
-	Thu, 11 Jun 2026 01:23:36 +0200 (CEST)
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9F147228;
+	Thu, 11 Jun 2026 01:24:16 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1781133816;
-	bh=1VgXq/psbzPZ5ujKREwdsJzxQTcDhvTF80CsspVxDH0=;
+	s=mail; t=1781133856;
+	bh=9s/l5AiqUNvUNOZoPIDF3lS1pmtc+PdVGWkmA9rNMqo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Cs87tXWK6hb7EuJl/FYSVlMzECBIoDmVnwjQh86ApEAq4bvqbHWDOezgf2P0NQ/ka
-	 nBTPwxU7NqsP3yRF/yIFPQKIm2F+KMoiG9GfZ19Fwu4i1W+SS0NLtDUyGR3AivFslr
-	 dZIqyvBQhMCXRrJHCKDDAhlFZXSy00Sdvzs1CYQs=
-Date: Thu, 11 Jun 2026 02:24:04 +0300
+	b=X8agLC/rjhJw56jTW6VGimcUzyMk8LcFUFo51asjmxzsZI/MW2Xk/1X5g2TDvMRMW
+	 fTfXbx2P5O3igkq9iEYijeQiV0WAGtGuG8LO4hYbIMqYlUQwd7i02q3eQhM0Ooq+XC
+	 Q3J5YKlEMScggrpieHE7o2UR22QVKTX0gqRvyvl0=
+Date: Thu, 11 Jun 2026 02:24:44 +0300
 From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
 Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -50,10 +50,11 @@ Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
 	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
 	devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 5/7] arm64: dts: renesas: r8a779g0: Add DSC
-Message-ID: <20260610232404.GD1632628@killaraus.ideasonboard.com>
+Subject: Re: [PATCH v3 6/7] arm64: dts: renesas: sparrow-hawk: Enable
+ DisplayPort by adding DSC
+Message-ID: <20260610232444.GE1632628@killaraus.ideasonboard.com>
 References: <20260515-rcar-du-dsc-v3-0-164157820498@ideasonboard.com>
- <20260515-rcar-du-dsc-v3-5-164157820498@ideasonboard.com>
+ <20260515-rcar-du-dsc-v3-6-164157820498@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -62,80 +63,50 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260515-rcar-du-dsc-v3-5-164157820498@ideasonboard.com>
+In-Reply-To: <20260515-rcar-du-dsc-v3-6-164157820498@ideasonboard.com>
 
 Hi Tomi and Marek,
 
 Thank you for the patch.
 
-On Fri, May 15, 2026 at 12:09:30PM +0300, Tomi Valkeinen wrote:
+On Fri, May 15, 2026 at 12:09:31PM +0300, Tomi Valkeinen wrote:
 > From: Marek Vasut <marek.vasut+renesas@mailbox.org>
 > 
-> The Renesas DSC Display Stream Compression is a bridge embedded in the
-> Renesas R-Car V4H SoC. The bridge is placed between DU and DSI1 units.
+> DisplayPort on the Sparrow Hawk board uses sn65dsi86 bridge, which in
+> turn gets the video stream from the SoC's DSI1 port. DSI1 pipeline has a
+> DSC block in between the DU and the DSI1. However, there was no DSC
+> driver in Linux and also the DSC was not defined in the dts files, and
+> thus the DisplayPort output did not work.
 > 
-> The current dtsi file does not represent the DSC at all, and thus the
-> pipeline for DSI1 has not been functional.
+> Now that we have DSC defined in the SoC dts file (r8a779g0.dtsi), we can
+> enable DSC for sparrowhawk.
 > 
 > Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
-> [tomi.valkeinen: separated the sparrowhawk changes]
+> [tomi.valkeinen: separated the sparrow hawk changes from the soc changes]
 > Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
 
 Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
 > ---
->  arch/arm64/boot/dts/renesas/r8a779g0.dtsi | 31 ++++++++++++++++++++++++++++++-
->  1 file changed, 30 insertions(+), 1 deletion(-)
+>  arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk.dts | 5 +++++
+>  1 file changed, 5 insertions(+)
 > 
-> diff --git a/arch/arm64/boot/dts/renesas/r8a779g0.dtsi b/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-> index 82a7278836e5..52a6176f9fd0 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a779g0.dtsi
-> @@ -2298,6 +2298,35 @@ du_out_dsi0: endpoint {
->  				port@1 {
->  					reg = <1>;
->  					du_out_dsi1: endpoint {
-> +						remote-endpoint = <&dsc_in_dsi1>;
-> +					};
-> +				};
-> +			};
-> +		};
-> +
-> +		dsc: dsc@feb8d000 {
-> +			compatible = "renesas,r8a779g0-dsc";
-> +			reg = <0 0xfeb8d000 0 0x400>;
-> +			interrupts = <GIC_SPI 559 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&cpg CPG_MOD 2819>;
-> +			power-domains = <&sysc R8A779G0_PD_ALWAYS_ON>;
-> +			resets = <&cpg 2819>;
-> +			status = "disabled";
-> +
-> +			ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				port@0 {
-> +					reg = <0>;
-> +					dsc_in_dsi1: endpoint {
-> +						remote-endpoint = <&du_out_dsi1>;
-> +					};
-> +				};
-> +
-> +				port@1 {
-> +					reg = <1>;
-> +					dsc_out_dsi1: endpoint {
->  						remote-endpoint = <&dsi1_in>;
->  					};
->  				};
-> @@ -2534,7 +2563,7 @@ ports {
->  				port@0 {
->  					reg = <0>;
->  					dsi1_in: endpoint {
-> -						remote-endpoint = <&du_out_dsi1>;
-> +						remote-endpoint = <&dsc_out_dsi1>;
->  					};
->  				};
+> diff --git a/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk.dts b/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk.dts
+> index 812b133cf29e..f418998c6b05 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk.dts
+> +++ b/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk.dts
+> @@ -288,6 +288,11 @@ channel4 {
+>  	};
+>  };
 >  
+> +/* Page 27 / DSI to Display */
+> +&dsc {
+> +	status = "okay";
+> +};
+> +
+>  /* Page 27 / DSI to Display */
+>  &dsi1 {
+>  	status = "okay";
 > 
 
 -- 
