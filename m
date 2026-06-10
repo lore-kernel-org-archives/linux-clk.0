@@ -1,169 +1,163 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCDB84C92;
-	Thu, 11 Jun 2026 00:03:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B74D533D6F7;
+	Thu, 11 Jun 2026 04:42:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781136210; cv=none; b=BCZuZOrJVu0quO4JfwMEETMgHlCnuwHBtlTnQgw8QRu7U0ZStzh00oOYQsMcsZZlWwpEBR7eUxE/shkLUPjNMmuDgsM9FhklahjpT2vPSQobRxO4USBj/tATMA5t3khcnyBcthnCvSCc/mfO25ylD10d6mNF5YfC4kgn8MM/4EM=
+	t=1781152954; cv=none; b=lGh3NRzowfGGMzeumE0LMlX0JHyE6Ote7A0Uh4TdwXtrnQalzx9MagP3g9PFzDLInQlZgnAl3MR7Y+UMKc8EBQ/kFO4EuOgHFnUsaB3xqXTJczq+jcvULevcZK6VKDVUdDZP7Cvb6XU0CFUeEuubg6k5anO+OqrJFM4se6fC63Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781136210; c=relaxed/simple;
-	bh=7Lc1rx8Jp41JTvrcWNEo7iJ/+E/l8wCtqHTTiQ1kiKc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rRYNZYH17EvFGU35UJxpegyoCZUIxRngDqX46oWfQwhBKruZxLhDw7aIw4ppb9qBCCrAFPJ0oWGD2Yrv3mdltFqt8ursM18SEqMrjCCoefbh2eU8Pxp8nhgy+YZCgIGk6bJ47XONpUilB0vbfN1+KiQPhJ4gR+JoXPJTj0d/+QY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=KkynWMvH; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1781152954; c=relaxed/simple;
+	bh=m+lauUpGk4LLE+zWBpWBZpWf5CCZUvP3Ls0+I20GSdA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qMecD8Rc29qhzKFu7WI65dI2U/HFHCU7J3cUnjARI3D1Gp4z9df1s40wHd3UGjFpIxd5/vvdyyLo4goGkoR5X50VEA8WeaH8bGZMBf+XwTo7NLzRtRqjrNSKo75DQID6q5TF1cE+MRgYP0WA4GMqLU8QnyVAHUJiUPlAg2oTrAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=HbNpwvp0; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="KkynWMvH"
-Received: from killaraus.ideasonboard.com (2001-14ba-70f3-e800--a06.rev.dnainternet.fi [IPv6:2001:14ba:70f3:e800::a06])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 80DE52D9;
-	Thu, 11 Jun 2026 02:02:56 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1781136176;
-	bh=7Lc1rx8Jp41JTvrcWNEo7iJ/+E/l8wCtqHTTiQ1kiKc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KkynWMvH4/GKiABKartnvdELDg8NTpkhQD92fWte+U+KU7Tlt/JUY4Yc+8KJ7k0qG
-	 cBLvV61QlTfXBUChPHMJhNSVPSBT4Aqt+gdcmkMEXhhJiagpstoGWC9nBuu5t3pauW
-	 01H1kUOWt0IQOTdUvUA4AEbjtX6QtanSzrHSPBvY=
-Date: Thu, 11 Jun 2026 03:03:24 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 4/7] drm/rcar-du: dsi: Support DSC in the pipeline
-Message-ID: <20260611000324.GH1632628@killaraus.ideasonboard.com>
-References: <20260515-rcar-du-dsc-v3-0-164157820498@ideasonboard.com>
- <20260515-rcar-du-dsc-v3-4-164157820498@ideasonboard.com>
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="HbNpwvp0"
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4gbVPK5Fbvz9txK;
+	Thu, 11 Jun 2026 06:42:29 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1781152949;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=a6BcnN8rdSZBC0imBDjb7WvsMQmmgBw7lE2xxGdBFAc=;
+	b=HbNpwvp0Zj9yuH8o2oc0btr7NocD+4rpR36lGjssYY90zRMgEJRkepCWreP4M9Nf7FWw2G
+	E9HY7rp4S1MHTyX7QMMv4fee/ekSf8lduJvfBHyzesvL6A0l+8xzJosXYM3uEd5i/B7NCU
+	XmguDNfQaWWdZs542ORZ1bEfxqdHnEaIn+nV+xPx+WSbnnv1kOj/dQZ9e42m4tixPkbJYf
+	XCDZ2t31PxCmC6VKwmLLgG9MPT5QYc9OJeFntCCtD4Aif4NtXPkbD4xa0jiLpOWeWwgjAT
+	pYs0XO2gv848HpNsiV/Bhc9ssNxU0+H+ax/skEM2e6ZHgyZiJJuhS5Ekuv7d+A==
+Message-ID: <7fc8f50f-7f6d-4b45-b172-a83d97164b40@mailbox.org>
+Date: Wed, 10 Jun 2026 18:31:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260515-rcar-du-dsc-v3-4-164157820498@ideasonboard.com>
+Subject: Re: [PATCH 00/39] Add i.MX95 DPU/DSI/LVDS support
+To: Liu Ying <victor.liu@nxp.com>
+Cc: Piyush Patle <piyushpatle228@gmail.com>, dri-devel@lists.freedesktop.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <festevam@gmail.com>,
+ Peng Fan <peng.fan@nxp.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Lucas Stach <l.stach@pengutronix.de>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>, Abel Vesa <abelvesa@kernel.org>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>
+References: <20251011170213.128907-1-marek.vasut@mailbox.org>
+ <20260605121112.27866-1-piyushpatle228@gmail.com> <aiZzxhljfyYQ68Gl@raspi>
+ <9ece4e08-a77f-4410-ba16-a77b9bd0aace@mailbox.org> <aifOQtaAi_7F9hXt@raspi>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <aifOQtaAi_7F9hXt@raspi>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-ID: 8a541f9777ff949760e
+X-MBO-RS-META: trp3ppsudps4pgwo9w4hhy1o1twon399
 
-Hi Tomi,
+On 6/9/26 10:26 AM, Liu Ying wrote:
 
-Thank you for the patch.
+Hello Liu,
 
-On Fri, May 15, 2026 at 12:09:29PM +0300, Tomi Valkeinen wrote:
-> Enabling DSI clocks on rcar-du needs some tricks as the DU dot clock is
-> provided by the DSI. Thus, we call rcar_mipi_dsi_pclk_enable() from the
-> crtc, when enabling the crtc.
+>>>> I brought this series up on the i.MX95 15x15 FRDM (IT6263 LVDS-to-HDMI on
+>>>> LVDS ch1). It mostly works, but I ran into a few issues around DI routing,
+>>>> LVDS format handling, and DC enable sequencing which needed rework before
+>>>> HDMI would come up reliably on the board.
+>>>>
+>>>> I don't see a v2 of the series and things seem to have been quiet since
+>>>> November. Are you planning to post an updated version?
+>>>
+>>> My plan was to enable prefetch engine support[1] for i.MX8QXP display
+>>> controller and add device tree for a whole i.MX8QXP LVDS display pipeline,
+>>> before adding i.MX95 display controller support.
+>>>
+>>> Unfortunately, it seems that Marek is not a big fan of [1]
+>>
+>> I am fine with [1] as long as it can be isolated and does not affect every
+>> SoC that might reuse this driver, which I think it can be done.
 > 
-> With DSC (added in upcoming patch) in the pipeline, between the DU and
-> the DSI, the above call path is broken as the crtc tries to call
-> rcar_mipi_dsi_pclk_enable() on the DSC.
-> 
-> Adjust the rcar_mipi_dsi_pclk_enable() so that it detects the DSC, and
-> in that case gets the next bridge from the DSC, which is the DSI.
-> 
-> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-> ---
->  drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c | 36 +++++++++++++++++++++++--
->  1 file changed, 34 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
-> index 4ef2e3c129ed..085e229bcb0b 100644
-> --- a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
-> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
-> @@ -88,6 +88,8 @@ struct dsi_setup_info {
->  	const struct dsi_clk_config *clkset;
->  };
->  
-> +static const struct drm_bridge_funcs rcar_mipi_dsi_bridge_ops;
-> +
->  static inline struct rcar_mipi_dsi *
->  bridge_to_rcar_mipi_dsi(struct drm_bridge *bridge)
->  {
-> @@ -844,15 +846,39 @@ static void rcar_mipi_dsi_atomic_disable(struct drm_bridge *bridge,
->  	rcar_mipi_dsi_stop_video(dsi);
->  }
->  
-> +/*
-> + * We need to skip the DSC bridge when we have DSC in between the DU and
-> + * the DSI. We detect the DSI bridge via bridge->funcs, and assume the
-> + * next_bridge is the DSI bridge. If this is not the case, the DT data
-> + * is wrong (so it shouldn't really happen).
-> + */
-> +static struct drm_bridge *
-> +rcar_mipi_dsi_resolve_bridge(struct drm_bridge *bridge)
-> +{
-> +	if (bridge->funcs != &rcar_mipi_dsi_bridge_ops)
-> +		bridge = bridge->next_bridge;
-> +
-> +	if (!bridge || bridge->funcs != &rcar_mipi_dsi_bridge_ops)
-> +		return NULL;
-> +
-> +	return bridge;
-> +}
+> How can it be isolated?
 
-Hmmmm... It's quite a bit of a hack. It would be nicer to do this in
-rcar_du_crtc.c instead, where we cache the dsi bridge pointer. The
-question is how to then identify the right bridge, as we won't have
-access to rcar_mipi_dsi_bridge_ops. Should this driver set the bridge
-type field to DRM_MODE_CONNECTOR_DSI ?
+if (compatible("mx8q"))
+   something->prefetch_op = somefunction;
 
-> +
->  void rcar_mipi_dsi_pclk_enable(struct drm_bridge *bridge,
->  			       struct drm_atomic_state *state)
->  {
-> -	struct rcar_mipi_dsi *dsi = bridge_to_rcar_mipi_dsi(bridge);
->  	const struct drm_display_mode *mode;
->  	struct drm_connector *connector;
-> +	struct rcar_mipi_dsi *dsi;
->  	struct drm_crtc *crtc;
->  	int ret;
->  
-> +	bridge = rcar_mipi_dsi_resolve_bridge(bridge);
-> +	if (WARN_ON(!bridge))
-> +		return;
-> +
-> +	dsi = bridge_to_rcar_mipi_dsi(bridge);
-> +
->  	connector = drm_atomic_get_new_connector_for_encoder(state,
->  							     bridge->encoder);
->  	crtc = drm_atomic_get_new_connector_state(state, connector)->crtc;
-> @@ -885,7 +911,13 @@ EXPORT_SYMBOL_GPL(rcar_mipi_dsi_pclk_enable);
->  
->  void rcar_mipi_dsi_pclk_disable(struct drm_bridge *bridge)
->  {
-> -	struct rcar_mipi_dsi *dsi = bridge_to_rcar_mipi_dsi(bridge);
-> +	struct rcar_mipi_dsi *dsi;
-> +
-> +	bridge = rcar_mipi_dsi_resolve_bridge(bridge);
-> +	if (WARN_ON(!bridge))
-> +		return;
-> +
-> +	dsi = bridge_to_rcar_mipi_dsi(bridge);
->  
->  	rcar_mipi_dsi_shutdown(dsi);
->  	rcar_mipi_dsi_clk_disable(dsi);
+And then wherever is prefetch used, do
+
+if (something->prefetch_op)
+   something->prefetch_op()
+
+Or something along those lines ?
+
+>>> and I'm busy
+>>> with downstream development so the plan doesn't move forward well.  I still
+>>> think [1] makes sense(maybe I need to rebase it on latest drm-misc-next),
+>>> so I'd like to see review comments on [1] and hopefully people think that
+>>> the overall idea of [1] is ok.
+>>
+>> My only concern is, to keep it isolated to MX8Q, so this driver can be
+>> reused by MX95.
+>>
+>>>> I've accumulated a fair amount of rework while getting this running on the
+>>>> FRDM. If you're not planning a v2, I can clean things up and send one based
+>>>> on the current series.
+>>>
+>>> I still think that i.MX95 display controller driver should be in a separate
+>>> driver, rather than sharing the same driver with i.MX8QXP display controller
+>>> like this patch series does, because the two display controllers are quite
+>>> different as I mentioned in comments on this patch series and in discussion
+>>> in [1].  Also, the common part between the two display controllers should
+>>> be extracted to a common helper library as I mentioned there too.
+>> Are they really? It seems this series adds support for the MX95 DC without
+>> that many changes, so are the DCs really that different ? It seems the MX95
+>> DC is simply a reuse/evolution of the MX8Q DC blocks, so duplicating the
+>> code seems like the wrong direction, it will only lead to disparate sets of
+>> bugs in two drivers, which isn't desired.
 > 
+> I pointed out a lot of H/W differences between the two display controllers
+> during the discussions for this patch series and my i.MX8QXP prefetch engine
+> patch series[1].  Please take a look at [1], which clearly shows that the
+> prefetch engine would considerably impact CRTC/plane atomic callback
+> implementations.
 
--- 
-Regards,
+Is the prefetch engine actually grown into the CRTC/DE or not ? I 
+suspect it is separate and instead part of the built-in DMA, right ?
 
-Laurent Pinchart
+> Display controller internal blocks would also impact
+> the implementations, e.g., DomainBlend block in i.MX95 display controller
+> doesn't present in i.MX8QXP display controller.  It makes sense to use
+> separate drivers for the two display controllers instead of adding 'if/else'
+> checks to a single driver's atomic callbacks or introducing two pairs of
+> atomic callbacks to that single driver.  I mentioned before, the code to
+> simply add a DRM driver(struct drm_driver) is fairly limited.
+
+Can't we simply have two sets of ops (one for mx8q and one for mx95) for 
+those ops which are too complicated to implement as a single op with 
+if/else statements ?
+
+> I also mentioned before that separate drivers make them easier to maintain:
+> we don't have to test both i.MX8QXP and i.MX95 if only one display controller
+> specific code is changed.
+
+The downside is lack of code reuse, which leads to disparate sets of 
+bugs in these two drivers and code duplication. And it seems to me, that 
+large parts of the MX8Q and MX95 DC are effectively identical.
+
+>> (I might not fully understand what you have in mind with the helper library
+>> though?)
+> 
+> I said this could be something like imx-ldb-helper.c and plus perhaps some
+> callbacks like fg->dc_fg_cfg_videomode().
+Do you perceive that the DC driver cannot be parametrized easily enough 
+that it has to be turned into a library like that ? When I look at this 
+patchset, esp. the first half which updates the various blocks, it does 
+not seem to me that way.
