@@ -1,180 +1,270 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F4E63FCB3A
-	for <linux-clk@vger.kernel.org>; Wed, 10 Jun 2026 12:24:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB52F4028C5
+	for <linux-clk@vger.kernel.org>; Wed, 10 Jun 2026 12:26:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781094272; cv=none; b=YgrWDxin8mXdcmzgB0jENbyE5gBEktmaSCWEqgOpSiQuraOG5AqILk4fNpRlm+2kk09ESxqkcYIJzBgbXNg9Ir1bsOTcxsCFDk9qOPpM2pZDjKTkgIqzm0+dyAd5HE0FqJCvf753Gbn5sHSRXaqTg04ln4naJ4X6+ygL2xtoXcQ=
+	t=1781094413; cv=none; b=RIV0erjm319xbPETqjNe0yftuCmsIWzFzD3+eVgxVGGePqnqr02ZyrQVKiCGf+E9VZFZUdq27jJi8BLH3xATqcYjBJ7hrvj06C9xTYggkfUDIrgaH+jInaSznUjLh5wq/dJ33g2DId2/SDeacm9f75jL1RkD3WQi7orPAZQQ+is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781094272; c=relaxed/simple;
-	bh=+58dkkhzFmFWzk9Gmvjn9HJUpCHLBYAvtBUgkR2/5SA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OIHfDDgfood8rUD63jrF3XVYqGY7ellnztzPQ3Nub/znXOMbCQ7i295Nyy6GaF/zxPBG/xtJwitSUFNPTp+5cx0k25pKd/L7emQkvv92iVqXtZq+T3Z6gpftzi5IRsJDpTLacYQKJfqJWtntbphTWsa/cpQEbij3iB+6RtH9Cps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=o+fp6481; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=G/H3wYMe; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1781094413; c=relaxed/simple;
+	bh=Se3xpdBJrL4E8uDAGJu6LGypc4lZerctdf5UE1wFo64=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=jOPZN8g3VikjFt+VdrPHzYstDCe5I7SxQlK14XbzzoX3A81GerAJuyC7o8PZYqyxBYexfj/0Xizv/ZWmQns+ZDiEHjpZ8ivf1ZK41D00WYdSWJwxoaE4nqwtNbFvrkXkogQG8US7aChGvuFiDCea8CA05cZ6FdsXqIDSXXMkPvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=gKlZf3CP; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="o+fp6481";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="G/H3wYMe"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 65ACC0XH1606472
-	for <linux-clk@vger.kernel.org>; Wed, 10 Jun 2026 12:24:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	amM/N+oRLG8mRewYc9VWMlxuVViY6WRo05rga5c5y5Q=; b=o+fp6481pY9Yq97z
-	ndnZ9yRSQWJw6vgv/jFZq8G/xStfsajlao1nmP4FsdoAGFUbLw1qR52MM4IcO4Wp
-	YlMOfsaopMCdDqyRDmGg9MMQpSsQte7TeAT8GAEHBslBasWGkN2nALGyjsDdGYkS
-	FmqcpQ+wT+8wlN2ZkUpRUi2oQixGiy+8T+p6381tZZA6tyAFai/mBaBTaRNifcHy
-	9ARB5c3KPs40JiUwfl9kr00SxgFs+64NmBoBTUmZRKHGCaIR2mW5MvmCfXjaPIXn
-	uxkYR0Dz07zQcBoS+8ZEk16f27dOYM1k8Ep3l+SkBP0tjPcGzVlK1XGp1oeHJFEg
-	5hOM4w==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4eq10a9qym-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Wed, 10 Jun 2026 12:24:30 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-5178ac43d27so18515001cf.0
-        for <linux-clk@vger.kernel.org>; Wed, 10 Jun 2026 05:24:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="gKlZf3CP"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-490abf12f0fso35320405e9.0
+        for <linux-clk@vger.kernel.org>; Wed, 10 Jun 2026 05:26:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1781094270; x=1781699070; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=amM/N+oRLG8mRewYc9VWMlxuVViY6WRo05rga5c5y5Q=;
-        b=G/H3wYMe1WuFRwcY/knPbvNCzCGoUomTNoHnOA104jdo1RHgusWuj0yo0HkMu6ey5h
-         ydggDWcx/z1KVYG40Pqw4iLqJJOKb4vlZlbFCpO2lXA3aW9NkNV9V+lOjg2hHoVLBiG0
-         2NlMZszxviGaqqnAc/GXdqOPfb0BMXTn1w2nvvVidMq6Dmy/3G7xrZpE43n0UomPey6K
-         PKeCBF/yXkwtK7FkVLH8cOzZT2aDYVcOV8JHdFkCvELUxde/jNxJqw9HRdaZ1NE4hOZP
-         PN2I7jDhxORn38Masgc/N9iVAJ1CUSBn0JjvTlkR7mySJhSZG+FNL6Ki5TrPWKLghVrA
-         rTkg==
+        d=baylibre.com; s=google; t=1781094408; x=1781699208; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:user-agent
+         :references:in-reply-to:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fw2wxypqiSq6JjCrHtFlLbVO37xmRZdL4EKtYtLIJ4I=;
+        b=gKlZf3CP9r3A23FzLXrmVYwI1l+hhjuGTX1c6KZ1rlLEa2qM/AY/zDFTKv7tdu2MZX
+         GsASoZh/sh2hPuzmb9qQMWceAkr5DS0TujsK8ZodL498germRNDNwQrcMeH78WhEgbbP
+         WQ4ypvYeAFI7NVN6gODPVhc3/YQFhqsYJChqqRaM6u4fTZMiplU7/JGws2SbjlMigmmV
+         oYRaJumHX8sBTrD5F0qPmxA9EHGcs7CJxbQxjkWE5MhWUXT0lojoH5ZQK0WY6Wu0mj1N
+         Pfsmz+VA9muohY73HqmmT6MEQrP08seN8kEeY7B1fFmtw3hZlIfEiSP60/HA96KY/X00
+         PkYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781094270; x=1781699070;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=amM/N+oRLG8mRewYc9VWMlxuVViY6WRo05rga5c5y5Q=;
-        b=MPzI1iMl8gediJy0fzbyEEk5NXz34f2GsmX0SlwnaoWDPobnNxv3kFmSHJTgXtyqtT
-         AwRse7wPZPVIWwPGZmfQd4JKyntHMBU8qsWuhRheKw3eCjT5k5RJ5rzXI/LEI9+3Ue60
-         ukzrSSRU0NjmesUZkSLTZZuOaPc2x97I2VI10kn9JOPNZlzJliFVe8YS3KeY+G5KOEKo
-         NAx6hyw+0R3x40H5Gw8bopDXRL1p7c63StIJEV7QtJ4jbpSWD9aFISAt0vFGk/FFDGSi
-         RqEQaWwVVMZkFoC2cTQf8Toacqr6VDFzJMPhZoKMzsHp2wTGWAmVbNDg53/Br8D6D27G
-         7qpA==
-X-Forwarded-Encrypted: i=1; AFNElJ90aHCENmBGkv1lPHI1skWqAvgtbi+pzcvDz3AQATabDa6j1kJMqXIc/hEfroPlV4xLQ7WqPTSA35w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAe/KUEcLJNFWvLploZZYaPxjB3/Vs0jN+MuJ+944Sx+9AdTyN
-	AWoDbFHoUm8JgfNqIZAv4yKp62oRPOu31CEwdutsffUkk/c1wlImojfghhVlp4aQbVgXkY25rUz
-	9jzii7SaAWYbWWxy0qfp2Py+IByesedgLwhHR+E9Q23hOuohLyo3Zqrp57jxrRls=
-X-Gm-Gg: Acq92OG9BSZJfOyJTcV8Kb5+U3YE7FqkfWf0VoRh9zqsci+7R5EfoF9k1QT/7JbGHH+
-	R1M3lTn7+bb3t/flL0wLn+p8xrlr72yECNcnDwj5qXao0PyrPdW7Hx5Y0CYL19YniAbPI4Ngq54
-	rkEK6VvjuHFIEXE9HDs46bLtidM608U/PQBTdomP38WluxNbGv6PbOC/ntFGlrJ2r4G4rypNHoh
-	HEClsMCv/6uIlsySXUrbrgWPAgJLiS3Gsg5ADICp3uhiZjnKIeiEEcKUZWemF5nqUNBx1Ya7Yxl
-	zY5bXS6TDtJWwmQ/3R7IR0exFsxPLSv38K/bldrUOC6FCFfIsZjM/DFitoynh91x+jWvs35cHAO
-	D09EF6GvP31v3UZBgIyTHnpsYRVpm1qKo3tliDYdVV3SQk9Mc8C/zoxky
-X-Received: by 2002:a05:622a:2612:b0:50f:b9a6:82ae with SMTP id d75a77b69052e-517ca3313e8mr66925311cf.2.1781094269943;
-        Wed, 10 Jun 2026 05:24:29 -0700 (PDT)
-X-Received: by 2002:a05:622a:2612:b0:50f:b9a6:82ae with SMTP id d75a77b69052e-517ca3313e8mr66924761cf.2.1781094269455;
-        Wed, 10 Jun 2026 05:24:29 -0700 (PDT)
-Received: from [192.168.120.170] ([178.235.128.140])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-68e64303892sm9858893a12.0.2026.06.10.05.24.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Jun 2026 05:24:28 -0700 (PDT)
-Message-ID: <5eaea87f-5fed-4869-93e5-55c9da5ced84@oss.qualcomm.com>
-Date: Wed, 10 Jun 2026 14:24:24 +0200
+        d=1e100.net; s=20251104; t=1781094408; x=1781699208;
+        h=content-transfer-encoding:mime-version:message-id:date:user-agent
+         :references:in-reply-to:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fw2wxypqiSq6JjCrHtFlLbVO37xmRZdL4EKtYtLIJ4I=;
+        b=jUoHIsP+jt3FK1+jYRY3xBzh+WU02+ZKYaJRb7Ips3gg0YJW5axB+3ps83TFliPjQ9
+         UFuBN9vvIWR8AHFt6HHixXnyLa/zznULnz3VoHCy3POgPC0WoJXcCpxwZIgLHcqG60zj
+         0naGI6QqiY6xg4s6yxF8tUzjnkENwu1DMVTD0te3Zvid0YCjXq04i6LqvzeGr31eWZ6v
+         zclcIu5nkAKuSb1gyAb0dEF3K2FjdL6zjiMsqEwMbBYodN1+w92Glbh2V0vK0wtscm3d
+         KSjqxpnekSNv66vZZOvs3F4k9dQTG0OP8s/OKIFRh8cEOglxtVGFr3tt7hR/TPxy3fsB
+         OMoQ==
+X-Forwarded-Encrypted: i=1; AFNElJ9sXPy7Bqc5uX6gAM6jjPzbGbEo+t3ck7FJKn7qPMIT8Yskf8mDfjVINXEDhVxmn/IBPnYq51kO7Bk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUcqAyFZx9Iqe4k4RDww/PMZODiPJDQ4RsI1Gr6W407a5oYZBu
+	ALrtZnxTyYAyyshHxxXxDznnBw1F3I+iSRTHjz818IVm0yZ0Vh4uGvk70GzWbXjPNi0=
+X-Gm-Gg: Acq92OFaTiIwb3KD5tfuTJN3gTf5NvPxEas5+0MdvEgnh5xcgDXHOw+uS3O26DYAXnz
+	CEunwvvZ7FjFOtlCfi5CDji1jAJHAFQnQ7wRyRG6KKrT6QHk1n3AXOvJkhsy5jkWl4DaJTBhgO8
+	HfJMtWfVCJV7eTKpWqZjl+8P8dGRrWK1hvCM5iyDtbkdimAyY1plFI3E1HTYYn4faSkDL9XHE2D
+	mCWWKYzKDSE84lO93H8SEenZevjBF4+R3fV4U66tSIL4YV5QyT89veWVpILlSNEYuY77Td/A/II
+	/Z9t0HPpBODGxEyqJxwxTJu00JNSnldg8bk3F/NWBlbWH/FnEOlmL12Lo82uDwz9z7hdq753IRL
+	V1yzGuDNE3a/Uj4w91mb48ye3dqTkirFp49Li1EnrFuIXOzGjnX00S6FIDr9JK7wH/6YGPAR+do
+	D6UHSRn/vEymCAva2A92xW2LZC6K8uTaIl
+X-Received: by 2002:a05:600c:4ed1:b0:490:b4cb:3866 with SMTP id 5b1f17b1804b1-490c2cf67f7mr331756785e9.10.1781094408066;
+        Wed, 10 Jun 2026 05:26:48 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:c371:18ed:9599:7f5f])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-490bc39def5sm547623695e9.5.2026.06.10.05.26.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jun 2026 05:26:47 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Jian Hu <jian.hu@amlogic.com>
+Cc: Jian Hu via B4 Relay <devnull+jian.hu.amlogic.com@kernel.org>,  Neil
+ Armstrong <neil.armstrong@linaro.org>,  Michael Turquette
+ <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,  Rob Herring
+ <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor
+ Dooley <conor+dt@kernel.org>,  Xianwei Zhao <xianwei.zhao@amlogic.com>,
+  Kevin Hilman <khilman@baylibre.com>,  Martin Blumenstingl
+ <martin.blumenstingl@googlemail.com>,  linux-amlogic@lists.infradead.org,
+  linux-clk@vger.kernel.org,  devicetree@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 2/2] clk: amlogic: Add A9 AO clock controller driver
+In-Reply-To: <67fcf9bc-0ac7-4812-aa7c-4d42d8f1c162@amlogic.com> (Jian Hu's
+	message of "Wed, 10 Jun 2026 12:18:54 +0800")
+References: <20260603-a9_aoclk-v2-0-f47ea616ee78@amlogic.com>
+	<20260603-a9_aoclk-v2-2-f47ea616ee78@amlogic.com>
+	<1j7bofd7dr.fsf@starbuckisacylon.baylibre.com>
+	<67fcf9bc-0ac7-4812-aa7c-4d42d8f1c162@amlogic.com>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Date: Wed, 10 Jun 2026 14:26:45 +0200
+Message-ID: <1jpl1yfunu.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 1/2] arm64: dts: qcom: sm8250: sort out Iris power
- domains
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>, Jonathan Marek <jonathan@marek.ca>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Bryan O'Donoghue <bod@kernel.org>,
-        Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
-        Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Hans Verkuil <hverkuil@kernel.org>,
-        Stefan Schmidt <stefan.schmidt@linaro.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Dikshita Agarwal <dikshita@qti.qualcomm.com>,
-        Ulf Hansson <ulfh@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-media@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-References: <20260604-iris-venus-fix-sm8250-v7-0-7bd2f0e5bae8@oss.qualcomm.com>
- <20260604-iris-venus-fix-sm8250-v7-1-7bd2f0e5bae8@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20260604-iris-venus-fix-sm8250-v7-1-7bd2f0e5bae8@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=GoFyPE1C c=1 sm=1 tr=0 ts=6a29577e cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
- a=IkcTkHD0fZMA:10 a=FelO9ux0wxsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=rJkE3RaqiGZ5pbrm-msn:22
- a=EUspDBNiAAAA:8 a=G7F_0OPF8zoUQoNe8PQA:9 a=QEXdDO2ut3YA:10
- a=kacYvNCVWA4VmyqE58fU:22
-X-Proofpoint-ORIG-GUID: 4ALyDFsi4NJ1xpcRdpce__-y2lA-VysW
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjEwMDExOCBTYWx0ZWRfX6NADVUHQTaJl
- xQlCAMO+TT/xr8dT1klxs9oCfaOiZvPX0EqvY2B+4i88kbHA6DZw5xlcDoZIJypEXOPWWBdj8r5
- vn/JTRG0HJNtdFMLmpxT7LaQ97LlZCLjkRbkrRnIvrpAQ9SvybW8c320nMDENruHKDO6Pi7zmXY
- xi1jYs9GVcj8nl6z8QaR1pzIrNVn1sGqBWULjVigrQrwiYaejFO4SlEJ+mSjXikYysy/JfqbtWI
- ZwNf0Upu7kglmbbu6GFPCX2QmYBC4n8dN/QnI5i+YUaHn+6hysH54MMNZrS34J6V5S/72OOUSM2
- oVa/yxACXYlfF4LfHleGYlPfgIBN+zsGrBlALfkonO3ehIgIaRaLD583kp9ilmqflYOa13R500W
- D+rEixUBBUn0P4hcFQP6L+vDw/oGU5FsyDhKQwGmSSjGI0f6jwBpYtM2F93EEqvxkeVipYyXM2P
- Ou7fc4J2IoAOR8PPVrw==
-X-Proofpoint-GUID: 4ALyDFsi4NJ1xpcRdpce__-y2lA-VysW
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
- definitions=2026-06-10_03,2026-06-09_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 bulkscore=0 impostorscore=0 priorityscore=1501
- suspectscore=0 adultscore=0 clxscore=1015 spamscore=0 phishscore=0
- malwarescore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2605210000
- definitions=main-2606100118
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 6/4/26 6:22 PM, Dmitry Baryshkov wrote:
-> On SM8250 Iris core requires two power rails to function, MX (for PLLs)
-> and MMCX (for everything else). The commit fa245b3f06cd ("arm64: dts:
-> qcom: sm8250: Add venus DT node") added only MX power rail, but omitted
-> MMCX voltage levels.
-> 
-> Add MMCX domain to the Iris device node.
-> 
-> Fixes: fa245b3f06cd ("arm64: dts: qcom: sm8250: Add venus DT node")
-> Reported-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> ---
+On mer. 10 juin 2026 at 12:18, Jian Hu <jian.hu@amlogic.com> wrote:
 
-[...]
+> Hi Jerome,
+>
+> Thanks for your review
+>
+> On 6/3/2026 10:29 PM, Jerome Brunet wrote:
+>> [ EXTERNAL EMAIL ]
+>>
+>> On Wed 03 Jun 2026 at 20:17, Jian Hu via B4 Relay <devnull+jian.hu.amlog=
+ic.com@kernel.org> wrote:
+>>
+>>> From: Jian Hu <jian.hu@amlogic.com>
+>>>
+>>> Add the Always-on clock controller driver for the Amlogic A9 SoC family.
+>>>
+>>> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+>>> ---
+>>>   drivers/clk/meson/Kconfig    |  13 ++
+>>>   drivers/clk/meson/Makefile   |   1 +
+>>>   drivers/clk/meson/a9-aoclk.c | 419 ++++++++++++++++++++++++++++++++++=
++++++++++
+>>>   3 files changed, 433 insertions(+)
+>>>
+>>> diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+>>> index cf8cf3f9e4ee..625e6788b940 100644
+>>> --- a/drivers/clk/meson/Kconfig
+>>> +++ b/drivers/clk/meson/Kconfig
+>>> @@ -132,6 +132,19 @@ config COMMON_CLK_A1_PERIPHERALS
+>>>          device, A1 SoC Family. Say Y if you want A1 Peripherals clock
+>>>          controller to work.
+>>>
+>>> +config COMMON_CLK_A9_AO
+>>> +     tristate "Amlogic A9 SoC AO clock controller support"
+>>> +     depends on ARM64
+>>> +     default ARCH_MESON || COMPILE_TEST
+>>> +     select COMMON_CLK_MESON_REGMAP
+>>> +     select COMMON_CLK_MESON_CLKC_UTILS
+>>> +     select COMMON_CLK_MESON_DUALDIV
+>>> +     imply COMMON_CLK_SCMI
+>>> +     help
+>>> +       Support for the AO clock controller on Amlogic A311Y3 based
+>>> +       device, AKA A9.
+>>> +       Say Y if you want A9 AO clock controller to work.
+>>> +
+>>>   config COMMON_CLK_C3_PLL
+>>>        tristate "Amlogic C3 PLL clock controller"
+>>>        depends on ARM64
+>>> diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
+>>> index c6719694a242..f89d027c282c 100644
+>>> --- a/drivers/clk/meson/Makefile
+>>> +++ b/drivers/clk/meson/Makefile
+>>> @@ -19,6 +19,7 @@ obj-$(CONFIG_COMMON_CLK_AXG) +=3D axg.o axg-aoclk.o
+>>>   obj-$(CONFIG_COMMON_CLK_AXG_AUDIO) +=3D axg-audio.o
+>>>   obj-$(CONFIG_COMMON_CLK_A1_PLL) +=3D a1-pll.o
+>>>   obj-$(CONFIG_COMMON_CLK_A1_PERIPHERALS) +=3D a1-peripherals.o
+>>> +obj-$(CONFIG_COMMON_CLK_A9_AO) +=3D a9-aoclk.o
+>>>   obj-$(CONFIG_COMMON_CLK_C3_PLL) +=3D c3-pll.o
+>>>   obj-$(CONFIG_COMMON_CLK_C3_PERIPHERALS) +=3D c3-peripherals.o
+>>>   obj-$(CONFIG_COMMON_CLK_GXBB) +=3D gxbb.o gxbb-aoclk.o
+>>> diff --git a/drivers/clk/meson/a9-aoclk.c b/drivers/clk/meson/a9-aoclk.c
+>>> new file mode 100644
+>>> index 000000000000..b7b3ca231a42
+>>> --- /dev/null
+>>> +++ b/drivers/clk/meson/a9-aoclk.c
+>>> @@ -0,0 +1,419 @@
+>>> +// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
+>>> +/*
+>>> + * Copyright (C) 2026 Amlogic, Inc. All rights reserved
+>>> + */
+>>> +
+>>> +#include <dt-bindings/clock/amlogic,a9-aoclkc.h>
+>>> +#include <linux/clk-provider.h>
+>>> +#include <linux/platform_device.h>
+>>> +#include "clk-regmap.h"
+>>> +#include "clk-dualdiv.h"
+>>> +#include "meson-clkc-utils.h"
+>>> +
+>>> +#define AO_OSCIN_CTRL                        0x00
+>>> +#define AO_SYS_CLK0                  0x04
+>>> +#define AO_PWM_CLK_A_CTRL            0x1c
+>>> +#define AO_PWM_CLK_B_CTRL            0x20
+>>> +#define AO_PWM_CLK_C_CTRL            0x24
+>>> +#define AO_PWM_CLK_D_CTRL            0x28
+>>> +#define AO_PWM_CLK_E_CTRL            0x2c
+>>> +#define AO_PWM_CLK_F_CTRL            0x30
+>>> +#define AO_PWM_CLK_G_CTRL            0x34
+>>> +#define AO_CEC_CTRL0                 0x38
+>>> +#define AO_CEC_CTRL1                 0x3c
+>>> +#define AO_RTC_BY_OSCIN_CTRL0                0x50
+>>> +#define AO_RTC_BY_OSCIN_CTRL1                0x54
+>>> +
+>>> +#define A9_COMP_SEL(_name, _reg, _shift, _mask, _pdata) \
+>>> +     MESON_COMP_SEL(a9_ao_, _name, _reg, _shift, _mask, _pdata, NULL, =
+0, 0)
+>>> +
+>>> +#define A9_COMP_DIV(_name, _reg, _shift, _width) \
+>>> +     MESON_COMP_DIV(a9_ao_, _name, _reg, _shift, _width, 0, CLK_SET_RA=
+TE_PARENT)
+>>> +
+>>> +#define A9_COMP_GATE(_name, _reg, _bit) \
+>>> +     MESON_COMP_GATE(a9_ao_, _name, _reg, _bit, CLK_SET_RATE_PARENT)
+>>> +
+>>> +static struct clk_regmap a9_ao_xtal_in =3D {
+>>> +     .data =3D &(struct clk_regmap_gate_data){
+>>> +             .offset =3D AO_OSCIN_CTRL,
+>>> +             .bit_idx =3D 3,
+>>> +     },
+>>> +     /*
+>>> +      * It may be ao_sys's parent clock, its child clocks mark
+>>> +      * CLK_IS_CRITICAL, So mark CLK_IS_CRITICAL for it.
+>>> +      */
+>> I don't really get what you mean ... Could you rephrase ?
+>
+>
+> The AO sys gate clock chain may be:
+>
+> ao_xtal_in->ao_xtal->ao_sys-> AO sys gate clocks
+>
+> "ao_xtal_in" is part of the parent chain of the AO sys gate clocks.
+>
+> Some of its downstream clocks are marked with CLK_IS_CRITICAL. To ensure
+> those clocks remain functional, ao_xtal_in must not be disabled and is
+> therefore marked as CLK_IS_CRITICAL as well.
 
->  				opp-720000000 {
->  					opp-hz = /bits/ 64 <720000000>;
-> -					required-opps = <&rpmhpd_opp_low_svs>;
-> +					required-opps = <&rpmhpd_opp_svs>,
-> +							<&rpmhpd_opp_low_svs>;
+If any of the downstream clocks are critical and marked as such, there is n=
+ot
+need to mark this one as well.
 
-So the computer tells me low_svs would be enough for PLL0 to generate 720MHz
+You should only mark the clocks that are actually critical with the flag
+and let CCF figure out the dependencies.
 
-Is there some transient dependency that bumps this to svs?
+>
+>
+> I will rephrase it like this in the next version:
+>
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 /*
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0* ao_sys can select different clock sou=
+rces. One possible clock
+> path is:
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0*=C2=A0 =C2=A0 =C2=A0 ao_xtal_in->ao_xt=
+al->ao_sys-> ao sys gate clocks
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0*
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0* ao_xtal_in is in the parent chain of =
+AO sys gate clocks.
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0* Since some downstream clocks are mark=
+ed CLK_IS_CRITICAL,
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0* ao_xtal_in must remain enabled and is=
+ therefore marked
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0* CLK_IS_CRITICAL as well.
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0*/
+>
+>>> +     .hw.init =3D CLK_HW_INIT_FW_NAME("ao_xtal_in", "xtal",
+>>> +                                    &clk_regmap_gate_ops, CLK_IS_CRITI=
+CAL),
+>> I'm honestly not sure about this. It is correct, sure and the macro exis=
+t to be
+>> used but ... It does not really help readability here, does it ?
+>>
+>> (I know that was a feedback you've got on v1)
+>>
+>> Other than that, this looks good to me.
+>>
+> Ok, I will use the original clk_init_data for this one.
 
-Your changelog mentions you altered this in v6, but I don't see any related
-discussion
+Well my comment applies to whole thing really.
 
-Konrad
+There are surely ways in which the macro but the way we statically
+declare things, it adds a level of indirection that makes things harder
+to review IMO.
+
+>
+>
+> [ ... ]
+>
+>> --
+>> Jerome
+
+--=20
+Jerome
