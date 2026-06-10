@@ -1,114 +1,161 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11023111.outbound.protection.outlook.com [52.101.127.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6255370ADE;
-	Wed, 10 Jun 2026 04:33:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781066005; cv=none; b=JNP/Cx9Ohsj0d8YNf3nplnUxI4Qg4Zo95yn1RTJxUBzwsgupTZeE5wpGg7Pk/XNLPBBgsjdhVh3DOedJIDQxP5dAIV2zxb88r/f72z1PVrwZo84lIcOKZik+XwcDvjLXEuyc1y7a9asLbt4MahrvfjZ4gBGF4TPhtJl36qvzbMg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781066005; c=relaxed/simple;
-	bh=8laxQoJT2lNJwHR3JwIshfZrBXuOnFnyYIPjA73bC3k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L28FKbExDer1Zqx6ZiRrCqAt2hZMrLI7L3a/ykp8tKHuFzrj5Bo2vqBagiCG/Ms10hpeSdMkqJU+W7hS9/NJVRQ6imSwcqBlg7rYfgQw5qV24R1vdOyyqO4AsV2YHcCtjYcTR2dT1uxWy9eeZK7fh9JPL9mVNe64F8VfiG1HTto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NEoNRuHm; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NEoNRuHm"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 020371F00893;
-	Wed, 10 Jun 2026 04:33:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781066004;
-	bh=oXYfUS9iAnPAsRhuciPrR5ndvfboUA5NSi/Wj0ODlDA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=NEoNRuHm4G3lOhwacyNXbaBQqHrh1KHHYSnPmxbF2pO3gzLvNecXW9RqfuRtvavNR
-	 kCqQ2xsdcbbYwLCHtOqYp4dajl2MbsnCLkHk5qJ8ky4sbFj/KJH88T0VDjNYT11t8B
-	 7ohqtNPGTJAYnV2tUYCcGH8nd7k+/O4zRcrU6r0ip1d1GvBQecEa3PobFqQ7/drA0M
-	 5gOJ3ZNlrju7JiplgapmU8c+tbPufpIpSDp7pShLMDW6pbUm8Fk19TDboesVTu4U4X
-	 l2p2W65uiqCXIspXWUtzZ75EaYRw5TcEm2fCDBQ7GMQ+9EBlDPtt7MBX7TzVe8Hot5
-	 yvgHY6+mS/87A==
-Date: Tue, 9 Jun 2026 21:33:22 -0700
-From: Drew Fustini <fustini@kernel.org>
-To: Icenowy Zheng <uwu@icenowy.me>
-Cc: Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-phy@lists.infradead.org,
-	linux-usb@vger.kernel.org, Han Gao <rabenda.cn@gmail.com>,
-	Yao Zi <ziyao@disroot.org>
-Subject: Re: [PATCH 02/12] clk: thead: th1520-ap: add support for MISC subsys
- clocks
-Message-ID: <aijpEqzJ7fM7rGMH@thelio>
-References: <20260507081710.4090814-1-zhengxingda@iscas.ac.cn>
- <20260507081710.4090814-3-zhengxingda@iscas.ac.cn>
- <aier9XppLeCkJydw@thelio>
- <93b867c1b7f5526cc25cb04f838432cd752f5981.camel@icenowy.me>
- <aievi0s-3SO8hV6a@thelio>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E9823264C7;
+	Wed, 10 Jun 2026 06:17:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.111
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1781072243; cv=fail; b=TONKwOCv2Hpdr6kYidTU6SsvXY7IQyKZcKjqIuc6fDAUiMqruZV1MRUrmaHfcwT6dH0iRCrUjj312qwSKnuzPpkJuvELdODMqNn7ibikAXY0LAHuV5Af4cBeMHwGSVEVQQnTNHgunQOEKozAIzvmNejyTxjjCgSyiw6347piLIU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1781072243; c=relaxed/simple;
+	bh=Xs9POHrnx0oSiwLX03/00LNcDAk+gjSZYgWWh0CTXbU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eq4t8U+AqFQM7qRNf8SVPNjxBytB1iLVtPIiiXc2Md0oWbdrAj2HhcFumcTKeT7BoELrcwj3wXPcVAqLAux08FukWQomqUQjzI5/tp+kWcD5XA2Kjs6CBZpUf3ceEgqmRysu0SogVFdAEY2uN7YRRCds8ecIYtIhwG1QGsEm0QE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=52.101.127.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=MLV7+EUeGKdcUEj/l2bSqBXbcfrXYLrsDi9wwVYkKOSvH0G+QXOOocU9WXpg8qXYxWm/SRNdeKZczvKQPprUgSSQIrnmLMQxa24UWtQP9tMnBCC9lj+deIMxnvhaLl0fxADN3XOHqy7rfQH5Z945rpducHVrHX51379o4let+/CnO+2bGwKmFiuvkNHADLAeUIGi/zUNBhrgzOePuCUQuS/WKYWV933rNEBB8k9+Lam032CrqUx9pDiOKJW425syWS1FZO8lSOdOJe9CUSYqP3F5H4SW3bg1VKOX7Kn1vvEHumLQ9CInw1YaosZuOcqK7O57sSB1yFuOCQaHxtJNnA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=EQXq7y4VDRCnCs7aTyPe3mddFLkda83JZJ2Nuluqp8U=;
+ b=mTbyAgeOYZ33EqIvAJwGJBjxWrYITJOWwOn9WKwEsZFZj145BvypG3r5l845LVwq7uT8etcCsu1w34rx6zIKxbOq3rmmPl0NSS9U20MFck/Cje5qwpQZSE4kq2+YDUO/Im4H/6nvQ2zxvjgE1KbJxIO2RuIAZxtTkQa1VUotSTUfgLT4XOttrMNb4YI7GwI1Qb795owCoeg1wtkW3FY148OatSwGSdhAQ4kV1AkUPVR9f2+tDQ93Hl1k+Eq1ZELMo4VeFQ7QaKmrXkNldv6Q3WwqEP3+mw8cidUIClZ1+IUDzKhnA/qitjKy3Fnr+H+H12alIR3M8Md1ch/JJUsx3A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 222.71.101.198) smtp.rcpttodomain=baylibre.com smtp.mailfrom=cixtech.com;
+ dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
+ not signed); arc=none (0)
+Received: from SI3PR02CA0005.apcprd02.prod.outlook.com (2603:1096:4:295::7) by
+ PUZPR06MB6006.apcprd06.prod.outlook.com (2603:1096:301:11e::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.113.11; Wed, 10 Jun
+ 2026 06:17:17 +0000
+Received: from OSA0EPF000000CA.apcprd02.prod.outlook.com
+ (2603:1096:4:295:cafe::6e) by SI3PR02CA0005.outlook.office365.com
+ (2603:1096:4:295::7) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.113.11 via Frontend Transport; Wed,
+ 10 Jun 2026 06:17:17 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
+ smtp.mailfrom=cixtech.com; dkim=none (message not signed)
+ header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
+Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
+ 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
+ client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
+Received: from smtprelay.cixcomputing.com (222.71.101.198) by
+ OSA0EPF000000CA.mail.protection.outlook.com (10.167.240.56) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.113.7 via Frontend Transport; Wed, 10 Jun 2026 06:17:16 +0000
+Received: from cix (unknown [172.18.64.61])
+	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id AACAE40A53A1;
+	Wed, 10 Jun 2026 14:17:15 +0800 (CST)
+From: joakim.zhang@cixtech.com
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	bmasney@redhat.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	p.zabel@pengutronix.de,
+	gary.yang@cixtech.com
+Cc: cix-kernel-upstream@cixtech.com,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Joakim Zhang <joakim.zhang@cixtech.com>
+Subject: [PATCH v3 5/5] arm64: dts: cix: sky1: add audss system control
+Date: Wed, 10 Jun 2026 14:17:12 +0800
+Message-ID: <20260610061712.3203984-6-joakim.zhang@cixtech.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20260610061712.3203984-1-joakim.zhang@cixtech.com>
+References: <20260610061712.3203984-1-joakim.zhang@cixtech.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <aievi0s-3SO8hV6a@thelio>
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: OSA0EPF000000CA:EE_|PUZPR06MB6006:EE_
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: 700e391e-ce50-417a-e680-08dec6b7eb9e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|23010399003|82310400026|1800799024|7416014|376014|36860700016|22082099003|18002099003|56012099006;
+X-Microsoft-Antispam-Message-Info:
+	PTwH/YNG0OQhIrNYTOKllvJW+9DcZyrKn/OIfctido/QBd9dDHPzkbS4uEKaJewulcbkFnmkxS7cXd2n8aqBHo5A3sTIcYEzZtI4jQYEw0LicWP2ade0D+C+0//jS8Gjp2qMhiXP9YINDky6+Xr/UZgxFD5DETFvOPI8UA/3PRo/T1VYbgZqmsbKjW4skhrKE7uHk0S12+3X3BWzKYhYcvzqFpJNTg+eA2vCipCBpYeDllOCX01v1OBzryXuP3mc3kbKHfJsNOnciboO0YKomJO4wRAdhNcWYgRvICqt0SWKMO0UykYkF1kIe3KVpMS66Ch2Xbgt6vja6SAnGMCI4XQ/PMsaeGFcGh17p2mI96u98EgPz9zBWYW+GO76RAu6Sy16ldiLY545k4tpyGjpllVUINnzC1ONbeQnuCL8SFrGVFV7uuwrcCm0Hh4s5q46tbhbB8mj2sblqmPLIvTxsPfZCRAwl06sRTG5bAMGWX1RAhXwXKHjAttLJ4zIukvJB42+4cTTfD5g72UD5TcsMbA/gTA5zHvHoQcUocdiDYTj+8oIfE8EbvHQ0MwUi1fWm8Qm5n0PNS8/Xc5B3vyPOXY/saYv6+ev7FqGD3KDbj6EFZETgr1HMgylQeIJawdqQIl8eoNKctr2++8aEe3jfsQW0A1QxbQYIHJ98CIMxZmUa87tp+dte/xAnfuUtRjocQCYqYL4FA1cQKdR83sW0Gn6XehH5/8U48YlaznFce8=
+X-Forefront-Antispam-Report:
+	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(23010399003)(82310400026)(1800799024)(7416014)(376014)(36860700016)(22082099003)(18002099003)(56012099006);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	HtcNEXBvjeTqu+iSKgmDNGLUoyk2FpUfFvdJ46dznRxvU5MSLXHf13uUcs4YWGcWgnFYRVnzto5CsXZ9cEGX0HkxB6cb8hQulWsbnMPlE137THAj7OuJC3Vz7t4vlPXgi1R9KJjIqif6E5hYHnnTx7v4v4aiDta8q9b+1buKJJXnDWO8AtJvNJCen5v30GbdsUA7IkjulLz6SBYRMNXASWSAhEr4Anvl5NC5MKFKHsnGSLWUdGU7V7cu0fkCXznPTqaDoA6kO/9gaZYdRlrMKgLad1xILC7w3xoLcmJsmpNRx0XyidSSeetAoubjI0oiX6n5R8Qlyc+Oa2rspcnHmp5s1dZLbwKd8adJhzj/N33qCT9RwDQQZOLOYZsNvezNbGvIiIsejkq/q6uHOYohrOr2ZZd2NlQezSjWTj/55MBo7CLjmBAilMeBmtwCfdXB
+X-OriginatorOrg: cixtech.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jun 2026 06:17:16.5441
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 700e391e-ce50-417a-e680-08dec6b7eb9e
+X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	OSA0EPF000000CA.apcprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUZPR06MB6006
 
-On Mon, Jun 08, 2026 at 11:15:39PM -0700, Drew Fustini wrote:
-> On Tue, Jun 09, 2026 at 02:01:43PM +0800, Icenowy Zheng wrote:
-> > 在 2026-06-08一的 23:00 -0700，Drew Fustini写道：
-> > > On Thu, May 07, 2026 at 04:17:00PM +0800, Icenowy Zheng wrote:
-> > > > The TH1520 SoC contains a MISC_SUBSYS clock controller, which
-> > > > allows
-> > > > controlling of USB related clocks and MMC/SD controller AHB bus
-> > > > clocks.
-> > > > 
-> > > > Add support for this clock controller, in order to enable USB
-> > > > support.
-> > > > 
-> > > > Signed-off-by: Icenowy Zheng <zhengxingda@iscas.ac.cn>
-> > > > ---
-> > > >  drivers/clk/thead/clk-th1520-ap.c | 64
-> > > > +++++++++++++++++++++++++++++++
-> > > >  1 file changed, 64 insertions(+)
-> > > > 
-> > > > diff --git a/drivers/clk/thead/clk-th1520-ap.c
-> > > > b/drivers/clk/thead/clk-th1520-ap.c
-> > > > index 3a6847f1c950f..24f785f0b329a 100644
-> > > > --- a/drivers/clk/thead/clk-th1520-ap.c
-> > > > +++ b/drivers/clk/thead/clk-th1520-ap.c
-> > > [...]
-> > > > @@ -1609,6 +1663,12 @@ static int th1520_clk_probe(struct
-> > > > platform_device *pdev)
-> > > >  			return ret;
-> > > >  	}
-> > > >  
-> > > > +	if (plat_data == &th1520_ap_platdata) {
-> > > > +		ret = devm_clk_hw_register(dev,
-> > > > &usb_suspend_div_clk.hw);
-> > > > +		if (ret)
-> > > > +			return ret;
-> > > > +	}
-> > > 
-> > > Should usb_suspend_div_clk.hw instead be registered under
-> > > 'if (plat_data == &th1520_ap_platdata)'?
-> > 
-> > Do you mean misc_platdata?
-> > 
-> > Yes, this is an copy-n-paste error that deserves a fix.
-> 
-> Hah, yes, I also had a typo :)
+From: Joakim Zhang <joakim.zhang@cixtech.com>
 
-Assuming that gets fixed in the next rev:
+Add audss system control device node, which would provides
+clocks and resets for devices in audss domain.
 
-Reviewed-by: Drew Fusini <fustini@kernel.org>
+Signed-off-by: Joakim Zhang <joakim.zhang@cixtech.com>
+---
+ arch/arm64/boot/dts/cix/sky1.dtsi | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/cix/sky1.dtsi b/arch/arm64/boot/dts/cix/sky1.dtsi
+index bb5cfb1f2113..368a1d85c93d 100644
+--- a/arch/arm64/boot/dts/cix/sky1.dtsi
++++ b/arch/arm64/boot/dts/cix/sky1.dtsi
+@@ -6,6 +6,10 @@
+ 
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/clock/cix,sky1.h>
++#include <dt-bindings/clock/cix,sky1-audss.h>
++#include <dt-bindings/reset/cix,sky1-system-control.h>
++#include <dt-bindings/reset/cix,sky1-s5-system-control.h>
++#include <dt-bindings/reset/cix,sky1-audss-system-control.h>
+ #include "sky1-power.h"
+ 
+ / {
+@@ -488,6 +492,26 @@ mbox_pm2ap: mailbox@65a0080 {
+ 			cix,mbox-dir = "rx";
+ 		};
+ 
++		audss_cru: system-controller@7110000 {
++			compatible = "cix,sky1-audss-system-control", "simple-mfd", "syscon";
++			reg = <0x0 0x07110000 0x0 0x10000>;
++			#reset-cells = <1>;
++			status = "okay";
++
++			audss_clk: clock-controller {
++				compatible = "cix,sky1-audss-clock";
++				power-domains = <&smc_devpd SKY1_PD_AUDIO>;
++				resets = <&s5_syscon SKY1_AUDIO_HIFI5_NOC_RESET_N>;
++				clocks = <&scmi_clk CLK_TREE_AUDIO_CLK0>,
++					 <&scmi_clk CLK_TREE_AUDIO_CLK2>,
++					 <&scmi_clk CLK_TREE_AUDIO_CLK4>,
++					 <&scmi_clk CLK_TREE_AUDIO_CLK5>;
++				clock-names = "x8k", "x11k", "sys", "48m";
++				#clock-cells = <1>;
++				status = "okay";
++			};
++		};
++
+ 		mbox_sfh2ap: mailbox@8090000 {
+ 			compatible = "cix,sky1-mbox";
+ 			reg = <0x0 0x08090000 0x0 0x10000>;
+-- 
+2.50.1
+
