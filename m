@@ -1,74 +1,59 @@
-Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11023094.outbound.protection.outlook.com [40.107.44.94])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55D813955D7;
-	Wed, 10 Jun 2026 07:56:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.94
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781078217; cv=fail; b=Xhh8TJyzpNxS3HcggCQVxUZUdLF8wHbd6hF/IV5SwlhJKe21UTsPXPG3fp/1tsOE+41Mn9Lfrl1nlkJQj9qo0VcrhdFjL8Du9nSHdM35eTFYbF+FFmBTKM2W8DL5pMs/FMDKK1QGUsCKnc/DmFkogU+eSdKx2A2yyEVNl/TRbew=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781078217; c=relaxed/simple;
-	bh=Xs9POHrnx0oSiwLX03/00LNcDAk+gjSZYgWWh0CTXbU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=R7GKgz8jUOBJraN92ZyryLK2aqLYXpNqulER8L7QxCnQc7Pirwav76t9RtXsYlBbm94vES1SsXywUjfdql64H2sRPSSlu3ql4+HkFSB/VpMJeCr7R0OvzrQSxqT5mITr0inHriBysx+drE+6WmEUYfvrHwyBIV0zHkbQiHsF8ao=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=40.107.44.94
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aDqa4/wAhTk8L+ro79jHuJ6/AdOFUpxmXUuOzLX+U6zXS2L0+gLxKU9VXtAuCLUFqweHl/G04rsMRI85PeBpZaG3UyG/Ykog9tMa1WMFPnfX2u/sjDJppEUCKkmgChyV/zF2EzzMl60MK6/w5aLheH2BRuWotfmcNvpi36P+E7BaudldFHL6NT7rO98eCLfRwhUJRkTuQ+u7SkdHAXsMVY3liXiSD4mcwn0iytkUj/vPQkWRv63LUvAU7VevO58+bMhhjXS6pQhB0wFS4b6wbdC/zD1bh9myGX76nAaQwNwmztGthnELMeuvENrUcXEOj9NjK0TuBNNP9Qy1zuUifw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EQXq7y4VDRCnCs7aTyPe3mddFLkda83JZJ2Nuluqp8U=;
- b=CeBcv5gx3l/ysV6lNAs5WkxCSUWKKPgSjnTZEA0430i8XqW6E8uEqoWyFvSBAjzyjEewn4g7Mf1//irDJXVknktpd8tRfQmqq9OZaF49LLIWfVmNy88XQB7McZUNO1JOqI9yxLaEEGKIuacSBpCAUNFlNtwNyOQqAEKq6o1QPd3r6i81YiDPwCJ51h9zjZl4oW/t2UP5vecfgkmNZZnqu3YE2mJ9mwY6i/vyzR0r6CeN9y+E0fpEJrrkZMsLVg0noS51GoL9ykdiIRJUtC2ejXyh9D/9x8Cbc8duXwUJ47bnKJko50KosDkUIcHZXF7AwSP6RZ0PakIoHPWNW/uDww==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 222.71.101.198) smtp.rcpttodomain=baylibre.com smtp.mailfrom=cixtech.com;
- dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
- not signed); arc=none (0)
-Received: from SG2P153CA0025.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c7::12) by
- SE3PR06MB8666.apcprd06.prod.outlook.com (2603:1096:101:330::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.92.14; Wed, 10 Jun
- 2026 07:56:51 +0000
-Received: from SG2PEPF000B66CC.apcprd03.prod.outlook.com
- (2603:1096:4:c7:cafe::b) by SG2P153CA0025.outlook.office365.com
- (2603:1096:4:c7::12) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.139.3 via Frontend Transport; Wed, 10
- Jun 2026 07:56:51 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
- smtp.mailfrom=cixtech.com; dkim=none (message not signed)
- header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
-Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
- 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
-Received: from smtprelay.cixcomputing.com (222.71.101.198) by
- SG2PEPF000B66CC.mail.protection.outlook.com (10.167.240.25) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.113.7 via Frontend Transport; Wed, 10 Jun 2026 07:56:48 +0000
-Received: from cix (unknown [172.18.64.61])
-	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id E58D34084279;
-	Wed, 10 Jun 2026 15:56:47 +0800 (CST)
-From: joakim.zhang@cixtech.com
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	bmasney@redhat.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	p.zabel@pengutronix.de,
-	gary.yang@cixtech.com
-Cc: cix-kernel-upstream@cixtech.com,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Joakim Zhang <joakim.zhang@cixtech.com>
-Subject: [PATCH v3 5/5] arm64: dts: cix: sky1: add audss system control
-Date: Wed, 10 Jun 2026 15:56:45 +0800
-Message-ID: <20260610075645.3581145-6-joakim.zhang@cixtech.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ACC239A05D;
+	Wed, 10 Jun 2026 08:09:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1781078962; cv=none; b=q+zgBHE/ljjA7Jy055RBI6nrXMb5N+dE/dG/M7GI5GM2JVl4jbTNaSgkcAE088rchXmyg/HSBzYMVtvcn5NQAgILjuN0e8UiR1pIg9rY91E+yM+9FQapqlsfX1Fmb6EGa/qkYu9EeZn//8XrJuQ/lD8cIZor7RGIEFzt9V/uXIA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1781078962; c=relaxed/simple;
+	bh=Y2bLr+IplXg7iF2yNhq2LAo9fHZrBDXUkk6t9kjoRXo=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pRemyFha4kT6BwEu/2+KU6a9KSqWK8Gqu6lveTntbhlOnUlEFwuf9MQABa9MaATqQRP0kCvusT1qWb0fWL7jgl1HDe0+WofLsqbCOAMLfopKWMlTS8V85QHA6R4BO2DO1jG5ElEQV+2G49m/hEn9palyEmna86Io221GAtpiQvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=asJsQXEb; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="asJsQXEb"
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 65A88R8g8983547, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1781078907; bh=LvMoJ7U1S8/LO4owCBzXHpG4df/KbQM1wUKAiJZyIfc=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Transfer-Encoding:Content-Type;
+	b=asJsQXEbLlo45Hsrp3pmpU8yDmkVy4B+cNHBQKzIfxLFMWECRrfStU2LB0Pe7MoVA
+	 euj1h1+B0z530fPfik/F3iRzDqQ296KVKwI8H2Wq/BpN9pkry4UYV4mYGXR4iR3y/j
+	 12BuOK/WwBEOhjVOad/iK78eRLTOGbtspqyz3kvRZ2ZXeJxzb/KOlrGV7yCL1PkMtt
+	 pA7/9JtOkzBVBpGtalVchlqqpvkzbomAY6ZfbafVy/om5m2NgANKK+2cKDv6K1FKuP
+	 nL2Ad+WsM6L7usn2HDJfv4qFFmYfjTioR7QQzaMlxs5PvwY2phW7AWe5N2cBUJHLdp
+	 ApfNWuB4iFBBA==
+Received: from mail.realtek.com (rtkexhmbs02.realtek.com.tw[172.21.6.41])
+	by rtits2.realtek.com.tw (8.15.2/3.29/5.94) with ESMTPS id 65A88R8g8983547
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 10 Jun 2026 16:08:27 +0800
+Received: from RTKEXHMBS03.realtek.com.tw (10.21.1.53) by
+ RTKEXHMBS02.realtek.com.tw (172.21.6.41) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Wed, 10 Jun 2026 16:08:27 +0800
+Received: from cn1dhc-k02 (172.21.252.101) by RTKEXHMBS03.realtek.com.tw
+ (10.21.1.53) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Wed, 10 Jun 2026 16:08:27 +0800
+From: Yu-Chun Lin <eleanor.lin@realtek.com>
+To: <mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <p.zabel@pengutronix.de>,
+	<cylee12@realtek.com>, <afaerber@suse.com>, <jyanchou@realtek.com>
+CC: <bmasney@redhat.com>, <devicetree@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-realtek-soc@lists.infradead.org>, <james.tai@realtek.com>,
+	<cy.huang@realtek.com>, <stanley_chang@realtek.com>,
+	<eleanor.lin@realtek.com>
+Subject: [PATCH v8 06/10] clk: realtek: Add support for mux clock
+Date: Wed, 10 Jun 2026 16:08:20 +0800
+Message-ID: <20260610080824.255063-7-eleanor.lin@realtek.com>
 X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20260610075645.3581145-1-joakim.zhang@cixtech.com>
-References: <20260610075645.3581145-1-joakim.zhang@cixtech.com>
+In-Reply-To: <20260610080824.255063-1-eleanor.lin@realtek.com>
+References: <20260610080824.255063-1-eleanor.lin@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -76,86 +61,138 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SG2PEPF000B66CC:EE_|SE3PR06MB8666:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 91c4dacf-e811-4bcf-bb20-08dec6c5d427
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|23010399003|36860700016|82310400026|1800799024|7416014|376014|18002099003|22082099003|56012099006;
-X-Microsoft-Antispam-Message-Info:
-	vkNjsul07cBF1weehXO0+vWQbgwA/omBHkB4760pztZuPVw0Oy5vrs7O2TzaW4MDd3P5F2xh+LRLAYXF/A3b93GhG514lNB0IGGJ+kDGUIVSVVtstk1fjaq9UYnnZrn+yXrAYHlBNZrx/k9D+pxMwKiQbrQq5hBujaaqPOF5tz1D9uFEiDCrEhHMEj3M4MhKbNp0OhikplwLdiF17Meprx8PKC9M3deF0AQasGFwGxLDyhRqTPvpe23JWR8z7rxaaj6MYxauG8LzvcUTUaYETLaCqJTzKaXiugJ1BYJSA5ai8KkD0G3Vjus1KZeUftobTsbQVUI8aV8DqLEm93ntX8YNzlSIuQhwc/l6LBw0dqfa9q7X4fA3eCIs/7znH++Q5YID9L0l1V1EOUAAT1pYzSdnztE+tMPCE2LBpaKEtlrkJHWIbN+gF3dEBUkQ2pLnjDITJtRfj8J+216pwdwmMDcVRjkpMArn9yJW5z2lUA0Mjs4WIuDJVtqvcufai8klMh9+MD2UM9K4H9AHXuGXTljqMN5owUoJatsY+X2BTx6npRQD2SBWzV0pDK73RIl/GGalwAcr3aPtNAfT5qJoMzLye77kQ3I9446OE7t7BaGUT22r8EKtjTIPWVvLIO4bfY178hfcBvCA/SnATS0iLSWwX3WwD2BTDaf3HKbVCZv2VipsrdXttmylCgbyy/A/i1pKV1N6IvP/Hd8wdy5qHytHwxDitWbl3oKIqq8OUAs=
-X-Forefront-Antispam-Report:
-	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(23010399003)(36860700016)(82310400026)(1800799024)(7416014)(376014)(18002099003)(22082099003)(56012099006);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	bQk0RbH19bSzPj42aRbWh00zZ6YTcnX6Ff3dpLDkcSAP4BJevfMQGmkm0yboHFjXK4P78oz0NonCk5jn+evrZfvhrhy/8Q/o9SMda5r0SX6CxwBx4108AQOBcQEGUZRQn7k29H8Ib4jv2TSwil19WwvPPkGVxcFMxzgigAk79HsvwtHyQaNnlmlpjWnrqnujisYeXoyqWjEShBzg6scBNRtRgnFAtRxfdAUzE+Ju+xt2RgVGVM6S+pF6334nvV1r0lVYwld9QtMsds+qVyGLOgGwK1isU50wtE9uv6vw6E87XxNmYv60H54wzuk07hhPfWN5o2YFtVob+DqHqGu7tuDR8ee8m8AVORl/U4eiN8ZEUkPVGMvAwoRiQfhPxuISj223SL22vHyEn+L2eBIbTo5rbGo6SA8xye0Pn6ny+Ew+gyofb/DBJcfCKa2tBrzF
-X-OriginatorOrg: cixtech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jun 2026 07:56:48.9439
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 91c4dacf-e811-4bcf-bb20-08dec6c5d427
-X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SG2PEPF000B66CC.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SE3PR06MB8666
 
-From: Joakim Zhang <joakim.zhang@cixtech.com>
+From: Cheng-Yu Lee <cylee12@realtek.com>
 
-Add audss system control device node, which would provides
-clocks and resets for devices in audss domain.
+Add a simple regmap-based clk_ops implementation for Realtek mux clocks.
 
-Signed-off-by: Joakim Zhang <joakim.zhang@cixtech.com>
+The implementation supports parent selection and rate determination through
+regmap-backed register access.
+
+Signed-off-by: Cheng-Yu Lee <cylee12@realtek.com>
+Co-developed-by: Yu-Chun Lin <eleanor.lin@realtek.com>
+Signed-off-by: Yu-Chun Lin <eleanor.lin@realtek.com>
 ---
- arch/arm64/boot/dts/cix/sky1.dtsi | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+Changes in v8:
+- In clk_regmap_mux_get_parent(), return 0xff instead of 0 to properly indicate
+an error.
+- In clk_regmap_mux_set_parent(), cast index to u32 to avoid signed integer
+- overflow.
+---
+ drivers/clk/realtek/Makefile         |  1 +
+ drivers/clk/realtek/clk-regmap-mux.c | 41 ++++++++++++++++++++++++++
+ drivers/clk/realtek/clk-regmap-mux.h | 43 ++++++++++++++++++++++++++++
+ 3 files changed, 85 insertions(+)
+ create mode 100644 drivers/clk/realtek/clk-regmap-mux.c
+ create mode 100644 drivers/clk/realtek/clk-regmap-mux.h
 
-diff --git a/arch/arm64/boot/dts/cix/sky1.dtsi b/arch/arm64/boot/dts/cix/sky1.dtsi
-index bb5cfb1f2113..368a1d85c93d 100644
---- a/arch/arm64/boot/dts/cix/sky1.dtsi
-+++ b/arch/arm64/boot/dts/cix/sky1.dtsi
-@@ -6,6 +6,10 @@
+diff --git a/drivers/clk/realtek/Makefile b/drivers/clk/realtek/Makefile
+index 74375f8127ac..f90dc57fcfdb 100644
+--- a/drivers/clk/realtek/Makefile
++++ b/drivers/clk/realtek/Makefile
+@@ -5,4 +5,5 @@ clk-rtk-y += common.o
  
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/clock/cix,sky1.h>
-+#include <dt-bindings/clock/cix,sky1-audss.h>
-+#include <dt-bindings/reset/cix,sky1-system-control.h>
-+#include <dt-bindings/reset/cix,sky1-s5-system-control.h>
-+#include <dt-bindings/reset/cix,sky1-audss-system-control.h>
- #include "sky1-power.h"
- 
- / {
-@@ -488,6 +492,26 @@ mbox_pm2ap: mailbox@65a0080 {
- 			cix,mbox-dir = "rx";
- 		};
- 
-+		audss_cru: system-controller@7110000 {
-+			compatible = "cix,sky1-audss-system-control", "simple-mfd", "syscon";
-+			reg = <0x0 0x07110000 0x0 0x10000>;
-+			#reset-cells = <1>;
-+			status = "okay";
+ clk-rtk-y += clk-pll.o
+ clk-rtk-y += clk-regmap-gate.o
++clk-rtk-y += clk-regmap-mux.o
+ clk-rtk-y += freq_table.o
+diff --git a/drivers/clk/realtek/clk-regmap-mux.c b/drivers/clk/realtek/clk-regmap-mux.c
+new file mode 100644
+index 000000000000..8bb66a9e244a
+--- /dev/null
++++ b/drivers/clk/realtek/clk-regmap-mux.c
+@@ -0,0 +1,41 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (C) 2017-2026 Realtek Semiconductor Corporation
++ * Author: Cheng-Yu Lee <cylee12@realtek.com>
++ */
 +
-+			audss_clk: clock-controller {
-+				compatible = "cix,sky1-audss-clock";
-+				power-domains = <&smc_devpd SKY1_PD_AUDIO>;
-+				resets = <&s5_syscon SKY1_AUDIO_HIFI5_NOC_RESET_N>;
-+				clocks = <&scmi_clk CLK_TREE_AUDIO_CLK0>,
-+					 <&scmi_clk CLK_TREE_AUDIO_CLK2>,
-+					 <&scmi_clk CLK_TREE_AUDIO_CLK4>,
-+					 <&scmi_clk CLK_TREE_AUDIO_CLK5>;
-+				clock-names = "x8k", "x11k", "sys", "48m";
-+				#clock-cells = <1>;
-+				status = "okay";
-+			};
-+		};
++#include <linux/clk-provider.h>
++#include <linux/export.h>
++#include <linux/regmap.h>
++#include "clk-regmap-mux.h"
 +
- 		mbox_sfh2ap: mailbox@8090000 {
- 			compatible = "cix,sky1-mbox";
- 			reg = <0x0 0x08090000 0x0 0x10000>;
++static u8 clk_regmap_mux_get_parent(struct clk_hw *hw)
++{
++	struct clk_regmap_mux *clkm = to_clk_regmap_mux(hw);
++	int num_parents = clk_hw_get_num_parents(hw);
++	u32 val;
++	int ret;
++
++	ret = regmap_read(clkm->clkr.regmap, clkm->mux_ofs, &val);
++	if (ret)
++		return 0;
++
++	val = (val >> clkm->shift) & clkm->mask;
++
++	return val >= num_parents ? 0xff : val;
++}
++
++static int clk_regmap_mux_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct clk_regmap_mux *clkm = to_clk_regmap_mux(hw);
++
++	return regmap_update_bits(clkm->clkr.regmap, clkm->mux_ofs,
++				  clkm->mask << clkm->shift, (u32)index << clkm->shift);
++}
++
++const struct clk_ops rtk_clk_regmap_mux_ops = {
++	.set_parent = clk_regmap_mux_set_parent,
++	.get_parent = clk_regmap_mux_get_parent,
++	.determine_rate = __clk_mux_determine_rate,
++};
++EXPORT_SYMBOL_NS_GPL(rtk_clk_regmap_mux_ops, "REALTEK_CLK");
+diff --git a/drivers/clk/realtek/clk-regmap-mux.h b/drivers/clk/realtek/clk-regmap-mux.h
+new file mode 100644
+index 000000000000..fff413222d19
+--- /dev/null
++++ b/drivers/clk/realtek/clk-regmap-mux.h
+@@ -0,0 +1,43 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Copyright (C) 2017-2026 Realtek Semiconductor Corporation
++ * Author: Cheng-Yu Lee <cylee12@realtek.com>
++ */
++
++#ifndef __CLK_REALTEK_CLK_REGMAP_MUX_H
++#define __CLK_REALTEK_CLK_REGMAP_MUX_H
++
++#include "common.h"
++
++struct clk_regmap_mux {
++	struct clk_regmap clkr;
++	int mux_ofs;
++	unsigned int mask;
++	unsigned int shift;
++};
++
++#define __clk_regmap_mux_hw(_p) __clk_regmap_hw(&(_p)->clkr)
++
++#define __CLK_REGMAP_MUX(_name, _parents, _ops, _flags, _ofs, _sft, _mask)   \
++	struct clk_regmap_mux _name = {                                      \
++		.clkr.hw.init =                                              \
++			CLK_HW_INIT_PARENTS(#_name, _parents, _ops, _flags), \
++		.mux_ofs = _ofs,                                             \
++		.shift = _sft,                                               \
++		.mask = _mask,                                               \
++	}
++
++#define CLK_REGMAP_MUX(_name, _parents, _flags, _ofs, _sft, _mask)           \
++	__CLK_REGMAP_MUX(_name, _parents, &rtk_clk_regmap_mux_ops, _flags, _ofs, \
++			 _sft, _mask)
++
++static inline struct clk_regmap_mux *to_clk_regmap_mux(struct clk_hw *hw)
++{
++	struct clk_regmap *clkr = to_clk_regmap(hw);
++
++	return container_of(clkr, struct clk_regmap_mux, clkr);
++}
++
++extern const struct clk_ops rtk_clk_regmap_mux_ops;
++
++#endif /* __CLK_REALTEK_CLK_REGMAP_MUX_H */
 -- 
-2.50.1
+2.43.0
 
