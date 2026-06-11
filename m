@@ -1,820 +1,141 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 915E83451D6;
-	Thu, 11 Jun 2026 09:41:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F6A640D591
+	for <linux-clk@vger.kernel.org>; Thu, 11 Jun 2026 09:41:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781170865; cv=none; b=RkmU9EFix2KpM1ILdpXvuxUiT1IrXKX2qPZItTxSgB2QgA6jHRG3KWyNnWPVNjV/2hFplixZxLl6BgBMu8mnTiPoJiKcEW5IV1Eb1yOcdwvd/gx2rO1vE9EEqFxvWC308SMjQJREYRhseCEQTh9hNbiSK1n53sfVs3v9amA+2oI=
+	t=1781170904; cv=none; b=k5+UuXenc17/nd/PAZC0IDOSppd6Iuxp+exYU9EgT6TX+T1Zt2Mqm/OgXDgwbVcd0lbSPEI7RTYv0A5gXbWqhEv7W75O3Ac+JNNK/08eisTu/jwkN18SWtxRzMGKDLU8gNhgQCT06v1XxquebrUvebciSVlbzpW+5vrhMwhMXA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781170865; c=relaxed/simple;
-	bh=4zXyl6wlnZWOpYkiNDJz1XoM4J6K/0g+ZsQn9R9tGQ0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=IQ2VmTio7/b5AziXoH32Z6RNryz4IEQkfjtn+2I5ypEL28LtJBHHSYH9exYGHU5WkrrBWawJGxWK6fKickoa4NQ++BpmQBXLESll364F5CcvC1FjKQs4JgsqMrqV4BY9PHg7jMFcxsd+NZOZdCiZU2TsQCvgX9Ier7BcddEWxAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U7IaLROj; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1781170904; c=relaxed/simple;
+	bh=gs29JVYoqBRbD7XbXz5ZIYaa4W+R/0h/qmCJb0z6MrQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fgvnalTZGbnUvQq+/ZgA3US0SPcLkFiw9Eyapkmr4wmn0DPYdEb97pNc26Ub0uXZ4VkpjEJx4v5YLz0XrbDcnszRvxdcKW59rpAzS02nGcsiZHyRC9hV5lSwM2yVVD3cGlr162tmoUqO0ODEqevwbqJJwHM1qbvQFXsb1eJye+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=QgR43M+J; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=cFnPZbE9; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U7IaLROj"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 385F0C4AF12;
-	Thu, 11 Jun 2026 09:41:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1781170865;
-	bh=4zXyl6wlnZWOpYkiNDJz1XoM4J6K/0g+ZsQn9R9tGQ0=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=U7IaLROje3iE5+98sKVhuzot50lgKC9zP35PhYwXF8Q+DPM1bjx0z3gmjZSwitGXS
-	 PPNWkyEYrAvyTSBuNT1Jcjo3uVp0mVAAwQlWkHw4eijmEqTGTTa5NWIIEd4xWjabYq
-	 ZE/bYTK8uiFdxJOjmTKOoCSCnTeTDXYWJblhinisYXanQ59miBY7WnduMn6ssi3Vgi
-	 fcJHJHcLnSKDO4UHBnbfOLjhBPNEE6mf+asMOdPKuIEzgVPunA28iYNv1R/+Hjkrxd
-	 JtN4/HfnscbhA5mfDsmTyF/yIYBZLdPPndiPFQlEGsBkfD9L3PhYKNRlCzpPQVgPWq
-	 9e3LXU4lpiwtQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2615FCD98D4;
-	Thu, 11 Jun 2026 09:41:05 +0000 (UTC)
-From: Jia Wang via B4 Relay <devnull+wangjia.ultrarisc.com@kernel.org>
-Date: Thu, 11 Jun 2026 17:40:54 +0800
-Subject: [PATCH 2/2] clk: ultrarisc: add DP1000 clock driver
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="QgR43M+J";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="cFnPZbE9"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 65B5GMs12248055
+	for <linux-clk@vger.kernel.org>; Thu, 11 Jun 2026 09:41:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	OsmgSByejwZrCh97iurQ7ytYSxygMHrNyrSm1o7mkBk=; b=QgR43M+J55gTURjk
+	Rg2FWjzuyB7bLsejkZh8yl4h++Uj29cnSBh6Y66KBz6j9civNb+dhHoPpxMEPwE1
+	tvYVB9/kudR12FCb68lSgXyb7eQ6rmkezCfjm1FmUcryIKA7dfzCg1rwv33NgGb8
+	y0YzgYZCb7h2UpFKknxlsnzzmqZkJnh+dckQk39BYuAHjC76RTjnZTl8YX5lUeD+
+	u3QcXcJYf7GwSyzeLsQlK/G/M9xIVfETfd4T2xQqpk8Ll/pE8R+zaHFSI5n1+bC3
+	s5XxmYtxknuI666vy7fq8aVfsDo4hkgPjBiU8Ar0+1mQrovsrWZjAdO5i8f/tcz+
+	kk4Bpg==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4eqe79jq2m-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Thu, 11 Jun 2026 09:41:42 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-51759082206so23103641cf.3
+        for <linux-clk@vger.kernel.org>; Thu, 11 Jun 2026 02:41:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1781170902; x=1781775702; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OsmgSByejwZrCh97iurQ7ytYSxygMHrNyrSm1o7mkBk=;
+        b=cFnPZbE9qa9dhkKxIWQw+SUe+5pnGnVdqNdx7UYq2tFziOF6+qdgBDpHo1GMHKapWz
+         kMBFzQ5WZQY7ZoxW3jyu9NAEtNUSJXX3OlrmfJ/Hp1qzOIDkNkL52zj2UP+gYvh1eX88
+         mE+KFHfL0JmfCNj7XpSAEeFEEloQvrKVChD8uZRK5uCjXViJIVl71NBoAK+Kem4NkqMb
+         YAJYSde3dVKw/P/sn9817XsFR/pgeyOfsvrZPJVwk4Efa9xDEhC06QM3LyOKNaLJ4xmi
+         wwA9x7F+3JURi/ih2ADQGliL0yC6qeqwvTxcvVpW9ZqixaWJ2G8GXjfiMrHC8hhACM88
+         H5Rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1781170902; x=1781775702;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OsmgSByejwZrCh97iurQ7ytYSxygMHrNyrSm1o7mkBk=;
+        b=qwneNn/G7xMC6BGznFlBBeJsNScPcL2ap2ODjgLiW6Q9p1iig2FGB5z36glNghHwiI
+         YKvl0Tsf3O8tOLxOW+GrgZlyOHEzw/AKiRsaz3eaQDZM3IWjUOFOXdPlfRMLq5D7v1hH
+         HmeTKsC/vZaPPpZIXoH5B0jTnnzoLMQtHLt24xaKGA5JVYocPv2dFGDafXgDA/wGX6PN
+         QyhZy/G6M+GWSoUh9Ye2MXWm/rmYlYYEdPsHxV4O//18TV9R7YgfWrmmhEI6VFQAAGcn
+         6e+TF7vMTaFHYFmaW2n0LIaMn78OZyBDpHSvwhIJSx0wfDVtGNRakjNFVgv2/LfvbWgB
+         9yMA==
+X-Gm-Message-State: AOJu0Yw0uD1m3UO+omTqiOnbhbyGqJkIlIjW5qIqA073r+BV1Q+VubXt
+	wZ4BIeJMGH/DGodXax26TNzmdFdy+9Ii/seUGkmysOUSXAABmJQP4MZx/Hgx9Z8vzs1xPuCu2jH
+	bSl412t8+3ZS6s5e5wAUO1rZF/adm+SUZbbVqXguBaskLSbnxEvNZk+lOm0N2R6s=
+X-Gm-Gg: Acq92OFc2d2Vz8nUXzBO3z7RngmXZcxtdfUTP5zE6w1w2jz8VG3dRugSq2ZrV0mtYFX
+	eGbDDn48ZqAgC4LkQgrGM+y6RqchUyJn4aACXgCLYoMioJQm8tMkXfm6XSLv5mZtIdGNyx+5jry
+	ciGXyKr86GwZP7irtOrcDAKrrRt6GbJdI1M4JrzrVn8/BylMKuu3Ub08o1mQ6vr2NRms8f2Zz+n
+	iPaAxn9FBx7Uw/NwPgnDNdMCtlVXo0IDbj7yvROnQuxeLj3zv/Zu3mXjFdpw7y6Ywes8FPO8Ccb
+	S/2+y445yt3vxhapHmP7U8Rt7Qdqc8qw6i+W3CP/681LwVFxs7OkLiQT4eDG2JI3tFX2FFyyh+D
+	4ByIuOGYG8+sOl/9tVutp9Ysij0Fd+Vfsoqc1OPGcoilB5wmEgjnmCdys
+X-Received: by 2002:a05:622a:1449:b0:517:8999:6c4b with SMTP id d75a77b69052e-517ee262f43mr19341721cf.7.1781170901790;
+        Thu, 11 Jun 2026 02:41:41 -0700 (PDT)
+X-Received: by 2002:a05:622a:1449:b0:517:8999:6c4b with SMTP id d75a77b69052e-517ee262f43mr19341481cf.7.1781170901370;
+        Thu, 11 Jun 2026 02:41:41 -0700 (PDT)
+Received: from [192.168.120.170] ([178.235.128.140])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-bfcb58cf947sm40282866b.43.2026.06.11.02.41.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Jun 2026 02:41:40 -0700 (PDT)
+Message-ID: <fe6bab50-f839-48ec-a393-ba0243baf5c0@oss.qualcomm.com>
+Date: Thu, 11 Jun 2026 11:41:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 05/15] clk: qcom: rpm: use clk_determine_rate_noop()
+To: Brian Masney <bmasney@redhat.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bjorn Andersson <andersson@kernel.org>, linux-arm-msm@vger.kernel.org
+References: <20260505-clk-determine-rate-noop-v3-0-f3f829fbacdf@redhat.com>
+ <20260505-clk-determine-rate-noop-v3-5-f3f829fbacdf@redhat.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20260505-clk-determine-rate-noop-v3-5-f3f829fbacdf@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260611-ultrarisc-clock-v1-2-2d93ebb4cc13@ultrarisc.com>
-References: <20260611-ultrarisc-clock-v1-0-2d93ebb4cc13@ultrarisc.com>
-In-Reply-To: <20260611-ultrarisc-clock-v1-0-2d93ebb4cc13@ultrarisc.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Jia Wang <wangjia@ultrarisc.com>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1781170862; l=21841;
- i=wangjia@ultrarisc.com; s=20260515; h=from:subject:message-id;
- bh=mhJtQW/68mMRc/9bjKVSpaTZzmELHCx5Q6ivEgWsLE8=;
- b=tO/CT4Bjr1vuApoCUVJteHfTN4I5tsZ9r1PQZnxVta6OHYam7pf6tN3Pt7FPMzCXPDjEkl60e
- fBXLhF6ZyQrAdVan7Oo4tQRvaWTcU7QWyJZDH7gsuLgoglAu0Cjl5X2
-X-Developer-Key: i=wangjia@ultrarisc.com; a=ed25519;
- pk=wGVm18siRScehKOkOz0WKxgxDy7IezHEszhnN4/TUCY=
-X-Endpoint-Received: by B4 Relay for wangjia@ultrarisc.com/20260515 with
- auth_id=779
-X-Original-From: Jia Wang <wangjia@ultrarisc.com>
-Reply-To: wangjia@ultrarisc.com
+X-Proofpoint-ORIG-GUID: TuBhC0Tluxpzik77vGunHvypWY5hGM9Z
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjExMDA5NiBTYWx0ZWRfX7Wos3lx37aks
+ lIDDERH5a1RnqZ5lrXpBzSPdSinUi6+V0xIjQtQf9bwaM2ULo1Toy8U13wrQLNsk/l2uqeIjcZh
+ 1kr1xsPM1/ZZW78dEJHd3sPnc+hhUq6iuXi0O7HLdudOP49TZHAJHkHu5eSf+tsFpo23zNEtyrQ
+ 1uQ6rImEoc9PbY/BRQkAePjP7Y1F6K+HLHFvgL/2s6QcLz9MDKVJnOIEqUM7woVF8AHGVuQ3coV
+ AE3Kibpg7m3P6G9hBh7270YS61YsAiJgGmsgVhutEnP01Wa5Yscb2l5rE3C3MYMqj9bwzPKkubK
+ 9ToX3aog0xTAPxArImecZxt3ZIDdMdU+6vCAGXkxHRmgdgk54i7RHC3n2jvEKBIB03gdBBnqP97
+ 1Yk1Tfz+UOZ4pHe0jFdJj/aINmUB3t/tRgZ93P0qEGzD0Du9+96hiLLzDwYE3oxf/1mDlV1t3Iv
+ QT116kVE3QfB/mjAcAw==
+X-Proofpoint-GUID: TuBhC0Tluxpzik77vGunHvypWY5hGM9Z
+X-Authority-Analysis: v=2.4 cv=fbydDUQF c=1 sm=1 tr=0 ts=6a2a82d6 cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
+ a=IkcTkHD0fZMA:10 a=FelO9ux0wxsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22
+ a=20KFwNOVAAAA:8 a=EUspDBNiAAAA:8 a=yiv6Am5jRSTGblAyIcUA:9 a=QEXdDO2ut3YA:10
+ a=tYq66TkwoL4A:10 a=uxP6HrT_eTzRwkO_Te1X:22
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNjExMDA5NiBTYWx0ZWRfX8nWA8hcLCsaD
+ Ou/jmZmQnnxc9yCXVXKbd9Fw/0Xzw8WO2WWsBQtIJnvVYKwxarRNOt2qYhKZ2l2xT0RtPAFUIrF
+ sqaEF93DGPMllcVj2E6f/X7qvlAYz4Y=
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
+ definitions=2026-06-11_01,2026-06-09_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 bulkscore=0 suspectscore=0 spamscore=0 adultscore=0
+ priorityscore=1501 lowpriorityscore=0 clxscore=1015 malwarescore=0
+ impostorscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606040000
+ definitions=main-2606110096
 
-From: Jia Wang <wangjia@ultrarisc.com>
+On 5/6/26 2:49 AM, Brian Masney wrote:
+> Drop the driver-specific empty determine_rate() function and use the new
+> shared clk_determine_rate_noop() helper.
+> 
+> Signed-off-by: Brian Masney <bmasney@redhat.com>
+> ---
 
-Add a clock driver for the UltraRISC DP1000 SoC.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-The clock tree is driven by a SYSPLL and provides fixed-factor clocks for
-the subsystem and PCIe, divider-based root clocks for GMAC and the UART,
-I2C, and SPI blocks, and per-instance gate clocks for UART0-3, I2C0-3,
-and SPI0-1.
-
-Signed-off-by: Jia Wang <wangjia@ultrarisc.com>
----
- MAINTAINERS                           |   1 +
- drivers/clk/Kconfig                   |   1 +
- drivers/clk/Makefile                  |   1 +
- drivers/clk/ultrarisc/Kconfig         |  18 ++
- drivers/clk/ultrarisc/Makefile        |   4 +
- drivers/clk/ultrarisc/clk-dp1000.c    | 152 +++++++++++++
- drivers/clk/ultrarisc/clk-ultrarisc.c | 417 ++++++++++++++++++++++++++++++++++
- drivers/clk/ultrarisc/clk-ultrarisc.h |  73 ++++++
- 8 files changed, 667 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 3331f1edf002..ed2827094d7f 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -27362,6 +27362,7 @@ M:	Jia Wang <wangjia@ultrarisc.com>
- L:	linux-clk@vger.kernel.org
- S:	Maintained
- F:	Documentation/devicetree/bindings/clock/ultrarisc,dp1000-clk.yaml
-+F:	drivers/clk/ultrarisc/*
- F:	include/dt-bindings/clock/ultrarisc,dp1000-clk.h
- 
- ULTRATRONIK BOARD SUPPORT
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index b2efbe9f6acb..75e336858420 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -535,6 +535,7 @@ source "drivers/clk/tenstorrent/Kconfig"
- source "drivers/clk/thead/Kconfig"
- source "drivers/clk/stm32/Kconfig"
- source "drivers/clk/ti/Kconfig"
-+source "drivers/clk/ultrarisc/Kconfig"
- source "drivers/clk/uniphier/Kconfig"
- source "drivers/clk/visconti/Kconfig"
- source "drivers/clk/x86/Kconfig"
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index a3e2862ebd7e..891272e8e1da 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -158,6 +158,7 @@ obj-$(CONFIG_ARCH_TEGRA)		+= tegra/
- obj-y					+= tenstorrent/
- obj-$(CONFIG_ARCH_THEAD)		+= thead/
- obj-y					+= ti/
-+obj-y					+= ultrarisc/
- obj-$(CONFIG_CLK_UNIPHIER)		+= uniphier/
- obj-$(CONFIG_ARCH_U8500)		+= ux500/
- obj-y					+= versatile/
-diff --git a/drivers/clk/ultrarisc/Kconfig b/drivers/clk/ultrarisc/Kconfig
-new file mode 100644
-index 000000000000..2eecc6ac3119
---- /dev/null
-+++ b/drivers/clk/ultrarisc/Kconfig
-@@ -0,0 +1,18 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+
-+config CLK_ULTRARISC
-+	tristate
-+	depends on OF
-+	depends on ARCH_ULTRARISC || COMPILE_TEST
-+
-+config CLK_ULTRARISC_DP1000
-+	tristate "UltraRISC DP1000 clock controller"
-+	select CLK_ULTRARISC
-+	depends on OF && HAS_IOMEM
-+	depends on ARCH_ULTRARISC || COMPILE_TEST
-+	default ARCH_ULTRARISC
-+	help
-+	  This driver provides the clock controller for the UltraRISC
-+	  DP1000 SoC. It exposes the PLL output, derived fixed-factor
-+	  clocks, programmable divider clocks, and peripheral gate
-+	  clocks to Linux consumers.
-diff --git a/drivers/clk/ultrarisc/Makefile b/drivers/clk/ultrarisc/Makefile
-new file mode 100644
-index 000000000000..b013708c9444
---- /dev/null
-+++ b/drivers/clk/ultrarisc/Makefile
-@@ -0,0 +1,4 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+
-+obj-$(CONFIG_CLK_ULTRARISC) += clk-ultrarisc.o
-+obj-$(CONFIG_CLK_ULTRARISC_DP1000) += clk-dp1000.o
-diff --git a/drivers/clk/ultrarisc/clk-dp1000.c b/drivers/clk/ultrarisc/clk-dp1000.c
-new file mode 100644
-index 000000000000..0d4531f30023
---- /dev/null
-+++ b/drivers/clk/ultrarisc/clk-dp1000.c
-@@ -0,0 +1,152 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2026 UltraRISC Technology (Shanghai) Co., Ltd.
-+ */
-+
-+#include <linux/module.h>
-+
-+#include <dt-bindings/clock/ultrarisc,dp1000-clk.h>
-+
-+#include "clk-ultrarisc.h"
-+
-+#define DP1000_PLL_CFG1_OFFSET		0x400
-+#define DP1000_PLL_CFG2_OFFSET		0x404
-+
-+#define DP1000_CCR_UART_OFFSET		0x220
-+#define DP1000_CCR_I2C_OFFSET		0x224
-+#define DP1000_CCR_GMAC_OFFSET		0x228
-+#define DP1000_CCR_SPI_OFFSET		0x22c
-+#define DP1000_PERI_CLKENA_OFFSET	0x270
-+
-+#define DP1000_CCR_LOAD			BIT(16)
-+
-+#define DP1000_PERI_MAX_RATE		62500000UL
-+
-+static const struct ultrarisc_pll_layout dp1000_pll_layout = {
-+	.cfg1_offset = DP1000_PLL_CFG1_OFFSET,
-+	.cfg2_offset = DP1000_PLL_CFG2_OFFSET,
-+	.frac_mask = GENMASK(23, 0),
-+	.m_mask = GENMASK(23, 16),
-+	.n_mask = GENMASK(11, 6),
-+	.oddiv1_mask = GENMASK(4, 3),
-+	.oddiv2_mask = GENMASK(1, 0),
-+};
-+
-+static const struct ultrarisc_pll_desc dp1000_plls[] = {
-+	{
-+		.id = DP1000_CLK_SYSPLL,
-+		.name = "syspll_clk",
-+	},
-+};
-+
-+#define DP1000_FIXED_FACTOR(_id, _name, _parent, _mult, _div)	\
-+	{							\
-+		.id = (_id),					\
-+		.name = (_name),				\
-+		.parent_id = (_parent),				\
-+		.mult = (_mult),				\
-+		.div = (_div),					\
-+	}
-+
-+#define DP1000_DIV(_id, _name, _offset, _parent, _max_rate)	\
-+	{							\
-+		.id = (_id),					\
-+		.name = (_name),				\
-+		.offset = (_offset),				\
-+		.parent_id = (_parent),				\
-+		.max_rate = (_max_rate),			\
-+		.load_mask = DP1000_CCR_LOAD,			\
-+		.div_shift = 8,					\
-+		.div_width = 4,					\
-+		.gate_bit = 0,					\
-+		.divider_flags = CLK_DIVIDER_ONE_BASED,		\
-+		.gate_flags = 0,				\
-+	}
-+
-+#define DP1000_GATE(_id, _name, _parent, _bit)		\
-+	{							\
-+		.id = (_id),					\
-+		.name = (_name),				\
-+		.offset = DP1000_PERI_CLKENA_OFFSET,		\
-+		.parent_id = (_parent),				\
-+		.gate_bit = (_bit),				\
-+		.gate_flags = 0,				\
-+	}
-+
-+static const struct ultrarisc_fixed_factor_desc dp1000_fixed_factor_clks[] = {
-+	DP1000_FIXED_FACTOR(DP1000_CLK_SYSPLL_DIV2, "syspll_div2_clk",
-+			    DP1000_CLK_SYSPLL, 1, 2),
-+	DP1000_FIXED_FACTOR(DP1000_CLK_SUBSYS, "subsys_clk",
-+			    DP1000_CLK_SYSPLL_DIV2, 1, 2),
-+	DP1000_FIXED_FACTOR(DP1000_CLK_PCIE_DBI, "pcie_dbi_clk",
-+			    DP1000_CLK_SYSPLL, 1, 10),
-+	DP1000_FIXED_FACTOR(DP1000_CLK_PCIEX4_CORE, "pciex4_core_clk",
-+			    DP1000_CLK_SYSPLL, 1, 2),
-+	DP1000_FIXED_FACTOR(DP1000_CLK_PCIEX16_CORE, "pciex16_core_clk",
-+			    DP1000_CLK_SYSPLL, 1, 1),
-+	DP1000_FIXED_FACTOR(DP1000_CLK_PCIE_AUX, "pcie_aux_clk",
-+			    DP1000_CLK_SYSPLL, 1, 40),
-+};
-+
-+static const struct ultrarisc_divider_desc dp1000_divider_clks[] = {
-+	DP1000_DIV(DP1000_CLK_GMAC, "gmac_clk", DP1000_CCR_GMAC_OFFSET,
-+		   DP1000_CLK_SYSPLL_DIV2, 0),
-+	DP1000_DIV(DP1000_CLK_UART_ROOT, "uart_root_clk",
-+		   DP1000_CCR_UART_OFFSET, DP1000_CLK_SUBSYS,
-+		   DP1000_PERI_MAX_RATE),
-+	DP1000_DIV(DP1000_CLK_I2C_ROOT, "i2c_root_clk",
-+		   DP1000_CCR_I2C_OFFSET, DP1000_CLK_SUBSYS,
-+		   DP1000_PERI_MAX_RATE),
-+	DP1000_DIV(DP1000_CLK_SPI_ROOT, "spi_root_clk",
-+		   DP1000_CCR_SPI_OFFSET, DP1000_CLK_SUBSYS,
-+		   DP1000_PERI_MAX_RATE),
-+};
-+
-+static const struct ultrarisc_gate_desc dp1000_gate_clks[] = {
-+	DP1000_GATE(DP1000_CLK_UART0, "uart0_clk", DP1000_CLK_UART_ROOT, 0),
-+	DP1000_GATE(DP1000_CLK_UART1, "uart1_clk", DP1000_CLK_UART_ROOT, 1),
-+	DP1000_GATE(DP1000_CLK_UART2, "uart2_clk", DP1000_CLK_UART_ROOT, 2),
-+	DP1000_GATE(DP1000_CLK_UART3, "uart3_clk", DP1000_CLK_UART_ROOT, 3),
-+	DP1000_GATE(DP1000_CLK_I2C0, "i2c0_clk", DP1000_CLK_I2C_ROOT, 4),
-+	DP1000_GATE(DP1000_CLK_I2C1, "i2c1_clk", DP1000_CLK_I2C_ROOT, 5),
-+	DP1000_GATE(DP1000_CLK_I2C2, "i2c2_clk", DP1000_CLK_I2C_ROOT, 6),
-+	DP1000_GATE(DP1000_CLK_I2C3, "i2c3_clk", DP1000_CLK_I2C_ROOT, 7),
-+	DP1000_GATE(DP1000_CLK_SPI0, "spi0_clk", DP1000_CLK_SPI_ROOT, 8),
-+	DP1000_GATE(DP1000_CLK_SPI1, "spi1_clk", DP1000_CLK_SPI_ROOT, 9),
-+};
-+
-+static const struct ultrarisc_clk_soc_data dp1000_clk_soc_data = {
-+	.num_clks = DP1000_CLK_NUM,
-+	.pll_layout = &dp1000_pll_layout,
-+	.plls = dp1000_plls,
-+	.num_plls = ARRAY_SIZE(dp1000_plls),
-+	.fixed_factors = dp1000_fixed_factor_clks,
-+	.num_fixed_factors = ARRAY_SIZE(dp1000_fixed_factor_clks),
-+	.dividers = dp1000_divider_clks,
-+	.num_dividers = ARRAY_SIZE(dp1000_divider_clks),
-+	.gates = dp1000_gate_clks,
-+	.num_gates = ARRAY_SIZE(dp1000_gate_clks),
-+};
-+
-+static int dp1000_clk_probe(struct platform_device *pdev)
-+{
-+	return ultrarisc_clk_probe(pdev, &dp1000_clk_soc_data);
-+}
-+
-+static const struct of_device_id dp1000_clk_of_match[] = {
-+	{ .compatible = "ultrarisc,dp1000-clk" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, dp1000_clk_of_match);
-+
-+static struct platform_driver dp1000_clk_driver = {
-+	.probe = dp1000_clk_probe,
-+	.driver = {
-+		.name = "ultrarisc-dp1000-clk",
-+		.of_match_table = dp1000_clk_of_match,
-+	},
-+};
-+module_platform_driver(dp1000_clk_driver);
-+
-+MODULE_DESCRIPTION("UltraRISC DP1000 clock controller");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/ultrarisc/clk-ultrarisc.c b/drivers/clk/ultrarisc/clk-ultrarisc.c
-new file mode 100644
-index 000000000000..2b970565a4be
---- /dev/null
-+++ b/drivers/clk/ultrarisc/clk-ultrarisc.c
-@@ -0,0 +1,417 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2026 UltraRISC Technology (Shanghai) Co., Ltd.
-+ */
-+
-+#include <linux/bitfield.h>
-+#include <linux/clk-provider.h>
-+#include <linux/io.h>
-+#include <linux/math64.h>
-+#include <linux/of_clk.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+
-+#include "clk-ultrarisc.h"
-+
-+struct ultrarisc_pll_clk {
-+	struct clk_hw hw;
-+	void __iomem *base;
-+	const struct ultrarisc_pll_layout *layout;
-+};
-+
-+struct ultrarisc_divider_clk {
-+	struct clk_divider divider;
-+	struct clk_gate gate;
-+	u32 load_mask;
-+};
-+
-+#define to_ultrarisc_pll_clk(_hw) \
-+	container_of(_hw, struct ultrarisc_pll_clk, hw)
-+
-+static inline struct ultrarisc_divider_clk *
-+to_ultrarisc_divider_clk(struct clk_hw *hw)
-+{
-+	struct clk_divider *divider = to_clk_divider(hw);
-+
-+	return container_of(divider, struct ultrarisc_divider_clk, divider);
-+}
-+
-+static unsigned long ultrarisc_pll_recalc_rate(struct clk_hw *hw,
-+					       unsigned long parent_rate)
-+{
-+	struct ultrarisc_pll_clk *pll = to_ultrarisc_pll_clk(hw);
-+	const struct ultrarisc_pll_layout *layout = pll->layout;
-+	u32 oddiv1_div, oddiv2_div;
-+	u64 mult, rate, den;
-+	u32 frac, m, n;
-+	u32 cfg1, cfg2;
-+
-+	cfg1 = readl_relaxed(pll->base + layout->cfg1_offset);
-+	cfg2 = readl_relaxed(pll->base + layout->cfg2_offset);
-+
-+	frac = field_get(layout->frac_mask, cfg1);
-+	m = field_get(layout->m_mask, cfg2);
-+	n = field_get(layout->n_mask, cfg2);
-+	oddiv1_div = 1U << field_get(layout->oddiv1_mask, cfg2);
-+	oddiv2_div = 1U << field_get(layout->oddiv2_mask, cfg2);
-+
-+	if (!n)
-+		return 0;
-+
-+	/*
-+	 * The output frequency is calculated as:
-+	 * fvco = parent * (m + frac / 2^24) / n
-+	 * fout = fvco / (2^oddiv1_raw * 2^oddiv2_raw)
-+	 *
-+	 * The output divider values are derived from the raw register field
-+	 * values as:
-+	 * oddivX_div = 1 << oddivX_raw
-+	 */
-+	mult = ((u64)m << 24) + frac;
-+	rate = (u64)parent_rate * mult;
-+	den = ((u64)n << 24) * oddiv1_div * oddiv2_div;
-+
-+	return div64_u64(rate + (den >> 1), den);
-+}
-+
-+static const struct clk_ops ultrarisc_pll_ro_ops = {
-+	.recalc_rate = ultrarisc_pll_recalc_rate,
-+};
-+
-+static unsigned long
-+ultrarisc_divider_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
-+{
-+	struct clk_divider *divider = to_clk_divider(hw);
-+	u32 val;
-+
-+	val = readl_relaxed(divider->reg) >> divider->shift;
-+	val &= clk_div_mask(divider->width);
-+
-+	return divider_recalc_rate(hw, parent_rate, val, divider->table,
-+				   divider->flags, divider->width);
-+}
-+
-+static int ultrarisc_divider_determine_rate(struct clk_hw *hw,
-+					    struct clk_rate_request *req)
-+{
-+	struct clk_divider *divider = to_clk_divider(hw);
-+
-+	return divider_determine_rate(hw, req, divider->table, divider->width,
-+				      divider->flags);
-+}
-+
-+static int ultrarisc_divider_set_rate(struct clk_hw *hw, unsigned long rate,
-+				      unsigned long parent_rate)
-+{
-+	struct ultrarisc_divider_clk *divider_clk = to_ultrarisc_divider_clk(hw);
-+	struct clk_divider *divider = &divider_clk->divider;
-+	int value;
-+	u32 val;
-+
-+	value = divider_get_val(rate, parent_rate, divider->table,
-+				divider->width, divider->flags);
-+	if (value < 0)
-+		return value;
-+
-+	scoped_guard(spinlock_irqsave, divider->lock) {
-+		val = readl_relaxed(divider->reg);
-+		val &= ~(clk_div_mask(divider->width) << divider->shift);
-+		val |= value << divider->shift;
-+		writel_relaxed(val, divider->reg);
-+
-+		if (divider_clk->load_mask) {
-+			/*
-+			 * The divider update is triggered by writing 1 to the
-+			 * self-clearing load bit after programming the new
-+			 * divider field.
-+			 */
-+			writel_relaxed(val | divider_clk->load_mask,
-+				       divider->reg);
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct clk_ops ultrarisc_divider_ops = {
-+	.recalc_rate = ultrarisc_divider_recalc_rate,
-+	.determine_rate = ultrarisc_divider_determine_rate,
-+	.set_rate = ultrarisc_divider_set_rate,
-+};
-+
-+static struct clk_hw *ultrarisc_clk_register_pll(struct device *dev,
-+						 const struct ultrarisc_pll_desc *desc,
-+						 const struct ultrarisc_pll_layout *layout,
-+						 void __iomem *base)
-+{
-+	struct clk_parent_data pdata = { .index = 0 };
-+	struct ultrarisc_pll_clk *pll;
-+	struct clk_init_data init = {
-+		.name = desc->name,
-+		.ops = &ultrarisc_pll_ro_ops,
-+		.parent_data = &pdata,
-+		.num_parents = 1,
-+		.flags = CLK_GET_RATE_NOCACHE,
-+	};
-+	int ret;
-+
-+	pll = devm_kzalloc(dev, sizeof(*pll), GFP_KERNEL);
-+	if (!pll)
-+		return ERR_PTR(-ENOMEM);
-+
-+	pll->base = base;
-+	pll->layout = layout;
-+	pll->hw.init = &init;
-+
-+	ret = devm_clk_hw_register(dev, &pll->hw);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	return &pll->hw;
-+}
-+
-+static struct clk_hw *
-+ultrarisc_clk_register_divider(struct device *dev,
-+			       const struct ultrarisc_divider_desc *desc,
-+			       struct clk_hw *parent_hw, void __iomem *base,
-+			       spinlock_t *lock)
-+{
-+	struct clk_parent_data pdata = { .hw = parent_hw };
-+	void __iomem *reg = base + desc->offset;
-+	struct ultrarisc_divider_clk *divider;
-+	const struct clk_ops *gate_ops = NULL;
-+	struct clk_hw *gate_hw = NULL;
-+
-+	if (!desc->div_width)
-+		return ERR_PTR(-EINVAL);
-+
-+	if (!lock)
-+		return ERR_PTR(-EINVAL);
-+
-+	divider = devm_kzalloc(dev, sizeof(*divider), GFP_KERNEL);
-+	if (!divider)
-+		return ERR_PTR(-ENOMEM);
-+
-+	divider->divider.reg = reg;
-+	divider->divider.shift = desc->div_shift;
-+	divider->divider.width = desc->div_width;
-+	divider->divider.flags = desc->divider_flags;
-+	divider->divider.lock = lock;
-+	divider->load_mask = desc->load_mask;
-+
-+	if (desc->gate_bit != ULTRARISC_CLK_NO_GATE) {
-+		divider->gate.reg = reg;
-+		divider->gate.bit_idx = desc->gate_bit;
-+		divider->gate.flags = desc->gate_flags;
-+		divider->gate.lock = lock;
-+		gate_hw = &divider->gate.hw;
-+		gate_ops = &clk_gate_ops;
-+	}
-+
-+	return devm_clk_hw_register_composite_pdata(dev, desc->name, &pdata, 1,
-+						    NULL, NULL,
-+						    &divider->divider.hw,
-+						    &ultrarisc_divider_ops,
-+						    gate_hw, gate_ops,
-+						    CLK_GET_RATE_NOCACHE);
-+}
-+
-+static int ultrarisc_clk_register_fixed_factors(struct device *dev,
-+						struct clk_hw_onecell_data *clk_data,
-+						const struct ultrarisc_clk_soc_data *soc_data)
-+{
-+	u32 i;
-+
-+	for (i = 0; i < soc_data->num_fixed_factors; i++) {
-+		const struct ultrarisc_fixed_factor_desc *desc;
-+		struct clk_hw *parent_hw;
-+		struct clk_hw *hw;
-+
-+		desc = &soc_data->fixed_factors[i];
-+		if (desc->id >= clk_data->num ||
-+		    desc->parent_id >= clk_data->num)
-+			return -EINVAL;
-+
-+		parent_hw = clk_data->hws[desc->parent_id];
-+		if (!parent_hw)
-+			return -EINVAL;
-+
-+		hw = devm_clk_hw_register_fixed_factor_parent_hw(dev, desc->name,
-+								 parent_hw,
-+								 CLK_GET_RATE_NOCACHE,
-+								 desc->mult,
-+								 desc->div);
-+		if (IS_ERR(hw))
-+			return PTR_ERR(hw);
-+
-+		clk_data->hws[desc->id] = hw;
-+	}
-+
-+	return 0;
-+}
-+
-+static int ultrarisc_clk_register_plls(struct platform_device *pdev,
-+				       struct clk_hw_onecell_data *clk_data,
-+				       const struct ultrarisc_clk_soc_data *soc_data,
-+				       void __iomem *base)
-+{
-+	struct device *dev = &pdev->dev;
-+	u32 i;
-+
-+	for (i = 0; i < soc_data->num_plls; i++) {
-+		const struct ultrarisc_pll_desc *desc = &soc_data->plls[i];
-+		struct clk_hw *hw;
-+
-+		if (desc->id >= clk_data->num)
-+			return -EINVAL;
-+
-+		hw = ultrarisc_clk_register_pll(dev, desc, soc_data->pll_layout,
-+						base);
-+		if (IS_ERR(hw))
-+			return PTR_ERR(hw);
-+
-+		clk_data->hws[desc->id] = hw;
-+	}
-+
-+	return 0;
-+}
-+
-+static int ultrarisc_clk_register_dividers(struct platform_device *pdev,
-+					   struct clk_hw_onecell_data *clk_data,
-+					   const struct ultrarisc_clk_soc_data *soc_data,
-+					   void __iomem *base,
-+					   spinlock_t *lock)
-+{
-+	struct device *dev = &pdev->dev;
-+	u32 i;
-+
-+	for (i = 0; i < soc_data->num_dividers; i++) {
-+		const struct ultrarisc_divider_desc *desc;
-+		struct clk_hw *parent_hw;
-+		struct clk_hw *hw;
-+
-+		desc = &soc_data->dividers[i];
-+		if (desc->id >= clk_data->num ||
-+		    desc->parent_id >= clk_data->num)
-+			return -EINVAL;
-+
-+		parent_hw = clk_data->hws[desc->parent_id];
-+		if (!parent_hw)
-+			return -EINVAL;
-+
-+		hw = ultrarisc_clk_register_divider(dev, desc, parent_hw, base,
-+						    lock);
-+		if (IS_ERR(hw))
-+			return PTR_ERR(hw);
-+
-+		if (desc->max_rate) {
-+			unsigned long rate;
-+
-+			clk_hw_set_rate_range(hw, 0, desc->max_rate);
-+
-+			rate = clk_hw_get_rate(hw);
-+			if (rate > desc->max_rate)
-+				dev_warn(dev, "%s rate %lu exceeds max %lu\n",
-+					 desc->name, rate, desc->max_rate);
-+		}
-+
-+		clk_data->hws[desc->id] = hw;
-+	}
-+
-+	return 0;
-+}
-+
-+static int ultrarisc_clk_register_gates(struct platform_device *pdev,
-+					struct clk_hw_onecell_data *clk_data,
-+					const struct ultrarisc_clk_soc_data *soc_data,
-+					void __iomem *base,
-+					spinlock_t *lock)
-+{
-+	struct device *dev = &pdev->dev;
-+	u32 i;
-+
-+	for (i = 0; i < soc_data->num_gates; i++) {
-+		const struct ultrarisc_gate_desc *desc;
-+		struct clk_hw *parent_hw;
-+		struct clk_hw *hw;
-+
-+		desc = &soc_data->gates[i];
-+		if (desc->id >= clk_data->num ||
-+		    desc->parent_id >= clk_data->num)
-+			return -EINVAL;
-+
-+		parent_hw = clk_data->hws[desc->parent_id];
-+		if (!parent_hw)
-+			return -EINVAL;
-+
-+		hw = devm_clk_hw_register_gate_parent_hw(dev, desc->name,
-+							 parent_hw,
-+							 CLK_GET_RATE_NOCACHE,
-+							 base + desc->offset,
-+							 desc->gate_bit,
-+							 desc->gate_flags,
-+							 lock);
-+		if (IS_ERR(hw))
-+			return PTR_ERR(hw);
-+
-+		clk_data->hws[desc->id] = hw;
-+	}
-+
-+	return 0;
-+}
-+
-+int ultrarisc_clk_probe(struct platform_device *pdev,
-+			const struct ultrarisc_clk_soc_data *soc_data)
-+{
-+	struct clk_hw_onecell_data *clk_data;
-+	struct device *dev = &pdev->dev;
-+	void __iomem *base;
-+	spinlock_t *lock;
-+	int ret;
-+
-+	if (!soc_data)
-+		return -EINVAL;
-+
-+	lock = devm_kzalloc(dev, sizeof(*lock), GFP_KERNEL);
-+	if (!lock)
-+		return -ENOMEM;
-+
-+	spin_lock_init(lock);
-+
-+	clk_data = devm_kzalloc(dev, struct_size(clk_data, hws,
-+						 soc_data->num_clks),
-+				GFP_KERNEL);
-+	if (!clk_data)
-+		return -ENOMEM;
-+
-+	clk_data->num = soc_data->num_clks;
-+
-+	base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	ret = ultrarisc_clk_register_plls(pdev, clk_data, soc_data, base);
-+	if (ret)
-+		return ret;
-+
-+	ret = ultrarisc_clk_register_fixed_factors(dev, clk_data, soc_data);
-+	if (ret)
-+		return ret;
-+
-+	ret = ultrarisc_clk_register_dividers(pdev, clk_data, soc_data, base,
-+					      lock);
-+	if (ret)
-+		return ret;
-+
-+	ret = ultrarisc_clk_register_gates(pdev, clk_data, soc_data, base,
-+					   lock);
-+	if (ret)
-+		return ret;
-+
-+	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
-+					   clk_data);
-+}
-+EXPORT_SYMBOL_GPL(ultrarisc_clk_probe);
-+
-+MODULE_DESCRIPTION("UltraRISC clock core driver");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/ultrarisc/clk-ultrarisc.h b/drivers/clk/ultrarisc/clk-ultrarisc.h
-new file mode 100644
-index 000000000000..1281196bb414
---- /dev/null
-+++ b/drivers/clk/ultrarisc/clk-ultrarisc.h
-@@ -0,0 +1,73 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+#ifndef __ULTRARISC_CLK_ULTRARISC_H
-+#define __ULTRARISC_CLK_ULTRARISC_H
-+
-+#include <linux/clk-provider.h>
-+#include <linux/platform_device.h>
-+#include <linux/types.h>
-+
-+#define ULTRARISC_CLK_NO_GATE		(-1)
-+
-+struct ultrarisc_pll_layout {
-+	u32 cfg1_offset;
-+	u32 cfg2_offset;
-+	u32 frac_mask;
-+	u32 m_mask;
-+	u32 n_mask;
-+	u32 oddiv1_mask;
-+	u32 oddiv2_mask;
-+};
-+
-+struct ultrarisc_pll_desc {
-+	u32 id;
-+	const char *name;
-+};
-+
-+struct ultrarisc_fixed_factor_desc {
-+	u32 id;
-+	const char *name;
-+	u32 parent_id;
-+	u32 mult;
-+	u32 div;
-+};
-+
-+struct ultrarisc_divider_desc {
-+	u32 id;
-+	const char *name;
-+	u32 offset;
-+	u32 parent_id;
-+	unsigned long max_rate;
-+	u32 load_mask;
-+	u8 div_shift;
-+	u8 div_width;
-+	s8 gate_bit;
-+	u16 divider_flags;
-+	u8 gate_flags;
-+};
-+
-+struct ultrarisc_gate_desc {
-+	u32 id;
-+	const char *name;
-+	u32 offset;
-+	u32 parent_id;
-+	u8 gate_bit;
-+	u8 gate_flags;
-+};
-+
-+struct ultrarisc_clk_soc_data {
-+	const struct ultrarisc_pll_layout *pll_layout;
-+	const struct ultrarisc_pll_desc *plls;
-+	u32 num_plls;
-+	const struct ultrarisc_fixed_factor_desc *fixed_factors;
-+	u32 num_fixed_factors;
-+	const struct ultrarisc_divider_desc *dividers;
-+	u32 num_dividers;
-+	const struct ultrarisc_gate_desc *gates;
-+	u32 num_gates;
-+	u32 num_clks;
-+};
-+
-+int ultrarisc_clk_probe(struct platform_device *pdev,
-+			const struct ultrarisc_clk_soc_data *soc_data);
-+
-+#endif /* __ULTRARISC_CLK_ULTRARISC_H */
-
--- 
-2.34.1
-
-
+Konrad
