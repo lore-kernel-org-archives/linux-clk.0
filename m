@@ -1,163 +1,160 @@
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B74D533D6F7;
-	Thu, 11 Jun 2026 04:42:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D4CC3644A3;
+	Thu, 11 Jun 2026 07:40:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781152954; cv=none; b=lGh3NRzowfGGMzeumE0LMlX0JHyE6Ote7A0Uh4TdwXtrnQalzx9MagP3g9PFzDLInQlZgnAl3MR7Y+UMKc8EBQ/kFO4EuOgHFnUsaB3xqXTJczq+jcvULevcZK6VKDVUdDZP7Cvb6XU0CFUeEuubg6k5anO+OqrJFM4se6fC63Y=
+	t=1781163627; cv=none; b=VtmvD0oN62pgAvEDLwIJHymofhyXPbFrfWDTXiODM7nra6gklw3o1QayF5ZBBHqrHewmU8Qc0oRpJbkGOmvrQ6KDK7MYvzJThLt6teJkIVpfH+r8hVQuKFhsV0g27Am93UphtjFT9LPTMonL1L9v6zD7U5moKcNbU09DL4uCe2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781152954; c=relaxed/simple;
-	bh=m+lauUpGk4LLE+zWBpWBZpWf5CCZUvP3Ls0+I20GSdA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qMecD8Rc29qhzKFu7WI65dI2U/HFHCU7J3cUnjARI3D1Gp4z9df1s40wHd3UGjFpIxd5/vvdyyLo4goGkoR5X50VEA8WeaH8bGZMBf+XwTo7NLzRtRqjrNSKo75DQID6q5TF1cE+MRgYP0WA4GMqLU8QnyVAHUJiUPlAg2oTrAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=HbNpwvp0; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1781163627; c=relaxed/simple;
+	bh=PgEzUnA04DEO3gqxBHObPbISQG8xWThEFhuGgAxGFKU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d++oquunsF3rEyz7dwr/fzmEYwx7MFiP0CElLoi573noh6STAnbusYc22WBg/pfr16Q7N50aRde1LwFj6s3rm3NN8xqqgadE95wGJjfOOAPRNhqR3ENdprmG3ijrOUgwgeBdOnCZg/N3zvJzUTqnPdAdiNrlDcvunwb/Eae3Qfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pf5jT1qW; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="HbNpwvp0"
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4gbVPK5Fbvz9txK;
-	Thu, 11 Jun 2026 06:42:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1781152949;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=a6BcnN8rdSZBC0imBDjb7WvsMQmmgBw7lE2xxGdBFAc=;
-	b=HbNpwvp0Zj9yuH8o2oc0btr7NocD+4rpR36lGjssYY90zRMgEJRkepCWreP4M9Nf7FWw2G
-	E9HY7rp4S1MHTyX7QMMv4fee/ekSf8lduJvfBHyzesvL6A0l+8xzJosXYM3uEd5i/B7NCU
-	XmguDNfQaWWdZs542ORZ1bEfxqdHnEaIn+nV+xPx+WSbnnv1kOj/dQZ9e42m4tixPkbJYf
-	XCDZ2t31PxCmC6VKwmLLgG9MPT5QYc9OJeFntCCtD4Aif4NtXPkbD4xa0jiLpOWeWwgjAT
-	pYs0XO2gv848HpNsiV/Bhc9ssNxU0+H+ax/skEM2e6ZHgyZiJJuhS5Ekuv7d+A==
-Message-ID: <7fc8f50f-7f6d-4b45-b172-a83d97164b40@mailbox.org>
-Date: Wed, 10 Jun 2026 18:31:02 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pf5jT1qW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BA871F00893;
+	Thu, 11 Jun 2026 07:40:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1781163625;
+	bh=UdnqG6HuOV9OtKkF5ww4O5HMNFK+JDqxC6oYIJO1qR8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Pf5jT1qWShYnBKo7WlrpSjwNa0q6F3mWdYLMT30kYYaP72XCVK29bzLIBBySlxlql
+	 8ItQlvep2nIykpVJryzcBXZyb51YPXOc5ITEKeB1BELHHKURLmSH7t0Vx+72QocsVj
+	 D3mXwcAzH5Ojx06ZePiiIyM9H03JCnjo1ZQAPvun2sE76dP+p4u2oeE8QmaDwRZWU9
+	 6/x0hyxH6iXyFkiPOqMkRlpxw2tKZIAZE8gVriYNm7jo84x6oIX+5hqRuebk1GmeoU
+	 0sQMycH516IoEmHKtykK4CX+WR412dUwuV4k/u/5Ih+UCG69gl2WL6wk/JdL++x8WI
+	 QJuuu7EW82qmw==
+Date: Thu, 11 Jun 2026 09:40:23 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: joakim.zhang@cixtech.com
+Cc: mturquette@baylibre.com, sboyd@kernel.org, bmasney@redhat.com, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, p.zabel@pengutronix.de, 
+	gary.yang@cixtech.com, cix-kernel-upstream@cixtech.com, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 1/5] dt-bindings: soc: cix,sky1-system-control: add
+ audss system control
+Message-ID: <20260611-gorgeous-macho-cricket-f1b78c@quoll>
+References: <20260610075645.3581145-1-joakim.zhang@cixtech.com>
+ <20260610075645.3581145-2-joakim.zhang@cixtech.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 00/39] Add i.MX95 DPU/DSI/LVDS support
-To: Liu Ying <victor.liu@nxp.com>
-Cc: Piyush Patle <piyushpatle228@gmail.com>, dri-devel@lists.freedesktop.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <festevam@gmail.com>,
- Peng Fan <peng.fan@nxp.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Lucas Stach <l.stach@pengutronix.de>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Thomas Zimmermann <tzimmermann@suse.de>, Abel Vesa <abelvesa@kernel.org>,
- Pengutronix Kernel Team <kernel@pengutronix.de>
-References: <20251011170213.128907-1-marek.vasut@mailbox.org>
- <20260605121112.27866-1-piyushpatle228@gmail.com> <aiZzxhljfyYQ68Gl@raspi>
- <9ece4e08-a77f-4410-ba16-a77b9bd0aace@mailbox.org> <aifOQtaAi_7F9hXt@raspi>
-Content-Language: en-US
-From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <aifOQtaAi_7F9hXt@raspi>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-MBO-RS-ID: 8a541f9777ff949760e
-X-MBO-RS-META: trp3ppsudps4pgwo9w4hhy1o1twon399
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20260610075645.3581145-2-joakim.zhang@cixtech.com>
 
-On 6/9/26 10:26 AM, Liu Ying wrote:
-
-Hello Liu,
-
->>>> I brought this series up on the i.MX95 15x15 FRDM (IT6263 LVDS-to-HDMI on
->>>> LVDS ch1). It mostly works, but I ran into a few issues around DI routing,
->>>> LVDS format handling, and DC enable sequencing which needed rework before
->>>> HDMI would come up reliably on the board.
->>>>
->>>> I don't see a v2 of the series and things seem to have been quiet since
->>>> November. Are you planning to post an updated version?
->>>
->>> My plan was to enable prefetch engine support[1] for i.MX8QXP display
->>> controller and add device tree for a whole i.MX8QXP LVDS display pipeline,
->>> before adding i.MX95 display controller support.
->>>
->>> Unfortunately, it seems that Marek is not a big fan of [1]
->>
->> I am fine with [1] as long as it can be isolated and does not affect every
->> SoC that might reuse this driver, which I think it can be done.
+On Wed, Jun 10, 2026 at 03:56:41PM +0800, joakim.zhang@cixtech.com wrote:
+> From: Joakim Zhang <joakim.zhang@cixtech.com>
 > 
-> How can it be isolated?
-
-if (compatible("mx8q"))
-   something->prefetch_op = somefunction;
-
-And then wherever is prefetch used, do
-
-if (something->prefetch_op)
-   something->prefetch_op()
-
-Or something along those lines ?
-
->>> and I'm busy
->>> with downstream development so the plan doesn't move forward well.  I still
->>> think [1] makes sense(maybe I need to rebase it on latest drm-misc-next),
->>> so I'd like to see review comments on [1] and hopefully people think that
->>> the overall idea of [1] is ok.
->>
->> My only concern is, to keep it isolated to MX8Q, so this driver can be
->> reused by MX95.
->>
->>>> I've accumulated a fair amount of rework while getting this running on the
->>>> FRDM. If you're not planning a v2, I can clean things up and send one based
->>>> on the current series.
->>>
->>> I still think that i.MX95 display controller driver should be in a separate
->>> driver, rather than sharing the same driver with i.MX8QXP display controller
->>> like this patch series does, because the two display controllers are quite
->>> different as I mentioned in comments on this patch series and in discussion
->>> in [1].  Also, the common part between the two display controllers should
->>> be extracted to a common helper library as I mentioned there too.
->> Are they really? It seems this series adds support for the MX95 DC without
->> that many changes, so are the DCs really that different ? It seems the MX95
->> DC is simply a reuse/evolution of the MX8Q DC blocks, so duplicating the
->> code seems like the wrong direction, it will only lead to disparate sets of
->> bugs in two drivers, which isn't desired.
+> The Cix Sky1 Audio Subsystem (AUDSS) groups audio-related clock, reset
+> and control registers in a dedicated CRU block. Software reset lines are
+> exposed on the syscon parent via #reset-cells, following the same model
+> as the existing Sky1 FCH and S5 system control bindings.
 > 
-> I pointed out a lot of H/W differences between the two display controllers
-> during the discussions for this patch series and my i.MX8QXP prefetch engine
-> patch series[1].  Please take a look at [1], which clearly shows that the
-> prefetch engine would considerably impact CRTC/plane atomic callback
-> implementations.
+> Add the cix,sky1-audss-system-control compatible to
+> cix,sky1-system-control.yaml for the MFD/syscon parent node, and define
+> AUDSS software reset indices in
+> include/dt-bindings/reset/cix,sky1-audss-system-control.h for I2S, HDA,
+> DMAC, mailbox, watchdog and timer blocks.
 
-Is the prefetch engine actually grown into the CRTC/DE or not ? I 
-suspect it is separate and instead part of the built-in DMA, right ?
+All this is pretty pointless - you explained the binding, which answers
+nothing why you did it that way. Instead you must explain the hardware
+design.
 
-> Display controller internal blocks would also impact
-> the implementations, e.g., DomainBlend block in i.MX95 display controller
-> doesn't present in i.MX8QXP display controller.  It makes sense to use
-> separate drivers for the two display controllers instead of adding 'if/else'
-> checks to a single driver's atomic callbacks or introducing two pairs of
-> atomic callbacks to that single driver.  I mentioned before, the code to
-> simply add a DRM driver(struct drm_driver) is fairly limited.
-
-Can't we simply have two sets of ops (one for mx8q and one for mx95) for 
-those ops which are too complicated to implement as a single op with 
-if/else statements ?
-
-> I also mentioned before that separate drivers make them easier to maintain:
-> we don't have to test both i.MX8QXP and i.MX95 if only one display controller
-> specific code is changed.
-
-The downside is lack of code reuse, which leads to disparate sets of 
-bugs in these two drivers and code duplication. And it seems to me, that 
-large parts of the MX8Q and MX95 DC are effectively identical.
-
->> (I might not fully understand what you have in mind with the helper library
->> though?)
 > 
-> I said this could be something like imx-ldb-helper.c and plus perhaps some
-> callbacks like fg->dc_fg_cfg_videomode().
-Do you perceive that the DC driver cannot be parametrized easily enough 
-that it has to be turned into a library like that ? When I look at this 
-patchset, esp. the first half which updates the various blocks, it does 
-not seem to me that way.
+> Signed-off-by: Joakim Zhang <joakim.zhang@cixtech.com>
+> ---
+>  .../soc/cix/cix,sky1-system-control.yaml      | 52 +++++++++++++++++--
+>  .../reset/cix,sky1-audss-system-control.h     | 25 +++++++++
+>  2 files changed, 72 insertions(+), 5 deletions(-)
+>  create mode 100644 include/dt-bindings/reset/cix,sky1-audss-system-control.h
+> 
+> diff --git a/Documentation/devicetree/bindings/soc/cix/cix,sky1-system-control.yaml b/Documentation/devicetree/bindings/soc/cix/cix,sky1-system-control.yaml
+> index a01a515222c6..61d26a69fd44 100644
+> --- a/Documentation/devicetree/bindings/soc/cix/cix,sky1-system-control.yaml
+> +++ b/Documentation/devicetree/bindings/soc/cix/cix,sky1-system-control.yaml
+> @@ -15,11 +15,16 @@ description:
+>  
+>  properties:
+>    compatible:
+> -    items:
+> -      - enum:
+> -          - cix,sky1-system-control
+> -          - cix,sky1-s5-system-control
+> -      - const: syscon
+> +    oneOf:
+> +      - items:
+> +          - enum:
+> +              - cix,sky1-system-control
+> +              - cix,sky1-s5-system-control
+> +          - const: syscon
+> +      - items:
+> +          - const: cix,sky1-audss-system-control
+> +          - const: simple-mfd
+
+Just so you are aware - this means children do not depend on the parent
+for operation. You will not be able to fix it later, if it turns out
+that children do depend...
+
+> +          - const: syscon
+>  
+>    reg:
+>      maxItems: 1
+> @@ -27,6 +32,28 @@ properties:
+>    '#reset-cells':
+>      const: 1
+>  
+> +  clock-controller:
+> +    type: object
+> +    properties:
+> +      compatible:
+> +        const: cix,sky1-audss-clock
+> +    required:
+> +      - compatible
+> +    additionalProperties: true
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: cix,sky1-audss-system-control
+> +    then:
+> +      required:
+> +        - clock-controller
+> +    else:
+> +      properties:
+> +        clock-controller: false
+> +
+>  required:
+>    - compatible
+>    - reg
+> @@ -40,3 +67,18 @@ examples:
+>        reg = <0x4160000 0x100>;
+>        #reset-cells = <1>;
+>      };
+> +  - |
+> +    audss_syscon: system-controller@7110000 {
+> +        compatible = "cix,sky1-audss-system-control", "simple-mfd", "syscon";
+> +        reg = <0x7110000 0x10000>;
+> +        #reset-cells = <1>;
+> +
+> +        clock-controller {
+> +            compatible = "cix,sky1-audss-clock";
+> +            power-domains = <&smc_devpd 0>;
+
+My questions from v2 from the other patch are still valid - why audss
+system clock controller is outside of the power domain? Why the audss
+reset is outside, but audss clock not?
+
+This does not feel like correct hardware representation.
+
+Best regards,
+Krzysztof
+
