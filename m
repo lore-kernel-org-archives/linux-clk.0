@@ -1,33 +1,33 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CF6838D3E0;
-	Fri, 12 Jun 2026 11:14:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4A483ABD95;
+	Fri, 12 Jun 2026 11:56:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781262852; cv=none; b=BxiuIj/8HqvDU522/2nevoUHdAzmA93KNErr2zOpYG/VbnLlWDHObHfM8c/FmE5Xa/ojdEsqKih1P8MNq2Vbo7ETd8AIJc5/iG17KjNFw4fXGUd8L1HOBdqABFbX3d99nufgx9mwX07K544yu4ayNRr+ouX0mYfubWqpG9vA44M=
+	t=1781265382; cv=none; b=lCiLfnZpbEkjURNqKLvEAWacXJ2zS02g34juLfS2IOnT1qTzt1ZkCAknRDX9A10u9Uufw6aPYvnOeyNq8hDdBDvlxhiurAcQO53srapPCJuUEYM94Yzh8/b9Va8VXPznps9ap1kZiRgAgjBbNaTsSjG1QOhEJDpIDiBDvJjqhwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781262852; c=relaxed/simple;
-	bh=NQzWXkEcu6HV2BAhZhYf7mM7q2QTMJqC9HwiVI/8xrg=;
+	s=arc-20240116; t=1781265382; c=relaxed/simple;
+	bh=/xxC0Hha6e9anXB89K7UKFjQ+uG1t5JBiZJIaIWVBTI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WxDZuFFianNOKoZh0dV/ovulBqY1c0aeA2Q+tSHYrL1dXOvME6rj/nUBSkaUa0heLFDQRvoQzxSuF3zy5vV9XLvk3y1G2bORX1OA8OmbBaNRpeGwrbnluwhpksenXrVg5qWkCTD4nR9l87sa6w59jirP+RvWoUZpeYXgJ7UZhUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NbY3nnBv; arc=none smtp.client-ip=100.103.45.18
+	 In-Reply-To:Content-Type; b=bTKHDURkLsIaDeJjXQ5mAWKs/Q8tRsj2OdHZzUKb2yuJZ3tLwpv2em8TBQr71YaGfRIzTfYZuBNMqXo8cw0objcy5ab8Y8KQ4F6fPBIb3SLr1DUjSU4b9ndr2z8BLcuvnZIMV9igtOz+rmlGDYPlHfLM3s66Lx62G/3inVfQOFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=S5OWJK8k; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NbY3nnBv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 379951F000E9;
-	Fri, 12 Jun 2026 11:14:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781262850;
-	bh=PZChMkC0kAP/BeBXhnEtdpKNR5h+zkzjl05C4+3VQCE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=NbY3nnBvPtC0c76fY6r1x7jGxNbMEWUItTLyhPzrMo8kOPBrajgapqOcnXV+b5sQE
-	 7d27Gf9zBMcB0QT66Fl2VJoF17+vPCENUy6Kd08N1eW+8Ntk3OeJqWSS+oOTGNIZeB
-	 CAAn3eJMfz88QKlmg7S/XQVpLXgopFkcUU8nOGu44xaeqIF1HngRhkaf1Z6iQoxVCi
-	 sAilo/FxtRvdEleQ1LPGrs5qkBRw/ug8KNvbqK3AMOqxMoNHVAJLuy2Vnir81BNMnr
-	 f3lAk/M8sAWYpfTWjqzThFr/n96JL5jXg4R7jOOdJpS3vtAxJCYP8WmZPL8aGtSWev
-	 8tYRXwZdQSz4g==
-Message-ID: <1de2f9bf-b48c-4acb-882c-9e35a8582d0b@kernel.org>
-Date: Fri, 12 Jun 2026 12:14:06 +0100
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="S5OWJK8k"
+Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id C7E3619EC;
+	Fri, 12 Jun 2026 13:55:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1781265346;
+	bh=/xxC0Hha6e9anXB89K7UKFjQ+uG1t5JBiZJIaIWVBTI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=S5OWJK8kRzafUXg0MuDQBVbhE6YPjdKfzc72GwxH5rvDO1NR/aqkHMCwtEq2nc+FU
+	 0itHpCzeLULzO8uXyt0fnnbEVdBiC41tPKL1Aj8NQ2l/RHqvbOl9bZiDaClYb8GixQ
+	 2JtwCK/jrNNDav4X7KPHkbeQ3Rp3Z7M0TCanLszI=
+Message-ID: <11f27d38-0224-4fce-a975-7c3f7d8d1d38@ideasonboard.com>
+Date: Fri, 12 Jun 2026 14:56:11 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,110 +35,119 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/3] clk: qcom: camcc-glymur: Add camera clock
- controller driver
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
+Subject: Re: [PATCH v3 4/7] drm/rcar-du: dsi: Support DSC in the pipeline
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+ <sboyd@kernel.org>, Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Taniya Das <taniya.das@oss.qualcomm.com>
-References: <20260517-glymur_camcc-v4-0-9d00acffdbf7@oss.qualcomm.com>
- <20260517-glymur_camcc-v4-2-9d00acffdbf7@oss.qualcomm.com>
- <8bd4365e-0171-425c-9738-0b186047cb15@kernel.org>
- <upcLoSPzJejUNhFiNYlTVH4d8Sh_Pv2o9OZfXsY-CMCDKw19_ci2gL9B3ZwqL1hV1pQeQMLDL8tNLbPzs0JIIg==@protonmail.internalid>
- <2a496bdf-4728-47b9-84ba-063712a6e5b6@oss.qualcomm.com>
- <0a197b43-a672-4849-91c7-6e5bfe3175f7@kernel.org>
- <amL4e4IHe75_j1HTIsmqE_GyurvudlyHQCPW14zs7ivHz0UnalN-yoknJwzaVRgHTT6ftSRCqDyCodh6ABCLxw==@protonmail.internalid>
- <66335474-d600-45ab-9ac6-e946f24142c8@oss.qualcomm.com>
- <639c94f9-6f62-4502-ad7e-5ae60f5f6d02@kernel.org>
- <WdjOMNZ2o-UF6xXKW4LiVgNZB10ZaGze3YWNriL-f1jf7LgBzprN9bqqMYcvMJH8KUF5wtRpyOB0aL_7HEk-yA==@protonmail.internalid>
- <10c2e008-74fe-4dac-99bf-194a1767bc16@oss.qualcomm.com>
-From: Bryan O'Donoghue <bod@kernel.org>
+ Conor Dooley <conor+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
+ Marek Vasut <marek.vasut+renesas@mailbox.org>,
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, linux-renesas-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
+References: <20260515-rcar-du-dsc-v3-0-164157820498@ideasonboard.com>
+ <20260515-rcar-du-dsc-v3-4-164157820498@ideasonboard.com>
+ <20260611000324.GH1632628@killaraus.ideasonboard.com>
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
 Content-Language: en-US
-Autocrypt: addr=bod@kernel.org; keydata=
- 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
-In-Reply-To: <10c2e008-74fe-4dac-99bf-194a1767bc16@oss.qualcomm.com>
+In-Reply-To: <20260611000324.GH1632628@killaraus.ideasonboard.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 11/06/2026 09:51, Konrad Dybcio wrote:
->>> implementation simpler, avoids unnecessary abstraction, and makes debugging—through direct
->>> comparison with the hardware spec easier.
->> How are hex values in upstream code easier to debug ?
->>
->> Without the spec you can't change or understand hex values in upstream code, which is the whole point I'm making here.
-> I get the 'understanding' part, but regarding change, as I said
-> previously, these must remain as-is - any difference for a PLL
-> impacts every single clock downstream of it. Some of them also
-> correspond to specific electrical properties, just like with PHY
-> init sequences. The existing values are a result of tuning and
-> silicon validation across presumably many, many chip units.
+Hi,
 
-That's an argument against changing the values, not naming the values. 
-Hexwork in upstream code is a public black box and should be avoided 
-where possible.
-
-How about, take these fixed hex but someone on the clock-side in qcom 
-agrees to update the script to write defined bitfields not hexwork in 
-future deliveries. AFAIU its a script that mostly spits out these clock 
-descriptors so, it should be possible to fix that script once @ source, 
-without committing to fixing everything _currently_ in flight.
-
-Qcom can then at its leisure update old controller descriptors by 
-running the script again.
-
-> There may be updates (very rarely post the chip going into
-> production), but I'd assume these would go through the same
-> testing procedures
+On 11/06/2026 03:03, Laurent Pinchart wrote:
+> Hi Tomi,
 > 
-> Konrad
+> Thank you for the patch.
+> 
+> On Fri, May 15, 2026 at 12:09:29PM +0300, Tomi Valkeinen wrote:
+>> Enabling DSI clocks on rcar-du needs some tricks as the DU dot clock is
+>> provided by the DSI. Thus, we call rcar_mipi_dsi_pclk_enable() from the
+>> crtc, when enabling the crtc.
+>>
+>> With DSC (added in upcoming patch) in the pipeline, between the DU and
+>> the DSI, the above call path is broken as the crtc tries to call
+>> rcar_mipi_dsi_pclk_enable() on the DSC.
+>>
+>> Adjust the rcar_mipi_dsi_pclk_enable() so that it detects the DSC, and
+>> in that case gets the next bridge from the DSC, which is the DSI.
+>>
+>> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+>> ---
+>>   drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c | 36 +++++++++++++++++++++++--
+>>   1 file changed, 34 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
+>> index 4ef2e3c129ed..085e229bcb0b 100644
+>> --- a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
+>> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
+>> @@ -88,6 +88,8 @@ struct dsi_setup_info {
+>>   	const struct dsi_clk_config *clkset;
+>>   };
+>>   
+>> +static const struct drm_bridge_funcs rcar_mipi_dsi_bridge_ops;
+>> +
+>>   static inline struct rcar_mipi_dsi *
+>>   bridge_to_rcar_mipi_dsi(struct drm_bridge *bridge)
+>>   {
+>> @@ -844,15 +846,39 @@ static void rcar_mipi_dsi_atomic_disable(struct drm_bridge *bridge,
+>>   	rcar_mipi_dsi_stop_video(dsi);
+>>   }
+>>   
+>> +/*
+>> + * We need to skip the DSC bridge when we have DSC in between the DU and
+>> + * the DSI. We detect the DSI bridge via bridge->funcs, and assume the
+>> + * next_bridge is the DSI bridge. If this is not the case, the DT data
+>> + * is wrong (so it shouldn't really happen).
+>> + */
+>> +static struct drm_bridge *
+>> +rcar_mipi_dsi_resolve_bridge(struct drm_bridge *bridge)
+>> +{
+>> +	if (bridge->funcs != &rcar_mipi_dsi_bridge_ops)
+>> +		bridge = bridge->next_bridge;
+>> +
+>> +	if (!bridge || bridge->funcs != &rcar_mipi_dsi_bridge_ops)
+>> +		return NULL;
+>> +
+>> +	return bridge;
+>> +}
+> 
+> Hmmmm... It's quite a bit of a hack. It would be nicer to do this in
+> rcar_du_crtc.c instead, where we cache the dsi bridge pointer. The
 
+It's actually cached in rcar_du_encoder.c, but used in rcar_du_crtc.c.
 
----
-bod
+If I understand right, you'd like to do the DSC detection in 
+rcar_du_crtc, and skip the DSC, if needed, before calling 
+rcar_mipi_dsi_pclk_enable()?
+
+> question is how to then identify the right bridge, as we won't have
+> access to rcar_mipi_dsi_bridge_ops. Should this driver set the bridge
+> type field to DRM_MODE_CONNECTOR_DSI ?
+
+I'm not sure how that would help. Or, I can, as the dsi driver does not 
+set the bridge type, so only DSC would set it. But isn't that even more 
+hacky?
+
+Or did you rather mean that the DSI driver would set the bridge type, 
+and DSC would not? We can then do:
+
+		if (bridge->type != DRM_MODE_CONNECTOR_DSI)
+			bridge = bridge->next_bridge;
+
+in the crtc driver. This works. It's still a bit hacky, but I think the 
+chances of the code getting it wrong are quite low. If the output port 
+is RCAR_DU_OUTPUT_DSIx, then the next bridge must be rcar-dsi or 
+rcar-dsc, so it's all under our control. Also, it's less code than this 
+patch, so I'll go with that.
+
+  Tomi
+
