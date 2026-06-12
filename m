@@ -1,66 +1,66 @@
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73D4A3DD867
-	for <linux-clk@vger.kernel.org>; Fri, 12 Jun 2026 12:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF3BB3E5A05
+	for <linux-clk@vger.kernel.org>; Fri, 12 Jun 2026 12:43:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781268063; cv=none; b=kvbd7RMCm3DyDBG8/GKfHL3fufTgoU3MRRab3zWpBi7Lu8xlBBD59PNplKWFC4sZ7v9IDIDqM+nI3Dtl4PsR709lU2L/Cnb6cpSHLPAjEqjv5U6NKI9vRWnKan8raRz8mQMYVVYGO7A59DedeuKkIWWW8zAUj8nLE3xZpvgudvs=
+	t=1781268184; cv=none; b=Rsljb9329qMMSek5urzqrsEzfpXzkM/c7FZhXVvzxWJDJ36TH2JijgYGXSMFMyZ5i215VKxSwphrWIEyBO3di7Zr16hK5fyEQwGogjP+F9JbSwqqcoubkGjAkmGML0Am71J455jIdLQy1OAen2qOnmrIPkVYV9La7/RwHJ+/9S8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781268063; c=relaxed/simple;
-	bh=Ju5wslSRsvwhk5WsIoCvEoMVc/9GYY2hK7MaGnkp3m4=;
+	s=arc-20240116; t=1781268184; c=relaxed/simple;
+	bh=Iiq1PXcGNwUHd7cbL073bR+pauELfqNbr8btOS6HBIo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EhIocw9KZHb2faHg8WjEvLyOSHpPSqlG83ZhVX/RfVjoT/WSXavyqDrFs+MA9SOv//Mg7aoZLq15pWuFxRx6w2pYArxNMeeBgjYcyTXl+ZfCIxPTMLgWl7WT/IbdjjIfm61T3aEZvUV4BWjCBYdrilaZuR2wJlIKcXncxWm4hwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=V0nEZuJJ; arc=none smtp.client-ip=209.85.208.170
+	 In-Reply-To:Content-Type; b=Nxc7jna91kyVPuxiQSnemqpnPpb4Ivc8A+AUYPs2Tx9ny5S+bU8g047inXPQkEN0DNGLNKGn1Dx/WahqzI+tjtCIKD2GS6/iA9tewoNySFPK5cTRFQ6+F+8s7BHdTjf71TGuwS3vofISHlWm3PlchiN1iotHGCQ185XB4qxE1bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jSKuNNrN; arc=none smtp.client-ip=209.85.167.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="V0nEZuJJ"
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-3991fff17f6so366381fa.3
-        for <linux-clk@vger.kernel.org>; Fri, 12 Jun 2026 05:41:02 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jSKuNNrN"
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5aa6b0f369fso65034e87.0
+        for <linux-clk@vger.kernel.org>; Fri, 12 Jun 2026 05:43:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1781268061; x=1781872861; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1781268180; x=1781872980; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
          :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=U6qY4NpZ30oPzo9/fz3bRiZ7Tbc8aHKKwIffAI9M1Bw=;
-        b=V0nEZuJJPBZEVohcRey7+kwB5rD/pDgVhUguGCMEZIPSJGhaY4KORyBlbr/uXtBasC
-         Yq6nggKWLrKq579Es9QD6Rws9rEqvDDHz1UsfSnZJUzgGsibIV2RxA8sW1ReB3diKDGD
-         LM5knXJheYf47JplRUpNG7UV/gKhEE41qOncd7VJef8rNGSZJMYjNaK/QkWvlpq+Ur60
-         c4xTT7KsjSEtM8Q9hKNnW2Oj4c298HP7i1oMLyg2u30U5xjcjwMfGl1Nw2TEK8Vtf8Zn
-         MfOYFixdfYzK++oJVmtoL3UGbm/RjGTsVrdl95qDApisCkWYWQbhvQFrdUZdmYq68T2w
-         +jIw==
+        bh=1MRB2sfzn7yah8ACPsk/oICHejeL/fVpNie2rMekDVA=;
+        b=jSKuNNrNJtPCFWhT1W2dDDkGnD7E/him2kxkB2Yt/pxr2PgeVoDpQl9W7MECZeuRGy
+         lcGsl4h0zt9tvGI8LHK8vL8NPC8Bsm37Id+jlPoj+aYUEgzh+Mqq14m+1hE1ExdCoKD6
+         8xr1BnQaDIzUimU6OzeN9skHl3vTeA+q9RcvOb5TiTnQsTWtKS1RAREGp6tMT7AAjUqq
+         EXRS05ZEYyouBLXTgy5CsFy+Dcpckt6zfCeWMmYTe36rrqdfyarMkt7AGh/wsDtwXBzm
+         VyeNM5bHLamQuZOkNi6dRAKobxEtwrnsdEAejkrKcBGdfRPylPd6Y5Vg7G57U+ouvM+z
+         JB6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781268061; x=1781872861;
+        d=1e100.net; s=20251104; t=1781268180; x=1781872980;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
          :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=U6qY4NpZ30oPzo9/fz3bRiZ7Tbc8aHKKwIffAI9M1Bw=;
-        b=DXUlh4Ozfhb0C7DNL4QR9CuPeMSb/qGMhE0WUrG7wL/KwD88MmAQkFllogJPmMDznU
-         e0477KikjBtAXrSu/4p3tItzf0hb5GVyPH4B0zC7YrMmPNWLA+Ex/J29jfJOdHQf0HNZ
-         rTGPf92hdjYfQSB34GOtk+GLzg1A9cr+U3xgpe4Vklt6LNnuR68//HObjm3ZvT5Sk2+Y
-         Nom074i8gRzEiBK1/IXNnauAhrG3xhiW27uLBlwFuYiMNuAaVIyK9SqFm1mW4SJ2NQIr
-         51m/lxAu8ed85MjGF4106pDvOKJsaUl/RIsVqdiLMreG/7MXrSeV0iyGXIOTLYapy+vO
-         cdXA==
-X-Forwarded-Encrypted: i=1; AFNElJ/t/YZZD88XKWcmpUJS12bt2EL9OaGRTFMES9zTnkz4DUpUkPRsoAoHIeMFb0jNnp4rbxc1KYDkpYs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMCtxaEGlWhTyo7skF/3pYUJSvSEfrcr/WWuId1woBJGocjVEw
-	4cIhrQwL9jj0FbP0cDBWvTLQoHCUoTDlURrdTKu9lPesBpF9O9cwxpiQ2zUj1DbXvy8=
-X-Gm-Gg: Acq92OG52F6IdRA3HiHRFssGOu1uUbDr37qxHdtGihsQ1VTKVvD0QE/nGaAJ2lYQhHX
-	B8q1lnJjXN8IPcwGPic3EFWITLeu2iUwvLxHYPLsUSutzXPIZ/yB32SNqdOEp+XysTONcu+gBmF
-	WDX1lrEgIuQl2eQCAnMDmLPVXEFaQcxqe4Y0cH5NWXS26eDP5+d6g2eqQPkkPGlS5V1DlgCyskM
-	Kmv7bZ/UfiXIu8g3R9qwUOqCfS3VCdFEMfnrV96b/ZNAumpTzBLp+svmVL7EFt5Q90i8y3z78fn
-	YjgmAptgPKZOl1x/4ikgaMjTjbwRULr4/rkHNZEGexTMyhcWJ1HTCyJ0eUtsbUlFYwt0FE3bYEG
-	ESzMyjZpiWCwoAcIOi2SnRZtH92yYZWcUl43Uf5Xq6t4GpBxohDkoZ7rMrsWCRda8eFMN2iGsik
-	mnKHapC2dormwkHaUyWFG671PHiPeE4hc6Nb/TmcpXQ/oj0JQ3tTuaSjNLmH+5cNq9i2O6AHfYY
-	RLkRg==
-X-Received: by 2002:a05:651c:984:b0:393:5904:7411 with SMTP id 38308e7fff4ca-3992b069ea4mr3516121fa.3.1781268060501;
-        Fri, 12 Jun 2026 05:41:00 -0700 (PDT)
+        bh=1MRB2sfzn7yah8ACPsk/oICHejeL/fVpNie2rMekDVA=;
+        b=oqFXVZnLii2brWnLH8xT0coOExLQG5uNhE4EK2krNbA58vmHQHFnzggjVXwBzhuK4c
+         sO3SjpIdYGZ3X6arQTY47xHl+xUdybbyRbeDICMp5wTiJ9OuK5OMKrV/aFUyY2/iFlM+
+         eHdmr9BOP5EPoW9vjmNEvlhPo9ZxMeU4qqdaGFWlePnIvJhJKcjJgEmd5fiC9/+kWtWp
+         4j2c52ksb5jgpg1N7J7gu4T0ZlB/vwFWheRPaV5qkryHaSH8AdbZqlKUfH+NZcmWLpTX
+         MdsNw2Mbv5A74uRfUUXDXzqqbEDNw3rwI27iayJvCKoSni6in/pyp6gpKzOPMIVK4l2s
+         ujVw==
+X-Forwarded-Encrypted: i=1; AFNElJ/bRgdkL+kOyOtEjd48Z4FgjYKPfIBZLRMsL65YXzPTxIlpQR5mKGRvADh4j5IDji5sVN1urgv71YE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0UnfVv9/e5KDGZuJOhTA9wO20FNymSvdptO3Du7IY4sD3KwPb
+	Gx9O8sAPH36OFEvZnYHEmL2rMVQxshyh0e03JpIDovtszPfYZ7TBd7xoqWb73FB39rw=
+X-Gm-Gg: Acq92OGttHkECEg4PzPyYb+caEivtMLmVPcfscp5lCwr1R7aewLdA08rBibp/MVz5ui
+	FOT9Z5+xc/MYmfnu86hX84PwLW/UCjmrhX/+PC1+jEZimDrErbkPVR5swcosi0Uh/bbbpv1Q1Pd
+	FA5y4HPdftPnWIXYQvguA/HwyCbdKDStJVcBzZ87J9Kfc5sk5JeIhoz5ftPW+rDu2KnGunHlKqI
+	ill39FAIR0RDOTloXPnrXXiq0LB9c8wELzHp3oTEaycYb8GTMEi74Jx3ldMp2E0KV6Co27+cMFr
+	EUMKK3kKE08BCfQ5orJ2rsZvu+O+FrLrXPB1YDNXYIVNcmIfQSM5lxRNLc8zTwYS51PFsehoVES
+	GpQ9HgG9917K58Oo+xrXJcQKqIYbn4ccJi+lej5a87Jg+HpHBDKKRAj3GkwwYOekFFOT7jcgboT
+	9AO0q7t9WLVy+9wnHUzc+/PZOwdGJdcCjBkPTIGpJzUO5ao7DcTKcUs0alxcmtHElj4IYepWQfi
+	xUWtw==
+X-Received: by 2002:a05:6512:3e2a:b0:5ad:2e00:c596 with SMTP id 2adb3069b0e04-5ad2e00c659mr414206e87.0.1781268179989;
+        Fri, 12 Jun 2026 05:42:59 -0700 (PDT)
 Received: from [192.168.1.100] (91-159-24-186.elisa-laajakaista.fi. [91.159.24.186])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-39929c29aefsm5863241fa.1.2026.06.12.05.40.59
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5ad2e1a733fsm519093e87.47.2026.06.12.05.42.59
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Jun 2026 05:41:00 -0700 (PDT)
-Message-ID: <b1d23af2-a431-4d42-86ae-77bc4e528768@linaro.org>
-Date: Fri, 12 Jun 2026 15:40:59 +0300
+        Fri, 12 Jun 2026 05:42:59 -0700 (PDT)
+Message-ID: <67bf6da8-bc31-4519-804f-63cf0dca3911@linaro.org>
+Date: Fri, 12 Jun 2026 15:42:58 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -68,8 +68,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/3] clk: qcom: camcc-glymur: Add camera clock
- controller driver
+Subject: Re: [PATCH v4 3/3] arm64: dts: qcom: glymur: Add camera clock
+ controller support
 To: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
  Bjorn Andersson <andersson@kernel.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
@@ -80,21 +80,20 @@ To: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
  Konrad Dybcio <konradybcio@kernel.org>
 Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Taniya Das <taniya.das@oss.qualcomm.com>,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 References: <20260517-glymur_camcc-v4-0-9d00acffdbf7@oss.qualcomm.com>
- <20260517-glymur_camcc-v4-2-9d00acffdbf7@oss.qualcomm.com>
+ <20260517-glymur_camcc-v4-3-9d00acffdbf7@oss.qualcomm.com>
 From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <20260517-glymur_camcc-v4-2-9d00acffdbf7@oss.qualcomm.com>
+In-Reply-To: <20260517-glymur_camcc-v4-3-9d00acffdbf7@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 5/17/26 20:33, Jagadeesh Kona wrote:
-> Add support for the camera clock controller for camera clients
-> to be able to request for camcc clocks on Glymur platform.
+> Add support for camera clock controller for camera clients to
+> be able to request for camera clocks on Glymur SoC's.
 > 
-> Reviewed-by: Taniya Das <taniya.das@oss.qualcomm.com>
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 > Signed-off-by: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
 
 Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
