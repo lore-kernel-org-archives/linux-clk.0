@@ -1,42 +1,49 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D61743845AE;
-	Fri, 12 Jun 2026 21:52:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B51E279DAF;
+	Fri, 12 Jun 2026 22:48:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781301179; cv=none; b=Mu+KrRWCdKrMeRXB11YSgqWaOTz+ryRdgi0ni53+WRK48sblX6INI3GAFpegQguPse7/2ripmBk4ArQr6b3x5GNIcAQPqEEUaaC1il8p9KuLhknWRYBqoMGjFRdGmF3LyrmSB1txujpZk0za99yuOEvToW23mrgW9YvBQz+AYMw=
+	t=1781304509; cv=none; b=kXSBWO1EsI7waY94mzWFBYuQMapwJDkzpHCnlNZ3KzdMqoXw7GM6zKiq8JtpYA/gf3YgIGVYSixKvBUi5PdlXJ38+77/pnzxLWL26PZkD4jOgehka05NP9epboQ9la7KwtsallGAv8f2sTejkzXK4FlVGrWUfh3AOpMoJp5BIhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781301179; c=relaxed/simple;
-	bh=kgDpMZ/cqT/fELgesiyMYovAsnG4qpX9d9NHPHCCZx0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LMRZuYXHJ6pkfzzYVpTvmyHhlw7EU0xI+lCNoORfoi6b+OlSOgcjFtC03Piunqu7xrjxYH1xB53AojULJg26wVRCwMkxjYLzoBIHLAe9JIVM+/0WwH/vI3TY7r8y8qY87zQU/89Nj7v5vzTYPWO2BEfrStOhwXMVixjwzAkVzpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XTPbg0tN; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1781304509; c=relaxed/simple;
+	bh=uUPK1oL43rZp+FmOduw8qffMAXDz3BLy4nu4METhBrk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sKyuXApo/2JW4qNIz5YPfc+0RzLZZ9wAYU6QPEEqFvbRHe9j6+X8DLRhdSQKx0F8OY0K8z8/chBCXRQ+deAQAza0OMvnovnEDtCur+BGDiuVM1giqizU/BpUdgwje7mInEr2rmj7+VIxS5v2CjKAnmuM/bSkPPlyxbZOcbCymHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wzq/qGDw; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XTPbg0tN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CBA01F000E9;
-	Fri, 12 Jun 2026 21:52:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wzq/qGDw"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07BC41F000E9;
+	Fri, 12 Jun 2026 22:48:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781301178;
-	bh=tniivSBTBfHmSVBUMCG/poEjwuMIXoYdwTE1p96lgEs=;
+	s=k20260515; t=1781304508;
+	bh=sZ8zv1h9vTqxIWN/kyWnqAytOew5Axzx7GoxuJXRb+s=;
 	h=From:To:Cc:Subject:Date;
-	b=XTPbg0tNroWotaCOdjMyiUYu7nMJ1wfEW1nerXr9C/omILHm+zRKuN0iuC/mFgE87
-	 sriKxkrC1QF2sr4L7zVzz5MdmkkB10K/oMpDm57EI68j2BLa+NGxHauq+zUBxSdGju
-	 odRHc8JOMmjRKiJlfTTo8U+UEXBy1J/CS31BRcYAadRHLHTLQC1qq/6AvxAL5ILOZX
-	 /1vpribp1D4lCBDA2xfGaa0aJL0yOTnXxbrvFAgrPsvwT/EGGxSf9dXhUSmTtjNgZm
-	 51wVvPGCA7l8R+bNdonDQimGXlOg/7eiaLiLGF6qOxsm/n90ZCYi4MSUINDvtlhROx
-	 8cDokE2KpZpvg==
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Cc: linux-clk@vger.kernel.org,
+	b=Wzq/qGDwR/S27eZeXfUkKaYYM9YhvcxpaWjonZHZ1+5OQDSWgs1xXto6u+vMvAxf7
+	 pFVrfjMLlN3l2nxNXrqL1opIh+HgqkzrSCyKW7s3sdxE3iS4nP/b0442fwkgNG2EiC
+	 zqKug41i1HlGtnEaLk7HKqz0VdOHVEudtly81GfgCCADTgldRbf8xtmvbk2LUAv+ku
+	 2AxUgW7gRvfSW4qSHiQJfv0FKDHSXpklXbWnvNnJfYKRfwjS3F0gxULF6mlpAoYsLQ
+	 A7RavZtrbSNO85p7krTiyvFD1rMSkBiQpz807Of22d0npfxyNKZdF3qz0xn05JA62z
+	 LqM44TQ1p9/Zw==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org
+Cc: linux-arm-msm@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: at91: Read "reg" with helper
-Date: Fri, 12 Jun 2026 16:52:51 -0500
-Message-ID: <20260612215251.1888345-1-robh@kernel.org>
+	Vivek Aknurwar <vivek.aknurwar@oss.qualcomm.com>,
+	Luca Weiss <luca.weiss@fairphone.com>,
+	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+	Luo Jie <jie.luo@oss.qualcomm.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+	Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>,
+	Alexander Koskovich <akoskovich@pm.me>,
+	Biswapriyo Nath <nathbappai@gmail.com>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Phillip Varney <pbvarney@protonmail.com>
+Subject: [GIT PULL] Qualcomm clock updates for v7.2
+Date: Fri, 12 Jun 2026 17:48:25 -0500
+Message-ID: <20260612224825.852551-1-andersson@kernel.org>
 X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -46,50 +53,157 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The "reg" property is an address-sized DT cell property. The AT91
-compat clock parser only uses a small bus id from it, but reading it
-with the u8 helper does not match the property encoding.
 
-Use of_property_read_reg() so the code goes through the helper for
-"reg" properties, then keep the existing range check before passing
-the bus id to the clock registration code.
+The following changes since commit 254f49634ee16a731174d2ae34bc50bd5f45e731:
 
-Assisted-by: Codex:gpt-5-5
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
----
- drivers/clk/at91/dt-compat.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+  Linux 7.1-rc1 (2026-04-26 14:19:00 -0700)
 
-diff --git a/drivers/clk/at91/dt-compat.c b/drivers/clk/at91/dt-compat.c
-index 5d543e807843..dad26dd5e71d 100644
---- a/drivers/clk/at91/dt-compat.c
-+++ b/drivers/clk/at91/dt-compat.c
-@@ -2,6 +2,7 @@
- #include <linux/clk-provider.h>
- #include <linux/clk/at91_pmc.h>
- #include <linux/of.h>
-+#include <linux/of_address.h>
- #include <linux/mfd/syscon.h>
- #include <linux/regmap.h>
- #include <linux/slab.h>
-@@ -217,7 +218,7 @@ CLK_OF_DECLARE(of_sama5d4_clk_h32mx_setup, "atmel,sama5d4-clk-h32mx",
- static void __init of_sama5d2_clk_i2s_mux_setup(struct device_node *np)
- {
- 	struct regmap *regmap_sfr;
--	u8 bus_id;
-+	u64 bus_id;
- 	const char *parent_names[2];
- 	struct device_node *i2s_mux_np;
- 	struct clk_hw *hw;
-@@ -228,7 +229,7 @@ static void __init of_sama5d2_clk_i2s_mux_setup(struct device_node *np)
- 		return;
- 
- 	for_each_child_of_node(np, i2s_mux_np) {
--		if (of_property_read_u8(i2s_mux_np, "reg", &bus_id))
-+		if (of_property_read_reg(i2s_mux_np, 0, &bus_id, NULL))
- 			continue;
- 
- 		if (bus_id > I2S_BUS_NR)
--- 
-2.53.0
+are available in the Git repository at:
 
+  https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git tags/qcom-clk-for-7.2
+
+for you to fetch changes up to e108373c54fbc844b7f541c6fd7ecb31772afd3c:
+
+  clk: qcom: regmap-phy-mux: Rework the implementation (2026-06-08 09:17:24 -0500)
+
+----------------------------------------------------------------
+Qualcomm clock updates for v7.2
+
+Introduce global, TCSR, and RPMh clock controllers for the Hawi mobile
+SoC.
+
+Introduce GX clock for Milos, and ensure that camera clock controller
+votes for interconnect bandwidth in order to ensure the TOP_GDSC can be
+turned on.
+
+Introduce camera and video clock controllers for Hamoa and Purwa. Reduce
+the max_register of the display clock controller to avoid regmap
+attemting to dump protected registers.
+
+Introduce global clock controller for the IPQ9650 SoC and add IPQ5332
+support to the cmnpll driver.
+
+Add missing USB2 PHY reset to the Nord NegCC.
+
+Rework the PHY mux clock implementation as necessary for upcoming USB4
+support.
+
+----------------------------------------------------------------
+Alexander Koskovich (1):
+      clk: qcom: clk-rpmh: Make all VRMs optional
+
+Bartosz Golaszewski (2):
+      dt-bindings: clock: qcom: add the definition for the USB2 PHY reset
+      clk: qcom: nord: negcc: add support for the USB2 PHY reset
+
+Biswapriyo Nath (1):
+      dt-bindings: clock: qcom,sm6125-dispcc: reference qcom,gcc.yaml
+
+Bjorn Andersson (2):
+      Merge branch '20260507-ipq9650_boot_to_shell-v3-1-62742b49c991@oss.qualcomm.com' into clk-for-7.2
+      Merge branch '20260106-qcom_ipq5332_cmnpll-v2-2-f9f7e4efbd79@oss.qualcomm.com' into clk-for-7.2
+
+Jagadeesh Kona (5):
+      dt-bindings: clock: qcom: Add X1P42100 video clock controller
+      dt-bindings: clock: qcom: Add X1P42100 camera clock controller
+      clk: qcom: videocc-x1p42100: Add support for video clock controller
+      clk: qcom: camcc-x1e80100: Add support for camera QDSS debug clocks
+      clk: qcom: camcc-x1p42100: Add support for camera clock controller
+
+Kathiravan Thirumoorthy (2):
+      dt-bindings: clock: add Qualcomm IPQ9650 GCC
+      clk: qcom: add Global Clock controller (GCC) driver for IPQ9650 SoC
+
+Konrad Dybcio (1):
+      clk: qcom: regmap-phy-mux: Rework the implementation
+
+Krzysztof Kozlowski (3):
+      clk: qcom: dispcc-x1e80100: Fix (possibly) dumping regmap
+      clk: qcom: Constify qcom_cc_driver_data and list of critical CBCR registers
+      dt-bindings: clock: qcom,kaanapali-gxclkctl: Correctly use additionalProperties
+
+Luca Weiss (6):
+      dt-bindings: clock: qcom: document the Milos GX clock controller
+      clk: qcom: Add support for GXCLK for Milos
+      interconnect: Add devm_of_icc_get_by_index() as exported API for users
+      dt-bindings: clock: qcom,milos-camcc: Document interconnect path
+      clk: qcom: gdsc: Support enabling interconnect path for power domain
+      clk: qcom: camcc-milos: Declare icc path dependency for CAMSS_TOP_GDSC
+
+Luo Jie (3):
+      dt-bindings: clock: qcom: Add CMN PLL support for IPQ5332 SoC
+      clk: qcom: cmnpll: Account for reference clock divider
+      clk: qcom: cmnpll: Add IPQ5332 SoC support
+
+Phillip Varney (1):
+      clk: qcom: a53: Corrected frequency multiplier for 1152MHz
+
+Vivek Aknurwar (7):
+      dt-bindings: clock: qcom-rpmhcc: Add RPMHCC bindings for Hawi
+      dt-bindings: clock: qcom: Add Hawi TCSR clock controller
+      dt-bindings: clock: qcom: Add Hawi global clock controller
+      clk: qcom: rpmh: Add support for Hawi RPMH clocks
+      clk: qcom: Add Hawi TCSR clock controller driver
+      clk: qcom: clk-alpha-pll: Add support for Taycan EHA_T PLL
+      clk: qcom: Add support for global clock controller on Hawi
+
+ .../bindings/clock/qcom,dispcc-sm6125.yaml         |   17 +-
+ .../devicetree/bindings/clock/qcom,hawi-gcc.yaml   |   63 +
+ .../bindings/clock/qcom,ipq9574-cmn-pll.yaml       |    1 +
+ .../bindings/clock/qcom,ipq9650-gcc.yaml           |   68 +
+ .../bindings/clock/qcom,kaanapali-gxclkctl.yaml    |    2 +-
+ .../bindings/clock/qcom,milos-camcc.yaml           |    8 +
+ .../bindings/clock/qcom,milos-gxclkctl.yaml        |   61 +
+ .../devicetree/bindings/clock/qcom,rpmhcc.yaml     |    1 +
+ .../bindings/clock/qcom,sm8450-videocc.yaml        |    3 +
+ .../bindings/clock/qcom,sm8550-tcsr.yaml           |    2 +
+ .../bindings/clock/qcom,x1e80100-camcc.yaml        |    1 +
+ drivers/clk/qcom/Kconfig                           |   48 +
+ drivers/clk/qcom/Makefile                          |    7 +-
+ drivers/clk/qcom/a53-pll.c                         |    2 +-
+ drivers/clk/qcom/camcc-milos.c                     |    7 +
+ drivers/clk/qcom/camcc-x1e80100.c                  |   64 +
+ drivers/clk/qcom/camcc-x1p42100.c                  | 2223 ++++++++++++
+ drivers/clk/qcom/clk-alpha-pll.h                   |    6 +
+ drivers/clk/qcom/clk-regmap-phy-mux.c              |   52 +-
+ drivers/clk/qcom/clk-rpmh.c                        |   41 +-
+ drivers/clk/qcom/dispcc-x1e80100.c                 |    2 +-
+ drivers/clk/qcom/gcc-hawi.c                        | 3657 ++++++++++++++++++++
+ drivers/clk/qcom/gcc-ipq9650.c                     | 3445 ++++++++++++++++++
+ drivers/clk/qcom/gcc-nord.c                        |    2 +-
+ drivers/clk/qcom/gdsc.c                            |   33 +
+ drivers/clk/qcom/gdsc.h                            |    5 +
+ drivers/clk/qcom/gpucc-sm8750.c                    |    4 +-
+ drivers/clk/qcom/gxclkctl-kaanapali.c              |    1 +
+ drivers/clk/qcom/ipq-cmn-pll.c                     |   30 +-
+ drivers/clk/qcom/negcc-nord.c                      |    3 +-
+ drivers/clk/qcom/nwgcc-nord.c                      |    4 +-
+ drivers/clk/qcom/segcc-nord.c                      |    2 +-
+ drivers/clk/qcom/tcsrcc-hawi.c                     |  158 +
+ drivers/clk/qcom/videocc-x1p42100.c                |  585 ++++
+ drivers/interconnect/core.c                        |   20 +
+ include/dt-bindings/clock/qcom,hawi-gcc.h          |  253 ++
+ include/dt-bindings/clock/qcom,hawi-tcsrcc.h       |   16 +
+ include/dt-bindings/clock/qcom,ipq5332-cmn-pll.h   |   19 +
+ include/dt-bindings/clock/qcom,ipq9650-gcc.h       |  172 +
+ include/dt-bindings/clock/qcom,nord-negcc.h        |    1 +
+ include/dt-bindings/clock/qcom,rpmh.h              |    2 +
+ include/dt-bindings/clock/qcom,x1e80100-camcc.h    |    3 +
+ include/dt-bindings/clock/qcom,x1p42100-videocc.h  |   48 +
+ include/dt-bindings/reset/qcom,ipq9650-gcc.h       |  215 ++
+ include/linux/interconnect.h                       |    6 +
+ 45 files changed, 11313 insertions(+), 50 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,hawi-gcc.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,ipq9650-gcc.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,milos-gxclkctl.yaml
+ create mode 100644 drivers/clk/qcom/camcc-x1p42100.c
+ create mode 100644 drivers/clk/qcom/gcc-hawi.c
+ create mode 100644 drivers/clk/qcom/gcc-ipq9650.c
+ create mode 100644 drivers/clk/qcom/tcsrcc-hawi.c
+ create mode 100644 drivers/clk/qcom/videocc-x1p42100.c
+ create mode 100644 include/dt-bindings/clock/qcom,hawi-gcc.h
+ create mode 100644 include/dt-bindings/clock/qcom,hawi-tcsrcc.h
+ create mode 100644 include/dt-bindings/clock/qcom,ipq5332-cmn-pll.h
+ create mode 100644 include/dt-bindings/clock/qcom,ipq9650-gcc.h
+ create mode 100644 include/dt-bindings/clock/qcom,x1p42100-videocc.h
+ create mode 100644 include/dt-bindings/reset/qcom,ipq9650-gcc.h
