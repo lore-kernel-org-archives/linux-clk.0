@@ -1,154 +1,95 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F53B3F1AAF;
-	Fri, 12 Jun 2026 17:01:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D61743845AE;
+	Fri, 12 Jun 2026 21:52:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781283713; cv=none; b=XkrwBmW8G2v/EKV+vMFVn4YskLQhMNPatv96fsKg5TZUX0swFSs9KFZECfaq+TazZa74JTJ5ANPeMgyRXR+FCFYSEAA5wOooBAO5Fx+Ue6PgTI3D5VGTjHrtjriqzVH9Q2H6wgS4GvyNOxa6fCmfvK7U3JYVLbOGNsGFy5B7k5o=
+	t=1781301179; cv=none; b=Mu+KrRWCdKrMeRXB11YSgqWaOTz+ryRdgi0ni53+WRK48sblX6INI3GAFpegQguPse7/2ripmBk4ArQr6b3x5GNIcAQPqEEUaaC1il8p9KuLhknWRYBqoMGjFRdGmF3LyrmSB1txujpZk0za99yuOEvToW23mrgW9YvBQz+AYMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781283713; c=relaxed/simple;
-	bh=KVbtAEEtprqp5yyIoAXBQcwpPK0XelSa5kEMMWYCbAI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nQ/EzgxMUhuLQBrw7mYKszxnBulazGoc77Z72ngipUyc1V+szNHVQuUhZvV9auBxvIEWzYud5/synh64OY9OzfVisZHuEwmxS9gbNZfY+zSmD1x/qA/w4NkG3vxz7qHX6rD80YNhn/iFQ90+H2khcDPvYPLtE/RYl0MJHFxJyLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=llm605R7; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1781301179; c=relaxed/simple;
+	bh=kgDpMZ/cqT/fELgesiyMYovAsnG4qpX9d9NHPHCCZx0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LMRZuYXHJ6pkfzzYVpTvmyHhlw7EU0xI+lCNoORfoi6b+OlSOgcjFtC03Piunqu7xrjxYH1xB53AojULJg26wVRCwMkxjYLzoBIHLAe9JIVM+/0WwH/vI3TY7r8y8qY87zQU/89Nj7v5vzTYPWO2BEfrStOhwXMVixjwzAkVzpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XTPbg0tN; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="llm605R7"
-Received: from killaraus.ideasonboard.com (2001-14ba-70f3-e800--a06.rev.dnainternet.fi [IPv6:2001:14ba:70f3:e800::a06])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6A615225;
-	Fri, 12 Jun 2026 19:01:17 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1781283677;
-	bh=KVbtAEEtprqp5yyIoAXBQcwpPK0XelSa5kEMMWYCbAI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=llm605R7ZrLc9err8IAkvdf4IzX4Spd6MKK7m6pw5EdHUOYoTigYq5B62jlv0yazg
-	 mbg/joeHg1oy1aTU96k+hDxZ+KHpvqentcezJiiytYRIT/SPXAZ6sC5Np6Zi7D7Han
-	 0pCNsBhLoieIxwIdVVc1UQ6I5cQalETck5BgagGw=
-Date: Fri, 12 Jun 2026 20:01:46 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XTPbg0tN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CBA01F000E9;
+	Fri, 12 Jun 2026 21:52:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1781301178;
+	bh=tniivSBTBfHmSVBUMCG/poEjwuMIXoYdwTE1p96lgEs=;
+	h=From:To:Cc:Subject:Date;
+	b=XTPbg0tNroWotaCOdjMyiUYu7nMJ1wfEW1nerXr9C/omILHm+zRKuN0iuC/mFgE87
+	 sriKxkrC1QF2sr4L7zVzz5MdmkkB10K/oMpDm57EI68j2BLa+NGxHauq+zUBxSdGju
+	 odRHc8JOMmjRKiJlfTTo8U+UEXBy1J/CS31BRcYAadRHLHTLQC1qq/6AvxAL5ILOZX
+	 /1vpribp1D4lCBDA2xfGaa0aJL0yOTnXxbrvFAgrPsvwT/EGGxSf9dXhUSmTtjNgZm
+	 51wVvPGCA7l8R+bNdonDQimGXlOg/7eiaLiLGF6qOxsm/n90ZCYi4MSUINDvtlhROx
+	 8cDokE2KpZpvg==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 2/5] dt-bindings: display: bridge: Document Renesas
- R-Car V4H DSC bindings
-Message-ID: <20260612170146.GA2094246@killaraus.ideasonboard.com>
-References: <20260515-rcar-du-dsc-v2-0-f6b9240a1240@ideasonboard.com>
- <20260515-rcar-du-dsc-v2-2-f6b9240a1240@ideasonboard.com>
- <20260515-fraying-trickle-7511a2eeaf44@spud>
- <81f89aa1-84d8-44e1-813b-2bbcafe3687e@ideasonboard.com>
- <20260612-landed-remedial-79582e900699@spud>
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: at91: Read "reg" with helper
+Date: Fri, 12 Jun 2026 16:52:51 -0500
+Message-ID: <20260612215251.1888345-1-robh@kernel.org>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260612-landed-remedial-79582e900699@spud>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jun 12, 2026 at 05:09:48PM +0100, Conor Dooley wrote:
-> On Fri, Jun 12, 2026 at 01:43:44PM +0300, Tomi Valkeinen wrote:
-> > On 15/05/2026 20:32, Conor Dooley wrote:
-> > > On Fri, May 15, 2026 at 10:56:15AM +0300, Tomi Valkeinen wrote:
-> > > > From: Marek Vasut <marek.vasut+renesas@mailbox.org>
-> > > > 
-> > > > The Renesas DSC Display Stream Compression is a bridge embedded in the
-> > > > Renesas R-Car V4H SoC. The bridge performs VESA DSC encoding of up to
-> > > > 8k or 400 Mpixel/s .
-> > > > 
-> > > > Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
-> > > > [tomi.valkeinen: fix the example]
-> > > > Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-> > > > ---
-> > > >   .../bindings/display/bridge/renesas,dsc.yaml       | 96 ++++++++++++++++++++++
-> > > >   1 file changed, 96 insertions(+)
-> > > > 
-> > > > diff --git a/Documentation/devicetree/bindings/display/bridge/renesas,dsc.yaml b/Documentation/devicetree/bindings/display/bridge/renesas,dsc.yaml
-> > > > new file mode 100644
-> > > > index 000000000000..2918d592732b
-> > > > --- /dev/null
-> > > > +++ b/Documentation/devicetree/bindings/display/bridge/renesas,dsc.yaml
-> > > 
-> > > Filename matching the compatible please.
-> > 
-> > All the other Documentation/devicetree/bindings/display/bridge/renesas,*
-> > files follow the same style, where the file name is in a generic format, but
-> > the actual compat strings are per SoC (and no generic compat string).
-> 
-> No idea why it's like that currently, but filename matching compatible
-> is the policy.
+The "reg" property is an address-sized DT cell property. The AT91
+compat clock parser only uses a small bus id from it, but reading it
+with the u8 helper does not match the property encoding.
 
-I wonder if we should use
+Use of_property_read_reg() so the code goes through the helper for
+"reg" properties, then keep the existing range check before passing
+the bus id to the clock registration code.
 
-  compatible:
-    items:
-      - enum:
-          - renesas,r8a779g0-dsc
-      - const: renesas,rcar-dsc
+Assisted-by: Codex:gpt-5-5
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ drivers/clk/at91/dt-compat.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-to prepare for the other SoCs that include a DSC. It's of course hard to
-predict how compatible all new silicon will be, but we know there will
-be some compatible ones.
-
-This being said, looking for instance at renesas,du.yaml in the same
-directory, we have
-
-  compatible:
-    enum:
-      - renesas,du-r8a7742 # for RZ/G1H compatible DU
-      - renesas,du-r8a7743 # for RZ/G1M compatible DU
-      - renesas,du-r8a7744 # for RZ/G1N compatible DU
-      - renesas,du-r8a7745 # for RZ/G1E compatible DU
-      - renesas,du-r8a77470 # for RZ/G1C compatible DU
-      - renesas,du-r8a774a1 # for RZ/G2M compatible DU
-      - renesas,du-r8a774b1 # for RZ/G2N compatible DU
-      - renesas,du-r8a774c0 # for RZ/G2E compatible DU
-      - renesas,du-r8a774e1 # for RZ/G2H compatible DU
-      - renesas,du-r8a7779 # for R-Car H1 compatible DU
-      - renesas,du-r8a7790 # for R-Car H2 compatible DU
-      - renesas,du-r8a7791 # for R-Car M2-W compatible DU
-      - renesas,du-r8a7792 # for R-Car V2H compatible DU
-      - renesas,du-r8a7793 # for R-Car M2-N compatible DU
-      - renesas,du-r8a7794 # for R-Car E2 compatible DU
-      - renesas,du-r8a7795 # for R-Car H3 compatible DU
-      - renesas,du-r8a7796 # for R-Car M3-W compatible DU
-      - renesas,du-r8a77961 # for R-Car M3-W+ compatible DU
-      - renesas,du-r8a77965 # for R-Car M3-N compatible DU
-      - renesas,du-r8a77970 # for R-Car V3M compatible DU
-      - renesas,du-r8a77980 # for R-Car V3H compatible DU
-      - renesas,du-r8a77990 # for R-Car E3 compatible DU
-      - renesas,du-r8a77995 # for R-Car D3 compatible DU
-      - renesas,du-r8a779a0 # for R-Car V3U compatible DU
-      - renesas,du-r8a779g0 # for R-Car V4H compatible DU
-      - renesas,du-r8a779h0 # for R-Car V4M compatible DU
-
-Could the file have been named renesas,du-r8a7790.yaml ? Sure. Would it
-be better for users than renesas,du.yaml ? I'm less sure.
-
+diff --git a/drivers/clk/at91/dt-compat.c b/drivers/clk/at91/dt-compat.c
+index 5d543e807843..dad26dd5e71d 100644
+--- a/drivers/clk/at91/dt-compat.c
++++ b/drivers/clk/at91/dt-compat.c
+@@ -2,6 +2,7 @@
+ #include <linux/clk-provider.h>
+ #include <linux/clk/at91_pmc.h>
+ #include <linux/of.h>
++#include <linux/of_address.h>
+ #include <linux/mfd/syscon.h>
+ #include <linux/regmap.h>
+ #include <linux/slab.h>
+@@ -217,7 +218,7 @@ CLK_OF_DECLARE(of_sama5d4_clk_h32mx_setup, "atmel,sama5d4-clk-h32mx",
+ static void __init of_sama5d2_clk_i2s_mux_setup(struct device_node *np)
+ {
+ 	struct regmap *regmap_sfr;
+-	u8 bus_id;
++	u64 bus_id;
+ 	const char *parent_names[2];
+ 	struct device_node *i2s_mux_np;
+ 	struct clk_hw *hw;
+@@ -228,7 +229,7 @@ static void __init of_sama5d2_clk_i2s_mux_setup(struct device_node *np)
+ 		return;
+ 
+ 	for_each_child_of_node(np, i2s_mux_np) {
+-		if (of_property_read_u8(i2s_mux_np, "reg", &bus_id))
++		if (of_property_read_reg(i2s_mux_np, 0, &bus_id, NULL))
+ 			continue;
+ 
+ 		if (bus_id > I2S_BUS_NR)
 -- 
-Regards,
+2.53.0
 
-Laurent Pinchart
