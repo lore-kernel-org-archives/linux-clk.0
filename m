@@ -1,103 +1,129 @@
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF3BB3E5A05
-	for <linux-clk@vger.kernel.org>; Fri, 12 Jun 2026 12:43:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D49792C11E4
+	for <linux-clk@vger.kernel.org>; Fri, 12 Jun 2026 14:30:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781268184; cv=none; b=Rsljb9329qMMSek5urzqrsEzfpXzkM/c7FZhXVvzxWJDJ36TH2JijgYGXSMFMyZ5i215VKxSwphrWIEyBO3di7Zr16hK5fyEQwGogjP+F9JbSwqqcoubkGjAkmGML0Am71J455jIdLQy1OAen2qOnmrIPkVYV9La7/RwHJ+/9S8=
+	t=1781274656; cv=none; b=MBXz7mxTitT7DJ8vDRZHtkuZpd7dmyBCYTLQNbLLngxg0b/ol+EER7+JIW5TSKALCF5CmP8VGkJ7lJ5sqroal+kTTzqQLYpJ1izMsHM6uCPpT+UYLAZYzKPodNp1krtor+A2gCKIiaMnZime9Qv6DamEvuFHRGyauN5dZeAhCiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781268184; c=relaxed/simple;
-	bh=Iiq1PXcGNwUHd7cbL073bR+pauELfqNbr8btOS6HBIo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Nxc7jna91kyVPuxiQSnemqpnPpb4Ivc8A+AUYPs2Tx9ny5S+bU8g047inXPQkEN0DNGLNKGn1Dx/WahqzI+tjtCIKD2GS6/iA9tewoNySFPK5cTRFQ6+F+8s7BHdTjf71TGuwS3vofISHlWm3PlchiN1iotHGCQ185XB4qxE1bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jSKuNNrN; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1781274656; c=relaxed/simple;
+	bh=yuMFmQ5MRWJeClwbnY3zCpvrJ03BA8VG6OH9X4U+owU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jvzQqotGIHvgeZVFVempWPMt7PntMtELHi71E6MHSKxFB/UEYoge0mUVbEbo/5HWCIJX8W4BY/CLk8IHm02xmAdslKtkXWXkRNO7pVFVsy10JWrNF01fEpq97cUFBE54vEJlcoHjpc6IGvSIfuXluA2d9TJL45c3ILDPwEDUS0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H8OdHXyO; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jSKuNNrN"
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5aa6b0f369fso65034e87.0
-        for <linux-clk@vger.kernel.org>; Fri, 12 Jun 2026 05:43:01 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H8OdHXyO"
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-45e9f4a3510so644254f8f.1
+        for <linux-clk@vger.kernel.org>; Fri, 12 Jun 2026 07:30:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1781268180; x=1781872980; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1MRB2sfzn7yah8ACPsk/oICHejeL/fVpNie2rMekDVA=;
-        b=jSKuNNrNJtPCFWhT1W2dDDkGnD7E/him2kxkB2Yt/pxr2PgeVoDpQl9W7MECZeuRGy
-         lcGsl4h0zt9tvGI8LHK8vL8NPC8Bsm37Id+jlPoj+aYUEgzh+Mqq14m+1hE1ExdCoKD6
-         8xr1BnQaDIzUimU6OzeN9skHl3vTeA+q9RcvOb5TiTnQsTWtKS1RAREGp6tMT7AAjUqq
-         EXRS05ZEYyouBLXTgy5CsFy+Dcpckt6zfCeWMmYTe36rrqdfyarMkt7AGh/wsDtwXBzm
-         VyeNM5bHLamQuZOkNi6dRAKobxEtwrnsdEAejkrKcBGdfRPylPd6Y5Vg7G57U+ouvM+z
-         JB6g==
+        d=gmail.com; s=20251104; t=1781274652; x=1781879452; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sj5YLZXXcBmUxWzHptzfJghLh2vd+J2ccuESFm/Sbrw=;
+        b=H8OdHXyOP2jx3b9qgnEFQx967A9FYE+GRupn+fIZzyGeRrHeDdhnw1VP7mXW01LVXM
+         eyii53GRrsVmGx1lQKUqKRKwjIg8dQtT6dc6rJ6yKfvqs5xBQZr6jFAXQ/FLAcVtNF3U
+         IYbX8I054wOCFM+mI9mjPLJJgvN4kkFDd7BQ+CXNmVhte7vwDYyNZEwb/4OF4eAIw2jJ
+         gCf27DV3aAzGn43eqIpgclBVDn/a5INBa+2arSvCJgzJ9Uw0yp2/CQ9mYLZNG+eoT29o
+         xz3A0yTUs2gp9MGv9Tn/DogNXfJIQlSg24xaCpQ4ByMAXS3vXVxF0v+y/2rSw1eTrIJk
+         98Ug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781268180; x=1781872980;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1MRB2sfzn7yah8ACPsk/oICHejeL/fVpNie2rMekDVA=;
-        b=oqFXVZnLii2brWnLH8xT0coOExLQG5uNhE4EK2krNbA58vmHQHFnzggjVXwBzhuK4c
-         sO3SjpIdYGZ3X6arQTY47xHl+xUdybbyRbeDICMp5wTiJ9OuK5OMKrV/aFUyY2/iFlM+
-         eHdmr9BOP5EPoW9vjmNEvlhPo9ZxMeU4qqdaGFWlePnIvJhJKcjJgEmd5fiC9/+kWtWp
-         4j2c52ksb5jgpg1N7J7gu4T0ZlB/vwFWheRPaV5qkryHaSH8AdbZqlKUfH+NZcmWLpTX
-         MdsNw2Mbv5A74uRfUUXDXzqqbEDNw3rwI27iayJvCKoSni6in/pyp6gpKzOPMIVK4l2s
-         ujVw==
-X-Forwarded-Encrypted: i=1; AFNElJ/bRgdkL+kOyOtEjd48Z4FgjYKPfIBZLRMsL65YXzPTxIlpQR5mKGRvADh4j5IDji5sVN1urgv71YE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0UnfVv9/e5KDGZuJOhTA9wO20FNymSvdptO3Du7IY4sD3KwPb
-	Gx9O8sAPH36OFEvZnYHEmL2rMVQxshyh0e03JpIDovtszPfYZ7TBd7xoqWb73FB39rw=
-X-Gm-Gg: Acq92OGttHkECEg4PzPyYb+caEivtMLmVPcfscp5lCwr1R7aewLdA08rBibp/MVz5ui
-	FOT9Z5+xc/MYmfnu86hX84PwLW/UCjmrhX/+PC1+jEZimDrErbkPVR5swcosi0Uh/bbbpv1Q1Pd
-	FA5y4HPdftPnWIXYQvguA/HwyCbdKDStJVcBzZ87J9Kfc5sk5JeIhoz5ftPW+rDu2KnGunHlKqI
-	ill39FAIR0RDOTloXPnrXXiq0LB9c8wELzHp3oTEaycYb8GTMEi74Jx3ldMp2E0KV6Co27+cMFr
-	EUMKK3kKE08BCfQ5orJ2rsZvu+O+FrLrXPB1YDNXYIVNcmIfQSM5lxRNLc8zTwYS51PFsehoVES
-	GpQ9HgG9917K58Oo+xrXJcQKqIYbn4ccJi+lej5a87Jg+HpHBDKKRAj3GkwwYOekFFOT7jcgboT
-	9AO0q7t9WLVy+9wnHUzc+/PZOwdGJdcCjBkPTIGpJzUO5ao7DcTKcUs0alxcmtHElj4IYepWQfi
-	xUWtw==
-X-Received: by 2002:a05:6512:3e2a:b0:5ad:2e00:c596 with SMTP id 2adb3069b0e04-5ad2e00c659mr414206e87.0.1781268179989;
-        Fri, 12 Jun 2026 05:42:59 -0700 (PDT)
-Received: from [192.168.1.100] (91-159-24-186.elisa-laajakaista.fi. [91.159.24.186])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5ad2e1a733fsm519093e87.47.2026.06.12.05.42.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Jun 2026 05:42:59 -0700 (PDT)
-Message-ID: <67bf6da8-bc31-4519-804f-63cf0dca3911@linaro.org>
-Date: Fri, 12 Jun 2026 15:42:58 +0300
+        d=1e100.net; s=20251104; t=1781274652; x=1781879452;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sj5YLZXXcBmUxWzHptzfJghLh2vd+J2ccuESFm/Sbrw=;
+        b=bulIJ7dllvF8gT/mRwn+cIhjJyzNlz2xIm29Jm/LRt0WvVLSP2FgeluQ2oTdQZmhw1
+         IuQ4IZJF/qm3Uewlje/qWnHixTjA6hA2PO1P9nEc4PjdMoFuq0gu1RsgqVap1DHz2Q+9
+         UWg6AxIacn9KE2/i2eQ/1s0vkexCNeXqq6ioqGO14d75VieYRto2miF/D+nQFsiGZdC4
+         9a/5L/5/RSawEQLCGstWiqpVf1HLlMn28UzULVuQtmcmHBIceB3ikiKDcWOmEalb43/b
+         Q9o65ruQUT4HUYobzK2OLL9Mu8gaUXe3TijCjwYQ6Ix27YUHUSX9bn8lVyn0pcPkcoPx
+         7/Zg==
+X-Forwarded-Encrypted: i=1; AFNElJ97chcv8gGfE9tNrRk16Q4tofSpmIGiAEFqIN0G42c0jl4ZcvMnK/nREnTZQy0vGEhvHaHyRe4tQwA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzm0e4jiy1Inj2qGKEM4rP8AEvca8eMbXgh04+d4buOIqR2bPKD
+	Em9sGTT5HAGXH9etscdpcXrgg5Kvp/p9yIupwRUU9fDd1MpMFWIPDVWX
+X-Gm-Gg: Acq92OEBMX2B2CdEmu0wBfz31cFW2ewTlaRRefIlMFh4pneL/BizEPzGrkk5hDHumxf
+	C2QcOetZqiNMUz+noYpG2mdSefdTO6LilvNqblRJLhXqtpA5c2G2QPUl8NQdjVtg2VUTvg9U64E
+	pK5UkwDU9uqRwGSsG6edXd6d45i+StJP1i3G+W7ewV7JaX0JWOktFgzDTnz7fLptmD4o3KXNOJc
+	RZ03XQDUYDuFrbVWL68FczJpBjT23lZuLSO3vcsMxXKUvjm0zFlHseMtfM2ZEmjB05qUApk8swl
+	w9Ba7CdwMk3XNoasufK9CYbVrNAK6MTF289QfvGFcC6SWPDjuPQkCVHCYUoP14t71WhBABai1YS
+	NnvHDsmU1HCrF5PCdjkCYOTTWad0bxdhBRlfk6mgWurHG1lEV4tdOKqGP7NH5lDsdMtCpIUQ8Mi
+	iipKp40F7XL+7JsLWkvONrKLseUuXFELwN3ZI0wngZ1uKBLg9O
+X-Received: by 2002:a05:6000:428a:b0:441:1cf8:ca00 with SMTP id ffacd0b85a97d-4606db9f17cmr4752008f8f.26.1781274651930;
+        Fri, 12 Jun 2026 07:30:51 -0700 (PDT)
+Received: from localhost.localdomain ([2a00:23c4:a700:7301:c72c:50c4:8b28:9a3a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4606f2c3782sm5850016f8f.25.2026.06.12.07.30.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Jun 2026 07:30:51 -0700 (PDT)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Vinod Koul <vkoul@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH 00/11] Add RZ/G3L USB2.0 host support
+Date: Fri, 12 Jun 2026 15:30:28 +0100
+Message-ID: <20260612143048.317907-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/3] arm64: dts: qcom: glymur: Add camera clock
- controller support
-To: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-References: <20260517-glymur_camcc-v4-0-9d00acffdbf7@oss.qualcomm.com>
- <20260517-glymur_camcc-v4-3-9d00acffdbf7@oss.qualcomm.com>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <20260517-glymur_camcc-v4-3-9d00acffdbf7@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 5/17/26 20:33, Jagadeesh Kona wrote:
-> Add support for camera clock controller for camera clients to
-> be able to request for camera clocks on Glymur SoC's.
-> 
-> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> Signed-off-by: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+Add device tree binding support for the RZ/G3L (r9a08g046) USB PHY
+controller. The RZ/G3L USB PHY block is similar to RZ/G3S, but each port
+has an OTG controller, unlike RZ/G3S, which has an OTG controller only on
+port 1.
+
+Biju Das (11):
+  dt-bindings: reset: renesas,rzg2l-usbphy-ctrl: Document RZ/G3L support
+  dt-bindings: phy: renesas,usb2-phy: Document RZ/G3L PHY bindings
+  clk: renesas: r9a08g046: Add USB2.0 clock and reset entries
+  reset: rzg2l-usbphy-ctrl: Introduce info struct for match data
+  reset: rzg2l-usbphy-ctrl: Add RZ/G3L support
+  regulator: renesas-usb-vbus-regulator: Introduce helper for regulator
+    registration
+  regulator: renesas-usb-vbus-regulator: Add RZ/G3L VBUS regulator
+    support
+  phy: renesas: phy-rcar-gen3-usb2: Add RZ/G3L support
+  phy: renesas: phy-rcar-gen3-usb2: Fix devm action registration for
+    disabled VBUS regulator
+  arm64: dts: renesas: r9a08g046: Add USB2.0 device nodes
+  arm64: dts: renesas: r9a08g046l48-smarc: Add USB2.0 support
+
+ .../bindings/phy/renesas,usb2-phy.yaml        |   2 +
+ .../reset/renesas,rzg2l-usbphy-ctrl.yaml      |  20 +++-
+ arch/arm64/boot/dts/renesas/r9a08g046.dtsi    | 103 ++++++++++++++++++
+ .../boot/dts/renesas/r9a08g046l48-smarc.dts   |  49 +++++++++
+ drivers/clk/renesas/r9a08g046-cpg.c           |  15 +++
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c      |  20 ++--
+ .../regulator/renesas-usb-vbus-regulator.c    |  72 ++++++++++--
+ drivers/reset/reset-rzg2l-usbphy-ctrl.c       |  44 +++++---
+ 8 files changed, 291 insertions(+), 34 deletions(-)
 
 -- 
-Best wishes,
-Vladimir
+2.43.0
+
