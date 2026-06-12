@@ -1,132 +1,164 @@
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 859A338CFFE
-	for <linux-clk@vger.kernel.org>; Fri, 12 Jun 2026 14:30:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BD7D346AD5;
+	Fri, 12 Jun 2026 15:53:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781274657; cv=none; b=T+wMsESCp2ZvHxH99hD+WcfNr3d+eUINX3f1BfGRsnsSQI6eg918I2LNLeJhnJcvqzq6+/FypB2CzPAmiaGG+/fi2b8AOcD6iiQpUe2d3VJWiEWqG7mPmfDiesHnY2W+GvSczUalOE+jVp76oQAw8vHxdN5K6qCrUc/YjezlhS0=
+	t=1781279587; cv=none; b=kS+iK2EAYCWuu4g0YZRu9/Udb9RzTsQAOlnVSBUGF99rXlzTUojJ17N9oay/szMuR1DPUubKD4EtYmRGeHlVrDZ0a9FvMTERSt2jM7yGrfLRy3TXiEc4VeauGJzdkLCe3aeiusI2XgGVLkFXuU/piQoeHmSpYVi1x0AJfDcFnJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781274657; c=relaxed/simple;
-	bh=iGtG+0lwcDHNaDdsmWDwoW1Z4Hd+hBkqiiVoObvf+dQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SGR7Yp73B8L8AjdbEnVU7vcQ6D25AHFTEpUS0dCChzVPR5fMIbKNvDzaJ8pJmw2oAV1m/lOxsq96tDgd08TgsEYHOzyGQDZD56EqkXtbpDxsZsVEo/38eroljFW8vaDJE1LGREWpY4P9rzwyPwYfhc6ZbHWRdh8EbUbt3j6pOYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cNwTQSxT; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1781279587; c=relaxed/simple;
+	bh=Xi4zr6K4kn0ZEMvzzLUuNwWw60sZlDm3SVBSJ/YtuQg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z4WPelPC+zaiw7v56z/s44mSJKgXKj5wA+9NXwfKLOgbeDMc9y4Prgty1eoA5rsIiF7FpjrR/dKj87Ph9ACLFUH4pMDArVibO0Hl1wFVbW1J2rq5CIBNPh8ty/zTkIfPzREGqVps4ci2r4I31Q+OnUsjlEHcqqild7zja1O62+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Z8S8P5jC; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cNwTQSxT"
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-45ee5cdbd28so1344826f8f.1
-        for <linux-clk@vger.kernel.org>; Fri, 12 Jun 2026 07:30:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1781274655; x=1781879455; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JXfYvyQdjiG+rGpfHpfWBCGzM82QHIcgpJsxLzxBnRA=;
-        b=cNwTQSxT6ZAMPe9MUfwTH7TDZB/ZrfauneauFG77PBoG2kpjXcAaZA0eu3jio3H7TO
-         fbVBeEZE4w/xe2ZovP15ErLQ4seZ3EypbGuCR8wssU0U+BOOTFBzzEl9KTu7NQPAC0Bp
-         31yVy+BobWtSik/z1iCUzEhGw9yRkmCC/AVk/JNHSzC69W2qhw3Z2jVNfmr8OC1SVfr/
-         b2KmpjfiWYPcTsBEnCYydNDELTSCmXHdooPVedGof3BAkqknXSBWkSm/qn2uoXwBzHO7
-         luGiFn3DKtFOrUnfPvKjuicN6wwU8Bb5WzdwXuUf+RjWwi2NS0hPdKJedzSjWhu6YP/G
-         j+FA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781274655; x=1781879455;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=JXfYvyQdjiG+rGpfHpfWBCGzM82QHIcgpJsxLzxBnRA=;
-        b=UT2a/VDsK4a77Gt1UiGQFgjBRLcYhEpVRRjBXwS6g095bftBjm9157Ugy89VQGRPwV
-         QQ9KKfj/D7+dBXS3I2ym47+QB+x025urs7XQMjKdJDh3+wyGY6eRpzSZshbxzgfXPZCm
-         yihqXuVxGlEFu5xvFgGuNZUzxpEpDHQmrVEojXZ7uU0Opa+4IGwqjH3VFIEPWn5V6D3H
-         quZz4hV3MCbk0qEueecmXBv0HKUHEum8GVVdQLezprmAcqyqQgc8E+8Wi0CLTXTRzWr4
-         k4gehUpom01qbuvKzReTEmCS7gb2dp7UQ24VKwOJjiXfAUsxnrpTx4c+AloozhEwW8uV
-         lFIQ==
-X-Forwarded-Encrypted: i=1; AFNElJ8vFKkwNlncNoyevXJzOFUTY1qatNdeuBpHhjK/mQ0HnrlgWxpW1NgYSpjZU4d3N3GV5svkTZwKWRs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzofVfRo/vjhwbC9r/FKjGMnLFII+lMTUBybPQeZ25WL6fHBTVw
-	5BR14ajnV8CIEmWUDbru+qlx+9XGHLjAl3AolweIWd+PqJZ6Hj67H1EeGPWP/Q==
-X-Gm-Gg: Acq92OElSTOAzq1hiOKOTVpC1P6MF1pWFiUQngT/U7uVnrVzMnxO9ylYoLW9r0hAwNl
-	KfmNL7winyVWxwqvPxM4teq0lvP7Kkc59eQLWF2g+37FwauUEtrTSeWagnKQGVz9JyPKF3UK+rb
-	b2WBTkvIlIJDNIyan/slR3rYu1/wcJJeWMz2m1Np0+VjhPcarHL3MLwM3NsEqGkSdicybUfe+Ko
-	WvvAlQGFg+JZCHWyshpLyB1Epxi9DMeBhV/oSJSudNKbvZHVzRWbM1PC6qDh36N20pbeHwNWdEv
-	ulwgbbei9VRMyspF1rZ3MfJRNshy/yop5926ijEqSpgpEmuDPTTtYRUjzOIL2JAwi0ytGaRaH5v
-	7oyq4YXWQhbIWiWMFcDS2zYuKq9k8UYl/MSeYpGzyrAUFqwj4nfcCV7HEkbGrdHrYaRsgFh68gB
-	Fm41i9NpDaA66uXarfZUptno+rn8hAGbQKKso7N0AMN6+h5od+
-X-Received: by 2002:a05:6000:2086:b0:460:6b59:c471 with SMTP id ffacd0b85a97d-4606d035fcfmr4098308f8f.25.1781274654803;
-        Fri, 12 Jun 2026 07:30:54 -0700 (PDT)
-Received: from localhost.localdomain ([2a00:23c4:a700:7301:c72c:50c4:8b28:9a3a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4606f2c3782sm5850016f8f.25.2026.06.12.07.30.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jun 2026 07:30:54 -0700 (PDT)
-From: Biju <biju.das.au@gmail.com>
-X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Z8S8P5jC"
+Received: from killaraus.ideasonboard.com (2001-14ba-70f3-e800--a06.rev.dnainternet.fi [IPv6:2001:14ba:70f3:e800::a06])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 7554F497;
+	Fri, 12 Jun 2026 17:52:32 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1781279552;
+	bh=Xi4zr6K4kn0ZEMvzzLUuNwWw60sZlDm3SVBSJ/YtuQg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Z8S8P5jCFyTJtycXMMjLt/8TwqBV+eybltV90qrojoPBmml1+uvKj11t9HxOnmrmX
+	 B0MOPpBIJsPGPWeh/6ZHZB9OWAvNXvY5ERFpaziK2fsszUVeqh8fdo+0W8uJoicdOL
+	 p3qRuinDJo5SSUZ6aAxCQrkyjnpPiJHBcc8erDIg=
+Date: Fri, 12 Jun 2026 18:53:01 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	Brian Masney <bmasney@redhat.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH 03/11] clk: renesas: r9a08g046: Add USB2.0 clock and reset entries
-Date: Fri, 12 Jun 2026 15:30:31 +0100
-Message-ID: <20260612143048.317907-4-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260612143048.317907-1-biju.das.jz@bp.renesas.com>
-References: <20260612143048.317907-1-biju.das.jz@bp.renesas.com>
+	Stephen Boyd <sboyd@kernel.org>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Marek Vasut <marek.vasut+renesas@mailbox.org>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 4/7] drm/rcar-du: dsi: Support DSC in the pipeline
+Message-ID: <20260612155301.GC1982714@killaraus.ideasonboard.com>
+References: <20260515-rcar-du-dsc-v3-0-164157820498@ideasonboard.com>
+ <20260515-rcar-du-dsc-v3-4-164157820498@ideasonboard.com>
+ <20260611000324.GH1632628@killaraus.ideasonboard.com>
+ <11f27d38-0224-4fce-a975-7c3f7d8d1d38@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <11f27d38-0224-4fce-a975-7c3f7d8d1d38@ideasonboard.com>
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+On Fri, Jun 12, 2026 at 02:56:11PM +0300, Tomi Valkeinen wrote:
+> On 11/06/2026 03:03, Laurent Pinchart wrote:
+> > On Fri, May 15, 2026 at 12:09:29PM +0300, Tomi Valkeinen wrote:
+> >> Enabling DSI clocks on rcar-du needs some tricks as the DU dot clock is
+> >> provided by the DSI. Thus, we call rcar_mipi_dsi_pclk_enable() from the
+> >> crtc, when enabling the crtc.
+> >>
+> >> With DSC (added in upcoming patch) in the pipeline, between the DU and
+> >> the DSI, the above call path is broken as the crtc tries to call
+> >> rcar_mipi_dsi_pclk_enable() on the DSC.
+> >>
+> >> Adjust the rcar_mipi_dsi_pclk_enable() so that it detects the DSC, and
+> >> in that case gets the next bridge from the DSC, which is the DSI.
+> >>
+> >> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+> >> ---
+> >>   drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c | 36 +++++++++++++++++++++++--
+> >>   1 file changed, 34 insertions(+), 2 deletions(-)
+> >>
+> >> diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
+> >> index 4ef2e3c129ed..085e229bcb0b 100644
+> >> --- a/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
+> >> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
+> >> @@ -88,6 +88,8 @@ struct dsi_setup_info {
+> >>   	const struct dsi_clk_config *clkset;
+> >>   };
+> >>   
+> >> +static const struct drm_bridge_funcs rcar_mipi_dsi_bridge_ops;
+> >> +
+> >>   static inline struct rcar_mipi_dsi *
+> >>   bridge_to_rcar_mipi_dsi(struct drm_bridge *bridge)
+> >>   {
+> >> @@ -844,15 +846,39 @@ static void rcar_mipi_dsi_atomic_disable(struct drm_bridge *bridge,
+> >>   	rcar_mipi_dsi_stop_video(dsi);
+> >>   }
+> >>   
+> >> +/*
+> >> + * We need to skip the DSC bridge when we have DSC in between the DU and
+> >> + * the DSI. We detect the DSI bridge via bridge->funcs, and assume the
+> >> + * next_bridge is the DSI bridge. If this is not the case, the DT data
+> >> + * is wrong (so it shouldn't really happen).
+> >> + */
+> >> +static struct drm_bridge *
+> >> +rcar_mipi_dsi_resolve_bridge(struct drm_bridge *bridge)
+> >> +{
+> >> +	if (bridge->funcs != &rcar_mipi_dsi_bridge_ops)
+> >> +		bridge = bridge->next_bridge;
+> >> +
+> >> +	if (!bridge || bridge->funcs != &rcar_mipi_dsi_bridge_ops)
+> >> +		return NULL;
+> >> +
+> >> +	return bridge;
+> >> +}
+> > 
+> > Hmmmm... It's quite a bit of a hack. It would be nicer to do this in
+> > rcar_du_crtc.c instead, where we cache the dsi bridge pointer. The
+> 
+> It's actually cached in rcar_du_encoder.c, but used in rcar_du_crtc.c.
+> 
+> If I understand right, you'd like to do the DSC detection in 
+> rcar_du_crtc, and skip the DSC, if needed, before calling 
+> rcar_mipi_dsi_pclk_enable()?
 
-Add module clock and reset definitions for the USB2.0 interfaces on the
-RZ/G3L (r9a08g046) SoC.
+That would be the idea, yes. Knowledge that there's a DSC in the
+pipeline would be in the DU driver, not the DSI driver. I think it would
+be better, as the DU driver is the one that should have an overall view
+of the display pipeline.
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
- drivers/clk/renesas/r9a08g046-cpg.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+> > question is how to then identify the right bridge, as we won't have
+> > access to rcar_mipi_dsi_bridge_ops. Should this driver set the bridge
+> > type field to DRM_MODE_CONNECTOR_DSI ?
+> 
+> I'm not sure how that would help. Or, I can, as the dsi driver does not 
+> set the bridge type, so only DSC would set it. But isn't that even more 
+> hacky?
+> 
+> Or did you rather mean that the DSI driver would set the bridge type, 
+> and DSC would not? We can then do:
+> 
+> 		if (bridge->type != DRM_MODE_CONNECTOR_DSI)
+> 			bridge = bridge->next_bridge;
 
-diff --git a/drivers/clk/renesas/r9a08g046-cpg.c b/drivers/clk/renesas/r9a08g046-cpg.c
-index edc83a4104b2..4488bd1988e8 100644
---- a/drivers/clk/renesas/r9a08g046-cpg.c
-+++ b/drivers/clk/renesas/r9a08g046-cpg.c
-@@ -416,6 +416,16 @@ static const struct rzg2l_mod_clk r9a08g046_mod_clks[] = {
- 					MSTOP(BUS_MCPU1, BIT(13))),
- 	DEF_MOD("ssi3_pclk_sfr",	R9A08G046_SSI3_PCLK_SFR, R9A08G046_CLK_P0, 0x570, 7,
- 					MSTOP(BUS_MCPU1, BIT(13))),
-+	DEF_MOD("usb_u2h0_hclk",	R9A08G046_USB_U2H0_HCLK, R9A08G046_CLK_P1, 0x578, 0,
-+					MSTOP(BUS_PERI_COM, BIT(5))),
-+	DEF_MOD("usb_u2h1_hclk",	R9A08G046_USB_U2H1_HCLK, R9A08G046_CLK_P1, 0x578, 1,
-+					MSTOP(BUS_PERI_COM, BIT(7))),
-+	DEF_MOD("usb_u2p0_exr_cpuclk",	R9A08G046_USB_U2P0_EXR_CPUCLK, R9A08G046_CLK_P1, 0x578, 2,
-+					MSTOP(BUS_PERI_COM, BIT(6))),
-+	DEF_MOD("usb_pclk",		R9A08G046_USB_PCLK, R9A08G046_CLK_P1, 0x578, 3,
-+					MSTOP(BUS_PERI_COM, BIT(4))),
-+	DEF_MOD("usb_u2p1_exr_cpuclk",	R9A08G046_USB_U2P1_EXR_CPUCLK, R9A08G046_CLK_P1, 0x578, 4,
-+					MSTOP(BUS_PERI_COM, BIT(13))),
- 	DEF_MOD("eth0_clk_axi",		R9A08G046_ETH0_CLK_AXI, R9A08G046_CLK_P1, 0x57c, 0,
- 					MSTOP(BUS_PERI_COM, BIT(2))),
- 	DEF_MOD("eth1_clk_axi",		R9A08G046_ETH1_CLK_AXI, R9A08G046_CLK_P1, 0x57c, 1,
-@@ -531,6 +541,11 @@ static const struct rzg2l_reset r9a08g046_resets[] = {
- 	DEF_RST(R9A08G046_SSI1_RST_M2_REG, 0x870, 1),
- 	DEF_RST(R9A08G046_SSI2_RST_M2_REG, 0x870, 2),
- 	DEF_RST(R9A08G046_SSI3_RST_M2_REG, 0x870, 3),
-+	DEF_RST(R9A08G046_USB_U2H0_HRESETN, 0x878, 0),
-+	DEF_RST(R9A08G046_USB_U2H1_HRESETN, 0x878, 1),
-+	DEF_RST(R9A08G046_USB_U2P0_EXL_SYSRST, 0x878, 2),
-+	DEF_RST(R9A08G046_USB_PRESETN, 0x878, 3),
-+	DEF_RST(R9A08G046_USB_U2P1_EXL_SYSRST, 0x878, 4),
- 	DEF_RST(R9A08G046_ETH0_ARESET_N, 0x87c, 0),
- 	DEF_RST(R9A08G046_ETH1_ARESET_N, 0x87c, 1),
- 	DEF_RST(R9A08G046_I2C0_MRST, 0x880, 0),
+Yes that's what I meant.
+
+> in the crtc driver. This works. It's still a bit hacky, but I think the 
+> chances of the code getting it wrong are quite low. If the output port 
+> is RCAR_DU_OUTPUT_DSIx, then the next bridge must be rcar-dsi or 
+> rcar-dsc, so it's all under our control. Also, it's less code than this 
+> patch, so I'll go with that.
+
+Thanks.
+
 -- 
-2.43.0
+Regards,
 
+Laurent Pinchart
