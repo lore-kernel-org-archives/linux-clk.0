@@ -1,194 +1,259 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010054.outbound.protection.outlook.com [52.101.69.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 198703E3C5B
-	for <linux-clk@vger.kernel.org>; Fri, 12 Jun 2026 07:55:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781250949; cv=none; b=jKpFycOxoxn1DH13Mey+ix0pXLKJxNssswKG3vtfvFeDDhLukbNnfZGAPKHwL8WoZc6wvLSgGv0bT9RdZIMb/4sEczIaTSipZoiaQmRMlUu9Aux3WKEsEwOU5VDOo2cIb2usFyP+v9U5lW+i85RTpc9KBoEQXXqN4EShMy0D0f4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781250949; c=relaxed/simple;
-	bh=xj6Cf2BFkU51demOt7x8+AYXxPPZBpyfYO041yfzpz0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bPNeO0xYptQ4ieA5GBRXgIW5vtoeaaH9ikqXC6nMPfA0hhUITNrZ13+PFElZQoq4A5ZwjnIYsLhlpjCGp8DoOs0HGSPKmg6czbbky2gL1XY2QRvbrDQsE4lFBN8XrGefoMPGJxD9CUzMumggWV7JT6y+BvwfKR3nXrfcQ6LC8d4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=pdxCmlAk; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=M2KweZx5; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF696380FC9;
+	Fri, 12 Jun 2026 08:43:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1781253799; cv=fail; b=rd2ykpeo7q0AIK89bx7fNouhO0V+DIemZzW8BYxjPnuHapr/rCevYHKcszLJRrwb1Yudk9UwTfDkpTPzkpqi1CyKo+L9dw4ARxsaI23Q3juG6QVkpaRZwaA6DnoUTjY/lnCVyQD3GWBNqi/kQ1AUQapEKcuMYOb36s8Ccwn8JmM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1781253799; c=relaxed/simple;
+	bh=yP9utN08lyH8GOSwM5CPlYCqpP/T5yXFHHfs2Fusnek=;
+	h=From:Subject:Date:Message-Id:Content-Type:To:Cc:MIME-Version; b=GrViYp2Brc/6aCz6RtPWoeuShrHi6fVr+/t27fE0Y0ZOoIMA24qU49iE08ZzGUu3fFBPyWKltZxw/6fn7dxb4TDZZyazXtoBVT8amEmDrSRKFi1NN0gVw2Zi3gno3yJ0wDsexX4ckeV5XhKkSiPfm6Y40cPOC8T8+NFEhlj6aQA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=wnX2PW2H; arc=fail smtp.client-ip=52.101.69.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="pdxCmlAk";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="M2KweZx5"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 65C3C28V2549535
-	for <linux-clk@vger.kernel.org>; Fri, 12 Jun 2026 07:55:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=NuE4PU1Q4pHoGlJdh3wxKiMh
-	dG8JaFJTJYhR0esJV/c=; b=pdxCmlAkM2SjE+v2ERBB40Gjf5EBbMy/cVjKrLvx
-	zcIuKZpReK6ie12vexN0nKyOaVbne3vn+WmQrOEHnshUriy1RtNaarCmFGgMXf9d
-	scYKdW+VuBY2+DE2UD20FZwRzfMdi+ZIkcTtBwTKddAIZaU8fhSZMeRjBE6wsTqU
-	IJtQg07+B7FywFmRfuEK/hgw+WKBuYQ1YDExs3XSr8Ac76G5V2SMPc25GF4l5CRn
-	H1HpByWWlD7qPgUx3+2SfscbwJTW0VV7v85B5Runs1mb0pqiDtjUmdSATkEVG7lh
-	mN0ntIyYX3xjEqMe5dI4Y7YbBOl3hIPKJclCWWSwzyu+/g==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4er29ut8rr-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Fri, 12 Jun 2026 07:55:43 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-517c65c019bso18299811cf.0
-        for <linux-clk@vger.kernel.org>; Fri, 12 Jun 2026 00:55:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1781250943; x=1781855743; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NuE4PU1Q4pHoGlJdh3wxKiMhdG8JaFJTJYhR0esJV/c=;
-        b=M2KweZx5+3VqCz/gVJwFS6EiLFAcQKG+bFJiMv6LW4M3pC6D24UUkcuzM9YwnsipF2
-         DKaHrwhZ9XPbM+kRfOVrsT2tjcjEqkS7PBxF+TrZ0yT34U0SZvjEDs7Qo8RukfWhl7fP
-         S3fv/JQV5nBnwLYR/QMdQgWx0Dm+7Lmn6KwerOp8RJQpsvtfjg9jFVI87CEYwxjekWZA
-         1VnsGHpCY3uS+SOgQBNjReLflm0apBzGSxDB4BF4/wT3XVwhI4+66RH7wV48+dd5Ig0Z
-         uFGd28pDZk1srWPjkpJgc5jCW83B4QrnOCPeOp7xCNO4dYgnaPlXxlVSVdc4vTkazxQe
-         kyoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781250943; x=1781855743;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NuE4PU1Q4pHoGlJdh3wxKiMhdG8JaFJTJYhR0esJV/c=;
-        b=DX78LgkR3WWLccE7Zfom42Ph5L8bm2C+RgqYBsT54llL0gFsxXZvsZQpe0u9sGwyt8
-         K+DxHwX2kArZg5GYSm91sIIeapJRScHCgBCjPb1KfeqjusOwGxpWF3MR5v3EIWOlrnCG
-         2iStj8+Qs06LfYqAX8F+l134rUiacLdpaUF5DK1xg/+FtUVFpIkooulwILtbe3SnVk57
-         LOoX1zCb8HElU/igYwPFBfANUyINqe5xL/FLCB5pwchiYFWGhiB3xK3SFPeEpN9d4DnS
-         Y4IL5+mzwjEbS6/Z/Rz3ks8yyxA9BWKWyzOekdnwv0YwQLRS3VKivO/2v4oXnywA3+ap
-         HN6g==
-X-Forwarded-Encrypted: i=1; AFNElJ8RQDQVvnYvwdSeAMsHkNKUQBuGmFKKnOVRZmpZXddzOjFk5pSl2jblRbvgr66EdytrmTCbu4egujI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFSHkMtsHRcjHLIzAvYD86MZPgGVsQOGezGZUtQRIOmpvQiZUs
-	BloGwDVa1Me8K8t8/K/CHZGFqumdLYs1KWOLN9lIGLXq4OcfCEdFxcrgs+7db6gL5fBmD7MaFk1
-	ED+24/Nrz3oof/YEaNC+DrZIW10EGkZxysc1Bpy25c+uw1l7VL8aSutwmetwBfPQ=
-X-Gm-Gg: Acq92OFcJkoiLZRx0BfBjSbI2YAKvdwY0zu9Glr+UISXxv8y7BEmVfmnsG1LhPGFniY
-	WD5R65Xt4DwS15BEBdJuF2BHs8pXJ6LPskkVcEk/s/43z9t2oYBijCNqTgIP0xnfrAiDltGzHYS
-	Ubr2s4rlMBy0l+3oDdLHimpLl7XWMRyouEOw67knXhHt1kXkQMyJXjFcQ4T1G+qXJ86dEuxqSmb
-	msBHdWwstVdOawNVS8+zoDPjWDTdEp0KToPKqmrKRN6erGZmd62QCg6DXsLFw43NWpiOaqEOFgj
-	jAXVu4JQ1KsJzH5ewLD1ghT+cMhzWhufAZ8Xkblbyds94ZhckPwSoGkFCPTOmuuHHdLkdyENWRU
-	jmO5BSaIgdGW9czn0qJURBet+JrHd1zuS7C0W+A8YW5CiN4d/efS+IoDjayQyVDy3XRHyE9l78Y
-	4BPdr7up9V7xHNqR7t3v7h8wdGi+I+sMtIdnk=
-X-Received: by 2002:ac8:5c92:0:b0:517:a9ef:ce23 with SMTP id d75a77b69052e-517fdf19634mr21653711cf.16.1781250943033;
-        Fri, 12 Jun 2026 00:55:43 -0700 (PDT)
-X-Received: by 2002:ac8:5c92:0:b0:517:a9ef:ce23 with SMTP id d75a77b69052e-517fdf19634mr21653341cf.16.1781250942593;
-        Fri, 12 Jun 2026 00:55:42 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5ad2e16217fsm326756e87.15.2026.06.12.00.55.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jun 2026 00:55:40 -0700 (PDT)
-Date: Fri, 12 Jun 2026 10:55:38 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
-        Jonathan Marek <jonathan@marek.ca>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Bryan O'Donoghue <bod@kernel.org>,
-        Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
-        Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Hans Verkuil <hverkuil@kernel.org>,
-        Stefan Schmidt <stefan.schmidt@linaro.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Dikshita Agarwal <dikshita@qti.qualcomm.com>,
-        Ulf Hansson <ulfh@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-media@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Subject: Re: [PATCH v7 1/2] arm64: dts: qcom: sm8250: sort out Iris power
- domains
-Message-ID: <ijevonu6ib5daesvvzis53qh5ztufrdlqdsfmx33kiajplqwhm@muhxbznlx5k4>
-References: <20260604-iris-venus-fix-sm8250-v7-0-7bd2f0e5bae8@oss.qualcomm.com>
- <20260604-iris-venus-fix-sm8250-v7-1-7bd2f0e5bae8@oss.qualcomm.com>
- <5eaea87f-5fed-4869-93e5-55c9da5ced84@oss.qualcomm.com>
- <cacfl4livqlkuk2c223hgapl45ojd6hsqg5sqqd7g5g2q57kk6@codcnqhfz3e6>
- <73a30753-527b-4662-ba99-2ebc3878861b@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="wnX2PW2H"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=y/gU1JNZHvJYE5wlJ2rBGeoWHVDAaPdlWpLI7Umj+jaw4cZLKf0bHrelzYGQhQfbcxRAUJ2qQ/afzjFXwxd0xK+EvOdrpizl5DURRrxFc0vZOD7dHQUjsdvJYCaQYZnWx2M6ZCtEnouCJvRJIx3TOJeO/t2q3ICit25ib7MeAw8EKtXn+8Kr7x7lpXEt+hH4s1jK/SsLAcr49+t2YvNudoD8dGwRd+5Vm8lsbk0E2XfFsT6bPZp48T+iMn6Nd1bE1vOWdqzjwv4gl8y7w+5a+olf2Ezk5WgvrxzJ4PAncwYgQ8vHEbSajPxtDcXFKUj0FgehrnfPIVkZxUuhNE8m9w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QrkWl50jmdgn95qPguqIxMvp94UqVrAH2Q/77R47tKg=;
+ b=ZtqR3+K+hAEWAjucx2mKyizRWdDV0TkaJOoB9kTYMIj+nUgGLb6Y2oI1gNEtvK9YY909bqGXwRPeUNmbLs+pzsR3IQrfPRtNLShfhNWe21DOzS9dh73+XProZHP4PrWBW1DCqCKuQCtMZttWJFZiikWwhlyYkgqGeC/Vv6hPAtSXydInpSqF/lbYAvNOWOISP8ruuDRVlxSSRKnKVxk8bRCJzdpkcKgCHYOWjsBmysBTLuIwX2I6WKqhsQ5YjtmjV7CGuhxssi9m/8AsEmX9JzZsq/IY0fys9iqKeib/PN4Cf5QtsuBdd2M1IFKf+3zOquV4s/cOMydawlISi97U0g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QrkWl50jmdgn95qPguqIxMvp94UqVrAH2Q/77R47tKg=;
+ b=wnX2PW2HttpCt0lx3BVhu+NkSspzItdtoZ+vdAyY+6wfOOC6C/uMifRcXq3eeWqbWYJ8pvQyrLE2cT46aktO7g9cJKWS+aTP7HUMbseThlKOQsYfnPwAFABF9jh+qQwIG3Kd/P34itzEoHvfIbEDDpWHoOrBhiwx2RsPhLpMIQsRAjOmwKbUCMXERw53VNCXWwfGbUNcF1a5F07ApYyw0BUVVyrjJkBRolZZQT214mLrFK3UNGyOF2rVQ8OcDYFCivAqXGoRLzFmAlVnqQM5OHBL/vv9GxAGoR/eYTeFZbExuPId4NkglsMdK31s+2+dwkwc4vVlOJAB6ScgGq28QQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from AM8PR04MB7874.eurprd04.prod.outlook.com (2603:10a6:20b:24d::9)
+ by GV2PR04MB12293.eurprd04.prod.outlook.com (2603:10a6:150:32b::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.92.17; Fri, 12 Jun
+ 2026 08:43:13 +0000
+Received: from AM8PR04MB7874.eurprd04.prod.outlook.com
+ ([fe80::ac38:1699:6f18:c5d9]) by AM8PR04MB7874.eurprd04.prod.outlook.com
+ ([fe80::ac38:1699:6f18:c5d9%4]) with mapi id 15.21.0113.013; Fri, 12 Jun 2026
+ 08:43:13 +0000
+From: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Subject: [PATCH v10 0/6] clk: Support spread spectrum and use it in
+ clk-scmi
+Date: Fri, 12 Jun 2026 16:46:22 +0800
+Message-Id: <20260612-clk-v10-v10-0-eb92484eda38@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAF7HK2oC/yWMyw5AMBBFf0VmrUnHoxG/IhbUlEGQlkYi/l2xP
+ DfnngscWSYHZXSBJc+O1yUAyjgCPTRLT4K7MEAiEyUVotDzJDxKUWRKmy6lXKGBYG+WDJ9fqqp
+ /dkc7kt7fO9z3A33543JsAAAA
+X-Change-ID: 20260611-clk-v10-846cfd3e561f
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Sudeep Holla <sudeep.holla@kernel.org>, 
+ Cristian Marussi <cristian.marussi@arm.com>, 
+ Sebin Francis <sebin.francis@ti.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, arm-scmi@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, Peng Fan <peng.fan@nxp.com>
+X-Mailer: b4 0.16-dev-7bc12
+X-ClientProxiedBy: MA5P287CA0220.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:a01:1b4::12) To AM8PR04MB7874.eurprd04.prod.outlook.com
+ (2603:10a6:20b:24d::9)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <73a30753-527b-4662-ba99-2ebc3878861b@oss.qualcomm.com>
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNjEyMDA3MCBTYWx0ZWRfX7RMR3ojGcwTA
- re9c5yNGzBUUNcbQRR0fGrCV4tjkgnb7TfNwuIF3y7O58B17JBB4WvXq83Oglnp+Jn5FkcaPMBk
- pqwZrVKUB41eh1RHrawsR1ElXbd+mlg=
-X-Proofpoint-GUID: RsjMiM8nyzZzmip7xr4G_1g6pBNqRwuO
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjEyMDA3MCBTYWx0ZWRfX38QLNJ3DeL5H
- BMzS6I0D7SNvUP3SR7ajHqIG15oHMnFrp/3HMkwupmc9VG/OzASD+d6N9gw5vVFNgEgXTE1h/4a
- 54LK1bCjNvUbMb2MYbX5H/c3m2di6zs6D4NswBxh6GNgJ+kv/ub8qk8hCo/TVkP2cbwYxf4oe3U
- YltHcEPOKAUbKhqp9cEISoyEJEHlWO58tbTQUGoIxZS2YWAF69wuTGinQcYQZA0tHuZmejm8RLC
- Kym3ShkVdjazaqejrWKJ8MHwmvsZisHR2HQGFjwy5q8U6i9YDEp9LELVTRQeY174wB/NCCAySSu
- zACxdxE9pe9AKtHANo6JvicluQWxbwsFVAGNV5WhdEkVLYHSPVEIlta93V4y7D3/8clXKNAA2+p
- WulwtCWESu5E2F0Yz7f/5EWTVCa1k92DXdRunV6ucIV2JwcprVd9R6tx22tRXPB4boZG+u0m0rF
- hnclzN2syfvt+jkKO+Q==
-X-Authority-Analysis: v=2.4 cv=DppmPm/+ c=1 sm=1 tr=0 ts=6a2bbb7f cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=FelO9ux0wxsA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=rJkE3RaqiGZ5pbrm-msn:22 a=EUspDBNiAAAA:8
- a=mcP3zJosRo5iYj3H2dwA:9 a=CjuIK1q_8ugA:10 a=uxP6HrT_eTzRwkO_Te1X:22
-X-Proofpoint-ORIG-GUID: RsjMiM8nyzZzmip7xr4G_1g6pBNqRwuO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
- definitions=2026-06-12_01,2026-06-11_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 adultscore=0 phishscore=0 priorityscore=1501 lowpriorityscore=0
- malwarescore=0 spamscore=0 clxscore=1015 impostorscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606040000 definitions=main-2606120070
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM8PR04MB7874:EE_|GV2PR04MB12293:EE_
+X-MS-Office365-Filtering-Correlation-Id: 409f2a45-2c72-4e73-39c4-08dec85ea3d1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|19092799006|366016|7416014|23010399003|1800799024|376014|3023799007|18002099003|11063799006|56012099006;
+X-Microsoft-Antispam-Message-Info:
+	IMdLMwl9ufxxO+UTrOh8fpnW9PwAeKznPDkONeAS8IJGw86QoZeROs+jOiWcHDEVtB4g+9tPTxjVsXyvql4Kc3TIhAUDkODDQyki4w5SLgDWd0VFU73OyfnbtxMZgnF15YkqK+0w+VaDpyQh+fJT+8ZVEcmmDZX5rSJb4PjX5MxOEhZVGFxPKxosl5lFlPvJP10wqOUKMa0LMmYz+UccnL4YWp6NnPDU+3b6YARAY9JEyKKaedjpfRzQjXLYtjg6vUG6s+0MJGrf/a0AgiNhMfvOFkvjWK9jQV6FmnuBOzjHBoROW3y3IdEYvCq+MHK1XG8pIA+YHHWTDp17fmjYWKxrIUJ5BWYuT1bHjgBCf0/1z0ybZkbW9d1ayMleEPaX7XHzQtMzPGRpXU9zxkcZZYg2uF/0hdHueQA8L5tbDv3c4P8hrmF8Y6CaUksaqvTemTTTCpK9zUmJHv5KqBeOwe+P/xPe21rfml53YZL+9GDl/eS9VpetAZGEMFo8YZYkvDnRtPpgJqJY4W8rxy1ziCFFILweglfMG8igYcu0RejQLmYvORHgrzKITvRFLcNOkomS3HjRyYdGitSTwC+k0WgfhgwnpnRyPCGIY718jyHIccriWA3DJPQPxILwYkmHVAONjUuaP197IOtd92x0W6JJR51hNgj8pJJccuSGgORjDUL9/PsB7OmR0fkV7bj6FokmSh4Ei7QuiLiqNGMQXA==
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7874.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(366016)(7416014)(23010399003)(1800799024)(376014)(3023799007)(18002099003)(11063799006)(56012099006);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?bHpYRDA3SmNHR1VVM3JFdDB0QW55WnI2bVlteEVwMks5QXFLWFFIcXRuNW9m?=
+ =?utf-8?B?SXVmaGNzQkFRb2E3b25NMWtRd1k5b1psZHNrcE9HQmM4SGNLUklaOS94WnBp?=
+ =?utf-8?B?QTgvRFhrSW9MTkNOYm5oMy9RUTBFWnVBRXVDRDRQWmpoYUlqVnZkQ3RsTWVt?=
+ =?utf-8?B?OVE4L2JYeWw5cmFnWVdsZjB1MlFJY1BTU0ZzUll6aUhoVWtPc2Y5bENHUDEx?=
+ =?utf-8?B?WHBFUXpXRDR1ZzNHRng1bUJ1OXh2L09JcGJSL2xySFFOcXJlRFo3T05iSDZY?=
+ =?utf-8?B?a0ZGbVByYmlhMS9TdW1xQWt6SWNIRzVlK21jNFo0bG5rOFV0OG5uTEtjOWtj?=
+ =?utf-8?B?YUR4Yk5HUFdLbHNVb0pvcjlJSytySm5BSFlvQTZoVGZyaUVsSFNTbGxGQlYw?=
+ =?utf-8?B?NEYzbTdBWm4rMnNOOVFpbVQ3eTFLeW9zUWZTblRXK013RGhyYVVqbFVpODlh?=
+ =?utf-8?B?RG13VEs3dHNvZXIrWDNhOG5PQWs5dHBSLzZBTUZoYXkxREMrUmptbS9zaVcr?=
+ =?utf-8?B?a050QTNtRWRHUGZKMnNFVkh1cTI1MEFvQVVUeHVsSkRoRXREL3QzQW1SOHN0?=
+ =?utf-8?B?RmVHZENMMjRvSjhKUHpPTjBUSVc4eFBLVHZXaW44UWo1cEJWWDgwWHgvWGM1?=
+ =?utf-8?B?YndwdGtVN0F0dzBFWGx3YTVWYjk0cTFMellLUytIWUFGb0FWRXFmd1VqeWdw?=
+ =?utf-8?B?M2JGSSt4U083bDZjbE9UcXF3Uml4QXM3bGNmeEhPbnFXeDdjM25WZEVmaUdi?=
+ =?utf-8?B?SmloMkEvZGtjNXVWdzZZZm5senFSL0FvTXoybGRRYnBpNzIrZDFEZlNNT3Qx?=
+ =?utf-8?B?M1k1MzNQdkxhbURGcU1YcW9QbGpES3BweTA0Mll2cVJNaE1oR3RvZkliUkVq?=
+ =?utf-8?B?dVZsN21HU0trQ2ZyZTV6Y2EvTWZhbkd6d09DM0xSa0gwRWRscEkvYmM5cHht?=
+ =?utf-8?B?eFNWRWVaRXpBdTY4aGwyNytJSjFBVWR5ZTFIWjdGQzFrTEZhZU90SlRKZzlK?=
+ =?utf-8?B?M3hIK0VNU1U3MGZQQTNwTElxelZSUVBwSnU0UFJOOENCb0hkcE9DeW9RS01W?=
+ =?utf-8?B?L09YOFd0LzJYV2ZGWEpQUW94aHN5NW9nWjJYQkZqVEhZV1Irc0NKb0diNVYv?=
+ =?utf-8?B?MDB0TnJnYVMzMzlJVmFPVlR6S0hVMWRXSTlNaTR0V1U0TDNDNGZ5eFJrSkcx?=
+ =?utf-8?B?TkRvZlN3Y2FueWQ2NEZmQ2lZcnRmSXZJYUc0Q01QOS9kM3p1RXpyOGd1cHFP?=
+ =?utf-8?B?bzBJYXRNRVVPSGEzVFRxU3o3OElGalVnMUdJZDFDLzdIbnBGQytmT25ydjc0?=
+ =?utf-8?B?eE5acWU5QloySFFIVmJWajBCYzhmQUovaHQvT2p0N2RoVzdaSVFrWDNGY3Bi?=
+ =?utf-8?B?ZVZHdGhBdVVYRUlOM0YzR3JyOTdNSlAvSUVkZ1cvRHAyUU8vTDloWStjNTBz?=
+ =?utf-8?B?RUNuZTBWdDh3NUpxSWdMamVqQVJheEdXREVsMGYzUjdTY1pSK3E3U1c0ajVk?=
+ =?utf-8?B?Nk5Mc0dnYjVvVEJLUThBeDV0VHNSNERWSStSbjIxaldVdFJYLzkybUdBOXkr?=
+ =?utf-8?B?bHdEOTY4ek1rd2xLK2tQUFZtM2hyY25SckhJUlV4c0dXMU5yR09yV05UdVUr?=
+ =?utf-8?B?L1U4Q2o0OVJUendXeWZzNDFYTzZ5U012VmlQZnJSeXRoVjBjTE9idWlxaUxp?=
+ =?utf-8?B?dFRSUUhIaHI2bGNCMFU0NnZvN0Q3YjJOZlZnMG9iZEhBY3FWU25EZ1hvUjhn?=
+ =?utf-8?B?dzRqMWsxSi9udkhhS01JS0s0blFIWSt3QTdZNGppUFpOOStHVzJnWkNWalkr?=
+ =?utf-8?B?R09PLzlHWThLTDBWWFZLbmRZMG1NNW5JRUhKZWU5QkllOUprZStRWlo5UzJI?=
+ =?utf-8?B?RjhYb1l5Rjl4MVk1QzIwWVlpa29BSDlyK1ZGRXhOa2lHTUNpK2Nta1o4eTVC?=
+ =?utf-8?B?dXFKRHRQRXJjcjl6MW9IMmtYdzlPa01aTmJTTm81bnZuWEVXMXIwVjVkWjlh?=
+ =?utf-8?B?QVhwdnJ6bVQ3aENubG5iT29Cem16ZWdLR1l5T2h1dWdkMzl1YnhWQm9oMzly?=
+ =?utf-8?B?Z29RVmI0Z1VhNU5KZEpFbCt5LzVIajNtVTNGNHdXcFNQMFE5T2xpKzdyakpQ?=
+ =?utf-8?B?OFoyUVFBWEJFb3JaNjdGRlYrbm9qOFpxVERtMWZGVExoYXJRMmhyM2owQ0Jm?=
+ =?utf-8?B?TzM5VmorY3k0WWhJTnFhK3dKdm9QeTNHSFdNbmxzcmszNkNnMXlBWUZ2L1lV?=
+ =?utf-8?B?Q0Q4OE9HL1RpMUk0M25mNUt2R0l0cVlsaDlNY3VjZ2F4c25WUnRDVWtRNWov?=
+ =?utf-8?B?Q3VuWk9qWHd1dWJpT1lrSEdub2o0REZWZ1JmanI4anFqUWxNSmRISWNvSTls?=
+ =?utf-8?Q?YBtgq0/hJ+at3M1gesk39pC6YQnju0f6jUuGg?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 409f2a45-2c72-4e73-39c4-08dec85ea3d1
+X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7874.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jun 2026 08:43:13.7776
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Ys/XhMt+ck8wPzGWfB4oE7A/bnEnKVam7ljx9PCoNQkrNcJ0nBsAT/60lpfqqPpfQBf7aKYn++Hr1RwOdWn254PJVKipa1em80Ezhasl+S0SOzZkqJos/Mue4tfOr78Y
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR04MB12293
 
-On Wed, Jun 10, 2026 at 03:52:09PM +0200, Konrad Dybcio wrote:
-> On 6/10/26 3:34 PM, Dmitry Baryshkov wrote:
-> > On Wed, Jun 10, 2026 at 02:24:24PM +0200, Konrad Dybcio wrote:
-> >> On 6/4/26 6:22 PM, Dmitry Baryshkov wrote:
-> >>> On SM8250 Iris core requires two power rails to function, MX (for PLLs)
-> >>> and MMCX (for everything else). The commit fa245b3f06cd ("arm64: dts:
-> >>> qcom: sm8250: Add venus DT node") added only MX power rail, but omitted
-> >>> MMCX voltage levels.
-> >>>
-> >>> Add MMCX domain to the Iris device node.
-> >>>
-> >>> Fixes: fa245b3f06cd ("arm64: dts: qcom: sm8250: Add venus DT node")
-> >>> Reported-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> >>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> >>> ---
-> >>
-> >> [...]
-> >>
-> >>>  				opp-720000000 {
-> >>>  					opp-hz = /bits/ 64 <720000000>;
-> >>> -					required-opps = <&rpmhpd_opp_low_svs>;
-> >>> +					required-opps = <&rpmhpd_opp_svs>,
-> >>> +							<&rpmhpd_opp_low_svs>;
-> >>
-> >> So the computer tells me low_svs would be enough for PLL0 to generate 720MHz
-> >>
-> >> Is there some transient dependency that bumps this to svs?
-> >>
-> >> Your changelog mentions you altered this in v6, but I don't see any related
-> >> discussion
-> > 
-> > There are two sources of information. The "clocks plan" and the "pll
-> > info". For some reason, the clock plan doesn't reflect actual PLL
-> > requirements. See the info on the corresponding PLL type.
-> 
-> OK thanks, now I think I asked this already in the past..
-> 
-> still, both point to LOWSVS @ 720 for sm8250
+Sorry for the long delay from v9 -> v10.
 
-Not really, PLL type points to 615. I've posted you the screenshots
-privately (sorry).
+Since the assigned-clock-sscs property [1] has been accepted into the device
+tree schema, we can now support it in the Linux clock driver. Therefore,
+I've picked up the previously submitted work [2] titled "clk: Support
+spread spectrum and use it in clk-pll144x and clk-scmi."
+As more than six months have passed since [2] was posted, I’m treating this
+patchset as a new submission rather than a v3.
 
--- 
-With best wishes
-Dmitry
+- Introduce clk_set_spread_spectrum to set the parameters for enabling
+  spread spectrum of a clock.
+- Parse 'assigned-clock-sscs' and configure it by default before using the
+  clock. This property is parsed before parsing clock rate.
+- Enable this feature for clk-scmi on i.MX95.
+
+Because SCMI spec will not include spread spectrum as a standard
+extension, we still need to use NXP i.MX OEM extension.
+
+[1] https://github.com/devicetree-org/dt-schema/pull/154
+[2] https://lore.kernel.org/all/20250205-clk-ssc-v2-0-fa73083caa92@nxp.com/
+
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+---
+Changes in v10:
+- For patch 4: per Stephen's comments, write a new testsuite, not modifying rate
+  tests. Updated commit log, and dropped the R-b tag.
+- Rebased to next-20260609
+- Link to v9: https://lore.kernel.org/linux-clk/177743031609.5403.8748588339056479001@localhost.localdomain/
+
+Changes in v9:
+- Rebased to next-20260311
+- Fix kunit test by setting return value to 0 when there is no
+  assigned-clocks in patch 3
+- Link to v8: https://lore.kernel.org/r/20260302-clk-ssc-v7-1-v8-0-2356443a7e4c@nxp.com
+
+Changes in v8:
+- Add R-b from Cristian for patch 5 and patch 6
+- Add comment for scmi_clk_oem_info in patch 6
+- Rebased to next-20260227
+- Link to v7: https://lore.kernel.org/r/20251231-clk-ssc-v7-1-v7-0-380e8b58f9e3@nxp.com
+
+Changes in v7:
+- Add R-b from Sebin
+- Drop __free usage per comment from Krzysztof in patch 3
+- Link to v6: https://lore.kernel.org/linux-clk/20251128-clk-ssc-v6-2-v6-0-cfafdb5d6811@nxp.com/
+
+Changes in v6:
+- Add kunit build warning
+- Update OEM string comparation per Sebin
+- Link to v5: https://lore.kernel.org/linux-clk/20251009-clk-ssc-v5-1-v5-0-d6447d76171e@nxp.com/
+
+Changes in v5:
+- Per Stephen, export clk_hw_set_spread_spectrum, use enum for method,
+  add const for set_spread_spectrum and rename clk_ss/conf to ss_conf.
+- Per Sebin, Cristian, Sudeep, I added clk-scmi-oem.c to support vendor
+  extensions.
+- Link to v4: https://lore.kernel.org/arm-scmi/aNQPWO6pfA_3mmxf@redhat.com/T/#me81231bf286e2a8e4e00a68707ed1e525a2b4a3d
+
+Changes in v4:
+- Add R-b for patch 1 from Brian
+- Drop unecessary change in patch 4 Per Brian
+- Link to v3: https://lore.kernel.org/r/20250912-clk-ssc-version1-v3-0-fd1e07476ba1@nxp.com
+
+Changes in v3:
+- New patch 1 for dt-bindings per comment from Brian
+  https://lore.kernel.org/all/aLeEFzXkPog_dt2B@x1/
+  This might not be good to add a new dt-binding file in v3. But this is
+  quite a simple file that just has four macros to encode modulation
+  method. So hope this is fine for DT maintainers.
+- Add Brain's R-b for patch 2
+- New patch 3 to add Kunit test per Brain. Since Brain helped
+  draft part of the code, I added Co-developed-by tag from Brain.
+- Link to v2: https://lore.kernel.org/r/20250901-clk-ssc-version1-v2-0-1d0a486dffe6@nxp.com
+
+Changes in v2:
+- Simplify the code in patch 2 per Dan Carpenter and Brian Masney
+- Rebased to next-20250829
+- Link to v1: https://lore.kernel.org/r/20250812-clk-ssc-version1-v1-0-cef60f20d770@nxp.com
+
+---
+Peng Fan (6):
+      dt-bindings: clock: Add spread spectrum definition
+      clk: Introduce clk_hw_set_spread_spectrum
+      clk: conf: Support assigned-clock-sscs
+      clk: Add KUnit tests for assigned-clock-sscs
+      clk: scmi: Introduce common header for SCMI clock interface
+      clk: scmi: Add i.MX95 OEM extension support for SCMI clock driver
+
+ drivers/clk/Makefile                               |  12 +-
+ drivers/clk/clk-conf.c                             |  76 ++++++++
+ drivers/clk/clk-scmi-oem.c                         | 108 +++++++++++
+ drivers/clk/clk-scmi.c                             |  44 ++---
+ drivers/clk/clk-scmi.h                             |  51 ++++++
+ drivers/clk/clk.c                                  |  27 +++
+ drivers/clk/clk_test.c                             | 203 ++++++++++++++++++++-
+ drivers/clk/kunit_clk_assigned_rates.h             |  10 +
+ .../clk/kunit_clk_assigned_rates_u64_multiple.dtso |   6 +
+ ...t_clk_assigned_rates_u64_multiple_consumer.dtso |   6 +
+ drivers/clk/kunit_clk_assigned_rates_u64_one.dtso  |   3 +
+ .../kunit_clk_assigned_rates_u64_one_consumer.dtso |   3 +
+ drivers/clk/kunit_clk_assigned_sscs_multiple.dtso  |  20 ++
+ .../kunit_clk_assigned_sscs_multiple_consumer.dtso |  24 +++
+ drivers/clk/kunit_clk_assigned_sscs_null.dtso      |  16 ++
+ .../clk/kunit_clk_assigned_sscs_null_consumer.dtso |  20 ++
+ drivers/clk/kunit_clk_assigned_sscs_one.dtso       |  16 ++
+ .../clk/kunit_clk_assigned_sscs_one_consumer.dtso  |  20 ++
+ drivers/clk/kunit_clk_assigned_sscs_without.dtso   |  15 ++
+ .../kunit_clk_assigned_sscs_without_consumer.dtso  |  19 ++
+ drivers/clk/kunit_clk_assigned_sscs_zero.dtso      |  12 ++
+ .../clk/kunit_clk_assigned_sscs_zero_consumer.dtso |  16 ++
+ include/dt-bindings/clock/clock.h                  |  14 ++
+ include/linux/clk-provider.h                       |  31 ++++
+ 24 files changed, 740 insertions(+), 32 deletions(-)
+---
+base-commit: 49e02880ec0a8c378e811bc9d85da188d7c6204c
+change-id: 20260611-clk-v10-846cfd3e561f
+
+Best regards,
+--  
+Peng Fan <peng.fan@nxp.com>
+
