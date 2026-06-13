@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B9AB348860;
-	Sat, 13 Jun 2026 22:55:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 831E030D3FE;
+	Sat, 13 Jun 2026 22:55:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781391316; cv=none; b=hAIYgCpvICCj0+d0oncvq0XSsqbbBtCp/1XfEk7JbG42+zay+gk2ZX2Aa6qNiCtk3F6ufXc/6fNmriTFXLxKt4/3GEAZfS8pUOyB4I1iAB9zKGBbS7eofwb2u22XtHEFcd59/m0Ouwq8AhVDhUQ6opjixxJ+LkCKgpf5wbvmECA=
+	t=1781391348; cv=none; b=kqBcgTMX3u/IXzOUOqCAjo3rQf5zpDM1hYGGrGtwbaEnqvJQHNBpNxwDE2Y/VrX629QH2UjrWsB5uI7gY93PrjwpusLJwQdlcIGoG477NUGB0CmOx94WQtMIDU+bZLZljaWe4hx1OHBjFDCmWn1ufjwjw7JVdUHeFpL3X1L0qd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781391316; c=relaxed/simple;
-	bh=cojz8L42QoYl4v8USwM1fmjxLhPaAAO4EBmbvPz+95w=;
+	s=arc-20240116; t=1781391348; c=relaxed/simple;
+	bh=waFcLfIWDrFtfyHeoFg4ES5dRKtg1IRhVdKp4lqp/rw=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=PZCdw+Y+cJintVHJE0kCBqX4YU2kRvarrgD3hzuuKGqGCxnUgi93dAl/qh+VwnwUbYivzwjMo8moX6+EzgEI4cGuNRstVHK/KG7aUxPqGuz5l83TWINaIB8y1KYMo33GqwxLVzAmkAHHH1e6zUFr6X9KLrpWkRcd++DXpxWn6rI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R0bDutmf; arc=none smtp.client-ip=100.103.45.18
+	 To:Date:Message-ID; b=lqSPR3LyHy4JnGn8udmZGx8zq+iag6Bk1mo/DohEdTNq8k5PU7HRZKeUfDydFVbyPkN64a54Jv1S3+ePSHnn/OxqlC9pOp0B0+AIbdzLERuCUJM/B3vnSm4dJ3NwAH6rWs7RDi7MZIis4WCU9a+N8DIvDq2F2gadgYwI8KKKDaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bsnum7D3; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R0bDutmf"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2750F1F000E9;
-	Sat, 13 Jun 2026 22:55:15 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bsnum7D3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E9EF1F000E9;
+	Sat, 13 Jun 2026 22:55:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781391315;
-	bh=cojz8L42QoYl4v8USwM1fmjxLhPaAAO4EBmbvPz+95w=;
+	s=k20260515; t=1781391347;
+	bh=8Y9czviEfUCs9RDuFGMQRHETjuWFS4198YhyV0ORENA=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date;
-	b=R0bDutmfWV/1bHtsseUtk4NuDpcqjBpr/3X+l3QT539C98oqUFuVRoXwhZ1F2tApZ
-	 EW/xXcgZFOh7w64Jo5SZaoqimxnssWMc6+6R9W1g622zYTFcIA4tG25g5i/Rlq4R7t
-	 Ctlpp9R954fGyNfOFhZ3RCoQ2EjhMFHy/738yV+2iM1UIjkNDj9nt1TUczgUmyBqCO
-	 fJBN2bY4g2szgbiC2DvRWiGDReP5v4+8Ir7c5RIbH21a07TU2VIYEI1trbZfpMLAF6
-	 N8LgYf7wRifY93I7rYZWS51KP6o4igC1/ML7WG3ZwCwM77pPfSGbz6n8KavhuLmEVQ
-	 moBbAo8FWIijQ==
+	b=Bsnum7D3HeZqfpgRMb8xikPmhEOVSat1u5u8opBITtAkcWMVEgAmbJgdLsHq7gm/C
+	 GMVOCc5iOJ6jFCJ7qv6zS6rEHeEJJMBqQXPdLKlFkZhXqtLzOA9hb6tn+b2pCeQUTi
+	 PoWfjMhuLVnSnUpiLtLeZdPmJViT3Xm8rGx75r7X/5sr6vfkFtZODbd+V7/PtWoLX1
+	 9/A1dWuhmiU/ECglT3EBs8OaVluvPzgEm8l/S8tftU/3QONSn3R4M02BSDxEmHKK+a
+	 oS32GjUUZvLkNKg+F/UN96HtdmmCZxRB8GapW3jY9txi+akDib6yVC47zCGqe28M7z
+	 bXhuA4iwzrpWg==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,41 +34,33 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20260602-tcsr_qref_0527-v5-2-8ea174a59d7e@oss.qualcomm.com>
-References: <20260602-tcsr_qref_0527-v5-0-8ea174a59d7e@oss.qualcomm.com> <20260602-tcsr_qref_0527-v5-2-8ea174a59d7e@oss.qualcomm.com>
-Subject: Re: [PATCH v5 2/7] clk: qcom: Add generic clkref_en support
+In-Reply-To: <20260612224825.852551-1-andersson@kernel.org>
+References: <20260612224825.852551-1-andersson@kernel.org>
+Subject: Re: [GIT PULL] Qualcomm clock updates for v7.2
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Qiang Yu <qiang.yu@oss.qualcomm.com>, krishna.chundru@oss.qualcomm.com
-To: Bjorn Andersson <andersson@kernel.org>, Brian Masney <bmasney@redhat.com>, Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Qiang Yu <qiang.yu@oss.qualcomm.com>, Rob Herring <robh@kernel.org>, Taniya Das <taniya.das@oss.qualcomm.com>
-Date: Sat, 13 Jun 2026 15:46:17 -0700
-Message-ID: <178139077723.819343.8364833855890359860@localhost.localdomain>
+Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Vivek Aknurwar <vivek.aknurwar@oss.qualcomm.com>, Luca Weiss <luca.weiss@fairphone.com>, Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>, Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, Luo Jie <jie.luo@oss.qualcomm.com>, Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>, Alexander Koskovich <akoskovich@pm.me>, Biswapriyo Nath <nathbappai@gmail.com>, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Phillip Varney <pbvarney@protonmail.com>
+To: Bjorn Andersson <andersson@kernel.org>, linux-clk@vger.kernel.org
+Date: Sat, 13 Jun 2026 15:55:45 -0700
+Message-ID: <178139134534.819343.861205819784064327@lazor>
 User-Agent: alot/0.12
 
-Quoting Qiang Yu (2026-06-02 01:02:18)
-> Before XO refclk is distributed to PCIe/USB/eDP PHYs, it passes through
-> a QREF block. QREF is powered by dedicated LDO rails, and the clkref_en
-> register controls whether refclk is gated through to the PHY side.
+Quoting Bjorn Andersson (2026-06-12 15:48:25)
 >=20
-> These clkref controls are different from typical GCC branch clocks:
-> - only a single enable bit is present, without branch-style config bits
-> - regulators must be voted before enable and unvoted after disable
+> The following changes since commit 254f49634ee16a731174d2ae34bc50bd5f45e7=
+31:
 >=20
-> Model this as a dedicated clk_ref clock type with custom clk_ops instead
-> of reusing struct clk_branch semantics.
+>   Linux 7.1-rc1 (2026-04-26 14:19:00 -0700)
 >=20
-> Also provide a common registration/probe API so the same clkref model
-> can be reused regardless of where clkref_en registers are placed, e.g.
-> TCSR on glymur and TLMM on SM8750.
+> are available in the Git repository at:
 >=20
-> Signed-off-by: Qiang Yu <qiang.yu@oss.qualcomm.com>
-> ---
-[...]
-> diff --git a/include/linux/clk/qcom.h b/include/linux/clk/qcom.h
-> new file mode 100644
-> index 000000000000..09e2e3178cfb
-> --- /dev/null
-> +++ b/include/linux/clk/qcom.h
+>   https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git tags/qco=
+m-clk-for-7.2
+>=20
+> for you to fetch changes up to e108373c54fbc844b7f541c6fd7ecb31772afd3c:
+>=20
+>   clk: qcom: regmap-phy-mux: Rework the implementation (2026-06-08 09:17:=
+24 -0500)
+>=20
+> ----------------------------------------------------------------
 
-Why are we making this file in linux/clk when only drivers/clk/qcom/ is
-going to use it? We can have some qref.h header in the qcom clk driver
-area.
+Thanks. Pulled into clk-next
