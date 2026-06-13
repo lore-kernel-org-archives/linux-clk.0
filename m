@@ -1,67 +1,67 @@
-Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 702753C1F2B
-	for <linux-clk@vger.kernel.org>; Sat, 13 Jun 2026 05:20:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A63A3C2B9D
+	for <linux-clk@vger.kernel.org>; Sat, 13 Jun 2026 05:20:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781328036; cv=none; b=T7t5Mr1ieSJaKvkeliIeUv+wv3ayeT036vKlcDnWIbvRdcfAArMti01gJDO1oOpPAojzTFC2GAouozpHGoRf1wCg4v9jlugnVDDdmu4EWLYwkQfVRa61vss/0s89JUQIgEuKJMsy3zs3E1RZhxD7L/VorQQXdWnr0yBNtfTp1p0=
+	t=1781328043; cv=none; b=iKRH7SbQ+X111q9UitzkGOCrYhBmM0UNKVB/tGcFvHW5K+JKzUbAeHiKzgLVi1188AWDLpQDCwoJ1XHH7XZA5hUhvg4mNJI92Fl4qixm5TXMeLf7bKlvkY8Jr3Zxiar2mNEgG0QKq/ZaDIvAi57H4j3f2HzY+IyIemU5saMwTwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781328036; c=relaxed/simple;
-	bh=miTCy44j1JAsbaJrI3jZw0x5PRuDRN+dSbWd8toHM6M=;
+	s=arc-20240116; t=1781328043; c=relaxed/simple;
+	bh=7Mhi088K4JbmXLsghbRGkWUhMJ0OIYyxUcPPBdeO4Vw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qqMuTMvGj12ZUcEXrRgbHQdUwVFW3AlJwHCGEht0CFYn8K0n5yb+rRnB0RpzSfgYbHqyt2r0IrJdru42C5/yc35Qzvwgh1PYUOgcm6sIuOEVilU+sVHmAPf1gtl0zIn1XA7TdI5k0CFa1D2TWCGMkhKiR+6wuZ+bH3Yr8aP75lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iKXMCJsj; arc=none smtp.client-ip=209.85.221.174
+	 In-Reply-To:To:Cc; b=gA+Fl9inLPF1f7jQOSz/C4SaUUvCGMg9MKzVP6Hh5YHl4RyzL+pgUpwVpZ0qhgYHSLh1Vi52eqhdt5Mga3pFfILKlQZuu01xY64YBsFl1t/eNoqkYrof2VuIJwkws7NCH1mDwZYANVKhbSDSO9aVREsqsxX3A4tEz9W/tghUhLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gCYC7lDT; arc=none smtp.client-ip=209.85.221.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iKXMCJsj"
-Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-59e2b96e3d3so1019599e0c.2
-        for <linux-clk@vger.kernel.org>; Fri, 12 Jun 2026 22:20:34 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gCYC7lDT"
+Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-5ab02fb64b0so857461e0c.1
+        for <linux-clk@vger.kernel.org>; Fri, 12 Jun 2026 22:20:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1781328033; x=1781932833; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1781328039; x=1781932839; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=oh7XZBRFNF3Q1qZUCiPu89RvrIopBJKwT1Tf5U0uHtM=;
-        b=iKXMCJsjLHILUcNx/4bq4kEcAsZyJfsVl9Q+y/KTuevXdFFpADPZSrKj+GZVjAQoa7
-         knOlOwFEUQKtbyMsGuLLXamVZlxN3vRN23HXhwfnZXhU2p+tFUP6310y+aoCBCIo8+4m
-         0wvZycY4TQKD0HZnDmvI05xjb34nLIXHpipd112mzAcAMQx3xl+z+uF5I7i8yJEze8/F
-         5SFP4d+TbRkZ345qTJssk+BEhJ9oVy0/sURdPy5afL3TMT4Y6BEdqKox/kAO23WndMxo
-         PNK7G9c+Lt/bB51Jz7WJOOSKnPX7QeZne4Dxem/kbOzooHY9n2eeHX0QJqZyC1WNU8ok
-         MypQ==
+        bh=ovyq5VY0HrDmnxwXqGTum6kqu484G9zPMiuaByi5weY=;
+        b=gCYC7lDTN801y/iu2x/gJc/DhEJBlyKCyocihcH8aTNbvx0NlNiIzcfTbbofjgEBAC
+         KV0JztAm/0x/of6ejVeJKdKGqHk+Rknhz71MJPx0+Tq2nfesuF1+DmKXyhf76KSMJTJ/
+         z/CItGnrcs/dpS6/Qg82K3EpJNwJA9zgL0A1u71K1MGCfNLRGz58zHqA/v113S26Z1m4
+         kNVjTJxwv5/dzVwf8CpU01tXc47Ge2IdiB0rq5PzGSQpztVeh+YbWxksmbbbaword5iW
+         PtkNEP0jWKa1V3Rf2NM2GDjClY9k7dbUNRxflNSWpYiRKxpkp6ff/5dQQCUbs0plyj4j
+         vZgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781328033; x=1781932833;
+        d=1e100.net; s=20251104; t=1781328039; x=1781932839;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=oh7XZBRFNF3Q1qZUCiPu89RvrIopBJKwT1Tf5U0uHtM=;
-        b=Q5zvX9PEnOZkV1jjzQUhWdOJRUnpGZJhZ2U4ulk2jFewoC7IgO4b2P2ucBul9gVtUK
-         5wz8YbOQcimUd/ukYekGvSxXadGfLV518HNQh+fzUUl9B46urvl36TkglxaIi8Owe9yi
-         YJnARVash6Ey7YWle+liwt/v75Rn4EpVm7Ks5ZEQb34LuMFY/r2Sp/MDOYUjxw0Lx9lJ
-         Ixqs4+DuKAp7Nwe7ySA0xEJArH/QpaIZlsj7GkckFy+CWwlQY65/M9bdk4mg6I/60FFe
-         uhqOO1Zpj1FsHJ9jfPeb6+4h/xRdwmtQiPJUT92kJl9DftFFYriAZKctsjmO6U2BFcjB
-         BoBw==
-X-Forwarded-Encrypted: i=1; AFNElJ9kHzl/J3IqkwtKitrJFjU5NwgqJpTt7oZ3suQ7lBJcN/vFXvJdm7I2cSrL6YxlVq4j99vRzF+1rK8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNSBBv8LM66ZYcpS0EWBhOhtSJEXGCDps2+l2fQiZbd1pENCi4
-	2vU5UsEzYDsXRrlwrW6olxb6sC+dj30xr8niJKanKdv1t78o3tJsI3KK
-X-Gm-Gg: Acq92OHa4ud/IFsTXZ8uyRbR+jnxLX5pX/mJnPFVtr3ZoWwHaZH8JD732z3mLHMgzgn
-	qfKuTLn6nVdAUZCzNyTw0Bv6Mp+uYwOtMH0tbfM5R9xd7GcMNxHVAX+uWl2DuHDNb/1/5VH9vZs
-	JrirY0DWgbmXjFL/5Q13jOMJEhPFKY9Fif2qo3W/zN4vtGwtVNHjkKzPebvhAJ8pMVGU0dJctQM
-	a7Stpy3ftOq3tjwS6006QOQlvO/GvKapnu2lTxzGKIVm2QJp4GP0pdErsR5nZ4x0zg+x3YO0L8G
-	mViLWJLqoqiZwkZpgEM3ZoUUu70BAvYmgWmdc0t0oLPHLqRydCZIk0Z40w+J9jPCEVg0p9qQQ3l
-	RYWeXrrtyv3TNNRpAIUYQ+WNSHItG9sJn3T/BRdnOUBcfWfqphTdPmDqPyZLSAzw87xln7n8PxF
-	bcxb8Kd3xmu0UqMXaUHItSdidPhVvAiHDnwvYNm0s=
-X-Received: by 2002:a05:6122:c90:b0:56d:2ca7:fbc3 with SMTP id 71dfb90a1353d-5bb6c077aa7mr3940480e0c.5.1781328033130;
-        Fri, 12 Jun 2026 22:20:33 -0700 (PDT)
+        bh=ovyq5VY0HrDmnxwXqGTum6kqu484G9zPMiuaByi5weY=;
+        b=p1G/0ZbGyumS4gaOgWVEnvy30U76uiVu232UreJuQBthlGWe8KWgkyO284hnwAx2JG
+         HiFtrBZ2S76jeQQIpyKMfJEa0M92BkKIeU+ehiZila2saW3N/UFcgZHmnf6QBhkqIMjD
+         E5RbBXzep/txZ9m5qnNbT1mVI13RSE2GV5GUMuZ8XFWJgwCPR5B9LHTsrU9UXeaBvJfC
+         Rp+kCyKGlAoRNYS8ceCNl3DcCPO0SgmDIIa0bwlNeXw+qy1xizmSfDVrPGa3Wy5h14H1
+         gzQ7vyiDxOwGWqphNqjWw2rcgrA+UwuU+m6OWuHtiLsN4UHeM8rCJ8OmfF67F0WNtRwZ
+         g2Ag==
+X-Forwarded-Encrypted: i=1; AFNElJ9587t2K6iSRtxps2wHbCpGcfZGXUdwUBs/R3FgdsYasKHrbNkpCC9jogXaGTMWLXCGA33+75H9u8Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDHCcpCphZSMLN+1JMEKdtD/RVruOQM5MDVYggvwtURl42Pbrk
+	4ywlrtQCd3Z3ye57LOZil94trp9wgLa/4UjHdpMpEbthkrcdKqDYwq6c
+X-Gm-Gg: Acq92OEmfyLzcLiMYRPtIdHKGpZevzHhOZN2F2afSuIVJR3ga9JQj6wRGdYOXkiaEwn
+	yvRsU1sc4+yLJrhzsZUVKo2tHU/hfl6eIiOy7SUWe2jWHmn9DqaC6KtumEnCduNQZ1Q0MF560fy
+	3CSXviqYqh7+YntSBzsJF+XILDMCtjh+s13G1tmPKGZrW1lS1jzTDVDyz3AiHfrrMmRmgfagOKc
+	pfCxGSkrJwsgCyDPPgFDZB7NMkKGhQ1FdOnguLngUnI1vtL7ClAn7PMRYQPdhtQlJIUlPX1oeIr
+	ABU95TlHrEDRMLId2nGuZepGk/fTUrKhrRSRzubypftvw6h65Zt3RRPoKxIEK49M5ImfiUa763R
+	MitkhlKwKryhDiI2nNZhqBWMztMEzU+NyVWH6/o+qlu0YHEsBoGTY5f9I/bsOQPvEBo7XpumdX2
+	wjh5PWKIAAPuXPVKDI7YFRmj2AkhM5bKkzwrOZn8A=
+X-Received: by 2002:a05:6122:4d8b:b0:567:4e8a:fb13 with SMTP id 71dfb90a1353d-5bb6c05beefmr3545667e0c.8.1781328039294;
+        Fri, 12 Jun 2026 22:20:39 -0700 (PDT)
 Received: from [127.0.0.1] ([38.252.222.136])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5bb69014308sm4848692e0c.7.2026.06.12.22.20.28
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5bb69014308sm4848692e0c.7.2026.06.12.22.20.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jun 2026 22:20:32 -0700 (PDT)
+        Fri, 12 Jun 2026 22:20:38 -0700 (PDT)
 From: Denzeel Oliva <wachiturroxd150@gmail.com>
-Date: Sat, 13 Jun 2026 00:19:51 -0500
-Subject: [PATCH v2 1/2] dt-bindings: clock: exynos990: Add
- CLK_GOUT_PERIS_TMU_SUB_PCLK
+Date: Sat, 13 Jun 2026 00:19:52 -0500
+Subject: [PATCH v2 2/2] clk: samsung: exynos990: Fix PERIS gate clock
+ parents
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -70,7 +70,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260613-exynos990-peris-fix-v2-v2-1-3dff7ade75b3@gmail.com>
+Message-Id: <20260613-exynos990-peris-fix-v2-v2-2-3dff7ade75b3@gmail.com>
 References: <20260613-exynos990-peris-fix-v2-v2-0-3dff7ade75b3@gmail.com>
 In-Reply-To: <20260613-exynos990-peris-fix-v2-v2-0-3dff7ade75b3@gmail.com>
 To: Krzysztof Kozlowski <krzk@kernel.org>, 
@@ -85,32 +85,101 @@ Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
  linux-kernel@vger.kernel.org, Denzeel Oliva <wachiturroxd150@gmail.com>
 X-Mailer: b4 0.15.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1781328021; l=704;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1781328021; l=4330;
  i=wachiturroxd150@gmail.com; s=20250819; h=from:subject:message-id;
- bh=miTCy44j1JAsbaJrI3jZw0x5PRuDRN+dSbWd8toHM6M=;
- b=X/BI2YKdcMP3CkhiT3eTACS7wdsMXf/M0WGqng7um4bnMC6SnlomqHBfhN9Xl3HP24McjUzZ0
- YwRxI48IP6LCJz590QZQdK+bnFu9pnakOSW8Ptixa5+TeMbengQLGZ4
+ bh=7Mhi088K4JbmXLsghbRGkWUhMJ0OIYyxUcPPBdeO4Vw=;
+ b=Eyg5vZ285Yt4XsqlCXfDhI6gutnRY1/qm7OGvSamzvTejycc9Ex+wbJKzBbJ+K8I7VPEBIZTW
+ vObz5hhT0QTBZj6W7HOAE6UCPhEdJ+zqVsb7vsunsTNs/+XVHigtLbR
 X-Developer-Key: i=wachiturroxd150@gmail.com; a=ed25519;
  pk=qNvcL0Ehm3chrW9jFA2JaPVgubN5mHH//uriMxR/DlI=
 
-Add the missing TMU_SUB_PCLK clock ID for the Exynos990 PERIS CMU.
+Correct eight PERIS gate clock parents to match the hardware clock
+tree, reorder the GIC mux parents, and add the missing TMU_SUB_PCLK
+gate.
 
 Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
 ---
- include/dt-bindings/clock/samsung,exynos990.h | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/samsung/clk-exynos990.c | 24 ++++++++++++++----------
+ 1 file changed, 14 insertions(+), 10 deletions(-)
 
-diff --git a/include/dt-bindings/clock/samsung,exynos990.h b/include/dt-bindings/clock/samsung,exynos990.h
-index 47540307cb52..c06f591d9d90 100644
---- a/include/dt-bindings/clock/samsung,exynos990.h
-+++ b/include/dt-bindings/clock/samsung,exynos990.h
-@@ -434,5 +434,6 @@
- #define CLK_GOUT_PERIS_TMU_TOP_PCLK		17
- #define CLK_GOUT_PERIS_OTP_CON_BIRA_OSCCLK	18
- #define CLK_GOUT_PERIS_OTP_CON_TOP_OSCCLK	19
-+#define CLK_GOUT_PERIS_TMU_SUB_PCLK		20
+diff --git a/drivers/clk/samsung/clk-exynos990.c b/drivers/clk/samsung/clk-exynos990.c
+index 4385c3b76dd6..df5928833b23 100644
+--- a/drivers/clk/samsung/clk-exynos990.c
++++ b/drivers/clk/samsung/clk-exynos990.c
+@@ -21,7 +21,7 @@
+ #define CLKS_NR_HSI0 (CLK_GOUT_HSI0_LHS_ACEL_D_HSI0_CLK + 1)
+ #define CLKS_NR_PERIC0 (CLK_GOUT_PERIC0_SYSREG_PCLK + 1)
+ #define CLKS_NR_PERIC1 (CLK_GOUT_PERIC1_XIU_P_ACLK + 1)
+-#define CLKS_NR_PERIS (CLK_GOUT_PERIS_OTP_CON_TOP_OSCCLK + 1)
++#define CLKS_NR_PERIS (CLK_GOUT_PERIS_TMU_SUB_PCLK + 1)
  
- #endif
+ /* ---- CMU_TOP ------------------------------------------------------------- */
+ 
+@@ -2551,7 +2551,7 @@ static const unsigned long peris_clk_regs[] __initconst = {
+ 
+ /* Parent clock list for CMU_PERIS muxes */
+ PNAME(mout_peris_bus_user_p)		= { "oscclk", "mout_cmu_peris_bus" };
+-PNAME(mout_peris_clk_peris_gic_p)	= { "oscclk", "mout_peris_bus_user" };
++PNAME(mout_peris_clk_peris_gic_p)	= { "mout_peris_bus_user", "oscclk" };
+ 
+ static const struct samsung_mux_clock peris_mux_clks[] __initconst = {
+ 	MUX(CLK_MOUT_PERIS_BUS_USER, "mout_peris_bus_user",
+@@ -2584,15 +2584,15 @@ static const struct samsung_gate_clock peris_gate_clks[] __initconst = {
+ 	     CLK_CON_GAT_GOUT_BLK_PERIS_UID_RSTNSYNC_CLK_PERIS_BUSP_IPCLKPORT_CLK,
+ 	     21, 0, 0),
+ 	GATE(CLK_GOUT_PERIS_CLK_PERIS_OSCCLK_CLK,
+-	     "gout_peris_clk_peris_oscclk_clk", "mout_peris_bus_user",
++	     "gout_peris_clk_peris_oscclk_clk", "oscclk",
+ 	     CLK_CON_GAT_CLK_BLK_PERIS_UID_RSTNSYNC_CLK_PERIS_OSCCLK_IPCLKPORT_CLK,
+ 	     21, 0, 0),
+ 	GATE(CLK_GOUT_PERIS_CLK_PERIS_GIC_CLK,
+-	     "gout_peris_clk_peris_gic_clk", "mout_peris_bus_user",
++	     "gout_peris_clk_peris_gic_clk", "mout_peris_clk_peris_gic",
+ 	     CLK_CON_GAT_GOUT_BLK_PERIS_UID_RSTNSYNC_CLK_PERIS_GIC_IPCLKPORT_CLK,
+ 	     21, 0, 0),
+ 	GATE(CLK_GOUT_PERIS_AD_AXI_P_PERIS_ACLKM,
+-	     "gout_peris_ad_axi_p_peris_aclkm", "mout_peris_bus_user",
++	     "gout_peris_ad_axi_p_peris_aclkm", "mout_peris_clk_peris_gic",
+ 	     CLK_CON_GAT_GOUT_BLK_PERIS_UID_AD_AXI_P_PERIS_IPCLKPORT_ACLKM,
+ 	     21, CLK_IGNORE_UNUSED, 0),
+ 	GATE(CLK_GOUT_PERIS_OTP_CON_BIRA_PCLK,
+@@ -2600,27 +2600,31 @@ static const struct samsung_gate_clock peris_gate_clks[] __initconst = {
+ 	     CLK_CON_GAT_GOUT_BLK_PERIS_UID_OTP_CON_BIRA_IPCLKPORT_PCLK,
+ 	     21, 0, 0),
+ 	GATE(CLK_GOUT_PERIS_GIC_CLK,
+-	     "gout_peris_gic_clk", "mout_peris_bus_user",
++	     "gout_peris_gic_clk", "mout_peris_clk_peris_gic",
+ 	     CLK_CON_GAT_GOUT_BLK_PERIS_UID_GIC_IPCLKPORT_CLK,
+ 	     21, CLK_IS_CRITICAL, 0),
+ 	GATE(CLK_GOUT_PERIS_LHM_AXI_P_PERIS_CLK,
+-	     "gout_peris_lhm_axi_p_peris_clk", "oscclk",
++	     "gout_peris_lhm_axi_p_peris_clk", "mout_peris_bus_user",
+ 	     CLK_CON_GAT_GOUT_BLK_PERIS_UID_LHM_AXI_P_PERIS_IPCLKPORT_I_CLK,
+ 	     21, CLK_IGNORE_UNUSED, 0),
+ 	GATE(CLK_GOUT_PERIS_MCT_PCLK,
+-	     "gout_peris_mct_pclk", "mout_peris_clk_peris_gic",
++	     "gout_peris_mct_pclk", "mout_peris_bus_user",
+ 	     CLK_CON_GAT_GOUT_BLK_PERIS_UID_MCT_IPCLKPORT_PCLK,
+ 	     21, 0, 0),
+ 	GATE(CLK_GOUT_PERIS_OTP_CON_TOP_PCLK,
+-	     "gout_peris_otp_con_top_pclk", "mout_peris_clk_peris_gic",
++	     "gout_peris_otp_con_top_pclk", "mout_peris_bus_user",
+ 	     CLK_CON_GAT_GOUT_BLK_PERIS_UID_OTP_CON_TOP_IPCLKPORT_PCLK,
+ 	     21, 0, 0),
+ 	GATE(CLK_GOUT_PERIS_D_TZPC_PERIS_PCLK,
+ 	     "gout_peris_d_tzpc_peris_pclk", "mout_peris_bus_user",
+ 	     CLK_CON_GAT_GOUT_BLK_PERIS_UID_D_TZPC_PERIS_IPCLKPORT_PCLK,
+ 	     21, 0, 0),
++	GATE(CLK_GOUT_PERIS_TMU_SUB_PCLK,
++	     "gout_peris_tmu_sub_pclk", "mout_peris_bus_user",
++	     CLK_CON_GAT_GOUT_BLK_PERIS_UID_TMU_SUB_IPCLKPORT_PCLK,
++	     21, 0, 0),
+ 	GATE(CLK_GOUT_PERIS_TMU_TOP_PCLK,
+-	     "gout_peris_tmu_top_pclk", "mout_peris_clk_peris_gic",
++	     "gout_peris_tmu_top_pclk", "mout_peris_bus_user",
+ 	     CLK_CON_GAT_GOUT_BLK_PERIS_UID_TMU_TOP_IPCLKPORT_PCLK,
+ 	     21, 0, 0),
+ 	GATE(CLK_GOUT_PERIS_OTP_CON_BIRA_OSCCLK,
 
 -- 
 2.54.0
