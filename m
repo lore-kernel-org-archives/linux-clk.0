@@ -1,209 +1,125 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B51E279DAF;
-	Fri, 12 Jun 2026 22:48:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1149D3C141A
+	for <linux-clk@vger.kernel.org>; Sat, 13 Jun 2026 05:20:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781304509; cv=none; b=kXSBWO1EsI7waY94mzWFBYuQMapwJDkzpHCnlNZ3KzdMqoXw7GM6zKiq8JtpYA/gf3YgIGVYSixKvBUi5PdlXJ38+77/pnzxLWL26PZkD4jOgehka05NP9epboQ9la7KwtsallGAv8f2sTejkzXK4FlVGrWUfh3AOpMoJp5BIhs=
+	t=1781328031; cv=none; b=fADO/2lw5Vphpl/hlMNb6Ea4kvNnbqH4P4H7JJMOCc3vZMRhsbmNMWKkmuKhq9pYaw0B5zxhm4+Z5PYl7yFdv7WnzHSqFYEtDmvGTF3KxZV9Av+Ug5vhOmEy2z+n0nWuzBnb26HMKvXCI3TIIaN7iz2UUkigT4NycXN8fyvwwTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781304509; c=relaxed/simple;
-	bh=uUPK1oL43rZp+FmOduw8qffMAXDz3BLy4nu4METhBrk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sKyuXApo/2JW4qNIz5YPfc+0RzLZZ9wAYU6QPEEqFvbRHe9j6+X8DLRhdSQKx0F8OY0K8z8/chBCXRQ+deAQAza0OMvnovnEDtCur+BGDiuVM1giqizU/BpUdgwje7mInEr2rmj7+VIxS5v2CjKAnmuM/bSkPPlyxbZOcbCymHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wzq/qGDw; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1781328031; c=relaxed/simple;
+	bh=9C+9acoU6g7lVamTfAReYE056+Mo4L19daujFjjLyxE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=u7JID2OPQpDZyE57sumNqQkb+fPFt9txQdC6aKptzsxhSf/JkWagCxUErWYTI5L9o8SVgeEAgvgqbevbZiKDKteFKl2lSH2p0Lqjz737DH2RQtPYcNJe2ONb7KBC2+HsnEeQmPL5oAUDPNx9DX2ajb+KtoCwaR7vTtvBpdBcClg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YqkEf2af; arc=none smtp.client-ip=209.85.221.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wzq/qGDw"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07BC41F000E9;
-	Fri, 12 Jun 2026 22:48:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781304508;
-	bh=sZ8zv1h9vTqxIWN/kyWnqAytOew5Axzx7GoxuJXRb+s=;
-	h=From:To:Cc:Subject:Date;
-	b=Wzq/qGDwR/S27eZeXfUkKaYYM9YhvcxpaWjonZHZ1+5OQDSWgs1xXto6u+vMvAxf7
-	 pFVrfjMLlN3l2nxNXrqL1opIh+HgqkzrSCyKW7s3sdxE3iS4nP/b0442fwkgNG2EiC
-	 zqKug41i1HlGtnEaLk7HKqz0VdOHVEudtly81GfgCCADTgldRbf8xtmvbk2LUAv+ku
-	 2AxUgW7gRvfSW4qSHiQJfv0FKDHSXpklXbWnvNnJfYKRfwjS3F0gxULF6mlpAoYsLQ
-	 A7RavZtrbSNO85p7krTiyvFD1rMSkBiQpz807Of22d0npfxyNKZdF3qz0xn05JA62z
-	 LqM44TQ1p9/Zw==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Vivek Aknurwar <vivek.aknurwar@oss.qualcomm.com>,
-	Luca Weiss <luca.weiss@fairphone.com>,
-	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
-	Luo Jie <jie.luo@oss.qualcomm.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-	Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>,
-	Alexander Koskovich <akoskovich@pm.me>,
-	Biswapriyo Nath <nathbappai@gmail.com>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Phillip Varney <pbvarney@protonmail.com>
-Subject: [GIT PULL] Qualcomm clock updates for v7.2
-Date: Fri, 12 Jun 2026 17:48:25 -0500
-Message-ID: <20260612224825.852551-1-andersson@kernel.org>
-X-Mailer: git-send-email 2.53.0
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YqkEf2af"
+Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-59d6e44e5c8so1194427e0c.2
+        for <linux-clk@vger.kernel.org>; Fri, 12 Jun 2026 22:20:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1781328028; x=1781932828; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=U/CLZ+5qQK6nv7unT8PtYK68qrCmHhJFocTHGDo1YqU=;
+        b=YqkEf2afuLBjIUD5wNsFTd28l/lznIL2zn4hL5yR7Bwv7KutC7JbiX1AeUjpQtS4Cp
+         85G1fE34/Fw9oaoslAIV5u/AtlUVGmsKj2tDuOztf5DP3EAPcBQsAjOwgcd7kAc9MK76
+         GQqS+dixjNWGw8TB6R7yuZS50SacBNxwpcFJjT68Hv4DXzwgh/RDjbIipPdR3vVoi6K7
+         dqRylJDdUDCEVf6QAIEmjQzrz+8LxHdtsorCofLx53BO9ZOAzv25WZRFrP3gvGayfBkC
+         amwcb4NOSBvpFYyzuD/qSewI3KBWg6DThFD6lXPuCMJgaabd6Z8IRqO73I51jwRxZuFz
+         /GEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1781328028; x=1781932828;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=U/CLZ+5qQK6nv7unT8PtYK68qrCmHhJFocTHGDo1YqU=;
+        b=ZrM6cqs8hsKqhPDqmk3iu4nmhak8DFteKcquC5HK5bi/SifQBk4wLypt2WAIRqAZCq
+         3EfvgFKtBVS1Kn5Tvy+DulGR3uVZxIKL/4LuDEC/2gwZ+R7p+CpEwNDuPKUhxSMDlkb2
+         kA6ubGJok8tu2QbWCzVzJR9cFZNGJi3fwIOo222/HlAUiVlo6rPGxYE6/sv2zEyzkQ6l
+         5KUrNa45aaCCeW6T9bpFvFEsIkVV/2KIJqVVwKyKicNvcx2nfYWcStFoO5ilGEOerR6L
+         DyF2ZFQlPP4eIM/tsv/7l8uL2TMkM4I7AyDQchmXVehG5iyhAUbdmNJ+z11SXoWGeEZU
+         I1fg==
+X-Forwarded-Encrypted: i=1; AFNElJ/7Eu0E91kLlHMsUQTegb6MozNxkGsykisFNNt8CitbCQ0zMUBWjVaoG3G0TARtMi1icuWu3+yyhVk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwB0krmIQMmuplmpBIwf6MMBQ0beM9zmrt4lfiklQCP5J/iAMgO
+	NigIlKeB8mT9t4asdO+s9VVJ5nWB1aJWe2/MW1Mlhwls1HK+txlTT5NMwCGawA==
+X-Gm-Gg: Acq92OFhP3+920gHnhblDrqJVnlg7kJXW5uisWCWbhuWHR1HYKswJBnXeAVBMx3uad0
+	D5ab4NPlVi0ZdMXVelwCdjzzubJf+YylYrYafddw9KZ1OV+vmzFJgrJrRxw8y31VRzupLkUdVia
+	lYKkm4TGpX90UgECwgfmGmJD+QrzXIOvdip7DgCJ6fjCDezdLVJ3r+WfOWYTWm8cwe3Tw655ZeQ
+	lsqq4dPHOT57l2ANv+TaOELfdtVRtGh5ihaTDRv36ODmv3kAdzMUCstPtWwzDZW+3pTw3BslhYq
+	9MgIrA8i1xfLIMpo0xXihN1erFhO9tLYocDnQYogPPmNa+1cLUJzNC26cUW6tcP9StiGpupam7Z
+	oyczM92Cw8mR+kXk+Lfn6L9FJqdRdt+Lc/VCqg8/zHU3j1u6FR+AyY7UL4hMw8/SFCGHxEC6KfA
+	5KIj5USNuugTGfsudv7PrfyDJP7VS1
+X-Received: by 2002:a05:6122:4204:b0:56c:3a57:aee2 with SMTP id 71dfb90a1353d-5bb6c001fddmr3552398e0c.6.1781328027844;
+        Fri, 12 Jun 2026 22:20:27 -0700 (PDT)
+Received: from [127.0.0.1] ([38.252.222.136])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5bb69014308sm4848692e0c.7.2026.06.12.22.20.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Jun 2026 22:20:27 -0700 (PDT)
+From: Denzeel Oliva <wachiturroxd150@gmail.com>
+Subject: [PATCH v2 0/2] clk: samsung: exynos990: Fix PERIS gate clock
+ parents and add TMU_SUB
+Date: Sat, 13 Jun 2026 00:19:50 -0500
+Message-Id: <20260613-exynos990-peris-fix-v2-v2-0-3dff7ade75b3@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHboLGoC/yWMywqDMBAAf0X23IU8IBB/pfSg6dquhxiyKhbx3
+ 13tcRhmdhCqTAJts0OllYWnrOAeDaRvlz+E/FYGZ1wwwXqk7ZcnidFg0VJw4A1Xh8HG5Dtveh8
+ SaFwqqbnHz9efZelHSvN1g+M4AQ8UKgN6AAAA
+X-Change-ID: 20260613-exynos990-peris-fix-v2-619c3a30b36c
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Denzeel Oliva <wachiturroxd150@gmail.com>
+X-Mailer: b4 0.15.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1781328021; l=954;
+ i=wachiturroxd150@gmail.com; s=20250819; h=from:subject:message-id;
+ bh=9C+9acoU6g7lVamTfAReYE056+Mo4L19daujFjjLyxE=;
+ b=fqNIjsE723ylk8j0/JzkxKuIjpTKFRODde0FklYKkmT158zHx150PVaaryeNmpJCGmx+6lS99
+ 9PAJFBwCkZ4Bwe267t1dckNnAYv4pOVr4zr1DpoTDCKAEQiCY6X2cEC
+X-Developer-Key: i=wachiturroxd150@gmail.com; a=ed25519;
+ pk=qNvcL0Ehm3chrW9jFA2JaPVgubN5mHH//uriMxR/DlI=
 
+Fix PERIS CMU gate clock parent mismatches and add the missing
+TMU_SUB_PCLK clock.
 
-The following changes since commit 254f49634ee16a731174d2ae34bc50bd5f45e731:
+Split into dt-bindings (clock ID) and driver (parent fixes) as
+required by checkpatch.
 
-  Linux 7.1-rc1 (2026-04-26 14:19:00 -0700)
+Changes in v2:
+  - Split dt-bindings header change into separate patch (1/2)
+  - Driver fix now only touches clk-exynos990.c (2/2)
+  - Add proper cover letter
 
-are available in the Git repository at:
+v1: TODO-add-lore-link
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git tags/qcom-clk-for-7.2
+Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
+---
+Denzeel Oliva (2):
+      dt-bindings: clock: exynos990: Add CLK_GOUT_PERIS_TMU_SUB_PCLK
+      clk: samsung: exynos990: Fix PERIS gate clock parents
 
-for you to fetch changes up to e108373c54fbc844b7f541c6fd7ecb31772afd3c:
+ drivers/clk/samsung/clk-exynos990.c           | 24 ++++++++++++++----------
+ include/dt-bindings/clock/samsung,exynos990.h |  1 +
+ 2 files changed, 15 insertions(+), 10 deletions(-)
+---
+base-commit: c425609d6ac4012c8bbf01ec2e10e801b1923a7b
+change-id: 20260613-exynos990-peris-fix-v2-619c3a30b36c
 
-  clk: qcom: regmap-phy-mux: Rework the implementation (2026-06-08 09:17:24 -0500)
+Best regards,
+--  
+Denzeel Oliva <wachiturroxd150@gmail.com>
 
-----------------------------------------------------------------
-Qualcomm clock updates for v7.2
-
-Introduce global, TCSR, and RPMh clock controllers for the Hawi mobile
-SoC.
-
-Introduce GX clock for Milos, and ensure that camera clock controller
-votes for interconnect bandwidth in order to ensure the TOP_GDSC can be
-turned on.
-
-Introduce camera and video clock controllers for Hamoa and Purwa. Reduce
-the max_register of the display clock controller to avoid regmap
-attemting to dump protected registers.
-
-Introduce global clock controller for the IPQ9650 SoC and add IPQ5332
-support to the cmnpll driver.
-
-Add missing USB2 PHY reset to the Nord NegCC.
-
-Rework the PHY mux clock implementation as necessary for upcoming USB4
-support.
-
-----------------------------------------------------------------
-Alexander Koskovich (1):
-      clk: qcom: clk-rpmh: Make all VRMs optional
-
-Bartosz Golaszewski (2):
-      dt-bindings: clock: qcom: add the definition for the USB2 PHY reset
-      clk: qcom: nord: negcc: add support for the USB2 PHY reset
-
-Biswapriyo Nath (1):
-      dt-bindings: clock: qcom,sm6125-dispcc: reference qcom,gcc.yaml
-
-Bjorn Andersson (2):
-      Merge branch '20260507-ipq9650_boot_to_shell-v3-1-62742b49c991@oss.qualcomm.com' into clk-for-7.2
-      Merge branch '20260106-qcom_ipq5332_cmnpll-v2-2-f9f7e4efbd79@oss.qualcomm.com' into clk-for-7.2
-
-Jagadeesh Kona (5):
-      dt-bindings: clock: qcom: Add X1P42100 video clock controller
-      dt-bindings: clock: qcom: Add X1P42100 camera clock controller
-      clk: qcom: videocc-x1p42100: Add support for video clock controller
-      clk: qcom: camcc-x1e80100: Add support for camera QDSS debug clocks
-      clk: qcom: camcc-x1p42100: Add support for camera clock controller
-
-Kathiravan Thirumoorthy (2):
-      dt-bindings: clock: add Qualcomm IPQ9650 GCC
-      clk: qcom: add Global Clock controller (GCC) driver for IPQ9650 SoC
-
-Konrad Dybcio (1):
-      clk: qcom: regmap-phy-mux: Rework the implementation
-
-Krzysztof Kozlowski (3):
-      clk: qcom: dispcc-x1e80100: Fix (possibly) dumping regmap
-      clk: qcom: Constify qcom_cc_driver_data and list of critical CBCR registers
-      dt-bindings: clock: qcom,kaanapali-gxclkctl: Correctly use additionalProperties
-
-Luca Weiss (6):
-      dt-bindings: clock: qcom: document the Milos GX clock controller
-      clk: qcom: Add support for GXCLK for Milos
-      interconnect: Add devm_of_icc_get_by_index() as exported API for users
-      dt-bindings: clock: qcom,milos-camcc: Document interconnect path
-      clk: qcom: gdsc: Support enabling interconnect path for power domain
-      clk: qcom: camcc-milos: Declare icc path dependency for CAMSS_TOP_GDSC
-
-Luo Jie (3):
-      dt-bindings: clock: qcom: Add CMN PLL support for IPQ5332 SoC
-      clk: qcom: cmnpll: Account for reference clock divider
-      clk: qcom: cmnpll: Add IPQ5332 SoC support
-
-Phillip Varney (1):
-      clk: qcom: a53: Corrected frequency multiplier for 1152MHz
-
-Vivek Aknurwar (7):
-      dt-bindings: clock: qcom-rpmhcc: Add RPMHCC bindings for Hawi
-      dt-bindings: clock: qcom: Add Hawi TCSR clock controller
-      dt-bindings: clock: qcom: Add Hawi global clock controller
-      clk: qcom: rpmh: Add support for Hawi RPMH clocks
-      clk: qcom: Add Hawi TCSR clock controller driver
-      clk: qcom: clk-alpha-pll: Add support for Taycan EHA_T PLL
-      clk: qcom: Add support for global clock controller on Hawi
-
- .../bindings/clock/qcom,dispcc-sm6125.yaml         |   17 +-
- .../devicetree/bindings/clock/qcom,hawi-gcc.yaml   |   63 +
- .../bindings/clock/qcom,ipq9574-cmn-pll.yaml       |    1 +
- .../bindings/clock/qcom,ipq9650-gcc.yaml           |   68 +
- .../bindings/clock/qcom,kaanapali-gxclkctl.yaml    |    2 +-
- .../bindings/clock/qcom,milos-camcc.yaml           |    8 +
- .../bindings/clock/qcom,milos-gxclkctl.yaml        |   61 +
- .../devicetree/bindings/clock/qcom,rpmhcc.yaml     |    1 +
- .../bindings/clock/qcom,sm8450-videocc.yaml        |    3 +
- .../bindings/clock/qcom,sm8550-tcsr.yaml           |    2 +
- .../bindings/clock/qcom,x1e80100-camcc.yaml        |    1 +
- drivers/clk/qcom/Kconfig                           |   48 +
- drivers/clk/qcom/Makefile                          |    7 +-
- drivers/clk/qcom/a53-pll.c                         |    2 +-
- drivers/clk/qcom/camcc-milos.c                     |    7 +
- drivers/clk/qcom/camcc-x1e80100.c                  |   64 +
- drivers/clk/qcom/camcc-x1p42100.c                  | 2223 ++++++++++++
- drivers/clk/qcom/clk-alpha-pll.h                   |    6 +
- drivers/clk/qcom/clk-regmap-phy-mux.c              |   52 +-
- drivers/clk/qcom/clk-rpmh.c                        |   41 +-
- drivers/clk/qcom/dispcc-x1e80100.c                 |    2 +-
- drivers/clk/qcom/gcc-hawi.c                        | 3657 ++++++++++++++++++++
- drivers/clk/qcom/gcc-ipq9650.c                     | 3445 ++++++++++++++++++
- drivers/clk/qcom/gcc-nord.c                        |    2 +-
- drivers/clk/qcom/gdsc.c                            |   33 +
- drivers/clk/qcom/gdsc.h                            |    5 +
- drivers/clk/qcom/gpucc-sm8750.c                    |    4 +-
- drivers/clk/qcom/gxclkctl-kaanapali.c              |    1 +
- drivers/clk/qcom/ipq-cmn-pll.c                     |   30 +-
- drivers/clk/qcom/negcc-nord.c                      |    3 +-
- drivers/clk/qcom/nwgcc-nord.c                      |    4 +-
- drivers/clk/qcom/segcc-nord.c                      |    2 +-
- drivers/clk/qcom/tcsrcc-hawi.c                     |  158 +
- drivers/clk/qcom/videocc-x1p42100.c                |  585 ++++
- drivers/interconnect/core.c                        |   20 +
- include/dt-bindings/clock/qcom,hawi-gcc.h          |  253 ++
- include/dt-bindings/clock/qcom,hawi-tcsrcc.h       |   16 +
- include/dt-bindings/clock/qcom,ipq5332-cmn-pll.h   |   19 +
- include/dt-bindings/clock/qcom,ipq9650-gcc.h       |  172 +
- include/dt-bindings/clock/qcom,nord-negcc.h        |    1 +
- include/dt-bindings/clock/qcom,rpmh.h              |    2 +
- include/dt-bindings/clock/qcom,x1e80100-camcc.h    |    3 +
- include/dt-bindings/clock/qcom,x1p42100-videocc.h  |   48 +
- include/dt-bindings/reset/qcom,ipq9650-gcc.h       |  215 ++
- include/linux/interconnect.h                       |    6 +
- 45 files changed, 11313 insertions(+), 50 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,hawi-gcc.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,ipq9650-gcc.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,milos-gxclkctl.yaml
- create mode 100644 drivers/clk/qcom/camcc-x1p42100.c
- create mode 100644 drivers/clk/qcom/gcc-hawi.c
- create mode 100644 drivers/clk/qcom/gcc-ipq9650.c
- create mode 100644 drivers/clk/qcom/tcsrcc-hawi.c
- create mode 100644 drivers/clk/qcom/videocc-x1p42100.c
- create mode 100644 include/dt-bindings/clock/qcom,hawi-gcc.h
- create mode 100644 include/dt-bindings/clock/qcom,hawi-tcsrcc.h
- create mode 100644 include/dt-bindings/clock/qcom,ipq5332-cmn-pll.h
- create mode 100644 include/dt-bindings/clock/qcom,ipq9650-gcc.h
- create mode 100644 include/dt-bindings/clock/qcom,x1p42100-videocc.h
- create mode 100644 include/dt-bindings/reset/qcom,ipq9650-gcc.h
