@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C8F3812C2
-	for <linux-clk@vger.kernel.org>; Sat, 13 Jun 2026 22:55:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC196348860;
+	Sat, 13 Jun 2026 22:55:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781391303; cv=none; b=frZOPxrMlhCDLmdEptDj9GqcSoCRCEcRrqvf/erMfWa3TMm6fU6Rd+aSROkPbfZmO2q7PdsPG8VC6FKXWcIXbae40drjQ1NSqdSe9bOtBga5DJKc+WvZkAoEbFMyf2DnbwiuCfqW9bUoPVMW0tkoRNz3pMch2KzkLVciCqr1rRw=
+	t=1781391305; cv=none; b=C1FJzP+EAhsbR7LxDvKLSGou34DNGS3rEWNaF63wUAEbunCFXcMrsz3z31FKPYHBCc9wLGl8+XYrs2P1ZbMVaz42HDpFxhxOj1MQOjl9fpHrEMivh/bL1BMhfOsHa3/UA+sWm66pWV65mNmS3JPfw1A1u/kIyuosFlpzDNn5JdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781391303; c=relaxed/simple;
-	bh=uD2KgGN2qvePriWx+OmDu4T4iSBPyz3xOPgYGdBnNBc=;
+	s=arc-20240116; t=1781391305; c=relaxed/simple;
+	bh=9AeznTkORLN6XW9vuJmDhO7OWaAaBqLg4kr78TEv9tc=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=cVngOTVVrr3g6q0SJyyQD1t+uuG+tH57k4Ck/ys/lFO+Z0VfKJNRkms60EMC2x5wCRVXOrll5HV0yMBdlpyxjeSRJsEJB6EA81+wZ+85zQSTo7kuUQuKtvkSwW9E4iWScqEc4lLVWqk60DbnTAfV5XV4edRvN13ZcuGrKe+H7gU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XLjmhtL+; arc=none smtp.client-ip=100.103.45.18
+	 To:Date:Message-ID; b=XSKaOUYMPIyPyyNrqlrZ3VIWHLXbM7s2UrsCEeW2ZqnloItp3VJpPpErOzgXlLsEVIDA3F10T2g26GRkesFdMAPUZZ3BT20F/BKeTPpBkgAugbO8YQ8PMZGXhoESirCa2UEZstUgILNbEZShTBID7sI4YWubESEWdnQ9voQInMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FD3qfZaY; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XLjmhtL+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60B511F000E9;
-	Sat, 13 Jun 2026 22:55:02 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FD3qfZaY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 662951F000E9;
+	Sat, 13 Jun 2026 22:55:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781391302;
-	bh=SjUBfdi4LdjoTQHtLZhEUMBg8a67K1Nl1TJEtZTwpOY=;
+	s=k20260515; t=1781391304;
+	bh=n2FhzrzvdqAzy0gU8lhh7x/LXxPE1LPhGr06xqqGpPo=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date;
-	b=XLjmhtL+V6hC4vaJcQsI5KZshRXmFOZJw5VjKH8kQLN6h3/UbtSEj1E1zMBtX4Kgg
-	 wrx3dE3YiYP69EXVmwxsgfuPedn/hFJqExE9cH8vqsj11SVr4CY008c51GvSPf6Hv3
-	 /SGGPzLB6NOnN2lSM2mMUejMxrSoxIocTUmP5KeKBJUhP7+u1oC6kVKmV3y4dcdoEj
-	 3WvNH+sg2grIxpZ6hpAdvUprZjbzjjQMYOFlnVix7faU5TVeF8cSj/SXI7d/V2eHTv
-	 SzAlKdiTEKuK6p0JFLYAg5x7bKioJUFdg226i54K1yfSWie2iZszlsKe7qP8Z2bmu/
-	 td4MicSBqa4Pg==
+	b=FD3qfZaYPeCDOtbqEM7kkl0l2E2nrpDxQyEo8fzwz2OQqK3STca9WA3GRYiPuHpbL
+	 TolfMJthikoK1qNdzYPYNL+ovmsLgD4B4OCOKOQVv2uDfRfj5DnxiENnELpCbCod/f
+	 AseFfzPW1lz9OTfT1kj+oBCF2D/LI+toNZfC9kfro8kMIcmeusdw+bvUDS/6ODeoUW
+	 +vwL4X3KLHgonvXjFaqF8ft3eKw7cksN7gkcaSPP4dmBg/R+uZdGf6QWM0tjhzBrvG
+	 bN8ZJU+ypUkgrgVcJcVmZsowpRyL4rF0lddUYlnMjaPvbqoziyxjwQctji3FHNJ1Hf
+	 Cb9Xp9ESkJtow==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,26 +34,26 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <4272848.9fHWaBTJ5E@phil>
-References: <4272848.9fHWaBTJ5E@phil>
-Subject: Re: [GIT PULL] Rockchip clock changes for 7.2 #1
+In-Reply-To: <20260604030907.dhppbxwyfnnoeitz@dumpling>
+References: <20260604030907.dhppbxwyfnnoeitz@dumpling>
+Subject: Re: [GIT PULL] clk: ti: sci: TI updates for v7.2
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
-To: Heiko Stuebner <heiko@sntech.de>, mturquette@baylibre.com
-Date: Sat, 13 Jun 2026 14:51:04 -0700
-Message-ID: <178138746455.819343.17093210868169147733@localhost.localdomain>
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Vignesh Raghavendra <vigneshr@ti.com>, Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>, Tony Lindgren <tony@atomide.com>, Santosh Shilimkar <ssantosh@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>, Nishanth Menon <nm@ti.com>
+Date: Sat, 13 Jun 2026 14:51:50 -0700
+Message-ID: <178138751088.819343.10697672744094606693@localhost.localdomain>
 User-Agent: alot/0.12
 
-Quoting Heiko Stuebner (2026-06-07 13:59:31)
-> Hi Mike, Stephen,
+Quoting Nishanth Menon (2026-06-03 20:09:07)
+> Hi Stephen, Mike,
 >=20
-> please find below a pull-request with a Rockchip clock change for 7.2
+> We have a couple of minor patches lying around for some time that
+> was'nt getting in, so took advice Brian made.. Here is the PR.
+> I have cross checked this on top of next-20260602, applies clean,
+> passes the build static checks and functions on all the TI K3
+> platforms I have access to. Thanks in advance for pulling..
 >=20
-> Please pull.
->=20
-> Thanks
-> Heiko
->=20
+> Please Pull:
 >=20
 > The following changes since commit 254f49634ee16a731174d2ae34bc50bd5f45e7=
 31:
@@ -62,12 +62,13 @@ Quoting Heiko Stuebner (2026-06-07 13:59:31)
 >=20
 > are available in the Git repository at:
 >=20
->   https://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.gi=
-t tags/v7.2-rockchip-clk1
+>   https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git tags/ti-k3=
+-sci-clk-for-v7.2
 >=20
-> for you to fetch changes up to 7edfb7fb58ee058298e18fde76a6077ef17d19d8:
+> for you to fetch changes up to 2b0123e4a9257fa2933d13d1bca9ac36467efac1:
 >=20
->   clk: rockchip: allow COMPILE_TEST builds (2026-05-13 12:35:57 +0200)
+>   clk: keystone: sci-clk: fix application of sizeof to pointer (2026-06-0=
+3 21:46:01 -0500)
 >=20
 > ----------------------------------------------------------------
 
