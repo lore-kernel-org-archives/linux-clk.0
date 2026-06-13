@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C84DC3988EB
-	for <linux-clk@vger.kernel.org>; Sat, 13 Jun 2026 22:55:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B9AB348860;
+	Sat, 13 Jun 2026 22:55:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781391314; cv=none; b=NqBq9uI7nuoOu/T5RYv2ue7C/fI4MEXahv2BeXfiFjCL2f2QsZyEK8OHavAbnDeFX716hQbuTvUvxWT7FoCIXBGYmcNSNj6nnEt0nl25AzlMw6YmxE988Vx+VRoIro1jYPGS5CTAyLXNAzIeLFsd8CIyL/ewRTaDZlhT+MRaoew=
+	t=1781391316; cv=none; b=hAIYgCpvICCj0+d0oncvq0XSsqbbBtCp/1XfEk7JbG42+zay+gk2ZX2Aa6qNiCtk3F6ufXc/6fNmriTFXLxKt4/3GEAZfS8pUOyB4I1iAB9zKGBbS7eofwb2u22XtHEFcd59/m0Ouwq8AhVDhUQ6opjixxJ+LkCKgpf5wbvmECA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781391314; c=relaxed/simple;
-	bh=mEoqaFjwsvgzZQCj+Qzhz51D26Vry36FvXQlxIxbkDk=;
+	s=arc-20240116; t=1781391316; c=relaxed/simple;
+	bh=cojz8L42QoYl4v8USwM1fmjxLhPaAAO4EBmbvPz+95w=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=DcHXyAzAsH6oucEUURjnV3GE2z5FBXxRf9Pj3cOOue3Kh2ZRz0fKkvSu8Q9X2u151AxEU4dE2jymX4hv5qia74qQaTYS6t2sFDui3Pd89fx9pUjg9x9ONvjnQceFgzBVvFNVsHdVD0DDupJJ/Ovfsfv2Yxu45d3mZqgOz6aypTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eGuO6ocO; arc=none smtp.client-ip=100.103.45.18
+	 To:Date:Message-ID; b=PZCdw+Y+cJintVHJE0kCBqX4YU2kRvarrgD3hzuuKGqGCxnUgi93dAl/qh+VwnwUbYivzwjMo8moX6+EzgEI4cGuNRstVHK/KG7aUxPqGuz5l83TWINaIB8y1KYMo33GqwxLVzAmkAHHH1e6zUFr6X9KLrpWkRcd++DXpxWn6rI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R0bDutmf; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eGuO6ocO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CBA91F000E9;
-	Sat, 13 Jun 2026 22:55:13 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R0bDutmf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2750F1F000E9;
+	Sat, 13 Jun 2026 22:55:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781391313;
-	bh=p4pP18fOAc+1/Sq6SOACvynFlZ1J+CXI3eRbYDQCw54=;
+	s=k20260515; t=1781391315;
+	bh=cojz8L42QoYl4v8USwM1fmjxLhPaAAO4EBmbvPz+95w=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date;
-	b=eGuO6ocOUeYdmPyOssoRxbU3mad9NowcVNx5QJOSv1zYdr9E2XyeYfOySxbJFIimT
-	 5YNCfqpzunYeaE/FB2+oq2RnZhraHAOcuwKlrha9yrlv6U6KvwvVCocIdlYx/axZHf
-	 b3CWA1KfFSF6kQzEgjyElCmoa/WsSWwK9AyQKEHI5nhSQuTp93dCtiVXjWKSyjmAzK
-	 oICLKUNXBMnQJsEcZcBmQMHUlatTPCzLHkS4MeMd8FSQgTSnhHdvpGAIi8SG6xCDfP
-	 9/SsoO37Zzl394egy+GpvVcpX/gGPT2QHIIIkQDdO/22F77acFdRYCXiHzGFj5rbll
-	 T/IK/ftGKrkOg==
+	b=R0bDutmfWV/1bHtsseUtk4NuDpcqjBpr/3X+l3QT539C98oqUFuVRoXwhZ1F2tApZ
+	 EW/xXcgZFOh7w64Jo5SZaoqimxnssWMc6+6R9W1g622zYTFcIA4tG25g5i/Rlq4R7t
+	 Ctlpp9R954fGyNfOFhZ3RCoQ2EjhMFHy/738yV+2iM1UIjkNDj9nt1TUczgUmyBqCO
+	 fJBN2bY4g2szgbiC2DvRWiGDReP5v4+8Ir7c5RIbH21a07TU2VIYEI1trbZfpMLAF6
+	 N8LgYf7wRifY93I7rYZWS51KP6o4igC1/ML7WG3ZwCwM77pPfSGbz6n8KavhuLmEVQ
+	 moBbAo8FWIijQ==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,32 +34,41 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20260609074302.814617-1-claudiu.beznea@tuxon.dev>
-References: <20260609074302.814617-1-claudiu.beznea@tuxon.dev>
-Subject: Re: [GIT PULL] Microchip clock updates for v7.2
+In-Reply-To: <20260602-tcsr_qref_0527-v5-2-8ea174a59d7e@oss.qualcomm.com>
+References: <20260602-tcsr_qref_0527-v5-0-8ea174a59d7e@oss.qualcomm.com> <20260602-tcsr_qref_0527-v5-2-8ea174a59d7e@oss.qualcomm.com>
+Subject: Re: [PATCH v5 2/7] clk: qcom: Add generic clkref_en support
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: claudiu.beznea@tuxon.dev, nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com, conor.dooley@microchip.com
-To: Claudiu Beznea <claudiu.beznea@tuxon.dev>, linux-clk@vger.kernel.org, mturquette@baylibre.com
-Date: Sat, 13 Jun 2026 14:58:33 -0700
-Message-ID: <178138791350.819343.6521312957120113501@localhost.localdomain>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Qiang Yu <qiang.yu@oss.qualcomm.com>, krishna.chundru@oss.qualcomm.com
+To: Bjorn Andersson <andersson@kernel.org>, Brian Masney <bmasney@redhat.com>, Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Qiang Yu <qiang.yu@oss.qualcomm.com>, Rob Herring <robh@kernel.org>, Taniya Das <taniya.das@oss.qualcomm.com>
+Date: Sat, 13 Jun 2026 15:46:17 -0700
+Message-ID: <178139077723.819343.8364833855890359860@localhost.localdomain>
 User-Agent: alot/0.12
 
-Quoting Claudiu Beznea (2026-06-09 00:43:02)
-> The following changes since commit 254f49634ee16a731174d2ae34bc50bd5f45e7=
-31:
+Quoting Qiang Yu (2026-06-02 01:02:18)
+> Before XO refclk is distributed to PCIe/USB/eDP PHYs, it passes through
+> a QREF block. QREF is powered by dedicated LDO rails, and the clkref_en
+> register controls whether refclk is gated through to the PHY side.
 >=20
->   Linux 7.1-rc1 (2026-04-26 14:19:00 -0700)
+> These clkref controls are different from typical GCC branch clocks:
+> - only a single enable bit is present, without branch-style config bits
+> - regulators must be voted before enable and unvoted after disable
 >=20
-> are available in the Git repository at:
+> Model this as a dedicated clk_ref clock type with custom clk_ops instead
+> of reusing struct clk_branch semantics.
 >=20
->   https://git.kernel.org/pub/scm/linux/kernel/git/at91/linux.git tags/clk=
--microchip-7.2
+> Also provide a common registration/probe API so the same clkref model
+> can be reused regardless of where clkref_en registers are placed, e.g.
+> TCSR on glymur and TLMM on SM8750.
 >=20
-> for you to fetch changes up to 871cb269cd43b5d90f4e59d1458f8c09204759d4:
->=20
->   clk: at91: sama7d65: add peripheral clock for I3C (2026-05-25 22:53:10 =
-+0300)
->=20
-> ----------------------------------------------------------------
+> Signed-off-by: Qiang Yu <qiang.yu@oss.qualcomm.com>
+> ---
+[...]
+> diff --git a/include/linux/clk/qcom.h b/include/linux/clk/qcom.h
+> new file mode 100644
+> index 000000000000..09e2e3178cfb
+> --- /dev/null
+> +++ b/include/linux/clk/qcom.h
 
-Thanks. Pulled into clk-next
+Why are we making this file in linux/clk when only drivers/clk/qcom/ is
+going to use it? We can have some qref.h header in the qcom clk driver
+area.
