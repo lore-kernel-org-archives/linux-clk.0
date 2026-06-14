@@ -1,63 +1,154 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 243F27263B;
-	Sun, 14 Jun 2026 01:24:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60E6A387364
+	for <linux-clk@vger.kernel.org>; Sun, 14 Jun 2026 14:08:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781400287; cv=none; b=H/8+BOp/3L/nzeE/OVDBkuzdI2OTAvTl6Nww05slL8zn1efB8MBSDFfOjoAKHmm79qFCI8EWXFupKisv4yiviCqRBfYmR4ZqHY/YwLB3M4qMLjw4w2C7uad1YFhA7/1RRVH0XHSwQCZ8J6c8ZANaMcpCOteX8cki+xE6XBGE1b4=
+	t=1781446091; cv=none; b=dEHh8LXCDAnZwB968U1Qqz/Dm8CjQJ9NMm0Qt7V7JULJ11VF8odhPngvbZWN4mCTTDoVe60OrJFSKuYQy652TzBDKXVMqwaU87X+sbCD6iJ09P0bCn+4V7pCuuh8S7ElXYejcWrcV9CBmXHstpII+HezQ178YJEgrVw+YmiYCJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781400287; c=relaxed/simple;
-	bh=fU328zcSWGBLoLyn56W1hUmSXDhxuPtvRQhI/ALuvug=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=r+sVza/DairwHvBV3AHn2EqNTekwFePbfLQIGaLeAKYR2jMJ/EMnfhN0o0zNvfX8/RyuK8xclF47rpYs0FUHq3n7j0YuIX/QrQdl6X3BmtF+BaZU+Mc4F8R4HMhYF8T4hd+Y4P+pNwv3tTlCK3G/EvYf8tylb9YykATGwlhWphg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bp0P6j9U; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1781446091; c=relaxed/simple;
+	bh=vZ6sLuNEBwb2pkhd5qu/rn+wBwxOy1DXeVTlXK6rZDU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EnQk45keAUIha3Wzd2wIEsJ+D3Rslh6gXnrdAMJkoRg+lDZEpQEvW1o2B8Zbhc+5uMt4vcTTfFXhXpuEJtg3zNq8NTbeQLKEKlK+Pk5+2Idf/SWQZZeUGtdJgIZ0VK0tPwnQo+DxUIJtDXdhMW9V6xq85V6ozT2XE9NHd1kPT6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SL0c6Tkv; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bp0P6j9U"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD5BB1F000E9;
-	Sun, 14 Jun 2026 01:24:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781400285;
-	bh=l2uAKlFErXXaDUN6iFUbbplyn7xdmr7gjNj9U+tEeB8=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc;
-	b=Bp0P6j9UhnnJVYMTixP/RrM2lqnVw+PC+wuyGt2qPIVK4TaI1NQSk0F75DaAys7KS
-	 GWP59a1uNkb/50g3EB4gNslRa1sLyoEesBQaNs9sh/0K6JQ9D1y+1iHSmWPugiX21w
-	 UIy3rmTtjmeTaBJqQb7AKKV+T8Zfz9gEz2bbxYZV3s3KfGKZIHPOLx1h3+q8wecZKn
-	 ibQ+AOKwNEa0uosxv2mVx/JxbxgFIKsrufTWmJxEiRl6C7P3/qmst5A8JQrOhN2stW
-	 rOjjUIr2RTlMa8kEZHQZhQ0ncHWpJl4Dl6x49ceLSzFMhzzaOfqwcNe4uYMBRcQSpJ
-	 kkLXDo9/YELSQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 19A143A54A33;
-	Sun, 14 Jun 2026 01:24:43 +0000 (UTC)
-Subject: Re: [GIT PULL] clk fixes for v7.1-rc7
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20260613231119.925018-1-sboyd@kernel.org>
-References: <20260613231119.925018-1-sboyd@kernel.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20260613231119.925018-1-sboyd@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
-X-PR-Tracked-Commit-Id: f29a24c94705496254dd9ce7ea8a31efb6eb4358
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: e21ee273e6fa3879aec9a27251cfce98156e07c4
-Message-Id: <178140028173.1650075.11237479010044216195.pr-tracker-bot@kernel.org>
-Date: Sun, 14 Jun 2026 01:24:41 +0000
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SL0c6Tkv"
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-45eecb8bf67so2012273f8f.2
+        for <linux-clk@vger.kernel.org>; Sun, 14 Jun 2026 07:08:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1781446089; x=1782050889; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vZ6sLuNEBwb2pkhd5qu/rn+wBwxOy1DXeVTlXK6rZDU=;
+        b=SL0c6TkvAOjiS4a+T0BD3hQYJv78tN0qebh5TH4l+9HI27TQ6wbXsXD+pkmdd7v5Pz
+         4hRcc1Qrx6Y9L/kLIf/DBBCQZj6bvGjvMAAwDMQw+ZYPz64pxjF05p/3OG5LQLb6XzwB
+         +dPucxVnDdH5CRe+dTEQjQV+HRJcHfFXeSzOqRGXc2Mla4wF2dYui7B/CglTPXUdCXRO
+         SxosPem4lxJ847Spn+4UtEEIM0doDUWqo/hR3iyseo+LiED7OM9yZag0bph/H/zkXP/n
+         k3VfEcU5aoBaWxmqWVlffxNgs70PlVVjss4sHCDYKuL/1A8YkYhsrIZ43rT7aYASPrmO
+         S0tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1781446089; x=1782050889;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=vZ6sLuNEBwb2pkhd5qu/rn+wBwxOy1DXeVTlXK6rZDU=;
+        b=oL6rtQgHyVu9rnM/KgcTIUrWQak3FIYgYINWwj0wiEzDC6Vcv+bAt6r0gzO8AuBby4
+         xPA3alCpJ0UgWE+/idGhhzhCVoAGqBT4s3C9Sy/BAmH5Iyr9PeYJl6xtSo4l7LoxjBgP
+         6cZpPgRi4PD40+QnSrwFpiNGe3emsHH5DmB9P0mmDH9oG/MDTB5FhkYRK5T5bwirCg9I
+         un1uKL+iXtdrI+oKwcFakxwwyUZ9dSh6PkPLQaxqBYjcg9OPWramm4+Dm+hj6yYFfSgg
+         tiOGE/V8yPIo6250VNlqocZljDRpODrRzr0AfVn386ISAvgSQL+/GBSt3h9ZET0QO0ge
+         XZFw==
+X-Forwarded-Encrypted: i=1; AFNElJ88zw2CuCSnxBwszDoPrWl5U3bHYsPrfjWBOPH7OnGU9vETJDNYBR0JYFOfYtZRIhelHZGfTjGB21M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+JbjBjsMRmPubJx9j0Vy+x95GrrUrREK0CT/epHjNTx4aQKbz
+	QUTZkgqA/mDP8N/pYoKaSuMrkA7TIKqXsDa4jR1rIx8d4206SBNARxnq
+X-Gm-Gg: Acq92OFVtyNKqkLOld1OgMQxylmrMCbaYk6JafrYUfCrQvZnMxUcGX0U0GGynmQpkfW
+	5+Dbs1Ahn/5nZGlv68B61//Bibp/eBuAfhLnwHhoHyRu/bgPpCIKH1fOCepPcZPSm1Ur6U9QWHx
+	PIJtrB/eWgi+VQnMbCHim3WXgN9vOc65b/6nOtZbEauWrLwUhuTkV5/qNBbklkIWUDAL9PW6QNI
+	Hh7yWPc7j0wb9Ny1OWLbYrcxiaOze3N0DgglrkngcmBDPKLYO6tfBXIU9J2u/N0x90uA3K2KvpU
+	me48rbKnnq9FheZNRx7IApU2GiN3APGOOJBsaFjA0cK4zPhO2nuraUx/mqhSNBVp7RUeA2kS0Fv
+	jVnnNLzjZcTcnJBn0YFu5+5vzjhPylFqG5VwhcMCkMnSW+v4pNMdMV/0cAO2lkehcn5pJ049ZxC
+	WLaFp0jZEU0mKhwmEUTZYPWkLzA1BllObqykIe3PF008QG
+X-Received: by 2002:a05:6000:984:b0:460:3234:293d with SMTP id ffacd0b85a97d-4606dbce8a5mr14655307f8f.40.1781446086390;
+        Sun, 14 Jun 2026 07:08:06 -0700 (PDT)
+Received: from jernej-laptop.localnet ([188.159.248.16])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4606f26f450sm27152837f8f.10.2026.06.14.07.08.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 14 Jun 2026 07:08:05 -0700 (PDT)
+From: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+To: wens@kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: samuel@sholland.org, mripard@kernel.org,
+ maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, airlied@gmail.com,
+ simona@ffwll.ch, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ mturquette@baylibre.com, sboyd@kernel.org, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org
+Subject:
+ Re: [PATCH v2 7/8] dt-bindings: display: allwinner: Split H616 DE33 layer reg
+ space
+Date: Sun, 14 Jun 2026 16:08:04 +0200
+Message-ID: <nIKN_benRn2Bk8SDZrkMCA@gmail.com>
+In-Reply-To: <032c1099-40ab-470e-8cc3-af6d3cad22d4@kernel.org>
+References:
+ <20260509190015.79086-1-jernej.skrabec@siol.net>
+ <ahNuuaVlDl0KvOSj@home.wens.tw>
+ <032c1099-40ab-470e-8cc3-af6d3cad22d4@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-The pull request you sent on Sat, 13 Jun 2026 16:11:18 -0700:
+Dne ponedeljek, 25. maj 2026 ob 14:10:38 Srednjeevropski poletni =C4=8Das j=
+e Krzysztof Kozlowski napisal(a):
+> On 24/05/2026 23:33, Chen-Yu Tsai wrote:
+> > Hi,
+> >=20
+> > (resent from new email)
+> >=20
+> > On Thu, May 14, 2026 at 2:04=E2=80=AFPM Krzysztof Kozlowski <krzk@kerne=
+l.org> wrote:
+> >>
+> >> On Sat, May 09, 2026 at 09:00:14PM +0200, Jernej Skrabec wrote:
+> >>> From: Jernej Skrabec <jernej.skrabec@gmail.com>
+> >>>
+> >>> As it turns out, current H616 DE33 binding was written based on
+> >>> incomplete understanding of DE33 design. Namely, planes are shared
+> >>> resource and not tied to specific mixer, which was the case for previ=
+ous
+> >>> generations of Display Engine (DE3 and earlier).
+> >>>
+> >>> This means that current DE33 binding doesn't properly reflect HW and
+> >>> using it would mean that second mixer (used for second display output)
+> >>> can't be supported.
+> >>>
+> >>> Remove layer register space, which will be represented with additional
+> >>> node, and replace it with phandle, which will point to that new, shar=
+ed
+> >>> node. That way, all mixers can share same layers.
+> >>>
+> >>> There is no user of this binding yet, so changes can be made safely,
+> >>> without breaking any backward compatibility.
+> >>
+> >> There is user. git grep gives me:
+> >> drivers/gpu/drm/sun4i/sun8i_mixer.c
+> >>
+> >> which means this is a released ABI. As I understood, the old code was
+> >=20
+> > We held off on merging the DT changes so that we could rework this.
+> > I can't find the actual request though. It was probably over IRC.
+> >=20
+> >> working fine but just did not support all use cases. Why this cannot be
+> >> kept backwards compatible?
+> >=20
+> > AFAIK the "planes" block is shared between two display mixers. As the
+> > commit message explains, this prevents using the second mixer, since
+> > only one of them can claim and map the register space. And on the H700
+> > (which is the same die as the H616 discussed here but with more exposed
+> > interfaces), there could actually be a use case for the second mixer.
+>=20
+> It explains why you want to make the changes but not why you cannot keep
+> it backwards compatible.
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+I guess it can be backward compatible, but I don't think it makes sense.
+Yes, original driver implemented original DT bindings, but there is no node
+which uses that binding. If there is no user of that, why would driver
+need to support it nevertheless? Supporting only actually used DT binding
+allows for better code architecture, as there is no need to support second,
+unused path. It also simplifies testing, since developer doesn't need to
+test both paths if code is changed in that area.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/e21ee273e6fa3879aec9a27251cfce98156e07c4
+Best regards,
+Jernej
 
-Thank you!
+Best regards,
+Jernej
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+
