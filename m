@@ -1,82 +1,82 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0673E37F01D
-	for <linux-clk@vger.kernel.org>; Mon, 15 Jun 2026 08:46:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D8613D47CE
+	for <linux-clk@vger.kernel.org>; Mon, 15 Jun 2026 08:51:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781513168; cv=none; b=uVwcszwBoAwN49Re94sv4RAbs8Kab5lWlft2bxEtMw2j+PxUeYxqf5q+Arzc8SU+xR/GVPqW02VqoX3dPdQToqLfpFGGA94uPstYg1MtK8jsnX4NR4FmvJf3BhvFx3AG6EirjTkpJtVtrhPlc2dqtfNcu8JUvNKlZ9M7Wocw8nE=
+	t=1781513490; cv=none; b=f35/tz1O3Vq7+TQYx+eRJtY70z+u91sKoqQjC+/ZWU8NSOQmB52LlyCdryhk8lWden+mj5iDBUgwTVMsqFe3qdbvBl8tHTGiso+yhj0gzub6+hC3T+hlk5VAsH86HbGqooGyXpFKGFgCQJWT91Yd0zMRJFNnBXixxuBeb0U+qRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781513168; c=relaxed/simple;
-	bh=/O05/RUXDTPoINgeXSSQztmerkf3/d1laEEbbrZivPE=;
+	s=arc-20240116; t=1781513490; c=relaxed/simple;
+	bh=s3YPsS7TYXOkNKykf4aKHwJBdJUL1KkEkzkYprblN7Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W90287dgaZHZdJNXeWsYFrhSmyYfdGhN0TNNarZxs50AhmzMZjy5HkWRlGOm5/A8uoj6BW9PcXd9kwzyft+ceIH655glYbS4ztBCYOEHNVpJh4St8iQU2ZZXDzKuD/p0Clbd92IgIPu6zL6WsYTWDAH8BkSscOjs/eapo0evftE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=N48wynWW; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Q5H5X8Rn; arc=none smtp.client-ip=205.220.180.131
+	 Content-Type:Content-Disposition:In-Reply-To; b=oY8/A/3xwxl7h4xKtuCGyGYjpN4Fjw+TRsvuafBcMf8VSwbDf2DNWkkQYHpDN0mwvbpmYMRCEERPjxphoVmsafIiZp7KID5od9qTyEKiKYNrqGzxm708sdVLPhQ5PIPUOH2CHrc3+JoriJdnHjQmZnPdxy92W9h5PyCpiCqUpns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Hl/Ye/73; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=OYH0NyqQ; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="N48wynWW";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Q5H5X8Rn"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 65F6Lig33853182
-	for <linux-clk@vger.kernel.org>; Mon, 15 Jun 2026 08:46:06 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Hl/Ye/73";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="OYH0NyqQ"
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 65F6IuZT3332556
+	for <linux-clk@vger.kernel.org>; Mon, 15 Jun 2026 08:51:25 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=TQmsqoe9deZs4vwOMpPUgVk6
-	RggtnzeexXvCM12GNX8=; b=N48wynWWB2UjZW7DAs120KmX8QCk1JlgW41b5BCN
-	AqFz4HYgYHskEveUuXHDleVDHk61XBKUNEij+WPLD2bWLQbXKR9KlXgU/sEOErIa
-	O2Y110pBeQ+2Up6c8upo/UcbNdhFOb6IYvPcPQ92h39nEt0r2AX85lsz5wexDW20
-	+4JbhUlmzTZXVMGNftODqJwA4HMOi09fD1xAw74RFGvJscnydfPpdwHx5jlocgMd
-	TpeWLDATv4WNTvizEHc9rund7ldYUNL5DK23Zks+yEdsx/DtauHaeNWY0CxLiWWy
-	hnq1Ymmhm7coLwy0qfuoc7EIRs1R/KhwBJCIokvGxMYgzg==
-Received: from mail-dy1-f200.google.com (mail-dy1-f200.google.com [74.125.82.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ery7gxhwp-1
+	:references:subject:to; s=qcppdkim1; bh=TY6bO/ZF34WSseauS7TpJELH
+	kVqlLrjKDs2OgzBNdv0=; b=Hl/Ye/73vX1dcRAZ8f+m6tCwMuKBC5w9FXTPrNl0
+	8JsuMq5AfBDbeXPO/IP63zrL1G7SeVlSAgR+Csy6DCF0noA++rMCtHVtgxamf1Om
+	CBLtEcOkq++ctSCJLxSB3uSQPSOgbZaRx+q1r0ij9DJgH2moEPSBQpe6463RWwSg
+	B42vo38zTqwj56tZCBydj6DHteNFydHUp6++GQ3mFvWKvYhlU+A/iVcSQNfBC9xi
+	QKOYtOYzPxs8S5nyOz/wZ4Cm8ip+SH6oq7lAqjS3bvP9HGz15NADWIZI8V+I2tTw
+	psmL1VIMNQ5x42zD6Q0WVZw6fVTrmANfO/YyXUmaamEjog==
+Received: from mail-dl1-f71.google.com (mail-dl1-f71.google.com [74.125.82.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4erye16jvx-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Mon, 15 Jun 2026 08:46:05 +0000 (GMT)
-Received: by mail-dy1-f200.google.com with SMTP id 5a478bee46e88-304dd917645so6630289eec.1
-        for <linux-clk@vger.kernel.org>; Mon, 15 Jun 2026 01:46:05 -0700 (PDT)
+	for <linux-clk@vger.kernel.org>; Mon, 15 Jun 2026 08:51:25 +0000 (GMT)
+Received: by mail-dl1-f71.google.com with SMTP id a92af1059eb24-137fe4a3640so4591068c88.0
+        for <linux-clk@vger.kernel.org>; Mon, 15 Jun 2026 01:51:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1781513165; x=1782117965; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1781513485; x=1782118285; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TQmsqoe9deZs4vwOMpPUgVk6RggtnzeexXvCM12GNX8=;
-        b=Q5H5X8Rnyjs71X8xhLPgaMC03QiGmpYB2rCIDefYKCjk4QmKYvCXMolualyuycKmpL
-         zJmrTz3uLNTsjIrINtOacJ1rRZfy+HRjpV4rQWfgccdX1ZyZu28wJhpqrsUocCAzOZGI
-         8eCfFmpcrBls7l8o/pusgCBwk8TqcCbflVWbCfghkW68XVwgnILB9ybApYR3ApRkBkH2
-         4xJfNr7UKDZfRoeeWw2ssdzzvBV2LhnJzdJeBSOt9vilrL8Ape2ShrM4eISG22bymvNY
-         xBwtOU74OKeFRNc9nrcWpraBR3AraGAViMMMJvhQYGLeJQEzWGD3UavZ4i52U+J67lxM
-         pIWg==
+        bh=TY6bO/ZF34WSseauS7TpJELHkVqlLrjKDs2OgzBNdv0=;
+        b=OYH0NyqQ5t7739Olv7CKvu/Pv5yfoA6/T/LYIccY7hCT/Q4AWSc2MkuYFttmhhp8uR
+         7k7e+XJF29cYGcJVghTwIJG3l/0O+nF0zs3K3+7ATK62pNlCP71goT0hXSQeSx4xKtX9
+         m8zhmdKMpYLWj6BUOA04zkZTtd6yqmlwwFqAEK/qdU/fgeYmUPfwzjEZxqsWUKhr/HOv
+         J8s+3OoJmFbWgS3W7UJ2/E7SZnylIZs4lhmgw0Vb4qkdhpHLp2ZEY/+Svx9md33tdSmp
+         iOqqIScovkTdK2XbtVFMbqh6q37vWWfwwfvI8d0aeVQIfZbZckGaNOvopcKTfqwLmXa6
+         rROA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781513165; x=1782117965;
+        d=1e100.net; s=20251104; t=1781513485; x=1782118285;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=TQmsqoe9deZs4vwOMpPUgVk6RggtnzeexXvCM12GNX8=;
-        b=Hj3A2jFst28l071N537Y2nTKujgEOWO+jr9wZy1e4Nn19GGYqCiZhySOOwqvotf6FY
-         Bry0Uc7ZBBf/43foPg6ZkMs8S/NC2u1FZ7Ex+1bDtgFtC8EmZZklFI1m1ZfbQQ6/D22C
-         3iE/c0K9Y7MESvmzCJu/jDSRoruD8eLEuO6qcYAwklHZsssg//rhXsT/xmb3xi2fSEU5
-         rwdU15wqj9ss1V0EZGRz0BEwv2NjpFKQRE1PrNqjoJGeOqIjSxZzogc0oeSOzEWmPq8x
-         I1S02AVUVyzvrJqoN9zxlg0tUnIvMSl/XcgFd/TXBuEBTeAOrDZdWxr8gfHc3rBKS8Z6
-         EoTA==
-X-Forwarded-Encrypted: i=1; AFNElJ8JFbZxrk8u5svh45JI135IsPLQm5+lUSn/Yy4uqPVwJfz9jUfEO2SvU6ILsKcVQW3Mkk7Z0fevFCA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybhYChwLYkz5yd0C/DERAJb/AFU0ZeL6DFO9rOe5vMOU1fhzXU
-	RJ9i8d5hAK8C0rnVitw1+xPoCUpYP5eZ6P/2zhYvJBg6HuGyVGH5xWX6wDSGAcTfQEK8lzH0ad0
-	S75WFrmHFP29BCGVlBY3RyuLwhxQIWv1KHKX6YOn2mxoSxs5KVnZ++6TbdosfYhE=
-X-Gm-Gg: Acq92OG4wE+e4tbu2s4Sot+6Lr48IEfSjXiBM5vaGSJLTX/yT5g98iPtVkPOL+evck7
-	IHStgLC8HHdd49Me4K2CXZE2qcav73XGNBSjSR3airzdl8/B1QMofK0T7A5AvrX+S4xEUy9zPfu
-	9g60XH/U+CcJKLW4sieflLkw1Y9tZa1HJRHBNHX3l+PEYVLtVHBqpyq0/BV1XHF+wJ4I9fLv1WQ
-	IQh1Ir9fScURSolp1Gf6fGpH806a56QWuxhFouLfVeZi528MGSorNxWa+L/02brra6uZLSh8KWm
-	NkN8n+hw0JePKpH4CTNbXIHaGOHa1JIG9yBN41gHWBkuIkhULROIJv+liJK1CGaur97sxSImfQL
-	tuzaJuAl62bV8JcFrnUSufzE0xsZyV/8jWC20Zm7TluhghcMBE4lpnt0+UkZy752wHuI7
-X-Received: by 2002:a05:7300:2148:b0:304:2e00:5fb5 with SMTP id 5a478bee46e88-3081ff4b72dmr7832577eec.3.1781513164778;
-        Mon, 15 Jun 2026 01:46:04 -0700 (PDT)
-X-Received: by 2002:a05:7300:2148:b0:304:2e00:5fb5 with SMTP id 5a478bee46e88-3081ff4b72dmr7832552eec.3.1781513164193;
-        Mon, 15 Jun 2026 01:46:04 -0700 (PDT)
+        bh=TY6bO/ZF34WSseauS7TpJELHkVqlLrjKDs2OgzBNdv0=;
+        b=l320DEu60jDkr8sF2K00MCkDPHcAvf6pHDw2lgifix9EHk2/RKa2TgD3V7EqlBaFMA
+         z0xBLoo0rVLxvxQcR1MVE0oP2eigCR3jpFfteT5R5oEUWVIVtRFHVRYVFXjAXQxus+dy
+         ErgQoTFKDovOjjQjlRJFDohKm9ABPZ8so2xMJpjdg5ZdcwKFVys6VcNZIu9VM2ag8rLU
+         qKeH9O5O7gnuV0dzuASom9lbpqAbICZON6TiATj4SD5048WEX+1DDWNLl1n2jGtIqMbc
+         8GCcJ4v9nWmB1Tq/yXUl2PwUjR6eK/TA3novc13TzV2FE7PVQR8yrivEJiGs90v5yj4F
+         UYuQ==
+X-Forwarded-Encrypted: i=1; AFNElJ9PQwdJcymoks6CMqE4jsmflMOC3iFAjkoLrmsLR6q82kfQdR3ptJ+BoYWz5hG09yy6c+s0tmSXKRQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3dz/eqxqppr+pvVPs/OLYyvXHOXRk83iPEDO/IH/oWrYuW3vd
+	MoYH9JCcYhbr9o8OhKap645jnFQ2sh3hCZd37/B9y5D4qiLxdQs3JYM6LQCfveCF1NIBs/xRA6i
+	50emQsVmDwtgunVmo0CL53nxgv/n8mbRb20MG6EiASRk0o2GrKqEvfuib65VgR+g=
+X-Gm-Gg: Acq92OHOdV0xcaHVUSKKn6y9ip7niHEzLTPniuIsLD8kryLKZhVOKbE2LPOzPrCDM35
+	S2n7y7utM7aFdEovmWdqNO+fJYzBPOdLoo2fFmnW4rgKeo7A5EveyCl5v3UghKE36kCdLsm+f1G
+	uk2eOQhUIieaXZ2Rjd+tvNuFGIy5Djs5j81D/p9aUJ8bajQ92s7Zm4tUFaKdZ/+tqNO558/9JA1
+	GQUXtUbaqvQ+4XS+wVz1lYn1SA7rXJwBQTOqOvlEt3gQKCRcXEeejscBYhgRKKk69ZxxFRRU5ZX
+	2RibgGrOYJHClUKhFI2CrK7vZfD/waq77hgHP25dCyMkJJwsfdEaE07dC+W2vNLguexxVykWxad
+	kzLImWCFLRySoptkfWnkzdrFUlTnFbjrToN+WQ1DJypDAS/xa1s9MZGUVO27xC+wYl5uF
+X-Received: by 2002:a05:7301:1e8c:b0:303:f2fc:c483 with SMTP id 5a478bee46e88-3081ff4108cmr7650471eec.1.1781513484567;
+        Mon, 15 Jun 2026 01:51:24 -0700 (PDT)
+X-Received: by 2002:a05:7301:1e8c:b0:303:f2fc:c483 with SMTP id 5a478bee46e88-3081ff4108cmr7650439eec.1.1781513484027;
+        Mon, 15 Jun 2026 01:51:24 -0700 (PDT)
 Received: from hu-qianyu-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3081eb8f8b2sm14166142eec.27.2026.06.15.01.46.03
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3081ddaf69asm14766842eec.0.2026.06.15.01.51.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Jun 2026 01:46:03 -0700 (PDT)
-Date: Mon, 15 Jun 2026 01:46:02 -0700
+        Mon, 15 Jun 2026 01:51:23 -0700 (PDT)
+Date: Mon, 15 Jun 2026 01:51:21 -0700
 From: Qiang Yu <qiang.yu@oss.qualcomm.com>
 To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 Cc: Bjorn Andersson <andersson@kernel.org>,
@@ -89,12 +89,12 @@ Cc: Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, krishna.chundru@oss.qualcomm.com
-Subject: Re: [PATCH v4 3/7] clk: qcom: tcsrcc-glymur: Migrate
- tcsr_pcie_N_clkref_en to clk_ref common helper
-Message-ID: <ai+7ym+qM1GbTO/b@hu-qianyu-lv.qualcomm.com>
+Subject: Re: [PATCH v4 7/7] arm64: dts: qcom: mahua: Switch pcie5_phy ref
+ clock to RPMH_CXO_CLK
+Message-ID: <ai+9CYntPuyEEcLX@hu-qianyu-lv.qualcomm.com>
 References: <20260527-tcsr_qref_0527-v4-0-ded83866c9d9@oss.qualcomm.com>
- <20260527-tcsr_qref_0527-v4-3-ded83866c9d9@oss.qualcomm.com>
- <747f0319-68e1-4cd7-9dd1-4a675d882f99@oss.qualcomm.com>
+ <20260527-tcsr_qref_0527-v4-7-ded83866c9d9@oss.qualcomm.com>
+ <db074223-ac01-4ffe-ae82-187ef0cb2cbb@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -103,160 +103,61 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <747f0319-68e1-4cd7-9dd1-4a675d882f99@oss.qualcomm.com>
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNjE1MDA5MSBTYWx0ZWRfX07uKNn7cnwdR
- 2J1OYPxIDXzxoGeaerFCGD91+Y2UBqAfU0pEdWUzZuOPw15+7rXnvlrz56hciDikURt8A7yhQdU
- TrQyU5WDXAzESlkp7AuRHAhFJDvhEZk=
-X-Authority-Analysis: v=2.4 cv=fLYJG5ae c=1 sm=1 tr=0 ts=6a2fbbcd cx=c_pps
- a=PfFC4Oe2JQzmKTvty2cRDw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+In-Reply-To: <db074223-ac01-4ffe-ae82-187ef0cb2cbb@oss.qualcomm.com>
+X-Proofpoint-GUID: PDHNq6puRmzWKz5adnLWc4CtXDghFAcu
+X-Authority-Analysis: v=2.4 cv=MNlQXsZl c=1 sm=1 tr=0 ts=6a2fbd0d cx=c_pps
+ a=JYo30EpNSr/tUYqK9jHPoA==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
  a=kj9zAlcOel0A:10 a=FelO9ux0wxsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=rJkE3RaqiGZ5pbrm-msn:22
- a=EUspDBNiAAAA:8 a=9x36BgKddDksvwc1ZLQA:9 a=CjuIK1q_8ugA:10
- a=6Ab_bkdmUrQuMsNx7PHu:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjE1MDA5MSBTYWx0ZWRfX1dUfR5JGEKDS
- Xv/CaQoYJ+FOSlw6knKjtII58auKsMorHZrs8MJJE/mW3kiTtrZ21dxTcXUiyF6UEOW7AoeDlht
- P0fM428XKWfcyWe6eYgEPYIgqj4lAei1oCFvJvaZVzR1UZoUInPH4YYQ8Yt/iiWXIDDG9oijgyO
- nRqIP0VKVy/S5NWYyLNzjUoIq/vao3xQY3xjlXw94ElNqdHS2+ly0QBRQEWy3jjfSV6O/eOcl4Q
- 1Oc4GTzPs6wsdWtEFLOc5TdSWex480279hj4aCw5Gie63E2fgn4ZfN6k0Oo2zn8L3Fo77w80T32
- ns2jWLx0D48aOymyEcLerTJaJl/R9x/6D27v/CxBIi+pxJpgMYkto5LqjgoS6C2ky/BDAVgJqYY
- seKcaYJvjRl8E6/Kmn5MvXKlNUXdC5SsdQuUB05gDzcIXQs41NsQyfZimSwUC/YpmlBWjikSzzo
- eTQvdv4h5E828eywxjQ==
-X-Proofpoint-GUID: Q5lSdCK8AbMXjuwr6XKTJ4fgGRDjFrYu
-X-Proofpoint-ORIG-GUID: Q5lSdCK8AbMXjuwr6XKTJ4fgGRDjFrYu
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=yOCtJkima9RkubShWh1s:22
+ a=ZCP-bhYMSNivbHJuKgkA:9 a=CjuIK1q_8ugA:10 a=Fk4IpSoW4aLDllm1B1p-:22
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNjE1MDA5MiBTYWx0ZWRfX04xXMLRbHfUi
+ wardqwd2RksLNhZ8g9P3EkG7qLHn8t7Xg9M1qwMhCPqUXGM+swdc441ZAJXWhBH5/KjQ31++CTa
+ k2RHIP/xeAzhQF/iYNPggJjGkVtRPFc=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjE1MDA5MiBTYWx0ZWRfX6OF3X5EO3Al+
+ Fc6hJGXQ8ivNGNKG8IR73jTvmyivYflJZG1+JksdbD09Xxew82LdwRpoVQ6ixymDyd4ukLR5554
+ vSQim3zlxik+ZIZGvu55OdnOwV+N2pLYf9neKUnSxrFl8ezSJuWxaoFHHngjNo0u+Vy1vgGMZlS
+ g0NnUSXPdNVpSLXfrrZorlnJF5TD47nIycQST3fUaWl5cRtHOaH/Sz8GZ9mlzBvvtp18Bg/4jfv
+ x5T32GgUpIcqdGelJD8YPW0B4aauFUIEqVoh7TGFk5U6FALMEKy2txDOPfGPZJQSyGxhrkzfQqz
+ M8acBQzEEZKSjehYLfSoylpIaXQSqcRqFRYz9mFHcO+xgeJqFT02OoghhZFqF17I2VIrad+kb24
+ lMLq54R7J6fir8t4Xe9OOSoqOKJ1P7hjpmnKL1yQAyj6XoPSnsz6/Crdw/hKq8GMvljTfoPB7X7
+ /2Q/0eoSNDPlcQ7OR3g==
+X-Proofpoint-ORIG-GUID: PDHNq6puRmzWKz5adnLWc4CtXDghFAcu
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
  definitions=2026-06-15_02,2026-06-12_03,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 bulkscore=0 suspectscore=0 priorityscore=1501 clxscore=1015
- malwarescore=0 impostorscore=0 phishscore=0 lowpriorityscore=0 spamscore=0
+ malwarescore=0 impostorscore=0 spamscore=0 priorityscore=1501 phishscore=0
+ adultscore=0 suspectscore=0 clxscore=1015 lowpriorityscore=0 bulkscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606040000 definitions=main-2606150091
+ reason=mlx scancount=1 engine=8.22.0-2606040000 definitions=main-2606150092
 
-On Tue, Jun 09, 2026 at 03:02:27PM +0200, Konrad Dybcio wrote:
+On Tue, Jun 09, 2026 at 03:06:02PM +0200, Konrad Dybcio wrote:
 > On 5/28/26 4:29 AM, Qiang Yu wrote:
-> > Replace local clk_branch-based clkref definitions with descriptor-based
-> > registration via qcom_clk_ref_probe().
-> > 
-> > This keeps the glymur driver focused on clock metadata and reuses common
-> > runtime logic for regulator handling, enable/disable sequencing, and OF
-> > provider wiring.
-> > 
-> > Signed-off-by: Qiang Yu <qiang.yu@oss.qualcomm.com>
-> > ---
+> > PCIe5 PHY on Mahua gets refclk from CXO0 pad directly, so no QREF
+> > clkref_en voting is required. Override the clock list to use RPMH_CXO_CLK
+> > directly instead.
 > 
-> You can remove the of.h include. Apart from that:
+> This is the last piece of the puzzle that this series is missing.
+> There's no QREF clkref_en, but there is a refgen that needs to be
+> powered. For PCIe5 on Mahua this would be L2F_E0 (0p9) and L4H_E0
+> (1p2).
 > 
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> I think the easiest (laziest?) solution would be to add dummy clocks
+> in the clkref driver and only toggle the required regulators. Another
+> option is to defer back to individual drivers (such as PCIe QMPPHY).
 > 
-> Also, attaching a diff to complete the regulator map. I'm fairly sure
-> these are correct, but it never hurts to triple-check.
-> 
-> You can add:
-> 
-> Co-developed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> 
-> if you squash them together. FYI e.g. the tertiary USB QMPPHY would
-> only start every 20 boots or so without this, running on pure luck..
+> I kinda like the "one central node to drive power" approach, but I'm
+> not sure others agree, since it stretches truth just a tiny bit
+> (although not as much as one would think since there are *some*
+> controls for the transparent-to-the-OS hw pieces in these paths still
+> in TCSR).. Dmitry, Krzysztof, would you object to that?
 >
 
-Okay, will sqash them and add above tags in next version.
+PCIe5 PHY on Mahua does not use QREF at all, so there is no refgen for
+QREF either. The refgen supplies you mentioned are for the PCIe5 PHY
+itself, not for QREF. For other PHYs that do use QREF, there are two
+refgens: one for QREF (voted here in the TCSR clkref driver) and one for
+the PHY (which should be voted in the PHY driver).
 
 - Qiang Yu
 > Konrad
-> 
-> diff --git a/drivers/clk/qcom/tcsrcc-glymur.c b/drivers/clk/qcom/tcsrcc-glymur.c
-> index e317003398d1..eb4ee8ec9ad7 100644
-> --- a/drivers/clk/qcom/tcsrcc-glymur.c
-> +++ b/drivers/clk/qcom/tcsrcc-glymur.c
-> @@ -21,6 +21,14 @@ static const char * const glymur_tcsr_tx0_rx5_regulators[] = {
->         "vdda-qreftx0-1p2",
->  };
->  
-> +static const char * const glymur_tcsr_tx1_rpt0_rx0_regulators[] = {
-> +       "vdda-refgen4-0p9",
-> +       "vdda-refgen4-1p2",
-> +       "vdda-qreftx1-0p9",
-> +       "vdda-qrefrpt0-0p9",
-> +       "vdda-qrefrx0-0p9",
-> +};
-> +
->  static const char * const glymur_tcsr_tx1_rpt01_rx1_regulators[] = {
->         "vdda-refgen4-0p9",
->         "vdda-refgen4-1p2",
-> @@ -40,6 +48,15 @@ static const char * const glymur_tcsr_tx1_rpt012_rx2_regulators[] = {
->         "vdda-qrefrx2-0p9",
->  };
->  
-> +static const char * const glymur_tcsr_tx1_rpt34_rx4_regulators[] = {
-> +       "vdda-refgen2-0p9",
-> +       "vdda-refgen2-1p2",
-> +       "vdda-qreftx1-0p9",
-> +       "vdda-qrefrpt3-0p9",
-> +       "vdda-qrefrpt4-0p9",
-> +       "vdda-qrefrx4-0p9",
-> +};
-> +
->  static const struct regmap_config tcsr_cc_glymur_regmap_config = {
->         .reg_bits = 32,
->         .reg_stride = 4,
-> @@ -52,6 +69,8 @@ static const struct qcom_clk_ref_desc tcsr_cc_glymur_clk_descs[] = {
->         [TCSR_EDP_CLKREF_EN] = {
->                 .name = "tcsr_edp_clkref_en",
->                 .offset = 0x60,
-> +               .regulator_names = glymur_tcsr_tx1_rpt0_rx0_regulators,
-> +               .num_regulators = ARRAY_SIZE(glymur_tcsr_tx1_rpt0_rx0_regulators),
->         },
->         [TCSR_PCIE_1_CLKREF_EN] = {
->                 .name = "tcsr_pcie_1_clkref_en",
-> @@ -80,34 +99,50 @@ static const struct qcom_clk_ref_desc tcsr_cc_glymur_clk_descs[] = {
->         [TCSR_USB2_1_CLKREF_EN] = {
->                 .name = "tcsr_usb2_1_clkref_en",
->                 .offset = 0x6c,
-> +               .regulator_names = glymur_tcsr_tx1_rpt34_rx4_regulators,
-> +               .num_regulators = ARRAY_SIZE(glymur_tcsr_tx1_rpt34_rx4_regulators),
->         },
->         [TCSR_USB2_2_CLKREF_EN] = {
->                 .name = "tcsr_usb2_2_clkref_en",
->                 .offset = 0x70,
-> +               .regulator_names = glymur_tcsr_tx1_rpt01_rx1_regulators,
-> +               .num_regulators = ARRAY_SIZE(glymur_tcsr_tx1_rpt01_rx1_regulators),
->         },
->         [TCSR_USB2_3_CLKREF_EN] = {
->                 .name = "tcsr_usb2_3_clkref_en",
->                 .offset = 0x74,
-> +               .regulator_names = glymur_tcsr_tx1_rpt34_rx4_regulators,
-> +               .num_regulators = ARRAY_SIZE(glymur_tcsr_tx1_rpt34_rx4_regulators),
->         },
->         [TCSR_USB2_4_CLKREF_EN] = {
->                 .name = "tcsr_usb2_4_clkref_en",
->                 .offset = 0x88,
-> +               .regulator_names = glymur_tcsr_tx1_rpt34_rx4_regulators,
-> +               .num_regulators = ARRAY_SIZE(glymur_tcsr_tx1_rpt34_rx4_regulators),
->         },
->         [TCSR_USB3_0_CLKREF_EN] = {
->                 .name = "tcsr_usb3_0_clkref_en",
->                 .offset = 0x64,
-> +               .regulator_names = glymur_tcsr_tx1_rpt34_rx4_regulators,
-> +               .num_regulators = ARRAY_SIZE(glymur_tcsr_tx1_rpt34_rx4_regulators),
->         },
->         [TCSR_USB3_1_CLKREF_EN] = {
->                 .name = "tcsr_usb3_1_clkref_en",
->                 .offset = 0x68,
-> +               .regulator_names = glymur_tcsr_tx1_rpt34_rx4_regulators,
-> +               .num_regulators = ARRAY_SIZE(glymur_tcsr_tx1_rpt34_rx4_regulators),
->         },
->         [TCSR_USB4_1_CLKREF_EN] = {
->                 .name = "tcsr_usb4_1_clkref_en",
->                 .offset = 0x44,
-> +               .regulator_names = glymur_tcsr_tx0_rx5_regulators,
-> +               .num_regulators = ARRAY_SIZE(glymur_tcsr_tx0_rx5_regulators),
->         },
->         [TCSR_USB4_2_CLKREF_EN] = {
->                 .name = "tcsr_usb4_2_clkref_en",
->                 .offset = 0x5c,
-> +               .regulator_names = glymur_tcsr_tx1_rpt01_rx1_regulators,
-> +               .num_regulators = ARRAY_SIZE(glymur_tcsr_tx1_rpt01_rx1_regulators),
->         },
->  };
-> 
