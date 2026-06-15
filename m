@@ -1,29 +1,34 @@
-Received: from ultrarisc.com (unknown [218.76.62.146])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48BD5288C30;
-	Mon, 15 Jun 2026 06:07:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.76.62.146
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB32D1A6816;
+	Mon, 15 Jun 2026 06:28:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781503639; cv=none; b=ph/5mARLuwuN/JZ2koqvkz+0U33us2bCm9CtFZkrLHcv5oikh7QP+9QVDWu5rGh/QDfsSrN8WfkemZT8mdtbP+0XjDQ9ZkyhB67Xbl3kEbNC3YG28zESuFTuskT7mjqLOBt5HN+1kH3d2BINTbt1Ffyf5TkvR401sVEUefNON5M=
+	t=1781504939; cv=none; b=THkBl/7gOv34StuvQOdA6V6VomHwfW+wYsWDHlQ8TDI+bgbV1QwMI5R+HJaM2Q9BuCNuQac9O4/yPmtxhfbJnZNzvvLFlyPiCtXxbUlyr7sCIIaR8bB/MID6905r5GSN2TJF1gieT3PFsYgEC02ccBPlGaQTLwjxjaN1oNDRDUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781503639; c=relaxed/simple;
-	bh=OvFkwwxq73FZwe0cJrWDvfiAej+0wFSea+Y7W0xSIXg=;
-	h=MIME-Version:Content-Type:Subject:From:To:Cc:In-Reply-To:
-	 References:Date:Message-Id; b=A+TNfx7lfHcPb07U2+aiHxkCyim4U8NSBK4EjBwOHm40BuO8zwyj8zuzel9fCD0at4+FCGIOHdQb+eLQqCOI3QAIp14iY8n8WtLX7ZpLIxt04wuEf5qpbwM6OnubSpSm9u4MQEO6izd5042DzmT1zQpIgIUMFupE2VfHoEU4TX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ultrarisc.com; spf=none smtp.mailfrom=ultrarisc.com; dkim=pass (1024-bit key) header.d=ultrarisc.com header.i=@ultrarisc.com header.b=ZCNFX7Ci; arc=none smtp.client-ip=218.76.62.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ultrarisc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ultrarisc.com
+	s=arc-20240116; t=1781504939; c=relaxed/simple;
+	bh=ZMSUx5Js4phMqr83IE4I2NPLsiEcMxNotCCIuOyvTPI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=A/6lRiAnT5781uyJIzZsFNRwpUu6d0IrqK9GnJbbrVON8Zb/1QW6Q6hKu3eDO6ZlgAiwrMIp7liZTymDijghLuyjAZYMFnH+0IizTeGpXue6hOJK7TzleE175nQ777FQh/7jW01a0qvjH5Qz1PEVkcMsxY1zdX3seIddp2kHvHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=lf+cg+TX; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ultrarisc.com header.i=@ultrarisc.com header.b="ZCNFX7Ci"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=ultrarisc.com; s=dkim; h=Received:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:
-	References:Date:Message-Id; bh=JlUzqvWJoPmBtFYEWjkZ8IYl/0ScnYlNv
-	f4G7+4Fle0=; b=ZCNFX7CiMScyaDsCawi+1domAzWxCs4u/T0DvOfVvBJyJf1dU
-	uVB8Dr+V7pfgQF8yCNuHjD7JIu37TawVZIeQgKEs2vEVHOcucnD6pu+QldXEDX+b
-	6dMTKIC0VAkDo4d3sh03MTmkOyWEXI4C34wTA6G0sEAqAxTT8qb4Qd2LA0=
-Received: from [127.0.0.1] (unknown [192.168.100.1])
-	by localhost.localdomain (Coremail) with SMTP id AQAAfwAnYUKvli9qLoMKAA--.9392S2;
-	Mon, 15 Jun 2026 14:07:43 +0800 (CST)
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="lf+cg+TX"
+Received: from [127.0.1.1] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A1AAF57E;
+	Mon, 15 Jun 2026 08:28:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1781504895;
+	bh=ZMSUx5Js4phMqr83IE4I2NPLsiEcMxNotCCIuOyvTPI=;
+	h=From:Subject:Date:To:Cc:From;
+	b=lf+cg+TXgXX/Ro32czZvht20wZ29e6L1o6N2szDygJOh4OYsA57+1Tz0z6ZXcYs2x
+	 6QGwQDrfrotW8RZt2JJNCBMlp+W6XT6OWVXKxteFb8Vf67UkdUOZSixfH8IzxYZrG5
+	 i04Go9T24B6rSH449kdIMOw5DAg5vcdwjL6hcGzk=
+From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Subject: [PATCH v4 0/7] drm/rcar-du: Add support for DSI pipelines with DSC
+Date: Mon, 15 Jun 2026 09:28:05 +0300
+Message-Id: <20260615-rcar-du-dsc-v4-0-93096a1b56a3@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -31,224 +36,131 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH 1/2] dt-bindings: clock: ultrarisc: Add DP1000 Clock
- Controller
-From: Jia Wang <wangjia@ultrarisc.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: wangjia@ultrarisc.com, Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHabL2oC/33MQQ7CIBCF4as0rMUABQquvIdxQWGwLCwGlGia3
+ l3alSbVzST/JO+bUIYUIKNDM6EEJeQQxxp81yA7mPECOLjaiBEmiaAcJ2sSdg/sssVc9NYTyzw
+ oierilsCH56qdzrWHkO8xvVa80OW77RSKCXZS+M5o0IrTY3Bgchz7aJLb23hFC1fYJyG+CVYJL
+ 3vNODG0nh9E+4doK0Elp6JTjHCtNoh5nt/1gW/ZMwEAAA==
+X-Change-ID: 20260514-rcar-du-dsc-45bcf0c2fe86
+To: Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20260611-reformist-wish-75a73a1d2c49@spud>
-References: <20260611-ultrarisc-clock-v1-0-2d93ebb4cc13@ultrarisc.com>
- <20260611-ultrarisc-clock-v1-1-2d93ebb4cc13@ultrarisc.com>
- <20260611-reformist-wish-75a73a1d2c49@spud>
-Date: Mon, 15 Jun 2026 14:07:07 +0800
-Message-Id: <178150362720.3055943.7661118151533529664.b4-reply@b4>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1781503627; l=5534;
- i=wangjia@ultrarisc.com; s=20260515; h=from:subject:message-id;
- bh=OvFkwwxq73FZwe0cJrWDvfiAej+0wFSea+Y7W0xSIXg=;
- b=I6/PlPlXlo7xmg+S9fb8qtk8KfqK7a3AS6hmDUdHdnSm9i/oziM2sJosXVME4hHAVh9x127Kd
- NdnrV6BjmLTB9ZEPObrsy1fIFoZ+64LgwdWJtf/ZkGd8M6dOLWg9dBQ
-X-Developer-Key: i=wangjia@ultrarisc.com; a=ed25519;
- pk=wGVm18siRScehKOkOz0WKxgxDy7IezHEszhnN4/TUCY=
-X-CM-TRANSID:AQAAfwAnYUKvli9qLoMKAA--.9392S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3Jw45Kry3ur17tF18Xw1fZwb_yoW7XFyfpF
-	nxCFZ0yF1IyF1xuw4Iqa43A3Z3Ja10kFy7GrW2kr1jyFZ093WrtFsFk3y5ZFy8Xrs7A3yq
-	yF1Uuw1ayw429aDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9l14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r
-	4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
-	n2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCY02Avz4vE-syl42xK82IYc2Ij64vIr41l4I
-	8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AK
-	xVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcV
-	AFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8I
-	cIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r
-	4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUoWlkDUUUU
-X-CM-SenderInfo: pzdqwylld63zxwud2x1vfou0bp/1tbiAQAAEWoWakYABgBcsa
+ Conor Dooley <conor+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
+ Marek Vasut <marek.vasut+renesas@mailbox.org>, 
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ devicetree@vger.kernel.org, 
+ Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+ Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3660;
+ i=tomi.valkeinen+renesas@ideasonboard.com; h=from:subject:message-id;
+ bh=ZMSUx5Js4phMqr83IE4I2NPLsiEcMxNotCCIuOyvTPI=;
+ b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBqL5uXuZhD+J4k6SYrPBGM5KDlLA/p1tTsQUfOo
+ 7ZMrZxsriyJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCai+blwAKCRD6PaqMvJYe
+ 9f0OEACbDRnk0MVwXgbaCA2JRT4kHZ/fSQ6HjCwzjV7fPILu3AuyaogoYHZPCjY5nv1xyzn20rI
+ r1vzFBT1HpTgZOgsBJcC4xWpTqGxmE8kArHBftJsKcCkbJ/kAc9Ocj+G24L2+b3I97XTIOTdV8m
+ C5fKOz1lCJgvkKCSEMzuBYZVk1Vq27bntbvSLl5YDqFqGR11SjMN84GJO0RJOrmHaZpCnQVOz4Z
+ Mf+HAFY6sBzO06XrWMh4c1x+lUPlE90/qSYpSoI/nXjcaNFmmsFEyk12STg1Nrzhu3qiZiytqY2
+ QwbLmFvUfLDjATSvSkZDRTLoqMzbH5pLDHgrFdbfWVepLo14AymIbrsSUuCbvMOYH63zb/Ukbug
+ LpVLb3LVzrxn9fQ3AJyU7JskWxIML81HyPeWIx8ubVEKpMbwtxhJaGxrI/BLzSRDXMRkMLk2KiN
+ 1YLEhBiME5RQlrYFLY3ClyR4xUvbaIv1/fvzoml9MvflV2fKVY6mMOyUIPw+NGqbxlyGaoJsy+V
+ D+eUr3MTXfqIOMqKTerM9CEBz1A7oUAvjaWg3ggGpQ+3GWxEMkZQ3ezI/bz/WdVlfRUfssnAkXZ
+ khbVsgoUmcBNvhXCb9UhRru+eatV0ryDFzWMptCZtwxYfyF8EkQXcvYTGVZOMMG0hZKO8WQTHN1
+ bVmlY29oSXLJG6g==
+X-Developer-Key: i=tomi.valkeinen+renesas@ideasonboard.com; a=openpgp;
+ fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
 
-On 2026-06-11 18:29 +0100, Conor Dooley wrote:
-> On Thu, Jun 11, 2026 at 05:40:53PM +0800, Jia Wang via B4 Relay wrote:
-> > From: Jia Wang <wangjia@ultrarisc.com>
-> > 
-> > Add doc for the clock controller on the UltraRISC DP1000 RISC-V SoC.
-> > 
-> > Signed-off-by: Jia Wang <wangjia@ultrarisc.com>
-> > ---
-> >  .../bindings/clock/ultrarisc,dp1000-clk.yaml       | 72 ++++++++++++++++++++++
-> >  MAINTAINERS                                        |  7 +++
-> >  include/dt-bindings/clock/ultrarisc,dp1000-clk.h   | 29 +++++++++
-> >  3 files changed, 108 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/clock/ultrarisc,dp1000-clk.yaml b/Documentation/devicetree/bindings/clock/ultrarisc,dp1000-clk.yaml
-> > new file mode 100644
-> > index 000000000000..d4d3d851a079
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/ultrarisc,dp1000-clk.yaml
-> > @@ -0,0 +1,72 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/clock/ultrarisc,dp1000-clk.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: UltraRISC DP1000 Clock Controller
-> > +
-> > +maintainers:
-> > +  - Jia Wang <wangjia@ultrarisc.com>
-> > +
-> > +description: |
-> > +  The UltraRISC DP1000 clock controller is driven from a single external
-> > +  oscillator input. It provides a system PLL with fractional multiplier
-> > +  and post-divider stages, several fixed-ratio derived clocks for
-> > +  the on-chip subsystem, Clock Configuration Register (CCR) divider
-> > +  outputs for GMAC and the UART, I2C, and SPI root clocks, and
-> > +  per-instance gate clocks for UART0-3, I2C0-3, and SPI0-1.
-> > +
-> > +  All available clocks are defined as preprocessor macros in
-> > +  include/dt-bindings/clock/ultrarisc,dp1000-clk.h
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: ultrarisc,dp1000-clk
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  clocks:
-> > +    maxItems: 1
-> > +    description:
-> > +      External oscillator input clock used as the parent of the PLLs.
-> > +
-> > +  clock-names:
-> > +    items:
-> > +      - const: osc
-> 
-> Clock names don't really have any value when you have one input clock.
->
+Some DSI pipelines have DSC (Display Stream Compression) IP block
+between the DU and the DSI. Even if DSC is not needed, the IP must be
+enabled for the DSI output to work.
 
-Thanks, I’ll drop clock-names in the next version.
- 
-> > +
-> > +  "#clock-cells":
-> > +    const: 1
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - clocks
-> > +  - clock-names
-> > +  - "#clock-cells"
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    #include <dt-bindings/clock/ultrarisc,dp1000-clk.h>
-> > +
-> > +    osc: oscillator {
-> > +      compatible = "fixed-clock";
-> > +      #clock-cells = <0>;
-> > +      clock-frequency = <24000000>;
-> > +    };
-> 
-> Drop this whole node please.
-> 
+This series adds a basic DSC driver, so that the DSC IP gets enabled in
+bypass mode. This enables DisplayPort output on Sparrow Hawk board, as
+the DP output comes from DSI and sn65dsi86 bridge, and also White Hawk
+board's second mini-DP output.
 
-I'll drop this node in the next version.
+Original series from Marek.
 
-> > +
-> > +    soc {
-> > +      #address-cells = <2>;
-> > +      #size-cells = <2>;
-> > +
-> > +      clock-controller@11080000 {
-> > +        compatible = "ultrarisc,dp1000-clk";
-> > +        reg = <0x0 0x11080000 0x0 0x1000>;
-> > +        clocks = <&osc>;
-> > +        clock-names = "osc";
-> > +        #clock-cells = <1>;
-> > +      };
-> > +    };
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index e035a3be797c..3331f1edf002 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -27357,6 +27357,13 @@ S:	Maintained
-> >  F:	drivers/usb/common/ulpi.c
-> >  F:	include/linux/ulpi/
-> >  
-> > +ULTRARISC DP1000 CLOCK DRIVER
-> > +M:	Jia Wang <wangjia@ultrarisc.com>
-> > +L:	linux-clk@vger.kernel.org
-> > +S:	Maintained
-> > +F:	Documentation/devicetree/bindings/clock/ultrarisc,dp1000-clk.yaml
-> > +F:	include/dt-bindings/clock/ultrarisc,dp1000-clk.h
-> > +
-> >  ULTRATRONIK BOARD SUPPORT
-> >  M:	Goran Rađenović <goran.radni@gmail.com>
-> >  M:	Börge Strümpfel <boerge.struempfel@gmail.com>
-> > diff --git a/include/dt-bindings/clock/ultrarisc,dp1000-clk.h b/include/dt-bindings/clock/ultrarisc,dp1000-clk.h
-> > new file mode 100644
-> > index 000000000000..5e484f652b08
-> > --- /dev/null
-> > +++ b/include/dt-bindings/clock/ultrarisc,dp1000-clk.h
-> > @@ -0,0 +1,29 @@
-> > +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> > +#ifndef _DT_BINDINGS_CLOCK_ULTRARISC_DP1000_CLK_H
-> > +#define _DT_BINDINGS_CLOCK_ULTRARISC_DP1000_CLK_H
-> > +
-> > +#define DP1000_CLK_SYSPLL		0
-> > +#define DP1000_CLK_SYSPLL_DIV2		1
-> > +#define DP1000_CLK_SUBSYS		2
-> > +#define DP1000_CLK_GMAC			3
-> > +#define DP1000_CLK_UART_ROOT		4
-> > +#define DP1000_CLK_I2C_ROOT		5
-> > +#define DP1000_CLK_SPI_ROOT		6
-> > +#define DP1000_CLK_PCIE_DBI		7
-> > +#define DP1000_CLK_PCIEX4_CORE		8
-> > +#define DP1000_CLK_PCIEX16_CORE		9
-> > +#define DP1000_CLK_PCIE_AUX		10
-> > +#define DP1000_CLK_UART0		11
-> > +#define DP1000_CLK_UART1		12
-> > +#define DP1000_CLK_UART2		13
-> > +#define DP1000_CLK_UART3		14
-> > +#define DP1000_CLK_I2C0			15
-> > +#define DP1000_CLK_I2C1			16
-> > +#define DP1000_CLK_I2C2			17
-> > +#define DP1000_CLK_I2C3			18
-> > +#define DP1000_CLK_SPI0			19
-> > +#define DP1000_CLK_SPI1			20
-> > +
-> 
-> > +#define DP1000_CLK_NUM			21
-> 
-> This is not suitable to have in a binding, move it to the driver if it
-> is required.
-> pw-bot: changes-requested
-> 
+Note: I see that not every run of kms++'s kmstest gives me a picture on
+my monitor. Sometimes the monitor seems to be trying to repeatedly sync,
+but fails, and the screen stays black. However, I see this same issue on
+WhiteHawk, which uses DSI0 pipeline, without DSC, so I think that is a
+separate issue.
 
-I'll move DP1000_CLK_NUM to the driver.
+ Tomi
 
-> Cheers,
-> Conor.
-> 
-> > +
-> > +#endif /* _DT_BINDINGS_CLOCK_ULTRARISC_DP1000_CLK_H */
-> > 
-> > -- 
-> > 2.34.1
-> > 
-> > 
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+---
+Changes in v4:
+- Add 'renesas,rcar-dsc' compatible, in addition to the SoC specific
+  compatible
+- Use 'bridge' as the name of the DT node
+- Arrange Kconfig and Makefile entries alphabetically
+- Rebase on drm-misc-next, and fix the drm_atomic_state rename issue
+- Use pm_runtime_get_sync() in .atomic_enable() instead of
+  pm_runtime_resume_and_get() to fix the possible runtime PM get/put
+  discrepancy
+- Drop ioremap and mmio field, as the driver does not touch the
+  registers
+- Use of_drm_get_bridge_by_endpoint() to get the next bridge
+- Rewrite "drm/rcar-du: dsi: Support DSC in the pipeline" to use
+  bridge->type to detect the DSI and the DSC
+- And some cosmetic fixes pointed out in the review comments
+- Link to v3: https://patch.msgid.link/20260515-rcar-du-dsc-v3-0-164157820498@ideasonboard.com
+
+Changes in v3:
+- Simplify DSC driver: drop reset control, drop clk handling, use runtime PM
+- Split dts changes for r8a779g0 and sparrow-hawk to separate patches
+- Add "arm64: dts: renesas: white-hawk: Add second mini-DP output
+  support"
+- Link to v2: https://patch.msgid.link/20260515-rcar-du-dsc-v2-0-f6b9240a1240@ideasonboard.com
+
+Changes in v2:
+- Fixed the dts example in "dt-bindings: display: bridge: Document
+  Renesas R-Car V4H DSC bindings"
+- Link to v1: https://lore.kernel.org/r/20260514-rcar-du-dsc-v1-0-d65f7a9e9841@ideasonboard.com
+
+---
+Geert Uytterhoeven (1):
+      arm64: dts: renesas: white-hawk: Add second mini-DP output support
+
+Marek Vasut (5):
+      clk: renesas: r8a779g0: Add DSC clock
+      dt-bindings: display: bridge: Document Renesas R-Car V4H DSC bindings
+      drm/rcar-du: dsc: Add rudimentary Renesas R-Car V4H DSC driver
+      arm64: dts: renesas: r8a779g0: Add DSC
+      arm64: dts: renesas: sparrow-hawk: Enable DisplayPort by adding DSC
+
+Tomi Valkeinen (1):
+      drm/rcar-du: dsi: Support DSC in the pipeline
+
+ .../bindings/display/bridge/renesas,dsc.yaml       |  99 ++++++++++++++
+ .../arm64/boot/dts/renesas/r8a779g0-white-hawk.dts |  94 +++++++++++++
+ arch/arm64/boot/dts/renesas/r8a779g0.dtsi          |  31 ++++-
+ .../boot/dts/renesas/r8a779g3-sparrow-hawk.dts     |   5 +
+ drivers/clk/renesas/r8a779g0-cpg-mssr.c            |   1 +
+ drivers/gpu/drm/renesas/rcar-du/Kconfig            |  12 ++
+ drivers/gpu/drm/renesas/rcar-du/Makefile           |   1 +
+ drivers/gpu/drm/renesas/rcar-du/rcar_dsc.c         | 149 +++++++++++++++++++++
+ drivers/gpu/drm/renesas/rcar-du/rcar_du_crtc.c     |  18 +++
+ drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c    |   1 +
+ 10 files changed, 410 insertions(+), 1 deletion(-)
+---
+base-commit: a56a73ec85c81c7e533bc249ff0fd996256053fd
+change-id: 20260514-rcar-du-dsc-45bcf0c2fe86
 
 Best regards,
-Jia Wang
-
+--  
+Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
 
