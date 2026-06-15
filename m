@@ -1,88 +1,88 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 185AC3F9F3A
-	for <linux-clk@vger.kernel.org>; Mon, 15 Jun 2026 14:22:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A9C53E5587
+	for <linux-clk@vger.kernel.org>; Mon, 15 Jun 2026 14:25:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781533370; cv=none; b=rqW5FMzJIQ+dJWskrdggs5c+tGI4Rs1f7hpRZv1hMdNTXAIbLIJyUfFEMZZqqTNEKTseuHIaKGk/2IodVVNRGlcTKrqXKP4+/eOIMSKJgzcu/IsKndKCHff7nRLtkvVf0ZvXcmRCD/MUUs89agzXhwRw3CUiqGivI2LTP4cQGYU=
+	t=1781533510; cv=none; b=OMgxZ0FnV9AYHP13vRZr0SaPks7EGMD6VqfJPTHEoMi3Ws5fEMUkzBtDopMfkBRIRcGqz7m6coQqy5LIarIKH/vvOHE52FDIm/VZQLBagoJkOWbCWPXOQcnYRQ27E8GRh5a6fWIExX2EWwhYbPe2dmqwfiDQKmrrNiaoLvjoFA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781533370; c=relaxed/simple;
-	bh=ZQn8hPrkM36VCBIdCi3eFgK8VPUUP8gn25zK7fcuS7g=;
+	s=arc-20240116; t=1781533510; c=relaxed/simple;
+	bh=3iC2i87xS9mCd/Ng/n0/ibrULXDsMvrLdh9naH6TGmc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H+efyL4U1vaTHzIhfbvunSWuTvbIFoorOJ8CDextZqKXUoH4pqBNz+b+x2uVYmxO5xYPdHPKg14Lnjk89S1Ju4f9VcveF9Xf92aPpo4OekEJ8Zc18z2N3Sim7GB+OHWdFkjXwyoWblqWD1/e2JW+NPL1zsIlq/pZpubQ9QV7/hE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XAR9fCbw; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=kyk5KUQP; arc=none smtp.client-ip=170.10.129.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=ofPBheoBaoyR81ii976Gt+DpIQ7MSidwbFEpE6if0asbY0FhdcqXVy5vHCv1Obv0wbtAW8pEwa3BbAC7bfmBhkrkpyEu82jL6cNgXfnsYQqwUY2sGk4IoGe0qMecH1CM4ZgXDs+aOQYPfDzyUPkmZulvUzhoMFNM27YoF5To59k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JzDQJVtD; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=ry967fT9; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XAR9fCbw";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="kyk5KUQP"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JzDQJVtD";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="ry967fT9"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1781533368;
+	s=mimecast20190719; t=1781533508;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=3zuMhQAEiwW8EZyF1+ggYbLN42TmxHM1hwGejQcOObs=;
-	b=XAR9fCbwD70YVZB1q45OBXXV0uKL2ebshcX1f3K5r98xisPocJ3dGl5+EhOdF572z3u2ZC
-	7cwS0hM3qHVpKcNeDAlri/tNS8b28Gbs7zsjiaEGMCsTSZDDYGuAS2GJ25ZUjOdIpHoEZE
-	co80HV0TBIDgYcf63wKWypKm5kbhoqs=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=Xh0dNKG18px5DpO/h+4aJqXUivlxzo3JbzN1grHbi+o=;
+	b=JzDQJVtD3am2U7Eo1LNfwr4oLHkMSUlhiXSaH0gwyndWy8fVqjH/aThZDlxMjstovJUWTq
+	SeHFoxVXDRsGRi7/7BzK5k5HZ6pgm36fb8VGk4zXgfBM5r/kgjpJE6fr4mLtIPgCK35ntg
+	/IeaktallCwmBGUAqhASWeua9E2gj3c=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-281-gLWrZJ3yNsaQmW4pcOjL1Q-1; Mon, 15 Jun 2026 10:22:41 -0400
-X-MC-Unique: gLWrZJ3yNsaQmW4pcOjL1Q-1
-X-Mimecast-MFC-AGG-ID: gLWrZJ3yNsaQmW4pcOjL1Q_1781533361
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-9156ceb551eso529335185a.2
-        for <linux-clk@vger.kernel.org>; Mon, 15 Jun 2026 07:22:41 -0700 (PDT)
+ us-mta-128-zqzWmN3AOaWlv8Xlbb_onQ-1; Mon, 15 Jun 2026 10:25:07 -0400
+X-MC-Unique: zqzWmN3AOaWlv8Xlbb_onQ-1
+X-Mimecast-MFC-AGG-ID: zqzWmN3AOaWlv8Xlbb_onQ_1781533507
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-51772325a64so44917421cf.2
+        for <linux-clk@vger.kernel.org>; Mon, 15 Jun 2026 07:25:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1781533361; x=1782138161; darn=vger.kernel.org;
+        d=redhat.com; s=google; t=1781533507; x=1782138307; darn=vger.kernel.org;
         h=user-agent:in-reply-to:content-transfer-encoding
          :content-disposition:mime-version:references:message-id:subject:cc
          :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3zuMhQAEiwW8EZyF1+ggYbLN42TmxHM1hwGejQcOObs=;
-        b=kyk5KUQPY6IiQqZqKBxJpnYeLi+ufrcDYW01yXtg0oVYtHKe/78MdlnaHhlDLeV+vr
-         AuGKAYKwGF0K6KQ95Jy22FMAwxzHu1YGZUChseL7c+z+6eUuHZtz+NKeClqnxING6tMz
-         LVrIOBEqZmKh0qm27iVgplLFx895CjspBGoD+EQZ2fZcTDqwjijRWeTDi+UKPG3iW/xL
-         aq5iLE7V7GoKoFX75aqJiwhGLWOgej1vuBdUjIzfxlek37xhNLaCW5+ahhklvo+m+dJ2
-         dMkreoclrGwnk2zn80pkYfszv7X3OCXipJEJDdY7hMQaP7nDN+7Cjy+k6t04CyX4x5D1
-         pKGg==
+        bh=Xh0dNKG18px5DpO/h+4aJqXUivlxzo3JbzN1grHbi+o=;
+        b=ry967fT9CmJC3sc59UK3ZgqozynC7VTHvY/PVYUisNGsjlc8IFghn40B/uEOv3r7Ob
+         2Kh7mQE+8xAPpROnD+IfWLRJi6oqEqXn1Aa9lIROBeCmMnl66MulzCTWjtPiWyH+DkbC
+         r6QzJFJYomQiPyeOXvL+CJJKBnPJPhysxCzpyxbODARt8jrRtYlnJxa+VlJYj+ZOZbWA
+         iPnXsWoL+Eu4RCjLjuSdhCTf/5IiDm0SPo6E7AtbEmqguMHkF3G7N759KAYTnT7MuSc8
+         je4HNkQTlPpVxApcZnORCch6xm6HQuele/lvhinDl+HUEi69sw0f/+i5+bsUWZDvO4vo
+         ylaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781533361; x=1782138161;
+        d=1e100.net; s=20251104; t=1781533507; x=1782138307;
         h=user-agent:in-reply-to:content-transfer-encoding
          :content-disposition:mime-version:references:message-id:subject:cc
          :to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3zuMhQAEiwW8EZyF1+ggYbLN42TmxHM1hwGejQcOObs=;
-        b=d1RXL8bTYenYs9EVg4M9LhXPgXTN5PanT9rpV/JkLTBQ1Lv8fqdmDXTVYfS3VZn/b4
-         s5cpiT04YkcvKghOQecb4JXdZkBgZ3ZjB67vHPMN+9jNaHpMSqo3gzWWGCZRSZhz7M0x
-         I2C1yitmZUxAqfqCfzeasQhDZHYk+ndf61cY9bQ4dAT630Zjm3pJLQex7yzqPaGqMSOA
-         3QxUKNdYxJCi0Yil4onWqnzpezLvYrjSftkcLh597+0Xrqh7/c5yNyO92mkfkC4w2Rsy
-         GSH6THlrFHF535tlvgTQRdIFq+tBN7xVvepivYs+g/iBNQoNUBUIKC+23gymZdsNX4L9
-         e6Og==
-X-Forwarded-Encrypted: i=1; AFNElJ9YL8B1vpA+uVucmHlufKiyXBDjqBjUbJtsnlMN1WUlR7nBWCL/03396kMXEewSGFM8UFStyw9QDcs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YychADiBPpsbCADPlWcwrY+7n0rXaXjJ/IpBpa0rcw8+7r1TgFG
-	gywYkWa7t9HkfKgOXN4KCSGBPUAwwkda/SEjXAS6bRzPeNZyz99ndolo8P6XmZN8K5ynvYZNz60
-	qGQLqLRiF4N3xvI0h8pO2c9RGX7fAW0YjdT5bqAAHP2oYFq07JH4Roka/lNGgow==
-X-Gm-Gg: Acq92OFWjFcxufzyJn7EJmqucHQGkM9MdXjx5yJhiKZUANj5o4j4FQ/nvhwYZmGAB7d
-	4bVoDux1w8jxSKNTnEoLSyvqal+NZ+DlACMJDgKJxKA3GWS9f+M5StNvmCJBg2otTClVZtN7f3Z
-	cXWP4vRWVQvEzxyrBz1Lu2tbrh9/tYQZzTzJvymTEX5d/0jLK6OtkikmfzMdxOBSgkY3mbeIvQ7
-	93nXYBxgOAuUHYhJR8AJVvRNeeb3OMcbZaP5CYviiXB+z33Mp3ay1oGOPwWigfLj0dg3C32QzqK
-	Jdc6dHCov/95e3YBsY1EOSt5UDH1AJXTNXYQ2dPAVPzzU2S2hYO43UbgvZtEDNxcoJsk4M1Cm+h
-	ur2YYwcK6yUILFQqbDrJ3iZBRcWGdLrTnBRK61ZWhlimmlwQrS3hK4FAm
-X-Received: by 2002:a05:620a:8906:b0:915:8c48:4975 with SMTP id af79cd13be357-9161bc8d76dmr2160614385a.34.1781533361158;
-        Mon, 15 Jun 2026 07:22:41 -0700 (PDT)
-X-Received: by 2002:a05:620a:8906:b0:915:8c48:4975 with SMTP id af79cd13be357-9161bc8d76dmr2160609685a.34.1781533360658;
-        Mon, 15 Jun 2026 07:22:40 -0700 (PDT)
+        bh=Xh0dNKG18px5DpO/h+4aJqXUivlxzo3JbzN1grHbi+o=;
+        b=Qg6tIA/9k2vZ4ccgBW+T08AaMAI83PV8LMRMSEQliKGPB9EshokUFAy1na5gcKIHdU
+         CN8rjaryYZT2tPHWHkne4FRmk74tXMr2ufMwY9GKpNbIUinwDJu+hmIcGQA4w0SJOK30
+         ub5U/uXOwUX2ZA0QoYGZ54uNyCpuo3hthklPlG3FEkrHSS3AYxtWHZrRXJ0JcsXklG6b
+         UMMLzYJC6pQ5PjVd4I/WsW6Cb+9XniWC1KX3FqhU/OhitW5zJBM8qBxG89sfc+cFvPDk
+         E7mf73yFAmWqEEz3f+vIx8K6bH1pXJq8nCqVVAlf9bdTJiu/v8udeIFF01bnHrpv0H11
+         K2Yw==
+X-Forwarded-Encrypted: i=1; AFNElJ8sQy2d6Gh69Y7fSHb43K20ReUHlBp2URmisEuWVI5Yblvn92OENHDdLXjSZ6lX2Mv5qh+zFQ67n3g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybhCOvN/Fcrjviw+HQkMO1cmxy9cligeTZdYNJnkpEa9TcGatR
+	6/H5sWRW9wuI6nQ+9j6atkWYQmDBVt6DsIS7T/KHCOYjsZVL8IKRVWJzWPoGfSkk1C3lV3iNVtJ
+	ZaIpUN13Wp316NrIJK6f7lJqVvWQDAO6RqZtD6zQbFefYsFAUPGeSkdyZYav0f3WrVkcXIA==
+X-Gm-Gg: Acq92OESAlmymNUPUPdoJNjLPfMYCAAD+buFlB16FGLPYnnO5ctFBAwPaz5CK2Cuptz
+	gm1Ce8A+z3JSnKaKTK32tJUuAzo4nr8n4E9NCk9dvMu9ALNSYJKXTGzN3iy8EWEc2qhoaJ1d9sy
+	uKBIRXhHELTvlcQEwjwCuN2Nupt0fcHh795xc9gNsB7QcOy5PuS8Ayie1cQml5to62Kk0J/UQ5t
+	x39+Kb2HQzDk7nwBp8eX5KP+93Gp+ZAtFJXaBgkFqsVobbvlYb9mhP39+Amz9Gn4ftOifcPL8eT
+	H6XeRnf70HyJltvEgO7zlAFp6AAtOEHfKlOpCimsve9Hk9GWsqRdVE0clEKqY5Ro6NGt/BWWoKH
+	bjvn2uZWrwcgEluURB1IpfZCWUcY2dYWrlINTwU2aaikbnvgSKFHOXLyF
+X-Received: by 2002:ac8:5e11:0:b0:517:9206:10fd with SMTP id d75a77b69052e-517fe4f99aemr213373171cf.16.1781533506513;
+        Mon, 15 Jun 2026 07:25:06 -0700 (PDT)
+X-Received: by 2002:ac8:5e11:0:b0:517:9206:10fd with SMTP id d75a77b69052e-517fe4f99aemr213372311cf.16.1781533505971;
+        Mon, 15 Jun 2026 07:25:05 -0700 (PDT)
 Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-9161a006ef0sm1087098485a.24.2026.06.15.07.22.38
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-517fb7dad16sm108693331cf.21.2026.06.15.07.24.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Jun 2026 07:22:39 -0700 (PDT)
-Date: Mon, 15 Jun 2026 10:22:37 -0400
+        Mon, 15 Jun 2026 07:25:05 -0700 (PDT)
+Date: Mon, 15 Jun 2026 10:24:53 -0400
 From: Brian Masney <bmasney@redhat.com>
-To: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-Cc: Saravana Kannan <saravanak@kernel.org>, Abel Vesa <abelvesa@kernel.org>,
-	Maxime Ripard <mripard@kernel.org>,
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Val Packett <val@packett.cool>, Saravana Kannan <saravanak@kernel.org>,
+	Abel Vesa <abelvesa@kernel.org>, Maxime Ripard <mripard@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
 	Russell King <linux@armlinux.org.uk>,
@@ -90,79 +90,59 @@ Cc: Saravana Kannan <saravanak@kernel.org>, Abel Vesa <abelvesa@kernel.org>,
 	Hans de Goede <johannes.goede@oss.qualcomm.com>,
 	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
 	linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 3/4] clk: qcom: convert from icc_sync_state() to
- qcom_cc_sync_state()
-Message-ID: <ajAKrYK44-C9B9Yp@redhat.com>
+Subject: Re: [PATCH 2/4] clk: qcom: common: introduce qcom_cc_sync_state()
+Message-ID: <ajALNcLMlTThdilX@redhat.com>
 References: <20260603-clk-sync-state-v1-0-457120eed200@redhat.com>
- <20260603-clk-sync-state-v1-3-457120eed200@redhat.com>
- <b732e65f-5963-4598-a341-06338044d90c@oldschoolsolutions.biz>
+ <20260603-clk-sync-state-v1-2-457120eed200@redhat.com>
+ <xtrvgetj3ybwuceez6mymxw4cwa6sqeycoz2hs2zztozeb4oyb@uuhtzbludmzv>
+ <2f6dbc37-7ee5-4cef-b39e-455494fb31fd@packett.cool>
+ <ncgma77ckduno5645xf2hcmakmbpwub5d54p4zcrhz5pbq3pij@o257r3t6p5aa>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <b732e65f-5963-4598-a341-06338044d90c@oldschoolsolutions.biz>
+In-Reply-To: <ncgma77ckduno5645xf2hcmakmbpwub5d54p4zcrhz5pbq3pij@o257r3t6p5aa>
 User-Agent: Mutt/2.3.1 (2026-03-20)
 
-Hi Jens,
+Hi Dmitry,
 
-On Sat, Jun 06, 2026 at 08:25:45AM +0200, Jens Glathe wrote:
-> On 03.06.26 16:21, Brian Masney wrote:
-> > Convert all of the qcom clk drivers from icc_sync_state() to
-> > qcom_cc_sync_state().
+On Sun, Jun 07, 2026 at 01:30:03PM +0300, Dmitry Baryshkov wrote:
+> On Sun, Jun 07, 2026 at 01:43:06AM -0300, Val Packett wrote:
 > > 
-> > Signed-off-by: Brian Masney <bmasney@redhat.com>
-> > ---
-> [...]
-> > diff --git a/drivers/clk/qcom/clk-cbf-8996.c b/drivers/clk/qcom/clk-cbf-8996.c
-> > index 0b40ed601f9a..0d920bd5a992 100644
-> > --- a/drivers/clk/qcom/clk-cbf-8996.c
-> > +++ b/drivers/clk/qcom/clk-cbf-8996.c
-> > @@ -6,7 +6,6 @@
-> >   #include <linux/clk.h>
-> >   #include <linux/clk-provider.h>
-> >   #include <linux/interconnect-clk.h>
-> > -#include <linux/interconnect-provider.h>
-> >   #include <linux/of.h>
-> >   #include <linux/module.h>
-> >   #include <linux/platform_device.h>
-> > @@ -249,7 +248,7 @@ static void qcom_msm8996_cbf_icc_remove(struct platform_device *pdev)
+> > On 6/6/26 8:15 AM, Dmitry Baryshkov wrote:
+> > > On Wed, Jun 03, 2026 at 10:21:47AM -0400, Brian Masney wrote:
+> > > > Several qcom clk providers currently have a sync_state helper set to
+> > > > icc_sync_state(). With an upcoming change to the clk framework, if
+> > > > sync_state is not defined for the device, then the clk framework sets it
+> > > > to clk_sync_state().
+> > > > [..]
+> > > > @@ -464,5 +466,12 @@ int qcom_cc_probe_by_index(struct platform_device *pdev, int index,
+> > > >   }
+> > > >   EXPORT_SYMBOL_GPL(qcom_cc_probe_by_index);
+> > > > +void qcom_cc_sync_state(struct device *dev)
+> > > > +{
+> > > > +	icc_sync_state(dev);
+> > > Only if desc->icc_hws != 0, otherwise it will mess the interconnect
+> > > internals. You might need to set drvdata to desc.
 > > 
-> Hi Brian, thank you for the patch set. To successfully build there seems to
-> be a header missing. I tested this in my tree on Thinkbook 16 G7 QOY and
-> Ideapad Slim3x 15Q8X10 without adverse effects, looking good.
+> > Hmmâ€¦
+> > 
+> > Currently icc_sync_state does not seem to use the dev argument at all.
+> > 
+> > How would something get messed up, now or whenever icc_sync_state changes?
+> > o.0
 > 
-> jglathe@tb16-jg:~$ sudo dmesg|grep "unused clocks"
-> [    0.492547] clk: Disabling unused clocks not associated with a device
-> [    1.178818] clk-rpmh 17500000.rsc:clock-controller: clk: Disabling unused
-> clocks
-> [    1.314479] qcom-edp-phy aec5a00.phy: clk: Disabling unused clocks
-> [    1.327608] tcsrcc-x1e80100 1fc0000.clock-controller: clk: Disabling
-> unused clocks
-> [    1.544869] qcom-qmp-combo-phy fdf000.phy: clk: Disabling unused clocks
-> [    1.614767] qcom-qmp-usb-phy 88e5000.phy: clk: Disabling unused clocks
-> [    1.616222] qcom-qmp-usb-phy 88e3000.phy: clk: Disabling unused clocks
-> [    1.690273] qcom-qmp-combo-phy fd5000.phy: clk: Disabling unused clocks
-> [    1.726354] qcom-qmp-pcie-phy 1bfc000.phy: clk: Disabling unused clocks
-> [   10.956342] qcom-qmp-pcie-phy 1c0e000.phy: clk: Disabling unused clocks
-> [   15.858926] q6prm-lpass-clock
-> 6800000.remoteproc:glink-edge:gpr:service@2:clock-controller: clk: Disabling
-> unused clocks
-> [   15.867120] rx_macro 6ac0000.codec: clk: Disabling unused clocks
-> [   15.867990] wsa_macro 6aa0000.codec: clk: Disabling unused clocks
-> [   15.868589] va_macro 6d44000.codec: clk: Disabling unused clocks
-> [   15.970465] wsa_macro 6b00000.codec: clk: Disabling unused clocks
-> [   15.973614] tx_macro 6ae0000.codec: clk: Disabling unused clocks
-> 
-> Tested-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+> Yes :-(
 
-Thanks for testing. I'm going to put the Tested-by on patch 4 that actually
-adds the sync_state support when I post the new version unless I hear
-from you otherwise.
+Sorry about the delayed response since I was out of town all last week.
+Just to be clear, the missing check for 'desc->icc_hws != 0' is a bug that
+existed prior to my change, and I should label it as such with a Fixes
+tag when I post my next version?
 
 Brian
 
