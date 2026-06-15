@@ -1,138 +1,128 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 245C54183A0
-	for <linux-clk@vger.kernel.org>; Mon, 15 Jun 2026 16:57:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EF7740B6E2
+	for <linux-clk@vger.kernel.org>; Mon, 15 Jun 2026 17:18:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781542637; cv=none; b=c8TNofofGPl9qiFTPS9AAWzugemCGJYUXGzAd58KVJbfLk4OiCsag9JAKpQxDbAUf3SVm+bRcsEwyAx34WwZxDRfpkIJoaJQLO99N5Agoqj+srUXgk8a0ZMEOMv6zftL/1Lvl0ijxL3pFlRQmp/TImx2xnrwaPs3tPuzlEGYa5k=
+	t=1781543895; cv=none; b=ftwzJ3g9KdcZyqk6d2v1TajaVZKALj4CZ7XVTggcOm7WI6xLuMTCgEtD1AhlhnW3WOCIHup4/hoaa5RmZfHpgrQiNkzhEUV9GYVDiNWZtpJ5EOnd4fYvGHBo2G2kJbHYgL2JlI4fSPM8rNA0j5uBM5oYeERr7A/5+eBJQo52uMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781542637; c=relaxed/simple;
-	bh=Q++Lf186tcvSnhNbpXMGHHXwihp6Nj2/MYlU3xEci64=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=TGPSfANdoOAYvsShBERicK3ny3ujuVPLFovLmue32ZFiOdb6HL2DCi7CMe5TmsG6QGmzDvAsm2EwcA3GV+n4gs9YiEqKD/MAt0JVZ9irY0BwXamFcg8zVFWnUpgX+7rS1+ld0Vg5lRp3cNPZ77RDYB/6P/dEM7WYxxYWOS9gMHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=n7y/vxpm; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1781543895; c=relaxed/simple;
+	bh=6MjK4Ekl6EgbuHurjrLkCh0S8WdwZwdwkLo1uggeUk0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WbXQC59ajwd5w6cbzJ2shpwP8YGSvLYEl23g8SB7r4ltf/wZoX5MIVGF5EH3RNuhkmA1xUM03zEg1x9sZXdYBxrrQmbVrqj9jGNjQXSYtDlgobLUOXBn5DZArc5irGW4QnELj6lNxO8ukn3clhugvlR6EWYIuSiXj3zKE81nMOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hjEEIeAe; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=YgyBCN8r; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="n7y/vxpm"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-490cf3000f0so36152385e9.1
-        for <linux-clk@vger.kernel.org>; Mon, 15 Jun 2026 09:57:15 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hjEEIeAe";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="YgyBCN8r"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1781543891;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oZr+ycgvZUilxhhoW/bzv6nOUngq3yd4joV7dFf5q7I=;
+	b=hjEEIeAeJim4/+7RWdVMN0u9XN07KW8mgqBuEHtQkSO6shWtkvBue+YBmUuBiWIQGC9f8Y
+	zMmcjAoKr/cCfHUb3bfbyVE3ULBBHw+H4Mhc8Fe3t8VN4Vj3QckRWmeo/wU8TEgWqCL3wi
+	3n2TSRaYTMaHxboQKBK+FZRzN8xODww=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-618-NCImD9auN8iJmJaWYRGllw-1; Mon, 15 Jun 2026 13:18:10 -0400
+X-MC-Unique: NCImD9auN8iJmJaWYRGllw-1
+X-Mimecast-MFC-AGG-ID: NCImD9auN8iJmJaWYRGllw_1781543889
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-5175b7946d5so29146051cf.0
+        for <linux-clk@vger.kernel.org>; Mon, 15 Jun 2026 10:18:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1781542634; x=1782147434; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XjyMVm4fYYqVPsgeWiKX2v7WFAJCpVCyaRGSZIumw3A=;
-        b=n7y/vxpmE0zsY2wMuUR+SfyWEUlbOeFm1Ekn9BChRC9EmctRzTMINuuwH2CRE3Vrfr
-         nSUXY8I3GGAd3e1H2VvX/t9GALp/qgQ2L4GVeiIEmijkpc4YAfQcVDIYuqMdScYvaMM9
-         ck4GWexKkcmugdV8/NlpvuD4d3C7rLSH1g4sm6Qy/nLXPcOt2QIGkSjsnVSFkvQKCI1E
-         KdMT7nFzrSRB6+G7WymYtu/ZpmQfWKppceplu3lY0s4MLd46TEjp7pZ3VpOAhq1se90m
-         JcopVEgVEZ3Io6/Qm251ARwjVjQyAso6tTNXl6fbnia+Z4DtxZ1ElChVI+z4U0xTPnUF
-         c7MQ==
+        d=redhat.com; s=google; t=1781543889; x=1782148689; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oZr+ycgvZUilxhhoW/bzv6nOUngq3yd4joV7dFf5q7I=;
+        b=YgyBCN8r3zHMlSL/SJ+pyavqbBJ9A1fxcVUkyrUzNxgEn8IoMqas5GxhTlryBLY8W4
+         qQR+cwpgqHqPz9EBpOkxH/AvtrJ8OOHvMORiKNJIECXd6HMIFA9uk42cRP7/ybQT6jbh
+         hewMQFmSDFE+l68yKEc7C0lbibXaW9Nyo+FMkxSDMvaIMvukFIuT6G/E2i0OA1doBDnW
+         Tqvz+rGnOYd8dVHG0sU2spi4/23ZXGKI5xooSjCTXF4VI4ZEseD2VXqmwz8I3FDLcO1e
+         7eS41HkBKXfKUns3g72Sf6/VsiRYWXvGFQz1gGjke60gN2ANEhXUd1Bf573GOYWO7Uzt
+         TJCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781542634; x=1782147434;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=XjyMVm4fYYqVPsgeWiKX2v7WFAJCpVCyaRGSZIumw3A=;
-        b=ZvVYSV5fqZ8KNChsntkaPrd6uXzipD/mvDoPBflEQyqL6U5b5t3JiyuLeXYlzARx7k
-         cqXBrVOlx/0cywtaRME3XvAXifGiSUnsL3doNp2pucqED6ZtXqB+EM8VDnj34ptjRPBB
-         WUyfUONfo3cu0aRST0B51OoFtzusIlBwOBJ4OqSXrjifhEK/RZk8jAvXVOJPHmkhn4z8
-         26ouES8jJ8NIDaCdv+G7jspplrSOrxZa35twR0PktM3QS00JYz22v/4DHJNyUu9/Jwmu
-         EuZSq1D3UwO/bLLmrAndax5xBeMucGCCPDa/AqFDHCQECUU8r/8qVRP6nY11c2jhBVw5
-         S+GQ==
-X-Forwarded-Encrypted: i=1; AFNElJ88Jy0sllbfq1pf30WIO6ZnyZ6w7ZKzoM2m0r8VI5shVT2apwo2FwT8edu5a5w6kfU9VvAlqFfUSSY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhvU++wapx5CFT35mJNQBqpTVO5u2V9UAK1jP++vx9TMblQH7u
-	E6QDcmNkjzc4QUmjfzjo3m8cnx6aF62/e7nMxG6nBq37l9uwyDVFtblBRtbydIRVvUU=
-X-Gm-Gg: Acq92OE6bul1u2dZHz28mVjvBioqdJOe6HkdxeOQ/9iOX5ui1ksE6dAghEcaonPUfkC
-	BHfb4LrqotMOUEmmaxFfRlUhN2tG/zASAf1ecM+jQ7uOyoGVyWuqDqGzKUAz0koYF1dNsVdLLer
-	RF724osuOmtxQB4VlioPfr9+DUOd5sZNWyJaQSkOicTGCy0TvWaolWZQML6ozGTlOrQmATpQHqR
-	5UGHui3BjYTE8PyWcTZdOrdBX6WyJ3d8YU08J/erZRV9jeeuJO4Zfy+PPmEkdnnBSAhPVuwZkCI
-	u/soVEe6bpUT+YKbmcLYWl/mX9dCxWV+cW4/bZ6u46oU2CLK9tHhzVShU8EOlbzRiZP1sHXZMni
-	ML21Q9ITkTSZj0h1U9uc6KGjun3x/sDBz6hWd4CBHr/G4dHbkA58/yYyqvf7nIa7STs1vsZx2Em
-	aKDlMZezoTlzpEYuqXOP94TXS0ibOazkFTUdyM4qnTaUFR
-X-Received: by 2002:a05:600c:3f07:b0:492:1e36:bafc with SMTP id 5b1f17b1804b1-4921e36bb41mr153680045e9.36.1781542634466;
-        Mon, 15 Jun 2026 09:57:14 -0700 (PDT)
-Received: from arrakeen.starnux.net ([2a01:e0a:106d:1080:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4606f2b0c35sm37202471f8f.22.2026.06.15.09.57.13
+        d=1e100.net; s=20251104; t=1781543889; x=1782148689;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=oZr+ycgvZUilxhhoW/bzv6nOUngq3yd4joV7dFf5q7I=;
+        b=gIIHMEFPFUfoljHXGAr5/fdtIth1j8tJOmFYdYU1EPdf1MwKjxcbM52yTqwoX3no+b
+         RW9EOuR6pFWbOvCcURT6AYVjcYb0diWotrl08vPPAV0Byw+djU2osBFLH5/S34PirRK5
+         kF7YSLzVok9LhK9hXIC9f70tWSvTOaGWHrv85Oxxj8E5utOymia8lay0taGXAivGcF+C
+         v2qb9rQ5s/FmDZJEUUg+4y5xrZ8ygisnNTlqP2UrlaxDzE5QT9Wpx8nSMFjgbotEolcJ
+         kDxa38pmaLomvjoYrMiDT2g0bFcfM7ZMi23mrDgf4BZYtTtekKxlYzEjWAfsYI8swlJw
+         RGZw==
+X-Forwarded-Encrypted: i=1; AFNElJ+gRAYaORE84CHveOUaW6OEEwQ4l2UcfCPlPOvmBfSP2bD1TnETYHsEzWmgq/KiEmlKTAfInF0gkC0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyi/XhSvxdP1bJhNs9l8XZtxoTgPJEmPecBiMJnkYTWfZqV5W1+
+	zRMVGth5PHs7mdLHVV7OdnSB7zUscCip2kcbFN3WeJGImndg1N6zojH0hjrYzuGYMmhyhIENWAR
+	gnhA4UD3CCamLMyicz/r+/BDdzwjUDkv/aTSxB8tsZm+1Mrcq92jvnf8gNhM+dw==
+X-Gm-Gg: Acq92OFBdMwCaeUNL3hCszuxr7ct/mZEKN0e4ASzMnNtdJtOUKKKGycNatsceEBUO9H
+	xHZ2o/I2of6u/GG3d/U7KlpELQ+WwwSAywMtrekXO4XM8DtALdvVtfkQWpXtNbCinw2aD3gAhj+
+	WdB7RW6DFFDqm+nBM1XRynqg4lnYJR0+SzDeWSgUwMoYUoIjEQbKHrcDH58yr5XeDjqhyOm0tvZ
+	mTECBjXz47salMf7Tk1H/iZD2Ykq4bkM2MOPpkOPDRjPohGnOSo3zyK343z++9gYcPm45fBu3/v
+	eYY62M1ZerMvkNdhW6KxRIMuEqCbhrx3fc2qIWFLFfhXryD/qBuaU13wMdt4hL6gqGdYOQv0eiX
+	Opqu4Ltt5/tL/FBUjFp/VKV3sJCRZxwKVDArDqtv9kiFO5WYJI5IxKlZe
+X-Received: by 2002:ac8:5e11:0:b0:517:9206:10fd with SMTP id d75a77b69052e-517fe4f99aemr224740401cf.16.1781543889124;
+        Mon, 15 Jun 2026 10:18:09 -0700 (PDT)
+X-Received: by 2002:ac8:5e11:0:b0:517:9206:10fd with SMTP id d75a77b69052e-517fe4f99aemr224739901cf.16.1781543888617;
+        Mon, 15 Jun 2026 10:18:08 -0700 (PDT)
+Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-517fb7a2227sm111888521cf.16.2026.06.15.10.18.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Jun 2026 09:57:14 -0700 (PDT)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Date: Mon, 15 Jun 2026 18:57:07 +0200
-Subject: [PATCH v2 6/6] arm64: dts: qcom: sm8650: Add missing CX power
- domain to GCC
+        Mon, 15 Jun 2026 10:18:07 -0700 (PDT)
+Date: Mon, 15 Jun 2026 13:18:05 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Wentao Liang <vulab@iscas.ac.cn>
+Cc: andrew@lunn.ch, gregory.clement@bootlin.com,
+	sebastian.hesselbarth@gmail.com, mturquette@baylibre.com,
+	sboyd@kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] clk: mvebu: ap-cpu: fix missing clk_put() in
+ ap_cpu_clock_probe()
+Message-ID: <ajAzzZQijess8tZf@redhat.com>
+References: <20260604025115.3763823-1-vulab@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260615-topic-sm8x50-tie-gcc-to-cx-v2-6-6b5752dd4747@linaro.org>
-References: <20260615-topic-sm8x50-tie-gcc-to-cx-v2-0-6b5752dd4747@linaro.org>
-In-Reply-To: <20260615-topic-sm8x50-tie-gcc-to-cx-v2-0-6b5752dd4747@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
- Abel Vesa <abelvesa@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
- Sai Prakash Ranjan <quic_saipraka@quicinc.com>, 
- Brian Masney <bmasney@redhat.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
- Abel Vesa <abel.vesa@oss.qualcomm.com>
-X-Mailer: b4 0.15.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1084;
- i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=Q++Lf186tcvSnhNbpXMGHHXwihp6Nj2/MYlU3xEci64=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBqMC7jZAiJqW5AmB1lC7UlqNt0vIWrJRHtTC326me0
- PmXRnEiJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCajAu4wAKCRB33NvayMhJ0S34D/
- 4wC9TFzb6OByWn6XRk30aSwG1MOO6TDGE/O8Zy/RyeNfPPs4cZUoUxa1Eg4qAVm6ut2RlvzxTReou0
- b7Lg/kHLVRGnN5mUOw/ebWHNwtxi3RwiINm1PAV42JmYueR/g/IVKAodgxcb5ojsRFOmqifs3Qzcdu
- BlbOzm8Hr/KaUYQV5JbDiaSJDkuMBeUjtXbH4ZWQYUYYnwrcD6j0uR9GlsEmIEyYx6Bo+su3j3HGGA
- a7yQAT/KaqQyzND2fqPYy3SF4hxUNWUiJbpKEqXelYVABd+KRW2c5fYCmhpF1cBlQ/2yr/aTI/L5Az
- inpmUVKLEWqWgZ+GfPDFUfluY1F+NkeMCbBgWEEYDhjMdR98tW2fe0AXhQMp6XkpZGlW0n58andf8/
- VozIOiApMLpUGlBWqUnNbzeb+TbhW2iA7UsumTuisIbG1mxHE+Wr4nFErwQnhRdz9eOlzDnajk3sPn
- cRfPqaadeGMVht5+vF4C5VOkBnwB18MXktAVrQQpTKcKsHRZZNnxrMsFWqhlb/5IPxdtOOtxPbeOXS
- sdA+rwlfITleBcmVmtHErPBzvIBXupBjwuhmlicGQFMOGvCzognf/ayoIEi3f5OPXrw/nCO8382tks
- cErQXKVTpGgKGvRKh1n8sv1K7eHjSK/3I5/LWxaIdJ9iuW5oigJ9u05DViTw==
-X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
- fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260604025115.3763823-1-vulab@iscas.ac.cn>
+User-Agent: Mutt/2.3.1 (2026-03-20)
 
-Unless CX is declared as the power-domain of GCC, votes (power and
-performance) on the GDSCs it provides will not propagate to the CX,
-which might result in under-voltage conditions.
+On Thu, Jun 04, 2026 at 02:51:15AM +0000, Wentao Liang wrote:
+> The function ap_cpu_clock_probe() calls of_clk_get() to obtain a
+> reference to the parent clock for each CPU cluster, but it never
+> releases it with clk_put().  The returned clk is used only to read
+> the parent's name via __clk_get_name(), and the reference is leaked
+> on every successful cluster initialization as well as on the error
+> path when devm_clk_hw_register() fails.
+> 
+> Add the missing clk_put() after the name has been extracted and
+> before returning on error to fix the leak.
+> 
+> Fixes: af9617b419f7 ("clk: mvebu: ap-cpu-clk: Fix a memory leak in error handling paths")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
 
-Add the missing power-domains property to associate GCC with RPMHPD_CX.
+This calls:
 
-Fixes: d2350377997f ("arm64: dts: qcom: add initial SM8650 dtsi")
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Reviewed-by: Abel Vesa <abel.vesa@oss.qualcomm.com>
-Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
----
- arch/arm64/boot/dts/qcom/sm8650.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+                parent = of_clk_get(np, cluster_index);
+                if (IS_ERR(parent)) {
+			...
+                }
+                parent_name =  __clk_get_name(parent);
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-index 160ead25ecf7..8365e97436d6 100644
---- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-@@ -1963,6 +1963,8 @@ gcc: clock-controller@100000 {
- 				 <&ufs_mem_phy 2>,
- 				 <&usb_dp_qmpphy QMP_USB43DP_USB3_PIPE_CLK>;
- 
-+			power-domains = <&rpmhpd RPMHPD_CX>;
-+
- 			#clock-cells = <1>;
- 			#reset-cells = <1>;
- 			#power-domain-cells = <1>;
+Can this all be replaced with a call to of_clk_get_parent_name() ?
 
--- 
-2.34.1
+Brian
 
