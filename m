@@ -1,128 +1,123 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from outbound9.mail.transip.nl (outbound9.mail.transip.nl [136.144.136.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EF7740B6E2
-	for <linux-clk@vger.kernel.org>; Mon, 15 Jun 2026 17:18:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E73A40863B;
+	Mon, 15 Jun 2026 17:21:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=136.144.136.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781543895; cv=none; b=ftwzJ3g9KdcZyqk6d2v1TajaVZKALj4CZ7XVTggcOm7WI6xLuMTCgEtD1AhlhnW3WOCIHup4/hoaa5RmZfHpgrQiNkzhEUV9GYVDiNWZtpJ5EOnd4fYvGHBo2G2kJbHYgL2JlI4fSPM8rNA0j5uBM5oYeERr7A/5+eBJQo52uMc=
+	t=1781544096; cv=none; b=B7Su/9HEO6OaM06eWC2aTrRIZI+FO22MpkJGoi4nE+zOxUUAMJdD8ImorXzcHOLHIBKmxVCHda+Ya4uyNKjBjHtc0GZkT8GY0XcKCcUaSYQ46w0gL4Il5YBxIt/a3W2kMW4E7rHPywhhygslIPBZ5XSQ+WFIEfPrFbdey9iCp3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781543895; c=relaxed/simple;
-	bh=6MjK4Ekl6EgbuHurjrLkCh0S8WdwZwdwkLo1uggeUk0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WbXQC59ajwd5w6cbzJ2shpwP8YGSvLYEl23g8SB7r4ltf/wZoX5MIVGF5EH3RNuhkmA1xUM03zEg1x9sZXdYBxrrQmbVrqj9jGNjQXSYtDlgobLUOXBn5DZArc5irGW4QnELj6lNxO8ukn3clhugvlR6EWYIuSiXj3zKE81nMOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hjEEIeAe; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=YgyBCN8r; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1781544096; c=relaxed/simple;
+	bh=iIbTOSIp0iMFO2Z7SFmL5SdUAEiTnbuy9LqmwWri3ZM=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=VhwM/X5SIH70X6lhn/KlP3jEN/zVafCgHLmjMBluSx5HmAKNu6JOWrlhQmuoh5u4WKJkerG7KXAnNCL+TxPYPaa7mLaCgLrHJ15394WciNxmxsYDc3ggRiYjpDY7JbzNlmLWPyjVjpbqrXNB+5bE2MG+x9nyWB/liP0RaQaLV7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=herrie.org; spf=pass smtp.mailfrom=herrie.org; dkim=pass (2048-bit key) header.d=herrie.org header.i=@herrie.org header.b=oJQIeMyv; arc=none smtp.client-ip=136.144.136.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=herrie.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=herrie.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hjEEIeAe";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="YgyBCN8r"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1781543891;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oZr+ycgvZUilxhhoW/bzv6nOUngq3yd4joV7dFf5q7I=;
-	b=hjEEIeAeJim4/+7RWdVMN0u9XN07KW8mgqBuEHtQkSO6shWtkvBue+YBmUuBiWIQGC9f8Y
-	zMmcjAoKr/cCfHUb3bfbyVE3ULBBHw+H4Mhc8Fe3t8VN4Vj3QckRWmeo/wU8TEgWqCL3wi
-	3n2TSRaYTMaHxboQKBK+FZRzN8xODww=
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
- [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-618-NCImD9auN8iJmJaWYRGllw-1; Mon, 15 Jun 2026 13:18:10 -0400
-X-MC-Unique: NCImD9auN8iJmJaWYRGllw-1
-X-Mimecast-MFC-AGG-ID: NCImD9auN8iJmJaWYRGllw_1781543889
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-5175b7946d5so29146051cf.0
-        for <linux-clk@vger.kernel.org>; Mon, 15 Jun 2026 10:18:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1781543889; x=1782148689; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oZr+ycgvZUilxhhoW/bzv6nOUngq3yd4joV7dFf5q7I=;
-        b=YgyBCN8r3zHMlSL/SJ+pyavqbBJ9A1fxcVUkyrUzNxgEn8IoMqas5GxhTlryBLY8W4
-         qQR+cwpgqHqPz9EBpOkxH/AvtrJ8OOHvMORiKNJIECXd6HMIFA9uk42cRP7/ybQT6jbh
-         hewMQFmSDFE+l68yKEc7C0lbibXaW9Nyo+FMkxSDMvaIMvukFIuT6G/E2i0OA1doBDnW
-         Tqvz+rGnOYd8dVHG0sU2spi4/23ZXGKI5xooSjCTXF4VI4ZEseD2VXqmwz8I3FDLcO1e
-         7eS41HkBKXfKUns3g72Sf6/VsiRYWXvGFQz1gGjke60gN2ANEhXUd1Bf573GOYWO7Uzt
-         TJCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781543889; x=1782148689;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=oZr+ycgvZUilxhhoW/bzv6nOUngq3yd4joV7dFf5q7I=;
-        b=gIIHMEFPFUfoljHXGAr5/fdtIth1j8tJOmFYdYU1EPdf1MwKjxcbM52yTqwoX3no+b
-         RW9EOuR6pFWbOvCcURT6AYVjcYb0diWotrl08vPPAV0Byw+djU2osBFLH5/S34PirRK5
-         kF7YSLzVok9LhK9hXIC9f70tWSvTOaGWHrv85Oxxj8E5utOymia8lay0taGXAivGcF+C
-         v2qb9rQ5s/FmDZJEUUg+4y5xrZ8ygisnNTlqP2UrlaxDzE5QT9Wpx8nSMFjgbotEolcJ
-         kDxa38pmaLomvjoYrMiDT2g0bFcfM7ZMi23mrDgf4BZYtTtekKxlYzEjWAfsYI8swlJw
-         RGZw==
-X-Forwarded-Encrypted: i=1; AFNElJ+gRAYaORE84CHveOUaW6OEEwQ4l2UcfCPlPOvmBfSP2bD1TnETYHsEzWmgq/KiEmlKTAfInF0gkC0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyi/XhSvxdP1bJhNs9l8XZtxoTgPJEmPecBiMJnkYTWfZqV5W1+
-	zRMVGth5PHs7mdLHVV7OdnSB7zUscCip2kcbFN3WeJGImndg1N6zojH0hjrYzuGYMmhyhIENWAR
-	gnhA4UD3CCamLMyicz/r+/BDdzwjUDkv/aTSxB8tsZm+1Mrcq92jvnf8gNhM+dw==
-X-Gm-Gg: Acq92OFBdMwCaeUNL3hCszuxr7ct/mZEKN0e4ASzMnNtdJtOUKKKGycNatsceEBUO9H
-	xHZ2o/I2of6u/GG3d/U7KlpELQ+WwwSAywMtrekXO4XM8DtALdvVtfkQWpXtNbCinw2aD3gAhj+
-	WdB7RW6DFFDqm+nBM1XRynqg4lnYJR0+SzDeWSgUwMoYUoIjEQbKHrcDH58yr5XeDjqhyOm0tvZ
-	mTECBjXz47salMf7Tk1H/iZD2Ykq4bkM2MOPpkOPDRjPohGnOSo3zyK343z++9gYcPm45fBu3/v
-	eYY62M1ZerMvkNdhW6KxRIMuEqCbhrx3fc2qIWFLFfhXryD/qBuaU13wMdt4hL6gqGdYOQv0eiX
-	Opqu4Ltt5/tL/FBUjFp/VKV3sJCRZxwKVDArDqtv9kiFO5WYJI5IxKlZe
-X-Received: by 2002:ac8:5e11:0:b0:517:9206:10fd with SMTP id d75a77b69052e-517fe4f99aemr224740401cf.16.1781543889124;
-        Mon, 15 Jun 2026 10:18:09 -0700 (PDT)
-X-Received: by 2002:ac8:5e11:0:b0:517:9206:10fd with SMTP id d75a77b69052e-517fe4f99aemr224739901cf.16.1781543888617;
-        Mon, 15 Jun 2026 10:18:08 -0700 (PDT)
-Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-517fb7a2227sm111888521cf.16.2026.06.15.10.18.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Jun 2026 10:18:07 -0700 (PDT)
-Date: Mon, 15 Jun 2026 13:18:05 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Wentao Liang <vulab@iscas.ac.cn>
-Cc: andrew@lunn.ch, gregory.clement@bootlin.com,
-	sebastian.hesselbarth@gmail.com, mturquette@baylibre.com,
-	sboyd@kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] clk: mvebu: ap-cpu: fix missing clk_put() in
- ap_cpu_clock_probe()
-Message-ID: <ajAzzZQijess8tZf@redhat.com>
-References: <20260604025115.3763823-1-vulab@iscas.ac.cn>
+	dkim=pass (2048-bit key) header.d=herrie.org header.i=@herrie.org header.b="oJQIeMyv"
+Received: from submission15.mail.transip.nl (unknown [10.103.8.166])
+	by outbound9.mail.transip.nl (Postfix) with ESMTP id 4gfH386S9mzTPNDC;
+	Mon, 15 Jun 2026 19:21:24 +0200 (CEST)
+Received: from transip.email (unknown [10.103.8.120])
+	by submission15.mail.transip.nl (Postfix) with ESMTPA id 4gfH382y09z3R3nyg;
+	Mon, 15 Jun 2026 19:21:24 +0200 (CEST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260604025115.3763823-1-vulab@iscas.ac.cn>
-User-Agent: Mutt/2.3.1 (2026-03-20)
+Date: Mon, 15 Jun 2026 19:21:24 +0200
+From: me@herrie.org
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Herman van Hazendonk <github.com@herrie.org>, sboyd@kernel.org, Bjorn
+ Andersson <andersson@kernel.org>, Michael Turquette
+ <mturquette@baylibre.com>, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: qcom: gcc-msm8660: register CE2 H clock
+Reply-To: github.com@herrie.org
+Mail-Reply-To: github.com@herrie.org
+In-Reply-To: <b51b4d7e-fdea-4793-9007-c9e3ee922f70@oss.qualcomm.com>
+References: <20260602042747.277270-1-github.com@herrie.org>
+ <20260602042747.277270-2-github.com@herrie.org>
+ <b51b4d7e-fdea-4793-9007-c9e3ee922f70@oss.qualcomm.com>
+User-Agent: Webmail
+Message-ID: <267d1996c4f6b25518d30eeca129fda4@herrie.org>
+X-Sender: me@herrie.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: ClueGetter at submission15.mail.transip.nl
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ s=transip-a; d=herrie.org; t=1781544084; h=from:reply-to:subject:to:
+ cc:references:in-reply-to:date:mime-version:content-type;
+ bh=UMEnw+hfbfjO44xCyRSRyc5yFScaN4Ozq5k4yQSUsoo=;
+ b=oJQIeMyvpmUHjCufH8c+X7FrsUgbaseTHoUYgVHisRUCBQWQKavkjNwRL4JoF+Q1t+hShE
+ 6Fxr47uZn2DMr0jxzoh1jwDKfJTEtQwigRILHLPAOt6UMK5iA8iSL7qWmmPh3FRomEk1xI
+ zQtDVBwOljFvPN37FxtVepMZ+PlRKzAacMIdIMtM4ZyI6ezAAv6MW1PCsS3Oz9lced/InJ
+ UHx8GFQGm6yXaIbzEEseSkkUvN9GqfE1jj4RdosCmKiqhCbQ5AXTT99aeO0ZImCnhma01M
+ GnziTVVdPl/74xOl2AJP6KK5CkGBU5sj2PRI77ngfO/EcasVoG896QrkTj58JA==
+X-Report-Abuse-To: abuse@transip.nl
 
-On Thu, Jun 04, 2026 at 02:51:15AM +0000, Wentao Liang wrote:
-> The function ap_cpu_clock_probe() calls of_clk_get() to obtain a
-> reference to the parent clock for each CPU cluster, but it never
-> releases it with clk_put().  The returned clk is used only to read
-> the parent's name via __clk_get_name(), and the reference is leaked
-> on every successful cluster initialization as well as on the error
-> path when devm_clk_hw_register() fails.
+On 2026-06-15 18:36, Konrad Dybcio wrote:
+> On 6/2/26 6:27 AM, Herman van Hazendonk wrote:
+>> On MSM8x60 the Crypto Engine 2 (CE2) block at 0x18500000 is gated by
+>> a single hardware enable in GCC_CE2_HCLK_CTL (0x2740, BIT(4)). The
+>> existing dt-binding header already reserves CE2_H_CLK (ID 77) for
+>> this clock but the driver never registered an entry for it, so probe
+>> of any consumer that resolves the binding fails: the CE2 MMIO window
+>> reads back 0x0 and qce's DMA hangs indefinitely waiting for handshake
+>> signals that never arrive.
 > 
-> Add the missing clk_put() after the name has been extracted and
-> before returning on error to fix the leak.
+> [...]
 > 
-> Fixes: af9617b419f7 ("clk: mvebu: ap-cpu-clk: Fix a memory leak in error handling paths")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+>> +/*
+>> + * Crypto Engine 2 (CE2) clock.
+>> + *
+>> + * On MSM8x60 the CE2 block at 0x18500000 is gated by a single 
+>> hardware
+>> + * enable in GCC_CE2_HCLK_CTL (0x2740, BIT(4)). The vendor MSM8660
+>> + * clock-8x60.c routes both the "core" and "iface" consumer-name 
+>> lookups
+>> + * to this one register, and the upstream QCE crypto driver requests
+>> + * both clock names via devm_clk_get_optional_enabled(). Without the
+>> + * clock present at probe the QCE MMIO window reads back 0x0 and DMA
+>> + * hangs indefinitely waiting for handshake signals that never 
+>> arrive.
+>> + *
+>> + * Register a single clk_branch: the consumer DT can reference the 
+>> same
+>> + * clock phandle twice under different clock-names ("core" and 
+>> "iface"),
+>> + * which yields the same struct clk for both clk_get() calls. Per-
+>> + * consumer refcounting then works correctly and the single 
+>> underlying
+>> + * enable bit is asserted while either consumer holds the clock
+>> + * prepared, instead of having two independent clk_branch structs
+>> + * racing the same hardware bit.
+>> + */
+> 
+> I don't find this comment particularly valuable, given it ends up
+> describing the fact that the common clock framework has refcounted
+> enables (pretty widely known) and details how the DT is going to use
+> this (which we can read in the DT itself)
+> 
+> I think the commit message is really exhaustive and it's a better
+> place for this info anyway
+> 
+> Konrad
+Hi Konrad,
 
-This calls:
+Happy to clean it up. MSM8x60 is poorly documented in public and 
+whatever is
+available in downstream kernels is often incomplete, so I tried to 
+document
+most in the various commits. Happy to put it in another place if that's 
+more
+appropriate. A lot of the info was found by register poking and trial 
+and
+error because the lack of documentation.
 
-                parent = of_clk_get(np, cluster_index);
-                if (IS_ERR(parent)) {
-			...
-                }
-                parent_name =  __clk_get_name(parent);
-
-Can this all be replaced with a call to of_clk_get_parent_name() ?
-
-Brian
-
+Thanks,
+Herman
