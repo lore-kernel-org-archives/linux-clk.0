@@ -1,123 +1,276 @@
-Received: from outbound9.mail.transip.nl (outbound9.mail.transip.nl [136.144.136.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E73A40863B;
-	Mon, 15 Jun 2026 17:21:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=136.144.136.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09F902E7374
+	for <linux-clk@vger.kernel.org>; Mon, 15 Jun 2026 17:46:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781544096; cv=none; b=B7Su/9HEO6OaM06eWC2aTrRIZI+FO22MpkJGoi4nE+zOxUUAMJdD8ImorXzcHOLHIBKmxVCHda+Ya4uyNKjBjHtc0GZkT8GY0XcKCcUaSYQ46w0gL4Il5YBxIt/a3W2kMW4E7rHPywhhygslIPBZ5XSQ+WFIEfPrFbdey9iCp3I=
+	t=1781545595; cv=none; b=OiFG5lbQ9Wq0tV8E3IjLXk9c1XVeC2uGXMrSbYGzEEWn3RrXsjufubTSSpxlegi48UeXNa5K7hS4WJRFtzKiO+wDZyPip38Lib0kgr5AnPaPMIGfxx3/BHugYGZOxpYXj2sk5RU1Ro9dMCd0+CpFWbTak3Af3wLcbcMnfBTilbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781544096; c=relaxed/simple;
-	bh=iIbTOSIp0iMFO2Z7SFmL5SdUAEiTnbuy9LqmwWri3ZM=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=VhwM/X5SIH70X6lhn/KlP3jEN/zVafCgHLmjMBluSx5HmAKNu6JOWrlhQmuoh5u4WKJkerG7KXAnNCL+TxPYPaa7mLaCgLrHJ15394WciNxmxsYDc3ggRiYjpDY7JbzNlmLWPyjVjpbqrXNB+5bE2MG+x9nyWB/liP0RaQaLV7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=herrie.org; spf=pass smtp.mailfrom=herrie.org; dkim=pass (2048-bit key) header.d=herrie.org header.i=@herrie.org header.b=oJQIeMyv; arc=none smtp.client-ip=136.144.136.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=herrie.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=herrie.org
+	s=arc-20240116; t=1781545595; c=relaxed/simple;
+	bh=6Kch48sojf7uiTigvd+1WdQSRnstLfhc2vvsNDPRh8g=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=EBnIQX4beZ6dR1uxngVTrrYAoXOouyI1QRqEuGuPrguf2faAi4uLNUls8dH1XEiJRiu34TkK0Rh177ys8KbJbpAytHo75Z4QtQzy2Pvy+ZoREznh46hFopLqhHHUh5RPbYR4qfpk1SSM1pE7cC6FQ/oB1CczzHUCUiQ7ftFAskg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=V9e5csqu; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=herrie.org header.i=@herrie.org header.b="oJQIeMyv"
-Received: from submission15.mail.transip.nl (unknown [10.103.8.166])
-	by outbound9.mail.transip.nl (Postfix) with ESMTP id 4gfH386S9mzTPNDC;
-	Mon, 15 Jun 2026 19:21:24 +0200 (CEST)
-Received: from transip.email (unknown [10.103.8.120])
-	by submission15.mail.transip.nl (Postfix) with ESMTPA id 4gfH382y09z3R3nyg;
-	Mon, 15 Jun 2026 19:21:24 +0200 (CEST)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="V9e5csqu"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-4600ddc4017so2719613f8f.0
+        for <linux-clk@vger.kernel.org>; Mon, 15 Jun 2026 10:46:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1781545591; x=1782150391; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:user-agent
+         :references:in-reply-to:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ksRwsZduIIB6SyG2nFNgDOhkTcDdI1Vxdkt4BX+vx3c=;
+        b=V9e5csquuf1zX//IXNFGDd3OvoWedqTPYctKiCAPTb7LpF/5XmOhmFDS3t/DbyCrfU
+         hrhnGMswTcFYbLE+od7qf+vngsGd4exUurM5PVtPjVKZvM7UbbBMD3NpW3czbfhIUZsP
+         A0y7sCiW9kBx5+v8/N16LlqQNCZP/jva6tbRmaTVuBtm7MpZDHO0ByuO0RVCEGRaS3Eh
+         mvwBKCCeXLTKWk2i6m4eTX1sBydoYunfAeLapjRGCanPHuS1hvVnRjSZOnbpX9N7xJwx
+         /z3Sq3dfL+k78AtMAloDj7/sqAgEluCL/nFMYhBn4GUMRm8X+nj6qzv5EtYz8F1BUBLb
+         05Pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1781545591; x=1782150391;
+        h=content-transfer-encoding:mime-version:message-id:date:user-agent
+         :references:in-reply-to:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ksRwsZduIIB6SyG2nFNgDOhkTcDdI1Vxdkt4BX+vx3c=;
+        b=pPChKjQGMUQAi06y7tzF4cMoMuGJ5XbK+LpLqtOKaSE8wP+GEc8/I897qpz8w275E3
+         HXmhNYE5+/WtV0ClLoTojfxvtkZYV++FTGH8J+tq4LeX00rhkpudqTS9Ek/TRE8j8V29
+         iVe/+1VodpS4/1IlUsvs/UeR+B2uaHZiaTgkcWMa53mQ2LEiCJdRxNl5gqFqirD0yQLy
+         7VS9Molu9HvMbFASoXJ86YhrhngyplCykzWQHaKP0f8NpB0+cqbQQTQWJ4rROHDGxE7V
+         NSJ4Ss8yZ++NYMMn99OcWxf4QW4yIFKEM37aBrOFV3TqbO0mesYbsHDgsrD3YB0HgYEj
+         JrmA==
+X-Forwarded-Encrypted: i=1; AFNElJ9wxsVm1PyD5CLP0d3fX5nFBP3P/KZQtcDSFe79bn8WR74pR7UUe1rCzsqX4bYvoHXJj9x8HDdtLxQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJm1cvr5nJPKhrN8XuZZjT1OTQ3WREEM77/nJtMKqujie8XCeR
+	EMolzpjP9Kvcs07oX6v8JBR9LceoZoB9lnkMae9Rs1AD0IqVmI9J8/ySEHfnxKK7Qp0=
+X-Gm-Gg: Acq92OEiHY+isNA4Zan3BGEJxESjH/5BbSn4vpVbkMRlv4KG0iPkoFrSArfR05yYX60
+	2wMin281j8aA8P8eOiYoPNKLmn0LYXzkOY4+uTM/Th/mfw1ULGPI+CrrNyGggtG3gW0YouICd12
+	qRDCtL+Tapgxtkjbr7UfvBSvAnWzB7mAnsp+wb7SHX5I3rm7sKOiKGgTLlJ0zlQJYAoYmEckHr6
+	7knbtr+nnB5wJgHNiBW/VJRbm1XcVvSgczJqqwrgUgfLrm/JCIAgNkBBBVOn043UdF7R3T6Wbww
+	MxnvMjMsoNeZsX1m+6XEyumwiqk9luK7wAjHgDbt4Qx1hcFdLwJ3xWRoISwch7Pduso/WETWvA1
+	Izs2qVohzQ7+62+MjsMRXwAWD6ooVNZmXyvaEDs7kWzwawjwTM3N8lHCLRHR1vf1K8UefzwF6Bu
+	0Z8o0AaJwFBDosY0lB4Z5gEA==
+X-Received: by 2002:a05:600c:638f:b0:490:9df1:f0cf with SMTP id 5b1f17b1804b1-4922ff8eeaemr3741655e9.2.1781545591514;
+        Mon, 15 Jun 2026 10:46:31 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:5176:ebe3:853b:8fb0])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4922fa3a8e4sm12251795e9.3.2026.06.15.10.46.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Jun 2026 10:46:30 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Chen-Yu Tsai <wens@kernel.org>
+Cc: Junhui Liu <junhui.liu@pigmoral.tech>,  Michael Turquette
+ <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,  Jernej
+ Skrabec <jernej.skrabec@gmail.com>,  Samuel Holland <samuel@sholland.org>,
+  Alexandre Belloni <alexandre.belloni@bootlin.com>,  Rob Herring
+ <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor
+ Dooley <conor+dt@kernel.org>,  Maxime Ripard <mripard@kernel.org>,
+  linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
+  linux-sunxi@lists.linux.dev,  linux-kernel@vger.kernel.org,
+  linux-rtc@vger.kernel.org,  devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/7] dt-bindings: rtc: sun6i: Add Allwinner A733 support
+In-Reply-To: <CAGb2v67844OPwE6VJ0PAs5LsmCa2h0FvXOBUomZ50dM5tZ0Zow@mail.gmail.com>
+	(Chen-Yu Tsai's message of "Sat, 28 Mar 2026 20:37:26 +0800")
+References: <20260121-a733-rtc-v1-0-d359437f23a7@pigmoral.tech>
+	<20260121-a733-rtc-v1-1-d359437f23a7@pigmoral.tech>
+	<CAGb2v67844OPwE6VJ0PAs5LsmCa2h0FvXOBUomZ50dM5tZ0Zow@mail.gmail.com>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Date: Mon, 15 Jun 2026 19:46:29 +0200
+Message-ID: <1j1pe7elxm.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 15 Jun 2026 19:21:24 +0200
-From: me@herrie.org
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Herman van Hazendonk <github.com@herrie.org>, sboyd@kernel.org, Bjorn
- Andersson <andersson@kernel.org>, Michael Turquette
- <mturquette@baylibre.com>, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] clk: qcom: gcc-msm8660: register CE2 H clock
-Reply-To: github.com@herrie.org
-Mail-Reply-To: github.com@herrie.org
-In-Reply-To: <b51b4d7e-fdea-4793-9007-c9e3ee922f70@oss.qualcomm.com>
-References: <20260602042747.277270-1-github.com@herrie.org>
- <20260602042747.277270-2-github.com@herrie.org>
- <b51b4d7e-fdea-4793-9007-c9e3ee922f70@oss.qualcomm.com>
-User-Agent: Webmail
-Message-ID: <267d1996c4f6b25518d30eeca129fda4@herrie.org>
-X-Sender: me@herrie.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: ClueGetter at submission15.mail.transip.nl
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- s=transip-a; d=herrie.org; t=1781544084; h=from:reply-to:subject:to:
- cc:references:in-reply-to:date:mime-version:content-type;
- bh=UMEnw+hfbfjO44xCyRSRyc5yFScaN4Ozq5k4yQSUsoo=;
- b=oJQIeMyvpmUHjCufH8c+X7FrsUgbaseTHoUYgVHisRUCBQWQKavkjNwRL4JoF+Q1t+hShE
- 6Fxr47uZn2DMr0jxzoh1jwDKfJTEtQwigRILHLPAOt6UMK5iA8iSL7qWmmPh3FRomEk1xI
- zQtDVBwOljFvPN37FxtVepMZ+PlRKzAacMIdIMtM4ZyI6ezAAv6MW1PCsS3Oz9lced/InJ
- UHx8GFQGm6yXaIbzEEseSkkUvN9GqfE1jj4RdosCmKiqhCbQ5AXTT99aeO0ZImCnhma01M
- GnziTVVdPl/74xOl2AJP6KK5CkGBU5sj2PRI77ngfO/EcasVoG896QrkTj58JA==
-X-Report-Abuse-To: abuse@transip.nl
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 2026-06-15 18:36, Konrad Dybcio wrote:
-> On 6/2/26 6:27 AM, Herman van Hazendonk wrote:
->> On MSM8x60 the Crypto Engine 2 (CE2) block at 0x18500000 is gated by
->> a single hardware enable in GCC_CE2_HCLK_CTL (0x2740, BIT(4)). The
->> existing dt-binding header already reserves CE2_H_CLK (ID 77) for
->> this clock but the driver never registered an entry for it, so probe
->> of any consumer that resolves the binding fails: the CE2 MMIO window
->> reads back 0x0 and qce's DMA hangs indefinitely waiting for handshake
->> signals that never arrive.
-> 
-> [...]
-> 
->> +/*
->> + * Crypto Engine 2 (CE2) clock.
->> + *
->> + * On MSM8x60 the CE2 block at 0x18500000 is gated by a single 
->> hardware
->> + * enable in GCC_CE2_HCLK_CTL (0x2740, BIT(4)). The vendor MSM8660
->> + * clock-8x60.c routes both the "core" and "iface" consumer-name 
->> lookups
->> + * to this one register, and the upstream QCE crypto driver requests
->> + * both clock names via devm_clk_get_optional_enabled(). Without the
->> + * clock present at probe the QCE MMIO window reads back 0x0 and DMA
->> + * hangs indefinitely waiting for handshake signals that never 
->> arrive.
->> + *
->> + * Register a single clk_branch: the consumer DT can reference the 
->> same
->> + * clock phandle twice under different clock-names ("core" and 
->> "iface"),
->> + * which yields the same struct clk for both clk_get() calls. Per-
->> + * consumer refcounting then works correctly and the single 
->> underlying
->> + * enable bit is asserted while either consumer holds the clock
->> + * prepared, instead of having two independent clk_branch structs
->> + * racing the same hardware bit.
->> + */
-> 
-> I don't find this comment particularly valuable, given it ends up
-> describing the fact that the common clock framework has refcounted
-> enables (pretty widely known) and details how the DT is going to use
-> this (which we can read in the DT itself)
-> 
-> I think the commit message is really exhaustive and it's a better
-> place for this info anyway
-> 
-> Konrad
-Hi Konrad,
+On sam. 28 mars 2026 at 20:37, Chen-Yu Tsai <wens@kernel.org> wrote:
 
-Happy to clean it up. MSM8x60 is poorly documented in public and 
-whatever is
-available in downstream kernels is often incomplete, so I tried to 
-document
-most in the various commits. Happy to put it in another place if that's 
-more
-appropriate. A lot of the info was found by register poking and trial 
-and
-error because the lack of documentation.
+> On Wed, Jan 21, 2026 at 7:03=E2=80=AFPM Junhui Liu <junhui.liu@pigmoral.t=
+ech> wrote:
+>>
+>> The RTC module in the Allwinner A733 SoC is functionally compatible with
+>> the sun6i RTC, but its internal Clock Control Unit (CCU) has significant
+>> changes.
+>>
+>> The A733 supports selecting the oscillator between three frequencies:
+>> 19.2MHz, 24MHz, and 26MHz. The RTC CCU relies on hardware to detect
+>> which frequency is actually used on the board. By defining all three
+>> frequencies as fixed-clocks in the device tree, the driver can identify
+>> the hardware-detected frequency and expose it to the rest of the system.
+>
+> No. The board device tree shall have the exact and correct frequency
+> defined in the external crystal device node. The operating system can
+> use the hardware-detected frequency to "fix" the in-system representation
+> if it is off.
+>
+>> Additionally, the A733 RTC CCU provides several new DCXO gate clocks for
+>> specific modules, including SerDes, HDMI, and UFS.
+>>
+>> Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
+>> ---
+>>  .../bindings/rtc/allwinner,sun6i-a31-rtc.yaml      | 38 +++++++++++++++=
++++++--
+>>  include/dt-bindings/clock/sun60i-a733-rtc.h        | 16 +++++++++
+>>  2 files changed, 52 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/rtc/allwinner,sun6i-a31-r=
+tc.yaml b/Documentation/devicetree/bindings/rtc/allwinner,sun6i-a31-rtc.yaml
+>> index 9df5cdb6f63f..b18431955783 100644
+>> --- a/Documentation/devicetree/bindings/rtc/allwinner,sun6i-a31-rtc.yaml
+>> +++ b/Documentation/devicetree/bindings/rtc/allwinner,sun6i-a31-rtc.yaml
+>> @@ -26,6 +26,7 @@ properties:
+>>            - allwinner,sun50i-h6-rtc
+>>            - allwinner,sun50i-h616-rtc
+>>            - allwinner,sun50i-r329-rtc
+>> +          - allwinner,sun60i-a733-rtc
+>>        - items:
+>>            - const: allwinner,sun50i-a64-rtc
+>>            - const: allwinner,sun8i-h3-rtc
+>> @@ -46,11 +47,11 @@ properties:
+>>
+>>    clocks:
+>>      minItems: 1
+>> -    maxItems: 4
+>> +    maxItems: 6
+>>
+>>    clock-names:
+>>      minItems: 1
+>> -    maxItems: 4
+>> +    maxItems: 6
+>>
+>>    clock-output-names:
+>>      minItems: 1
+>> @@ -156,6 +157,38 @@ allOf:
+>>          - clocks
+>>          - clock-names
+>>
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            const: allwinner,sun60i-a733-rtc
+>> +
+>> +    then:
+>> +      properties:
+>> +        clocks:
+>> +          minItems: 5
+>> +          items:
+>> +            - description: Bus clock for register access
+>
+>> +            - description: 19.2 MHz oscillator
+>> +            - description: 24 MHz oscillator
+>> +            - description: 26 MHz oscillator
+>
+> No. There is only one input. As in there is only one set of pins for the
+> DCXO. The inputs are the same as on R329 / A523. Just use that list.
+>
+>> +            - description: AHB parent for internal SPI clock
+>> +            - description: External 32768 Hz oscillator
+>> +
+>> +        clock-names:
+>> +          minItems: 5
+>> +          items:
+>> +            - const: bus
+>> +            - const: osc19M
+>> +            - const: osc24M
+>> +            - const: osc26M
+>> +            - const: ahb
+>> +            - const: ext-osc32k
+>> +
+>> +      required:
+>> +        - clocks
+>> +        - clock-names
+>> +
+>>    - if:
+>>        properties:
+>>          compatible:
+>> @@ -164,6 +197,7 @@ allOf:
+>>                - allwinner,sun8i-r40-rtc
+>>                - allwinner,sun50i-h616-rtc
+>>                - allwinner,sun50i-r329-rtc
+>> +              - allwinner,sun60i-a733-rtc
+>>
+>>      then:
+>>        properties:
+>> diff --git a/include/dt-bindings/clock/sun60i-a733-rtc.h b/include/dt-bi=
+ndings/clock/sun60i-a733-rtc.h
+>> new file mode 100644
+>> index 000000000000..8a2b5facad73
+>> --- /dev/null
+>> +++ b/include/dt-bindings/clock/sun60i-a733-rtc.h
+>> @@ -0,0 +1,16 @@
+>> +/* SPDX-License-Identifier: GPL-2.0-only OR MIT */
+>> +
+>> +#ifndef _DT_BINDINGS_CLK_SUN60I_A733_RTC_H_
+>> +#define _DT_BINDINGS_CLK_SUN60I_A733_RTC_H_
+>> +
+>> +#define CLK_IOSC               0
+>> +#define CLK_OSC32K             1
+>> +#define CLK_HOSC               2
+>
+> The DCXO enable control has been present since at least the H6. We just
+> never added it, as we would never disable it anyway.
+>
+> If you compare the RTC clock trees of the A733 and A523, the only addition
+> besides the new gates seems to be the LOSC auto selection. But even that
+> is just an illusion, as the A523 has the same registers for that.
+>
+> One could say the A733 RTC is almost backward compatible to the A523, if
+> not for the two fastboot registers the A523 has at 0x120 and 0x124.
+>
+> So I ask that you try to integrate the differences into the existing
+> driver and bindings. You can tweak and export internal clks if you
+> need.
 
-Thanks,
-Herman
+I'd like to help with that. I think it is doable but I have a question
+regarding the binding of the existing driver, more precisely their usage
+here:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/dri=
+vers/clk/sunxi-ng/ccu-sun6i-rtc.c?h=3Dv7.1#n370
+
+Clock indexes are supposed to be stable in DT (AFAIK) but with the code
+linked the external 32k is at:
+
+* "ext-32k" - so index 3 - if "clock-names" is present
+* index 0 if clock names is not present
+
+... but index 0 is supposed to be the bus clock according the binding
+doc, whether "clock-names" is there or not :/
+
+So what are those old r329 bindings ? is there a documentation defining
+them somewhere ?
+
+Cleaning that part would help with A733 addition in the existing driver
+I think
+
+>
+>> +#define CLK_RTC_32K            3
+>
+> AFAICT besides being an internal clock, this is also fed to GPIO for
+> debounce? We probably need to expose this on the A523 as well.
+>
+>
+> Thanks
+> ChenYu
+>
+>
+>> +#define CLK_OSC32K_FANOUT      4
+>> +#define CLK_HOSC_SERDES1       5
+>> +#define CLK_HOSC_SERDES0       6
+>> +#define CLK_HOSC_HDMI          7
+>> +#define CLK_HOSC_UFS           8
+>> +
+>> +#endif /* _DT_BINDINGS_CLK_SUN60I_A733_RTC_H_ */
+>>
+>> --
+>> 2.52.0
+>>
+>>
+
+--=20
+Jerome
