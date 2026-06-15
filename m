@@ -1,94 +1,96 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E9A93B6C16
-	for <linux-clk@vger.kernel.org>; Mon, 15 Jun 2026 22:01:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D131B2D1931
+	for <linux-clk@vger.kernel.org>; Mon, 15 Jun 2026 23:56:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781560902; cv=none; b=Wdxii/JuEInLAR1ZhL6EtFRtPSyzXwIjq0YvCGzqYr6Hz5CWuJ/23FlXRUPXjR4s/nudGO0BUlnEyQmbiLGjxkj3lugi+XKRvL0xPYS0lJhsy69LqnLpWnwsilT1LO5g899y9iqyJSFmUSrgPJWFYipdI+ci+i6OxP2LMXUrjXQ=
+	t=1781567780; cv=none; b=P53S7jFtBoPdJrAv+U2sacLfURln3VaBGTSi9iBSPsoSwc+5DDVKe2aUGenl6bAOcMZNdbOWasqi5O5Ld18pj8MZaptcXMV0nE8FWxpMBh2Kyi3X9dLZ9w9BTnSJ8QYlbJO4C1YfwRjHveI78o5Zw7snZG1R13EK7CrHVlKEU4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781560902; c=relaxed/simple;
-	bh=KQya+UdDlavUkX/Dssd0LzS1SHmdLAk2q4vV5a+8SBM=;
+	s=arc-20240116; t=1781567780; c=relaxed/simple;
+	bh=GSDE17dix6NM4G9TyF8RriQusXi8CIwfyjIN1giOcEo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YcbRcHPV6fplO06H5O5gMouxc0ToC2KYDZd4DHQzkhdGvy8aV+5qiZfGnpty1WkCMwD19zn8gVZZCUirb0QntiOdZro6qo0iuQf2IPh+PVgMU7TwzSLG1AKFbtOaDLHGDZldUDt4NYcYK4ysyAJ+Fbf8wTHjndHJIpdcyAuyxLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JH5Z5qNN; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=LRtkJ9vz; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mpv+yzPfNGYDROuagMs66PxaGG+Lo2gDqw4YJn6LnTp2B87Z2C24/wSsDi4XsQiiWx2fSEW5uP3ETxvuveY3fWOVzdlqGmnRVzNTSYucG6+4yGHnpDwmOLu2hVqL9LAgFltEOAUE4Bgd/PhRbTBA24VEqETB0FSMQB+Vqw70Ecs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Jcrbfq04; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=S2vkd+cF; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JH5Z5qNN";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="LRtkJ9vz"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1781560900;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=baYX1Qtzf/n+O1i7trf2KNQTHTp/T36Knv9xiG+6gR8=;
-	b=JH5Z5qNN59p9SJ+eEdx80qhOKxLbU03oMIfTQBJAd5YgY9LNhcEoF0tQXAm8pVj1Gm6MPI
-	QHj4dkmFRdJTun34UShFEnZf4oXW2hvdjmswE0F+rRoD8c/0hA1V4ztiFXsTSloZC4xPO1
-	QOCmBCq3W3BfY7twIDhtTV4IPp4W7HM=
-Received: from mail-oi1-f200.google.com (mail-oi1-f200.google.com
- [209.85.167.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-84-fk5kB2DWMwynFim_JJX3rA-1; Mon, 15 Jun 2026 18:01:39 -0400
-X-MC-Unique: fk5kB2DWMwynFim_JJX3rA-1
-X-Mimecast-MFC-AGG-ID: fk5kB2DWMwynFim_JJX3rA_1781560899
-Received: by mail-oi1-f200.google.com with SMTP id 5614622812f47-4867831a9a8so5798370b6e.3
-        for <linux-clk@vger.kernel.org>; Mon, 15 Jun 2026 15:01:39 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Jcrbfq04";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="S2vkd+cF"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 65FJ17qW1393465
+	for <linux-clk@vger.kernel.org>; Mon, 15 Jun 2026 23:56:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=pGRlwJSIZC4OC7CDfGLngBCa
+	nYzdpwDoYdH51ukyug4=; b=Jcrbfq04t0NEl+bQ4SMz0vX8ub9D5qnwJMVd+uOr
+	T1yuRIzYNPO8JFMhkITMHXWMcZdcF7VPNw7EjcIeJzT3NwfRh0bVp+aaisw4uBMj
+	tlhvszUMgO3i8mYCLs0NRcKdENGyfPI4LilFeU/DNcxXI/cEaFi6OmKc6vPwsR5M
+	MnInXLQxHZtl2ejQos03+XF0e2os5nZwSfSgcRT6wtGPuKNjMuuIaDT1PAqsSB7h
+	MADPTsJ0PhMsNo5FRuS3bHCALMn5Pblnuf2k6wlh220sP2R0WGRZ3NQNmJ356tJ6
+	dWWLi+Kb0jO44B+sdhZO5jors91HkKxVsq9qorL9S9J/Jw==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4eter23q4x-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Mon, 15 Jun 2026 23:56:17 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-91576c147a4so1006250285a.3
+        for <linux-clk@vger.kernel.org>; Mon, 15 Jun 2026 16:56:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1781560898; x=1782165698; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=baYX1Qtzf/n+O1i7trf2KNQTHTp/T36Knv9xiG+6gR8=;
-        b=LRtkJ9vzD7YJ2twTswRUR69q7pcEVA70GOV2CYt57hUYyjT+GqDSQ4uoQvLRI6E4f5
-         WpwwY2lFoEGR0WDxBnyiSw22TXzTEGk/YAvjhn+94qwAnglsKPyC9GWUPQowFfo7rqCw
-         rYVw27UwfEtO3B9IdoH/XUPKPDZi+d3eCl3He+lDKJRvZmOlZdrA7qEjlyZZjOT/MC7M
-         4HMN/yQu56RdPw3YHG5rEpxaebLSV19ZaqBW42njx8ccsKfs4vGpJxE8X6YXRHVYTvYo
-         6eMqi4Cv8rwj2AYddf/uIbzaoNFpFhcahaawUalR1xePcUirKgq/l/plWUKohhFa9EpZ
-         mABQ==
+        d=oss.qualcomm.com; s=google; t=1781567777; x=1782172577; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=pGRlwJSIZC4OC7CDfGLngBCanYzdpwDoYdH51ukyug4=;
+        b=S2vkd+cFHimI8OUihDK/cJKN7LulzQu6LHCf2l2FktWoTQ9m20GSyKk+Zpp+UkhTGW
+         AKsJq/aW9I/Qdq4eOPdjnKgnJ/L4u6BbBA2C6VrdG64i25lqxrU8WN3c+Q6dsQfZh4jd
+         uqfATszCjoxGO2z70SNw7NxIie92/0vEpUgD2cQP3mFB7cKBSlBNjACjTAzdiuj1oqR4
+         ABe31SvyNYF0eY+JdNmmvSb1jWcc+7uZ+PCzofTLwja4FPdEx98MMyhfOodIsEG5cbsC
+         MHiI8xlJd89UIAqCx+o/56nGSer1/tchK7ycZ2fbjEuO9Rn+XJayXWtWR+j8Oof8sijG
+         cUlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781560898; x=1782165698;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=baYX1Qtzf/n+O1i7trf2KNQTHTp/T36Knv9xiG+6gR8=;
-        b=KnB4r15URPx8Gb1C8BitmDXm5+1abUaVtOwsd/d0Ex3d7TI3OE31qpaUahY0VuDOm8
-         ISPRkkXdXN9EXBWB/e0lLVn2LmiqI0p9nOPCFs8TU2DfTF4cc1ySeF9kEsOs5stZVl6A
-         5/n5x2dwOCmaxHI2dJWc95eyHP8xvi02iCyR+bW6mewCUduM4KwiXY8X6rPfvLpIr179
-         AZi+Fk51mtJUo1eP3PUvmYBZXGAN3QSQHul/FRBo9DxzTAoD6mkPXm4qQC6VCkfmNUMH
-         IplyLgODMNW0JgXE0IirhO67jFdKYPHutQkBR2PLxaJWIe5mbzyp25NU1X/SToi+dmJZ
-         wVBA==
-X-Forwarded-Encrypted: i=1; AFNElJ+E8+FgmCNtrhFVFrfyKIsC88rU0ZvfFqNYSbtynuOmDwPLThHg3Ne52SD9fkt6ChU5RBNll6ZnFI0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybqJN9zDwkNJol7Mlatk8NsZZGgFU7P70YK9m5JymEIkZEyekw
-	Bdbh1xzvl8AVUzEk2s8/MLwwn3ygkgVNTfUGN/YrtLV+mduj1N1EbDbV07lALIkvOwFhMrbA6Zo
-	6B/Bx+Zuidt1vzF2WH1QhDCwkWgelMgtkzNveIDBXudBynsNKVPO23xYK7LhMuQ==
-X-Gm-Gg: Acq92OGrc4tlGrYlhmC5S31Oto6fGOemtRXXISoBD+k94IGM5amhM8SqzCZ3kM593DX
-	QPkz6XCs7L2Z7QNmbhDOHSY91TPY/gbiNytfEMvY464kPHUBu29Gnd1A22RfwI/Ax9so+kgR/AU
-	JKcDDhVt/VLtOmzbJiu2Vz2Y/k5uaPRFzUrbcMtNGFFvttryEC2JP+gS71A33NkcmhLiLRUy/ol
-	ReO7LGQm4k336B2V1jJATg9hJEZl/mQXB2rVEse1kfcCP3KYD34lzvg2SiyVCtGhk3Yk4MUbv3x
-	2YyFgmYuG95pTZGMXNIf+601G6k0m8bCEsYiJ0IDOVEQFzuthEowd7M+ih2agp8w0GuZUVTH3Rp
-	9mawnGcNRpeQOBZBpnIB/+NOz27NO3234oYL3Fs+kyEMr8e3nSBX1v5q7
-X-Received: by 2002:a05:6808:159b:b0:487:5b1f:2bce with SMTP id 5614622812f47-4875b1ffd23mr5600458b6e.36.1781560897995;
-        Mon, 15 Jun 2026 15:01:37 -0700 (PDT)
-X-Received: by 2002:a05:6808:159b:b0:487:5b1f:2bce with SMTP id 5614622812f47-4875b1ffd23mr5600362b6e.36.1781560897194;
-        Mon, 15 Jun 2026 15:01:37 -0700 (PDT)
-Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-517fb61eaf4sm120318231cf.4.2026.06.15.15.01.35
+        d=1e100.net; s=20251104; t=1781567777; x=1782172577;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pGRlwJSIZC4OC7CDfGLngBCanYzdpwDoYdH51ukyug4=;
+        b=VOdzKxzuwKqmv3+gMDfSxypifhXRCrqJD4HRkBSioB8XtQGFRRbsp7e0p7Oqss5TZA
+         BZni5JoKNkKv/HAq7Q4SVbCAzudGR7x/Msg/nlz5Ev0twOWgGeeUQeqMT3y7hgxrrTIW
+         3sYB3XUNOly19mvZtv7qU3z7qPaL7qsFh5yOaKOqokX0G+AfpTseSkQJW/nT5NBgJCuB
+         EwVWQJprWU4uUFvnyvIy3hbD5ssxperDlyZx6jpoSwpx630DNGSa5FKFjmAsDQm/wBmP
+         Ln9QVg/nKcNhj6cNo9OIw4lVlLmkrrWIV5UJnQ51ovvotpJVCU5UuKsH6px2d2zntTx7
+         3czA==
+X-Forwarded-Encrypted: i=1; AFNElJ9g/yLER3V2wDX191IMMIortQ0ZzqI92zxWHvhOBAOyitJrwPa1F0Rvd0vwavy+80hi58IFzzYhaY4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwY3k89fgwZ2JZ5JN7bTTpytVxivIsJlw1CEy0D0PUqbO46FT63
+	AtZucefKyb2Dm8uLvlWb/HlIvO/BrWiXbOpgyUmYWoMSz4Ha/jZyyaTS/vHmrnzcUpzYoY4IWAs
+	IHj25/gBrkwia7qjjfQP1P8BidKzlp0yX2MqthfMXWzThMV21gWOM+xB5EFr2pOk=
+X-Gm-Gg: Acq92OHVBXqQzkjWDcPngIjSB7V+eEKO+gMvupz2X5CQ5IQzurE0jmur2/1GDREB9rk
+	vuirJhWiF1txdZ4UkYeNLZ8luvtomFHwf1JLCdeQtEpLSypD9kxsxkREy6V0Qz7dAZ0823MkdEH
+	SGyzHMCcOzGxS4IcjQAmwFp+sf/0lbdv2zVl6qqytH11ymCDy72QGi5P5jqofqwrUtuXihnXMZT
+	O7g5duOdcjhhfonni12UCsLPN1WObHn6NRoAAmcO9zwiCOTpdwGeaIXk2iPiFClp8pVFWbP29Du
+	T0liyaPFzWLUg/GiFzGjyTn6792bUkgcreneFUfqdN+IcwsxRMhePqX+6ULe483gnSSJ7I2OjoV
+	Yj5OKPn/XmiPWwWSDesIRTZ6UPBCIQrgKpkDjbUxSZGLCsNGsPAoTAuTQm17VOmYLVst/VVUyEg
+	lpmf1p0Fr01kOBzMRs49nmPfeqbammJaZs96U=
+X-Received: by 2002:a05:620a:1a1a:b0:915:1359:fc5f with SMTP id af79cd13be357-917f03a447dmr1996388585a.14.1781567777155;
+        Mon, 15 Jun 2026 16:56:17 -0700 (PDT)
+X-Received: by 2002:a05:620a:1a1a:b0:915:1359:fc5f with SMTP id af79cd13be357-917f03a447dmr1996385185a.14.1781567776692;
+        Mon, 15 Jun 2026 16:56:16 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5ad2e161f74sm3150225e87.7.2026.06.15.16.56.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Jun 2026 15:01:36 -0700 (PDT)
-Date: Mon, 15 Jun 2026 18:01:34 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: V.Yurkov.EXT@bruker.com
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	Vyacheslav Yurkov <uvv.mail@gmail.com>
-Subject: Re: [PATCH v3 1/2] dt-bindings: Add GPIO-locked fixed clock
-Message-ID: <ajB2PhmxvdtsXNnm@redhat.com>
-References: <20260603-feature-clock-guard-v3-0-01cca0aa04a5@bruker.com>
- <20260603-feature-clock-guard-v3-1-01cca0aa04a5@bruker.com>
+        Mon, 15 Jun 2026 16:56:15 -0700 (PDT)
+Date: Tue, 16 Jun 2026 02:56:13 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: github.com@herrie.org
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, sboyd@kernel.org,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: qcom: gcc-msm8660: register CE2 H clock
+Message-ID: <4g73mxbfc5s23hrmuoacmsqzigtminr3adangfld75l6557shd@w4p2csvkt6u6>
+References: <20260602042747.277270-1-github.com@herrie.org>
+ <20260602042747.277270-2-github.com@herrie.org>
+ <b51b4d7e-fdea-4793-9007-c9e3ee922f70@oss.qualcomm.com>
+ <267d1996c4f6b25518d30eeca129fda4@herrie.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -97,122 +99,101 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260603-feature-clock-guard-v3-1-01cca0aa04a5@bruker.com>
-User-Agent: Mutt/2.3.1 (2026-03-20)
+In-Reply-To: <267d1996c4f6b25518d30eeca129fda4@herrie.org>
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNjE1MDI1MyBTYWx0ZWRfX5G2wxvTlr4Li
+ q/UiAA4wq/lUpSS0Zj8iuyXbZVQswbxoxQSe1rbCF4dMljm5+d4N0eBDDzVRfc0oiFQROTdINMN
+ M8io++qDGLMxNdoZ1L/XqhXkIBJAyXU=
+X-Proofpoint-GUID: X6q_3aePlFNejq9SG8QIUiWxJzfIq7g7
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjE1MDI1MyBTYWx0ZWRfX8bNB1P7He2AJ
+ akLpANS4kW1tw3KUEPyXtAxih9HQ8h7df8kxJtrwY7bezf3kx8wzw/Bjn1JOlFDhC/Q10H5pWwY
+ vyYcFyObF1xFAhRW6qtZOuBJ3KbD3YMW+JEwdoXAZaKnuo6AXCrKzeLccfHc4Wuf+19Fgufbnxq
+ IMVo4IaJIPoT97I9rzrTBiqBsbLUGNNSp9njzUN/DJLk/Ti93iwx1z/nEVUECQ6kOE3Mc3t4P50
+ 9zQiOHr1LPcm5OzyzVqUnNXLRgDwqWBevoSuiPqy4NQpHoXAmMSm3amNlSONF5H4feto1ZjizFr
+ +sYQBISmEKmh6aR0LBnPhYlCUjR+N7DB3wdv15Ck+cDMJD2dETxMYzooaqv99OrRO7r+uwSy7b3
+ MZqB0Mde15TJvmTwumbMgfs3GYzorGhA/b/4bjP+of0lRZJjZZ3r82TDTaaE6Zary2sObmwdTtn
+ odlhMs3lEhfdFFDJpEQ==
+X-Authority-Analysis: v=2.4 cv=F4tnsKhN c=1 sm=1 tr=0 ts=6a309121 cx=c_pps
+ a=HLyN3IcIa5EE8TELMZ618Q==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=FelO9ux0wxsA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=rJkE3RaqiGZ5pbrm-msn:22 a=cTwmTnRGAAAA:8
+ a=n78FrjUhffZnk7pW8FkA:9 a=CjuIK1q_8ugA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
+ a=GUWCSGlMWfG-xDt5EnV5:22
+X-Proofpoint-ORIG-GUID: X6q_3aePlFNejq9SG8QIUiWxJzfIq7g7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
+ definitions=2026-06-15_05,2026-06-15_04,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 bulkscore=0 clxscore=1015 impostorscore=0 spamscore=0
+ adultscore=0 lowpriorityscore=0 priorityscore=1501 suspectscore=0
+ malwarescore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606040000
+ definitions=main-2606150253
 
-Hi Vyacheslav,
-
-On Wed, Jun 03, 2026 at 11:16:42AM +0000, Vyacheslav Yurkov via B4 Relay wrote:
-> From: Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>
+On Mon, Jun 15, 2026 at 07:21:24PM +0200, me@herrie.org wrote:
+> On 2026-06-15 18:36, Konrad Dybcio wrote:
+> > On 6/2/26 6:27 AM, Herman van Hazendonk wrote:
+> > > On MSM8x60 the Crypto Engine 2 (CE2) block at 0x18500000 is gated by
+> > > a single hardware enable in GCC_CE2_HCLK_CTL (0x2740, BIT(4)). The
+> > > existing dt-binding header already reserves CE2_H_CLK (ID 77) for
+> > > this clock but the driver never registered an entry for it, so probe
+> > > of any consumer that resolves the binding fails: the CE2 MMIO window
+> > > reads back 0x0 and qce's DMA hangs indefinitely waiting for handshake
+> > > signals that never arrive.
+> > 
+> > [...]
+> > 
+> > > +/*
+> > > + * Crypto Engine 2 (CE2) clock.
+> > > + *
+> > > + * On MSM8x60 the CE2 block at 0x18500000 is gated by a single
+> > > hardware
+> > > + * enable in GCC_CE2_HCLK_CTL (0x2740, BIT(4)). The vendor MSM8660
+> > > + * clock-8x60.c routes both the "core" and "iface" consumer-name
+> > > lookups
+> > > + * to this one register, and the upstream QCE crypto driver requests
+> > > + * both clock names via devm_clk_get_optional_enabled(). Without the
+> > > + * clock present at probe the QCE MMIO window reads back 0x0 and DMA
+> > > + * hangs indefinitely waiting for handshake signals that never
+> > > arrive.
+> > > + *
+> > > + * Register a single clk_branch: the consumer DT can reference the
+> > > same
+> > > + * clock phandle twice under different clock-names ("core" and
+> > > "iface"),
+> > > + * which yields the same struct clk for both clk_get() calls. Per-
+> > > + * consumer refcounting then works correctly and the single
+> > > underlying
+> > > + * enable bit is asserted while either consumer holds the clock
+> > > + * prepared, instead of having two independent clk_branch structs
+> > > + * racing the same hardware bit.
+> > > + */
+> > 
+> > I don't find this comment particularly valuable, given it ends up
+> > describing the fact that the common clock framework has refcounted
+> > enables (pretty widely known) and details how the DT is going to use
+> > this (which we can read in the DT itself)
+> > 
+> > I think the commit message is really exhaustive and it's a better
+> > place for this info anyway
+> > 
+> > Konrad
+> Hi Konrad,
 > 
-> Some hardware designs provide fixed-frequency clocks generated outside
-> software control, such as by FPGA-resident PLLs. While the clock rate is
-> fixed, a separate GPIO signal indicates whether the clock source is
-> locked and producing a valid output.
-> 
-> Describe a GPIO-locked fixed clock provider that exposes a fixed-rate
-> clock whose availability depends on one or more GPIO lock-status
-> signals.
-> 
-> Signed-off-by: Vyacheslav Yurkov <uvv.mail@gmail.com>
-> Signed-off-by: Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>
-> ---
->  .../bindings/clock/gpio-locked-fixed-clock.yaml    | 70 ++++++++++++++++++++++
->  1 file changed, 70 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/gpio-locked-fixed-clock.yaml b/Documentation/devicetree/bindings/clock/gpio-locked-fixed-clock.yaml
-> new file mode 100644
-> index 000000000000..9106b800b673
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/gpio-locked-fixed-clock.yaml
-> @@ -0,0 +1,70 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/gpio-locked-fixed-clock.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: GPIO Locked Fixed Clock
-> +
-> +maintainers:
-> +  - Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>
-> +
-> +description: |
-> +  Provides a clock output whose availability depends on a set of
-> +  prerequisite conditions. These conditions include the presence of
-> +  one or more parent clocks and the asserted state of one or more
-> +  GPIO lock indicators. An example of such clocks is FPGA clock that
-> +  are outside CPU control, with the lock status exposed through GPIO
-> +  signal.
-> +
-> +  The output clock is considered available only when all configured
-> +  prerequisites are satisfied.
+> Happy to clean it up. MSM8x60 is poorly documented in public and whatever is
+> available in downstream kernels is often incomplete, so I tried to document
+> most in the various commits. Happy to put it in another place if that's more
+> appropriate. A lot of the info was found by register poking and trial and
+> error because the lack of documentation.
 
-I'm stepping outside my usual review of just the clk drivers. Krzysztof
-in v1 and v2 asked for more detailed hardware explanation. This feels to
-me like this is a policy that says to not use these clocks until the
-GPIO says they are ready. My gut feeling is that details like this
-should live in a clk driver instead of a dt-binding.
+You can move it to the commit message. Another point would be to make
+QCE driver request only one clock on this platform. Is there a point in
+having two names for a single instance? (well, unless there is a good
+reason in the driver).
 
-Alternatively, if this is generic enough, then could
-Documentation/devicetree/bindings/clock/gated-fixed-clock.yaml be
-extended?
-
-Brian
-
-
-> +
-> +properties:
-> +  compatible:
-> +    const: gpio-locked-fixed-clock
-> +
-> +  "#clock-cells":
-> +    const: 0
-> +
-> +  clocks:
-> +    description: Input clocks whose validity is monitored by this provider.
-> +
-> +  clock-output-names:
-> +    description: Names of the clock provided by this controller.
-> +    maxItems: 1
-> +
-> +  locked-gpios:
-> +    description: |
-> +      GPIOs to check the lock state.
-> +    minItems: 1
-> +    maxItems: 32
-> +
-> +required:
-> +  - compatible
-> +  - "#clock-cells"
-> +
-> +anyOf:
-> +  - required:
-> +      - clocks
-> +  - required:
-> +      - locked-gpios
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/gpio/gpio.h>
-> +
-> +    clk_gpio_locked: gpio-locked-fixed-clock {
-> +        compatible = "gpio-locked-fixed-clock";
-> +        #clock-cells = <0>;
-> +
-> +        clocks = <&clk0 0>, <&pll 0>;
-> +
-> +        locked-gpios = <&gpio0 4 GPIO_ACTIVE_HIGH>,
-> +                <&gpio0 5 GPIO_ACTIVE_HIGH>,
-> +                <&gpio1 2 GPIO_ACTIVE_LOW>;
-> +
-> +        clock-output-names = "clkout0";
-> +    };
 > 
-> -- 
-> 2.34.1
-> 
-> 
+> Thanks,
+> Herman
 
+-- 
+With best wishes
+Dmitry
