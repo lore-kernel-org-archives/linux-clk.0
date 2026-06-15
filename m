@@ -1,171 +1,154 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7A8040DFA5
-	for <linux-clk@vger.kernel.org>; Mon, 15 Jun 2026 16:37:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B039E40B6F4
+	for <linux-clk@vger.kernel.org>; Mon, 15 Jun 2026 16:40:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781541427; cv=none; b=h22OT4cuOcxg8hTc9rLLZIWURcuwGmAOEqTZ5Q5B2c8zbeJ6vrNVAfCQgCLbrT6OokCGj/PXp7rWirfgcAnjdYYkF6yYGH7agK+h5KvyMmALaIFTB0pPCC6Ffgbc9f9oOqTQVFA6FwguYYafjFWo/Mw6IiRHKZo7CJdHufZOP0g=
+	t=1781541656; cv=none; b=mFZbHaeVON9y8tk+uYf2kSoKwENMOXsRdwDm/yeOWCFcojFBsixcDrC6dnVKcksB6QuiBc0kAuQQWASwthF5+VzAR/USWgOpcJy/F2QgexshnONAciyDfxpADF2iboWiPENHthkctSz0jI4DJ7Eot1LkLGZc6/TmWZYCV3Fm0yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781541427; c=relaxed/simple;
-	bh=KnykR2/mt0PbIfgCIqYRR5r7ZR1BPAjruV/C8RjstuM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bbd5sw9dPzQifcnBAmLdh0nSzmBSYTM47IwfGnszXwLCXPZm7fcD4YTyEz/2MUmpk90fiaapGLgE98ujNqWnRDQC+hCCWpCT0qWY9N+UXPzrkVwzfwfMTfqKbpjviHQueAEkIeyQaXsy+taT8vsiFfYSUv59gcXP/XscoGm4Da0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=CNzfNWdL; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=SEd2JXIG; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1781541656; c=relaxed/simple;
+	bh=sgFYe03AdqAI3bmcuoDq5yghX+BkC5mlsAqcpIEve6I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OgiGWANOBTTzlrEHUzMfe1taCSXRKS6Q9OjaZRd8VK/4MIgJ78VRRdzC+WCCYOO0/Iy5nlvVujhJ4l8M641vvB3f+BZCF+dLIu9ZtUFgWoWmVbILb4ilvQbyMMlRPoaP63QO6u10rtDJAXEIe8z7U42/Ul7TwtXLW8t0bqW7P8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ONRgOO5V; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=SRXWYeak; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="CNzfNWdL";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="SEd2JXIG"
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 65FFha5w805514
-	for <linux-clk@vger.kernel.org>; Mon, 15 Jun 2026 16:37:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	KnykR2/mt0PbIfgCIqYRR5r7ZR1BPAjruV/C8RjstuM=; b=CNzfNWdLFeOBft8G
-	6RLKBJr3sUtBissZqf9ACDDSX2oJquHsSzZzhSawwh0KJgR8YubRmJIRKt/Su7o5
-	+RFxUw4QGlNyAbD6QYBz0EqeuExx7NP5IA8dr1v2li8AOH7UrfhFeg+JPgspe2VW
-	sKoRog1cUd4sPVtN9I3lVd2hXSfdf7Rpm9mleB/8SF4LPrjHSuUmikW1xedAjlzL
-	zcWOaAi5l1VOqltcAvfWJ/dLHktXBMHfy1l/8Q8zHa1tk4ycGk3wsyBGL6NLS74p
-	JJH7yj95hSVt8Nr1aBqirgNDDrzLlbdb+M/V702pV0yW2orXK5BSS4TesDRx9GZg
-	bVk35A==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4etetf1scv-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Mon, 15 Jun 2026 16:37:04 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-915a547f4b3so32986985a.3
-        for <linux-clk@vger.kernel.org>; Mon, 15 Jun 2026 09:37:04 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ONRgOO5V";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="SRXWYeak"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1781541654;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fYiGHVY1xpFWEX6h4yQg4Y2KYAiZFnPKyRrFWVlw2cc=;
+	b=ONRgOO5V3u2ytYqn0L/ERJ5Tgtude6rP6Li9duSvWX47YlErAipSYtyTDWMH9TnQe/4AFu
+	Pi8OlRJqNnzlsRdPHZ8Mmer2wV2uEQb4gJVimkHznntzswKmt2leZC8LXmUkhsS0WOnn99
+	obg/XP7JG4AKsd0/BnsJr2ETNDj8394=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-150-QVbFxM3xOnCik5taouojeQ-1; Mon, 15 Jun 2026 12:40:53 -0400
+X-MC-Unique: QVbFxM3xOnCik5taouojeQ-1
+X-Mimecast-MFC-AGG-ID: QVbFxM3xOnCik5taouojeQ_1781541653
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-915ba226a9bso895987685a.2
+        for <linux-clk@vger.kernel.org>; Mon, 15 Jun 2026 09:40:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1781541424; x=1782146224; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KnykR2/mt0PbIfgCIqYRR5r7ZR1BPAjruV/C8RjstuM=;
-        b=SEd2JXIG1PAEq0WeNeZPKl3+vtSFLeHot2B7R6V+Zk+V7hn4t1K7EpLkb5QUJ2GU09
-         qACaN3OyIBaNFP1mMiZ0Oz89we3l7sdzKOo86aDbP4u3Py68AV9w0pnLvf2raRIPUuxX
-         ID3ycYtkFDdAiNqTI20luK/uc9Dy2c1egDAl/b4H+N9GE0CAVUtqpPHtyE/hNnL3T9/5
-         UAuFhI1/PdzDO23CtOlL6JKOx09ZI5Z8aKI5V4IWSbSH6+0IUFXcyQGuaLDiMfu717jq
-         qRPb6TnW9Gab7IkwEroSL7FYS6a6g0JF/k+wdnBR9Mv9yHLH5g4P4qoBQ9MUjkMe/K6N
-         +d/g==
+        d=redhat.com; s=google; t=1781541653; x=1782146453; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=fYiGHVY1xpFWEX6h4yQg4Y2KYAiZFnPKyRrFWVlw2cc=;
+        b=SRXWYeak+v7j0jqiJ7b51gxeOtyaapgR1CtatxokgXbwiO6AvPUMg/tTPHn9XZEVFM
+         VeScC+cq6DNqMcqxPTSipShRQ1QaGCMnjl1Dw3on9Qt9BrTICGvndLIbuTuq6JuJg6+3
+         dvUssKANX1zRu8zTcGu0N03aFVzEoYBSg+SbueM1Rgs0XpVR3czA6KTNEwoqkD6B66vk
+         bJ6QhWYV7xuJiUyRJl/ez0B2xyORC3xDMWjCnEwdoFtM3cXVx5HnxhWTvDsMC1K7et45
+         akJS5DFP25ns3/ie5OYrrZxiwQmnrQOiRA4OvVLsdwcmP4P3NhdmcH/VXtVEbTMcPCJR
+         wRgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781541424; x=1782146224;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KnykR2/mt0PbIfgCIqYRR5r7ZR1BPAjruV/C8RjstuM=;
-        b=emf5MQH/9EkHImfMPHuwx+V1xuTZe5hfituYqtMpjJ5FPHzAA7Repgypmyu2ykq/Ae
-         BuuSAxVjVOJMixc1Y7juPooQEK+uYuX4ahlaYGZv7RwwQDPaAWSIfj8GcH5ue9DoNkye
-         pdBsI2WJCLZstqxuKZG+/+bwOKi5m7wckJUixGdro0lmW5rye3c0Y0gxxbFT1V5MUvX3
-         X5SaxgKV8leBC1/ggq2LEX/ERNxrE7qGn+U5Lyk9Gnsgf1utjlcKnJpvhFj3GRqOj4kU
-         gFnOPavO4pKUQtdt5LtOuOESNHtNGzCbNsV+mdmyB9HpoJHTGTEhhSW1p/5x4fyp0+hU
-         h6JQ==
-X-Forwarded-Encrypted: i=1; AFNElJ/x7nZkh5ZUyuoOzMkuQYzWOM4xMz+s2hVDoGl22fCesF/qIE/JxuIMXXDgJOF7D7S8obfAxdLchUY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztU5Tc8R0vUarrKZiTLdkaPSMt8W1q1cwTFyrrcMJ/Z1xYSOC+
-	Za1NpWMiK176JcN5X31BtjQepgosVcTX19793tq9bKdno6oO9NV/E5duEB/f648Om7aX5guu8QZ
-	zDk41XezLmc+JjI3mjNvNTbiq+l/sSmaoXiGT283KYKHPIHtSRiNn9WlyKALeb2Hl41m8CTI=
-X-Gm-Gg: Acq92OFRgem+yQn4E56vtn9yI/nQpkSKJFUc3mevnaPSyzbwDFb1z8WNbPGy4Ws887Z
-	b62xC39YkDYILUrViYnRWVzZmR5HCLUWy3Qz4kvLXvwANatNhV1190bqutXhrQIWyjvyGAVJh19
-	1Wmqsmm1jISbq9m3SfnHQ/yve3n40h/K9gSSRRpf9g8eWOIP+/Aq6DVywQ+jEIq5IiCfWzVwdHP
-	g1Rs5zJVi++nMNTo7ts5AYtilK7xAaJJAeFrL3q5Nl4mjHhhpfMy5yo51otVGVPfTKulQAJzyMd
-	LRKOvwg+ZyredrwoeNfeDBNAg8SA3lbJK5i8W+XjOWjegE9DT4jWizBdOLfQJ6E0TNHFRBg0MeO
-	NXPoaL0iyEVP16vutJHuDKqheeYWBSd9ny1PbPao7sbeV8g==
-X-Received: by 2002:a05:620a:1a20:b0:915:fad5:9096 with SMTP id af79cd13be357-9161bcd5533mr1337894885a.7.1781541424082;
-        Mon, 15 Jun 2026 09:37:04 -0700 (PDT)
-X-Received: by 2002:a05:620a:1a20:b0:915:fad5:9096 with SMTP id af79cd13be357-9161bcd5533mr1337890685a.7.1781541423607;
-        Mon, 15 Jun 2026 09:37:03 -0700 (PDT)
-Received: from [192.168.120.170] ([178.235.128.140])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6937919b556sm3774679a12.4.2026.06.15.09.37.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Jun 2026 09:37:01 -0700 (PDT)
-Message-ID: <b51b4d7e-fdea-4793-9007-c9e3ee922f70@oss.qualcomm.com>
-Date: Mon, 15 Jun 2026 18:36:59 +0200
+        d=1e100.net; s=20251104; t=1781541653; x=1782146453;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fYiGHVY1xpFWEX6h4yQg4Y2KYAiZFnPKyRrFWVlw2cc=;
+        b=IawkNJWiW4Nv46mVrDzpZbQ4mSszTiZmcxAUS1PZKbmvoF7bBzp6++KAFZOkZ2xB9p
+         MjYZXCluDLYN/+LWJkTGmLWRkmZZHyFrvyK8vdkjUGBIA4WInVQWfOoFzA6+amgfsASb
+         SVnRVTEvvXjRG0T1dFF4SYDW2vSQ925twGtmj6/qwJYtcM/7thWhxiqunqpyTNVkBL4T
+         WrJIoyoAaLIEbbpPuhnGdmwBJe7+mBn9Q17F3dLtAOZo7I3caMuJSUMx7BHS245+Z09c
+         uHsV+DZIQxulObfcCanL1DClnzCC984CH6EtnapO9OcSRb951j3IQLGSMFaicD6eV/Ew
+         iSwA==
+X-Forwarded-Encrypted: i=1; AFNElJ9z7MVC5tVdOgYLwzcQBtd/WsEdNQwJL8j//OCxEKEtmzZnRT77KxvF1aMYdcAn/XZKnEnlQDXbSDw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFDeN+MLvTRO4TMdnr9I3er+FxU7OfxfLwVGtkDhTa+eZBoM6r
+	VEpYV8G1bEdvyKf0BrkQdiieK98A8Dsm0PlBPCMs7bdY7Xs4UnCvVImsOqhCW02QOLY7ebGRiRo
+	/vBrH+tPD1OdHJCqD0KsdDxV4LmAFI8NoX6ulWYqVCxlPTC9Fb2F0N7eQE1P/uw==
+X-Gm-Gg: Acq92OEjkilHQNq955AM3VUcnx2FhS4ExFc9NaDMYuuiCCDLuObJIvcX2chJvqu6BRI
+	vC7139bc+aeqlIrjuHo3TI03ygn6QpSMGw/RCMWz1/6Vp0dCf/dMd8xmRcOgZPU1ibHjMZ1f+J2
+	eq1aEeMZcsbdjMJcNWQcl2wkhIIlefpsiPjQCpQN5BJ6ipm0UoSiLhtHKiHS28iEPiVfI2VlpRZ
+	0wy2vTAapTYHVF61IC9NsDahMkeSjQQ+eNz1fQhAYHmNfv/cXfTW4sw9hUaYxqHbgzE89KqbmUT
+	f3ZUelRP0HT7mm/70tO0l//56Pz3RsXpNCxvYweRHKMlQhN4wDVoe4woDhvzhbJyaRrkTqMakVj
+	Gpi+vA1c21IP929liN7cJ2VqI76f9ixpVEK0SIX9E8Z3PlilezHCeurF8
+X-Received: by 2002:a05:620a:31a0:b0:910:87f4:9a26 with SMTP id af79cd13be357-917f1e44e09mr1835939185a.41.1781541653023;
+        Mon, 15 Jun 2026 09:40:53 -0700 (PDT)
+X-Received: by 2002:a05:620a:31a0:b0:910:87f4:9a26 with SMTP id af79cd13be357-917f1e44e09mr1835934985a.41.1781541652604;
+        Mon, 15 Jun 2026 09:40:52 -0700 (PDT)
+Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-91619f06835sm1180700185a.14.2026.06.15.09.40.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Jun 2026 09:40:51 -0700 (PDT)
+Date: Mon, 15 Jun 2026 12:40:49 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sudeep Holla <sudeep.holla@kernel.org>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Sebin Francis <sebin.francis@ti.com>, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH v10 4/6] clk: Add KUnit tests for assigned-clock-sscs
+Message-ID: <ajArEQ1rA7AtH-uG@redhat.com>
+References: <20260612-clk-v10-v10-0-eb92484eda38@nxp.com>
+ <20260612-clk-v10-v10-4-eb92484eda38@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] clk: qcom: gcc-msm8660: register CE2 H clock
-To: Herman van Hazendonk <github.com@herrie.org>, sboyd@kernel.org
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20260602042747.277270-1-github.com@herrie.org>
- <20260602042747.277270-2-github.com@herrie.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20260602042747.277270-2-github.com@herrie.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=adxRWxot c=1 sm=1 tr=0 ts=6a302a30 cx=c_pps
- a=HLyN3IcIa5EE8TELMZ618Q==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
- a=IkcTkHD0fZMA:10 a=FelO9ux0wxsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=ZpdpYltYx_vBUK5n70dp:22
- a=LvhWEcBnrMCrogBIVCUA:9 a=QEXdDO2ut3YA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
-X-Proofpoint-GUID: OeA08hSDXIgJzW9ocpPGS-b9_5KxClLs
-X-Proofpoint-ORIG-GUID: OeA08hSDXIgJzW9ocpPGS-b9_5KxClLs
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNjE1MDE3NSBTYWx0ZWRfX4ZiwrH5K3FYw
- pefwoPTOia0iBsPcgFJQap+/Yhkhy2nGVeaSJS3yYILgo546ulpWkemXNUGod423VFd1QQyojjb
- TQeXpPWXjwMHLPfWwh4qAbU3W5FaFDQ=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjE1MDE3NSBTYWx0ZWRfX7YRl+zhQ/M7g
- kq2qrrAVw/ANplzzas4wqj9F5Vq8BSAm6MXW3DHSElA3GvnKBGf6W6iBobz6IukkJ8c7V+vJA20
- gkX6pYat0bmB94hPgq0PassDJS6p3QUYrGQz+SpXDfPd+rMdmi9sWCcAXAMn21lFEeu1CJiKlEF
- Pfd94TrsWkbC+YQNHAJ0c5JXwPgjIjIh6Wcu07gq3VrfyR99AtDBUpr/zL0l/giFiL1d94WhNTc
- eUz2LAqDsPwO4ghJsVWzfWczx2HqQy7Lz6ze9/Gryg19xEPJD2QcuCdD+wprs05CKltogfJdf92
- yVfkhDhXRy+DuUGWN/2ZOj9O8SUnBaFwYVHDjeHlMcfnBvD5wM+VuIUbUxNrfbXQPUV1qShj/Ze
- zYhxIqEHzC2557E20yj1M01Iy8tw/LKcDYFucYRN6lx1U6c8u/ujOL+hhQmoSeMaGRY9S0JmUlp
- 9cDSrKKVKjijkmgu4BQ==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
- definitions=2026-06-15_04,2026-06-15_04,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 clxscore=1015 impostorscore=0 lowpriorityscore=0
- malwarescore=0 suspectscore=0 spamscore=0 phishscore=0 adultscore=0
- bulkscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.22.0-2606040000
- definitions=main-2606150175
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260612-clk-v10-v10-4-eb92484eda38@nxp.com>
+User-Agent: Mutt/2.3.1 (2026-03-20)
 
-On 6/2/26 6:27 AM, Herman van Hazendonk wrote:
-> On MSM8x60 the Crypto Engine 2 (CE2) block at 0x18500000 is gated by
-> a single hardware enable in GCC_CE2_HCLK_CTL (0x2740, BIT(4)). The
-> existing dt-binding header already reserves CE2_H_CLK (ID 77) for
-> this clock but the driver never registered an entry for it, so probe
-> of any consumer that resolves the binding fails: the CE2 MMIO window
-> reads back 0x0 and qce's DMA hangs indefinitely waiting for handshake
-> signals that never arrive.
+On Fri, Jun 12, 2026 at 04:46:26PM +0800, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+> 
+> Add KUnit test coverage for the assigned-clock-sscs DT property that
+> configures spread spectrum on clocks before they are used.
+> 
+> Extend the existing test infrastructure to support spread spectrum:
+> - Add struct clk_spread_spectrum field to clk_dummy_context and a
+>   clk_dummy_set_spread_spectrum callback
+> - Wire set_spread_spectrum into all dummy clock ops
+> - Extend clk_assigned_rates_register_clk and test parameter struct
+>   to propagate initial SSCS values
+> 
+> Add a new separate test suite clk_assigned_sscs with three categories:
+> 
+>   1. clk_assigned_sscs_assigns_one — verifies that a single
+>      assigned-clock-sscs entry correctly configures spread spectrum
+>      on one clock, testing both provider and consumer paths
+> 
+>   2. clk_assigned_sscs_assigns_multiple — verifies that multiple
+>      assigned-clock-sscs entries configure spread spectrum on two
+>      clocks, testing both provider and consumer paths
+> 
+>   3. clk_assigned_sscs_skips — verifies that malformed DT properties
+>      are correctly skipped without error: missing assigned-clocks,
+>      zero-valued SSCS, and null phandles, tested for both provider
+>      and consumer scenarios
+> 
+> New DT overlays are added for all test scenarios:
+>   - kunit_clk_assigned_sscs_one{,consumer} — single valid entry
+>   - kunit_clk_assigned_sscs_multiple{,consumer} — two valid entries
+>   - kunit_clk_assigned_sscs_without{,consumer} — missing assigned-clocks
+>   - kunit_clk_assigned_sscs_zero{,consumer} — all-zero SSCS values
+>   - kunit_clk_assigned_sscs_null{,consumer} — null phandle
+> 
+> Co-developed-by: Brian Masney <bmasney@redhat.com>
+> Signed-off-by: Brian Masney <bmasney@redhat.com>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 
-[...]
+Looks good to me.
 
-> +/*
-> + * Crypto Engine 2 (CE2) clock.
-> + *
-> + * On MSM8x60 the CE2 block at 0x18500000 is gated by a single hardware
-> + * enable in GCC_CE2_HCLK_CTL (0x2740, BIT(4)). The vendor MSM8660
-> + * clock-8x60.c routes both the "core" and "iface" consumer-name lookups
-> + * to this one register, and the upstream QCE crypto driver requests
-> + * both clock names via devm_clk_get_optional_enabled(). Without the
-> + * clock present at probe the QCE MMIO window reads back 0x0 and DMA
-> + * hangs indefinitely waiting for handshake signals that never arrive.
-> + *
-> + * Register a single clk_branch: the consumer DT can reference the same
-> + * clock phandle twice under different clock-names ("core" and "iface"),
-> + * which yields the same struct clk for both clk_get() calls. Per-
-> + * consumer refcounting then works correctly and the single underlying
-> + * enable bit is asserted while either consumer holds the clock
-> + * prepared, instead of having two independent clk_branch structs
-> + * racing the same hardware bit.
-> + */
+It's probably not appropriate for me to also put a Reviewed-by here.
 
-I don't find this comment particularly valuable, given it ends up
-describing the fact that the common clock framework has refcounted
-enables (pretty widely known) and details how the DT is going to use
-this (which we can read in the DT itself)
+Brian
 
-I think the commit message is really exhaustive and it's a better
-place for this info anyway
-
-Konrad
