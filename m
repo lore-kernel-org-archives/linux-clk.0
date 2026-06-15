@@ -1,243 +1,115 @@
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011015.outbound.protection.outlook.com [52.101.70.15])
+Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 649EE3EF647;
-	Mon, 15 Jun 2026 15:03:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781535795; cv=fail; b=BEEb84PabxnKwmCn2Jxy2XTiBhPITXVEjdOL1phx9iXkN4wdtWva3L8gYLLUF21OPjvwwvdITP7wxcRAh8/DkMRz/RWFFcAM0zOOPJIF/cnfu4C0RSveOD2bVxJW9KOnsOZSvMTx8q91YP5dAIOGx7X0vC1DWDU5e6MRYgj4hG0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781535795; c=relaxed/simple;
-	bh=Y854zxHLGrAKn8XZzmiiwALl1Tl7/8ywweVhMbFC4CE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Mt8at5S9KTwFBgNZChzU0MsOTVi3YGGAUyzaxDg/k7AeHgjkVnorrTcPUUOfLtZlWzOSkddSoCOFvql2eGcj7+cyKH8Wi8dwScoYoektmMnNhGSIKyrGkuwYlbjWuji3vq13JyEVa93eK6cGzr0VDcPCxqDdsVFhDkTYMrQlN6c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=KEMOPX4O; arc=fail smtp.client-ip=52.101.70.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A533258CCC;
+	Mon, 15 Jun 2026 15:04:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.73
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1781535879; cv=none; b=nzSjQ2HMIk4+c9FSvYHMnlsWUoB64VGZ3fOzG5GtkoR44JNVKycrQUYO3twd3jY1dASwHCc1IoeG+Fj6L/8XfqSyu/d8p9HYaXSaaT+HtDs+Q1Xebvb/kbXP2YLmC9xHyJTPiE54nHo0roHek9G8yVGkfUTjA5yHTDPwfAPZE2I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1781535879; c=relaxed/simple;
+	bh=EXY2uu6ib4i0Umzbyi0k1eACx9NyAhfxBDBY7iThl2w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=t4lsl3zfVOfcjFSUM24qfBulB2QP7DhaW/xcr7+nyWQv86+WpJm1zjSSlqD6mg5CS7vI9POAoi7WpIMCi249DIom1hntaAgHsOZghqmcZaRI0y+th40F/DVwRG8T6aqyg/t1KDCjmREkV34MO2HwPX3smiMcMsqRciawNtffsuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oldschoolsolutions.biz; spf=pass smtp.mailfrom=oldschoolsolutions.biz; dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b=bkMxJ0RA; arc=none smtp.client-ip=217.72.192.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oldschoolsolutions.biz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oldschoolsolutions.biz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="KEMOPX4O"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VumPx1zblPMM4o4eDbimFVwDyv0fj1RBmtvpsVA/xm2e+cwgVdLe+PVas2n+UtSZGXjrfZYZOW4N0PKVU5kCaVUjtVB2YiSdGcl2l2Rsi1doQmh0prR5rZbp3rWd+Equ9lC8/LU8F1kL2ILfgs6+vL2KCyhzC06uFTG+dMAizyd1W1AxXXAIj13pscuOlelkN2h3Ye4HN9lS8oWkzPFZZO8PA9N0gheOkxM9rNg7RmeyL7KpvPro13FOgF5W5hCbih367+eb3ivybFO5XWtwq5VWplDx2AprbTqS4nT+4X/zCyVjLbivjfF67CpkDJP5FOkVdrgju2hRaZ4c6rj7QQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=01GJeQ3TVm3SyhAseN+7iFx4vEgjBNUF+MzfqM9H9Og=;
- b=boj45KobT3A7XFhzpnyWGMupa9U/jKk36jGeV7BJA/qc0ysj40u9hHJBnviI/rplpsFItlk9rI+VeZF+K9NNfANdPt0ZXNhNVQ0x4yBUKZuC5ts7jjuYg/+ZDIj/hTiKgn6aa0+019r1Z07NzZyWkYgOm9hfhFeAH6QgJr47rHoWmkBYSp6RAfd8+48UDLl4yjpPq44CMajoNWSpa2oW4EKn75JFd3WqEV1hLbVW026sGauzWiETeQ7gcVXdFoT8F3lfDe+RhmNonLJG9CvgKsBVMGHmmn1naGzNCL8IqPRzYqcpq9SsJDTcp9Ac59d8NB6h0b+vMlkDkUp04mRq+Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=01GJeQ3TVm3SyhAseN+7iFx4vEgjBNUF+MzfqM9H9Og=;
- b=KEMOPX4ObD6pl9fEdEzqbBbj00mY2HdLIKHKxGE9vEE3dlJmzCZ1BePkb/DELnEvEWJF/VFv4xelAbFUxS42zHdD0liw0ol7z4I8Nu9x7hIjhEXBS5cn26AuwWcCKZ35ox+NfV30U2FioMGN9q6JkRBdvku6lsZu8H1HP5aQ9E3tqk0X8+6XubPVrFcEjaFsUTXtrGFsPHpUuid4d0suSWkJGRoIE1qhdnKre2zMZt6fwnEy4Squsbof3cWmPe4r8KCc1PlRBu7WKLg6Ds9FZGV/zPlWanxWG62m8zwFNXXOVXf3yiWsLX/kOQTBROyY+W1jmsNEXwG5iYo91IMAgw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from GV2PR04MB11799.eurprd04.prod.outlook.com (2603:10a6:150:2cf::9)
- by DBBPR04MB7594.eurprd04.prod.outlook.com (2603:10a6:10:203::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.113.18; Mon, 15 Jun
- 2026 15:03:11 +0000
-Received: from GV2PR04MB11799.eurprd04.prod.outlook.com
- ([fe80::2146:83a2:5329:b7c]) by GV2PR04MB11799.eurprd04.prod.outlook.com
- ([fe80::2146:83a2:5329:b7c%6]) with mapi id 15.21.0113.015; Mon, 15 Jun 2026
- 15:03:11 +0000
-Date: Mon, 15 Jun 2026 10:02:58 -0500
-From: Frank Li <Frank.li@oss.nxp.com>
-To: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
-Cc: Ying Liu <victor.liu@nxp.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	linux-clk@vger.kernel.org, imx@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v9 2/9] drm/bridge: fsl-ldb: Get the next non-panel bridge
-Message-ID: <ajAUIsjY83qZnolY@SMW015318>
-References: <20260612-dcif-upstreaming-v9-0-8d0ff89aa3c5@oss.nxp.com>
- <20260612-dcif-upstreaming-v9-2-8d0ff89aa3c5@oss.nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260612-dcif-upstreaming-v9-2-8d0ff89aa3c5@oss.nxp.com>
-X-ClientProxiedBy: SA1P222CA0077.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:806:2c1::24) To GV2PR04MB11799.eurprd04.prod.outlook.com
- (2603:10a6:150:2cf::9)
+	dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b="bkMxJ0RA"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=oldschoolsolutions.biz; s=s1-ionos; t=1781535875; x=1782140675;
+	i=jens.glathe@oldschoolsolutions.biz;
+	bh=EXY2uu6ib4i0Umzbyi0k1eACx9NyAhfxBDBY7iThl2w=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=bkMxJ0RAWBLjqJUMyvv8+KHd1XsAi+kzjjglAP+ccefKdkX6FO6WuvAXkx03CL47
+	 ICcF5Q5k2DMWyM41+g2wua5WEVa+HzEskXESUNrolEo1dTDccJbSo1ZdhjazZlvGz
+	 xYnEHmhz5XKmmOv5hgjwQpeuqlrkCEg3qavZqHFL9KxPIacQcYTFRHCFJFAl2/qvB
+	 CBS7UmD7NaNikHF/ReIosTyIZrQOUmmFVjz6LCweFKdTHEL2FSGRTnj5aIQFEZx/T
+	 iES27J9QT5ssLOAcog9JoLadEnLEJpdOS0+W4lD0Buqm1uB+ypvGAtqW32KDw/bGu
+	 Kxoa/j71PbUSllKJqA==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from client.hidden.invalid by mrelayeu.kundenserver.de (mreue106
+ [212.227.15.183]) with ESMTPSA (Nemesis) id 1MX0Xf-1wg6ez2uuP-00QrNL; Mon, 15
+ Jun 2026 16:50:52 +0200
+Message-ID: <689ef757-ff55-4665-b560-675b3e2c0d07@oldschoolsolutions.biz>
+Date: Mon, 15 Jun 2026 16:50:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: GV2PR04MB11799:EE_|DBBPR04MB7594:EE_
-X-MS-Office365-Filtering-Correlation-Id: 402aba23-27c2-4049-4ac3-08decaef3742
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|23010399003|7416014|376014|19092799006|1800799024|366016|56012099006|11063799006|4143699003|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info:
- pypDiHwFIow2CC5BAXOqk/KHeTmbKvLDy2Jtkb1SoviDxIrRbto7CSngY8jyJ14ikQqK7e4Jd/6LShM2sQweiO690RZbAT012Dl/rTySXikuN9UPw2s6JE8i4ZC866GG2ilFxlwS6v84MEqWLQtMj9yxuV9K7DTEZY2UKcLWge2rRwVwOV+KHEXkIlA8ZrAj9J1dSG7jZndedUol9yVVjtOkU1xDZvZr1EcY7e+SDd2+iggBCDkyxTmHGouaPOSMXqYQhvq3NbO+jy6cYJ0TdcxgUgvUyg6+zkgxljzLibpmPSXYWwDKmD8trmDll/X2b6sCVrNfFJyUWU6yhzr7TeJZy/MBaulIQlZJmrt2XhFl8F9mnzNrqvidFfftEM0nNGsQBqudBQHdpbMn/Xe9bfcTNY9WeN/kSc9e+VGd0MWVuG9EVJ8j8bsXpH9osj8Trwt4cp2lhoQQGBZceiHZwEsTbIs7mXdVo/1+OYcy3pJ+HrPz2JmCK3E+PjwGiaTcYHkm2I4OP9s2CgSzi/JB5e44DOyZX3knE1STESQKfBknJozHlKuYyjYav7mHstP+6bV1bmBYZUunmVJ9NS5KFq2o57DzHZbMb4ZSM6hdhvJCZauw1UGC22HtmDoH9Ryb+0vHdYS2EcSag2OI2SKq1OTcFrZEvofVtQ7svdE8iYxyT5xN3KNn2ve/vDocF6gs
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR04MB11799.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(7416014)(376014)(19092799006)(1800799024)(366016)(56012099006)(11063799006)(4143699003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?us-ascii?Q?jDgaE5tUK+M48vLSOGJN/GV8/27zYgWARTNgOutTcw+xdG8+0eNVWah11LpP?=
- =?us-ascii?Q?78qDDsIQaqzpnB01Nj/X+0NU1qbXVPJFFSr2q0RnLSBhZvlcPFgd3yu3o1mX?=
- =?us-ascii?Q?CrIPBWx6fi9kkIJTymkuL1V5xxsW8Hg5PWxlFMZBakn4fXpOE18pGDs4OJeg?=
- =?us-ascii?Q?0xNJtzspFIbos1Wbdi3IfGvmJ6tYEKLtp18oW0VZLKqXqDAsqqq2mIuk7boS?=
- =?us-ascii?Q?ksESQjkMPZ1mMdueekjm/SYFghOn5uVA4hGDttdPj19UCorLChBzaqwpQBle?=
- =?us-ascii?Q?tbT1chf37ZY8r1Vo2ZxWUuatQsdtem0IKAfZquBecOCBgT4vX40nyH58zNlB?=
- =?us-ascii?Q?Vm+hsmxkiMsBymSbGBNJcCJkZHPZ9pK71vaB2YP+qbXPqIdTlWfF6sYauJop?=
- =?us-ascii?Q?e8Evl0jFHwxTDuaE9ATOXPl39pYIuiOsAm+jgpYNGwGSMI9kyMq5Pd9y59JZ?=
- =?us-ascii?Q?bncqUP31mwXYJqkgucTEOClxKoNTu30ggFvGQtaiGZWXZTdZAeSGj4jrAiwm?=
- =?us-ascii?Q?cCgUfJA4RXfgAQxRkukh36kXk0EmkpWlnhWLYkh6haf0ByZQErMnDFbASuFd?=
- =?us-ascii?Q?RNKaX+9cPKcYBgkVVTRMjdABZISiMVERSMXic5kQh5yHrJA8GiLL+lSSf9EU?=
- =?us-ascii?Q?z/gP/kenyQdwha9DwF6eGB+vSYr858SlmrXtiFcKCuam6Lq3pp2lx2QkNyN4?=
- =?us-ascii?Q?EOSP7skqNX5opdxM18o4rePnLjMb80OkMPNy13JvsfNoz62INr4AJ88WB0Tb?=
- =?us-ascii?Q?uaX4DwdUYQq0OA0qT4btMTSQSLr6txS+/1BnYCPYRwDS3huRFTl8l5pKJxL1?=
- =?us-ascii?Q?lU4bej66baUrCY6hRmXAZXmhzNRNgk4WNLAMDf1d4bnXvbzw+kq5eXQlhq/y?=
- =?us-ascii?Q?nkaQUSpvjIYopQke/8HiJtp4m+fqG8zx4NCH5iF0UVTHbd7fwynvc9g5xAiz?=
- =?us-ascii?Q?akTjPg034t2jo60Ekge6vD56bs6gnajrIypIUwMr2t9gnSWL6XNUSVGWVg/k?=
- =?us-ascii?Q?Z+PuT9/hyUpHgiixfnmdG/rsodTfAlz4Sah5DxJZ2k3FKEanEf30qCel6PDX?=
- =?us-ascii?Q?2Z1US4hvRHr8CPrZsTHo8Bwm2s/9TZaykHa97nG6dtD4HVLS1odrIow8VyfC?=
- =?us-ascii?Q?l+/GPtvjlAaGe+JUyt1vQT8V9V4UKeVS8sXjfBJbrw3dKIPu2B2veik2PgsR?=
- =?us-ascii?Q?bMn6Gy0uvV1TBye8Ci9w18TfrtKdg4oLYUBERsVmDYL6LmSUmoTNqvDYR7fJ?=
- =?us-ascii?Q?5HU7MS70U/zg4nSySmvjQvMmGoKBy3+fkOTh1yyY6gcgrmbVhdU/TXjNx8c2?=
- =?us-ascii?Q?t7jhjO3JWLnNhOGXCe0KpzWVV57gZeGfr78dktKp8iX85N2OcPFhnRXqmzPC?=
- =?us-ascii?Q?ksGdpgnkWHvXSWY9YC1rSD1fWXbRiM7aS+82WSGCS/iv+GbhQdM1Aj7J+T9d?=
- =?us-ascii?Q?jKDVxsN9p2Domll5/B/PzOaabto7wMDF7IsVn145t/B3/xp85aZSauziHaYb?=
- =?us-ascii?Q?xIGuCmVqpLDtvJWLUWxnpaPTc6qnIRQqGoVt/t4vVq+JItlxh3U8tJ8O/DVM?=
- =?us-ascii?Q?qNxfMpUxrpmN4/U00Q3RYrMWSQk/dI4Q7xpseVRa5WP/B+K7ZgKNKEdLSKLl?=
- =?us-ascii?Q?I10UYmko6A9kKJTGmaBZsrd7PwqkIqgt1ZvgBgmj19QM8lzS+xnt/0z/gxyR?=
- =?us-ascii?Q?9sNNkTwMspuDRH9wXHUWpzBkiK/NzrL36zXkyo96jl3a9wCCPA/RP7Y4BEjg?=
- =?us-ascii?Q?0B4zWXmkdeOxp9k+X4wcYDPGKzLpTGW7e8lcVZQXTN88riydWQV/?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 402aba23-27c2-4049-4ac3-08decaef3742
-X-MS-Exchange-CrossTenant-AuthSource: GV2PR04MB11799.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jun 2026 15:03:10.9658
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: m69fSsl7jUiGl8po+14H762LBK0Iv0g+4TAEfSSFtOsmkTj0bMmzoJnew2UHEntUhS8KTka3KIvT4qMUdnLx8oDD1QBi68x/KZuRAmhTvN1qdCza6B2AcR2j5CQzVKFl
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB7594
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH 3/4] clk: qcom: convert from icc_sync_state() to
+ qcom_cc_sync_state()
+To: Brian Masney <bmasney@redhat.com>
+Cc: Saravana Kannan <saravanak@kernel.org>, Abel Vesa <abelvesa@kernel.org>,
+ Maxime Ripard <mripard@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Hans de Goede <johannes.goede@oss.qualcomm.com>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+References: <20260603-clk-sync-state-v1-0-457120eed200@redhat.com>
+ <20260603-clk-sync-state-v1-3-457120eed200@redhat.com>
+ <b732e65f-5963-4598-a341-06338044d90c@oldschoolsolutions.biz>
+ <ajAKrYK44-C9B9Yp@redhat.com>
+Content-Language: en-US
+From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+In-Reply-To: <ajAKrYK44-C9B9Yp@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:WFchek0AOHyQVbFu1iBpKkw2wUXDiEaNJam1Br6h1sYEJVuu+wP
+ Ra4EqoShSBMrvKBTRbkXyX/FORqrrithKxuiqgjXgyt2fUTY2Uz4OnAhylxT0U1S3iQXNoD
+ gzo9/KbgaB09EaGfzmEHWz5ZX0v29syyKD1aXnaBmzXZeTFrJNxYwjSQVC9INtSzhJf6rFH
+ cMAgM8f3nyymUIbwzMxww==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:gHtO+xbwJGE=;iAC1tStPdwdP07gWbRKpD2cTIms
+ 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
 
-On Fri, Jun 12, 2026 at 02:58:33PM +0300, Laurentiu Palcu wrote:
-> From: Liu Ying <victor.liu@nxp.com>
->
-> The next bridge in bridge chain could be a panel bridge or a non-panel
-> bridge.  Use devm_drm_of_get_bridge() to replace the combination
-> function calls of of_drm_find_panel() and devm_drm_panel_bridge_add()
-> to get either a panel bridge or a non-panel bridge, instead of getting
-> a panel bridge only.
->
-> Signed-off-by: Liu Ying <victor.liu@nxp.com>
-> Signed-off-by: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
-> ---
+Hi Brian,
 
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
+On 6/15/26 16:22, Brian Masney wrote:
+> Thanks for testing. I'm going to put the Tested-by on patch 4 that actua=
+lly
+> adds the sync_state support when I post the new version unless I hear
+> from you otherwise.
 
->  drivers/gpu/drm/bridge/fsl-ldb.c | 31 ++++++++++++-------------------
->  1 file changed, 12 insertions(+), 19 deletions(-)
->
-> diff --git a/drivers/gpu/drm/bridge/fsl-ldb.c b/drivers/gpu/drm/bridge/fsl-ldb.c
-> index 9bfaa3f933709..bd03c36ee696c 100644
-> --- a/drivers/gpu/drm/bridge/fsl-ldb.c
-> +++ b/drivers/gpu/drm/bridge/fsl-ldb.c
-> @@ -15,7 +15,6 @@
->  #include <drm/drm_atomic_helper.h>
->  #include <drm/drm_bridge.h>
->  #include <drm/drm_of.h>
-> -#include <drm/drm_panel.h>
->
->  #define LDB_CTRL_CH0_ENABLE                    BIT(0)
->  #define LDB_CTRL_CH0_DI_SELECT                 BIT(1)
-> @@ -86,7 +85,6 @@ static const struct fsl_ldb_devdata fsl_ldb_devdata[] = {
->  struct fsl_ldb {
->         struct device *dev;
->         struct drm_bridge bridge;
-> -       struct drm_bridge *panel_bridge;
->         struct clk *clk;
->         struct regmap *regmap;
->         const struct fsl_ldb_devdata *devdata;
-> @@ -119,7 +117,7 @@ static int fsl_ldb_attach(struct drm_bridge *bridge,
->  {
->         struct fsl_ldb *fsl_ldb = to_fsl_ldb(bridge);
->
-> -       return drm_bridge_attach(encoder, fsl_ldb->panel_bridge,
-> +       return drm_bridge_attach(encoder, fsl_ldb->bridge.next_bridge,
->                                  bridge, flags);
->  }
->
-> @@ -296,9 +294,8 @@ static const struct drm_bridge_funcs funcs = {
->  static int fsl_ldb_probe(struct platform_device *pdev)
->  {
->         struct device *dev = &pdev->dev;
-> -       struct device_node *panel_node;
->         struct device_node *remote1, *remote2;
-> -       struct drm_panel *panel;
-> +       struct drm_bridge *next_bridge;
->         struct fsl_ldb *fsl_ldb;
->         int dual_link;
->
-> @@ -321,36 +318,32 @@ static int fsl_ldb_probe(struct platform_device *pdev)
->         if (IS_ERR(fsl_ldb->regmap))
->                 return PTR_ERR(fsl_ldb->regmap);
->
-> -       /* Locate the remote ports and the panel node */
-> +       /* Locate the remote ports. */
->         remote1 = of_graph_get_remote_node(dev->of_node, 1, 0);
->         remote2 = of_graph_get_remote_node(dev->of_node, 2, 0);
->         fsl_ldb->ch0_enabled = (remote1 != NULL);
->         fsl_ldb->ch1_enabled = (remote2 != NULL);
-> -       panel_node = of_node_get(remote1 ? remote1 : remote2);
->         of_node_put(remote1);
->         of_node_put(remote2);
->
-> -       if (!fsl_ldb->ch0_enabled && !fsl_ldb->ch1_enabled) {
-> -               of_node_put(panel_node);
-> -               return dev_err_probe(dev, -ENXIO, "No panel node found");
-> -       }
-> +       if (!fsl_ldb->ch0_enabled && !fsl_ldb->ch1_enabled)
-> +               return dev_err_probe(dev, -ENXIO, "No next bridge node found");
->
->         dev_dbg(dev, "Using %s\n",
->                 fsl_ldb_is_dual(fsl_ldb) ? "dual-link mode" :
->                 fsl_ldb->ch0_enabled ? "channel 0" : "channel 1");
->
-> -       panel = of_drm_find_panel(panel_node);
-> -       of_node_put(panel_node);
-> -       if (IS_ERR(panel))
-> -               return PTR_ERR(panel);
-> -
->         if (of_property_present(dev->of_node, "nxp,enable-termination-resistor"))
->                 fsl_ldb->use_termination_resistor = true;
->
-> -       fsl_ldb->panel_bridge = devm_drm_panel_bridge_add(dev, panel);
-> -       if (IS_ERR(fsl_ldb->panel_bridge))
-> -               return PTR_ERR(fsl_ldb->panel_bridge);
-> +       next_bridge = devm_drm_of_get_bridge(dev, dev->of_node,
-> +                                            fsl_ldb->ch0_enabled ? 1 : 2,
-> +                                            0);
-> +       if (IS_ERR(next_bridge))
-> +               return dev_err_probe(dev, PTR_ERR(next_bridge),
-> +                                    "failed to get next bridge\n");
->
-> +       fsl_ldb->bridge.next_bridge = drm_bridge_get(next_bridge);
->
->         if (fsl_ldb_is_dual(fsl_ldb)) {
->                 struct device_node *port1, *port2;
->
-> --
-> 2.51.0
->
+I would say the Tested-by should be on the whole patch series as its=20
+running here.
+
+with best regards
+
+Jens
+
