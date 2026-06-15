@@ -1,138 +1,167 @@
-Received: from CH5PR02CU005.outbound.protection.outlook.com (mail-northcentralusazon11012054.outbound.protection.outlook.com [40.107.200.54])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD9A1277C9D;
-	Mon, 15 Jun 2026 03:49:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.200.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781495370; cv=fail; b=j3YKjMzCbxQR+R2fw4qZ6xUO0RbcomvcjKlLVGJzEJO2WfkZYGAH4oQwuTEKMC3MwBm6VgSalAFSkhqAakVmb7Sea4RPLEgR5etngkHhQ+REsrZaVcO9fQGPmpZ3LzJ6yx3VRzJnAOp+EbJxA191s9WhdhT6kHTljbRanCaoShk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781495370; c=relaxed/simple;
-	bh=ZMmhmBXYFDvnIXEXrbPstXb8HlDPpR8axWxB0JddU94=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Dw9aWWE+mhtuBAbgejGld23l1bzpC0e3vz1Fk9DkyVvmZto6l9ugDU7/JsknjgbGsGn43tgTgHSBYeMwWObKvPUMGJc+U0MkXvtPoFESvSL2Puc+F+gB10Lacx4uRQOsGXOAfs3z4aCiqzy2eCBqkkjhtAuT83Bbx4ppCRg9+Rg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=RbiUwpuc; arc=fail smtp.client-ip=40.107.200.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A8DD2AD2C;
+	Mon, 15 Jun 2026 04:29:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1781497744; cv=none; b=fhYOkXifukdOakgGBySVTZ0040Qx1fL0UTN8585N9YmQ552rod7vkfNp0fhelor7a/Ably5oika4evtJM30Sd7XRmPwHWWrL9yxLrBwJvx3Trv6ulb8diYIQOOBafRFPsH5N++YcMPBN5bLrqq0VhTF8QLQRBUCktugvTMIhW7Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1781497744; c=relaxed/simple;
+	bh=ck7Prj6LUmNL2O0pu9DFDaFX27y5bdZ0cJMjkilSEh0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j91KiOXG2VIkKM7Opbed58OV2c/Nj16M0I7743UshQnZvWtOMdMEYa9SryJ7QYPtSvnSHAfqwLraHSYBoEyXpOr7kh7jHExhgCXk0sBLb0Jcp7Pxs7/pLqCcTWVbnS6MNIuVxbZYaIctGQ65YuFvIqYBtbE9MlAnYuWmptTxmmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gIBjQVoV; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="RbiUwpuc"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=sVyliztxKFYJzdBZjATkA1yMKe5+sRlIuqXUxJyGch4/bynqw8C8Uw83jN9sdIsP9JWVDRw7F1IK0Y4/HZzDE4JxIAeglvC/7+QriNYIvelKZfETuadxYfe3tnbJJR+Jva2b4ipuP1n+MbGqWaKKPImrV/01OEFyQ2zx5z/SNkjmK/+y0AMt4rxXxZHL+LaivwCTK+nOfF6iYYLKPAMzOBt005WtNpxpXHsH6MXRExgXDsLaL6bSKLghn9Z4kVZcp9BI9WSZlLa62t9DQeTYRu5FXbOpg/63bsdMMWWXOQ3/uSlJpDy3o5ZGVOGkfHOJDYtQ7EXNxhNfY5uGzyUZcw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oFyBV90adYeJCdF4jSwYQMSG2g4ZBZ1oQNb0LnvvTlg=;
- b=JQvsIEq7B9t9Cpq83W/GdfyjFz2JLZN9SAFtjHS5wJxUcWjWrXynqM98H9j5KFkGp2wfqZ869vAaMiaOo+4Pr4LapFi5icbFzdB3cV1LHfR7HQie0ZJDvseBtCDsGv1Ugqx0qDSmmldAjQEvvxv59JMELj4FhrkvdiRAxgSK/8Ac48eCfnZ03rrXa6LlKBI0dvhBIa6nC/PwpbfUOy4Ff43rcd4XJ3e7NDwKT67KhIKHl/qhgn3aUqxUNFFB/CeHF+fSNgYcy2w63dZ1L+JsBeag7Yog/2Ebq5pK8y0Q/RseSREJLMNtIrpFKdPa5Vq9hePbY83MY//Qxc7l0UczGA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oFyBV90adYeJCdF4jSwYQMSG2g4ZBZ1oQNb0LnvvTlg=;
- b=RbiUwpucFbiDrmNn0T6fyPnYGvy0PH6TVjAb0aVgNamN0IvQ9Ous641KUqFawaCfsST2Re6nYn0evgZ/ThbGMscHLzVGHHxr8YktjR5HbqQhsTMvXEvSKg+H6y/eibavUl9VxtKNFeBAeExvogJxBSg5ux6hSMNNH4wrV1gGFSk=
-Received: from SN6PR04CA0091.namprd04.prod.outlook.com (2603:10b6:805:f2::32)
- by PH7PR12MB9201.namprd12.prod.outlook.com (2603:10b6:510:2e8::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.113.18; Mon, 15 Jun
- 2026 03:49:21 +0000
-Received: from SN1PEPF000397AE.namprd05.prod.outlook.com
- (2603:10b6:805:f2:cafe::45) by SN6PR04CA0091.outlook.office365.com
- (2603:10b6:805:f2::32) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.113.18 via Frontend Transport; Mon,
- 15 Jun 2026 03:49:21 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- SN1PEPF000397AE.mail.protection.outlook.com (10.167.248.52) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.139.8 via Frontend Transport; Mon, 15 Jun 2026 03:49:21 +0000
-Received: from satlexmb10.amd.com (10.181.42.219) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.41; Sun, 14 Jun
- 2026 22:49:21 -0500
-Received: from satlexmb08.amd.com (10.181.42.217) by satlexmb10.amd.com
- (10.181.42.219) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.41; Sun, 14 Jun
- 2026 22:49:20 -0500
-Received: from xhdshubhraj40.xilinx.com (10.180.168.240) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.41 via Frontend
- Transport; Sun, 14 Jun 2026 22:49:16 -0500
-From: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
-To: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <git@amd.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Michal Simek
-	<michal.simek@amd.com>, Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH 8/8] clk: clocking-wizard: Use dev_err_probe() when mapping registers
-Date: Mon, 15 Jun 2026 09:18:45 +0530
-Message-ID: <20260615034845.3320286-9-shubhrajyoti.datta@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260615034845.3320286-1-shubhrajyoti.datta@amd.com>
-References: <20260615034845.3320286-1-shubhrajyoti.datta@amd.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gIBjQVoV"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A50261F000E9;
+	Mon, 15 Jun 2026 04:28:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1781497742;
+	bh=4zOF8ACcQnGINtLJ1j5EoUWcnRZyFCDbQM5I2mI8cJI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=gIBjQVoVnGaNXBlOLr/2kvjLqa0XSsytCf8icoDPAioCUFGNWQnfNXRXxu4NikDqv
+	 D0oOU+SqepW8a21COfHEblvn+oLteTPOrSQ0Drb8i+VwxagY1aFakmjhNDYf6qqpcs
+	 lmTDU1wkB1A9YSjy9fJcbbQw7HnkdfNSLjsZ4rPi3++mWCYn314MRTNMAFGdnpeZHg
+	 2r+tIu+CPbyOVJUrJuNQK5I/HYxYSuGqaapRKH6Vnb5ubmupjB6SSGzWDa3hF2aML0
+	 BkAm7uMysMiPkdAw09NttKj5XwD+g7ToWZixfZf0mMiL5934O0kX6b4Uvs1Sv1fefv
+	 WMXzXpB8kFWSQ==
+Message-ID: <86943057-f5b4-4fae-9172-45f13814494f@kernel.org>
+Date: Mon, 15 Jun 2026 06:28:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 7/8] dt-bindings: display: allwinner: Split H616 DE33
+ layer reg space
+To: =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@gmail.com>,
+ wens@kernel.org
+Cc: samuel@sholland.org, mripard@kernel.org,
+ maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, airlied@gmail.com,
+ simona@ffwll.ch, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ mturquette@baylibre.com, sboyd@kernel.org, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <20260509190015.79086-1-jernej.skrabec@siol.net>
+ <ahNuuaVlDl0KvOSj@home.wens.tw>
+ <032c1099-40ab-470e-8cc3-af6d3cad22d4@kernel.org>
+ <nIKN_benRn2Bk8SDZrkMCA@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <nIKN_benRn2Bk8SDZrkMCA@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF000397AE:EE_|PH7PR12MB9201:EE_
-X-MS-Office365-Filtering-Correlation-Id: d89c52b7-e62e-49ab-8e56-08deca9115b2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|23010399003|36860700016|376014|22082099003|18002099003|56012099006|11063799006;
-X-Microsoft-Antispam-Message-Info:
-	HBgCmf/N+Y7z6Fk9GAaG6FJCxSTCUSs0x7WWLWhUFWc6RJ2lzorLzWwIh5KxuSncuBEnaXdOeWiV6wHNp9noDslNlemMpXJAh0dWXIfLxYRYVLUnmcTVaQh49cLo6zyo0kjJWALrxBqieTYTo/QWFJHCVp7M2ZLEyVyb7AFTa9ya0IzrNvgCUdd5XcB2Cgbg+dfYanI5O5BG9pRYg2qhr35ei6zDmKZV5qWfQSjKRRubARIUthK0MLw+GrtQYjW2AE2U7TLtaqlLYhPjzVKFUJHF9yxGN7ku79OLcOsLBPJaF1bf++sh7xgXoVSwKVaQNxUOWS3Mf2Ak00YOVlQ1YdDbghGIHPjfeFYSAl4O1PrLDl2GCqH+ogNVt8DkPAF7UPVtlxkdJgkkSb129b8B29h74+OVy3ywo8UURITjgstPeR5jUfESDgeWh4e381vxA5CPNq4M3v34MH1oW6jwIABpQCqDjVzrbBRIJI1eadI1Lz0SFNrOo6BPHQ7oPD68Nf3HVRxV3u6ouaw5WcGEIrWHMr4m6pZHv8mTNDiffzf0WC15mt+2hc6ajsr0iiV5GuEMtj40M3+bN3rmCz94wZjGEb8jGgs3S36D0GEX6Zu4fI39M8Yx0Psy/W2zRYHP+1pg+8XoIC2x8RdnteHgxtUqfjxhw8Rh3pGmcLY+Gk6PnIrbyj+OejDYFNfhRhvPZT4qmBdPn4RkYkKVeGwSvjzP/+Wvxbuz/fixWPRORRY=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(23010399003)(36860700016)(376014)(22082099003)(18002099003)(56012099006)(11063799006);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	BAyXqrlyv7E40gA7vXh7igEkZmv4p4lxfJUy2rXPWnOTQ8x+jhiMBBfP9nDReaHW2iqTCmTZ9zZ2Llu2O87IOMye2WGuhR9KQvZxkyhh3dVFMVAAVOusub8YLPJDw0hzHpTI+TzBSM3lh/qemXDCJQdCBOJ3aSWDzJcWkBt+XdSu5N47xkCZYEI41nf/FAo/HGmuNX1DWyFWM+7vhDGQvIjYz1GkNkEVa2GaSgeM+Eq1SkyyRX1ddS3fjfb41qMvj/MxO7yduWB+bWNSnyTM1OOF0LZxGpAvy4bQxDxjeVm1NmmrNstVaiV7e+a3H6B6qJpmt5iOTnYSKxC1OIb05BGjLhX5zRpcRavzr37ncpUSeKuKFSWKSKax8jrQ5wKlp85h8BMLk5bEVAwnXlsg5TeF06CeJpi5jM8pzCYYyfKlrh1sM9VfUI0NEpET7LGg
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jun 2026 03:49:21.5635
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d89c52b7-e62e-49ab-8e56-08deca9115b2
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF000397AE.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB9201
 
-Align the devm_platform_ioremap_resource() error path with clk_in1 and
-s_axi_aclk handling for consistent logging and deferred-probe behavior.
+On 14/06/2026 16:08, Jernej Škrabec wrote:
+> Dne ponedeljek, 25. maj 2026 ob 14:10:38 Srednjeevropski poletni čas je Krzysztof Kozlowski napisal(a):
+>> On 24/05/2026 23:33, Chen-Yu Tsai wrote:
+>>> Hi,
+>>>
+>>> (resent from new email)
+>>>
+>>> On Thu, May 14, 2026 at 2:04 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>>>
+>>>> On Sat, May 09, 2026 at 09:00:14PM +0200, Jernej Skrabec wrote:
+>>>>> From: Jernej Skrabec <jernej.skrabec@gmail.com>
+>>>>>
+>>>>> As it turns out, current H616 DE33 binding was written based on
+>>>>> incomplete understanding of DE33 design. Namely, planes are shared
+>>>>> resource and not tied to specific mixer, which was the case for previous
+>>>>> generations of Display Engine (DE3 and earlier).
+>>>>>
+>>>>> This means that current DE33 binding doesn't properly reflect HW and
+>>>>> using it would mean that second mixer (used for second display output)
+>>>>> can't be supported.
+>>>>>
+>>>>> Remove layer register space, which will be represented with additional
+>>>>> node, and replace it with phandle, which will point to that new, shared
+>>>>> node. That way, all mixers can share same layers.
+>>>>>
+>>>>> There is no user of this binding yet, so changes can be made safely,
+>>>>> without breaking any backward compatibility.
+>>>>
+>>>> There is user. git grep gives me:
+>>>> drivers/gpu/drm/sun4i/sun8i_mixer.c
+>>>>
+>>>> which means this is a released ABI. As I understood, the old code was
+>>>
+>>> We held off on merging the DT changes so that we could rework this.
+>>> I can't find the actual request though. It was probably over IRC.
+>>>
+>>>> working fine but just did not support all use cases. Why this cannot be
+>>>> kept backwards compatible?
+>>>
+>>> AFAIK the "planes" block is shared between two display mixers. As the
+>>> commit message explains, this prevents using the second mixer, since
+>>> only one of them can claim and map the register space. And on the H700
+>>> (which is the same die as the H616 discussed here but with more exposed
+>>> interfaces), there could actually be a use case for the second mixer.
+>>
+>> It explains why you want to make the changes but not why you cannot keep
+>> it backwards compatible.
+> 
+> I guess it can be backward compatible, but I don't think it makes sense.
+> Yes, original driver implemented original DT bindings, but there is no node
+> which uses that binding. If there is no user of that, why would driver
 
-Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
----
+Did you check all out of tree users of the ABI? All vendor kernels,
+forks and all of them for which the ABI was made for?
 
- drivers/clk/xilinx/clk-xlnx-clock-wizard.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+If there is no single downstream/out of tree kernel using this ABI, then
+of course you do not need to consider it. I don't know how would you
+prove that but I am open for suggestions.
 
-diff --git a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c b/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
-index fe73ee02b54e..381e396aef0e 100644
---- a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
-+++ b/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
-@@ -1277,7 +1277,8 @@ static int clk_wzrd_probe(struct platform_device *pdev)
- 
- 		clk_wzrd->base = devm_platform_ioremap_resource(pdev, 0);
- 		if (IS_ERR(clk_wzrd->base))
--			return PTR_ERR(clk_wzrd->base);
-+			return dev_err_probe(&pdev->dev, PTR_ERR(clk_wzrd->base),
-+					     "failed to map registers\n");
- 
- 		ret = of_property_read_u32(np, "xlnx,speed-grade", &clk_wzrd->speed_grade);
- 		if (!ret) {
--- 
-2.49.1
-
+> need to support it nevertheless? Supporting only actually used DT binding
+> allows for better code architecture, as there is no need to support second,
+> unused path. It also simplifies testing, since developer doesn't need to
+> test both paths if code is changed in that area.
+> 
+Best regards,
+Krzysztof
