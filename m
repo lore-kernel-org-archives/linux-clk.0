@@ -1,167 +1,254 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A8DD2AD2C;
-	Mon, 15 Jun 2026 04:29:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+Received: from ultrarisc.com (unknown [218.76.62.146])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48BD5288C30;
+	Mon, 15 Jun 2026 06:07:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.76.62.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781497744; cv=none; b=fhYOkXifukdOakgGBySVTZ0040Qx1fL0UTN8585N9YmQ552rod7vkfNp0fhelor7a/Ably5oika4evtJM30Sd7XRmPwHWWrL9yxLrBwJvx3Trv6ulb8diYIQOOBafRFPsH5N++YcMPBN5bLrqq0VhTF8QLQRBUCktugvTMIhW7Q=
+	t=1781503639; cv=none; b=ph/5mARLuwuN/JZ2koqvkz+0U33us2bCm9CtFZkrLHcv5oikh7QP+9QVDWu5rGh/QDfsSrN8WfkemZT8mdtbP+0XjDQ9ZkyhB67Xbl3kEbNC3YG28zESuFTuskT7mjqLOBt5HN+1kH3d2BINTbt1Ffyf5TkvR401sVEUefNON5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781497744; c=relaxed/simple;
-	bh=ck7Prj6LUmNL2O0pu9DFDaFX27y5bdZ0cJMjkilSEh0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j91KiOXG2VIkKM7Opbed58OV2c/Nj16M0I7743UshQnZvWtOMdMEYa9SryJ7QYPtSvnSHAfqwLraHSYBoEyXpOr7kh7jHExhgCXk0sBLb0Jcp7Pxs7/pLqCcTWVbnS6MNIuVxbZYaIctGQ65YuFvIqYBtbE9MlAnYuWmptTxmmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gIBjQVoV; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1781503639; c=relaxed/simple;
+	bh=OvFkwwxq73FZwe0cJrWDvfiAej+0wFSea+Y7W0xSIXg=;
+	h=MIME-Version:Content-Type:Subject:From:To:Cc:In-Reply-To:
+	 References:Date:Message-Id; b=A+TNfx7lfHcPb07U2+aiHxkCyim4U8NSBK4EjBwOHm40BuO8zwyj8zuzel9fCD0at4+FCGIOHdQb+eLQqCOI3QAIp14iY8n8WtLX7ZpLIxt04wuEf5qpbwM6OnubSpSm9u4MQEO6izd5042DzmT1zQpIgIUMFupE2VfHoEU4TX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ultrarisc.com; spf=none smtp.mailfrom=ultrarisc.com; dkim=pass (1024-bit key) header.d=ultrarisc.com header.i=@ultrarisc.com header.b=ZCNFX7Ci; arc=none smtp.client-ip=218.76.62.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ultrarisc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ultrarisc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gIBjQVoV"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A50261F000E9;
-	Mon, 15 Jun 2026 04:28:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781497742;
-	bh=4zOF8ACcQnGINtLJ1j5EoUWcnRZyFCDbQM5I2mI8cJI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=gIBjQVoVnGaNXBlOLr/2kvjLqa0XSsytCf8icoDPAioCUFGNWQnfNXRXxu4NikDqv
-	 D0oOU+SqepW8a21COfHEblvn+oLteTPOrSQ0Drb8i+VwxagY1aFakmjhNDYf6qqpcs
-	 lmTDU1wkB1A9YSjy9fJcbbQw7HnkdfNSLjsZ4rPi3++mWCYn314MRTNMAFGdnpeZHg
-	 2r+tIu+CPbyOVJUrJuNQK5I/HYxYSuGqaapRKH6Vnb5ubmupjB6SSGzWDa3hF2aML0
-	 BkAm7uMysMiPkdAw09NttKj5XwD+g7ToWZixfZf0mMiL5934O0kX6b4Uvs1Sv1fefv
-	 WMXzXpB8kFWSQ==
-Message-ID: <86943057-f5b4-4fae-9172-45f13814494f@kernel.org>
-Date: Mon, 15 Jun 2026 06:28:54 +0200
+	dkim=pass (1024-bit key) header.d=ultrarisc.com header.i=@ultrarisc.com header.b="ZCNFX7Ci"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=ultrarisc.com; s=dkim; h=Received:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:
+	References:Date:Message-Id; bh=JlUzqvWJoPmBtFYEWjkZ8IYl/0ScnYlNv
+	f4G7+4Fle0=; b=ZCNFX7CiMScyaDsCawi+1domAzWxCs4u/T0DvOfVvBJyJf1dU
+	uVB8Dr+V7pfgQF8yCNuHjD7JIu37TawVZIeQgKEs2vEVHOcucnD6pu+QldXEDX+b
+	6dMTKIC0VAkDo4d3sh03MTmkOyWEXI4C34wTA6G0sEAqAxTT8qb4Qd2LA0=
+Received: from [127.0.0.1] (unknown [192.168.100.1])
+	by localhost.localdomain (Coremail) with SMTP id AQAAfwAnYUKvli9qLoMKAA--.9392S2;
+	Mon, 15 Jun 2026 14:07:43 +0800 (CST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 7/8] dt-bindings: display: allwinner: Split H616 DE33
- layer reg space
-To: =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@gmail.com>,
- wens@kernel.org
-Cc: samuel@sholland.org, mripard@kernel.org,
- maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, airlied@gmail.com,
- simona@ffwll.ch, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- mturquette@baylibre.com, sboyd@kernel.org, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <20260509190015.79086-1-jernej.skrabec@siol.net>
- <ahNuuaVlDl0KvOSj@home.wens.tw>
- <032c1099-40ab-470e-8cc3-af6d3cad22d4@kernel.org>
- <nIKN_benRn2Bk8SDZrkMCA@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <nIKN_benRn2Bk8SDZrkMCA@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH 1/2] dt-bindings: clock: ultrarisc: Add DP1000 Clock
+ Controller
+From: Jia Wang <wangjia@ultrarisc.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: wangjia@ultrarisc.com, Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20260611-reformist-wish-75a73a1d2c49@spud>
+References: <20260611-ultrarisc-clock-v1-0-2d93ebb4cc13@ultrarisc.com>
+ <20260611-ultrarisc-clock-v1-1-2d93ebb4cc13@ultrarisc.com>
+ <20260611-reformist-wish-75a73a1d2c49@spud>
+Date: Mon, 15 Jun 2026 14:07:07 +0800
+Message-Id: <178150362720.3055943.7661118151533529664.b4-reply@b4>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1781503627; l=5534;
+ i=wangjia@ultrarisc.com; s=20260515; h=from:subject:message-id;
+ bh=OvFkwwxq73FZwe0cJrWDvfiAej+0wFSea+Y7W0xSIXg=;
+ b=I6/PlPlXlo7xmg+S9fb8qtk8KfqK7a3AS6hmDUdHdnSm9i/oziM2sJosXVME4hHAVh9x127Kd
+ NdnrV6BjmLTB9ZEPObrsy1fIFoZ+64LgwdWJtf/ZkGd8M6dOLWg9dBQ
+X-Developer-Key: i=wangjia@ultrarisc.com; a=ed25519;
+ pk=wGVm18siRScehKOkOz0WKxgxDy7IezHEszhnN4/TUCY=
+X-CM-TRANSID:AQAAfwAnYUKvli9qLoMKAA--.9392S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3Jw45Kry3ur17tF18Xw1fZwb_yoW7XFyfpF
+	nxCFZ0yF1IyF1xuw4Iqa43A3Z3Ja10kFy7GrW2kr1jyFZ093WrtFsFk3y5ZFy8Xrs7A3yq
+	yF1Uuw1ayw429aDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9l14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r
+	4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+	n2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCY02Avz4vE-syl42xK82IYc2Ij64vIr41l4I
+	8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AK
+	xVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcV
+	AFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8I
+	cIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r
+	4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUoWlkDUUUU
+X-CM-SenderInfo: pzdqwylld63zxwud2x1vfou0bp/1tbiAQAAEWoWakYABgBcsa
 
-On 14/06/2026 16:08, Jernej Škrabec wrote:
-> Dne ponedeljek, 25. maj 2026 ob 14:10:38 Srednjeevropski poletni čas je Krzysztof Kozlowski napisal(a):
->> On 24/05/2026 23:33, Chen-Yu Tsai wrote:
->>> Hi,
->>>
->>> (resent from new email)
->>>
->>> On Thu, May 14, 2026 at 2:04 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>>>
->>>> On Sat, May 09, 2026 at 09:00:14PM +0200, Jernej Skrabec wrote:
->>>>> From: Jernej Skrabec <jernej.skrabec@gmail.com>
->>>>>
->>>>> As it turns out, current H616 DE33 binding was written based on
->>>>> incomplete understanding of DE33 design. Namely, planes are shared
->>>>> resource and not tied to specific mixer, which was the case for previous
->>>>> generations of Display Engine (DE3 and earlier).
->>>>>
->>>>> This means that current DE33 binding doesn't properly reflect HW and
->>>>> using it would mean that second mixer (used for second display output)
->>>>> can't be supported.
->>>>>
->>>>> Remove layer register space, which will be represented with additional
->>>>> node, and replace it with phandle, which will point to that new, shared
->>>>> node. That way, all mixers can share same layers.
->>>>>
->>>>> There is no user of this binding yet, so changes can be made safely,
->>>>> without breaking any backward compatibility.
->>>>
->>>> There is user. git grep gives me:
->>>> drivers/gpu/drm/sun4i/sun8i_mixer.c
->>>>
->>>> which means this is a released ABI. As I understood, the old code was
->>>
->>> We held off on merging the DT changes so that we could rework this.
->>> I can't find the actual request though. It was probably over IRC.
->>>
->>>> working fine but just did not support all use cases. Why this cannot be
->>>> kept backwards compatible?
->>>
->>> AFAIK the "planes" block is shared between two display mixers. As the
->>> commit message explains, this prevents using the second mixer, since
->>> only one of them can claim and map the register space. And on the H700
->>> (which is the same die as the H616 discussed here but with more exposed
->>> interfaces), there could actually be a use case for the second mixer.
->>
->> It explains why you want to make the changes but not why you cannot keep
->> it backwards compatible.
+On 2026-06-11 18:29 +0100, Conor Dooley wrote:
+> On Thu, Jun 11, 2026 at 05:40:53PM +0800, Jia Wang via B4 Relay wrote:
+> > From: Jia Wang <wangjia@ultrarisc.com>
+> > 
+> > Add doc for the clock controller on the UltraRISC DP1000 RISC-V SoC.
+> > 
+> > Signed-off-by: Jia Wang <wangjia@ultrarisc.com>
+> > ---
+> >  .../bindings/clock/ultrarisc,dp1000-clk.yaml       | 72 ++++++++++++++++++++++
+> >  MAINTAINERS                                        |  7 +++
+> >  include/dt-bindings/clock/ultrarisc,dp1000-clk.h   | 29 +++++++++
+> >  3 files changed, 108 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/clock/ultrarisc,dp1000-clk.yaml b/Documentation/devicetree/bindings/clock/ultrarisc,dp1000-clk.yaml
+> > new file mode 100644
+> > index 000000000000..d4d3d851a079
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/ultrarisc,dp1000-clk.yaml
+> > @@ -0,0 +1,72 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/clock/ultrarisc,dp1000-clk.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: UltraRISC DP1000 Clock Controller
+> > +
+> > +maintainers:
+> > +  - Jia Wang <wangjia@ultrarisc.com>
+> > +
+> > +description: |
+> > +  The UltraRISC DP1000 clock controller is driven from a single external
+> > +  oscillator input. It provides a system PLL with fractional multiplier
+> > +  and post-divider stages, several fixed-ratio derived clocks for
+> > +  the on-chip subsystem, Clock Configuration Register (CCR) divider
+> > +  outputs for GMAC and the UART, I2C, and SPI root clocks, and
+> > +  per-instance gate clocks for UART0-3, I2C0-3, and SPI0-1.
+> > +
+> > +  All available clocks are defined as preprocessor macros in
+> > +  include/dt-bindings/clock/ultrarisc,dp1000-clk.h
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: ultrarisc,dp1000-clk
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  clocks:
+> > +    maxItems: 1
+> > +    description:
+> > +      External oscillator input clock used as the parent of the PLLs.
+> > +
+> > +  clock-names:
+> > +    items:
+> > +      - const: osc
 > 
-> I guess it can be backward compatible, but I don't think it makes sense.
-> Yes, original driver implemented original DT bindings, but there is no node
-> which uses that binding. If there is no user of that, why would driver
+> Clock names don't really have any value when you have one input clock.
+>
 
-Did you check all out of tree users of the ABI? All vendor kernels,
-forks and all of them for which the ABI was made for?
-
-If there is no single downstream/out of tree kernel using this ABI, then
-of course you do not need to consider it. I don't know how would you
-prove that but I am open for suggestions.
-
-> need to support it nevertheless? Supporting only actually used DT binding
-> allows for better code architecture, as there is no need to support second,
-> unused path. It also simplifies testing, since developer doesn't need to
-> test both paths if code is changed in that area.
+Thanks, I’ll drop clock-names in the next version.
+ 
+> > +
+> > +  "#clock-cells":
+> > +    const: 1
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - clocks
+> > +  - clock-names
+> > +  - "#clock-cells"
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    #include <dt-bindings/clock/ultrarisc,dp1000-clk.h>
+> > +
+> > +    osc: oscillator {
+> > +      compatible = "fixed-clock";
+> > +      #clock-cells = <0>;
+> > +      clock-frequency = <24000000>;
+> > +    };
 > 
+> Drop this whole node please.
+> 
+
+I'll drop this node in the next version.
+
+> > +
+> > +    soc {
+> > +      #address-cells = <2>;
+> > +      #size-cells = <2>;
+> > +
+> > +      clock-controller@11080000 {
+> > +        compatible = "ultrarisc,dp1000-clk";
+> > +        reg = <0x0 0x11080000 0x0 0x1000>;
+> > +        clocks = <&osc>;
+> > +        clock-names = "osc";
+> > +        #clock-cells = <1>;
+> > +      };
+> > +    };
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index e035a3be797c..3331f1edf002 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -27357,6 +27357,13 @@ S:	Maintained
+> >  F:	drivers/usb/common/ulpi.c
+> >  F:	include/linux/ulpi/
+> >  
+> > +ULTRARISC DP1000 CLOCK DRIVER
+> > +M:	Jia Wang <wangjia@ultrarisc.com>
+> > +L:	linux-clk@vger.kernel.org
+> > +S:	Maintained
+> > +F:	Documentation/devicetree/bindings/clock/ultrarisc,dp1000-clk.yaml
+> > +F:	include/dt-bindings/clock/ultrarisc,dp1000-clk.h
+> > +
+> >  ULTRATRONIK BOARD SUPPORT
+> >  M:	Goran Rađenović <goran.radni@gmail.com>
+> >  M:	Börge Strümpfel <boerge.struempfel@gmail.com>
+> > diff --git a/include/dt-bindings/clock/ultrarisc,dp1000-clk.h b/include/dt-bindings/clock/ultrarisc,dp1000-clk.h
+> > new file mode 100644
+> > index 000000000000..5e484f652b08
+> > --- /dev/null
+> > +++ b/include/dt-bindings/clock/ultrarisc,dp1000-clk.h
+> > @@ -0,0 +1,29 @@
+> > +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> > +#ifndef _DT_BINDINGS_CLOCK_ULTRARISC_DP1000_CLK_H
+> > +#define _DT_BINDINGS_CLOCK_ULTRARISC_DP1000_CLK_H
+> > +
+> > +#define DP1000_CLK_SYSPLL		0
+> > +#define DP1000_CLK_SYSPLL_DIV2		1
+> > +#define DP1000_CLK_SUBSYS		2
+> > +#define DP1000_CLK_GMAC			3
+> > +#define DP1000_CLK_UART_ROOT		4
+> > +#define DP1000_CLK_I2C_ROOT		5
+> > +#define DP1000_CLK_SPI_ROOT		6
+> > +#define DP1000_CLK_PCIE_DBI		7
+> > +#define DP1000_CLK_PCIEX4_CORE		8
+> > +#define DP1000_CLK_PCIEX16_CORE		9
+> > +#define DP1000_CLK_PCIE_AUX		10
+> > +#define DP1000_CLK_UART0		11
+> > +#define DP1000_CLK_UART1		12
+> > +#define DP1000_CLK_UART2		13
+> > +#define DP1000_CLK_UART3		14
+> > +#define DP1000_CLK_I2C0			15
+> > +#define DP1000_CLK_I2C1			16
+> > +#define DP1000_CLK_I2C2			17
+> > +#define DP1000_CLK_I2C3			18
+> > +#define DP1000_CLK_SPI0			19
+> > +#define DP1000_CLK_SPI1			20
+> > +
+> 
+> > +#define DP1000_CLK_NUM			21
+> 
+> This is not suitable to have in a binding, move it to the driver if it
+> is required.
+> pw-bot: changes-requested
+> 
+
+I'll move DP1000_CLK_NUM to the driver.
+
+> Cheers,
+> Conor.
+> 
+> > +
+> > +#endif /* _DT_BINDINGS_CLOCK_ULTRARISC_DP1000_CLK_H */
+> > 
+> > -- 
+> > 2.34.1
+> > 
+> > 
+
 Best regards,
-Krzysztof
+Jia Wang
+
+
