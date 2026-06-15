@@ -1,126 +1,107 @@
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52F272E2850
-	for <linux-clk@vger.kernel.org>; Mon, 15 Jun 2026 09:32:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1618330B14;
+	Mon, 15 Jun 2026 09:39:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781515931; cv=none; b=gGEqNNsGRoIwg23P1EmlL5ID/lKtud/YzF6S+SbWdInesAsac2BOAc3Ic3VZ3PekiM4u0KB5COCIChlgPtbDzIWuMG2Ffh5rMkKc6wwUdLpVXXjOGl5WPW+SsTpEJnbW7SeAnpniXbHfabcxdPARK/BA9DwLz+hMmOlw8ENRzPw=
+	t=1781516351; cv=none; b=f9LIYtyBsUyF3658PWJGxqLBJXHN+8sVgQ5cmFGpv3B567SDqQ4RCXgx5ZXK+kWW9wYqZnFf3Lete+b3NyvjL1Vq6QMWVkia+zShhBmpsM+P7BQ49kzPVEuRy/gO8jwsBMoH94EqWb7oWbzZFbHI6ebFUCdgHihG5M6xcGqs+gg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781515931; c=relaxed/simple;
-	bh=cokh81Cx7W15QrHxXBRjalQp7kxTMzsuksUx0kqLiGU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YMqNNLNH7Tze3E+KpRAx0PYEsNi2VXyYKio/vpPI3ba8Q8jVffklcpRNoApKVdjnXS+9tPKaYjoTcfiPnfvNlORA4Hj41JXzsiTV1+3JjtRMvBCVcoGjGEwfptFB6DHvISKEKbEjki+Gi5KvhWi2kKta9T4PGowwbtMDlBkgaDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-8ccea53f35cso39968666d6.1
-        for <linux-clk@vger.kernel.org>; Mon, 15 Jun 2026 02:32:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781515929; x=1782120729;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ekHktY4/Tubvm6BgE1BfS1UNgz1F/icrKZN3pNx8f0Y=;
-        b=LEQTCN0YlfEdqYufr2aBK1RjNO6Eu0VYEa7m8meQ3pLVtrJf/VjHvDtbcIdodNanhi
-         w+e/Uz3ySNyU/MdOwm+BpvQ83++4K9NHAdPOdFqXZKFnNdmRVEh6/vmMS/6kUMDphhGx
-         xCyQZtNk+yxveOhi2GPl4bF8WBu4k6avkDB9Jk1GKyFHKyXa3kg5WFSDuHfmObnaSEKi
-         NlUNf2BKCvFyWZOFb608UcQro7UwodKRlQ2+UMw9yrhI3XqOqIaRVaiWN5jzs8k8A3OT
-         blKjjm8CEdGk8M5O+DWcFnPRZuxQM/68kJuBWWayEA3/U1MJgq9Csh9sMCEvnJwUgOg3
-         1mPw==
-X-Forwarded-Encrypted: i=1; AFNElJ+8fZUBV/K4/97FbA2AbbPB0Q7APDRlU8xOtlJG4X357LucUAOD8Ar77C1U87CUx3nUJ35L1vLijuc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHOVQZojAGkbQhkfS5/i5JniolIMQ3LWnmRZf/hrPNftpJKDqn
-	EdSies/7Y/8qhCwD2IRgCpjn8BnZZCVRnxURE5TRKMmrqYiWu+Nw+B5RWb1U2alH
-X-Gm-Gg: Acq92OHEUQhMIFH6HNqN6fhnazQqzPaVomvdy2evHYFO3Af8VrnVuUOcSlDnYw5GFdi
-	xr7qpiuPIz7YjHkMyxFEBftdFRTyJHyvgo57Yg2EOTw9bP2ZKzH0zdZ7dMPesVUTf0CABW1PiWZ
-	Cwd3ds4AcLboqCka0qG1b4qvZiQ3zRpD4qH4n9LosoUgh6VwF1sOFqZMVwDx+qq2NdYNC42KNgJ
-	cGJnuNG7/Saxc8bOmDAbw1RylCOE7nCOEo22Gxx1PQ3HkHEmxYdL9dMJO2gRswgE12B+tOXmZyG
-	Sl5HyCNOelbfWhKGEnJe/Qg+ZkEoGUHeQAMOXiWysgWDd9rPubXVgdWs8VWr2k0I9XRQGXKCH4t
-	1mKDsoL+rf/I/p/OQkVDgwQlH/5gypEsTCe1bVcW6MNUfFBK2uksKWZs/RFXBZHRSlpaNGrX5jY
-	WcbMq7rmuH0od18AyS0ftWGQMDyxNoJ+s6txNrdrTdGpJRAplfvtewW8qZ4d6uejo6LwNFnqblW
-	Qc=
-X-Received: by 2002:a05:6214:451a:b0:8ca:25d3:bf41 with SMTP id 6a1803df08f44-8d44d04fe38mr163309566d6.8.1781515929189;
-        Mon, 15 Jun 2026 02:32:09 -0700 (PDT)
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com. [209.85.160.181])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8d300f6b1c5sm110066016d6.3.2026.06.15.02.32.08
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Jun 2026 02:32:08 -0700 (PDT)
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-5176096116fso38069991cf.0
-        for <linux-clk@vger.kernel.org>; Mon, 15 Jun 2026 02:32:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ/dqrL+qJ8MTows5PFv0orOAfAM9BUNPuvJbXkHqYRvy0bzDLFgha7b/1giZVl2VQxYvzLjQvr7lXw=@vger.kernel.org
-X-Received: by 2002:a05:6102:32c4:b0:6c2:e290:cc69 with SMTP id
- ada2fe7eead31-71f60e0fc5bmr5388435137.23.1781515508903; Mon, 15 Jun 2026
- 02:25:08 -0700 (PDT)
+	s=arc-20240116; t=1781516351; c=relaxed/simple;
+	bh=dnONPYD6XzHhp9EBOgFNHs7pj4H4LDKb5beDVT0zjho=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tTozMDUayrxNENwXOkhSt4SrEBxAgEfqxhuYxaiBydEb6KgP3Z1tPBkwJqh0iEgpXfRqlWhei0hqzjG8FTJwDUULhvNjAQJvL6EdNSXbrUEKP+AY0XQFLx9zAmc7RzfS+8xyyWY2Q7o6v7XrK14AiS7Ojvd80WOGvfGuqdhKMT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=cQE6uE/o; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="cQE6uE/o"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1781516349; x=1813052349;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=dnONPYD6XzHhp9EBOgFNHs7pj4H4LDKb5beDVT0zjho=;
+  b=cQE6uE/osYndA9+53fxO5LpgJcax07WKMQKhUTfRvf2XyH8EHNV5thVq
+   Nx/gzTj8yC+3vrI7bQtVzCXGTvUTrnw9LmtK1/CH0meUpz/5kDlZiDSEb
+   D3ebq2kT+MjFMnFkT2f/M9fTXd6tbJtMYX2M8Mj8MFXBVCCnZMVD9rUbc
+   CUrGQUoIWJc50Ui9Mkd0yyAuheR9HUw5wj3SCYqCqNZg1bTKr7BSN/HZC
+   drBcc3yYDGyRoYH2RuwQcIt7NCfuEou3a3ruihwOX0+bEJQ7tdNEHirLR
+   EeQ/zH1YMeL8XKpNultaHNdEgYtc7oGEf8pbQ8sWsu6zkGMo6Edmr3/FS
+   g==;
+X-CSE-ConnectionGUID: +Wai5PhcQwyFvCCU3De2TA==
+X-CSE-MsgGUID: vqn+V4SDSieryT8ypJm+tQ==
+X-IronPort-AV: E=Sophos;i="6.24,206,1774335600"; 
+   d="asc'?scan'208";a="58296024"
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jun 2026 02:39:02 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.87.71) by
+ chn-vm-ex1.mchp-main.com (10.10.87.30) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.2562.41; Mon, 15 Jun 2026 02:39:02 -0700
+Received: from wendy (10.10.85.11) by chn-vm-ex01.mchp-main.com (10.10.85.143)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.58 via Frontend
+ Transport; Mon, 15 Jun 2026 02:38:57 -0700
+Date: Mon, 15 Jun 2026 10:38:10 +0100
+From: Conor Dooley <conor.dooley@microchip.com>
+To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+CC: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Andrzej Hajda
+	<andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, Robert
+ Foss <rfoss@kernel.org>, Laurent Pinchart
+	<Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, Jernej
+ Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Magnus
+ Damm <magnus.damm@gmail.com>, Marek Vasut <marek.vasut+renesas@mailbox.org>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Kieran Bingham
+	<kieran.bingham+renesas@ideasonboard.com>, Philipp Zabel
+	<p.zabel@pengutronix.de>, <linux-renesas-soc@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v4 2/7] dt-bindings: display: bridge: Document Renesas
+ R-Car V4H DSC bindings
+Message-ID: <20260615-undiluted-gallery-d7318905c8fe@wendy>
+References: <20260615-rcar-du-dsc-v4-0-93096a1b56a3@ideasonboard.com>
+ <20260615-rcar-du-dsc-v4-2-93096a1b56a3@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260615-rcar-du-dsc-v4-0-93096a1b56a3@ideasonboard.com> <20260615-rcar-du-dsc-v4-2-93096a1b56a3@ideasonboard.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="Uh78Vh1VzfEi4O33"
+Content-Disposition: inline
 In-Reply-To: <20260615-rcar-du-dsc-v4-2-93096a1b56a3@ideasonboard.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 15 Jun 2026 11:24:57 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVxwvDmRqsdbA_ReCnnaDWbzzTKGCXw-64U-bSJfgiy7g@mail.gmail.com>
-X-Gm-Features: AVVi8Ceq73VEJddOjmb1j9jjrYgT5rbGI4-mYSdD7C_MYewqPqxZACymjTcgJ3U
-Message-ID: <CAMuHMdVxwvDmRqsdbA_ReCnnaDWbzzTKGCXw-64U-bSJfgiy7g@mail.gmail.com>
-Subject: Re: [PATCH v4 2/7] dt-bindings: display: bridge: Document Renesas
- R-Car V4H DSC bindings
-To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Marek Vasut <marek.vasut+renesas@mailbox.org>, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	Conor Dooley <conor.dooley@microchip.com>
-Content-Type: text/plain; charset="UTF-8"
 
-Hi Tomi,
+--Uh78Vh1VzfEi4O33
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 15 Jun 2026 at 08:28, Tomi Valkeinen
-<tomi.valkeinen+renesas@ideasonboard.com> wrote:
+On Mon, Jun 15, 2026 at 09:28:07AM +0300, Tomi Valkeinen wrote:
 > From: Marek Vasut <marek.vasut+renesas@mailbox.org>
->
+>=20
 > The Renesas DSC Display Stream Compression is a bridge embedded in the
 > Renesas R-Car V4H SoC. The bridge performs VESA DSC encoding of up to
 > 8k or 400 Mpixel/s .
->
+>=20
 > Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 > [tomi.valkeinen: fix the example]
 > Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
 > Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 > Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> ---
+>  .../bindings/display/bridge/renesas,dsc.yaml       | 99 ++++++++++++++++=
+++++++
+>  1 file changed, 99 insertions(+)
 
-Thanks for the update!
-
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/bridge/renesas,dsc.yaml
-> @@ -0,0 +1,99 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/bridge/renesas,dsc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Renesas R-Car DSC Display Stream Compression
-> +
-> +maintainers:
-> +  - Marek Vasut <marek.vasut+renesas@mailbox.org>
-> +
-> +description: |
-> +  This binding describes the VESA DSC Display Stream Compression encoder
-> +  embedded in the Renesas R-Car V4H SoC. The encoder supports all DSC1.1
-> +  encoding mechanisms, configurable bits-per-pixel, resolution up to 8k.
-> +
 > +properties:
 > +  compatible:
 > +    items:
@@ -128,26 +109,22 @@ Thanks for the update!
 > +          - renesas,r8a779g0-dsc
 > +      - const: renesas,rcar-dsc
 
-Please do not introduce new "renesas,rcar" fallback compatible values,
-unless you are adding new support for a hardware block that is present
-in SoCs belonging to multiple (nowadays I would say at least three)
-R-Car generations.  The DSC is only found in R-Car Gen4 SoCs, so
-"renesas,rcar-gen4-dsc" sounds more appropriate.
-However, so far R-Car V4H is the only R-Car Gen4 SoC that has a DSC.
-Even the very similar R-Car V4M does not seem to have it.
-R-Car X5H has DSC-functionality integrated in its DisplayPort TX
-controller, so that seems to be a different implementation?
-Hence that rules out any family-specific compatible value for now.
+I didn't provide an ack for this FYI, I was giving the ack for the
+file being called renesas,r8a779g0-dsc.yaml. Since Geert isn't happy
+with what's here, could you drop my ack when you send another version?
 
-The rest of the (system/core) SoC integration LGTM.
+Cheers,
+Conor.
 
-Gr{oetje,eeting}s,
+--Uh78Vh1VzfEi4O33
+Content-Type: application/pgp-signature; name="signature.asc"
 
-                        Geert
+-----BEGIN PGP SIGNATURE-----
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCai/IAgAKCRB4tDGHoIJi
+0lGiAP4i+hsdDIWn5Ob66ARc+soBDeG/vc4lEZHkeIcbNWBX8QD8CvRTmZfRwU0o
+J33Zs5Y0tg/53Ixvcqhdm9vClQTuzQo=
+=DIro
+-----END PGP SIGNATURE-----
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--Uh78Vh1VzfEi4O33--
