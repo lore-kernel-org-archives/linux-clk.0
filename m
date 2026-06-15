@@ -1,207 +1,149 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012009.outbound.protection.outlook.com [52.101.66.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 960E03FCB3D
-	for <linux-clk@vger.kernel.org>; Mon, 15 Jun 2026 14:51:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781535102; cv=none; b=DNoZO63k2bXsGTMjX02tAGVNpQ3zXO3Yl1H3CMx3oZph7dx/8MBL7LvCgsFbvAjgr9LzuHbuUDEbrSCFpcd+H5qUL4GNJBqWHNWtS7lmM+jIBZfAujmLleIVzWzvIdOIO+pSLdxL2uIa2aS6yUT7b7ZaPOGl9fzmqrIPn/fa+y8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781535102; c=relaxed/simple;
-	bh=pnjFXfHvTcgzr/idrDh0pO+usNWN9B3o6L5QG6iq23c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ruko84QIof5mFoCQ9U4Z3amuPvZ0aF45/K6MbamG8F/JaukV61NiEd5GR+A51xT3quUPEewH6bAYKEEXKvU03e1paegohPoGrqU2LSWgasxUr+KYnmS8CRBoWejCGqMl5rPXbmWhCDM6o1aPGYuiyY2TH1w0lE+/p2lU1YhpgKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=okD+eTdY; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=iO3kFl8Y; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 210143F58FC;
+	Mon, 15 Jun 2026 14:59:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1781535552; cv=fail; b=URqlff8nn8/n6SoTjXuZ6o8NhVVgLYOhA/WhnYmnCHUyu7l5sYzVPkWxnr2J2ZGh0Qz0lmRykjX85ykX5cS9MDat+o6ZRm1f6uz/cRGe0Qn6RCOUK21oA+vd347W6wcEip3LUT7X8ys+2pT9aLSB1tfMBHBD3XKe/Y4bHGW88/Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1781535552; c=relaxed/simple;
+	bh=afj2TQTHo0Aw+g+xwJ8mTtAFJluueYyKH0liOs+UgL0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=g7auE4Ohqcr6QCxnY6AT2CHpXQCPuioLO//BcwahKMLTiITxOfIAVMithJ8/ST4lWpPMt5ihzyYgL1KytFzl+/JIUhk9zAnE/aU+/81IWpKqBi7RL4Rkea3zRuqAxVafAfmpRmq9hQXOx9TtWp5S2z6XL8vKqDfLNzlDFR0TvG4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=xL8IszGF; arc=fail smtp.client-ip=52.101.66.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="okD+eTdY";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="iO3kFl8Y"
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 65FEZ2Ox833631
-	for <linux-clk@vger.kernel.org>; Mon, 15 Jun 2026 14:51:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	4AUYS+wae+hsbFs8L1IrRqpyJhpzYX6yweeTpXfvcbo=; b=okD+eTdYYLRbfln9
-	V2EKlJRaGlSkmVYAV7zIR+agqfTfF5XpkySQMSi95/GrbVcPpMFLpD4Sal5HBCmO
-	g7LlJspvBprjwrioGl61vqtKEblz6xSfMgg8y5DJdCQY7pGz5o5exenV5NmHKWu0
-	/fOdphcUtvm10OrN24ecj/j1oclbcm8M1AtBjYTZeMwAZJfxZUVjWVyT/yfW4P7n
-	Qcu0lORxKvVdxzOvejhfRHS6XgbFOhBTDpOrhT94Kj1FT1ss0cm1+A4ryo4Be1OM
-	EE4WnghlM69AEtBiMgQbvJA+NnP/AgPb3dodYJ98vm+bdy5ybFUywVdfVcuNG0zK
-	Rg1LZw==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4etgvhgse0-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Mon, 15 Jun 2026 14:51:40 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-517bdeceb54so8125901cf.2
-        for <linux-clk@vger.kernel.org>; Mon, 15 Jun 2026 07:51:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1781535100; x=1782139900; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4AUYS+wae+hsbFs8L1IrRqpyJhpzYX6yweeTpXfvcbo=;
-        b=iO3kFl8YoJEDT73YUlRUMVwQ+IGW4E2nE3jKabiiOO/5opu5RrJMm3SMlbxhyUzwoG
-         pVFIkQLI0o13QhCRK/hgpeX1DUNgK8E69yMayT1gkPpNWhZoMs/Gz4msAqm7QwnW5SOl
-         7+nJRroqsQHX+ZNULQBYM1QqpuZjxvzejD/tKNgnEVCI8E2pfVrU8Gkq11ou0n+Rg/En
-         CxFunOjuO2+NhvBM67mg3rwKddcnltRkROBa7iRXOT/bqoxH5kmanYLscR+GcnFLfMDO
-         1096o+o5YmJ1Ibr6PhxEVdhD5PpBe2XaBqa5bLHFDoGRhdCmgIghnJJYezWw2dxihoXG
-         Rr7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781535100; x=1782139900;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4AUYS+wae+hsbFs8L1IrRqpyJhpzYX6yweeTpXfvcbo=;
-        b=M2ThQUGVFDYZTZ9XqPMUOBDbHAuaUXzd4LYUyE3pmstytfoN/ThbETVK/6rGfTgrBL
-         GrYTxFvHQaJXQo1v2vYRsbP7wvi3W0zJL23U+RUXZHcj/PNbuRGhw8cT4DZWDC9RtIic
-         voeTuHrLIqoXv/G9mXmvv5TV7gYmtL/ZrbJGvuKp1BkmIzYmvqBGzoA8s74vfue/GGpH
-         lfOrrB2sVaPrcBpJCIh/5feJwwknE4FjwHw6nkUkJhU+HTVGv3Oz+twKip7OqUPgzmC6
-         zmn0jACtxL8/ABDc1hkZSBwNkkLI7tkL5DnGAj45z6aGBrnav9kj2lq7LkoynYa3zU4W
-         HriA==
-X-Forwarded-Encrypted: i=1; AFNElJ+aOd9MDVSjN6z08pKzu7/2OclFNR+N2W9ec1oguiZqIpY/l8t+zD+ijw28uKzdq/ssIQVnOZ+xqMo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgtOztqYre7Qo+1eSzGnMC3BdaA9+XLuFJVaYonBCX//6y1Y/I
-	g5uCLzfSU2M1R2G3gPpjIpeKnl3KPZhro+3StIQoLVmhIva5ZOP7Bvbinx8Z+4m+lsQjLLhq4sI
-	L6H7XtyucgslhVH6AseVmw3TKN8Y+FNVQiV4BZpspf8n5Mfzr1KacwOiSDbSX6Hc=
-X-Gm-Gg: Acq92OHJu198DTun+rgvC1cRwT3sgDqIZGRuC2BmzSVRQnnlNReyBYQ2M0libDzcQwn
-	PrGR0vrSk9s2EFUlMPVRmxhQTY6bZ2qnfnBHuoAZO7B24t/VEWnGcmP/Mi4qElg55QSYnh1Y0Wf
-	AKOmFY4fMcXtG7nu3WbkJmMweFsybreq+FnCBWO3bumsAgONadDeqUQYDWvwg+68NkL45wRdW/f
-	QJ/dCh3Eh2eZTq/VdcVW3cknWBrOqkh1Cumk/H5ryGrHIOBrAz4XL/IFj8mqrJTH830ThjdW2st
-	om+Nyy4OPSUCHt2EyVdGfrzPI+MNdUrooxfJnRonyMVb6m/J/aChAdiKiPzt7YHOg0tglmDXSIM
-	LQhQplzu0pfO6vXMAWzjnjphos3Yw2LT4LPD73efH+gZR/g==
-X-Received: by 2002:a05:620a:2892:b0:8f3:5988:f97c with SMTP id af79cd13be357-9161bc9eeabmr1354305685a.3.1781535099771;
-        Mon, 15 Jun 2026 07:51:39 -0700 (PDT)
-X-Received: by 2002:a05:620a:2892:b0:8f3:5988:f97c with SMTP id af79cd13be357-9161bc9eeabmr1354302185a.3.1781535099280;
-        Mon, 15 Jun 2026 07:51:39 -0700 (PDT)
-Received: from [192.168.120.170] ([178.235.128.140])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6937949bc64sm3651693a12.26.2026.06.15.07.51.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Jun 2026 07:51:38 -0700 (PDT)
-Message-ID: <fef227d8-4ad0-4884-98ae-fc48056c3856@oss.qualcomm.com>
-Date: Mon, 15 Jun 2026 16:51:35 +0200
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="xL8IszGF"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=TNxXvE9YxIXmigMvFgP4vapVWNRcujQIjvHx+4ilZR5M0gFj5SDVlE8u6wqmWB1/xF/SJ6Cxk2IF6x9oEVO7EzGl+TG0iUzJCGIaFn5KVzmBPlWrNRSaQvQqbO+NPPI5OLp+0YKBxmvgNrniLCccT6cu7Te5Fsj8NEgjUXThvCOMZYbsABcJ2JPxI2ea8lEaA7L3BbSTNfLnT/4B6AMHwhOuwa0GsHlyooGwO0a2EvRN4hinyik4z9VODClcFO0oUu3rbRzh+ydfdQ1Yi4CwlYpM9MzMIOoDK5lSfzof6a/o+paWKe+jIfpRd/NtHmDXh04sC/nbbwp6UCjF455RJg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=56Trww10RjbA3TRhWEMmNfR3bXg1NvARVJXeIw4Nk3s=;
+ b=y69LQLUFRVa4C78aGyczjvo+Gw9E98e1dlMMYGmqMJc1kgvaZY62RL7YPVtmhWVFDDYw0lfIo7ZHvY58WIc3zWGWc03NULLZ9VqZfjHtUFzxn/LLrbAhgSEwfNp8nIUPR6rSRKdDQVTnDJp56knQiUjNw0LdHIJ9EH30fcZ1f9qL9b4CoxEHldO28Y4Afv0f9qV+M7rmDcj+UzA6OdroC+xjDUjAo49VGg0f6gGF/uHaAQ8zwvdTdD8LIVMtZXbHZv8Jet07+jnG2LSwdD4C1eBktXMiB1UzFvo+fpbtCd4h1bO6jO994VcI/I2g4vIZraF+vnbEEzHyfVt/54lP/g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=56Trww10RjbA3TRhWEMmNfR3bXg1NvARVJXeIw4Nk3s=;
+ b=xL8IszGFwWR0FhQ5BDAprmjwNhVKzg/4irXWEYvxdAwahav6p/UDR7Di+tg3TXgXHRfAMVK4oY0O+TgBZ7/FNfBLO/UDmzEoJPOK19SkNx9d1qqkj9hwi7FPyYX0LbXAs2kEMXqKykUkx3KZCnvM/c0drlEfQrxCGW/HqNWxnbrWE9kH32b+jSkCWHn8BGqUwn4eq1MO5BBL3xJYH39h1QBa+QIVvfDwCVFMIZTRCHrx4eWkJlJPJ+CbfBm0JYBrndzvQk+sVpx0EpGnwKX6ukTSlayRgRw4yYgX26mtYtxh2buyTxwjkN1544B8gMsgzDk5BohZEvAkghKCP94bfA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from GV2PR04MB11799.eurprd04.prod.outlook.com (2603:10a6:150:2cf::9)
+ by AS8PR04MB9128.eurprd04.prod.outlook.com (2603:10a6:20b:44b::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.113.18; Mon, 15 Jun
+ 2026 14:59:07 +0000
+Received: from GV2PR04MB11799.eurprd04.prod.outlook.com
+ ([fe80::2146:83a2:5329:b7c]) by GV2PR04MB11799.eurprd04.prod.outlook.com
+ ([fe80::2146:83a2:5329:b7c%6]) with mapi id 15.21.0113.015; Mon, 15 Jun 2026
+ 14:59:07 +0000
+Date: Mon, 15 Jun 2026 09:58:55 -0500
+From: Frank Li <Frank.li@oss.nxp.com>
+To: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
+Cc: Ying Liu <victor.liu@nxp.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, linux-clk@vger.kernel.org,
+	imx@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v9 5/9] drm/imx: Add support for i.MX94 DCIF
+Message-ID: <ajATLz4QbgfyZeSa@SMW015318>
+References: <20260612-dcif-upstreaming-v9-0-8d0ff89aa3c5@oss.nxp.com>
+ <20260612-dcif-upstreaming-v9-5-8d0ff89aa3c5@oss.nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260612-dcif-upstreaming-v9-5-8d0ff89aa3c5@oss.nxp.com>
+X-ClientProxiedBy: SA1P222CA0080.NAMP222.PROD.OUTLOOK.COM
+ (2603:10b6:806:35e::17) To GV2PR04MB11799.eurprd04.prod.outlook.com
+ (2603:10a6:150:2cf::9)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] clk: qcom: common: introduce qcom_cc_sync_state()
-To: Brian Masney <bmasney@redhat.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Val Packett <val@packett.cool>, Saravana Kannan <saravanak@kernel.org>,
-        Abel Vesa <abelvesa@kernel.org>, Maxime Ripard <mripard@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Hans de Goede <johannes.goede@oss.qualcomm.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-References: <20260603-clk-sync-state-v1-0-457120eed200@redhat.com>
- <20260603-clk-sync-state-v1-2-457120eed200@redhat.com>
- <xtrvgetj3ybwuceez6mymxw4cwa6sqeycoz2hs2zztozeb4oyb@uuhtzbludmzv>
- <2f6dbc37-7ee5-4cef-b39e-455494fb31fd@packett.cool>
- <ncgma77ckduno5645xf2hcmakmbpwub5d54p4zcrhz5pbq3pij@o257r3t6p5aa>
- <ajALNcLMlTThdilX@redhat.com>
- <68a86037-bba0-4cab-8a1f-b0be78f259db@oss.qualcomm.com>
- <ajAQqVB_knGO-bqL@redhat.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <ajAQqVB_knGO-bqL@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNjE1MDE1NiBTYWx0ZWRfX8GHnhnQmpcn7
- hHzOX6HV9yYp/J9yCoQW69s6KIq0TBf2sO7kwl+wKapsvgyuJB59sq/N0/YVl6RZuhTI2ooDz/U
- MQUQEYIvM158gHskn3Ar+XpjbY6dzKc=
-X-Authority-Analysis: v=2.4 cv=Zqnd7d7G c=1 sm=1 tr=0 ts=6a30117c cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
- a=IkcTkHD0fZMA:10 a=FelO9ux0wxsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_glEPmIy2e8OvE2BGh3C:22
- a=OVboD8nU07OjOQKM4TkA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=kacYvNCVWA4VmyqE58fU:22
-X-Proofpoint-GUID: ce38CRmlWX50g7i-oCS9FrqxtBJxut7n
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjE1MDE1NiBTYWx0ZWRfX3o31KgjquWVp
- aAywVYMQjDcvD/5frDdAzBj4B/B4z95pRxqWbiPIcNJtMy0qlHtNk5HP0vPsacXQeJH5p7TfMEj
- l0J8FwrBE15Vm6ogxc5hu6jKBknu0pgKT1TW+lVtr1T9N0CSmumalkIVMMDladOZtJZyws2Ag1p
- pL2IfQdY+0KnZwjFSI9x56Oyi1cxR5Tf6VzZ4Umns3ELqXRayP4pjd6j/UK72HMBooZWq7SG1Ag
- e/C3YP4LRz/YN5uQ6Kz3MNl6MZrQu+jwBCjfgWIHpbQM0Pha99cAQhlkkOToCPi1ikOTPby/EwT
- nvwFlg+VZYlsteN0hqNhAZiG0maOZ5F5wg/OKGmTSMyIsCwHBUZQQFvALfI7VZXFHpoIwY0r8fD
- TFU/Nkw3l6KtXhpocJg2jP0OcZaglnQIQvmsjvmjODkTE5dTCxWRZwtEQM5V/gPTi7ywWhY2B6l
- pi/D6rrdIivVC22XU2A==
-X-Proofpoint-ORIG-GUID: ce38CRmlWX50g7i-oCS9FrqxtBJxut7n
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
- definitions=2026-06-15_03,2026-06-15_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 spamscore=0 priorityscore=1501 suspectscore=0 lowpriorityscore=0
- adultscore=0 malwarescore=0 clxscore=1015 impostorscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606040000 definitions=main-2606150156
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: GV2PR04MB11799:EE_|AS8PR04MB9128:EE_
+X-MS-Office365-Filtering-Correlation-Id: 94e1eb9d-f947-4e0e-4fd2-08decaeea592
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|19092799006|7416014|376014|23010399003|3023799007|22082099003|18002099003|4143699003|11063799006|56012099006;
+X-Microsoft-Antispam-Message-Info:
+	w47QeT2260GbTPsD7MApwDsazH9drhj5hEd53Cgg/fYldgrakSxwaGlTy+FS4NybKpgGl8cBXH7otBhpI4VWMUKKtb1Sg0jAtDmwOf+55KRDuswv0fQ97aTdTxXJv/9hvmV3/THcTGCNH1VGrgN9h3NW1fegMGzoHGFINsrfCPzb6t1H7coS0zNf4nGaxHVMA26/5I9dJP04MFKtpMKuDihxKHI7peNijjO8OYX0Qmsc9MIm8P57nszFBfhY8t5wRJ/oF8XEvDrhLzCl5Zdb2pGS+VkAGIkb5nVQo1Un2nrec5yIYxYO3Vk4fDgYmuUWBtnrDj77nj5Fw0rWaIUXjOUpfj8ZqSaoTC9LwuPPxmEIXLNeh4vynaWu4gAZqZsd4+7GJuI7bX6cvW/lfLgY52J99shfzSdvc/VFxv7NWnUNXJ6RkkzusubypqdqVzpRiDtfWPxU4c+NL4P0s8yGFk+3dw3vkh5ASr8TSr06m6WASGQQpQBllXQc3a8a2yFyW62SwaYVq5JGwDw8RfpS9kipX8TlqSpFx7Fm5ZP6UUgc+FitMWLdju3AUoQCQAS+Lvy6tQAFPHCICumtZsqi6duy/fO3fLqdMepDGeSnKWsgBCIuMEH5roLxvQFWFfVCIDGxZcbBdMBCm0an7XMNhcY7ky748hjPFdmoZA9ZjzSYWwBNFz4sYg9eJS2uYoBv
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR04MB11799.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(19092799006)(7416014)(376014)(23010399003)(3023799007)(22082099003)(18002099003)(4143699003)(11063799006)(56012099006);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Ay4DDUfLndYkJ4bqgqtk8zw+bSxvI9PdvZzkKmIgm4cx1fcgYEWLBOk8RrSy?=
+ =?us-ascii?Q?7UkQfrposupxcF52aIUr7MC+jcquAPEXilTnjjz8/MLZPu5QINrMSP13HwaY?=
+ =?us-ascii?Q?EQT8FEKUBF+gmhr6Zfiq2TOvPMyPFUYaIHj0lBwNhcUxHpftfwpkUSeiotGW?=
+ =?us-ascii?Q?FidFHTrJzIbd27kFllv21+KQOlilLF/Xdl5BeuzDTuHSfwd6aM5pHFgAEIiU?=
+ =?us-ascii?Q?6FEa7IJhTpyXqAtmNTHDlT43JH2QFJjt4ga13UBrytTm5uBpHDn5hdqXtESJ?=
+ =?us-ascii?Q?UCIKjs94gs6T4mKROOdoVwf8upRW7go2QE+h4TscYJnWco4UPPFrk272DhVF?=
+ =?us-ascii?Q?bUJsyIZSmx02n7NROVVfqUQ8BkfjgvivAmdJYFY1UMzyCWw/FAIJz1Y7gm8f?=
+ =?us-ascii?Q?G45DJu8Cv/zxiH45ent/wUp3ps3kh3MgKcSy3E4cqrFPndQIFC5/twczlhmJ?=
+ =?us-ascii?Q?i4nSmuC3sciMVrjq1unAKkroU+bwHOjtfPyILOWGWTYMOtOtPpmEVB4KGX4L?=
+ =?us-ascii?Q?nbqY1xQ1C0Xn+ENbqjtKxQvtpWcN1YWS7bg4JCDlGTHRmciwcbPtY5TImY4o?=
+ =?us-ascii?Q?qTG1+zzBQ+TAfButqht0huydKU70tatQ4qMMx3FTSbYN8I1jvtF3yee9dWH4?=
+ =?us-ascii?Q?bsRNwF6qBhf4C3xEfRV/3mt14ApYnkL1VtKojpJQFPMEY+aJ8j1pXx8Xf21e?=
+ =?us-ascii?Q?rEHSNdjkpXIbcr5UhKLILBIapb7pSHnwS0lhESFhZGyinOIQmF/0fN5SNOqh?=
+ =?us-ascii?Q?XwlofCmGR7rsfnu6iHDrxslCkN7bZvbRQY4KC5ewYs5+84uahiIU7IH0zUq+?=
+ =?us-ascii?Q?szTtmCrGsN99JBzs6IjR+6Ij5rkbBDXO+olYTPwxCqjFG5P428AqY+cyb/sg?=
+ =?us-ascii?Q?4Yk5GJv2Rxa9iB+7fh4a1KkfN2VTmYKulh1G44fR29sEghH2ZyFeREU/09lx?=
+ =?us-ascii?Q?0kei7FbAO96XqHFS3ddaNN8Aw3Sk5dIYKY1NwlgkYV/rDEWnJ9UEE2cpX1sM?=
+ =?us-ascii?Q?ziaEEdwnvhEmYD8a0jGSClB7oFCh9F8GIRYAgnXmSLu1GEh/t6E4xTZ96cPz?=
+ =?us-ascii?Q?nK5fpv5gTgb2G59UJLlet1us/jFMRUTAlvUbo4OqjrW7RPFMNCdrKWEP5KLF?=
+ =?us-ascii?Q?KHHK0gJLt+EU26iBySdIN4R3977Mc5l1WEK1OZgDw8HVdKVNdzsNMjZ/R+25?=
+ =?us-ascii?Q?PNtXLJyRIbHoAmdkV62OBmma6o/BXrMlZz4pAi16AeHsCFYfeqbHcp0rTsTX?=
+ =?us-ascii?Q?dldTu0x14STUulGu6qkIb6GcdMIx5gXwSRuYfG1NKW4tHreHHbOaDyXtKUgi?=
+ =?us-ascii?Q?C1+58A5mlbyskT3emXwWowVLdwVaHgaCazbC3jOY8wtQ4ZtPIpCzncP9BxtA?=
+ =?us-ascii?Q?QBnku70Wl+cye7KP2fEbjv9TEQXRpfMuCNsFb9DVr9CpwvXNEjf0TfBay171?=
+ =?us-ascii?Q?gIBiMlKFTnGx0wWwF3+u57QdMxPf6nbb9vhvk9moNEgpRQfrZFdxaY54VtpZ?=
+ =?us-ascii?Q?dG4vos0BucZgzk5Ahz0f/RHg+qK4dbX761ReF1rvsXWlS9z7XrM5J09LI+R6?=
+ =?us-ascii?Q?OAtkCZjwaLZYIm69sb4lsvJe7QSRWW2U3E4Ucj7/REoRms0Qm+Qz12JUfCx8?=
+ =?us-ascii?Q?3IiKdWrv0jXCGh7lCSCxXR5cDD8uZmQoJ3of2VTOoMObdqwVok+zrLs3oi9/?=
+ =?us-ascii?Q?Swzps4nny8tsiFicGGMJ8QaE3M+Y73kJxx+Qq158+pX3qKRiN6N9o9u9imiM?=
+ =?us-ascii?Q?tR09U/6SAQdjVgQlFtvQaEq826jK/KyodWeSl7/PgDHXNBJRwWRb?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 94e1eb9d-f947-4e0e-4fd2-08decaeea592
+X-MS-Exchange-CrossTenant-AuthSource: GV2PR04MB11799.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jun 2026 14:59:07.1933
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: smAaBzp4YFwAXYIXVE8xyTmviOcd1RpsAA2dcUNVfDEuJdy81Nm/tmydiibv5YWygiZpBDNiBDbeYXNJjwACMj7K23hNEZslV3ZyfI0dN5rGqg0Oe/O1OJ+WUsAcAOxX
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB9128
 
-On 6/15/26 4:48 PM, Brian Masney wrote:
-> Hi Konrad / Dmitry,
-> 
-> On Mon, Jun 15, 2026 at 04:33:17PM +0200, Konrad Dybcio wrote:
->> On 6/15/26 4:24 PM, Brian Masney wrote:
->>> On Sun, Jun 07, 2026 at 01:30:03PM +0300, Dmitry Baryshkov wrote:
->>>> On Sun, Jun 07, 2026 at 01:43:06AM -0300, Val Packett wrote:
->>>>>
->>>>> On 6/6/26 8:15 AM, Dmitry Baryshkov wrote:
->>>>>> On Wed, Jun 03, 2026 at 10:21:47AM -0400, Brian Masney wrote:
->>>>>>> Several qcom clk providers currently have a sync_state helper set to
->>>>>>> icc_sync_state(). With an upcoming change to the clk framework, if
->>>>>>> sync_state is not defined for the device, then the clk framework sets it
->>>>>>> to clk_sync_state().
->>>>>>> [..]
->>>>>>> @@ -464,5 +466,12 @@ int qcom_cc_probe_by_index(struct platform_device *pdev, int index,
->>>>>>>   }
->>>>>>>   EXPORT_SYMBOL_GPL(qcom_cc_probe_by_index);
->>>>>>> +void qcom_cc_sync_state(struct device *dev)
->>>>>>> +{
->>>>>>> +	icc_sync_state(dev);
->>>>>> Only if desc->icc_hws != 0, otherwise it will mess the interconnect
->>>>>> internals. You might need to set drvdata to desc.
->>>>>
->>>>> Hmm…
->>>>>
->>>>> Currently icc_sync_state does not seem to use the dev argument at all.
->>>>>
->>>>> How would something get messed up, now or whenever icc_sync_state changes?
->>>>> o.0
->>>>
->>>> Yes :-(
->>>
->>> Sorry about the delayed response since I was out of town all last week.
->>> Just to be clear, the missing check for 'desc->icc_hws != 0' is a bug that
->>> existed prior to my change, and I should label it as such with a Fixes
->>> tag when I post my next version?
->>
->> Up until this change, having icc_hws > 0 but lacking icc_sync_state
->> (or the reverse) would be be considered programmer error
-> 
-> icc_hws > 0 but lacking icc_sync_state (or the reverse) makes sense as a
-> programmer error. However...
-> 
->> Starting with patch 4, this gets assigned unconditionally, so there's
->> no prior bug to be fixed
-> 
-> I don't see where that situation happens here. All of the places where
-> icc_sync_state() was previously called, the new code now calls
-> qcom_cc_sync_state() -> icc_sync_state(). (There is
-> qcom_msm8996_cbf_icc_sync_state() that needs to be modified.)
-> 
-> In patch 4 of this series, it sets up a framework level sync_state()
-> callback with dev_set_drv_sync_state(). If a sync_state already exists,
-> then that call will fail with -EBUSY, and it will leave the existing
-> sync_state() intact. So it's not calling sync_state twice. I will
-> clarify that on the comment.
+On Fri, Jun 12, 2026 at 02:58:36PM +0300, Laurentiu Palcu wrote:
+> The i.MX94 Display Control Interface features:
+>  * Up to maximum 3 layers of alpha blending:
+>     - 1 background layer(Layer 0);
+>     - 1 foreground layer(Layer 1);
+>     - A programmable constant color behind the background layer;
+>  * Each layer supports:
+>     - programmable plane size;
+>     - programmable background color;
+>     - embedded alpha and global alpha;
+>  * Data output with CRC checksum for 4 programmable regions;
+>
+> Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com> # bridge refcounting
+> Signed-off-by: Sandor Yu <sandor.yu@nxp.com>
+> Co-developed-by: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
+> Signed-off-by: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
+> ---
 
-Dmitry and I are referring to the situation where the clock driver isn't
-an interconnect provider but icc_sync_state() still executes. That could
-not have been the case before, since most clock drivers didn't come with
-any sort of .sync_state()
-
-Konrad
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
