@@ -1,196 +1,124 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D60A4071C3
-	for <linux-clk@vger.kernel.org>; Mon, 15 Jun 2026 15:47:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0232240759D
+	for <linux-clk@vger.kernel.org>; Mon, 15 Jun 2026 16:07:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781538426; cv=none; b=cKUao9ttT45OB0qNe6HSoiQR+yJXlKcEKvg0yIhjAdICKTBQeNEn2XXnbos7D6pqKoAqyk4SMtH43oZAGq+p1RO2HDjJnSEp5a70TfbBV/XvQWm/EQotesFaXKzmQOBt2SlLwG6TQlS338oYwZ0Mpn/CYAma8ZKdrDCaS1lx9Vk=
+	t=1781539676; cv=none; b=CTkpwA6NEesgcDWCqBFsbtmkVFt4+EmLOMTpd6qooOmHmWJ8iZoOlGsqVfXcVv0iIfTJqyflSKzuLDJwEG5goH87sjbrBJTsgmIk7iKtieiFf+Q6HQ3mkZcywHPQEA5dBYBzQbULTL2RxhajSyMBUsduyAnwuenGC/7LnAsCM6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781538426; c=relaxed/simple;
-	bh=KjI9RSrMpeF9kl7KVlAoFqnYJfNf7P3l6mHXMFpoLdk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SZjhHTxeVJOwkwMyu0JeFNdpR+WgWX1JjHSR19s+EaIMCTnjUqxTGlzwmwarAkpy28eqgjRPyfkgSaqIo7lhnRLDESVNBKir4MrIjoCIQxQkyQ4og9i0GG9lUudk7CHpYcHLVEQ2SeWJL92iAlHICzeEimyluULY2soksOmcPRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VE3qL/sT; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1781539676; c=relaxed/simple;
+	bh=BNWm3yBrWDSvhvRniGZ4hmT2BF78LFW7Pkimsfh59v4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ryPgpuKHRF3X2gH824Npz3+XvylpvgQv28CHm4rrPn+xoZrZkCUh+WlFcD8uiD49V+gCDHvul1ySQb39CXxnBPJc7Ju2638cn1w9H9fE1wf7Xc3VKkbakxTqqyXufD+5jQgum/uFxSQMbiBx/1wiakdBTeUpv6e8qBJxSI4GWNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Hl0e4N5T; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=pSdygqvR; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VE3qL/sT"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-4619f244978so32154f8f.3
-        for <linux-clk@vger.kernel.org>; Mon, 15 Jun 2026 08:47:04 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Hl0e4N5T";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="pSdygqvR"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1781539674;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qqiCivCRQvHY+CsTahzYtUmnxa2excZbQQLs4Yc0u3c=;
+	b=Hl0e4N5Ty0qJWd3wfEhgTOr0kBO+LTEuG1TrNkx+D1AAwF39jnM/YxZTqGbB0rr4/3RWeM
+	OTGe45NeQdZ3te3/OACZ9aArdvOG+VVYG/6+GNJ1Dy+uUbuM9Al3ksvAZ3mCwdmQbwlH2I
+	eRfezutItiyCc1Bh4kbcG0dpmk87R3w=
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
+ [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-639-FkRdVtqhMmSsbMz6wmkG1g-1; Mon, 15 Jun 2026 12:07:52 -0400
+X-MC-Unique: FkRdVtqhMmSsbMz6wmkG1g-1
+X-Mimecast-MFC-AGG-ID: FkRdVtqhMmSsbMz6wmkG1g_1781539672
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-8ccdcd8dd3dso75711626d6.3
+        for <linux-clk@vger.kernel.org>; Mon, 15 Jun 2026 09:07:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1781538423; x=1782143223; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=redhat.com; s=google; t=1781539672; x=1782144472; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=KjI9RSrMpeF9kl7KVlAoFqnYJfNf7P3l6mHXMFpoLdk=;
-        b=VE3qL/sTyjYVYjz3DMoKAAvrFpRpsmTsrI54G50fB1PuQRqsKX3Odkqc/q74zxevLu
-         RS7CXy3yzAyDHxVfCPs0KXe5XS8L/phSKddISGoLHdIuTNJrdnl4p2AmqXGtcNlZdqOS
-         AfA46WG7mzZFoa2xLVT8P438A2W6Fe28YSb1IBHfHCqn6C33Dv0LSXt0Dzt6amWV0Fhw
-         MkRq/Gp87cP6MNKM0mgfpLBxYK0QT+VN63HiIm0ezrRaGFKXeezo9v09NI4tfZR/nHmR
-         wBeyKAMH98q9zUmYLZwpx/2l2QNX0MaNcNlpATRRIDtpKmCahHit9tkPOAC8UBqd+7NX
-         DG7g==
+        bh=qqiCivCRQvHY+CsTahzYtUmnxa2excZbQQLs4Yc0u3c=;
+        b=pSdygqvRdZTXml1YG1HBB/8+N9L3Iceh5yhV+VxVs9IoAbFmf5z2XBDZnFHDB2XJxH
+         c6PG/3IzJihvrBCOczJdn0J1oVi5/iWV7AIXdjxk39cgHXnAHvMRQJB46poDhN97vkut
+         RqEivhXzYRxaqRqssS+pV1+UXLskt6kj2P79c7gO9O8jBX94nhKmiOd1bAw65PK5eo9I
+         7nlCdXc+efNP5pVeQUXFKx0GGD0HuV+JmqqpC0oAS68bo1x8jYQgRT2E9l9y7R/YCobl
+         SpuS1yPHfj0Ls9sp2HP2KM+LQv69iwZJFcqd/Nqy2ZR4q8vQhEtr7BPD2T+6wYlt31vA
+         d3VQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781538423; x=1782143223;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+        d=1e100.net; s=20251104; t=1781539672; x=1782144472;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=KjI9RSrMpeF9kl7KVlAoFqnYJfNf7P3l6mHXMFpoLdk=;
-        b=TGAa+hawyIUnfhIYUSbiyllUxOqORdy7gstIXFXowjr8Q6bLVZEveaBzdgnqRiYHVe
-         qMAHW7Q9RYGi/u6iCBmcEcg9Ycpn3aWpRUpfA6NPY6mSWM/s3xWdII36UITZBHgbR1zH
-         2cliZIK8eX7XQnG7SiroUiUgPsQtxDBBlu5Xy7XMeURBTLtQ4Tt3bQB07q7MvJl5a9Gt
-         gq8Laui0qzRDxnd+ZQ4oG1dsIln1z+YXXKWgtI6I1TuEKBLtVt9IBvMXDMnfKwF2rW8Q
-         z5KQNw/Q3fun4IuwwyDPorBmcPCWG5gk+qK9rRHXSPM5vNenk7/Dae3A75kKnLb9w1qS
-         BmBg==
-X-Forwarded-Encrypted: i=1; AFNElJ8mvcHy2Ur6ua5ltN4umy1dbQ7u/yimiA3fdklvCwgQRl8k01LpdkMIMxeNL0yY47qwK8N3SWNGXAk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBXQjtTbQpxPhz+OTi7mCqR6JK1imtFYv789RB0AZqVsyEB888
-	QnAQygXoSeD9kIyhusylwSUQVrUTqHfbfnZMuR7B/diFh3aWthpMccu3
-X-Gm-Gg: Acq92OGJPhI9ifJKMggbGPA23Wv5Yg2DTppjLwP34l1rkJZNONxnywvaZJ/nPC3j4Rv
-	+jT0rj/ItoHNRAu8Au0AqvurAYs8vD5DpHAa5lz+APGaT6ue9kadrz43jRQArP2dZDQi75vP19B
-	Fzxkpnqu7DmTXqJnf8VP9D2EUFTZIZJqmhBB+cQkOBLvZgW2aAzRTRSv8tiyZ9XRN4zkDz+JRJk
-	2vA3OyOI4qPKboilWZ+mXrDIPNUF1Xx4v3Oe8L8h05ArbYHy1UzQxqMwSlpSWBCXuEqMO8AMccG
-	trxtANm08cZWuE+4IefO4rlFwUOG2FDvQ7rjlMwyKIttWSnS+noNG0fO6x9IdbOg9p52dc7i/2T
-	GptJ1yKy7E/3igG0CRq/kVGeS6e9EQvGxnBkLP9ED8FpB+Dn83wTxXmkbuPUbCdAt6TFBB0ruTE
-	/OHRWy42RPFyWRZBPHkvoAgdcpLfIYAx0SkMuj2FgsWRyuW0aEidoe4J5x4yr1phiMtftNPCmy5
-	2QaraXGLWelBQS2Fmmj43mQ/ptmgP/ap5ihkQ==
-X-Received: by 2002:a05:6000:1acb:b0:460:1bf8:c981 with SMTP id ffacd0b85a97d-4606da57c41mr20753889f8f.5.1781538422504;
-        Mon, 15 Jun 2026 08:47:02 -0700 (PDT)
-Received: from jernej-laptop.localnet (92-53-159-70.dynamic.telemach.net. [92.53.159.70])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4606f2c4240sm32724851f8f.27.2026.06.15.08.47.00
+        bh=qqiCivCRQvHY+CsTahzYtUmnxa2excZbQQLs4Yc0u3c=;
+        b=pM5wfud4WtDY8jlvzwOYBnGKh6+njvBIbNzQIZzoqVOepg3xjaTv8suv7EH0O1YSbQ
+         Sqyki6pVBCQ98GZFvlcF2mFdcVF0NiF1DEnwJl4T/V1MUDQgpn8fqog6kBvszZe6TnUE
+         Je4Y8Cd7AiSmCLdJkTu0T01yu2aWSTWNhgPevgZM2EudJul7D4hdoloNUu99zuz9ivU5
+         cjI9HfNJc4U/NYszVgS1SO35UAxhHUaw/ZOCrCMA/7gfUdSChqz7LqcrMpEKAqcnQ2lp
+         JoNp9jrdqtoaebwZv7yeMjcJQ8leR4San43FZMyzDqcGuJGLOu5UXPO0BbL2dUllfZ/4
+         cclw==
+X-Forwarded-Encrypted: i=1; AFNElJ/rQJnnwxCTKNoTw8L4rllpik4yFbnWc4hYdP1yKj2/VOAmhweipPf4MYkbEB3JOzDYtpeNYB/u1VI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUtTIgY43zHmMK5MjH77logAeT+JBzbWkdzesYZq4DyTssiQsN
+	DMIkFbHxUYpmpVEOwvCFZhhXyJ1V7/jd1gRWs/0DNQ+nMCc20m07fZCOZVULOaW+XuTU02BClKr
+	y62AiT3odowV0s6Req+wce4RumvL++MdLZHbg2ivrKIwqbctPZdPnZi+uPgrkEg==
+X-Gm-Gg: Acq92OGO6As9uPe/ryhJHpaH4rVjT6AunrO+Ug6MvFasfRpbMbSZXV8Hml1iBoaWsDQ
+	LA0LJ2sih9q3PZcV1E98wimrbK9hJ4CT1c/gcxLrovUFVcdU7H15pDrvHNuQp0InCxJvuV5/kc3
+	6mNvXhbFRec1PyLF5lVJ+ln5+IWg1Ag/LXEXvO0LUhjagDaY6D8YgN2ixHBN7iT/02uMpSLlrdk
+	jYg4NhY6G0e2GfmQGHqrcpD74vWC2y/lA0dqjNaUjtmjFnbUgFZOTwjWf2pwtAXiaKfAhclkhMm
+	AEisynDYo90c5OH3E/5bPJZtNnaT70PixK2lFuRIl+Iebznp5LxphlAcnkt52zu4wsq2TmGxiyq
+	z6T4T2zmf3y+KxqH9GSYUpUFfxPIMGDnpc+tv9b6dVtvjRtdWGYU7LH/p
+X-Received: by 2002:ad4:5687:0:b0:8cc:e8f4:1636 with SMTP id 6a1803df08f44-8d9fdd239b2mr3018646d6.25.1781539672173;
+        Mon, 15 Jun 2026 09:07:52 -0700 (PDT)
+X-Received: by 2002:ad4:5687:0:b0:8cc:e8f4:1636 with SMTP id 6a1803df08f44-8d9fdd239b2mr3018186d6.25.1781539671714;
+        Mon, 15 Jun 2026 09:07:51 -0700 (PDT)
+Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8d9f1416a6csm2722726d6.3.2026.06.15.09.07.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Jun 2026 08:47:02 -0700 (PDT)
-From: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To: wens@kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: samuel@sholland.org, mripard@kernel.org,
- maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, airlied@gmail.com,
- simona@ffwll.ch, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- mturquette@baylibre.com, sboyd@kernel.org, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org
-Subject:
- Re: [PATCH v2 7/8] dt-bindings: display: allwinner: Split H616 DE33 layer reg
- space
-Date: Mon, 15 Jun 2026 17:47:00 +0200
-Message-ID: <0r4us4OeRRWtJhxvps-bZw@gmail.com>
-In-Reply-To: <86943057-f5b4-4fae-9172-45f13814494f@kernel.org>
-References:
- <20260509190015.79086-1-jernej.skrabec@siol.net>
- <nIKN_benRn2Bk8SDZrkMCA@gmail.com>
- <86943057-f5b4-4fae-9172-45f13814494f@kernel.org>
+        Mon, 15 Jun 2026 09:07:50 -0700 (PDT)
+Date: Mon, 15 Jun 2026 12:07:43 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: William Theesfeld <william@theesfeld.net>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Michal Simek <michal.simek@amd.com>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: zynq: handle kasprintf() failure in periph_clk
+ registration
+Message-ID: <ajAjT2oiAjFPJ2Bb@redhat.com>
+References: <20260601203500.658135-1-william@theesfeld.net>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260601203500.658135-1-william@theesfeld.net>
+User-Agent: Mutt/2.3.1 (2026-03-20)
 
-Dne ponedeljek, 15. junij 2026 ob 06:28:54 Srednjeevropski poletni =C4=8Das=
- je Krzysztof Kozlowski napisal(a):
-> On 14/06/2026 16:08, Jernej =C5=A0krabec wrote:
-> > Dne ponedeljek, 25. maj 2026 ob 14:10:38 Srednjeevropski poletni =C4=8D=
-as je Krzysztof Kozlowski napisal(a):
-> >> On 24/05/2026 23:33, Chen-Yu Tsai wrote:
-> >>> Hi,
-> >>>
-> >>> (resent from new email)
-> >>>
-> >>> On Thu, May 14, 2026 at 2:04=E2=80=AFPM Krzysztof Kozlowski <krzk@ker=
-nel.org> wrote:
-> >>>>
-> >>>> On Sat, May 09, 2026 at 09:00:14PM +0200, Jernej Skrabec wrote:
-> >>>>> From: Jernej Skrabec <jernej.skrabec@gmail.com>
-> >>>>>
-> >>>>> As it turns out, current H616 DE33 binding was written based on
-> >>>>> incomplete understanding of DE33 design. Namely, planes are shared
-> >>>>> resource and not tied to specific mixer, which was the case for pre=
-vious
-> >>>>> generations of Display Engine (DE3 and earlier).
-> >>>>>
-> >>>>> This means that current DE33 binding doesn't properly reflect HW and
-> >>>>> using it would mean that second mixer (used for second display outp=
-ut)
-> >>>>> can't be supported.
-> >>>>>
-> >>>>> Remove layer register space, which will be represented with additio=
-nal
-> >>>>> node, and replace it with phandle, which will point to that new, sh=
-ared
-> >>>>> node. That way, all mixers can share same layers.
-> >>>>>
-> >>>>> There is no user of this binding yet, so changes can be made safely,
-> >>>>> without breaking any backward compatibility.
-> >>>>
-> >>>> There is user. git grep gives me:
-> >>>> drivers/gpu/drm/sun4i/sun8i_mixer.c
-> >>>>
-> >>>> which means this is a released ABI. As I understood, the old code was
-> >>>
-> >>> We held off on merging the DT changes so that we could rework this.
-> >>> I can't find the actual request though. It was probably over IRC.
-> >>>
-> >>>> working fine but just did not support all use cases. Why this cannot=
- be
-> >>>> kept backwards compatible?
-> >>>
-> >>> AFAIK the "planes" block is shared between two display mixers. As the
-> >>> commit message explains, this prevents using the second mixer, since
-> >>> only one of them can claim and map the register space. And on the H700
-> >>> (which is the same die as the H616 discussed here but with more expos=
-ed
-> >>> interfaces), there could actually be a use case for the second mixer.
-> >>
-> >> It explains why you want to make the changes but not why you cannot ke=
-ep
-> >> it backwards compatible.
-> >=20
-> > I guess it can be backward compatible, but I don't think it makes sense.
-> > Yes, original driver implemented original DT bindings, but there is no =
-node
-> > which uses that binding. If there is no user of that, why would driver
->=20
-> Did you check all out of tree users of the ABI? All vendor kernels,
-> forks and all of them for which the ABI was made for?
+On Mon, Jun 01, 2026 at 04:35:00PM -0400, William Theesfeld wrote:
+> zynq_clk_register_periph_clk() ignores the return value of the two
+> kasprintf() calls used to build the mux and divider clock names, and
+> passes the resulting (possibly NULL) pointers straight into
+> clk_register_mux(), clk_register_divider() and clk_register_gate() as
+> the clock '"'name'"' argument.  On allocation failure that name later
+> gets dereferenced by the clock framework (e.g. in debugfs name
+> formatting), causing a NULL-pointer dereference.
+> 
+> Check both kasprintf() returns.  On failure unwind any allocated name
+> buffer and the spinlock, then fall through to the existing err label
+> which sets clks[] to ERR_PTR(-ENOMEM).  Freeing the spinlock on the
+> error path is correct here because no clk_register_*() call has had
+> a chance to take ownership of it; the success path intentionally
+> hands it off to the registered clocks.
+> 
+> The neighbouring zynq_clk_register_fclk() in the same file already
+> uses this per-allocation goto-label cleanup pattern; this change
+> brings periph_clk into line with it.
+> 
+> Signed-off-by: William Theesfeld <william@theesfeld.net>
 
-Since when do we care about out of tree users? I understand that drivers
-must support old device tree files. Once they work, compatibility must
-be carried forward. But that's not the case here.
-
-In any case, vendor kernels have completely different DT structure. This
-was developed independently from them. Take a look at [1] how BSP DT looks
-like, specifically Display Engine node.
-
-Of course there are some distros which grab WIP patches from mailing lists
-soon after they are available. For example, I know that Armbian carried old
-WIP patches which used old ABI. However, such distros generally don't care
-about exact solution and ditch patches as soon as proper solution is merged
-upstream or even when better WIP patches come around. DT files in such
-distros get updated alongside kernel, they are not hidden in firmware.=20
-
-Best regards,
-Jernej
-
-[1] https://github.com/orangepi-xunlong/linux-orangepi/blob/orange-pi-4.9-s=
-un50iw9/arch/arm64/boot/dts/sunxi/sun50iw9p1.dtsi#L1315-L1339
-
->=20
-> If there is no single downstream/out of tree kernel using this ABI, then
-> of course you do not need to consider it. I don't know how would you
-> prove that but I am open for suggestions.
->=20
-> > need to support it nevertheless? Supporting only actually used DT bindi=
-ng
-> > allows for better code architecture, as there is no need to support sec=
-ond,
-> > unused path. It also simplifies testing, since developer doesn't need to
-> > test both paths if code is changed in that area.
-> >=20
-> Best regards,
-> Krzysztof
->=20
-
-
-
+Reviewed-by: Brian Masney <bmasney@redhat.com>
 
