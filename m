@@ -1,33 +1,33 @@
 Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52FC5371D02;
-	Mon, 15 Jun 2026 11:06:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35FEB3E2ABC;
+	Mon, 15 Jun 2026 11:07:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781521578; cv=none; b=BVz+CLgytrEwxm4auEhcDHXs0bEmcl+PEqZ91MGDUO0dDgBR1gnbyCn5LUG+P2Rv1c8O25DmPGmeN8pVinA6aUEigcDtmfvLvqsHhO2eJTUSI99vF0LHsba4AWL3Jxvqk3MNmjNIXznBpU3/7UvrPqIcV7X5aiJv8bzgKC12jgM=
+	t=1781521658; cv=none; b=Uc4R4/7HCL6zAr41ufplvIqIXeX3o6gl7NsZxudYVN5OThTFN1ORpjj1tA9mveHI1QVX7FrXz8kM7Q9RGRI+qs8TsapVAMEljDUhqydu8PPnAbfQlm5hGGv5xFS45LKF3uLbhTR8oTZC6K5Ew92mtcYovBLZPEbaCuwsZHoTv8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781521578; c=relaxed/simple;
-	bh=ZKByL8sIB9khjZZ1TUk0OL6t+PRiVXvN+5s/ImffJBI=;
+	s=arc-20240116; t=1781521658; c=relaxed/simple;
+	bh=N/hg2A20qBERMOLfSOzyDt/oeRbtkj0OfMiW3erTfHo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gAwxVAg3YKM1NV7qpHA+dQsbF6pMV/vQQFlhBrVaUdU4jxfjzwU3BWm/bS4OINwCBRWlRdETlkNwIi4IYmND1Bxq4i4dcc5wmCGo2jS894EQz8WPMh3sivv796zQB1cp5qrdkuDgGjqi/jciClzatCXANAF6NxUzVgt+RlYves0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=FthRFMEl; arc=none smtp.client-ip=213.167.242.64
+	 In-Reply-To:Content-Type; b=J3qljQ/yZQR0zMHFnU25cH+8cC06uSTbZ3dsRTweflhZ6J2ekW9D0y/gnSbOj42o9cSMHWrzpxeyyv0MaXjkZ5QBmLtW3GEJhBsoWmH8vb/balTxaePWQMFhu7J8a9a5bSY3s5WiS2BKVbPevMd3gXy/PxjmypyxfXVZozNJsoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=rkWpy4Gt; arc=none smtp.client-ip=213.167.242.64
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="FthRFMEl"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="rkWpy4Gt"
 Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id B80A119DC;
-	Mon, 15 Jun 2026 13:05:38 +0200 (CEST)
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id DBB5919DC;
+	Mon, 15 Jun 2026 13:07:00 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1781521540;
-	bh=ZKByL8sIB9khjZZ1TUk0OL6t+PRiVXvN+5s/ImffJBI=;
+	s=mail; t=1781521622;
+	bh=N/hg2A20qBERMOLfSOzyDt/oeRbtkj0OfMiW3erTfHo=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FthRFMElHZZvDVqh9YrWQfdOKxPN0jbC5Ad1wKd/HyHknKZGFaY2xX065HhvIshJG
-	 3QrnGmwXybKHKzN1LdB9JTRVuAcKI4rqSqAojMUkE1DGHzhe5qbCwWYtXTMOpQiIPO
-	 Q0RgNvA+8m0+T5g2k/X9jYGppdtNbG+gE+5rAlTQ=
-Message-ID: <27ff2472-5e71-4af1-98fd-7b8142ad14c5@ideasonboard.com>
-Date: Mon, 15 Jun 2026 14:06:08 +0300
+	b=rkWpy4GttUssHAa8nVGl5LH4bkj3hko5jqVKbyA2rwz/86ZBDBOBAZSbHSErOnrVx
+	 31idD8dgTs4jUlh9EnmI6PfqaYLIyg8CEFii8/zyJ/6BoXDgKIGdRxTbqJZ933hxAY
+	 s8Adgbr4vMTqvQ7EyEMrF1T/R5lPf8tzy6Dk6HIY=
+Message-ID: <9789d4e8-8afc-4349-bff7-5f546eec795a@ideasonboard.com>
+Date: Mon, 15 Jun 2026 14:07:30 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -37,10 +37,11 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v4 2/7] dt-bindings: display: bridge: Document Renesas
  R-Car V4H DSC bindings
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
+To: Conor Dooley <conor.dooley@microchip.com>,
  Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Andrzej Hajda <andrzej.hajda@intel.com>,
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Andrzej Hajda <andrzej.hajda@intel.com>,
  Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
  Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
  Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
@@ -54,24 +55,20 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
  Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
  Philipp Zabel <p.zabel@pengutronix.de>, linux-renesas-soc@vger.kernel.org,
  linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- Conor Dooley <conor.dooley@microchip.com>
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
 References: <20260615-rcar-du-dsc-v4-0-93096a1b56a3@ideasonboard.com>
  <20260615-rcar-du-dsc-v4-2-93096a1b56a3@ideasonboard.com>
- <CAMuHMdVxwvDmRqsdbA_ReCnnaDWbzzTKGCXw-64U-bSJfgiy7g@mail.gmail.com>
+ <20260615-undiluted-gallery-d7318905c8fe@wendy>
 From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
 Content-Language: en-US
-In-Reply-To: <CAMuHMdVxwvDmRqsdbA_ReCnnaDWbzzTKGCXw-64U-bSJfgiy7g@mail.gmail.com>
+In-Reply-To: <20260615-undiluted-gallery-d7318905c8fe@wendy>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi Geert,
+Hi,
 
-On 15/06/2026 12:24, Geert Uytterhoeven wrote:
-> Hi Tomi,
-> 
-> On Mon, 15 Jun 2026 at 08:28, Tomi Valkeinen
-> <tomi.valkeinen+renesas@ideasonboard.com> wrote:
+On 15/06/2026 12:38, Conor Dooley wrote:
+> On Mon, Jun 15, 2026 at 09:28:07AM +0300, Tomi Valkeinen wrote:
 >> From: Marek Vasut <marek.vasut+renesas@mailbox.org>
 >>
 >> The Renesas DSC Display Stream Compression is a bridge embedded in the
@@ -83,28 +80,10 @@ On 15/06/2026 12:24, Geert Uytterhoeven wrote:
 >> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
 >> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 >> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+>> ---
+>>   .../bindings/display/bridge/renesas,dsc.yaml       | 99 ++++++++++++++++++++++
+>>   1 file changed, 99 insertions(+)
 > 
-> Thanks for the update!
-> 
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/display/bridge/renesas,dsc.yaml
->> @@ -0,0 +1,99 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/display/bridge/renesas,dsc.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Renesas R-Car DSC Display Stream Compression
->> +
->> +maintainers:
->> +  - Marek Vasut <marek.vasut+renesas@mailbox.org>
->> +
->> +description: |
->> +  This binding describes the VESA DSC Display Stream Compression encoder
->> +  embedded in the Renesas R-Car V4H SoC. The encoder supports all DSC1.1
->> +  encoding mechanisms, configurable bits-per-pixel, resolution up to 8k.
->> +
 >> +properties:
 >> +  compatible:
 >> +    items:
@@ -112,30 +91,11 @@ On 15/06/2026 12:24, Geert Uytterhoeven wrote:
 >> +          - renesas,r8a779g0-dsc
 >> +      - const: renesas,rcar-dsc
 > 
-> Please do not introduce new "renesas,rcar" fallback compatible values,
-> unless you are adding new support for a hardware block that is present
-> in SoCs belonging to multiple (nowadays I would say at least three)
-> R-Car generations.  The DSC is only found in R-Car Gen4 SoCs, so
-> "renesas,rcar-gen4-dsc" sounds more appropriate.
-
-Ok.
-
-> However, so far R-Car V4H is the only R-Car Gen4 SoC that has a DSC.
-
-Right. Even "renesas,rcar-gen4-dsc" feels a bit too wide.
-
-None of the other rcar du related bindings define fallback compatibles. 
-So maybe we can just keep "renesas,r8a779g0-dsc" and name the file 
-"renesas,r8a779g0-dsc.yaml" (which was the review comment I'm trying to 
-resolve with this change).
-
-> Even the very similar R-Car V4M does not seem to have it.
-> R-Car X5H has DSC-functionality integrated in its DisplayPort TX
-> controller, so that seems to be a different implementation?
-I'm not that familiar with DSC functionality, but my understanding is 
-that it's not DSI or DP specific, it just outputs packed parallel video. 
-I couldn't find details about X5H's DSC, it could even be the same block 
-(or not).
+> I didn't provide an ack for this FYI, I was giving the ack for the
+> file being called renesas,r8a779g0-dsc.yaml. Since Geert isn't happy
+> with what's here, could you drop my ack when you send another version?
+Yep, I took too much liberty there, sorry about that. I'll drop your 
+ack, unless I move to just renaming the file to "renesas,r8a779g0-dsc.yaml".
 
   Tomi
 
