@@ -1,168 +1,186 @@
-Received: from CHN02-BJS-obe.outbound.protection.partner.outlook.cn (mail-bjschn02on2101.outbound.protection.partner.outlook.cn [139.219.17.101])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 487A23C13FC;
-	Tue, 16 Jun 2026 03:10:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.17.101
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781579436; cv=fail; b=Y5LZQLlaA91nTrWd2aPTRHRbcHbH9lOg51kO+dXvU+1DxdjJDul1hFvyy+ROzDRLmXncuJ1k9/m2YbieEdiDL1aRx6bTGhKS2Hgao8f0TivmEaHtryMExIJBD3ApnERaIvYJDwqtSW9Jol7VUpD2xi/05cdYcxauGMStcDKrRj4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781579436; c=relaxed/simple;
-	bh=rxrTKdsv4TUoWrtaeOAciHMCFZEYCtL+W6NVeGouoXg=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=NHYpwS2IMHG9XRbs2Y6sf9AHB9hvh8G0R1Zm6hNn1sG1yvMClhWbj7R0MEUbNIFQYCjlX4fiQcs25dSjGCmzV9iH/YXE2YU+OHyJe/ZEhuVY7Cii9t+p9t0ftX+3pfhTmc2upxYjxCdiP+pMqXm968Hi5iH9XRmR7n5597LgMW0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.17.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=FmwSdhUSN+/hyho+IJTkRdFXq2qQ/5QF+W0yi/W69ZKiG+r/E1WEFsKOjfr2xYExOAJthhXf93qaoJvV6A9/lCn7VbhJ7rEONFzkTetkTYv6YNAqpY1LtfacVbnMiCABmMxKKlX+OZ7Q9EIhDHzD4olyzmkurbEoP8+QVI9GDoZDxVHMp5Hn17vDsjvr0BQ/K4B1aAtO+oQvlbQggEb2L3k/spM/7rRgGOiW94H6E2l2d6pXzuU5IC5R8vYSMw4AvgdcbcG5OZYyM585uo/6QB+SyxHJlP+BpKEKC6C3+JG6EOs7x/X/Hedf/MbiiuZLX4U5jddtm7bFe09eV9PWzw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DhdCLbD/v07tVLVNSqn0a0Wecq8ySVeLC9DP3XzYXBA=;
- b=cFrigMfY8/o87ELO4HvK6XOgtQnzthOgUsKqf/w8TeUjeaOVkr/oia9YeAg0UetB31hViqfiTlJMGuaR4GS4ru6QXx5icUrEezzNzBUYxloQ6c15VkVv4uQBFTpbqS2MN6eE+Q2o3orWY+UYEoG3zIDq+oYiD3K5+usSQcb7wvgFBdLZ9efHudSRtnwI7CcUDBO1eY7msdBUIEfdXP9TzFfsfXczt1c2UBenLdUPTQlXbcI5sB/xHvehxF2exM26+fPT4Ny4hAb5FXEWiHwSZDcIc0k7ozXzoBcMJqKyVjAxe4n71uZusHGC4tsxi9Js7PpNvRD0/pK6W8NcT/qKtQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=starfivetech.com; dmarc=pass action=none
- header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
-Received: from ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:7::14) by ZQ2PR01MB1162.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:11::7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.113.18; Tue, 16 Jun
- 2026 03:10:17 +0000
-Received: from ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
- ([fe80::4386:5cc4:3bc4:4795]) by
- ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn ([fe80::4386:5cc4:3bc4:4795%3])
- with mapi id 15.21.0113.015; Tue, 16 Jun 2026 03:10:17 +0000
-From: Hal Feng <hal.feng@starfivetech.com>
-To: Wentao Liang <vulab@iscas.ac.cn>, "kernel@esmil.dk" <kernel@esmil.dk>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@kernel.org"
-	<sboyd@kernel.org>
-CC: "bmasney@redhat.com" <bmasney@redhat.com>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "stable@vger.kernel.org"
-	<stable@vger.kernel.org>
-Subject: Re: [PATCH] clk: starfive: jh7110-isp: fix refcount leak in
- jh7110_ispcrg_probe()
-Thread-Topic: [PATCH] clk: starfive: jh7110-isp: fix refcount leak in
- jh7110_ispcrg_probe()
-Thread-Index: AQHc8+12EwOc4EKRQU6uqqmWYrh++bZAk3TQ
-Date: Tue, 16 Jun 2026 03:10:17 +0000
-Message-ID:
- <ZQ2PR01MB1307AD6833AC18B9B8279356E6E52@ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn>
-References: <20260604064314.3772678-1-vulab@iscas.ac.cn>
-In-Reply-To: <20260604064314.3772678-1-vulab@iscas.ac.cn>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=starfivetech.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: ZQ2PR01MB1307:EE_|ZQ2PR01MB1162:EE_
-x-ms-office365-filtering-correlation-id: 0087e3a0-2868-4b8b-8d25-08decb54cab2
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|376014|23010399003|366016|38070700021|22082099003|18002099003|56012099006;
-x-microsoft-antispam-message-info:
- LXQsBHXDrzQkAmkEvinGk0LhMCqYg+at/45/rZx7acfPNs1b2WFS1emDqUUsVCavcdRLaPjpHXpUVCeEyri7/OZzqhgYB3HDhORtmsLG81Kv3tlR+kCPY6dsvhkx94YBF35FNLE2kyTobBPuKAF9+iHSsmj9nVndAS6A4u1LBLCYl1eVIbVyUG5knJ2re++bAPPYynZf5AyO8ZOIRtwFbsuXlVQrJe0CNFl6ZutH8W/puH/X9BC/5xPI9ser3edZ04E+CKZfGYZiFQdpDWXGV47ft8hR1ox5dNvLKxqtD43MNRG5EBHN6lwoSY+b/6XgTBjxbZ2N0GOYk1ZDKJ970QJGcGVhicFLPLQip0YXn74XjxQNJYsUg9GZET2gTTD8WQVd0WvTlRSHbu/lk3IzdYms4mvd06gmtppt9EuCWH41kQuhOWJGm2FNF/Kz1ccNlvqDVE29Xx8kreTlk0txChSqeY0H5DvUP1Wo9jiVC1M2oQY4g4U9LcGeOL/ZXLR//1fqZazjNGo4kl0CzN8im5NONzKZHPTF37uTDywjJTwDAMJ4JdeKSX8tRdQ+aESq
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(23010399003)(366016)(38070700021)(22082099003)(18002099003)(56012099006);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?SNUpUFzYWGXwMfK7wNIb/+zh4yUneAZspE9H1e4jApqTN7ZlOqip20OhRFkl?=
- =?us-ascii?Q?trE3Bv4NBV5qq/kSkQ0BSt0J5/2EDr5qL5ex4tQPQl9ZO71Uw7RUE2rnk1Zc?=
- =?us-ascii?Q?H0rh0E76FY51A6eVtzP0XhvVwJGZgZXxXXLyuc/Tza0kRrEd5JNSj7eAI123?=
- =?us-ascii?Q?xqNxTJwbu+E4MicPGV8iYtHoZ5GkYjF6+ChucSRVVO8IpZPiFnHsrlVD2Ayw?=
- =?us-ascii?Q?hc+ompCZTOgB012UgzaUGBmwzA8+PLaEycwHYVDoaJ6tURmDC/BS9RRoYAJ9?=
- =?us-ascii?Q?Aix5FNh2cktBSlqqBrnspKroq+nGWMDRvLTFvfEC6hRwIi/t7kcrKRE6XRiB?=
- =?us-ascii?Q?Jvl8Gm82ho/h8lK+EvTkC912q9sZv43aHBOK0Thn4N8FYh1N0Dl02ZG3hUz1?=
- =?us-ascii?Q?87vFF7bzTGHU0oKfcwVeFtavSgfV5AP/b0OuyPzYeONBXs17UmKRKMzQp97V?=
- =?us-ascii?Q?BEJKKpCBpLwdJON4qErNkZc9EbrnITb18SJgdJGZn7sMFuo/aUqzxw5PY5f2?=
- =?us-ascii?Q?CVS+jVHHv2yY2Ku+D/Tsje92twQ5dXr4idggv3zNIThlj6M9moZhUDn9kLKH?=
- =?us-ascii?Q?s/AL/gcaYcHL8xsFrTWQLMbvV9caHlSTMda0dod+PMNrDe0Uu6Fso+0EfhLL?=
- =?us-ascii?Q?NYk4Q2/O7Dmj/CI038Jc4fFFBuY19+CZ2q+lozCP6Zkr3woNptCjPm196pjl?=
- =?us-ascii?Q?Tawly8Qh3LaRu3xpgl233CS7LqRekJHKwQzql8XNF6Omd8zk1kPPiD6uaP/a?=
- =?us-ascii?Q?Wqy4wSQXoTe/00HgLZ72NRkgCQDkDWN59PYI9Y7Zvm+SXBv+0HWAm7DrfYHF?=
- =?us-ascii?Q?VgiZ+fIi9x0a+Ztosu05BvreGdHknmcoO8oFOuVY/e10WaEE5TJjsOe+jPOJ?=
- =?us-ascii?Q?xXm3cNWmQ20ckOTv7w2INK13oqdw/SaaYSzypqjTZyomKHYZ5ovAdxkJtUb/?=
- =?us-ascii?Q?baYKdRvYyoxR50ZecRCOd/NwbEwO8Z1fId0CFXJafb5XJeOioBqK2uhnkGJa?=
- =?us-ascii?Q?QcqKy/QbvLfRdGIZmmXFEDjJ/vTu97McpvvAICf6A/+Dnsh+jT1RqtxtIdFI?=
- =?us-ascii?Q?yFef2vx0ZMk/hDTg2DndAv++PUp4N0NHcuEaGJAcVOL6v4VEw+iKI43wI1+R?=
- =?us-ascii?Q?So2ZCFD8rJKT07mPXZHJA8B5YXhxJ5HJVJMkQ2FYHAbpLoGwQUyoP/fKcqHS?=
- =?us-ascii?Q?wbJY4pn/SAs107IjNTCN0SOa675mAfpWCATcFT5fbMqktLB5J8ZQvZSt47V9?=
- =?us-ascii?Q?oaBxX1aYByLerGDNeqN7JhJo/X0hZ3s8xprMAOYptb6Gmr4pAlRAD9DM0vjB?=
- =?us-ascii?Q?tq/k4JMrJcNdPUgHvCsFPNMdEkw0HlL5s36PoOQ5qXK2YEpkraiU+YkMZauU?=
- =?us-ascii?Q?dbQ4kXXp9FV7rLZjO/u4AfpS9JmX6BMPTZ/2+ZwMjmzUROdZT3elhwbzEZhl?=
- =?us-ascii?Q?HQ31Hx5ng2jLXJcZ6WzKEpvVjObv49Q3p2GghA53y6Hvwmzt4Kxg3SqvQ44E?=
- =?us-ascii?Q?L5VM5I/gthMxXWdo0pRJDR2VTGqgojrNP7lc6pi619VsL1wVt9sIAh/Nqdhn?=
- =?us-ascii?Q?bJqRycUni/BcZG49twSuuqgyLds+NtP/57oF8ZQCOfNs+Y51BcQ2MYn//7vd?=
- =?us-ascii?Q?eRNtjX6nUf5PxupkUq5OF+adS/38QX70Jlg5s9MwRkhDiFbbjTz4l2ZCniFf?=
- =?us-ascii?Q?qv1DeJdcZtGBPLn9s3A/KLkUUmzCCaPkWDdADNGJbdN7hKYKhcSxaXHIWUGo?=
- =?us-ascii?Q?yZI9l9MErQ=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC35123C512;
+	Tue, 16 Jun 2026 03:51:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1781581902; cv=none; b=VNYuPAP0V6nbOtnsjToQ0vSEG0N/3hDpcjNOlgKj4pGofQx5fAGE76JNrax1A644khk8i5BRfsfYaJYcq+/oKlw8Md1a4RFtF/spjeb0aKsL/fhcFHb6HbMozmmK78r3HxG2kjMJpODmTFq+C+yq33KDYfH7tq3Hke+FKcUqHus=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1781581902; c=relaxed/simple;
+	bh=A1zaSC8/ttGVTC9vbcVYYzlxZTQy1+EstQ32TwbpofY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BEv9eq2aTq4GGN34p5NtV6AJn7EfnE8b9yYDQ/PPgGt23pZ4G6u9vGx3K7lvy+SWtMBZ0T86uEk1da/ZMIkNlqGMs/Zqf1+Zk0AzF9VCqrtdJjwy8epNucX/bE/k9EsC1vOiPmytmDxNQjCJ2Pbzmq596Tp9wZh6zgWO+77jIPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nVj5KS8d; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nVj5KS8d"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4373D1F000E9;
+	Tue, 16 Jun 2026 03:51:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1781581900;
+	bh=0LLj4LGa+CEorWsXFdkROPtAy/btizr8qptWeMPKmQ0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=nVj5KS8dmM6px34g0QjZi4/1Wq1JfYLMPwSqwR8qAPVxOE4KFryFGL/NPsr77lOE9
+	 S1ZZt+Ne0GT+XH5So8VkuxbjNrbV075vkRN4kCCWXWrIX9rCGAQI1aijwuW8fGCzMv
+	 ceHkk9RDMYlMkieIcfOQimcbbQaAHVRtQUyP9vFZcyyFZwx65+nJlgqbFl0EyJ94Ch
+	 RMzeO5zFPKfqnqxpOKmHXJtXrI+fRF2Cc08uEC7RLxpzo70wRLUPkT5YztQAp+8jdm
+	 hnuqPOEbDrKh6zT+92WHog+xjOfK+cT7RoQQcZGokdjGVKsGroAQl1b0iNSaVUSKqz
+	 DOIP2VrKhkHbA==
+Message-ID: <b1f03d81-85db-4303-89ff-64440b6e1890@kernel.org>
+Date: Tue, 16 Jun 2026 05:51:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: starfivetech.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0087e3a0-2868-4b8b-8d25-08decb54cab2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jun 2026 03:10:17.1474
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ajkkL9PoGjt6iWONy9Mj1D7o/WdZxWR2MA66eOS0ka/J9+qlQGEym3WV5OXYuEuCZrCLPey5duDictO5pbreb1YdHTeuoqZAGPMq6OSwtek=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ2PR01MB1162
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 7/8] dt-bindings: display: allwinner: Split H616 DE33
+ layer reg space
+To: =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@gmail.com>,
+ wens@kernel.org
+Cc: samuel@sholland.org, mripard@kernel.org,
+ maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, airlied@gmail.com,
+ simona@ffwll.ch, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ mturquette@baylibre.com, sboyd@kernel.org, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <20260509190015.79086-1-jernej.skrabec@siol.net>
+ <nIKN_benRn2Bk8SDZrkMCA@gmail.com>
+ <86943057-f5b4-4fae-9172-45f13814494f@kernel.org>
+ <0r4us4OeRRWtJhxvps-bZw@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <0r4us4OeRRWtJhxvps-bZw@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-> On 26.06.24 14:43, Wentao Liang wrote:
-> In jh7110_ispcrg_probe(), the error path for pm_runtime_get_sync() failur=
-e
-> directly returns without releasing the runtime PM reference count. The ca=
-ll to
-> __pm_runtime_resume() increments the usage count unconditionally before
-> attempting to resume, and does not decrement it on failure. Thus the leak=
-ed
-> reference makes it impossible to suspend the device later.
->=20
-> All other error paths correctly jump to err_exit and call pm_runtime_put_=
-sync().
-> Fix this by replacing pm_runtime_get_sync() with pm_runtime_resume_and_ge=
-t(),
-> which properly balances the reference count on error.
->=20
-> Cc: stable@vger.kernel.org
-> Fixes: 81279f5d0812 ("clk: starfive: Add StarFive JH7110 Image-Signal-Pro=
-cess
-> clock driver")
-> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
-> ---
->  drivers/clk/starfive/clk-starfive-jh7110-isp.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/clk/starfive/clk-starfive-jh7110-isp.c
-> b/drivers/clk/starfive/clk-starfive-jh7110-isp.c
-> index f3fa069db193..c02c8b29a123 100644
-> --- a/drivers/clk/starfive/clk-starfive-jh7110-isp.c
-> +++ b/drivers/clk/starfive/clk-starfive-jh7110-isp.c
-> @@ -130,7 +130,7 @@ static int jh7110_ispcrg_probe(struct platform_device
-> *pdev)
->=20
->  	/* enable power domain and clocks */
->  	pm_runtime_enable(priv->dev);
-> -	ret =3D pm_runtime_get_sync(priv->dev);
-> +	ret =3D pm_runtime_resume_and_get(priv->dev);
->  	if (ret < 0)
->  		return dev_err_probe(priv->dev, ret, "failed to turn on power\n");
+On 15/06/2026 17:47, Jernej Škrabec wrote:
+> Dne ponedeljek, 15. junij 2026 ob 06:28:54 Srednjeevropski poletni čas je Krzysztof Kozlowski napisal(a):
+>> On 14/06/2026 16:08, Jernej Škrabec wrote:
+>>> Dne ponedeljek, 25. maj 2026 ob 14:10:38 Srednjeevropski poletni čas je Krzysztof Kozlowski napisal(a):
+>>>> On 24/05/2026 23:33, Chen-Yu Tsai wrote:
+>>>>> Hi,
+>>>>>
+>>>>> (resent from new email)
+>>>>>
+>>>>> On Thu, May 14, 2026 at 2:04 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>>>>>
+>>>>>> On Sat, May 09, 2026 at 09:00:14PM +0200, Jernej Skrabec wrote:
+>>>>>>> From: Jernej Skrabec <jernej.skrabec@gmail.com>
+>>>>>>>
+>>>>>>> As it turns out, current H616 DE33 binding was written based on
+>>>>>>> incomplete understanding of DE33 design. Namely, planes are shared
+>>>>>>> resource and not tied to specific mixer, which was the case for previous
+>>>>>>> generations of Display Engine (DE3 and earlier).
+>>>>>>>
+>>>>>>> This means that current DE33 binding doesn't properly reflect HW and
+>>>>>>> using it would mean that second mixer (used for second display output)
+>>>>>>> can't be supported.
+>>>>>>>
+>>>>>>> Remove layer register space, which will be represented with additional
+>>>>>>> node, and replace it with phandle, which will point to that new, shared
+>>>>>>> node. That way, all mixers can share same layers.
+>>>>>>>
+>>>>>>> There is no user of this binding yet, so changes can be made safely,
+>>>>>>> without breaking any backward compatibility.
+>>>>>>
+>>>>>> There is user. git grep gives me:
+>>>>>> drivers/gpu/drm/sun4i/sun8i_mixer.c
+>>>>>>
+>>>>>> which means this is a released ABI. As I understood, the old code was
+>>>>>
+>>>>> We held off on merging the DT changes so that we could rework this.
+>>>>> I can't find the actual request though. It was probably over IRC.
+>>>>>
+>>>>>> working fine but just did not support all use cases. Why this cannot be
+>>>>>> kept backwards compatible?
+>>>>>
+>>>>> AFAIK the "planes" block is shared between two display mixers. As the
+>>>>> commit message explains, this prevents using the second mixer, since
+>>>>> only one of them can claim and map the register space. And on the H700
+>>>>> (which is the same die as the H616 discussed here but with more exposed
+>>>>> interfaces), there could actually be a use case for the second mixer.
+>>>>
+>>>> It explains why you want to make the changes but not why you cannot keep
+>>>> it backwards compatible.
+>>>
+>>> I guess it can be backward compatible, but I don't think it makes sense.
+>>> Yes, original driver implemented original DT bindings, but there is no node
+>>> which uses that binding. If there is no user of that, why would driver
+>>
+>> Did you check all out of tree users of the ABI? All vendor kernels,
+>> forks and all of them for which the ABI was made for?
+> 
+> Since when do we care about out of tree users? I understand that drivers
 
-Looks good. Keep it consistent with drivers/clk/starfive/clk-starfive-jh711=
-0-vout.c.
+Since always? That is the meaning of ABI. Otherwise there is no point to
+discuss ABI at all. Why would it exist if you had all DTS inside kernel
+always matching the code?
 
-Reviewed-by: Hal Feng <hal.feng@starfivetech.com>
+
+> must support old device tree files. Once they work, compatibility must
+> be carried forward. But that's not the case here.
+> 
+> In any case, vendor kernels have completely different DT structure. This
+> was developed independently from them. Take a look at [1] how BSP DT looks
+> like, specifically Display Engine node.
+> 
+> Of course there are some distros which grab WIP patches from mailing lists
+> soon after they are available. For example, I know that Armbian carried old
+> WIP patches which used old ABI. However, such distros generally don't care
+> about exact solution and ditch patches as soon as proper solution is merged
+> upstream or even when better WIP patches come around. DT files in such
+> distros get updated alongside kernel, they are not hidden in firmware. 
+> 
+
+I am not talking about BSP. I am talking about out of tree users for
+which we defined the ABI and called it that way.
+
 
 Best regards,
-Hal
+Krzysztof
