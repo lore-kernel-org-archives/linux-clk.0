@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29041165F16;
-	Tue, 16 Jun 2026 08:36:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68F2429346F;
+	Tue, 16 Jun 2026 08:36:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781598971; cv=none; b=rHu6SbpojjHlIZmTfYSJU57MlgR/fOtDjzWm0w3WsA/+U0DJQu8AaMgp6+mlomCh8A20vk8DeTq6UuZM7EfzxVFiA2iVe9i3zv2qdXGOqwjbQfFvB0c/Un+hzFn+BcBff5biozgFxjPIEVmPAScFMq+Vj+db6Uf065D+j337HxI=
+	t=1781598982; cv=none; b=k/2V9Pe/tkv4qQ+oyLIc3esW7v7KdMbi6kYm7eORKFHX1x/jN4LodBs3IFYmhHYhcCyPL4d1u2HvX5c1gkrmYltjiJaFFKTc3fjj0tkE1EQvbUwxyoYmI/fEqdLE8zaf6SekQZCHYN2VDxqTTU5yhxYBKJ8QOjFU/nxLc86jbJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781598971; c=relaxed/simple;
-	bh=boZCRrX6QeXgrOrWVTQWF4Bm6PIPot4WDoMly6Jm8rQ=;
+	s=arc-20240116; t=1781598982; c=relaxed/simple;
+	bh=U/DxfgA/dRxSIpyFd48JrTawebSeZU6lDMpQH6b7WzI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lx9uKPBWXBi/6qKgwVAoYeuLdIdicsL+5CeO/iCKDZvRUcrGsDbhEf4nnEbv7Queyg8+1y40lB2QAo6WIAKCGxF5XsO77GkT7ND0DV+RM4SBy2w9hJix0jZO3mSKEoZ5RGMKPzgM+3Zl57TTAQJMV19GI5bP8sBCGfCUibhO9YI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q257ADpZ; arc=none smtp.client-ip=100.103.45.18
+	 In-Reply-To:Content-Type; b=PJjox3Ev93fULdL5nfYcUtjNRAV+Wav11esPK1lDapUC2z/gd2yY61TZHjnf+Eon8zebTUcb0/71zI6Sz6UKx5xNk1M0rhwD0RHxyu6v31oAoDOdlO9uQfSWcnYWJH41SDp6hwEwyAJAwvDjy4k6AKwcxjdwO9MLeHkEx2LkmIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oGFTwjNe; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q257ADpZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF51D1F000E9;
-	Tue, 16 Jun 2026 08:36:03 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oGFTwjNe"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 675711F000E9;
+	Tue, 16 Jun 2026 08:36:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781598969;
-	bh=T2WO11Yvy+joBc64YU8rn0xdejIi6A7h3daYt6wUBxs=;
+	s=k20260515; t=1781598981;
+	bh=smOIQBYK+JUznKLNf86VCfPvjTlWup7jCYhkjp3n/Xs=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=Q257ADpZYeMLuChuW2jSYWrd0tnjSrkqsN4PQaMhMOqInxJQTSZcFYbPyDhxh4T+T
-	 DGttlVMNygBLGqMYQNAafrIZxn0evicke0WXQvqWt0u9uxHF6YQowjMZ5A+dXMTTHu
-	 ov2EipnouHO/wHMIE9Y0pBSvOZY7EPxsEOZKNWNrI5ctW8FK6GLQUQTRGvwz//DhqM
-	 V/nznwde2Mv+KYyhV/WHF6t7cRPXBy2a24U0Vq1NDulHUepYuZUUzh0cebQLtNjT5O
-	 b6eIhOGIFZGquRq5liereztJR2O2luO4HfBvKdJQZfFVR+T510xG1LhN4fmD1CkQUM
-	 NXG9cCK+vXutg==
-Message-ID: <1d4f3e4e-ec9e-44d0-9e4a-651b6920015c@kernel.org>
-Date: Tue, 16 Jun 2026 10:36:00 +0200
+	b=oGFTwjNe3pEyL4hb5K3zFzeuYejax0n/M+9xvaPTXgO1N+uRSwFOX5a9ug3ZECLF3
+	 syDnL84PUSKtjET30nLxG9V1M1WC28nLEjHZCQZYyEaZ4VGEhRG2QXk9wy9Qt0RC2C
+	 JffcRnbSec8nW0GuyxutSgJVzxe3EVE1mycj3BPgxoRGOj01DZ+GAHkQj5t0WxCKR9
+	 MElAFNvh7W5NunSIGuNQNkdDf/25dssPVryOVqoB9I4NTSK8htDItlApwPc+NvMhe+
+	 5DnfwenUtbzbOdt7rVk/pK1hRRJA2UVk6sY78mjAozYAf/CpxMviBFrJjj7w6jcd98
+	 5sWg6CI8jJJgw==
+Message-ID: <95e1f659-7fd5-4806-bc86-03c5ac7682ba@kernel.org>
+Date: Tue, 16 Jun 2026 10:36:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,7 +35,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/6] dt-bindings: clock: qcom: gcc-sm8450: Add missing
+Subject: Re: [PATCH v2 2/6] dt-bindings: clock: qcom: sm8550-gcc: Add missing
  power-domains property
 To: Neil Armstrong <neil.armstrong@linaro.org>,
  Bjorn Andersson <andersson@kernel.org>,
@@ -49,7 +49,7 @@ To: Neil Armstrong <neil.armstrong@linaro.org>,
 Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20260615-topic-sm8x50-tie-gcc-to-cx-v2-0-6b5752dd4747@linaro.org>
- <20260615-topic-sm8x50-tie-gcc-to-cx-v2-1-6b5752dd4747@linaro.org>
+ <20260615-topic-sm8x50-tie-gcc-to-cx-v2-2-6b5752dd4747@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -95,33 +95,24 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
  n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
  qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
-In-Reply-To: <20260615-topic-sm8x50-tie-gcc-to-cx-v2-1-6b5752dd4747@linaro.org>
+In-Reply-To: <20260615-topic-sm8x50-tie-gcc-to-cx-v2-2-6b5752dd4747@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 15/06/2026 18:57, Neil Armstrong wrote:
 > In order for the GCC votes on the GDSCs it provides to be propagated
 > to CX, CX needs to be declared as power domain of the GCC.
-
-I would be happier to see here short mentioning what is the effect of
-missing votes - do things work? - as justification why required
-property, thus ABI change, is justified.
-
-The DTS patches gave me that answer, but should be here as well the best.
-
-Well, don't want to stall anything here, so anyway:
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-
-
 > 
 > Document the missing power-domains property to that purpose.
 > 
-> Fixes: 72a0ca203ca7 ("dt-bindings: clock: Add SM8450 GCC clock bindings")
+> Fixes: 47ba9c50bbeb ("dt-bindings: clock: Add SM8550 GCC clocks")
 > Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/clock/qcom,sm8550-gcc.yaml | 6 ++++++
+>  1 file changed, 6 insertions(+)
 
 
-
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
 Best regards,
 Krzysztof
