@@ -1,129 +1,183 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD282344D88
-	for <linux-clk@vger.kernel.org>; Tue, 16 Jun 2026 19:22:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD85437F8B2
+	for <linux-clk@vger.kernel.org>; Tue, 16 Jun 2026 20:26:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781637735; cv=none; b=kc7kwpVLoOTSgSGs7CYbExAr0X3RHPTRbDAMzTIGHRTCQzC/Be6JDULmcnG6WmhDcrIwjw5o8aOTdf0LxUKO3UA04hxJNUQ1lUX5VoFQKdFS/9Qaiv+pOus/ze/o/+ZRn8fBP8PwxmWm3wjC5Vk8QSUCzbshAggQ9Qv0Q07yZGM=
+	t=1781641614; cv=none; b=IusTcMx4pPJFdCwEFMTe5D4EQwY22BD2kDESH8mrqG7v7scO7whhA0lV9wrsutUUFopwPxJxlVcdmAzQ2vypggxYNU/JV8QIAftbQPChSW1F9Z1Zq2TOkb87pGvHLZskI0uGWoD5dq87fG5TugE7k17w+BPaqUQsv6pVrJt8jg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781637735; c=relaxed/simple;
-	bh=NVM1Rubw7YZ9XU2iZhNrjdu8qkSccQVCtMAZO7mjpeQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K2xDjhjQomEmQEW/UyWew10ALr1c/0BJsqE42u5bAMVGGhZTe5IbB2VFOgapPhobtfUbTqMJV/8mPwuz/qNCFGAboFCrtR74lbV5MgmU6m1xCByJJhlwVT6hbZxb/0Kw8p+SFR1Im2xJHccB6qd2uhd2YBtVlRPpuv6KVWlDsFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OWt8kZTF; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=jkUHEHv4; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1781641614; c=relaxed/simple;
+	bh=FwO80H1E3JHTygfTphnHg7nPuRMZdLoWNR8BX9Qlzrk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Pl80VDu+VMonaBVfAxHa6NIWXfvbxC1lCTUqN9OiRZ4nVYIDFWz4BGQ68h6JjNREtVlUHvyvq8A/gRU/2bbPHTEjqqCRk4gqDT0YBuybVI50a4IkFhQzGGXWnZVtWXE0PUdW0LOV0t72Hw1+qYsyzhcF5cqORTbg8XGQkdrYf8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cMF/599B; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OWt8kZTF";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="jkUHEHv4"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1781637732;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=icHrK2aTsAoupO6HF7R3pIp5ly1Gmg7Tm5VKudfF+po=;
-	b=OWt8kZTFUc0p0FrIsL+1YITp7joNoKajE9f7Y08iUvzZ51TKNinPiADAlYfRUZHJihHi1p
-	yfmp4oeS3lVBLSV6x2PKdX79RG1miU5STUS9i8sdxrXJIj489gqSHjW01mwrPg4y6uln3G
-	ZydXhWDB/sFZhmEx80UCLE7xn+Rm1TU=
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
- [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-516-fTi3_E-WOu6ARYcBmq51ZA-1; Tue, 16 Jun 2026 15:22:11 -0400
-X-MC-Unique: fTi3_E-WOu6ARYcBmq51ZA-1
-X-Mimecast-MFC-AGG-ID: fTi3_E-WOu6ARYcBmq51ZA_1781637731
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-517e0cdf99fso129649931cf.2
-        for <linux-clk@vger.kernel.org>; Tue, 16 Jun 2026 12:22:11 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cMF/599B"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-490ac10e337so33945965e9.3
+        for <linux-clk@vger.kernel.org>; Tue, 16 Jun 2026 13:26:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1781637731; x=1782242531; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=icHrK2aTsAoupO6HF7R3pIp5ly1Gmg7Tm5VKudfF+po=;
-        b=jkUHEHv4ZrcjhawT62mbHILLluURkLmuAZTPbCB3W9raJH3g1X9/J6/ezU+capqwWZ
-         BfFPGZJiOOwYQr+L0BtreN0bjmo4C8cqvp7nJJ4JkJIabNq3+Ha3TTvgGWWuA3CW/Jfb
-         JDhWTHsdWu+w8HA0Td/EWppPTLfMrAQTcfRx8bHHhKFX76FHmIBIHY+mXolcHwJV5+oa
-         JlYK10i+rgMnyCRLk7hvWJBnf0S59n9FsVWIJYZtQCsl8fb2Wu9LcGw/gmxsaeyHPhYq
-         eeeaezEZxmN3EptLgrHI/S8mv/X8HPrc/E1Plv4OXSLjC4Bu1mGOL/gV5q1QGdhpIloi
-         S2Yw==
+        d=gmail.com; s=20251104; t=1781641611; x=1782246411; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BPpoQ7v1yBgGnokyZPjeSn3hpjUfo+LeGZ8fvnOwicA=;
+        b=cMF/599BLMWCwwLnwPqQwcBt1kBYtH9YFbPuATwCE3S+g4voHXKTiHvvL9ygnuDTir
+         8nMLxBCkuHTnJ3vD/SQjU1606jrV0ikaiFYv+GLveAOVXGA9X2V6yYyFwoRWl9yzoUnn
+         fi2rxF4bk8R7iInr8v47uuwVmYWX+ayhRiVmWGetKBrWZ1bVkDb8z58RjdnBOnesgumz
+         iDfMYXWdo2a6hYz09epaYZ7FZ97jBss5H/tisrXsaQFXM8Ga1DIiSpgQ6dA79vm+6gst
+         C+EtLLooN3M8GbaShFMlEv5o8fIWMeAs5HLxaAwNP6SK1wOZ+pWvOk6l8rF8baLJU1yx
+         smuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781637731; x=1782242531;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=icHrK2aTsAoupO6HF7R3pIp5ly1Gmg7Tm5VKudfF+po=;
-        b=ZTqmW4OnYO9rYKOgniDVxtP8cw/zeGJSqHrOVGc8agB3pr4qm4lH4TNx7M50gxZI2D
-         Z4vjAhEc5n3BkKxkK0NGBvqM+g0XQvedBXxNDHBTnR4/g0BeJ2vEE+rMkvW5Y8+zxdFx
-         VDFkEyT83+Y+U6JZ7OJgnfydk0bq9pmZmAQtr8LTvtkEnkjOu36FtMJFuqzzISUTOD/h
-         NfDw4vbJ6Yr8QH+Ntvc8vYDlCzgXTaArBgEVF8GNvXlaj9vDcH+SAXUdtJG4UMmqlS+n
-         8TgdhtnvgmTyqw9q02mjGBuLcOKskaGXDUeAGYlI96/crkLDrgkvQEYcavW4p2Uh6SDN
-         SOiw==
-X-Forwarded-Encrypted: i=1; AFNElJ/SagCHrXH95QzQt14ydzI1m0dySgO3bNmhJZqJyX+rk+aGd6xxopAGrSb5OZhebyCxW7tmf73JAkw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzS98Teg+wJEWfJ77zYZaVJZBWPxdg0ZrDvYVX05oQLzsoJDha
-	AcN65KYT5noobQsbcGIUjjU3bZez59x5m39/Q4Lim32BNL0hZppG3YoC9/ZXkBUX7yC0E2R9tNC
-	sR277S3jpe5/EmEsNWTpab5eM7ryRcUM1iD4ZPEtTS46F8U69zSVavCf/XqSDQg==
-X-Gm-Gg: Acq92OFupoEx3Hfat0lDDYC2xm/Tj5/9swGrw117bIL8jQOcjFjSRuK7B+YWwasiCdR
-	xt21WRtj/fxy+U10jWgnjCu6aE/Zoxm1LmnXp2O/JFVqyRp1O6MWdFsAjagi0roNBxvJuqeofaC
-	1ZC55waZryNWEDIMYG7YbiSHC3x4js8amLxassaWewihsSZxXzAZUcAWPHRe1dpkW3w1rUokKf4
-	qxmgKkad46mjoeFZNmiygoTIkifJwquV6MZO86QbKq8LIllrtMV9tiGErcyk6wiLeNOtQ9ZMykU
-	mtiYsn2UwKKXJXMpfxhbpCxNCaxdMxHBdR2XN4tkykD7SRCBCvXFa/DjTMa3JyZnk0SPMZkIekc
-	yRiHtJH088UAtwPpub5mV
-X-Received: by 2002:a05:622a:8cd:b0:517:6afc:b644 with SMTP id d75a77b69052e-519a8fffa38mr13241561cf.47.1781637730987;
-        Tue, 16 Jun 2026 12:22:10 -0700 (PDT)
-X-Received: by 2002:a05:622a:8cd:b0:517:6afc:b644 with SMTP id d75a77b69052e-519a8fffa38mr13240961cf.47.1781637730415;
-        Tue, 16 Jun 2026 12:22:10 -0700 (PDT)
-Received: from redhat.com ([2600:382:8500:43e0:4da9:d4f1:1887:ec76])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-517fb79df4dsm147042751cf.15.2026.06.16.12.22.08
+        d=1e100.net; s=20251104; t=1781641611; x=1782246411;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BPpoQ7v1yBgGnokyZPjeSn3hpjUfo+LeGZ8fvnOwicA=;
+        b=C/DW2IsqAH7xPccTnMrWUyBzH1iawLqGvKvJkU6dj4bQBvSnL5WYZoYcUlwHoNwL+H
+         V0e0LeeyHtAt/EvrOBHkQ9CnJln6eZKuffJ8Bq6LDrKXH+H4OJ4ts2Ke4wFLlfEqlbAY
+         zD2a5CTpqXgDxj9q5eb6912LPrZeoMsWYGlqgP8rux/flz1VlmM9nSN7vdcpduW2CHfF
+         SjxzuRAbFK0NCDEoF7TO1KWPGEyec/F/oDdIdZ112GqPUSeaKLJoGmwdt6nzbHpwejb6
+         k/2gbrCEt52NhoXZ8zfOW/1P7MtSP4q3jmQGWL75QrdYWrRAY4bKBzJ4eCiTKL2NPorR
+         Oxnw==
+X-Gm-Message-State: AOJu0Yw+cmF3+hiHpQ1Eb9m6aSz0uW1+mVb1NTNXU8y/4zRUvHOgI7pC
+	2Z/VHWFxzJgEurRaiYvafuT9fJGHwecjsutsW0MActq2J3xVlMncb3Qv
+X-Gm-Gg: Acq92OHMpvJpcFrnzQg4cbWU1KLgQeVH1qMG03uE3XQVXWJa9QLRpNSX6dWwTXDSbvR
+	AQk52eie1werViVCHJZ6MkmF9xzcxrhNLjOwWeBVQzVWdhkkZj/hiW+/pPT8Y9bBv/+/BTFo4XI
+	leLweZDD+3FnygS7MdD9nJrtIE9e6VqI4GM+zsdupL5hcDbb4lw5XkKaDe9JKKuMdJ4cMbNIzs3
+	cWJnPHA6Ml9qwuvqLsu6oObpkCxWjQlLbEPMjeW8gJXgV2KPUhDxy82SkM/JDFGS/h5KXiOVBIL
+	jYDasbINVgqErjJD39CXB5ocY7z7TU+mqfFZBpIMNMnZb/ThDR7lC4rriprJcHosDcnvqvNA9cJ
+	ykLs80v8Br/DFu/xeqKc0f6w9nSjP5oJTIFIylDOx6pUN9bWLsrGRhrW+e1o0SW7/9k5CFbOBKs
+	/0FWP4orKD4QZ4IQc7TwnjG4IqPjQOfYJo8A==
+X-Received: by 2002:a05:600c:c09a:b0:490:bb37:9d49 with SMTP id 5b1f17b1804b1-492333bf9f6mr15240805e9.11.1781641611016;
+        Tue, 16 Jun 2026 13:26:51 -0700 (PDT)
+Received: from [192.168.0.2] ([197.250.51.220])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49230a458f2sm89987005e9.3.2026.06.16.13.26.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jun 2026 12:22:09 -0700 (PDT)
-Date: Tue, 16 Jun 2026 15:22:07 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Wentao Liang <vulab@iscas.ac.cn>
-Cc: andrew@lunn.ch, gregory.clement@bootlin.com,
-	sebastian.hesselbarth@gmail.com, mturquette@baylibre.com,
-	sboyd@kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk: mvebu: ap-cpu: fix missing clk_put() in
- ap_cpu_clock_probe()
-Message-ID: <ajGiX4JoGXaMu_-w@redhat.com>
-References: <20260616122936.1669366-1-vulab@iscas.ac.cn>
+        Tue, 16 Jun 2026 13:26:50 -0700 (PDT)
+From: =?utf-8?q?Stefan_D=C3=B6singer?= <stefandoesinger@gmail.com>
+Subject: [PATCH RFC v4 00/12] ZTE zx297520v3 clock bindings and driver
+Date: Tue, 16 Jun 2026 23:26:20 +0300
+Message-Id: <20260616-zx29clk-v4-0-ca994bd22e9d@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260616122936.1669366-1-vulab@iscas.ac.cn>
-User-Agent: Mutt/2.3.1 (2026-03-20)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/2WOQU7DMBBFrxJ5jZE9YydxV0hIHIAtYmE749Zq0
+ 4AdokKVu2MZpEaw/DPz3vwry5QiZbZrrizREnOcziWou4b5gz3vicehZAYCWqGl4F8XMP505EB
+ qQEMoofesXL8lCvFSTS/s+emRvf4ME71/FOv8u3E2E/fTOMZ513hJ3gGaYFHpVoOxCKA1ahN81
+ 7vWkDNDr7rqOsQ8T+mzNl1klf0rtUguOElnfQiBTNs97EcbT/flYXUssOXkjYPCgQmCBo9CBP2
+ Xww0H5sZh4XwXSCuy2Pdhy63r+g3mrePpXwEAAA==
+X-Change-ID: 20260510-zx29clk-2e4d39e3128c
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+ Brian Masney <bmasney@redhat.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ =?utf-8?q?Stefan_D=C3=B6singer?= <stefandoesinger@gmail.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3793;
+ i=stefandoesinger@gmail.com; h=from:subject:message-id;
+ bh=FwO80H1E3JHTygfTphnHg7nPuRMZdLoWNR8BX9Qlzrk=;
+ b=owEBiQJ2/ZANAwAIAT0TvMhUTxoiAcsmYgBqMbGA2Nqb6P7bZNY0Jn4Ahgvm54BiflHnww1Wp
+ u3KXRrPtbCJAk8EAAEIADkWIQRDFvS2qgVbJ5UyXWw9E7zIVE8aIgUCajGxgBsUgAAAAAAEAA5t
+ YW51MiwyLjUrMS4xMiwyLDIACgkQPRO8yFRPGiKA+hAAnx40hgB9SBYrpop0r6jTAhXwWFB+/nn
+ 8O5iuk7DJYzsn3lFHR+tQsG/3cq8O7tocyhW4ubq6jhNbAzdzsYG6+XgURtNbokwpiShr/YAiDb
+ 4oQ1NC8EXwXA7LgrmX2yZdOmbAyxuRhzMRybynIIdF1njxSpkjG00NV2Zd0yKyQcNzuD2F2YAym
+ 0FVMdmgtHajdER14GjV7j/lVTxhLlYSWAywYjzo12eOhe46yC2wEpvYNDXwvgnxqp/pWsMHS1UC
+ +nK7V4n9pzLusWq0KIbO/QhI5e5ZqmigRzmls9mRjJvpa51E/tzbJCnxJm3JWpHw/ORPl6iMw5O
+ gg4JE/Gq2lO3gfmdpPlFhXZ5BTAJWVB1bhiSj1rX+qok978+gl79sn34X1UFOI7leRg4W+bARP7
+ UCH19kVRvyS57uxdSj979jBaGnUBk7W9m8YvESecdVtlcvRK47vAR/4QH330wX8kgNkxV9SfAlg
+ Uk6pDKy1JQ+Jvq7EGbEIDjbjIPOfukvF4YJm5vu8z+QbLOMA0pimFP9kDsfHb6JDPEW1m83p9HU
+ h+eW2BFnEfs75ZDUTn1jsbm/hhRvEGoCqKcq7hvHELRO3NtnT+5Pl/uJgIqMTepp4EDDqeIkjKK
+ eP6OcLPboHD1sgSiQp35Tdl+pAfF0drGakTpXhQvSlYivxx4SD3k=
+X-Developer-Key: i=stefandoesinger@gmail.com; a=openpgp;
+ fpr=4F9C2C8728019633893EBBB98CB81F9A72BBA155
 
-Hi Wentao,
+Hi,
 
-On Tue, Jun 16, 2026 at 12:29:36PM +0000, Wentao Liang wrote:
-> The function ap_cpu_clock_probe() calls of_clk_get() to obtain a
-> reference to the parent clock for each CPU cluster, but it never
-> releases it with clk_put().  The returned clk is used only to read
-> the parent's name via __clk_get_name(), and the reference is leaked
-> on every successful cluster initialization as well as on the error
-> path when devm_clk_hw_register() fails.
-> 
-> Rather than adding clk_put() calls, replace the of_clk_get() +
-> __clk_get_name() pattern with of_clk_get_parent_name(), which is
-> the intended API for this use case and handles the reference
-> counting internally.  This matches the pattern already used by the
-> sibling drivers clk-cpu.c and clk-corediv.c.
-> 
-> Fixes: af9617b419f7 ("clk: mvebu: ap-cpu-clk: Fix a memory leak in error handling paths")
-> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+I am sending version 4 of my zx297520v3 clock patch. The major change is 
+using regmaps rather than raw mmio to access the clocks and moving reset 
+handling into its own aux bus driver.
 
-The Fixes commit you listed missed this, and yes it should have been
-fixed there as well, however the Fixes tag needs to point to the commit
-where the leak was first introduced. In this case, it is:
+I think the list of clocks in my driver is fairly complete; It is 
+certainly a lot better than what the downstream ZTE drivers have. I 
+deduced a lot of it by trial and error. I am sure there are some clocks 
+missing that will need to be added to the binding later. Afaiu adding 
+clocks is not an issue, but removing or reordering them is an ABI break.
 
-Fixes: f756e362d9384 ("clk: mvebu: add CPU clock driver for Armada 7K/8K")
+I expect Sashiko to find a lot of slopiness mistakes, so I kept the 
+[RFC] tag for this submission.
 
-With that fixed:
+Signed-off-by: Stefan Dösinger <stefandoesinger@gmail.com>
+---
+Changes in v4:
+*) Use syscon and regmap instead of raw IO
+*) Move reset to its own driver on the aux bus, but keep reset and clk 
+in the same binding as it matches the way the hardware works
+*) Go back to having matrixclk in its own device because syscon deals 
+poorly with multi io reg devices. List all PLL outputs from topclk as 
+inputs to matrixclk
+*) Some more hardware research: Figure out the parents of the 4 possible
+GPIO clock outputs and declare them in the driver. They are unused on 
+the hardware I have, but they show that all PLLs can be used.
 
-Reviewed-by: Brian Masney <bmasney@redhat.com>
+- Link to v3: https://lore.kernel.org/r/20260529-zx29clk-v3-0-c7fe54ea388f@gmail.com
+
+Changes in v3:
+Model top and matrix clocks as one device
+Add PLL driver
+Fixed a few issues found by Sashiko: register lock, some missing devm_, 
+error handling
+
+v2: Fix build issues introduced by checkpatch.pl fixes that I didn't 
+spot earlier.
+
+---
+Stefan Dösinger (12):
+      dt-bindings: clk: zte: Add zx297520v3 top clock and reset bindings
+      dt-bindings: clk: zte: Add zx297520v3 matrix clock and reset bindings
+      dt-bindings: clk: zte: Add zx297520v3 LSP clock and reset bindings
+      clk: zte: Add Clock registration infrastructure.
+      clk: zte: Add zx PLL support infrastructure
+      clk: zte: Add regmap based clocks
+      clk: zte: Introduce a driver for zx297520v3 top clocks
+      clk: zte: Introduce a driver for zx297520v3 matrix clocks
+      clk: zte: Introduce a driver for zx297520v3 LSP clocks
+      reset: zte: Add a zx297520v3 reset driver
+      ARM: dts: zte: Declare zx297520v3 clock device nodes
+      ARM: dts: zte: Add a syscon-reboot for zx297520v3 boards
+
+ .../bindings/clock/zte,zx297520v3-lspclk.yaml      | 130 ++++
+ .../bindings/clock/zte,zx297520v3-matrixclk.yaml   | 180 +++++
+ .../bindings/clock/zte,zx297520v3-topclk.yaml      |  70 ++
+ MAINTAINERS                                        |   4 +
+ arch/arm/boot/dts/zte/zx297520v3.dtsi              |  97 ++-
+ drivers/clk/Kconfig                                |   1 +
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/zte/Kconfig                            |  28 +
+ drivers/clk/zte/Makefile                           |   6 +
+ drivers/clk/zte/clk-regmap.c                       | 247 +++++++
+ drivers/clk/zte/clk-zx.c                           | 157 ++++
+ drivers/clk/zte/clk-zx.h                           |  79 ++
+ drivers/clk/zte/clk-zx297520v3.c                   | 795 +++++++++++++++++++++
+ drivers/clk/zte/pll-zx.c                           | 477 +++++++++++++
+ drivers/reset/Kconfig                              |  11 +
+ drivers/reset/Makefile                             |   1 +
+ drivers/reset/reset-zte-zx297520v3.c               | 224 ++++++
+ include/dt-bindings/clock/zte,zx297520v3-clk.h     | 219 ++++++
+ 18 files changed, 2718 insertions(+), 9 deletions(-)
+---
+base-commit: c1ecb239fa3456529a32255359fc78b69eb9d847
+change-id: 20260510-zx29clk-2e4d39e3128c
+
+Best regards,
+-- 
+Stefan Dösinger <stefandoesinger@gmail.com>
 
