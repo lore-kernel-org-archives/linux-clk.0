@@ -1,66 +1,66 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC07C396561
-	for <linux-clk@vger.kernel.org>; Tue, 16 Jun 2026 20:27:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05F45397350
+	for <linux-clk@vger.kernel.org>; Tue, 16 Jun 2026 20:27:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781641646; cv=none; b=Jdh3YGMxwBu7imdE7nGEArLli4KoVhPNTDKxi7wtWET3N7XCzGsdCcGIn3dtohHb4Nmf+6BuFmN/F0fzN/NZeAVRqS/cywpFW0uDfMsWjqMT/PDb5PDnZ+DO3rPmLab1uGfssJePbkcxszOy8fiRDMMMWyiiuBfAhMubQ/I+5vg=
+	t=1781641650; cv=none; b=OhjydRUztKEfnUZ6aU/zB1EITm2w7LYGCp/D+Y04wp8i0P8dRLIwlphZh5AvvgUESh+Wj3joiCz/3RYkcjKUb7YgSyINk7k7MWqap1DNakmSf9LlwsczAS3VUirGNRpqU9obfqkF4nIXkewZ0PlBUm9wM/t3bE6wgvOsT1MByuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781641646; c=relaxed/simple;
-	bh=2CJMMG1/LE5vixHG7JxoV5FWmwbKqkkpuEs/bq1yiII=;
+	s=arc-20240116; t=1781641650; c=relaxed/simple;
+	bh=lbHHuSxqYynCWbB7Q+n6QPG7iIdM8EIGUyLv56zQRDc=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Mfu9m5r0AIrulUIlWDQFfG0EqWWzRNgPFxqT4EZAQ6y0Ib7ppWMBSfWCwmznOkvTXpPb7I8I/ncKVCfwARcTlKYeibFgvItW4CDkDfn7yFzD34tFVV597+oZukWoGPWqAf95qBPu4YPY70oGuZ6cFX269Xu7TN5LxBBX7p/KNKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZTuZzQXN; arc=none smtp.client-ip=209.85.128.42
+	 In-Reply-To:To:Cc; b=XASWUjIWNzTp7vvH6Hr38ESWH1TrjwfrFGC1N/A52v6mwRulCvZGvyGWOQyyGGq4LzZHWmciVz12wG9gI+TC0VdgimAxcIbz0NLMzXNjlM1UMWBi33uXc+BgBM9CWwwHs9F+N8+bKjQSHcezi+gyWaMm0DvHuVvrQMgGGN4RNB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XvzRr8/T; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZTuZzQXN"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-490b9318997so36610085e9.2
-        for <linux-clk@vger.kernel.org>; Tue, 16 Jun 2026 13:27:24 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XvzRr8/T"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-490b12270b3so30864465e9.1
+        for <linux-clk@vger.kernel.org>; Tue, 16 Jun 2026 13:27:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1781641643; x=1782246443; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1781641647; x=1782246447; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=IVQO6hIIgLgmlWsatP4pC/13zJii6CGhx+MK+WXIvZM=;
-        b=ZTuZzQXNKNZtAZI3iPpDPUBXB/Vm+0rau009GZ8z3Px2wTl99HTUDtjDE0QHHDJ9yz
-         LSqNpi2zaqGYbyhe5XdbUX/2QQg+2ogI5jEJX0OCs45WqrErVybRisg16zIwCj6dsQkW
-         5fPMGxdFAfpSL5ZgTgC7pYkwtO82lBi6DktU7Lvx3U7STQ1ZjEyrr50OP0AcMFa686Cx
-         XJacpXI6TSFFbCQo+ztrA/vtRLc+AbrL7pelSDuYk3XaFD+Ol2CTELgy9BscsMoRC4qW
-         d0wQJZyCCSHoLosM9RwkYe/bpqtbYQUf5R6xR+1RFls4XPsTUyTm7Vxm+5EqTIWAb2B+
-         nPiQ==
+        bh=baR2tJhTCCpjbOvimxFzjlV0YgowSxYpo4W6Y4kO2+g=;
+        b=XvzRr8/THiwh8ObcqyYSCMLygqjIvKd9ENlHy03DJ1NyyBwjg77pN5xTHtD+Ap3Gek
+         Leb+wjfV1tTcyRUZEPWDn9QdOlDEvjvmWDkGuSfQiytce3hSYMbFpZqjEKBj48upIj8I
+         00zFUiQNgh4ftaFiUKl4bKA4pFZT/ZivpUuRD71M9TiRRZMMZ3EXyC3H59GxHEGFAsyD
+         YBpBzNpUmeGpwt+MFw0Fxb5qm0r/zGZvYAxCpzB+asUDNpc2fo/CXbIYg2ySPlQJIUMc
+         mojef0Mm9WWMCEYMJ3AWFxp9OdPsK7vwbSeVM72S3xnBNxLzZXnv4dt179YaJB3hSir/
+         kuVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781641643; x=1782246443;
+        d=1e100.net; s=20251104; t=1781641647; x=1782246447;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=IVQO6hIIgLgmlWsatP4pC/13zJii6CGhx+MK+WXIvZM=;
-        b=NLt/BNEeJsxdU3ch1Dc4Hn5G2E6VyG9bdmmy7gA8Hz+fKM1uT+SPUVrUvrcOxoCbiX
-         gOtD/fEJl9UCIE/vZQoy66j/09hcx7xDfPyknYdg1atwOuXud6BqWozxZ15NpSWZJIj6
-         8ruh3AY8y5YTaCXFRkjkrljGvcJODn/HFpAEJoq5hgY3d/x/hGWa2ZA2viHw6IVEq+ZK
-         r2dJko1ktEMSr+HPgXT+1KDoG2SkHdjNgAlFWRBHpolh1Vio1VGP3lH+j3vNoQSHJsQv
-         TN4pKFeeMoeAbG8AXJGyvXEdWcZdH6bXuievUUhVkF7Ux2vMMf5Xxi4uA0+b8qp5g+0I
-         w9jg==
-X-Gm-Message-State: AOJu0YyONV60DR4StTvIRQ+Ia0y1OcwgpNIeFzUx0UCP1G+Je2zPLNpp
-	koDTCeHBPhEvv2N2cYbHU9D5QGNrvpF7+3jC31FsdWQSntPlsM8aU84P
-X-Gm-Gg: Acq92OHQon1HDJrsOXL9g6fxe6x4b3HQHvdUm3waplSq8eDxYQi77Z+F4+ZAGyVAdjg
-	iTJKyyZovxpAj6Wn2vX6b8Y598cqlX8lWs1K9nUKXczdsjRerwZoT1NUGwy+UfJ9HiuJcDgtwuG
-	NI2ZgEwm/cd626w0W6zyoxbRWXO3yqF3zhSGgydU7lkznNUZldEcVl/c3ZakfHGS2O5U1FZglI4
-	MsCk00TX74sY4MH60eBhUF/IHixA625eQAJQXgw+6Sx3K6fSCUHdk/0d2norivxay5/UppEWxe1
-	nI9Ul8W9N7XwEEd+LrtBAHk7rXCGt/hfZCbcBxAtVEP+9nY0BIyUbDcYwXxzItYQiK6/1+l9tcx
-	4InMkyTAY8luCHOP8Ii2OIsj2PHyRpihwFRDksEuv8Q+CJRMPGbz5dBhGardhec3BjjUDYK1J5d
-	9F5lFKbD6bdLaMjEKWe5Sxmyaytv+wr9zrVruN+ZigC9+2
-X-Received: by 2002:a05:600c:332a:b0:492:1e36:85dd with SMTP id 5b1f17b1804b1-492333e359fmr11453315e9.37.1781641643101;
-        Tue, 16 Jun 2026 13:27:23 -0700 (PDT)
+        bh=baR2tJhTCCpjbOvimxFzjlV0YgowSxYpo4W6Y4kO2+g=;
+        b=ImhBc9CrdUp/X72YZZHi5XdsW/3zz2Pr3yOcTRAU3YCpc4K1gxC0LCM0XCnjTgfOi7
+         QERbi2465VpW/QrIAdJJC5s0B2+xPzKBzmiDNQBfT8Y+6oFmcNhqhb4UWm082LmMmsTr
+         V2EtSLHwz/aonWK5/2sqir969rOySoT35q2iKZqSb9kzf+DGbdWh7V+PQcKVJljGMSdc
+         y5ja8wNF8gc61o5VTeqw9i+00tDgHVj7GQaq8xTjQsD1pvBIznN/cRihSWX/IVmF/EdR
+         5rHI7aog7i0fMRe220x+RRajunYCjSCOBCaQE3gLiOz+GXrZouVtoMb3BV7BsgR96Zd1
+         FSOw==
+X-Gm-Message-State: AOJu0YwBQNG0t0IzE9fhpERcLh66dMFDwELK0fBPUToy4KMJTiiTuKns
+	HB+RIVg3wbl0Si23msGu3Ri+NBYrS3jfI+HAVTiU+iwX0TJdl4XBSXfk
+X-Gm-Gg: Acq92OE0oNRad6zXVVTKQaFqcrYocAsala7HCq9x/oROE26kidzuNfClLUh9obIHw/e
+	lsAo9YpwKl5jeIe1et5Fee93Xm3INJ1TYsfGo9PWDs1oNd3EJZLCwjfv0yg7rzg0m5vr6OcRNGQ
+	dT3z58a4MzyIuR4puKWNeWL+8mu7SjW7bPgQnl4eORO6J/AZvwZ/LIm8IeV/hgWm/WnYkUEcCoh
+	4Z+CLLYqszjtnCImdz70D/N3qxYMe4qH434BDI/HesDsQ3aknP0gYBDfZ1tRKf1pEm0JsXYdSZV
+	7EmiYD4YGEB6ecxAxAtdShkxuIEka03tMwAf5bt59ytJmA5x8JoXLKnarbdoS49/ERcuIQFi/dI
+	TJgQsoBf9ku5+H7hnXXwGFzpxs5JgAaWxMxxCANl6qX1WRNHbmID2Yi39QkWKJjBDQOkzPpJ4kc
+	yP+B/+ay/iAD+CpveAhf3nmB3q7rhyUYjKSGebSNbCf4VD
+X-Received: by 2002:a7b:c3d1:0:b0:490:b92f:ef5b with SMTP id 5b1f17b1804b1-492341088b1mr2343925e9.13.1781641647445;
+        Tue, 16 Jun 2026 13:27:27 -0700 (PDT)
 Received: from [192.168.0.2] ([197.250.51.220])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49230a458f2sm89987005e9.3.2026.06.16.13.27.19
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49230a458f2sm89987005e9.3.2026.06.16.13.27.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jun 2026 13:27:22 -0700 (PDT)
+        Tue, 16 Jun 2026 13:27:27 -0700 (PDT)
 From: =?utf-8?q?Stefan_D=C3=B6singer?= <stefandoesinger@gmail.com>
-Date: Tue, 16 Jun 2026 23:26:28 +0300
-Subject: [PATCH RFC v4 08/12] clk: zte: Introduce a driver for zx297520v3
- matrix clocks
+Date: Tue, 16 Jun 2026 23:26:29 +0300
+Subject: [PATCH RFC v4 09/12] clk: zte: Introduce a driver for zx297520v3
+ LSP clocks
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -69,7 +69,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20260616-zx29clk-v4-8-ca994bd22e9d@gmail.com>
+Message-Id: <20260616-zx29clk-v4-9-ca994bd22e9d@gmail.com>
 References: <20260616-zx29clk-v4-0-ca994bd22e9d@gmail.com>
 In-Reply-To: <20260616-zx29clk-v4-0-ca994bd22e9d@gmail.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
@@ -81,219 +81,240 @@ Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
  =?utf-8?q?Stefan_D=C3=B6singer?= <stefandoesinger@gmail.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=9437;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=11110;
  i=stefandoesinger@gmail.com; h=from:subject:message-id;
- bh=2CJMMG1/LE5vixHG7JxoV5FWmwbKqkkpuEs/bq1yiII=;
- b=owEBiQJ2/ZANAwAIAT0TvMhUTxoiAcsmYgBqMbGGCHFBls8mhrHFC8ZuUkVYYpxIem8E07Qyy
- 5wFNEEcGaqJAk8EAAEIADkWIQRDFvS2qgVbJ5UyXWw9E7zIVE8aIgUCajGxhhsUgAAAAAAEAA5t
- YW51MiwyLjUrMS4xMiwyLDIACgkQPRO8yFRPGiL9gQ//WHbD9rNammpvKJ6xvivDdcp5lAm7ayr
- BrI9UdJZ6bORXL8cJ3dRUOqiXwvP6+Mwpz3bArD7GkCui3UWb69rRwF/mS2pzfPFBAG0m6XaRiX
- KzpE7bBmidqsftCxtWYreTC9z+ZIXrSQeOePfM7mtnEWsCAGdjszc4pZxFEhmE8G3y37U35Lfjy
- K1Qipeo8D3rTWjTO2S0ryp0g9+K9HJio8+/9YMC8WxknQmbNMUtHnhCJML8ENW3daNK+1zi/nQ6
- pH5j5j9KvzBTVr7aUKPRdUKRWMmu4KoeqfoLvq2CpHjzlBXdRe2Bgsg5bHVJww1OJtW8Ne5Bg7C
- Tt69FM7Am3xuAS89XweaMviBz53Mp5kkfh/i3GHO2eTnVYYVb7IubpeZKel1x8yF/znpUA+ti7f
- n/L3LoWwa527gicsarv6C7pxEjkatHarJmo3H3EIkRjQiwSRzYq1xepf33omqOJOiRuwqcZynr/
- pA4ezELr7pNJiirUbzJ2og3MgYTQYT667U7slpKPxGn2l5QTdOsONlrgrcj8H3CgJOgeJ0UUPOh
- uzL0hqeliXT8fssLrUAP/h93touFp20x+YBKv1I5BiGxF3fGjCVvkNoUDSaaWRc5li2qAsDiZAh
- IlE7U35SRr+1fgI8vmOHxa1nvHVZ9P7v/9xnCUgpSK+tAKcELtxA=
+ bh=lbHHuSxqYynCWbB7Q+n6QPG7iIdM8EIGUyLv56zQRDc=;
+ b=owEBiQJ2/ZANAwAIAT0TvMhUTxoiAcsmYgBqMbGG3cZnUlyNSfTHc6i03TNVKRGuxlVzqM1c0
+ Z0guS11NSCJAk8EAAEIADkWIQRDFvS2qgVbJ5UyXWw9E7zIVE8aIgUCajGxhhsUgAAAAAAEAA5t
+ YW51MiwyLjUrMS4xMiwyLDIACgkQPRO8yFRPGiI0rxAAmYmX3RvSjLds5sb3ahEFkJzTNThkZP6
+ YwB/Fyo/NA1qs+k8ryr2qqgGK3uifISAIQuPTdXTiqF5lbxGtg4OzfTJjGyQhSgnnH9PgvU0MUK
+ AqFWD/1j2ydjjzK2KQtKsfG193a+PDu8mi7Dg+brHozhi7Df4WAURitykgQRhWfBoP77fB2XgGp
+ 3fyK5BazcrnYn2P1gRdY0fqR2YChWxx2H2so373DOK38K6pr0o3M6t6Ww36px+FsOqBf7MMbp6i
+ oVGj6F5uUjG854BLBiBSojFdWIX51JKWeX3wAGldY63/88Cu09W8mKaRuqSK2wD0OZ1WuDO88pt
+ fBtiYgoQPJipigIXynLVVIB3vqTyhkfgxmAzBZEovS3aytTGM4WwGR1MJCsxCSNLtboZXkpR/MA
+ wgYACIu5wBUZjCiK6WZ56QkXnHNHKWBOg2jctuXSyTUruhYtMayLeCqrQIFl0xVCOyX60E5uz7N
+ G64fdok2OtlAtjF9feYs2vAeBMwFO/C5hN8wO6hPvW+xo8c+xtor2sIoBhgWirs5P8qVw2ee+AZ
+ 9lfck/VAybD2oXkEShpkXo7tAiyKIPOPzTh4oEFOEedJBhI24kB2Hs0clhHXbiDutsgWowLdtWB
+ a1s7vTcaA2evYlSTnT/R9qQp+K5SW39HqGmeDVgrZ/Z6AxS7jcxE=
 X-Developer-Key: i=stefandoesinger@gmail.com; a=openpgp;
  fpr=4F9C2C8728019633893EBBB98CB81F9A72BBA155
 
-This clock controller controls high speed devices: CPU, DMA, RAM, SDIO,
-Ethernet. The only non-clock, non-reset registers I have spotted here
-are hardware spinlocks.
+"LSP" is ZTE's term for this part of the SoC, I suspect it stands for
+"low speed peripherals". The main UART is here, together with the flash
+controller and more surplus proprietary timers.
 
-I put the entire set of PLL generated frequencies as consumed clocks in
-the binding. Due to lack of a data sheet I can't rule out that the any
-of the PLL subdivions are used.
+It also has two more I2C controllers that supposedly connect to a
+battery charger, SPI for displays and I2S for analog telephones. The
+boards I have don't have any of these components though.
 
 Signed-off-by: Stefan Dösinger <stefandoesinger@gmail.com>
 ---
- drivers/clk/zte/clk-zx297520v3.c | 172 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 172 insertions(+)
+ drivers/clk/zte/clk-zx297520v3.c | 192 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 192 insertions(+)
 
 diff --git a/drivers/clk/zte/clk-zx297520v3.c b/drivers/clk/zte/clk-zx297520v3.c
-index 50263bca6e08..d90aadf18026 100644
+index d90aadf18026..26b05f2bf97a 100644
 --- a/drivers/clk/zte/clk-zx297520v3.c
 +++ b/drivers/clk/zte/clk-zx297520v3.c
-@@ -410,8 +410,180 @@ static const struct zx_clk_data zx297520v3_topclk_data = {
- 	.reset_auxdev_name = "zx297520v3_toprst"
+@@ -581,9 +581,201 @@ static const struct zx_clk_data zx297520v3_matrixclk_data = {
+ 	.reset_auxdev_name = "zx297520v3_matrixrst"
  };
  
-+static const char * const cpu_sel[] = {
-+	"osc26m",
-+	"mpll",		/* 624 MHz */
-+	"mpll_d2",	/* 312 MHz */
-+	"mpll_d4",	/* 156 MHz */
++/* LSP clock entries have a common pattern: Bit 0 for WCLK, Bit 1 for PCLK. Bit 4 (and sometimes
++ * more) for WCLK mux.
++ *
++ * Bit 8 and 9 are reset bits. I don't know the difference between the two, but they both need to be
++ * set to deassert the reset.
++ *
++ * Bits 15:12 can be a divisor, but not all clocks have it. Some clocks have a divisor in 19:16.
++ *
++ * The ID given in this table is the first register in the device's MMIO space. ZTE's drivers
++ * usually call this a version register, but it looks more like a device identifier.
++ *
++ * It looks like the registers map to devices like this:
++ *
++ * Timer reg	function	div	dev offset(lsp + xxxx)	ID
++ * 0x0: Read-only, probably device identifier			0x00752100
++ * 0x4:		timer_l1	Y	0x1000			0x02020000
++ * 0x8:		watchdog_l2	Y	0x2000			0x02020000
++ * 0xc:		watchdog_l3	Y	0x3000			0x02020000
++ * 0x10:	pwm		N	0x4000			0x01020000
++ * 0x14:	i2s0		Yh	0x5000			0x01030000
++ * 0x18:	always 0	-	-			-
++ * 0x1c:	i2s1		Yh	0x6000			0x01030000
++ * 0x20:	always 0	-	-			-
++ * 0x24:	qspi		N	0x7000			0x01040000
++ * 0x28:	uart1		N	0x8000			0x01060000
++ * 0x2c:	i2c1		N	0x9000			0x01020000
++ * 0x30:	spi0		Y	0xa000			0x01040000
++ * 0x34:	timer_lb	Y	0xb000			0x02020000
++ * 0x38:	timer_lc	Y	0xc000			0x02020000
++ * 0x3c:	uart2		N	0xd000			0x01060000
++ * 0x40:	watchdog_le	Y	0xe000			0x02020000
++ * 0x44:	timer_lf	Y	0xf000			0x02020000
++ * 0x48:	spi1		Y	0x10000			0x01040000
++ * 0x4c:	timer_l11	Y	0x11000			0x02020000
++ * 0x50:	tdm		Yh	0x12000			0x01040000
++ *
++ * Registers 0x58, 0x5c, 0x60, 0x64, 0x68 seem to contain more controls for i2s and tdm.
++ *
++ * I am not sure about the device at offset 0x4000 (clk reg 0x10). The ID matches that of i2c, but
++ * it has a larger register set. I suspect it is a PWM device, but I have not seen any ZTE kernel
++ * operate it - even devices with displays only use a GPIO to control the backlight.
++ */
++
++static const char * const timer_lsp_sel[] = {
++	"lsp_osc32k",
++	"lsp_osc26m",
 +};
 +
-+static const char * const sd0_sel[] = {
-+	"osc26m",
-+	"mpll_d4",	/* 156 MHz */
-+	"gpll_d2",	/* 100 MHz */
-+	"mpll_d8",	/* 78 MHz */
-+	"gpll_d4",	/* 50 MHz */
-+	"gpll_d8",	/* 25 MHz */
++static const char * const uart_lsp_sel[] = {
++	"lsp_osc26m",
++	"lsp_mpll_d6",
 +};
 +
-+static const char * const sd1_sel[] = {
-+	"osc26m",
-+	"gpll_d2",	/* 100 MHz */
-+	"mpll_d8",	/* 78 MHz */
-+	"gpll_d4",	/* 50 MHz */
-+	"mpll_d16",	/* 39 MHz */
-+	"gpll_d8",	/* 25 MHz */
++static const char * const i2s_lsp_sel[] = {
++	"lsp_osc26m",
++	"lsp_dpll_d4",
++	"lsp_mpll_d6",
++	/* Unknown */
 +};
 +
-+static const char * const nand_sel[] = {
-+	"mpll_d4",	/* 156 MHz */
-+	"osc26m",
++static const char * const tdm_lsp_sel[] = {
++	"lsp_tdm_wclk",
 +};
 +
-+static const char * const edcp_sel[] = {
-+	"osc26m",
-+	"mpll_d4",	/* 156 MHz */
-+	"mpll_d5",	/* 124.8 MHz */
-+	"mpll_d6",	/* 104 MHz */
++static const char * const spi_lsp_sel[] = {
++	"lsp_osc26m",
++	"lsp_mpll_d4",
++	"lsp_mpll_d6",
++	/* Unknown */
 +};
 +
-+static const char * const tdm_sel[] = {
-+	"osc26m",
-+	"dpll_d4",	/* 122.88 MHz */
-+	"mpll_d6",	/* 104 MHz */
++static const char * const qspi_lsp_sel[] = {
++	"lsp_osc26m",
++	"lsp_mpll_d4",
++	"lsp_mpll_d5",
++	"lsp_mpll_d6",
++	"lsp_mpll_d8",
++	"lsp_mpll_d12",
++	"lsp_osc26m",
++	"lsp_osc26m",
 +};
 +
-+static const struct zx_mux_desc zx297520v3_matrix_muxes[] = {
-+	MUX(0,                             "cpu_mux",        cpu_sel,          0x20,  0, 2),
-+	MUX(0,                             "sd0_mux",        sd0_sel,          0x50,  4, 3),
-+	MUX(0,                             "sd1_mux",        sd1_sel,          0x50,  8, 3),
-+	MUX(0,                             "nand_mux",       nand_sel,         0x50, 12, 2),
-+	MUX(0,                             "edcp_mux",       edcp_sel,         0x50, 16, 2),
-+	MUX(0,                             "tdm_mux",        tdm_sel,          0x50, 24, 2),
++static const struct zx_mux_desc zx297520v3_lsp_muxes[] = {
++	MUX(0,                             "timer_l1_mux",   timer_lsp_sel,    0x04,  4, 1),
++	MUX(0,                             "wdt_l2_mux",     timer_lsp_sel,    0x08,  4, 1),
++	MUX(0,                             "wdt_l3_mux",     timer_lsp_sel,    0x0c,  4, 1),
++	/* PWM: No mux bit can be set */
++	MUX(0,                             "i2s0_mux",       i2s_lsp_sel,      0x14,  4, 2),
++	/* 0x18: Always 0 */
++	MUX(0,                             "i2s1_mux",       i2s_lsp_sel,      0x1c,  4, 2),
++	/* 0x20: Always 0 */
++	MUX(0,                             "qspi_mux",       qspi_lsp_sel,     0x24,  4, 3),
++	MUX(0,                             "uart1_mux",      uart_lsp_sel,     0x28,  4, 1),
++	MUX(0,                             "i2c1_mux",       uart_lsp_sel,     0x2c,  4, 1),
++	MUX(0,                             "spi0_mux",       spi_lsp_sel,      0x30,  4, 2),
++	MUX(0,                             "timer_lb_mux",   timer_lsp_sel,    0x34,  4, 1),
++	MUX(0,                             "timer_lc_mux",   timer_lsp_sel,    0x38,  4, 1),
++	MUX(0,                             "uart2_mux",      uart_lsp_sel,     0x3c,  4, 1),
++	MUX(0,                             "wdt_le_mux",     timer_lsp_sel,    0x40,  4, 1),
++	MUX(0,                             "timer_lf_mux",   timer_lsp_sel,    0x44,  4, 1),
++	MUX(0,                             "spi1_mux",       spi_lsp_sel,      0x48,  4, 2),
++	MUX(0,                             "timer_l11_mux",  timer_lsp_sel,    0x4c,  4, 1),
++	/* TDM: No mux in LSP. Instead, it is in matrix with a separate clk line to LSP */
 +};
 +
-+static const struct zx_gate_desc zx297520v3_matrix_gates[] = {
-+	/* Both 0x24 and 0x28 bits 1 and 2 stop the CPU. There is also a bit in topclk+0x138, which
-+	 * ZTE's uboot calls "A53 reset", which also stops the CPU. I can't really tell the
-+	 * difference between matrix+28 and top+138. The clock (maxtrix+0x24) can be disabled and
-+	 * enabled from the Cortex M0 and it will nicely stop and restart the A53, retaining all
-+	 * state.
-+	 *
-+	 * 0x50, bits 0-3 have the DDR clock. A lot of DDR gates and resets are in 0x100.
-+	 */
-+	GATE(ZX297520V3_CPU_WCLK,          "cpu_wclk",       "cpu_mux",        0x24,  1,
-+		CLK_IS_CRITICAL),
-+	GATE(ZX297520V3_CPU_PCLK,          "cpu_pclk",       clk_main[0],      0x24,  2,
-+		CLK_IS_CRITICAL),
-+
-+	/* ZSP aka LTE DSP clock. I think there is a mux at matrix+0x30, but I have no idea
-+	 * about the frequencies it selects.
-+	 */
-+	GATE(ZX297520V3_ZSP_WCLK,          "zsp_wclk",       clk_unknown[0],   0x3c,  0, 0),
-+
-+	GATE(ZX297520V3_SD0_WCLK,          "sd0_wclk",       "sd0_mux",        0x54, 12, 0),
-+	GATE(ZX297520V3_SD0_PCLK,          "sd0_pclk",       clk_main[0],      0x54, 13, 0),
-+	GATE(ZX297520V3_SD0_CDET,          "sd0_cdet",       "osc32k",         0x54, 14, 0),
-+	GATE(ZX297520V3_SD1_WCLK,          "sd1_wclk",       "sd1_mux",        0x54,  4, 0),
-+	GATE(ZX297520V3_SD1_PCLK,          "sd1_pclk",       clk_main[0],      0x54,  5, 0),
-+	/* I don't know how the cdet clock works. Card detection in the way the dwc,mmc driver uses
-+	 * it appears broken no matter this clock's setting.
-+	 */
-+	GATE(ZX297520V3_SD1_CDET,          "sd1_cdet",       "osc32k",         0x54,  6, 0),
-+
-+	/* This is some "denali" NAND, not the qspi connected one */
-+	GATE(ZX297520V3_NAND_WCLK,         "nand_wclk",      "nand_mux",       0x54, 20, 0),
-+	GATE(ZX297520V3_NAND_PCLK,         "nand_pclk",      clk_main[0],      0x54, 21, 0),
-+	GATE(ZX297520V3_SSC_WCLK,          "ssc_wclk",       clk_unknown[0],   0x84,  1, 0),
-+	GATE(ZX297520V3_SSC_PCLK,          "ssc_pclk",       clk_main[0],      0x84,  2, 0),
-+
-+	/* Yes, WCLK bit > PCLK bit for EDCP */
-+	GATE(ZX297520V3_EDCP_WCLK,         "edcp_wclk",      "edcp_mux",       0x64,  2, 0),
-+	GATE(ZX297520V3_EDCP_PCLK,         "edcp_pclk",      clk_main[0],      0x64,  1, 0),
-+
-+	/* There are a lot more VOU related controls in these registers, but turning off the main
-+	 * clock seems to shut off the entire VOU MMIO range.
-+	 */
-+	GATE(ZX297520V3_VOU_WCLK,          "vou_wclk",       clk_unknown[0],  0x168,  0, 0),
-+	GATE(ZX297520V3_VOU_PCLK,          "vou_pclk",       clk_main[0],     0x168,  1, 0),
-+
-+	/* PDCFG. Like PMM, either clock bit will allow the device to function. */
-+	GATE(ZX297520V3_PDCFG_WCLK,        "pdcfg_wclk",     clk_unknown[0],   0x88,  0,
-+		CLK_IS_CRITICAL),
-+	GATE(ZX297520V3_PDCFG_PCLK,        "pdcfg_pclk",     clk_main[0],      0x88,  1,
-+		CLK_IS_CRITICAL),
-+
-+	/* ZTE's driver has a statemt to the effect of *(top->base+0x11c) = 5, with a comment
-+	 * suggesting that this sets a 50 mhz clock. The clock code itself lists gmac clocks in
-+	 * matrix+110 and lists the parents of these clock as 50mhz gpll output, but the GMAC
-+	 * driver never enables the clocks. It turns out ZTE's code is highly misleading.
-+	 *
-+	 * The GMAC's work clock is definitly not any gpll output because it keeps working fine with
-+	 * gpll disabled. The MDIO speed is mostly unaffected by mpll speed changes, so it is most
-+	 * likely not fed by mpll either. All other PLLs can be disabled without breaking GMAC, so
-+	 * osc26m is the only possible remaining parent.
-+	 *
-+	 * The GMAC Gates are left enabled by the boot loader and are required for the GMAC to work.
-+	 *
-+	 * As for the 50 MHz comment: See rmiiphy_wclk.
-+	 */
-+	GATE(ZX297520V3_GMAC_WCLK,         "gmac_wclk",      clk_main[0],     0x110,  0, 0),
-+	GATE(ZX297520V3_GMAC_PCLK,         "gmac_pclk",      clk_main[0],     0x110,  1, 0),
-+	GATE(ZX297520V3_GMAC_AHB,          "gmac_ahb",       "AHB_wclk",      0x110,  2, 0),
-+
-+	GATE(ZX297520V3_MBOX_PCLK,         "mbox_pclk",      clk_main[0],      0x88,  2, 0),
-+	GATE(ZX297520V3_DMA_PCLK,          "dma_pclk",       clk_main[0],      0x94,  3, 0),
-+
-+	/* LSP uplink clocks. The PCLK is fairly obvious (disabling it shuts off the entire LSP
-+	 * register area). The WCLK speeds were deduced by setting timers and qspi muxes to a
-+	 * specific speed and seeing which bit in matrix+0x7c needs to be enabled for the device
-+	 * to work.
-+	 *
-+	 * Due to the timers I am certain about the 26mhz and 32khz clocks. I cannot directly
-+	 * observe the qspi mux frequency, so the clock rates depend on ZTE's qspi mux selection
-+	 * being correct.
-+	 *
-+	 * Two additional bits are specific to sound components - the mux for the LSP's TDM IP is
-+	 * in matrixclk and gets passed down. I2S has a mux in LSP, which can select the dpll_d4
-+	 * clock.
-+	 */
-+	GATE(ZX297520V3_LSP_MPLL_D5_WCLK,  "lsp_mpll_d5",    "mpll_d5",        0x7c,  0, 0),
-+	GATE(ZX297520V3_LSP_MPLL_D4_WCLK,  "lsp_mpll_d4",    "mpll_d4",        0x7c,  1, 0),
-+	GATE(ZX297520V3_LSP_MPLL_D6_WCLK,  "lsp_mpll_d6",    "mpll_d6",        0x7c,  2, 0),
-+	GATE(ZX297520V3_LSP_MPLL_D8_WCLK,  "lsp_mpll_d8",    "mpll_d8",        0x7c,  3, 0),
-+	GATE(ZX297520V3_LSP_MPLL_D12_WCLK, "lsp_mpll_d12",   "mpll_d12",       0x7c,  4, 0),
-+	GATE(ZX297520V3_LSP_OSC26M_WCLK,   "lsp_osc26m",     clk_main[0],      0x7c,  5, 0),
-+	GATE(ZX297520V3_LSP_OSC32K_WCLK,   "lsp_osc32k",     "osc32k",         0x7c,  6, 0),
-+	GATE(ZX297520V3_LSP_PCLK,          "lsp_pclk",       clk_main[0],      0x7c,  7, 0),
-+	GATE(ZX297520V3_LSP_TDM_WCLK,      "lsp_tdm_wclk",   "tdm_mux",        0x7c,  8, 0),
-+	GATE(ZX297520V3_LSP_DPLL_D4_WCLK,  "lsp_dpll_d4",    "dpll_d4",        0x7c,  9, 0),
++static const struct zx_div_desc zx297520v3_lsp_dividers[] = {
++	DIV(0,                             "timer_l1_div",   "timer_l1_mux",   0x04, 12, 4),
++	DIV(0,                             "wdt_l2_div",     "wdt_l2_mux",     0x08, 12, 4),
++	DIV(0,                             "wdt_l3_div",     "wdt_l3_mux",     0x0c, 12, 4),
++	/* PWM: No div */
++	DIV(0,                             "i2s0_div",       "i2s0_mux",       0x14, 16, 4),
++	/* 0x18: Always 0 */
++	DIV(0,                             "i2s1_div",       "i2s1_mux",       0x1c, 16, 4),
++	/* 0x20: Always 0 */
++	/* qspi, uart1, i2c1: No div */
++	DIV(0,                             "spi0_div",       "spi0_mux",       0x30, 12, 4),
++	DIV(0,                             "timer_lb_div",   "timer_lb_mux",   0x34, 12, 4),
++	DIV(0,                             "timer_lc_div",   "timer_lc_mux",   0x38, 12, 4),
++	/* uart2: No div */
++	DIV(0,                             "wdt_le_div",     "wdt_le_mux",     0x40, 12, 4),
++	DIV(0,                             "timer_lf_div",   "timer_lf_mux",   0x44, 12, 4),
++	DIV(0,                             "spi1_div",       "spi1_mux",       0x48, 12, 4),
++	DIV(0,                             "timer_l11_div",  "timer_l11_mux",  0x4c, 12, 4),
++	DIV(0,                             "tdm_div",        "lsp_tdm_wclk",   0x50, 16, 4),
 +};
 +
-+static const char * const zx297529v3_matrix_inputs[] = {
-+	"osc26m", "osc32k",
-+	"mpll", "mpll_d2", "mpll_d3", "mpll_d4", "mpll_d5", "mpll_d6", "mpll_d8", "mpll_d12",
-+	"mpll_d16", "mpll_d26",
-+	"upll", "upll_d2", "upll_d3", "upll_d4", "upll_d5", "upll_d6", "upll_d8", "upll_d12",
-+	"upll_d16",
-+	"dpll", "dpll_d2", "dpll_d3", "dpll_d4", "dpll_d5", "dpll_d6", "dpll_d8", "dpll_d12",
-+	"dpll_d16",
-+	"gpll", "gpll_d2", "gpll_d3", "gpll_d4", "gpll_d5", "gpll_d6", "gpll_d8", "gpll_d12",
-+	"gpll_d16",
++static const struct zx_gate_desc zx297520v3_lsp_gates[] = {
++	GATE(ZX297520V3_TIMER_L1_WCLK,     "timer_l1_wclk",  "timer_l1_div",   0x04,  0, 0),
++	GATE(ZX297520V3_TIMER_L1_PCLK,     "timer_l1_pclk",  "lsp_pclk",       0x04,  1, 0),
++	GATE(ZX297520V3_WDT_L2_WCLK,       "wdt_l2_wclk",    "wdt_l2_div",     0x08,  0, 0),
++	GATE(ZX297520V3_WDT_L2_PCLK,       "wdt_l2_pclk",    "lsp_pclk",       0x08,  1, 0),
++	GATE(ZX297520V3_WDT_L3_WCLK,       "wdt_l3_wclk",    "wdt_l3_div",     0x0c,  0, 0),
++	GATE(ZX297520V3_WDT_L3_PCLK,       "wdt_l3_pclk",    "lsp_pclk",       0x0c,  1, 0),
++	/* I don't know the LSP parent. It must be one of the LSP inputs though. */
++	GATE(ZX297520V3_PWM_WCLK,          "pwm_wclk",       "lsp_osc26m",     0x10,  0, 0),
++	GATE(ZX297520V3_PWM_PCLK,          "pwm_pclk",       "lsp_pclk",       0x10,  1, 0),
++	GATE(ZX297520V3_I2S0_WCLK,         "i2s0_wclk",      "i2s0_div",       0x14,  0, 0),
++	GATE(ZX297520V3_I2S0_PCLK,         "i2s0_pclk",      "lsp_pclk",       0x14,  1, 0),
++	/* 0x1c: Always 0 */
++	GATE(ZX297520V3_I2S1_WCLK,         "i2s1_wclk",      "i2s1_div",       0x1c,  0, 0),
++	GATE(ZX297520V3_I2S1_PCLK,         "i2s1_pclk",      "lsp_pclk",       0x1c,  1, 0),
++	/* 0x20: Always 0 */
++	GATE(ZX297520V3_QSPI_WCLK,         "qspi_wclk",      "qspi_mux",       0x24,  0, 0),
++	GATE(ZX297520V3_QSPI_PCLK,         "qspi_pclk",      "lsp_pclk",       0x24,  1, 0),
++	GATE(ZX297520V3_UART1_WCLK,        "uart1_wclk",     "uart1_mux",      0x28,  0, 0),
++	GATE(ZX297520V3_UART1_PCLK,        "uart1_pclk",     "lsp_pclk",       0x28,  1, 0),
++	GATE(ZX297520V3_I2C1_WCLK,         "i2c1_wclk",      "i2c1_mux",       0x2c,  0, 0),
++	GATE(ZX297520V3_I2C1_PCLK,         "i2c1_pclk",      "lsp_pclk",       0x2c,  1, 0),
++	GATE(ZX297520V3_SPI0_WCLK,         "spi0_wclk",      "spi0_div",       0x30,  0, 0),
++	GATE(ZX297520V3_SPI0_PCLK,         "spi0_pclk",      "lsp_pclk",       0x30,  1, 0),
++	GATE(ZX297520V3_TIMER_LB_WCLK,     "timer_lb_wclk",  "timer_lb_div",   0x34,  0, 0),
++	GATE(ZX297520V3_TIMER_LB_PCLK,     "timer_lb_pclk",  "lsp_pclk",       0x34,  1, 0),
++	GATE(ZX297520V3_TIMER_LC_WCLK,     "timer_lc_wclk",  "timer_lc_div",   0x38,  0, 0),
++	GATE(ZX297520V3_TIMER_LC_PCLK,     "timer_lc_pclk",  "lsp_pclk",       0x38,  1, 0),
++	GATE(ZX297520V3_UART2_WCLK,        "uart2_wclk",     "uart2_mux",      0x3c,  0, 0),
++	GATE(ZX297520V3_UART2_PCLK,        "uart2_pclk",     "lsp_pclk",       0x3c,  1, 0),
++	GATE(ZX297520V3_WDT_LE_WCLK,       "wdt_le_wclk",    "wdt_le_div",     0x40,  0, 0),
++	GATE(ZX297520V3_WDT_LE_PCLK,       "wdt_le_pclk",    "lsp_pclk",       0x40,  1, 0),
++	GATE(ZX297520V3_TIMER_LF_WCLK,     "timer_lf_wclk",  "timer_lf_div",   0x44,  0, 0),
++	GATE(ZX297520V3_TIMER_LF_PCLK,     "timer_lf_pclk",  "lsp_pclk",       0x44,  1, 0),
++	GATE(ZX297520V3_SPI1_WCLK,         "spi1_wclk",      "spi1_div",       0x48,  0, 0),
++	GATE(ZX297520V3_SPI1_PCLK,         "spi1_pclk",      "lsp_pclk",       0x48,  1, 0),
++	GATE(ZX297520V3_TIMER_L11_WCLK,    "timer_l11_wclk", "timer_l11_div",  0x4c,  0, 0),
++	GATE(ZX297520V3_TIMER_L11_PCLK,    "timer_l11_pclk", "lsp_pclk",       0x4c,  1, 0),
++	GATE(ZX297520V3_TDM_WCLK,          "tdm_wclk",       "tdm_div",        0x50,  0, 0),
++	GATE(ZX297520V3_TDM_PCLK,          "tdm_pclk",       "lsp_pclk",       0x50,  1, 0),
 +};
 +
-+static const struct zx_clk_data zx297520v3_matrixclk_data = {
-+	.inputs = zx297529v3_matrix_inputs,
-+	.num_inputs = ARRAY_SIZE(zx297529v3_matrix_inputs),
-+	.muxes = zx297520v3_matrix_muxes,
-+	.num_muxes = ARRAY_SIZE(zx297520v3_matrix_muxes),
-+	.gates = zx297520v3_matrix_gates,
-+	.num_gates = ARRAY_SIZE(zx297520v3_matrix_gates),
-+	.reset_auxdev_name = "zx297520v3_matrixrst"
++static const char * const zx297529v3_lsp_inputs[] = {
++	"mpll_d5", "mpll_d4", "mpll_d6", "mpll_d8", "mpll_d12",
++	"osc26m", "osc32k", "tdm_wclk", "dpll_d4"
++};
++
++static const char * const zx297529v3_lsp_inputs_enable[] = {
++	"pclk"
++};
++
++static const struct zx_clk_data zx297520v3_lspclk_data = {
++	.inputs_enable = zx297529v3_lsp_inputs_enable,
++	.num_inputs_enable = ARRAY_SIZE(zx297529v3_lsp_inputs_enable),
++	.inputs = zx297529v3_lsp_inputs,
++	.num_inputs = ARRAY_SIZE(zx297529v3_lsp_inputs),
++	.muxes = zx297520v3_lsp_muxes,
++	.num_muxes = ARRAY_SIZE(zx297520v3_lsp_muxes),
++	.divs = zx297520v3_lsp_dividers,
++	.num_divs = ARRAY_SIZE(zx297520v3_lsp_dividers),
++	.gates = zx297520v3_lsp_gates,
++	.num_gates = ARRAY_SIZE(zx297520v3_lsp_gates),
++	.reset_auxdev_name = "zx297520v3_lsprst"
 +};
 +
  static const struct of_device_id of_match_zx297520v3[] = {
  	{ .compatible = "zte,zx297520v3-topclk", .data = &zx297520v3_topclk_data },
-+	{ .compatible = "zte,zx297520v3-matrixclk", .data = &zx297520v3_matrixclk_data },
+ 	{ .compatible = "zte,zx297520v3-matrixclk", .data = &zx297520v3_matrixclk_data },
++	{ .compatible = "zte,zx297520v3-lspclk", .data = &zx297520v3_lspclk_data },
  	{ }
  };
  MODULE_DEVICE_TABLE(of, of_match_zx297520v3);
