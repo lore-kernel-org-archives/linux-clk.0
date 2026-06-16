@@ -1,153 +1,138 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 663C5282F01
-	for <linux-clk@vger.kernel.org>; Tue, 16 Jun 2026 08:39:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA5E442E01D
+	for <linux-clk@vger.kernel.org>; Tue, 16 Jun 2026 10:45:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781599143; cv=none; b=agnaRpw1QF7L3CSSBJQZEXNx2EBaDZdmFcToEDE/B1x0sFW3rV91ckbvDaa+FFHp8fac9nVpTSMTCRsup48ijhu/T/6UAMzN3kRZGKx6NYyObx+WXQwpeYGyBg/D0xDsUTivHXm0+Ux8x+7PmsNehDEtT965ZMiJyyE/Jn0NMZk=
+	t=1781606706; cv=none; b=YQtNkweaupyMOv8N6cJB4wowRJjXctzkqGj7An/Yc8SEKkn8b9bLWJhW3FNjzJospJ2eJ1Qneq70dPtKkfr7Sf7dobOCGv7nCXCfQ4/rCKt0IGGwtqCCCUdTevUqc/fnfqHMdL7+PmtTTq6cZqPqAz+Avl7i7/m/+GeqVf6kQ4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781599143; c=relaxed/simple;
-	bh=k8aQq5wGmFAB4J4lBgkr9j72Y9UninjoFJHtA/6CKlU=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=oszOMj/pcI8ODnWgfq176S5wMg6rRe2HGbVjsWUzpqM8w+0TRTp8OCPYuzLw4+kBvMvfVTECcR4vk4BNwDwkSKVsJqvvr8/8PMmcrkBzLBbMvi9cNAtYXC8czhiMxL9kgbelm5NjME/UEeAJQE0ZgAwrqRCe2h5fqPmMvf4uZNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=J7OZ/uPb; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1781606706; c=relaxed/simple;
+	bh=sKtKuInWWgkpnwOdLL4P+tLnyENjTquK40r7C4btG6Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ns3NMDIY18Jo48x2vftGQ4/OnqwO+RtAVcsMCeBTSALe77hSbp4ZIE6KAn8Apoa2kLYf7W0PjFfB8UQGBj/88SyQUAdqwmOStTUWqQwlmO25xEN0nZs+L3VojXeGKE5BpZWw51b45xi3fgyYyZaJ29TFmx1rIdIm2x6v4q/XoA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i/Ru7QiU; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="J7OZ/uPb"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4921eed3fa2so26906485e9.0
-        for <linux-clk@vger.kernel.org>; Tue, 16 Jun 2026 01:39:01 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i/Ru7QiU"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-490c1915793so37425615e9.2
+        for <linux-clk@vger.kernel.org>; Tue, 16 Jun 2026 03:45:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1781599140; x=1782203940; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kTZp3Url2zZDdRq9wvwMvf217hOXdGlg4G7ifVPCt0M=;
-        b=J7OZ/uPbYioBaElB78mQDC8gLuglE0SIflZu864FX+21Osctd+gkjzlUrqNWORzpxR
-         OIDofk8l2k3i8E8nCtN+MtlehMgE9BQiggK5SCDy8TMNWUq795eSwo0bRunt9OPTivnO
-         A1GO4Icw/4yTOsDFycv0G8zAegc2SBABQcXb2wHquEALpuU2AcPIJUpRi4A2BPeckiuR
-         FtEKDlfmyCbXPgGB74M9IzWexkAm1POuDWUrMdkFtVYgrXIIXkpqvk68YcrQCrNBtyG+
-         C6PMzV8A5c8o1gJyJNynwnMYxyF/YHiibeQF7fZq1nhtIwBGXbJft288cPp5/Mvi4Os4
-         THAA==
+        d=gmail.com; s=20251104; t=1781606703; x=1782211503; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=v+W3gkJdUSVWqcMXGqjt/1kOI7XTiovzDDxctkwEQPc=;
+        b=i/Ru7QiUzfKr3YVecRZc1fd/7oKYU+TowVY2i1EcwBmTicUWOFluN09vik4kKTzsS3
+         fhgIRk0U93iLfRkgxbodCbhdXw9qHdCokWn8TT1sQwdE62jxNrfldjTWzkl26hx/U8iG
+         Hfa74vvt88RxV0CDNVbgvwncpPxa3Ziz2/Oj6P2OybOWJQL0HmQ9TR873JbUKsmfRPmH
+         OZ+qrHrKCz/6BQzHDGluetj4nBtcLIck2/YxXHV2qUFtZpiwVzxMOCEqW3wUQR/WJRuP
+         /aAJOhqUgnQTw1LZUqzD8DBFZ+bihaUBwwEOywSe3r+rOoU1HEHSAGRN3gHTIunN+3zU
+         PacA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781599140; x=1782203940;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kTZp3Url2zZDdRq9wvwMvf217hOXdGlg4G7ifVPCt0M=;
-        b=G/ei0QxZsy+qvHY0sg/FHJjtjshIODYY/7FEXN/n9t05aGnwOAseLQrXhnYsq/k+Xn
-         kE1vxgWpuEYEBq9StBYweIO5X0fMNBIIzge0Hh8IxNeNiGCo5ZubIyZyEZHhf5ZC4o52
-         pCWEKyPPIMnLyoxealTKx49y8LVQ4cQXcSMQBh4z6v6B2c2CyGwrNHB2eJswkIqxUja8
-         NGJ44VIH7W+PH7Gp2Hcp4bSkphbvF5nyp8BswQYm1Z4FU+YWRFnCMfEhCO3PjM2/F/L9
-         iAyLE0dYv61ZLikqthXhU8ua02i2KX2k1dQEv2Iq10+wX2Db/lxSNqDV4I9gz+CJtHND
-         X3xg==
-X-Forwarded-Encrypted: i=1; AFNElJ+Y4a1Fgvz+H1hqBNUKe/LDEUJ3vieDRU2CK6WLq/CB28mfvxKzy1ebzR19EP8lJulmpozR8wablug=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yya6AxDgn3Nt6zSHgs/bZeSybdrEyE3boZP4BLnNNen5D5RcHeB
-	gIYZgqAmwK5LLMs65xhhcL+bwOyv84BlzHD4Ekh0tZWjl6LSDjLLMctzq0CF7Ras1XI=
-X-Gm-Gg: Acq92OEoMB6x7njXfeKtPr/pDPo+5SXlI4X2YakFgPvo9oXoo7OYQvt0zaL3gmhPHYN
-	pUdksjSmbNN3jxUyw/PmRH0UgnOJqi/KQTrXMK+SN44uBVX6YSBrqxkYcnHHNvpRiTMQP3GBui8
-	mLR+atpcQzwTCg44PIoh2yPdLWs/URph0XDUmqQ3l9yhNFFxJ20fLKjNLENHLxa4B8Myuy+0unc
-	/IorxFa3UduQDjPRdrXMhM112uUNDHwNHMo85rickgdLjoef6epT8bKFHJbyCUXsjWpFHleqmGV
-	7zFkeWAvcY97xVVcHNBR8ZNdg0KqY4k38zm/7baVazLmHPlVj8gBVwx1InyV0yPkKhOiVA0Mw3/
-	Z6Gfqo1NrzbVHTyM2KwSePyl9nr7LmI19gL4pxlU8aow1QSpQE677v1LckDYuCH3B+pdyfe1vnp
-	cz/fUo4lVYTlcS1GGWBN4wlzjoxXO8JQ==
-X-Received: by 2002:a05:600c:34c8:b0:492:1e36:8c4b with SMTP id 5b1f17b1804b1-4921e368c91mr191827965e9.36.1781599139730;
-        Tue, 16 Jun 2026 01:38:59 -0700 (PDT)
-Received: from [10.3.4.22] ([212.133.41.77])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4606f2b0c10sm42736575f8f.21.2026.06.16.01.38.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Jun 2026 01:38:59 -0700 (PDT)
-Message-ID: <50b8d6e1-7038-4752-a200-441736dc7135@linaro.org>
-Date: Tue, 16 Jun 2026 10:38:57 +0200
+        d=1e100.net; s=20251104; t=1781606703; x=1782211503;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=v+W3gkJdUSVWqcMXGqjt/1kOI7XTiovzDDxctkwEQPc=;
+        b=hr0HCUyKtEU7msL6R1+/kK+jlxhrgAJuGpRRuDJBNdayttFbfzep9dWtC3HZwpnth9
+         HJQV3cEK8WashvNzKdKhQv2aod0xYsjUaxfc3nwC+3gVjdEPyYfpYWbVI17JWL3WM24p
+         sr4URN6MYhr+u5X7RPfxUUKAEasftMT9zPk/lNG+UBaMXC23i48FW2IihFnWfFFuzdot
+         nfaOsQZUgZe31gj5cgEbuyivJ60d1yQShVub5mLQKkxqInbGy+h32W55ADxA5nBtZ5jL
+         8/NTI7HYhvdWFZP5IzgqT32iR8piSeJuYZJ1AseAOrdGEATT8/3H8avxDw8DM7blJ5Fz
+         WRxg==
+X-Forwarded-Encrypted: i=1; AFNElJ+/rjiAytarVuGdm0sQoxSD1/q9JTZq8ar8TBwjTzmhSOWsBWRLxKkNHUNoea6ZNx+Z9htrNEPLeyE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3qYWf+yIaIveQFU+ug9VKmiJe3ecD0DlcddPvM39HU5FMZ8qR
+	o6vL8dRhHehMPwSuUo7xHpXVXtUXT4icWD0xZfml6KRpOCGVjwtpZ42q
+X-Gm-Gg: Acq92OHeh/eWD78iP1n4cQKEHcuzOvtP/nvBPcteIV6xnC+EZ3/JVNuaIr0ShKbyrnf
+	oSDnllf6AK8M3LoSjuOBcXLC/D6qvDbNfE6tsCAB/ppnvrnb+Eq177LGj2FeguZurf3eMJlIAw9
+	j546Gykj0PvhItGnDG7BsDE6N9VRmCIPocZJ1/olf00kcBK1VRIOqE355PIju/VZ1u7ocai4K2u
+	L6gGGGAS5cHixlQ8k8dBAxR1eQOHUdBqKNIh2QK0sDUVYGggVuOBNGnREWuFqNx1cmrW0HBL0AH
+	Wiafs/3HqbX96KECRG1qV0dJk1PuTKJ4hY+dqsmeDXJxMW9FAwvFKg/cJmDeTKqbm+u+zgL+bZw
+	iY1w7zjJg9XN+in8XUbOuO5lVpUlJRX/OTDB9aqqv/aBC0mw9vNBcZ4aaotpgYaBtp07e59AbLZ
+	HIhgbYPWoS5jt97MErbarYonthMmnJDjgGfK+bAWIPy+WGPt+h
+X-Received: by 2002:a05:600c:190b:b0:490:bcf6:469f with SMTP id 5b1f17b1804b1-490ec33898fmr239045165e9.0.1781606703064;
+        Tue, 16 Jun 2026 03:45:03 -0700 (PDT)
+Received: from localhost.localdomain ([2a00:23c4:a700:7301:7499:34c3:598b:e20c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4922fa47da9sm82458485e9.5.2026.06.16.03.45.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Jun 2026 03:45:02 -0700 (PDT)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Vinod Koul <vkoul@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH v2 00/10] Add RZ/G3L USB2.0 host support
+Date: Tue, 16 Jun 2026 11:44:42 +0100
+Message-ID: <20260616104459.410743-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH v2 1/6] dt-bindings: clock: qcom: gcc-sm8450: Add missing
- power-domains property
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
- Abel Vesa <abelvesa@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
- Sai Prakash Ranjan <quic_saipraka@quicinc.com>,
- Brian Masney <bmasney@redhat.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20260615-topic-sm8x50-tie-gcc-to-cx-v2-0-6b5752dd4747@linaro.org>
- <20260615-topic-sm8x50-tie-gcc-to-cx-v2-1-6b5752dd4747@linaro.org>
- <1d4f3e4e-ec9e-44d0-9e4a-651b6920015c@kernel.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <1d4f3e4e-ec9e-44d0-9e4a-651b6920015c@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 6/16/26 10:36, Krzysztof Kozlowski wrote:
-> On 15/06/2026 18:57, Neil Armstrong wrote:
->> In order for the GCC votes on the GDSCs it provides to be propagated
->> to CX, CX needs to be declared as power domain of the GCC.
-> 
-> I would be happier to see here short mentioning what is the effect of
-> missing votes - do things work? - as justification why required
-> property, thus ABI change, is justified.
-> 
-> The DTS patches gave me that answer, but should be here as well the best.
-> 
-> Well, don't want to stall anything here, so anyway:
-> 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Thanks I'll update the commit message with the same explanation as
-the DT changes.
+Add device tree binding support for the RZ/G3L (r9a08g046) USB PHY
+controller. The RZ/G3L USB PHY block is similar to RZ/G3S, but each port
+has an OTG controller, unlike RZ/G3S, which has an OTG controller only on
+port 1.
 
-Thanks,
-Neil
+v1->v2:
+ * Dropped patch#6(Introduce helper for regulator registration)
+ * Passing pointer to an array of regulators to make it scalable.
+ * Dropped regulator1-vbus and added a regulators group node.
+ * Updated commit description for patch#1,#4,#6,#7,#8,#9 and #10.
+ * Added enum instead of const in the compatible section.
+ * Updated schema check.
+ * Collected tag for PHY binding patch.
+   in the regulator driver.
+ * Added regulators group node and its children in SoC dtsi.
 
-> 
->>
->> Document the missing power-domains property to that purpose.
->>
->> Fixes: 72a0ca203ca7 ("dt-bindings: clock: Add SM8450 GCC clock bindings")
->> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> 
-> 
-> 
-> 
-> Best regards,
-> Krzysztof
+Biju Das (10):
+  dt-bindings: reset: renesas,rzg2l-usbphy-ctrl: Document RZ/G3L support
+  dt-bindings: phy: renesas,usb2-phy: Document RZ/G3L PHY bindings
+  clk: renesas: r9a08g046: Add USB2.0 clock and reset entries
+  reset: rzg2l-usbphy-ctrl: Introduce info struct for match data
+  reset: rzg2l-usbphy-ctrl: Add RZ/G3L support
+  regulator: renesas-usb-vbus-regulator: Add RZ/G3L VBUS regulator
+    support
+  phy: renesas: phy-rcar-gen3-usb2: Add RZ/G3L support
+  phy: renesas: phy-rcar-gen3-usb2: Fix devm action registration for
+    disabled VBUS regulator
+  arm64: dts: renesas: r9a08g046: Add USB2.0 device nodes
+  arm64: dts: renesas: r9a08g046l48-smarc: Add USB2.0 support
+
+ .../bindings/phy/renesas,usb2-phy.yaml        |   2 +
+ .../reset/renesas,rzg2l-usbphy-ctrl.yaml      |  49 +++++++-
+ arch/arm64/boot/dts/renesas/r9a08g046.dtsi    | 105 ++++++++++++++++++
+ .../boot/dts/renesas/r9a08g046l48-smarc.dts   |  49 ++++++++
+ drivers/clk/renesas/r9a08g046-cpg.c           |  15 +++
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c      |  20 ++--
+ .../regulator/renesas-usb-vbus-regulator.c    |  53 +++++++++
+ drivers/reset/reset-rzg2l-usbphy-ctrl.c       |  44 +++++---
+ 8 files changed, 312 insertions(+), 25 deletions(-)
+
+-- 
+2.43.0
 
