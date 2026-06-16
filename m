@@ -1,65 +1,66 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25BC0395DBE
-	for <linux-clk@vger.kernel.org>; Tue, 16 Jun 2026 20:27:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6182E395AE7
+	for <linux-clk@vger.kernel.org>; Tue, 16 Jun 2026 20:27:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781641654; cv=none; b=MwqD2hcHJJwG/uo9b7omZETLwL0eWo44HOxZzWrE4DgdyGMqOXCJpMkm30rDoObZC/jXsCVrbcYwm3f5atqYjCrW09/IfJX85BxVmP6eBdzB4xZnQ8lfrMco1/qLXLI2W0B4byl5AAL4R7Xky/aS0XsgZyK8xi+xcxOMo4Wfo8k=
+	t=1781641658; cv=none; b=lGCmN9rVlsbIsFTBPNMb/JHM5A7vSO2gcgX6lSk2o3Q9pO1CbjMYZn3MMa2BKaBJ6RoV/Gi2QdHbjE6+BQcfC+J6KmcXPJd59vdn98RxwGjF/lJJW2eXHcV8zA4A3rTdfWyQgs+zHbW5dqwLJYVG2d/rkk3JF8fDEYh9QZCPre0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781641654; c=relaxed/simple;
-	bh=/Onf7SXVmixZtmZBhrlI1d4heQCOgMKCksLiEvEpIR4=;
+	s=arc-20240116; t=1781641658; c=relaxed/simple;
+	bh=WCM0t2tSpKbIjViogFh06SwJ0ZwBBkr30bJ7ePaJsf4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=oj59vBeaDgUctf3snrYsx1j4LYPt4TOZMaLHMtG2Ff9A1XWRq8Akiwih3r5lN9DPEQR3vS++jbWjvyF7Stgu5qwdo4T23Eq714TG+eU94QSfdkUpCO9e/nj99Y1Hy/yLX4usuUkwe5jYBQ172HUb77gcA1rSFVkh1AitWWcXsh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ec8dQWi8; arc=none smtp.client-ip=209.85.128.53
+	 In-Reply-To:To:Cc; b=nFCTdjx5nJdpq8g2mMsBiqT9ZcrKcKOlzYetxlOKvbacfjgCuIs9PiEnFvZBIgfOy7yk+BTnkNJaEAFOWd+UfpvjirKlDs/D81h1D4g7GVGJQDSPURiVYpvH/NpDaQvIlYhWtyBfmY15kwvQAfvZmOHY28NwIShvkTXI9HTcwAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k18+5I7g; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ec8dQWi8"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-490a76757e5so36359275e9.2
-        for <linux-clk@vger.kernel.org>; Tue, 16 Jun 2026 13:27:32 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k18+5I7g"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4903d730b1fso62623375e9.2
+        for <linux-clk@vger.kernel.org>; Tue, 16 Jun 2026 13:27:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1781641651; x=1782246451; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1781641656; x=1782246456; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=gyQFQwJnUbTFEFdQPMoEQmAROc3LFCyt4oG2RWf7UYA=;
-        b=Ec8dQWi8ltWf+z6OAczJ5BKyO1K/AWmfXNuNFUTTsNnJd51mkb9uk9ejFywDTKp0hr
-         Uspldk0mF9u2dDAN7facFAdtNTfjFd6TVp/Z8i49399Xn79IpCtj4tX3wygJGXfTU4cv
-         MdUO+88AYrqzxUdeQz36/L+dYJ9ghl7y4DYAcZMp9tjR7hC7L/PaWI9gZWonPmz4PRmm
-         0hDYCfvK0V6+fygpkIaqFQ9HjXHVovWB4eAi5qCkMhC817+gPNkReqiVMdmnMDyDIBFJ
-         x1wCriHuEAuAosfAaKu6ctXjViDbze0nyt4djarpEcqfDoB/YLkVmdHZ91xe8ELW2Grp
-         iFlQ==
+        bh=Ltlo+66CbkzQq4Lsr4cyfZ7a+2/NQVI4939KsTGc97E=;
+        b=k18+5I7gyirNJQGqxBAD41ARjG3k3jceQck30BQMSQRNe0Yb5FB5jtqvc1mmfYxbav
+         lbeCdVldE04+BLc6syy3wDu6/39PDWGowAaGh1vXNO0A/FJ3kWInDUKITDBgv6ujtvGh
+         zDOvNCAjC+lmEOU4Sj1OOHuY/k14k0Rh2eZvL/Kkem2p6tFoqfjaTVIk5auHvVtEZVoK
+         Fbw3UIjkROfk2i6Qek0VfNBkE4hG+uU3u0cIGdVFT726+sR5ShAATnpdRWMvoa3ID2b7
+         GXN/RiTdyO0jcTRl9DPENawVLp9UMchsz45nMtXtkmSPjtnq1fvvfP+Ge9OwLApLLheD
+         36SQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781641651; x=1782246451;
+        d=1e100.net; s=20251104; t=1781641656; x=1782246456;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=gyQFQwJnUbTFEFdQPMoEQmAROc3LFCyt4oG2RWf7UYA=;
-        b=EzRJIGENNy0sWvv1U+fullrCsxizrWGGT/wtM4u3SrSfAgg2Y4PTDz752aZqh3gAUm
-         rCrYVCZ/okGgErsE55JqZ/fXg7f3RkIJhNXw703NMwjXMmCqf/Td6KZ8VfZYyJOIrPwu
-         R1bcsXHh+g5oZo6dMnujiodjApWgqPfCmM7735nBR1Xufx/mGm0Iy3iSkYzRPHlkVCI8
-         KUu7tUFYCGzl4T+JLTbjN1oV798nrnhsVnadvEy+MYyb9JRwyQwDn3DGo8GIlblqUVmG
-         LZQKxalSFu8YRlkRaeejR9rk4O6Sd9ckvjmShSffGY0xzZUccodzk3e3vP0xX2Xb7+EG
-         DU3w==
-X-Gm-Message-State: AOJu0Yy33xVhLEZzpt82wJr6AKAdxkzSCmtVARRvOO86dsP5RRWXEek1
-	2EdZ8ECg5xhft2BsChJSi1qBLKfWC+yCddUZaPt8PfG0Ue6nofVxgYpF
-X-Gm-Gg: Acq92OGoM2ZNlG0FDaBfN1XQXWhqo0cLmYmiBIl+zrWaEWhA5o4wf9LZeLwqmp/4gQW
-	L/rnX/rzCkJ730R6O0YQvj7+PcgE98uk3fORktWdZ4k5gu5xMlTAMTozlXc/ZKe04ONcNxNKdxI
-	nvzKk4GmV/dB7bY3OFaJzkYvM4MezYKTZGoEHj4+3BSNO7RsqqmOZv72+g6g9QN6HytkYLZ4P8U
-	163iTNJBhik1mSUZYfJKmFDdk1YTEO1JOjhYZSMtFEfxp69bV4PS3BPa/txbN1MN0I4LtXnH6+d
-	l2/7eMDSjARuSDyJp+3T+SUm+mUl9wayCnypv5a+1KPsOTOf7RemDlooDJLnIkPxcPtjDUcxIlZ
-	tEFJdTmPeZID+jqloIzGwW9R2yfUstfADaaFx6s8sawPaDI/f3e21HrgaKB1nXIOHfI9RbGMmAU
-	ZieFvf6MHmFNJH1jfzjkUv3pPl58ttUGdbOw==
-X-Received: by 2002:a05:600c:c09a:b0:490:bb37:9d49 with SMTP id 5b1f17b1804b1-492333bf9f6mr15269455e9.11.1781641651403;
-        Tue, 16 Jun 2026 13:27:31 -0700 (PDT)
+        bh=Ltlo+66CbkzQq4Lsr4cyfZ7a+2/NQVI4939KsTGc97E=;
+        b=kBEB8vcKJp11Zw8Oc/tiNokq/oNSeeB13id8pzbqGKHEg7r4c4OLLEwjZYSAF5sBfY
+         mIGVx1XhdTHbD9t6KYSE1aIqQ63r1Fyb3ZyuItmnTE/zWg4bPYLzWZnsPPzKpN/6Wlp0
+         to/+fGwiK/uVR9MuGiT3VICN66545xkCx/hkJp6f5t+1+kN/5IbA8OD9DmGA7r0dAoVs
+         hYgucj0Y9zwNlfXps4WkbyHXwkeeUfiGLTjqSrAODaqRPZcxiMYohYFXvO6BEoTKfZ/F
+         l9prU9PP4DsOSa5JMPrRHhsmqgrl2qMoltAlJK418+0Jza1NvvQ+hjNZyKHnMp74lzBH
+         jTjA==
+X-Gm-Message-State: AOJu0YxJ3E9PlCdLTqp8DNjZ147IIua7YVW05zh0YVd/YLJSV1YeFYXt
+	tz/SV+qGthobSRdjB/wkTvP7sTtCvMrofkG1c74PLcilQPMFKVc4S8xL
+X-Gm-Gg: Acq92OGnhueiGLkXymj3/g40YV9VOYCY40zhCVeFAZYRJMEqTSLHVKkgFXXqCzDBBhR
+	5aB2h4j68KvOKkl6qBbLQeBWcI7rC8kSi+J+vBkxa2GrYBnAOa7fUlzctpOKqiiRymi8+ajTTWK
+	FHL2XdB3LD1fWeGeUhRgp/kpaIJh4AazLPWJc31G6nT9ypYb3Bg0pAt/wfxzjgNYYs+vO9XH7gn
+	omYg2/TCbyiNk5yBp6xwMjGSvsNZ2MiGQ4yTwURU58uXoxfj5/9jz8Qui0JFMoIynudn8O9KJKm
+	dMY8de8TORegnNGnYCDPW/tnk33l1YfjuwNVjjPUqcEVgjIfYHn13WfoHD6VkrsKerztKTZSygl
+	DL3VFxZbQX7cq7nfe96m6r9oS/7is9Q7h4EFUQrtCAk3QsJS+7uoIsis626O3plZbj0cXjo/Anf
+	QF/oMfyNfeEg9uMO2WZnVPdC+4PK9Gymj9ow==
+X-Received: by 2002:a05:600c:a104:b0:492:3347:12a9 with SMTP id 5b1f17b1804b1-492334712camr12197255e9.26.1781641655477;
+        Tue, 16 Jun 2026 13:27:35 -0700 (PDT)
 Received: from [192.168.0.2] ([197.250.51.220])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49230a458f2sm89987005e9.3.2026.06.16.13.27.27
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49230a458f2sm89987005e9.3.2026.06.16.13.27.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jun 2026 13:27:30 -0700 (PDT)
+        Tue, 16 Jun 2026 13:27:34 -0700 (PDT)
 From: =?utf-8?q?Stefan_D=C3=B6singer?= <stefandoesinger@gmail.com>
-Date: Tue, 16 Jun 2026 23:26:30 +0300
-Subject: [PATCH RFC v4 10/12] reset: zte: Add a zx297520v3 reset driver
+Date: Tue, 16 Jun 2026 23:26:31 +0300
+Subject: [PATCH RFC v4 11/12] ARM: dts: zte: Declare zx297520v3 clock
+ device nodes
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -68,7 +69,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20260616-zx29clk-v4-10-ca994bd22e9d@gmail.com>
+Message-Id: <20260616-zx29clk-v4-11-ca994bd22e9d@gmail.com>
 References: <20260616-zx29clk-v4-0-ca994bd22e9d@gmail.com>
 In-Reply-To: <20260616-zx29clk-v4-0-ca994bd22e9d@gmail.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
@@ -80,309 +81,172 @@ Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
  =?utf-8?q?Stefan_D=C3=B6singer?= <stefandoesinger@gmail.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=11093;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5713;
  i=stefandoesinger@gmail.com; h=from:subject:message-id;
- bh=/Onf7SXVmixZtmZBhrlI1d4heQCOgMKCksLiEvEpIR4=;
- b=owEBiQJ2/ZANAwAIAT0TvMhUTxoiAcsmYgBqMbGGZTOmPtLBlyNbaMcWpanSPy4o/C2VjTjma
- bqpPM5kLaaJAk8EAAEIADkWIQRDFvS2qgVbJ5UyXWw9E7zIVE8aIgUCajGxhhsUgAAAAAAEAA5t
- YW51MiwyLjUrMS4xMiwyLDIACgkQPRO8yFRPGiJaUQ//Zc26M1HzXnLUzAvLgAPfOnYSemnKyuN
- uFndLu41BWHi4OSmYe2We8unIgoWPnA2+QfeVBSX419pVImDFPR40a67Pf+xxfSSiIUXMMEeQIc
- n7pO3Dn1lE7yXHyeWyb7Xe765VhZCHOPsZ/a2YDGqU/QhRtb++ZVvJWeyUZLPF6/fvOVSgkUWhY
- UNBjTUzcgh27yJIP54k+D2yY/AKbXgI5xIQpGKCDegm8WT68W+dtuyNwb9WwoeF5aMq5zsvH1UI
- Y4aSG7+zMzHHuDJRDsPV6mr4Ma9aLf3QVTsktT3o+wC0mcZZWGIjfu2gaTLwti2fPnFST91lwKO
- hkW+pYbPQCcgq7Rgyit4EQOKR+IRagTxBQBdHg/VyOT3xsRqi4EuuD0G+vqIMjCv7k4npNmMPGL
- c0KUw4NNMGfx8JGAf89JQ3D5k5AzUkRCNW/kUG0tJ56ac0fLfYi5VMmlH0FW8R1AKc1gI0zgjFO
- 68d5b/rbAAFAHumx2gc5Og5WwvhAf/O66ebHt7oQlgXOkzRDTVby7bTkbbMMyzyKbtg+5ObXAUV
- t1wOXMCCjKlRJBeRWrk9fGtMOTXWIqTgY9bQgxhaiQrtIULuqlVCGLHK8nx5IZu6QvRvtmtgf6I
- Fo+88mc4F62KqSGGlUsUU3NSobc+Aba7etHHmhWueiL5coVe4BTM=
+ bh=WCM0t2tSpKbIjViogFh06SwJ0ZwBBkr30bJ7ePaJsf4=;
+ b=kA0DAAgBPRO8yFRPGiIByyZiAGoxsYaiDmVa7tF78rIc/+Vl7tgrhQY8mQM5Yh4KGvxwiGHNr
+ IkCTwQAAQgAORYhBEMW9LaqBVsnlTJdbD0TvMhUTxoiBQJqMbGGGxSAAAAAAAQADm1hbnUyLDIu
+ NSsxLjEyLDIsMgAKCRA9E7zIVE8aIpRhEACvKmqnDur7+8kPrK12EWu35XXeLXUinVJ0g/4I8QB
+ ZqBj02ZtosMPs4FkVtdx2+9/iGDrf9cBcLN+YkzllQ+jP68E7Ps8GILZx0GqWZlMv9CeFz2DPZV
+ AnwkfeuL4/9GF6rQXDdkaKa4bp7IFgnzkjvdgGzn4/TLoDQO0/YctobzHJZzAbOWra2gmdXqDuT
+ G+RaSViXHnZZMjxB/UfBut8O/3w2IYUSnU7dnXCnAGJRMxoljKzDNXLSqzptpnvdQz5phTA3pTX
+ nvk6Z5gDGgW0i1uCm+rwmBCUuZJWiFJ//A+Y1EcILgxaCsyP63gaxo/EMRKl+UEcLnxXMzB0vaz
+ pWGDB+rOZwj1HBzc3khtcL68RO4CUHvAKlfmljai3o+B/RYrKRw9gu/TGyKkepDS2+xi5OzbDCp
+ GCql6zX8Ig0DxNiU9RQ92P9Z5vcU1m/w2pq/UXy9xPUKluH50vKAQiXSTq/E8OnDMdTzJ9t1zKJ
+ TapBwT+kd/UC/Ycv+38ci/h5lzKA/KkVkieL/1HR9pYokYpe/9sYTH0OEPmKoKD6rlegWD+s5dN
+ wt104eqgKg3dZbwmXZ+cwxVO4W+Q5qeG7CkTrE+jOJ+1JTiwbapHBqL2SUyy/EAOoqW6HBVDKZM
+ Cf4s78AXtxPhTrBhXYqLgUqvYTcSXtutnCoEMVmWDrg==
 X-Developer-Key: i=stefandoesinger@gmail.com; a=openpgp;
  fpr=4F9C2C8728019633893EBBB98CB81F9A72BBA155
 
-This drives the auxiliary devices created by the clock driver.
+This makes use of the driver added in the previous patches. It wires up
+the uart clocks and resets and allows getting rid of the placeholder
+uartclk node.
 
 Signed-off-by: Stefan Dösinger <stefandoesinger@gmail.com>
 ---
- MAINTAINERS                          |   1 +
- drivers/reset/Kconfig                |  11 ++
- drivers/reset/Makefile               |   1 +
- drivers/reset/reset-zte-zx297520v3.c | 224 +++++++++++++++++++++++++++++++++++
- 4 files changed, 237 insertions(+)
+ arch/arm/boot/dts/zte/zx297520v3.dtsi | 90 +++++++++++++++++++++++++++++++----
+ 1 file changed, 81 insertions(+), 9 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index f1f0459b2c72..55bf0290343a 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -3871,6 +3871,7 @@ F:	Documentation/devicetree/zte,zx297520v3-*
- F:	arch/arm/boot/dts/zte/
- F:	arch/arm/mach-zte/
- F:	drivers/clk/zte/
-+F:	drivers/reset/reset-zte-zx297520v3.c
- F:	include/dt-bindings/clock/zte,zx297520v3-clk.h
+diff --git a/arch/arm/boot/dts/zte/zx297520v3.dtsi b/arch/arm/boot/dts/zte/zx297520v3.dtsi
+index a16c30a164bb..a2b6909e7434 100644
+--- a/arch/arm/boot/dts/zte/zx297520v3.dtsi
++++ b/arch/arm/boot/dts/zte/zx297520v3.dtsi
+@@ -4,6 +4,7 @@
+  */
  
- ARM/ZYNQ ARCHITECTURE
-diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-index d009eb0849a3..116dd23f1b8e 100644
---- a/drivers/reset/Kconfig
-+++ b/drivers/reset/Kconfig
-@@ -404,6 +404,17 @@ config RESET_UNIPHIER_GLUE
- 	  on UniPhier SoCs. Say Y if you want to control reset signals
- 	  provided by the glue layer.
- 
-+config RESET_ZTE_ZX297520V3
-+	tristate "ZTE zx297520v3 Reset Driver"
-+	depends on (ARCH_ZTE || COMPILE_TEST)
-+	default CLK_ZTE_ZX297520V3
-+	select AUXILIARY_BUS
-+	help
-+	  This enables the reset controller for ZTE zx297520v3 SoCs. The reset
-+	  controller is part of the clock controller on this SoC. This driver
-+	  operates on an auxiliary device exposed by the clock driver. Enable
-+	  this driver if you plan to boot the kernel on a zx297520v3 based SoC.
-+
- config RESET_ZYNQ
- 	bool "ZYNQ Reset Driver" if COMPILE_TEST
- 	default ARCH_ZYNQ
-diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-index 3e52569bd276..9a8a48d44dc4 100644
---- a/drivers/reset/Makefile
-+++ b/drivers/reset/Makefile
-@@ -50,5 +50,6 @@ obj-$(CONFIG_RESET_TI_TPS380X) += reset-tps380x.o
- obj-$(CONFIG_RESET_TN48M_CPLD) += reset-tn48m.o
- obj-$(CONFIG_RESET_UNIPHIER) += reset-uniphier.o
- obj-$(CONFIG_RESET_UNIPHIER_GLUE) += reset-uniphier-glue.o
-+obj-$(CONFIG_RESET_ZTE_ZX297520V3) += reset-zte-zx297520v3.o
- obj-$(CONFIG_RESET_ZYNQ) += reset-zynq.o
- obj-$(CONFIG_RESET_ZYNQMP) += reset-zynqmp.o
-diff --git a/drivers/reset/reset-zte-zx297520v3.c b/drivers/reset/reset-zte-zx297520v3.c
-new file mode 100644
-index 000000000000..2022f4df2ebd
---- /dev/null
-+++ b/drivers/reset/reset-zte-zx297520v3.c
-@@ -0,0 +1,224 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2026 Stefan Dösinger
-+ */
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
 +#include <dt-bindings/clock/zte,zx297520v3-clk.h>
-+#include <linux/reset-controller.h>
-+#include <linux/platform_device.h>
-+#include <linux/auxiliary_bus.h>
-+#include <linux/clk-provider.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/regmap.h>
-+#include <linux/iopoll.h>
-+#include <linux/delay.h>
+ 
+ / {
+ 	#address-cells = <1>;
+@@ -20,13 +21,16 @@ cpu@0 {
+ 		};
+ 	};
+ 
+-	/* Base bus clock and default for the UART. It will be replaced once a clock driver has
+-	 * been added.
+-	 */
+-	uartclk: uartclk-26000000 {
+-		#clock-cells = <0>;
++	osc26m: osc26m {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <26000000>;
++		#clock-cells = <0>;
++	};
 +
-+struct zte_reset_reg {
-+	u32 mask, wait_mask;
-+	u16 reg;
-+};
++	osc32k: osc32k {
++		compatible = "fixed-clock";
++		clock-frequency = <32768>;
++		#clock-cells = <0>;
+ 	};
+ 
+ 	timer {
+@@ -70,13 +74,80 @@ gic: interrupt-controller@f2000000 {
+ 			      <0xf2040000 0x20000>;
+ 		};
+ 
++		topclk: clock-controller@13b000 {
++			compatible = "zte,zx297520v3-topclk", "syscon";
++			reg = <0x0013b000 0x400>;
++			#clock-cells = <1>;
++			#reset-cells = <1>;
++			clocks = <&osc26m>, <&osc32k>;
++			clock-names = "osc26m", "osc32k";
++		};
 +
-+struct zte_reset_info {
-+	const struct zte_reset_reg *resets;
-+	unsigned int num;
-+};
++		matrixclk: clock-controller@1306000 {
++			compatible = "zte,zx297520v3-matrixclk", "syscon";
++			reg = <0x01306000 0x400>;
++			#clock-cells = <1>;
++			#reset-cells = <1>;
++			clocks = <&osc26m>, <&osc32k>,
++				 <&topclk ZX297520V3_MPLL>, <&topclk ZX297520V3_MPLL_D2>,
++				 <&topclk ZX297520V3_MPLL_D3>, <&topclk ZX297520V3_MPLL_D4>,
++				 <&topclk ZX297520V3_MPLL_D5>, <&topclk ZX297520V3_MPLL_D6>,
++				 <&topclk ZX297520V3_MPLL_D8>, <&topclk ZX297520V3_MPLL_D12>,
++				 <&topclk ZX297520V3_MPLL_D16>, <&topclk ZX297520V3_MPLL_D26>,
++				 <&topclk ZX297520V3_UPLL>, <&topclk ZX297520V3_UPLL_D2>,
++				 <&topclk ZX297520V3_UPLL_D3>, <&topclk ZX297520V3_UPLL_D4>,
++				 <&topclk ZX297520V3_UPLL_D5>, <&topclk ZX297520V3_UPLL_D6>,
++				 <&topclk ZX297520V3_UPLL_D8>, <&topclk ZX297520V3_UPLL_D12>,
++				 <&topclk ZX297520V3_UPLL_D16>,
++				 <&topclk ZX297520V3_DPLL>, <&topclk ZX297520V3_DPLL_D2>,
++				 <&topclk ZX297520V3_DPLL_D3>, <&topclk ZX297520V3_DPLL_D4>,
++				 <&topclk ZX297520V3_DPLL_D5>, <&topclk ZX297520V3_DPLL_D6>,
++				 <&topclk ZX297520V3_DPLL_D8>, <&topclk ZX297520V3_DPLL_D12>,
++				 <&topclk ZX297520V3_DPLL_D16>,
++				 <&topclk ZX297520V3_GPLL>, <&topclk ZX297520V3_GPLL_D2>,
++				 <&topclk ZX297520V3_GPLL_D3>, <&topclk ZX297520V3_GPLL_D4>,
++				 <&topclk ZX297520V3_GPLL_D5>, <&topclk ZX297520V3_GPLL_D6>,
++				 <&topclk ZX297520V3_GPLL_D8>, <&topclk ZX297520V3_GPLL_D12>,
++				 <&topclk ZX297520V3_GPLL_D16>;
++			clock-names = "osc26m", "osc32k", "mpll", "mpll_d2", "mpll_d3", "mpll_d4",
++				      "mpll_d5", "mpll_d6", "mpll_d8", "mpll_d12", "mpll_d16",
++				      "mpll_d26", "upll", "upll_d2", "upll_d3", "upll_d4",
++				      "upll_d5", "upll_d6", "upll_d8", "upll_d12", "upll_d16",
++				      "dpll", "dpll_d2", "dpll_d3", "dpll_d4", "dpll_d5", "dpll_d6",
++				      "dpll_d8", "dpll_d12", "dpll_d16", "gpll", "gpll_d2",
++				      "gpll_d3", "gpll_d4", "gpll_d5", "gpll_d6", "gpll_d8",
++				      "gpll_d12", "gpll_d16";
++		};
 +
-+struct zte_reset {
-+	struct reset_controller_dev rcdev;
-+	struct regmap *map;
-+	const struct zte_reset_reg *resets;
-+};
++		lspclk: clock-controller@1400000 {
++			compatible = "zte,zx297520v3-lspclk";
++			reg = <0x01400000 0x100>;
++			#clock-cells = <1>;
++			#reset-cells = <1>;
 +
-+static inline struct zte_reset *to_zte_reset(struct reset_controller_dev *rcdev)
-+{
-+	return container_of(rcdev, struct zte_reset, rcdev);
-+}
++			clocks = <&matrixclk ZX297520V3_LSP_MPLL_D5_WCLK>,
++				 <&matrixclk ZX297520V3_LSP_MPLL_D4_WCLK>,
++				 <&matrixclk ZX297520V3_LSP_MPLL_D6_WCLK>,
++				 <&matrixclk ZX297520V3_LSP_MPLL_D8_WCLK>,
++				 <&matrixclk ZX297520V3_LSP_MPLL_D12_WCLK>,
++				 <&matrixclk ZX297520V3_LSP_OSC26M_WCLK>,
++				 <&matrixclk ZX297520V3_LSP_OSC32K_WCLK>,
++				 <&matrixclk ZX297520V3_LSP_PCLK>,
++				 <&matrixclk ZX297520V3_LSP_TDM_WCLK>,
++				 <&matrixclk ZX297520V3_LSP_DPLL_D4_WCLK>;
++			clock-names = "mpll_d5", "mpll_d4", "mpll_d6", "mpll_d8", "mpll_d12",
++				      "osc26m", "osc32k", "pclk", "tdm_wclk", "dpll_d4";
++		};
 +
-+static int zx29_rst_assert(struct reset_controller_dev *rcdev, unsigned long id)
-+{
-+	struct zte_reset *rst = to_zte_reset(rcdev);
 +
-+	return regmap_clear_bits(rst->map, rst->resets[id].reg, rst->resets[id].mask);
-+}
-+
-+static int zx29_rst_deassert(struct reset_controller_dev *rcdev, unsigned long id)
-+{
-+	struct zte_reset *rst = to_zte_reset(rcdev);
-+	int res;
-+	u32 val;
-+
-+	res = regmap_set_bits(rst->map, rst->resets[id].reg, rst->resets[id].mask);
-+	if (res)
-+		return res;
-+
-+	/* This is a special case used only by USB reset */
-+	if (rst->resets[id].wait_mask) {
-+		return regmap_read_poll_timeout(rst->map, rst->resets[id].reg + 4, val,
-+						val & rst->resets[id].wait_mask, 1, 100);
-+	}
-+
-+	return 0;
-+}
-+
-+static int zx29_rst_status(struct reset_controller_dev *rcdev, unsigned long id)
-+{
-+	struct zte_reset *rst = to_zte_reset(rcdev);
-+	int res;
-+
-+	res = regmap_test_bits(rst->map, rst->resets[id].reg, rst->resets[id].mask);
-+	if (res < 0)
-+		return res;
-+
-+	return !res;
-+}
-+
-+static const struct reset_control_ops zx29_rst_ops = {
-+	.assert		= zx29_rst_assert,
-+	.deassert	= zx29_rst_deassert,
-+	.status		= zx29_rst_status,
-+};
-+
-+static const struct zte_reset_reg zx297520v3_top_resets[] = {
-+	/* This bit is set by ZTE's cpko.ko blob, it looks like a reset bit for the LTE DSP
-+	 * coprocessor. Clocks for it are in matrixclk.
-+	 */
-+	[ZX297520V3_ZSP_RESET]       = { .reg = 0x13c, .mask = BIT(0)            },
-+
-+	[ZX297520V3_UART0_RESET]     = { .reg = 0x78,  .mask = BIT(6)  | BIT(7)  },
-+	[ZX297520V3_I2C0_RESET]      = { .reg = 0x74,  .mask = BIT(8)  | BIT(9)  },
-+	[ZX297520V3_RTC_RESET]       = { .reg = 0x74,  .mask = BIT(4)  | BIT(5)  },
-+	[ZX297520V3_TIMER_T08_RESET] = { .reg = 0x78,  .mask = BIT(4)  | BIT(5)  },
-+	[ZX297520V3_TIMER_T09_RESET] = { .reg = 0x78,  .mask = BIT(2)  | BIT(3)  },
-+	[ZX297520V3_PMM_RESET]       = { .reg = 0x74,  .mask = BIT(0)  | BIT(1)  },
-+
-+	/* I haven't found any clocks for GPIO. It probably wouldn't make much
-+	 * sense anyway. Only one reset bit per controller.
-+	 */
-+	[ZX297520V3_GPIO_RESET]      = { .reg =  0x74, .mask = BIT(3)            },
-+	[ZX297520V3_GPIO8_RESET]     = { .reg =  0x74, .mask = BIT(2)            },
-+
-+	[ZX297520V3_TIMER_T12_RESET] = { .reg =  0x74, .mask = BIT(6)  | BIT(7)  },
-+	[ZX297520V3_TIMER_T13_RESET] = { .reg =  0x7c, .mask = BIT(0)  | BIT(1)  },
-+	[ZX297520V3_TIMER_T14_RESET] = { .reg =  0x7c, .mask = BIT(2)  | BIT(3)  },
-+	[ZX297520V3_TIMER_T15_RESET] = { .reg =  0x74, .mask = BIT(10) | BIT(11) },
-+	[ZX297520V3_TIMER_T16_RESET] = { .reg =  0x7c, .mask = BIT(4)  | BIT(5)  },
-+	[ZX297520V3_TIMER_T17_RESET] = { .reg = 0x12c, .mask = BIT(0)  | BIT(1)  },
-+	[ZX297520V3_WDT_T18_RESET]   = { .reg =  0x74, .mask = BIT(12) | BIT(13) },
-+	[ZX297520V3_USIM1_RESET]     = { .reg =  0x74, .mask = BIT(14) | BIT(15) },
-+	[ZX297520V3_AHB_RESET]       = { .reg =  0x70, .mask = BIT(0)  | BIT(1)  },
-+
-+	/* USB reset. This is slightly special because it needs to wait for a ready bit after
-+	 * deasserting.
-+	 */
-+	[ZX297520V3_USB_RESET]      =  { .reg = 0x80,   .mask = BIT(3) | BIT(4) | BIT(5),
-+		.wait_mask = BIT(1)},
-+	[ZX297520V3_HSIC_RESET]      = { .reg = 0x80,   .mask = BIT(0) | BIT(1) | BIT(2),
-+		.wait_mask = BIT(0)},
-+};
-+
-+static const struct zte_reset_info zx297520v3_top_info = {
-+	.resets = zx297520v3_top_resets,
-+	.num = ARRAY_SIZE(zx297520v3_top_resets),
-+};
-+
-+static const struct zte_reset_reg zx297520v3_matrix_resets[] = {
-+	[ZX297520V3_CPU_RESET]       = { .reg =  0x28, .mask = BIT(1)            },
-+	[ZX297520V3_EDCP_RESET]      = { .reg =  0x68, .mask = BIT(0)            },
-+	[ZX297520V3_SD0_RESET]       = { .reg =  0x58, .mask = BIT(1)            },
-+	[ZX297520V3_SD1_RESET]       = { .reg =  0x58, .mask = BIT(0)            },
-+	[ZX297520V3_NAND_RESET]      = { .reg =  0x58, .mask = BIT(4)            },
-+	[ZX297520V3_PDCFG_RESET]     = { .reg =  0x94, .mask = BIT(20)           },
-+	[ZX297520V3_SSC_RESET]       = { .reg =  0x94, .mask = BIT(24)           },
-+	[ZX297520V3_GMAC_RESET]      = { .reg = 0x114, .mask = BIT(0)  | BIT(1)  },
-+	[ZX297520V3_VOU_RESET]       = { .reg = 0x16c, .mask = BIT(0)            },
-+};
-+
-+static const struct zte_reset_info zx297520v3_matrix_info = {
-+	.resets = zx297520v3_matrix_resets,
-+	.num = ARRAY_SIZE(zx297520v3_matrix_resets),
-+};
-+
-+static const struct zte_reset_reg zx297520v3_lsp_resets[] = {
-+	[ZX297520V3_TIMER_L1_RESET]  = { .reg = 0x04,  .mask = BIT(8)  | BIT(9)  },
-+	[ZX297520V3_WDT_L2_RESET]    = { .reg = 0x08,  .mask = BIT(8)  | BIT(9)  },
-+	[ZX297520V3_WDT_L3_RESET]    = { .reg = 0x0c,  .mask = BIT(8)  | BIT(9)  },
-+	[ZX297520V3_PWM_RESET]       = { .reg = 0x10,  .mask = BIT(8)  | BIT(9)  },
-+	[ZX297520V3_I2S0_RESET]      = { .reg = 0x14,  .mask = BIT(8)  | BIT(9)  },
-+	/* 0x18: Not writeable */
-+	[ZX297520V3_I2S1_RESET]      = { .reg = 0x1c,  .mask = BIT(8)  | BIT(9)  },
-+	/* 0x20: Not writeable */
-+	[ZX297520V3_QSPI_RESET]      = { .reg = 0x24,  .mask = BIT(8)  | BIT(9)  },
-+	[ZX297520V3_UART1_RESET]     = { .reg = 0x28,  .mask = BIT(8)  | BIT(9)  },
-+	[ZX297520V3_I2C1_RESET]      = { .reg = 0x2c,  .mask = BIT(8)  | BIT(9)  },
-+	[ZX297520V3_SPI0_RESET]      = { .reg = 0x30,  .mask = BIT(8)  | BIT(9)  },
-+	[ZX297520V3_TIMER_LB_RESET]  = { .reg = 0x34,  .mask = BIT(8)  | BIT(9)  },
-+	[ZX297520V3_TIMER_LC_RESET]  = { .reg = 0x38,  .mask = BIT(8)  | BIT(9)  },
-+	[ZX297520V3_UART2_RESET]     = { .reg = 0x3c,  .mask = BIT(8)  | BIT(9)  },
-+	[ZX297520V3_WDT_LE_RESET]    = { .reg = 0x40,  .mask = BIT(8)  | BIT(9)  },
-+	[ZX297520V3_TIMER_LF_RESET]  = { .reg = 0x44,  .mask = BIT(8)  | BIT(9)  },
-+	[ZX297520V3_SPI1_RESET]      = { .reg = 0x48,  .mask = BIT(8)  | BIT(9)  },
-+	[ZX297520V3_TIMER_L11_RESET] = { .reg = 0x4c,  .mask = BIT(8)  | BIT(9)  },
-+	[ZX297520V3_TDM_RESET]       = { .reg = 0x50,  .mask = BIT(8)  | BIT(9)  },
-+};
-+
-+static const struct zte_reset_info zx297520v3_lsp_info = {
-+	.resets = zx297520v3_lsp_resets,
-+	.num = ARRAY_SIZE(zx297520v3_lsp_resets),
-+};
-+
-+static int reset_zx297520v3_probe(struct auxiliary_device *adev,
-+				  const struct auxiliary_device_id *id)
-+{
-+	const struct zte_reset_info *drv_info;
-+	struct device *dev = &adev->dev;
-+	struct zte_reset *rst;
-+
-+	drv_info = (struct zte_reset_info *)id->driver_data;
-+
-+	rst = devm_kzalloc(dev, sizeof(*rst), GFP_KERNEL);
-+	if (!rst)
-+		return -ENOMEM;
-+
-+	rst->resets = drv_info->resets;
-+	rst->rcdev.owner = THIS_MODULE;
-+	rst->rcdev.nr_resets = drv_info->num;
-+	rst->rcdev.ops = &zx29_rst_ops;
-+	rst->rcdev.of_node = dev->of_node;
-+	rst->rcdev.dev = dev;
-+	rst->rcdev.of_reset_n_cells = 1;
-+
-+	rst->map = device_node_to_regmap(dev->of_node);
-+	if (IS_ERR(rst->map))
-+		return dev_err_probe(dev, PTR_ERR(rst->map), "Cannot get parent syscon regmap\n");
-+
-+	return devm_reset_controller_register(dev, &rst->rcdev);
-+}
-+
-+static const struct auxiliary_device_id reset_zx297520v3_ids[] = {
-+	{
-+		.name = "clk_zte.zx297520v3_toprst",
-+		.driver_data = (kernel_ulong_t)&zx297520v3_top_info,
-+	},
-+	{
-+		.name = "clk_zte.zx297520v3_matrixrst",
-+		.driver_data = (kernel_ulong_t)&zx297520v3_matrix_info,
-+	},
-+	{
-+		.name = "clk_zte.zx297520v3_lsprst",
-+		.driver_data = (kernel_ulong_t)&zx297520v3_lsp_info,
-+	},
-+	{ },
-+};
-+
-+MODULE_DEVICE_TABLE(auxiliary, reset_zx297520v3_ids);
-+
-+static struct auxiliary_driver reset_zx297520v3_drv = {
-+	.name = "zx297520v3_reset",
-+	.id_table = reset_zx297520v3_ids,
-+	.probe = reset_zx297520v3_probe,
-+};
-+
-+module_auxiliary_driver(reset_zx297520v3_drv);
-+
-+MODULE_AUTHOR("Stefan Dösinger <stefandoesinger@gmail.com>");
-+MODULE_DESCRIPTION("ZTE zx297520v3 reset driver");
-+MODULE_LICENSE("GPL");
+ 		uart0: serial@131000 {
+ 			compatible = "arm,pl011", "arm,primecell";
+ 			arm,primecell-periphid = <0x0018c011>;
+ 			reg = <0x00131000 0x1000>;
+ 			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&uartclk>, <&uartclk>;
++			clocks = <&topclk ZX297520V3_UART0_WCLK>, <&topclk ZX297520V3_UART0_PCLK>;
+ 			clock-names = "uartclk", "apb_pclk";
++			resets = <&topclk ZX297520V3_UART0_RESET>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -85,8 +156,9 @@ uart1: serial@1408000 {
+ 			arm,primecell-periphid = <0x0018c011>;
+ 			reg = <0x01408000 0x1000>;
+ 			interrupts = <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&uartclk>, <&uartclk>;
++			clocks = <&lspclk ZX297520V3_UART1_WCLK>, <&lspclk ZX297520V3_UART1_PCLK>;
+ 			clock-names = "uartclk", "apb_pclk";
++			resets = <&lspclk ZX297520V3_UART1_RESET>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -94,9 +166,9 @@ uart2: serial@140d000 {
+ 			compatible = "arm,pl011", "arm,primecell";
+ 			arm,primecell-periphid = <0x0018c011>;
+ 			reg = <0x0140d000 0x1000>;
+-			interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&uartclk>, <&uartclk>;
++			clocks = <&lspclk ZX297520V3_UART2_WCLK>, <&lspclk ZX297520V3_UART2_PCLK>;
+ 			clock-names = "uartclk", "apb_pclk";
++			resets = <&lspclk ZX297520V3_UART2_RESET>;
+ 			status = "disabled";
+ 		};
+ 	};
 
 -- 
 2.53.0
