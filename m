@@ -1,122 +1,129 @@
-Received: from fhigh-b7-smtp.messagingengine.com (fhigh-b7-smtp.messagingengine.com [202.12.124.158])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 798BC3C76AF;
-	Tue, 16 Jun 2026 17:53:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD282344D88
+	for <linux-clk@vger.kernel.org>; Tue, 16 Jun 2026 19:22:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781632389; cv=none; b=JH3Eg5SwgThYfccsjK/CmPXMtkyFy54cUzNG0Ar9ynYko51XlbmnfG4JoWA5v6wvRlCmYWVRB21C9WjBBA4K+cyL6WqeoJtI9kRg+0tBhukIgS0RAoObaqxvuGx/o4gEoQULSqUi477kDV1W7Ulspgoig8ylrFWQkk44DL/eMFA=
+	t=1781637735; cv=none; b=kc7kwpVLoOTSgSGs7CYbExAr0X3RHPTRbDAMzTIGHRTCQzC/Be6JDULmcnG6WmhDcrIwjw5o8aOTdf0LxUKO3UA04hxJNUQ1lUX5VoFQKdFS/9Qaiv+pOus/ze/o/+ZRn8fBP8PwxmWm3wjC5Vk8QSUCzbshAggQ9Qv0Q07yZGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781632389; c=relaxed/simple;
-	bh=Oy0RRk5QulwyIm+ZmmfOFXncoE5odDngKfJlDCAOesw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hs2b2EEBzgzYJIWvrM8cQ+IILdqGf3xfnGq65cNlj25qZ3EpQBQbtOVf5OaQVAAAcY4xze5D8F+qlTxhdnrbeLmZWUX4K+gp6FzKk7hvzUfBJIEHplA+SV+LOv6OK20rGC37LvuiSXVz/LuDiqVQPHM/N1XcpKcBq9t8LbMZhg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=GFSpkuGc; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=OxkAnLD7; arc=none smtp.client-ip=202.12.124.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+	s=arc-20240116; t=1781637735; c=relaxed/simple;
+	bh=NVM1Rubw7YZ9XU2iZhNrjdu8qkSccQVCtMAZO7mjpeQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K2xDjhjQomEmQEW/UyWew10ALr1c/0BJsqE42u5bAMVGGhZTe5IbB2VFOgapPhobtfUbTqMJV/8mPwuz/qNCFGAboFCrtR74lbV5MgmU6m1xCByJJhlwVT6hbZxb/0Kw8p+SFR1Im2xJHccB6qd2uhd2YBtVlRPpuv6KVWlDsFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OWt8kZTF; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=jkUHEHv4; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="GFSpkuGc";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="OxkAnLD7"
-Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 512D37A00D8;
-	Tue, 16 Jun 2026 13:53:04 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-09.internal (MEProxy); Tue, 16 Jun 2026 13:53:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:message-id:mime-version:reply-to
-	:subject:subject:to:to; s=fm3; t=1781632384; x=1781718784; bh=2s
-	ZyD20FMg/PCHT8+2P9zYIMVsHDFqtcWDSPeckFTvQ=; b=GFSpkuGc/Pe0VsyfNA
-	GWp2tqdzHISRw3EOGaodpLgyvbGb262dEOiODNmC48z1eOrVEFftXnv37BoLjm/4
-	64XXzxZp4xPCEA5i+stNXWfij1rqfyzQCYTQomb7Bd0uInG/4KIu12sDhKBCkRVC
-	uxAMnSaeky32kJ29P3LT4Khl8NtKwooDxF2B5gTZR77/g5ZvxfvgE2HZPWf9J0SV
-	PwudQGBQC1Fut6HMddBHZZ1uqvHW+JWTDoRQtmiQ+ltLQ/hYsfLzwWltE7WXpxVc
-	iOounrYzvLrxxvzfs56R0dYoXCH4lqqIi6HAJLRZNE6zu7SRjqKYFH82dnTtE/uW
-	aZ9Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1781632384; x=1781718784; bh=2sZyD20FMg/PCHT8+2P9zYIMVsHD
-	FqtcWDSPeckFTvQ=; b=OxkAnLD7t8l36oVunpiSIS6gMUwtZqrh4X7JJrF/8IS8
-	MLYn9q+mO+6O1oEWKNs38m0PtJSYmkgnyfWvYPcoK+StxHKMJUs+5sT4e3LLGh5e
-	CNOV4n6W/Ed/j1kqnTWnNT3ZXApCQBIZTI8kjWSpq+rBXaLFcZJLWiQ/Rih7xbQk
-	JrEHr/AUlOWtztg+gOmtYIuosxWa9R2jZHNHodHobCKMtA4WGtV4eMCuZg1IZvPR
-	dZIag8qcgrRtIGvXd6CYHCb/VGKRXsWZBUJjTwuv9FHSu/MlhGsW6s/jFAUPEUj6
-	Wd2oSnRtG1tNk7WPorxk3N0eu0KCayBaUNYAZp3VrQ==
-X-ME-Sender: <xms:f40xaj0BjLsUwHRZ0If51hpwDLRaCgW4a2l1jthzX7NsLt5Fue6LTA>
-    <xme:f40xarbE4pHcY4A8-711tRpFN-IqApuGXKXokUrS-iPyAM9En6dUTQh-6pwOR2w0z
-    9Ee-AfV5ZGlBLe9xi7WDelOA5aNuvBIU-schn2JnfMRCgSAHueHKfE>
-X-ME-Received: <xmr:f40xarIUh2z01MVfwgb3qk9uEZm7DuzE1VP4ilHD1vSBHOcCntLFj0IE6wSmeqDyjZsTNnfBmoWFNNj5d1co8d3wfW63>
-X-ME-Proxy-Cause: dmFkZTGZTgHPcy+1uLKRgSbbX+eU8C/CaT+cP3r9EzK9Ri7Jzpcqequ0QD1lsYGSBKZh8p
-    UHCkWJe0J7az2+tVSLJLK8d9zGJJixlSyuWtuCe+UrgJmtkEz2gOHoGSY9MPbCOkKhIqSW
-    jw24GYx7r4vlZkOPUJdhwxAp+4kX/9rloKwQ1h8YYKpi9TQPbaWdA75Htd0+mM46H1akvH
-    QD8/ajRRfMKKuu7G1NEUFyXJcTZuB9HHCVPLUazKMKZikQ+n4dsnHgEOa5TCH8M2wrXfph
-    4WDYeNZaxkGd0GO3mcpGCyIzqkT8V7Q1ryD1nCSYC2R9IG8vnq2t4n2d4bS3+5f3MaSSVx
-    GYjfyYkXLJXrRChrZl5BGjg5PhwydErjCEuW7uemr3Newkd1rjTYoy3sv/l3otoo0Uxd4r
-    wlELcEwJcFIAr6YWdhkPf3TrLLnXfGahAPB9913n/HcGXSlIcuZyCI/N2Af5IKAgnMdTF8
-    OuevEIT4+oZDVsNgs47DRn+3sjejajQkm2Uxx3hGLO0mB+tjMQH6JTb5BInyEVoTOMQslA
-    0ne31EDLz4u0HDH9hcb6DFgU+KUENfLNMY1LZRjCCGeqd/POghHh8pNrCjxdP+G+AjqJn5
-    miXDe7ER7n8PvjhC6nPb47TZFQW3tAyEfZazjVNwr8rkUMeZ9Er4uicuyssw
-X-ME-Proxy: <xmx:f40xaqHaY5FUg444xFfYro1PftcN_uE4uGFiLXqvs0fOSu4pueAhug>
-    <xmx:f40xaiszZdZtcu2y90qTMcvpkth8DHqcpSVYvUbtCBnNXgTiTydx0A>
-    <xmx:f40xaptvgalIC1dEsoK71Qo2DRgkPnjGLYKvX3B61mEj3lufp6bsLg>
-    <xmx:f40xagCjia6glzXOR85wa1x6Odch49_1RjaRo20rrlG7wNNwWwqUEQ>
-    <xmx:gI0xaqQKbyMNOX5_yGcPq0OLE58k4bzBXkK7mjRCFAL4D8KXgw4BKZ4g>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 16 Jun 2026 13:53:03 -0400 (EDT)
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2] clk: renesas: r8a77995: Add ZG and 3DGE support
-Date: Tue, 16 Jun 2026 19:52:47 +0200
-Message-ID: <20260616175247.2104891-1-niklas.soderlund+renesas@ragnatech.se>
-X-Mailer: git-send-email 2.54.0
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OWt8kZTF";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="jkUHEHv4"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1781637732;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=icHrK2aTsAoupO6HF7R3pIp5ly1Gmg7Tm5VKudfF+po=;
+	b=OWt8kZTFUc0p0FrIsL+1YITp7joNoKajE9f7Y08iUvzZ51TKNinPiADAlYfRUZHJihHi1p
+	yfmp4oeS3lVBLSV6x2PKdX79RG1miU5STUS9i8sdxrXJIj489gqSHjW01mwrPg4y6uln3G
+	ZydXhWDB/sFZhmEx80UCLE7xn+Rm1TU=
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
+ [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-516-fTi3_E-WOu6ARYcBmq51ZA-1; Tue, 16 Jun 2026 15:22:11 -0400
+X-MC-Unique: fTi3_E-WOu6ARYcBmq51ZA-1
+X-Mimecast-MFC-AGG-ID: fTi3_E-WOu6ARYcBmq51ZA_1781637731
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-517e0cdf99fso129649931cf.2
+        for <linux-clk@vger.kernel.org>; Tue, 16 Jun 2026 12:22:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1781637731; x=1782242531; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=icHrK2aTsAoupO6HF7R3pIp5ly1Gmg7Tm5VKudfF+po=;
+        b=jkUHEHv4ZrcjhawT62mbHILLluURkLmuAZTPbCB3W9raJH3g1X9/J6/ezU+capqwWZ
+         BfFPGZJiOOwYQr+L0BtreN0bjmo4C8cqvp7nJJ4JkJIabNq3+Ha3TTvgGWWuA3CW/Jfb
+         JDhWTHsdWu+w8HA0Td/EWppPTLfMrAQTcfRx8bHHhKFX76FHmIBIHY+mXolcHwJV5+oa
+         JlYK10i+rgMnyCRLk7hvWJBnf0S59n9FsVWIJYZtQCsl8fb2Wu9LcGw/gmxsaeyHPhYq
+         eeeaezEZxmN3EptLgrHI/S8mv/X8HPrc/E1Plv4OXSLjC4Bu1mGOL/gV5q1QGdhpIloi
+         S2Yw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1781637731; x=1782242531;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=icHrK2aTsAoupO6HF7R3pIp5ly1Gmg7Tm5VKudfF+po=;
+        b=ZTqmW4OnYO9rYKOgniDVxtP8cw/zeGJSqHrOVGc8agB3pr4qm4lH4TNx7M50gxZI2D
+         Z4vjAhEc5n3BkKxkK0NGBvqM+g0XQvedBXxNDHBTnR4/g0BeJ2vEE+rMkvW5Y8+zxdFx
+         VDFkEyT83+Y+U6JZ7OJgnfydk0bq9pmZmAQtr8LTvtkEnkjOu36FtMJFuqzzISUTOD/h
+         NfDw4vbJ6Yr8QH+Ntvc8vYDlCzgXTaArBgEVF8GNvXlaj9vDcH+SAXUdtJG4UMmqlS+n
+         8TgdhtnvgmTyqw9q02mjGBuLcOKskaGXDUeAGYlI96/crkLDrgkvQEYcavW4p2Uh6SDN
+         SOiw==
+X-Forwarded-Encrypted: i=1; AFNElJ/SagCHrXH95QzQt14ydzI1m0dySgO3bNmhJZqJyX+rk+aGd6xxopAGrSb5OZhebyCxW7tmf73JAkw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzS98Teg+wJEWfJ77zYZaVJZBWPxdg0ZrDvYVX05oQLzsoJDha
+	AcN65KYT5noobQsbcGIUjjU3bZez59x5m39/Q4Lim32BNL0hZppG3YoC9/ZXkBUX7yC0E2R9tNC
+	sR277S3jpe5/EmEsNWTpab5eM7ryRcUM1iD4ZPEtTS46F8U69zSVavCf/XqSDQg==
+X-Gm-Gg: Acq92OFupoEx3Hfat0lDDYC2xm/Tj5/9swGrw117bIL8jQOcjFjSRuK7B+YWwasiCdR
+	xt21WRtj/fxy+U10jWgnjCu6aE/Zoxm1LmnXp2O/JFVqyRp1O6MWdFsAjagi0roNBxvJuqeofaC
+	1ZC55waZryNWEDIMYG7YbiSHC3x4js8amLxassaWewihsSZxXzAZUcAWPHRe1dpkW3w1rUokKf4
+	qxmgKkad46mjoeFZNmiygoTIkifJwquV6MZO86QbKq8LIllrtMV9tiGErcyk6wiLeNOtQ9ZMykU
+	mtiYsn2UwKKXJXMpfxhbpCxNCaxdMxHBdR2XN4tkykD7SRCBCvXFa/DjTMa3JyZnk0SPMZkIekc
+	yRiHtJH088UAtwPpub5mV
+X-Received: by 2002:a05:622a:8cd:b0:517:6afc:b644 with SMTP id d75a77b69052e-519a8fffa38mr13241561cf.47.1781637730987;
+        Tue, 16 Jun 2026 12:22:10 -0700 (PDT)
+X-Received: by 2002:a05:622a:8cd:b0:517:6afc:b644 with SMTP id d75a77b69052e-519a8fffa38mr13240961cf.47.1781637730415;
+        Tue, 16 Jun 2026 12:22:10 -0700 (PDT)
+Received: from redhat.com ([2600:382:8500:43e0:4da9:d4f1:1887:ec76])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-517fb79df4dsm147042751cf.15.2026.06.16.12.22.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Jun 2026 12:22:09 -0700 (PDT)
+Date: Tue, 16 Jun 2026 15:22:07 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Wentao Liang <vulab@iscas.ac.cn>
+Cc: andrew@lunn.ch, gregory.clement@bootlin.com,
+	sebastian.hesselbarth@gmail.com, mturquette@baylibre.com,
+	sboyd@kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] clk: mvebu: ap-cpu: fix missing clk_put() in
+ ap_cpu_clock_probe()
+Message-ID: <ajGiX4JoGXaMu_-w@redhat.com>
+References: <20260616122936.1669366-1-vulab@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260616122936.1669366-1-vulab@iscas.ac.cn>
+User-Agent: Mutt/2.3.1 (2026-03-20)
 
-Describe the ZG and 3DGE clocks needed to operate the PowerVR GPU.
+Hi Wentao,
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
-* Changes since v1
-- Fix the ZG parent and clock divider are not fixed, but configurable
-  through the FRQCRB.ZGFC register bit field
----
- drivers/clk/renesas/r8a77995-cpg-mssr.c | 2 ++
- 1 file changed, 2 insertions(+)
+On Tue, Jun 16, 2026 at 12:29:36PM +0000, Wentao Liang wrote:
+> The function ap_cpu_clock_probe() calls of_clk_get() to obtain a
+> reference to the parent clock for each CPU cluster, but it never
+> releases it with clk_put().  The returned clk is used only to read
+> the parent's name via __clk_get_name(), and the reference is leaked
+> on every successful cluster initialization as well as on the error
+> path when devm_clk_hw_register() fails.
+> 
+> Rather than adding clk_put() calls, replace the of_clk_get() +
+> __clk_get_name() pattern with of_clk_get_parent_name(), which is
+> the intended API for this use case and handles the reference
+> counting internally.  This matches the pattern already used by the
+> sibling drivers clk-cpu.c and clk-corediv.c.
+> 
+> Fixes: af9617b419f7 ("clk: mvebu: ap-cpu-clk: Fix a memory leak in error handling paths")
+> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
 
-diff --git a/drivers/clk/renesas/r8a77995-cpg-mssr.c b/drivers/clk/renesas/r8a77995-cpg-mssr.c
-index 162fa86c81ff..315f0cb026ad 100644
---- a/drivers/clk/renesas/r8a77995-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a77995-cpg-mssr.c
-@@ -80,6 +80,7 @@ static const struct cpg_core_clk r8a77995_core_clks[] __initconst = {
- 	/* Core Clock Outputs */
- 	DEF_FIXED("za2",       R8A77995_CLK_ZA2,   CLK_PLL0D3,     2, 1),
- 	DEF_FIXED("z2",        R8A77995_CLK_Z2,    CLK_PLL0D3,     1, 1),
-+	DEF_GEN3_Z("zg",       R8A77995_CLK_ZG,    CLK_TYPE_GEN3_ZG, CLK_PLL0D3, 1, 24),
- 	DEF_FIXED("ztr",       R8A77995_CLK_ZTR,   CLK_PLL1,       6, 1),
- 	DEF_FIXED("zt",        R8A77995_CLK_ZT,    CLK_PLL1,       4, 1),
- 	DEF_FIXED("zx",        R8A77995_CLK_ZX,    CLK_PLL1,       3, 1),
-@@ -119,6 +120,7 @@ static const struct cpg_core_clk r8a77995_core_clks[] __initconst = {
- };
- 
- static const struct mssr_mod_clk r8a77995_mod_clks[] __initconst = {
-+	DEF_MOD("3dge",			 112,	R8A77995_CLK_ZG),
- 	DEF_MOD("tmu4",			 121,	R8A77995_CLK_S1D4C),
- 	DEF_MOD("tmu3",			 122,	R8A77995_CLK_S3D2C),
- 	DEF_MOD("tmu2",			 123,	R8A77995_CLK_S3D2C),
--- 
-2.54.0
+The Fixes commit you listed missed this, and yes it should have been
+fixed there as well, however the Fixes tag needs to point to the commit
+where the leak was first introduced. In this case, it is:
+
+Fixes: f756e362d9384 ("clk: mvebu: add CPU clock driver for Armada 7K/8K")
+
+With that fixed:
+
+Reviewed-by: Brian Masney <bmasney@redhat.com>
 
