@@ -1,186 +1,324 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11022098.outbound.protection.outlook.com [52.101.126.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC35123C512;
-	Tue, 16 Jun 2026 03:51:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781581902; cv=none; b=VNYuPAP0V6nbOtnsjToQ0vSEG0N/3hDpcjNOlgKj4pGofQx5fAGE76JNrax1A644khk8i5BRfsfYaJYcq+/oKlw8Md1a4RFtF/spjeb0aKsL/fhcFHb6HbMozmmK78r3HxG2kjMJpODmTFq+C+yq33KDYfH7tq3Hke+FKcUqHus=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781581902; c=relaxed/simple;
-	bh=A1zaSC8/ttGVTC9vbcVYYzlxZTQy1+EstQ32TwbpofY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BEv9eq2aTq4GGN34p5NtV6AJn7EfnE8b9yYDQ/PPgGt23pZ4G6u9vGx3K7lvy+SWtMBZ0T86uEk1da/ZMIkNlqGMs/Zqf1+Zk0AzF9VCqrtdJjwy8epNucX/bE/k9EsC1vOiPmytmDxNQjCJ2Pbzmq596Tp9wZh6zgWO+77jIPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nVj5KS8d; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 936413D75BE;
+	Tue, 16 Jun 2026 06:12:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.98
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1781590350; cv=fail; b=VhH3onFyQWpwchqJUkmr9pi6SJVq3L9j/qKz7SpHckCmAetN6SQ1uxp+HHsxEtIPGVS4G0zwFotHiCVMCUC3tLbl/j4Vr7O/hqZi9JTgoFYyWJnwA2qFMd1JrsN4jxl+AXVc9a0UkcTHjDrPIdOF9hmpa9jgrmkBF3ORzggVb1M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1781590350; c=relaxed/simple;
+	bh=5YYeS+WFUOK3GTH1My46nGQbrY+vq+dbw1LZHmhQ1ZA=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=a4HZUBIE5WDBkxQQ3wqSjMAZ8+2MBUpJVq9zx292OFOWhbicYm61aT2nPcOq+NT+jnVZGgAb4hPIUw8Ob+3pcDWrgnMLlOjnlhZ2h8nE3XSil6yE7A1+G7Uu9Qupq8Yq9dWvT9dj3ouJvcnp1jSdgavArU45DsgAOL6TEFFByKI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=DC9es54Q; arc=fail smtp.client-ip=52.101.126.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nVj5KS8d"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4373D1F000E9;
-	Tue, 16 Jun 2026 03:51:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781581900;
-	bh=0LLj4LGa+CEorWsXFdkROPtAy/btizr8qptWeMPKmQ0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=nVj5KS8dmM6px34g0QjZi4/1Wq1JfYLMPwSqwR8qAPVxOE4KFryFGL/NPsr77lOE9
-	 S1ZZt+Ne0GT+XH5So8VkuxbjNrbV075vkRN4kCCWXWrIX9rCGAQI1aijwuW8fGCzMv
-	 ceHkk9RDMYlMkieIcfOQimcbbQaAHVRtQUyP9vFZcyyFZwx65+nJlgqbFl0EyJ94Ch
-	 RMzeO5zFPKfqnqxpOKmHXJtXrI+fRF2Cc08uEC7RLxpzo70wRLUPkT5YztQAp+8jdm
-	 hnuqPOEbDrKh6zT+92WHog+xjOfK+cT7RoQQcZGokdjGVKsGroAQl1b0iNSaVUSKqz
-	 DOIP2VrKhkHbA==
-Message-ID: <b1f03d81-85db-4303-89ff-64440b6e1890@kernel.org>
-Date: Tue, 16 Jun 2026 05:51:32 +0200
+	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="DC9es54Q"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=krZqORzIA9hiVaRipo57if/3wi9c4l8YvZLL22G6iNC+OYyscgEUZaJfjG2DNS3ch7hSr4VaQ/l/susSJSn7iKgDvzJZMudOd24CgAa9ovT7IpYoVGBqlWa6qVAwbybSnWavURKqZtHCZhIMRSekN9l6DaO7yLlT2F/dFyZvYe95Xp5q37SD7vTm+w2dlRP7Rw/Y0SEJQLdv6t6hktQdzt9OkQr8HRcq0k0e4IGYHtWLsyoIeOrhOxXh6/l8UW+UpOWEpujcj+qG88bRY9AHbbSo+r4G8rQV5S96yh4KfgtXdF0wfXJpQEbdL+aByTE40lwXoloKtS9VoEEVEwI+aw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IC1KoUvF73OtWJ/lTWg9nZe3Dxd1TPPs/CEL0ojNFYQ=;
+ b=EhuYiXk7oqAmDc+1xRqC4vnMMZaBuxIn9uqmF5ymmf1ajl3f728fxOCZu+28fmgwFwSw5txkQjZpyM4tDEWslb9uCxpm0EfIK3FEKznBxbs/GUr8YMzJ3Mx6KQqY3WjVa7eIzU9AmM7qJivgytBWDPsS44PXvMqDOO+2zP3jTYHuxs45AqNGeHSbIlkyrTPrQt6kd7hL6VBSSSRXpVXwBfY3v06u6+j8N86UFYpDIiiQdozCIkYpQz8CK2WnohdnaoGWtAu1VpJDVOn3//kM4aSzsEoWlGbxJC/6TthcLDJU3qbI+NyC0RpR/aVG6Q6Bpn1zHrTTffgD4sawyR0IiA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
+ dkim=pass header.d=amlogic.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IC1KoUvF73OtWJ/lTWg9nZe3Dxd1TPPs/CEL0ojNFYQ=;
+ b=DC9es54Qzes7h8R4dKDVAhrAQY9n+teFlKPp2P6qBc+H67tvfc95lJIF5itMPdFHMZaBmJ8UzcA0tT7PGMx++Er0RdfnFZC0VuzcGJ2qk9IWO0wsjaualyThJBkrDvusTtQupc/hpakHlT7AAwoayxSK8uzzzYDzPhsqiiWZXTiq35/I5Oe/qaxIlLoXJ2AsUvmU4FIf+nzMxTmKSTeHJmQq9HP9XKHGf/W5xjZegfACV0dWxMB9t0jUN+M0p0vS1GaSbcK83Iu/3JkBh/o+f/LKsBSj95LwAaK3nj0B7MrSPdBgjraK5sLjjjmGTSv9zdo2qYtHFoWXBww94Y2f/A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amlogic.com;
+Received: from KL1PR03MB7149.apcprd03.prod.outlook.com (2603:1096:820:ca::7)
+ by KL1PR03MB8413.apcprd03.prod.outlook.com (2603:1096:820:130::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.139.11; Tue, 16 Jun
+ 2026 06:12:24 +0000
+Received: from KL1PR03MB7149.apcprd03.prod.outlook.com
+ ([fe80::2f06:12a:fff0:6506]) by KL1PR03MB7149.apcprd03.prod.outlook.com
+ ([fe80::2f06:12a:fff0:6506%5]) with mapi id 15.21.0139.009; Tue, 16 Jun 2026
+ 06:12:24 +0000
+Message-ID: <5601fe65-777b-4db0-a6e5-8d2cdcde7e53@amlogic.com>
+Date: Tue, 16 Jun 2026 14:12:20 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] clk: amlogic: Add A9 peripherals clock controller
+ driver
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Jian Hu via B4 Relay <devnull+jian.hu.amlogic.com@kernel.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Xianwei Zhao <xianwei.zhao@amlogic.com>,
+ Kevin Hilman <khilman@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20260610-a9_peripherals-v3-0-d07a78085f71@amlogic.com>
+ <20260610-a9_peripherals-v3-2-d07a78085f71@amlogic.com>
+ <1jecieftme.fsf@starbuckisacylon.baylibre.com>
+ <bfe92bbe-5325-4497-b79f-10c7a6e1ed5b@amlogic.com>
+ <1j7bo0dm0z.fsf@starbuckisacylon.baylibre.com>
+From: Jian Hu <jian.hu@amlogic.com>
+In-Reply-To: <1j7bo0dm0z.fsf@starbuckisacylon.baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SE2P216CA0180.KORP216.PROD.OUTLOOK.COM
+ (2603:1096:101:2ca::11) To KL1PR03MB7149.apcprd03.prod.outlook.com
+ (2603:1096:820:ca::7)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 7/8] dt-bindings: display: allwinner: Split H616 DE33
- layer reg space
-To: =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@gmail.com>,
- wens@kernel.org
-Cc: samuel@sholland.org, mripard@kernel.org,
- maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, airlied@gmail.com,
- simona@ffwll.ch, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- mturquette@baylibre.com, sboyd@kernel.org, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <20260509190015.79086-1-jernej.skrabec@siol.net>
- <nIKN_benRn2Bk8SDZrkMCA@gmail.com>
- <86943057-f5b4-4fae-9172-45f13814494f@kernel.org>
- <0r4us4OeRRWtJhxvps-bZw@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <0r4us4OeRRWtJhxvps-bZw@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: KL1PR03MB7149:EE_|KL1PR03MB8413:EE_
+X-MS-Office365-Filtering-Correlation-Id: b3403e22-7158-44c9-e7c8-08decb6e3bb6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|23010399003|7416014|376014|1800799024|11063799006|56012099006|6133799003|4143699003|22082099003|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	s0J5WRAdpCQI4IeALV4jhkkTyfsO3QOpcgA3GaLM2eDeI987dsCiVB8HR+yK0pOeJ6wDvfypnjM4p9YhxN78zFTCAEeRZHZpznkesNFYXomOY2qbeJ8xpAYcgPK4oqa0zvz6vYAmS0uGKabqUJchR/DNJzkk0SrUA9qqx4z9YPt2xZZTrI5EndMBVngTFD0U8xU2ZCw19uChIisEaCqCDrEjjTQN5tisks4Ph7pnTzMdDEzlWQpqd3Iq2fq/8Wdgfebd77p6KDs1YajHCn35EJTIrDUyW1gi0/vCpz4kPaVaEuf5VSb6mzTOPFPiEdLKPvCx4NuloWsOWGhjFDgReB3li1iPGmK+B7E1SD9ycPtwc23h81IpsMLsuDCu2Up23x5pVLH+CAYM91/sEy8GnfXI/l7kbDJ0j2H68PbkU5tb2t2tMYQCgTclWYxbAg1ra1y2achNUVX23YDaqfMajJ9CC7V1JED3eUIJ7NXRySvIrJa2wvxkx2HkrifXpl4MAno5JiKsmWQmR158rcC1WcWFgXFhrxKntzhKnrNqxP6P3wppYANDGCZZZt6exDnly8XLEM+4d+mCaHQ3iWOqju80KzNe9an/hk3w6NU1w1k4nZOywRgUZEaZI8Q7RFQCoEyqc5fPhtRJSNUYljW3j7HFbz3PfkvFYqLZ39tkuynz69Emq1hOZZGvq3R6oWTH
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR03MB7149.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(23010399003)(7416014)(376014)(1800799024)(11063799006)(56012099006)(6133799003)(4143699003)(22082099003)(18002099003);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?RzJxSVRGNUhUQmNkNlNoTkZlK2w0eFlMOFJMOVd1SVFYcTIrQzJKc0FlWVBY?=
+ =?utf-8?B?czUwNFBVRUtselgxcWhSc2ZnZlV0Ukc0VEtlL2MwMWgwTUI4SVNOL1RtbnBu?=
+ =?utf-8?B?ZlNsMUJCbVNxcm9pQ2w1ZmRJaHpMVmFqN3FSRFJUeU5nUVhMTnJ3L2QyYkVH?=
+ =?utf-8?B?UEtjcXdwaWdJdExXTVhUMjdxM3R5cjB5K1RFQ1FXVUsyK1dIU29yUDRhSVp2?=
+ =?utf-8?B?TlU2eXRQSFVNVzZmSWJYak9pcm1abEJKbFJoSEJBUUQyRWd4R0VXVkNJY3Rj?=
+ =?utf-8?B?c2RZaWRSSXFSczJBNmlGQkpJcDh1UjVJcU5MUHI0VDM0dGhYeGtzOVE2OU9O?=
+ =?utf-8?B?MXN2L3VKT2ZWM3NZRURzUXllSjhjemxLdUM3bmxjbk43RUFHVnhnTjMwUHRX?=
+ =?utf-8?B?Q2c3MTFPakJOSnNOU0dDU0cvbkN5MlUrTERqYlBnUWFTdHlQSXlkMG5vamt1?=
+ =?utf-8?B?Wm9GbE1QUHFvNEY3b0JVT3h4SHpyM3Bkc1FHTUZDMVpGS2lwamFhYlJYSW0w?=
+ =?utf-8?B?cW5RQ0ZjcUlDeFg3Y3VwRkVFWnRBRXVINVNya1BoajA1T0p5VFlNZlBRZklZ?=
+ =?utf-8?B?RmpiNFFnVWNWb29PTm5TcXBkcEFWZjhVVnlJYlhmTDUvR3NYcEpEcGwzb3hp?=
+ =?utf-8?B?am9PY3FZL3ZjMzdUQmZCNlgrNVcydGtNN2R2bklkamlLNzdqbUNjY1ZwM0po?=
+ =?utf-8?B?M1VPMVQyekJHMWtseDhBeUVaRVMyQ0lJdDQrV0NweFdTZ0hyS0VKcDE4enJZ?=
+ =?utf-8?B?MGYwaUJiSU9sWXlERnFvb2pMZmFjQXpEMkpXSWVKMWFBaEk3eWtobGpwR1pr?=
+ =?utf-8?B?S25jdHRZZmhDMERCV1UySzViR3Jja2wzNk1CWjdEbXZvNEtJdVRrVU9JQndH?=
+ =?utf-8?B?THNOVVhWYnMzSE9wbFpQdGV5ajBaY0NGbjlFN2g5YVl6czZKSXduNEdMT0NO?=
+ =?utf-8?B?RFp3cysra3hkVzFrRm9ncWFhOTF6UndteFYvSzB4bWRsNG5ncVNQblNFd2hB?=
+ =?utf-8?B?SHRZdWdtVUI1Tm80WC9rSkZESVU0b1o1MnAxT3pGYzNyTFE2aFlSS09OK0tp?=
+ =?utf-8?B?VGpyOEZZUGRiZDBNVzNJVWFqUzhzbzBkbzB2bDI0TDhhREZUdFNYU1Z1WlVY?=
+ =?utf-8?B?T0hybGlFNi9sTWgvS1RCMDdLOVdVVHRSMHFrdmxtSGtCMXFqczZTeGF6SitZ?=
+ =?utf-8?B?dHk1bFhKdUlJT0VEL0VDOTR2d1hGbVpHUDVsc20xekJ1ZGVKRmtVYjNpU0Vv?=
+ =?utf-8?B?eGt1TGpKQ0I4YUhJM0RIcTZyaWJZNW4vdzRtdTE2VE9UNUErem10WDBHYjNx?=
+ =?utf-8?B?b1hwbUFPaVNpRE5pZGNqKzE3V0VhM1ZNMGdmYWh5aDI2Z2VNa0NpZ2RheURp?=
+ =?utf-8?B?eHRVTEhWVUFpdXhVb3FxTjMyMzRQd1gwYWMvMWlPb1E5bFNVQ0hyQkNqYlY3?=
+ =?utf-8?B?eHR3c20vNm5tNzExalc2L3RaR2k3MEJDTWY3cTdXcU9EeVVmWHFnSTlTdm81?=
+ =?utf-8?B?bEFmSm4wNDBxWG9pMXdRMjA5WW1xNFRqbjZNc0RGWUE0eUUwN29nelYyek5J?=
+ =?utf-8?B?YjFBQlhpUFp1QWV3RU9Gd1FhY2Y0d1Q0emRHQjg4N2E0UXRUc3I0K3V2akJp?=
+ =?utf-8?B?TndJOFptK0RiWVUwVlRmeWJZc2xnOGhVcisxZ0VKSFF2UldjMk1aMkdLMU9i?=
+ =?utf-8?B?R1VoOUVrdmhnMVpVNnJjTlZaQ0taV2hVRWE5cmZ1NUlMdGVXaVVhcWl2TGp0?=
+ =?utf-8?B?YU93cTMreTFsMXV5VUZuN1RRVEl1dU1Ub1djdDFXcmw5bmVFejhscHF3VVh3?=
+ =?utf-8?B?c2VEc0syS29mbmNQMSt1MnBLQzRPOFkwZm5jNlNCNk9OOGZTMks3a1R1ZG8y?=
+ =?utf-8?B?bVIzTjhKRHhSaVFqWmRpcHpQRzJjTit6NXB2TTdRWDU2QW5jR1dCVW84NFN3?=
+ =?utf-8?B?aDdCdnByZVV5VTdrRW0yMkNyaDRGd3JIUDFMWUdRZ0RDK2dqZ3dFbzFHRkNy?=
+ =?utf-8?B?QjV3ekZHaXE1V21jUXlmQmdrWktMU251eldUMkxCVXFMN0thMUFselRmNkJD?=
+ =?utf-8?B?djVKUDVGdlY5UWdqdG9teHphMGlqSWIwaHplY0JvUk5FWGNMaHlVVUk0R2N2?=
+ =?utf-8?B?aG5MTVVhd3AzU2hTVzhGUkZxOGxQNmlMZGVCdTBrTDRzRW93WWdvV1FFdjYz?=
+ =?utf-8?B?QVh1U0g2b0V1WnNVcXFRTDVNdnhJYUh6ek5makFGVElKUWcwTHQ5RzZ4cm9k?=
+ =?utf-8?B?QTFGVElrYThicUV5TWdOTE5rSXozK1RnQmhhQmhBdDk3TVUwMlZyYXhIS2V1?=
+ =?utf-8?B?WE1ULzZKS3ZqekkySTJkaXFIeXU3clNKME1GYzNIN05kRHMxV0djZz09?=
+X-OriginatorOrg: amlogic.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b3403e22-7158-44c9-e7c8-08decb6e3bb6
+X-MS-Exchange-CrossTenant-AuthSource: KL1PR03MB7149.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jun 2026 06:12:24.3300
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: EwlWXhCVAET6VZDyjO3CFUc3I6vVslrrrHmL59r9ZVKYIF4H8WXeFjfE4oq2hlfDj8/oIrlt+fxw3IJh2edh3w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR03MB8413
 
-On 15/06/2026 17:47, Jernej Škrabec wrote:
-> Dne ponedeljek, 15. junij 2026 ob 06:28:54 Srednjeevropski poletni čas je Krzysztof Kozlowski napisal(a):
->> On 14/06/2026 16:08, Jernej Škrabec wrote:
->>> Dne ponedeljek, 25. maj 2026 ob 14:10:38 Srednjeevropski poletni čas je Krzysztof Kozlowski napisal(a):
->>>> On 24/05/2026 23:33, Chen-Yu Tsai wrote:
->>>>> Hi,
->>>>>
->>>>> (resent from new email)
->>>>>
->>>>> On Thu, May 14, 2026 at 2:04 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>>>>>
->>>>>> On Sat, May 09, 2026 at 09:00:14PM +0200, Jernej Skrabec wrote:
->>>>>>> From: Jernej Skrabec <jernej.skrabec@gmail.com>
->>>>>>>
->>>>>>> As it turns out, current H616 DE33 binding was written based on
->>>>>>> incomplete understanding of DE33 design. Namely, planes are shared
->>>>>>> resource and not tied to specific mixer, which was the case for previous
->>>>>>> generations of Display Engine (DE3 and earlier).
->>>>>>>
->>>>>>> This means that current DE33 binding doesn't properly reflect HW and
->>>>>>> using it would mean that second mixer (used for second display output)
->>>>>>> can't be supported.
->>>>>>>
->>>>>>> Remove layer register space, which will be represented with additional
->>>>>>> node, and replace it with phandle, which will point to that new, shared
->>>>>>> node. That way, all mixers can share same layers.
->>>>>>>
->>>>>>> There is no user of this binding yet, so changes can be made safely,
->>>>>>> without breaking any backward compatibility.
->>>>>>
->>>>>> There is user. git grep gives me:
->>>>>> drivers/gpu/drm/sun4i/sun8i_mixer.c
->>>>>>
->>>>>> which means this is a released ABI. As I understood, the old code was
->>>>>
->>>>> We held off on merging the DT changes so that we could rework this.
->>>>> I can't find the actual request though. It was probably over IRC.
->>>>>
->>>>>> working fine but just did not support all use cases. Why this cannot be
->>>>>> kept backwards compatible?
->>>>>
->>>>> AFAIK the "planes" block is shared between two display mixers. As the
->>>>> commit message explains, this prevents using the second mixer, since
->>>>> only one of them can claim and map the register space. And on the H700
->>>>> (which is the same die as the H616 discussed here but with more exposed
->>>>> interfaces), there could actually be a use case for the second mixer.
->>>>
->>>> It explains why you want to make the changes but not why you cannot keep
->>>> it backwards compatible.
+
+On 6/15/2026 8:29 PM, Jerome Brunet wrote:
+> [ EXTERNAL EMAIL ]
+>
+> On lun. 15 juin 2026 at 19:25, Jian Hu <jian.hu@amlogic.com> wrote:
+>
+>> On 6/10/2026 8:49 PM, Jerome Brunet wrote:
+>>> [ EXTERNAL EMAIL ]
 >>>
->>> I guess it can be backward compatible, but I don't think it makes sense.
->>> Yes, original driver implemented original DT bindings, but there is no node
->>> which uses that binding. If there is no user of that, why would driver
+>>> On mer. 10 juin 2026 at 16:14, Jian Hu via B4 Relay <devnull+jian.hu.amlogic.com@kernel.org> wrote:
+>>>
+>>>> From: Jian Hu <jian.hu@amlogic.com>
+>>>>
+>>>> Add the peripherals clock controller driver for the Amlogic A9 SoC family.
+>>>>
+>>>> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+>>>> ---
+>>>>    drivers/clk/meson/Kconfig          |   15 +
+>>>>    drivers/clk/meson/Makefile         |    1 +
+>>>>    drivers/clk/meson/a9-peripherals.c | 1925 ++++++++++++++++++++++++++++++++++++
+>>>>    3 files changed, 1941 insertions(+)
+>>>>
+>> [ ... ]
 >>
->> Did you check all out of tree users of the ABI? All vendor kernels,
->> forks and all of them for which the ABI was made for?
-> 
-> Since when do we care about out of tree users? I understand that drivers
+>>>> +
+>>>> +/* Channel 6 is unconnected. */
+>>>> +static u32 a9_glb_parents_val_table[] = { 0, 1, 2, 3, 4, 5, 7 };
+>>>> +static struct clk_regmap a9_dspa;
+>>> What is this ?
+>>
+>> The peripheral clock definitions are ordered by register offset.
+>>
+>> dspa is one of the parents of the glb clock, while the dsp clock registers
+>> are located after the GLB clock registers.
+>>
+>> Since glb references a9_dspa before its full definition appears, the
+>> declaration
+>>
+>> static struct clk_regmap a9_dspa;
+>>
+>> is added as a forward declaration to satisfy the compiler.
+>>
+>>
+>> Would it make sense to relax the register-offset ordering in this case?
+>>
+> I don't think we ever enforced such ordering (or any other ordering) in
+> the clock driver, so yes please.
+>
 
-Since always? That is the meaning of ABI. Otherwise there is no point to
-discuss ABI at all. Why would it exist if you had all DTS inside kernel
-always matching the code?
+Understood. I'll reorder the clock definitions accordingly and remove 
+the forward declaration
+
+in the next version.
+
+>> By defining the DSP clock before the GLB clock, we could remove the forward
+>> declaration of a9_dspa.
+> Unless it is absolutely necessary, please avoid forward declaration.
+>
+> Declare what is needed first, keep related things together and use your.
+> best judgement ... IOW, make it easy for me to review ;)
 
 
-> must support old device tree files. Once they work, compatibility must
-> be carried forward. But that's not the case here.
-> 
-> In any case, vendor kernels have completely different DT structure. This
-> was developed independently from them. Take a look at [1] how BSP DT looks
-> like, specifically Display Engine node.
-> 
-> Of course there are some distros which grab WIP patches from mailing lists
-> soon after they are available. For example, I know that Armbian carried old
-> WIP patches which used old ABI. However, such distros generally don't care
-> about exact solution and ditch patches as soon as proper solution is merged
-> upstream or even when better WIP patches come around. DT files in such
-> distros get updated alongside kernel, they are not hidden in firmware. 
-> 
+Ok.
 
-I am not talking about BSP. I am talking about out of tree users for
-which we defined the ABI and called it that way.
+>>>> +
+>>>> +static const struct clk_parent_data a9_glb_parents[] = {
+>>>> +};
+> [...]
+>
+>>>> +
+>>>> +static struct clk_regmap a9_vclk_div2_en = {
+>>>> +     .data = &(struct clk_regmap_gate_data){
+>>>> +             .offset = VID_CLK_CTRL,
+>>>> +             .bit_idx = 1,
+>>>> +     },
+>>>> +     .hw.init = CLK_HW_INIT_HW("vclk_div2_en", &a9_vclk.hw,
+>>>> +                               &clk_regmap_gate_ops, CLK_SET_RATE_PARENT),
+>>>> +};
+>>> Looks to me all this div_en / div repeating pattern would be easier to review
+>>> with tiny macro .
+>>
+>> Good point.
+>>
+>> I tried to reduce the repeated div_en/div pattern using a helper macro.
+>>
+>> It keeps the relationship between gate and fixed-factor clock more compact
+>> and easier to review.
+>>
+>> After using the helper macro, the div_en/div code can be simplified to the
+>> following:
+>>
+>> #define A9_VCLK(_name, _reg, _bit, _div, _parent)        \
+>> struct clk_regmap a9_##_name##_en = {      \
+>                         ^- not strictly necessary, a touch too agressive
+>
+>
+>>          .data = &(struct clk_regmap_gate_data){          \
+>>                  .offset = _reg,      \
+>>                  .bit_idx = _bit,       \
+>>          },       \
+>>          .hw.init = &(struct clk_init_data) {           \
+>>                  .name = #_name "_en",      \
+>>                  .ops = &clk_regmap_gate_ops,           \
+>>                  .parent_hws = (const struct clk_hw *[]) { _parent },    \
+>>                  .num_parents = 1,      \
+>>                  .flags = CLK_SET_RATE_PARENT,      \
+>>          },       \
+>> };       \
+>>        \
+>> struct clk_fixed_factor a9_##_name = {       \
+>>          .mult = 1,       \
+>>          .div = _div,       \
+>>          .hw.init = &(struct clk_init_data){          \
+>>                  .name = #_name,      \
+>>                  .ops = &clk_fixed_factor_ops,          \
+>>                  .parent_hws = (const struct clk_hw *[]) {      \
+>>                          &a9_##_name##_en.hw          \
+>>                  },       \
+>>                  .num_parents = 1,      \
+>>                  .flags = CLK_SET_RATE_PARENT,      \
+>>          },       \
+>> };       \
+>>
+>> static A9_VCLK(vclk_div2, VID_CLK_CTRL, 1, 2, &a9_vclk.hw);
+>> static A9_VCLK(vclk_div4, VID_CLK_CTRL, 2, 4, &a9_vclk.hw);
+>> static A9_VCLK(vclk_div6, VID_CLK_CTRL, 3, 6, &a9_vclk.hw);
+>> static A9_VCLK(vclk_div6, VID_CLK_CTRL, 4, 12, &a9_vclk.hw);
+>> static A9_VCLK(vclk2_div2, VIID_CLK_CTRL, 1, 2, &a9_vclk2.hw);
+>> static A9_VCLK(vclk2_div4, VIID_CLK_CTRL, 2, 4, &a9_vclk2.hw);
+>> static A9_VCLK(vclk2_div6, VIID_CLK_CTRL, 3, 6, &a9_vclk2.hw);
+>> static A9_VCLK(vclk2_div6, VIID_CLK_CTRL, 4, 12, &a9_vclk2.hw);
+>>
+>>
+>> If you think splitting it further into separate helper macros would improve
+>> readability.
+> One clock per macro please. Hidding 2 declaration is recipe for
+> disaster. For ex, here the first one is static, the 2nd is not
 
 
-Best regards,
-Krzysztof
+I'll split it into separate helper macros so that each macro expands to 
+a single clock definition.
+
+They are defined as follows: (Excluding struct clk_regmap)
+
+#define A9_VCLK_GATE(_name, _reg, _bit,  _parent)        \
+         .data = &(struct clk_regmap_gate_data){          \
+                 .offset = _reg,      \
+                 .bit_idx = _bit,       \
+         },       \
+         .hw.init = &(struct clk_init_data) {           \
+                 .name = #_name "_en",      \
+                 .ops = &clk_regmap_gate_ops,           \
+                 .parent_hws = (const struct clk_hw *[]) { _parent },    \
+                 .num_parents = 1,      \
+                 .flags = CLK_SET_RATE_PARENT,      \
+         },
+
+#define A9_VCLK_DIV(_name, _reg, _div)       \
+
+     ....
+
+static struct clk_regmap a9_vclk_div2_en = {
+         A9_VCLK_GATE(vclk_div2, VID_CLK_CTRL, 1, &a9_vclk.hw),
+};
+
+
+static struct clk_regmap a9_vclk_div2 = {
+         A9_VCLK_DIV(vclk_div2, VID_CLK_CTRL, 2),
+};
+
+My understanding is that you would prefer helper macros to cover only 
+the repeated initializer fields,
+while keeping the actual clock declarations explicit.
+
+If that's not what you had in mind, please let me know.
+>> I can do that as well.
+>>
+--
+
+Jian
+
