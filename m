@@ -1,95 +1,95 @@
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11AFA390200
-	for <linux-clk@vger.kernel.org>; Wed, 17 Jun 2026 20:45:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63ED027FD4B
+	for <linux-clk@vger.kernel.org>; Wed, 17 Jun 2026 20:49:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.44
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781729142; cv=pass; b=R8+U5HaISr8bHy6XfKqrRmZzzcm3cxGIEwBpNyyh4F1Htm0yl8BInnDnbtraQVr8YRCPvbVbuQt08dWJwVeh/kcsVu5ZJJBzRVBV59OO0JN0NZ+i6jjxsL7SEVBsgZjoaNKBUttgM6bLCiAQXSXO4SeKxdNjBPkwdMNMVxvsROI=
+	t=1781729389; cv=pass; b=XPndpGcg0eYbU2EMVj/WaK5ow8BTMcgslBPZUInSvWQ97Jea0ogpSeSQ5vtxjWzlUhfz2c2JyMkTUx02U4Ff3oTo9SM6mxKlwnrVER7DhKR3nE6v8cpnfu29OlhImChw4D7ZHECaUIptToA5MBrjpTc8G+5jBtFT6+Yxfo0TbPA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781729142; c=relaxed/simple;
-	bh=8a/iR0PgeZPtVkzSIzBEbGfKE8M5iGI/7dK+r7riu/M=;
+	s=arc-20240116; t=1781729389; c=relaxed/simple;
+	bh=8riQs28c5CEk2XTXUUBXYJHl6xc4h6FhZF3t0ruzM/M=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GcCFeF0yidLErHkRU11U5LyDqvBhsFDVNmJssoaVJRGT74ivCnTXfaOARFfXS3W48F6pBPbF+jl8GET4RR8dfblQCAKp48JXw3Zymmmbg0ReUPhTJptLDw6CDefqOhY1HTGtAdnj2DnKNaKJkBqu+ymcU/v1lR4JzR+IhLsw93Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DT7t0EGd; arc=pass smtp.client-ip=209.85.221.53
+	 To:Cc:Content-Type; b=plWCk1/HLIgzJavNXTNfPNC2m2BbVBw/GXjib36GKkIyN32PkwV4JcFtmegFagkPoZ5Ffg6TfjBtaWzCCJzdnxyZLvqvKPP8gvZl0P0H6pmFWzUslQqp26lfLEqwyMjtvq4DNcodmvgkgwjzg3EOmF7zjoACt88qzd18dNyL2L0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QauogLM5; arc=pass smtp.client-ip=209.85.221.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DT7t0EGd"
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-462cdb88d01so124029f8f.0
-        for <linux-clk@vger.kernel.org>; Wed, 17 Jun 2026 13:45:40 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1781729139; cv=none;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QauogLM5"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-45ef779c1c2so193835f8f.1
+        for <linux-clk@vger.kernel.org>; Wed, 17 Jun 2026 13:49:47 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1781729386; cv=none;
         d=google.com; s=arc-20240605;
-        b=cp5J9T7gvI1F88pQqO8Y8qJnXZNBidfIx0aD/2IjrRG+iw7WfSsHqjAJx7OZ/k4wlL
-         FhSlWWe3UC1OPkT4E58VcvT6yAuQ6KzGfJ3reSoFgb3Fk4hQL1nP21CaSCM1Hd11fTKh
-         yPAJAjAZaQ1a4+1ZG6aihgTNdueKXFBOgG918eXc8NFWKQLGAGvyH0g0aTfZKqsUmvTv
-         yTNHSQlqwjUpUsqYUDSF0uN8W4sQJqHPdwLYioSPQiZh7SvrrHX3+u6ReP64zGUd1IU/
-         34pURc5NzSoZB/FUrcduk9dun7YJa+8bSUuKnHvEc9uF8tm2QrSBTpkOPXmjrH47tcN5
-         fFBw==
+        b=bvYsMj/Z9gbpSuZmqsXNDZmGru+Ts0sm1e3FIr6c9g6E+U518qYj72Ukh6x+JaYuY/
+         Bmu/Si81QTUTLD5LxLk/jaOlpHttxTg3ms4NPwlTgdTtcIt0BxNLhLoc5jm+7qsO1nji
+         sm+F5i7PhNJ0fFZikY+Hklv2UIVN4DyWx3otHTt91kyuqgAFyY3L+rM9bpfWiySly9ux
+         M7MFKRLz6wtXVvYTF5Jr796adlL/23NGUZ13INVyT4JtAZlv0Ic1BMe9IOgrpNHaez4A
+         Bv5s/aKd4n9q9VdrX4X7+Zc/ycVp50fEfCSvqwzzE2pb9x5qx/SP3NsTZmfO6tSenAHl
+         /VCg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=tOxpa5RlaT10x/M9xWFJdAC7kk5hOTrDuX91QFFTTi8=;
-        fh=HfGiR3CkQ0UgycGJYRp5kQ4+5+V7yBZOBN2HMBqAsxQ=;
-        b=M6ZLjrAzfpHUW4pTqJVA/IPxD7F1EBMX3sWAtQHPY1Ovdo4+BxrDaePPRBPngr39yN
-         Zf7Juwumto94p7CG2peNRAWR0a1auVGl7MmO3HVsJ/nuL4+fqOmrpkByvsh7vxQBLwOO
-         we+oFY3q3NHwYUghxCk+N3bsvCsVJRbTgD/7+alxT2Vc/wbyyyLpRoUJ6sMxHXOv9MvH
-         BAmF4xA9wCNpUBzw4E6Qs/m4lbL4u4u0I2s8Sf28lWQ4xDbhkmMnv2szf1PIGEcFlpF7
-         LMdsZMruOESv8JhSJpIjMcHWdbcg+0MHlraXTXCCtX9q6ohBw3WOYsDDfw7fxGq5ttNB
-         /wdw==;
+        bh=StSvglLaxppt7VqPKeSB/sD5CeiYnjB2MJ3tpzdtgys=;
+        fh=jLZg8pmllq6isAHRlF43XldxC+Oj4DrlOTFGuWL2Jsw=;
+        b=Uo0/c9G/SLbmjlhWd0zCsgnoDrqoNS5O287u4gIGqykZ2qnkmt/ET9yTPbjZk3pDR+
+         q1DlE0FA6irZbxYtmffYPSMmQdDVFMWkAiz/1Y0iWr1khghSdjd+2Fjrl664l3oBeoyT
+         Yro0YaB5Z0+Bg09YXiuBxzqGRx1PcPpV94DgTTtgK9+ZaSZnDCTML8Lh/7tsX84NTLCA
+         8wIie06Ry87WGTqzCZHQDlOw5Yxvgxsn6NU7I6Vz/FYS7q5azUMTVUybLJpFn2ume2ka
+         5bNo6Jnm8FPXvbWQ1OPqBK7Goc/ew9tWW7WmJcEWmbpHeHIo9Z5petZ7XKnBNvbylzke
+         ROfg==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1781729139; x=1782333939; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1781729386; x=1782334186; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tOxpa5RlaT10x/M9xWFJdAC7kk5hOTrDuX91QFFTTi8=;
-        b=DT7t0EGddQ6oq5WJ7ix/vWnJ7EGtcz6PvZmYmAXQKsabmw79lUMDNz5YfwKw5LLT9Y
-         UH742BBlzFH3EZ2CxXyqIqjl4uEaq1v19Uhwh6olsl2PClKPSOuiBDvYirFPgxo8Nev/
-         L1WnJkdp6lTyLN4Z404c0VZUkh+pp5Wfx4Swtuj0l9KFpbt7CEJz4+st0yBw9PT69Mcb
-         uWz6cvL8n8hcWmU06fjEWv2gl5Tvavgnl+f3cji8fFH05wtagvLsMwSD3B9UqXcZIH42
-         14XdGM1JMQ7pHQukxnZ5bREgzhMK7tWLqn6wz32dQE5eCEOTABbedjtw30DZSjMKxrGv
-         5Xgw==
+        bh=StSvglLaxppt7VqPKeSB/sD5CeiYnjB2MJ3tpzdtgys=;
+        b=QauogLM5z3vcR02KJOAwodPmp1SbhNgnfDTWwSGr7oBe4pneIR9CZ8z3g+VJGK7ZE3
+         d2g9dP/mgrhiwsNGo4ZP309N9aHw+jDc+cUfcB7XsDgf9AdyHOCTC8h3pFJte1KrC6NV
+         J2hFYEbOpAT6PxEr50+9Kxmx0SJ+cKo++bjGWmIUcDLy3GQLCgpcE/UirKjpUpOuuN9W
+         E6rlDxUW0VNvoRqZtOj/Nma4Pz03KHqvlq3GjzNzoj3sLDzdK2V1rcp392js59/+pZuh
+         Nv+0iGag7kqC6TLVULf38Gm6AR9zyxxCBy4njCjQVnb8bckv1HNh05DzXNF471OhzkPh
+         yQDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781729139; x=1782333939;
+        d=1e100.net; s=20251104; t=1781729386; x=1782334186;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=tOxpa5RlaT10x/M9xWFJdAC7kk5hOTrDuX91QFFTTi8=;
-        b=IOnXTrr9aO4aCBxvwJwLQR2H+gAA5rm+pg85N7apriTMgpUGRaeGrW69TEC67ie8F3
-         rT6SfvXg0rrB5124OHFrs7FM2Jy6c8rWjIKrk2/BiD4Vestf2tjothqoUu5VOIefe4/m
-         i8hV4Z6LU3hqPA79m9XuPeOqn36AVAaaAhLNIkcCkfh7yZvemPBD7QdkN8n0xMIhYiJS
-         1eUVjnBhmBVMPLyutZz2Fihkq0K8+tYghsxjHrq2mM4ZHxKGhsjcglX4ubgRAYDzBMiU
-         VVObzaBV23Pc5EAps4CXnUn4Bxb2Nn/ofpzEWG+V55jHnhsM2vHhgV98oqXFsKK9B2ZS
-         uvLw==
-X-Forwarded-Encrypted: i=1; AFNElJ94WSIxvYOFDD9flnDNBwCxRxyBFd9+70yDfv1JAfcDBPH4bjHBTmoyrj7ptRLjyjqQLyG9NcQiNo4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGGYxv+AArwTg29YkSl6Q6fd+ml/MG8n38bQQoaND+LNjp016J
-	fxMjngDUEMhxuikVNqmH033AYZZZdzwoLiEPMz7gk/RbFWci0Y8FYwbjKhA0tui8OLZGWjWu6XZ
-	UnXYU/OBon3lR8SygxMwfUpXOGg9tZao=
-X-Gm-Gg: AfdE7clnZgVahBE901/LR/iJjnKVkfm+Q66pbPEQ5XmbjfDo7iMU4VSRC5JGIDCLzZM
-	ckk2Yafqgjw2TNYMqtvk9/SeM9GubD8K1CYWF2z+VDH+N2f7Y++QMxPszzsSbfGvdZyQPSpOtMw
-	L+hUZiZVvvIDL7W/F+u3pqQvnAaeftD8NMNrAcgimgfF38EBbkA5eWWtToM9cNvdMlDmVKXqgxM
-	5PxOblZVBFxokYM9O/0yhFxKKqoAGBD5c+nProNyj9/npo6PR7US/TzkDjK5RSWwXa/ZZrd/yFS
-	AdV0Opje3b9MRGpuZCGVVkToJgB1QASjo5dTLhP4uQ4/uusByr3xbP7rZwk=
-X-Received: by 2002:a05:6000:4712:b0:460:11a7:f82e with SMTP id
- ffacd0b85a97d-463968566c6mr1731610f8f.8.1781729139388; Wed, 17 Jun 2026
- 13:45:39 -0700 (PDT)
+        bh=StSvglLaxppt7VqPKeSB/sD5CeiYnjB2MJ3tpzdtgys=;
+        b=HyG38JMuY+PXA98abcI5aVk3KyX0K4NFXNI50ExNQoiiT+4X9utUmKKdLExnWq84OS
+         3ux06hB9uL7k9cjkLOWoMzCzn/fcTf3I1U9cTtLPJyvZ4WFM+oE9OaLZPRUqgnS3rI9Y
+         anKDQAjEmNJESM78lhl2ujb5tkEePgFqaF6dhRKXzBH15nSKHUUSnAucqnFFCIo8ZBkD
+         N7d++yVqho5tFPABpXeTZ6llVwINbW9Cb9fbIgbx9L6rfIKhPAbX+GDr44HY9fvaeyNh
+         xAO6vTUaaOvIz8SsuvOsbJ3YT1oV7jz0mJBb4fYdF4uouptcuBc4tcO7ArvXVJb7I2iP
+         Tw5Q==
+X-Forwarded-Encrypted: i=1; AFNElJ8+4oMSRbovmLWKBo8Qa9TsRfN0xK7esCcyg6uSOoI3f2qM+Cpg9deJ7tKt3y9Fl6Zr5ZlI6G4hi+s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxN4ToP8YXOoL3r49rI8MFObW43T9PAMtQFHL2hVFizoXhyP6J1
+	8owHP6EUBgH/29E2qx3IcEkoKyVO5oZH7KB8M37r43Xd/5jdnpA+NzW5H3ES5UevJ0SpokZwTF3
+	dkDabQ45mpLfg1eEUXUvFcAD0zSzuR+A=
+X-Gm-Gg: AfdE7ckMExn4cgkFvlXLpuoEoqPfW9YF1YuF+NEFRz8bZ2ijP8WEfXjhi0XLxdbncLl
+	A5wJASgPEXcaFjVnZDHrbAMaOefrLffwqROFXQVhmu1KU5tYfM9xhs7/4eO0jThnhZFBKCxvdDS
+	oIlzPdS0b9ey/nPjcs0b/C30cLb4bMHs8K2V1FdVDl7LWehH1P6m/bmxWGpOFtMa7E6C+SErJYv
+	amkkjoM6yuIVOwPWa4IO2XeRFxjv+Hrtbg4xe3aIrNLRXrIfb0hj7RpcTi5s76v3AgGm3pJV2fg
+	NrfrVvo2jamjIoTLGpoRVUmdec7RTkIhuIeR4RIMqILMnytMTuXh8Muzz5Y=
+X-Received: by 2002:a05:6000:1289:b0:45d:41e0:467b with SMTP id
+ ffacd0b85a97d-46235e9acb4mr7940736f8f.3.1781729385759; Wed, 17 Jun 2026
+ 13:49:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260615104845.4122868-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20260615104845.4122868-5-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdVN7dfF6bah0Ca=G-uHZwJ7JDyQb5NoE59PPfAuXp+mHg@mail.gmail.com>
-In-Reply-To: <CAMuHMdVN7dfF6bah0Ca=G-uHZwJ7JDyQb5NoE59PPfAuXp+mHg@mail.gmail.com>
+References: <20260615143943.1610095-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20260615143943.1610095-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdXQ3S37L7JAJ42Bag0UPa15Q7n-nNCcbV9FXTtTs4aihQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdXQ3S37L7JAJ42Bag0UPa15Q7n-nNCcbV9FXTtTs4aihQ@mail.gmail.com>
 From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Wed, 17 Jun 2026 21:45:13 +0100
-X-Gm-Features: AVVi8Cdkf1jVo4kO3gd7API00mVvh1fcU6060AgvOUxLid7Szzq8x4Qi-iPfzo0
-Message-ID: <CA+V-a8t9b-xi-bfBs-rp8eZOS+TM8OVLVy44S19fPFZjRKT3Lg@mail.gmail.com>
-Subject: Re: [PATCH v3 4/5] clk: renesas: rzv2h-cpg: Extract PLL calculation
- math into a library
+Date: Wed, 17 Jun 2026 21:49:19 +0100
+X-Gm-Features: AVVi8CfEsllEJEwUR32cqZ4L1WJgMIiJ_74re8ZjTdVt3p2wYsrPrSguI2CW5nk
+Message-ID: <CA+V-a8vdxgBUs4Z3GYJEtP82zAUA0gTKCCfu1Mj-O_1XabVD_g@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: clock: renesas,r9a09g077/87: Add PCLKRTC
+ clock ID
 To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
 	Brian Masney <bmasney@redhat.com>, Rob Herring <robh@kernel.org>, 
@@ -106,90 +106,36 @@ Hi Geert,
 
 Thank you for the review.
 
-On Wed, Jun 17, 2026 at 11:05=E2=80=AFAM Geert Uytterhoeven
+On Wed, Jun 17, 2026 at 11:19=E2=80=AFAM Geert Uytterhoeven
 <geert@linux-m68k.org> wrote:
 >
 > Hi Prabhakar,
 >
-> On Mon, 15 Jun 2026 at 12:48, Prabhakar <prabhakar.csengg@gmail.com> wrot=
+> Thanks for your patch!
+>
+> On Mon, 15 Jun 2026 at 16:40, Prabhakar <prabhakar.csengg@gmail.com> wrot=
 e:
 > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > >
-> > Move the common PLL and divider parameter calculation logic from the
-> > core rzv2h-cpg driver into a standalone library file.
+> > Add the peripheral clock ID definition for the Real-Time Clock (PCLKRTC=
+)
+> > on the Renesas RZ/T2H (R9A09G077) and RZ/N2H (R9A09G087) SoCs.
 > >
-> > Introduce the CLK_RZV2H_CPG_LIB Kconfig configuration symbol and create
-> > rzv2h-cpg-lib.c to house rzv2h_cpg_get_pll_pars() and
-> > rzv2h_cpg_get_pll_divs_pars().
-> >
-> > Keep rzv2h_get_pll_pars() and rzv2h_get_pll_divs_pars() in the original
-> > driver as wrappers that call into the new library helper endpoints.
-> > These wrappers are maintained for this cycle because they are actively
-> > referenced by the DSI driver; they will be safely removed in a subseque=
-nt
-> > cycle once the DSI driver is updated to use the new APIs from the libra=
-ry,
-> > preventing cross-subsystem build breakages.
-> >
-> > This restructuring allows other Renesas SoC clock drivers, such as the
-> > upcoming RZ/T2H and RZ/N2H platforms that utilize similar LCDC clock
-> > divider mathematical logic, to share the iterative calculation helper
-> > infrastructure without duplication.
+> > Note that the LCDC_CLKD clock is utilized as the operating clock source
+>
+> PCLKRTC
+>
+Oops my bad!
+
+> > for the RTC IP.
 > >
 > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 >
-> Thanks for your patch!
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> i.e. will queue in a branch shared by renesas-clk and renesas-dts
+> with the above fixed.
 >
-> > --- a/include/linux/clk/renesas.h
-> > +++ b/include/linux/clk/renesas.h
-> > @@ -213,4 +213,27 @@ static inline bool rzv2h_get_pll_divs_pars(const s=
-truct rzv2h_pll_limits *limits
-> >  }
-> >  #endif
-> >
-> > +#ifdef CONFIG_CLK_RZV2H_CPG_LIB
-> > +bool rzv2h_cpg_get_pll_pars(const struct rzv2h_pll_limits *limits,
-> > +                           struct rzv2h_pll_pars *pars, u64 freq_milli=
-hz);
-> > +
-> > +bool rzv2h_cpg_get_pll_divs_pars(const struct rzv2h_pll_limits *limits=
-,
-> > +                                struct rzv2h_pll_div_pars *pars,
-> > +                                const u8 *table, u8 table_size, u64 fr=
-eq_millihz);
-> > +#else
-> > +static inline bool rzv2h_cpg_get_pll_pars(const struct rzv2h_pll_limit=
-s *limits,
-> > +                                         struct rzv2h_pll_pars *pars,
-> > +                                         u64 freq_millihz)
-> > +{
-> > +       return false;
-> > +}
-> > +
-> > +static inline bool rzv2h_cpg_get_pll_divs_pars(const struct rzv2h_pll_=
-limits *limits,
-> > +                                              struct rzv2h_pll_div_par=
-s *pars,
-> > +                                              const u8 *table, u8 tabl=
-e_size,
-> > +                                              u64 freq_millihz)
-> > +{
-> > +       return false;
-> > +}
-> > +#endif
-> >  #endif
->
-> What about just dropping the old functions, and adding two simple
-> compatibility defines in the header file:
->
->     #define rzv2h_get_pll_pars rzv2h_cpg_get_pll_pars
->     #define rzv2h_get_pll_divs_pars rzv2h_cpg_get_pll_divs_pars
->
-Thats neat!
-
-> That way there is less code to change in the next phase.
->
-Agreed.
+Thank you for taking care of this issue.
 
 Cheers,
 Prabhakar
@@ -207,4 +153,3 @@ But
 > when I'm talking to journalists I just say "programmer" or something like=
  that.
 >                                 -- Linus Torvalds
->
