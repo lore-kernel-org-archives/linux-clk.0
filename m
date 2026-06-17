@@ -1,155 +1,158 @@
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63ED027FD4B
-	for <linux-clk@vger.kernel.org>; Wed, 17 Jun 2026 20:49:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781729389; cv=pass; b=XPndpGcg0eYbU2EMVj/WaK5ow8BTMcgslBPZUInSvWQ97Jea0ogpSeSQ5vtxjWzlUhfz2c2JyMkTUx02U4Ff3oTo9SM6mxKlwnrVER7DhKR3nE6v8cpnfu29OlhImChw4D7ZHECaUIptToA5MBrjpTc8G+5jBtFT6+Yxfo0TbPA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781729389; c=relaxed/simple;
-	bh=8riQs28c5CEk2XTXUUBXYJHl6xc4h6FhZF3t0ruzM/M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=plWCk1/HLIgzJavNXTNfPNC2m2BbVBw/GXjib36GKkIyN32PkwV4JcFtmegFagkPoZ5Ffg6TfjBtaWzCCJzdnxyZLvqvKPP8gvZl0P0H6pmFWzUslQqp26lfLEqwyMjtvq4DNcodmvgkgwjzg3EOmF7zjoACt88qzd18dNyL2L0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QauogLM5; arc=pass smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68AB527FD4B;
+	Wed, 17 Jun 2026 21:24:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1781731441; cv=none; b=PSpfLat5q30EvnblJkPhcrKtncGBl8IOIUIbHgkVGoJdtgLk3T1ju/8tzTP/+erhxylrmLW5b22l2vG6c0lPpeII4vjB4umLTiqZ+4JqWIwuduIgvN6K7v/ktghveK1G8qbZqwPPDWIRuhis+Prd+Q51bin5JoC3oP0JYCth2z8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1781731441; c=relaxed/simple;
+	bh=AyXQRojzaAxfBcqMNAS22dtQzF1CPfQn8pgCiDYFOKo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nHNp1NW8GyeJQhmjHJSG6/GOKgwJiPijOim4RksoxlKJg7JBpMcVKEmq5Don3QplmQsg46IglkId+vycCftt/Ji5+PA4ELyY6KRBtib7mZiYnLx4PjsYABX9T96k396u307k8jSlJsE/orKMQBJ2vGisWPNfWhrUz4o3WdDRp7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y3HdAWjJ; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QauogLM5"
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-45ef779c1c2so193835f8f.1
-        for <linux-clk@vger.kernel.org>; Wed, 17 Jun 2026 13:49:47 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1781729386; cv=none;
-        d=google.com; s=arc-20240605;
-        b=bvYsMj/Z9gbpSuZmqsXNDZmGru+Ts0sm1e3FIr6c9g6E+U518qYj72Ukh6x+JaYuY/
-         Bmu/Si81QTUTLD5LxLk/jaOlpHttxTg3ms4NPwlTgdTtcIt0BxNLhLoc5jm+7qsO1nji
-         sm+F5i7PhNJ0fFZikY+Hklv2UIVN4DyWx3otHTt91kyuqgAFyY3L+rM9bpfWiySly9ux
-         M7MFKRLz6wtXVvYTF5Jr796adlL/23NGUZ13INVyT4JtAZlv0Ic1BMe9IOgrpNHaez4A
-         Bv5s/aKd4n9q9VdrX4X7+Zc/ycVp50fEfCSvqwzzE2pb9x5qx/SP3NsTZmfO6tSenAHl
-         /VCg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=StSvglLaxppt7VqPKeSB/sD5CeiYnjB2MJ3tpzdtgys=;
-        fh=jLZg8pmllq6isAHRlF43XldxC+Oj4DrlOTFGuWL2Jsw=;
-        b=Uo0/c9G/SLbmjlhWd0zCsgnoDrqoNS5O287u4gIGqykZ2qnkmt/ET9yTPbjZk3pDR+
-         q1DlE0FA6irZbxYtmffYPSMmQdDVFMWkAiz/1Y0iWr1khghSdjd+2Fjrl664l3oBeoyT
-         Yro0YaB5Z0+Bg09YXiuBxzqGRx1PcPpV94DgTTtgK9+ZaSZnDCTML8Lh/7tsX84NTLCA
-         8wIie06Ry87WGTqzCZHQDlOw5Yxvgxsn6NU7I6Vz/FYS7q5azUMTVUybLJpFn2ume2ka
-         5bNo6Jnm8FPXvbWQ1OPqBK7Goc/ew9tWW7WmJcEWmbpHeHIo9Z5petZ7XKnBNvbylzke
-         ROfg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1781729386; x=1782334186; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=StSvglLaxppt7VqPKeSB/sD5CeiYnjB2MJ3tpzdtgys=;
-        b=QauogLM5z3vcR02KJOAwodPmp1SbhNgnfDTWwSGr7oBe4pneIR9CZ8z3g+VJGK7ZE3
-         d2g9dP/mgrhiwsNGo4ZP309N9aHw+jDc+cUfcB7XsDgf9AdyHOCTC8h3pFJte1KrC6NV
-         J2hFYEbOpAT6PxEr50+9Kxmx0SJ+cKo++bjGWmIUcDLy3GQLCgpcE/UirKjpUpOuuN9W
-         E6rlDxUW0VNvoRqZtOj/Nma4Pz03KHqvlq3GjzNzoj3sLDzdK2V1rcp392js59/+pZuh
-         Nv+0iGag7kqC6TLVULf38Gm6AR9zyxxCBy4njCjQVnb8bckv1HNh05DzXNF471OhzkPh
-         yQDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781729386; x=1782334186;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=StSvglLaxppt7VqPKeSB/sD5CeiYnjB2MJ3tpzdtgys=;
-        b=HyG38JMuY+PXA98abcI5aVk3KyX0K4NFXNI50ExNQoiiT+4X9utUmKKdLExnWq84OS
-         3ux06hB9uL7k9cjkLOWoMzCzn/fcTf3I1U9cTtLPJyvZ4WFM+oE9OaLZPRUqgnS3rI9Y
-         anKDQAjEmNJESM78lhl2ujb5tkEePgFqaF6dhRKXzBH15nSKHUUSnAucqnFFCIo8ZBkD
-         N7d++yVqho5tFPABpXeTZ6llVwINbW9Cb9fbIgbx9L6rfIKhPAbX+GDr44HY9fvaeyNh
-         xAO6vTUaaOvIz8SsuvOsbJ3YT1oV7jz0mJBb4fYdF4uouptcuBc4tcO7ArvXVJb7I2iP
-         Tw5Q==
-X-Forwarded-Encrypted: i=1; AFNElJ8+4oMSRbovmLWKBo8Qa9TsRfN0xK7esCcyg6uSOoI3f2qM+Cpg9deJ7tKt3y9Fl6Zr5ZlI6G4hi+s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxN4ToP8YXOoL3r49rI8MFObW43T9PAMtQFHL2hVFizoXhyP6J1
-	8owHP6EUBgH/29E2qx3IcEkoKyVO5oZH7KB8M37r43Xd/5jdnpA+NzW5H3ES5UevJ0SpokZwTF3
-	dkDabQ45mpLfg1eEUXUvFcAD0zSzuR+A=
-X-Gm-Gg: AfdE7ckMExn4cgkFvlXLpuoEoqPfW9YF1YuF+NEFRz8bZ2ijP8WEfXjhi0XLxdbncLl
-	A5wJASgPEXcaFjVnZDHrbAMaOefrLffwqROFXQVhmu1KU5tYfM9xhs7/4eO0jThnhZFBKCxvdDS
-	oIlzPdS0b9ey/nPjcs0b/C30cLb4bMHs8K2V1FdVDl7LWehH1P6m/bmxWGpOFtMa7E6C+SErJYv
-	amkkjoM6yuIVOwPWa4IO2XeRFxjv+Hrtbg4xe3aIrNLRXrIfb0hj7RpcTi5s76v3AgGm3pJV2fg
-	NrfrVvo2jamjIoTLGpoRVUmdec7RTkIhuIeR4RIMqILMnytMTuXh8Muzz5Y=
-X-Received: by 2002:a05:6000:1289:b0:45d:41e0:467b with SMTP id
- ffacd0b85a97d-46235e9acb4mr7940736f8f.3.1781729385759; Wed, 17 Jun 2026
- 13:49:45 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y3HdAWjJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2EF11F000E9;
+	Wed, 17 Jun 2026 21:23:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1781731440;
+	bh=beNpfuk/6VLfvMcqWyijbHRYY4nZbi8qSQddBym6GBw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Y3HdAWjJv7yEtzUHOcQNvSG0ujaiA74CmoR4PyzgxZa5PjqBHOHH0h0rCq/dkrLNc
+	 QNCWO1I52sgewS043ZwduF3iZz4HDhNv+Qgv+fY4MoKnSsXXoUt9fBRKVAIB6CWNGi
+	 39O+Gxcqk23ge9fI9ca3LxL9QMPnUh1LxBKLe3BAMRmoJD/vu/Qx/WJXwPSZhWprl2
+	 6N1ZUH8sRFNUj3/Q2qmzgUvrzaj+gacjV69Rob7XXntCij7VbZxAZ9ySCpkEySecjA
+	 i7YbjGEK8Pftnsb+oxP/K6EZRAStw5se4GbUavclmhL8MKUscg2sMxosd2rWNW6F3o
+	 TBn2wRF3QSV7A==
+Date: Wed, 17 Jun 2026 22:23:56 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Stefan =?iso-8859-1?Q?D=F6singer?= <stefandoesinger@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Brian Masney <bmasney@redhat.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH RFC v4 01/12] dt-bindings: clk: zte: Add zx297520v3 top
+ clock and reset bindings
+Message-ID: <20260617-deed-snap-4649ffae0e27@spud>
+References: <20260616-zx29clk-v4-0-ca994bd22e9d@gmail.com>
+ <20260616-zx29clk-v4-1-ca994bd22e9d@gmail.com>
+ <20260617-tabasco-pulsate-454ed3f8f0b6@spud>
+ <-l2OM6P0RNSYRQfOSObOyw@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260615143943.1610095-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20260615143943.1610095-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdXQ3S37L7JAJ42Bag0UPa15Q7n-nNCcbV9FXTtTs4aihQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdXQ3S37L7JAJ42Bag0UPa15Q7n-nNCcbV9FXTtTs4aihQ@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Wed, 17 Jun 2026 21:49:19 +0100
-X-Gm-Features: AVVi8CfEsllEJEwUR32cqZ4L1WJgMIiJ_74re8ZjTdVt3p2wYsrPrSguI2CW5nk
-Message-ID: <CA+V-a8vdxgBUs4Z3GYJEtP82zAUA0gTKCCfu1Mj-O_1XabVD_g@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: clock: renesas,r9a09g077/87: Add PCLKRTC
- clock ID
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="aXpZeYmC7TLQbH+H"
+Content-Disposition: inline
+In-Reply-To: <-l2OM6P0RNSYRQfOSObOyw@gmail.com>
+
+
+--aXpZeYmC7TLQbH+H
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Geert,
+On Wed, Jun 17, 2026 at 08:47:53PM +0300, Stefan D=F6singer wrote:
+> Am Mittwoch, 17. Juni 2026, 19:08:02 Ostafrikanische Zeit schrieb Conor=
+=20
+> Dooley:
+> > On Tue, Jun 16, 2026 at 11:26:21PM +0300, Stefan D=F6singer wrote:
+>=20
+> > > +F:	Documentation/devicetree/zte,zx297520v3-*
+> >=20
+> > Sashiko complaint here looks valid.
+>=20
+> Yes, it is valid.
+>=20
+> It also brought up another concern in patch 12 that has an impact on this=
+=20
+> binding:
+>=20
+> Am Dienstag, 16. Juni 2026, 23:42:19 Ostafrikanische Zeit schrieb sashiko-
+> bot@kernel.org:
+> > issue(s) to consider: - [Low] The `syscon-reboot` node is incorrectly
+> > defined at the root level using the explicitly deprecated `regmap`
+> > property. --
+>=20
+> And indeed "regmap" is deprecated and I missed it somehow. As far as I=20
+> understand, to put syscon-reboot as a child of the clock, I need to add t=
+he=20
+> simple-mfd .compatible:
+>=20
+> Either
+>=20
+> topclk: clock-controller@13b000 {
+> 	compatible =3D "zte,zx297520v3-topclk", "syscon", "simple-mfd";
+> 	reg =3D <0x0013b000 0x400>;
+> 	...
+> 	syscon-reboot {
+> 		compatible =3D "syscon-reboot";
+> 		regmap =3D <&topclk>;
+> 		offset =3D <0x0>;
+> 		mask =3D <0x1>;
+> 	};
+> };
+>=20
+> --- or ---
+>=20
+> something@13b000 {
+> 	compatible =3D "zte,zx297520v3-topcrm", "syscon", "simple-mfd";
+> 	reg =3D <0x0013b000 0x400>;
+> 	ranges;
+>=20
+> 	topclk: clock-controller@0 {
+> 		compatible =3D "zte,zx297520v3-topclk";
+> 		...
+> 	}
+>=20
+> 	syscon-reboot {
+> 		compatible =3D "syscon-reboot";
+> 		offset =3D <0x0>;
+> 		mask =3D <0x1>;
+> 	};
+> };
+>=20
+> I see both ways in existing DTS files (e.g. imx6sl.dtsi for the fomer,=20
+> uniphier-pro4.dtsi for the latter). Is there a preferred way? I have a mi=
+ld=20
+> preference for the first, as it would keep all 3 clocks in the same way. =
+If I=20
+> go for the second, the clock driver would have to query its own node and =
+the=20
+> parent node for the regmap.
 
-Thank you for the review.
+The first one is more natural...
 
-On Wed, Jun 17, 2026 at 11:19=E2=80=AFAM Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
->
-> Hi Prabhakar,
->
-> Thanks for your patch!
->
-> On Mon, 15 Jun 2026 at 16:40, Prabhakar <prabhakar.csengg@gmail.com> wrot=
-e:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Add the peripheral clock ID definition for the Real-Time Clock (PCLKRTC=
-)
-> > on the Renesas RZ/T2H (R9A09G077) and RZ/N2H (R9A09G087) SoCs.
-> >
-> > Note that the LCDC_CLKD clock is utilized as the operating clock source
->
-> PCLKRTC
->
-Oops my bad!
+> AFAIU unrelated to syscon-reboot option 2 would give me the opportunity t=
+o=20
+> have separate clock and reset nodes and bindings and skip the aux bus, bu=
+t=20
+> this would not be a correct representation of how the hardware works.
 
-> > for the RTC IP.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> i.e. will queue in a branch shared by renesas-clk and renesas-dts
-> with the above fixed.
->
-Thank you for taking care of this issue.
+=2E..for this reason!
+Do you actually need an aux bus here though? Since you have to add
+simple-mfd for your the syscon-reboot and simple-mfd is a real bus, can you
+set the reset controller up with an mfd_cell + devm_mfd_add_devices()
+instead?
 
-Cheers,
-Prabhakar
+--aXpZeYmC7TLQbH+H
+Content-Type: application/pgp-signature; name=signature.asc
 
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
-8k.org
->
-> In personal conversations with technical people, I call myself a hacker. =
-But
-> when I'm talking to journalists I just say "programmer" or something like=
- that.
->                                 -- Linus Torvalds
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCajMQawAKCRB4tDGHoIJi
+0i1ZAQChkntDCaVz6at1gTETpGDuYDaGrt/c9Ih6y89+zogSggD/QNSAz1aKjTsZ
+eA1aiNiWJJUe0WjPlwBo8QPgGL6g4Qc=
+=eiAi
+-----END PGP SIGNATURE-----
+
+--aXpZeYmC7TLQbH+H--
