@@ -1,863 +1,208 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11022141.outbound.protection.outlook.com [40.107.75.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 650463546E6;
-	Wed, 17 Jun 2026 06:03:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781676187; cv=none; b=fdFw52nwE29Dn1aUJZDmChzCGHceZOypp6tgKlv62WFXWZ/10qxVI0cD17Uv0fQR2WSXi82ocsUrKiLqIgNnQUNDtdc/sKcmhViTIyghkMjJKOebsZQ3gKi5kOrKV+Rgr1yIKLvNHw+z013keAVMy9WXl4+xu0w7N+79LIop/tM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781676187; c=relaxed/simple;
-	bh=EcsXod+K7NpOJiPnx3sQJKjDRqvJvZqG47u3lrBjKSU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ZLseqgnWT8o/Htwsr0MzaIyrsv2uKr5ewRzJzzSL/o/nzyrI/O6qIKnsG+GmOA6/k9KECUp+BnK/IOP1nvLI/iI3Eav0uyQYyXUpnzmyCnCJsee7zzZR5eiZiQeKGA/40H1cu4BdgUN/mNT4Tfrr7RuQVRtDeDHogxU0ikko8bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IdiHX//H; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IdiHX//H"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 20C01C2BCC7;
-	Wed, 17 Jun 2026 06:03:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1781676187;
-	bh=EcsXod+K7NpOJiPnx3sQJKjDRqvJvZqG47u3lrBjKSU=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=IdiHX//Hrj8mIibP/v4afaTbcPE1bHakNt7mtp08nuyuLGOW8z/0d4Qu2vNZMfsjh
-	 jdjU/z01SivWCcQOJiCHRqpSqCabcFNkBLw4r/jdspWc8psqi4Xw6szg7IxhAgiaa9
-	 hz3AuOiHEDIs2hGNbETIXr/j6vgqSppirvfqTPyaWVuduuivmgK4kpIyqAuaJlu1W3
-	 N9xNcMRL+xCFHnUzck4tlR4q/klEnsASiBIfUC3kVzfdJt4USWSzRJts/J68+Y5hlc
-	 Npq5DldpoV4cJTfi+ZyE027OvEW2bKRpo0JLq2wo7ufNWS8Xxnm7VPwLqAuM6H1TAM
-	 lbjlq+1q3CMNA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B4A5CD98F2;
-	Wed, 17 Jun 2026 06:03:07 +0000 (UTC)
-From: Jia Wang via B4 Relay <devnull+wangjia.ultrarisc.com@kernel.org>
-Date: Wed, 17 Jun 2026 14:02:55 +0800
-Subject: [PATCH v2 2/2] clk: ultrarisc: add DP1000 clock driver
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B30A3B14C5;
+	Wed, 17 Jun 2026 06:04:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.141
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1781676294; cv=fail; b=f2yVky2pDvj0cZ9Yik1QinygGs0xI1/QTA4+qL5BVgzwr90eK+G2Qr1RL3yxcY0Cu7Q6ano2A++2qGl86dnEbW07KLrYQm7mwl7cCn0D603rYu5SMeKNzIVXOj8eu8f/t9XShNmg/hIZFZPt9WVMdYTzR9OyIWhss1WhC8yf2x8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1781676294; c=relaxed/simple;
+	bh=29mgrWKGDn8nAOGQ/QdUp48dZOm9m3JYtegTUQ0ycGE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oG4gdHaIHoLHEEcySCAIEPxtXQEqCBbfB3bGTDrcKOf5qc4hRra0ApWVreOzsEtntxN5w8ukf2/9+JNpQ2M3P8+prA1tlvToPDEm1ol6S62+sGLwQSSR5tvDJqdbL0wQiaSND8EZn5c2u8vU9eEwsV3knzRgSAI+6pr7XNoEUV4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=40.107.75.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tAzaB+oYSck547Mar5M8/kn6z2he6wgE8eY09ARqcrZYKPQRGcfOdGq0XSYZcJpoA8OtuNoBSMfjcvr2ZIjb89rbFkwKJM0N9mCwCd/viXzX6LYBePleCkx2va4oaTOIgw0cTaqDVPhX+1BDSstw6FgKb7yQj6+yE0WaAXVRaIV8MRGeJUCBASmCCUDzXGL8BN64mR1Fqo4Z7n9S2H/piyU/Rz6sKxTmu2DnPvGJRilk58QwgZQnJWOiY4Owj/tckQQo+KmkoXaLhTcaGVrBRfDw3bPA5Vgy8OH9FVYNvK9sBkyHZDAxA0NEPi+7zRpoyxiZulTbYIn9pxu95A1KeA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=16t1swX9E3DoDDgaTiCcWxCfxC/3ieCbtYwPAByc6ek=;
+ b=viITgXLH2M+yw9b35/S9JfgPpEVfpypb6vMksRbSyUrTXIuy+SzE6SvZTdpzJ1MbGUN91TsoJX2vM3hqWI1RvNDQ/G4aUQkedl/wu5j2GAUgVP8JzZFg06EPdqg+TTf3L635lY2wwql08sYSG+KphwIXONjVCacfnUfBQMpZOeE8sYj5p7jsbgyLKPgLiaAPJw513E5xAEVjaOdLR+AJ8xVgsYWErBQzmGcXMtnBq6Sfkl5BmD6c3aYQNsn0LMmeakbafBwx7GxMTYIiCIs2w4lWyO9dR7ejayV1wnjeUtwPP/u4E7QwLrBw9bv6B0jTv2d6R8/YLcSdgRnz/bA+Pw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 222.71.101.198) smtp.rcpttodomain=baylibre.com smtp.mailfrom=cixtech.com;
+ dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
+ not signed); arc=none (0)
+Received: from SI2PR02CA0039.apcprd02.prod.outlook.com (2603:1096:4:196::9) by
+ SEZPR06MB5592.apcprd06.prod.outlook.com (2603:1096:101:c8::6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.113.18; Wed, 17 Jun 2026 06:04:49 +0000
+Received: from OSA0EPF000000C9.apcprd02.prod.outlook.com
+ (2603:1096:4:196:cafe::38) by SI2PR02CA0039.outlook.office365.com
+ (2603:1096:4:196::9) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.113.18 via Frontend Transport; Wed,
+ 17 Jun 2026 06:04:48 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
+ smtp.mailfrom=cixtech.com; dkim=none (message not signed)
+ header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
+Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
+ 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
+ client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
+Received: from smtprelay.cixcomputing.com (222.71.101.198) by
+ OSA0EPF000000C9.mail.protection.outlook.com (10.167.240.55) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.139.8 via Frontend Transport; Wed, 17 Jun 2026 06:04:47 +0000
+Received: from cix (unknown [172.18.64.61])
+	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id C914B41D4003;
+	Wed, 17 Jun 2026 14:04:46 +0800 (CST)
+From: joakim.zhang@cixtech.com
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	bmasney@redhat.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	p.zabel@pengutronix.de,
+	gary.yang@cixtech.com
+Cc: cix-kernel-upstream@cixtech.com,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Joakim Zhang <joakim.zhang@cixtech.com>
+Subject: [PATCH v4 0/5] Add Cix Sky1 AUDSS clock and reset support
+Date: Wed, 17 Jun 2026 14:04:32 +0800
+Message-ID: <20260617060437.1474816-1-joakim.zhang@cixtech.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260617-ultrarisc-clock-v2-2-9cb16083e15e@ultrarisc.com>
-References: <20260617-ultrarisc-clock-v2-0-9cb16083e15e@ultrarisc.com>
-In-Reply-To: <20260617-ultrarisc-clock-v2-0-9cb16083e15e@ultrarisc.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Jia Wang <wangjia@ultrarisc.com>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1781676184; l=23040;
- i=wangjia@ultrarisc.com; s=20260515; h=from:subject:message-id;
- bh=G8F0YPVcg4D5f+yuczHMwoJ+cCrt2Nj/GcU+crtUjwE=;
- b=bFsqmmClvHHWLzPdoXUAMDT/G0eVhDvxeGubqIIuImGwko5pGV7NdWO9Ol7QxQ75A1K+9uWye
- tt22SB0z6FtCwA0cLQk7B/HgYZ2qZkNqEOCDHDfzo/IWXblbBkynqkc
-X-Developer-Key: i=wangjia@ultrarisc.com; a=ed25519;
- pk=wGVm18siRScehKOkOz0WKxgxDy7IezHEszhnN4/TUCY=
-X-Endpoint-Received: by B4 Relay for wangjia@ultrarisc.com/20260515 with
- auth_id=779
-X-Original-From: Jia Wang <wangjia@ultrarisc.com>
-Reply-To: wangjia@ultrarisc.com
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: OSA0EPF000000C9:EE_|SEZPR06MB5592:EE_
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: b3ffc43c-97c8-4176-2a32-08decc36564e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|36860700016|82310400026|23010399003|376014|1800799024|56012099006|6133799003|18002099003|3023799007;
+X-Microsoft-Antispam-Message-Info:
+	UjJ01e5HpfyH08YkMDvpfXcoU34qxkC/pl4oW/P+vrpN5VDBf1dIIBkbirEFJUOAgutmTVPY2No/UHvM4UlI0aoMMN86fJWZiPwtSqPd/4gLFHr+Jv1Oyo5qG96Q8Rrg4mbLkFi4DKupnJLbcmQKH7+pJ6IEzYD7cxXRUt0kvoJSV0YHIWN2jyvoiZ8TTL4F5FN3eUMoYk/eK1slz1rCwxnA+IdQxeNSl75p7IwqYK0alIW27FWjur3GXB/O6WoXYTVczzVQ4fkJvMdEj5x4xPCY2NtczXJrSqCZAbSEvcAzkEexGDfobRF2dRwCsJ+p2LUa22OiEPaI67uqeoldl2GMgAj/Rc0mXWJkrSL+p6nvol7s0wOfwz4rsWzwfw7drn62KhfX77bs3nzC9YXLqdz+RPQp+WFNmM3v3BHiMkfdESHkk7hpIAY5EELE/HLIlSqzXPhSTsg+mRx0TP9riCVEHh6qlpISvmlKfAo68i+M9r66YFRcSFv/AIcRPimSjNs1v48M1b72HpaJLhGa6yx4RpKdxS5L3I2uw4M5mvoGcKX/kZC4QG6CrtCRt/Kqm2BDMNPKLwtG7qA5fsegKvrgVgdPJ6PGGwyvaIYvUAmMM2OnuqL5JBBbP4BpDN3Az9QlBoa3lB50kzYJy0ehXp+Ox/3a+Dks0jp29bEQ7O3BX/vJqh/Ql0itc/6LLAS7d02NHkDNdbqOwOAgL+6S+HjQ0GbAvr0GfVTIB/nopdE=
+X-Forefront-Antispam-Report:
+	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(36860700016)(82310400026)(23010399003)(376014)(1800799024)(56012099006)(6133799003)(18002099003)(3023799007);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	VgBVDGvxp4n8P+8HsS9HURUpfzwpZOmOpu/20kpKx7Ee2GfHFl41wXRCoMxl/YNY1HPYFdbqEmUnZfZG+DEhKyOBxPUbyUkPD6xP4vyan0dlIgIuZharHFJin5sBPeP4xAw0w98pLbKjFAQTtn+alZskbof6Uiz1Trut0tl32MVB0ZS4HEspyle2Gsnt2yoKPNojrLmN7+HIhpvpp1uN8Zw+XxOa8zz/lqSp89KZGZnvxTh3dKslVAi/XP8Yqw0fEuDioCWo7zZ75HDgCNvuMzLN09JjYgAaQ81xEbmxpT1NgfYmGAzw0P9QbflCfPOmVBWeqyacfNSni1M+xr6zBomaLMBOIX0Ia4oKAqqujcrNHaaTPGDOgyfRxxb5LKYQI2G1EJ8iCpmz5XSORifPAlBtRLxU18JLRBL+yfTsfpANbjR321euxj8jsnx2vPkR
+X-OriginatorOrg: cixtech.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jun 2026 06:04:47.9360
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b3ffc43c-97c8-4176-2a32-08decc36564e
+X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	OSA0EPF000000C9.apcprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB5592
 
-From: Jia Wang <wangjia@ultrarisc.com>
+From: Joakim Zhang <joakim.zhang@cixtech.com>
 
-Add a clock driver for the UltraRISC DP1000 SoC.
+This patch set adds the clock and reset support for AUDSS. The AUDSS
+groups audio-related peripherals (HDA, I2S, DSP, DMA, mailboxes,
+watchdog, timer, etc.) behind a single Clock and Reset Unit (CRU)
+register block.
 
-The clock tree is driven by a SYSPLL and provides fixed-factor clocks for
-the subsystem and PCIe, divider-based root clocks for GMAC and the UART,
-I2C, and SPI blocks, and per-instance gate clocks for UART0-3, I2C0-3,
-and SPI0-1.
+Clock and reset changes normally belong to separate subsystems and would
+ideally be submitted as independent series. They are combined here because
+the AUDSS DT bindings cross-reference each other: the system-control
+binding describes the clock child node, the clock binding documents
+reset lines exposed on the parent syscon, and the DTS example wires both
+together. Keeping clock and reset in one series gives reviewers the full
+picture when evaluating the binding layout, dependencies, and
+integration.
 
-Signed-off-by: Jia Wang <wangjia@ultrarisc.com>
+Patches apply in the following order:
+
+  1. Reset support
+     - dt-bindings: soc: cix,sky1-system-control: add audss system control
+     - reset: cix: add audss support to sky1 reset driver
+
+  2. Clock support
+     - dt-bindings: clock: cix,sky1-audss-clock: add audss clock controller
+     - clk: cix: add sky1 audss clock controller
+
+  3. Device tree
+     - arm64: dts: cix: sky1: add audss system control
+
+The reset and clock parts have each been build-tested and checked with
+dt_binding_check independently. If reviewers prefer separate series for
+the reset and clock maintainers, I can split and resubmit after this
+round of review once the overall design is agreed on.
+
 ---
- MAINTAINERS                           |   1 +
- drivers/clk/Kconfig                   |   1 +
- drivers/clk/Makefile                  |   1 +
- drivers/clk/ultrarisc/Kconfig         |  18 ++
- drivers/clk/ultrarisc/Makefile        |   4 +
- drivers/clk/ultrarisc/clk-dp1000.c    | 153 ++++++++++++
- drivers/clk/ultrarisc/clk-ultrarisc.c | 459 ++++++++++++++++++++++++++++++++++
- drivers/clk/ultrarisc/clk-ultrarisc.h |  73 ++++++
- 8 files changed, 710 insertions(+)
+ChangeLogs:
+v3->v4:
+  * move both power domain and resets into parset node (audss_cru)
+  * remove "simple-mfd", and change to populate the child node
+  * cix,sky1-audss.h -> cix,sky1-audss-clock.h 
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index b7e43313c65f..aa5021f30cb5 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -27444,6 +27444,7 @@ M:	Jia Wang <wangjia@ultrarisc.com>
- L:	linux-clk@vger.kernel.org
- S:	Maintained
- F:	Documentation/devicetree/bindings/clock/ultrarisc,dp1000-clk.yaml
-+F:	drivers/clk/ultrarisc/*
- F:	include/dt-bindings/clock/ultrarisc,dp1000-clk.h
- 
- ULTRATRONIK BOARD SUPPORT
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index b2efbe9f6acb..75e336858420 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -535,6 +535,7 @@ source "drivers/clk/tenstorrent/Kconfig"
- source "drivers/clk/thead/Kconfig"
- source "drivers/clk/stm32/Kconfig"
- source "drivers/clk/ti/Kconfig"
-+source "drivers/clk/ultrarisc/Kconfig"
- source "drivers/clk/uniphier/Kconfig"
- source "drivers/clk/visconti/Kconfig"
- source "drivers/clk/x86/Kconfig"
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index a3e2862ebd7e..891272e8e1da 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -158,6 +158,7 @@ obj-$(CONFIG_ARCH_TEGRA)		+= tegra/
- obj-y					+= tenstorrent/
- obj-$(CONFIG_ARCH_THEAD)		+= thead/
- obj-y					+= ti/
-+obj-y					+= ultrarisc/
- obj-$(CONFIG_CLK_UNIPHIER)		+= uniphier/
- obj-$(CONFIG_ARCH_U8500)		+= ux500/
- obj-y					+= versatile/
-diff --git a/drivers/clk/ultrarisc/Kconfig b/drivers/clk/ultrarisc/Kconfig
-new file mode 100644
-index 000000000000..2eecc6ac3119
---- /dev/null
-+++ b/drivers/clk/ultrarisc/Kconfig
-@@ -0,0 +1,18 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+
-+config CLK_ULTRARISC
-+	tristate
-+	depends on OF
-+	depends on ARCH_ULTRARISC || COMPILE_TEST
-+
-+config CLK_ULTRARISC_DP1000
-+	tristate "UltraRISC DP1000 clock controller"
-+	select CLK_ULTRARISC
-+	depends on OF && HAS_IOMEM
-+	depends on ARCH_ULTRARISC || COMPILE_TEST
-+	default ARCH_ULTRARISC
-+	help
-+	  This driver provides the clock controller for the UltraRISC
-+	  DP1000 SoC. It exposes the PLL output, derived fixed-factor
-+	  clocks, programmable divider clocks, and peripheral gate
-+	  clocks to Linux consumers.
-diff --git a/drivers/clk/ultrarisc/Makefile b/drivers/clk/ultrarisc/Makefile
-new file mode 100644
-index 000000000000..b013708c9444
---- /dev/null
-+++ b/drivers/clk/ultrarisc/Makefile
-@@ -0,0 +1,4 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+
-+obj-$(CONFIG_CLK_ULTRARISC) += clk-ultrarisc.o
-+obj-$(CONFIG_CLK_ULTRARISC_DP1000) += clk-dp1000.o
-diff --git a/drivers/clk/ultrarisc/clk-dp1000.c b/drivers/clk/ultrarisc/clk-dp1000.c
-new file mode 100644
-index 000000000000..33a16df8f189
---- /dev/null
-+++ b/drivers/clk/ultrarisc/clk-dp1000.c
-@@ -0,0 +1,153 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2026 UltraRISC Technology (Shanghai) Co., Ltd.
-+ */
-+
-+#include <linux/module.h>
-+
-+#include <dt-bindings/clock/ultrarisc,dp1000-clk.h>
-+
-+#include "clk-ultrarisc.h"
-+
-+#define DP1000_PLL_CFG1_OFFSET		0x400
-+#define DP1000_PLL_CFG2_OFFSET		0x404
-+
-+#define DP1000_CCR_UART_OFFSET		0x220
-+#define DP1000_CCR_I2C_OFFSET		0x224
-+#define DP1000_CCR_GMAC_OFFSET		0x228
-+#define DP1000_CCR_SPI_OFFSET		0x22c
-+#define DP1000_PERI_CLKENA_OFFSET	0x270
-+
-+#define DP1000_CCR_LOAD			BIT(16)
-+
-+#define DP1000_PERI_MAX_RATE		62500000UL
-+#define DP1000_CLK_NUM			21
-+
-+static const struct ultrarisc_pll_layout dp1000_pll_layout = {
-+	.cfg1_offset = DP1000_PLL_CFG1_OFFSET,
-+	.cfg2_offset = DP1000_PLL_CFG2_OFFSET,
-+	.frac_mask = GENMASK(23, 0),
-+	.m_mask = GENMASK(23, 16),
-+	.n_mask = GENMASK(11, 6),
-+	.oddiv1_mask = GENMASK(4, 3),
-+	.oddiv2_mask = GENMASK(1, 0),
-+};
-+
-+static const struct ultrarisc_pll_desc dp1000_plls[] = {
-+	{
-+		.id = DP1000_CLK_SYSPLL,
-+		.name = "syspll_clk",
-+	},
-+};
-+
-+#define DP1000_FIXED_FACTOR(_id, _name, _parent, _mult, _div)	\
-+	{							\
-+		.id = (_id),					\
-+		.name = (_name),				\
-+		.parent_id = (_parent),				\
-+		.mult = (_mult),				\
-+		.div = (_div),					\
-+	}
-+
-+#define DP1000_DIV(_id, _name, _offset, _parent, _max_rate)	\
-+	{							\
-+		.id = (_id),					\
-+		.name = (_name),				\
-+		.offset = (_offset),				\
-+		.parent_id = (_parent),				\
-+		.max_rate = (_max_rate),			\
-+		.load_mask = DP1000_CCR_LOAD,			\
-+		.div_shift = 8,					\
-+		.div_width = 4,					\
-+		.gate_bit = 0,					\
-+		.divider_flags = CLK_DIVIDER_ONE_BASED,		\
-+		.gate_flags = 0,				\
-+	}
-+
-+#define DP1000_GATE(_id, _name, _parent, _bit)		\
-+	{							\
-+		.id = (_id),					\
-+		.name = (_name),				\
-+		.offset = DP1000_PERI_CLKENA_OFFSET,		\
-+		.parent_id = (_parent),				\
-+		.gate_bit = (_bit),				\
-+		.gate_flags = 0,				\
-+	}
-+
-+static const struct ultrarisc_fixed_factor_desc dp1000_fixed_factor_clks[] = {
-+	DP1000_FIXED_FACTOR(DP1000_CLK_SYSPLL_DIV2, "syspll_div2_clk",
-+			    DP1000_CLK_SYSPLL, 1, 2),
-+	DP1000_FIXED_FACTOR(DP1000_CLK_SUBSYS, "subsys_clk",
-+			    DP1000_CLK_SYSPLL_DIV2, 1, 2),
-+	DP1000_FIXED_FACTOR(DP1000_CLK_PCIE_DBI, "pcie_dbi_clk",
-+			    DP1000_CLK_SYSPLL, 1, 10),
-+	DP1000_FIXED_FACTOR(DP1000_CLK_PCIEX4_CORE, "pciex4_core_clk",
-+			    DP1000_CLK_SYSPLL, 1, 2),
-+	DP1000_FIXED_FACTOR(DP1000_CLK_PCIEX16_CORE, "pciex16_core_clk",
-+			    DP1000_CLK_SYSPLL, 1, 1),
-+	DP1000_FIXED_FACTOR(DP1000_CLK_PCIE_AUX, "pcie_aux_clk",
-+			    DP1000_CLK_SYSPLL, 1, 40),
-+};
-+
-+static const struct ultrarisc_divider_desc dp1000_divider_clks[] = {
-+	DP1000_DIV(DP1000_CLK_GMAC, "gmac_clk", DP1000_CCR_GMAC_OFFSET,
-+		   DP1000_CLK_SYSPLL_DIV2, 0),
-+	DP1000_DIV(DP1000_CLK_UART_ROOT, "uart_root_clk",
-+		   DP1000_CCR_UART_OFFSET, DP1000_CLK_SUBSYS,
-+		   DP1000_PERI_MAX_RATE),
-+	DP1000_DIV(DP1000_CLK_I2C_ROOT, "i2c_root_clk",
-+		   DP1000_CCR_I2C_OFFSET, DP1000_CLK_SUBSYS,
-+		   DP1000_PERI_MAX_RATE),
-+	DP1000_DIV(DP1000_CLK_SPI_ROOT, "spi_root_clk",
-+		   DP1000_CCR_SPI_OFFSET, DP1000_CLK_SUBSYS,
-+		   DP1000_PERI_MAX_RATE),
-+};
-+
-+static const struct ultrarisc_gate_desc dp1000_gate_clks[] = {
-+	DP1000_GATE(DP1000_CLK_UART0, "uart0_clk", DP1000_CLK_UART_ROOT, 0),
-+	DP1000_GATE(DP1000_CLK_UART1, "uart1_clk", DP1000_CLK_UART_ROOT, 1),
-+	DP1000_GATE(DP1000_CLK_UART2, "uart2_clk", DP1000_CLK_UART_ROOT, 2),
-+	DP1000_GATE(DP1000_CLK_UART3, "uart3_clk", DP1000_CLK_UART_ROOT, 3),
-+	DP1000_GATE(DP1000_CLK_I2C0, "i2c0_clk", DP1000_CLK_I2C_ROOT, 4),
-+	DP1000_GATE(DP1000_CLK_I2C1, "i2c1_clk", DP1000_CLK_I2C_ROOT, 5),
-+	DP1000_GATE(DP1000_CLK_I2C2, "i2c2_clk", DP1000_CLK_I2C_ROOT, 6),
-+	DP1000_GATE(DP1000_CLK_I2C3, "i2c3_clk", DP1000_CLK_I2C_ROOT, 7),
-+	DP1000_GATE(DP1000_CLK_SPI0, "spi0_clk", DP1000_CLK_SPI_ROOT, 8),
-+	DP1000_GATE(DP1000_CLK_SPI1, "spi1_clk", DP1000_CLK_SPI_ROOT, 9),
-+};
-+
-+static const struct ultrarisc_clk_soc_data dp1000_clk_soc_data = {
-+	.num_clks = DP1000_CLK_NUM,
-+	.pll_layout = &dp1000_pll_layout,
-+	.plls = dp1000_plls,
-+	.num_plls = ARRAY_SIZE(dp1000_plls),
-+	.fixed_factors = dp1000_fixed_factor_clks,
-+	.num_fixed_factors = ARRAY_SIZE(dp1000_fixed_factor_clks),
-+	.dividers = dp1000_divider_clks,
-+	.num_dividers = ARRAY_SIZE(dp1000_divider_clks),
-+	.gates = dp1000_gate_clks,
-+	.num_gates = ARRAY_SIZE(dp1000_gate_clks),
-+};
-+
-+static int dp1000_clk_probe(struct platform_device *pdev)
-+{
-+	return ultrarisc_clk_probe(pdev, &dp1000_clk_soc_data);
-+}
-+
-+static const struct of_device_id dp1000_clk_of_match[] = {
-+	{ .compatible = "ultrarisc,dp1000-clk" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, dp1000_clk_of_match);
-+
-+static struct platform_driver dp1000_clk_driver = {
-+	.probe = dp1000_clk_probe,
-+	.driver = {
-+		.name = "ultrarisc-dp1000-clk",
-+		.of_match_table = dp1000_clk_of_match,
-+	},
-+};
-+module_platform_driver(dp1000_clk_driver);
-+
-+MODULE_DESCRIPTION("UltraRISC DP1000 clock controller");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/ultrarisc/clk-ultrarisc.c b/drivers/clk/ultrarisc/clk-ultrarisc.c
-new file mode 100644
-index 000000000000..4ef222348dd7
---- /dev/null
-+++ b/drivers/clk/ultrarisc/clk-ultrarisc.c
-@@ -0,0 +1,459 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2026 UltraRISC Technology (Shanghai) Co., Ltd.
-+ */
-+
-+#include <linux/bitfield.h>
-+#include <linux/clk-provider.h>
-+#include <linux/io.h>
-+#include <linux/math64.h>
-+#include <linux/module.h>
-+#include <linux/of_clk.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+
-+#include "clk-ultrarisc.h"
-+
-+struct ultrarisc_pll_clk {
-+	struct clk_hw hw;
-+	void __iomem *base;
-+	const struct ultrarisc_pll_layout *layout;
-+};
-+
-+struct ultrarisc_divider_clk {
-+	struct clk_divider divider;
-+	struct clk_gate gate;
-+	u32 load_mask;
-+};
-+
-+#define to_ultrarisc_pll_clk(_hw) \
-+	container_of(_hw, struct ultrarisc_pll_clk, hw)
-+
-+static inline struct ultrarisc_divider_clk *
-+to_ultrarisc_divider_clk(struct clk_hw *hw)
-+{
-+	struct clk_divider *divider = to_clk_divider(hw);
-+
-+	return container_of(divider, struct ultrarisc_divider_clk, divider);
-+}
-+
-+static unsigned long ultrarisc_pll_recalc_rate(struct clk_hw *hw,
-+					       unsigned long parent_rate)
-+{
-+	struct ultrarisc_pll_clk *pll = to_ultrarisc_pll_clk(hw);
-+	const struct ultrarisc_pll_layout *layout = pll->layout;
-+	u32 oddiv1_div, oddiv2_div;
-+	u64 mult, rate, den;
-+	u32 frac, m, n;
-+	u32 cfg1, cfg2;
-+
-+	cfg1 = readl_relaxed(pll->base + layout->cfg1_offset);
-+	cfg2 = readl_relaxed(pll->base + layout->cfg2_offset);
-+
-+	frac = field_get(layout->frac_mask, cfg1);
-+	m = field_get(layout->m_mask, cfg2);
-+	n = field_get(layout->n_mask, cfg2);
-+	oddiv1_div = 1U << field_get(layout->oddiv1_mask, cfg2);
-+	oddiv2_div = 1U << field_get(layout->oddiv2_mask, cfg2);
-+
-+	if (!n)
-+		return 0;
-+
-+	/*
-+	 * The output frequency is calculated as:
-+	 * fvco = parent * (m + frac / 2^24) / n
-+	 * fout = fvco / (2^oddiv1_raw * 2^oddiv2_raw)
-+	 *
-+	 * The output divider values are derived from the raw register field
-+	 * values as:
-+	 * oddivX_div = 1 << oddivX_raw
-+	 */
-+	mult = ((u64)m << 24) + frac;
-+	rate = (u64)parent_rate * mult;
-+	den = ((u64)n << 24) * oddiv1_div * oddiv2_div;
-+
-+	return div64_u64(rate + (den >> 1), den);
-+}
-+
-+static const struct clk_ops ultrarisc_pll_ro_ops = {
-+	.recalc_rate = ultrarisc_pll_recalc_rate,
-+};
-+
-+static unsigned long
-+ultrarisc_divider_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
-+{
-+	struct clk_divider *divider = to_clk_divider(hw);
-+	u32 val;
-+
-+	val = readl_relaxed(divider->reg) >> divider->shift;
-+	val &= clk_div_mask(divider->width);
-+
-+	return divider_recalc_rate(hw, parent_rate, val, divider->table,
-+				   divider->flags, divider->width);
-+}
-+
-+static int ultrarisc_divider_determine_rate(struct clk_hw *hw,
-+					    struct clk_rate_request *req)
-+{
-+	struct clk_divider *divider = to_clk_divider(hw);
-+
-+	return divider_determine_rate(hw, req, divider->table, divider->width,
-+				      divider->flags);
-+}
-+
-+static int ultrarisc_divider_set_rate(struct clk_hw *hw, unsigned long rate,
-+				      unsigned long parent_rate)
-+{
-+	struct ultrarisc_divider_clk *divider_clk = to_ultrarisc_divider_clk(hw);
-+	struct clk_divider *divider = &divider_clk->divider;
-+	int value;
-+	u32 val;
-+
-+	value = divider_get_val(rate, parent_rate, divider->table,
-+				divider->width, divider->flags);
-+	if (value < 0)
-+		return value;
-+
-+	scoped_guard(spinlock_irqsave, divider->lock) {
-+		val = readl_relaxed(divider->reg);
-+		val &= ~(clk_div_mask(divider->width) << divider->shift);
-+		val |= value << divider->shift;
-+		writel_relaxed(val, divider->reg);
-+
-+		if (divider_clk->load_mask) {
-+			/*
-+			 * Program the new divider field, then write 1 to the
-+			 * load bit to trigger the update. The load bit is
-+			 * write-triggered and reads back as 0 on this hardware.
-+			 */
-+			writel_relaxed(val | divider_clk->load_mask,
-+				       divider->reg);
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct clk_ops ultrarisc_divider_ops = {
-+	.recalc_rate = ultrarisc_divider_recalc_rate,
-+	.determine_rate = ultrarisc_divider_determine_rate,
-+	.set_rate = ultrarisc_divider_set_rate,
-+};
-+
-+static void ultrarisc_clk_unregister_composite(void *data)
-+{
-+	clk_hw_unregister_composite(data);
-+}
-+
-+static struct clk_hw *
-+ultrarisc_clk_hw_register_composite(struct device *dev, const char *name,
-+				    const char * const *parent_names,
-+				    int num_parents, struct clk_hw *mux_hw,
-+				    const struct clk_ops *mux_ops,
-+				    struct clk_hw *rate_hw,
-+				    const struct clk_ops *rate_ops,
-+				    struct clk_hw *gate_hw,
-+				    const struct clk_ops *gate_ops,
-+				    unsigned long flags)
-+{
-+	struct clk_hw *hw;
-+	int ret;
-+
-+	hw = clk_hw_register_composite(dev, name, parent_names, num_parents,
-+				       mux_hw, mux_ops, rate_hw, rate_ops,
-+				       gate_hw, gate_ops, flags);
-+	if (IS_ERR(hw))
-+		return hw;
-+
-+	ret = devm_add_action_or_reset(dev, ultrarisc_clk_unregister_composite,
-+				       hw);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	return hw;
-+}
-+
-+static struct clk_hw *ultrarisc_clk_register_pll(struct device *dev,
-+						 const struct ultrarisc_pll_desc *desc,
-+						 const struct ultrarisc_pll_layout *layout,
-+						 void __iomem *base)
-+{
-+	struct clk_parent_data pdata = { .index = 0 };
-+	struct ultrarisc_pll_clk *pll;
-+	struct clk_init_data init = {
-+		.name = desc->name,
-+		.ops = &ultrarisc_pll_ro_ops,
-+		.parent_data = &pdata,
-+		.num_parents = 1,
-+		.flags = CLK_GET_RATE_NOCACHE,
-+	};
-+	int ret;
-+
-+	pll = devm_kzalloc(dev, sizeof(*pll), GFP_KERNEL);
-+	if (!pll)
-+		return ERR_PTR(-ENOMEM);
-+
-+	pll->base = base;
-+	pll->layout = layout;
-+	pll->hw.init = &init;
-+
-+	ret = devm_clk_hw_register(dev, &pll->hw);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	return &pll->hw;
-+}
-+
-+static struct clk_hw *
-+ultrarisc_clk_register_divider(struct device *dev,
-+			       const struct ultrarisc_divider_desc *desc,
-+			       struct clk_hw *parent_hw, void __iomem *base,
-+			       spinlock_t *lock)
-+{
-+	const char * const parent_names[] = { clk_hw_get_name(parent_hw) };
-+	void __iomem *reg = base + desc->offset;
-+	struct ultrarisc_divider_clk *divider;
-+	const struct clk_ops *gate_ops = NULL;
-+	struct clk_hw *gate_hw = NULL;
-+
-+	if (!desc->div_width)
-+		return ERR_PTR(-EINVAL);
-+
-+	if (!lock)
-+		return ERR_PTR(-EINVAL);
-+
-+	divider = devm_kzalloc(dev, sizeof(*divider), GFP_KERNEL);
-+	if (!divider)
-+		return ERR_PTR(-ENOMEM);
-+
-+	divider->divider.reg = reg;
-+	divider->divider.shift = desc->div_shift;
-+	divider->divider.width = desc->div_width;
-+	divider->divider.flags = desc->divider_flags;
-+	divider->divider.lock = lock;
-+	divider->load_mask = desc->load_mask;
-+
-+	if (desc->gate_bit != ULTRARISC_CLK_NO_GATE) {
-+		divider->gate.reg = reg;
-+		divider->gate.bit_idx = desc->gate_bit;
-+		divider->gate.flags = desc->gate_flags;
-+		divider->gate.lock = lock;
-+		gate_hw = &divider->gate.hw;
-+		gate_ops = &clk_gate_ops;
-+	}
-+
-+	return ultrarisc_clk_hw_register_composite(dev, desc->name,
-+						   parent_names, 1,
-+						   NULL, NULL,
-+						   &divider->divider.hw,
-+						   &ultrarisc_divider_ops,
-+						   gate_hw, gate_ops,
-+						   CLK_GET_RATE_NOCACHE);
-+}
-+
-+static int ultrarisc_clk_register_fixed_factors(struct device *dev,
-+						struct clk_hw_onecell_data *clk_data,
-+						const struct ultrarisc_clk_soc_data *soc_data)
-+{
-+	u32 i;
-+
-+	for (i = 0; i < soc_data->num_fixed_factors; i++) {
-+		const struct ultrarisc_fixed_factor_desc *desc;
-+		struct clk_hw *parent_hw;
-+		struct clk_hw *hw;
-+
-+		desc = &soc_data->fixed_factors[i];
-+		if (desc->id >= clk_data->num ||
-+		    desc->parent_id >= clk_data->num)
-+			return -EINVAL;
-+
-+		parent_hw = clk_data->hws[desc->parent_id];
-+		if (!parent_hw)
-+			return -EINVAL;
-+
-+		hw = devm_clk_hw_register_fixed_factor_parent_hw(dev, desc->name,
-+								 parent_hw,
-+								 CLK_GET_RATE_NOCACHE,
-+								 desc->mult,
-+								 desc->div);
-+		if (IS_ERR(hw))
-+			return PTR_ERR(hw);
-+
-+		clk_data->hws[desc->id] = hw;
-+	}
-+
-+	return 0;
-+}
-+
-+static int ultrarisc_clk_register_plls(struct platform_device *pdev,
-+				       struct clk_hw_onecell_data *clk_data,
-+				       const struct ultrarisc_clk_soc_data *soc_data,
-+				       void __iomem *base)
-+{
-+	struct device *dev = &pdev->dev;
-+	u32 i;
-+
-+	for (i = 0; i < soc_data->num_plls; i++) {
-+		const struct ultrarisc_pll_desc *desc = &soc_data->plls[i];
-+		struct clk_hw *hw;
-+
-+		if (desc->id >= clk_data->num)
-+			return -EINVAL;
-+
-+		hw = ultrarisc_clk_register_pll(dev, desc, soc_data->pll_layout,
-+						base);
-+		if (IS_ERR(hw))
-+			return PTR_ERR(hw);
-+
-+		clk_data->hws[desc->id] = hw;
-+	}
-+
-+	return 0;
-+}
-+
-+static int ultrarisc_clk_register_dividers(struct platform_device *pdev,
-+					   struct clk_hw_onecell_data *clk_data,
-+					   const struct ultrarisc_clk_soc_data *soc_data,
-+					   void __iomem *base,
-+					   spinlock_t *lock)
-+{
-+	struct device *dev = &pdev->dev;
-+	u32 i;
-+
-+	for (i = 0; i < soc_data->num_dividers; i++) {
-+		const struct ultrarisc_divider_desc *desc;
-+		struct clk_hw *parent_hw;
-+		struct clk_hw *hw;
-+
-+		desc = &soc_data->dividers[i];
-+		if (desc->id >= clk_data->num ||
-+		    desc->parent_id >= clk_data->num)
-+			return -EINVAL;
-+
-+		parent_hw = clk_data->hws[desc->parent_id];
-+		if (!parent_hw)
-+			return -EINVAL;
-+
-+		hw = ultrarisc_clk_register_divider(dev, desc, parent_hw, base,
-+						    lock);
-+		if (IS_ERR(hw))
-+			return PTR_ERR(hw);
-+
-+		if (desc->max_rate) {
-+			unsigned long rate;
-+
-+			clk_hw_set_rate_range(hw, 0, desc->max_rate);
-+
-+			rate = clk_hw_get_rate(hw);
-+			if (rate > desc->max_rate)
-+				dev_warn(dev, "%s rate %lu exceeds max %lu\n",
-+					 desc->name, rate, desc->max_rate);
-+		}
-+
-+		clk_data->hws[desc->id] = hw;
-+	}
-+
-+	return 0;
-+}
-+
-+static int ultrarisc_clk_register_gates(struct platform_device *pdev,
-+					struct clk_hw_onecell_data *clk_data,
-+					const struct ultrarisc_clk_soc_data *soc_data,
-+					void __iomem *base,
-+					spinlock_t *lock)
-+{
-+	struct device *dev = &pdev->dev;
-+	u32 i;
-+
-+	for (i = 0; i < soc_data->num_gates; i++) {
-+		const struct ultrarisc_gate_desc *desc;
-+		struct clk_hw *parent_hw;
-+		struct clk_hw *hw;
-+
-+		desc = &soc_data->gates[i];
-+		if (desc->id >= clk_data->num ||
-+		    desc->parent_id >= clk_data->num)
-+			return -EINVAL;
-+
-+		parent_hw = clk_data->hws[desc->parent_id];
-+		if (!parent_hw)
-+			return -EINVAL;
-+
-+		hw = devm_clk_hw_register_gate_parent_hw(dev, desc->name,
-+							 parent_hw,
-+							 CLK_GET_RATE_NOCACHE,
-+							 base + desc->offset,
-+							 desc->gate_bit,
-+							 desc->gate_flags,
-+							 lock);
-+		if (IS_ERR(hw))
-+			return PTR_ERR(hw);
-+
-+		clk_data->hws[desc->id] = hw;
-+	}
-+
-+	return 0;
-+}
-+
-+int ultrarisc_clk_probe(struct platform_device *pdev,
-+			const struct ultrarisc_clk_soc_data *soc_data)
-+{
-+	struct clk_hw_onecell_data *clk_data;
-+	struct device *dev = &pdev->dev;
-+	void __iomem *base;
-+	spinlock_t *lock;
-+	int ret;
-+
-+	if (!soc_data)
-+		return -EINVAL;
-+
-+	lock = devm_kzalloc(dev, sizeof(*lock), GFP_KERNEL);
-+	if (!lock)
-+		return -ENOMEM;
-+
-+	spin_lock_init(lock);
-+
-+	clk_data = devm_kzalloc(dev, struct_size(clk_data, hws,
-+						 soc_data->num_clks),
-+				GFP_KERNEL);
-+	if (!clk_data)
-+		return -ENOMEM;
-+
-+	clk_data->num = soc_data->num_clks;
-+
-+	base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	ret = ultrarisc_clk_register_plls(pdev, clk_data, soc_data, base);
-+	if (ret)
-+		return ret;
-+
-+	ret = ultrarisc_clk_register_fixed_factors(dev, clk_data, soc_data);
-+	if (ret)
-+		return ret;
-+
-+	ret = ultrarisc_clk_register_dividers(pdev, clk_data, soc_data, base,
-+					      lock);
-+	if (ret)
-+		return ret;
-+
-+	ret = ultrarisc_clk_register_gates(pdev, clk_data, soc_data, base,
-+					   lock);
-+	if (ret)
-+		return ret;
-+
-+	for (int i = 0; i < clk_data->num; i++) {
-+		if (!clk_data->hws[i]) {
-+			dev_err(dev, "missing clock ID %u\n", i);
-+			return -EINVAL;
-+		}
-+	}
-+
-+	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
-+					   clk_data);
-+}
-+EXPORT_SYMBOL_GPL(ultrarisc_clk_probe);
-+
-+MODULE_DESCRIPTION("UltraRISC clock core driver");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/ultrarisc/clk-ultrarisc.h b/drivers/clk/ultrarisc/clk-ultrarisc.h
-new file mode 100644
-index 000000000000..1281196bb414
---- /dev/null
-+++ b/drivers/clk/ultrarisc/clk-ultrarisc.h
-@@ -0,0 +1,73 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+#ifndef __ULTRARISC_CLK_ULTRARISC_H
-+#define __ULTRARISC_CLK_ULTRARISC_H
-+
-+#include <linux/clk-provider.h>
-+#include <linux/platform_device.h>
-+#include <linux/types.h>
-+
-+#define ULTRARISC_CLK_NO_GATE		(-1)
-+
-+struct ultrarisc_pll_layout {
-+	u32 cfg1_offset;
-+	u32 cfg2_offset;
-+	u32 frac_mask;
-+	u32 m_mask;
-+	u32 n_mask;
-+	u32 oddiv1_mask;
-+	u32 oddiv2_mask;
-+};
-+
-+struct ultrarisc_pll_desc {
-+	u32 id;
-+	const char *name;
-+};
-+
-+struct ultrarisc_fixed_factor_desc {
-+	u32 id;
-+	const char *name;
-+	u32 parent_id;
-+	u32 mult;
-+	u32 div;
-+};
-+
-+struct ultrarisc_divider_desc {
-+	u32 id;
-+	const char *name;
-+	u32 offset;
-+	u32 parent_id;
-+	unsigned long max_rate;
-+	u32 load_mask;
-+	u8 div_shift;
-+	u8 div_width;
-+	s8 gate_bit;
-+	u16 divider_flags;
-+	u8 gate_flags;
-+};
-+
-+struct ultrarisc_gate_desc {
-+	u32 id;
-+	const char *name;
-+	u32 offset;
-+	u32 parent_id;
-+	u8 gate_bit;
-+	u8 gate_flags;
-+};
-+
-+struct ultrarisc_clk_soc_data {
-+	const struct ultrarisc_pll_layout *pll_layout;
-+	const struct ultrarisc_pll_desc *plls;
-+	u32 num_plls;
-+	const struct ultrarisc_fixed_factor_desc *fixed_factors;
-+	u32 num_fixed_factors;
-+	const struct ultrarisc_divider_desc *dividers;
-+	u32 num_dividers;
-+	const struct ultrarisc_gate_desc *gates;
-+	u32 num_gates;
-+	u32 num_clks;
-+};
-+
-+int ultrarisc_clk_probe(struct platform_device *pdev,
-+			const struct ultrarisc_clk_soc_data *soc_data);
-+
-+#endif /* __ULTRARISC_CLK_ULTRARISC_H */
+v2->v3:
+  * clk part:
+    * devm_reset_control_get()->devm_reset_control_get_exclusive()
+    * assert noc reset from suspend
+    * clock parents changes from 6 to 4, and rename the clock names,
+      explain more about this: confirm with our designer, In fact,
+      there are 6 clock sources going into the audio subsystem. audio_clk1
+      and audio_clk3 are redundant in design and are not actually needed
+      in practice, so they are not shown here.
+    * refine clocks and clock-names property
+    * add detailed description of clocks
+    * drop parent node from clk binding
+    * drop define AUDSS_MAX_CLKS
+  * reset part:
+    * rename reset signal macro, remove _N
+    * drop SKY1_AUDSS_SW_RESET_NUM
+    * switching to compatible-style of defining subnodes in parent schema
+
+v1->v2:
+  * remove audss_rst device node since it doesn't has resource, and
+    move to reset-sky1.c driver.
+  * remove hda related which would be sent after this patch set accepted
+  * soc componnet is okay by default from dtsi
+  * fix for audss clk driver:
+    * remove "comment "Clock options for Cixtech audss:""
+    * add select MFD_SYSCON
+    * move lock and clk_data into struct sky1_audss_clks_priv
+    * const char *name -> const char * const * name
+    * remove CLK_GET_RATE_NOCACHE
+    * divicer -> divider
+    * Reverse Christmas tree order
+    * return reg ? 1 : 0; -> return !!reg;
+    * return ERR_CAST(hw); -> return hw;
+    * of_device_get_match_data(dev) -> device_get_match_data()
+    * add lock from runtime_suspend/resume
+  * loop to more mailing lists
+
+Joakim Zhang (5):
+  dt-bindings: soc: cix,sky1-system-control: add audss system control
+  reset: cix: add audss support to sky1 reset driver
+  dt-bindings: clock: cix,sky1-audss-clock: add audss clock controller
+  clk: cix: add sky1 audss clock controller
+  arm64: dts: cix: sky1: add audss system control
+
+ .../bindings/clock/cix,sky1-audss-clock.yaml  |   72 +
+ .../soc/cix/cix,sky1-system-control.yaml      |   48 +
+ arch/arm64/boot/dts/cix/sky1.dtsi             |   24 +
+ drivers/clk/Kconfig                           |    1 +
+ drivers/clk/Makefile                          |    1 +
+ drivers/clk/cix/Kconfig                       |   16 +
+ drivers/clk/cix/Makefile                      |    3 +
+ drivers/clk/cix/clk-sky1-audss.c              | 1167 +++++++++++++++++
+ drivers/reset/reset-sky1.c                    |   86 +-
+ .../dt-bindings/clock/cix,sky1-audss-clock.h  |   60 +
+ .../reset/cix,sky1-audss-system-control.h     |   25 +
+ 11 files changed, 1500 insertions(+), 3 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/cix,sky1-audss-clock.yaml
+ create mode 100644 drivers/clk/cix/Kconfig
+ create mode 100644 drivers/clk/cix/Makefile
+ create mode 100644 drivers/clk/cix/clk-sky1-audss.c
+ create mode 100644 include/dt-bindings/clock/cix,sky1-audss-clock.h
+ create mode 100644 include/dt-bindings/reset/cix,sky1-audss-system-control.h
 
 -- 
-2.34.1
-
-
+2.50.1
