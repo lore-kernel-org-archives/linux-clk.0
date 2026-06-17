@@ -1,45 +1,47 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6987480328;
-	Wed, 17 Jun 2026 15:56:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D83A4A138C;
+	Wed, 17 Jun 2026 16:08:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781711800; cv=none; b=hpavGFi2w7Nm+/WeS+XS2KODan5g2dXxCeQziLWu0fWOVIGioCn/tyRVWa4w894C9tYk/V9GKd+Svr1PZ/udCJXMQ5HcGrEb6dmf/pM1y4kO4pfm3cBAYeSnK1Bt0M4dFt+rAkx0Jd5f9p/OrwNDB19kTQtMPcIPS5lHKaA3Kpw=
+	t=1781712497; cv=none; b=i1mlpT0uNUIz0s3SG1hFB+rsPgrRpOvnZNebYacJM58zYCnp/jmkHhRFdGry+OO5Exwh19PkXKFAXr1SxAzh0I4lHZM4Woi5nSC6p5cjAQ10CtB11SRmIQQa8zxWGp2cCZWtpItsVAY4hazTKaEhL4ks8PGpTLwbHhBiSgRTkyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781711800; c=relaxed/simple;
-	bh=ouP0s2SokYSfDUab4TWEmgXE2f6RHxBh8vfLFB+oUmc=;
+	s=arc-20240116; t=1781712497; c=relaxed/simple;
+	bh=zbnIJ4WK1ZwthjWEkQhcQCMItqHN7R3Y7eKdrLAaBxo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gY5DZJRVspkw0A1Vc8WcS+ys/3qO6XiLmkErScT6TF6cBURzAjUaa0HrlpTSSdbHipVQKhtPH6jWPB6qMHvq8JS9Jp7HxTZUyU9e6SW9Bgw3966db6cyzHntmyimozQBK/MUnJnv7h+z6iFpDuHXYoRcoaVGxf4y6aq92jnzL24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UIL/e6Kz; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=m1NTeI4mrrAHOgzdc/Wlf/7OOBGX3fT6gK2dIEvQbvMMGEOG5jmYayPrXmdEc6htGHTE/6ipm9iPPR/UGpyYZLd01yZLeBCMphnaL7x47CmpJwWjhy/H7gAWpk7qYfEGYtj1Q/DjfxxfQKFiBDGDsSRZPIpn5T0kK+U3HtFe9o0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hz2kqya5; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UIL/e6Kz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4F261F000E9;
-	Wed, 17 Jun 2026 15:56:24 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hz2kqya5"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11F531F000E9;
+	Wed, 17 Jun 2026 16:08:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781711786;
-	bh=b3igiyBFgh2jFv3ANznSMMApxq86Mex+9yLSze6gqC0=;
+	s=k20260515; t=1781712486;
+	bh=DZv1HGAlytWaa6Up/o9NHIGKHSQi3/6sVCX/gXxAz7Q=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=UIL/e6KzcxwD7v/7Ow/fSBgKCRSNWFFPD1fVxpHk6MWQjsEzxFtYu1wBZgu1vNvBd
-	 /KYmTj0KTMiYb/fU9l1tbhbW/3QNEcfOTijjFr5zCdZXb+5IwSQQEPiiOzwSWzCSHV
-	 PV3hZ/3+usfgQA54gsFEMoyDBdQnfvd/th5g8FTXfu1G9AB+pLq5pctqUutsX76xlV
-	 FnKmMF+p2pZIMriOihiAC44DS28m8h/ogDSB0EIkZprHoR2yfMpX921lUakW/trNOG
-	 7/jiyMGx+CVVPZXHfzVnQmVqyh6x1C34w+VB62+SD8PHF+hxhkjTG3MjDhfUlcZ0cO
-	 x5pyotX2xhNtg==
-Date: Wed, 17 Jun 2026 16:56:22 +0100
+	b=Hz2kqya5xQdNuv8Fo2m1y00ruQyJ4TI3MbFSiTTQegFy+TfVg9vjat3Y5IDCr4FXx
+	 PaYQMenFndngCb1DHklaiwN2ycPoYQ+hc8BbHe+cT/3LRlTNcHl4Oh7A8gNqElNfCo
+	 aUv2ILGlBKUY8VHL2zTqIXxO+/SkdnprQkXipG/3qO1V+s3u3paBJWr6Fw57s9Y8Q6
+	 dbyst4qtrotFI6bEaREY9N25Si3jFJtpOsb86YlexsQK7GIrUkQWN1yj2CEZJHDmCx
+	 3W9TT6PLwQu3r1rwos1v58riGRO7LJe9YP0Etogjzjy1lN3ZxvhFqnTXPryO8afAEA
+	 VjacwR+HboYRQ==
+Date: Wed, 17 Jun 2026 17:08:02 +0100
 From: Conor Dooley <conor@kernel.org>
-To: wangjia@ultrarisc.com
+To: Stefan =?iso-8859-1?Q?D=F6singer?= <stefandoesinger@gmail.com>
 Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
-	Rob Herring <robh@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: clock: ultrarisc: Add DP1000 Clock
- Controller
-Message-ID: <20260617-squirt-maimed-6b3b273af10e@spud>
-References: <20260617-ultrarisc-clock-v2-0-9cb16083e15e@ultrarisc.com>
- <20260617-ultrarisc-clock-v2-1-9cb16083e15e@ultrarisc.com>
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Brian Masney <bmasney@redhat.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH RFC v4 01/12] dt-bindings: clk: zte: Add zx297520v3 top
+ clock and reset bindings
+Message-ID: <20260617-tabasco-pulsate-454ed3f8f0b6@spud>
+References: <20260616-zx29clk-v4-0-ca994bd22e9d@gmail.com>
+ <20260616-zx29clk-v4-1-ca994bd22e9d@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -47,171 +49,176 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="PVK+HrIdPtUTwcqp"
+	protocol="application/pgp-signature"; boundary="ZHoM7zafRhtkAPrt"
 Content-Disposition: inline
-In-Reply-To: <20260617-ultrarisc-clock-v2-1-9cb16083e15e@ultrarisc.com>
+In-Reply-To: <20260616-zx29clk-v4-1-ca994bd22e9d@gmail.com>
 
 
---PVK+HrIdPtUTwcqp
-Content-Type: text/plain; charset=utf-8
+--ZHoM7zafRhtkAPrt
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 17, 2026 at 02:02:54PM +0800, Jia Wang via B4 Relay wrote:
-> From: Jia Wang <wangjia@ultrarisc.com>
+On Tue, Jun 16, 2026 at 11:26:21PM +0300, Stefan D=F6singer wrote:
+> These SoCs have 3 clock and reset controllers: Top, Matrix and LSP. The
+> separation of concerns between Top and Matrix and the interface between
+> them is poorly defined in the hardware, so the bindings list all
+> potential PLL clocks that might be passed between them.
 >=20
-> Add doc for the clock controller on the UltraRISC DP1000 RISC-V SoC.
+> Generally every device has two clocks (one work clock, and one that
+> connects it to the bus, I call it PCLK), two reset bits (I don't know
+> what the difference is - sometimes asserting one is enough to reset the
+> device, sometimes both need to be asserted). PCLK and WCLK are
+> controlled by individual gates. Some devices have a mux and/or a
+> divider for their work clock. Some devices, like the GPIO controller,
+> only have reset bits and no clocks.
 >=20
-> Signed-off-by: Jia Wang <wangjia@ultrarisc.com>
-
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-pw-bot: not-applicable
-
-Cheers,
-Conor.
-
+> The top clock controller is fed by a 26mhz external oscillator and has 4
+> PLLs to generate other clock rates. ZTE's kernel mostly relies on the
+> boot ROM to set up PLLs, but one LTE-Related PLL is not configured
+> on some boards. Therefore my driver contains code to program PLLs. It
+> produces identical settings as the boot ROM for the pre-programmed
+> frequencies.
+>=20
+> Not all clocks will have an explicit user in the end. I am defining a
+> lot of them simply to shut them off. The boot loader sets up a few of
+> the proprietary timers, which will send regular IRQs (although the
+> kernel of course doesn't need to listen to them). I don't plan to add a
+> driver for the proprietary timer as I see no use for them - the ARM arch
+> timer works just fine. I will add a driver for the very similar
+> proprietary watchdog though.
+>=20
+> The clock list in this patch is pretty complete but not exhaustive.
+> There are other bits that are enabled, but I couldn't deduce what they
+> are controlling by trial and error. Some of them seem to do nothing.
+> Others cause an instant hang of the board when disabled. It is quite
+> likely that a handful more clocks will be added in the future, but not a
+> large number.
+>=20
+> Signed-off-by: Stefan D=F6singer <stefandoesinger@gmail.com>
 > ---
->  .../bindings/clock/ultrarisc,dp1000-clk.yaml       | 60 ++++++++++++++++=
+>  .../bindings/clock/zte,zx297520v3-topclk.yaml      |  70 ++++++++++++
+>  MAINTAINERS                                        |   2 +
+>  include/dt-bindings/clock/zte,zx297520v3-clk.h     | 118 +++++++++++++++=
 ++++++
->  MAINTAINERS                                        |  7 +++
->  include/dt-bindings/clock/ultrarisc,dp1000-clk.h   | 27 ++++++++++
->  3 files changed, 94 insertions(+)
+>  3 files changed, 190 insertions(+)
 >=20
-> diff --git a/Documentation/devicetree/bindings/clock/ultrarisc,dp1000-clk=
-=2Eyaml b/Documentation/devicetree/bindings/clock/ultrarisc,dp1000-clk.yaml
+> diff --git a/Documentation/devicetree/bindings/clock/zte,zx297520v3-topcl=
+k.yaml b/Documentation/devicetree/bindings/clock/zte,zx297520v3-topclk.yaml
 > new file mode 100644
-> index 000000000000..ede565ec440c
+> index 000000000000..374f63891288
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/ultrarisc,dp1000-clk.yaml
-> @@ -0,0 +1,60 @@
+> +++ b/Documentation/devicetree/bindings/clock/zte,zx297520v3-topclk.yaml
+> @@ -0,0 +1,70 @@
 > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 > +%YAML 1.2
 > +---
-> +$id: http://devicetree.org/schemas/clock/ultrarisc,dp1000-clk.yaml#
+> +$id: http://devicetree.org/schemas/clock/zte,zx297520v3-topclk.yaml#
 > +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +title: UltraRISC DP1000 Clock Controller
+> +title: ZTE zx297520v3 SoC top clock and reset controller
 > +
 > +maintainers:
-> +  - Jia Wang <wangjia@ultrarisc.com>
+> +  - Stefan D=F6singer <stefandoesinger@gmail.com>
 > +
 > +description: |
-> +  The UltraRISC DP1000 clock controller is driven from a single external
-> +  oscillator input. It provides a system PLL with fractional multiplier
-> +  and post-divider stages, several fixed-ratio derived clocks for
-> +  the on-chip subsystem, Clock Configuration Register (CCR) divider
-> +  outputs for GMAC and the UART, I2C, and SPI root clocks, and
-> +  per-instance gate clocks for UART0-3, I2C0-3, and SPI0-1.
+> +  The zx297520v3's top clock controller generates clocks for core device=
+s on the
+> +  board like the main bus, USB and timers. In addition to clocks it has =
+reset
+> +  controls for peripherals, a global board reset and watchdog reset cont=
+rols.
 > +
-> +  All available clocks are defined as preprocessor macros in
-> +  include/dt-bindings/clock/ultrarisc,dp1000-clk.h
+> +  The controller has two clock inputs: a 26 MHz and a 32 KHz external
+> +  oscillator. They need to be provided as input clocks. The controller p=
+rovides
+> +  clocks to the downstream Matrix clock controller.
+> +
+> +  All available clocks are defined as preprocessor macros in the
+> +  'dt-bindings/clock/zte,zx297520v3-clk.h' header.
 > +
 > +properties:
 > +  compatible:
-> +    const: ultrarisc,dp1000-clk
+> +    items:
+> +      - const: zte,zx297520v3-topclk
+> +      - const: syscon
 > +
 > +  reg:
 > +    maxItems: 1
 > +
 > +  clocks:
-> +    maxItems: 1
-> +    description:
-> +      External oscillator input clock used as the parent of the PLLs.
+> +    items:
+> +      - description: 26 MHz external oscillator
+> +      - description: 32 KHz external oscillator
+> +
+> +  clock-names:
+> +    items:
+> +      - const: osc26m
+> +      - const: osc32k
 > +
 > +  "#clock-cells":
+> +    const: 1
+> +
+> +  "#reset-cells":
 > +    const: 1
 > +
 > +required:
 > +  - compatible
 > +  - reg
 > +  - clocks
-> +  - "#clock-cells"
+> +  - clock-names
+> +  - '#clock-cells'
+> +  - '#reset-cells'
 > +
 > +additionalProperties: false
 > +
 > +examples:
 > +  - |
-> +    #include <dt-bindings/clock/ultrarisc,dp1000-clk.h>
+> +    #include <dt-bindings/clock/zte,zx297520v3-clk.h>
 > +
-> +    soc {
-> +      #address-cells =3D <2>;
-> +      #size-cells =3D <2>;
-> +
-> +      clock-controller@11080000 {
-> +        compatible =3D "ultrarisc,dp1000-clk";
-> +        reg =3D <0x0 0x11080000 0x0 0x1000>;
-> +        clocks =3D <&osc>;
+> +    clock-controller@13b000 {
+> +        compatible =3D "zte,zx297520v3-topclk", "syscon";
+> +        reg =3D <0x0013b000 0x400>;
+> +        clocks =3D <&osc26m>, <&osc32k>;
+> +        clock-names =3D "osc26m", "osc32k";
 > +        #clock-cells =3D <1>;
-> +      };
+> +        #reset-cells =3D <1>;
 > +    };
 > diff --git a/MAINTAINERS b/MAINTAINERS
-> index 3d6db8cb608f..b7e43313c65f 100644
+> index 8629ed2aa82f..0cc1ede3c80c 100644
 > --- a/MAINTAINERS
 > +++ b/MAINTAINERS
-> @@ -27439,6 +27439,13 @@ S:	Maintained
->  F:	drivers/usb/common/ulpi.c
->  F:	include/linux/ulpi/
-> =20
-> +ULTRARISC DP1000 CLOCK DRIVER
-> +M:	Jia Wang <wangjia@ultrarisc.com>
-> +L:	linux-clk@vger.kernel.org
-> +S:	Maintained
-> +F:	Documentation/devicetree/bindings/clock/ultrarisc,dp1000-clk.yaml
-> +F:	include/dt-bindings/clock/ultrarisc,dp1000-clk.h
-> +
->  ULTRATRONIK BOARD SUPPORT
->  M:	Goran Ra=C4=91enovi=C4=87 <goran.radni@gmail.com>
->  M:	B=C3=B6rge Str=C3=BCmpfel <boerge.struempfel@gmail.com>
-> diff --git a/include/dt-bindings/clock/ultrarisc,dp1000-clk.h b/include/d=
-t-bindings/clock/ultrarisc,dp1000-clk.h
-> new file mode 100644
-> index 000000000000..751125f99965
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/ultrarisc,dp1000-clk.h
-> @@ -0,0 +1,27 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> +#ifndef _DT_BINDINGS_CLOCK_ULTRARISC_DP1000_CLK_H
-> +#define _DT_BINDINGS_CLOCK_ULTRARISC_DP1000_CLK_H
-> +
-> +#define DP1000_CLK_SYSPLL		0
-> +#define DP1000_CLK_SYSPLL_DIV2		1
-> +#define DP1000_CLK_SUBSYS		2
-> +#define DP1000_CLK_GMAC			3
-> +#define DP1000_CLK_UART_ROOT		4
-> +#define DP1000_CLK_I2C_ROOT		5
-> +#define DP1000_CLK_SPI_ROOT		6
-> +#define DP1000_CLK_PCIE_DBI		7
-> +#define DP1000_CLK_PCIEX4_CORE		8
-> +#define DP1000_CLK_PCIEX16_CORE		9
-> +#define DP1000_CLK_PCIE_AUX		10
-> +#define DP1000_CLK_UART0		11
-> +#define DP1000_CLK_UART1		12
-> +#define DP1000_CLK_UART2		13
-> +#define DP1000_CLK_UART3		14
-> +#define DP1000_CLK_I2C0			15
-> +#define DP1000_CLK_I2C1			16
-> +#define DP1000_CLK_I2C2			17
-> +#define DP1000_CLK_I2C3			18
-> +#define DP1000_CLK_SPI0			19
-> +#define DP1000_CLK_SPI1			20
-> +
-> +#endif /* _DT_BINDINGS_CLOCK_ULTRARISC_DP1000_CLK_H */
->=20
-> --=20
-> 2.34.1
->=20
->=20
->=20
+> @@ -3867,8 +3867,10 @@ L:	linux-arm-kernel@lists.infradead.org (moderated=
+ for non-subscribers)
+>  S:	Odd fixes
+>  F:	Documentation/arch/arm/zte/
+>  F:	Documentation/devicetree/bindings/arm/zte.yaml
+> +F:	Documentation/devicetree/zte,zx297520v3-*
 
---PVK+HrIdPtUTwcqp
+Sashiko complaint here looks valid.
+
+FWIW
+/scripts/get_maintainer.pl --self-test=3Dpatterns
+will catch these kinds of things.
+
+pw-bot: changes-requested
+
+Cheers,
+Conor.
+
+>  F:	arch/arm/boot/dts/zte/
+>  F:	arch/arm/mach-zte/
+> +F:	include/dt-bindings/clock/zte,zx297520v3-clk.h
+
+--ZHoM7zafRhtkAPrt
 Content-Type: application/pgp-signature; name=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCajLDpgAKCRB4tDGHoIJi
-0j6gAP9VSJ/vNhU5a9hwBpNy4gKNHEOtWljEnEKXzvIZVKsuTwEAs8gyKr+pM70P
-TiFUXpEpRuLneAudmilzjn7tVQJegQE=
-=tk6F
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCajLGYQAKCRB4tDGHoIJi
+0mvQAP4ikcMBAm7HrOzIGqoOuKA/tjGl81mN0GnIu+pLpLVZdAEAsgXEDf2C1QIp
+BAbVtHSV7qt+fPS14JPbe7tY/fVzsAQ=
+=O0ZX
 -----END PGP SIGNATURE-----
 
---PVK+HrIdPtUTwcqp--
+--ZHoM7zafRhtkAPrt--
