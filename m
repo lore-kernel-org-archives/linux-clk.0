@@ -1,76 +1,228 @@
-Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DDCF3E1716;
-	Thu, 18 Jun 2026 10:14:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.200.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4C88310763;
+	Thu, 18 Jun 2026 10:33:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781777646; cv=none; b=lDOFUvnSrnJTP+lrsBpXChkFEMr383KKboOG88XaVaS52ORBC6huF1Axgq0QQW98Lon0lRuwlQ7B5A1hCMIKOHAvifJ3R6e4abzt+IBfOaq5Nc3YyDwNJ6+QZAr6KWTpgPXAaolwKYsOHzrlO+h8c4jc2QpGyoOLs+WLcicJFKs=
+	t=1781778815; cv=none; b=HEzFXqY7UyuhKQTgm7SSFavHpRNDsnEmXMIJhMO49rPEHCz2s8sYssKZbGg0OdPCnJTjJqxx65XBMl/fmcUJjR4cepe3kF8QWHWi3Iis44DOo8USWex1tgcp6PgtUaJg8OeNKinbVfFVt4jBtdiECCRi5EhyF0lQ42z6uMPH5bw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781777646; c=relaxed/simple;
-	bh=MOzY70+Gs5SUNR9QxRpWLxXbIER3YcmIVqillMWIyL8=;
+	s=arc-20240116; t=1781778815; c=relaxed/simple;
+	bh=f2bBKlgGHI1n2LVJiJH5GioLna49dxGlUzSu9ppoRvc=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=MMTIx0E0mS89ef7yQS05V0+EH4TyU0JlpL/1MY9z/Ig/JxeA/JjShI3nu2TJifM+slV158bszYhxRf3bVktO+P0zxJvmWvvh2eSYqiA+S5oH7JdjvVx2uWRf50jK0PjCiT2b2jCBlG//ToYcwvinuKLaf86qyq2KI/Z75Ac+JtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.200.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de (drehscheibe.grey.stw.pengutronix.de [IPv6:2a0a:edc0:0:c01:1d::a2])
-	(Authenticated sender: relay-from-drehscheibe.grey.stw.pengutronix.de)
-	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id 5C4C4200275;
-	Thu, 18 Jun 2026 12:14:00 +0200 (CEST)
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1wa9l2-003QAw-0x;
-	Thu, 18 Jun 2026 12:14:00 +0200
-Received: from pza by lupine with local (Exim 4.98.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1wa9l2-000000006Aa-0sWM;
-	Thu, 18 Jun 2026 12:14:00 +0200
-Message-ID: <8882bc976c1d6e1de253780a4102a3a5cd5df7bf.camel@pengutronix.de>
-Subject: Re: [PATCH 2/2] reset: spacemit: k3: fix USB2 ahb reset
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Yixun Lan <dlan@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Michael
- Turquette <mturquette@baylibre.com>
-Cc: linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org, Junzhong Pan
-	 <panjunzhong@linux.spacemit.com>
-Date: Thu, 18 Jun 2026 12:14:00 +0200
-In-Reply-To: <20260526132335-GKB3748271@kernel.org>
-References: <20260518-06-clk-reset-usb-fix-v1-0-14fc235e692b@kernel.org>
-	 <20260518-06-clk-reset-usb-fix-v1-2-14fc235e692b@kernel.org>
-	 <20260526132335-GKB3748271@kernel.org>
+	 Content-Type:MIME-Version; b=B19iuYeb/39i0hUqtBb5w1RjPJGtkEE28C8HRRsiCrXkGzTjDjlH7zMps/2sOG6Y23R0LTGthi3PDBoMY3Rrp3sBeK1a8HRXxxIH/pbYj62vPS75EFnhTCRBu0+QBX1J6n8uxJwRgNbH4KSxp6WXJMgsJAqFZnA/027qK0vNt7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from edelgard.fodlan.icenowy.me (unknown [112.94.100.206])
+	by APP-01 (Coremail) with SMTP id qwCowAB3GtNuyTNqwZIyAg--.9210S2;
+	Thu, 18 Jun 2026 18:33:19 +0800 (CST)
+Message-ID: <0bb460aefb97e44cc0890a7841b8d217349143de.camel@iscas.ac.cn>
+Subject: Re: [PATCH v4 4/6] drm/verisilicon: add DC8000 (DCUltraLite)
+ display controller support
+From: Icenowy Zheng <zhengxingda@iscas.ac.cn>
+To: Joey Lu <a0987203069@gmail.com>, maarten.lankhorst@linux.intel.com, 
+	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
+ simona@ffwll.ch, 	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ Michael Turquette	 <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Brian Masney	 <bmasney@redhat.com>
+Cc: ychuang3@nuvoton.com, schung@nuvoton.com, yclu4@nuvoton.com, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org
+Date: Thu, 18 Jun 2026 18:33:18 +0800
+In-Reply-To: <df7363be-0e3f-4459-be4a-43ffb0a5366c@gmail.com>
+References: <20260615065003.76661-1-a0987203069@gmail.com>
+	 <20260615065003.76661-5-a0987203069@gmail.com>
+	 <d5df0e9df3a9a68aae982f2fce830a4b10468476.camel@iscas.ac.cn>
+	 <df7363be-0e3f-4459-be4a-43ffb0a5366c@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-0+deb13u1 
+User-Agent: Evolution 3.58.3 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-CM-TRANSID:qwCowAB3GtNuyTNqwZIyAg--.9210S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3Wr48ZrWUXFy5WFW7AF43Wrg_yoW7ZFWkpF
+	WktFWUKrZ8A3yxurn2qFyjqFyFy3WxJay8Wr18Jry0ywsrAryUWF40qFykua4DXrs7Aw40
+	qa1rCr43urW2vF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvvb7Iv0xC_Kw4lb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I2
+	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xII
+	jxv20xvEc7CjxVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I
+	8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
+	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8Jw
+	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l
+	c7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr
+	1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE
+	14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7
+	IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E
+	87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73Uj
+	IFyTuYvjxUkX_TUUUUU
+X-CM-SenderInfo: x2kh0wp0lqwv3d6l2u1dvotugofq/
 
-On Di, 2026-05-26 at 13:23 +0000, Yixun Lan wrote:
-> Hi Philipp Zabel,
+(CC'ed clk maintainers for weird clock gate bit)
+
+=E5=9C=A8 2026-06-17=E4=B8=89=E7=9A=84 18:35 +0800=EF=BC=8CJoey Lu=E5=86=99=
+=E9=81=93=EF=BC=9A
 >=20
-> On 02:58 Mon 18 May     , Yixun Lan wrote:
-> > According to SpacemiT K3's updated docs, the USB2 ahb reset and USB2 bu=
-s
-> > clock enable bit was wrongly swapped, the correct one should be:
+> On 6/15/2026 4:51 PM, Icenowy Zheng wrote:
+> > =E5=9C=A8 2026-06-15=E4=B8=80=E7=9A=84 14:50 +0800=EF=BC=8CJoey Lu=E5=
+=86=99=E9=81=93=EF=BC=9A
+> > > The Nuvoton MA35D1 SoC integrates a Verisilicon DCUltraLite
+> > > display
+> > > controller whose register layout differs from the DC8200 in
+> > > several
+> > > important ways:
+> > >=20
+> > > 1. No CONFIG_EX commit path: framebuffer updates use the enable
+> > > (bit
+> > > 0)
+> > > =C2=A0=C2=A0=C2=A0 and reset (bit 4) bits in FB_CONFIG instead of the=
+ DC8200
+> > > staging
+> > > =C2=A0=C2=A0=C2=A0 registers (FB_CONFIG_EX, FB_TOP_LEFT, FB_BOTTOM_RI=
+GHT,
+> > > =C2=A0=C2=A0=C2=A0 FB_BLEND_CONFIG, PANEL_CONFIG_EX).
+> > >=20
+> > > 2. No PANEL_START register: panel output starts when
+> > > =C2=A0=C2=A0=C2=A0 PANEL_CONFIG.RUNNING is set; there is no multi-dis=
+play sync
+> > > start
+> > > =C2=A0=C2=A0=C2=A0 register.
+> > >=20
+> > > 3. Different IRQ registers: DCUltraLite uses DISP_IRQ_STA
+> > > (0x147C) /
+> > > =C2=A0=C2=A0=C2=A0 DISP_IRQ_EN (0x1480) versus DC8200's TOP_IRQ_ACK (=
+0x0010) /
+> > > =C2=A0=C2=A0=C2=A0 TOP_IRQ_EN (0x0014).
+> > >=20
+> > > 4. Per-frame commit cycle: DCUltraLite requires the VALID bit in
+> > > =C2=A0=C2=A0=C2=A0 FB_CONFIG to be set at the start of each atomic co=
+mmit
+> > > (crtc_begin)
+> > > =C2=A0=C2=A0=C2=A0 and cleared after (crtc_flush).
+> > >=20
+> > > 5. Simpler clock topology: only 'core' (bus gate) and 'pix0'
+> > > (pixel
+> > > =C2=A0=C2=A0=C2=A0 divider) clocks; no axi or ahb clocks required.=C2=
+=A0 Make axi_clk
+> > > and
+> > > =C2=A0=C2=A0=C2=A0 ahb_clk optional (devm_clk_get_optional_enabled) s=
+o DC8000
+> > > nodes
+> > > =C2=A0=C2=A0=C2=A0 without those clocks are handled gracefully.
+> > >=20
+> > > Add vs_dc8000.c implementing the vs_dc_funcs vtable for the above
+> > > differences.=C2=A0 The probe now selects vs_dc8000_funcs when the
+> > > identified
+> > > generation is VSDC_GEN_DC8000 (DCUltraLite reads model 0x0,
+> > > revision 0x5560, customer_id 0x305).
+> > >=20
+> > > Signed-off-by: Joey Lu <a0987203069@gmail.com>
+> > > ---
+> > > =C2=A0=C2=A0drivers/gpu/drm/verisilicon/Makefile=C2=A0=C2=A0=C2=A0 |=
+=C2=A0 2 +-
+> > > =C2=A0=C2=A0drivers/gpu/drm/verisilicon/vs_dc.c=C2=A0=C2=A0=C2=A0=C2=
+=A0 |=C2=A0 9 ++-
+> > > =C2=A0=C2=A0drivers/gpu/drm/verisilicon/vs_dc.h=C2=A0=C2=A0=C2=A0=C2=
+=A0 |=C2=A0 1 +
+> > > =C2=A0=C2=A0drivers/gpu/drm/verisilicon/vs_dc8000.c | 78
+> > > +++++++++++++++++++++++++
+> > > =C2=A0=C2=A04 files changed, 86 insertions(+), 4 deletions(-)
+> > > =C2=A0=C2=A0create mode 100644 drivers/gpu/drm/verisilicon/vs_dc8000.=
+c
+> > >=20
+> > > diff --git a/drivers/gpu/drm/verisilicon/Makefile
+> > > b/drivers/gpu/drm/verisilicon/Makefile
+> > > index 9d4cd16452fa..d2fd8e4dff24 100644
+> > > --- a/drivers/gpu/drm/verisilicon/Makefile
+> > > +++ b/drivers/gpu/drm/verisilicon/Makefile
+> > > @@ -1,6 +1,6 @@
+> > > =C2=A0=C2=A0# SPDX-License-Identifier: GPL-2.0-only
+> > > =C2=A0=20
+> > > -verisilicon-dc-objs :=3D vs_bridge.o vs_crtc.o vs_dc.o vs_dc8200.o
+> > > vs_drm.o vs_hwdb.o \
+> > > +verisilicon-dc-objs :=3D vs_bridge.o vs_crtc.o vs_dc.o vs_dc8200.o
+> > > vs_dc8000.o vs_drm.o vs_hwdb.o \
+> > > =C2=A0=C2=A0	vs_plane.o vs_primary_plane.o vs_cursor_plane.o
+> > > =C2=A0=20
+> > > =C2=A0=C2=A0obj-$(CONFIG_DRM_VERISILICON_DC) +=3D verisilicon-dc.o
+> > > diff --git a/drivers/gpu/drm/verisilicon/vs_dc.c
+> > > b/drivers/gpu/drm/verisilicon/vs_dc.c
+> > > index 9729b693d360..9499fffbca58 100644
+> > > --- a/drivers/gpu/drm/verisilicon/vs_dc.c
+> > > +++ b/drivers/gpu/drm/verisilicon/vs_dc.c
+> > > @@ -90,13 +90,13 @@ static int vs_dc_probe(struct platform_device
+> > > *pdev)
+> > > =C2=A0=C2=A0		return PTR_ERR(dc->core_clk);
+> > > =C2=A0=C2=A0	}
+> > > =C2=A0=20
+> > > -	dc->axi_clk =3D devm_clk_get_enabled(dev, "axi");
+> > > +	dc->axi_clk =3D devm_clk_get_optional_enabled(dev, "axi");
+> > > =C2=A0=C2=A0	if (IS_ERR(dc->axi_clk)) {
+> > > =C2=A0=C2=A0		dev_err(dev, "can't get axi clock\n");
+> > > =C2=A0=C2=A0		return PTR_ERR(dc->axi_clk);
+> > > =C2=A0=C2=A0	}
+> > > =C2=A0=20
+> > > -	dc->ahb_clk =3D devm_clk_get_enabled(dev, "ahb");
+> > > +	dc->ahb_clk =3D devm_clk_get_optional_enabled(dev, "ahb");
+> > Please make the clock change a separated patch for atomicity.
 > >=20
-> > Register : APMU_USB_CLK_RES_CTRL
-> > bit[1]   : usb2_port_bus_clk_en
-> > bit[0]   : usb2_port_ahb_rstn
+> > BTW the MA35D1 manual's clock tree shows that DCUltra appears on
+> > AXI2
+> > ACLK, AHB_HCLK2, behind a mux of SYS-PLL/EPLL-DIV2 (which seems to
+> > be
+> > the core clock), and behind a divider (which seems to be the pixel
+> > clock).
 > >=20
-> > Fixes: a0e0c2f8c5f3 ("reset: spacemit: k3: Decouple composite reset lin=
-es")
-> > Reported-by: Junzhong Pan <panjunzhong@linux.spacemit.com>
-> > Signed-off-by: Yixun Lan <dlan@kernel.org>
->=20
-> Would be it ok from your side to queue this patch for v7.2 cycle?
+> > However it's weird that only one DCUltra Clock Enable Bit exists
+> > despite both bus clocks have "ICG" (I think it means "Integrated
+> > Clock
+> > Gating"). In addition the linux clk-ma35d1 driver assigns
+> > "dcu_gate" as
+> > a downstream of "dcu_mux", although the Figure 6.5-2 in the TRM
+> > shows
+> > no ICG after the "Display core CLK" mux.
+> >=20
+> > Is the two bus clocks controlled by a single gate bit, and is the
+> > bit
+> > also gating DC core clock?
+> >=20
+> > Thanks,
+> > Icenowy
+> I will split the axi/ahb optional-clock change into its own patch in
+> v5=20
+> for atomicity.
+> Regarding the MA35D1 clock tree: from the TRM, the single "dcu_gate"
+> bit=20
+> gates both bus clocks (AXI ACLK and AHB HCLK) together with the
+> display=20
+> core clock through the same ICG cell. The clk-ma35d1 driver exposes
+> only=20
+> "dcu_gate" (downstream of "dcu_mux") and does not provide separate=20
 
-Yes, I'll queue it for v7.2.
+Then it's one of the case that the clock tree doesn't properly
+represent the hardware, which is bad. However, as three gates share the
+same bit, I am not sure how to represent such kind of thing in the
+common clk framework.
 
-regards
-Philipp
+> axi/ahb clock entries. Therefore the MA35D1 DT binding will use only
+> two=20
+> clocks ("core" and "pix0"); making axi and ahb optional in the driver
+> is the correct approach, and this will be stated clearly in the
+>  split-out patch.
+
+I agree to make them optional, although these two clocks do exist in
+the hardware of MA35D1.
+
+Thanks,
+Icenowy
+
+> > > =C2=A0=C2=A0	if (IS_ERR(dc->ahb_clk)) {
+> > > =C2=A0=C2=A0		dev_err(dev, "can't get ahb clock\n");
+> > > =C2=A0=C2=A0		return PTR_ERR(dc->ahb_clk);
+
