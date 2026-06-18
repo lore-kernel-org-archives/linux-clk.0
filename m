@@ -1,228 +1,131 @@
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+Received: from mail-dy1-f170.google.com (mail-dy1-f170.google.com [74.125.82.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4C88310763;
-	Thu, 18 Jun 2026 10:33:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781778815; cv=none; b=HEzFXqY7UyuhKQTgm7SSFavHpRNDsnEmXMIJhMO49rPEHCz2s8sYssKZbGg0OdPCnJTjJqxx65XBMl/fmcUJjR4cepe3kF8QWHWi3Iis44DOo8USWex1tgcp6PgtUaJg8OeNKinbVfFVt4jBtdiECCRi5EhyF0lQ42z6uMPH5bw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781778815; c=relaxed/simple;
-	bh=f2bBKlgGHI1n2LVJiJH5GioLna49dxGlUzSu9ppoRvc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=B19iuYeb/39i0hUqtBb5w1RjPJGtkEE28C8HRRsiCrXkGzTjDjlH7zMps/2sOG6Y23R0LTGthi3PDBoMY3Rrp3sBeK1a8HRXxxIH/pbYj62vPS75EFnhTCRBu0+QBX1J6n8uxJwRgNbH4KSxp6WXJMgsJAqFZnA/027qK0vNt7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from edelgard.fodlan.icenowy.me (unknown [112.94.100.206])
-	by APP-01 (Coremail) with SMTP id qwCowAB3GtNuyTNqwZIyAg--.9210S2;
-	Thu, 18 Jun 2026 18:33:19 +0800 (CST)
-Message-ID: <0bb460aefb97e44cc0890a7841b8d217349143de.camel@iscas.ac.cn>
-Subject: Re: [PATCH v4 4/6] drm/verisilicon: add DC8000 (DCUltraLite)
- display controller support
-From: Icenowy Zheng <zhengxingda@iscas.ac.cn>
-To: Joey Lu <a0987203069@gmail.com>, maarten.lankhorst@linux.intel.com, 
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
- simona@ffwll.ch, 	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- Michael Turquette	 <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Brian Masney	 <bmasney@redhat.com>
-Cc: ychuang3@nuvoton.com, schung@nuvoton.com, yclu4@nuvoton.com, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org
-Date: Thu, 18 Jun 2026 18:33:18 +0800
-In-Reply-To: <df7363be-0e3f-4459-be4a-43ffb0a5366c@gmail.com>
-References: <20260615065003.76661-1-a0987203069@gmail.com>
-	 <20260615065003.76661-5-a0987203069@gmail.com>
-	 <d5df0e9df3a9a68aae982f2fce830a4b10468476.camel@iscas.ac.cn>
-	 <df7363be-0e3f-4459-be4a-43ffb0a5366c@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.3 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3737E3ED105
+	for <linux-clk@vger.kernel.org>; Thu, 18 Jun 2026 10:40:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.82.170
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1781779232; cv=pass; b=suyn87LnGm0FrpgUZBKHeuxegUr9lyTHJqbF+XjJel7y3/SuxI7+mQLIRRNDpb2jGb6lR1THzgjsueQo1JTJRoX1xpzVvHvg//0iXeNRnLGxxwqnOIEvTYWIXBHr/GfWgW5Xx6+lRynQIzoU3REVLw0ibIahQTV7h+wre89nWZo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1781779232; c=relaxed/simple;
+	bh=yhUtjbZV53eJ33+I5WWMx1PK7EZ98q+cI9GUW0pweEM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=vFtfvzm1gwGlWQkqQ92SR2m02Z1ZwvpNr5GRg8aotNPWCZl7Dv0OUMKLPKfuRqYTXx/pecElPt32di8jGkMZxc+20i/1WEbclgCKd/mcs9ji22+fZjwuRvwKzyT9VX4t3beEmE2pLfWbmRXvKSRTbbVV+KylLpe2s5sK3p8GGPQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZDW4jrkf; arc=pass smtp.client-ip=74.125.82.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZDW4jrkf"
+Received: by mail-dy1-f170.google.com with SMTP id 5a478bee46e88-30bda2cb796so49098eec.1
+        for <linux-clk@vger.kernel.org>; Thu, 18 Jun 2026 03:40:28 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1781779227; cv=none;
+        d=google.com; s=arc-20240605;
+        b=OhXvYDBIhp3qrcV+TipDkd9XHRLqAHUYuFAqNG+9riVLlWACYDGNCK/Jy2hhjPmaQF
+         aqQdUy9rL4jOzewJp1ByoDkG5ZVH6De68hsS+5JF+XInWz8DCsGf7qlGY5RoPXw6xxeK
+         7pQnIfE9Gd/5irH+pC8MXLEindcFKxrqvc58kddt8kCJgFTZUW5J63VSaj27lJBBBx55
+         k0dPPMTqGPnhe9icUbQ57Y1Y+Ij8IVf96teOU1YFi/41cRengfAGS0Z+hrQD4fEiGyC/
+         MrM2SMYFXXbWN050ZoCVQYDET8Ef6ZZp/pInI+n8gTJcW9zODj7fHGwkqo9q4UtjRwl1
+         oDPg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=7DUQbCb92xOvO01pv+r7iCHPQp0UAu27WllptLJOlB8=;
+        fh=ZEcZGPOSvuJ2zd6qdeCGQp9WoUqJgXnjKAFC1eJuW5s=;
+        b=X49T1eCh9FPCOw3v8ZK/9sUlBXeMPCY1ZA5dqaxmamxA2xr53exQ83cL4WScJ3L16u
+         HsnpNj3b9uXzjNUzjq8fwaXx4vCm8TaUW4hs95oSFT37NUefDnuNjIht7sFcfzaYrrbD
+         +SLc/3WkGniUzsmeStMlR536bFduEILgW1u2RJCQQIPJB9oUhr1GAmMXuxgnu7gGsykZ
+         ARxBkohwvUE6FqIRH+FsWL/lk0o4qCPjumJMDd5upVj9ppKSthQ2G7ztDC+PEdquWMmL
+         OA7CX0rGjC2hKJOsP7L+h7eltI0rUDJ9djvEtcrxPhHYYKbqGdQgJlnz9dSnnw88IfgC
+         buLA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1781779227; x=1782384027; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7DUQbCb92xOvO01pv+r7iCHPQp0UAu27WllptLJOlB8=;
+        b=ZDW4jrkfk3387CIo4fAM4NOExN7ZA+JSUepXfBLmjVA+9FSYPSR+jjJ6jViBSqlURM
+         S9V6LCLaqgcwgr9YDdt1Mgl6rSrPgLi8WYmsdwGZtGJJHr8fYYLDPOoydPJz4Ej2woKa
+         VGi8nER7rddQjktBGGDNpeu/TaA3SWCVmWzCouZBHU0fSB6Sdk7+0DOLfMz5Xd9t+1tq
+         4PPNM8eij0R9Mi9C35+amzk2T60DWvpon7MBlHRKPr54i4XVSTz2ulaIiuYX181sHbxm
+         yTzCEmnhvbEtgMB/vBKfM7I3+8rtXvucGfl2SYuH7oSYFK02IzPvqvDmqj2hgddxeFNX
+         K+CQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1781779227; x=1782384027;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=7DUQbCb92xOvO01pv+r7iCHPQp0UAu27WllptLJOlB8=;
+        b=nMxHHnMULUUO3A89SBZqARpdSxr+9dcjT67X7e/7g+XdxwvgQb9sapbKSjb3vFFppy
+         9v2Cx4ZE9Z2kn8g+v5xdopYIukV0oiiChYp8NNpZCxY9n9eKGBfrpbkV6jZ/Rku+GzA1
+         dTzB89k0nXHiE/8PJUYSIep1fLa2jjkZSTJMQEDFEnSCtMMJLZk9JBEI6EWup4M9u4+k
+         YLv/xUcqs+Qevk1PqXblS9pfzp8DxYpuWon+ykiqcNKzAi3XU3nNdqDnv73ClfUtgFjz
+         phqhWagCQVnD9zTeZht26WCJWXYioUNEZ0Dl9ZUCv07LM7/LaThIuP+Zt3NxYpIoiAuB
+         u3Mw==
+X-Forwarded-Encrypted: i=1; AFNElJ92FZMyKWMwrRHdhZ0J8MnZVmx8S/bD+15kATnXIrP4SSjPGaeZSXuuhR1G6LhhoHKW8hLkW3JXSjY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7+Kr8VgqMqjRu8qlf+BxRfuCFR5ZZ6P6XSCeBZ6U+0xNGxk2M
+	8CRgmhuX6QS7rlst9VqELMBNqJkZqLdjnJhpYQck2Ss52vy0kJH3Ro6eEnJw8E36+7RdbIRtp9V
+	p5sPQVXm4Ae7/D/JfI2OcYbpuAn9DsU0=
+X-Gm-Gg: AfdE7cky367IDQThSHDxmRwiLAQQNKtV/BhyCjHMBnPsPX62DD+xxh0pMaltVHVESfS
+	2Z40Q6iMdpv6BPiMcMzojefxO/5aWJhPNrx8gZmjSf53ecGgjIPnD4Gz5n6WeDMzplqD0fans7W
+	sxGOZIoDBiTSdiGdDjmJCAdAb1iJ7bj5MpEQs/7kpzk5c60YOH8iSFijnPeLRbMpdngWM8Tm76G
+	utgjzaYicdBMtVp3lXjqo654fM0KedO82piwTJ3CG7moJkjqpyrawUVU3JXPzFl4h2befppuVZA
+	5nrCB4eB2qoB+bgAGPCm70Nyl3CWnmGXtNglKJuaBDGQt4ozUgh56mB7HbDhtsXzAOQcVvO4Nh0
+	heYjI4l8cYTq9
+X-Received: by 2002:a05:7300:ed85:b0:30b:c021:5045 with SMTP id
+ 5a478bee46e88-30bf09c4416mr1020403eec.5.1781779227291; Thu, 18 Jun 2026
+ 03:40:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:qwCowAB3GtNuyTNqwZIyAg--.9210S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3Wr48ZrWUXFy5WFW7AF43Wrg_yoW7ZFWkpF
-	WktFWUKrZ8A3yxurn2qFyjqFyFy3WxJay8Wr18Jry0ywsrAryUWF40qFykua4DXrs7Aw40
-	qa1rCr43urW2vF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvvb7Iv0xC_Kw4lb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I2
-	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
-	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xII
-	jxv20xvEc7CjxVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I
-	8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
-	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8Jw
-	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l
-	c7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr
-	1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE
-	14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7
-	IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E
-	87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73Uj
-	IFyTuYvjxUkX_TUUUUU
-X-CM-SenderInfo: x2kh0wp0lqwv3d6l2u1dvotugofq/
+References: <20260618-clk-type-state-v4-0-8be082786080@collabora.com> <20260618-clk-type-state-v4-3-8be082786080@collabora.com>
+In-Reply-To: <20260618-clk-type-state-v4-3-8be082786080@collabora.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Thu, 18 Jun 2026 12:40:14 +0200
+X-Gm-Features: AVVi8CcKkRQ8t8MfiUD4gXtI1Y4DMiQAI7JLxiiYKqJ_3SsG98lF2VyIrlJ2k1o
+Message-ID: <CANiq72myoVT9npyaB0pVvbJ1v9ELzw68uAvSoAkdJJX2MJQ=kA@mail.gmail.com>
+Subject: Re: [PATCH v4 3/3] rust: clk: use 'kernel vertical style' for imports
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Michal Wilczynski <m.wilczynski@samsung.com>, 
+	Brian Masney <bmasney@redhat.com>, Boqun Feng <boqun@kernel.org>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-riscv@lists.infradead.org, linux-pwm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	Boris Brezillon <boris.brezillon@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-(CC'ed clk maintainers for weird clock gate bit)
+On Thu, Jun 18, 2026 at 5:48=E2=80=AFAM Daniel Almeida
+<daniel.almeida@collabora.com> wrote:
+>
+> +            Result, //
 
-=E5=9C=A8 2026-06-17=E4=B8=89=E7=9A=84 18:35 +0800=EF=BC=8CJoey Lu=E5=86=99=
-=E9=81=93=EF=BC=9A
->=20
-> On 6/15/2026 4:51 PM, Icenowy Zheng wrote:
-> > =E5=9C=A8 2026-06-15=E4=B8=80=E7=9A=84 14:50 +0800=EF=BC=8CJoey Lu=E5=
-=86=99=E9=81=93=EF=BC=9A
-> > > The Nuvoton MA35D1 SoC integrates a Verisilicon DCUltraLite
-> > > display
-> > > controller whose register layout differs from the DC8200 in
-> > > several
-> > > important ways:
-> > >=20
-> > > 1. No CONFIG_EX commit path: framebuffer updates use the enable
-> > > (bit
-> > > 0)
-> > > =C2=A0=C2=A0=C2=A0 and reset (bit 4) bits in FB_CONFIG instead of the=
- DC8200
-> > > staging
-> > > =C2=A0=C2=A0=C2=A0 registers (FB_CONFIG_EX, FB_TOP_LEFT, FB_BOTTOM_RI=
-GHT,
-> > > =C2=A0=C2=A0=C2=A0 FB_BLEND_CONFIG, PANEL_CONFIG_EX).
-> > >=20
-> > > 2. No PANEL_START register: panel output starts when
-> > > =C2=A0=C2=A0=C2=A0 PANEL_CONFIG.RUNNING is set; there is no multi-dis=
-play sync
-> > > start
-> > > =C2=A0=C2=A0=C2=A0 register.
-> > >=20
-> > > 3. Different IRQ registers: DCUltraLite uses DISP_IRQ_STA
-> > > (0x147C) /
-> > > =C2=A0=C2=A0=C2=A0 DISP_IRQ_EN (0x1480) versus DC8200's TOP_IRQ_ACK (=
-0x0010) /
-> > > =C2=A0=C2=A0=C2=A0 TOP_IRQ_EN (0x0014).
-> > >=20
-> > > 4. Per-frame commit cycle: DCUltraLite requires the VALID bit in
-> > > =C2=A0=C2=A0=C2=A0 FB_CONFIG to be set at the start of each atomic co=
-mmit
-> > > (crtc_begin)
-> > > =C2=A0=C2=A0=C2=A0 and cleared after (crtc_flush).
-> > >=20
-> > > 5. Simpler clock topology: only 'core' (bus gate) and 'pix0'
-> > > (pixel
-> > > =C2=A0=C2=A0=C2=A0 divider) clocks; no axi or ahb clocks required.=C2=
-=A0 Make axi_clk
-> > > and
-> > > =C2=A0=C2=A0=C2=A0 ahb_clk optional (devm_clk_get_optional_enabled) s=
-o DC8000
-> > > nodes
-> > > =C2=A0=C2=A0=C2=A0 without those clocks are handled gracefully.
-> > >=20
-> > > Add vs_dc8000.c implementing the vs_dc_funcs vtable for the above
-> > > differences.=C2=A0 The probe now selects vs_dc8000_funcs when the
-> > > identified
-> > > generation is VSDC_GEN_DC8000 (DCUltraLite reads model 0x0,
-> > > revision 0x5560, customer_id 0x305).
-> > >=20
-> > > Signed-off-by: Joey Lu <a0987203069@gmail.com>
-> > > ---
-> > > =C2=A0=C2=A0drivers/gpu/drm/verisilicon/Makefile=C2=A0=C2=A0=C2=A0 |=
-=C2=A0 2 +-
-> > > =C2=A0=C2=A0drivers/gpu/drm/verisilicon/vs_dc.c=C2=A0=C2=A0=C2=A0=C2=
-=A0 |=C2=A0 9 ++-
-> > > =C2=A0=C2=A0drivers/gpu/drm/verisilicon/vs_dc.h=C2=A0=C2=A0=C2=A0=C2=
-=A0 |=C2=A0 1 +
-> > > =C2=A0=C2=A0drivers/gpu/drm/verisilicon/vs_dc8000.c | 78
-> > > +++++++++++++++++++++++++
-> > > =C2=A0=C2=A04 files changed, 86 insertions(+), 4 deletions(-)
-> > > =C2=A0=C2=A0create mode 100644 drivers/gpu/drm/verisilicon/vs_dc8000.=
-c
-> > >=20
-> > > diff --git a/drivers/gpu/drm/verisilicon/Makefile
-> > > b/drivers/gpu/drm/verisilicon/Makefile
-> > > index 9d4cd16452fa..d2fd8e4dff24 100644
-> > > --- a/drivers/gpu/drm/verisilicon/Makefile
-> > > +++ b/drivers/gpu/drm/verisilicon/Makefile
-> > > @@ -1,6 +1,6 @@
-> > > =C2=A0=C2=A0# SPDX-License-Identifier: GPL-2.0-only
-> > > =C2=A0=20
-> > > -verisilicon-dc-objs :=3D vs_bridge.o vs_crtc.o vs_dc.o vs_dc8200.o
-> > > vs_drm.o vs_hwdb.o \
-> > > +verisilicon-dc-objs :=3D vs_bridge.o vs_crtc.o vs_dc.o vs_dc8200.o
-> > > vs_dc8000.o vs_drm.o vs_hwdb.o \
-> > > =C2=A0=C2=A0	vs_plane.o vs_primary_plane.o vs_cursor_plane.o
-> > > =C2=A0=20
-> > > =C2=A0=C2=A0obj-$(CONFIG_DRM_VERISILICON_DC) +=3D verisilicon-dc.o
-> > > diff --git a/drivers/gpu/drm/verisilicon/vs_dc.c
-> > > b/drivers/gpu/drm/verisilicon/vs_dc.c
-> > > index 9729b693d360..9499fffbca58 100644
-> > > --- a/drivers/gpu/drm/verisilicon/vs_dc.c
-> > > +++ b/drivers/gpu/drm/verisilicon/vs_dc.c
-> > > @@ -90,13 +90,13 @@ static int vs_dc_probe(struct platform_device
-> > > *pdev)
-> > > =C2=A0=C2=A0		return PTR_ERR(dc->core_clk);
-> > > =C2=A0=C2=A0	}
-> > > =C2=A0=20
-> > > -	dc->axi_clk =3D devm_clk_get_enabled(dev, "axi");
-> > > +	dc->axi_clk =3D devm_clk_get_optional_enabled(dev, "axi");
-> > > =C2=A0=C2=A0	if (IS_ERR(dc->axi_clk)) {
-> > > =C2=A0=C2=A0		dev_err(dev, "can't get axi clock\n");
-> > > =C2=A0=C2=A0		return PTR_ERR(dc->axi_clk);
-> > > =C2=A0=C2=A0	}
-> > > =C2=A0=20
-> > > -	dc->ahb_clk =3D devm_clk_get_enabled(dev, "ahb");
-> > > +	dc->ahb_clk =3D devm_clk_get_optional_enabled(dev, "ahb");
-> > Please make the clock change a separated patch for atomicity.
-> >=20
-> > BTW the MA35D1 manual's clock tree shows that DCUltra appears on
-> > AXI2
-> > ACLK, AHB_HCLK2, behind a mux of SYS-PLL/EPLL-DIV2 (which seems to
-> > be
-> > the core clock), and behind a divider (which seems to be the pixel
-> > clock).
-> >=20
-> > However it's weird that only one DCUltra Clock Enable Bit exists
-> > despite both bus clocks have "ICG" (I think it means "Integrated
-> > Clock
-> > Gating"). In addition the linux clk-ma35d1 driver assigns
-> > "dcu_gate" as
-> > a downstream of "dcu_mux", although the Figure 6.5-2 in the TRM
-> > shows
-> > no ICG after the "Display core CLK" mux.
-> >=20
-> > Is the two bus clocks controlled by a single gate bit, and is the
-> > bit
-> > also gating DC core clock?
-> >=20
-> > Thanks,
-> > Icenowy
-> I will split the axi/ahb optional-clock change into its own patch in
-> v5=20
-> for atomicity.
-> Regarding the MA35D1 clock tree: from the TRM, the single "dcu_gate"
-> bit=20
-> gates both bus clocks (AXI ACLK and AHB HCLK) together with the
-> display=20
-> core clock through the same ICG cell. The clk-ma35d1 driver exposes
-> only=20
-> "dcu_gate" (downstream of "dcu_mux") and does not provide separate=20
+Since you import the prelude, I think you can take the change to
+remove e.g. this one.
 
-Then it's one of the case that the clock tree doesn't properly
-represent the hardware, which is bad. However, as three gates share the
-same bit, I am not sure how to represent such kind of thing in the
-common clk framework.
+>          /// use kernel::error::Result;
 
-> axi/ahb clock entries. Therefore the MA35D1 DT binding will use only
-> two=20
-> clocks ("core" and "pix0"); making axi and ahb optional in the driver
-> is the correct approach, and this will be stated clearly in the
->  split-out patch.
+>      /// use kernel::error::Result;
 
-I agree to make them optional, although these two clocks do exist in
-the hardware of MA35D1.
+>      /// use kernel::error::Result;
 
-Thanks,
-Icenowy
+>          /// use kernel::error::Result;
 
-> > > =C2=A0=C2=A0	if (IS_ERR(dc->ahb_clk)) {
-> > > =C2=A0=C2=A0		dev_err(dev, "can't get ahb clock\n");
-> > > =C2=A0=C2=A0		return PTR_ERR(dc->ahb_clk);
+Similarly, the prelude is imported in doctests by default.
 
+Cheers,
+Miguel
