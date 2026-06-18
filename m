@@ -1,292 +1,130 @@
-Received: from mail-43172.protonmail.ch (mail-43172.protonmail.ch [185.70.43.172])
+Received: from sender4-pp-o94.zoho.com (sender4-pp-o94.zoho.com [136.143.188.94])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68DC33D5259
-	for <linux-clk@vger.kernel.org>; Thu, 18 Jun 2026 08:10:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781770250; cv=none; b=Ryv3m8vBDsG7jovIAXxOOUEiVJF85ssITHlptnDbN1/QQjZAtjZo3t+c63lR70w8PDBhZSFKbNKwpbKcTvhn2REtQdNt1ToIQyhR6DjisZAjNxrPaBQaPEQBD+nodx+SayqNPK+96i6oWZcOshvZ7gGLaHQbyow/Sb3Lp2DVKMc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781770250; c=relaxed/simple;
-	bh=KEOOS/s/am57CV3qCbmRplrQNf+VLf3i3XAvXZtygWg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gVYr1L6sQ8kBvzZy7YTEwGTgilUfpDQfYzlryeFR32RqmXn1AoqcV+enDzkHEnS7jzumktiXEcWilHAUdfwS8jVFwhvyP/jjRhtxdG5QdFwPRcyPlG/ZAj9fCRK8EQkPgU146freGPmyC6DsPO+CANDbPPpqteoZ7HrE/aA/EPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (2048-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=Wv+neOsH; arc=none smtp.client-ip=185.70.43.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=onurozkan.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B28FC38CFE8;
+	Thu, 18 Jun 2026 08:19:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.94
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1781770755; cv=pass; b=UJv6Ka9z5gPGw3m0am7uRl8YyJVz6Ch1EoqOpYGCPllHbijlDQ5OqDnTir7AkLoymAyzQgDDAPKLn2+YrH+QfGBqFofUHy//IRi2v4NCkReRBCXGMg+KzFi+HJqlCKG/S+6Ti1/E0ceWJXGd8DBAr/k54Gob20+HLcP+oS+OI0w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1781770755; c=relaxed/simple;
+	bh=3wewoHGjeqOAkJRKndF4OFdzJe7sNBDsbBePRRj7Vio=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U5UFeqs8neWKgf+MbGjwpkDH7321qVMuBenva7qEY+sQ3S+nxbni3qXRZ9TRugWt3+sboEPHrDSVy5i7Ac9Tzy8Y2Ve/PbwL1UOUhKL/NkFvo/78Eq88cxTG40CV9Q5b3GWSPzF/PDKDL/UD+ROePaYtvmYDHMKGxoJoYhoKuM4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b=cg2HDsHi; arc=pass smtp.client-ip=136.143.188.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="Wv+neOsH"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
-	s=protonmail; t=1781770246; x=1782029446;
-	bh=il13JZXSJpfwDVrhPAiRTVZ2CIyzBfQKH8+hwIpyxAA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:From:To:
-	 Cc:Date:Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=Wv+neOsHPNFrzUzR1T6c+Nm8SMdjfWY/pQfGR4t8YaGoAPK8NA8VKqx2HaH/wZ1ke
-	 pEpTES0lpXf26srd6UW5QjMNjBl6UrqTGa7T7eyoe8uuq03xqMqIfzYA97u7h//1Qz
-	 f1Oo0G5s8ab/+EWJvJBkFZy8JcwVELKGhDfhoHeUCf4RIqVOMe6gf7wBcpLMZd0UPa
-	 LzZSecvPDXmSCGXid1Qqd4EwF8p0ldlilDHkgwoW1nSi2FA6Vj4LYEdyEwNKANN4Kd
-	 SlEeVYtVVa3ALpHPpUanOg9Z1jhiKm95uzRmnrfnSsPNCzqNmYSwTIbddi2YoC/q+F
-	 HuVuTEba7BFTw==
-X-Pm-Submission-Id: 4ggthG5v2fz2ScNJ
-From: =?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Drew Fustini <fustini@kernel.org>,
-	Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>,
-	=?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Gary Guo <gary@garyguo.net>,
-	=?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	Michal Wilczynski <m.wilczynski@samsung.com>,
-	Brian Masney <bmasney@redhat.com>,
-	Boqun Feng <boqun@kernel.org>,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-riscv@lists.infradead.org,
-	linux-pwm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	Boris Brezillon <boris.brezillon@collabora.com>
-Subject: Re: [PATCH v4 1/3] rust: clk: use the type-state pattern
-Date: Thu, 18 Jun 2026 11:10:34 +0300
-Message-ID: <20260618081037.35784-1-work@onurozkan.dev>
-X-Mailer: git-send-email 2.51.2
-In-Reply-To: <20260618-clk-type-state-v4-1-8be082786080@collabora.com>
-References: <20260618-clk-type-state-v4-0-8be082786080@collabora.com> <20260618-clk-type-state-v4-1-8be082786080@collabora.com>
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b="cg2HDsHi"
+ARC-Seal: i=1; a=rsa-sha256; t=1781770742; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=C5OF1KcblCgAbzEMOs6fJKsEO4vWR4bQsnmG5LBm2PSS/OXhyZVKGNIK3wQ1/l+qKcy2QB8PcKOsWJYN3fhT39A9NkJmufvKWRGuVQcNLnd0HyK5/1B4rc3t/Yjvphw5r5oPSiNsh6u/oJXmvwuvPt15d6Xe4EsdC3nfoJXyOuM=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1781770742; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=5BJImhEJ6EW74MMZhPQZoPhZhLYghDyrKI8n6oUPg8U=; 
+	b=a2EJsHRJSgrrNJkYVNpjwo1Vthv46usiydZQxgVckCjIJ0b9yURX1gTLNNfCTmIjDQMGGfBs4fG15hBemWDKMnd11Cnu3/UQ/rqOFKYuvBatNgyM0G48FmvNIPtbZVecnn0IJNlpKAAI97b+IjzXbLovew3F8cyXcanoSegCoto=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=kingxukai@zohomail.com;
+	dmarc=pass header.from=<kingxukai@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1781770742;
+	s=zm2022; d=zohomail.com; i=kingxukai@zohomail.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
+	bh=5BJImhEJ6EW74MMZhPQZoPhZhLYghDyrKI8n6oUPg8U=;
+	b=cg2HDsHihqkcwyzq+WQdQ20X1wodRLpiBQ2Fz1p8aTGeU4Re+S/XQGbntNsSTylq
+	LNvuGAnkSDh4XJ+2Ji6lUd1cYef8YC9UNliyjDJaGzWntCsFFrj9Qq+2itSXliWmCk/
+	3U84U1enI7h8CWiX9oIWktfgG2km7mo70p8h8+iA=
+Received: by mx.zohomail.com with SMTPS id 1781770739779267.5548719522228;
+	Thu, 18 Jun 2026 01:18:59 -0700 (PDT)
+Message-ID: <2eda17d5-298a-421e-9460-ef32a65e50d2@zohomail.com>
+Date: Thu, 18 Jun 2026 16:18:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: canaan: Clear rate fields before reprogramming
+ dividers
+To: David Carlier <devnexen@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: Brian Masney <bmasney@redhat.com>,
+ Conor Dooley <conor.dooley@microchip.com>,
+ Troy Mitchell <TroyMitchell988@gmail.com>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20260618045030.12581-1-devnexen@gmail.com>
+From: Xukai Wang <kingxukai@zohomail.com>
+Content-Language: en-US
+In-Reply-To: <20260618045030.12581-1-devnexen@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Feedback-ID: zu0801122798565b00ab176dc49c4574bf00006aa5af34f0f7fb8b9c5507f3a7f43bf46172e40a5a637b483a:ZohoMail
+X-Zoho-CM-AccountID: 2ee5dd3c83366259b2ba1e9826250ffebed1ef2dd213857d649ad25aba73b429
+X-ZohoMailClient: External
 
-On Thu, 18 Jun 2026 00:46:35 -0300=0D
-Daniel Almeida <daniel.almeida@collabora.com> wrote:=0D
-=0D
-> The current Clk abstraction can still be improved on the following issues=
-:=0D
-> =0D
-> a) It only keeps track of a count to clk_get(), which means that users ha=
-ve=0D
-> to manually call disable() and unprepare(), or a variation of those, like=
-=0D
-> disable_unprepare().=0D
-> =0D
-> b) It allows repeated calls to prepare() or enable(), but it keeps no tra=
-ck=0D
-> of how often these were called, i.e., it's currently legal to write the=0D
-> following:=0D
-> =0D
-> clk.prepare();=0D
-> clk.prepare();=0D
-> clk.enable();=0D
-> clk.enable();=0D
-> =0D
-> And nothing gets undone on drop().=0D
-> =0D
-> c) It adds a OptionalClk type that is probably not needed. There is no=0D
-> "struct optional_clk" in C and we should probably not add one.=0D
-> =0D
-> d) It does not let a user express the state of the clk through the=0D
-> type system. For example, there is currently no way to encode that a Clk =
-is=0D
-> enabled via the type system alone.=0D
-> =0D
-> In light of the Regulator abstraction that was recently merged, switch th=
-is=0D
-> abstraction to use the type-state pattern instead. It solves both a) and =
-b)=0D
-> by establishing a number of states and the valid ways to transition betwe=
-en=0D
-> them. It also automatically undoes any call to clk_get(), clk_prepare() a=
-nd=0D
-> clk_enable() as applicable on drop(), so users do not have to do anything=
-=0D
-> special before Clk goes out of scope.=0D
-> =0D
-> It solves c) by removing the OptionalClk type, which is now simply encode=
-d=0D
-> as a Clk whose inner pointer is NULL.=0D
-> =0D
-> It solves d) by directly encoding the state of the Clk into the type, e.g=
-.:=0D
-> Clk<Enabled> is now known to be a Clk that is enabled.=0D
-> =0D
-> The INVARIANTS section for Clk is expanded to highlight the relationship=
-=0D
-> between the states and the respective reference counts that are owned by=
-=0D
-> each of them.=0D
-> =0D
-> The examples are expanded to highlight how a user can transition between=
-=0D
-> states, as well as highlight some of the shortcuts built into the API.=0D
-> =0D
-> The current implementation is also more flexible, in the sense that it=0D
-> allows for more states to be added in the future. This lets us implement=
-=0D
-> different strategies for handling clocks, including one that mimics the=0D
-> current API, allowing for multiple calls to prepare() and enable().=0D
-> =0D
-> The users (cpufreq.rs/ rcpufreq_dt.rs) were updated by this patch (and no=
-t=0D
-> a separate one) to reflect the new changes. This is needed, because=0D
-> otherwise this patch would break the build.=0D
-> =0D
-> Link: https://crates.io/crates/sealed [1]=0D
-> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>=0D
-> ---=0D
->  drivers/cpufreq/rcpufreq_dt.rs |   2 +-=0D
->  drivers/gpu/drm/tyr/driver.rs  |  31 +--=0D
->  drivers/pwm/pwm_th1520.rs      |  17 +-=0D
->  rust/kernel/clk.rs             | 512 ++++++++++++++++++++++++++++++-----=
-------=0D
->  rust/kernel/cpufreq.rs         |   8 +-=0D
->  5 files changed, 396 insertions(+), 174 deletions(-)=0D
-> =0D
-> diff --git a/drivers/cpufreq/rcpufreq_dt.rs b/drivers/cpufreq/rcpufreq_dt=
-.rs=0D
-> index f17bf64c22e2..9d2ec7df4bac 100644=0D
-> --- a/drivers/cpufreq/rcpufreq_dt.rs=0D
-> +++ b/drivers/cpufreq/rcpufreq_dt.rs=0D
-> @@ -40,7 +40,7 @@ struct CPUFreqDTDevice {=0D
->      freq_table: opp::FreqTable,=0D
->      _mask: CpumaskVar,=0D
->      _token: Option<opp::ConfigToken>,=0D
-> -    _clk: Clk,=0D
-> +    _clk: Clk<kernel::clk::Unprepared>,=0D
->  }=0D
->  =0D
->  #[derive(Default)]=0D
-> diff --git a/drivers/gpu/drm/tyr/driver.rs b/drivers/gpu/drm/tyr/driver.r=
-s=0D
-> index 279710b36a10..a2230aebfea2 100644=0D
-> --- a/drivers/gpu/drm/tyr/driver.rs=0D
-> +++ b/drivers/gpu/drm/tyr/driver.rs=0D
-> @@ -3,7 +3,7 @@=0D
->  use kernel::{=0D
->      clk::{=0D
->          Clk,=0D
-> -        OptionalClk, //=0D
-> +        Enabled, //=0D
->      },=0D
->      device::{=0D
->          Bound,=0D
-> @@ -49,7 +49,7 @@ pub(crate) struct TyrPlatformDriverData {=0D
-=0D
-[...]=0D
-=0D
-> -        /// Disable and unprepare the clock.=0D
-> -        ///=0D
-> -        /// Equivalent to calling [`Clk::disable`] followed by [`Clk::un=
-prepare`].=0D
-> +        /// Behaves the same as [`Self::get`], except when there is no c=
-lock=0D
-> +        /// producer. In this case, instead of returning [`ENOENT`], it =
-returns=0D
-> +        /// a dummy [`Clk`].=0D
->          #[inline]=0D
-> -        pub fn disable_unprepare(&self) {=0D
-> -            // SAFETY: By the type invariants, self.as_raw() is a valid =
-argument for=0D
-> -            // [`clk_disable_unprepare`].=0D
-> -            unsafe { bindings::clk_disable_unprepare(self.as_raw()) };=0D
-> +        pub fn get_optional(dev: &Device<Bound>, name: Option<&CStr>) ->=
- Result<Clk<Enabled>> {=0D
-> +            Clk::<Prepared>::get_optional(dev, name)?=0D
-> +                .enable()=0D
-> +                .map_err(|error| error.error)=0D
-> +        }=0D
-> +=0D
-> +        /// Attempts to disable the [`Clk`] and convert it to the [`Prep=
-ared`]=0D
-=0D
-nit: I wouldn't use the word "Attempts" for an infallible function.=0D
-=0D
-> +        /// state.=0D
-> +        #[inline]=0D
-> +        pub fn disable(self) -> Result<Clk<Prepared>, Error<Enabled>> {=
-=0D
-=0D
-This is an infallible function, you can return Clk<Prepared> directly.=0D
-=0D
-Thanks,=0D
-Onur=0D
-=0D
-> +            // We will be transferring the ownership of our `clk_get()` =
-and=0D
-> +            // `clk_enable()` counts to `Clk<Prepared>`.=0D
-> +            let clk =3D ManuallyDrop::new(self);=0D
-> +=0D
-> +            // SAFETY: By the type invariants, `self.0` is a valid argum=
-ent for=0D
-> +            // [`clk_disable`].=0D
-> +            unsafe { bindings::clk_disable(clk.as_raw()) };=0D
-> +=0D
-> +            Ok(Clk {=0D
-> +                inner: clk.inner,=0D
-> +                _phantom: PhantomData,=0D
-> +            })=0D
->          }=0D
->  =0D
->          /// Get clock's rate.=0D
-> @@ -251,82 +544,31 @@ pub fn set_rate(&self, rate: Hertz) -> Result {=0D
-> +                // [`clk_unprepare`].=0D
-=0D
-[...]=0D
-=0D
-> +                unsafe { bindings::clk_unprepare(self.as_raw()) };=0D
-> +            }=0D
->  =0D
-> -        fn deref(&self) -> &Clk {=0D
-> -            &self.0=0D
-> +            // SAFETY: By the type invariants, self.as_raw() is a valid =
-argument for=0D
-> +            // [`clk_put`].=0D
-> +            unsafe { bindings::clk_put(self.as_raw()) };=0D
->          }=0D
->      }=0D
->  }=0D
-> diff --git a/rust/kernel/cpufreq.rs b/rust/kernel/cpufreq.rs=0D
-> index d8d26870bea2..e837bb1010e0 100644=0D
-> --- a/rust/kernel/cpufreq.rs=0D
-> +++ b/rust/kernel/cpufreq.rs=0D
-> @@ -553,8 +553,12 @@ pub fn cpus(&mut self) -> &mut cpumask::Cpumask {=0D
->      /// The caller must guarantee that the returned [`Clk`] is not dropp=
-ed while it is getting used=0D
->      /// by the C code.=0D
->      #[cfg(CONFIG_COMMON_CLK)]=0D
-> -    pub unsafe fn set_clk(&mut self, dev: &Device, name: Option<&CStr>) =
--> Result<Clk> {=0D
-> -        let clk =3D Clk::get(dev, name)?;=0D
-> +    pub unsafe fn set_clk(=0D
-> +        &mut self,=0D
-> +        dev: &Device,=0D
-> +        name: Option<&CStr>,=0D
-> +    ) -> Result<Clk<crate::clk::Unprepared>> {=0D
-> +        let clk =3D Clk::<crate::clk::Unprepared>::get_unbound(dev, name=
-)?;=0D
->          self.as_mut_ref().clk =3D clk.as_raw();=0D
->          Ok(clk)=0D
->      }=0D
-> =0D
-> -- =0D
-> 2.54.0=0D
-> =0D
+
+On 2026/6/18 12:50, David Carlier wrote:
+> The rate set_rate helpers perform a read-modify-write on the divider
+> and multiplier registers but only ever OR the new value in, without
+> first masking off the existing field. The first write after reset lands
+> on a zeroed field and looks correct, but any later reprogramming leaves
+> the old bits set: the field becomes the bitwise OR of the previous and
+> new encodings, corrupting the divider or multiplier.
+>
+> Mask off each field before writing the new value so reprogramming a
+> clock to a different rate produces the intended register contents.
+>
+> Fixes: a7b7c7c6c016 ("clk: canaan: Add clock driver for Canaan K230")
+> Signed-off-by: David Carlier <devnexen@gmail.com>
+> ---
+>  drivers/clk/clk-k230.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/drivers/clk/clk-k230.c b/drivers/clk/clk-k230.c
+> index cfc437038e4e..f34a3e6d3bca 100644
+> --- a/drivers/clk/clk-k230.c
+> +++ b/drivers/clk/clk-k230.c
+> @@ -2227,6 +2227,7 @@ static int k230_clk_set_rate_mul(struct clk_hw *hw, unsigned long rate,
+>  	guard(spinlock)(rate_self->lock);
+>  
+>  	mul_reg = readl(rate_self->reg + clk->mul_reg_off);
+> +	mul_reg &= ~(rate_self->mul_mask << rate_self->mul_shift);
+>  	mul_reg |= ((mul - 1) & rate_self->mul_mask) << (rate_self->mul_shift);
+>  	mul_reg |= BIT(rate_self->write_enable_bit);
+>  	writel(mul_reg, rate_self->reg + clk->mul_reg_off);
+> @@ -2257,6 +2258,7 @@ static int k230_clk_set_rate_div(struct clk_hw *hw, unsigned long rate,
+>  	guard(spinlock)(rate_self->lock);
+>  
+>  	div_reg = readl(rate_self->reg + clk->div_reg_off);
+> +	div_reg &= ~(rate_self->div_mask << rate_self->div_shift);
+>  	div_reg |= ((div - 1) & rate_self->div_mask) << (rate_self->div_shift);
+>  	div_reg |= BIT(rate_self->write_enable_bit);
+>  	writel(div_reg, rate_self->reg + clk->div_reg_off);
+> @@ -2287,11 +2289,13 @@ static int k230_clk_set_rate_mul_div(struct clk_hw *hw, unsigned long rate,
+>  	guard(spinlock)(rate_self->lock);
+>  
+>  	div_reg = readl(rate_self->reg + clk->div_reg_off);
+> +	div_reg &= ~(rate_self->div_mask << rate_self->div_shift);
+>  	div_reg |= ((div - 1) & rate_self->div_mask) << (rate_self->div_shift);
+>  	div_reg |= BIT(rate_self->write_enable_bit);
+>  	writel(div_reg, rate_self->reg + clk->div_reg_off);
+>  
+>  	mul_reg = readl(rate_self->reg + clk->mul_reg_off);
+> +	mul_reg &= ~(rate_self->mul_mask << rate_self->mul_shift);
+>  	mul_reg |= ((mul - 1) & rate_self->mul_mask) << (rate_self->mul_shift);
+>  	mul_reg |= BIT(rate_self->write_enable_bit);
+>  	writel(mul_reg, rate_self->reg + clk->mul_reg_off);
+
+Good catch. This fix is correct and necessary -- without masking the old
+bits first, reprogramming the clock rate would leave stale bits in the
+register and result in incorrect divider/multiplier values.
+
+All set_rate paths are properly covered.
+
+Acked-by: Xukai Wang <kingxukai@zohomail.com>
+
+-- 
+Thanks,
+Xukai
+
