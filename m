@@ -1,131 +1,127 @@
-Received: from mail-dy1-f170.google.com (mail-dy1-f170.google.com [74.125.82.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3737E3ED105
-	for <linux-clk@vger.kernel.org>; Thu, 18 Jun 2026 10:40:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.82.170
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781779232; cv=pass; b=suyn87LnGm0FrpgUZBKHeuxegUr9lyTHJqbF+XjJel7y3/SuxI7+mQLIRRNDpb2jGb6lR1THzgjsueQo1JTJRoX1xpzVvHvg//0iXeNRnLGxxwqnOIEvTYWIXBHr/GfWgW5Xx6+lRynQIzoU3REVLw0ibIahQTV7h+wre89nWZo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781779232; c=relaxed/simple;
-	bh=yhUtjbZV53eJ33+I5WWMx1PK7EZ98q+cI9GUW0pweEM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=vFtfvzm1gwGlWQkqQ92SR2m02Z1ZwvpNr5GRg8aotNPWCZl7Dv0OUMKLPKfuRqYTXx/pecElPt32di8jGkMZxc+20i/1WEbclgCKd/mcs9ji22+fZjwuRvwKzyT9VX4t3beEmE2pLfWbmRXvKSRTbbVV+KylLpe2s5sK3p8GGPQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZDW4jrkf; arc=pass smtp.client-ip=74.125.82.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C908F3B2FC2
+	for <linux-clk@vger.kernel.org>; Thu, 18 Jun 2026 11:37:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1781782647; cv=none; b=Ip4UYI2k527g++FWaIAoGx4dkSxD8nM8pFM/G3VjHXSUVufP3AWFGebQM/ioiNg35U0KgcaPFU0B1Upqx+lOx12em3KEU1Bk+8nXyNHSo4UsHDsedDyDyoVuRIOHPDABLlIK0uUOPhU/isVPYCuj9lH/ZBXVN3ABcBW2Uc0AtB8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1781782647; c=relaxed/simple;
+	bh=fpa/H07iVRbVBLt1YaDl0sTETMOvCiyWgWwZf6Kug4A=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:In-Reply-To:
+	 Content-Type:References; b=tcutXdL7yqKr0rA5jA3JHCMLnDQM22MqQtDKh6hzotA9X2RRP2+a9tRWkwnzTmjW8QoS1L2OI9SmKjQKSe1jWjUP5drPfHUeZjbcohdj1aMLKHxLoOA+oU0/xTjTJqIe1cMWZLnIGl5ZKlICzy/9Pq8WPbOV4obzERg4IGswQvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=i1bV33TJ; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZDW4jrkf"
-Received: by mail-dy1-f170.google.com with SMTP id 5a478bee46e88-30bda2cb796so49098eec.1
-        for <linux-clk@vger.kernel.org>; Thu, 18 Jun 2026 03:40:28 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1781779227; cv=none;
-        d=google.com; s=arc-20240605;
-        b=OhXvYDBIhp3qrcV+TipDkd9XHRLqAHUYuFAqNG+9riVLlWACYDGNCK/Jy2hhjPmaQF
-         aqQdUy9rL4jOzewJp1ByoDkG5ZVH6De68hsS+5JF+XInWz8DCsGf7qlGY5RoPXw6xxeK
-         7pQnIfE9Gd/5irH+pC8MXLEindcFKxrqvc58kddt8kCJgFTZUW5J63VSaj27lJBBBx55
-         k0dPPMTqGPnhe9icUbQ57Y1Y+Ij8IVf96teOU1YFi/41cRengfAGS0Z+hrQD4fEiGyC/
-         MrM2SMYFXXbWN050ZoCVQYDET8Ef6ZZp/pInI+n8gTJcW9zODj7fHGwkqo9q4UtjRwl1
-         oDPg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=7DUQbCb92xOvO01pv+r7iCHPQp0UAu27WllptLJOlB8=;
-        fh=ZEcZGPOSvuJ2zd6qdeCGQp9WoUqJgXnjKAFC1eJuW5s=;
-        b=X49T1eCh9FPCOw3v8ZK/9sUlBXeMPCY1ZA5dqaxmamxA2xr53exQ83cL4WScJ3L16u
-         HsnpNj3b9uXzjNUzjq8fwaXx4vCm8TaUW4hs95oSFT37NUefDnuNjIht7sFcfzaYrrbD
-         +SLc/3WkGniUzsmeStMlR536bFduEILgW1u2RJCQQIPJB9oUhr1GAmMXuxgnu7gGsykZ
-         ARxBkohwvUE6FqIRH+FsWL/lk0o4qCPjumJMDd5upVj9ppKSthQ2G7ztDC+PEdquWMmL
-         OA7CX0rGjC2hKJOsP7L+h7eltI0rUDJ9djvEtcrxPhHYYKbqGdQgJlnz9dSnnw88IfgC
-         buLA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1781779227; x=1782384027; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7DUQbCb92xOvO01pv+r7iCHPQp0UAu27WllptLJOlB8=;
-        b=ZDW4jrkfk3387CIo4fAM4NOExN7ZA+JSUepXfBLmjVA+9FSYPSR+jjJ6jViBSqlURM
-         S9V6LCLaqgcwgr9YDdt1Mgl6rSrPgLi8WYmsdwGZtGJJHr8fYYLDPOoydPJz4Ej2woKa
-         VGi8nER7rddQjktBGGDNpeu/TaA3SWCVmWzCouZBHU0fSB6Sdk7+0DOLfMz5Xd9t+1tq
-         4PPNM8eij0R9Mi9C35+amzk2T60DWvpon7MBlHRKPr54i4XVSTz2ulaIiuYX181sHbxm
-         yTzCEmnhvbEtgMB/vBKfM7I3+8rtXvucGfl2SYuH7oSYFK02IzPvqvDmqj2hgddxeFNX
-         K+CQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781779227; x=1782384027;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=7DUQbCb92xOvO01pv+r7iCHPQp0UAu27WllptLJOlB8=;
-        b=nMxHHnMULUUO3A89SBZqARpdSxr+9dcjT67X7e/7g+XdxwvgQb9sapbKSjb3vFFppy
-         9v2Cx4ZE9Z2kn8g+v5xdopYIukV0oiiChYp8NNpZCxY9n9eKGBfrpbkV6jZ/Rku+GzA1
-         dTzB89k0nXHiE/8PJUYSIep1fLa2jjkZSTJMQEDFEnSCtMMJLZk9JBEI6EWup4M9u4+k
-         YLv/xUcqs+Qevk1PqXblS9pfzp8DxYpuWon+ykiqcNKzAi3XU3nNdqDnv73ClfUtgFjz
-         phqhWagCQVnD9zTeZht26WCJWXYioUNEZ0Dl9ZUCv07LM7/LaThIuP+Zt3NxYpIoiAuB
-         u3Mw==
-X-Forwarded-Encrypted: i=1; AFNElJ92FZMyKWMwrRHdhZ0J8MnZVmx8S/bD+15kATnXIrP4SSjPGaeZSXuuhR1G6LhhoHKW8hLkW3JXSjY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7+Kr8VgqMqjRu8qlf+BxRfuCFR5ZZ6P6XSCeBZ6U+0xNGxk2M
-	8CRgmhuX6QS7rlst9VqELMBNqJkZqLdjnJhpYQck2Ss52vy0kJH3Ro6eEnJw8E36+7RdbIRtp9V
-	p5sPQVXm4Ae7/D/JfI2OcYbpuAn9DsU0=
-X-Gm-Gg: AfdE7cky367IDQThSHDxmRwiLAQQNKtV/BhyCjHMBnPsPX62DD+xxh0pMaltVHVESfS
-	2Z40Q6iMdpv6BPiMcMzojefxO/5aWJhPNrx8gZmjSf53ecGgjIPnD4Gz5n6WeDMzplqD0fans7W
-	sxGOZIoDBiTSdiGdDjmJCAdAb1iJ7bj5MpEQs/7kpzk5c60YOH8iSFijnPeLRbMpdngWM8Tm76G
-	utgjzaYicdBMtVp3lXjqo654fM0KedO82piwTJ3CG7moJkjqpyrawUVU3JXPzFl4h2befppuVZA
-	5nrCB4eB2qoB+bgAGPCm70Nyl3CWnmGXtNglKJuaBDGQt4ozUgh56mB7HbDhtsXzAOQcVvO4Nh0
-	heYjI4l8cYTq9
-X-Received: by 2002:a05:7300:ed85:b0:30b:c021:5045 with SMTP id
- 5a478bee46e88-30bf09c4416mr1020403eec.5.1781779227291; Thu, 18 Jun 2026
- 03:40:27 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="i1bV33TJ"
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20260618113715euoutp0272511a8edf67eb85640cfb9abd2e372a~6Kd318ZCI0753007530euoutp02L
+	for <linux-clk@vger.kernel.org>; Thu, 18 Jun 2026 11:37:15 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20260618113715euoutp0272511a8edf67eb85640cfb9abd2e372a~6Kd318ZCI0753007530euoutp02L
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1781782635;
+	bh=yudMLDN6lpMb0Z/7uQmRfp4PbQdrNR6BkrAQrkb/XA0=;
+	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
+	b=i1bV33TJT0EVirmuBK597IABsnI95i8FFnxt/YA9bl2bvII7ecKhk9DPE/xTrV8Og
+	 Mab6B9cFPvqkmKbLfQV+1U/C0D6IzXa3M7JJuYx+NfMu1O+j0VfcWbtYK8Zuj5z5Qx
+	 0L9Zzz6qUSWL2+L25K3Q19NvQBPRSGRaeUXz/GkA=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20260618113715eucas1p2340cead7e78cb4b3d1b91a7f2c23874a~6Kd3lMwT81088410884eucas1p2M;
+	Thu, 18 Jun 2026 11:37:15 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20260618113714eusmtip2cf281128f9e3ec3839f51cad471e7dba~6Kd25GYMe3002730027eusmtip2F;
+	Thu, 18 Jun 2026 11:37:14 +0000 (GMT)
+Message-ID: <d4c1e329-78de-4d02-99e5-3e4887bdecf8@samsung.com>
+Date: Thu, 18 Jun 2026 13:37:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260618-clk-type-state-v4-0-8be082786080@collabora.com> <20260618-clk-type-state-v4-3-8be082786080@collabora.com>
-In-Reply-To: <20260618-clk-type-state-v4-3-8be082786080@collabora.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 18 Jun 2026 12:40:14 +0200
-X-Gm-Features: AVVi8CcKkRQ8t8MfiUD4gXtI1Y4DMiQAI7JLxiiYKqJ_3SsG98lF2VyIrlJ2k1o
-Message-ID: <CANiq72myoVT9npyaB0pVvbJ1v9ELzw68uAvSoAkdJJX2MJQ=kA@mail.gmail.com>
-Subject: Re: [PATCH v4 3/3] rust: clk: use 'kernel vertical style' for imports
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Michal Wilczynski <m.wilczynski@samsung.com>, 
-	Brian Masney <bmasney@redhat.com>, Boqun Feng <boqun@kernel.org>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-riscv@lists.infradead.org, linux-pwm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	Boris Brezillon <boris.brezillon@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH v2 08/11] clk: qcom: dispcc-sm8250: Enable parents for
+ pixel clocks
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Val Packett
+	<val@packett.cool>, Bjorn Andersson <andersson@kernel.org>, Michael
+	Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	Jonathan Marek <jonathan@marek.ca>
+Cc: Konrad Dybcio <konradybcio@kernel.org>, Johan Hovold
+	<johan+linaro@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>, Dmitry
+	Baryshkov <lumag@kernel.org>, Maximilian Luz <luzmaximilian@gmail.com>,
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Content-Language: en-US
+In-Reply-To: <6e0d6119-c7ef-40d8-bf0f-6a5b6f6b00cf@samsung.com>
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20260618113715eucas1p2340cead7e78cb4b3d1b91a7f2c23874a
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20260320113219eucas1p1bc2f238b689c55ba256c4694eb067d35
+X-EPHeader: CA
+X-CMS-RootMailID: 20260320113219eucas1p1bc2f238b689c55ba256c4694eb067d35
+References: <20260312112321.370983-1-val@packett.cool>
+	<20260312112321.370983-9-val@packett.cool>
+	<CGME20260320113219eucas1p1bc2f238b689c55ba256c4694eb067d35@eucas1p1.samsung.com>
+	<2f5b98a4-80a6-4611-9615-ab0202a8c455@samsung.com>
+	<f9511ec8-be32-4232-9168-00f967c29508@oss.qualcomm.com>
+	<6e0d6119-c7ef-40d8-bf0f-6a5b6f6b00cf@samsung.com>
 
-On Thu, Jun 18, 2026 at 5:48=E2=80=AFAM Daniel Almeida
-<daniel.almeida@collabora.com> wrote:
->
-> +            Result, //
+On 16.06.2026 16:31, Marek Szyprowski wrote:
+> On 16.06.2026 13:33, Konrad Dybcio wrote:
+>> On 3/20/26 12:32 PM, Marek Szyprowski wrote:
+>>> On 12.03.2026 12:12, Val Packett wrote:
+>>>> Add CLK_OPS_PARENT_ENABLE to MDSS pixel clock sources to ensure parent
+>>>> clocks are enabled during clock operations, preventing potential
+>>>> stability issues during display configuration.
+>>>>
+>>>> Fixes: 80a18f4a8567 ("clk: qcom: Add display clock controller driver for SM8150 and SM8250")
+>>>> Signed-off-by: Val Packett <val@packett.cool>
+>>> This patch landed in yesterday's linux-next as commit. In my tests I 
+>>> found that it triggers the following warning on RB5 board:
+>> Hi, I was clearing out my inbox.. Is this still happening on the latest
+>> next?
+> Yes, still happens here with next-20260615.
 
-Since you import the prelude, I think you can take the change to
-remove e.g. this one.
 
->          /// use kernel::error::Result;
+I've just played a bit with that code and RB5 board and found that this issue
+happens, because enabling the DSI PLL clock fails for unknown reason.
 
->      /// use kernel::error::Result;
 
->      /// use kernel::error::Result;
+Here is what happens just before the warnings (I've missed that in the initial
+report):
 
->          /// use kernel::error::Result;
+DSI PLL(0) lock failed, status=0x00000000
+PLL(0) lock failed
 
-Similarly, the prelude is imported in doctests by default.
+It looks that the generic clock code doesn't take care to properly balance
+enable/disable in __clk_set_parent_after() when enabling one of the parent
+clock fails in __clk_set_parent_before().
 
-Cheers,
-Miguel
+
+With the following hack the issue is gone:
+
+diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
+index 8cb0db3a9880..c59326d4877e 100644
+--- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
++++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
+@@ -510,7 +510,7 @@ static int dsi_pll_7nm_vco_prepare(struct clk_hw *hw)
+        rc = dsi_pll_7nm_lock_status(pll_7nm);
+        if (rc) {
+                pr_err("PLL(%d) lock failed\n", pll_7nm->phy->id);
+-               goto error;
++               rc = 0;
+        }
+
+        pll_7nm->phy->pll_on = true;
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
