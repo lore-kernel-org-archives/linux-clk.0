@@ -1,133 +1,150 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE487175A7F
-	for <linux-clk@vger.kernel.org>; Thu, 18 Jun 2026 04:50:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E04D35E926
+	for <linux-clk@vger.kernel.org>; Thu, 18 Jun 2026 07:17:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781758237; cv=none; b=GAKV5nFTBNBPsa04km9Dkb1UZEO/4a1Q5czueicx9v6Cb5931gPRJM52opufmlzv7eAiTNbJGPXN1T5JygK3F/AGBHsgNXUuZ8pG3FhkiTCzkgEvkp+GAfwqV5SHnuEWgqFZcJq2cpPvyD6Ap7Hux7wna47NEOMJsQqBxsXUVbs=
+	t=1781767059; cv=none; b=KI4hNQjAIPXJPk/QbpV8s4b1v05D57cRJwmHyNup3gSPyvNgTPrBP60cQVmAdXmP3gO90k5xyWHUAE3sHF4Qi94BAQqUdqa04Cfg7HRQlhuu3gOYXX4gTU6JZp1j6e04F5cKSiEx2eqLZX6yE0bw4Plh3nipYbFzpAyAH3yeK1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781758237; c=relaxed/simple;
-	bh=Tq5HpbMHkfaX/kguaxKLT+S3TKi6LgFcPVxSs3/BNMY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mCc5M4H2syA1FVEsueLuCa/o8q9flHc9rEmIYzMWGz8z+7dS1PJqolwtd8Pj4EWU2MZjHzkh+f05LP5fhlWTIW7tgx8C2JPcOxl0ljjFQaIISnm1bUKWiykx4xpYHOjaC+hK/oRV11NMnAi3KDfSM29xVCsmG0zOIQW0g+XsMdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LcqswcWu; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1781767059; c=relaxed/simple;
+	bh=tfbcEFHyRGxmt/ZNMjfmkNiTbtmi4aiIGAAer8bH9z4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qVAYoEi+BidjWl8XAHdqlkYT/lUMY5Q6U2MatOcO9xMuIgw8quhYwlUfCZGIhQbBO6KwTcW5uNtqHjdIRMUms4GkqitTIlj82bONn8BmIhLLJkgvqFNAp4evAeypnbbWBwpqbbHdNdbqAGNhNFD1j3DRDfHCoh94oxTotrYiHOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LcqswcWu"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4905529b933so3704935e9.0
-        for <linux-clk@vger.kernel.org>; Wed, 17 Jun 2026 21:50:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1781758234; x=1782363034; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=VacQXbVEU94Chhv1WpbEGfuNK3V3Bl3pAscUT4//yRE=;
-        b=LcqswcWuj2UnqzVezEH77te46HLv/w3cOlhB1JtzB/Yv/H+ISPwBSXexAXTCbCRhDd
-         TVSVbnff4IN3L0hZzedpHIaYVhKPrpO82FVekuX1V0En8AHUDBrOCtsxSGN7mR5eu0g4
-         CrV+/Hw8L1WJCGjYhWzdh0Y1zc/OHzgMRg9WfRPEf4EgDx9TEOpv7BHoS53hopYV4PPr
-         /4e0Cxk3Gbl2+pcOQoGsjQ7gJhcVHjSFezPQcG5WZOoLJljoXuF83/++VSGHkGwd7q6u
-         9nD+Qpd0y476TJ5m5zdYzD6dlNz0k5u1+Cqqv9Xs58kXToEZySC2RX8oeqEUd1Gb3htq
-         uz0g==
+Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-5ab0377d0b2so206930e0c.3
+        for <linux-clk@vger.kernel.org>; Thu, 18 Jun 2026 00:17:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781758234; x=1782363034;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VacQXbVEU94Chhv1WpbEGfuNK3V3Bl3pAscUT4//yRE=;
-        b=fUDZlLR8wvlc9RUiU7IAE9pakKgdWIBAK/piyf1p9XkxSPfA+oOqHxoFcxU6L02prK
-         nlP30F8bQw+CP6l5t23hBKjqv3XXCUbCJlxqFVePFlYss+PTkloq1lqLSdRiLvGSsKWJ
-         IpFADOcoAVW2FJfCYWnf1K79PAgfH3B0uQ+ffoZL721lEvv//Xiq0nMlONNMEdmeGaYs
-         /rbNWy4QsdKWpgYSHIajawzBNCbUKlsvoUxL15hPU1oY/8ZHdRUJl0ltT+4qe0WNxkbo
-         qt5Qfp9i8+QSPI0EIJOD9gxilcByM6qvrfUSycehdkuHNVqBlbAYJb3DtAcq91i3ZSc3
-         I74w==
-X-Forwarded-Encrypted: i=1; AFNElJ8IVYsmytmkYEaLdbLlowR1QyEFw6Rxtsmnz0jyhza63agbicChQk5++YHPSSXTiJB/b0ZpvW+Eseg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyN5tXShVlFRN/A9tZ7T6/LJpibtXwoUISvd5ur1tWoFi79P1HU
-	ZNx4FOUijSN6+4JJfyIzKPwUHMUC2TfW6+vnh38Nc5e71c7EOBiPUMxg
-X-Gm-Gg: Acq92OHF1p6g9UnXwHCgop0JBB/OST8Q0lUqGZLlofUdnQTGOpPHLnpupQQOvedm/Jz
-	NHlAklaH4YD6tp24mKVgzCg0sfAK2cbMIWmsKm+DDq+22a8jdWUduuivRrM0sXPK1Q89SgWFVhe
-	omVvDslBGbiSaV5nJOsKeVNc3jBQDjLOZ0SdMg4u7nDdAiGDpozi2SDgtA1VhUyFWil2GboQh5O
-	pvZ8j2aW1UjkZzj3NWALrFibQG3/UpoVdmN80/LM3dR2r6YxsNJ/emi5DXC7MXFbvVaui/8cFqt
-	P8kWKJgAqJFkjWKFTQpFuBK6Dl0o0mHZc9tdwO3gQLeoXUaTQ0RjgKzhwLioMqJODqmqBtiqWuN
-	bSjLRrAI12XtGcugJs4+GAZVjViJ2k4/cySI5FrfrZhOlgtjrpw+stD9TlSziHBo4l5Z1PHrZMf
-	9Ip1BHW4Ibbw1ZA3eNmTO13VSWVbWkfowCtNgb1n2/nChE39b3ZBNN4ZqiwNlLKdaREHpjPIhP
-X-Received: by 2002:a05:600c:608a:b0:490:b65f:8b1 with SMTP id 5b1f17b1804b1-492333ba1d1mr131957285e9.5.1781758233797;
-        Wed, 17 Jun 2026 21:50:33 -0700 (PDT)
-Received: from dohko.chello.ie (188-141-5-72.dynamic.upc.ie. [188.141.5.72])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4606f26392esm59281440f8f.3.2026.06.17.21.50.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Jun 2026 21:50:33 -0700 (PDT)
-From: David Carlier <devnexen@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Brian Masney <bmasney@redhat.com>,
-	Xukai Wang <kingxukai@zohomail.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Troy Mitchell <TroyMitchell988@gmail.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	David Carlier <devnexen@gmail.com>
-Subject: [PATCH] clk: canaan: Clear rate fields before reprogramming dividers
-Date: Thu, 18 Jun 2026 05:50:30 +0100
-Message-ID: <20260618045030.12581-1-devnexen@gmail.com>
-X-Mailer: git-send-email 2.53.0
+        d=1e100.net; s=20251104; t=1781767056; x=1782371856;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=xzQ4TuItSjjDfqcY5h5uPw4axpJfO2Kzm9zj8eN9JJg=;
+        b=R3pTTuGjxjF0dd3bzMxzB9F/p62G800l9UYiZhojBUNrG7MbW+R6CfFWJnIz4aybub
+         NcgFiuGSqjUEfA8thSuVfKrxikY+eTzS7LV8RcnU6/nY3QXu568BKDtOBMFMnFycmeQg
+         ma8zW/gHRYPR+llNbsPmZ4tcxrMZHGhbUW8/L19q4pdXcSsyI6bXdUW4oo1VRYyjduaT
+         L0BagMCFBAyqfpEcd6G4nNfhZjbAgYu+Fb7AjncT7OszJV9CPij1Qj8HSp3CQ0SdCG6Z
+         EiiYsHgeZcO9wGPeECVWqJZUuZlv65+XZrkrvSWNHYSRKg15An9TuT1etgsuM8oAtml6
+         sHFQ==
+X-Forwarded-Encrypted: i=1; AFNElJ/LPv0T4IxfokWOGCUnEe1o+Nrh4yR6MPaYyObLX+03DarKkqgQUAq0fA9xgjBexy247yp/mHJp2ms=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBOLJC5xzY+iZguRdb1j3NxeN7tK6LgkpNfiNIAJzx3h5fwLgx
+	E/Jk3rQCWqZzVwRfMsKGznigbWCOsrwsMdGj8IRUoQFsvLzAtdSAOynSPcnrN2lY
+X-Gm-Gg: AfdE7cnG+jx2TpmeKvyKfY2XqZdqMb6vqNqV2LdshSrOgccLb6NoAy9LNSeY3MZDse5
+	dRFL/0/CY0DVl+FReZnuNTyB31HABaDRQ6GqLb6d3bN8Ov7H/SeuCHUVhmYKetavodWBbncOVzr
+	Cw9x4rDUIUjRrcCX2uI9vt2blRh2e8g3nXZNAmY8TSTbrUpOIdXxH14TKERd2LlP0TYexFRM+zo
+	kxE6v5r/ReGwdASJQLuZD5EnVFfRu2fAQd5pFOEos1X0vOrs6J10AUYK1o9Ibomoz5X6nPcl7vB
+	aDSCGQhSWi/zJFJrZiDfdKWjqJZNQxQ98+hSV3dZaD/+Bw3IhCM7x3YXCJd8LRDVV2NViNaiS53
+	AldTlGMs0TI8oPxwZMICyzyB3VOG6nFzcoDnRaGWE2zbS6JdgqmeDG109cRPpiJggKH7ryEqsG0
+	W8u3fkOsSL0mF1q+7RexFh91yurvy71u33obsaQLHabW6QNP49e4XeI8EHo+0E
+X-Received: by 2002:a05:6122:65aa:b0:59b:1012:3f42 with SMTP id 71dfb90a1353d-5bbbe70433bmr3485467e0c.10.1781767056395;
+        Thu, 18 Jun 2026 00:17:36 -0700 (PDT)
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5bb901ac4d6sm10315182e0c.13.2026.06.18.00.17.36
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 18 Jun 2026 00:17:36 -0700 (PDT)
+Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-6cd01f6c11aso210008137.3
+        for <linux-clk@vger.kernel.org>; Thu, 18 Jun 2026 00:17:36 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ9nnHZF3Cxco+PQXbIjsWfFYcK1xuObbPuyZeNM2fVvfgOOnRN3c1CXZXAjIk7uHghoEZlBTzJ1caA=@vger.kernel.org
+X-Received: by 2002:a05:6102:3f51:b0:635:1bc8:3563 with SMTP id
+ ada2fe7eead31-7246cde4ab6mr4100174137.20.1781767055966; Thu, 18 Jun 2026
+ 00:17:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260615104845.4122868-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20260615104845.4122868-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CAMuHMdWBeaTB4QK5vvB0CQm+yrX1ps3V2EtFu0Q4a0JG_94f7g@mail.gmail.com> <CA+V-a8uixCr+LZ+2SrX1b2p3nNwkq8=ctdpzx=BF9OcR9eJW1w@mail.gmail.com>
+In-Reply-To: <CA+V-a8uixCr+LZ+2SrX1b2p3nNwkq8=ctdpzx=BF9OcR9eJW1w@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 18 Jun 2026 09:17:23 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVx_SS0w=x4H3WUb4BdnOXQOxboeFZwmvhP31HLoQNNkw@mail.gmail.com>
+X-Gm-Features: AVVi8CdwNDnTBvDYfJRjdNKhkzB68fOeQnOFgapo4u-OWjhPO9Gwwv76NFhl4Qg
+Message-ID: <CAMuHMdVx_SS0w=x4H3WUb4BdnOXQOxboeFZwmvhP31HLoQNNkw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/5] clk: renesas: rzv2h-cpg: Use per-SoC PLL reference
+ frequency for calculations
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The rate set_rate helpers perform a read-modify-write on the divider
-and multiplier registers but only ever OR the new value in, without
-first masking off the existing field. The first write after reset lands
-on a zeroed field and looks correct, but any later reprogramming leaves
-the old bits set: the field becomes the bitwise OR of the previous and
-new encodings, corrupting the divider or multiplier.
+Hi Prabhakar,
 
-Mask off each field before writing the new value so reprogramming a
-clock to a different rate produces the intended register contents.
+On Wed, 17 Jun 2026 at 22:17, Lad, Prabhakar <prabhakar.csengg@gmail.com> w=
+rote:
+> On Wed, Jun 17, 2026 at 10:48=E2=80=AFAM Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+> > On Mon, 15 Jun 2026 at 12:48, Prabhakar <prabhakar.csengg@gmail.com> wr=
+ote:
+> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > >
+> > > Introduce a per-SoC PLL reference input frequency parameter to avoid
+> > > relying on a hardcoded 24MHz constant during PLL configuration math.
+> > >
+> > > Add an input_fref member to struct rzv2h_pll_limits. In the core
+> > > calculation helper rzv2h_get_pll_pars(), derive the base input clock
+> > > rate from limits->input_fref, utilizing the conditional ternary opera=
+tor
+> > > to fall back to 24MHz if the struct field is left uninitialized (0), =
+and
+> > > drop the obsolete macro RZ_V2H_OSC_CLK_IN_MEGA.
+> > >
+> > > This abstraction permits the reuse of the common PLL divider logic on
+> > > newer SoC platforms like the RZ/T2H, which feature a 48 MHz PLL refer=
+ence
+> > > clock input instead of the 24 MHz signal used by RZ/V2H(P), without
+> > > disrupting existing platforms.
+> > >
+> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com=
+>
+> >
+> > Thanks for your patch!
+> >
+> > > --- a/include/linux/clk/renesas.h
+> > > +++ b/include/linux/clk/renesas.h
+> > > @@ -53,6 +53,9 @@ static inline void rzg2l_cpg_dsi_div_set_divider(u8=
+ divider, int target) { }
+> > >   * various parameters used to configure a PLL. These limits ensure
+> > >   * the PLL operates within valid and stable ranges.
+> > >   *
+> > > + * @input_fref: Reference input frequency to the PLL (in MHz). If se=
+t
+> >
+> > "in Hz", as pointed out by Sashiko.
+> >
+> Agreed.
+>
+> > > + * to 0, a default value of 24MHz is used.
+> > > + *
+> I'll also replace `24MHz` to `24000000 Hz`.
 
-Fixes: a7b7c7c6c016 ("clk: canaan: Add clock driver for Canaan K230")
-Signed-off-by: David Carlier <devnexen@gmail.com>
----
- drivers/clk/clk-k230.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Personally, I find "24 MHz" easier to read.
+Counting zeroes without thousands-grouping can be hard...
+https://lore.kernel.org/CAMuHMdUp3fOkAttk2FKJTh5svaiMwgu4JZ8utPeHghU4TQLE-w=
+@mail.gmail.com
 
-diff --git a/drivers/clk/clk-k230.c b/drivers/clk/clk-k230.c
-index cfc437038e4e..f34a3e6d3bca 100644
---- a/drivers/clk/clk-k230.c
-+++ b/drivers/clk/clk-k230.c
-@@ -2227,6 +2227,7 @@ static int k230_clk_set_rate_mul(struct clk_hw *hw, unsigned long rate,
- 	guard(spinlock)(rate_self->lock);
- 
- 	mul_reg = readl(rate_self->reg + clk->mul_reg_off);
-+	mul_reg &= ~(rate_self->mul_mask << rate_self->mul_shift);
- 	mul_reg |= ((mul - 1) & rate_self->mul_mask) << (rate_self->mul_shift);
- 	mul_reg |= BIT(rate_self->write_enable_bit);
- 	writel(mul_reg, rate_self->reg + clk->mul_reg_off);
-@@ -2257,6 +2258,7 @@ static int k230_clk_set_rate_div(struct clk_hw *hw, unsigned long rate,
- 	guard(spinlock)(rate_self->lock);
- 
- 	div_reg = readl(rate_self->reg + clk->div_reg_off);
-+	div_reg &= ~(rate_self->div_mask << rate_self->div_shift);
- 	div_reg |= ((div - 1) & rate_self->div_mask) << (rate_self->div_shift);
- 	div_reg |= BIT(rate_self->write_enable_bit);
- 	writel(div_reg, rate_self->reg + clk->div_reg_off);
-@@ -2287,11 +2289,13 @@ static int k230_clk_set_rate_mul_div(struct clk_hw *hw, unsigned long rate,
- 	guard(spinlock)(rate_self->lock);
- 
- 	div_reg = readl(rate_self->reg + clk->div_reg_off);
-+	div_reg &= ~(rate_self->div_mask << rate_self->div_shift);
- 	div_reg |= ((div - 1) & rate_self->div_mask) << (rate_self->div_shift);
- 	div_reg |= BIT(rate_self->write_enable_bit);
- 	writel(div_reg, rate_self->reg + clk->div_reg_off);
- 
- 	mul_reg = readl(rate_self->reg + clk->mul_reg_off);
-+	mul_reg &= ~(rate_self->mul_mask << rate_self->mul_shift);
- 	mul_reg |= ((mul - 1) & rate_self->mul_mask) << (rate_self->mul_shift);
- 	mul_reg |= BIT(rate_self->write_enable_bit);
- 	writel(mul_reg, rate_self->reg + clk->mul_reg_off);
--- 
-2.53.0
+Gr{oetje,eeting}s,
 
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
