@@ -1,176 +1,113 @@
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E8CD33BBA7
-	for <linux-clk@vger.kernel.org>; Thu, 18 Jun 2026 16:05:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 200C028D8DA
+	for <linux-clk@vger.kernel.org>; Thu, 18 Jun 2026 16:49:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781798705; cv=none; b=Tu5f6fFJOUEpTaXOOdTPWzrWKYIcRhjU4AS+L1rGyNZ9TvEbcP7RxqgjyvJnHzT6Yay3JPaUT3y9W1q3dYXJAmn3odmlURjuryjvGQiEPWhXNSWjYkOaGXP9f3l9N/Js99hFAwEs1gccUkt52yMrsR4U5Di4uAuTLsnezf45SmA=
+	t=1781801353; cv=none; b=NtATxGl0pX/Y2QVcPKfjTnJTkEqvcK6FzmDZC7m7DQaHJbsy58w18jrZaZlB/mBxiq9U/Ql9ZxiND64NQPUjyVTv1QT+o0pxU4fQz4bEYIGoBTMElvWVxZL+e67KR3Q1X0AewySPhe7zghaLexqQ+MY2HCmhcnLpwBjX0U6W//o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781798705; c=relaxed/simple;
-	bh=CURlfTarocTR5tosxaot6j42X80TLAh8SWyFaztpvg4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LEvBn+iYeHZ9YP7aA/o7njVovxVa4Or7gJmyMVofEGmq2uh0sHgmaBYK6MkstuvAztXrJHNSvsRXJXgHUjujAzyrHHIGfZldj15V+INRQ7OK+7G3r7vtbq0msgl7hYEgwYZbzoPK8B5MI03EnmXrPnXjRFPWnkZLhPNRqXSjuAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=CcB9Ef72; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1781801353; c=relaxed/simple;
+	bh=aGdOuab/Oz/04Rgx3xTG4yssGlXpJHiuyQ1pTDFYYbs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sHMcAJcYxI8wGF5Ddli7RL5O2Q2kb/fbNapEPDWck9QEf+Rs2IpfRrsbTPc9JNope7Zx2p0vH3jeFiLLKPVP8UNOWEzzx/zUUB5FN4o3Vt0gfz8dEaPpqYFwRrkOzYHrUqhDEWsnHB4icKISyF4YpzecydewERx9PGXUuLqLXVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FUTUvzMj; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=hUtftKFC; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="CcB9Ef72"
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-c08922c23ebso21579766b.0
-        for <linux-clk@vger.kernel.org>; Thu, 18 Jun 2026 09:05:03 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FUTUvzMj";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="hUtftKFC"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1781801351;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qzIerF98rNDz/PxgXqfLSKEi6qLn6V1Cg7XqhPCbaQk=;
+	b=FUTUvzMjgetK1TptEWPWkHLEcat49FH5h53OHMIoQDxaTMukRwBCJVtVlgR6HHMk4TsGr8
+	krd8cOMS9+JfGbVVP+0tIEp44M+bq49Y51w5Md7YUlHKOsgA92BReDBIzkHUEo8u31Q7+w
+	NdOYtSoOYsOfHId6J+GNqUlfP+bO2E4=
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
+ [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-711-VHZIhZqWMumxZqXtOGdyEQ-1; Thu, 18 Jun 2026 12:49:10 -0400
+X-MC-Unique: VHZIhZqWMumxZqXtOGdyEQ-1
+X-Mimecast-MFC-AGG-ID: VHZIhZqWMumxZqXtOGdyEQ_1781801349
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-51776d4355cso51752031cf.0
+        for <linux-clk@vger.kernel.org>; Thu, 18 Jun 2026 09:49:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1781798702; x=1782403502; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PnGQk9/+o7yZx0SmsZ9RN3I0YGb+pwc1bJacVtg+ogk=;
-        b=CcB9Ef72dM6rjyQ0XlqEq5x+uuBZrwdQYRXV12Fn4OZPwRYeq9oUDbMmcdcmdQl6C3
-         +pOc3VlycbWQmeglapCIPkLPrQ/2Iyuqsb1/HCcyy0ZyMJp8W7aGCbr+aozwi/oqzV+e
-         AocPGppdvykadkGA89FGkof70IZYwx80QXxcQwAaSUHVlTiYJrYMDOBgaslaI+O6QEEI
-         xF9/PUSYsxBzpxltiKL18JyIpI6hgDCE5x8txDBkbDZicksn8FIy2D4j9NY7CmKn7Cxv
-         tdoOct1HD+XPzDJqMcWqS9Xr3ZjvTZKOz9bPpZvyndtXB5Zjp+76hOTcfF4TBM/MHav7
-         SDiw==
+        d=redhat.com; s=google; t=1781801349; x=1782406149; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qzIerF98rNDz/PxgXqfLSKEi6qLn6V1Cg7XqhPCbaQk=;
+        b=hUtftKFCmrqAVNgkzA+SA3s+P8FVXUdqPfkFaZ9cjPBisL7H/mgfbt9SMBsDeNJhvL
+         gUpVCp9a4avwHfcb4+RfujQ6sgjmw3BvE6D1iPhRh4ngso0pyzj13YmHVpDA9ugVHgIK
+         VjLY6hxLEVSoFRTPNaBCNDrX7LeOZfNRGQMcggoTSH+6mj6mU1g1z0BZg3n/qXlkRlCd
+         ivBDWIqsor9KNjFWwNvbaYex1irsqa1tBqn5Y6GzaG4aG4fMPwkPUEa+Nccnnv8J/UHh
+         pBH7TxEF/0Ni4FrPX0tQ/MCfDJHVFl7anUbV8S+6/s8PG9OUr7Hp8S4dRSXWN+emYM5j
+         vn6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781798702; x=1782403502;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20251104; t=1781801349; x=1782406149;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PnGQk9/+o7yZx0SmsZ9RN3I0YGb+pwc1bJacVtg+ogk=;
-        b=knvY0QeE3g+leg7KMdGT7D40oCtKFHaiI2YBVwWcB+Nd21BgReaJsvwFpcCA8r1JOt
-         9M46aQ5agdh2AYdXW2zTjsKcLlo6hToNFcpAoOUj2tIPgt8ULRHe3wqSNZxwSVYK0rQ7
-         7YH6/U1+hF5W91LdPsl+JVwTDbogGUBHHSksLs2DEDfXDVFxdx9RpWG7KxCa6rc/WK4u
-         QZz7DKS3Gcg6MTUy/WIyS8oNVAyY996f1kznhLf8hRHrxqiQvRvVfTI0Mn+rNuDnmXC6
-         Kkg+02RGYzyq2SKJJx/EK+M4qg4Y4PkCEqX2lM6kLpWpJjc7ETTrQJymQgq0m+Xn57su
-         ugBw==
-X-Forwarded-Encrypted: i=1; AFNElJ+h4Vs5bjg87yWdF6umwvwZKHpCzptsULV5E4lQehPt8ul81dqn7cTUo/m6GG+JxyQhoQslmphAqmo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyG9ggKuenEnXeQkGTEF5wnKCxZHGez9HHkiVrJOYFm1FBXdfBI
-	mZgjZ2grfGMORwqa4qeGiUA7+5GNpeC4FgZO6Ez+4UEscNHE/iQhob3cdbmDF+j/pjA=
-X-Gm-Gg: AfdE7ckYJ9Vb3WoSH0thHOt3Opr2YqaixBKDRFYSrpJFl8bBfjP99UYXx69Y6L/Vx9x
-	Cla9sk/D7VHdYY4WMfOMAsstxQrE6Z8T7Mwq79XofIQJEIuN7SRNOD5niRGriofWrvxMdOzSs1z
-	bjHDgFwXpcn8v+sGKZT965HzGaHQ2CDR6DUjRz9QXwymx3fiFenMo3KvNYLs44QToyraSppKASs
-	SfGrOfKrezMRHEsBQU9jxrjDHiSoXILAjhTjF4Lp3NtxlR5ekLiHxBR5MdO97ZvhzeJCV+3fApM
-	2yaZe9VZ4X7x5f3HIjfcT5/5qG3mi6k+WmXH0QmjC7RKHjziXliIq2jsJOTRZZDcnvZBd2jTKZ0
-	r7+dA3hnXgBrN02QYoms1mB3g5fKcYZ2BqIz3t2Zp9HMmXkFzl5/wZejeRA4o343tv6mwG4TGoV
-	/77zLR0JGDrMjVbSjOpkXsb9Sj5YxCx4IWj9VUBFq+Xtr/w1q3kbWqyfUA5cygCRsa2rrLnssVk
-	qkk
-X-Received: by 2002:a17:907:3f11:b0:c03:ee1f:9d3b with SMTP id a640c23a62f3a-c05d2a4d04emr536671566b.43.1781798701457;
-        Thu, 18 Jun 2026 09:05:01 -0700 (PDT)
-Received: from localhost (p200300f65f47db04cea0a59ab11cac9f.dip0.t-ipconnect.de. [2003:f6:5f47:db04:cea0:a59a:b11c:ac9f])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-4620b3ed0d2sm29125841f8f.22.2026.06.18.09.04.59
+        bh=qzIerF98rNDz/PxgXqfLSKEi6qLn6V1Cg7XqhPCbaQk=;
+        b=Subekt+iixWoj1CfRGguXNSib3u9AuOqn02s581/Ov9nHuxAS6yqwjntzAaH1iLSRh
+         wGGMLg48FSgLR74dsatknlaENo5/ZMXCQYo0pPi7+MarbIAtl/aqzJg6lRcrpjNX6rYt
+         ziJEoqlk1vVTODoydmcYOpssb7xCmePVyrAd93nHy0M5gzSwX0jVHGez5D8QBqC/4Ogn
+         hJ3rrq/lawVN7WQ+lcyvx05zaV/NcjPYXwYKHcMpgZYK/a8lxqeVtywc0hAKvQkzUSHV
+         jG3tZiTIlsWvmgOVdM9un9eOcA7qlltUROF5hnHIR2lqqrExBJar3OuZTdaUtxFy38Ru
+         DBzg==
+X-Forwarded-Encrypted: i=1; AFNElJ8RRkC1BqoO09zmngFywbJ/jS5/aDDIHS0khjs0ERJeaRDrOIoRrrgNJURSv/WhNrx3Er0cQP4U0/k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSwW7thEce/9CFtzwt0Dh+ss+HqEwt+9dG72Tgt3GSkvwEK7ZF
+	a7aP4dRLnnBcNscPXw+iVVIzK081JyDhPmP9YTaawxUUhiDOA5StuijcrmSSLq4h6BrTFpsD6Ln
+	jcRhUYuLnCKjqG1zDV3IaaT02cO4EGOXkNX6SvU/ks3lSVNB0lDRplpscN8i5Ww==
+X-Gm-Gg: AfdE7cnx3JVzu/fO42fztkq4gE63ucnhZrvFOY2z2UzFAxPTNyHYw8A0vh/uiPzW5gA
+	d1SLAp7NXLYLhEKzm1Nqf8aBW/Rhs1RHQMCPHNYpSN8L/KjRC+UXTrpclyXUbJi/PciTd/2ytps
+	sEABmboRwg8GfBCTyd+3qIFlKHsAIlJyjsMqAK0zbAFuDLuQm6DqaExs7mBZ8fyrKBQfOY0DgmF
+	xT4zd6R/MTlUd66/CR2Q7IFcg4ZsoC8xZROpEaUwXRKOJuLP9EOUbLvs27mKOqnH/txsrffMAnv
+	93eRIQaRUfVWc9CFMY88v2i3J/mTRkjRUUBcTrSywYthBDPb1sH4fQmXYMy+8LWRm4cMhlWOjrj
+	h8z7I/kEzCayDZmR19PeZGEdrJ+QM/PaNxA8ka315DafySQ==
+X-Received: by 2002:a05:622a:96:b0:517:91e5:108d with SMTP id d75a77b69052e-519c4f56936mr58721191cf.42.1781801349389;
+        Thu, 18 Jun 2026 09:49:09 -0700 (PDT)
+X-Received: by 2002:a05:622a:96:b0:517:91e5:108d with SMTP id d75a77b69052e-519c4f56936mr58720671cf.42.1781801348872;
+        Thu, 18 Jun 2026 09:49:08 -0700 (PDT)
+Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-517fb61fb15sm201220721cf.5.2026.06.18.09.49.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Jun 2026 09:05:00 -0700 (PDT)
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig=20=28The=20Capable=20Hub=29?= <u.kleine-koenig@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Brian Masney <bmasney@redhat.com>,
-	linux-clk@vger.kernel.org,
+        Thu, 18 Jun 2026 09:49:07 -0700 (PDT)
+Date: Thu, 18 Jun 2026 12:49:04 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig_=28The_Capable_Hub=29?= <u.kleine-koenig@baylibre.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v1] clk: clk-lmk04832: Simplify device abstraction
-Date: Thu, 18 Jun 2026 18:04:55 +0200
-Message-ID:  <5f4e100b3c2b5cf3ca1faac4ce1b0ffe5c9ea6eb.1781798524.git.u.kleine-koenig@baylibre.com>
-X-Mailer: git-send-email 2.47.3
+Subject: Re: [PATCH v1] clk: clk-lmk04832: Simplify device abstraction
+Message-ID: <ajQhgONg0vfS6VQY@redhat.com>
+References: <5f4e100b3c2b5cf3ca1faac4ce1b0ffe5c9ea6eb.1781798524.git.u.kleine-koenig@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3063; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=CURlfTarocTR5tosxaot6j42X80TLAh8SWyFaztpvg4=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBqNBcnWvxgbsvyIgo/cCOwFrvkmVat/NbL7X8Vh y7an0JA1uuJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCajQXJwAKCRCPgPtYfRL+ TgmIB/9xxndbjwzIGvglPUum8mZtvddJQJDa763jwaQTLgBEU7XzFLvmHStM1wQZGYMl+ESaG25 601wRt/IDspnbW6KJjyo0je7+uC5itjvO/G271vqbcvknrC6CmHeTWGRFd7lwxUP0oXpQwoLbTA w+Z5Gjzg4ewYqfJ0KYKfiAQxZg/KcCiFxvt7jPIMvl7WOJftN7CkRjFW524nu04P8RjFB+Fkhez /I680W9CUQxFuF6IdkuF6dY7nOtz8IXBDTs8c1GOT46koL07psAR6GZ5as98/0D0xTdzvLsOIKU GXu+vNzK/cJi/a3jQsgDdLJBoSSK9D8wa+YXNn8Telu2d57g
-X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <5f4e100b3c2b5cf3ca1faac4ce1b0ffe5c9ea6eb.1781798524.git.u.kleine-koenig@baylibre.com>
+User-Agent: Mutt/2.3.2 (2026-04-26)
 
-The driver was introduced in 2021 and since then only supports a single
-chip variant. Simplify the driver by hard-coding the device properties
-instead of using the id_table's abstraction for a single chip type.
+On Thu, Jun 18, 2026 at 06:04:55PM +0200, Uwe Kleine-König (The Capable Hub) wrote:
+> The driver was introduced in 2021 and since then only supports a single
+> chip variant. Simplify the driver by hard-coding the device properties
+> instead of using the id_table's abstraction for a single chip type.
+> 
+> While touching the id table, use a single space in the table terminator
+> to match the most used style.
+> 
+> Signed-off-by: Uwe Kleine-König (The Capable Hub) <u.kleine-koenig@baylibre.com>
 
-While touching the id table, use a single space in the table terminator
-to match the most used style.
-
-Signed-off-by: Uwe Kleine-KÃ¶nig (The Capable Hub) <u.kleine-koenig@baylibre.com>
----
-Hello,
-
-my motivation here is to get rid of the assignment to .driver_data using
-a list initializer. I want to move .driver_data into an anonymous union
-which requires the member to be initialized by name (or not being
-assigned a value).
-
-Best regards
-Uwe
-
- drivers/clk/clk-lmk04832.c | 27 ++++++++++-----------------
- 1 file changed, 10 insertions(+), 17 deletions(-)
-
-diff --git a/drivers/clk/clk-lmk04832.c b/drivers/clk/clk-lmk04832.c
-index 9bf86caad829..c644d31b223e 100644
---- a/drivers/clk/clk-lmk04832.c
-+++ b/drivers/clk/clk-lmk04832.c
-@@ -175,10 +175,6 @@
- #define LMK04832_REG_RB_HOLDOVER	0x188
- #define LMK04832_REG_SPI_LOCK		0x555
- 
--enum lmk04832_device_types {
--	LMK04832,
--};
--
- /**
-  * struct lmk04832_device_info - Holds static device information that is
-  *                               specific to the chip revision
-@@ -197,14 +193,12 @@ struct lmk04832_device_info {
- 	unsigned int vco1_range[2];
- };
- 
--static const struct lmk04832_device_info lmk04832_device_info[] = {
--	[LMK04832] = {
--		.pid = 0x63d1, /* WARNING PROD_ID is inverted in the datasheet */
--		.maskrev = 0x70,
--		.num_channels = 14,
--		.vco0_range = { 2440, 2580 },
--		.vco1_range = { 2945, 3255 },
--	},
-+static const struct lmk04832_device_info lmk04832_device_info = {
-+	.pid = 0x63d1, /* WARNING PROD_ID is inverted in the datasheet */
-+	.maskrev = 0x70,
-+	.num_channels = 14,
-+	.vco0_range = { 2440, 2580 },
-+	.vco1_range = { 2945, 3255 },
- };
- 
- enum lmk04832_rdbk_type {
-@@ -422,11 +416,10 @@ static unsigned long lmk04832_vco_recalc_rate(struct clk_hw *hw,
-  */
- static int lmk04832_check_vco_ranges(struct lmk04832 *lmk, unsigned long rate)
- {
--	struct spi_device *spi = to_spi_device(lmk->dev);
- 	const struct lmk04832_device_info *info;
- 	unsigned long mhz = rate / 1000000;
- 
--	info = &lmk04832_device_info[spi_get_device_id(spi)->driver_data];
-+	info = &lmk04832_device_info;
- 
- 	if (mhz >= info->vco0_range[0] && mhz <= info->vco0_range[1])
- 		return LMK04832_VAL_VCO_MUX_VCO0;
-@@ -1405,7 +1398,7 @@ static int lmk04832_probe(struct spi_device *spi)
- 	int ret;
- 	int i;
- 
--	info = &lmk04832_device_info[spi_get_device_id(spi)->driver_data];
-+	info = &lmk04832_device_info;
- 
- 	lmk = devm_kzalloc(&spi->dev, sizeof(struct lmk04832), GFP_KERNEL);
- 	if (!lmk)
-@@ -1553,8 +1546,8 @@ static int lmk04832_probe(struct spi_device *spi)
- }
- 
- static const struct spi_device_id lmk04832_id[] = {
--	{ "lmk04832", LMK04832 },
--	{}
-+	{ .name = "lmk04832" },
-+	{ }
- };
- MODULE_DEVICE_TABLE(spi, lmk04832_id);
- 
-
-base-commit: e2cae00c05d196491c318196792297f2dfbaa02c
--- 
-2.47.3
+Reviewed-by: Brian Masney <bmasney@redhat.com>
 
