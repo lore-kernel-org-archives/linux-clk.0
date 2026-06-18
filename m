@@ -1,191 +1,133 @@
-Received: from sender4-op-o11.zoho.com (sender4-op-o11.zoho.com [136.143.188.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E61A298CB2;
-	Thu, 18 Jun 2026 03:48:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781754522; cv=pass; b=eK4UYe/HV8SOVY7Zm1CA+IFhnr4qmAXkvUMjsjBqMqmQ94fPnNmu5IAF3UaRz0POrtfeEhNVWtgwS8cltXZXL1hyfySNAqbyB0BYQVB+oMHO1Cyt8JM2pH1W27WI6zne/i+z9RA2Tw9+wlogoY42CNFcTP6aMb65hTotJ6WsHl0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781754522; c=relaxed/simple;
-	bh=vmpQMgFf/eBZeeZ4Ycjvtn/NICT/KZSpluoGRjIPNdw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=uUKJ2XvgN0enkWCqUL1ieiQPvonwrpwq+IpBbV7krduDVNCdUmW2V92GIRrQg6v1ndtqmUvL283S0B1Svt0UIfiAlJ25Yr4Fs17MWUEe2aSCG0xrPqrgpfZzstJkV0rkR58cx8d0Ej81NI0L08Ut0gFf76VvcZM1pqDRIg7sCII=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=APn++8oq; arc=pass smtp.client-ip=136.143.188.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE487175A7F
+	for <linux-clk@vger.kernel.org>; Thu, 18 Jun 2026 04:50:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1781758237; cv=none; b=GAKV5nFTBNBPsa04km9Dkb1UZEO/4a1Q5czueicx9v6Cb5931gPRJM52opufmlzv7eAiTNbJGPXN1T5JygK3F/AGBHsgNXUuZ8pG3FhkiTCzkgEvkp+GAfwqV5SHnuEWgqFZcJq2cpPvyD6Ap7Hux7wna47NEOMJsQqBxsXUVbs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1781758237; c=relaxed/simple;
+	bh=Tq5HpbMHkfaX/kguaxKLT+S3TKi6LgFcPVxSs3/BNMY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mCc5M4H2syA1FVEsueLuCa/o8q9flHc9rEmIYzMWGz8z+7dS1PJqolwtd8Pj4EWU2MZjHzkh+f05LP5fhlWTIW7tgx8C2JPcOxl0ljjFQaIISnm1bUKWiykx4xpYHOjaC+hK/oRV11NMnAi3KDfSM29xVCsmG0zOIQW0g+XsMdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LcqswcWu; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="APn++8oq"
-ARC-Seal: i=1; a=rsa-sha256; t=1781754498; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=mNXOKcw9uzCiiYr5O9KI4cBXfISXVa5n9kATef+RRuQ7wWtji9H+phX7Vnl+CO1/cXeFBhbgYl41JnJ4OZKw+RBiz17jvQrCSJAYW3v6sVj0L6NRuUQV3sXeMmMAn82G//2YrkcSTsJUoFvddbu70aHG/LQF8wtbT3xx1WYpdjg=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1781754498; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=U2lJv0/DE3CCJO9+3Z4st8Eh7wfAyQlNJPVjWBCZG3U=; 
-	b=hSjS4IQnIcFzPUorUV3amUfN+UL1yh7XGTtDtbKKFF8OtyNca7PeM1ZIAGWoTL1mpHEZw6RKaKvqkhepVdlv0+W0ejkpFFwbuqMO/j1w6RpQhb3OIVQ+r37PcY9C6PeXNoiPJsOpYqinastYnKDVWm0LfQ7CQytS8ByVo+EHwDk=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1781754498;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=U2lJv0/DE3CCJO9+3Z4st8Eh7wfAyQlNJPVjWBCZG3U=;
-	b=APn++8oq3SbVjjPkB0W+AeYEi4qEdpH7NvFESoL6kiFyxQkL2MlsJJSlh/Lmwtc6
-	DhmWKbyWgbDZe0ChM4NFZj2zW8rc5KyW9TYaov4K1R1Uoe0EPvHiYb2n4D2fo/cftAF
-	jYgn5x2BDFc2wOttOU4iVtD30mai4ZSz0VM5Zreg=
-Received: by mx.zohomail.com with SMTPS id 1781754495642490.6198508965592;
-	Wed, 17 Jun 2026 20:48:15 -0700 (PDT)
-From: Daniel Almeida <daniel.almeida@collabora.com>
-Date: Thu, 18 Jun 2026 00:46:37 -0300
-Subject: [PATCH v4 3/3] rust: clk: use 'kernel vertical style' for imports
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LcqswcWu"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4905529b933so3704935e9.0
+        for <linux-clk@vger.kernel.org>; Wed, 17 Jun 2026 21:50:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1781758234; x=1782363034; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VacQXbVEU94Chhv1WpbEGfuNK3V3Bl3pAscUT4//yRE=;
+        b=LcqswcWuj2UnqzVezEH77te46HLv/w3cOlhB1JtzB/Yv/H+ISPwBSXexAXTCbCRhDd
+         TVSVbnff4IN3L0hZzedpHIaYVhKPrpO82FVekuX1V0En8AHUDBrOCtsxSGN7mR5eu0g4
+         CrV+/Hw8L1WJCGjYhWzdh0Y1zc/OHzgMRg9WfRPEf4EgDx9TEOpv7BHoS53hopYV4PPr
+         /4e0Cxk3Gbl2+pcOQoGsjQ7gJhcVHjSFezPQcG5WZOoLJljoXuF83/++VSGHkGwd7q6u
+         9nD+Qpd0y476TJ5m5zdYzD6dlNz0k5u1+Cqqv9Xs58kXToEZySC2RX8oeqEUd1Gb3htq
+         uz0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1781758234; x=1782363034;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VacQXbVEU94Chhv1WpbEGfuNK3V3Bl3pAscUT4//yRE=;
+        b=fUDZlLR8wvlc9RUiU7IAE9pakKgdWIBAK/piyf1p9XkxSPfA+oOqHxoFcxU6L02prK
+         nlP30F8bQw+CP6l5t23hBKjqv3XXCUbCJlxqFVePFlYss+PTkloq1lqLSdRiLvGSsKWJ
+         IpFADOcoAVW2FJfCYWnf1K79PAgfH3B0uQ+ffoZL721lEvv//Xiq0nMlONNMEdmeGaYs
+         /rbNWy4QsdKWpgYSHIajawzBNCbUKlsvoUxL15hPU1oY/8ZHdRUJl0ltT+4qe0WNxkbo
+         qt5Qfp9i8+QSPI0EIJOD9gxilcByM6qvrfUSycehdkuHNVqBlbAYJb3DtAcq91i3ZSc3
+         I74w==
+X-Forwarded-Encrypted: i=1; AFNElJ8IVYsmytmkYEaLdbLlowR1QyEFw6Rxtsmnz0jyhza63agbicChQk5++YHPSSXTiJB/b0ZpvW+Eseg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyN5tXShVlFRN/A9tZ7T6/LJpibtXwoUISvd5ur1tWoFi79P1HU
+	ZNx4FOUijSN6+4JJfyIzKPwUHMUC2TfW6+vnh38Nc5e71c7EOBiPUMxg
+X-Gm-Gg: Acq92OHF1p6g9UnXwHCgop0JBB/OST8Q0lUqGZLlofUdnQTGOpPHLnpupQQOvedm/Jz
+	NHlAklaH4YD6tp24mKVgzCg0sfAK2cbMIWmsKm+DDq+22a8jdWUduuivRrM0sXPK1Q89SgWFVhe
+	omVvDslBGbiSaV5nJOsKeVNc3jBQDjLOZ0SdMg4u7nDdAiGDpozi2SDgtA1VhUyFWil2GboQh5O
+	pvZ8j2aW1UjkZzj3NWALrFibQG3/UpoVdmN80/LM3dR2r6YxsNJ/emi5DXC7MXFbvVaui/8cFqt
+	P8kWKJgAqJFkjWKFTQpFuBK6Dl0o0mHZc9tdwO3gQLeoXUaTQ0RjgKzhwLioMqJODqmqBtiqWuN
+	bSjLRrAI12XtGcugJs4+GAZVjViJ2k4/cySI5FrfrZhOlgtjrpw+stD9TlSziHBo4l5Z1PHrZMf
+	9Ip1BHW4Ibbw1ZA3eNmTO13VSWVbWkfowCtNgb1n2/nChE39b3ZBNN4ZqiwNlLKdaREHpjPIhP
+X-Received: by 2002:a05:600c:608a:b0:490:b65f:8b1 with SMTP id 5b1f17b1804b1-492333ba1d1mr131957285e9.5.1781758233797;
+        Wed, 17 Jun 2026 21:50:33 -0700 (PDT)
+Received: from dohko.chello.ie (188-141-5-72.dynamic.upc.ie. [188.141.5.72])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4606f26392esm59281440f8f.3.2026.06.17.21.50.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Jun 2026 21:50:33 -0700 (PDT)
+From: David Carlier <devnexen@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Brian Masney <bmasney@redhat.com>,
+	Xukai Wang <kingxukai@zohomail.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Troy Mitchell <TroyMitchell988@gmail.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	David Carlier <devnexen@gmail.com>
+Subject: [PATCH] clk: canaan: Clear rate fields before reprogramming dividers
+Date: Thu, 18 Jun 2026 05:50:30 +0100
+Message-ID: <20260618045030.12581-1-devnexen@gmail.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260618-clk-type-state-v4-3-8be082786080@collabora.com>
-References: <20260618-clk-type-state-v4-0-8be082786080@collabora.com>
-In-Reply-To: <20260618-clk-type-state-v4-0-8be082786080@collabora.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>, 
- Viresh Kumar <viresh.kumar@linaro.org>, Danilo Krummrich <dakr@kernel.org>, 
- Alice Ryhl <aliceryhl@google.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>, 
- Fu Wei <wefu@redhat.com>, 
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
- Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
- Trevor Gross <tmgross@umich.edu>, 
- Daniel Almeida <daniel.almeida@collabora.com>, 
- Michal Wilczynski <m.wilczynski@samsung.com>, 
- Brian Masney <bmasney@redhat.com>, Boqun Feng <boqun@kernel.org>, 
- Boqun Feng <boqun@kernel.org>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, linux-riscv@lists.infradead.org, 
- linux-pwm@vger.kernel.org, linux-clk@vger.kernel.org, 
- rust-for-linux@vger.kernel.org, 
- Boris Brezillon <boris.brezillon@collabora.com>
-X-Mailer: b4 0.15.2
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
 
-Convert all imports to use the new import style. This will make it easier
-to land new changes in the future.
+The rate set_rate helpers perform a read-modify-write on the divider
+and multiplier registers but only ever OR the new value in, without
+first masking off the existing field. The first write after reset lands
+on a zeroed field and looks correct, but any later reprogramming leaves
+the old bits set: the field becomes the bitwise OR of the previous and
+new encodings, corrupting the divider or multiplier.
 
-No change of functionality implied.
+Mask off each field before writing the new value so reprogramming a
+clock to a different rate produces the intended register contents.
 
-Link: https://docs.kernel.org/rust/coding-guidelines.html#imports
-Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
+Fixes: a7b7c7c6c016 ("clk: canaan: Add clock driver for Canaan K230")
+Signed-off-by: David Carlier <devnexen@gmail.com>
 ---
- rust/kernel/clk.rs | 56 ++++++++++++++++++++++++++++++++++++++++++++----------
- 1 file changed, 46 insertions(+), 10 deletions(-)
+ drivers/clk/clk-k230.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/rust/kernel/clk.rs b/rust/kernel/clk.rs
-index 692ee88ca772..1412a2f0aedf 100644
---- a/rust/kernel/clk.rs
-+++ b/rust/kernel/clk.rs
-@@ -80,12 +80,23 @@ fn from(freq: Hertz) -> Self {
- mod common_clk {
-     use super::Hertz;
-     use crate::{
--        device::{Bound, Device},
--        error::{from_err_ptr, to_result, Result},
--        prelude::*,
-+        device::{
-+            Bound,
-+            Device, //
-+        },
-+        error::{
-+            from_err_ptr,
-+            to_result,
-+            Result, //
-+        },
-+        prelude::*, //
-     };
+diff --git a/drivers/clk/clk-k230.c b/drivers/clk/clk-k230.c
+index cfc437038e4e..f34a3e6d3bca 100644
+--- a/drivers/clk/clk-k230.c
++++ b/drivers/clk/clk-k230.c
+@@ -2227,6 +2227,7 @@ static int k230_clk_set_rate_mul(struct clk_hw *hw, unsigned long rate,
+ 	guard(spinlock)(rate_self->lock);
  
--    use core::{marker::PhantomData, mem::ManuallyDrop, ptr};
-+    use core::{
-+        marker::PhantomData,
-+        mem::ManuallyDrop,
-+        ptr, //
-+    };
+ 	mul_reg = readl(rate_self->reg + clk->mul_reg_off);
++	mul_reg &= ~(rate_self->mul_mask << rate_self->mul_shift);
+ 	mul_reg |= ((mul - 1) & rate_self->mul_mask) << (rate_self->mul_shift);
+ 	mul_reg |= BIT(rate_self->write_enable_bit);
+ 	writel(mul_reg, rate_self->reg + clk->mul_reg_off);
+@@ -2257,6 +2258,7 @@ static int k230_clk_set_rate_div(struct clk_hw *hw, unsigned long rate,
+ 	guard(spinlock)(rate_self->lock);
  
-     mod private {
-         pub trait Sealed {}
-@@ -189,8 +200,15 @@ impl<State: ClkState> From<Error<State>> for kernel::error::Error {
-         /// original [`Clk`], e.g.:
-         ///
-         /// ```
--        /// use kernel::clk::{Clk, Enabled, Unprepared};
--        /// use kernel::device::{Bound, Device};
-+        /// use kernel::clk::{
-+        ///     Clk,
-+        ///     Enabled,
-+        ///     Unprepared, //
-+        /// };
-+        /// use kernel::device::{
-+        ///     Bound,
-+        ///     Device, //
-+        /// };
-         /// use kernel::error::Result;
-         ///
-         /// fn get_enabled(dev: &Device<Bound>) -> Result<Clk<Enabled>> {
-@@ -240,8 +258,17 @@ fn from(err: Error<State>) -> Self {
-     /// The following example demonstrates how to obtain and configure a clock for a device.
-     ///
-     /// ```
--    /// use kernel::clk::{Clk, Enabled, Hertz, Unprepared, Prepared};
--    /// use kernel::device::{Bound, Device};
-+    /// use kernel::clk::{
-+    ///     Clk,
-+    ///     Enabled,
-+    ///     Hertz,
-+    ///     Prepared,
-+    ///     Unprepared, //
-+    /// };
-+    /// use kernel::device::{
-+    ///     Bound,
-+    ///     Device, //
-+    /// };
-     /// use kernel::error::Result;
-     ///
-     /// fn configure_clk(dev: &Device<Bound>) -> Result {
-@@ -287,7 +314,11 @@ fn from(err: Error<State>) -> Self {
-     /// and move between the variants:
-     ///
-     /// ```
--    /// use kernel::clk::{Clk, Enabled, Prepared};
-+    /// use kernel::clk::{
-+    ///     Clk,
-+    ///     Enabled,
-+    ///     Prepared, //
-+    /// };
-     /// use kernel::error::Result;
-     ///
-     /// enum DeviceClk {
-@@ -481,7 +512,12 @@ pub fn enable(self) -> Result<Clk<Enabled>, Error<Prepared>> {
-         /// clock or threading it through an intermediate state, e.g.:
-         ///
-         /// ```
--        /// use kernel::clk::{Clk, Enabled, Hertz, Prepared};
-+        /// use kernel::clk::{
-+        ///     Clk,
-+        ///     Enabled,
-+        ///     Hertz,
-+        ///     Prepared, //
-+        /// };
-         /// use kernel::error::Result;
-         ///
-         /// fn read_rate(clk: &Clk<Prepared>) -> Result<Hertz> {
-
+ 	div_reg = readl(rate_self->reg + clk->div_reg_off);
++	div_reg &= ~(rate_self->div_mask << rate_self->div_shift);
+ 	div_reg |= ((div - 1) & rate_self->div_mask) << (rate_self->div_shift);
+ 	div_reg |= BIT(rate_self->write_enable_bit);
+ 	writel(div_reg, rate_self->reg + clk->div_reg_off);
+@@ -2287,11 +2289,13 @@ static int k230_clk_set_rate_mul_div(struct clk_hw *hw, unsigned long rate,
+ 	guard(spinlock)(rate_self->lock);
+ 
+ 	div_reg = readl(rate_self->reg + clk->div_reg_off);
++	div_reg &= ~(rate_self->div_mask << rate_self->div_shift);
+ 	div_reg |= ((div - 1) & rate_self->div_mask) << (rate_self->div_shift);
+ 	div_reg |= BIT(rate_self->write_enable_bit);
+ 	writel(div_reg, rate_self->reg + clk->div_reg_off);
+ 
+ 	mul_reg = readl(rate_self->reg + clk->mul_reg_off);
++	mul_reg &= ~(rate_self->mul_mask << rate_self->mul_shift);
+ 	mul_reg |= ((mul - 1) & rate_self->mul_mask) << (rate_self->mul_shift);
+ 	mul_reg |= BIT(rate_self->write_enable_bit);
+ 	writel(mul_reg, rate_self->reg + clk->mul_reg_off);
 -- 
-2.54.0
+2.53.0
 
