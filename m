@@ -1,211 +1,140 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5160432AADE
-	for <linux-clk@vger.kernel.org>; Thu, 18 Jun 2026 19:28:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0B6A30E827;
+	Thu, 18 Jun 2026 19:54:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781810903; cv=none; b=SXoDwXekOw/q+u6HA5sFhC+5D62rVc6jC003jDKJwcuzM8iqy3wYmiSs8m40/70JFT4YDIQO6EwoD4yuS6jJfLqqIfeHePYThlGY5WfqGHb/JDAOTYobKI4z7dDXGdua2dPFNvjzKxTecnHyGT0cEHMkC88jLvQCXWkgE82EkXE=
+	t=1781812498; cv=none; b=Ehta8mXl/sLorHfqIov1Ew+7OpsLL0WG5V6MpPcyvqQrSmZqVeTqldSRgMWVUg+l1otCrig19U4Eml0qI3WkPv8OgRtUTONBcRrJ/jBQlU8i2ooAwcTAMM751F1TkFLFm04W+9TJ+nSJvPLjZvbYVrsjYbdbh1Wu71OpC382XIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781810903; c=relaxed/simple;
-	bh=A153VHEeuRIzzseIS0sssGTKG4lkc/OZ1lFglcZ7OeQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VyPwBKS8lsqa6NTcgt4Dbi6OcgL6zMQFEPL1LIXWx3HCVas6ZiyavBEFUxcBlR8iIQXsZsgjnLbDFhE64soyhqwo1ZrPwVdTfcq8cn0p/tvvJc3fTfuoRdn5DOX9fZDoEgWBpwqfqH3OHspKN49OHVgZ2Dh76Z1NiFGWUytB/bU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ACSpJz1T; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1781812498; c=relaxed/simple;
+	bh=ChaR+L+O0umhnKyuHBEkEzYpuHpr3EdQEGRs/zVdoBM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LDJgD0JcoBCWMkpEUizm+KNvxjKQGs36Bm2At7SqQUNgKQDhPtXLe8s9CRoL6tTEwgYngDhOnmTC/E8QQTJCZGGe56dO437Q9Rnv+S8xVxbTJj7X6VKeYsDUdfUJrr17Qz4AN3uaVzpqnK+NkJV4rRGSV0MihqN3REjBq2hOFR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iT4lqhEZ; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ACSpJz1T"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4921e4dd62dso10567625e9.0
-        for <linux-clk@vger.kernel.org>; Thu, 18 Jun 2026 12:28:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1781810901; x=1782415701; darn=vger.kernel.org;
-        h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=g7F4n8mgpmXvR1ZomD7s5qVMQgPf2THfCdABQ8kzmgU=;
-        b=ACSpJz1TowvtUTlneYCY6z4s+BILPdMJRGznqH8qQSVrUZwO7ueog16BfKFjr9nPAQ
-         wUCjisZSN2PdZmMl2gtuvqsiWw9ABycuiICmWIXfqGCsFpxgOHrKaobjMueDqyFANIHZ
-         heGDxYEk3+753FgsIAOnwoeEQkQ7kKaCmvHun6I/ZYukGzqk26rEZiAAxlB12j9tOWlJ
-         taQIV6NtI6vQQMSPUyLgCgZ4cH9FU21uzCZfxva7H566E70uulf1VvpP3ow3eWCLeOfc
-         GcGLa1Ll5Z+SsntEsMcfMVk9J+TX9h9aRsMP5FxOmJJqANBQkwG3WlJmTeQCaUoLxESC
-         1m2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781810901; x=1782415701;
-        h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
-         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=g7F4n8mgpmXvR1ZomD7s5qVMQgPf2THfCdABQ8kzmgU=;
-        b=MiT4SyvJNtwmO4fk0KIDTUGp2D6sO+xXp1vAnVLNxBqB0OqhxSEz0IbHaEj5YwL8qQ
-         XYQEq2eXRFC9a0uUHu4vkzIWIzvjkr0CSIorHQPDaSwgrAxH15CZSGlnbxltfPuokl7J
-         oRL/eu4hdsmURwbAHNcxfSsGdAeiI59PZjA74NIfFlMSoUan/BqiEmW8pjSz0fSISeV5
-         gQnqBEPFEM52G0wd1E85sKoYCzIoE0jnZ4vNthF7ohfKAVHZmbbKOqagfJFYijIzUAz4
-         koI39UbHqBW+vFfu8KqK5djTDy1MCUMUarbt4JZFJ1yjSy+6jmzx5dQdwh1vUmdc+GRy
-         5bKA==
-X-Gm-Message-State: AOJu0YxgnBnZ3SpI99nWsx0fVAbqWopRN7nsHYIFBSRxN00bd4HMDo6t
-	Yjs6Hs9YE68Ba2Dr0m/FSjZzD7JIk/DuTRB1f9Olzl0rPJNnyPguQ3PH
-X-Gm-Gg: AfdE7cn0OzIrLg+Rta4b/xi/O5bMfR/7pvxtbbU7Ak8Gc9TqPqcCuZIlr74OTu1JOEv
-	OCqPuIUsSS72sOPiWDceWx5B+Q72zY3l2/x14YwGsCh008TcyK6mOEU2OYYZI2nb4Z4nY1y5LQ5
-	B+3hY1QW275jeRsGQKKfo8+5trl8WPUruify4Kx865/mPLRx7KPCuhdy6yky0b28Gf605bkSq26
-	kLvUVpjdGPT5mtVZcrIapeVkzJYak5/blqZenVm2MWkBCwqsFiytX+WlglYHhKYNmuriUiJc3He
-	TO3EKkFpi+SSeSv4v2a7fb0ww7vSJrlRo9/+iVxl8x5PMoiBynZmwUZ7QGAaKj4gKUCZDMUrD+2
-	QcaUZGpUFmQM80Iyyj247q9kLb0e9pXM+k4vLmHOHD6oyYFa5T/SN1mn6ybjbX2vlaeoqZRAt8R
-	XoDi46EwnK25AYaY/HDlubbQ==
-X-Received: by 2002:a05:600c:4745:b0:490:b26c:64ad with SMTP id 5b1f17b1804b1-49240a051c5mr5075335e9.5.1781810900283;
-        Thu, 18 Jun 2026 12:28:20 -0700 (PDT)
-Received: from strix.localnet ([197.250.96.160])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4923fd29883sm11319845e9.14.2026.06.18.12.28.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Jun 2026 12:28:18 -0700 (PDT)
-From: Stefan =?UTF-8?B?RMO2c2luZ2Vy?= <stefandoesinger@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Brian Masney <bmasney@redhat.com>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH RFC v4 10/12] reset: zte: Add a zx297520v3 reset driver
-Date: Thu, 18 Jun 2026 22:28:01 +0300
-Message-ID: <8K1EfEWITAurt--cymuLyw@gmail.com>
-In-Reply-To: <90c4f50eb23dec06497d46f9c0f522a6b90a918b.camel@pengutronix.de>
-References:
- <20260616-zx29clk-v4-0-ca994bd22e9d@gmail.com>
- <20260616-zx29clk-v4-10-ca994bd22e9d@gmail.com>
- <90c4f50eb23dec06497d46f9c0f522a6b90a918b.camel@pengutronix.de>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iT4lqhEZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E3FA1F000E9;
+	Thu, 18 Jun 2026 19:54:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1781812497;
+	bh=ChaR+L+O0umhnKyuHBEkEzYpuHpr3EdQEGRs/zVdoBM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=iT4lqhEZBafq/H7aa0u623hrpML7qIWjcWt/HcDXEqgusgZjGUp+VgecJq+NeqHDA
+	 NEeO6RfCOqRZ2BEc0NygLjUdW+3d5Glkq4iSo+iNnCHfUxayrQX3Z4V6Hl+vqzvoaO
+	 zbWP0RQaYgnZXAx6G9VVH1rJRvp/zK65RT90VMuyoSf0gbMzpOsdLTX1GyuYkwUSfk
+	 qttZm7kzqUoBZtF5h3hpq2AI0AWGp2TFbAti/fOOzHUU0J/jPJCCPvU7rpGGfjwUWB
+	 ZMJGXCQEFlzMgTVf68MJ/aZw5k2npCWf+cRO5qhsrcg7gNyoohJbYy7XHyKShAd3SP
+	 SKsVhx96BMEUQ==
+Date: Thu, 18 Jun 2026 20:54:53 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Stefan =?iso-8859-1?Q?D=F6singer?= <stefandoesinger@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Brian Masney <bmasney@redhat.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH RFC v4 01/12] dt-bindings: clk: zte: Add zx297520v3 top
+ clock and reset bindings
+Message-ID: <20260618-fantasy-estimate-6c52edbc6890@spud>
+References: <20260616-zx29clk-v4-0-ca994bd22e9d@gmail.com>
+ <-l2OM6P0RNSYRQfOSObOyw@gmail.com>
+ <20260617-deed-snap-4649ffae0e27@spud>
+ <BXIzXc2sQ5SGynZ1chd-pw@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart7cqxV3SpSTKGVocmuEIt-Q";
- micalg="pgp-sha256"; protocol="application/pgp-signature"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ajFBN5mr9y54BNeo"
+Content-Disposition: inline
+In-Reply-To: <BXIzXc2sQ5SGynZ1chd-pw@gmail.com>
 
---nextPart7cqxV3SpSTKGVocmuEIt-Q
+
+--ajFBN5mr9y54BNeo
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
-From: Stefan =?UTF-8?B?RMO2c2luZ2Vy?= <stefandoesinger@gmail.com>
-Subject: Re: [PATCH RFC v4 10/12] reset: zte: Add a zx297520v3 reset driver
-Date: Thu, 18 Jun 2026 22:28:01 +0300
-Message-ID: <8K1EfEWITAurt--cymuLyw@gmail.com>
-In-Reply-To: <90c4f50eb23dec06497d46f9c0f522a6b90a918b.camel@pengutronix.de>
-MIME-Version: 1.0
 
-Am Donnerstag, 18. Juni 2026, 12:24:26 Ostafrikanische Zeit schrieb Philipp=
-=20
-Zabel:
-> On Di, 2026-06-16 at 23:26 +0300, Stefan D=C3=B6singer wrote:
-> > This drives the auxiliary devices created by the clock driver.
+On Thu, Jun 18, 2026 at 09:59:00PM +0300, Stefan D=F6singer wrote:
+> Am Donnerstag, 18. Juni 2026, 00:23:56 Ostafrikanische Zeit schrieben Sie:
 >=20
-> Which auxiliary devices? Which clock driver?
-
-The ones from patches 7-10. But I guess you're telling me to spell this out=
-=20
-for readers who see my patch in the kernel commit log rather than the=20
-submission series.
-
-> > +	[ZX297520V3_UART0_RESET]     =3D { .reg =3D 0x78,  .mask =3D BIT(6)  =
-|=20
-BIT(7)=20
-> > },
-> Is this a single reset line controlled by two bits (do you know what
-> they are)? Or might these actually be two different reset controls that
-> are just always set together?
-
-Most devices on this SoC have two reset lines. In most cases asserting one =
-is=20
-enough to reset the device, and consequently both need to be deasserted to=
-=20
-bring the device out of reset. In some cases both need to be asserted to re=
-set=20
-the device and it keeps operating fine with only one asserted. I believe I=
-=20
-documented some of that in comments, but maybe I forgot to move it from the=
-=20
-clock part of the driver.
-
-Exceptions apply - some devices have only one reset bit and for some I have=
-n't=20
-found any. USB as you noticed has 3.
-
-I don't really know the difference between the two lines. I don't have a=20
-datasheet and ZTE's downstream kernel only operates on the USB resets. The =
-old=20
-upstream zx2967xx code had no reset driver at all. So I found the resets by=
-=20
-setting the registers and then single bits to 0 and seeing what disappears=
-=20
-from mmio space. Everything on this board except USB comes with resets=20
-deasserted on boot.
-
-I'm pretty sure that what I identified as resets are actually resets and no=
-t=20
-extra clocks because previous device configuration gets lost after assertin=
-g a=20
-reset, whereas it is retained when disabling pclk.
-
-I absolutely expect to run into surprises and epiphanies in the future and=
-=20
-problems on as of yet untested types of zx297520v3 devices.
-
-> > +	[ZX297520V3_USB_RESET]      =3D  { .reg =3D 0x80,   .mask =3D BIT(3) =
-|=20
-BIT(4)
-> > | BIT(5), +		.wait_mask =3D BIT(1)},
+> > Do you actually need an aux bus here though? Since you have to add
+> > simple-mfd for your the syscon-reboot and simple-mfd is a real bus, can=
+ you
+> > set the reset controller up with an mfd_cell + devm_mfd_add_devices()
+> > instead?
 >=20
-> Same as above, are these actually three separate reset lines?
+> I'll have to read up on devm_mfd_add_devices; The aux bus was the suggest=
+ion=20
+> of Philipp Zabel. At first sight it sounds to me like they do fairly simi=
+lar=20
+> things. I don't see any precedence for [devm_]mfd_add_devices in drivers/=
+clk/.
 
-It is likely a combination of the same 2 indistinguishable lines (4, 5) and=
- a=20
-separate USB PHY line (3) - this is what ZTE's code suggests, but it is a m=
-ess=20
-of #ifdefs and redirection, so I don't know if I isolated the correct=20
-codepath. (No, a kernel built from that ugly code doesn't boot, so I can't =
-add=20
-printks).
+I think you don't see it because the driver calling mfd_add_devices()
+probably isn't in drivers/clk and probably also uses an mfd_cell for the
+clock.
+There's some in drivers/soc and some in drivers/mfd (I'll be honest and
+admit to not knowing what actually drives the placement of the mfd
+driver).
 
-The PHY reset line does not do anything observable on my device if I recall=
+I think aux bus makes perfect sense when you have a clock/reset
+controller, but once you start expanding past that and you have reboot
+or hwmon or hwspinlock then mfd starts to make sense.
+
+>=20
+> Whatever way I go I'd like to use the same for all 3 clock/reset controll=
+ers.=20
+> So far I only made topclk a simple-mfd. I recently stumbled upon spinlock=
 =20
-correctly. It might be nonexistent, it might be a leftover from older=20
-revisions or some devices might have different PHYs, similarly to how Ether=
-net=20
-PHYs differ.
+> registers in matrixclk, so I guess I can justify a simple-mfd there too. =
+For=20
 
-I'll double check those USB resets before I resend. It's been months since =
-I=20
-looked at this particular part of the board, and maybe I missed something. =
-On=20
-the booted ZTE kernel and in the bootloader, when booted via USB, all 3 are=
-=20
-deasserted. When booted via the NAND boot chain they are asserted when the=
-=20
-kernel takes over.
+Just to note, simple-mfd is used when you have child nodes. You don't
+need simple-mfd if a device fills multiple roles but doesn't have
+children.
+Your hwspinlock may not require a child node at all, you can just put
+#hwlock-cells into the main node and use mfd_add_devices().
 
+You'd then have topclock that is a syscon + simple-mfd, matrixclk that is
+a syscon and lsp that's using the aux bus. The topclock and matrixclock
+would have dedicated and trivial drivers somewhere that have the mfd_cells
+and call mfd_add_devices(). The fact that topclock would be a simple-mfd
+has basically no impact - I think the difference is that topclock will
+call of_platform_populate() where matrixclk will not.
 
+Probably the compatibles you've chosen start to make less sense at this
+point though, but probably "topclk" and "matrixclk" are not what the
+documentation for this device calls these register regions?
 
---nextPart7cqxV3SpSTKGVocmuEIt-Q
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
+> lspclk all I can see is clocks and resets and I ran out of unknown regist=
+ers=20
+> in there.
+
+I think the priority is having something that reflects the hardware
+accurately, I wouldn't compromise on that just to have the same design
+for all three drivers.
+
+I guess the problem you have is that the reset driver is shared? You can
+always have more than one way to probe a driver. Because I messed up
+stuff in the past, reset-mpfs.c has both aux bus and mfd probing in it,
+which could serve as an example for how to have both in one file.
+
+--ajFBN5mr9y54BNeo
+Content-Type: application/pgp-signature; name=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 
-iQJPBAABCAA5FiEEQxb0tqoFWyeVMl1sPRO8yFRPGiIFAmo0RsEbFIAAAAAABAAO
-bWFudTIsMi41KzEuMTIsMiwyAAoJED0TvMhUTxoiEm8P/AvHfClRvmy9YL9udTPC
-Z4QCPIQLCeqVhdF7G8jxr++QtOAWGVMwzMmhkV/HjMOZKzngI/79K7GOXh+ZWacu
-8urWF49rVNSwd66BJAspTEzrhAFzDKyuqRni9MxHUKUZQhwHR74mB3jbvJN7Ro1T
-ivQumkIS2UvKvSXrrn5jN3oy/Nyrvp7D+18fd6olrwCBAqxufx2XnUStim/unV+j
-EetwGC0+OFgDrN3baOlhVHbZpa3sf1R+K7VfUp83K1SaAIil0DbmXho49O6AnV58
-4x8xOXR+e7cJn9Wwal90xb6uhNumK/Pcg1JfxazDu1r3LoO/zNeBuQPhVipny1/L
-5rScYzShnt6RwEhn97EY1+JIUcFl+sSfcsLrM0g9N8IRY6ZF86xwK1uhzZtHVhqa
-iduxPvaxGWzK/I4VO9gLVQ+SzI31jX13AquwVe1wMzR4aWJlBVDqV8eyzDT3xQpT
-pM88XTEW8HucCi8UNTM1UuFwiaEmKBjyp7zRCci16eRY9RkzlADhCT2oQ5SXGaf2
-uy6ke7LyzUvSN4HUzUhN5RY/Kt8qaDi9V/K9yKYc8w/k21N/hdfryJEsouPfmGJq
-EzjOugd9lByljMjhYc2sj6xazXsNLKNNounCgqw2hUyzg5OAdQZRB+fV/c19/QCP
-AIr5phGYT29fwL4Rd0gyO5GJ
-=KeDM
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCajRNDAAKCRB4tDGHoIJi
+0p7PAP9ZceOwH+gLo8A2ejco8rW2JkGu3DEB1FMmEaUVRfVCJgD9GgBrmaQwHzJj
+M6a0Db0Bq9oduGTS1qxc4gkCxlmKrQE=
+=P+Eg
 -----END PGP SIGNATURE-----
 
---nextPart7cqxV3SpSTKGVocmuEIt-Q--
-
-
-
+--ajFBN5mr9y54BNeo--
