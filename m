@@ -1,176 +1,201 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from sender4-op-o11.zoho.com (sender4-op-o11.zoho.com [136.143.188.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8D902F6188
-	for <linux-clk@vger.kernel.org>; Thu, 18 Jun 2026 02:34:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781750091; cv=none; b=XRySN4dg08PS8wMWBvjHVOB6WoiVmdIpWAh0LxjGQbca6g0U40azQ+RmwtreL1EGZc26BfLl2pEj17LwOtM+Kcgu8pvGAqsoAnaQGpj0VPOeEnX3p2iz6Tx+aqyyNZBRGWPiWlVww865sTSEYpUJg9U8XyvlmvOxO+FXaSK7XE4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781750091; c=relaxed/simple;
-	bh=CfuK7Yai7UVyLm8X0nYd0q5AiDAwYNu1UR8Y6QvJZ7k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FlHSOVvPQ/z1e7aK5uQwnSDtey8SkZcPqqnmOJ0OQQcmLA7UTuYogt/+H1YAud9qVmiIyTnRN/AznhOb5lK3BfKVE/c34C8go9cHU9M4El5/fm/9W/g5+uwKh3YiGBhJ/G2ho/nE2hMIAOqqgstwx0/2ANL5PwMiwtGQTPVUNp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=EV5vcgoY; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=X/ODIsBa; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 083861A680E;
+	Thu, 18 Jun 2026 03:48:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1781754511; cv=pass; b=XlPKj8JTVcWBgHUngcEajxY4A5c7QQSX2MUr/PbEGOgnPyJ80hUbOEnXjxdzqSuqM538iDHhYqoD6WIPx+FdDtjsvWxinDDiP/6DHDSlDmF+fufod28IzXgLMBZubiykna3d2RaTQCs0f5FYpy4qF6R+txmrh4lwHkjGEKlvrPg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1781754511; c=relaxed/simple;
+	bh=6Cp3otGVigzclKCuk/nbBESEREfIgSidtmQQ4GBq43k=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=mL4FSjC7jl09HptAw4yh5qu5IwlKnKpiUj7R0vFeAMJMcP+UQjXv5hVpfTGSGTocb/N2muTWl8JmM4C5/mpA1B+ELr8601EOSARI1Hm4FtJ4FV8fH1kC+9wJ+Va/P0uiRgASYXhEyyHJtFQ1YYc3cMId5LB+LE/cFEb+yeZCn1A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=DfzxTsaU; arc=pass smtp.client-ip=136.143.188.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="EV5vcgoY";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="X/ODIsBa"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 65HIsuTV3591708
-	for <linux-clk@vger.kernel.org>; Thu, 18 Jun 2026 02:34:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=5b9KVnuPgA23rMKIBEpEA5dr
-	XdebUDUhX9JkClEFb6Y=; b=EV5vcgoYtPlTS6h7mn5fpSXgCPtCnfgVWVGm0v7+
-	mVRqXXTkCE2UUE0EoqUVq3ay8rtWJQsQpk5JrvBBCajwz3icu2LXcZy81aux9Nej
-	W1LdCReisa2Nq9ozaDr8kaHyv627nD6mxb1RsB73Kx0BoQihnwh4qVGlVgOCePAy
-	Ia164FmhqzmjGJoR+ecFFOYR+9vtNcg0yWHiV5mQ4vGGhlLTldKg/qz6tYv/3ZGJ
-	O1rl+f839kg2q2UofaqnQJj0+BnQJS9K2sPs3RZm+INQSDi+sOSQUJwEQgC7Zpya
-	kTCubDuMtArFf1Ucu8hdxh1rHHGCLsXNtt72fr1Kr70VJA==
-Received: from mail-dy1-f200.google.com (mail-dy1-f200.google.com [74.125.82.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ev19a1e9u-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Thu, 18 Jun 2026 02:34:48 +0000 (GMT)
-Received: by mail-dy1-f200.google.com with SMTP id 5a478bee46e88-304b8d0ee63so1179059eec.0
-        for <linux-clk@vger.kernel.org>; Wed, 17 Jun 2026 19:34:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1781750088; x=1782354888; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5b9KVnuPgA23rMKIBEpEA5drXdebUDUhX9JkClEFb6Y=;
-        b=X/ODIsBas8YA6F0yI+L464nnUSewR+49Y+9wgQaTOJsTIMFxfqA7Sb/0bLN0fkN6Un
-         sBfqPY4Hw3HcQ+kmRRjD8UeqVRakXXUHslcmBSD34WwA6ltuTvK8G9uOZGi4tlF+ZjiY
-         5vU9Vh5/RauKfnAfNhH2RdAJMQhziVJoX9K/SndYaUjnpqzAehilFuzTJ0RbsN8ubGDu
-         t0GX49maqIH/qtlBEenmrMwQvd72HjBwGODwnjI8X0CVaXQWQ0wH6qTRDownTnmm0xa0
-         CHzwgCbqEfK3a8yp02f0xAZ5/HLmMia8c8M20gHBfwnND0R0lw/dlfRxltb3fmqDGPiU
-         C4+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781750088; x=1782354888;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5b9KVnuPgA23rMKIBEpEA5drXdebUDUhX9JkClEFb6Y=;
-        b=tM8yWI8/Z0IpJUhbqX6ii+8Cd8aghkrowtcojYeTfbryPoMfMOX3o+pAeygzs1LSRJ
-         Aq3vou8/5jZXEMK0geqL+sM/IHEp5tuWF2bjV2HVCgvDSPur3gOibKaoemFustTDQlb/
-         EUUk/IQ1v7dYm/+6UHUVimaAErBwC4Sd0IDCOcX9vkTgOe2565n+8tRhqdQ7g1aUpxQ1
-         gBlp7EFNrrNXWUMgBDlEKAJGyzgiyhfZYXN8AnAYh9MZtB6cNHLH0483ITEKvhkES9Wf
-         j0lE5bgfEBPWSuwIQ8PChh/wrCNXW3Sl1zxtB58KPzHVBszAgwNQuzo1wPVhd8J/ns1K
-         3ngw==
-X-Forwarded-Encrypted: i=1; AFNElJ9hNL6tdPDo9T6iGcSahqXvzUaMM/MfW/jsQev4xgf/afroskRHLrgxbYV02JMc710jOttNs+3N+N8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwepVnJi81LkfPrqHJ5TRye0/mh5SwjygyvUwyl8zWhSvfNdqbI
-	qosfY/uvAZNeShB3wWzbqAhv4Kn6BXe7WmoReJH/I+FJmrF1c9XyOhL2tKyQOYIC40kK46P1EW3
-	+iZ6Uf5on4WWSX7DN32+d2D5BUzGvBdrhlacwjTCdUBV/smPzu217fRPplbrVEtM=
-X-Gm-Gg: AfdE7cmykTsuXCgpovLLUqeLEELVS42gQ4c5n4o0Sjxdx3xIuUoeR95oGQqolrc8Acs
-	/DU1copdjtad4HUtMQe5QkgkBe8/3civ72BlyHJNWaGqQ82L+qEwzktbV3eqoWSODU+0o0znWdb
-	T0FeGkoEyyAAnw3ToJRCXcgP5t+BfrfxGbHBzp0MI8CZsJP7pc0T86fXq/GutWgSThVq/S3Z5wv
-	6XdDp04/Rqik3XM+K1iX+lO5A9U2KcfjWvRURYmv2JM5zrFrbw/b1Wxv4D/h+DiiCdP3rU8x+SS
-	wDyK4idZPnJUhVei6NSsfOC7O6r4MFBAlijcVoGC1kT1Vwe/LagCl5l9U1qIl6M459+5vTPDTxC
-	bcgF1WFNmSc8NY8NzWic8GMcxo86ZVnqm0zW/1Qp1DrVEV3jnfVKWvzBLww==
-X-Received: by 2002:a05:7301:3809:b0:304:de94:1c55 with SMTP id 5a478bee46e88-30bf09f6196mr1183233eec.35.1781750087716;
-        Wed, 17 Jun 2026 19:34:47 -0700 (PDT)
-X-Received: by 2002:a05:7301:3809:b0:304:de94:1c55 with SMTP id 5a478bee46e88-30bf09f6196mr1183189eec.35.1781750087151;
-        Wed, 17 Jun 2026 19:34:47 -0700 (PDT)
-Received: from hu-qianyu-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-30bd8ab412fsm4091630eec.31.2026.06.17.19.34.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Jun 2026 19:34:46 -0700 (PDT)
-Date: Wed, 17 Jun 2026 19:34:44 -0700
-From: Qiang Yu <qiang.yu@oss.qualcomm.com>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Taniya Das <taniya.das@oss.qualcomm.com>,
-        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, krishna.chundru@oss.qualcomm.com
-Subject: Re: [PATCH v4 7/7] arm64: dts: qcom: mahua: Switch pcie5_phy ref
- clock to RPMH_CXO_CLK
-Message-ID: <ajNZRKln79gY5fS1@hu-qianyu-lv.qualcomm.com>
-References: <20260527-tcsr_qref_0527-v4-0-ded83866c9d9@oss.qualcomm.com>
- <20260527-tcsr_qref_0527-v4-7-ded83866c9d9@oss.qualcomm.com>
- <db074223-ac01-4ffe-ae82-187ef0cb2cbb@oss.qualcomm.com>
- <ai+9CYntPuyEEcLX@hu-qianyu-lv.qualcomm.com>
- <a956a733-7bb0-46f3-bf21-142d5cb8fc3e@oss.qualcomm.com>
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="DfzxTsaU"
+ARC-Seal: i=1; a=rsa-sha256; t=1781754477; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=BiSkO6X+CbSlyyv0PKWuBOBKBoJmBDBicT4zKkw9qKECHs/xzC+TrUR4g5ZjKsZ7UbiE/lSQI+riGcCdE2fR+WPH9U25hzFBcmiuTwg0dD4Wf+Rm8b3m3gqll8jIIWJHnyNYiU02KGBdIPv38MtP/q5SySm0H9dLAE9TN6ZAkgg=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1781754477; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=a/FAuDcMrWGnOcei28EPEPjKA2Es2+JGZ7eG60Xhc2o=; 
+	b=Jzd+1ym5YIPHuJ1poP7RIsrqz2mE/cGEZfwakFIPf0ETEdyCGBgP4JwgY/F3sHdAEGhJZfVh0/FGL3Yc2j5g0f7PpideF7GX4Htxat4sh1GodcN9Ft02aUPg+wfiEV+M1IRga6pPDg4EPEUPBktFmn8OdmrPC0vGHyc8b2aztOA=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1781754477;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=From:From:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Type:Content-Transfer-Encoding:To:To:Cc:Cc:Reply-To;
+	bh=a/FAuDcMrWGnOcei28EPEPjKA2Es2+JGZ7eG60Xhc2o=;
+	b=DfzxTsaUd3L6p936K2c7mZaX6NLwGPbFNWt8O68s6IqAdOfgLVUD91pVOyH7ciUq
+	OlPyHdHOWWwqPtQSUQ0kTE5bKaL+Fa9HouutzU0w6/OeeKJ5CTKf8hKyAXlI2kHK15V
+	KASwqBk0kUJ1KAEpbaQcfFO90zPA9bpSBnGeg88E=
+Received: by mx.zohomail.com with SMTPS id 1781754475220300.17079620644984;
+	Wed, 17 Jun 2026 20:47:55 -0700 (PDT)
+From: Daniel Almeida <daniel.almeida@collabora.com>
+Subject: [PATCH v4 0/3] Clk improvements
+Date: Thu, 18 Jun 2026 00:46:34 -0300
+Message-Id: <20260618-clk-type-state-v4-0-8be082786080@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a956a733-7bb0-46f3-bf21-142d5cb8fc3e@oss.qualcomm.com>
-X-Authority-Analysis: v=2.4 cv=YbmNIQRf c=1 sm=1 tr=0 ts=6a335948 cx=c_pps
- a=PfFC4Oe2JQzmKTvty2cRDw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=kj9zAlcOel0A:10 a=FelO9ux0wxsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=3WHJM1ZQz_JShphwDgj5:22
- a=g0m48HacwZqLR8_YHKYA:9 a=CjuIK1q_8ugA:10 a=6Ab_bkdmUrQuMsNx7PHu:22
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNjE4MDAyMSBTYWx0ZWRfXys5nXeSKlFal
- zpL1GrcYA4EbA0yo5uMCkkNnNyH9baIch/I93hEuK2CjFb0jhIeCCvzyLOozd5cI3t55q9s1qPX
- CSg7BPXEUlky9+nINmUpnQ1zfGqdOS4=
-X-Proofpoint-GUID: WlpnHgAO_2YC-OJtnqTAgQ7lQvZDBlBK
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjE4MDAyMSBTYWx0ZWRfX8dfPWB911SXN
- 0FQFC2m+jv+d0OWUz8dYDRh399zz/Kr96lrPAcWkOnutd3KAyUyl3LyezbQpAicO8a7XilosarD
- 4zXa9jJqLGZVJ16Uex1GUXwvfMxjPZw0iisZ2G/YR+OXOWS2p6ZMCuLOfM0uKGiePs+fdFl6WFh
- v/ufVyxrPHP5QUff11ee1GcWyzcsMq1uHb8ADdvT08X5e+rFcFgpFad8MapSuV4jaEvAUOX8nvm
- LUVllpnOAsgHG0voJiruuxJg4znIorNcxM6Is9gbZX+0HfOA+isDHlzNmbI44+Jng3je3gAx4Pw
- 0TsTi7R2tYLzJgsLxVbI36Aw2Yy0Zg0BYmT9CDwS7q89AjaJW4UKysvukImXlOsQZ26Hd+SC0Lz
- K21h9hViBgaalFFC7g3TqWmnC1TQI2O7/8xuNe8fhAu1wwl8PR/HVBVWdQEq/HxP8zIpYaQ6UBo
- 1B0E1PVrcVynwDEzNIQ==
-X-Proofpoint-ORIG-GUID: WlpnHgAO_2YC-OJtnqTAgQ7lQvZDBlBK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
- definitions=2026-06-17_02,2026-06-17_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 adultscore=0 lowpriorityscore=0 bulkscore=0 malwarescore=0
- clxscore=1015 impostorscore=0 spamscore=0 phishscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2606180021
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/6XQTW7DIBAF4KtErDsVA8WErHqPqgt+xjGqE1KgV
+ qPIdy9OWlWKl1m+xftg3oUVypEK220uLNMUS0zHFl6eNswP9rgniKFlJrhQ3HADfvyAej4RlGo
+ rgedorQ5BKQyslU6Z+vh9Bd/eW+5zOkAdMtl/RosVMyEgbE3nlNxi12v36tM4WpeyffbpsMhDL
+ DXl8/Wnk1j8R7TbPchXVQEc0BntEZ3rJN5Vl5sm+fd6x5HrFSEboXWQJImU8eKemG87Zfr8anv
+ X37Hm+QcRS4DljQEAAA==
+X-Change-ID: 20250909-clk-type-state-c01aa7dd551d
+To: "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Viresh Kumar <viresh.kumar@linaro.org>, Danilo Krummrich <dakr@kernel.org>, 
+ Alice Ryhl <aliceryhl@google.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>, 
+ Fu Wei <wefu@redhat.com>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+ Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+ Trevor Gross <tmgross@umich.edu>, 
+ Daniel Almeida <daniel.almeida@collabora.com>, 
+ Michal Wilczynski <m.wilczynski@samsung.com>, 
+ Brian Masney <bmasney@redhat.com>, Boqun Feng <boqun@kernel.org>, 
+ Boqun Feng <boqun@kernel.org>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ dri-devel@lists.freedesktop.org, linux-riscv@lists.infradead.org, 
+ linux-pwm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ rust-for-linux@vger.kernel.org, 
+ Boris Brezillon <boris.brezillon@collabora.com>
+X-Mailer: b4 0.15.2
+X-ZohoMailClient: External
 
-On Wed, Jun 17, 2026 at 02:11:33PM +0200, Konrad Dybcio wrote:
-> On 6/15/26 10:51 AM, Qiang Yu wrote:
-> > On Tue, Jun 09, 2026 at 03:06:02PM +0200, Konrad Dybcio wrote:
-> >> On 5/28/26 4:29 AM, Qiang Yu wrote:
-> >>> PCIe5 PHY on Mahua gets refclk from CXO0 pad directly, so no QREF
-> >>> clkref_en voting is required. Override the clock list to use RPMH_CXO_CLK
-> >>> directly instead.
-> >>
-> >> This is the last piece of the puzzle that this series is missing.
-> >> There's no QREF clkref_en, but there is a refgen that needs to be
-> >> powered. For PCIe5 on Mahua this would be L2F_E0 (0p9) and L4H_E0
-> >> (1p2).
-> >>
-> >> I think the easiest (laziest?) solution would be to add dummy clocks
-> >> in the clkref driver and only toggle the required regulators. Another
-> >> option is to defer back to individual drivers (such as PCIe QMPPHY).
-> >>
-> >> I kinda like the "one central node to drive power" approach, but I'm
-> >> not sure others agree, since it stretches truth just a tiny bit
-> >> (although not as much as one would think since there are *some*
-> >> controls for the transparent-to-the-OS hw pieces in these paths still
-> >> in TCSR).. Dmitry, Krzysztof, would you object to that?
-> >>
-> > 
-> > PCIe5 PHY on Mahua does not use QREF at all, so there is no refgen for
-> > QREF either. The refgen supplies you mentioned are for the PCIe5 PHY
-> > itself, not for QREF. For other PHYs that do use QREF, there are two
-> > refgens: one for QREF (voted here in the TCSR clkref driver) and one for
-> > the PHY (which should be voted in the PHY driver).
-> 
-> Okay, so in this case we have the refgen regulator hardwired into the
-> PHY block and we just consume it from the PHY node&driver, am I following
-> correctly?
->
+This series contains a few improvements that simplifies clock handling for
+drivers.
 
-The refgen regulators are not hardwired into the QREF or PHY blocks
-directly. They power the REFGEN block, which provides the reference
-voltage to QREF and PHY.
+Patch 1 implements the same typestate pattern that has been used
+successfully for Regulators. This is needed because otherwise drivers
+will be responsible for unpreparing and disabling clocks themselves and
+ultimately handling the reference counts on their own. This is
+undesirable. The patch automatically encodes this information using the
+type system so that no misuse can occur.
 
-- Qiang Yu
+Patch 2 makes things more convenient by offering devres-managed APIs. This
+lets drivers set clock parameters once and forget about lifetime
+management.
+
+Patch 3 converts clk.rs to the newer kernel-vertical style in order to make
+future changes easier.
+
+Alice Ryhl's "rust: clk: implement Send and Sync" series, which this used to
+depend on, has since been merged, so this series now applies directly on
+clk-next.
+
+---
+Changes in v4:
+- Rebased onto clk-next. Alice Ryhl's "rust: clk: implement Send and Sync"
+  series is now merged upstream, so it is no longer carried as a dependency.
+- Fixed the build with CONFIG_CPUFREQ_DT_RUST=y. The generic DT cpufreq
+  driver only has the (unbound) per-CPU device, so it cannot hand a
+  &Device<Bound> to Policy::set_clk(). Added a pub(crate) Clk::get_unbound()
+  for the few in-tree abstractions that operate on a device outside a bind
+  scope; set_clk() now takes &Device and uses it. Clk::get()/get_optional()
+  and the devm_* helpers still require &Device<Bound>.
+- Added impl From<Error<State>> for kernel::error::Error, so the fallible
+  state transitions can be used with `?` (and chained) instead of
+  .map_err(|e| e.error).
+- Added Clk::<Prepared>::with_enabled(), which runs a closure with the clock
+  temporarily enabled, scoping the Enabled state without giving up the
+  prepared clock.
+- Documented how to change a clock's state at runtime via an enum, for
+  drivers that enable/disable across resume/suspend.
+- Link to v3: https://lore.kernel.org/r/20260107-clk-type-state-v3-0-77d3e3ee59c2@collabora.com
+
+Changes in v3:
+- Rebased on top of 6.19-rc4
+- Dropped patch 1 (from Alice), added her series as a dependency instead
+- Fixed Tyr, PWM_TH1520 drivers
+- Changed clk.rs imports to kernel-vertical style
+- Added support get_optional shortcut for Prepared and Enabled (i.e.:
+  Clk::<Enabled>::get_optional())
+- Fixed misplaced #[inline] tag
+
+Thanks, Danilo {
+  - Moved the devres changes into its own patch
+  - Require &Device<Bound> for all functions where a &Device is used
+  - Account for con_in in SAFETY comments where applicable
+  - Added backticks
+}
+
+- Link to v2: https://lore.kernel.org/r/20250910-clk-type-state-v2-0-1b97c11bb631@collabora.com
+
+Changes in v2:
+- Added Alice's patch as patch 1, since it is a dependency.
+- Added devm helpers (like we did for Regulator<T>)
+- Fixed missing clk_put() call in Drop (Danilo)
+- Fixed missing parenthesis and wrong docs (Viresh)
+- Removed extra "dev" parameter from "shutdown" example (Danilo)
+- Removed useless type annotation from example (Danilo)
+- Link to v1: https://lore.kernel.org/rust-for-linux/20250729-clk-type-state-v1-1-896b53816f7b@collabora.com/#r
+
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+To: Danilo Krummrich <dakr@kernel.org>
+To: Alice Ryhl <aliceryhl@google.com>
+To: Daniel Almeida <daniel.almeida@collabora.com>
+To: David Airlie <airlied@gmail.com>
+To: Simona Vetter <simona@ffwll.ch>
+To: Drew Fustini <fustini@kernel.org>
+To: Guo Ren <guoren@kernel.org>
+To: Fu Wei <wefu@redhat.com>
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+To: Uwe Kleine-König <ukleinek@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>
+To: Brian Masney <bmasney@redhat.com>
+To: Miguel Ojeda <ojeda@kernel.org>
+To: Boqun Feng <boqun@kernel.org>
+To: Gary Guo <gary@garyguo.net>
+To: Björn Roy Baron <bjorn3_gh@protonmail.com>
+To: Benno Lossin <lossin@kernel.org>
+To: Andreas Hindborg <a.hindborg@kernel.org>
+To: Trevor Gross <tmgross@umich.edu>
+Cc: linux-pm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org
+Cc: linux-riscv@lists.infradead.org
+Cc: linux-pwm@vger.kernel.org
+Cc: linux-clk@vger.kernel.org
+Cc: rust-for-linux@vger.kernel.org
+Cc: Boris Brezillon <boris.brezillon@collabora.com>
+
+---
+Daniel Almeida (3):
+      rust: clk: use the type-state pattern
+      rust: clk: add devres-managed clks
+      rust: clk: use 'kernel vertical style' for imports
+
+ drivers/cpufreq/rcpufreq_dt.rs |   2 +-
+ drivers/gpu/drm/tyr/driver.rs  |  31 +--
+ drivers/pwm/pwm_th1520.rs      |  17 +-
+ rust/kernel/clk.rs             | 595 +++++++++++++++++++++++++++++++----------
+ rust/kernel/cpufreq.rs         |   8 +-
+ 5 files changed, 477 insertions(+), 176 deletions(-)
+---
+base-commit: 8d03cc42a42b1a3f1535757f65bfb74a9753953f
+change-id: 20250909-clk-type-state-c01aa7dd551d
+
+Best regards,
+--  
+Daniel Almeida <daniel.almeida@collabora.com>
 
