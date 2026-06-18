@@ -1,186 +1,410 @@
-Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11022090.outbound.protection.outlook.com [40.107.75.90])
+Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013003.outbound.protection.outlook.com [52.101.83.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1B8E3C8717;
-	Thu, 18 Jun 2026 09:27:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 884B9395ADD;
+	Thu, 18 Jun 2026 09:38:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.83.3
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781774854; cv=fail; b=VdxT2kO4Mo45rqCVK4uMNVyomVzykP/lqoHxt+bQE5baSS/gl4z1EkAVAj+YVuZ2ozLRMvRE+wH+ytg/FJizhn2CYIoYX0FMr9GBtWEn9fn29pXlrj2l/6+swVMAlvK8wIkvuw5h63u/qzDBSIJFpft5nbs2u4u7zV3HMikuUQM=
+	t=1781775528; cv=fail; b=agkd0sCQYZ2ueEUkhIKX/i7+YvKFXv6nt1PElLNH6/vc+iZq3POHLpnCZo1U2vgRJAz8ziYjgyH21fscVGRk7kyeI0/b8cBTn9W4+/5WM4J9WxO7yzNxEM/R+YjH5OmDcl+KNweIu6zo2Cw6n3IdSpjvBt5CqeaJt+SNhfcdP1o=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781774854; c=relaxed/simple;
-	bh=L7ZM/zatYF2LKm1dBZYlpiylf3GFVRj44mizucxmVqM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=O6yM/9gNGMItDwgyKnVCyJPoYJIMXO2SKiKV3VvFUiBK/IimHKly3b93NCPmJ18T7+OaOC07DoGKzbUSJgTcyW0VnxJY+00QLI7PC6nEDVQ0KudzwUnfbbv6Urokbc3Tu5UcE1Jr7s/99GB3eHCXVVJ0InxX1WGW8bijVXzeOBg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=40.107.75.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
+	s=arc-20240116; t=1781775528; c=relaxed/simple;
+	bh=uYmiNmWMzJhK5A2Bbz5oAeqxaQfKdPgRdeTm4NI8HL8=;
+	h=From:Subject:Date:Message-Id:Content-Type:To:Cc:MIME-Version; b=Gm7CWJXw53hPteZO2F8PTyg4nA1tW+6rhBKFU0U4dr/IzAQSFu+bdmDMHasmRaqG0Mw1AH3aFJXn98VgIoMv+x0JBEuHJCM5SKw5iAnUd1Xj27/NgR8maAYiqMoJVVjzHNIBiPZ2cQhI0pHvwQmpnJcbgxN82KVTFMCLyOsH73M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=aquzFCiL; arc=fail smtp.client-ip=52.101.83.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="aquzFCiL"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LGngsgAV8Vdv8ee1JPRL+VuwhDnolkKPuPflZmNHUj3mYUCOwH9bdfzc5bX9qDTVOZWPZj81YNrk8GGdN/6u727B6MApGcoKrQPDk0p4uB7d+tGxQ1jQKzWsbbvdDk+cV4W2uviKTj4D8iMe8WqAFvMAjNHwUqt0IsRjxxUenGjJL6ccbyxCBbkgjceeZ3vudLfB3qHeF5aRG4uRY17rl2eEITthrn8ocvRiYMUxHTFlnmzFkSayGMQ8DF5le9hSPMMOmEP5EAz7sAar0zNPnN4dqtOlPjiNAbyVn+wA9eZbqEV0WcTtgBUoF601gxC+iz8XGlNm9DgXOak7m/UVUQ==
+ b=Z0a+2hQM5yRPJIfxiDm1J++C+3b90tlH1YavfUO5Va/Dgv/17B9SIUlEVXvBY0go9nNmzWvHCGziDXVvXaEw1Lyux4s19mMjjppQK90pWXbWslJltTvaOnB7RyHY0p+bA277oreltvc09GZTphuawD+0WO2cgo5ZZjWgTFKXjQitmG7QeyjYoXvLPG0HCJtv0FT1QigWQhUPe22VB7Zv1SW4VhcvedzgrbHma0hUkxLw1riFFlb1W2Kcju0f01dVbQxbBi+jzDED4M32IQS7SMcHtaR/K5Cx1xTcitV38X1Du73cJSuH80XyYckJkiFQA9czaQSZJ9Ks0LS/5i2kZA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=L7ZM/zatYF2LKm1dBZYlpiylf3GFVRj44mizucxmVqM=;
- b=OiEeE4tBYviTSO/fxbOr2CmHhob9dI7/Hq2M0IejrYe7lsCnzzOdT4wNjDCySi2p08FrwDCIdQ7eB+FKBC/6dLb5pYjg82oJJj+Fx4Ntxau7F/iTJkphaHs3rHuHptexZIWYeLeBOw3gbX5ZpEGwvMm+fRLLXX4xQ1OBi9V7AI7tQBtsaDSDIK6fAxF0cnvMEVXYSS+n4uLynRF7WupeHAXSiS0y3+B8IrEUhXWPzqGcukCXzzPH9WxG53Ufgiy4Ctv6BCShM19nJEroVQUbC4078iahE1CeQI/lFC0escLT9fTszPnjXJoniWBlUiFEpRhFnoXI5DnvUcqWA1tiAQ==
+ bh=86J9SgXNlYwCsA2jgLEQ+3PQW8JF/yhqNILtUr5y8vg=;
+ b=TNQ2IdL1jr0QHYMosc7moJkptuxTVrCxCZinRPVE1Fd+j1WFd4hJiGfvq+aisXWep9pMWUXsaGpnDEesewgicacLzIONJ9O4xHFRuWfVuOqXbB4zhJv9o5kQFf/KBrWVNlgOI9ASkET6jBJtsTV3HGoIKOLn/jc3Y6iHsqwt5/iYv0no2lhMFKN6Z6t5CYJuB4A74ZyuNsJvLdc7bX+W3TU8Ovrm16T0pXANj88uAc93JKHvp3SEtq4ELuJu8TfZvbMgBUjWqA1jqVu8qfPT0JEGkqLsXjqm5y36Yr6hfnxFL0qUjvwO6xC8wX8ayXYpYeIb9gYqk3LsT6ZEVX2KeQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cixtech.com; dmarc=pass action=none header.from=cixtech.com;
- dkim=pass header.d=cixtech.com; arc=none
-Received: from SEYPR06MB6226.apcprd06.prod.outlook.com (2603:1096:101:df::13)
- by SE3PR06MB9242.apcprd06.prod.outlook.com (2603:1096:101:332::14) with
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=86J9SgXNlYwCsA2jgLEQ+3PQW8JF/yhqNILtUr5y8vg=;
+ b=aquzFCiL1yQeGVfcsay1eBcu1M2BcsUMZUMB5pBL4EMZXglQt9zvGyjYO0yvyQd4C4IBBpWJpo9FxeNW0f3cQh1qn3HCwh217aEh/elLzW+2Xptf1D59SeWj9SbnHDTrVTrUASJiN1hY7Xef2p2FohkAvXIga33sayLa5nkyKOo2r4c8bt4zVziFnfFqJ3AcqlKP4/4SRWX3DoJe56ggKB4UN/0YFxVZZjOcDF5jy1ux+kMkPqX+zGg1FJiPPDhx+ymAM7PmYEtDxW8iY1Lyhelov7vUTlMYTAQ0YnCFLlhw1r82CGMp5WowyZErHSKC1mI4h9UFJF3TmNgd45TAyw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from GV1PR04MB11513.eurprd04.prod.outlook.com (2603:10a6:150:284::9)
+ by VI1PR04MB7070.eurprd04.prod.outlook.com (2603:10a6:800:123::18) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.139.12; Thu, 18 Jun
- 2026 09:27:29 +0000
-Received: from SEYPR06MB6226.apcprd06.prod.outlook.com
- ([fe80::56e8:777c:d80e:d364]) by SEYPR06MB6226.apcprd06.prod.outlook.com
- ([fe80::56e8:777c:d80e:d364%5]) with mapi id 15.21.0139.011; Thu, 18 Jun 2026
- 09:27:28 +0000
-From: "Joakim  Zhang" <joakim.zhang@cixtech.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>, Conor Dooley <conor@kernel.org>
-CC: "mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@kernel.org"
-	<sboyd@kernel.org>, "bmasney@redhat.com" <bmasney@redhat.com>,
-	"robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
-	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, Gary Yang
-	<Gary.Yang@cixtech.com>, cix-kernel-upstream
-	<cix-kernel-upstream@cixtech.com>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH v4 3/5] dt-bindings: clock: cix,sky1-audss-clock: add
- audss clock controller
-Thread-Topic: [PATCH v4 3/5] dt-bindings: clock: cix,sky1-audss-clock: add
- audss clock controller
-Thread-Index: AQHc/h82CYMaDL0LD0Koho75ZPcCVLZC50MAgACkQWCAAHGQAIAAD2fg
-Date: Thu, 18 Jun 2026 09:27:28 +0000
-Message-ID:
- <SEYPR06MB6226B25BA7652287C752E4C782E32@SEYPR06MB6226.apcprd06.prod.outlook.com>
-References: <20260617060437.1474816-1-joakim.zhang@cixtech.com>
-	 <20260617060437.1474816-4-joakim.zhang@cixtech.com>
-	 <20260617-clinic-blank-61289f8fc1c2@spud>
-	 <SEYPR06MB62262C0F7823337CA9496DE982E32@SEYPR06MB6226.apcprd06.prod.outlook.com>
- <cd63c1ab9831fdfd39aad8d1a40c4702a9cbb158.camel@pengutronix.de>
-In-Reply-To: <cd63c1ab9831fdfd39aad8d1a40c4702a9cbb158.camel@pengutronix.de>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=cixtech.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SEYPR06MB6226:EE_|SE3PR06MB9242:EE_
-x-ms-office365-filtering-correlation-id: 141a1aba-72f3-4c32-fa45-08decd1bd0ed
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|1800799024|376014|23010399003|38070700021|18002099003|22082099003|56012099006|4143699003;
-x-microsoft-antispam-message-info:
- vmZK/dkyPy4Smln0zqTrJzOyuAQRv4k5XwfZzcnUPlfnHZ+j5saNma5RAb2WWJCjRLq5JVMcyPF4KsftyQFpOd/uYHrsmErwAMmQ5xnxxm5rg7RtRadJS3YRw8omA5u57idp3GfjAFfkkOm2AVUjmP5YGeUHw5Rw1k/IBO+GCI0+SU6OgVgDFOdNOdhGx+73pPzx0yshGDKrRYngYeRM89nLxODAEEyXFxe0r+9MSJfX9i/npErtiOHhIGSeFV3by1L45dXLpDQg2raTfZKJJC6LMl3Jbk14dDBVOyor8LqgBeb5Lmmmf01BPcnLODpnJPXfqBO6CXzx9I02lJS8RfLKDR6EFv8VSjf8g3cBY5PEKySOpWX7QX19f8fVVjkW0C+m/97jpvWITf2NK1IQkGa4u+0dnCwGjZbBasHnPnzPrAR3iTRNYLhw+GLenutlM/FxQKuGyN8aq3uAZhvHy4AK+7ZIOt9TU5lpfHwObsH625IrSH2kUG+jn8dYU36EN6Wsa2MFEfjFUvL2us/Mbamjg9kUUZ+sSM/w1S0xzVa+jyNV6M/flgRGoOuDRET7pkiB3zH8em+lbUhHnNDPyFQ4P10R69ukOfhEJ51kbE7+roztk9Vw/giTINuUOFFQ6SYbNQnhV059oBlBcSCdCH1BbPwTYIV0hsYUWeAfuSdegnQxEa/EJKlv/F+wZuDGqTqT37nrsVM7gjiArl2WoAYetSF8xUGO7jiyyhHrONms/OuOBidj9nWmSYqqpx5b
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:zh-cn;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEYPR06MB6226.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(23010399003)(38070700021)(18002099003)(22082099003)(56012099006)(4143699003);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?alYvM2txVXN0dk5FYXpXM2RqMGltUnRkK0tMczdnTnV2amViQnhvRlFPM3Ir?=
- =?utf-8?B?eTJML0RhWit5cW5OTUdpZEpnR0l5Q0l1NlpnSUtJYmhrMkoyS3NHeUgxbWtz?=
- =?utf-8?B?UHZqY3hEaXhRVGRaR2ZtSDd5L1NMQXpSMUpDMSs1U1pad0o2NnJzS1B2Q0F2?=
- =?utf-8?B?eG5WNlFWWmljZHJNb3FRNHpudEpaallTVUl2ZHoxaGJQL3dNdGxVVU9VM1Ux?=
- =?utf-8?B?NDJwZW80clNHZnR2N1pNWWZhSXYycHRuU2JYWHZYTFBLNWlNMDZpZ3lBcW1M?=
- =?utf-8?B?RktMbmpQYitQOU5KMDd3b0ltSDNaaHJweXlBOXFQNWhIWHNqUlErUDVnaEdw?=
- =?utf-8?B?ZzhGRkVkbWhJSmh4UlpkSTR1M0RYS0ZlV0c4U1VJL2hxNkJtT1hpbllrcE4z?=
- =?utf-8?B?a3F0RVBocWZaazJWS0Z3QWlkUmZHelpCWXFxTVZZTlRSMHkrVEMrdzZZRHdu?=
- =?utf-8?B?Y3pqN1Y4dmpaVjRJTlFWZVF3WW5NSWJ4bk5NS2RWWEZzVGNPT1hYNE1VVE94?=
- =?utf-8?B?YlVQdDUzOGtwYzNIV2ZGSE5MWWorUkRyeGFzL0R6VWZiRTdBbTBQZDVsMS8x?=
- =?utf-8?B?L29Ybys5eTlBenFPdExidGZOQ0xVZXRrNTNDNWJ3QzZhMWpCeTVuWTlNWThw?=
- =?utf-8?B?eXlNNzRNVmlGQlJ1Szd3UDJMdzg2QnVSVHdJYU5VMk0xY0E5dDFzZzd2VEtt?=
- =?utf-8?B?TzgrbkVuN2ZDazV6eS93UXVXSm5WYllVbFQxRzcvS1Z6UUQ4K1kzazdMT3ZK?=
- =?utf-8?B?ZkMyZ2UzK3ZUaGdHSmZocHA0cWpLRTZQRlUrS1UwZzJwZ3NQYXJUUjlyT1dN?=
- =?utf-8?B?cHVVREhnNmZtaUhSMmF0blFkT3lkWWJuWVJySDA0bmV0K3ZFRmNIVUlVcXBX?=
- =?utf-8?B?L253MlJxME1neEFYV1A3ZTVNSkJ3T1VoVUtIc21oT2FMTDc2bHE3dC9aa2Nw?=
- =?utf-8?B?TldmZkcwQkxqSnIxYmRPdlFUWXdLclJFeGVlUUhQYzU4U1F1dURiUWIzWUJ1?=
- =?utf-8?B?anlhaXQ1S2EzOTl1U0piZGpKU0RCL01xTnRxc01kMExCaWtza2xjRkpBZzVx?=
- =?utf-8?B?NnlhRFhERkZWQWVDazQ4TE03TWNhOXdtV3V6THJ2eFowVUZWMHluL1Y4WmpQ?=
- =?utf-8?B?Y1kwNEhQdFBuM3hZVzVTQTNYM3VZZTlBTEtDOXBlNDNrSFRLNk9NeTQvOC9O?=
- =?utf-8?B?SHRSbm9kYWtlSXRPcm1JRlM4ekZWbW50b1ZPNE13R3BtOFVDN2FGRlFaZGlJ?=
- =?utf-8?B?cGRCQlBxUWd1cmNTdHM1S3VwL3JGQnVpckc3VE1sb2tJQnB4RVdpMWVTQ2J4?=
- =?utf-8?B?QUdDd0hBWW5qQXdxZ20yWkpZWHZheXNCWkkrWE1tNTkyTWp0YXIyc29KUzhI?=
- =?utf-8?B?VlAwWlFZTVBaUGFPejBtc1FQVVRUL3hzL2NETlBmS2U0T1EyMEV0emV2T1Uy?=
- =?utf-8?B?b0tSNGtLTVg3UlFKZGNEMi93WVpVUW5iSUFvZnZNcUNjZG5ldTZ0S2FGaGhO?=
- =?utf-8?B?RWl5YVYwY2ZtTXVWdXlydWpYckRrVG1UR0E1aThMRzBHeG9wRDV6ZC9YdkhQ?=
- =?utf-8?B?OVdXV09IQVdtM0N3dzlMOEVjL2hYN25qNjk1OE1STHFuN1Fya0NSbEh0OGhz?=
- =?utf-8?B?Z2tKbzMwc1RQbGRpMGJTZGNDLzJkaDJ2dFNaRkxiYUVIeHN2aEhTV01ONGVB?=
- =?utf-8?B?bmJPdmpyVjl5emVzaGZqZjQ0SGo1Y0tGWXByM2RPcUh5TVM1VC9PN2NIQ2N1?=
- =?utf-8?B?QWhEcGU2MEpiV3NQTEhSTzFhQ3l6OU92ZXpBODRLQnJEWTkraElyZC8zK3dZ?=
- =?utf-8?B?RlMxQkdTOHZYcDJ2V01zTXlZWWVVTThvRUVzMjRacWpjQytvK0ZwREl4c0xv?=
- =?utf-8?B?R1lBck1JNWlvRk5BajF2Y0Zvd0hHa3AvM2I0ekFjOHNnc2pHN1lzUnorQ0xi?=
- =?utf-8?B?d2YrRXE5UFJCQVI1UkV3bkFVbTZyQis0WTdUYzRkK3MvWm13VVpxZloyQk83?=
- =?utf-8?B?MXM2a0xjSzFCRDFWdkUrbzBXOGhXV3VIL3NVdmFlVE4zVk5uOEhUU0p3YW9p?=
- =?utf-8?B?MEpBU2x6UTFvWVBET3VGYVNrYWU0Wld1dHFCbEcrMXNWWWViVDhXdFF6VGpR?=
- =?utf-8?B?U0lhNTlQcFVLL0QrZjNid2QySW5UK2JDQ0p5OG8xVXBvd3Zxb2VKdXIzamI2?=
- =?utf-8?B?RUFQUXhDZlRjcGFvck04M0g4MmREYU13VndzUGV4dHlFazFXUGZ4aFZNSzdG?=
- =?utf-8?B?Vy9PTFBva1pPaHdzTnQ2NHFTWllTOEtOdFE1cmw3ZmRTRVlueERWd2JFTy9t?=
- =?utf-8?B?ejMvWUwyciszaDR6aXBPRjRiaTE2cWhqMk9PdWdWT0VxYUYxUW9KUT09?=
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.139.11; Thu, 18 Jun
+ 2026 09:38:42 +0000
+Received: from GV1PR04MB11513.eurprd04.prod.outlook.com
+ ([fe80::29e0:98a1:4577:2cc7]) by GV1PR04MB11513.eurprd04.prod.outlook.com
+ ([fe80::29e0:98a1:4577:2cc7%3]) with mapi id 15.21.0139.011; Thu, 18 Jun 2026
+ 09:38:42 +0000
+From: guoniu.zhou@oss.nxp.com
+Subject: [PATCH v10 0/4] media: nxp: Add CSI Pixel Formatter support
+Date: Thu, 18 Jun 2026 17:41:34 +0800
+Message-Id: <20260618-csi_formatter-v10-0-f23830312ba5@oss.nxp.com>
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAE69M2oC/23RzWrDMAwH8FcpPi/Fkm3Z3qnvMcaIv1Yf2pQ4h
+ I7Sd5/TMZa4O0rw+wtJN1bimGNhr7sbG+OcSx7OtQD+smP+2J8/Y5dDbTDkqABQdb7kjzSMp36
+ a4thFCmgFUPCRWDWXMaZ8fQS+vdf6mMs0jF+P/BmW7k8SctEkzdDxLjobAaR20sbD+XrZ++HEl
+ pwZVxZ0a7FaQiDTJ8MR+NaKtbWtFdUaMjxQMJpb2Fr5a4kDYmvlMjdR8n0AL0S/tWptn/ZV1Qb
+ lDBfJkHZpa+nP1ru3lqrlwNFEARjRHYZS9huv1960XlevCJ1WXCkdxbM3K//09dksezuShHU+y
+ n/m27Wn1tvqfS+CqUeTXtitv9/v30eE3sWZAgAA
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Frank Li <frank.li@nxp.com>, Abel Vesa <abelvesa@kernel.org>, 
+ Peng Fan <peng.fan@nxp.com>, Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+Cc: imx@lists.linux.dev, linux-media@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+ Guoniu Zhou <guoniu.zhou@nxp.com>, Frank Li <Frank.Li@nxp.com>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1781775717; l=11188;
+ i=guoniu.zhou@oss.nxp.com; s=20250815; h=from:subject:message-id;
+ bh=uYmiNmWMzJhK5A2Bbz5oAeqxaQfKdPgRdeTm4NI8HL8=;
+ b=OQ0adlOohqrXABRqbMJPTuoKdlkhxJ3pKf8evlMRpdkkBeyeA9ZqAbOWRc6gahhlzNYhBS2Jy
+ /LHA59OQUwuDvZKtoHKlsKZllDTo8eY49aQp6xCzCz2BbV7zbrvj5WE
+X-Developer-Key: i=guoniu.zhou@oss.nxp.com; a=ed25519;
+ pk=MM+/XICg5S78/gs+f9wtGP6yIvkyjTdZwfaxXeu5rlo=
+X-ClientProxiedBy: MA5PR01CA0087.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a01:1a8::11) To GV1PR04MB11513.eurprd04.prod.outlook.com
+ (2603:10a6:150:284::9)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: cixtech.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: GV1PR04MB11513:EE_|VI1PR04MB7070:EE_
+X-MS-Office365-Filtering-Correlation-Id: c9e8ce91-7392-4c69-b344-08decd1d6254
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|7416014|366016|376014|19092799006|23010399003|1800799024|18002099003|5023799004|11063799006|3023799007|56012099006|921020|6133799003|7136999003;
+X-Microsoft-Antispam-Message-Info:
+ bCeiF5gq1I9+Ea2hNyuv/v9pOS5wCjihpf+tZ/kJiDXJlc5lfF9MF2yGqyeeIWzPJaW9P8gLO1LWgK9VIzFyHENt7SauyJ3+RaWXyRwWKg1EsSMYWdChUnoPncePDX8wgdo64TxOmFZVw7shxKfpZfdPxn+VkoBmUFvCB11rWRaESCMnSP9cf8mQdkdCGjcNjEiDfA8kWB2dNgKZFGgy88Xq4ziIzOukGsQYVlhL9rZgRIknupXrlsvJC/XfpFCMy8M2hLIb1bZNUd+ONJ3RUPgDsNV9H5S5pZsJkqeruAQZ7EtnxksgrGylnj/sp8rT8XqrGOGtMjrgZWNdLP6Q5/ryjUvjKtAoNY7BciPibGjH3jtkyzw4fkdwxmzsh5M5gshI3nGyjc6jEgio4yCbfgTQ1ni4N7jkOoQ3mpzKT+F10MqM1mgb02g3GumEjcA+cJJKWEdZWH0qcRwGbF7Px0gSQa4dXIALG7Ryd25OpdP3XCi50cOzGZd7ySwZitwpIcjnGbGH6phVqv3qqWguMz/UVpprt46WoAFHL0zwZ5nHNUxw6C6Y7gsak+hp4BeR2gmupO/+BF3fjKiHUoX/JYOFomcU9iBTgSn74F4EvXtDVY/2D795i3NCnLz0jEhjtuXnQqxdRw3igDE74MbxVgwlDbFA8Hxd8mATtgk9BSV8L4oGAKnywQx4DdXf/C9IN+FVY1ians1iJ+wNWvPyHtcPvhkKLJwuvRHBQur2PTE=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV1PR04MB11513.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(19092799006)(23010399003)(1800799024)(18002099003)(5023799004)(11063799006)(3023799007)(56012099006)(921020)(6133799003)(7136999003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?cFpkRDdKRGJMejJicUl4YkN5ZlA5Z1RFbU93V2FzRUE2TFdhNVpCYU91S2Zx?=
+ =?utf-8?B?UTBXbFh4L2hMbElFbzVGQnJlVnM4RndWckFUM3R0UUV5emhyQkhVRVhzRy9H?=
+ =?utf-8?B?YXUxZzBoekZkMFZhdHh5VmwrQUJzMzNjbVVISFhFQTdzKzZyMytFQTErM3Vq?=
+ =?utf-8?B?M1FhYklMdDFqdGxWV0xqNDlVbUFOeklKeW40MnJ3N205ZjJIeFJ3bFpQdEt1?=
+ =?utf-8?B?eWw1QzhZTW8vdjB0RjdBancxQjA0ODNWaHRvVkZ6bGE3N1J4V2RBQTk3UWVJ?=
+ =?utf-8?B?K1FaS09uQmZMWC9hcml5WEZvVGZiVUpTZlNQNlVYdkVKQU85U295T3ZqQnRt?=
+ =?utf-8?B?M25SaFUrd3RTcFZGd3lnRy9xRmVjSWNHaDBndTE3YjRyczlabjhRWXY4QmF4?=
+ =?utf-8?B?emI0cFBuZFp6cE53UDFWcXFySStGaitIMXhCVnRyUEk0Q0hMTjJHalBuWVp1?=
+ =?utf-8?B?bUd3Z0kzMGpiczkwVGthRDhCYWlQeWhJTWJudUJ2ZjRPY29BUzJrcTZLOVJy?=
+ =?utf-8?B?dG54U1lWVDNwYWt6bVpSQ0NWckxhRFIyY3VaQ1lzUWx3U1FNUXZKL0Y2UUc3?=
+ =?utf-8?B?cUdoZExJa3lQbXRYMk1RYjlDQ2FXbVBFdjBSbXdidWVzMTlUMTVLWjIxVjNz?=
+ =?utf-8?B?eUJQdmhNTU52SHJCMXNmK0dyalpVOGJvS3BmTmc5cEwvT0RNaTh4MGs1T3Vh?=
+ =?utf-8?B?ZGZHUld1SS91UTJ0L20rMTh1VVRtVGlLdTFKK2Njeld5R0hNWFhwOVNBd3kv?=
+ =?utf-8?B?Z2t5clpNc0VBZWVNNUU1L0xpaFdYNnYvbnp3elJtRHJmc29wUTZweko2Y3Rt?=
+ =?utf-8?B?WDRMT1JzWmNxQ3hycGREeDFHSUVjdVFaRFhvTXcxMTJma3R4TU5WVklLdnR6?=
+ =?utf-8?B?Q293aG5VaVRyVC9lNEU1QzVSd1hEYXlvWlNOT1JnbDNka3dUNnV5YVRBQnNI?=
+ =?utf-8?B?aW1OZkh2em5rblEyNS9mcDc3Zld6Wm9mbi94QzZJRnRrTUw3aVRSUW9Ia1lN?=
+ =?utf-8?B?emZxeWFxd2JWV2dPcnV4NWhXWEF3ZExiZDduTTVWNUdiV1ZMNjNzbHFob0RD?=
+ =?utf-8?B?M2d5WkxTZ1pyV2RHRy9iRk9sdlZpa1h1RytqY0NBSmZEOXRERDJqNXpMU0FV?=
+ =?utf-8?B?Nm1MQm9nSTk0MkhkZE43SENWeEdhcDgwK2szMm1VWitIZnhHS3ovUERnc3pL?=
+ =?utf-8?B?Qnl4SW5HajlYZXhEL0Q3dXQyUDlhM2wxTXBTWkZvVi9FVGQ5cmM1cWN1MlJC?=
+ =?utf-8?B?VGpQUTA3V2FVNWhDMlVOT1VZYlVhaDEwMVdOUE4vUVdTMElsa2NrKzNuQUJt?=
+ =?utf-8?B?clJHOUxWWjBuQkRsRlh1K25uTmJRZXM5bFZBNFhzRk1hSUhOSy9zQzZpUXN2?=
+ =?utf-8?B?dEVlclFqZ0QvRWNieDc0ejZDZHNrVHluNG1pRHpJcThVc3AvTlpwUmZVZFN6?=
+ =?utf-8?B?OE5HdFROS21oU3BHWFZaS3VieVV1L2NoSUk4cUViUmI5RFd1OHMzZlR5RzFS?=
+ =?utf-8?B?TW5PN2hKYkVXZUlmR2NVQW4rZEpzOFdJd1llL3RzckFKNnFFdGRqRGNZbWY3?=
+ =?utf-8?B?b21lZXU1aW93cHZpWk5OVjlwdDVHZTZkSk03MEFlVVFLN2tEbzgxcXk2NFg4?=
+ =?utf-8?B?UVI5STVPaGRzWXVlWVgrRmFka3VwMUNWdk1RcUdWM3JLTVlsWVIrZDVubXVF?=
+ =?utf-8?B?V1M3MVZBWndGMUxSTWNQdlhNT2dxMzZWUUFWbWZZZC9OaW5lQnNHWUhMV21v?=
+ =?utf-8?B?UDduL1E1Y1lWbzlHN3BESVJJWWNUa3FFcFdvbGs1blY0MDZxLzNyMUlMczJD?=
+ =?utf-8?B?ODR3YUNDV1JjQjltMzVBK2VJZWxPMkU0cXVUK3JmdHM4LzZXeVh0UmNmd2Ir?=
+ =?utf-8?B?QzA2L1pPTTlRMEY5THhUdmIwVmN1Q1QxUW9hb3YvWCtIUDk2UTNIR3RBL0pa?=
+ =?utf-8?B?dWNNcFU1dmw2aW5DOGt5V0lWTmNtdUtybWlmVFBYRS9jWUk5UElGUk9qZzFy?=
+ =?utf-8?B?K2lsd1Z1dWFFZERwenl0YnJCNktTK054MlZ4UkNxVUlSSnl6RlpGQWdEYk5T?=
+ =?utf-8?B?bTA1c3lQZFFtRjRkMVdzSjFlNVgvamJ6L3N5SnJSVnFHdklUaGJrSDdFY0Y0?=
+ =?utf-8?B?ZjJKYVgzU3hBZTZYRS91NlBseTlqNnBtL0dtNC84aEhDb0N3YURNVGhGUUdH?=
+ =?utf-8?B?YTBHRUt0L1ovMUIrSFlVSXg0Ymk4RUlaWGU3ODNacVFBL3oyNDh5aVNzemFR?=
+ =?utf-8?B?SVE0cVBTVnY1Vnp2TUZZMGlOQnhMVVBsRCtEVHRQSTIzVjJCbnZ3VFZ3c3o5?=
+ =?utf-8?B?dm5RSkgwTzRWakpCQ2hWMkRObmlRUndBRUd3Qm50TmJPTjZmNXVYYzdEL2ph?=
+ =?utf-8?Q?+XDLz870aIk1X8wNgWBynQ4txZe+iHhi+bKsg?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c9e8ce91-7392-4c69-b344-08decd1d6254
+X-MS-Exchange-CrossTenant-AuthSource: GV1PR04MB11513.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SEYPR06MB6226.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 141a1aba-72f3-4c32-fa45-08decd1bd0ed
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Jun 2026 09:27:28.6013
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2026 09:38:42.2401
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 0409f77a-e53d-4d23-943e-ccade7cb4811
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: W++81X7L5Y1Xi4LmhNOXXgvuOgL8AHwxv8/Ez71ASHWjFdl/Ygs18nZgdAqKvCvENJsBthdFKTwJtcNE75MtrQ6jz45C0lcncVMax8JgGjY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SE3PR06MB9242
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: F99pphokydd4ZPYDz0NXWtBZAWVXL2Irfk9EoTyh1Jud6EyQ2C6kj+Fx8z5qEYIBEYCmyr/DY2ek3lyXL3mnSjVkNshgiPtkeva5mO4bXnbvoEL8LqxBcOF2ZUI206Bb
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB7070
 
-DQpIZWxsbywNCg0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IFBoaWxp
-cHAgWmFiZWwgPHAuemFiZWxAcGVuZ3V0cm9uaXguZGU+DQo+IFNlbnQ6IFRodXJzZGF5LCBKdW5l
-IDE4LCAyMDI2IDQ6MzAgUE0NCj4gVG86IEpvYWtpbSBaaGFuZyA8am9ha2ltLnpoYW5nQGNpeHRl
-Y2guY29tPjsgQ29ub3IgRG9vbGV5DQo+IDxjb25vckBrZXJuZWwub3JnPg0KPiBDYzogbXR1cnF1
-ZXR0ZUBiYXlsaWJyZS5jb207IHNib3lkQGtlcm5lbC5vcmc7IGJtYXNuZXlAcmVkaGF0LmNvbTsN
-Cj4gcm9iaEBrZXJuZWwub3JnOyBrcnprK2R0QGtlcm5lbC5vcmc7IGNvbm9yK2R0QGtlcm5lbC5v
-cmc7IEdhcnkgWWFuZw0KPiA8R2FyeS5ZYW5nQGNpeHRlY2guY29tPjsgY2l4LWtlcm5lbC11cHN0
-cmVhbSA8Y2l4LWtlcm5lbC0NCj4gdXBzdHJlYW1AY2l4dGVjaC5jb20+OyBsaW51eC1jbGtAdmdl
-ci5rZXJuZWwub3JnOw0KPiBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVs
-QHZnZXIua2VybmVsLm9yZzsgbGludXgtYXJtLQ0KPiBrZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9y
-Zw0KPiBTdWJqZWN0OiBSZTogW1BBVENIIHY0IDMvNV0gZHQtYmluZGluZ3M6IGNsb2NrOiBjaXgs
-c2t5MS1hdWRzcy1jbG9jazogYWRkIGF1ZHNzDQo+IGNsb2NrIGNvbnRyb2xsZXINCj4gDQo+IEVY
-VEVSTkFMIEVNQUlMDQo+IA0KPiBDQVVUSU9OOiBTdXNwaWNpb3VzIEVtYWlsIGZyb20gdW51c3Vh
-bCBkb21haW4uDQo+IA0KPiBPbiBEbywgMjAyNi0wNi0xOCBhdCAwMTo0MyArMDAwMCwgSm9ha2lt
-ICBaaGFuZyB3cm90ZToNCj4gPiBIZWxsbywNCj4gPg0KPiA+DQo+ID4gPiAtLS0tLU9yaWdpbmFs
-IE1lc3NhZ2UtLS0tLQ0KPiA+ID4gRnJvbTogQ29ub3IgRG9vbGV5IDxjb25vckBrZXJuZWwub3Jn
-Pg0KPiA+ID4gU2VudDogV2VkbmVzZGF5LCBKdW5lIDE3LCAyMDI2IDExOjU2IFBNDQo+ID4gPiBU
-bzogSm9ha2ltIFpoYW5nIDxqb2FraW0uemhhbmdAY2l4dGVjaC5jb20+DQo+ID4gPiBDYzogbXR1
-cnF1ZXR0ZUBiYXlsaWJyZS5jb207IHNib3lkQGtlcm5lbC5vcmc7IGJtYXNuZXlAcmVkaGF0LmNv
-bTsNCj4gPiA+IHJvYmhAa2VybmVsLm9yZzsga3J6aytkdEBrZXJuZWwub3JnOyBjb25vcitkdEBr
-ZXJuZWwub3JnOw0KPiA+ID4gcC56YWJlbEBwZW5ndXRyb25peC5kZTsgR2FyeSBZYW5nIDxnYXJ5
-LnlhbmdAY2l4dGVjaC5jb20+Ow0KPiA+ID4gY2l4LWtlcm5lbC0gdXBzdHJlYW0gPGNpeC1rZXJu
-ZWwtdXBzdHJlYW1AY2l4dGVjaC5jb20+Ow0KPiA+ID4gbGludXgtY2xrQHZnZXIua2VybmVsLm9y
-ZzsgZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc7DQo+ID4gPiBsaW51eC1rZXJuZWxAdmdlci5r
-ZXJuZWwub3JnOyBsaW51eC1hcm0tIGtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnDQo+ID4gPiBT
-dWJqZWN0OiBSZTogW1BBVENIIHY0IDMvNV0gZHQtYmluZGluZ3M6IGNsb2NrOg0KPiA+ID4gY2l4
-LHNreTEtYXVkc3MtY2xvY2s6IGFkZCBhdWRzcyBjbG9jayBjb250cm9sbGVyDQo+ID4gPg0KPiA+
-ID4gT24gV2VkLCBKdW4gMTcsIDIwMjYgYXQgMDI6MDQ6MzVQTSArMDgwMCwgam9ha2ltLnpoYW5n
-QGNpeHRlY2guY29tDQo+IHdyb3RlOg0KPiA+ID4gPiBGcm9tOiBKb2FraW0gWmhhbmcgPGpvYWtp
-bS56aGFuZ0BjaXh0ZWNoLmNvbT4NCj4gPiA+ID4NCj4gPiA+ID4gVGhlIEFVRFNTIENSVSBjb250
-YWlucyBhbiBpbnRlcm5hbCBjbG9jayB0cmVlIG9mIG11eGVzLCBkaXZpZGVycw0KPiA+ID4gPiBh
-bmQgZ2F0ZXMgZm9yIERTUCwgSTJTLCBIREEsIERNQUMgYW5kIHJlbGF0ZWQgYmxvY2tzLiBUaGUg
-Y2xvY2sNCj4gPiA+ID4gcHJvdmlkZXIgaXMgYSBjaGlsZCBub2RlIG9mIHRoZSBjaXgsc2t5MS1h
-dWRzcy1zeXN0ZW0tY29udHJvbA0KPiA+ID4gPiBzeXNjb24gYW5kIGFjY2Vzc2VzIHJlZ2lzdGVy
-cyB0aHJvdWdoIHRoZSBwYXJlbnQgTU1JTyByZWdpb24uDQo+ID4gPg0KPiA+ID4gV2h5IGNhbiB0
-aGlzIG5vdCBqdXN0IGJlIHBhcnQgb2YgdGhlIHBhcmVudCBzeXNjb24gbm9kZT8NCj4gPg0KPiA+
-IFRoZSBjbG9jayBhbmQgcmVzZXQgYmxvY2tzIGFyZSBoYW5kbGVkIGJ5IGRpZmZlcmVudCBzdWJz
-eXN0ZW1zIGFuZA0KPiBtYWludGFpbmVycyAoY2xrIHZzIHJlc2V0KS4gUHV0dGluZyB0aGUgY2xv
-Y2sgcHJvdmlkZXIgb24gdGhlIHBhcmVudCBzeXNjb24gbm9kZQ0KPiB3b3VsZCBtZWFuIGEgc2lu
-Z2xlIGRyaXZlciBoYXMgdG8gcmVnaXN0ZXIgYm90aCB0aGUgcmVzZXQgY29udHJvbGxlciBhbmQg
-dGhlDQo+IGNsb2NrIHByb3ZpZGVyIG9uIG9uZSBkZXZpY2UsIHdoaWNoIGRvZXNuJ3QgZml0IHdl
-bGwuDQo+IA0KPiBUaGVyZSBhcmUgbWFueSBleGFtcGxlcyBvZiBjbG9jayBhbmQgcmVzZXQgZHJp
-dmVycyBzaGFyaW5nIHRoZSBzYW1lIG5vZGUsIGJ5DQo+IHVzaW5nIHBsYXRmb3JtX2RyaXZlciBm
-b3Igb25lICh1c3VhbGx5IGNsaykgYW5kIGF1eGlsaWFyeV9kcml2ZXIgZm9yIHRoZSBvdGhlcg0K
-PiAodXN1YWxseSByZXNldCkuDQoNCk9LLCBJIHdpbGwgaGF2ZSBhIGxvb2suICBJZiB5b3UgYXJl
-IGFsc28gcHJlZmVyIHRvIHRoaXMsIEkgd2lsbCByZWZhY3RvciB0aGUgcGF0Y2guDQoNClRoYW5r
-cywNCkpvYWtpbQ0K
+CSI Pixel Formatter is a module found on i.MX95. It could unpack the
+pixels received by the formatter and reformat them to meet the pixel
+link format requirement.
+
+This patch series adds a new V4L2 driver for CSI Pixel Formatter.
+
+Background
+----------
+The Camera CSR binding was upstreamed during the pre-silicon phase when
+the hardware integration details were not fully finalized. At that time,
+the syscon binding focused on the CSR's primary role as a shared register
+provider for clock gating, QoS, and error handling across Camera domain IPs.
+
+However, the Camera CSR hardware is actually a mixed-function register
+container with varying control levels over different IP blocks:
+- ISP/CSI: Clock gating only
+- ISI: QoS configuration
+- CSI: Buffer overflow handling
+- LPCAC: Error handling only
+- ISP: Pixel link selection
+- Formatter: Complete IP control (full register set)
+
+Why Child Nodes Now
+-------------------
+The CSI formatter is unique among these IPs - it's an independent hardware
+block whose complete control registers reside within the CSR address
+space, not just a few configuration bits. This architectural detail was
+not reflected in the original binding because:
+
+1. The pre-silicon binding focused on simple register-level controls
+2. The syscon pattern for complete IP control was not initially considered
+
+Discussion with original CSR author(Peng Fan) confirmed this reflects the
+intended hardware design that wasn't fully captured during pre-silicon
+upstreaming.
+
+v4l2-compliance 1.28.1-5233, 64 bits, 64-bit time_t
+v4l2-compliance SHA: fc15e229d9d3 2024-07-23 19:22:15
+
+Compliance test for device /dev/v4l-subdev9:
+
+Driver Info:
+	Driver version   : 7.1.0
+	Capabilities     : 0x00000002
+		Streams Support
+	Client Capabilities: 0x0000000000000003
+streams interval-uses-which
+Required ioctls:
+	test VIDIOC_SUDBEV_QUERYCAP: OK
+	test invalid ioctls: OK
+
+Allow for multiple opens:
+	test second /dev/v4l-subdev9 open: OK
+	test VIDIOC_SUBDEV_QUERYCAP: OK
+	test for unlimited opens: OK
+
+Debug ioctls:
+	test VIDIOC_LOG_STATUS: OK (Not Supported)
+
+Input ioctls:
+	test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+	test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+	test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+	test VIDIOC_ENUMAUDIO: OK (Not Supported)
+	test VIDIOC_G/S/ENUMINPUT: OK (Not Supported)
+	test VIDIOC_G/S_AUDIO: OK (Not Supported)
+	Inputs: 0 Audio Inputs: 0 Tuners: 0
+
+Output ioctls:
+	test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+	test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+	test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+	test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+	test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+	Outputs: 0 Audio Outputs: 0 Modulators: 0
+
+Input/Output configuration ioctls:
+	test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+	test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+	test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+	test VIDIOC_G/S_EDID: OK (Not Supported)
+
+Sub-Device routing ioctls:
+	test Try VIDIOC_SUBDEV_G_ROUTING/VIDIOC_SUBDEV_S_ROUTING: OK
+	test Active VIDIOC_SUBDEV_G_ROUTING/VIDIOC_SUBDEV_S_ROUTING: OK
+
+Control ioctls:
+	test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK (Not Supported)
+	test VIDIOC_QUERYCTRL: OK (Not Supported)
+	test VIDIOC_G/S_CTRL: OK (Not Supported)
+	test VIDIOC_G/S/TRY_EXT_CTRLS: OK (Not Supported)
+	test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK (Not Supported)
+	test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+	Standard Controls: 0 Private Controls: 0
+
+Format ioctls:
+	test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK (Not Supported)
+	test VIDIOC_G/S_PARM: OK (Not Supported)
+	test VIDIOC_G_FBUF: OK (Not Supported)
+	test VIDIOC_G_FMT: OK (Not Supported)
+	test VIDIOC_TRY_FMT: OK (Not Supported)
+	test VIDIOC_S_FMT: OK (Not Supported)
+	test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+	test Cropping: OK (Not Supported)
+	test Composing: OK (Not Supported)
+	test Scaling: OK (Not Supported)
+
+Codec ioctls:
+	test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+	test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+	test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+
+Buffer ioctls:
+	test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK (Not Supported)
+	test CREATE_BUFS maximum buffers: OK
+	test VIDIOC_REMOVE_BUFS: OK
+	test VIDIOC_EXPBUF: OK (Not Supported)
+	test Requests: OK (Not Supported)
+
+Total for device /dev/v4l-subdev9: 47, Succeeded: 47, Failed: 0, Warnings: 0
+
+Signed-off-by: Guoniu Zhou <guoniu.zhou@nxp.com>
+---
+Changes in v10:
+- Rebase to latest media/next
+- [NEW PATCH] Use single quotes consistently (Krzysztof Kozlowski)
+- Drop syscon parent node from example
+- Drop Reviewed-by tags from Frank and Krzysztof due to binding changes,
+  requesting re-review
+- Add description for reg property
+- Add space after formatter@20 before opening brace in example
+- Enhance the port description with more detailed information
+- Delete the blank line immediately following the endpoint in example
+- Use single quotes for regex pattern to be consistent (Krzysztof Kozlowski)
+- Add formatter subnode binding and camera-csr syscon example
+- Update commit title and message
+- Use u8 for vc in csi_formatter_get_vc() and drop vc < 0 check
+- Add MFD_SYSCON dependency to Kconfig
+- Fix stream/VC mapping potential mismatch in start/stop_stream functions
+- Link to v9: https://lore.kernel.org/r/20260526-csi_formatter-v9-0-ca3d8c334c39@oss.nxp.com
+
+Changes in v9:
+- [NEW PATCH] Fix formatter as syscon child node issue
+- Link to v8: https://lore.kernel.org/r/20260525-csi_formatter-v8-0-6b646231224b@oss.nxp.com
+
+Changes in v8:
+- Rebase to latest media/next
+- Use standard port reference instead of video-interfaces.yaml
+- Add parent syscon node in example to show device integration
+- Remove fmt field and look up format from subdev state instead
+- Unify function and structure naming to use csi_formatter_ prefix
+- Remove misleading alignment comment from set_fmt function
+- Optimize get_frame_desc to call once per start_stream
+- Replace V4L2_FRAME_DESC_ENTRY_MAX with CSI_FORMATTER_VC_NUM in loops
+- Remove redundant debug message in enable_streams
+- Use MEDIA_PAD_FL_MUST_CONNECT flag instead of manual link check
+- Link to v7: https://lore.kernel.org/r/20260518-csi_formatter-v7-0-562b750557e3@oss.nxp.com
+
+Changes in v7:
+- Change compatible to imx95-csi-formatter as IP is i.MX95 specific per Marco's suggestion
+  Link: https://lore.kernel.org/linux-media/20260511-csi_formatter-v6-0-01028e312e2b@oss.nxp.com/T/#mcd135b3de179b3cb69daa1fd6e0e8e27c85b3332
+- Update references from imx9 to imx95 for consistency with dt-bindings
+- Enable PM runtime before async registration
+- Link to v6: https://lore.kernel.org/r/20260511-csi_formatter-v6-0-01028e312e2b@oss.nxp.com
+
+Changes in v6:
+- Rebase to latest media/next
+- Update v4l2-compliace test
+- Remove unused header includes
+- Unify macro naming: VCx/VCX -> VC and parameter x -> vc
+- Remove unused format field from csi_formatter struct
+- Use compact initialization for formats array
+- Make find_csi_format() return NULL instead of default format
+- Use unsigned int for array index in find_csi_format()
+- Add err_ prefix to error handling labels
+- Add v4l2_subdev_cleanup() and reorder cleanup sequence
+- Update enable_streams debug output format
+- Rename VC_MAX to VC_NUM and fix boundary check
+- Update CSI formatter Kconfig description
+- Use v4l2_subdev_get_frame_desc_passthrough() helper
+- Fix error paths in async registration and probe
+- Add mutex to protect enabled_streams
+- Switch to devm_pm_runtime_enable()
+- Remove redundant num_routes check in set_routing
+- Optimize get_index_by_dt() and add warning for unsupported type
+- csi_formatter_start/stop_stream: Process all streams in mask
+- Link to v5: https://lore.kernel.org/r/20260123-csi_formatter-v5-0-d5b803f867bf@nxp.com
+
+Changes in v5:
+- Remove CSI_FORMATTER_DRV_NAME macro since only use once.
+- Remove sd->owner = THIS_MODULE;
+- Simplify code by using DEFINE_RUNTIME_DEV_PM_OPS macro.
+- Link to v4: https://lore.kernel.org/r/20260122-csi_formatter-v4-0-6f6fcad1c33a@nxp.com
+
+Changes in v4:
+- Rebase to latest media/next.
+- Add comments to describe the index field in formatter_dt_to_index_map array.
+- Link to v3: https://lore.kernel.org/r/20251219-csi_formatter-v3-0-8680d6d87091@nxp.com
+
+Changes in v3:
+- Rename nxp,imx9-csi-formatter.yaml to fsl,imx9-csi-formatter.yaml.
+- Drop clock-names property.
+- Drop macro IMX95_PD_CAMERA definition and use a constant directly.
+  [PATCH 1/2] media: dt-bindings: Add CSI Pixel Formatter DT bindings
+- Remove the assignment driver.owner = THIS_MODULE.
+- Assign struct fwnode_handle *ep __free(fwnode_handle) when definition.
+- Update yaml file name for csi formatter in MAINTAINERS.
+  [PATCH 2/2] media: nxp: Add i.MX9 CSI pixel formatter v4l2 driver
+- Link to v2: https://lore.kernel.org/r/20251217-csi_formatter-v2-0-62168af80210@nxp.com
+
+Changes in v2:
+- Delete "|" for description key. 
+- Add empty line between child node and property.
+- Delete labels for endpoint of child nodes.
+  [PATCH 1/2] media: dt-bindings: Add CSI Pixel Formatter DT bindings
+
+- Update commit message.
+- Use the value defined by bellow macros directly since they are used only once.
+  #define CSI_FORMATTER_DEF_MBUS_CODE	MEDIA_BUS_FMT_UYVY8_1X16
+  #define CSI_FORMATTER_DEF_PIX_WIDTH	1920U
+  #define CSI_FORMATTER_DEF_PIX_HEIGHT	1080U
+  #define CSI_FORMATTER_MAX_PIX_WIDTH	0xffff
+  #define CSI_FORMATTER_MAX_PIX_HEIGHT	0xffff
+- Use macro pm_ptr() to fix build warning when CONFIG_PM is disabled. 
+- Finish route loop by break statement, instead of goto.
+- Return dev_err_probe() when meet errors in probe() function instead of dev_err().
+- Remove MODULE_ALIAS().
+- Refine .enable(.dsable)_stream callback implementation, include bellow changes:
+  Add stream checking.
+  Fix potential pm runtime count unbalance issue.
+  Add stop stream error handling when enabling remote subdev stream.
+- Use __free(fwnode_handle) to drop reference to a device node automatically.
+  [PATCH 2/2] media: nxp: Add i.MX9 CSI pixel formatter v4l2 driver
+
+- Link to v1: https://lore.kernel.org/r/20251203-csi_formatter-v1-0-eb9e1147b49e@nxp.com
+
+---
+Guoniu Zhou (4):
+      dt-bindings: clock: imx95-blk-ctl: Use single quotes consistently
+      media: dt-bindings: Add CSI Pixel Formatter DT bindings
+      dt-bindings: clock: imx95-blk-ctl: Define formatter child node schema
+      media: nxp: Add i.MX95 CSI pixel formatter v4l2 driver
+
+ .../bindings/clock/nxp,imx95-blk-ctl.yaml          |  66 +-
+ .../bindings/media/fsl,imx95-csi-formatter.yaml    |  88 +++
+ MAINTAINERS                                        |   8 +
+ drivers/media/platform/nxp/Kconfig                 |  15 +
+ drivers/media/platform/nxp/Makefile                |   1 +
+ drivers/media/platform/nxp/imx95-csi-formatter.c   | 775 +++++++++++++++++++++
+ 6 files changed, 951 insertions(+), 2 deletions(-)
+---
+base-commit: 06cb687a5132fcffe624c0070576ab852ac6b568
+change-id: 20251125-csi_formatter-e6d29316dce6
+
+Best regards,
+-- 
+Guoniu Zhou <guoniu.zhou@oss.nxp.com>
+
