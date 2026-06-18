@@ -1,150 +1,204 @@
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail-244107.protonmail.ch (mail-244107.protonmail.ch [109.224.244.107])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E04D35E926
-	for <linux-clk@vger.kernel.org>; Thu, 18 Jun 2026 07:17:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0243D6CAA;
+	Thu, 18 Jun 2026 07:58:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781767059; cv=none; b=KI4hNQjAIPXJPk/QbpV8s4b1v05D57cRJwmHyNup3gSPyvNgTPrBP60cQVmAdXmP3gO90k5xyWHUAE3sHF4Qi94BAQqUdqa04Cfg7HRQlhuu3gOYXX4gTU6JZp1j6e04F5cKSiEx2eqLZX6yE0bw4Plh3nipYbFzpAyAH3yeK1Q=
+	t=1781769542; cv=none; b=YZt4QXLBp3vqZLi1sYWIp6va+PQnlDQ21otIAGbtGdYRIn4r9UqMS2rPGe1ta49BvQAo1MFiPJY4Of6/e/QhNe5G5BVDuD5qoD7P5DZHlR7FsVR5SgKcHyEefUDIMfgPAM9OYw0MXTJKONIgMXkcjSDGjznQqgGarwPcSZmt0sU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781767059; c=relaxed/simple;
-	bh=tfbcEFHyRGxmt/ZNMjfmkNiTbtmi4aiIGAAer8bH9z4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qVAYoEi+BidjWl8XAHdqlkYT/lUMY5Q6U2MatOcO9xMuIgw8quhYwlUfCZGIhQbBO6KwTcW5uNtqHjdIRMUms4GkqitTIlj82bONn8BmIhLLJkgvqFNAp4evAeypnbbWBwpqbbHdNdbqAGNhNFD1j3DRDfHCoh94oxTotrYiHOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-5ab0377d0b2so206930e0c.3
-        for <linux-clk@vger.kernel.org>; Thu, 18 Jun 2026 00:17:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781767056; x=1782371856;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=xzQ4TuItSjjDfqcY5h5uPw4axpJfO2Kzm9zj8eN9JJg=;
-        b=R3pTTuGjxjF0dd3bzMxzB9F/p62G800l9UYiZhojBUNrG7MbW+R6CfFWJnIz4aybub
-         NcgFiuGSqjUEfA8thSuVfKrxikY+eTzS7LV8RcnU6/nY3QXu568BKDtOBMFMnFycmeQg
-         ma8zW/gHRYPR+llNbsPmZ4tcxrMZHGhbUW8/L19q4pdXcSsyI6bXdUW4oo1VRYyjduaT
-         L0BagMCFBAyqfpEcd6G4nNfhZjbAgYu+Fb7AjncT7OszJV9CPij1Qj8HSp3CQ0SdCG6Z
-         EiiYsHgeZcO9wGPeECVWqJZUuZlv65+XZrkrvSWNHYSRKg15An9TuT1etgsuM8oAtml6
-         sHFQ==
-X-Forwarded-Encrypted: i=1; AFNElJ/LPv0T4IxfokWOGCUnEe1o+Nrh4yR6MPaYyObLX+03DarKkqgQUAq0fA9xgjBexy247yp/mHJp2ms=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBOLJC5xzY+iZguRdb1j3NxeN7tK6LgkpNfiNIAJzx3h5fwLgx
-	E/Jk3rQCWqZzVwRfMsKGznigbWCOsrwsMdGj8IRUoQFsvLzAtdSAOynSPcnrN2lY
-X-Gm-Gg: AfdE7cnG+jx2TpmeKvyKfY2XqZdqMb6vqNqV2LdshSrOgccLb6NoAy9LNSeY3MZDse5
-	dRFL/0/CY0DVl+FReZnuNTyB31HABaDRQ6GqLb6d3bN8Ov7H/SeuCHUVhmYKetavodWBbncOVzr
-	Cw9x4rDUIUjRrcCX2uI9vt2blRh2e8g3nXZNAmY8TSTbrUpOIdXxH14TKERd2LlP0TYexFRM+zo
-	kxE6v5r/ReGwdASJQLuZD5EnVFfRu2fAQd5pFOEos1X0vOrs6J10AUYK1o9Ibomoz5X6nPcl7vB
-	aDSCGQhSWi/zJFJrZiDfdKWjqJZNQxQ98+hSV3dZaD/+Bw3IhCM7x3YXCJd8LRDVV2NViNaiS53
-	AldTlGMs0TI8oPxwZMICyzyB3VOG6nFzcoDnRaGWE2zbS6JdgqmeDG109cRPpiJggKH7ryEqsG0
-	W8u3fkOsSL0mF1q+7RexFh91yurvy71u33obsaQLHabW6QNP49e4XeI8EHo+0E
-X-Received: by 2002:a05:6122:65aa:b0:59b:1012:3f42 with SMTP id 71dfb90a1353d-5bbbe70433bmr3485467e0c.10.1781767056395;
-        Thu, 18 Jun 2026 00:17:36 -0700 (PDT)
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5bb901ac4d6sm10315182e0c.13.2026.06.18.00.17.36
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Jun 2026 00:17:36 -0700 (PDT)
-Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-6cd01f6c11aso210008137.3
-        for <linux-clk@vger.kernel.org>; Thu, 18 Jun 2026 00:17:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ9nnHZF3Cxco+PQXbIjsWfFYcK1xuObbPuyZeNM2fVvfgOOnRN3c1CXZXAjIk7uHghoEZlBTzJ1caA=@vger.kernel.org
-X-Received: by 2002:a05:6102:3f51:b0:635:1bc8:3563 with SMTP id
- ada2fe7eead31-7246cde4ab6mr4100174137.20.1781767055966; Thu, 18 Jun 2026
- 00:17:35 -0700 (PDT)
+	s=arc-20240116; t=1781769542; c=relaxed/simple;
+	bh=YJM6wrmGhKXn+d/Bq+J5FDixvimrwMNCUE20hZ3q+jY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UXJrQVihPO4dBfLMWI2Nr8Yg3YbFdhULARfLcMONG1p+dZruOx/EFEj/S7U0349RJ55vslCkRvnKFezFOr8lc3uuwxeRF2Eh9xX+3UmDvEzHNGCgbJu5LXNlhIg2wSRjQK1uuqHbZEQgxsfVzVue3vNGCz/5NplMU16OzxcvBNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (2048-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=bu5voEUH; arc=none smtp.client-ip=109.224.244.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=onurozkan.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="bu5voEUH"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
+	s=protonmail; t=1781769537; x=1782028737;
+	bh=FQ9h1CNqtUIN9Ufq0CQyLuGN5g3JqgqYIsoSVJmPyDg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:From:To:
+	 Cc:Date:Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=bu5voEUHxZ16s5NR8RCnQZSzKOtOARepFItcD+renzYYsuo0H9OMI/sh+bvQb8WYR
+	 kcl8QhRR6Lk/89oPQ+kCcVsecOdlEjmbIXH3ScoNfbtC0p5/MYwjUkewI2/VOq7Cq3
+	 1de2jMTVMIVu00IhN1HxtAbwLH4D1u/ZTvSssC+QmH59KiF1IFKsQT+gGcIJPQbogT
+	 iZpROoSfiW/M0lurXIzcW9AXtETcxUXGelZkEu5t4oG/UE/wdFkAdZbvKOux/+52Ts
+	 6z89OgPGkxuAmYKvyT1Akt9meuGh61PJebzFQsGydcKaQioBdDyRD1nmdrUL7HlM20
+	 1RNW0/QdxAy4A==
+X-Pm-Submission-Id: 4ggtQf3jNcz2ScmS
+From: =?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Drew Fustini <fustini@kernel.org>,
+	Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>,
+	=?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Gary Guo <gary@garyguo.net>,
+	=?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	Michal Wilczynski <m.wilczynski@samsung.com>,
+	Brian Masney <bmasney@redhat.com>,
+	Boqun Feng <boqun@kernel.org>,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-riscv@lists.infradead.org,
+	linux-pwm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	Boris Brezillon <boris.brezillon@collabora.com>,
+	=?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>
+Subject: Re: [PATCH v4 3/3] rust: clk: use 'kernel vertical style' for imports
+Date: Thu, 18 Jun 2026 10:58:47 +0300
+Message-ID: <20260618075848.28017-1-work@onurozkan.dev>
+X-Mailer: git-send-email 2.51.2
+In-Reply-To: <20260618-clk-type-state-v4-3-8be082786080@collabora.com>
+References: <20260618-clk-type-state-v4-0-8be082786080@collabora.com> <20260618-clk-type-state-v4-3-8be082786080@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260615104845.4122868-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20260615104845.4122868-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CAMuHMdWBeaTB4QK5vvB0CQm+yrX1ps3V2EtFu0Q4a0JG_94f7g@mail.gmail.com> <CA+V-a8uixCr+LZ+2SrX1b2p3nNwkq8=ctdpzx=BF9OcR9eJW1w@mail.gmail.com>
-In-Reply-To: <CA+V-a8uixCr+LZ+2SrX1b2p3nNwkq8=ctdpzx=BF9OcR9eJW1w@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 18 Jun 2026 09:17:23 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVx_SS0w=x4H3WUb4BdnOXQOxboeFZwmvhP31HLoQNNkw@mail.gmail.com>
-X-Gm-Features: AVVi8CdwNDnTBvDYfJRjdNKhkzB68fOeQnOFgapo4u-OWjhPO9Gwwv76NFhl4Qg
-Message-ID: <CAMuHMdVx_SS0w=x4H3WUb4BdnOXQOxboeFZwmvhP31HLoQNNkw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/5] clk: renesas: rzv2h-cpg: Use per-SoC PLL reference
- frequency for calculations
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-Hi Prabhakar,
-
-On Wed, 17 Jun 2026 at 22:17, Lad, Prabhakar <prabhakar.csengg@gmail.com> w=
-rote:
-> On Wed, Jun 17, 2026 at 10:48=E2=80=AFAM Geert Uytterhoeven
-> <geert@linux-m68k.org> wrote:
-> > On Mon, 15 Jun 2026 at 12:48, Prabhakar <prabhakar.csengg@gmail.com> wr=
-ote:
-> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > >
-> > > Introduce a per-SoC PLL reference input frequency parameter to avoid
-> > > relying on a hardcoded 24MHz constant during PLL configuration math.
-> > >
-> > > Add an input_fref member to struct rzv2h_pll_limits. In the core
-> > > calculation helper rzv2h_get_pll_pars(), derive the base input clock
-> > > rate from limits->input_fref, utilizing the conditional ternary opera=
-tor
-> > > to fall back to 24MHz if the struct field is left uninitialized (0), =
-and
-> > > drop the obsolete macro RZ_V2H_OSC_CLK_IN_MEGA.
-> > >
-> > > This abstraction permits the reuse of the common PLL divider logic on
-> > > newer SoC platforms like the RZ/T2H, which feature a 48 MHz PLL refer=
-ence
-> > > clock input instead of the 24 MHz signal used by RZ/V2H(P), without
-> > > disrupting existing platforms.
-> > >
-> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com=
->
-> >
-> > Thanks for your patch!
-> >
-> > > --- a/include/linux/clk/renesas.h
-> > > +++ b/include/linux/clk/renesas.h
-> > > @@ -53,6 +53,9 @@ static inline void rzg2l_cpg_dsi_div_set_divider(u8=
- divider, int target) { }
-> > >   * various parameters used to configure a PLL. These limits ensure
-> > >   * the PLL operates within valid and stable ranges.
-> > >   *
-> > > + * @input_fref: Reference input frequency to the PLL (in MHz). If se=
-t
-> >
-> > "in Hz", as pointed out by Sashiko.
-> >
-> Agreed.
->
-> > > + * to 0, a default value of 24MHz is used.
-> > > + *
-> I'll also replace `24MHz` to `24000000 Hz`.
-
-Personally, I find "24 MHz" easier to read.
-Counting zeroes without thousands-grouping can be hard...
-https://lore.kernel.org/CAMuHMdUp3fOkAttk2FKJTh5svaiMwgu4JZ8utPeHghU4TQLE-w=
-@mail.gmail.com
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+On Thu, 18 Jun 2026 00:46:37 -0300=0D
+Daniel Almeida <daniel.almeida@collabora.com> wrote:=0D
+=0D
+> Convert all imports to use the new import style. This will make it easier=
+=0D
+> to land new changes in the future.=0D
+> =0D
+> No change of functionality implied.=0D
+> =0D
+> Link: https://docs.kernel.org/rust/coding-guidelines.html#imports=0D
+> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>=0D
+=0D
+Reviewed-by: Onur =C3=96zkan <work@onurozkan.dev>=0D
+=0D
+> ---=0D
+>  rust/kernel/clk.rs | 56 ++++++++++++++++++++++++++++++++++++++++++++----=
+------=0D
+>  1 file changed, 46 insertions(+), 10 deletions(-)=0D
+> =0D
+> diff --git a/rust/kernel/clk.rs b/rust/kernel/clk.rs=0D
+> index 692ee88ca772..1412a2f0aedf 100644=0D
+> --- a/rust/kernel/clk.rs=0D
+> +++ b/rust/kernel/clk.rs=0D
+> @@ -80,12 +80,23 @@ fn from(freq: Hertz) -> Self {=0D
+>  mod common_clk {=0D
+>      use super::Hertz;=0D
+>      use crate::{=0D
+> -        device::{Bound, Device},=0D
+> -        error::{from_err_ptr, to_result, Result},=0D
+> -        prelude::*,=0D
+> +        device::{=0D
+> +            Bound,=0D
+> +            Device, //=0D
+> +        },=0D
+> +        error::{=0D
+> +            from_err_ptr,=0D
+> +            to_result,=0D
+> +            Result, //=0D
+> +        },=0D
+> +        prelude::*, //=0D
+>      };=0D
+>  =0D
+> -    use core::{marker::PhantomData, mem::ManuallyDrop, ptr};=0D
+> +    use core::{=0D
+> +        marker::PhantomData,=0D
+> +        mem::ManuallyDrop,=0D
+> +        ptr, //=0D
+> +    };=0D
+>  =0D
+>      mod private {=0D
+>          pub trait Sealed {}=0D
+> @@ -189,8 +200,15 @@ impl<State: ClkState> From<Error<State>> for kernel:=
+:error::Error {=0D
+>          /// original [`Clk`], e.g.:=0D
+>          ///=0D
+>          /// ```=0D
+> -        /// use kernel::clk::{Clk, Enabled, Unprepared};=0D
+> -        /// use kernel::device::{Bound, Device};=0D
+> +        /// use kernel::clk::{=0D
+> +        ///     Clk,=0D
+> +        ///     Enabled,=0D
+> +        ///     Unprepared, //=0D
+> +        /// };=0D
+> +        /// use kernel::device::{=0D
+> +        ///     Bound,=0D
+> +        ///     Device, //=0D
+> +        /// };=0D
+>          /// use kernel::error::Result;=0D
+>          ///=0D
+>          /// fn get_enabled(dev: &Device<Bound>) -> Result<Clk<Enabled>> =
+{=0D
+> @@ -240,8 +258,17 @@ fn from(err: Error<State>) -> Self {=0D
+>      /// The following example demonstrates how to obtain and configure a=
+ clock for a device.=0D
+>      ///=0D
+>      /// ```=0D
+> -    /// use kernel::clk::{Clk, Enabled, Hertz, Unprepared, Prepared};=0D
+> -    /// use kernel::device::{Bound, Device};=0D
+> +    /// use kernel::clk::{=0D
+> +    ///     Clk,=0D
+> +    ///     Enabled,=0D
+> +    ///     Hertz,=0D
+> +    ///     Prepared,=0D
+> +    ///     Unprepared, //=0D
+> +    /// };=0D
+> +    /// use kernel::device::{=0D
+> +    ///     Bound,=0D
+> +    ///     Device, //=0D
+> +    /// };=0D
+>      /// use kernel::error::Result;=0D
+>      ///=0D
+>      /// fn configure_clk(dev: &Device<Bound>) -> Result {=0D
+> @@ -287,7 +314,11 @@ fn from(err: Error<State>) -> Self {=0D
+>      /// and move between the variants:=0D
+>      ///=0D
+>      /// ```=0D
+> -    /// use kernel::clk::{Clk, Enabled, Prepared};=0D
+> +    /// use kernel::clk::{=0D
+> +    ///     Clk,=0D
+> +    ///     Enabled,=0D
+> +    ///     Prepared, //=0D
+> +    /// };=0D
+>      /// use kernel::error::Result;=0D
+>      ///=0D
+>      /// enum DeviceClk {=0D
+> @@ -481,7 +512,12 @@ pub fn enable(self) -> Result<Clk<Enabled>, Error<Pr=
+epared>> {=0D
+>          /// clock or threading it through an intermediate state, e.g.:=0D
+>          ///=0D
+>          /// ```=0D
+> -        /// use kernel::clk::{Clk, Enabled, Hertz, Prepared};=0D
+> +        /// use kernel::clk::{=0D
+> +        ///     Clk,=0D
+> +        ///     Enabled,=0D
+> +        ///     Hertz,=0D
+> +        ///     Prepared, //=0D
+> +        /// };=0D
+>          /// use kernel::error::Result;=0D
+>          ///=0D
+>          /// fn read_rate(clk: &Clk<Prepared>) -> Result<Hertz> {=0D
+> =0D
+> -- =0D
+> 2.54.0=0D
+> =0D
