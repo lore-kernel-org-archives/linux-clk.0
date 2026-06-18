@@ -1,64 +1,64 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A63A2C325C
-	for <linux-clk@vger.kernel.org>; Thu, 18 Jun 2026 18:19:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73C96360EE6
+	for <linux-clk@vger.kernel.org>; Thu, 18 Jun 2026 18:19:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781806796; cv=none; b=AxQ9Pu9o7mfx4L3wHFcbhAV5W1kbpTFvXKY8c7pxPKLHDd+HBdE3/aOf/MziKaXA7turWnY4A5OAYyjRa0Je9upkDl4aex9E0Z7ZjK+4l6kYHY5O4aTjLAIbD+Qr3KxWB6ymB8nNamVSTXbsgagOzFE2Cs8CwEETCPm6OfNxcCI=
+	t=1781806797; cv=none; b=JqLSEf8Wym+RUbpstfjoC4nez9liWC52ICUlphyCh9vA/FGgOTstsrD2Q6rJbxsZE3VZcH6TORIDWI7hIPGFv1dP6xQORMk4eROS0aLQa6DNIJgYsA2c76HFc4CNviOgOGCFfT881vZJG/4joV/+bXkqnPxAwpLDKd4maL/DTB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781806796; c=relaxed/simple;
-	bh=FVIPY1tpmqUCfjcHpr64kdi2gllDdfhZLzamW+VAut4=;
+	s=arc-20240116; t=1781806797; c=relaxed/simple;
+	bh=HoYpqivwGVANa/1JF5XBlbgNs/qwjN7jE8naqxHLyDI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nu4+COehr2bNs0VEtaHpKb24IrnKgUa/GgV3+az8wrhPC7Xzf//Zq82wC45UftuRB0Vi5tW1dxvWhRdbDq2bZzjJnjEgQufsTEjgTxuPhzLo2UV2Aq9VhBXrhBGlWsngkJEiOoCtex9G2eP96wEipurC6YrukI4o5yIFRmwt1i4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=covb9dzq; arc=none smtp.client-ip=209.85.128.50
+	 MIME-Version; b=MutkJlzh37wrTdNekMiI6TFl5oKjcyR1dZHYTIiEouTIGt+5wcv1ZYhtrk9vknRQZNZd5I9lREgZWwuPT3WBS79JmWmEXkjtLaq0df4us/I3iD17A10IAD05HqP9rIop5gHzFA/bdux6KtbN62agnABeTeMZ3StwWmjdtVBVI6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PCBLWfIr; arc=none smtp.client-ip=209.85.221.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="covb9dzq"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4921e4dd62dso10149635e9.0
-        for <linux-clk@vger.kernel.org>; Thu, 18 Jun 2026 11:19:54 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PCBLWfIr"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-4624c1409c9so980658f8f.3
+        for <linux-clk@vger.kernel.org>; Thu, 18 Jun 2026 11:19:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1781806793; x=1782411593; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1781806794; x=1782411594; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8jEq3xPdR6OLs4jvkvbhYoDUoAuNjkoOpaFOrvr2Puk=;
-        b=covb9dzqsN83Bov+qRdEzYnZoW/3GP56vUakvzrMpq7XHCMAdjoR9KcfGuHKWfSlLA
-         aXno/YVIIC4Wkt/XeiPFxXBf9usgJ3Y6e0ZKHu+Y3f75bvqXFE0DagE14IRiwpzyE9hS
-         Uu1lnkwYB1R2OuZMgqS5TUJXKjSQM2kZf7jL4Zc+iQ5rIPkMyRrwVcvYBzSLHbQYv8OI
-         1vPzElfpeTUIo+S1tUbSvZhN5AVfqfi+nlRkDaz2jhcePoXZ0tWE2EL3m4J1g016T149
-         BK7MRBAHmal3vSSxujtDvrRVdj6kAL9YxNTlBTp9eMaX8ovey1E5keClSeL+diO5N38y
-         kSWw==
+        bh=JZfCSxnbcgYyMg1b6U2y2nuS3Se3N84xdsJLHyDbTLw=;
+        b=PCBLWfIrA3NSAJECZaKmn+f7ERF0ZpxwCmzct7WbPmnLe7I2NBGkDDHeB8Z9HxHaNQ
+         VDnDP8fJlmXXSp8j9HimGLcbm9PWcSr7zHUO0XUPC/m6iWpryE5LBWEOrRSpQauBYQfd
+         oJCq05VHO5QGnWjG8GgRQkUABdTHpr3r58ZurEaUx4XVJjQ5L0mreaF/fFiJNWgnMnF+
+         TaqJD1TZjx9Ul99XM5SPuyvrjwrEEVJiDUKakw3AtnUqJWsh86uW2zu5OlcCSQrTs15e
+         MsiUPrRUuEe45t33axagJcdQIDxuhamoO8Td4U8HC6zJtXGzVQxiiG54VBhfa+MJpb3S
+         qjpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781806793; x=1782411593;
+        d=1e100.net; s=20251104; t=1781806794; x=1782411594;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=8jEq3xPdR6OLs4jvkvbhYoDUoAuNjkoOpaFOrvr2Puk=;
-        b=Qn33yhpPOc0l2fAD439jiUrZ6G/1V6fcu0E1YnIrTsVmQ07BHmAvZ5HrHgpmp2EQeY
-         SqUgEtlV3KJGQc3SZ8yvmr6dwLyCf4Bzzpa2gLPdcAgyXT4fCGoI3Mb0OyvU8eCxSVDz
-         AEpW52Y2FJoXn3T72ffwjBT56wE29JIXagT+0V9pznrG424T/2NlB843CAcJHT1OJHtE
-         SxvhwlZYvfQ+B4i5T7xWrTNBH/zTJS0LRcZoF5Fe6Q6i6u0LZMdSdJMSdnpWfpeFuWI8
-         +yLDFd3ohp7zN/jiuGzi2KKMF3i/8t6gxScWJT38i5p+djhA6x5qReMdLA5y5yI9Z52b
-         9DsA==
-X-Forwarded-Encrypted: i=1; AFNElJ/VfpKrhvfnW3njJu7qr1M+bhgR/9Cf70MlLgf0RkUcj9NIKTN00OdbkWmLcHEwDXWMSnwfOjsyj40=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlPOCpQycoy4iARlTWB5b00HJj1qAeI2kOJmOLv3bWcNqI+lQF
-	/848+ZNxcfYOBEpvNqcRUqJEwZstJW/tmi4C/xWsVI704/xM/vAIOCHl
-X-Gm-Gg: AfdE7cmTMyPxppUpWCQvTr1zH+JrJe5y1MdnsquS4N1O5EGlmU7wsOwVnPtZgD7bT9n
-	PEagwzMUJvcku7qeTZcILmIRCtiQFdzYeBGxhk0nsiqcv9TRNOmg2fYoYVdWd/UlcZGqPYFe9f7
-	mapvCZGRg+dPsoId40medUiA+srsM6xqmC3NBBPkMBK1QGIEWJARbvd9/47/Fkp6ydgRlRfPVJF
-	8bsPxXF69Ky+4XdBgDxpZI3EK60KbUVlme0MUeiL0P7UzsXrh9Gf1qQ/QXS6TzGPU4exUJNkowP
-	nQ0Bjicf7jT0/UVMywAFy7tmz0BppYQVxhsmY5xlf8yk9lWxZ2wu3fvjhiLVuB1DtUzLiNNNa2f
-	wrBFiQkFmPIcpp9+Ahoe12dgzyzNGNGJR6Fq16/PEiucjw5fn3nB775YTi4GYKw5fzK2XfBKoFm
-	z25H0c0d+rzlxTa7AQcFwlw5yirBhUf/NtAkzsLb00+V1TjdYHJuUsbSiJEY5YFRIHMifCa/6fm
-	cHl42sNJwxtNAWUycMSm136vTFpPpOC7pEVlA==
-X-Received: by 2002:a05:600c:c04b:10b0:492:2ffd:8a74 with SMTP id 5b1f17b1804b1-49240a38ba5mr1602745e9.12.1781806793083;
+        bh=JZfCSxnbcgYyMg1b6U2y2nuS3Se3N84xdsJLHyDbTLw=;
+        b=p3ehtASKsfm4bLAftuuOFO4F8MYL/WZxLYF5bo66wNgdjcDG7DrzB8v3fh+CgkCd61
+         gqec0INZgZvpFWMq6fhsFTkARE+v5gNzTHViY7hyVvDiB+/daNIRBS3jVRc1Ekv0pxLR
+         jvoa8+sgYKORuhxItkq7bBAS7RZ364MGjoxGo+Vvhseh4CtyGJssybgIZfbuLwr+AWKS
+         xQl/MGEGldSusksSzA1FdirxbWwIUKbGqEyegiEM2DhqwI+p1QW3UmIjZmT5/z0GHtIU
+         5xKO1Ipf7TiBmCDWxLTd8hTuUiu/s06uuSuhxwDzWwj0aV9eyP/m5iblyOgvNQnUAqmv
+         9OKQ==
+X-Forwarded-Encrypted: i=1; AFNElJ+uMk9zqpLblC6M91gObeyVSMGZskBLNHDf74ULI6gOmAbwkZeZSk6XsvcOUnZZ/0rKsEl9LAw24U8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyW43ox2bSAipua9pQTGqVtjb2Xz6L3z0vrpuX3Zk+hN4igSH68
+	gcdXL/1ePtiUXt+eKxUAYYSObU/gMkWrDUN9Qa0ckUF+qU8B+yPZxVFk
+X-Gm-Gg: AfdE7cmx/cLySc8LAfEBwb4U0CBnrWjvKJyoapX0cmdkvCFYAvksJOCB9HMU9vN+wjY
+	bIcwqGyAWtxnzD98YuWJ2udIq6tozQIwLemowtYLH22ER0V/W5swQmeHXdZQGHWvPU90GeWsCE2
+	UCWrRpR4kDhLh7y7hATisGg/6lbhV26jJH+VJpXJEfpI2abJ1FqdA3k9qNdC+aWu0qe0D6hhpB5
+	PtQwyyMGBPX8a17/MXCMwfNSBTCAu6C8s0S7rd6XZkK2VPzkVn15xHpk/Z+iykvJ7BN1P/9wwoF
+	TYlT8Po8QbmpeU3oWj2dF/6Cgmfa5J6rwW9hvrkDM4H7acuSnK7qee8oqyqbOXOrkYsLZuL2rqe
+	pAeQarrB+A53ShwxoZsFkAbOmrHUX48pBgHmkm1UivhJQg635gVcADEvdZLsYodAcKMJHKNThp0
+	H5BkxdVJ1gPhzBFZvp2xl4Z+nV9xFBz2x1fZ17q1l2O2GGqRgsVgWXDxWDWX0dB03V0IsUjepgN
+	qRZIJZmseSJNmtipt3BSPGjRxU=
+X-Received: by 2002:a5d:5f91:0:b0:464:f719:561c with SMTP id ffacd0b85a97d-46501e3a652mr988685f8f.36.1781806793851;
         Thu, 18 Jun 2026 11:19:53 -0700 (PDT)
 Received: from iku.Home ([2a06:5906:61b:2d00:3bf7:d534:a488:f67d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-465090c42e1sm869435f8f.11.2026.06.18.11.19.52
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-465090c42e1sm869435f8f.11.2026.06.18.11.19.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Jun 2026 11:19:52 -0700 (PDT)
+        Thu, 18 Jun 2026 11:19:53 -0700 (PDT)
 From: Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -77,9 +77,9 @@ Cc: linux-kernel@vger.kernel.org,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v4 1/5] clk: renesas: rzv2h-cpg: Use per-SoC PLL reference frequency for calculations
-Date: Thu, 18 Jun 2026 19:19:45 +0100
-Message-ID: <20260618181949.3036280-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v4 2/5] clk: renesas: cpg-mssr: Implement dedicated MSTP delay logic for RZ/T2H LCDC and RTC
+Date: Thu, 18 Jun 2026 19:19:46 +0100
+Message-ID: <20260618181949.3036280-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20260618181949.3036280-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20260618181949.3036280-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -93,105 +93,84 @@ Content-Transfer-Encoding: 8bit
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Introduce a per-SoC PLL reference input frequency parameter to avoid
-relying on a hardcoded 24MHz constant during PLL configuration math.
+Introduce a dedicated clock delay mechanism, cpg_rzt2h_mstp_delay(), to
+satisfy the module-stop (MSTP) state release requirements specified in
+the RZ/T2H hardware manual.
 
-Add an input_fref member to struct rzv2h_pll_limits. In the core
-calculation helper rzv2h_get_pll_pars(), derive the base input clock
-rate from limits->input_fref, utilizing the conditional ternary operator
-to fall back to 24MHz if the struct field is left uninitialized (0),
-and drop the obsolete macro RZ_V2H_OSC_CLK_IN_MEGA.
+Per the hardware manual, while a standard 10 us delay (satisfying 7 dummy
+reads) is sufficient for most IP blocks, the LCDC requires 100 dummy reads
+(142 us) and the RTC requires 300 dummy reads (428 us) to stabilize after
+being released from a module-stop state.
 
-This abstraction permits the reuse of the common PLL divider logic on
-newer SoC platforms like the RZ/T2H, which feature a 48 MHz PLL reference
-clock input instead of the 24 MHz signal used by RZ/V2H(P), without
-disrupting existing platforms.
+Implement a conditional bitmask filter helper that switches wait
+intervals based on the packaged module clock index. In
+cpg_mstp_clock_endisable(), the clock index and individual target bits are
+known, allowing an exact match. In the resume path cpg_mssr_resume_noirq(),
+where individual bits are not tracked, pass a fallback register index base
+(`reg * 32`) with bit verification masked out to match on the peripheral's
+register group block instead.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 v3->v4:
-- Fixed MHz to Hz for input_fref in the doc comment for
-  struct rzv2h_pll_limits.
 - Added RB tag from Geert.
 
 v2->v3:
 - No change
 
 v1->v2:
-- Dropped RZ_V2H_OSC_CLK_IN_MEGA macro in favor of direct use of the
-  input_fref field with a fallback.
-- Updated the doc to specify the default value of input_freq when it is 0.
-- Updated commit message
+- Dropped using table based approach in favor of direct conditional checks on the clock index.
+- Updated commit message to reflect the new approach.
 ---
- drivers/clk/renesas/rzv2h-cpg.c | 8 ++++----
- include/linux/clk/renesas.h     | 5 +++++
- 2 files changed, 9 insertions(+), 4 deletions(-)
+ drivers/clk/renesas/renesas-cpg-mssr.c | 20 ++++++++++++++++++--
+ 1 file changed, 18 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/renesas/rzv2h-cpg.c b/drivers/clk/renesas/rzv2h-cpg.c
-index e271c04cee34..fff89f2bdc0b 100644
---- a/drivers/clk/renesas/rzv2h-cpg.c
-+++ b/drivers/clk/renesas/rzv2h-cpg.c
-@@ -218,7 +218,6 @@ struct rzv2h_plldsi_div_clk {
- #define to_plldsi_div_clk(_hw) \
- 	container_of(_hw, struct rzv2h_plldsi_div_clk, hw)
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index 5b84cbee030b..4ed056b18d31 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -253,6 +253,22 @@ static void cpg_rzt2h_mstp_write(struct cpg_mssr_priv *priv, u16 offset, u32 val
+ 	writel(value, base + RZT2H_MSTPCR_OFFSET(offset));
+ }
  
--#define RZ_V2H_OSC_CLK_IN_MEGA		(24 * MEGA)
- #define RZV2H_MAX_DIV_TABLES		(16)
- 
- /**
-@@ -242,6 +241,7 @@ struct rzv2h_plldsi_div_clk {
- bool rzv2h_get_pll_pars(const struct rzv2h_pll_limits *limits,
- 			struct rzv2h_pll_pars *pars, u64 freq_millihz)
- {
-+	unsigned long input_fref = limits->input_fref ?: (24 * MEGA);
- 	u64 fout_min_millihz = mul_u32_u32(limits->fout.min, MILLI);
- 	u64 fout_max_millihz = mul_u32_u32(limits->fout.max, MILLI);
- 	struct rzv2h_pll_pars p, best;
-@@ -254,7 +254,7 @@ bool rzv2h_get_pll_pars(const struct rzv2h_pll_limits *limits,
- 	best.error_millihz = S64_MAX;
- 
- 	for (p.p = limits->p.min; p.p <= limits->p.max; p.p++) {
--		u32 fref = RZ_V2H_OSC_CLK_IN_MEGA / p.p;
-+		u32 fref = input_fref / p.p;
- 		u16 divider;
- 
- 		for (divider = 1 << limits->s.min, p.s = limits->s.min;
-@@ -335,9 +335,9 @@ bool rzv2h_get_pll_pars(const struct rzv2h_pll_limits *limits,
- 					continue;
- 
- 				/* PLL_M component of (output * 65536 * PLL_P) */
--				output = mul_u32_u32(p.m * 65536, RZ_V2H_OSC_CLK_IN_MEGA);
-+				output = mul_u32_u32(p.m * 65536, input_fref);
- 				/* PLL_K component of (output * 65536 * PLL_P) */
--				output += p.k * RZ_V2H_OSC_CLK_IN_MEGA;
-+				output += p.k * input_fref;
- 				/* Make it in mHz */
- 				output *= MILLI;
- 				output = DIV_U64_ROUND_CLOSEST(output, 65536 * p.p * divider);
-diff --git a/include/linux/clk/renesas.h b/include/linux/clk/renesas.h
-index 0949400f44de..798bb0b54bab 100644
---- a/include/linux/clk/renesas.h
-+++ b/include/linux/clk/renesas.h
-@@ -53,6 +53,9 @@ static inline void rzg2l_cpg_dsi_div_set_divider(u8 divider, int target) { }
-  * various parameters used to configure a PLL. These limits ensure
-  * the PLL operates within valid and stable ranges.
-  *
-+ * @input_fref: Reference input frequency to the PLL (in Hz). If set
-+ * to 0, a default value of 24MHz is used.
-+ *
-  * @fout: Output frequency range (in MHz)
-  * @fout.min: Minimum allowed output frequency
-  * @fout.max: Maximum allowed output frequency
-@@ -78,6 +81,8 @@ static inline void rzg2l_cpg_dsi_div_set_divider(u8 divider, int target) { }
-  * @k.max: Maximum delta-sigma value
-  */
- struct rzv2h_pll_limits {
-+	u32 input_fref;
++static void cpg_rzt2h_mstp_delay(u32 idx, bool bit_valid)
++{
++	unsigned int mask = bit_valid ? GENMASK(31, 0) : GENMASK(31, 5);
 +
- 	struct {
- 		u32 min;
- 		u32 max;
++	if (idx == (MOD_CLK_PACK(1204) & mask)) {
++		/* LCDC needs 100 dummy reads, or 142us */
++		udelay(142);
++	} else if (idx == (MOD_CLK_PACK(605) & mask)) {
++		/* RTC needs 300 dummy reads, or 428us */
++		udelay(428);
++	} else {
++		/* default 7 dummy reads, or 10us */
++		udelay(10);
++	}
++}
++
+ static int cpg_mstp_clock_endisable(struct clk_hw *hw, bool enable)
+ {
+ 	struct mstp_clock *clock = to_mstp_clock(hw);
+@@ -312,7 +328,7 @@ static int cpg_mstp_clock_endisable(struct clk_hw *hw, bool enable)
+ 		 * register, we simply add a delay after the read operation.
+ 		 */
+ 		cpg_rzt2h_mstp_read(priv, priv->control_regs[reg]);
+-		udelay(10);
++		cpg_rzt2h_mstp_delay(clock->index, true);
+ 		return 0;
+ 	}
+ 
+@@ -1142,7 +1158,7 @@ static int cpg_mssr_resume_noirq(struct device *dev)
+ 			cpg_rzt2h_mstp_write(priv, priv->control_regs[reg], newval);
+ 			/* See cpg_mstp_clock_endisable() on why this is necessary. */
+ 			cpg_rzt2h_mstp_read(priv, priv->control_regs[reg]);
+-			udelay(10);
++			cpg_rzt2h_mstp_delay(reg * 32, false);
+ 			continue;
+ 		} else
+ 			writel(newval, priv->pub.base0 + priv->control_regs[reg]);
 -- 
 2.54.0
 
