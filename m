@@ -1,115 +1,157 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47E6B3947B8;
-	Fri, 19 Jun 2026 16:08:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 454FD372057
+	for <linux-clk@vger.kernel.org>; Fri, 19 Jun 2026 16:40:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781885332; cv=none; b=qJUe4NsPwVUq56uCOfUB49aGAByWWDZc+Qd9eunlYTzxV0DqjaOsnJWHma0H76wnst1A7kL1jgNKSUtKZX6jsjYwnwYYd9AX0n4j4JeaVbBSV6L01UQmBXqaA3rbEWmF/JSBqR1l8cWQg1vTwN+1jsYzFt0P+u8DZkkeFTQVUpg=
+	t=1781887237; cv=none; b=RMS2pgJFNS7x6Imj2W+gsPxv/kFh4w3qtoEZAKQK/FXyUf/wOVsGZ1gcGjhQuUSe3CHBmjuK1AukoqF/F47/HajkolnxKhaclKIh1dL/EaRz9Ifau72YI4dcSiudYAWzu2R+9c3QItZzL3Blvv61fVTj76DkatVbZxc8E8uVe+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781885332; c=relaxed/simple;
-	bh=IZBZZMg5/MujLTP47UFAq9wwXBvXEvulfL2I98ygXPI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=InkAwFO8d/IepOav+zCW6S/5VCb2yJ/43XzD8lWogoFOrEtvBOlvX95iKkjobrnsCPaJTVmxNsGqS6pDjlEGtQcDN4+jvqeXMzQiRcdCn5zFcNe6AKL2p7GnmMhiCFZvUV0ieARN1ZKIuM8puKmhk/B6cKcJ7fipe9DpaAi+8+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PiigFRnM; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1781887237; c=relaxed/simple;
+	bh=fRiGDz/PnXRxujzQJocylPslpViJhpqWl66DtLpk2kE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ePRA3D4nags4SFHq9Y+w4JU979J7GZ50XLP6Ol4dgODlD9P5pRBVWzOQPYla4ZZoB9k75DDV4C26AQVvvBPEK6LcgERD/azx+V78zt//QOIDbBV+U4Y14czjpt0O6RDMaV5NBghaMIRllvzTzESi7TyTbsCQq7XKlMRw6Kqj9KU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h4ozNIG3; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PiigFRnM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19B361F000E9;
-	Fri, 19 Jun 2026 16:08:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781885331;
-	bh=g3rjYwyXp9LVnLG0ToWc25PWAKwvGflge9Yq+toMptA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=PiigFRnMAgWqZbRw8JbcDuSyWN/DDDNft2XfAW1edDrOHtPgypB6APfPuGmIhLHu1
-	 xidrGAjPub7xmEhPpv1ekZfWyczoaWbpqZTAK/KzcOr0E4KfwB2DcrpD3CdyY0owFy
-	 /j5YhXdsrBRlZBxASaxKu1Z3s2+GqIRNdq34COVmnlFLHKIdtSDbXOmMFdKsM6xc++
-	 05I6mBEafF6I9VrpOgGSAkdHdO7/yaqfEkuYXGHivIExGArF4ucv3FWG+vGvVlhFLA
-	 zc5Iznd/AAZlF+q/kau+VlvD6cfyfYH5y2fpPQTcAHNfaYM6SxZNmplUeHGccTBJJv
-	 ME0pKRKGCXJ1Q==
-Message-ID: <7d946861-c3cb-4512-9d5f-9f4cb9b7ee8a@kernel.org>
-Date: Fri, 19 Jun 2026 19:07:59 +0300
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h4ozNIG3"
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-45f3cf907ceso1158657f8f.2
+        for <linux-clk@vger.kernel.org>; Fri, 19 Jun 2026 09:40:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1781887234; x=1782492034; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5IwVlN3yJGrfyQnit4rech+V0QDajwRA0nwH1Dul5Uo=;
+        b=h4ozNIG30Gi6nK5o+bKnE7J44N7BnmP6akMCh9pBJIJt+HGwJDeF/YaZhnxmdU4e/q
+         Pmr/j84p9p18ZzDPLoc4UqR0zVV3rcCM1TTcSImAvyvXBAqm6K9tg0HCoqaqLKkd3jpP
+         jISYpXqSpL1UXCMV5SLOmHhE4Rpnw03e2hMuOjk/TMMGKsKo3KuvlK6MpxIw/F2vm0B0
+         EngpT4RAsS32cfm4Q42iFGr5IKKb7qzRUr8wa5XrPGqinkTTZMbjezDeHw71BgyF6OS+
+         UVdEmj4mhWUB6OHr1dOO1808N1RDiPZgIum7V68AUAVVUKpYcvROxbznu4E4eoSQiVmY
+         K7yQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1781887234; x=1782492034;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5IwVlN3yJGrfyQnit4rech+V0QDajwRA0nwH1Dul5Uo=;
+        b=lNU0G91i8KWMNltIwQN4RNwb9JqQ1eYiGUGY/qxcJDr8ayFBTeJfuRrJPIEWwi1Wvf
+         3HNKWzZp36FWekV5Z44lYVaE98tTY3ifOt6jRzsQtq63wyfineAY8JHPyiQOEbwrKFTH
+         5homq2YrxPXeUkAAOtBLYXJ5HuwGwKHe6fQkGAvucf637hZLKGqn8oIGkSR6QZ1Nd2Dd
+         2F7z8+z4JHjJS3b0j2J5p+XF6ngKo75s+WmquWC+xdZxWqoGBXQQUzSLzKO0DmgjhGph
+         57/ZE6U5iCHw5uaL3es4cEM1kIhEUGtJibicPIf2quyf7HgvitLf3l70kI7IVjGmImLG
+         5JOA==
+X-Forwarded-Encrypted: i=1; AFNElJ9kOCqFIOCEEKm2XwpJBsWhd+7Q13PyJekD29dRm/cF6dHGxVrE6E6ymKJ4zoYPXYwJ56HoSy0rnCA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyI4UjzRcYAmpM7cIKpKB6rVWMpQLw5JgyrQns0pXJHiyM2eWLB
+	d93IeEXdO90ag+IiOx0JaJgnF9YbEbmJmHMJ3QpdCKQSmXDUSKwOSdBW
+X-Gm-Gg: AfdE7cldHsibvY2FXQLUVWe86xM4LqX88cowEn8x5Rg8rRFypbRGsXJn5n/orWhRprh
+	ET9tidb5LbCaBc/dhH5lQZmJUYWstoJz/TbrNSapDTd7MOylvKajqHAk2rNbMou3kZFEHMj/3SU
+	yvkel8PN8SluQpC106TCpRNCDcaHOwfHptdazZatg0eyFmt7KvQ+TFlIJlW9CKAG4Z2Ted8sBoG
+	oNVzi5HCv3zoKHyDc1Aoh8kaO2EkY3rajtx2bH7GPC/mfMyYyQpFSwEaRzrxHyV6NRdH1QPEeFZ
+	w/euA58Oq80LNJN8EEi0RUg3S37ZrmXwyYFk06Ft5wq4EiCVV0tHrYys3cSL3zRb/tjEdRgQ5OC
+	GplFkcLn88s2IpzWNcU7O9gU3sUBeFHqFZdgEA3lqhWT1tWdLpuaeqs9wCO7faGsMpVxUZp67TJ
+	voyJ/kyxIEG0DWom+KO550ltOiGe1H6bn85XBtPVlq9VXOSaeK
+X-Received: by 2002:a05:6000:2884:b0:465:81cb:bb20 with SMTP id ffacd0b85a97d-46581cbbe76mr5269641f8f.9.1781887233482;
+        Fri, 19 Jun 2026 09:40:33 -0700 (PDT)
+Received: from localhost.localdomain ([2a00:23c4:a702:d301:b387:a6c7:e8fd:bca5])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-46667221de7sm261621f8f.33.2026.06.19.09.40.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Jun 2026 09:40:33 -0700 (PDT)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Brian Masney <bmasney@redhat.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH 0/6] clk: renesas: rzg2l: Add RZ/G3L MIPI DSI, LCDC and LVDS clock support
+Date: Fri, 19 Jun 2026 17:40:20 +0100
+Message-ID: <20260619164030.380098-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/11] ARM: NXP: Drop NOMMU platform support
-To: Frank.Li@oss.nxp.com, Arnd Bergmann <arnd@arndb.de>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Stefan Agner <stefan@agner.ch>, Fabio Estevam <festevam@gmail.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Russell King <linux@armlinux.org.uk>,
- Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
- Dong Aisheng <aisheng.dong@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
- NXP S32 Linux Team <s32@nxp.com>, Linus Walleij <linusw@kernel.org>,
- Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
- Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-hardening@vger.kernel.org, Frank Li <Frank.Li@nxp.com>
-References: <20260619-dts_cleanup_arm_mcore-v1-0-0101795a2662@nxp.com>
-From: Vladimir Zapolskiy <vz@kernel.org>
-In-Reply-To: <20260619-dts_cleanup_arm_mcore-v1-0-0101795a2662@nxp.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hello Frank.
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-On 6/19/26 18:40, Frank.Li@oss.nxp.com wrote:
-> Commercial users and hardware vendors migrated to Zephyr or other RTOS
-> solutions years ago, leaving the NOMMU platform support effectively
-> unused and unmaintained.
-> 
-> Remove the obsolete support to reduce maintenance burden and simplify the
-> Freescale/nxp platform code.
-> 
-> Some driver code still be kept and may clean up later since it is possible
-> reused by other SoC.
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+Hi all,
+ 
+This series adds clock and reset support for the MIPI DSI, LCDC and LVDS
+peripherals on the RZ/G3L (R9A08G046) SoC.
+ 
+The DSI clock path on RZ/G3L is generated by a dedicated fractional PLL
+(PLL7), followed by a two-stage divider and a mux that selects between
+the LVDS path and the DSI/RGB path, each requiring a different output
+duty cycle:
+ 
+ EXTAL->PLL7->[ DIV_DSI_C | DIV_DSI_{A,B}] -> [mux: LVDS | DSI/RGB]-> vclk
+ 
+None of the existing clock types in the driver could express this
+hardware, so the series introduces three new clock types plus one small
+piece of supporting infrastructure, then wires them up for RZ/G3L:
+ 
+ - Patch 1 adds CLK_TYPE_G3L_DSI_DIV, a two-stage divider
+   (power-of-two DIV_DSI_A cascaded with linear DIV_DSI_B) used to
+   derive the DSI clock from PLL7.
+ 
+ - Patch 2 adds CLK_TYPE_G3L_PLLDSI for PLL7 itself. PLL7 is a
+   fractional PLL with its own parameter search (MR/PR/NIR/NFR) and
+   programming sequence, distinct from the existing PLL types in the
+   driver.
+ 
+ - Patch 3 is a small preparatory change that splits the divider
+   "flag" field used by CLK_TYPE_DIV into separate clock flags and
+   divider flags, so that later patches can request divider-specific
+   flags (e.g. CLK_DIVIDER_ROUND_CLOSEST) without affecting existing
+   CLK_TYPE_DIV users.
+ 
+ - Patch 4 adds CLK_TYPE_G3L_DSI_MUX, a mux that additionally tracks
+   and sets the output duty cycle (4/7 for the LVDS path, 1/2 for the
+   DSI/RGB path) depending on which parent is selected.
+ 
+ - Patch 5 wires up the above for RZ/G3L: it adds PLL7 and the DSI
+   divider/mux chain to the core clock table, and adds module clock
+   and reset entries for the MIPI DSI and LCDC peripherals.
+ 
+ - Patch 6 adds the remaining module clock and reset entries for LVDS,
+   which shares the same PLL7/mux clock tree set up in patch 5.
+ 
+This series was tested on the RZ/G3L SMARC EVK [add testing details,
+e.g. board/display panel used and what was verified - resolution,
+clock rates measured, etc.].
+ 
+Patches 1, 2 and 4 depend on each other only loosely (they each add an
+independent clock type); patch 3 is a real prerequisite for patch 5,
+since patch 5 uses DEF_DIV_FLAGS() on the M2 divider. Patches 1-4 are
+core framework changes with no functional effect until patch 5 wires
+them into the RZ/G3L clock tables.
+ 
+Looking forward to your review.
+ 
+Best regards,
+Biju
 
-This change is a bit too early to happen, I prefer to get it orchestrated
-by Arnd. So, as for today I NAK the change for its NXP LPC part.
+Biju Das (6):
+  clk: renesas: rzg2l: Add DSI divider clock support for RZ/G3L
+  clk: renesas: rzg2l: Add PLL7 DSI clock support for RZ/G3L
+  clk: renesas: rzg2l: Add support for divider flags
+  clk: renesas: rzg2l: Add support for RZ/G3L DSI mux
+  clk: renesas: r9a08g046-cpg: Add MIPI DSI and LCDC clock/reset entries
+  clk: renesas: r9a08g046: Add clock and reset entries for LVDS
 
-> ---
-> Frank Li (11):
->        ARM: dts: vf610m4: Remove NOMMU platform support
->        ARM: dts: imxrt1050: Remove NOMMU platform support
->        ARM: imx: Remove NOMMU platform support
->        clk: imx: imxrt1050: Remove NOMMU platform support
->        pinctrl: freescale: IMXRT: Remove NOMMU platform support
->        ARM: imxrt_defconfig: Remove NOMMU platform support
->        ARM: dts: lpc: Remove NOMMU platform support
->        ARM: mach-lpc: Remove NOMMU platform support
->        ARM: configs: lpc*: Remove NOMMU platform support
->        clk: nxp: lpc: Remove NOMMU platform support
->        pinctrl: nxp: lpc: Remove NOMMU platform support
-> 
->   .../devicetree/bindings/pinctrl/fsl,imxrt1050.yaml |   79 -
->   .../devicetree/bindings/pinctrl/fsl,imxrt1170.yaml |   77 -
->   arch/arm/Kconfig                                   |   12 -
->   arch/arm/Makefile                                  |    2 -
->   arch/arm/boot/dts/nxp/Makefile                     |    1 -
->   arch/arm/boot/dts/nxp/imx/Makefile                 |    2 -
->   arch/arm/boot/dts/nxp/imx/imxrt1050-evk.dts        |   72 -
->   arch/arm/boot/dts/nxp/imx/imxrt1050-pinfunc.h      |  993 ------------
->   arch/arm/boot/dts/nxp/imx/imxrt1050.dtsi           |  160 --
->   arch/arm/boot/dts/nxp/imx/imxrt1170-pinfunc.h      | 1561 -------------------
->   arch/arm/boot/dts/nxp/lpc/Makefile                 |    9 -
->   arch/arm/boot/dts/nxp/lpc/lpc18xx.dtsi             |  543 -------
->   arch/arm/boot/dts/nxp/lpc/lpc3250-ea3250.dts       |  273 ----
->   arch/arm/boot/dts/nxp/lpc/lpc3250-phy3250.dts      |  236 ---
->   arch/arm/boot/dts/nxp/lpc/lpc32xx.dtsi             |  540 -------
-
-NXP LPC32xx is ARMv5 and it has MMU, hence it's plainly out of scope of
-the proposed "dropping NOMMU platform support".
+ drivers/clk/renesas/r9a08g046-cpg.c |  67 ++++
+ drivers/clk/renesas/rzg2l-cpg.c     | 501 +++++++++++++++++++++++++++-
+ drivers/clk/renesas/rzg2l-cpg.h     |  31 +-
+ 3 files changed, 593 insertions(+), 6 deletions(-)
 
 -- 
-Best wishes,
-Vladimir
+2.43.0
+
