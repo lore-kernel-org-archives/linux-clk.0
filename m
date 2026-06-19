@@ -1,182 +1,246 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011037.outbound.protection.outlook.com [52.101.70.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43B7B3A168F
-	for <linux-clk@vger.kernel.org>; Fri, 19 Jun 2026 14:31:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781879513; cv=none; b=sevRbAVQ63AqlJeUVS6xUg60vd0S0aQ7FljI3oGajpzd6jcCBdBVOwErkDzsqS7zUlOBoEsUuNXVDzP+aVpLgru2FEAROSUAp0wrJL1wLnB2fEGE8e4yJco8yk0e3hSYbbdSkFWd01TfZ2ndMAZocRXJzWfMq9PQPgfmh6gaqFk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781879513; c=relaxed/simple;
-	bh=LJdnh2HS0tF/xyGE8ExaAQswGjGzrHLipDvrQ2bYaX0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=szQKORyfyNPwx+EEnQMSSRWlBoIBN6s8/w5yMULXz3QpA4TCA9sOTmj7cp9JBvb4R5BwADIRm6y1wqR7Iog7h3+gEOPC8UIblhZGy8sRYXWR5Hsh9ZsQYMzWUmp7znEUU0/zZluXcnk9rvuDKWItPbuh7GYEQ/pU4eK0gHO/qRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=h6SqJU6T; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=LaPZW7By; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A11033B27FB;
+	Fri, 19 Jun 2026 15:41:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1781883685; cv=fail; b=GnTHwKW6772WpTYmabuk1xXkHgNfORrcMONISC57bs4L6QLxYqWHBF2FQHWD9tRG1tTsiWgaeX3mVj/9HOIFfIWkaDAOPi8T/IzS3+1QH7JALytp5FBQ3GhORwn0VFPrk7la5CRd4dt9ioVMAjYKh761EhIiAv3hNIMXDfbtk5M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1781883685; c=relaxed/simple;
+	bh=niBM/b6MzXcCC9rb3Vc9QoKu6antCXoFNtrcCraXi0U=;
+	h=From:Subject:Date:Message-Id:Content-Type:To:Cc:MIME-Version; b=CvZcEHXs00d5MItPSfK0hF+ntHy8m/uHGTkXa5QnIlobMUuo1PXqPk3ppA9T1zR9e28L1NPSbtGYzEjPcKzgfL3iMeMSI1LVVZi8IQgiYh5gG7z49JCgxHAq8/pQYpYsXtg2PtRI8u9mEQXR+VB1zdsAXKeEqkyOhBwFkTH1EFA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=vDG6jG2m; arc=fail smtp.client-ip=52.101.70.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="h6SqJU6T";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="LaPZW7By"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 65JD9dpf3005477
-	for <linux-clk@vger.kernel.org>; Fri, 19 Jun 2026 14:31:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	v1XXoqxMnSgXD6o5pvkQCf4rFypZQ0pr8ir/56ByDZc=; b=h6SqJU6TkKy+EuHa
-	fXkxiTS7J6n5o4ve6mXweznkyz5mzC4OJ1p5SIKAXyNyn3iJ0Rel14jGZfuzXR4C
-	YzGgDGuW3t7KCvYH7rUxsXQ5k7WMlwvy0M56jm1ht2rVj/iksjA8P0uJCdhihRxu
-	uEFYgeI7D4lGP8+Xn/BfD8eUNg0WGWfBdherdlvONAz67ZQvkn95WABlx8r3GCVe
-	Q/lf9lwzN1kPxfwqu255sIT0kzG03hXaKmoJZWKzxPBABweui6d9nFU+lcM4tkRo
-	NPvaVCbvYQqv4+l1yYaKP1ExDyR5AoiK9mOY57SDRsgaNmTu2qzw1uBbfmotS9tq
-	8MupNg==
-Received: from mail-ot1-f69.google.com (mail-ot1-f69.google.com [209.85.210.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4evmyrbuku-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Fri, 19 Jun 2026 14:31:47 +0000 (GMT)
-Received: by mail-ot1-f69.google.com with SMTP id 46e09a7af769-7e6b5a8836bso837733a34.2
-        for <linux-clk@vger.kernel.org>; Fri, 19 Jun 2026 07:31:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1781879507; x=1782484307; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=v1XXoqxMnSgXD6o5pvkQCf4rFypZQ0pr8ir/56ByDZc=;
-        b=LaPZW7ByxsOf1tVUYO+VPSCW1ZeC1txnSAaTFEowrSbrVZKIEldcM5qhP4xtX/nOUm
-         Hg9SuXrSdWuPy/tawAJPOAT5z2IIDvySyScKfbmtOazT4sM1x6XY3TzFe8BwR7w0OE+D
-         nle7qNqjxR2tpzbgnUufVdeRgl8WMa5cBUj1u2ItsTeJipCV6nq+4UNG0W+xc0rvf4q/
-         6D5ux7NMqAXqpDlVf4VbNZqDDfbyzxLXVgtYxVMZEEVJX5nE8+m7B35EG2zcIpiKaHqO
-         D5Nfa3qnt/JAxAKzzblGUdAfS931pM18KupAAzH/i66Ptvd/eU9lnGxSW6f/3F2GBVgC
-         2eEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781879507; x=1782484307;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=v1XXoqxMnSgXD6o5pvkQCf4rFypZQ0pr8ir/56ByDZc=;
-        b=XR2BjmyxMSo97wlc07LJn16zaLvMw1msSwX+NhgUMZc9s13FPFETJTNXQBwcuMt94F
-         WfZggG2GPKrm9XDdww3vWK/+VxhILJUQDkjHwDTgfZfsVTYwRfo6TPT5VWuxISwLc9/J
-         SDQWhUfoT4YDZiJjgO+dyK+Z4ZYrcIgqCZkVxTkGi2Iw/NE0MNx0H/gA4tbnnyACHtxN
-         4GBj51uF719rG/zWsTSh2HoSvLfP0PDgkClClhJ+LFIkEW/+fG/xbllk3WrNr8qBOjd1
-         0emeEi+pRdiIvyLo/4+D2/Obtwi79rFWH7b1NBlugEPnaqgkTecU7SkV+d37ZRb9DLaB
-         1aiQ==
-X-Forwarded-Encrypted: i=1; AFNElJ9u5yMqK8ex1t/LvQFTkRBra/s0uyVHRydD31cTDPAtfLAswXvwpTdPfzb7YKdLLJj3StIJpltzuPs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEkrHVnD/lUExUwuq4lF4KW19c24yHYAAlxJ8s/lSaEwY8L2D1
-	8FG4B1W9yFZaywUTpm3gHu2rA6EuTRqdmYTvyl01vCeoWW5P65iyAYzn8xoQ1UQsvwqn5b29N5k
-	JTLsIyH+pK8oswb26JN6Xw0UMhQq/OBwZyDn8my4RDNnff8/YFZ/v6qxTIjpcQaY=
-X-Gm-Gg: AfdE7cmc8G64sXJuMfPX+TMBrFfb7iQqYBNmIYS7urmswvDP9XnDAzMxxdWW5WPAxkD
-	d3TXSrRmqkOv7EgrukXxcySibBmD4umUoDgKxSuwVm4aOaLfrKzjCg5P5hR4F2GL+tKxC808N9Q
-	zT0Dg/uGA4AqGISd6cemyJwFU0oaOj+LqG1BbvW5V6r9HtVM8GRL7Q3LApXRK6zTu0a3QuLKQ6z
-	L+G/HLFlQSH4AU2xzLSSwHmKXMr6xkKv+4mkXkl4KWIFbb9ITAugMaktto527XEeeu5W/JSozGk
-	2rx/wqQKP/h6MJBllCy5g1ElUgislmjeA640wcrMatUOR8pNaPLq4/dirRJnUenpi0NvZ7g/0Qs
-	FNPpFxijWJSWhGl88zDosFDn/9HFJ4M8iYxo=
-X-Received: by 2002:a05:6830:410c:b0:7e6:6f9f:7446 with SMTP id 46e09a7af769-7e92d9d0f71mr1516304a34.4.1781879506933;
-        Fri, 19 Jun 2026 07:31:46 -0700 (PDT)
-X-Received: by 2002:a05:6830:410c:b0:7e6:6f9f:7446 with SMTP id 46e09a7af769-7e92d9d0f71mr1516270a34.4.1781879506460;
-        Fri, 19 Jun 2026 07:31:46 -0700 (PDT)
-Received: from [192.168.120.170] ([178.235.128.140])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c0a9a1568dcsm92462266b.51.2026.06.19.07.31.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Jun 2026 07:31:45 -0700 (PDT)
-Message-ID: <45163c0b-e33f-4080-a424-9d0d8942a533@oss.qualcomm.com>
-Date: Fri, 19 Jun 2026 16:31:42 +0200
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="vDG6jG2m"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Qz1EPCMEC62a5AogpGvBb4LGdhzUNdUGDzcmz1B/zJVWV0S9FFnAIC6Iz0umBEj/L5IjCu3jnQOejebjMAr1IgdLzdV5zb+XzjAU+tfNTHYn8oAA6UGjA8Lg0AdWHI+/y2CVtRNizV1BxDB81po0YOBVj7khC+/cCdB8vv9zFHXOroJFfDecX3tAP3/0+6/7O0bJyfSYXl2CZ22ukNUzSVoYjYcyPR0JiIlVS7vgDSJjO0xAVDB/Rvc3sQY1KFDlaWl3C0/yGom/CdKf6zoyBvUBG2sd7qQfc02aUM0EV6sf3iTiYuRY0O8Tr21p3cScZJ3tZfUwuvi7Te1w9/eUGw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ilbHr1lGO9j/58JqrowiSOskTablvvYVRbPsw93jPzA=;
+ b=XWtQi2rpBoUkhVLbHvc7MB3kvvuLk5nb62/YBsxMBA5dZqFEgA9CPxKivRXV2Tl8DCangvZuJk2Ks0dG6MfOQ91ZM4QyHrp9I1p15oag13+FDGwV1tUg45NiDA4OGU3LQnLFVf+/vulVPcLjcn1Y76eZaQkDbMIQwpFzQaeCkTASJI5bNaW+9ZyHWX9VhqtESJXve6twRDTBCD/MhqHex6gz5tRt7X5PooNpZn7oLJRn9MxJpwbqNqwmjk2aCwtV7wFAPGLRHihOxF4xcULnzAtkjzCZQLrSXJlYTdLlLo+3YgaKcZusTa8LUH+LRKsmZPTr3eRDG3JX2oeaXnOauA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ilbHr1lGO9j/58JqrowiSOskTablvvYVRbPsw93jPzA=;
+ b=vDG6jG2mvyJwvtS9Pw6wb2ahlXhsEqHcRsnTZs2pSBAUOVdE/ijA+eOnFqQSt9lHAyLFsW+by/V3P1LZN7hFjM+j33I/IxDb9hrgCkxpwMU4fb7Rjneum+uk5GijZgDt+JFcEn/ZbCF2iYO+4/LVofC1ZTmdW6Ynf2Wt0linpPfku8TVPwSoEWw9vT1Gb/ZxSUS3//K9LDFLp+/Ws5RJ7+W72shuz3pCbH9En87fIW+UlQaMeIVYzyejzek0dPKTXwF45KjoRXZDaTSDRWv35WChVZFfdX/2i+A0mu22a8g4ufvq+PQE0JL7ul5G2GG4j4tUVDbTCGsw61OfQDgvWQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from GV2PR04MB11799.eurprd04.prod.outlook.com (2603:10a6:150:2cf::9)
+ by PAWPR04MB11550.eurprd04.prod.outlook.com (2603:10a6:102:50b::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.139.13; Fri, 19 Jun
+ 2026 15:41:20 +0000
+Received: from GV2PR04MB11799.eurprd04.prod.outlook.com
+ ([fe80::2146:83a2:5329:b7c]) by GV2PR04MB11799.eurprd04.prod.outlook.com
+ ([fe80::2146:83a2:5329:b7c%6]) with mapi id 15.21.0113.015; Fri, 19 Jun 2026
+ 15:41:20 +0000
+From: Frank.Li@oss.nxp.com
+Subject: [PATCH 00/11] ARM: NXP: Drop NOMMU platform support
+Date: Fri, 19 Jun 2026 11:40:57 -0400
+Message-Id: <20260619-dts_cleanup_arm_mcore-v1-0-0101795a2662@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAljNWoC/yXMWwrCMBBG4a2UeTbQC/TiVkTCmPzqiE3LTCtC6
+ d6N+vg9nLORQQVGx2IjxUtMppRRHQoKd043OInZVJd1W7ZV7+JiPjzBaZ096+jHMCkcOgxNE7k
+ beqbczoqrvH/f0/lvWy8PhOU7o33/AGYPz7R5AAAA
+X-Change-ID: 20260618-dts_cleanup_arm_mcore-e7e933da798a
+To: Arnd Bergmann <arnd@arndb.de>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Stefan Agner <stefan@agner.ch>, Fabio Estevam <festevam@gmail.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Russell King <linux@armlinux.org.uk>, 
+ Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
+ Dong Aisheng <aisheng.dong@nxp.com>, Jacky Bai <ping.bai@nxp.com>, 
+ NXP S32 Linux Team <s32@nxp.com>, Linus Walleij <linusw@kernel.org>, 
+ Vladimir Zapolskiy <vz@mleia.com>, 
+ Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>, 
+ Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ linux-hardening@vger.kernel.org, Frank Li <Frank.Li@nxp.com>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1781883675; l=5122;
+ i=Frank.Li@nxp.com; s=20240130; h=from:subject:message-id;
+ bh=niBM/b6MzXcCC9rb3Vc9QoKu6antCXoFNtrcCraXi0U=;
+ b=T7m8qnxdpcwc1H6erHQ0rgLnV+uZgSFOEo58G6BNDS3kluzYUaNx6bJsF9DjfT+4iRIXoPMY9
+ zIFwW0XeDupDXaD77x3hAm56TGusJNjR42z0BUJzFBV9TrlLvJev5/f
+X-Developer-Key: i=Frank.Li@nxp.com; a=ed25519;
+ pk=I0L1sDUfPxpAkRvPKy7MdauTuSENRq+DnA+G4qcS94Q=
+X-ClientProxiedBy: SN7P220CA0018.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:806:123::23) To GV2PR04MB11799.eurprd04.prod.outlook.com
+ (2603:10a6:150:2cf::9)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 08/11] clk: qcom: dispcc-sm8250: Enable parents for
- pixel clocks
-To: Marek Szyprowski <m.szyprowski@samsung.com>,
-        Val Packett <val@packett.cool>, Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Jonathan Marek <jonathan@marek.ca>
-Cc: Konrad Dybcio <konradybcio@kernel.org>,
-        Johan Hovold <johan+linaro@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Dmitry Baryshkov
- <lumag@kernel.org>,
-        Maximilian Luz <luzmaximilian@gmail.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20260312112321.370983-1-val@packett.cool>
- <20260312112321.370983-9-val@packett.cool>
- <CGME20260320113219eucas1p1bc2f238b689c55ba256c4694eb067d35@eucas1p1.samsung.com>
- <2f5b98a4-80a6-4611-9615-ab0202a8c455@samsung.com>
- <f9511ec8-be32-4232-9168-00f967c29508@oss.qualcomm.com>
- <6e0d6119-c7ef-40d8-bf0f-6a5b6f6b00cf@samsung.com>
- <d4c1e329-78de-4d02-99e5-3e4887bdecf8@samsung.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <d4c1e329-78de-4d02-99e5-3e4887bdecf8@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=RZWgzVtv c=1 sm=1 tr=0 ts=6a3552d3 cx=c_pps
- a=z9lCQkyTxNhZyzAvolXo/A==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
- a=IkcTkHD0fZMA:10 a=FelO9ux0wxsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22
- a=CBy3kSv35Q_usJoEGC8A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=EyFUmsFV_t8cxB2kMr4A:22
-X-Proofpoint-ORIG-GUID: 3talIOtMfgeUmPtmazHINSrpUuMGRO9K
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjE5MDEzNyBTYWx0ZWRfX/mIe29aRYDax
- 0U7yRAD+U/5dIL2aHQF+0ifl2HcvaRdmi2FurT/xZFyCJgdPio6OcsHdH438+i0unOaKNoj+lyv
- 6gdGGpp5DVMUx/TO/lqJgQX+4reqmOtTUDW4JRBnGKIYBZiIf7oHHLg+BIeR/ngY3fDWf/tp7kq
- NIzMDac5/3rEvuOkKb0a/LeEfeseIxkVqhTChGQl3BBFjlCkIiPG+KmirqhBqbCbyDkosHJ42+g
- WYWh8eS56WSGbH6cQszGv/ROXOjXCOFF8+ixIoqY3JntBusrm/sv+v8VsDMAz0JnWIbmcKkHPS1
- zffOKAcaQ1h+sJjtlhQIWE2HXLPQm893GpuBikzuJfLu8tUZ1AxFq5vqH//0H92bhv4sYTu26VL
- 8x1gXo281wX0Ef0uzKQNKg4sHW9q9mDmTKuax83p4TH8vSkr7RFC1o+yrmkKoNC1jgs45kS09J/
- LTiqbLUc3pkmd44wcgA==
-X-Proofpoint-GUID: 3talIOtMfgeUmPtmazHINSrpUuMGRO9K
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNjE5MDEzNyBTYWx0ZWRfX9zP5GZwUPWYa
- FPYL+xehniY+A7yLLfnDrlawZgOu78geKQC7yxasWtwnWiryy2RNudJ5tHHxtRnIFW4r+v6kuHJ
- nZbs1z4YGmHxUiItswc2K9INLN6u/m0=
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
- definitions=2026-06-19_03,2026-06-18_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 malwarescore=0 clxscore=1015 suspectscore=0
- lowpriorityscore=0 priorityscore=1501 adultscore=0 bulkscore=0 phishscore=0
- spamscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
- definitions=main-2606190137
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: GV2PR04MB11799:EE_|PAWPR04MB11550:EE_
+X-MS-Office365-Filtering-Correlation-Id: 813898f6-133b-446f-b1f9-08dece193596
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|23010399003|7416014|376014|366016|19092799006|11063799006|56012099006|18002099003|921020;
+X-Microsoft-Antispam-Message-Info:
+	/8SOAH5jpSPBni6a3VH/ooyfh4amhBciN7T+4PACNDW2r9QC0WK/QtLiBH72XuCgiLGb9nyamr5fdlpsRi7hLyUNr6Bq87RfwQbK6bFDCvY0XMKNd892ArIrx+vUqxlkWcjL8ilvQyqjFeOYSwrSX13KyrMDAAAeBYpJ1Is9fbYc6QdWbLN/QIjbfJN2jLJWU01KeHngkrcluywiv6iLg2vfJ+Z/NFvsBYWsC746tMmxsPXsoPdk6jZi0GbJyb631+jYL4cH/bb4Imuy2moaGyICvjLUjPS8EJXWGyn1ztpBaH0fbRcQNXmB6F4AyeWSQxOnVKlEOD0Qgekyu5svrCcU7Y6olRnuZzRysd/PJ4P3p933NCiAWkloI9Q0tTTW2ScFX989V8RNwsYaTU0g25EvKVnC59qzVbHk4RIslsUm4x3//EuYUkatXr49A7Dte1osloF27KycndXpm1hTtBmJMCpIcDIi4ONv0LmsUxpKteg6yh/QTPXGRybpxSsgfcTJrhpxAiY1rtl3MFylKzQE5LgbyIk+HbRcnAQoqx6w/sKiJbhZu6km0ZUF5v+pbTidENmX8kWtO7GX4gVDZI/XMF/0KlHlSfpE8P7/RGSHJdB0WI6hPXAbtJC2s9NAbr7yQ2rxNi101t44F3HJtpDm49qXFnhduUuZ242JVb8skUft0M9pYDRzrggA2S2r9w7pSUa0uGJCeEcdLnS3jg==
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR04MB11799.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(23010399003)(7416014)(376014)(366016)(19092799006)(11063799006)(56012099006)(18002099003)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?S3oxWERoNUg2aThqTnNFYzNKTUZKNnYyZCt1V29tWFhxLzdSVFdBRUswUkJH?=
+ =?utf-8?B?eVhPSkgzeUszVytoMnBEd3BVVHNIbW1iUGIyTk1COUJmWkhMUjVvV2NCbjMr?=
+ =?utf-8?B?Z3dCbUlWWFdIb2U0ZkJHQWkwRi9hWnh5bmNLckNSaVBndHBqYkVsVlVSN3pk?=
+ =?utf-8?B?OS9FK2FPTEhrMk9OTEFxZkFFeUEyWXVWOGU2UG5LMk12NnZmajFkMHFPaVRh?=
+ =?utf-8?B?eTdBOUxxUUdDVlVsNGUrKzhKcDFHMjdpSE5WQlAyMkNQV3REY1k0ZWxIemtn?=
+ =?utf-8?B?dkVoQ1Z4QmhNekdUeitYdk5ieEtyY0lORE9CT2JXVXlKYUxMUjd5bU51aTZW?=
+ =?utf-8?B?ekJFalpNTzFpRGpDSWNXcWorb1dybm5ZcElqcDloRmJjZlJ5N3pJY1hWaHdZ?=
+ =?utf-8?B?Ri9qOTNwN1o1ODFaRlI0Mjh3cDVuUmRERXNyQzJic09GY1dBVVFUZXRnVnIv?=
+ =?utf-8?B?RHRZK1plY3pScmNobGppTHd3TjljSENuTHU4Rnd1NnZHNW42d0hwQjEzODF6?=
+ =?utf-8?B?NDR4MzVUeXJwTFFYRUxSbTFEMmJaOUFxdGxxV3puQ2xzTkRoRWxibmlCTmFR?=
+ =?utf-8?B?RDloZFpKM3FyWGNQUEpKaXJIaEpkNmxIZFJXU2tCSG8rQ3RTRjFJZnNWTDFq?=
+ =?utf-8?B?NGNBZG5PR0VJcnJjMkVCaDV5RFRpSXJTcDRsQUZRVURMei8yb005VHZSdHFM?=
+ =?utf-8?B?Rk1uSWJNcFhsZ0w3Y3R0V1FVOHJjUndTdmowZFpQaEJiWE1TQXlPOWxROUNR?=
+ =?utf-8?B?MS9CenhpSWlzTGJwQUo5TlNoa2tDY3NXODF5WmNDWHFuaHZQdFZ0eVF3ODVE?=
+ =?utf-8?B?Szg4dXJNK2JPNUtPaFFLeUM4U0p3ZUFlTVQrUStOMEdOZWFiVzF5bWM2ZXlM?=
+ =?utf-8?B?ay9DMHlHWENnanRmb0x0cE91RDhnOGQ2NDJ6amVVdjZnOWpXSC9pa0padlVt?=
+ =?utf-8?B?cFF0MXNoVzNqdFkydGRDcEg4MHZKanBlS1lUQ3VtOElMa1FRU3QvN3NKa0cr?=
+ =?utf-8?B?LzVTSG9sS3UwK1QvSGF0L0prRWptTk1QNElhK3Z0dE5MZkVKWTlhZlU2Sm9O?=
+ =?utf-8?B?VVhJaHA1MHQxVFJYY1YzZnR0dTBMYnYvR2Y0RnU5RlErMCtVL3R5QjJpaE1R?=
+ =?utf-8?B?QndzMEZZS3RMaVpIZ0ZFc25COTZjWjU0U0R0WHh6QlJFT2Fjc0Q3dXpsSVdP?=
+ =?utf-8?B?VVE3UnViYktFWWNxTVRBbTBZQTlsLzUra1A1Rkhhdm10RCtVSG9RSDhyQ0pW?=
+ =?utf-8?B?bmFsSmgvQ3FZd1YvajhjUTc2QVdWVGJJNnpBaVRVbjJJL2tFRzc1RmxlUWpr?=
+ =?utf-8?B?cThkbXh5QjNCZkJ5Vk9QM3E1ekNEeWsyYjZvNXRWMUZHU2NPYURvZ0NldnYr?=
+ =?utf-8?B?cjd1NWFBWWNTVlJ3WXIrNmtOeXpkRjdGZkJCL3ZRM3JyUVBEQWtLc0FObWFu?=
+ =?utf-8?B?Y2V3MzdnSzFEV1FOK0xzdVFRZnBRd2ZPK0liNk02REtxOFdBdTlNN1lWT2tC?=
+ =?utf-8?B?NzB6Q1VlSlA3Z1pnSVJLN3pIT0dSVHN2bmNCTHRrQ2xqQzJVNXdab05OR1Ar?=
+ =?utf-8?B?VmJMWmkreHF1bEJ1Z0prcWlpYVlEVjVRN1dRbGkxVElPVUtQRjc5NDBGUi96?=
+ =?utf-8?B?d2NwMEMyQkJsYjVJS2dTTnd3Q2thNHd4Z0ltbTRpSkVheEpiLzlhL2puWjAr?=
+ =?utf-8?B?WXVhaUZqc3RnaDVzV1gzWUVSeEFVYzE0WlM1TTdHa2RyR05PWEloc2FzeEpw?=
+ =?utf-8?B?cTh3alBGbVlkaGtpNFoyRnZuampzQXczeDB2MzVWbkt3NXhvUVBPK01pUjRJ?=
+ =?utf-8?B?Tmx1Zk1aVW82czVUeGhDTGR4NXZrREVVZmxUaVJ3REpMNEtxbXI4a3JFUFVx?=
+ =?utf-8?B?MWlSbWNsNnptOWNQL0hZVWRjaWQ3aDBDY2xEcXFQRU8xUUFNaTJFYytTYm51?=
+ =?utf-8?B?N1ZyWStlaVlEQmw5bE9wMW5EaXFXT1dKQTFVVUtLOUFxWFdDRzJla2oxMmJ1?=
+ =?utf-8?B?U2hXWW8vZjZkaFVjNUpjMjN3T0IvMnhFRHBtMU45cXMvWVEwWitzYnhWRWs3?=
+ =?utf-8?B?ZGZGT1hYVlZOZHg5cjhxL2t4MXlENWpudXl6andrbU9vVWQ0alVScHJnc0R0?=
+ =?utf-8?B?anJ2VmcxK2N1ZnV5R0xZdElqbXlkVmhkclE4aGlDcmpMY1JHR1dLa0c2eWFt?=
+ =?utf-8?B?OTViZ3V2dGYzQjNyU25oamU5V2kvSHFJamNLaFdoclRNc0N2L2FSZ0I4Zk5M?=
+ =?utf-8?B?ekpTam52c0tLcm42Rm54eklWSEs1TWFRajN0NDZmZlYvc2puS0pQTnFGNlU0?=
+ =?utf-8?B?S0h0Z0hxOVNIS0lWTnBMb0VpRExTcHBkb2tZT21qUDhTOEJiclpKNXRoZXZW?=
+ =?utf-8?Q?yFshvkvELmEdgaOJ8+LSZJmfT6uVjU5E31ugy?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 813898f6-133b-446f-b1f9-08dece193596
+X-MS-Exchange-CrossTenant-AuthSource: GV2PR04MB11799.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jun 2026 15:41:20.3940
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: B0dWtwrTxG8ISc0hOM+9mu153YY8yVBNNC7RYk4hpIOCCmQGyBJR5dOIEbXAjVTMxqwOw4kdbAxitcMQd2TvpFKa1TMzRoRCdfVr2T5BZCFjlmV8wlAWfvWzf3dlYgXA
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR04MB11550
 
-On 6/18/26 1:37 PM, Marek Szyprowski wrote:
-> On 16.06.2026 16:31, Marek Szyprowski wrote:
->> On 16.06.2026 13:33, Konrad Dybcio wrote:
->>> On 3/20/26 12:32 PM, Marek Szyprowski wrote:
->>>> On 12.03.2026 12:12, Val Packett wrote:
->>>>> Add CLK_OPS_PARENT_ENABLE to MDSS pixel clock sources to ensure parent
->>>>> clocks are enabled during clock operations, preventing potential
->>>>> stability issues during display configuration.
->>>>>
->>>>> Fixes: 80a18f4a8567 ("clk: qcom: Add display clock controller driver for SM8150 and SM8250")
->>>>> Signed-off-by: Val Packett <val@packett.cool>
->>>> This patch landed in yesterday's linux-next as commit. In my tests I 
->>>> found that it triggers the following warning on RB5 board:
->>> Hi, I was clearing out my inbox.. Is this still happening on the latest
->>> next?
->> Yes, still happens here with next-20260615.
-> 
-> 
-> I've just played a bit with that code and RB5 board and found that this issue
-> happens, because enabling the DSI PLL clock fails for unknown reason.
-> 
-> 
-> Here is what happens just before the warnings (I've missed that in the initial
-> report):
-> 
-> DSI PLL(0) lock failed, status=0x00000000
-> PLL(0) lock failed
-> 
-> It looks that the generic clock code doesn't take care to properly balance
-> enable/disable in __clk_set_parent_after() when enabling one of the parent
-> clock fails in __clk_set_parent_before().
+Commercial users and hardware vendors migrated to Zephyr or other RTOS
+solutions years ago, leaving the NOMMU platform support effectively
+unused and unmaintained.
 
-Hm, indeed.. Interestingly the return value of clk_core_prepare_enable()
-(defined static inside clk.c) is never evaluated, across all of the calls
+Remove the obsolete support to reduce maintenance burden and simplify the
+Freescale/nxp platform code.
 
-Konrad
+Some driver code still be kept and may clean up later since it is possible
+reused by other SoC.
+
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
+---
+Frank Li (11):
+      ARM: dts: vf610m4: Remove NOMMU platform support
+      ARM: dts: imxrt1050: Remove NOMMU platform support
+      ARM: imx: Remove NOMMU platform support
+      clk: imx: imxrt1050: Remove NOMMU platform support
+      pinctrl: freescale: IMXRT: Remove NOMMU platform support
+      ARM: imxrt_defconfig: Remove NOMMU platform support
+      ARM: dts: lpc: Remove NOMMU platform support
+      ARM: mach-lpc: Remove NOMMU platform support
+      ARM: configs: lpc*: Remove NOMMU platform support
+      clk: nxp: lpc: Remove NOMMU platform support
+      pinctrl: nxp: lpc: Remove NOMMU platform support
+
+ .../devicetree/bindings/pinctrl/fsl,imxrt1050.yaml |   79 -
+ .../devicetree/bindings/pinctrl/fsl,imxrt1170.yaml |   77 -
+ arch/arm/Kconfig                                   |   12 -
+ arch/arm/Makefile                                  |    2 -
+ arch/arm/boot/dts/nxp/Makefile                     |    1 -
+ arch/arm/boot/dts/nxp/imx/Makefile                 |    2 -
+ arch/arm/boot/dts/nxp/imx/imxrt1050-evk.dts        |   72 -
+ arch/arm/boot/dts/nxp/imx/imxrt1050-pinfunc.h      |  993 ------------
+ arch/arm/boot/dts/nxp/imx/imxrt1050.dtsi           |  160 --
+ arch/arm/boot/dts/nxp/imx/imxrt1170-pinfunc.h      | 1561 -------------------
+ arch/arm/boot/dts/nxp/lpc/Makefile                 |    9 -
+ arch/arm/boot/dts/nxp/lpc/lpc18xx.dtsi             |  543 -------
+ arch/arm/boot/dts/nxp/lpc/lpc3250-ea3250.dts       |  273 ----
+ arch/arm/boot/dts/nxp/lpc/lpc3250-phy3250.dts      |  236 ---
+ arch/arm/boot/dts/nxp/lpc/lpc32xx.dtsi             |  540 -------
+ arch/arm/boot/dts/nxp/lpc/lpc4337-ciaa.dts         |  221 ---
+ arch/arm/boot/dts/nxp/lpc/lpc4350-hitex-eval.dts   |  485 ------
+ arch/arm/boot/dts/nxp/lpc/lpc4350.dtsi             |   48 -
+ .../arm/boot/dts/nxp/lpc/lpc4357-ea4357-devkit.dts |  624 --------
+ arch/arm/boot/dts/nxp/lpc/lpc4357-myd-lpc4357.dts  |  621 --------
+ arch/arm/boot/dts/nxp/lpc/lpc4357.dtsi             |   52 -
+ arch/arm/boot/dts/nxp/vf/Makefile                  |    2 -
+ arch/arm/boot/dts/nxp/vf/vf610m4-colibri.dts       |   61 -
+ arch/arm/boot/dts/nxp/vf/vf610m4-cosmic.dts        |   88 --
+ arch/arm/boot/dts/nxp/vf/vf610m4.dtsi              |   61 -
+ arch/arm/configs/imxrt_defconfig                   |   35 -
+ arch/arm/configs/lpc18xx_defconfig                 |  158 --
+ arch/arm/configs/lpc32xx_defconfig                 |  192 ---
+ arch/arm/mach-imx/Kconfig                          |    7 -
+ arch/arm/mach-imx/Makefile                         |    2 -
+ arch/arm/mach-imx/mach-imxrt.c                     |   19 -
+ arch/arm/mach-lpc18xx/Makefile                     |    2 -
+ arch/arm/mach-lpc18xx/board-dt.c                   |   19 -
+ arch/arm/mach-lpc32xx/Kconfig                      |   13 -
+ arch/arm/mach-lpc32xx/Makefile                     |    8 -
+ arch/arm/mach-lpc32xx/common.c                     |  125 --
+ arch/arm/mach-lpc32xx/common.h                     |   32 -
+ arch/arm/mach-lpc32xx/lpc32xx.h                    |  717 ---------
+ arch/arm/mach-lpc32xx/phy3250.c                    |   92 --
+ arch/arm/mach-lpc32xx/pm.c                         |  135 --
+ arch/arm/mach-lpc32xx/serial.c                     |  148 --
+ arch/arm/mach-lpc32xx/suspend.S                    |  148 --
+ drivers/clk/Kconfig                                |    7 -
+ drivers/clk/Makefile                               |    1 -
+ drivers/clk/imx/Kconfig                            |    6 -
+ drivers/clk/imx/Makefile                           |    1 -
+ drivers/clk/imx/clk-imxrt1050.c                    |  182 ---
+ drivers/clk/nxp/Makefile                           |    5 -
+ drivers/clk/nxp/clk-lpc18xx-ccu.c                  |  301 ----
+ drivers/clk/nxp/clk-lpc18xx-cgu.c                  |  668 --------
+ drivers/clk/nxp/clk-lpc18xx-creg.c                 |  225 ---
+ drivers/clk/nxp/clk-lpc32xx.c                      | 1591 --------------------
+ drivers/pinctrl/Kconfig                            |    9 -
+ drivers/pinctrl/Makefile                           |    1 -
+ drivers/pinctrl/freescale/Kconfig                  |   16 -
+ drivers/pinctrl/freescale/Makefile                 |    2 -
+ drivers/pinctrl/freescale/pinctrl-imxrt1050.c      |  309 ----
+ drivers/pinctrl/freescale/pinctrl-imxrt1170.c      |  349 -----
+ drivers/pinctrl/pinctrl-lpc18xx.c                  | 1382 -----------------
+ include/dt-bindings/clock/imxrt1050-clock.h        |   72 -
+ 60 files changed, 13802 deletions(-)
+---
+base-commit: 598c7067dd8b65b93f3ccada47e9014a13137f1b
+change-id: 20260618-dts_cleanup_arm_mcore-e7e933da798a
+
+Best regards,
+--  
+Frank Li <Frank.Li@nxp.com>
+
