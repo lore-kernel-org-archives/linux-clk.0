@@ -1,175 +1,112 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C609C3438A1
-	for <linux-clk@vger.kernel.org>; Thu, 18 Jun 2026 21:12:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFDD3330650
+	for <linux-clk@vger.kernel.org>; Fri, 19 Jun 2026 07:29:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781817171; cv=none; b=ZZITgRGUJymQmoDGSHwwuasyc1sxeKcmSiZOIsbNfz0XLB6m5SKfdIbGpsFlPTu1ILshcPcxQWwqg6H2jMVCxIQHM2R6tWH+QgpX3Uyrbq/m+Aq3Klh4jqWi4MoTLfFWF27/RpRpfg9yJSpZOl1P5eOVPS2q+WJV7zxY8VcqRWk=
+	t=1781854196; cv=none; b=J7NsRqzZsWNpBShbRzTedfTk970izyAofPYibRDOpaI580NmmiJMi8JO7lXlZiY7Nc26u2ySRiX0WoWOt60GRp8OTsDhailqCmx7QXRGn5+aL2ljqsXEfnJbEsbwq+L5ZFaRLdXui61W3APfn93MJiQfXSaHdE89lddRrrwKvW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781817171; c=relaxed/simple;
-	bh=BPJXynNAo8Jcooz8/RyQzKJBfUECCST9+2kUSac33zg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lvnZNpPhP0y6ppLbkUw+X8ht5Ng6FOk9KMgEU/vcAqiBWEQD/7PYOdC0vYShnI35sd7/HqAVlKCPON50USObqh1YfE5IAoEg9z4ALt2QCHEKuHyrxkqh+DpUDGnn9wudCvIqCvZNwe8mROg11IE0f0sKihxj9DLotsaJGe5r1QI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XesuMcAB; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=s+Yzq9TF; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1781854196; c=relaxed/simple;
+	bh=XBcuO4HXyLC72ANXStPSUqeOoQMNYhUkr4zFsbzLeBs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=f6Asy63QXEELtH9W8lcF4qd3Dr9FEvs2ycvSoU7NUTZ86kWWsxJY7HuXVhZgZi96O7SpfO6TNRkalk7fZ3E9KC5iONxf+QmTWLJnL3PTSLpWKVmstQC1d2Xjqbh6umfuJ/EO+yYVYhq88J1pYmpRskiiUGU3wJdzqQRShK3B1L0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=ZqsP797F; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XesuMcAB";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="s+Yzq9TF"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1781817167;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=avP9ibHNPh0uZocZWfTS/uf3Zirh7iSsxekjlin/Vn8=;
-	b=XesuMcABWgf0CvQ+Xuvlcc2kOEa17wMj5slqp+Qn8OgH8phEJDx8PcMeXexSwPl6AIY+sl
-	b5prZRYX3zvbVANF4GxZ5tw7ATaQ8rE27eDG37RfwKULcct2ucOMQ4cAGBPPbKi1NmOBTe
-	BRASgZNJ5CCOAIaxNwg17dgSywuMZQk=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-127-vYi6Q6krN8KNGkCjt9VY6Q-1; Thu, 18 Jun 2026 17:12:45 -0400
-X-MC-Unique: vYi6Q6krN8KNGkCjt9VY6Q-1
-X-Mimecast-MFC-AGG-ID: vYi6Q6krN8KNGkCjt9VY6Q_1781817165
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-9158f2c4b55so247865685a.0
-        for <linux-clk@vger.kernel.org>; Thu, 18 Jun 2026 14:12:45 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="ZqsP797F"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4923139e940so10283575e9.3
+        for <linux-clk@vger.kernel.org>; Fri, 19 Jun 2026 00:29:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1781817165; x=1782421965; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=avP9ibHNPh0uZocZWfTS/uf3Zirh7iSsxekjlin/Vn8=;
-        b=s+Yzq9TFSIuzKFBZ/vi1TPnuGPSqHAxQVN0gO2CN3DnYKWqY834dtOlCH7udxrhGf+
-         zkCFlsZNtuFsKYeA60k9v8aXOfFVQHz0Fy5BK5hYFR3pbAANon8nvcPyhUNOSC9/Il60
-         RfmcKAKQOz2+Zwu6gAP0poWpWLZsrcVyTZMCM482X9Iu3I8Ykzm3EhwPR0iWUr92eYyq
-         CpexjaZHlemKdAB1Y6m6Hh/2QL11dhxuhj4Nu/U8usydkTjm4xNEipN6TeQvgycjmKA2
-         6vrz6YyPv1SgHqpqvvKFrVUPZKsX433c63JklHhzX4J7JolTipw/Fh9G3qINuHDrmgwA
-         4wIw==
+        d=baylibre.com; s=google; t=1781854193; x=1782458993; darn=vger.kernel.org;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wPDHyNrMcgujLZEScT9ZWB7ZjuOqeA69xZgdQn0M0M4=;
+        b=ZqsP797F6XLkR+rnv544/0Z2J9AHZEidCvwksOT7YmqlfRDsDnrlQwaSdz4iqjmfue
+         6pxQa2rzMqRnOZIUoh1F+G/hjjYhhwIprse8jJGHpwhMvy8ZajKNHWz37QtjZvRr69fY
+         vNe8e13khAYZ7nXe4E8kpi9rlNUdt1PBksiKnX3R26ItgYlf6u/45BViaEyjnpAS0GIy
+         5zH04LAVoOYIYmio4MQJ/F3dZ4yJNBUsCrMxxBZ2hoithQJqH7r55Zzxb0NNnvwd9YCG
+         avRzGJumv01XjvB4mCZduiYsDGVTPo3Q+GhQG2xGz3elx8wuQ6WajvBFcuAch1I5/KAs
+         4XLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781817165; x=1782421965;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=avP9ibHNPh0uZocZWfTS/uf3Zirh7iSsxekjlin/Vn8=;
-        b=EtcvVI0nSNyH34iYp/gVoBGVVFnjFf6XENf/v9k3Sil0PBA7ft1u/P38zqy11b1Erl
-         st7bHZLPsR2lBpzolFhRSB2hmaxxlrfd83LhcO1Lb8arXdyWaxxgtScKnKxrHwJPR4EZ
-         U7Zppp+HZxwnL3Ojk8RspaALag5Ns8C2PP5/sUI4N8bWstQLZtd2vCvraZcsZmCwlGV4
-         86MiorMO+FAdkoZAxle38SzhKCccM0sHMDi23a5py8zDFw0RrSrj4yU5KkUNZgRtaQDz
-         IIMUbnzcivETB3pZ5o5ml4fjDWBP0wjii71NeTp5Q/cJgWdNfpa3xAON2zdB6juVrXhD
-         wYaw==
-X-Forwarded-Encrypted: i=1; AFNElJ+fW1AB7pgsDX/zihOdLjhFg2gceaNmb/b0jsZ53ID4xGstj8vkNaWs1v1zGWcyj/NGXgCK71QPfeo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxO/xvUq10iMt9OfZmSJmFmpGaFb2RM6/8DrM6/q3BPCvfUtsnV
-	X/AHeuKBvndUmb8BMBNolbQLRXcrhy3skCUX+f7+jbPqXdV+GXqIKky45+SMPGdJEAymVmnpU8N
-	Zmu8iOi0ObLtkHcVpKAk8PM1xWH5VJ8cyh4hHV9LOVY/U5VyZUlWxGUXnbx6U9Q==
-X-Gm-Gg: AfdE7ckEmrIgv0SK+p4TD8z2FhzUNP1a3gFNK09X3a8fhHX0vLqjLxudo4EW5ujGQ4B
-	EkfUKcLPNVDrPcJ1Uf7RrqvRWy1voCnvjRunvs1n7oC5cAhsiHboOz2aE9v9z3CG3YLfZP00K0T
-	1VGUFY2lfLJ2QoN24YWdaof9XBRExSrWiAGRc0oZFJmZiH06iUBtPL+sRkr/Bn69RhNIOYBnzKw
-	VcuI4VQFUN1Z/+gLfCozHiCTCECOUWfoY6ooc1cgR0pHF2wHluWrVKVusIUgCyrxjhfRxVFrkVf
-	GasU/aci0LCrUoor24Ib/166hKsGJyKwxi+9hdpU3RDF7i+NTFDWX8Bzuv2J0XcWXloN9zhz3nt
-	DKJxn0sXq5hwJNQ5PmstD3YxanZ/3grVS7c+YB2gTKy/wXA==
-X-Received: by 2002:a05:620a:27d2:b0:915:9de3:226b with SMTP id af79cd13be357-9208f256e5cmr124278885a.18.1781817165241;
-        Thu, 18 Jun 2026 14:12:45 -0700 (PDT)
-X-Received: by 2002:a05:620a:27d2:b0:915:9de3:226b with SMTP id af79cd13be357-9208f256e5cmr124271785a.18.1781817164653;
-        Thu, 18 Jun 2026 14:12:44 -0700 (PDT)
-Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-920a1819fa5sm28625685a.20.2026.06.18.14.12.42
+        d=1e100.net; s=20251104; t=1781854193; x=1782458993;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=wPDHyNrMcgujLZEScT9ZWB7ZjuOqeA69xZgdQn0M0M4=;
+        b=GS8nYPQDvv2AgUXCKLngAjJKuYJS2g24yjmQvO8IxhTfH89ZUtTB8e9oyHzico/8Ek
+         hMc7oOg991aO6pyH2Us8WV8NlKSqUHZ96UQKVH6PStS8MOo/L6vsKNEDl26dRcwpXb8Y
+         GCA7A5QBiK+puVPDX+HRaLEWgTbXn/MTkIlO+dJEZQcsdJUC+eDiUNRneci09C081VCI
+         nGpVsDVpmtS/jioh6R3JZEfdVTF8GRso0sHlStoaG4+WepQ/EP7Fc2k8Or7TEfbcKXrk
+         HRooH3plh8eanpesYSkuFG7nBU7UNik5IEECb/zAmrVfGJ+4gi80vBNtY8BqkqcNqJeu
+         2hhg==
+X-Forwarded-Encrypted: i=1; AFNElJ8/9YtgKvf9hC6S+hQr1buew4AShmDZtncuLbmxSSYu7vIhT/bMgwimQmNXz+CM05AmKTdT8kDb6Tg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx948dH/etb731ClieglvK6ySuB7oxdrDf4PTXWY5ZK1tWT3QWk
+	gCONbL1a7tzdIneAqa/8fGjoGSfY/GCi9dLM4XeTfJPmhCP5YS33kxDXIqD0/+Ewp08=
+X-Gm-Gg: AfdE7clj8vw4yKPN8HcS3PdJtcDrYuehapwlWlsWEKaXRWYdcJN+CuhCrDSEt0oPAl4
+	lITqv+heo0sBQlpchGcf0ux/6gkh6zA4nJ9kfUDKl9FjvjEGXk31dT2gONyKNtmLDkpyyyuF9+w
+	IFEGe7WQL91YoFVFf9Y+HLER6YVYV6QSt6GycSpMO3A1vExPQpt4GnZWDY2dhDSHewsBJ6+Qh3m
+	gzFzhi6y/EkIsM9XdtJ6zWtYT6207B7CWB86Tw4SP4ReoMt32vAT+nBbwrJAKPVsoqTwX55KxGw
+	uGGvvOULmlfnXqf8OW4cFpUsLBOeSBT4ur8scGhdnsjLgq3igDOCudbFxL/lG/Zf5lJKS57AGCA
+	9xGt6LxIk6nV+9dvNIPfbwty7Fd/aapuKDwTpbv5Cgsm852znugAcVETaagaL0Anyht0kFW9NwN
+	+BNWubgjFqkuI=
+X-Received: by 2002:a05:600c:46d4:b0:490:b58b:a8ca with SMTP id 5b1f17b1804b1-4924257c483mr21687735e9.27.1781854193037;
+        Fri, 19 Jun 2026 00:29:53 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:95ed:eac1:5731:4e21])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4923fd30078sm46219025e9.7.2026.06.19.00.29.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Jun 2026 14:12:43 -0700 (PDT)
-Date: Thu, 18 Jun 2026 17:12:41 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Ulf Hansson <ulf.hansson@oss.qualcomm.com>
-Cc: Saravana Kannan <saravanak@kernel.org>, Abel Vesa <abelvesa@kernel.org>,
-	Maxime Ripard <mripard@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Hans de Goede <johannes.goede@oss.qualcomm.com>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-Subject: Re: [PATCH v2 5/5] clk: implement sync_state support
-Message-ID: <ajRfSbkAYusH5H9H@redhat.com>
-References: <20260616-clk-sync-state-v2-0-15f82c64d95c@redhat.com>
- <20260616-clk-sync-state-v2-5-15f82c64d95c@redhat.com>
- <CAPx+jO9JiV16ePLk59hTQzEMnA96Va6Ns4jqJbwyZ6oTT0AjXA@mail.gmail.com>
- <ajK29WcueJ1wLCLQ@redhat.com>
- <CAPx+jO-tHYUa5oYEjuCdgF440viiR=Q6O-X6q=JNGwLgS_stsA@mail.gmail.com>
+        Fri, 19 Jun 2026 00:29:52 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Julian Braha <julianbraha@gmail.com>
+Cc: jian.hu@amlogic.com,  Neil Armstrong <neil.armstrong@linaro.org>,
+  Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd
+ <sboyd@kernel.org>,  Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski
+ <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,  Xianwei Zhao
+ <xianwei.zhao@amlogic.com>,  Kevin Hilman <khilman@baylibre.com>,  Martin
+ Blumenstingl <martin.blumenstingl@googlemail.com>,
+  linux-amlogic@lists.infradead.org,  linux-clk@vger.kernel.org,
+  devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v4 2/2] clk: amlogic: Add A9 AO clock controller driver
+In-Reply-To: <79b1a519-5723-4e0c-904c-b7fdf9564ee1@gmail.com> (Julian Braha's
+	message of "Thu, 18 Jun 2026 19:56:12 +0100")
+References: <20260618-a9_aoclk-v4-0-569d0425e50c@amlogic.com>
+	<20260618-a9_aoclk-v4-2-569d0425e50c@amlogic.com>
+	<79b1a519-5723-4e0c-904c-b7fdf9564ee1@gmail.com>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Date: Fri, 19 Jun 2026 09:29:50 +0200
+Message-ID: <1jbjd7c7ip.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPx+jO-tHYUa5oYEjuCdgF440viiR=Q6O-X6q=JNGwLgS_stsA@mail.gmail.com>
-User-Agent: Mutt/2.3.2 (2026-04-26)
+Content-Type: text/plain
 
-Hi Ulf,
+On jeu. 18 juin 2026 at 19:56, Julian Braha <julianbraha@gmail.com> wrote:
 
-On Wed, Jun 17, 2026 at 05:29:51PM +0200, Ulf Hansson wrote:
-> On Wed, Jun 17, 2026 at 5:02 PM Brian Masney <bmasney@redhat.com> wrote:
-> > On Wed, Jun 17, 2026 at 04:24:05PM +0200, Ulf Hansson wrote:
-> > > On Tue, Jun 16, 2026 at 11:09 PM Brian Masney <bmasney@redhat.com> wrote:
-> > > > @@ -4345,8 +4382,17 @@ __clk_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
-> > > >         core->dev = dev;
-> > > >         clk_pm_runtime_init(core);
-> > > >         core->of_node = np;
-> > > > -       if (dev && dev->driver)
-> > > > +       if (dev && dev->driver) {
-> > > >                 core->owner = dev->driver->owner;
-> > > > +
-> > > > +               /*
-> > > > +                * If a clk provider sets their own sync_state, then it needs to
-> > > > +                * also call clk_sync_state(). dev_set_drv_sync_state() won't
-> > > > +                * overwrite the sync_state callback, and this call will fail
-> > > > +                * with -EBUSY.
-> > > > +                */
-> > > > +               dev_set_drv_sync_state(dev, clk_sync_state);
-> > >
-> > > We have cases where a device node represents a provider for multiple
-> > > types of resources, like clocks, power-domains (genpds), resets, etc,
-> > > as in the qcom case, for example.
-> > >
-> > > For power-domain provider drivers (genpd) we also try to assign the
-> > > ->sync_state() callback, see of_genpd_add_provider_simple() and
-> > > of_genpd_add_provider_simple(). This means the above doesn't play well
-> > > with how genpd behaves, so we need to figure out a way to manage these
-> > > cases.
-> > >
-> > > In this regard, we also have of_genpd_sync_state(), which allows a
-> > > genpd provider driver to explicitly call genpd's sync state function,
-> > > if/when needed.
-> > >
-> > > Unfortunately I am not able to suggest a detailed solution for how to
-> > > move this forward at this point, as it requires some more thinking and
-> > > I am heading for some vacation very soon.
-> >
-> > One approach I initially considered was to make it so that we can have a
-> > list of sync_state callbacks that can be added to. I already did some
-> > work on this, but I didn't think it was worth it for just the QC clk
-> > drivers in isolation, but it would address the concern here.
-> 
-> Right, maybe that would work.
-> 
-> One more thing to somewhat consider, is the problem I have been trying
-> to address for power-domains providers [1]. At least for genpd
-> providers, we need a more fine grained sync state solution, which also
-> must be able to co-exists with other subsystems sync state support. I
-> am not sure if something like this is needed for clocks too?
-> 
-> [1]
-> https://lore.kernel.org/all/20260508123910.114273-1-ulf.hansson@linaro.org/
+> Hi Jian,
+>
+> On 6/18/26 10:49, Jian Hu via B4 Relay wrote:
+>
+>> +config COMMON_CLK_A9_AO
+>> +	tristate "Amlogic A9 SoC AO clock controller support"
+>> +	depends on ARM64 || COMPILE_TEST
+>> +	default ARCH_MESON
+>> +	select COMMON_CLK_MESON_REGMAP
+>> +	select COMMON_CLK_MESON_CLKC_UTILS
+>> +	select COMMON_CLK_MESON_DUALDIV
+>
+> Selecting COMMON_CLK_MESON_REGMAP is unnecessary since you're already
+> selecting COMMON_CLK_MESON_DUALDIV here.
 
-I am not aware of any clks setup that way but that's not to say they don't
-exist. Stephen, and/or some of the folks from QC would know better.
+No, regmap clock are directly used so this is necessary.
+Relying on other module dependencies is not enough
 
-Brian
+>
+> - Julian Braha
 
+-- 
+Jerome
