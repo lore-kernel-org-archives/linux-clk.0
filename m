@@ -1,174 +1,168 @@
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D7B954652
-	for <linux-clk@vger.kernel.org>; Sat, 20 Jun 2026 17:28:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E316B4F5E0
+	for <linux-clk@vger.kernel.org>; Sun, 21 Jun 2026 13:26:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781976498; cv=none; b=gM+LrycsyDXGrZRLO8wh5+bjh1I38yij9C424d11cJEFQb0k60dNWmIbYwki6b0XtW+AMlgk47Iy4DBefBCE19zaAFtBk/SQvxg2fpqpSwA+lzMWfcQUdQrlTcmQDsCZaowNl07xRjC3DsPzNcggywAhW3trBSyoVBNo4QIX4h0=
+	t=1782048369; cv=none; b=BhDSSFGIvDrLwziGyBOdlQ7GJZVuSxXl9vus5fPivCRC5vj0O++HlRVqXn6BY8NErGL28rt248KQwruPzcdO4StqJtF2DSt+wXM5IvHvLZ1TCQoIo0K5I6g7M4RO8WqL5hxANHFZunZK1D6CK5++cZECJ8hv+6j8JRbENU/vkeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781976498; c=relaxed/simple;
-	bh=nM5yehFKra88Qfal5zlQkUu6h12HqXiJIL0q08sT7nU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UtwLip124cPN6uyQ4EcpvaIPqyciceREBl4WKpBdY17IChzlTj/vHhWEbhUporsmaz80mUCll9YrzKygy/aewaBTyuVQGpix87wcN3UXHy1lgmVlev6uhbnC1c136lcbuJ/2kaXptVd4zmHFcyoAGEcsHWdBd2gsdr0UYF/EiRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jB61f7lp; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1782048369; c=relaxed/simple;
+	bh=sxbJyRUQvldWAxJc7L72BkA3Q+j4Xzvlov4wtcHv4RU=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=o+Ezl9YbAKxEyUpDNu8ew2MP02Y5Bqxj7Fb4rwSlMHOXW6mPxVYxwuEbU7Z3/B93rxy5YDfFshA+JXyAOl2ImGfuuAf8Yi88vLroGSAdtMIMY3ugatr2jtWwq6TCABMNcJL/+HuP5fwoMJh+zLQDl5ViyxZSr3tAxpIekCo3DTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Zh59p1nm; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=j6LKl9nM; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jB61f7lp"
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-46255b269c2so2294506f8f.3
-        for <linux-clk@vger.kernel.org>; Sat, 20 Jun 2026 10:28:16 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Zh59p1nm";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="j6LKl9nM"
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 65L9vGDf1809307
+	for <linux-clk@vger.kernel.org>; Sun, 21 Jun 2026 13:26:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	+RcTKE/9DoE6dBWweLVTGAqtmWmBxPGlNR4Xl8V5Rtc=; b=Zh59p1nmikZdSUOZ
+	Zd4jxV4fmxFc0xckXq4X0b7TMeI1+ROR4AD0p/QoPQvdsXpAxgUAQuHCYVesN0UQ
+	0njDQqeqxzaxsByD5MIhntIy1BZNE1CTKA8pNkRlf3VUHfw+HErs91q2x3jlmH6C
+	55cRaREkDXWPpHqK67Y8yPf8znEqYxpGAj6um9yF3ZiEde7GkbZOZYnm79UCbNiJ
+	OLLeeFcll3nR8KsSv03MauF3EW0Fd7nmRAKPoLIZtMu3eSTGqGetYS6HfFegtdUG
+	xsFI0ols+/WjVFiYkqv6Hza6uYtU9BZ4KDpneHmErddAxTRUvvpXlLjNTeIsrT5H
+	bcjB1Q==
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ewk8830ft-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Sun, 21 Jun 2026 13:26:06 +0000 (GMT)
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-36b982ec338so3577132a91.0
+        for <linux-clk@vger.kernel.org>; Sun, 21 Jun 2026 06:26:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1781976495; x=1782581295; darn=vger.kernel.org;
-        h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=f/6fDvnIguDHo3k7rp3ZTnWwimeNwTtivMzdauHwuVo=;
-        b=jB61f7lppmVBZGkKBtcJaZCSkm9hC3ba6fNnuGFpbsu5ILAsvceXsbtlJzQevYsV+x
-         fo7AmHwC8ug+s09Os2ZXQWboeHE4sEU4+C06+XWAws2Gp/CvQMCe2UjcE6rsJV7Q79Lj
-         ykYfjIGdLGVvPmp1fjc8J//yuYBo2DCAimNvEbSSqY/+RIbrEmtEmcVm9FwY1E9hJmk8
-         xwlU3O9/+ByeuvePqDLiSR13kfjTLfmcLgSmFoFXiN2nUQe2sRzTAGx2weogkFGesqe/
-         khQ//xr4sKUclN46CAmQHKRa7wI+yqNLEGTcp9O0bS5WTB3m0qKb5C7agYqEGQYp+W1A
-         3NkA==
+        d=oss.qualcomm.com; s=google; t=1782048366; x=1782653166; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=+RcTKE/9DoE6dBWweLVTGAqtmWmBxPGlNR4Xl8V5Rtc=;
+        b=j6LKl9nMSX3ynuCSG8ANoI2KCJAL20IGKoHilrl9DyWLBYdkPZJObjKvK7AuoJTQQU
+         ZdYKghBH38YcKnjFpOvKZ3uMXPhH6d806pLan9daCasxOEfNghLi6pt6vwbNcEayLZES
+         pVIAFFoXWRfvLEAiY3mdAhWloz9g70fZPet1dmifT5zEKz0eLdIlRDrrVV5mSGr//qPu
+         r42m6D82hYUP6rd7Q1YT5eqZBwiHgdGjFBCPMCYRDaNYUg8PsB89uhWSM6Fy0FUd/Q+c
+         zrZkyH8jpbI4USn+zr2ZhDVvNYrB/WV92VuakiiMQXqg5/LMGBacse+IcVOfiXsUtM8C
+         NgPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781976495; x=1782581295;
-        h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
-         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=f/6fDvnIguDHo3k7rp3ZTnWwimeNwTtivMzdauHwuVo=;
-        b=O+HJPfE9pffrrkMRzM7UJCM9VVJwzTBKZKghReJAoIkmYpBDNVyykAdJ5yjNP+xbiW
-         J0X+M95FoV4Nkn8tjt60CJa+cDImHxRtY1Zp6YHXaTKeESO8kHCrjEWyTqg7OhN2DHbI
-         +pGLxeK33PjVEFHzrceNjtAVlHPsmi8VfJeg05TKsVmwZdeCIhthlHsL2fBuEbCtFoqa
-         DPu/mcbaRj66Lt6qZuziScp5hHXpmoh+3W/d7eouUhPjWbqUrvoh7MdKORqUHoiBuQEX
-         dF0A9rFEkhmu4jizR7eYybt8J+OmlGsMIqjsCiCsrtO4OhEJF7P3s2kshid30Z16Nccp
-         /GwA==
-X-Forwarded-Encrypted: i=1; AFNElJ/a3KIgui9wv0ux5han7E5vynN0NFUkRf5Xx+WIxFCb+59KrGaF1D7Og7zuYCiO9ej9lhhStR5ojF0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsP2A+I08mx9qaHtoa2PA2a6Eqxb9gxBpDJxKZl2hrZMw5ktqO
-	6HxGe3eFO71b9bnB6A5YZAS0+pvfX6oLlGKHIMuLts9ClQ8nW+0KPXI7
-X-Gm-Gg: AfdE7ckI2p8GEzjgSjx4SkfWaSkn+uhPQUTZ7cSO+MLMLMPbIVintiFo7eGH/wuDWxG
-	57euSkWwsTd6Wi4j1INAgd8vRsuhLstZFo/LA8hkBz6NVIU4MPiTTo1QhIAdNV0i/Z6fIA7i+wZ
-	w1L82++EPp1am428tzkGWqzfKjGEODXg8/zYs3rEz3yR/vkFr+QzYlTAkdGEWnP6xvwH7JZnkY8
-	7Vq+QlTOh3/a/yQg5cRQZrFhDd/nMvT82e2CDA1viSVgFEFTwP0/p+sFiW8yhZ6HFiBPyG82T1O
-	u2fM0+yHdUBT0gbSB8X8oI2W/XL1SjkdpY5fWtqf+tZvyb+29YM2a97A0LyVlJ2lV1eUEEdhZvl
-	dkSBXg4M/S2YAYsoxDoq99cd8QM6QvhC7ntcx8A1YIlmvTofXZqV3C2HMF0dVwwsQG34BfNfNku
-	264QB4ImVWdP3nsztk/cDwXm5xcw==
-X-Received: by 2002:a05:6000:41ea:b0:464:5df5:332a with SMTP id ffacd0b85a97d-465026e230fmr13924863f8f.34.1781976495283;
-        Sat, 20 Jun 2026 10:28:15 -0700 (PDT)
-Received: from strix.localnet ([197.250.226.245])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-466648c4fd2sm9661404f8f.14.2026.06.20.10.28.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 20 Jun 2026 10:28:14 -0700 (PDT)
-From: Stefan =?UTF-8?B?RMO2c2luZ2Vy?= <stefandoesinger@gmail.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>, Brian Masney <bmasney@redhat.com>,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject:
- Re: [PATCH RFC v4 01/12] dt-bindings: clk: zte: Add zx297520v3 top clock and
- reset bindings
-Date: Sat, 20 Jun 2026 20:28:03 +0300
-Message-ID: <vYm1twErR8mp-Fjgbvf-MQ@gmail.com>
-In-Reply-To: <20260618-fantasy-estimate-6c52edbc6890@spud>
-References:
- <20260616-zx29clk-v4-0-ca994bd22e9d@gmail.com>
- <BXIzXc2sQ5SGynZ1chd-pw@gmail.com>
- <20260618-fantasy-estimate-6c52edbc6890@spud>
+        d=1e100.net; s=20251104; t=1782048366; x=1782653166;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+RcTKE/9DoE6dBWweLVTGAqtmWmBxPGlNR4Xl8V5Rtc=;
+        b=jqCj1vSoqLJAzZPpBWv3T4ZI3EzJ+PjksZ/Mjk0+oPn4FdvkSX//ZAppddEl8ndiuq
+         V1fPEAbirI5i5J50q5Ad/alZjggSgxyUREkzBemN7GWfWFMP1CXulo9Va+zi7BjigNlQ
+         od+fM7p8GSjiknyMbEo46YlaihaZoNiafQ3iRN7dX+tIokn6kiK5cOiF+ficu/F1HsWf
+         AB9lkdLfnnTXMPX64+JmIqi8GIqay3VtjPlTOb5uhDnooYghtGZCguMcTEHJ/TTQ91vN
+         E4J/jlI6wOKABt2DTeJ0NfAGEGefyxTbQkGl5ZUhDGm3X1tji6M/o88oS2s+slwxAfKw
+         8vXA==
+X-Forwarded-Encrypted: i=1; AHgh+RoIuedONkYNcci9aU8I07woMZN03/3EzNTjdmSUL4UM8i/icu2YHfEX5dwcRNLRcqZCGj5Fy+5U6xw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYlrY3wsr/XWf21+EPm3IUzLk9IOffJptxKXqheKC41eltgzQe
+	bdt7VRIWX2M0rmvybJRAIQ27zU6Fd8kHuHHbybrWJVP17MVKnak2czRS5nNhVNNmQf6gGCfnInp
+	od1tVqs/v6SKgIVDOyXxIwaOvN6lCG5KQZW46pnP/TTTiuaFa2yvb1B9W4wzkfOs=
+X-Gm-Gg: AfdE7clYE67Vw32eNY+6SMpsBGdpMWuwvOXML3jgCT0+ovPnO0GyWDk1+yNutfQz6XG
+	BSJ2EcuNTePDtwNoYkKXRYs0M8gx1waFoNVuOeXolq0jKfXiIGCaq+UL5ahN5JupBY7aBtoPxWm
+	FU5zBtz6RgZ9XePD0ghXSc8SmGqyzZE9AG2fUVHOVGxKK/5ew0cULWOSOcrO/LBHbAYc527Jk8U
+	jufndHVnnVQTUtjYRP5OhGMBqEr8Qf+kkLeK2Cvb3qx8R7Zm0l7falPNYU9oSMVp1a5LvT5Oy7s
+	O3Nu93bR+d4241n8RmXjT86t16v/XBOwX9P0aV6eFRzZqGKmNUf6LtEX7aC9VdagqpFcDCG9Ges
+	gPJVRHbowc/+gGks6cI8OZZnUI71tkXRTV3Ixyhlu
+X-Received: by 2002:a17:90b:5708:b0:375:2a38:1d40 with SMTP id 98e67ed59e1d1-37d1617a684mr10789840a91.20.1782048365877;
+        Sun, 21 Jun 2026 06:26:05 -0700 (PDT)
+X-Received: by 2002:a17:90b:5708:b0:375:2a38:1d40 with SMTP id 98e67ed59e1d1-37d1617a684mr10789810a91.20.1782048365428;
+        Sun, 21 Jun 2026 06:26:05 -0700 (PDT)
+Received: from [192.168.29.32] ([49.43.225.115])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-37d4f2d2615sm4469608a91.10.2026.06.21.06.25.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 21 Jun 2026 06:26:04 -0700 (PDT)
+Message-ID: <70f37f20-dce7-4592-afb2-4fac6d7c513c@oss.qualcomm.com>
+Date: Sun, 21 Jun 2026 18:55:52 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPartj8KIpuwSTluwcOdB0G_0rg";
- micalg="pgp-sha256"; protocol="application/pgp-signature"
-
---nextPartj8KIpuwSTluwcOdB0G_0rg
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
-From: Stefan =?UTF-8?B?RMO2c2luZ2Vy?= <stefandoesinger@gmail.com>
-To: Conor Dooley <conor@kernel.org>
-Date: Sat, 20 Jun 2026 20:28:03 +0300
-Message-ID: <vYm1twErR8mp-Fjgbvf-MQ@gmail.com>
-In-Reply-To: <20260618-fantasy-estimate-6c52edbc6890@spud>
-MIME-Version: 1.0
-
-Hi Conor,
-Am Donnerstag, 18. Juni 2026, 22:54:53 Ostafrikanische Zeit schrieb Conor 
-Dooley:
-
-I think I get the gist of your suggestions. I have a few follow-up questions 
-to make sure I understand things right:
-
-> I think aux bus makes perfect sense when you have a clock/reset
-> controller, but once you start expanding past that and you have reboot
-> or hwmon or hwspinlock then mfd starts to make sense.
-
-At what point does it make sense to move the bindings from bindings/clock to 
-bindings/mfd? The controllers are still very clock-heavy. allwinner,*-
-prcm.yaml look like clock, reset, misc controllers in mfd/ whereas 
-ingenic,cgu.yaml, sprd,sc9863a-clk.yaml and da8xx-cfgchip.txt are clock + misc 
-drivers in clock/.
-
-Likewise for the node names: syscon@ or clock-controller@?
-
-> You'd then have topclock that is a syscon + simple-mfd, matrixclk that is
-> a syscon and lsp that's using the aux bus. The topclock and matrixclock
-> would have dedicated and trivial drivers somewhere that have the mfd_cells
-> and call mfd_add_devices().
-
-Do I even need simple-mfd? It seems I can add the syscon-reboot node via 
-mfd_cells too by setting .of_compatible. It seems once it has a driver (even a 
-very short one) simple-mfd is misplaced.
-
-What about syscon? Topclk needs it for syscon-reboot and the watchdog 
-controls. For the other two I only want a regmap. Afaiu device_node_to_regmap 
-works without a "syscon" compatible. There's also regmap_init_mmio, but afaics 
-I only want this when my driver is the only one using the regmap.
-
-> Probably the compatibles you've chosen start to make less sense at this
-> point though, but probably "topclk" and "matrixclk" are not what the
-> documentation for this device calls these register regions?
-
-Yeah I'll rename them top topcrm / matrixcrm / lspcrm. I just stuck to the old 
-names for this email.
-
-> I think the priority is having something that reflects the hardware
-> accurately, I wouldn't compromise on that just to have the same design
-> for all three drivers.
-
-As far as I can see the primary difference between mfd_add_devices and simple-
-mfd + child nodes is that the latter makes the MFD composition visible in the 
-device tree and the former keeps it a driver implementation detail. My sense 
-is that the latter is preferred unless a subcomponent of the MFD might be 
-reused in other components - e.g. an ADC is used in PMIC-abc and PMIC-xyz and 
-thus the driver can be reused as well.
-
---nextPartj8KIpuwSTluwcOdB0G_0rg
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iQJPBAABCAA5FiEEQxb0tqoFWyeVMl1sPRO8yFRPGiIFAmo2zaMbFIAAAAAABAAO
-bWFudTIsMi41KzEuMTIsMiwyAAoJED0TvMhUTxoiA8sP/iDCZo9JCPTXlknep41Z
-EiXNNHm4yYRiVaWnovL3ahmlVRNEQnKpkhizLzvFtmvkwpJPPWe+PQuZGKh1xfHX
-j4l43lj0EiP9ZkpSFoJgHzskpiLVoCzt8IzYLzY5/miAhJCRVkVhudLZXb9AWTAN
-5Kg2jCv4/s6gp4viQkwA58GEomii5C43k2D+j8/UBf4rz9mWrMuMRaezj7F0YqCG
-Nik4IrBIHuDGWJyThgQ2mTluCQcBroaA3V/+jhDMTPg12FmhY4A5M1fpW33iN3B6
-fo65LBzVwmhdjICendnz9go3I3ZEjqnlERFhlEqywbZBjNxFxhV0Jg7XAuVN9YOw
-EFYuyNbzZy+u7KYvgzW8pswUYhOjAUupEU2EOY3+kKzmpkB+0hXeP10rTawXot4d
-GKJFdt9emZh4/xFtEyeVovXR2bq6Kk40uZsgwDEf1KS+QtANtA3vstQn9rEhIPFZ
-vVopjQLE45hhxKiWjXqUZaA0iJg+bmmy5HeI03X9b6jXgfaEhJBBAH0bRW9smBoK
-OJ0wIe1JnGd0RnGM/1DjWedhXVq2RMfVgXCozzyFiETgXhYr++4Y57h/NgHzoNm0
-nIN2gqG3q7T+OOkziGJmmcMyvONlYqcyy2F9bnJ1AgtGwdYhMWC159JK54VhAd6S
-sFQ9rZwU2zMAjJ7YPlocj67G
-=JozV
------END PGP SIGNATURE-----
-
---nextPartj8KIpuwSTluwcOdB0G_0rg--
+User-Agent: Mozilla Thunderbird
+From: Imran Shaik <imran.shaik@oss.qualcomm.com>
+Subject: Re: [PATCH v4 02/13] dt-bindings: clock: qcom,qcm2290-dispcc: Add
+ DSI1 PHY and sleep clocks
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Loic Poulain <loic.poulain@oss.qualcomm.com>,
+        Brian Masney <bmasney@redhat.com>,
+        Ajit Pandey
+ <ajit.pandey@oss.qualcomm.com>,
+        Taniya Das <taniya.das@oss.qualcomm.com>,
+        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20260604-shikra-dispcc-gpucc-v4-0-8204f1029311@oss.qualcomm.com>
+ <20260604-shikra-dispcc-gpucc-v4-2-8204f1029311@oss.qualcomm.com>
+ <20260605-eager-lynx-of-eternity-f77ecb@quoll>
+Content-Language: en-US
+In-Reply-To: <20260605-eager-lynx-of-eternity-f77ecb@quoll>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjIxMDEzNiBTYWx0ZWRfX3uUt1EhckFY6
+ NwEcdUf6BoeqvERYt6gHGOnX9FlXdqNl5MTMRjA/qRE9cAVGUW0PQLChX+gQgofEYgWpYz/WtPA
+ xHFDmk3BIPen+/i41GjnyPeJ1obYnjW04Ht/yWQaTsI7l7Si4NMzpMH6n2IE2rXX5AcrHSyKGbn
+ XdcAw27JAlZUKHMLIK2xQ1ChJ8wRGygDEmyabgmbugHFLGd7rboK0i1BRIV1hdOnWjhgtjgoStX
+ ieJ0CiA/aqlOqk3/9NuXSpPOkWS+hVDtSraaHd0CoMCdD7rR7jYcWXKq4S6XXF/eReGT7pLrTy4
+ hy46h4Bqj4dlYRQ2sOqk+/gpCj2lFR9wLZzMKcGCnQCeizQ+SSxATKkTwrO3slN4mstgFsCJGlw
+ u3BctCQSOw2GzxSm24gwNX8ouywBjx06xbyWqsVbjd5aNkPGHPSYL6s66+tiqvd4/B6qY2/mgSq
+ z5uoaH8WQIPqVaeubzA==
+X-Authority-Analysis: v=2.4 cv=b9qCJNGx c=1 sm=1 tr=0 ts=6a37e66e cx=c_pps
+ a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=HwFTmRh04JSsUSWzyQ2edw==:17
+ a=IkcTkHD0fZMA:10 a=FelO9ux0wxsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=yx91gb_oNiZeI1HMLzn7:22
+ a=6Xi6mpGAEk2f3eWU2LkA:9 a=QEXdDO2ut3YA:10 a=uKXjsCUrEbL0IQVhDsJ9:22
+X-Proofpoint-GUID: W5_O7dVLDj4kfEcU3YTEPiqYC1KTwIhh
+X-Proofpoint-ORIG-GUID: W5_O7dVLDj4kfEcU3YTEPiqYC1KTwIhh
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNjIxMDEzNiBTYWx0ZWRfX8PUdPwj0t0QH
+ 1A9jAZtRTJQdSwIG25AA03MxWNd79FFkeFyd2SGGJUNOA1CXlP43Fboyfo32pTgkLp1nIZhceUr
+ JGHoYmk9oeiMad25ue0kLiLy9mLAURU=
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
+ definitions=2026-06-21_01,2026-06-18_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 malwarescore=0 suspectscore=0 spamscore=0 phishscore=0
+ lowpriorityscore=0 adultscore=0 clxscore=1015 impostorscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2606210136
 
 
 
+On 05-06-2026 03:53 pm, Krzysztof Kozlowski wrote:
+> On Thu, Jun 04, 2026 at 10:56:08AM +0530, Imran Shaik wrote:
+>> Update the QCM2290 DISPCC binding to document additional clock inputs
+>> supported by the hardware, including DSI1 PHY byte/pixel clocks and
+>> the sleep clock, alongside the existing clock list. This is an ABI
+>> extension, and existing clock inputs ordering is unchanged.
+> 
+> That's ABI break, not extension, because you require all these clocks.
+> And "dtbs_check" would tell you that it is a break.
+> 
+> You need to provide reasons why they have to be added - something was
+> not working? Something was missing? Did it matter?
+> 
+
+Apologies for the late reply.
+
+The DISPCC hardware supports additional external clocks (DSI1 PHY 
+byte/pixel and sleep clocks) which are currently missing from the 
+binding. I will capture these details in commit text and update the ABI 
+break details in next series.
+
+Thanks,
+Imran
