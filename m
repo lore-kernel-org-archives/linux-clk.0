@@ -1,180 +1,153 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13EA425A2DD;
-	Mon, 22 Jun 2026 10:46:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30F792D73B8;
+	Mon, 22 Jun 2026 10:48:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782125174; cv=none; b=olmnBxy3pgthC14SJ4YPqU4u4u2bWl0CK9mCy0HYXZnOqCmcigWO28t1tx7lqxzAWskRM2idPlA9XjcllynijGE6DlRNHjPyoPnwUcWF6nkdKyiAazotL3xdCUv2hleV+PkEv/ufJ88xRezuUC6VQSluwnGOcDML3D7swqFvaUg=
+	t=1782125306; cv=none; b=T8I7S36sxErxyFkqXnCd7RRfVNG2dG/Of+JJXZmzN8K87aW3n3r7+WPXnXfqZJm1zfmY5oSfV67S8VjBlNTagU8CTG1UcLt1fWXgHNnR1iNjzdRsI4bq8B3KGGOj39h6NB9vxdkYaydeXRpBZeZfFO9kH8F/cCdKzPq22RkjBY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782125174; c=relaxed/simple;
-	bh=hMDAgLe7cDer6nzvqmXg9ylcO6Ix4RJZqoVohhfsUfM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=diMTXjn4cuy+f8PPxhOH6hm+7iAwRrgTSOhERZhVQdoFowsp/g+Yo5rWWOp35+LiOfS3jmTC5rn62jMGU4T8aEEWhUwy1KzHSM+sKpkJ2nKr39EnljrR9E1a+7QAMSBmJw5pgMftXrPxwwgwEQn7DTD/mxb1M1zWzIGRC+RADi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lr98dekk; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1782125306; c=relaxed/simple;
+	bh=p5o4wCL19SgZAJdahyUBE2YojNuLVqQsq/iL26YQhl8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g0tUvdEJkBB8LczzCeDGQ9YWtEul+F8aMhyFU3CmJ6DiCS4ljr29JbzzGbCWsjhnckvdc0uJEnEqMwmqT0WAxWy17bcNy60bNb4Gxw9j3jQtlKZayb284cbGilCz3nVUih81khTAVxxZyfhSQ0fntq7os4YKf7puPQp0m6YYLpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EJSg4XS8; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lr98dekk"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A5D91F000E9;
-	Mon, 22 Jun 2026 10:46:09 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EJSg4XS8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BC131F000E9;
+	Mon, 22 Jun 2026 10:48:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1782125173;
-	bh=vA8TsApoYifboONc/BviKOxLxdIYQW+iSoPtQoVWi4o=;
-	h=From:Date:Subject:To:Cc;
-	b=Lr98dekkNcYr0R3kUQrDXOfN81g6b+xfjCXEpbp1HRtL5Aq5itDClLgqZ8L2h34nY
-	 jSUDNYpSNT766BkKSfYeF+0RiNTXrb+S1RKIPa8yR2uprb/npz5WOKlY64RXZDOQtK
-	 zfABW2UBk29Q5aNDYcQj6RxLrIewvwmtWfRiDk5o8mD/y3FM5fLK72yI+zh3vinJ99
-	 +S+xiP3drdXx9VW0bMrEvqD/wHPUzJf8wpD4YCIc3xVDTmJUEZ4Ab0G0el+Xeef/ES
-	 HUv4CkFGFghyjz/+sMwV5anXflhCGPF/X87UKzKObrKmyhZfwDXd/XRFFEt1i8Ez40
-	 Hi66PEyaZgJXw==
-From: Konrad Dybcio <konradybcio@kernel.org>
-Date: Mon, 22 Jun 2026 12:46:05 +0200
-Subject: [PATCH] Revert "clk: qcom: regmap-phy-mux: Rework the
- implementation"
+	s=k20260515; t=1782125304;
+	bh=p5o4wCL19SgZAJdahyUBE2YojNuLVqQsq/iL26YQhl8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=EJSg4XS8+Ip5ViIYLpINFix30Jh2Lg+T0wZ1JeVTU+Ci5w5qX5eg7GLCkuYvR10/0
+	 PXb7LoChkyHztfqXzyWDTWBpNc/3mK3OwSUvLZXURSPg5RAgs6Zh3VYkwmFyLMUXky
+	 mlLwAhEdanGwHAdmMvjolMmSVUDpppuVIto1aUlyFmiEbfoiyDDvrmmkuonE2s2YcE
+	 4oR5L09+nzr+J9whrjZUn6CNFen0rMpNXuCnmZJVtrpLfhzlIasECd3UXpry8g5Xhy
+	 n7YOr3GAeiToyxbzJbFFnKYDdKR2O4dRg7W2Ud7I8oe4G+NvbmKFPLCoHGheNm2slK
+	 aMY+ok/fv4Ntg==
+Date: Mon, 22 Jun 2026 11:48:05 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Sam Protsenko <semen.protsenko@linaro.org>,
+	Rob Clark <robin.clark@oss.qualcomm.com>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Abhinav Kumar <abhinav.kumar@linux.dev>,
+	Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Inki Dae <inki.dae@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Georgi Djakov <djakov@kernel.org>, Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>, Hans Verkuil <hverkuil@kernel.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Ulf Hansson <ulfh@kernel.org>, Peter Rosin <peda@lysator.liu.se>,
+	Vinod Koul <vkoul@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Sebastian Reichel <sre@kernel.org>,
+	Javier Martinez Canillas <javier@dowhile0.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Srinivas Kandagatla <srini@kernel.org>,
+	Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	Jonathan Marek <jonathan@marek.ca>,
+	Taniya Das <quic_tdas@quicinc.com>,
+	Robert Marko <robimarko@gmail.com>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	Stephan Gerhold <stephan@gerhold.net>,
+	Adam Skladowski <a_skl39@protonmail.com>,
+	Sireesh Kodali <sireeshkodali@protonmail.com>,
+	Barnabas Czeman <barnabas.czeman@mainlining.org>,
+	Imran Shaik <quic_imrashai@quicinc.com>,
+	Sricharan Ramabadhran <quic_srichara@quicinc.com>,
+	Anusha Rao <quic_anusha@quicinc.com>,
+	Luo Jie <quic_luoj@quicinc.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Chanho Park <chanho61.park@samsung.com>,
+	Sunyeal Hong <sunyeal.hong@samsung.com>,
+	Shin Son <shin.son@samsung.com>,
+	Krishna Manikandan <quic_mkrishn@quicinc.com>,
+	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+	Jaehoon Chung <jh80.chung@samsung.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Alina Yu <alina_yu@richtek.com>, Andy Gross <agross@kernel.org>,
+	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>,
+	Wesley Cheng <quic_wcheng@quicinc.com>,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+	linux-i2c@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
+	linux-mmc@vger.kernel.org, linux-phy@lists.infradead.org,
+	linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-serial@vger.kernel.org, linux-sound@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Subject: Re: [PATCH 2/2] dt-bindings: Drop incorrect usage of double '::'
+Message-ID: <15b1fc6f-0bee-4d3b-a694-0b076566e3bc@sirena.org.uk>
+References: <20260622101606.485961-3-krzysztof.kozlowski@oss.qualcomm.com>
+ <20260622101606.485961-4-krzysztof.kozlowski@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260622-topic-phymux_revert-v1-1-f6ec85523840@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMTQ7CIBBA4as0s5aEosWmVzGN4WeUMWlLgBoM4
- e5SXX6L9wpEDIQRpq5AwDdF2taG/tSBcWp9IiPbDIILyaUQLG2eDPPus+z53goMiV3UddBS2bM
- dEVrpAz4o/663+e+46xeadKyg1i+LjL0sdwAAAA==
-X-Change-ID: 20260622-topic-phymux_revert-4a75b6ad3d8e
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
- Abel Vesa <abel.vesa@oss.qualcomm.com>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1782125169; l=3567;
- i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
- bh=G52ORgWlRAy4sEcqY1Z6pWueSuJsz3m566Cs2dOALKQ=;
- b=EvZ4l0sU+5kwTl9swItPbccyA+3sUPm2WEdWTKq9cLNngw3e6Shbb3+S1ZSsIdMNWcBx6KcFu
- Qh1aN4CygmACn9Xs+i4VtbMdI4d1l53tGXfzbqPDKtiM6Kl0/Vow3/p
-X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="WS/yioW3EKfTwezB"
+Content-Disposition: inline
+In-Reply-To: <20260622101606.485961-4-krzysztof.kozlowski@oss.qualcomm.com>
+X-Cookie: Now I am depressed ...
 
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-This reverts commit e108373c54fbc844b7f541c6fd7ecb31772afd3c.
+--WS/yioW3EKfTwezB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This has been reported to break PCIe on at least SM8350 and Eliza
-platforms. I had originally tested this on Hamoa (X1E) where there were
-no adverse effects. It's highly likely that this stems from a
-difference in how the bootloader configures the clocks.
+On Mon, Jun 22, 2026 at 12:16:08PM +0200, Krzysztof Kozlowski wrote:
+> There is no use of double colon '::' in YAML. OTOH, the literal style
+> block, e.g. using '|' treats all characters as content [1] therefore
+> single use of ':' in descriptions is perfectly fine, whenever '|' is
+> used.
 
-Revert the offending change to fix the issue in the immediate, with the
-intent to revisit it in the upcoming cycle.
+Acked-by: Mark Brown <broonie@kernel.org>
 
-Reported-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Reported-by: Abel Vesa <abel.vesa@oss.qualcomm.com>
-Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
----
- drivers/clk/qcom/clk-regmap-phy-mux.c | 58 ++++++++++++-----------------------
- 1 file changed, 20 insertions(+), 38 deletions(-)
+--WS/yioW3EKfTwezB
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/drivers/clk/qcom/clk-regmap-phy-mux.c b/drivers/clk/qcom/clk-regmap-phy-mux.c
-index b7d1c69d62f7..7b7243b7107d 100644
---- a/drivers/clk/qcom/clk-regmap-phy-mux.c
-+++ b/drivers/clk/qcom/clk-regmap-phy-mux.c
-@@ -15,66 +15,48 @@
- #define PHY_MUX_PHY_SRC		0
- #define PHY_MUX_REF_SRC		2
- 
--#define XO_RATE			19200000UL
--
- static inline struct clk_regmap_phy_mux *to_clk_regmap_phy_mux(struct clk_regmap *clkr)
- {
- 	return container_of(clkr, struct clk_regmap_phy_mux, clkr);
- }
- 
--static unsigned long phy_mux_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
-+static int phy_mux_is_enabled(struct clk_hw *hw)
- {
- 	struct clk_regmap *clkr = to_clk_regmap(hw);
- 	struct clk_regmap_phy_mux *phy_mux = to_clk_regmap_phy_mux(clkr);
--	u32 val;
-+	unsigned int val;
- 
- 	regmap_read(clkr->regmap, phy_mux->reg, &val);
-+	val = FIELD_GET(PHY_MUX_MASK, val);
- 
--	switch (FIELD_GET(PHY_MUX_MASK, val)) {
--	case PHY_MUX_PHY_SRC:
--		return ULONG_MAX;
--	case PHY_MUX_REF_SRC:
--		return XO_RATE;
--	default:
--		return 0;
--	}
-+	WARN_ON(val != PHY_MUX_PHY_SRC && val != PHY_MUX_REF_SRC);
-+
-+	return val == PHY_MUX_PHY_SRC;
- }
- 
--static int phy_mux_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
--{
--	if (req->rate == XO_RATE || req->rate == ULONG_MAX)
--		return 0;
--
--	return -EINVAL;
--}
--
--static int phy_mux_set_rate(struct clk_hw *hw, unsigned long rate, unsigned long parent_rate)
-+static int phy_mux_enable(struct clk_hw *hw)
- {
- 	struct clk_regmap *clkr = to_clk_regmap(hw);
- 	struct clk_regmap_phy_mux *phy_mux = to_clk_regmap_phy_mux(clkr);
--	u32 val;
- 
--	switch (rate) {
--	case XO_RATE:
--		val = PHY_MUX_REF_SRC;
--		break;
--	case ULONG_MAX:
--		val = PHY_MUX_PHY_SRC;
--		break;
--	default:
--		return -EINVAL;
--	}
-+	return regmap_update_bits(clkr->regmap, phy_mux->reg,
-+				  PHY_MUX_MASK,
-+				  FIELD_PREP(PHY_MUX_MASK, PHY_MUX_PHY_SRC));
-+}
-+
-+static void phy_mux_disable(struct clk_hw *hw)
-+{
-+	struct clk_regmap *clkr = to_clk_regmap(hw);
-+	struct clk_regmap_phy_mux *phy_mux = to_clk_regmap_phy_mux(clkr);
- 
- 	regmap_update_bits(clkr->regmap, phy_mux->reg,
- 			   PHY_MUX_MASK,
--			   FIELD_PREP(PHY_MUX_MASK, val));
--
--	return 0;
-+			   FIELD_PREP(PHY_MUX_MASK, PHY_MUX_REF_SRC));
- }
- 
- const struct clk_ops clk_regmap_phy_mux_ops = {
--	.recalc_rate = phy_mux_recalc_rate,
--	.determine_rate = phy_mux_determine_rate,
--	.set_rate = phy_mux_set_rate,
-+	.enable = phy_mux_enable,
-+	.disable = phy_mux_disable,
-+	.is_enabled = phy_mux_is_enabled,
- };
- EXPORT_SYMBOL_GPL(clk_regmap_phy_mux_ops);
+-----BEGIN PGP SIGNATURE-----
 
----
-base-commit: 3ce97bd3c4f18608335e709c24d6a40e7036cab8
-change-id: 20260622-topic-phymux_revert-4a75b6ad3d8e
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmo5EuQACgkQJNaLcl1U
+h9DdpAf9GJ2uDy3rgqNiOlKlstOlFjMqiN8oPWouLl8gDA1j1uulyqx1qYeFRe27
+7fBwR08BkQbAvA5tr6ZGCawSCJBGn0heinD9Cs+f+6n5kx4bqWyaIjcKPwVvR4yA
+Sbcw60tpnIxiaHkPNE0/6+c3Lt+3QAq7fJNWV81eMlnf5qpRt6S57epvBH5EXHn/
+jbSw2rJ+d72s6xJHKyWzF0ZOlh4rdU8cyAO9dq1ws+6whq4RtgBCveCHVGktp/OY
+yS+AG/1388ooc8EnTIKAz7vvlWq/BUgi+eqkN/wrhKf478kO4kCYtINPFInaOhud
+RrbkzoT8TIb+1TCiBYn9KDHKMXEaFw==
+=rXVB
+-----END PGP SIGNATURE-----
 
-Best regards,
---  
-Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-
+--WS/yioW3EKfTwezB--
