@@ -1,361 +1,246 @@
-Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11022087.outbound.protection.outlook.com [40.107.75.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 898543148DA;
-	Mon, 22 Jun 2026 02:25:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.87
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782095136; cv=fail; b=RfAamAi1/Y85AvKKVkVZe5+y9WtntB7piwJhJlQ9CCDFNJw7feaAnXpv1Lei0OTaTlqQzeFRNGBU/spXnCtacIOvB9S7pLgsHaOJmPIY2uGXKk2h+T/tIGg5IeM26oywdt1mfIqOJmCqSj9esfj5R+xxwf7Lyz2zHt9BCUh/7gk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782095136; c=relaxed/simple;
-	bh=WsTFDiE9ZXqOK3KN+GLrxZRNnrNtBQosdNTym6Uqw3U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=l0BcYth+qCZvfaeCIZeZUFPJCDAkW1XK+4WGwWBYKnAgC0by4He+afgIsuTxCke0OWncpC15JaSpcPO4UP6qb02YcZC5IWuef7/KW2QrFJDbr2EmX3NCpIJk8CVlYj/CfElKwAMiKAhIFEffoMBeCkW91tGppuCmGsSHLvQ3v1s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=40.107.75.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oXr8rbk/alaUJ4c0T8SnjCOkSj5BX1PUPsD1UiK8WpHRbx0leevyAQX5e+4dAQiyA/PotbAn2jIkGQq1MONyLoAcNgkFDZfq/AZstPCVMR4i6/7cIjjKZVdO9DaGVnhH/9Slpjg7tAN1BLHvQoTEw5ACHdcf4nCgoid8C/LC4EHRhAVjJomofwaXqGmHvU6ob3uGrJetDkh9idaekfzICWRACEgdy6FOJjLTZUpMesvllMJoSMt/36OsybiPnrKUlSvzTlO/Hh/fthAC/dybxjwGAaGqN4qYIEAFqD5+x9Oy/J34ynK0qvqAEz/Zv4qMcx81cPMEQoTQhxI4MHyRsA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SxtEYDnBUJoGo23/F5MRhG8LhraBayRFeMoWvdfV6UM=;
- b=Q/8F7oQ3FDZAAK4yopd5NH9LXPcPs2fxKMTvV5o6cL4Eqor2FdVbbhatn4rd5V4NnxV6k9HQQQu5eA4mdqArINrGfnaofw07WSJcLOf407lK4Oa3ZVvGpUYHoXKEl3et68VN1zMUgWK3IPhNU4+7C8vXjVC/MsC70ladq/9RpjUymyzUHJ+UhLo3l0h0edGOr75MhYrsS/A9MLRX+cSGHXmshFWbheL1UJ7HlQTS//KpvIMHkdT22KiR1AYmg9zIxZUB4m2R/X6ZDim6Q80K4QnkG26F1Pq/lCH0WNBniwKetJgs2ZfVY5tJymJDe89ewyV43Su3b475dGcicFOHKQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 222.71.101.198) smtp.rcpttodomain=baylibre.com smtp.mailfrom=cixtech.com;
- dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
- not signed); arc=none (0)
-Received: from SI2PR06CA0002.apcprd06.prod.outlook.com (2603:1096:4:186::10)
- by KU2PPFDF24F4212.apcprd06.prod.outlook.com (2603:1096:d18::4b0) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.139.19; Mon, 22 Jun
- 2026 02:25:30 +0000
-Received: from OSA0EPF000000C7.apcprd02.prod.outlook.com
- (2603:1096:4:186:cafe::79) by SI2PR06CA0002.outlook.office365.com
- (2603:1096:4:186::10) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.139.14 via Frontend Transport; Mon,
- 22 Jun 2026 02:25:29 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
- smtp.mailfrom=cixtech.com; dkim=none (message not signed)
- header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
-Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
- 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
-Received: from smtprelay.cixcomputing.com (222.71.101.198) by
- OSA0EPF000000C7.mail.protection.outlook.com (10.167.240.53) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.159.10 via Frontend Transport; Mon, 22 Jun 2026 02:25:29 +0000
-Received: from cix (unknown [172.18.64.61])
-	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id 3532C40E7F92;
-	Mon, 22 Jun 2026 10:25:27 +0800 (CST)
-From: joakim.zhang@cixtech.com
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	bmasney@redhat.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	p.zabel@pengutronix.de,
-	gary.yang@cixtech.com
-Cc: cix-kernel-upstream@cixtech.com,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Joakim Zhang <joakim.zhang@cixtech.com>
-Subject: [PATCH v5 3/4] reset: cix: add sky1 audss auxiliary reset driver
-Date: Mon, 22 Jun 2026 10:25:19 +0800
-Message-ID: <20260622022520.3127103-4-joakim.zhang@cixtech.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20260622022520.3127103-1-joakim.zhang@cixtech.com>
-References: <20260622022520.3127103-1-joakim.zhang@cixtech.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75643333429
+	for <linux-clk@vger.kernel.org>; Mon, 22 Jun 2026 02:30:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1782095445; cv=none; b=t4mA+lETlNruauQzMXtHgcZ7T2nEkQKSUu2ttDObBgIfsobJiyWd+14MTTViFO73KkaDhCjR+ToQC0a4Gv13Kmcn6QrWAYNeU3DEmbUPo/5pot9isC5epVFBN0wzeDPqRnKFYHqYgG06pjTY6nN4LbHBg4TR9oDJ86XrjGnV2Cc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1782095445; c=relaxed/simple;
+	bh=ScO7RBq/KolPYjNRfRqcuR3AUL95RysnVAALa01G0/s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IUXqIsft7juKObUIWTFm/8MtE/WHmOvUt0xFVuYbKXozbzLIbiY3KRbh7AHr+5zmajVH2Sa2WpFx7q0n/GP3vhTxwA251BaXJnqzpeXIZqSbnz9JLEfdAawQd8/skqaBaO8rPwkjUvMfBdJf/MayLQo2JiwDTnYMVsnb+JDW0Y8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MAtFS60Y; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MAtFS60Y"
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2c0c3546924so28479345ad.3
+        for <linux-clk@vger.kernel.org>; Sun, 21 Jun 2026 19:30:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1782095444; x=1782700244; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ipKRVPzkC3/bLO3loiWzGU9J/nN5jU3SnxMn7jqpCwk=;
+        b=MAtFS60YObAAfZAnwIUrnTfYtbd2b2l9RaVKdfvlGJvxkycReC2UgygiRnWnGBZM+U
+         WdNJo5RGjCFuGEz1OQ1Z1y48mIhx5ObLDJAxxbmdLYKvo+pFwNLj+PN9PUqhjBMXub2x
+         8Dd33BMNZ8cUMizDQsO1SktfNmmcuvSH1Yf48D9C+/wPlduw7F14+gh4aHpZ8y09mqSy
+         4rDwzoSTB0L0QqVwITDaKo4fe9CXx866mWhxM0VddzMlSW3HcV5IhlPxTRO/CFqjCPGZ
+         pg8nvQHjyJ99U4ChK7fN1MpJAy3sUbsOiWd1SuaEPQSNWWCpFgoJ9LaRHcT71Z93Ws7q
+         AEHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1782095444; x=1782700244;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ipKRVPzkC3/bLO3loiWzGU9J/nN5jU3SnxMn7jqpCwk=;
+        b=aZmM/OMT9gI4w+C637QQPB1ARRa51qArwBVSkEtDSZS6cUIWkMZKOZWn3WxpK9xQxP
+         fmqZS3ftZFvrpCqFz8LNExJNjkaDfekVweaJ/82F/WZQ/ywsV+TuKqaOLsRNsTJe/BA7
+         bVfe7EUJKTswnSbNwdCgl09mgjU1t3K5NlEMBwZM34SoWbn4ZXJa5/RiEQSwEvIYZD7Y
+         C1naOTeQMraVRhsFXjKxSQy3LMkswuZMaR8wcvu1w+MOyRyAiQw4dW62mhPCgrYc5u+h
+         JPMBGPQlpXf9eyZrY1qtLlmURynj0prHjfXWd2t3B2kBtsV4Wb4Xf4iVoVSx6zp6w59g
+         dCfQ==
+X-Forwarded-Encrypted: i=1; AHgh+RqsxkJ0UabhyKkJaZgzUzXjpqiqxYmhnl8KAYcer15WoNFlv7U4/6xvI/yoFiQxzGWs3FCfdcLlaQU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwWpAVnMRCA1Z2J/w1RsCi50Gz5SrBxy20f709xq0cWb5FbJx9
+	DC9ayhoodWmY1uGLtXB+Tts0OKIv5GO9qXyzlpjk8+e0swjDajfQT9+X
+X-Gm-Gg: AfdE7cmoYA4Afp2lBnp9Zh5jcZBTeFU1XU2jb2Am4W3eZ0y2AiYI61NSFB6rBnwJnap
+	T4eytB6Oc0OIIFJpy1CDKxKWnhTo8xnsC2qYxspce9sMF07uwOdZeWQaLGLsyJYSlPInu6s9ysQ
+	Vxsq7+KCRfes7AgQu2QbENI13e1BhO5vEmIid4Il5IW7+q3LpziviyDWXDKMDvuW2FLutnvSFOJ
+	l2N2DBsi1CdvISTsR3Kp/jHUWatRIYJHXsdgBMxW0kk73LVJCX2lNR3he919oNwFz3wh5HeZfQI
+	NHcmlZiAxWdPe+nwQtIEe8ySzRyFbTLmrItp/D2fgSs709LjvU4w+ZNMbYcB0WDi1UVPL+e/tu1
+	KbUvlJn2trYOk59Q6ZZLOO7fcRWV5G4o/WJdGZu/aONfzjgx6EwqVYCBMMFYuZHVFpjK4B4X5IN
+	wlH4/H7849FcwwO2a0v9qYbYV3SXN7Sm7KijGMhDZIj/CbH32ZIxV2W9giOAaQxAH1Aw==
+X-Received: by 2002:a17:903:b47:b0:2c6:a487:f431 with SMTP id d9443c01a7336-2c718fe2eb1mr137529215ad.23.1782095443621;
+        Sun, 21 Jun 2026 19:30:43 -0700 (PDT)
+Received: from [192.168.0.100] (60-250-196-139.hinet-ip.hinet.net. [60.250.196.139])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2c742fdd411sm64398555ad.0.2026.06.21.19.30.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 21 Jun 2026 19:30:43 -0700 (PDT)
+Message-ID: <6d6dd8d0-292a-43f6-a94a-dedebe22c582@gmail.com>
+Date: Mon, 22 Jun 2026 10:30:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/6] drm/verisilicon: add DC8000 (DCUltraLite) display
+ controller support
+To: Icenowy Zheng <zhengxingda@iscas.ac.cn>,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ airlied@gmail.com, simona@ffwll.ch, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>
+Cc: ychuang3@nuvoton.com, schung@nuvoton.com, yclu4@nuvoton.com,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <20260615065003.76661-1-a0987203069@gmail.com>
+ <20260615065003.76661-5-a0987203069@gmail.com>
+ <d5df0e9df3a9a68aae982f2fce830a4b10468476.camel@iscas.ac.cn>
+ <df7363be-0e3f-4459-be4a-43ffb0a5366c@gmail.com>
+ <0bb460aefb97e44cc0890a7841b8d217349143de.camel@iscas.ac.cn>
+Content-Language: en-US
+From: Joey Lu <a0987203069@gmail.com>
+In-Reply-To: <0bb460aefb97e44cc0890a7841b8d217349143de.camel@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: OSA0EPF000000C7:EE_|KU2PPFDF24F4212:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 8945e471-2d38-4179-13f0-08ded005871e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|7416014|23010399003|36860700016|82310400026|56012099006|5023799004|22082099003|18002099003|3023799007;
-X-Microsoft-Antispam-Message-Info:
-	NFPDexi66r2W8J36qgfUF6iwpM8tHLiY/i26Mx+sByebnoUDhS3d2uLd404qrdk7RMkLwpliw4Q1gDxGn/UFMkhIw4MPC8cIwgrSlKFuRaLUW9AJjtAsXg/bLEeHHiVeGJ6qZ4KYNalzfTSU9T4OHbFWYjyTsNu9KY4dp4LfTJ1Htv5mYdujZsZEOm5tukZpyeeG79+0EymvNDEle5vV18ppT3ZluvXsAQf1q8CrYFnWu/NC5APczlwmcDlatDhtgejxmxcl3VthA+VEgoQpNmPl0n7j53glotkblgiYumTMuB5jOiApzpIFXo7d5YBosjfkELJ3jXGEQJ2MCJGaCCHI0smXraAtWjEKIU3nt/m009sNXF3Vbwjk/F4BN4IC7yRMtZ/Mj4TDCma2CrHbNKFHBvWdjXaiOfvML2bF8oYB+P8ZSJIR6IV9Ob+y9TfdsQY2q/xsLXVO3UX1EReYYd88cFzZhjoLUzja2H6U4jnWDt5AwF3RiBeNkkf+AmsOoXkBXWd72u7CtumCG6BiRpIHhdfv8A33gEH+5Y+1o9TaOePGJ6kNhvCDIN4fHVp5GK8ppvJ9jHAPTsVj8i12YyrEY5skLDwsXJ71iH2IXb6uDmM3A0x1Om5vwampVSfZ2irv+1rAyWBDrIShzCHaGqROlZcu1f8UUxt9q1nciDqfg3qCEdt3n2rHZmIMI8F4QC8hdARO8yIj1AYAkfAWkw==
-X-Forefront-Antispam-Report:
-	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(23010399003)(36860700016)(82310400026)(56012099006)(5023799004)(22082099003)(18002099003)(3023799007);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	rv8ixmot27SdUQBUNCRKRf0RxYCJG7PiVIMTfKtx+cFPufalXm3e2qnonOi65ZBdfE0KLU68PhThKvUarrPzLSU80L4nNZjZqKrLCsyY5xDUfEkkzWKEzizFbobmYELdhJ41ylxGRK4jxzl2Zvqad6eTYp5inXp6qWF4Eh3rh1NGldIvLCRSTe7yk19dEtTRDFLFhFZWuB0jz7zWEiBz4HxHegDa5zYTHu79QRDe2lyMNt32pGuM+sZxjr22aOk4rBK4wrtWiot96knDnD9X+HoBgWce5NKeudVyDCWXGskSziK2ZsGcQeKyrfG74D3ksNKhbmvtitsu4xxg/zcYS/+K3qhqdpbYja+V4MZr5qLMrjDY2qxuAuf+c7ZyUZSkaLJESp5bLN5oc9tirpp4cdJmi6EtJPAMSrAwobZz8SmjOWsRimCQ1z+of+REG8U6
-X-OriginatorOrg: cixtech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jun 2026 02:25:29.0842
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8945e471-2d38-4179-13f0-08ded005871e
-X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	OSA0EPF000000C7.apcprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KU2PPFDF24F4212
 
-From: Joakim Zhang <joakim.zhang@cixtech.com>
 
-Add an auxiliary reset controller driver for the AUDSS CRU. Sixteen
-software reset lines for audio subsystem peripherals are controlled
-through one register in the CRU register map.
-
-The driver is created by the AUDSS clock platform driver and registers
-the reset controller on the CRU device node.
-
-Signed-off-by: Joakim Zhang <joakim.zhang@cixtech.com>
----
- drivers/reset/Kconfig            |  14 +++
- drivers/reset/Makefile           |   1 +
- drivers/reset/reset-sky1-audss.c | 192 +++++++++++++++++++++++++++++++
- 3 files changed, 207 insertions(+)
- create mode 100644 drivers/reset/reset-sky1-audss.c
-
-diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-index d009eb0849a3..f74859b292ae 100644
---- a/drivers/reset/Kconfig
-+++ b/drivers/reset/Kconfig
-@@ -300,6 +300,20 @@ config RESET_SKY1
- 	help
- 	  This enables the reset controller for Cix Sky1.
- 
-+config RESET_SKY1_AUDSS
-+	tristate "Cix Sky1 Audio Subsystem reset controller"
-+	depends on ARCH_CIX || COMPILE_TEST
-+	select AUXILIARY_BUS
-+	select REGMAP_MMIO
-+	default CLK_SKY1_AUDSS
-+	help
-+	  Support for block-level software reset lines in the Cix Sky1
-+	  Audio Subsystem (AUDSS) Clock and Reset Unit. Sixteen reset
-+	  outputs for audio peripherals are controlled through the CRU
-+	  register map. The driver binds as an auxiliary device from
-+	  the AUDSS clock driver. Say M or Y here if you want to build
-+	  this driver.
-+
- config RESET_SOCFPGA
- 	bool "SoCFPGA Reset Driver" if COMPILE_TEST && (!ARM || !ARCH_INTEL_SOCFPGA)
- 	default ARM && ARCH_INTEL_SOCFPGA
-diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-index 3e52569bd276..e81407ea3e29 100644
---- a/drivers/reset/Makefile
-+++ b/drivers/reset/Makefile
-@@ -39,6 +39,7 @@ obj-$(CONFIG_RESET_RZV2H_USB2PHY) += reset-rzv2h-usb2phy.o
- obj-$(CONFIG_RESET_SCMI) += reset-scmi.o
- obj-$(CONFIG_RESET_SIMPLE) += reset-simple.o
- obj-$(CONFIG_RESET_SKY1) += reset-sky1.o
-+obj-$(CONFIG_RESET_SKY1_AUDSS) += reset-sky1-audss.o
- obj-$(CONFIG_RESET_SOCFPGA) += reset-socfpga.o
- obj-$(CONFIG_RESET_SUNPLUS) += reset-sunplus.o
- obj-$(CONFIG_RESET_SUNXI) += reset-sunxi.o
-diff --git a/drivers/reset/reset-sky1-audss.c b/drivers/reset/reset-sky1-audss.c
-new file mode 100644
-index 000000000000..f29fe3554ec1
---- /dev/null
-+++ b/drivers/reset/reset-sky1-audss.c
-@@ -0,0 +1,192 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Cix Sky1 Audio Subsystem reset controller driver
-+ *
-+ * Copyright 2026 Cix Technology Group Co., Ltd.
-+ */
-+
-+#include <dt-bindings/reset/cix,sky1-audss-reset.h>
-+
-+#include <linux/auxiliary_bus.h>
-+#include <linux/delay.h>
-+#include <linux/device.h>
-+#include <linux/io.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/regmap.h>
-+#include <linux/reset-controller.h>
-+
-+#define SKY1_RESET_SLEEP_MIN_US		50
-+#define SKY1_RESET_SLEEP_MAX_US		100
-+
-+#define AUDSS_SW_RST			0x78
-+
-+struct sky1_audss_reset_map {
-+	unsigned int offset;
-+	unsigned int mask;
-+};
-+
-+struct sky1_audss_reset {
-+	struct reset_controller_dev rcdev;
-+	struct regmap *regmap;
-+	const struct sky1_audss_reset_map *map;
-+};
-+
-+static const struct sky1_audss_reset_map sky1_audss_reset_map[] = {
-+	[AUDSS_I2S0_SW_RST]   = { AUDSS_SW_RST, BIT(0) },
-+	[AUDSS_I2S1_SW_RST]   = { AUDSS_SW_RST, BIT(1) },
-+	[AUDSS_I2S2_SW_RST]   = { AUDSS_SW_RST, BIT(2) },
-+	[AUDSS_I2S3_SW_RST]   = { AUDSS_SW_RST, BIT(3) },
-+	[AUDSS_I2S4_SW_RST]   = { AUDSS_SW_RST, BIT(4) },
-+	[AUDSS_I2S5_SW_RST]   = { AUDSS_SW_RST, BIT(5) },
-+	[AUDSS_I2S6_SW_RST]   = { AUDSS_SW_RST, BIT(6) },
-+	[AUDSS_I2S7_SW_RST]   = { AUDSS_SW_RST, BIT(7) },
-+	[AUDSS_I2S8_SW_RST]   = { AUDSS_SW_RST, BIT(8) },
-+	[AUDSS_I2S9_SW_RST]   = { AUDSS_SW_RST, BIT(9) },
-+	[AUDSS_WDT_SW_RST]    = { AUDSS_SW_RST, BIT(10) },
-+	[AUDSS_TIMER_SW_RST]  = { AUDSS_SW_RST, BIT(11) },
-+	[AUDSS_MB0_SW_RST]    = { AUDSS_SW_RST, BIT(12) },
-+	[AUDSS_MB1_SW_RST]    = { AUDSS_SW_RST, BIT(13) },
-+	[AUDSS_HDA_SW_RST]    = { AUDSS_SW_RST, BIT(14) },
-+	[AUDSS_DMAC_SW_RST]   = { AUDSS_SW_RST, BIT(15) },
-+};
-+
-+static struct sky1_audss_reset *to_sky1_audss_reset(struct reset_controller_dev *rcdev)
-+{
-+	return container_of(rcdev, struct sky1_audss_reset, rcdev);
-+}
-+
-+static int sky1_audss_reset_set(struct reset_controller_dev *rcdev,
-+				unsigned long id, bool assert)
-+{
-+	struct sky1_audss_reset *priv = to_sky1_audss_reset(rcdev);
-+	const struct sky1_audss_reset_map *signal = &priv->map[id];
-+	unsigned int value = assert ? 0 : signal->mask;
-+
-+	return regmap_update_bits(priv->regmap, signal->offset, signal->mask, value);
-+}
-+
-+static int sky1_audss_reset_assert(struct reset_controller_dev *rcdev,
-+				   unsigned long id)
-+{
-+	sky1_audss_reset_set(rcdev, id, true);
-+	usleep_range(SKY1_RESET_SLEEP_MIN_US, SKY1_RESET_SLEEP_MAX_US);
-+	return 0;
-+}
-+
-+static int sky1_audss_reset_deassert(struct reset_controller_dev *rcdev,
-+				     unsigned long id)
-+{
-+	sky1_audss_reset_set(rcdev, id, false);
-+	usleep_range(SKY1_RESET_SLEEP_MIN_US, SKY1_RESET_SLEEP_MAX_US);
-+	return 0;
-+}
-+
-+static int sky1_audss_reset(struct reset_controller_dev *rcdev,
-+			    unsigned long id)
-+{
-+	sky1_audss_reset_assert(rcdev, id);
-+	sky1_audss_reset_deassert(rcdev, id);
-+	return 0;
-+}
-+
-+static int sky1_audss_reset_status(struct reset_controller_dev *rcdev,
-+				   unsigned long id)
-+{
-+	struct sky1_audss_reset *priv = to_sky1_audss_reset(rcdev);
-+	const struct sky1_audss_reset_map *signal = &priv->map[id];
-+	unsigned int value;
-+
-+	regmap_read(priv->regmap, signal->offset, &value);
-+	return !!(value & signal->mask);
-+}
-+
-+static const struct reset_control_ops sky1_audss_reset_ops = {
-+	.reset    = sky1_audss_reset,
-+	.assert   = sky1_audss_reset_assert,
-+	.deassert = sky1_audss_reset_deassert,
-+	.status   = sky1_audss_reset_status,
-+};
-+
-+static const struct regmap_config sky1_audss_regmap_config = {
-+	.reg_bits = 32,
-+	.val_bits = 32,
-+	.reg_stride = 4,
-+};
-+
-+static void sky1_audss_reset_iounmap(void *data)
-+{
-+	iounmap(data);
-+}
-+
-+static int sky1_audss_reset_get_regmap(struct sky1_audss_reset *priv)
-+{
-+	struct device *dev = priv->rcdev.dev;
-+	void __iomem *base;
-+	int ret;
-+
-+	priv->regmap = dev_get_regmap(dev->parent, NULL);
-+	if (priv->regmap)
-+		return 0;
-+
-+	base = of_iomap(dev->parent->of_node, 0);
-+	if (!base)
-+		return dev_err_probe(dev, -ENOMEM, "failed to iomap address space\n");
-+
-+	ret = devm_add_action_or_reset(dev, sky1_audss_reset_iounmap, base);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "failed to register iounmap action\n");
-+
-+	priv->regmap = devm_regmap_init_mmio(dev, base, &sky1_audss_regmap_config);
-+	if (IS_ERR(priv->regmap))
-+		return dev_err_probe(dev, PTR_ERR(priv->regmap),
-+				     "failed to initialize regmap\n");
-+
-+	return 0;
-+}
-+
-+static int sky1_audss_reset_probe(struct auxiliary_device *adev,
-+				  const struct auxiliary_device_id *id)
-+{
-+	struct sky1_audss_reset *priv;
-+	struct device *dev = &adev->dev;
-+	int ret;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->map = sky1_audss_reset_map;
-+	priv->rcdev.owner = THIS_MODULE;
-+	priv->rcdev.nr_resets = ARRAY_SIZE(sky1_audss_reset_map);
-+	priv->rcdev.ops = &sky1_audss_reset_ops;
-+	priv->rcdev.of_node = dev->parent->of_node;
-+	priv->rcdev.dev = dev;
-+	priv->rcdev.of_reset_n_cells = 1;
-+
-+	dev_set_drvdata(dev, priv);
-+
-+	ret = sky1_audss_reset_get_regmap(priv);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "failed to get regmap\n");
-+
-+	return devm_reset_controller_register(dev, &priv->rcdev);
-+}
-+
-+static const struct auxiliary_device_id sky1_audss_reset_ids[] = {
-+	{ .name = "clk_sky1_audss.reset" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(auxiliary, sky1_audss_reset_ids);
-+
-+static struct auxiliary_driver sky1_audss_reset_driver = {
-+	.probe = sky1_audss_reset_probe,
-+	.id_table = sky1_audss_reset_ids,
-+};
-+
-+module_auxiliary_driver(sky1_audss_reset_driver);
-+
-+MODULE_AUTHOR("Joakim Zhang <joakim.zhang@cixtech.com>");
-+MODULE_DESCRIPTION("Cix Sky1 Audio Subsystem reset driver");
-+MODULE_LICENSE("GPL");
--- 
-2.50.1
-
+On 6/18/2026 6:33 PM, Icenowy Zheng wrote:
+> (CC'ed clk maintainers for weird clock gate bit)
+>
+> 在 2026-06-17三的 18:35 +0800，Joey Lu写道：
+>> On 6/15/2026 4:51 PM, Icenowy Zheng wrote:
+>>> 在 2026-06-15一的 14:50 +0800，Joey Lu写道：
+>>>> The Nuvoton MA35D1 SoC integrates a Verisilicon DCUltraLite
+>>>> display
+>>>> controller whose register layout differs from the DC8200 in
+>>>> several
+>>>> important ways:
+>>>>
+>>>> 1. No CONFIG_EX commit path: framebuffer updates use the enable
+>>>> (bit
+>>>> 0)
+>>>>      and reset (bit 4) bits in FB_CONFIG instead of the DC8200
+>>>> staging
+>>>>      registers (FB_CONFIG_EX, FB_TOP_LEFT, FB_BOTTOM_RIGHT,
+>>>>      FB_BLEND_CONFIG, PANEL_CONFIG_EX).
+>>>>
+>>>> 2. No PANEL_START register: panel output starts when
+>>>>      PANEL_CONFIG.RUNNING is set; there is no multi-display sync
+>>>> start
+>>>>      register.
+>>>>
+>>>> 3. Different IRQ registers: DCUltraLite uses DISP_IRQ_STA
+>>>> (0x147C) /
+>>>>      DISP_IRQ_EN (0x1480) versus DC8200's TOP_IRQ_ACK (0x0010) /
+>>>>      TOP_IRQ_EN (0x0014).
+>>>>
+>>>> 4. Per-frame commit cycle: DCUltraLite requires the VALID bit in
+>>>>      FB_CONFIG to be set at the start of each atomic commit
+>>>> (crtc_begin)
+>>>>      and cleared after (crtc_flush).
+>>>>
+>>>> 5. Simpler clock topology: only 'core' (bus gate) and 'pix0'
+>>>> (pixel
+>>>>      divider) clocks; no axi or ahb clocks required.  Make axi_clk
+>>>> and
+>>>>      ahb_clk optional (devm_clk_get_optional_enabled) so DC8000
+>>>> nodes
+>>>>      without those clocks are handled gracefully.
+>>>>
+>>>> Add vs_dc8000.c implementing the vs_dc_funcs vtable for the above
+>>>> differences.  The probe now selects vs_dc8000_funcs when the
+>>>> identified
+>>>> generation is VSDC_GEN_DC8000 (DCUltraLite reads model 0x0,
+>>>> revision 0x5560, customer_id 0x305).
+>>>>
+>>>> Signed-off-by: Joey Lu <a0987203069@gmail.com>
+>>>> ---
+>>>>    drivers/gpu/drm/verisilicon/Makefile    |  2 +-
+>>>>    drivers/gpu/drm/verisilicon/vs_dc.c     |  9 ++-
+>>>>    drivers/gpu/drm/verisilicon/vs_dc.h     |  1 +
+>>>>    drivers/gpu/drm/verisilicon/vs_dc8000.c | 78
+>>>> +++++++++++++++++++++++++
+>>>>    4 files changed, 86 insertions(+), 4 deletions(-)
+>>>>    create mode 100644 drivers/gpu/drm/verisilicon/vs_dc8000.c
+>>>>
+>>>> diff --git a/drivers/gpu/drm/verisilicon/Makefile
+>>>> b/drivers/gpu/drm/verisilicon/Makefile
+>>>> index 9d4cd16452fa..d2fd8e4dff24 100644
+>>>> --- a/drivers/gpu/drm/verisilicon/Makefile
+>>>> +++ b/drivers/gpu/drm/verisilicon/Makefile
+>>>> @@ -1,6 +1,6 @@
+>>>>    # SPDX-License-Identifier: GPL-2.0-only
+>>>>    
+>>>> -verisilicon-dc-objs := vs_bridge.o vs_crtc.o vs_dc.o vs_dc8200.o
+>>>> vs_drm.o vs_hwdb.o \
+>>>> +verisilicon-dc-objs := vs_bridge.o vs_crtc.o vs_dc.o vs_dc8200.o
+>>>> vs_dc8000.o vs_drm.o vs_hwdb.o \
+>>>>    	vs_plane.o vs_primary_plane.o vs_cursor_plane.o
+>>>>    
+>>>>    obj-$(CONFIG_DRM_VERISILICON_DC) += verisilicon-dc.o
+>>>> diff --git a/drivers/gpu/drm/verisilicon/vs_dc.c
+>>>> b/drivers/gpu/drm/verisilicon/vs_dc.c
+>>>> index 9729b693d360..9499fffbca58 100644
+>>>> --- a/drivers/gpu/drm/verisilicon/vs_dc.c
+>>>> +++ b/drivers/gpu/drm/verisilicon/vs_dc.c
+>>>> @@ -90,13 +90,13 @@ static int vs_dc_probe(struct platform_device
+>>>> *pdev)
+>>>>    		return PTR_ERR(dc->core_clk);
+>>>>    	}
+>>>>    
+>>>> -	dc->axi_clk = devm_clk_get_enabled(dev, "axi");
+>>>> +	dc->axi_clk = devm_clk_get_optional_enabled(dev, "axi");
+>>>>    	if (IS_ERR(dc->axi_clk)) {
+>>>>    		dev_err(dev, "can't get axi clock\n");
+>>>>    		return PTR_ERR(dc->axi_clk);
+>>>>    	}
+>>>>    
+>>>> -	dc->ahb_clk = devm_clk_get_enabled(dev, "ahb");
+>>>> +	dc->ahb_clk = devm_clk_get_optional_enabled(dev, "ahb");
+>>> Please make the clock change a separated patch for atomicity.
+>>>
+>>> BTW the MA35D1 manual's clock tree shows that DCUltra appears on
+>>> AXI2
+>>> ACLK, AHB_HCLK2, behind a mux of SYS-PLL/EPLL-DIV2 (which seems to
+>>> be
+>>> the core clock), and behind a divider (which seems to be the pixel
+>>> clock).
+>>>
+>>> However it's weird that only one DCUltra Clock Enable Bit exists
+>>> despite both bus clocks have "ICG" (I think it means "Integrated
+>>> Clock
+>>> Gating"). In addition the linux clk-ma35d1 driver assigns
+>>> "dcu_gate" as
+>>> a downstream of "dcu_mux", although the Figure 6.5-2 in the TRM
+>>> shows
+>>> no ICG after the "Display core CLK" mux.
+>>>
+>>> Is the two bus clocks controlled by a single gate bit, and is the
+>>> bit
+>>> also gating DC core clock?
+>>>
+>>> Thanks,
+>>> Icenowy
+>> I will split the axi/ahb optional-clock change into its own patch in
+>> v5
+>> for atomicity.
+>> Regarding the MA35D1 clock tree: from the TRM, the single "dcu_gate"
+>> bit
+>> gates both bus clocks (AXI ACLK and AHB HCLK) together with the
+>> display
+>> core clock through the same ICG cell. The clk-ma35d1 driver exposes
+>> only
+>> "dcu_gate" (downstream of "dcu_mux") and does not provide separate
+> Then it's one of the case that the clock tree doesn't properly
+> represent the hardware, which is bad. However, as three gates share the
+> same bit, I am not sure how to represent such kind of thing in the
+> common clk framework.
+>
+>> axi/ahb clock entries. Therefore the MA35D1 DT binding will use only
+>> two
+>> clocks ("core" and "pix0"); making axi and ahb optional in the driver
+>> is the correct approach, and this will be stated clearly in the
+>>   split-out patch.
+> I agree to make them optional, although these two clocks do exist in
+> the hardware of MA35D1.
+>
+> Thanks,
+> Icenowy
+As mentioned in the DT binding reply, the absence of separate AXI/AHB 
+clock entries for DCU in clk driver is due to the hardware design 
+constraint of a single shared enable bit, not a driver oversight. In v5, 
+the axi and ahb clock fetches in `vs_dc_probe` will be split into their 
+own patch and made optional via `devm_clk_get_optional_enabled`, with a 
+comment explaining that on MA35D1 the AXI and AHB bus clocks share the 
+single `dcu_gate` enable bit and are therefore not separately exposed by 
+the clock driver.
+>>>>    	if (IS_ERR(dc->ahb_clk)) {
+>>>>    		dev_err(dev, "can't get ahb clock\n");
+>>>>    		return PTR_ERR(dc->ahb_clk);
