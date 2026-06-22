@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2722F3B52E6;
-	Mon, 22 Jun 2026 13:58:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 142073BA236;
+	Mon, 22 Jun 2026 13:59:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782136723; cv=none; b=XKy5WxZrWtiyDZIzMiw/8wMPzmuHfpqRlHWGYmbqmbo7WqMDmbHPPQ5FFgtJLc1Ipq7+EzmaQIv299UjzU+C9v25ZddSJC55ZKSB4hagq/HUirFfjWpCa6K9ZL5Dd2VTfkI3nvbGRAoZDB05Fsst8yo3wU7kJ3+RKCKHEHSIgpM=
+	t=1782136760; cv=none; b=rNYdbgG8CgswNTZ4OM5pcQuFbHnpzt4Ozsvpcf2wPZ3sPHZ0GY8eRaFU66i3HbVGo8pSPg+cBKNsyc/d/V2//WCHI06sz4TpXA7CjwsowrZlkV+IBQ8bsZB3uVALQFqw/p6/zOrEY15xgGgTFERTOobRyo8hatMLQU7vyqZE9Ac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782136723; c=relaxed/simple;
-	bh=bH/xcw5K7GJShWcVWL3KYu9u8gPe+vn9MQbYu4v47Xo=;
+	s=arc-20240116; t=1782136760; c=relaxed/simple;
+	bh=ckf2CLDcD5bKeJNfALH76945wCUEve6WvHu06tACpbc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q6hiIRt6VOENCRSx/X1BL/zk0tXQqjI7tV58hwYcPEwVvo7kHGS8hzIJqaS9EbRl4YolxqYXlizt5y9duX/0kFrSywI9vnzd54D6RfncpRVrWAU+xZUwbInhRONpsIW1Z8tl/9WWtyfqZ69ZZ7hy4+G+wbXO0q/tEQFa8N3a7Hg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TnNVSOQl; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=RKBrhQWo1HpiXgZ9rXd4cDAef1uZ258Y29rM0Yw9vvuky59WKnrbKnfIenx97JnHhfy0W7rVOwrqYT4TPY5N77SloJZ6lAKtV+N7ahKYOmA9AtzO5P/vscE5ljjU+NIXeDHqnelydfSe9477rrjjI385z1qnptchosXGEsj+9ZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hfH7ldEZ; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TnNVSOQl"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C51741F000E9;
-	Mon, 22 Jun 2026 13:58:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hfH7ldEZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A42821F000E9;
+	Mon, 22 Jun 2026 13:59:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1782136722;
-	bh=am+wTx4UFWjmOrlNd0YbxrEFpH2wlRpzURyKfJls7IA=;
+	s=k20260515; t=1782136758;
+	bh=MWzOfyz2T2EU1PoKiDXZCT09S48JZ9ZqR9VTXBONb08=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=TnNVSOQllJN8DYP8SG+rg47vLAVBwLi1oC2SEzuWM/z+XU39TMsRDa2vVOvuBsjI2
-	 32Bhla415ZKv5dZH1hqRJ05p5IiEbY1xYirBR1ImE7MGoa6uyR7+4lGH2/1Bj00uqN
-	 RJsp6Dfr+UMp1yvcxOW5yc3bHDQje5kM6wmW3bi2+8Y0LLFu84a6V0AjkJaZYlhMS+
-	 vLbl1czCp1/LA7/P2g1VZSJJRIFjRf3UqIDcXl3laRQopH80OUNsmou9nyi0PWL0Z0
-	 q3+4kGkxIVdFaWj862IfCF++Mv26R1cAiw+5A/XQwlGGWN6jQEo7otzNM0QShxxEet
-	 fr2hKdVpmKqVw==
-Date: Mon, 22 Jun 2026 15:58:38 +0200
+	b=hfH7ldEZxUXB4JBSpJS4PVZ94sWnAZizGMRIZShEn0UwLfQxMGaXStyExU5p/yGvZ
+	 9IJgV7YjnxJspHI9lAOMAm0DOMJWozPUhlo14mTU0++sVcIeSXWRKkFGILuV3ifHej
+	 y24SGaI8va+OzbuBs6keJOJovL2HdM/QJEY+Fuyk8fMVokaA/vRk0FTYVmWEOOwN0i
+	 GVYQX7yHYTM3Qk1Pcb72DRfTfwq1O1xEyFy+cNEH+GxBZfnR/XfkjnpcEV5SBhZ66a
+	 NkY31ZVNarCSAxbi7gODggOqQcleK1HspVP90/YVxasU9CNF1RpkfpXkuuGKOPsTFf
+	 9x+UWLszT3vpA==
+Date: Mon, 22 Jun 2026 15:59:14 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Taniya Das <taniya.das@oss.qualcomm.com>
 Cc: Bjorn Andersson <andersson@kernel.org>, 
@@ -37,11 +37,11 @@ Cc: Bjorn Andersson <andersson@kernel.org>,
 	Imran Shaik <imran.shaik@oss.qualcomm.com>, Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>, 
 	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/5] dt-bindings: clock: qcom: Add Maili global clock
- controller
-Message-ID: <20260622-complex-dashing-gopher-9f43a3@quoll>
+Subject: Re: [PATCH 5/5] dt-bindings: mailbox: qcom: Document Maili CPUCP
+ mailbox controller
+Message-ID: <20260622-durable-violet-bittern-5ff7eb@quoll>
 References: <20260618-maili_initial_clock-v1-0-d6ede0352113@oss.qualcomm.com>
- <20260618-maili_initial_clock-v1-3-d6ede0352113@oss.qualcomm.com>
+ <20260618-maili_initial_clock-v1-5-d6ede0352113@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -50,33 +50,19 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260618-maili_initial_clock-v1-3-d6ede0352113@oss.qualcomm.com>
+In-Reply-To: <20260618-maili_initial_clock-v1-5-d6ede0352113@oss.qualcomm.com>
 
-On Thu, Jun 18, 2026 at 10:51:18PM +0530, Taniya Das wrote:
->    clocks:
->      items:
-> diff --git a/include/dt-bindings/clock/qcom,hawi-gcc.h b/include/dt-bindings/clock/qcom,hawi-gcc.h
-> index 6cd7fa0884f535efce90b60997662ca90cfb9b7e..9e0e382af3112b980997f0c7e223720517f12b02 100644
-> --- a/include/dt-bindings/clock/qcom,hawi-gcc.h
-> +++ b/include/dt-bindings/clock/qcom,hawi-gcc.h
-> @@ -196,6 +196,16 @@
->  #define GCC_VIDEO_AXI0C_CLK					186
->  #define GCC_VIDEO_XO_CLK					187
->  
-> +/* Maili has below additional clocks on top of Hawi */
-> +#define GCC_QUPV3_WRAP5_CORE_2X_CLK				188
-> +#define GCC_QUPV3_WRAP5_CORE_CLK				189
-> +#define GCC_QUPV3_WRAP5_QSPI_REF_CLK				190
-> +#define GCC_QUPV3_WRAP5_QSPI_REF_CLK_SRC			191
-> +#define GCC_QUPV3_WRAP5_S0_CLK					192
-> +#define GCC_QUPV3_WRAP5_S0_CLK_SRC				193
-> +#define GCC_QUPV3_WRAP_5_M_AHB_CLK				194
-> +#define GCC_QUPV3_WRAP_5_S_AHB_CLK				195
+On Thu, Jun 18, 2026 at 10:51:20PM +0530, Taniya Das wrote:
+> Document the CPU Control Processor (CPUCP) mailbox controller for the
+> Qualcomm Maili SoC. It is software compatible with the X1E80100 CPUCP
+> mailbox controller and uses it as a fallback compatible string.
+> 
+> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+> ---
+>  Documentation/devicetree/bindings/mailbox/qcom,cpucp-mbox.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 
-I think this should be moved to its own header which will include the
-qcom,hawi-gcc.h. We already do it for
-include/dt-bindings/clock/qcom,sm8650-videocc.h.
-
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
 Best regards,
 Krzysztof
