@@ -1,169 +1,124 @@
-Received: from mail-dl1-f42.google.com (mail-dl1-f42.google.com [74.125.82.42])
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 619953B0ACC
-	for <linux-clk@vger.kernel.org>; Mon, 22 Jun 2026 13:06:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C11E3B14CC
+	for <linux-clk@vger.kernel.org>; Mon, 22 Jun 2026 13:13:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782133613; cv=none; b=eoiPBuzjWJTQOKUqIk9SozFXcPdAooo+dzUvmFX7wsX+BUYMC3nQMaQiEjdJ/aHXetqne/Y6NsubxhBDtRsYAf715sXfN0f19A7JjZWlR8cs09HepezOo5RNY1qjC975NvCau26PFc4IqMfNqe0EOoZQ/HExulLgc8WdCUV5+F4=
+	t=1782134001; cv=none; b=tyyYIcsH6eRCNGu1SP+g26RKlpBJbCECXvTYEyd4munajEAC9fvdmxBsmVUFuRK9bA2xHTFVfCy3D0S/WVVvDQezb9kLTmvL9VWJPYY0wwXEVIk0z+VQLNGwUD+mlbQAtoygZxQy2gaIPIxoepCE4eAaeoci8aDb+Tqmb3q5Zgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782133613; c=relaxed/simple;
-	bh=rEgomYeES1303/3+oBxWiEtLOZncEUHVqywFcqqxico=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k7tdvetqB+zs6GGfeg9KueXbzFVJA2HPsW072Gkp8j4b8ULScpbuDgRwSjX5prDreMv8YRFH5CHyMymn50hT2PxdjkYfs/rCYaMRz9mNQfmOqZtcF+2d1MP1PQHiclcnisoLT/t1PXUJFLfacuAC2YizN7M8P3LF7k4KAbYRQto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m2JNRoN9; arc=none smtp.client-ip=74.125.82.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	s=arc-20240116; t=1782134001; c=relaxed/simple;
+	bh=XcEOJh31PWonfR0DQ8W+3Ki764YdjB5fZsLG4UFUAQw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oL8TzC7XgDvDJAmZjyjAC9bedQ6ql7LnaOqPAQzhF1/J0P6q4cZVOoiI1n0xhQq5tq30noTmxuPjpjhYoPtYy3RP/5rvlcnmSlRCA1zl4bF6JfKg/rUlVjwTWDyqXQh8LE5eUwO2LK6t/LPcoCnyeUBzvcHssoDpK1gfLvlpgiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m2JNRoN9"
-Received: by mail-dl1-f42.google.com with SMTP id a92af1059eb24-137eb0d76beso3730196c88.0
-        for <linux-clk@vger.kernel.org>; Mon, 22 Jun 2026 06:06:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1782133612; x=1782738412; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=JzlovJlGJX04+5z99oBQpaTuexgmdv5pr10RaNussdc=;
-        b=m2JNRoN9kMMFj4TrOwgFeJgxLdCM8rbBv7wI1kppwdO6aCijke7MWma8ucG2MugTpY
-         F24uOWg9t2NXgM7B2grdN/XYLur/IResnkx5dcKZO6E/omsb+oulW5jhgcCVD8RSI4jH
-         Xi9AUbR4RhqpLnzN+XrFI/dE0JJMXkT7ydgfv0E4Hm59urLeJeEJEx0fu5RkMXLq0slZ
-         3AEecywPLoYMQ6aeXoMYtjk/veSHhCHfkMH93K8mQjdg4VBWW+7LPZb7ZqaFvewM0hJu
-         hOKwQr7HYBt955AucPeHARwOt2oKdvfBfdyrK7OvTr866onTS2vUMVDBebMPaBagwW/S
-         PI1Q==
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-c0c41ff84a6so304222466b.1
+        for <linux-clk@vger.kernel.org>; Mon, 22 Jun 2026 06:13:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782133612; x=1782738412;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JzlovJlGJX04+5z99oBQpaTuexgmdv5pr10RaNussdc=;
-        b=KKN6erdOQeszHb09WF3l6e47HqgkrgyD4jYVJKNKvUN7R/BLzNh1fCMl7s31umbOXL
-         c+3GiJPfG0Y5fpWpgED6h5VE6/9TBL/wxmCdTTqY9/XLR688ecZye3NsV8s68vp3EkW0
-         45pWUlsRRYRk1To9jhjeZAvEE4YmqaywlRYAkyUEA+kdU5hDU/b4RQCvFbzo3SXMCTa+
-         sm4WhiAnu2LfZf8/IAOL2KhYyC0bM/yE6McfoqdCbc+1ZmXg8/XvgHeQydrivqx48ct4
-         YfcVhVE0zkljgxWLrwHEQ4LTuBedSrTzOrMmNfv2qzjxKeL24c15rsBTPwPbh8I8NBRS
-         W0lA==
-X-Forwarded-Encrypted: i=1; AFNElJ+Sb1cdEh+wxuFqjZpz4alc8EAccrUFZvzQJfVoaihFJg25TzGfRUFNNV2yf0VWr7yta9PGmqFvuks=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7naa4jaIHr9giSFLgrtptZhE5r7ZW65G23tGvIuMLae9PVSrm
-	r21oc+XwikOBe2IPqZrL5JczJtLeIOnn63fNYZaTKQJA/oUiTpl9WgdD
-X-Gm-Gg: AfdE7cmxDtU6SqHaHkhmumvMssRxEIPWmCwfetrtC2l/esIXnr8dKMo10BadMK2dIF/
-	35dv9VedW0U4r1UOzrJIVjVoN9g5XJ164UoBYz08YnyyocYAgMcoMEbUM3zlPZM/is3aba5yxRI
-	ZRPvZ/e0U5wxsZyNW3Q0uz/z/1oI1oA7aHelWT+mEtfdusD7r+T8h9cNlrpkaDq9d3l7zoTasVt
-	9NegxRQmK8CIbgNIqGDgHOx901laKD4hjwsZex5oDcZXANqzDMp8n9b3JpNhAHWhgXEQT94ovF5
-	hYtic0IHazQlqmU6Vk/JsXOPqRZNFOY5/rBvjzk7e/yM13xZA5l/LI2O8kjs5y1llsISwI6JdjG
-	LQjAKBleumfX/0AEYQEYIcczYBsIzWYbEa5ht0ePFEbj1hhV2CAidtjroVgII3IU8dfhoBK73EO
-	l2ZhWbshjn8nlrt/C2l3dRkw/CCDR9NRz3zWXgJNvJYodE4SaJyRKjJsfW582uiQ==
-X-Received: by 2002:a05:7022:e998:b0:136:bb14:b0f8 with SMTP id a92af1059eb24-139a3051a57mr7768480c88.5.1782133611333;
-        Mon, 22 Jun 2026 06:06:51 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-139adccb622sm8183703c88.7.2026.06.22.06.06.49
+        d=1e100.net; s=20251104; t=1782133998; x=1782738798;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9cPiOkbmgHnl7iVDXe5O/aM/qhQ7nF1KGFxDUd/gPMA=;
+        b=asooQD/H5GYvS3fhw639fgDeEsPJI3Gq6i1Pd24s0pha35rBsSNQCzuyuy6kPuPAmg
+         oiFaffubpxZcf/aH3Qlkeg0VjA+X00FtjTykX3ZRusNPlyNDyMdY7eTL+9e5ZrkpM7jR
+         o0AE8/FO8GwTW5vi2u6kYpBJiEXDsgr6qu8PwDY/Y2cNxtiw3CfXHqPhENJKZfE8a4Cq
+         nbtm+/lWMOXlwjR5aoMt+qJvvhNWAL+GHkMXfGkTJr61e3BpV+RSSS4Ivqe5Zx+3cQ/z
+         heYgIF3YREf80hWSdqW48BgwwGAAuQQslxFKF3H3krj0ILk3Lq8dUylQY/GnfAQ9IHuE
+         lL1Q==
+X-Forwarded-Encrypted: i=1; AFNElJ9vO20/6bIZLPn14vcEwgKcCobYI225q4MJ/QZH8TJVJphSwK1E6oF2phMo8nYO6tllFtOSCqOsoss=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUesl8HSPWeSxdaEblTZNrBNKHJA/MZKLkcF72pg/SPlBGDPIC
+	O/yTHYo2JYwpOnrN1KMdgofA1AYQybqOwm3hocesv5u0QnG1PTQ+9OjxQzrzaGt+6TI=
+X-Gm-Gg: AfdE7ckRiFDlVGazC60IWaTISqRXDIapt2eFYYgbY8jRb+9o5cUJ42R1qxwf5d6F8wT
+	lLk4DE7QtasTg8JojwI9wp+jDLMdJGZDRzwD9485L1jqX3+hrKLNi452X9b+RUvDcijlE2S7Hff
+	xZZyXDsyHtftd2VxtZ2QJL0FV7alFRwPJbONWBRdDKAkN/8Eu/7MjT+88p/CvxnE9Z4jrffrPS+
+	VdS0k2NXrg8LCZ4p/90S4kKHfIWQIVtB8O1A45XzX4miu54dH9ZHzZU7fbPXcXM0wCfYlXuPqLZ
+	IWe5SRHhpys24tTUec4w97YHSC3E+EeP5rkkqJBJyJbNjKoJG+6uhLT2nBD7LXePhDyviJpCJXo
+	DA2kYrMWYW2P9/8DJj6tf2mYHY4oWdZVczYdFmoSh5k2Ul+KyQ9TnimgjusXdd8L5oKikhGF8bJ
+	9VHlBFXtMaL0xb3ulwHSthOp2+NLnB5N4BIAEKzwYyq1dBo/F7Ew==
+X-Received: by 2002:a17:906:f59e:b0:bf7:a616:cafa with SMTP id a640c23a62f3a-c097c8ba434mr890218466b.34.1782133998250;
+        Mon, 22 Jun 2026 06:13:18 -0700 (PDT)
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com. [209.85.208.42])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c0c5e99bd0bsm359533466b.23.2026.06.22.06.13.16
+        for <linux-clk@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Jun 2026 06:06:50 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <ec74f1b8-cf7f-4b33-9157-1fd0bb7da7ba@roeck-us.net>
-Date: Mon, 22 Jun 2026 06:06:48 -0700
+        Mon, 22 Jun 2026 06:13:17 -0700 (PDT)
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6974a6e54dbso5286201a12.2
+        for <linux-clk@vger.kernel.org>; Mon, 22 Jun 2026 06:13:16 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ+4aUL0nSigoPefhATYQd7IzyTh3b2jk70SbsrTG+vASu6eqRgadyhd9Q0Qg2Tmsrvq9P058BZ2uTE=@vger.kernel.org
+X-Received: by 2002:a05:6402:3547:b0:697:ce0e:9243 with SMTP id
+ 4fb4d7f45d1cf-697ce0e9559mr540539a12.13.1782133996242; Mon, 22 Jun 2026
+ 06:13:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mfd: db8500-prcmu: Fold dbx500 header into db8500
-To: Linus Walleij <linusw@kernel.org>, Russell King <linux@armlinux.org.uk>,
- Ulf Hansson <ulfh@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Daniel Lezcano <daniel.lezcano@kernel.org>,
- Christian Loehle <christian.loehle@arm.com>, Lee Jones <lee@kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
- Wim Van Sebroeck <wim@linux-watchdog.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-watchdog@vger.kernel.org,
- linux-sound@vger.kernel.org, kernel test robot <lkp@intel.com>
-References: <20260619-mfd-prcmu-merge-headers-v1-1-8ea0ee23b4d6@kernel.org>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
-In-Reply-To: <20260619-mfd-prcmu-merge-headers-v1-1-8ea0ee23b4d6@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20260618181949.3036280-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20260618181949.3036280-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20260618181949.3036280-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 22 Jun 2026 15:13:03 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXX-3ddkTmHGQOySZygRmvhnG6snk7uv4xmA8NjM9MsDw@mail.gmail.com>
+X-Gm-Features: AVVi8CcUH8u1TOdYYuE-qFfJh-2q3W4LZYrwKknGe4DqOfHPr71m4gxhWY1vJh4
+Message-ID: <CAMuHMdXX-3ddkTmHGQOySZygRmvhnG6snk7uv4xmA8NjM9MsDw@mail.gmail.com>
+Subject: Re: [PATCH v4 5/5] clk: renesas: r9a09g077: Add LCDC and PLL3 clock
+ support for RZ/T2H display pipeline
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 6/19/26 13:27, Linus Walleij wrote:
-> Move the DBx500 PRCMU definitions into the DB8500 PRCMU
-> header and delete the wrapper header.
-> 
-> Convert users of simple PRCMU wrappers to call the DB8500 helpers
-> directly.
-> 
-> The dbx500-prcmu.h header was the result of an earlier attempt to
-> abstract several DBx5x SoC PRCMU units to use the same abstract
-> header. They are deleted from the kernel and this is not just
-> causing maintenance burden and build errors.
-> 
-> The stub code is using -ENOSYS in a way checkpatch complains about
-> so replace these with -EINVAL while we're at it.
-> 
-> Assisted-by: Codex:gpt-5-5
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202606180825.vUSQntkJ-lkp@intel.com/
-> Signed-off-by: Linus Walleij <linusw@kernel.org>
+Hi Prabhakar,
+
+On Thu, 18 Jun 2026 at 20:19, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Add the clock definitions and PLL logic required to supply the LCDC
+> (VSPD/FCPVD/DU) blocks on the RZ/T2H (R9A09G077) SoC. The RZ/T2H display
+> subsystem depends on a dedicated PLL (PLL3) and a set of new derived
+> clocks.
+>
+> Introduce a new PLL clock type and implement rate recalculation,
+> programming and locking sequences for PLL3 using the RZ/T2H specific
+> divider and VCO limits. Add the corresponding muxes and divider entries,
+> expose the LCDC core clock, and register the LCDC module clock using the
+> correct PCLK parent.
+>
+> This enables the RZ/T2H clock driver to generate the display pipeline
+> clocking tree needed by the DU and VSP-based composition engines, allowing
+> upcoming display support to be integrated without duplicating CPG logic.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
->   arch/arm/mach-ux500/cpu-db8500.c |   6 +-
->   drivers/clk/ux500/clk-prcmu.c    |  20 +-
->   drivers/clk/ux500/u8500_of_clk.c |   2 +-
->   drivers/cpuidle/cpuidle-ux500.c  |   6 +-
->   drivers/mfd/ab8500-core.c        |   2 +-
->   drivers/mfd/db8500-prcmu.c       |   6 +-
->   drivers/regulator/db8500-prcmu.c |  12 +-
->   drivers/thermal/db8500_thermal.c |  10 +-
->   drivers/watchdog/db8500_wdt.c    |  22 +-
+> v3->v4:
+> - Added RB tag from Geert.
 
-For watchdog:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v7.3.
 
-Acked-by: Guenter Roeck <linux@roeck-us.net>
+> +       rate_millihz = mul_u32_u32(req->rate, MILLI);
 
+The issue pointed out by Sashiko (req->rate is unsigned long, i.e. can
+be larger than u32 on 64-bit) is valid, but I believe it can't happen
+in practice.  Still, would be good to fix it in a subsequent patch.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
