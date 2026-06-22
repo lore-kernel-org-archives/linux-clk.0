@@ -1,75 +1,87 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 353C23955C3;
-	Mon, 22 Jun 2026 09:02:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8F9839B495;
+	Mon, 22 Jun 2026 09:18:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782118978; cv=none; b=dWNYWll9H0odRdJdOqrybRFgHdb2G/4orlWiuk8Ft/BIkDVGOZywNOWL8StiZljbY//5GOyRke1jONGoiF7KffjRMfQrfFbyF51ALEx8L8mE9Tv6nm20N3b5uhu6NOvhKUOEB3XQ1KjcYpaQfyYBBS64iKqT9rtZWcyy2lN/Vns=
+	t=1782119941; cv=none; b=UaeH4KmJQ5V1z2vV7bkJDHDZcjPDLVmLwWFmv27M0T2PLxA2xg0q0i0onC0IX2fwBJTiM5F3IZOarkVBjhIDegDok+VXBszrUmLUYdBAihanR0Y06TryFbTdGi3Yev0WQRQ6gBwsGXLuL5rL4CcKzRpnOImviGoxGSZNwVExf5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782118978; c=relaxed/simple;
-	bh=bof2RftABQM0VW5dqtozp5h4V8Fl6nfu+ykwzqfqVVI=;
+	s=arc-20240116; t=1782119941; c=relaxed/simple;
+	bh=rNXWhIqCnCiuZjgJcEM9gRULbQI8ONKE9bL7itt2wxE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zde62zvz5EeZYdgp+sQXuGuG1Xp/SI22SX7H390eeRpvPdoZOQbWeqPBuqx6zrtKJgsKF3zG1vUq5D5EXgo5pXDblM78+wXIL4ZlytcGrikZuIo9qq0BCosqBzJTcgNsWSaS1BsHuuDWGFnYoQCqKtE40fmtU7CvDXBFCXM3gzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k2zzXMRb; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=dPofWFICHngTC6I7rWZmKRp63Gj6SxHH1YIRKA+kTn8IaDjmzmw3ZlyDd06z53VN/xr545SGhV4xV7QxQz0fWztkpa45l5/Sf36+z1FQVVvJgHFCps/MzGoqjFw9In42d9cRtxE3mrlJmHfa2b8V7mCY6wJokK01a/vvq2Tzc9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LEkQ9Xtm; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k2zzXMRb"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F8061F000E9;
-	Mon, 22 Jun 2026 09:02:54 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LEkQ9Xtm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B789B1F000E9;
+	Mon, 22 Jun 2026 09:18:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1782118975;
-	bh=37JW7K3sg07SL4BlJiD2RoB54WDCii+ode2jFNVJxNo=;
+	s=k20260515; t=1782119937;
+	bh=rNXWhIqCnCiuZjgJcEM9gRULbQI8ONKE9bL7itt2wxE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=k2zzXMRbaAgtx4A9VTmvyk+GhkLCzkMlCr6+OXPPplDlPFcqL2XHR9tBZW8Vwazty
-	 ihfQXyTKWaxxIn7Wx9qxA6RkKgO2VY4SPbwCxP+kE8hzBZgWnfvr0kIZOvZznfk+as
-	 qjijR9aaZPZpY7J9wYgjhaIs0L0qGbJ+wi/1+qdFyCMClpeHUh2pt1V9IWps/MBoB0
-	 LLE54H8slDEVL3JlZVAnW/08m6oEKuFva/dJBe0GaI6+MvYYtcv1xWqLNg5u3hV/cR
-	 MBn0nbBxaaRcMBT6iaLT2FV9FfhVAqHr4wvPRQJaL4LDs5hJb43gejFx85KQAScnpC
-	 SXg+TcGUpEwwA==
-Date: Mon, 22 Jun 2026 11:02:51 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: joakim.zhang@cixtech.com
-Cc: mturquette@baylibre.com, sboyd@kernel.org, bmasney@redhat.com, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, p.zabel@pengutronix.de, 
-	gary.yang@cixtech.com, cix-kernel-upstream@cixtech.com, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v5 4/4] arm64: dts: cix: sky1: add audss cru
-Message-ID: <20260622-dramatic-worm-of-radiance-adf731@quoll>
-References: <20260622022520.3127103-1-joakim.zhang@cixtech.com>
- <20260622022520.3127103-5-joakim.zhang@cixtech.com>
+	b=LEkQ9XtmIrZkFEhkooQbXgFQHG77Bd28aPmHUdYP5v2g93YlcLZxCQ2vX3rE+JXxB
+	 ntQuYtwCXa9ZLKEX5W7dqzMS2dYd3zAkOHcWQq2cjbibjSw2BuwNsnhrJ96pfG8/da
+	 /wM19OEfkOlPNCqm49mh0XV5/7e6MNE6SC43y6cPNqT6n+NDEB8LMTXxtSzB1FhCIA
+	 7x4hQ8EtRWM8vFQpvVZlN0MS5TeqcxZ8moesBkezQEfKe6gnLp6Vw/1LlFeyYCBHon
+	 xe1+Hk19xFNbMcBRriFpD9vSyaiQOSz/cpvV7QrNmBKd2xZNGBfW4Ly4Q8RfyMlis+
+	 1K4mhSYXuW4gA==
+Date: Mon, 22 Jun 2026 10:18:49 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Linus Walleij <linusw@kernel.org>
+Cc: Russell King <linux@armlinux.org.uk>, Ulf Hansson <ulfh@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@kernel.org>,
+	Christian Loehle <christian.loehle@arm.com>,
+	Lee Jones <lee@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-watchdog@vger.kernel.org,
+	linux-sound@vger.kernel.org, kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH] mfd: db8500-prcmu: Fold dbx500 header into db8500
+Message-ID: <6a1c6e6f-b2a4-4953-878c-2f2f3744d320@sirena.org.uk>
+References: <20260619-mfd-prcmu-merge-headers-v1-1-8ea0ee23b4d6@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="F21+nkoAYpsrTplW"
 Content-Disposition: inline
-In-Reply-To: <20260622022520.3127103-5-joakim.zhang@cixtech.com>
+In-Reply-To: <20260619-mfd-prcmu-merge-headers-v1-1-8ea0ee23b4d6@kernel.org>
+X-Cookie: Now I am depressed ...
 
-On Mon, Jun 22, 2026 at 10:25:20AM +0800, joakim.zhang@cixtech.com wrote:
->  
-> +		audss_cru: clock-controller@7110000 {
-> +			compatible = "cix,sky1-audss-cru";
-> +			reg = <0x0 0x07110000 0x0 0x10000>;
-> +			#clock-cells = <1>;
-> +			#reset-cells = <1>;
-> +			clocks = <&scmi_clk CLK_TREE_AUDIO_CLK0>,
-> +				 <&scmi_clk CLK_TREE_AUDIO_CLK2>,
-> +				 <&scmi_clk CLK_TREE_AUDIO_CLK4>,
-> +				 <&scmi_clk CLK_TREE_AUDIO_CLK5>;
-> +			clock-names = "x8k", "x11k", "sys", "48m";
-> +			power-domains = <&smc_devpd SKY1_PD_AUDIO>;
-> +			resets = <&s5_syscon SKY1_AUDIO_HIFI5_NOC_RESET_N>;
 
-> +			status = "okay";
+--F21+nkoAYpsrTplW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Drop.
+On Fri, Jun 19, 2026 at 10:27:10PM +0200, Linus Walleij wrote:
+> Move the DBx500 PRCMU definitions into the DB8500 PRCMU
+> header and delete the wrapper header.
 
-> +		};
-> +
+Acked-by: Mark Brown <broonie@kernel.org>
 
-Best regards,
-Krzysztof
+--F21+nkoAYpsrTplW
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmo4/fkACgkQJNaLcl1U
+h9BceAf+JnRRZo3CC7dY7ixwk7zpLhaOOcYrfPWC7UPLCHezOGDW4mYKWhJCKed4
+opIBNonasXPS4Q3MuElsJo8eLwxS5HhDkmVX7k0CoEoPdeTGkbqih/6ZLU0vk0e/
+PTbTPGGJFQj6ewMSK6TZMnor3CNuqVSYDhYD++Wtkpy2Bc+HM46Pj2xGADsWkAk5
+rJTCldPiov2ztl7LN5YsUax/+xulcuqnxvw1yXrS1AExqFqnkLX3AEFdC1p3ycoh
+Lbwo5s6c+lChx+Owkt5DeYeDJ9CQ3qrmiZRZUtHKLb1yd120zbWEXa7CXk5mk8e1
+EGKSYIKOunlL6yCr6AOb+fsg9njECA==
+=27Qz
+-----END PGP SIGNATURE-----
+
+--F21+nkoAYpsrTplW--
