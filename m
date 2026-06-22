@@ -1,148 +1,180 @@
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88540371D14
-	for <linux-clk@vger.kernel.org>; Mon, 22 Jun 2026 10:39:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13EA425A2DD;
+	Mon, 22 Jun 2026 10:46:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782124794; cv=none; b=O3o02VmJBr/lul8I78tE7NVQ7b4h/KpyaDefT8Xu+USWeIzwEZa2rXp5DsslNVChR0jmAw3cbyEvWvnQfk5aKfrPBFEw0BK+RY/J4/KloTRzDH+AQd3UZVMYIo7/GRMOFL8vWb2KppewL00ofhEKGRQEzdqGEmv6HncYGpdjipA=
+	t=1782125174; cv=none; b=olmnBxy3pgthC14SJ4YPqU4u4u2bWl0CK9mCy0HYXZnOqCmcigWO28t1tx7lqxzAWskRM2idPlA9XjcllynijGE6DlRNHjPyoPnwUcWF6nkdKyiAazotL3xdCUv2hleV+PkEv/ufJ88xRezuUC6VQSluwnGOcDML3D7swqFvaUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782124794; c=relaxed/simple;
-	bh=CTQXMUV+/UBVnNjzgtkJO88wjy6FOPIwK3y5DrpmBBk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZeKDPV077FbZ4EKIklUSjxfwlQ4Q7KW/cbv7iKGsX3ghoQrg1b78jXGMqcWIOuXBDDBKvCup8c/z7Ti4yXENxbb+AExBXVehFglJgcQUPONYvHnBEHkF0FlDotZxQihKGoJJUE1aHuZY5+zE345zudnPiz1tV/M0nLnaEchG6Es=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2c0c379e8ffso34560265ad.3
-        for <linux-clk@vger.kernel.org>; Mon, 22 Jun 2026 03:39:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782124793; x=1782729593;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6sEwup8vrGtzg0eQ+zIA6Kd2oTy+XBY9jxS2BNcFzC0=;
-        b=KiuUnkVETfA1GFCHXrovsvxSzanB/pptdjzc0DFhgUKqN03b/UC55YmlUjl5PvspXw
-         4uZAqpq2/jkNHZf6i7TQmpgbiYhTOqZfhyvZ6Rj3DBD3GBQIDvRpUT+XkTv3CP0kfdJi
-         KpuDYZnAHPTtEXjZs22d/V3PzQedgXIvKkE/ScMUZBVX5GKVBn5/tm9V3SxuycLp8kru
-         Vkz6wvVAKZy4wYmYbVpZzLcWwsiESdvb/FdDEj4E/dWMq6d9ryB2FQQLfuDCTJIx5wsz
-         EoocvCvhlaituqdYcCJyNR0Dg7IMpE1KUXVjSp5uHpYU8B/+1ZNnv+WIqsfttYnHXSO5
-         JwgA==
-X-Forwarded-Encrypted: i=1; AHgh+Rrbaup+T3KNJyobdZUfT73wZdBmwJVePdWrdzDxGokj4d+vYByc937Oq0KgVvRTt2IPwL44ecLY+fI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFr4p+e3xelDU0LbiV/1Xzhv8lNsb4nFGM13YHUYGsFsVURag8
-	yLXW9IYUkcPDMbPQAdb0TrxH/O0TRiZvj/4Ve215n6v4W9/XL3p8hNErbOANEpaX
-X-Gm-Gg: AfdE7clCmWqbdmutWlHj6fSwVVUfLDU8B5FNK4+zxVCrj262ewiz1hDOiAKdGzrjgB6
-	fnZOdYjwd7oLn+FHvdUJEQ01V7Uard2wZJV/ib76P3K37sj0P00o3Ww4my7GN99r7otWMyxob0v
-	PdlMFlvRlF+htm8+e3q87Gg+RZXWdyO90TTqhu/Zq7lWQrKX9i55rRSOv/hY1+V1G/UKbeYDtZX
-	j+Xkxl7wwB4PCuGYrIgKt7hDTk9NXAOjr9AhjSYHNcajiwsmoeEc8kI+msOSJwp+aG6yahmMc2g
-	hMDeVhjGunq/cbnsd5gnqVtNTgOoWp09lKXRc+2Ioo5wOElrHWOqpDQhQzPHyN705i2h00BZIzS
-	g0iG/KZbA2t4iWfFeKBx1pCZrh5QTlPOWW9NI+7pMF/+ukMwMRTm4fbYd+4FfuvosFlaYa7TNQh
-	OFzk+oqf/8RsBcOQ16WhdLx7sC13lduX1z7XIYfebQ9PolccKM
-X-Received: by 2002:a17:902:f788:b0:2c2:5446:30f1 with SMTP id d9443c01a7336-2c718f619d1mr148771155ad.14.1782124792828;
-        Mon, 22 Jun 2026 03:39:52 -0700 (PDT)
-Received: from mail-dl1-f44.google.com (mail-dl1-f44.google.com. [74.125.82.44])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2c7444aad99sm87110165ad.80.2026.06.22.03.39.52
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Jun 2026 03:39:52 -0700 (PDT)
-Received: by mail-dl1-f44.google.com with SMTP id a92af1059eb24-1384eb94d20so10101661c88.1
-        for <linux-clk@vger.kernel.org>; Mon, 22 Jun 2026 03:39:52 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ/AOIOeTgXwqcSi84fKuD9FFz25DcQm1ZuIFY8QW1jrX4kJBj/ifFJQc4xssL9fh81ZRLCFLZPxSgs=@vger.kernel.org
-X-Received: by 2002:a05:6102:3314:b0:6ef:f6cf:1b32 with SMTP id
- ada2fe7eead31-72a043c9af3mr8022945137.27.1782124344043; Mon, 22 Jun 2026
- 03:32:24 -0700 (PDT)
+	s=arc-20240116; t=1782125174; c=relaxed/simple;
+	bh=hMDAgLe7cDer6nzvqmXg9ylcO6Ix4RJZqoVohhfsUfM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=diMTXjn4cuy+f8PPxhOH6hm+7iAwRrgTSOhERZhVQdoFowsp/g+Yo5rWWOp35+LiOfS3jmTC5rn62jMGU4T8aEEWhUwy1KzHSM+sKpkJ2nKr39EnljrR9E1a+7QAMSBmJw5pgMftXrPxwwgwEQn7DTD/mxb1M1zWzIGRC+RADi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lr98dekk; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lr98dekk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A5D91F000E9;
+	Mon, 22 Jun 2026 10:46:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1782125173;
+	bh=vA8TsApoYifboONc/BviKOxLxdIYQW+iSoPtQoVWi4o=;
+	h=From:Date:Subject:To:Cc;
+	b=Lr98dekkNcYr0R3kUQrDXOfN81g6b+xfjCXEpbp1HRtL5Aq5itDClLgqZ8L2h34nY
+	 jSUDNYpSNT766BkKSfYeF+0RiNTXrb+S1RKIPa8yR2uprb/npz5WOKlY64RXZDOQtK
+	 zfABW2UBk29Q5aNDYcQj6RxLrIewvwmtWfRiDk5o8mD/y3FM5fLK72yI+zh3vinJ99
+	 +S+xiP3drdXx9VW0bMrEvqD/wHPUzJf8wpD4YCIc3xVDTmJUEZ4Ab0G0el+Xeef/ES
+	 HUv4CkFGFghyjz/+sMwV5anXflhCGPF/X87UKzKObrKmyhZfwDXd/XRFFEt1i8Ez40
+	 Hi66PEyaZgJXw==
+From: Konrad Dybcio <konradybcio@kernel.org>
+Date: Mon, 22 Jun 2026 12:46:05 +0200
+Subject: [PATCH] Revert "clk: qcom: regmap-phy-mux: Rework the
+ implementation"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260622101606.485961-3-krzysztof.kozlowski@oss.qualcomm.com> <20260622101606.485961-4-krzysztof.kozlowski@oss.qualcomm.com>
-In-Reply-To: <20260622101606.485961-4-krzysztof.kozlowski@oss.qualcomm.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 22 Jun 2026 12:32:09 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWw4+-YZRx2icp_t3OQt3cb9osjac7gziiyRZcHa3zMbQ@mail.gmail.com>
-X-Gm-Features: AVVi8CeRh5uGKoGdWXUVe0e4sYYTgs7H91cw7cP665l5Rz_E8v79r8eSiiAY4SE
-Message-ID: <CAMuHMdWw4+-YZRx2icp_t3OQt3cb9osjac7gziiyRZcHa3zMbQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] dt-bindings: Drop incorrect usage of double '::'
-To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney@redhat.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, Sam Protsenko <semen.protsenko@linaro.org>, 
-	Rob Clark <robin.clark@oss.qualcomm.com>, Dmitry Baryshkov <lumag@kernel.org>, 
-	Abhinav Kumar <abhinav.kumar@linux.dev>, Jessica Zhang <jesszhan0024@gmail.com>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Inki Dae <inki.dae@samsung.com>, 
-	Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
-	Andi Shyti <andi.shyti@kernel.org>, Georgi Djakov <djakov@kernel.org>, Lee Jones <lee@kernel.org>, 
-	Pavel Machek <pavel@kernel.org>, Hans Verkuil <hverkuil@kernel.org>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Ulf Hansson <ulfh@kernel.org>, Peter Rosin <peda@lysator.liu.se>, 
-	Vinod Koul <vkoul@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Linus Walleij <linusw@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Magnus Damm <magnus.damm@gmail.com>, Sebastian Reichel <sre@kernel.org>, 
-	Javier Martinez Canillas <javier@dowhile0.org>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, Srinivas Kandagatla <srini@kernel.org>, 
-	Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@kernel.org>, Zhang Rui <rui.zhang@intel.com>, 
-	Lukasz Luba <lukasz.luba@arm.com>, Jonathan Marek <jonathan@marek.ca>, 
-	Taniya Das <quic_tdas@quicinc.com>, Robert Marko <robimarko@gmail.com>, 
-	Christian Marangi <ansuelsmth@gmail.com>, Stephan Gerhold <stephan@gerhold.net>, 
-	Adam Skladowski <a_skl39@protonmail.com>, Sireesh Kodali <sireeshkodali@protonmail.com>, 
-	Barnabas Czeman <barnabas.czeman@mainlining.org>, Imran Shaik <quic_imrashai@quicinc.com>, 
-	Sricharan Ramabadhran <quic_srichara@quicinc.com>, Anusha Rao <quic_anusha@quicinc.com>, 
-	Luo Jie <quic_luoj@quicinc.com>, Tomasz Figa <tomasz.figa@gmail.com>, 
-	Chanho Park <chanho61.park@samsung.com>, Sunyeal Hong <sunyeal.hong@samsung.com>, 
-	Shin Son <shin.son@samsung.com>, Krishna Manikandan <quic_mkrishn@quicinc.com>, 
-	Jacek Anaszewski <jacek.anaszewski@gmail.com>, Jaehoon Chung <jh80.chung@samsung.com>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, Alina Yu <alina_yu@richtek.com>, 
-	Andy Gross <agross@kernel.org>, =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
-	Wesley Cheng <quic_wcheng@quicinc.com>, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-i2c@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-leds@vger.kernel.org, 
-	linux-media@vger.kernel.org, linux-mmc@vger.kernel.org, 
-	linux-phy@lists.infradead.org, linux-gpio@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-serial@vger.kernel.org, 
-	linux-sound@vger.kernel.org, linux-usb@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260622-topic-phymux_revert-v1-1-f6ec85523840@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMTQ7CIBBA4as0s5aEosWmVzGN4WeUMWlLgBoM4
+ e5SXX6L9wpEDIQRpq5AwDdF2taG/tSBcWp9IiPbDIILyaUQLG2eDPPus+z53goMiV3UddBS2bM
+ dEVrpAz4o/663+e+46xeadKyg1i+LjL0sdwAAAA==
+X-Change-ID: 20260622-topic-phymux_revert-4a75b6ad3d8e
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+ Abel Vesa <abel.vesa@oss.qualcomm.com>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1782125169; l=3567;
+ i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
+ bh=G52ORgWlRAy4sEcqY1Z6pWueSuJsz3m566Cs2dOALKQ=;
+ b=EvZ4l0sU+5kwTl9swItPbccyA+3sUPm2WEdWTKq9cLNngw3e6Shbb3+S1ZSsIdMNWcBx6KcFu
+ Qh1aN4CygmACn9Xs+i4VtbMdI4d1l53tGXfzbqPDKtiM6Kl0/Vow3/p
+X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-On Mon, 22 Jun 2026 at 12:16, Krzysztof Kozlowski
-<krzysztof.kozlowski@oss.qualcomm.com> wrote:
-> There is no use of double colon '::' in YAML. OTOH, the literal style
-> block, e.g. using '|' treats all characters as content [1] therefore
-> single use of ':' in descriptions is perfectly fine, whenever '|' is
-> used.
->
-> Cleanup existing code, so the confusing style won't be re-used in new
-> contributions.
->
-> Link: https://yaml.org/spec/1.2.2/#literal-style [1]
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
->
-> ---
->
-> Intention for this patch is to go via Rob's tree.
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
->  .../bindings/power/renesas,rcar-sysc.yaml     |  2 +-
->  .../bindings/soc/renesas/renesas-soc.yaml     |  4 ++--
+This reverts commit e108373c54fbc844b7f541c6fd7ecb31772afd3c.
 
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be> # renesas
+This has been reported to break PCIe on at least SM8350 and Eliza
+platforms. I had originally tested this on Hamoa (X1E) where there were
+no adverse effects. It's highly likely that this stems from a
+difference in how the bootloader configures the clocks.
 
-Gr{oetje,eeting}s,
+Revert the offending change to fix the issue in the immediate, with the
+intent to revisit it in the upcoming cycle.
 
-                        Geert
+Reported-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Reported-by: Abel Vesa <abel.vesa@oss.qualcomm.com>
+Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+---
+ drivers/clk/qcom/clk-regmap-phy-mux.c | 58 ++++++++++++-----------------------
+ 1 file changed, 20 insertions(+), 38 deletions(-)
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+diff --git a/drivers/clk/qcom/clk-regmap-phy-mux.c b/drivers/clk/qcom/clk-regmap-phy-mux.c
+index b7d1c69d62f7..7b7243b7107d 100644
+--- a/drivers/clk/qcom/clk-regmap-phy-mux.c
++++ b/drivers/clk/qcom/clk-regmap-phy-mux.c
+@@ -15,66 +15,48 @@
+ #define PHY_MUX_PHY_SRC		0
+ #define PHY_MUX_REF_SRC		2
+ 
+-#define XO_RATE			19200000UL
+-
+ static inline struct clk_regmap_phy_mux *to_clk_regmap_phy_mux(struct clk_regmap *clkr)
+ {
+ 	return container_of(clkr, struct clk_regmap_phy_mux, clkr);
+ }
+ 
+-static unsigned long phy_mux_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
++static int phy_mux_is_enabled(struct clk_hw *hw)
+ {
+ 	struct clk_regmap *clkr = to_clk_regmap(hw);
+ 	struct clk_regmap_phy_mux *phy_mux = to_clk_regmap_phy_mux(clkr);
+-	u32 val;
++	unsigned int val;
+ 
+ 	regmap_read(clkr->regmap, phy_mux->reg, &val);
++	val = FIELD_GET(PHY_MUX_MASK, val);
+ 
+-	switch (FIELD_GET(PHY_MUX_MASK, val)) {
+-	case PHY_MUX_PHY_SRC:
+-		return ULONG_MAX;
+-	case PHY_MUX_REF_SRC:
+-		return XO_RATE;
+-	default:
+-		return 0;
+-	}
++	WARN_ON(val != PHY_MUX_PHY_SRC && val != PHY_MUX_REF_SRC);
++
++	return val == PHY_MUX_PHY_SRC;
+ }
+ 
+-static int phy_mux_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
+-{
+-	if (req->rate == XO_RATE || req->rate == ULONG_MAX)
+-		return 0;
+-
+-	return -EINVAL;
+-}
+-
+-static int phy_mux_set_rate(struct clk_hw *hw, unsigned long rate, unsigned long parent_rate)
++static int phy_mux_enable(struct clk_hw *hw)
+ {
+ 	struct clk_regmap *clkr = to_clk_regmap(hw);
+ 	struct clk_regmap_phy_mux *phy_mux = to_clk_regmap_phy_mux(clkr);
+-	u32 val;
+ 
+-	switch (rate) {
+-	case XO_RATE:
+-		val = PHY_MUX_REF_SRC;
+-		break;
+-	case ULONG_MAX:
+-		val = PHY_MUX_PHY_SRC;
+-		break;
+-	default:
+-		return -EINVAL;
+-	}
++	return regmap_update_bits(clkr->regmap, phy_mux->reg,
++				  PHY_MUX_MASK,
++				  FIELD_PREP(PHY_MUX_MASK, PHY_MUX_PHY_SRC));
++}
++
++static void phy_mux_disable(struct clk_hw *hw)
++{
++	struct clk_regmap *clkr = to_clk_regmap(hw);
++	struct clk_regmap_phy_mux *phy_mux = to_clk_regmap_phy_mux(clkr);
+ 
+ 	regmap_update_bits(clkr->regmap, phy_mux->reg,
+ 			   PHY_MUX_MASK,
+-			   FIELD_PREP(PHY_MUX_MASK, val));
+-
+-	return 0;
++			   FIELD_PREP(PHY_MUX_MASK, PHY_MUX_REF_SRC));
+ }
+ 
+ const struct clk_ops clk_regmap_phy_mux_ops = {
+-	.recalc_rate = phy_mux_recalc_rate,
+-	.determine_rate = phy_mux_determine_rate,
+-	.set_rate = phy_mux_set_rate,
++	.enable = phy_mux_enable,
++	.disable = phy_mux_disable,
++	.is_enabled = phy_mux_is_enabled,
+ };
+ EXPORT_SYMBOL_GPL(clk_regmap_phy_mux_ops);
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+---
+base-commit: 3ce97bd3c4f18608335e709c24d6a40e7036cab8
+change-id: 20260622-topic-phymux_revert-4a75b6ad3d8e
+
+Best regards,
+--  
+Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+
