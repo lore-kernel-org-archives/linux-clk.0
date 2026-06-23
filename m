@@ -1,71 +1,77 @@
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6BBC3C73C9
-	for <linux-clk@vger.kernel.org>; Tue, 23 Jun 2026 09:40:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 461523C661A
+	for <linux-clk@vger.kernel.org>; Tue, 23 Jun 2026 09:41:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782207632; cv=none; b=kVqqd88ra/Zd1iSsX65MoPc5A+a1awXEClMr/gFN+SRa7wfXXcOzLcEBwYOVILuZdF6lO7N3pbFl3RuXZs0fA9vT0UcyLco6N4uIJhKLIfKnSH9YCUlUbE6nAdl6nDJMjabCEGQYjHgnoS/ZkQVxWzx22BK5j7Goyq7StG3s2PQ=
+	t=1782207694; cv=none; b=aixwFUKqk+7alqTx8kPYNCWYFMcvrhQTkinMFzzk4I9v8OMG8AmiZR+O5krDfbkO9e3GPwZ9qAOkP3Xqb/A0oEBSnEto3KYKCQVeejU/1jUpgokBm8XkzwubFe+B5Wny4sr/XwU5mNO9Zt6S4UWo5PmcvKPyAN3aaBfFxD7zTGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782207632; c=relaxed/simple;
-	bh=SnIDHBtDfjRngMeLKz6BX1PBRaDqF1HB0vtqyNU5yb8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Upzo/VEE4Y4xmFSpbbkyM1YuGDrDjKRA1mwvqNa3uEcJHnEmPdVPVTQe2AQKEZlMwDdgDlBaLCzO+Z2TFuF9Yfp0puSTL7ZuJrqrQ/jEKBTAB00sJGZCxueFiIY3kq36XpgEmd/o+iyeOYFVgS8TDjURQLHQX88AjtP9EKZqrQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b3SqdXaG; arc=none smtp.client-ip=209.85.210.179
+	s=arc-20240116; t=1782207694; c=relaxed/simple;
+	bh=zr8hwqY180WIlpyUsuAChZb+brSoXLdvMBNtpNj9nYM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YOCclFHb6hshK3sMot2UndxoDSmILPVS9mbX/3Kx6FUu5wuG8Kn/7zgpEHUrtVvDHkPRyhTcRMT9w8cx2GRYIz7xP4XLddfA5Q/FHxSGSDQUDbOM0Vi06ZPzTTjWhnD5fbo0poRIJt2hEoNlisoqkufeHCRrKmH0V+wdZSadnIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gpRvR2Ku; arc=none smtp.client-ip=209.85.210.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b3SqdXaG"
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-84538597e1fso3116095b3a.1
-        for <linux-clk@vger.kernel.org>; Tue, 23 Jun 2026 02:40:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gpRvR2Ku"
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-84232e83ca9so2256233b3a.2
+        for <linux-clk@vger.kernel.org>; Tue, 23 Jun 2026 02:41:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1782207630; x=1782812430; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1782207692; x=1782812492; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gnsa5FQ5jZSvFZuYEysM3sNVcO0NPhCred8y/3Y4jCM=;
-        b=b3SqdXaGgFN2Mg/foq/iaUHjmZj4/NGBLRqQ3cKlGyKLlYoTwQC7rurWRHn7iSXi6n
-         w+761bWwneSifDarKwYmPgUhHItb6wcYSd6KKAlXpeX8+eJU931bkxGxtCKfwkjtMG+8
-         hunAz1UxkyU/jd27ggYXmQ/2hdRU0T2zPmZ6oCQMVg3tN8uwFhmI0BFlRw9cnt0gFaTE
-         bt+8SBybTJbvNEIubeKRPGgENXrEmX6Zq4q+7XHGh3089fNx7RmRY89KLWQWrg6tsEC/
-         jQZbwd+Ww4Skz8Br+xINz0o52NJ1DFLmutejim1BilHjKEcgkLTHPerDTsY2AKHRoXv3
-         Enww==
+        bh=LEY4mxBInTV31P334VeLm1dxOKL0Pc0LaCfP0/xhKcY=;
+        b=gpRvR2Ku0ASNRIhgJAFEPFQwuF84WEqdBv1977/Yos8N79u1IHkuO8DInbwq/auzCL
+         P+nLiKSDAozAScQj1Kf7kTOqB2Gd6iYEs4MkHe0cWPoz46HCB6U6H0DupSPWLfi/O0ZU
+         H5EnWpCpFNsG2fQOUOetOLXw+V76/qgFrvYzzCNHOw1iAW1SF5UF0t2rhoO3DngftQpG
+         osI6VvArz5TLMwBlpH5SiPDWfY1v+5rNDZxNgj78Z9RonqZZGnMsTl889Jv5tR6pxjFI
+         2b6MlFPOzhOyd9oha4jQoBmjs2R5/4OJ/x7j2/x6gAOchwYZJ39AW51j/j0EciCc+Grq
+         Oukg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782207630; x=1782812430;
+        d=1e100.net; s=20251104; t=1782207692; x=1782812492;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gnsa5FQ5jZSvFZuYEysM3sNVcO0NPhCred8y/3Y4jCM=;
-        b=d+UbzSjQKdtmxIGSPLtaav072DJsuUHrjJFo/bgyikCsKQD4NZNGXjD0uan0b9slES
-         Tr22rajt6n1yXR9CnIQHoQtpRprdpIMaRy11FWN9zdAy91DMPkfR0zL1BU6yjVNAgq4j
-         43GM/xdc/6E7wZRE58G5jYv8nN37KvylNfdwmMi5KzMM7B4fLuI+RLRaZHdsr8mDGM+J
-         yZy0RbO7wrjEZ0dW1qchdtasmvsyEU/HUFHMPmKajWCflC2dSh3VNoRV2SJKWIIkQsUh
-         tCTjqsAYEz1y5Loq6Yl9ambWAtrAq3E9q7w6a6xupBtGc2UW/D74B/g3W/sdXCh0U82o
-         cXQA==
-X-Gm-Message-State: AOJu0Yw7rma8iEkeTamqKwhxO+el/mboVhQYED+207oqtTSK5Cg6o157
-	rN0UaqOxHY4DLpRb1vPOuBI+n12NSym43mhBSYXbkusVya/zjsZWgJQ=
-X-Gm-Gg: AfdE7cnYTShxeVftm8eaJ5JCwVfaiE1/KJg54QACLu8YCNBo44BfKLZm1jnzOYMzUNC
-	TC0aaK9pgxNhXr+eSwTUCAw2tVvSMN9Vrh6IqFQfLN5eYI8JNbcEE4lgADHAu12ShIO31U0LjQ6
-	VrjuztskBP9vHp6tf4AESMzGB8oS1ZGdLgigLgqqwscVxW7HIvmW/v/B7+R67APta+rHukRub0d
-	+CPgQCeHFkSWI7+ByoJbtXpmPjAtIzWoHIrBJcUJFZcX14FcJX0Cc+k3arkUmGdnVop/5C19LoC
-	Zu4lY/VpOkQMuzDEMH+7ffelpXRQrR19/arR14MFd4NFm0WrH3RWhoovI++Ya9X3k3VoY02syON
-	hl2Bm5FZQNxflCQoNDUIPWCK+q815QMa2s6qQ5FcFOw8GorAHoVM5olAmj3sQgrDecEuiPA2IPU
-	8kGdGEoVPywQxpG/Ka5nRPcYw9Uzt1R5WVZ1rOYZJI1h95UXGCZ/7WZjfiiZGRWT41
-X-Received: by 2002:a05:6a00:909d:b0:845:344f:ef1a with SMTP id d2e1a72fcca58-845952728a2mr2554331b3a.15.1782207629998;
-        Tue, 23 Jun 2026 02:40:29 -0700 (PDT)
+        bh=LEY4mxBInTV31P334VeLm1dxOKL0Pc0LaCfP0/xhKcY=;
+        b=eXlcaBIrMtMf4LzL8OKQtoiqUUGD86aS5mIMNSza2TNFSusCueye7F/SyqHqYFYaR+
+         dpBhrcyOMSARXIp5keQIkr2Zy0M2Og2ciVEhMa1eA5bQF/TzCzWqkWWjINsygqWn2Ma4
+         3cCB2pT//+7QZZ4mda2C5ESAhekZJIEwDN2chI8Jda5Ayf1pwzSmK1AMJvHkKhOyXHcf
+         8QQL9aRKKLcGw3ZWraRSS56Yw9Q2Ix/E9l6KLSRKJJfjVEdS7zpgbKi56k2tfOnZlkXv
+         rTpngsSZGeALF3BSpAeF1vtG3tqQUSPjJ1navB8j2CBrO2i4yGm7cSarcHW1tjzVDy32
+         JmPQ==
+X-Forwarded-Encrypted: i=1; AFNElJ+QMypIptJGSxCWWhorsrEdF2vPZ7VQ65tbzAZ6VqyzAMo4oEEn9lVlb7yLUy0jYnuE/0dJ022nt7o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzinXChy4vCc83cmPfdaArVAHw2+3o/R9xGN3fFbgnFpXe3zZ0V
+	v4RwZMuuKMP1If5CMRoQGuJA5jibgdc0lmgXFGh1ta+sEKNosNF9AaY=
+X-Gm-Gg: AfdE7cksaydY8tf2teyOfHOEMfPt64EmHYbyrox1FgK6v+9pA+ctlv4V/zShP9BAcfD
+	1XOY72TnX/1pXxOH1yVRFOXRskIvWC+PUdUjzUNdRYXV+9rouhK6EYeZXaGFDti6U8uDqrn7FY/
+	8m/49rDGtl9okzBNtltctO4WEktmx1OxgBTGrUENCF3/8EVtpkZTGodkNrgwgi4xbEJvHHrrRz7
+	7tLbrDwep0vOMsmxf/WCvqKrPFb/bhuLDBm6WTTMkG5lULkh2ZMKXYaobu+K4SI8yWoF9VOfxq+
+	voRVBFbS0crz/37L4j9BTPTeJR8YFGfDJo648ikesCMYPYZy3HRYsiL1yxc+OqqLnzUS7WFdSs1
+	LK2+ItlKhBGxvmrfBAQHuS/ECYK6QVxXlfEsOiJHEiOwNEeo/UOlnQG6SyxmG2l20G4No7J35aW
+	ZHwET7a59gstDYDvRzNXdOFZXkmRyI5jEEPJwLzEQ0JsIoEje6Ey6dcKpTGKHDv9DMw7w9riWkL
+	pM=
+X-Received: by 2002:a05:6a00:2196:b0:842:4387:34c0 with SMTP id d2e1a72fcca58-8459524d475mr2570456b3a.5.1782207692530;
+        Tue, 23 Jun 2026 02:41:32 -0700 (PDT)
 Received: from localhost.localdomain ([14.5.152.27])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-84564ebcf45sm9507635b3a.48.2026.06.23.02.40.27
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-84564d6bf73sm10180079b3a.5.2026.06.23.02.41.28
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 23 Jun 2026 02:40:29 -0700 (PDT)
+        Tue, 23 Jun 2026 02:41:31 -0700 (PDT)
 From: Myeonghun Pak <mhun512@gmail.com>
-To: Alex Helms <alexander.helms.jy@renesas.com>,
+To: Yassine Oudjana <y.oudjana@protonmail.com>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org,
+Cc: Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-clk@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	Myeonghun Pak <mhun512@gmail.com>,
 	Ijae Kim <ae878000@gmail.com>
-Subject: [PATCH v2] clk: versaclock7: Fix APLL clock leak on probe failure
-Date: Tue, 23 Jun 2026 18:40:18 +0900
-Message-ID: <20260623094023.94231-1-mhun512@gmail.com>
+Subject: [PATCH] clk: mediatek: mt6735: Unregister PLLs on probe failure
+Date: Tue, 23 Jun 2026 18:41:11 +0900
+Message-ID: <20260623094125.95791-1-mhun512@gmail.com>
 X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -75,45 +81,47 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-vc7_probe() registers the APLL with clk_register_fixed_rate(), which is
-not devm-managed and must be explicitly unregistered on probe failure.
+mtk_clk_register_plls() registers the apmixedsys PLL clocks manually, while
+clk_mt6735_apmixed_remove() unregisters them on driver removal.
 
-Most later errors already unwind through err_clk, but a failure from
-vc7_get_bank_clk() in the output registration loop returned directly.
-That skipped clk_unregister_fixed_rate() and leaked the APLL clock.
+If devm_of_clk_add_hw_provider() fails after the PLL registration succeeds,
+probe returns the error directly and the remove callback is not run. This
+leaves the registered PLL clocks behind on the probe failure path.
 
-Route that error through the existing err_clk label so the fixed-rate
-clock is released consistently with the other probe failure paths.
+Add an unregister_plls error path so provider registration failures unwind the
+PLLs before returning the error.
 
-This issue was identified during our ongoing static-analysis research while
-reviewing kernel code.
-
-Fixes: 48c5e98fedd9 ("clk: Renesas versaclock7 ccf device driver")
+Fixes: 43c04ed79189 ("clk: mediatek: Add drivers for MediaTek MT6735 main clock and reset drivers")
 Co-developed-by: Ijae Kim <ae878000@gmail.com>
 Signed-off-by: Ijae Kim <ae878000@gmail.com>
 Signed-off-by: Myeonghun Pak <mhun512@gmail.com>
 
 ---
-Changes in v2:
-- Correct the Fixes tag to reference the commit that introduced the
-  VersaClock7 driver.
+ drivers/clk/mediatek/clk-mt6735-apmixedsys.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
- drivers/clk/clk-versaclock7.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/clk-versaclock7.c b/drivers/clk/clk-versaclock7.c
-index adcc603e32..e3a36dcd98 100644
---- a/drivers/clk/clk-versaclock7.c
-+++ b/drivers/clk/clk-versaclock7.c
-@@ -1197,7 +1197,7 @@ static int vc7_probe(struct i2c_client *client)
- 		if (ret) {
- 			dev_err_probe(&client->dev, ret,
- 				      "unable to register output %d\n", i);
--			return ret;
-+			goto err_clk;
- 		}
+diff --git a/drivers/clk/mediatek/clk-mt6735-apmixedsys.c b/drivers/clk/mediatek/clk-mt6735-apmixedsys.c
+index 9e30c089a2..04cf9665ec 100644
+--- a/drivers/clk/mediatek/clk-mt6735-apmixedsys.c
++++ b/drivers/clk/mediatek/clk-mt6735-apmixedsys.c
+@@ -102,10 +102,17 @@ static int clk_mt6735_apmixed_probe(struct platform_device *pdev)
  
- 		switch (bank_src_map.type) {
+ 	ret = devm_of_clk_add_hw_provider(&pdev->dev, of_clk_hw_onecell_get,
+ 					  clk_data);
+-	if (ret)
++	if (ret) {
+ 		dev_err(&pdev->dev,
+ 			"Failed to register clock provider: %d\n", ret);
++		goto unregister_plls;
++	}
++
++	return 0;
+ 
++unregister_plls:
++	mtk_clk_unregister_plls(apmixedsys_plls, ARRAY_SIZE(apmixedsys_plls),
++				clk_data);
+ 	return ret;
+ }
+ 
 -- 
 2.47.1
-
