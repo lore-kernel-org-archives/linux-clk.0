@@ -1,124 +1,99 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E904E86341
-	for <linux-clk@vger.kernel.org>; Tue, 23 Jun 2026 17:01:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3DDD38AC85
+	for <linux-clk@vger.kernel.org>; Tue, 23 Jun 2026 17:27:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782234083; cv=none; b=XvD/GoUWgA/0pzSzgj4V67AuLIpreOMXoFeCSK8rqZ8aJME3+BYgWUvQ1Hi4PD3w2p9jieB0uAelrh0p9+b6p5iszQyK4AIXic4yGWEcF3CrfCB8BkWQL6jjjMXSf2Z00EEHiy+m/3iGI+iaD5xpX7S1YusZptRkuCVHKDHBPUU=
+	t=1782235650; cv=none; b=MEH+jsoYQAPI9RA335R+0/XnAjl6IS2etOqNLWtNlzr5CVjK/UEZyVoerEGNpHVKVk/xZBSnkCTUeokyO92grMnZIEpex8sMu8TMnJQvx6a0SsEvqSOKGyjSBU+zkD8ae5CPDZli5NyUtCfngX9hDNL2+L/c6uy4zl9ooturKR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782234083; c=relaxed/simple;
-	bh=KLp47J3F3ZEmgySRH6ZoydWxIZaG/J2hxWrFEP1eRUg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zz0+qDCtWuLnE221L2dNlYc2vgN3lbrTadZyQfUajYmB7TzCEFbzhMWdUfO1gYwPVnIfyWSS//K1/6GYzy/b2wFY/pubIBkZlFgCqgKPg7aER1Z1A3VL4q2V0hq2aOADhlr+YwMZTh4GdJ+fZ3dM4QiFyVFO5uuojxpUn0foABY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d4voqUYn; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=Rxq3vzZ9; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d4voqUYn";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="Rxq3vzZ9"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1782234081;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZHLmvt/hfcPMjp8rNAR4Lzj4cVVJybJjQGa6DTmnt7A=;
-	b=d4voqUYnPECaO/CiPmZQ8PlDwBS5ZIS2ENOqZNFzjeRt+3nO5PuAcdGSewMGo9quy0t2bd
-	qqYmlOCdswObfFJB2fNzq3obGpDYJl8esIjumK31cBT2aWCQ+gtAJlTqHjacPOrmU9IZwr
-	du3PbUjPtmyTOKvGBumLHvbJnCZwodQ=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-577-wzMH3JObNjqydbClBcYmQg-1; Tue, 23 Jun 2026 13:01:19 -0400
-X-MC-Unique: wzMH3JObNjqydbClBcYmQg-1
-X-Mimecast-MFC-AGG-ID: wzMH3JObNjqydbClBcYmQg_1782234079
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-8de3cf78895so2652486d6.0
-        for <linux-clk@vger.kernel.org>; Tue, 23 Jun 2026 10:01:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1782234079; x=1782838879; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZHLmvt/hfcPMjp8rNAR4Lzj4cVVJybJjQGa6DTmnt7A=;
-        b=Rxq3vzZ9EH0QfWbnGQan4kt6iara7hDJVYoxP4YOYBPjJdLi8MEe/S9rREbvEoy84l
-         jtyIFj3uX4UA/o0qknel2nob4GUzZXydYgX1UAfWUzPvYoCJzF2JWktn3kUffiDS6pkX
-         JUa7p3HjvwuJIcZRdZSVQY3JnFSwdjHtKiyr3bTvbKh/HoSmhY7uYjT9PVzrZDttITi4
-         jJaLNSPx+F149WN6X/joYeWtWHJW8DV1br5bN7f0L6K1ZOIkUMi25lhqUp6p8j3hctXx
-         UI39L6Q7lFn2FfeA9K4EsAvyeq4mixyKH6lFF6fQCWctAf0EPD2zLJpvXFKOa9Hm6JTP
-         CTJA==
+	s=arc-20240116; t=1782235650; c=relaxed/simple;
+	bh=vgfeiR53zUTqL9wCEjuNbQgZ56wPbSXK33ZlwgtxoP0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=stOA1yuVAwVRpoURCjMbLID/In64Fs+mqLmMYIqi+qDerqAdT1GwCIFeeMnMaL3NzDQiLOTgE1GESkml/8yV91vQ3afcSMqd5CYqJrcO8g9F4OJ31HqalFMjwh3V14GoIxYWn2MxVnNsRy4ZJWWeHZPmk4RO5GSADy62LbXAM+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-5bbf01bcfb9so58645e0c.2
+        for <linux-clk@vger.kernel.org>; Tue, 23 Jun 2026 10:27:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782234079; x=1782838879;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=ZHLmvt/hfcPMjp8rNAR4Lzj4cVVJybJjQGa6DTmnt7A=;
-        b=V5u68TELVj5GDiY+MU1w3FaCQGkk5wdF0mo0GbR8PRcu2t28bTFtgwOF4NRj9pA/xs
-         /x9MZ9NDTE74enUxmLwOJGdehjdaGnDxINtokQOWiN8uRBCT1GpnZ/zE4M8/vIczy5kn
-         jc7ajC4HZfm1KrzWNDDMF4lDNT0Gt5XbcJ90Ti0wwqIdeIqbb2SVTZywFlZNlA8dzcH2
-         umD38aoslcCsRoSA0RIOHYyJj1sTKDXsO6nhDOq+MbYtnwjuzIezmYeZwB+DRjzZoliv
-         /vKMIVoALm3UVz/XmA7QMFeJoc1wbm58dQqrV+lJjTVfNP8R2JPBc/UDXvlw1vuhZlKF
-         5c/g==
-X-Forwarded-Encrypted: i=1; AHgh+RrS/M4fUi5HRd02WJfM6x3/BR1GjZWLDrynf57aE+PBl8wpkWCNFdiMeC0DwujsK8d4SwbVnBSybek=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2/+3IapDWj6T974BsUL4ktrvhBnBtOUWfHGpr7bwXPCcsvbK5
-	njlOqkmNq7XJ+f/DphLdj31+eSFB0jPNdfwYsK24YUHfXgXCwdDjzhHWnBiGSQG/pDH0/azNYjh
-	dC4KaiKyC1HzqOzq0LMjvsHAz6kRI6TsrI5/+oRAy7Zo5MxyGeUXd3VThEnXiyw==
-X-Gm-Gg: AfdE7cls0EzR9Iemiczu6foOJZyQ25lHoGiU55gYWKSkxwA68Trtj43MJQY1s8DREhJ
-	KIHzdPEsnY/1MiJJVjQAo/DAKAyMYKWFDibp/vFGYpCwt0a47WzNNZiyn/STXDiwpnXBDNq4OTs
-	KnwZOb/w6zS7xs80lj2wI0YWZG9cPOIqXmadMAMQIZbXdqX6aEzSx05W+EfsVJ1q+0/lqgCmxSS
-	HXQYEc6kqqBukA10lgnt7/m3PNcXnEeGMI4a3o0IXj6QNnaU0IsTSjJ+GQTE9bwPdwzFVkWxhba
-	Ld+uuYWgq2uPjq29zUoo/IYJ0QiBGqa/0OEgWJPOg8MKsnPenfD05namiO+YVcsnG+BC6ciu8PP
-	akvksfmMHwKMy7QRvDZl2Aor1K00K/J8a7A8YyYwA04aQxw==
-X-Received: by 2002:ad4:5c6c:0:b0:8de:7e5c:b57f with SMTP id 6a1803df08f44-8de7e5cb63emr362655636d6.4.1782234059805;
-        Tue, 23 Jun 2026 10:00:59 -0700 (PDT)
-X-Received: by 2002:ad4:5c6c:0:b0:8de:7e5c:b57f with SMTP id 6a1803df08f44-8de7e5cb63emr362605556d6.4.1782234033037;
-        Tue, 23 Jun 2026 10:00:33 -0700 (PDT)
-Received: from redhat.com (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8df7f01855bsm146771086d6.9.2026.06.23.10.00.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jun 2026 10:00:32 -0700 (PDT)
-Date: Tue, 23 Jun 2026 13:00:23 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Biju <biju.das.au@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Alex Helms <alexander.helms.jy@renesas.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH] dt-bindings: clock: renesas,versaclock7: Update
- maintainer
-Message-ID: <ajq7pziuKDFZqj40@redhat.com>
-References: <20260623162039.153291-1-biju.das.jz@bp.renesas.com>
+        d=1e100.net; s=20251104; t=1782235648; x=1782840448;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Muh/OMSDZ663MN4xoOU6DnOJThUhytQ4BDNNdsQmXS0=;
+        b=L0OQuFygvPz1UDR4o5gwII/mDGpt5m5RvoDT5gX5Z8QBaPCkNNEfJZFjh4m3MYAErH
+         vUT6TM+ANhexctR/K6q+pPgDBcG0SsUJG267VCJheX+TKXUUJDniNWJCtUApnBZNH5tQ
+         EUVeRZTNnVO2kMX8GocAQdhi6oNLPY2qLuOCZ4Lrva44irhwunOd4G679CRqMLHiDx71
+         bSYbQ+SpOdulkbuujUqeE+TcIapHkfrxK3QZFjSUkhaAqZzBpTvgtaYdgpbGOszAGjP6
+         S9KQk34SDLoaEkTHpah9FWWrPf765Uzih3fMn5i7V29rPvWQ3dNi8NWUxOJEaO+51Jqo
+         7pPA==
+X-Forwarded-Encrypted: i=1; AFNElJ/2k5tb9/CN+5gJ2EaOwVMUYDk2Jwa4w5eirwz5Fq0r5DHM92Um5OLWvmCbDShFVpsALkGMIPE7v18=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyxfD9PrlCEvDry68BUc53CDC6v0eYkv2BnUMpgounNI+oMvOP
+	3Dg4fU8Jhm0WVxdoFkRXLwyiwyKu1zbm9qICly3eWWy/+riE4nNxfK1T4BjT0X03
+X-Gm-Gg: AfdE7clf3anWKpRdJ9UIc/iaLQuqj/AqbzhypkKOFQEUz04yMvew251GSwrau+zxlST
+	doPiCvNe3+Amfs2GYcXMrQOo9zidAy+umm2qan1uk01snacz6tvEgxVXEt5bd63HDgagCmG1VhM
+	iHZPQkMp8ATJdsuODRa5Pmgu+htzX99kWUPmW8Dt/FZD26kqFmIRscAeoqNkOCvi2YaREktSOyM
+	m4aKpUXadDc4XsHW1HHEpzcbseW+ZDvkPdxexPDic5/1DvzxmgvFYV593HDlucdFeRyOgnVheeX
+	3kOyzdvIDEKhR2PkbHWs2XhIUca3JuPVRkmhVQPKqvrJVUYzYc5J6WUIjxRfkfVPomge7RVAZOY
+	afVoj9ZSA9kjtltXFthQx0kt0v6DPUsLHT5vesKXmVQnABsv3tsOVzU6KbrUza8H2FrR+Nuxmfo
+	dDmJG8nAHkp9/e05Hb/sv4oLPks534f4frOTSVAO+TxHEs8E+BzA==
+X-Received: by 2002:a05:6122:922:b0:55b:d85:5073 with SMTP id 71dfb90a1353d-5bbebbcf5f0mr11667738e0c.4.1782235647727;
+        Tue, 23 Jun 2026 10:27:27 -0700 (PDT)
+Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com. [209.85.217.51])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5bbfbab451bsm9134705e0c.18.2026.06.23.10.27.27
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Jun 2026 10:27:27 -0700 (PDT)
+Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-7269038ad05so95010137.0
+        for <linux-clk@vger.kernel.org>; Tue, 23 Jun 2026 10:27:27 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ9g27F6fRLtC656GICqozV67QzhrzlOg2xA15K672+RNwPktA+SAvuUocIRObKFQHyS2tSOW4zduQM=@vger.kernel.org
+X-Received: by 2002:a05:6102:dcd:b0:6c5:d55d:c091 with SMTP id
+ ada2fe7eead31-72a1f0afecdmr13056221137.14.1782235646896; Tue, 23 Jun 2026
+ 10:27:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20260623162039.153291-1-biju.das.jz@bp.renesas.com>
 In-Reply-To: <20260623162039.153291-1-biju.das.jz@bp.renesas.com>
-User-Agent: Mutt/2.3.2 (2026-04-26)
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 23 Jun 2026 19:27:15 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVjvjckPSBtqvWy_WHZZL08KeNo1xeL7jaTG+5rKyWiTQ@mail.gmail.com>
+X-Gm-Features: AVVi8CettBHPDtUTsCGKpp8vAn8Psn3jekUVojmzhnZ0gc3_U3cHxNpDSHwB5q0
+Message-ID: <CAMuHMdVjvjckPSBtqvWy_WHZZL08KeNo1xeL7jaTG+5rKyWiTQ@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: clock: renesas,versaclock7: Update maintainer
+To: Biju <biju.das.au@gmail.com>
+Cc: Alex Helms <alexander.helms.jy@renesas.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Brian Masney <bmasney@redhat.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Jun 23, 2026 at 05:20:37PM +0100, Biju wrote:
+On Tue, 23 Jun 2026 at 18:20, Biju <biju.das.au@gmail.com> wrote:
 > From: Biju Das <biju.das.jz@bp.renesas.com>
-> 
+>
 > Alex's email is bouncing. Update the maintainers list with my contact
 > details to take over the schema maintenance.
-> 
+>
 > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> ---
-> Ref [1]
-> [1] https://lore.kernel.org/all/ajqWevofEJ3fv856@redhat.com/
 
-Reviewed-by: Brian Masney <bmasney@redhat.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v7.3.
 
-Thanks for submitting this quickly.
+Gr{oetje,eeting}s,
 
-Brian
+                        Geert
 
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
