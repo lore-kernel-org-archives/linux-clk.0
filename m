@@ -1,110 +1,200 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FCA13D3CF6;
-	Tue, 23 Jun 2026 11:15:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB6983D34BA
+	for <linux-clk@vger.kernel.org>; Tue, 23 Jun 2026 11:23:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782213306; cv=none; b=Eddyq3wYYpqXn1OaCoCXHp0lYIHbJvdyg+0VGW3wx7wS+4GNZUQiam6FIOPe4SEZKoaNlZVFEkyqeZ7Y7fYCCm5W5v5myH/nqyPK31ZjdyO6A7naLp+9FUGCu9u5NHtTqt+H6fMvzzpfM3bpUPL4kYng1Xe5oI+/cBed2tAhz7g=
+	t=1782213810; cv=none; b=fWGVMQbsU6TETLQ3jX9eU8PDP/qR/7bsAkj5bYdSXoIADKqV3BJIqrxH9h6XSo6apEWxbRsbxqwAsV1t45Uk4lldOMXHCNbOBbAWEtGKd0emlntaunLA1Dau6isaPCupuuJgSrBiGJojB0dytB256X5W2nommI1tZbCuYot3UwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782213306; c=relaxed/simple;
-	bh=wqZcMJLGjMPoiWwScIX3RQTLxDspyOYcDem9+jhHz7s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BtFjfKNezduMcrzVfMm6UadP+y0ZFXXNnl5MGLqHi6/mrGekol3mpClF7jrmlEfzwwKP3UAHfum+QjFTUTkCRstOilq2KYahndhsi9BFf5qQ59o8KohGkJXlaVQQ5BKqXjzCYUDDaTfZqmfqskcPIxrIzL3ssxO5kUlk+jlFqOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jGsTbYGj; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1782213810; c=relaxed/simple;
+	bh=RXUS0MiuMi7p51H4Qd9KyX1mXELw3gVjHZCesaH4yws=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FDhi6r797Fiaab5xCVh3Hif/MYSp3mVVObHfjUzYh94OeiwLvCTakFqQyn9Bjdb1i4PYjQh6QqqqW4Bn7t03WUjA9MBooYlCRMA59QQDenAFnGIwJ1buxvYk+1bUorjoDPACkNayDXu8N+r48AX6vFxjSepLZTS0hy6u804Onyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=cbXilyVI; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=L3hE0+LS; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jGsTbYGj"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1782213305; x=1813749305;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=wqZcMJLGjMPoiWwScIX3RQTLxDspyOYcDem9+jhHz7s=;
-  b=jGsTbYGjCxKG67UEuwK9qk3xYZhfoE8kwTKu1i25THzGZBpTprKtpHW/
-   8l23Osa8roMIFmZcYEd0WggpDvuvRpJDRwj6TctmHx2v395ZDG0ehsH6l
-   A7/9TQy5Hzb9DfglaOD2zqeU7853PoFdPTv7IIU1RXI0oFHeC5W70VFwX
-   kaGFPY1pUaFek+i/4+8xnyYSPbVPAZm0f2zs/wgB1r7qYJuMLQDHQOWol
-   21hWM8pP1qAp49AEWmsn7PviORKZf2e4LkG7ywlUAeA6W8RKD8oMwy8Ie
-   aoJFwdTmvO6i9iKR/IUSWCn9WnqfJc4BWGm1EJIHxFrMUYXFZcRBr6SWa
-   g==;
-X-CSE-ConnectionGUID: M6i4SxsLSGyyKfWDw7k/5w==
-X-CSE-MsgGUID: Y8lt22vrQIaIlTwhboIQWQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11825"; a="81933215"
-X-IronPort-AV: E=Sophos;i="6.24,220,1774335600"; 
-   d="scan'208";a="81933215"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2026 04:15:04 -0700
-X-CSE-ConnectionGUID: UAwfnSysS7aXCPhA5d5nTg==
-X-CSE-MsgGUID: 1DtfOqIaSNy8/gFadyNbvA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,220,1774335600"; 
-   d="scan'208";a="245136985"
-Received: from igk-lkp-server01.igk.intel.com (HELO 892db79562d4) ([10.211.93.152])
-  by fmviesa006.fm.intel.com with ESMTP; 23 Jun 2026 04:15:00 -0700
-Received: from kbuild by 892db79562d4 with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1wbz5m-000000006Bt-0oIR;
-	Tue, 23 Jun 2026 11:14:58 +0000
-Date: Tue, 23 Jun 2026 13:14:01 +0200
-From: kernel test robot <lkp@intel.com>
-To: Bhargav Joshi <j.bhargav.u@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Tero Kristo <kristo@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	goledhruva@gmail.com, m-chawdhry@ti.com, daniel.baluta@gmail.com,
-	simona.toaca@nxp.com, j.bhargav.u@gmail.com
-Subject: Re: [PATCH] dt-bindings: clock: ti,clockdomain: Convert to DT schema
-Message-ID: <202606231306.COGVL9ZT-lkp@intel.com>
-References: <20260621-ti-clockdomain-v1-1-e99a56af98ea@gmail.com>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="cbXilyVI";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="L3hE0+LS"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 65NAsePO023925
+	for <linux-clk@vger.kernel.org>; Tue, 23 Jun 2026 11:23:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	mAVIsyi0roMiNG+3y68083oAhmj4zDD/EfEM2kSD1qg=; b=cbXilyVI6wW8w1uJ
+	sZXyG8GJmlYGOYwDI2JQHfWE9oF9tIeIQbhrCZjn0pvbKS7li7kBxH98HzdSka4y
+	hFGhL+SDLgFikzzemVUbKThM20Xlmi4hoEl9jd/jv+nKs+Z2syIh0kPDS1LDNgf0
+	zO1b3dSG+qfnTsNJ8yodH4frZdovKlS7FD6chm/9yp+dQxem+d78ngb3/OJwYiAE
+	5uQbWjnerSM/+XhuM0y24R/kJCS2TUKgaigmEShJh3qp6xGxcy7NkB2TFpvgcnEG
+	CEuHH+22bN0XUk1ePdfwwmZUlPpdf6ipYArWe/Vb+os/huSVJ6y1B4I67aRCdlEH
+	mNNngA==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4eymnvs7xj-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Tue, 23 Jun 2026 11:23:27 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-9229581de9eso32357685a.2
+        for <linux-clk@vger.kernel.org>; Tue, 23 Jun 2026 04:23:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1782213806; x=1782818606; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mAVIsyi0roMiNG+3y68083oAhmj4zDD/EfEM2kSD1qg=;
+        b=L3hE0+LSrVJWk/WzV534gc3c1HOagMkk/GQpj97Wjy8DkF5GLrHPMSR7MjIW8O+yQV
+         sXIkLTXqfgE8JKYd+WQUj0ciZTwL8VtLLIwenM3Sk/gvN7Oog4FDqyIXGwhcbceoW9RR
+         DTNfFnmXQvtoc1rvTc4EABEuargOOXsJ+co5l4DfoJkR9eqy7TDb9MnYJRtP+VoFyGAk
+         wCcXkM3v0CZC6JDPoUPyj6aw2N3IoxI3b7GiCIFY/6TTYOmSHr55avOdpzeoNjj+BxfH
+         MXPtvyhvD0dZqJhwI4Jodm94Aic6mVRME8eF/VeTeofhF0hwPQamXi711Dow0yhayMLx
+         3wNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1782213806; x=1782818606;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mAVIsyi0roMiNG+3y68083oAhmj4zDD/EfEM2kSD1qg=;
+        b=mobxgvhAOXF/u4lODRUrMm5PM54ETCVdC6L7CvnWcPd/KocO6LkpQ76kByC/0FjjA5
+         7dgpRbsSeJnGp80g7O+VB/DlQ909G5yJydWD99YKf3hi3KCXamVTrm1AWMYZov9EufnR
+         N9S+4OxLmbFs79rgRYg5MMoffRHq63Y3VgT379DuOBxM2rCpR9RrupIN3Sv8AKHhUpLb
+         77GXvm4o7MUrc9mFrWK3E21u6AO+/gco4SQXk+8syND7zgMHWCnDkQ4vrm0OywtgxkfH
+         y8vE+7W8xwgu85cmaoCb2Wgk2JlyEdhmFC4Ee1ZuIF7skzTPvMi4AcO5/5OcDPlQge1B
+         Syqg==
+X-Forwarded-Encrypted: i=1; AFNElJ+PUXg8DxcRQz3VTJ6s9zomGG/nGGqU6vyVExFDRij3VA+/+njiPY7+McsbnKdj2I0Ies4ZGNukKMI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgueXZfqPDZiF388fu+GZOFX0DX8ZA7Q07HwIOUWR0xa6Kspn3
+	2fJHSUz0n2NkWg/dOq9dyHUUHadnILF07EqpBi7lFGdbH+DeEmc0FDVoBwPSbWfF4SnwrRhcZt3
+	p6h6EKoStxnGUNB0hODHaUqfw7F8fX27J1txC2lPZBId1Xpo0kF5zvR4EbbDElZU=
+X-Gm-Gg: AfdE7cla2XhX/vY8kBZ2ywVo8C3vOuMW96QvDaibd9EUal4kEPZG2wxfb87Dof57brJ
+	C/6BJrVafQ1Lj3XopClpIsPeNYuwMMmJRkFWdqgO4Z8x4HKDKxlKEaUYd8VWisOShGELDSsLMoI
+	WukHusLZfeeqXfwStkf2aqkFStIEaO0xRtfOBCkZ8H96787drgMtV9IStDKuZGDuD4HS/dX1eqo
+	4+3ZMY7+6YtAIZTlgKqx7aOVME0KnS7VhlZSl90BHgulT5g714E2cWjQHaNPDIuUWN52PPTXEhr
+	QeU6sxmsL9oklocvlXThotC0uZGUrgg7RuAIw/jYCN6NAUk251I7IgeMy62VvIyfkZJDZit+ikb
+	0M8pKeTE9DgRbTEbZW2AoncM4gTT7mNoBwqw=
+X-Received: by 2002:a05:620a:6cce:b0:920:6579:bee8 with SMTP id af79cd13be357-925c6f59e85mr504351485a.1.1782213806276;
+        Tue, 23 Jun 2026 04:23:26 -0700 (PDT)
+X-Received: by 2002:a05:620a:6cce:b0:920:6579:bee8 with SMTP id af79cd13be357-925c6f59e85mr504346985a.1.1782213805798;
+        Tue, 23 Jun 2026 04:23:25 -0700 (PDT)
+Received: from [192.168.120.170] ([178.235.128.140])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c0c5e49a759sm503098866b.6.2026.06.23.04.23.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Jun 2026 04:23:24 -0700 (PDT)
+Message-ID: <27db2e06-e3ea-4edf-a0b9-1baac1d5bb50@oss.qualcomm.com>
+Date: Tue, 23 Jun 2026 13:23:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260621-ti-clockdomain-v1-1-e99a56af98ea@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/8] arm64: dts: qcom: sm8450: Modify GPU operating points
+To: esteuwu@proton.me, Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Rob Clark <robin.clark@oss.qualcomm.com>,
+        Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+        "Joerg Roedel (AMD)" <joro@8bytes.org>, Vinod Koul <vkoul@kernel.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+        linux-phy@lists.infradead.org
+References: <20260622-sm8450-qol-v1-0-37e2ee8df9da@proton.me>
+ <20260622-sm8450-qol-v1-3-37e2ee8df9da@proton.me>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20260622-sm8450-qol-v1-3-37e2ee8df9da@proton.me>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=dOWWXuZb c=1 sm=1 tr=0 ts=6a3a6caf cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
+ a=IkcTkHD0fZMA:10 a=FelO9ux0wxsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=gowsoOTTUOVcmtlkKump:22
+ a=yh-zqMWk-TAmMPKcllkA:9 a=QEXdDO2ut3YA:10 a=PEH46H7Ffwr30OY-TuGO:22
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNjIzMDA5MiBTYWx0ZWRfX8pb0EL+H32Js
+ 7QCzQM2Wc5gB/s+ymSjg1oFU3MIhGu/KbL1+rd3cEjqmklwQhUnbN0sLlxqny0vnq03uVHxBmtc
+ iweKFVDMY6oLoNHu7ksrbliHHUa12sc=
+X-Proofpoint-ORIG-GUID: dZ-rY-JjQQ-5sNBGyDVqlwP77XvK6Qvj
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjIzMDA5MiBTYWx0ZWRfX3dM8vPyomm9T
+ K7GmPXzBJUAWHk29nxlOESprGugJMi1OI1beoOtn9en9IptPChMQSpIcazLVfHO3Y6KLsFnm0FL
+ GwvU2THBOSYaTluIrOFWs2ivJpmCwnxV7KY9exX5c9PWhEGMbDuVqzVbK6KnYbkMMwLLXCAZs5m
+ Y4Z5hLI6/0NL7zK96cCLXhuNDI775dTRuTAMYObMxbmTKmtMzVqG+vRhsa+yIL9UHSBAqfJqqFP
+ kHEmUpyFlX+6dpNfjXkqGPtY4Isf4gJdqfn9DH2l+y33KVdpcQohf3Iau8Wkq8lDffDSY51wx7I
+ cfHNyQTu9sJZAsSaO/+nTbCxO//MRzJIRRApUTKwXqtL1hXE6Ih1abgtMQ9xVr27SpR7KBzOJXP
+ JfFH8iH6qmwROQ+5X/m0monH7aLcxQ==
+X-Proofpoint-GUID: dZ-rY-JjQQ-5sNBGyDVqlwP77XvK6Qvj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
+ definitions=2026-06-23_02,2026-06-23_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 malwarescore=0 adultscore=0 bulkscore=0 phishscore=0
+ spamscore=0 suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
+ definitions=main-2606230092
 
-Hi Bhargav,
+On 6/23/26 2:54 AM, Esteban Urrutia via B4 Relay wrote:
+> From: Esteban Urrutia <esteuwu@proton.me>
+> 
+> These frecuencies don't exist in downstream device trees.
+> Both 220MHz and 285MHz belong to SM8475, and I'm not sure where 317MHz
+> came from.
+> 
+> Signed-off-by: Esteban Urrutia <esteuwu@proton.me>
+> ---
+>  arch/arm64/boot/dts/qcom/sm8450.dtsi | 15 ---------------
+>  1 file changed, 15 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sm8450.dtsi b/arch/arm64/boot/dts/qcom/sm8450.dtsi
+> index e34e3c05bf74..5e331a25e22a 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8450.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sm8450.dtsi
+> @@ -2495,21 +2495,6 @@ opp-350000000 {
+>  					opp-hz = /bits/ 64 <350000000>;
+>  					opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS>;
+>  				};
+> -
+> -				opp-317000000 {
+> -					opp-hz = /bits/ 64 <317000000>;
+> -					opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS>;
+> -				};
+> -
+> -				opp-285000000 {
+> -					opp-hz = /bits/ 64 <285000000>;
+> -					opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS_D1>;
+> -				};
+> -
+> -				opp-220000000 {
+> -					opp-hz = /bits/ 64 <220000000>;
+> -					opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS_D1>;
+> -				};
 
-kernel test robot noticed the following build warnings:
+These are valid frequency points, although downstream didn't advertize
+them.
 
-[auto build test WARNING on acb7500801e98639f6d8c2d796ed9f64cba83d3a]
+Funnily enough, the frequency plan lists them as:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Bhargav-Joshi/dt-bindings-clock-ti-clockdomain-Convert-to-DT-schema/20260623-022037
-base:   acb7500801e98639f6d8c2d796ed9f64cba83d3a
-patch link:    https://lore.kernel.org/r/20260621-ti-clockdomain-v1-1-e99a56af98ea%40gmail.com
-patch subject: [PATCH] dt-bindings: clock: ti,clockdomain: Convert to DT schema
-compiler: clang version 22.1.8 (https://github.com/llvm/llvm-project ca7933e47d3a3451d81e72ac174dcb5aa28b59d1)
-docutils: docutils (Docutils 0.21.2, Python 3.13.5, on linux)
-reproduce: (https://download.01.org/0day-ci/archive/20260623/202606231306.COGVL9ZT-lkp@intel.com/reproduce)
+LOWSVS_D2 -> 317 MHz // in downstream, at LOW_SVS
+LOWSVS_D1 -> 285 MHz // in downstream as-is
+LOWSVS_D0 -> 220 MHz // in downstream, LOW_SVS_D1
+(the above are what it says in the doc, yes, lower voltage for
+higher frequencies.. certainly seems like a bug..)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202606231306.COGVL9ZT-lkp@intel.com/
+LOW_SVS   -> 350 Mhz // this and the following are in downstream too
+LOW_SVS_L1-> 421 MHz
+SVS	  -> 492 MHz
+SVS_L0 	  -> 545 MHz
+SVS_L1    -> 599 MHz
+SVS_L2    -> 640 MHz
+NOM       -> 734 MHz
+NOM_L1    -> 791 MHz
+TURBO     -> 818 MHz
 
-All warnings (new ones prefixed by >>):
+so in short, the existing map seems to be OK
 
-   from /zdci/src/kernel-tests/common.sh:210: redirect_command_errors
-   from /zdci/src/kernel-tests/lib/builder/htmldocs.sh:86: builder_execute_build
-   from /zdci/src/kernel-tests/lib/kbuild.sh:6419: compile_one_config
-   from /zdci/src/kernel-tests/lib/builder/base.sh:88: builder_compile
-   from /zdci/src/kernel-tests/bisect-test-build-error.sh:102: main
->> Warning: Documentation/devicetree/bindings/clock/ti/ti,gate-clock.yaml references a file that doesn't exist: Documentation/devicetree/bindings/clock/ti/clockdomain.txt
-   Warning: Documentation/devicetree/bindings/mfd/motorola-cpcap.txt references a file that doesn't exist: Documentation/devicetree/bindings/regulator/cpcap-regulator.txt
-   Warning: Documentation/devicetree/bindings/mfd/motorola-cpcap.txt references a file that doesn't exist: Documentation/devicetree/bindings/rtc/cpcap-rtc.txt
-   Warning: Documentation/devicetree/bindings/regulator/motorola,cpcap-regulator.yaml references a file that doesn't exist: Documentation/devicetree/bindings/mfd/motorola,cpcap.yaml
-   Warning: Documentation/devicetree/bindings/regulator/siliconmitus,sm5703-regulator.yaml references a file that doesn't exist: Documentation/devicetree/bindings/mfd/siliconmitus,sm5703.yaml
-   Warning: Documentation/devicetree/bindings/rtc/motorola,cpcap-rtc.yaml references a file that doesn't exist: Documentation/devicetree/bindings/mfd/motorola,cpcap.yaml
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Konrad
