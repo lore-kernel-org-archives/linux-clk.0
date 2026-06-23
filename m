@@ -1,164 +1,123 @@
-Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010021.outbound.protection.outlook.com [52.101.228.21])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B746B3D7D84;
-	Tue, 23 Jun 2026 15:29:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.21
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782228560; cv=fail; b=NF4GSrPm1NxW2669WSUQwNPXjVaLvru3ebCTrWy9PFm8JXAAqpCLmBMB/kkBKhg83ts+MMwURuCrFCsaReosh60zbDtSlu5uBfvfLJm+Gjeqc8SgoE+Udpd8o0ogMDSGvUya7kHtGA+V5jRAXgfixA1eqW6AiFJcY+nWBBOweuE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782228560; c=relaxed/simple;
-	bh=DWf0RBHGu59x8V6Yk7PSB16RpzfICOjlGxLVa8iqwZA=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=Pa3qkp2WD7t+RI1p9dRzcycOECKiNV2Oda10HDG1jbBL7XbpLJfR3/J6XSff316h0f1s9zlNEnYuuaAkKaMbaU0klAtFpW+lFyBYkkV5lP3YdMgnQ0tmI/dtZRGTFE7EgXthk2u/OE5uifQGFm9uRuZIdzxnqUcItLvjKp3uhBg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=tolHCRKd; arc=fail smtp.client-ip=52.101.228.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 559B72DCC1C;
+	Tue, 23 Jun 2026 15:40:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1782229206; cv=none; b=Lx5kR/IZYVH02fFt5qfoXc9CjEiY2D466NMxOWSpLACYf+hho2R14BrFCn2EIzUTDpfcir7ongNtxGCJORns8iPtUgBw06vzt4Z8IIRJQfny1eG0g52BiEtzLnfCOVkYgMZR0ZIhB3pyGVAXkzuTLhbIEojJpTrweG2+JZ2tiWM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1782229206; c=relaxed/simple;
+	bh=6cX12bYt5lU2zEEuwgsiF4sysItirmoUNcjgrKhWcFY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Rtz7ojALJTIq1ctKFytw3pow6WlWkc6h2Jmz42lvmxkwwTYeeY5DT63auaZqR4x6ircD1T9w6ERPZs9gRVk0YyAHfaMx65qywDC+t3gEgrkZMJ7EbfWOwUvTqtKBHM3rzIN+4G6wNtiZs9JzITHESm/vCisyxkVN8nEGs8jVSus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LVMeCBqd; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="tolHCRKd"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=P/oMlgVQly/qE5PslZMmJA9GIrXFwzyV+OxthX25HxPY4ahNbqvePnCG5AORFFAPaHaSiSYnTjPYnN5YIednt15ARW5ZXA651cXZcnkriqLFLWLYio6A1GAcJ6EokZkBfVnrJEbcCbu0qrs87Jwh1YgFWO2W7DWs4RIlEDtcHHfMHg0SAmRnykbgOXtEp+8zlOxO0owpCAqitIpPQvMx+75muhwQW+40an8re5Y42k9o8A63PlS+tWBKGReg+h42K+8kMftDLFraDkWiHEongCqJALG8xBOfsupywiogwS1soaAafIX2KoO+LxkqbrZYZrPR7T/X9qGnCAF+OcNXbA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JhSW2zG6ecT34CIFwFakc665kbr+mJJ73gw15AuV5Xg=;
- b=Gs1RLdlxI1QLKY8KrFOIRbSQqPywv6IGNtzAHpwfnnf4F6a9EXpNhYZYPbwXy9OfT7EFg+r4fZmuWOjlCpUznJqzDocPtIf0C4FNLf4wKn5sDEN7U51yGgqAiOauoHvJZCTcB35jZjvN8LyAOLdS2MpQRjZ+vmYWEeYM8rZbrtv+ArAFDjNVx0EeeVTsQa+zx2jd38h1RkZKyykO/4deMDoiEZPCC1QiSL+U2WV89eBkLXwRfN2kOQ/m7KrtjEutd0VxL0xN3BIycuDsXPoMmthwCSvBYZL4mgGq8dAJgML/WhZSGoAMgg07Y6nlOzlXAvJJ8ZUobKXqkn+p1ennng==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JhSW2zG6ecT34CIFwFakc665kbr+mJJ73gw15AuV5Xg=;
- b=tolHCRKdLh/hLp+CvA2SpudPSci4ktABsDq1tiHKnwmCqOhZWSX2C99Mh7R5P7j22M1v2YaS4Dffjkxh6esyMSfq6wCoN85d1hcLZIRFRRZnHjnuLKQh7teotj+JBWGz5BlOzwEitxt/rKIARMQVE0TrlyzoBZLadYt38IIuFII=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-Received: from TYRPR01MB13588.jpnprd01.prod.outlook.com (2603:1096:405:18d::7)
- by TYCPR01MB10054.jpnprd01.prod.outlook.com (2603:1096:400:1ea::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.139.20; Tue, 23 Jun
- 2026 15:29:15 +0000
-Received: from TYRPR01MB13588.jpnprd01.prod.outlook.com
- ([fe80::2f5b:8560:48ed:3828]) by TYRPR01MB13588.jpnprd01.prod.outlook.com
- ([fe80::2f5b:8560:48ed:3828%4]) with mapi id 15.21.0139.018; Tue, 23 Jun 2026
- 15:29:15 +0000
-From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-To: tomm.merciai@gmail.com
-Cc: linux-renesas-soc@vger.kernel.org,
-	biju.das.jz@bp.renesas.com,
-	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney@redhat.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: renesas: r9a09g047: Add LVDS clocks and resets
-Date: Tue, 23 Jun 2026 17:28:49 +0200
-Message-ID: <20260623152851.478573-1-tommaso.merciai.xr@bp.renesas.com>
-X-Mailer: git-send-email 2.54.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: VIXP296CA0014.AUTP296.PROD.OUTLOOK.COM
- (2603:10a6:800:36c::17) To TYRPR01MB13588.jpnprd01.prod.outlook.com
- (2603:1096:405:18d::7)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LVMeCBqd"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF98B1F000E9;
+	Tue, 23 Jun 2026 15:39:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1782229205;
+	bh=BSb0t7HyzHmwhpJzJhNzEHmlkldxYgAG5n8UPrH07Gc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=LVMeCBqdk5hwFeHn8/I7u9VR7FqrdpBuOPyb6G0GimM+42U1FN4lVvNlcoLFJ4DWj
+	 UxXN+TE3uazvUnbAaHv/SIHC9NTNWe/fppEioc+tcy61ncLijafOYcyTUz97w9tDBo
+	 51p8ChFpKy8FmtloedEEKFdaB1EAVq2nd+MxYAabmhOVRgFdctNHGnDwUKAaXrxebJ
+	 GpyKoYqHJDuKike+GqeFstm/D3gIafyQatSvKZ1Ppd4xMsdMgDcf3hM+YMNT1JtvQJ
+	 3DN0jr31C9XJMhpqqck0u0ImVd3HdR1OEYE00HaTPtr3/AvCJ8yicgMJXHN++VURE3
+	 IeHRaHSbtw4Pg==
+Message-ID: <350464c2-e4e6-4626-961d-b44f4ed864ea@kernel.org>
+Date: Tue, 23 Jun 2026 17:39:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYRPR01MB13588:EE_|TYCPR01MB10054:EE_
-X-MS-Office365-Filtering-Correlation-Id: 56331d66-eda0-4bf0-4a3e-08ded13c2f0c
-X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|23010399003|366016|376014|52116014|56012099006|38350700014|11063799006|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	RupZHcuJlk053KOqpHgAbPdh4oMD5P/mPezny1d7JDZBDxDfARE44IifJ+/63FTyM/tap46+yDu0shhU6Dds25CJ0p2S4cKCZ7rWq1kokaBWWZMOTzpsPF/tDq3e1wedUTiv2DRP6vYOBJznLsvCF/H+iGIUu2vmwkkC64xLubIQ9ZV5lkQrtdPtxVev5ZS+Vui/zm/7HpRJE0/TT+gJUJxzxjbGM6Wz1kGla4Bn5z/S7QhCfTwjUxUMwjkJxHZU4FydryBV7IsnQn6jRnXYMegu7tIaBPbngIxXmV442OrX9+BL4OzKDydQiE05dimzIYGXdEEv7lg1kTQGxWmeRiteoqPZ/s4iwgxeIRAcmkprAkU0Mcr4J56poaPa3dZewSAtZdjiRfBL/Fb3FFHBYjO3M/jTZUE5bHaTL0MXLSD/Njw4zIOSiswPR748MPdVUFno7dxewtMRvNryckcOt002eQg5oDrVS41ONc5yiBL8rFSew/dMopTZTD/jVg1big8Hgwx3LbdtPbUq2ezkV/64g6LLF6F2ZLAZQSVdDoTqAT4dQoZv6YpcUyt3OFD2f7dhignLJm3xxlTRfKbs/HezkwivZEUTz9mCQPsCXWkG2bgS6PdAqO0HogTKKUoAThDve5qFm+yTZSs0fr6/Aa9f7+Xr+50QsNf86TKhILkSRJWksNaUFbCI1kUJ/Jqkdvl/BdnGrxOhW1aImveXBBxQHdafGs70T7vvaPhTlu0=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYRPR01MB13588.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(23010399003)(366016)(376014)(52116014)(56012099006)(38350700014)(11063799006)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?fZXy59eO268uUk5dgveR26zgMOi/8vcPJKaDoVe/JANf4fGerP9dJBqgQda6?=
- =?us-ascii?Q?tIX95Qg49FMiATZDSjtcAo19o1AI9pBE+LrwfL2OkBF2PpD677BbXmEtksKj?=
- =?us-ascii?Q?mz59LOtEr/fIHPWYDjVzjXT5BYnKJaqU+2jhXapS33A0p0+aPvm19OaJCtuQ?=
- =?us-ascii?Q?Z+oe+Pcnxi46kHWphp+EIR1Eio+udM3CieQP+SHQe42nzxiOTd3J9E90oXt0?=
- =?us-ascii?Q?Tf/2WHdRflRLVfxkwhKH9RHD65hE3EpzlY78VUNHdrXCRnfm7g42wyeNtEax?=
- =?us-ascii?Q?FCSKi/yhDj/bS120oJja/ey7EzqLqtHmrZjRlPNRPmUXnhsYN1BeYNb2uMnl?=
- =?us-ascii?Q?f1PSVz21JVCUxwj+nuj/8zcl247Xnk1ywjlisbeswFIbFDFpT2Vbm24aGB1D?=
- =?us-ascii?Q?8HoGT5jz5wzxu63+hE5dRy27HZeWyqnFzhGDEDUYI98JxkDredSgcsC7TWNn?=
- =?us-ascii?Q?kZoQG3zG/ehYQ/HXjohXsDlPqwib/nDJn26xchkadngVVvbxa/6SiTF8QMLa?=
- =?us-ascii?Q?tt09VtOV60dSt3mHD+jIw2ozgCKw//Cl3lJjufMSAtONCf8lPT/VscLZtYgC?=
- =?us-ascii?Q?pmRVx6Hq/ssTrl7qBC2oWTyxpk5Rjjnw29Y6wHaNrLafDxJ7JWoWvwbIBuTM?=
- =?us-ascii?Q?naM8pkqmxXsoAS0+XdcP0TviVZzj95UCUnnl6PTojLqTvqhWuElkW/aJp6hr?=
- =?us-ascii?Q?eoa5QhiqvHHVDuop9/uCYt2DVnYa/3AGh8EvHnoHk02GZ3ybP46S4ZjCuB1q?=
- =?us-ascii?Q?1FobDLFrNU++tFd3RvHYij7jNLR9WuO+95Y2gZZvgIF/dE8QJv4Pii2I85oL?=
- =?us-ascii?Q?gCRo62HqAc6a/Xgcvvdim3lUOch+BgK2zgyL6weI9slVT3PVs1acEzlxCd2P?=
- =?us-ascii?Q?VJhhIm5R+7NcAOJtNK2IKBqvlIl6Pw6Yc6eRTXg7poyFgSMMx71urQv8t6Vu?=
- =?us-ascii?Q?fvZzHQ99KBRw15tnqeQEmSEONsFMeGGkW7AmnaY5duNKnyazpi12yCp6UHPl?=
- =?us-ascii?Q?GJhVxqxm6S/iF7mrhHWb/ZUU0vDMXlylI7Mt90A1UDlw8JB6As4BRweeW5ah?=
- =?us-ascii?Q?jClZj7Jk529v3tb6shdwc5La1GquBblePqzcLkGmPyTivkt+HJh//8QyM8Oy?=
- =?us-ascii?Q?7gyQ6brxLR+knGYb5y+cEUDTojr/Jm5+dUNVt1hNqrpfBZ1/RF2XCAUcUYfF?=
- =?us-ascii?Q?j6T7+Y0egn7lM+EeQcQlajLzbMsF5tG9De9xYKrHs4QP8d5WU4MIeg07bu2s?=
- =?us-ascii?Q?fslySo66JscdYWer6lQ7bs5dtdPOR0pgaJJPGLgQs1PlydzhEtib1WoQteqJ?=
- =?us-ascii?Q?haOR4bCjCj9/nEFp/luSsxYcZ90kssRVuGykbaOyTbaCiga+3mq4T57lTn4E?=
- =?us-ascii?Q?X1lGFZHSuKlvs96f7r9xex+FHL+yD1PFAaaVE/wbaopEYBQBnPFdJqZ1vTk7?=
- =?us-ascii?Q?i+P6VKb9/vOnCKYA5rtMdwQ8OM/Sv0GBkdGH/lrZkSybNFen8LiRNOxJhqkw?=
- =?us-ascii?Q?K5nQc1xgIw6/7FLzjjOOtfQnMqw/7b8BkngsDQvu8ECVZZW4lh4leDAwnqpH?=
- =?us-ascii?Q?Qa7E3mK6r/Bxa9jXI4+CamtgBYse4bKN68xBttdfA1BlxO2ERsQGG7OX9gBs?=
- =?us-ascii?Q?IxlS8ppxPD/mB2I+ZmfW4RcVnn/jrRUf3wnEQtsr8u3vYsa6ygOi9v272Ctx?=
- =?us-ascii?Q?HRAcrs6uSOyVTsEvXlnkn4tMVolheLdyvnK+zSDTZx7hP9eZRUZAw+ZRDZjs?=
- =?us-ascii?Q?cc9LNfBpqgD6m1Rgz6PDRyhkOxlh7yfkH7yMh4IvmRaegYNcfZa+?=
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 56331d66-eda0-4bf0-4a3e-08ded13c2f0c
-X-MS-Exchange-CrossTenant-AuthSource: TYRPR01MB13588.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jun 2026 15:29:15.1717
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: VYrItkXrKhs8SWgMdYkapTtY7TXu0RwcR6Tq6k8hrl0iWmuE+HyLqO9As+OZTEkJQ7Q//RTEh1BYjbmlvyAuMG1QZMeEI2N98c95oX+yUkArMMvJZvPOIxllFY2kBlQJ
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB10054
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/8] clk: qcom: dispcc-sm8450: Fix mdss clocks
+To: esteuwu@proton.me, Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Rob Clark <robin.clark@oss.qualcomm.com>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ "Joerg Roedel (AMD)" <joro@8bytes.org>, Vinod Koul <vkoul@kernel.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-phy@lists.infradead.org
+References: <20260622-sm8450-qol-v1-0-37e2ee8df9da@proton.me>
+ <20260622-sm8450-qol-v1-1-37e2ee8df9da@proton.me>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <20260622-sm8450-qol-v1-1-37e2ee8df9da@proton.me>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add LVDS clocks and resets entries to the r9a09g047 CPG driver.
+On 23/06/2026 02:54, Esteban Urrutia via B4 Relay wrote:
+> From: Esteban Urrutia <esteuwu@proton.me>
+> 
+> Both of these changes allow the framebuffer to show upon boot and let
+> the mdss driver take over afterwards.
+> Before, none of these actions were possible. Only mdss takeover was
+> possible, but screen had to be turned off first.
+> 
+> OLE configuration may have been a misinterpretation... that's not
+> something that's done on the downstream driver.
+> 
+> Changing disp_cc_mdss_mdp_clk_src from clk_rcg2_shared_ops to
+> clk_rcg2_shared_no_init_park_ops fixes this warning as well:
 
-Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
----
- drivers/clk/renesas/r9a09g047-cpg.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
 
-diff --git a/drivers/clk/renesas/r9a09g047-cpg.c b/drivers/clk/renesas/r9a09g047-cpg.c
-index 94158b6834e6..875c01eaa695 100644
---- a/drivers/clk/renesas/r9a09g047-cpg.c
-+++ b/drivers/clk/renesas/r9a09g047-cpg.c
-@@ -534,6 +534,16 @@ static const struct rzv2h_mod_clk r9a09g047_mod_clks[] __initconst = {
- 						BUS_MSTOP(2, BIT(15))),
- 	DEF_MOD("dsi_0_vclk2",			CLK_SMUX2_DSI1_CLK, 25, 0, 10, 21,
- 						BUS_MSTOP(9, BIT(15) | BIT(14))),
-+	DEF_MOD("lvds_top_clk_ch0",		CLK_PLLDSI0, 26, 0, 10, 22,
-+						BUS_MSTOP(13, BIT(0))),
-+	DEF_MOD("lvds_top_clk_ch1",		CLK_PLLDSI1, 26, 1, 10, 23,
-+						BUS_MSTOP(13, BIT(0))),
-+	DEF_MOD("lvds_top_clk_dot_ch0",		CLK_SMUX2_DSI0_CLK, 26, 2, 10, 24,
-+						BUS_MSTOP(13, BIT(0))),
-+	DEF_MOD("lvds_top_clk_dot_ch1",		CLK_SMUX2_DSI1_CLK, 26, 3, 10, 25,
-+						BUS_MSTOP(13, BIT(0))),
-+	DEF_MOD("lvds_top_pclk",		CLK_PLLDTY_DIV16, 26, 4, 10, 26,
-+						BUS_MSTOP(13, BIT(0))),
- 	DEF_MOD("lcdc_1_clk_a",			CLK_PLLDTY_ACPU_DIV2, 26, 8, 10, 30,
- 						BUS_MSTOP(13, BIT(5) | BIT(4) | BIT(3))),
- 	DEF_MOD("lcdc_1_clk_p",			CLK_PLLDTY_DIV16, 26, 9, 10, 31,
-@@ -622,6 +632,7 @@ static const struct rzv2h_reset r9a09g047_resets[] __initconst = {
- 	DEF_RST(13, 14, 6, 15),		/* GE3D_AXI_RESETN */
- 	DEF_RST(13, 15, 6, 16),		/* GE3D_ACE_RESETN */
- 	DEF_RST(15, 8, 7, 9),		/* TSU_1_PRESETN */
-+	DEF_RST(17, 10, 8, 11),		/* LVDS_TOP_RESET_N */
- 	DEF_RST(17, 14, 8, 15),		/* LCDC_1_RESET_N */
- };
- 
--- 
-2.54.0
+These should be two separate commits, if I understand correctly.
 
+Please use also Fixes tag.
+
+Best regards,
+Krzysztof
