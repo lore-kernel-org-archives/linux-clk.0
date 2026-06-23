@@ -1,98 +1,137 @@
-Received: from fr5000-r.dnsiaas.com (fr5000-r.dnsiaas.com [92.42.104.18])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD179313543;
-	Tue, 23 Jun 2026 13:23:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.42.104.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5784337C93D
+	for <linux-clk@vger.kernel.org>; Tue, 23 Jun 2026 13:40:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782221037; cv=none; b=nedpXtk6hQxWCxzGDfIFFP3ifSNjf7vD5WmGKwULT5k5cmPnKyl9cFfdepx/YNvJEYior2W6RlV9hrTB6CsLQ3b+Tdlw8WSneKhr9iBDXcDmO/6LQUmk+8RLS08vNdTCYMHEMpYhznFRqLxgfDDdn+kDhi6rf+K4NuQKMsSWuUE=
+	t=1782222051; cv=none; b=dNMH3CtLbf/Bd8VgoQpq2u6kF9Jh3oQ50kmk6BPfsVn6ApUdpz+OCnE5EvxZK4yBpcSJenxwoGTtNSLESw0OeqvoZXDJWMp1wqYQxtPSHhm4ZRCPWF1INHfPfg4L9g51gunOS8YIcFJGlWPnDwwJHyaxjVYShzm0/6KGlSHNL+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782221037; c=relaxed/simple;
-	bh=PVy4S/eNaNAAxNj9kHLDxwcgqSAw69kke2AJz1Kb9pY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QU6RrL8mpdJktNP8PPgZQgi6JwJzUcSEjBp7cQ1gDmYs40+TlpMiDxB/FiLenDRtcoebAZPSjJKttetxSNrgvFOVMC94qcxpq1jyj7kruYdlEYUnG80bSoXDcxZOI4BakVfnPFDlcj2cVdhs7kzmU/so9QypQt9o+sd2XxjHjwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=superkali.me; spf=pass smtp.mailfrom=superkali.me; dkim=pass (2048-bit key) header.d=superkali.me header.i=@superkali.me header.b=YKi5a7gj; arc=none smtp.client-ip=92.42.104.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=superkali.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=superkali.me
+	s=arc-20240116; t=1782222051; c=relaxed/simple;
+	bh=Cc5TbQEAam/pScqVc7tva3rlQhdXYztR2FTD905WYCY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jfJwhnFrOlLT6VUuvKuUiI325tieDk/w3LzetBPMHueSkRlGfIgrEx3hdAX0iMuS5326oFO2FiBTRmSgJ0m6nT6OdZcrK1F8JH1Pe4sZmuzzqcSAGUTwTUA/+dGiS30nMnJ21E2b/Un6IQiHsa/FeWnVB+Q3KID3Vn2CeKLq5PM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GdUq+Vna; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=q4ukpZjX; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=superkali.me header.i=@superkali.me header.b="YKi5a7gj"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=superkali.me; s=default; h=Content-Transfer-Encoding:Content-Type:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=PVy4S/eNaNAAxNj9kHLDxwcgqSAw69kke2AJz1Kb9pY=; b=YKi5a7gjyQM1wxwm+vvyuvL6+m
-	o/dL7T7k53Z0zxFUgYtLOThwC8F7dF1IT0TDRj/R88bJu588o0gzioJEZVMqmNdOG4NJMjb1Zk38a
-	9KCxA48kSac8oPHZJlKEOJbxsjTQBWzMKM7FIsQtv6ZkwMM5enI6BpRmLfTzi2ddbRIs8XuvBfLT5
-	Yu8ZGfXW/Fo1MTzrwD01i+QNA5d7aQB8JAqrNCt3HFPjVGG0MDZqmyh/8bjt9UEaW2vrNfKCeUcg4
-	134O5NTk2LBdItF1XzsEinqSxwtpRYoAbMUFOVFn/iZ2RM5+HrCjBt8L/XhQSBgV75yS/cr3XQhJg
-	VGyp0ESA==;
-Received: from [81.57.40.39] (port=52518 helo=superkali.me)
-	by fr5000-r.dnsiaas.com with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.99.4)
-	(envelope-from <hello@superkali.me>)
-	id 1wc16a-00000006qSa-0t0n;
-	Tue, 23 Jun 2026 15:23:53 +0200
-From: Daniele Briguglio <hello@superkali.me>
-To: Diederik de Haas <diederik@cknow-tech.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Michael Turquette <mturquette@baylibre.com>,
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GdUq+Vna";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="q4ukpZjX"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1782222049;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=feC1Xc95vHwpugGrGXRgs1T9zUXNoDWuuL7V/419NWM=;
+	b=GdUq+Vnavih9MXxjiZ1kCbqj8i+aNA2d8RTq7P560M7EqBhVN/HTC66Tcun32+m8LDkWD/
+	P8h2BEyhE1+pWetj7K3jF+DP8F4yBjXhm6zhSpsAZaylckAAiZNoqcCXSnQfxnpkrbcnDv
+	7AO/JzirJHxLW/Bny7vR7lbEvmUBXlo=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-217-9TrQvUbxNxux2Phw5M1Olg-1; Tue, 23 Jun 2026 09:40:46 -0400
+X-MC-Unique: 9TrQvUbxNxux2Phw5M1Olg-1
+X-Mimecast-MFC-AGG-ID: 9TrQvUbxNxux2Phw5M1Olg_1782222046
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-92045e86763so212330485a.1
+        for <linux-clk@vger.kernel.org>; Tue, 23 Jun 2026 06:40:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1782222046; x=1782826846; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=feC1Xc95vHwpugGrGXRgs1T9zUXNoDWuuL7V/419NWM=;
+        b=q4ukpZjX4sqZwKimYHtlQ0tdzmxpQlWryRxpasE5adZTXPXdJ5N90j049jTEsNxvGm
+         DQxVszbPEIJ3JSGN7EkzIio98dcQRJIIE6QptXwbBJgZRWw2sRxpsHnRw9X1//oOI8dM
+         +XEla/tJNDBlaK6Th1mE670K+KD7vNE3bU23urZpqJKgq46EzXMlpVdeAPaSuuKchiuu
+         a3AdbkmQKELEVpCFiG0xSFCEAnJVLEYzvAFFjsyMyNwB2uq7fTxbLURvA732efv/MHHO
+         DzmvLAW7nnyiSzfI307umQySr3emoGT+TtZy12y6oOxXFrhe3meZ5OWtPZkPOYrTYWqG
+         L3Dg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1782222046; x=1782826846;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=feC1Xc95vHwpugGrGXRgs1T9zUXNoDWuuL7V/419NWM=;
+        b=ArcK8N/T/ihfDAouM6zSK/63tu+3hnpfuUqZV7R0UOAcqb0kYAzO7VUPboQLBJM5Fz
+         Wg9+j+c5AIy3czHXYqbvJCRO8MYagLO0BoP0WMYHWI5pkSREHTT0S6LbllmdaCXx8dHM
+         m62gh40PN96y6XMds6cjkRSpeHmfZT4YHr0ZSj4Ur6WGMaLh679PDq56SOaRbm/IaTv/
+         C4uSRWHb3koSG0kQkvOTRjWRD9GVQcxrLRKHmhELMajgBbU+8+B4J+JmzCcvH07+UIIA
+         yqPh6jdsAi5cacb2eQqZHgBF7L/XokuOEygLNeBNzGJ20S7nT34JUENKbxfVg6jyxXzM
+         Prkw==
+X-Forwarded-Encrypted: i=1; AFNElJ/ziJ3EA8dYHRr2wnK3facVgV0a/krfbfnr6EzIv0swJAzi9uxAUUyCCAKwJ+JhpHV183dpwftASu0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXA8oOd7RfwM6QylRpUfAddhfCmoDEHDz0XNZrZzYYlFQSM6Ce
+	vMxT16dKiuVhws9Go/SRS7Yy+zTUBzcAcLH0PxuMOhDCCocjQNc6AAakIfHViEmOX9gSMbpOXVg
+	WJnI0RRdSK0Hf0gYqLw6u+6f5O0ClUACDT1H23gt2amZioSLfs3yiXq1/1W/YCQ==
+X-Gm-Gg: AfdE7ck+eKUKAW1kzxEZf9ueVoAulnvA0W1jvUxFD0bmefXUgVfpHRuXB5MKbTM1g1S
+	JTZ7rkT5l6B4NXRVDIXKPyK3pfeaVDTINURTQhI9r6v5cma1yHyM+fK6nJ3Ar8DcPdYSQ8xISJX
+	q+Du9Lyz03/b5tIe6zHUhS87fry5OF8zALqiSAaK+w1L1P5J80qlJHUWMnE2FPSWqFl+MC697sW
+	1x0+Ds+LVNGX1owXIDWI03mQsDFukRZzL0eD86t2l8Fm3fLy7d+d2VAslgfqqtWuM9AjnCz97dY
+	d82kHDe27lYUeGf+quT7D9NX8D0LenDdEqqLowz0Q6m7WQbn7WbdgyUe+6JgLgdbIX/Gm9EKsve
+	T4HZTF6rddHwRj9oDNZgt5+gRLWM+gq7rCd4BjWZKAysaEw==
+X-Received: by 2002:a05:620a:4044:b0:915:92f3:54e3 with SMTP id af79cd13be357-925ffbdfd56mr628782985a.4.1782222046074;
+        Tue, 23 Jun 2026 06:40:46 -0700 (PDT)
+X-Received: by 2002:a05:620a:4044:b0:915:92f3:54e3 with SMTP id af79cd13be357-925ffbdfd56mr628779685a.4.1782222045634;
+        Tue, 23 Jun 2026 06:40:45 -0700 (PDT)
+Received: from redhat.com (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8df7f018898sm125887546d6.7.2026.06.23.06.40.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Jun 2026 06:40:44 -0700 (PDT)
+Date: Tue, 23 Jun 2026 09:40:42 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Colin Foster <colin.foster@in-advantage.com>
+Cc: "Datta, Shubhrajyoti" <shubhraj@amd.com>, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
+	Michal Simek <michal.simek@amd.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Ricardo Pardini <ricardo@pardini.net>
-Subject: Re: [PATCH v4 5/5] clk: rockchip: rk3588: add GATE_GRF clocks for I2S MCLK output to IO
-Date: Tue, 23 Jun 2026 15:23:51 +0200
-Message-ID: <20260623132351.4144457-1-hello@superkali.me>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <DJGG8DEAKSPK.1GJ8FARAHXPXM@cknow-tech.com>
-References: <20260419-rk3588-mclk-gate-grf-v4-0-513a42dd1dcc@superkali.me> <20260419-rk3588-mclk-gate-grf-v4-5-513a42dd1dcc@superkali.me> <DJGDSS875DDO.22TYPVYK5X8KZ@cknow-tech.com> <2100447.PIDvDuAF1L@diego> <20260623123316.4111002-1-hello@superkali.me> <DJGG8DEAKSPK.1GJ8FARAHXPXM@cknow-tech.com>
+	Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH v1 0/3] clock-wizard fixups
+Message-ID: <ajqM2m1d7-YnI5rZ@redhat.com>
+References: <20260506200555.2558434-1-colin.foster@in-advantage.com>
+ <65e8c879-fec5-4be9-8211-8e92cf1a0833@amd.com>
+ <ajqEMXmTnpOA7tVs@colin-ia-desktop>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - fr5000-r.dnsiaas.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - superkali.me
-X-Get-Message-Sender-Via: fr5000-r.dnsiaas.com: authenticated_id: hello@superkali.me
-X-Authenticated-Sender: fr5000-r.dnsiaas.com: hello@superkali.me
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ajqEMXmTnpOA7tVs@colin-ia-desktop>
+User-Agent: Mutt/2.3.2 (2026-04-26)
 
-Hi Diederik,
+Hi Colin,
 
-> md.l 0xfd58c318
-> fd58c318: 00000600
+On Tue, Jun 23, 2026 at 08:03:45AM -0500, Colin Foster wrote:
+> On Thu, May 07, 2026 at 05:29:41PM +0530, Datta, Shubhrajyoti wrote:
+> > [You don't often get email from shubhraj@amd.com. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
+> > 
+> > On 5/7/2026 1:35 AM, Colin Foster wrote:
+> > > The clock-wizard driver had a hard-coded 20KHz minimum accuracy. This
+> > > led to out-of-tree drivers silently failing to set clock rates instead
+> > > of dealing with the best-effort.
+> > > 
+> > > Remove this 20KHz restriction to match the Versal clock wizard driver.
+> > > There also was a bug in the difference calculation that is addressed in
+> > > the first patch.
+> > > 
+> > > The second patch optimizes the search if an exact match is found.
+> > > 
+> > > The third removes the restriction.
+> > 
+> > LGTM
+> > 
+> > 
+> > Reviewed-by: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
+> 
+> Are there any actions required from me? Hoping this doesn't slip through
+> the cracks.
 
-Thanks. Bit 0 is clear there, so the I2S0 gate is open at the U-Boot
-prompt, after BL31 and before Linux. That matches the symptom: the
-firmware on your T6 leaves it open, and the kernel closes it once nothing
-references it.
+No there is nothing else that you need to do. Stephen hasn't made the
+clk pull to Linus yet. He should assemble it this week.
 
-Given that, I think Heiko's suggestion makes sense here. Marking the four
-gates CLK_IGNORE_UNUSED keeps the kernel from disabling what the firmware
-already left open, and boards that reference _TO_IO still drive it through
-the consumer.
+For the series:
 
-Could you test that change if you get a chance? Just set the flag on the
-I2S0/1/2/3 _TO_IO gates in clk-rk3588.c and check your analog audio comes
-back. The series is already merged, so I'll send the fix as a separate
-follow-up patch, this evening if Heiko is fine with the approach.
+Reviewed-by: Brian Masney <bmasney@redhat.com>
 
-Best regards,
-Daniele
