@@ -1,200 +1,110 @@
-Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BE813D3486
-	for <linux-clk@vger.kernel.org>; Tue, 23 Jun 2026 11:10:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FCA13D3CF6;
+	Tue, 23 Jun 2026 11:15:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782213058; cv=none; b=faoiR8buoIiW7Hawq7mz6zjFxEuQq6JSqybTpw0OxXpN6nMRX54glRHA6MZKTWHSO77R6Z0A6LPAWYwAXC2NttakJtF3DdOfqvbgcvxUYlXJR9TgmY+W1sclpWzk1nK2Iwk5ZJYOQ/m0f1ICkpTwzL13tdn78k0cNx6UHCu4GKU=
+	t=1782213306; cv=none; b=Eddyq3wYYpqXn1OaCoCXHp0lYIHbJvdyg+0VGW3wx7wS+4GNZUQiam6FIOPe4SEZKoaNlZVFEkyqeZ7Y7fYCCm5W5v5myH/nqyPK31ZjdyO6A7naLp+9FUGCu9u5NHtTqt+H6fMvzzpfM3bpUPL4kYng1Xe5oI+/cBed2tAhz7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782213058; c=relaxed/simple;
-	bh=ZUm4KkPPLsAjnKKl40pQCQvmtFDX7DyxwcQ7kmg3q/E=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=B2lcz091q02Saj120qvjVXHPcagHsn+2udXgrYCtqEHzwhvGMC8a2iBISBWNfc0xI/BcqXoBG80tEJmZcZTlXU0J/Ouj/ZDCLW4JybheyB6mK0JuvSgFdAJRpQsq9V3kw55XUo8OiIkTFGtIgT3zOx73BVrmCVgWH2b9PtynYnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow-tech.com; spf=pass smtp.mailfrom=cknow-tech.com; dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b=Bvn3yQ8T; arc=none smtp.client-ip=91.218.175.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow-tech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow-tech.com
+	s=arc-20240116; t=1782213306; c=relaxed/simple;
+	bh=wqZcMJLGjMPoiWwScIX3RQTLxDspyOYcDem9+jhHz7s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BtFjfKNezduMcrzVfMm6UadP+y0ZFXXNnl5MGLqHi6/mrGekol3mpClF7jrmlEfzwwKP3UAHfum+QjFTUTkCRstOilq2KYahndhsi9BFf5qQ59o8KohGkJXlaVQQ5BKqXjzCYUDDaTfZqmfqskcPIxrIzL3ssxO5kUlk+jlFqOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jGsTbYGj; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b="Bvn3yQ8T"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jGsTbYGj"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1782213305; x=1813749305;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=wqZcMJLGjMPoiWwScIX3RQTLxDspyOYcDem9+jhHz7s=;
+  b=jGsTbYGjCxKG67UEuwK9qk3xYZhfoE8kwTKu1i25THzGZBpTprKtpHW/
+   8l23Osa8roMIFmZcYEd0WggpDvuvRpJDRwj6TctmHx2v395ZDG0ehsH6l
+   A7/9TQy5Hzb9DfglaOD2zqeU7853PoFdPTv7IIU1RXI0oFHeC5W70VFwX
+   kaGFPY1pUaFek+i/4+8xnyYSPbVPAZm0f2zs/wgB1r7qYJuMLQDHQOWol
+   21hWM8pP1qAp49AEWmsn7PviORKZf2e4LkG7ywlUAeA6W8RKD8oMwy8Ie
+   aoJFwdTmvO6i9iKR/IUSWCn9WnqfJc4BWGm1EJIHxFrMUYXFZcRBr6SWa
+   g==;
+X-CSE-ConnectionGUID: M6i4SxsLSGyyKfWDw7k/5w==
+X-CSE-MsgGUID: Y8lt22vrQIaIlTwhboIQWQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11825"; a="81933215"
+X-IronPort-AV: E=Sophos;i="6.24,220,1774335600"; 
+   d="scan'208";a="81933215"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2026 04:15:04 -0700
+X-CSE-ConnectionGUID: UAwfnSysS7aXCPhA5d5nTg==
+X-CSE-MsgGUID: 1DtfOqIaSNy8/gFadyNbvA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.24,220,1774335600"; 
+   d="scan'208";a="245136985"
+Received: from igk-lkp-server01.igk.intel.com (HELO 892db79562d4) ([10.211.93.152])
+  by fmviesa006.fm.intel.com with ESMTP; 23 Jun 2026 04:15:00 -0700
+Received: from kbuild by 892db79562d4 with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1wbz5m-000000006Bt-0oIR;
+	Tue, 23 Jun 2026 11:14:58 +0000
+Date: Tue, 23 Jun 2026 13:14:01 +0200
+From: kernel test robot <lkp@intel.com>
+To: Bhargav Joshi <j.bhargav.u@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Tero Kristo <kristo@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	goledhruva@gmail.com, m-chawdhry@ti.com, daniel.baluta@gmail.com,
+	simona.toaca@nxp.com, j.bhargav.u@gmail.com
+Subject: Re: [PATCH] dt-bindings: clock: ti,clockdomain: Convert to DT schema
+Message-ID: <202606231306.COGVL9ZT-lkp@intel.com>
+References: <20260621-ti-clockdomain-v1-1-e99a56af98ea@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow-tech.com;
-	s=key1; t=1782213053;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=k4NUULsbD4Wr6wdY5daDLj8cImrhH+2QVswARzXf4Zs=;
-	b=Bvn3yQ8TmLGKyw5o+A2ByipnhrRbTy4NK+Kh9x//FBQlE2+gxQ+tyapgaF4UWjlQEe7bwe
-	mfgtxetRw+VljLm3/DuIXkMEDxiIQv+hK99VFD/MwDz2lvcJIY4RtTKbRL/RnbtZKDrezd
-	fNSTqbzrZnI3iABN6X3TScvs6FoNRqoAXEeftPGdBxqFH1MFJyhkdmldBgapDw7tRUNmmM
-	UKxnFuwYkoRTJirMmEDU7qIMzjayGg4OAufkp2bSujEhrWj/u/XzFFIUIWErchfXURwR7V
-	gahekD/4Sr1CPRzhMB022kvUpUG/8BK5o9uJkNX0KW0llsK78j5m5Hd4GKnMzg==
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 23 Jun 2026 13:10:49 +0200
-Message-Id: <DJGDSS875DDO.22TYPVYK5X8KZ@cknow-tech.com>
-Cc: "Nicolas Frattaroli" <nicolas.frattaroli@collabora.com>,
- <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-arm-kernel@lists.infradead.org>,
- <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
- "Ricardo Pardini" <ricardo@pardini.net>
-Subject: Re: [PATCH v4 5/5] clk: rockchip: rk3588: add GATE_GRF clocks for
- I2S MCLK output to IO
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <diederik@cknow-tech.com>
-To: "Daniele Briguglio" <hello@superkali.me>, "Michael Turquette"
- <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Rob Herring"
- <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, "Heiko Stuebner" <heiko@sntech.de>
-References: <20260419-rk3588-mclk-gate-grf-v4-0-513a42dd1dcc@superkali.me>
- <20260419-rk3588-mclk-gate-grf-v4-5-513a42dd1dcc@superkali.me>
-In-Reply-To: <20260419-rk3588-mclk-gate-grf-v4-5-513a42dd1dcc@superkali.me>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260621-ti-clockdomain-v1-1-e99a56af98ea@gmail.com>
 
-[Resending it against v4 which wasn't present in my INBOX, but was the
-version accepted and used in my kernel]
+Hi Bhargav,
 
-On Tue Jun 23, 2026 at 1:08 PM CEST, Daniele Briguglio wrote:
-> The I2S MCLK outputs on RK3588 are gated by bits in the SYS_GRF
-> register SOC_CON6 (offset 0x318). These gates control whether the
-> internal CRU MCLK signals reach the external IO pins connected to
-> audio codecs.
->
-> The kernel should explicitly manage these gates so that audio
-> functionality does not depend on bootloader register state. This is
-> analogous to what was done for RK3576 SAI MCLK outputs [1].
->
-> Register the SYS_GRF as an auxiliary GRF with grf_type_sys using
-> rockchip_clk_add_grf(), and add GATE_GRF entries for all four I2S
-> MCLK output gates:
->
->   - I2S0_8CH_MCLKOUT_TO_IO (bit 0)
->   - I2S1_8CH_MCLKOUT_TO_IO (bit 1)
->   - I2S2_2CH_MCLKOUT_TO_IO (bit 2)
->   - I2S3_2CH_MCLKOUT_TO_IO (bit 7)
->
-> Board DTS files that need MCLK on an IO pin can reference these
-> clocks, e.g.:
->
->     clocks =3D <&cru I2S0_8CH_MCLKOUT_TO_IO>;
->
-> Tested on the Youyeetoo YY3588 (RK3588) with an ES8388 codec on I2S0.
+kernel test robot noticed the following build warnings:
 
-Doesn't this break audio on a lot of RK3588 based boards?
-I have a kernel with this patch set and since then analog audio on my NanoP=
-C-T6
-LTS and my WIP NanoPC-T6 Plus stopped working.
-Until I did s/I2S0_8CH_MCLKOUT/I2S0_8CH_MCLKOUT_TO_IO/ in my dts[i] files.
+[auto build test WARNING on acb7500801e98639f6d8c2d796ed9f64cba83d3a]
 
-And I wouldn't be surprised if the same thing applies to other RK3588 based
-boards? The same dtb file with a 7.1 kernel, without this patch set, works.
+url:    https://github.com/intel-lab-lkp/linux/commits/Bhargav-Joshi/dt-bindings-clock-ti-clockdomain-Convert-to-DT-schema/20260623-022037
+base:   acb7500801e98639f6d8c2d796ed9f64cba83d3a
+patch link:    https://lore.kernel.org/r/20260621-ti-clockdomain-v1-1-e99a56af98ea%40gmail.com
+patch subject: [PATCH] dt-bindings: clock: ti,clockdomain: Convert to DT schema
+compiler: clang version 22.1.8 (https://github.com/llvm/llvm-project ca7933e47d3a3451d81e72ac174dcb5aa28b59d1)
+docutils: docutils (Docutils 0.21.2, Python 3.13.5, on linux)
+reproduce: (https://download.01.org/0day-ci/archive/20260623/202606231306.COGVL9ZT-lkp@intel.com/reproduce)
 
-Cheers,
-  Diederik
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202606231306.COGVL9ZT-lkp@intel.com/
 
-> [1] https://lore.kernel.org/r/20250305-rk3576-sai-v1-2-64e6cf863e9a@colla=
-bora.com/
->
-> Tested-by: Ricardo Pardini <ricardo@pardini.net>
-> Signed-off-by: Daniele Briguglio <hello@superkali.me>
-> ---
->  drivers/clk/rockchip/clk-rk3588.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
->
-> diff --git a/drivers/clk/rockchip/clk-rk3588.c b/drivers/clk/rockchip/clk=
--rk3588.c
-> index 1694223f4f84..2ba9976654cf 100644
-> --- a/drivers/clk/rockchip/clk-rk3588.c
-> +++ b/drivers/clk/rockchip/clk-rk3588.c
-> @@ -5,11 +5,13 @@
->   */
-> =20
->  #include <linux/clk-provider.h>
-> +#include <linux/mfd/syscon.h>
->  #include <linux/of.h>
->  #include <linux/of_address.h>
->  #include <linux/platform_device.h>
->  #include <linux/syscore_ops.h>
->  #include <dt-bindings/clock/rockchip,rk3588-cru.h>
-> +#include <soc/rockchip/rk3588_grf.h>
->  #include "clk.h"
-> =20
->  #define RK3588_GRF_SOC_STATUS0		0x600
-> @@ -892,6 +894,8 @@ static struct rockchip_clk_branch rk3588_early_clk_br=
-anches[] __initdata =3D {
->  			RK3588_CLKGATE_CON(8), 0, GFLAGS),
->  	MUX(I2S2_2CH_MCLKOUT, "i2s2_2ch_mclkout", i2s2_2ch_mclkout_p, CLK_SET_R=
-ATE_PARENT,
->  			RK3588_CLKSEL_CON(30), 2, 1, MFLAGS),
-> +	GATE_GRF(I2S2_2CH_MCLKOUT_TO_IO, "i2s2_2ch_mclkout_to_io", "i2s2_2ch_mc=
-lkout",
-> +			0, RK3588_SYSGRF_SOC_CON6, 2, GFLAGS, grf_type_sys),
-> =20
->  	COMPOSITE(CLK_I2S3_2CH_SRC, "clk_i2s3_2ch_src", gpll_aupll_p, 0,
->  			RK3588_CLKSEL_CON(30), 8, 1, MFLAGS, 3, 5, DFLAGS,
-> @@ -907,6 +911,8 @@ static struct rockchip_clk_branch rk3588_early_clk_br=
-anches[] __initdata =3D {
->  			RK3588_CLKGATE_CON(8), 4, GFLAGS),
->  	MUX(I2S3_2CH_MCLKOUT, "i2s3_2ch_mclkout", i2s3_2ch_mclkout_p, CLK_SET_R=
-ATE_PARENT,
->  			RK3588_CLKSEL_CON(32), 2, 1, MFLAGS),
-> +	GATE_GRF(I2S3_2CH_MCLKOUT_TO_IO, "i2s3_2ch_mclkout_to_io", "i2s3_2ch_mc=
-lkout",
-> +			0, RK3588_SYSGRF_SOC_CON6, 7, GFLAGS, grf_type_sys),
->  	GATE(PCLK_ACDCDIG, "pclk_acdcdig", "pclk_audio_root", 0,
->  			RK3588_CLKGATE_CON(7), 11, GFLAGS),
->  	GATE(HCLK_I2S0_8CH, "hclk_i2s0_8ch", "hclk_audio_root", 0,
-> @@ -935,6 +941,8 @@ static struct rockchip_clk_branch rk3588_early_clk_br=
-anches[] __initdata =3D {
->  			RK3588_CLKGATE_CON(7), 10, GFLAGS),
->  	MUX(I2S0_8CH_MCLKOUT, "i2s0_8ch_mclkout", i2s0_8ch_mclkout_p, CLK_SET_R=
-ATE_PARENT,
->  			RK3588_CLKSEL_CON(28), 2, 2, MFLAGS),
-> +	GATE_GRF(I2S0_8CH_MCLKOUT_TO_IO, "i2s0_8ch_mclkout_to_io", "i2s0_8ch_mc=
-lkout",
-> +			0, RK3588_SYSGRF_SOC_CON6, 0, GFLAGS, grf_type_sys),
-> =20
->  	GATE(HCLK_PDM1, "hclk_pdm1", "hclk_audio_root", 0,
->  			RK3588_CLKGATE_CON(9), 6, GFLAGS),
-> @@ -2220,6 +2228,8 @@ static struct rockchip_clk_branch rk3588_early_clk_=
-branches[] __initdata =3D {
->  			RK3588_PMU_CLKGATE_CON(2), 13, GFLAGS),
->  	MUX(I2S1_8CH_MCLKOUT, "i2s1_8ch_mclkout", i2s1_8ch_mclkout_p, CLK_SET_R=
-ATE_PARENT,
->  			RK3588_PMU_CLKSEL_CON(9), 2, 2, MFLAGS),
-> +	GATE_GRF(I2S1_8CH_MCLKOUT_TO_IO, "i2s1_8ch_mclkout_to_io", "i2s1_8ch_mc=
-lkout",
-> +			0, RK3588_SYSGRF_SOC_CON6, 1, GFLAGS, grf_type_sys),
->  	GATE(PCLK_PMU1, "pclk_pmu1", "pclk_pmu0_root", CLK_IS_CRITICAL,
->  			RK3588_PMU_CLKGATE_CON(1), 0, GFLAGS),
->  	GATE(CLK_DDR_FAIL_SAFE, "clk_ddr_fail_safe", "clk_pmu0", CLK_IGNORE_UNU=
-SED,
-> @@ -2439,6 +2449,7 @@ static struct rockchip_clk_branch rk3588_clk_branch=
-es[] =3D {
->  static void __init rk3588_clk_early_init(struct device_node *np)
->  {
->  	struct rockchip_clk_provider *ctx;
-> +	struct regmap *sys_grf;
->  	unsigned long clk_nr_clks, max_clk_id1, max_clk_id2;
->  	void __iomem *reg_base;
-> =20
-> @@ -2479,6 +2490,11 @@ static void __init rk3588_clk_early_init(struct de=
-vice_node *np)
->  			&rk3588_cpub1clk_data, rk3588_cpub1clk_rates,
->  			ARRAY_SIZE(rk3588_cpub1clk_rates));
-> =20
-> +	/* Register SYS_GRF for I2S MCLK output to IO gate clocks */
-> +	sys_grf =3D syscon_regmap_lookup_by_compatible("rockchip,rk3588-sys-grf=
-");
-> +	if (!IS_ERR(sys_grf))
-> +		rockchip_clk_add_grf(ctx, sys_grf, grf_type_sys);
-> +
->  	rockchip_clk_register_branches(ctx, rk3588_early_clk_branches,
->  				       ARRAY_SIZE(rk3588_early_clk_branches));
-> =20
+All warnings (new ones prefixed by >>):
 
+   from /zdci/src/kernel-tests/common.sh:210: redirect_command_errors
+   from /zdci/src/kernel-tests/lib/builder/htmldocs.sh:86: builder_execute_build
+   from /zdci/src/kernel-tests/lib/kbuild.sh:6419: compile_one_config
+   from /zdci/src/kernel-tests/lib/builder/base.sh:88: builder_compile
+   from /zdci/src/kernel-tests/bisect-test-build-error.sh:102: main
+>> Warning: Documentation/devicetree/bindings/clock/ti/ti,gate-clock.yaml references a file that doesn't exist: Documentation/devicetree/bindings/clock/ti/clockdomain.txt
+   Warning: Documentation/devicetree/bindings/mfd/motorola-cpcap.txt references a file that doesn't exist: Documentation/devicetree/bindings/regulator/cpcap-regulator.txt
+   Warning: Documentation/devicetree/bindings/mfd/motorola-cpcap.txt references a file that doesn't exist: Documentation/devicetree/bindings/rtc/cpcap-rtc.txt
+   Warning: Documentation/devicetree/bindings/regulator/motorola,cpcap-regulator.yaml references a file that doesn't exist: Documentation/devicetree/bindings/mfd/motorola,cpcap.yaml
+   Warning: Documentation/devicetree/bindings/regulator/siliconmitus,sm5703-regulator.yaml references a file that doesn't exist: Documentation/devicetree/bindings/mfd/siliconmitus,sm5703.yaml
+   Warning: Documentation/devicetree/bindings/rtc/motorola,cpcap-rtc.yaml references a file that doesn't exist: Documentation/devicetree/bindings/mfd/motorola,cpcap.yaml
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
