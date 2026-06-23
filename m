@@ -1,77 +1,275 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25FAA3998A4;
-	Tue, 23 Jun 2026 20:26:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CB43371D11;
+	Tue, 23 Jun 2026 22:35:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782246415; cv=none; b=fDCunhbSCUj1NpmFagp6EFmjOAVRnscpMgAMVyanPRI7oHUzp8Y5qZSS18R93kZkToV3g/76sQYvQSNLhGMl+/f4sWyPqqWjXUnnS5Jyx5OqJaS1KVE9DCaGVGKMv7SacEA0WglTDQRIMHgAfsVqnaQUEV+zvS9USoPWyK00b8E=
+	t=1782254116; cv=none; b=lHwd2H3OzYHcwexhBOOpcu/mdx9660Wfxm2okjoKUZDbXzNHuEhYKGchJA6DTFtVhKErL4CQfg6X7Iu3y5HM7ePNol3j+9EJuqcq1fHSsxJG6sGPs9nIEFE3cJ0vhV13Omyuy7cTT2VAh6cDVHtG7tE323j4qy8yNRzf9aYgP/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782246415; c=relaxed/simple;
-	bh=/SK4QNgdunGn1N8wdLrCElrEdfOZM2pD0csWQG2dai4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H3C+fEzMjsQRCM/styMg0LGPr/aoC9P5PcVSj4m0MiTekMWfTFaXXs6McCMGBl7t/DCtFS8yIvhy5AMZsfcXJQn44RezZCaTOkBXTN1AoxJP4CWAr3ad6pOKEoBONAdNaB14k6kMSw4AQvKjjRPTzpJ1XLkhIjY1PPNmRHpgdZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SdV3vIl1; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1782254116; c=relaxed/simple;
+	bh=SRPt/Z1N9zfS5tVZtHc1Ym/DJpa09C6NIWLnEJarli8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p/qxonJ7W5O8R0pMS+u3td0044Ai2mM1pWRi5PVYvX1bCLfzcoBvevMOggYdOjV2DAtdCbHL/qocuOIKVeMPzVOdqJkQwswlxmkgp+ZuZZ4yHkHttNEVHSsv+nqdOf3Nj4cUdd5i0vOCDci5pGgzRoaSzAXQWUiPs+PwI86Vtmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=G5flbO5J; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SdV3vIl1"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FEB11F000E9;
-	Tue, 23 Jun 2026 20:26:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1782246413;
-	bh=ie03j2TujfKNZ9SmiUM47+g20ngBeN5app0Z2aJgO5o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=SdV3vIl1abrSY17gzTT9hztTEbhwquYA6Vs7OUZpc94JI6ISBgsnmR1vFRzYAbNF7
-	 9Tr2FIHpVBlYa6NElHKrnxsvp4Pi62ZRiu6ZcNK/Ddnb9d+0N55yg70A7Sc3OAmmuo
-	 gGH+W4Rk+ut9YdHxepJ2JBs3Fgot++hdLbyAB+Ue1wEYl/JBrUyiS4KBsgbj99LLj1
-	 JuKTNkbso/iyDMuwzRNmR+ilwZL9W66z6iWVP0IYIXe4oSGIeh+mhOSbn0eoQ0BsNF
-	 pWx8lZpIIBAwvItYGkl8IE2xb8GXHH9TV3F1Zon8KTDKEA9NP2ugzAVfCv6XE10pKo
-	 tuRPBdR9JzcXw==
-Date: Tue, 23 Jun 2026 22:26:50 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-i2c@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-mmc@vger.kernel.org, 
-	linux-phy@lists.infradead.org, linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-serial@vger.kernel.org, linux-sound@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] dt-bindings: Drop incorrect usage of double '::'
-Message-ID: <ajrr5pWNSmx4K-Dc@zenone.zhora.eu>
-References: <20260623054842.21831-3-krzysztof.kozlowski@oss.qualcomm.com>
- <20260623054842.21831-4-krzysztof.kozlowski@oss.qualcomm.com>
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="G5flbO5J"
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6B3EC1713;
+	Tue, 23 Jun 2026 15:35:07 -0700 (PDT)
+Received: from [10.43.8.246] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B3D423F632;
+	Tue, 23 Jun 2026 15:35:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+	t=1782254112; bh=SRPt/Z1N9zfS5tVZtHc1Ym/DJpa09C6NIWLnEJarli8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=G5flbO5JtjY2PHGG2ojKGXX8SqI+2MRfa+r6LYez6kIYWrMO5mYm3Z02byPITyVx5
+	 yIv7eGXrRte6UNWeKzB1Oryv66h5vXQEk1IcivwwfWgcjoIuMI/XRYk4euGrcbvraI
+	 pTYpub3JKKI8VTcq9p5Y59S2sQJTxCa6efj4jEfE=
+Message-ID: <138b5b54-7e2a-45fd-9c3f-eb4b4e04d954@arm.com>
+Date: Tue, 23 Jun 2026 23:35:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260623054842.21831-4-krzysztof.kozlowski@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 5/8] clk: sunxi-ng: a733: Add bus clocks support
+To: Junhui Liu <junhui.liu@pigmoral.tech>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Chen-Yu Tsai <wens@kernel.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>, Philipp Zabel
+ <p.zabel@pengutronix.de>, Paul Walmsley <pjw@kernel.org>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>, Richard Cochran <richardcochran@gmail.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ netdev@vger.kernel.org
+References: <20260310-a733-clk-v1-0-36b4e9b24457@pigmoral.tech>
+ <20260310-a733-clk-v1-5-36b4e9b24457@pigmoral.tech>
+Content-Language: en-US
+From: Andre Przywara <andre.przywara@arm.com>
+In-Reply-To: <20260310-a733-clk-v1-5-36b4e9b24457@pigmoral.tech>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Krzysztof,
+Hi,
 
-On Tue, Jun 23, 2026 at 07:48:44AM +0200, Krzysztof Kozlowski wrote:
-> There is no use of double colon '::' in YAML. OTOH, the literal style
-> block, e.g. using '|' treats all characters as content [1] therefore
-> single use of ':' in descriptions is perfectly fine, whenever '|' is
-> used.
+On 3/10/26 08:33, Junhui Liu wrote:
+> Add the essential bus clocks in the Allwinner A733 CCU, including AHB,
+> APB0, APB1, APB_UART, NSI, and MBUS. These buses are necessary for many
+> other functional modules. Additionally clocks such as trace, gic and
+> cpu_peri are also added as they fall within the register address range
+> of the bus clocks, even though they are not strictly bus clocks.
 > 
-> Cleanup existing code, so the confusing style won't be re-used in new
-> contributions.
+> The MBUS clock is marked as critical to ensure the memory bus remains
+> operational at all times. For the NSI and MBUS clocks, the hardware
+> requires an update bit (bit 27) to be set so that the configuration
+> takes effect and the updated parameters can be correctly read back.
 > 
-> Link: https://yaml.org/spec/1.2.2/#literal-style [1]
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> Acked-by: Alim Akhtar <alim.akhtar@samsung.com>
-> Acked-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> Acked-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> Acked-by: Mark Brown <broonie@kernel.org>
-> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be> # renesas
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+> Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
+> ---
+>   drivers/clk/sunxi-ng/ccu-sun60i-a733.c | 131 +++++++++++++++++++++++++++++++++
+>   1 file changed, 131 insertions(+)
+> 
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun60i-a733.c b/drivers/clk/sunxi-ng/ccu-sun60i-a733.c
+> index cf819504c51f..68457813dbbb 100644
+> --- a/drivers/clk/sunxi-ng/ccu-sun60i-a733.c
+> +++ b/drivers/clk/sunxi-ng/ccu-sun60i-a733.c
+> @@ -19,6 +19,7 @@
+>   #include "ccu_common.h"
+>   
+>   #include "ccu_div.h"
+> +#include "ccu_mp.h"
+>   #include "ccu_mult.h"
+>   #include "ccu_nkmp.h"
+>   #include "ccu_nm.h"
+> @@ -65,6 +66,16 @@ static const struct clk_hw *pll_ref_hws[] = {
+>   	&pll_ref_clk.common.hw
+>   };
+>   
+> +/*
+> + * There is a non-software-configurable mux selecting between the DCXO and the
+> + * PLL_REF in hardware, whose output is fed to the sys-24M clock. Although both
+> + * sys-24M and pll-ref are fixed at 24 MHz, define a 1:1 fixed factor clock to
+> + * provide logical separation:
+> + * - pll-ref is dedicated to feeding other PLLs
+> + * - sys-24M serves as reference clock for downstream functional modules
+> + */
+> +static CLK_FIXED_FACTOR_HWS(sys_24M_clk, "sys-24M", pll_ref_hws, 1, 1, 0);
+> +
+>   #define SUN60I_A733_PLL_DDR_REG		0x020
+>   static struct ccu_nkmp pll_ddr_clk = {
+>   	.enable		= BIT(27),
+> @@ -371,6 +382,107 @@ static SUNXI_CCU_M_HWS(pll_de_4x_clk, "pll-de-4x", pll_de_hws,
+>   static SUNXI_CCU_M_HWS(pll_de_3x_clk, "pll-de-3x", pll_de_hws,
+>   		       SUN60I_A733_PLL_DE_REG, 16, 3, 0);
+>   
+> +/**************************************************************************
+> + *                           bus clocks                                   *
+> + **************************************************************************/
+> +
+> +static const struct clk_parent_data ahb_apb_parents[] = {
+> +	{ .hw = &sys_24M_clk.hw },
+> +	{ .fw_name = "losc" },
+> +	{ .fw_name = "iosc" },
+> +	{ .hw = &pll_periph0_600M_clk.hw },
+> +};
+> +
+> +static SUNXI_CCU_M_DATA_WITH_MUX(ahb_clk, "ahb", ahb_apb_parents, 0x500,
+> +				 0, 5,		/* M */
+> +				 24, 2,		/* mux */
+> +				 0);
+> +
+> +static SUNXI_CCU_M_DATA_WITH_MUX(apb0_clk, "apb0", ahb_apb_parents, 0x510,
+> +				 0, 5,		/* M */
+> +				 24, 2,		/* mux */
+> +				 0);
+> +
+> +static SUNXI_CCU_M_DATA_WITH_MUX(apb1_clk, "apb1", ahb_apb_parents, 0x518,
+> +				 0, 5,		/* M */
+> +				 24, 2,		/* mux */
+> +				 0);
+> +
+> +static const struct clk_parent_data apb_uart_parents[] = {
+> +	{ .hw = &sys_24M_clk.hw },
+> +	{ .fw_name = "losc" },
+> +	{ .fw_name = "iosc" },
+> +	{ .hw = &pll_periph0_600M_clk.hw },
+> +	{ .hw = &pll_periph0_480M_clk.common.hw },
+> +};
+> +static SUNXI_CCU_M_DATA_WITH_MUX(apb_uart_clk, "apb-uart", apb_uart_parents, 0x538,
+> +				 0, 5,		/* M */
+> +				 24, 3,		/* mux */
+> +				 0);
+> +
+> +static const struct clk_parent_data trace_parents[] = {
+> +	{ .hw = &sys_24M_clk.hw },
+> +	{ .fw_name = "losc" },
+> +	{ .fw_name = "iosc" },
+> +	{ .hw = &pll_periph0_300M_clk.hw },
+> +	{ .hw = &pll_periph0_400M_clk.hw },
+> +};
+> +static SUNXI_CCU_M_DATA_WITH_MUX_GATE(trace_clk, "trace", trace_parents, 0x540,
+> +				 0, 5,		/* M */
+> +				 24, 3,		/* mux */
+> +				 BIT(31),	/* gate */
+> +				 0);
+> +
+> +static const struct clk_parent_data gic_cpu_peri_parents[] = {
+> +	{ .hw = &sys_24M_clk.hw },
+> +	{ .fw_name = "losc" },
+> +	{ .hw = &pll_periph0_600M_clk.hw },
+> +	{ .hw = &pll_periph0_480M_clk.common.hw },
+> +	{ .hw = &pll_periph0_400M_clk.hw },
+> +};
+> +static SUNXI_CCU_M_DATA_WITH_MUX_GATE(gic_clk, "gic", gic_cpu_peri_parents, 0x560,
 
-Acked-by: Andi Shyti <andi.shyti@kernel.org>
+Do we really want to model the GIC clock? The A523 has one as well, as 
+we don't describe it there. And while the GICv3 binding describes a 
+clock property, the Linux driver completely ignores that.
+So if I see this correctly, this clock would become unused, and would be 
+turned off, killing the GIC? So we would at least need a CLK_IS_CRITICAL 
+flag?
 
-Thanks,
-Andi
+But it's a good reminder to lift this clock to something PLL based, in 
+U-Boot's SPL, because I guess the 24MHz are rather slow.
+
+> +				      0, 5,	/* M */
+> +				      24, 3,	/* mux */
+> +				      BIT(31),	/* gate */
+> +				      0);
+> +
+> +static SUNXI_CCU_M_DATA_WITH_MUX_GATE(cpu_peri_clk, "cpu-peri", gic_cpu_peri_parents, 0x568,
+
+What is this clock about? I don't see it referenced by any peripheral in 
+the manual.
+
+> +				      0, 5,	/* M */
+> +				      24, 3,	/* mux */
+> +				      BIT(31),	/* gate */
+> +				      0);
+> +
+> +static const struct clk_parent_data nsi_parents[] = {
+> +	{ .hw = &sys_24M_clk.hw },
+> +	{ .hw = &pll_ddr_clk.common.hw },
+> +	{ .hw = &pll_periph0_800M_clk.common.hw },
+> +	{ .hw = &pll_periph0_600M_clk.hw },
+> +	{ .hw = &pll_periph0_480M_clk.common.hw },
+> +	{ .hw = &pll_de_3x_clk.common.hw },
+> +};
+> +static SUNXI_CCU_MP_DATA_WITH_MUX_GATE_FEAT(nsi_clk, "nsi", nsi_parents, 0x580,
+
+Similar question like for the GIC: do we need this in the kernel, and do 
+we need to prevent this from being turned off?
+
+> +					    0, 5,	/* M */
+> +					    0, 0,	/* no P */
+> +					    24, 3,	/* mux */
+> +					    BIT(31),	/* gate */
+> +					    0, CCU_FEATURE_UPDATE_BIT);
+> +
+> +static const struct clk_parent_data mbus_parents[] = {
+> +	{ .hw = &sys_24M_clk.hw },
+> +	{ .hw = &pll_periph1_600M_clk.hw },
+> +	{ .hw = &pll_ddr_clk.common.hw },
+> +	{ .hw = &pll_periph1_480M_clk.common.hw },
+> +	{ .hw = &pll_periph1_400M_clk.hw },
+> +	{ .hw = &pll_npu_clk.common.hw },
+> +};
+> +static SUNXI_CCU_MP_DATA_WITH_MUX_GATE_FEAT(mbus_clk, "mbus", mbus_parents, 0x588,
+> +					    0, 5,	/* M */
+> +					    0, 0,	/* no P */
+> +					    24, 3,	/* mux */
+> +					    BIT(31),	/* gate */
+> +					    CLK_IS_CRITICAL,
+> +					    CCU_FEATURE_UPDATE_BIT);
+> +
+>   /*
+>    * Contains all clocks that are controlled by a hardware register. They
+>    * have a (sunxi) .common member, which needs to be initialised by the common
+> @@ -407,11 +519,21 @@ static struct ccu_common *sun60i_a733_ccu_clks[] = {
+>   	&pll_de_clk.common,
+>   	&pll_de_4x_clk.common,
+>   	&pll_de_3x_clk.common,
+> +	&ahb_clk.common,
+> +	&apb0_clk.common,
+> +	&apb1_clk.common,
+> +	&apb_uart_clk.common,
+> +	&trace_clk.common,
+> +	&gic_clk.common,
+> +	&cpu_peri_clk.common,
+> +	&nsi_clk.common,
+> +	&mbus_clk.common,
+>   };
+>   
+>   static struct clk_hw_onecell_data sun60i_a733_hw_clks = {
+>   	.hws	= {
+>   		[CLK_PLL_REF]		= &pll_ref_clk.common.hw,
+> +		[CLK_SYS_24M]		= &sys_24M_clk.hw,
+>   		[CLK_PLL_DDR]		= &pll_ddr_clk.common.hw,
+>   		[CLK_PLL_PERIPH0_4X]	= &pll_periph0_4x_clk.common.hw,
+>   		[CLK_PLL_PERIPH0_2X]	= &pll_periph0_2x_clk.common.hw,
+> @@ -453,6 +575,15 @@ static struct clk_hw_onecell_data sun60i_a733_hw_clks = {
+>   		[CLK_PLL_DE]		= &pll_de_clk.common.hw,
+>   		[CLK_PLL_DE_4X]		= &pll_de_4x_clk.common.hw,
+>   		[CLK_PLL_DE_3X]		= &pll_de_3x_clk.common.hw,
+> +		[CLK_AHB]		= &ahb_clk.common.hw,
+> +		[CLK_APB0]		= &apb0_clk.common.hw,
+> +		[CLK_APB1]		= &apb1_clk.common.hw,
+> +		[CLK_APB_UART]		= &apb_uart_clk.common.hw,
+> +		[CLK_TRACE]		= &trace_clk.common.hw,
+> +		[CLK_GIC]		= &gic_clk.common.hw,
+> +		[CLK_CPU_PERI]		= &cpu_peri_clk.common.hw,
+> +		[CLK_NSI]		= &nsi_clk.common.hw,
+> +		[CLK_MBUS]		= &mbus_clk.common.hw,
+>   	},
+>   	.num	= CLK_FANOUT3 + 1,
+>   };
+> 
+
