@@ -1,38 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B43F385D8D;
-	Tue, 23 Jun 2026 00:56:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EFBA386571;
+	Tue, 23 Jun 2026 02:55:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782176160; cv=none; b=UIsfnzkqHWaiICUwS+rOq3Fc8UeNDTXyE8NjMQ16PECCR7m/y73ecDxBO5TR74LaeTf1kgKcmxzL/aqVZZKy6UnjO3Jvql9Ar19c1ttYxmK5cK8I7EVpgaImY+tm/piAzFsSOqWRc8hIug+Bzzwhhz9dpe58txXZJXFCu2YabKA=
+	t=1782183353; cv=none; b=nR8cQ9a32ZaTtRwAAPvQMtOt7bCcbd/dLKiOxLuHVKFJPLWflEoN1M0ERJMGC4rP2UqwHP8uyC2Jx0D1VwpPklGiQ9SWGuKGgbqHCxJfjjYTXofdtj+4jpVldcmOjct3x/Rxc0gHqhvRw46eRMcNXJA9H5bIavJF1EFLNKV83Ok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782176160; c=relaxed/simple;
-	bh=jdKY+byHPWm9vMjGf54bd0u8kLi6DA6ZtuZea9rXoXU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=SXE6z7QwynoNBGA0lzwvRlDRt2uoALFlvo+bww3WQv1N5enyacR3t1Cvsn9P3TkVGYtkVG6t2ovsYpaT1zBDJIDExd+kX8AIwEugEPz4zMxwpmCkZ4HTQ9kvXGgohElpvV1OkouCTa2KoyAAYPjI2zPoQnNkcHqLamt5+/OGFho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BLtnS7vK; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1782183353; c=relaxed/simple;
+	bh=hTKmrhhlidg806logJAbmCAaNns/K6kFJIOELIiijRg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=F6loOnR5QdDYOyy+Ma0HEgilGLw4+LDbm1f9++aKqZAwCMjtGrAXEyzMSf2H9/PA9YLTChKF5hG8C86+v+PL/Js0SoRXKe8+4gqnavINrcXTxr0fxM+N2SeLJignKySU/5KZFOws56WSMtaNh5t/jYWbHF6zbgUvmzFu1jD9EwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KX1DkqKl; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BLtnS7vK"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 92A00C4AF13;
-	Tue, 23 Jun 2026 00:55:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KX1DkqKl"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C22EDC2BCB4;
+	Tue, 23 Jun 2026 02:55:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1782176159;
-	bh=jdKY+byHPWm9vMjGf54bd0u8kLi6DA6ZtuZea9rXoXU=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=BLtnS7vKhfof6j1wkJwhMlHw7LiCOv5R3YVx5bQ+BaDCMUx6o0+K+yB1D24OpGkby
-	 EZt53GNqvuzejcj9s2TTgA2WT+ua2PuYllUtZnjE4yZ7RXd++4tDdag2C1VcDgWiLw
-	 ra7pWu+t7OLZzxEq7+RnpuPCjBsa17PbBMYg0JAK8lyuMMB0XDqeS72Vy9DnNitdJ2
-	 4ZXIUKjzupXOvJ5EwSSMPPZ7oshIIjG7GoAxV/rXSyON/eqIr1chIbfAsR82dZCw+x
-	 lwpji+E2lNzZcIeZ0vn67lJvzguIpUh97MOQDU8dtU7Wef8BWa+mMruZV0NlkQXuDR
-	 4I0Hk/lApqklA==
+	s=k20201202; t=1782183352;
+	bh=hTKmrhhlidg806logJAbmCAaNns/K6kFJIOELIiijRg=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=KX1DkqKldKKZsZ1Pcf/UW+N0hV2g6bMrTfHbwcSuUtA9Gaf4R1rMul8sDA6nFDNWA
+	 AbaCMTbahK3D7nNzL3FXm8fMFFyhYtQ2UIcduS6mHtbpQcXNC8IGKtDzIZQn3rA4Ob
+	 p9pbcz890Eru/NR8CKPsDYBq8moar32n6/QbAQYyxulKSFNbYbToBsB5IE+1ctBYeN
+	 YPEEvC0TJ3Cm/LeoKlrmy+7NIrKeUTYrwoSKqMPVfa8ouB12YT/afcpuCqavtfki8e
+	 j1dnOZ8nqXABB1erSrw0grgCIitW1Snl9/0u13DVOAtgNrmjvSeppOFVNtt25twUsF
+	 l9z3TQuyVETZA==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A429CDB476;
-	Tue, 23 Jun 2026 00:55:59 +0000 (UTC)
-From: Esteban Urrutia via B4 Relay <devnull+esteuwu.proton.me@kernel.org>
-Date: Mon, 22 Jun 2026 20:54:28 -0400
-Subject: [PATCH 7/8] phy: qcom: qmp-combo: Correct pre-emphasis table for
- QMP v4 DP PHYs
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7286CDB46F;
+	Tue, 23 Jun 2026 02:55:52 +0000 (UTC)
+From: Jian Hu via B4 Relay <devnull+jian.hu.amlogic.com@kernel.org>
+Subject: [PATCH v5 0/2] clk: amlogic: Add A9 AO clock controller
+Date: Tue, 23 Jun 2026 10:55:32 +0800
+Message-Id: <20260623-a9_aoclk-v5-0-c7cb1ff9ebf1@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -41,59 +40,84 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260622-sm8450-qol-v1-7-37e2ee8df9da@proton.me>
-References: <20260622-sm8450-qol-v1-0-37e2ee8df9da@proton.me>
-In-Reply-To: <20260622-sm8450-qol-v1-0-37e2ee8df9da@proton.me>
-To: Bjorn Andersson <andersson@kernel.org>, 
+X-B4-Tracking: v=1; b=H4sIAKT1OWoC/23MSw6CMBSF4a2Qjq3pG3DkPowxfVygEagB02gIe
+ 7cwqtHhubnfv6AZJg8zOhULmiD62YcxDXkokO302AL2Lm3ECFNEEY51fdPB9ndsTCM5NdpZxVF
+ 6f0zQ+NeeulzT7vz8DNN7L0e2Xf9EIsMEN6IEragCKKuzHvrQenu0YUBbJvKMUpJRnqgpZc2cs
+ pwC+6Uip1VGRaJS1Y4IJkES+03Xdf0A4g99gxgBAAA=
+X-Change-ID: 20260603-a9_aoclk-bbf531badc63
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jerome Brunet <jbrunet@baylibre.com>, 
  Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Rob Clark <robin.clark@oss.qualcomm.com>, Will Deacon <will@kernel.org>, 
- Robin Murphy <robin.murphy@arm.com>, "Joerg Roedel (AMD)" <joro@8bytes.org>, 
- Vinod Koul <vkoul@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- linux-phy@lists.infradead.org, Esteban Urrutia <esteuwu@proton.me>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1782176157; l=777;
- i=esteuwu@proton.me; s=20260622; h=from:subject:message-id;
- bh=R63hycbHvUFDnC1cHIBb7h07gA5W8fdx5mdFsG6A0Hc=;
- b=r3MLZtUkiD8mgYlKgmkuEcwMO18d1TmeuiMJv06QB6X1rg0/nZYY0pWJieUde234c4KbTtH4L
- 7lpnsa42qcdDqLdn+u6bN6p+Vjlwb7oIe4/LSJRwg0drtzZimgV9mbC
-X-Developer-Key: i=esteuwu@proton.me; a=ed25519;
- pk=wToFt4mOAWkzbqb15Ye1hrhevI13vK9BcMUFiQ/me1M=
-X-Endpoint-Received: by B4 Relay for esteuwu@proton.me/20260622 with
- auth_id=835
-X-Original-From: Esteban Urrutia <esteuwu@proton.me>
-Reply-To: esteuwu@proton.me
+ Conor Dooley <conor+dt@kernel.org>, Xianwei Zhao <xianwei.zhao@amlogic.com>, 
+ Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, Jian Hu <jian.hu@amlogic.com>, 
+ Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1782183350; l=1916;
+ i=jian.hu@amlogic.com; s=20260415; h=from:subject:message-id;
+ bh=hTKmrhhlidg806logJAbmCAaNns/K6kFJIOELIiijRg=;
+ b=jJjPS3zddbBehGs303rgybAFS1kns9gRA3zFjqikT3LQs3XwlfXMxlleEnKZhtltGN3udEO1x
+ ZvvCnYqKb+KC2U8DgTRXShEt3aIH59ZwT5ONiYh64Z78msRD1vfa8+y
+X-Developer-Key: i=jian.hu@amlogic.com; a=ed25519;
+ pk=zHUE+rNtH9z+Sb8au1/elWknjFQmy5QDVkBoxleuOIA=
+X-Endpoint-Received: by B4 Relay for jian.hu@amlogic.com/20260415 with
+ auth_id=735
+X-Original-From: Jian Hu <jian.hu@amlogic.com>
+Reply-To: jian.hu@amlogic.com
 
-From: Esteban Urrutia <esteuwu@proton.me>
+This series adds Amlogic A9 AO clock support, including dt-binding and AO clock driver.
 
-Comparing sm8350 and sm8450 tables, this seems to be typo.
-
-Signed-off-by: Esteban Urrutia <esteuwu@proton.me>
+Signed-off-by: Jian Hu <jian.hu@amlogic.com>
 ---
- drivers/phy/qualcomm/phy-qcom-qmp-combo.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes in v5:
+- Include <linux/module.h>.
+- Correct duandiv name.
+- Link to v4: https://lore.kernel.org/r/20260618-a9_aoclk-v4-0-569d0425e50c@amlogic.com
 
-diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-combo.c b/drivers/phy/qualcomm/phy-qcom-qmp-combo.c
-index 9bd666ac2c49..5b278fd54a16 100644
---- a/drivers/phy/qualcomm/phy-qcom-qmp-combo.c
-+++ b/drivers/phy/qualcomm/phy-qcom-qmp-combo.c
-@@ -2108,7 +2108,7 @@ static const u8 qmp_dp_v4_pre_emphasis_hbr3_hbr2[4][4] = {
- static const u8 qmp_dp_v4_pre_emphasis_hbr_rbr[4][4] = {
- 	{ 0x00, 0x0d, 0x14, 0x1a },
- 	{ 0x00, 0x0e, 0x15, 0xff },
--	{ 0x00, 0x0d, 0xff, 0xff },
-+	{ 0x00, 0x0e, 0xff, 0xff },
- 	{ 0x03, 0xff, 0xff, 0xff }
- };
- 
+Changes in v4:
+- Drop CLK_IS_CRITICAL for ao_xtal_in clock.
+- Drop CLK_HW_INIT* and revert to explicit clock declarations.
+- Link to v3: https://lore.kernel.org/r/20260610-a9_aoclk-v3-0-b7592d6c31e2@amlogic.com
 
+Changes in v3:
+- Move COMPILE_TEST after 'depends on ARM64' reported by sashiko-bot.
+- Rename i2c3 to i3c reported by sashiko-bot.
+- Reword the comment describing ao_xtal_in's flags.
+- Use struct clk_init_data to describe ao_xtal_in's hw.init.
+- Link to v2: https://lore.kernel.org/r/20260603-a9_aoclk-v2-0-f47ea616ee78@amlogic.com
+
+Changes in v2:
+- Split the A9 clock driver and send the AO clock separately.
+- Rename aobus to soc.
+- Use CLK_HW_INIT_FW_NAME to describe clk_init_data.
+- Use CLK_HW_INIT_PARENTS_DATA to describe clk_init_data.
+- Use a9_ao prefix for MESON_COMP_SEL.
+- Correct duandiv name.
+- Fix pwm b reg.
+- Link to v1: https://lore.kernel.org/all/20260511-b4-a9_clk-v1-0-41cb4071b7c9@amlogic.com/
+
+---
+Jian Hu (2):
+      dt-bindings: clock: Add Amlogic A9 AO clock controller
+      clk: amlogic: Add A9 AO clock controller driver
+
+ .../bindings/clock/amlogic,a9-aoclkc.yaml          |  76 ++++
+ drivers/clk/meson/Kconfig                          |  13 +
+ drivers/clk/meson/Makefile                         |   1 +
+ drivers/clk/meson/a9-aoclk.c                       | 489 +++++++++++++++++++++
+ include/dt-bindings/clock/amlogic,a9-aoclkc.h      |  76 ++++
+ 5 files changed, 655 insertions(+)
+---
+base-commit: ca89c88bcf69daca829044c638a8163d5ce47af0
+change-id: 20260603-a9_aoclk-bbf531badc63
+
+Best regards,
 -- 
-2.54.0
+Jian Hu <jian.hu@amlogic.com>
 
 
