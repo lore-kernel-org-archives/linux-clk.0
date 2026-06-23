@@ -1,129 +1,147 @@
-Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0BD437EFF1;
-	Tue, 23 Jun 2026 13:56:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D85037F721
+	for <linux-clk@vger.kernel.org>; Tue, 23 Jun 2026 13:59:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782222992; cv=none; b=orVXM5W5uNjGbpDkI6DfDyNEkX/lX2N6enGAi74yaE8M5PXGYcqtqI5sb0SAfirJ+bwS9QULOyh3BCx5RWGh1/rCNRScbKqVpmehOEFnYbyclw3c/8R8mgIRSBNL25KoSK8WZXXosLl4X57YWge82An7Gt2oPkHRXIk2gGO/NDM=
+	t=1782223172; cv=none; b=UvnaVX3oSKw+gacuxHzfCdgiIlN37PCuLePG41L7J9JEGaO8e9HlCizyJDDM/lTllgee5jiTCosETXIB62L/T62cn2s68ArDGVhqIpMWTLh0n/QsmTmbSt1RlHAo96iXGXk01S1J+XI+uDksamjcRs3myqhyVE47Fv71SF0oC0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782222992; c=relaxed/simple;
-	bh=wR/vCPc90t0pPiifGEXVfQyIHyrFoXe6b0sujnNM1Zo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tCrzFMIVQsM3A4nlGB9vdPrAZbVLsIXH8f9aRVeA1p0HYk8wFcd0YVAUtZPmGywYZx/iGvU1XJ8JyvVz0h95cMEmY2BLry7YZjNUB6j/VPGFcfMpG5xBFpaHgoZllfdRifVtpIFUoZg5Nl3Q1tbGHrrW1kM8HxcYTZ4QSAsSwww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [111.196.245.140])
-	by APP-05 (Coremail) with SMTP id zQCowADXYQWJkDpqyTnYFA--.30817S2;
-	Tue, 23 Jun 2026 21:56:25 +0800 (CST)
-From: Pengpeng Hou <pengpeng@iscas.ac.cn>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Pengpeng Hou <pengpeng@iscas.ac.cn>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: si5351: fail prepare when PLL reset times out
-Date: Tue, 23 Jun 2026 21:56:25 +0800
-Message-ID: <20260623135625.49610-1-pengpeng@iscas.ac.cn>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1782223172; c=relaxed/simple;
+	bh=+QO87KVJcXVWtp5OCGxQiPqy8tJ7A6wL9dyNda913JY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j8/vA1Y3k3YmzsFpbuinUmd9QrkqdgUi3TmCfKdbU/nNt+GsCQ2bkOhgfh1Fslyz9Qx89Y8ulOWhCXAnKJrmxOqMyoJAkUejcU2MoC9ohHcQ+tBrsMtYLYKgo3V9Tqb3Gwv1UB6eaYramrA5xiVyP/yW4a0vqyz3N0/4HNYTfT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AxPJ/cnC; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=iKKqKFtE; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AxPJ/cnC";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="iKKqKFtE"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1782223170;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EQ9x8NWrux7PBvYE3t1qf1YpH0o3vvkHjjg5EqulJzY=;
+	b=AxPJ/cnCTgJ4/Do5oVXAxENvGYkPjfBxPeddmcHZ0i01XUDCpAv1tD9jWSeiJo7cZUks0C
+	heQRGYVXTKI2/+7c4DBoWK2VP8pPEuvTg4GsENcOepzNUxlu30GkNA8WfUCoLy58FOGkMM
+	bpp816qhL9n2NNxaeqBUhCZyQ0Jn7PU=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-178-Vrz2GYSWOqSBE3GjkiKi2g-1; Tue, 23 Jun 2026 09:59:27 -0400
+X-MC-Unique: Vrz2GYSWOqSBE3GjkiKi2g-1
+X-Mimecast-MFC-AGG-ID: Vrz2GYSWOqSBE3GjkiKi2g_1782223167
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-8ddefc5be4bso105374786d6.1
+        for <linux-clk@vger.kernel.org>; Tue, 23 Jun 2026 06:59:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1782223167; x=1782827967; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EQ9x8NWrux7PBvYE3t1qf1YpH0o3vvkHjjg5EqulJzY=;
+        b=iKKqKFtEo5AmfsHlESi58VLqReHjEC/DRBXooLpp0kmok4T20ZNfIKmf1sMjnP6ciR
+         m7E+oSiPqedXW6u0cVwPfM9DfkUxutkxfdWpWzcWYl4I/SuapXYUto/PHWc/veezbUhK
+         BTxNCIsIJGAQMJmuxhOTO+LpSaotO3S54/rNdua+AY3wZo6LCYvOcz/APRsrojpr6sa1
+         a7rX6IfBkJ5sVS6NLjoDsNI9EppbM/Pnc1/S548rIDK5wcuEpPY3jmk5in3nU+/P/lTw
+         DZ7hflJZBK0ZbjDdkTu+5JvT4MJslcPKc/SeGjrygzWQShWjhbXFksMl0v86k6q68agf
+         II8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1782223167; x=1782827967;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=EQ9x8NWrux7PBvYE3t1qf1YpH0o3vvkHjjg5EqulJzY=;
+        b=ZrMKsOpF3F2UPqgmmKbeP+1NBlc1TQGGagwuvUjpVP/kNsHJ52BdljJ53Gqzk3lmvc
+         q90FaoogCQG/bVVUC5d5LB2gqsw41YwYHEXTV5Utb1FzwufontDuM1dHscTJDz0VPQEy
+         ypvP4CvosgCqiKo8aDAmClr2gdWn9Ra1IPxE/vY4Mi/9V1Vhfj1rPV4VceXtuFmR0zEW
+         GU0Cd26nXjHJsl/2HKUJG/x71swdIW7R2IkQd5cq+L9TQx0swNFRSIXMDyITpSvIjkGa
+         3ByDPDWQv3bR0ZvROQou+1KhwfYMa7fDgN67LMeJj2ZUm/uji38alpYACrmsZTZmqC7b
+         iTtw==
+X-Forwarded-Encrypted: i=1; AHgh+RoBDuOm5Qt3YRHcCo4nbDJ+YGaBL8jJHtfzJbitPtY3C1Re0V8yonGppgVb/mnzTH/Mx08encjn/PE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuLHSkVs4U332yfKENS8QMrMMIBl9aW0Gu2FitfF7r7nki+kev
+	ZJcytBwwllXXS0ATDCPCFjbUaWnRu4eWrOm0fv00HdSE0g9ouX8njqHh4n5GovfSnmiN/lfwCnH
+	BJQqG988Ax2UJKXnyI4ePVWZR1v4qnQ+Yl0WTbwzUHD3MLjw/mu9k4h0uQ39R1Q==
+X-Gm-Gg: AfdE7cllCBSOAahGXO3bgiIjMv/v+fErVr+Ix0a9hBxr9BLotXibzEZWeLE4Ie0BbO0
+	LKsVXwIOU/1T5fjzvUY1ncf6oRCu+Idnx7KHZZZlyaC0HLFWtKIAox7ZIVLJHvgU1m/YAq+fpmM
+	ugsiiZ+UjwjksLz96C85S4O+Gg+RKMEfPKkHz7JrBrscyqvtutontRUVBEDtSMR1zo5ik2ypcLR
+	qhZgNFn9ZgYEbZ3h6S8KLWGDSzY+j2WdVbJG3K21byRCFzZ5EsZGIObpDNXmgC7gs/MoVW2Dgou
+	2o9bCML8YIM477z6SS9Hd8S3OnfI1W7JZhUca75iH1+IEwub/1eBRHxxOpmWVud/CKiLb/BpaeE
+	I8KtXEQyJTd0/E6ArGndfHyn06Uh0AjO7EZsaLq6WZp3GTQ==
+X-Received: by 2002:a05:6214:529a:b0:8e0:4976:c301 with SMTP id 6a1803df08f44-8e48912ce1bmr24841206d6.41.1782223166271;
+        Tue, 23 Jun 2026 06:59:26 -0700 (PDT)
+X-Received: by 2002:a05:6214:529a:b0:8e0:4976:c301 with SMTP id 6a1803df08f44-8e48912ce1bmr24839726d6.41.1782223164971;
+        Tue, 23 Jun 2026 06:59:24 -0700 (PDT)
+Received: from redhat.com (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8df7f015805sm126048916d6.1.2026.06.23.06.59.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Jun 2026 06:59:24 -0700 (PDT)
+Date: Tue, 23 Jun 2026 09:59:22 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Myeonghun Pak <mhun512@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Ijae Kim <ae878000@gmail.com>
+Subject: Re: [PATCH] clk: palmas: unprepare clock on provider registration
+ failure
+Message-ID: <ajqROjYdv28Yrqo5@redhat.com>
+References: <20260623090738.13773-1-mhun512@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowADXYQWJkDpqyTnYFA--.30817S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxGFy7AF17Wr1fGFW3ZF1UJrb_yoW5Gw15pF
-	W2gayYvr4Utryq9rsIyFWq9a4Syw1ftayjgw40kay09r15trWjgF4ftFyq93Z0kr95Jw43
-	Jr4IyFyrCF1DtF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkC14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AKxVWU
-	AVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
-	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkG
-	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4U
-	MIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvjfU089NUU
-	UUU
-X-CM-SenderInfo: pshqw1xhqjqxpvfd2hldfou0/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260623090738.13773-1-mhun512@gmail.com>
+User-Agent: Mutt/2.3.2 (2026-04-26)
 
-si5351_clkout_prepare() clears the output powerdown bit and, when
-requested, resets the parent PLL before enabling the output. The PLL
-reset helper logs when the reset bit does not clear, but returns void,
-so prepare still enables the output and reports success.
+Hi Myeonghun,
 
-Make the reset helper return the poll error and propagate it from
-.prepare. If the reset fails, restore the output powerdown bit before
-returning the error.
+Thanks for the patch!
 
-Fixes: 5142cbcea324 ("clk: si5351: Wait for bit clear after PLL reset")
-Signed-off-by: Pengpeng Hou <pengpeng@iscas.ac.cn>
----
- drivers/clk/clk-si5351.c | 22 +++++++++++++++++-----
- 1 file changed, 17 insertions(+), 5 deletions(-)
+On Tue, Jun 23, 2026 at 06:07:34PM +0900, Myeonghun Pak wrote:
+> palmas_clks_init_configure() prepares the clock when an external control
+> pin is configured.  If the subsequent of_clk_add_hw_provider() call fails,
+> palmas_clks_probe() returns the error without dropping that prepare
+> reference.
+> 
+> Unprepare the clock on that error path when external control is active, so
+> the probe failure path balances the successful clk_prepare().
+> 
+> This issue was identified during our ongoing static-analysis research while
+> reviewing kernel code.
+> 
+> Fixes: 942d1d674931 ("clk: Add driver for Palmas clk32kg and clk32kgaudio clocks")
+> Co-developed-by: Ijae Kim <ae878000@gmail.com>
+> Signed-off-by: Ijae Kim <ae878000@gmail.com>
+> Signed-off-by: Myeonghun Pak <mhun512@gmail.com>
+> 
+> ---
+>  drivers/clk/clk-palmas.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/clk-palmas.c b/drivers/clk/clk-palmas.c
+> index 39049f62db..ab9df2eedb 100644
+> --- a/drivers/clk/clk-palmas.c
+> +++ b/drivers/clk/clk-palmas.c
+> @@ -265,8 +265,11 @@ static int palmas_clks_probe(struct platform_device *pdev)
+>  	}
+>  
+>  	ret = of_clk_add_hw_provider(node, of_clk_hw_simple_get, &cinfo->hw);
+> -	if (ret < 0)
+> +	if (ret < 0) {
+>  		dev_err(&pdev->dev, "Fail to add clock driver, %d\n", ret);
+> +		if (cinfo->ext_control_pin)
+> +			clk_unprepare(cinfo->hw.clk);
+> +	}
 
-diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
-index e755db545..4e60261da 100644
---- a/drivers/clk/clk-si5351.c
-+++ b/drivers/clk/clk-si5351.c
-@@ -907,18 +907,18 @@ static int _si5351_clkout_set_disable_state(
- 	return 0;
- }
- 
--static void _si5351_clkout_reset_pll(struct si5351_driver_data *drvdata, int num)
-+static int _si5351_clkout_reset_pll(struct si5351_driver_data *drvdata, int num)
- {
- 	u8 val = si5351_reg_read(drvdata, SI5351_CLK0_CTRL + num);
- 	u8 mask = val & SI5351_CLK_PLL_SELECT ? SI5351_PLL_RESET_B :
--						       SI5351_PLL_RESET_A;
-+							       SI5351_PLL_RESET_A;
- 	unsigned int v;
- 	int err;
- 
- 	switch (val & SI5351_CLK_INPUT_MASK) {
- 	case SI5351_CLK_INPUT_XTAL:
- 	case SI5351_CLK_INPUT_CLKIN:
--		return;  /* pll not used, no need to reset */
-+		return 0;  /* pll not used, no need to reset */
- 	}
- 
- 	si5351_reg_write(drvdata, SI5351_PLL_RESET, mask);
-@@ -931,6 +931,8 @@ static void _si5351_clkout_reset_pll(struct si5351_driver_data *drvdata, int num
- 	dev_dbg(&drvdata->client->dev, "%s - %s: pll = %d\n",
- 		__func__, clk_hw_get_name(&drvdata->clkout[num].hw),
- 		(val & SI5351_CLK_PLL_SELECT) ? 1 : 0);
-+
-+	return err;
- }
- 
- static int si5351_clkout_prepare(struct clk_hw *hw)
-@@ -947,8 +949,18 @@ static int si5351_clkout_prepare(struct clk_hw *hw)
- 	 * Do a pll soft reset on the parent pll -- needed to get a
- 	 * deterministic phase relationship between the output clocks.
- 	 */
--	if (pdata->clkout[hwdata->num].pll_reset)
--		_si5351_clkout_reset_pll(hwdata->drvdata, hwdata->num);
-+	if (pdata->clkout[hwdata->num].pll_reset) {
-+		int ret;
-+
-+		ret = _si5351_clkout_reset_pll(hwdata->drvdata, hwdata->num);
-+		if (ret) {
-+			si5351_set_bits(hwdata->drvdata,
-+					SI5351_CLK0_CTRL + hwdata->num,
-+					SI5351_CLK_POWERDOWN,
-+					SI5351_CLK_POWERDOWN);
-+			return ret;
-+		}
-+	}
- 
- 	si5351_set_bits(hwdata->drvdata, SI5351_OUTPUT_ENABLE_CTRL,
- 			(1 << hwdata->num), 0);
--- 
-2.50.1 (Apple Git-155)
+The driver currently only calls clk_unprepare() on an error path in
+palmas_clks_init_configure(). It leaks when the driver is removed.
+
+I think the cleanest approach to fixing this is to convert over to use
+devm_of_clk_add_hw_provider().
+
+Brian
 
