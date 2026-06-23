@@ -1,123 +1,299 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 559B72DCC1C;
-	Tue, 23 Jun 2026 15:40:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 907C8269CE7
+	for <linux-clk@vger.kernel.org>; Tue, 23 Jun 2026 15:42:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782229206; cv=none; b=Lx5kR/IZYVH02fFt5qfoXc9CjEiY2D466NMxOWSpLACYf+hho2R14BrFCn2EIzUTDpfcir7ongNtxGCJORns8iPtUgBw06vzt4Z8IIRJQfny1eG0g52BiEtzLnfCOVkYgMZR0ZIhB3pyGVAXkzuTLhbIEojJpTrweG2+JZ2tiWM=
+	t=1782229352; cv=none; b=f/RVv53tozElVf561dwHIZa44L2sCauWxsvULD0jZgoox0Go+4apPsTFFhmF0ikzbhySpcXv0iph/PMJo9lXZL7M/EOJRJQEYHYEAsGEx88H6dpEG8RqyCl7hYefEwVC6qcdl0j6wCu1t1suOuWLs6MHQ2h7OJzYqM70HpUyqmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782229206; c=relaxed/simple;
-	bh=6cX12bYt5lU2zEEuwgsiF4sysItirmoUNcjgrKhWcFY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Rtz7ojALJTIq1ctKFytw3pow6WlWkc6h2Jmz42lvmxkwwTYeeY5DT63auaZqR4x6ircD1T9w6ERPZs9gRVk0YyAHfaMx65qywDC+t3gEgrkZMJ7EbfWOwUvTqtKBHM3rzIN+4G6wNtiZs9JzITHESm/vCisyxkVN8nEGs8jVSus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LVMeCBqd; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1782229352; c=relaxed/simple;
+	bh=z6MKKtlC7LSYB5Sy3KeJxvJLPKB1dSyb1BRmdkMlOX0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Wm/t+oWdiD1rnUWejInd+N+ft3JSt/WpgHrm5R+isabkMqrneqUqF2ZNTXBfahilU/LdFsacAiUzZtD9Ho4hVYOVrsyRdtl+J1cSG9f+3dNuqXG9x7tYn6cjc7j5ZvCuqZBVOY0+zpF/0QUXOwaLYhz3a7PBkjugZIqPmuoytAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PLU/Xe7/; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LVMeCBqd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF98B1F000E9;
-	Tue, 23 Jun 2026 15:39:57 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PLU/Xe7/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7777F1F00A3D
+	for <linux-clk@vger.kernel.org>; Tue, 23 Jun 2026 15:42:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1782229205;
-	bh=BSb0t7HyzHmwhpJzJhNzEHmlkldxYgAG5n8UPrH07Gc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=LVMeCBqdk5hwFeHn8/I7u9VR7FqrdpBuOPyb6G0GimM+42U1FN4lVvNlcoLFJ4DWj
-	 UxXN+TE3uazvUnbAaHv/SIHC9NTNWe/fppEioc+tcy61ncLijafOYcyTUz97w9tDBo
-	 51p8ChFpKy8FmtloedEEKFdaB1EAVq2nd+MxYAabmhOVRgFdctNHGnDwUKAaXrxebJ
-	 GpyKoYqHJDuKike+GqeFstm/D3gIafyQatSvKZ1Ppd4xMsdMgDcf3hM+YMNT1JtvQJ
-	 3DN0jr31C9XJMhpqqck0u0ImVd3HdR1OEYE00HaTPtr3/AvCJ8yicgMJXHN++VURE3
-	 IeHRaHSbtw4Pg==
-Message-ID: <350464c2-e4e6-4626-961d-b44f4ed864ea@kernel.org>
-Date: Tue, 23 Jun 2026 17:39:55 +0200
+	s=k20260515; t=1782229351;
+	bh=BSL3Ji4GUrL1JE/4JUwmqRt8VhO/nTrzRQrvkStmD+k=;
+	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc;
+	b=PLU/Xe7/8I4p6kQw9d+XwsJJIyv8ger5txXEWfC385pIIaf5tiX0F2wRW4uPOHh09
+	 Doh7GOS3oSSHklFWi0LWiWPRmm/Mpi2QPnvez/wBzDonyqGD5lns28H14WJe6Hb/om
+	 +6H+5S6d019xHkOLUewLOKj4v7uBXxcwuwt+PVNe8sgF4QDlGqBZXfONZjAblucZOP
+	 DFJuxPTEaxDypwhYZjhhqSPoYwstBVtrA+8K3jqEZtKpIb3/TlPvyh0M81I4G0amhs
+	 LNPCfm8UhYg1xQBiNwWcyLzDai9Ym8d05n3fGMYl4AJEwxnhpMAXNbiVkysPcaWrmT
+	 49OODXw+LAFgA==
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-399389dae7fso12146011fa.0
+        for <linux-clk@vger.kernel.org>; Tue, 23 Jun 2026 08:42:31 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ8Np+7pPOKCDnWLAyk/JGyKepUo+TxkZ6n1LL5/g4y7WWBDWbKpJtin6gbKEW0Oadf3reJP4bVstwA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwG4bBF76F7EbsyJJL7qK9y8x1Esf8p4/jGirjinugKDQXbPUpF
+	fJgmI9YDaJYFPEZnsCG2MV+QnsrfrLAfwLNP86WGZnC4fgB7CDUshad9KVKsdfm/ayEdqJm9s3j
+	9iIgcXJ2qPK2rTcW9f2EMPvHc1/mPILE=
+X-Received: by 2002:a2e:ad12:0:b0:38a:5bf2:80d6 with SMTP id
+ 38308e7fff4ca-399c537553emr12162361fa.5.1782229349894; Tue, 23 Jun 2026
+ 08:42:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/8] clk: qcom: dispcc-sm8450: Fix mdss clocks
-To: esteuwu@proton.me, Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Rob Clark <robin.clark@oss.qualcomm.com>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- "Joerg Roedel (AMD)" <joro@8bytes.org>, Vinod Koul <vkoul@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-phy@lists.infradead.org
-References: <20260622-sm8450-qol-v1-0-37e2ee8df9da@proton.me>
- <20260622-sm8450-qol-v1-1-37e2ee8df9da@proton.me>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <20260622-sm8450-qol-v1-1-37e2ee8df9da@proton.me>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20260121-a733-rtc-v1-0-d359437f23a7@pigmoral.tech>
+ <20260121-a733-rtc-v1-1-d359437f23a7@pigmoral.tech> <CAGb2v67844OPwE6VJ0PAs5LsmCa2h0FvXOBUomZ50dM5tZ0Zow@mail.gmail.com>
+ <1j1pe7elxm.fsf@starbuckisacylon.baylibre.com>
+In-Reply-To: <1j1pe7elxm.fsf@starbuckisacylon.baylibre.com>
+Reply-To: wens@kernel.org
+From: Chen-Yu Tsai <wens@kernel.org>
+Date: Tue, 23 Jun 2026 23:42:15 +0800
+X-Gmail-Original-Message-ID: <CAGb2v66dTvBmmtJs_9nScpmudpcnSeUvmUmMSkmBw9MoDc_N0w@mail.gmail.com>
+X-Gm-Features: AVVi8CcgLOtVmxPkjYo8ol2JpJAsomRkV2c2-YmPvchv8vYkQh8VbR5Oaj0YqvI
+Message-ID: <CAGb2v66dTvBmmtJs_9nScpmudpcnSeUvmUmMSkmBw9MoDc_N0w@mail.gmail.com>
+Subject: Re: [PATCH 1/7] dt-bindings: rtc: sun6i: Add Allwinner A733 support
+To: Jerome Brunet <jbrunet@baylibre.com>, Junhui Liu <junhui.liu@pigmoral.tech>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Maxime Ripard <mripard@kernel.org>, linux-clk@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 23/06/2026 02:54, Esteban Urrutia via B4 Relay wrote:
-> From: Esteban Urrutia <esteuwu@proton.me>
-> 
-> Both of these changes allow the framebuffer to show upon boot and let
-> the mdss driver take over afterwards.
-> Before, none of these actions were possible. Only mdss takeover was
-> possible, but screen had to be turned off first.
-> 
-> OLE configuration may have been a misinterpretation... that's not
-> something that's done on the downstream driver.
-> 
-> Changing disp_cc_mdss_mdp_clk_src from clk_rcg2_shared_ops to
-> clk_rcg2_shared_no_init_park_ops fixes this warning as well:
+On Tue, Jun 16, 2026 at 1:46=E2=80=AFAM Jerome Brunet <jbrunet@baylibre.com=
+> wrote:
+>
+> On sam. 28 mars 2026 at 20:37, Chen-Yu Tsai <wens@kernel.org> wrote:
+>
+> > On Wed, Jan 21, 2026 at 7:03=E2=80=AFPM Junhui Liu <junhui.liu@pigmoral=
+.tech> wrote:
+> >>
+> >> The RTC module in the Allwinner A733 SoC is functionally compatible wi=
+th
+> >> the sun6i RTC, but its internal Clock Control Unit (CCU) has significa=
+nt
+> >> changes.
+> >>
+> >> The A733 supports selecting the oscillator between three frequencies:
+> >> 19.2MHz, 24MHz, and 26MHz. The RTC CCU relies on hardware to detect
+> >> which frequency is actually used on the board. By defining all three
+> >> frequencies as fixed-clocks in the device tree, the driver can identif=
+y
+> >> the hardware-detected frequency and expose it to the rest of the syste=
+m.
+> >
+> > No. The board device tree shall have the exact and correct frequency
+> > defined in the external crystal device node. The operating system can
+> > use the hardware-detected frequency to "fix" the in-system representati=
+on
+> > if it is off.
+> >
+> >> Additionally, the A733 RTC CCU provides several new DCXO gate clocks f=
+or
+> >> specific modules, including SerDes, HDMI, and UFS.
+> >>
+> >> Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
+> >> ---
+> >>  .../bindings/rtc/allwinner,sun6i-a31-rtc.yaml      | 38 +++++++++++++=
++++++++--
+> >>  include/dt-bindings/clock/sun60i-a733-rtc.h        | 16 +++++++++
+> >>  2 files changed, 52 insertions(+), 2 deletions(-)
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/rtc/allwinner,sun6i-a31=
+-rtc.yaml b/Documentation/devicetree/bindings/rtc/allwinner,sun6i-a31-rtc.y=
+aml
+> >> index 9df5cdb6f63f..b18431955783 100644
+> >> --- a/Documentation/devicetree/bindings/rtc/allwinner,sun6i-a31-rtc.ya=
+ml
+> >> +++ b/Documentation/devicetree/bindings/rtc/allwinner,sun6i-a31-rtc.ya=
+ml
+> >> @@ -26,6 +26,7 @@ properties:
+> >>            - allwinner,sun50i-h6-rtc
+> >>            - allwinner,sun50i-h616-rtc
+> >>            - allwinner,sun50i-r329-rtc
+> >> +          - allwinner,sun60i-a733-rtc
+> >>        - items:
+> >>            - const: allwinner,sun50i-a64-rtc
+> >>            - const: allwinner,sun8i-h3-rtc
+> >> @@ -46,11 +47,11 @@ properties:
+> >>
+> >>    clocks:
+> >>      minItems: 1
+> >> -    maxItems: 4
+> >> +    maxItems: 6
+> >>
+> >>    clock-names:
+> >>      minItems: 1
+> >> -    maxItems: 4
+> >> +    maxItems: 6
+> >>
+> >>    clock-output-names:
+> >>      minItems: 1
+> >> @@ -156,6 +157,38 @@ allOf:
+> >>          - clocks
+> >>          - clock-names
+> >>
+> >> +  - if:
+> >> +      properties:
+> >> +        compatible:
+> >> +          contains:
+> >> +            const: allwinner,sun60i-a733-rtc
+> >> +
+> >> +    then:
+> >> +      properties:
+> >> +        clocks:
+> >> +          minItems: 5
+> >> +          items:
+> >> +            - description: Bus clock for register access
+> >
+> >> +            - description: 19.2 MHz oscillator
+> >> +            - description: 24 MHz oscillator
+> >> +            - description: 26 MHz oscillator
+> >
+> > No. There is only one input. As in there is only one set of pins for th=
+e
+> > DCXO. The inputs are the same as on R329 / A523. Just use that list.
+> >
+> >> +            - description: AHB parent for internal SPI clock
+> >> +            - description: External 32768 Hz oscillator
+> >> +
+> >> +        clock-names:
+> >> +          minItems: 5
+> >> +          items:
+> >> +            - const: bus
+> >> +            - const: osc19M
+> >> +            - const: osc24M
+> >> +            - const: osc26M
+> >> +            - const: ahb
+> >> +            - const: ext-osc32k
+> >> +
+> >> +      required:
+> >> +        - clocks
+> >> +        - clock-names
+> >> +
+> >>    - if:
+> >>        properties:
+> >>          compatible:
+> >> @@ -164,6 +197,7 @@ allOf:
+> >>                - allwinner,sun8i-r40-rtc
+> >>                - allwinner,sun50i-h616-rtc
+> >>                - allwinner,sun50i-r329-rtc
+> >> +              - allwinner,sun60i-a733-rtc
+> >>
+> >>      then:
+> >>        properties:
+> >> diff --git a/include/dt-bindings/clock/sun60i-a733-rtc.h b/include/dt-=
+bindings/clock/sun60i-a733-rtc.h
+> >> new file mode 100644
+> >> index 000000000000..8a2b5facad73
+> >> --- /dev/null
+> >> +++ b/include/dt-bindings/clock/sun60i-a733-rtc.h
+> >> @@ -0,0 +1,16 @@
+> >> +/* SPDX-License-Identifier: GPL-2.0-only OR MIT */
+> >> +
+> >> +#ifndef _DT_BINDINGS_CLK_SUN60I_A733_RTC_H_
+> >> +#define _DT_BINDINGS_CLK_SUN60I_A733_RTC_H_
+> >> +
+> >> +#define CLK_IOSC               0
+> >> +#define CLK_OSC32K             1
+> >> +#define CLK_HOSC               2
+> >
+> > The DCXO enable control has been present since at least the H6. We just
+> > never added it, as we would never disable it anyway.
+> >
+> > If you compare the RTC clock trees of the A733 and A523, the only addit=
+ion
+> > besides the new gates seems to be the LOSC auto selection. But even tha=
+t
+> > is just an illusion, as the A523 has the same registers for that.
+> >
+> > One could say the A733 RTC is almost backward compatible to the A523, i=
+f
+> > not for the two fastboot registers the A523 has at 0x120 and 0x124.
+> >
+> > So I ask that you try to integrate the differences into the existing
+> > driver and bindings. You can tweak and export internal clks if you
+> > need.
+>
+> I'd like to help with that. I think it is doable but I have a question
+> regarding the binding of the existing driver, more precisely their usage
+> here:
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/d=
+rivers/clk/sunxi-ng/ccu-sun6i-rtc.c?h=3Dv7.1#n370
+>
+> Clock indexes are supposed to be stable in DT (AFAIK) but with the code
+> linked the external 32k is at:
+>
+> * "ext-32k" - so index 3 - if "clock-names" is present
+> * index 0 if clock names is not present
+>
+> ... but index 0 is supposed to be the bus clock according the binding
+> doc, whether "clock-names" is there or not :/
+>
+> So what are those old r329 bindings ? is there a documentation defining
+> them somewhere ?
+
+You can look at
+
+    8487614a8a8a dt-bindings: rtc: sun6i: Add H616, R329, and D1 support
+
+In hindsight maybe the two bindings should be separate. The old SoCs
+did not have all these clock inputs from the main clock controller.
+The only input it could possibly take was the external 32k crystal.
+
+> Cleaning that part would help with A733 addition in the existing driver
+> I think
+
+Yeah. Also, we can treat the bindings and drivers separately. We could
+have two bindings but one common driver, or vice versa. As you pointed
+out, the bindings are a bit messed up, so we could consider separating
+them.
+
+If we end up with separate binding header files, maybe we could use
+a different prefix for the new ones so they don't collide? That way
+the driver could maybe still be shared?
+
+As for whether to share the headers, I think they should be treated
+as part of the binding, so if the bindings are shared, then they can
+be shared as well; if the bindings are separate, then they should be
+completely separate files as well.
 
 
-These should be two separate commits, if I understand correctly.
+And sorry for the late reply.
 
-Please use also Fixes tag.
 
-Best regards,
-Krzysztof
+Thanks
+ChenYu
+
+> >
+> >> +#define CLK_RTC_32K            3
+> >
+> > AFAICT besides being an internal clock, this is also fed to GPIO for
+> > debounce? We probably need to expose this on the A523 as well.
+> >
+> >
+> > Thanks
+> > ChenYu
+> >
+> >
+> >> +#define CLK_OSC32K_FANOUT      4
+> >> +#define CLK_HOSC_SERDES1       5
+> >> +#define CLK_HOSC_SERDES0       6
+> >> +#define CLK_HOSC_HDMI          7
+> >> +#define CLK_HOSC_UFS           8
+> >> +
+> >> +#endif /* _DT_BINDINGS_CLK_SUN60I_A733_RTC_H_ */
+> >>
+> >> --
+> >> 2.52.0
+> >>
+> >>
+>
+> --
+> Jerome
+>
