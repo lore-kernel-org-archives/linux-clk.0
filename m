@@ -1,208 +1,197 @@
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E5E83D16E4
-	for <linux-clk@vger.kernel.org>; Tue, 23 Jun 2026 11:00:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AB683D1A81
+	for <linux-clk@vger.kernel.org>; Tue, 23 Jun 2026 11:02:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782212402; cv=none; b=kUopU+Y5bbeMUAllxkBlNRdkKNo315Q7JfLGoKJ60BNOjeiYLCdAtWtqANaenwNabbrD9Eh9vYdh4v37YRbLaUKwnplZCjDHrbB4SVjUTnOrziM3eIhVAqoVi6TJo5rput67fAbyvsL597uoqpiAfuI5ICbn6eXxSBewKstYi5o=
+	t=1782212573; cv=none; b=Uxix9+ZvCyr3QE6fpRmXUtsIvX1fw2Ez8zC6ufs+Tg7KOUzMJlkfve91O488IaciEMpcSYOHlDG4bns1xjaK85RE+tDZgTOBSTl/OSoBostokjkmz6S17DW6MtTuXAzKJaM3yzkp88Xxa4tQUvCzLo/9pb45s0bDpA/9ERGwq9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782212402; c=relaxed/simple;
-	bh=1g3yVFwvi3QLJf+kLTELRhLDnDw+SCQq8UtKU9T4u5s=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=eJTFpaHhN+gagm3dJ4RLpwtDIBkW2sU+0qC6B6s+F9PixTuthM07A7tD4xzVg1Ps4AfjnDYuI1r/uql3NgonSJIx64773s2wqtBhj/Tx/UYwzRUmB0TAbJW2guW6GwobfpXJZ/m/B4V+Fu+fpZ9b1wNtpwGHdnecxYFu3CDn2p4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow-tech.com; spf=pass smtp.mailfrom=cknow-tech.com; dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b=HYa5Rqwl; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow-tech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow-tech.com
+	s=arc-20240116; t=1782212573; c=relaxed/simple;
+	bh=ZoZVHIcb20ztaVZGDCK46IymHjRjY+Yi4pkPjRPyYng=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZLnxMZS0oJDewUNkuQIL2uBCwW0B35z7ARireJJiKqOrKz2YWrtzdusMK9Naxng/ska8xMf4k+KI+NtxEer9yEcxz//bQCWMYpyFIKODk+REOykL2aQPFPCrKfGRVw+qHM08jF6ExLiLbbeFnABOspn9fdh06a5N5P7Jr2503Es=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=iZvUU46G; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=G0f8s6mE; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow-tech.com header.i=@cknow-tech.com header.b="HYa5Rqwl"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="iZvUU46G";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="G0f8s6mE"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 65NAshuu3664252
+	for <linux-clk@vger.kernel.org>; Tue, 23 Jun 2026 11:02:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	/3Bur5W8WIf69VnzHiI+arDhtZRA4HK1lbpmUhai2O4=; b=iZvUU46GibMAwNkz
+	AoK7VQzXe+5QNe2NDKKB/mgDiLZOo5GlZXwA/ce67JAiyVLIDN4WwaqOHLLQYnab
+	vBvCZ3Q57JQwnF3JshLMTYyR5HF5NGIzzMJR8TWC0N3NYhPMFUx2EqA7l1FU9dU/
+	pE/LJoxOVj7x+BnGbz8TfH44/R/DMg7zLiyMOoQRA32bUDzWZk5OtUyWaNw3eKYU
+	NgJRdeZH158uWFnqlLx8WmF415Gz2na1sFuj6vDNC8UOplKUTMJStLdbfZlvJDV/
+	I5V3KoTsvE4S1ZFmAaijS5B02SRmfvlhsOw6zr0k2+KJfCEwCdUBW0vIlHeZVjAe
+	fnjmFA==
+Received: from mail-vs1-f71.google.com (mail-vs1-f71.google.com [209.85.217.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4eyp29gt7t-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Tue, 23 Jun 2026 11:02:51 +0000 (GMT)
+Received: by mail-vs1-f71.google.com with SMTP id ada2fe7eead31-7297b2a8689so346327137.2
+        for <linux-clk@vger.kernel.org>; Tue, 23 Jun 2026 04:02:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1782212570; x=1782817370; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/3Bur5W8WIf69VnzHiI+arDhtZRA4HK1lbpmUhai2O4=;
+        b=G0f8s6mEbVMpSKoc61441HdIB1Bqpcvt3u+E1OTmh0pR2L0lr/V5KJZ1LcZ/TrOCZH
+         RV4757WTUFA6SCrTqIbSIZSYZ5VdLeOgGPnA6BoRM8geM17YglNmrxIMJax4uuM9FrCN
+         IgeexyjFBcBUK2Kb/vKrLbr0SlTD5yw9ipAcxP6keY3pQjLV9S/iGszJe5k+b84Zff3p
+         0LNodXd39ggXTXg659uwuEWKKc+d40GBZdsgKoUBEqnkxa7iyKiN5m1QWxVTaYI+u7aE
+         VX6yBhOfJp/cOgk1NniEWgjLvsc7Ug8A0yiskJutbs4rr4FAs7SadJjGgux4p7sZ2Iql
+         /uUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1782212570; x=1782817370;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/3Bur5W8WIf69VnzHiI+arDhtZRA4HK1lbpmUhai2O4=;
+        b=a07YKuBW/cuu+9mmdLSvr4Z/7be8t8m/SSGwsd5mEHIqhl/qUEHm/C16lndQ+3Dlk+
+         DI7KUZBsQVZySRixye0rAzT1UnjGqzPtgXyG9T4eoZELXFmK85aOzdQKq5uJ6yXylRvi
+         tdvnKhO6OnqXVU9pCAq5OWHB2f6qPxcCM8sQLf20Ggh7izH60IvHZ8W1ZpBGQd2ojkXT
+         jmFa/cuMvFz57+kC18rLI3T5lfZqKkfM7Dk8CAFELAAmGeBj35EXISrlsbmt7UTFglRe
+         m37+IEEjFW794bPNTADgTqfPjIzkELgAi40d7IvIdRKay50e4UgM34q2P1trkllGPcJT
+         7S1g==
+X-Forwarded-Encrypted: i=1; AFNElJ+2h56qPbW0HqFEyym4PovfuyBFbTmAvEMuEiLkGzp40kOb5bdVYdjBCvMFyYM8WJAA63cYzSBnVWY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzS7cLRgzbYEfhLDQpONUm98+s3vUfArSHhJJCbTsfAtSUGuhE
+	ECMTIIBF3nuxhc0AVkWN6ppO/uVVRPtud4hHW4HnYfsx8Ey7XBdf7MWZCOj9LeS5D/tpnTP9elj
+	UC/znqZZT+JF2IQAkqh0C2WHoAxbyNSD+qgbPZX5RWjqzTvOn/+PyarIgFPFGu8c=
+X-Gm-Gg: AfdE7cmuBfAXHvcSZCfT89Gr2Lq1//TmV7IR7TRvP1gEQAvCvXUil2N4D6O804Ud4yx
+	AMJLCjrh5UQKEt3F8PbKReNpigwA5swa0/WzLB4293JMP1Ya59n9ozwI4ogNZpuu/tjwOv6JTgK
+	9Pm2sHbNVc4ajNq3YeRxz+reR0vMWjEZrOUurkdqgLgO1Fet0ZW2zO+K2ZYeBxta9ltpaudD9t7
+	LuH75kf+c9k1Ce+JS6+J6ayJj2Vu8vAY10iz4VAy2EL7SnZ8gY8WpuyS/E1OH4s7VLV1+eGdeta
+	5fzYUMuf3Up+/WjS3rOdvjgoN8IGYg7naABoNlmH2IQOhkpSgvuQrCsVIXpjid4q//nK1R7Ma/d
+	QEBeSG6EhrT/YoyOArqlWSTLofDXsjjGfuH0=
+X-Received: by 2002:a05:6102:3f14:b0:720:2ba:5299 with SMTP id ada2fe7eead31-72f3ac9650cmr1080750137.6.1782212570284;
+        Tue, 23 Jun 2026 04:02:50 -0700 (PDT)
+X-Received: by 2002:a05:6102:3f14:b0:720:2ba:5299 with SMTP id ada2fe7eead31-72f3ac9650cmr1080720137.6.1782212569762;
+        Tue, 23 Jun 2026 04:02:49 -0700 (PDT)
+Received: from [192.168.120.170] ([178.235.128.140])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c0c5e498cedsm491816166b.4.2026.06.23.04.02.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Jun 2026 04:02:48 -0700 (PDT)
+Message-ID: <e1e492ab-884e-442b-8410-cc100c54fd5f@oss.qualcomm.com>
+Date: Tue, 23 Jun 2026 13:02:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow-tech.com;
-	s=key1; t=1782212387;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bgNiBBf4cu32q0ZEEYeIX25WTZd4hvVr+vxDhDI/sgY=;
-	b=HYa5RqwlJ97bZG6XkmSoo1V2BG9Sl5u3bd9B979ewpsl0t7WfPVOgbblAc9tppbn8W81IF
-	ws3PmW4qlw5MDLAaSsT47fneTsbFfeWdM8GpbxLKDEUR6iXpzuncovQpZn0HOawytQ96OD
-	smvR8ur1LVCWoZE+c0ZuUfVD2pkaUnCCWPs7pzuhq/5/5hIC2xO+eLdMjL+o4inKUWrf0y
-	W+AZTc3j/AMmNkGi2FLd4uqNB1W+jtKIEu7TvC3PY8+CQrtAMWd8JGLPV1y7B5wvqlBAD3
-	Eotg7rAGQ5w54BsUVGBXghHV7esKFYng9FeAy4MqfP53ZogSiISQPVJJ4MoVQg==
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/8] arm64: dts: qcom: sm8450: Remove unneeded reserved
+ memory nodes
+To: esteuwu@proton.me, Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Rob Clark <robin.clark@oss.qualcomm.com>,
+        Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+        "Joerg Roedel (AMD)" <joro@8bytes.org>, Vinod Koul <vkoul@kernel.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+        linux-phy@lists.infradead.org
+References: <20260622-sm8450-qol-v1-0-37e2ee8df9da@proton.me>
+ <20260622-sm8450-qol-v1-2-37e2ee8df9da@proton.me>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20260622-sm8450-qol-v1-2-37e2ee8df9da@proton.me>
 Content-Type: text/plain; charset=UTF-8
-Date: Tue, 23 Jun 2026 12:59:42 +0200
-Message-Id: <DJGDK9WA46IK.AH6NJASRAR0J@cknow-tech.com>
-Cc: "Nicolas Frattaroli" <nicolas.frattaroli@collabora.com>,
- <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-arm-kernel@lists.infradead.org>,
- <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
- "Ricardo Pardini" <ricardo@pardini.net>
-Subject: Re: [PATCH v3 4/4] clk: rockchip: rk3588: add GATE_GRF clocks for
- I2S MCLK output to IO
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <diederik@cknow-tech.com>
-To: "Daniele Briguglio" <hello@superkali.me>, "Michael Turquette"
- <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Rob Herring"
- <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, "Heiko Stuebner" <heiko@sntech.de>
-References: <20260320-rk3588-mclk-gate-grf-v3-0-980338eacd2c@superkali.me>
- <20260320-rk3588-mclk-gate-grf-v3-4-980338eacd2c@superkali.me>
-In-Reply-To: <20260320-rk3588-mclk-gate-grf-v3-4-980338eacd2c@superkali.me>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=LdAMLDfi c=1 sm=1 tr=0 ts=6a3a67db cx=c_pps
+ a=P2rfLEam3zuxRRdjJWA2cw==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
+ a=IkcTkHD0fZMA:10 a=FelO9ux0wxsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=eoimf2acIAo5FJnRuUoq:22
+ a=dk325V_gTbMn8ZHce38A:9 a=QEXdDO2ut3YA:10 a=ODZdjJIeia2B_SHc_B0f:22
+X-Proofpoint-GUID: D453R7dGvrQBk-m_tctGi0nXGGDdQe0S
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNjIzMDA4OSBTYWx0ZWRfX5OQ4eqEPXFJX
+ 5IBdgRP6iECCGtHV84Gvwc60gNDLkzonyASunlSkrTTzDppmKMo7FZK8x6a/Js/bN6PwrdG54Jz
+ tCY89ccGBE5NRMQyw00wtZu01tXW+XQ=
+X-Proofpoint-ORIG-GUID: D453R7dGvrQBk-m_tctGi0nXGGDdQe0S
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjIzMDA4OSBTYWx0ZWRfXxH8KPSJBsS4O
+ Oodd+GfwGOZej13fJssQEVIR+djs7z9uUXORyAZPqcdXvpf2jxakrgecILSL5ZjHBxGOqQ12+Ts
+ NbXRsYc//8EPTz/ZWuX0o3zVrAWAvix2J9pHDYsXOGUDsfMEX7TnPPr5CwBbk2xhwAzxUmDcjWA
+ LKrd3D1Nk4YNbXQAvYg3oHsNymdNOeYkBGhWXU0J+9FeYmNJXqBOnR1iwOi594ibHFIlnbGyhe8
+ e4JVy9AzLVf0wc/SFt1xFVccNevXVPq1WepNk7/qWm3/eF/8JeBdEZijAUp7fOyhEuBAL9FIb4w
+ /5lxmMr9mWPPUENS9oxAX4oYlP6SflHW4L7Lm40wBjMW5QfVmwExoc2gJxgkmApA6QSNsLxVKoM
+ 1lD3RC1LYMLQZX2QhdRZpkbwVN+7MA16cgPbyZv2N0F4SJUnl70jyH4RZs16/9eejI1tlJdwbCs
+ brBV53ph1yi8271jGXw==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
+ definitions=2026-06-23_02,2026-06-23_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 priorityscore=1501 impostorscore=0 lowpriorityscore=0
+ suspectscore=0 malwarescore=0 clxscore=1015 spamscore=0 phishscore=0
+ bulkscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
+ definitions=main-2606230089
 
-Hi,
-
-On Fri Mar 20, 2026 at 11:34 AM CET, Daniele Briguglio wrote:
-> The I2S MCLK outputs on RK3588 are gated by bits in the SYS_GRF
-> register SOC_CON6 (offset 0x318). These gates control whether the
-> internal CRU MCLK signals reach the external IO pins connected to
-> audio codecs.
->
-> The kernel should explicitly manage these gates so that audio
-> functionality does not depend on bootloader register state. This is
-> analogous to what was done for RK3576 SAI MCLK outputs [1].
->
-> Register the SYS_GRF as an auxiliary GRF with grf_type_sys in the
-> early clock init, and add GATE_GRF entries for all four I2S MCLK
-> output gates:
->
->   - I2S0_8CH_MCLKOUT_TO_IO (bit 0)
->   - I2S1_8CH_MCLKOUT_TO_IO (bit 1)
->   - I2S2_2CH_MCLKOUT_TO_IO (bit 2)
->   - I2S3_2CH_MCLKOUT_TO_IO (bit 7)
->
-> Board DTS files that need MCLK on an IO pin can reference these
-> clocks, e.g.:
->
->     clocks =3D <&cru I2S0_8CH_MCLKOUT_TO_IO>;
->
-> Tested on the Youyeetoo YY3588 (RK3588) with an ES8388 codec on I2S0.
-
-Doesn't this break audio on a lot of RK3588 based boards?
-I have a kernel with this patch set and since then analog audio on my NanoP=
-C-T6
-LTS and my WIP NanoPC-T6 Plus stopped working.
-Until I did s/I2S0_8CH_MCLKOUT/I2S0_8CH_MCLKOUT_TO_IO/ in my dts[i] files.
-
-And I wouldn't be surprised if the same thing applies to other RK3588 based
-boards? The same dtb file with a 7.1 kernel, without this patch set, works.
-
-Cheers,
-  Diederik
-
-> [1] https://lore.kernel.org/r/20250305-rk3576-sai-v1-2-64e6cf863e9a@colla=
-bora.com/
->
-> Reviewed-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-> Tested-by: Ricardo Pardini <ricardo@pardini.net>
-> Signed-off-by: Daniele Briguglio <hello@superkali.me>
+On 6/23/26 2:54 AM, Esteban Urrutia via B4 Relay wrote:
+> From: Esteban Urrutia <esteuwu@proton.me>
+> 
+> These nodes are not present on downstream device trees and only take
+> memory away from the AP.
+> No crashes occur without these nodes, so remove them.
+> 
+> Signed-off-by: Esteban Urrutia <esteuwu@proton.me>
 > ---
->  drivers/clk/rockchip/clk-rk3588.c | 24 ++++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
->
-> diff --git a/drivers/clk/rockchip/clk-rk3588.c b/drivers/clk/rockchip/clk=
--rk3588.c
-> index 1694223f4f84..2cc85fb5b2cc 100644
-> --- a/drivers/clk/rockchip/clk-rk3588.c
-> +++ b/drivers/clk/rockchip/clk-rk3588.c
-> @@ -5,11 +5,14 @@
->   */
-> =20
->  #include <linux/clk-provider.h>
-> +#include <linux/mfd/syscon.h>
->  #include <linux/of.h>
-> +#include <linux/slab.h>
->  #include <linux/of_address.h>
->  #include <linux/platform_device.h>
->  #include <linux/syscore_ops.h>
->  #include <dt-bindings/clock/rockchip,rk3588-cru.h>
-> +#include <soc/rockchip/rk3588_grf.h>
->  #include "clk.h"
-> =20
->  #define RK3588_GRF_SOC_STATUS0		0x600
-> @@ -892,6 +895,8 @@ static struct rockchip_clk_branch rk3588_early_clk_br=
-anches[] __initdata =3D {
->  			RK3588_CLKGATE_CON(8), 0, GFLAGS),
->  	MUX(I2S2_2CH_MCLKOUT, "i2s2_2ch_mclkout", i2s2_2ch_mclkout_p, CLK_SET_R=
-ATE_PARENT,
->  			RK3588_CLKSEL_CON(30), 2, 1, MFLAGS),
-> +	GATE_GRF(I2S2_2CH_MCLKOUT_TO_IO, "i2s2_2ch_mclkout_to_io", "i2s2_2ch_mc=
-lkout",
-> +			0, RK3588_SYSGRF_SOC_CON6, 2, GFLAGS, grf_type_sys),
-> =20
->  	COMPOSITE(CLK_I2S3_2CH_SRC, "clk_i2s3_2ch_src", gpll_aupll_p, 0,
->  			RK3588_CLKSEL_CON(30), 8, 1, MFLAGS, 3, 5, DFLAGS,
-> @@ -907,6 +912,8 @@ static struct rockchip_clk_branch rk3588_early_clk_br=
-anches[] __initdata =3D {
->  			RK3588_CLKGATE_CON(8), 4, GFLAGS),
->  	MUX(I2S3_2CH_MCLKOUT, "i2s3_2ch_mclkout", i2s3_2ch_mclkout_p, CLK_SET_R=
-ATE_PARENT,
->  			RK3588_CLKSEL_CON(32), 2, 1, MFLAGS),
-> +	GATE_GRF(I2S3_2CH_MCLKOUT_TO_IO, "i2s3_2ch_mclkout_to_io", "i2s3_2ch_mc=
-lkout",
-> +			0, RK3588_SYSGRF_SOC_CON6, 7, GFLAGS, grf_type_sys),
->  	GATE(PCLK_ACDCDIG, "pclk_acdcdig", "pclk_audio_root", 0,
->  			RK3588_CLKGATE_CON(7), 11, GFLAGS),
->  	GATE(HCLK_I2S0_8CH, "hclk_i2s0_8ch", "hclk_audio_root", 0,
-> @@ -935,6 +942,8 @@ static struct rockchip_clk_branch rk3588_early_clk_br=
-anches[] __initdata =3D {
->  			RK3588_CLKGATE_CON(7), 10, GFLAGS),
->  	MUX(I2S0_8CH_MCLKOUT, "i2s0_8ch_mclkout", i2s0_8ch_mclkout_p, CLK_SET_R=
-ATE_PARENT,
->  			RK3588_CLKSEL_CON(28), 2, 2, MFLAGS),
-> +	GATE_GRF(I2S0_8CH_MCLKOUT_TO_IO, "i2s0_8ch_mclkout_to_io", "i2s0_8ch_mc=
-lkout",
-> +			0, RK3588_SYSGRF_SOC_CON6, 0, GFLAGS, grf_type_sys),
-> =20
->  	GATE(HCLK_PDM1, "hclk_pdm1", "hclk_audio_root", 0,
->  			RK3588_CLKGATE_CON(9), 6, GFLAGS),
-> @@ -2220,6 +2229,8 @@ static struct rockchip_clk_branch rk3588_early_clk_=
-branches[] __initdata =3D {
->  			RK3588_PMU_CLKGATE_CON(2), 13, GFLAGS),
->  	MUX(I2S1_8CH_MCLKOUT, "i2s1_8ch_mclkout", i2s1_8ch_mclkout_p, CLK_SET_R=
-ATE_PARENT,
->  			RK3588_PMU_CLKSEL_CON(9), 2, 2, MFLAGS),
-> +	GATE_GRF(I2S1_8CH_MCLKOUT_TO_IO, "i2s1_8ch_mclkout_to_io", "i2s1_8ch_mc=
-lkout",
-> +			0, RK3588_SYSGRF_SOC_CON6, 1, GFLAGS, grf_type_sys),
->  	GATE(PCLK_PMU1, "pclk_pmu1", "pclk_pmu0_root", CLK_IS_CRITICAL,
->  			RK3588_PMU_CLKGATE_CON(1), 0, GFLAGS),
->  	GATE(CLK_DDR_FAIL_SAFE, "clk_ddr_fail_safe", "clk_pmu0", CLK_IGNORE_UNU=
-SED,
-> @@ -2439,6 +2450,8 @@ static struct rockchip_clk_branch rk3588_clk_branch=
-es[] =3D {
->  static void __init rk3588_clk_early_init(struct device_node *np)
->  {
->  	struct rockchip_clk_provider *ctx;
-> +	struct rockchip_aux_grf *sys_grf_e;
-> +	struct regmap *sys_grf;
->  	unsigned long clk_nr_clks, max_clk_id1, max_clk_id2;
->  	void __iomem *reg_base;
-> =20
-> @@ -2479,6 +2492,17 @@ static void __init rk3588_clk_early_init(struct de=
-vice_node *np)
->  			&rk3588_cpub1clk_data, rk3588_cpub1clk_rates,
->  			ARRAY_SIZE(rk3588_cpub1clk_rates));
-> =20
-> +	/* Register SYS_GRF for I2S MCLK output to IO gate clocks */
-> +	sys_grf =3D syscon_regmap_lookup_by_compatible("rockchip,rk3588-sys-grf=
-");
-> +	if (!IS_ERR(sys_grf)) {
-> +		sys_grf_e =3D kzalloc_obj(*sys_grf_e);
-> +		if (sys_grf_e) {
-> +			sys_grf_e->grf =3D sys_grf;
-> +			sys_grf_e->type =3D grf_type_sys;
-> +			hash_add(ctx->aux_grf_table, &sys_grf_e->node, grf_type_sys);
-> +		}
-> +	}
-> +
->  	rockchip_clk_register_branches(ctx, rk3588_early_clk_branches,
->  				       ARRAY_SIZE(rk3588_early_clk_branches));
-> =20
+>  arch/arm64/boot/dts/qcom/sm8450.dtsi | 15 ---------------
+>  1 file changed, 15 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sm8450.dtsi b/arch/arm64/boot/dts/qcom/sm8450.dtsi
+> index 56cb6e959e4e..e34e3c05bf74 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8450.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sm8450.dtsi
+> @@ -752,11 +752,6 @@ oem_vm_mem: memory@bb000000 {
+>  			no-map;
+>  		};
+>  
+> -		mte_mem: memory@c0000000 {
+> -			reg = <0x0 0xc0000000 0x0 0x20000000>;
+> -			no-map;
+> -		};
 
+This is mentioned in the memory map description, but is not part
+of it.
+
+I booted up a 8450 HDK and it doesn't even have MTE, so it's
+probably valid
+
+> -
+>  		qheebsp_reserved_mem: memory@e0000000 {
+>  			reg = <0x0 0xe0000000 0x0 0x600000>;
+>  			no-map;
+> @@ -806,16 +801,6 @@ qtee_mem: memory@e9b00000 {
+>  			reg = <0x0 0xe9b00000 0x0 0x500000>;
+>  			no-map;
+>  		};
+> -
+> -		trusted_apps_mem: memory@ea000000 {
+> -			reg = <0x0 0xea000000 0x0 0x3900000>;
+> -			no-map;
+> -		};
+> -
+> -		trusted_apps_ext_mem: memory@ed900000 {
+> -			reg = <0x0 0xed900000 0x0 0x3b00000>;
+> -			no-map;
+> -		};
+
+These exist in the memory map, but I'd guess they may be unused if
+you don't load any trusted apps
+
+Konrad
