@@ -1,165 +1,165 @@
-Received: from sender4-op-o11.zoho.com (sender4-op-o11.zoho.com [136.143.188.11])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3389B33B6CC;
-	Mon, 22 Jun 2026 20:38:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782160684; cv=pass; b=dEWCxhcSPuFGjV5I31Hld3/evmZrknGQzrqJpt7F08Y9C/DTJ4B4xnwzFVweZFUdejQQ3yvRdOdyEOsGZoagj0P6PsWTiCpFAXtv1/j3lPuahzrv50iJW6pKt59vcqjoRSjK5V2IVZMvMgfUXeogHjx4VmNYFjnhlUCNpJrC+PE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782160684; c=relaxed/simple;
-	bh=WsDcKuA1gvo2wPOxdvdHPc1d4sATgEmk4SH3WC2S+lA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AuHfawblQAsmmC2AS2ckOmnyll1we17CddoDP43mjee5zU4gwFUbOAS32xEbvuPlfRFBKn+iyPasQnVz5E/dOp1Jmubztoq7L9s/s7Wf7wvGxY9hL2JUhzlYVHEL0H4H1lO02i4GsRzZmKt1ZRbNbTlEEgtWYPM7RH5k/qNUpJo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=ftenAF2p; arc=pass smtp.client-ip=136.143.188.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C258740D56A;
+	Tue, 23 Jun 2026 00:55:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1782176159; cv=none; b=j0btPHUQl6kd/KiUkuxz3rBzjYj8IKz7Oh51Q7oowYSVHl/EtovT8zX0hCEQx7o16OKcfB9ilynInll/IrhLCX9hUAC8mi+4ifqWPS9Fs55/8HNA9R4FtwDC9GNciBdl0ByVlcF1V4d/ZAuyc0jGkIDgPJIxr90nRBFRz4eTYis=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1782176159; c=relaxed/simple;
+	bh=O3h+r3KMVJ2BTpp0cvTdaW3R2CnFXiiBiYPuDmFfHv0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=qb2nKIQMllQjQWLKN/UMjkCkhVsEMJXtlGsG7hqT9pCVXL8rP5oBOXnTiNO/k0AnVkcEPpWj5iejNetAiMlX48nydZdRqxoW1Q/aKoh2p4dOcmvvkon3hIxze3kwd4fjzgkgJ1+euo1/47d87D/xPfnuiTYo0bMHGPEsPitWaY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I1KDKWzZ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="ftenAF2p"
-ARC-Seal: i=1; a=rsa-sha256; t=1782160644; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=NbZ03RwDUpsPUGMBrvUdLdu9YwvBtwbJnzp1KGgnOw8bmxFm308mN3AT9TQxGf0hTvg6NQG4C2vMqEG28Kk9TYtSAwUBIsPuLMENiboDJ821z6UtEvkeDwz5+Jcm+re9M7ZFaWtEkR9uOKdar4YVHKXBp3rQHmkoCuJ+yoWpc4o=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1782160644; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=mN91JuTXlP9yH/fF2WAYmfPvIPkIj7NLhNIGrphtGFQ=; 
-	b=cdn/QOUYXHEVxnnOG0Xz+v5hgIFdWmFnUWGGBrXE0BkN+/Y/SSTnkF8DIdXeHmsun1N1bTnfVSATEUntE3qlia7Tu2OXutygr1K/pScuMkRUqb8jzru748kl9eSG9NgAF6EAKY/Eq7kqq5AHGgy4zYxnRNwUhOnHfiaIKQmZ7Ec=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1782160644;
-	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=mN91JuTXlP9yH/fF2WAYmfPvIPkIj7NLhNIGrphtGFQ=;
-	b=ftenAF2pLAzRlyNVRan8mKVLwnie2DhUAR+YqxoXAcc93rbXBpyH//u6VQz6uvu5
-	NVnB16FfAhcMzP72FH86ULWAFvMa3rYocIFntWDDFHxLa7uuG26U7HA2MLbmUYNgfOb
-	uJogOLlRuf0JNK3ahPODVSRWU84ISRiZWge9esxY=
-Received: by mx.zohomail.com with SMTPS id 1782160642430172.91971762131618;
-	Mon, 22 Jun 2026 13:37:22 -0700 (PDT)
-Received: by venus (Postfix, from userid 1000)
-	id 6EF1E1824A2; Mon, 22 Jun 2026 22:37:11 +0200 (CEST)
-Date: Mon, 22 Jun 2026 22:37:11 +0200
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney@redhat.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, Sam Protsenko <semen.protsenko@linaro.org>, 
-	Rob Clark <robin.clark@oss.qualcomm.com>, Dmitry Baryshkov <lumag@kernel.org>, 
-	Abhinav Kumar <abhinav.kumar@linux.dev>, Jessica Zhang <jesszhan0024@gmail.com>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Inki Dae <inki.dae@samsung.com>, 
-	Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
-	Andi Shyti <andi.shyti@kernel.org>, Georgi Djakov <djakov@kernel.org>, Lee Jones <lee@kernel.org>, 
-	Pavel Machek <pavel@kernel.org>, Hans Verkuil <hverkuil@kernel.org>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Ulf Hansson <ulfh@kernel.org>, Peter Rosin <peda@lysator.liu.se>, 
-	Vinod Koul <vkoul@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Linus Walleij <linusw@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Magnus Damm <magnus.damm@gmail.com>, Javier Martinez Canillas <javier@dowhile0.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Srinivas Kandagatla <srini@kernel.org>, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@kernel.org>, 
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Jonathan Marek <jonathan@marek.ca>, Taniya Das <quic_tdas@quicinc.com>, 
-	Robert Marko <robimarko@gmail.com>, Christian Marangi <ansuelsmth@gmail.com>, 
-	Stephan Gerhold <stephan@gerhold.net>, Adam Skladowski <a_skl39@protonmail.com>, 
-	Sireesh Kodali <sireeshkodali@protonmail.com>, Barnabas Czeman <barnabas.czeman@mainlining.org>, 
-	Imran Shaik <quic_imrashai@quicinc.com>, Sricharan Ramabadhran <quic_srichara@quicinc.com>, 
-	Anusha Rao <quic_anusha@quicinc.com>, Luo Jie <quic_luoj@quicinc.com>, 
-	Tomasz Figa <tomasz.figa@gmail.com>, Chanho Park <chanho61.park@samsung.com>, 
-	Sunyeal Hong <sunyeal.hong@samsung.com>, Shin Son <shin.son@samsung.com>, 
-	Krishna Manikandan <quic_mkrishn@quicinc.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, 
-	Jaehoon Chung <jh80.chung@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Alina Yu <alina_yu@richtek.com>, Andy Gross <agross@kernel.org>, 
-	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, Wesley Cheng <quic_wcheng@quicinc.com>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, linux-i2c@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-leds@vger.kernel.org, linux-media@vger.kernel.org, 
-	linux-mmc@vger.kernel.org, linux-phy@lists.infradead.org, linux-gpio@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-serial@vger.kernel.org, linux-sound@vger.kernel.org, 
-	linux-usb@vger.kernel.org
-Subject: Re: [PATCH 2/2] dt-bindings: Drop incorrect usage of double '::'
-Message-ID: <ajmcsfEXiTfFh-XH@venus>
-References: <20260622101606.485961-3-krzysztof.kozlowski@oss.qualcomm.com>
- <20260622101606.485961-4-krzysztof.kozlowski@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I1KDKWzZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 4974DC2BCC9;
+	Tue, 23 Jun 2026 00:55:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1782176159;
+	bh=O3h+r3KMVJ2BTpp0cvTdaW3R2CnFXiiBiYPuDmFfHv0=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=I1KDKWzZ05p2vEB9ZiL8dlaQ3Sv2kboq9k/QGP9FkaFIVFuhBXqU5q64AfynPYREy
+	 6GSbxaQY7NqW+0Dtkrh/OTpNVXtvQaOlCPvgHbDT1zoCKO6eTJuomRf/+V1juEBsON
+	 E6X9tKDK91rDM/C4lRmRbWrSpl+54SZf7V3H+pfOlYFet0fr53lShb8nZjTGEvLEcr
+	 vPvqIx2c9NEYf2RVAOy7Qt9jl3aI4/rpGYJqEakwigcxI+SgxGPv90WIr3lhjurtFQ
+	 fFQ0ujpsPYMjQW8Xgi4S/oXq/hYGzVCX9V9LIU6NMRyLBJhVsJ9xz+XKgGGyTVFBVf
+	 JJCMgy1ksqBCA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3191FCDB466;
+	Tue, 23 Jun 2026 00:55:59 +0000 (UTC)
+From: Esteban Urrutia via B4 Relay <devnull+esteuwu.proton.me@kernel.org>
+Date: Mon, 22 Jun 2026 20:54:22 -0400
+Subject: [PATCH 1/8] clk: qcom: dispcc-sm8450: Fix mdss clocks
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="he6mgtsui5z5w5dr"
-Content-Disposition: inline
-In-Reply-To: <20260622101606.485961-4-krzysztof.kozlowski@oss.qualcomm.com>
-X-Zoho-Virus-Status: 1
-X-Zoho-AV-Stamp: zmail-av-0.2.10.1.5.2/282.152.77
-X-ZohoMailClient: External
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260622-sm8450-qol-v1-1-37e2ee8df9da@proton.me>
+References: <20260622-sm8450-qol-v1-0-37e2ee8df9da@proton.me>
+In-Reply-To: <20260622-sm8450-qol-v1-0-37e2ee8df9da@proton.me>
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Rob Clark <robin.clark@oss.qualcomm.com>, Will Deacon <will@kernel.org>, 
+ Robin Murphy <robin.murphy@arm.com>, "Joerg Roedel (AMD)" <joro@8bytes.org>, 
+ Vinod Koul <vkoul@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ linux-phy@lists.infradead.org, Esteban Urrutia <esteuwu@proton.me>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1782176157; l=4544;
+ i=esteuwu@proton.me; s=20260622; h=from:subject:message-id;
+ bh=Nkcn4urkSzO8xVsWhGDA3qPh5MIpKzECwfoMwJPmbeM=;
+ b=2VndCX5WEP4sJ4zXlSVdNf635h5yO9ULJwd3imAAL8DT4Qlqv9EG9o460Gip0qDb6BehVETmC
+ FjFevWKU9cfAwmUzfu0xC5f54vhpTPpbqMj+09WbWfzlJO1fcCFheS3
+X-Developer-Key: i=esteuwu@proton.me; a=ed25519;
+ pk=wToFt4mOAWkzbqb15Ye1hrhevI13vK9BcMUFiQ/me1M=
+X-Endpoint-Received: by B4 Relay for esteuwu@proton.me/20260622 with
+ auth_id=835
+X-Original-From: Esteban Urrutia <esteuwu@proton.me>
+Reply-To: esteuwu@proton.me
+
+From: Esteban Urrutia <esteuwu@proton.me>
+
+Both of these changes allow the framebuffer to show upon boot and let
+the mdss driver take over afterwards.
+Before, none of these actions were possible. Only mdss takeover was
+possible, but screen had to be turned off first.
+
+OLE configuration may have been a misinterpretation... that's not
+something that's done on the downstream driver.
+
+Changing disp_cc_mdss_mdp_clk_src from clk_rcg2_shared_ops to
+clk_rcg2_shared_no_init_park_ops fixes this warning as well:
+
+[    0.075780] ------------[ cut here ]------------
+[    0.075791] disp_cc_mdss_mdp_clk_src: rcg didn't update its configuration.
+[    0.075812] WARNING: drivers/clk/qcom/clk-rcg2.c:136 at update_config+0xd4/0xe4, CPU#3: swapper/0/1
+[    0.075840] Modules linked in:
+[    0.075856] CPU: 3 UID: 0 PID: 1 Comm: swapper/0 Tainted: G S                  7.1.0-rc2+ #320 PREEMPT
+[    0.075870] Tainted: [S]=CPU_OUT_OF_SPEC
+[    0.075877] Hardware name: Motorola ThinkPhone by motorola (DT)
+[    0.075887] pstate: 61400005 (nZCv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
+[    0.075897] pc : update_config+0xd4/0xe4
+[    0.075906] lr : update_config+0xd4/0xe4
+[    0.075914] sp : ffff80008005b9f0
+[    0.075921] x29: ffff80008005ba00 x28: 0000000000000004 x27: ffff000782892200
+[    0.075937] x26: ffff0007823a46c0 x25: 0000000000000004 x24: ffffffffffffffff
+[    0.075953] x23: ffff0007823a0240 x22: ffffdbc0a0940220 x21: ffffdbc0a0940220
+[    0.075967] x20: ffffdbc0a0dcb388 x19: 0000000000000000 x18: 0000000000000048
+[    0.075981] x17: 0000000000000014 x16: 0000000000010008 x15: fffffffffffea870
+[    0.075996] x14: ffffdbc0a0c5d580 x13: ffffdbc0a0c5d600 x12: 00000000000001ee
+[    0.076010] x11: fffffffffffea870 x10: fffffffffffea828 x9 : ffffdbc0a0c5d600
+[    0.076024] x8 : 3fffffffffffefff x7 : ffffdbc0a0cb5600 x6 : 00000000000001ef
+[    0.076038] x5 : 3ffffffffffff1ee x4 : 00000000000001ee x3 : 0000000000000000
+[    0.076052] x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff00078066adc0
+[    0.076067] Call trace:
+[    0.076074]  update_config+0xd4/0xe4 (P)
+[    0.076085]  clk_rcg2_shared_disable+0x50/0x80
+[    0.076096]  clk_rcg2_shared_init+0x10/0x20
+[    0.076107]  __clk_register+0x1b4/0x9ec
+[    0.076118]  devm_clk_hw_register+0x5c/0xd4
+[    0.076128]  devm_clk_register_regmap+0x44/0x84
+[    0.076139]  qcom_cc_really_probe+0x304/0x514
+[    0.076149]  disp_cc_sm8450_probe+0x104/0x200
+[    0.076160]  platform_probe+0x5c/0xa4
+[    0.076172]  really_probe+0xbc/0x2ac
+[    0.076182]  __driver_probe_device+0x80/0x154
+[    0.076193]  driver_probe_device+0x3c/0x184
+[    0.076203]  __driver_attach+0x90/0x18c
+[    0.076213]  bus_for_each_dev+0x7c/0xdc
+[    0.076224]  driver_attach+0x24/0x30
+[    0.076233]  bus_add_driver+0xe4/0x20c
+[    0.076243]  driver_register+0x68/0x130
+[    0.076251]  __platform_driver_register+0x20/0x2c
+[    0.076260]  disp_cc_sm8450_driver_init+0x1c/0x28
+[    0.076273]  do_one_initcall+0x60/0x1d4
+[    0.076287]  kernel_init_freeable+0x24c/0x2d4
+[    0.076299]  kernel_init+0x24/0x140
+[    0.076311]  ret_from_fork+0x10/0x20
+[    0.076323] ---[ end trace 0000000000000000 ]---
+
+Signed-off-by: Esteban Urrutia <esteuwu@proton.me>
+---
+ drivers/clk/qcom/dispcc-sm8450.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/qcom/dispcc-sm8450.c b/drivers/clk/qcom/dispcc-sm8450.c
+index 2e91332dd92a..b99d3eb5e195 100644
+--- a/drivers/clk/qcom/dispcc-sm8450.c
++++ b/drivers/clk/qcom/dispcc-sm8450.c
+@@ -614,7 +614,7 @@ static struct clk_rcg2 disp_cc_mdss_mdp_clk_src = {
+ 		.parent_data = disp_cc_parent_data_5,
+ 		.num_parents = ARRAY_SIZE(disp_cc_parent_data_5),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_shared_ops,
++		.ops = &clk_rcg2_shared_no_init_park_ops,
+ 	},
+ };
+ 
+@@ -1824,8 +1824,8 @@ static int disp_cc_sm8450_probe(struct platform_device *pdev)
+ 		disp_cc_pll1.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID_OLE];
+ 		disp_cc_pll1.clkr.hw.init = &sm8475_disp_cc_pll1_init;
+ 
+-		clk_lucid_ole_pll_configure(&disp_cc_pll0, regmap, &sm8475_disp_cc_pll0_config);
+-		clk_lucid_ole_pll_configure(&disp_cc_pll1, regmap, &sm8475_disp_cc_pll1_config);
++		clk_lucid_evo_pll_configure(&disp_cc_pll0, regmap, &sm8475_disp_cc_pll0_config);
++		clk_lucid_evo_pll_configure(&disp_cc_pll1, regmap, &sm8475_disp_cc_pll1_config);
+ 	} else {
+ 		clk_lucid_evo_pll_configure(&disp_cc_pll0, regmap, &disp_cc_pll0_config);
+ 		clk_lucid_evo_pll_configure(&disp_cc_pll1, regmap, &disp_cc_pll1_config);
+
+-- 
+2.54.0
 
 
---he6mgtsui5z5w5dr
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 2/2] dt-bindings: Drop incorrect usage of double '::'
-MIME-Version: 1.0
-
-Hi,
-
-On Mon, Jun 22, 2026 at 12:16:08PM +0200, Krzysztof Kozlowski wrote:
-> There is no use of double colon '::' in YAML. OTOH, the literal style
-> block, e.g. using '|' treats all characters as content [1] therefore
-> single use of ':' in descriptions is perfectly fine, whenever '|' is
-> used.
->=20
-> Cleanup existing code, so the confusing style won't be re-used in new
-> contributions.
->=20
-> Link: https://yaml.org/spec/1.2.2/#literal-style [1]
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
->=20
-> ---
->=20
-> Intention for this patch is to go via Rob's tree.
-> ---
-
-[...]
-
->  .../bindings/power/reset/restart-handler.yaml |  8 ++++----
-
-Acked-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-
-[...]
-
-Greetings,
-
--- Sebastian
-
---he6mgtsui5z5w5dr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmo5nPIACgkQ2O7X88g7
-+pqv2Q/+LMhPKKkmgsVnMejKBphG4p2N/zVrnMgxmg8lVO8rwgA7Kxo2wlLqu2H5
-iapTV4a2dMXB0SUw8UGbt9Lt6JjHaORZnybu95mZEZMS+G7HRl5M8DE+LWMJXLX0
-S+G43Cv1O/d5dV/rM2nJqOItOK+KIbHQI4+oY/O8P7ENnU2h3X2HxOtWxtg6+9gz
-UNPZgoZdEE38SJVzhHrCO1+NfGikbo7vUZC0BmyxiNuVTK9eFjie/eIS3ST4W5T9
-3v2n+F2fD7+xsfSzUyjRc3p+zLyweImjiS6J5GAmTf4qxL9hQ3nXEW2gtRQQvB2l
-W62s4eZt9jFlQjhXVjUeIkEPkORE4RrDInyktgSc6BKm/D5SylQgwytebDtJC2s4
-QceoYrV7CHNsQ0vr9oITDlBN4Ik2TTsqhK2Sw0/2P0W7VU7y8uoHsm2xHPkf17l+
-svy9/UvPf4f5kyBIPwySRFS4IUXcdP8MhscNstvyw1GJqxtCNNRfDX6z0isLIU6Q
-yfIbxBsgCdHQMyM3HekxaofPcGx9LRJtbbNt2YA4SbqEKnzci/ToUY+z8a2svvDM
-Ko5OrYJ/yAjPYjcoQ7ajynJC+BxvFRMTtfCEQmDLiaxN9+ueXJJMXe26hLYClF9g
-ADHM+PuYvQrF2GfU9DgvPXkJHh3yEtyPk1rE6O1f4Q9xvKZMblg=
-=cVKh
------END PGP SIGNATURE-----
-
---he6mgtsui5z5w5dr--
