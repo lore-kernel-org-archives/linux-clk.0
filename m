@@ -1,169 +1,176 @@
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D442F8E9C
-	for <linux-clk@vger.kernel.org>; Wed, 24 Jun 2026 07:03:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.215.173
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782284586; cv=pass; b=RtMuM0hprWrwxf4w/EE8k4B5gZPxziq0BJ4jv+hpox7N+9ikKRvcJUjd+Zva3K/8dPNR/NpR4r7wOEv9PZ8tUdosFKsZRf9HtcdOL5IfVEeoYmb9elyf/yHokYs/ete8+TMMHpA50PY+85Qqg7PVouF2tq9Lowzxqgb23E08vYI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782284586; c=relaxed/simple;
-	bh=6NnUuMFK7ZVPFmJ/RYM6gVqWzmsucRvdbM9ZcfpYsOc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fTK8JHu8MD+1nnsxOat87+aCi6eSB0gbohosZRnWw0yr1D5/Vbp6/e9mPsi9PS3Ju3rHGJTYsE+kH95NCAKO/7ja2kMQ/c7fmA2VzWCsr2QufxUtn3iEBCPzMVvvfq6fhY4LhgXMnPWabHuia25upi5EB0oUVo45Q/b32QVqz3U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CbUS0YJD; arc=pass smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9E92388E50
+	for <linux-clk@vger.kernel.org>; Wed, 24 Jun 2026 07:06:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1782284771; cv=none; b=nGmeO4/+zgwbwd4o2RacGWyW2E92HoeEN2hyizuN3PzZVJyn6tfs+zEqZrYfsdJgv6+CvMcchDLuWZSTfm+miY3XKVnjFFvq23DjgDO7+yxtSfdkD+YLAg7ptfQaFwKmhKKTRoo5Z5gY3l6EOsiy/eSjtJhW3lWoUGWWNr3XuGA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1782284771; c=relaxed/simple;
+	bh=vO37nKWNggFQax7MCOi8c31bmHyC0P5Zcqzdh35oJXQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AuO/ULGH1OQXyx1pWKJ63f2IPDXGu2vqa6+WmZYmdu+O93PeOFhrMac1NQTMrIWFYiuWq/44De1GT4NnL+Xd/7PbqdgYFzlkfYhQ4LGDBDQPUHLIN07LYBxeQry3QvdxzTWRQZ3LZMm6kkVlN5UgQbLquxmoZcttGWpLPVkOz4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YeWUGPIA; arc=none smtp.client-ip=209.85.214.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CbUS0YJD"
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-c8ff15af279so378525a12.3
-        for <linux-clk@vger.kernel.org>; Wed, 24 Jun 2026 00:03:04 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1782284584; cv=none;
-        d=google.com; s=arc-20240605;
-        b=cpJf5/uczEOcmH02ueLf8eSZp9sPIOErhRo3SZuOMsmusmoNWKaPsxYuQ4ArnHFUUe
-         RVhkZ1nzE5tn++5+PEuylewywVOpqC81+e19xKj8jh00wnO09AMi7bFY2o5esHF9awgV
-         brqu5MPiZiXtnGhVvpRmmlFYBd9R6UcjO1ovHX0++9bOcoGubMNnGLeHT6nxGAh1N5yJ
-         79y3xJ6tAm6kCXppM8jsX1Dz6KyEu16eEC/XL8P2RHvj07Ty4rvmbBeXm41NFFRRs7OY
-         945KmP0Vk1SC9Nc2mFEAjmmUUuOOQ7no3S3iCynjQaZ0Me2nuYmS8h/9paw4+s+0yTz9
-         Cqiw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=rlK+fk93PJhltwmX3WNvBKy5MCGrZO4m1kl0DhorfTU=;
-        fh=j/hKqcJi+ZbRR80FQyMzlGHKxFjhtUU3aEyfGMwdBuw=;
-        b=f2PT6dRHv05+0mhSabMkWZi4hXuIuhWBu0om/FPyNkN/qwqHi82MKCbf/mKEXbTegh
-         qDl7iVq7DHdyRqVR3f2CrcgzNcOZw/EsNexbnVscvzk9Xgt5I+bIYuaiAkKFsLlScYls
-         6x8w7qWuyszo5euIkufbzOcSZ9ssJWTkQqeVgf2rrZvJuX2jYzbdrkEtW4MgRz9CUSWb
-         aqVLr4bn7YymZII703BuOjqiUHFjbxs9ZF3yQKB8gZatG6aPJIXPWXJdkm5EMvdDD7xH
-         JaRkusmnTOD/qEFjmwtB7+OuOKcJ6yBxGbwYImIZtAVQNgv4L2pU70kUXYPYHKJddhzo
-         40DA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YeWUGPIA"
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2c6bdb8a8bdso3309115ad.1
+        for <linux-clk@vger.kernel.org>; Wed, 24 Jun 2026 00:06:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1782284584; x=1782889384; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rlK+fk93PJhltwmX3WNvBKy5MCGrZO4m1kl0DhorfTU=;
-        b=CbUS0YJDkdxTytYkcywUUb+F7bICN7xN0mb9mnq74V8/ZofuJdL/b43L7KBqyx6P+V
-         003fP8O1i0da5/rHNnZOE3wvNQMSsMGPPDLGzN94ed3/B6g8Ju26rMnjyEpyZEhMzYOb
-         gJaXQaUqMWjdwb8H6FBntyGnv5sQgZaFr3jyJ5er2j61PO78ZFKBGr9VvTZfXzjxKCsX
-         QoFpNMdD/hZSicUHS6K8+x/9H1tqSJxGY+fK0d2PTfBh0qzUgMm0O6MUKnN1wScxrvDM
-         jpdGQre/REuVifEBfye3xK95KBqF4M/BPEapJ9WYragOXmhrim/DFVXyIL1V/FqR8m62
-         6Egg==
+        d=gmail.com; s=20251104; t=1782284769; x=1782889569; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/E9Hk2LKss7XBEYuxylpcD6Bl9dpKGVhcdDLO/oIkQM=;
+        b=YeWUGPIAGXdIul79lH5dDLHyk6klcT4fqQP3aVPxSvmXDO0hdoU59G8RmHQiBXyb+C
+         FdF0dZAIdj/WIUUn7VRopqk5kypxYUCO2To+re7y2As4kmTxs8r3W5YTDfxm5Pn7RMNb
+         CAg2d2+F4h2SIY1ZzXMDgTfUPZ4l/YYVFx4ijQ8yXlM4gF0GQmPM4BagH38zJpFjbrTn
+         G0sFfvbhSluQ5XdXcNUj1h0aomWUB1TtQyXghCBZK4IAlQTmwsn5ltKMp7i222YtMK9/
+         QUOTxO0PAlGdoF0ouLMOthNvUj9gD/KrxZ5BLAp/vYvNMkwCMNIStNd9xArVwUtNkJKI
+         StjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782284584; x=1782889384;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=rlK+fk93PJhltwmX3WNvBKy5MCGrZO4m1kl0DhorfTU=;
-        b=SmcpqK28wnnymVktXpqr1OsD36Aq0INlDGOpfbsW/cHWzfkWMxgci9yb27vExznNWW
-         7tVWgkgPV6wSSaI0mSlI6LQXV5lVAmtMR1Xr2kaPLx9QsxemBLoA2aMh6/ZhUkzrELkd
-         JavAOZ2wExsxL+x9PyiLTDnA8XlMHUDC+Msrtwd2+yS2VzkVrNbdkuHehYrq80OXPPYf
-         sOAoIlCfa7+e2IycJo5zvXrQRw90wgfZDQXGlweJItzYKSHVUaOwpAu+Y6UyJGxAsz/+
-         zeHAA5canyBVwzaLzkam/Ra21kwEYLqous63OZ4FAuMyG2Bfjvw7Zd4B5xK989T6j9CK
-         ErfA==
-X-Forwarded-Encrypted: i=1; AFNElJ+SxqyNO+9cC5cTTz2dBiLOXC9g0kU/AaViWAJbBS/Rj9DdVKfKsP3bd4ZUd67g4eEFBdD1mW4cpD4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUcXjvveHDdvS3ecPrzKwp1AZm1hue/BDBYVR4UhiXJevn82Ld
-	axvVMIhZIq5U6kak/muMkuoSAo2Clveodunrlxx0QVAkyitDbOd4KLI2gBMQwUZ7uzU7+RLaHeV
-	uehb1128DQ+CIuv7MJlfX8z4cfAVowg==
-X-Gm-Gg: AfdE7cl69j/b0bhuGVaOLA471sQnFe1h0SxGUPvqh/wvz0efOL7vzfKl2q6/GfqxQsc
-	M47uTh8WVnum6WRJCODxzXOnWa6yzw72BpjKtXugqdGearkXE3tNikaFGHm55Lv/TLJs7nGfOkl
-	9/d20O+00TmY5xgMjKnRPMn0Qii/V6ghLd3j3KxYOhhdKqwRPZlr3MDsir6/khkCMKDqb4af8LP
-	qfIBBx3669V4t2fbMrLxu3aPjt8xSTXHy+6sTPfALzn3tNzdX9Q54e4WIoaBA/AOiTepqsiZpcQ
-	YT9jRWeFFp2m3ltK9PUGQlB/
-X-Received: by 2002:a05:6a21:10d:b0:3ba:ca7d:f8f0 with SMTP id
- adf61e73a8af0-3bd2d03331dmr2777776637.9.1782284584392; Wed, 24 Jun 2026
- 00:03:04 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1782284769; x=1782889569;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/E9Hk2LKss7XBEYuxylpcD6Bl9dpKGVhcdDLO/oIkQM=;
+        b=lw6m2qyqUcSDREePtNRcXAaGcNr/ob9lQaRfQiD/QvxtE8yH8NHi9G7vTNHNJDDQCN
+         TUE5CaPBlhC12TGIjM0iv/4XWys5JB5+dvg3P8cDcc1XJ11fYxRH/YNSYZo3rS9Ba6v4
+         j/28Rk+WQsDe+LaXmKTDY9d0yiyR93+p6HbBzkbNGF3EDvXYzoZF4ErKAhtul3PEx82g
+         EVp+3h5y2/dukDh4J80XDJm7J7NU8ugcS/lf4kkiR0mfxRypGS4ToqbhMr6VcJ3MFcLs
+         pr0UZjaFk/GjWivkfHofEy8Va2wexSEMjYgT4aG9xTnLcdSYGNAy3Zvx/iyjqYZ1oZ3Q
+         o1Gw==
+X-Gm-Message-State: AOJu0YyvZwxHcDom9VQRF4iQ8Y5DnyYjkVXAe42ibPFiN+46g5w7xDJ0
+	5X/1hzm4zXFt7C7GHG3LsG205tSo09flsn9+CJF9zWPY5gW2wP4rTLk=
+X-Gm-Gg: AfdE7cl+GJQhqcGkLoIDVAWH9xT3e6uChdpn064+D3xJ+tKTCCdDEYUaqut5tVK8Tqk
+	QBBMLmrPCj+43d/ofJtmLvKLSJfMj7ex3E15buqgKc3dtFn7AMASjAlbjqU7O1OCCMKJR976fbi
+	ay7sqgAuTwgF1iNPGk98cdTFptiwTRf095cVlKPrUYNnMi4dujHjYWNk0jrnhKmtKPunF0vgM8Q
+	1wCnXxQaXW3IZtcIsq2ELAyo/jfayvgR9hjmUYf7IQ6jon+BmtB7jgghEB5UlKCfu6lmPVsokjs
+	Z3ovFzroIVYBbvVX3WGMDmKQjTWe9elHwefU25+a2dfrJEpbKOU0MhR+ujwSMmUCnEhS0bjWLej
+	7GQ3XKu+/NLkcrU3nC3EIr14MxLbSOPM8FZ6SHScpDtqp7cSNal0T2WUraNe7t9JALS7ojhE7KX
+	3Fog2DcusDYRtxbaOq0fANFuHFLqlP5KZBtKWB+nSQWIWxiL70ZxyIAfBttnlJwShXpDKFUFeZN
+	R8=
+X-Received: by 2002:a17:903:3bc7:b0:2c4:608:167c with SMTP id d9443c01a7336-2c7c759693bmr65587045ad.6.1782284768917;
+        Wed, 24 Jun 2026 00:06:08 -0700 (PDT)
+Received: from localhost.localdomain ([14.5.152.27])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2c743bfdc97sm151451845ad.65.2026.06.24.00.06.06
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 24 Jun 2026 00:06:08 -0700 (PDT)
+From: Myeonghun Pak <mhun512@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Myeonghun Pak <mhun512@gmail.com>,
+	Ijae Kim <ae878000@gmail.com>
+Subject: [PATCH v2] clk: palmas: Balance external-control clock prepare
+Date: Wed, 24 Jun 2026 16:05:42 +0900
+Message-ID: <20260624070602.10328-1-mhun512@gmail.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260623090738.13773-1-mhun512@gmail.com> <ajqROjYdv28Yrqo5@redhat.com>
-In-Reply-To: <ajqROjYdv28Yrqo5@redhat.com>
-From: Myeonghun Pak <mhun512@gmail.com>
-Date: Wed, 24 Jun 2026 16:02:49 +0900
-X-Gm-Features: AVVi8Cf9qcxjsGQb7x0dDnqnZi-YWmw2EKgRQkeo6x3PV864BQfmeqOIg5JwnPE
-Message-ID: <CAGEsz8E=KwQko7sDQEftvFFbPu6f2Z1k7HLZVXn1FetCqqKKWw@mail.gmail.com>
-Subject: Re: [PATCH] clk: palmas: unprepare clock on provider registration failure
-To: Brian Masney <bmasney@redhat.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Ijae Kim <ae878000@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Brian,
+palmas_clks_init_configure() prepares the clock when an external control
+pin is configured.  The current driver only drops that prepare reference
+when external control configuration fails.
 
-Thanks for the review.
+If provider registration fails after that point, or if the driver is later
+removed, the prepare reference remains held.
 
-Agreed, v1 only handled the provider registration failure path and missed t=
-he
-driver remove path. I will send a v2 converting the provider registration t=
-o
-devm_of_clk_add_hw_provider() and making the external-control clk_prepare()
-reference device-managed as well.
+Use devm_add_action_or_reset() to manage the prepare reference.  Use
+devm_of_clk_add_hw_provider() to manage provider registration.  This
+balances the prepare reference on probe failure and driver removal.
 
-Best regards,
-Myeonghun
+Fixes: 942d1d674931 ("clk: Add driver for Palmas clk32kg and clk32kgaudio clocks")
+Co-developed-by: Ijae Kim <ae878000@gmail.com>
+Signed-off-by: Ijae Kim <ae878000@gmail.com>
+Signed-off-by: Myeonghun Pak <mhun512@gmail.com>
+---
+Changes in v2:
+- Use devm_of_clk_add_hw_provider() for provider cleanup.
+- Manage the external-control clk_prepare() with devm_add_action_or_reset().
+- Remove the manual provider remove callback.
 
-2026=EB=85=84 6=EC=9B=94 23=EC=9D=BC (=ED=99=94) =EC=98=A4=ED=9B=84 10:59, =
-Brian Masney <bmasney@redhat.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
->
-> Hi Myeonghun,
->
-> Thanks for the patch!
->
-> On Tue, Jun 23, 2026 at 06:07:34PM +0900, Myeonghun Pak wrote:
-> > palmas_clks_init_configure() prepares the clock when an external contro=
-l
-> > pin is configured.  If the subsequent of_clk_add_hw_provider() call fai=
-ls,
-> > palmas_clks_probe() returns the error without dropping that prepare
-> > reference.
-> >
-> > Unprepare the clock on that error path when external control is active,=
- so
-> > the probe failure path balances the successful clk_prepare().
-> >
-> > This issue was identified during our ongoing static-analysis research w=
-hile
-> > reviewing kernel code.
-> >
-> > Fixes: 942d1d674931 ("clk: Add driver for Palmas clk32kg and clk32kgaud=
-io clocks")
-> > Co-developed-by: Ijae Kim <ae878000@gmail.com>
-> > Signed-off-by: Ijae Kim <ae878000@gmail.com>
-> > Signed-off-by: Myeonghun Pak <mhun512@gmail.com>
-> >
-> > ---
-> >  drivers/clk/clk-palmas.c | 5 ++++-
-> >  1 file changed, 4 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/clk/clk-palmas.c b/drivers/clk/clk-palmas.c
-> > index 39049f62db..ab9df2eedb 100644
-> > --- a/drivers/clk/clk-palmas.c
-> > +++ b/drivers/clk/clk-palmas.c
-> > @@ -265,8 +265,11 @@ static int palmas_clks_probe(struct platform_devic=
-e *pdev)
-> >       }
-> >
-> >       ret =3D of_clk_add_hw_provider(node, of_clk_hw_simple_get, &cinfo=
-->hw);
-> > -     if (ret < 0)
-> > +     if (ret < 0) {
-> >               dev_err(&pdev->dev, "Fail to add clock driver, %d\n", ret=
-);
-> > +             if (cinfo->ext_control_pin)
-> > +                     clk_unprepare(cinfo->hw.clk);
-> > +     }
->
-> The driver currently only calls clk_unprepare() on an error path in
-> palmas_clks_init_configure(). It leaks when the driver is removed.
->
-> I think the cleanest approach to fixing this is to convert over to use
-> devm_of_clk_add_hw_provider().
->
-> Brian
->
+ drivers/clk/clk-palmas.c | 24 +++++++++++++++---------
+ 1 file changed, 15 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/clk/clk-palmas.c b/drivers/clk/clk-palmas.c
+index 39049f62db..fdbf8445eb 100644
+--- a/drivers/clk/clk-palmas.c
++++ b/drivers/clk/clk-palmas.c
+@@ -194,6 +194,13 @@ static void palmas_clks_get_clk_data(struct platform_device *pdev,
+ 	cinfo->ext_control_pin = prop;
+ }
+ 
++static void palmas_clks_unprepare_ext_control(void *data)
++{
++	struct palmas_clock_info *cinfo = data;
++
++	clk_unprepare(cinfo->hw.clk);
++}
++
+ static int palmas_clks_init_configure(struct palmas_clock_info *cinfo)
+ {
+ 	int ret;
+@@ -214,13 +221,18 @@ static int palmas_clks_init_configure(struct palmas_clock_info *cinfo)
+ 			return ret;
+ 		}
+ 
++		ret = devm_add_action_or_reset(cinfo->dev,
++					       palmas_clks_unprepare_ext_control,
++					       cinfo);
++		if (ret)
++			return ret;
++
+ 		ret = palmas_ext_control_req_config(cinfo->palmas,
+ 					cinfo->clk_desc->sleep_reqstr_id,
+ 					cinfo->ext_control_pin, true);
+ 		if (ret < 0) {
+ 			dev_err(cinfo->dev, "Ext config for %s failed, %d\n",
+ 				cinfo->clk_desc->clk_name, ret);
+-			clk_unprepare(cinfo->hw.clk);
+ 			return ret;
+ 		}
+ 	}
+@@ -230,7 +242,6 @@ static int palmas_clks_init_configure(struct palmas_clock_info *cinfo)
+ static int palmas_clks_probe(struct platform_device *pdev)
+ {
+ 	struct palmas *palmas = dev_get_drvdata(pdev->dev.parent);
+-	struct device_node *node = pdev->dev.of_node;
+ 	const struct palmas_clks_of_match_data *match_data;
+ 	struct palmas_clock_info *cinfo;
+ 	int ret;
+@@ -264,24 +275,19 @@ static int palmas_clks_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
+-	ret = of_clk_add_hw_provider(node, of_clk_hw_simple_get, &cinfo->hw);
++	ret = devm_of_clk_add_hw_provider(&pdev->dev, of_clk_hw_simple_get,
++					  &cinfo->hw);
+ 	if (ret < 0)
+ 		dev_err(&pdev->dev, "Fail to add clock driver, %d\n", ret);
+ 	return ret;
+ }
+ 
+-static void palmas_clks_remove(struct platform_device *pdev)
+-{
+-	of_clk_del_provider(pdev->dev.of_node);
+-}
+-
+ static struct platform_driver palmas_clks_driver = {
+ 	.driver = {
+ 		.name = "palmas-clk",
+ 		.of_match_table = palmas_clks_of_match,
+ 	},
+ 	.probe = palmas_clks_probe,
+-	.remove = palmas_clks_remove,
+ };
+ 
+ module_platform_driver(palmas_clks_driver);
+-- 
+2.47.1
