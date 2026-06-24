@@ -1,343 +1,178 @@
-Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4F463AC0F5;
-	Wed, 24 Jun 2026 08:30:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.200.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32A063093CB
+	for <linux-clk@vger.kernel.org>; Wed, 24 Jun 2026 08:53:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782289820; cv=none; b=P0MDaLaMjXfXuMTyb3exUlqu+gRT3rqtj+5B3R0T5b2S9I51c/uK8Ea7XMc/dEo38WQNK/KemdLge9MLJ1cHTZEF4V8uhvZLICMZNZ6H33ZgaZ7B6O4htqaI/z7pkAQvl3YkgpsiJr068bCAuXpEKJM8N4wooRV5yRRPf3h3VBw=
+	t=1782291240; cv=none; b=BjS73DLoMp6V29fRJjTqX/c1DIxqRRhGEXFNG2hXmwtFqbwRpXCmONgjH/PYmVv2/JRmuDRs4awlGsCn9K5luMkyKVghKSMLFMcwfWqlJKsKNDSZLP0+CAaODeRb0pvoWkG1coSbSMi71uTL1+ZOs2zyagipwJn8anuJIeuLftU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782289820; c=relaxed/simple;
-	bh=lkaYPeVqE1Sh6B2MbSNE28E8PWIOnrh2JVKCnTPSS2s=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=UC0WZMQV2GM6hca1qktot+vVABWY9m7VOgoX+PPou4Rt6FEzXzWJUPnGvUymISeX1kW5skmyyiEw3yUkDyEqVF0xWvtjW0wdUaBjkfCm8cRGMLYFvD7Cd7cRBvs7bjAJMtb6ebH8SrP8MvyPL3HrYCO/BauMfnEMLZPrk2JcmLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.200.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de (drehscheibe.grey.stw.pengutronix.de [IPv6:2a0a:edc0:0:c01:1d::a2])
-	(Authenticated sender: relay-from-drehscheibe.grey.stw.pengutronix.de)
-	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id 1BB7A200320;
-	Wed, 24 Jun 2026 10:30:09 +0200 (CEST)
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1wcIzp-004OaY-05;
-	Wed, 24 Jun 2026 10:30:09 +0200
-Received: from pza by lupine with local (Exim 4.98.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1wcIzo-000000003om-3yka;
-	Wed, 24 Jun 2026 10:30:08 +0200
-Message-ID: <0193c47ff4ca98b1a6cb56ed8f4d8876b54756d8.camel@pengutronix.de>
-Subject: Re: [PATCH v6 3/4] reset: cix: add sky1 audss auxiliary reset driver
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: joakim.zhang@cixtech.com, mturquette@baylibre.com, sboyd@kernel.org, 
-	bmasney@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, 	gary.yang@cixtech.com
-Cc: cix-kernel-upstream@cixtech.com, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org
-Date: Wed, 24 Jun 2026 10:30:08 +0200
-In-Reply-To: <20260623070805.211019-4-joakim.zhang@cixtech.com>
-References: <20260623070805.211019-1-joakim.zhang@cixtech.com>
-	 <20260623070805.211019-4-joakim.zhang@cixtech.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-0+deb13u1 
+	s=arc-20240116; t=1782291240; c=relaxed/simple;
+	bh=31M5oDzvv7jUkHK/L53fJqHSTyhvuwPx0+bN3Xi2/vI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g+rXsJMTeBrzVnS0z9bagzovAdSCTshO6m39n4k1VvIuZYAB8Rf9qKW+++gtpsrMelF2L0W+s4PfYZv/BuOXUkDf8Z5KcGawo1CgicEbtKujt5b2IstmHEkGtb5RboM9jVICFYF171BdsorQLPOyXQjhwxZ6TbijaRRHWXxz6d4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IVhn+24W; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IVhn+24W"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 717AD1F000E9;
+	Wed, 24 Jun 2026 08:53:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1782291239;
+	bh=4Zl5Ebn9buIu2G1ZtxyEcZ4/F83TLtSV53gJrVovQNQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=IVhn+24WGRJEbfzhY0ffLwBbOQwPb2tPq0CJtDgTbT9gnHigERZTZlSgsCSnEIYE5
+	 /iBpHxhf+aBY0D31GAm4o6Y0z9vYsFRlLmBsgDPHTkg3qdhZB0Akg9wN3GarVpt8qk
+	 1DJ8XAz4s7mLxouI3gX1dvFnq/H8ACKd9cf+5b/iSHvhWcgZEKlEsRieBsKp1MyNqH
+	 mPnFEA+AuWG2ke6iQf0BygHBaYMsAE9LvQ3Xw9AQ3T8mu3kvpiPChGZloyB0uLpH6f
+	 ZRRQfsfxQAE+NIHCsCwAB1D5rSt56kXAHpvAdWqTar9ivaOaedJqpUgaZXKYfnbWrz
+	 U4MRTcqabGZ6A==
+Date: Wed, 24 Jun 2026 10:53:55 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Hans de Goede <johannes.goede@oss.qualcomm.com>
+Cc: Brian Masney <bmasney@redhat.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Javier Martinez Canillas <javierm@redhat.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Helge Deller <deller@gmx.de>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Dmitry Baryshkov <lumag@kernel.org>, Rob Clark <robin.clark@oss.qualcomm.com>, 
+	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	~postmarketos/upstreaming@lists.sr.ht
+Subject: Re: [PATCH 0/3] clk: Add __clk_disable_unprepare_counts_only() and
+ use this in simple[fb|drm]
+Message-ID: <20260624-ultramarine-beetle-of-vastness-acd51e@houat>
+References: <20260527094811.116977-1-johannes.goede@oss.qualcomm.com>
+ <ahd4XgTo3KZqGS9M@redhat.com>
+ <66a76d9f-fe04-4a72-b6fe-42c2922fe9d9@oss.qualcomm.com>
+ <20260528-sloth-of-delightful-chaos-1f02dc@houat>
+ <4b09bd91-9a08-407a-9b01-216dd4d7aae0@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="3v5pwppls5iobxny"
+Content-Disposition: inline
+In-Reply-To: <4b09bd91-9a08-407a-9b01-216dd4d7aae0@oss.qualcomm.com>
 
-On Di, 2026-06-23 at 15:08 +0800, joakim.zhang@cixtech.com wrote:
-> From: Joakim Zhang <joakim.zhang@cixtech.com>
+
+--3v5pwppls5iobxny
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 0/3] clk: Add __clk_disable_unprepare_counts_only() and
+ use this in simple[fb|drm]
+MIME-Version: 1.0
+
+On Thu, May 28, 2026 at 03:02:09PM +0200, Hans de Goede wrote:
+> On 28-May-26 2:08 PM, Maxime Ripard wrote:
+> > On Thu, May 28, 2026 at 12:12:10PM +0200, Hans de Goede wrote:
+> >> Hi Brian,
+> >>
+> >> On 28-May-26 1:03 AM, Brian Masney wrote:
+> >>> Hi Hans,
+> >>>
+> >>> On Wed, May 27, 2026 at 11:48:08AM +0200, Hans de Goede wrote:
+> >>>> 2) One option considered was detaching the simple-framebuffer driver=
+ later,
+> >>>>    after the real display driver has had a chance to claim the clock=
+s. But
+> >>>>    this won't work in cases where the real display driver picks diff=
+erent
+> >>>>    parent clocks then the boot firmware did and needs to reparent cl=
+ocks.
+> >>>
+> >>> Why won't that work in the case where different parent clocks are sel=
+ected?
+> >>> I'll describe a scenario below.
+> >>>
+> >>>>
+> >>>>    Basically the goal is for things to behave as if the simple-frame=
+buffer
+> >>>>    driver was not there at all, because that leaves the hw in the st=
+ate
+> >>>>    the real display driver expects.
+> >>>
+> >>> I think the deferred unbinding could have some potential here where
+> >>> there is some kind of notification mechanism between simple-framebuff=
+er
+> >>> and the real drm driver. So:
+> >>>
+> >>> - simple-framebuffer driver takes reference(s) to the clk(s).
+> >>>
+> >>> - real drm driver eventually loads, takes reference(s) to the necessa=
+ry
+> >>>   clk(s).
+> >>>
+> >>> - real drm driver sends a notification to simple-framebuffer that it's
+> >>>   done, and has control.
+> >>>
+> >>> - simple-framebuffer can unbind and release its references to the clk=
+s.
+> >>>
+> >>> No clks will be shutdown prematurely in this scenario.
+> >>>
+> >>> If the real drm driver needs a different parent, then presumably thin=
+gs
+> >>> should be setup correctly, and simple-framebuffer can have the clocks
+> >>> shut down when it calls clk_disable_unprepare().
+> >>
+> >> If the real drm driver needs a different parent, then how does it
+> >> do the reparenting while the simple-framebuffer driver is holding
+> >> a reference to the clock ?  In that case the clock might have
+> >> a protected_count of non 0 (depends on the core-clk flags) and
+> >> reparenting won't work.
+> >=20
+> > The only case where it should reparent you listed was that you might
+> > need to pick up a different resolution. However, that can only be
+> > enforced by an ioctl or a client.
+> >=20
+> > simplefb/drm is removed in msm_drm_kms_init. The device is published
+> > drm_dev_register called right after msm_drm_kms_init, and the clients
+> > are registered in msm_drm_kms_post_init, called after drm_dev_register.
+> >=20
+> > There's no way in the current msm architecture to have a modeset happen
+> > while the simpledrm driver is still active.
 >=20
-> Add an auxiliary reset controller driver for the AUDSS CRU. Sixteen
-> software reset lines for audio subsystem peripherals are controlled
-> through one register in the CRU register map.
+> Ok, new plan, please let me know what you think about this:
 >=20
-> The driver is created by the AUDSS clock platform driver and registers
-> the reset controller on the CRU device node.
+> 1. Add a new "disable" callback argument to
+> devm_aperture_acquire_for_platform_device() and store this in
+> struct aperture_range
 >=20
-> Signed-off-by: Joakim Zhang <joakim.zhang@cixtech.com>
-> ---
->  drivers/reset/Kconfig            |  14 +++
->  drivers/reset/Makefile           |   1 +
->  drivers/reset/reset-sky1-audss.c | 192 +++++++++++++++++++++++++++++++
->  3 files changed, 207 insertions(+)
->  create mode 100644 drivers/reset/reset-sky1-audss.c
+> 2. Add a new aperture_disable_conflicting_devices() which
+> calls the disable callback for matching devices.
 >=20
-> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-> index d009eb0849a3..f74859b292ae 100644
-> --- a/drivers/reset/Kconfig
-> +++ b/drivers/reset/Kconfig
-> @@ -300,6 +300,20 @@ config RESET_SKY1
->  	help
->  	  This enables the reset controller for Cix Sky1.
-> =20
-> +config RESET_SKY1_AUDSS
-> +	tristate "Cix Sky1 Audio Subsystem reset controller"
-> +	depends on ARCH_CIX || COMPILE_TEST
-> +	select AUXILIARY_BUS
-> +	select REGMAP_MMIO
-> +	default CLK_SKY1_AUDSS
-> +	help
-> +	  Support for block-level software reset lines in the Cix Sky1
-> +	  Audio Subsystem (AUDSS) Clock and Reset Unit. Sixteen reset
-> +	  outputs for audio peripherals are controlled through the CRU
-> +	  register map. The driver binds as an auxiliary device from
-> +	  the AUDSS clock driver. Say M or Y here if you want to build
-> +	  this driver.
-> +
->  config RESET_SOCFPGA
->  	bool "SoCFPGA Reset Driver" if COMPILE_TEST && (!ARM || !ARCH_INTEL_SOC=
-FPGA)
->  	default ARM && ARCH_INTEL_SOCFPGA
-> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-> index 3e52569bd276..e81407ea3e29 100644
-> --- a/drivers/reset/Makefile
-> +++ b/drivers/reset/Makefile
-> @@ -39,6 +39,7 @@ obj-$(CONFIG_RESET_RZV2H_USB2PHY) +=3D reset-rzv2h-usb2=
-phy.o
->  obj-$(CONFIG_RESET_SCMI) +=3D reset-scmi.o
->  obj-$(CONFIG_RESET_SIMPLE) +=3D reset-simple.o
->  obj-$(CONFIG_RESET_SKY1) +=3D reset-sky1.o
-> +obj-$(CONFIG_RESET_SKY1_AUDSS) +=3D reset-sky1-audss.o
->  obj-$(CONFIG_RESET_SOCFPGA) +=3D reset-socfpga.o
->  obj-$(CONFIG_RESET_SUNPLUS) +=3D reset-sunplus.o
->  obj-$(CONFIG_RESET_SUNXI) +=3D reset-sunxi.o
-> diff --git a/drivers/reset/reset-sky1-audss.c b/drivers/reset/reset-sky1-=
-audss.c
-> new file mode 100644
-> index 000000000000..20870f37d7d7
-> --- /dev/null
-> +++ b/drivers/reset/reset-sky1-audss.c
-> @@ -0,0 +1,192 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Cix Sky1 Audio Subsystem reset controller driver
-> + *
-> + * Copyright 2026 Cix Technology Group Co., Ltd.
-> + */
-> +
-> +#include <dt-bindings/reset/cix,sky1-audss-cru.h>
-> +
-> +#include <linux/auxiliary_bus.h>
-> +#include <linux/delay.h>
-> +#include <linux/device.h>
-> +#include <linux/io.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/regmap.h>
-> +#include <linux/reset-controller.h>
-> +
-> +#define SKY1_RESET_SLEEP_MIN_US		50
-> +#define SKY1_RESET_SLEEP_MAX_US		100
-> +
-> +#define AUDSS_SW_RST			0x78
-> +
-> +struct sky1_audss_reset_map {
-> +	unsigned int offset;
-> +	unsigned int mask;
-> +};
-> +
-> +struct sky1_audss_reset {
-> +	struct reset_controller_dev rcdev;
-> +	struct regmap *regmap;
-> +	const struct sky1_audss_reset_map *map;
-> +};
-> +
-> +static const struct sky1_audss_reset_map sky1_audss_reset_map[] =3D {
-> +	[AUDSS_I2S0_SW_RST]   =3D { AUDSS_SW_RST, BIT(0) },
-> +	[AUDSS_I2S1_SW_RST]   =3D { AUDSS_SW_RST, BIT(1) },
-> +	[AUDSS_I2S2_SW_RST]   =3D { AUDSS_SW_RST, BIT(2) },
-> +	[AUDSS_I2S3_SW_RST]   =3D { AUDSS_SW_RST, BIT(3) },
-> +	[AUDSS_I2S4_SW_RST]   =3D { AUDSS_SW_RST, BIT(4) },
-> +	[AUDSS_I2S5_SW_RST]   =3D { AUDSS_SW_RST, BIT(5) },
-> +	[AUDSS_I2S6_SW_RST]   =3D { AUDSS_SW_RST, BIT(6) },
-> +	[AUDSS_I2S7_SW_RST]   =3D { AUDSS_SW_RST, BIT(7) },
-> +	[AUDSS_I2S8_SW_RST]   =3D { AUDSS_SW_RST, BIT(8) },
-> +	[AUDSS_I2S9_SW_RST]   =3D { AUDSS_SW_RST, BIT(9) },
-> +	[AUDSS_WDT_SW_RST]    =3D { AUDSS_SW_RST, BIT(10) },
-> +	[AUDSS_TIMER_SW_RST]  =3D { AUDSS_SW_RST, BIT(11) },
-> +	[AUDSS_MB0_SW_RST]    =3D { AUDSS_SW_RST, BIT(12) },
-> +	[AUDSS_MB1_SW_RST]    =3D { AUDSS_SW_RST, BIT(13) },
-> +	[AUDSS_HDA_SW_RST]    =3D { AUDSS_SW_RST, BIT(14) },
-> +	[AUDSS_DMAC_SW_RST]   =3D { AUDSS_SW_RST, BIT(15) },
-> +};
-> +
-> +static struct sky1_audss_reset *to_sky1_audss_reset(struct reset_control=
-ler_dev *rcdev)
-> +{
-> +	return container_of(rcdev, struct sky1_audss_reset, rcdev);
-> +}
-> +
-> +static int sky1_audss_reset_set(struct reset_controller_dev *rcdev,
-> +				unsigned long id, bool assert)
-> +{
-> +	struct sky1_audss_reset *priv =3D to_sky1_audss_reset(rcdev);
-> +	const struct sky1_audss_reset_map *signal =3D &priv->map[id];
-> +	unsigned int value =3D assert ? 0 : signal->mask;
-> +
-> +	return regmap_update_bits(priv->regmap, signal->offset, signal->mask, v=
-alue);
+> 3. Have the simple[fd|drm] drivers implement a disable callback
+> which unregisters the drm dev and releases any claims on the
+> aperture mem-region, while keeping clks, regulators, etc.
+> enabled. And have them check if disable was called on remove()
+> and if not do the disable() things on remove(0
+>=20
+> 4. Have msm call aperture_disable_conflicting_devices() where it
+> now call aperture_remove_conflicting_devices() and call
+> aperture_remove_conflicting_devices() at the point where it has
+> claimed any clks it needs.
+>=20
+> Does this sound like something which would be acceptable ?
 
-Why does this propagate the return value ...
+Generally speaking, yes, but I'd also like to understand what you're
+trying to fix exactly, because I don't see how it can be what you hinted
+at before.
 
-> +}
-> +
-> +static int sky1_audss_reset_assert(struct reset_controller_dev *rcdev,
-> +				   unsigned long id)
-> +{
-> +	sky1_audss_reset_set(rcdev, id, true);
+Maxime
 
-... only to be ignored? It'd be better to pass it on.
+--3v5pwppls5iobxny
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> +	usleep_range(SKY1_RESET_SLEEP_MIN_US, SKY1_RESET_SLEEP_MAX_US);
-> +	return 0;
-> +}
-> +
-> +static int sky1_audss_reset_deassert(struct reset_controller_dev *rcdev,
-> +				     unsigned long id)
-> +{
-> +	sky1_audss_reset_set(rcdev, id, false);
-> +	usleep_range(SKY1_RESET_SLEEP_MIN_US, SKY1_RESET_SLEEP_MAX_US);
-> +	return 0;
-> +}
-> +
-> +static int sky1_audss_reset(struct reset_controller_dev *rcdev,
-> +			    unsigned long id)
-> +{
-> +	sky1_audss_reset_assert(rcdev, id);
-> +	sky1_audss_reset_deassert(rcdev, id);
-> +	return 0;
-> +}
+-----BEGIN PGP SIGNATURE-----
 
-Will any AUDSS reset consumer use the reset_control_reset() API?
-If not, no need to implement this.
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCajubIgAKCRAnX84Zoj2+
+dvMDAYCoDoEuVS2C+WS3QyeeEXq7mW3a6slIYHufpnpz3Eex/cfoISTR//povPdq
+oy3gMYwBfRblB2aWaEAHLvyzzJhFRNyYOVCSWrWj3cO5CX9yzWi0T2ZR6XG6qJFQ
+69ZadJ3xjA==
+=3T3C
+-----END PGP SIGNATURE-----
 
-> +
-> +static int sky1_audss_reset_status(struct reset_controller_dev *rcdev,
-> +				   unsigned long id)
-> +{
-> +	struct sky1_audss_reset *priv =3D to_sky1_audss_reset(rcdev);
-> +	const struct sky1_audss_reset_map *signal =3D &priv->map[id];
-> +	unsigned int value;
-> +
-> +	regmap_read(priv->regmap, signal->offset, &value);
-> +	return !!(value & signal->mask);
-> +}
-> +
-> +static const struct reset_control_ops sky1_audss_reset_ops =3D {
-> +	.reset    =3D sky1_audss_reset,
-> +	.assert   =3D sky1_audss_reset_assert,
-> +	.deassert =3D sky1_audss_reset_deassert,
-> +	.status   =3D sky1_audss_reset_status,
-> +};
-> +
-> +static const struct regmap_config sky1_audss_regmap_config =3D {
-> +	.reg_bits =3D 32,
-> +	.val_bits =3D 32,
-> +	.reg_stride =3D 4,
-> +};
-> +
-> +static void sky1_audss_reset_iounmap(void *data)
-> +{
-> +	iounmap(data);
-> +}
-> +
-> +static int sky1_audss_reset_get_regmap(struct sky1_audss_reset *priv)
-> +{
-> +	struct device *dev =3D priv->rcdev.dev;
-> +	void __iomem *base;
-> +	int ret;
-> +
-> +	priv->regmap =3D dev_get_regmap(dev->parent, NULL);
-> +	if (priv->regmap)
-> +		return 0;
-> +
-> +	base =3D of_iomap(dev->parent->of_node, 0);
-> +	if (!base)
-> +		return dev_err_probe(dev, -ENOMEM, "failed to iomap address space\n");
-> +
-> +	ret =3D devm_add_action_or_reset(dev, sky1_audss_reset_iounmap, base);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "failed to register iounmap action\n");
-> +
-> +	priv->regmap =3D devm_regmap_init_mmio(dev, base, &sky1_audss_regmap_co=
-nfig);
-> +	if (IS_ERR(priv->regmap))
-> +		return dev_err_probe(dev, PTR_ERR(priv->regmap),
-> +				     "failed to initialize regmap\n");
-
-Why is there a fallback path? The clock driver creates the regmap
-before creating the reset aux device, so dev_get_regmap() can never
-fail.
-
-> +
-> +	return 0;
-> +}
-> +
-> +static int sky1_audss_reset_probe(struct auxiliary_device *adev,
-> +				  const struct auxiliary_device_id *id)
-> +{
-> +	struct sky1_audss_reset *priv;
-> +	struct device *dev =3D &adev->dev;
-> +	int ret;
-> +
-> +	priv =3D devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +
-> +	priv->map =3D sky1_audss_reset_map;
-> +	priv->rcdev.owner =3D THIS_MODULE;
-> +	priv->rcdev.nr_resets =3D ARRAY_SIZE(sky1_audss_reset_map);
-> +	priv->rcdev.ops =3D &sky1_audss_reset_ops;
-> +	priv->rcdev.of_node =3D dev->parent->of_node;
-
-auxiliary_device_create() uses device_set_of_node_from_dev() to inherit
-the parent of_node, so you can use dev->of_node here.
-
-> +	priv->rcdev.dev =3D dev;
-> +	priv->rcdev.of_reset_n_cells =3D 1;
-
-No need to set of_reset_n_cells.
-
-> +
-> +	dev_set_drvdata(dev, priv);
-
-This seems unnecessary as well.
-
-> +
-> +	ret =3D sky1_audss_reset_get_regmap(priv);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "failed to get regmap\n");
-> +
-> +	return devm_reset_controller_register(dev, &priv->rcdev);
-> +}
-> +
-> +static const struct auxiliary_device_id sky1_audss_reset_ids[] =3D {
-> +	{ .name =3D "clk_sky1_audss.reset" },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(auxiliary, sky1_audss_reset_ids);
-> +
-> +static struct auxiliary_driver sky1_audss_reset_driver =3D {
-> +	.probe =3D sky1_audss_reset_probe,
-> +	.id_table =3D sky1_audss_reset_ids,
-> +};
-> +
-
-Drop this empty line.
-
-> +module_auxiliary_driver(sky1_audss_reset_driver);
-> +
-> +MODULE_AUTHOR("Joakim Zhang <joakim.zhang@cixtech.com>");
-> +MODULE_DESCRIPTION("Cix Sky1 Audio Subsystem reset driver");
-> +MODULE_LICENSE("GPL");
-
-regards
-Philipp
+--3v5pwppls5iobxny--
