@@ -1,33 +1,58 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CB43371D11;
-	Tue, 23 Jun 2026 22:35:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from bee.birch.relay.mailchannels.net (bee.birch.relay.mailchannels.net [23.83.209.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D272227587D;
+	Wed, 24 Jun 2026 01:57:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=23.83.209.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782254116; cv=none; b=lHwd2H3OzYHcwexhBOOpcu/mdx9660Wfxm2okjoKUZDbXzNHuEhYKGchJA6DTFtVhKErL4CQfg6X7Iu3y5HM7ePNol3j+9EJuqcq1fHSsxJG6sGPs9nIEFE3cJ0vhV13Omyuy7cTT2VAh6cDVHtG7tE323j4qy8yNRzf9aYgP/8=
+	t=1782266277; cv=none; b=ouRQrmAQRUb3qQq7V1z5bSQ87F8EQJQg8o4JhbeL32PRZQqMzilJFXu7O3z8Wx9A6U8QH7XzTcf1LKtXmfjfVfMIOLYSh7WS7lViLOrvsyKflOiuDCfTJLBWVNHllylgMFoUIm3z2t8+U5QmxcyyAZNL3odiT7qhFonK0PiZZN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782254116; c=relaxed/simple;
-	bh=SRPt/Z1N9zfS5tVZtHc1Ym/DJpa09C6NIWLnEJarli8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p/qxonJ7W5O8R0pMS+u3td0044Ai2mM1pWRi5PVYvX1bCLfzcoBvevMOggYdOjV2DAtdCbHL/qocuOIKVeMPzVOdqJkQwswlxmkgp+ZuZZ4yHkHttNEVHSsv+nqdOf3Nj4cUdd5i0vOCDci5pGgzRoaSzAXQWUiPs+PwI86Vtmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=G5flbO5J; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+	s=arc-20240116; t=1782266277; c=relaxed/simple;
+	bh=iba7NmPHAdUNsherrWymXiobu0tuKdu/VKZxh56ffCM=;
+	h=Message-ID:MIME-Version:Subject:To:References:From:In-Reply-To:
+	 Content-Type:Date; b=Zoc3SCyIGgej+u2t6kYW7p0VxscvnAG0iKRB3encln/wI/XqANwC7oWdIIgTNwSCwA22AFuhOCONYPkbnPJ3Ex9DOIBHtIMQV0NcAHbJB1f73QGubbyl7SogMaXiNyPZLF9OQGS7IMZLBBEZt4wIvsZcishbD+Zmc7F0Kaz47RI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smankusors.com; spf=pass smtp.mailfrom=smankusors.com; dkim=pass (2048-bit key) header.d=smankusors.com header.i=@smankusors.com header.b=jhhRmfgs; arc=none smtp.client-ip=23.83.209.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smankusors.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=smankusors.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="G5flbO5J"
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6B3EC1713;
-	Tue, 23 Jun 2026 15:35:07 -0700 (PDT)
-Received: from [10.43.8.246] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B3D423F632;
-	Tue, 23 Jun 2026 15:35:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1782254112; bh=SRPt/Z1N9zfS5tVZtHc1Ym/DJpa09C6NIWLnEJarli8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=G5flbO5JtjY2PHGG2ojKGXX8SqI+2MRfa+r6LYez6kIYWrMO5mYm3Z02byPITyVx5
-	 yIv7eGXrRte6UNWeKzB1Oryv66h5vXQEk1IcivwwfWgcjoIuMI/XRYk4euGrcbvraI
-	 pTYpub3JKKI8VTcq9p5Y59S2sQJTxCa6efj4jEfE=
-Message-ID: <138b5b54-7e2a-45fd-9c3f-eb4b4e04d954@arm.com>
-Date: Tue, 23 Jun 2026 23:35:00 +0100
+	dkim=pass (2048-bit key) header.d=smankusors.com header.i=@smankusors.com header.b="jhhRmfgs"
+X-Sender-Id: hostingeremail|x-authuser|linux@smankusors.com
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id 7EF4F3E208D;
+	Wed, 24 Jun 2026 01:57:49 +0000 (UTC)
+Received: from de-fra-smtpout10.hostinger.io (100-96-8-20.trex-nlb.outbound.svc.cluster.local [100.96.8.20])
+	(Authenticated sender: hostingeremail)
+	by relay.mailchannels.net (Postfix) with ESMTPA id CCEDB3E1EE4;
+	Wed, 24 Jun 2026 01:57:46 +0000 (UTC)
+X-Sender-Id: hostingeremail|x-authuser|linux@smankusors.com
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: hostingeremail|x-authuser|linux@smankusors.com
+X-MailChannels-Auth-Id: hostingeremail
+X-Abaft-Eyes: 4d03c4980dd6d59d_1782266269097_2955076911
+X-MC-Loop-Signature: 1782266269097:1914449800
+X-MC-Ingress-Time: 1782266269097
+Received: from de-fra-smtpout10.hostinger.io (de-fra-smtpout10.hostinger.io
+ [148.222.55.9])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+	by 100.96.8.20 (trex/7.1.5);
+	Wed, 24 Jun 2026 01:57:49 +0000
+Received: from [IPV6:2001:448a:c020:7ad:1083:9244:171a:4093] (unknown [IPv6:2001:448a:c020:7ad:1083:9244:171a:4093])
+	(Authenticated sender: linux@smankusors.com)
+	by smtp.hostinger.com (smtp.hostinger.com) with ESMTPSA id 4glQ6y3ylZz41T8;
+	Wed, 24 Jun 2026 01:57:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=smankusors.com;
+	s=hostingermail-a; t=1782266253;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=V8lw0wB1gav+5jD9VS0zq4XX1UeWjm6plfNwyDSSlRU=;
+	b=jhhRmfgsc3UIMQRTSm6x4lzCNtZ+FqmYrRIhVuRqyydBVx+2rBAmiNaMSekRKdSZk7Eib4
+	4aSR4tkU/mJR4Byiilco4Je78ryAPKCrpCouWmhWD6AA0wN8gWqAm6uMOaUSZzsgsl1B71
+	2ODgYMwmJSydHWK0iAzAxoDy/V05uZmzKEcubaQoTO8+66lSoiN069WVZamiKwL0ZfZy+I
+	LyOBxwe0pff8nd42OKU3zKqgbAi0Fv7kIQVs6QFaskFkvUliLhDmu/FxcSyFrQSA35ozy/
+	EXr7cONoRnlq5zrabyz6Ug16pVidCF2iGNG73+/hzDJm0wzr8TriY2Fr2XT0HQ==
+Message-ID: <36f37fa0-94f3-498b-86ca-b431436750e1@smankusors.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,241 +60,59 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 5/8] clk: sunxi-ng: a733: Add bus clocks support
-To: Junhui Liu <junhui.liu@pigmoral.tech>,
+Subject: Re: [RFC PATCH] clk: qcom: hfpll: return lock timeout from enable
+ paths
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Pengpeng Hou <pengpeng@iscas.ac.cn>, Bjorn Andersson <andersson@kernel.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Chen-Yu Tsai <wens@kernel.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>, Philipp Zabel
- <p.zabel@pengutronix.de>, Paul Walmsley <pjw@kernel.org>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>, Richard Cochran <richardcochran@gmail.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- netdev@vger.kernel.org
-References: <20260310-a733-clk-v1-0-36b4e9b24457@pigmoral.tech>
- <20260310-a733-clk-v1-5-36b4e9b24457@pigmoral.tech>
+ <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Herman van Hazendonk <github.com@herrie.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+References: <20260623060517.10889-1-pengpeng@iscas.ac.cn>
+ <8e7a4cd1-ff17-4052-938b-5cb2ee8576f0@oss.qualcomm.com>
 Content-Language: en-US
-From: Andre Przywara <andre.przywara@arm.com>
-In-Reply-To: <20260310-a733-clk-v1-5-36b4e9b24457@pigmoral.tech>
+From: Antony Kurniawan Soemardi <linux@smankusors.com>
+In-Reply-To: <8e7a4cd1-ff17-4052-938b-5cb2ee8576f0@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Date: Wed, 24 Jun 2026 01:57:29 +0000 (UTC)
+X-CM-Envelope: MS4xfHVpCM49oSa/jhdUW9Sc2rO3GVbTkfYQzshCHkKHiKaMz1W5getDrS46X5EQQ4NtJA1jZGQOuAMT+exm4Lc/DeQTMybNuKx04IF3WWbgFgoqiY1LYKUU 0iLcXVdPdOd6ErhYXMpLbXHSpH/wflzn8fr4cwmm1lBXGk++vOQEukaFF30+0aClbC8WyqgMZw6fkFzmI+ycJJeRVj0ERJxrPt6Q1th+NQnjsIVSDcr5vC+/ vte0uJUrpa5mvhp3ovMHWgPr0fMQcVw7rvhpmIV9GpxiBxRqvGXgco7TveCcErJuTw0/4GiS4MLYaMMeltIcIAg6oQ9+x7t+HeNBHMHyWSdNdAqNBksXPrjc pqJ4ZETVCot1FQfLridnGb4WsZk0EAznkLj+B0d5KRajFmKoK1Q/AlL/ND+7iF+fgyDGEmZN/nlqFvxKNmy1/zNzgZh+MMhjb0CIlVClRmW3CIO4C2y+rkSY Vryu2NXhUiaKNSgr5s2h4EUVnsxVBQtTMmscdp46c13uu4bCY+hBsEWt0BQ0oV4xWtZY2m44cZsKu9pvvSxkaGkIYaRlHDzSuRJc3a/gbqfjXDetGdZxRb55 pFxia7PN1wUdxmhM8ufJxHA8HA0pckc6gJEiq8oEi/Z2SrgnIs/ku8LbBIhDCEUZtPw+uWjkR8rBTxGkh8PgXXV9
+X-CM-Analysis: v=2.4 cv=etGNzZpX c=1 sm=1 tr=0 ts=6a3b398d a=ner5Rnm/N87odTmz6FGazA==:617 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=EBJuqMV3QWurEbtjHp4A:9 a=QEXdDO2ut3YA:10
+X-AuthUser: linux@smankusors.com
 
-Hi,
-
-On 3/10/26 08:33, Junhui Liu wrote:
-> Add the essential bus clocks in the Allwinner A733 CCU, including AHB,
-> APB0, APB1, APB_UART, NSI, and MBUS. These buses are necessary for many
-> other functional modules. Additionally clocks such as trace, gic and
-> cpu_peri are also added as they fall within the register address range
-> of the bus clocks, even though they are not strictly bus clocks.
+On 6/23/2026 4:43 PM, Konrad Dybcio wrote:
+> On 6/23/26 8:05 AM, Pengpeng Hou wrote:
+>> The HFPLL enable helper waits for the lock bit but ignores the
+>> regmap_read_poll_timeout() result. The polling condition is also
+>> inconsistent with clk_hfpll_init(), which treats the lock bit being set
+>> as the locked state.
+>>
+>> Wait for the lock bit to become set, return timeout errors from the
+>> helper, and propagate those errors through clk_hfpll_enable() and
+>> clk_hfpll_set_rate() instead of enabling the output unconditionally.
+>>
+>> Signed-off-by: Pengpeng Hou <pengpeng@iscas.ac.cn>
+>> ---
 > 
-> The MBUS clock is marked as critical to ensure the memory bus remains
-> operational at all times. For the NSI and MBUS clocks, the hardware
-> requires an update bit (bit 27) to be set so that the configuration
-> takes effect and the updated parameters can be correctly read back.
+> This looks good on the surface..
 > 
-> Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
-> ---
->   drivers/clk/sunxi-ng/ccu-sun60i-a733.c | 131 +++++++++++++++++++++++++++++++++
->   1 file changed, 131 insertions(+)
+> +Herman, Anthony, Dmitry could you please give this a spin on 8x60?
 > 
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun60i-a733.c b/drivers/clk/sunxi-ng/ccu-sun60i-a733.c
-> index cf819504c51f..68457813dbbb 100644
-> --- a/drivers/clk/sunxi-ng/ccu-sun60i-a733.c
-> +++ b/drivers/clk/sunxi-ng/ccu-sun60i-a733.c
-> @@ -19,6 +19,7 @@
->   #include "ccu_common.h"
->   
->   #include "ccu_div.h"
-> +#include "ccu_mp.h"
->   #include "ccu_mult.h"
->   #include "ccu_nkmp.h"
->   #include "ccu_nm.h"
-> @@ -65,6 +66,16 @@ static const struct clk_hw *pll_ref_hws[] = {
->   	&pll_ref_clk.common.hw
->   };
->   
-> +/*
-> + * There is a non-software-configurable mux selecting between the DCXO and the
-> + * PLL_REF in hardware, whose output is fed to the sys-24M clock. Although both
-> + * sys-24M and pll-ref are fixed at 24 MHz, define a 1:1 fixed factor clock to
-> + * provide logical separation:
-> + * - pll-ref is dedicated to feeding other PLLs
-> + * - sys-24M serves as reference clock for downstream functional modules
-> + */
-> +static CLK_FIXED_FACTOR_HWS(sys_24M_clk, "sys-24M", pll_ref_hws, 1, 1, 0);
-> +
->   #define SUN60I_A733_PLL_DDR_REG		0x020
->   static struct ccu_nkmp pll_ddr_clk = {
->   	.enable		= BIT(27),
-> @@ -371,6 +382,107 @@ static SUNXI_CCU_M_HWS(pll_de_4x_clk, "pll-de-4x", pll_de_hws,
->   static SUNXI_CCU_M_HWS(pll_de_3x_clk, "pll-de-3x", pll_de_hws,
->   		       SUN60I_A733_PLL_DE_REG, 16, 3, 0);
->   
-> +/**************************************************************************
-> + *                           bus clocks                                   *
-> + **************************************************************************/
-> +
-> +static const struct clk_parent_data ahb_apb_parents[] = {
-> +	{ .hw = &sys_24M_clk.hw },
-> +	{ .fw_name = "losc" },
-> +	{ .fw_name = "iosc" },
-> +	{ .hw = &pll_periph0_600M_clk.hw },
-> +};
-> +
-> +static SUNXI_CCU_M_DATA_WITH_MUX(ahb_clk, "ahb", ahb_apb_parents, 0x500,
-> +				 0, 5,		/* M */
-> +				 24, 2,		/* mux */
-> +				 0);
-> +
-> +static SUNXI_CCU_M_DATA_WITH_MUX(apb0_clk, "apb0", ahb_apb_parents, 0x510,
-> +				 0, 5,		/* M */
-> +				 24, 2,		/* mux */
-> +				 0);
-> +
-> +static SUNXI_CCU_M_DATA_WITH_MUX(apb1_clk, "apb1", ahb_apb_parents, 0x518,
-> +				 0, 5,		/* M */
-> +				 24, 2,		/* mux */
-> +				 0);
-> +
-> +static const struct clk_parent_data apb_uart_parents[] = {
-> +	{ .hw = &sys_24M_clk.hw },
-> +	{ .fw_name = "losc" },
-> +	{ .fw_name = "iosc" },
-> +	{ .hw = &pll_periph0_600M_clk.hw },
-> +	{ .hw = &pll_periph0_480M_clk.common.hw },
-> +};
-> +static SUNXI_CCU_M_DATA_WITH_MUX(apb_uart_clk, "apb-uart", apb_uart_parents, 0x538,
-> +				 0, 5,		/* M */
-> +				 24, 3,		/* mux */
-> +				 0);
-> +
-> +static const struct clk_parent_data trace_parents[] = {
-> +	{ .hw = &sys_24M_clk.hw },
-> +	{ .fw_name = "losc" },
-> +	{ .fw_name = "iosc" },
-> +	{ .hw = &pll_periph0_300M_clk.hw },
-> +	{ .hw = &pll_periph0_400M_clk.hw },
-> +};
-> +static SUNXI_CCU_M_DATA_WITH_MUX_GATE(trace_clk, "trace", trace_parents, 0x540,
-> +				 0, 5,		/* M */
-> +				 24, 3,		/* mux */
-> +				 BIT(31),	/* gate */
-> +				 0);
-> +
-> +static const struct clk_parent_data gic_cpu_peri_parents[] = {
-> +	{ .hw = &sys_24M_clk.hw },
-> +	{ .fw_name = "losc" },
-> +	{ .hw = &pll_periph0_600M_clk.hw },
-> +	{ .hw = &pll_periph0_480M_clk.common.hw },
-> +	{ .hw = &pll_periph0_400M_clk.hw },
-> +};
-> +static SUNXI_CCU_M_DATA_WITH_MUX_GATE(gic_clk, "gic", gic_cpu_peri_parents, 0x560,
+> Konrad
 
-Do we really want to model the GIC clock? The A523 has one as well, as 
-we don't describe it there. And while the GICv3 binding describes a 
-clock property, the Linux driver completely ignores that.
-So if I see this correctly, this clock would become unused, and would be 
-turned off, killing the GIC? So we would at least need a CLK_IS_CRITICAL 
-flag?
+Just to clarify, this patch impacts cpufreq and gpufreq for Qualcomm
+Krait era, is that correct?
 
-But it's a good reminder to lift this clock to something PLL based, in 
-U-Boot's SPL, because I guess the 24MHz are rather slow.
+I could try this over the weekend on top of Rudraksha Gupta's cpufreq
+patch for msm8960 [1]. We don't have a gpu patch for msm8960 on LKML
+yet...
 
-> +				      0, 5,	/* M */
-> +				      24, 3,	/* mux */
-> +				      BIT(31),	/* gate */
-> +				      0);
-> +
-> +static SUNXI_CCU_M_DATA_WITH_MUX_GATE(cpu_peri_clk, "cpu-peri", gic_cpu_peri_parents, 0x568,
+(also my name doesn't have an "h" :D )
 
-What is this clock about? I don't see it referenced by any peripheral in 
-the manual.
+[1] 
+https://lore.kernel.org/all/20260527-expressatt_cpufreq-v2-0-b9b7726ccb6d@gmail.com/
 
-> +				      0, 5,	/* M */
-> +				      24, 3,	/* mux */
-> +				      BIT(31),	/* gate */
-> +				      0);
-> +
-> +static const struct clk_parent_data nsi_parents[] = {
-> +	{ .hw = &sys_24M_clk.hw },
-> +	{ .hw = &pll_ddr_clk.common.hw },
-> +	{ .hw = &pll_periph0_800M_clk.common.hw },
-> +	{ .hw = &pll_periph0_600M_clk.hw },
-> +	{ .hw = &pll_periph0_480M_clk.common.hw },
-> +	{ .hw = &pll_de_3x_clk.common.hw },
-> +};
-> +static SUNXI_CCU_MP_DATA_WITH_MUX_GATE_FEAT(nsi_clk, "nsi", nsi_parents, 0x580,
-
-Similar question like for the GIC: do we need this in the kernel, and do 
-we need to prevent this from being turned off?
-
-> +					    0, 5,	/* M */
-> +					    0, 0,	/* no P */
-> +					    24, 3,	/* mux */
-> +					    BIT(31),	/* gate */
-> +					    0, CCU_FEATURE_UPDATE_BIT);
-> +
-> +static const struct clk_parent_data mbus_parents[] = {
-> +	{ .hw = &sys_24M_clk.hw },
-> +	{ .hw = &pll_periph1_600M_clk.hw },
-> +	{ .hw = &pll_ddr_clk.common.hw },
-> +	{ .hw = &pll_periph1_480M_clk.common.hw },
-> +	{ .hw = &pll_periph1_400M_clk.hw },
-> +	{ .hw = &pll_npu_clk.common.hw },
-> +};
-> +static SUNXI_CCU_MP_DATA_WITH_MUX_GATE_FEAT(mbus_clk, "mbus", mbus_parents, 0x588,
-> +					    0, 5,	/* M */
-> +					    0, 0,	/* no P */
-> +					    24, 3,	/* mux */
-> +					    BIT(31),	/* gate */
-> +					    CLK_IS_CRITICAL,
-> +					    CCU_FEATURE_UPDATE_BIT);
-> +
->   /*
->    * Contains all clocks that are controlled by a hardware register. They
->    * have a (sunxi) .common member, which needs to be initialised by the common
-> @@ -407,11 +519,21 @@ static struct ccu_common *sun60i_a733_ccu_clks[] = {
->   	&pll_de_clk.common,
->   	&pll_de_4x_clk.common,
->   	&pll_de_3x_clk.common,
-> +	&ahb_clk.common,
-> +	&apb0_clk.common,
-> +	&apb1_clk.common,
-> +	&apb_uart_clk.common,
-> +	&trace_clk.common,
-> +	&gic_clk.common,
-> +	&cpu_peri_clk.common,
-> +	&nsi_clk.common,
-> +	&mbus_clk.common,
->   };
->   
->   static struct clk_hw_onecell_data sun60i_a733_hw_clks = {
->   	.hws	= {
->   		[CLK_PLL_REF]		= &pll_ref_clk.common.hw,
-> +		[CLK_SYS_24M]		= &sys_24M_clk.hw,
->   		[CLK_PLL_DDR]		= &pll_ddr_clk.common.hw,
->   		[CLK_PLL_PERIPH0_4X]	= &pll_periph0_4x_clk.common.hw,
->   		[CLK_PLL_PERIPH0_2X]	= &pll_periph0_2x_clk.common.hw,
-> @@ -453,6 +575,15 @@ static struct clk_hw_onecell_data sun60i_a733_hw_clks = {
->   		[CLK_PLL_DE]		= &pll_de_clk.common.hw,
->   		[CLK_PLL_DE_4X]		= &pll_de_4x_clk.common.hw,
->   		[CLK_PLL_DE_3X]		= &pll_de_3x_clk.common.hw,
-> +		[CLK_AHB]		= &ahb_clk.common.hw,
-> +		[CLK_APB0]		= &apb0_clk.common.hw,
-> +		[CLK_APB1]		= &apb1_clk.common.hw,
-> +		[CLK_APB_UART]		= &apb_uart_clk.common.hw,
-> +		[CLK_TRACE]		= &trace_clk.common.hw,
-> +		[CLK_GIC]		= &gic_clk.common.hw,
-> +		[CLK_CPU_PERI]		= &cpu_peri_clk.common.hw,
-> +		[CLK_NSI]		= &nsi_clk.common.hw,
-> +		[CLK_MBUS]		= &mbus_clk.common.hw,
->   	},
->   	.num	= CLK_FANOUT3 + 1,
->   };
-> 
-
+-- 
+Thanks,
+Antony K. S.
