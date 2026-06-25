@@ -1,84 +1,63 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C90353EB109;
-	Thu, 25 Jun 2026 16:21:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34E473446CA;
+	Thu, 25 Jun 2026 19:58:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782404464; cv=none; b=f+qNGLPxSjLX17zUOmsPycCC9G8l1ZsCOhGSrsck+zI5FUjGPU6IdMBoNVPSuKK0+8AL93llJp9D/YCxd/GiG5G4DHVfnxBxkPjVNwhPlzu8WEhCyXjlFo9UXK/3HyJ96cF72MUESzZz0xx55crgawpKvzm6gAOotyyNplyiaZk=
+	t=1782417489; cv=none; b=pYA1GxUk+9JJ2GglAnCf5XQKaTuViD06Xv+n7vDAK/DKa+9Zwx/vU7KdKD+7pYyM/rH4JZauoILRXYvYper05dv3IVE8txucetyzWTpuyTgeeDQRO78/i079CfRpfsEjh3RqthjHYMmk600yAi8lSL61Tw4qLRV7x4BL9KFf2ac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782404464; c=relaxed/simple;
-	bh=xrLwSyXmtmsChkV0naETQN9onqnVo6oYYeqKKEOxBKQ=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=fk9Ltts3Ti11HeYloeL5vgBlX2mCuy9xT9S6HHzq0niz9uOMFPoVN94W1mztYSNmdBueq5JRyhN6dlf8p9zkP/W/Z00SnCKIQ6pxLwvn1AoWWDUTC1Doq4xPA+HbadfjH382RGtQ6EhpEl6I46KoPT/9HWr0Ut7YaRE8RK2QqmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cJSGwDNT; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1782417489; c=relaxed/simple;
+	bh=RwcKUxv61z/ZSoBpZ3few82ZRebqX+it5jFkSIpzF5Q=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=M1JYStTmPLCEoVQsFzRo/1W9o7qhkMTKsxhFtubLhVZ5GkJWpRPuOhHJ+MN6EJnALsIKv+j00kCesodEdAYYI22B0lfdzatBv9OUC4RiGVPDK7YVdcnbdkUqpKpL91j8ITIW7WR7Sg2qGR0XjhNlwUQkSWzc/0JpswI5DlzD0ho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J3IFMIfe; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cJSGwDNT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E0221F000E9;
-	Thu, 25 Jun 2026 16:21:03 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J3IFMIfe"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1ABB71F000E9;
+	Thu, 25 Jun 2026 19:58:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1782404463;
-	bh=P59ValBkQNzuvvptIgrf+qBNmqFCKZvDwNjf8Im7x5M=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc;
-	b=cJSGwDNT21U5KBgpUWXr42TaygGJ+W3tS2NkIfoe5FTfNAPykkYzY84HhmE1t7xn4
-	 2HwvkkUPu6Ipg/UOYqVjO8jQzs99aUlqGYtVR1YdOy267hhY2Uh4U4puJTG/V4x8G5
-	 wOBbqRVvaLUXrjI1m+sAPZJgvJJ/Xvlxwv5LXOO683kMqDHeRa+eyUGihz5GpkyA2R
-	 IGKzifnCEdDzhUrFT+/rLYNQvL2tDOZQyMKtexkrClDFEFdCENQaVveVxALDrKMAR4
-	 LVToPRDG7Mq3tcMgahQQZ3b/m2Reonqk3qmIVSNIFeuX/SVBcNl96iu4QagzyPQC4G
-	 Pcm7eYo+I1J3g==
+	s=k20260515; t=1782417488;
+	bh=eseArUhrL89KwJjQ74K2tKh/ObN05dW/e/PREs+kolI=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc;
+	b=J3IFMIfes80AvFyyWCHSaqEUebJUw38SilYqHEE/JSybGaS2RlGq/JPqC5ODLwwab
+	 qU3EEmJOn16u8c+rAvW6Ix5NKZQ+SLEdMt6vWlRacAxR8fQr3W6Osqc8PVj22KmpHj
+	 ZPXPd10JxszZKkLAddB46UL/kQpj5DlDv0iVmeJWXk4pgfv1Eha8lJlSiErid9MIma
+	 cu6+VY9QAg1Ux/FuQoUsHGTrCepQ3/RJ9pukh0sEdVwZSrWV+SMRSF1HPu12zyQB/h
+	 aTpKzYl++RTfoihpDiazjkg9vW1ufM3mvmHyuaiMD3x5YvLYJe6fiIZeQf+ukmUZUS
+	 4n3dlgzNH4/eQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 568F43AD449A;
-	Thu, 25 Jun 2026 16:20:52 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id D099639387B1;
+	Thu, 25 Jun 2026 19:57:56 +0000 (UTC)
+Subject: Re: [GIT PULL] clk changes for the merge window
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20260625151438.8471-1-sboyd@kernel.org>
+References: <20260625151438.8471-1-sboyd@kernel.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20260625151438.8471-1-sboyd@kernel.org>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-for-linus
+X-PR-Tracked-Commit-Id: 92010229c4b38897f1319d260162d2f96925ed17
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 8c04c1292dca29a57ea82c6a44348be49749fc22
+Message-Id: <178241747549.135849.17145989824433508087.pr-tracker-bot@kernel.org>
+Date: Thu, 25 Jun 2026 19:57:55 +0000
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Michael Turquette <mturquette@baylibre.com>, Brian Masney <bmasney@redhat.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] net: ethernet: qualcomm: ppe: Demote from supported
- and
- fix maintainer addresses
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <178240445086.3803792.5981466761897195144.git-patchwork-notify@kernel.org>
-Date: Thu, 25 Jun 2026 16:20:50 +0000
-References: <20260623073307.36483-2-krzysztof.kozlowski@oss.qualcomm.com>
-In-Reply-To: <20260623073307.36483-2-krzysztof.kozlowski@oss.qualcomm.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Cc: andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
- bmasney@redhat.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- jie.luo@oss.qualcomm.com, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- quic_leiwei@quicinc.com, quic_suruchia@quicinc.com, quic_pavir@quicinc.com,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org, netdev@vger.kernel.org
 
-Hello:
+The pull request you sent on Thu, 25 Jun 2026 08:14:37 -0700:
 
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-for-linus
 
-On Tue, 23 Jun 2026 09:33:08 +0200 you wrote:
-> Emails to the maintainer of Qualcomm PPE Ethernet driver (Luo Jie
-> <quic_luoj@quicinc.com>) bounce permanently (full mailbox), because the
-> "quicinc.com" addresses were deprecated for public work.  All Qualcomm
-> contributors are aware of that and were asked to fix their addresses.
-> 
-> Driver is not supported - in terms of how netdev understands supported
-> commitment - if maintainer does not care to receive the patches for its
-> code, so demote it to "maintained" to reflect true status.
-> 
-> [...]
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/8c04c1292dca29a57ea82c6a44348be49749fc22
 
-Here is the summary with links:
-  - [net] net: ethernet: qualcomm: ppe: Demote from supported and fix maintainer addresses
-    https://git.kernel.org/netdev/net/c/efd7fb21bad8
+Thank you!
 
-You are awesome, thank you!
 -- 
 Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+https://korg.docs.kernel.org/prtracker.html
