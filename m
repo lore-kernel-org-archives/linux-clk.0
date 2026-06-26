@@ -1,112 +1,97 @@
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D45B63BB10D
-	for <linux-clk@vger.kernel.org>; Fri, 26 Jun 2026 09:41:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47B9B30D3FA
+	for <linux-clk@vger.kernel.org>; Fri, 26 Jun 2026 09:46:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782466905; cv=none; b=NCxSZANE6dLOwuTrsaPEb3jh00A4Bk5Q4SBNhGcX6LtrRBouu5oLiX4xHuKkP0YDh6UJZVUQhk5WV9DbAjpQqaylq8ahrnviml7Ht8vVSEPV/y8jDOYV/Dp8iDE/HcmeFJfitbvJ66m98+umGyaWref8pDgxf+F1oHs43rIIpY4=
+	t=1782467196; cv=none; b=SInLXo6qkWTY49804VIGaRG9AIgLExGFRnEUdE6cMMkTnU2oebHY30NktaDrP7kKkKCx1zbtlmEU7KXQ2xyvpImeFXrL0qpDp+8glZO2yS9RBUHOi5uxFjyZUQVNKbsq3siRIawXwQu3sKEqbU6IqfGA5CozunQxF5SLcqs9ssA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782466905; c=relaxed/simple;
-	bh=MfAhvEObsV+KWrsGCI3P9Sm+CI6pojZgxHIyPBbaVtY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tcosw6AUfjZQ+BKBZigOKuRq6CgsV1UX2JJZytC7HXmWTNgUoW1jU+Z5Btnr32M5EUuBLyUM6jPVmoHFrbpucWwxbAWu8tq4Rx8cu77BbUWFdQ+uEBiaTrzUv+ZTotiHh7Zg+O3Apni/UQxLUA2VbdDkqhNMX27LRLHDp0KQrfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FePgrkES; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1782467196; c=relaxed/simple;
+	bh=oisu7zR0v38Y828rHjRNScoVsE+KgSpp45xewOkjlQU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=Br8LjtoDQdtaOAAGkPW4A1sDU/ppDu5iQlf4KcZBxZh7sTMBg2eNoDrKdzvNPzyDqr/olsBXyefjNdWa2C8PHvcwxewwydHk2Qj8516IH7vA+FNKjrzBTiNiV31k4u64aGsmaB9m7jze1zmO4VqJItPLw1ScOZykDiK9UWvf8hU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=THusoym3; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FePgrkES"
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-37c6cd1ac98so594038a91.0
-        for <linux-clk@vger.kernel.org>; Fri, 26 Jun 2026 02:41:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1782466902; x=1783071702; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7J5GI2pmCkcVilqZesKiSKQTUF3Kx6m9amj3OnCb7ho=;
-        b=FePgrkESIGxeer7BHTiyP2TAgfINLAmkUQERMgw/JKd2LX614imH4Ghx8gRrjaE6fA
-         2SL3G8m9j2PJOon+W4Z9O9NrDf1oHhWHn16lWs6S7subGUtX3+xR3O3Tjd8d3JXkVkC7
-         EWZxJ+hHjfWyOnckINiF73QwCrFzsXaSY0H9mfr4L0DilRr07yPH7XpgKjXosE2lRpsg
-         7x3sLv61lo2N0SF5hh0RUKlAgvu7FuSgzajhqGSW5rUBScOylNQorkK2ajAmOf/uIlJH
-         oPPnK2Nwq5gSNqCxrF97qkimI0/HgaoeyH7u+Una15GUg7u3PR8fqvIVarMPDrBADAqv
-         xetg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782466902; x=1783071702;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7J5GI2pmCkcVilqZesKiSKQTUF3Kx6m9amj3OnCb7ho=;
-        b=G2qP0z3SuDLAJ2r13pWznvRYBHSvUmpWvslrO3xnfmLflFPez+wCuTAGOgCc1nDcGl
-         OfWOVGbqusuMt8wa0T9Y20OGoBUNuTMgiOw8LgZbtCtjZM+DrDSPCkQxBoRbL3TLlrIh
-         piuqWpcYQM1PHo6HcmL71JTbYXXrMtM6KvtQtUGkNhruP6FLy3GKljSjvfcEb+iwkB07
-         +YaYcG+YE64XCtNsxla+dxDxoKDc8FoH0l5GIveVNKqQe93mcJrqw25NVNnvz0JNIpLj
-         cwODWb/Z9x37nGLvNOUZFobeCJgRUz+0RzC7nc0lHJb6u8RQxWA/gSql/5GqGBEFF4bH
-         at/g==
-X-Forwarded-Encrypted: i=1; AHgh+RqXawWYiFDuEb0xweZRXzcZgqLGxLCFgaMhrzYwW8sLpWVIwzYipQ1AoBnZn/eSX8WtmQ5S5gjC8HI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcBB+6e4/frEwuG1TSe/WePkyb0CtlGSq1422sgIzwv9+F5nCH
-	YnpDaEVi+oLvV+KwDcUrQk23Oh5PFvcNWrccr3HrCPcaLyzywq2PcQ4=
-X-Gm-Gg: AfdE7clWJfuJszzcdbbsZFTXhj7bhClT/7UPR7VxMfyIMNruB1HkQ+zx37WOLiCa5mz
-	5SqARiAlH7Bg2W+FVfuSOiBlyvOBXbjAmKQz5+bSfRRpZr8g9Q8K0c2vJIkSKcfFd89BEMcE3Qi
-	51o8lpXSHWXZ9ybT0YAK8aCA5kIHKj0kNqtgog/rgIY1AFbmplhp8BciZVZCWZh9nWo+GGUau3Y
-	Tyj7q7suJN0xFm5tHkG+6tdYxaI2bKq8VWOF5TBvxIzdU6TPEePL9VSamjKGHwLMWxlJEyJ5SO6
-	j+EJezvRRiyr2h/ge5YcHWSIzKXCctXS5fQQlx0JegwnnnNZNXZ1wMkHnLure48laIcG9hKFwOC
-	0w7OPFqbQ5BjtYJos6fpPe/wSf7DGJeRTLhSIUNcABhiOZnBmfiZPN+MmZToGfny+qQuBEUdm9T
-	1YoAy0gAR95GyG0cXqF3kHQhLz/Y2G/8+t7zaNErmRMAGQ6K0ETvC34QHhaIKruK8RpC3YKdPGg
-	tB/UdaG5XgrTUyTijrDSTHLMtNGrDLW5pM6VfJXIu95SXDJTg==
-X-Received: by 2002:a17:90b:384e:b0:36e:2106:ded8 with SMTP id 98e67ed59e1d1-37dfa28bb98mr6256890a91.25.1782466902167;
-        Fri, 26 Jun 2026 02:41:42 -0700 (PDT)
-Received: from localhost.localdomain ([14.5.152.27])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-37e12daa2fesm456408a91.2.2026.06.26.02.41.38
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Fri, 26 Jun 2026 02:41:40 -0700 (PDT)
-From: Myeonghun Pak <mhun512@gmail.com>
-To: Tero Kristo <kristo@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-omap@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Myeonghun Pak <mhun512@gmail.com>,
-	Ijae Kim <ae878000@gmail.com>
-Subject: [PATCH] clk: ti: adpll: unregister OF clock provider on remove
-Date: Fri, 26 Jun 2026 18:41:26 +0900
-Message-ID: <20260626094134.71961-1-mhun512@gmail.com>
-X-Mailer: git-send-email 2.47.1
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="THusoym3"
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20260626094632euoutp011e21b723ea6fc54e7da652afa7b05106~8mHfAmnlA2452824528euoutp01L
+	for <linux-clk@vger.kernel.org>; Fri, 26 Jun 2026 09:46:32 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20260626094632euoutp011e21b723ea6fc54e7da652afa7b05106~8mHfAmnlA2452824528euoutp01L
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1782467192;
+	bh=8uVPoGobuqUzzib+j+IavUKdevfV4LK7AEjzXVVlfJI=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=THusoym3AQEp+Cp/GfVMABZpu86o8fbmByBzeBK0MT+XkyCaBP8ajZXvZJR/5Uc/b
+	 elqjf7hiYD5JLKQbCNh2bycoUmiOCkAFfdpzrgvcKuQwV8IcV3KKYMwi+/Qfp69RzN
+	 +jeR/rlOpWaUfFGDsLiXBBAD03b4apuXMzG3ifRE=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20260626094632eucas1p2a0bd78e844ebe4e0205a0b900f8e3289~8mHemOR-Z2319923199eucas1p2t;
+	Fri, 26 Jun 2026 09:46:32 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20260626094631eusmtip16a3e68a99088c6511be0c08558f47356~8mHeBvm7K2611326113eusmtip1K;
+	Fri, 26 Jun 2026 09:46:31 +0000 (GMT)
+Message-ID: <750856c8-ac82-4d05-9c8e-702d091e930f@samsung.com>
+Date: Fri, 26 Jun 2026 11:46:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH] clk: qcom: regmap-phy-mux: Rework the implementation
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Bjorn Andersson
+	<andersson@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@kernel.org>, Taniya Das <taniya.das@oss.qualcomm.com>, Jagadeesh Kona
+	<jagadeesh.kona@oss.qualcomm.com>, Konrad Dybcio <konradybcio@kernel.org>,
+	usb4-upstream@oss.qualcomm.com, linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Konrad Dybcio
+	<konrad.dybcio@oss.qualcomm.com>
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <c675lcfptr4xgg4hcjp66unmuozgsvgwvtymh7on6jcipjrdw7@jy4h7fkwqwjg>
+Content-Transfer-Encoding: 7bit
+X-CMS-MailID: 20260626094632eucas1p2a0bd78e844ebe4e0205a0b900f8e3289
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20260626094632eucas1p2a0bd78e844ebe4e0205a0b900f8e3289
+X-EPHeader: CA
+X-CMS-RootMailID: 20260626094632eucas1p2a0bd78e844ebe4e0205a0b900f8e3289
+References: <20260409-topic-phy_fastclk-v1-1-6b4aaee56b90@oss.qualcomm.com>
+	<178093139446.244194.9422100472802070367.b4-ty@kernel.org>
+	<c675lcfptr4xgg4hcjp66unmuozgsvgwvtymh7on6jcipjrdw7@jy4h7fkwqwjg>
+	<CGME20260626094632eucas1p2a0bd78e844ebe4e0205a0b900f8e3289@eucas1p2.samsung.com>
 
-ti_adpll_probe() registers the driver's onecell clock provider with
-of_clk_add_provider().  The remove path only frees the clock resources,
-leaving the provider registered after the backing data has been torn
-down.
+On 11.06.2026 21:38, Dmitry Baryshkov wrote:
+> On Mon, Jun 08, 2026 at 10:09:55AM -0500, Bjorn Andersson wrote:
+>> On Thu, 09 Apr 2026 13:57:45 +0200, Konrad Dybcio wrote:
+>>> The sole reason this hw exists is to let the branch clock downstream of
+>>> it keep running, with the PHY disengaged. This is not possible with the
+>>> current implementation, as the enabled status is hijacked to mean
+>>> "enabled" = "use fast/PHY source" and "disabled" = "use XO source".
+>>>
+>>> This is an issue, since the mux enable state follows that of the child
+>>> branch, making the desired "child enabled, MUX @ XO" combination
+>>> impossible.
+>>>
+>>> [...]
+>> Applied, thanks!
+>>
+>> [1/1] clk: qcom: regmap-phy-mux: Rework the implementation
+>>       commit: e108373c54fbc844b7f541c6fd7ecb31772afd3c
+> This breaks at PCIe at least on SM8350. The attached WiFi card is
+> not detected anymore. Rewerting the patch makes it work again.
+Same on QCS6490-based RubikPi3, after this patch the XHCI USB host controller PCI
+devive is no longer detected.
 
-Unregister the OF clock provider before freeing the ADPLL resources so
-the provider no longer points at released driver data after device
-removal.
-
-Fixes: 21330497f303 ("clk: ti: Add support for dm814x ADPLL")
-Co-developed-by: Ijae Kim <ae878000@gmail.com>
-Signed-off-by: Ijae Kim <ae878000@gmail.com>
-Signed-off-by: Myeonghun Pak <mhun512@gmail.com>
----
- drivers/clk/ti/adpll.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/ti/adpll.c b/drivers/clk/ti/adpll.c
-index e305fcb..0c22e33 100644
---- a/drivers/clk/ti/adpll.c
-+++ b/drivers/clk/ti/adpll.c
-@@ -925,6 +925,7 @@ static void ti_adpll_remove(struct platform_device *pdev)
- {
- 	struct ti_adpll_data *d = dev_get_drvdata(&pdev->dev);
- 
-+	of_clk_del_provider(d->np);
- 	ti_adpll_free_resources(d);
- }
- 
+Best regards
 -- 
-2.53.0
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
