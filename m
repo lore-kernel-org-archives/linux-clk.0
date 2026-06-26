@@ -1,70 +1,103 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E98C3E024F;
-	Fri, 26 Jun 2026 10:58:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D4A9382F17
+	for <linux-clk@vger.kernel.org>; Fri, 26 Jun 2026 11:15:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782471516; cv=none; b=M+MgfR6nSEgLo32Ho2O4IL6mpsb5esQZeGq8myegWhZuQQlXcpWqYevTB52XKZaLaV1vmEkfP0NO9GyssZ9Dk7Pp5JkmVvAyGfL2ZVMxQOLUmtm9vRhqHVH5Uy01CoInQf2ngH9qrwluErGCZF1tTNCGlX0c7gLOq7t/Ntvc0eI=
+	t=1782472508; cv=none; b=gy16Q8Ss8Fe2QOUeKDok3wv//is6c4Kf1MvrgnaxDH2qQy7P2MQwZbCSOsGTgfBa5iOoh2EtwZnlGxxv/JMgYIF5cVKxj2ycyumukmJRwHWRLVr7UP/F7K1N+vneSlE1H8kUl8C/Hgq4iisYejD7hikooPI0v4FcldkARD9eQeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782471516; c=relaxed/simple;
-	bh=kkhq87eNHx45rDTRj2aYiXEgmDVbyoXLvkV567xOy14=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VuvU1yFYa0mrQoJfu/kcnsu7mYk6E5uPSPiDj3tg9dmBAISraRNqI1F/vVyI4AuhTXAoiIq13KYiQL6KiYF65dXqrf47TKEwE5G5uM4rO/lYfWv0uO4fhmh3p/2abkr8hOc8u/B4JNWLZd+BBdk901XpAxTZNOBtZPC2ePrn0gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YTtqDhZW; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1782472508; c=relaxed/simple;
+	bh=t0EnBvyYKtlT2m4NKrmxp2OprTsX8mozrOnIZAtLFIs=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:In-Reply-To:
+	 Content-Type:References; b=mfTA+mM9X3uXytl6lBrFG8G//+KaMIj45X+r6q5uEg6VZaC90+UAlHUschwQIyFGqLfFILDQztr/nKAEiLJoVg3u+Fz4i1/ryX5bIxweOcUfYM1OQb4+65xWYECMfyvUPUDKv34O9chmzjxNQldNCWxG+Q0bzGiPSvXbiIAJMwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=JU56IzW4; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YTtqDhZW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 164181F00A3A;
-	Fri, 26 Jun 2026 10:58:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1782471514;
-	bh=RiRGYMelPViVpJAFJ/+wpKu/uY7s9Tmxp1lwWzuPoWo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=YTtqDhZWX4gDsM3ZhC+RSSrkB6J3+JXyXalf7KZmvI6BZPpAJGkTDga9CWGHqDQGn
-	 LJHpssTXYqG+amR6YdlEILOJENU/76GWqwO9J07I/gVIQuOKuKPxG1P0gZoo7iKOir
-	 n5q9Ss+JnmDQJ4iDyJS+T3T595NfO5VNqkOq5RpDhd1nZ+VRhXaL8O6OcAC2ODGb1/
-	 tdmbvqX/GoyXHKrGw5iLfPbV32OPxdhF9Lyd+Ie/CiDTl34hXH2yilooJMnQY1yYAv
-	 vLIL5WimkP1EXPSZvqgSGY2TsG+++V4xUtmjlcTAFyS9QmoSyjCMwWDOin+YSd+MoR
-	 tO4VZbNwqH69g==
-Date: Fri, 26 Jun 2026 12:58:30 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Ryder Lee <ryder.lee@mediatek.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Jianjun Wang <jianjun.wang@mediatek.com>, 
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/4] dt-bindings: clock: airoha: Add additional reset for
- PCIe PERSTOUT
-Message-ID: <20260626-talkative-cerulean-hedgehog-93ccdc@quoll>
-References: <20260625215741.3253212-1-ansuelsmth@gmail.com>
- <20260625215741.3253212-2-ansuelsmth@gmail.com>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="JU56IzW4"
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20260626111504euoutp02f1ec9abfbccfb9567c051a837dc04562~8nUx7hAJk2468024680euoutp02Z
+	for <linux-clk@vger.kernel.org>; Fri, 26 Jun 2026 11:15:04 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20260626111504euoutp02f1ec9abfbccfb9567c051a837dc04562~8nUx7hAJk2468024680euoutp02Z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1782472504;
+	bh=qMxZRe3OcvLJqLoDf7Eb4NKS9R8/hQ9Mz/EhnSJd94I=;
+	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
+	b=JU56IzW4pOTVEiTGwlJ5a/Aim7WqayEQpAkcfmkUNO+2C+JhMc3jEjNF50nmpooeT
+	 dxwjqhExLL2fZU/9FuVHb6k+T8Acz/RlW7QKVRSblqHbHpz6ZshNsZKfXuOCIz69DK
+	 vFkL3ldgWp1yJcMl4XFiHfGyIeKvqyBU0v+c7cKU=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20260626111504eucas1p1f9f7ffbd3655c400c6d7bd35e11fccb8~8nUxwBVi11347013470eucas1p1x;
+	Fri, 26 Jun 2026 11:15:04 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20260626111503eusmtip225060f4d954b5c77cef1ff4a225fd091~8nUxI4EZ20500005000eusmtip2T;
+	Fri, 26 Jun 2026 11:15:03 +0000 (GMT)
+Message-ID: <a2114981-632a-4001-a360-ab78542a1d7a@samsung.com>
+Date: Fri, 26 Jun 2026 13:15:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260625215741.3253212-2-ansuelsmth@gmail.com>
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH] clk: qcom: regmap-phy-mux: Rework the implementation
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Bjorn Andersson
+	<andersson@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@kernel.org>, Taniya Das <taniya.das@oss.qualcomm.com>, Jagadeesh Kona
+	<jagadeesh.kona@oss.qualcomm.com>, Konrad Dybcio <konradybcio@kernel.org>,
+	usb4-upstream@oss.qualcomm.com, linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Konrad Dybcio
+	<konrad.dybcio@oss.qualcomm.com>
+Content-Language: en-US
+In-Reply-To: <750856c8-ac82-4d05-9c8e-702d091e930f@samsung.com>
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20260626111504eucas1p1f9f7ffbd3655c400c6d7bd35e11fccb8
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20260626111504eucas1p1f9f7ffbd3655c400c6d7bd35e11fccb8
+X-EPHeader: CA
+X-CMS-RootMailID: 20260626111504eucas1p1f9f7ffbd3655c400c6d7bd35e11fccb8
+References: <20260409-topic-phy_fastclk-v1-1-6b4aaee56b90@oss.qualcomm.com>
+	<178093139446.244194.9422100472802070367.b4-ty@kernel.org>
+	<c675lcfptr4xgg4hcjp66unmuozgsvgwvtymh7on6jcipjrdw7@jy4h7fkwqwjg>
+	<750856c8-ac82-4d05-9c8e-702d091e930f@samsung.com>
+	<CGME20260626111504eucas1p1f9f7ffbd3655c400c6d7bd35e11fccb8@eucas1p1.samsung.com>
 
-On Thu, Jun 25, 2026 at 11:57:34PM +0200, Christian Marangi wrote:
-> Add additional reset to control PCIe PERSTOUT reset line for each of the 3
-> PCIe lines.
-> 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> ---
->  include/dt-bindings/reset/airoha,en7581-reset.h | 4 ++++
->  1 file changed, 4 insertions(+)
+On 26.06.2026 11:46, Marek Szyprowski wrote:
+> On 11.06.2026 21:38, Dmitry Baryshkov wrote:
+>> On Mon, Jun 08, 2026 at 10:09:55AM -0500, Bjorn Andersson wrote:
+>>> On Thu, 09 Apr 2026 13:57:45 +0200, Konrad Dybcio wrote:
+>>>> The sole reason this hw exists is to let the branch clock downstream of
+>>>> it keep running, with the PHY disengaged. This is not possible with the
+>>>> current implementation, as the enabled status is hijacked to mean
+>>>> "enabled" = "use fast/PHY source" and "disabled" = "use XO source".
+>>>>
+>>>> This is an issue, since the mux enable state follows that of the child
+>>>> branch, making the desired "child enabled, MUX @ XO" combination
+>>>> impossible.
+>>>>
+>>>> [...]
+>>> Applied, thanks!
+>>>
+>>> [1/1] clk: qcom: regmap-phy-mux: Rework the implementation
+>>>       commit: e108373c54fbc844b7f541c6fd7ecb31772afd3c
+>> This breaks at PCIe at least on SM8350. The attached WiFi card is
+>> not detected anymore. Rewerting the patch makes it work again.
+> Same on QCS6490-based RubikPi3, after this patch the XHCI USB host controller PCI
+> devive is no longer detected.
+A few more comments. I've checked the PCIe initialization code called on Rubik Pi3
+board ("qcom_pcie_init_2_7_0()") and there is no call to set_rate(), which would 
+change the MUX to PHY. The PCIe init code only calls clk_bulk_prepare_enable(),
+but this became noop after this patch on the mentioned MUX.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-
-Best regards,
-Krzysztof
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
