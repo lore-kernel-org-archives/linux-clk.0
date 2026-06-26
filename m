@@ -1,237 +1,70 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6D353F5BE4
-	for <linux-clk@vger.kernel.org>; Fri, 26 Jun 2026 12:46:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24BF03F824B;
+	Fri, 26 Jun 2026 14:25:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782478012; cv=none; b=kcX6Ae4S2QEV7iX78SPqmxR+jRBK1Wakaj2mJNQFf1kWEJaTIrYkEfPIAoPXsCdACbYrDwFCQM0VOWaRiy2wN4T96RDVbf6HtKWI9v7CbnhGGBJpVLEHCeCwgJxy1nLlHzOKImm4DIfdLtIC/kGa2XIcQtl49mPca0tGzNWapho=
+	t=1782483924; cv=none; b=gD4IDIZehlDGWeX+fw0rSobnKkXRZL8dc+1Yc5P/4lmIqOXnH9aR8bjQ7tq6ImgBVPY9sL0gQKO/5xedQda4mGou3C15k9CtDHvsPYTPA+Tk9Hi7oi0CxGbnZsbShwTfQyJoXqnU2fsapwrqJD6iwk8FMoVUXIGF0FhKI2iSxa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782478012; c=relaxed/simple;
-	bh=3o/s8ab58FkeW/8JTz9tT1SCTVTsGG/ZsZ29hRSfWSo=;
+	s=arc-20240116; t=1782483924; c=relaxed/simple;
+	bh=zFXw28tcp2znXE5YvFHH1BdbJpUtf0ZvLVZs71XWQbc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ea5Vg90vmeZPI5hYqD0S/DSHqihaOnht3ptYBoRTEqyUf+IPmerDqr755AzRIxTeX3F7I0wjc67mxAU5Ez1xt44pz/GftUeLAObSKRWRG386k+xrZy5B52PNcvZzbZGWfL4YDcJP8uD/RTAuWhRYN/LkuQhQxc9/mGtuRJPYVtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NiiKt4F+; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=attyQwY5x6g9jl6XPFbuDWLzS2BVR+9GwPIkIFjvbjbK7RapE0QBeDfsk/SagYU9Lxf/X5nGd2uMBOQQMa+UvsytOUgEHURbt3q95CPKbtJzQemUvGJ3RbN2wxm08cT9DkFVHWhTIDKZO7O2eOg9IuF+Guw4bu2Bs27TOj2DM3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=SlhftcQo; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NiiKt4F+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 638C01F000E9;
-	Fri, 26 Jun 2026 12:46:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1782478003;
-	bh=fP2BM5siPysCREjfmNXTR/AxtHEbdVc8M5zdwdMP+mk=;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="SlhftcQo"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 441BD1F000E9;
+	Fri, 26 Jun 2026 14:25:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxfoundation.org;
+	s=korg; t=1782483922;
+	bh=Mq5eB87xLrwNqO+AmRAx98AdQSUns2cVe/ldlPXsX14=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=NiiKt4F+FD/xr4ICI51VvWflhjUH201ZGxa4dXz5iiGpggTXlyRUeAEBpU4bFkG7h
-	 Y16rYAzZyT3r6wXl83K3BfFQY3el38xkXteaSudkhkQSUreTxcwg6rm8vjncEdNT9b
-	 6pd4eR1ofgNdscUQ2uGqwoaQSWZWXgwZdYvXLFJ+/QxJLoaYL+dPAGeAw18D/J8q4f
-	 emR3NPxczJIXQFq4eRJjgQ71hNBq5nNHsXADJdHso6mcdeDGahZ4MyqhMVFMOlcHnC
-	 aSrUG8rOJBFeY+EpwxrZVdaDXdsB30aB8cnpEZTQER8/k1ChsAYecSMAnrfeDn5giZ
-	 aA8Zh1BOaXgCQ==
-Date: Fri, 26 Jun 2026 14:46:41 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Hans de Goede <johannes.goede@oss.qualcomm.com>
-Cc: Brian Masney <bmasney@redhat.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Javier Martinez Canillas <javierm@redhat.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Helge Deller <deller@gmx.de>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Dmitry Baryshkov <lumag@kernel.org>, Rob Clark <robin.clark@oss.qualcomm.com>, 
-	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH 0/3] clk: Add __clk_disable_unprepare_counts_only() and
- use this in simple[fb|drm]
-Message-ID: <20260626-elegant-remarkable-chipmunk-31dbed@houat>
-References: <20260527094811.116977-1-johannes.goede@oss.qualcomm.com>
- <ahd4XgTo3KZqGS9M@redhat.com>
- <66a76d9f-fe04-4a72-b6fe-42c2922fe9d9@oss.qualcomm.com>
- <20260528-sloth-of-delightful-chaos-1f02dc@houat>
- <4b09bd91-9a08-407a-9b01-216dd4d7aae0@oss.qualcomm.com>
- <20260624-ultramarine-beetle-of-vastness-acd51e@houat>
- <7c91795c-f8bf-429b-b588-f7e96d97b1a1@oss.qualcomm.com>
+	b=SlhftcQoyt+CCvsFrPLqCbzrYbKhix2b1KAVgU9jE1ER84hpdJ5RoaGVryqSJBFqK
+	 tlCi2DM/GtanGUCMkLwnL7TXrNNQtXobMg1AspzsQZtDl48fwaKFabEaac4blBeM+0
+	 nibbMs0foCEmhcjqrKp0o117YZG0XpYNydueh2Ng=
+Date: Fri, 26 Jun 2026 15:24:09 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: WenTao Liang <vulab@iscas.ac.cn>
+Cc: krzk@kernel.org, s.nawrocki@samsung.com, cw00.choi@samsung.com,
+	mturquette@baylibre.com, sboyd@kernel.org, alim.akhtar@samsung.com,
+	bmasney@redhat.com, linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] fix: clk/samsung: exynos_clkout_probe: success path
+ leaks parent clock   references from of_clk_get_by_name
+Message-ID: <2026062612-twiddling-lagged-62ac@gregkh>
+References: <20260626120135.34173-1-vulab@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="by3ip33exiefhb24"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7c91795c-f8bf-429b-b588-f7e96d97b1a1@oss.qualcomm.com>
+In-Reply-To: <20260626120135.34173-1-vulab@iscas.ac.cn>
 
+On Fri, Jun 26, 2026 at 08:01:35PM +0800, WenTao Liang wrote:
+> of_clk_get_by_name() acquires clock references stored in the local
+>   parents[] array. All error paths correctly release these via the clks_put
+>   label, but the success path returns 0 without releasing the parent
+>   references. The references were only needed to obtain clock names for
+>   registration and are permanently leaked after probe completes.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 9484f2cb8332 ("clk: samsung: exynos-clkout: convert to module driver")
+> Signed-off-by: WenTao Liang <vulab@iscas.ac.cn>
+> ---
+>  drivers/clk/samsung/clk-exynos-clkout.c | 4 ++++
+>  1 file changed, 4 insertions(+)
 
---by3ip33exiefhb24
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 0/3] clk: Add __clk_disable_unprepare_counts_only() and
- use this in simple[fb|drm]
-MIME-Version: 1.0
+For all of these, you are not using the normal kernel style, which means
+a LLM is generating them, which implies that you did not properly
+document what tool found/fixed all of these.  So please go back and fix
+them all up and resend them properly, after telling the
+maintainers/developers that the originals should be ignored.
 
-On Wed, Jun 24, 2026 at 11:06:49AM +0200, Hans de Goede wrote:
-> Hi,
->=20
-> On 24-Jun-26 10:53, Maxime Ripard wrote:
-> > On Thu, May 28, 2026 at 03:02:09PM +0200, Hans de Goede wrote:
-> >> On 28-May-26 2:08 PM, Maxime Ripard wrote:
-> >>> On Thu, May 28, 2026 at 12:12:10PM +0200, Hans de Goede wrote:
-> >>>> Hi Brian,
-> >>>>
-> >>>> On 28-May-26 1:03 AM, Brian Masney wrote:
-> >>>>> Hi Hans,
-> >>>>>
-> >>>>> On Wed, May 27, 2026 at 11:48:08AM +0200, Hans de Goede wrote:
-> >>>>>> 2) One option considered was detaching the simple-framebuffer driv=
-er later,
-> >>>>>>    after the real display driver has had a chance to claim the clo=
-cks. But
-> >>>>>>    this won't work in cases where the real display driver picks di=
-fferent
-> >>>>>>    parent clocks then the boot firmware did and needs to reparent =
-clocks.
-> >>>>>
-> >>>>> Why won't that work in the case where different parent clocks are s=
-elected?
-> >>>>> I'll describe a scenario below.
-> >>>>>
-> >>>>>>
-> >>>>>>    Basically the goal is for things to behave as if the simple-fra=
-mebuffer
-> >>>>>>    driver was not there at all, because that leaves the hw in the =
-state
-> >>>>>>    the real display driver expects.
-> >>>>>
-> >>>>> I think the deferred unbinding could have some potential here where
-> >>>>> there is some kind of notification mechanism between simple-framebu=
-ffer
-> >>>>> and the real drm driver. So:
-> >>>>>
-> >>>>> - simple-framebuffer driver takes reference(s) to the clk(s).
-> >>>>>
-> >>>>> - real drm driver eventually loads, takes reference(s) to the neces=
-sary
-> >>>>>   clk(s).
-> >>>>>
-> >>>>> - real drm driver sends a notification to simple-framebuffer that i=
-t's
-> >>>>>   done, and has control.
-> >>>>>
-> >>>>> - simple-framebuffer can unbind and release its references to the c=
-lks.
-> >>>>>
-> >>>>> No clks will be shutdown prematurely in this scenario.
-> >>>>>
-> >>>>> If the real drm driver needs a different parent, then presumably th=
-ings
-> >>>>> should be setup correctly, and simple-framebuffer can have the cloc=
-ks
-> >>>>> shut down when it calls clk_disable_unprepare().
-> >>>>
-> >>>> If the real drm driver needs a different parent, then how does it
-> >>>> do the reparenting while the simple-framebuffer driver is holding
-> >>>> a reference to the clock ?  In that case the clock might have
-> >>>> a protected_count of non 0 (depends on the core-clk flags) and
-> >>>> reparenting won't work.
-> >>>
-> >>> The only case where it should reparent you listed was that you might
-> >>> need to pick up a different resolution. However, that can only be
-> >>> enforced by an ioctl or a client.
-> >>>
-> >>> simplefb/drm is removed in msm_drm_kms_init. The device is published
-> >>> drm_dev_register called right after msm_drm_kms_init, and the clients
-> >>> are registered in msm_drm_kms_post_init, called after drm_dev_registe=
-r.
-> >>>
-> >>> There's no way in the current msm architecture to have a modeset happ=
-en
-> >>> while the simpledrm driver is still active.
-> >>
-> >> Ok, new plan, please let me know what you think about this:
-> >>
-> >> 1. Add a new "disable" callback argument to
-> >> devm_aperture_acquire_for_platform_device() and store this in
-> >> struct aperture_range
-> >>
-> >> 2. Add a new aperture_disable_conflicting_devices() which
-> >> calls the disable callback for matching devices.
-> >>
-> >> 3. Have the simple[fd|drm] drivers implement a disable callback
-> >> which unregisters the drm dev and releases any claims on the
-> >> aperture mem-region, while keeping clks, regulators, etc.
-> >> enabled. And have them check if disable was called on remove()
-> >> and if not do the disable() things on remove(0
-> >>
-> >> 4. Have msm call aperture_disable_conflicting_devices() where it
-> >> now call aperture_remove_conflicting_devices() and call
-> >> aperture_remove_conflicting_devices() at the point where it has
-> >> claimed any clks it needs.
-> >>
-> >> Does this sound like something which would be acceptable ?
-> >=20
-> > Generally speaking, yes, but I'd also like to understand what you're
-> > trying to fix exactly, because I don't see how it can be what you hinted
-> > at before.
->=20
-> The basic problem is that on handover from simpledrm -> msm
-> the clocks get turned off, without fully shutting down the
-> display pipeline first (since simpledrm does not know how).
->=20
-> Then when msm later tries to re-enable things, the hw is
-> in a confused state and we hit this error:
->=20
-> [    2.980181] disp_cc_mdss_dptx3_pixel0_clk_src: rcg didn't update its c=
-onfiguration.
-> [    2.980272] WARNING: drivers/clk/qcom/clk-rcg2.c:136 at update_config+=
-0xdc/0x100
->=20
-> So we need a way to handover things to the msm driver
-> without anything getting disabled by simpledrm in an
-> uncontrolled (not following proper pwr-down seq) manner.
->=20
-> The idea behind the 2 step simpledrm removal process is
-> that on the first step drm_dev_unplug() gets called for
-> the simpledrm device and any struct resource claim on
-> the aperture gets released. While keeping all the clocks,
-> regulators, etc. claims.
->
-> Then msm can take things over and call the second step
-> when it has taken everything over. On the second step
-> simpeldrm will release its enable count ref on the clocks,
-> etc. in question.
+thanks,
 
-So I'm not really sure you need a hand-over, and you kind of rejected
-doing a proper one anyway.
-
-I see two issues there:
- - simpledrm doesn't safely disable its resources on QC SoCs
-
- - there's no way to claim the resources from simpledrm after the main
-   drm driver is active.
-
-And you're trying to work around the first one with the second one. The
-second one is generic to me, so it shouldn't be an msm (or simpledrm)
-specific solution.
-
-The first one is SoC-specific, and fixing the second won't prevent
-completely the first. If you unbind simpledrm while it's active, you'll
-get the same issue, and you can't rely on the msm driver being always
-there to cover for you.
-
-So we need to fix both. We should discuss the second part with Thomas
-really, but for the first one, simple-framebuffer having its own
-compatible will allow you to trigger any coordinated poweroff sequence.
-
-Maxime
-
---by3ip33exiefhb24
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaj50qQAKCRAnX84Zoj2+
-dojtAYCmeW3bzu+YkChvIKdC+nbW6MN2bPTAHpqM1GM0ZtbH0AKJtQh4UWvJueJq
-TGdm2wsBf1swiWMaFoBi9UoEdVkB4y02Gcisr2W4HluPhEGwb2/bFOxt6x3RsQYy
-Lnuh3GI3Wg==
-=O0bd
------END PGP SIGNATURE-----
-
---by3ip33exiefhb24--
+greg k-h
