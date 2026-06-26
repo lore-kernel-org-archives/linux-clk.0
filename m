@@ -1,143 +1,168 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D83203FC5CE
-	for <linux-clk@vger.kernel.org>; Fri, 26 Jun 2026 16:32:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B57263FC5C5
+	for <linux-clk@vger.kernel.org>; Fri, 26 Jun 2026 16:33:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782491580; cv=none; b=D8XQS4BIyXJ3HixyO7drTrWE/pr/aw4p7Gx8uRefpQ3F7z4FSuHi/pyvgIPNgTXMQZbnVWwNEOdOWb48gjpL9MSvXjiVpckymIooyjLu+dPqJj7ifEQ0QaU/IrBBk2tOWcDa+1QLjA8PV6BEnDQyZrhNQnuJznuLwako0pDiaUA=
+	t=1782491595; cv=none; b=jpp9mbBTQSCnA8c0Qwl7/03FtAMT95j/mQiw2qHvgwjJFFv5OfxmrzeRwMsRmT+Ds+aPkhPUiAGZboZG0vEuBETh/vhKEd9AHwH4xdXj4NADBIwHmpezxW1QDXIqe0pR5PF+Hm3BclblWesTjgv7kHpmFahncagoQUWZYUFEGvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782491580; c=relaxed/simple;
-	bh=FOtl0C20K6pWYgLqC3NmwFqGG+mcnf74JUxu/N8X4rY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sPcd6nTBVgbM+Xl+tnC2cyVSSJ8V778cJucLXvLkA9nE1No2j0hUXcClHT4xWX0B6qTsgqGzsuxL4HxIIdsALWxf0MEwcZ3jlbEhI0Vzli5yA4yDtvB+ZZJLPeMW0TDWNhjwWhmr+kXUjOgqE3OqPeisLOD96caeFFdJwbzkyrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=FM4mhbI9; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=AbzeEDNu; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1782491595; c=relaxed/simple;
+	bh=bg9znAoidL3T3xPeKitW5n5yYJtb4QN2AQr+a8OWug4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Tcd1kNr/gOZmJV3nbAIxaIjoTUVjgwSJzCDpJyT0EUU0ExziW4ufydobKc2O8IIQLBWooGwWlJZM6N0jDm0wAiYj1z54/w/RUIH+j2dP2WKrgUfyedhWtcNFVkA4eHHUkMuERJQIzHO6IIn5tTv1BgcnX5wJdItmygetBcRFAqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Yv6VIaR+; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=qEeSu9lR; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="FM4mhbI9";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="AbzeEDNu"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 65QFihJv1534831
-	for <linux-clk@vger.kernel.org>; Fri, 26 Jun 2026 16:32:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	FOtl0C20K6pWYgLqC3NmwFqGG+mcnf74JUxu/N8X4rY=; b=FM4mhbI9KylaQZMF
-	/H83hA5OenX/FEyy0XVGhZynfc7VYq3huCjVECWKpNvqkjhwS7Cyvp7F36VDfGr5
-	7Q5ElohywSAjhY4A0alTkIktVTFx7Yrhqhy0OE4O07gIicSrtc3yQL+tSYef7Rsv
-	3mKTmaXQSMZK1X6QtzNXMz1glJeylwHJq7M4sS8YdIYBfPEtyP5nrRT/LUKHcE+3
-	3Hf2YUV1+d3bm8FhM7X8GnkNICcMmzBeEL9ZkGH9Ljbke6d5YxHiKwcULLlmrlvs
-	xDUthc2NKklmOg2PX3q95Mz/qlGRvY8tTRNb3I8RCiipW0kC1GpZDLphbjF++IMv
-	eqcoHQ==
-Received: from mail-ua1-f69.google.com (mail-ua1-f69.google.com [209.85.222.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4f1p2tsqp3-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Fri, 26 Jun 2026 16:32:57 +0000 (GMT)
-Received: by mail-ua1-f69.google.com with SMTP id a1e0cc1a2514c-966ca0f25a4so27599241.0
-        for <linux-clk@vger.kernel.org>; Fri, 26 Jun 2026 09:32:57 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Yv6VIaR+";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="qEeSu9lR"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1782491592;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=z6k9bAlUN3GR2gspqeApZc0R2eNHUyrDASVXA4THBoQ=;
+	b=Yv6VIaR+PWiqOmUOdFjONj5bYK+YGF9e9a0rCZcpFUM2276YiZkOSiUjriARGuiWkTou9G
+	2rzj0Kj1K/hDT+gndgW/+EwYZt1UAj1FIEdL5L3738r19tMw1sIozoGpJEinUptGyuQ0o1
+	FFViNMbxNZixIYJE3MTiVfZB8Tou/hc=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-55-0EGFQlpsO5al2lz72qLubg-1; Fri, 26 Jun 2026 12:33:11 -0400
+X-MC-Unique: 0EGFQlpsO5al2lz72qLubg-1
+X-Mimecast-MFC-AGG-ID: 0EGFQlpsO5al2lz72qLubg_1782491591
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-51a0d024b84so11651351cf.2
+        for <linux-clk@vger.kernel.org>; Fri, 26 Jun 2026 09:33:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1782491577; x=1783096377; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=FOtl0C20K6pWYgLqC3NmwFqGG+mcnf74JUxu/N8X4rY=;
-        b=AbzeEDNu0Cj2YKDWmalw1AQziwaB5xFtajnbZRBw40uc7uYJxKKViulDW2T2IFJz3H
-         ykWq8phgTgxnhnXXcNsEhz6pioiH5KAJDl1inl9RpFQ+Laoi5pvvyDX8X9bs6oeu4C3P
-         Dtu3JtFpWA/YJzxyPNc/HuPEOkP7KCkzI89S9cX8vMM/SwKujOyScMGH4245e34ZwEeW
-         Va4+iZTWPR+u553ECv2QvIIl5UCVNTUF4q7X2P8TkFIe8evyp5tcbUEGapMAOQX5iOlY
-         zeuVniiMjDOUDDDWa3RJHUFHlK10GVXB4z59hZ/4M78+BBy+plD0fJGUzviBqnvDkndL
-         wDZg==
+        d=redhat.com; s=google; t=1782491591; x=1783096391; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=z6k9bAlUN3GR2gspqeApZc0R2eNHUyrDASVXA4THBoQ=;
+        b=qEeSu9lRysxSg1rEn644VxZ6L0N4CCtozku8kYsYwH9j2GgaC/5t7rrw4STxgpWwul
+         gAFVQRPCtdtogRuPcs/4w8rjO1rWebQ8phQCBk8tLhT/dT1FmzluEdtzaxQZ+bf+YWIs
+         1CuQ7jkH5KYBGLJtGauI5NVaAfTjUHhMYrFzGyS/lp0dolwk2THhZCrM78gpVdDJR3rE
+         ntYfuMQ12NE/mwBVhkx3EAF8yz0/npSCSvsS2OwrApxdW9JyRnVVVwKitR0kwgHwf/fZ
+         h2jlPItHMz0GL+wCb9KbUyB75RSQVcSbVe/gk1U+kqv/X/ziN+jNQhRzJRhbhws9Ck8b
+         xbMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782491577; x=1783096377;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=FOtl0C20K6pWYgLqC3NmwFqGG+mcnf74JUxu/N8X4rY=;
-        b=aH0NN4yKZvYhx6Weo66E8G6zEIcq4D6gO7iNB7A+WbETo/dcqp+GkpgkiVIyLcjU63
-         Ehp/NndlHXkfqfLdtsj/5SxGamu6cUMeAioaPSdYHKSgvLaum7cTiPBXxABDn/J8IRtx
-         hVuOZHOXsEdjZvOWQGUodCwpR99UMzePzLMax4pQW3Yu6mafHQLk3+KvBcEd+xXA53bw
-         mwbS/c8kpDLMyCP5FQIjL7YYkYeV6ET6OE/7mxik6oRGR8g0HFgENK5p9dCao6BeWO4S
-         96Am4BsNDMd5U2Ai+ZCSEYmZt5p3ELhgDhJthoAZojmXBWef77HmVxV3SMZFXBrWzMp8
-         ecRw==
-X-Forwarded-Encrypted: i=1; AHgh+RpUNSPzCustY61wh30CxxUaYPNEp64W5lOBizr74SV3SNqDXwXxv3xxcobkv21pWsVjKVD5TIQdx+o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAY29zbU89b5Xi1+yiM7eauSTvgNTYAjeJW7tp2a/6wyWrPb1U
-	vNLSjBZ/HSOwjoXZ8ohWRixw/LC45eM51z5of/AKHCQYoHhX51xVw28DsczniJWh4Kml2Wd5uxO
-	1DE3S0AvpAS6c4KD91oQP+F5j5HQJiF0da33Bqu6QrjGsxwXX3YptkoBSMaoh/t4=
-X-Gm-Gg: AfdE7ckQVnQm08PMSXxPg9F2ubGx4Xz4+mYC63nn9r12Muvq2qdBGF4iTjrA5GhAO4c
-	NnisQA5azVvY6J+AcN+UILmPgUkzTuaMGrClmQFm5Y0EAXAvpX35j45WOpN77ORxdn9PPWRU7V6
-	tHT9qe/SOW4ISl88ILJRD+HLwBpATeU2Fp8prz6c8D4RTUqUoOfZPGDCIy0q0/+8NqS3N5DOKYP
-	MT/BmR3d+667FC7Q3oEGM/q7xszJba9dkJbEWRm41t36SNDfAu4Zm73Us+xRijVxZWtVjEhQ7Wp
-	5bgCYymN//CjI0AVlAldgDZM1f5JHUoC+lU7nx2z0cboeWltmhMGATEIXiF16DHjee7hJK0Djhg
-	bJOYrR/hZKN9z62m9IIt1Dl7hiCj5clcuZDw=
-X-Received: by 2002:a05:6102:440f:b0:6d1:8f7:18a5 with SMTP id ada2fe7eead31-73433e3dc72mr1396646137.1.1782491577113;
-        Fri, 26 Jun 2026 09:32:57 -0700 (PDT)
-X-Received: by 2002:a05:6102:440f:b0:6d1:8f7:18a5 with SMTP id ada2fe7eead31-73433e3dc72mr1396642137.1.1782491576706;
-        Fri, 26 Jun 2026 09:32:56 -0700 (PDT)
-Received: from [192.168.120.170] ([178.235.128.140])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-697f4bd44d0sm3050633a12.29.2026.06.26.09.32.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Jun 2026 09:32:55 -0700 (PDT)
-Message-ID: <bcf9fd99-454f-4ac2-8357-b0775be42d41@oss.qualcomm.com>
-Date: Fri, 26 Jun 2026 18:32:52 +0200
+        d=1e100.net; s=20251104; t=1782491591; x=1783096391;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=z6k9bAlUN3GR2gspqeApZc0R2eNHUyrDASVXA4THBoQ=;
+        b=H04xaFCcsgNyp9Ro4GJDbIQYkwvQGSmyhJVoNqNdlD3mnEWueXP3sbilrfRz5CGhgP
+         0S6NgkOQ7EOJb5tkb4k1VBDnW3kHvyrTrTok7NW0o2o9CBu1DWWZ/9XIFDaozCX4eXeW
+         e0tyX7tuDzvwYKHiMxlTPKI+/2MshQTYDjy24OypC0gbfbyzAOW7icy7/yawR7HbfW+T
+         Jpoh/ojO+GymolxjzFnEmxYVjXgGXWp5Nr+Nun1IhLdu1+EuwEaAOvlbL+kbblOBIlrf
+         zLzLkktyoIhTV6Rqc/7+S+0PA1FjY6hl7A3wmCZBRlOUlULySir/t+aWrXkhJFl6g7xT
+         pNFQ==
+X-Forwarded-Encrypted: i=1; AFNElJ/Ut2msR+13rhgrYrY7ZsoO2l9I99to9GUvgE/WChgo4mOadYI2zcJWSpxN/scG2+nmorzBpNCGGDA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwErKtA29VMRBlihSFhbeJ8ORnkOBvj7ME1jTe6Mmrt9DFbIdPg
+	hgMH4/v+lVCM8Nzu2YR1gOWpoUzrBx5lLbkw9oFgsqz6OO87F5Rz6k9CiSvj1D5uEFRB2kr4hnN
+	8Y8xVf1gR4d3tJ72N1eqm4lLofsC4/cHkZhlB0PVP2KTOMEkmOpOGVV/oMFmIng==
+X-Gm-Gg: AfdE7cka2It+V0mSuOWj066RrP/HcFhB8/fi17E+xXVAfR42v0jDoIEEb530FajYuX1
+	qjHH/6Arj/v3x7f8aHX0AE/tMoiBR7mxJ6QFIXq7UyeM+kHQ7qYw29zCdQChpoLV7C/3yxTYnOK
+	OJ+ani5J7Qi0x+RbYHOGcAj7kiLdf1FyN4M1+szNkdMQ3XH8D30Fziov6xLPAmGTagbRYJ4wZCL
+	CATdF5P/gzRCcgXV/CjIviki27V9YB5e2O49o/Edds9MbDU146c88hfw9TAoSw7/m9s1GY3cjD1
+	nfsP2vQyyzuQ7OBAPbeAxP0K3rN7i/7R8LvqijjmNqyj03KthT9QzBu9OmDCrqERMUs666CmDpH
+	WV+Xcx8IiH5NwGrrhlbKOEzFbemK7uKsk23j4HfvAdClcieY4aA==
+X-Received: by 2002:ac8:7f4e:0:b0:51a:8c99:1f18 with SMTP id d75a77b69052e-51a8c99223emr11336491cf.71.1782491590629;
+        Fri, 26 Jun 2026 09:33:10 -0700 (PDT)
+X-Received: by 2002:ac8:7f4e:0:b0:51a:8c99:1f18 with SMTP id d75a77b69052e-51a8c99223emr11335551cf.71.1782491589761;
+        Fri, 26 Jun 2026 09:33:09 -0700 (PDT)
+Received: from [192.168.1.3] (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8df7f018566sm234540526d6.2.2026.06.26.09.33.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Jun 2026 09:33:09 -0700 (PDT)
+From: Brian Masney <bmasney@redhat.com>
+Subject: [PATCH 0/4] clk: implement sync_state support
+Date: Fri, 26 Jun 2026 12:32:41 -0400
+Message-Id: <20260626-clk-sync-state-v1-0-4156d8196dc8@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: qcom: enable ALWAYS_ON for titan_top_gdsc
-To: Brian Masney <bmasney@redhat.com>, Bjorn Andersson
- <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20260626-camcc-sc8280xp-titan-top-v1-1-2ca246886493@redhat.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20260626-camcc-sc8280xp-titan-top-v1-1-2ca246886493@redhat.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNjI2MDEzNyBTYWx0ZWRfX4npL7PbDwHNs
- KL5IhEv/ELoaGMGwIYAGLhK0G7Wp+dr/wpbxpcRks0dhWbMZN3O7VlZ8HoXmEGsmlGHEy+ytAxx
- Q9aeKO55UoF1sc78s+hw/315DHj282U=
-X-Proofpoint-GUID: kzE74aeZrWSB56mlCewXLovhXoNxrRNj
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjI2MDEzNyBTYWx0ZWRfX8CyxvlBCSgD1
- 6Nyi/YpjeU/h8hHU2MupMdqoU797BqyzWh0k1tuV06kbBrv4b6BgGkDUgs7NonR2rQaLrPFrxY7
- NIXllKvdfBZ99fmY2Gg3Q/XwyyEniixEYXqeAN9WmhrVaUUhonC07R1rVTd+RBFvBtzJXHcs+yj
- vjY66npWvzoBBrZWMiAwWTs+R79lJcumrjBseT/+xF2OrHVqASuaL8CGt+YAXXT/R0zW9jvKuPL
- L7FCYXGlbY46ZGEE1pk9C8OXS53wBkgA8Ib1bo0hylmy86P8mf/50gA5JD3I6LZfFWKNihheA34
- Yjy64xgjfpMhOOvmCEql4g0tqxwjSl/r7/PZMNqbLEKzu3b7XEYUopkVaicpGOx6rW822Zqzs3u
- IwlAD9v/MEF3cZfjlasvFjw+eKIW1L6RjLWTu+8La4XmaVO13sdUX6nymgrOqqmiMnHLs+Icmbm
- BA7TfkPUPuQanrmMCkQ==
-X-Proofpoint-ORIG-GUID: kzE74aeZrWSB56mlCewXLovhXoNxrRNj
-X-Authority-Analysis: v=2.4 cv=IM8yzAvG c=1 sm=1 tr=0 ts=6a3ea9b9 cx=c_pps
- a=UbhLPJ621ZpgOD2l3yZY1w==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
- a=IkcTkHD0fZMA:10 a=FelO9ux0wxsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=yx91gb_oNiZeI1HMLzn7:22
- a=VuFW3N86aykZV0Cky-kA:9 a=QEXdDO2ut3YA:10 a=TOPH6uDL9cOC6tEoww4z:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
- definitions=2026-06-26_04,2026-06-26_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 bulkscore=0 malwarescore=0 adultscore=0 lowpriorityscore=0
- impostorscore=0 priorityscore=1501 phishscore=0 suspectscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2606260137
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/x3MQQqAIBBA0avErBswF2JdJVqITTUUFo5EId49a
+ fkW/2cQikwCQ5Mh0s3CZ6jo2gb85sJKyHM1aKWNMtqgP3aUN3iU5BKhm5WyVvfO2B5qdEVa+Pm
+ H41TKBwBFMJpgAAAA
+X-Change-ID: 20260626-clk-sync-state-ad008829a689
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
+ Ulf Hansson <ulfh@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Xuyang Dong <dongxuyang@eswincomputing.com>, 
+ Jens Glathe <jens.glathe@oldschoolsolutions.biz>, 
+ Hans de Goede <johannes.goede@oss.qualcomm.com>, 
+ Maxime Ripard <mripard@kernel.org>, Saravana Kannan <saravanak@kernel.org>, 
+ Abel Vesa <abelvesa@kernel.org>
+Cc: driver-core@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ linux-clk@vger.kernel.org, Brian Masney <bmasney@redhat.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2145; i=bmasney@redhat.com;
+ s=20250903; h=from:subject:message-id;
+ bh=bg9znAoidL3T3xPeKitW5n5yYJtb4QN2AQr+a8OWug4=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLLsVu6/yxxZGNTU+anKb0WYEWPKq4NtjJltB6tM1De8c
+ b0WaqDTUcrCIMbFICumyLIk16ggInWV7b07miwwc1iZQIYwcHEKwESuTGL4H21R2rlfI/2AfmT9
+ 1uaZAaufLI771ptpemXTtf0m3HEHjBkZlrppH/+y8Pxd1QULVANm6ta93pfv4WKf26rasPMGu1s
+ qAwA=
+X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
+ fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
-On 6/26/26 6:26 PM, Brian Masney wrote:
-> With the introduction of sync_state support in the clk and pmdomain
-> subsystems, the following warning happens when the unused clocks are
-> shutdown in camcc-sc8280xp:
+The existing support for disabling unused clks runs in the late initcall
+stage, and it has been known for a long time that this is broken since
+it runs too early in the boot up process. It doesn't work for kernel
+modules, and it also doesn't work if all of the consumers haven't fully
+probed yet. Folks have long recommended to boot certain platforms with
+clk_ignore_unused to work around issues with disabling unused clks.
 
-Stuck at _on_ sounds wrong.. does clk_ignore_unused / removing
-the sync state from the clock part only resolve this? There may
-be a clock dependency for the TITAN_TOP_GDSC that we're failing to
-describe
+This series fixes this by adding support for sync_state to the clk
+subsystem.
 
-Konrad
+Changes in v3:
+- Allow multiple sync_state callbacks in the driver core via a new
+  helper dev_add_sync_state(). This allows dropping changes to the QC
+  drivers that already have a sync_state callback since everything can
+  coexist without changes. This also makes it so that this can coexist
+  with the pmdomain subsystem.
+- Only show "clk: Not disabling unused clocks" message once.
+- Add Tested-by from Neil and Xuyang
+- Link to v2: https://lore.kernel.org/linux-clk/20260616-clk-sync-state-v2-0-15f82c64d95c@redhat.com/
+
+Changes in v2:
+- Split out clk-cbf-8996.c into it's own patch, and don't call
+  qcom_cc_sync_state().
+- Clarify comment above call to dev_set_drv_sync_state() about
+  the -EBUSY.
+- Added Tested-by from Jens
+- Link to v1: https://lore.kernel.org/r/20260603-clk-sync-state-v1-0-457120eed200@redhat.com
+
+Signed-off-by: Brian Masney <bmasney@redhat.com>
+---
+Brian Masney (4):
+      driver: core: introduce dev_add_sync_state()
+      pmdomain: core: migrate to dev_add_sync_state()
+      driver: core: remove dev_set_drv_sync_state()
+      clk: implement sync_state support
+
+ drivers/base/base.h     |  7 +++++
+ drivers/base/core.c     | 29 ++++++++++++++++++
+ drivers/clk/clk.c       | 78 ++++++++++++++++++++++++++++++++++++++++---------
+ drivers/pmdomain/core.c |  4 +--
+ include/linux/clk.h     | 14 +++++++++
+ include/linux/device.h  | 21 +++++++------
+ 6 files changed, 127 insertions(+), 26 deletions(-)
+---
+base-commit: 6c94b38b83a04c43ea49004275f0391404051093
+change-id: 20260626-clk-sync-state-ad008829a689
+
+Best regards,
+-- 
+Brian Masney <bmasney@redhat.com>
+
