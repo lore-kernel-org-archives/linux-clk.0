@@ -1,73 +1,74 @@
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 059503E92AC
-	for <linux-clk@vger.kernel.org>; Fri, 26 Jun 2026 09:34:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D45B63BB10D
+	for <linux-clk@vger.kernel.org>; Fri, 26 Jun 2026 09:41:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782466461; cv=none; b=WoyOoQXlYCgasvkgj+Os/1KgBP4UonfssPoFFjeGGAHRKvwPnx3uapeZO4BDZemlkmgFmB5VGN93FefGVjxZT/q/fxiojoRwysgEZ4UDNBw2KAyWeNO5zN/yvE/qs1hlmDf1mR7vfABjgxdyjxZcPZAKvRJI+EbDBIwMCpfr/Mk=
+	t=1782466905; cv=none; b=NCxSZANE6dLOwuTrsaPEb3jh00A4Bk5Q4SBNhGcX6LtrRBouu5oLiX4xHuKkP0YDh6UJZVUQhk5WV9DbAjpQqaylq8ahrnviml7Ht8vVSEPV/y8jDOYV/Dp8iDE/HcmeFJfitbvJ66m98+umGyaWref8pDgxf+F1oHs43rIIpY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782466461; c=relaxed/simple;
-	bh=l7M8Rv1FX6tc7M6wlAUtVT3zV3ehj2x0TDhS7wf037I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Slnp/pPqpN68F0FVxTgcMWvl00chhBqFOt0p1MzeG0YfdPTJAdi2afV1z6l9j2ytIphJfdwrfFCrIi4SGEclhxPMJ5rGtVQf7XiFFjTRnRvI38qGrvwaloNxvLiJtVcUrXJdsaiXSLAQIpCffFvy8H4rZBNkvh04RKz//iDyi3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nC+HOWQQ; arc=none smtp.client-ip=209.85.214.177
+	s=arc-20240116; t=1782466905; c=relaxed/simple;
+	bh=MfAhvEObsV+KWrsGCI3P9Sm+CI6pojZgxHIyPBbaVtY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tcosw6AUfjZQ+BKBZigOKuRq6CgsV1UX2JJZytC7HXmWTNgUoW1jU+Z5Btnr32M5EUuBLyUM6jPVmoHFrbpucWwxbAWu8tq4Rx8cu77BbUWFdQ+uEBiaTrzUv+ZTotiHh7Zg+O3Apni/UQxLUA2VbdDkqhNMX27LRLHDp0KQrfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FePgrkES; arc=none smtp.client-ip=209.85.216.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nC+HOWQQ"
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2c95a0c0aa2so51115ad.3
-        for <linux-clk@vger.kernel.org>; Fri, 26 Jun 2026 02:34:18 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FePgrkES"
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-37c6cd1ac98so594038a91.0
+        for <linux-clk@vger.kernel.org>; Fri, 26 Jun 2026 02:41:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1782466458; x=1783071258; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1782466902; x=1783071702; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=aKllfYEV0UIxS9YR+qG1P28UUyEJha52iUC/4n2PQK4=;
-        b=nC+HOWQQ9d66MDf/bNNaN0jY6P/P6zjdbm8Pvm+lV91sEkqxkqmPlmGmEazxRGk2+u
-         pdnKQtrId1YUiu3C/Eu2RGKFJEtnD31010m/4Hur+WmxBO1g5lbInO0SPPK3J2lUDfdu
-         IYEvidklxMFQRShVIbTGaYNyL3a7Rre6UVQsTSfVG77reAnobbELv7e8xxNfXX31Crxh
-         KzuNpi0avVCbVHN1OJB7y5DI48xtwKwSxqUAvCnOT2NTsWeafOZ+VboxnPiB9GKM5tCb
-         PxOeuHIAcejzudI4Pfg9j1tLaoYeuvlACtMZipmvvDfJrd+hVXAUqz8Dij/w/NFhEAuJ
-         aKIg==
+        bh=7J5GI2pmCkcVilqZesKiSKQTUF3Kx6m9amj3OnCb7ho=;
+        b=FePgrkESIGxeer7BHTiyP2TAgfINLAmkUQERMgw/JKd2LX614imH4Ghx8gRrjaE6fA
+         2SL3G8m9j2PJOon+W4Z9O9NrDf1oHhWHn16lWs6S7subGUtX3+xR3O3Tjd8d3JXkVkC7
+         EWZxJ+hHjfWyOnckINiF73QwCrFzsXaSY0H9mfr4L0DilRr07yPH7XpgKjXosE2lRpsg
+         7x3sLv61lo2N0SF5hh0RUKlAgvu7FuSgzajhqGSW5rUBScOylNQorkK2ajAmOf/uIlJH
+         oPPnK2Nwq5gSNqCxrF97qkimI0/HgaoeyH7u+Una15GUg7u3PR8fqvIVarMPDrBADAqv
+         xetg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782466458; x=1783071258;
+        d=1e100.net; s=20251104; t=1782466902; x=1783071702;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=aKllfYEV0UIxS9YR+qG1P28UUyEJha52iUC/4n2PQK4=;
-        b=FL5GVlxSyiTwLxFyQoLXtlfL06YZcgZfFoMb6VFXVrMZOxuscfhm5KBuAu6f8otglX
-         AvjkCJB/PqtzNALlK/ktrYJJR9Vi/Ry2DEC092PfzXk36m3WSHWh0kMmBD8/ir6mw3yr
-         bfJQFUOBFzvVAXZnjYApJAN+fnR2MpdMvWH/cj/XVs1MSmdlZrueWwUL8rbZAtXj7Vf5
-         dXbSde3JVBWHodGBUesc9GP0zj/kRSoWsAeaG7GuAEzY8Ykbj0hFT2NIMUEnyCxJI/Ac
-         ou1WDRK85ZHY3xnMjn3jn28RiM2ku75ntHuoyuHdul/dVfNpbZo9CVtQiE30BKKB818l
-         ctxg==
-X-Forwarded-Encrypted: i=1; AHgh+Rp+oNXngCAZUWfWVEj7YVrOgSbLdmg9dtKp3QnP5YAc9emJJIL66JiURZAg1qDNe1zlBqlmQB0JU60=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxdqmKpYZzP/Ja4zhrXaN/iDDqpS8tspaPFI2VsuiWiNquBaMQ
-	bG+VTbY9oAml41zloGn98Mozg9NsynrjXBYQm0WCigW7TV9c7ST6T2g=
-X-Gm-Gg: AfdE7cnJHAqbjIbLPO7KtwUSf+V5fT0WuFKWCvQ4/f9lXjHgRPgAmrz/uewWni9IdFH
-	4jejvmZY3zBhSb4hZWRgbolA+v2jREZ+Pfca9JlEkq8k78ikqafKxSxAATsutNaXpTMwR++5O+y
-	xOILvJIpGuMpgrsr5xghDs6vwcD2xja1Fff8BZT/ypqN9g8Y07HKX+SH1FHNiwlxDNpv46qRjno
-	L0XYZtZIeplFtgDkYDs4Y4TUraktsX/CZpD/7snhy5Pw6Kfg5uUsrPEjFiVg8k+mP3YmM+4bzR2
-	dk0Fpt49IbKBKp0W80+jFY1nQjm2i7NkBsTtbJEdaks5qetWIngooE5nKlfciyfePBY432C/cUi
-	qCGYCCUil2ljA/LpPAQ1ipEPJEdHwnE+xt2FNyI8uvfvviCxUCUNbFrrAIhAD4uTN4KPTQGk5h9
-	p41fmQcs6OH09vsQJteI4JLO5b82qavpEBbraVtgAYfVkIQcDSnU+GpoQg/dCeMPtNbcvfWEn43
-	2vainn3Ip9N7/bw/PIPt90ra5LEwhOac4b94bN2xAZMlV/v3aUXA6vnrnXG
-X-Received: by 2002:a17:902:f70e:b0:2c8:21c4:e14a with SMTP id d9443c01a7336-2c821c4e303mr8737065ad.17.1782466458239;
-        Fri, 26 Jun 2026 02:34:18 -0700 (PDT)
+        bh=7J5GI2pmCkcVilqZesKiSKQTUF3Kx6m9amj3OnCb7ho=;
+        b=G2qP0z3SuDLAJ2r13pWznvRYBHSvUmpWvslrO3xnfmLflFPez+wCuTAGOgCc1nDcGl
+         OfWOVGbqusuMt8wa0T9Y20OGoBUNuTMgiOw8LgZbtCtjZM+DrDSPCkQxBoRbL3TLlrIh
+         piuqWpcYQM1PHo6HcmL71JTbYXXrMtM6KvtQtUGkNhruP6FLy3GKljSjvfcEb+iwkB07
+         +YaYcG+YE64XCtNsxla+dxDxoKDc8FoH0l5GIveVNKqQe93mcJrqw25NVNnvz0JNIpLj
+         cwODWb/Z9x37nGLvNOUZFobeCJgRUz+0RzC7nc0lHJb6u8RQxWA/gSql/5GqGBEFF4bH
+         at/g==
+X-Forwarded-Encrypted: i=1; AHgh+RqXawWYiFDuEb0xweZRXzcZgqLGxLCFgaMhrzYwW8sLpWVIwzYipQ1AoBnZn/eSX8WtmQ5S5gjC8HI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcBB+6e4/frEwuG1TSe/WePkyb0CtlGSq1422sgIzwv9+F5nCH
+	YnpDaEVi+oLvV+KwDcUrQk23Oh5PFvcNWrccr3HrCPcaLyzywq2PcQ4=
+X-Gm-Gg: AfdE7clWJfuJszzcdbbsZFTXhj7bhClT/7UPR7VxMfyIMNruB1HkQ+zx37WOLiCa5mz
+	5SqARiAlH7Bg2W+FVfuSOiBlyvOBXbjAmKQz5+bSfRRpZr8g9Q8K0c2vJIkSKcfFd89BEMcE3Qi
+	51o8lpXSHWXZ9ybT0YAK8aCA5kIHKj0kNqtgog/rgIY1AFbmplhp8BciZVZCWZh9nWo+GGUau3Y
+	Tyj7q7suJN0xFm5tHkG+6tdYxaI2bKq8VWOF5TBvxIzdU6TPEePL9VSamjKGHwLMWxlJEyJ5SO6
+	j+EJezvRRiyr2h/ge5YcHWSIzKXCctXS5fQQlx0JegwnnnNZNXZ1wMkHnLure48laIcG9hKFwOC
+	0w7OPFqbQ5BjtYJos6fpPe/wSf7DGJeRTLhSIUNcABhiOZnBmfiZPN+MmZToGfny+qQuBEUdm9T
+	1YoAy0gAR95GyG0cXqF3kHQhLz/Y2G/8+t7zaNErmRMAGQ6K0ETvC34QHhaIKruK8RpC3YKdPGg
+	tB/UdaG5XgrTUyTijrDSTHLMtNGrDLW5pM6VfJXIu95SXDJTg==
+X-Received: by 2002:a17:90b:384e:b0:36e:2106:ded8 with SMTP id 98e67ed59e1d1-37dfa28bb98mr6256890a91.25.1782466902167;
+        Fri, 26 Jun 2026 02:41:42 -0700 (PDT)
 Received: from localhost.localdomain ([14.5.152.27])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2c7f63b2e18sm36677835ad.41.2026.06.26.02.34.15
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-37e12daa2fesm456408a91.2.2026.06.26.02.41.38
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Fri, 26 Jun 2026 02:34:17 -0700 (PDT)
+        Fri, 26 Jun 2026 02:41:40 -0700 (PDT)
 From: Myeonghun Pak <mhun512@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
+To: Tero Kristo <kristo@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>
-Cc: Mike Looijmans <mike.looijmans@topic.nl>,
+Cc: linux-omap@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Myeonghun Pak <mhun512@gmail.com>,
 	Ijae Kim <ae878000@gmail.com>
-Subject: [PATCH] clk: si5341: disable input clock on probe failure and remove
-Date: Fri, 26 Jun 2026 18:33:07 +0900
-Message-ID: <20260626093410.67573-1-mhun512@gmail.com>
+Subject: [PATCH] clk: ti: adpll: unregister OF clock provider on remove
+Date: Fri, 26 Jun 2026 18:41:26 +0900
+Message-ID: <20260626094134.71961-1-mhun512@gmail.com>
 X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -75,82 +76,37 @@ List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-si5341_clk_select_active_input() prepares and enables the selected
-input clock, but the driver never disables it. The devm-managed clock
-lookup only releases the clock handle; it does not unwind the
-prepare/enable count.
+ti_adpll_probe() registers the driver's onecell clock provider with
+of_clk_add_provider().  The remove path only frees the clock resources,
+leaving the provider registered after the backing data has been torn
+down.
 
-Track the input clock that was successfully prepared and disable it
-from both the post-selection probe error path and the remove path.
+Unregister the OF clock provider before freeing the ADPLL resources so
+the provider no longer points at released driver data after device
+removal.
 
-Fixes: 3044a860fd09 ("clk: Add Si5341/Si5340 driver")
+Fixes: 21330497f303 ("clk: ti: Add support for dm814x ADPLL")
 Co-developed-by: Ijae Kim <ae878000@gmail.com>
 Signed-off-by: Ijae Kim <ae878000@gmail.com>
 Signed-off-by: Myeonghun Pak <mhun512@gmail.com>
 ---
- drivers/clk/clk-si5341.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ drivers/clk/ti/adpll.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/clk-si5341.c b/drivers/clk/clk-si5341.c
-index 2499b77..14f80a5 100644
---- a/drivers/clk/clk-si5341.c
-+++ b/drivers/clk/clk-si5341.c
-@@ -74,6 +74,7 @@ struct clk_si5341 {
- 	struct clk_si5341_output clk[SI5341_MAX_NUM_OUTPUTS];
- 	struct clk *input_clk[SI5341_NUM_INPUTS];
- 	const char *input_clk_name[SI5341_NUM_INPUTS];
-+	int prepared_input;
- 	const u16 *reg_output_offset;
- 	const u16 *reg_rdiv_offset;
- 	u64 freq_vco; /* 13500–14256 MHz */
-@@ -1463,9 +1464,20 @@ static int si5341_clk_select_active_input(struct clk_si5341 *data)
- 	if (err < 0)
- 		return err;
+diff --git a/drivers/clk/ti/adpll.c b/drivers/clk/ti/adpll.c
+index e305fcb..0c22e33 100644
+--- a/drivers/clk/ti/adpll.c
++++ b/drivers/clk/ti/adpll.c
+@@ -925,6 +925,7 @@ static void ti_adpll_remove(struct platform_device *pdev)
+ {
+ 	struct ti_adpll_data *d = dev_get_drvdata(&pdev->dev);
  
-+	data->prepared_input = res;
-+
- 	return res;
++	of_clk_del_provider(d->np);
+ 	ti_adpll_free_resources(d);
  }
  
-+static void si5341_clk_disable_active_input(struct clk_si5341 *data)
-+{
-+	if (data->prepared_input < 0)
-+		return;
-+
-+	clk_disable_unprepare(data->input_clk[data->prepared_input]);
-+	data->prepared_input = -1;
-+}
-+
- static ssize_t input_present_show(struct device *dev,
- 				  struct device_attribute *attr,
- 				  char *buf)
-@@ -1571,6 +1583,7 @@ static int si5341_probe(struct i2c_client *client)
- 	if (!data)
- 		return -ENOMEM;
- 
-+	data->prepared_input = -1;
- 	data->i2c_client = client;
- 
- 	/* Must be done before otherwise touching hardware */
-@@ -1803,6 +1816,7 @@ static int si5341_probe(struct i2c_client *client)
- 
- cleanup:
- 	if (err) {
-+		si5341_clk_disable_active_input(data);
- 		for (i = 0; i < SI5341_MAX_NUM_OUTPUTS; ++i) {
- 			if (data->clk[i].vddo_reg)
- 				regulator_disable(data->clk[i].vddo_reg);
-@@ -1818,6 +1832,8 @@ static void si5341_remove(struct i2c_client *client)
- 
- 	sysfs_remove_files(&client->dev.kobj, si5341_attributes);
- 
-+	si5341_clk_disable_active_input(data);
-+
- 	for (i = 0; i < SI5341_MAX_NUM_OUTPUTS; ++i) {
- 		if (data->clk[i].vddo_reg)
- 			regulator_disable(data->clk[i].vddo_reg);
 -- 
-2.50.0
+2.53.0
+
