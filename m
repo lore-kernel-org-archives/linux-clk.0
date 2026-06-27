@@ -1,122 +1,144 @@
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3BA42701B6;
-	Sat, 27 Jun 2026 11:43:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 316603A75A2
+	for <linux-clk@vger.kernel.org>; Sat, 27 Jun 2026 12:15:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782560583; cv=none; b=DsxnidJCn4j6BXIuIRmajWHz/k4UZwqB1TgiODK3sWOTCOFFEMy/eIuwS7R2CDbLhgG+i+vwVv8ND4vdmsITxLkTQ2Sr6xTabvh9fRgKissb0i9uXRSHeJehVhSQLVIQ0qcCNshe2uUl11Lg1LS/rgyxukUAlPJ+3TpETyI2GZw=
+	t=1782562503; cv=none; b=I7rUHavi3IiaMzyliejq7lDTo1DG1lHoSOh5CjfoEZbxLm+9tjzAyC1DqHDH25kuHP0czU5l96sBtLz7rBbCMABIyqjl/b5cvZ5I4VAKfqMJBDcRtSEs7/qMIUuaSFGZQJ5fDPR5aPVAWapmBy5Uf3sSt3iUv+IPfS0FKzKvJkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782560583; c=relaxed/simple;
-	bh=3mxVq99yn4aKKaOcgRV5QwjAvgoJvrPCMvbXndaxFD8=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=W1zV783pXQoca0GYJI3I2v5aqdn5S9+no4M8d29rt7W+IkR7JI9GRSRCgPPOO6GHIoQGyYLiEkdvBnL1S2BRQECq6dehTyggPfNQmtnUXcASG8WdPQ4aFCEl5Kj8gZnEAHchX1ZhSVIB+7B3fC7DPTOnlynU9UCgOyosf/jdupY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from smtpclient.apple (unknown [117.182.75.66])
-	by APP-03 (Coremail) with SMTP id rQCowABnPJM2tz9qzg4MFg--.4997S2;
-	Sat, 27 Jun 2026 19:42:47 +0800 (CST)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1782562503; c=relaxed/simple;
+	bh=iOqbzTOr7Al7FRgdDYfrfx6rKgnAR26rPeCHRKlIgiM=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=akagvEdyF7L4rrv6jLIdixowajhNUVUw/T0+PzmQHgm+hMXuSW2Xds3P8rHW3paQ+OibdjNwpT0MqidLZlM2q5sWkM9vv0h+2c0II3/iKa+y8iQwO8nrsElaT/uuDlTbod8HSdLylK31hMYFqsTucrKMirk5CYZ2hELnd/HIOnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c+F7+STo; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c+F7+STo"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-49270caa5c0so8953365e9.3
+        for <linux-clk@vger.kernel.org>; Sat, 27 Jun 2026 05:15:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1782562500; x=1783167300; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ENGLhUzySY12FfgNeO/39C61qpfSr8IVf4djxpXqVbg=;
+        b=c+F7+SToXKOjitreIm7Brg6kMOEXdrDcrlPQ8e+9oH9P0hN2Az6Wy5jZgzkT8q9cgT
+         w3yvycvwwY1BXhEx3dc+HulQ0pOa1jSPttpInRZfEFARoeTvdHPDAt7iJNwBv9NJfewq
+         QjTlhHXgrpI9dBSNIuFdSZKZGn3tjsWmWNJKfnOv/0XxP/RDlMhmYsUSIxfGTK5hapvG
+         DPA9jWk87QLmNqtgYWkoGHIxEUV2+F5FyD5hMpLUBQmmTgmrn0ojnylWud1o2EJQX7qh
+         0NnQw5MyyOzqkRg3xuCjXoCMniWGc2NaTiO/lHWQTdHXbwQzrzHJqdqycA9l2CcDFAHC
+         1iSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1782562500; x=1783167300;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ENGLhUzySY12FfgNeO/39C61qpfSr8IVf4djxpXqVbg=;
+        b=SmEJk+bL/9N6yXyoCSfOY6TpzSNBLYAmS/X4+xd2AdFF/uoxpsXlMLMDlnoLw5a5yB
+         PrkOC0rIAHNGKVRuZYsOEmVqcBl6whblaKdQjfGomgrXFCiR0Apx/OdzVfUOFobl+vyb
+         k17DgmKf4kjUDsKu9An34JAR+6MQKqQM7ciYOsoJ0aSn7GqPfw9YiDFDiGkexMNyyJ4G
+         /6SLvJXEl6MO8eGDtuqHVKE4ERIlSXSWBnT4btVRZbMibatNqFIxFGTI3vxtviAdHV7S
+         EYEYpAzr3EcD5yOjW1GDxS7wRhm2qh73TlAv8Fw8QW2wo/E1QcM+9iIsNGpylX9vSyWI
+         Vxtw==
+X-Forwarded-Encrypted: i=1; AFNElJ8seb02jrzSm9UmXbWPLHH0UYE+VfvDh53hE2IFGzGWrW1rN6t56VxvvS7YyOpXc06y+jnFlbTQCYY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUTMKu5v6LSZ+s1bWaTPmOIKtqvYtLGl9mTrp3AydRAmSycncc
+	zBCOtZ4JMY2e6PNbRV65VY4jqe0arCxbQXLaYRAxD5cIwwrbihCjR7dJ
+X-Gm-Gg: AfdE7cnjt6R4+Jq32YwZD5TJkPTEIo9VAm1Zo8kHUDrAxOLrOg8ZIZC2wbRfyK66+h6
+	GGYtBS+QLdSAUYMTfWa8tljEI91m8KofuKDOGOFB9MlUzfprsFyhAG4NVK+va2My1F23MIlxxrp
+	5HZaXLzMl238lTnJH9iK2U0bYr3k+j4r5oqzQS8yQiRGt19WPFploOUkMaRhmKhiOHcZKBapgue
+	/xLfw0AOWPOv7GrmxevL2VRA3l//OFTHnw1oTLPdZchJ9Dv8lc6o1tjwYViBqN1FL7AjyjREuQW
+	AbYNEF1Bv3K3Mnp8oY13BEsbDNFNIyeWoI9pMHD8TB5jmhDKiI0HBrcq9B25WodBm0GD5ydaTG3
+	wgclEGajrwCgZqwyfSuX8TiTYsqqnmWRjxJxCsq/AYqdFAynDEQmavWHBXK301KCCcdFwFiwBpj
+	fRZS2LPzbFkkpyw7upM2kDBf7baWy3uWMZyBRk2LasSrIBEMEtO9QG0KLRs7O9Kw==
+X-Received: by 2002:a05:600c:3f06:b0:492:33a8:5499 with SMTP id 5b1f17b1804b1-492668858a8mr160407315e9.17.1782562499407;
+        Sat, 27 Jun 2026 05:14:59 -0700 (PDT)
+Received: from Ansuel-XPS24.localdomain (93-34-89-195.ip49.fastwebnet.it. [93.34.89.195])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-49269002511sm149028265e9.8.2026.06.27.05.14.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 27 Jun 2026 05:14:59 -0700 (PDT)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Ryder Lee <ryder.lee@mediatek.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney@redhat.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	Jianjun Wang <jianjun.wang@mediatek.com>,
+	linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v3 0/4] CI: mediatek-gen3: Add 2-lanes mode support + clock
+Date: Sat, 27 Jun 2026 14:14:41 +0200
+Message-ID: <20260627121450.3529133-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81.1.8\))
-Subject: Re: [PATCH] fix: clk/samsung: exynos_clkout_probe: success path leaks
- parent clock   references from of_clk_get_by_name
-From: WenTao Liang <vulab@iscas.ac.cn>
-In-Reply-To: <2026062612-twiddling-lagged-62ac@gregkh>
-Date: Sat, 27 Jun 2026 19:42:36 +0800
-Cc: krzk@kernel.org,
- s.nawrocki@samsung.com,
- cw00.choi@samsung.com,
- mturquette@baylibre.com,
- sboyd@kernel.org,
- alim.akhtar@samsung.com,
- bmasney@redhat.com,
- linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <10D15C29-89E4-4A0B-BB89-F03A86963DDA@iscas.ac.cn>
-References: <20260626120135.34173-1-vulab@iscas.ac.cn>
- <2026062612-twiddling-lagged-62ac@gregkh>
-To: Greg KH <gregkh@linuxfoundation.org>
-X-Mailer: Apple Mail (2.3826.700.81.1.8)
-X-CM-TRANSID:rQCowABnPJM2tz9qzg4MFg--.4997S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7ZF15AryxWw4DJFWUZFWrKrg_yoW8WFyfpF
-	WfKay3AFsxJr1Iya1IkF1rCFWxA3yrKFW5Wr15ua4xuFn8WF1IqryqgFs8ZFy7J3yvk3ya
-	qr4UKFyUK3WUZFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvGb7Iv0xC_Zr1lb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I2
-	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
-	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xII
-	jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4
-	A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IE
-	w4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r4j6F4UMc
-	vjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kIc2xK
-	xwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJV
-	W8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF
-	1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6x
-	IIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvE
-	x4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa
-	73UjIFyTuYvjxU2R6wDUUUU
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBwcLA2o-mHs6iQAAsN
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
+This small series introduce support for 2-lanes mode for Airoha AN7581
+SoC. This is needed for correctly functionality of Eagle WiFi Card
+normally attached to this SoC that require a 2-line PCIe card to
+correctly work (and give the proper performance)
 
+The first 2 patch address a limitation of the PCIe implementation
+where the PERSTOUT reset were indirectly asserted and deasserted
+all at the same time (for all the 3 PCIe card) with PCIe
+enable and disable.
+The 2 patch address this and introduce correct reset to control
+reset line for the relevant PCIe line.
 
-> 2026=E5=B9=B46=E6=9C=8826=E6=97=A5 22:24=EF=BC=8CGreg KH =
-<gregkh@linuxfoundation.org> =E5=86=99=E9=81=93=EF=BC=9A
->=20
-> On Fri, Jun 26, 2026 at 08:01:35PM +0800, WenTao Liang wrote:
->> of_clk_get_by_name() acquires clock references stored in the local
->>  parents[] array. All error paths correctly release these via the =
-clks_put
->>  label, but the success path returns 0 without releasing the parent
->>  references. The references were only needed to obtain clock names =
-for
->>  registration and are permanently leaked after probe completes.
->>=20
->> Cc: stable@vger.kernel.org
->> Fixes: 9484f2cb8332 ("clk: samsung: exynos-clkout: convert to module =
-driver")
->> Signed-off-by: WenTao Liang <vulab@iscas.ac.cn>
->> ---
->> drivers/clk/samsung/clk-exynos-clkout.c | 4 ++++
->> 1 file changed, 4 insertions(+)
->=20
-> For all of these, you are not using the normal kernel style, which =
-means
-> a LLM is generating them, which implies that you did not properly
-> document what tool found/fixed all of these.  So please go back and =
-fix
-> them all up and resend them properly, after telling the
-> maintainers/developers that the originals should be ignored.
->=20
-> thanks,
->=20
-> greg k-h
+The last 2 patch add additional logic and support to assert
+and deassert the PERSTOUT and also apply the required configuration
+for 2-lanes mode.
 
+2-lanes mode is implemented in DT by adding the required property
+and by defining the "num-lanes" to 2.
 
+Changes v3:
+- Add Ack from Krzysztof
+- Improve commit description of PCIe patch
+- Use pcie->num_lanes instead of possible uninit variable num_lanes
+Changes v2:
+- Address typo regs -> reg in Documentation
+- Address typo lan -> lane in Documentation
+- Apply a suggested fix from Airoha for PCIe MUX configuration
+  before PHY init
+- Parse secondary reg in probe
+- Add missing reset_status handling for inverted bits
+- Move SCU to local handling in power_up
+- Add check for max num-lanes for EN7581
 
-Thank you for the review and guidance. I understand the issues now.
+Christian Marangi (4):
+  dt-bindings: clock: airoha: Add additional reset for PCIe PERSTOUT
+  clk: en7523: add support for dedicated PCIe PERSTOUT reset
+  dt-bindings: PCI: mediatek-gen3: Split Airoha schema and document
+    2-lanes
+  PCI: mediatek-gen3: Add 2-lanes mode support for Airoha AN7581
 
-I will:
-1. Study the proper kernel coding style
-2. If using any automated tools, document them properly in the commit
-   message
-3. Fix all the patches following the correct style
-4. Send a v2 series with proper version history
-5. Inform all maintainers that the original patches should be ignored
+ .../bindings/pci/airoha,en7581-pcie.yaml      | 251 ++++++++++++++++++
+ .../bindings/pci/mediatek-pcie-gen3.yaml      |  77 +-----
+ drivers/clk/clk-en7523.c                      |  39 ++-
+ drivers/pci/controller/pcie-mediatek-gen3.c   | 104 ++++++--
+ .../dt-bindings/reset/airoha,en7581-reset.h   |   4 +
+ 5 files changed, 375 insertions(+), 100 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pci/airoha,en7581-pcie.yaml
 
-I apologize for the inconvenience and will ensure future submissions
-follow all kernel submission guidelines properly.
-
-Regards,
-
-WenTao Liang=
+-- 
+2.53.0
 
