@@ -1,65 +1,65 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 527053B14DF
-	for <linux-clk@vger.kernel.org>; Sun, 28 Jun 2026 19:59:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0753D3B14A7
+	for <linux-clk@vger.kernel.org>; Sun, 28 Jun 2026 19:59:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782676770; cv=none; b=IDdM2OXxJ1n7j86VOniH1XRmaOnBvIhHyOYfJJHB1PsGDbeDQDMouAzI5WDo+Yc2X8o9Oo3a6dmltUHe+XKBjrSmc2QjwEHmUo18tFhf9UBgFvNvJ59T14Ithfyiiy9WBmoKT/TTDh0RpYq3dHC7wRN/1Dx8FfnB32FCxgsnJMk=
+	t=1782676773; cv=none; b=bEqJLZB/MouyxB3htouWnw2LD8A/TbPFy9Xqy9Ab54XE71zFw/hvf+1ZT8wzxGAfmxAZPMQuEgSjJ0SAJJx1RtfItN3AcW64KqxBXpPe2BWmL3AIqV/+8mNV3cO77TBifQCKGL2piTQy9EHzxcOtsro30d/BYx3+xxQRHFJH1jU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782676770; c=relaxed/simple;
-	bh=cXtZZSnybSvHM0AdrQqoqzCvxpsEwMyY+x2tMzfR6k4=;
+	s=arc-20240116; t=1782676773; c=relaxed/simple;
+	bh=a7c78y4awvOptqBnvo4wwQFCy4PQARBq/5n/LCe0P2g=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mvDidb74DuehM/pIvs+tZ+1WspUWkidahj3fnoc3pYoD4axkYoUB83mMZlzggoJKZAv37XcC4WJGdWrCmy8nawA3K9vSciOZYCLJaHMjFsEWeLJlA1FW0IPm3P6VNRsA0nU9RZoapcbhUi3Yyw9REUuiEk+UIp+t3DwCCitr3JA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ouFL01GW; arc=none smtp.client-ip=209.85.128.42
+	 In-Reply-To:To:Cc; b=izib1XmSSKLLf4qo4hjwPuHNHiSUu2W4x2FSHFkgVfWyu9He935V4n0IESjtyA4fBKd4hkeuMyLYZLrbh+56zqH9l5xw4ZoMnLA0eN9SffHUtci1oG9TW4qfuzCffSy1a+Gg+ZsRTBlOOmyP7Wa7ydLj4+TSXzjf+yXdqSg659o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=rNOCfSef; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ouFL01GW"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-492719b2d81so5984725e9.3
-        for <linux-clk@vger.kernel.org>; Sun, 28 Jun 2026 12:59:28 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rNOCfSef"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-493a440bc10so5454095e9.1
+        for <linux-clk@vger.kernel.org>; Sun, 28 Jun 2026 12:59:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1782676767; x=1783281567; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1782676770; x=1783281570; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=PNNZfoB+jlMGGkF2GNJR9f6JBYB+xNRQZETStwnODfQ=;
-        b=ouFL01GWUQPOoe2KaKkB1HNamKiGaNlbXAnyIzNDpSVbwC/ajC7iTqVPKZnz5WMJyd
-         QQqNYMyCbsNdsPPTHpDoo/laWURmEY1QPDx2vBZD2QfNw9SodyTeD+EJNw8qCKsB/EtZ
-         8qHjufXYTBXbZAboUhjvoMXjs2UXavYqhzjjGuGdXaO597+NX5/E5E4EnDJ1ClRbwRiW
-         G8WR+U2HrFsXQ/s041Mm+vhrsjt9ny5SE66hp7E1q0TNtW/juRP1hF8mk0jAY7LdCPEq
-         0HRHVWIrZD3M4ZlQT0UfL03s2IGgdZIpYANbJbV4Qige6hrQxctOYnyQ8EvBk02IZLXB
-         EYeg==
+        bh=ZqIYbDSpn4lGb/07yoDdg2DMBPPvCNmBE5i5NwPXm4U=;
+        b=rNOCfSefa74mMB3e5OdmvAhBNEtqRBjGXEAapGKuKSaN8bjp/xOhCF3cpJP06z3v5S
+         EJV9N9vYGSv0SLmZlZu3Uo86mBNx4yTuExVCYFNZzXHbli7s8JmMHGfiJ6bJcEl+IKoh
+         SZrtpBi8tpnW/VMQDLz9HAUrvpJwshZcTyyHLuwGH/zd3fSCYsCIb/In8MTTmL1flUTZ
+         jqM3OKeDFPqQSDNZv2GPB9w1nLt/K5PUIqUj2nL5+SYmukEyBAkeQHVwmH1n8ckO3Pdt
+         yzKGX5qYzL1FZpGMdh42a1G+Zjsv4LeBORBb6ebA5XH2/htqnLvzl5C7C0xxaHjJbYIH
+         BO/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782676767; x=1783281567;
+        d=1e100.net; s=20251104; t=1782676770; x=1783281570;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=PNNZfoB+jlMGGkF2GNJR9f6JBYB+xNRQZETStwnODfQ=;
-        b=a6G52EnUVIm2ZCZSdTR65eHHi7jNp/NrJfgR5X7cUisqMiOAj2pXgYCWhDr01OvE3E
-         dLCUcmSZENYgzHsJpoPsJ0QWMaVpXV1H9r60/TbBaxP76zIdDrt4wZdSeeQ9GUP0+qiT
-         qQiqMtzLtRkjHvMV5OvyEB3W3RxeiP99SqigkLFkeoEouPgOiD4vcF6Ko3+kKJ/iABhg
-         s6WZbsA4nxnQkz/Bs9LY4av15gevMyaLcKVsdRmyHMJLMoRP6mSac3p055q+yHw/ycRU
-         nHUz6j9rZvyLos1KluWLW7mqueOj1ACRG/A0NyWwE6JcUrJ4PtaBJUaAuB/kel/cqoJq
-         p8SQ==
-X-Gm-Message-State: AOJu0YyTS05fV4gaDBjc//ncyJLa9+KMVXlxwtKV1rE59352UVT6XZ1F
-	rF425i9/aQ8nYSquOoxlenRwR6XGBk0b2y1MMl/QEZ+iW1gS0O3SQ3h4
-X-Gm-Gg: AfdE7cljsoquYT7RIiFb9I6hmmbOJqAFqsdM1lAS1GM2NBCKBb9Vd2kkKO+hMkhrgWb
-	0/mQNCCBjCi9VK5s2SKzAEGfEclyEv7/Z8mmQMLq+r3mrcFMOAd3AdyhEjwSexv7A/PhpaDosus
-	VyFlimmP9Y6/djqqdqpCFgb7KD9NRYRSne4jrTjcfAHv7uFg+whqU9HRMb3S6quZxy9teLkbgYm
-	g32U9mmQDix093np9CY46NAZgLde9M1EXyhrNKqDd+yR+B40MfCg7cukILeOm7papJdWLsF+aUD
-	QxtSH09nqR8OdteUwU6THQgTwd7VdVY7a2KuQ4k+uWRybPfCbpBUovWZZpdj13lBbGva5EJk8nM
-	gZqHblOMHfAwTZ243WzEwIZEunuDSCHdRRHKhV5IFJz6XMIPmP9HV99SPU92OzIpiEe6flwYgHq
-	DzMhVni7VEdHDm1VsOUU07lzk=
-X-Received: by 2002:a05:600c:4443:b0:490:688b:f9f8 with SMTP id 5b1f17b1804b1-4926fc8cd5fmr146664495e9.27.1782676766742;
-        Sun, 28 Jun 2026 12:59:26 -0700 (PDT)
+        bh=ZqIYbDSpn4lGb/07yoDdg2DMBPPvCNmBE5i5NwPXm4U=;
+        b=LkV+6xarKqXMOqaJM2FlSF6EA/CwicP/9aZs5MrDJsyRx25zkWFyUJ1e2Cp+rNeR6Y
+         4tKl4y2SbidarmG5dmghouysNscsrgmbCWHp+WeH6Rw7yFUvbIMIau8xMDwrL5s1eAAd
+         hFBdCQrHopqeVAeutpLHIBqt5vgXugFjBbqIju8YG70VTDigQa2+Lmp2t6g4Fx2bFh1f
+         +8wQshSlBE94cP4nGfYE1i08x+WEiZhSreqTbm3wBJ2VvOpusRAQ2sz6+6SuFYorCk5b
+         /ctyQG9ZeEDLyKAcGEGp1HkPF90/3leeqM0mhVlRai5qetFDdXZ1XZio0bsc+n0V13ZI
+         V37g==
+X-Gm-Message-State: AOJu0YwlrE2KZ1qdO/umVo4vL4hnmg+dLKF6Jz2BvCBlqRH4uv3WzncG
+	If2xXl37N8rQ/zuEMUyMYgbaPNwXyIczWm3nmLwPXJVsdeOgO4oRawcF
+X-Gm-Gg: AfdE7cnoiYZIHGy7flb4z+NltWeaOIs9Ft322To3l98Mvh9Ip6fCS6bDeq4D8dEQ8Pw
+	6i4yp3U1yUARoWCIidZZYoI6hm9JcFEKAslFnmloGc4xeq4nNB9Fl7lENTtQMtzIcHxhX/z4F29
+	TZqrfYiHM4iYSfjs+4uiS1tfdTsAeWWdJi4w13LKg2829XrACyWbPd+n86iDYZi0L1i/8xIyqPx
+	rh+ZtGuVgwjPEYhZxYdjfeQVjslsbQas59CPpoRS1Fj8qstYn0Zxn80OV9dZfonc7ovw2Uk6iXv
+	yuqPTjSIEZ26HeuhSyQQNtZh1H20ErFRNX5NQnve9G6b01OmMkfpWHV2srQ0C/juBwtDrYenGXK
+	ghBSsuXct648VIsJotI77ZVr0OGywyziMhOi5RyKEbacLbK4YeEnLXhE1IE65OX6OyP5R2G04qP
+	ZljQPXGeU4V8VNqp7+0i9Qgyc=
+X-Received: by 2002:a05:600c:3e0f:b0:493:8f89:cb86 with SMTP id 5b1f17b1804b1-4938f89cd5emr77371605e9.3.1782676770286;
+        Sun, 28 Jun 2026 12:59:30 -0700 (PDT)
 Received: from [192.168.0.2] ([197.250.51.120])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-493ae96c85fsm15133505e9.5.2026.06.28.12.59.23
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-493ae96c85fsm15133505e9.5.2026.06.28.12.59.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 28 Jun 2026 12:59:26 -0700 (PDT)
+        Sun, 28 Jun 2026 12:59:29 -0700 (PDT)
 From: =?utf-8?q?Stefan_D=C3=B6singer?= <stefandoesinger@gmail.com>
-Date: Sun, 28 Jun 2026 22:58:57 +0300
-Subject: [PATCH RFC v5 02/12] dt-bindings: soc: zte: Add zx297520v3 matrix
+Date: Sun, 28 Jun 2026 22:58:58 +0300
+Subject: [PATCH RFC v5 03/12] dt-bindings: clk: zte: Add zx297520v3 LSP
  clock and reset bindings
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -69,7 +69,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20260628-zx29clk-v5-2-79ff044e4192@gmail.com>
+Message-Id: <20260628-zx29clk-v5-3-79ff044e4192@gmail.com>
 References: <20260628-zx29clk-v5-0-79ff044e4192@gmail.com>
 In-Reply-To: <20260628-zx29clk-v5-0-79ff044e4192@gmail.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
@@ -81,78 +81,76 @@ Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
  =?utf-8?q?Stefan_D=C3=B6singer?= <stefandoesinger@gmail.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=10831;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=8046;
  i=stefandoesinger@gmail.com; h=from:subject:message-id;
- bh=cXtZZSnybSvHM0AdrQqoqzCvxpsEwMyY+x2tMzfR6k4=;
- b=owEBiQJ2/ZANAwAIAT0TvMhUTxoiAcsmYgBqQX0UYDoA+QurQkMZJw9fJS2Gk8g8s1gZ+k3l6
- QEt2w+d/HuJAk8EAAEIADkWIQRDFvS2qgVbJ5UyXWw9E7zIVE8aIgUCakF9FBsUgAAAAAAEAA5t
- YW51MiwyLjUrMS4xMiwyLDIACgkQPRO8yFRPGiLiJA//S0R0ePt6i6JlqXk6FbNih0g3OlJqEpl
- Sx1ZbtJtT6Vvgn14nObA0w5AV+U+97ddEbSrpW3WqOcgUT+KcMe9Dj6xK3fRCKKGeVjHRrPhyMw
- wNszT4z76Ph9+CZcIgvODI5vCiIru3Z55ULVsokXUTzilgAt4MjjQ2aSV/KKfPP7F9cM0lr99oA
- 8IzYJhqaMtcgIbTgx1U9o9UedYIPniL1hjFqpo6rtQa/RcFpynpra9S3Mrg7xldszO2zcm/s0bF
- vRsEnhKhWXd0rGBXy6Ai/piqxZvIRDLY5wAolVDFTnviwZS+HWLqEVmZ1pImoALVmzhK+w/ngWi
- AJyzWLMI4/N7AM5spLV4W6sYuseT4EgN+rMZhkquDR/1yuELuv/cT/Qkmy2A6FTiSvFc/UJBkym
- /ZMuKbkgvB5NQ4RuIwd5m6jK9udLmB4s61KQmFoWJzkxCtl8ac13ION4QPtV8gsVEs7DxAWL1Lq
- wQBAt+1jMfJQbW9h1dAn3qt8o25IRin0r9Glrb31Zoy0XbJwWWBoLWdDyTOqGYrSiD/tiLt4LoL
- kAtxXtOVF5dhSx9y4qDi81qDZfH8Tjdz+ndt3KkrhwVvvwUZFomXD4AcwH0W6M/OPN41z97YCT/
- 0IfuUGctQRnX5afHmkvg9Y/EX1aPZrzQ8qYiJ65+XmxMJcrGoWIg=
+ bh=a7c78y4awvOptqBnvo4wwQFCy4PQARBq/5n/LCe0P2g=;
+ b=owEBiQJ2/ZANAwAIAT0TvMhUTxoiAcsmYgBqQX0UpTxm6MDy46Z8ykCtPHL4tqhGPJlg8xDZm
+ 67ONeEJo5CJAk8EAAEIADkWIQRDFvS2qgVbJ5UyXWw9E7zIVE8aIgUCakF9FBsUgAAAAAAEAA5t
+ YW51MiwyLjUrMS4xMiwyLDIACgkQPRO8yFRPGiLnUw/9GKAHn7+pX7hDbh7m01Gd9o4PuTvVOuh
+ da0QY9NbeHmZQNeNijvFnvIVfuwMi1WmsLf4wRfYdEKmWf1wQ7mrjOxkjkDw30SeSjufP33uU5x
+ iH4DXLeS4x/Z2lylgmQULaVHzwoq/w/GBVRGhtMq/TAdmxNNhAWZA0AgXTPVTAalMOcCdpKGJtA
+ 3NMrC2giYOibqiltI78lnE3nsLL6aeEAa1SGluJ7RVCptKEg2q5xtEnfUS5HJoEhD1+xr/og8m+
+ gmKC6aMkyl6517EbQsCFNXRJlAb4HxNmslN/KdVgB+4cmwfNb8l3HzoTWJWEYFCHxZiiRSM5Wus
+ PMK5CvEW/zDTHKR5GPF6dKeTfF+25Fvemj3PkJOrjZjermA7f6/bbgND8RtjWcENwfSoGNaLqdf
+ 6sgoWKvX5V2n7Ss9+Vrg8zTN/tpXLVMEWTTe+jw2iXZZIkyXiWWmT5yGjE8gfI3FQ/NAGn1TELk
+ wv5Cc0zUeDUbBFAgooCBjOdp/9zQ28H1SmtjlbQ8elFdtpAGr21C8mrNlleeS3x8Bguoy0CXWSJ
+ ZuRDtdKvYSqIYfgLR6eMMl8YD7cHxwXc+vj/GA/J5nBId5wZ7oo36Z8vvZecRTVN5SmXlK//6Ew
+ o2/8WZc0cVXXfYZSf7+KxM6BlRy0Cd1o3OHbcb64cW+rKJEZ6Gqg=
 X-Developer-Key: i=stefandoesinger@gmail.com; a=openpgp;
  fpr=4F9C2C8728019633893EBBB98CB81F9A72BBA155
 
-This controller contains clocks and resets for high speed devices on the
-zx297520v3 board and hardware spinlocks that I expect will be necessary
-to communicate correctly with the LTE DSP firmware blob.
+The clock controller of the zx297520v3 Low Speed Peripherals is
+relatively clean. One register per device with gates, muxes and resets
+and for some devices a divider. There are even bits in the matrix
+controller to control propagation of clock lines down to LSP.
 
-A simple MFD driver will instantiate independent clock, reset and hwlock
-drivers.
+The clocks are sorted by register address and I am convinced that the
+device list is complete. There are however a few more registers that are
+likely extra dividers for TDM and I2S devices
 
 Signed-off-by: Stefan Dösinger <stefandoesinger@gmail.com>
 
 ---
 
-Changes
-v4->v5:
-Move binding to soc/zte
-Remove topclk from the example
-Add #hwlock-cells for hw spinlock registers
-Add more clocks I stumbled into: sram0 and another LTE related device
+Patch changelog:
 
-v3->v4:
-Split matrixclk into its own controller again because syscon/regmap
-deals poorly with device nodes that have more than one memory region. As
-a consequence I am passing all PLL outputs generated on Topclk down to
-Matrixclk.
+v5:
+Rename from lspclk to lspcrm
+Remove matrixcrm from example
+
+v4: Order properties compatible->reg->clocks->clock->names->#cells
 ---
- .../bindings/soc/zte/zte,zx297520v3-matrixcrm.yaml | 177 +++++++++++++++++++++
- include/dt-bindings/clock/zte,zx297520v3-clk.h     |  37 +++++
- include/dt-bindings/reset/zte,zx297520v3-reset.h   |  10 ++
- 3 files changed, 224 insertions(+)
+ .../bindings/clock/zte,zx297520v3-lspcrm.yaml      | 96 ++++++++++++++++++++++
+ MAINTAINERS                                        |  1 +
+ include/dt-bindings/clock/zte,zx297520v3-clk.h     | 37 +++++++++
+ include/dt-bindings/reset/zte,zx297520v3-reset.h   | 19 +++++
+ 4 files changed, 153 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/soc/zte/zte,zx297520v3-matrixcrm.yaml b/Documentation/devicetree/bindings/soc/zte/zte,zx297520v3-matrixcrm.yaml
+diff --git a/Documentation/devicetree/bindings/clock/zte,zx297520v3-lspcrm.yaml b/Documentation/devicetree/bindings/clock/zte,zx297520v3-lspcrm.yaml
 new file mode 100644
-index 000000000000..bbec0eb837da
+index 000000000000..c510129068de
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/zte/zte,zx297520v3-matrixcrm.yaml
-@@ -0,0 +1,177 @@
++++ b/Documentation/devicetree/bindings/clock/zte,zx297520v3-lspcrm.yaml
+@@ -0,0 +1,96 @@
 +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/soc/zte/zte,zx297520v3-matrixcrm.yaml#
++$id: http://devicetree.org/schemas/clock/zte,zx297520v3-lspcrm.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: ZTE zx297520v3 SoC matrix clock and reset controller
++title: ZTE zx297520v3 SoC LSP clock and reset controller
 +
 +maintainers:
 +  - Stefan Dösinger <stefandoesinger@gmail.com>
 +
 +description: |
-+  This controller contains clock and reset controls for high speed devices on
-+  the zx297520v3 board: The CPU, RAM, SDIO and Ethernet clocks and resets are
-+  found here. This controller requires PLL-generated clocks from Topcrm as well
-+  as the fixed 26 MHz and 32 KHz oscillators found on this board.
++  This clock and reset controller controls low speed peripherals on the board.
++  This is a relatively isolated subsystem containing UART, I2C, I2S and SPI
++  devices. The controller is responsible for bringing the devices out of reset
++  and enabling their clocks as needed.
 +
-+  This controller also contains hardware mutex registers for synchronization
-+  with different processors on this board.
++  The controller receives its clock signal from the matrix controller and need
++  to be declared as clock inputs.
 +
 +  All available clocks are defined as preprocessor macros in the
 +  'dt-bindings/clock/zte,zx297520v3-clk.h' header. Resets are defined in the
@@ -160,100 +158,38 @@ index 000000000000..bbec0eb837da
 +
 +properties:
 +  compatible:
-+    items:
-+      - const: zte,zx297520v3-matrixcrm
++    const: zte,zx297520v3-lspcrm
 +
 +  reg:
 +    maxItems: 1
 +
 +  clocks:
 +    items:
-+      - description: 26 MHz external oscillator
-+      - description: 32 KHz external oscillator
-+      - description: Main PLL output from topcrm (usually 624 MHz)
-+      - description: Main PLL subdivision factor 2
-+      - description: Main PLL subdivision factor 3
-+      - description: Main PLL subdivision factor 4
-+      - description: Main PLL subdivision factor 5
-+      - description: Main PLL subdivision factor 6
-+      - description: Main PLL subdivision factor 8
-+      - description: Main PLL subdivision factor 12
-+      - description: Main PLL subdivision factor 16
-+      - description: Main PLL subdivision factor 26
-+      - description: Upll output from topcrm (Usually 480 MHz)
-+      - description: Upll subdivision factor 2
-+      - description: Upll subdivision factor 3
-+      - description: Upll subdivision factor 4
-+      - description: Upll subdivision factor 5
-+      - description: Upll subdivision factor 6
-+      - description: Upll subdivision factor 8
-+      - description: Upll subdivision factor 12
-+      - description: Upll subdivision factor 16
-+      - description: Dpll output from topcrm (usually 492.88 MHz)
-+      - description: Dpll subdivision factor 2
-+      - description: Dpll subdivision factor 3
-+      - description: Dpll subdivision factor 4
-+      - description: Dpll subdivision factor 5
-+      - description: Dpll subdivision factor 6
-+      - description: Dpll subdivision factor 8
-+      - description: Dpll subdivision factor 12
-+      - description: Dpll subdivision factor 16
-+      - description: Gpll output from topcrm (usually 200 MHz)
-+      - description: Gpll subdivision factor 2
-+      - description: Gpll subdivision factor 3
-+      - description: Gpll subdivision factor 4
-+      - description: Gpll subdivision factor 5
-+      - description: Gpll subdivision factor 6
-+      - description: Gpll subdivision factor 8
-+      - description: Gpll subdivision factor 12
-+      - description: Gpll subdivision factor 16
++      - description: Main PLL divided by 5 output from matrixcrm (124.8 MHz)
++      - description: Main PLL divided by 4 output from matrixcrm (156 MHz)
++      - description: Main PLL divided by 6 output from matrixcrm (104 MHz)
++      - description: Main PLL divided by 8 output from matrixcrm (78 MHz)
++      - description: Main PLL divided by 12 output from matrixcrm (52 MHz)
++      - description: Main oscillator output from matrixcrm (26 MHz)
++      - description: Timer oscillator output from matrixcrm (32 KHz)
++      - description: LSP pclk output from matrixcrm (26 MHz)
++      - description: TDM wclk mux output from matrixcrm
++      - description: DPLL divided by 4 output from matrixcrm (122.88 MHz)
 +
 +  clock-names:
 +    items:
-+      - const: osc26m
-+      - const: osc32k
-+      - const: mpll
-+      - const: mpll_d2
-+      - const: mpll_d3
-+      - const: mpll_d4
 +      - const: mpll_d5
++      - const: mpll_d4
 +      - const: mpll_d6
 +      - const: mpll_d8
 +      - const: mpll_d12
-+      - const: mpll_d16
-+      - const: mpll_d26
-+      - const: upll
-+      - const: upll_d2
-+      - const: upll_d3
-+      - const: upll_d4
-+      - const: upll_d5
-+      - const: upll_d6
-+      - const: upll_d8
-+      - const: upll_d12
-+      - const: upll_d16
-+      - const: dpll
-+      - const: dpll_d2
-+      - const: dpll_d3
++      - const: osc26m
++      - const: osc32k
++      - const: pclk
++      - const: tdm_wclk
 +      - const: dpll_d4
-+      - const: dpll_d5
-+      - const: dpll_d6
-+      - const: dpll_d8
-+      - const: dpll_d12
-+      - const: dpll_d16
-+      - const: gpll
-+      - const: gpll_d2
-+      - const: gpll_d3
-+      - const: gpll_d4
-+      - const: gpll_d5
-+      - const: gpll_d6
-+      - const: gpll_d8
-+      - const: gpll_d12
-+      - const: gpll_d16
 +
 +  "#clock-cells":
-+    const: 1
-+
-+  "#hwlock-cells":
 +    const: 1
 +
 +  "#reset-cells":
@@ -265,7 +201,6 @@ index 000000000000..bbec0eb837da
 +  - clocks
 +  - clock-names
 +  - '#clock-cells'
-+  - "#hwlock-cells"
 +  - '#reset-cells'
 +
 +additionalProperties: false
@@ -275,105 +210,108 @@ index 000000000000..bbec0eb837da
 +    #include <dt-bindings/clock/zte,zx297520v3-clk.h>
 +    #include <dt-bindings/reset/zte,zx297520v3-reset.h>
 +
-+    clock-controller@1306000 {
-+        compatible = "zte,zx297520v3-matrixcrm";
-+        reg = <0x01306000 0x400>;
-+        clocks = <&osc26m>, <&osc32k>,
-+                 <&topcrm ZX297520V3_MPLL>, <&topcrm ZX297520V3_MPLL_D2>,
-+                 <&topcrm ZX297520V3_MPLL_D3>, <&topcrm ZX297520V3_MPLL_D4>,
-+                 <&topcrm ZX297520V3_MPLL_D5>, <&topcrm ZX297520V3_MPLL_D6>,
-+                 <&topcrm ZX297520V3_MPLL_D8>, <&topcrm ZX297520V3_MPLL_D12>,
-+                 <&topcrm ZX297520V3_MPLL_D16>, <&topcrm ZX297520V3_MPLL_D26>,
-+                 <&topcrm ZX297520V3_UPLL>, <&topcrm ZX297520V3_UPLL_D2>,
-+                 <&topcrm ZX297520V3_UPLL_D3>, <&topcrm ZX297520V3_UPLL_D4>,
-+                 <&topcrm ZX297520V3_UPLL_D5>, <&topcrm ZX297520V3_UPLL_D6>,
-+                 <&topcrm ZX297520V3_UPLL_D8>, <&topcrm ZX297520V3_UPLL_D12>,
-+                 <&topcrm ZX297520V3_UPLL_D16>,
-+                 <&topcrm ZX297520V3_DPLL>, <&topcrm ZX297520V3_DPLL_D2>,
-+                 <&topcrm ZX297520V3_DPLL_D3>, <&topcrm ZX297520V3_DPLL_D4>,
-+                 <&topcrm ZX297520V3_DPLL_D5>, <&topcrm ZX297520V3_DPLL_D6>,
-+                 <&topcrm ZX297520V3_DPLL_D8>, <&topcrm ZX297520V3_DPLL_D12>,
-+                 <&topcrm ZX297520V3_DPLL_D16>,
-+                 <&topcrm ZX297520V3_GPLL>, <&topcrm ZX297520V3_GPLL_D2>,
-+                 <&topcrm ZX297520V3_GPLL_D3>, <&topcrm ZX297520V3_GPLL_D4>,
-+                 <&topcrm ZX297520V3_GPLL_D5>, <&topcrm ZX297520V3_GPLL_D6>,
-+                 <&topcrm ZX297520V3_GPLL_D8>, <&topcrm ZX297520V3_GPLL_D12>,
-+                 <&topcrm ZX297520V3_GPLL_D16>;
-+        clock-names = "osc26m", "osc32k", "mpll", "mpll_d2", "mpll_d3",
-+                      "mpll_d4", "mpll_d5", "mpll_d6", "mpll_d8", "mpll_d12",
-+                      "mpll_d16", "mpll_d26", "upll", "upll_d2", "upll_d3",
-+                      "upll_d4", "upll_d5", "upll_d6", "upll_d8", "upll_d12",
-+                      "upll_d16", "dpll", "dpll_d2", "dpll_d3", "dpll_d4",
-+                      "dpll_d5", "dpll_d6", "dpll_d8", "dpll_d12", "dpll_d16",
-+                      "gpll", "gpll_d2", "gpll_d3", "gpll_d4", "gpll_d5",
-+                      "gpll_d6", "gpll_d8", "gpll_d12", "gpll_d16";
++    clock-controller@1400000 {
++        compatible = "zte,zx297520v3-lspcrm";
++        reg = <0x01400000 0x100>;
++        clocks = <&matrixcrm ZX297520V3_LSP_MPLL_D5_WCLK>,
++                 <&matrixcrm ZX297520V3_LSP_MPLL_D4_WCLK>,
++                 <&matrixcrm ZX297520V3_LSP_MPLL_D6_WCLK>,
++                 <&matrixcrm ZX297520V3_LSP_MPLL_D8_WCLK>,
++                 <&matrixcrm ZX297520V3_LSP_MPLL_D12_WCLK>,
++                 <&matrixcrm ZX297520V3_LSP_OSC26M_WCLK>,
++                 <&matrixcrm ZX297520V3_LSP_OSC32K_WCLK>,
++                 <&matrixcrm ZX297520V3_LSP_PCLK>,
++                 <&matrixcrm ZX297520V3_LSP_TDM_WCLK>,
++                 <&matrixcrm ZX297520V3_LSP_DPLL_D4_WCLK>;
++        clock-names = "mpll_d5", "mpll_d4", "mpll_d6", "mpll_d8", "mpll_d12",
++                      "osc26m", "osc32k", "pclk", "tdm_wclk", "dpll_d4";
 +        #clock-cells = <1>;
-+        #hwlock-cells = <1>;
 +        #reset-cells = <1>;
 +    };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 0f9e588e4839..ee585982b859 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -3867,6 +3867,7 @@ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ S:	Odd fixes
+ F:	Documentation/arch/arm/zte/
+ F:	Documentation/devicetree/bindings/arm/zte.yaml
++F:	Documentation/devicetree/bindings/clock/zte,zx297520v3-lspcrm.yaml
+ F:	Documentation/devicetree/bindings/soc/zte/
+ F:	arch/arm/boot/dts/zte/
+ F:	arch/arm/mach-zte/
 diff --git a/include/dt-bindings/clock/zte,zx297520v3-clk.h b/include/dt-bindings/clock/zte,zx297520v3-clk.h
-index de1c08b6a5a9..8a6aa456a708 100644
+index 8a6aa456a708..3c390211f897 100644
 --- a/include/dt-bindings/clock/zte,zx297520v3-clk.h
 +++ b/include/dt-bindings/clock/zte,zx297520v3-clk.h
-@@ -94,4 +94,41 @@
- #define ZX297520V3_HSIC_WCLK			86
- #define ZX297520V3_HSIC_PCLK			87
+@@ -131,4 +131,41 @@
+ #define ZX297520V3_SRAM0_PCLK			35
+ #define ZX297520V3_GSM_CFG_PCLK			36
  
-+#define ZX297520V3_CPU_WCLK			1
-+#define ZX297520V3_CPU_PCLK			2
-+#define ZX297520V3_ZSP_WCLK			3
-+#define ZX297520V3_EDCP_WCLK			4
-+#define ZX297520V3_EDCP_PCLK			5
-+#define ZX297520V3_SD0_WCLK			6
-+#define ZX297520V3_SD0_PCLK			7
-+#define ZX297520V3_SD0_CDET			8
-+#define ZX297520V3_SD1_WCLK			9
-+#define ZX297520V3_SD1_PCLK			10
-+#define ZX297520V3_SD1_CDET			11
-+#define ZX297520V3_NAND_WCLK			12
-+#define ZX297520V3_NAND_PCLK			13
-+#define ZX297520V3_DMA_PCLK			14
-+#define ZX297520V3_MBOX_PCLK			15
-+#define ZX297520V3_PDCFG_WCLK			16
-+#define ZX297520V3_PDCFG_PCLK			17
-+#define ZX297520V3_SSC_WCLK			18
-+#define ZX297520V3_SSC_PCLK			19
-+#define ZX297520V3_GMAC_WCLK			20
-+#define ZX297520V3_GMAC_PCLK			21
-+#define ZX297520V3_GMAC_AHB			22
-+#define ZX297520V3_VOU_WCLK			23
-+#define ZX297520V3_VOU_PCLK			24
-+#define ZX297520V3_LSP_MPLL_D5_WCLK		25
-+#define ZX297520V3_LSP_MPLL_D4_WCLK		26
-+#define ZX297520V3_LSP_MPLL_D6_WCLK		27
-+#define ZX297520V3_LSP_MPLL_D8_WCLK		28
-+#define ZX297520V3_LSP_MPLL_D12_WCLK		29
-+#define ZX297520V3_LSP_OSC26M_WCLK		30
-+#define ZX297520V3_LSP_OSC32K_WCLK		31
-+#define ZX297520V3_LSP_PCLK			32
-+#define ZX297520V3_LSP_TDM_WCLK			33
-+#define ZX297520V3_LSP_DPLL_D4_WCLK		34
-+#define ZX297520V3_SRAM0_PCLK			35
-+#define ZX297520V3_GSM_CFG_PCLK			36
++#define ZX297520V3_TIMER_L1_WCLK		1
++#define ZX297520V3_TIMER_L1_PCLK		2
++#define ZX297520V3_WDT_L2_WCLK			3
++#define ZX297520V3_WDT_L2_PCLK			4
++#define ZX297520V3_WDT_L3_WCLK			5
++#define ZX297520V3_WDT_L3_PCLK			6
++#define ZX297520V3_PWM_WCLK			7
++#define ZX297520V3_PWM_PCLK			8
++#define ZX297520V3_I2S0_WCLK			9
++#define ZX297520V3_I2S0_PCLK			10
++#define ZX297520V3_I2S1_WCLK			11
++#define ZX297520V3_I2S1_PCLK			12
++#define ZX297520V3_QSPI_WCLK			13
++#define ZX297520V3_QSPI_PCLK			14
++#define ZX297520V3_UART1_WCLK			15
++#define ZX297520V3_UART1_PCLK			16
++#define ZX297520V3_I2C1_WCLK			17
++#define ZX297520V3_I2C1_PCLK			18
++#define ZX297520V3_SPI0_WCLK			19
++#define ZX297520V3_SPI0_PCLK			20
++#define ZX297520V3_TIMER_LB_WCLK		21
++#define ZX297520V3_TIMER_LB_PCLK		22
++#define ZX297520V3_TIMER_LC_WCLK		23
++#define ZX297520V3_TIMER_LC_PCLK		24
++#define ZX297520V3_UART2_WCLK			25
++#define ZX297520V3_UART2_PCLK			26
++#define ZX297520V3_WDT_LE_WCLK			27
++#define ZX297520V3_WDT_LE_PCLK			28
++#define ZX297520V3_TIMER_LF_WCLK		29
++#define ZX297520V3_TIMER_LF_PCLK		30
++#define ZX297520V3_SPI1_WCLK			31
++#define ZX297520V3_SPI1_PCLK			32
++#define ZX297520V3_TIMER_L11_WCLK		33
++#define ZX297520V3_TIMER_L11_PCLK		34
++#define ZX297520V3_TDM_WCLK			35
++#define ZX297520V3_TDM_PCLK			36
 +
  #endif /* __DT_BINDINGS_CLOCK_ZX297520V3_H */
 diff --git a/include/dt-bindings/reset/zte,zx297520v3-reset.h b/include/dt-bindings/reset/zte,zx297520v3-reset.h
-index 43db72bb59de..81ffc8bc34c5 100644
+index 81ffc8bc34c5..85a2f0707cdc 100644
 --- a/include/dt-bindings/reset/zte,zx297520v3-reset.h
 +++ b/include/dt-bindings/reset/zte,zx297520v3-reset.h
-@@ -29,4 +29,14 @@
- #define ZX297520V3_HSIC_PHY_RESET		20
- #define ZX297520V3_HSIC_RESET			21
+@@ -39,4 +39,23 @@
+ #define ZX297520V3_GMAC_RESET			7
+ #define ZX297520V3_VOU_RESET			8
  
-+#define ZX297520V3_CPU_RESET			0
-+#define ZX297520V3_EDCP_RESET			1
-+#define ZX297520V3_SD0_RESET			2
-+#define ZX297520V3_SD1_RESET			3
-+#define ZX297520V3_NAND_RESET			4
-+#define ZX297520V3_PDCFG_RESET			5
-+#define ZX297520V3_SSC_RESET			6
-+#define ZX297520V3_GMAC_RESET			7
-+#define ZX297520V3_VOU_RESET			8
++#define ZX297520V3_TIMER_L1_RESET		0
++#define ZX297520V3_WDT_L2_RESET			1
++#define ZX297520V3_WDT_L3_RESET			2
++#define ZX297520V3_PWM_RESET			3
++#define ZX297520V3_I2S0_RESET			4
++#define ZX297520V3_I2S1_RESET			5
++#define ZX297520V3_QSPI_RESET			6
++#define ZX297520V3_UART1_RESET			7
++#define ZX297520V3_I2C1_RESET			8
++#define ZX297520V3_SPI0_RESET			9
++#define ZX297520V3_TIMER_LB_RESET		10
++#define ZX297520V3_TIMER_LC_RESET		11
++#define ZX297520V3_UART2_RESET			12
++#define ZX297520V3_WDT_LE_RESET			13
++#define ZX297520V3_TIMER_LF_RESET		14
++#define ZX297520V3_SPI1_RESET			15
++#define ZX297520V3_TIMER_L11_RESET		16
++#define ZX297520V3_TDM_RESET			17
 +
  #endif /* __DT_BINDINGS_RESET_ZX297520V3_H */
 
