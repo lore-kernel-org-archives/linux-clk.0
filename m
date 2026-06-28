@@ -1,135 +1,76 @@
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91CA323BD1B
-	for <linux-clk@vger.kernel.org>; Sun, 28 Jun 2026 16:20:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFBBC2E738E;
+	Sun, 28 Jun 2026 19:13:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782663609; cv=none; b=ToyUYVr4yLmYeXTg+1Egryr31kxM0rbOtJy9B1v6wBV6HrG9rSjr6NCGc4IH4KhNwuEOq5BuSkR+mvKBP7AhZzLI7zdQh+l0CxHJB5y8Bu3mWKv8GEWKiZGIdNSlpluakbVOtSFuntuqKQ5qxaeDl5kygxz66KqQWKi2QcWCChE=
+	t=1782674028; cv=none; b=FK94gz/4IZPKHoLs7cE9fdyYDkrwAiF5kuWqB5j9Vac85ucamngbNhhAgBBp8SxtCuO6R5/+wuN4JiYxtdoBwkmLi70hjigGgh+7VA7/brefkjZ1my0848fNnvyGGtipEgFWQ14wT24Foy358a7VRKDcTgZQJBdgNllryMpo/kU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782663609; c=relaxed/simple;
-	bh=Nbf5EGGn3lkHfjDRMtqBw1NucK30uj5U/Isd5BvJ2N4=;
+	s=arc-20240116; t=1782674028; c=relaxed/simple;
+	bh=FCodNi6ty/cBlbv/zpTiMtH6uSClwLENQ++mxU89SqY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TAaB+J//By9b1Dfbsy3rS6zj9L66I+N8zyj+fD35bVSD+qZEd6I4m0qgmDovGM66mn9Jx/dHf5xGCK9hm28d6gHA0wUIl4T8hX5BpIYYqMjgL4SHwLwSWWjph0mev38Xd0mu6WNLEx5fSPJdkE360/C5NrVqpMXrgNVL+fouOP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a+UVTpXV; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 MIME-Version:Content-Type; b=YH67I2S25uHby6hz9f9nM9RbDXA5sSJlGBxYjwWcPB0UERsPC0weCrn+qNX4W80CtSjUojtG2d0/J8xPI6/Xu3XpCPnRYNYeGOOrE3Osw5pQ9atIWooAVAjRiSvxFI/WpmaV7ZtxeNMDm1phGle/1qJrvCjTs38dOcRTZxXumWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=Mk26meco; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a+UVTpXV"
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-845b6d9bf39so1148084b3a.1
-        for <linux-clk@vger.kernel.org>; Sun, 28 Jun 2026 09:20:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1782663607; x=1783268407; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sDpZAt2IrybbNfg1qPYm1EXtgIkqc1OGq8+ZjA8nsrg=;
-        b=a+UVTpXVcnRWrHKuWdKKrX4y86bHLTtlQqeVedKdo7g7U48u4UJxLpaZHmuP9Ows0K
-         TUQf2B6UrNtXLCy4z5Rj77WDKpVirtDsmMGl4E3WEdiLarkfQ4gFBpt5aqep2u8d78ql
-         IhWLXehPrQ+2yXxrXJw8IQkINrF+G0l33F7GQE/eEcOugwvpK+BG71vdAZh2feW8GvDX
-         GZKnCZCxpO1L22skVSxs4RK6xSXjr3CjA4YsQO0cjWTxq9g20iz+mu/D78YUtNdT6E5G
-         gwX+/La5ok3yfun0inbgWyEpbmscRUFFGVHUXDDV5Uu79SJf+5jrqg+rjzcaqwok9UWm
-         A2rw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782663607; x=1783268407;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=sDpZAt2IrybbNfg1qPYm1EXtgIkqc1OGq8+ZjA8nsrg=;
-        b=CVnBG/Eg3VDHdmzwhtZXkG9IkR8aSXPkIc2Pj2BNT8jPEVfq2tUoFXBKpDhASt5Gv1
-         eGeJimW/71ZSOMJnA2RzO2rWprFaDRPTKcGmKKY2hFWVxi8utiqMH9DdYjp1UPbc1j0P
-         WRn64iki+ufUrZx46l3mxNQlI3rGwg3BF6jNVm7BusVJfUOf5XuahhUBiWYBCjOHLMB5
-         LCp7blfuL/ZthjX0onrofxn6LvIQ3jXmDW2GRsTy6x4fPNzmDem7xmolv2HBUuqc0AkJ
-         mkuzYgtATCGOzk+TEiRpt8R3H5B5CG8wJUgJro3KoDgvqdZaEiPwp1FLwvvu772Qg2Xe
-         Rxxg==
-X-Forwarded-Encrypted: i=1; AHgh+Rpvl4m+NmvV50PdnKkkc6DBEFIF1EDFKQ6xrPldFNF+rjPU80O+ZB8z0gHtEKOizcn9RiClBnW0zsw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKzUqHgOzzxIpFYbw3Lyh+k+fmiRZJCMN5HxMV/ka3f3vcsqYL
-	5Reo075LpWP1BQf878lc5UUVvwlHJtbaumm+lhPrYQkeQgvPf05putk=
-X-Gm-Gg: AfdE7cmel2OGcBP+ORYIZnp3ABeUoTJSaxHI6rcgu6piXNcna1NQ/tAXRBXtl6Jn21k
-	auvdwAcPUb2598xhLASiptga5dnnccHeTNOWgIpxknOaNABr0Ewqb2bzYQnQwCxw3Qfwbcocw6M
-	mQ9lNjaph2mTh0XwFiahQApzLozhe4J+a7dbdDa6aR0D9Xn2XPO7gF/ksx6Xi7DnkHx0MYy5c5b
-	D9Frn9P8mwMJJrWPGTUdOVehH+pcUVHja7JWfbyPpdGyWGBpWqZHj4qaGYyMlsZfffXCdk9//oC
-	zzJ88rTagt9xaHyiOKA0GbTxK7Gg5On0OEAov3kwvBuIE4uM9T0UxXE3lXWEwklaRzth7ur9HrS
-	YWlM9yLtcphfilUBYLlCWfHbCZCe4kuyPnUppdqW7dbmtVvO3hbr/JXgywGSvUINXOeUw2nMalk
-	ZynbMGpB0imOAn8bbKzUQGpHkfbMgwgmTNJUfnmje3XV2snIxTZiFHCtkqpxWuBYTxyozgdS/Ww
-	DZKRX08Y/lGmRn/zD+tCsb0CydjgFBqGDuHNtnMPcovraRu9w==
-X-Received: by 2002:a05:6a00:4511:b0:845:d2e3:b9c8 with SMTP id d2e1a72fcca58-845d2e3bb71mr5830594b3a.28.1782663606629;
-        Sun, 28 Jun 2026 09:20:06 -0700 (PDT)
-Received: from localhost.localdomain ([14.5.152.27])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-845a3fcc5ffsm10063450b3a.9.2026.06.28.09.20.02
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sun, 28 Jun 2026 09:20:05 -0700 (PDT)
-From: Myeonghun Pak <mhun512@gmail.com>
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="Mk26meco"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=oKHWu+eAIE/CZIjLM4PqfERbb2g3EF/Ptw0DlJwxfEM=; b=Mk26mecoq6LVnqwkG20VoTOT58
+	yjzkv4G6vhY8fd4Ezlx75RVUft6+m4Fw8lM2iM2joFBRYdfWQSPAAgtBCz83xS/1CtIUAeLLhUUbQ
+	c2nfEhhoUeZTH/smRNmwvxUdmvmvkiZKD1bDU7sFRQQR6qNPKkXXfvjtaxEs5FOVBvO6kzn/16Xr9
+	arDNpj7OIB6/w6HxaX92wFd6Bfucp9EyZj0+NhKG0Z7gfY/6s1HdXdXNvZ8/n13X0Omk4SrDovtC1
+	aGu3/HoWDX6NOjUexXyb3VI4VxlccYEGa0KLJtvZ+KE4ohZr4fotQ5DVtEilybUuf72lnpJSIrILy
+	fxDzyZ0A==;
+From: Heiko Stuebner <heiko@sntech.de>
 To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Mike Looijmans <mike.looijmans@topic.nl>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Daniele Briguglio <hello@superkali.me>
+Cc: Heiko Stuebner <heiko@sntech.de>,
 	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Myeonghun Pak <mhun512@gmail.com>,
-	Ijae Kim <ae878000@gmail.com>
-Subject: [PATCH v2] clk: si5341: disable input clock on probe failure and remove
-Date: Mon, 29 Jun 2026 01:19:43 +0900
-Message-ID: <20260628161958.25876-1-mhun512@gmail.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20260626093410.67573-1-mhun512@gmail.com>
-References: <20260626093410.67573-1-mhun512@gmail.com>
+	Diederik de Haas <diederik@cknow-tech.com>,
+	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+	Ricardo Pardini <ricardo@pardini.net>
+Subject: Re: [PATCH] clk: rockchip: rk3588: don't disable unused I2S MCLK output gates
+Date: Sun, 28 Jun 2026 21:13:24 +0200
+Message-ID: <178267399833.3089434.5140309637329023610.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260624123914.1767374-1-hello@superkali.me>
+References: <20260624123914.1767374-1-hello@superkali.me>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-si5341_clk_select_active_input() prepares and enables the selected
-input clock, but the driver never disables it. devm_clk_get() only
-releases the clock handle; it does not unwind the prepare/enable count.
 
-Register a devm cleanup action for the exact input clock after
-clk_prepare_enable() succeeds. This unwinds the prepare/enable reference
-on both probe failure after input selection and driver detach, without
-having to re-read the current input parent later.
+On Wed, 24 Jun 2026 14:39:14 +0200, Daniele Briguglio wrote:
+> No in-tree board references these gates yet. Boards drive the codec
+> MCLK through the parent I2S*_8CH_MCLKOUT, and now that the gates are
+> managed clocks, clk_disable_unused() turns them off at boot. On a board
+> that relied on firmware leaving the output enabled, that cuts the MCLK
+> and analog audio stops working.
+> 
+> Mark the four gates CLK_IGNORE_UNUSED so an unreferenced gate keeps the
+> state firmware left. A board that wants the kernel to own the gate can
+> reference I2S*_8CH_MCLKOUT_TO_IO from DT instead.
+> 
+> [...]
 
-Fixes: 3044a860fd09 ("clk: Add Si5341/Si5340 driver")
-Co-developed-by: Ijae Kim <ae878000@gmail.com>
-Signed-off-by: Ijae Kim <ae878000@gmail.com>
-Signed-off-by: Myeonghun Pak <mhun512@gmail.com>
----
-Changes in v2:
-- Use devm_add_action_or_reset() for the prepared input clock.
-- Drop the prepared_input state and manual cleanup calls.
+Applied, thanks!
 
- drivers/clk/clk-si5341.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+[1/1] clk: rockchip: rk3588: don't disable unused I2S MCLK output gates
+      commit: 946352b2f88fd2378f0341312e47dff1e8dc2fac
 
-diff --git a/drivers/clk/clk-si5341.c b/drivers/clk/clk-si5341.c
-index 2499b77..2c36757 100644
---- a/drivers/clk/clk-si5341.c
-+++ b/drivers/clk/clk-si5341.c
-@@ -1426,6 +1426,11 @@ static int si5341_initialize_pll(struct clk_si5341 *data)
- 			SI5341_PLL_M_NUM, m_num, m_den);
- }
- 
-+static void si5341_clk_disable_unprepare(void *clk)
-+{
-+	clk_disable_unprepare(clk);
-+}
-+
- static int si5341_clk_select_active_input(struct clk_si5341 *data)
- {
- 	int res;
-@@ -1463,6 +1468,12 @@ static int si5341_clk_select_active_input(struct clk_si5341 *data)
- 	if (err < 0)
- 		return err;
- 
-+	err = devm_add_action_or_reset(&data->i2c_client->dev,
-+				       si5341_clk_disable_unprepare,
-+				       data->input_clk[res]);
-+	if (err < 0)
-+		return err;
-+
- 	return res;
- }
- 
+Best regards,
 -- 
-2.50.0
+Heiko Stuebner <heiko@sntech.de>
