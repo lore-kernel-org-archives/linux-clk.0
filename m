@@ -1,228 +1,235 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C234D2E6CB8
-	for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2026 13:47:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05C1F2E7185
+	for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2026 14:24:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782740841; cv=none; b=j7PTXpseDPkOVk4Rtml1i8G+heR2Mbd6HHN2S3w5UJFFgXzVk0LUJOfbpaZECaZniIls7zpMBlbyYZyHbSK9fk1V5hUV8oJIBE8Q+YwwUo+KmI2T2YS2OulZY669JTtd39R7m9QYD0CPnnAmJ0+99aNmIBEF/uV35YKXzmIMv40=
+	t=1782743055; cv=none; b=KLzHSzcjw3t3cNEW5opy+71OXqRDfFop0Vvc4vkbBoPMDNfxQL5fhy0G4Dprx2sDBKkWOkHp1oVL8zK+wWuy1Glh3Chyn/Bany8S4v/+Zvx+wK5U4b/ZwOhrfckXs7G+Ipx5dXzgJUCclJgp5K+8HuTRejWQ4E69jBct46Bjqm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782740841; c=relaxed/simple;
-	bh=cWLGHl+YEJAm1rNw68MYlvwx1Sqs4J/IHHCWaT05NBk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ze6HF8Zg8mkHBZAANmHtDlnl3P3SiWDX+3oVU5hy6OXF0maEvYD/PFJvrJkXGnBP9PcJSiljykDFtPJgo8w1882BMP5HwSMJVeHccURuTp6B2s2dDpXfkMPw4ppIXKms9vqpUP5Os4l47MBSNZ1b+FzHRECswzPBNubeRH9cjl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UvnZI2In; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=JZIboC+b; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1782743055; c=relaxed/simple;
+	bh=nkdey6N0dtLwNgVGQFnGByxIUg93+UcfWsr6NLV+l7U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZYRtfF5WsN7nX3G9ccD+FmL/K/Fx1XP5pvB14SLyXfTz/Ha2/2J9IZhUyppgSQ6sB330AYHOH3sgOu38vrYHXOssWd7XfhSkTldhZ+AKNkNeejrLobc1kWWCb9PHwlerH1UZ+NxqZIi7MeHErNjFG55SvFEqx3nKlarK3vbkcXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=obtRxDMf; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UvnZI2In";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="JZIboC+b"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 65TAT4Re2641438
-	for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2026 13:47:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ty5H6lwxHqC7d0OKhOvBgcwXdI83azrYSAb+xRBzZow=; b=UvnZI2In3GfAemsY
-	O/sVXun6jAWn4X4HHgvgR/KJjR6zloJQip0NU8DhGsrgjBgfLjhqzNEYwW1VpgMY
-	gtoJtMvxJauQHRdj9Fi7cqeHO8U2j9AVJuhmG8pwmiGZODliQDZbdYxMmOfhaior
-	LJeywYaZy+DvJpleggIyFuJD5jbUBdxgPkCcUVft6Im0ZhVwDBqPovdTVQZhfI6V
-	tUp22CO9M/LgWTvDF2lcFMD+3Mp1KiTF4D1z5AudUv+iyiPpxdyhsMXJdnqX2JsH
-	w/ByA1iqVeyv4t67aOlfHV65T1R8zNPtaAt76D0n2RI/xb42UA9W3XxhvjSwiCDj
-	go3REQ==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4f3n5s18ca-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2026 13:47:17 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-51bfa45b280so1162861cf.3
-        for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2026 06:47:17 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="obtRxDMf"
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-37cb36ca63bso1485257a91.0
+        for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2026 07:24:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1782740837; x=1783345637; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=ty5H6lwxHqC7d0OKhOvBgcwXdI83azrYSAb+xRBzZow=;
-        b=JZIboC+bW+ZXdU0sKOWJomFPLYyhQH/sOUfYHobbj073cbMsDWApk8Opr4ANwWVgdm
-         eFhgyUBYFsdc9hyr9gKCjVqogWzL1b5MRSLEB7mQP4CILBBWkGIHNXzcPz7b6xHWwL5F
-         aOz/XgScZar5K6d9qWILXYlcSbG0U5DLEfW10M7cTy/hHcPYJ6Z/ORLqcyWT/2OWrHuE
-         yNdQxy/lIicqx8YYR7k1fIezWT5hWcl3FruwRSPafG24QRnM/Sw2s5omB81j7xHhhRG9
-         4Apu4Prh8gFAYOKRSVb/6gMiklF+hWBxa3A5fgaVxcdGitpLTS9tAdyKFff0GRgGgUpx
-         cSDw==
+        d=gmail.com; s=20251104; t=1782743053; x=1783347853; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=geRPSWvxvMn9jDj9k0oxQ8NVSaQtfwxbqr6vTa84l6I=;
+        b=obtRxDMfA6crad2UvGm8+lEoWS3M7xOZVLqSYmSWK1Bt3OWpm+NbjxPtOPP55h9pNx
+         m2cHUe5aVqBMHBCJyFpbqJ+BZkd8ZS4HZb9u1mE6bhgNBj2o7ovc66BxzLsnYLiXKj4I
+         J7CW/hNOFalkTHPHu6EWYqTNWkeFFY/TBgGzhaCwh+6EpDx3FiYBLVmtETq9/N7St4x0
+         j4JTkHFIZ0K3slGnxT40koxs1wvJIJyCp1lmQY1TffGVP2fJkDUkWe9LyXhngZ3umDr8
+         mgIF7kpaJmZ+xVL3lVMaQiK1+wScqJ1XM3P6eCc/ZnF6OacQRcbZl2ECq6kt+e6TpDkP
+         ygUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782740837; x=1783345637;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=ty5H6lwxHqC7d0OKhOvBgcwXdI83azrYSAb+xRBzZow=;
-        b=NHGfX9mkNNyvxdbc8HzrneKHnxfEFUg+cmSIepObVbVU45BlPCaJ2sH1jzrIWXsEEc
-         Mln9GPPp9Q/hnyXOovrvQmxJCFJ9qHpbOC2vaAU9w31/XpPk45toRq9rmNAlVZAY4vky
-         nRu2GiXBp55Kl4LMcCBj7uwfXq06F59EjiWU6C0xNo2COsinL9bxEydiYQ4NbgIc10Mb
-         5yUo3alwlTROumllFVvR85fjFpk/Ty5+AOxeHXJGCmTZBO+k2HRg9yNV4/DVkmgKQJYi
-         WfnG6iia0S/ak7Wmr30Z1agMb2KwhVRt1qMvi8QZRRkhXpsonxTvOZ3My009jBsNWL5+
-         bj+Q==
-X-Forwarded-Encrypted: i=1; AFNElJ+mtb3oHu/sCgRfFJw0wbWUus83jLHiyTPk9+X1BVVbl85V9SaLRixSG8T5vCgc+l340oVi4TTmu1I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzH7JgiTSfBDX9hLQZwp1RI4cPi5UYL2iPr/EuyE6DcgESHrJMf
-	IQVP++RVXCF4bOV1znjN52egLgf3Y57EtubpjQ2+9puoSKMJ5xGJYYRGP5efuG+w0t0cHeWoJGr
-	GkWis21kqSkIKc8d33s0XdQU8oGL3gOSIYS2+A5izuqBuUZhKB+XxHF0UjeeIBfo=
-X-Gm-Gg: AfdE7clR1uloWM0gsKy7B8x9vMZHAD3OcN8EEEeu8EiPzO6S7/VJasuSJPFg1WWEK+K
-	s0unp/aM61rhSuYmfuwAyBx0/0+5cueSpPnXhvg3lvh9a179nY4xyp7qCPQBrxhASIJPiicJGdm
-	c6fD7NJsmCK9iF4YOw2ts9ethFMZ+PrhKgKO6Eb2Kn7qWzwaYMIffyftGq8XpQM7I82YvRLAJDU
-	fyCs8BI/v8dINyCNTV5s5tfH+4Y/UIcyU6mpja+ZkKC3qp21agYtKoKt3AJ5eiI1G7SqBiLOKfP
-	hLSmoaAuS4eW4Mb1Ny1HyQOMUMTspne04bf31oINAczcb4ilzoZgEr5OdM+k17uSsIoEMOwThmR
-	JiJ3spbMpasHCsLEsPgxuKLtygjL1df/irCg=
-X-Received: by 2002:ac8:7f13:0:b0:51a:8c9b:64a5 with SMTP id d75a77b69052e-51a8c9b9539mr97100231cf.9.1782740836922;
-        Mon, 29 Jun 2026 06:47:16 -0700 (PDT)
-X-Received: by 2002:ac8:7f13:0:b0:51a:8c9b:64a5 with SMTP id d75a77b69052e-51a8c9b9539mr97099261cf.9.1782740835898;
-        Mon, 29 Jun 2026 06:47:15 -0700 (PDT)
-Received: from [192.168.120.170] ([178.235.128.140])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c11fbec37dfsm785750166b.56.2026.06.29.06.47.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Jun 2026 06:47:14 -0700 (PDT)
-Message-ID: <d54dcae1-00de-48ff-b6ec-f57da28c4adb@oss.qualcomm.com>
-Date: Mon, 29 Jun 2026 15:47:12 +0200
+        d=1e100.net; s=20251104; t=1782743053; x=1783347853;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=geRPSWvxvMn9jDj9k0oxQ8NVSaQtfwxbqr6vTa84l6I=;
+        b=VcHZZkrlTHUWos85Prk0bkKXA6UzqIGMY/HYxzHoP8pHCXF1PXg7vzkXgK5MuEeWVO
+         2uyAIrJluw0p1pjTalp+vd5kmx0C6cQx19ogJwXlG4Nz/fHUAI4eRbdNEimqRBt6CAHW
+         9O0WVbA2nblyE+xKb03kAvnPrL3Ksh3XrhqRwttCAZ81SOl6QwKF0PpMimYsNl5n7hUT
+         gxx96PF4tKmmmHP/zPDlRoenHlN+dqVnQdLZMincoq6L0zHDe3FJKnJMjYPWsg1TeGeY
+         jLEedG3AMrqyDbRREk+NQ6EgeLEeVN5aAcgjv4tmsMYIk+0nb0L2ztSUe9vpqXVQ2oVi
+         UJzg==
+X-Forwarded-Encrypted: i=1; AHgh+Rrqipb8UD9GkO+xALApRCNTaxZyQCN+QFWhrz3GwILa+KfYtT98phhDJn1Dhp342L3iH3w7mFBdJ4Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxoAmArnlwuipz9tehcvIzfKKRAN8bS4ctce5niPAOBke/WcFBJ
+	DDcQCb1KeqSYDqUCjbokwKXcQOijx8LFYLaHzRoxHubFWkrCbzs2QXdt
+X-Gm-Gg: AfdE7ck7qPt71A/8v5W0fOAEYvo5PhQIqLk677KEpjAKUulT39kHzS2SqI3sZK2MHVi
+	4gkNHolTAcZW0pVeRKz76Yda6CIMh/Ky6EJY6ZaNi4BTke2DECiCRBhgLQumIuQtNDzduj9nOWF
+	Ut8cNgj91e2iKhGahk1qdRaAbCh57j8CDxPaFz0B27qOILEae+H+ZEOZ6amB6D/dh412BTxVf52
+	dZzCFfImX15bkWcTsdegU2oyHhNVticSGdDfD7F4CjFzxAUZaFG9+vLBhuNODNO2g1ODdt2ZkyE
+	t+i5hhVQf7+SXtFgxut99MSnouBZlLJS7Qs1xduBbxhvtqR6V8LQOEUWjy8dAH26XtInZJNC/v3
+	NhGklaO1+tqyrMOwfGiYE5HexJuIMg+LeXGzsRfb9/ShQeKoJy+CP2rJHGTkg7mzPbZmWZEpEIH
+	55qpg+cr2keiAOVXnKlEMMunJAQu14axqTFqpvMSZTv/R9
+X-Received: by 2002:a17:90b:510f:b0:380:540:d49a with SMTP id 98e67ed59e1d1-3800540eb15mr3073658a91.7.1782743053280;
+        Mon, 29 Jun 2026 07:24:13 -0700 (PDT)
+Received: from buffalo-ssd (M014013071096.v4.enabler.ne.jp. [14.13.71.96])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-37fd2bd0e49sm3919763a91.0.2026.06.29.07.24.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jun 2026 07:24:12 -0700 (PDT)
+From: Akari Tsuyukusa <akkun11.open@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney@redhat.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Chen-Yu Tsai <wenst@chromium.org>,
+	Miles Chen <miles.chen@mediatek.com>
+Cc: Akari Tsuyukusa <akkun11.open@gmail.com>,
+	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
+	linux-kernel@vger.kernel.org (open list:ARM/Mediatek SoC support),
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM/Mediatek SoC support),
+	linux-mediatek@lists.infradead.org (moderated list:ARM/Mediatek SoC support)
+Subject: [PATCH] clk: mediatek: fix memory leak on module removal
+Date: Mon, 29 Jun 2026 23:23:40 +0900
+Message-ID: <20260629142348.273766-1-akkun11.open@gmail.com>
+X-Mailer: git-send-email 2.54.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 5/8] clk: qcom: tcsrcc-glymur: Add Mahua QREF regulator
- support
-To: Qiang Yu <qiang.yu@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Taniya Das
- <taniya.das@oss.qualcomm.com>,
-        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, krishna.chundru@oss.qualcomm.com
-References: <20260621-tcsr_qref_0622-v6-0-c939c22ded0c@oss.qualcomm.com>
- <20260621-tcsr_qref_0622-v6-5-c939c22ded0c@oss.qualcomm.com>
- <5f32d4c2-f90d-4f66-96b1-c9c7987ac18e@oss.qualcomm.com>
- <ajkvV28hEWFfnwa6@hu-qianyu-lv.qualcomm.com>
- <cd7619b6-a428-4ad3-9926-52b846953634@oss.qualcomm.com>
- <aj33ujz1m9qYOcRs@hu-qianyu-lv.qualcomm.com>
- <c6df90d1-bb3f-426f-806b-9f31840126b5@oss.qualcomm.com>
- <akJz2xNeuzIiE3Vc@hu-qianyu-lv.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <akJz2xNeuzIiE3Vc@hu-qianyu-lv.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNjI5MDExNCBTYWx0ZWRfX7CIaQZTCvy70
- jq4Def/R7fWCVUctSgsZsVOWdeE3DAPdp8FJz/5LAr1P2IIPrxQBE5uV47zf8IIiBELrDzu7k5N
- F2UW0mUU2XF7fpVNnXU+OphVnzDlxWU=
-X-Proofpoint-ORIG-GUID: qFhhFkrkD8hKpsFS_c6LfrlfYh3GRPCq
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjI5MDExNCBTYWx0ZWRfXxQpGmQfxe5yU
- omJKynJ+K1KxtCHfIeXQpUq3KdAAdgNd45Lald0CnvniOE+i+5DgOWWSNDeCuEWshWXHjU3zqdK
- f7Qe7ivDmLCmpotsmh7MId+2VqM2p/pmzMBzqtPDHCYAnsI439eZMbcRHQvFbQQNQCZRoHJwbHe
- j1RYcAD33skBmUWoM+mmnN69M/pVff9W4jrWziY+vgGXoUXI4cCTQKajXvTXv1D47CnCCoos4JW
- 5O7CIvnucE9IcYtn/aSDBLPyW8Aa9FjWngNT8sr7t1VBsQg49PptFtpSB5fCzyt2zDO0GeKdXGB
- pDHy+hczs9DLDPyXhN4yS03D6PjvRhEFCdColCdy+nwF+EzRmdyvt1l5Bj545q2NmBisNcD9mXD
- NSks+xma79WFnDak9MUERDRnKtHfQdIvohMTSSA/xNcivvejctbej3nSAA4ZVu4TIrmcWpaAZB4
- CUXYeVgFwZq69+afqOg==
-X-Authority-Analysis: v=2.4 cv=NZzWEWD4 c=1 sm=1 tr=0 ts=6a427765 cx=c_pps
- a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
- a=IkcTkHD0fZMA:10 a=FelO9ux0wxsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=eoimf2acIAo5FJnRuUoq:22
- a=EUspDBNiAAAA:8 a=ffaXYdf2Q3_1duncg2EA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=a_PwQJl-kcHnX1M80qC6:22
-X-Proofpoint-GUID: qFhhFkrkD8hKpsFS_c6LfrlfYh3GRPCq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
- definitions=2026-06-29_03,2026-06-26_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 impostorscore=0 spamscore=0 adultscore=0 suspectscore=0
- clxscore=1015 bulkscore=0 priorityscore=1501 malwarescore=0
- lowpriorityscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
- definitions=main-2606290114
 
-On 6/29/26 3:32 PM, Qiang Yu wrote:
-> On Mon, Jun 29, 2026 at 12:30:37PM +0200, Konrad Dybcio wrote:
->> On 6/26/26 5:53 AM, Qiang Yu wrote:
->>> On Mon, Jun 22, 2026 at 03:03:39PM +0200, Konrad Dybcio wrote:
->>>> On 6/22/26 2:49 PM, Qiang Yu wrote:
->>>>> On Mon, Jun 22, 2026 at 01:35:45PM +0200, Konrad Dybcio wrote:
->>>>>> On 6/22/26 7:11 AM, Qiang Yu wrote:
->>>>>>> Mahua is based on Glymur but uses a different QREF topology, requiring
->>>>>>> distinct regulator lists and clock descriptors for its PCIe clock
->>>>>>> references.
->>>>>>>
->>>>>>> Add mahua-specific regulator arrays and clk descriptor table, and use
->>>>>>> match_data to select the correct descriptor table per compatible string at
->>>>>>> probe time.
->>>>>>>
->>>>>>> Signed-off-by: Qiang Yu <qiang.yu@oss.qualcomm.com>
->>>>>>> ---
->>>>
->>>> [...]
->>>>
->>>>>> You're also missing PCIe_1_CLKREF_EN (+0x48) (for PCIe5)
->>>>>> which goes through CXO1_>TX->RPT0->RPT1->RPT2->RX2
->>>>>
->>>>> I have removed PCIe_1_CLKREF_EN in dts node because PCIe5 PHY doesn't
->>>>> require QREF. So I didn't provide its structure here.
->>>>
->>>> I don't quite get what you mean. I see that it is there in the graph
->>>
->>> I double-checked with the HW team — QREF is not required for CXO0. In TCSR
->>> HPG, I think the QREF components you are seeing are in an old version
->>> diagram, but it says the QREF for CXO0 will be removed. In the updated
->>> diagram, PCIe5, USB2_0, USB2_1, USB4_0 and USB4_1 PHYs get refclk directly
->>> from CXO0.
->>>
->>> In theory, we don't need to vote clkref_en and QREF LDOs for these PHY
->>> instances, and I got confirmation from the PCIe HW team for PCIe5 PHY.
->>>
->>> I also compared the description of the TCSR_CLKREF_EN register between
->>> glymur and mahua on ipcatlog. Unfortunately, only
->>> TCSR_USB4_1_CLKREF_EN_USB4_ENABLE is marked as "not in use". I believe
->>> this is because these registers are not documented well in ipcatlog.
->>>
->>> So I think part of the regulator lists you commented for USB instances is
->>> not required, and their dts node also can to be changed to use CXO as
->>> refclk instead of TCSR_CLKREF_EN. But the mapping between the USB instance
->>> names in the QREF diagram and the TCSR_CLKREF_EN registers is not clear —
->>> I cannot find TCSR_USB4_0_CLKREF_EN_USB4_ENABLE, but there is a USB4_0 PHY
->>> in the diagram. Can we leave the USB regulator list as NULL or we just
->>> add them as it is harmless?
->>
->> I believe the internal discussions we had indeed point to the TX/RPT
->> elements having been removed somewhere in the chip dev process, so
->> the regulators can go, in my understanding.
->>
->> As for the refclk toggles themselves, my understanding is that they are
->> still meaningful. Although, we should be able to just smoketest that - set
->> all of these registers to 0 and see if the related IPs still work normally
->>
-> 
-> As internal discussion, the TCSR_USBn_CLKREF_EN to digram instance mapping
-> is:
-> 
-> TCSR_USB2_1_CLKREF_EN -> usb2_hs
-> TCSR_USB2_2_CLKREF_EN -> usb2_hs3
-> TCSR_USB2_3_CLKREF_EN -> usb2_hs6
-> TCSR_USB2_4_CLKREF_EN -> usb2_2
-> TCSR_USB3_0_CLKREF_EN -> usb3_ss3
-> TCSR_USB3_1_CLKREF_EN -> usb3_ss4
-> TCSR_USB4_1_CLKREF_EN -> usb4_1
-> TCSR_USB4_2_CLKREF_EN -> usb4_2
-> 
-> I will remove regulator list for TCSR_USB2_1_CLKREF_EN and
-> TCSR_USB4_1_CLKREF_EN. For the registers, we can leave them in the clk
-> array, the driver can still vote CXO as parent of tcsr_clkref_en and the
-> register setting in enable/disable is just a no-op if they are really not
-> required.
+Some MediaTek clock drivers do not call platform_set_drvdata() during
+probe(), but their remove() callback calls platform_get_drvdata(). This
+results in platform_get_drvdata() returning NULL, which leads to calling
+mtk_free_clk_data(NULL) -> kfree(NULL).
+Therefore, the actual clk_data is never released, causing a memory leak.
 
-sgtm
+Fix this by calling platform_set_drvdata() during probe.
 
-Konrad
+Fixes: 124294ff468f ("clk: mediatek: mt8192: Move apmixedsys clock driver to its own file")
+Fixes: 4c02c9af3cb9 ("clk: mediatek: mt8173: Break down clock drivers and allow module build")
+Fixes: 54b7026f011e ("clk: mediatek: mt8135-apmixedsys: Convert to platform_driver and module")
+Fixes: c50e2ea6507b ("clk: mediatek: mt7622-apmixedsys: Add .remove() callback for module build")
+Fixes: 0d363282bb0c ("clk: mediatek: Add MediaTek Helio X10 MT6795 clock drivers")
+Fixes: c6368ce86435 ("clk: mediatek: mt2712-apmixedsys: Add .remove() callback for module build")
+Fixes: 838b86331c5e ("clk: mediatek: mt7622: Move infracfg to clk-mt7622-infracfg.c")
+Signed-off-by: Akari Tsuyukusa <akkun11.open@gmail.com>
+---
+ drivers/clk/mediatek/clk-mt2712-apmixedsys.c | 1 +
+ drivers/clk/mediatek/clk-mt6795-apmixedsys.c | 1 +
+ drivers/clk/mediatek/clk-mt6795-infracfg.c   | 1 +
+ drivers/clk/mediatek/clk-mt6795-pericfg.c    | 1 +
+ drivers/clk/mediatek/clk-mt7622-apmixedsys.c | 1 +
+ drivers/clk/mediatek/clk-mt7622-infracfg.c   | 1 +
+ drivers/clk/mediatek/clk-mt8135-apmixedsys.c | 1 +
+ drivers/clk/mediatek/clk-mt8173-apmixedsys.c | 1 +
+ drivers/clk/mediatek/clk-mt8173-infracfg.c   | 1 +
+ drivers/clk/mediatek/clk-mt8192-apmixedsys.c | 1 +
+ 10 files changed, 10 insertions(+)
+
+diff --git a/drivers/clk/mediatek/clk-mt2712-apmixedsys.c b/drivers/clk/mediatek/clk-mt2712-apmixedsys.c
+index 54b18e9f83f8..24522fc24019 100644
+--- a/drivers/clk/mediatek/clk-mt2712-apmixedsys.c
++++ b/drivers/clk/mediatek/clk-mt2712-apmixedsys.c
+@@ -129,6 +129,7 @@ static int clk_mt2712_apmixed_probe(struct platform_device *pdev)
+ 		goto unregister_plls;
+ 	}
+ 
++	platform_set_drvdata(pdev, clk_data);
+ 	return 0;
+ 
+ unregister_plls:
+diff --git a/drivers/clk/mediatek/clk-mt6795-apmixedsys.c b/drivers/clk/mediatek/clk-mt6795-apmixedsys.c
+index 123d5d7fea85..b607592a7c37 100644
+--- a/drivers/clk/mediatek/clk-mt6795-apmixedsys.c
++++ b/drivers/clk/mediatek/clk-mt6795-apmixedsys.c
+@@ -175,6 +175,7 @@ static int clk_mt6795_apmixed_probe(struct platform_device *pdev)
+ 	dev_dbg(dev, "Performing initial setup for MD1\n");
+ 	clk_mt6795_apmixed_setup_md1(base);
+ 
++	platform_set_drvdata(pdev, clk_data);
+ 	return 0;
+ 
+ unregister_ref2usb:
+diff --git a/drivers/clk/mediatek/clk-mt6795-infracfg.c b/drivers/clk/mediatek/clk-mt6795-infracfg.c
+index e4559569f5b0..12146bb3b726 100644
+--- a/drivers/clk/mediatek/clk-mt6795-infracfg.c
++++ b/drivers/clk/mediatek/clk-mt6795-infracfg.c
+@@ -116,6 +116,7 @@ static int clk_mt6795_infracfg_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto unregister_cpumuxes;
+ 
++	platform_set_drvdata(pdev, clk_data);
+ 	return 0;
+ 
+ unregister_cpumuxes:
+diff --git a/drivers/clk/mediatek/clk-mt6795-pericfg.c b/drivers/clk/mediatek/clk-mt6795-pericfg.c
+index d48240eb2a67..28faeb2e657a 100644
+--- a/drivers/clk/mediatek/clk-mt6795-pericfg.c
++++ b/drivers/clk/mediatek/clk-mt6795-pericfg.c
+@@ -125,6 +125,7 @@ static int clk_mt6795_pericfg_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto unregister_composites;
+ 
++	platform_set_drvdata(pdev, clk_data);
+ 	return 0;
+ 
+ unregister_composites:
+diff --git a/drivers/clk/mediatek/clk-mt7622-apmixedsys.c b/drivers/clk/mediatek/clk-mt7622-apmixedsys.c
+index 8a29eaab0cfc..a9fc2e5536b3 100644
+--- a/drivers/clk/mediatek/clk-mt7622-apmixedsys.c
++++ b/drivers/clk/mediatek/clk-mt7622-apmixedsys.c
+@@ -109,6 +109,7 @@ static int clk_mt7622_apmixed_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto unregister_gates;
+ 
++	platform_set_drvdata(pdev, clk_data);
+ 	return 0;
+ 
+ unregister_gates:
+diff --git a/drivers/clk/mediatek/clk-mt7622-infracfg.c b/drivers/clk/mediatek/clk-mt7622-infracfg.c
+index cfdf3b07c3e0..b44baf521d2f 100644
+--- a/drivers/clk/mediatek/clk-mt7622-infracfg.c
++++ b/drivers/clk/mediatek/clk-mt7622-infracfg.c
+@@ -90,6 +90,7 @@ static int clk_mt7622_infracfg_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto unregister_cpumuxes;
+ 
++	platform_set_drvdata(pdev, clk_data);
+ 	return 0;
+ 
+ unregister_cpumuxes:
+diff --git a/drivers/clk/mediatek/clk-mt8135-apmixedsys.c b/drivers/clk/mediatek/clk-mt8135-apmixedsys.c
+index 19e4ee489ec3..41e5cfbcbb76 100644
+--- a/drivers/clk/mediatek/clk-mt8135-apmixedsys.c
++++ b/drivers/clk/mediatek/clk-mt8135-apmixedsys.c
+@@ -66,6 +66,7 @@ static int clk_mt8135_apmixed_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto unregister_plls;
+ 
++	platform_set_drvdata(pdev, clk_data);
+ 	return 0;
+ 
+ unregister_plls:
+diff --git a/drivers/clk/mediatek/clk-mt8173-apmixedsys.c b/drivers/clk/mediatek/clk-mt8173-apmixedsys.c
+index d7d416172ab3..fe36d2eac3da 100644
+--- a/drivers/clk/mediatek/clk-mt8173-apmixedsys.c
++++ b/drivers/clk/mediatek/clk-mt8173-apmixedsys.c
+@@ -179,6 +179,7 @@ static int clk_mt8173_apmixed_probe(struct platform_device *pdev)
+ 	if (r)
+ 		goto unregister_ref2usb;
+ 
++	platform_set_drvdata(pdev, clk_data);
+ 	return 0;
+ 
+ unregister_ref2usb:
+diff --git a/drivers/clk/mediatek/clk-mt8173-infracfg.c b/drivers/clk/mediatek/clk-mt8173-infracfg.c
+index fa2d1d557e04..b923b73c64f6 100644
+--- a/drivers/clk/mediatek/clk-mt8173-infracfg.c
++++ b/drivers/clk/mediatek/clk-mt8173-infracfg.c
+@@ -128,6 +128,7 @@ static int clk_mt8173_infracfg_probe(struct platform_device *pdev)
+ 	if (r)
+ 		goto unregister_clk_hw;
+ 
++	platform_set_drvdata(pdev, clk_data);
+ 	return 0;
+ 
+ unregister_clk_hw:
+diff --git a/drivers/clk/mediatek/clk-mt8192-apmixedsys.c b/drivers/clk/mediatek/clk-mt8192-apmixedsys.c
+index b0563a285bd6..446c55b77777 100644
+--- a/drivers/clk/mediatek/clk-mt8192-apmixedsys.c
++++ b/drivers/clk/mediatek/clk-mt8192-apmixedsys.c
+@@ -176,6 +176,7 @@ static int clk_mt8192_apmixed_probe(struct platform_device *pdev)
+ 	if (r)
+ 		goto unregister_gates;
+ 
++	platform_set_drvdata(pdev, clk_data);
+ 	return r;
+ 
+ unregister_gates:
+-- 
+2.54.0
+
