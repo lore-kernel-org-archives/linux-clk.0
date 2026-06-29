@@ -1,46 +1,47 @@
 Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11021075.outbound.protection.outlook.com [52.101.62.75])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A87C348C4B;
-	Mon, 29 Jun 2026 20:53:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61ECD38889B;
+	Mon, 29 Jun 2026 20:53:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.75
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782766435; cv=fail; b=Sn9Sk31Gjq6u/Lq6uF440fQw9EsLobPk9N2HSfOmEReuMXC80xjE+BCAEK0JWkI06lZTJ0W1n65wnkuFOOd4UBh1OuNx4T8lNaF0PGvx6kbkMMj0bkUGNOnBWTGaZY8gyFtnhUAz5NoSrunK6SvGNG+vZbFPcUTY5FjoKQziYtY=
+	t=1782766436; cv=fail; b=EkauoeMDf2RPqs9Kg7DRtho1S4GDi5M55olnlrxHgO5SXunoMnzmUsvLZ49KAbUXbsX4Tt62yMfHEeQ7Lrs3jlzf2b0+fGR1fNcyT7O7BfXqQLFCoVFx1C3Qbwe4KdeXsVY8vVrOAzB6m0yQqknpNHAl2l7EeMoacbagSEeaRoY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782766435; c=relaxed/simple;
-	bh=U5uQJnAOPj53+UJdff29oyhLAB9zKqbopv9IgnQR1fU=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=jYP2nmLO0mSxXYs3nQL9G63zjrqMWlQEpW3SKkeOd05q27foO+HbIBhxR+AoHdWEfaBJNHcUvZkOYJoJe6nxVK2mK/h5sA3JbKtUZArTwLthqrmDaFRM2mmj7OD8O8a5FXW8z9muP1nxJA4KQi4tmYWNm8fnQGs+pThOnzbqHhs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=in-advantage.com; spf=pass smtp.mailfrom=in-advantage.com; dkim=pass (1024-bit key) header.d=in-advantage.com header.i=@in-advantage.com header.b=AjEW1Ch1; arc=fail smtp.client-ip=52.101.62.75
+	s=arc-20240116; t=1782766436; c=relaxed/simple;
+	bh=/MoYiDACrTbzz04028KYiBvXsatODdP/r6juX+JZTqs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=o2XyGO83nrKnYSCtqw8I7JI9sFGqxu5tIcICGGh6IwTFWcd4Mi5U3QEEt8aMOEX8iDNuJa74TPxg8vY0/A6VsdZEOnwVnsfHesVP1M3OcCxrUzTYNJvpF9LXN63OieaRb45y42HFcATWQSPUCs9F1veL7FYDF58SVmqmI8hJSmc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=in-advantage.com; spf=pass smtp.mailfrom=in-advantage.com; dkim=pass (1024-bit key) header.d=in-advantage.com header.i=@in-advantage.com header.b=BBEVfqNy; arc=fail smtp.client-ip=52.101.62.75
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=in-advantage.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=in-advantage.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=in-advantage.com header.i=@in-advantage.com header.b="AjEW1Ch1"
+	dkim=pass (1024-bit key) header.d=in-advantage.com header.i=@in-advantage.com header.b="BBEVfqNy"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xvPgydqBM/i1EULhYJ9bOWh+1+sOgNBeCYkmK6wL6uoFwdFWCLZSXzoFl7ioFr++/Hu0uw7ZgRT4kq7GYtCSEvmRucQV+2Sd66Y3qZRqVtAlvDxBlejUQtmBY4EuSZWPgs3NTaeN1tpV1wc5tUBmBfSHz/OcjM2aa3gfm+519IJoPko3jjqkbiM/Q1st/SaxEaSYPIZ4WCuSeMX7WgGmq6/d/rMoEODUy4GTZwLyrn7S9L1Q0itp51/BE+OAfb31h3kwBc0QbSNvrwZ4XPBW/cNvcN2XNPMEqonVxtdOQhpW7gehXJ5KOICWZLqL6ZwZNBvAH2Xi78j21z/2UQO6wA==
+ b=QEx97I2PcWHDRaBSvKmjUUegG4eTHIPjtMItldqdAD46apsQ6GJx/nr1wzQG2OXRW/tCw1HeB2XhifAGQeQsqMHmjcpZKCiuP/IV/9n+9v6jDds2yRFy8WVCuimW8ZK5JSnWyLZuM477VbpVWfLcO4tYjejUELmFcx3z+/BJZ1BWLNQn3k5qwoScKjvemRA1S4x5hHPojLv2AI+S1J0Rb5vM1cqPbOWTXI+nIEJIi964gz8HTgxU+XUi3yCmJQ7j4uFWzT2lSa0xKLNIyrihE+QPxjOZ312LVB8M1M/w1tGM1NK0oc1JfSzYH3Ojf24oPkJ9HbLhT6WJZAudfSX37Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Asl2j7yCCjlD5LrfCshmb45PyDwM64F3ce65+BVPYQs=;
- b=fYSWF0XAtddSFSquyWnM+/EaV0ZgqJ1BUV+beU14gaCgfACbpOSnSKprY5fYGAFbk6HhdraGJ295nDYtkFKg5AxlYPq/Qicp0cV3lxiGLVGek9skvWfJjNp7qCfQkBlRjPvwYs58ZoGjMYNvzQykxEp2RjGdMHjOQr7KLcefT0fIXfJqR62rCuLl7JOsLUgkEARWAeBjbmjrltBsOnbDtThwE/JoFaL4LavyzNPulZrQYsm54rbIGe4ivL2z4Av9miq6erzyqnMUO0gsak7QuXU+fe3C+HxIJ6Pwi/8OcjQzt7Q41o5DG8p32OojCuwkXFWQ8EzFFJh1vyCWRLzw3A==
+ bh=FPkiIfYS/p9tSmw68fTY23RyXQT+oRK4BisdBJ7hMl0=;
+ b=pXPMubYwfDmzw7ro+q8K9TgKASA6Hl8wvuHX8im8oX82I2ACUYdEfiz0qhklSAVUXg0MYUUgXKq8meBSEEkGePi2M+8tl56Iqlce7R0aaWU8uTsANTGJxjv7xhQCQKM/572fBgoDvygpCgjwVlpRtAVRU1IeuIhILRpgLAO7/2kKshC3dSgN+aNbIJTYQdc5CMD63tCKfYATL3TmdZ30ukWIZee093W2xacM2sqTNd4sC4/Hoc+V5sOGEWL7pauhIAoCti6jD7SLletJ+lGU6s43yUwVYeEyM5FHfdtTLYC8QFx5cfG/hiaS+oDL2RhBQXlfe2tNqrDNHVfhreiaow==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=in-advantage.com; dmarc=pass action=none
  header.from=in-advantage.com; dkim=pass header.d=in-advantage.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=in-advantage.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Asl2j7yCCjlD5LrfCshmb45PyDwM64F3ce65+BVPYQs=;
- b=AjEW1Ch1mR7OhkxDjA+9tqVMnmWQa9aCSzAXww/Eh+GpwlDcycfFdisqc6HtsIgkJvTjB/iY0CdwNpweY2LCXO6YtmE3YxW6O+w0Szgs+++ZwLG295GJdl1etaOeLNF7/4aCfJQXHlid2/OTahxzt9z70TTU9Ody2x75UKvjsBE=
+ bh=FPkiIfYS/p9tSmw68fTY23RyXQT+oRK4BisdBJ7hMl0=;
+ b=BBEVfqNykrk49lbyPDCIcCVSxY5UKeobuuY6pnia/s8c/KBZuGi8q9cUjc16Wdfxd/4AD8mCI4IfJ8ph6CqT/qOAWEDRvY4BZHU1DAyxrB6HWWwMutHfd7/xBNTQoUi3tIevc2DPg6KV3wEYC1U2TEb1otJO46LKGU5A2PlKPxg=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=in-advantage.com;
 Received: from CH0PR10MB5290.namprd10.prod.outlook.com (2603:10b6:610:dc::14)
  by SJ0PR10MB4749.namprd10.prod.outlook.com (2603:10b6:a03:2da::20) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.159.18; Mon, 29 Jun
- 2026 20:53:50 +0000
+ 2026 20:53:52 +0000
 Received: from CH0PR10MB5290.namprd10.prod.outlook.com
  ([fe80::fd87:b9a4:818d:5ef5]) by CH0PR10MB5290.namprd10.prod.outlook.com
  ([fe80::fd87:b9a4:818d:5ef5%4]) with mapi id 15.21.0159.018; Mon, 29 Jun 2026
- 20:53:50 +0000
+ 20:53:52 +0000
 From: Colin Foster <colin.foster@in-advantage.com>
 To: linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
@@ -50,14 +51,16 @@ Cc: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
 	Brian Masney <bmasney@redhat.com>,
 	Stephen Boyd <sboyd@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>
-Subject: [PATCH_v2 0/3] clock-wizard fixups
-Date: Mon, 29 Jun 2026 15:53:43 -0500
-Message-ID: <20260629205346.3228886-1-colin.foster@in-advantage.com>
+Subject: [PATCH_v2 1/3] clk: clocking-wizard: fix clock difference detection
+Date: Mon, 29 Jun 2026 15:53:44 -0500
+Message-ID: <20260629205346.3228886-2-colin.foster@in-advantage.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260629205346.3228886-1-colin.foster@in-advantage.com>
+References: <20260629205346.3228886-1-colin.foster@in-advantage.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: BN9PR03CA0159.namprd03.prod.outlook.com
- (2603:10b6:408:f4::14) To CH0PR10MB5290.namprd10.prod.outlook.com
+X-ClientProxiedBy: BN9PR03CA0344.namprd03.prod.outlook.com
+ (2603:10b6:408:f6::19) To CH0PR10MB5290.namprd10.prod.outlook.com
  (2603:10b6:610:dc::14)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -67,84 +70,105 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: CH0PR10MB5290:EE_|SJ0PR10MB4749:EE_
-X-MS-Office365-Filtering-Correlation-Id: 53e62b9a-a416-4e36-c040-08ded620859d
+X-MS-Office365-Filtering-Correlation-Id: 9725e4ef-6b50-48be-8a77-08ded620869a
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|23010399003|1800799024|376014|366016|56012099006|11063799006|18002099003|55112099003;
+	BCL:0;ARA:13230040|23010399003|1800799024|376014|366016|56012099006|3023799007|11063799006|18002099003|55112099003|22082099003;
 X-Microsoft-Antispam-Message-Info:
-	hpB8zqHjNJ9qSLF0OxHpOAD0/Xw/zGwtvKiznB5EJyL54Ii1UZV8+bF7fmMN2qcTexdunvUwh85VzBlAZsHsBdQNcqlRx4igMExMQ1CF7m2BdQeQDOwhiROXsTnac0//NglaOWNp4ePiEIW6PJ26hv3P0glMyhNT03q69+CT579Oj8v++Lg2anJ+7xqvvcxRvuAQ1zCmpSEYYSpfEWXtrygATKy/IEjCrQpyOo47rBIGZDrHUeCain3XOFNeHSsqSIIQaKerPXyobxAjpcx+v6YMZLjKadSqcrRoY7uAWXX50BeyyRZEHoSKBjWMxaTSySkCCcqjB0HXkpb+J+iT/1BM+LgqlYwodi9kStVQKew6T6A3Jt2AZx635ljv1mi7zWZbpqAK4lC10OnS6SmMqnSSaET5qC8HyGSqcLIIMrDDCllAoBAomw6kf2Tze/W4pLxSv4R4DHIK5K6B+bTJ1GM8taaA12UAWoSlPqGkiMGdtgPfnLp5C4JECOwJ5quM/e+7obWd94pwEMoMVVAcRk3Pu2H2ilwcpD7uji7rQXb0OQJGV7/TmJ7UX5fdJ6U3raCCPPEawZsaCQu2/gyyT8iBXWglqFb4/TjeKrrwe8MuMYQQWVW+Ac/4v5wEfhGcQZSYIG+YtK4HJ0jTWiVyZL7t6U6XVSJNgt1WPMqx+Pg=
+	E3uV7ZySJZdKnb7wqJ163XaQOV8V0/XCufisOKphSUJj4wVJdbvBLlbIruh/ELniQpbBwyAPr/9wYCUCqVFn9MW4xNazL2QytNVIAYnq1boiuTmwSc1IiX2gpQ+T1pCffze48AdqP/1rlPlz6JXIF4vafvTUzQ7CJPz+sQuBazIdFIxEcSanqLgJXy/tEgKTq+Hxf2aCcI2rgWA6ONyiNEqLBH2oqRedmBxQj1vt8ZvnlgxbvKhqsRmRIcojKt9/DG/IqI8G6Gi2WSyMtx365zg/5mz1R3sepKgkuZ8LBq8dBmu6kY2oQEKZlyGFMDXpCYgn/+GNEqzV6vQ1dIuK/cbCRtJMcxsrYfY2hIQaBKUW8bI4ipVQuK3euJbVObQWt/ljeDbAcA1bJM8IiM8te+JbeHXeNce3IRh8EfmA0SA72P7Dw/uOotDTEN/UV9huD1Wcz524KO9QzwJphtwWt51DzQxXxooNHhqNVRkL7AB21NVzofS8QlIZI8rTY6Uotc5hAVJEAiNvDH8imvmYilT1OYTlxcZOQsFFuaXPBlZpCenkumTUJrnZ74g2hiu67l5r/vRh+JEzuZ/feTMNHhW8mXo8lbCRLiSL7hd+0BvT6hURX84btBj3n/EvOf/M1tMkXvszPSqpuaBgj3yIkdsCBBOMvAS2dmi/BAdXkMk=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR10MB5290.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(1800799024)(376014)(366016)(56012099006)(11063799006)(18002099003)(55112099003);DIR:OUT;SFP:1102;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR10MB5290.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(1800799024)(376014)(366016)(56012099006)(3023799007)(11063799006)(18002099003)(55112099003)(22082099003);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?rgwmnqcwEIYqZ6H8CBoFdezl4fxAd+LebAkh5/xbUmx3jYJgtrLseHlcPLpN?=
- =?us-ascii?Q?m0G+/an+Ew257I+0ek/a7EG5zLdIh/KvRL032nM5rKa29vZYxa5hMF110WvX?=
- =?us-ascii?Q?UBtrl4zsQWW5jwNQtJHNO6F5zlmau6/p/i67h7bFKY8W042na/NHDSkc4Nj2?=
- =?us-ascii?Q?en9x648JX8bLenGvdspG0+JPmyti6M5ktWz2t1z7gpvcR4SXFAO168J1LiNt?=
- =?us-ascii?Q?sDkw5bSiuy64ICuAHMl91fmqSAXBl12UAG5dW7YD/7nlVSECs3rIjEyuot+x?=
- =?us-ascii?Q?VeOBl0S+9dCuG+dfZU7qv9JpadSiimS+nBz8KlPD96SZoRGGNbVXxMpMw+5d?=
- =?us-ascii?Q?J694jrwuvdlaxQB5AKbq+p3A4DQemURdn8HTCvCPDNNqIoQvJrrYZo+hGD7Q?=
- =?us-ascii?Q?ijXdf0DujUIQ5FsqlVve/TSCFm4iaqtEevGl8GQishT8/7UWym+Bw9u9RgsK?=
- =?us-ascii?Q?gBGNz/mV65Dd7LvFf37eULjpPqtLnMWPihVzSP+0pVDUKlsu+7/+mcMiwcVA?=
- =?us-ascii?Q?rl7urH1tE13d4d+pd7pOXaFkyjsCZqB2LaQUAxKt724xn21TWoyGkSCV9dNP?=
- =?us-ascii?Q?uWI+Nz5rKWk3tXzKRKVuER5jrvWiEGb86l8Txe6zw6+PQDdhl/oXVaXJnJUK?=
- =?us-ascii?Q?vJds6szqjr0X0gDTYTfHKJ+99u7hGPwmlIS7RPT+AS+VAaKkugRDi3dj8dK+?=
- =?us-ascii?Q?9psudRSuHq0yI6AKNLEJVNQxh2Zi5NiYohLA7BN82kntERObNj77I8JuMpkV?=
- =?us-ascii?Q?rxw0QavrMDT34oGTSy+P9VHYwhfMecYeLTx8bFTLNBO8kUFLaAqdK4k0hW8a?=
- =?us-ascii?Q?BZ8/LmYp41oceWiZ9W2OqlYx7xYfsjZ5dVS5Ww40DSTK6mIB7om/GU82sQE0?=
- =?us-ascii?Q?Gvy8+pjHaMbPubVa4RQOirRIBI7bnQRY9/Iok6ZPkIpM2MYfOaJtsG95nu3p?=
- =?us-ascii?Q?dPcyz2lq8NrmJpNDPPl+C5PKt1NCP+8tTTSs3Ag/l0chT9gJWriuYYlFKMYY?=
- =?us-ascii?Q?cUSEmMur1BG09muiOU/9h2RyK5YaAKcZ4d9xqXW9Zhh2NupOcu8Xe1VzOGnp?=
- =?us-ascii?Q?Eh9ALRuJT75ce7wOdmSJ3Mpb/Ez87njKpd8JcW5KVaUWy8MeLK7u0MOIsekW?=
- =?us-ascii?Q?Ixnr9uP6+tfV8yT1VPSozMzslJcefa/KOCCicAPgt3+AESWpOsTP4t6pQinM?=
- =?us-ascii?Q?Wfacl6LvrNS562Rp4TWCCVBr6qP3F1i8Stu32nGGj8xnKTwK0x5dGY9papGm?=
- =?us-ascii?Q?WOMZYz9YPKbJSIItj+vsfPu0IB0MXo7a+pWRrHA7DDzkd81+C4M2l+x3awkL?=
- =?us-ascii?Q?dMgnakzMEPOzsF24oHcMClw3W8M/elwY/TSAr7vBOBw6qoeSqD/E7G95OULN?=
- =?us-ascii?Q?muc0tw4awIPHe5A3OzHxeHQwFWSS55K+TeCtNhhQoPpNhLk95jppqIkP9XUo?=
- =?us-ascii?Q?7JprZeTdRPgnJkEHwiPcrIz53K1pZ7r9avwm5dyYzjy6jYMCiPhN1WAnfFND?=
- =?us-ascii?Q?+IUXtmiUWbPRHSNS+DKrz4p9h6i/vx0IIRANRyjWf+m2v4QUvITQ2mGZiUjE?=
- =?us-ascii?Q?GF9GPBB8JqEntU5f3BSAWOVvI6IO8wJPP4waapTZ4MgOzWa4mL/n3SdydWGK?=
- =?us-ascii?Q?nA2y65Z3hn6JWmmT7cEfBMYKAX5Y63fVMvdQ6WBSkdyIlQIycicsnqyokhd2?=
- =?us-ascii?Q?E7M++FMN0CQN+d4Kakmm0s+3hCnrfe092SZTtqecH16UGbl7G10W6NhmSCqu?=
- =?us-ascii?Q?4f7xLrhsU7nlPb+BY8ZzRbE0tcsKp7c=3D?=
+	=?us-ascii?Q?G83NNIV9yjhDtWVhl3sNTGBE4XDE/4Mi0RAKLkOXC1FpS3Pq9JH99rq4jzdg?=
+ =?us-ascii?Q?jQ1ZU5QUKVhEkYPc8nv4MvppvBqUJBex0xVZfmT4YlqiUbhx0rS8ouekGJgf?=
+ =?us-ascii?Q?MI1WxMzOhAG2Su/FlISSNkpoTFshZTFCAu7JAU32MNf8fqgsDSC4cQUYfozn?=
+ =?us-ascii?Q?n867rRtYDanvogRC2JnKGVs1R7ICwdq8y9j/Q58NgIj9wdGNAaGfQg+jI1cc?=
+ =?us-ascii?Q?cdDltxFuBbWhrcMeNez0h+rAqVjF7ashTs5nGGd9OsEDZJ1ZYfmJBM5MbutX?=
+ =?us-ascii?Q?ATMDeT+2oHh9hpSt+wsTtS7HwnFMJqLJi5rVxDRLeggv1In42Dd5MyHWvEcw?=
+ =?us-ascii?Q?xnrN0EVJ4PSzqgMRrxEUu8UB0RY4P14t4rlMEgjmGxOsYTv3NR78kl4h3JPU?=
+ =?us-ascii?Q?3MG0a7Vumz5svExLIQmBwPGVgnqFUFDi3H0DhliY1Gf/RxGqcifh8opQye5f?=
+ =?us-ascii?Q?obIUknvEOBja9737UZAixHPvPOJhRa1Ou4F8OFBT0SFmDFZ7VkeaAkkp5qMG?=
+ =?us-ascii?Q?Mw4wWms1jrXQ77xvH5dEH4pjk1HdMCiOxFPw3Bv8vBxC29TEPDgsIHPoeK4s?=
+ =?us-ascii?Q?o86cvMfHaQOPq46SwYbvYxVxDhJUYUXWkztlw5WRFpu/y5QMj+eNpA8RfoTq?=
+ =?us-ascii?Q?yOW8PP8KQzFFpipwtQCS5tmiMWgdAN1UUCUhJu4JdgP+hwDYB04d+udrk0ip?=
+ =?us-ascii?Q?p7lu6sHkkcBVfUZNKicTPM8H6/BcxfFm9/2XdjO8SXu5rbliuXkEtXV5xrvJ?=
+ =?us-ascii?Q?AOEM0NmCqaowXZnKBnX2+CNDI1HFF9lrOfr65rkXTTFmeM+fTDEPHMM4n5NY?=
+ =?us-ascii?Q?n+uzXXlct+w1jKMYOqowpDx9fysL7K5NnJNm/WygH9YO9nIMi4rPxrwpE0lh?=
+ =?us-ascii?Q?T4ungvaZE5JcylkstO8VlVpACHOljNXK2O3KBX891P+1zf0+LnDlZXrLJOJi?=
+ =?us-ascii?Q?XLKfAoIx/UpNG4vlU5Woo7ptKiZyrlD9gXeozXdquZwMWfktGWRFGcYIc6Tk?=
+ =?us-ascii?Q?sH98PkOTwEKL+yPVJuzcWh8P40sccTyMAlL9+kMiEEj15+b+CUz6WGcaw/TY?=
+ =?us-ascii?Q?TW/HAE86E4X/g3PYobzQdY+yThPMN9E1tYSGmFZZSrhL/ipm8GJob9SiTvTD?=
+ =?us-ascii?Q?hp4fKfYo266CvnetmbXz11Ou4JuWYuGwYDrWwH/UwT4kh6xW1jB+XONctZ/Q?=
+ =?us-ascii?Q?yuZIOsaMMOagFzAtce8rAyVG4Z1SEjRZCS6tXWM+8UOvZ0zsAlz8tKIKSmFG?=
+ =?us-ascii?Q?/D5NqIw9rxe1vI6H2F3wXFJNOfCImqvPI+Ah1A8/SxbxKHcqjm7WEZaPRCt9?=
+ =?us-ascii?Q?5+nJ6sMj8UDHA2Pe1BA8al2vcAFam+HC0WtJIw3pRA8TV3vIybbyeFU+7GpR?=
+ =?us-ascii?Q?CJ3hwJTp3lQeDNz/tuQot2ACng9iCldLg215NbORKces1gb0eT5/KY4+GmfR?=
+ =?us-ascii?Q?nmFv2oCCwjboayhAjOQVmlQvMEGYzI3eYPDFXUfO+uK3BHoZspa+RiflXkM8?=
+ =?us-ascii?Q?DOr1j76qv1FTUk45U8YU9/P7zlbGljLrUtA71PstiMeHng4fpwwPnNKHKRuK?=
+ =?us-ascii?Q?eyJh5HSWiDKyVUjZP0cXvyJkdcYAa1FzZFVucEpNx++t51tiD2ZiUlN06jrZ?=
+ =?us-ascii?Q?6tiGTCN5PPg9Bto2cnDYZUN+HHVIHkvQ/NQG/6GFQpwlWtkXIOpXOeapwnqV?=
+ =?us-ascii?Q?lm9y+hbmxvhaA82Uw3C2K9WKBqrH80NsM3PKOkJt+j103VG5FuYdksR7fleE?=
+ =?us-ascii?Q?jngSeW1bqOOR22UDgj8VIuE6LdNkiDs=3D?=
 X-OriginatorOrg: in-advantage.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 53e62b9a-a416-4e36-c040-08ded620859d
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9725e4ef-6b50-48be-8a77-08ded620869a
 X-MS-Exchange-CrossTenant-AuthSource: CH0PR10MB5290.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jun 2026 20:53:50.3419
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jun 2026 20:53:51.9904
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 48e842ca-fbd8-4633-a79d-0c955a7d3aae
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: AM2giDJM9wJpfae8bxCtdb1uzBe2ZqSliTKSJeq5ytTGZmyN8SlNMdUO2RIpl0okYI/KSouuxKM3qmnpetG6gcA9EfpXG/651kW+UArQfPg=
+X-MS-Exchange-CrossTenant-UserPrincipalName: a6jut9zFQbFhNvAquiNbybDNcmppmpZYSPoX9/AH/vVpflyH5yYBOtoftiZMzflF3dcnoOC1jqNCFsmjeicSnYs3/WO+qrSZLeY7cCqI40o=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB4749
 
-The clock-wizard driver had a hard-coded 20KHz minimum accuracy. This
-led to out-of-tree drivers silently failing to set clock rates instead
-of dealing with the best-effort.
+The diff calculation didn't take into account rollover. As such, a
+target clock frequency below the requested rate would not be considered.
 
-Remove this 20KHz restriction to match the Versal clock wizard driver.
-There also was a bug in the difference calculation that is addressed in
-the first patch.
+Before this change, bogus diffs would be used to determine the closest
+possible clock:
 
-The second patch optimizes the search if an exact match is found.
+8<--------
+clk-wizard-test: requesting 133312500 Hz on output 0 (clock NOT enabled)
+*** Clock wizard - Matching for rate 133312500 parent rate 99999000
+m = 33, d = 1, o = 25, freq = 131998680, diff = 18446744073708237796
+m = 34, d = 1, o = 26, freq = 130767923, diff = 18446744073707007039
+m = 35, d = 1, o = 26, freq = 134614038, diff = 1301538
+m = 36, d = 1, o = 27, freq = 133332000, diff = 19500
+8<--------
 
-The third removes the restriction.
+After this change:
 
-v2:
- * Rebase to apply cleanly
- * Add signoffs
+8<--------
+clk-wizard-test: requesting 133312500 Hz on output 0 (clock NOT enabled)
+*** Clock wizard - Matching for rate 133312500 parent rate 99999000
+m = 33, d = 1, o = 25, freq = 131998680, diff = 1313820
+m = 35, d = 1, o = 26, freq = 134614038, diff = 1301538
+m = 36, d = 1, o = 27, freq = 133332000, diff = 19500
+8<--------
 
-Colin Foster (3):
-  clk: clocking-wizard: fix clock difference detection
-  clk: clocking-wizard: optimize clock search
-  clk: clocking-wizard: remove 20kHz restriction
+Reviewed-by: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
+Reviewed-by: Brian Masney <bmasney@redhat.com>
+Signed-off-by: Colin Foster <colin.foster@in-advantage.com>
+---
+ drivers/clk/xilinx/clk-xlnx-clock-wizard.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/clk/xilinx/clk-xlnx-clock-wizard.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
-
+diff --git a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c b/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
+index 4a0136349f71a..77c9d025ca8cf 100644
+--- a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
++++ b/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
+@@ -406,7 +406,7 @@ static int clk_wzrd_get_divisors(struct clk_hw *hw, unsigned long rate,
+ 			if (o < omin || o > omax)
+ 				continue;
+ 			freq = DIV_ROUND_CLOSEST_ULL(vco_freq, o);
+-			diff = freq - rate;
++			diff = abs(freq - rate);
+ 			if (diff < best_diff) {
+ 				best_diff = diff;
+ 				divider->m = m >> 3;
 -- 
 2.43.0
 
