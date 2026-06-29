@@ -1,162 +1,195 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 242E33FFACC
-	for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2026 12:29:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782736174; cv=none; b=WHXwbsByZnJt5dJY/fGIF9nV71ELjkLmizipZJyTAI5S828U780NLVkgtRaxGzV3SKxRRAS8UVSyymuZVjdr+nPecRWKjuJ27ZFNVdPFgkgVzOkYwHutuW4LdpE1ZigudCC0MhBzNB0+5RtT4rsOVtDHKtnZt4YEtL2LpKPSDMM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782736174; c=relaxed/simple;
-	bh=3wkaVyo8f9C10ckpDW8FQOs7mVt1PctZ4+KQwkKXBec=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FvsZM1CVqM+icyZLKXwpdKZM9vdcvNaiHYyclWJBTxfY4OfahbPYLXZ2xAFrrEacskeopFA/X1sKOj8DliEnuAnFBCV1Lqpq+9N4VzQXoT/dmHoC1weo+Tx/ZKM1sxYdC5av9/oPJlE9a4gFSU0KRbZQl5UNQ6F17WVvsPFpCJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UAQbONyO; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=iYxDCdZd; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A401409100
+	for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2026 12:32:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1782736364; cv=pass; b=BGDo6+MZXC+ZEpehK6PIusbrV/M1uzwSyl9Ij/lIW9RLYjqd6cdXo6yz95zvh7788/R7DAROhjKkacqgYTeTqnCOU47mdi5cs3Vj5Ox50ZXvg0GPD5H6DDsPSI1ZnHgmG0Me4YBD4bxlyjXGYSeI+JbmOo/nRdLWDF/qQK5I7LU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1782736364; c=relaxed/simple;
+	bh=L8JaU1cFQMm9KChrGufXeN5dKBFqD7lhpptMglX4LMw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FX+3UtCh2SCtD8KzdHBp3KZyiQj3+n+DMvGOx9NG5Mqg3TaoWCJbA6BkCWirf41NPAgbnZExIQ3raPpepVhNgwnAqfPKa0npuyvC5gkdP7vwN0RTIloONbAmhbu4tpqYfUC5V+XsIan7bHyOcgWxAZlItEoyHkjmojf6lWWIovc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JGuyXLnQ; arc=pass smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UAQbONyO";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="iYxDCdZd"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 65TAT3ZH2641658
-	for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2026 12:29:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	g8QjTG+MobzU76SuZmdM098g+XPk+Q3XuBlOoWFGPaA=; b=UAQbONyOcBavg6Vv
-	mnuHEm9D2HiR8cx0XlQWUEjb0sFuSGBvK1jTyCylrAezm/9/Cd32+aLQ0l1Eoe7b
-	IP3s8NqUlmI4ZE9IjZjqzu+LAe+q4Z9fzzB0XyYJ1huwhw39cs9XLaFA6WbP4yuK
-	55OvsWBWq0c8eztsDcQQsip8ZFFkFIKfuWPZzWfpIwJ7AnXk7c4VYy51p4IKHjQI
-	H4QVZIMgmIOAZ3hW2hGmMguehm15WcgE8VnoXJASNAtdBwWprlErpiYZgVSOGm4/
-	s6xLfmk1luW6ZvIdzQ501TEk1988Hz+1+ASQTDrcmTLh62PMj5q4oHEHxBrQwuB6
-	CBqJfA==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4f3npers9k-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2026 12:29:32 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-51c07313be5so266381cf.2
-        for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2026 05:29:32 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JGuyXLnQ"
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-6986287534eso1761404a12.3
+        for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2026 05:32:42 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1782736361; cv=none;
+        d=google.com; s=arc-20260327;
+        b=cjuFfVFGkR/JIkEmMhC9OWi9FumiazeERn29G/oUk0UXO20FxSFX3nWvjA+43tShW3
+         OwQVa2tjVvQXX786FjDrBvxn5CpxtdWWC0q2mpXXqpjmDVyZj3onG6JKp9rCj/eBbO/5
+         Wy2CeY5Sc28suGVmv9pzgBWg5h2Ol7QXfOyOuPD68v7riSauDQuSxCUqaTrwpDGDOXSQ
+         brfJPa03A1bnOmNanNEy3juJbJGrSXbuc9otWea9P6gR9TP2hgGeCoGI+/luE8ANwcVX
+         JfoQQkQEOAXrOyWXThVqwqfjVWgSkWenocV0tVs8whNtMumrG+m9IhBnfcHF6h2B6vb4
+         j3Bg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=mx+bJya2052OeT1zYheYpJVI5drzn8BNJLEF7IAU1sg=;
+        fh=FwZ5U8W1E1WbYvJYnb61t0hKZMXUCzpb+5T4WE6Lr9M=;
+        b=g2hyFKpcikV38NmfHuuugEL2eeZmYwZddsvwU//8gseQAoT0v1u+tBKUwVngCK2Ttf
+         7EL9hOUKyAILxNGpRL6zKl7Dpibh+QTdcET9DzL1QRKhLPz/j5iQZ6mM+6CCCyxNF9XB
+         gQ1SnzQYtRkTpqru+mN6ydM/gMrGk4nX2nv8ihhSG9Kxfts+TgINIUE208AqG+zVCJUD
+         E3X4Cr8bR4o3VOs59da/IE1znDGWpF8KvpQqXmRMaXVrtPR2UcyYnUJqnzVKj0Rgs+6m
+         XHGkDUPlf3zM15kMX13RB2HmCtNI7HGyYEg7L21bT+RjApFxPlugCwveSlv6EJixoHnI
+         wGTg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1782736171; x=1783340971; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=g8QjTG+MobzU76SuZmdM098g+XPk+Q3XuBlOoWFGPaA=;
-        b=iYxDCdZd60ZuFnZj3MgublrfAkYI17T++8LK+4yPuaQp4z0LP6WKdAisgymlXyQalO
-         VnvMKx3t+8flF6/vZpV5R1/RqgkOZrmELPY+h48apNPJ1skEN3CPNHuBKZ7+h4+JQyRD
-         Ecy96WTLC1uUhOr0O9gjfScu45ybOI9sl/tcBtuDOiVuDojia1StOBY2H2nH+x+3l8Hs
-         JS9+ZXU9SPeQLK2OzyoprRHAW/a2UZxRoP77VKo8sNtlchVDVu4O/sc6VojVrxCx5kgK
-         UvqOup0jP8TFM4ZASbJ4rzloResEjzw7jIPGpZk6smV3GH+s41NScu8DJFZpKwsp3BsJ
-         Fyeg==
+        d=linaro.org; s=google; t=1782736361; x=1783341161; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=mx+bJya2052OeT1zYheYpJVI5drzn8BNJLEF7IAU1sg=;
+        b=JGuyXLnQL5sz9BH6+VPjvQeoF3/judbJARvJ0xkTJSpwa3rlW9fTCnYBr3mSjiI2xB
+         3Ac60HX+i5+KJAoVOEBKs+x3EUrHbziQNfLPDONqowB+t9HrmkDfyf1YK0P8vDtScu3Y
+         791WtF7RyjGrvlOAOBWeitOkmZzwWJkx0f9z3W9jhD4iRV1xGBbKtKyvI231NsXMyMuP
+         LDLPPtMnXTbWN/mUVqzpW0vlEevdhFAu00He9KdLufz9D/UHuvLWxDOjj5tSixQ+mR/1
+         8jtGvG6Bgzl0NFhPretHBnDU9dB/73TI0SSZKc3sVk/29lR2qq6KpsiAZTLvkZPSIX31
+         diog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782736171; x=1783340971;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=g8QjTG+MobzU76SuZmdM098g+XPk+Q3XuBlOoWFGPaA=;
-        b=DrP6BNpbpU+835/hc97h30LKl7apysXOFhjJ1E3h7yo/43JMdR9Bkkm4m6kSYEce3S
-         GUvghIBQFhKUy84juMTBnmdK+QrhjUfidif/xBSeDIv+ov6nnkMSamMA9CsBclKiqHEt
-         TC38s/LeVuxGWypQdepoicvayPRAMshC/psyJJkIBYONcqxW1U6Wx0pFlCJigB/nXkwt
-         3TZdAxY7hxqHOYuec6UusN/hYP3VXsBgOUfhW2/IRSp8UGwWjcGWFauFCOnd9NXytvge
-         K9cJay8p7vmAe9bt7VGepTtQ+gZYN1yHzQ+q/KYuMmNK1JqxThq27wxjuBzs1YOML6mu
-         Oqzw==
-X-Forwarded-Encrypted: i=1; AFNElJ/HBdX9pSR8gOy5CdwR/8N6RzUJ/a43Zv3Jz++ohGXhQASDwjwAQG0XnkrQB/KJcy+Z2X8BmG+sC+w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyO+4nOKWPrX3OXHjuc3Ou0GdNsOOsOi7pvcqCfbIJbln4fUC3V
-	J+l5B8jdZSIM5uuRAC+d7arfb2Hhv5adQjqggBe3s89f7MoaySRgvvF4zkX9Nrw6xNlssv4ylF/
-	sinRkSsolYdVvq47fsIiuszDoOECoI3VBEyAd5EvVF3jk+1siPpNFLevJaiVvXzo=
-X-Gm-Gg: AfdE7cnoiu0x/hM03z26xc/snon0RMk8dT0nPC/ay409qRnIg3YiPqHC8Eyy6FvcFsa
-	oiu/JFTxAmKZGMXJkhbakWvJVb8fkG90ge7fK2af8ODhaBwi0vHnhu7JWrpC7zoDEjMof29G1Pq
-	rWqJofqX3DUDey3vl25jRsR0d8dp1arNNKpaFoicA4jnPRHqfWH00F2d/XlQn4hpAsokpOqjlvZ
-	zYdFV2QXQvpxtefzWerb8iiwiTgFLCrGvZxJJOBbbBsGONc0OmDWAJ0nXQn0eBDSph6KNMNRWw7
-	M1GUJM8wXAz0X5Pp40UCv/RNBJtwtZ09XQC8rENjbYFQDbSvWAJqijGpQb/OUj85FdmyLkg5frA
-	LHi/Isr6JuKfd+64pQQqxgELIF7+PAKuWQrw=
-X-Received: by 2002:a05:622a:244:b0:51b:fe41:4764 with SMTP id d75a77b69052e-51bfe414b9bmr23414721cf.7.1782736171473;
-        Mon, 29 Jun 2026 05:29:31 -0700 (PDT)
-X-Received: by 2002:a05:622a:244:b0:51b:fe41:4764 with SMTP id d75a77b69052e-51bfe414b9bmr23413151cf.7.1782736168361;
-        Mon, 29 Jun 2026 05:29:28 -0700 (PDT)
-Received: from [192.168.120.170] ([178.235.128.140])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-39b0a53a815sm8454541fa.21.2026.06.29.05.29.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Jun 2026 05:29:27 -0700 (PDT)
-Message-ID: <ba7ca0e1-2e66-4355-a8f6-fcd65010b08c@oss.qualcomm.com>
-Date: Mon, 29 Jun 2026 14:29:24 +0200
+        d=1e100.net; s=20251104; t=1782736361; x=1783341161;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mx+bJya2052OeT1zYheYpJVI5drzn8BNJLEF7IAU1sg=;
+        b=G54VjHOP8V/kculKmqprmWjFiN7O+4piqgsaOOT+H68J+40RwcXaOwimSbpH4l9z8W
+         +UCU8MmvltRiOyoXq6EaX6D7Fl++13lP5WeZHwmCQBnScA/7OXph6vjdx0NlmZzkDF/Q
+         Lx1Hij030tJP8zfIMEU6Fb/iutj7UOvQO7eJBDfJt73aVJizQWxAMKxUA7bMM/x8YLeE
+         24DGL1AO57KERQSAWQ1g9qdARzsmx4Q8TI5Zz1c4W24oFKPusGZA+NrPLBQMtt7aaGBw
+         xMEtPMnFLN7TDt878zGadQGds4dAA76jVYdiTNg4cW+YzIH3T/fxz1iFJrCSlXcV4Kmu
+         Qdbw==
+X-Forwarded-Encrypted: i=1; AHgh+RoM1C4LsJjgl522m8XVh0PLFhO8BlXeo5PoKeHKCVeumM4MPZlrrDya7dMa4fYJnLPxzUv5m1ooy7I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWMowDSFbF/HMMFZk3esXgl+YTGeYgBq8aVIIloJDR2Woh/jDg
+	8IH5iviFK6LnqL3OZ1uFGbmeQFo4VcWW1q5yKXrLVRBixORzHwsY1768qsb6EtO9BpD+0CZ1NjR
+	QUlT74SgGdozNd646buVclqZoEQamwSL6824HwJpEVw==
+X-Gm-Gg: AfdE7ckj8ucjXoJMJ6ISJ/upG/a8EOmXc2Tgw3f3Q3zh1hkP1ijMvFt2DFYaJ1X2/YK
+	oYoJ/7giiOAqE7Q23/8I65z7HhedONXHxrW8lhzasUK8dRjtq1nsVXWrZU7KTseZSOqepk8JSBl
+	YSLM3HhrUZhnahosV23wW44pdj+DJ1U3Gs+jjG1HvtVkALwc1qECjgatbdCgAKhm7150AhZQmHp
+	WXihoq34FoFWWgrXI0GuFci1dRUll/7BiKYPgMeENd6z5fooAv1EeFvdjM/ADXB9SN8rGwPL4mN
+	kmMSCXzZKc0820LjdiBCa6dn3IEr1A==
+X-Received: by 2002:a05:6402:35cd:b0:697:d475:9692 with SMTP id
+ 4fb4d7f45d1cf-6983630b4camr4695431a12.11.1782736360872; Mon, 29 Jun 2026
+ 05:32:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] pmdomain: core: migrate to dev_add_sync_state()
-To: Brian Masney <bmasney@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Danilo Krummrich <dakr@kernel.org>, Ulf Hansson <ulfh@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Xuyang Dong <dongxuyang@eswincomputing.com>,
-        Jens Glathe <jens.glathe@oldschoolsolutions.biz>,
-        Hans de Goede <johannes.goede@oss.qualcomm.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Saravana Kannan <saravanak@kernel.org>,
-        Abel Vesa <abelvesa@kernel.org>
-Cc: driver-core@lists.linux.dev, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-References: <20260626-clk-sync-state-v1-0-4156d8196dc8@redhat.com>
- <20260626-clk-sync-state-v1-2-4156d8196dc8@redhat.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20260626-clk-sync-state-v1-2-4156d8196dc8@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjI5MDEwMyBTYWx0ZWRfXwHduPDEn2VYc
- ZcEGmIkA0mZKxbAAuZ12ETacFdFcR+UgJR+XOPXxobCwuGDyauibO/+0vf8s6lfloR63rjgX4d8
- u8yRyg9E9oschKDSqpnQi98A5vwpQF0Uv2qIkqj+ib3TUj1MAqDZkGq+P09X9Y2ZB9+b093axic
- CMon6OhFLO5G5sdpirYN8PBIWIbDnuIPkBnF7Db5O86TtM7TMdJmF/03fWA854BBJTqnms362oT
- TdzA6KB+uoGgVNSOEt7ueUBO8+Ceyvy8G/+gjB6ck1I0hes8lUZDU9bV8hs6Mzi1kE8/o2MVAp8
- KnD749nPLWX4RIzTHaL+/31pDHAtzAc9wQc5kmKVv6wyMlt1ZxOJgcgd2iwfMBjmiMs9YrJLmCi
- OLZTSrvvhYzzDQts+StVkV92iCq08+Li7cE2LAEu/wc9qQdZ5fouIDVqFI2jhyvPkOtOo20a9E6
- 8FD7leYqT59+FmLxKww==
-X-Proofpoint-ORIG-GUID: EaJhC8vrBFHEqxp2zQ1m2vdVY1eml8OT
-X-Authority-Analysis: v=2.4 cv=T6q8ifKQ c=1 sm=1 tr=0 ts=6a42652c cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
- a=IkcTkHD0fZMA:10 a=FelO9ux0wxsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=yOCtJkima9RkubShWh1s:22
- a=20KFwNOVAAAA:8 a=EUspDBNiAAAA:8 a=fDt9MinM2cAR7eUiMvAA:9 a=QEXdDO2ut3YA:10
- a=uxP6HrT_eTzRwkO_Te1X:22
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNjI5MDEwMyBTYWx0ZWRfX82TixdqJ6dop
- LwtvA/7mb/AlVTmwVFsBeuUMHEdzDx7rHDlsFZlxQUsjX/OE4BnTSmyf2JhC/LRP+G1Cwetsrxb
- ELubHwaSujQIJwZHRBUHJWII13jWWss=
-X-Proofpoint-GUID: EaJhC8vrBFHEqxp2zQ1m2vdVY1eml8OT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
- definitions=2026-06-29_03,2026-06-26_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 priorityscore=1501 suspectscore=0 clxscore=1015 adultscore=0
- lowpriorityscore=0 malwarescore=0 impostorscore=0 phishscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2606290103
+References: <20260613-exynos990-peris-fix-v3-v3-0-2b230db78ae4@gmail.com> <20260613-exynos990-peris-fix-v3-v3-3-2b230db78ae4@gmail.com>
+In-Reply-To: <20260613-exynos990-peris-fix-v3-v3-3-2b230db78ae4@gmail.com>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Mon, 29 Jun 2026 13:32:29 +0100
+X-Gm-Features: AVVi8CdLbhp4Di9rmkSMap57ieyZzpxVCIoG3c1G91VB-Ou_IfcxhglJYrQ6uH0
+Message-ID: <CADrjBPpNQd6WgwVo-a3Mz74d1EptPm9D9BisLEmoFRsdUb3izw@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] clk: samsung: exynos990: Fix PERIS gate clock parents
+To: Denzeel Oliva <wachiturroxd150@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney@redhat.com>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 6/26/26 6:32 PM, Brian Masney wrote:
-> We have cases where a device node represents a provider for multiple
-> types of resources, like clocks, power-domains, resets, etc. Having just
-> a single sync_state on the device is not sufficient since other
-> frameworks will want to add their own sync_state callback.
-> 
-> Migrate the pmdomain core code from dev_set_drv_sync_state() to
-> dev_add_sync_state() so that this works nicely with other frameworks
-> that want to add their own sync_state callback.
-> 
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
-> Assisted-by: Claude:claude-opus-4-6
+Hi Krysztof & Denzeel,
+
+On Sat, 13 Jun 2026 at 13:36, Denzeel Oliva <wachiturroxd150@gmail.com> wrote:
+>
+> Correct eight PERIS gate clock parents to match the hardware clock
+> tree and reorder the GIC mux parents so mout_peris_bus_user is the
+> default source.
+>
+> Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
 > ---
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
 
-Konrad
+@Krysztof: I was thinking, maybe we should establish a new rule/best
+practice for Samsung clock upstream submissions whereby patch
+contributors should link to the downstream cal-if code for the SoC
+after the --- line. That would make reviewing the patches' correctness
+a bit easier, as the downstream cal-if code would be readily available
+to the reviewer.
+
+regards,
+
+Peter
+
+>  drivers/clk/samsung/clk-exynos990.c | 18 +++++++++---------
+>  1 file changed, 9 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/clk/samsung/clk-exynos990.c b/drivers/clk/samsung/clk-exynos990.c
+> index ee3566b8e57c..df5928833b23 100644
+> --- a/drivers/clk/samsung/clk-exynos990.c
+> +++ b/drivers/clk/samsung/clk-exynos990.c
+> @@ -2551,7 +2551,7 @@ static const unsigned long peris_clk_regs[] __initconst = {
+>
+>  /* Parent clock list for CMU_PERIS muxes */
+>  PNAME(mout_peris_bus_user_p)           = { "oscclk", "mout_cmu_peris_bus" };
+> -PNAME(mout_peris_clk_peris_gic_p)      = { "oscclk", "mout_peris_bus_user" };
+> +PNAME(mout_peris_clk_peris_gic_p)      = { "mout_peris_bus_user", "oscclk" };
+>
+>  static const struct samsung_mux_clock peris_mux_clks[] __initconst = {
+>         MUX(CLK_MOUT_PERIS_BUS_USER, "mout_peris_bus_user",
+> @@ -2584,15 +2584,15 @@ static const struct samsung_gate_clock peris_gate_clks[] __initconst = {
+>              CLK_CON_GAT_GOUT_BLK_PERIS_UID_RSTNSYNC_CLK_PERIS_BUSP_IPCLKPORT_CLK,
+>              21, 0, 0),
+>         GATE(CLK_GOUT_PERIS_CLK_PERIS_OSCCLK_CLK,
+> -            "gout_peris_clk_peris_oscclk_clk", "mout_peris_bus_user",
+> +            "gout_peris_clk_peris_oscclk_clk", "oscclk",
+>              CLK_CON_GAT_CLK_BLK_PERIS_UID_RSTNSYNC_CLK_PERIS_OSCCLK_IPCLKPORT_CLK,
+>              21, 0, 0),
+>         GATE(CLK_GOUT_PERIS_CLK_PERIS_GIC_CLK,
+> -            "gout_peris_clk_peris_gic_clk", "mout_peris_bus_user",
+> +            "gout_peris_clk_peris_gic_clk", "mout_peris_clk_peris_gic",
+>              CLK_CON_GAT_GOUT_BLK_PERIS_UID_RSTNSYNC_CLK_PERIS_GIC_IPCLKPORT_CLK,
+>              21, 0, 0),
+>         GATE(CLK_GOUT_PERIS_AD_AXI_P_PERIS_ACLKM,
+> -            "gout_peris_ad_axi_p_peris_aclkm", "mout_peris_bus_user",
+> +            "gout_peris_ad_axi_p_peris_aclkm", "mout_peris_clk_peris_gic",
+>              CLK_CON_GAT_GOUT_BLK_PERIS_UID_AD_AXI_P_PERIS_IPCLKPORT_ACLKM,
+>              21, CLK_IGNORE_UNUSED, 0),
+>         GATE(CLK_GOUT_PERIS_OTP_CON_BIRA_PCLK,
+> @@ -2600,19 +2600,19 @@ static const struct samsung_gate_clock peris_gate_clks[] __initconst = {
+>              CLK_CON_GAT_GOUT_BLK_PERIS_UID_OTP_CON_BIRA_IPCLKPORT_PCLK,
+>              21, 0, 0),
+>         GATE(CLK_GOUT_PERIS_GIC_CLK,
+> -            "gout_peris_gic_clk", "mout_peris_bus_user",
+> +            "gout_peris_gic_clk", "mout_peris_clk_peris_gic",
+>              CLK_CON_GAT_GOUT_BLK_PERIS_UID_GIC_IPCLKPORT_CLK,
+>              21, CLK_IS_CRITICAL, 0),
+>         GATE(CLK_GOUT_PERIS_LHM_AXI_P_PERIS_CLK,
+> -            "gout_peris_lhm_axi_p_peris_clk", "oscclk",
+> +            "gout_peris_lhm_axi_p_peris_clk", "mout_peris_bus_user",
+>              CLK_CON_GAT_GOUT_BLK_PERIS_UID_LHM_AXI_P_PERIS_IPCLKPORT_I_CLK,
+>              21, CLK_IGNORE_UNUSED, 0),
+>         GATE(CLK_GOUT_PERIS_MCT_PCLK,
+> -            "gout_peris_mct_pclk", "mout_peris_clk_peris_gic",
+> +            "gout_peris_mct_pclk", "mout_peris_bus_user",
+>              CLK_CON_GAT_GOUT_BLK_PERIS_UID_MCT_IPCLKPORT_PCLK,
+>              21, 0, 0),
+>         GATE(CLK_GOUT_PERIS_OTP_CON_TOP_PCLK,
+> -            "gout_peris_otp_con_top_pclk", "mout_peris_clk_peris_gic",
+> +            "gout_peris_otp_con_top_pclk", "mout_peris_bus_user",
+>              CLK_CON_GAT_GOUT_BLK_PERIS_UID_OTP_CON_TOP_IPCLKPORT_PCLK,
+>              21, 0, 0),
+>         GATE(CLK_GOUT_PERIS_D_TZPC_PERIS_PCLK,
+> @@ -2624,7 +2624,7 @@ static const struct samsung_gate_clock peris_gate_clks[] __initconst = {
+>              CLK_CON_GAT_GOUT_BLK_PERIS_UID_TMU_SUB_IPCLKPORT_PCLK,
+>              21, 0, 0),
+>         GATE(CLK_GOUT_PERIS_TMU_TOP_PCLK,
+> -            "gout_peris_tmu_top_pclk", "mout_peris_clk_peris_gic",
+> +            "gout_peris_tmu_top_pclk", "mout_peris_bus_user",
+>              CLK_CON_GAT_GOUT_BLK_PERIS_UID_TMU_TOP_IPCLKPORT_PCLK,
+>              21, 0, 0),
+>         GATE(CLK_GOUT_PERIS_OTP_CON_BIRA_OSCCLK,
+>
+> --
+> 2.54.0
+>
