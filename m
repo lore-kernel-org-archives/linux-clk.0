@@ -1,321 +1,263 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012032.outbound.protection.outlook.com [52.101.66.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5D4125DB12
-	for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2026 20:58:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782766738; cv=none; b=E+bMu+Fqdhe1WOB8yHUo2K2+i5m3DltW1Ivj+LM+TplBbz61SeHknEArwOoxxHG+i2uxCKhHxGS5p9rP1ZkpVeNkzv4rGHwEFIczq4qVyGJBV4zKXpFxGXhHx+1Tbv4W7+HYdAhE0aT8YfMGwcs2iy6G/gBERs6lPSwxOZw/LDg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782766738; c=relaxed/simple;
-	bh=tnCPLFyTDiiNTVv+XC+oXI58RNeNgPi4SDjHqCmUR20=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cls5lgpzzzW+FnzVyN8FsfdVRo1XfhbbCCWCSFU0rkwnq0Ss7HkTsZn/fGWbAlhg0rsrfsf9NrmZwbUf6Z7RldyA2gQHniHsg4jnuMbTKUar1Ctyb4yuLbcONAp3erfvEDdrMGPXQznkdXqhdvEsiyb//0fXB7NGsrDnID+xpTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=POgwaQEQ; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=KvKUcMyK; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6093425DB12;
+	Mon, 29 Jun 2026 20:59:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1782766774; cv=fail; b=ocfncwkvhoCjzJcwSqEVbf8JvC4mJygjwE8DJZAcWh3b5BWzChKROrYOr3XNIaBdTf6Dr1Zw6u5Fo2AXGWhiUy9VhFeVjryC9VfYD4J0QKrgsQ4WqndbqkX5POkt9ShpgMjV4VcfD3HZxHjSmMDmRM+tZWZxtC8Ac9NcQlYNpG0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1782766774; c=relaxed/simple;
+	bh=F934TN0BtkmZUDKMeX/DkTBYqFeW3Vk8eW0mNE8DYBY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=lrk4rXRqWTd7IKnnP4Rpu47nEeZwFTchyJhReSrErvy+6AGn9SzGixPBivx4k1voa7EjC081Q6F1YlXvsTJJgak0CKExRDdFw4lliA2kNoOKe/a6WkXGpFvRGZ8+zYs5Wv/32YVl1TKZG2Qigh7uq4F27t6j7RLKfML2Dxebqq8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=lbNA+Ov7; arc=fail smtp.client-ip=52.101.66.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="POgwaQEQ";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="KvKUcMyK"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1782766734;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vc9TcsGqvwP2sCjfxbHhvEp3jEIy9e292sjunigOY5E=;
-	b=POgwaQEQSYsCO0Pn3A5nI7SXmVZ67CpjlqDgeibA8cFpgsp8eN3xacBBpKOtr17E1DbPkg
-	CqP4/v9IxO3FikihXQ78ZWUUAsWc8x/pD4V7enAPT2Ue9nOCPkOtkhIihf6JWzcAl6EbFB
-	9fRBgCs4qA1jTMRI1RtjSAI/c5gOA+8=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-510-KMIHEaitOkOdGgp4t3UHYQ-1; Mon, 29 Jun 2026 16:58:53 -0400
-X-MC-Unique: KMIHEaitOkOdGgp4t3UHYQ-1
-X-Mimecast-MFC-AGG-ID: KMIHEaitOkOdGgp4t3UHYQ_1782766733
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-8e9489f62bfso79455736d6.2
-        for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2026 13:58:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1782766733; x=1783371533; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vc9TcsGqvwP2sCjfxbHhvEp3jEIy9e292sjunigOY5E=;
-        b=KvKUcMyKMuJJxOP6sPVRRFL+A1IpLAzH/dPoHvyuvi7PmrlWStW2w3Xj6bG1o5n1Ow
-         TK0db6tLNSyI+mJzppzV+bLVuzQ7KU56HmI1DxN7K4ee4GNr+mGkCdsOhEsz4pDZwLLl
-         UyukMe7nFYpwRxcKdJclFHWPOawuM5U99aECf7HisIXPEodlBhsjv7QgvKCWHz9gjZAc
-         VCqd0ATbBsrC8XNT+pq6P9VPfX4w3TIp9FRCe6rUkgr2R8uHltOqX1LhoGS8Jvwv8f72
-         0jZrYVL7SAecmllm/4iHZv530zvwSDYIxTGJQc2/OlT5Tzywo42HGEiu2xFPChs05MdM
-         05Zg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782766733; x=1783371533;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=vc9TcsGqvwP2sCjfxbHhvEp3jEIy9e292sjunigOY5E=;
-        b=qMTMeIxD6EXhVA53pcma/8iM2PMc3HTp6Ue56hAKC0tW1Phe1iDaQu9EvqlfbPoLnZ
-         SeMD1+EHyEIgVlSzPIiViY+cm6MJRp0vrZvNd/2Ee30zTf8sr/KnUajkS65SFO4BM0i1
-         QbkgOmMD8lwHbEirRHcRmkORp61ih/duNl3ArUkYJvsYMCMZmxjfJooymfaF2ZQGmb5l
-         y9TmZfpjSRWBjETycFolMTW+9RsBYlbayEp/2qLt/LQT7snjF65dGEL68Ka47QEKAF5k
-         9VFB73ndq+5vrQFoiwU1pl/xnJCwy1CZnil9FDHcapM/dcqTwII99NkmevutClUz1QPh
-         l35A==
-X-Forwarded-Encrypted: i=1; AHgh+Roz13TLam9QkbdTrveOkJOAjnaKjOkd9YjIDOW7uWITKrFZdllRiNv9TcsGZK5mtxRi+deMQd12Ft4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy20r+bB4OOCIpdHawCn4UqU/K+Xw58G3mOAVjotsbWLvs88Ub9
-	nw1bAyPkNoc59EUQlTZz+kAVAU3tJ1lJ+93ZqRDbL+qrclxIeYxVBVtTJDOX4VDAfsWws3j2nEA
-	1fKbTJD1wscmkbdZRkkPLQA11kKUzWjg5h80+jUCayAkd/LgyUSso0LoiiNS47Q==
-X-Gm-Gg: AfdE7ckV+MuwWeHWNAlK1PTybZEeZRzefAckv6AW9JRKQnvhakvY0YQDfquWilZsct0
-	NO5r+b8WgB81lPgtGSxVYVfDTnaVPk0JHiYTMZuOcyiYlp4b2FJVEdnUhK7toNGdKZb6MTBHT20
-	eAsGAkdMyP03rILiGRGjkzBfZnrUeMh5dnffy+GF3Z6u+Zt2nf7lCtuwwCTjoh0wMjCFWNlLbkq
-	KR82VilNA8lcUPnVhLqmkw9r8QSwRNPKq5KfMrdgtAN3GONjL9Hu2kSrbmx+cy96hpy6FDC+5af
-	94ML3+wa004u6WW7xitTSrJbI6Xohhmzj0VMgmWvEvskkroiIqmN6zWx11ZX76iz1Lw4U+s8aLk
-	6XEmF5j5/pLEHd7o9XTgQTuWNacMuULTVjD3rIiSsMux8qA==
-X-Received: by 2002:a05:6214:4709:b0:8ef:aad6:dada with SMTP id 6a1803df08f44-8f1ba699fcemr14251706d6.20.1782766732942;
-        Mon, 29 Jun 2026 13:58:52 -0700 (PDT)
-X-Received: by 2002:a05:6214:4709:b0:8ef:aad6:dada with SMTP id 6a1803df08f44-8f1ba699fcemr14251346d6.20.1782766732468;
-        Mon, 29 Jun 2026 13:58:52 -0700 (PDT)
-Received: from redhat.com (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8f1a328fed8sm7220026d6.16.2026.06.29.13.58.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jun 2026 13:58:51 -0700 (PDT)
-Date: Mon, 29 Jun 2026 16:58:20 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Junhui Liu <junhui.liu@pigmoral.tech>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="lbNA+Ov7"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=uJJ1jemULKxYaBtYKAsocUGUbktOB4wxKtwQ2ofZWqoC83Q0RE4iPlAlYJmsC4GuDzmpJ2/+l84VcxZizA7tfIS2sYkzFp/ZFclUFU4DbilqDSP5Pj632/omtIuu76hhl5doaphkcr25ImgD8xWSBFjMD2Hn1Eyi21o8411vZSL77zHRqQNnYg+gcp4A3OFPmvzcPMFiB8JqLlL1xwgme/lIMABu4AGWm/jTfDwq8VxMlpvwCb9/Cpx9Imucv32HAUTn890KT/qDYqjq5BFMeCp+MCU4Fb/5yfumWTsXc1xZ05SLcQ9dk1xxV3wc+FBsSnZBH/ZMwz84lhqzvgtSvw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=sLh4limW5803sh0kjrys/WA3oUN3B8C8TasX9yD7HWE=;
+ b=sudjPn8BuCxWxMUD/XhwlEkglnykHHC3mLVWwlShhSz5v1TY/zY0PTw2xSRtuyrN+8bL8yDu7AeNb6M6X9zXVuoItytD+tk8Qdk0saQTqcOg8Q1CQNA8R6T3mcmdY6a/Y97Xxg6Q+2WTxwbwaR8Dtflj72Wja9FtK66v5QXhy/Px+Lhdi4t+A8Lp96l8jo/twLkpNft2tQmVtk0W4sw98vlwpvwvLIsQMeMLfsBgX3AyQqAMNJ9u+XySvQ/O1rSRA/+UAMTKmkbhYQG9ge1sMZkvFbidyxpKfi4fVUT1mndAAtltooSOfinkoFKk28+tW2Dz2PVUSkJOCxr4vA4u+w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=sLh4limW5803sh0kjrys/WA3oUN3B8C8TasX9yD7HWE=;
+ b=lbNA+Ov7o+Rr6ZngowbzCN0cT/yFJaeHVkWO2fPCB99dATZpXG6KpOkh2mbdeALVkIvzBZKvAT7vzapobWVHGoeBMb2td/XcUNzNyzZBAwRQn+pAEQyBI+27ASl0doNECnl5SkXi7uGDkZTbS2oZtDOyf08GoUPCAIZGOONYuRVoaKC+7lsmqBfgZ+vCsxAeHQNctsjOAnANeL7hkkCkofgeSbX0r4KeoVJ2qdqbvHM6+/vmeoDY8jpsE+OgRMuVsmjvLX5t6Mu6Gs8HC8/oGAVwYoLaLDYVKlkSaLS3S9TPEVfytc7qqJD0rF5dME6DRGLamN0hpzam+sZs4NF2ZA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from GV2PR04MB11799.eurprd04.prod.outlook.com (2603:10a6:150:2cf::9)
+ by VI2PR04MB10595.eurprd04.prod.outlook.com (2603:10a6:800:273::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.159.19; Mon, 29 Jun
+ 2026 20:59:28 +0000
+Received: from GV2PR04MB11799.eurprd04.prod.outlook.com
+ ([fe80::2146:83a2:5329:b7c]) by GV2PR04MB11799.eurprd04.prod.outlook.com
+ ([fe80::2146:83a2:5329:b7c%6]) with mapi id 15.21.0159.007; Mon, 29 Jun 2026
+ 20:59:28 +0000
+Date: Mon, 29 Jun 2026 16:59:19 -0400
+From: Frank Li <Frank.li@oss.nxp.com>
+To: guoniu.zhou@oss.nxp.com
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 4/6] reset: anlogic: add support for Anlogic DR1V90
- resets
-Message-ID: <akLcbHYKJfvZzf27@redhat.com>
-References: <20260514-dr1v90-cru-v5-0-34f3021aab51@pigmoral.tech>
- <20260514-dr1v90-cru-v5-4-34f3021aab51@pigmoral.tech>
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Frank Li <frank.li@nxp.com>, Abel Vesa <abelvesa@kernel.org>,
+	Peng Fan <peng.fan@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, imx@lists.linux.dev,
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, Guoniu Zhou <guoniu.zhou@nxp.com>
+Subject: Re: [PATCH v11 2/3] dt-bindings: clock: imx95-blk-ctl: Define
+ formatter child node schema
+Message-ID: <akLcp8coyZUsIR8I@lizhi-Precision-Tower-5810>
+References: <20260623-csi_formatter-v11-0-a792fe9c1502@oss.nxp.com>
+ <20260623-csi_formatter-v11-2-a792fe9c1502@oss.nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260623-csi_formatter-v11-2-a792fe9c1502@oss.nxp.com>
+X-ClientProxiedBy: SA9PR13CA0130.namprd13.prod.outlook.com
+ (2603:10b6:806:27::15) To GV2PR04MB11799.eurprd04.prod.outlook.com
+ (2603:10a6:150:2cf::9)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260514-dr1v90-cru-v5-4-34f3021aab51@pigmoral.tech>
-User-Agent: Mutt/2.3.2 (2026-04-26)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: GV2PR04MB11799:EE_|VI2PR04MB10595:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7c27dbf4-34e9-454a-2149-08ded6214eef
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|376014|7416014|366016|1800799024|19092799006|23010399003|18002099003|22082099003|3023799007|11063799006|4143699003|56012099006;
+X-Microsoft-Antispam-Message-Info:
+ xHWVonMj3zE9KwvW2bnwtpTJyJKssoMPjyObrfc9JvG4+O7LxEi0JTz3HIpj3pe4AMulW2lpAXQVP9WTlpsEdFXZr/6fQgSdnF3O8rJMRDnymgihbdtN4Kr1GngSECW5i90FPtmW4POTkuLMFcUjZQuODaBTYMtBdMwYeXC83vZWaqg9hXszctMXahaU8V/4hIBX6cRoeFcnpN+INBHIJFAVCdoJgbOhPOOvSrtUZjGp05Y1CbijDPVs/Okz6qq4Ea+dhQlGWuvJM7vevb+NowiacZB0+/4mrfELpS/XxBfCGW7wELh9qWVfXlpG6N1XkqADXkcmJhHpxuiPXSUm2r4pf361+Y27zu0Vt2OXLUS9trq3kJirkhOoCbSiUxJYRjZMxkpee9zZes6bqi595rAftJ70QT8PZly7sgNDL2+Lsx2x2PbuDLQC0L+V7Hx9KrtkLgU7avF/3jHDqsS2Rkan/bXvz423lg/9hjdlxr1jSS1rTSGADyUOrVTD2RtePE0AlXYWpc3Y+piLPXcJZDQR+kkNbqV87+dfbBO5COohMu9D5/3E7MosHu0dVeD8K1wRagdCZejKi9zVj9oX8rkyj+uEEyKVmFu+fqRMPkB8KLwWqrfa0DRApClUdA7A8o7sdAvin7BGpduL0fCSdR36G2Hc3scIpvx97cYUbK0=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR04MB11799.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(19092799006)(23010399003)(18002099003)(22082099003)(3023799007)(11063799006)(4143699003)(56012099006);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?us-ascii?Q?g5ZGMqqi2RXbxOVWhxi4HPuF5z3FKQ+ZeBz+FXeCMgzQkDggCXoGD1/EHcGt?=
+ =?us-ascii?Q?CcQM81fCRK2Pg1tcii5cxvM66uoUo4AkdJ4GNpbHwsFMCcS8jtGB5OAswjQ8?=
+ =?us-ascii?Q?IE6yAo4tE4rpLk0FPJ4yS6VNgXhEJc9kjST6Y+LBU1LR9TPrrULQ4N05PL3O?=
+ =?us-ascii?Q?J8j4zPjrNqNgH3y5VtP/yWDu26Q0vilef8nCcQy4q7yU9T6kkmFA1yduEs2t?=
+ =?us-ascii?Q?CkYAfGoIECQIRZbWGtB6O6qwJEYfcnY6nUZZMhqxZVU6SCFu/iCrl7D+DOgd?=
+ =?us-ascii?Q?Op0dY+pjzZLF0lp5K+lFBU/HUhvk4P58psyZoYo+LUPlpZCVWbwL8F8D7l22?=
+ =?us-ascii?Q?VnUh+77Mc0Q4Hro8J6oDg721FBqTkmX9raFEGO3Rtw7/cLqYs3u6gnne8aRp?=
+ =?us-ascii?Q?oSRJZeCrfHmN9KqoP5U14ZrOCC5mw6fuu4tmFXlPm9dZtjb1UDGLMoDRQHo/?=
+ =?us-ascii?Q?0xjqWekxiLrWlVNk6PqKt8NWoKV64UwIRJdnU2LtaBpWp1gFUbi6Fg0QCfhT?=
+ =?us-ascii?Q?zhJj/lL4+QEe160H0dN81kOW0Et1TlbqvD7lGYAP7q92t45kCT5IQKRqEvjz?=
+ =?us-ascii?Q?DqP3R9CN0sPFaCNvs0dITjw1Uc0uq7jam1SzBq109Dg3LkdNaYaKpgBOiaMu?=
+ =?us-ascii?Q?IngewZBPb+jMXOLH4C6wJ6CWP4edufqInM2JsNS9DF//g+/3OSq4RsFReGRK?=
+ =?us-ascii?Q?tOVKKppPdI2saV7jCnZywpJQf/PD0248zY4JNxeNluMI6xcBtcLVD8Mn8hZz?=
+ =?us-ascii?Q?Iw/MFUiTpkqXBNa1zkCAgh1/Fa2dAn9uW0w6F1Xw5Q5+yB2Qoa3gsZLM4Q8N?=
+ =?us-ascii?Q?uN+LTk08zbunWtQ8HRWB3Qb2zRXHUSeEQv7xORwwjAY6O90LP+vFsJXVD4qG?=
+ =?us-ascii?Q?dy3DKtMuXQ3P9HXDaoVLnStwd/pzDcgu9C2nL4CqAxmTMeVH+0ZBGTazeyIX?=
+ =?us-ascii?Q?5AhliJBpZvc2IzZ/yZ2VMla8BjHyUAGkiDu4h22grNGoELAnGuFKCRD9ntcc?=
+ =?us-ascii?Q?Mru5zZuecr/2VdJ3cHDNvhTfeSfNg0OcLrDGRm391penlA41MNL6XRIIiITS?=
+ =?us-ascii?Q?j3AKFGSzhwZsIZefkrU02GlGbTZkI/SoN50utJ5wibN9aG0RZa8MovojLmxL?=
+ =?us-ascii?Q?2RuF9J8nuQuefmLZxhRmaoZQzMn94yg9q5D5zsEwsRX4tVR7Z4Bbur3PauCd?=
+ =?us-ascii?Q?N116pzlSVSBbIJ6R06ekrdGeH/QggUbUylPZv8l0qGpqimqtYHgcQW5Ig6+I?=
+ =?us-ascii?Q?gpP17PmKnhdNyAr9VeoGUvVFlaBbwI46rQvjZzBxHhdbmrTDtcnk5cFJWOJm?=
+ =?us-ascii?Q?QlJ+fr8G+PPpUgs63z7W+zPzqJ+BQGTt6qcC6IupcswO9mouDT+Zat4JEF14?=
+ =?us-ascii?Q?XHTVn2aSSE9BPxuouJ2VGbLpTTBcPB7EFUE0u4KkSm3M0vrYlvHL7SghIn56?=
+ =?us-ascii?Q?/1L7KcUDkVaTvSpqhh4E2ENLjfgIoKYf6znlzi8HYcnSRjzWuwmk/J9FdT8e?=
+ =?us-ascii?Q?zpOYfL+LwsbzH1FtghXWE3QQdTfmieftJTlDDHhhOz7IJoOiHQoIUCfTYzIo?=
+ =?us-ascii?Q?w6Hy5iw2R+V6bHOcTthnF0J+0kaca8MRplT2XXg1LVzI/ZE0TsSh+CWZVUbl?=
+ =?us-ascii?Q?o7CW7ENDBwwkAzWES5Qk68NWGlOV0e2z5g/QX37owzSSuhMZxJ9/aq/Wk944?=
+ =?us-ascii?Q?EmsEge/jq7bM5JO0C6VOLJs7ahCRvo9iZN3KrsXQo1uvSsxuq3jfTJW9vZfT?=
+ =?us-ascii?Q?WPEbb083xDGm65TU4Oz4x5Arpyd8UHhC1ww6wvZ4vASNrklyHuQm?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7c27dbf4-34e9-454a-2149-08ded6214eef
+X-MS-Exchange-CrossTenant-AuthSource: GV2PR04MB11799.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jun 2026 20:59:28.1428
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: myhbvl4CtPLGNGKiiFiKo3+WVBUEkCnahDOeaUoUUOR1ebqn3eZWDvz5LAKIE8RtJIrCCBqAeCXKVqhK75mPYtMBSV24iyvix+qJWmzJkhccpaWvRMUew6Qw8nU6Zu46
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI2PR04MB10595
 
-Hi Philipp,
-
-On Thu, May 14, 2026 at 05:27:20PM +0800, Junhui Liu wrote:
-> Add reset controller support for the Anlogic DR1V90 SoC, which is an
-> auxiliary device associated with the Clock and Reset Unit (CRU). All
-> resets are active-low.
-> 
-> Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
-
-I don't see a Reviewed-by or Acked-by for you on the reset portion of
-this driver.
-
-I'm gathering a pull for Stephen for various clk drivers that were
-missed during the last merge window. Does all of this usually go in via
-one tree? Or Stephen merges the clk part, you merge the reset portion?
-Who usually merges the dts changes?
-
-Thanks,
-
-Brian
-
-
-
-
+On Tue, Jun 23, 2026 at 11:56:32AM +0800, guoniu.zhou@oss.nxp.com wrote:
+> From: Guoniu Zhou <guoniu.zhou@nxp.com>
+>
+> The Camera CSR contains control registers for multiple CSI formatter IPs
+> at different register offsets. Each formatter is an independent hardware
+> block with its own clock input and media pipeline connection.
+>
+> Define schema to allow formatter child nodes under nxp,imx95-camera-csr,
+> with 'reg' property specifying the formatter's register offset within the
+> CSR address space.
+>
+> Signed-off-by: Guoniu Zhou <guoniu.zhou@nxp.com>
 > ---
->  drivers/reset/Kconfig        |  10 ++++
->  drivers/reset/Makefile       |   1 +
->  drivers/reset/reset-dr1v90.c | 140 +++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 151 insertions(+)
-> 
-> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-> index d009eb0849a3..0bc1723224a4 100644
-> --- a/drivers/reset/Kconfig
-> +++ b/drivers/reset/Kconfig
-> @@ -73,6 +73,16 @@ config RESET_BRCMSTB_RESCAL
->  	  This enables the RESCAL reset controller for SATA, PCIe0, or PCIe1 on
->  	  BCM7216 or the BCM2712.
->  
-> +config RESET_DR1V90
-> +	tristate "Anlogic DR1V90 reset controller"
-> +	depends on ARCH_ANLOGIC || COMPILE_TEST
-> +	depends on ANLOGIC_DR1V90_CRU
-> +	select AUXILIARY_BUS
-> +	default ARCH_ANLOGIC
-> +	help
-> +	  This enables the reset controller driver for Anlogic DR1V90 SoCs
-> +	  provided by the CRU unit.
-> +
->  config RESET_EIC7700
->  	bool "Reset controller driver for ESWIN SoCs"
->  	depends on ARCH_ESWIN || COMPILE_TEST
-> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-> index 3e52569bd276..ab2bbc917b73 100644
-> --- a/drivers/reset/Makefile
-> +++ b/drivers/reset/Makefile
-> @@ -14,6 +14,7 @@ obj-$(CONFIG_RESET_BCM6345) += reset-bcm6345.o
->  obj-$(CONFIG_RESET_BERLIN) += reset-berlin.o
->  obj-$(CONFIG_RESET_BRCMSTB) += reset-brcmstb.o
->  obj-$(CONFIG_RESET_BRCMSTB_RESCAL) += reset-brcmstb-rescal.o
-> +obj-$(CONFIG_RESET_DR1V90) += reset-dr1v90.o
->  obj-$(CONFIG_RESET_EIC7700) += reset-eic7700.o
->  obj-$(CONFIG_RESET_EYEQ) += reset-eyeq.o
->  obj-$(CONFIG_RESET_GPIO) += reset-gpio.o
-> diff --git a/drivers/reset/reset-dr1v90.c b/drivers/reset/reset-dr1v90.c
-> new file mode 100644
-> index 000000000000..daa99c797b1a
-> --- /dev/null
-> +++ b/drivers/reset/reset-dr1v90.c
-> @@ -0,0 +1,140 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (C) 2026 Junhui Liu <junhui.liu@pigmoral.tech>
-> + */
-> +
-> +#include <linux/auxiliary_bus.h>
-> +#include <linux/cleanup.h>
-> +#include <linux/device.h>
-> +#include <linux/io.h>
-> +#include <linux/reset-controller.h>
-> +
-> +#include <dt-bindings/reset/anlogic,dr1v90-cru.h>
-> +
-> +struct dr1v90_reset_map {
-> +	u32 offset;
-> +	u32 bit;
-> +};
-> +
-> +struct dr1v90_reset_controller {
-> +	struct reset_controller_dev rcdev;
-> +	void __iomem *base;
-> +	spinlock_t lock; /* protect register read-modify-write */
-> +};
-> +
-> +static inline struct dr1v90_reset_controller *
-> +to_dr1v90_reset_controller(struct reset_controller_dev *rcdev)
-> +{
-> +	return container_of(rcdev, struct dr1v90_reset_controller, rcdev);
-> +}
-> +
-> +static const struct dr1v90_reset_map dr1v90_resets[] = {
-> +	[RESET_OCM]		= { 0x74, BIT(4)},
-> +	[RESET_QSPI]		= { 0x74, BIT(5)},
-> +	[RESET_SMC]		= { 0x74, BIT(6)},
-> +	[RESET_WDT]		= { 0x74, BIT(7)},
-> +	[RESET_DMAC_AXI]	= { 0x74, BIT(8)},
-> +	[RESET_DMAC_AHB]	= { 0x74, BIT(9)},
-> +	[RESET_NPU]		= { 0x74, BIT(12)},
-> +	[RESET_JPU]		= { 0x74, BIT(13)},
-> +	[RESET_DDRBUS]		= { 0x74, BIT(14)},
-> +	[RESET_NIC_HP0]		= { 0x78, BIT(0)},
-> +	[RESET_NIC_HP1]		= { 0x78, BIT(1)},
-> +	[RESET_NIC_GP0M]	= { 0x78, BIT(4)},
-> +	[RESET_NIC_GP1M]	= { 0x78, BIT(5)},
-> +	[RESET_GPIO]		= { 0x78, BIT(8)},
-> +	[RESET_IPC]		= { 0x78, BIT(12)},
-> +	[RESET_USB0]		= { 0x7C, BIT(0)},
-> +	[RESET_USB1]		= { 0x7C, BIT(1)},
-> +	[RESET_GBE0]		= { 0x7C, BIT(4)},
-> +	[RESET_GBE1]		= { 0x7C, BIT(5)},
-> +	[RESET_SDIO0]		= { 0x7C, BIT(8)},
-> +	[RESET_SDIO1]		= { 0x7C, BIT(9)},
-> +	[RESET_UART0]		= { 0x7C, BIT(12)},
-> +	[RESET_UART1]		= { 0x7C, BIT(13)},
-> +	[RESET_SPI0]		= { 0x7C, BIT(16)},
-> +	[RESET_SPI1]		= { 0x7C, BIT(17)},
-> +	[RESET_CAN0]		= { 0x7C, BIT(20)},
-> +	[RESET_CAN1]		= { 0x7C, BIT(21)},
-> +	[RESET_TTC0]		= { 0x7C, BIT(24)},
-> +	[RESET_TTC1]		= { 0x7C, BIT(25)},
-> +	[RESET_I2C0]		= { 0x7C, BIT(28)},
-> +	[RESET_I2C1]		= { 0x7C, BIT(29)}
-> +};
-> +
-> +static int dr1v90_reset_control_update(struct reset_controller_dev *rcdev,
-> +				       unsigned long id, bool assert)
-> +{
-> +	struct dr1v90_reset_controller *rstc = to_dr1v90_reset_controller(rcdev);
-> +	u32 offset = dr1v90_resets[id].offset;
-> +	u32 bit = dr1v90_resets[id].bit;
-> +	u32 reg;
-> +
-> +	guard(spinlock_irqsave)(&rstc->lock);
-> +
-> +	reg = readl(rstc->base + offset);
-> +	if (assert)
-> +		reg &= ~bit;
-> +	else
-> +		reg |= bit;
-> +	writel(reg, rstc->base + offset);
-> +
-> +	return 0;
-> +}
-> +
-> +static int dr1v90_reset_control_assert(struct reset_controller_dev *rcdev,
-> +				       unsigned long id)
-> +{
-> +	return dr1v90_reset_control_update(rcdev, id, true);
-> +}
-> +
-> +static int dr1v90_reset_control_deassert(struct reset_controller_dev *rcdev,
-> +					 unsigned long id)
-> +{
-> +	return dr1v90_reset_control_update(rcdev, id, false);
-> +}
-> +
-> +static const struct reset_control_ops dr1v90_reset_control_ops = {
-> +	.assert = dr1v90_reset_control_assert,
-> +	.deassert = dr1v90_reset_control_deassert,
-> +};
-> +
-> +static int dr1v90_reset_probe(struct auxiliary_device *adev,
-> +			      const struct auxiliary_device_id *id)
-> +{
-> +	struct dr1v90_reset_controller *rstc;
-> +	struct device *dev = &adev->dev;
-> +
-> +	rstc = devm_kzalloc(dev, sizeof(*rstc), GFP_KERNEL);
-> +	if (!rstc)
-> +		return -ENOMEM;
-> +
-> +	spin_lock_init(&rstc->lock);
-> +
-> +	rstc->base = dev->platform_data;
-> +	rstc->rcdev.dev = dev;
-> +	rstc->rcdev.nr_resets = ARRAY_SIZE(dr1v90_resets);
-> +	rstc->rcdev.of_node = dev->parent->of_node;
-> +	rstc->rcdev.ops = &dr1v90_reset_control_ops;
-> +	rstc->rcdev.owner = THIS_MODULE;
-> +
-> +	return devm_reset_controller_register(dev, &rstc->rcdev);
-> +}
-> +
-> +static const struct auxiliary_device_id dr1v90_reset_ids[] = {
-> +	{
-> +		.name = "anlogic_dr1_cru.reset"
-> +	},
-> +	{ /* sentinel */ }
-> +};
-> +MODULE_DEVICE_TABLE(auxiliary, dr1v90_reset_ids);
-> +
-> +static struct auxiliary_driver dr1v90_reset_driver = {
-> +	.probe = dr1v90_reset_probe,
-> +	.id_table = dr1v90_reset_ids,
-> +};
-> +module_auxiliary_driver(dr1v90_reset_driver);
-> +
-> +MODULE_AUTHOR("Junhui Liu <junhui.liu@pigmoral.tech>");
-> +MODULE_DESCRIPTION("Anlogic DR1V90 reset controller driver");
-> +MODULE_LICENSE("GPL");
-> 
-> -- 
-> 2.54.0
-> 
 
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
+
+> Changes in v11:
+> - Move properties to top-level and use if:then:else (Krzysztof/Frank)
+>
+> Changes in v10:
+> - Use single quotes for regex pattern to be consistent (Krzysztof Kozlowski)
+> - Add formatter subnode binding and camera-csr syscon example
+> - Update commit title and message
+>
+> Changes in v9:
+> - New patch to address the issue of formatter acting as a child node of syscon
+> ---
+>  .../bindings/clock/nxp,imx95-blk-ctl.yaml          | 71 ++++++++++++++++++++++
+>  1 file changed, 71 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/clock/nxp,imx95-blk-ctl.yaml b/Documentation/devicetree/bindings/clock/nxp,imx95-blk-ctl.yaml
+> index 27403b4c52d6..fbbf1b3f1790 100644
+> --- a/Documentation/devicetree/bindings/clock/nxp,imx95-blk-ctl.yaml
+> +++ b/Documentation/devicetree/bindings/clock/nxp,imx95-blk-ctl.yaml
+> @@ -39,6 +39,18 @@ properties:
+>        ID in its "clocks" phandle cell. See
+>        include/dt-bindings/clock/nxp,imx95-clock.h
+>
+> +  '#address-cells':
+> +    const: 1
+> +
+> +  '#size-cells':
+> +    const: 1
+> +
+> +patternProperties:
+> +  '^formatter@[0-9a-f]+$':
+> +    type: object
+> +    $ref: /schemas/media/fsl,imx95-csi-formatter.yaml#
+> +    unevaluatedProperties: false
+> +
+>  required:
+>    - compatible
+>    - reg
+> @@ -46,6 +58,23 @@ required:
+>    - power-domains
+>    - clocks
+>
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: nxp,imx95-camera-csr
+> +    then:
+> +      required:
+> +        - '#address-cells'
+> +        - '#size-cells'
+> +    else:
+> +      properties:
+> +        '#address-cells': false
+> +        '#size-cells': false
+> +      patternProperties:
+> +        '^formatter@[0-9a-f]+$': false
+> +
+>  additionalProperties: false
+>
+>  examples:
+> @@ -57,4 +86,46 @@ examples:
+>        clocks = <&scmi_clk 114>;
+>        power-domains = <&scmi_devpd 21>;
+>      };
+> +
+> +  - |
+> +    #include <dt-bindings/clock/nxp,imx95-clock.h>
+> +
+> +    syscon@4ac10000 {
+> +      compatible = "nxp,imx95-camera-csr", "syscon";
+> +      reg = <0x4ac10000 0x10000>;
+> +      #address-cells = <1>;
+> +      #size-cells = <1>;
+> +      #clock-cells = <1>;
+> +      clocks = <&scmi_clk 62>;
+> +      power-domains = <&scmi_devpd 3>;
+> +
+> +      formatter@20 {
+> +        compatible = "fsl,imx95-csi-formatter";
+> +        reg = <0x20 0x100>;
+> +        clocks = <&cameramix_csr IMX95_CLK_CAMBLK_CSI2_FOR0>;
+> +        power-domains = <&scmi_devpd 3>;
+> +
+> +        ports {
+> +          #address-cells = <1>;
+> +          #size-cells = <0>;
+> +
+> +          port@0 {
+> +            reg = <0>;
+> +
+> +            endpoint {
+> +              remote-endpoint = <&mipi_csi_0_out>;
+> +            };
+> +
+> +          };
+> +
+> +          port@1 {
+> +            reg = <1>;
+> +
+> +            endpoint {
+> +              remote-endpoint = <&isi_in_2>;
+> +            };
+> +          };
+> +        };
+> +      };
+> +    };
+>  ...
+>
+> --
+> 2.34.1
+>
