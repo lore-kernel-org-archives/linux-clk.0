@@ -1,140 +1,79 @@
-Received: from bee.birch.relay.mailchannels.net (bee.birch.relay.mailchannels.net [23.83.209.14])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE7C54266A2;
-	Mon, 29 Jun 2026 15:22:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=23.83.209.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27379436377
+	for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2026 15:25:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782746533; cv=none; b=QDLGFuu9nGQDarjyFzMfvKnuJpIO5SAuhn4le4fyP9Uk3wyylRq2sO+OqzGRaelKU7uqoek53o4KyEM0kAvENpD4IbqZYGk97/F6ts0z3egRjhyj+xox52MRF7Lv5fp2xpwx0YT3WJatf564dpZUSOLZWTYGJIBjTYL1nj9GcS4=
+	t=1782746732; cv=none; b=NjVyWVvcL31ek2xoYn65kMtiPvC0IT79H6AjkYyc6UF/xhsEhuL4dzp11WPrZcOS1zwxfs7EjtE2UVksIeADUOI630Us0v/hQWpBvvGp49I6FBGl4E40k9JiY0+7UspY4kUva0dAg2+cnXOqO82zNlUTrXZaHLDZPCW00PXjL1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782746533; c=relaxed/simple;
-	bh=+Dy9WY0nfnbOTEnfWeHJIktf95DixIQgH5f/eVTdGpQ=;
-	h=Message-ID:MIME-Version:Subject:To:References:From:In-Reply-To:
-	 Content-Type:Date; b=QuR5GlxzliAku9zGPOzEaFJxPNovWodGxxQhqD6f7C1KrSanwTUMoAt2F7RoEtd4x7jXftteBDMD4C6ibaBXuFIl4OxnNLuh2WhsNFHCgK7hUPoJunSwlwqMl6HF5NEC8FbSZGtjjebUlT8hijTQUYTPKKuQnPPuH0obQow+huY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smankusors.com; spf=pass smtp.mailfrom=smankusors.com; dkim=pass (2048-bit key) header.d=smankusors.com header.i=@smankusors.com header.b=KEUq9Jrs; arc=none smtp.client-ip=23.83.209.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smankusors.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=smankusors.com
+	s=arc-20240116; t=1782746732; c=relaxed/simple;
+	bh=EuaEiP1R/Ld6EoN/FwVrc43DhXOZIUY3usyXo926Mcw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g6J3CC/STP8HSY1J1gh9MTnnJWQZ3eJT8o3pxpwXDZVVk67YL1l18y9M+Z4FQnh2YzLr1b50/gW0lnnU8PRODuLS1S0wOjczF6uxGb7Hg8C24S41NLIQNJIGbeWe/zXiYruHW2nPup/99+LhCqyf8V+FcsF8tVSSmqtb37scp24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NEaaQMMm; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=smankusors.com header.i=@smankusors.com header.b="KEUq9Jrs"
-X-Sender-Id: hostingeremail|x-authuser|linux@smankusors.com
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id C32AB42F47;
-	Mon, 29 Jun 2026 15:14:12 +0000 (UTC)
-Received: from fr-int-smtpout23.hostinger.io (trex-green-0.trex.outbound.svc.cluster.local [100.98.255.9])
-	(Authenticated sender: hostingeremail)
-	by relay.mailchannels.net (Postfix) with ESMTPA id BA8A24308A;
-	Mon, 29 Jun 2026 15:14:09 +0000 (UTC)
-X-Sender-Id: hostingeremail|x-authuser|linux@smankusors.com
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: hostingeremail|x-authuser|linux@smankusors.com
-X-MailChannels-Auth-Id: hostingeremail
-X-Attack-Trouble: 7049e7a50e329c89_1782746052543_1762689129
-X-MC-Loop-Signature: 1782746052543:2609547043
-X-MC-Ingress-Time: 1782746052543
-Received: from fr-int-smtpout23.hostinger.io (fr-int-smtpout23.hostinger.io
- [148.222.54.29])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.98.255.9 (trex/7.1.5);
-	Mon, 29 Jun 2026 15:14:12 +0000
-Received: from [IPV6:2001:448a:c030:3ec5:354f:5fbd:f4fe:4abf] (unknown [IPv6:2001:448a:c030:3ec5:354f:5fbd:f4fe:4abf])
-	(Authenticated sender: linux@smankusors.com)
-	by smtp.hostinger.com (smtp.hostinger.com) with ESMTPSA id 4gpqYn0h1Pz1y2x;
-	Mon, 29 Jun 2026 15:14:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=smankusors.com;
-	s=hostingermail-a; t=1782746048;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mH+H0EAnTvotIPpxr2juGNq83wr4Zi/DMW5McbEQOVc=;
-	b=KEUq9JrsvsnogFlSuOqQdPRLZD3IAvwoxX5Y+CLRO8yeOIQ9sQ48H2L5VYyQCkXFKyH9b2
-	WTBZhKV0YL1O4b4GW3ko56eAZOOrDj2TCVBGlUJ8jEFTpVmNUGy7h2cRp3VDnp+THPFblf
-	/Oua5f6l1Agn+K/4XepzYBakOq8UE9bIgMraTgdXuHAVNIgjZAgh/ZWSTMmWeiBygong//
-	JWg9YT+nivxvzgKLYpW0JoXWL4+lfWpjdiyNZVf1w6vnNqI9johcNGa6BlKgadVzYNa5de
-	tzPjuULcVlSnlg1kSmA3DV2+iZ26rnZ4LZQE3QCuOaoBOa8XHu2xzqEg2t26mA==
-Message-ID: <42fa946b-43f7-4f8a-a349-f8509daab749@smankusors.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NEaaQMMm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D036C1F00ADB
+	for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2026 15:25:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1782746730;
+	bh=EuaEiP1R/Ld6EoN/FwVrc43DhXOZIUY3usyXo926Mcw=;
+	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc;
+	b=NEaaQMMmgiu3Bi9aHlfHaIAXM4xHO2fxsd3nLwPGvb0LQbca34Sbhj2utpQT13UCR
+	 uxC2ZiOdYhwUHtZr28/r/ExV41qLjJDePbNblKiQedtsyF1Iu509vzKboVFudoJmn1
+	 0bifMfsOAVN62Z31LJlaLH+gT4E7c4KxQfFkca/TfJsKacxZ2Ei4Z3hiBgS6xwuWlF
+	 FOEqn/tiU1AgRsLsGE79j91UHJGYQJB4tFkrVFE6X1RhVahVfUotEWBMh47uPfo0P+
+	 Y8IbwL1dnhGw+iN2yi0Bz6f7q1qeDokuKnMMUuzK2gYjBrRiGsAAD7XR6LYdxvly26
+	 sRMQZMVoPt5Bg==
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-39b14a7e53aso7683941fa.2
+        for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2026 08:25:30 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RoWrCSw/hR1qLLnwbxgCa8Gj+//oFrKd1mCl7T1ws9rPa1BK5AOLlIDdg4uyTa4hMd9+basbkxBwtA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqfbE0L6Iw0A0IJDzvP4Ik5K2jpSdMfaDXdjDUOIs2iQBhto00
+	7072j3oafL9d/ZQhBHVaWvT3Hkia66eQm7XSGHu1hcCH7n9jH9lhrqdTCvvtzFm283SJLx8cuvh
+	1py8XoOjtQhgDEkWTMtKv6WZ2T3/oiDE=
+X-Received: by 2002:a2e:a988:0:b0:39b:70:e808 with SMTP id 38308e7fff4ca-39b0070f5f8mr12585631fa.35.1782746729301;
+ Mon, 29 Jun 2026 08:25:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] clk: qcom: hfpll: return lock timeout from enable
- paths
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Pengpeng Hou <pengpeng@iscas.ac.cn>, Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Herman van Hazendonk <github.com@herrie.org>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-References: <20260623060517.10889-1-pengpeng@iscas.ac.cn>
- <8e7a4cd1-ff17-4052-938b-5cb2ee8576f0@oss.qualcomm.com>
- <36f37fa0-94f3-498b-86ca-b431436750e1@smankusors.com>
- <198ad9ab-6e8e-4c67-afc2-01962ea12dde@oss.qualcomm.com>
- <5c374231-33dc-4082-95c1-1046286fbb13@smankusors.com>
- <89c53cb1-3804-4dfe-8d93-e27e31bc2254@oss.qualcomm.com>
-Content-Language: en-US
-From: Antony Kurniawan Soemardi <linux@smankusors.com>
-In-Reply-To: <89c53cb1-3804-4dfe-8d93-e27e31bc2254@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Date: Mon, 29 Jun 2026 15:14:04 +0000 (UTC)
-X-CM-Envelope: MS4xfOJv4uwastBmsPyfT+bDdqPIyTlyzMMJosipCf68eYwsftw9vM6gnqeEElAC0WPKnsSRTBDLF/sd3t6cFAWm1e3EtsKFmJMHsRlGLcCYYygB8qQVhx2Z eUfjVzez5ebDQE3Tk+kRTsGCtj2gDUh58LkMttHTBCOy+RRgpUqtI5IHoEIOHZ6w1rrXURBJIDFC9m2eTdoogStnYmLElub+nzFWkN3jkOmPdfIg+u4rXiAP BPC1DLt3yJe7i9s2ZNgJ94NuFTRGvTTXVVZv/TqdxVGBZCuCbwK0EODByWxu8kH+5r5FzFJacas8G21ToKRL7l1tRkcMlsA3RhJh76N9FDKWNAI9YPe/he9V Xp46cy+1P776X0d3ecNDw3TB2/9ByTB/NJgNu93PMujkx6zL3nJejCC6Y01BjDgJJ5GgRlRhrW89M4l4LJEG2GEpDdU2jqil3A5G2T77D4EC27j5Zb8hylz5 pOhoEABOxI2y+lvF57VBv79TMF8Ecg2ylpdsMLw/fRkfKeeSl81XcY1jmE9dreG57C28AL5hTxuBJEwzT2UE2TaQrpb6vb319WlWKDUz0uz1ZFIKYaOqwUZa ZaW/YqOM1vFxQaADq1n2rZ7t476RyvQuPjY4Hkl3CsZFtnPbV7obSPMUYjpzGKUFL/Pg2EoJP6TDXSCmcjKKs7ff
-X-CM-Analysis: v=2.4 cv=BvrPwpX5 c=1 sm=1 tr=0 ts=6a428bbf a=w1GBRM/3DoNZU4Dpj/menA==:617 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=0BFf4t5RkbpkQngwbF0A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-AuthUser: linux@smankusors.com
+References: <20260629-a733-rtc-v2-0-7b72112784f8@baylibre.com> <20260629-a733-rtc-v2-3-7b72112784f8@baylibre.com>
+In-Reply-To: <20260629-a733-rtc-v2-3-7b72112784f8@baylibre.com>
+Reply-To: wens@kernel.org
+From: Chen-Yu Tsai <wens@kernel.org>
+Date: Mon, 29 Jun 2026 23:25:16 +0800
+X-Gmail-Original-Message-ID: <CAGb2v67_N5WQ4GqGsn6xzivVpGDN5_GNtPXKmUMC4WTHmDyztg@mail.gmail.com>
+X-Gm-Features: AVVi8CecxM3k7I339CdtYTrFlBU6hFBOIy50N3ezSA0spmb-80bIde-G7mpTp9c
+Message-ID: <CAGb2v67_N5WQ4GqGsn6xzivVpGDN5_GNtPXKmUMC4WTHmDyztg@mail.gmail.com>
+Subject: Re: [PATCH v2 3/6] clk: sunxi-ng: sun6i-rtc: Add feature bit for IOSC calibration
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Junhui Liu <junhui.liu@pigmoral.tech>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Maxime Ripard <mripard@kernel.org>, linux-rtc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/29/2026 4:15 PM, Konrad Dybcio wrote:
-> On 6/28/26 8:07 PM, Antony Kurniawan Soemardi wrote:
->> On 6/24/2026 2:39 PM, Konrad Dybcio wrote:
->>> On 6/24/26 3:57 AM, Antony Kurniawan Soemardi wrote:
->>>> On 6/23/2026 4:43 PM, Konrad Dybcio wrote:
->>>>> On 6/23/26 8:05 AM, Pengpeng Hou wrote:
->>>>>> The HFPLL enable helper waits for the lock bit but ignores the
->>>>>> regmap_read_poll_timeout() result. The polling condition is also
->>>>>> inconsistent with clk_hfpll_init(), which treats the lock bit being set
->>>>>> as the locked state.
->>>>>>
->>>>>> Wait for the lock bit to become set, return timeout errors from the
->>>>>> helper, and propagate those errors through clk_hfpll_enable() and
->>>>>> clk_hfpll_set_rate() instead of enabling the output unconditionally.
->>>>>>
->>>>>> Signed-off-by: Pengpeng Hou <pengpeng@iscas.ac.cn>
->>>>>> ---
->>>>>
->>>>> This looks good on the surface..
->>>>>
->>>>> +Herman, Anthony, Dmitry could you please give this a spin on 8x60?
->>>>>
->>>>> Konrad
->>>>
->>>> Just to clarify, this patch impacts cpufreq and gpufreq for Qualcomm
->>>> Krait era, is that correct?
->>>
->>> Seems that way - cpu, L2, and GPU, maybe others
->>
->> nope, tested on Sony Xperia SP (MSM8960T), the phone hangs
-> 
-> [...]
-> 
->> [    2.679716] L2 @ Undefined rate. Forcing new rate
-> 
-> This seems odd. What's the reported rate there?
+On Mon, Jun 29, 2026 at 8:42=E2=80=AFPM Jerome Brunet <jbrunet@baylibre.com=
+> wrote:
+>
+> From: Junhui Liu <junhui.liu@pigmoral.tech>
+>
+> The sun6i-rtc CCU driver currently uses a global static variable to
+> denote whether calibration is supported, which makes IOSC operations
+> tightly coupled to this file.
+>
+> Convert this into a feature bit to decouple the logic. This allows the
+> IOSC clock code to be moved into a shared module for reuse by other SoCs.
+>
+> Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
+> Signed-off-by: Jerome Brunet<jbrunet@baylibre.com>
 
-if you're asking clk_get_rate(clks[l2_mux]), it's 0 Hz.
-
-without Pengpeng Hou's patch, the kernel continues with the
-following logs:
-
-[    2.442850] ledtrig-cpu: registered to indicate activity on CPUs
-[    2.516664] L2 @ Undefined rate. Forcing new rate.
-[    2.516870] L2 @ 391500 KHz
-[    2.527751] CPU0 @ 918000 KHz
-[    2.527813] CPU1 @ Undefined rate. Forcing new rate.
-[    2.529921] CPU1 @ 391500 KHz
-[    2.613351] gsbi 1a000000.gsbi: GSBI port protocol: 6 crci: 0
-
--- 
-Thanks,
-Antony K. S.
+Reviewed-by: Chen-Yu Tsai <wens@kernel.org>
