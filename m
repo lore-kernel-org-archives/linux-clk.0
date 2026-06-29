@@ -1,61 +1,63 @@
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0BDF37D131
-	for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2026 03:25:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B71537DEA2
+	for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2026 03:25:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782703544; cv=none; b=nrSK4leXvIzlwh6NkbzRJhr8wCSjx1tOwRe7zWmWPtqAc8hA3VqVx8dhZk+4f4nvTkDqBEXS2SqCFQx2w0B9tryU0O7sxdI/OuCmGWh/8D7xz4KpLP1vqevrlCAbexzAAtpj+LKVUB5sAk0qqboDazY467OBSjqPbyeO3wpvjbU=
+	t=1782703546; cv=none; b=PZj9B2YWp8PEVKp9pjZUyO3Ue83+ZTJgEFnAs22nLm7iAWyQB5RKLymECCEej+6WaBzM87OzeBCiEUyOjm6/gDq3yicQfu6jhGQzwMW/X+Ax7udZ42EKwjkufyYy8iCsSo/iAH2HWVi3R3kgRMc8oCvpcquzG0fM3FbmfoKUetQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782703544; c=relaxed/simple;
-	bh=sI235h7NpFG/djNSPowZLUqWUmqwyCKk8vSphw/WAWM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RHqJIkIkd0+IjBx/UbOYBZ9CQYHV4YVLADFTROmC9Srp6Fk703OSdmyj+vgu0umFnk3ErrklQTnie5n7KziIpoVewTnuhPnlWRlFT5AOs/MF5+J0IDL1qZfAIzIafiHCBwzqmOErC5tVg/NHFpcKNGYpn3byI4ha4DvTIaWYyeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dpa/wsrf; arc=none smtp.client-ip=209.85.210.180
+	s=arc-20240116; t=1782703546; c=relaxed/simple;
+	bh=LDc0P9CwkIe16iPZKMLw4eVvkPa43dqovSv391Oa31M=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=rbDUGQ2ia2Y36tQlz4X3GDpcTseEaOj+5SUNC6+uZFwimcYCrUvULDDp0dpwCbNF+8ExryXocKMH5LJw8Qv+8vlLYyz9K/5qyBr3wd+quVzTZFBFJkKhLy+Y5Wlm1CKn4LgOgZSLfOL65M6IL6r6rwr5cirOEnP5dWUS9S8y3Oc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fPryPO5m; arc=none smtp.client-ip=209.85.210.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dpa/wsrf"
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-8424b00710aso2000370b3a.0
-        for <linux-clk@vger.kernel.org>; Sun, 28 Jun 2026 20:25:43 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fPryPO5m"
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-845a3c05e40so1378930b3a.1
+        for <linux-clk@vger.kernel.org>; Sun, 28 Jun 2026 20:25:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1782703543; x=1783308343; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=TyaonlxlnRA1aHNz8FZIRpD/+0hZdshlSVPR6i+Frcs=;
-        b=Dpa/wsrf74G1iCqVst8sqMLODNH8A+VzJywCrClHac8QgbFW+R75VYnxqIee+TVKU2
-         dwhSdewmEQbLX9O64v1fPnJktHSogsukQC50NelFozd9xZRJ/7DSRQXH9xfuGZdnbTEL
-         AsdNyFqJchck5VsQ2UldwetybZ7kA5lbbxarHjfWDNF51WVUYWk2eldSqcqM3lVKC3IQ
-         2E1W0o4dV0KNWZOLp4Ryc4ztaDtsJHodMrtD4eeZy46iDmR6y/kamfCscjOLpTZNlLDJ
-         +TY4Y+srnt5FyCGUlsGvJxGKCnRQ3l4R0iMnjvRX9zWoWGCsii09UayJd8KFiWsDm/lf
-         NM0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782703543; x=1783308343;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1782703544; x=1783308344; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TyaonlxlnRA1aHNz8FZIRpD/+0hZdshlSVPR6i+Frcs=;
-        b=ggoCgmWPvk7mGLgQ7yAHWIZr3aOj+juyg91gYTf75G+XqZjwM1qP6CnHEVIl2VS4hQ
-         9Wh+AUpngDA/2AcxkCo+BZ7CaTc00uMH8Au0XMVTsqYDoRGHmOiOH6wXibM7HiSTfKZM
-         7gvZpHmYfNbK2LdyWceNRgD8lPfrXl+S6kVyXLjryK900r5Gg1mTv9yei3mcctlICmXB
-         2Cx/8OZf9XoipNbfoTWyl3T6yUwqtviRo9Wm28ohgI1kM/dIc4c63VoU7OXnbcvTe/oI
-         ZW2K7Fc0iCwjzS1TmDDq6g62GZgq0xCXUctIfTNYfG85wn71YOgqAy8GSysSF/KidaRY
-         6UQg==
-X-Gm-Message-State: AOJu0YwdAfn5QhO/n3UK9BlfegI1c01U8TKUzmKuRY+4i1XZ3Ok8WfPj
-	FnDtLljnwFWZDhbFGPYa+ZGLOM29TQvaUTM5xR53aMWJVX/9AFGoOx0yTAh/kSlH
-X-Gm-Gg: AfdE7clx1cba8WPRxmJdStn3kGV2cNe8p9cLKbsJFXCxYncQ3S828FlLixhRnlGtwPQ
-	olpxgfEnAQSFfXvL6F4jM9TQQbQz/XfglTckglaZMTR9haczp3H5tHq2wrutPpGJn5I3gZD/GVk
-	eeBl9dQCdc2rnq3cj6AlMM3bsoRYfIqEjqAzAqCZKWJ7xGUY81CNACcs0n4T2G7cOpnIVHFz/xw
-	H232zhQi6GnMzvdSC/MR0QQ3U7e0j/TcM5ZUhzYuSco9n/XJjBArM4Au3MP/Tq9tHIuEApJi0pj
-	g3lRIKxLMOzkgzVRMms50Byetezzy6xizLF4STeiaPcI4r3JykxgLx9/e8t1oVr7d5l04JFdjzA
-	g+J7/qT6okjGS19Sn4YNXP6ip7DfJyCgzbjp+mvA52IqdSSuX1n+fyF6bqTZvuEi56e4tnIGGT4
-	qwq73ToQ2V+NKwbcgw+weP7bAzMOxS5vCd8h2CRhHofEgzy7ou8Y37URHnZPZGLnUsW/R5ABxft
-	77IF6HSi8DFmCw6ufFW
-X-Received: by 2002:a05:6a00:4c19:b0:845:cd69:bd34 with SMTP id d2e1a72fcca58-845cd69bf6fmr9304863b3a.28.1782703543034;
-        Sun, 28 Jun 2026 20:25:43 -0700 (PDT)
+        bh=80McaoHOMKyfyTsbZQMYToHQLH0RNFgmuDW7N7Wm2Yk=;
+        b=fPryPO5mTlCT5Ex/+AkzF9Ugl+fMtqhWWuVkrzdvIZGV/qOep9zHRmVstDjPxCfwzc
+         42jAKD0DmnOEkuKIuIER+ijsshljuAmdoJABiLIl5OF+ytfmOwQP5z5v7wxD2Zuj16o4
+         Anhtk1eCh3mkEZR68wCLjbOT7dpe1lPA6LMvxY47InSCoIFEi80dlwGS82UwKJbK7tnc
+         sVA2RH66vuXoUVT/QGfOFQccX9TJXnnUkYHkV5LPUNH9Q24HJOkQvbU+J43DTSC84rnD
+         nS37kignYRbYnsln5wfhEFHjqONse7jt0J1sl2asGL6U7tRw4skjn5t/DDhrvfbu65yS
+         sARg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1782703544; x=1783308344;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=80McaoHOMKyfyTsbZQMYToHQLH0RNFgmuDW7N7Wm2Yk=;
+        b=bDu6DldvWNjp+itPyd/JImi0fVy1m6O012MS5E7Uw/NCGlg47sPWNBvR/5KPIydms+
+         M0k8v9OVlFHIQdIVJBcf0+PV8Mbn7ZLeQKW/AaDNQT3Gtbxl3sit+wc5/iw+1vnvgkGd
+         /VbWpJKV2MhG58d1WZtDuThI/k9KcRr3q3fk64KFC8qUzMimiqQDg96OQt436LPc2GC7
+         tiaC5duba2bQCL7MMdQgg7xOlaFgz6NdRHDCHZFpGLDQJUhNaNvslyGF+gnKJYJh5Iuf
+         CNE9/gKl3A59MI7PnCBuv/tc1r3OPNUVSPAL6+EY3Va+0rcu2/vOsfnNy5S7WrX9Sld8
+         0Lhg==
+X-Gm-Message-State: AOJu0YzXHFlcFyFNc5B6TjKrmuDJ6GQJW8Ttn2B+q8XSHkh+O0bB8xBx
+	4zL7+DeMxSU3iSZ5shGj4/+AWgvlHONdyhIvr99z8X6u2bS5PyROZQOZHopPXpYU
+X-Gm-Gg: AfdE7cnPefpzFr/qzXZCllJFbuudZUBV/f+RH7PBz/wS4UeGPP/e1WGno2szV+gDbLo
+	koSbOtQUNag/75m7msIPK/Nr15yXF8G7E5Vz0BCjIP86rYErCbODOsBHlER0Uuc8m0jkRNogNFB
+	9X3Hl9qjVEFC7LNNh+ftOXMC84wVhCRnjY4P/WYsbsJbMQ7EeEXZFQ6Sz0vyFM+kgcBsdtMAlmp
+	RvynpGZV9fBqe0PeKniAGuFmMqLMBHl9P00i4ocYVjPN12adnpDQcB0Nhv2QH3XINdHH/T7wvoJ
+	IfMa1MDFXnlIY8cGa/7b7Hqrwqdor31bud6n/ZqtLyhuqaeHACZzjaCd1h85M2fSEHYxUlYypKS
+	d7k8svznHZIF3JGk9ZBFHTIxJiGsuWbaHPTxnfTX3H2bx0EFzSGAa6t6bDUm1d8yHIgLZWRe9SZ
+	3VGS+PIHrpEsuXQ4GX7irQFvDFPrX38BRQY3Hu03R9dofsETRvDGvE+BOtIQw2oNA7Oq1tMopvj
+	fiM75JPxg==
+X-Received: by 2002:a05:6a00:9082:b0:847:9267:2104 with SMTP id d2e1a72fcca58-84792672a21mr150260b3a.12.1782703544516;
+        Sun, 28 Jun 2026 20:25:44 -0700 (PDT)
 Received: from ryzen.lan ([2601:644:8000:7a86::e34])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-846c7f659ddsm1921771b3a.32.2026.06.28.20.25.41
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-846c7f659ddsm1921771b3a.32.2026.06.28.20.25.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 28 Jun 2026 20:25:42 -0700 (PDT)
+        Sun, 28 Jun 2026 20:25:43 -0700 (PDT)
 From: Rosen Penev <rosenp@gmail.com>
 To: linux-clk@vger.kernel.org
 Cc: Krzysztof Kozlowski <krzk@kernel.org>,
@@ -71,10 +73,12 @@ Cc: Krzysztof Kozlowski <krzk@kernel.org>,
 	linux-samsung-soc@vger.kernel.org (open list:SAMSUNG SOC CLOCK DRIVERS),
 	linux-kernel@vger.kernel.org (open list),
 	linux-hardening@vger.kernel.org (open list:KERNEL HARDENING (not covered by other areas):Keyword:\b__counted_by(_le|_be|_ptr)?\b)
-Subject: [PATCHv3 0/3] clk: samsung: use kzalloc_flex
-Date: Sun, 28 Jun 2026 20:25:37 -0700
-Message-ID: <20260629032540.2331559-1-rosenp@gmail.com>
+Subject: [PATCHv3 1/3] clk: samsung: use kzalloc_flex
+Date: Sun, 28 Jun 2026 20:25:38 -0700
+Message-ID: <20260629032540.2331559-2-rosenp@gmail.com>
 X-Mailer: git-send-email 2.54.0
+In-Reply-To: <20260629032540.2331559-1-rosenp@gmail.com>
+References: <20260629032540.2331559-1-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -83,22 +87,68 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Switch three structs to flexible array members to combine allocations.
+Simplify allocation by using kzalloc_flex with a flexible array member
+to combine allocations. samsung_clk_alloc_reg_dump is no longer needed
+for this struct but is needed elsewhere.
 
-v3: move rd_num
-v2: fix compilation and reword descriptions
+Add __counted_by for extra runtime analysis. Move counting variable
+assignment after kzalloc_flex which does the same with GCC 15 and above.
 
-Rosen Penev (3):
-  clk: samsung: use kzalloc_flex
-  clk: samsung: cpu: use kzalloc_flex
-  clk: samsung: pll: use kzalloc_flex
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
+---
+ drivers/clk/samsung/clk.c | 11 ++++++-----
+ drivers/clk/samsung/clk.h |  4 ++--
+ 2 files changed, 8 insertions(+), 7 deletions(-)
 
- drivers/clk/samsung/clk-cpu.c | 34 +++++++++------------
- drivers/clk/samsung/clk-pll.c | 56 ++++++++++++++++-------------------
- drivers/clk/samsung/clk.c     | 11 +++----
- drivers/clk/samsung/clk.h     |  4 +--
- 4 files changed, 48 insertions(+), 57 deletions(-)
-
---
+diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
+index 91e5cdbc79d7..2895c77534ae 100644
+--- a/drivers/clk/samsung/clk.c
++++ b/drivers/clk/samsung/clk.c
+@@ -430,21 +430,22 @@ void samsung_clk_extended_sleep_init(void __iomem *reg_base,
+ 			unsigned long nr_rsuspend)
+ {
+ 	struct samsung_clock_reg_cache *reg_cache;
++	int i;
+ 
+-	reg_cache = kzalloc_obj(struct samsung_clock_reg_cache);
++	reg_cache = kzalloc_flex(*reg_cache, rdump, nr_rdump);
+ 	if (!reg_cache)
+ 		panic("could not allocate register reg_cache.\n");
+-	reg_cache->rdump = samsung_clk_alloc_reg_dump(rdump, nr_rdump);
+ 
+-	if (!reg_cache->rdump)
+-		panic("could not allocate register dump storage.\n");
++	reg_cache->rd_num = nr_rdump;
++
++	for (i = 0; i < nr_rdump; ++i)
++		reg_cache->rdump[i].offset = rdump[i];
+ 
+ 	if (list_empty(&clock_reg_cache_list))
+ 		register_syscore(&samsung_clk_syscore);
+ 
+ 	reg_cache->reg_base = reg_base;
+ 	reg_cache->sysreg = sysreg;
+-	reg_cache->rd_num = nr_rdump;
+ 	reg_cache->rsuspend = rsuspend;
+ 	reg_cache->rsuspend_num = nr_rsuspend;
+ 	list_add_tail(&reg_cache->node, &clock_reg_cache_list);
+diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
+index b1192ca03db5..be733eba08a2 100644
+--- a/drivers/clk/samsung/clk.h
++++ b/drivers/clk/samsung/clk.h
+@@ -324,10 +324,10 @@ struct samsung_clock_reg_cache {
+ 	struct list_head node;
+ 	void __iomem *reg_base;
+ 	struct regmap *sysreg;
+-	struct samsung_clk_reg_dump *rdump;
+-	unsigned int rd_num;
+ 	const struct samsung_clk_reg_dump *rsuspend;
+ 	unsigned int rsuspend_num;
++	unsigned int rd_num;
++	struct samsung_clk_reg_dump rdump[] __counted_by(rd_num);
+ };
+ 
+ /**
+-- 
 2.54.0
 
