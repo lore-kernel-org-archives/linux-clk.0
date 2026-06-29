@@ -1,76 +1,81 @@
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 827F73F9F2E
-	for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2026 09:33:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DC1B3F9F3B
+	for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2026 09:33:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782725615; cv=none; b=HQhtvkDlv3L79pMTzp8R84wpU5Jgso6hHDfUCncY/c+YXt0rDjxNrmpQ5WMY9FP502ky/hRqC7tolpgO7CwgTfJcTCR68tzNA7bFLtLCEjBAMz0bbx/AyBUGJAHD2fJ9FQCKPbT60zMvbUfMuOfWoeDAm1t8zF3P+SHTrUAoHOU=
+	t=1782725616; cv=none; b=TjC4RFsc9rbnzC315WkyER4JVqlVAKnbZFaVvYKMu8zHuPsm3AQGR893rdJ6lMvm18eLVGU1jR7VIyQUpGFwD6/CTgBB+MDXlCgDx9C+w7fiuxKHZkbV1Rcg4GmhJoaizO7OdVM11qCEQWU+u1n049OVTM7Z4/V3QI9JTTUIrZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782725615; c=relaxed/simple;
-	bh=/R88zq7r2VvYaiOH9CDJymccIC+wfi5JMSmk3Vidz8I=;
+	s=arc-20240116; t=1782725616; c=relaxed/simple;
+	bh=5Uy1dXTbauOTy+QyZiGIOiG703Ca4Z/b8w0fJPVFxPA=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=gfiu23veHJFeErKw3R3P0tr+ZS+N3c/isJgZS4ZXQ8egZnz2K2BT5s21YF1klmtn0jd3yZg847OdkFsfG6cPnPd9bdJwD32rQ4PeVTi11WtbNuwLuzYb9zlUi2lpRN6N1/1qREopoHa0iMlfsP06ZRqWj8QXNX2pVYXBqJBWJBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=N53vB51q; arc=none smtp.client-ip=209.85.221.47
+	 MIME-Version:Content-Type; b=E4WqpCMr4lZ1rm3cQa8ZsYV5L8DU06C0ps2lcBwkC5/vWx5SEtjfA/DH77ms+EWEYIJ0Le9qFa1YFbmKlGirpJGOC2fkb2Up3RHrRrd6838nhT0xvnIOmg7D04LSyTsuCdfmqtcmzmcLOlLKkzaX+XIx3rMOX3KM7CEJu/zk/xo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=JHEY8dLQ; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="N53vB51q"
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-4745492ed3aso295656f8f.1
-        for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2026 02:33:31 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="JHEY8dLQ"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-490cf322ed0so21729035e9.1
+        for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2026 02:33:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1782725610; x=1783330410; darn=vger.kernel.org;
+        d=baylibre.com; s=google; t=1782725612; x=1783330412; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Vv3/bI7mQQBzw4o7vxFb5GrHgzhC/QfD51paBaJ+fHA=;
-        b=N53vB51qKc6+02HN2GjHNwAPUdNAob0eLR3CX/pnY26gfvBDCN/SNjptmu0G/EWNYD
-         ME6WPGoiag6l2zu8nrLfs/vZ0CS/rioTsyH1nsNP987YT1kgwf4XyBaFjkhkltMef9lr
-         p8LFvRyyDsMZ0fSzg/efjKse0xvk5lDL1CLhtX7jSsQMwj0El8ktjaudoCc3sl2iL2YZ
-         2124sWN1Dfln1yk1zwzXDJIb+/ynTHqZI5WMyPujgeju7qHAwkjCSXIZQsm/UdHaVWUd
-         Dm+CMbfD56ENROT82VZ7zktHpiPR528fGfsMDnFi1idGvKq2sg3gK7QHaRJtw3+o4bHs
-         ToSA==
+        bh=WoxMGI0BVuk3x6WyDDntBseVyfJ89DBJ4oPAJpDJ4cE=;
+        b=JHEY8dLQCcqgSshoSoEsRlOXeR0t7Bf+t+I+Go/QNTLQLkJ+ik0tD3mdRU86V2Fah3
+         LTmMZoU3ion1vZSP/4RMtXsLOFNMr6oHt/oZRbc1ZTz4LrIPxk8iX6tqMNVVN3hkKXtY
+         2njWBTvYAC8K6QYmPOKrMVdy27MrYunUdgBK8X0yhI9P3MM5kliVmqvFHbzT+n6x+iBJ
+         vl9c35QqNp6XOj59VVLUyhakPejm2KYY4t43FyCMuxAWrwt5tdYGwkiRBql4Pk4k9jGu
+         p5WWJyZJHxqBTcmmQyhFrQTdH9VpwJQdQMgaXyNOfAn/OVM2XEWjq8WdNiPadvuAEjj6
+         hrlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782725610; x=1783330410;
+        d=1e100.net; s=20251104; t=1782725612; x=1783330412;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=Vv3/bI7mQQBzw4o7vxFb5GrHgzhC/QfD51paBaJ+fHA=;
-        b=ILxD+G4z22IhsiI+sr73ghyr/u5cGLVnGz1Umy7uQt0iRQXVJNj2vG69f2Q88la5fh
-         upzMR3rAkx6F+ytwdvBZ/KyGTmA0F5K7HGnuJvsSi/5DfVh3clICcnbOWHCty4krlUs7
-         hqgC85SIWssLgw/9cZNJrrjE1Cm3LmPA6i6581w5paA3oWasU5yg+sB/J50FD3KgLFOW
-         hx8VpwnfBSj/gkxsw+1eJPu3+mYKvcyMsO7yDZLypLMqRDU560d4rKb+YsIfIrhOAU9F
-         49l+sF8ge6uDhjjk+58ZnXV9m9I4jPE2Kb+Mrt6vTJzQ4ooAg6EC5rd78xBCg52vRoNM
-         xKOw==
-X-Forwarded-Encrypted: i=1; AHgh+RpQX1C8B/zD6tN8GUkIZVF8bOQmAZLheRK/W53g4MEYq53SPlYhn39SR+V1aYSAuq/PN13p5UJ6Tmk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfPh5zOMtmbsNBkXh3rpQ4NT0+ctfyVHQWOIs/XfOTmsrBydDC
-	o9Th5b5cSJ1Ui+dWJj4b+rcPino0f4OgLgBpzrZcoSvbdLD+NTJhGgInpedDGPMhvZ0=
-X-Gm-Gg: AfdE7cnfy7MIePd4WfZXdEHM7Oj/ogizfqm/FIH7JdCUFqnQmMs6mOfT1cTd80/lVRA
-	Npoz3ybZ6UIdkwT0Kc5lNy+2Xk2SxC8DAPK9EaK923YVk4ud82AuQHxBP1J6oSTsm+nMocyn3Ke
-	5mfCqNhNGw+Unk5//FYLD3tsq/fNDNn92LMGbTzwB++CApkdrUIsPSqAuwhIjySelGUuvzR7ZqV
-	+u7Gmu9B4670p1xjs0sXf15Wdx3yBq/+YXk8ixnqUer0kI4a7lIdfBwaBpsV80hZbwL7QmDqE1A
-	fgElOOSmDXAnMbIcWz9zmX68W3xXT+sDscKkpdRinHHAXN2o2rErcGSKvLRHr6amW6JqVAVt6Lk
-	jOmp6pMdj6f0Ytu+Bew8Esbd8MWxDuW0H/nkNIq2QIGmS3TTK4ybkz8K+h2L1LylAsfZOkec+8F
-	in62u1kxzzbPY=
-X-Received: by 2002:a05:6000:46c7:b0:46e:5c5d:b2cc with SMTP id ffacd0b85a97d-46e5c5db779mr19780582f8f.23.1782725609875;
-        Mon, 29 Jun 2026 02:33:29 -0700 (PDT)
+        bh=WoxMGI0BVuk3x6WyDDntBseVyfJ89DBJ4oPAJpDJ4cE=;
+        b=LoTgn8teIvCfHu6tP9Q59F87ZXKtDWn7U1kfHj31p6TwfFHXP/N+3o0W7A0uZuOPzX
+         yxcIB5dLVblAwzFhZw5hdZI94L9Yemtqi8ofjJYs0UaYbh68aXO0DaUy8jLJKW8GQf8U
+         Ns0/bfS9WElx8t8onPUIRY0iix8H72f/+T3u6CUcYP+gOveurtrvWWVFrzGlo/HrUOJV
+         hBUUQZsGLk1aVOZt4vr8XCxfnBX2YW6PzA6HLnORXXoQCj2jaCYJcxdqqss0xgv/mgEX
+         pKQflwQ6K3VbaWqLR1Imeku2wR1bcgUSdEPmYEs+7WqZHJR3z6Nep3+RUs0hQL5ErxLL
+         6WDg==
+X-Forwarded-Encrypted: i=1; AFNElJ+sqbC3mC+ZvjCjFmc7w8KYhmKwxNM3/kDRJgB0X+KJaIbHAmCyU0bwByHPVqpznekL3y6FNDyEpmE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSfBYQKdznJXHJ+Z6qzYDtc+z1PqmBP64/l3oibLONTHLKiGRH
+	YzUUXZfR5DokbYWw0odP2WHZWNXaZi4wsfYNyJBwIfFz0nemaaxX4V8t6lAJlyDoKHc=
+X-Gm-Gg: AfdE7clY9VKpDfRuPa5axPmmToVHh/PfBe5eVvjBVbZX2ojZVoJnZVKxSslBQyYyUMW
+	DdN34ZEyz5Du8j7xijNXDBhUu1XVF8km4uVcQ9N30vMnJADMaI3eCU4Jshx3kqNqMYS/yUQfgpg
+	XDz2WYwsWxKiWfvinYWWfl8md7rKgX4Ka3Wz9rQ5NT5f+9DYHdMk8Cfhu25D91srTwTLOyyQ5zB
+	7oN3o01Z6HaHQdy3OB12Nbhkj/ASE7zmQkhZKfo/kC7KkPGflzKCQ1QNlNwqJs0huQP1/mQ2BUp
+	oEdGXPd0Kc1eZo0fUEnrG+lgIwgXEKQ7m2BY44ZG8kTu4pRX4V01Mtu/Voc5iC84CeJHk5CkIfJ
+	xDOEA3l5FjrX3Doep+JMkHcISRPSGPno6jBMCzPVHOpGO4KlSTA18EO3GAQNwRGC1Yi/Gsf3OxX
+	JImBZtxbTax6+NsG8xFH7MLg==
+X-Received: by 2002:a05:600c:154d:b0:493:a6b7:cae5 with SMTP id 5b1f17b1804b1-493a6b7cc46mr73697705e9.28.1782725611965;
+        Mon, 29 Jun 2026 02:33:31 -0700 (PDT)
 Received: from localhost ([2a01:e0a:3c5:5fb1:1d21:f5d5:2d3c:23a7])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-46cf775a4f0sm39251229f8f.17.2026.06.29.02.33.28
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4926c2954efsm197764055e9.2.2026.06.29.02.33.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jun 2026 02:33:29 -0700 (PDT)
+        Mon, 29 Jun 2026 02:33:31 -0700 (PDT)
 From: Jerome Brunet <jbrunet@baylibre.com>
-To: linux-amlogic@lists.infradead.org, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, bmasney@redhat.com, 
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Christian Hewitt <christianshewitt@gmail.com>, 
- stable@vger.kernel.org
-In-Reply-To: <20260623201956.1324992-1-martin.blumenstingl@googlemail.com>
-References: <20260623201956.1324992-1-martin.blumenstingl@googlemail.com>
-Subject: Re: [PATCH v2] clk: meson: align gxbb_32k_clk_sel number of
- parents with actual count
-Message-Id: <178272560746.2490611.124390800107278004.b4-ty@b4>
-Date: Mon, 29 Jun 2026 11:33:27 +0200
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Xianwei Zhao <xianwei.zhao@amlogic.com>, 
+ Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Jian Hu <jian.hu@amlogic.com>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ Conor Dooley <conor.dooley@microchip.com>
+In-Reply-To: <20260623-a9_aoclk-v5-0-c7cb1ff9ebf1@amlogic.com>
+References: <20260623-a9_aoclk-v5-0-c7cb1ff9ebf1@amlogic.com>
+Subject: Re: [PATCH v5 0/2] clk: amlogic: Add A9 AO clock controller
+Message-Id: <178272561000.2490611.2050441945204527084.b4-ty@b4>
+Date: Mon, 29 Jun 2026 11:33:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -83,8 +88,10 @@ X-Mailer: b4 0.15.2
 
 Applied to clk-meson (clk-meson-next), thanks!
 
-[1/1] clk: meson: align gxbb_32k_clk_sel number of parents with actual count
-      https://github.com/BayLibre/clk-meson/commit/628b6fee9fca
+[1/2] dt-bindings: clock: Add Amlogic A9 AO clock controller
+      https://github.com/BayLibre/clk-meson/commit/d425596035b3
+[2/2] clk: amlogic: Add A9 AO clock controller driver
+      https://github.com/BayLibre/clk-meson/commit/a1b4c3a63a7e
 
 Best regards,
 --
