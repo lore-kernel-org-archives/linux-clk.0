@@ -1,265 +1,161 @@
-Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011032.outbound.protection.outlook.com [40.93.194.32])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0759D3B71DE;
-	Mon, 29 Jun 2026 09:59:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782727169; cv=fail; b=WAyCkyk44e9SGRtGNq7B8qBg5FH2LQRUv44DMDMXrELjEIZneTA+o5avHH1SU+cQ5h09KGjgbUjK1PKM1wFV0BtxMxZQrG2pm3v0I+Q5RM6lICApVA7EvsojlFG1I2iKCTu0nyTc0ikQkSA/w/jLtIlLO/lqZd5OQnc0wxit0Js=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782727169; c=relaxed/simple;
-	bh=CXPJ+TkGShM0nQPo/7Ut8boDu8biiy2MFwG+vaOV0nU=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=GWSQ3zorvAQ/nw28Py2lqIDB7rBLvWe7MDbFhskFrGQiiRtuLoadBvEE+SPpl+Uhk+Lpkk0Rw9oE05iDK/6KI/YBKzSn9jQcpV02Fr/em71f+0grGd7eKhQ0zX8hciTZcRLQh6jI71FLz4WIQR3H9Wmxr05QW40EOWx9qeFn1UE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=SJMvZGI+; arc=fail smtp.client-ip=40.93.194.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 137073DCD83
+	for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2026 10:06:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1782727586; cv=none; b=CNdfKS8FKak/Zrn+sh1oj/3Zu9ldRdHIqxjD6sk7jH0rOpJuz0uYku9MjqmaddUtOI5gyXZX7TYvx6rFuxnubUigAak51BJjC9Mlb3UBjWxzsiVhXYesJ4WQlR9tQ6KLFH3pve+JbuBnR0WS10Bpn8NsPFhelpdeIyMbTGeU5WE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1782727586; c=relaxed/simple;
+	bh=eYrZuUDW54GVV8/zA+Zs7S0GCSgEOyJGq3UYJVTrPJk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g7ZsdQQXo7U1M+TMwAfNNeC+NuhlaFOSLyGndMVVBB1BCxZ9nedBuy/i9r5fKJSTEt8zq+lfL3EyFJkz8DBA7MIuV6xQrs/9iLjAy2zS+/mIapgtrYVd8rlBFTYdWN9Xh+JAnjQPcjNgLKAHyBEkz5/Y7/PsM6dVOb206Bc0IA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=MqZ7xCHb; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=h2u3lGXR; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="SJMvZGI+"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=j6GjLhhsB0IkD3J77Zb+b3Pjus1hTfHfehsg9w7ENC3HPE/OM8odqXpEIBs+OCsbp+oKRLf8cvb/qwEPKIBaH0B4QzXeVHItDSVYDSrRNoFTyvxw+JIFPGbyJqaTqo3XxdfCt+CmXl1g8nMKFE/NN/20Z4cZ8feWUi4OOdw8uOq9x46mncUszEckkBVdhBvwhCGFurzMRFWCYBy7pPRwK9L2Fs/DJmqybzh6ZJN1QAQxmHT/JccQOsmi836lt1gJUXPs2ZqYbOmTHvJncHOz7PdnquuJ2CRyzSxpPJ9ceyv3SBzdykcFch2AjODpFSzbFmWpo0QU/YKGFmwUkWZzeg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=an6IvaYorx4kfjhO0rfPbQ/C3Z1yU1fJXK7mjpH3E4A=;
- b=McppUxTLIHDs0le3HI1kxvLAPjcYDU46cdp4r7Lsu2S8i1TNlLqc/6cerMhLuNFsgW8jLhS8hkJcLoaaxP8NF8qm0Cx5zqw/a5S8Y3VdWnR3V8sYdH6HdLcgXvVs60YRjLWWktR3VmDFbrQsVjW+4nljNWS0jKuKpIq04seQAAeAe3KL9XOsudIpu0q9jSg5FEyqXXhhhAOsqjZWkbZvzCsBdrN6gttdo/NIxnda3QVud0C9XDBLer9GetMOdQDtNVVoy/m9YCyYPyuxJusKaXJShi9wcz8s34gW66g/Sg4SG4nBevw8a5XDXqtyxODNgPMTR3WFSlmtO61vc3FNdA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=an6IvaYorx4kfjhO0rfPbQ/C3Z1yU1fJXK7mjpH3E4A=;
- b=SJMvZGI+WK8u7UtvyB0pfP/ZZGQb7YBZFSsJ48imT6U8euIKzb0NO2apvqbSiLYzB9gByL2/0sSJWUBa4zhLnMtNqN9FOKijRPJ4BDBkPMSmNu4a+zlOIlTNKp14q+rEOl9rZ9jTzILBJyzt2Mw49Cc9Le3Xjyj8YJPNtQ6c5Jg=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from LV5PR12MB9779.namprd12.prod.outlook.com (2603:10b6:408:301::14)
- by BL1PR12MB5753.namprd12.prod.outlook.com (2603:10b6:208:390::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.159.14; Mon, 29 Jun
- 2026 09:59:23 +0000
-Received: from LV5PR12MB9779.namprd12.prod.outlook.com
- ([fe80::8ac8:e862:8ae9:9287]) by LV5PR12MB9779.namprd12.prod.outlook.com
- ([fe80::8ac8:e862:8ae9:9287%3]) with mapi id 15.21.0159.018; Mon, 29 Jun 2026
- 09:59:23 +0000
-Message-ID: <bfc16eac-6a4a-425c-b460-449dc1d91558@amd.com>
-Date: Mon, 29 Jun 2026 11:59:16 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/5] clock: versal-clk: Fix Versal NET clock binding
- and switch to CCF
-To: linux-kernel@vger.kernel.org, monstr@monstr.eu, git@amd.com
-Cc: Conor Dooley <conor+dt@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>,
- Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
- Stephen Boyd <sboyd@kernel.org>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>, kishore Manne <nava.kishore.manne@amd.com>,
- "moderated list:ARM/ZYNQ ARCHITECTURE"
- <linux-arm-kernel@lists.infradead.org>,
- "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-References: <cover.1780499520.git.michal.simek@amd.com>
-Content-Language: en-US
-From: Michal Simek <michal.simek@amd.com>
-Autocrypt: addr=michal.simek@amd.com; keydata=
- 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
- mpwx1d8=
-In-Reply-To: <cover.1780499520.git.michal.simek@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR03CA0029.namprd03.prod.outlook.com
- (2603:10b6:a03:33a::34) To LV5PR12MB9779.namprd12.prod.outlook.com
- (2603:10b6:408:301::14)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="MqZ7xCHb";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="h2u3lGXR"
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 65T8xmtu2432112
+	for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2026 10:06:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	lVt6Gi25NiYqcnkyDANHxTfSbL/4fUYAeYFJ+RUI7cE=; b=MqZ7xCHbU1O4tss5
+	EMuW985nkiThlT3+GsjK3ceVrdJuznujEYmCOJYJlPcy2hDjSRSBLI0qofA8W3Df
+	UHspn07PPrzMDWwOvJI5Qpn1m2PHQGN2TmD0kf9mA8JL2RyXxR44ndHznQPt+BMO
+	VlMR23Efa7mhmgwVR/T3CJjflWI+LPBYyNyAcjgnFUcu6ZGX4sW+aVt31Cv1Aa+f
+	7H2ZCGXJLwF8gCLP7f58JXPPd6UBVusZLffrQ5RxDjwIPfUZNmWa5Jjjkisz1SBv
+	gEpeffsGZjxTM+UeDMDISujGXSAcdiWYJIHnne8FN3A9xH98a1KixsWEy7LKC1Jt
+	ChXDMQ==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4f3nper9n0-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2026 10:06:24 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-51c069f73e4so701421cf.1
+        for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2026 03:06:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1782727583; x=1783332383; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=lVt6Gi25NiYqcnkyDANHxTfSbL/4fUYAeYFJ+RUI7cE=;
+        b=h2u3lGXRGjNIEBh/Ci+2zLvpnbusJTRKsC4HUkcss2VdtPnKzENwcsNAdepL8TnXI5
+         o+4sBXmiYKiq3OLTLiC73hucrvnpdv8OrVToLmvdbnrD6Qh4DRe+kqFd7+q6p2p2mRAb
+         t6/Zph5aCC7+m6QcIjBsuBN0eNa/k6PDVxdKzM2oW7xAOoEEMB2GAyOI4b0N8Ik1KHuF
+         Fk6hZ0IIwe7K7Z4ITZShsxW1hNAXPmUN/zXBrgIaBuJ8lpeNnhQ9AVoG9+CYqMmIpKIU
+         +oH+okEyMn0McjUxmUYRF29jMFyV5vctYcJ6kQrOBm2euly2+YfLXiKxpjAX4GKAm+Jt
+         VImQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1782727583; x=1783332383;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=lVt6Gi25NiYqcnkyDANHxTfSbL/4fUYAeYFJ+RUI7cE=;
+        b=M6FiHsdPtY14WwXYP2P49wh4WWvcvSlDArB3ll54a3I89pmrC+BbvJP+zW6nA+zYTY
+         j/vjaPTckFSNsMlbedEEm71tcut8dsvZUyzd0jif0AXI8EVedfhdX1745NsjA6W54E/g
+         fU/qbEF4MBGFYC5ovVHH75ckfVfRX/3yNCD2KlHaPiJ/IPFtrdTx9uUu0STvGaG0Pjxm
+         bPyO4eO9Ff6COps3KrLvqtypeH971tocnMS6Cjjx/rTicGgyixTNQSOW2l+X9ROCC+g0
+         7HP262w42spWdUkFyjqP7Oq+yas9hvq0rGtDvzBgmIoq24Kdansciws/zlSZkv2sK/bX
+         TzIQ==
+X-Forwarded-Encrypted: i=1; AFNElJ+NFQYm+f6ULEYZ5o/LPlA1MJ10dmEtnLWXd1Lwv90vnFH1wW/ZW9YiKwAXufSxbBvg09iomkYqaTs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywy9e8AyO+vSfEShpyKjJpWsriSMGMFlTMTGwARZDiJvK384Wt6
+	gHUCSp4lAlHanprHUxmmxOx6J12uk8lz1ja6gxpGYG85l7yuHDTRZB+6BXXp1YoUtQnnVGp12oH
+	ykXOdTDKMSWb69EZ8m/WUrIjljzumcrYb+YuX5/Kox4ku/BpWxG3m09N6ec00xuU=
+X-Gm-Gg: AfdE7ckIjR5rT6t4LzKVB+ev7eMCib5wXR0KqDTWGWuLMvt70mnkr18aor3/t1RugYc
+	Q87pAgTosAm+Hh23TPgDvC7Aah12+4gialjDZxq2rIpzM4eFOGxfiSISQF9pC1KKlG63YDrU0V2
+	bTSf5JU2csd40619d9KohBVjMudY29zcMTvHhgwGlhuHe9MZ6ZFEbSBiqme6Nb9R+3ysooQDFz7
+	sO4ChY1MguTKrohWWVVdASOWRYsRtF8V4GMJ7RdDOSQSqbcP0w6HWlA4A8BfCoqbONLlBl7WJj8
+	3lwveSIteRBL0hI6PZqKwASSH0sWWdmj9LGNLyEOq9gmSZxHtVB8tsVvOYfvrYqieLXfl0VnY6X
+	k2u+Oaa+LJFR101t74jG87f1yDH5zbZZ/oZo=
+X-Received: by 2002:a05:622a:3d0:b0:51b:eab3:4ef1 with SMTP id d75a77b69052e-51beab3578cmr59352031cf.4.1782727583421;
+        Mon, 29 Jun 2026 03:06:23 -0700 (PDT)
+X-Received: by 2002:a05:622a:3d0:b0:51b:eab3:4ef1 with SMTP id d75a77b69052e-51beab3578cmr59351661cf.4.1782727582842;
+        Mon, 29 Jun 2026 03:06:22 -0700 (PDT)
+Received: from [192.168.120.170] ([178.235.128.140])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c11fbbe8125sm747959766b.19.2026.06.29.03.06.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 29 Jun 2026 03:06:21 -0700 (PDT)
+Message-ID: <bfacf381-8112-4c12-b87c-46cab7d7f284@oss.qualcomm.com>
+Date: Mon, 29 Jun 2026 12:06:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV5PR12MB9779:EE_|BL1PR12MB5753:EE_
-X-MS-Office365-Filtering-Correlation-Id: a5779989-c5d5-4baa-e023-08ded5c5187b
-X-LD-Processed: 3dd8961f-e488-4e60-8e11-a82d994e183d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|23010399003|366016|1800799024|18002099003|22082099003|11063799006|56012099006|6133799003|3023799007;
-X-Microsoft-Antispam-Message-Info:
-	VaMgs4Zljj226yNBNk3B3cCp4FMMoJa48ibLOz3N/wX/y3yIqhbqCEwigKJybrbv221W2xUhjjluUQO7bgBNP1EhF21GCNbrLyoLnkdom//5CB/NjQzoOPrGXiIoQ3FB/Op8BRzn4swWRlJi31nT3aNlcprCQBHp0lCspIURbCnVlNJz8SEuGvrz8V7q2pqP+YBe961qQ+whI+bscOGXBNPg7PXMrDT7eCTDWWy9LKAlqkvOlLPjxRaiEBpl3gbrI8Y5ojxYzP7aE2JLImQD3Ww3+C0eTm1rAYN91viHZfha/9vPqCnePPI4ER1SLAtAKBU8jvELhApYrTVDEOhfdVEdy2zi0qxge/aVRI0IF1rb7ro8+UmhH2p/9ukFo6VagYUFaJvoIeYgHnuoMrjQqKXdTh0e1zZ6WWG1uPWSlkWu42iYxzptvmbY4u+WfvKBAZbO+/wiVGAtwbMg2iTKpJ+374lieFvj/nEWzQkvFf+rDiMTtT5lo1pQMNYJgK+9YXSKMUmE3CkrWTHfmNVmrZoJhxr9wzDl9ut4irB86dzTiwVlXIqJ2+SmAThRJRoH9XvV+1I6E8xSPd9FmrsHjxshYCoHWZqcxqEmWEuOU0tGvdMs0fn+s9e0XULEYcHLHw1TUJlvaKyu52BQb9B7f57CBqffjx5E2aRu4sPnx6c=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV5PR12MB9779.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(23010399003)(366016)(1800799024)(18002099003)(22082099003)(11063799006)(56012099006)(6133799003)(3023799007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?K1pqWjZIYmZsQ1hJVk1rVnltaGNKMlFHVVo4ZTBxUWVpakxvZDM0cW9iOE5I?=
- =?utf-8?B?bmJPNXEyNTU2aUs3MHJqUXllU1JlaUZBWG90S1hybVphSjhhQ3FEdDM2M0VI?=
- =?utf-8?B?VjdPSXdSNHpMMnNETXcxUkFCcnI5U2lYS3dvd1lKdHJ5QUZUZ2xLUmpzOFdH?=
- =?utf-8?B?eWwrM3dFMVlZMTdqUm9NbENQNk1VYS9FNlZiUnNjSE1vMWI0UXJzSEZhWm1K?=
- =?utf-8?B?TjZFMzJ6b1BTNGVjRXZFZXNyRzVjZktGcHV2RFRtcXpTaE0yQ1kwWVFXU2sw?=
- =?utf-8?B?SGxPZXhZSWVjNWFKNWxNcnRrQllJNGxUc0tzTTRwU1hiLzdjV1JONVZyYVA0?=
- =?utf-8?B?Q0M2RnBYRHBrS0ZQeXNhcDBsYjYyOEh2ejRNNW1GcURmWUozYUlvMjJaaWlN?=
- =?utf-8?B?N1c0UW5MSjlSVm9MeUdOY213K3RBV0h0b2d6ZGJhMjFOemE4UmduRE5LeVY4?=
- =?utf-8?B?bGI2T2x6eFkxR0RYK2pZdmJicWtocnNWQmNkTEQvbkJiNXNrQ1VvNmFoK2F6?=
- =?utf-8?B?dmhzbDJiRjBFZ2QxdmxmbjBPd1VlSlMyRlVQSUZwTEtocGNTUVpZUDVTYTc2?=
- =?utf-8?B?OGdFeXFuWUxxTTk4T2MrM21KdjB2MCtGU0swVjhHWWNqZm5YT0ZhRlE0dzdI?=
- =?utf-8?B?elU4SGJuRWxzSktpbEM2aEo2azlSajFzUnFvNTEwZEhBdEZacFlSa0sxQ0JQ?=
- =?utf-8?B?SFl2bFdrY3F0UHdHVWk3OWJRZjNkWHViRGl3bUZPcURjNFdmQitzNHF5VG5v?=
- =?utf-8?B?Sjd2RmJwaG0wd1lNZ240Rzh2TUVveWlaeFZnTUhUeXUvN3FnNFJoengxLzdm?=
- =?utf-8?B?Q2EvUkcvdEtmQ1ZzdlBtei90d1cwUWVyRWhNZU02dTVUMXh3K0dGRHZZcEdM?=
- =?utf-8?B?VGtyZUdNMGUyaDZMZGNQbWhxdFlPeFJkMXhabUNqY2Y0bER1M04wSytxZk5V?=
- =?utf-8?B?dmxDQ1BJcFcyTThuV1dJWkZ1aTBKQjh6K3VHdUIrYksyQzN0SlQ2Y2tWM2RJ?=
- =?utf-8?B?N3V4N0FWcHl2c2lBM0JnbW44bG14K0xMQmhzemdMMnBxYWdsQ2hsclZKMnFS?=
- =?utf-8?B?TUhpTEpVei9LbURZVEIzTWI4YWRWc3p4VndubzQ0WUUwOEZjbXVlNVdvTlY2?=
- =?utf-8?B?amNVSVNJR3R5ZzkzUy95Zk1aRWVuMkc4RFRCa0gxS3gxK2M5K29SOHQzNEZX?=
- =?utf-8?B?TnE0b2NoVEtKdUc4OUVZc2p1Um9IaTkxMFlBRi9kZTZQc2liajRkcktjbm1a?=
- =?utf-8?B?UUhYN0hnd1laY1k5MjArSWtLbkhPSDVhS20wZ0VIbUsyWFJpc2dydThBR0dV?=
- =?utf-8?B?bE84bXE0OXdvY0RuYS85MVNJRWJaUzA3YjRuUE9mZ2tvTEhjeU9TMnpEM3d6?=
- =?utf-8?B?R1ZQcURWbkdSeWNQakdIK1hub1VlNmdpTFBiaitpSGxHYS93T21EdC9OWGY4?=
- =?utf-8?B?cUJiSzVMUWxDcVM1YnlYK3plV1hjcnB2UFNsbzhWRnVZYVhpaXZIZncyV1No?=
- =?utf-8?B?aDhSTGdiZFY1U1JHL0QvL2hvQjJ5cTlrVk5RVjFKMXlGeVhXRHAwWDhNakF6?=
- =?utf-8?B?R3dXN1BJMmJxcWhOUGV6Qk5TWURpQ20yUWx6WFNRMGFsMVdGWTcwT0FyWnUw?=
- =?utf-8?B?VVNUUDB4alVESDVMcVl0UkhhdytqeGlvbitKVHZMUyt6VDRsTlNaRURucGIw?=
- =?utf-8?B?Z2hOUkQrVjFFWUpscldKaFBSNWMzM3lBQjE5dGlNZWRSalJUb2Q5V09FZnpj?=
- =?utf-8?B?OFd2VHl0b1JWVXVZOG41amJ3cUIveTRBWi84MFl5STVoOEt0Mi90Z3AwdGZR?=
- =?utf-8?B?cFZiYVMzQzNDNWFWMWlhZ3pMTnZDVm5IRTFtVUFTVFRLeWVpeCs3SllQU1d2?=
- =?utf-8?B?NjhHUzEvbHZPSlJSQmFsakFlK24vWjhkSGRLMVpRRHMydmQ0OFdhOHVMREkv?=
- =?utf-8?B?WFZmamZJa0lYVUhpR3NBRjJHYUVMK2JXVFZSNk80WlZCbmtVbVpXUDNWWllC?=
- =?utf-8?B?MTR2c3BUL1pROVlkSkE4d0d3ZUFmcldualFFYlV3dHVFNlcxRkNOUjRuYWVj?=
- =?utf-8?B?dWMwVHVzZ2VGbVA5aUszV0lBYjFLdDBmZURaelhGbTFYS25PbzNaNVFEUjAv?=
- =?utf-8?B?cGxET05sMW56MDRIK1VxTXpSOVNUd3RvMkRTNVFDNjJpODBqYTN0ZkFDaHJ4?=
- =?utf-8?B?bTJLSW1IU2VXTHVxaDZvUGZMZVVWUjlnVXpOSk50UlEwa3NMbkRTVDdmbWFp?=
- =?utf-8?B?VS8weVhuRjM0T3Q1SjVmL3BtWnF3eTlzUFF2ZTgvV1hRa2ZqUFE0YXJVNGJF?=
- =?utf-8?Q?uCQJSMtOBgTOzpIaNe?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a5779989-c5d5-4baa-e023-08ded5c5187b
-X-MS-Exchange-CrossTenant-AuthSource: LV5PR12MB9779.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jun 2026 09:59:23.0576
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: TpHE7ll3wPaDKQVY7nKh6/3sVg4aR5YTe5YqU7dI+YYPG4Ke+KTdAozbv9y+94Qm
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5753
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/4] clk: implement sync_state support
+To: Brian Masney <bmasney@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Danilo Krummrich <dakr@kernel.org>, Ulf Hansson <ulfh@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Xuyang Dong <dongxuyang@eswincomputing.com>,
+        Jens Glathe <jens.glathe@oldschoolsolutions.biz>,
+        Hans de Goede <johannes.goede@oss.qualcomm.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Saravana Kannan <saravanak@kernel.org>,
+        Abel Vesa <abelvesa@kernel.org>
+Cc: driver-core@lists.linux.dev, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org
+References: <20260626-clk-sync-state-v1-0-4156d8196dc8@redhat.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20260626-clk-sync-state-v1-0-4156d8196dc8@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjI5MDA4MSBTYWx0ZWRfX3O2oTLc4WCiS
+ vpHSTDWSQ6nqnNvnBhjJ2IrTdc2bQir/wyrvW68/r/WJI0yxaZ2uWTe9rgrlK1MjTk8eyZSUCZp
+ mb8SS7JLKzb9ibT+7K6L/cvWyQDVCFy3aV6xuqGw/4N7yGbKns7GxdprkzaWq+YoJUJda3HSjGU
+ upq2fVz8J6hyTI+SGhA2SOL3TVV3XcKgaBvSp/can54Hih9p0iKnuumIg23fXoiTcsZ1bQ6Sgnz
+ 8nV+pcFGmCJOnJARS8o0Tqkx3lkyLEpOK3GHd1/8/kOPBTnedRmw0I+dBGmseLOnRpnDLPL5MfN
+ G4N47WlBG6L6M4zfN/H+x/4piHy69GuqsA8y6ba6ZhzNpW7FRSkZ5DXUWLKMkAlqGRWsp2BB9bo
+ 4ejGFfGWZpA5nVaghGEzXoAqeNSAXYp7V5eSeBrcgjD0QPjTOciHdTxAUcRlk4h48N3eEyUqD76
+ dXaHhYL4hBNquUEJMJQ==
+X-Proofpoint-ORIG-GUID: oxMWlPEyH8QyCm_hq1D438EHENUSVLvA
+X-Authority-Analysis: v=2.4 cv=T6q8ifKQ c=1 sm=1 tr=0 ts=6a4243a0 cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
+ a=IkcTkHD0fZMA:10 a=FelO9ux0wxsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=yOCtJkima9RkubShWh1s:22
+ a=NDI1EqwwtgGkLGOeOxsA:9 a=QEXdDO2ut3YA:10 a=kacYvNCVWA4VmyqE58fU:22
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNjI5MDA4MSBTYWx0ZWRfXxhZfbAKLkevh
+ Fj7TGWgQ7IblmV97qwDO8llecZTBmdNrttjpC/8eIxkhTc7h5qBHh+AifUPBUM+VmH3gghB4ioV
+ 4vppCqpo1cjMQiwgGYNxrVpqabBZP7k=
+X-Proofpoint-GUID: oxMWlPEyH8QyCm_hq1D438EHENUSVLvA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
+ definitions=2026-06-29_02,2026-06-26_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 priorityscore=1501 suspectscore=0 clxscore=1015 adultscore=0
+ lowpriorityscore=0 malwarescore=0 impostorscore=0 phishscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2606290081
 
-
-
-On 6/3/26 17:12, Michal Simek wrote:
-> This series fixes the Versal NET clock controller DT binding validation
-> and switches the platform to use the firmware-based CCF clock interface.
+On 6/26/26 6:32 PM, Brian Masney wrote:
+> The existing support for disabling unused clks runs in the late initcall
+> stage, and it has been known for a long time that this is broken since
+> it runs too early in the boot up process. It doesn't work for kernel
+> modules, and it also doesn't work if all of the consumers haven't fully
+> probed yet. Folks have long recommended to boot certain platforms with
+> clk_ignore_unused to work around issues with disabling unused clks.
 > 
-> Patch 1 extracts zynqmp to own DT binding file.
-> 
-> Patch 2 restructures the if/then conditions in the versal-clk binding
-> schema so that xlnx,versal-net-clk is matched first before falling back
-> to xlnx,versal-clk. This fixes false "too long" validation errors caused
-> by both conditions matching simultaneously when the fallback compatible
-> is present. A dedicated example for the Versal NET 3-clock configuration
-> is added and all examples are split into separate blocks for independent
-> validation.
-> 
-> Patch 3 switches Versal NET from static fixed-clock definitions to the
-> firmware-based clock interface, enabling proper clock management
-> through platform firmware. DT macro headers for clocks, power domains
-> and resets are added.
-> 
-> Thanks,
-> Michal
+> This series fixes this by adding support for sync_state to the clk
+> subsystem.
 > 
 > Changes in v3:
-> - new patch in series
-> - New patch in series
-> - Cover change in zynqmp-firmware.yaml
-> - Move clock-cells to be the last in the example
-> - Remove comment around (Optional clock) which is obvious from schema
->    itself
-> - Move clock-cells to be the last property in the example
-> - use 2 spaces for indentation in example to follow the same style which is
->    already used
-> - Add fixed tag
-> - Remove interrupt from zynqmp-power - Versal NET is using event framework
->    instead. No interrupt is required.
-> - Remove unused GEM{0,1}_REF_{R,T}X macros
-> - Update commit message
-> - s/zynqmp/versal-net/ in subject
-> - Update copyrights
-> - Make all macro values lower case
-> - Fix guarding macro names
-> 
-> Changes in v2:
-> - New patch in series
-> - Split zynqmp-clk from versal-clk
-> - Update logic without ZynqMP part in this file and have if/else only
->    around min/maxItems
-> - use clock-<HZ> node name for fixed clocks
-> - Reuse existing versal-net-clk.dtsi file
-> 
-> Michal Simek (5):
->    dt-bindings: firmware: xilinx: Add missing example for ZynqMP
->    dt-bindings: clock: versal-clk: Fix mio_clk index range in clock-names
->      pattern
->    dt-bindings: clock: Move xlnx,zynqmp-clk to its own schema
->    dt-bindings: clock: versal-clk: Fix Versal NET clock validation
->    arm64: versal-net: Switch Versal NET to firmware clock interface
-> 
->   .../bindings/clock/xlnx,versal-clk.yaml       |  89 +----
->   .../bindings/clock/xlnx,zynqmp-clk.yaml       |  68 ++++
->   .../firmware/xilinx/xlnx,zynqmp-firmware.yaml |  15 +-
->   .../arm64/boot/dts/xilinx/versal-net-clk.dtsi | 345 +++++++++++++-----
->   arch/arm64/boot/dts/xilinx/xlnx-versal-clk.h  | 123 +++++++
->   .../boot/dts/xilinx/xlnx-versal-net-clk.h     |  74 ++++
->   .../boot/dts/xilinx/xlnx-versal-net-power.h   |  38 ++
->   .../boot/dts/xilinx/xlnx-versal-net-resets.h  |  53 +++
->   .../arm64/boot/dts/xilinx/xlnx-versal-power.h |  55 +++
->   .../boot/dts/xilinx/xlnx-versal-resets.h      | 106 ++++++
->   10 files changed, 795 insertions(+), 171 deletions(-)
->   create mode 100644 Documentation/devicetree/bindings/clock/xlnx,zynqmp-clk.yaml
->   create mode 100644 arch/arm64/boot/dts/xilinx/xlnx-versal-clk.h
->   create mode 100644 arch/arm64/boot/dts/xilinx/xlnx-versal-net-clk.h
->   create mode 100644 arch/arm64/boot/dts/xilinx/xlnx-versal-net-power.h
->   create mode 100644 arch/arm64/boot/dts/xilinx/xlnx-versal-net-resets.h
->   create mode 100644 arch/arm64/boot/dts/xilinx/xlnx-versal-power.h
->   create mode 100644 arch/arm64/boot/dts/xilinx/xlnx-versal-resets.h
-> 
 
-Applied.
-M
+The version tag is missing from the subjects of the patches you sent
+By the trailers, it seems like you used b4.. did you play with
+prep --force-revision by chance?
+
+Konrad
