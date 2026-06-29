@@ -1,159 +1,131 @@
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AC48405840
-	for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2026 13:00:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EF6927727
+	for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2026 13:21:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782738059; cv=none; b=r0GVq4kUwBn8o0aXWdVX3wLS5ypwv42rs+QM4P7MQJWHcPLLyqiV1rpIOmGNBv+z7WnQRmnK+b9L51s5kuH70hashTxAuN9hJLBEOd2nvryy/VvkwQkd6Eji0oK6W7DLECURsW95FFbjb9LIGtqi27uNza9jQ8UqcW0NXZmuoUA=
+	t=1782739270; cv=none; b=teblbANHJU0HoqK1GpDdTK6RmbEY7ewU7vsOJ4S01LWKpgsBl8uR+MiNPWQ5Okj5iS0bOXUU37hKQjFvl/9ShUaZgE2qobbInVgoVguZB9EKIIRx1ePzzIZOz76D3L0uDMx8bscSkHygSmygSewUQQt+rG1l18w/tLlBC0tpziw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782738059; c=relaxed/simple;
-	bh=ptC+qOiC6+d1qdGlhlfC4UXNJ/q88wxddxLLdklLOWY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IDqgPwGaykBc3CUUFqBu7hoN0SLbznYmKKp/QQm6dhs1cJmdYOF+wpd0uMOxo+5QLV7mPAejOgdqVOJDFInhSlvjbI0sfHDEyMru7aNA3UfvAv1vvvH+RHoDphzeI6reryO9/8paVUPrymh6cBPQ6T4Xa7RYLVahGxBe4MHtvXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=N8HusOvo; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1782739270; c=relaxed/simple;
+	bh=QxzWy/Hv5RiNDtU4NazhiKpBVXecqMQz1LvHg0mRcRo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Wam7QhVSPE8rlvU2l5fIEbAlaSSh9HCEUbBiZWmRaSQ/SayEb8et1Wd/27W3g1QYjONZDIYDDcnlGw76enayYV8prHUAcJWBtItVg3b6meX4N9k0hQQAIwWM8xVF1xJ99uPL6DLL6qn5Lb1hC8Zk0+QRRcRzrYmpNT2dsy/ZpHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QIEOVhRa; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="N8HusOvo"
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5aeb40ebefbso247598e87.0
-        for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2026 06:00:57 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QIEOVhRa"
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-38005a36edbso549332a91.1
+        for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2026 06:21:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1782738056; x=1783342856; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=m3Fai9RBjd+npFV53TQmqA1uln8pKm/M0yqFuuvwOko=;
-        b=N8HusOvoin7uG2/EDkYzV7wQ+Q8alB4l6/xWidNN9lmCSqMyeVPtT2KMppQ3liD/xw
-         cmMKfosyZdTbIilJsJ4jmfe7BlOWMIZ/LnhzzUljhb6x7QiCxuUDJVSulqOo+m0Chj8U
-         ONcmysFd3E77TDyqEFOgvywFRMMmHl1/l2aaeRr0iZ0Mm614nJk8+SDcBr8+u7jc2Tkk
-         O+53pKL856zhCZvDo5RqVKV5yZYgS0fs0a5OPb1XH7XUae2j4IeujsFCBfdpnCGVbZNK
-         WoTJzeaL68jasp4fwny9j9YndVvS8iPKQmBbkUlaHPG2zlucVDrmye6OwWOeQ7wRczNH
-         6RDw==
+        d=gmail.com; s=20251104; t=1782739269; x=1783344069; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IheE9qVzV7PsklKZKF/CcoIEwL18pQsEGgmo5EP68GU=;
+        b=QIEOVhRaFhSnMNl0QAu8zgBZaCGPTi2t8PCoaL2aGx9aKnyMH1PofvmUy2jlE6C4TD
+         GBldgUsf3UB5R0M6ipOGNAA1U3+nsVXRwu5fnYxmGYXohsNfbF12P0RZn//C7ARtzcNC
+         q8MMElIBW2IQjLPo+CoNG9Lfiy7oomcSTrTAN/qeW3+Du1+H1dp/12RQpBWJycMgeAB5
+         gVa0DVfnigmAAe4p25zchuvIxPoTNlbWeRTT/cGPMVtFeo5445qyFlf1UjDYYoWU7Ktg
+         sDWD/Mgyl1/Q/xUiI0Pz7nUN1qGuL7XWcmUGClMWvaLSuDZizuX64mQbIEI02FdTseW/
+         uWUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782738056; x=1783342856;
-        h=content-transfer-encoding:content-type:in-reply-to:from:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=m3Fai9RBjd+npFV53TQmqA1uln8pKm/M0yqFuuvwOko=;
-        b=ZpBJ7I9Mt1IEcjdx6wPVU7kDM4LwX4cZYpCdOkNRJzDaKWEyEzn2MMjEztH2O9dcYW
-         fcx/m/AZSn4/qcIjvCuuJJMAqr8INqpf4PU6uqo8W0LGp4+87U7F3KDndQwmKB3UmxP2
-         7A5Av0rITrPfstGIY+tWN0W2mMNEBGDveGZ/ZCPLCmxFkVUDWBkjjc9RiLt0BEGXZpfv
-         kqpxursL5V+kEFUieVdDRx0vPX3rHHBjpriKaH2+xR6hwhZ80BNFs4dL5Hi486ZgnXED
-         3Tm+/m42LkX5xKLhxTdW1tqECMQnZt64GZAHYfYeKGEfpx3xbj9Z19KP7/QQgq+jus0N
-         U4Vg==
-X-Forwarded-Encrypted: i=1; AHgh+Rr6IkoiTA9IDF3vrp26xehvufh9JEhjar4DmWOkef05bOVshJIXpSQjQKyjISaSCVbWmfbMt9kWqDk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yybj1nN6PtTwwisYgbTpuWNhOCjyzT9mdWXbizb+WrborxkA75Q
-	yvEe/Qx3YITHDEsl7TgZio/48yrhCFoPSuvo4dRP9agDUhLSlzPXoymMI/Z5oRuZ7lm04Xc0oLp
-	TiKymkcc=
-X-Gm-Gg: AfdE7ckvpyZ3DcJODkcOMeeDvqe7shoJb/eoRyJX1ejrh3jVvOUPOGl4EWpMqrJjt6X
-	XVsvkvWmEFDp49E1K2tx94jGqhQYPZIA0Uc0zbgiAtYaiZArGkp7RyAL6Iu3RYMCHAJE/FXYcaK
-	Lrd3V9V/z26WLXPjjmhG2pD5NESLtsak29QW/TQ7ZVJMa59OZY5bbgNyDVYUUa8xofPKq2KB0xy
-	JnJW7yJEEM8xbF/iQFHcP6zfESJ/mjTogpRBLewUbqLBj001En9LsecQ2qU4yRErHCEUOYvcULl
-	K/+7xw7K7QABW4IOW3a9W8fiNdnJfi7nSagvOBo+HY9/Y/E0LigWx8SITsk0uamaWq8uBrKRB8d
-	jtAtGlKEUrUKtKmEDqBtr38aMv1H9AQ/tJnJiy3tsI88zLCYyOJZ3s+pfyeXNikzEaxwLgYK+lB
-	vjc6Byihpno8GK3TxDAAmRnyekR82sH17Zq8vT1KdigBZzrWujD1t1zvsy8hIVKhs1kQg=
-X-Received: by 2002:a05:6512:3b11:b0:5ae:ba7d:8fad with SMTP id 2adb3069b0e04-5aeba7d9145mr373785e87.4.1782738055280;
-        Mon, 29 Jun 2026 06:00:55 -0700 (PDT)
-Received: from [192.168.1.100] (91-159-24-186.elisa-laajakaista.fi. [91.159.24.186])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5aebd32dbf3sm45796e87.46.2026.06.29.06.00.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Jun 2026 06:00:54 -0700 (PDT)
-Message-ID: <03596c5b-9448-49e3-a035-25c0475df9be@linaro.org>
-Date: Mon, 29 Jun 2026 16:00:46 +0300
+        d=1e100.net; s=20251104; t=1782739269; x=1783344069;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IheE9qVzV7PsklKZKF/CcoIEwL18pQsEGgmo5EP68GU=;
+        b=rchnwW9zj3SY58rabjkXG/e9DC4xUNtl342yPFm3BglBQ16/9cnv4trmT2lyrEuwBV
+         7Lthji3s8d+aljT1F+Au2t82uBaUg6CadGQ9WCL7qv6qxc6gBx5GxB/cMB85jEnwGLcs
+         haqGx4qib9zwLkCoZCwiypj4tuukRMODaOm1mwTy4VIxcQJwOURQZv3bTAeMy0H49dbr
+         MrW/KrrO3kEvYGdmy1qZWD0NOreTP0e4EWDOqC8VOAu1zv6gw6LV+UOf3mBO2lke9u5R
+         JDKXPcVTWx9+c5nZnJDh7YL+wdB9r4/JMtYOU3G2VDp8e5wuRgb8woFWfQC/l/nxDoDd
+         U2Jg==
+X-Forwarded-Encrypted: i=1; AHgh+RqmLxNTTS9+fbtkBsOuspOpVWMGAbQxFBF3bg/+hpCfcjgHENFEHA6SW9GAgIhwEQN9FjfJGIRpk3w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSMeoaYfUOvQjZGvWp/5UIf8CMQm6GhdjzDddmv7Isb/6fCDC9
+	je/nayQ6T4yCZIGP56CQKMmtRS371o0XK1xk88hlIihgw49Rr+Av2aup
+X-Gm-Gg: AfdE7cmnXT5BGQbNcUzpgAf/3cwFC8Y4YVLNnHSkIOVFoNSqir8THbU7JSxLtA3ZwKs
+	zcEvA/gaeeYJSxQAcLYpLu3IIYxodRd6L2tAvsmZT5CnHmW1EEXOVcwOyYym3Ow+u1k/j7OXY+T
+	i1Hx5iVO9wU8vRfH0f/Tud5mQRu8njBfVWHdQNdWzx81kPCQ+Ax+fdQLsg7t37GbvcgRPOe25lC
+	MPRml0ekKUs7/TgBT5RiatdQToyq5VBH3QN0tx4aqTR0MANsLkotfz0H2bkDSMj56tewdsrILpO
+	KPoiSw1GPHxBgg81/f1Zfdjf6eg8DE+AQfTkG6fge1tnFIhgT5kpa1I3NCJ1gd3Z6UHKO7EZ6ZY
+	s50PXF5emqkH32ksMMIb/3bUYDhUVQrdtFmNsVjyT6jBp9MhQcn0Z62cYicS3iIkCYec+EIU487
+	z877LXPtbDcrN69zXNEmViB0hW7treNTkw5dykoFwWEF3K
+X-Received: by 2002:a17:90b:3f10:b0:37f:db06:2299 with SMTP id 98e67ed59e1d1-37fdb062e8amr5490736a91.21.1782739268802;
+        Mon, 29 Jun 2026 06:21:08 -0700 (PDT)
+Received: from buffalo-ssd (M014013071096.v4.enabler.ne.jp. [14.13.71.96])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-37df411ddf7sm9007528a91.16.2026.06.29.06.21.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jun 2026 06:21:08 -0700 (PDT)
+From: Akari Tsuyukusa <akkun11.open@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney@redhat.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Henry Chen <henryc.chen@mediatek.com>,
+	James Liao <jamesjj.liao@mediatek.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Akari Tsuyukusa <akkun11.open@gmail.com>,
+	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
+	linux-kernel@vger.kernel.org (open list:ARM/Mediatek SoC support),
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM/Mediatek SoC support),
+	linux-mediatek@lists.infradead.org (moderated list:ARM/Mediatek SoC support)
+Subject: [PATCH] clk: mediatek: mt8135: Fix inverted gate control for devapc_ck
+Date: Mon, 29 Jun 2026 22:20:43 +0900
+Message-ID: <20260629132044.208905-1-akkun11.open@gmail.com>
+X-Mailer: git-send-email 2.54.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: qcom: enable ALWAYS_ON for titan_top_gdsc
-To: Brian Masney <bmasney@redhat.com>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20260626-camcc-sc8280xp-titan-top-v1-1-2ca246886493@redhat.com>
- <bcf9fd99-454f-4ac2-8357-b0775be42d41@oss.qualcomm.com>
- <41a76941-2e21-49ce-b0cd-0ae6a8b2eb1f@linaro.org>
- <akJQ7ZFODBjHrqFt@redhat.com>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <akJQ7ZFODBjHrqFt@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Brian,
+The devapc_ck (CLK_INFRA_DEVAPC) on MT8135 is currently using
+"mtk_clk_gate_ops_setclr". However, checking the downstream kernel reveals
+that this clock is configured with set:enable and clr:disable making
+"mtk_clk_gate_ops_setclr_inv" the appropriate choice.
+But, it is strange that some downstream kernels are not like that.
 
-On 6/29/26 14:03, Brian Masney wrote:
-> Hi Vladimir,
-> 
-> On Fri, Jun 26, 2026 at 07:54:39PM +0300, Vladimir Zapolskiy wrote:
->> On 6/26/26 19:32, Konrad Dybcio wrote:
->>> On 6/26/26 6:26 PM, Brian Masney wrote:
->>>> With the introduction of sync_state support in the clk and pmdomain
->>>> subsystems, the following warning happens when the unused clocks are
->>>> shutdown in camcc-sc8280xp:
->>>
->>> Stuck at _on_ sounds wrong.. does clk_ignore_unused / removing
->>> the sync state from the clock part only resolve this? There may
->>> be a clock dependency for the TITAN_TOP_GDSC that we're failing to
->>> describe
->>>
->>
->> Let me remind that there is a series, which solves this problem in a proper
->> and elegant way, it would be nice to get the review tags though:
->>
->> [1] https://lore.kernel.org/linux-clk/20260331140142.892579-1-vladimir.zapolskiy@linaro.org
-> 
-> As I mentioned in my other message, this series didn't address my issue.
-> sc8280xp wasn't included in your series, so I had to make the following
-> change in my tree:
+Amazon: INV
+ChromiumOS (early): not INV
+ChromiumOS 3.16 to 3.18-revew-v2: INV
+ChromiumOS 3.18-review-v3 and later (sent to kernel.org): not INV
 
-absolutely, sc8280xp CAMCC should be also fixed in that respect.
+Link: https://github.com/amazon-oss/android_kernel_amazon_mt8135/blob/e2b2163a8ec4a7c8d961c89003a15b4ba0f0e371/arch/arm/mach-mt8135/mt_clkmgr.c#L1022-L1028
+Link: https://github.com/mtk09422/chromiumos-third_party-kernel-mediatek/blob/4b624ee66e65d5dcd43fca36b313086efae8922a/arch/arm/boot/dts/mt8135-clocks.dtsi#L944-L948
+Link: https://github.com/mtk09422/chromiumos-third_party-kernel-mediatek/blob/decd80c01d0dbe9f3afa8ff72273b5618b418180/drivers/clk/mediatek/clk-mt8135.c#L881-L882
+Link: https://github.com/mtk09422/chromiumos-third_party-kernel-mediatek/blob/9b6f06cb7637100aa1a42e1fc351b36b384a1c54/drivers/clk/mediatek/clk-mt8135.c#L450
+Fixes: a8aede794843 ("clk: mediatek: Add basic clocks for Mediatek MT8135.")
+Signed-off-by: Akari Tsuyukusa <akkun11.open@gmail.com>
+---
+ drivers/clk/mediatek/clk-mt8135.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-> 
-> diff --git a/drivers/clk/qcom/camcc-sc8280xp.c b/drivers/clk/qcom/camcc-sc8280xp.c
-> index 18f5a3eb313e1..4724ea54c5f67 100644
-> --- a/drivers/clk/qcom/camcc-sc8280xp.c
-> +++ b/drivers/clk/qcom/camcc-sc8280xp.c
-> @@ -2995,6 +2995,7 @@ static const struct qcom_cc_desc camcc_sc8280xp_desc = {
->          .num_resets = ARRAY_SIZE(camcc_sc8280xp_resets),
->          .gdscs = camcc_sc8280xp_gdscs,
->          .num_gdscs = ARRAY_SIZE(camcc_sc8280xp_gdscs),
-> +       .cc_gdsc = &titan_top_gdsc,
->   };
->   
->   static const struct of_device_id camcc_sc8280xp_match_table[] = {
-> 
-
-commenting the series I was also directed by Konrad's review comment on it.
-In addition one problem, which I immediate observe, is that camcc_sc8280xp_desc
-misses the necessary .use_rpm flag, can you please do me a favour and test
-my series plus the add-on change below?
-
-diff --git a/drivers/clk/qcom/camcc-sc8280xp.c b/drivers/clk/qcom/camcc-sc8280xp.c
-index 18f5a3eb313e..a15e9754bfb2 100644
---- a/drivers/clk/qcom/camcc-sc8280xp.c
-+++ b/drivers/clk/qcom/camcc-sc8280xp.c
-@@ -2995,6 +2995,8 @@ static const struct qcom_cc_desc camcc_sc8280xp_desc = {
-  	.num_resets = ARRAY_SIZE(camcc_sc8280xp_resets),
-  	.gdscs = camcc_sc8280xp_gdscs,
-  	.num_gdscs = ARRAY_SIZE(camcc_sc8280xp_gdscs),
-+	.use_rpm = true,
-+	.cc_gdsc = &titan_top_gdsc,
-  };
-  
-  static const struct of_device_id camcc_sc8280xp_match_table[] = {
-
-
-Anyway despite my posted series and the above change for sc8280xp resolve
-one well-established problem in the CAMCC drivers, I believe there might be
-more unresolved issues on top, which should be addressed separately.
-
+diff --git a/drivers/clk/mediatek/clk-mt8135.c b/drivers/clk/mediatek/clk-mt8135.c
+index 084e48a554c2..1d20e15608f7 100644
+--- a/drivers/clk/mediatek/clk-mt8135.c
++++ b/drivers/clk/mediatek/clk-mt8135.c
+@@ -409,6 +409,9 @@ static const struct mtk_gate_regs infra_cg_regs = {
+ 	GATE_MTK_FLAGS(_id, _name, _parent, &infra_cg_regs, _shift,	\
+ 		       &mtk_clk_gate_ops_setclr, CLK_IS_CRITICAL)
+ 
++#define GATE_ICG_INV(_id, _name, _parent, _shift)	\
++	GATE_MTK(_id, _name, _parent, &infra_cg_regs, _shift, &mtk_clk_gate_ops_setclr_inv)
++
+ static const struct mtk_gate infra_clks[] = {
+ 	GATE_DUMMY(CLK_DUMMY, "infra_dummy"),
+ 	GATE_ICG(CLK_INFRA_PMIC_WRAP, "pmic_wrap_ck", "axi_sel", 23),
+@@ -419,7 +422,7 @@ static const struct mtk_gate infra_clks[] = {
+ 	GATE_ICG(CLK_INFRA_CPUM, "cpum_ck", "cpum_tck_in", 15),
+ 	GATE_ICG_AO(CLK_INFRA_M4U, "m4u_ck", "mem_sel", 8),
+ 	GATE_ICG(CLK_INFRA_MFGAXI, "mfgaxi_ck", "axi_sel", 7),
+-	GATE_ICG(CLK_INFRA_DEVAPC, "devapc_ck", "axi_sel", 6),
++	GATE_ICG_INV(CLK_INFRA_DEVAPC, "devapc_ck", "axi_sel", 6),
+ 	GATE_ICG(CLK_INFRA_AUDIO, "audio_ck", "aud_intbus_sel", 5),
+ 	GATE_ICG(CLK_INFRA_MFG_BUS, "mfg_bus_ck", "axi_sel", 2),
+ 	GATE_ICG(CLK_INFRA_SMI, "smi_ck", "smi_sel", 1),
 -- 
-Best wishes,
-Vladimir
+2.54.0
+
