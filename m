@@ -1,178 +1,140 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CAC83B992A
-	for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2026 10:38:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782729539; cv=none; b=jtqS5fzwFazq/vAWtEaKpiFdUgidG3Hth2Xc9bwqZy+9CDXd/AlkpEt3nJCEZAZggKrcN4JiVgwws0RCqMJKqirlW4TQbgp6RoPjqfMO1jOd+ShMXJqXWrA2XwvLjm+1ZgMKxQI18KcgfuVhNcWMlhNpTle8o5Rr1GqQ0BccKtA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782729539; c=relaxed/simple;
-	bh=LrE7fbEwnME9lt1owyrkD/f+XIylRcuGgyJYKdiDMvM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XWvLDFFlBYVv74b0ZYZVFjUPWqvD+SJhVPwL46Pfo3lIwlnTRmngsx5fNfY9Sem8DBhD2nmj6HfBRCkI+WExw9fI/6/MiMPu3ja7EMy/16hRV1IU76PR9g3GEe6ru5D2qJcrMOKJYXgGenlyn8nGTkzWG4JbWHH9WCr/wTpCk8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ChuY1yxS; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=HQGqoUrk; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2EEF3B9DA9
+	for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2026 10:44:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1782729861; cv=pass; b=DpdCXWPXa1qSCaTF3EOrq2h+QuOKFM7AEOUJtluHIy8I6YXBtiK2ZeYgxmooPyG3eefYb6Rko623J29z+IzAnqxptfZ6Pfx3M/x+FyJ/df7Aw2sEmAQqcYL8fi0tE7swJ2USiU6IGMOsJg+pQXCQt1FGhbD/yGh7W2BnR0KBGSM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1782729861; c=relaxed/simple;
+	bh=iDO4j2JAZZI6/SJz0ZNmXzlln8bKUKTt/Dj4jurK9p0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XmXxy+0+t06iWeSoCzJ14qikVbnf77hZ1pnmmaWTpmQGv47TZOnfN9uyk76SK1nCmDE9cAMLaBUplTgdkc0no5ejYL+5QQaaOhiKlRqWa0SDmQNcpTTqWvYgmr1xFiLRYkfhUe/cwyyN9jfmLWycEh7zfWwWl99ADLzdLWUrA80=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vYwkTSNy; arc=pass smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ChuY1yxS";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="HQGqoUrk"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 65TAT2162618791
-	for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2026 10:38:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	0RWreAaB78HYAsqbj2HFHS8isvDnQ0YYLlkTXEXlOAU=; b=ChuY1yxSUOvRuk29
-	FEuoaA9QVruZzXPLjk6d1n/rE4QwSQQblX3J6wmDzRU9ZiKwakBmBSeIms0fUNCa
-	8tSGQTIJGmJqfzSFkLkS+MxQn4HLPJYNFtCQdSo+aUkeY9gk5iwmz1gkP/jNT+3C
-	Hp5P86epwvPhybfAVA6rdwsi3yGJuoABsp9Pf+UXce5B4ebEx7x5wu2DMMZ+N8cg
-	6rkkaN87uDxGntGx/szi3NHsoCjJLIVi8vFEp+VfHBW04OJyTuZ+EokW1LBy7t1A
-	wVKsVSUuD4eR3qJBHr13n9BrZ8HrxxP0denUU1rD5HFV3p1F59FDkb+G51G0+6v5
-	IU+wsg==
-Received: from mail-vs1-f72.google.com (mail-vs1-f72.google.com [209.85.217.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4f3pdkr5ur-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2026 10:38:57 +0000 (GMT)
-Received: by mail-vs1-f72.google.com with SMTP id ada2fe7eead31-737c728b37fso46251137.1
-        for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2026 03:38:56 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vYwkTSNy"
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-691c5776f95so5474998a12.3
+        for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2026 03:44:19 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1782729858; cv=none;
+        d=google.com; s=arc-20260327;
+        b=W3B/D0QkSUVuwU45piGiaeTe9oBzAKJUQ6I0xkLvu5a3ItkBK8qBhoMo7qkeQS7w7c
+         D08s39jrEmsEx+4BgkmruYnqm1U/qnlUL7oiUHF9qn3uFFDRiUA3pQ/xb/Y2zDnkzoqC
+         Zvuhhml6AOtAgqb7fr7vxKuA0I/4sZViNLfZaRTORnf6atRt1nIv195LUMLkWD4V7Qt4
+         1aj/akwNdxYOwcyQkgBDeYKAv3vcJXBuM5TO2Mv+KCfiEgeiLc7L+hUNh+nw/N5dFRX3
+         Bdq6SVoZjpy0Y7QPKvXdG62Ga4tBWMGrYZ6YhcFZ4MxIyY5FNfWMTeXTNtvVep8rMs4S
+         zpLg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=wmnqsRJKYkgjvaCA1bs99cASP2GQp3sADe+ZeD2I3KY=;
+        fh=plPJnHZmVbGfqRwn70JQABBYLU/fxa1ucVk2lXAgvRk=;
+        b=dNsRat0ZCyUIeTKdYTR7hd3ux/bH+Br+A647Z0HEIdA8d6QTSaJOXxyLK1dO+vSkcO
+         u1pLnWBJD5fcDsuAoFeBQj2Zxkc0CODVZ7bSJVDdl8tW/7x5zDy5ibKSw4n+QzaEz/Tr
+         2MR6Rke9NOUiWZul5YBW2qB8J9S2fts4xFcBrLijxjJagjFZ5ayVQhKqj591HLSYwpv3
+         Pu/8I40XwmjTkvhaqwgMYW9FBvQASvon5mdMVjYS3V8dHSh6MNsBajeoHVonEgXpQCas
+         iiCn/hpW5CR/4VWEEx3qriqiGD4WFSKi0vdGryIgvlkpkPGF1sigmkKaSJO6RV0Khmyn
+         pTkg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1782729536; x=1783334336; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=0RWreAaB78HYAsqbj2HFHS8isvDnQ0YYLlkTXEXlOAU=;
-        b=HQGqoUrkaxNTzGJ/V95q5AsO0uvCzyeZYPldYZl+RrzT3F2bSjtcNcuAcdyOhrIYR7
-         D3meodJmFt1BCKoU/ym8olaXxUXLCZKwTcD8L0edTNKhD1XztkvrlSADmKYx9/H5Nliq
-         GH47LOhXRUcN9Mkw/yraRdPjMo6fruIPQ3iBGkuNyYjB1lCrkRl/HV7XMFoF8bSH7HrZ
-         bvsknIQ9biuJDD+EPNPTysvqjcUV9NQwPETR9XSmKPuk4RXftxBrs+ddsFVfohphzGy5
-         pXnL4c4wPq5XG144Bxtwc/ZcSdyZYu8GycH+HdT1HXVs6ehAYz2XcYU0xCBgwe62XwSP
-         TanA==
+        d=linaro.org; s=google; t=1782729858; x=1783334658; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=wmnqsRJKYkgjvaCA1bs99cASP2GQp3sADe+ZeD2I3KY=;
+        b=vYwkTSNydHDJMWhbVKWp3I0A/xVS9T1wUnB7DRi8/z1KJKysqwd0m+tNU6a7mIqter
+         81qyJTlFztmPfCOU08vBZ6TLf3KmdjYKvrh0PNSfr2FVMEpPBlvHSPjAII0F5FhongtE
+         lCLvfP+yYvcQ+KyYst5BxA5MVAeuPx9EIorhQD0rwKrduR/aEKB9/0Bjuwstj8EjVETg
+         I/vsZOnVgQxYvnhMPv0MG6WoNRUdo+TS/wTgAxNxH6TalLxH7uZsaLJ+aajCSxXgfwg+
+         htXJAluBwnzF5sQed2QkKuHsFWARL6sy1lD2FpKWCc3OYlGND1J/Swh3ME7e4cXGLQ85
+         8kKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782729536; x=1783334336;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=0RWreAaB78HYAsqbj2HFHS8isvDnQ0YYLlkTXEXlOAU=;
-        b=f2sWpw6VmtbrN154gvL39Z49j3m+OMkd7Cvnuo5a/qvLO01SyijrwEaBBWg5TuFflF
-         EXeVrfZSJF1FLclBcYwUP6q2QFwN0JiTLkJqaivOYLoxhNlBQ4TERcuYgoFLTASU54mE
-         AuJAeX7zUTIo3OljlpkdMHT8dlwi7iIUCDYlx7WSD41ltbsP9XeKmqC6LZNHVtwn0OHA
-         3IOjFsWTEJwijGO+lh/PdQOL6y75QjE9RHUp2LDdnB31Z+liqb3M5zxnHDQNUMZJQN/y
-         9czetTrclkK55llEikoOubq8LUWb3iwooCqXGA1XgzpZKz69HDviWYyEMiHEpManxyLG
-         MCxA==
-X-Forwarded-Encrypted: i=1; AHgh+RqD78ndoxisPZ6FAAXe0b+2PspqKHj61lT60B1wQLNXpx66ySZE1ljbKczr3+rq+wqah6Y5iVN5zdQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUGMcVv/XOZw05LGeqo74N7dBsH7dGsIKSQXoeWNktNeqxoNCm
-	CGSvm39JR4grYOOGxvz6DvIdN83q51M8/TkYiO4nhKWhl9gXzWRQUy9wyVsUVvINqf1COsFOmhr
-	vNa0wX+53PVlINbiCCXTSLWUKFVjQHwVbTaajRLuQ24ta8sEa0D4t6EAoLysyNrI=
-X-Gm-Gg: AfdE7clPjE2d8xJh0wqOXLWm6fOZ4vYwJg4XdspkYx2fJ8Y7XanxyoFlXjgvaVLGS9k
-	MiDqlmKqNFXgiI/49GsE+EuxsATHmWANcWalhFpF/ty03So27zNZ7XH6y9Oc0T84wPQSR/tdRcK
-	mVnJjGk3KRSLhdweciENxv1Lg16+bmUqiQyN6aQzh4T47a8e9vOIKwv4TgMHGNHz63KVusgVPJF
-	Eje4anFNmHLcO8lDx8MWo/89U3MmOyyU1Co0cYMz47vty7hDy7KsoftEPbXcOxKa5HEr+ClVva/
-	Pk8yX2KBGc1rhg/1ysUZ5w0Ht9qpSlI81/bUwYpFtJBFlVB4oZlQu94/cGNn3wmLzwOC/lbCT6w
-	Hd7Y9E/a8eFyPzah2WSN1xYMhL5at8vGRNX4=
-X-Received: by 2002:a05:6102:8099:b0:738:1ef6:51b6 with SMTP id ada2fe7eead31-7381ef65da6mr557579137.5.1782729536378;
-        Mon, 29 Jun 2026 03:38:56 -0700 (PDT)
-X-Received: by 2002:a05:6102:8099:b0:738:1ef6:51b6 with SMTP id ada2fe7eead31-7381ef65da6mr557574137.5.1782729535994;
-        Mon, 29 Jun 2026 03:38:55 -0700 (PDT)
-Received: from [192.168.120.170] ([178.235.128.140])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-69870eac1f5sm621852a12.2.2026.06.29.03.38.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Jun 2026 03:38:55 -0700 (PDT)
-Message-ID: <b8e0711b-1e02-4860-b80c-bc99757181cf@oss.qualcomm.com>
-Date: Mon, 29 Jun 2026 12:38:52 +0200
+        d=1e100.net; s=20251104; t=1782729858; x=1783334658;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wmnqsRJKYkgjvaCA1bs99cASP2GQp3sADe+ZeD2I3KY=;
+        b=mADgIV4nFev5dxomLpECf9fE0Z8qe7uZkS373Rll8w8ueC/8TGQ5gTeM7gPVmwmHOM
+         mN4YoJRd6iqjq2N2GUmA22/JSARzH/XfgFxOFOgY7RtdGFJnnONnI0Z+rIp2LCJf6KaB
+         tD6ZxJ3ifzR9X+X4apuvBqADGvQxEdhNDKtHgXbTYExQiOwLlNUWcZdA66h3P3o5E03J
+         m1fOMeuR7vDBJkzr3GPaFUqFGbpuHm9XyfX2sNsGjEcV/rNHg2/VRYqWVgsUmviS8TXG
+         mKQNox7yWPZPBV7rpk736Uz0pbjy3K+hKhDAYyMcR3VdmGuGaAlacNM0yA02QdCsikzl
+         6tbQ==
+X-Forwarded-Encrypted: i=1; AHgh+Rqdu7gjux5esoND/Qs2Ry24UHUVlmDQeZgMgHCR4/Q9la4rE7G9LqV9xQX8LY5/v0/Ikph02+U03GU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6+RAGpacIAshQFroQ8k1AjIBAz+c520KGHr3ybl/g6P5jJd8c
+	plJ+OnG0GEetCMfzARf5RhDnHjMANgcPMXoMDqgVYfR4QWdZ5wLqvmDmePBRhezqmFa08sqFhz5
+	4bhYfUdaFPHDO+nCR+hvImAERECfzYclgySO5fManxQ==
+X-Gm-Gg: AfdE7ckMmiGWONj6oq5vSVhNumNR5Z1B+kI/q+1lvPWZpdd6bQ1hHNcj+vV1Y0R3uwZ
+	Jr5XCPETwxE6jSUsRHxUtgsshvAVG7WIzwZpKsNLqylwBYOqarc3IQbT9tXbLtwHuhd4s6PqN5k
+	X34LjG/vhyMXzdCjq8V6IG6klWsRyAChpshxR5RqE0jM+zkKu5PeIEC51+tbikizOPvUlSQIzsN
+	8+DYwKM0iHw0kLqANWB6X5ORZoegAxEHFLBxRRFr8osqeY/2jAOvNJDTikPnhgVqF+sES38hzfo
+	gPl8orNjC37SbDoUTBOny9RTl/skxg==
+X-Received: by 2002:a05:6402:400d:b0:697:8d48:7fa7 with SMTP id
+ 4fb4d7f45d1cf-69810ae01c2mr5980595a12.22.1782729858308; Mon, 29 Jun 2026
+ 03:44:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 6/8] arm64: dts: qcom: glymur: Add QREF regulator
- supplies to TCSR
-To: Qiang Yu <qiang.yu@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Taniya Das
- <taniya.das@oss.qualcomm.com>,
-        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, krishna.chundru@oss.qualcomm.com
-References: <20260621-tcsr_qref_0622-v6-0-c939c22ded0c@oss.qualcomm.com>
- <20260621-tcsr_qref_0622-v6-6-c939c22ded0c@oss.qualcomm.com>
- <314bab03-5f19-4954-9ad6-fe14d429ff5a@oss.qualcomm.com>
- <ajk3opFNCQYrnwiA@hu-qianyu-lv.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <ajk3opFNCQYrnwiA@hu-qianyu-lv.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=R8Uz39RX c=1 sm=1 tr=0 ts=6a424b41 cx=c_pps
- a=DUEm7b3gzWu7BqY5nP7+9g==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
- a=IkcTkHD0fZMA:10 a=FelO9ux0wxsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=rJkE3RaqiGZ5pbrm-msn:22
- a=EUspDBNiAAAA:8 a=kbzcBev-Ug5g7ovxFVgA:9 a=QEXdDO2ut3YA:10
- a=-aSRE8QhW-JAV6biHavz:22
-X-Proofpoint-GUID: UAVnhMJSX5ORkaghaxrsts0SmgaqT6-W
-X-Proofpoint-ORIG-GUID: UAVnhMJSX5ORkaghaxrsts0SmgaqT6-W
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjI5MDA4NiBTYWx0ZWRfX1gsyyZpmZSSA
- dxfO59PgbTcud1/mXA8beSD2BMUBkhshdnHkWjR2lvlm/KN0sptPKFJKfVC+QBsdHF0GJzUTqR5
- bIx/f6+2quT9NWPO6aPTwzLfkDGdTIIxXgtCvxuIApGhqVzJU1OAKh9OuHB7D3PP+SjjMG/bGi1
- JdUEfYewT4F/Z8YxGD2jhyV/Gjz8lNVsVC9Xn2XWiRbwMHwrMdIPLtnz7G4Hq8XsU6hLxrdVk2K
- 9W/uwzqaaiFXOhB9i+FQK+h8HIJOhjDDTpoxMAJ5XlA6V10r+lxi4qAWKP5W9cLviZ43zdB1Jjz
- dFNtkE/wNuEwgHrbPOGNwez8N1cDrfwCvu3pMeYnXKDC6+Xc0Vp91ltY6ySjbWwga62y9JRK2Fh
- ew+QjYH5C8+3TTVqUpFgK17Tc2tw+eP7qr+pJbzucB+/dggtAq9wJa3Gmipd1UlRy+21VwjOOv+
- YUB7YENu3ZrdEpFMbZQ==
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNjI5MDA4NiBTYWx0ZWRfXzzo3qLQ6GSzS
- F1YRmjVO9KCEhvcYpxj5JxlfeYQjjpbBm5GHaww28i6CIepMcvc6BP/UrsGuSFAS5GkWstNHLRh
- ClaVzL/hn2n4p4FO0P56llLrWSRMi/8=
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
- definitions=2026-06-29_03,2026-06-26_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 phishscore=0 clxscore=1015 lowpriorityscore=0 adultscore=0
- priorityscore=1501 impostorscore=0 suspectscore=0 malwarescore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2606290086
+References: <20260613-exynos990-peris-fix-v3-v3-0-2b230db78ae4@gmail.com> <20260613-exynos990-peris-fix-v3-v3-2-2b230db78ae4@gmail.com>
+In-Reply-To: <20260613-exynos990-peris-fix-v3-v3-2-2b230db78ae4@gmail.com>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Mon, 29 Jun 2026 11:44:05 +0100
+X-Gm-Features: AVVi8CdUhgADG2xSK96hAWTQ9tVWRhtK6fekJr5xsrWPfeyuxnqLTd7JZu91VDg
+Message-ID: <CADrjBPrCKS-_FSFaL+124cdRioGOEvk+6HFfrJCGt7HB983rGw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/3] clk: samsung: exynos990: Add PERIS TMU_SUB_PCLK gate
+To: Denzeel Oliva <wachiturroxd150@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney@redhat.com>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 6/22/26 3:24 PM, Qiang Yu wrote:
-> On Mon, Jun 22, 2026 at 02:16:45PM +0200, Konrad Dybcio wrote:
->> On 6/22/26 7:11 AM, Qiang Yu wrote:
->>> The TCSR clkref_en clocks gate the QREF block which provides reference
->>> clocks to the PCIe PHYs. Wire up the LDO supplies required by the QREF
->>> and refgen blocks on the CRD board.
->>>
->>> Signed-off-by: Qiang Yu <qiang.yu@oss.qualcomm.com>
->>> ---
->>>  arch/arm64/boot/dts/qcom/glymur-crd.dts | 20 ++++++++++++++++++++
->>>  1 file changed, 20 insertions(+)
->>>
->>> diff --git a/arch/arm64/boot/dts/qcom/glymur-crd.dts b/arch/arm64/boot/dts/qcom/glymur-crd.dts
->>> index c98dfb3941fa..92b929ee3448 100644
->>> --- a/arch/arm64/boot/dts/qcom/glymur-crd.dts
->>> +++ b/arch/arm64/boot/dts/qcom/glymur-crd.dts
->>> @@ -278,6 +278,26 @@ &smb2370_k_e2_eusb2_repeater {
->>>  	vdd3-supply = <&vreg_l7b_e0_2p79>;
->>>  };
->>>  
->>> +&tcsr {
->>> +	vdda-qrefrpt0-0p9-supply = <&vreg_l2f_e1_0p83>;
->>> +	vdda-qrefrpt1-0p9-supply = <&vreg_l2f_e1_0p83>;
->>> +	vdda-qrefrpt2-0p9-supply = <&vreg_l2f_e1_0p83>;
->>> +	vdda-qrefrpt3-0p9-supply = <&vreg_l2h_e0_0p72>;
->>
->> l2c_e0
-> 
-> For COB, it is l2h_e0. L2c_e0 is used in SIP.
+On Sat, 13 Jun 2026 at 13:36, Denzeel Oliva <wachiturroxd150@gmail.com> wrote:
+>
+> Add the missing CLK_GOUT_PERIS_TMU_SUB_PCLK gate clock for the Thermal
+> Management Unit sub-block and update CLKS_NR_PERIS accordingly.
+>
+> Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
+> ---
 
-Right, ipcat fails to make a distinction, but schematics agree..
+Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-
-Konrad
+>  drivers/clk/samsung/clk-exynos990.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/samsung/clk-exynos990.c b/drivers/clk/samsung/clk-exynos990.c
+> index 4385c3b76dd6..ee3566b8e57c 100644
+> --- a/drivers/clk/samsung/clk-exynos990.c
+> +++ b/drivers/clk/samsung/clk-exynos990.c
+> @@ -21,7 +21,7 @@
+>  #define CLKS_NR_HSI0 (CLK_GOUT_HSI0_LHS_ACEL_D_HSI0_CLK + 1)
+>  #define CLKS_NR_PERIC0 (CLK_GOUT_PERIC0_SYSREG_PCLK + 1)
+>  #define CLKS_NR_PERIC1 (CLK_GOUT_PERIC1_XIU_P_ACLK + 1)
+> -#define CLKS_NR_PERIS (CLK_GOUT_PERIS_OTP_CON_TOP_OSCCLK + 1)
+> +#define CLKS_NR_PERIS (CLK_GOUT_PERIS_TMU_SUB_PCLK + 1)
+>
+>  /* ---- CMU_TOP ------------------------------------------------------------- */
+>
+> @@ -2619,6 +2619,10 @@ static const struct samsung_gate_clock peris_gate_clks[] __initconst = {
+>              "gout_peris_d_tzpc_peris_pclk", "mout_peris_bus_user",
+>              CLK_CON_GAT_GOUT_BLK_PERIS_UID_D_TZPC_PERIS_IPCLKPORT_PCLK,
+>              21, 0, 0),
+> +       GATE(CLK_GOUT_PERIS_TMU_SUB_PCLK,
+> +            "gout_peris_tmu_sub_pclk", "mout_peris_bus_user",
+> +            CLK_CON_GAT_GOUT_BLK_PERIS_UID_TMU_SUB_IPCLKPORT_PCLK,
+> +            21, 0, 0),
+>         GATE(CLK_GOUT_PERIS_TMU_TOP_PCLK,
+>              "gout_peris_tmu_top_pclk", "mout_peris_clk_peris_gic",
+>              CLK_CON_GAT_GOUT_BLK_PERIS_UID_TMU_TOP_IPCLKPORT_PCLK,
+>
+> --
+> 2.54.0
+>
