@@ -1,216 +1,310 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2A0343C04C
-	for <linux-clk@vger.kernel.org>; Tue, 30 Jun 2026 14:37:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5008634AB1D;
+	Tue, 30 Jun 2026 14:55:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782830239; cv=none; b=LxwtCoGyxPrlTXjYrW4zR+fPZOkwO06OrV1z4nlUPcflT+Mm0y0mHcfGE/Ne3+bdrB3csFAqO5k65imOtuOwGEHCFnJSH0NU5v1uTXdX3Uhu6BwnQk5Uf+Uw2WJpzminKC3zTbSUhSesE4Z715HeQ7EDtWnKZAcA3ndwjb0VP98=
+	t=1782831308; cv=none; b=UKNHSkhfvVdW4QcqlEq3zOYZh9N38uF8W6rm19MvFRx37BXCFdzPWz4ApYnKvwMNuTuG2aTLR4rQBVEKjVloz0kGOwYeBessBgWefGEvVCTjGqBlb9ShHfmKZGsLQJShVPSA1nE4YF/JDuCdizrVw2JSl3MM22RqmyrsvJVKg/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782830239; c=relaxed/simple;
-	bh=VJkPOlo31BaH5cqVAnma8Jzets8wHIHf0hQnL3y1Yls=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I7DNYbEnwKQZ8CiXkmY8cGwStK1/ch4mkr6DbygNdxQhPcZ3jo4LXtgBzqIbVGoX8oBv/b3HgswkNoOa8nX1+oLJLTc9WO/YculSV3UZM99DaopnUIPo8oyMGsGNkfEUfRvHt0SmQlmOjsJ+fyTFYTkNeHDD4rYRARNMvmapE1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=lVMMHtM8; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=K/Vg4rS1; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1782831308; c=relaxed/simple;
+	bh=awFFWtgVL1TAG14f5CYmC0LELd9S2Tl5LSXPyhVTyk4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oyIJpDoQKKpjjqj09D4H79EaCquVfqrWkWNziM3T6imsZqqv7nUm3ryZeXvEoZcEdbEg9ZYcdXytzXzclGU8pbcZdPcvlUKhZpx7X/yyGshMpT5sPo42YuC9/LksxWRw/4D3ToURIldYXYHxTJU+yMEFihDIhr5ENy5lhdkfWL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oKfVzFZ6; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="lVMMHtM8";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="K/Vg4rS1"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 65UEDR062225666
-	for <linux-clk@vger.kernel.org>; Tue, 30 Jun 2026 14:37:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Bh8SlCTfNpOE7sOPuwSI5J0e39QVe4ueR4PAofbIuas=; b=lVMMHtM8FRGe+Laf
-	ihUgoub3OjXSvAFK4payLgH0Gz8MVxGvsr6yhg5s6f+Q0Duf0GHLSCBm9k4Fle4+
-	7WRrwJDo9cKtNt7rPQ+75uu08Js5kDQ2NjUxMgKIVM54ew8Ig6ZpEx+wTr4BUxjK
-	/AfG4RbWuJeWm/J3Ve6GfFtEzXlohIHJpR33bdfPgWRhP6JHZ9Ojo/04yXhe7l61
-	1fMFbW9sx51LqubHB0lwD6nkqRqoQGeygQpX/AgWy6EyNII+2fKSXR80RoSY9hb8
-	Ls3T12v8NREsVzDoDHyRkAjkckNBxxj63/z1j19Qg9FdE557dpyx1WqXxlkmUe42
-	+N3Ntg==
-Received: from mail-vk1-f200.google.com (mail-vk1-f200.google.com [209.85.221.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4f441gu54e-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Tue, 30 Jun 2026 14:37:17 +0000 (GMT)
-Received: by mail-vk1-f200.google.com with SMTP id 71dfb90a1353d-5bd91d5907fso117662e0c.3
-        for <linux-clk@vger.kernel.org>; Tue, 30 Jun 2026 07:37:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1782830236; x=1783435036; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=Bh8SlCTfNpOE7sOPuwSI5J0e39QVe4ueR4PAofbIuas=;
-        b=K/Vg4rS1BMSLb+7PH6EjqWnoDV4IavjU+pqlJj65rUDs8SNL8Lf6kPXzQgLGYiIOc1
-         3MNtAB/l8wVU5Zam6fSLIQWo/WG9Es+YZstJPmbkPQT62vSLiYcQk6Tui4cNi1Xq0vFQ
-         cWbCKG7g9RE8jqbFDdMzGVyaca82NBEueadZo6VYYw2RE9ie9Fp0wqWRy9+9Xbq1QcGv
-         ynTiP4DCEwMZgKxdsJ+ADiJz8M9WZ/NndZtZ28D92FvQ7Z4HBdw8EgvobK65Gkyy1uw1
-         IKC2evKojCe3NnvgZ2wJ3HbOuhD9rIIrYuzOQwyYjAnXz21f8lT81RMwV1VW+I3ptqFi
-         TrSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782830236; x=1783435036;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=Bh8SlCTfNpOE7sOPuwSI5J0e39QVe4ueR4PAofbIuas=;
-        b=m32N6canQsk8fgR/tgtUwj4IJoy0iveOkB+FF3PONgzTjrEcUM9xCglqRhbUKnK5qk
-         Z7eMNS8ZHVUtI3d1wscAHRnPgM47jDS5+NqxOQPAo4SgFRpECFcIhpe8y58Il5mqJmzC
-         tztNPPY4wGgRbCKsSUPzKsaC/rGQto2Ybk6HyJgK52oT5rliIscjji9GH/Pe3FYidJiq
-         274RLW3vSXnQWQDXhtsqTzEmRqhcZAA1kCIDj//OmX8FHrysPUW91UNHtHInKnorxNKf
-         9MViBGXtR4bwrUzqCMNSXUPriQeiUo0HT4mpjKBLiTQ5KHDBnoMMEkrjSwIuCkxAXF9w
-         LFww==
-X-Forwarded-Encrypted: i=1; AHgh+RoJefQfbyZpDSKP4fcAnhW2sHNU6JMAlQq9bCplkf+CRCO1XOmKMFvsS3YpeRdhhButy7hI/PO+tqY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyz3awb0bUwovamdtgQpcVHsciDErbUAIpeGLeIjxnMDRI7kXTd
-	qP+9PIFEqCo7Idgl+mywpdCl7yaw9E/4kjU6mtAISyt9fQfmfVA4FjOVo+KlEfAVxaCQ8QHEbGQ
-	exqzbjkAaniHZtQFQdG3qtbE5laa53sFiHRB5sNaclI7bHXVZr0oi0t8McGYUOoU=
-X-Gm-Gg: AfdE7cn+cjdoaA2jLhPchG9aZoWaUoJznp6yv2XSO7KZLO5zZyZbq7dB1gvzDlKM5b6
-	TZRytgPHo2+7IcnrZE1LaAnAdGkRXxWVMoADo9iF0yvXsTLolwL5rc9Vvw2CWcD3P11nmlNklQu
-	3ni3WZDx/HDH3GHWsrQ7wvaVhH3xPFPN7tcKbQcnxlLPuTCqhgx+1uGtJOUIB90uso6spSrzI2d
-	KHrJVzUUAkzBazhqDkeB5rHnteiNWok3MRyJprPDOsGgwIaRlVtDpxWtR1IavbNlvZqj0H4I1I0
-	5006C8GAr7ws1uyB3MzzlAFb2cCF+aoT93yAkzcC61P2ifIjNvzllVXZxn0JG8Z7oNQnKZi0XBG
-	jRYOtD6vO2DSHlzQ/7FgHD9p4exVD4HFpIi4=
-X-Received: by 2002:a05:6102:6448:b0:737:9003:ac52 with SMTP id ada2fe7eead31-73a333d61b9mr637521137.0.1782830236055;
-        Tue, 30 Jun 2026 07:37:16 -0700 (PDT)
-X-Received: by 2002:a05:6102:6448:b0:737:9003:ac52 with SMTP id ada2fe7eead31-73a333d61b9mr637518137.0.1782830235630;
-        Tue, 30 Jun 2026 07:37:15 -0700 (PDT)
-Received: from [192.168.120.170] ([178.235.128.140])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6987c93cbf8sm1373390a12.17.2026.06.30.07.37.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Jun 2026 07:37:14 -0700 (PDT)
-Message-ID: <798d2516-0772-4f98-8fad-959a1daf71bc@oss.qualcomm.com>
-Date: Tue, 30 Jun 2026 16:37:12 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oKfVzFZ6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73DB41F00A3E;
+	Tue, 30 Jun 2026 14:54:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1782831307;
+	bh=FrOy3rj9ErYPsJBF3jjZifi/JmWhngje4d+c3PkjfiI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=oKfVzFZ6b/XSsHTT24iTlGuILVTem1fiPHNzbqfkkfEvgofuYcLnT0ZBgbClmJSyU
+	 1Lje1eKxqCR4srhyHKb8b43TaGt/wOdQZXmv9MCfqI/QaKY0Sm3heWK7BVrIeOZDzf
+	 P2zz/ZVNqH0yjYGkLQQLLiGvp654MVGM2V4RrpCvRDYfrZqeDqSFpN1iBK/jQBipio
+	 GzOMvwzGE77O+3r4MhfmAyJvycRC+cbAkpZPfltFgLx+L3FcsZRkJbecwAdR5VffFu
+	 7XRMQ3++8oaFXaRC4M35PtNbbbb3CmOuL7Rrw8sLRlduulgMHMNmiiOglxx3k9yzNS
+	 XQhqm13RH8Dug==
+Date: Tue, 30 Jun 2026 16:54:52 +0200
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Ryder Lee <ryder.lee@mediatek.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney@redhat.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Jianjun Wang <jianjun.wang@mediatek.com>, 
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 3/4] dt-bindings: PCI: mediatek-gen3: Split Airoha
+ schema and document 2-lanes
+Message-ID: <alqqddz52csz4pcbiilfca7a47x6jsazf2um4ydwiqq6ejrgz4@4qhkbj4k5i5s>
+References: <20260627121450.3529133-1-ansuelsmth@gmail.com>
+ <20260627121450.3529133-4-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: qcom: dispcc-sc8280xp: remove CLK_SET_RATE_PARENT
- from byte_div_clk_src dividers
-To: Brian Masney <bmasney@redhat.com>
-Cc: Pengyu Luo <mitltlatltl@gmail.com>,
-        Bjorn Andersson
- <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Dmitry Baryshkov <lumag@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        White Lewis <liu224806@gmail.com>, Maxime Ripard <mripard@kernel.org>
-References: <20260303115550.9279-1-mitltlatltl@gmail.com>
- <d2cdaa7e-1a17-4e6b-879d-266844958410@oss.qualcomm.com>
- <aahGtIkxtNPeeWKc@redhat.com>
- <CAH2e8h5oHvaADPgE_GdPQsWrU00XUT1d0ktbE25ztMeBEE51Yw@mail.gmail.com>
- <CABx5tqJ_spoZrhX7n91rTOaMcp1G_n8jB5aJV-rNbSPYZBZxEA@mail.gmail.com>
- <abRBT4niX2CB9XVR@redhat.com>
- <22a469ef-0a25-48f6-bdc7-95ae5541e834@oss.qualcomm.com>
- <CABx5tqK3MymYQZ4owofnzFLnjt+96njw5RG2Vwxo7UJ93A-42g@mail.gmail.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <CABx5tqK3MymYQZ4owofnzFLnjt+96njw5RG2Vwxo7UJ93A-42g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNjMwMDEzNyBTYWx0ZWRfX7i3P53B0aL7E
- 9M16fSvwHESh8/WmFs1sVV6FBMwF0tje0Dt8cjd+MHWRHAJPeslw/apLbn3+qvvAP8UIHRF8OhD
- y05p/peS058t58vj8uQ0NUWUAEH7dcE=
-X-Proofpoint-ORIG-GUID: k3KUWuvPyYTVo-drLi3VsXEbhsSx3Bay
-X-Authority-Analysis: v=2.4 cv=F8dnsKhN c=1 sm=1 tr=0 ts=6a43d49d cx=c_pps
- a=wuOIiItHwq1biOnFUQQHKA==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
- a=IkcTkHD0fZMA:10 a=FelO9ux0wxsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22
- a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=pGLkceISAAAA:8 a=20KFwNOVAAAA:8
- a=vTfNKC5RNyR7SVgzpBIA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=XD7yVLdPMpWraOa8Un9W:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjMwMDEzNyBTYWx0ZWRfX4FqmCOs/u+C6
- +W2ZWH7/b+uuxrByALOjqs7LtU7HbQijCQbrLCa0ZHu7gg1iaeDS4g6SiQ8pstzEUb6HZsB0rez
- cTmAOXMM3Y19LYRXkctAeEfeCjrmg7+uK9AOdTecmcAKqdwVwMdZWIIXOMDuW9L5Vw/ijVqhYws
- Hg92aOVeS0N4IibLBH5zheHH3qxSAMnLfLzJbUrANEfiC7YS1y1TD+GZPsvaBsnfrdEPvLa8J/s
- 7gVmlUZV/UP6ypuHJVnhCzYmUaIeVkhkH4f2WSnA0pOp6s/R/hApQ5j/u4Ss7eu1l+rV/VBywTR
- GGi8g7mMNb/qjzdPR15/ZEMOwnMqGdCM+8FKjZCct+SIPNSCqIisMvxJi2gMVxu1HCMyUQkx4QD
- tY0LiWZTI8GL3E+0YR2wWXBIpfCbetkH8shyLVrR3GrPj+Iwzjh8G1/9g+woG/116nb689KNwmp
- W6KmesOYQ9ZhEzZJr7A==
-X-Proofpoint-GUID: k3KUWuvPyYTVo-drLi3VsXEbhsSx3Bay
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
- definitions=2026-06-30_04,2026-06-26_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 priorityscore=1501 suspectscore=0 clxscore=1015
- impostorscore=0 phishscore=0 spamscore=0 bulkscore=0 lowpriorityscore=0
- adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
- definitions=main-2606300137
+In-Reply-To: <20260627121450.3529133-4-ansuelsmth@gmail.com>
 
-On 3/23/26 5:07 PM, Brian Masney wrote:
-> Hi Konrad,
+On Sat, Jun 27, 2026 at 02:14:44PM +0200, Christian Marangi wrote:
+> To permit proper documentation of required property to support PCIe
+> configured for 2-lanes mode, split the Airoha schema part from the
+> mediatek-gen3 schema to a dedicated schema.
 > 
-> On Mon, Mar 23, 2026 at 8:48 AM Konrad Dybcio
-> <konrad.dybcio@oss.qualcomm.com> wrote:
->> On 3/13/26 5:54 PM, Brian Masney wrote:
->>> On Fri, Mar 06, 2026 at 06:27:20PM -0500, Brian Masney wrote:
->>>> On Wed, Mar 4, 2026 at 10:08 AM Pengyu Luo <mitltlatltl@gmail.com> wrote:
->>>>> On Wed, Mar 4, 2026 at 10:50 PM Brian Masney <bmasney@redhat.com> wrote:
->>>>>> On Tue, Mar 03, 2026 at 01:10:43PM +0100, Konrad Dybcio wrote:
->>>>>>> On 3/3/26 12:55 PM, Pengyu Luo wrote:
->>
->> [...]
->>
->>> Ignore my previous patch set. In my v6 that I just posted, I updated
->>> clk-divider.c to support the new v2 clk negotiation logic. The
->>> clk_regmap_div_ops uses this driver, so you shouldn't have to make any
->>> code changes.
->>>
->>> Anyways, would someone from Qualcomm be willing to test this? The
->>> procedure is fairly simple:
->>
->> Unfortunately, I don't think it's easy to get your hands on a 8280
->> device with DSI.. maybe Pengyu could test that on his tablet/laptop.
+> A PCIe configured for 2-lanes mode require an additional reg for the
+> secondary PCIe to be configured and the airoha,scu phandle to correctly
+> configure the PCIe MUX.
 > 
-> It doesn't have to be an 8280 SoC. It could be any device that has the
-> issue where the parent rate change screws up that portion of the clock
-> tree, and crashes the device. This has been a long-standing issue in
-> the clk framework.  I know you recently posted a series for 5 other
-> SoCs with a similar change [1], so any of those other devices should
-> work as well.
+> Rework the mediatek-gen3 schema to drop any redundant constraint previsouly
+> introduced for Airoha PCIe properties.
 > 
-> [1] https://lore.kernel.org/linux-arm-msm/20260304-topic-dsi_byte_fixup-v1-0-b79b29f83176@oss.qualcomm.com/
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> ---
+>  .../bindings/pci/airoha,en7581-pcie.yaml      | 251 ++++++++++++++++++
+>  .../bindings/pci/mediatek-pcie-gen3.yaml      |  77 +-----
+>  2 files changed, 256 insertions(+), 72 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/pci/airoha,en7581-pcie.yaml
 > 
-> The kunit tests in my clk scaling patch set demonstrate the issues
-> that I have worked on. For example, in my test scenario, I start with
-> a parent, and two children. The parent can do any rate. The two
-> children are simple dividers. This is the current behavior today:
-> 
->         KUNIT_ASSERT_EQ(test, clk_get_rate(ctx->parent_clk), 24 * HZ_PER_MHZ);
->         KUNIT_ASSERT_EQ(test, clk_get_rate(ctx->child1_clk), 24 * HZ_PER_MHZ);
->         KUNIT_ASSERT_EQ(test, clk_get_rate(ctx->child2_clk), 24 * HZ_PER_MHZ);
-> 
->         ret = clk_set_rate(ctx->child1_clk, 32 * HZ_PER_MHZ);
-> 
->         /*
->          * The last sibling rate change is the one that was successful, and
->          * wins. The parent, and two children are all changed to 32 MHz.
->          */
->         KUNIT_EXPECT_EQ(test, clk_get_rate(ctx->parent_clk), 32 * HZ_PER_MHZ);
->         KUNIT_EXPECT_EQ(test, clk_get_rate(ctx->child1_clk), 32 * HZ_PER_MHZ);
->         KUNIT_EXPECT_EQ(test, clk_get_rate(ctx->child2_clk), 32 * HZ_PER_MHZ);
-> 
-> With my changes, the clk framework will land on 96 MHz for the parent,
-> and 24 MHz and 32 MHz for the two children.
-> 
-> Anyways, it would be great if someone from Qualcomm would be willing
-> to help me test my changes on real hardware. If it requires code
-> changes to a specific clk provider, then I'm willing to also do that
-> work if someone can test for me. Getting confirmation that this is
-> fixed on real hardware will help to land my series that will provide a
-> solution to this problem that has existing in the clk framework since
-> it was introduced over 12 years ago.
+> diff --git a/Documentation/devicetree/bindings/pci/airoha,en7581-pcie.yaml b/Documentation/devicetree/bindings/pci/airoha,en7581-pcie.yaml
+> new file mode 100644
+> index 000000000000..c690ba7f207c
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pci/airoha,en7581-pcie.yaml
+> @@ -0,0 +1,251 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pci/airoha,en7581-pcie.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Gen3 PCIe controller on Airoha SoCs
+> +
+> +maintainers:
+> +  - Christian Marangi <ansuelsmth@gmail.com>
+> +
+> +description: |+
+> +  PCIe Gen3 MAC controller for Airoha SoCs, it supports Gen3 speed
+> +  and compatible with Gen2, Gen1 speed.
+> +
+> +  This PCIe controller supports up to 256 MSI vectors, the MSI hardware
+> +  block diagram is as follows:
+> +
+> +                    +-----+
+> +                    | GIC |
+> +                    +-----+
+> +                       ^
+> +                       |
+> +                   port->irq
+> +                       |
+> +               +-+-+-+-+-+-+-+-+
+> +               |0|1|2|3|4|5|6|7| (PCIe intc)
+> +               +-+-+-+-+-+-+-+-+
+> +                ^ ^           ^
+> +                | |    ...    |
+> +        +-------+ +------+    +-----------+
+> +        |                |                |
+> +  +-+-+---+--+--+  +-+-+---+--+--+  +-+-+---+--+--+
+> +  |0|1|...|30|31|  |0|1|...|30|31|  |0|1|...|30|31| (MSI sets)
+> +  +-+-+---+--+--+  +-+-+---+--+--+  +-+-+---+--+--+
+> +   ^ ^      ^  ^    ^ ^      ^  ^    ^ ^      ^  ^
+> +   | |      |  |    | |      |  |    | |      |  |  (MSI vectors)
+> +   | |      |  |    | |      |  |    | |      |  |
+> +
+> +    (MSI SET0)       (MSI SET1)  ...   (MSI SET7)
+> +
+> +  With 256 MSI vectors supported, the MSI vectors are composed of 8 sets,
+> +  each set has its own address for MSI message, and supports 32 MSI vectors
+> +  to generate interrupt.
+> +
+> +properties:
+> +  compatible:
+> +    const: airoha,en7581-pcie
+> +
+> +  reg:
+> +    minItems: 1
+> +    maxItems: 2
+> +
+> +  reg-names:
+> +    minItems: 1
+> +    maxItems: 2
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  ranges:
+> +    minItems: 1
+> +    maxItems: 8
 
-Was going through my inbox - do you still need the testing? I see that
-the last revision of the series (v6) is from march
+8 entries? Really?
 
-Do I need anything other than just the series itself?
+> +
+> +  iommu-map:
+> +    maxItems: 1
+> +
+> +  iommu-map-mask:
+> +    const: 0
 
-Konrad
+Why these iommu properties are not present in the example?
+
+> +
+> +  resets:
+> +    minItems: 1
+> +    maxItems: 4
+> +
+> +  reset-names:
+> +    minItems: 1
+> +    maxItems: 4
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  clock-names:
+> +    items:
+> +      - const: sys-ck
+
+sys-clk?
+
+> +
+> +  phys:
+> +    maxItems: 1
+> +
+> +  phy-names:
+> +    items:
+> +      - const: pcie-phy
+
+If there is going to be only one PHY, then I think you can drop the phy-names
+property.
+
+> +
+> +  num-lanes:
+> +    enum: [1, 2]
+> +
+> +  mediatek,pbus-csr:
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    items:
+> +      - items:
+> +          - description: phandle to pbus-csr syscon
+> +          - description: offset of pbus-csr base address register
+> +          - description: offset of pbus-csr base address mask register
+> +    description:
+> +      Phandle with two arguments to the syscon node used to detect if
+> +      a given address is accessible on PCIe controller.
+> +
+> +  airoha,scu:
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    items:
+> +      - items:
+> +          - description: phandle to airoha SCU syscon
+> +    description:
+> +      Phandle to SCU syscon to configure PCIe MUX for 2 lines support.
+> +
+> +  '#interrupt-cells':
+> +    const: 1
+> +
+> +  interrupt-controller:
+> +    description: Interrupt controller node for handling legacy PCI interrupts.
+
+s/legacy/INTx
+
+> +    type: object
+> +    properties:
+> +      '#address-cells':
+> +        const: 0
+> +      '#interrupt-cells':
+> +        const: 1
+> +      interrupt-controller: true
+> +
+> +    required:
+> +      - '#address-cells'
+> +      - '#interrupt-cells'
+> +      - interrupt-controller
+> +
+> +    additionalProperties: false
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - reg-names
+> +  - interrupts
+> +  - ranges
+> +  - clocks
+> +  - clock-names
+> +  - '#interrupt-cells'
+> +  - interrupt-controller
+> +
+> +allOf:
+> +  - $ref: /schemas/pci/pci-host-bridge.yaml#
+> +  - if:
+> +      properties:
+> +        num-lanes:
+> +          const: 2
+> +    then:
+> +      properties:
+> +        reg:
+> +          minItems: 2
+> +
+> +        reg-names:
+> +          items:
+> +            - const: pcie-mac
+> +            - const: sec-pcie-mac
+> +
+> +        resets:
+> +          minItems: 4
+> +
+> +        reset-names:
+> +          items:
+> +            - const: phy-lane0
+> +            - const: phy-lane1
+> +            - const: perstout
+> +            - const: sec-perstout
+> +
+> +      required:
+> +        - airoha,scu
+> +
+> +    else:
+> +      properties:
+> +        reg:
+> +          maxItems: 1
+> +
+> +        reg-names:
+> +          items:
+> +            - const: pcie-mac
+> +
+> +        resets:
+> +          minItems: 2
+> +          maxItems: 3
+> +
+> +        reset-names:
+> +          minItems: 2
+> +          items:
+> +            - enum: [ phy-lane0, phy-lane1, phy-lane2 ]
+> +            - enum: [ phy-lane1, perstout ]
+> +            - const: phy-lane2
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    bus {
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +
+
+You can drop bus node.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
