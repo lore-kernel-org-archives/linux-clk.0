@@ -1,160 +1,167 @@
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD1711D86E4
-	for <linux-clk@vger.kernel.org>; Tue, 30 Jun 2026 11:03:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782817387; cv=pass; b=baBaO21L3cPJ8Fewmb9fLwzz3W3dU4LkxtRYKwLjtrLvW76mH9YcTVW7sftCCXinDvfChgivgnFPZj6jHyw5woP8odX3U81nGDdYYO9fD9Prw2pH/oWROxYJ8NqjvRMxdi7rvSJsYiJ2NUbNN+PfyG+STY3EkZ0TK42sGaRvEvo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782817387; c=relaxed/simple;
-	bh=bvJH40d0IrIetecFCQlgRVfs0FrCD/qnuQhwohU6QjQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r2yPV5NbcTzIzrXM3QZkOtN8KJj2j8YmpKiImqMyD1RaYiQvw/ch/ggXFH7JE+qr4ry3k68fkcBKKP60arVDRcsJsq43uX1aZmOWOs2TesZQ8q5P6JS7ZFdVVRy2pJoiMXP29VNttPFBpPjUjgal1aenD4ghT1y7OiNKnsiWt/U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FI8Mm/CC; arc=pass smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EE56403AF2;
+	Tue, 30 Jun 2026 11:12:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1782817967; cv=none; b=FD6DpLj8lYIa+z70RfmWlHLV7r1QP81xl9EMeQMCtWXJNMSyyE4hlsH3uvUnqyssubkJLPMf5Vx4Pe6p49Deam8WhrCesb1+9p6VzMwa5q1qVdfJ+Dl/m2VTXmF8LncGvBVT8LmAc4/ExWGxSdZvdyxYpOgH25HzMAppNXtQs7A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1782817967; c=relaxed/simple;
+	bh=1cKYV5p/kwcfKQpk90FnJcC90L7zAu2LvjggsG23C18=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z2YGjsqtlOtwLSgDWuXzCJGTOFEo20ZQLLNq3AxHOnU9TbQ44O8XO9sL6AVFlHN7UMUNGn5mEuePsqpEpnhZtpBhV2RDt4TBkuq9s3Iqb6XE4uZtnKcWkNxDJT+33i+yYXyCIFv40qxwq/P+d7v2tnog3+WOcKepodhvalWqbBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iyYsbzdm; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FI8Mm/CC"
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-6983f8b0aebso721371a12.1
-        for <linux-clk@vger.kernel.org>; Tue, 30 Jun 2026 04:03:05 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1782817384; cv=none;
-        d=google.com; s=arc-20260327;
-        b=a3+hLvPdezn9oxoSznf+2/vlZHlkh4X37mXP4UvsEOuQT+a7Dl4WZJENKOnNgzCrmO
-         /O94XVEJXmmdbQj5S+uAz07CK4v/CMsicvjiYEc9ifYLr8HSszXlB9ubQySQdj/6RKKL
-         QkwaF5C9bEyzO5JUdU+IFYYCrdSb4Uxhq661a4hiQnOXfuLp825wt/bly+336Aa7G+TR
-         XelslStoSW4BsIkeYCL19qp25FIr7LUb0z43jGg3my77TryIfGxKPK+vrkNRBBPutSP6
-         dJPKn1XBr6BS+UKvQiySje3jnSwQ6W155GmY9XdK1Sc1ale/rn2D6cJzpn0c3pu6XQUZ
-         zxfw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=bvJH40d0IrIetecFCQlgRVfs0FrCD/qnuQhwohU6QjQ=;
-        fh=QH0cjqy2I61mWSfeJWL+/s8f274gnvuoE2wTRLl3EFE=;
-        b=QMhlX3gytZbngj400zQPHDU2YYI0UM9K7Q0GGbSkxO7tqHGh19RdupS4iwIZ6fwSMh
-         2cHFwJxxmF2QKJQwErA1SvEVmsk/rBjHInB+82frm52zxCUcdYYtZuNnpugfXXolDd+9
-         +A47pzrVDxmcrqUM+YHh9vfIBDf8q5XKovOWR0Ngxd1p4nJhdtlAtCzVxhT+fhbcGmGE
-         fJPfZzW3VzWz1y/HH+sxdLjmFPeMcNs4yYu0VDMLO0nxqDVvmkqmGlLL4Is17ZvRBlhF
-         NbzhNzgkuhAR2lp82xiTlYM72zNGUnkU6amYvQaWilzTrkNJVteQTMwu/Jr4f5He3vHC
-         Uv2w==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1782817384; x=1783422184; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=bvJH40d0IrIetecFCQlgRVfs0FrCD/qnuQhwohU6QjQ=;
-        b=FI8Mm/CCqhCN5gcgXwiyaPrReLZg2XBTJl4ZBvTdsTX7PhNxJs00V6wYnKXAYxxWnX
-         FX4gLOzWpeTqYp7exZk0PkPyvxeGbAwHEGHunoHT3vDYpu2UscNwjV3mt1ws22WwkNmX
-         2pLmtNtVTJilFBX3JGGI6dtJgSCid7bPHoll31MGB1Z2ZilMfFxMtV5OQs4AthXUnjVp
-         evxDZVYjI1bxzDvCov5PVDzdOhWEFqmcC7z/knhMJZF5SNBiMLA+7LcrMiENw5+G5iTj
-         ly6aob1L79tjfy/fd8mgxTgbU4+4mpktN1sU+74tivnd1xbZeXy/wiHdRbHneJ39SUPs
-         2UbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782817384; x=1783422184;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bvJH40d0IrIetecFCQlgRVfs0FrCD/qnuQhwohU6QjQ=;
-        b=oKwzi/51KoFbBoKxm/nyFx/PaWomELcG7UCfpRM+d9liVeoKtcxQRa4iAbcC671TF+
-         9gnjgL8C+EKqP9NCpQq2KN0oyllx7tilFH+dSafmlYxgd4f1nRSGC6q57pm0wJsJLZpP
-         C4ZcdVLtCqM3YvWQaP8Vz58pTdLpXcCERYtAPrK5eAsP3es/atFHdbGKkIDzhTrwWhZ/
-         bSJU3AaQwFYRTZPQDp3vWFNbHATzx1kfiMOQpiSfyKNkVpbjw/c5lptOCfVdsV98PGAJ
-         LKVSfQIrADcAEALsUa6cpowryiwIt2Wom2MUsnFopb6mWMap/8fsNDNL+kAcpI78tsWa
-         rNRg==
-X-Forwarded-Encrypted: i=1; AHgh+RrbZkYwsV8ymKHXGCtHDiS5kWb/o6NVmg58Km9GBnrDeB7xvwAtwG7Xcxnqm/UMQ0GqzohVzLNEKxI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXyWDTCb2h0ynRJQNYSFdnGTaYgvKNWODWOpf+HTC7usdced+q
-	LQ/6Z4LNGY08icpKX9qVqPTwnrF5DJtuad4ZvCiErUatR085R2Z6HWHnVPw72L5BnjUoT7Krd8X
-	QpKPSd/1ojF2X0d77pbQwLe7d1p6hsdeZ6Mogies9zQ==
-X-Gm-Gg: AfdE7clJhYsp7HR+7Fp+G+egT+ixUoDUohOMA2gCCLMgHIJKiVgXnO89Y8/OgI1CeyQ
-	T2QJU/1Avn5Nt83G1oweO8BBCFMqLkhOx/KKcgw06PJw8xxdi3D/LYW3IJY9ljZvVFGueUHQbKe
-	stFSPY7jYy+vkeEa2QT6s8ANrEsFw7wpYve5CUdFzzpVuzKUVsOi/2pTuhkGc93LRwMJHUcui3L
-	pnWl4PMSKXDccrcvvj2v6LQerxz+zr+wb+1Uo3xz1DEaDgeaQfUeWR55JFUjV+tA2WVtiYmApra
-	weY9iHBqJoPW6SPnbB50zKz926H+jQ==
-X-Received: by 2002:a05:6402:2695:b0:697:fbe7:2028 with SMTP id
- 4fb4d7f45d1cf-698819d524fmr695334a12.13.1782817384224; Tue, 30 Jun 2026
- 04:03:04 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iyYsbzdm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E537B1F000E9;
+	Tue, 30 Jun 2026 11:12:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1782817966;
+	bh=wQrE0ReycrpnBX9CUrqb4OLjGjFo1ru+7Cj+6cRm340=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=iyYsbzdmqGYRoSuWJDGqtfM1o0lq6B5CONt/3pKwqGlG+p4JjgcCgVfKGyJd4v7QK
+	 MExvh7tnMMa8MPts7VE8JizBiFDyz0FerZtreEJ5FasOhN/6/U+fEPM/SI/XGnx/0V
+	 8Fdlxw5I5jpsGidykV0gSRYnP0cf/3Zz7ERBsaJPL9Z4UAsvgf+fDfOOlIpbAiOCuP
+	 qw5D3ghhL9MTPwKtic+LUYe+eIdB0yVBPu/eP8gwhqW+S56AgjF/5kd/1kVVtGG75N
+	 XDa+5RyvW5LWQylH4z7cEDwPiyub4pTyBgFv5DDmDz2nkSOBopVm8VaFbZcHhcVsZv
+	 B+oHiXrtkMWqA==
+Message-ID: <b035916c-e985-4acf-930b-bb74814ae748@kernel.org>
+Date: Tue, 30 Jun 2026 13:12:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/3] clk: samsung: exynos990: Fix PERIS gate clock
+ parents
+To: Peter Griffin <peter.griffin@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Denzeel Oliva <wachiturroxd150@gmail.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
 References: <20260613-exynos990-peris-fix-v3-v3-0-2b230db78ae4@gmail.com>
  <20260613-exynos990-peris-fix-v3-v3-3-2b230db78ae4@gmail.com>
  <CGME20260629123246epcas5p2aab9da9ef417274bb0b70f74c386f7b4@epcas5p2.samsung.com>
- <CADrjBPpNQd6WgwVo-a3Mz74d1EptPm9D9BisLEmoFRsdUb3izw@mail.gmail.com> <0f1e01dd0844$01190c40$034b24c0$@samsung.com>
-In-Reply-To: <0f1e01dd0844$01190c40$034b24c0$@samsung.com>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Tue, 30 Jun 2026 12:02:52 +0100
-X-Gm-Features: AVVi8CcnyhJ8d9gnBSRZyCKu3M5tPQ4ftaBlF7F7oCbmkRZx4xm5fGDGZptwHa0
-Message-ID: <CADrjBPoZ4G09WGC_b59YWq3_EfTaPFyp0dD7VizKLYBW_eFk+A@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] clk: samsung: exynos990: Fix PERIS gate clock parents
-To: Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Denzeel Oliva <wachiturroxd150@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney@redhat.com>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+ <CADrjBPpNQd6WgwVo-a3Mz74d1EptPm9D9BisLEmoFRsdUb3izw@mail.gmail.com>
+ <0f1e01dd0844$01190c40$034b24c0$@samsung.com>
+ <CADrjBPoZ4G09WGC_b59YWq3_EfTaPFyp0dD7VizKLYBW_eFk+A@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGPBBMBCgA5AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJp2mE8AAoJEBuTQ307QWKbeaIP
+ /ihHTkTW4KsN/DQ945JJbyu5tI0J80Wue7QyyLPglyKfhgb5cLLNPpOC8cCIJsc7+W3i2P38
+ s2c1cOH6CYGE7E9ur3Vfme8NW2S2I/Z8VC7bZnzyS23wT17LrsdS/qCpx4o8U+pt/xdXDKph
+ EGRYrIEmMpUWvyYzyYKGIe25FtaayIIKpq8eZYyFcp2f/sG5IkOW5uZzHPMPdcm87jU7fyuQ
+ rAU2vx9r+ulUfQ/q9Z2roC/ode3l7t2pN7BCBCsUDp6JCrUyZrtT1e7EbA0ZRP3aOBNk2P2E
+ DQOgJGjGdO5Yx2Y9LFtltu6JbsBJHi1syGRX3AtQYOMc4Y1WGoeZJmMlvKj2ZqqXNkcWi2DS
+ IQEWB0uW6CqFsBBIMGDa+6OzdaVO/uAVXWDWml02Men3CILdI1MbVjoh8ECqYUY7OQ+JJvNN
+ vnliuq5WM3Ghd3jg/LZZrxXjdIginRHFQCjIJYLKpLZWm1/iDFedcfzqRNYmTtqscdCNHW41
+ oT3Z7BmO9xwdjuwBS6nmS6JJwkbf5Ot2QR4pB/DRU7ZwjT1qHe+9r9gF32wXVQatHNGK/VVu
+ sfwOnkdxCWkp/qb2gdQRmZh+SedStWshigH6sNfuHBloF/q+hjMRc8b2m326OZdrbSHwY1Sz
+ vti8Hn7n8NjdHO9LKB7BIdjkA9DA5WsqOuVCzsFNBFVDXDQBEADNkrQYSREUL4D3Gws46JEo
+ Z9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLueMNsWLJBv
+ BaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6eiOMheesVS
+ 5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wAGldWsRxb
+ f3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA6z6lBZn0
+ WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9YegxWKvX
+ XHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt91pFzBSO
+ IpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gUBLHFTg2h
+ YnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/JoFzZ4B0
+ p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu4vXVFBYI
+ GmpyNPYzRm0QPwARAQABwsF2BBgBCgAgAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtBYpsFAmna
+ YUkACgkQG5NDfTtBYptX+BAApg32CkxwNucNEi8WfWA8oKkW0y8YDuY6ORMo9FWNGiT/OTy0
+ vyJrLocrpn86zwfjVp+eCrssPYh8eqJfnWqmYv6ACQtHPYzPZQ3mSo8H97Z01oUxITzCxpXm
+ ZkLgPIqtDPcC2E3dPM/fVxcyowM8XsaMA9wcsaUYrta8toOq2b9tKcjleKMfMrm0gQ9u7wUc
+ QbLkwj6TCLOwucb07GXzLTNF9PZmaDUpKAZjMjmrW+le+SFvQbhamx0rxLWPR0NWntXpbCn+
+ +ACch03p/JyTBVktxFsFyCt7pTPE1kEaeuXBTe/a2D9iQvRxRW19LvuO2e59/u1wYUiH/orz
+ wbIC2S4dBsPAPihL3ztOU1yE86GPyQtSE0kU+/7snnLt4QGi6PChf3t5gnNjAzjUUovO8rgI
+ c+5yN5heq5loYHgK6OQ9OlHzsPHO9e9MOQcKlFycs1pyijFGzDwdNUm/SchK8iWT2QApTx4A
+ K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
+ n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
+ qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
+In-Reply-To: <CADrjBPoZ4G09WGC_b59YWq3_EfTaPFyp0dD7VizKLYBW_eFk+A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Alim,
+On 30/06/2026 13:02, Peter Griffin wrote:
+> Hi Alim,
+> 
+> On Tue, 30 Jun 2026 at 04:53, Alim Akhtar <alim.akhtar@samsung.com> wrote:
+>>
+>>
+>>
+>>> -----Original Message-----
+>>> From: Peter Griffin <peter.griffin@linaro.org>
+>>> Sent: Monday, June 29, 2026 6:02 PM
+>>> To: Denzeel Oliva <wachiturroxd150@gmail.com>
+>>> Cc: Krzysztof Kozlowski <krzk@kernel.org>; Sylwester Nawrocki
+>>> <s.nawrocki@samsung.com>; Chanwoo Choi <cw00.choi@samsung.com>;
+>>> Alim Akhtar <alim.akhtar@samsung.com>; Michael Turquette
+>>> <mturquette@baylibre.com>; Stephen Boyd <sboyd@kernel.org>; Brian
+>>> Masney <bmasney@redhat.com>; Rob Herring <robh@kernel.org>; Conor
+>>> Dooley <conor+dt@kernel.org>; linux-samsung-soc@vger.kernel.org; linux-
+>>> clk@vger.kernel.org; devicetree@vger.kernel.org; linux-arm-
+>>> kernel@lists.infradead.org; linux-kernel@vger.kernel.org
+>>> Subject: Re: [PATCH v3 3/3] clk: samsung: exynos990: Fix PERIS gate clock
+>>> parents
+>>>
+>>> Hi Krysztof & Denzeel,
+>>>
+>>> On Sat, 13 Jun 2026 at 13:36, Denzeel Oliva <wachiturroxd150@gmail.com>
+>>> wrote:
+>>>>
+>>>> Correct eight PERIS gate clock parents to match the hardware clock
+>>>> tree and reorder the GIC mux parents so mout_peris_bus_user is the
+>>>> default source.
+>>>>
+>>>> Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
+>>>> ---
+>>>
+>>> Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+>>>
+>>> @Krysztof: I was thinking, maybe we should establish a new rule/best
+>>> practice for Samsung clock upstream submissions whereby patch
+>>> contributors should link to the downstream cal-if code for the SoC after the --
+>>> - line. That would make reviewing the patches' correctness a bit easier, as the
+>>> downstream cal-if code would be readily available to the reviewer.
+>>>
+>> We can leave this choice to the reviewer if they want to refer to downstream cal-if code.
+> 
+> Generally I would like to, but I also don't have time to hunt around
+> the internet for a downstream kernel tree. My rationale was that the
+> submitter is most likely to know where the downstream code is, and is
+> likely using it for the upstream clock implementation. So, linking to
+> it as part of the submission should hopefully be fairly easy.
+> 
+> If it is a Samsung SoC for which no public code is available that's
+> fine. I didn't intend this to be a hard requirement: "you can't
+> upstream x,y,z unless you link to the cal-if code". I meant it more as
+> "best practice/guidance"; if the cal-if code is publicly available,
+> linking to it would be a useful reference for reviewers.
 
-On Tue, 30 Jun 2026 at 04:53, Alim Akhtar <alim.akhtar@samsung.com> wrote:
->
->
->
-> > -----Original Message-----
-> > From: Peter Griffin <peter.griffin@linaro.org>
-> > Sent: Monday, June 29, 2026 6:02 PM
-> > To: Denzeel Oliva <wachiturroxd150@gmail.com>
-> > Cc: Krzysztof Kozlowski <krzk@kernel.org>; Sylwester Nawrocki
-> > <s.nawrocki@samsung.com>; Chanwoo Choi <cw00.choi@samsung.com>;
-> > Alim Akhtar <alim.akhtar@samsung.com>; Michael Turquette
-> > <mturquette@baylibre.com>; Stephen Boyd <sboyd@kernel.org>; Brian
-> > Masney <bmasney@redhat.com>; Rob Herring <robh@kernel.org>; Conor
-> > Dooley <conor+dt@kernel.org>; linux-samsung-soc@vger.kernel.org; linux-
-> > clk@vger.kernel.org; devicetree@vger.kernel.org; linux-arm-
-> > kernel@lists.infradead.org; linux-kernel@vger.kernel.org
-> > Subject: Re: [PATCH v3 3/3] clk: samsung: exynos990: Fix PERIS gate clock
-> > parents
-> >
-> > Hi Krysztof & Denzeel,
-> >
-> > On Sat, 13 Jun 2026 at 13:36, Denzeel Oliva <wachiturroxd150@gmail.com>
-> > wrote:
-> > >
-> > > Correct eight PERIS gate clock parents to match the hardware clock
-> > > tree and reorder the GIC mux parents so mout_peris_bus_user is the
-> > > default source.
-> > >
-> > > Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
-> > > ---
-> >
-> > Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
-> >
-> > @Krysztof: I was thinking, maybe we should establish a new rule/best
-> > practice for Samsung clock upstream submissions whereby patch
-> > contributors should link to the downstream cal-if code for the SoC after the --
-> > - line. That would make reviewing the patches' correctness a bit easier, as the
-> > downstream cal-if code would be readily available to the reviewer.
-> >
-> We can leave this choice to the reviewer if they want to refer to downstream cal-if code.
+cal-if as vendor tree? Some contributors just base their work on
+downstream GPL-compliance dumps from opensource.samsung.com, so not sure
+how that link would work.
 
-Generally I would like to, but I also don't have time to hunt around
-the internet for a downstream kernel tree. My rationale was that the
-submitter is most likely to know where the downstream code is, and is
-likely using it for the upstream clock implementation. So, linking to
-it as part of the submission should hopefully be fairly easy.
-
-If it is a Samsung SoC for which no public code is available that's
-fine. I didn't intend this to be a hard requirement: "you can't
-upstream x,y,z unless you link to the cal-if code". I meant it more as
-"best practice/guidance"; if the cal-if code is publicly available,
-linking to it would be a useful reference for reviewers.
-
-Thanks,
-
-Peter
+Best regards,
+Krzysztof
