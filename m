@@ -1,101 +1,183 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3556641166B;
-	Tue, 30 Jun 2026 12:53:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4818C413D66;
+	Tue, 30 Jun 2026 13:14:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782823999; cv=none; b=Vua1Ca8T7EUF+h28RtYG2B23w6pJ87Cmkg0E3alFsNKFT/tNkl/31+HQ/KqEaQxvoOLXd9WpKjA4/CqtfT+mecnn/bdqzW/pkx3L8ygrk4306OkxdWHA9j5cfK3+1kAulw2/vvJ3SyjGkYGyxPrHao3Ato78crOvUBonxJ0op2c=
+	t=1782825244; cv=none; b=O6qqJfTeeibpjmLzlFE1EHNiePkKIjU+o9SJsKFOICPSRNo/dfqwz3Al/PdblP9FHJrErcJPvx72B53pMzEI2HRsCAs1YMhu+KB1jyMx3rQGmdRrnFs8XbDnRjwKvtaoTTq+Q/gBo7OA1fWBbot3e14MKDNGFexRxLlmDkRi7qU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782823999; c=relaxed/simple;
-	bh=cnv+dro6g/o2f7nGM4zI5C5UpZYNAQtm/R+vGOgu5mg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=uRhm38y/RDlFrN1TMp61K/I64UQnPboPvz1P/+ipuRqo/Gc8TP49LMIHES6CfFOk2s0H5cyPFFXu49jUnJasprbhZmALDwEBTetS9yfu5YWOaVUXBgp6xoxaboedx+4K1xbpKfmNDk5sxYJEWfStnCXBsIWCFtH+2+QlRLg554w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TLv/UWN3; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1782825244; c=relaxed/simple;
+	bh=xFwetoL8Vuck3E69GGR5DG/ScQBvfKjkLbbRxYolLus=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MSxeWf3zVq8I+kl5ASFY4VKvuXj1IVcgzw6aUWbjbFeki06zUJGzu5+UQUTZNRa9tFmYjyqeetdzQEjFIhz1zEvL1uQd1Ake+Eyv7fvuDP1DoGr5NSpGwfjRJISlxtd4ppkb7Cthy92YJTfskiiaZXyF3Xt0qit5uxRrkhKJwQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D+NR4PWB; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TLv/UWN3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD2F71F00A3A;
-	Tue, 30 Jun 2026 12:53:14 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D+NR4PWB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A928F1F000E9;
+	Tue, 30 Jun 2026 13:14:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1782823998;
-	bh=quqKXaOY/defIjRmqlpmFrrkZp9Qyvv8wvLYUfMRkgc=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=TLv/UWN3CAeV6uXwH3EbVRAnpgw6kiMg7Yq8UqcDNmbUtPqP63zj7rrzQCmUojzKt
-	 M0qIbVH2l43eT0MkIKElK5XG9040QFhd9XlhNZ2JNXq4oKwFf6EBdYTVHNyW8Vpfyi
-	 u3Vh0adnLjhQ4OfuOlUpr0VGcPgBcqTm3isO4QPMFXTQxPmNlvnyR0tHSTYUygrFMo
-	 NF62V08ySqx+8yYCIEF3uhsvUeaUxnbhd2nYs+hYCM/UiD9/RhtrKTtFn993Bcra/H
-	 GBET2e+Civfwt2D7Q1chPDqxH9ynxxy19CDkxY00Zri0tpSFfoR5dVeFy+SBDItlWR
-	 c5Li+PZXWUQ9A==
-From: Yixun Lan <dlan@kernel.org>
-Date: Tue, 30 Jun 2026 12:52:47 +0000
-Subject: [PATCH 3/3] clk: spacemit: k3: Add UFS refclk clock
+	s=k20260515; t=1782825242;
+	bh=3VuQxWyNENL8ziwIh4+vVmGpesCoHqcx8KGFgDaDinE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=D+NR4PWBy6W6iM/Ff9MJncwYZfKq30z/VF5MnSG8JFLGmwT0FzFrXQ6aqWQn6tpWz
+	 chHpLPggi5lTbCoTpu69t94kXbZr+54B8Qro/1rU8YF3QIJBK4COjPZil73sSsG/rd
+	 CiVe+KSnk9WsTojsa9gNlK1n26D3/mnvCqbZMD5cX6k9unq4jh7CGsXJojiyasmvDq
+	 7w0D/ZsVBTMrSr6IcdOr8M0V26GjKqIDvDX2FrobXBhsyL6Jjt3N6f1qpqH6gdqybZ
+	 eLCJc7XBSLae7AfshSoISbnWfGD+cmyyDGkCoKB0jaQPJzFZxNYKlq0Y2hgnslfXEp
+	 2ae+MO2588wVg==
+Date: Tue, 30 Jun 2026 08:14:02 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Cc: Lee Jones <lee@kernel.org>, Sean Paul <sean@poorly.run>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	David Airlie <airlied@gmail.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Lukasz Luba <lukasz.luba@arm.com>, Vinod Koul <vkoul@kernel.org>,
+	Adam Skladowski <a_skl39@protonmail.com>,
+	Chanho Park <chanho61.park@samsung.com>,
+	Wesley Cheng <quic_wcheng@quicinc.com>,
+	Mark Brown <broonie@kernel.org>, Linus Walleij <linusw@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Abhinav Kumar <abhinav.kumar@linux.dev>, linux-gpio@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	Anusha Rao <quic_anusha@quicinc.com>, linux-mmc@vger.kernel.org,
+	Jonathan Marek <jonathan@marek.ca>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Javier Martinez Canillas <javier@dowhile0.org>,
+	Taniya Das <quic_tdas@quicinc.com>, linux-clk@vger.kernel.org,
+	Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+	Zhang Rui <rui.zhang@intel.com>,
+	Srinivas Kandagatla <srini@kernel.org>,
+	Barnabas Czeman <barnabas.czeman@mainlining.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Sunyeal Hong <sunyeal.hong@samsung.com>,
+	freedreno@lists.freedesktop.org,
+	Stephan Gerhold <stephan@gerhold.net>,
+	Rob Clark <robin.clark@oss.qualcomm.com>,
+	Simona Vetter <simona@ffwll.ch>, Andi Shyti <andi.shyti@kernel.org>,
+	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>,
+	linux-i2c@vger.kernel.org, Brian Masney <bmasney@redhat.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Maxime Ripard <mripard@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Hans Verkuil <hverkuil@kernel.org>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Sebastian Reichel <sre@kernel.org>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Robert Marko <robimarko@gmail.com>, linux-sound@vger.kernel.org,
+	linux-usb@vger.kernel.org, Pavel Machek <pavel@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	linux-arm-msm@vger.kernel.org,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	Imran Shaik <quic_imrashai@quicinc.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	dri-devel@lists.freedesktop.org, Jiri Slaby <jirislaby@kernel.org>,
+	linux-phy@lists.infradead.org, Shin Son <shin.son@samsung.com>,
+	Jessica Zhang <jesszhan0024@gmail.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Sam Protsenko <semen.protsenko@linaro.org>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-renesas-soc@vger.kernel.org,
+	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+	Sricharan Ramabadhran <quic_srichara@quicinc.com>,
+	Georgi Djakov <djakov@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	devicetree@vger.kernel.org, Luo Jie <quic_luoj@quicinc.com>,
+	linux-serial@vger.kernel.org,
+	Jaehoon Chung <jh80.chung@samsung.com>,
+	Andy Gross <agross@kernel.org>,
+	Krishna Manikandan <quic_mkrishn@quicinc.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>, linux-leds@vger.kernel.org,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	linux-media@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Ulf Hansson <ulfh@kernel.org>,
+	Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Sireesh Kodali <sireeshkodali@protonmail.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	linux-pm@vger.kernel.org, Alina Yu <alina_yu@richtek.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: clock: Drop incorrect usage of
+ double '::'
+Message-ID: <178282524123.2726988.10975134253725315687.robh@kernel.org>
+References: <20260623054842.21831-3-krzysztof.kozlowski@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260630-06-clk-ufs-support-v1-3-cf7521d1d0fe@kernel.org>
-References: <20260630-06-clk-ufs-support-v1-0-cf7521d1d0fe@kernel.org>
-In-Reply-To: <20260630-06-clk-ufs-support-v1-0-cf7521d1d0fe@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org, 
- spacemit@lists.linux.dev, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, Yixun Lan <dlan@kernel.org>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1218; i=dlan@kernel.org;
- h=from:subject:message-id; bh=cnv+dro6g/o2f7nGM4zI5C5UpZYNAQtm/R+vGOgu5mg=;
- b=owEB6QIW/ZANAwAKATGq6kdZTbvtAcsmYgBqQ7wsYcTfVh9d/UL94SxpyG3obN2aao1WIBGwj
- GtVg1z+n4KJAq8EAAEKAJkWIQS1urjJwxtxFWcCI9wxqupHWU277QUCakO8LBsUgAAAAAAEAA5t
- YW51MiwyLjUrMS4xMiwyLDJfFIAAAAAALgAoaXNzdWVyLWZwckBub3RhdGlvbnMub3BlbnBncC5
- maWZ0aGhvcnNlbWFuLm5ldEI1QkFCOEM5QzMxQjcxMTU2NzAyMjNEQzMxQUFFQTQ3NTk0REJCRU
- QACgkQMarqR1lNu+2xxw//cr0AfxHPxyn4fD5bkV+IHBESEcc8l0lbe/ajtvkD0oRE38o9f9B9V
- MHYwIJjIS+wIJZBGdf5m07pXDtwf422sqPBJqH5qlz28FSxzYTCK9r2SndzUz0lEyf5mWnx/KH9
- 2bUs3uTgeDiKv7rRcJBA8lyktZ583yfAsJTrjiaHodhbPTeUed+ICTmIPxs5L+owohoGHMRR5fv
- f49lQtt1sfkA1eKtHGWf76U//XLAam3wg7mGYeu+v5j1sXVGztcr2gHeF4J+/M28lH5DQUMa57K
- ngnS7Kt24jdzh98zuHvpgx0rfOnUzz+roi9HjlmamdwEHxauLgfR58ArrwZgL+AyHMQIpXersA9
- Qwmt9QKD1X9o4kMtckXiEMNGKAITWKWgXRq/l4vn2II5QfXBOqwIZp7wvc3W++dt2jWvVRw7VvG
- 9TOksiiXMOAe8kpm9abAzf6S2G4mzIWs52PpfpIIlLk50TQsGr/sHbkRRC6/nu9SdLi30wB4LMx
- 4h221xXKCMd7fX6K0oia+TyChOXJay0dpkzgEx7jwuiLc6wBt/gxIkh56CO+StB85s78/lRbNcA
- v6ske83tWiM79Yt75D7SO0tZpf3nFN9wIjKBt+dUa8nL2wxLc8T4gPE9snT9N5wNl6NCQGVRFnq
- /1hjg7bCkVWBO2s0m1MjhzLGJATnmY=
-X-Developer-Key: i=dlan@kernel.org; a=openpgp;
- fpr=50B03A1A5CBCD33576EF8CD7920C0DBCAABEFD55
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260623054842.21831-3-krzysztof.kozlowski@oss.qualcomm.com>
 
-Add the UFS reference clock for SpacemiT K3 SoC.
 
-Signed-off-by: Yixun Lan <dlan@kernel.org>
----
- drivers/clk/spacemit/ccu-k3.c | 3 +++
- 1 file changed, 3 insertions(+)
+On Tue, 23 Jun 2026 07:48:43 +0200, Krzysztof Kozlowski wrote:
+> There is no use of double colon '::' in YAML. OTOH, the literal style
+> block, e.g. using '|' treats all characters as content [1] therefore
+> single use of ':' in descriptions is perfectly fine, whenever '|' is
+> used.
+> 
+> Cleanup existing code, so the confusing style won't be re-used in new
+> contributions.
+> 
+> Link: https://yaml.org/spec/1.2.2/#literal-style [1]
+> Acked-by: Alim Akhtar <alim.akhtar@samsung.com>
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+> ---
+> I split the patches to avoid bounces from mailing list due to email size.
+> 
+> This can go via clock tree (no dependencies)... or both could go via
+> Rob's tree.
+> 
+> Changes in v2:
+> 1. Add tags (partial Reviews as Acks, as that's the meaning of Ack)
+> ---
+>  .../devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml       | 2 +-
+>  .../devicetree/bindings/clock/qcom,gcc-apq8064.yaml         | 2 +-
+>  .../devicetree/bindings/clock/qcom,gcc-apq8084.yaml         | 2 +-
+>  .../devicetree/bindings/clock/qcom,gcc-ipq6018.yaml         | 2 +-
+>  .../devicetree/bindings/clock/qcom,gcc-ipq8064.yaml         | 2 +-
+>  .../devicetree/bindings/clock/qcom,gcc-mdm9607.yaml         | 2 +-
+>  .../devicetree/bindings/clock/qcom,gcc-mdm9615.yaml         | 2 +-
+>  .../devicetree/bindings/clock/qcom,gcc-msm8660.yaml         | 2 +-
+>  .../devicetree/bindings/clock/qcom,gcc-msm8909.yaml         | 2 +-
+>  .../devicetree/bindings/clock/qcom,gcc-msm8916.yaml         | 2 +-
+>  .../devicetree/bindings/clock/qcom,gcc-msm8953.yaml         | 2 +-
+>  .../devicetree/bindings/clock/qcom,gcc-msm8974.yaml         | 2 +-
+>  .../devicetree/bindings/clock/qcom,gcc-sdm660.yaml          | 2 +-
+>  Documentation/devicetree/bindings/clock/qcom,gpucc.yaml     | 2 +-
+>  .../devicetree/bindings/clock/qcom,ipq5018-gcc.yaml         | 2 +-
+>  .../devicetree/bindings/clock/qcom,ipq9574-gcc.yaml         | 2 +-
+>  .../devicetree/bindings/clock/qcom,qca8k-nsscc.yaml         | 2 +-
+>  .../devicetree/bindings/clock/qcom,qcm2290-gpucc.yaml       | 2 +-
+>  Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml     | 2 +-
+>  .../devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml  | 2 +-
+>  .../devicetree/bindings/clock/qcom,sc8280xp-lpasscc.yaml    | 2 +-
+>  .../devicetree/bindings/clock/qcom,sm6115-lpasscc.yaml      | 2 +-
+>  .../devicetree/bindings/clock/qcom,sm8350-videocc.yaml      | 2 +-
+>  Documentation/devicetree/bindings/clock/qcom,videocc.yaml   | 2 +-
+>  .../devicetree/bindings/clock/samsung,exynos5260-clock.yaml | 6 +++---
+>  .../devicetree/bindings/clock/samsung,exynos5410-clock.yaml | 2 +-
+>  .../devicetree/bindings/clock/samsung,exynos5433-clock.yaml | 2 +-
+>  .../devicetree/bindings/clock/samsung,exynos7-clock.yaml    | 2 +-
+>  .../devicetree/bindings/clock/samsung,exynos850-clock.yaml  | 2 +-
+>  .../bindings/clock/samsung,exynosautov9-clock.yaml          | 2 +-
+>  .../bindings/clock/samsung,exynosautov920-clock.yaml        | 2 +-
+>  .../devicetree/bindings/clock/samsung,s5pv210-clock.yaml    | 2 +-
+>  32 files changed, 34 insertions(+), 34 deletions(-)
+> 
 
-diff --git a/drivers/clk/spacemit/ccu-k3.c b/drivers/clk/spacemit/ccu-k3.c
-index 42293a38b098..f47d26e1d642 100644
---- a/drivers/clk/spacemit/ccu-k3.c
-+++ b/drivers/clk/spacemit/ccu-k3.c
-@@ -934,6 +934,8 @@ static const struct clk_parent_data ufs_aclk_parents[] = {
- CCU_MUX_DIV_GATE_FC_DEFINE(ufs_aclk, ufs_aclk_parents, APMU_UFS_CLK_RES_CTRL, 5, 3, BIT(8),
- 			   2, 3, BIT(1), 0);
- 
-+CCU_FACTOR_DEFINE(ufs_refclk, CCU_PARENT_HW(pll1_d64_38p4), 2, 1);
-+
- static const struct clk_parent_data edp0_pclk_parents[] = {
- 	CCU_PARENT_HW(lcd_pxclk),
- 	CCU_PARENT_NAME(external_clk),
-@@ -1391,6 +1393,7 @@ static struct clk_hw *k3_ccu_apmu_hws[] = {
- 	[CLK_APMU_DSI4LN2_DPU_ACLK]	= &dsi4ln2_dpu_aclk.common.hw,
- 	[CLK_APMU_DPU_ACLK]		= &dpu_aclk.common.hw,
- 	[CLK_APMU_UFS_ACLK]		= &ufs_aclk.common.hw,
-+	[CLK_APMU_UFS_REFCLK]		= &ufs_refclk.common.hw,
- 	[CLK_APMU_EDP0_PXCLK]		= &edp0_pxclk.common.hw,
- 	[CLK_APMU_EDP1_PXCLK]		= &edp1_pxclk.common.hw,
- 	[CLK_APMU_PCIE_PORTA_MSTE]	= &pciea_mstr_clk.common.hw,
-
--- 
-2.54.0
+Applied, thanks!
 
