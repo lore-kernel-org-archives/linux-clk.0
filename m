@@ -1,154 +1,93 @@
-Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11022119.outbound.protection.outlook.com [40.107.75.119])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4D8841168A;
-	Tue, 30 Jun 2026 12:44:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.119
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782823466; cv=fail; b=gf0vEJg8raqRfrI0QBZkbZlRBlMbgidqAtHY/+y3XJ5akbO5FcapS78GhfdEo7yXoIdOk/lNgkupp7sfegr0y329LhKpMmB7XdKxO3mrIEByp5bdIKuA7gtK90YbOJPPcY+WBUWYILwyIuuQoOahIQSPxMbHJw5eb/wkkHvNZEg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782823466; c=relaxed/simple;
-	bh=PX0dmIiy0Dw+VZf9uNau20dSHNglMDpYtCrHDUUQYJk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LvA6uN0KqRS/dDEmZeBTSVot/xkDbqNk3l3I3nM5s1mAvVWqPFLVOqfveH1MHt5Kg+qFhNmJplUzsUBpSf2zSrrnY+7trCONmIsCPsANYvDybKvvfn54wKPlg6egfRobsLqyiKhqpOTrYRsZpFE7biX0MfXkQp6OKMITDVuqvYQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=40.107.75.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SD/NjTsiBdYsSH8IssYkPaQTnxslrCHCgOr7iy90T+9tZM+GcoFjl9L1GPdzVFgcYbK4Oi/0cgmRlDe8ws8rgKtZ3Lbd6F8Cq2PzIifB9MqTcIUw45CSW2Q9XYsMc+ZKC+tUL8RXDS69uGiPE6tE+UoqHrRoMzgx0m/CdXm1U/I7NiU4z4sks/m4dUbJ+qZXaA+FJEgPByz5lrlmgMqy4UCguiqX29LAOpb43j+lXjx0qGQcy6RXm7zD1+v9YkqiyLpn+57paUsAOBM59I6+MQkI0ZxsjnPXjngCfBd7oC/pGZxs1SGZWVZqt0qOUBukD5xpsHHyekIxDMjKcdsjkQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NVP/cX8K+IizM7MHHIWGgxoxHAqmXb0N3FutYFrisSU=;
- b=OElyI84SvXVtL7FCjfXThXffIzkh1q81d5QPfDm7SNSuw/Mi4NfV1UPPIpUrE50OPMH4BY+tidNDYW3TXUI7RstTnpwbCSgBExGcBaIipa1+uiAIe9PUhuB8jd0qkk2utAqeveHkhuLZ32rWDny+NoUD88oGNkyNoLwJp70/kjC/0CBXryfDG+4PS51Q2BAesxSlR+LT7E39nf/Raxr2uwJyJjZaPQzLeoJf6+B2OgrwjmYFBP4SJsUVpAlokzGMkI+igQvMUnH+I4NAxt86pg/B37xN9Fcei7Lh3fEeDi5UeVfntKvy4lxVJ/SMeoeVWPMQ/sA1qgA6wOvlGJBuUQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 222.71.101.198) smtp.rcpttodomain=baylibre.com smtp.mailfrom=cixtech.com;
- dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
- not signed); arc=none (0)
-Received: from TYCP301CA0024.JPNP301.PROD.OUTLOOK.COM (2603:1096:400:381::14)
- by SG2PR06MB5058.apcprd06.prod.outlook.com (2603:1096:4:1c6::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.159.19; Tue, 30 Jun
- 2026 12:44:21 +0000
-Received: from TY2PEPF0000AB88.apcprd03.prod.outlook.com
- (2603:1096:400:381:cafe::84) by TYCP301CA0024.outlook.office365.com
- (2603:1096:400:381::14) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.181.8 via Frontend Transport; Tue, 30
- Jun 2026 12:44:21 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
- smtp.mailfrom=cixtech.com; dkim=none (message not signed)
- header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
-Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
- 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
-Received: from smtprelay.cixcomputing.com (222.71.101.198) by
- TY2PEPF0000AB88.mail.protection.outlook.com (10.167.253.11) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.181.6 via Frontend Transport; Tue, 30 Jun 2026 12:44:20 +0000
-Received: from cix (unknown [172.18.64.61])
-	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id 1FC9F40920E0;
-	Tue, 30 Jun 2026 20:44:17 +0800 (CST)
-From: joakim.zhang@cixtech.com
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	bmasney@redhat.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	p.zabel@pengutronix.de
-Cc: cix-kernel-upstream@cixtech.com,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Joakim Zhang <joakim.zhang@cixtech.com>
-Subject: [PATCH v8 4/4] arm64: dts: cix: sky1: add audss cru
-Date: Tue, 30 Jun 2026 20:44:13 +0800
-Message-ID: <20260630124413.1814379-5-joakim.zhang@cixtech.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20260630124413.1814379-1-joakim.zhang@cixtech.com>
-References: <20260630124413.1814379-1-joakim.zhang@cixtech.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B44033FA5D8;
+	Tue, 30 Jun 2026 12:53:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1782823988; cv=none; b=PWc1ydcvb01gIZfU/4xKS0gG3M0V4Fdcf/xe2hNu+XdOrUMgs9XlSjJN9HqHl3M+kdLYj2tOoGG9J0zc2vhLU/EFmiT14q9BwC+VIYeOtg3US1K+3c92C0rEfA05uJwE0mGV/dYJcd06EnjQ4ZLumBmTpvQ3HgNRWxU6FG2ozbg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1782823988; c=relaxed/simple;
+	bh=ROcY5MyDjeKC0r7oBgUYsRLMttcLNK+R76DuiYC0u4E=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=TkGHeCOpqbx01TJi6SoNcuAReBbnQQtQ6nQo045HWpMpEVhETARnAvMdF2CD99RfpGYwKmuL4jKV8bZDXuR6VIOeU7yTXS7WVbuT+qFHL6R7P/1XxumMy3WIvlLWK/OiL//XSgg0ESmKqvsaffgNY3nv2hrnO3ZZ6XKikHt4rF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BZvw+gJt; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BZvw+gJt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E06DF1F000E9;
+	Tue, 30 Jun 2026 12:53:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1782823987;
+	bh=fFTV49VQW5ZLiYL/aWzjzFEMFn4A4VsTnUBjOkMuqWY=;
+	h=From:Subject:Date:To:Cc;
+	b=BZvw+gJtjsEfu3BH3FwuCAS6hJw15zwm0YFP7w2g8qNdTKf9SuksiES7LX89gf0zr
+	 NVY0CR0pwdHP6ns2hzuACB73oM+Oepgb3ydWKQWNrNKGwl8F46XAL6ZXwWv21KDn0F
+	 xgYkZZmyBSXZl7IjFbi19+IpQcJayjilVoY30lNZAcMgPLtKsD6EUCJQPqEVYjNHsv
+	 qflbEwUwWR+k1cUwS1Qi6UyggJ92eBNlaXKrfviw7bOC+v5VZQYSzWdKRojzf2Lkwj
+	 NuBbKYzkeWFHRmvEi6JL5IQAUAd7kXAlYVLw0DdE91bhLEK8ILzXlQs7dNenN5Tl+Q
+	 D/I6R+c3zneTw==
+From: Yixun Lan <dlan@kernel.org>
+Subject: [PATCH 0/3] clk: spacemit: Add clock support for UFS
+Date: Tue, 30 Jun 2026 12:52:44 +0000
+Message-Id: <20260630-06-clk-ufs-support-v1-0-cf7521d1d0fe@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TY2PEPF0000AB88:EE_|SG2PR06MB5058:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: dfb484d4-1512-4469-67d9-08ded6a54ec4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|23010399003|376014|1800799024|36860700016|82310400026|56012099006|18002099003|22082099003;
-X-Microsoft-Antispam-Message-Info:
-	f4y6AQ++GB4jFNbNiT3RB5/SIOO4RP9RZ7kcYLoi6g137tvvX8/4nHQHc3OsO2aZobMgvk61FQ2Xd4hvROM1Zd+u6DhsIa6NhzujKiSinw8l0BKH9GwkCJ/RODsk1O84yr2DeYSTzS0bHHHU8FapvL8JLjTVeDnVTDnOvnvQjoOXxo1szAoL/LYW4Egx005zARgbUhRLC+DFK243GxqX5H3FH6HrjNOs1lhu1Rb9cZ8lY9ZzA1EN2+KOLmvG1XOBKAwXDpq+GdAmTIAzWROQlfeWMBE9vadGvQSRhxBJolV9CKaCJ3VHabN2qJNR98MGrK4z3AyGhrzUbtdb2KuH+FedTBukywB4VQwmJjU/bUzZBBcaBBoytWasSdpcclEPU0TmCFV5P+Hm2gGyKHcs5mEfyNIxyDav1oOqtOfK5vB1yXlKNE+9ETPWhbC1SPrPoJsMk3p7Z5sWKdOQNI2nKg+kqXpscy/cvxRhlW+BpBllDN0jSbBF0wxupR7WZw9glfUfMB58lGazPe2/xaAFZA4WywIwOdb0+aHK4xsnokhXcHafctOrlYE2jeLtJ2O+IO1Y6ZYRkPp8IYuSlVFM4O0F4BA8jNNggVzF3givK5m8JXvN33z7N+U+HjcgpBxjRcNA+/It1PuHQh4qJuwSgtIUzp4okIqICidA0CDNcL0v7nyZ0uX/6LmYCYYXX3SXnCpX+giq3gCnNS9V1F2f+w==
-X-Forefront-Antispam-Report:
-	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(23010399003)(376014)(1800799024)(36860700016)(82310400026)(56012099006)(18002099003)(22082099003);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	o+rTxVS9afxrC3Rni0ndQGhr+C5R/sFTrwOMwNp3Hvj8j9RK4gCJ0Dt2TFhFajB5s1gt/TTj5W2nDbwQCDxUMhvyFGHID3p9FPM8Ph6twBj5G4F3QyTFgb0ljItRWJjs4GicF/49LlfbO3tbmoKygk19vd/whPjPZ6Gx0JOj5I1vFzcCvjKoniEuC5bOCX/UU920JyMXFr1B+tR7ZcmXnRmNEt3OH+57zvQHmKeL7c8igZdRxS4svWVJpE7kVXkyePhXHmYaI7ssRxRJFaOTcJyQK69o+YM7mFwao5Am4QQc6F/WPUCSMmQ7jMrcghg3UvHmHX+MXYfRMdaWtadULOJN1DyrJlLkLMqLWCno4lNoV6xED7JPh9B11VRKvmDncKFMcD4nrj0Q5gmIB40tEj2xX426Orddn1ysZ+B/EoUBx9hs0yZkfW1LtcNu/Iqu
-X-OriginatorOrg: cixtech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jun 2026 12:44:20.9938
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: dfb484d4-1512-4469-67d9-08ded6a54ec4
-X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	TY2PEPF0000AB88.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SG2PR06MB5058
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABy8Q2oC/yXMQQ6CMBBA0auQWTPJWElBr0JYSJnqqIGmQwkJ4
+ e4WXL7F/xsoR2GFe7FB5EVUpjHjUhbgXo/xyShDNhgylixdkSy67weTV9QUwhRntA352jR1Vd0
+ Ichgie1nPadv9ral/s5uPE+z7D0ZG/5Z2AAAA
+X-Change-ID: 20260603-06-clk-ufs-support-680f72874490
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org, 
+ spacemit@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Yixun Lan <dlan@kernel.org>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=924; i=dlan@kernel.org;
+ h=from:subject:message-id; bh=ROcY5MyDjeKC0r7oBgUYsRLMttcLNK+R76DuiYC0u4E=;
+ b=owEB6QIW/ZANAwAKATGq6kdZTbvtAcsmYgBqQ7witHp46MnBhRPjHRqWbO9ifeIppPTxvDQQ/
+ YQNw4zSt+eJAq8EAAEKAJkWIQS1urjJwxtxFWcCI9wxqupHWU277QUCakO8IhsUgAAAAAAEAA5t
+ YW51MiwyLjUrMS4xMiwyLDJfFIAAAAAALgAoaXNzdWVyLWZwckBub3RhdGlvbnMub3BlbnBncC5
+ maWZ0aGhvcnNlbWFuLm5ldEI1QkFCOEM5QzMxQjcxMTU2NzAyMjNEQzMxQUFFQTQ3NTk0REJCRU
+ QACgkQMarqR1lNu+1OmA//food5KEGKOPt1pFdI0WOzWHoqS7YKsm7TL3J5jP8jn9e5T6VUg1XC
+ ogEi79jITIqS7/ffigZ6qgvw14YLGl2n5gxLNiJftyEY92bT8/XIuO2rWImBZ0TwUduqMoLTeeu
+ t3tzVz3xkOLdFF7uNIa1E11NLgiTbjjFgioIFeLAXX132Mjw6ZFDHOVQAVKLSrGQAgNMpjgyBhP
+ FBEafeUtwOXR3VffUKJJr49+nnPRBcv2DyUlDrPW6SA9EqlS/QTIsN/hZfb9hTSvJUkQkwUPj/b
+ KIqCv47XPpin82iWqR8YZNWetTT7Yw66W1p1zHGYjiBKgBAl6cD3t8773ljd8xuFAb3TrTm45Y3
+ sp6nUH+uIwm2TIE3ddIjGelHQzQyIOhOQwNoPVNt4Lk2r482Pi2EWyCCGviNXATyreIJ7aK4yLJ
+ S4RwEEXIZnDImAwSSzJEMBMFMq8VIAMsFB20BD+kGXTgR6+uUVYNiC5KiH1bsCwbVb4tYJqcTY7
+ nbPxBqkYiW8PYIu3QRGVYzupBsP8WdON64GKQgCRb1rDs3bYeH62aMAyQy0kkgAWyfE+1H0mUBZ
+ 6Hth1A2KMYzjPze9s2PAdB7ZchtCIklgvCY/U0ICjFG4pHQPPiwcbCoHj61kdOuAB7HZPrIRzod
+ mxPHEtMzxBMexmFQHgHL/nk1PzTSfM=
+X-Developer-Key: i=dlan@kernel.org; a=openpgp;
+ fpr=50B03A1A5CBCD33576EF8CD7920C0DBCAABEFD55
 
-From: Joakim Zhang <joakim.zhang@cixtech.com>
+This series try to fix parent clock of UFS aclk which was submitted as 
+wrong version, so correct it according to updated doc[1] here. Also, add
+a UFS reference clock which was missing in previous patchset.
 
-Add the AUDSS CRU device node providing clocks and software resets
-for audio subsystem peripherals.
-
-Signed-off-by: Joakim Zhang <joakim.zhang@cixtech.com>
+Link: https://www.spacemit.com/community/document/info?nodepath=hardware/key_stone/k3/k3_docs/k3_usermanual/17_clock_reset.md&lang=en [1]
+Signed-off-by: Yixun Lan <dlan@kernel.org>
 ---
- arch/arm64/boot/dts/cix/sky1.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+Yixun Lan (3):
+      clk: spacemit: k3: fix parent clock of UFS aclk
+      dt-bindings: soc: spacemit: k3: Add clock ID for UFS refclk
+      clk: spacemit: k3: Add UFS refclk clock
 
-diff --git a/arch/arm64/boot/dts/cix/sky1.dtsi b/arch/arm64/boot/dts/cix/sky1.dtsi
-index bb5cfb1f2113..6d045d7216e6 100644
---- a/arch/arm64/boot/dts/cix/sky1.dtsi
-+++ b/arch/arm64/boot/dts/cix/sky1.dtsi
-@@ -6,6 +6,10 @@
- 
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/clock/cix,sky1.h>
-+#include <dt-bindings/clock/cix,sky1-audss-cru.h>
-+#include <dt-bindings/reset/cix,sky1-system-control.h>
-+#include <dt-bindings/reset/cix,sky1-s5-system-control.h>
-+#include <dt-bindings/reset/cix,sky1-audss-cru.h>
- #include "sky1-power.h"
- 
- / {
-@@ -488,6 +492,20 @@ mbox_pm2ap: mailbox@65a0080 {
- 			cix,mbox-dir = "rx";
- 		};
- 
-+		audss_cru: clock-controller@7110000 {
-+			compatible = "cix,sky1-audss-cru";
-+			reg = <0x0 0x07110000 0x0 0x10000>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			clocks = <&scmi_clk CLK_TREE_AUDIO_CLK0>,
-+				 <&scmi_clk CLK_TREE_AUDIO_CLK2>,
-+				 <&scmi_clk CLK_TREE_AUDIO_CLK4>,
-+				 <&scmi_clk CLK_TREE_AUDIO_CLK5>;
-+			clock-names = "x8k", "x11k", "sys", "48m";
-+			power-domains = <&smc_devpd SKY1_PD_AUDIO>;
-+			resets = <&s5_syscon SKY1_AUDIO_HIFI5_NOC_RESET_N>;
-+		};
-+
- 		mbox_sfh2ap: mailbox@8090000 {
- 			compatible = "cix,sky1-mbox";
- 			reg = <0x0 0x08090000 0x0 0x10000>;
--- 
-2.50.1
+ drivers/clk/spacemit/ccu-k3.c                  | 10 ++++++----
+ include/dt-bindings/clock/spacemit,k3-clocks.h |  1 +
+ 2 files changed, 7 insertions(+), 4 deletions(-)
+---
+base-commit: dc59e4fea9d83f03bad6bddf3fa2e52491777482
+change-id: 20260603-06-clk-ufs-support-680f72874490
+
+Best regards,
+--  
+Yixun Lan <dlan@kernel.org>
 
