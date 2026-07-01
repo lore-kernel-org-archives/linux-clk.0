@@ -1,40 +1,41 @@
-Received: from mxb.seznam.cz (mxb.seznam.cz [77.75.78.89])
+Received: from mxb.seznam.cz (mxb.seznam.cz [77.75.76.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 051E935E1BF;
-	Wed,  1 Jul 2026 14:52:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=77.75.78.89
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42C7DEEB3;
+	Wed,  1 Jul 2026 14:52:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=77.75.76.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782917530; cv=none; b=tiN+wc+4C5GHJyvF/CKSmlzcf46cvip3S2qJwyTqBF6B1N7Dbv1AUMsji2FC6TB9IgZDA45VTwbrFEP0V4+8b3npYjd9ylhLqHZWrOR/abzf6TnkgLSLW0sqHCddU8pftGclxiiIC+eHK+4w0pfDmiUJuZhXpTFA7hau75+gaZQ=
+	t=1782917550; cv=none; b=QEQfQuKn5gDFz9SE6Flb7nrXoVp+RnWVDcVpEGvvBN6eD3IWef1Wdewo2dFl8ZP2yzbv6yeTTPASWWJ+F9OrCew2Kd9tOyEfFtXOP7zW0v5bjc9MmoidYHvEV/V/Mt7SFpAmiJ82JQac5KIsu8Dbt7aNzwYTJzLNC7Q04C+tsL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782917530; c=relaxed/simple;
-	bh=/vca1q8opkBckH2fh34ilm8hmardMelgES/zJfNx0QY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OW9JBEltWvizOAQjQtlrk1X8k8RMn2X8R7eIUe/v0VRUgfBN+/B6oxmnXF1ECLFAJJMv95hEIkB039YAutAjn4b9VsVbvlYvQtto54jhvERtj+UUnR3od+9bUiG5ohFtz+KQW3xEAHrJoL/GVQwr7YFL6AX/dNEE/lg7UCmLsQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loebl.cz; spf=none smtp.mailfrom=loebl.cz; dkim=pass (2048-bit key) header.d=emailprofi.seznam.cz header.i=@emailprofi.seznam.cz header.b=g5DL7UV6; arc=none smtp.client-ip=77.75.78.89
+	s=arc-20240116; t=1782917550; c=relaxed/simple;
+	bh=ika0BrSNQoltLJqUAR1RwAjrRKCr5c1SgU5LtyaOsdQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=K1roQHT9C5hFvmNrZMQyXQRxockfuwpjycNsBSSaIbYlKrtq8UXNGxRNTHTkG3q2xZvSyVKesaxCe1yLsD69Xr/VB8CgNhBfYGzMX7zSIDfNA1Sxb0ltj2sZ/FmdU208YorrS1/DSw3yAuZFCwji5TDD8OY0oOhGE2wAJeg2PR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loebl.cz; spf=none smtp.mailfrom=loebl.cz; dkim=pass (2048-bit key) header.d=emailprofi.seznam.cz header.i=@emailprofi.seznam.cz header.b=VnM2bm+E; arc=none smtp.client-ip=77.75.76.89
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loebl.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=loebl.cz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=emailprofi.seznam.cz header.i=@emailprofi.seznam.cz header.b="g5DL7UV6"
+	dkim=pass (2048-bit key) header.d=emailprofi.seznam.cz header.i=@emailprofi.seznam.cz header.b="VnM2bm+E"
 Received: from email.seznam.cz
-	by smtpc-mxb-7dd54556bb-mmpkq
-	(smtpc-mxb-7dd54556bb-mmpkq [2a02:598:64:8a00::1000:90e])
-	id 4148eec25ada631645ad5740;
-	Wed, 01 Jul 2026 16:51:54 +0200 (CEST)
+	by smtpc-mxb-55bd7c95dc-hrn5m
+	(smtpc-mxb-55bd7c95dc-hrn5m [2a02:598:96:8a00::1200:50c])
+	id 44b5930f5f271edb40502a8d;
+	Wed, 01 Jul 2026 16:52:19 +0200 (CEST)
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=emailprofi.seznam.cz; s=szn1; t=1782917514;
-	bh=chPS+RNkrmXTe3ehJ/BfFYLgi6SC5NP1gcF9y9DGqgM=;
+	d=emailprofi.seznam.cz; s=szn1; t=1782917539;
+	bh=us0nAeHD3vBIcCOehjkvttvj8zYNKPFSkGMChTkflDE=;
 	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding;
-	b=g5DL7UV6FPHPCn3HqHbGc6Nh/sepzpVNnNkIKicoh8tNSfDFAYZbWghZxi49h6bi0
-	 p8zBP56bfm/idtkBn9ort878Kel9bJyPjiOTqPuBI+V7Jy75uFHQDD3k9hPn8g/3BM
-	 jOQB8L5vGklzRRRGhXJvTMgMEr9tyqnN3oRXfljLwEX592QOUWfdw8etR/QTprMLDM
-	 U6Pwl0h4ZqkV3catqt0AgqE7qPInshaNM24j7eIzaMBXGqFWEuk3A/yN9eDP68hM0A
-	 VGKnEiAwFkkrgbwn1X+4WqZhHx6/StIKydi32tOHYhChJjPY4FfZaiN5DZK5rx+Ba1
-	 V++b4p22ETKeQ==
+	b=VnM2bm+E0qbTzLlfXP2BQEo/x3vR6XUvns/j9J6AszsWRQxGF2ymGbOsA+2NyGORE
+	 Vum3oZbG9APyNuZaqmPmuOsojftnVD+emLkPM952rDAisVNX1o+KfxQodaGD1M6Nb9
+	 v2IvS3yumvBFQV/UxN66by8OghQ9d3JzxIcbCfR02CvV5jSIk8haLp/c2TKRyimRXl
+	 2EZKftbbi62hYj9juDRytIA3MjavSttxgz6wA3bbHL6M+ghY7Xs18GJjDOBxvKiZfk
+	 l9o6ttVJP6AJfiyHEbZzPI31IUcxq/+0HUXZhr2+DZrd+Doo4o5LTsEhzBH3BHkDft
+	 JMQsewixa9v3A==
 Received: from localhost (109-81-118-98.rct.o2.cz [109.81.118.98])
-	by smtpd-relay-f8b496c7c-jtrnh (szn-email-smtpd/2.0.76) with ESMTPA
-	id 29c0e294-37cd-4f7b-9f50-5acea2c588df;
-	Wed, 01 Jul 2026 16:51:44 +0200
+	by smtpd-relay-f8b496c7c-25jvs (szn-email-smtpd/2.0.76) with ESMTPA
+	id 5109345c-e1c2-4b17-ab47-f09211e5ee9b;
+	Wed, 01 Jul 2026 16:51:46 +0200
 From: =?UTF-8?q?Pavel=20L=C3=B6bl?= <pavel@loebl.cz>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
@@ -44,10 +45,12 @@ To: Michael Turquette <mturquette@baylibre.com>,
 Cc: devicetree@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	=?UTF-8?q?Pavel=20L=C3=B6bl?= <pavel@loebl.cz>
-Subject: [PATCH v2 0/2] Add support for Si549 programmable clock
-Date: Wed,  1 Jul 2026 16:50:59 +0200
-Message-ID: <20260701145101.3932655-1-pavel@loebl.cz>
+Subject: [PATCH v2 1/2] dt-bindings: clock: si544: add si549 compatible
+Date: Wed,  1 Jul 2026 16:51:00 +0200
+Message-ID: <20260701145101.3932655-2-pavel@loebl.cz>
 X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260701145101.3932655-1-pavel@loebl.cz>
+References: <20260701145101.3932655-1-pavel@loebl.cz>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -57,28 +60,53 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-This adds support for Si549 programmable oscillator. It's almost the
-same as already supported Si544, except it uses different internal
-oscillator frequency.
+Adding Si549 compatible, which uses different internal oscillator
+frequency. Like in Si544 case, there are three types ending with
+latters a,b and c. Each with different maximum output frequency.
 
-So new compatible strings are added, and driver data is extended
-to carry both maximum output frequency and internal xtal frequency.
+Also fix datasheet links after Silicon Labs acquisition by
+Skyworks Solutions.
 
-Changes in v2:
-  Fixed obvious stuff found by Sashiko (extra unused struct member),
-  removing unneeded data argument to calculation functions, xo_freq
-  is now passed in settings struct.
+Signed-off-by: Pavel Löbl <pavel@loebl.cz>
+---
+ .../devicetree/bindings/clock/silabs,si544.yaml        | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-
-Pavel Löbl (2):
-  dt-bindings: clock: si544: add si549 compatible
-  clk: si544: add support for si549
-
- .../bindings/clock/silabs,si544.yaml          | 10 ++-
- drivers/clk/Kconfig                           |  6 +-
- drivers/clk/clk-si544.c                       | 82 +++++++++++++++----
- 3 files changed, 75 insertions(+), 23 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/clock/silabs,si544.yaml b/Documentation/devicetree/bindings/clock/silabs,si544.yaml
+index f87e71867108..c58171f1bc5b 100644
+--- a/Documentation/devicetree/bindings/clock/silabs,si544.yaml
++++ b/Documentation/devicetree/bindings/clock/silabs,si544.yaml
+@@ -4,7 +4,7 @@
+ $id: http://devicetree.org/schemas/clock/silabs,si544.yaml#
+ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+-title: Silicon Labs SI514/SI544 clock generator
++title: Silicon Labs SI514/SI544/SI549 clock generator
+ 
+ maintainers:
+   - Mike Looijmans <mike.looijmans@topic.nl>
+@@ -13,8 +13,9 @@ description: >
+   Silicon Labs 514/544 programmable I2C clock generator. Details about the device
+   can be found in the datasheet:
+ 
+-    https://www.silabs.com/Support%20Documents/TechnicalDocs/si514.pdf
+-    https://www.silabs.com/documents/public/data-sheets/si544-datasheet.pdf
++    https://www.skyworksinc.com/-/media/Skyworks/SL/documents/public/data-sheets/Si514.pdf
++    https://www.skyworksinc.com/-/media/Skyworks/SL/documents/public/data-sheets/si544-datasheet.pdf
++    https://www.skyworksinc.com/-/media/Skyworks/SL/documents/public/data-sheets/si549-datasheet.pdf
+ 
+ properties:
+   compatible:
+@@ -23,6 +24,9 @@ properties:
+       - silabs,si544a
+       - silabs,si544b
+       - silabs,si544c
++      - silabs,si549a
++      - silabs,si549b
++      - silabs,si549c
+ 
+   reg:
+     maxItems: 1
 -- 
 2.53.0
 
