@@ -1,112 +1,113 @@
-Received: from mxb.seznam.cz (mxb.seznam.cz [77.75.76.89])
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42C7DEEB3;
-	Wed,  1 Jul 2026 14:52:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=77.75.76.89
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A566A44CAD7
+	for <linux-clk@vger.kernel.org>; Wed,  1 Jul 2026 15:06:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782917550; cv=none; b=QEQfQuKn5gDFz9SE6Flb7nrXoVp+RnWVDcVpEGvvBN6eD3IWef1Wdewo2dFl8ZP2yzbv6yeTTPASWWJ+F9OrCew2Kd9tOyEfFtXOP7zW0v5bjc9MmoidYHvEV/V/Mt7SFpAmiJ82JQac5KIsu8Dbt7aNzwYTJzLNC7Q04C+tsL0=
+	t=1782918401; cv=none; b=Y1iG9knUUHAQRZtWBzR22uI1yygfcgCaSKznCLdyqh7Rcfyx0QeRqvap9F9L8Lj1iO42BWggmZ/t2soSOCq/QgxBz+RHXIp8cEtfigBTzOeWerKDPXrpDmMdJSlDj8yYpe6WrLbB3j2kPLy6o3n/AxEbkxp7BxoV+72uwwViL7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782917550; c=relaxed/simple;
-	bh=ika0BrSNQoltLJqUAR1RwAjrRKCr5c1SgU5LtyaOsdQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=K1roQHT9C5hFvmNrZMQyXQRxockfuwpjycNsBSSaIbYlKrtq8UXNGxRNTHTkG3q2xZvSyVKesaxCe1yLsD69Xr/VB8CgNhBfYGzMX7zSIDfNA1Sxb0ltj2sZ/FmdU208YorrS1/DSw3yAuZFCwji5TDD8OY0oOhGE2wAJeg2PR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loebl.cz; spf=none smtp.mailfrom=loebl.cz; dkim=pass (2048-bit key) header.d=emailprofi.seznam.cz header.i=@emailprofi.seznam.cz header.b=VnM2bm+E; arc=none smtp.client-ip=77.75.76.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loebl.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=loebl.cz
+	s=arc-20240116; t=1782918401; c=relaxed/simple;
+	bh=B1KLfxqZc7VNnr3/5F6pKI2LR1JslYubJtfNHtAUECE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=AHAmAs62INFaqz493lrNqYCvk6Y+hxDIoST6WDZ+QW+sKHxqvd+kKeL7dnmPPMSrH6Zsu2NA9gZ0VagofBMQikA/RZl0abmToKeLco+fzwiErmwpNxzb/mzhCnF/JlQlCxocAgl6/HNNcHkN8Xy54azN0xwcF1+WBLwpmFmGyFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=TtI1NB8w; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=emailprofi.seznam.cz header.i=@emailprofi.seznam.cz header.b="VnM2bm+E"
-Received: from email.seznam.cz
-	by smtpc-mxb-55bd7c95dc-hrn5m
-	(smtpc-mxb-55bd7c95dc-hrn5m [2a02:598:96:8a00::1200:50c])
-	id 44b5930f5f271edb40502a8d;
-	Wed, 01 Jul 2026 16:52:19 +0200 (CEST)
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=emailprofi.seznam.cz; s=szn1; t=1782917539;
-	bh=us0nAeHD3vBIcCOehjkvttvj8zYNKPFSkGMChTkflDE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding;
-	b=VnM2bm+E0qbTzLlfXP2BQEo/x3vR6XUvns/j9J6AszsWRQxGF2ymGbOsA+2NyGORE
-	 Vum3oZbG9APyNuZaqmPmuOsojftnVD+emLkPM952rDAisVNX1o+KfxQodaGD1M6Nb9
-	 v2IvS3yumvBFQV/UxN66by8OghQ9d3JzxIcbCfR02CvV5jSIk8haLp/c2TKRyimRXl
-	 2EZKftbbi62hYj9juDRytIA3MjavSttxgz6wA3bbHL6M+ghY7Xs18GJjDOBxvKiZfk
-	 l9o6ttVJP6AJfiyHEbZzPI31IUcxq/+0HUXZhr2+DZrd+Doo4o5LTsEhzBH3BHkDft
-	 JMQsewixa9v3A==
-Received: from localhost (109-81-118-98.rct.o2.cz [109.81.118.98])
-	by smtpd-relay-f8b496c7c-25jvs (szn-email-smtpd/2.0.76) with ESMTPA
-	id 5109345c-e1c2-4b17-ab47-f09211e5ee9b;
-	Wed, 01 Jul 2026 16:51:46 +0200
-From: =?UTF-8?q?Pavel=20L=C3=B6bl?= <pavel@loebl.cz>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	=?UTF-8?q?Pavel=20L=C3=B6bl?= <pavel@loebl.cz>
-Subject: [PATCH v2 1/2] dt-bindings: clock: si544: add si549 compatible
-Date: Wed,  1 Jul 2026 16:51:00 +0200
-Message-ID: <20260701145101.3932655-2-pavel@loebl.cz>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260701145101.3932655-1-pavel@loebl.cz>
-References: <20260701145101.3932655-1-pavel@loebl.cz>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="TtI1NB8w"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 2BDE1C504E2
+	for <linux-clk@vger.kernel.org>; Wed,  1 Jul 2026 15:06:47 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 2F4C860288;
+	Wed,  1 Jul 2026 15:06:36 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0D2F8104C9645;
+	Wed,  1 Jul 2026 17:06:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1782918395; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=OJZ+bRR/5vHeCzoVjWEL8tNwXwe+b//XD/OJdfUFeuw=;
+	b=TtI1NB8w6taN1xX/KBgOl7Gd8TAxTN4SPEeO5I07Qx2rJr++dDez5zjO5jQhBTIq9AUpwN
+	1uDZjPoNkBes5gZDFC/ur04qZEY3KJ/lCbyZ1B8jrfHHVvVSun2sBGS6DCB7EfuxQbt2Jq
+	8kIiApZER9Dk4jX+og51TMVWOFgYYOeYhBESgcaCFhBS5GKzmc2R0aqqKTPV5AXYx8gkoV
+	LZQ4ayeVlXfrBhQq6dlwnIsQ0Bjq5tCA9CwWIdDSrSMH6QQWc+s+zFoFXkbdCnH0agURZ4
+	Krp/dHoj6nLGtwfNaJL8kfiqByNHzwlaCk1BwC4CPNNIY5x8IFJ9Wa+jlePGjQ==
+From: Thomas Richard <thomas.richard@bootlin.com>
+Date: Wed, 01 Jul 2026 17:06:28 +0200
+Subject: [PATCH] clk: ti: omap4: Initialize DPLL_USB_M2 during the boot
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260701-clk-ti-omap4-dpll-usb-m2-v1-1-02d8a3845a55@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIAPMsRWoC/x3MQQ5AMBBA0avIrE1SDSquIhbVDiaKpkUk4u4ay
+ 7f4/4FIgSlCmz0Q6OLI+5ZQ5BmYWW8TIdtkkELWoi4UGrfgwbiv2pdovXN4xgFXiUaRFZWioTE
+ NpNwHGvn+113/vh9X3OkjagAAAA==
+X-Change-ID: 20260617-clk-ti-omap4-dpll-usb-m2-c7ed057eb8c8
+To: Tero Kristo <kristo@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ linux-omap@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Thomas Richard <thomas.richard@bootlin.com>
+X-Mailer: b4 0.14.3
+X-Last-TLS-Session-Version: TLSv1.3
 
-Adding Si549 compatible, which uses different internal oscillator
-frequency. Like in Si544 case, there are three types ending with
-latters a,b and c. Each with different maximum output frequency.
+Initialize and lock DPLL_USB_M2 at boot to make USB devices work.
 
-Also fix datasheet links after Silicon Labs acquisition by
-Skyworks Solutions.
-
-Signed-off-by: Pavel Löbl <pavel@loebl.cz>
+Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
 ---
- .../devicetree/bindings/clock/silabs,si544.yaml        | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+Recently a series [1] adding back OMAP4 support in U-Boot has been merged
+in next branch. While testing it, I noticed USB is not working on
+omap4_var_som.
 
-diff --git a/Documentation/devicetree/bindings/clock/silabs,si544.yaml b/Documentation/devicetree/bindings/clock/silabs,si544.yaml
-index f87e71867108..c58171f1bc5b 100644
---- a/Documentation/devicetree/bindings/clock/silabs,si544.yaml
-+++ b/Documentation/devicetree/bindings/clock/silabs,si544.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/clock/silabs,si544.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
+usb 1-1: new full-speed USB device number 8 using ohci-platform
+usb 1-1: device descriptor read/64, error -62
+usb 1-1: device descriptor read/64, error -62
+usb 1-1: new full-speed USB device number 9 using ohci-platform
+usb 1-1: device descriptor read/64, error -62
+usb 1-1: device descriptor read/64, error -62
+usb usb1-port1: attempt power cycle
+
+The USB_M2 DPLL was previously initialized by U-Boot, but [1] lacks USB
+support for OMAP4. This patch initializes the DPLL in the kernel to avoid
+relying on the bootloader.
+
+If you want to test, as U-Boot does not handle pbias regulators, you also
+have to apply the patch series "[PATCH v2 00/11] Add SIM pbias regulator
+support for USB on OMAP4" [2].
+
+[1] https://lore.kernel.org/all/20260608-omap4-support-v3-0-8595ccd203f0@bootlin.com/
+[2] https://lore.kernel.org/all/20260330-omap4-fix-usb-support-v2-0-1c1e11b190dc@bootlin.com/
+---
+ drivers/clk/ti/clk-44xx.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/clk/ti/clk-44xx.c b/drivers/clk/ti/clk-44xx.c
+index 9b2824ed785b..3944c50b7cd0 100644
+--- a/drivers/clk/ti/clk-44xx.c
++++ b/drivers/clk/ti/clk-44xx.c
+@@ -811,6 +811,11 @@ int __init omap4xxx_dt_clk_init(void)
+ 	if (rc)
+ 		pr_err("%s: failed to configure USB DPLL!\n", __func__);
  
--title: Silicon Labs SI514/SI544 clock generator
-+title: Silicon Labs SI514/SI544/SI549 clock generator
- 
- maintainers:
-   - Mike Looijmans <mike.looijmans@topic.nl>
-@@ -13,8 +13,9 @@ description: >
-   Silicon Labs 514/544 programmable I2C clock generator. Details about the device
-   can be found in the datasheet:
- 
--    https://www.silabs.com/Support%20Documents/TechnicalDocs/si514.pdf
--    https://www.silabs.com/documents/public/data-sheets/si544-datasheet.pdf
-+    https://www.skyworksinc.com/-/media/Skyworks/SL/documents/public/data-sheets/Si514.pdf
-+    https://www.skyworksinc.com/-/media/Skyworks/SL/documents/public/data-sheets/si544-datasheet.pdf
-+    https://www.skyworksinc.com/-/media/Skyworks/SL/documents/public/data-sheets/si549-datasheet.pdf
- 
- properties:
-   compatible:
-@@ -23,6 +24,9 @@ properties:
-       - silabs,si544a
-       - silabs,si544b
-       - silabs,si544c
-+      - silabs,si549a
-+      - silabs,si549b
-+      - silabs,si549c
- 
-   reg:
-     maxItems: 1
++	usb_dpll = clk_get_sys(NULL, "dpll_usb_m2_ck");
++	rc = clk_set_rate(usb_dpll, OMAP4_DPLL_USB_DEFFREQ / 2);
++	if (rc)
++		pr_err("%s: failed to configure DPLL_USB_M2!\n", __func__);
++
+ 	/*
+ 	 * On OMAP4460 the ABE DPLL fails to turn on if in idle low-power
+ 	 * state when turning the ABE clock domain. Workaround this by
+
+---
+base-commit: d247142d038d06514de633de44db8faf17227752
+change-id: 20260617-clk-ti-omap4-dpll-usb-m2-c7ed057eb8c8
+
+Best regards,
 -- 
-2.53.0
+Thomas Richard <thomas.richard@bootlin.com>
 
