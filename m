@@ -1,106 +1,110 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 291E2366816;
-	Wed,  1 Jul 2026 16:24:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8B6D2D5408;
+	Wed,  1 Jul 2026 16:45:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782923067; cv=none; b=RokDcQq4CdTo3l9l72E1Euabb4BFYB+X2MbL2nbuWcBITFb/DGwVGTES1TVBc47UxFUym/63QkpzS5mLtclheHdP9NYOz/daVkDgyDEocyJrk42tTGxqRaXZhgqQ1xe3t2GJrSDhRabVAwC3wUlTv58nQ4sGSuQew9K1hGkOu4Q=
+	t=1782924345; cv=none; b=m2d3qnfO2LUtLRjXvLLy/iWS0PqrX+s9ZWK/KoKtIszonXfim9MYgT16r8RADj2bv0DwUQR61tdyCqdjGOEnm2Cd99zyol9S0yxJS2HVdBv5wKMWYBvJTSteJuEEN6OCzkRYkDNGoEm3X4lOtCoJKk5W6W1CPSiMcSM2HsudWYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782923067; c=relaxed/simple;
-	bh=PkQmqwbgSjT5aMMiQj1i8sYD8hdwFPcTFD7ghp7SVAM=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=DyIv7L+Snne8kHwgBU4gvnTgtmUQ5jU5qCOrLj8ChSLzXu6g0bVhCFwcpO8tHEJwXHL6+26lxJHcqfVHoalG8+Y9bz+47QgRr6j5GLcjnX2WUSGhqQpPTojEWjxOe2j6RL8yKyNPxQtR9cqfv7qLr3lYdXbSUXm9pPc+vO6N1Lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SwtQnZ96; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1782924345; c=relaxed/simple;
+	bh=g2FAJ3MZ6WTq5XPr06Cie+9t3S1YgTQ5fz7dZk70lsc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JfaT2hP7nHP1Is+ZqJ1RSCAdXzIBCqOBSlfMC4C0ZB34glsLW142m3loP9nUChPwNerAx4QDwVP0SHYAtLH5dKfeH/rPQtxcuhSWttyRQFgJc+B40xzHzBwRM6HD5S4bbVa/SlHg5ee2CZ4yQnbqdb2ddH9wn8YBuQlqCd1CfcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=EdIJJCW/; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SwtQnZ96"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90A061F000E9;
-	Wed,  1 Jul 2026 16:24:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1782923065;
-	bh=dQbBlkNyShZgl6jx6OlwULDQXonRARNTYcAllSQ/B9U=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject;
-	b=SwtQnZ96zoZhDDv5bku1HcaOWLPPGhIElTYWLAl7g5ozDyFVuHrDxlCKsxe2tnFK1
-	 84055kA9AfD+vRLgMAx/eq68Bl0h9UTkkY3GDMYVFrt8cQZsrB89h2ETyEuxbobAGg
-	 bTVJz6mmEuAnTH0Z9MKTNzsnN54hwblnw4ewbCAIA6O/tllnvzKpX3UqQjgGjBMdAH
-	 +hikVObjG2l4s3QR1I2P2VtTHWhI+YYD9WBgAwtBn5slQrY845Db3sJx73xcdIm57l
-	 prk40ttbIjtqy8jNtkoBXaQQlkWYWoXV+YDTCWLk8dThdnyvXprJX9y06zxh3sOTxX
-	 MjRr1bENc8HaQ==
-Date: Wed, 01 Jul 2026 11:24:24 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="EdIJJCW/"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Subject:Cc:To:From:
+	Reply-To:Content-ID:Content-Description;
+	bh=WdspS75NOxfLhQ84f5cjMDOmswQRpBYDCdh0Opc/BZM=; t=1782924343; x=1784133943; 
+	b=EdIJJCW/F+OTzYaOMifTBEXP6uNs98fqNo3deOQy72kUCdb+OuLQRDhAJXkHsvO6CXYDTeBJT+k
+	dPsfC4aegqf1xElcKKRvKYEFPGYSRIeMkSW/BVxTa8/EA+76JTPE+Hsy8OeQcKrmhaJWLuFjMn1nW
+	koarrDAcxd6n9WnYWNC38aHSwm8sKrzeYEzBhCcUe0a8XOT0J0SntQOsFazAcWQkDDjlJk/PNCQju
+	1H7XKOtHpYlp+h4sYN594r1YR/wdLfbSVbjL+ptnjnJFzY29Cf2enPlRqFxp69bg5jDTe986qlafu
+	W7nd6oRAtCljGjkYyYW+Cfbm4lLgE4e5dn5A==;
+Date: Wed, 1 Jul 2026 18:45:25 +0200
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Thomas Richard <thomas.richard@bootlin.com>
+Cc: Tero Kristo <kristo@kernel.org>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Brian Masney
+ <bmasney@redhat.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: ti: omap4: Initialize DPLL_USB_M2 during the boot
+Message-ID: <20260701184525.6d80ad79@kemnade.info>
+In-Reply-To: <20260701-clk-ti-omap4-dpll-usb-m2-v1-1-02d8a3845a55@bootlin.com>
+References: <20260701-clk-ti-omap4-dpll-usb-m2-v1-1-02d8a3845a55@bootlin.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; aarch64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-kernel@vger.kernel.org, 
- Richard Cochran <richardcochran@gmail.com>, 
- Chun-Jie Chen <chun-jie.chen@mediatek.com>, netdev@vger.kernel.org, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Brian Masney <bmasney@redhat.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- Stephen Boyd <sboyd@kernel.org>, linux-mediatek@lists.infradead.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, kernel@collabora.com, 
- Michael Turquette <mturquette@baylibre.com>, 
- Edward-JW Yang <edward-jw.yang@mediatek.com>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org
-To: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
-In-Reply-To: <20260701-mt8189-clocks-system-base-v1-2-2b048feea50a@collabora.com>
-References: <20260701-mt8189-clocks-system-base-v1-0-2b048feea50a@collabora.com>
- <20260701-mt8189-clocks-system-base-v1-2-2b048feea50a@collabora.com>
-Message-Id: <178292306474.849869.14658483953316030995.robh@kernel.org>
-Subject: Re: [PATCH 02/15] dt-bindings: clock: mediatek: regroup MT8188
- dt-bindings into MT8186
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Wed, 01 Jul 2026 17:06:28 +0200
+Thomas Richard <thomas.richard@bootlin.com> wrote:
 
-On Wed, 01 Jul 2026 15:11:07 +0200, Louis-Alexis Eyraud wrote:
-> Regroup the MT8188 clock and system clock dt-bindings into MT8186 ones
-> to ease maintainability and have common files for several currently
-> supported SoC or new future ones, that have the same kind of clock
-> controller design.
+> Initialize and lock DPLL_USB_M2 at boot to make USB devices work.
 > 
-> Note:
-> The `#clock-cells` property is a required property for all compatibles
-> declared in MT8188 clock and system clock dt-bindings but not in MT8186
-> ones.
-> To avoid ABI breakage, conditional blocks to check this requirement
-> for MT8188 compatibles are added, rather than enforcing it for MT8186
-> compatibles.
-> 
-> Signed-off-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+> Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
 > ---
->  .../bindings/clock/mediatek,mt8186-clock.yaml      | 82 ++++++++++++++++++-
->  .../bindings/clock/mediatek,mt8186-sys-clock.yaml  | 20 ++++-
->  .../bindings/clock/mediatek,mt8188-clock.yaml      | 93 ----------------------
->  .../bindings/clock/mediatek,mt8188-sys-clock.yaml  | 58 --------------
->  4 files changed, 100 insertions(+), 153 deletions(-)
+> Recently a series [1] adding back OMAP4 support in U-Boot has been merged
+> in next branch. While testing it, I noticed USB is not working on
+> omap4_var_som.
 > 
+> usb 1-1: new full-speed USB device number 8 using ohci-platform
+> usb 1-1: device descriptor read/64, error -62
+> usb 1-1: device descriptor read/64, error -62
+> usb 1-1: new full-speed USB device number 9 using ohci-platform
+> usb 1-1: device descriptor read/64, error -62
+> usb 1-1: device descriptor read/64, error -62
+> usb usb1-port1: attempt power cycle
+> 
+> The USB_M2 DPLL was previously initialized by U-Boot, but [1] lacks USB
+> support for OMAP4. This patch initializes the DPLL in the kernel to avoid
+> relying on the bootloader.
+> 
+> If you want to test, as U-Boot does not handle pbias regulators, you also
+> have to apply the patch series "[PATCH v2 00/11] Add SIM pbias regulator
+> support for USB on OMAP4" [2].
+> 
+> [1] https://lore.kernel.org/all/20260608-omap4-support-v3-0-8595ccd203f0@bootlin.com/
+> [2] https://lore.kernel.org/all/20260330-omap4-fix-usb-support-v2-0-1c1e11b190dc@bootlin.com/
+> ---
+>  drivers/clk/ti/clk-44xx.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/clk/ti/clk-44xx.c b/drivers/clk/ti/clk-44xx.c
+> index 9b2824ed785b..3944c50b7cd0 100644
+> --- a/drivers/clk/ti/clk-44xx.c
+> +++ b/drivers/clk/ti/clk-44xx.c
+> @@ -811,6 +811,11 @@ int __init omap4xxx_dt_clk_init(void)
+>  	if (rc)
+>  		pr_err("%s: failed to configure USB DPLL!\n", __func__);
+>  
+> +	usb_dpll = clk_get_sys(NULL, "dpll_usb_m2_ck");
+> +	rc = clk_set_rate(usb_dpll, OMAP4_DPLL_USB_DEFFREQ / 2);
+> +	if (rc)
+> +		pr_err("%s: failed to configure DPLL_USB_M2!\n", __func__);
+> +
+>  	/*
+>  	 * On OMAP4460 the ABE DPLL fails to turn on if in idle low-power
+>  	 * state when turning the ABE clock domain. Workaround this by
+> 
+we have assigned-rates in omap44xx-clocks.dtsi
+for similar divider clocks. I have a patch needed because of recent u-boots
+not having some abe stuff initalized to have mcbsp working in master mode
+on omap4. I think should have some consistency here and agree on it.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+So I would say if it is all about setting recommended defaults, probably
+a better way is to have it in clk-44xx.c (as you have). Reparenting might
+be a different story. There might be reasons to have it reconfigured.
 
-yamllint warnings/errors:
-./Documentation/devicetree/bindings/clock/mediatek,mt8186-clock.yaml:62:1: [warning] too many blank lines (2 > 1) (empty-lines)
-
-dtschema/dtc warnings/errors:
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.kernel.org/project/devicetree/patch/20260701-mt8189-clocks-system-base-v1-2-2b048feea50a@collabora.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+Regards,
+Andreas
