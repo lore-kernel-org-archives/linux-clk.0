@@ -1,196 +1,200 @@
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9750B29DB9A
-	for <linux-clk@vger.kernel.org>; Wed,  1 Jul 2026 14:09:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A513233B6E8
+	for <linux-clk@vger.kernel.org>; Wed,  1 Jul 2026 14:16:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782914955; cv=none; b=FpzALiLLfwen9gldXspKGwhrAzaqrdwMMCgeQGLZT/B1UTR4zPHG59aBMfEqqiaNtU8DdXxEeAV3pTzIEX/nSIM4DMEGjk70guIKCfNkvsYJV/PfGa4GUfYtlMolIKxSwSoWzLoPiSfEv5Lk0JBSje/oH6J4o1FI1nFkJlsKEPo=
+	t=1782915398; cv=none; b=r1kKppngDYkrud4Ju8rFc7gkSeMMy6QOz/9Vrxwpc15EoGKVwQZquL7UGNC2hkP/tQgpJeog58K/IJAkqmUoaYfcikZV9Kx9JoZQIjylHvxG8cXCdgzNNrQnti+M7i6WP6wJ2AvJUJPTeDISgVurCwtZhD1U5POyua+bmZIRqe8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782914955; c=relaxed/simple;
-	bh=Rr9nTxauw3Ld+d8F57iqszED//Wn2JjDdovTpTeRCzE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pZr181OzWWkcPIBJ86xEknWeFjGyexWxh7idjryTpopgiufLFmG6J4B++TC/B2RFE7wzQUQxeXXeDgDThR3rJa20EKFxstc+fFjgIeDF2pueI0zVxmRubP5Dk7TtB3ikDHj+3p1pszPbkR/wixYvV/Dxz3PBAtV6cwes1898Y5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NXf3h7t/; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=Vgz3vSYN; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1782915398; c=relaxed/simple;
+	bh=RpauZrEucFKlazf2uI7VX0Q7EoNWI1WAXPiXtwCOLeQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=MzyDMoKp0hifW+hXTwzXPv/2NX5YXnnxP1m4jcvamgKmMUpI8FPsFTibmVjASQvOgxFmfNCiGVKjE6KdeaGXUx4ayknqWj/SKZuG2sSwuwjaO7Bn+5kxgVCOQEVKai3+3iB5Wq08DbGeSLB1Txa92x9xxf9p9ieO78MEIaz9pso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Q/JAo6Mn; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=B5nz2LWN; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NXf3h7t/";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="Vgz3vSYN"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Q/JAo6Mn";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="B5nz2LWN"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1782914953;
+	s=mimecast20190719; t=1782915393;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Fg1jQ5xlQw7jkowSdvyp9ysqaIiouFFtIXbXuCa9asQ=;
-	b=NXf3h7t/H2NYSES3LNQIpP+JmTrBrOmxtfV3n3JztEvatR8tUASRAtFCh8uz/6pjfKhYhs
-	X5IekaIVTKza0xhNCN/XxWg8SxGtY9MHhheHAC1d5vGEcPI7b0BACnAeAqWg03Yu31CL/9
-	7Gom86SoN7kFtTEWYKLQirLkDnL6tys=
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=/JWBbuPH+JoxQjIqcAckt9LCjRBqaw7vRzjjWYDDti8=;
+	b=Q/JAo6MnZcLDT+/6nL+jgDytVlIsJuvXZzz05rNLi1WbYE7c5YWYRSvSFH9YIhMcVMhycJ
+	Jc/W9RXrDUnmvI+NHo0464n+o6IkAgRJgYgH4/fta7uiETiWHUcwAeF57ZyOD2mERMW5pQ
+	m6DhCvrYsP/V3MSChJKg4Stjpounddg=
 Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
  [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-298-9E3_Q5GBP9yuW0LK0eRllQ-1; Wed, 01 Jul 2026 10:09:12 -0400
-X-MC-Unique: 9E3_Q5GBP9yuW0LK0eRllQ-1
-X-Mimecast-MFC-AGG-ID: 9E3_Q5GBP9yuW0LK0eRllQ_1782914952
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-92e4f27f49bso67352785a.0
-        for <linux-clk@vger.kernel.org>; Wed, 01 Jul 2026 07:09:12 -0700 (PDT)
+ us-mta-98-P-dwEEROPTy5CFdEMIyjVg-1; Wed, 01 Jul 2026 10:16:30 -0400
+X-MC-Unique: P-dwEEROPTy5CFdEMIyjVg-1
+X-Mimecast-MFC-AGG-ID: P-dwEEROPTy5CFdEMIyjVg_1782915390
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-92e623b0e95so74260685a.3
+        for <linux-clk@vger.kernel.org>; Wed, 01 Jul 2026 07:16:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1782914952; x=1783519752; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Fg1jQ5xlQw7jkowSdvyp9ysqaIiouFFtIXbXuCa9asQ=;
-        b=Vgz3vSYNbWxy6s3rUxXJOa1nsMmWKANEhpsTCmFBBZzoG69L1znoUpVqfVD+KDCokn
-         b5yFO3glpb1Kk4AMX5VTHUQ8IgFHH9aG7+6wUr7htyywIpuLlBgfv96lY2vdAcB3QJvq
-         8pgW/ILDIHtP97SQ/Y/YcuEwfBJNrPVvgs8Sd/66o1PkUMk5df5zDKrGNlyTAqfihrQx
-         Nhkq84+StkzsjYtaOY6OUUE6wNIPnIIlwgsKERGX4je4x3LeRCf491+v+VOAFNe7BiK0
-         XQiwW/viCO0BHN5KlmiPYwwYbl80DrdRy/ogyef0mYP1myqlmVw90NiQWHt+R4jHDnjA
-         SWBg==
+        d=redhat.com; s=google; t=1782915390; x=1783520190; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/JWBbuPH+JoxQjIqcAckt9LCjRBqaw7vRzjjWYDDti8=;
+        b=B5nz2LWNivmTWzXzUWlJAAuJQkIVJsOrsQd+VYJRfONDYrdft4PTJD+Wp92wzteSCH
+         W90qgpxNWSyWOf1cx2lLsTb7vbEf2xxsK7SI2/aNoWNrzUz0o7QfODRuXCxyIU/3gfsl
+         hEoJNNI0ikQD5wNpiOlTBh1nzYNOvL7aMdk0ecjSs/xzJ/8L418Wxo8AHiQ3PEmYi2L6
+         6CXw6o349xDJsPM4mvrPk9SkMbpigyfpefiMkbIA/2aHOQKtUqqLmijiUfHhuX6etSxt
+         0DXTvSWeCm+t7HrIN6w9R0VW1tLzQ+NnYGHSYCok/88hZX60vr79Hlp38ouXAKdJdeGy
+         xpDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782914952; x=1783519752;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Fg1jQ5xlQw7jkowSdvyp9ysqaIiouFFtIXbXuCa9asQ=;
-        b=rzkuq2Vj6UY8inX9mzCPianXiO3WopboBqFwWtDfDVAatUtRYYAgYjvePCcEjabfI/
-         PlW6n3A7QbtY8EhTGQ22bBGhYao7YKln/h6xmjHYGIXJkvluP6bOhNd6w2mgD8PUciH2
-         HjRoGNGBe50bVS1JQ4fe/ognYBZVgGfa4S2nwIRBk6C57mTcr9ej/rXy2+2OSEPZPErX
-         mdZey09piP2De/RXIHOHtUppkMDb91Ncuhl/Grh0RJ8apj/GTNZyDYO2SwjFy4ZPA45F
-         LN2VJIdBEsa48echKU/n52BmzNThOomQogdJiwtt9VLj6Ug06GaDSU7T4e3tOTWf25FS
-         FbWg==
-X-Forwarded-Encrypted: i=1; AFNElJ+NYDwmiY2bzHB1lceL9d47qFBqWJRyq0rfv0UaCoJRL1+FFk3inmi+FVpFJUKYlF4c6wEFiTZphWo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVi4kqzYFqT6L4Bx1poKegUMWdjGIb3Jb75hNWD4+PmSAjWQ2W
-	ACwQjJwgTDGTEbqZhurkIFUHPtAQYJB+lNkwzy2Tezq+lfNNhNCcB6FbuLkTo04ihAQUIB57IYf
-	V3gOEVETXihDEhTo8fvhfNqbkv4LwantoE9r3CjME8cJXmZ1VkgMfDcgrtec28Q==
-X-Gm-Gg: AfdE7cmcll5J/J0siuZGltAsX2NnIios4eF4SYkv+LVwnZvjQRxWcf7hN4wa8JkYcLx
-	tjOnmkik/9hqmV6DSSY9GmYcmldesbdG6Cd6KQPwkmsfGYNq4pM4oerx2fbljn6MfPIqPkqUnFQ
-	IzE30YmKSeDr+Hhzjon/WPZM6j8FJ2FddsQwUHyja2kaHuNvs6KSrpMlzt7bGO8680fSaEeWjvw
-	GSqTGDgXKzkPMR/6oIj7eAMfNS9sz4x+ID2ACDKgu9IRKHtnsdigGR+J6MAe+9Bx5HARESQ3MR0
-	pTD274u6MNmLCts5WkWJjFbwM10WYADde1XW4kZkpXZJkRS3jo/VBy6lc/uZZYHrovkObM6AKTZ
-	qxsWqhJQmnax3jWN5y3vqhkss8pe7C2HEoqQlNtWFTscoRg==
-X-Received: by 2002:a05:620a:6405:b0:92e:72cd:32f4 with SMTP id af79cd13be357-92e78504000mr245373185a.64.1782914951716;
-        Wed, 01 Jul 2026 07:09:11 -0700 (PDT)
-X-Received: by 2002:a05:620a:6405:b0:92e:72cd:32f4 with SMTP id af79cd13be357-92e78504000mr245365485a.64.1782914951052;
-        Wed, 01 Jul 2026 07:09:11 -0700 (PDT)
-Received: from redhat.com (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-92e6234862csm564321785a.38.2026.07.01.07.09.09
+        d=1e100.net; s=20251104; t=1782915390; x=1783520190;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/JWBbuPH+JoxQjIqcAckt9LCjRBqaw7vRzjjWYDDti8=;
+        b=ibfG2F9pS335mxvBUQwTphkDMr1uZDJJpK3juj+/amimeh+xVECy/tBhfPTsl7pcHm
+         bYZZzA1kZLT0bfsGlAJPn8sEPD17EEjPxmyp8UGvdsw+Ic7pjMQ3x9sMMIKbN0/nAuQc
+         DMUo2ARBn9xa5Av5zAp314OVp7n2RjFStk8TQ5Y5zfOlgZ5MfykGxOepHQ5xPHxLa3pC
+         g3rBCf6NO7mx8bNj11BlmR4ukXvc83+rAomaRRdFwdUgoFeKTwFdZELN11UOhA5yAq9I
+         Ryi5F04Ial6XlxbIavZgZiv3gbuF8LVg3beDH0W4iIPT7Uea2ypPEoE2mmRsOclKeXV2
+         jrOQ==
+X-Forwarded-Encrypted: i=1; AFNElJ8t2OhEB7DYCIjUnVhG/RCGXUKtL28aWaEv1iHeMLHvqXoS/u9EZuGY4bFi3TT+SWNIAM/VXcqbdOs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTOoAT3EybSzHRfkytIaht5KUyRKi5RxskuK9FsdTIKlapI6Oa
+	Y7X/q1YV91HhzGUOFRYeMY2Yusne+VUyZpqdBIhUGcYHPviuhSQrBwSMRzMxSYsiQtJskhMmH3e
+	cr54cbqKPJJO/7f7Mt8B2MnQaVOTgTUf/z4a9+80ODwE3AUSCTXUdwNcqncR8PjEdHFanRxiF2/
+	QekkF65AUB649ZhjpqnZugXh6a5Z/RMZwTuOWkRC2AMx4h
+X-Gm-Gg: AfdE7cl5sw8hO2Jh0jwLqokKEWXdr7Qqc+Sa4LsKLIHh37TTarvIigKqX8frM6VMawu
+	4mRwZKjwf80vp7yoCpDfPO88DpSG7+zZZWyBvRgLFicdY5aHYy91Ao6k/PbpRnkkGaZyCRbzGqu
+	cWVIEJswTg1dVY1bbMGn3aMBQ3J+2rrX9/BtbPeMfM2KCyGRdqj3txtorRronU1Zftrhr3ReRyY
+	WRskVTRPQoQzpsbj/Vnp35eI2GPZDnn6ClJ1sNIWWu/TmWCpIRvwJ6QzWMpY/PY2pOP1d3X/MRI
+	94pdx8EamDhRMZmjtYwhbyHMLczGEWOSfDdiLMI9KIPaX1PNGvKt3XwIZcdXGWoF4jdyALCe0Wu
+	0YTRnosqHqyVkseT54qXB0cFSw6royNlCDEjb+ysLRZB/6D6NiA==
+X-Received: by 2002:a05:620a:1986:b0:92c:3086:6d50 with SMTP id af79cd13be357-92e781f13b5mr264302685a.2.1782915389763;
+        Wed, 01 Jul 2026 07:16:29 -0700 (PDT)
+X-Received: by 2002:a05:620a:1986:b0:92c:3086:6d50 with SMTP id af79cd13be357-92e781f13b5mr264291885a.2.1782915388400;
+        Wed, 01 Jul 2026 07:16:28 -0700 (PDT)
+Received: from [192.168.1.3] (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-92e622e87a7sm598871485a.28.2026.07.01.07.16.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Jul 2026 07:09:09 -0700 (PDT)
-Date: Wed, 1 Jul 2026 10:09:08 -0400
+        Wed, 01 Jul 2026 07:16:27 -0700 (PDT)
 From: Brian Masney <bmasney@redhat.com>
-To: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Taniya Das <taniya.das@oss.qualcomm.com>
-Subject: Re: [PATCH] clk: qcom: enable ALWAYS_ON for titan_top_gdsc
-Message-ID: <akUfhLO0I2NqqIYi@redhat.com>
-References: <20260626-camcc-sc8280xp-titan-top-v1-1-2ca246886493@redhat.com>
- <bcf9fd99-454f-4ac2-8357-b0775be42d41@oss.qualcomm.com>
- <56ebd97b-0834-41ac-8fdb-2469e2848694@oss.qualcomm.com>
+Date: Wed, 01 Jul 2026 10:16:05 -0400
+Subject: [PATCH] clk: qcom: camcc-sc8280xp: add CLK_IGNORE_UNUSED to
+ camcc_gdsc_clk
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <56ebd97b-0834-41ac-8fdb-2469e2848694@oss.qualcomm.com>
-User-Agent: Mutt/2.3.2 (2026-04-26)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260701-sc8280xp-camcc-gdsc-clk-v1-1-ee28be1e8508@redhat.com>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/x3MTQqEMAxA4atI1gbazqDWq4iLElMN/tKACMW7T
+ 5nlt3gvg3ISVuirDIlvUTmPAltXQEs4ZkaZisEZ15jWWFTqXGeeCynsRDhPSkjbitZ+vr4N3sc
+ mQqmvxFGe/3kY3/cHuUEeF2kAAAA=
+X-Change-ID: 20260701-sc8280xp-camcc-gdsc-clk-113497a99f6f
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Brian Masney <bmasney@redhat.com>, 
+ Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5612; i=bmasney@redhat.com;
+ s=20250903; h=from:subject:message-id;
+ bh=RpauZrEucFKlazf2uI7VX0Q7EoNWI1WAXPiXtwCOLeQ=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLJcFc3SjnPcDY3bsYP7Fe8N3+Wpa+OP2fk/i4l0/8jaK
+ 95020C2o5SFQYyLQVZMkWVJrlFBROoq23t3NFlg5rAygQxh4OIUgIkwL2Fk2C0g7Zg62T5SrM/u
+ 0qFjFib7Te4nPpg6S0HAvyT5YqFqDyPDNw4LTn0BFSetCSdv3ajuEG2o4A1efCh29f0P+Qp6XZv
+ 5AA==
+X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
+ fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
-Hi Jagadeesh,
+With the introduction of sync_state support in the clk and pmdomain
+subsystems, the following warning happens when the unused clocks are
+shutdown in camcc-sc8280xp:
 
-On Wed, Jul 01, 2026 at 09:37:04AM +0530, Jagadeesh Kona wrote:
-> This probably could be due to camcc_gdsc_clk getting turned OFF during the
-> sync_state, but this clk is required for GDSC transitions. The camcc_gdsc_clk
-> is currently kept always ON from probe in camcc-sc8280xp, but the clock is
-> also modeled with clock framework, so the clock can get disabled in sync_state
-> callback now.
-> 
-> Can you please try removing the modelling of camcc_gdsc_clk using below diff
-> and see if helps here?
-> 
-> 
-> diff --git a/drivers/clk/qcom/camcc-sc8280xp.c b/drivers/clk/qcom/camcc-sc8280xp.c
-> index e97b8d4f3c84..660d8655d391 100644
-> --- a/drivers/clk/qcom/camcc-sc8280xp.c
-> +++ b/drivers/clk/qcom/camcc-sc8280xp.c
-> @@ -1753,24 +1753,6 @@ static struct clk_branch camcc_csiphy3_clk = {
->         },
->  };
-> 
-> -static struct clk_branch camcc_gdsc_clk = {
-> -       .halt_reg = 0xc1e4,
-> -       .halt_check = BRANCH_HALT,
-> -       .clkr = {
-> -               .enable_reg = 0xc1e4,
-> -               .enable_mask = BIT(0),
-> -               .hw.init = &(struct clk_init_data){
-> -                       .name = "camcc_gdsc_clk",
-> -                       .parent_hws = (const struct clk_hw*[]){
-> -                               &camcc_xo_clk_src.clkr.hw,
-> -                       },
-> -                       .num_parents = 1,
-> -                       .flags = CLK_SET_RATE_PARENT,
-> -                       .ops = &clk_branch2_ops,
-> -               },
-> -       },
-> -};
-> -
->  static struct clk_branch camcc_icp_ahb_clk = {
->         .halt_reg = 0xc0d8,
->         .halt_check = BRANCH_HALT,
-> @@ -2839,7 +2821,6 @@ static struct clk_regmap *camcc_sc8280xp_clocks[] = {
->         [CAMCC_CSIPHY2_CLK] = &camcc_csiphy2_clk.clkr,
->         [CAMCC_CSIPHY3_CLK] = &camcc_csiphy3_clk.clkr,
->         [CAMCC_FAST_AHB_CLK_SRC] = &camcc_fast_ahb_clk_src.clkr,
-> -       [CAMCC_GDSC_CLK] = &camcc_gdsc_clk.clkr,
->         [CAMCC_ICP_AHB_CLK] = &camcc_icp_ahb_clk.clkr,
->         [CAMCC_ICP_CLK] = &camcc_icp_clk.clkr,
->         [CAMCC_ICP_CLK_SRC] = &camcc_icp_clk_src.clkr,
+    [   15.408367] titan_top_gdsc status stuck at 'on'
+    [   15.408429] WARNING: drivers/clk/qcom/gdsc.c:178 at gdsc_toggle_logic+0x14c/0x160, CPU#2: kworker/u32:1/14
+    [   15.408462] Modules linked in: bnep vfat fat ath11k_pci(+) ath11k mac80211 cfg80211 mhi libarc4 snd_soc_wcd938x snd_soc_wcd938x_sdw snd_soc_wcd_classh hci_uart snd_soc_wcd_common
+    snd_soc_sc8280xp soundwire_qcom snd_soc_wcd_mbhc snd_soc_qcom_sdw slimbus snd_soc_qcom_common regmap_sdw btqca btrtl qcom_camss soundwire_bus btbcm btintel snd_soc_sdca snd_soc_lpass_wsa_macro
+    bluetooth snd_soc_lpass_tx_macro snd_soc_lpass_va_macro snd_soc_lpass_rx_macro snd_soc_hdmi_codec snd_soc_lpass_macro_common videobuf2_dma_sg ov5675 v4l2_fwnode videobuf2_memops
+    qcom_spmi_adc5 snd_soc_core qcom_spmi_adc_tm5 videobuf2_v4l2 snd_seq snd_seq_device videobuf2_common v4l2_async qcom_vadc_common qcom_spmi_temp_alarm pm8941_pwrkey industrialio videodev
+    snd_compress rfkill ac97_bus snd_pcm_dmaengine qcom_tsens mc qcom_edac snd_pcm pci_pwrctrl_pwrseq qcom_cpufreq_hw snd_timer snd qcomtee soundcore tee leds_gpio joydev binfmt_misc zram
+    lz4hc_compress governor_simpleondemand panel_edp msm xhci_plat_hcd nvme nvme_core dwc3 qcom_pm8008_regulator
+    [   15.408688]  ucsi_glink nvme_keyring nvme_auth pmic_glink_altmode udc_core typec_ucsi aux_hpd_bridge qcom_battmgr ulpi ubwc_config socinfo ocmem drm_gpuvm qcom_q6v5_pas drm_exec
+    qcom_pil_info leds_qcom_lpg gpu_sched led_class_multicolor rtc_pm8xxx qcom_pbs qcom_common drm_display_helper qcom_pon qcom_glink_smem qcom_glink ghash_ce pwrseq_qcom_wcn gpio_sbu_mux
+    qcom_stats phy_qcom_qmp_combo qcom_q6v5 gf128mul cec dispcc_sc8280xp phy_qcom_edp camcc_sc8280xp i2c_qcom_cci qcom_sysmon drm_dp_aux_bus mdt_loader aux_bridge qcom_pm8008 i2c_hid_of_elan
+    dwc3_qcom_legacy llcc_qcom icc_bwmon gpi typec qcom_refgen_regulator phy_qcom_qmp_usb nvmem_qfprom qcom_ipcc phy_qcom_snps_femto_v2 gpucc_sc8280xp pinctrl_sc8280xp_lpass_lpi qcom_hwspinlock
+    pinctrl_lpass_lpi lpasscc_sc8280xp qrtr qcom_aoss pmic_glink pdr_interface phy_qcom_qmp_pcie qcom_smd qcom_pdr_msg icc_osm_l3 qcom_wdt qmi_helpers qcom_rng smp2p rpmsg_core gpio_keys pwm_bl
+    smem hid_multitouch fuse i2c_dev
+    [   15.408928] CPU: 2 UID: 0 PID: 14 Comm: kworker/u32:1 Not tainted 7.1.0+ #2 PREEMPT(lazy)
+    [   15.408937] Hardware name: LENOVO 21BX0016US/21BX0016US, BIOS N3HET88W (1.60 ) 03/14/2024
+    [   15.408942] Workqueue: pm pm_runtime_work
+    [   15.408959] pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+    [   15.408967] pc : gdsc_toggle_logic+0x14c/0x160
+    [   15.408978] lr : gdsc_toggle_logic+0x14c/0x160
+    [   15.408987] sp : ffff8000800f3b40
+    [   15.408991] x29: ffff8000800f3b40 x28: 0000000000000000 x27: 0000000000000000
+    [   15.409003] x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000000000
+    [   15.409014] x23: 0000000000000000 x22: 0000000000000001 x21: ffffa33f298fca88
+    [   15.409024] x20: 0000000000000000 x19: ffffa33f298fc5b0 x18: 00cd15db75dacefd
+    [   15.409035] x17: 000000040044ffff x16: ffffa33f3b1a3d88 x15: 726f776b80000002
+    [   15.409045] x14: ffffffffffffffff x13: 0000000000000028 x12: 0101010101010101
+    [   15.409056] x11: 7f7f7f7f7f7f7f7f x10: fefeff3039313274 x9 : ffffa33f3a5edafc
+    [   15.409067] x8 : ffff8000800f3780 x7 : 0000000000000001 x6 : 0000000000000001
+    [   15.409078] x5 : ffff000bf3ca1288 x4 : 0000000000000000 x3 : ffff5cccb6a3f000
+    [   15.409088] x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff000080ae0000
+    [   15.409098] Call trace:
+    [   15.409103]  gdsc_toggle_logic+0x14c/0x160 (P)
+    [   15.409115]  gdsc_disable+0x4c/0x190
+    [   15.409126]  _genpd_power_off+0xa0/0x1a8
+    [   15.409137]  genpd_power_off.part.0+0x180/0x2a0
+    [   15.409149]  genpd_runtime_suspend+0x218/0x310
+    [   15.409155]  __rpm_callback+0x50/0x1f8
+    [   15.409166]  rpm_callback+0x7c/0x90
+    [   15.409175]  rpm_suspend+0xe8/0x690
+    [   15.409185]  pm_runtime_work+0xd0/0xe0
+    [   15.409195]  process_one_work+0x18c/0x518
+    [   15.409208]  worker_thread+0x190/0x320
+    [   15.409218]  kthread+0x110/0x130
+    [   15.409227]  ret_from_fork+0x10/0x20
 
-So there is the CLK_IGNORE_UNUSED flag that can be added so that we can
-keep the clock defined.
+camcc_sc8280xp_probe() has the following snippet:
+
+    /* Keep some clocks always-on */
+    qcom_branch_set_clk_en(regmap, 0xc1e4); /* CAMCC_GDSC_CLK */
+
+This clock is required for GDSC transitions, so let's add the
+CLK_IGNORE_UNUSED flag so that it is not shutdown during the unused
+clock sweep.
+
+This was tested on a Lenovo Thinkpad x13s.
+
+Signed-off-by: Brian Masney <bmasney@redhat.com>
+Suggested-by: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
+---
+ drivers/clk/qcom/camcc-sc8280xp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/clk/qcom/camcc-sc8280xp.c b/drivers/clk/qcom/camcc-sc8280xp.c
-index 18f5a3eb313e1..9a525347fb2a4 100644
+index 18f5a3eb313e..9a525347fb2a 100644
 --- a/drivers/clk/qcom/camcc-sc8280xp.c
 +++ b/drivers/clk/qcom/camcc-sc8280xp.c
 @@ -1766,7 +1766,7 @@ static struct clk_branch camcc_gdsc_clk = {
-                                &camcc_xo_clk_src.clkr.hw,
-                        },
-                        .num_parents = 1,
--                       .flags = CLK_SET_RATE_PARENT,
-+                       .flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
-                        .ops = &clk_branch2_ops,
-                },
-        },
+ 				&camcc_xo_clk_src.clkr.hw,
+ 			},
+ 			.num_parents = 1,
+-			.flags = CLK_SET_RATE_PARENT,
++			.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
 
-This patch fixes the issue for me. I see that camcc_sc8280xp_probe()
-has this:
+---
+base-commit: dc59e4fea9d83f03bad6bddf3fa2e52491777482
+change-id: 20260701-sc8280xp-camcc-gdsc-clk-113497a99f6f
 
-        /* Keep some clocks always-on */
-        qcom_branch_set_clk_en(regmap, 0xc1e4); /* CAMCC_GDSC_CLK */
-
-I'll submit a proper patch for this shortly.
-
-Do you by chance work on the team that deals with clocks at Qualcomm? If
-so, it would be really nice if your team could make the time to help
-review a patch set that I have to fix some scaling issues with clocks.
-Here's some details:
-
-https://lore.kernel.org/linux-clk/akPcgdjlDxd-JmYb@redhat.com/
-
-This is two messages up in the same thread that has an example kunit
-test snippet showing the problem:
-https://lore.kernel.org/linux-clk/CABx5tqK3MymYQZ4owofnzFLnjt+96njw5RG2Vwxo7UJ93A-42g@mail.gmail.com/
-
-Thanks,
-
-Brian
+Best regards,
+-- 
+Brian Masney <bmasney@redhat.com>
 
