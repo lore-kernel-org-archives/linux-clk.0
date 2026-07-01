@@ -1,113 +1,100 @@
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A566A44CAD7
-	for <linux-clk@vger.kernel.org>; Wed,  1 Jul 2026 15:06:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABEFF43637A;
+	Wed,  1 Jul 2026 15:39:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782918401; cv=none; b=Y1iG9knUUHAQRZtWBzR22uI1yygfcgCaSKznCLdyqh7Rcfyx0QeRqvap9F9L8Lj1iO42BWggmZ/t2soSOCq/QgxBz+RHXIp8cEtfigBTzOeWerKDPXrpDmMdJSlDj8yYpe6WrLbB3j2kPLy6o3n/AxEbkxp7BxoV+72uwwViL7U=
+	t=1782920347; cv=none; b=TmWTmdYbqmyQv8IItejan21IsykUQhtXDxVLZFLJLaLTkGbYcMUt33MYO82fLKBKtF2AB3nFyqdudsPX7Mz+B7TxXNjgJNTBLdUBFLPsW8ov+knaTkt3tWXMlxNCWTH4oL+ivzaBGGyL9OrqaZ0vBx/JSlldFeGRmA2Thygjp3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782918401; c=relaxed/simple;
-	bh=B1KLfxqZc7VNnr3/5F6pKI2LR1JslYubJtfNHtAUECE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=AHAmAs62INFaqz493lrNqYCvk6Y+hxDIoST6WDZ+QW+sKHxqvd+kKeL7dnmPPMSrH6Zsu2NA9gZ0VagofBMQikA/RZl0abmToKeLco+fzwiErmwpNxzb/mzhCnF/JlQlCxocAgl6/HNNcHkN8Xy54azN0xwcF1+WBLwpmFmGyFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=TtI1NB8w; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1782920347; c=relaxed/simple;
+	bh=0foiH+ij4RI16jN7GIYYVMnnucuAlbGDmtr8OzsDHQM=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=RSzFN96svECCY3qW2bdFRfw/uQIjmktX6hpsj89p8W3hCtqk7yJ933UHRdSf5ppUk35R8M9+QqFmXJYRq6kVwHnTfBelJ6NDRBalF9fCAef+JMLw3Y6l67q+tSZft/LqZEsincZgkeX8Dh9W1GgmvOK65ihfXS9nbeF3WXx6u+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DujIxa56; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="TtI1NB8w"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 2BDE1C504E2
-	for <linux-clk@vger.kernel.org>; Wed,  1 Jul 2026 15:06:47 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 2F4C860288;
-	Wed,  1 Jul 2026 15:06:36 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0D2F8104C9645;
-	Wed,  1 Jul 2026 17:06:34 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1782918395; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding; bh=OJZ+bRR/5vHeCzoVjWEL8tNwXwe+b//XD/OJdfUFeuw=;
-	b=TtI1NB8w6taN1xX/KBgOl7Gd8TAxTN4SPEeO5I07Qx2rJr++dDez5zjO5jQhBTIq9AUpwN
-	1uDZjPoNkBes5gZDFC/ur04qZEY3KJ/lCbyZ1B8jrfHHVvVSun2sBGS6DCB7EfuxQbt2Jq
-	8kIiApZER9Dk4jX+og51TMVWOFgYYOeYhBESgcaCFhBS5GKzmc2R0aqqKTPV5AXYx8gkoV
-	LZQ4ayeVlXfrBhQq6dlwnIsQ0Bjq5tCA9CwWIdDSrSMH6QQWc+s+zFoFXkbdCnH0agURZ4
-	Krp/dHoj6nLGtwfNaJL8kfiqByNHzwlaCk1BwC4CPNNIY5x8IFJ9Wa+jlePGjQ==
-From: Thomas Richard <thomas.richard@bootlin.com>
-Date: Wed, 01 Jul 2026 17:06:28 +0200
-Subject: [PATCH] clk: ti: omap4: Initialize DPLL_USB_M2 during the boot
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DujIxa56"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CD351F000E9;
+	Wed,  1 Jul 2026 15:39:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1782920346;
+	bh=T4AkqOupu39zAwLHhbxL17u3PNcF/dLuQZhEPfCEpxU=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject;
+	b=DujIxa56mkQBTupP60pFDJqQAyLW/1zOOWC1/apL3X8IDByXPxwDJodb9IEQGEME3
+	 FoKyLAivNNaopZLzt0+KydLO16sHRsxIsmhZO+iFizerJOCIM6UwjUvzLUU8w4MUx+
+	 L0r2mZ2PiSqrYQA2c/tVJmZT5VV0zpkq0bEgMEBJFuJfM5PMWn6IbH+0x4+bkY1dgK
+	 yMhHkPUkC/GDWTBfvhRI0hzngWqPnQtZeobkHfZv7C78/4t72DNO5GjrrOekKKlrkm
+	 Su8s8UqF74+bRMry01QATLOj+NLxrEOYFEVBCXtA16XJapbeZjdNffKYtykd3Prb6F
+	 HaL61ZNzqZI4g==
+Date: Wed, 01 Jul 2026 10:39:05 -0500
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260701-clk-ti-omap4-dpll-usb-m2-v1-1-02d8a3845a55@bootlin.com>
-X-B4-Tracking: v=1; b=H4sIAPMsRWoC/x3MQQ5AMBBA0avIrE1SDSquIhbVDiaKpkUk4u4ay
- 7f4/4FIgSlCmz0Q6OLI+5ZQ5BmYWW8TIdtkkELWoi4UGrfgwbiv2pdovXN4xgFXiUaRFZWioTE
- NpNwHGvn+113/vh9X3OkjagAAAA==
-X-Change-ID: 20260617-clk-ti-omap4-dpll-usb-m2-c7ed057eb8c8
-To: Tero Kristo <kristo@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- linux-omap@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Thomas Richard <thomas.richard@bootlin.com>
-X-Mailer: b4 0.14.3
-X-Last-TLS-Session-Version: TLSv1.3
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Mark Brown <broonie@kernel.org>, Brian Masney <bmasney@redhat.com>, 
+ Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, 
+ Stephen Boyd <sboyd@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Linus Walleij <linusw@kernel.org>, 
+ linux-rtc@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Matti Vaittinen <mazziesaccount@gmail.com>, linux-gpio@vger.kernel.org, 
+ Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, 
+ Lee Jones <lee@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+To: Matti Vaittinen <matti.vaittinen@linux.dev>
+In-Reply-To: <67b42b5363533f11c22a6421417c3345f9872aec.1782909323.git.mazziesaccount@gmail.com>
+References: <cover.1782909323.git.mazziesaccount@gmail.com>
+ <67b42b5363533f11c22a6421417c3345f9872aec.1782909323.git.mazziesaccount@gmail.com>
+Message-Id: <178292034520.501377.15267936510733753810.robh@kernel.org>
+Subject: Re: [PATCH 1/8] dt-bindings: regulator: ROHM BD73800 regulators
 
-Initialize and lock DPLL_USB_M2 at boot to make USB devices work.
 
-Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
----
-Recently a series [1] adding back OMAP4 support in U-Boot has been merged
-in next branch. While testing it, I noticed USB is not working on
-omap4_var_som.
+On Wed, 01 Jul 2026 15:41:11 +0300, Matti Vaittinen wrote:
+> From: Matti Vaittinen <mazziesaccount@gmail.com>
+> 
+> Add bindings for the BUCKs and LDOs on ROHM BD73800. The PMIC state
+> specific voltages can be set in same fashion as with a few other ROHM
+> PMICs (for example with BD718[15,28,37,47,50,79]). Same properties are
+> recycled :)
+> 
+> The LDOs 1 and 4 can use different voltage ranges depending on the OTP
+> configuration.
+> 
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> ---
+>  .../regulator/rohm,bd73800-regulator.yaml     | 119 ++++++++++++++++++
+>  1 file changed, 119 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/regulator/rohm,bd73800-regulator.yaml
+> 
 
-usb 1-1: new full-speed USB device number 8 using ohci-platform
-usb 1-1: device descriptor read/64, error -62
-usb 1-1: device descriptor read/64, error -62
-usb 1-1: new full-speed USB device number 9 using ohci-platform
-usb 1-1: device descriptor read/64, error -62
-usb 1-1: device descriptor read/64, error -62
-usb usb1-port1: attempt power cycle
+My bot found errors running 'make dt_binding_check' on your patch:
 
-The USB_M2 DPLL was previously initialized by U-Boot, but [1] lacks USB
-support for OMAP4. This patch initializes the DPLL in the kernel to avoid
-relying on the bootloader.
+yamllint warnings/errors:
 
-If you want to test, as U-Boot does not handle pbias regulators, you also
-have to apply the patch series "[PATCH v2 00/11] Add SIM pbias regulator
-support for USB on OMAP4" [2].
+dtschema/dtc warnings/errors:
 
-[1] https://lore.kernel.org/all/20260608-omap4-support-v3-0-8595ccd203f0@bootlin.com/
-[2] https://lore.kernel.org/all/20260330-omap4-fix-usb-support-v2-0-1c1e11b190dc@bootlin.com/
----
- drivers/clk/ti/clk-44xx.c | 5 +++++
- 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/clk/ti/clk-44xx.c b/drivers/clk/ti/clk-44xx.c
-index 9b2824ed785b..3944c50b7cd0 100644
---- a/drivers/clk/ti/clk-44xx.c
-+++ b/drivers/clk/ti/clk-44xx.c
-@@ -811,6 +811,11 @@ int __init omap4xxx_dt_clk_init(void)
- 	if (rc)
- 		pr_err("%s: failed to configure USB DPLL!\n", __func__);
- 
-+	usb_dpll = clk_get_sys(NULL, "dpll_usb_m2_ck");
-+	rc = clk_set_rate(usb_dpll, OMAP4_DPLL_USB_DEFFREQ / 2);
-+	if (rc)
-+		pr_err("%s: failed to configure DPLL_USB_M2!\n", __func__);
-+
- 	/*
- 	 * On OMAP4460 the ABE DPLL fails to turn on if in idle low-power
- 	 * state when turning the ABE clock domain. Workaround this by
+doc reference errors (make refcheckdocs):
+Warning: Documentation/devicetree/bindings/regulator/rohm,bd73800-regulator.yaml references a file that doesn't exist: Documentation/devicetree/bindings/mfd/rohm,bd73800-pmic.yaml
+Documentation/devicetree/bindings/regulator/rohm,bd73800-regulator.yaml: Documentation/devicetree/bindings/mfd/rohm,bd73800-pmic.yaml
 
----
-base-commit: d247142d038d06514de633de44db8faf17227752
-change-id: 20260617-clk-ti-omap4-dpll-usb-m2-c7ed057eb8c8
+See https://patchwork.kernel.org/project/devicetree/patch/67b42b5363533f11c22a6421417c3345f9872aec.1782909323.git.mazziesaccount@gmail.com
 
-Best regards,
--- 
-Thomas Richard <thomas.richard@bootlin.com>
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
