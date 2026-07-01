@@ -1,124 +1,151 @@
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7B7F3ACEFF
-	for <linux-clk@vger.kernel.org>; Wed,  1 Jul 2026 06:19:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 934462222CC;
+	Wed,  1 Jul 2026 06:48:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782886776; cv=none; b=GgR3flnz3n99aPj6Ns4Rtswa33oZhYYXH5ea2x068vfeGg1kCBZowUBCfwR1a7KPte3ugaWhhz0siuANfPBoii8F3oI3kGVS4L7iMt0uY+hd1LlUjgS5ehY5PaAZbH8sw69IJ36b/Lb9Qjd0oT5OsF3H5kwkztfqYUELWysd1L4=
+	t=1782888538; cv=none; b=E6+3EphH2zdk43EYkgtZ03r4eUvi0Yz1mBlbwa5h2JcPSV9ecfNxeoyfIIddts8/rhGmfPuQSnFrFdAmKlISvxF+c+VQzQDTnLwqJQnKC9A78Iv+FhXRB9Wz5doC+DfpbR3yT+ldatKoBhZw4oDroF8UgkqhXxGAHIbXBYV3vr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782886776; c=relaxed/simple;
-	bh=y35146R1hLQHr0cXVvffTxW+/OTdywP5qn459ftUbR0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Aaac+rAJPpOCZ8ffQeNruqBaWaCypXZdTI0A6tbw1GugpYi8zH15moVXTGrXYk6ZPY0EwcdKH6YEbIZiR6PDJtoCr6ZPeqQiG6qurHVASGA6OOFQMor9r2+1aGhYE/vmAYc3OlHhS9DpLy0+jINmP6bkyORMIMf3poqZGMAEevw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=xUq1NEcx; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+	s=arc-20240116; t=1782888538; c=relaxed/simple;
+	bh=O8ok//vkUpJ8IC0w58gonWcEwAQiZ3Sr18Cml5A6zN0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jigstR1j44Y9+niNLLA1fMwA/9tN8E80XmuCQSKKiaMzX62576Kw132TxAZuQ7QTDBOEF6SVSyxAsqj7abYi86NL++Bc2kB916Z5jzo0FllBTsebJWKetbfro+cWZIf8MaKO3CGyfNz6GlUSc+KQvCKT8y41EPeFaSYfsxAl9aQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c2VoM09+; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="xUq1NEcx"
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-471eeac43bfso160861f8f.3
-        for <linux-clk@vger.kernel.org>; Tue, 30 Jun 2026 23:19:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1782886773; x=1783491573; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z+PbsLJCR1LGXeK1bTzaX+dlzYS17E09lgiH/dHDN2c=;
-        b=xUq1NEcxIq0ESL4lfVzuX73zd+FCW6ZoU08QsS1bk8p0eewqXjlrHh/BV9bjWIRJsO
-         YVSNhNje4IpOtEUNHDI58wNU+6T7BUZtkNK8aZdpzFp+DH/L/0OXp2HnKNux9pXg1Bvr
-         GLHxfCVr0PJD2a7KIeHgDRlFrX+c20UHLfhopyfkKchefnNxYs4k5sPRIeu3XEKBQ0Nn
-         6SMmq8XxtAyDyzrU5oJ5t+9zAeaem5vwyBZ+MVRNJESuksfshgBpt831epMBBOkyMKKP
-         /xtrpOo38R8NvISqS9+r9mT6UA4dfbSjlnaRNM4D0hxK8N2br1szu+CemwTQZbND4f49
-         hXjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782886773; x=1783491573;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Z+PbsLJCR1LGXeK1bTzaX+dlzYS17E09lgiH/dHDN2c=;
-        b=dUSefZl4hQcqvybnLgFRWZp2hm3ltBW7F9YxHLvpPwbui1CqWMpb5V2RdU5oY5ks2E
-         ZTz8GB3ycoMxetbt6gpcrng3cQUmNyfoYnKghSsd0km8rnhGQeZtKO4fW778LyFY4Y5F
-         9l+sXFKqvlm6FcEebT/rWoq2wqzvdqYLJwYGFsT/EM9btJdgMQDq05PE7Q5ZjUO2z+/r
-         zZSYeT+RP33va3XszJ5Skr7/JakCloaQ0wkQlvdXUhoc198jwonpAazQa1lIxeC9UR5C
-         6qTMEqzD6hVKM+uRo2w82ggQ+4Q8nwPEdScJoucmpWYBhJxH4WzUZQcBOoq2TPZ6PeO9
-         s8eg==
-X-Forwarded-Encrypted: i=1; AFNElJ9M5svywE+r0DpELC/eAZIejSUvADIb2fYA6knsnd9KdX2gedW9cFgmjmGk4bTzyKKuWXcXvWQfk3c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx82QBgmCPNN2AdUqiKqO3btztJcigLX+WOUtpA9UQA9HbUDvem
-	YTjtR1JFtr5LLSIlEwJt7jr6zU2ewT/HxNnorCqAmCbm1sut4xSrBUivOpIOV5vB3FA=
-X-Gm-Gg: AfdE7ckzZGp4EGRjRJDb8OLHfUpkwmCTyhPT7dLmksnlzAo5yQTC43rH46ZK+oHk3/Y
-	7N4W2vbhQl7joT9YrUQOcH1Dkb4/pq00TueX6reQiA8GHO/oGUDy0LqBvS/1UzrCsWjfHScziuN
-	whnsZJSAE3/tcm1NX8POGfoc4yvO5mYaRPvEPGLDp44GIvP/JUySbFXmY41kPRUcDLj0LRqDo2i
-	vK7g5QKwnXv0F8gn1sHGowugQ/mUlrBzuJPDpByL0vK8OgNW0bonf2Bvzxcy5VU+2Ydo8eSHQoz
-	ATPEODw9bDe1APAsatms5yXKxIC5AWIejPuBLvQj4pUcVUkjSiYKq9yr998TYwRfkLD8du+Z4/u
-	L6sOZMWMTkWNO/tPL50lpNnMKUa72XtgbQZwfgtR6Zlgolwi0TTQLTyLOC4jO3ZVeMQzQg7eCPD
-	dxQ2MyC9XskykfPvPvWRs=
-X-Received: by 2002:a05:600c:c046:b0:492:4668:27b5 with SMTP id 5b1f17b1804b1-493c2b3d3ffmr2644035e9.6.1782886773243;
-        Tue, 30 Jun 2026 23:19:33 -0700 (PDT)
-Received: from [10.33.0.72] ([212.133.41.85])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47563d194b0sm14748608f8f.1.2026.06.30.23.19.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jun 2026 23:19:32 -0700 (PDT)
-From: Luca Weiss <luca.weiss@fairphone.com>
-Date: Wed, 01 Jul 2026 08:19:30 +0200
-Subject: [PATCH] clk: qcom: Don't use all caps for Glymur GPUCC
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c2VoM09+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 153F91F000E9;
+	Wed,  1 Jul 2026 06:48:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1782888537;
+	bh=qqxjSfdNptRpMmnYEFCOxj743R+/l3YLArLI7MNlECg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=c2VoM09+A49PImIpp8iIVPTzA7pRP8dBNVaXjrbkPsCv1QLkjb338Us4egdCxuyyF
+	 yxcut5idanoVL0t1ozdHhAIhZK1y3hsR/RyWI7COiXg7Eg3plu8YN9Tl6irKEmwyH4
+	 2ylYeq4MvW4z9kpews/s1XXcJHZprIRdMNZPL4BZfnF6BJl3dLr6aY0bMlZ4JvXKw8
+	 hkFS1FVX0PyvtHvsT3HlnKPN6tqR9cgCsB/Mr/9pdsAYfVHw36V7ARrNoWUYPxmNLD
+	 kZa4csVVZY9DKokf2pcSsTpODUEDF52STT6lN4VvXOM5t9ZqdKMaVMKXXBm8iU9pho
+	 NV3U2ulcZtskQ==
+Date: Wed, 1 Jul 2026 08:48:52 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Richard Fitzgerald <rf@opensource.cirrus.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, bmasney@redhat.com, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	patches@opensource.cirrus.com
+Subject: Re: [PATCH v6 1/3] dt-bindings: clock: cs2600: Add support for the
+ CS2600
+Message-ID: <20260701-optimal-honest-earthworm-db18cf@quoll>
+References: <20260630155549.824059-1-rf@opensource.cirrus.com>
+ <20260630155549.824059-2-rf@opensource.cirrus.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260701-glymur-uncaps-v1-1-5f7065348eb2@fairphone.com>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIzMDcwND3fScytzSIt3SvOTEgmJdyyRTYwszE9M0gyQLJaCegqLUtMwKsHn
- RsRB+cWlSVmpyCcgQpdpaAHjbmdRxAAAA
-X-Change-ID: 20260701-glymur-uncaps-9b538645f0b8
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Luca Weiss <luca.weiss@fairphone.com>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1782886771; l=1097;
- i=luca.weiss@fairphone.com; s=20250611; h=from:subject:message-id;
- bh=y35146R1hLQHr0cXVvffTxW+/OTdywP5qn459ftUbR0=;
- b=mQrz1gNPzurdTuK+gXJ6oSM7mBxuhXNjzjZoHt5+V/7V1w1jwV2UE9wRxS5ime2wHKmUg+QDK
- BN1QGSiW8PrAbsH6RKrNTWZV4Mlh56gWTl0qGGPjVJaqfciqq3Vsqc+
-X-Developer-Key: i=luca.weiss@fairphone.com; a=ed25519;
- pk=O1aw+AAust5lEmgrNJ1Bs7PTY0fEsJm+mdkjExA69q8=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20260630155549.824059-2-rf@opensource.cirrus.com>
 
-All other Glymur driver use "Glymur" and not all caps "GLYMUR". Align
-the prompt and help text.
+On Tue, Jun 30, 2026 at 04:55:47PM +0100, Richard Fitzgerald wrote:
+> From: Paul Handrigan <paulha@opensource.cirrus.com>
+> 
+> Add device tree schema for the Cirrus Logic CS2600 clock generator.
+> 
+> The majority of the schema is typical clock, power and I2C
+> properties.
+> 
+> Passes dt_binding_check:
+> make dt_binding_check DT_SCHEMA_FILES=clock/cirrus,cs2600.yaml
+>   SCHEMA  Documentation/devicetree/bindings/processed-schema.json
+>   CHKDT   ./Documentation/devicetree/bindings
+>   LINT    ./Documentation/devicetree/bindings
+>   STYLE   ./Documentation/devicetree/bindings
+>   DTEX    Documentation/devicetree/bindings/clock/cirrus,cs2600.example.dts
+>   DTC [C] Documentation/devicetree/bindings/clock/cirrus,cs2600.example.dtb
 
-Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
----
- drivers/clk/qcom/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Why is this in the commit msg? What is its purpose? Do you see any of
+this in any commits?
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index 7d84c2f1d911..4169ecd95ef3 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -65,11 +65,11 @@ config CLK_GLYMUR_GCC
- 	  I2C, USB, UFS, SDCC, etc.
- 
- config CLK_GLYMUR_GPUCC
--	tristate "GLYMUR Graphics Clock Controller"
-+	tristate "Glymur Graphics Clock Controller"
- 	depends on ARM64 || COMPILE_TEST
- 	select CLK_GLYMUR_GCC
- 	help
--	  Support for the graphics clock controller on GLYMUR devices.
-+	  Support for the graphics clock controller on Glymur devices.
- 	  Say Y if you want to support graphics controller devices and
- 	  functionality such as 3D graphics.
- 
 
----
-base-commit: 7de6ae9e12207ec146f2f3f1e58d1a99317e88bc
-change-id: 20260701-glymur-uncaps-9b538645f0b8
+> 
+> Signed-off-by: Paul Handrigan <paulha@opensource.cirrus.com>
+> Co-developed-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+> Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+> ---
+> 
+> Changes in V6:
+> - Fixed clock naming in descriptions to match datasheet.
+> - Fixed clock-names property values to match datasheet names.
+> 
+> - Added cirrus,internal-oscillator boolean to flag that the internal
+>   oscillator is the clock source. Previously the driver inferred this
+>   if clock-names did not contain "ref_clk_in", but this made it difficult
+>   to enforce dts correctness because there was no way to tell whether
+>   ref_clk_in was intentionally or accidentally missing.
+> 
+> - Changed the cirrus,clock-mode enum property into two booleans, since
+>   effectively it was two separate features masquerading as an enum:
+>   - cirrus,smart-mode present to enable smart mode.
+>   - cirrus,smart-mode-clkin-only to enable a feature where the output will
+>     be suppressed until both input clocks are present.
+> 
+> - Changes to cirrus,aux-output-source property:
+>     - Renamed to cirrus,aux1-output-source because it's for the AUX1 pin.
+>     - Added more options.
+>     - Renamed the "no_clkin" option to "clkin_missing".
+>     - Reformatted the description as a list instead of one long sentence.
+> 
+> - Changed clock-names from an enum to an ordered list of const.
+>   This implicitly ensures ref_clk_in is always required.
+> 
+> - Added properties to invert bclk and fsync outputs.
+> - Added property cirrus,fsync-duty-cycles.
+> - Added #clock-cells and vdd-supply to the list of required properies.
+> - Rewritten description description section.
+> - Reordered the property list to put common properties before custom
+>   cirrus properties.
+> - Added more examples.
+> - Added header file to define the clock indexes for DT consumers of the
+>   CS2600 clocks.
+> 
+>  Note:
+>  V5 was Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>  but I haven't carried this forward because the changes in V6 are large.
+
+Dropping my tag is right thing to do, but making significant changes to
+hardware at v6 is very odd. Bindings represent here the hardware, so how
+is that v5 had one view of hardware and the next revision rewrites it
+completely.
+
+Probably answer - v5 was heavily incomplete - but we do ask to make it
+complete in the first place (see writing bindings), so all my previous
+review was waste of time.
+
+This will wait for review.
+
+> +examples:
+> +  - |
+> +    /* Smart mode */
+> +    i2c {
+> +      #address-cells = <1>;
+> +      #size-cells = <0>;
+> +
+> +      clock-controller@2c {
+> +        compatible = "cirrus,cs2600";
+> +        reg = <0x2c>;
+> +        #clock-cells = <1>;
+> +        clocks = <&xtl_clk>, <&sync_clock>;
+> +        clock-names = "ref_clk_in", "clk_in";
+> +        vdd-supply = <&vreg>;
+> +        cirrus,smart-mode;
+> +      };
+> +    };
+> +
+
+Two examples max.
 
 Best regards,
---  
-Luca Weiss <luca.weiss@fairphone.com>
+Krzysztof
 
