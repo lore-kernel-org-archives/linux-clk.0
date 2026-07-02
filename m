@@ -1,81 +1,72 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B35E54A13BE;
-	Thu,  2 Jul 2026 15:48:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF91C33438F;
+	Thu,  2 Jul 2026 15:53:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.200.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783007311; cv=none; b=Q2OZ/296y88il3oQLcRTBijPYPwX6P9uz1YCgWoav6MM56bC+5k7Zdq4g08+o8YMfv1eBj+w2QyGHdOrJAxx6qXAqdGXBhuqFD7fZz/hyf+QULy1cy+ciMRCDuFHzrwYqD1t5x7oE209vbOBdRTOWmG8tUlcb5Iy/OYFi5YqSzE=
+	t=1783007619; cv=none; b=Xekyd33ydZKTWK1HOCFpieAFSlo9JrKCyJDi6UYZJzet8bdhBqimrvZXtPHfLWWgtJpBvoZCEUIyRWXGLf5E+ncQ+ehHQYMmvFBtcIPW25Yf4D59k4if7o5xbz8mUi99nBb2pe6hgLOTpqlvXfJ5o8QOLNqG5tqibCml8u/TGBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783007311; c=relaxed/simple;
-	bh=bC02IXRyUtam/K63OqClv6GezabIVoXLE1LRXZMRCmY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=LAi7ED4gPpHE/5zKDDglmKCZSKdQuZSpf7RaKJ3e0zWmKXzKHknygPaBn9jiTCVxqlHcp9VjNEvfKMqQs6XJPOBCOCl/EqkKLxpGtarLGF8A67GjpQs/KtOy4NNWSGRFWP5HmgdTWJU8CUYJvpEx8g/9iF0tNBickIlXGAAf5CI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sm8LBoU5; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sm8LBoU5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A3F81F000E9;
-	Thu,  2 Jul 2026 15:48:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783007310;
-	bh=mAQwTMxJrdyHL3I8Pf5y0dbT9yvLueulFvkIgfXWEC4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=Sm8LBoU5UzyMOGMClgbU25/yaSAVQnr+SPK5ZoSJWoW7nWqHNYu1jY8B1PW9pbkEO
-	 hfP18jSg35VBxcgoiKKT3Pd8ZypIQaWN5eXgBGRK8dwegjU8vC9aF9yn9uN1ldBPJo
-	 tw2jFd9WND9nRfLMZTOIiEXGYjjrBTqOeeBXJEdrPgNEWJ+jjwDDBNhAFPZ7H1Khaa
-	 TiI5A7QAbaGa3YEw/RXYv+lE0fp6S4Uqmua2VQYkzHGBLwrKY7M8cYZ6XCEy32ENBt
-	 PxY6Ggb9W9I+4kdjmCndsaSiCHMO+BR+9pnn+hKI51xY8pJ7rK0zDnn4684YiaaA3Y
-	 BvWZrViYiS6hQ==
-From: Lee Jones <lee@kernel.org>
-To: Russell King <linux@armlinux.org.uk>, Ulf Hansson <ulfh@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Daniel Lezcano <daniel.lezcano@kernel.org>, 
- Christian Loehle <christian.loehle@arm.com>, Lee Jones <lee@kernel.org>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
- Wim Van Sebroeck <wim@linux-watchdog.org>, 
- Guenter Roeck <linux@roeck-us.net>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, Linus Walleij <linusw@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
- linux-pm@vger.kernel.org, linux-watchdog@vger.kernel.org, 
- linux-sound@vger.kernel.org, kernel test robot <lkp@intel.com>
-In-Reply-To: <20260619-mfd-prcmu-merge-headers-v1-1-8ea0ee23b4d6@kernel.org>
-References: <20260619-mfd-prcmu-merge-headers-v1-1-8ea0ee23b4d6@kernel.org>
-Subject: Re: (subset) [PATCH] mfd: db8500-prcmu: Fold dbx500 header into
- db8500
-Message-Id: <178300730531.2216044.15808904000613354673.b4-ty@b4>
-Date: Thu, 02 Jul 2026 16:48:25 +0100
+	s=arc-20240116; t=1783007619; c=relaxed/simple;
+	bh=v969tZW/2hyq8qZnqoyWvimix+b7bWWKmDeqXoG6APA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=q1WoweYAmPGCanwyFq0cAfPgbaCmmaBU7hnSUqtufR4VFbL6ecDD94jah8YVXFQAR0p0oXqptwoZfcQ3V/bWZZylh0IW/isw0eLX3DwExKNYqZIsQqBLZrPMkXqVK+fdROq0huKt4ub6tnaZAqgQne2gbnXagpYTpHoj/vw0ycw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.200.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de (drehscheibe.grey.stw.pengutronix.de [IPv6:2a0a:edc0:0:c01:1d::a2])
+	(Authenticated sender: relay-from-drehscheibe.grey.stw.pengutronix.de)
+	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id 9E7DD200EDF;
+	Thu, 02 Jul 2026 17:53:34 +0200 (CEST)
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1wfJjK-005lg1-1j;
+	Thu, 02 Jul 2026 17:53:34 +0200
+Received: from pza by lupine with local (Exim 4.98.2)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1wfJjK-00000000Fe5-1uow;
+	Thu, 02 Jul 2026 17:53:34 +0200
+Message-ID: <ae1e67ae363956c1df695213c13f2463b73dfa72.camel@pengutronix.de>
+Subject: Re: [PATCH 0/2] spacemit: fix USB2 clock and reset
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Yixun Lan <dlan@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Michael
+ Turquette <mturquette@baylibre.com>
+Cc: linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org, Junzhong Pan
+	 <panjunzhong@linux.spacemit.com>
+Date: Thu, 02 Jul 2026 17:53:34 +0200
+In-Reply-To: <20260518-06-clk-reset-usb-fix-v1-0-14fc235e692b@kernel.org>
+References: <20260518-06-clk-reset-usb-fix-v1-0-14fc235e692b@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-0+deb13u1 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.16-dev-ad80c
 
-On Fri, 19 Jun 2026 22:27:10 +0200, Linus Walleij wrote:
-> Move the DBx500 PRCMU definitions into the DB8500 PRCMU
-> header and delete the wrapper header.
-> 
-> Convert users of simple PRCMU wrappers to call the DB8500 helpers
-> directly.
-> 
-> The dbx500-prcmu.h header was the result of an earlier attempt to
-> abstract several DBx5x SoC PRCMU units to use the same abstract
-> header. They are deleted from the kernel and this is not just
-> causing maintenance burden and build errors.
-> 
-> [...]
+On Mo, 2026-05-18 at 02:58 +0000, Yixun Lan wrote:
+> In current code (v7.1-rc1), the register bit of bus clock and ahb reset
+> for USB2 were wrongly swapped, but this didn't cause any problem, because
+> from setting the register bits perspective, the de-assert reset operation
+> is effectly equivalent to enabling the clock bit, both of them will set
+> value 1.
+>=20
+> This issue was found during suspend/resume test with vendor's internal
+> kernel.
 
-Applied, thanks!
+[...]
 
-[1/1] mfd: db8500-prcmu: Fold dbx500 header into db8500
-      commit: 6fd345e209284bc939693989bb7144133a8e93fd
+Applied to reset/fixes, thanks!
 
---
-Lee Jones [李琼斯]
+[2/2] reset: spacemit: k3: fix USB2 ahb reset
+      https://git.kernel.org/pub/scm/linux/kernel/git/pza/linux.git/commit/=
+?id=3D1ca22c6aa006
+
+regards
+Philipp
 
