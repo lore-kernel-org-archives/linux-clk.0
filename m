@@ -1,147 +1,114 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77ECC38553F;
-	Thu,  2 Jul 2026 19:05:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 025E2383C67
+	for <linux-clk@vger.kernel.org>; Thu,  2 Jul 2026 19:24:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783019121; cv=none; b=LF/m8OlS3IdoR0FJGCtQkVtN6dwhFdoXToSqGJztQJSfgYR/OLNHH40+uw8H7AbbSIayi37qj3YR73UPVzmDCmKq+vlCNK7vgZCNpqcoSuetDVdlgMAUkg3p4MwUgOyWmR+RfzlHGv1G4FD9E54Jvlp7yY7SVb295vbZUQ22N3A=
+	t=1783020272; cv=none; b=GO1xBfq+YoY3jfkVqJMzzhI8Xrp5CmUagcHeI/lPoslgmpzo6glFQbKR+oq8TdjZmYb7j+Yxyb+EW1KMHSZblfEakGDx2eX6Zpaf248QH0vtTL+2iBA7whK4ZkhXE1UxMLtXQtjO91nNIZJZbW8ubEORc9Snfque0QR/gu7UZU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783019121; c=relaxed/simple;
-	bh=LCLDDCKtmZNL1Th80foxOZecq8OHiutL4enntKJtc9k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gj6KBqUWx9cAfshc3zRCO3rdU+3TABm3nvDH+XR457UrbJ8uDXXTmC7U7avXJqqW8LN/HrOQukUSDgiSp0HLUjA2+T3fAMloatpDDm44ZE8C1Jecpv1RfaLD5W9+dqRu6pQPDDvrKVb2VY6/hb/AvPVSIBtYFmhvAzrPb/gYVPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BpfolKN2; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1783020272; c=relaxed/simple;
+	bh=STqErUIB6lQ1GSgE/uIqGk2C0fbKhYjGQq1Fu1HrLJY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BbwcXWinZfxm2NxtxvPK4c8pYOQDxKpMmQEW8021u2tQDUAvrOHShgX+lnaXDoJv4ny4FVhyR1PafPB1Inum2wNhg9aYL1HE1ndaVjjQ5gWwW57EAq2QUQr/RaDWp+8rkKMReHTnCUIUF7/YZnHB16Rb++bGzo6u8GXXShkPx28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eZGkYXrk; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BpfolKN2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C09E1F00ADB;
-	Thu,  2 Jul 2026 19:05:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783019118;
-	bh=ts0JUqI/UQtpggkPbz8ec50NHpUrsHW9mROWrvo34io=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=BpfolKN29Ql/zs4jLL/uQI1Kq/bcwoinu+Hx2O+DTwS6qRSA7Sf53w505wlmGyHQb
-	 01kfEiaFHA2zOzHR2Juy3SSBIAyHk4Xu1m1EZydiyYLJne2Zeq5MzCJZbe2HGX7Z8G
-	 slbSLMlL5GXdwdfwR3mbo9/NlOAgEFNF+7a3KjPCLD/60ymU6+suGXAAc5DaYBBmw9
-	 ydSwd4wbDJuw/cfefH/ZLKr2MdjY/Hr3s9UHsgPMd3Ixfr+DbntgKbun7dc7RIgMra
-	 xGa+cMmzxRqsk4wkIL7Tb+peMCf60K3Vxstbeaqrn8aQz3RDlel+rhFNhS/CLJP/Jg
-	 LNqWyC91fkR+A==
-Date: Thu, 2 Jul 2026 20:05:14 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Stefan =?iso-8859-1?Q?D=F6singer?= <stefandoesinger@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Brian Masney <bmasney@redhat.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH RFC v5 00/12] ZTE zx297520v3 clock bindings and driver
-Message-ID: <20260702-frequent-refreeze-9850982156cb@spud>
-References: <20260628-zx29clk-v5-0-79ff044e4192@gmail.com>
- <20260629-unwelcome-raking-3df3d8ff0422@spud>
- <ihPM7P2dSn-oiyaL8fageA@gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eZGkYXrk"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-493b6f1b14bso9645975e9.0
+        for <linux-clk@vger.kernel.org>; Thu, 02 Jul 2026 12:24:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1783020269; x=1783625069; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=1iJoqMShC+TvOCSI7HOO+Cah5rIfKqS+yxnlq3esHG0=;
+        b=eZGkYXrkdy5dByHa3w+pYBeGU9pXw0FMVms6cyobrSNyaOWCdB9UYVUvlGqej5cF6b
+         Jn5jejXXkLeQXDt3X16Q3xruUfSy9oxTktyrdDYDjEYxlOOWFaZr+ZwINAFfAzWTjH+Z
+         M+Pk8UFMUvHX7t6IVOQf7DM9J0BXnRhxifIfWKFcx0OSdMR5bSKaTrSGwQHQ39pZ/diD
+         M5UX0ylnoNLkZgv5sZoLNw+TRq+FL210lZuK1ul5bBIb3hGebwxzabyeYu96qW7RmPXy
+         Mqhn+6Ifp7Okgavgvu6dhayQiBb6gKgdOSyxWta/65INXPazYUFvEX5zFgY/H/nlIr8R
+         rUjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1783020269; x=1783625069;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :sender:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1iJoqMShC+TvOCSI7HOO+Cah5rIfKqS+yxnlq3esHG0=;
+        b=jEdLDpkoHBenupAY10UZ4rSIxngEcBDuLikG8gZlKQkWWPHN4EgJSwOhg692oEvuM3
+         M7ymOLIfP4H52eYlMFHkHfnkFzH7wtwwR8JU7Soh25kiPaiTNK5pWA3/Wx4wiU/WPzwW
+         bWYMoHyY6mGZp8uETsrvSuEIzBwSombW5HG80B9OpzVHN30aFoWncdxEEaYrAX10tmD5
+         yN9UT+wpFFCnQulp//SkQRBCcfb0s2t4ifMQ5PQwDJCsW44RBIvUCFYkkaAjiuTyXQVZ
+         PkCS6UFPXc4mFHAU7ZHmtbUMC/sQketV1MIJ+2JoEtoxfsa0DmLnD0GfVz6B8I94yTmB
+         xC3g==
+X-Gm-Message-State: AOJu0YyWk9JbwfgYoLVt6ZMfZjckY5NiEc7GLWsKcRHMZkj8rxKpFnDX
+	7av92qvSNKSbd9wYXr0Gz2ogRq++reySKDCC2hXHYzscfHMPHGyJBFiT
+X-Gm-Gg: AfdE7clQVv5LWdC2NZPyIWDgyiRlAb4De1h/0096okS+jptE1L3TbrtogOXt6rubgbZ
+	S6poAiaIXAbOrAJ0FAqfKFlksv7UqHoj+HSBMCo1PxbJ5l3buiuaDZk/089jlw4/LET33je619J
+	aTHSHHq+SLr+dUqAyCn+H2NJlk4RNPntSolxe/qOLWzbveYs828f9sGOdFppDCXwijoTsu/hXDp
+	6R4L+XDwzYzkF+UICBGl/A8fT8P0Bml8i2yt2mxG3t44NvW27oljMSitEaamkNHnU7ccKfI2nr1
+	z/dmj2ATv2CBM1W/rEoHw5qE3FwH5FDD9c+yx6l3FhhEu43kcK7NhZwJc9NS1ljeIF+aG78eBK7
+	rE7/kUzLuxk63HT718UK2wyckwg9Q98KLeyu/H0UpK0xC+D4DbDCKhBGuw2gbZy0dpp0BRnBCeF
+	r7MJRmGvsvG3J2G6B0V1of1i4EKaHMyX3Mv7mHn1jSg9JetDsdgAyimoMYw900aUY2NzRipjEUM
+	+0IT7NM
+X-Received: by 2002:a05:600d:8649:10b0:490:44eb:c1ea with SMTP id 5b1f17b1804b1-493c2b905d3mr87929245e9.24.1783020269382;
+        Thu, 02 Jul 2026 12:24:29 -0700 (PDT)
+Received: from [10.128.11.240] (195-23-151-163.net.novis.pt. [195.23.151.163])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-493c6381e4fsm82751675e9.8.2026.07.02.12.24.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 02 Jul 2026 12:24:28 -0700 (PDT)
+Sender: Julian Braha <julian.braha@gmail.com>
+Message-ID: <2723c6d5-7a3e-436b-9ac2-12e5b0a3d1c5@gmail.com>
+Date: Thu, 2 Jul 2026 20:24:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="uabdFokmh9zu64R+"
-Content-Disposition: inline
-In-Reply-To: <ihPM7P2dSn-oiyaL8fageA@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 3/3] clk: cs2600: Add KUnit test for CS2600 driver
+To: Richard Fitzgerald <rf@opensource.cirrus.com>, mturquette@baylibre.com,
+ sboyd@kernel.org, bmasney@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, patches@opensource.cirrus.com
+References: <20260630155549.824059-1-rf@opensource.cirrus.com>
+ <20260630155549.824059-4-rf@opensource.cirrus.com>
+Content-Language: en-US
+From: Julian Braha <julianbraha@gmail.com>
+In-Reply-To: <20260630155549.824059-4-rf@opensource.cirrus.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
---uabdFokmh9zu64R+
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Richard,
 
-On Wed, Jul 01, 2026 at 08:22:21PM +0300, Stefan D=F6singer wrote:
-> Am Montag, 29. Juni 2026, 18:49:08 Ostafrikanische Zeit schrieb Conor Doo=
-ley:
->=20
-> > Bindings seem fine to me, I'll be happy to give you some r-b tags when
-> > you go non-RFC. To be frank, I think you should drop them as you've got
-> > no significant questions here I think and you'll be taken a bt more
-> > seriously.
->=20
-> Thanks for all the advice so far!
->=20
-> Here's one more binding related question: Philipp's request to give the P=
-HY=20
-> reset its own reset ID means I need a node and driver to consume that res=
-et.=20
-> My question is if it should be another MFD subdevice of topcrm or not. I =
-am=20
-> leaning towards not:
->=20
-> usb_phy: phy@2 {
-> 	compatible =3D "zte,zx29-usb2-phy";
-> 	interrupts =3D <GIC_SPI 42 IRQ_TYPE_EDGE_RISING>, <GIC_SPI 43=20
-> IRQ_TYPE_EDGE_RISING>;
-> 	interrupt-names =3D "powerup", "powerdown";
-> 	syscon =3D <&topcrm 0x84 0x2>;
-> 	resets =3D <&topcrm ZX297520V3_USB_PHY_RESET>;
-> 	reset-names =3D "phy";
-> 	#phy-cells =3D <0>;
+On 6/30/26 16:55, Richard Fitzgerald wrote:
+> +++ b/drivers/clk/cirrus/Kconfig
+> @@ -8,3 +8,16 @@ config COMMON_CLK_CS2600
+>  	help
+>  	  If you say yes here you get support for the CS2600 clock synthesizer
+>  	  and multiplier.
+> +
+> +config COMMON_CLK_CS2600_KUNIT_TEST
+> +	tristate "KUnit test for CS2600 clock driver" if !KUNIT_ALL_TESTS
+> +	depends on COMMON_CLK_CS2600
+> +	depends on KUNIT
+> +	depends on REGULATOR
+> +	depends on REGULATOR_FIXED_VOLTAGE
+> +	default KUNIT_ALL_TESTS
+> +	help
+> +		Build the KUnit tests for the Cirrus Logic CS2600
+> +		clock driver.
+> +
+> +		If unsure say N.
 
-Where is this node's reg property?
-What bus is this node on?
+Could you format your kconfig help text with a tab + 2 spaces, as the
+kconfig documentation shows in its example?
 
-It looks like the answer to both is that it should be a child of the
-topcrm and this "syscon" property should be replaced by "reg".
+In fact, your previous patch in this series (adding COMMON_CLK_CS2600)
+formatted it correctly.
 
-> };
->=20
-> usb0: usb@1500000 {
-> 	compatible =3D "snps,dwc2";
-> 	reg =3D <0x01500000 0x1000>;
-> 	...
-> 	phys =3D <&usb_phy>;
-> 	phy-names =3D "usb2-phy";
-> };
->=20
-> I am not aware of any IO region to configure the PHY, although one may ex=
-ist.=20
-> topcrm + 0x84 has two status bits reporting if USB and HSIC are powered a=
-nd=20
-> out of reset. Nevertheless, the PHY feels distinct enough from topcrm tha=
-t it=20
-> should have its own binding. The phy driver would merely deassert the res=
-et=20
-
-This is the sort of thing that should be a child node of the syscon,
-rather than integrated into the parent, given it consumes resources from
-another feature of the syscon.
-
-> and wait for the ready bit and maybe in the future do something useful wi=
-th=20
-> the connect/disconnect IRQs.
->=20
-> Interestingly the USB IO region is actually downstream of the AHB bus and=
-=20
-> matrix controller, but it has its clocks and resets in topcrm. I suspect =
-the=20
-> purpose of this setup is to allow wake-by-USB IRQs while shutting down th=
-e=20
-> main data path.
->=20
-> Cheers,
-> Stefan
-
-
-
---uabdFokmh9zu64R+
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaka2agAKCRB4tDGHoIJi
-0gdQAP9SW0nb5swJHYPwKFbOAuwicY4LMenlLRlsYlYGO0fb6QD+Mf9ROZAatBx5
-9zeKEpLv/VLnYldfI4wgADXKMReGqQg=
-=VHSW
------END PGP SIGNATURE-----
-
---uabdFokmh9zu64R+--
+- Julian Braha
