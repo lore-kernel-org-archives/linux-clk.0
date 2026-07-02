@@ -1,66 +1,66 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AA1E3A9D84
-	for <linux-clk@vger.kernel.org>; Thu,  2 Jul 2026 20:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5AF03A6B9A
+	for <linux-clk@vger.kernel.org>; Thu,  2 Jul 2026 20:28:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783024130; cv=none; b=V0MFnEUzaTbbtiVxYCokXfvvy9Vh2Rw/3x5ZqCGmx8SM7JjubDWdE48JcRBJpFCKW4MdWwGJvoA2y3sPZhJdtHHBROhO5srGhBuFTndFlf3uy0gFW0niz/GDy1+xPecmqbb4GJi7pzZHZI632Yhb6P68uxbQgtNGAWkMfirpC0o=
+	t=1783024133; cv=none; b=AJ3MNBslBhYTVWv+6nNQqjTFP4OekQ1Pc+6aKfUMd+oDrMgQG4mGjF5lJFmHd/AMDDJjy0Y1jR3EBFlD45YECEafFnRFA7szXd0hmqO7gn820Oc9cO/f5WelWVV07arKUtleSpdyDrffzRRBQCNAVdy3MnzUGKanN45+lCVvBSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783024130; c=relaxed/simple;
-	bh=nD4pdAjQRFx12q99yc0dvHRGI29k5S6vxp88vHzvDuE=;
+	s=arc-20240116; t=1783024133; c=relaxed/simple;
+	bh=2jrY2goJwHqx0QF64e77XWB3kl4hSelit10NU180RzI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=OqVLAgmMDhRjMaG5/BZYMgdHjl6oHXbSnCFbD+b+jVyzpn82PzScmpbgiVcvjgC3Q05zfMAzVQQhIUtjocPP7GVD704BuZswykvBEFR0d//dOb32BalqFLTYii8OObS0Nig1y29LLvSGaRm9kmWVtz2bZ7gjpRBsVxbjBcGHJHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UchRg9Bt; arc=none smtp.client-ip=209.85.128.48
+	 In-Reply-To:To:Cc; b=spF+ILt+qIQwvJ1okdEEybFdIOPtrU39PvK8CiwvUOKuxdOLiibiMxccMt9FWxgoJnyEh9en5D1YE7iZmHufQiV/riUnkB7nzm2pISVtnMMbgNfvvjIEj0BNfqa4PYQRzZb6cpdPrSqILFOFMmogVoMYxSciS3jnSYiQ6BMkkcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=rFwuthJw; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UchRg9Bt"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-493ae59eca6so15727175e9.1
-        for <linux-clk@vger.kernel.org>; Thu, 02 Jul 2026 13:28:48 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rFwuthJw"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-493c486f012so7129465e9.3
+        for <linux-clk@vger.kernel.org>; Thu, 02 Jul 2026 13:28:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783024127; x=1783628927; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1783024130; x=1783628930; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=tsfCXzmlFFAtUda42ACCVl9QcJBbK9RzBZ2SreyufmI=;
-        b=UchRg9BthyJFqBWSNIoCGnuyW1RosLfEKfYYWaVa1LwHtS0xfqgQwedtveUtjGRS+W
-         dTmdnfqdekVqvIVmusC1xh9oKl2Zi5X+Aa05J7zWxURDYsn0SkRF9vz9YJLU5zmN1GqR
-         BzpkhXW5V57E1EXpTyuu8SdULt+QK662jtIULZP6aZYph5yF1Y8KwCOWmNOx63Kn/83W
-         JQ/WUGP7RBFJELgwkHMOf0ghWi1q6hwHfQZNlUO77bvXrtFHtpLmrmWUOgbyqtUwMUE6
-         Ng3A7ZrxdSFPvoI+ycyj6poU/trm4m7IcIZL052QRb3KSrvxM4fOc/FkS4SSgTG01xt2
-         OitA==
+        bh=9ZivD2QNfEmbneZZ6cONahTTfy2owWO3FbZ42lF8SzY=;
+        b=rFwuthJwh4M/0nEj+tSFyf6i1MkGpujwJMqVnNSYDLf3qlkb3rZ986ANcVu3Kuo+xo
+         OGD5lC54FWNpAMQS2metQRD+OJM1B5A9tiPQWEkzXWRiLOMrivG9uf5OGfTLW3UOxmKo
+         3RJJSeJzW64e2SkGiFfJx03D486Rx+jSWW3/UR+kGRi1d0GVDs9sBNzMchm3r+RC0GiN
+         SQZ2A3TyL3VhJZzZ5JhI93BCQL8Ot1yWiFCek1fNeKKN8LO2LqOWH9VQn93VuPUSThCB
+         2BfRW//EqAh3BFbLeXZXQJ7JJxDwPDq/Qo/98EghrRCWplSj9N73YK9rj2C1Cr8uKtis
+         SSCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783024127; x=1783628927;
+        d=1e100.net; s=20251104; t=1783024130; x=1783628930;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=tsfCXzmlFFAtUda42ACCVl9QcJBbK9RzBZ2SreyufmI=;
-        b=tSTR2dtK3efjgqCBSPMS1S8wI2JkzD+iLxKAjnHN3l8lwr38w3XVlrZ2rAnfGajAtY
-         ASUifq1NVTplYDOccpJceZ7xkZuqkBy+wAOdtwIN2RMadXKv8/53W0l7OnWXKrrwTqRf
-         giYczDe86j3MBxPghj5vs8aoSwz38heyNw1n/WgXAkdOez/bjsUph6SwXoxSKTfmiCJA
-         3FZmJrdfHGuux3Fx/Mf3KrSaNwCkpRffU7NOPChbf07CNMlF65csKePH4vrijFmm8F96
-         LTp4TONkqKTKbtUlfV+LeDmVkl7BTUCNARyFsffbPIfQ9S814WEQW7Xx80nef4Dhh5DT
-         sM4A==
-X-Gm-Message-State: AOJu0YyWEaM/os8X18pzfcMS3OAlOlLzxVMa352fhlQJdf7209XmmQ8h
-	ZFzuU3AMTSlpXoMtRuGEPDyto5ElzMrainDp5M/3Y37kZNvxcC8tKEJM
-X-Gm-Gg: AfdE7clvZ5vJl3FTVhe4clY7nUEYj5zDbNNsCQdokK5rpXuFu8YqIzZGtcL+e8WogD/
-	oSoFF3UiTdXkUYIr/OIyCOpHiflxhz9NN4h+Pu7gSM/RpPXNl7GnIKm3ZT1EXw4M70dEiRKkGSD
-	GSbCgNiGdaytZOfCJL89SahO6+L2NHyen6zWtsCarsadspg6431Che2nGoMBzjrDhet876v5egk
-	sQLpjKx0Rw2tPzNjp/HC5FpCS5buoz3Qr4Effsd9Bc1CNgTg0Lu8g85OWWq6AGbb6pkir5U92I+
-	i9LSu6/AaqfeGG2C4MIvbLGxHtmaPW3UgqiC5hzSkbVPOWOOm591kSaAwlzYlXRxxxNoM1LqKL+
-	wppQVuH2gxg9R/ea+fL+OoKTqraehhlt/kl62YpLWt9jQrV/CJleFXcp1ipzrVwkeAxEBU682Fm
-	cP1BARID/89i2y/UJGjUVNvd8=
-X-Received: by 2002:a05:600d:108:10b0:493:c337:db19 with SMTP id 5b1f17b1804b1-493c3cdf959mr80608715e9.17.1783024126599;
-        Thu, 02 Jul 2026 13:28:46 -0700 (PDT)
+        bh=9ZivD2QNfEmbneZZ6cONahTTfy2owWO3FbZ42lF8SzY=;
+        b=BFWfRN2rhIT0ix0r/J5xsOfSpnRa8VNaU2djSxrmXuXrdJVWrAp43OKzW7T6YxOKmf
+         8SzuvkVHeNJMKr6EFqTwOMPq29tzLD5JOmDr+0TZyLggHq+BcehpasxjuJDOMufXxUim
+         W3icTPli99wbXiswZmO4oclnELfjm5+fA3uwWoxRzIJcN2rp06xMYLPSJzx5e3Gi5NVR
+         C7vIyAAd0+5ENItAzfDqA+XLndQWn1aCB+BAbth6+JKaz8zn34jZ7NX8LL5GW2TdpBON
+         O4GHqWueZS1ulkLQa1s4JYUJmKZ64IF8hFxph+UP1TrprEt4cHfvt2crUsiv1LCZt7D2
+         VAwQ==
+X-Gm-Message-State: AOJu0Yyr732h82GVJJiNUg2QOWbP15+xm1vIA8vWo+Qqt3fA5NzHhkeV
+	yYBPgyY03nXQySBlprR5sUrz9guW/bkjXVRuNkubacknKFOALgp6ibDI
+X-Gm-Gg: AfdE7cmq2zOCBUQ1ftUEvmhyPCgB9Z7P2VOeEjZ1DuQIuYIiuJVz805rPDJs7vT3IPL
+	ZIly++35S6m0NmcXIhkVD4OzPO7sSCr6AUD469NmuRvJQ/ABU0rfr5CUQQ3dq3eMsJxYaOd2ufz
+	A0/CdOs3C0G+gnZGxCo6D0+5dMpynITPFfGndS0A9/AU/jP9yGdS78FmiU/B3Q4RYIp1GOUgZWR
+	zGoBBWpNl7dZwzbyiReRI1dPZ4pr0q/SHNAbJ2NV9sHj8YStP+tqfeA2WJPdGGcgRwdkhZXBXug
+	c/wm6UIGrwMZhNOI4LAfC+8T0seKCdAbuvRyu15IToKwqoCvX4U/d/fmV6FkeeUpQ8hAVopeykU
+	QKK11CmthWZ4ypQinGsCw55mv7iPY11y0Zgrne3w1sjel1BRYsYNqJ/cb/D3ZOnPLernFGhuPJF
+	4jGAOxBiYcaD/jEboyP1Dc+D8=
+X-Received: by 2002:a05:600c:34d4:b0:493:a5d4:3798 with SMTP id 5b1f17b1804b1-493c2b3a6camr106126825e9.1.1783024130084;
+        Thu, 02 Jul 2026 13:28:50 -0700 (PDT)
 Received: from [192.168.0.2] ([197.250.51.120])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-493c6369488sm80321145e9.9.2026.07.02.13.28.43
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-493c6369488sm80321145e9.9.2026.07.02.13.28.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Jul 2026 13:28:46 -0700 (PDT)
+        Thu, 02 Jul 2026 13:28:49 -0700 (PDT)
 From: =?utf-8?q?Stefan_D=C3=B6singer?= <stefandoesinger@gmail.com>
-Date: Thu, 02 Jul 2026 23:28:00 +0300
-Subject: [PATCH v6 05/12] clk: zte: Add Clock registration infrastructure.
+Date: Thu, 02 Jul 2026 23:28:01 +0300
+Subject: [PATCH v6 06/12] clk: zte: Add regmap based clocks
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -69,7 +69,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20260702-zx29clk-v6-5-377b704f80c4@gmail.com>
+Message-Id: <20260702-zx29clk-v6-6-377b704f80c4@gmail.com>
 References: <20260702-zx29clk-v6-0-377b704f80c4@gmail.com>
 In-Reply-To: <20260702-zx29clk-v6-0-377b704f80c4@gmail.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
@@ -81,424 +81,296 @@ Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
  =?utf-8?q?Stefan_D=C3=B6singer?= <stefandoesinger@gmail.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=11991;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7587;
  i=stefandoesinger@gmail.com; h=from:subject:message-id;
- bh=nD4pdAjQRFx12q99yc0dvHRGI29k5S6vxp88vHzvDuE=;
- b=owEBiQJ2/ZANAwAIAT0TvMhUTxoiAcsmYgBqRsnpTTDTbcGy4QQA/hQMHoRjq2xP6RQkThZRA
- 6GR+7jf0BqJAk8EAAEIADkWIQRDFvS2qgVbJ5UyXWw9E7zIVE8aIgUCakbJ6RsUgAAAAAAEAA5t
- YW51MiwyLjUrMS4xMiwyLDIACgkQPRO8yFRPGiJ50A//ZpufSxdDDyuF6wU21b7fNI8lDeBJGgt
- hEb8q4fTLcS0K8kJKidCY/aGVLv/yt0K1kVLlwh8/ZUVscf+lYFoIdzSOFiDuF2TPU5s8frumyb
- +GviRnWxvT/oXiAIxq/AjNsBZDthsdN7yaT4lldS9xYZczFcSPAkstNdMKxqia8xnlisnsIhdNf
- IMl7lLNR+u2WqO3wuodBeIMcgEtXKlRZx7O+vzmlkg4HGOt26M8W/+2axLmAnw7i1h4c7NpklNG
- 35yyzUrvCEN++afxuQq3lIIJt8XWccx+5AQB2oVFlS0AB6kpsNmIw777QxquzFe6G8SrmThrbkS
- dCFvBhUINx1C/Jt2y9zOGOlVdRaePkf9wOA6VXKPtHr73vxn7937s/5plq46eq3BTtuzCmVb+RF
- ffTRgE8mIzWGdTOQmxhFPGiaRsID/LPhq669OvO8pARiYrE8wr61GDlx/bGzhcm2DYtZr1/hvfd
- +ahVlZO6Enp8SVIPG9lFCq6H5mMRSTY+nf+FOcwsXRPSbrfFu33iotjEfjr8ZdwYN0ZjasbOhqS
- e7N+sa+5G0cw2fX1ZnP2wWaPvHRqOAT5NGuL50kPRthfPsLCmcWWr7hk+G+CVqQEqtspFK11UA9
- tStCM8oX//cKK+E36WZ9ldRd8n8LnoMLYknyHJfAUuFLqPSujECU=
+ bh=2jrY2goJwHqx0QF64e77XWB3kl4hSelit10NU180RzI=;
+ b=owEBiQJ2/ZANAwAIAT0TvMhUTxoiAcsmYgBqRsnpzGKYz7rhnkLlcbV+yYeEafn5yjHtbdK7i
+ Pe+JVNWdryJAk8EAAEIADkWIQRDFvS2qgVbJ5UyXWw9E7zIVE8aIgUCakbJ6RsUgAAAAAAEAA5t
+ YW51MiwyLjUrMS4xMiwyLDIACgkQPRO8yFRPGiI4nw/+IrddksVAYQrK61nzNX3tkrz76coJtSm
+ DLC7t/PdfPSyvufFwHDd4WRYZvjkhHChmMMLYuYhDvVFzLqo9+FNmCiJLnr4eKlrc3Jzt4LIm8w
+ ygr8afZ7RiDuZphPrIfVW9G9IXO3X9wGSZjzqxoK12cow3SYziRwBcZFr+9pNYVkPruCpqV2Fkz
+ 9Wsz7SusrXl1Xeye9Fk2IX/0++aUHEM5jXWCOfxcjanyKYFKlMvWkB+U16dA+obpC7JCTT4jG5h
+ 7zFKlCw5nBAbTno2Tq05s3i5/VZoxuPLfhjuS8cW85hFx8LXz+tgM2mOqrYexKOiJLoWf/bBoKb
+ 5nx8Z9m9edcHYSdaLgf5BBEw9JkH+Ar7fSr5bejoD4cDiVBDxMPBm9Aj2WS212CV2MnmgV6tk32
+ AQ2lkpvPgAgBqcbtDdaGq2KU5NNWx8+u4AaEHiq8+HI/wq9xZlZtVR7aSwlhIqPj9cveqjPYtVh
+ KHxSQSzxB1R50o6ti0Ob4tsFKHvDoQBgp1NeYN7AxwH1PCpsgCR64YQZc9kA55qGto34OFAqjSA
+ Mhfn3LNkaSq1I35J/7jfoYTlEAmlKexK4UVoTjQjGZcmdUDQTFtpYJCMXVj9lwg8xxRYSgdnGgK
+ hjceDOHpPkdY7s3A3axeT+SlkMy1TbhRkrAPWqHBfk5Ah40fIhgI=
 X-Developer-Key: i=stefandoesinger@gmail.com; a=openpgp;
  fpr=4F9C2C8728019633893EBBB98CB81F9A72BBA155
 
-The next patches will implement the regmap clocks and PLL driver. The
-actual hardware specific clock listing will live in a separate module.
+This is based on meson/clk-regmap.c, although slightly simplified. I
+have kept the copyright lines at the top of the file to indicate its
+origin.
+
+I see that numerous clock drivers have their own incarnation of regmap
+based mux/div/gate clocks. If there is any version of it that is likely
+to be elevated to shared code liks clk-gate.c I'll copy that and try to
+use it as unmodified as possible.
 
 Signed-off-by: Stefan Dösinger <stefandoesinger@gmail.com>
 
 ---
 
-Version 6:
-*) Remove auxdev now that LSP clocks also use MFD
-*) Error codepath fixes pointed out by Sashiko.
+Version 6: Remove stray regmap (Sashiko)
 
-Version 5:
-
-*) Pass the static clk data instead of calling get_match_data to prepare
-for operating as an MFD child.
-
-*) Don't use devm_kzalloc to allocate the auxiliary_device
-structure. I guess Sashiko is right, and that's what "Because once the
-device is placed on the bus the parent driver can not tell what other
-code may have a reference to this data" is trying to dell me.
-
-*) Fix error check for device_node_to_regmap.
+Version 5: Use regmap_test_bits in zte_clk_regmap_gate_is_enabled
 ---
- MAINTAINERS                  |   1 +
- drivers/clk/Kconfig          |   1 +
- drivers/clk/Makefile         |   1 +
- drivers/clk/zte/Kconfig      |  16 +++++
- drivers/clk/zte/Makefile     |   5 ++
- drivers/clk/zte/clk-regmap.c |  35 +++++++++++
- drivers/clk/zte/clk-zx.c     | 142 +++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/zte/clk-zx.h     |  80 ++++++++++++++++++++++++
- drivers/clk/zte/pll-zx.c     |  17 ++++++
- 9 files changed, 298 insertions(+)
+ drivers/clk/zte/clk-regmap.c | 221 ++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 218 insertions(+), 3 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 6502d343fe44..8f2e436cb42b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -3882,6 +3882,7 @@ F:	Documentation/devicetree/bindings/clock/zte,zx297520v3-lspcrm.yaml
- F:	Documentation/devicetree/bindings/soc/zte/
- F:	arch/arm/boot/dts/zte/
- F:	arch/arm/mach-zte/
-+F:	drivers/clk/zte/
- F:	drivers/soc/zte/
- F:	include/dt-bindings/clock/zte,zx297520v3-clk.h
- F:	include/dt-bindings/reset/zte,zx297520v3-reset.h
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 1717ce75a907..6f0a863951ca 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -545,6 +545,7 @@ source "drivers/clk/uniphier/Kconfig"
- source "drivers/clk/visconti/Kconfig"
- source "drivers/clk/x86/Kconfig"
- source "drivers/clk/xilinx/Kconfig"
-+source "drivers/clk/zte/Kconfig"
- source "drivers/clk/zynqmp/Kconfig"
- 
- # Kunit test cases
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index cc108a75a900..13a5478f1112 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -167,5 +167,6 @@ ifeq ($(CONFIG_COMMON_CLK), y)
- obj-$(CONFIG_X86)			+= x86/
- endif
- obj-y					+= xilinx/
-+obj-$(CONFIG_COMMON_CLK_ZTE)		+= zte/
- obj-$(CONFIG_ARCH_ZYNQ)			+= zynq/
- obj-$(CONFIG_COMMON_CLK_ZYNQMP)         += zynqmp/
-diff --git a/drivers/clk/zte/Kconfig b/drivers/clk/zte/Kconfig
-new file mode 100644
-index 000000000000..0222549dd211
---- /dev/null
-+++ b/drivers/clk/zte/Kconfig
-@@ -0,0 +1,16 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+#
-+# ZTE Clock Drivers
-+#
-+
-+config COMMON_CLK_ZTE
-+	tristate "Clock driver for ZTE SoCs"
-+	depends on ARCH_ZTE || COMPILE_TEST
-+	default ARCH_ZTE
-+	select MFD_SYSCON
-+	help
-+	  This option selects common clock infrastructure for ZTE based SoCs.
-+	  You will need to enable one or more SoC specific drivers to make use
-+	  of this.
-+
-+	  Enable this if you are building a kernel for a ZTE designed board.
-diff --git a/drivers/clk/zte/Makefile b/drivers/clk/zte/Makefile
-new file mode 100644
-index 000000000000..27db07293165
---- /dev/null
-+++ b/drivers/clk/zte/Makefile
-@@ -0,0 +1,5 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+
-+obj-$(CONFIG_COMMON_CLK_ZTE) += clk-zte.o
-+
-+clk-zte-y += clk-zx.o pll-zx.o clk-regmap.o
 diff --git a/drivers/clk/zte/clk-regmap.c b/drivers/clk/zte/clk-regmap.c
-new file mode 100644
-index 000000000000..1180d7aa7d62
---- /dev/null
+index 1180d7aa7d62..642db1aaac0a 100644
+--- a/drivers/clk/zte/clk-regmap.c
 +++ b/drivers/clk/zte/clk-regmap.c
-@@ -0,0 +1,35 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2014 MediaTek Inc.
-+ * Copyright (c) 2018 BayLibre, SAS.
-+ * Copyright (c) 2026 Stefan Dösinger.
-+ * Author: Stefan Dösinger <stefandoesinger@gmail.com>
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/device.h>
-+#include <linux/regmap.h>
-+#include <linux/errno.h>
-+
-+#include "clk-zx.h"
-+
-+int zx_clk_register_gates(struct device *dev, struct regmap *regmap,
-+			  const struct zx_gate_desc *desc, unsigned int num,
-+			  struct clk_hw_onecell_data *clocks)
-+{
-+	return -ENODEV;
-+}
-+
-+int zx_clk_register_dividers(struct device *dev, struct regmap *regmap,
-+			     const struct zx_div_desc *desc, unsigned int num,
-+			     struct clk_hw_onecell_data *clocks)
-+{
-+	return -ENODEV;
-+}
-+
-+int zx_clk_register_muxes(struct device *dev, struct regmap *regmap,
-+			  const struct zx_mux_desc *desc, unsigned int num,
-+			  struct clk_hw_onecell_data *clocks)
-+{
-+	return -ENODEV;
-+}
-diff --git a/drivers/clk/zte/clk-zx.c b/drivers/clk/zte/clk-zx.c
-new file mode 100644
-index 000000000000..8a1c91fdd63e
---- /dev/null
-+++ b/drivers/clk/zte/clk-zx.c
-@@ -0,0 +1,142 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2026 Stefan Dösinger
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/module.h>
-+#include <linux/errno.h>
-+#include <linux/clk.h>
+@@ -7,29 +7,244 @@
+  */
+ 
+ #include <linux/clk-provider.h>
++#include <linux/container_of.h>
+ #include <linux/device.h>
+ #include <linux/regmap.h>
++#include <linux/types.h>
+ #include <linux/errno.h>
++#include <linux/bits.h>
 +#include <linux/err.h>
+ 
+ #include "clk-zx.h"
+ 
++struct zte_clk_regmap {
++	struct clk_hw	hw;
++	struct regmap	*map;
++	u16		reg;
++	u8		shift;
++	u8		size;
++};
 +
-+#include "clk-zx.h"
-+
-+static void zx_delete_clk_provider(void *data)
++static inline struct zte_clk_regmap *to_zte_clk_regmap(struct clk_hw *hw)
 +{
-+	of_clk_del_provider(data);
++	return container_of(hw, struct zte_clk_regmap, hw);
 +}
 +
-+static void zx_clk_disable_unprepare_put(void *data)
++static int zte_clk_regmap_gate_enable(struct clk_hw *hw)
 +{
-+	clk_disable_unprepare(data);
-+	clk_put(data);
++	struct zte_clk_regmap *clk = to_zte_clk_regmap(hw);
++
++	return regmap_set_bits(clk->map, clk->reg, BIT(clk->shift));
 +}
 +
-+int zx_clk_common_probe(struct device *dev, struct device_node *of_node,
-+			const struct zx_clk_data *data)
++static void zte_clk_regmap_gate_disable(struct clk_hw *hw)
 +{
-+	unsigned int public_clk_count = 1, highest_id = 0;
-+	struct clk_hw_onecell_data *clocks;
-+	struct regmap *map;
-+	struct clk *clk;
++	struct zte_clk_regmap *clk = to_zte_clk_regmap(hw);
++
++	regmap_clear_bits(clk->map, clk->reg, BIT(clk->shift));
++}
++
++static int zte_clk_regmap_gate_is_enabled(struct clk_hw *hw)
++{
++	struct zte_clk_regmap *clk = to_zte_clk_regmap(hw);
++
++	return regmap_test_bits(clk->map, clk->reg, BIT(clk->shift));
++}
++
++static const struct clk_ops zte_clk_regmap_gate_ops = {
++	.enable		= zte_clk_regmap_gate_enable,
++	.disable	= zte_clk_regmap_gate_disable,
++	.is_enabled	= zte_clk_regmap_gate_is_enabled,
++};
++
+ int zx_clk_register_gates(struct device *dev, struct regmap *regmap,
+ 			  const struct zx_gate_desc *desc, unsigned int num,
+ 			  struct clk_hw_onecell_data *clocks)
+ {
+-	return -ENODEV;
++	struct zte_clk_regmap *clk;
 +	unsigned int i;
 +	int res;
 +
-+	map = device_node_to_regmap(of_node);
-+	if (IS_ERR(map))
-+		return PTR_ERR(map);
++	for (i = 0; i < num; ++i) {
++		struct clk_init_data init = {};
 +
-+	for (i = 0; i < data->num_plls; ++i) {
-+		if (data->plls[i].id) {
-+			unsigned int last_idx = data->plls[i].id + data->plls[i].num_postdivs - 1;
++		clk = devm_kzalloc(dev, sizeof(*clk), GFP_KERNEL);
++		if (!clk)
++			return -ENOMEM;
 +
-+			if (last_idx > highest_id)
-+				highest_id = last_idx;
-+			public_clk_count += data->plls[i].num_postdivs;
-+		}
-+	}
-+	for (i = 0; i < data->num_muxes; ++i) {
-+		if (data->muxes[i].id) {
-+			if (data->muxes[i].id > highest_id)
-+				highest_id = data->muxes[i].id;
-+			public_clk_count++;
-+		}
-+	}
-+	for (i = 0; i < data->num_divs; ++i) {
-+		if (data->divs[i].id) {
-+			if (data->divs[i].id > highest_id)
-+				highest_id = data->divs[i].id;
-+			public_clk_count++;
-+		}
-+	}
-+	for (i = 0; i < data->num_gates; ++i) {
-+		if (data->gates[i].id) {
-+			if (data->gates[i].id > highest_id)
-+				highest_id = data->gates[i].id;
-+			public_clk_count++;
-+		}
-+	}
++		init.name = desc[i].name;
++		init.ops = &zte_clk_regmap_gate_ops;
++		init.parent_names = &desc[i].parent;
++		init.num_parents = 1;
++		init.flags = CLK_SET_RATE_PARENT | desc[i].flags;
++		clk->hw.init = &init;
++		clk->map = regmap;
++		clk->reg = desc[i].reg;
++		clk->shift = desc[i].shift;
++		clk->size = 1;
 +
-+	if (WARN_ON(public_clk_count != highest_id + 1))
-+		return -EINVAL;
-+
-+	clocks = devm_kzalloc(dev, struct_size(clocks, hws, public_clk_count), GFP_KERNEL);
-+	if (!clocks)
-+		return -ENOMEM;
-+	clocks->num = public_clk_count;
-+
-+	for (i = 0; i < data->num_inputs_enable; ++i) {
-+		clk = of_clk_get_by_name(of_node, data->inputs_enable[i]);
-+		if (IS_ERR(clk)) {
-+			return dev_err_probe(dev, PTR_ERR(clk), "Input clk %s failure\n",
-+					     data->inputs_enable[i]);
-+		}
-+
-+		res = clk_prepare_enable(clk);
-+		if (res) {
-+			clk_put(clk);
-+			return dev_err_probe(dev, res, "Input clk %s enable failure\n",
-+					     data->inputs_enable[i]);
-+		}
-+		res = devm_add_action_or_reset(dev, zx_clk_disable_unprepare_put, clk);
++		res = devm_clk_hw_register(dev, &clk->hw);
 +		if (res)
-+			return res;
-+	}
-+	for (i = 0; i < data->num_inputs; ++i) {
-+		/* FIXME: devm_get_clk_from_child doesn't do any tree traversal, so it works here
-+		 * whether "of_node" belongs to "dev" or a parent of "dev". Is it supposed to be
-+		 * used that way though?
-+		 */
-+		clk = devm_get_clk_from_child(dev, of_node, data->inputs[i]);
-+		if (IS_ERR(clk)) {
-+			return dev_err_probe(dev, PTR_ERR(clk), "Input clk %s failure\n",
-+					     data->inputs[i]);
-+		}
++			return dev_err_probe(dev, res, "Failed to register clk %s\n", desc[i].name);
++
++		if (desc[i].id)
++			clocks->hws[desc[i].id] = &clk->hw;
 +	}
 +
-+	res = zx_clk_register_plls(dev, map, data->plls, data->num_plls, clocks);
-+	if (res)
-+		return res;
-+
-+	res = zx_clk_register_muxes(dev, map, data->muxes, data->num_muxes, clocks);
-+	if (res)
-+		return res;
-+
-+	res = zx_clk_register_dividers(dev, map, data->divs, data->num_divs, clocks);
-+	if (res)
-+		return res;
-+
-+	res = zx_clk_register_gates(dev, map, data->gates, data->num_gates, clocks);
-+	if (res)
-+		return res;
-+
-+	/* This is to catch holes in the tables rather than registration errors. The count vs
-+	 * highest ID should catch most static issues. This check here will trigger if an ID is
-+	 * reused by accident.
-+	 */
-+	for (i = 1; i < public_clk_count; i++) {
-+		if (WARN(!clocks->hws[i], "Clock %u not registered\n", i))
-+			return -EINVAL;
-+	}
-+
-+	res = of_clk_add_hw_provider(of_node, of_clk_hw_onecell_get, clocks);
-+	if (res)
-+		return res;
-+	return devm_add_action_or_reset(dev, zx_delete_clk_provider, of_node);
++	return 0;
 +}
-+EXPORT_SYMBOL_NS_GPL(zx_clk_common_probe, "ZTE_CLK");
 +
-+MODULE_AUTHOR("Stefan Dösinger <stefandoesinger@gmail.com>");
-+MODULE_DESCRIPTION("ZTE common clock driver");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/zte/clk-zx.h b/drivers/clk/zte/clk-zx.h
-new file mode 100644
-index 000000000000..71ebcc1d5895
---- /dev/null
-+++ b/drivers/clk/zte/clk-zx.h
-@@ -0,0 +1,80 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (C) 2026 Stefan Dösinger
-+ */
-+
-+#ifndef __DRV_CLK_ZX_H
-+#define __DRV_CLK_ZX_H
-+
-+#include <linux/platform_device.h>
-+#include <linux/clk-provider.h>
-+#include <linux/regmap.h>
-+#include <linux/types.h>
-+
-+struct zx_pll_desc {
-+	unsigned int id;
-+	const char *name;
-+	const char * const *parents;
-+	unsigned int num_parents;
-+	unsigned long rate;
-+	const unsigned int *postdivs;
-+	unsigned int num_postdivs;
-+	u16 reg;
-+};
-+
-+struct zx_mux_desc {
-+	unsigned int id;
-+	const char *name;
-+	const char * const *parents;
-+	unsigned int num_parents;
-+	u16 reg;
-+	u8 shift, size;
-+};
-+
-+struct zx_div_desc {
-+	unsigned int id;
-+	const char *name, *parent;
-+	u16 reg;
-+	u8 shift, size;
-+};
-+
-+struct zx_gate_desc {
-+	unsigned int id;
-+	const char *name, *parent;
-+	unsigned long flags;
-+	u16 reg;
-+	u8 shift;
-+};
-+
-+int zx_clk_register_plls(struct device *dev, struct regmap *regmap,
-+			 const struct zx_pll_desc *desc, unsigned int num,
-+			 struct clk_hw_onecell_data *clocks);
-+int zx_clk_register_muxes(struct device *dev, struct regmap *regmap,
-+			  const struct zx_mux_desc *desc, unsigned int num,
-+			  struct clk_hw_onecell_data *clocks);
-+int zx_clk_register_dividers(struct device *dev, struct regmap *regmap,
-+			     const struct zx_div_desc *desc, unsigned int num,
-+			     struct clk_hw_onecell_data *clocks);
-+int zx_clk_register_gates(struct device *dev, struct regmap *regmap,
-+			  const struct zx_gate_desc *desc, unsigned int num,
-+			  struct clk_hw_onecell_data *clocks);
-+
-+struct zx_clk_data {
-+	const char * const *inputs_enable;
-+	unsigned int num_inputs_enable;
-+	const char * const *inputs;
-+	unsigned int num_inputs;
-+	const struct zx_pll_desc *plls;
-+	unsigned int num_plls;
-+	const struct zx_mux_desc *muxes;
-+	unsigned int num_muxes;
-+	const struct zx_div_desc *divs;
-+	unsigned int num_divs;
-+	const struct zx_gate_desc *gates;
-+	unsigned int num_gates;
-+};
-+
-+int zx_clk_common_probe(struct device *dev, struct device_node *of_node,
-+			const struct zx_clk_data *data);
-+
-+#endif /* __DRV_CLK_ZX_H */
-diff --git a/drivers/clk/zte/pll-zx.c b/drivers/clk/zte/pll-zx.c
-new file mode 100644
-index 000000000000..1a8cb37ca7e2
---- /dev/null
-+++ b/drivers/clk/zte/pll-zx.c
-@@ -0,0 +1,17 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2026 Stefan Dösinger
-+ */
-+#include <linux/clk-provider.h>
-+#include <linux/device.h>
-+#include <linux/regmap.h>
-+#include <linux/errno.h>
-+
-+#include "clk-zx.h"
-+
-+int zx_clk_register_plls(struct device *dev, struct regmap *regmap,
-+			 const struct zx_pll_desc *desc, unsigned int num,
-+			 struct clk_hw_onecell_data *clocks)
++static unsigned long zte_clk_regmap_div_recalc_rate(struct clk_hw *hw,
++						unsigned long prate)
 +{
-+	return -ENODEV;
++	struct zte_clk_regmap *clk = to_zte_clk_regmap(hw);
++	unsigned int val;
++	int ret;
++
++	ret = regmap_read(clk->map, clk->reg, &val);
++	if (ret)
++		/* Gives a hint that something is wrong */
++		return 0;
++
++	val >>= clk->shift;
++	val &= clk_div_mask(clk->size);
++	return divider_recalc_rate(hw, prate, val, NULL, 0, clk->size);
 +}
++
++static int zte_clk_regmap_div_determine_rate(struct clk_hw *hw,
++					 struct clk_rate_request *req)
++{
++	struct zte_clk_regmap *clk = to_zte_clk_regmap(hw);
++
++	return divider_determine_rate(hw, req, NULL, clk->size, 0);
+ }
+ 
++static int zte_clk_regmap_div_set_rate(struct clk_hw *hw, unsigned long rate,
++				   unsigned long parent_rate)
++{
++	struct zte_clk_regmap *clk = to_zte_clk_regmap(hw);
++	unsigned int val;
++	int ret;
++
++	ret = divider_get_val(rate, parent_rate, NULL, clk->size, 0);
++	if (ret < 0)
++		return ret;
++
++	val = (unsigned int)ret << clk->shift;
++	return regmap_update_bits(clk->map, clk->reg, clk_div_mask(clk->size) << clk->shift, val);
++}
++
++static const struct clk_ops zte_clk_regmap_divider_ops = {
++	.recalc_rate = zte_clk_regmap_div_recalc_rate,
++	.determine_rate = zte_clk_regmap_div_determine_rate,
++	.set_rate = zte_clk_regmap_div_set_rate,
++};
++
+ int zx_clk_register_dividers(struct device *dev, struct regmap *regmap,
+ 			     const struct zx_div_desc *desc, unsigned int num,
+ 			     struct clk_hw_onecell_data *clocks)
+ {
+-	return -ENODEV;
++	struct zte_clk_regmap *clk;
++	unsigned int i;
++	int res;
++
++	for (i = 0; i < num; ++i) {
++		struct clk_init_data init = {};
++
++		clk = devm_kzalloc(dev, sizeof(*clk), GFP_KERNEL);
++		if (!clk)
++			return -ENOMEM;
++
++		init.name = desc[i].name;
++		init.ops = &zte_clk_regmap_divider_ops;
++		init.parent_names = &desc[i].parent;
++		init.num_parents = 1;
++		init.flags = CLK_SET_RATE_PARENT;
++		clk->hw.init = &init;
++		clk->map = regmap;
++		clk->reg = desc[i].reg;
++		clk->shift = desc[i].shift;
++		clk->size = desc[i].size;
++
++		res = devm_clk_hw_register(dev, &clk->hw);
++		if (res)
++			return dev_err_probe(dev, res, "Failed to register clk %s\n", desc[i].name);
++
++		if (desc[i].id)
++			clocks->hws[desc[i].id] = &clk->hw;
++	}
++
++	return 0;
+ }
+ 
++static u8 zte_clk_regmap_mux_get_parent(struct clk_hw *hw)
++{
++	struct zte_clk_regmap *clk = to_zte_clk_regmap(hw);
++	unsigned int val;
++	int ret;
++
++	ret = regmap_read(clk->map, clk->reg, &val);
++	if (ret)
++		return 0xff;
++
++	val >>= clk->shift;
++	val &= GENMASK(clk->size - 1, 0);
++	return clk_mux_val_to_index(hw, NULL, 0, val);
++}
++
++static int zte_clk_regmap_mux_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct zte_clk_regmap *clk = to_zte_clk_regmap(hw);
++	unsigned int val = clk_mux_index_to_val(NULL, 0, index);
++
++	return regmap_update_bits(clk->map, clk->reg,
++				  GENMASK(clk->size - 1, 0) << clk->shift,
++				  val << clk->shift);
++}
++
++static int zte_clk_regmap_mux_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
++{
++	return clk_mux_determine_rate_flags(hw, req, 0);
++}
++
++static const struct clk_ops zte_clk_regmap_mux_ops = {
++	.get_parent = zte_clk_regmap_mux_get_parent,
++	.set_parent = zte_clk_regmap_mux_set_parent,
++	.determine_rate = zte_clk_regmap_mux_determine_rate,
++};
++
+ int zx_clk_register_muxes(struct device *dev, struct regmap *regmap,
+ 			  const struct zx_mux_desc *desc, unsigned int num,
+ 			  struct clk_hw_onecell_data *clocks)
+ {
+-	return -ENODEV;
++	struct zte_clk_regmap *clk;
++	unsigned int i;
++	int res;
++
++	for (i = 0; i < num; ++i) {
++		struct clk_init_data init = {};
++
++		clk = devm_kzalloc(dev, sizeof(*clk), GFP_KERNEL);
++		if (!clk)
++			return -ENOMEM;
++
++		init.name = desc[i].name;
++		init.ops = &zte_clk_regmap_mux_ops;
++		init.parent_names = desc[i].parents;
++		init.num_parents = desc[i].num_parents;
++		clk->hw.init = &init;
++		clk->map = regmap;
++		clk->reg = desc[i].reg;
++		clk->shift = desc[i].shift;
++		clk->size = desc[i].size;
++
++		res = devm_clk_hw_register(dev, &clk->hw);
++		if (res)
++			return dev_err_probe(dev, res, "Failed to register clk %s\n", desc[i].name);
++
++		if (desc[i].id)
++			clocks->hws[desc[i].id] = &clk->hw;
++	}
++
++	return 0;
+ }
 
 -- 
 2.54.0
