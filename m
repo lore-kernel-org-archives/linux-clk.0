@@ -1,98 +1,109 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DD533C4161;
-	Thu,  2 Jul 2026 08:57:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9E871FB1;
+	Thu,  2 Jul 2026 09:01:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.200.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782982657; cv=none; b=M9mOI+Vh3jyBfoqLTAcGWObXPsipv583Io1xSOnfuCU5neZTR1Ocl89SMPgyRUH1UAq/as2G2PxaZUxAqbwa/dmu3X+vZF4yx1sqyWz/7fd7i9DlO39tnPAglg4ZokU3mn0OYLxxf5x2uwxSBjx04m2i6r/9mbG1z8oIaFhEXVE=
+	t=1782982906; cv=none; b=BBrybQc/axNu3eciXQ4Pyd0f64kH0kgbFNNQ2HZ0O8NRpEBHd9nn7YfHh6FG0RUNDxCe//0uo0ojYdby1+o+R2zmwC4dvVvkt0C6vE99Cji4rB6vK5OkNv5LjXv6AZTcf6cIreRpTv5CYF+RS14MraW/bpz6QWx9ZiYiJtgApJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782982657; c=relaxed/simple;
-	bh=MSbq6+W3UnipbgRe5OqNXC2h5o+vLMVg75Y2ERCCqF4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Iw7ZqxGMZLfPK+kLMhf5iFTIV6wRTx8OicfCsq/P4Xqg0dkXdLY5Gv+rfkjuYGP93ibmWkzYqFB0UfFzYivTxn2onGnJsVpkSh1qofex2eZnAmv6nJQsjuE8aOKd3YEJ/1ktG0MLAjwxqhVSGfyJWsgSFlIyC0HMaJzWSKobpvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=vxlIj29X; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="vxlIj29X"
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4FF42288E;
-	Thu,  2 Jul 2026 01:57:25 -0700 (PDT)
-Received: from [192.168.178.24] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6EFFB3F905;
-	Thu,  2 Jul 2026 01:57:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1782982649; bh=MSbq6+W3UnipbgRe5OqNXC2h5o+vLMVg75Y2ERCCqF4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=vxlIj29X8SyZB1IgbyT7B2lCW/p+J0QTyfWT5aKusya9JNXJDD72C2MXt0nB1jJBq
-	 L6w4cZPCwWj8mcv6ihhP+P0n5CwUEWYj6xE0SdD0s6CHqhEAm7j1wIRANnMYUKvYbY
-	 gChO0ak5hCTtvm8wzYEpFjegAHoefiu3EimrD+Us=
-Message-ID: <17e411b5-f025-4c72-90a7-5bdd5971654c@arm.com>
-Date: Thu, 2 Jul 2026 10:57:23 +0200
+	s=arc-20240116; t=1782982906; c=relaxed/simple;
+	bh=Ci5DBXRn+5kdYcV4syoJ/nlrfafCD6IBrci7rpIgT7k=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=AewDd6Xt2CsL1fi9vgZ1IBQLtJmGZubhwnwGN5uCwdNwM+a1ZZlDflLyFCI87kZ3dzhXI7gMCCwrMo/appy4Ld7nk+vhVEDpR14SZ2IgykFQEe26HKZLTmnV50px5N6BMwhe0vshHq8o0Nm+skUNOu9bATU8+DN0bsDRKgdUinw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.200.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de (drehscheibe.grey.stw.pengutronix.de [IPv6:2a0a:edc0:0:c01:1d::a2])
+	(Authenticated sender: relay-from-drehscheibe.grey.stw.pengutronix.de)
+	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id E3D852003DD;
+	Thu, 02 Jul 2026 11:01:34 +0200 (CEST)
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1wfDIc-005iZG-2i;
+	Thu, 02 Jul 2026 11:01:34 +0200
+Received: from pza by lupine with local (Exim 4.98.2)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1wfDIc-000000005AH-3BGi;
+	Thu, 02 Jul 2026 11:01:34 +0200
+Message-ID: <1ef8b2e4ab588aac1dae737541240e698fcf26a7.camel@pengutronix.de>
+Subject: Re: [PATCH RFC v5 05/12] clk: zte: Add Clock registration
+ infrastructure.
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Stefan =?ISO-8859-1?Q?D=F6singer?= <stefandoesinger@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>,  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,  Brian Masney
+ <bmasney@redhat.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, 	linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Date: Thu, 02 Jul 2026 11:01:34 +0200
+In-Reply-To: <84C4450E-7355-48CD-BCBB-CF619C27EBED@gmail.com>
+References: <20260628-zx29clk-v5-0-79ff044e4192@gmail.com>
+	 <20260628-zx29clk-v5-5-79ff044e4192@gmail.com>
+	 <c59fab242716c80250a66707d7ccaaf243a85aac.camel@pengutronix.de>
+	 <84C4450E-7355-48CD-BCBB-CF619C27EBED@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-0+deb13u1 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 0/8] clk: sunxi-ng: Add support for Allwinner A733 CCU
- and PRCM
-To: Enzo Adriano <enzo.adriano.code@gmail.com>,
- Junhui Liu <junhui.liu@pigmoral.tech>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
- Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- Jerome Brunet <jbrunet@baylibre.com>, Paul Walmsley <pjw@kernel.org>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>, Richard Cochran <richardcochran@gmail.com>,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- netdev@vger.kernel.org
-References: <20260310-a733-clk-v1-0-36b4e9b24457@pigmoral.tech>
- <20260701160055.320000-a733-ccu-status-enzo.adriano.code@gmail.com>
-Content-Language: en-US
-From: Andre Przywara <andre.przywara@arm.com>
-In-Reply-To: <20260701160055.320000-a733-ccu-status-enzo.adriano.code@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-Hi Enzo,
+On Di, 2026-06-30 at 11:53 +0300, Stefan D=C3=B6singer wrote:
+> Hi Philipp,
+>=20
+> > Am 30.06.2026 um 11:27 schrieb Philipp Zabel <p.zabel@pengutronix.de>:
+> >=20
+> > I think the MFD driver is unnecessary overhead. Can't you just keep the
+> > reset controllers as auxdev and use of_platform_populate() to create
+> > devices for clock-controller child nodes such as syscon-reboot?
+>=20
+> MFD for top and matrix was the suggestion of Conor:
+>=20
+> https://lore.kernel.org/linux-arm-kernel/20260618-fantasy-estimate-6c52ed=
+bc6890@spud/
+>=20
+> To quote:
+>=20
+> > I think aux bus makes perfect sense when you have a clock/reset
+> > controller, but once you start expanding past that and you have reboot
+> > or hwmon or hwspinlock then mfd starts to make sense.
 
-On 7/1/26 18:07, Enzo Adriano wrote:
-> Hi Junhui,
-> 
-> Thanks for the A733 CCU/PRCM RFC v1. I've been reading through the
-> series and the review feedback, including the NSI clock/reset handling,
-> the binding naming and ordering comments, the SDM macro cleanup, and the
-> question around modeled but otherwise-unused clocks such as the GIC clock.
+Note how the example Conor gives is introduced with:
 
-that's great, but please tell the list, by replying to the respective 
-patches. There are still a few patches left that haven't been checked 
-against the manual or otherwise reviewed. I will probably do this at 
-some point in time, but we could use any help here.
-You don't need to be an expert for this: just comparing the numbers in 
-the struct (register offsets and bit positions) against the manual is 
-already very helpful, and can be done by most people, just with some 
-endurance ;-)
+> > Because I messed up stuff in the past, reset-mpfs.c has both aux bus
+> > and mfd probing in it, [...]
 
-Thanks,
-Andre
+So while, yes, this is possible, I'd like to avoid it if not necessary.
 
-> I do not see a v2 on the list yet, so I wanted to check in: are you still
-> planning to take this series forward? No rush at all, and I am happy to
-> leave it entirely with you if so.
-> 
-> If you have moved on to other things, I would be glad to help carry the
-> series forward and address the review comments, keeping your authorship
-> and prior work intact. I have A733 hardware here and can help test the
-> changes.
-> 
-> Either way, please let me know what works best for you.
-> 
-> Thanks,
-> Enzo
+> I can go either way. To me aux vs mfd seems like a distinction without a =
+difference.
 
+I think that's because the main difference doesn't apply here:
+
+MFD comes from aggregate devices where a shared register space
+accessible via a physical bus (which we have) can be partitioned out to
+child devices. Reset controls are often just individual registers or
+even bits scattered around the CRU register space, so we can't make use
+of the MFD framework's IO/IRQ resource partitioning infrastructure at
+all.
+
+Auxiliary devices were introduced to separate functionality of a single
+device into subsystem drivers (which applies here) for devices that are
+not just controlled via direct register access, for example via a
+firmware interface. That's not the case here, we usually can just share
+a regmap.
+
+Either way, I'd prefer the reset driver to not carry more boilerplate
+than actual reset code, so if you can either put all of them into a
+single auxiliary_driver or into a single platform_driver, I would be
+happier.
+
+regards
+Philipp
