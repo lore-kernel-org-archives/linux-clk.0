@@ -1,45 +1,46 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F14EB378D9B;
-	Fri,  3 Jul 2026 09:23:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 283723B14AC;
+	Fri,  3 Jul 2026 09:53:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783070629; cv=none; b=HDnAef2n9rPOfQ6Jc6cJT9vBufkXtil+0Bd5lqeV9xpe8tbRG6vTC3Y+911nI9acd/4M/F7VUoUZLFS563AbShY2q0AFlu9WpppIT1Ow/NsDIOrt3UScWUBSuGV7m6Gee9O3TBukLkHVGUG/x8qkOXKCuhPwVomJWGbI1sJ7xBk=
+	t=1783072418; cv=none; b=amYYg85zZlXeVPpX8qERIz+akMyGuXlcOAd/xK2XdA078WhpYZb9h3ppGdbfgTRRk2fdzgNVLzv8fVCiQRku7XaO6vC4tX2EbBstbivScPh9my9l0VtSw5uuzL/mjFZ0VEt1rrM72NqBnsCnVLiOaSL5Z1aP+W0BmIUOq2hDyZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783070629; c=relaxed/simple;
-	bh=SeRVzFJ1nCvET5lSJokzi8FmrSxdBYU+mKcpQ9x4Rtg=;
+	s=arc-20240116; t=1783072418; c=relaxed/simple;
+	bh=2L75dJp21IjSIQ4qqPVGE/oyVx9qhEU9GtCivqVwR34=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aDDuwaZvOHFyjcG8D69HypGKA4c38hfAV6+MpCrFxqhyljkgFSXbqQBdZfNeWaalfMI1RuDLOSm16ToNBDolOPdW3dqD5Cskxa6huqaI3+kE49kIsLeixFW02WJfnqtXDNDkS3lJclQSEeXlbQcXhnbfDFOK8r10PLMGm8oOwHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h9dSDL8W; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=a/FH0yv3b0Dl8i9c3avOCdYVNh6CqzmHRc2HPeTpwuBZPrvdxsYGKCdyLk/pS0EK2a5ge/fC/QFrQUFANr2Wu52/4fQmd3raXPi/8Ag5mlDxJECuv3M2z9UuSk7/S9gy26C9007lORYFKsgeH1w2hFg3FvQj/eGChcIbBPACE0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OF/cjS93; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h9dSDL8W"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B88811F000E9;
-	Fri,  3 Jul 2026 09:23:46 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OF/cjS93"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD6E01F000E9;
+	Fri,  3 Jul 2026 09:53:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783070627;
-	bh=BTsbkzKqRt/9QZjZtR3MaPSTXt8k/gxCyByBOMZn9OE=;
+	s=k20260515; t=1783072416;
+	bh=SaZwKJT1mcqlaSPlM+wH/cK8p/eu/JiBJQO7HD7Jt54=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=h9dSDL8WYqPPKjfZlQJG3rkunmEnS8718Em9B8D5sMxIdDzYAAnp7tgWN50sFoMvj
-	 NJMQ00fzebr+3q6mr2OsKalLrqQaq/CEQSvyrngUAnW7htanXfC69FJVp/QubQz4D5
-	 9xqEzamyaRJDahY95FkmSfjji4xOxCqb6Ksktdusi7NDJivglvCzfGNY/2E1jQSMRA
-	 Yauc0bDJkB9AXn8W7vW5jB9wVoaVDGFuzf9zrjYsZwJJwLktKoYoXeIZbxonOO7jhj
-	 77iNcq4prgYyk8CypOXrLmAnURkZVffYbB/t96XXndvqjs/Xqcu3Wd1zZIs6cdL0VK
-	 bf3I1VZVf8Lzg==
-Date: Fri, 3 Jul 2026 11:23:43 +0200
+	b=OF/cjS93JCz9fvJi5J53vzzUpmODrWEI0X+l/YQKubMaMw0PEOT9bj6Qtcuuw21lV
+	 k3rXjNisHfWOUCrbbvL/oL+7UoUSYjzR7YZ8j8Or6SBy+ZQDWzaZMZ8l/2yq6KbQKQ
+	 duI1KpGKehLTar1ABuFdOA87HhWl38/dMm8LJmwdf9OQbxZORCxvR8jmax8GoBcvXd
+	 IFTsYy2O6NJ1i0/plQHiqsDO4MCn/4d7SBUEh70c/+JjYBitz03dQ92V0AcQCjRCxK
+	 XTEJPcdZS4IfS7SWe74OacVgroPYYtB4pedEnutpbW467mhTb+NNXQ5Ye2nQJr4Av+
+	 AF8YSANx2dn+A==
+Date: Fri, 3 Jul 2026 11:53:33 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Varadarajan Narayanan <varadarajan.narayanan@oss.qualcomm.com>
+To: Lin Li <zhuolin.li@oss.qualcomm.com>
 Cc: Bjorn Andersson <andersson@kernel.org>, 
 	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
 	Brian Masney <bmasney@redhat.com>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Taniya Das <taniya.das@oss.qualcomm.com>, Jagadeesh Kona <quic_jkona@quicinc.com>, 
 	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] dt-bindings: clock: qcom,a53pll: Add IPQ5210
- compatible
-Message-ID: <20260703-astonishing-lyrical-camel-bf3adc@quoll>
-References: <20260703-apss-clk-v3-0-4785e89a9c58@oss.qualcomm.com>
- <20260703-apss-clk-v3-1-4785e89a9c58@oss.qualcomm.com>
+Subject: Re: [PATCH 1/2] dt-bindings: clock: qcom: Add Hawi video clock
+ controller
+Message-ID: <20260703-hilarious-hopeful-corgi-e0fa28@quoll>
+References: <20260702-hawi-videocc-v1-0-6c1e640b0954@oss.qualcomm.com>
+ <20260702-hawi-videocc-v1-1-6c1e640b0954@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -48,18 +49,19 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260703-apss-clk-v3-1-4785e89a9c58@oss.qualcomm.com>
+In-Reply-To: <20260702-hawi-videocc-v1-1-6c1e640b0954@oss.qualcomm.com>
 
-On Fri, Jul 03, 2026 at 10:33:47AM +0530, Varadarajan Narayanan wrote:
-> Add the qcom,ipq5210-a53pll compatible for the A53 PLL found on IPQ5210
-> SoCs.
+On Thu, Jul 02, 2026 at 10:08:07AM -0700, Lin Li wrote:
+> Add device tree bindings for the video clock controller on Qualcomm
+> Hawi SoC.
 > 
-> Signed-off-by: Varadarajan Narayanan <varadarajan.narayanan@oss.qualcomm.com>
+> Signed-off-by: Lin Li <zhuolin.li@oss.qualcomm.com>
 > ---
->  Documentation/devicetree/bindings/clock/qcom,a53pll.yaml | 1 +
->  1 file changed, 1 insertion(+)
+>  .../bindings/clock/qcom,sm8450-videocc.yaml        |  3 +
+>  include/dt-bindings/clock/qcom,hawi-videocc.h      | 64 ++++++++++++++++++++++
+>  2 files changed, 67 insertions(+)
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
 Best regards,
 Krzysztof
