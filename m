@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FD1D3655EA;
-	Fri,  3 Jul 2026 06:03:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E94325392C;
+	Fri,  3 Jul 2026 06:08:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783058610; cv=none; b=LFwKddSpVPQ2VQak0gtn7nR4vzKCUHkuC/3+VLvCcFZD2UJmfsfhCiFSPmLsrgRdeCDvumPhMaafprE5x3FzyvfGxXfWggVwhe0RG9TtaYOrVEyEvsvy8H5/bFdrRmsj2oKUx40GIDvMgXMy8yBOVYQ7zC13RhheIhPjz/5nADY=
+	t=1783058882; cv=none; b=aKPLjvTMCD5Pgr8D3gEeRN8+aia/5rPiaXcDDVukudAjN4bcGsZU2wEB75mTZcvw3L2l1x8n9TLWHFjUlt4k0AvZHe9rrljDiL/13mZyqfQJpzrOx63mFTmVJJr9LKiR0VGsewc0ul3PSCjRaeBbHTScSzNLK4bP8dLULkOxyn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783058610; c=relaxed/simple;
-	bh=Amlg5TyEyS6Ch9Utm7lwW1uokDtg2yzH4rcoMZQ2DHE=;
+	s=arc-20240116; t=1783058882; c=relaxed/simple;
+	bh=mEUrM8x3sX0nMe6PzqR3wBKzu+FAH+7Z0tCazYHvPJI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wkw7G/tkpMiqJ2hiB7bY1iXvCD6Z7xLe7tFLfXGTL8+CLdokK2YPLpjTx29iwVn0s0f6hi+nY0cGBrDhTfJSUz/O1bw9vJ7fkHMSbi+fd9lSxQxu6DN0Q44QFJtGBAXrG+k7swSZ70QWSSkZhqsv3l9xEYjZT7+o9EKFK2b/rZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VbzJILcl; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZAr4JUUfgSYQrz6XKDoY7aLxJziBZj2W+DoyXbW1/kEfNvn8T/93ccAzQrA/lMYF2YAMfgXTuawmtVSBeBoEjPWMlVCrHfjRXErOYXMUdqk/uaJl2wc+SVqPwNvThI0e7qFymIwfGCxo0ohw0r8TBOecXoG2KtMwPvqpJnmlnoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M7SMh9pL; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VbzJILcl"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F5C41F00A3D;
-	Fri,  3 Jul 2026 06:03:27 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M7SMh9pL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 505DD1F000E9;
+	Fri,  3 Jul 2026 06:07:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783058608;
-	bh=u+9sMqB1r9beX3vNKFEtSUw8I/tCjyfUBR2Ob8T7vM8=;
+	s=k20260515; t=1783058880;
+	bh=mEUrM8x3sX0nMe6PzqR3wBKzu+FAH+7Z0tCazYHvPJI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=VbzJILclvc1144vvtNYuDfQOGLwOuF1pvQ5GY4HLqVgnXBEGYLBfZu4eQCCCp23GJ
-	 6yIebnBefO5vw+jPXXXK/dMPntBQsvREOC4TVwHMFr6p15sRxb0nXMnVaijkYDe94v
-	 40M6ymWYkaJelpxd2VE7YGqWkABZxpV60uDjHuvb1tJpSuzUa4YtSlAp+cm1Pphz6g
-	 O1zwICQvg8fKjZxcXW15Kea8EFPHXtPLC98r4fWry5as1HxhHnt6f5pS71ZXMJHA5R
-	 DOLavsGoo7w9JIC4BQKed0fI4iCF/QEgyYsW+XMSJ1SEhqev0s0mkVAdFY10c+01Wv
-	 w2EstqTSwpaBQ==
-Date: Fri, 3 Jul 2026 08:03:25 +0200
+	b=M7SMh9pL5doMGKIm/4H0MQ+2m5BYfS/1JNlz0g0NWquKsb0CH/F8vbM8DkYEv6Yim
+	 NfV8SZtjCR5ysa/WNF7wjCB44//ZNuhCO+X/vSzFb9j0XWHEqsfPqVMDs23+/oSV21
+	 euAxPPd5+h5VfaiFCUgM7eIPDmA/zA9mtimCV5LP1X6OF4qcYqNGEL/RgMWwfzArbK
+	 vYxt5kRT7FNEvpdz4ktckdQEHWgtIoOwyv88nYeKV8pTV8yvk5PLn8d6CVMtEFUJei
+	 UnTIRGpd7X2Gu65O1J8B6uY7njmX+9oUPpjNMl5H8o6FFyfDChtw4DT+PsrpyrQL84
+	 RxNBhVEtx5g4A==
+Date: Fri, 3 Jul 2026 08:07:56 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Stefan =?utf-8?B?RMO2c2luZ2Vy?= <stefandoesinger@gmail.com>
 Cc: Michael Turquette <mturquette@baylibre.com>, 
@@ -35,11 +35,11 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
 	Philipp Zabel <p.zabel@pengutronix.de>, Brian Masney <bmasney@redhat.com>, linux-clk@vger.kernel.org, 
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v6 01/12] dt-bindings: soc: zte: Add zx297520v3 top clock
- and reset bindings
-Message-ID: <20260703-dynamic-bronze-buffalo-37eac5@quoll>
+Subject: Re: [PATCH v6 02/12] dt-bindings: soc: zte: Add zx297520v3 matrix
+ clock and reset bindings
+Message-ID: <20260703-cheerful-salmon-of-agility-1ed1f1@quoll>
 References: <20260702-zx29clk-v6-0-377b704f80c4@gmail.com>
- <20260702-zx29clk-v6-1-377b704f80c4@gmail.com>
+ <20260702-zx29clk-v6-2-377b704f80c4@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -49,77 +49,27 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20260702-zx29clk-v6-1-377b704f80c4@gmail.com>
+In-Reply-To: <20260702-zx29clk-v6-2-377b704f80c4@gmail.com>
 
-On Thu, Jul 02, 2026 at 11:27:56PM +0300, Stefan D=C3=B6singer wrote:
-> +maintainers:
-> +  - Stefan D=C3=B6singer <stefandoesinger@gmail.com>
-> +
-> +description: |
-> +  The zx297520v3's top clock and reset controller generates clocks for c=
-ore
-> +  devices on the board like the main bus, USB and timers. In addition to=
- clocks
-> +  it has reset controls for peripherals, a global board reset, watchdog =
-reset
-> +  controls and a USB status register.
-> +
-> +  The controller has two clock inputs: a 26 MHz and a 32 KHz external
-> +  oscillator. They need to be provided as input clocks. The controller p=
-rovides
-> +  clocks to the downstream Matrix clock controller.
-> +
-> +  All available clocks are defined as preprocessor macros in the
-> +  'dt-bindings/clock/zte,zx297520v3-clk.h' header. The resets are define=
-d in the
-> +  'dt-bindings/reset/zte,zx297520v3-reset.h' header.
+On Thu, Jul 02, 2026 at 11:27:57PM +0300, Stefan D=C3=B6singer wrote:
+> This controller contains clocks and resets for high speed devices on the
+> zx297520v3 board and hardware spinlocks that I expect will be necessary
+> to communicate correctly with the LTE DSP firmware blob.
+>=20
+> A simple MFD driver will instantiate independent clock, reset and hwlock
+> drivers.
+>=20
+> Signed-off-by: Stefan D=C3=B6singer <stefandoesinger@gmail.com>
+>=20
+> ---
+>=20
+> Changes
+> v5->v6:
+> Add syscon compatible - Conor suggested this after v4 and I forgot it in =
+v5.
 
-Use full paths (include/...), so these could be validated by tooling.
-
-
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - const: zte,zx297520v3-topcrm
-> +      - const: syscon
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: 26 MHz external oscillator
-> +      - description: 32 KHz external oscillator
-> +
-> +  clock-names:
-> +    items:
-> +      - const: osc26m
-> +      - const: osc32k
-> +
-> +  "#clock-cells":
-> +    const: 1
-> +
-> +  "#reset-cells":
-> +    const: 1
-> +
-> +  syscon-reboot:
-> +    type: object
-> +    $ref: /schemas/power/reset/syscon-reboot.yaml#
-
-Missing: unevaluatedProperties: false
-
-> +    description:
-> +      Reboot method for the SoC.
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +  - '#clock-cells'
-
-Use consistent quotes, either ' or "
+Please explain why. syscon has meaning in bindings, so if this is not
+accessed outside, then it is not a syscon.
 
 Best regards,
 Krzysztof
