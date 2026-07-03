@@ -1,130 +1,222 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D6163D3314;
-	Fri,  3 Jul 2026 14:50:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E4E7414DF2;
+	Fri,  3 Jul 2026 15:22:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783090237; cv=none; b=RL2v6eUGQwV80D1Bs0LpvK7C7Ea2Nv0v2SIRmLrSf3RjTtwzIGM/NwjF5pkEZivhlROIwCEo04vpGijVR51oFrs3gowNfoexfNIJErxsoKY/PO9EW+HW7LM1L23GptRH6XYc98xwcGim3KcKMjRKSX0Ut9P3OqaIBpp01rpHD9s=
+	t=1783092154; cv=none; b=q1DF0jhEY0beJ3CAcOrjcBVzzKKbE9NgFfCY4/8nERHzaIdT2TK2pPKJYJCQuEtRX1HfIpb5DbBmb2slR4iSgHlyoJkIy1GCFZk5T8uFkJxFB/1dIgw+zaOsJBRHTLPuatnIezTQdXFYzcqj8zN0ekdrU1XUftsqrOOsveBvndA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783090237; c=relaxed/simple;
-	bh=q2CGUFcxSt5wM3GRAK9pYeCmqT/KkAzEKexF8M/gt18=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lzWJeZjmyg7yZhpQF5kl7r1vN4yGE7TOP1djq2ZptFMqDnk+fl/Y2CbLwY3P9etRiw2y+qSDEcbuMeaGFUpF0PNPTCd7KPsX0eBJS45Vz2BKpvbGJkfmUrLqkJlTTrJLbvKsn/Z+E3PCb7GDj+8Qegt/IqXikmzBJKheT96hE0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O3DFNwtI; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1783092154; c=relaxed/simple;
+	bh=o6qYyClYJFUhN8SqkfwWXv6Xh9TUxilTNZ7qbfwufLo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S3tVzjT24tvOUYnGN3/d79aO84+1o/tWAKOcnlWa3hFfAMu3E1hm/a/VHommCokYsS5vp+hta3ko78ubI8OOdDCVo3DxUIfX7mHalLV25/NOemy799w7BZnpeOkyZnYVUCs99ZioTj3d9HInPPgvwWYR1WVlJJkTOUtkTZZLkI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=jP75NKZs; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O3DFNwtI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 614561F000E9;
-	Fri,  3 Jul 2026 14:50:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783090235;
-	bh=q2CGUFcxSt5wM3GRAK9pYeCmqT/KkAzEKexF8M/gt18=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=O3DFNwtIgINAhnfGispxniSCsLZ+iUYBvCj8vmeEqyca+oiJSasw6VucE5nkfsvGW
-	 1LN36w+UOk0T8pItZKJfeRl5XVGXB+BK+cpM7rCTQ5AYQDsSS0f/k0hMwFjN13ctLM
-	 7tXa0xTg4EktJ/gLHrDFFSYMg+iFT1iuOGx3bQn4k8ozVpc417iu4vdsXAg6kHGLVH
-	 CLWIXtGxy97o2t/UxTgGTQe9qqOqHKh2fmitdQSeIjErbXYmXM7jYqtJLFVEo89z71
-	 aN/Y/nNuWAAoIcFSceRRsLwz6LL8fQEuhKLtLVxK8MydHT5rC2JAcquHaQytByHtk8
-	 F1aSdKqSL/OxA==
-Message-ID: <6d23a482-4d5c-4444-a533-d89a4602a4dc@kernel.org>
-Date: Fri, 3 Jul 2026 16:50:27 +0200
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="jP75NKZs"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 29ACA1A0E1F;
+	Fri,  3 Jul 2026 15:22:30 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id E338160300;
+	Fri,  3 Jul 2026 15:22:29 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 58C01104C952E;
+	Fri,  3 Jul 2026 17:22:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1783092148; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=GL/PEBpDRjNofqSclIW36EdkzsUZczRz8DzmZfGvPwM=;
+	b=jP75NKZsLJ/JammBfF5BPYS43hPWKLJPaZFkNZXjxuysm/XKJbVF/NG4ZawS74KU/FLxNz
+	/y+4SJAEkAS4RPaEXpq47pzFmQzdR6hjaShd0I9uyfiT9jq6LexziQ/ZoyPHPinBV0EufL
+	F4mDzo/w4VjAvWMkGlmopm2yk5XAwrSu7hT+J091pRkqiO8JtqkFJXT2S7kZ8UZhtw6i5y
+	nRXDdgqHLfGNnkVqXHPOHbTnh6d6fBvJkUF+XFI0l9D4A3jECqWgVJCSrWUZ6atyOx6hz9
+	50tEQidDdy2DZ8qiOmIyRxFj10xS7v3Xs04k3DGPxc1ug0DfuiW0iKHqKtrGng==
+From: Richard Genoud <richard.genoud@bootlin.com>
+To: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney@redhat.com>
+Cc: Paul Kocialkowski <paulk@sys-base.io>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	John Stultz <jstultz@google.com>,
+	Joao Schim <joao@schimsalabim.eu>,
+	bigunclemax@gmail.com,
+	linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Richard Genoud <richard.genoud@bootlin.com>
+Subject: [PATCH v7 0/4] Introduce Allwinner H616 PWM controller
+Date: Fri,  3 Jul 2026 17:22:11 +0200
+Message-ID: <20260703152215.192859-1-richard.genoud@bootlin.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 1/7] dt-bindings: clock: qcom: Move glymur TCSR to own
- binding
-To: Qiang Yu <qiang.yu@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Taniya Das
- <taniya.das@oss.qualcomm.com>, Konrad Dybcio <konradybcio@kernel.org>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- krishna.chundru@oss.qualcomm.com
-References: <20260702-tcsr_qref_0702-v7-0-776f2811b7af@oss.qualcomm.com>
- <20260702-tcsr_qref_0702-v7-1-776f2811b7af@oss.qualcomm.com>
- <20260703-godlike-artificial-coyote-3e9ba9@quoll>
- <akeoHGv905FTOiy9@hu-qianyu-lv.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <akeoHGv905FTOiy9@hu-qianyu-lv.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 03/07/2026 14:16, Qiang Yu wrote:
-> On Fri, Jul 03, 2026 at 07:58:00AM +0200, Krzysztof Kozlowski wrote:
->> On Thu, Jul 02, 2026 at 12:36:11AM -0700, Qiang Yu wrote:
->>> The QREF block supplies reference clocks to PCIe PHYs and requires
->>> dedicated LDO supplies to operate. The digital control interface for QREF
->>> (clkref_en registers) resides in TCSR on glymur. Since QREF has no
->>> dedicated DT node of its own, these supply properties are placed in the
->>> TCSR node which acts as the control interface for QREF.
->>>
->>> Add a dedicated binding file for qcom,glymur-tcsr and document the supply
->>> properties. As this binding will grow to cover more SoCs, mark the
->>> required supplies per compatible using an allOf/if/then conditional.
->>>
->>> Signed-off-by: Qiang Yu <qiang.yu@oss.qualcomm.com>
->>
->> So you dropped the tag because? Where is the explanation?
->>
-> Sorry for the confusion. The patch was substantially reworked in v7
-> based on your v6 review comments on patch 2: the compatible was changed
-> from const to an enum, and the allOf/if/then block was moved into this
-> patch upfront. Since the diff changed significantly from what you
-> reviewed, I dropped the tag rather than carry it forward silently.
+Allwinner H616 PWM controller is quite different from the A10 one.
 
-Dropping tag is fine, but what do the submitting patches say when you
-drop someone's tag?
+It can drive 6 PWM channels, and like for the A10, each channel has a
+bypass that permits to output a clock, bypassing the PWM logic, when
+enabled.
 
-Best regards,
-Krzysztof
+But, the channels are paired 2 by 2, sharing a first set of
+MUX/prescaler/gate.
+Then, for each channel, there's another prescaler (that will be bypassed
+if the bypass is enabled for this channel).
+
+It looks like that:
+            _____      ______      ________
+OSC24M --->|     |    |      |    |        |
+APB1 ----->| Mux |--->| Gate |--->| /div_m |-----> PWM_clock_src_xy
+           |_____|    |______|    |________|
+                          ________
+                         |        |
+                      +->| /div_k |---> PWM_clock_x
+                      |  |________|
+                      |    ______
+                      |   |      |
+                      +-->| Gate |----> PWM_bypass_clock_x
+                      |   |______|
+PWM_clock_src_xy -----+   ________
+                      |  |        |
+                      +->| /div_k |---> PWM_clock_y
+                      |  |________|
+                      |    ______
+                      |   |      |
+                      +-->| Gate |----> PWM_bypass_clock_y
+                          |______|
+
+Where xy can be 0/1, 2/3, 4/5
+
+As this is quite complex for a PWM, the Common Clock Framework is
+leverage to deal with that and not reinvent the wheel.
+
+PWM_clock_x/y serve for the PWM purpose.
+PWM_bypass_clock_x/y serve for the clock-provider purpose.
+The common clock framework has been used to manage those clocks.
+
+This PWM driver serves as a clock-provider for PWM_bypass_clocks.
+This is needed for example by the embedded AC300 PHY which clock comes
+from PMW5 pin (PB12).
+
+Usually, to get a clock from a PWM driver, we use the pwm-clock driver
+so that the PWM driver doesn't need to be a clk-provider itself.
+While this works in most cases, here it just doesn't.
+That's because the pwm-clock request a period from the PWM driver,
+without any clue that it actually wants a clock at a specific frequency,
+and not a PWM signal with duty cycle capability.
+So, the PWM driver doesn't know if it can use the bypass or not, it
+doesn't even have the real accurate frequency information (23809524 Hz
+instead of 24MHz) because PWM drivers only deal with periods.
+
+With pwm-clock, we loose a precious information along the way (that we
+actually want a clock and not a PWM signal).
+That's ok with simple PWM drivers that don't have multiple input clocks,
+but in this case, without this information, we can't know for sure which
+clock to use.
+And here, for instance, if we ask for a 24MHz clock, pwm-clock will
+requests 42ns (assigned-clocks doesn't help for that matter). The logic
+is to select the highest clock (100MHz) with no prescaler and a duty
+cycle value of 2/4 => we have 25MHz instead of 24MHz.
+And that's a perfectly fine choice for a PMW, because we still can
+change the duty cycle in the range [0-4]/4.
+But obviously for a clock, we don't care about the duty cycle, but more
+about the clock accuracy.
+
+And actually, this PWM is really a PWM AND a real clock when the bypass
+is set.
+
+This series is based onto v7.2-rc1
+
+NB: checkpatch is not happy with patch 2, but it's a false positive.
+It doesn't detect that PWM_XY_SRC_MUX/GATE/DIV are structures, but as
+it's more readable like that, I prefer keeping it that way.
+
+Changes since v6:
+- rebase on v7.2-rc1
+- Cc common clock framework maintainers, suggested by Uwe
+- add missing static before SUN8I_PWM_X_BYPASS_GATE
+- reorder code in probe to fix potential life cycle issues
+- set pwmcc_data[i].parent_names to NULL in sun8i_pwm_unregister_clk
+
+Changes since v5:
+- remove trailing junk after commit message in patch 4
+- remove Tested-by when it doesn't make sense.
+(sorry for the noise)
+
+Changes since v4:
+- Fix a bug on bypass for channels greater than 1
+- add colons to clarify 2 debug messages
+- switch from H616 to sun8i prefix (in code, filename, module name)
+- fix consistency issues in macro parameters
+- rename some macros with a confusing naming
+- rebase on v7.0
+
+Changes since v3:
+- gather Acked-by/Tested-by
+- fix cast from pointer to integer of different size (kernel test robot
+  with arc platform)
+- add devm_action for clk_hw_unregister_composite as suggested by Philipp
+- remove now unused pwm_remove as suggested by Philipp
+
+Changes since v2:
+- use U32_MAX instead of defining UINT32_MAX
+- add a comment on U32_MAX usage in clk_round_rate()
+- change clk_table_div_m (use macros)
+- fix formatting (double space, superfluous comma, extra line feed)
+- fix the parent clock order
+- simplify code by using scoped_guard()
+- add missing const in to_h616_pwm_chip() and rename to
+h616_pwm_from_chip()
+- add/remove missing/superfluous error messages
+- rename cnt->period_ticks, duty_cnt->duty_ticks
+- fix PWM_PERIOD_MAX
+- add .remove() callback
+- fix DIV_ROUND_CLOSEST_ULL->DIV_ROUND_UP_ULL
+- add H616_ prefix
+- protect _reg in macros
+- switch to waveforms instead of apply/get_state
+- shrink struct h616_pwm_channel
+- rebase on v6.19-rc4
+
+Changes since v1:
+- rebase onto v6.19-rc1
+- add missing headers
+- remove MODULE_ALIAS (suggested by Krzysztof)
+- use sun4i-pwm binding instead of creating a new one (suggested by Krzysztof)
+- retrieve the parent clocks from the devicetree
+- switch num_parents to unsigned int
+
+Richard Genoud (4):
+  dt-bindings: pwm: allwinner: add h616 pwm compatible
+  pwm: sun8i: Add H616 PWM support
+  arm64: dts: allwinner: h616: add PWM controller
+  MAINTAINERS: Add entry on Allwinner sun8i/H616 PWM driver
+
+ .../bindings/pwm/allwinner,sun4i-a10-pwm.yaml |  19 +-
+ MAINTAINERS                                   |   5 +
+ .../arm64/boot/dts/allwinner/sun50i-h616.dtsi |  47 +
+ drivers/pwm/Kconfig                           |  12 +
+ drivers/pwm/Makefile                          |   1 +
+ drivers/pwm/pwm-sun8i.c                       | 938 ++++++++++++++++++
+ 6 files changed, 1021 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/pwm/pwm-sun8i.c
+
+-- 
+2.47.3
+
