@@ -1,270 +1,88 @@
-Received: from toucan.tulip.relay.mailchannels.net (toucan.tulip.relay.mailchannels.net [23.83.218.254])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5850334C39;
-	Sat,  4 Jul 2026 09:09:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=23.83.218.254
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4A063976A0;
+	Sat,  4 Jul 2026 12:45:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783156153; cv=none; b=dzb/bb7pudIhiHxnxtIvJ+UuyT34hBAOqwRm3Z7TTwZj65puAv8mIVuIIPvytrSx8JtJ4lbnDccsmig0QRDXEnOENga9Lrrqd4UB/Y2MPLFrKpjPJggoYdJLmDDe5QjTHgDiS437z4oVa4Fbfjoez3HjIXxJo76VHPc2Q3riTMg=
+	t=1783169112; cv=none; b=qQ/PqVQCvuX/Ci7e5ENKTGYluLKe3Er4Qymd16Spe+mWMkn1VMj5yStqx15kmcOIOepGAhUVcClGhPBGPkxqqr6HaVJRFh5+JKzDO+DU2rtOLpwjBXK4f+eFa288dedvsfef4XJyhBv4t51Y87krD5Oy4fF4nGR2VNXp5Zk9Ac0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783156153; c=relaxed/simple;
-	bh=v4mMZ46MIeihKrAlJScf4TpBLX/AgDDm1zkc1myckMM=;
-	h=Message-ID:MIME-Version:Subject:To:References:From:In-Reply-To:
-	 Content-Type:Date; b=KJGKE5L3ViulySD8Eh4IbA/ShVx299OF+eqgQ/YH3ZEk2Ygj8F6I7vXN5RDYxS4eb9O+Vz8+zbrcJ/pRDqDjqHYX+GGpRQQt3QdEEEBc+A+JfTxBUFT+IAGXARKCJiw/eFpgWhkL/5U1vdU+Wx5Pru69WNfUm9i/UgwqSqpaoho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smankusors.com; spf=pass smtp.mailfrom=smankusors.com; dkim=pass (2048-bit key) header.d=smankusors.com header.i=@smankusors.com header.b=guiUHmMU; arc=none smtp.client-ip=23.83.218.254
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smankusors.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=smankusors.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=smankusors.com header.i=@smankusors.com header.b="guiUHmMU"
-X-Sender-Id: hostingeremail|x-authuser|linux@smankusors.com
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id 13FB9382387;
-	Sat, 04 Jul 2026 09:02:50 +0000 (UTC)
-Received: from fr-int-smtpout29.hostinger.io (100-99-245-61.trex-nlb.outbound.svc.cluster.local [100.99.245.61])
-	(Authenticated sender: hostingeremail)
-	by relay.mailchannels.net (Postfix) with ESMTPA id 8C813382384;
-	Sat, 04 Jul 2026 09:02:46 +0000 (UTC)
-X-Sender-Id: hostingeremail|x-authuser|linux@smankusors.com
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: hostingeremail|x-authuser|linux@smankusors.com
-X-MailChannels-Auth-Id: hostingeremail
-X-Arch-Drop: 263943132682c5a9_1783155769915_1954679418
-X-MC-Loop-Signature: 1783155769915:2001952177
-X-MC-Ingress-Time: 1783155769914
-Received: from fr-int-smtpout29.hostinger.io (fr-int-smtpout29.hostinger.io
- [148.222.54.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.99.245.61 (trex/8.0.2);
-	Sat, 04 Jul 2026 09:02:49 +0000
-Received: from [192.168.1.100] (unknown [180.247.178.47])
-	(Authenticated sender: linux@smankusors.com)
-	by smtp.hostinger.com (smtp.hostinger.com) with ESMTPSA id 4gsl4y2RGyz32DG;
-	Sat,  4 Jul 2026 09:02:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=smankusors.com;
-	s=hostingermail-a; t=1783155764;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5uAPwddbcsVqjTN7KfKSFX1l/DpceKdnZHuhocuiH7I=;
-	b=guiUHmMUMZ2XFDIeKnGIAM41pRx58QMGrRvHUOs86MOFSnOqePZ6vdPb0mS7sOzV1YTxuK
-	U7dNTjlQPf/3Z+yISXf/6Cc68xGZcsO3yBrynm8NijFOX6reIHTmb82dAjiGvirGhVelo0
-	CyXY5ebI0d0c1EfwiBTEwZ45uyRHhIoQVVZNT9Ls8GUrz7prkZq8BJheVzrz/bFxKutDkb
-	Vg5R9ujvnBrw8hfIdAdIBITcaBg7eZ7cmyTJPTWNj6k2UQRmzmXu+3wGdseDHiq8A2G3Tv
-	gcmKkR7eKIx6trFcaEZVe4PTFhENAVW+RmYnnVyBqsLqceZcisx5LzyLpml4tA==
-Message-ID: <f1749c0a-bb54-4ddd-94cb-75af9386a47a@smankusors.com>
+	s=arc-20240116; t=1783169112; c=relaxed/simple;
+	bh=2FoyiXPolFM0EQiV4/qHz3kHKqQS45BjKTwNBsnwixk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MvZGLKhczKxtHbZw3DM4Vvinl8hel4jV9TH56A65xEDXADHN0gmuB7RewHAhnllzPMq5JL6DHinqrTGs35lyRg6d3d+3sXh13nXvEB0zsASytGifcKSsmC4uz/zrGeIZ5eBGw4hfQ4avrJo35naQ+bOpp2Vb9gH7UL/E/WcfVN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [111.196.245.140])
+	by APP-03 (Coremail) with SMTP id rQCowADXu+JDAElqeFXWFg--.22738S2;
+	Sat, 04 Jul 2026 20:44:51 +0800 (CST)
+From: Pengpeng Hou <pengpeng@iscas.ac.cn>
+To: Yassine Oudjana <y.oudjana@protonmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney@redhat.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Pengpeng Hou <pengpeng@iscas.ac.cn>,
+	linux-clk@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] clk: mediatek: mt6735-vdecsys: add missing MODULE_DEVICE_TABLE()
+Date: Sat,  4 Jul 2026 20:44:50 +0800
+Message-ID: <20260704124450.11035-1-pengpeng@iscas.ac.cn>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] clk: qcom: hfpll: return lock timeout from enable
- paths
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Pengpeng Hou <pengpeng@iscas.ac.cn>, Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Herman van Hazendonk <github.com@herrie.org>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-References: <20260623060517.10889-1-pengpeng@iscas.ac.cn>
- <8e7a4cd1-ff17-4052-938b-5cb2ee8576f0@oss.qualcomm.com>
- <36f37fa0-94f3-498b-86ca-b431436750e1@smankusors.com>
- <198ad9ab-6e8e-4c67-afc2-01962ea12dde@oss.qualcomm.com>
- <5c374231-33dc-4082-95c1-1046286fbb13@smankusors.com>
- <89c53cb1-3804-4dfe-8d93-e27e31bc2254@oss.qualcomm.com>
- <42fa946b-43f7-4f8a-a349-f8509daab749@smankusors.com>
- <e129178c-6079-4538-89a2-247185dd0ce7@oss.qualcomm.com>
-Content-Language: en-US
-From: Antony Kurniawan Soemardi <linux@smankusors.com>
-In-Reply-To: <e129178c-6079-4538-89a2-247185dd0ce7@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Date: Sat,  4 Jul 2026 09:02:42 +0000 (UTC)
-X-CM-Analysis: v=2.4 cv=BvrPwpX5 c=1 sm=1 tr=0 ts=6a48cc34 a=wcdSEg5z0Ek8dsFYb0grdQ==:117 a=wcdSEg5z0Ek8dsFYb0grdQ==:17 a=IkcTkHD0fZMA:10 a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=6pUSk3Kk9M1ibPHMJV8A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-CM-Envelope: MS4xfMotcKL6x3ZvdgxyZQKXmmKp8kIlcthje7VjLjQ1CbqJ2gDUW8gSLdNW+0Dy1CO9AJXSrh26pWoxvFaLDndbFEfJH6/llfcMqb26zBNMo8uBN1Tx/WX0 ePM0vA5hVi5gr5QfZlQQF+ZuPl2ASJLyD3Gni7KCJiPoYx0rC2P3J4XiwB170KTA1LQAAsBQqyaDZ9tVdlESYwyCbQAfgVH83LuOYmbZU0CwyF+f4SOpOnv6 62+rzj+GPshl7DLuvd5CzKUvuGnmutxF/RO2JAHhNMJ9VAKyXxxMEkY9EZVcAhEMHAgc41fal0teJy1nqlj2Eku7I/1Idhf60Psh6Hdb68dcquz0PRA249un Yd87xMtuwgtfrVZQrWFEt3XJNAx04pm3sO1FQt6RduENoieOfVvxgA0muEev0WgUJb1N0dlf/45RD7XXR5HnCGVBF2R7zNn/YbBq6FLwPbGHRRI60PPGECsl XUNvOTjKwKrVvwkV2ZNia2d1wko+6mRqzpmvKPUHSMz+zT0NcKConJjnmpLqJixXQ/UTr0osrIfzYBkQ62MNObsg6Fy/e9NBdu575A==
-X-AuthUser: linux@smankusors.com
+X-CM-TRANSID:rQCowADXu+JDAElqeFXWFg--.22738S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrtr45uw1rurW7Aw4DuryrtFb_yoWktFXEkr
+	1DXrZrZr1jgryvkFWftFs3ZFW29an5ZFykJF93KrWIq347CrnrZws2g39IqryUWryxZFnx
+	Xr93WF18CFW7ZjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUba8FF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
+	Gr1UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Cr0_Gr1UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr
+	1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWxJVW8Jr1lIxAIcVC2z280aVCY1x0267AKxVWxJr0_GcJvcS
+	sGvfC2KfnxnUUI43ZEXa7VU1go2UUUUUU==
+X-CM-SenderInfo: pshqw1xhqjqxpvfd2hldfou0/
 
-On 7/1/2026 7:11 PM, Konrad Dybcio wrote:
-> On 6/29/26 5:14 PM, Antony Kurniawan Soemardi wrote:
->> On 6/29/2026 4:15 PM, Konrad Dybcio wrote:
->>> On 6/28/26 8:07 PM, Antony Kurniawan Soemardi wrote:
->>>> On 6/24/2026 2:39 PM, Konrad Dybcio wrote:
->>>>> On 6/24/26 3:57 AM, Antony Kurniawan Soemardi wrote:
->>>>>> On 6/23/2026 4:43 PM, Konrad Dybcio wrote:
->>>>>>> On 6/23/26 8:05 AM, Pengpeng Hou wrote:
->>>>>>>> The HFPLL enable helper waits for the lock bit but ignores the
->>>>>>>> regmap_read_poll_timeout() result. The polling condition is also
->>>>>>>> inconsistent with clk_hfpll_init(), which treats the lock bit being set
->>>>>>>> as the locked state.
->>>>>>>>
->>>>>>>> Wait for the lock bit to become set, return timeout errors from the
->>>>>>>> helper, and propagate those errors through clk_hfpll_enable() and
->>>>>>>> clk_hfpll_set_rate() instead of enabling the output unconditionally.
->>>>>>>>
->>>>>>>> Signed-off-by: Pengpeng Hou <pengpeng@iscas.ac.cn>
->>>>>>>> ---
->>>>>>>
->>>>>>> This looks good on the surface..
->>>>>>>
->>>>>>> +Herman, Anthony, Dmitry could you please give this a spin on 8x60?
->>>>>>>
->>>>>>> Konrad
->>>>>>
->>>>>> Just to clarify, this patch impacts cpufreq and gpufreq for Qualcomm
->>>>>> Krait era, is that correct?
->>>>>
->>>>> Seems that way - cpu, L2, and GPU, maybe others
->>>>
->>>> nope, tested on Sony Xperia SP (MSM8960T), the phone hangs
->>>
->>> [...]
->>>
->>>> [    2.679716] L2 @ Undefined rate. Forcing new rate
->>>
->>> This seems odd. What's the reported rate there?
->>
->> if you're asking clk_get_rate(clks[l2_mux]), it's 0 Hz.
-> 
-> Hm, are the parents registered?
+The driver has an OF match table wired to .of_match_table, but does
+not export the table with MODULE_DEVICE_TABLE().
 
-pardon me for stupid question, but how do I verify the parent
-registration?
+Add the missing MODULE_DEVICE_TABLE(of, ...) entry so module alias
+information is generated for OF based module autoloading.
 
-> I see:
-> 
-> p_data[0].fw_name = hfpll_name; // "hfpll_l2" lookup via clock-names
-> p_data[0].name = hfpll_name; // legacy global clk lookup for
-> 			     // clk.name == 'hfpll_l2'	
-> 			     // (registered in gcc-msm8960.c)
-> 
-> p_data[1].hw = hfpll_div; // sourced from "hfpllN"
-> p_data[2].hw = sec_mux; // sourced from "acpuN_aux"
-> 
-> There's a fw_devlink between kraitcc and gcc already, since you
-> specify all the clocks (minus hfpll_l2):
-> 
-> https://lore.kernel.org/linux-arm-msm/20260514-expressatt_cpufreq-v1-3-487fd2d78859@gmail.com/
-> 
-> so it must have probed beforehand (unless you disable fw_devlink?)
+This is a source-level fix.  It does not claim dynamic hardware
+reproduction; the evidence is the driver-owned match table, its use by
+the platform driver, and the missing module alias publication.
 
-I removed the fw_devlink kernel arg, the kraitcc is probed much later,
-but still stuck with the same "L2 @ undefined rate"
-> Can you do `cat /sys/kernel/debug/clk/clk_summary` on a running system?
+Signed-off-by: Pengpeng Hou <pengpeng@iscas.ac.cn>
+---
+ drivers/clk/mediatek/clk-mt6735-vdecsys.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-below is the mainline kernel, with cpufreq patch
+diff --git a/drivers/clk/mediatek/clk-mt6735-vdecsys.c b/drivers/clk/mediatek/clk-mt6735-vdecsys.c
+index 8817085fc1db..d53ebf92e878 100644
+--- a/drivers/clk/mediatek/clk-mt6735-vdecsys.c
++++ b/drivers/clk/mediatek/clk-mt6735-vdecsys.c
+@@ -63,6 +63,7 @@ static const struct of_device_id of_match_mt6735_vdecsys[] = {
+ 	{ .compatible = "mediatek,mt6735-vdecsys", .data = &vdecsys_clks },
+ 	{ /* sentinel */ }
+ };
++MODULE_DEVICE_TABLE(of, of_match_mt6735_vdecsys);
+ 
+ static struct platform_driver clk_mt6735_vdecsys = {
+ 	.probe = mtk_clk_simple_probe,
 
-sony-huashan:/home/user# cat /sys/kernel/debug/clk/clk_summary
-                                  enable  prepare  protect 
-                  duty  hardware                            connection
-    clock                          count    count    count        rate 
-accuracy phase  cycle    enable   consumer                         id
----------------------------------------------------------------------------------------------------------------------------------------------
-  qsb                                 0       0        0        1 
-    0          0     50000      Y   deviceless 
-no_connection_id
-[...]
-  pxo_board                           4       4        1        27000000 
-    0          0     50000      Y   deviceless 
-no_connection_id
-[...]
-     hfpll_l2                         1       1        0 
-783000000   0          0     50000      Y      deviceless 
-       no_connection_id
-        hfpll_l2_div                  3       3        0 
-391500000   0          0     50000      Y         deviceless 
-          no_connection_id
-           krait_l2_pri_mux           2       2        0 
-391500000   0          0     50000      Y            deviceless 
-             no_connection_id
-     hfpll1                           1       1        0 
-783000000   0          0     50000      Y      deviceless 
-       no_connection_id
-        hfpll1_div                    2       2        0 
-391500000   0          0     50000      Y         deviceless 
-          no_connection_id
-           krait1_pri_mux             1       1        0 
-391500000   0          0     50000      Y            cpu1 
-             no_connection_id
-  
-                                             cpu1 
-     no_connection_id
-  
-                                             deviceless 
-     no_connection_id
-     hfpll0                           2       2        0 
-1512000000  0          0     50000      Y      deviceless 
-       no_connection_id
-        krait0_pri_mux                1       1        0 
-1512000000  0          0     50000      Y         cpu0 
-          no_connection_id
-  
-                                          cpu0 
-  no_connection_id
-  
-                                          deviceless 
-  no_connection_id
-        hfpll0_div                    1       1        0 
-756000000   0          0     50000      Y         deviceless 
-          no_connection_id
-[...]
-  krait_l2_sec_mux                    2       2        0        0 
-    0          0     50000      Y   deviceless 
-no_connection_id
-  krait1_sec_mux                      1       1        0        0 
-    0          0     50000      Y   deviceless 
-no_connection_id
-  krait0_sec_mux                      1       1        0        0 
-    0          0     50000      Y   deviceless 
-no_connection_id
-  pll4_vote                           0       0        0        0 
-    0          0     50000      ?   deviceless 
-no_connection_id
-
-below is the mainline kernel, without cpufreq patch
-
-sony-huashan:/home/user# cat /sys/kernel/debug/clk/clk_summary
-                                  enable  prepare  protect 
-                  duty  hardware                            connection
-    clock                          count    count    count        rate 
-accuracy phase  cycle    enable   consumer                         id
----------------------------------------------------------------------------------------------------------------------------------------------
-[...]
-  pxo_board                           1       1        1        27000000 
-    0          0     50000      Y   deviceless 
-no_connection_id
-[...]
-     hfpll_l2                         0       0        0        0 
-    0          0     50000      N      deviceless 
-no_connection_id
-     hfpll1                           0       0        0 
-918000000   0          0     50000      N      deviceless 
-       no_connection_id
-     hfpll0                           0       0        0 
-918000000   0          0     50000      Y      deviceless 
-       no_connection_id
-[...]
-  pll4_vote                           0       0        0        0 
-    0          0     50000      ?   deviceless 
-no_connection_id
-
-
-Do you have other idea how to solve this? I added some pr_err if the
-read poll is timeout:
-
-[   11.164436] [pmOS-rd]:   ❬❬ PMOS STAGE 2 ❭❭
-[   20.400232] krait_add_pri_mux: krait0_pri_mux, hfpll_name: hfpll0
-[   20.400793] Enabling HFPLL hfpll1
-[   20.455491] krait_add_pri_mux: krait1_pri_mux, hfpll_name: hfpll1
-[   20.456081] Enabling HFPLL hfpll_l2
-[   20.560623] HFPLL hfpll_l2 failed to lock (val=0x6, ret=-110, 
-hd->lock_bit=0)
-[   20.758961] krait_add_pri_mux: krait_l2_pri_mux, hfpll_name: hfpll_l2
-[   20.759339] L2 @ 0 KHz. Forcing new rate.
-[   20.764520] L2 @ Undefined rate. Forcing new rate.
-
--- 
-Thanks,
-Antony K. S.
