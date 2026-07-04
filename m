@@ -1,208 +1,125 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BCCF39B4A5
-	for <linux-clk@vger.kernel.org>; Sat,  4 Jul 2026 08:25:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E4F03264CB;
+	Sat,  4 Jul 2026 08:35:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783153517; cv=none; b=o5GP8ygaws+gNmgrJLqiK6W+qlQGO9Hb8GK/pEj0oHMtqN0veh71rjYqQMe8dD4UpQR5GePWTtdoAegsSuKYymKuOvrFqrBzQ6Nluk/dL2OaIOuoNyNQwrD4vXJapZfpT8UrNSxIwR/BvPZsvToBYjjyR3r9qKSXM2bQzUYsJ3M=
+	t=1783154111; cv=none; b=bAlyQlWM3gd54QMcku88r5z4kfGRlH4bTBWLxy7eLntVlFcmTlFZfeJiIGofLZFg/disfCSf1csNSZitKhCqiAjNOzXWCBCnaS3NEpmu73G+qokAC1xdbqxoOAmtcNRye21+qsS5C7UQY5AaNOwrzUuKOISVqetcT5dB0X9nRZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783153517; c=relaxed/simple;
-	bh=kcg7KVCWy+NnC+VfCf9xytGdC2NFAJGaOzW5jvhcj1g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ae0Ldb4OY5lrI/OHizUXnJCSO56JCpIdSgcUXFaStfOiMfNZHymVXnYgimzGfiyltESmWXpIz4G6UvRbmjdBHLsRcRXoUUKmMD5zlv7pUM95MDorawLLf5StPKRoIpXWqDd7jreM/L+X571RxX7QJ6whqWSINV2hoPbvIB4Us8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AhmNjmDr; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1783154111; c=relaxed/simple;
+	bh=jRMvTshMSFYbREqTCfD1Q7jueUhY46bykYtPR7nveu4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Qvw1kmCdqBnoDmPSUs/jvTIjAkU3T+auoc2SF7ugGJuqN7M0O2BaTXg7GR0Sh6IaCdks/vNB3ZgavgXsSrEp+zFBHWvYgspP7tfnRhp+/QQRmQmfS0+XY4dsoX8BpWA/LcgxGpEVvK9PVTqt72Dd4mAyVSrn6SrAOc/JHKfv+fI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hDIJmxVd; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AhmNjmDr"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1318C1F00ACF
-	for <linux-clk@vger.kernel.org>; Sat,  4 Jul 2026 08:25:15 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hDIJmxVd"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37BBC1F000E9;
+	Sat,  4 Jul 2026 08:35:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783153515;
-	bh=Fs2AiFoC/uXi7Y3GxLDQdbdL/aEwooLIt1/0w5YrmTY=;
-	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc;
-	b=AhmNjmDrvXUIm6qq1QCLqnCOerLJyDhayVscWRp+pfxFlPNRVhDN7FxAEBUNoNMvv
-	 fX29jiShaD+xLYEqR7ds9oASvt4gBXubcEqIEeeSZCjmi3wT9+gWWpA4MGRGG+Uvwt
-	 mvJWckTAhYPw6RWzQe0tmkPrR3mUDBDsmlKP77VOdcSvJMAX5+xPyr5ol32ly0rNVT
-	 LsT22Ht/ajL5O29l+rtTZjt3uzQXj++OBIe01iL26GOWmLzFWxhaPXrvtTvlF5Dlx7
-	 6inn3nzqPF18/AmMG8zg21CDbttnRU5OLYRAYvQg7oYedlXUqccE4GDPbIzz1LhTBE
-	 r3Ho1aegqR+Sg==
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-39b1026e171so12514921fa.1
-        for <linux-clk@vger.kernel.org>; Sat, 04 Jul 2026 01:25:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RqptgkfGx8Hx3t2VdY13EthArA1BPi/1GAfC92Nk1FkDCuxRppP6V5SZSu52/CAQq4n9Pe23TTwgkg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywfnqv69Xng2oOPm/P11526sGnSoD+8nZpplfoo1JBkwr4InSYY
-	I+Cjc0UFHDCrot2x62gRWrng0ZY0HLUsEKXQ9Bosw783IxFBY8NVRbFWO7DUpOSuvCMeEN+HHJB
-	VLN1sQ2UG0uLBhitY+WUY9tNoNXHHbwg=
-X-Received: by 2002:a2e:bcc5:0:b0:39b:35bd:e704 with SMTP id
- 38308e7fff4ca-39b53c3ffd6mr4690261fa.7.1783153513431; Sat, 04 Jul 2026
- 01:25:13 -0700 (PDT)
+	s=k20260515; t=1783154109;
+	bh=CKUugtOm1OlpT8XBvygInagoA0+wflgB0eAdKOCZarY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=hDIJmxVdhvN9fPFPojiWm85GIGaHgrgPyXPJdkSHSYIEvL3Qp3Q9z8XIOhb45cwkQ
+	 hAMnzHGjMJswuFTriVUmWOYXf+mUvF4O+wvIDV+lW7Y2Ilkbmv4NFd2TYLnZsBWjx6
+	 t0K6IsR5qNa8iyaJlpCEsyO0s6LSkpQz2+8ivPtdqPZITiNOTB7PTDUKH9SQZ3vTmU
+	 tmeoY1jbDqKDUocXh9eRFKXFB/pcpB079kX8FIkIST9j8Ux1+WFuGJ+Uus6JKrfQJ7
+	 qSNLnEF7xCygarmsPDMutlXCONPcQCI+mHDJq0JM99Q2QwEtmyRZbFYYq2/ICqH/Rk
+	 fTeuP9wvcjk8w==
+Message-ID: <b7ddfb42-75c6-4882-b4e0-ab22436fd657@kernel.org>
+Date: Sat, 4 Jul 2026 10:35:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260702-a733-rtc-v3-0-eb2580374de6@baylibre.com> <20260702-a733-rtc-v3-6-eb2580374de6@baylibre.com>
-In-Reply-To: <20260702-a733-rtc-v3-6-eb2580374de6@baylibre.com>
-Reply-To: wens@kernel.org
-From: Chen-Yu Tsai <wens@kernel.org>
-Date: Sat, 4 Jul 2026 16:25:07 +0800
-X-Gmail-Original-Message-ID: <CAGb2v64C4Xn=V5NQcqZQa=v0KsemsVh+_6g7ed0kHz6C_bzmww@mail.gmail.com>
-X-Gm-Features: AVVi8Cco2rDKRY4RtRBz1e78QgPbRDMEhgem8aNt-eUIdWMg4uPicNKKdtWJM8A
-Message-ID: <CAGb2v64C4Xn=V5NQcqZQa=v0KsemsVh+_6g7ed0kHz6C_bzmww@mail.gmail.com>
-Subject: Re: [PATCH v3 6/8] clk: sunxi-ng: div: add read-only operation support
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Junhui Liu <junhui.liu@pigmoral.tech>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Maxime Ripard <mripard@kernel.org>, linux-rtc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 01/12] dt-bindings: soc: zte: Add zx297520v3 top clock
+ and reset bindings
+To: =?UTF-8?Q?Stefan_D=C3=B6singer?= <stefandoesinger@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Brian Masney <bmasney@redhat.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20260702-zx29clk-v6-0-377b704f80c4@gmail.com>
+ <20260702-zx29clk-v6-1-377b704f80c4@gmail.com>
+ <387ff0d7-256e-4b18-b864-37a0ec3c9d9d@kernel.org>
+ <az-AzRTTT8qfUWysHYig6Q@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <az-AzRTTT8qfUWysHYig6Q@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 2, 2026 at 4:11=E2=80=AFPM Jerome Brunet <jbrunet@baylibre.com>=
- wrote:
->
-> Add support for sunxi-ng read-only dividers. This will be
-> useful to the a733 oscillator detection logic.
->
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
->  drivers/clk/sunxi-ng/ccu_div.c | 42 ++++++++++++++++++++++++++++++++++++=
-++++++
->  drivers/clk/sunxi-ng/ccu_div.h |  1 +
->  drivers/clk/sunxi-ng/ccu_mux.c |  3 ++-
->  drivers/clk/sunxi-ng/ccu_mux.h |  4 ++++
->  4 files changed, 49 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/sunxi-ng/ccu_div.c b/drivers/clk/sunxi-ng/ccu_di=
-v.c
-> index 62d680ccb524..d1c8c7baa12d 100644
-> --- a/drivers/clk/sunxi-ng/ccu_div.c
-> +++ b/drivers/clk/sunxi-ng/ccu_div.c
-> @@ -84,6 +84,36 @@ static int ccu_div_determine_rate(struct clk_hw *hw,
->                                              req, ccu_div_determine_rate_=
-helper, cd);
->  }
->
-> +static int ccu_rodiv_determine_rate(struct clk_hw *hw,
-> +                                   struct clk_rate_request *req)
-> +{
-> +       struct ccu_div *cd =3D hw_to_ccu_div(hw);
-> +       unsigned long val;
-> +       u32 reg;
-> +       int ret;
-> +
-> +       reg =3D readl(cd->common.base + cd->common.reg);
-> +       val =3D reg >> cd->div.shift;
-> +       val &=3D (1 << cd->div.width) - 1;
-> +
-> +       req->rate =3D ccu_mux_helper_unapply_prediv(&cd->common, &cd->mux=
-, -1,
-> +                                                 req->rate);
-> +
-> +       if (cd->common.features & CCU_FEATURE_FIXED_POSTDIV)
-> +               req->rate *=3D cd->fixed_post_div;
-> +
-> +       ret =3D divider_ro_determine_rate(hw, req, cd->div.table,
-> +                                       cd->div.width, cd->div.flags, val=
-);
-> +
-> +       if (cd->common.features & CCU_FEATURE_FIXED_POSTDIV)
-> +               req->rate /=3D cd->fixed_post_div;
-> +
-> +       req->rate =3D ccu_mux_helper_apply_prediv(&cd->common, &cd->mux, =
--1,
-> +                                               req->rate);
-> +
-> +       return ret;
-> +}
-> +
->  static int ccu_div_set_rate(struct clk_hw *hw, unsigned long rate,
->                            unsigned long parent_rate)
->  {
-> @@ -143,3 +173,15 @@ const struct clk_ops ccu_div_ops =3D {
->         .set_rate       =3D ccu_div_set_rate,
->  };
->  EXPORT_SYMBOL_NS_GPL(ccu_div_ops, "SUNXI_CCU");
-> +
-> +const struct clk_ops ccu_rodiv_ops =3D {
-> +       .disable        =3D ccu_div_disable,
-> +       .enable         =3D ccu_div_enable,
-> +       .is_enabled     =3D ccu_div_is_enabled,
-> +
-> +       .get_parent     =3D ccu_div_get_parent,
-> +
-> +       .determine_rate =3D ccu_rodiv_determine_rate,
-> +       .recalc_rate    =3D ccu_div_recalc_rate,
-> +};
-> +EXPORT_SYMBOL_NS_GPL(ccu_rodiv_ops, "SUNXI_CCU");
-> diff --git a/drivers/clk/sunxi-ng/ccu_div.h b/drivers/clk/sunxi-ng/ccu_di=
-v.h
-> index be00b3277e97..a30a92780a05 100644
-> --- a/drivers/clk/sunxi-ng/ccu_div.h
-> +++ b/drivers/clk/sunxi-ng/ccu_div.h
-> @@ -300,5 +300,6 @@ static inline struct ccu_div *hw_to_ccu_div(struct cl=
-k_hw *hw)
->  }
->
->  extern const struct clk_ops ccu_div_ops;
-> +extern const struct clk_ops ccu_rodiv_ops;
->
->  #endif /* _CCU_DIV_H_ */
-> diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/ccu_mu=
-x.c
-> index 766f27cff748..e2d6833a6d33 100644
-> --- a/drivers/clk/sunxi-ng/ccu_mux.c
-> +++ b/drivers/clk/sunxi-ng/ccu_mux.c
-> @@ -68,13 +68,14 @@ unsigned long ccu_mux_helper_apply_prediv(struct ccu_=
-common *common,
->  }
->  EXPORT_SYMBOL_NS_GPL(ccu_mux_helper_apply_prediv, "SUNXI_CCU");
->
-> -static unsigned long ccu_mux_helper_unapply_prediv(struct ccu_common *co=
-mmon,
-> +unsigned long ccu_mux_helper_unapply_prediv(struct ccu_common *common,
->                                             struct ccu_mux_internal *cm,
->                                             int parent_index,
->                                             unsigned long parent_rate)
->  {
->         return parent_rate * ccu_mux_get_prediv(common, cm, parent_index)=
-;
->  }
-> +EXPORT_SYMBOL_NS_GPL(ccu_mux_helper_unapply_prediv, "SUNXI_CCU");
+On 03/07/2026 19:20, Stefan Dösinger wrote:
+> Am Freitag, 3. Juli 2026, 09:26:43 Ostafrikanische Zeit schrieb Krzysztof 
+> Kozlowski:
+> 
+>> Also, this cannot be placed in soc. Clock and reset controllers DO NOT
+>> go to the soc directory. Place in it clocks.
+> 
+> Even when they contain other functionality like hwlock, usb phy and reboot? 
+> Here is the previous discussion that made me move it to soc:
+> 
+> https://lore.kernel.org/linux-arm-kernel/20260621-plywood-straddle-b01f0c45f27c@spud/
+> 
+> Likewise, what about the node name: syscon@ or clock-controller@ ? Conor 
+> advised me to go with syscon@
 
-This does not need to be exported since all the base clocks build into
-one module. And maybe it shouldn't as we probably don't want individual
-clock drivers implementing ops.
+You called the device node clock-controller. The title also says it is
+clock controller. The description also says that it is clock controller
+(and reset, but that is irrelevant here). Your commit subject also calls
+it "clock"
 
+What sort of answer you expect from us? In all possible places you call
+it clock controller.
 
-Otherwise,
-
-Reviewed-by: Chen-Yu Tsai <wens@kernel.org>
-
->  int ccu_mux_helper_determine_rate(struct ccu_common *common,
->                                   struct ccu_mux_internal *cm,
-> diff --git a/drivers/clk/sunxi-ng/ccu_mux.h b/drivers/clk/sunxi-ng/ccu_mu=
-x.h
-> index c94a4bde5d01..272a2c36a8f2 100644
-> --- a/drivers/clk/sunxi-ng/ccu_mux.h
-> +++ b/drivers/clk/sunxi-ng/ccu_mux.h
-> @@ -134,6 +134,10 @@ unsigned long ccu_mux_helper_apply_prediv(struct ccu=
-_common *common,
->                                           struct ccu_mux_internal *cm,
->                                           int parent_index,
->                                           unsigned long parent_rate);
-> +unsigned long ccu_mux_helper_unapply_prediv(struct ccu_common *common,
-> +                                           struct ccu_mux_internal *cm,
-> +                                           int parent_index,
-> +                                           unsigned long parent_rate);
->  int ccu_mux_helper_determine_rate(struct ccu_common *common,
->                                   struct ccu_mux_internal *cm,
->                                   struct clk_rate_request *req,
->
-> --
-> 2.47.3
->
+Best regards,
+Krzysztof
