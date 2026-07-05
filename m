@@ -1,39 +1,47 @@
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B406D13A3F7;
-	Sun,  5 Jul 2026 00:17:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C6682DF136
+	for <linux-clk@vger.kernel.org>; Sun,  5 Jul 2026 16:35:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783210638; cv=none; b=mODGfKUdAMsyw9Xr7Yy9x0qiTfY18AnuHDEQchNj1nEHape0z34vl+7xYcTwZ16PqS1WCh6k8Gzj6Py+ds70m4eLqBHR7PIg9fRzcnHyajsZEmlgmeK1fsypxG3BMSfeJvcxFBjTMaYIzvkDWC7f5N1eHcGTOz/Ynb450l3U9g0=
+	t=1783269340; cv=none; b=cSNuCVdfxTtOQpb6jyL0KCc0E9wmNI2QUwxPwys1gY157LFURIIbcT9A285wMHFZWAFtXT/WhCTDzojUWviLuVZNlcNE1zymQ3ghErgR9UnT1c+ddoMYgmcCkihjmZIdub7kxeaZVE6bC9js2TsifVTZq/iXv4+Svpyk0NT+7cg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783210638; c=relaxed/simple;
-	bh=awJzd0BSU0YzzcDjbaE0knsR/D/RJBbGVQo2C+9JvNc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KiaXDTWw6YWM6yadcnArchQjvpggMGyvWvVzYQcGYYid+wWbhqFtDF7OC47j3gDYmA7srT0T9odfeJEKfY16sPgvk5RXifD2GcyIJvzZweqvcWqlcBmYivGV0laCO1kdcnP9ixz21lnKvOvuz3b90WVSVLdZYPH1D7gYqCQezoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [111.196.245.140])
-	by APP-03 (Coremail) with SMTP id rQCowAAXBayDoklqvszfFg--.15806S2;
-	Sun, 05 Jul 2026 08:17:07 +0800 (CST)
-From: Pengpeng Hou <pengpeng@iscas.ac.cn>
-To: Abel Vesa <abelvesa@kernel.org>,
-	Peng Fan <peng.fan@nxp.com>,
+	s=arc-20240116; t=1783269340; c=relaxed/simple;
+	bh=2VT6C5jURoRPZYDFHBow6toGTd8bBc8zSV4K43DYPTk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s2pIQIuoD10qoU/QW3J4i5krFdy3QXynOF8RjIRGL/6ZzC9Ibw6f0KUq1zsuziC4QuEDa8dKVXlVK8hOSzDCA7JVLxNOEDPmQlmOfRg5HyUF6Xdrk0G3BimKLXTrTNkR9lP36jDjPPXuPaxqxD3/CCr8KYTkC90mJhed9zDwpzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Mb9xW01A; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Mb9xW01A"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=from:to:cc:subject:date:message-id
+	:mime-version:content-transfer-encoding; s=k1; bh=R4nai0spS4xz/s
+	y9X2FqTj+eO3xeqrH21m//XxXvR6k=; b=Mb9xW01AMDeQmGNCk/doumAlIlkjGD
+	roB5XhSPIwOCCU7lqGRk48xN+ova6KodZkaNC3hgYJYeGwWA0FGH08IBIwV5YUID
+	qcmYIxwtVxJIelKE7clOHJJXYZDu2s+ppaivdcdurq150jCz2WV7klrveqyVaEPT
+	uphMP3MvY97OZZfFWMl8MJ+Eui9LXvbB6FhWy4HaNzWFEo7XsosLKxxMTQaPhcz1
+	OYWMi9XedufpUsQKe+kX26jObb6bzWJdMJwyZarGQNBK7ICj5AMcv1ojNibZ2kB+
+	75Z0MKWFyZfXZrT+edUxJGLgHU+dPqW3v8MMEP1N9Nol0uqQPJufWH4g==
+Received: (qmail 2287049 invoked from network); 5 Jul 2026 18:35:27 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 5 Jul 2026 18:35:27 +0200
+X-UD-Smtp-Session: l3s3148p1@1N/Lvt9V8XdtKjFj
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-kernel@vger.kernel.org
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Frank Li <Frank.Li@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>
-Cc: Pengpeng Hou <pengpeng@iscas.ac.cn>,
+	Brian Masney <bmasney@redhat.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
 	linux-clk@vger.kernel.org,
-	imx@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: imx: imx8qxp: add missing MODULE_DEVICE_TABLE()
-Date: Sun,  5 Jul 2026 08:17:05 +0800
-Message-ID: <20260705001705.70400-1-pengpeng@iscas.ac.cn>
-X-Mailer: git-send-email 2.50.1
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH] clk: mediatek: remove unneeded 'fast_io' parameter in regmap_config
+Date: Sun,  5 Jul 2026 18:35:24 +0200
+Message-ID: <20260705163523.1797-2-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -41,53 +49,30 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowAAXBayDoklqvszfFg--.15806S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Xw47WF43Aw43JF17XrWkWFg_yoWkGrX_Cr
-	y8Wr1xWr48CFZYk3W7Gr1furyI9w47ur1kXFyvqa43Ja4UZr13GFZ2gwsIqw1UGrW0yFZ8
-	XwnrWry8Cry2kjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUba8FF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVW8Jr
-	0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
-	6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
-	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E
-	8cxan2IY04v7MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFV
-	Cjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWl
-	x4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r
-	1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_
-	JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcS
-	sGvfC2KfnxnUUI43ZEXa7VUb_Ma5UUUUU==
-X-CM-SenderInfo: pshqw1xhqjqxpvfd2hldfou0/
 
-The driver has a match table for the of bus wired into its driver
-structure, but the table is not exported with MODULE_DEVICE_TABLE().
+When using MMIO with regmap, fast_io is implied. No need to set it
+again.
 
-Add the missing MODULE_DEVICE_TABLE() entry so module alias information
-is generated for automatic module loading.
-
-This is a source-level fix.  It does not claim dynamic hardware
-reproduction; the evidence is the driver-owned match table, its use by
-the driver registration structure, and the missing module alias
-publication.
-
-Signed-off-by: Pengpeng Hou <pengpeng@iscas.ac.cn>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/clk/imx/clk-imx8qxp.c | 1 +
- 1 file changed, 1 insertion(+)
+No dependencies, can be applied directly to the subsystem tree. Buildbot is
+happy, too.
 
-diff --git a/drivers/clk/imx/clk-imx8qxp.c b/drivers/clk/imx/clk-imx8qxp.c
-index c781425a005e..1f6d9f45dad7 100644
---- a/drivers/clk/imx/clk-imx8qxp.c
-+++ b/drivers/clk/imx/clk-imx8qxp.c
-@@ -337,6 +337,7 @@ static const struct of_device_id imx8qxp_match[] = {
- 	{ .compatible = "fsl,imx8qm-clk", &imx_clk_scu_rsrc_imx8qm, },
- 	{ /* sentinel */ }
+ drivers/clk/mediatek/clk-mt8196-vlpckgen.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/clk/mediatek/clk-mt8196-vlpckgen.c b/drivers/clk/mediatek/clk-mt8196-vlpckgen.c
+index 7dcc164627c5..ee88dc4a231a 100644
+--- a/drivers/clk/mediatek/clk-mt8196-vlpckgen.c
++++ b/drivers/clk/mediatek/clk-mt8196-vlpckgen.c
+@@ -629,7 +629,6 @@ static const struct regmap_config vlpckgen_regmap_config = {
+ 	.val_bits = 32,
+ 	.reg_stride = 4,
+ 	.max_register = 0x1000,
+-	.fast_io = true,
  };
-+MODULE_DEVICE_TABLE(of, imx8qxp_match);
  
- static struct platform_driver imx8qxp_clk_driver = {
- 	.driver = {
+ static int clk_mt8196_vlp_probe(struct platform_device *pdev)
 -- 
-2.53.0
+2.51.0
 
