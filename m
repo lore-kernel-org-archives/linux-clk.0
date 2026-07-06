@@ -1,112 +1,92 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB5D43A8753
-	for <linux-clk@vger.kernel.org>; Mon,  6 Jul 2026 15:37:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A726441D4E0;
+	Mon,  6 Jul 2026 15:38:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783352256; cv=none; b=AVgFvPg9n6jY/YZVZZlK8wqdizRhAYr30VEXrqh6/hCGMC3qr4RwFsW+lnJDyaT4SUlUuknbejmSMka4veWyMndQd269yyxzYkwfIDqHgD8eZ7Yz6UymoFSl032ZD7EeHxSfx/2GqcUGU5+vT5oX/F+HEVjY0aewMEStw/7nh6s=
+	t=1783352327; cv=none; b=gWi2cY5jzG3rfpcNnP+cHN+U8HpWwnQopofoIyMsjxeLkKkqXN3nEPN6Sd7To2QUuKaydDRAGaYnXfHQ+fA433otfZbo2kBU0n9c/8SGSkvGMqi7Bh+/KtkoJ9PQ7bc/+fOdDqvZ1/Ux0wwjAd04OzjVuFw9OabO6iXE+gi6M+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783352256; c=relaxed/simple;
-	bh=4R23QBTPWJ6UJ+Hm7rrPtubC3nhZVFMbWF4OiXPDw5o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d7k2Eym4RCAvCSgO1vBW/3Mc+H0SQ3phatbv2aM97NzdDNIB5F0c53w3qFzk6ynhNABQT99Rj/fIucfdRgrsgKPBAgVohaCM00TTiUhhYH30u5KhicVBJx980hr3df+3XKo5WuLdGd2JM6vApfU92Fi6A+1pOBAzGKL0+pis2ME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NMJ9GV6c; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=ksAGzro9; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1783352327; c=relaxed/simple;
+	bh=LAXozm5gc1YwylcjaE4ISSaDXB57GpYDiTTghofaIKA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=mT3W6dKdJPTm/G0aibPOxdfeck9E16XuBbv0sVIl6ym4tzcSzgbDuyaaiOkLZIPeNLsbtETaXMHMlRjrGQ00Co7iPX28iY2fsOUj9QORvIsNtv+L9uggMhPPvEEYYPCB8lIu+awXaAgyLeEqQKnHbVWB5rOVcMMFxRl1eWHol3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EPY9l92B; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NMJ9GV6c";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="ksAGzro9"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1783352253;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=W/pDoKEoQmk2z1wFY/sJFIdvOlkBp5OVP4wtVG7Rdj4=;
-	b=NMJ9GV6cX7vFnkh8V5Y7gkgaTzvT1TGe5GHv6a1bwzrbGDXQ2v8QiUAccjZ2lEY4LKx9TC
-	Y6LXx5qVd3QICFyUMUiqmXeVM6OYAxgwD9YZNJ536V3TsRGUK1u05sg+Mq2hVWfuiA4RWM
-	0hnpxtgAQsRdrKkDf2LUa03SwNMMsXs=
-Received: from mail-yx1-f70.google.com (mail-yx1-f70.google.com
- [74.125.224.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-102-VxxeiV18OfKdIe4BNmJWcw-1; Mon, 06 Jul 2026 11:37:32 -0400
-X-MC-Unique: VxxeiV18OfKdIe4BNmJWcw-1
-X-Mimecast-MFC-AGG-ID: VxxeiV18OfKdIe4BNmJWcw_1783352252
-Received: by mail-yx1-f70.google.com with SMTP id 956f58d0204a3-6651d030185so4632094d50.3
-        for <linux-clk@vger.kernel.org>; Mon, 06 Jul 2026 08:37:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1783352252; x=1783957052; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:content-type
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=W/pDoKEoQmk2z1wFY/sJFIdvOlkBp5OVP4wtVG7Rdj4=;
-        b=ksAGzro98aVO+jF1A09FY5ABL39x4fINkg5fwef23Cfhg7/pOp5lk89b/ObKpa/Sec
-         KTFXOOkkzRc6DF6pFButAyoFZ3ZHFsy3EqMHR6VtBl/2vzFXEfrfYYq4lrdTLldCGv5F
-         Xy3CgeNchTqMB7S3SBhZNIUYdprP+5UeEqL3UVpCVocFEDLF8mt9n7FE3bDsazxmtliZ
-         YcepqpAvQw8WPKo8ldirTW52spHs3+Io/V7jGIQ3S/BgA2NLeTQxKOPWIreJrVcvfIYm
-         roL6bY4uwWcBoImCHHENMD/9mKxpUCdhi1r41W0QLEMl7gtf3aINyHRQGR3vb2yryMZ8
-         fI+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783352252; x=1783957052;
-        h=user-agent:in-reply-to:content-disposition:content-type
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=W/pDoKEoQmk2z1wFY/sJFIdvOlkBp5OVP4wtVG7Rdj4=;
-        b=RTlN9th3OdF7G33NZBPESPH5+I9/Je3sStq6msjLmScRdAFkvyZ3UwHDrG4RP5SG2F
-         SYbs1lBnVzcxlZF8xW1bE53UWD6t6FDPxBcslQUn7AT6bu3lYFL5b2zUz3AI7/Hhig9i
-         GsgILSOo2s49syl4Hayfg9vC8dqMvIBA8Q4yY68qaC1x8HOf19+7cArRQ2XBCpA0/sGQ
-         tGX1N+/QxK4fQpBsTf0hQPs51cbxNpPOn2Q/Ou3ZFeCYx7d6bIrWDxw65EWdcR1t7yq2
-         kXDtc7QbL+Mkj3sVIm4FCCKJSqvAr22YKwqeHbwYc+bqneFaKztd12geL8R+QKEE78NM
-         0ODQ==
-X-Forwarded-Encrypted: i=1; AHgh+RqD/Xws7Sl/vFfkAzLRuDmfmDxcZnUjFadLW4Y4SD2uVSfOsuF2+3EBvS7KMM5UgEw0xEjOCwubg4A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWWjzK8DlBCdcilBEo6P01y45obK7kbIsRsj2Pl9ivIJV6WgQH
-	QIiNdKd9QlfU7jufbgtoRlk341QEHzWfLnljilyEHWKIvX6ilfzVkmFtknc6lL+xXsXXguwWXJ7
-	5AKibJmYlWtyMqtAD1hrdYimDzLSAZ7s9wNoYbBZUcgROkbaq9/wFi+1U6+oI8A==
-X-Gm-Gg: AfdE7ckSZoeisrs3To3VLytcU4YqMk5UQY/7klGpZN0mB0Z1rEiPG+KDqMQ1puLgaM+
-	V5m1SJ/L8sn/FxO1ndANPqSuznrYpdHhz7/PZ6Dwz9c9NZtnmh6338Tzry3oBQizKlLwHDpP+mE
-	f/7exbH9HU4TSy8rSqK8RvfhrjalVeap9a+UGhWm5r8JN+CaN+r2p11u5V65D72z++K7but7qKP
-	2tXvw0+WR9Yh+RJdrkhulHkmDu3xBwgDf9YJCbl8De/fThQVqgjhVJroUtC5a379el+lJ/14ZrA
-	CGMJnm5aNca9C5f8FcuSETjAroXyFMi43+v+h6cA5v4uUzA4AHDftUK7rB2unvoYOAO+iCnpHbb
-	WfAcBDKBXNgYfEbN2uZWv5xult3/GyDPijxkXisNrLhrHKg==
-X-Received: by 2002:a05:690e:4850:b0:667:78df:cc0a with SMTP id 956f58d0204a3-6677fbff299mr832911d50.51.1783352251781;
-        Mon, 06 Jul 2026 08:37:31 -0700 (PDT)
-X-Received: by 2002:a05:690e:4850:b0:667:78df:cc0a with SMTP id 956f58d0204a3-6677fbff299mr832885d50.51.1783352251259;
-        Mon, 06 Jul 2026 08:37:31 -0700 (PDT)
-Received: from redhat.com (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-66640402ec3sm4964158d50.5.2026.07.06.08.37.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Jul 2026 08:37:30 -0700 (PDT)
-Date: Mon, 6 Jul 2026 11:37:28 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-kernel@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH] clk: mediatek: remove unneeded 'fast_io' parameter in
- regmap_config
-Message-ID: <akvLuLVq5SmaNro2@redhat.com>
-References: <20260705163523.1797-2-wsa+renesas@sang-engineering.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EPY9l92B"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1AE51F000E9;
+	Mon,  6 Jul 2026 15:38:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1783352326;
+	bh=RSikxvuz0fdarLrs2WLzUhq/9C36cPYevojeibE+zuk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=EPY9l92BO8O5jYYnl7h9lLRbSlM0BEJa0uue0aFoOPStybvib7DPxEXFDhCT+/87B
+	 yFDDSSH4qFc8BCqDrkinXt+2bQ4aLt5Y5iSoigcYq4fFFmmCEhIC1kseBeMaLAyZ8v
+	 gFuMzofG6T70blVK6EPNMTncsGWWv/WjzDMB9DQgHdcfFyJEsuhclX92JoFgrDLhaf
+	 WhcUfPJez+GKPnMMvuQKkL+kXGW9ZmeZOJKbF0z8yx7t71U/aeVfPiTnLUdk8IRw4v
+	 QbGps9GIFsnFluaOH2xyhsq879YyNdu/TZ/VwmHRR/yrbxz+7Y/hnZImqhCuxN8pEG
+	 FlCpnEx4ehuKw==
+From: Chen-Yu Tsai <wens@kernel.org>
+To: Junhui Liu <junhui.liu@pigmoral.tech>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Maxime Ripard <mripard@kernel.org>, 
+ Jerome Brunet <jbrunet@baylibre.com>
+Cc: linux-rtc@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+ Sashiko <sashiko-bot@kernel.org>, Conor Dooley <conor.dooley@microchip.com>
+In-Reply-To: <20260706-a733-rtc-v4-0-f330728db3d3@baylibre.com>
+References: <20260706-a733-rtc-v4-0-f330728db3d3@baylibre.com>
+Subject: Re: (subset) [PATCH v4 0/9] clk: sun6i-rtc: Add support for
+ Allwinner A733 SoC
+Message-Id: <178335232274.3929059.7231678940771555249.b4-ty@kernel.org>
+Date: Mon, 06 Jul 2026 23:38:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260705163523.1797-2-wsa+renesas@sang-engineering.com>
-User-Agent: Mutt/2.3.2 (2026-04-26)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-On Sun, Jul 05, 2026 at 06:35:24PM +0200, Wolfram Sang wrote:
-> When using MMIO with regmap, fast_io is implied. No need to set it
-> again.
+On Mon, 06 Jul 2026 11:32:08 +0200, Jerome Brunet wrote:
+> Add support for the Allwinner A733 RTC and its internal Clock Control
+> Unit (CCU). Reuse the rtc-sun6i rtc driver while introducing a new
+> SoC-specific RTC CCU driver to handle the hardware's evolved clock
+> structure.
 > 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> The A733 implementation supports hardware detection of three external
+> crystal frequencies (19.2MHz, 24MHz and 26MHz), which is represented in
+> the driver via read-only divider operations. Implement logic to derive a
+> normalized 32kHz reference from these DCXO sources using fixed
+> pre-dividers. Additionally, provide several new DCXO gate clocks for
+> peripherals, including SerDes, HDMI, and UFS.
+> 
+> [...]
 
-Reviewed-by: Brian Masney <bmasney@redhat.com>
+Applied to sunxi/clk-for-7.3 in sunxi, thanks!
+
+[1/9] dt-bindings: rtc: sun6i: no clock-output-names on h616/r329
+      https://git.kernel.org/sunxi/linux/c/7b9f8fe9c9e0
+[2/9] dt-bindings: rtc: sun6i: add sun60i-a733 support
+      https://git.kernel.org/sunxi/linux/c/38d6b194a21c
+[3/9] clk: sunxi-ng: fix ccu probe clock unregister on error
+      https://git.kernel.org/sunxi/linux/c/81f4ddc9f7e0
+[4/9] clk: sunxi-ng: sun6i-rtc: clean up DT usage
+      https://git.kernel.org/sunxi/linux/c/192c6220e14d
+[5/9] clk: sunxi-ng: sun6i-rtc: Add feature bit for IOSC calibration
+      https://git.kernel.org/sunxi/linux/c/d2fcd82ca07d
+[7/9] clk: sunxi-ng: mux: remove unneeded export
+      https://git.kernel.org/sunxi/linux/c/c52b5090bf1e
+
+Best regards,
+-- 
+Chen-Yu Tsai <wens@kernel.org>
 
