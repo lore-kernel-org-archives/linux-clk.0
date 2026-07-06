@@ -1,162 +1,177 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE0573C342A
-	for <linux-clk@vger.kernel.org>; Mon,  6 Jul 2026 18:51:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783363904; cv=pass; b=cIJZGWnD5SKC18x55EBNFEfwRMfF3TfoXgTpixxgu2CWuzH1Vsm1O3W+n66K6rRz8r05kh2U6I3JQTcQSNyoDLpkKetsRXHh8B7FjCaJD8f/Z+5kXfKsUL1i8XXjoayJH7RbvXP+lv6KMzwd1Cdz2gIYOT6TgPqlfWIIWvQNXqs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783363904; c=relaxed/simple;
-	bh=fCdq0lYopj7korz3DO/dq32zkKygeRyx2BE0Wg8f5OY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oZaWA4EdxX+P6RWDTh5WWpwOBHx6TbdLnIuriCeYP02DOa2zK/Eo6ZU592t7Sbl2Sg9dsPnPbaQHkBpZAmL4NmbpJw72ZrYFwwY6dd2vZT/eHa5unsEAmMHU4RV9ZSFItrCNsob1RVfbgfIcT8Hp5YS/KqE/v4WeXuKdVx+0YAo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D2DB+V1p; arc=pass smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0731B3D093A
+	for <linux-clk@vger.kernel.org>; Mon,  6 Jul 2026 19:58:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1783367936; cv=none; b=fJ1+uWBJzMNW2Xq+WlRDvvwp7mSeibWg5iD+makkD6n08oYejUpJ0Bv2D3+z426v4agNqbJ2cmBYexSqd/rl2iyGeoLFFyG/yKkPw18x72RWivWminhW3tRXnnGIBvK0aOgasuLl//Z6Ys4SyLogRam2mrhQVH4ceWYDUGeTYo4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1783367936; c=relaxed/simple;
+	bh=VQRJctfRoIx43q7B8zg+JoEZ2DSkfCYQEsjoCD9AsiI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WXI6Z2u7qJgsoILrAf3heRvQH74TnCOREPm7jOdD10oxxfWzNC4PKF3liL3Arvkz42S3vTih+H+micx4xa7e/1M9oHhn8niLD0lmgFQsZ26slsLSyaT5RBMXAC7pXNgw9DJj0PiUoIWdXN2h6anr32hw0UFa81H2+pxhRzw+3iU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=fLI7VdWx; arc=none smtp.client-ip=209.85.210.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D2DB+V1p"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-493c52cde9eso34579075e9.3
-        for <linux-clk@vger.kernel.org>; Mon, 06 Jul 2026 11:51:41 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1783363900; cv=none;
-        d=google.com; s=arc-20260327;
-        b=hcNYgZ/WHy2hwjXMJTvl/Mi+1sym0hVrZDOZuaOZCfk3cqg5HTTbv/kuNBgwat7d4k
-         Te2GP296UMUxsHy7A8ovIlXjFC4unXE3LWTNEkBp1y4JL5PG8CVgbfS9b/j0H1I3rvPY
-         oYWRoP2iLuETxi8GfqqCSujCfyRNJU5PfED2Hdl9X3JNhTHygHJwtbyMHpoppFfVha7+
-         DzBL1enGu3UKx7gjcAyY2MpKSFgJYxwLz5r54jP2U25F56IKzNBcb5ReEkLL+ucILApx
-         ynp1NW1XatrOSOt7EOepcah67nmKHr4jxyVLcWOpN290LQwo0lG32iR/QMo1fo8ObbbB
-         4JoA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=/CSAQ86wMiX5Gp6AT84n1QfYe5hGWs1YjlnFkunec7Q=;
-        fh=j6nxv1FQwcXwA/e6OD9xpGdGKVfsw/5ziclpo3tqzdY=;
-        b=dS3rEf5aM0rLyd6bEPlQZiQDtz9EtyPtDDVSIiRItBzHiiJqyUXj59tZCMD3DEkG+b
-         YLTJ1k1rSM0yDjf5QSW8bFVWJcT9FFn74f1Xw9WH0mPKPi2U2G4wBLUYljW3qmfewUs+
-         ArCU2HfhNQnmFKblUJmxR9GqV0oPeTifwQXlcITTGnZKp1ujq+Gev9ryd13dWDDIp15l
-         GfKn/9FlmhbtZsH9K6MX8ENhqFJnv/n0NNBZp3qG/oNBlHGFK9KUZx7pPNVV2y+BpLDB
-         R5q5IkMSTrMl007o2bjFx97LEuWTgycnTyiFEbqR2cCSJFfPFHeJ5mcF4GerYtcgekjn
-         rxjw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fLI7VdWx"
+Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-7e9f69ee6f4so2996568a34.2
+        for <linux-clk@vger.kernel.org>; Mon, 06 Jul 2026 12:58:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783363900; x=1783968700; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/CSAQ86wMiX5Gp6AT84n1QfYe5hGWs1YjlnFkunec7Q=;
-        b=D2DB+V1pu9VZk76gbHmhZs2FWtDSxbjxD+6jk2xSBrzpA7nzl8bqO0aKfE4303aiaz
-         3D9r+dis1GGFTHWYfnRfvnZGWQX3jYP0+iqKGWsYowGxafGoUOqWh2NhTNgUJ8H6vXqP
-         qfQTFVBcm2UYE/nTJyTm2/E6kr68K1nIhPsZ3wR6ePFV66jqa+sEWwqvItsKYgr4Zv63
-         Ik6JoFB8JxYhhN4mwBlNM9lFOUINzhgYN+Zy7g/HpON63rEZ0hiuzuUaB/sRfM6OkYfT
-         bnO8xc+NI6TuiuRQui6d+XcjupSpez2q5AjaYtWi0i8+Khha5e5GhyB3lirnGjubuYto
-         Tnuw==
+        d=chromium.org; s=google; t=1783367933; x=1783972733; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=YlT3WnM+OJST3BZ/4dqDMJmxXkYErU65jgqgDcmWdqE=;
+        b=fLI7VdWxmVioG1DzkOAcOiSBU5UPE0uYjVuDNI3h9Q9XAdYjV09FY0Iwe9T5gmFDOM
+         rpg9MLdvMrkObb7Vbz1Ph/oSP63fNu3kFrFB51YrFEdCeP90+k8O1p4wUqeD0x6fb5z6
+         oNlg583yDuJQNLkRlK6n6XJwqfqnTngCk7CBg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783363900; x=1783968700;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=/CSAQ86wMiX5Gp6AT84n1QfYe5hGWs1YjlnFkunec7Q=;
-        b=fUzKUdzpMln5KmJpZ56wiVLN+bJ4g1hP7nvG9YP8d9YlBdh45KhFtd82mAdn2F9t9V
-         8ilFhYhN3TprN9Xns5I2sXY9ob+VPWfdN8ZkdQp277FRCf+9b5fBhhdowNEtDGItjamx
-         fN6N0RuN2ZidKy8oZlSc+C7X1a7eAjwR7QRi+pzQKcKP/Rp20W2quUtk1A+jveUnjrjm
-         BsMOkmV0PNj0VJ7XCLMCarMwUXyvazx+emE/Kje6WD8YPlZE3VS3eNYNFxMnBQaCpN9b
-         0kUZXcZYyB+2wMJ6gEBlHELkaelCaVCEDOhAwtN6tVH3c3ewwb377Ep5MacZOBDRVx1t
-         mxOg==
-X-Forwarded-Encrypted: i=1; AHgh+RqLOaD8rBsVTgjBmnfmT2SISXJ9foMqKhPf0oqEXgcdAeQOJqoPLr56I2wQIEIzN/CVuiHXZqJrqSI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNGwVVhyRcQPZdSc1iGufATaIS4SYdOYTgq5U38/WlYuLPtxjc
-	N/138EHUbtRqj+xFj5wE22sL8joeS/esV1FTk3e0LmEkxP7M7Z9O4nWWKaIElrKuDNXUVVNrpb7
-	xAQMhDlYkuyDWcuMC8D2o1vIBJyjUUMk=
-X-Gm-Gg: AfdE7cnq4Jhz7dlgjdSSEk6UWbynsGKVVuV/bH+sJcUnCFJkYJDal3nyT0AUIs+bDWh
-	qYoEW+QmxDlH0cwvD8N34FrjjyEFHCglyfBnwHULti2LH1rONW8uhra7c27/zrkOp7VPJyI1ykb
-	GD6uH8cV/md/xJtwVK02Chnde93F05bw1DZBACeGtQM5/ENzrudIXF94vKnwFCu4du0vXc8g7A0
-	P4RhtLAhcM8DHzxFBUzFnBySPOeVyyhNlp7YCxXTDZxKfAKRqHdAUD3dU6FQsoOy/MTCQU7daiL
-	8lsPM1e3gw3kgUzsdJnQdaYFqxsPISb9Irb1Qn+rU6W+A9+jwEDKj/D5eQ==
-X-Received: by 2002:a05:600c:4f84:b0:492:5030:5e7b with SMTP id
- 5b1f17b1804b1-493df06a26emr18953135e9.10.1783363900368; Mon, 06 Jul 2026
- 11:51:40 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1783367933; x=1783972733;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=YlT3WnM+OJST3BZ/4dqDMJmxXkYErU65jgqgDcmWdqE=;
+        b=bv2U9VVf24eNBpnCKe2+j1fM+HbV5YfSMS/FNDDeRWGBThscxywS9FKd7N6KDkT3zj
+         FuCnufR/4Xu6DuFbjVhOEILjg1ZFlN0y/4hBiL1VIR7D43O9HQQFjbrW0m8FuUPb7uy7
+         U3SxFFMiKTV9t7unUhyTLmKQVFzm1LHW0940f7oowevL0AHaI2Ic+b3BZG7RcNcxgUuP
+         sq79RHThOoDQ1W5ZweIz9UOU30Hqxppaa8K2NZzFsdDY6Qt+us3JipbepGom0TLbumZw
+         5MLenPGRLXBqO73ZEC4vuTbcJCc5kW01F3F0WUukmFjWoasmKT00ZQ2lWPRl4aQdxPyZ
+         Rdjg==
+X-Forwarded-Encrypted: i=1; AFNElJ8kdlP7QMvuEAWiGuRZNzaLXkUIEkaustHT/JLGkBhp9/YcaOXvVAJctab6lu3MJCae+FpTFQXBdNg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyg8FwsacjXt4Z5IUgWlUr5hjExdVvhZwDrCiQ78wzGMx4WQThD
+	OWpAIujZ65Nrd+wdw4HIEpZS9hiJ8YtWY70pdrCWOH4tG3PtfR8k2YFoxYPLFF4Bmg==
+X-Gm-Gg: AfdE7cnfkddMrfLvbBaQNxYLzohPHqvQ2y9RCcQFttO7Ff19J/1oAm6iI/LJGEzBeAD
+	pdpKcb9A9CBEKjZxqDUG4hGhTwX9UF7Dlj8eWUu/uNVCZa0lJE1WqcCCKUJxwzw6u13dJKiZRHt
+	Kxxv7W8qf5gIhHTYjjgtAM4x0ujIZJhix6HbhUAc08u1xSrJbHAw/i1QFSC/pBvLznrRUwhF9eO
+	TKJDalJpz5rvOMXOUjq5Zydd+tqpOjX/zIjNBEetkg4X1mgIZDkUwZrmqeZzHe7r09IDsS+BhNV
+	65r5U9vW/uGUCUrFebqSNXkakpU+DDlvzUTb+xBS5ALs69bmvMS6sS1j3jIh9+uWj9Q38NP/5qH
+	ZiTXo0SksqiAds7eWyE4JXXa7wXIuMqU9MvxmZVDcgLopOciB1XdSzuF2kD+ajRtc9CLDY9gZt8
+	XPy6CQpgg=
+X-Received: by 2002:a05:6830:4882:b0:7e9:3765:79c2 with SMTP id 46e09a7af769-7ebb22251dfmr1322732a34.12.1783367933546;
+        Mon, 06 Jul 2026 12:58:53 -0700 (PDT)
+Received: from chromium.org ([174.51.25.52])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7eb542d017csm12161834a34.8.2026.07.06.12.58.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Jul 2026 12:58:52 -0700 (PDT)
+From: Simon Glass <sjg@chromium.org>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: linux-rockchip@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	Fabio Estevam <festevam@nabladev.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Simon Glass <sjg@chromium.org>,
+	Albert Aribaud <albert.u.boot@aribaud.net>,
+	Andy Shevchenko <andy@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Brian Masney <bmasney@redhat.com>,
+	Chukun Pan <amadeus@jmu.edu.cn>,
+	Conor Dooley <conor+dt@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	FUKAUMI Naoki <naoki@radxa.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Jamie Iles <jamie@jamieiles.com>,
+	Jeffy Chen <jeffy.chen@rock-chips.com>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Michael Opdenacker <michael.opdenacker@rootcommit.com>,
+	Michael Riesch <michael.riesch@collabora.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+	Rob Herring <robh@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Ulf Hansson <ulfh@kernel.org>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Yao Zi <ziyao@disroot.org>,
+	huang lin <hl@rock-chips.com>,
+	linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mmc@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	linux-watchdog@vger.kernel.org
+Subject: [PATCH 00/12] Add support for the Rockchip RV1106 and RV1103
+Date: Mon,  6 Jul 2026 13:57:56 -0600
+Message-ID: <20260706195818.3906949-1-sjg@chromium.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260702123112.161160-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20260702123112.161160-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdUTDRkq-WaXNxGzBLAEY90cn1i_-UOuDkS3PBs3xKooFg@mail.gmail.com>
-In-Reply-To: <CAMuHMdUTDRkq-WaXNxGzBLAEY90cn1i_-UOuDkS3PBs3xKooFg@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Mon, 6 Jul 2026 19:51:13 +0100
-X-Gm-Features: AVVi8CdhZOFc6S2n05FV9nlTvx9urpSzJPBcWirnqMlmue__2oziyda_FreEG6M
-Message-ID: <CA+V-a8vxjms+yqzO_sfFo19nMAuhZ5aFSuBsy1Hm+0PLFio3KA@mail.gmail.com>
-Subject: Re: [PATCH RFC v2 2/9] clk: renesas: r9a09g077: Add SYSC regmap support
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, 
-	Magnus Damm <magnus.damm@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, 
-	Prabhakar <prabhakar.csengg+renesas@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Geert,
+This series adds initial support for the Rockchip RV1106, a Cortex-A7
+SoC aimed at IP cameras, and its RV1103 package variant, together with
+the Luckfox Pico Mini B, a small and widely available RV1103 board.
 
-Thank you for the review.
+The series follows the structure of the recently merged RV1103B
+support. The clock driver is ported from the vendor kernel and is the
+work of Elaine Zhang; the pinctrl data also comes from the vendor
+kernel. The clock binding header keeps the vendor clock IDs. As with
+the RV1103B, no resets are exposed yet and the CPU pvtpll is
+initialised but not calibrated.
 
-On Mon, Jul 6, 2026 at 11:08=E2=80=AFAM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
->
-> Hi Prabhakar,
->
-> On Thu, 2 Jul 2026 at 14:31, Prabhakar <prabhakar.csengg@gmail.com> wrote=
-:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Add System Controller (SYSC) regmap support for the RZ/T2H SoC.
-> >
-> > The RZ/T2H SoC features two System Controller (SYSC) blocks that handle
-> > low-power management and access control. These blocks are defined as ch=
-ild
-> > nodes within the Clock Pulse Generator (CPG) address space in the devic=
-e
-> > tree. Implement support for creating regmaps for these SYSC blocks.
-> >
-> > Register the regmap using of_syscon_register_regmap() against the CPG
-> > device node so that consumers can access SYSC registers via the existin=
-g
-> > syscon phandle.
-> >
-> > Add a sysc_init() callback to the CPG/MSSR core to allow SoC-specific
-> > initialization of the SYSC regmap.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > ---
-> > v1->v2:
-> > - Made use of for_each_child_of_node_scoped
-> > - Moved sysc_init() to the end of the probe function
->
-> Thanks for the update!
->
-> > --- a/drivers/clk/renesas/r9a09g077-cpg.c
-> > +++ b/drivers/clk/renesas/r9a09g077-cpg.c
->
-> > +static int r9a09g077_sysc_init(struct device *dev)
-> > +{
-> > +       struct device_node *child, *np =3D dev->of_node;
->
-> error: unused variable =E2=80=98child=E2=80=99 [-Werror=3Dunused-variable=
-]
->
-Oops, I will fix this in the next version.
+The devicetrees cover the devices needed for a basic system: UARTs,
+SD/eMMC, the SPI flash controller, SARADC, watchdog, GPIO and pinctrl.
 
-> No need to resend yet.
->
-OK, I will wait for the review of the other patches too.
+The series is tested on the Luckfox Pico Mini B: the kernel boots to
+the rootfs wait with a working console on UART2, timers, pinctrl and
+GPIO, and an SD card running at high speed. It builds with W=1 without
+warnings and dt_binding_check and dtbs_check are clean.
 
-Cheers,
-Prabhakar
+
+Simon Glass (12):
+  dt-bindings: clock: rockchip: Add RV1106 CRU support
+  clk: rockchip: Add clock controller for the RV1106
+  dt-bindings: pinctrl: rockchip: Add RV1106 compatible
+  pinctrl: rockchip: Add RV1106 pinctrl support
+  dt-bindings: soc: rockchip: grf: Add RV1106 compatibles
+  dt-bindings: serial: snps-dw-apb-uart: Add RV1106 compatible
+  dt-bindings: mmc: rockchip-dw-mshc: Add RV1106 compatible
+  dt-bindings: watchdog: snps,dw-wdt: Add RV1106 compatible
+  dt-bindings: iio: adc: rockchip-saradc: Add RV1106 compatible
+  ARM: dts: rockchip: Add support for RV1106 and RV1103
+  dt-bindings: arm: rockchip: Add Luckfox Pico Mini B
+  ARM: dts: rockchip: Add Luckfox Pico Mini B
+
+ .../devicetree/bindings/arm/rockchip.yaml     |    5 +
+ .../bindings/clock/rockchip,rv1106-cru.yaml   |   59 +
+ .../bindings/iio/adc/rockchip-saradc.yaml     |    3 +
+ .../bindings/mmc/rockchip-dw-mshc.yaml        |    1 +
+ .../bindings/pinctrl/rockchip,pinctrl.yaml    |    1 +
+ .../bindings/serial/snps-dw-apb-uart.yaml     |    1 +
+ .../devicetree/bindings/soc/rockchip/grf.yaml |   30 +
+ .../bindings/watchdog/snps,dw-wdt.yaml        |    1 +
+ arch/arm/boot/dts/rockchip/Makefile           |    1 +
+ .../rockchip/rv1103-luckfox-pico-mini-b.dts   |   93 ++
+ arch/arm/boot/dts/rockchip/rv1103.dtsi        |   12 +
+ .../arm/boot/dts/rockchip/rv1106-pinctrl.dtsi | 1398 +++++++++++++++++
+ arch/arm/boot/dts/rockchip/rv1106.dtsi        |  299 ++++
+ drivers/clk/rockchip/Kconfig                  |    7 +
+ drivers/clk/rockchip/Makefile                 |    1 +
+ drivers/clk/rockchip/clk-rv1106.c             | 1107 +++++++++++++
+ drivers/pinctrl/pinctrl-rockchip.c            |  208 +++
+ drivers/pinctrl/pinctrl-rockchip.h            |    1 +
+ .../dt-bindings/clock/rockchip,rv1106-cru.h   |  301 ++++
+ 19 files changed, 3529 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rv1106-cru.yaml
+ create mode 100644 arch/arm/boot/dts/rockchip/rv1103-luckfox-pico-mini-b.dts
+ create mode 100644 arch/arm/boot/dts/rockchip/rv1103.dtsi
+ create mode 100644 arch/arm/boot/dts/rockchip/rv1106-pinctrl.dtsi
+ create mode 100644 arch/arm/boot/dts/rockchip/rv1106.dtsi
+ create mode 100644 drivers/clk/rockchip/clk-rv1106.c
+ create mode 100644 include/dt-bindings/clock/rockchip,rv1106-cru.h
+
+---
+base-commit: 8cdeaa50eae8dad34885515f62559ee83e7e8dda
+branch: rv1106a
+
+-- 
+2.43.0
+
