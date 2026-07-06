@@ -1,66 +1,68 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA03D3803C0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ECFF37F8DC
 	for <linux-clk@vger.kernel.org>; Mon,  6 Jul 2026 15:02:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783350177; cv=none; b=pCfBBYRLyDHXbq2j384FS19Ikf+FHEHzHY7/ixCmQJ36h9UMJeH4X7fncPl1pfqEhTPW7285lhQNRKQt6iXSvFtNE6g0PWb45IupL/NjSoGE7x81qIwYJs+xb386wvf0/LC5c1RbvPE86qggxKKbRmc9m7xxKGRQELplec9Vbu4=
+	t=1783350178; cv=none; b=WR+p06VWqPZ/DzTtwAi7D45DtKzr6bbH/qXtcxsAPOxXDKOqHupnWuI7Jgq2maApU/X8kg7/mdWwwCYN1UkoYyXIPO+eNbxOdwqTWI0czMXzCLnj80LXefg22fLoZhdhVnzFi8cdQFsimc3RS5qt8gTZOx12C22LXYO5Y5zZmYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783350177; c=relaxed/simple;
-	bh=vxfXIFdpH2DkubO4qsVjWm99Icp1mKYD9x6L3Ptu088=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=DyU26HQEsziAupblihOaaqLFwf46NI6wVrBvzOcMDyh3+U9VTAICuWd/Ojz4uuFo0VPSF84nxx1UihPPlMky7KVbm9TFuiTaCgby60REv0CwFFuoybpwSFeRDH0ki33Dur/wVLNbQGPjrf1yr9kxO0tFadTVQhla1gYJsfDSzWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UnWrzR96; arc=none smtp.client-ip=209.85.128.46
+	s=arc-20240116; t=1783350178; c=relaxed/simple;
+	bh=AtEZcNEb3ClBSLeLofH89FOOEW3yyy4sU/gIpI1RXy8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=JsAdBvEgsyA721GTulw0Wbd8y1+VC7zugkiSaUMWHAwW0IdXBQrR5DrExPTFxXmJGJPas/hFRnlgrD8M9i29hXlxHtRqCy3BSDZALDM/HobqJp56wZKJglidGuMSVOVsMIjuOmeEDJCBxahyE3VQlctbuZ5r26u/dJz0Zrd9oCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XKnJy0lj; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UnWrzR96"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-493c2b3dc8bso21899955e9.2
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XKnJy0lj"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-493ae59eca6so22907485e9.1
         for <linux-clk@vger.kernel.org>; Mon, 06 Jul 2026 08:02:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1783350174; x=1783954974; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZyKuwOGJCk0NkmK6l4ueiJx1Wz28pfoEZsB8FSk6Sy0=;
-        b=UnWrzR96/yntAx2i5Hmq7Xw2Z2AawuGATmVXjtRXF2QMj33fMTE64cuj8mn6Vks0rR
-         DKpLulwd8nOFiDpD0JCFRTE4+ZfIHqqafyPgfHlvw1oA/Ufm79Fa9r/ZigIH3xW1YY7C
-         8e2vb6E04M+GXvoNaivOr/FiNLUiYyMW63RHh2sW72ptdVwv6CDPiZr2lgzysIzAvgMV
-         77oaLuSdcSXpAZM9ywwAa66T9HdUZphY+eq5x2DrLoZKli3x+fvvXLEMsQwa/sooZP/k
-         YyCyJi5+NoLnnF4vWNNlg9ccp2ExDEbnuB+RA5tpjN7kunwWpM2lMFwYXv+d2lt/3JFN
-         Q+jA==
+        d=linaro.org; s=google; t=1783350173; x=1783954973; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=tHOTidNjNLnwwKoun3jL+S03jKuXKaLpyrO3E7uk78g=;
+        b=XKnJy0ljemOmuZXnjtfHgiKoF8mHh7e8RkevNqlAMCMRPBoc5wqgy1WeZlNENz3/WP
+         CHbBqIXvm4Qo4JpdCfqlu5BR4HVZDACVrdRLwtJUWptBg8EEdo5ni1BHUcMyL5EV8uR3
+         GJN8uKoFQwv74iHHzRlZlwQ1EFcpXW1VVHYCFXqoPKBol+NzUQ7s5aIT+mQwczUlJ0Hi
+         gbR+u5papDw9WNy0qAFlKVm5Rlm4XTMK/ZLnY+bPGQW+Liq0J9A+qrzV6wrZ1DgVvPpM
+         FdJGhnaYBQNxCiBF8y2Ajz6dK4AsK8KSIfTgmhzCnH8yG2DCoAvwtEzxrLemEAh0f7pV
+         btoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783350174; x=1783954974;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZyKuwOGJCk0NkmK6l4ueiJx1Wz28pfoEZsB8FSk6Sy0=;
-        b=oljz8WWW67CGrvRAYlDVbvtGVHbDUnLWIPptrpohD9+jAzULSXc3iPABhOSVgdMixB
-         hKz+XUZfl5U4vtnXRrlnFvvDC1GVD71QQ4JqrZg6nbzVUVW+0VVKoHJAd+uJyNhRTCYZ
-         zNQqI6FAT3LuLyD7z7cSHlDj9ZnfDl1MKN6oo+o6FmTSxLkUMjabYKjtMnEuAuSsHPqv
-         B4RjeQe3hqFUCSFHiHFljJUxWVU4Mtlox/TRzWA/ahZEokpjUgunn0dly/DqCurxi35J
-         WAy+d/z9nvuauWSsgrcg0Ed9d7GPwrk55Vsh6D6f/8jPOzS4xDJl01BoFsMjC0VmF0eP
-         eUYw==
-X-Forwarded-Encrypted: i=1; AHgh+RqkXagBSSeBGmp4XDml35jn6hCV9B7/ilO7NLPC7bYKwC2SVYyuRV+81sooDKL6REvpPz2p/kXZaPE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGqOQWGlGfqv0sMd2ui5ly2uVJpsiVPDPWzZI1HV8k8ZFxpjvb
-	rQDuKhij6VMaghKeWXgG/q4Nx1tfsrP4IXX5IfCPtTix+pMxyE3Xfx+6gsSthsV2imA=
-X-Gm-Gg: AfdE7ckHTJiLLIMRHGG/53e8unAXfeksTAlpQOJMSJTplaYMEILPqajDFFMlpDylvMV
-	Bf3hDF5vE1p7H105+EOBBOooLGYiqvs8KOE1vH2I7yvHMN2wo46h2nptNJmzNBRSFIvpyZwfZ1w
-	lDx4p1rsLDAdpuWWUBwcXXJNP0YFSZGhFfHb5ZiaI3KqalYq8VVBADgWyOF368BXrNgg3Dsbbn2
-	JHzyq50DbJRCu/KgAJVOEGsMLrOeVuyNFdWNKakTFL59Mi5kv+MUumNK49Xr80Qav/+eJQmVUgo
-	1u1B/IXVexCB+l6gYAbVDEnZ1A0J232rNX8irQFnxLe0x0l6d5JnfGaEOQKml2D4X3NTeuNG+MZ
-	dD782tKZ7IWRmTSS3/vqZcHYMUCAM/EiTZsexnZaUMuZRvTrNEg7m/K1zTMyG05ysOD6nwY4FW8
-	xCmICCt31rJSku8bFMUhihEcfYcA==
-X-Received: by 2002:a05:600c:5395:b0:493:bd2f:c5fc with SMTP id 5b1f17b1804b1-493df074984mr10650625e9.15.1783350171023;
-        Mon, 06 Jul 2026 08:02:51 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1783350173; x=1783954973;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :content-type:mime-version:subject:date:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=tHOTidNjNLnwwKoun3jL+S03jKuXKaLpyrO3E7uk78g=;
+        b=ibGU7a2vDTNa+u9J83Y9UsjIW/zFDBUhh3JWryiVMWq5R2LnqpCTdH9QduQ/3b+7u/
+         S6Zb7qcF8BrKN98L1nN0CXRfYQAzI+0uWNkfaGJ74qntsi6plHP0Wn+YC7Mw9er6ULWG
+         ML2S/ISbJf/TpHgvZLzsrS2uYVn86WgZFLjXK+E6HBv6//fPuz8f6W/2v2x31Y3xNOS1
+         9MTc5b/jrq4pKm4QOEcFYnSsAvDk5Igy4NJcvO5rQCJ4O54UDm4V3uJutBRQcJBZ/HBy
+         beyrYp0nSzYkZHBPlDutF2ZMqWibKpOC4E1UFvzgzqdVBcvnRXEpQpM6K8Q+j5Twuqo0
+         vMWA==
+X-Forwarded-Encrypted: i=1; AHgh+Rrr7LeRvKJk0NRIPcmoz6GMWB6XvQhl98rHu+eHCwKnpYOrxJx64VA4B1ykGUS5U4xzxbpKiN+FPZk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6+tc/LfQOpfoIddEnFrZzKiXelw3mJOQycPdMDMj+5+SgOhSa
+	AAmQNRxADw1q6n+kn/dV62Y0Y50SIEqwMSX3lAqIhmHPK1dsIWo+Cn0GpD+ExLG13GA=
+X-Gm-Gg: AfdE7cmn50qYdMG2UUt/e4T9/0Ee7hUU12XSHMqUp0OpLhkU5uyRgk3mM/rmiMkARQr
+	EwIvcX32TdywvHc4e4paJlW5m+ppFSR5Dq2YgLoWH4IoX1Fz6Su2Fg8mfWCLmTNjZwapJnpYxAv
+	DywWO3nW8C0Lz901RSOre2fdNovBz0qxb0eK5z+qfxbhbEiKNVaAg9p8trz/umwM3phDGw2kumz
+	vXpAjtDRzL4+rJje5UBhgWNqDTdy1Hjoh4bOqd3+UXNxiAU7FtK6z90aDeDctiFCY9LrNbXoXgg
+	Mrm536GxylOzyX/C/nf/VG5k0Wwb446UGGmmVHJeC7WRGdVwoVVHS2fQmI0LOsuJFSw8rxXrLQF
+	smmerNWKE4XDGznKh03hSt8i00rDosTgHscNvKSf3h0PKdCSBbK6U71iAAjdCrVC7hM+/JYtIRa
+	qhCUL/5M0OLY5k7OxfDi7ahhOeNQ==
+X-Received: by 2002:a05:600c:4e93:b0:493:af0d:484c with SMTP id 5b1f17b1804b1-493df0797a2mr9939925e9.34.1783350173321;
+        Mon, 06 Jul 2026 08:02:53 -0700 (PDT)
 Received: from [127.0.0.2] ([2a02:2454:ff24:7210:1bb5:914d:5d25:d048])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-493c637568dsm397741625e9.4.2026.07.06.08.02.49
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-493c637568dsm397741625e9.4.2026.07.06.08.02.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Jul 2026 08:02:50 -0700 (PDT)
+        Mon, 06 Jul 2026 08:02:52 -0700 (PDT)
 From: Stephan Gerhold <stephan.gerhold@linaro.org>
-Subject: [PATCH v2 00/12] clk: qcom: Assorted fixes for gcc-mdm9607 (and
- gcc-msm8916/39)
-Date: Mon, 06 Jul 2026 17:02:07 +0200
-Message-Id: <20260706-qcom-clk-mdm9607-fixes-v2-0-745565101869@linaro.org>
+Date: Mon, 06 Jul 2026 17:02:09 +0200
+Subject: [PATCH v2 02/12] clk: qcom: gcc-msm8939: Fix enable_reg for
+ gcc_blsp1_sleep_clk
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -69,11 +71,9 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAG/DS2oC/4WNQQ6CMBBFr0Jm7Zi2USiuvIdhUdoBRoVqi0RDu
- LsFD+Dy5f/3/wyRAlOEUzZDoIkj+yGB2mVgOzO0hOwSgxIqF7ko8Wl9j/Z+w971ZS4KbPhNEbU
- 02knpaqcFJPkRaAuSe6l+HF/1ley4rq2NjuPow2d7nuTa+3sySRR4pLKQRWMafVDnOw8m+L0PL
- VTLsnwBEr9AfM8AAAA=
-X-Change-ID: 20260609-qcom-clk-mdm9607-fixes-81a8d11dbd80
+Message-Id: <20260706-qcom-clk-mdm9607-fixes-v2-2-745565101869@linaro.org>
+References: <20260706-qcom-clk-mdm9607-fixes-v2-0-745565101869@linaro.org>
+In-Reply-To: <20260706-qcom-clk-mdm9607-fixes-v2-0-745565101869@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>
 Cc: Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Georgi Djakov <djakov@kernel.org>, 
@@ -84,67 +84,40 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
  Conor Dooley <conor+dt@kernel.org>, 
  Taniya Das <taniya.das@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org, 
  linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+ devicetree@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 X-Mailer: b4 0.15.2
 
-The gcc-mdm9607 driver was originally based on gcc-msm8916, with register
-addresses/frequency tables - where available - replaced with the values
-from the downstream clock-gcc-mdm9607 driver. Nowadays, gcc-msm8909 is a
-much closer match, so comparing the two drivers revealed quite a few
-mistakes inside the gcc-mdm9607 driver.
+MSM8939 is similar to MSM8916, where the GCC_BLSP1_SLEEP_CBCR register is
+read-only and only has the CLK_OFF bit to check if the clock is running.
+This is a shared vote clock, the correct way to enable it is to vote for
+BLSP1_SLEEP_CLK_ENA (BIT(9)) in GCC_APCS_CLOCK_BRANCH_ENA_VOTE (0x45004).
 
-This series fixes them, together with a few other related bug fixes in
-gcc-msm8916, gcc-msm8939 and the dt-bindings for qcom,gcc-mdm9607.
-
+Cc: stable@vger.kernel.org
+Fixes: 1664014e4679 ("clk: qcom: gcc-msm8939: Add MSM8939 Generic Clock Controller")
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
 ---
-Changes in v2:
-- Pick up review tags (Konrad, Taniya, Krzysztof)
-- clk: qcom: gcc-mdm9607: Fix BIMC PLL definition
-  - Replace with new commit that drops the BIMC PLL entirely, together with
-    all related consumer clocks. Similar to newer SoCs, we now define the
-    NoC-related clocks without parent. (Konrad, Taniya)
-- clk: qcom: gcc-mdm9607: Drop incorrect apss_tcu_clk_src
-  - Drop now unused static gcc_xo_gpll0_gpll1_gpll2_map variables (Sashiko)
-  - Clarify commit message, looks like the apss_tcu_clk_src exists in the
-    hardware, but at a different address. We don't have any use for this
-    clock though, so leave the actual change as-is. (Konrad)
-- clk: qcom: gcc-mdm9607: Drop incorrect system_noc_bfdcd_clk_src
-  - Clarify commit message, the system_noc_bfdcd_clk_src is really missing
-    in the hardware. (Konrad)
-- dt-bindings: clock: qcom: gcc-mdm9607: Drop incorrect clocks
-  - Keep APSS_TCU_CLK_SRC since Konrad mentioned this clock exists in the
-    hardware. We don't use it in the driver, but the dt-bindings document
-    the hardware, not the driver.
-- Link to v1: https://patch.msgid.link/20260609-qcom-clk-mdm9607-fixes-v1-0-5e9717faf842@linaro.org
+ drivers/clk/qcom/gcc-msm8939.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
----
-Stephan Gerhold (12):
-      clk: qcom: gcc-msm8916: Fix enable_reg for gcc_blsp1_sleep_clk
-      clk: qcom: gcc-msm8939: Fix enable_reg for gcc_blsp1_sleep_clk
-      clk: qcom: gcc-mdm9607: Fix enable_reg for gcc_blsp1_sleep_clk
-      clk: qcom: gcc-mdm9607: Fix halt_reg for gcc_apss_axi_clk
-      clk: qcom: gcc-mdm9607: Increase delay for USB PHY reset
-      clk: qcom: gcc-mdm9607: Drop incorrect apss_tcu_clk_src
-      clk: qcom: gcc-mdm9607: Drop incorrect system_noc_bfdcd_clk_src
-      clk: qcom: gcc-mdm9607: Drop incorrect BIMC PLL and related clocks
-      dt-bindings: clock: qcom: gcc-mdm9607: Drop SYSTEM_NOC_BFDCD_CLK_SRC
-      dt-bindings: clock: qcom: gcc-mdm9607: Add missing "clocks" property
-      dt-bindings: clock: qcom: gcc-mdm9607: Use proper address in example
-      clk: qcom: gcc-mdm9607: Drop redundant register update during probe
+diff --git a/drivers/clk/qcom/gcc-msm8939.c b/drivers/clk/qcom/gcc-msm8939.c
+index 45193b3d714b..ffd7f14fcbaf 100644
+--- a/drivers/clk/qcom/gcc-msm8939.c
++++ b/drivers/clk/qcom/gcc-msm8939.c
+@@ -1929,9 +1929,10 @@ static struct clk_branch gcc_blsp1_ahb_clk = {
+ 
+ static struct clk_branch gcc_blsp1_sleep_clk = {
+ 	.halt_reg = 0x01004,
++	.halt_check = BRANCH_HALT_VOTED,
+ 	.clkr = {
+-		.enable_reg = 0x01004,
+-		.enable_mask = BIT(0),
++		.enable_reg = 0x45004,
++		.enable_mask = BIT(9),
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "gcc_blsp1_sleep_clk",
+ 			.ops = &clk_branch2_ops,
 
- .../bindings/clock/qcom,gcc-mdm9607.yaml           |  18 +-
- drivers/clk/qcom/gcc-mdm9607.c                     | 193 +--------------------
- drivers/clk/qcom/gcc-msm8916.c                     |   5 +-
- drivers/clk/qcom/gcc-msm8939.c                     |   5 +-
- include/dt-bindings/clock/qcom,gcc-mdm9607.h       |   1 -
- 5 files changed, 29 insertions(+), 193 deletions(-)
----
-base-commit: 696bef37f7f22f894ffc2059bdf9ec76b309cf8f
-change-id: 20260609-qcom-clk-mdm9607-fixes-81a8d11dbd80
-
-Best regards,
---  
-Stephan Gerhold <stephan.gerhold@linaro.org>
+-- 
+2.54.0
 
