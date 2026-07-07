@@ -1,52 +1,55 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28138352005;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80FB738BF61;
 	Tue,  7 Jul 2026 03:22:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783394531; cv=none; b=AFN0OVbofAUmU44tRaUCVjiL2vhCpfQ1wUPgGv/pp6lCjbJhgYpUALLBpTfG8xMLdXe/cWQRsb2kfk8jH7BY9B6ptsZiQWbpuUxY56fo3rpPBLbododyIL7hcapYO0gF4EJrAKYwjbP6U5GPLtj7nYmei46XCL1veEIoVfjnb1U=
+	t=1783394532; cv=none; b=u9YFQij25K+Rtklhi1QbKLFe1M+d7aXNAOSeKrG6KnTD3ypnmSC9jlPa/d5RVbIzjT53wzscesWrGJdvApFvQ5cuEMs35XRsfCs+5qabdSI9benImW57Tgsgh6krPcay32+BY+2KGQW9N15/OuQOhUN5zews50gp3kobZLIN0sQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783394531; c=relaxed/simple;
-	bh=vYTupzQSvgPWt8PcUwfJO6cbQYYph/+J9IOnCW5TIGI=;
+	s=arc-20240116; t=1783394532; c=relaxed/simple;
+	bh=+Q6YYHLhvahJ1H7KchgsU99N7ZVa2sVOllalxe3zHf4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LbP0yQ0R0SXI1buC3pAk1A70NDcSVKjEAr4K6Co3bHsXoy8yH8Jy4TZL0a6OMsAIono/+HsU7pb3z6zUTVNkeNfEoeoBk/SEfl8/7k81EKnnFHlt/+HZI/pQrK0nmtyUe9Nuf/p8JMDC/lyjyDziRW+1yG8KyFRCBhdd2Du2r4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZZSLyDEQ; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version:Content-Type; b=bixk2Y/DvQjNWCnKvDxLDx77m/FaJzREJN4ojE74RdoWqVGxRXtpTC/FnzKxe9JAsIMbhFqJb4DpiT193fffcC55INu60JyJBL3x0gPFQbAdcrO93pa5tm7H34G9GRkKKijhq1SDIMWxZ0H+2aj4aO2YhpFtfeKeHMfCrIs9xHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cjyg+xT8; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZZSLyDEQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AF561F00ADF;
-	Tue,  7 Jul 2026 03:22:07 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cjyg+xT8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C27191F00ADE;
+	Tue,  7 Jul 2026 03:22:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783394528;
-	bh=5gWzG0+HWgVZbxjFj069WpF26GbvtN+pMH1FDKn1SH8=;
+	s=k20260515; t=1783394526;
+	bh=f9jizBEFpEuVKna4nQ4iZMy3xkuiSm5a1pkyONdWm54=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=ZZSLyDEQxyES23hQV7wA7vxillaNiRPQZvw1xCgJKDZfvFt9HKdrmACZa4DvU49nE
-	 yRWTPFDn0LRuwrbJpEJr0foEPod7oqwW7kzbeLKT3mMbt9RFFXYYegQLhmHBYoaDSZ
-	 2+EfhmeJohHmXvfEWYGyEMrW4lA1Cuwv9Fkir3uZu1oQay8nLEjpFEP2wjpD84syzq
-	 U5GMOn2CxDswthAlhAV8LWn3tbxDyvbSWzU8m752isj65zx8QFGpDRLYRnfNakgdGh
-	 cA4EG8ajt9Ad9fGNDPoTC3vyOcDjt9Kpm1O4roOp2tPOkd4RYuVskPfcMm7IbAPFAX
-	 9uMY/Kd9qSTmw==
+	b=Cjyg+xT8CGw+YJno/W5Vz11hjm0BGdYTl9zJRVPhRSTvozLVi7DREJNa02Y7N1B7/
+	 AUr2+RrbbRY7ERg5zHIJxg+0feapCf8SjA4RIoX7tK8xNqIvLhRAo2K8J/rA+4EKP0
+	 3N1rMpzq7X8e3FWe2iNT0os4hJbmgxj5B04qQLq2m/y+Jlxn96kAsQtm+1HbBBmxER
+	 P/eXC+4ApI19JaCQrIkx8Q59SMbYXUmClE3GaIfhVfcIh68ia2gZin8sP+59FqypVd
+	 r+zMc5GYz0RrlTB8yvi98JXiC9FeG4p+ZomP8QNxah1rDgC6NBRWTICMuG1XLaworF
+	 g2q4YYIOYWm1g==
 From: Bjorn Andersson <andersson@kernel.org>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
 	Brian Masney <bmasney@redhat.com>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Taniya Das <taniya.das@oss.qualcomm.com>,
-	Jagadeesh Kona <quic_jkona@quicinc.com>,
-	Lin Li <zhuolin.li@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Taniya Das <taniya.das@oss.qualcomm.com>
+Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+	Imran Shaik <imran.shaik@oss.qualcomm.com>,
+	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+	linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH 0/2] clk: qcom: Add video clock controller support for Hawi
-Date: Mon,  6 Jul 2026 22:21:41 -0500
-Message-ID: <178339449928.1938770.5009440185841702031.b4-ty@kernel.org>
+	devicetree@vger.kernel.org
+Subject: Re: (subset) [PATCH v2 0/4] clk: qcom: Add EVA clock controller support for Glymur SoC
+Date: Mon,  6 Jul 2026 22:21:39 -0500
+Message-ID: <178339449926.1938770.15333855977275297563.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260702-hawi-videocc-v1-0-6c1e640b0954@oss.qualcomm.com>
-References: <20260702-hawi-videocc-v1-0-6c1e640b0954@oss.qualcomm.com>
+In-Reply-To: <20260617-evacc_glymur-v2-0-905108dacaaa@oss.qualcomm.com>
+References: <20260617-evacc_glymur-v2-0-905108dacaaa@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -57,18 +60,20 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Thu, 02 Jul 2026 10:08:06 -0700, Lin Li wrote:
-> This series adds support for the video clock controller (videocc)
-> required by the upcoming Qualcomm Hawi SoC.
+On Wed, 17 Jun 2026 16:37:51 +0530, Taniya Das wrote:
+> This series adds support for the Enhanced Video Analytics (EVA) clock
+> controller on the Qualcomm Glymur SoC.
 > 
+> The EVA subsystem handles vision processing workloads and requires its
+> own clock controller (EVACC) to manage the PLL, RCGs, branch clocks,
+> GDSCs and resets.
 > 
+> [...]
 
 Applied, thanks!
 
-[1/2] dt-bindings: clock: qcom: Add Hawi video clock controller
-      commit: d9ef4ed45866531d37a2e9c62dc795cd678b5b0c
-[2/2] clk: qcom: Add support for VideoCC driver for Hawi
-      commit: edbd5d323183ca15676fac30344ec0713b98dc46
+[4/4] arm64: dts: qcom: glymur: Add EVA clock controller node
+      commit: f135aa4dc1aa43bd55edb028f02e96c7ec8b2e63
 
 Best regards,
 -- 
