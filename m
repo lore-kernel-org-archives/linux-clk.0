@@ -1,99 +1,94 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BDB631714C
-	for <linux-clk@vger.kernel.org>; Tue,  7 Jul 2026 14:48:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D9A63161A1
+	for <linux-clk@vger.kernel.org>; Tue,  7 Jul 2026 14:57:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783435724; cv=none; b=Cnq9XHLtCbcYsBWKlh4LfyXvEUFEeTYg7roWWy+O0bDNdroE6rRe3kuskFM7FX4JS9/lxS4oHgZH8yKvBV1/TKnnQSwLbJ3kNS2P+Kko+XbdxNORP7OY3zDXRYMTdLOv1cPxXjnjc1fXhHh38+XOeoBIm3FNtVLFY+2LDi/hICU=
+	t=1783436279; cv=none; b=M8C4CgoAvKbn3JerQyaiJ87UEkO409MslM/5r2GpHavq9DD/7BSDbslOCuuJmN8BSPUKto5dEJSeiFVEQlvnTFYaeuX/PJ9iIhClx3v4iFQOMugFmRmGo4Y4O2SkHTqkNLkecFw3taqAMHOQyr42ix9rWMifoMhLLpV16+x5X3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783435724; c=relaxed/simple;
-	bh=3pmfXR4Jnv2/fQCMmyH1XbyAye1yx5cOX75L1MFZJgI=;
+	s=arc-20240116; t=1783436279; c=relaxed/simple;
+	bh=34cmiOT4AUQDB6/wgRLO9dq+0zBHPmY/oLQ2eesmocI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MK2igh9D2Njz7U/8o0Cp3oN1hJJC5GP7QcmkaRyb4499FaVEMWY/X18ydfOah+TvG7OGhflOko73NIeyenkQXGfZlJiDO6M0CtVaInyMzEbghStYckPivqMnrKv5PQRXhAFe3KdO/hjEoOrhK4+z5aeyM6qVpXt8+wEDU1yZGzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ay/6FBon; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=d7GujN/u; arc=none smtp.client-ip=170.10.129.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=X2oBDcB4OWwcerKm6t0oF4CSkpsIe3DKigkH9+TQTPlnt44U9cigjJ4zfIIlWJfIGHaPBgqGBpOI4PWdliK8swa3JsoIeozHPkyBTTHcSAcrueH1L+spuRvybsQKrZVDsgrZmPTAGMgyqjyXaffnWkd2q07GLvU+UpyisU2mz3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Rht7jV/y; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=UZnmmT0W; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ay/6FBon";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="d7GujN/u"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Rht7jV/y";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="UZnmmT0W"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1783435722;
+	s=mimecast20190719; t=1783436277;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=h1r3uOYYLfyHkYl7JQXo9+dI1iFhQk/Yi77FdFZjY7s=;
-	b=Ay/6FBonifhOZVCrnhuIm13bEyWzTvphdEtGscors/x5YdbPEwJTc+5Syo35zwd4vpyQAO
-	1lPcyqGfDGZ/gJBj7ItOgbKwx0oUq76Nx4OZaZmCaNq+de87jCsFwq4e+nOcns8rFv4vJL
-	Asd+cl2y859d/h8+M+Wb84KSdkjUDQE=
+	bh=mFGcKpezQc2FdGn9v+N6oSZlIFNYCsG+Imjq35hvLSI=;
+	b=Rht7jV/yJiq1rsZeq6FaO6daN1NUKS22YADSHhvxmJpLG9m6Xv83qK1/+ucWMBmFZcNdAc
+	yUr3HxLlLDrkrm7UenHJ28eGjCOm8XVFykyb++wEMeQdK26xsv9fWOrSLUSbu96XHpSM/+
+	cmrnmcvjgo/lB994tFNQLv8n/oCWV8o=
 Received: from mail-ot1-f70.google.com (mail-ot1-f70.google.com
  [209.85.210.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-519-oWansfJjMJu5kaLqJcyzQw-1; Tue, 07 Jul 2026 10:48:41 -0400
-X-MC-Unique: oWansfJjMJu5kaLqJcyzQw-1
-X-Mimecast-MFC-AGG-ID: oWansfJjMJu5kaLqJcyzQw_1783435721
-Received: by mail-ot1-f70.google.com with SMTP id 46e09a7af769-7e9f1ee3ce4so1041334a34.0
-        for <linux-clk@vger.kernel.org>; Tue, 07 Jul 2026 07:48:41 -0700 (PDT)
+ us-mta-486-Agtqgk2XPZyIOz6j2FDmQg-1; Tue, 07 Jul 2026 10:57:56 -0400
+X-MC-Unique: Agtqgk2XPZyIOz6j2FDmQg-1
+X-Mimecast-MFC-AGG-ID: Agtqgk2XPZyIOz6j2FDmQg_1783436276
+Received: by mail-ot1-f70.google.com with SMTP id 46e09a7af769-7eb64224fd2so6791920a34.0
+        for <linux-clk@vger.kernel.org>; Tue, 07 Jul 2026 07:57:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1783435721; x=1784040521; darn=vger.kernel.org;
+        d=redhat.com; s=google; t=1783436276; x=1784041076; darn=vger.kernel.org;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=h1r3uOYYLfyHkYl7JQXo9+dI1iFhQk/Yi77FdFZjY7s=;
-        b=d7GujN/utWCZsHwdlYLricu8E8y2Rffl06T2DWaQiZGONqb5C1T8UzHQjkdO/T0gnq
-         QzOsfNUEfVIvvfROMOdoahePli5hbGf2TfAbXl1N43pBx8yht+B5vG1yUc0pdfwjJRql
-         ++homkp89CL03hVDVH0TNn5K1f7zF5PQ/t/ioh+qvUlubPmfOaOKugnDVpeQyiPaMToM
-         i98WNO2ThJ8wJw+2Wh3EfWVCrVbe5UselEttKu05+E7E4Q7mvF0BfV12NVTnziQmTgoB
-         NFGUb01eutobyrkTGttrpqP2UlKkqymGnt50XrMjYl/cExZAa5P6F/8FZJ2+jrFtlA4Y
-         4JgQ==
+        bh=mFGcKpezQc2FdGn9v+N6oSZlIFNYCsG+Imjq35hvLSI=;
+        b=UZnmmT0WlJgjV13s0/NDquotBQyRhYrnh3DsyC9VEOwb0qwCkYrrKc7byPfR6fY/AC
+         xfu26udKNC1tuHphh3I27XPF94SnzCVHySamxvuOuf4uISvX+GFLRoLrGVUHezwwm/DN
+         +Rz1qwSy9qJfiCQTzTWc7jYEomvLWNjGZA/MBkZQr27SOpGvddm6FUwv0vdy6b/X861C
+         2rAi292FzrrqeTPcZ/KK6CXkU9ZkoA3Ko04xZk7M3diAtdYof3Os/BCTHa2NBm356/CG
+         mM2biU6JoqWMdhE0INsM9w/MA3ZNRCPW8krDfOI5+h+58cARGhExLasZJKKwDHENnAN1
+         OtPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783435721; x=1784040521;
+        d=1e100.net; s=20251104; t=1783436276; x=1784041076;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=h1r3uOYYLfyHkYl7JQXo9+dI1iFhQk/Yi77FdFZjY7s=;
-        b=dt4G3VdNUwMsC0Iw4dfZ1Rv7v39nGbMxgsQzTMz0nxBKB+3B60bS9J52tXM8O9Ov9i
-         Vu68dBxks0pxmuWsP3UNx07SOwa3mFNgd6XT7VsYk4R8IRgVviFyIynFX1VfarY2AR2e
-         ARQ1pJmMJf+YlIxWxJmSjS8S1WxDgKovK6J5SuNS3P1S6jOHd8HNou0s83ZWHRTseDdy
-         EVv3qFDDQ/06gyxonoVdFg1wv64yxLigKI1mGS0Q2T6FCNqlBKK5I2zb6h1TP/yOjqxD
-         7ZXyx5Dg7RjFHpNHbYbmD4J5BfKTgy/tEiy0n3N+sFMElbrBJjdu/mqEgwlH/hydozx5
-         vNtw==
-X-Forwarded-Encrypted: i=1; AFNElJ+H/HEJIsuHi5bQUSh4hnIE1Vsr5jrNHLcYj0UBmIjLjanJDH/XKn5auYw/43322SjV9M1kX5T2V3E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaRWiLw7+YMCt+KGVQLu0CL+5xHC/wn9mayPx3QHlvDN5jxBP0
-	rUJHgWervI2RWilv933J8ArFJcwM58HweN0DvlHCsOaouGbiOHV0z1N0Odcod9YzCtfump6yt1n
-	Bvh7ZUxj9dAZEHUt8QMJ0kEREap0yT0/kld04zSS2S4t0J2Veo4BVGgTAlv4sPg==
-X-Gm-Gg: AfdE7cllfrhbpjevq+Gf0Iim1DBIlyk5g3iyTvD2wh9Z6UVGzLMLNFJb2AqiJm+KHdv
-	grtqGs38S1xd2sOqXonR2XHkE7Nlo3276sZjVUnGjZnU/R9l0y5CFRMYc/7tg+nt6DQF06z48CS
-	9ga6j5o9hD/BgA+OYXaCPuD8R1KKSG/bS5W3Qxaa6eOR7Hvhgm1dUCg9HlM0hbjaWMtpoRZp5Bz
-	VPR9/L8aUME5z7rEzoHtF1VN6IbQUcK3phR76EDdoXwr1UsCKn0/Fd7RoI8dqjV8z2dgnpeagUJ
-	evTsJsv07aiW7EoWjYD6jz7FX3U8fm3goshvZXCKsjh8Y5atWRxYdWR0FUmdMvTVxX/SW5CcHR9
-	dYLI39PDl
-X-Received: by 2002:a05:6830:828e:b0:7d7:fd71:f2d4 with SMTP id 46e09a7af769-7ebba10d518mr1910789a34.3.1783435719952;
-        Tue, 07 Jul 2026 07:48:39 -0700 (PDT)
-X-Received: by 2002:a05:6830:828e:b0:7d7:fd71:f2d4 with SMTP id 46e09a7af769-7ebba10d518mr1910777a34.3.1783435719482;
-        Tue, 07 Jul 2026 07:48:39 -0700 (PDT)
+        bh=mFGcKpezQc2FdGn9v+N6oSZlIFNYCsG+Imjq35hvLSI=;
+        b=bw62qRv8UwSA1IVLcVT+qIGno3gtgpKaL3HJupmVO/GDEhYVfHRc8t1zjHYaMxLJ7o
+         w3ybsyPsaiZ7Ms2jEEjBj7mBlLi4zoAyIlp1O+T2vbcw83Ww9pESxDlF7zRIeG+uf/OX
+         0bUb7GU2yyGqe4kusyNYsWGKNimeGyLhb6zQ4/JvYt0bms1lGvpd7jxLHcehjr3BVkae
+         nq+qDS/Dd79c4cYLnPKD0kS5SijjDgeUEOoiVxxjzVkYXK9n7Ut5TYMVHpBnNOfKG9Fr
+         5SjFOXnKqRLBpeaZEtrSiuRZvNuL6D1iDv/mv0jEBppu+jQtH9+rS0l2avkuZ6wwQzTF
+         DJog==
+X-Gm-Message-State: AOJu0Yzqymot+D6VzhanT2ownmSKxdRB5bDwOgtQOebvHHO5ohTwT/ET
+	9Tx6PRqBuShHbEI9TTiCDwAnZSi9j9zHTeTo23yTg0TiRUUyDarte0PsUENpHKQXEsCbDlzrwTJ
+	vKZ8H7bWksNHIZDyoWYkH2iSb5UrLg91GsQlRi27e/PBMGAc2E+Nho4Z8FelDsw==
+X-Gm-Gg: AfdE7clDq+OtVlTtRwbyhKMgaMc8M1ppkWabWZ8NCawMwZ5uTLNngMXHLLTYd1QHe2Z
+	jC8YWcMajBUpCApX+UVo+rV57m8kez4HYNbElDRWW4KB1X3s3Ylwo+jDFb6tBBfljiuoBzVAh8S
+	OiRXb291i3YMsnM7Kk7Pt+swdCkltfq8ce1gosKr9foM4uoFtgNOcubGlqI5H015+wm7ZadkQ9q
+	JbgzX3c8ejZUUg1/WgfDohdvUtvIR4BHmh4WGIfJU3QPEdaTw1qSO+efAM9RY6+0KLtztmm19Cz
+	enSfmAfH1NXgT+vs9u3BY2C+tYj6Jow36tUAG8I72S6cLLYLEZA5oTHu750+0t+qE+dhgD+BjED
+	5/rMpT8BP
+X-Received: by 2002:a05:6830:660a:b0:7e9:f8e8:d8fb with SMTP id 46e09a7af769-7ebb231d6c0mr3396704a34.21.1783436275536;
+        Tue, 07 Jul 2026 07:57:55 -0700 (PDT)
+X-Received: by 2002:a05:6830:660a:b0:7e9:f8e8:d8fb with SMTP id 46e09a7af769-7ebb231d6c0mr3396674a34.21.1783436274867;
+        Tue, 07 Jul 2026 07:57:54 -0700 (PDT)
 Received: from redhat.com ([2600:382:850a:55b4:731e:b0d4:e0cc:410])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7eb544fcb06sm14123177a34.22.2026.07.07.07.48.36
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7eb542d017csm14082217a34.8.2026.07.07.07.57.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Jul 2026 07:48:38 -0700 (PDT)
-Date: Tue, 7 Jul 2026 10:48:35 -0400
+        Tue, 07 Jul 2026 07:57:54 -0700 (PDT)
+Date: Tue, 7 Jul 2026 10:57:51 -0400
 From: Brian Masney <bmasney@redhat.com>
-To: Akari Tsuyukusa <akkun11.open@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
+To: Rosen Penev <rosenp@gmail.com>
+Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-	"open list:ARM/Mediatek SoC support" <linux-kernel@vger.kernel.org>,
-	"moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>,
-	"moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>,
-	stable@vger.kernel.org, Chen-Yu Tsai <wenst@chromium.org>,
-	Miles Chen <miles.chen@mediatek.com>
-Subject: Re: [PATCH v2 6/6] clk: mediatek: mt8192: fix memory leak on module
- removal
-Message-ID: <ak0Rw5krDlc_ZXQn@redhat.com>
-References: <20260707074839.240676-1-akkun11.open@gmail.com>
- <20260707074839.240676-7-akkun11.open@gmail.com>
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:CLANG/LLVM BUILD SUPPORT:Keyword:b(?i:clang|llvm)b" <llvm@lists.linux.dev>
+Subject: Re: [PATCHv2] clk: thead: allow COMPILE_TEST builds
+Message-ID: <ak0T7zxwwSn_L57X@redhat.com>
+References: <20260707005619.1229238-1-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -102,22 +97,19 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260707074839.240676-7-akkun11.open@gmail.com>
+In-Reply-To: <20260707005619.1229238-1-rosenp@gmail.com>
 User-Agent: Mutt/2.3.2 (2026-04-26)
 
-On Tue, Jul 07, 2026 at 04:48:35PM +0900, Akari Tsuyukusa wrote:
-> clk_mt8192_apmixed_probe() in clk-mt8192-apmixedsys.c does not call
-> platform_set_drvdata(), but clk_mt8192_apmixed_remove() callback calls
-> platform_get_drvdata().
-> This results in platform_get_drvdata() returning NULL,
-> which leads to calling kfree(NULL) in mtk_free_clk_data(NULL).
-> This leaves clk_data unreleased, causing a memory leak.
+On Mon, Jul 06, 2026 at 05:56:19PM -0700, Rosen Penev wrote:
+> Follow the pattern of many other directories in this Makefile (sunxi-ng,
+> tenstorrent, ti, etc.) by using obj-y. This allows COMPILE_TEST to
+> select the driver without having CONFIG_ARCH_THEAD enabled
 > 
-> Fix this by calling platform_set_drvdata() during probe.
+> Tested with:
+> make LLVM=1 ARCH=loongarch drivers/clk/thead/
 > 
-> Fixes: 124294ff468f ("clk: mediatek: mt8192: Move apmixedsys clock driver to its own file")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Akari Tsuyukusa <akkun11.open@gmail.com>
+> Assisted-by: Codex:GPT-5.5
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
 
 Reviewed-by: Brian Masney <bmasney@redhat.com>
 
