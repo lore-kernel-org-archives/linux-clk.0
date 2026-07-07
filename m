@@ -1,161 +1,205 @@
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 447283F8232
-	for <linux-clk@vger.kernel.org>; Tue,  7 Jul 2026 16:34:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87B82435A91
+	for <linux-clk@vger.kernel.org>; Tue,  7 Jul 2026 16:35:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783442078; cv=none; b=sg24e6Ts9qqsZIzZTgX2VIMs/Lc9W4H5dzQo6/npYtKSG/QYyppkk8XwL4yNBpa+FsrAl0zCMEyOvwVdiKyreLLblUXOHvXtAjNG+ICQuE65Y/ruFGhR9wovNKJv3kI7KY7zZ3XEFHrmdJaNupMyUPxFG8SwbcgR1WRRAJGMR+4=
+	t=1783442144; cv=none; b=mbL0XJKs+R6/3sF8V3fRzx6io+D+WkqfzL2u90DZ+fSoAQyGKldwWl41xd2eNi1tNxnXFXH1q1TTR8KB5s7eYVqzsGgN66xo0dvA10n9gFNLylnW5x79v7chjwraxtb8okNsOR6HmkjpYQg1Hs/+/xlGyeLQ8jYrFVKmEpflah0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783442078; c=relaxed/simple;
-	bh=HZOQZ5+gEBXB9FFiQskUNf/8oWIAtCajF2Z9MT8W9Dc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XDeZVh2rI/9hdfxk+gl/e4g0re3A/9n3nL+voMriAu6A6XxM1W6/4N+9uTwTz1zaWHpxyPzu3/R5z7uZ/SGSaJPdn5w39/cnoND0VFnFf8zR2Aym3uS0KTmaYNn4Sy86IxP3vwlMHceOWGEPIJhS+w2xSqrpvpkmPFslStoqdms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=monstr.eu; spf=none smtp.mailfrom=monstr.eu; dkim=pass (2048-bit key) header.d=monstr-eu.20251104.gappssmtp.com header.i=@monstr-eu.20251104.gappssmtp.com header.b=odla9vgw; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=monstr.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=monstr.eu
+	s=arc-20240116; t=1783442144; c=relaxed/simple;
+	bh=eLxLdQLsu+iaBBH+wLafSl6Y8TnZpHdXc7NJlDA1zv8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MiiI//JTCzWh4swgW3I7Neh0zbKR+Bs4nTO3IBgPkk7KMLiJI9DpQeqHLbX9nemkhTfujsOl9Fjta0OxwXda6mQqNV7I+pxt0FUMsLRa7SRtp7bHJlDn9z3EuMY8t7WkHgbgziQ9Vpw2WTa3qnM5/k4O0nD88ohtWuzLAQ0jRu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fImhzVtd; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=HlmTZxuU; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=monstr-eu.20251104.gappssmtp.com header.i=@monstr-eu.20251104.gappssmtp.com header.b="odla9vgw"
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-698beff7178so8385446a12.3
-        for <linux-clk@vger.kernel.org>; Tue, 07 Jul 2026 09:34:35 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fImhzVtd";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="HlmTZxuU"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1783442142;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hLXdUDx40KUl+OrKm3kL+rKhY0e13ruPLiiJQQF/qN4=;
+	b=fImhzVtdPqhFP3nMAH4vDZMibOdL2KajLaWP639DtPDf6y7Gq1oRheG+g9RGyqvut+CsYq
+	5vITUtFWocoYOLm83B7htYjvBEWYHKffw6ftk3oDNx7NS3N7rusHbm3vDOIV3wTo34OVD2
+	hkib9NTMXxQQ4FxGZkwU8lywCHqSnn8=
+Received: from mail-vk1-f197.google.com (mail-vk1-f197.google.com
+ [209.85.221.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-439--1m79WFsN0icYbcIVvWlwA-1; Tue, 07 Jul 2026 12:35:40 -0400
+X-MC-Unique: -1m79WFsN0icYbcIVvWlwA-1
+X-Mimecast-MFC-AGG-ID: -1m79WFsN0icYbcIVvWlwA_1783442140
+Received: by mail-vk1-f197.google.com with SMTP id 71dfb90a1353d-5bf5f9489c1so302960e0c.3
+        for <linux-clk@vger.kernel.org>; Tue, 07 Jul 2026 09:35:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=monstr-eu.20251104.gappssmtp.com; s=20251104; t=1783442074; x=1784046874; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=m4yMg62YAe6Tk0Zq+iKrI/zpLYixVD/ZixnriSqWY5c=;
-        b=odla9vgw6qcBhvarpe3TXwKagXjWpw28LyNO93mud5SjOGeb6fiTBkHlwtiqa/4q+v
-         K7+Z/UxsznOao9Qq/UAxeurn0DseNG/Aj5mei911j1NIDaNBKqrB8DsKWTDjRqMloC1V
-         wtkOtuUxmvVq59gbvH0+mTpHhrz+9pH9iRe6RFKEsg/XuRi/gW3mlr2fqrb9YUzbU4un
-         PPS27aXNx424aDJoIbR6Rpz3cD/1iueeZG20MbUkKjQpGa84K5nZU27Oae/PuEejh9a7
-         DtF0Uj5MH2xkx1MN+DBuYYk3DgIrE1wVNC422nOwueGC5eNsEf8p1Xpllr6x3AbN/snD
-         0d9Q==
+        d=redhat.com; s=google; t=1783442140; x=1784046940; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:content-type
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=hLXdUDx40KUl+OrKm3kL+rKhY0e13ruPLiiJQQF/qN4=;
+        b=HlmTZxuUJHUadjmctAtM8w7tMlyhluR8yZiEPO4tRUurvZDgQjWcAJ9i+GIQ4i9MJ5
+         qIIZqIarYFczxZVMNZ6S4HwNqBpEsthqRpi4g1h4GTeMxl4+Y/2f33rCVILH9QqWngJd
+         rH6Sv7m42R9cGHXdtqPKNxLQNzsH6xzHbP1KmImnhmB4wUVWg0gKkZ4QMveJ1eubIjrR
+         CQ6SPlJEHs1ed9jx91b2UAA39F8tkYmzU+iytEZXhcr47r/fNfz8S59XMlDJ82YVjf2l
+         KzefTNgw4TGOVsNlZ/5SQK/UVv6dYtiESb1Sd+g9xkPY+AhW6ibu6qSHqwgbrQwg3Oca
+         oYSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783442074; x=1784046874;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=m4yMg62YAe6Tk0Zq+iKrI/zpLYixVD/ZixnriSqWY5c=;
-        b=gnjkZmGXqkk3aZTk5MuN/ZhWJIgBUhO2zlgb7IJ+Ukm4XaXYtG4ERBWKpFrZcajcN9
-         v/+rxh2N+rBa8EEjR9cWJ9LKiJAOJmbtwxFJ+XDz/91hTgmXzZNwKc1u2932f3svNBkB
-         UImyYNz8albrAXYDVq2/RRfoGDsnOkxQ9OtCJzXR4zq6oeMvRQ8DT5jarpwgTcZpa3V2
-         gb8UV8Jd1RkDCFZ3zt63gfv4XqWAjP6hzKyKUGHB6CJkfcH/ZUma2OzNER+2lJlXlzhG
-         yxAXPr4D2wGTXvZZUqZhJ476Ka5oWZvp0C/h2ALHSp8KYbfL71nMxeZYe6EynKJ2/Hrk
-         K55g==
-X-Forwarded-Encrypted: i=1; AHgh+RqeX3wK+CgO7L9H6L6E7HJmQ8GLpFLbugbkilr3P6ElEhUb5p0YeViPS9Pd183zkKQ6aFWZiY6SZLY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhtiOAJmzIKxCfP4iYus2v8DBZ0GBIpnAAbdMnzmiPhAVN/LwC
-	ehjETy/0c9FeNvrInL6ExI1XrWoERqelckGvuHWw8CsSI52z63VpRROQKGAcMr9oLw==
-X-Gm-Gg: AfdE7cnN/fUCfjKyHfYbKQphP6I7N+1kwGA8t1lkE4dm+tF0tEMONBO5JqpPThtJSP/
-	icaVFaHiQz9OXD6uQPCr63LleJGsv60c1UC2CDU06JaEnAMuHnDHBWoE/IvnBQlUhDnvcsHy9Ir
-	Bx2Uixp7VOy572o2D+RER3+pH1QgPrsAcsiy2mNhSQ00Bn1tCWsNmR16dXt171OSg+rBi6xk3eG
-	jxRAPeYqWwONOft/VMfhcFWy8EE6aCOHPfORnXS7AGqNwoH2kL2FmT/qT7HKkkKmg/TUFlt+Z3o
-	z8BjW8J1PcEA6V2x/b6b/au/uZvib2KCDjyRVt6zk9yXEACkSay6+dIhAvqWyo5fbkuMDy9I4zN
-	n7rLCvd/OJdOobkX27xKtzZCEuHxSbZFMUV/tx3pXljtF2rZJRAjPC2BjyGqYN/P4Dma+F4opYB
-	wGh2t6tCK6gOEQJw8dsXAdqxXrpAk6G3GXIrUdOvMeoagGqA==
-X-Received: by 2002:aa7:d58b:0:b0:697:d4ee:ab97 with SMTP id 4fb4d7f45d1cf-69a8566812cmr2367431a12.12.1783442074173;
-        Tue, 07 Jul 2026 09:34:34 -0700 (PDT)
-Received: from [10.254.183.223] ([149.199.62.131])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-69a19d78a08sm6832401a12.18.2026.07.07.09.34.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Jul 2026 09:34:32 -0700 (PDT)
-Message-ID: <da06120d-0850-4e79-9e07-efe481c057ff@monstr.eu>
-Date: Tue, 7 Jul 2026 18:34:24 +0200
+        d=1e100.net; s=20251104; t=1783442140; x=1784046940;
+        h=user-agent:in-reply-to:content-disposition:content-type
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=hLXdUDx40KUl+OrKm3kL+rKhY0e13ruPLiiJQQF/qN4=;
+        b=hkuFEmPgUpPypEpilb3t5nxrpgrlTc47snL+RZDZooDOaGAdHJ0an5IPU3RZoQNhdu
+         HDQ+HQBqq2LNWqUcA6PuJFFVz8AZPOgFbGCqlXrsRJ6yknvTakIgZqEDmHi1Kuyjti0o
+         UbcGT/kybWhQ2dE7Mi1/O84BGVI9W6dBiYvP9C2KgjTrUGbyk2OkDpfT7ndkf/79iLJq
+         yAOlR//DeR+T65CGm3XyOmWfP2sfl2B0fhs6O9bC7z37jY08ntnYXMcR/ipuxtM+x3xu
+         bfXc4E7lWUd/ulsAtz+nfiK1ebGcQX1bWnn7tYRXEk3TV+hcMaX73d4WTXYkm1c6PAaj
+         0SkQ==
+X-Forwarded-Encrypted: i=1; AHgh+Rocnb3xLEOL7AkE/JgpIbjoEBJ+5FKtK+XmjtYRTJ/PyeNgnUhDyNcpMfxHdI8YrNOI9hJoC9oYKMM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0ULCRs4cUXP2+pCJa/q4TIrO487hq/9wO/2XObx+SLsL5LKR0
+	i2EraNxNQjjtZrn6m0L8W2CVoVEEDKuU1wsvS4byabhOACl2lE91TmgC6kQlMBvJhXPsqMVVAh8
+	1SAk6/hgROuClUNnsFsymkY5Fkzszyp3A+YsBI0H3DxEKugEYZV7n24wSVGYcbw==
+X-Gm-Gg: AfdE7ck0pVmkJOiCNq36KOeP04APw5tsTLQJeCONb8SNWwJgiJQrJGi3CNdtOrDAiEe
+	gXT6sf8lCtIrD5q6WroyXcbjzdjqGvCl5b3MtHEm18TFo5PxG87xqvDpklFohjW1FRwtzCRE1BN
+	cqz9t4KtJiDAfJhSxjTjuoz1KWj1jy7FWgrNsqUoR6mQlI8d4ZwhnUQwStvxQ7wDl1YECjCmMgi
+	mEdgSjU5G5IHJrYug98OSAxlafOedMVbdTeQ+MIdOZ5EQ7WffgsH+rfIuKLV4QsVYPkHMZU/cz8
+	APXYjZMzde2Rx83aBx87YxUYXQ4Cb0a4A8df4lStsfWxUN3RP/zrAit/6dkBwataSV2IGr6vljN
+	paZz1kh5s
+X-Received: by 2002:a05:6122:1c84:b0:5bd:b2d2:a1b9 with SMTP id 71dfb90a1353d-5be9076525emr3484142e0c.5.1783442139583;
+        Tue, 07 Jul 2026 09:35:39 -0700 (PDT)
+X-Received: by 2002:a05:6122:1c84:b0:5bd:b2d2:a1b9 with SMTP id 71dfb90a1353d-5be9076525emr3484104e0c.5.1783442138832;
+        Tue, 07 Jul 2026 09:35:38 -0700 (PDT)
+Received: from redhat.com ([2600:382:7726:2cb:ada8:1d9c:fd6a:977e])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-96983899f28sm7201271241.3.2026.07.07.09.35.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Jul 2026 09:35:38 -0700 (PDT)
+Date: Tue, 7 Jul 2026 12:35:34 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: joakim.zhang@cixtech.com
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, p.zabel@pengutronix.de,
+	cix-kernel-upstream@cixtech.com, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v8 2/4] clk: cix: add sky1 audss clock controller
+Message-ID: <ak0q1pWZREYsvJ4f@redhat.com>
+References: <20260630124413.1814379-1-joakim.zhang@cixtech.com>
+ <20260630124413.1814379-3-joakim.zhang@cixtech.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/5] dt-bindings: clock: Move xlnx,zynqmp-clk to its
- own schema
-To: Rob Herring <robh@kernel.org>, Michal Simek <michal.simek@amd.com>
-Cc: linux-kernel@vger.kernel.org, git@amd.com,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>, kishore Manne <nava.kishore.manne@amd.com>,
- "moderated list:ARM/ZYNQ ARCHITECTURE"
- <linux-arm-kernel@lists.infradead.org>,
- "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-References: <cover.1780499520.git.michal.simek@amd.com>
- <23d848e29176706548612c4a0751481d46176f11.1780499520.git.michal.simek@amd.com>
- <CAL_JsqLWwcRjzQs4DHV265w-ROzeW_OPVS0uP0Ew8p+-dYu+EA@mail.gmail.com>
-Content-Language: en-US
-From: Michal Simek <monstr@monstr.eu>
-In-Reply-To: <CAL_JsqLWwcRjzQs4DHV265w-ROzeW_OPVS0uP0Ew8p+-dYu+EA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260630124413.1814379-3-joakim.zhang@cixtech.com>
+User-Agent: Mutt/2.3.2 (2026-04-26)
 
+Hi Joakim,
 
+Thanks for the patch.
 
-On 7/7/26 17:55, Rob Herring wrote:
-> On Wed, Jun 3, 2026 at 10:12 AM Michal Simek <michal.simek@amd.com> wrote:
->>
->> The ZynqMP clock controller binding shares only #clock-cells with the
->> Versal bindings. Move it to a dedicated xlnx,zynqmp-clk.yaml schema.
->> Also remove "(Optional clock)" from clock description because it is visible
->> from schema itself.
->>
->> Suggested-by: Rob Herring <robh@kernel.org>
->> Signed-off-by: Michal Simek <michal.simek@amd.com>
->> ---
->>
->> Changes in v3:
->> - Cover change in zynqmp-firmware.yaml
->> - Move clock-cells to be the last in the example
->> - Remove comment around (Optional clock) which is obvious from schema
->>    itself
->>
->> Changes in v2:
->> - New patch in series
->> - Split zynqmp-clk from versal-clk
->>
->>   .../bindings/clock/xlnx,versal-clk.yaml       | 50 +-------------
->>   .../bindings/clock/xlnx,zynqmp-clk.yaml       | 68 +++++++++++++++++++
->>   .../firmware/xilinx/xlnx,zynqmp-firmware.yaml |  7 +-
->>   3 files changed, 76 insertions(+), 49 deletions(-)
->>   create mode 100644 Documentation/devicetree/bindings/clock/xlnx,zynqmp-clk.yaml
+On Tue, Jun 30, 2026 at 08:44:11PM +0800, joakim.zhang@cixtech.com wrote:
+> From: Joakim Zhang <joakim.zhang@cixtech.com>
 > 
-> This is now causing warnings in linux-next:
+> Add a platform driver for the Cix Sky1 AUDSS CRU. The driver maps
+> the CRU registers and registers mux, divider and gate clocks for
+> DSP, SRAM, HDA, DMAC, I2S, mailbox, watchdog and timer blocks.
 > 
-> /builds/robherring/linux-dt/Documentation/devicetree/bindings/clock/xlnx,versal-clk.example.dtb:
-> zynqmp-firmware (xlnx,zynqmp-firmware):
-> clock-controller:clock-names:0: 'pss_ref_clk' was expected
->          from schema $id:
-> http://devicetree.org/schemas/firmware/xilinx/xlnx,zynqmp-firmware.yaml
-> /builds/robherring/linux-dt/Documentation/devicetree/bindings/clock/xlnx,versal-clk.example.dtb:
-> zynqmp-firmware (xlnx,zynqmp-firmware):
-> clock-controller:clock-names:1: 'video_clk' was expected
->          from schema $id:
-> http://devicetree.org/schemas/firmware/xilinx/xlnx,zynqmp-firmware.yaml
-> /builds/robherring/linux-dt/Documentation/devicetree/bindings/clock/xlnx,versal-clk.example.dtb:
-> zynqmp-firmware (xlnx,zynqmp-firmware): clock-controller:clock-names:
-> ['ref', 'pl_alt_ref'] is too short
->          from schema $id:
-> http://devicetree.org/schemas/firmware/xilinx/xlnx,zynqmp-firmware.yaml
-> /builds/robherring/linux-dt/Documentation/devicetree/bindings/clock/xlnx,versal-clk.example.dtb:
-> zynqmp-firmware (xlnx,zynqmp-firmware): clock-controller:clocks:
-> [[4294967295], [4294967295]] is too short
->          from schema $id:
-> http://devicetree.org/schemas/firmware/xilinx/xlnx,zynqmp-firmware.yaml
-> /builds/robherring/linux-dt/Documentation/devicetree/bindings/clock/xlnx,versal-clk.example.dtb:
-> zynqmp-firmware (xlnx,zynqmp-firmware): clock-controller:compatible:0:
-> 'xlnx,zynqmp-clk' was expected
->          from schema $id:
-> http://devicetree.org/schemas/firmware/xilinx/xlnx,zynqmp-firmware.yaml
+> Four SoC-level audio reference clocks are enabled as inputs to the
+> internal clock tree. The driver releases the AUDSS NOC reset, enables
+> runtime PM and instantiates the auxiliary reset device.
+> 
+> Signed-off-by: Joakim Zhang <joakim.zhang@cixtech.com>
 
-I will look at it. Thanks for reporting it.
-Michal
+[snip]
 
+> +static struct clk_hw *sky1_audss_clk_register(struct device *dev,
+> +					      const char *name,
+> +					      const char * const *parent_names,
+> +					      int num_parents,
+> +					      struct regmap *regmap,
+> +					      const u32 *mux_table,
+> +					      struct muxdiv_cfg *mux_cfg,
+> +					      struct muxdiv_cfg *div_cfg,
+> +					      struct gate_cfg *gate_cfg,
+> +					      unsigned long flags,
+> +					      spinlock_t *lock)
+> +{
+> +	const struct clk_ops *sky1_mux_ops = NULL;
+> +	const struct clk_ops *sky1_div_ops = NULL;
+> +	const struct clk_ops *sky1_gate_ops = NULL;
+> +	struct clk_hw *hw = ERR_PTR(-ENOMEM);
+> +	struct sky1_clk_divider *sky1_div = NULL;
+> +	struct sky1_clk_gate *sky1_gate = NULL;
+> +	struct sky1_clk_mux *sky1_mux = NULL;
 
--- 
-Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
-w: www.monstr.eu p: +42-0-721842854
-Maintainer of Linux kernel - Xilinx Microblaze
-Maintainer of Linux kernel - Xilinx Zynq ARM and ZynqMP/Versal ARM64 SoCs
-U-Boot custodian - Xilinx Microblaze/Zynq/ZynqMP/Versal/Versal NET SoCs
-TF-A maintainer - Xilinx ZynqMP/Versal/Versal NET SoCs
+Reverse Christmas tree order please.
+
+> +
+> +	if (mux_cfg->offset >= 0) {
+> +		sky1_mux = devm_kzalloc(dev, sizeof(*sky1_mux), GFP_KERNEL);
+> +		if (!sky1_mux)
+> +			return ERR_PTR(-ENOMEM);
+> +
+> +		sky1_mux->mux.reg = NULL;
+> +		sky1_mux->mux.shift = mux_cfg->shift;
+> +		sky1_mux->mux.mask = BIT(mux_cfg->width) - 1;
+> +		sky1_mux->mux.flags = mux_cfg->flags;
+> +		sky1_mux->mux.table = mux_table;
+> +		sky1_mux->mux.lock = lock;
+> +		sky1_mux_ops = &sky1_audss_clk_mux_ops;
+> +		sky1_mux->regmap = regmap;
+> +		sky1_mux->offset = mux_cfg->offset;
+> +	}
+> +
+> +	if (div_cfg->offset >= 0) {
+> +		sky1_div = devm_kzalloc(dev, sizeof(*sky1_div), GFP_KERNEL);
+> +		if (!sky1_div)
+> +			return ERR_PTR(-ENOMEM);
+> +
+> +		sky1_div->div.reg = NULL;
+> +		sky1_div->div.shift = div_cfg->shift;
+> +		sky1_div->div.width = div_cfg->width;
+> +		sky1_div->div.flags = div_cfg->flags | CLK_DIVIDER_POWER_OF_TWO;
+> +		sky1_div->div.lock = lock;
+> +		sky1_div_ops = &sky1_audss_clk_divider_ops;
+> +		sky1_div->regmap = regmap;
+> +		sky1_div->offset = div_cfg->offset;
+> +	}
+> +
+> +	if (gate_cfg->offset >= 0) {
+> +		sky1_gate = devm_kzalloc(dev, sizeof(*sky1_gate), GFP_KERNEL);
+> +		if (!sky1_gate)
+> +			return ERR_PTR(-ENOMEM);
+> +
+> +		sky1_gate->gate.reg = NULL;
+> +		sky1_gate->gate.bit_idx = gate_cfg->shift;
+> +		sky1_gate->gate.flags = gate_cfg->flags;
+> +		sky1_gate->gate.lock = lock;
+> +		sky1_gate_ops = &sky1_audss_clk_gate_ops;
+> +		sky1_gate->regmap = regmap;
+> +		sky1_gate->offset = gate_cfg->offset;
+> +	}
+> +
+> +	hw = clk_hw_register_composite(dev, name, parent_names, num_parents,
+> +				       sky1_mux ? &sky1_mux->mux.hw : NULL, sky1_mux_ops,
+> +				       sky1_div ? &sky1_div->div.hw : NULL, sky1_div_ops,
+> +				       sky1_gate ? &sky1_gate->gate.hw : NULL, sky1_gate_ops,
+> +				       flags);
+
+Please use devm_clk_hw_register_composite_pdata() to make sure that
+everything is cleaned up in the expected order relative to the other
+devm_*() calls.
+
+Please go through the Sashiko feedback at 
+https://sashiko.dev/#/message/20260630125936.E186A1F000E9%40smtp.kernel.org
+and I'll do do a thorough review on the next version.
+
+Brian
 
