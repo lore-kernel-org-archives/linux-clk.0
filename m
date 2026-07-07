@@ -1,83 +1,83 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 413C22F6911
-	for <linux-clk@vger.kernel.org>; Tue,  7 Jul 2026 14:48:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1866930AABE
+	for <linux-clk@vger.kernel.org>; Tue,  7 Jul 2026 14:48:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783435684; cv=none; b=C2yyzNXuBM9Pl+wjI75TXkpmD9KGGk9EWlCG4g8+Q4zLE5b8dstUF403U3QR2CTEbpVpuUjQBsgCp9d+jhwTBaAfAAXnAab3k4YOcclWYd5vSkUtEX2UUlN4NwnkUSph+Gv9dm/E3HUJjD/vnBh6L9/EkNYv7m2tll+mg3Nvbm0=
+	t=1783435713; cv=none; b=MrKYUm9EkALB1QkSE0oShob2yblAlG0CuBP2gPRpWVUdtoKVsGJiAJ8Pj2YZ3cL5a9O3Kpb0yne9SIH9geUo16W69jKPrwUgfQH/9FW+qeWPV/2PjooA61MT0KOIMwAH+LN7uUpx2npi1MrumXfmoIfn4Rq7AXgzek0aIFFa4LY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783435684; c=relaxed/simple;
-	bh=S+Yern/ohFP1Pftuewb5E8aWkrFDh5l+IZDpzLWeifU=;
+	s=arc-20240116; t=1783435713; c=relaxed/simple;
+	bh=Lsg4j5eFWvMqIbEJyOW2qo0hHFj3gbtonhvxLCJ8LwA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ffPBMGmDgH6h543l+C4ytbpoox9bLStbkW2yhbXDwVnM/C+O+ss5/QXAix5QeWV8xhklnEFjp+E4jqw2e+Ep0l1UXRRjsgfYTIBOg+HVCwuNu0amP9v9yaB4qB5wfyVfLlX9AITm7bUozz7DkzMAjfgpDQB2L0B34UxRU6f74gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JsT4OA1c; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=bl4yvrjv; arc=none smtp.client-ip=170.10.129.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kqc8cpYC76k+wqeXelscbb+pYDDBAQN5P0v8GxcrWs7uLXWuy3Zq8eX8ICDiT2xEq+Viq/tpD6N6VRieZygaWYtfSc+9AQ4idLecMAqMNqrxBasqYOFpA2jqGop6rU76FHQ4GxHnYH7CSrKI/fgdieloH7QNO+dtfcPAiQw4Rrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VzD1POnF; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=k3aXMXrc; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JsT4OA1c";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="bl4yvrjv"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VzD1POnF";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="k3aXMXrc"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1783435682;
+	s=mimecast20190719; t=1783435711;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=7JqovvXzMlh5rauQf8957U0jSCHUoUql6bim5TQYvA0=;
-	b=JsT4OA1c9QGSZCwg6jyEepLh7f2k6gp20qTNFWSLAZA6UZcVO9uv6Zr4jgXJg8G6CITuJU
-	8WMZGjHwvQa3fKizhp+xVpriM+xdEJFxW4kv0VC/jW0CuxQsH3+3Ieyvq68jdoehbdOoeU
-	DmlRCGaI4vQ3QqM+0s5Q9iUQ2zs/I5w=
-Received: from mail-oa1-f70.google.com (mail-oa1-f70.google.com
- [209.85.160.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=Drq9IO910KDKJg6IREG7IQQKNNio5SvfjReuxq/0qk0=;
+	b=VzD1POnFW5OZi8ODFPNLGnViaYsF89+MagFD1VEbFRnm79+NNCvMvwCpduddj1s/wqeiHG
+	bGEZK3c2LBkKjTUsPZQiqUfNQvNu6rLtK6Y0nXsQZ+cEuvzHFOkxOhuCRssmcETU8Yqcud
+	uFTfeDi3n1BvDqrDPUpzRmD96L5hngM=
+Received: from mail-ot1-f72.google.com (mail-ot1-f72.google.com
+ [209.85.210.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-99-ym5mLYysPv-73Yt_pGNTBA-1; Tue, 07 Jul 2026 10:48:01 -0400
-X-MC-Unique: ym5mLYysPv-73Yt_pGNTBA-1
-X-Mimecast-MFC-AGG-ID: ym5mLYysPv-73Yt_pGNTBA_1783435680
-Received: by mail-oa1-f70.google.com with SMTP id 586e51a60fabf-44899f99756so5331916fac.2
-        for <linux-clk@vger.kernel.org>; Tue, 07 Jul 2026 07:48:01 -0700 (PDT)
+ us-mta-678-2Arf9V-kNPSXuwfWiZbRGA-1; Tue, 07 Jul 2026 10:48:29 -0400
+X-MC-Unique: 2Arf9V-kNPSXuwfWiZbRGA-1
+X-Mimecast-MFC-AGG-ID: 2Arf9V-kNPSXuwfWiZbRGA_1783435709
+Received: by mail-ot1-f72.google.com with SMTP id 46e09a7af769-7eb6a8c61deso3551269a34.3
+        for <linux-clk@vger.kernel.org>; Tue, 07 Jul 2026 07:48:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1783435680; x=1784040480; darn=vger.kernel.org;
+        d=redhat.com; s=google; t=1783435709; x=1784040509; darn=vger.kernel.org;
         h=user-agent:in-reply-to:content-disposition:content-type
          :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to:content-type;
-        bh=7JqovvXzMlh5rauQf8957U0jSCHUoUql6bim5TQYvA0=;
-        b=bl4yvrjv92eOgA7GRUTC13AoObBdIdGWII3agZYDaWAkG7RLbRpaDGYZ8TLwsnoI3T
-         fM2XggnOGJstBW020P2U6qiOdHbZCiMUaSpSRsS9BzGAa40Pc/lmudNNC5Se95UnuiPi
-         zxDeqo5Nv8a0CAGQVwUS+s8d93dlf2DuPH4TmS4SW/Vrlcu33Vs6NIsZRmCx/W9J2U5C
-         LKGQdvvuNFyqeIakSW8cWUI4YLE6Wf1Rdukb9sXZvl4wl15EHmnb6D8jKe71pRRuQSbz
-         EAkNuI9/rZgQsZTU0sAB8TfMuCvG4kyO/IToPq0++SKMLU2zJ0nSIMFFUQcNbg7ajCZf
-         o6FQ==
+        bh=Drq9IO910KDKJg6IREG7IQQKNNio5SvfjReuxq/0qk0=;
+        b=k3aXMXrcd/shAsPRWPpcdGae/nQjSwSmaydE+WDllEByadAYGT4Dy1Yg2E1umcVJrw
+         QQNYX120gHCGKheqHv0UIQNnSHbssuWk0Ie//3ckv6e+5W2IlxkpDoka3B11HCkTcjtZ
+         q/4vR4Xz5pb7aKoWcxIg8ozeZ754DbCm5mZlKb3zoYdiYBGauRsOL+QDDT/WMWBYSr1T
+         GuBwLJaXdytTq5x4rsf9psh4l82bHL2jZV2JXDTB5F9LRxM9RDuissuh4/Ta+4jdW431
+         ShkwGZgrEoSWDjrj0sUS9Nlz/G1Yokfg6/sc7TelhUbf8Qve8Rsbdw4CX1foe5srC291
+         uLMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783435680; x=1784040480;
+        d=1e100.net; s=20251104; t=1783435709; x=1784040509;
         h=user-agent:in-reply-to:content-disposition:content-type
          :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=7JqovvXzMlh5rauQf8957U0jSCHUoUql6bim5TQYvA0=;
-        b=kPY+hSk9zAc5UnwhpJpmC0UAyz8SznVYPnzuojhmqfLOIvT2Lt6xD+kAx+PuZ5tm3b
-         nHGYbfKHQJRZj+DJIFCCEslcMD1Cvuz60HCLsWhVQBe2sxjLi9KxHHyuTPrNxc7sajc5
-         +kHuA69yJf5q7NYqwUnHCFuLtNHAhW8W0PfbIXs0qGkV3MFWXAsxw+Ht7dEIP99O4gb7
-         nqDpui9KM6uDVDpFOgQ6+2qSgFuxJC47YQJoB77a4RSqGOlrfLA5s5JAeATKzcDka1lg
-         xPgiXltBqReoWJoennoa3XWVCbmY2l3+ds35lAj9kD/D/TbdttgasJD/DBTT7iaH/fag
-         cGKQ==
-X-Forwarded-Encrypted: i=1; AFNElJ8ClJic37t+SfujJQcXkIqIeLamGCsg4oFmGcM98z8KsLtSyHobY3SmWZh2CaidWGr//sLeqoNGA8c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyd7MgrPodDBcq4chJqiAq2SU/ZWoSIEenL/AquojUdF446ggc9
-	wbX76+h/IPI9KNYy3EldiBMqzspPKbFflF5rlxu+cTlFtE/aXKbcSdRzYXAZqVCzpsdlAd0EczH
-	9OeZyCPR6jW3i6ocDx5pq1gRLutni6ynJJxDzanOCZO0TG2G65EGs4+7Oxw7xxg==
-X-Gm-Gg: AfdE7clL/a+YCigN97UZokuLUaxMO+f8pUhvdDf3QcNHF4tV9vf2Qv8Y14WDP03B91b
-	R8lq8lPvpYCXxb2i5p8O0w3kIzbUOUVY2x0sPQlMLLIZ5/2+wN/53AwYY/KvfbF41o4TSpNL/2c
-	yMz0f5UKg2/3001J9CKp6vwYNsA0PHHwXoRteXtSG0VG2/3Z5OC2hKjNw1fA3vV5kPvqP7Fywvo
-	CK3jIIGoKVabCQwmZhe6oTFoxgXNVr5oLkC+veJ++BH7qF5Yv9FSscK/cFtTVFGyte90jHrvbPn
-	UZkbGCnBOGEA/zygW1j5+f1MiGwMCrzR2D5ccUSUw5prdb8kFFLMSwjmrgGon5wdn+1l6TzwlK9
-	jFQYn9eH0
-X-Received: by 2002:a05:6820:1f02:b0:6a0:e1d4:7fdd with SMTP id 006d021491bc7-6a3553de9bfmr3896706eaf.23.1783435680173;
-        Tue, 07 Jul 2026 07:48:00 -0700 (PDT)
-X-Received: by 2002:a05:6820:1f02:b0:6a0:e1d4:7fdd with SMTP id 006d021491bc7-6a3553de9bfmr3896690eaf.23.1783435679782;
-        Tue, 07 Jul 2026 07:47:59 -0700 (PDT)
+        bh=Drq9IO910KDKJg6IREG7IQQKNNio5SvfjReuxq/0qk0=;
+        b=pEDdhZJvO55Rxr9PywvSvZcVrcGLxYP8tRTRiJH+9HsBI9P/sQ3JAT6bkZO6iatuOx
+         vlj0ucvhdQzkXzI6Yr4vd2j1gDBje5CgV+r8hsJaWXH0Ad+dw1QBt3zsNehSKDU8LfyX
+         IkgGWCi42b0GqdBmrNVo22fMOQOYAZQL80KRBu3BuzgMnii0O2F2rtr7eZhY5dqRUNeu
+         m1ixTryUGgj5o7fJymGOepOBeYL4pU2DCkwvQknnY+1Tv41tWPXFlTpMlMwuGghgZk0e
+         9Ns/tgkPbG1xXSBp9qZJyMo5fri/34XKjYJ94dsfTN1XumpYbKwpIDZTHAbGRQImfT/r
+         hl1Q==
+X-Forwarded-Encrypted: i=1; AFNElJ8hHkJL7m3Kjv67vy5wO221WNN/gUsMRyh/OTDkDta+BYR8OF4eNuiIz6uLN2WEcATdzgsQW7A6rAA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHhQmLWvD7YfkwZFbsMz5IFdjhwkD8iEfUlUJndmWOw7JzDfHW
+	AGAIbawUr+N1RdUlLwQ42dkEyI42ClCk1fXWjkLyXSDUUC+Qu7YBCsI4KQ3VLivlN93u0YUaFaP
+	hgJWA2m+PF/PzS9XDWi141MmfoRCQzXzmYc9BS/9pE2HvS3crT756NusUwtkiRQ==
+X-Gm-Gg: AfdE7clhkmi00xwbk2ZFi1QSIvtdOi7EhXb2YEwgBP0ER6PJyQZ/wQ+4eSYrQMp/68L
+	nTGRVHBxF8HWqzqTW63ZjrCTP8XOzFxEVJKIeD8zONnDV6g6iM4CfrP/R6aoTegcavSywwOWEyf
+	NI9SNLsRzVUrbY4C5fPk0C48tNVLL7Zkwgox85VJPBy9JchWsjZ02/EK2V5MY3N0bfdSSDwEO7a
+	Y/KZ58QSkfXpmfqV7sRuYHoKbBaz7BtYNjnctoXW3XVIEtnezYJ3ktQEo+T2zchdzUNXu+jqrI1
+	YNDbh+1xhrTn5nSuTqgVi57ZuX8aYLQYVETFxUZJcj8a2n0L1gxHmqnrgUUNuFIRFIYJo/qL7xH
+	9B8fhw9ay
+X-Received: by 2002:a05:6830:660a:b0:7e9:f0e6:fd55 with SMTP id 46e09a7af769-7ebb239d6a4mr3693043a34.30.1783435708885;
+        Tue, 07 Jul 2026 07:48:28 -0700 (PDT)
+X-Received: by 2002:a05:6830:660a:b0:7e9:f0e6:fd55 with SMTP id 46e09a7af769-7ebb239d6a4mr3693021a34.30.1783435708164;
+        Tue, 07 Jul 2026 07:48:28 -0700 (PDT)
 Received: from redhat.com ([2600:382:850a:55b4:731e:b0d4:e0cc:410])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-6a3103e064esm10772021eaf.14.2026.07.07.07.47.57
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7eb542936e6sm14104096a34.5.2026.07.07.07.48.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Jul 2026 07:47:59 -0700 (PDT)
-Date: Tue, 7 Jul 2026 10:47:56 -0400
+        Tue, 07 Jul 2026 07:48:27 -0700 (PDT)
+Date: Tue, 7 Jul 2026 10:48:24 -0400
 From: Brian Masney <bmasney@redhat.com>
 To: Akari Tsuyukusa <akkun11.open@gmail.com>
 Cc: Michael Turquette <mturquette@baylibre.com>,
@@ -90,11 +90,11 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
 	"moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>,
 	stable@vger.kernel.org, Chen-Yu Tsai <wenst@chromium.org>,
 	Miles Chen <miles.chen@mediatek.com>
-Subject: Re: [PATCH v2 4/6] clk: mediatek: mt8135: fix memory leak on module
+Subject: Re: [PATCH v2 5/6] clk: mediatek: mt8173: fix memory leak on module
  removal
-Message-ID: <ak0RnIsPqT8fQ7c1@redhat.com>
+Message-ID: <ak0RuP-Gy29fpPVi@redhat.com>
 References: <20260707074839.240676-1-akkun11.open@gmail.com>
- <20260707074839.240676-5-akkun11.open@gmail.com>
+ <20260707074839.240676-6-akkun11.open@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -103,20 +103,20 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260707074839.240676-5-akkun11.open@gmail.com>
+In-Reply-To: <20260707074839.240676-6-akkun11.open@gmail.com>
 User-Agent: Mutt/2.3.2 (2026-04-26)
 
-On Tue, Jul 07, 2026 at 04:48:33PM +0900, Akari Tsuyukusa wrote:
-> clk_mt8135_apmixed_probe() in clk-mt8135-apmixedsys.c does not call
-> platform_set_drvdata(), but clk_mt8135_apmixed_remove() callback calls
-> platform_get_drvdata().
+On Tue, Jul 07, 2026 at 04:48:34PM +0900, Akari Tsuyukusa wrote:
+> clk-mt8173-apmixedsys.c and clk-mt8173-infracfg.c do not call
+> platform_set_drvdata() during their driver probe callback,
+> but their remove callback calls platform_get_drvdata().
 > This results in platform_get_drvdata() returning NULL,
 > which leads to calling kfree(NULL) in mtk_free_clk_data(NULL).
 > This leaves clk_data unreleased, causing a memory leak.
 > 
 > Fix this by calling platform_set_drvdata() during probe.
 > 
-> Fixes: 54b7026f011e ("clk: mediatek: mt8135-apmixedsys: Convert to platform_driver and module")
+> Fixes: 4c02c9af3cb9 ("clk: mediatek: mt8173: Break down clock drivers and allow module build")
 > Cc: stable@vger.kernel.org
 > Signed-off-by: Akari Tsuyukusa <akkun11.open@gmail.com>
 
