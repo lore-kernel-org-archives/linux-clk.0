@@ -1,60 +1,52 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6E4B37266D;
-	Tue,  7 Jul 2026 03:22:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28138352005;
+	Tue,  7 Jul 2026 03:22:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783394530; cv=none; b=MbATW9+i0lD8MxJeY0EbNoeGKN0xme0gYpPMsgn2hPu+6fSD2QDAVs+Vqwdgx+aLQGN9PwAxzISECb8yyJnyIn4ZXYpJcfqD8YSBO8z3+aQeA3G+6KUi/6zy0Sx+guCLBI5VQKuoQtdb67HEwRD4QHRBjrTLARW5PTsokUvO3m8=
+	t=1783394531; cv=none; b=AFN0OVbofAUmU44tRaUCVjiL2vhCpfQ1wUPgGv/pp6lCjbJhgYpUALLBpTfG8xMLdXe/cWQRsb2kfk8jH7BY9B6ptsZiQWbpuUxY56fo3rpPBLbododyIL7hcapYO0gF4EJrAKYwjbP6U5GPLtj7nYmei46XCL1veEIoVfjnb1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783394530; c=relaxed/simple;
-	bh=uifYgKU3HWleDJ1V51l/6/3x0LKaVLQJVdYJHTT2Nk8=;
+	s=arc-20240116; t=1783394531; c=relaxed/simple;
+	bh=vYTupzQSvgPWt8PcUwfJO6cbQYYph/+J9IOnCW5TIGI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RHHqrIhvUCat7whvIXYwexeG+0GzRhCVRv0rSq/DFxXwwpGdbVdD3UaGNOIBfSmfQ/yBvZmLSbOCYqkT4xrnq/L4D7kDX/g6ZuIMGCzF7tVYZv5yg4GHVMSBvQqxwkKVTVt4UL34B3j919IPOwxSbbzrABFej78qQuVwk1NFa74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GkGBTtwg; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version:Content-Type; b=LbP0yQ0R0SXI1buC3pAk1A70NDcSVKjEAr4K6Co3bHsXoy8yH8Jy4TZL0a6OMsAIono/+HsU7pb3z6zUTVNkeNfEoeoBk/SEfl8/7k81EKnnFHlt/+HZI/pQrK0nmtyUe9Nuf/p8JMDC/lyjyDziRW+1yG8KyFRCBhdd2Du2r4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZZSLyDEQ; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GkGBTtwg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3B901F00A3A;
-	Tue,  7 Jul 2026 03:21:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZZSLyDEQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AF561F00ADF;
+	Tue,  7 Jul 2026 03:22:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783394520;
-	bh=Pp3QGx4MI0wMm1/tu5AIhwHgnRl0wO+oCUAfozdxYPU=;
+	s=k20260515; t=1783394528;
+	bh=5gWzG0+HWgVZbxjFj069WpF26GbvtN+pMH1FDKn1SH8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=GkGBTtwg3fkvelnnB9ePsx319TKYpkyY120ukz7J9mXwDL3F2SzlhOQXOykAPNXSt
-	 T9hTCoVaRJNePFrs/NDXVp9wnzqatoW7OMOdbknTQe4P2M33cfbuNxRW1tDwUvEfYl
-	 nBCh0bG1DBfJOf5Xg7RmIxDkxQUIeZnxvrZQsCAOCC2QNoSqb067N2oG8Yl7LQIwer
-	 usfq7vYi3tzceYNHbKDJblKy4Z9Q7q2t3rW9isJVflPWzWU90TN5g6OHh4KHeiQe1O
-	 FB814nrxxka8MCU/ItGGi5evHQqyZLk7NJMLo5TpplcLD+OcCau2vm+UB1jehnriqH
-	 5OBWbiPk5xgew==
+	b=ZZSLyDEQxyES23hQV7wA7vxillaNiRPQZvw1xCgJKDZfvFt9HKdrmACZa4DvU49nE
+	 yRWTPFDn0LRuwrbJpEJr0foEPod7oqwW7kzbeLKT3mMbt9RFFXYYegQLhmHBYoaDSZ
+	 2+EfhmeJohHmXvfEWYGyEMrW4lA1Cuwv9Fkir3uZu1oQay8nLEjpFEP2wjpD84syzq
+	 U5GMOn2CxDswthAlhAV8LWn3tbxDyvbSWzU8m752isj65zx8QFGpDRLYRnfNakgdGh
+	 cA4EG8ajt9Ad9fGNDPoTC3vyOcDjt9Kpm1O4roOp2tPOkd4RYuVskPfcMm7IbAPFAX
+	 9uMY/Kd9qSTmw==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Konrad Dybcio <konradybcio@kernel.org>,
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney@redhat.com>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Lee Jones <lee@kernel.org>,
-	Pavel Machek <pavel@kernel.org>,
-	Sean Young <sean@mess.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Martin Botka <martin.botka@somainline.org>,
-	Biswapriyo Nath <nathbappai@gmail.com>
+	Taniya Das <taniya.das@oss.qualcomm.com>,
+	Jagadeesh Kona <quic_jkona@quicinc.com>,
+	Lin Li <zhuolin.li@oss.qualcomm.com>
 Cc: linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-leds@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	~postmarketos/upstreaming@lists.sr.ht,
-	phone-devel@vger.kernel.org,
-	kernel test robot <lkp@intel.com>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Subject: Re: (subset) [PATCH v3 0/7] Add vibrator, IR transmitter and USB-C handling in xiaomi-ginkgo
-Date: Mon,  6 Jul 2026 22:21:33 -0500
-Message-ID: <178339449904.1938770.3052050232768803324.b4-ty@kernel.org>
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH 0/2] clk: qcom: Add video clock controller support for Hawi
+Date: Mon,  6 Jul 2026 22:21:41 -0500
+Message-ID: <178339449928.1938770.5009440185841702031.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260330-ginkgo-add-usb-ir-vib-v3-0-c4b778b0d7f8@gmail.com>
-References: <20260330-ginkgo-add-usb-ir-vib-v3-0-c4b778b0d7f8@gmail.com>
+In-Reply-To: <20260702-hawi-videocc-v1-0-6c1e640b0954@oss.qualcomm.com>
+References: <20260702-hawi-videocc-v1-0-6c1e640b0954@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -65,29 +57,18 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Mon, 30 Mar 2026 10:13:47 +0000, Biswapriyo Nath wrote:
-> This patch series add support for various components in Xiaomi Redmi
-> Note 8.
+On Thu, 02 Jul 2026 10:08:06 -0700, Lin Li wrote:
+> This series adds support for the video clock controller (videocc)
+> required by the upcoming Qualcomm Hawi SoC.
 > 
-> Most notably:
-> - IR transmitter
-> - USB-C OTG
-> - Vibrator
 > 
-> [...]
 
 Applied, thanks!
 
-[1/7] arm64: dts: qcom: sm6125: Use 64 bit addressing
-      commit: 88f8e2ca76ee9999c1f21d020362e6588a6d5ef5
-[3/7] arm64: dts: qcom: sm6125-xiaomi-ginkgo: Enable vibrator
-      commit: 222f161a873f198301497f22ae0dd089f30e9b75
-[4/7] arm64: dts: qcom: sm6125: Enable USB-C port handling
-      commit: 3df39679bfcb46a3475b0e8d0b31cfcb07def9c4
-[5/7] arm64: dts: qcom: sm6125-xiaomi-ginkgo: Add PMI632 Type-C property
-      commit: c1da9374c3e08c6eb06106256cac3875fb5c467f
-[7/7] arm64: dts: qcom: sm6125-xiaomi-ginkgo: Add IR transmitter
-      commit: 474dedd7f653be26ce5385f46ff2b7a3282a359f
+[1/2] dt-bindings: clock: qcom: Add Hawi video clock controller
+      commit: d9ef4ed45866531d37a2e9c62dc795cd678b5b0c
+[2/2] clk: qcom: Add support for VideoCC driver for Hawi
+      commit: edbd5d323183ca15676fac30344ec0713b98dc46
 
 Best regards,
 -- 
