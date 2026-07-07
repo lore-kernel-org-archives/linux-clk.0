@@ -1,75 +1,79 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE30C23BD1D;
-	Tue,  7 Jul 2026 09:41:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D55703E1D16;
+	Tue,  7 Jul 2026 10:24:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783417288; cv=none; b=CYGZd7R3dCk8X5RpFilUCzOcRvYfJOE7FRWFEMhBcAJFJMMZSSL/h0FvP2RB4w5wA5ROU70e9dHugmWgo5b+YI3QUuuCn1erupohenhosdZlpeI6DxKIVAoMXPIA421ANJCk19J3+GOpYGZ1ZnrvZsImreHR0rpP7xSAt7gs0uU=
+	t=1783419867; cv=none; b=eds2G0iQf/cUylGVZfKWxGdg0RU22/60qG1F8pub75CZqD9mJQcRFoT8vGUepXTSuInD83p/lAdwOadp+VsRFbY9C5FCpLl/bfP6UHvfcDDRS+BuT3vDNhAstvhvZzYtOaUJyoBbN89/d3AGOjaJ7zkeUAICytP3T9isOh/NhtE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783417288; c=relaxed/simple;
-	bh=aaJkouc0j0BlKCAS1RY90DSMHg5PkEs0Uv/6/9S/ZPk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MPXMHpikae6TkNLlaf0uUiINRWIfPHXTkvQCuUrFy2GDQ06D6HjIXMQw7rEj3OAdpLfBJzUnSveIAQDpvZVdNe8ryyJZvbG7APSxIMkZsD56slKA5M/EJHCLxcKBQ4gPyMmVNxlREjDyWkp+zFrCjxGmLvqhV9K/bthII8NFozY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=D5jb2t6i; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="D5jb2t6i"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=u2xB54k8wnP3j+i/BezsfM/iJmqJZPrpAP/RKUP1HHU=; b=D5jb2t6iILMTxhDn9DydV+DJS8
-	lvx3Kc8zQac0BqKhR7encW4rHqpeP2GYBZ4IsrICbfw5rO1HTI3HYm0LpXnsFNZcejbTHueJ+jk1K
-	g+EEwqNJ922YrexciPdtRsgj/ncWzAzJO3tEJFJ0Qr+99UyQdmZwnRVZq9zy8muujX1HABhpCbUXn
-	K0+tOP5IAWN21Cpxkn7HNhRdFbXlZTI8ccZk0o0oAhU1DlHCc91MaYV/oImKPYBCi2+HMRhdIrwDQ
-	FFvXckyt1qsOswrJrGEsLTRyjwXElvIZ0jh1QveLjwqkv0GMVR47Ex8t9kdr7F2edsUx2tn9IvVZ8
-	BbRc1GeQ==;
-From: Heiko Stuebner <heiko@sntech.de>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: mturquette@baylibre.com,
+	s=arc-20240116; t=1783419867; c=relaxed/simple;
+	bh=rfQA24pNBdai4SXVx7SQMIib5Yam9+s344kX1w9crpU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JggoGJdM8rwOFU9naWxuRFgGtwDJ4DBS7GLofk9GVmFYAQYMT1kB7h7GcYzAje7K4lczd7wchCX81zAWZElr4DdtIwiOrC5nEWs+4bw042bHXwozhikKrdJ8Na3q31r8F0dQPtm3sQPGtJlw7TVWU2u/3mEdm1u9O2CTg5RE2tE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A6431F000E9;
+	Tue,  7 Jul 2026 10:24:21 +0000 (UTC)
+From: Claudiu Beznea <claudiu.beznea+renesas@tuxon.dev>
+To: mkl@pengutronix.de,
+	mailhol@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	geert+renesas@glider.be,
+	magnus.damm@gmail.com,
+	mturquette@baylibre.com,
 	sboyd@kernel.org,
-	zhangqing@rock-chips.com,
-	sebastian.reichel@collabora.com,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+	bmasney@redhat.com,
+	biju.das.jz@bp.renesas.com,
+	tu.nguyen.xg@renesas.com,
+	fabrizio.castro.jz@renesas.com
+Cc: claudiu.beznea@tuxon.dev,
+	linux-can@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	quentin.schulz@cherry.de,
-	andyshrk@163.com,
-	macromorgan@hotmail.com
-Subject: Re: [PATCH v2 0/2] Bring dclk_vop2 in line with other VPs on RK3588
-Date: Tue,  7 Jul 2026 11:41:06 +0200
-Message-ID: <178341726130.481833.2104125095372172924.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260304121426.1184680-1-heiko@sntech.de>
-References: <20260304121426.1184680-1-heiko@sntech.de>
+	linux-clk@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 0/8] can: rcar_canfd: Add support for Renesas RZ/G3S
+Date: Tue,  7 Jul 2026 13:24:10 +0300
+Message-ID: <20260707102418.1646159-1-claudiu.beznea+renesas@tuxon.dev>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-On Wed, 04 Mar 2026 13:14:24 +0100, Heiko Stuebner wrote:
-> The dclk for VP2 behaves differently and its use can currently break
-> other peripherals, so fix that and additionally allow it to drive
-> the same outputs.
-> 
-> I've kept Quentin's Tested-by from v1, as the overall change is the same
-> but did not transfer his Reviewed-by, as the series-structure changed.
-> 
-> [...]
+Hi,
 
-Applied, thanks!
+Series adds CAN support for the Renesas RZ/G3S SoC. Along with it a typo
+fix patch was added on the CAN driver.
 
-[1/2] clk: rockchip: rk3588: Don't change PLL rates when setting dclk_vop2_src
-      commit: 13b10571cc353448275365ede1a5396d20dfe839
-[2/2] clk: rockchip: rk3588: Allow VP2 the same sourcing options as other VPs
-      commit: 778dd30867ad783b6903b0aa24a0ab5e97c2dff6
+Thank you,
+Claudiu
 
-Best regards,
+Claudiu Beznea (8):
+  clk: r9a08g045-cpg: Add clocks and resets for CAN-FD
+  dt-bindings: can: renesas,rcar-canfd: Document RZ/G3S SoC
+  can: rcar_canfd: Fix typos in macro names
+  can: rcar_canfd: Allow the CAN FD clock to be sourced from fck
+  can: rcar_canfd: Do not set registers selecting the CAN mode
+  can: rcar_canfd: Add support for Renesas RZ/G3S
+  arm64: dts: renesas: r9a08g045: Add CAN-FD node
+  arm64: dts: renesas: rzg3s-smarc: Enable CAN-FD
+
+ .../bindings/net/can/renesas,rcar-canfd.yaml  | 17 +++++-
+ arch/arm64/boot/dts/renesas/r9a08g045.dtsi    | 39 +++++++++++++
+ .../boot/dts/renesas/rzg3s-smarc-switches.h   | 12 ++++
+ arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi  | 46 +++++++++++++++
+ drivers/clk/renesas/r9a08g045-cpg.c           | 10 ++++
+ drivers/net/can/rcar/rcar_canfd.c             | 56 ++++++++++++++++---
+ 6 files changed, 170 insertions(+), 10 deletions(-)
+
 -- 
-Heiko Stuebner <heiko@sntech.de>
+2.43.0
+
