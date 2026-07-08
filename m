@@ -1,151 +1,209 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012031.outbound.protection.outlook.com [40.107.209.31])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECDBD23ABA7
-	for <linux-clk@vger.kernel.org>; Wed,  8 Jul 2026 13:03:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783515795; cv=none; b=X9V81TSQJnMcmzVSEqz8dOhD1m6rKFNtnCsgMHs6Xw0VBu0zDJsHamfoMbajm0BiklrWrDdKKJnryvarKtCkLTQvnwVmyNIh5CgVAQbPUn+rUFfY81CrXUhML67HVPmPcN3tIIodUektQdtJvAqnCItbjiuCwKAFNXvQfprbobY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783515795; c=relaxed/simple;
-	bh=WdAXu2wQhnSrNal0fclWdl3vSbNYAndpe0G+kbfr2XA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nYGycPeCrmJTiwNk0J7iaGeIVJ5+d1D5P9YNQogM1MFBK9dlvFilc0JiIP6FmKupBhw0OJN5cCCzOAEInhWGAo2YaHdY9IutauSb3EAzcSSzePiU7aEQ3qpp5MwF2DYOatkh3UCVhybCWzM0C0e6MCiZ/llrjMIyCrx2wdHg//Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=NokrrRbo; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=gfqYf/AH; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CECC21ABB1;
+	Wed,  8 Jul 2026 13:12:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.31
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1783516360; cv=fail; b=msfIKK0Bba/VpuSf5yt1nfQUaVhe8yLUE3xOO8VdXGIC54AHTXAGbxyKXB9nksZgA/E3BDEYwXgXcgPr33SmzgDtdcue/qqWlJsAs0+JRPSjBkS5FnYDc3QJFqFrgx78c1cmmkPY4JZvB6H6U5zXZPMwWBKwNxRCWLDalpVM22Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1783516360; c=relaxed/simple;
+	bh=ttt81hGq31K4yB3DRz9+oIPTN87gFcDi8F+Cxz2kVOo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RdnFvE1m03yOd4KjD3w2BekEUmtiBZPlZG6MUwytCXmkcmYdotxZwPPrQVQFioEcRe0F6I/0P1Z1eDZslk5+erb6fG1bL0Yr4BlWcpmvJ9qqGbzvyLj8rCD73651OKHVrBqDZBAsYYJiBq7FiiDrp0YUn/5zaO6fh6+5zy+tnjk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=NArRMtaC; arc=fail smtp.client-ip=40.107.209.31
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="NokrrRbo";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="gfqYf/AH"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 668C3RUw2617304
-	for <linux-clk@vger.kernel.org>; Wed, 8 Jul 2026 13:03:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	4o2s6UhCAjs6OGP5q7L53GHO8Qbvx6uRsdzC9P4HJKI=; b=NokrrRboT7RTHzyS
-	x4K6XgaFT/nO5k38Xa09rFmoVor9vKZIi7qmnRlqP2d11ThnH0pdBItRuseWlEUu
-	vMRTOXG2CyiWQtu1i3jJh7llsTdKR3cOCrd+GfH9mP/8Dku7sv0P3W1kCIcAmW1q
-	BNMc7Q1vAlFUf3Lc1j7jRIEDwq7APpArJni6cUbQrspcr+Y6ZeHAQRxi/DSQ3s00
-	ZcMSwso3eJrAYeCodkxOjL15ubgwPpNQY13EgIOlPkHgW62qqVf+0+tkT4zB/GV+
-	g33WtJChJzXg21pvgicPbuCKLglZsEtjBVJELcMRdbwFPVg/qK2URFjSU1gWxd64
-	M7WtIw==
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4f9gqw9krg-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Wed, 08 Jul 2026 13:03:13 +0000 (GMT)
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2c6a72d672aso1720615ad.1
-        for <linux-clk@vger.kernel.org>; Wed, 08 Jul 2026 06:03:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1783515792; x=1784120592; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=4o2s6UhCAjs6OGP5q7L53GHO8Qbvx6uRsdzC9P4HJKI=;
-        b=gfqYf/AHTRZ61BqCiEAaDtbsRy1AM+QDd6zb1QIinhHsn+Hg3oNEXiF+9cg0QkHnOl
-         m5xTcvypDjuu5A+ZAKO+NlxBNkKlibHXGfjn1IjdmRF8+13BzM+CLS1AyhipFNTadGob
-         7+37J3TrKac8UiDu4fbK06P3rAj3bH7ZuxwHOZ9PQE2agmF1vqpZ5eX/M3Yhc960Xk+4
-         Wze4weOsf1I7B6VumdEG9qVYi3l93v8VjHvykxjpZbHhkbc8zyEa3ptLYkN3KJKl0cgA
-         koW7nIw1WYAosn4fSwns5+UA1VHV6jhyu01K/4xPCEO3AfWglq/r+M/g7LvHIaq3+z1E
-         38HA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783515792; x=1784120592;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=4o2s6UhCAjs6OGP5q7L53GHO8Qbvx6uRsdzC9P4HJKI=;
-        b=cIVJfyqc936SegAgVP2FSQIUBGb6JfIVPR36MJ3+NXfYGRO5EYvnjpMyHl9ug2hKRB
-         E3El9wuctXHaGFwedbiuV/ISryD3iYj73Dwz2hjDDuegf7Ax3NxP/fUV6Cso1kviq1Ez
-         EpRKtV8UDglhTxtwBQHbJPiDVm27rg4NaAnT6tJYLGxQICcgn6uea/GY6Wkn5vR2xENt
-         br61HquYYbaMok24W4cSOd3iQghFD6vOL/Z4Bt84OSvx15MqCLsHwYXeOUy3u9Uexdsg
-         iPbLo6kPoGZpEAVxhbemdXxZ7zjart0m48y0F6OJJlh7nj4noSDeEyP7sxBd/LIUp3j4
-         iV+Q==
-X-Forwarded-Encrypted: i=1; AHgh+RpfW+9beXP1Ng9NwIV6DkTSb3K+av+KsrG8aFA/hwdVwk9wZnwOeWG0TB5xFsdNranWuLqHNfBd/7o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzeheodbmsGyZkyhlmyhQSr6aao0hLOZclonFZpVqx8p+E0OS1+
-	IN+LvdTijVX+M5S/EGre87bYYQgEeAoGOCqtvx0daS9if9dJEnUX9Am1k1e54nS+tC8TtLmk2v5
-	tEwOuC6R/nnRlVwybmkdfzC6xo8xxF6lltXtsX8FA8YuA6vm8PpMN15GJs8ToIDQ=
-X-Gm-Gg: AfdE7ck9+u+yJNGrvD52wJ4DoWMPODTe0eHVH4IqxF/2OZPKxv6OUb0GjIgb5LdoQr9
-	CN2T/zc/aoYJT99PVqGbJUf1rQlY4ROzoLHa8SdrgXXTcr4kPksM1veZQO9+rb8EtG/gsWrAJyg
-	KpwMcnK41hmLjLwkvG6UAvtu17CAUUCc1R7OEO6059rL4wt+/P+KGPs9HUwWPuUMo38DMy1ebic
-	2UBKk4I5RpIm0nmVL5QXj2BP+LoI+BZQSdlYTxZ3yU6lPSDeg7Z/7huq6YeYkO8l8wDx+cUYYoX
-	w0z+Yc+OVi6rZ3+LFK+uBzoD5cgk7mTEkh4OKBNNP/EnpBFOnQlFCnsZ6NFu3AqXs9wwRhszaD1
-	QrODWfWjwkVDrutCstwqYft2roZA4ctTN3U4=
-X-Received: by 2002:a17:902:e747:b0:2c9:e846:a582 with SMTP id d9443c01a7336-2ccea276712mr21921355ad.0.1783515792331;
-        Wed, 08 Jul 2026 06:03:12 -0700 (PDT)
-X-Received: by 2002:a17:902:e747:b0:2c9:e846:a582 with SMTP id d9443c01a7336-2ccea276712mr21920945ad.0.1783515791798;
-        Wed, 08 Jul 2026 06:03:11 -0700 (PDT)
-Received: from [192.168.120.193] ([178.235.128.140])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c15d3859f69sm89230266b.27.2026.07.08.06.03.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Jul 2026 06:03:10 -0700 (PDT)
-Message-ID: <6d2f66e4-502c-4f69-a57b-0cd779cd3501@oss.qualcomm.com>
-Date: Wed, 8 Jul 2026 15:03:08 +0200
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="NArRMtaC"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=dQu36hKniY0uS4pcrrPH2xL/HJ5KO2hOxlyJODL8OtTz64qPP4EfIN14t3RKtvnDS6jPytDECKvJFQTeKaViOYxshHy0LnJYwyw1gAht5c3cbFqrWtNMnd33LGqNPV4tvrxPsQhCkG4+q45DVtUVQkdyimbu96XrOOZLjtHn8HwxYDNULXtH61pRbNLbcRPVmh5t5YfIefEyOIdJ4wjTKwNOtnmTw3fm3oFpuH7z3N8NbFNjzT9/fckReuRLjVR15wNB8MIAbpSFmq+zMUP7GHQznP/IhEiBGSIOgPUnq+1LREIBQt9TLrhjb5CRq0bwoBfWXiZqHVz6Fs4CmFeiVA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tx3fDhePUW7WG/m3/hWAMlBjy884Iu5JArauq/ZJsyg=;
+ b=JwEuly1H1paSz4hwav34AVoDbmRvOjaWTaPaKHXwwSSNS1I86qKSIMExUPC3URfCPdHPcYBpuB2lB8UHhWZ8SVyr4hJCETk9w4soeyhigkv1NV2bK7H2dYVU2Tye7XcbnZGuaRfiXJiknwgEQZyw+gBPSf0Tt60WyJtFgafSORb3V3RkJOCDTUe3rp7hClzLpv4asOOAGT0BA3xlyTTTTxH9z6Kw7hPyEI8ebIQjGAqKPSldVN7ljdGQ49Jxs5BFUEENLcHV+my/HHv1hk+D81L2zIkC5/duCMZNyxOIWf8IZTLF8vXi7m2B2JXUbAG2Y7coAJDNYgeSE24BrZEV4Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tx3fDhePUW7WG/m3/hWAMlBjy884Iu5JArauq/ZJsyg=;
+ b=NArRMtaCRIo5LIhJWEq7LZo+lwCfHZX4xmOiv4IGGKDxcjzdwaCbKMR8bkz4rN3XrFAfReoiEUn2Gk2gm2h+InGq9LJgWsSg9i3FB+BJKTumnLwTEm9mizkkMMDnK3lgd9mA8dR/85gJyJXsF3U9pIZ2ZxbzRGQq23UY3fXb2ww=
+Received: from BN0PR04CA0025.namprd04.prod.outlook.com (2603:10b6:408:ee::30)
+ by SAVPR12MB999143.namprd12.prod.outlook.com (2603:10b6:806:4e5::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.181.8; Wed, 8 Jul 2026
+ 13:12:35 +0000
+Received: from BN2PEPF00004FBA.namprd04.prod.outlook.com
+ (2603:10b6:408:ee:cafe::2c) by BN0PR04CA0025.outlook.office365.com
+ (2603:10b6:408:ee::30) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.202.10 via Frontend Transport; Wed, 8
+ Jul 2026 13:12:35 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
+Received: from satlexmb08.amd.com (165.204.84.17) by
+ BN2PEPF00004FBA.mail.protection.outlook.com (10.167.243.180) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.181.6 via Frontend Transport; Wed, 8 Jul 2026 13:12:34 +0000
+Received: from satlexmb07.amd.com (10.181.42.216) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.41; Wed, 8 Jul
+ 2026 08:12:32 -0500
+Received: from localhost (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.41 via Frontend
+ Transport; Wed, 8 Jul 2026 08:12:32 -0500
+From: Michal Simek <michal.simek@amd.com>
+To: <linux-kernel@vger.kernel.org>, <monstr@monstr.eu>,
+	<michal.simek@amd.com>, <git@amd.com>
+CC: Brian Masney <bmasney@redhat.com>, Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette
+	<mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Shubhrajyoti Datta
+	<shubhrajyoti.datta@amd.com>, Stephen Boyd <sboyd@kernel.org>, "open
+ list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+	<devicetree@vger.kernel.org>, kishore Manne <nava.kishore.manne@amd.com>,
+	"moderated list:ARM/ZYNQ ARCHITECTURE"
+	<linux-arm-kernel@lists.infradead.org>, "open list:COMMON CLK FRAMEWORK"
+	<linux-clk@vger.kernel.org>
+Subject: [PATCH v5 0/5] clock: versal-clk: Fix Versal NET clock binding and switch to CCF
+Date: Wed, 8 Jul 2026 15:12:21 +0200
+Message-ID: <cover.1783516336.git.michal.simek@amd.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] clk: qcom: Add support for videocc driver on Qualcomm
- Maili SoC
-To: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Taniya Das
- <taniya.das@oss.qualcomm.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20260707-maili_videocc-v1-0-ef0828c0bf6e@oss.qualcomm.com>
- <20260707-maili_videocc-v1-2-ef0828c0bf6e@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20260707-maili_videocc-v1-2-ef0828c0bf6e@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzA4MDEyNyBTYWx0ZWRfX3msHtNSIQPc3
- l9pvZWoIvZPDAZf1RlCLGf8jG+vWS02e+Ue0WK5FhLrXGeft+iX9o/g+GVVIulVtA9w3wfURQW4
- 8WgN77qmU9h0bt95bdJ/EqWAnZMSV9sZBFQEaIuwmAHTQptthtRP8dmsi+pSqCY71l3sD+x+bqv
- JcUZ2IGi9iIVDwLX5HPZ6hNzul65WYt1qahGyWOnEr4y5AiF2Rc+UY2FLGAjU0GTdItupt3S7/E
- YKcR6N1c8RKTym6XEk8SLx4k7LGjTnNm3RDrugBmCjo/KklL0TskExZo/RfW2Z8R7DaPZXeUzV3
- 3zEIGpx1fHpC/rSSY8Qip8ty/WpTWO7sYLxlAKT0u8gGZUieaohE01NZK1NNnBeNU58zlkQXyR2
- iFYsi+MQ170oXNX6O23xHCJcm80erie+4FKIEKlp1yYXjck2V+vC2KK/oFVWp75NWoxPlP1wWa2
- H2ykbOVkzArZXO92DfQ==
-X-Proofpoint-GUID: QIcUxZiSqcdGsxevdnDkT2vwC-_yPtaN
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNzA4MDEyNyBTYWx0ZWRfXxnQ/PQVd0GyG
- vg0vacN8Z5x58Lz0Na4YSJdOZciANNkm1U8rxGCXv0ug4CbIFCvb/YPyyBIqvSV3KgfBnCa59gL
- rxFPw7E+KRfrnCJjIdxEPso7s48MXS4=
-X-Proofpoint-ORIG-GUID: QIcUxZiSqcdGsxevdnDkT2vwC-_yPtaN
-X-Authority-Analysis: v=2.4 cv=Wf88rUhX c=1 sm=1 tr=0 ts=6a4e4a91 cx=c_pps
- a=cmESyDAEBpBGqyK7t0alAg==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
- a=IkcTkHD0fZMA:10 a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_K5XuSEh1TEqbUxoQ0s3:22
- a=EUspDBNiAAAA:8 a=KabViBKo7pAC4wHH2OwA:9 a=QEXdDO2ut3YA:10
- a=1OuFwYUASf3TG4hYMiVC:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-07-08_02,2026-07-08_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 clxscore=1015 bulkscore=0 impostorscore=0 malwarescore=0
- spamscore=0 priorityscore=1501 adultscore=0 lowpriorityscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607080127
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3980; i=michal.simek@amd.com; h=from:subject:message-id; bh=ttt81hGq31K4yB3DRz9+oIPTN87gFcDi8F+Cxz2kVOo=; b=owGbwMvMwCG2mv3fB7+vgl8ZT6slMWT5+Wzba+49Pf9h/vqbOwR43s12PDHv7ppfqy6b7J61f cky6dTsGx2lLAxiHAyyYoos05l0HNZ8u7ZUbHlkPswcViaQIQxcnAIwkf48RoYVDSft+ZaU3Jqx uWWZ8rI5gdJLPEvt92d+Drz6uj4p6f5URoZNj409lfm8T2gsMlcWPzHnpufDqO+F0rLpjyrrdl3 caM8IAA==
+X-Developer-Key: i=michal.simek@amd.com; a=openpgp; fpr=67350C9BF5CCEE9B5364356A377C7F21FE3D1F91
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN2PEPF00004FBA:EE_|SAVPR12MB999143:EE_
+X-MS-Office365-Filtering-Correlation-Id: 476e8169-5a8d-42c3-f5a8-08dedcf2938a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|82310400026|7416014|23010399003|1800799024|36860700016|56012099006|6133799003|11063799006|18002099003|3023799007;
+X-Microsoft-Antispam-Message-Info:
+	m6VWaaTNGTjE//6p5/3FhBPZidb4s4FPgeT8RiqVTbSg38lCk8/ajHJ/WKd6+f3E0Kezud6CcTiwiiHwH6GePBSTtQNWj3WDIezXkBMRU4DzJUusDbhyUMMk9btkcGDumVSHBnZ+Ng3bHp9gA0ESmc+4mlqfpFS9LXwi/M4rEms4k2J9uX+aHKJW7c3qGzhFdThxlK4FN3nuX08LwFV8pkOwQF2SalqIxYwhBj1F9EhhnHK2smLUckN5M9Ew4T7hmmbwntVlvofEPjjUofae4vPCDJJIPFF6up33oYFbyhaPhnTx5JTMkJeONUR1lOfLrNwjR09RSDbnqFAvg4/aAuvO2qXKtneP2ggd3iTgiQ0/x3cVDIi5UWL/b9Zjpuv6cAAc6q+FAj7CgLU3mfPaIdz/ul/+slUaBRE9esjmoKhudLKp2la3VaFP1wQA6ax2HdL+x9DkvDjpqiqEvz8X88YLc4eH0EWruBWYS+wvy4lEDxarN6Gwrbw9gu/PJxVc5NUgyvSCLkQo0jPK1uQUjPppWmBN7bcpE1hQGqW6V8aCeSvclrEo/SQoX9G9FxVD0goq+981/9RKQGZuXVFSTJpJb6uHlbzxqvNDqG3hlvCp2wyxedq32ZjQXf1mqaiE4v6L4ShsTQ9outvgY2QgzSfyQb+upBOhpxVPIawyN5RIudAFJ/liG/GUMORWs91YATDsc8pGFgpCeWaURRdlAg==
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(7416014)(23010399003)(1800799024)(36860700016)(56012099006)(6133799003)(11063799006)(18002099003)(3023799007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	UDtNxM6yC3ytqbUdwaFaFh3go5Rlyja/h8BiLyWCBgt14PiCyn4/yTDX1VM3m/ZeRihVo4ZftHAXqU60PHDzi0N3s5miE4SdcYvNzTLJ4mzSMn/dXf77+hEcFGL8CvlKGr04HNtrQIuBDiElY+rK6xABfE7SO8WiYx9cu+Mx7ksdo8sm/x8xFkvOTEzjNjCqhtYh7IzzRF+m4itrNtmVQebgVBSlDb/MtwxotZguEdKM/Deq9l01BlTUfFPTN6zMGl3HoFsMOPBB0Y6kXcpC0u5jsQYiS/OXhlsYj8t1hI/afNlWWJMjltEU1QQEvlbHUC2G02KuKtNr9fQ9qdmOtotEj3/KcLfbWtnvBcQ1VIsfaFBD29B8wRhPrFkAZnu0vNFw0XfHrKi0CU/hukPEq0+CpRV68p2eV+V0Adk8oOsnD7mREBPpsza8Niz177cm
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2026 13:12:34.8294
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 476e8169-5a8d-42c3-f5a8-08dedcf2938a
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN2PEPF00004FBA.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SAVPR12MB999143
 
-On 7/7/26 8:13 PM, Jagadeesh Kona wrote:
-> Add support for Qualcomm Maili video clock controller driver for
-> video clients to be able to request for videocc clocks.
-> 
-> Signed-off-by: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
-> ---
+This series fixes the Versal NET clock controller DT binding validation
+and switches the platform to use the firmware-based CCF clock interface.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+One patch extracts zynqmp to own DT binding file.
 
-Konrad
+Another restructures the if/then conditions in the versal-clk binding
+schema so that xlnx,versal-net-clk is matched first before falling back
+to xlnx,versal-clk. This fixes false "too long" validation errors caused
+by both conditions matching simultaneously when the fallback compatible
+is present. A dedicated example for the Versal NET 3-clock configuration
+is added and all examples are split into separate blocks for independent
+validation.
+
+The last patch switches Versal NET from static fixed-clock definitions to
+the firmware-based clock interface, enabling proper clock management
+through platform firmware. DT macro headers for clocks, power domains
+and resets are added.
+
+Thanks,
+Michal
+
+Changes in v5:
+- update commit message s/zynqmp-clk/versal-clk/
+- Also update firmware node to match xlnx,versal-firmware enforced by
+  schema (change taken from next patch)
+- Update commit message
+- Move change done in v4 to previous patch where issue started.
+
+Changes in v4:
+- simplify expression to [0-6][0-9] from 0[0-9||[1-6][0-9]
+- Update regex from previous patch
+- Also update firmware node to match xlnx,versal-firmware enforced by
+  schema
+
+Changes in v3:
+- new patch in series
+- New patch in series
+- Cover change in zynqmp-firmware.yaml
+- Move clock-cells to be the last in the example
+- Remove comment around (Optional clock) which is obvious from schema
+  itself
+- Move clock-cells to be the last property in the example
+- use 2 spaces for indentation in example to follow the same style which is
+  already used
+- Add fixed tag
+- Remove interrupt from zynqmp-power - Versal NET is using event framework
+  instead. No interrupt is required.
+- Remove unused GEM{0,1}_REF_{R,T}X macros
+- Update commit message
+- s/zynqmp/versal-net/ in subject
+- Update copyrights
+- Make all macro values lower case
+- Fix guarding macro names
+
+Changes in v2:
+- New patch in series
+- Split zynqmp-clk from versal-clk
+- Update logic without ZynqMP part in this file and have if/else only
+  around min/maxItems
+- use clock-<HZ> node name for fixed clocks
+- Reuse existing versal-net-clk.dtsi file
+
+Michal Simek (5):
+  dt-bindings: firmware: xilinx: Add missing example for ZynqMP
+  dt-bindings: clock: versal-clk: Fix mio_clk index range in clock-names
+    pattern
+  dt-bindings: clock: Move xlnx,zynqmp-clk to its own schema
+  dt-bindings: clock: versal-clk: Fix Versal NET clock validation
+  arm64: versal-net: Switch Versal NET to firmware clock interface
+
+ .../bindings/clock/xlnx,versal-clk.yaml       |  93 ++---
+ .../bindings/clock/xlnx,zynqmp-clk.yaml       |  68 ++++
+ .../firmware/xilinx/xlnx,zynqmp-firmware.yaml |  15 +-
+ .../arm64/boot/dts/xilinx/versal-net-clk.dtsi | 345 +++++++++++++-----
+ arch/arm64/boot/dts/xilinx/xlnx-versal-clk.h  | 123 +++++++
+ .../boot/dts/xilinx/xlnx-versal-net-clk.h     |  74 ++++
+ .../boot/dts/xilinx/xlnx-versal-net-power.h   |  38 ++
+ .../boot/dts/xilinx/xlnx-versal-net-resets.h  |  53 +++
+ .../arm64/boot/dts/xilinx/xlnx-versal-power.h |  55 +++
+ .../boot/dts/xilinx/xlnx-versal-resets.h      | 106 ++++++
+ 10 files changed, 797 insertions(+), 173 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/xlnx,zynqmp-clk.yaml
+ create mode 100644 arch/arm64/boot/dts/xilinx/xlnx-versal-clk.h
+ create mode 100644 arch/arm64/boot/dts/xilinx/xlnx-versal-net-clk.h
+ create mode 100644 arch/arm64/boot/dts/xilinx/xlnx-versal-net-power.h
+ create mode 100644 arch/arm64/boot/dts/xilinx/xlnx-versal-net-resets.h
+ create mode 100644 arch/arm64/boot/dts/xilinx/xlnx-versal-power.h
+ create mode 100644 arch/arm64/boot/dts/xilinx/xlnx-versal-resets.h
+
+---
+base-commit: dc59e4fea9d83f03bad6bddf3fa2e52491777482
+branch: xnext/versal-net
+
+-- 
+2.43.0
+
