@@ -1,126 +1,273 @@
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5960F40245F;
-	Wed,  8 Jul 2026 16:48:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8524438471
+	for <linux-clk@vger.kernel.org>; Wed,  8 Jul 2026 16:50:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783529325; cv=none; b=dvojIpiqH0sdOm3yCpYY+BbmmqW0CC3iU9muUgJtqUInSxO4BB64wLrUNCzLcFNb8IgJN6swRVdgSCHjfyDMy4unZj0FKXa0CrUAqEMAbAqxF0uBU+Qt/O7mKVissAIGCBKR2kDC8nEmd06DmQQpzeQBKdn+H4VsmBUErSRbY34=
+	t=1783529461; cv=none; b=sR7Fl3lAADyUffVsDzO8HvpEzmskkFwo6WvfY3OAeyBue1aw7xINFHJGWLbDvIR3AjfMoz2qtvWAdYyaFQUeAT1oa4hzps/J5zyvLMpEFge+qf0Xap3HoUAHsFsgKlEOU0EUZMlfO0AF+GhTNL79cr8cIxVFNId8aTL49T+SC+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783529325; c=relaxed/simple;
-	bh=fofBQvPVcd3NX+xdJivf5D8jfwRM6c2GJjKIcT6JUBk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MyCQadAH7qFUZ8lqUyYc1mQsdHlL2W1c5xTAeVKgdLYjmALN4w7Ujx2jVYK6WG5EtwUdbJpeAa/iCDDRBaMM/FFN0opkhNAVI0ndswt/G7fTJ12MsdV39eVzknN9XvM+J5pN9B99Yo0x3vWd7eTQmTVoCwu6bWTKaXgus+KOtoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=yY1xJQwb; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=HyyEMk/D; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1783529461; c=relaxed/simple;
+	bh=tz1PhZPqzbgRuWMGzhTLhnfvzEdK9DN68mDDZnu/57w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JwIurvcbFdhv04bGEkoTzfwV+uIApgKSy+g3XXppSaK/XjcZ2onvhryHkbhz5ZWiL445dMIRWAvw2Ix0fwucAP2A86RyGjKatrwcICjZFMmeZ8BIY7/Dzgi/b6XqA5a+lRESCLGlal44rk8SnoDHMKnNFRiC9EPEoe1DW5r/n6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OW3qO8fb; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=QxdMqmBo; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="yY1xJQwb";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="HyyEMk/D"
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA512)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4gwPDm6s9TzMlKN;
-	Wed, 08 Jul 2026 18:48:40 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1783529321;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OW3qO8fb";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="QxdMqmBo"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1783529446;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=G2F8UTbrQpHAZf8UnpKm16ni9iweS0yaca1Uv+SwEYc=;
-	b=yY1xJQwbYy4eG2NsyWzBCVrlkg0EcBjFvdcuFovEC2IbWp3kU60JKjSAKSzLMciR1EsPdu
-	ejjAFDe+JVF9Sr9+3QhhAur1hoqUsx/BwX/PDpB/e8Nwa0hOuypUuMHhL9Uwujrw7tbXNH
-	/j35Zda5HbVnuqxQP84QRGA1FV25MuMpNgpXQAo9aBYw2ylltxz5DS3qGE2Xk/tripSQUp
-	4rigneeHGxJ162cClnDzNhffDU/3Eo9bSvYV4qi7/wkQ7qcrWGAK6XA2NN2uE2+bIhKC0P
-	Ov74Ct4qnnCl6FDRTICjToZjcoBT48/7DeD44GFkfO2C13KILjQU/E9XLhZq4w==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b="HyyEMk/D";
-	spf=pass (outgoing_mbo_mout: domain of marek.vasut@mailbox.org designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=marek.vasut@mailbox.org
-Message-ID: <1c072a8f-a854-4b72-be43-7fdb50b14653@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1783529319;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G2F8UTbrQpHAZf8UnpKm16ni9iweS0yaca1Uv+SwEYc=;
-	b=HyyEMk/DEMoJgPcxBr0Pq212SsCaf5NsNufZl8aXOfXzinVkcA2D20WAtT1qmT/1tWXXMm
-	UH50YgTdA4l+ihaYZ8AdS5GPRPKEWGAfhLKMXCMjNamAB+octGR79OarG/cz3sMKyDkx1A
-	szPV4dYYdC5rvgx5AsAU0aYRIKTDw8GV5rWRlZOBrOKKCq6a8ETtr4NOv7JDltLeNkzqFP
-	htLjbKZpYH65f3a2eeCxEaLRBnkYPYfr7gjm6vahw3qM7uspJlzPtCdzwIAwcuWPBU7FOI
-	s9p//CTQHqCgonVROF8iPyh9bmOz2wBDEdSqly1oBaTIk4J6CdcFB+d1/rb0jQ==
-Date: Wed, 8 Jul 2026 18:48:31 +0200
+	bh=UKgh5ApTuCOuav59S8TO2YqC8DCsibHGOqh1KF7QsrM=;
+	b=OW3qO8fbKM/sApYx/A9l26ruVnL+hTHbbdGjCW6uUXfuHCD+OiMkNHfoSQfDrhk50OAk/f
+	z+fBPLS98L03ZvfSAqi2WANwwI7tGFUYFJ2jb9+MHyX7ImzdTSTp2Sn8/T1c7ESdNiv6R9
+	NlV5uWQJSMWS5j6uELtYRfxydkWUODc=
+Received: from mail-yw1-f197.google.com (mail-yw1-f197.google.com
+ [209.85.128.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-646--uBqgUwRMCejMQ_ipTR79w-1; Wed, 08 Jul 2026 12:50:45 -0400
+X-MC-Unique: -uBqgUwRMCejMQ_ipTR79w-1
+X-Mimecast-MFC-AGG-ID: -uBqgUwRMCejMQ_ipTR79w_1783529444
+Received: by mail-yw1-f197.google.com with SMTP id 00721157ae682-8068416764bso28160447b3.2
+        for <linux-clk@vger.kernel.org>; Wed, 08 Jul 2026 09:50:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1783529444; x=1784134244; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:content-type
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=UKgh5ApTuCOuav59S8TO2YqC8DCsibHGOqh1KF7QsrM=;
+        b=QxdMqmBoCEUC1UkpXRE6QnRlPoUTt9Ic8Re/AOB0V9JyHqiUSztSq2WDtU3HlPi4bl
+         00wtzv729k+7PYZxfshc42x7yWMukzRA06fh8KWUU+ocxWaSmUNl4maDU0BZabtc3lFx
+         GRp0ogdwLGoy/DkQF6M5y0Tnt3DJxrHdw/Odad7HUe40MlRWq+Xt2YC3HKklJDsFRNDd
+         2Z5PvM6b/0cBHh/az1TRVqbEafbbXnRb/uzdCEs40Tv8Mxoorf7oj+r1k3PEMs9uzCSr
+         SS5E9N0Izp0k567XSZ4pgYrEbv75M25WQVMJtCe15KDvRKMWke7GbiYCQDfXkx5fqZ0M
+         HbjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1783529444; x=1784134244;
+        h=user-agent:in-reply-to:content-disposition:content-type
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=UKgh5ApTuCOuav59S8TO2YqC8DCsibHGOqh1KF7QsrM=;
+        b=K8Hibdwh9qzy+TaT83l3atiSGD+qYwi0IFxSXQF6a6sf/Ov+J6d44MfJ93Kvlcj2+n
+         gBgEVpUx2AVb7efyuWfTlzlVusXAa9M/X/hsyZKneS+q0NGTp/DN5ZYbx6et5vuCaLoC
+         y9PedttcJAqN/GZKYTp4fzjQcsC5vUYe5rmoRq48fkzVAimTZW0A0ah1VDLtkBFx4DLV
+         938H/QyYJOCtEKU+bt7PXudMEZsBCFKzzopNRL33Bmtei34P5XBDJsFZHYuUrK8d1XQ7
+         IdznBmllSusupw1dMyRkGg6O6L9kI6NU5BlO6FQH2H5SD2tN4o42g8l9gLZOBzdMN9jL
+         1eyg==
+X-Forwarded-Encrypted: i=1; AHgh+RqZ40EyEyEebstQG4GM6MyuYNwXFx2njq8yUU00ZLEC8GyvHWoWsRUbUPmqUEloGJ8hyYzp/uVQSGw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvjS51GuQcNKpgNOAydPy4/Pu4KzngGlu+NvFz86DZMz3v98Ve
+	lKnEic/udWeYQdcNJh4cWj3rUwB3LgHqEODsyj/LQjc9w3hgIz9sJgQCINIDe2wMWwUPq2ZsrAj
+	4O0mSWu43uD5WrR5uTmUD+xaCMkzBzBMiYRNa9os1plk5TP392bNjKOV5j9+zHg==
+X-Gm-Gg: AfdE7clpmb4ZQudpTzl+HriaYVK75fhqBvEcR9eEtrKxEO1kg1QRWc2nOysNJ7jFBhh
+	xRD5+2TeI8MxxA5ixvVAMlNiBQDwiNEX3/Svn0qt4lJSwlNHNXzTHugpSWmtTbtFZBrqAUh1ADY
+	GX7o8ub7kRSfI2FQo+9moiq1nHlQdHVTij4GcX+9NiUck2obHXf5ZVv50xq52AZvEmIUA2MmxZF
+	LlPznORBJO9y5ZSv7vJPm69kLljqgr3OhSZw8gcKNjJuUNWagluGby4/wEHA3wvywZ7ok/n0TOO
+	A3BE7LM3M3Jm7vwadY7KN4gIOUC4s+Q4hEN9sBj/0qnRhBAKcow2T50q2edv9HakgKjqhV3Npo7
+	QgPj7M+EN4OQ+RLFNOWD32/VJTLlsv1hkvjhgD1v//7uakA==
+X-Received: by 2002:a05:690c:b03:b0:7dc:7764:3e83 with SMTP id 00721157ae682-81dbf597344mr25866587b3.17.1783529444310;
+        Wed, 08 Jul 2026 09:50:44 -0700 (PDT)
+X-Received: by 2002:a05:690c:b03:b0:7dc:7764:3e83 with SMTP id 00721157ae682-81dbf597344mr25866277b3.17.1783529443859;
+        Wed, 08 Jul 2026 09:50:43 -0700 (PDT)
+Received: from redhat.com (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-8143dfebd55sm86860117b3.0.2026.07.08.09.50.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Jul 2026 09:50:43 -0700 (PDT)
+Date: Wed, 8 Jul 2026 12:50:41 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Chen-Yu Tsai <wenst@chromium.org>,
+	Edward-JW Yang <edward-jw.yang@mediatek.com>,
+	Johnson Wang <johnson.wang@mediatek.com>, kernel@collabora.com,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH] clk: mediatek: pllfh: Fix IO remapping leak in
+ register_pllfhs error path
+Message-ID: <ak5_4aTPwWPdczms@redhat.com>
+References: <20260708-clk-mediatek-pllfh-fix-v1-1-2cfc2d6b258e@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2 00/10] R-Car X5H Ironhide CPG/MDLC SCMI remapping
- support
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
- Sudeep Holla <sudeep.holla@kernel.org>,
- Cristian Marussi <cristian.marussi@arm.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Saravana Kannan <saravanak@kernel.org>,
- Ulf Hansson <ulfh@kernel.org>, "Rafael J . Wysocki" <rafael@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
- Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
- Vinod Koul <vkoul@kernel.org>, Konrad Dybcio
- <konrad.dybcio@oss.qualcomm.com>, Kevin Hilman <khilman@baylibre.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Marek Vasut <marek.vasut+renesas@mailbox.org>,
- Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
- arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <cover.1783505329.git.geert+renesas@glider.be>
- <3c76a2d4-a8b8-493a-9196-c5cc72958118@mailbox.org>
- <CAMuHMdUVUKYrrms0Vd4i3_nwq2LVjvnvFRWswi8UY3cA67u2-w@mail.gmail.com>
-Content-Language: en-US
-From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <CAMuHMdUVUKYrrms0Vd4i3_nwq2LVjvnvFRWswi8UY3cA67u2-w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-MBO-RS-ID: 09e4c3dda12fcca6b00
-X-MBO-RS-META: na9n8ju6zp3juk8qegttrip714c8zcby
-X-Rspamd-Queue-Id: 4gwPDm6s9TzMlKN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260708-clk-mediatek-pllfh-fix-v1-1-2cfc2d6b258e@collabora.com>
+User-Agent: Mutt/2.3.2 (2026-04-26)
 
-On 7/8/26 6:04 PM, Geert Uytterhoeven wrote:
+Hi Louis-Alexis,
 
-Hello Geert,
+Thanks for the patch.
 
-> On Wed, 8 Jul 2026 at 17:42, Marek Vasut <marek.vasut@mailbox.org> wrote:
->> On 7/8/26 12:16 PM, Geert Uytterhoeven wrote:
->>> Geert Uytterhoeven (10):
->>>     firmware: arm_scmi: Add scmi_get_base_info()
->>>     of: property: fw_devlink: Add support for firmware
->>>     pmdomain: Make genpd_get_from_provider() public
->>>     reset: Add reset_controller_get_provider()
->>>     dt-bindings: clock: renesas,r8a78000-cpg: Add firmware property
->>>     dt-bindings: power: renesas,r8a78000-mdlc: Add firmware property
->>>     clk: renesas: r8a78000: Add SCMI remapping support
->>>     pmdomain: renesas: r8a78000: Add SCMI remapping support
->>>     arm64: dts: renesas: ironhide: Enable SCMI devpd, sys, clock, and
->>>       reset
->>>     arm64: dts: renesas: ironhide: Add CPG/MDLC firmware properties
->>
->> I think 10/10 did not make it either to my inbox or lore.k.o , but the
->> remaining 9 patches look good. Thank you !
+On Wed, Jul 08, 2026 at 11:18:59AM +0200, Louis-Alexis Eyraud wrote:
+> When mtk_clk_register_pllfhs function fails to register a PLL, it
+> unregisters all PLLs and cleans up itself in its error path before
+> returning, so the function callers don't need to do it.
 > 
-> Thanks, I did something silly while sending.
-> Lore now has it, b4 still seems to miss it, unless I specify the
-> Message-ID of 10/10.
+> But contrary to mtk_clk_unregister_pllfhs function, that does almost
+> the same sequence, it does not free the IO memory mapped on fhctl node,
+> leading to a leak.
+> 
+> Fix this leak by factorizing the cleanup sequence in a new private
+> function and use it both mtk_clk_register_pllfhs and
+> mtk_clk_unregister_pllfhs functions.
+> 
+> Also, change the loop index start value to avoid the -1 operation on
+> index at each loop.
+> 
+> Fixes: d7964de8a8ea ("clk: mediatek: Add new clock driver to handle FHCTL hardware")
+> Signed-off-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+> ---
+> This patch aims to fix a issue, detected by Sashiko
+> during another series review ([1]), regarding the use of 
+> mtk_clk_register_pllfhs function.
+> 
+> The patch is based on linux-next tree (tag: next-20260707).
+> 
+> [1]: https://sashiko.dev/#/patchset/20260701-mt8189-clocks-system-base-v1-0-2b048feea50a%40collabora.com?part=6
+> ---
+>  drivers/clk/mediatek/clk-pllfh.c | 87 ++++++++++++++++++----------------------
+>  1 file changed, 39 insertions(+), 48 deletions(-)
+> 
+> diff --git a/drivers/clk/mediatek/clk-pllfh.c b/drivers/clk/mediatek/clk-pllfh.c
+> index aa95cd9197b3..7463aa35d7e3 100644
+> --- a/drivers/clk/mediatek/clk-pllfh.c
+> +++ b/drivers/clk/mediatek/clk-pllfh.c
+> @@ -197,6 +197,43 @@ static void mtk_clk_unregister_pllfh(struct clk_hw *hw)
+>  	kfree(fh);
+>  }
+>  
+> +static void mtk_clk_cleanup_pllfhs(const struct mtk_pll_data *plls, int num_plls,
+> +				   struct mtk_pllfh_data *pllfhs, int num_fhs,
+> +				   struct clk_hw_onecell_data *clk_data)
+> +{
+> +	void __iomem *base = NULL, *fhctl_base = NULL;
+> +	int i;
+> +
+> +	for (i = num_plls - 1; i > 0; i--) {
 
-Thank you, it looks just fine.
+It looks like this should be i >= 0
 
--- 
-Best regards,
-Marek Vasut
+> +		const struct mtk_pll_data *pll = &plls[i];
+> +		struct mtk_pllfh_data *pllfh;
+> +		bool use_fhctl;
+> +
+> +		if (IS_ERR_OR_NULL(clk_data->hws[pll->id]))
+> +			continue;
+> +
+> +		pllfh = get_pllfh_by_id(pllfhs, num_fhs, pll->id);
+> +		use_fhctl = fhctl_is_supported_and_enabled(pllfh);
+> +
+> +		if (use_fhctl) {
+> +			fhctl_base = pllfh->state.base;
+> +			mtk_clk_unregister_pllfh(clk_data->hws[pll->id]);
+> +		} else {
+> +			base = mtk_clk_pll_get_base(clk_data->hws[pll->id],
+> +						    pll);
+> +			mtk_clk_unregister_pll(clk_data->hws[pll->id]);
+> +		}
+> +
+> +		clk_data->hws[pll->id] = ERR_PTR(-ENOENT);
+> +	}
+> +
+> +	if (fhctl_base)
+> +		iounmap(fhctl_base);
+> +
+> +	iounmap(base);
+
+When use_fhctl is enabled for all PLLs, base will be NULL.
+
+Brian
+
+> +}
+> +
+> +
+>  int mtk_clk_register_pllfhs(struct device *dev,
+>  			    const struct mtk_pll_data *plls, int num_plls,
+>  			    struct mtk_pllfh_data *pllfhs, int num_fhs,
+> @@ -238,24 +275,7 @@ int mtk_clk_register_pllfhs(struct device *dev,
+>  	return 0;
+>  
+>  err:
+> -	while (--i >= 0) {
+> -		const struct mtk_pll_data *pll = &plls[i];
+> -		struct mtk_pllfh_data *pllfh;
+> -		bool use_fhctl;
+> -
+> -		pllfh = get_pllfh_by_id(pllfhs, num_fhs, pll->id);
+> -		use_fhctl = fhctl_is_supported_and_enabled(pllfh);
+> -
+> -		if (use_fhctl)
+> -			mtk_clk_unregister_pllfh(clk_data->hws[pll->id]);
+> -		else
+> -			mtk_clk_unregister_pll(clk_data->hws[pll->id]);
+> -
+> -		clk_data->hws[pll->id] = ERR_PTR(-ENOENT);
+> -	}
+> -
+> -	iounmap(base);
+> -
+> +	mtk_clk_cleanup_pllfhs(plls, i, pllfhs, num_fhs, clk_data);
+>  	return PTR_ERR(hw);
+>  }
+>  EXPORT_SYMBOL_GPL(mtk_clk_register_pllfhs);
+> @@ -264,38 +284,9 @@ void mtk_clk_unregister_pllfhs(const struct mtk_pll_data *plls, int num_plls,
+>  			       struct mtk_pllfh_data *pllfhs, int num_fhs,
+>  			       struct clk_hw_onecell_data *clk_data)
+>  {
+> -	void __iomem *base = NULL, *fhctl_base = NULL;
+> -	int i;
+> -
+>  	if (!clk_data)
+>  		return;
+>  
+> -	for (i = num_plls; i > 0; i--) {
+> -		const struct mtk_pll_data *pll = &plls[i - 1];
+> -		struct mtk_pllfh_data *pllfh;
+> -		bool use_fhctl;
+> -
+> -		if (IS_ERR_OR_NULL(clk_data->hws[pll->id]))
+> -			continue;
+> -
+> -		pllfh = get_pllfh_by_id(pllfhs, num_fhs, pll->id);
+> -		use_fhctl = fhctl_is_supported_and_enabled(pllfh);
+> -
+> -		if (use_fhctl) {
+> -			fhctl_base = pllfh->state.base;
+> -			mtk_clk_unregister_pllfh(clk_data->hws[pll->id]);
+> -		} else {
+> -			base = mtk_clk_pll_get_base(clk_data->hws[pll->id],
+> -						    pll);
+> -			mtk_clk_unregister_pll(clk_data->hws[pll->id]);
+> -		}
+> -
+> -		clk_data->hws[pll->id] = ERR_PTR(-ENOENT);
+> -	}
+> -
+> -	if (fhctl_base)
+> -		iounmap(fhctl_base);
+> -
+> -	iounmap(base);
+> +	mtk_clk_cleanup_pllfhs(plls, num_plls, pllfhs, num_fhs, clk_data);
+>  }
+>  EXPORT_SYMBOL_GPL(mtk_clk_unregister_pllfhs);
+> 
+> ---
+> base-commit: b3a87fbe738f19cbe19411cf749f3d8c09c04de4
+> change-id: 20260708-clk-mediatek-pllfh-fix-7e9ca35989e2
+> 
+> Best regards,
+> -- 
+> Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+> 
+
