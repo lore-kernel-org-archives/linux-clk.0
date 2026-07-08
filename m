@@ -1,88 +1,88 @@
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A62563F8EAF
-	for <linux-clk@vger.kernel.org>; Wed,  8 Jul 2026 18:25:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4146E4307A9
+	for <linux-clk@vger.kernel.org>; Wed,  8 Jul 2026 18:25:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783535145; cv=none; b=V8j05zyOqejI0KNSsp3Ux1CaoD4eCUWXKDJg4aJdlptQbGOGU5W2y335G/6PAgv05VbdNEgrWtX5nMmQO4lKf9iQJmycN6ZDUYtDsPI036o8fKcaPHmIojvpAs3yJ2I88eUpglydR/2YLLU6bzea6orkrjGKhurGYUuFffz9FzY=
+	t=1783535148; cv=none; b=FOfheSw4wOdVRkzmBHAoRseCDQlThc1YffEyEL+IggYBfY/PYwVJ0lfsSjA2lHbihjLYKP0PDXdSL0S31TLOjSoBEvOQpEKzhHZF3C9f52niJm+jOX5/p/u7thvFwvPHJgOc7xyOySHs8w1gjzYcYCOTWsb3tZRgiYWDbBrYLJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783535145; c=relaxed/simple;
-	bh=HpeAEWZwctd23qPrDJQucwCkCmlvNsKWN9E+yZbp6pE=;
+	s=arc-20240116; t=1783535148; c=relaxed/simple;
+	bh=3K6L4c6OZp3Eul3Ri9W31RQJgrKQhggB3UWIGCxKmz4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=tw1SRhWkwDMOJH0A6Vm9EyGIXj9IJ+zNO9wFrXj2RjFf90Ju2H8cHahdLUB3gqlNHpSsg/FRi4cpayoPOn/aK9bHZKnZ4V1dnCj2f1m6k+8QIVspkZ+ieCIWfebFRcrYVyJdbnxMoJigOofdCR126SMIhpa9mrCmy5of6Wd32Fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=B8fRddtu; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=iGKluH2r; arc=none smtp.client-ip=205.220.180.131
+	 In-Reply-To:To:Cc; b=iBRGOuGfrufxC9iIC2ds2eBF0qEzUzYboBp56Xc0q1YDHv20imUXiMpE9HY3IZkSE08+MwiRh/53TxxGnkOGqPhDyfXYbgyauhwqzfLRQJ4yKpogbruR1Nnhw4Qyb8G/izIoOKnB3TadEK+zzvJS3UwYicjIeicmL0mNR5+EzIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=i37blsxS; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=AVNVHskQ; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="B8fRddtu";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="iGKluH2r"
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 668ILfCj3578712
-	for <linux-clk@vger.kernel.org>; Wed, 8 Jul 2026 18:25:41 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="i37blsxS";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="AVNVHskQ"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 668GKxcB3304124
+	for <linux-clk@vger.kernel.org>; Wed, 8 Jul 2026 18:25:46 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	oadDjJBRgYK5tR8AHh8ohqDa4ddWrSWG7Gn1xGpFy50=; b=B8fRddtu+DSowByw
-	jQw6ibusioC+ibtb6D3VlhMJdpAak/GISpluLLAgS1uwYopJvzLnNL6gGlGwnPYU
-	RYlObl2Hd0ahY3/7v5o9I46HBqPdWPBuWrs0jq42k1/aRTqOgQQiBdXGwQ5yI22S
-	MaWQ19FBMHx77XXNCnGmrI9DC2JKeWI73c+Z+q1R6VAe4WlUjfz71qhnPmb4KUpf
-	0HuyU3Q8tkJswtbXNTzjFkJKU/usyaM2IkKljxyOlLPp7Mi3+JWgmG6fjA0gdCoI
-	NPDiFIDK+rqNe9HYzuoWXOyex1JFrZedNEZO2c//PezUTfz4Zi5U/NIbSRDH9U5r
-	G34s7w==
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4f9urvr0f8-1
+	SBzV8i8B0VApk80w48yOX5U8XJD0eQ+y0RjEDHih1bQ=; b=i37blsxSEiIOBQl0
+	o3rlLfUvYnTwH9VGRR4PxuJM5kdFFj9+JwdPns6MvYl/HTcR8VAoP8MMLSoSgUE2
+	VPY/V1K6h++w7UVd6Bk4Y3RduBslVac9KTJTy7E8y65drVwgMvnYVTCKNQnXkxRx
+	9a6DUCqeD57We9+EM+VL0PeYVctnZVUOtpnLi905uR1zfvLGQVKvEdM8E3FKLhSf
+	haZkXg66CC7easFoXsGHG7mAPwYUDbPNR9CdUn2x4+iuc7EomVOdnwscKjYVZoCr
+	+WsnU1oWyxwszDGb27DxW0uOVAmOMT9iOXM1Ed9KXyvLsOONXOdpl6OHNPGKmWPe
+	AdPH7w==
+Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4f9rq30xgs-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Wed, 08 Jul 2026 18:25:41 +0000 (GMT)
-Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-848415e9e8eso127748b3a.2
-        for <linux-clk@vger.kernel.org>; Wed, 08 Jul 2026 11:25:41 -0700 (PDT)
+	for <linux-clk@vger.kernel.org>; Wed, 08 Jul 2026 18:25:46 +0000 (GMT)
+Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-c894c1c4aa9so131367a12.0
+        for <linux-clk@vger.kernel.org>; Wed, 08 Jul 2026 11:25:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1783535141; x=1784139941; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1783535145; x=1784139945; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=oadDjJBRgYK5tR8AHh8ohqDa4ddWrSWG7Gn1xGpFy50=;
-        b=iGKluH2rgqZAjeS4mYyTLw7ZDGDq/Y3mv8Tde0Pgj20elAFYOR7gqL/Bx/Ejhwf0N+
-         UOt/poxmLor/UhPBmVJPAwDHlvEjskmZKFoqNUHJvQt9SMdFIrmgzMbvx7N1CAItZhEb
-         Dongkg5BdMuGY7lMXTjnEbjIckzuVnRTQcgw+jiHca4VNI/Mis68QzEIxgEQ5OrfhHxt
-         T04prV56pXoCM7AAYd1+AB+hz8mQX1F8HTfl+DEv6smb1ax0OkQF4/0NyH669US4MEZX
-         93e1tBa1aJazhE/DZlp4xQg75eUltZce3dP2AXS5pWLqRa7xAhsVXPdysdqlv6ORIgvH
-         6jUA==
+        bh=SBzV8i8B0VApk80w48yOX5U8XJD0eQ+y0RjEDHih1bQ=;
+        b=AVNVHskQwIR3pR0CvpcOhx513VVmDNXj7qQiBLvMXTDhdqA+KNhethIl5ia22FLJ3Y
+         iqFrYjAfmBSAj0bnpPWWEnVwNyFqObauifTMQ4S5wzJMAnwHrX8CZWxjhuuharngTXyJ
+         J8E7tG92L5Gys3GziKdVlsdfJWGtvcxgKs971Dfze1stkDlFa/miSjI2gQfqH9wE6tfD
+         E5ZwGivWMua8kkyVTcw6PUVO7wfQlsDjyN+Ud7pD7RkKa+v3r/xC763Twhjvbw7/NXzw
+         jtgc6MG9zFlG9mFjQh5zli4As7SwbgLXSBSustGT6NCPVSFRpAQm+8yCMyBCWbKoyCxs
+         uOSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783535141; x=1784139941;
+        d=1e100.net; s=20251104; t=1783535145; x=1784139945;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=oadDjJBRgYK5tR8AHh8ohqDa4ddWrSWG7Gn1xGpFy50=;
-        b=cbNasl2ikfbGOhiPWfkjWCGN0vRibbGqbPpFtmF7v+ji/h7XYeyzqB7rLERvbOc1ed
-         2q8vyS1QBYsG6R08dLmNLoKOw0ekOM7ZsFimfzXVn6anuLNUASWvRn0GLa6HT1xg4Sr/
-         ziiEnL4i8MIOhi2Z86cS4U2tCAsH6+jpxztiU5C/KtYQEY76yLiZHHbrrteC/1vNnEfX
-         dADDT9Wkf8m3Hvg2Gix2c27O5AJdI4Aj76U1amNmNiI3SkkiGN4rZS5eje3GePW2jaE2
-         erRp43TkZTI0BZc1C1aT5jGxntrF5lmHYAohEyvI2HBZoXzToIO4V70YJf9SS9E/uRrD
-         iWAQ==
-X-Forwarded-Encrypted: i=1; AHgh+RoOIVvgeA2uXnHkOkW4QgzqfUUZkqQgTIKa5nYlwpfpiVo3Uazs+zycbKh6t1jNsM/xWXikRYYi3oc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1QAr9jj0qx2Cntw+ex1Skd28vkSrBpdK98GCh52Mn0PLU7sS2
-	4P21oEQJy0xKs6rvjbFrXZyF/gZzKOhzhA4Qrh4Pa8VOmkgDATGHQrrPQeZ2/iD7uRYWocuEQWs
-	YQErgiAL6IqLtH68hBu80trEYNm5BlLnYz3GGLu2472S/3jJeh57mX6W5+CTSAKY=
-X-Gm-Gg: AfdE7ckC89F5mL+XgzyRg9ToEyqZ36PHOGvzQMO+Ehg50A67wiqnpV+qxc1tWI/IudN
-	zLoLj4yI3pf+XFuF03vrJMhI//5gfOHRblnm1/cHHXj3aU9v0Z3YuHbO7ZqKn0bB6DywkXZS/Tr
-	W5sSZ51Eqa/HHCzGlYASiuSxDMzbIUEUrL8GrnyePurpjIr4B5y1pumzlsb1482DllR6KnIIjsv
-	nzaKo8jbgXlkDk4pTqTyJySHWbmBMXwxYY8rrBFUGwxZe8XH55VR3ZdryPw2DzVCAfqGIHVDSRe
-	CLQ3vFIkYe6imp7pSG+xkjNTAb11ra3J+cui9Xcc2UDnWLg8BbP9XTxDimQQqOIj0hq/DChmD5k
-	zTLrgwTWYELntHoSzLD85QQznRFl0xCPwa2b50mq6tQ==
-X-Received: by 2002:a05:6a00:8f0b:b0:848:30fe:da34 with SMTP id d2e1a72fcca58-84842fc4707mr3900472b3a.45.1783535140162;
-        Wed, 08 Jul 2026 11:25:40 -0700 (PDT)
-X-Received: by 2002:a05:6a00:8f0b:b0:848:30fe:da34 with SMTP id d2e1a72fcca58-84842fc4707mr3900418b3a.45.1783535139370;
-        Wed, 08 Jul 2026 11:25:39 -0700 (PDT)
+        bh=SBzV8i8B0VApk80w48yOX5U8XJD0eQ+y0RjEDHih1bQ=;
+        b=PL8p+7PB1DTokrNPj8/Mn9fGb+HQDmO0Q28Xh/wsO/nnDwqpbYu9+olkCSvdbuzY5l
+         DtK3Ic1Ra04T/mYS0F6QF8425twdDscx0wICDR8Hv+cVScaHImaN4L92gfmtQGsE4z9T
+         gE5/7tSNwtULIDuqKthT35Va6GGmja5fcInVh6M+4+8uRw0lFBbbwfq3jA0d4SSyoIXc
+         BajzQT3TXPA4HcJwE69SRMs63a6N4aLS4qHCz/0NIRtrWZnVSf1Mr6x/hwp5DJZhmKQl
+         jCG9Cx9+r8svumalD+m1FWughU1qOIXxZfD1CEN6i1+QmBUxk24Fktl6AV2tLu+NNADE
+         Y1gw==
+X-Forwarded-Encrypted: i=1; AHgh+RrtEIv9Flq71fl8Mpr627Hf4DiCyg/Zk6hXBS8jC1WPco85EmSDb0yXV60fnr8jFQ71WwEYEr8Do0k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHJhk0dDSK0HUa12WYv+eijsOX8MOV8q0v+HtqU5Ts1drSp0Zy
+	YlSbdG9eK1ZtoXXgFfMcnJbLGbYUVC/CmMe3YiW1BHz/jEJ9qpMBnamadhoskCX8pgBuUeSOG5F
+	nFYgUnJQMwJ1+V3Ibx26w12ZlFzVQSxxAPHoEUzf8FiLYE8R6NyHepAUZ3MoOvYI=
+X-Gm-Gg: AfdE7ckoEnyao31kmUnDutzVReA7Nq9KpmI6F0K+hkuYCWBSatH2foIwA9xoFTDQ+qa
+	Vo0QNoyuh7lVCEaMU4kLuLrSPkSNnb8FZB06Vxm8wkPgqf9pJohIMC+0Go1SX9eIjTVrvaaCs2N
+	BgXY8GSSH1zlu7S/CYGq018W/STlmWRCa3yqiMse+5d/N3CnxqOETb2quJ4mhcO2Wn+Iiu7Zuxu
+	5OYd5KZN2prq6iLnOdTBpa9XyfvfnSadTKJL+iGeoRPVPdib4FtHeGibwy1ro3ikSKBknl8LfeM
+	LPOpCjhMGtv4q04T8dqPJkooXjGCEQL7JvL+2BjNLKuohS/y00KmIQdYK5C8Gkj0e6egGfXafP6
+	TI8YyLTU4ZALZTfBtShLJyRcrh3NvTVTg6Lv+/JYOmA==
+X-Received: by 2002:a05:6a21:62c8:b0:3bf:aa1a:d2ef with SMTP id adf61e73a8af0-3c0bd164cd0mr4158485637.56.1783535145402;
+        Wed, 08 Jul 2026 11:25:45 -0700 (PDT)
+X-Received: by 2002:a05:6a21:62c8:b0:3bf:aa1a:d2ef with SMTP id adf61e73a8af0-3c0bd164cd0mr4158449637.56.1783535144873;
+        Wed, 08 Jul 2026 11:25:44 -0700 (PDT)
 Received: from hu-imrashai-hyd.qualcomm.com ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ca5af7d5946sm2671098a12.7.2026.07.08.11.25.33
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ca5af7d5946sm2671098a12.7.2026.07.08.11.25.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Jul 2026 11:25:38 -0700 (PDT)
+        Wed, 08 Jul 2026 11:25:44 -0700 (PDT)
 From: Imran Shaik <imran.shaik@oss.qualcomm.com>
-Date: Wed, 08 Jul 2026 23:55:07 +0530
-Subject: [PATCH v2 3/4] clk: qcom: Add Audio Core clock controller support
- on Qualcomm Shikra SoC
+Date: Wed, 08 Jul 2026 23:55:08 +0530
+Subject: [PATCH v2 4/4] arm64: dts: qcom: shikra: Add support for
+ AudioCoreCC and AudioCoreCSR nodes
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -91,7 +91,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260708-shikra-audiocorecc-v2-3-b320d822cdd0@oss.qualcomm.com>
+Message-Id: <20260708-shikra-audiocorecc-v2-4-b320d822cdd0@oss.qualcomm.com>
 References: <20260708-shikra-audiocorecc-v2-0-b320d822cdd0@oss.qualcomm.com>
 In-Reply-To: <20260708-shikra-audiocorecc-v2-0-b320d822cdd0@oss.qualcomm.com>
 To: Bjorn Andersson <andersson@kernel.org>,
@@ -108,893 +108,122 @@ Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         Imran Shaik <imran.shaik@oss.qualcomm.com>
 X-Mailer: b4 0.14.2
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNzA4MDE3OSBTYWx0ZWRfX0xW3/3OTcr/r
- NioQqjeW1IthAxos4iDb+rlujDb8TW/AUBKLfAPvaTRumT2UUpUJLLGupbjRzL9TYB9yLduVeDs
- V04ReYDV1xmtdw+OlcRhdyM56uPPMUo=
-X-Proofpoint-GUID: _YQAcq4NFtDqfj1EZy3TzbFaA47ndaM1
-X-Proofpoint-ORIG-GUID: _YQAcq4NFtDqfj1EZy3TzbFaA47ndaM1
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzA4MDE3OSBTYWx0ZWRfX8OGFIKo5XqMD
- lJYPLeBCMvHrgZ5Wm0d+F7debf+qU39Jm8kDCgr5IfQNV7FvDwjGuZuvmEVaQjaYaYSFru84nm8
- F5BiRWWis7L/t04Np40Gg7I51iAt0cSfjBe9sa3UqN8J4yvj9WDhtaWgIyY6I8Um9YJqc7Yprmv
- rWkXWc208UBUagoPdNEGbb5bohKHNFURSQbFjv88gqyGKiHZ17a8Y0T1Zi4DoZw4Va0P0L3SCA0
- QqoCNrmKRW0gkGuO0Kdo32cEfssXmWpSFAq5EHj5xOEltyF+5EH9Z/6P8zvMrL5862kn8jzVTq7
- EOF4RIVsu3H/Q8f8ExZlPzUoJD47e0VZGR4mN7uQayONoAnTZkzbww7lnC9oxjMBR07HAgt7Xf5
- um8uagDERK5GvpEGheozFmTLLb2HjCir17JrQmk9WC1+1rxhhLtx5Q9nAK87xg9KjDnFY1+gddl
- vMwHIqZ4dbqlseLmxDw==
-X-Authority-Analysis: v=2.4 cv=H43rBeYi c=1 sm=1 tr=0 ts=6a4e9625 cx=c_pps
- a=rEQLjTOiSrHUhVqRoksmgQ==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+X-Proofpoint-ORIG-GUID: YlPaJTM-04Uur8qz_8F1r48uD4w3_smK
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzA4MDE4MCBTYWx0ZWRfX+9xwTb98k4Iz
+ PBh5RnhcbEmwV7jwFG2Qe5EVjz1ruTeCP8ff1oFmeT/gX5xqOvDVWoOORt3jmTH9DD0fUyVSbm6
+ IIZeaeBU6lSFAkGHvKwVi1eV3ozRyKKuYImMfzB9cCvUeLO/oOVtspykaHxTASQb6HfN+SIcIjQ
+ rkwuHMKYsNmLPKqVstA2Q8fr0Zs3DV9VrmTbbuUVeX484WvbbMcleGsVk22/owIUqQDbGIPN7+L
+ UJSQT9+F+GICbbFdo8YFfLWMWpQOF3kPKBEqd6KxlTMlMVy43IFDfum9yvd6JxeqiFdxUq/rFYd
+ jhKUnxRa/84LuheAOhZ+yOxnUH/h39uuPae/hN1UdeYeez5+1Z2DvHLjY9muNgDO/Jx4d8BfOhe
+ fEbGRuxVAco/4/1w5qsf/VYVqVZpADcTmSbi4b/WxXaJ7pcLpmLlGnDOfpKN5ayV9pifKPlkxqM
+ nKnDAvXM+hBuOPk3Big==
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNzA4MDE4MCBTYWx0ZWRfXxbwz+b0ZHaxP
+ 1cKAWegndctvPkhMDGeoJ5xgkuCqSeK6qxRFmaTWza8X4SW99RGn/w4ggzmfaHvfbYz+wV3CjBL
+ +mu0m4yoJJHJEiZr9DAJ3OhGyLUm3lo=
+X-Authority-Analysis: v=2.4 cv=PYPPQChd c=1 sm=1 tr=0 ts=6a4e962a cx=c_pps
+ a=rz3CxIlbcmazkYymdCej/Q==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
  a=IkcTkHD0fZMA:10 a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=ZpdpYltYx_vBUK5n70dp:22
- a=EUspDBNiAAAA:8 a=6R40rii2pyDi1IHM5g4A:9 a=QEXdDO2ut3YA:10
- a=2VI0MkxyNR6bbpdq8BZq:22
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=gowsoOTTUOVcmtlkKump:22
+ a=EUspDBNiAAAA:8 a=3-fpjux48RbdSrvt_gcA:9 a=QEXdDO2ut3YA:10
+ a=bFCP_H2QrGi7Okbo017w:22
+X-Proofpoint-GUID: YlPaJTM-04Uur8qz_8F1r48uD4w3_smK
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
  definitions=2026-07-08_03,2026-07-08_01,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 impostorscore=0 adultscore=0 spamscore=0 phishscore=0
- bulkscore=0 priorityscore=1501 malwarescore=0 lowpriorityscore=0
+ priorityscore=1501 phishscore=0 lowpriorityscore=0 impostorscore=0
+ malwarescore=0 adultscore=0 clxscore=1015 bulkscore=0 spamscore=0
  suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
  route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
- definitions=main-2607080179
+ definitions=main-2607080180
 
-Add support for Audio Core Clock Controller (AUDIOCORECC) and Audio Core
-CSR resets on Qualcomm Shikra SoC.
+Add support for Audio Core Clock Controller (AudioCoreCC) and Audio Core
+CSR nodes on Qualcomm Shikra SoC. The Audio Core Clocks and Resets support
+differs across Shikra variants based on Audio subsystem enablement as
+follows:
+- CQM variant: The QAIF driver runs on HLOS, hence both clocks and resets
+are required to be supported on HLOS.
+- CQS variant: The QAIF driver runs on the Modem, and required clocks are
+handled on Modem, so from HLOS only resets are needed.
+- IQS variant: no soundwire codes, hence no clocks/resets are needed.
 
 Signed-off-by: Imran Shaik <imran.shaik@oss.qualcomm.com>
 ---
- drivers/clk/qcom/Kconfig              |  10 +
- drivers/clk/qcom/Makefile             |   1 +
- drivers/clk/qcom/audiocorecc-shikra.c | 809 ++++++++++++++++++++++++++++++++++
- 3 files changed, 820 insertions(+)
+ arch/arm64/boot/dts/qcom/shikra-cqm-evk.dts |  8 ++++++++
+ arch/arm64/boot/dts/qcom/shikra-cqs-evk.dts |  4 ++++
+ arch/arm64/boot/dts/qcom/shikra.dtsi        | 18 ++++++++++++++++++
+ 3 files changed, 30 insertions(+)
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index 72e172ee0e6eaeccf709c0110e1d24fb555d894d..08e10feeaffa9a05daed5a2c5db8cb9f5eff76f3 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -155,6 +155,16 @@ config CLK_NORD_GCC
- 	  SPI, I2C, USB, SD/UFS, PCIe etc. The clock controller is a combination
- 	  of GCC, SE_GCC, NE_GCC and NW_GCC.
+diff --git a/arch/arm64/boot/dts/qcom/shikra-cqm-evk.dts b/arch/arm64/boot/dts/qcom/shikra-cqm-evk.dts
+index 0a52ab9b7a4c34d371f5ac23efe59d1c9d2723f4..2d56182a6aeb3c36f525fc32dba7fbcd75103984 100644
+--- a/arch/arm64/boot/dts/qcom/shikra-cqm-evk.dts
++++ b/arch/arm64/boot/dts/qcom/shikra-cqm-evk.dts
+@@ -23,6 +23,14 @@ chosen {
+ 	};
+ };
  
-+config CLK_SHIKRA_AUDIOCORECC
-+	tristate "Shikra Audio Core Clock Controller"
-+	depends on ARM64 || COMPILE_TEST
-+	select CLK_SHIKRA_GCC
-+	default m if ARCH_QCOM
-+	help
-+	  Support for the Audio Core clock controller on Qualcomm Shikra devices.
-+	  Say Y if you want to use AudioCoreCC clocks required to support audio
-+	  devices and it's functionality.
++&audiocorecc {
++	status = "okay";
++};
 +
- config CLK_SHIKRA_GCC
- 	tristate "Shikra Global Clock Controller"
- 	depends on ARM64 || COMPILE_TEST
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index 910add09b3b2fe64bb21a18f4e1e445a702e283b..c03cd721bb8d2736d1bb5e6249dfc27e3af7cb48 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -39,6 +39,7 @@ obj-$(CONFIG_CLK_KAANAPALI_TCSRCC) += tcsrcc-kaanapali.o
- obj-$(CONFIG_CLK_KAANAPALI_VIDEOCC) += videocc-kaanapali.o
- obj-$(CONFIG_CLK_NORD_GCC) += gcc-nord.o negcc-nord.o nwgcc-nord.o segcc-nord.o
- obj-$(CONFIG_CLK_NORD_TCSRCC) += tcsrcc-nord.o
-+obj-$(CONFIG_CLK_SHIKRA_AUDIOCORECC) += audiocorecc-shikra.o
- obj-$(CONFIG_CLK_SHIKRA_GCC) += gcc-shikra.o
- obj-$(CONFIG_CLK_X1E80100_CAMCC) += camcc-x1e80100.o
- obj-$(CONFIG_CLK_X1E80100_DISPCC) += dispcc-x1e80100.o
-diff --git a/drivers/clk/qcom/audiocorecc-shikra.c b/drivers/clk/qcom/audiocorecc-shikra.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..76017240f7684da5e2fc5b8ab7ec2d3a3793da56
---- /dev/null
-+++ b/drivers/clk/qcom/audiocorecc-shikra.c
-@@ -0,0 +1,809 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
-+ */
++&audiocore_csr {
++	status = "okay";
++};
 +
-+#include <linux/clk-provider.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
+ &sdhc_1 {
+ 	vmmc-supply = <&pm4125_l20>;
+ 	vqmmc-supply = <&pm4125_l14>;
+diff --git a/arch/arm64/boot/dts/qcom/shikra-cqs-evk.dts b/arch/arm64/boot/dts/qcom/shikra-cqs-evk.dts
+index b3f19a64d7aed3121ef092df684b19a4de39b497..46e1d8b718af30c095b2535eb4f7fa6e60157c2b 100644
+--- a/arch/arm64/boot/dts/qcom/shikra-cqs-evk.dts
++++ b/arch/arm64/boot/dts/qcom/shikra-cqs-evk.dts
+@@ -23,6 +23,10 @@ chosen {
+ 	};
+ };
+ 
++&audiocore_csr {
++	status = "okay";
++};
 +
+ &sdhc_1 {
+ 	vmmc-supply = <&pm4125_l20>;
+ 	vqmmc-supply = <&pm4125_l14>;
+diff --git a/arch/arm64/boot/dts/qcom/shikra.dtsi b/arch/arm64/boot/dts/qcom/shikra.dtsi
+index a4334d99c1f35ee851ca8266ec37d4a200a07ee5..c008a836251fcf96e8376bfd3fc17ee994e7250f 100644
+--- a/arch/arm64/boot/dts/qcom/shikra.dtsi
++++ b/arch/arm64/boot/dts/qcom/shikra.dtsi
+@@ -4,6 +4,7 @@
+  */
+ 
+ #include <dt-bindings/clock/qcom,rpmcc.h>
 +#include <dt-bindings/clock/qcom,shikra-audiocorecc.h>
+ #include <dt-bindings/clock/qcom,shikra-gcc.h>
+ #include <dt-bindings/interconnect/qcom,icc.h>
+ #include <dt-bindings/interconnect/qcom,rpm-icc.h>
+@@ -640,6 +641,23 @@ &clk_virt SLAVE_QUP_CORE_0 RPM_ALWAYS_TAG>,
+ 			};
+ 		};
+ 
++		audiocorecc: clock-controller@a0a0000 {
++			compatible = "qcom,shikra-audiocorecc";
++			reg = <0x0 0x0a0a0000 0x0 0x10000>;
++			clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
++				 <&sleep_clk>,
++				 <0>;
++			#clock-cells = <1>;
++			status = "disabled";
++		};
 +
-+#include "clk-alpha-pll.h"
-+#include "clk-branch.h"
-+#include "clk-pll.h"
-+#include "clk-rcg.h"
-+#include "clk-regmap.h"
-+#include "clk-regmap-divider.h"
-+#include "clk-regmap-mux.h"
-+#include "common.h"
-+#include "reset.h"
++		audiocore_csr: reset-controller@a0b4000 {
++			compatible = "qcom,shikra-audiocore-csr";
++			reg = <0x0 0x0a0b4000 0x0 0x1000>;
++			#reset-cells = <1>;
++			status = "disabled";
++		};
 +
-+enum {
-+	DT_BI_TCXO,
-+	DT_SLEEP_CLK,
-+	DT_AUD_REF_CLK_SRC,
-+};
-+
-+enum {
-+	P_AUD_REF_CLK_SRC,
-+	P_AUDIO_CORE_CC_DIG_PLL_OUT_AUX,
-+	P_AUDIO_CORE_CC_DIG_PLL_OUT_AUX2,
-+	P_BI_TCXO,
-+	P_SLEEP_CLK,
-+};
-+
-+static const struct pll_vco spark_vco[] = {
-+	{ 500000000, 1000000000, 2 },
-+};
-+
-+/* 614.4 MHz Configuration */
-+static const struct alpha_pll_config audio_core_cc_dig_pll_config = {
-+	.l = 0x20,
-+	.alpha = 0x0,
-+	.vco_val = BIT(21),
-+	.post_div_val = 0x28100,
-+	.post_div_mask = GENMASK(17, 8),
-+	.vco_mask = GENMASK(21, 20),
-+	.main_output_mask = BIT(0),
-+	.aux_output_mask = BIT(1),
-+	.aux2_output_mask = BIT(2),
-+	.config_ctl_val = 0x4001055b,
-+	.test_ctl_hi_val = 0x1,
-+	.test_ctl_hi_mask = 0x1,
-+};
-+
-+static struct clk_alpha_pll audio_core_cc_dig_pll = {
-+	.offset = 0x0,
-+	.config = &audio_core_cc_dig_pll_config,
-+	.vco_table = spark_vco,
-+	.num_vco = ARRAY_SIZE(spark_vco),
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
-+	.clkr = {
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "audio_core_cc_dig_pll",
-+			.parent_data = &(const struct clk_parent_data) {
-+				.index = DT_BI_TCXO,
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_alpha_pll_fixed_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_fixed_factor audio_core_cc_dig_pll_out_aux = {
-+	.mult = 1,
-+	.div = 5,
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "audio_core_cc_dig_pll_out_aux",
-+		.parent_data = &(const struct clk_parent_data) {
-+			.hw = &audio_core_cc_dig_pll.clkr.hw,
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+		.ops = &clk_fixed_factor_ops,
-+	},
-+};
-+
-+static struct clk_fixed_factor audio_core_cc_dig_pll_out_aux2 = {
-+	.mult = 1,
-+	.div = 2,
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "audio_core_cc_dig_pll_out_aux2",
-+		.parent_data = &(const struct clk_parent_data) {
-+			.hw = &audio_core_cc_dig_pll.clkr.hw,
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+		.ops = &clk_fixed_factor_ops,
-+	},
-+};
-+
-+static const struct parent_map audio_core_cc_parent_map_0[] = {
-+	{ P_BI_TCXO, 0 },
-+	{ P_AUD_REF_CLK_SRC, 1 },
-+	{ P_SLEEP_CLK, 2 },
-+	{ P_AUDIO_CORE_CC_DIG_PLL_OUT_AUX, 4 },
-+	{ P_AUDIO_CORE_CC_DIG_PLL_OUT_AUX2, 6 },
-+};
-+
-+static const struct clk_parent_data audio_core_cc_parent_data_0[] = {
-+	{ .index = DT_BI_TCXO },
-+	{ .index = DT_AUD_REF_CLK_SRC },
-+	{ .index = DT_SLEEP_CLK },
-+	{ .hw = &audio_core_cc_dig_pll_out_aux.hw },
-+	{ .hw = &audio_core_cc_dig_pll_out_aux2.hw },
-+};
-+
-+static const struct freq_tbl ftbl_audio_core_cc_aif_if0_clk_src[] = {
-+	F(240000, P_BI_TCXO, 10, 1, 8),
-+	F(256000, P_AUDIO_CORE_CC_DIG_PLL_OUT_AUX, 15, 1, 32),
-+	F(512000, P_AUDIO_CORE_CC_DIG_PLL_OUT_AUX, 15, 1, 16),
-+	F(768000, P_AUDIO_CORE_CC_DIG_PLL_OUT_AUX, 10, 1, 16),
-+	F(1024000, P_AUDIO_CORE_CC_DIG_PLL_OUT_AUX, 15, 1, 8),
-+	F(1536000, P_AUDIO_CORE_CC_DIG_PLL_OUT_AUX, 10, 1, 8),
-+	F(2048000, P_AUDIO_CORE_CC_DIG_PLL_OUT_AUX, 15, 1, 4),
-+	F(3072000, P_AUDIO_CORE_CC_DIG_PLL_OUT_AUX, 10, 1, 4),
-+	F(4096000, P_AUDIO_CORE_CC_DIG_PLL_OUT_AUX, 15, 1, 2),
-+	F(6144000, P_AUDIO_CORE_CC_DIG_PLL_OUT_AUX, 10, 1, 2),
-+	F(8192000, P_AUDIO_CORE_CC_DIG_PLL_OUT_AUX, 15, 0, 0),
-+	F(9600000, P_BI_TCXO, 2, 0, 0),
-+	F(12288000, P_AUDIO_CORE_CC_DIG_PLL_OUT_AUX, 10, 0, 0),
-+	F(19200000, P_BI_TCXO, 1, 0, 0),
-+	F(24576000, P_AUDIO_CORE_CC_DIG_PLL_OUT_AUX, 5, 0, 0),
-+	{ }
-+};
-+
-+static struct clk_rcg2 audio_core_cc_aif_if0_clk_src = {
-+	.cmd_rcgr = 0x104c,
-+	.mnd_width = 16,
-+	.hid_width = 5,
-+	.parent_map = audio_core_cc_parent_map_0,
-+	.freq_tbl = ftbl_audio_core_cc_aif_if0_clk_src,
-+	.hw_clk_ctrl = true,
-+	.clkr.hw.init = &(const struct clk_init_data) {
-+		.name = "audio_core_cc_aif_if0_clk_src",
-+		.parent_data = audio_core_cc_parent_data_0,
-+		.num_parents = ARRAY_SIZE(audio_core_cc_parent_data_0),
-+		.flags = CLK_SET_RATE_PARENT,
-+		.ops = &clk_rcg2_shared_ops,
-+	},
-+};
-+
-+static struct clk_rcg2 audio_core_cc_aif_if1_clk_src = {
-+	.cmd_rcgr = 0x10b0,
-+	.mnd_width = 16,
-+	.hid_width = 5,
-+	.parent_map = audio_core_cc_parent_map_0,
-+	.freq_tbl = ftbl_audio_core_cc_aif_if0_clk_src,
-+	.hw_clk_ctrl = true,
-+	.clkr.hw.init = &(const struct clk_init_data) {
-+		.name = "audio_core_cc_aif_if1_clk_src",
-+		.parent_data = audio_core_cc_parent_data_0,
-+		.num_parents = ARRAY_SIZE(audio_core_cc_parent_data_0),
-+		.flags = CLK_SET_RATE_PARENT,
-+		.ops = &clk_rcg2_shared_ops,
-+	},
-+};
-+
-+static struct clk_rcg2 audio_core_cc_aif_if2_clk_src = {
-+	.cmd_rcgr = 0x1114,
-+	.mnd_width = 16,
-+	.hid_width = 5,
-+	.parent_map = audio_core_cc_parent_map_0,
-+	.freq_tbl = ftbl_audio_core_cc_aif_if0_clk_src,
-+	.hw_clk_ctrl = true,
-+	.clkr.hw.init = &(const struct clk_init_data) {
-+		.name = "audio_core_cc_aif_if2_clk_src",
-+		.parent_data = audio_core_cc_parent_data_0,
-+		.num_parents = ARRAY_SIZE(audio_core_cc_parent_data_0),
-+		.flags = CLK_SET_RATE_PARENT,
-+		.ops = &clk_rcg2_shared_ops,
-+	},
-+};
-+
-+static const struct freq_tbl ftbl_audio_core_cc_aif_if3_clk_src[] = {
-+	F(240000, P_BI_TCXO, 10, 1, 8),
-+	F(256000, P_AUDIO_CORE_CC_DIG_PLL_OUT_AUX, 15, 1, 32),
-+	F(512000, P_AUDIO_CORE_CC_DIG_PLL_OUT_AUX, 15, 1, 16),
-+	F(768000, P_AUDIO_CORE_CC_DIG_PLL_OUT_AUX, 10, 1, 16),
-+	F(1024000, P_AUDIO_CORE_CC_DIG_PLL_OUT_AUX, 15, 1, 8),
-+	F(1536000, P_AUDIO_CORE_CC_DIG_PLL_OUT_AUX, 10, 1, 8),
-+	F(2048000, P_AUDIO_CORE_CC_DIG_PLL_OUT_AUX, 15, 1, 4),
-+	F(3072000, P_AUDIO_CORE_CC_DIG_PLL_OUT_AUX, 10, 1, 4),
-+	F(4096000, P_AUDIO_CORE_CC_DIG_PLL_OUT_AUX, 15, 1, 2),
-+	F(6144000, P_AUDIO_CORE_CC_DIG_PLL_OUT_AUX, 10, 1, 2),
-+	F(8192000, P_AUDIO_CORE_CC_DIG_PLL_OUT_AUX, 15, 0, 0),
-+	F(9600000, P_BI_TCXO, 2, 0, 0),
-+	F(12288000, P_AUDIO_CORE_CC_DIG_PLL_OUT_AUX, 10, 0, 0),
-+	F(19200000, P_BI_TCXO, 1, 0, 0),
-+	F(24576000, P_AUDIO_CORE_CC_DIG_PLL_OUT_AUX, 5, 0, 0),
-+	F(49152000, P_AUDIO_CORE_CC_DIG_PLL_OUT_AUX, 2.5, 0, 0),
-+	{ }
-+};
-+
-+static struct clk_rcg2 audio_core_cc_aif_if3_clk_src = {
-+	.cmd_rcgr = 0x1178,
-+	.mnd_width = 16,
-+	.hid_width = 5,
-+	.parent_map = audio_core_cc_parent_map_0,
-+	.freq_tbl = ftbl_audio_core_cc_aif_if3_clk_src,
-+	.hw_clk_ctrl = true,
-+	.clkr.hw.init = &(const struct clk_init_data) {
-+		.name = "audio_core_cc_aif_if3_clk_src",
-+		.parent_data = audio_core_cc_parent_data_0,
-+		.num_parents = ARRAY_SIZE(audio_core_cc_parent_data_0),
-+		.flags = CLK_SET_RATE_PARENT,
-+		.ops = &clk_rcg2_shared_ops,
-+	},
-+};
-+
-+static const struct freq_tbl ftbl_audio_core_cc_aud_dma_clk_src[] = {
-+	F(38400000, P_AUDIO_CORE_CC_DIG_PLL_OUT_AUX2, 8, 0, 0),
-+	F(102400000, P_AUDIO_CORE_CC_DIG_PLL_OUT_AUX2, 3, 0, 0),
-+	F(153600000, P_AUDIO_CORE_CC_DIG_PLL_OUT_AUX2, 2, 0, 0),
-+	F(307200000, P_AUDIO_CORE_CC_DIG_PLL_OUT_AUX2, 1, 0, 0),
-+	{ }
-+};
-+
-+static struct clk_rcg2 audio_core_cc_aud_dma_clk_src = {
-+	.cmd_rcgr = 0x1028,
-+	.mnd_width = 0,
-+	.hid_width = 5,
-+	.parent_map = audio_core_cc_parent_map_0,
-+	.freq_tbl = ftbl_audio_core_cc_aud_dma_clk_src,
-+	.hw_clk_ctrl = true,
-+	.clkr.hw.init = &(const struct clk_init_data) {
-+		.name = "audio_core_cc_aud_dma_clk_src",
-+		.parent_data = audio_core_cc_parent_data_0,
-+		.num_parents = ARRAY_SIZE(audio_core_cc_parent_data_0),
-+		.flags = CLK_SET_RATE_PARENT,
-+		.ops = &clk_rcg2_shared_ops,
-+	},
-+};
-+
-+static const struct freq_tbl ftbl_audio_core_cc_bus_clk_src[] = {
-+	F(38400000, P_AUDIO_CORE_CC_DIG_PLL_OUT_AUX2, 8, 0, 0),
-+	F(76800000, P_AUDIO_CORE_CC_DIG_PLL_OUT_AUX2, 4, 0, 0),
-+	{ }
-+};
-+
-+static struct clk_rcg2 audio_core_cc_bus_clk_src = {
-+	.cmd_rcgr = 0x1008,
-+	.mnd_width = 0,
-+	.hid_width = 5,
-+	.parent_map = audio_core_cc_parent_map_0,
-+	.freq_tbl = ftbl_audio_core_cc_bus_clk_src,
-+	.hw_clk_ctrl = true,
-+	.clkr.hw.init = &(const struct clk_init_data) {
-+		.name = "audio_core_cc_bus_clk_src",
-+		.parent_data = audio_core_cc_parent_data_0,
-+		.num_parents = ARRAY_SIZE(audio_core_cc_parent_data_0),
-+		.flags = CLK_SET_RATE_PARENT,
-+		.ops = &clk_rcg2_shared_ops,
-+	},
-+};
-+
-+static struct clk_rcg2 audio_core_cc_ext_mclka_clk_src = {
-+	.cmd_rcgr = 0x123c,
-+	.mnd_width = 8,
-+	.hid_width = 5,
-+	.parent_map = audio_core_cc_parent_map_0,
-+	.freq_tbl = ftbl_audio_core_cc_aif_if0_clk_src,
-+	.hw_clk_ctrl = true,
-+	.clkr.hw.init = &(const struct clk_init_data) {
-+		.name = "audio_core_cc_ext_mclka_clk_src",
-+		.parent_data = audio_core_cc_parent_data_0,
-+		.num_parents = ARRAY_SIZE(audio_core_cc_parent_data_0),
-+		.flags = CLK_SET_RATE_PARENT,
-+		.ops = &clk_rcg2_shared_ops,
-+	},
-+};
-+
-+static struct clk_rcg2 audio_core_cc_ext_mclkb_clk_src = {
-+	.cmd_rcgr = 0x125c,
-+	.mnd_width = 8,
-+	.hid_width = 5,
-+	.parent_map = audio_core_cc_parent_map_0,
-+	.freq_tbl = ftbl_audio_core_cc_aif_if0_clk_src,
-+	.hw_clk_ctrl = true,
-+	.clkr.hw.init = &(const struct clk_init_data) {
-+		.name = "audio_core_cc_ext_mclkb_clk_src",
-+		.parent_data = audio_core_cc_parent_data_0,
-+		.num_parents = ARRAY_SIZE(audio_core_cc_parent_data_0),
-+		.flags = CLK_SET_RATE_PARENT,
-+		.ops = &clk_rcg2_shared_ops,
-+	},
-+};
-+
-+static const struct freq_tbl ftbl_audio_core_cc_lpaif_pcmoe_clk_src[] = {
-+	F(9600000, P_BI_TCXO, 2, 0, 0),
-+	F(15360000, P_AUDIO_CORE_CC_DIG_PLL_OUT_AUX, 8, 0, 0),
-+	F(30720000, P_AUDIO_CORE_CC_DIG_PLL_OUT_AUX, 4, 0, 0),
-+	F(61440000, P_AUDIO_CORE_CC_DIG_PLL_OUT_AUX, 2, 0, 0),
-+	{ }
-+};
-+
-+static struct clk_rcg2 audio_core_cc_lpaif_pcmoe_clk_src = {
-+	.cmd_rcgr = 0x12ac,
-+	.mnd_width = 8,
-+	.hid_width = 5,
-+	.parent_map = audio_core_cc_parent_map_0,
-+	.freq_tbl = ftbl_audio_core_cc_lpaif_pcmoe_clk_src,
-+	.hw_clk_ctrl = true,
-+	.clkr.hw.init = &(const struct clk_init_data) {
-+		.name = "audio_core_cc_lpaif_pcmoe_clk_src",
-+		.parent_data = audio_core_cc_parent_data_0,
-+		.num_parents = ARRAY_SIZE(audio_core_cc_parent_data_0),
-+		.flags = CLK_SET_RATE_PARENT,
-+		.ops = &clk_rcg2_shared_ops,
-+	},
-+};
-+
-+static const struct freq_tbl ftbl_audio_core_cc_tx_mclk_rcg_clk_src[] = {
-+	F(19200000, P_BI_TCXO, 1, 0, 0),
-+	F(24576000, P_AUDIO_CORE_CC_DIG_PLL_OUT_AUX, 5, 0, 0),
-+	{ }
-+};
-+
-+static struct clk_rcg2 audio_core_cc_tx_mclk_rcg_clk_src = {
-+	.cmd_rcgr = 0x127c,
-+	.mnd_width = 8,
-+	.hid_width = 5,
-+	.parent_map = audio_core_cc_parent_map_0,
-+	.freq_tbl = ftbl_audio_core_cc_tx_mclk_rcg_clk_src,
-+	.hw_clk_ctrl = true,
-+	.clkr.hw.init = &(const struct clk_init_data) {
-+		.name = "audio_core_cc_tx_mclk_rcg_clk_src",
-+		.parent_data = audio_core_cc_parent_data_0,
-+		.num_parents = ARRAY_SIZE(audio_core_cc_parent_data_0),
-+		.flags = CLK_SET_RATE_PARENT,
-+		.ops = &clk_rcg2_shared_ops,
-+	},
-+};
-+
-+static struct clk_regmap_div audio_core_cc_cdiv_tx_mclk_div_clk_src = {
-+	.reg = 0x129c,
-+	.shift = 0,
-+	.width = 4,
-+	.clkr.hw.init = &(const struct clk_init_data) {
-+		.name = "audio_core_cc_cdiv_tx_mclk_div_clk_src",
-+		.parent_hws = (const struct clk_hw*[]) {
-+			&audio_core_cc_tx_mclk_rcg_clk_src.clkr.hw,
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+		.ops = &clk_regmap_div_ro_ops,
-+	},
-+};
-+
-+static struct clk_branch audio_core_cc_aif_if0_ebit_clk = {
-+	.halt_reg = 0x1068,
-+	.halt_check = BRANCH_HALT_DELAY,
-+	.clkr = {
-+		.enable_reg = 0x1068,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "audio_core_cc_aif_if0_ebit_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch audio_core_cc_aif_if0_ibit_clk = {
-+	.halt_reg = 0x1064,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x1064,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "audio_core_cc_aif_if0_ibit_clk",
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&audio_core_cc_aif_if0_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch audio_core_cc_aif_if1_ebit_clk = {
-+	.halt_reg = 0x10cc,
-+	.halt_check = BRANCH_HALT_DELAY,
-+	.clkr = {
-+		.enable_reg = 0x10cc,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "audio_core_cc_aif_if1_ebit_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch audio_core_cc_aif_if1_ibit_clk = {
-+	.halt_reg = 0x10c8,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x10c8,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "audio_core_cc_aif_if1_ibit_clk",
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&audio_core_cc_aif_if1_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch audio_core_cc_aif_if2_ebit_clk = {
-+	.halt_reg = 0x1130,
-+	.halt_check = BRANCH_HALT_DELAY,
-+	.clkr = {
-+		.enable_reg = 0x1130,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "audio_core_cc_aif_if2_ebit_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch audio_core_cc_aif_if2_ibit_clk = {
-+	.halt_reg = 0x112c,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x112c,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "audio_core_cc_aif_if2_ibit_clk",
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&audio_core_cc_aif_if2_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch audio_core_cc_aif_if3_ebit_clk = {
-+	.halt_reg = 0x1194,
-+	.halt_check = BRANCH_HALT_DELAY,
-+	.clkr = {
-+		.enable_reg = 0x1194,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "audio_core_cc_aif_if3_ebit_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch audio_core_cc_aif_if3_ibit_clk = {
-+	.halt_reg = 0x1190,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x1190,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "audio_core_cc_aif_if3_ibit_clk",
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&audio_core_cc_aif_if3_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch audio_core_cc_aud_dma_clk = {
-+	.halt_reg = 0x1040,
-+	.halt_check = BRANCH_HALT,
-+	.hwcg_reg = 0x1040,
-+	.hwcg_bit = 1,
-+	.clkr = {
-+		.enable_reg = 0x1040,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "audio_core_cc_aud_dma_clk",
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&audio_core_cc_aud_dma_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch audio_core_cc_aud_dma_mem_clk = {
-+	.halt_reg = 0x1044,
-+	.halt_check = BRANCH_HALT,
-+	.hwcg_reg = 0x1044,
-+	.hwcg_bit = 1,
-+	.clkr = {
-+		.enable_reg = 0x1044,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "audio_core_cc_aud_dma_mem_clk",
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&audio_core_cc_aud_dma_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch audio_core_cc_bus_clk = {
-+	.halt_reg = 0x1020,
-+	.halt_check = BRANCH_HALT_VOTED,
-+	.clkr = {
-+		.enable_reg = 0x1020,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "audio_core_cc_bus_clk",
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&audio_core_cc_bus_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_aon_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch audio_core_cc_ext_mclka_out_clk = {
-+	.halt_reg = 0x1254,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x1254,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "audio_core_cc_ext_mclka_out_clk",
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&audio_core_cc_ext_mclka_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch audio_core_cc_ext_mclkb_out_clk = {
-+	.halt_reg = 0x1274,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x1274,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "audio_core_cc_ext_mclkb_out_clk",
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&audio_core_cc_ext_mclkb_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch audio_core_cc_im_sleep_clk = {
-+	.halt_reg = 0x12cc,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x12cc,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "audio_core_cc_im_sleep_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch audio_core_cc_lpaif_pcmoe_clk = {
-+	.halt_reg = 0x12c4,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x12c4,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "audio_core_cc_lpaif_pcmoe_clk",
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&audio_core_cc_lpaif_pcmoe_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch audio_core_cc_rx_mclk_2x_clk = {
-+	.halt_reg = 0x1298,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x1298,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "audio_core_cc_rx_mclk_2x_clk",
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&audio_core_cc_tx_mclk_rcg_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch audio_core_cc_rx_mclk_clk = {
-+	.halt_reg = 0x12a4,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x12a4,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "audio_core_cc_rx_mclk_clk",
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&audio_core_cc_cdiv_tx_mclk_div_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch audio_core_cc_sampling_clk = {
-+	.halt_reg = 0x1000,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x1000,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "audio_core_cc_sampling_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch audio_core_cc_tx_mclk_2x_clk = {
-+	.halt_reg = 0x1294,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x1294,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "audio_core_cc_tx_mclk_2x_clk",
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&audio_core_cc_tx_mclk_rcg_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch audio_core_cc_tx_mclk_clk = {
-+	.halt_reg = 0x12a0,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x12a0,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "audio_core_cc_tx_mclk_clk",
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&audio_core_cc_cdiv_tx_mclk_div_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_hw *audio_core_cc_shikra_hws[] = {
-+	[AUDIO_CORE_CC_DIG_PLL_OUT_AUX] = &audio_core_cc_dig_pll_out_aux.hw,
-+	[AUDIO_CORE_CC_DIG_PLL_OUT_AUX2] = &audio_core_cc_dig_pll_out_aux2.hw,
-+};
-+
-+static struct clk_regmap *audio_core_cc_shikra_clocks[] = {
-+	[AUDIO_CORE_CC_AIF_IF0_CLK_SRC] = &audio_core_cc_aif_if0_clk_src.clkr,
-+	[AUDIO_CORE_CC_AIF_IF0_EBIT_CLK] = &audio_core_cc_aif_if0_ebit_clk.clkr,
-+	[AUDIO_CORE_CC_AIF_IF0_IBIT_CLK] = &audio_core_cc_aif_if0_ibit_clk.clkr,
-+	[AUDIO_CORE_CC_AIF_IF1_CLK_SRC] = &audio_core_cc_aif_if1_clk_src.clkr,
-+	[AUDIO_CORE_CC_AIF_IF1_EBIT_CLK] = &audio_core_cc_aif_if1_ebit_clk.clkr,
-+	[AUDIO_CORE_CC_AIF_IF1_IBIT_CLK] = &audio_core_cc_aif_if1_ibit_clk.clkr,
-+	[AUDIO_CORE_CC_AIF_IF2_CLK_SRC] = &audio_core_cc_aif_if2_clk_src.clkr,
-+	[AUDIO_CORE_CC_AIF_IF2_EBIT_CLK] = &audio_core_cc_aif_if2_ebit_clk.clkr,
-+	[AUDIO_CORE_CC_AIF_IF2_IBIT_CLK] = &audio_core_cc_aif_if2_ibit_clk.clkr,
-+	[AUDIO_CORE_CC_AIF_IF3_CLK_SRC] = &audio_core_cc_aif_if3_clk_src.clkr,
-+	[AUDIO_CORE_CC_AIF_IF3_EBIT_CLK] = &audio_core_cc_aif_if3_ebit_clk.clkr,
-+	[AUDIO_CORE_CC_AIF_IF3_IBIT_CLK] = &audio_core_cc_aif_if3_ibit_clk.clkr,
-+	[AUDIO_CORE_CC_AUD_DMA_CLK] = &audio_core_cc_aud_dma_clk.clkr,
-+	[AUDIO_CORE_CC_AUD_DMA_CLK_SRC] = &audio_core_cc_aud_dma_clk_src.clkr,
-+	[AUDIO_CORE_CC_AUD_DMA_MEM_CLK] = &audio_core_cc_aud_dma_mem_clk.clkr,
-+	[AUDIO_CORE_CC_BUS_CLK] = &audio_core_cc_bus_clk.clkr,
-+	[AUDIO_CORE_CC_BUS_CLK_SRC] = &audio_core_cc_bus_clk_src.clkr,
-+	[AUDIO_CORE_CC_CDIV_TX_MCLK_DIV_CLK_SRC] = &audio_core_cc_cdiv_tx_mclk_div_clk_src.clkr,
-+	[AUDIO_CORE_CC_DIG_PLL] = &audio_core_cc_dig_pll.clkr,
-+	[AUDIO_CORE_CC_EXT_MCLKA_CLK_SRC] = &audio_core_cc_ext_mclka_clk_src.clkr,
-+	[AUDIO_CORE_CC_EXT_MCLKA_OUT_CLK] = &audio_core_cc_ext_mclka_out_clk.clkr,
-+	[AUDIO_CORE_CC_EXT_MCLKB_CLK_SRC] = &audio_core_cc_ext_mclkb_clk_src.clkr,
-+	[AUDIO_CORE_CC_EXT_MCLKB_OUT_CLK] = &audio_core_cc_ext_mclkb_out_clk.clkr,
-+	[AUDIO_CORE_CC_IM_SLEEP_CLK] = &audio_core_cc_im_sleep_clk.clkr,
-+	[AUDIO_CORE_CC_LPAIF_PCMOE_CLK] = &audio_core_cc_lpaif_pcmoe_clk.clkr,
-+	[AUDIO_CORE_CC_LPAIF_PCMOE_CLK_SRC] = &audio_core_cc_lpaif_pcmoe_clk_src.clkr,
-+	[AUDIO_CORE_CC_RX_MCLK_2X_CLK] = &audio_core_cc_rx_mclk_2x_clk.clkr,
-+	[AUDIO_CORE_CC_RX_MCLK_CLK] = &audio_core_cc_rx_mclk_clk.clkr,
-+	[AUDIO_CORE_CC_SAMPLING_CLK] = &audio_core_cc_sampling_clk.clkr,
-+	[AUDIO_CORE_CC_TX_MCLK_2X_CLK] = &audio_core_cc_tx_mclk_2x_clk.clkr,
-+	[AUDIO_CORE_CC_TX_MCLK_CLK] = &audio_core_cc_tx_mclk_clk.clkr,
-+	[AUDIO_CORE_CC_TX_MCLK_RCG_CLK_SRC] = &audio_core_cc_tx_mclk_rcg_clk_src.clkr,
-+};
-+
-+static struct clk_alpha_pll *audio_core_cc_shikra_plls[] = {
-+	&audio_core_cc_dig_pll,
-+};
-+
-+static const struct qcom_cc_driver_data audio_core_cc_shikra_driver_data = {
-+	.alpha_plls = audio_core_cc_shikra_plls,
-+	.num_alpha_plls = ARRAY_SIZE(audio_core_cc_shikra_plls),
-+};
-+
-+static const struct regmap_config audio_core_cc_shikra_regmap_config = {
-+	.reg_bits = 32,
-+	.reg_stride = 4,
-+	.val_bits = 32,
-+	.max_register = 0x305c,
-+	.fast_io = true,
-+};
-+
-+static const struct qcom_reset_map audio_core_csr_shikra_resets[] = {
-+	[AUDIO_CORE_CSR_RX_SWR_CGCR] = { 0x1c, 1 },
-+	[AUDIO_CORE_CSR_TX_SWR_CGCR] = { 0x30, 1 },
-+};
-+
-+static const struct regmap_config audio_core_csr_shikra_regmap_config = {
-+	.name = "audio_core_cc_shikra_reset",
-+	.reg_bits = 32,
-+	.reg_stride = 4,
-+	.val_bits = 32,
-+	.fast_io = true,
-+	.max_register = 0x34,
-+};
-+
-+static const struct qcom_cc_desc audio_core_csr_shikra_desc = {
-+	.config = &audio_core_csr_shikra_regmap_config,
-+	.resets = audio_core_csr_shikra_resets,
-+	.num_resets = ARRAY_SIZE(audio_core_csr_shikra_resets),
-+};
-+
-+static const struct qcom_cc_desc audio_core_cc_shikra_desc = {
-+	.config = &audio_core_cc_shikra_regmap_config,
-+	.clk_hws = audio_core_cc_shikra_hws,
-+	.num_clk_hws = ARRAY_SIZE(audio_core_cc_shikra_hws),
-+	.clks = audio_core_cc_shikra_clocks,
-+	.num_clks = ARRAY_SIZE(audio_core_cc_shikra_clocks),
-+	.driver_data = &audio_core_cc_shikra_driver_data,
-+};
-+
-+static const struct of_device_id audio_core_cc_shikra_match_table[] = {
-+	{ .compatible = "qcom,shikra-audiocorecc", .data = &audio_core_cc_shikra_desc },
-+	{ .compatible = "qcom,shikra-audiocore-csr", .data = &audio_core_csr_shikra_desc },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, audio_core_cc_shikra_match_table);
-+
-+static int audio_core_cc_shikra_probe(struct platform_device *pdev)
-+{
-+	const struct qcom_cc_desc *desc;
-+
-+	desc = device_get_match_data(&pdev->dev);
-+
-+	return qcom_cc_probe(pdev, desc);
-+}
-+
-+static struct platform_driver audio_core_cc_shikra_driver = {
-+	.probe = audio_core_cc_shikra_probe,
-+	.driver = {
-+		.name = "audiocorecc-shikra",
-+		.of_match_table = audio_core_cc_shikra_match_table,
-+	},
-+};
-+
-+module_platform_driver(audio_core_cc_shikra_driver);
-+
-+MODULE_DESCRIPTION("QTI AUDIOCORECC Shikra Driver");
-+MODULE_LICENSE("GPL");
+ 		sram@c11e000 {
+ 			compatible = "qcom,shikra-imem", "mmio-sram";
+ 			reg = <0x0 0x0c11e000 0x0 0x1000>;
 
 -- 
 2.34.1
