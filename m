@@ -1,41 +1,86 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73F1D416CE4;
-	Wed,  8 Jul 2026 09:19:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6028B31B803
+	for <linux-clk@vger.kernel.org>; Wed,  8 Jul 2026 09:48:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783502361; cv=none; b=ImIzL5W/9u4r1wV6ChwglSYB195CQ5nyjhdoKjYsx/W8S+9LaDbKkE2AZUTeIMOrRRQEjZ04VOgSeq6coMSSTNqD32+FIHRLGcKtSigxpF8Ec2/8DLvsAJgZk5ZZU6kzmuafrU3ycVi9/W0KNdFHypISyzRWCjm2/bMcnLkCtZg=
+	t=1783504132; cv=none; b=JsyFflswhAbnx1J+HNdSQACgnv8leF/LZWCvF42aeksaKLqgnubtmmqRXM8iauMj9zDiufrLJKrbb1sm/ebYgR/xBu6bUdWqy/AtSy2Qadn1KC0DlCzPPuqwSqbjR207H3dyZ7GykK6WhLp3qahQGma/EWVWM33fBvEZmTdDfOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783502361; c=relaxed/simple;
-	bh=4H+StpOW2ZH0hn4OeaLVWGpQKMud7otOxAZzPt6gxyU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=K4M/xlkWwC4LbNzF5u2uN8We+Xa/qNE/4c7fAuqnL8sqtakniZk/JUV3eNbwtOxr2yM9cndpRTwjlDhyuwy/lhYkegAxHp88a43jWZ5bDo430sUIFSFQOKr0ouNA2grEMj9n5mQDlDisV6dydTuBm9TW00QBC/vCv2/WjRAlc+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=BL6oo2KO; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1783504132; c=relaxed/simple;
+	bh=iquhnVX83va+93/Mcr4oasDJq2ojoyyvQIfd/GlAlpY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=pyZlT+iPSlqEdS+3cBzz7YfbHBLiORrbmk+8JdippBHelVT/HYNYvLSytI8couwRuKmE5Spl/IrQh5yopQGPjS56UQVnNXnz+ORhY7Fcqe9f7FUTyLkzsEddY++eNzTQ4jvnOJ43V1ppcUcoivkqqBoWEUTnYi3bIlz4scwIQQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=RPCkH5qF; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=AWFSx6J2; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="BL6oo2KO"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1783502352;
-	bh=4H+StpOW2ZH0hn4OeaLVWGpQKMud7otOxAZzPt6gxyU=;
-	h=From:Date:Subject:To:Cc:From;
-	b=BL6oo2KOaOY8P9CiXuyeTGeHyyCgOERtejWG8PQgEsFFIYiJkDNsgeiate6HKB8Pp
-	 4Qu0zmmliVMpunBLArD3kt78cckNb2XDIUwo01goTEdR9qlXgFVbdhfdo4QKWX6V8u
-	 QHZKCsvBt34BlgJkOihAIOPvogUBfS4KG0a/BGNWCFppBHay2b28jH0dkxW1Txlch1
-	 kdds4GZRwmtpMHZFob4uFlJZ7Mnh5v55fkALrUsr9qWbV7shmP6RL720jGmAG4R7X6
-	 45LOQxkR33XUR7/bi/6c5zCH1deJFxJ5OsL29GD0QKG2+r4/27VvCNWmN2OKFdHvkM
-	 vDHTF2l9hNUAg==
-Received: from yukiji.home (unknown [100.64.0.131])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: laeyraud)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8EB2917E0521;
-	Wed, 08 Jul 2026 11:19:11 +0200 (CEST)
-From: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
-Date: Wed, 08 Jul 2026 11:18:59 +0200
-Subject: [PATCH] clk: mediatek: pllfh: Fix IO remapping leak in
- register_pllfhs error path
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="RPCkH5qF";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="AWFSx6J2"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66888onE2204069
+	for <linux-clk@vger.kernel.org>; Wed, 8 Jul 2026 09:48:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=bg+Lut/Yb+GhISLgjp4dKi
+	W1om4zG/Mga19fYgYPmo4=; b=RPCkH5qFs+pR8L5rXJtY8U934sI542D6zTEOEJ
+	w5tpbZMvqZrtOXW1DRbPxOPyK+o46Brgc6yr51As0GlXycFq6ydPM7WFx1GjcuDs
+	DqNjf1HE7bI7YUiTYfghgBC1NEc6cy7tCy+zp6yPJt++mKemS+yWpK22zmdnGQeq
+	cnvxgUBTYGpONQz8rXHoQ5DsoKfIAjYZCNBaRn9T8JkSs5Pf345Wiu225VF6ht4C
+	sV8307Slu0c9KtERsi0loIfFOg1vf1yhva5cIA7xoJDBesl93Fi6dEdOBrV2Kaz5
+	fuGg4M0d1rkBZEyb9Clqeg17ze4+5bQ1rGi3h3EtVin5isnA==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4f9hnv0pxn-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Wed, 08 Jul 2026 09:48:50 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-51c1852a86fso5469501cf.0
+        for <linux-clk@vger.kernel.org>; Wed, 08 Jul 2026 02:48:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1783504130; x=1784108930; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=bg+Lut/Yb+GhISLgjp4dKiW1om4zG/Mga19fYgYPmo4=;
+        b=AWFSx6J2NeVABqnZIu+LTDoWmgpimx3RyU+uaQVWyzNPYS8Yf/uyM/5I3e+IXcYBjI
+         mjLup4ZQfoGAYqeEWYg9juu9rNQnOfE2bgkpv1/aMqGKW2ASH0Gd210YJoFuIbdVvlfi
+         4B1a171dpgGn7wdrndYnQgzjXk88bqIWWCbNbD9IoihbHZnhDLqZFIs82Dkdk/2ifknM
+         x7QBZ9mFEfM5uMPpeglu6Z12cBQOfD90Xsd3BsPRohxCCcW3EfxfANZj811eLnHIq2rR
+         pn2bPSP1J36ZVTMVKkmm3AqY9ERdHiHk8FLUGM9XuqUiHhOSZafs59Fb0kYX5jq1ZIem
+         Uv+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1783504130; x=1784108930;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=bg+Lut/Yb+GhISLgjp4dKiW1om4zG/Mga19fYgYPmo4=;
+        b=QdX8ADDlzHMbBFB2iw599EMrYV9+tp9paTPERdPEBhP5zjHFeSHCBByWYaIfmnyKeR
+         9cC/F3EIdb/5s1zHlVdS601oq37Md+7DcaGfWGD3zV/fK5aMypJxBmxem2CrRjZwafjR
+         ewJh3qbvLfe8TDgfRM6ESuDRnveU8rw8jJDY4UAnq7jg3xYedLOByHW2fb46T9Qv2fXn
+         679kCLIhCFbM7nHZ+FeAcTz7EgSFw9lj41xQqBaAw21AF/3kP/0K531XM+03fDAdPPOk
+         LjxiiwjKU3jgms3+/OlhKDrCPLFxfIYMHf0I+DwhOKqXIe/w55kcOqtD8zupu9H8720q
+         XnEA==
+X-Forwarded-Encrypted: i=1; AHgh+Rotw7VRKeqq9l7sruU1RMO5n14T4epdOWT3zWVjoivxRgPZA9FpT7CTV3+1MqmxzfvLuwTjFMWibHo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkKeKSE5Zn1oKOyI81MG9v9EMz+2OVb0tBxiwEZ8aJ8k3QO6H/
+	TUv7DxaYqiPJzMNsor4Gm3Ku66svln3XetiHvYOsWgAfTuzvLYTLqqcljYqYaxtE3JN7LQA5nUd
+	Fs2/V1Vngsz6G5ma8O3KcwGTvZC0CwwnR0XuUL8t+lx498gp7uRCrKZmBLcE6uYo=
+X-Gm-Gg: AfdE7ckoqX00kpFR5qBDam8nO6eAFQuu8PABLuoaaUACtu8Iqlwj/y0UrOSDxuy84Ku
+	ixKQF8Yxjnr4M64z8TQy1qEwVIObF8817T2057Z3nH/xmMhEgcL3OrmpcQKv9MR9FzeSLbbpOO2
+	JbOe5tsB8wQJQPwAfKkGtY+nh8u5UMedO5txQsrDCr3gM2VV33b6Ki4YluEkAzJlJROeJrNeO+o
+	b3+C0z1gkhczG5LWdQaGwlacDPFr27C/LnwbEo3dnySmNBeeJao3PTMVNc7panpHeCqNbr3isGo
+	BqX9VOQDY3o7yVzC4u+sxX6kasTUBrdwAwqGmvjHT+IuGeqiU4YR7oqmsATbr/jfWtQzBKuGSyU
+	5EqG/iB+u77CqiNTMvcbjtqHW2KFrhxADAgM=
+X-Received: by 2002:ac8:5c94:0:b0:51b:efbb:fbc with SMTP id d75a77b69052e-51c8b2dcc55mr19609061cf.33.1783504129663;
+        Wed, 08 Jul 2026 02:48:49 -0700 (PDT)
+X-Received: by 2002:ac8:5c94:0:b0:51b:efbb:fbc with SMTP id d75a77b69052e-51c8b2dcc55mr19608831cf.33.1783504129280;
+        Wed, 08 Jul 2026 02:48:49 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.223.174])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-493e0f3318dsm114258085e9.3.2026.07.08.02.48.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Jul 2026 02:48:48 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Subject: [PATCH 0/3] dt-bindings: clock: qcom: camcc and videocc
+ improvements
+Date: Wed, 08 Jul 2026 11:48:38 +0200
+Message-Id: <20260708-dt-bindings-camcc-required-opps-v1-0-ae0871774210@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -44,180 +89,87 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260708-clk-mediatek-pllfh-fix-v1-1-2cfc2d6b258e@collabora.com>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/y2NQQ7CIBBFr0Jm7SSIUUqvYrpAOrWTAq2ApknTu
- 0usy/eS//4GmRJThlZskOjDmedY4XwS4EYbn4TcVwYl1U1q2aDzEwbq2RaacPF+GHHgFTUZZy9
- X0xhSUMdLoqp/4Xt3cKLXu/bLIeFhM6GbQ+DSikhrwf+Hhm7fv/+XTYuZAAAA
-X-Change-ID: 20260708-clk-mediatek-pllfh-fix-7e9ca35989e2
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Chen-Yu Tsai <wenst@chromium.org>, 
- Edward-JW Yang <edward-jw.yang@mediatek.com>, 
- Johnson Wang <johnson.wang@mediatek.com>
-Cc: kernel@collabora.com, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, 
- Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1783502351; l=4683;
- i=louisalexis.eyraud@collabora.com; s=20250113; h=from:subject:message-id;
- bh=4H+StpOW2ZH0hn4OeaLVWGpQKMud7otOxAZzPt6gxyU=;
- b=NejNT+aEHaLKBMGOPalAU8w8iI66YYZDyCVarlySqapXDEAVq1t/74meWPuqrFdW9lBd1UIud
- kQ0cuKSTGJHCt3UCqknLZebd6K5QpPJpV+d7An1loKRmngpurlwc2kx
-X-Developer-Key: i=louisalexis.eyraud@collabora.com; a=ed25519;
- pk=CHFBDB2Kqh4EHc6JIqFn69GhxJJAzc0Zr4e8QxtumuM=
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXNwQrCMAyA4VcZORuoHczpq4iHpokzgl1tNhHG3
+ n2dHr/L/y9gUlQMLs0CRT5qOqaK46GB+AhpEFSuBu98506uR56QNLGmwTCGV4xY5D1rEcYxZ0O
+ icOZAvu3aHmolF7nr93e43v62mZ4Spz0L67oBrxh0B4MAAAA=
+X-Change-ID: 20260708-dt-bindings-camcc-required-opps-bba9dab23638
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Taniya Das <taniya.das@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=790;
+ i=krzysztof.kozlowski@oss.qualcomm.com; h=from:subject:message-id;
+ bh=iquhnVX83va+93/Mcr4oasDJq2ojoyyvQIfd/GlAlpY=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBqThz4Wh0klLWrSZ04yZNrXrg9VdmMik51Ayh/+
+ iHOlV+5zZ2JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCak4c+AAKCRDBN2bmhouD
+ 1x3WD/0d7wgVy5SI1+gUM+2P6bGDR7DlABiIIMl0dEbWlyXg0ppYOMiePNVz/KrOYEXMd3tOj4h
+ CbeK0zY0knnAxyaWFNSTKj4bdWqzJcm+AAXCp6zht2GPc8ba8Y2qqBiaNrCa+OBbuBWWCg4Vhye
+ gAqMHvJeqgWdDzO0VYHXGRrFR1RM1DRJPF/RBIaai6Vw4dsJS/hzFNQuWqFAN+QPmZTofKe1j2K
+ byZHt4bz8kIYIZf7tH6tMyCBYYmbkO8CyWY1zJsGurD9jrppj/MC8VaUOq4w6SeHy7iVukmj4kV
+ axIgPayiKI15MIvr7D5xjZPP33IR92rNFbwU4T+drSYdSPNygCtX7RF42dV9Z3oUhhIbbyb3mn9
+ EHNdPzDieJDAepjiOJY4dbSAgGe18ECZ+RX0pSwbgnES/Jgip5sEq16HeNdHyUJdXTnnXcecfFW
+ ATWhUjgMTduDmVQlF6tW6TEm0cEFoMdK3NvdaUiZh8nA7zJiJN0gJzjxIoCyBy5xBsENoEBcphe
+ 4EBUyoiyHbjnxWf1sQuCED/R9JToBU5n5gbm4xTg/gtT56V2Kb9FimK1eYpcPSUxmd0I8ZeWbar
+ 34SA5cHTJrYVTSGjMwizgObouixr/Mpol7JCYjiOPDdrzjcuR7qaADTthcVwClsHTiVPToCR64z
+ tSjt5HhS37iJkGg==
+X-Developer-Key: i=krzysztof.kozlowski@oss.qualcomm.com; a=openpgp;
+ fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+X-Authority-Analysis: v=2.4 cv=KNNqylFo c=1 sm=1 tr=0 ts=6a4e1d02 cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=N6niishs+lR9UBL1FN3Qrw==:17
+ a=IkcTkHD0fZMA:10 a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=eoimf2acIAo5FJnRuUoq:22
+ a=EUspDBNiAAAA:8 a=FyscYusVtPSbMHA5wp0A:9 a=QEXdDO2ut3YA:10
+ a=dawVfQjAaf238kedN5IG:22
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNzA4MDA5NCBTYWx0ZWRfXz6HITikSfrjh
+ 91TG2D4pC38Msbn+iFbZhgfDwcb2+HvdvgVtJrWut/f28qB5Ajzr0dhSgpiJo+NwqoKoqzxkl4V
+ XyN9z1mcPJ7G6Q6tcgrb8ANJg84gHsQ=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzA4MDA5NCBTYWx0ZWRfX/D74GPRZjnGi
+ n+s5BOiVw931/AOW47P0fcS6aXlPc3LiLPLoU3ZxRxynM+6bSs9jQ6/nhQGGnFwFIMGPDmPnnPN
+ rybK7JCSbSDL3RjziE5cSP3TGv3pMCnatHaxh5zSdyMvbF+aWy2zov9skyV4jN8iDIecPtvpjSt
+ 2bav5DUAgRhC35B7uoCJAJ3Bi0OSxO33dI4LGnhl1kAkyO8vn6T4LuVX37h36r503hLOvep291W
+ 7Uyh3ArkU7k/e2ToKxOcjXIC5JfGUYZSeS3gSZHNLHKEhRYH7KYXxnDgmI3BWvg1VdmLqUVn50v
+ KKrJIpCKaWUOL8FMbvC4gK/ankjMREwO8apAcmLwgah79oK1tNASYAnTSqWAd1jGJDFOjQ8OXkY
+ jPNqhn/H10yuFPx/iyd7Ow5Jhzuw96OaMQhCHCCMFn39wUODOG6PnuOTqr7SLU9xO7yoEfC0z2M
+ fAjykxHi1lX5xFtLI2g==
+X-Proofpoint-ORIG-GUID: TAXyqlBM_wEfotnZ5V4dl1Amx_VZQ3Mz
+X-Proofpoint-GUID: TAXyqlBM_wEfotnZ5V4dl1Amx_VZQ3Mz
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-07-08_01,2026-07-06_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 bulkscore=0 impostorscore=0 suspectscore=0 spamscore=0
+ malwarescore=0 phishscore=0 clxscore=1015 priorityscore=1501 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607080094
 
-When mtk_clk_register_pllfhs function fails to register a PLL, it
-unregisters all PLLs and cleans up itself in its error path before
-returning, so the function callers don't need to do it.
-
-But contrary to mtk_clk_unregister_pllfhs function, that does almost
-the same sequence, it does not free the IO memory mapped on fhctl node,
-leading to a leak.
-
-Fix this leak by factorizing the cleanup sequence in a new private
-function and use it both mtk_clk_register_pllfhs and
-mtk_clk_unregister_pllfhs functions.
-
-Also, change the loop index start value to avoid the -1 operation on
-index at each loop.
-
-Fixes: d7964de8a8ea ("clk: mediatek: Add new clock driver to handle FHCTL hardware")
-Signed-off-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
----
-This patch aims to fix a issue, detected by Sashiko
-during another series review ([1]), regarding the use of 
-mtk_clk_register_pllfhs function.
-
-The patch is based on linux-next tree (tag: next-20260707).
-
-[1]: https://sashiko.dev/#/patchset/20260701-mt8189-clocks-system-base-v1-0-2b048feea50a%40collabora.com?part=6
----
- drivers/clk/mediatek/clk-pllfh.c | 87 ++++++++++++++++++----------------------
- 1 file changed, 39 insertions(+), 48 deletions(-)
-
-diff --git a/drivers/clk/mediatek/clk-pllfh.c b/drivers/clk/mediatek/clk-pllfh.c
-index aa95cd9197b3..7463aa35d7e3 100644
---- a/drivers/clk/mediatek/clk-pllfh.c
-+++ b/drivers/clk/mediatek/clk-pllfh.c
-@@ -197,6 +197,43 @@ static void mtk_clk_unregister_pllfh(struct clk_hw *hw)
- 	kfree(fh);
- }
- 
-+static void mtk_clk_cleanup_pllfhs(const struct mtk_pll_data *plls, int num_plls,
-+				   struct mtk_pllfh_data *pllfhs, int num_fhs,
-+				   struct clk_hw_onecell_data *clk_data)
-+{
-+	void __iomem *base = NULL, *fhctl_base = NULL;
-+	int i;
-+
-+	for (i = num_plls - 1; i > 0; i--) {
-+		const struct mtk_pll_data *pll = &plls[i];
-+		struct mtk_pllfh_data *pllfh;
-+		bool use_fhctl;
-+
-+		if (IS_ERR_OR_NULL(clk_data->hws[pll->id]))
-+			continue;
-+
-+		pllfh = get_pllfh_by_id(pllfhs, num_fhs, pll->id);
-+		use_fhctl = fhctl_is_supported_and_enabled(pllfh);
-+
-+		if (use_fhctl) {
-+			fhctl_base = pllfh->state.base;
-+			mtk_clk_unregister_pllfh(clk_data->hws[pll->id]);
-+		} else {
-+			base = mtk_clk_pll_get_base(clk_data->hws[pll->id],
-+						    pll);
-+			mtk_clk_unregister_pll(clk_data->hws[pll->id]);
-+		}
-+
-+		clk_data->hws[pll->id] = ERR_PTR(-ENOENT);
-+	}
-+
-+	if (fhctl_base)
-+		iounmap(fhctl_base);
-+
-+	iounmap(base);
-+}
-+
-+
- int mtk_clk_register_pllfhs(struct device *dev,
- 			    const struct mtk_pll_data *plls, int num_plls,
- 			    struct mtk_pllfh_data *pllfhs, int num_fhs,
-@@ -238,24 +275,7 @@ int mtk_clk_register_pllfhs(struct device *dev,
- 	return 0;
- 
- err:
--	while (--i >= 0) {
--		const struct mtk_pll_data *pll = &plls[i];
--		struct mtk_pllfh_data *pllfh;
--		bool use_fhctl;
--
--		pllfh = get_pllfh_by_id(pllfhs, num_fhs, pll->id);
--		use_fhctl = fhctl_is_supported_and_enabled(pllfh);
--
--		if (use_fhctl)
--			mtk_clk_unregister_pllfh(clk_data->hws[pll->id]);
--		else
--			mtk_clk_unregister_pll(clk_data->hws[pll->id]);
--
--		clk_data->hws[pll->id] = ERR_PTR(-ENOENT);
--	}
--
--	iounmap(base);
--
-+	mtk_clk_cleanup_pllfhs(plls, i, pllfhs, num_fhs, clk_data);
- 	return PTR_ERR(hw);
- }
- EXPORT_SYMBOL_GPL(mtk_clk_register_pllfhs);
-@@ -264,38 +284,9 @@ void mtk_clk_unregister_pllfhs(const struct mtk_pll_data *plls, int num_plls,
- 			       struct mtk_pllfh_data *pllfhs, int num_fhs,
- 			       struct clk_hw_onecell_data *clk_data)
- {
--	void __iomem *base = NULL, *fhctl_base = NULL;
--	int i;
--
- 	if (!clk_data)
- 		return;
- 
--	for (i = num_plls; i > 0; i--) {
--		const struct mtk_pll_data *pll = &plls[i - 1];
--		struct mtk_pllfh_data *pllfh;
--		bool use_fhctl;
--
--		if (IS_ERR_OR_NULL(clk_data->hws[pll->id]))
--			continue;
--
--		pllfh = get_pllfh_by_id(pllfhs, num_fhs, pll->id);
--		use_fhctl = fhctl_is_supported_and_enabled(pllfh);
--
--		if (use_fhctl) {
--			fhctl_base = pllfh->state.base;
--			mtk_clk_unregister_pllfh(clk_data->hws[pll->id]);
--		} else {
--			base = mtk_clk_pll_get_base(clk_data->hws[pll->id],
--						    pll);
--			mtk_clk_unregister_pll(clk_data->hws[pll->id]);
--		}
--
--		clk_data->hws[pll->id] = ERR_PTR(-ENOENT);
--	}
--
--	if (fhctl_base)
--		iounmap(fhctl_base);
--
--	iounmap(base);
-+	mtk_clk_cleanup_pllfhs(plls, num_plls, pllfhs, num_fhs, clk_data);
- }
- EXPORT_SYMBOL_GPL(mtk_clk_unregister_pllfhs);
-
----
-base-commit: b3a87fbe738f19cbe19411cf749f3d8c09c04de4
-change-id: 20260708-clk-mediatek-pllfh-fix-7e9ca35989e2
+Hardware needs certain levels on rails, thus document it.
 
 Best regards,
--- 
-Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+Krzysztof
+
+---
+Krzysztof Kozlowski (3):
+      dt-bindings: clock: qcom,sm8450-camcc: Drop qcom,sc8280xp-camcc from "if" block
+      dt-bindings: clock: qcom,sm8450-camcc: Require required-opps on SM8750
+      dt-bindings: clock: qcom,sm8450-video: Require required-opps on X1E80100
+
+ .../devicetree/bindings/clock/qcom,sm8450-camcc.yaml        | 12 +++++-------
+ .../devicetree/bindings/clock/qcom,sm8450-videocc.yaml      | 13 +++++--------
+ 2 files changed, 10 insertions(+), 15 deletions(-)
+---
+base-commit: 8e9685d3c41c35dd1b37df70d854137abcb2fbac
+change-id: 20260708-dt-bindings-camcc-required-opps-bba9dab23638
+
+Best regards,
+--  
+Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
