@@ -1,881 +1,353 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 825EB3BE644
-	for <linux-clk@vger.kernel.org>; Tue,  7 Jul 2026 19:54:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8201883F
+	for <linux-clk@vger.kernel.org>; Wed,  8 Jul 2026 00:07:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783454082; cv=none; b=Z1khLiuFpSFIKXLv4S2eJuH0KCnnzgC6hS/BQd8+jSkRpw5FKnNrhPaqtatTfO9si/QIcFTn4Yma9sNnfXUR5zM1JLOFE7ZH4yRxEEn6i/Kg5aFCb+m370LESPl1P6vSBEcmR61T3snP2ubvvhNU3dfJtgtRIbGHcakpXTvkLWw=
+	t=1783469230; cv=none; b=ssxQk2IyMpd6buUnQUH/VsPIEIJqaWqQnjSxCNGPBR6ktkRt918TAYKtnbmCDIvwvOhsW0LNxzAxVlM0Ih0yDScHO5UmMVVKUO8huckPBTX0RNoRQvfLtQAui8RgDGfUXfqsBaEhB6X1kIawjVrRd21XVW/sb7TEaN4IwFiDbus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783454082; c=relaxed/simple;
-	bh=Ua5KQwt1GmcIZ8E77R6eAA3mgGFKu9vM0SGPGBTrqdM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d29Xm97Ew4xocv884oIcNEwtc56QmCQJgsc6sGVDAIcr11Wfw61R9dF7nxBA++s8AeeHaKOwu+3z1zo43ebwt0Km8CQPcB0BHvcRWmdQTBLFIyaSPqn2FyU1FZ6zzvQfG76O1Tdz1vhY+CQK4bJ0QevZvcfRI04ITqNSSq3YAGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UkiQGru4; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=M0N9xe1L; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1783469230; c=relaxed/simple;
+	bh=Yt7aOeVHllyNoz8w+5/gCd8J0nSG9GjWKfMjcWqUGdA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ThDrmKICOA1XzuG5jKtHnxOa79fRR0oADSgWLPwxz9p55WSRVx7T2Q27bkf4LAa7O3IPO1FFdYbu6f2LteOXxyy6R7jRxyHIE2Xnja5eS3CrSx6biBeYVmtMfKlixyihehKoAObEAbk9P6EzBKAqfNKVUIa5PoggKsBqjZFtPNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yi53TwDR; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UkiQGru4";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="M0N9xe1L"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1783454079;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=unIuywujNYdkgUTdYaK7LkQijd5tY0RoqZIlmMgDOcA=;
-	b=UkiQGru4jy0c/DuFm7Zd35+SWZ2vp4i3HIiLgFfRlgXMbzaJ6RTrL2OEYJSnkWtPkEelVr
-	5diLE4TunQG6oMQlaCEJFvVtPxPBYg7JGyNWmsLzclDp+nOf62y6UZ+fVYs3sheiBVm2jl
-	ugzACPl2sM/1deIHBWjiyN4+xH5nEok=
-Received: from mail-ot1-f69.google.com (mail-ot1-f69.google.com
- [209.85.210.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-390-NuZSSAHzMUWpu9TOnDRleg-1; Tue, 07 Jul 2026 15:54:38 -0400
-X-MC-Unique: NuZSSAHzMUWpu9TOnDRleg-1
-X-Mimecast-MFC-AGG-ID: NuZSSAHzMUWpu9TOnDRleg_1783454078
-Received: by mail-ot1-f69.google.com with SMTP id 46e09a7af769-7e6b59d85dcso6947410a34.3
-        for <linux-clk@vger.kernel.org>; Tue, 07 Jul 2026 12:54:38 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yi53TwDR"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-46ed4f66256so76358f8f.3
+        for <linux-clk@vger.kernel.org>; Tue, 07 Jul 2026 17:07:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1783454077; x=1784058877; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=unIuywujNYdkgUTdYaK7LkQijd5tY0RoqZIlmMgDOcA=;
-        b=M0N9xe1L0xO1MfiTxsSb5VsNZTSGIrXa4Pvw4eoBr541tNotavZDf0MijgNKDa3li4
-         ukqxyz2w/DoT2brPpi2Kw3E7JN3x6usNJCiLOAyaWNXe9kar7V3zwK3ZLXFokgIqJ9F7
-         Lqm2TOS5jGizfEX8jF5J+/CU5KdCnlABNrINVhUNcDrOKjRVfvHBmPx0CJMyRq+k5t1F
-         R5ZEWg1LwkyLfTwvl6BbODWlcRQJyW6yz65QhcYNu/3nO5kivPIyuXGaz9OWOnQNdY6e
-         1+CIHwtWOO6rrZ/D52ukCQkNCDQ+l8T73/XKnwo25tW8jkuKuvcqCCuOHJdkOO8+3ixH
-         56NA==
+        d=linaro.org; s=google; t=1783469226; x=1784074026; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=t1U5LAGgqxOXs4+GmCCnVfsxpbmD7Yxy59mrl3C2FeE=;
+        b=yi53TwDR/WjEfkKzz+EzjbatZHwHvB8RenIbXDIWlwevPsCZLy7k8K4A8weiyW6Ryy
+         5A6ESZaxrMj6q+MgGMmDUpl4f7Pjmn2YZZTUkfR6pWDWONDkuJDJCQ5Y+6UuTahmTpF8
+         XfjFwKC4YNz/ubsq0TWtQ27+Fxa4A3zaAUBsz1P2xKlchaOmnbSZ0UYrGslYfcODA31E
+         djkuKSQiYbMKrYbI73B1lyHVr9hDVH7kfxEY89eQ9vuHkdaRjMd1/p7pDTmcG/hM4bhf
+         cS9Jc0ouWdCJRFolxgsICaqFSP3SY6y28qTN/AT4e21+uqBI+MFcQT3zu2xgwikLh73s
+         7KIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783454077; x=1784058877;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=unIuywujNYdkgUTdYaK7LkQijd5tY0RoqZIlmMgDOcA=;
-        b=GzYjZwg0HBrZVTtmX2aTT2dEGcsvKvW8BK02tbxSSkjWKusVmydsxIxdv/xpfAjoUh
-         SSZB745EO4/45yttPHtPvDdvqZyIJym8+6jUoK8RC+I9OURU24tOx4OImAzXuyryY59P
-         EMF6hgujXU/WxINhlVfgMK/u0MQMnAJcwQ7rEvhJ4udw5QoZ7lq/zV4LeP+90702aD8M
-         4qwGLwaCuyDAyrL8afiNZzHmSvSRubIa1yTgJDuVMrmD5GYS3fSrgcl7LwQvh/iSgWrd
-         OlHjlQzI/CKM5OkLJhiws6ck2lO4LEx5iF2mytb3xKCQGkd5nnj/S+ntFbau86eZPioa
-         duxw==
-X-Forwarded-Encrypted: i=1; AFNElJ+AwupdPBDZsDsiYWyK6oGXKlWUbA7ncX5n1Mrvkv6tZUeWj2zPx109/3t517XhkMNJsQboJnJePqM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw24OLwGrDfLoPby4qXSnwEw4GRxPvJAPXRvp1byfbToE1ArV+Z
-	FnIWYWjTy40HTt3qcg5v8OnqsR7WlqVbT0ffdK2FrQgd/l8C9CZHk/52etsHi9MvkVyKqA6fR3F
-	9GaruxRJ4iA4TMJwEu0OEBG9+W1Fs2JQJbzHWGhDPptv/o9MZpqyZLvP/aSG8bg==
-X-Gm-Gg: AfdE7cmJ6dpQQ6PL8/2I9nxFYFmkPYiCh9ePwGT54ycF9uhI+x2LNF+Z9U4WUDuX0UR
-	96Yh6LK/5KKm2ArIFFOXXBm0z3YNICMshld2UdtKeTwdJ57tobSEortrTPv9ZbgiOuwMjbX4ZD1
-	EQ6V3/hPxUg5pkVUfshrx46tTRitdANZKxy+Kqtk3qzwDlSaTBhzs9hPTP5neLZAxjuYNK63RuV
-	HyTKs6gAvTNP+1jI4kV0Hfbq9FRDzNAYadU6viWWseg4DoloHyqx81mMbS+9NVyBkMFLsKJ0m6b
-	FixvpMTd9bjkH0vn56oNICguhgh9BZAI5mJhNiFsqAxb9gQJ795kPPhxZmPU68iw0GIZvw/uVAk
-	890ptJTPH
-X-Received: by 2002:a05:6820:1612:b0:69d:6bfd:5a3f with SMTP id 006d021491bc7-6a3553d640amr4422817eaf.51.1783454072627;
-        Tue, 07 Jul 2026 12:54:32 -0700 (PDT)
-X-Received: by 2002:a05:6820:1612:b0:69d:6bfd:5a3f with SMTP id 006d021491bc7-6a3553d640amr4422788eaf.51.1783454071946;
-        Tue, 07 Jul 2026 12:54:31 -0700 (PDT)
-Received: from redhat.com ([2600:382:8102:284f:288:4331:f63e:598f])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7ebcab8efc3sm264425a34.0.2026.07.07.12.54.28
+        d=1e100.net; s=20251104; t=1783469226; x=1784074026;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=t1U5LAGgqxOXs4+GmCCnVfsxpbmD7Yxy59mrl3C2FeE=;
+        b=Q898Tw5WS+gB3QeF88AsuwQOQQXyv68JeImRgC1/Ld/C9UdQ3h8904/w74Z2y/9F6U
+         khaKiYE4ZIcjbBD1pSDGiyP1oOr0Ej6vmEGq40FJqU5RjMPg+aeZXK+pSIUtT4EApajk
+         VKtG7F8IbvWGQd6pz7UEqkej1+0tR12KY7S2+gP7szbSASjuTjxtLv7LIgUqStv73Kxz
+         n9eAzr9Iivd1k8ZooIZMlcirdd+pAxomXZWYnWzcd7yG+orWXRCt8821X2MRw9NxCeJf
+         bJ4rJ1WRP/A+FSjINYuIJ0XfLyo19Imu2IeWh4kq5AG9/uXfcG9Ojr0cWlq7hEDUrA8Z
+         LGWA==
+X-Forwarded-Encrypted: i=1; AHgh+Rr1FuHhQnTw8K85TrP7CpL+YZ119zesQbCz2L0Mi7gZYkC1pdGBtorbtfHSi+dnZWmBRVKJ1dqzHnQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzV339Ux2o36x/5ufi64LC5sLmsMxsc0n9xeGfE9MAA/qm9C9Pd
+	biXMSQgGW0+PfvUdRZDjjhtVCKP//U61mq88TmZb1bmUpVJryg77quXL66bu2dM1jdk=
+X-Gm-Gg: AfdE7ckcfNy3xHENChfmf7a+w4apUdpMsTxSgOiiWlICv10A70abxeb/neuSpkRKhJ/
+	tJZgMlMyf34B6pqK20nnp0hifsAaXEXUjyn77DO3pk3tAoiBmPDqwi6FuVOPCfOBNBd3esdrKWR
+	6O9TR98SNj+wJz/OHunsZ4SLy8dIOwczGN7c6B0BIryW8aZSUN3A8QjWGhhM+p+4If8iINyt0LH
+	+nYaQS1hrbD2i/wKGVysnbvfzWtSyj0OcX3Gdt6FQTVm20+X4knwfIB0S0iFnJ1MUk4ASihlLcJ
+	K/bgT5Jf14YurYt+V3S29kR6bCJWtXZEgKMNZJC/ikWKl01EpC7yiT24rz5ajYvGHogs1WFgBOc
+	+zXZnIopNSNFrSNHXaYohrY5QbHMHlxkt81Qq108JZ3M/YIL9vzCTEauoiwgNzeOozzUj0vdIj5
+	8oGt3KOzgckE4W8T/xHW3FWk2urNoqAmZwhw==
+X-Received: by 2002:adf:e387:0:b0:475:5e4b:588f with SMTP id ffacd0b85a97d-47de6610e75mr6947629f8f.16.1783469226167;
+        Tue, 07 Jul 2026 17:07:06 -0700 (PDT)
+Received: from [192.168.0.35] ([109.77.92.41])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47aa039af67sm43757092f8f.17.2026.07.07.17.07.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Jul 2026 12:54:31 -0700 (PDT)
-Date: Tue, 7 Jul 2026 15:54:27 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Jia Wang <wangjia@ultrarisc.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] clk: ultrarisc: add DP1000 clock driver
-Message-ID: <ak1Zc7uSoqx-F_7Q@redhat.com>
-References: <20260617-ultrarisc-clock-v2-0-9cb16083e15e@ultrarisc.com>
- <20260617-ultrarisc-clock-v2-2-9cb16083e15e@ultrarisc.com>
+        Tue, 07 Jul 2026 17:07:05 -0700 (PDT)
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: [PATCH v12 0/6] Add dt-bindings and PHY updates for CAMSS on
+ x1e80100 silicon
+Date: Wed, 08 Jul 2026 01:06:54 +0100
+Message-Id: <20260708-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v12-0-f8588da41f16@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260617-ultrarisc-clock-v2-2-9cb16083e15e@ultrarisc.com>
-User-Agent: Mutt/2.3.2 (2026-04-26)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/53RS2rDMBAG4KsErasyo5elrnqP0oWeiaC1g+Ual
+ 5C7dxIocfHK3QhmhL5/GF1Yy2PNjb0cLmzMc2116KlA8XRg8eT7Y+Y1UYMJEBokSh4U/6j918L
+ 7vExcaA6SUztNrfIFswUE4NF/tsZRgymdCiFJzwg8j7nU5Z729k71qbZpGL/v4bO+df8VM9Mlt
+ 8pE541y0ttXeunH4XkYj+yWM5u1rXbZhuycYhCxRIlCbOzuYXeIu+yObAhRJ29F0cJsbPtrGxB
+ E7bEt2U5r7KSTgcbf2G5tm122I9trF2UB2SUIGxvhgUvchyPthJdUsrOKDoVbHVf6ztHph4Dr4
+ KRCHbJJ6Y9+vV5/AGkEta8SAwAA
+X-Change-ID: 20250313-b4-linux-next-25-03-13-dtsi-x1e80100-camss-1506f74bbd3a
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>, 
+ Todor Tomov <todor.too@gmail.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, 
+ Bryan O'Donoghue <bod@kernel.org>, 
+ Loic Poulain <loic.poulain@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-media@vger.kernel.org, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=11063;
+ i=bryan.odonoghue@linaro.org; h=from:subject:message-id;
+ bh=Yt7aOeVHllyNoz8w+5/gCd8J0nSG9GjWKfMjcWqUGdA=;
+ b=owEBbQKS/ZANAwAKASJxO7Ohjcg6AcsmYgBqTZSlsdpz5IHi3UgtKsCS0lZCC6prvu+31GYAa
+ tl13m4UVVqJAjMEAAEKAB0WIQTmk/sqq6Nt4Rerb7QicTuzoY3IOgUCak2UpQAKCRAicTuzoY3I
+ OjXyEACThdXtE/ytH+jnSpTyabeuIhEKihkUPRkbrlbvIRZJLlPBPxntGiItTbuYvbXVGnTm5wZ
+ Z1Dkz0sqS3VFZAB1XhajQGD38QUi4xrJyW+OE3vSL7Zs8aYi79397nSwW6Jq4nZQMkNDsRoKodL
+ WX/QciCpvoIShR0gu/tkoihH8kIWULh0vpwlEyrbUfFdt95iC+i2HnOetAuMJKf3OPoWJyPVT8b
+ b3t1HZ7X+WG0/4/dWE7h8NrHLqiGzyIcKT4MmTWIWyq7xxnnlCJnSi7cuI3kaBYeGH3KB7tG7gq
+ DTiryWy72ZvSmS5H1W4zTagHBbTZ4gj7bHOXLrl4lpmZeqtMGTdvCtS3E7qHLi0/5tFWHAs/lNe
+ sqvZnF+f8z3HFGQ7905moH6PSGlDglMw7a64wZz4YJlf4XaTtB0D5u7REIPaOtn+geRqcg978Nm
+ xlKJoAGAFrOuDsxCmfjTNShy87/8ZcbCqHDbaQ87v3apifHVv13p/aIKW4xSp1Ga/jAqjJtnzax
+ aAHlgwKqTOsqscJzB3aOSf0TD7lAwQOfiyQxTkenIGa/JmrXX91WganmIcPO2XtMY6VlgbC83ZP
+ 9/PKVIhp6E1X/M/jFD3qZvXu4ilsOjUrBD9CpwaoAGT/1pYNMnUpqZ7xIlzT5zsthgUxW9su1XU
+ JW25aSkxGZ6abSg==
+X-Developer-Key: i=bryan.odonoghue@linaro.org; a=openpgp;
+ fpr=E693FB2AABA36DE117AB6FB422713BB3A18DC83A
 
-Hi Jia,
+Changes in v12:
+- Updates camss sensor find method to find the sensor in the CSIPHY port. -
+  Neil, Vlad, Bryan
+- Drops dependency on passing polarities and positions. Moved into CSIPHY
+  port as agreed. Neil, Vlad, Bryan
+- Omitted mux to CSID as discussed this will be done when splitting CSID
+  out as its own individual node. Neil, Bryan
+- Updated Reviewed-by: - Loic
+- Link to v11: https://lore.kernel.org/r/20260326-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v11-0-5b93415be6dd@linaro.org
 
-Thanks for the patch.
+Changes in v11:
+- Dropped simple-mfd in dts for devm_of_platform_populate() - Krzysztof
+- Pass polarity and position for data and clock lanes - bod
+- Remove check for PHY_TYPE_DPHY - PHY driver validates its own mode - bod
+- Depends-on: https://lore.kernel.org/r/20260325-dphy-params-extension-v1-0-c6df5599284a@linaro.org
+- Depends-on: https://lore.kernel.org/r/20260326-x1e-csi2-phy-v5-0-0c0fc7f5c01b@linaro.org
+- Link to v10: https://lore.kernel.org/r/20260316-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v10-0-fdfe984fe941@linaro.org
 
-On Wed, Jun 17, 2026 at 02:02:55PM +0800, Jia Wang wrote:
-> Add a clock driver for the UltraRISC DP1000 SoC.
-> 
-> The clock tree is driven by a SYSPLL and provides fixed-factor clocks for
-> the subsystem and PCIe, divider-based root clocks for GMAC and the UART,
-> I2C, and SPI blocks, and per-instance gate clocks for UART0-3, I2C0-3,
-> and SPI0-1.
-> 
-> Signed-off-by: Jia Wang <wangjia@ultrarisc.com>
-> ---
->  MAINTAINERS                           |   1 +
->  drivers/clk/Kconfig                   |   1 +
->  drivers/clk/Makefile                  |   1 +
->  drivers/clk/ultrarisc/Kconfig         |  18 ++
->  drivers/clk/ultrarisc/Makefile        |   4 +
->  drivers/clk/ultrarisc/clk-dp1000.c    | 153 ++++++++++++
->  drivers/clk/ultrarisc/clk-ultrarisc.c | 459 ++++++++++++++++++++++++++++++++++
->  drivers/clk/ultrarisc/clk-ultrarisc.h |  73 ++++++
->  8 files changed, 710 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index b7e43313c65f..aa5021f30cb5 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -27444,6 +27444,7 @@ M:	Jia Wang <wangjia@ultrarisc.com>
->  L:	linux-clk@vger.kernel.org
->  S:	Maintained
->  F:	Documentation/devicetree/bindings/clock/ultrarisc,dp1000-clk.yaml
-> +F:	drivers/clk/ultrarisc/*
->  F:	include/dt-bindings/clock/ultrarisc,dp1000-clk.h
->  
->  ULTRATRONIK BOARD SUPPORT
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index b2efbe9f6acb..75e336858420 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -535,6 +535,7 @@ source "drivers/clk/tenstorrent/Kconfig"
->  source "drivers/clk/thead/Kconfig"
->  source "drivers/clk/stm32/Kconfig"
->  source "drivers/clk/ti/Kconfig"
-> +source "drivers/clk/ultrarisc/Kconfig"
->  source "drivers/clk/uniphier/Kconfig"
->  source "drivers/clk/visconti/Kconfig"
->  source "drivers/clk/x86/Kconfig"
-> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> index a3e2862ebd7e..891272e8e1da 100644
-> --- a/drivers/clk/Makefile
-> +++ b/drivers/clk/Makefile
-> @@ -158,6 +158,7 @@ obj-$(CONFIG_ARCH_TEGRA)		+= tegra/
->  obj-y					+= tenstorrent/
->  obj-$(CONFIG_ARCH_THEAD)		+= thead/
->  obj-y					+= ti/
-> +obj-y					+= ultrarisc/
->  obj-$(CONFIG_CLK_UNIPHIER)		+= uniphier/
->  obj-$(CONFIG_ARCH_U8500)		+= ux500/
->  obj-y					+= versatile/
-> diff --git a/drivers/clk/ultrarisc/Kconfig b/drivers/clk/ultrarisc/Kconfig
-> new file mode 100644
-> index 000000000000..2eecc6ac3119
-> --- /dev/null
-> +++ b/drivers/clk/ultrarisc/Kconfig
-> @@ -0,0 +1,18 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +
-> +config CLK_ULTRARISC
-> +	tristate
-> +	depends on OF
-> +	depends on ARCH_ULTRARISC || COMPILE_TEST
-> +
-> +config CLK_ULTRARISC_DP1000
-> +	tristate "UltraRISC DP1000 clock controller"
-> +	select CLK_ULTRARISC
-> +	depends on OF && HAS_IOMEM
-> +	depends on ARCH_ULTRARISC || COMPILE_TEST
-> +	default ARCH_ULTRARISC
-> +	help
-> +	  This driver provides the clock controller for the UltraRISC
-> +	  DP1000 SoC. It exposes the PLL output, derived fixed-factor
-> +	  clocks, programmable divider clocks, and peripheral gate
-> +	  clocks to Linux consumers.
-> diff --git a/drivers/clk/ultrarisc/Makefile b/drivers/clk/ultrarisc/Makefile
-> new file mode 100644
-> index 000000000000..b013708c9444
-> --- /dev/null
-> +++ b/drivers/clk/ultrarisc/Makefile
-> @@ -0,0 +1,4 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +
-> +obj-$(CONFIG_CLK_ULTRARISC) += clk-ultrarisc.o
-> +obj-$(CONFIG_CLK_ULTRARISC_DP1000) += clk-dp1000.o
-> diff --git a/drivers/clk/ultrarisc/clk-dp1000.c b/drivers/clk/ultrarisc/clk-dp1000.c
-> new file mode 100644
-> index 000000000000..33a16df8f189
-> --- /dev/null
-> +++ b/drivers/clk/ultrarisc/clk-dp1000.c
-> @@ -0,0 +1,153 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (C) 2026 UltraRISC Technology (Shanghai) Co., Ltd.
-> + */
-> +
-> +#include <linux/module.h>
-> +
-> +#include <dt-bindings/clock/ultrarisc,dp1000-clk.h>
-> +
-> +#include "clk-ultrarisc.h"
-> +
-> +#define DP1000_PLL_CFG1_OFFSET		0x400
-> +#define DP1000_PLL_CFG2_OFFSET		0x404
-> +
-> +#define DP1000_CCR_UART_OFFSET		0x220
-> +#define DP1000_CCR_I2C_OFFSET		0x224
-> +#define DP1000_CCR_GMAC_OFFSET		0x228
-> +#define DP1000_CCR_SPI_OFFSET		0x22c
-> +#define DP1000_PERI_CLKENA_OFFSET	0x270
-> +
-> +#define DP1000_CCR_LOAD			BIT(16)
-> +
-> +#define DP1000_PERI_MAX_RATE		62500000UL
-> +#define DP1000_CLK_NUM			21
-> +
-> +static const struct ultrarisc_pll_layout dp1000_pll_layout = {
-> +	.cfg1_offset = DP1000_PLL_CFG1_OFFSET,
-> +	.cfg2_offset = DP1000_PLL_CFG2_OFFSET,
-> +	.frac_mask = GENMASK(23, 0),
-> +	.m_mask = GENMASK(23, 16),
-> +	.n_mask = GENMASK(11, 6),
-> +	.oddiv1_mask = GENMASK(4, 3),
-> +	.oddiv2_mask = GENMASK(1, 0),
-> +};
-> +
-> +static const struct ultrarisc_pll_desc dp1000_plls[] = {
-> +	{
-> +		.id = DP1000_CLK_SYSPLL,
-> +		.name = "syspll_clk",
-> +	},
-> +};
-> +
-> +#define DP1000_FIXED_FACTOR(_id, _name, _parent, _mult, _div)	\
-> +	{							\
-> +		.id = (_id),					\
-> +		.name = (_name),				\
-> +		.parent_id = (_parent),				\
-> +		.mult = (_mult),				\
-> +		.div = (_div),					\
-> +	}
-> +
-> +#define DP1000_DIV(_id, _name, _offset, _parent, _max_rate)	\
-> +	{							\
-> +		.id = (_id),					\
-> +		.name = (_name),				\
-> +		.offset = (_offset),				\
-> +		.parent_id = (_parent),				\
-> +		.max_rate = (_max_rate),			\
-> +		.load_mask = DP1000_CCR_LOAD,			\
-> +		.div_shift = 8,					\
-> +		.div_width = 4,					\
-> +		.gate_bit = 0,					\
-> +		.divider_flags = CLK_DIVIDER_ONE_BASED,		\
-> +		.gate_flags = 0,				\
-> +	}
-> +
-> +#define DP1000_GATE(_id, _name, _parent, _bit)		\
-> +	{							\
-> +		.id = (_id),					\
-> +		.name = (_name),				\
-> +		.offset = DP1000_PERI_CLKENA_OFFSET,		\
-> +		.parent_id = (_parent),				\
-> +		.gate_bit = (_bit),				\
-> +		.gate_flags = 0,				\
-> +	}
-> +
-> +static const struct ultrarisc_fixed_factor_desc dp1000_fixed_factor_clks[] = {
-> +	DP1000_FIXED_FACTOR(DP1000_CLK_SYSPLL_DIV2, "syspll_div2_clk",
-> +			    DP1000_CLK_SYSPLL, 1, 2),
-> +	DP1000_FIXED_FACTOR(DP1000_CLK_SUBSYS, "subsys_clk",
-> +			    DP1000_CLK_SYSPLL_DIV2, 1, 2),
-> +	DP1000_FIXED_FACTOR(DP1000_CLK_PCIE_DBI, "pcie_dbi_clk",
-> +			    DP1000_CLK_SYSPLL, 1, 10),
-> +	DP1000_FIXED_FACTOR(DP1000_CLK_PCIEX4_CORE, "pciex4_core_clk",
-> +			    DP1000_CLK_SYSPLL, 1, 2),
-> +	DP1000_FIXED_FACTOR(DP1000_CLK_PCIEX16_CORE, "pciex16_core_clk",
-> +			    DP1000_CLK_SYSPLL, 1, 1),
-> +	DP1000_FIXED_FACTOR(DP1000_CLK_PCIE_AUX, "pcie_aux_clk",
-> +			    DP1000_CLK_SYSPLL, 1, 40),
-> +};
-> +
-> +static const struct ultrarisc_divider_desc dp1000_divider_clks[] = {
-> +	DP1000_DIV(DP1000_CLK_GMAC, "gmac_clk", DP1000_CCR_GMAC_OFFSET,
-> +		   DP1000_CLK_SYSPLL_DIV2, 0),
-> +	DP1000_DIV(DP1000_CLK_UART_ROOT, "uart_root_clk",
-> +		   DP1000_CCR_UART_OFFSET, DP1000_CLK_SUBSYS,
-> +		   DP1000_PERI_MAX_RATE),
-> +	DP1000_DIV(DP1000_CLK_I2C_ROOT, "i2c_root_clk",
-> +		   DP1000_CCR_I2C_OFFSET, DP1000_CLK_SUBSYS,
-> +		   DP1000_PERI_MAX_RATE),
-> +	DP1000_DIV(DP1000_CLK_SPI_ROOT, "spi_root_clk",
-> +		   DP1000_CCR_SPI_OFFSET, DP1000_CLK_SUBSYS,
-> +		   DP1000_PERI_MAX_RATE),
-> +};
-> +
-> +static const struct ultrarisc_gate_desc dp1000_gate_clks[] = {
-> +	DP1000_GATE(DP1000_CLK_UART0, "uart0_clk", DP1000_CLK_UART_ROOT, 0),
-> +	DP1000_GATE(DP1000_CLK_UART1, "uart1_clk", DP1000_CLK_UART_ROOT, 1),
-> +	DP1000_GATE(DP1000_CLK_UART2, "uart2_clk", DP1000_CLK_UART_ROOT, 2),
-> +	DP1000_GATE(DP1000_CLK_UART3, "uart3_clk", DP1000_CLK_UART_ROOT, 3),
-> +	DP1000_GATE(DP1000_CLK_I2C0, "i2c0_clk", DP1000_CLK_I2C_ROOT, 4),
-> +	DP1000_GATE(DP1000_CLK_I2C1, "i2c1_clk", DP1000_CLK_I2C_ROOT, 5),
-> +	DP1000_GATE(DP1000_CLK_I2C2, "i2c2_clk", DP1000_CLK_I2C_ROOT, 6),
-> +	DP1000_GATE(DP1000_CLK_I2C3, "i2c3_clk", DP1000_CLK_I2C_ROOT, 7),
-> +	DP1000_GATE(DP1000_CLK_SPI0, "spi0_clk", DP1000_CLK_SPI_ROOT, 8),
-> +	DP1000_GATE(DP1000_CLK_SPI1, "spi1_clk", DP1000_CLK_SPI_ROOT, 9),
-> +};
-> +
-> +static const struct ultrarisc_clk_soc_data dp1000_clk_soc_data = {
-> +	.num_clks = DP1000_CLK_NUM,
-> +	.pll_layout = &dp1000_pll_layout,
-> +	.plls = dp1000_plls,
-> +	.num_plls = ARRAY_SIZE(dp1000_plls),
-> +	.fixed_factors = dp1000_fixed_factor_clks,
-> +	.num_fixed_factors = ARRAY_SIZE(dp1000_fixed_factor_clks),
-> +	.dividers = dp1000_divider_clks,
-> +	.num_dividers = ARRAY_SIZE(dp1000_divider_clks),
-> +	.gates = dp1000_gate_clks,
-> +	.num_gates = ARRAY_SIZE(dp1000_gate_clks),
-> +};
-> +
-> +static int dp1000_clk_probe(struct platform_device *pdev)
-> +{
-> +	return ultrarisc_clk_probe(pdev, &dp1000_clk_soc_data);
-> +}
-> +
-> +static const struct of_device_id dp1000_clk_of_match[] = {
-> +	{ .compatible = "ultrarisc,dp1000-clk" },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(of, dp1000_clk_of_match);
-> +
-> +static struct platform_driver dp1000_clk_driver = {
-> +	.probe = dp1000_clk_probe,
-> +	.driver = {
-> +		.name = "ultrarisc-dp1000-clk",
-> +		.of_match_table = dp1000_clk_of_match,
-> +	},
-> +};
-> +module_platform_driver(dp1000_clk_driver);
-> +
-> +MODULE_DESCRIPTION("UltraRISC DP1000 clock controller");
-> +MODULE_LICENSE("GPL");
-> diff --git a/drivers/clk/ultrarisc/clk-ultrarisc.c b/drivers/clk/ultrarisc/clk-ultrarisc.c
-> new file mode 100644
-> index 000000000000..4ef222348dd7
-> --- /dev/null
-> +++ b/drivers/clk/ultrarisc/clk-ultrarisc.c
-> @@ -0,0 +1,459 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (C) 2026 UltraRISC Technology (Shanghai) Co., Ltd.
-> + */
-> +
-> +#include <linux/bitfield.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/io.h>
-> +#include <linux/math64.h>
-> +#include <linux/module.h>
-> +#include <linux/of_clk.h>
+Changes in v10:
+- compat simple-mfd added to CAMSS allows probing sub-nodes.
+  The other way to do this would be simple-bus however, CAMSS
+  is really a collection of devices in a block as opposed to a
+  discoverable bus.
+- csiphy nodes are sub-nodes of CAMSS.
+  Sub-nodes as pointed out by Dmitry will allow us to show some love to
+  older platforms.
+- Depends-on: https://lore.kernel.org/r/20260315-x1e-csi2-phy-v4-0-90c09203888d@linaro.org
+- Link to v9: https://lore.kernel.org/r/20260226-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v9-0-a59c3f037d0b@linaro.org
 
-This can be dropped.
+v9:
+- Adds phy handles as optional nodes
+- Adds minItems: 5 for iommu entries
+  I believe this should be acceptable as maxItems: 8 continues
+  to be valid
+- Makes CAMSS-level rails optional for x1e
+  Similarly I think this should be OK as the legacy binding
+  is still valid it is simply optional instead of mandatory now
+- Supports CSIPHY nodes adjacent to CAMSS while leaving
+  csiphy regs intact.
+- Pushes dtsi drop to another series everything in this series
+  can go through linux-media
+- Depends-on: https://lore.kernel.org/r/20260226-x1e-csi2-phy-v3-0-11e608759410@linaro.org
+- Link to v8: https://lore.kernel.org/r/20260225-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v8-0-95517393bcb2@linaro.org
 
-> +#include <linux/platform_device.h>
-> +#include <linux/slab.h>
+v8:
 
-I think this can be dropped as well.
+- This version rebases on latest media-committers/next - bod
+- Adds support for "combo-mode" PHYs in the YAML.
+  It will be possible to build out the code to support this later - Vlad
+- Maintains the upstream model of connecting sensors to CSI decoders.
+  Every other upstream implementation does it this way so
+  CAMSS will do it this way too.
+- Reduces the number of IOMMU entires in CAMSS to those required for
+  CSID, VFE/RDI/PIX respectively.
+  Including all of the IOMMUs implies we will also "stuff" CAMSS
+  with ever increasing lists of registers but a better approach
+  is to have individual nodes for functional blocks.
+  For example this series supports CSIPHy as a separate block
+  CCI is already a separate block - and we will add ICP, BPS, IPE
+  etc as additional standalone nodes.
+  camss@someaddr {
+        //existing bindings vfe, csid, csiphy go here
+        iommus = <just what's needed for this>;
+  };
+  bps@some_other_address {
+        iommus = <bps specific iommus>;
+  }
+  In particular this model will save us from going down the same
+  path as the vpu which has ended up tripping over the total size
+  an iommu entry may span.
 
-> +
-> +#include "clk-ultrarisc.h"
-> +
-> +struct ultrarisc_pll_clk {
-> +	struct clk_hw hw;
-> +	void __iomem *base;
-> +	const struct ultrarisc_pll_layout *layout;
-> +};
-> +
-> +struct ultrarisc_divider_clk {
-> +	struct clk_divider divider;
-> +	struct clk_gate gate;
-> +	u32 load_mask;
-> +};
-> +
-> +#define to_ultrarisc_pll_clk(_hw) \
-> +	container_of(_hw, struct ultrarisc_pll_clk, hw)
-> +
-> +static inline struct ultrarisc_divider_clk *
-> +to_ultrarisc_divider_clk(struct clk_hw *hw)
-> +{
-> +	struct clk_divider *divider = to_clk_divider(hw);
-> +
-> +	return container_of(divider, struct ultrarisc_divider_clk, divider);
-> +}
-> +
-> +static unsigned long ultrarisc_pll_recalc_rate(struct clk_hw *hw,
-> +					       unsigned long parent_rate)
-> +{
-> +	struct ultrarisc_pll_clk *pll = to_ultrarisc_pll_clk(hw);
-> +	const struct ultrarisc_pll_layout *layout = pll->layout;
-> +	u32 oddiv1_div, oddiv2_div;
-> +	u64 mult, rate, den;
-> +	u32 frac, m, n;
-> +	u32 cfg1, cfg2;
-> +
-> +	cfg1 = readl_relaxed(pll->base + layout->cfg1_offset);
-> +	cfg2 = readl_relaxed(pll->base + layout->cfg2_offset);
-> +
-> +	frac = field_get(layout->frac_mask, cfg1);
-> +	m = field_get(layout->m_mask, cfg2);
-> +	n = field_get(layout->n_mask, cfg2);
-> +	oddiv1_div = 1U << field_get(layout->oddiv1_mask, cfg2);
-> +	oddiv2_div = 1U << field_get(layout->oddiv2_mask, cfg2);
-> +
-> +	if (!n)
-> +		return 0;
+  Nobody really likes the legacy binding much so instead of
+  continuing to bludgeon more entries into it, I've conciously
+  not included BPS, IPE, ICP etc.
 
-Can this if block be moved right after n is assigned above?
+Depends-on: https://lore.kernel.org/r/20260225-x1e-csi2-phy-v2-0-7756edb67ea9@linaro.org
+Link to v7: https://lore.kernel.org/r/20250711-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-0-0bc5da82f526@linaro.org
+Working tree: https://gitlab.com/Linaro/arm64-laptops/linux/-/tree/qcom-laptops-v6.19-rc8-camss?ref_type=heads
 
-> +
-> +	/*
-> +	 * The output frequency is calculated as:
-> +	 * fvco = parent * (m + frac / 2^24) / n
-> +	 * fout = fvco / (2^oddiv1_raw * 2^oddiv2_raw)
-> +	 *
-> +	 * The output divider values are derived from the raw register field
-> +	 * values as:
+v7:
 
-You can now go out to 100 characters on a single line.
+- Reimagine the PHYs as individual nodes.
+  A v1 of the schmea and driver for the CSI PHY has been published with
+  some review feedback from Rob Herring and Konrad Dybcio
 
-> +	 * oddivX_div = 1 << oddivX_raw
-> +	 */
-> +	mult = ((u64)m << 24) + frac;
-> +	rate = (u64)parent_rate * mult;
-> +	den = ((u64)n << 24) * oddiv1_div * oddiv2_div;
-> +
-> +	return div64_u64(rate + (den >> 1), den);
-> +}
-> +
-> +static const struct clk_ops ultrarisc_pll_ro_ops = {
-> +	.recalc_rate = ultrarisc_pll_recalc_rate,
-> +};
-> +
-> +static unsigned long
-> +ultrarisc_divider_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
-> +{
-> +	struct clk_divider *divider = to_clk_divider(hw);
-> +	u32 val;
-> +
-> +	val = readl_relaxed(divider->reg) >> divider->shift;
-> +	val &= clk_div_mask(divider->width);
-> +
-> +	return divider_recalc_rate(hw, parent_rate, val, divider->table,
-> +				   divider->flags, divider->width);
-> +}
-> +
-> +static int ultrarisc_divider_determine_rate(struct clk_hw *hw,
-> +					    struct clk_rate_request *req)
-> +{
-> +	struct clk_divider *divider = to_clk_divider(hw);
-> +
-> +	return divider_determine_rate(hw, req, divider->table, divider->width,
-> +				      divider->flags);
-> +}
-> +
-> +static int ultrarisc_divider_set_rate(struct clk_hw *hw, unsigned long rate,
-> +				      unsigned long parent_rate)
-> +{
-> +	struct ultrarisc_divider_clk *divider_clk = to_ultrarisc_divider_clk(hw);
-> +	struct clk_divider *divider = &divider_clk->divider;
-> +	int value;
-> +	u32 val;
-> +
-> +	value = divider_get_val(rate, parent_rate, divider->table,
-> +				divider->width, divider->flags);
-> +	if (value < 0)
-> +		return value;
-> +
-> +	scoped_guard(spinlock_irqsave, divider->lock) {
-> +		val = readl_relaxed(divider->reg);
-> +		val &= ~(clk_div_mask(divider->width) << divider->shift);
-> +		val |= value << divider->shift;
-> +		writel_relaxed(val, divider->reg);
-> +
-> +		if (divider_clk->load_mask) {
-> +			/*
-> +			 * Program the new divider field, then write 1 to the
-> +			 * load bit to trigger the update. The load bit is
-> +			 * write-triggered and reads back as 0 on this hardware.
-> +			 */
-> +			writel_relaxed(val | divider_clk->load_mask,
-> +				       divider->reg);
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct clk_ops ultrarisc_divider_ops = {
-> +	.recalc_rate = ultrarisc_divider_recalc_rate,
-> +	.determine_rate = ultrarisc_divider_determine_rate,
-> +	.set_rate = ultrarisc_divider_set_rate,
-> +};
-> +
-> +static void ultrarisc_clk_unregister_composite(void *data)
-> +{
-> +	clk_hw_unregister_composite(data);
-> +}
-> +
-> +static struct clk_hw *
-> +ultrarisc_clk_hw_register_composite(struct device *dev, const char *name,
-> +				    const char * const *parent_names,
-> +				    int num_parents, struct clk_hw *mux_hw,
-> +				    const struct clk_ops *mux_ops,
-> +				    struct clk_hw *rate_hw,
-> +				    const struct clk_ops *rate_ops,
-> +				    struct clk_hw *gate_hw,
-> +				    const struct clk_ops *gate_ops,
-> +				    unsigned long flags)
-> +{
-> +	struct clk_hw *hw;
-> +	int ret;
-> +
-> +	hw = clk_hw_register_composite(dev, name, parent_names, num_parents,
-> +				       mux_hw, mux_ops, rate_hw, rate_ops,
-> +				       gate_hw, gate_ops, flags);
-> +	if (IS_ERR(hw))
-> +		return hw;
-> +
-> +	ret = devm_add_action_or_reset(dev, ultrarisc_clk_unregister_composite,
-> +				       hw);
+  https://lore.kernel.org/r/20250710-x1e-csi2-phy-v1-0-74acbb5b162b@linaro.org
 
-Use devm_clk_hw_register_composite_pdata()
+  Both the clock name changes from Rob and OPP changes suggested by Konrad
+  are _not_ yet present in this submission however stipulating to those
+  changes, I think publishing this v7 of the CAMSS/DT changes is warranted.
 
-> +	if (ret)
-> +		return ERR_PTR(ret);
-> +
-> +	return hw;
-> +}
-> +
-> +static struct clk_hw *ultrarisc_clk_register_pll(struct device *dev,
-> +						 const struct ultrarisc_pll_desc *desc,
-> +						 const struct ultrarisc_pll_layout *layout,
-> +						 void __iomem *base)
-> +{
-> +	struct clk_parent_data pdata = { .index = 0 };
-> +	struct ultrarisc_pll_clk *pll;
-> +	struct clk_init_data init = {
-> +		.name = desc->name,
-> +		.ops = &ultrarisc_pll_ro_ops,
-> +		.parent_data = &pdata,
-> +		.num_parents = 1,
-> +		.flags = CLK_GET_RATE_NOCACHE,
-> +	};
-> +	int ret;
-> +
-> +	pll = devm_kzalloc(dev, sizeof(*pll), GFP_KERNEL);
-> +	if (!pll)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	pll->base = base;
-> +	pll->layout = layout;
-> +	pll->hw.init = &init;
-> +
-> +	ret = devm_clk_hw_register(dev, &pll->hw);
-> +	if (ret)
-> +		return ERR_PTR(ret);
-> +
-> +	return &pll->hw;
-> +}
-> +
-> +static struct clk_hw *
-> +ultrarisc_clk_register_divider(struct device *dev,
-> +			       const struct ultrarisc_divider_desc *desc,
-> +			       struct clk_hw *parent_hw, void __iomem *base,
-> +			       spinlock_t *lock)
-> +{
-> +	const char * const parent_names[] = { clk_hw_get_name(parent_hw) };
+  Its important to publish a whole view of changes for reviewers without
+  necessarily munging everything together in one sprawling series.
 
-Moving to devm_clk_hw_register_composite_pdata() will let you drop this
-older usage of the parent_names and move to the parent_data.
+  TL;DR I moved the PHY driver to its own series review comments there
+  are not reflected here yet but "shouldn't" have a big impact here.
 
-> +	void __iomem *reg = base + desc->offset;
-> +	struct ultrarisc_divider_clk *divider;
-> +	const struct clk_ops *gate_ops = NULL;
-> +	struct clk_hw *gate_hw = NULL;
-> +
-> +	if (!desc->div_width)
-> +		return ERR_PTR(-EINVAL);
-> +
-> +	if (!lock)
-> +		return ERR_PTR(-EINVAL);
-> +
-> +	divider = devm_kzalloc(dev, sizeof(*divider), GFP_KERNEL);
-> +	if (!divider)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	divider->divider.reg = reg;
-> +	divider->divider.shift = desc->div_shift;
-> +	divider->divider.width = desc->div_width;
-> +	divider->divider.flags = desc->divider_flags;
-> +	divider->divider.lock = lock;
-> +	divider->load_mask = desc->load_mask;
-> +
-> +	if (desc->gate_bit != ULTRARISC_CLK_NO_GATE) {
+- Having separate nodes in the DT for the PHYS allows for switching on PHYs
+  as we do for just about every other PHYs.
+  &csiphyX {
+      status = "okay";
+  };
 
-As I mentioned elsewhere, nothing sets ULTRARISC_CLK_NO_GATE.
+  We just list phys = <> in the core dtsi and enable the PHYs we want in
+  the platform dts.
 
-> +		divider->gate.reg = reg;
-> +		divider->gate.bit_idx = desc->gate_bit;
-> +		divider->gate.flags = desc->gate_flags;
-> +		divider->gate.lock = lock;
-> +		gate_hw = &divider->gate.hw;
-> +		gate_ops = &clk_gate_ops;
-> +	}
-> +
-> +	return ultrarisc_clk_hw_register_composite(dev, desc->name,
-> +						   parent_names, 1,
-> +						   NULL, NULL,
-> +						   &divider->divider.hw,
-> +						   &ultrarisc_divider_ops,
-> +						   gate_hw, gate_ops,
-> +						   CLK_GET_RATE_NOCACHE);
-> +}
-> +
-> +static int ultrarisc_clk_register_fixed_factors(struct device *dev,
-> +						struct clk_hw_onecell_data *clk_data,
-> +						const struct ultrarisc_clk_soc_data *soc_data)
-> +{
-> +	u32 i;
-> +
-> +	for (i = 0; i < soc_data->num_fixed_factors; i++) {
-> +		const struct ultrarisc_fixed_factor_desc *desc;
-> +		struct clk_hw *parent_hw;
-> +		struct clk_hw *hw;
-> +
-> +		desc = &soc_data->fixed_factors[i];
-> +		if (desc->id >= clk_data->num ||
-> +		    desc->parent_id >= clk_data->num)
+- The level of code change in CAMSS itself turns out to be quite small.
+  Adding the PHY structure to the CSIPHY device
+  Differentiating the existing camss.c -> camss-csiphy.c init functions
+  A few new function pointers to facilitate parallel support of legacy
+  and new PHY interfaces.
 
-This could be combined onto one line.
+- A key goal of this updated series is both to introduce a new PHY method
+  to CAMSS but to do it _only_ for a new SoC while taking care to ensure
+  that legacy CAMSS-PHY and legacy DT ABI continues to work.
 
-> +			return -EINVAL;
-> +
-> +		parent_hw = clk_data->hws[desc->parent_id];
-> +		if (!parent_hw)
-> +			return -EINVAL;
-> +
-> +		hw = devm_clk_hw_register_fixed_factor_parent_hw(dev, desc->name,
-> +								 parent_hw,
-> +								 CLK_GET_RATE_NOCACHE,
+  This is a key point coming from the DT people which I've slowly imbibed
+  and hopefully succeeded in implementing.
 
-Should all of these clocks be registered with CLK_GET_RATE_NOCACHE? I
-see that used in the other registration functions as well.
+- In addition to the CRD both T14s and Slim7x are supported.
+  I have the Inspirion14 working and the XPS but since we haven't landed
+  the Inspirion upstream yet, I've chosen to hold off on the XPS too.
 
-> +								 desc->mult,
-> +								 desc->div);
-> +		if (IS_ERR(hw))
-> +			return PTR_ERR(hw);
-> +
-> +		clk_data->hws[desc->id] = hw;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int ultrarisc_clk_register_plls(struct platform_device *pdev,
-> +				       struct clk_hw_onecell_data *clk_data,
-> +				       const struct ultrarisc_clk_soc_data *soc_data,
-> +				       void __iomem *base)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	u32 i;
-> +
-> +	for (i = 0; i < soc_data->num_plls; i++) {
-> +		const struct ultrarisc_pll_desc *desc = &soc_data->plls[i];
-> +		struct clk_hw *hw;
-> +
-> +		if (desc->id >= clk_data->num)
-> +			return -EINVAL;
+- There is another proposal on the list to make PHY devices as sub-devices
 
-Add dev_error() message here.
+  I believe having those separate like most of our other PHYs
+  is the more appropriate way to go.
 
-> +
-> +		hw = ultrarisc_clk_register_pll(dev, desc, soc_data->pll_layout,
-> +						base);
-> +		if (IS_ERR(hw))
-> +			return PTR_ERR(hw);
-> +
-> +		clk_data->hws[desc->id] = hw;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int ultrarisc_clk_register_dividers(struct platform_device *pdev,
-> +					   struct clk_hw_onecell_data *clk_data,
-> +					   const struct ultrarisc_clk_soc_data *soc_data,
-> +					   void __iomem *base,
-> +					   spinlock_t *lock)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	u32 i;
-> +
-> +	for (i = 0; i < soc_data->num_dividers; i++) {
-> +		const struct ultrarisc_divider_desc *desc;
-> +		struct clk_hw *parent_hw;
-> +		struct clk_hw *hw;
-> +
-> +		desc = &soc_data->dividers[i];
-> +		if (desc->id >= clk_data->num ||
-> +		    desc->parent_id >= clk_data->num)
+  Similarly there is less code change to the CAMSS driver with this change.
 
-This could be on one line as well. I see some others down below but I'm
-not going to call them out separately.
+  Finally I believe we should contine to have endpoints go from the sensor
+  to CAMSS not the PHY as CAMSS' CSI decoder is the consumer of the data
+  not the PHY.
 
-> +			return -EINVAL;
-> +
-> +		parent_hw = clk_data->hws[desc->parent_id];
-> +		if (!parent_hw)
-> +			return -EINVAL;
-> +
-> +		hw = ultrarisc_clk_register_divider(dev, desc, parent_hw, base,
-> +						    lock);
-> +		if (IS_ERR(hw))
-> +			return PTR_ERR(hw);
-> +
-> +		if (desc->max_rate) {
-> +			unsigned long rate;
-> +
-> +			clk_hw_set_rate_range(hw, 0, desc->max_rate);
-> +
-> +			rate = clk_hw_get_rate(hw);
-> +			if (rate > desc->max_rate)
-> +				dev_warn(dev, "%s rate %lu exceeds max %lu\n",
-> +					 desc->name, rate, desc->max_rate);
-> +		}
-> +
-> +		clk_data->hws[desc->id] = hw;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int ultrarisc_clk_register_gates(struct platform_device *pdev,
-> +					struct clk_hw_onecell_data *clk_data,
-> +					const struct ultrarisc_clk_soc_data *soc_data,
-> +					void __iomem *base,
-> +					spinlock_t *lock)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	u32 i;
-> +
-> +	for (i = 0; i < soc_data->num_gates; i++) {
-> +		const struct ultrarisc_gate_desc *desc;
-> +		struct clk_hw *parent_hw;
-> +		struct clk_hw *hw;
-> +
-> +		desc = &soc_data->gates[i];
-> +		if (desc->id >= clk_data->num ||
-> +		    desc->parent_id >= clk_data->num)
-> +			return -EINVAL;
-> +
-> +		parent_hw = clk_data->hws[desc->parent_id];
-> +		if (!parent_hw)
-> +			return -EINVAL;
-> +
-> +		hw = devm_clk_hw_register_gate_parent_hw(dev, desc->name,
-> +							 parent_hw,
-> +							 CLK_GET_RATE_NOCACHE,
-> +							 base + desc->offset,
-> +							 desc->gate_bit,
-> +							 desc->gate_flags,
-> +							 lock);
-> +		if (IS_ERR(hw))
-> +			return PTR_ERR(hw);
-> +
-> +		clk_data->hws[desc->id] = hw;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +int ultrarisc_clk_probe(struct platform_device *pdev,
-> +			const struct ultrarisc_clk_soc_data *soc_data)
-> +{
-> +	struct clk_hw_onecell_data *clk_data;
-> +	struct device *dev = &pdev->dev;
-> +	void __iomem *base;
-> +	spinlock_t *lock;
-> +	int ret;
-> +
-> +	if (!soc_data)
-> +		return -EINVAL;
-> +
-> +	lock = devm_kzalloc(dev, sizeof(*lock), GFP_KERNEL);
-> +	if (!lock)
-> +		return -ENOMEM;
-> +
-> +	spin_lock_init(lock);
-> +
-> +	clk_data = devm_kzalloc(dev, struct_size(clk_data, hws,
-> +						 soc_data->num_clks),
-> +				GFP_KERNEL);
-> +	if (!clk_data)
-> +		return -ENOMEM;
-> +
-> +	clk_data->num = soc_data->num_clks;
-> +
-> +	base = devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(base))
-> +		return PTR_ERR(base);
-> +
-> +	ret = ultrarisc_clk_register_plls(pdev, clk_data, soc_data, base);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = ultrarisc_clk_register_fixed_factors(dev, clk_data, soc_data);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = ultrarisc_clk_register_dividers(pdev, clk_data, soc_data, base,
-> +					      lock);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = ultrarisc_clk_register_gates(pdev, clk_data, soc_data, base,
-> +					   lock);
-> +	if (ret)
-> +		return ret;
-> +
-> +	for (int i = 0; i < clk_data->num; i++) {
-> +		if (!clk_data->hws[i]) {
-> +			dev_err(dev, "missing clock ID %u\n", i);
-> +			return -EINVAL;
-> +		}
-> +	}
-> +
-> +	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
-> +					   clk_data);
-> +}
-> +EXPORT_SYMBOL_GPL(ultrarisc_clk_probe);
+- Working tree: https://git.codelinaro.org/bryan.odonoghue/kernel/-/tree/x1e80100-6.16-rcX-dell-inspiron14-camss-ov02c10-ov02e10-audio-iris-phy-v3
+- Link to v6: https://lore.kernel.org/r/20250314-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v6-0-edcb2cfc3122@linaro.org
 
-Please put this in a namespace with EXPORT_SYMBOL_NS_GPL(). There's
-other examples under drivers/clk.
+v6:
+- Removes 'A phandle to an OPP node describing' per Krzysztof's comment
+  on patch #1
+- Drops Fixes: from patch #1 - Krzysztof
+- The ordering of opp description MXC and MMXC is kept as it matches the
+  power-domain ordering - Krzysztof/bod
+- Link to v5: https://lore.kernel.org/r/20250313-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v5-0-846c9a6493a8@linaro.org
 
-> +
-> +MODULE_DESCRIPTION("UltraRISC clock core driver");
-> +MODULE_LICENSE("GPL");
-> diff --git a/drivers/clk/ultrarisc/clk-ultrarisc.h b/drivers/clk/ultrarisc/clk-ultrarisc.h
-> new file mode 100644
-> index 000000000000..1281196bb414
-> --- /dev/null
-> +++ b/drivers/clk/ultrarisc/clk-ultrarisc.h
-> @@ -0,0 +1,73 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +#ifndef __ULTRARISC_CLK_ULTRARISC_H
-> +#define __ULTRARISC_CLK_ULTRARISC_H
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/types.h>
-> +
-> +#define ULTRARISC_CLK_NO_GATE		(-1)
+v5:
+- Picks up a Fixes: that is a valid precursor for this series - Vlad
+- Applies RB from Vlad
+- Drops "cam" prefix in interconnect names - Krzysztof/Vlad
+- Amends sorting of regs, clocks consistent with recent 8550 - Depeng/Vlad
+- Link to v4: https://lore.kernel.org/r/20250119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v4-0-c2964504131c@linaro.org
 
-This is only used in the if statement, and is not set anywhere.
+v4:
+- Applies RB from Konrad
+- Adds the second CCI I2C bus to CCI commit log description.
+  I previously considered leaving out the always on pins but, decided
+  to include them in the end and forgot to align the commit log.
+- Alphabetises the camcc.h included in the dtsi. - Vlad
+- Link to v3: https://lore.kernel.org/r/20250102-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v3-0-cb66d55d20cc@linaro.org
 
-    if (desc->gate_bit != ULTRARISC_CLK_NO_GATE) {
+v3:
+- Fixes ordering of headers in dtsi - Vlad
+- Changes camcc to always on - Vlad
+- Applies RB as indicated - Krzysztof, Konrad
+- Link to v2: https://lore.kernel.org/r/20241227-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v2-0-06fdd5a7d5bb@linaro.org
 
-Brian
+v2:
+
+I've gone through each comment and implemented each suggestion since IMO
+they were all good/correct comments.
+
+Detail:
+
+- Moves x1e80100 camcc to its own yaml - Krzysztof
+- csid_wrapper comes first because it is the most relevant
+  register set - configuring all CSID blocks subordinate to it - bod, Krzysztof
+- Fixes missing commit log - Krz
+- Updates to latest format established @ sc7280 - bod
+- Includes CSID lite which I forgot to add @ v1 - Konrad, bod
+- Replaces static ICC parameters with defines - Konrad
+- Drops newlines between x and x-name - Konrad
+- Drops redundant iommu extents - Konrad
+- Leaves CAMERA_AHB_CLK as-is - Kronrad, Dmitry
+  Link: https://lore.kernel.org/r/3f1a960f-062e-4c29-ae7d-126192f35a8b@oss.qualcomm.com
+- Interrupt EDGE_RISING - Vladimir
+- Implements suggested regulator names pending refactor to PHY API - Vladimir
+- Drop slow_ahb_src clock - Vladimir
+
+Link to v1:
+https://lore.kernel.org/r/20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-0-54075d75f654@linaro.org
+
+Working tree:
+https://git.codelinaro.org/bryan.odonoghue/kernel/-/tree/arm-laptop/wip/x1e80100-6.13-rc3
+
+v1:
+
+This series adds dt-bindings and dtsi for CAMSS on x1e80100.
+
+The primary difference between x1e80100 and other platforms is a new VFE
+and CSID pair at version 680.
+
+Some minor driver churn will be required to support outside of the new VFE
+and CSID blocks but nothing too major.
+
+The CAMCC in this silicon requires two, not one power-domain requiring
+either this fix I've proposed here or something similar:
+
+https://lore.kernel.org/linux-arm-msm/bad60452-41b3-42fb-acba-5b7226226d2d@linaro.org/T/#t
+
+That doesn't gate adoption of the binding description though.
+
+A working tree in progress can be found here:
+https://git.codelinaro.org/bryan.odonoghue/kernel/-/tree/x1e80100-6.12-rc7+camss?ref_type=heads
+
+Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+---
+Bryan O'Donoghue (6):
+      dt-bindings: media: qcom,x1e80100-camss: Add optional PHY handle definitions
+      dt-bindings: media: qcom,x1e80100-camss: Describe iommu entries
+      media: qcom: camss: Add support to populate sub-devices
+      media: qcom: camss: Add legacy_phy flag to SoC definition structures
+      media: qcom: camss: Add support for PHY API devices
+      media: qcom: camss: Drop legacy PHY descriptions from x1e
+
+ .../bindings/media/qcom,x1e80100-camss.yaml        |  59 +++++--
+ drivers/media/platform/qcom/camss/Kconfig          |   1 +
+ drivers/media/platform/qcom/camss/camss-csiphy.c   | 179 +++++++++++++++++++--
+ drivers/media/platform/qcom/camss/camss-csiphy.h   |   7 +
+ drivers/media/platform/qcom/camss/camss.c          | 143 ++++++++++------
+ drivers/media/platform/qcom/camss/camss.h          |   1 +
+ 6 files changed, 315 insertions(+), 75 deletions(-)
+---
+base-commit: 2e41fb778334db3d260c52c6be4c4d44fbed87ac
+change-id: 20250313-b4-linux-next-25-03-13-dtsi-x1e80100-camss-1506f74bbd3a
+
+Best regards,
+--  
+Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
