@@ -1,55 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44AAF4C6F16;
-	Wed,  8 Jul 2026 14:57:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBA5547886E;
+	Wed,  8 Jul 2026 14:57:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783522636; cv=none; b=Pjjr/TNFgaBI+BUyo9NH/HtX2WSqpuCdm/dYwCAFj8Qfdmp7U+kAVKZkUAhL6FT4NHgYZkTbtPyHg0SetMViyqFVa2Qaw+EpwqVc7JjkVPbXB4DLAabz87pRO2dw4QjLtzwpx6S/LoUEGwZIyQu7q4lOgsOwIziiW9HCw9ZNQSg=
+	t=1783522639; cv=none; b=cdibG4ATJbiVwt18tof2zmKxm00qx8NlPIwKTwl1WO9rfaByShGlF1wCPIaVtOO6HS2ejiwe0SSMsjKzhNK+nagTpZRnqFLOjTr9JjHWNZ6s6YXWPaSgkdIVk/6khM+HuFJKUn/AQyOi7fHDzeYbArjR8XWfTRGrPuFhWifd3xs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783522636; c=relaxed/simple;
-	bh=5yhOIY6EeIe2qy5Zt0ltoCyxQqu3Zj/XMFPY5RZ1drk=;
+	s=arc-20240116; t=1783522639; c=relaxed/simple;
+	bh=zva2rRBeHuEN2IolFxVcZjYpcR3Ar0pDSVTAlH0qH+4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qfsYEBznf2geCnL03ejPcWSHLrr/MVP8M/WwqhT0M3/tiZQLnlxhVvGJKuPmtZUKiwnrz5NThIXK7pbiornVIWLGmWev6yyy5AXNav/v6elUeZWnNE26yzfUvrcdl00bDPB7CEmCg8mUkdQ25bEliJdgoxyxdzTJMe7vxUptxKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TBTJV9Td; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version:Content-Type; b=ksnzf1q3sC+bx5JibiL735PCbgpIjiAkFm+FQewYWQg8xN3kJ3SqpptEys8cBOR81Oc1f+hdfGRaiiaWp88IrhqyKn/vh+4j6T+eq/evEs6KJnaXblq1F2SI/Quf3ZlLG5aU4NKZZ5HbSyGrluyzzE1IbXW3dWV6RZ3PmhQ/yk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F4lmV3bs; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TBTJV9Td"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD41E1F00AC4;
-	Wed,  8 Jul 2026 14:57:13 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F4lmV3bs"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AB2F1F00AC4;
+	Wed,  8 Jul 2026 14:57:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783522634;
-	bh=jtRoaleXHYtvwj3YsxcEm5vvvb5LD6sGb0KJPRIn6bE=;
+	s=k20260515; t=1783522637;
+	bh=AxbHpsGj+0x0gXgzF45YXJSN7mWnZiagdib1WnEcxr8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=TBTJV9TdKSBN4FD7dz27nYiA9jgvXMEJe2sV+GjyI/tj9X/9Zf8x45PxkhI+EX4Di
-	 eHfWlzi7zlJ8j6+zKzDSF3s266lIH2rbPoO0oDYEnyMvSdRq+muBU7ncOwEtY2a49z
-	 MF4Fsnd61cbAd9XY39CyHCaTBfekNrachdkTrjFhHtOqxIhS9pf/UqNuPNn1ihX8zW
-	 4MWRgvz1LsQRkReF5z91PJSvT3MBxLPMzftwgybVJxRbkKFq+zScaBCVqhx1ZG5qe/
-	 e+V1lpUygZxIndGWCR7D0X4J+nB/1t7p58xRe75VbBcRAIL9lwTBpAXukd18EeNe7l
-	 gp0PTa+8CX3mg==
+	b=F4lmV3bsnVjGFCi8Y7qcKZuYfA6DqYuG41ohsR0HFpOpEb+/cz1DJl8z+hqDZsZQ0
+	 z6A+xs3+OEtATZcowNqUyOj2Oo6+6YiBMlUtClUZXAJlOLwCS2+6sM/TzQ/FA/FfyU
+	 okts8SQAhc5qJzWXI7dgUFikylwrG4ghaJdXlM/MICUN1TQtbZuh4Xl7QaeZm25kyd
+	 vWgYj/UVTg7acUmaAXSk3ch7kvzIIDTNpZgBveB6QwkbSB51pcn8lNcFjec6NvrXV3
+	 n3ufyoTfJxQ7H6nQnc/l0MwggyEy+Tc2hOkLdVhNH/lopHBvPvEMRCwDJifjwaSZjA
+	 suVKz2MYt6w0g==
 From: Bjorn Andersson <andersson@kernel.org>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
-	Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
-	Bryan O'Donoghue <bod@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+	Herman van Hazendonk <github.com@herrie.org>
 Cc: linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: (subset) [PATCH v2 0/4] media: iris: bring up driver on SM6115-based platforms
-Date: Wed,  8 Jul 2026 09:56:15 -0500
-Message-ID: <178352261575.2235436.7747224578732326606.b4-ty@kernel.org>
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] clk: qcom: gdsc: three pre-existing correctness fixes
+Date: Wed,  8 Jul 2026 09:56:18 -0500
+Message-ID: <178352261579.2235436.1160754515486201566.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260515-iris-sm6115-v2-0-2ab75229de61@oss.qualcomm.com>
-References: <20260515-iris-sm6115-v2-0-2ab75229de61@oss.qualcomm.com>
+In-Reply-To: <20260602140934.796697-1-github.com@herrie.org>
+References: <20260602140934.796697-1-github.com@herrie.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -60,24 +49,24 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Fri, 15 May 2026 14:59:23 +0300, Dmitry Baryshkov wrote:
-> The SM6115 / SM4250 / QRB4210 platforms use the AR50_LITE IP core as the
-> video en/decoder (the same as Agatti platform). Extend Iris driver to
-> support this platform. This has been tested on the Qualcomm RB2 board
-> with the normal HFI Gen1 firmware. HFI Gen2 firmware for AR50Lt doesn't
-> work yet on SM6115.
-> 
-> V4L2 compliance for Encoder fails due to firmware / driver error:
->  qcom-iris 5a00000.video-codec: session error for command: 3007001, event id:1007, session id:d3b1e000
+On Tue, 02 Jun 2026 16:09:31 +0200, Herman van Hazendonk wrote:
+> While preparing MSM8x60 support for the GDSC core (a separate series,
+> adding LEGACY_FOOTSWITCH and RPM_ALWAYS_ON), code review surfaced
+> three pre-existing correctness issues in drivers/clk/qcom/gdsc.c that
+> are independent of any new SoC enabling work. This series collects
+> those three fixes so each can be reviewed and queued on its own
+> schedule without blocking the MSM8x60 series.
 > 
 > [...]
 
 Applied, thanks!
 
-[3/4] arm64: dts: qcom: sm6115: add venus device
-      commit: e0511284f0c14e2929aa6cec435a9cb8bec259b1
-[4/4] arm64: dts: qcom: qrb4210-rb2: enable venus device
-      commit: 43611ba2955c1f349a0694b7ad7ab6a2794910df
+[1/3] clk: qcom: gdsc: propagate gdsc_check_status() errors from gdsc_poll_status
+      commit: d69f0c2b8d292b4890c9f0fbe184dfc26c4de86c
+[2/3] clk: qcom: gdsc: propagate gdsc_enable() failure for ALWAYS_ON domains
+      commit: eea55fc694e132aacbe2cf4be7f345115e3d1801
+[3/3] clk: qcom: gdsc: tear down per-domain genpds in gdsc_unregister()
+      commit: 86b23609d5e17a770d03037e53c6a443e742a6e6
 
 Best regards,
 -- 
