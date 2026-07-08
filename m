@@ -1,123 +1,126 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B65943711D
-	for <linux-clk@vger.kernel.org>; Wed,  8 Jul 2026 16:41:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5960F40245F;
+	Wed,  8 Jul 2026 16:48:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783528918; cv=none; b=BUe/cFjSl0JvPphSdEvgpCQigihK/qLbVPwP809BgYeuqglpDi5bjbWBdAYQ+PC2i34zs0wRmOyTLTrQFTzFMyOctZ8fnJmh6sV39N3a/ZPYW2jG7hIGfNs/Z4PuXRh13R6lBO2JGGKc7difgOgc1OG1LnY1RUumW/zquohs/vg=
+	t=1783529325; cv=none; b=dvojIpiqH0sdOm3yCpYY+BbmmqW0CC3iU9muUgJtqUInSxO4BB64wLrUNCzLcFNb8IgJN6swRVdgSCHjfyDMy4unZj0FKXa0CrUAqEMAbAqxF0uBU+Qt/O7mKVissAIGCBKR2kDC8nEmd06DmQQpzeQBKdn+H4VsmBUErSRbY34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783528918; c=relaxed/simple;
-	bh=hxJeTTJpCgngpttgBKLmH7ptP6ELM2r7kNGcEsfXpko=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XugiIq4xK4pcT+rlAxY1BekQr9mjOEfOVnp2hkeEPSr0wUstrKgweLwCAqtatDBSf83l2b8BzcTQ68XFenMIWorrXsaj5SJWr3zunPCgXYIvwDAK6UBIa0jnhAZBtanhNiKjkEKiDg1moPel5Uz7qbVaE4lJr8U2PWIwJbUKOHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SbCly8Jc; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=klTcNqng; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1783529325; c=relaxed/simple;
+	bh=fofBQvPVcd3NX+xdJivf5D8jfwRM6c2GJjKIcT6JUBk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MyCQadAH7qFUZ8lqUyYc1mQsdHlL2W1c5xTAeVKgdLYjmALN4w7Ujx2jVYK6WG5EtwUdbJpeAa/iCDDRBaMM/FFN0opkhNAVI0ndswt/G7fTJ12MsdV39eVzknN9XvM+J5pN9B99Yo0x3vWd7eTQmTVoCwu6bWTKaXgus+KOtoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=yY1xJQwb; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=HyyEMk/D; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SbCly8Jc";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="klTcNqng"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1783528912;
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="yY1xJQwb";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="HyyEMk/D"
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA512)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4gwPDm6s9TzMlKN;
+	Wed, 08 Jul 2026 18:48:40 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1783529321;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=KeN+eUGcS7y43ntst2e5pfjhEcVMN4wZLhE8yfU/Pkc=;
-	b=SbCly8Jcz7CsAGIkkhNDDOYapG4eKnngeTw1HENSCWE/nO2SFisGsPeorTWdC9uiV+kIZy
-	RcWVAwp3kxCmgOuohF75S771E/X+RfgSkhzGeybMFm+LRbLjKmHo4R9ZbNl9pG8wYJbMjU
-	qnJg31weL8foaouLJtCza2a13/CU5x0=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-513-eqbdfkOsNYWiSbaT7lrSpw-1; Wed, 08 Jul 2026 12:41:51 -0400
-X-MC-Unique: eqbdfkOsNYWiSbaT7lrSpw-1
-X-Mimecast-MFC-AGG-ID: eqbdfkOsNYWiSbaT7lrSpw_1783528911
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-51c1b4d961dso487161cf.1
-        for <linux-clk@vger.kernel.org>; Wed, 08 Jul 2026 09:41:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1783528911; x=1784133711; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:content-type
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=KeN+eUGcS7y43ntst2e5pfjhEcVMN4wZLhE8yfU/Pkc=;
-        b=klTcNqng2n3y589/zhRXCK9iucBkPG1i/Gos/foP6On4pSkdRuMZTY2acTb7lFQrKW
-         Xcb+x1zRSKoth2qwBRsQ+xnyEOLqoOd5pIDKPY+cHJoFq35FKCl0/DNFNFXaySWMwnxh
-         1eN8nZD/3UZH4Yyhv+bzvuukTvm0xetO2KpdINBQ5WmfSd+9ymzqHC5cu1y+GF8pXFh1
-         Ua0b7kY47FEzZgV929s1EGqGPMCWLmY8DmYQGW/6Dk2ia2Gn7lEm1BeJY3XrsZeKp9Bi
-         oSplTPy1obMOiZMg80LFMfvPWtdpnuIQQ7M9LsHACM4ibvXYV8m2aplVSRPniT3d+W6T
-         KBtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783528911; x=1784133711;
-        h=user-agent:in-reply-to:content-disposition:content-type
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=KeN+eUGcS7y43ntst2e5pfjhEcVMN4wZLhE8yfU/Pkc=;
-        b=b2gw5LknbUjbmtTGQl7JpafpeiO/Mgd96Jg2QWCh7XFJnyFpg7KtpjVX9RjZs211ME
-         zS1YV4TcXRmRESDMCpwCMDMltzir/0rboCYReWxYorWbdGIH7XYpH7RHWhNeTbBBrdiv
-         t7iOGRXiD44YYftIUnQGcXuP2bULsCiMJ9MngB2Q6m2KttCeuKB2p1ISWVacpKRzifK6
-         NfPL8fdwLn0TOCQ9oY8B8rO2g/sZ5SJrN3CrpstoP3npVWOF0Lsc0rCgwwe9CSo00mKb
-         bvLA+etDOHbeJyhbe0dh3uNvZvjG0JaHwd/qKfb/Y3lI+lvswsqAz/AYqp1Ht8pUE8x5
-         t2Sw==
-X-Forwarded-Encrypted: i=1; AHgh+Rqh6h9KK81gZYAS8JoysuIbcrJ7bjTeEHyrjy2MepCi6Up2J5CwIjgSRQ/9LyJpLJ0tYJlHQMp8rvU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvbRsZrGEoPdEl1mzh3RSmu5DVBKpPlqoTHNOKP+WyDK+hLPcc
-	V+/Qa2JT93dY0SigcJB/M3wxtuWHoKmSLcaYgajEGhKP2Mcb55/qYhpGfin/2Qp+p7E2Skep9co
-	b54/wCkw0bhqW4e68fsVpQJC43yqJ3nWXyS1g0Y59VWbXZ4eWMsZ277ctMno0/w==
-X-Gm-Gg: AfdE7ckAHMReZ6RXb5KMHd+f6IW/dkwa+ttU52Pmu7V90s27kvoQrqHATufLyjk+JuQ
-	dXanYUEzGqHIK7MvLk130ZFZfABaSEbdvkoVy4mvXRiKxOHH3DQkEzmOKWlwxli6+g5ggPIOzA2
-	mSEnnk8NOXX3KcDZgwSDlTepXvsyECLXA4Ijfazlxvos/m6V+B7FtxdozQN0l799KtWoICvO6Mn
-	hvBL2I3Lukkr2H+0+c4UX24yflYzzATi8zUhXj3Cc0lI5NNTbu5w732v0f+a+EBNkpRcDThyA7S
-	sHqrjWG9D0rFIdzpI/v8jge4I7keRnGmhAq9/IWi69L+a3Jdd3P1+CjrTWUGzvoCPAUCqfb5GaA
-	UuPv2BRNWO39vJ1415ijldtgf323GAhWqjk+i1TJxBi+6+Q==
-X-Received: by 2002:a05:622a:4cb:b0:517:f9cc:1fb2 with SMTP id d75a77b69052e-51c8b30e312mr36983761cf.19.1783528910855;
-        Wed, 08 Jul 2026 09:41:50 -0700 (PDT)
-X-Received: by 2002:a05:622a:4cb:b0:517:f9cc:1fb2 with SMTP id d75a77b69052e-51c8b30e312mr36983291cf.19.1783528910398;
-        Wed, 08 Jul 2026 09:41:50 -0700 (PDT)
-Received: from redhat.com (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-51c41b55495sm147695021cf.11.2026.07.08.09.41.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Jul 2026 09:41:49 -0700 (PDT)
-Date: Wed, 8 Jul 2026 12:41:47 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Guangshuo Li <lgs201920130244@gmail.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Tomeu Vizoso <tomeu@tomeuvizoso.net>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: tegra: tegra124-emc: put EMC node on register
- failure
-Message-ID: <ak59y2H3IsHsZ15L@redhat.com>
-References: <20260708112058.750952-1-lgs201920130244@gmail.com>
+	bh=G2F8UTbrQpHAZf8UnpKm16ni9iweS0yaca1Uv+SwEYc=;
+	b=yY1xJQwbYy4eG2NsyWzBCVrlkg0EcBjFvdcuFovEC2IbWp3kU60JKjSAKSzLMciR1EsPdu
+	ejjAFDe+JVF9Sr9+3QhhAur1hoqUsx/BwX/PDpB/e8Nwa0hOuypUuMHhL9Uwujrw7tbXNH
+	/j35Zda5HbVnuqxQP84QRGA1FV25MuMpNgpXQAo9aBYw2ylltxz5DS3qGE2Xk/tripSQUp
+	4rigneeHGxJ162cClnDzNhffDU/3Eo9bSvYV4qi7/wkQ7qcrWGAK6XA2NN2uE2+bIhKC0P
+	Ov74Ct4qnnCl6FDRTICjToZjcoBT48/7DeD44GFkfO2C13KILjQU/E9XLhZq4w==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b="HyyEMk/D";
+	spf=pass (outgoing_mbo_mout: domain of marek.vasut@mailbox.org designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=marek.vasut@mailbox.org
+Message-ID: <1c072a8f-a854-4b72-be43-7fdb50b14653@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1783529319;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G2F8UTbrQpHAZf8UnpKm16ni9iweS0yaca1Uv+SwEYc=;
+	b=HyyEMk/DEMoJgPcxBr0Pq212SsCaf5NsNufZl8aXOfXzinVkcA2D20WAtT1qmT/1tWXXMm
+	UH50YgTdA4l+ihaYZ8AdS5GPRPKEWGAfhLKMXCMjNamAB+octGR79OarG/cz3sMKyDkx1A
+	szPV4dYYdC5rvgx5AsAU0aYRIKTDw8GV5rWRlZOBrOKKCq6a8ETtr4NOv7JDltLeNkzqFP
+	htLjbKZpYH65f3a2eeCxEaLRBnkYPYfr7gjm6vahw3qM7uspJlzPtCdzwIAwcuWPBU7FOI
+	s9p//CTQHqCgonVROF8iPyh9bmOz2wBDEdSqly1oBaTIk4J6CdcFB+d1/rb0jQ==
+Date: Wed, 8 Jul 2026 18:48:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260708112058.750952-1-lgs201920130244@gmail.com>
-User-Agent: Mutt/2.3.2 (2026-04-26)
+Subject: Re: [PATCH v2 00/10] R-Car X5H Ironhide CPG/MDLC SCMI remapping
+ support
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Sudeep Holla <sudeep.holla@kernel.org>,
+ Cristian Marussi <cristian.marussi@arm.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Saravana Kannan <saravanak@kernel.org>,
+ Ulf Hansson <ulfh@kernel.org>, "Rafael J . Wysocki" <rafael@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+ Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+ Vinod Koul <vkoul@kernel.org>, Konrad Dybcio
+ <konrad.dybcio@oss.qualcomm.com>, Kevin Hilman <khilman@baylibre.com>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Marek Vasut <marek.vasut+renesas@mailbox.org>,
+ Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+ arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <cover.1783505329.git.geert+renesas@glider.be>
+ <3c76a2d4-a8b8-493a-9196-c5cc72958118@mailbox.org>
+ <CAMuHMdUVUKYrrms0Vd4i3_nwq2LVjvnvFRWswi8UY3cA67u2-w@mail.gmail.com>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <CAMuHMdUVUKYrrms0Vd4i3_nwq2LVjvnvFRWswi8UY3cA67u2-w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-ID: 09e4c3dda12fcca6b00
+X-MBO-RS-META: na9n8ju6zp3juk8qegttrip714c8zcby
+X-Rspamd-Queue-Id: 4gwPDm6s9TzMlKN
 
-On Wed, Jul 08, 2026 at 07:20:58PM +0800, Guangshuo Li wrote:
-> tegra124_clk_register_emc() stores a device node reference returned by
-> of_parse_phandle() in tegra->emc_node.
-> 
-> If clk_register() fails, the function returns an error before that
-> reference can be consumed and released by the normal runtime path. The
-> tegra_clk_emc object is freed on this failure path, but freeing the
-> object does not drop the OF node reference stored in it.
-> 
-> Drop the EMC node reference before freeing the tegra_clk_emc object.
-> of_node_put() is safe for a NULL node, so this also covers the case where
-> the phandle is absent.
-> 
-> Fixes: 2db04f16b589 ("clk: tegra: Add EMC clock driver")
-> Signed-off-by: Guangshuo Li <lgs201920130244@gmail.com>
+On 7/8/26 6:04 PM, Geert Uytterhoeven wrote:
 
-Reviewed-by: Brian Masney <bmasney@redhat.com>
+Hello Geert,
 
+> On Wed, 8 Jul 2026 at 17:42, Marek Vasut <marek.vasut@mailbox.org> wrote:
+>> On 7/8/26 12:16 PM, Geert Uytterhoeven wrote:
+>>> Geert Uytterhoeven (10):
+>>>     firmware: arm_scmi: Add scmi_get_base_info()
+>>>     of: property: fw_devlink: Add support for firmware
+>>>     pmdomain: Make genpd_get_from_provider() public
+>>>     reset: Add reset_controller_get_provider()
+>>>     dt-bindings: clock: renesas,r8a78000-cpg: Add firmware property
+>>>     dt-bindings: power: renesas,r8a78000-mdlc: Add firmware property
+>>>     clk: renesas: r8a78000: Add SCMI remapping support
+>>>     pmdomain: renesas: r8a78000: Add SCMI remapping support
+>>>     arm64: dts: renesas: ironhide: Enable SCMI devpd, sys, clock, and
+>>>       reset
+>>>     arm64: dts: renesas: ironhide: Add CPG/MDLC firmware properties
+>>
+>> I think 10/10 did not make it either to my inbox or lore.k.o , but the
+>> remaining 9 patches look good. Thank you !
+> 
+> Thanks, I did something silly while sending.
+> Lore now has it, b4 still seems to miss it, unless I specify the
+> Message-ID of 10/10.
+
+Thank you, it looks just fine.
+
+-- 
+Best regards,
+Marek Vasut
