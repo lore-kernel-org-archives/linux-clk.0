@@ -1,129 +1,112 @@
-Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE9BB401A02
-	for <linux-clk@vger.kernel.org>; Thu,  9 Jul 2026 09:49:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A0EA40B38F;
+	Thu,  9 Jul 2026 10:10:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783590601; cv=none; b=gimYJ93YzRDj5FZJYqbBxSE+LnAFUvGbG0GgcfKBt++XVGsOxL0p7jmDGLYsahXcFflQpE8h6QmN4NhgibSK8Eu1B6DUnTj7jDhWFZQvLy2Xe+bzQOf5LYUXMHlJIuowtpuzClcht8/vzmKLDSK7eEvv3NgxmCq4C3K+PQNI+2E=
+	t=1783591821; cv=none; b=pd5lRw1LnOwpW5ZFo9s8h3N6sSHhSTmqXvmfyZjkqhfrfMfTUxC77FGQjLcZyWE8cY9ZFsGIr7UnxAtfKoZTgVpOj68/J5K7EQgpgET3KpAWFUR3Ib36v+KuvJCvy95nK5IeCoaohFQY5Psl0AQG88bBAER9Vswf2s5tsXtUwc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783590601; c=relaxed/simple;
-	bh=XyB0QJBI/ArxNnxn06+fFpma6hNeLNHAjblX5FcA1C0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Bc7ZkyarQ0pCkSN/4Tfxl4+D36EFYW5bIAOkk+8NbrI7nnWQvDq8Bo16mKGYwmk+1Zg5ICK1/PwPSg/AGUCqPhpCfHyiwoYpFLRGXkGiaFbzRVxyQHDo3VdNBSgpr4JXiWt5t4aea0n67KzDNQysg3ZgczlQIcO6CfbOoqRd+7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-738bcf9a573so532893137.2
-        for <linux-clk@vger.kernel.org>; Thu, 09 Jul 2026 02:49:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783590593; x=1784195393;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=JBx1Lwl28bs84XHLARf2PZgvr/qdRO+0Qc3qcd6uTMQ=;
-        b=PKzPxr8lWn4VrmY12Yyh+52xeQlObROm6PDiFTyLDoEg8Q5w1V449dc86R9mWfy4yc
-         unccKKhG3+2Qurn+48So1L9G6FtXcQAkC/owOKKQ61vdMkDrxjZv0W36aZSB48rb80pE
-         R9iBEyYZKGGvqot5ENoS09rmTr5m02fS4FBrJC9NIXyRGG9+Hoq+zArOWsv1U8EusgUP
-         ppQqjhpJcbAY3V6H5NK4FRQafK/BazHZdti8WpW3zAywiWTwg+9WyoDZImz/4+xZa/lW
-         KlvrvftzumTu4DaOLIudACoJs1HeFdox1w+42ob1gNKS0ymq870toPRRKR1Z1ByKPhsP
-         RuHQ==
-X-Forwarded-Encrypted: i=1; AHgh+Rp5zdpgMVmXgQ/tjwwcIzirEqGN/1QjwwKIyQQUyu1uKrBR9947ib8pK5YGCA4qiCUkCfckXh8RZrI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyxBe08kolypk84TahBBz1ftNiNv4DLkKGZ4ZwmpzSZDZybG7L
-	/6nEKKBZygJSIbXdU4vvA36WLQaQR02cju4NjUm3DB96xYU8Cu0tPUZoeZLFjdoMJgA=
-X-Gm-Gg: AfdE7cl0BJ6mQZrAb0kEnwcpZ5Sf7hzzqMl6pWYZQqHGfPVhKWvsFyJOWqlTe797Ba2
-	HZ12bZ8o7T/3HW+qlNa6I9KLLfP1csPF17YR91XhBPQ6Il20qHN4gLfS/ER/lFi8u5Zwo2xwfIp
-	GZGsUsn5SKqKjYn6ZOUgU26Rj8OgdF01YnUJ6Gve0EL94zzyxqCLJr38eMNIg75gzCqTFpInGFT
-	Rrofij8SUc6TSguTP34ftAQ7wbsAuAthP0F0msSM393wFbzYxHYCDXxVXI1KYfay8aFXc+jnu+E
-	bZSn91Q4+2LdinqsLYlzJ79r3u3lwS4S79bXAAHNJw699OBcD9i4dMcZiqknI7YvCBeVJekALPp
-	sOxdpiRFLLRl0SnDQxJBRBs3bD5fDwFN0qrJx+fRVAqvUSTjXirIluCnx3p5SSZqrZsSHIZq1O7
-	4sqM/nRPEhPKIXw4Y8w87GwgdnZezltHoPAc3ZvLQVd8TmaFwY7agWccNsgB4D
-X-Received: by 2002:a05:6102:1607:b0:631:28c1:154c with SMTP id ada2fe7eead31-744dff3ab04mr4449009137.9.1783590593464;
-        Thu, 09 Jul 2026 02:49:53 -0700 (PDT)
-Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com. [209.85.222.50])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-970e6076dedsm194926241.3.2026.07.09.02.49.52
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Jul 2026 02:49:53 -0700 (PDT)
-Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-969524c1aefso424268241.3
-        for <linux-clk@vger.kernel.org>; Thu, 09 Jul 2026 02:49:52 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RoMdwzEmFkyvWi2EVG461b9+j0oNhhl7joWRX76CiazRjIM90D4izlMUWc5w6QxGCEsgNpooiyoZTw=@vger.kernel.org
-X-Received: by 2002:a05:6102:c54:b0:740:22ba:8a4e with SMTP id
- ada2fe7eead31-744dfed12b0mr3967593137.6.1783590592726; Thu, 09 Jul 2026
- 02:49:52 -0700 (PDT)
+	s=arc-20240116; t=1783591821; c=relaxed/simple;
+	bh=fRNeER7LnUmcwoquzvpNn39F7hoZUAISetj6EkZZm2Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZAglQaMDywneEb1thEshAVduxVhdTQAdza10AKSLHiCwHo//34ycBrSULpSST9TXkIaxsJI25G1amlNVvCSXhbQaTsbXrQ+iKaJjZl3wExj1ioZNlTwnV7EsOw8TczW1fWk7H5eHj+XIfWjv0wqxCY1W7gB2KXQgiQxjz1pheWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F03vhvIw; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F03vhvIw"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C8C61F00A3D;
+	Thu,  9 Jul 2026 10:10:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1783591819;
+	bh=oWFW04FqDfkqF6FQ5XuyyPvQ7Y46Kanl78+AV4Ugsl8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=F03vhvIwmj4StkRYQPee7Mpo8rhhvPDYa1ZUqMf2+g/CIeGCVIfCN0xnG5MJNYpgT
+	 G/xk+YiSmjsIpQ2a+ZCD1F7xW6UWIvVaIlA6EZhjtHM2GrgY2ZJp+KTKbZzmfeMY3V
+	 YI9cy3UqYXyMdyhNZ1zM949+ZSyI5yjfsP0DsW4R6T1oCjhBIM50nriVks3E2TiNTH
+	 S9m1h8vO+qxxJ7t4pzTYadBUln5t8vaGIXxmcrGaq5iBn0yQiXfbw6yHSMCKDUSEG8
+	 sAdltXpvBqJuHdUtm+PegrAGj97SvlIeTEKN0AltXJqRF1FwfLCw0B+XrWz/skAojF
+	 Ifn+6OI6uNVwQ==
+Date: Thu, 9 Jul 2026 11:10:12 +0100
+From: Sudeep Holla <sudeep.holla@kernel.org>
+To: Hans de Goede <johannes.goede@oss.qualcomm.com>
+Cc: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
+	Sudeep Holla <sudeep.holla@kernel.org>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nsc@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>, Frank Li <Frank.Li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Jyoti Bhayana <jbhayana@google.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Ulf Hansson <ulfh@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+	imx@lists.linux.dev, linux-hwmon@vger.kernel.org,
+	linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-rtc@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] firmware: arm_scmi: Ensure automatic module
+ loading
+Message-ID: <20260709-spicy-fiery-squid-6eec1d@sudeepholla>
+References: <20260618-scmi-modalias-v2-0-8c7547c1be21@oss.qualcomm.com>
+ <8c2a4ae3-95cc-489a-a7a4-90a3ee2597e9@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1783505142.git.geert+renesas@glider.be> <50f5804f00c55cd60604d00da1bf1f1dc912ba8d.1783505142.git.geert+renesas@glider.be>
- <80a31a21-9876-48a7-a9ed-baac4f87bc11@mailbox.org>
-In-Reply-To: <80a31a21-9876-48a7-a9ed-baac4f87bc11@mailbox.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 9 Jul 2026 11:49:40 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdV+nHe9kWbBv1k=b-6iixBBJbqeNY-Vq+qbT+wD2g6jUQ@mail.gmail.com>
-X-Gm-Features: AUfX_mz8czD0BjSvqmftRZ_pTGys7GO-j5nSESdQS6eSA4Z7r12bLxvVFtqIaAw
-Message-ID: <CAMuHMdV+nHe9kWbBv1k=b-6iixBBJbqeNY-Vq+qbT+wD2g6jUQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/6] clk: renesas: Add R-Car X5H CPG driver
-To: Marek Vasut <marek.vasut@mailbox.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, Ulf Hansson <ulfh@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Marek Vasut <marek.vasut+renesas@mailbox.org>, 
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, devicetree@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8c2a4ae3-95cc-489a-a7a4-90a3ee2597e9@oss.qualcomm.com>
 
-Hi Marek,
+On Thu, Jun 18, 2026 at 10:31:12PM +0200, Hans de Goede wrote:
+> Hi,
+> 
+> On 18-Jun-26 17:56, Bjorn Andersson wrote:
+> > SCMI drivers such as the Arm SCMI CPUfreq driver are allowed to built as
+> > modules, but they are then not automatically loaded. Rework the SCMI
+> > device table alias support to make modpost consume the information from
+> > MODULE_DEVICE_TABLE(scmi, ...) and allow drivers to be loaded based on
+> > this information, if known. Also add a protocol-based alias to also
+> > trigger driver loading when only the SCMI protocol id is known.
+> > 
+> > Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+> 
+> So I just gave this a test spin and unfortunately it does not work.
+> 
+> The problem with Fedora's kernel-config / setup is that the
+> request_module() from patch 2/2 runs from the initramfs, but
+> the scmi_cpufreq module is only available in the rootfs.
+> 
+> It does work if I explictly add the scmi_cpufreq module to
+> the initramfs, then it does get autoloaded.
+> 
+> We really need some place to put a uevent sysfs attr which then
+> gets replayed when udev is restarted from the rootfs and then
+> re-reads all the uevent files as part of its coldplug
+> enumeration.
+> 
 
-On Wed, 8 Jul 2026 at 23:55, Marek Vasut <marek.vasut@mailbox.org> wrote:
-> On 7/8/26 12:15 PM, Geert Uytterhoeven wrote:
-> > +static int register_fixed_clks(struct r8a78000_cpg_priv *priv)
-> > +{
-> > +     struct device *dev = priv->dev;
-> > +     unsigned long rate;
-> > +     struct clk_hw *hw;
-> > +     const char *name;
-> > +
-> > +     for (unsigned int i = 0; i < ARRAY_SIZE(fixed_clk_rates); i++) {
-> > +             rate = fixed_clk_rates[i];
-> > +             name = devm_kasprintf(dev, GFP_KERNEL, "cpg-%lu", rate);
-> > +             if (!name)
-> > +                     return -ENOMEM;
-> > +
-> > +             hw = clk_hw_register_fixed_rate(dev, name, NULL, 0, rate);
->
-> Would it be viable to use devm_clk_hw_register_fixed_rate() here ?
-
-Yes, I think so; thanks!
-
-> > +             if (IS_ERR(hw)) {
-> > +                     while (i-- > 0)
-> > +                             clk_hw_unregister_fixed_rate(priv->fixed_hws[i]);
-> > +                     return PTR_ERR(hw);
-> > +             }
-> > +
-> > +             priv->fixed_hws[i] = hw;
-> > +     }
-> > +
-> > +     return devm_add_action_or_reset(dev, unregister_fixed_clks, priv);
-
-And then this, and unregister_fixed_clks() can go, and
-r8a78000_cpg_priv.fixed_hws[] is no longer needed after probe.
-
-> > +}
-
-Gr{oetje,eeting}s,
-
-                        Geert
+I don't have much knowledge on uevent to provide any suggestions/help.
+But isn't this a generic requirement ? I mean you could have modules
+install on the rootfs and not all of them are packed in initramfs ?
+Just wondering if that works for other modules, we can examine how
+do they work and what are we missing ?
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Regards,
+Sudeep
