@@ -1,656 +1,348 @@
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012025.outbound.protection.outlook.com [52.101.66.25])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D97B4307AE;
-	Thu,  9 Jul 2026 16:08:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB02D2D73B5
+	for <linux-clk@vger.kernel.org>; Thu,  9 Jul 2026 16:33:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=205.220.168.131
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783613326; cv=fail; b=gSBvve4O1m8xNXVGdxMBNYAMoJN4bbXoxqrNXZWLNOuq8JK0Hu4iOhWAkZcnm8+MN49PL0prOjIh2pRpxicZnc6QC4yGNSJnVp5vijfqloxp8OcEjXJ4v5d33/tqInsocfaH8n8lyh0iPrjBgLQ1YpNlpPtxmINeFdSNtqwETSo=
+	t=1783614839; cv=pass; b=XABbUAjcl4cVYk1w3VwOAKytsPBKI8zvPNlN3rlTXPVnM1/vzZPOM7XRJghWJUmQaneFvudzBhApcTmXGeI2aYhjET2KuuPgx13ntkxCln6mCklVw7PaQbG6RditYoCXy2RA8uzvru0PbW5m/Z/Skd0RzRyivpdlqmw6v7P/YZ8=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783613326; c=relaxed/simple;
-	bh=MszivSAsmLdVZKVFn4W/HozHzKt2SboloPEFp17YQ1Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=jxGjD8Bu0zUmahy4qN883/FU7wWVF8MmgzRMHibVXbidUMx0906Td4Y0Fd/a44u0znuRPoZ5DPasRsJ0Zc/KpvsNqq97rbgTifpnaebz9cD1RtGBM7vlfme2wg7znKKTNznhfUHS1zwwjd56faXsXu0XWNWaguGFVyPeTGB2/9w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=buxT91dj; arc=fail smtp.client-ip=52.101.66.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+	s=arc-20240116; t=1783614839; c=relaxed/simple;
+	bh=xeFfrz6h8yMo4SlaHzqhiMDslcgOYLX/u46LE+HL1N4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=B3qYO2OhjoJNI90GFhPwC8XOMjQJ4jbL5wBo9HjUQ8Qve+oZ3sqUdwDuCao1X4e93cqVrhq7P4wkbfAiozeZvStTi80AjXvm6vnz+OfTxw4vtkTR/IOaMI5z7rVte/dSxGvR6Vg8Tm7R+Wp1gkBo8CGJWp54MdZw4zfuCW39Gtc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gJK+cjCB; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=fpt0Ge61; arc=pass smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="buxT91dj"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=twNBv8XXK8W8nNOeHUdSamYDtWmO2+8fJSJ4ZDMSfSM7EZUncdpMWSENfo2YRoD2a9IX3YyHzP9Oax0BZsb7T7R0/rEQ6EfwfUrYNRQFWS5SgiO7xCf+rhFl3nnuT8h8nlFZ0Jpi3qg9hCrxUPoCWcQr5tU0TEPSDATceR8h6/fSjviHwXmuJD3SbG5NwmJpdN62d2QEfR61vb7hu+BSR9a8EIiX4dx15GY+EqFmUHHQQLbsTjKbs3L3G/UcX1XLSFK3zOkddrhBDjoAfCXk1JmeQcU3D2+WEa1IkZzXAfciUb2yzOBZF20xj4C8myNIIQ2YdSeKZNffS+BzE5M+Cg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3kxVmYZyOuIaxaL8DjKm6wjrX00M2IXEJ7FUWzzF3e4=;
- b=xgaLzu+U5pPfk75QMwuxWoM089bMfKN7E7g3tAEP+KoBxUbhHGxDMaIjtSlPNFIo0ZKMaQW1mA5/zbkf8fSlIA1ZC6NadqM4IQCCPpfcFu/Fb11ZRjID7KvZYV0AwZLPrXSG7zW146F3s9eMO+azHDiyfUv3MBxFGhieGyxKQ2m4YYtuDDpel++Jmja0DpYUbdK/rBqirgrx2uss9oORAgnG8aMw/sffj9pCO1/4tBOzIdWXgHYt5TwhudELbKgTZZoKvW6KgY77RQRbKYk6zmvm5lu2/L4cLsnPTE3qjwhtPXDeuJWqyDQ024oyHP8uMeqF2Kr9/x1tCAM3Zt1kww==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3kxVmYZyOuIaxaL8DjKm6wjrX00M2IXEJ7FUWzzF3e4=;
- b=buxT91djXy3uMvwJspx6W922O8ZBlV6+gvxs3qUQpSHG2zIwoSmZat8ERN2GgKhxP1x1X0lnzfQEb937c3u+RJPIbblHNZ78cOUBlSy2dmxG5H1NLQx6IEv2R17RqAcf4RuP3jOYGEE1pw5J4DYzepDpuk7CLYk4CU9W8tUGFpEpBsn+zXbPupDQd7gtoFUc5k1pWf2DlRgXG/gh9GsR4C+vXTuSFTQefkCfB8lwCUaDCiXTw/64v0fuB+RaB8YdztVpqVEsL/SLZYoPVztW3PtFvESeTYDogTYGhGxZyPvnwWqF+V6302h700P0xVdveF162no4XyDMebqISX1Fig==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from GV2PR04MB11799.eurprd04.prod.outlook.com (2603:10a6:150:2cf::9)
- by DB9PR04MB8429.eurprd04.prod.outlook.com (2603:10a6:10:242::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.181.15; Thu, 9 Jul
- 2026 16:08:39 +0000
-Received: from GV2PR04MB11799.eurprd04.prod.outlook.com
- ([fe80::2146:83a2:5329:b7c]) by GV2PR04MB11799.eurprd04.prod.outlook.com
- ([fe80::2146:83a2:5329:b7c%6]) with mapi id 15.21.0159.007; Thu, 9 Jul 2026
- 16:08:38 +0000
-Date: Thu, 9 Jul 2026 12:08:28 -0400
-From: Frank Li <Frank.li@oss.nxp.com>
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>,
-	Todor Tomov <todor.too@gmail.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-	Bryan O'Donoghue <bod@kernel.org>,
-	Loic Poulain <loic.poulain@oss.qualcomm.com>,
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v12 5/6] media: qcom: camss: Add support for PHY API
- devices
-Message-ID: <ak_HfEIpXj6Aky9c@lizhi-Precision-Tower-5810>
-References: <20260708-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v12-0-f8588da41f16@linaro.org>
- <20260708-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v12-5-f8588da41f16@linaro.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260708-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v12-5-f8588da41f16@linaro.org>
-X-ClientProxiedBy: PH7PR10CA0024.namprd10.prod.outlook.com
- (2603:10b6:510:23d::13) To GV2PR04MB11799.eurprd04.prod.outlook.com
- (2603:10a6:150:2cf::9)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gJK+cjCB";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="fpt0Ge61"
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 669Dw6pQ2013010
+	for <linux-clk@vger.kernel.org>; Thu, 9 Jul 2026 16:33:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Xd9eNrOSCFFAWaQdLSMEnWBSlqv0nUO4Pn2WJ4es7Z4=; b=gJK+cjCBtngOV7iC
+	igPGm0DUQGrCJ4j6Nf3o2zSH+gzpMxI2RKaRYq2YIFHKLcoslxd26PqvM049n4rD
+	w4QcL9+BsLOFQt2iXsHoiyqhZLl+JrY+L+CszR+J8Ijs69uPXjd1FCfV1PmLnkvb
+	+DTac5yISgY+QT0jLVZPpRJTfJM9zH2DvrgCQSZD4Li3h1HB0DfU7KOOLyqzA6Mj
+	03iGCkAbIeJqHP1VD40uzx7rQ9aP+PgEyQWaoVAx7DvvZvAY8AhSXbDZeV64BgeH
+	jA6M72Q/Ac4jzxMz8MlDnxeX35icerG0uAnsT2Y0zGVT/NFko+kGNXnXNy8peEf4
+	S0nXRg==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fa418kaj2-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Thu, 09 Jul 2026 16:33:57 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-92e6a2f5995so163551685a.3
+        for <linux-clk@vger.kernel.org>; Thu, 09 Jul 2026 09:33:57 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1783614836; cv=none;
+        d=google.com; s=arc-20260327;
+        b=VMKLxYXNFV2lISQ1/i/HvZ8KAlcA7r4yKMaLyOx6YbTQKDwwMnrx7MPvQR09b3JZFZ
+         O2yRINodM5ST3pHRyB5sHFYATmtqNpSRyXHRt/L9V8MpP8ja8Sv+L/oOcG4h16VtrYZE
+         XJnEQAYwyiZgWH6gJIxMfeTseaybzl+l/09cpO3aJ7jwwvqz2b6jkxjayUjLqDRj+4qf
+         MwGSh94WtDC3+H6910T9YHZEqw+I/etXY91tfIGG+8qqL0M5marYCtbFJo+wpAJzLxn0
+         4VeNOLVyhbFVnNS+NuN2jkiVsIGzpmSw5gT7IovA6DRabBee5/9jsUfxpFlpmEN2LN7B
+         oh1Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=Xd9eNrOSCFFAWaQdLSMEnWBSlqv0nUO4Pn2WJ4es7Z4=;
+        fh=Xb/fdTT8ThxFcyWGMdCm2Eu2aXPYRcBYSDXa8kW2rY8=;
+        b=M+iB0B6n08OG02tGi1ksvOO60g+2Xt5X+AMKh7SZ1OgdwrAyj0K8SoKEldsXqaOlp0
+         7TMFPYUW9dSjdXIAn/H1sGFnX5BL9thdYOKW8twHOlG5Pq54xNp45x2v//GGKDvfRDxB
+         7tvy8PzEFoAaCQ0N1iilFYSSRF0O1YPvdYD2xkKfYluPWAa73zMpedduYxbHr62lLhX9
+         k7aFohmJOLbvZFl/s3FIrYnl4YoQcro2PBMHP2dAPRzhsXadloqUVga3kexVxWdG8Bt7
+         nf5sdjN0+2BauR5yJzvIHBq9xDVF1V+tf5iUaTW3tNcxPJboA8m/gFI1Y5+fIyI5/ohW
+         ycxQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1783614836; x=1784219636; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=Xd9eNrOSCFFAWaQdLSMEnWBSlqv0nUO4Pn2WJ4es7Z4=;
+        b=fpt0Ge61k5eCyN9EOd3N/vQYe1fzWqSuCP/YYZPD/aFxIGX2YRsVyaAUtnzEi8MYgu
+         2FjfEotctKoJ9D4aeitc+mUcMEOchaYZNOYMn9JDxUgfpYkwGZHwIU+5mOlqdXaIaEP8
+         1L3AcgYdI2Gjfbv36p8hT5FrGdUzHj/E3yoV618uY1seH4pCotPsGrhAVI9OP70M7G68
+         CyAbz/m5UOLEPCL0cLym2skivYF3sV/Fr0K3vOCoZaxGNrzF5XrlA+nuHOhy/ErQmAsS
+         GtGAHWvnGXFqdu0po/7VzbVtipFMY5yLGrqObJbWaUqlcdnXFam9QFAIgpxGaMqriq0S
+         rVwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1783614836; x=1784219636;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=Xd9eNrOSCFFAWaQdLSMEnWBSlqv0nUO4Pn2WJ4es7Z4=;
+        b=g65RkUf2Dj+06ZUHh5/oJPENW+xncaHCEY69Lz5BjAQFyiXBiZdubgl7wprb2rGLGJ
+         wCBjuhiQMX2WfIPVawuUNotEfyABn0NLmtGN+KiSksgT5CZlJmnCX4FUhXFXB2/ksTWw
+         6LECejr1zOXJvBDwKfWZ3Hntqw3e2Jm3nbqYT3473jdF1nUmoK1WJi7/5/Ls44e119mI
+         Wq5tMzaVVmxPrQNiP5qpW4Mnj24Rh2U4Fd1WgdNWQifN+CRCh7qd+HpqRGR+R3zZ3Svh
+         vI1lKSZfDNIIohY5x5Y75rtpq2+yvkrWML6wuzMSiEXco+xkv+NAft7G64Ab/MGO8VOu
+         YKMQ==
+X-Forwarded-Encrypted: i=1; AHgh+RrCnjJfkd9Laz9U13f38DakdzAnb6Iao1fn47bTxVXCc6Hmr9FdDMiTq3Jccgs9dBy2IYZ39QXYZs4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAhHYx5YcH1ljoHCbiwuZaEkOMcgkqIlCstHevk5CVa/Q9fJOq
+	79/eUXlc8nEjTpp50Dncx1gES4eFVOc+5AZESzCvPUEdJRZ+c0xobyounKinRNjDLBVLQRVou7X
+	XcR+I48AUftebv8zZQtPwQEqMxqpgeUFcCj59QSHgp0RCM8U4+/8Qm4GbT2bQBoVMV5iapXu7iq
+	6E6chS+ptZsjig3lZhbQvx1XFPTgx/Yb07G8wDyw==
+X-Gm-Gg: AfdE7clR/Zer4b59uYhfUyBPNmduuGOdkHNrz/pbpJ2aC8SHB7oZdKoUQNb33SEdlIv
+	m/6yN0OOfppJSLEtW/58LggX3xPBvEbC6EKqxMkjqWUhsyRHe2tFc+bnVci3c8FJ/DbbN9YOEIf
+	wpvnpGUYvs6Hu1JqDjXl8lbmYfcBWuT/R5Nhi1pq/pWgPWKBsZWwhNuShP6lyIY5ZfWboMDF8u7
+	+DN3Hmxqn002HYnTOoJe3GufMI1hIQDco+qlr1XjFAjzAVPpKtaqPYcWx5YVKH3UuvbRjEfTQXw
+	JxY7M22GvA==
+X-Received: by 2002:a05:620a:6cc5:b0:92e:c117:9ea2 with SMTP id af79cd13be357-92ecf8edac8mr795067785a.80.1783614836230;
+        Thu, 09 Jul 2026 09:33:56 -0700 (PDT)
+X-Received: by 2002:a05:620a:6cc5:b0:92e:c117:9ea2 with SMTP id
+ af79cd13be357-92ecf8edac8mr795063985a.80.1783614835839; Thu, 09 Jul 2026
+ 09:33:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: GV2PR04MB11799:EE_|DB9PR04MB8429:EE_
-X-MS-Office365-Filtering-Correlation-Id: 02f6f028-238e-4c94-5924-08deddd45622
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|23010399003|19092799006|376014|7416014|1800799024|18002099003|22082099003|56012099006|11063799006|4143699003|6133799003;
-X-Microsoft-Antispam-Message-Info:
-	ANTtDXfx7ZFHXVHz78R9UMMHNEss/FhVhdNCdjAnaYPRCwo9STWdOmuKz3lFFdUCOIu5RtHG9qZU0ySIhKTR51c1yfUhDJ0D8RFhl0ACLOoXCv+nqVez/nR0/SMQOXsR/kqBsCK/e+/S0Gvqw1ny9IPeC77lJQssOc7bnVDvbkZzXx5o3Mm5Kg+6PK3/Jw9wCkYOCuA60jSeZu/5itnLqSsVuHYNa9e6n+NGfVUIYDkPjYugImintNGPAhbo5INtEFqdhneTV8wqFK5u8yOfbuhiz9aJE2D46M3l97Z2LNjJCnmAI/YRsnRf8wJAWnEWT/fELtFQuOr8TelIeQbJM2oH9/HPdGpOSrb/H8EY9liU/suNw+rxXutOSqNsI4SFr6F7PSwKx5r8fR8ePjfDj7FsoXRBipQUJFzpgqGGI3StTKsQv9AQOZpWi1RQ5msk29mz75qJ7zWZN5SqyQcDdG5/Wn5RzS083soSAtFeKz2CYGwSrR+WqNzShxtOC9bBLafbKOPBwa/2rA3JdsnCtI4TBCgU1Q/XhMSnbRW4FHs4USJosnQYE0FEH2lNlVxbnKlK0oyyIm+hn18P0wd/2I9xivEmtLqdXMrgj68QC49rhixK1QzC7n3skcUn7m0P+lOUxZdJONAaEl20BWDkALrSd+bI+Q0i8E0oAzPj/yQ=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR04MB11799.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(23010399003)(19092799006)(376014)(7416014)(1800799024)(18002099003)(22082099003)(56012099006)(11063799006)(4143699003)(6133799003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?arA738d+FZkY0kDX1nsOkvJtYT0dP0wm/PTZTbKfBaVq2ZsiU5m+XhgfNMEh?=
- =?us-ascii?Q?hEDLFg7kNF1KOPkcRy8tKuRbUmlyRAESuvyhJZ2tMXan5WmUkOlK4r5XQvDG?=
- =?us-ascii?Q?ShBtXaM6l9/rzKob0UtDgBuH8exR4wMerEF0zD4FxdVP13h+9vpRUmZwYixG?=
- =?us-ascii?Q?qV34pWfBxbQC+roTu3OytawZ0lATFuDXbe7uk2IWNnkOT+TM9MtZhfuKsmDT?=
- =?us-ascii?Q?kd2Ep5ohMOOHUQMhxk/M9L5xGjkO5eCN7CBsGV7xkJsOcNJmK6/xAa8PwQEf?=
- =?us-ascii?Q?4r6xDSW/5oyoDBojjAbOQUbOSa4WjzH4/TEhy5mEXh5HebPwnmdOal79WSGb?=
- =?us-ascii?Q?ZUhc8IBjOEhO+4K62kfQs1jhsAyKVID0yx/a82roaFaxEQb1QXkogJ3o/GAt?=
- =?us-ascii?Q?iPRErVkV1bbDixFQITgMO/JcqKa2bVB8cQDtoyjmLRF1Ed+t/DHzpzuYDICs?=
- =?us-ascii?Q?rdHD+KYUvJxuSON2bcNO/sQXJ1RoeAlatamR/Biawduzu1L04eyOsbg+j0w/?=
- =?us-ascii?Q?K2DKLXyAK+nfj7ody6crPmo7jqseQ07UIvoRn+ORp9QAy/bcZCYawSPVGx2R?=
- =?us-ascii?Q?KpNv6spBCCbRdEC6uKUlQ9ZhTK3PcOVS1x0rhg9xXa4dCeHaRcPLLlP9Qdtu?=
- =?us-ascii?Q?3XjihImRQowIKgR+7hDTvsiLThn6KsM+PyjT/l0yQEv2YfkeZCX2uSIJJYAc?=
- =?us-ascii?Q?Gg6RKd4Cte9rgVPPdtzbLyKsUcFKDYuZRzO8o9jKtYGHyz9edVo1JqNcggnr?=
- =?us-ascii?Q?x80KKNN7zW5BPX9aOPOsqWQ4vxzfJkmTWl5Zu8S/Wj3GF1pp9M0VACs3Ju3A?=
- =?us-ascii?Q?YTEmV36nuslVxRIxiaa/dAdq2mt6Enhn8W/hVdbja91q5EIZS/HSMf+Q92KO?=
- =?us-ascii?Q?Rxqp0rCZ1Wd8dvyXF+mqnmP91PDs2fpSX8eXYcwI9u8yqXFbKemgxVwnTUtT?=
- =?us-ascii?Q?Fa4d8nYmq+XC3zEpQSYba94gCjL1HtDtqrYQHdQquwiH9PEuHNNi0mlk689P?=
- =?us-ascii?Q?GRq5179N2+qSSu9LIIqqxj25RaTdWHrBlo/cdStuAncSElOT1SvLAozm9VKo?=
- =?us-ascii?Q?H60rwuOQTZGog239jNhluvNDFbtcxcgHLv+IsoXu5lXZY7bcYwGQzz4LWpRZ?=
- =?us-ascii?Q?2GPAoVQErsK16M5tAIeH16/q3tKZ3PmBeixtWDnAXEgXNr3MAY6va/AWxTsk?=
- =?us-ascii?Q?oxTEJ8vdgsENkFzEiVF4ZVr8ictSDruXpSL/fPGOQrPLR8taNoX6AXYiGnYy?=
- =?us-ascii?Q?85yfxDcRc13AnkCdpF9foTW+nZhQwLX1kpE1uvIeChiNtkkcKpdUjT7ZSjB8?=
- =?us-ascii?Q?Bf3y5AnFqIXZtsFa82NfahsUo78jII3XgQLEednygC0QWd+j3/T9f0N55R43?=
- =?us-ascii?Q?/tOlD10Zu/5kk0gPJ6bXRIpHaGM6drn0hLfaMyBHKxXEHVX5unsayG0Ca3ka?=
- =?us-ascii?Q?SiBMW5tZGPvbJoqDl5hUUDUqLuU0XzXg5EDzrirTJcEream69MO8bMS/fWgm?=
- =?us-ascii?Q?wdn9bj3jawRwV75JK1NN7kALUSf/3UGUHBgKVzShQEnB/g6WiB//H1ftb0A1?=
- =?us-ascii?Q?oIfQzIvyMtmItxmc4HsshE4kKLefdV3QokJMWwf2lLLPrGQON+k70nOZvRre?=
- =?us-ascii?Q?XsYeLyb5ypayJdsMnR1q6YWzv92fZ76tqwVy21MIPrC4YcWeqznL120E2zHe?=
- =?us-ascii?Q?zAH3Izaalrhfc2gq6MkfsEUNWcUMOXLsA5rlSuXsSZ1r/+TKiHO+blgqAyYg?=
- =?us-ascii?Q?uoQFjjxbtmmJbDUARfhqXOrZcuqqWC/RwW296VvTFKE16Tv8KBWH?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 02f6f028-238e-4c94-5924-08deddd45622
-X-MS-Exchange-CrossTenant-AuthSource: GV2PR04MB11799.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2026 16:08:38.8009
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: fMZlALeD/ge4+II3Oa4cKZK06HF8bHHCEP8F88r4a/ubPcZhqsqIdHrjJPFhCIZ/uuKnqQ28xvm0lzwJ6mKxv7+JrbHP7LKlHoHxqxRoNArhuNoxcMA7tP6e8fh+iOS+
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB8429
+References: <20260708-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v12-0-f8588da41f16@linaro.org>
+ <20260708-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v12-4-f8588da41f16@linaro.org>
+In-Reply-To: <20260708-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v12-4-f8588da41f16@linaro.org>
+From: Loic Poulain <loic.poulain@oss.qualcomm.com>
+Date: Thu, 9 Jul 2026 18:33:44 +0200
+X-Gm-Features: AUfX_mxrvMsfVaIuwsAqRlu-SiIqeRWjw3dsC18UJ-fCRtJqc3yI7XzxXZWCYk4
+Message-ID: <CAFEp6-00rJSrOCyHnCQ-VkSWLYHA6C-MCGNt2oMwAA6ngi=Dxw@mail.gmail.com>
+Subject: Re: [PATCH v12 4/6] media: qcom: camss: Add legacy_phy flag to SoC
+ definition structures
+To: "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>,
+        Todor Tomov <todor.too@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        "Bryan O'Donoghue" <bod@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Authority-Analysis: v=2.4 cv=UI3t2ify c=1 sm=1 tr=0 ts=6a4fcd75 cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=IkcTkHD0fZMA:10 a=RAioF0-LDSMA:10
+ a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22
+ a=yOCtJkima9RkubShWh1s:22 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8
+ a=LRu0fTMIKIkxnFiMMFwA:9 a=QEXdDO2ut3YA:10 a=PEH46H7Ffwr30OY-TuGO:22
+ a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzA5MDE2MiBTYWx0ZWRfX5YpR06ttUIab
+ b5BFITr/rM1pj43mGTfu7z8dPHIaCN0/MawZnwVzOnbqUz3J9XjZGeNe34flT6MrpwPZ2qrr0g8
+ SCicEKOHGPdCxrUHnNWn1QgkVhnuNSrBYQld4m+x1vPTqCLXeDnigeExELze/8GSbjE5iNRO5n4
+ cyJazANhzYCX9F64qMsLhqVGYrbs8FeSfhWVYvfxrjorQsIcr2vHbyqA+nqbO4Jxa1mO3gwbWQ4
+ TjTNO5P6Myp0pY1Z6AEE/HAQ9lmfbxEelJNr3gNT4K8/D/DDPzvhtWcJFrzri78PxzwdFfsdsUr
+ 86qH9oAYijQFGjfwktd/sitSELmqZ5G6KCKqgEVmRMBXL3XT5QzENLF5B6BNsQA9ISZYUFxbC1I
+ jbjwRwdtjXLZsO4LSvmxGRr1kG4qem0kxhoYiPz/+du5Ke/zf0XNIx07//xmgzmkkLwhS+IMoUM
+ NjbX5zAwX6LQXpzN6jA==
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNzA5MDE2MiBTYWx0ZWRfX3r9id6wCMN70
+ qDCAd/bsmqmS8A5HQF9BeZ+SKtJ7yfoxumr5esxXuFAnC0f6P5SofkCQ39QnE42A2B4++B017Ed
+ M48hLyiMYSetU5DV8JqPUbWuzUrm1ts=
+X-Proofpoint-GUID: Bo2YrRcE4VwmgE1YccxXOqIqfIV3RdXZ
+X-Proofpoint-ORIG-GUID: Bo2YrRcE4VwmgE1YccxXOqIqfIV3RdXZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-07-09_03,2026-07-09_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 suspectscore=0 spamscore=0 malwarescore=0 bulkscore=0
+ adultscore=0 clxscore=1015 lowpriorityscore=0 impostorscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607090162
 
-On Wed, Jul 08, 2026 at 01:06:59AM +0100, Bryan O'Donoghue wrote:
-> Add the ability to use a PHY pointer which interacts with the standard PHY
-> API.
+On Wed, Jul 8, 2026 at 2:07=E2=80=AFAM Bryan O'Donoghue
+<bryan.odonoghue@linaro.org> wrote:
 >
-> In the first instance the code will try to use the new PHY interface. If no
-> PHYs are present in the DT then the legacy method will be attempted.
+> Flag which SoCs have legacy - builtin PHY code. This will be useful in
+> subsequent patches to inform PHY bringup logic if legacy bindings are
+> available.
 >
 > Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+
+Reviewed-by: Loic Poulain <loic.poulain@oss.qualcomm.com>
+
 > ---
->  drivers/media/platform/qcom/camss/Kconfig        |   1 +
->  drivers/media/platform/qcom/camss/camss-csiphy.c | 179 +++++++++++++++++++++--
->  drivers/media/platform/qcom/camss/camss-csiphy.h |   7 +
->  drivers/media/platform/qcom/camss/camss.c        |  88 +++++++++--
->  4 files changed, 245 insertions(+), 30 deletions(-)
+>  drivers/media/platform/qcom/camss/camss.c | 17 +++++++++++++++++
+>  drivers/media/platform/qcom/camss/camss.h |  1 +
+>  2 files changed, 18 insertions(+)
 >
-> diff --git a/drivers/media/platform/qcom/camss/Kconfig b/drivers/media/platform/qcom/camss/Kconfig
-> index 4eda48cb1adf0..1edc5e5a1829e 100644
-> --- a/drivers/media/platform/qcom/camss/Kconfig
-> +++ b/drivers/media/platform/qcom/camss/Kconfig
-> @@ -7,3 +7,4 @@ config VIDEO_QCOM_CAMSS
->  	select VIDEO_V4L2_SUBDEV_API
->  	select VIDEOBUF2_DMA_SG
->  	select V4L2_FWNODE
-> +	select PHY_QCOM_MIPI_CSI2
-> diff --git a/drivers/media/platform/qcom/camss/camss-csiphy.c b/drivers/media/platform/qcom/camss/camss-csiphy.c
-> index 539ac4888b608..b740edd0c67e6 100644
-> --- a/drivers/media/platform/qcom/camss/camss-csiphy.c
-> +++ b/drivers/media/platform/qcom/camss/camss-csiphy.c
-> @@ -7,12 +7,14 @@
->   * Copyright (c) 2011-2015, The Linux Foundation. All rights reserved.
->   * Copyright (C) 2016-2018 Linaro Ltd.
->   */
-> +#include <dt-bindings/phy/phy.h>
->  #include <linux/clk.h>
->  #include <linux/delay.h>
->  #include <linux/interrupt.h>
->  #include <linux/io.h>
->  #include <linux/kernel.h>
->  #include <linux/of.h>
-> +#include <linux/phy/phy.h>
->  #include <linux/platform_device.h>
->  #include <linux/pm_runtime.h>
->  #include <media/media-entity.h>
-> @@ -131,10 +133,10 @@ static u8 csiphy_get_bpp(const struct csiphy_format_info *formats,
->  }
->
->  /*
-> - * csiphy_set_clock_rates - Calculate and set clock rates on CSIPHY module
-> + * csiphy_set_clock_rates_legacy - Calculate and set clock rates on CSIPHY module
->   * @csiphy: CSIPHY device
->   */
-> -static int csiphy_set_clock_rates(struct csiphy_device *csiphy)
-> +static int csiphy_set_clock_rates_legacy(struct csiphy_device *csiphy)
->  {
->  	struct device *dev = csiphy->camss->dev;
->  	s64 link_freq;
-> @@ -200,7 +202,7 @@ static int csiphy_set_clock_rates(struct csiphy_device *csiphy)
->   *
->   * Return 0 on success or a negative error code otherwise
->   */
-> -static int csiphy_set_power(struct v4l2_subdev *sd, int on)
-> +static int csiphy_set_power_legacy(struct v4l2_subdev *sd, int on)
->  {
->  	struct csiphy_device *csiphy = v4l2_get_subdevdata(sd);
->  	struct device *dev = csiphy->camss->dev;
-> @@ -219,7 +221,7 @@ static int csiphy_set_power(struct v4l2_subdev *sd, int on)
->  			return ret;
->  		}
->
-> -		ret = csiphy_set_clock_rates(csiphy);
-> +		ret = csiphy_set_clock_rates_legacy(csiphy);
->  		if (ret < 0) {
->  			regulator_bulk_disable(csiphy->num_supplies,
->  					       csiphy->supplies);
-> @@ -254,7 +256,7 @@ static int csiphy_set_power(struct v4l2_subdev *sd, int on)
->  }
->
->  /*
-> - * csiphy_stream_on - Enable streaming on CSIPHY module
-> + * csiphy_stream_on_legacy - Enable streaming on CSIPHY module
->   * @csiphy: CSIPHY device
->   *
->   * Helper function to enable streaming on CSIPHY module.
-> @@ -262,7 +264,7 @@ static int csiphy_set_power(struct v4l2_subdev *sd, int on)
->   *
->   * Return 0 on success or a negative error code otherwise
->   */
-> -static int csiphy_stream_on(struct csiphy_device *csiphy)
-> +static int csiphy_stream_on_legacy(struct csiphy_device *csiphy)
->  {
->  	struct csiphy_config *cfg = &csiphy->cfg;
->  	s64 link_freq;
-> @@ -306,11 +308,89 @@ static int csiphy_stream_on(struct csiphy_device *csiphy)
->   *
->   * Helper function to disable streaming on CSIPHY module
->   */
-> -static void csiphy_stream_off(struct csiphy_device *csiphy)
-> +static void csiphy_stream_off_legacy(struct csiphy_device *csiphy)
-
-suggest put these rename to prepare patch to reduce review efforts.
-
->  {
->  	csiphy->res->hw_ops->lanes_disable(csiphy, &csiphy->cfg);
->  }
->
-> +/*
-> + * csiphy_stream_on - Enable streaming on CSIPHY module
-> + * @csiphy: CSIPHY device
-> + *
-> + * Helper function to enable streaming on CSIPHY module.
-> + * Main configuration of CSIPHY module is also done here.
-> + *
-> + * Return 0 on success or a negative error code otherwise
-> + */
-> +static int csiphy_stream_on(struct csiphy_device *csiphy)
-> +{
-> +	u8 bpp = csiphy_get_bpp(csiphy->res->formats->formats, csiphy->res->formats->nformats,
-> +				csiphy->fmt[MSM_CSIPHY_PAD_SINK].code);
-> +	struct csiphy_lanes_cfg *lncfg = &csiphy->cfg.csi2->lane_cfg;
-> +	struct phy_configure_opts_mipi_dphy *dphy_cfg;
-> +	union phy_configure_opts dphy_opts = { 0 };
-> +	struct device *dev = csiphy->camss->dev;
-> +	u8 num_lanes = lncfg->num_data;
-> +	s64 link_freq;
-> +	int i;
-> +	int ret;
-> +
-> +	dphy_cfg = &dphy_opts.mipi_dphy;
-> +
-> +	link_freq = camss_get_link_freq(&csiphy->subdev.entity, bpp, num_lanes);
-> +
-> +	if (link_freq < 0) {
-> +		dev_err(dev,
-> +			"Cannot get CSI2 transmitter's link frequency\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	phy_mipi_dphy_get_default_config_for_hsclk(link_freq, num_lanes, dphy_cfg);
-> +
-> +	phy_set_mode(csiphy->phy, PHY_MODE_MIPI_DPHY);
-> +
-> +	ret = phy_configure(csiphy->phy, &dphy_opts);
-> +	if (ret) {
-> +		dev_err(dev, "failed to configure MIPI D-PHY\n");
-> +		goto error;
-
-no extra clean exist, return ret here.
-
-> +	}
-> +
-> +	return phy_power_on(csiphy->phy);
-> +
-> +error:
-> +	return ret;
-> +}
-> +
-> +/*
-> + * csiphy_stream_off - Disable streaming on CSIPHY module
-> + * @csiphy: CSIPHY device
-> + *
-> + * Helper function to disable streaming on CSIPHY module
-> + */
-> +static void csiphy_stream_off(struct csiphy_device *csiphy)
-> +{
-> +	phy_power_off(csiphy->phy);
-> +}
-> +
-> +/*
-> + * csiphy_set_stream - Enable/disable streaming on CSIPHY module
-> + * @sd: CSIPHY V4L2 subdevice
-> + * @enable: Requested streaming state
-> + *
-> + * Return 0 on success or a negative error code otherwise
-> + */
-> +static int csiphy_set_stream_legacy(struct v4l2_subdev *sd, int enable)
-> +{
-> +	struct csiphy_device *csiphy = v4l2_get_subdevdata(sd);
-> +	int ret = 0;
-> +
-> +	if (enable)
-> +		ret = csiphy_stream_on_legacy(csiphy);
-> +	else
-> +		csiphy_stream_off_legacy(csiphy);
-> +
-> +	return ret;
-> +}
->
->  /*
->   * csiphy_set_stream - Enable/disable streaming on CSIPHY module
-> @@ -572,16 +652,16 @@ csiphy_match_clock_name(const char *clock_name, const char *format, ...)
->  }
->
->  /*
-> - * msm_csiphy_subdev_init - Initialize CSIPHY device structure and resources
-> + * msm_csiphy_subdev_init_legacy - Initialize CSIPHY device structure and resources
->   * @csiphy: CSIPHY device
->   * @res: CSIPHY module resources table
->   * @id: CSIPHY module id
->   *
->   * Return 0 on success or a negative error code otherwise
->   */
-> -int msm_csiphy_subdev_init(struct camss *camss,
-> -			   struct csiphy_device *csiphy,
-> -			   const struct camss_subdev_resources *res, u8 id)
-> +int msm_csiphy_subdev_init_legacy(struct camss *camss,
-> +				  struct csiphy_device *csiphy,
-> +				  const struct camss_subdev_resources *res, u8 id)
->  {
->  	struct device *dev = camss->dev;
->  	struct platform_device *pdev = to_platform_device(dev);
-> @@ -709,6 +789,60 @@ int msm_csiphy_subdev_init(struct camss *camss,
->  	return ret;
->  }
->
-> +/*
-> + * msm_csiphy_subdev_init - Initialize CSIPHY device structure and resources
-> + * @csiphy: CSIPHY device
-> + * @res: CSIPHY module resources table
-> + * @id: CSIPHY module id
-> + *
-> + * Return 0 on success or a negative error code otherwise
-> + */
-> +int msm_csiphy_subdev_init(struct camss *camss,
-> +			   struct csiphy_device *csiphy,
-> +			   const struct camss_subdev_resources *res, u8 id)
-> +{
-> +	struct device *dev = camss->dev;
-> +	struct of_phandle_args args;
-> +	int idx;
-> +	int ret;
-> +
-> +	snprintf(csiphy->name, ARRAY_SIZE(csiphy->name), "csiphy%d", id);
-> +
-> +	idx = of_property_match_string(dev->of_node, "phy-names", csiphy->name);
-> +	if (idx < 0) {
-> +		dev_err(dev, "%s not found\n", csiphy->name);
-> +		return idx;
-> +	}
-> +
-> +	ret = of_parse_phandle_with_args(dev->of_node, "phys", "#phy-cells", idx, &args);
-> +	if (ret < 0) {
-> +		dev_err(dev, "unable to parse phys args %s\n", csiphy->name);
-> +		return ret;
-> +	}
-
-why need check these information manaully?
-
-> +
-> +	if (!of_device_is_available(args.np))
-> +		goto put_np;
-> +
-> +	csiphy->phy = devm_phy_get(dev, csiphy->name);
-> +	if (IS_ERR(csiphy->phy)) {
-> +		ret = PTR_ERR(csiphy->phy);
-> +		goto put_np;
-> +	}
-> +
-> +	csiphy->camss = camss;
-> +	csiphy->id = id;
-
-id information should keep into phy device, you can use phy-cells to
-pass down it.
-
-If you index is important and convince you should use
-devm_of_phy_get_by_index() function.
-
-> +	csiphy->res = &res->csiphy;
-> +
-> +	ret = phy_init(csiphy->phy);
-> +	if (ret)
-> +		dev_err(dev, "phy %s init fail %d\n", csiphy->name, ret);
-> +
-> +put_np:
-> +	of_node_put(args.np);
-> +
-> +	return ret;
-> +}
-> +
->  /*
->   * csiphy_link_setup - Setup CSIPHY connections
->   * @entity: Pointer to media entity structure
-> @@ -743,8 +877,12 @@ static int csiphy_link_setup(struct media_entity *entity,
->  	return 0;
->  }
->
-> -static const struct v4l2_subdev_core_ops csiphy_core_ops = {
-> -	.s_power = csiphy_set_power,
-> +static const struct v4l2_subdev_core_ops csiphy_core_ops_legacy = {
-> +	.s_power = csiphy_set_power_legacy,
-> +};
-> +
-> +static const struct v4l2_subdev_video_ops csiphy_video_ops_legacy = {
-> +	.s_stream = csiphy_set_stream_legacy,
->  };
->
->  static const struct v4l2_subdev_video_ops csiphy_video_ops = {
-> @@ -758,8 +896,13 @@ static const struct v4l2_subdev_pad_ops csiphy_pad_ops = {
->  	.set_fmt = csiphy_set_format,
->  };
->
-> +static const struct v4l2_subdev_ops csiphy_v4l2_ops_legacy = {
-> +	.core = &csiphy_core_ops_legacy,
-> +	.video = &csiphy_video_ops_legacy,
-> +	.pad = &csiphy_pad_ops,
-> +};
-> +
->  static const struct v4l2_subdev_ops csiphy_v4l2_ops = {
-> -	.core = &csiphy_core_ops,
->  	.video = &csiphy_video_ops,
->  	.pad = &csiphy_pad_ops,
->  };
-> @@ -788,7 +931,11 @@ int msm_csiphy_register_entity(struct csiphy_device *csiphy,
->  	struct device *dev = csiphy->camss->dev;
->  	int ret;
->
-> -	v4l2_subdev_init(sd, &csiphy_v4l2_ops);
-> +	if (IS_ERR(csiphy->phy))
-> +		v4l2_subdev_init(sd, &csiphy_v4l2_ops_legacy);
-> +	else
-> +		v4l2_subdev_init(sd, &csiphy_v4l2_ops);
-> +
->  	sd->internal_ops = &csiphy_v4l2_internal_ops;
->  	sd->flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
->  	snprintf(sd->name, ARRAY_SIZE(sd->name), "%s%d",
-> @@ -828,6 +975,8 @@ int msm_csiphy_register_entity(struct csiphy_device *csiphy,
->   */
->  void msm_csiphy_unregister_entity(struct csiphy_device *csiphy)
->  {
-> +	if (!IS_ERR(csiphy->phy))
-> +		phy_exit(csiphy->phy);
->  	v4l2_device_unregister_subdev(&csiphy->subdev);
->  	media_entity_cleanup(&csiphy->subdev.entity);
->  }
-> diff --git a/drivers/media/platform/qcom/camss/camss-csiphy.h b/drivers/media/platform/qcom/camss/camss-csiphy.h
-> index 9d9657b82f748..1879826034aac 100644
-> --- a/drivers/media/platform/qcom/camss/camss-csiphy.h
-> +++ b/drivers/media/platform/qcom/camss/camss-csiphy.h
-> @@ -12,6 +12,7 @@
->
->  #include <linux/clk.h>
->  #include <linux/interrupt.h>
-> +#include <linux/phy/phy.h>
->  #include <media/media-entity.h>
->  #include <media/v4l2-device.h>
->  #include <media/v4l2-mediabus.h>
-> @@ -97,6 +98,7 @@ struct csiphy_device_regs {
->
->  struct csiphy_device {
->  	struct camss *camss;
-> +	struct phy *phy;
->  	u8 id;
->  	struct v4l2_subdev subdev;
->  	struct media_pad pads[MSM_CSIPHY_PADS_NUM];
-> @@ -104,6 +106,7 @@ struct csiphy_device {
->  	void __iomem *base_clk_mux;
->  	u32 irq;
->  	char irq_name[30];
-> +	char name[16];
->  	struct camss_clock *clock;
->  	bool *rate_set;
->  	int nclocks;
-> @@ -118,6 +121,10 @@ struct csiphy_device {
->
->  struct camss_subdev_resources;
->
-> +int msm_csiphy_subdev_init_legacy(struct camss *camss,
-> +				  struct csiphy_device *csiphy,
-> +				  const struct camss_subdev_resources *res, u8 id);
-> +
->  int msm_csiphy_subdev_init(struct camss *camss,
->  			   struct csiphy_device *csiphy,
->  			   const struct camss_subdev_resources *res, u8 id);
-> diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
-> index e814a96953b1b..146fea438486f 100644
+> diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/pl=
+atform/qcom/camss/camss.c
+> index 95e655a8b6aa0..e814a96953b1b 100644
 > --- a/drivers/media/platform/qcom/camss/camss.c
 > +++ b/drivers/media/platform/qcom/camss/camss.c
-> @@ -4794,14 +4794,51 @@ static int camss_parse_endpoint_node(struct device *dev,
->  static int camss_parse_ports(struct camss *camss)
->  {
->  	struct device *dev = camss->dev;
-> +	const struct camss_resources *res = camss->res;
->  	struct fwnode_handle *fwnode = dev_fwnode(dev), *ep;
->  	int ret;
+> @@ -5512,6 +5512,7 @@ static void camss_remove(struct platform_device *pd=
+ev)
 >
->  	fwnode_graph_for_each_endpoint(fwnode, ep) {
->  		struct camss_async_subdev *csd;
-> +		struct fwnode_handle *remote;
-> +
-> +		if (!fwnode_device_is_available(ep))
-> +			continue;
-> +
-> +		if (res->legacy_phy) {
-> +			csd = v4l2_async_nf_add_fwnode_remote(&camss->notifier, ep,
-> +							      typeof(*csd));
-> +		} else {
-> +			struct fwnode_handle *phy_out, *phy_node, *phy_in, *sensor_ep;
-
-use auto cleanup __free(fwnode_handle)
-
-> +
-> +			phy_out = fwnode_graph_get_remote_endpoint(ep);
-> +			if (!phy_out)
-> +				continue;
-
-anyways, parse phy node here look like not good enough, which should below
-phy's task.
-
-Frank
-> +
-> +			phy_node = fwnode_graph_get_port_parent(phy_out);
-> +			fwnode_handle_put(phy_out);
-> +			if (!phy_node)
-> +				continue;
-> +
-> +			phy_in = fwnode_graph_get_endpoint_by_id(phy_node, 0, 0, 0);
-> +			fwnode_handle_put(phy_node);
-> +			if (!phy_in)
-> +				continue;
-> +
-> +			sensor_ep = fwnode_graph_get_remote_endpoint(phy_in);
-> +			fwnode_handle_put(phy_in);
-> +			if (!sensor_ep)
-> +				continue;
-> +
-> +			csd = v4l2_async_nf_add_fwnode(&camss->notifier, sensor_ep,
-> +						struct camss_async_subdev);
-> +			fwnode_handle_put(sensor_ep);
-> +			if (IS_ERR(csd)) {
-> +				ret = PTR_ERR(csd);
-> +				goto err_cleanup;
-> +			}
-> +		}
+>  static const struct camss_resources msm8916_resources =3D {
+>         .version =3D CAMSS_8x16,
+> +       .legacy_phy =3D true,
+>         .csiphy_res =3D csiphy_res_8x16,
+>         .csid_res =3D csid_res_8x16,
+>         .ispif_res =3D &ispif_res_8x16,
+> @@ -5523,6 +5524,7 @@ static const struct camss_resources msm8916_resourc=
+es =3D {
 >
-> -		csd = v4l2_async_nf_add_fwnode_remote(&camss->notifier, ep,
-> -						      typeof(*csd));
->  		if (IS_ERR(csd)) {
->  			ret = PTR_ERR(csd);
->  			goto err_cleanup;
-> @@ -4833,15 +4870,26 @@ static int camss_init_subdevices(struct camss *camss)
->  	unsigned int i;
->  	int ret;
+>  static const struct camss_resources msm8939_resources =3D {
+>         .version =3D CAMSS_8x39,
+> +       .legacy_phy =3D true,
+>         .csiphy_res =3D csiphy_res_8x39,
+>         .csid_res =3D csid_res_8x39,
+>         .ispif_res =3D &ispif_res_8x39,
+> @@ -5534,6 +5536,7 @@ static const struct camss_resources msm8939_resourc=
+es =3D {
 >
-> -	for (i = 0; i < camss->res->csiphy_num; i++) {
-> -		ret = msm_csiphy_subdev_init(camss, &camss->csiphy[i],
-> -					     &res->csiphy_res[i],
-> -					     res->csiphy_res[i].csiphy.id);
-> -		if (ret < 0) {
-> -			dev_err(camss->dev,
-> -				"Failed to init csiphy%d sub-device: %d\n",
-> -				i, ret);
-> -			return ret;
-> +	if (!res->legacy_phy) {
-> +		for (i = 0; i < camss->res->csiphy_num; i++) {
-> +			ret = msm_csiphy_subdev_init(camss, &camss->csiphy[i],
-> +						     &res->csiphy_res[i],
-> +						     res->csiphy_res[i].csiphy.id);
-> +			if (ret < 0)
-> +				return ret;
-> +		}
-> +	} else {
-> +		for (i = 0; i < camss->res->csiphy_num; i++) {
-> +			ret = msm_csiphy_subdev_init_legacy(camss, &camss->csiphy[i],
-> +							    &res->csiphy_res[i],
-> +							    res->csiphy_res[i].csiphy.id);
-> +			if (ret < 0) {
-> +				dev_err(camss->dev,
-> +					"Failed to init csiphy%d sub-device: %d\n",
-> +					i, ret);
-> +				return ret;
-> +			}
-> +			camss->csiphy[i].phy = ERR_PTR(-ENODEV);
->  		}
->  	}
+>  static const struct camss_resources msm8953_resources =3D {
+>         .version =3D CAMSS_8x53,
+> +       .legacy_phy =3D true,
+>         .icc_res =3D icc_res_8x53,
+>         .icc_path_num =3D ARRAY_SIZE(icc_res_8x53),
+>         .csiphy_res =3D csiphy_res_8x96,
+> @@ -5547,6 +5550,7 @@ static const struct camss_resources msm8953_resourc=
+es =3D {
 >
-> @@ -4931,6 +4979,9 @@ static int camss_link_entities(struct camss *camss)
+>  static const struct camss_resources msm8996_resources =3D {
+>         .version =3D CAMSS_8x96,
+> +       .legacy_phy =3D true,
+>         .csiphy_res =3D csiphy_res_8x96,
+>         .csid_res =3D csid_res_8x96,
+>         .ispif_res =3D &ispif_res_8x96,
+> @@ -5558,6 +5562,7 @@ static const struct camss_resources msm8996_resourc=
+es =3D {
 >
->  	for (i = 0; i < camss->res->csiphy_num; i++) {
->  		for (j = 0; j < camss->res->csid_num; j++) {
-> +			if (!camss->csiphy[i].phy)
-> +				continue;
-> +
->  			ret = media_create_pad_link(&camss->csiphy[i].subdev.entity,
->  						    MSM_CSIPHY_PAD_SRC,
->  						    &camss->csid[j].subdev.entity,
-> @@ -5057,6 +5108,9 @@ static int camss_register_entities(struct camss *camss)
->  	int ret;
+>  static const struct camss_resources qcm2290_resources =3D {
+>         .version =3D CAMSS_2290,
+> +       .legacy_phy =3D true,
+>         .csiphy_res =3D csiphy_res_2290,
+>         .csid_res =3D csid_res_2290,
+>         .vfe_res =3D vfe_res_2290,
+> @@ -5571,6 +5576,7 @@ static const struct camss_resources qcm2290_resourc=
+es =3D {
+>  static const struct camss_resources qcs8300_resources =3D {
+>         .version =3D CAMSS_8300,
+>         .pd_name =3D "top",
+> +       .legacy_phy =3D true,
+>         .csiphy_res =3D csiphy_res_8300,
+>         .tpg_res =3D tpg_res_8775p,
+>         .csid_res =3D csid_res_8775p,
+> @@ -5587,6 +5593,7 @@ static const struct camss_resources qcs8300_resourc=
+es =3D {
+>  static const struct camss_resources sa8775p_resources =3D {
+>         .version =3D CAMSS_8775P,
+>         .pd_name =3D "top",
+> +       .legacy_phy =3D true,
+>         .csiphy_res =3D csiphy_res_8775p,
+>         .tpg_res =3D tpg_res_8775p,
+>         .csid_res =3D csid_res_8775p,
+> @@ -5602,6 +5609,7 @@ static const struct camss_resources sa8775p_resourc=
+es =3D {
 >
->  	for (i = 0; i < camss->res->csiphy_num; i++) {
-> +		if (!camss->csiphy[i].phy)
-> +			continue;
-> +
->  		ret = msm_csiphy_register_entity(&camss->csiphy[i],
->  						 &camss->v4l2_dev);
->  		if (ret < 0) {
-> @@ -5132,8 +5186,10 @@ static int camss_register_entities(struct camss *camss)
+>  static const struct camss_resources sdm660_resources =3D {
+>         .version =3D CAMSS_660,
+> +       .legacy_phy =3D true,
+>         .csiphy_res =3D csiphy_res_660,
+>         .csid_res =3D csid_res_660,
+>         .ispif_res =3D &ispif_res_660,
+> @@ -5613,6 +5621,7 @@ static const struct camss_resources sdm660_resource=
+s =3D {
 >
->  	i = camss->res->csiphy_num;
->  err_reg_csiphy:
-> -	for (i--; i >= 0; i--)
-> -		msm_csiphy_unregister_entity(&camss->csiphy[i]);
-> +	for (i--; i >= 0; i--) {
-> +		if (camss->csiphy[i].phy)
-> +			msm_csiphy_unregister_entity(&camss->csiphy[i]);
-> +	}
->
->  	return ret;
->  }
-> @@ -5148,8 +5204,10 @@ static void camss_unregister_entities(struct camss *camss)
->  {
->  	unsigned int i;
->
-> -	for (i = 0; i < camss->res->csiphy_num; i++)
-> -		msm_csiphy_unregister_entity(&camss->csiphy[i]);
-> +	for (i = 0; i < camss->res->csiphy_num; i++) {
-> +		if (camss->csiphy[i].phy)
-> +			msm_csiphy_unregister_entity(&camss->csiphy[i]);
-> +	}
->
->  	if (camss->tpg) {
->  		for (i = 0; i < camss->res->tpg_num; i++)
+>  static const struct camss_resources sdm670_resources =3D {
+>         .version =3D CAMSS_845,
+> +       .legacy_phy =3D true,
+>         .csiphy_res =3D csiphy_res_670,
+>         .csid_res =3D csid_res_670,
+>         .vfe_res =3D vfe_res_670,
+> @@ -5624,6 +5633,7 @@ static const struct camss_resources sdm670_resource=
+s =3D {
+>  static const struct camss_resources sdm845_resources =3D {
+>         .version =3D CAMSS_845,
+>         .pd_name =3D "top",
+> +       .legacy_phy =3D true,
+>         .csiphy_res =3D csiphy_res_845,
+>         .csid_res =3D csid_res_845,
+>         .vfe_res =3D vfe_res_845,
+> @@ -5635,6 +5645,7 @@ static const struct camss_resources sdm845_resource=
+s =3D {
+>  static const struct camss_resources sm6150_resources =3D {
+>         .version =3D CAMSS_6150,
+>         .pd_name =3D "top",
+> +       .legacy_phy =3D true,
+>         .csiphy_res =3D csiphy_res_sm6150,
+>         .csid_res =3D csid_res_sm6150,
+>         .vfe_res =3D vfe_res_sm6150,
+> @@ -5661,6 +5672,7 @@ static const struct camss_resources sm6350_resource=
+s =3D {
+>  static const struct camss_resources sm8250_resources =3D {
+>         .version =3D CAMSS_8250,
+>         .pd_name =3D "top",
+> +       .legacy_phy =3D true,
+>         .csiphy_res =3D csiphy_res_8250,
+>         .csid_res =3D csid_res_8250,
+>         .vfe_res =3D vfe_res_8250,
+> @@ -5674,6 +5686,7 @@ static const struct camss_resources sm8250_resource=
+s =3D {
+>  static const struct camss_resources sc8280xp_resources =3D {
+>         .version =3D CAMSS_8280XP,
+>         .pd_name =3D "top",
+> +       .legacy_phy =3D true,
+>         .csiphy_res =3D csiphy_res_sc8280xp,
+>         .csid_res =3D csid_res_sc8280xp,
+>         .ispif_res =3D NULL,
+> @@ -5688,6 +5701,7 @@ static const struct camss_resources sc8280xp_resour=
+ces =3D {
+>  static const struct camss_resources sc7280_resources =3D {
+>         .version =3D CAMSS_7280,
+>         .pd_name =3D "top",
+> +       .legacy_phy =3D true,
+>         .csiphy_res =3D csiphy_res_7280,
+>         .csid_res =3D csid_res_7280,
+>         .vfe_res =3D vfe_res_7280,
+> @@ -5701,6 +5715,7 @@ static const struct camss_resources sc7280_resource=
+s =3D {
+>  static const struct camss_resources sm8550_resources =3D {
+>         .version =3D CAMSS_8550,
+>         .pd_name =3D "top",
+> +       .legacy_phy =3D true,
+>         .csiphy_res =3D csiphy_res_8550,
+>         .csid_res =3D csid_res_8550,
+>         .vfe_res =3D vfe_res_8550,
+> @@ -5715,6 +5730,7 @@ static const struct camss_resources sm8550_resource=
+s =3D {
+>  static const struct camss_resources sm8650_resources =3D {
+>         .version =3D CAMSS_8650,
+>         .pd_name =3D "top",
+> +       .legacy_phy =3D true,
+>         .csiphy_res =3D csiphy_res_sm8650,
+>         .csid_res =3D csid_res_sm8650,
+>         .csid_wrapper_res =3D &csid_wrapper_res_sm8550,
+> @@ -5729,6 +5745,7 @@ static const struct camss_resources sm8650_resource=
+s =3D {
+>  static const struct camss_resources x1e80100_resources =3D {
+>         .version =3D CAMSS_X1E80100,
+>         .pd_name =3D "top",
+> +       .legacy_phy =3D true,
+>         .csiphy_res =3D csiphy_res_x1e80100,
+>         .tpg_res =3D tpg_res_x1e80100,
+>         .csid_res =3D csid_res_x1e80100,
+> diff --git a/drivers/media/platform/qcom/camss/camss.h b/drivers/media/pl=
+atform/qcom/camss/camss.h
+> index 93d691c8ac63b..698694d3064ea 100644
+> --- a/drivers/media/platform/qcom/camss/camss.h
+> +++ b/drivers/media/platform/qcom/camss/camss.h
+> @@ -107,6 +107,7 @@ enum icc_count {
+>  struct camss_resources {
+>         enum camss_version version;
+>         const char *pd_name;
+> +       const bool legacy_phy;
+>         const struct camss_subdev_resources *csiphy_res;
+>         const struct camss_subdev_resources *tpg_res;
+>         const struct camss_subdev_resources *csid_res;
 >
 > --
 > 2.54.0
