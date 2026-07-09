@@ -1,133 +1,113 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C03103F39E9
-	for <linux-clk@vger.kernel.org>; Thu,  9 Jul 2026 13:48:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 064B2382373;
+	Thu,  9 Jul 2026 13:48:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783604911; cv=none; b=CL3Ux1+gxUmO8JmrOghY66xy13AS3litIiocM6531GVJ5QwbGJ38E6AwyPF4YbyJUKBfdkC4aZZCaPcJRsvI6yyMD0gWD6CWENFJ/BfP7RELrMWm4hokWnO6QvTsHuUqgnQTkm3GWUGeJuJsaO99z8z2i2ZCOEyP4gDqreBw6ps=
+	t=1783604932; cv=none; b=ckcGyuLn+NB6qcxy7+wHsLH3PW48tI6pBPCSZ1cjZPIynFFXBm4eXNomuhMtAPIr7hzXjS+a8QC6aEJ5RSmjA3SdQ1ZPDWMz2OrRajNT1Sz7j2gLy6h95Ttw5IBFJ6cW1HfLmgdMyKqt+/VS3M7TaslW39Iv9GENte1K9BBi7Ik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783604911; c=relaxed/simple;
-	bh=oTfYNfnr1dfMrSCaR0BJIVASu18bHLDiq6Qq+l4pxOg=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qRn2KlYM8YrPBD46o01AJaswgTeJE6PueUTl2TC8GiN+ZpnsNRu/FwXHg+zMwQAjcyn5GCkH8e8easmr8hU6WFcZPOqVTgX62etaJbB6wxXXlwE5RE+KrLWnxj9C1RUfJv2VAV6skHRVKsWEfCM4MBtVIaxG/uWV0YxJCg0PDdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=liQqdDtS; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1783604932; c=relaxed/simple;
+	bh=K+LVGraXAMblh/wS3bFKCf1Rotn9jKdnH5k+fGzPHRk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WVMr+QP8eKPGGpjWkJgkR67pMYcVCG9wdcFoL/pU5WxOcGgRD7MAKDIjiIRwzK3jKkJW4nrYqku5NqjIF9sZh1U61zjvPgzaLMFpYxkyx4Ac6Fukb6BpXfuUOu+UbA5AUd5ApzX0S01H6ggRB+JXrcH4CU/zDVfrVdvaowAprsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I59NSzva; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="liQqdDtS"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-4703bc0a99aso1140639f8f.3
-        for <linux-clk@vger.kernel.org>; Thu, 09 Jul 2026 06:48:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783604908; x=1784209708; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:subject:cc:to:from:date:message-id:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=RfxNiyfGalcXxYCujFTGDOzvlUn3o2Vt8N79ndZYWsc=;
-        b=liQqdDtSfbk1Yzi6PRyJDbYwSIPq1gusHrdUX95hiY4xeGot7R5IZu8qlF1obnhzSC
-         3HnPNUepfdva0sxbXsxgy+fLEl6MwvS9RRqI50gBlnRKOBSKWGQ1SdBQauz5vbyGG+hz
-         WWmfK0FV7QUTXs0hpfAi0qfvPdwOFizepAjOwbU1wXzCN4gpQwxMfTiCFwBIYwi90lv9
-         Obm9tpNHK0Q7Z96mkitzKylZTHVR/OxrsDdW2Ux33Q74vlzsaer/25xwXt5qECS4BKvD
-         mq1gr2WQG3qWgVjzwkXeobzjhUOZsv6+j3gLGm2iP7eFAihGx2jDTXpICvR05Bki8Rc7
-         3OXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783604908; x=1784209708;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:subject:cc:to:from:date:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=RfxNiyfGalcXxYCujFTGDOzvlUn3o2Vt8N79ndZYWsc=;
-        b=XxkkdWFk6xvvmhFwLbrwXreRePpXutJoW7MYKv7vQNpdm0PL0Y6nlw0PlM/SahWPU6
-         SR/c07PlkOIq/zoIuzaA1RwEAFGy/9GRnscIlZwPcvR6tSFjZMMoNjWBU2S9LwNuL9De
-         LQmMHyF6vb6wcKM0J5WftWaxfoYjkzpW1LudNuRsOiMgx0SlEeLqw2UtZoXA2JiVf+nR
-         ePYiW4WsAn6fqvC59xy6x5knYoM3C8dQ76J1Zz5D1cz2/Zpl9HYvQVQoecUfTKL7dYad
-         M9wdlIuT/lZVXs0lPpoZ1L9TJMyxjKax+nJOQh1DnHiUC3VgLcC+bV1F9XViM7vG6jda
-         zGBA==
-X-Forwarded-Encrypted: i=1; AHgh+RrXcLAAg1Tg6QkhULZBXF7EvOQB1vIqCiJJuGi4jYmWsSy5i/LKk6oIaf9pNIaYG5EZDvxiGHzXgK8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDIwaQ1+lA/XGri9Rfql/Qca22G9ATfTJ4xrNHyTSZPW5IWcgx
-	XA5FMILf/dOZWDjveEn0pj9VQquYdAjMK8pFkKzVS7Nmle1CYrsMgJ+N
-X-Gm-Gg: AfdE7cn9C6Rn1CjgG0dIsL7neTjkQDXk/KiEVhdFtP0Iq2/Rfi0mosy1Jizxn5QFElU
-	kKWtPI/5ZZCwzw9ym6Y004+kAdIe9Vh9uS4fbdMYaf1O7sT3GOiAr4KV9Vm0GGDrS8WkC/70wJT
-	M8DCJA3XkPL1ChqHM66VmhCd0wnKjQ/5jo6glk8Y9LIMWcef+8BlcDvkHHYDr3WvavzEbOxwzGh
-	+bZQ8jStSRhmD7nO+2qzDPMFZOVyu3sTKtTA+DLWE0x/TRkLvSkdDu2WaurpFTRX2N90CjnISMm
-	AE4+2s9Y/LXHxdDUTcQLVhkvu99E89sDnIudc5sJcbV6GVhQCCqP5Om6UyJ96SpvNYtQlGV4Xem
-	MGifvc2jJY/DndjAc9UJS7lHY2+LSZ7xcyy2oyJ61HXRCj4VO/ZH2ha1R4zd9KV4lUOjOkMU5hM
-	JuyoOvF6E9336ozH9xVs+RGvH0EHWoyJa6aIwa+jQRTQNx2VVuHpjRA9uVl586d9U=
-X-Received: by 2002:a05:6000:4613:b0:47d:ecaa:3f60 with SMTP id ffacd0b85a97d-47df077b2dbmr7296836f8f.46.1783604907964;
-        Thu, 09 Jul 2026 06:48:27 -0700 (PDT)
-Received: from Ansuel-XPS. (host-95-248-227-210.retail.telecomitalia.it. [95.248.227.210])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47a9de1d8cdsm55329868f8f.1.2026.07.09.06.48.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jul 2026 06:48:27 -0700 (PDT)
-Message-ID: <6a4fa6ab.b2781ae3.385c0f.d696@mx.google.com>
-X-Google-Original-Message-ID: <ak-mqjsTP-TDVfti@Ansuel-XPS.>
-Date: Thu, 9 Jul 2026 15:48:26 +0200
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Brian Masney <bmasney@redhat.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: en7523: reset PCIE HB on init for AN7581
-References: <20260708084045.8380-1-ansuelsmth@gmail.com>
- <ak6AYe5ZZrzyf1UB@redhat.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I59NSzva"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87AB21F000E9;
+	Thu,  9 Jul 2026 13:48:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1783604930;
+	bh=K+LVGraXAMblh/wS3bFKCf1Rotn9jKdnH5k+fGzPHRk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=I59NSzvaQxwTdYf/ydnUSsp3J7DRGD6vuGADrtJX3lWUUqErsp6d6+63BaCU2UH3V
+	 q9i0SATbBbTGY4RuXl/8pyesWUhMIhjOoL53RMDtqdAUhVElEm3TPWrOmWent7AISY
+	 U19kiYNZLe6XkO+rAPKDIRyhqlFQEKFTMUdtVk9nzDXYN2QNkboKu5KMB6h67J/qAX
+	 5AWIXf1rUbdA38oscMMdV4R7ETds30jthSI7xq6ilNGfe1DH8Vd7xLeNN3d3dzTgGj
+	 EmdXIlZNa1vL4OQeCpQZY4L1IxOauswZHU4kCZHv0NLOzZyltr7bONZorKx4UUTnV1
+	 zUeN3v07P3ZzA==
+Date: Thu, 9 Jul 2026 14:48:39 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Michal Simek <michal.simek@amd.com>
+Cc: linux-kernel@vger.kernel.org, monstr@monstr.eu, git@amd.com,
+	vincent.guittot@linaro.org, Souvik.Chakravarty@arm.com,
+	Alex Shi <alexs@kernel.org>, Andy Shevchenko <andy@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Brian Masney <bmasney@redhat.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	David Lechner <dlechner@baylibre.com>,
+	Dongliang Mu <dzm91@hust.edu.cn>,
+	Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, Len Brown <lenb@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Pavel Machek <pavel@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Sudeep Holla <sudeep.holla@kernel.org>,
+	Ulf Hansson <ulfh@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Yanteng Si <si.yanteng@linux.dev>, arm-scmi@vger.kernel.org,
+	"open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>,
+	linux-arm-kernel@lists.infradead.org,
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+	"open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+	"open list:HARDWARE MONITORING" <linux-hwmon@vger.kernel.org>,
+	"open list:IIO SUBSYSTEM AND DRIVERS" <linux-iio@vger.kernel.org>,
+	"open list:ENERGY MODEL" <linux-pm@vger.kernel.org>
+Subject: Re: [RFC PATCH] firmware: scmi: Make SCMI arch independent
+Message-ID: <28cc462c-4c65-4de9-a9e2-965646eb4c83@sirena.org.uk>
+References: <d7f7e8c9589d937b60e43168845ab4fda15037a3.1783603600.git.michal.simek@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="yR+snn5kvWfft1sV"
+Content-Disposition: inline
+In-Reply-To: <d7f7e8c9589d937b60e43168845ab4fda15037a3.1783603600.git.michal.simek@amd.com>
+X-Cookie: MS-DOS must die!
+
+
+--yR+snn5kvWfft1sV
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ak6AYe5ZZrzyf1UB@redhat.com>
 
-On Wed, Jul 08, 2026 at 12:52:49PM -0400, Brian Masney wrote:
-> Hi Christian,
-> 
-> Thanks for the patch.
-> 
-> On Wed, Jul 08, 2026 at 10:40:44AM +0200, Christian Marangi wrote:
-> > It was reported that PCIE HB should be reset for AN7581 or some instability
-> > or link training issue will be present on warm boot scenario.
-> > 
-> > Reset PCIE HB on clk HW init to handle warm boot problem with PCIe.
-> > 
-> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> > ---
-> >  drivers/clk/clk-en7523.c | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> > 
-> > diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
-> > index 1ab0e2eca5d3..c450d89bfa96 100644
-> > --- a/drivers/clk/clk-en7523.c
-> > +++ b/drivers/clk/clk-en7523.c
-> > @@ -57,6 +57,7 @@
-> >  
-> >  #define REG_RST_CTRL2			0x830
-> >  #define REG_RST_CTRL1			0x834
-> > +#define   REG_PCIE_HB_RST		BIT(29)
-> >  #define EN751221_REG_RST_DMT		0x84
-> >  #define EN751221_REG_RST_USB		0xec
-> >  
-> > @@ -853,6 +854,12 @@ static int en7581_clk_hw_init(struct platform_device *pdev,
-> >  	val = readl(base + REG_NP_SCU_PCIC);
-> >  	writel(val | 3, base + REG_NP_SCU_PCIC);
-> >  
-> > +	val = readl(base + REG_RST_CTRL1);
-> > +	val |= REG_PCIE_HB_RST;
-> > +	writel(val, base + REG_RST_CTRL1);
-> > +	val &= ~REG_PCIE_HB_RST;
-> > +	writel(val, base + REG_RST_CTRL1);
-> > +
-> 
-> Sashiko has a question about whether or not a delay or a flush is needed
-> between the writel() calls?
-> 
-> https://sashiko.dev/#/patchset/20260708084045.8380-1-ansuelsmth%40gmail.com
->
+On Thu, Jul 09, 2026 at 03:27:00PM +0200, Michal Simek wrote:
+> On heterogenious systems like AMD/Xilinx FPGA there is a need to talk to
+> SCMI server from different architectures than ARM that's why remove
+> ARM/ARM64 Kconfig dependency with also remove ARM from description and
+> rename folder to reflect it.
+> From specification perspective only ARM specific transport layers should be
+> available on ARM/ARM64 architectures.
 
-Hi Brian, from the test done by me and Airoha with their CI on 10000 test,
-no delay is needed. If we want to be on the save side I can add it anyway
-for consistency with the other code. What do you think?
- 
--- 
-	Ansuel
+Acked-by: Mark Brown <broonie@kernel.org>
+
+--yR+snn5kvWfft1sV
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpPprYACgkQJNaLcl1U
+h9BuZwf7BOfh7haRASNEf+GyM/vJ8Rk5M6i8yfFXIOEaCoBhABZ8W1qPGH3D9QB6
+j85LaXzp5x1NmpHyO1zPkfENzIT8rDMO3sNcd2V1i9UbGT5EZAOjkvFpEAiUbDPg
+6vmqmlrPHzncOhGwzSsjgbGIrv8q6IDUKZCPB1fFjuBJICagQCuAQ8onuA+RLmMH
+mCYg0dJz9kljPFTkBn0UXgVnCBDyR0em/jBJoFVGQqmNEuAit/KicZ13TP6+ApXP
+fsZpWN+9x9deYwe20wbBAoZ6dpnPlv86m1OPhEO3WtcoKmnXLo7onCWHsRAKLJB7
+57OJGcXyJz+mFT2Y1Clm/wpPUCck8g==
+=gvbq
+-----END PGP SIGNATURE-----
+
+--yR+snn5kvWfft1sV--
