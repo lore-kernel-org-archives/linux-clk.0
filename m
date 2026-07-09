@@ -1,93 +1,99 @@
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE919331EC4
-	for <linux-clk@vger.kernel.org>; Thu,  9 Jul 2026 14:24:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28EE721E098
+	for <linux-clk@vger.kernel.org>; Thu,  9 Jul 2026 14:28:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783607052; cv=none; b=HqNkKzkN3IvTkGQ2a7aGxc4nz9EYGuc/L+hCqri+SNca8VSLXowdxXl6dsfu9BKypAF47SW3EexOqRUxL6J/MUTC+5kKNYg5qZRCe+IkakJA+S4l6sIHVoDrToLKhIDE9O0UmuFSowIs5nv05kchIqmXkRqQ0R0XWP6iu32N7TU=
+	t=1783607294; cv=none; b=VXJz+AXsT5FJb4muHtCi32oQS9U7ECB65rLYjGaa828cdMuEcW+SQ2r0guiRe/8iwnKNhzrbamPosAnIud/g0mRr6a8JbTdoQ33OssvJhdtcxaWsT07g+ScAEWwDsxS+NkW+8NGItF1exN855fPVG51ULvV6haok35UxIGymqGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783607052; c=relaxed/simple;
-	bh=H/58S8xtc3DqTmrpTgSLBSpHd4+F0iyFIRuxJ/sA9tU=;
+	s=arc-20240116; t=1783607294; c=relaxed/simple;
+	bh=PgUeHneBxAfToAshr4h3JMYv/lZaBMB1tn2P/BKrqhk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=moUiAayn36ybPqgtc8GNfHeJDVxTgWVbGgB9P08Dn+rHkjDddV0VVYv9Ibm0vZX7f/2g/I6srDfLJJKgLjO0wdYnw0a0qT+ZX7D1y6//u0g7I6O2TFCK6hVdNwwXNWgaZ5WjUQOgdhXOj1yOZrBU7yDqYSK5RxlUPee1VwG+x5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fUanHYy7; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=l1lnFmSl; arc=none smtp.client-ip=170.10.133.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=gPX+scNvNxnI+11HgSxxjqQqQ+f3azRLsMJyA3uuM5li7wvwhTFw+/L7uFOO27ixMnAidWZy027BTm9ze/a4axwNJTSlFPp7JJVhvdSe+uG9iAzQ1Xk5Hiz05IIHRLYTYof95MNHglXJmBgtSF0nT4B3+Hax85jFIF0GnazM+k0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jTjzgptw; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=krMgrhtg; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fUanHYy7";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="l1lnFmSl"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jTjzgptw";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="krMgrhtg"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1783607050;
+	s=mimecast20190719; t=1783607292;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Y1C0dXpz7AWQiPJGGV2R39/aRuB5qt1XtWGhBi3VmSQ=;
-	b=fUanHYy7e3iqvxZcgOmxD4QNZgxOG3mWJm5j/d0MpA2sy6qgR1UG2boNq7ambwlJbegd2i
-	MVBCPVbJ9JPO9VH+yPHZDMG4P+2CP8IF5E9kZk0tzbzstqMJnUiAzhVAN7FpyFCm/jI9s7
-	S8tDTbGxctwRdAxHBmAtjmULmMVbgbE=
-Received: from mail-yw1-f199.google.com (mail-yw1-f199.google.com
- [209.85.128.199]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=92JJ36rrwvvb7yLlV9W9rV0xnJPT/KBmVXI1YNHLk7c=;
+	b=jTjzgptwPo20f9zD7f0S9uwQWmbqDBjnYzNBwkMSWoLfWn/OhaJvNvzzffNfpZiMFPiPXA
+	/ASFojpjyIFs1/DbXAd5dA2vqQ+Dh0mT5waEYkGFMHzHwVo4teWNOLKxqPRB64F24FpHez
+	RAgI11AEJJp8RfEY9s/k8INxalFygFc=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-612-UhrRl5oKMpmKtTk4nQx_qg-1; Thu, 09 Jul 2026 10:24:08 -0400
-X-MC-Unique: UhrRl5oKMpmKtTk4nQx_qg-1
-X-Mimecast-MFC-AGG-ID: UhrRl5oKMpmKtTk4nQx_qg_1783607048
-Received: by mail-yw1-f199.google.com with SMTP id 00721157ae682-7fec7afc9d1so28377467b3.1
-        for <linux-clk@vger.kernel.org>; Thu, 09 Jul 2026 07:24:08 -0700 (PDT)
+ us-mta-246-xSGb0xv7N16fGfodsII63A-1; Thu, 09 Jul 2026 10:28:08 -0400
+X-MC-Unique: xSGb0xv7N16fGfodsII63A-1
+X-Mimecast-MFC-AGG-ID: xSGb0xv7N16fGfodsII63A_1783607288
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-92e7ee64b25so286102885a.0
+        for <linux-clk@vger.kernel.org>; Thu, 09 Jul 2026 07:28:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1783607048; x=1784211848; darn=vger.kernel.org;
+        d=redhat.com; s=google; t=1783607288; x=1784212088; darn=vger.kernel.org;
         h=user-agent:in-reply-to:content-disposition:content-type
          :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to:content-type;
-        bh=Y1C0dXpz7AWQiPJGGV2R39/aRuB5qt1XtWGhBi3VmSQ=;
-        b=l1lnFmSlcVJoFL58ciwvQ9LbFDrRkeKNyVBgh0VSuEkVChR1iTI6HGnOMjw606MCQm
-         i3atJaK+kTNsaELRvbMr+X/eNr+nxhrUIxRyl3qgOOAYI93pf4u6SnSYrR4bwiFGgEKu
-         uPR0pf6cTQtDt5ys9ES4U9rIyIPTD6IvjXWLCHion4mLGhlxez5V/zWWHNgBiIdZH8e7
-         wQA7f+yKeMoESZ4Dgjv3BpUvCKa6jXG4x1hQIuu9wCA/MV1f/OKOEHqKO1rUfHMFT30o
-         jFnlQoqpFDZHQOJlKPPZbddUnQ91eegTMV14+M6Z6bSLzfY9+j2yvQSDe3tbDBrwGWps
-         r1sg==
+        bh=92JJ36rrwvvb7yLlV9W9rV0xnJPT/KBmVXI1YNHLk7c=;
+        b=krMgrhtgg99JnjZEuGUQQWlW4YlJi+2KY3mz+PM8lyccdTbQLQu/eoPTZuR3vgbkOL
+         N3jVMxNvIsfbK4uId2Om81UQFY8aUIE+BLjIq9kNkdHOtI7QZ6cHn4/r8jdQ/fppLFU6
+         2Nw0bX6nZs152M3lnmlJC1UP7gKjpSA8oJtZSIYc7FskcyAWcuSyurOBMvivnzrTwT6P
+         7GFyyJgpC+byfAzZ0C72VLWIGYlPnPCuOrd+QP1677uj5aazT0Ic4CnMqSr4Ta/aLluU
+         9dzxWhfP0kLOfVMd9KmHH5uwEaNo1AQBIH8ry647JKLXVpIk0umoYGdsDAWmfepRcC6J
+         BGfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783607048; x=1784211848;
+        d=1e100.net; s=20251104; t=1783607288; x=1784212088;
         h=user-agent:in-reply-to:content-disposition:content-type
          :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=Y1C0dXpz7AWQiPJGGV2R39/aRuB5qt1XtWGhBi3VmSQ=;
-        b=ABZTpGayurVrATakhONT4D7R/YsJlNx0EI2niYnFgFnk6pWB6qRngXLdZ0Gn+6G3qX
-         PudXzq6yYwfzojsbx8VtGArfQI2cS0MDw4YQgFb35tOzyE9zHENewhLe+io855Xu3dDY
-         WPYmmjM0k1v1soNY5zqgKTX8EV+syo3KF+Wi9RBFDyGe/MbInY1azrLSwF6HfinZuCkY
-         caT5LIF6xevi+J6Dmur2ZLhqN9o+0iZIrXCUB+6pR4aiCrfYDogbkVV48jHvDr+pYhAf
-         D+cR+mhA2YP5N/T1xoMEV2oWq243kgaw6OIp+4tUgQ/xAAnHZgk1AzdmzrRF1r0wm6FT
-         7qlw==
-X-Forwarded-Encrypted: i=1; AHgh+RppnbUYbkmTNM4B+AqIIDFrx/WLr9piZqDo4tDYdLqA6uGXnf7d+nqPUTuMJ/DBuKZJf5vmVamENoI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlqbfmG5HXUpLgWg5nQCaLEr1hcDN3MM/+TVdja52hZ6e/hOfe
-	CwvyHnHw3AkEJXy8fdNJpm7TbOQU5hhmjWGABciKGqB7K3a+xSO4E7w8VDsi5txJXuc/aQcEg+K
-	6jbMPR4mJWlWFtpA4SZ2XO49oQGF3rKCK30T+paBdBVckDj8pzEnxB3dshxgk/Q==
-X-Gm-Gg: AfdE7cne9yZE1HT0VwOS7fPvnXfKNFzjlzh23JehipzdU49x2bMelXHpgL458LUgiyC
-	wUwYfpz5x/bE5cflbuKWXvOFsmXtRZDduiu582gWYAiUAga5B9WNmJIZNd30Btwel8+Jd8e3Mzv
-	gEHbtww13DrKYeW+21w1kLrgKApn30rmkppsHVE6wL+QrhRtgo6/8k3iGh6Avi4TlQAkGIM9/8R
-	qJBwBPS5UXRoo/ZhdrAd8iiZ3WqtQUdcHyGKsZ1B0rjtINnC6X7q7OyvBp54PjEag+Iimn7MOxN
-	IAffZgMudvKtdhyYy7Cg8dGJpzuELRfoafSATKnPB5SdWRsM883CIG+Vp2LGSIBpnuc7ILVi3RX
-	bnLmhpgqWAUfuLXKQ8+nlpXX6LEVnbcVBohviXXALPKvNxw==
-X-Received: by 2002:a05:690c:6c84:b0:81c:8300:f719 with SMTP id 00721157ae682-81dc0ce7f36mr61951587b3.56.1783607048184;
-        Thu, 09 Jul 2026 07:24:08 -0700 (PDT)
-X-Received: by 2002:a05:690c:6c84:b0:81c:8300:f719 with SMTP id 00721157ae682-81dc0ce7f36mr61951307b3.56.1783607047696;
-        Thu, 09 Jul 2026 07:24:07 -0700 (PDT)
+        bh=92JJ36rrwvvb7yLlV9W9rV0xnJPT/KBmVXI1YNHLk7c=;
+        b=VBV+iqp3LffJ49sFzzdmcK9s9yCntGxE2QdhnThpf/V+FL0flrclYJDQ+bL+nNN1RH
+         d8M+BuYj3yv+c2aY/15GYpYNL1uMj7sB3YEeOYIshxiC3dHtZfLtrMb9AtKx5eDr94cJ
+         nyOEVdaQ/jS7vIIks/HX7L15hV5Mdhss22Jx/7CMhkY2ix4U85PNBn/MDIZRkjnNmsjX
+         3yjVNgQRlbRrHUeXKeVIJVmiQ6EXqV4oFn/z942fUyoG93RHDdOQR4kBQb0rwRvPFpiN
+         EvAzPJTOyApUrvr4MbSaA4tHLS6f0WByRJ4tu3KawEBYgUSN+x1K7ezyy9gZ4IWzjp33
+         fbQw==
+X-Forwarded-Encrypted: i=1; AHgh+RptzY0yiVvnc/NPoH80OwVyvwDSIf7U8PdRhLbMlJ4QTMPMboywzFxu3LrLiciWFPOeVs1soVzDm0U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNMOzERt/yhFShw8JcSUTmqdxh6pSFnzI40yqN8AM6BENeTzk3
+	A6eXC1KHs+1jJImqO6S8wQr3mwvu9qyRN0kOPPwgvv16N3PbTpSeSLCrN6H780RTm9+rNkRsz+c
+	GEuY16vKlZan8C43mEg0r4XqHbYw3Yxro7Js6KKnXwM8HpfieGjHNkN8omf7hiA==
+X-Gm-Gg: AfdE7ckTU0oAgY4/RJhxaY5CYSWSikJbs5JZHShUss6fd+EFvyTdC/5R+Xe3sQ1wULI
+	vMvKX89m89K15OGd3/xxMNzaRhfznVHICfnS/qx1T0lbHZdbsG19SSn5bh3Brm+y2NWDwTm76jq
+	p9LRTrT8klk305Zb65s+vkoIZ22AAGyDCzE/eNoAK48879K51FoMqG+C6rcn9npO8BSPIaPI0il
+	DEoy1QHPOelBe8FUYgu6YVWO1Oeo7Rhxs+Fc9MDLm/xjCSjruQKB4P0WBwwdfadzxiXPKQzeY5F
+	LDac5ClZzZGj+iREflFL0xNXLf/tFrTzY4SE9e52ZOwTtdg2JAWS7mD1anVNnovGpZkmTa+s5/8
+	sa2BvxcnXCAkbaIEz2yDPUMRJ50gpTJn7YiVwKisF6U/byw==
+X-Received: by 2002:ac8:7fc8:0:b0:51c:2068:a9f8 with SMTP id d75a77b69052e-51c8b399047mr79250311cf.5.1783607288345;
+        Thu, 09 Jul 2026 07:28:08 -0700 (PDT)
+X-Received: by 2002:ac8:7fc8:0:b0:51c:2068:a9f8 with SMTP id d75a77b69052e-51c8b399047mr79249991cf.5.1783607287938;
+        Thu, 09 Jul 2026 07:28:07 -0700 (PDT)
 Received: from redhat.com (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-81e6c1e1d12sm18995437b3.33.2026.07.09.07.24.06
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-51c41d2cde7sm173167731cf.18.2026.07.09.07.28.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jul 2026 07:24:06 -0700 (PDT)
-Date: Thu, 9 Jul 2026 10:24:02 -0400
+        Thu, 09 Jul 2026 07:28:07 -0700 (PDT)
+Date: Thu, 9 Jul 2026 10:28:04 -0400
 From: Brian Masney <bmasney@redhat.com>
-To: Christian Marangi <ansuelsmth@gmail.com>
+To: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
 Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: en7523: reset PCIE HB on init for AN7581
-Message-ID: <ak-vAqKlJ0pFx9J6@redhat.com>
-References: <20260708084045.8380-1-ansuelsmth@gmail.com>
- <ak6AYe5ZZrzyf1UB@redhat.com>
- <6a4fa6ab.b2781ae3.385c0f.d696@mx.google.com>
+	Stephen Boyd <sboyd@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Chen-Yu Tsai <wenst@chromium.org>,
+	Edward-JW Yang <edward-jw.yang@mediatek.com>,
+	Johnson Wang <johnson.wang@mediatek.com>, kernel@collabora.com,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v2] clk: mediatek: pllfh: Fix IO remapping leak in
+ register_pllfhs error path
+Message-ID: <ak-v9MPymB4rg9rP@redhat.com>
+References: <20260709-clk-mediatek-pllfh-fix-v2-1-a235078fe9d5@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -96,60 +102,27 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6a4fa6ab.b2781ae3.385c0f.d696@mx.google.com>
+In-Reply-To: <20260709-clk-mediatek-pllfh-fix-v2-1-a235078fe9d5@collabora.com>
 User-Agent: Mutt/2.3.2 (2026-04-26)
 
-On Thu, Jul 09, 2026 at 03:48:26PM +0200, Christian Marangi wrote:
-> On Wed, Jul 08, 2026 at 12:52:49PM -0400, Brian Masney wrote:
-> > Hi Christian,
-> > 
-> > Thanks for the patch.
-> > 
-> > On Wed, Jul 08, 2026 at 10:40:44AM +0200, Christian Marangi wrote:
-> > > It was reported that PCIE HB should be reset for AN7581 or some instability
-> > > or link training issue will be present on warm boot scenario.
-> > > 
-> > > Reset PCIE HB on clk HW init to handle warm boot problem with PCIe.
-> > > 
-> > > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> > > ---
-> > >  drivers/clk/clk-en7523.c | 7 +++++++
-> > >  1 file changed, 7 insertions(+)
-> > > 
-> > > diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
-> > > index 1ab0e2eca5d3..c450d89bfa96 100644
-> > > --- a/drivers/clk/clk-en7523.c
-> > > +++ b/drivers/clk/clk-en7523.c
-> > > @@ -57,6 +57,7 @@
-> > >  
-> > >  #define REG_RST_CTRL2			0x830
-> > >  #define REG_RST_CTRL1			0x834
-> > > +#define   REG_PCIE_HB_RST		BIT(29)
-> > >  #define EN751221_REG_RST_DMT		0x84
-> > >  #define EN751221_REG_RST_USB		0xec
-> > >  
-> > > @@ -853,6 +854,12 @@ static int en7581_clk_hw_init(struct platform_device *pdev,
-> > >  	val = readl(base + REG_NP_SCU_PCIC);
-> > >  	writel(val | 3, base + REG_NP_SCU_PCIC);
-> > >  
-> > > +	val = readl(base + REG_RST_CTRL1);
-> > > +	val |= REG_PCIE_HB_RST;
-> > > +	writel(val, base + REG_RST_CTRL1);
-> > > +	val &= ~REG_PCIE_HB_RST;
-> > > +	writel(val, base + REG_RST_CTRL1);
-> > > +
-> > 
-> > Sashiko has a question about whether or not a delay or a flush is needed
-> > between the writel() calls?
-> > 
-> > https://sashiko.dev/#/patchset/20260708084045.8380-1-ansuelsmth%40gmail.com
-> >
+On Thu, Jul 09, 2026 at 02:23:00PM +0200, Louis-Alexis Eyraud wrote:
+> When mtk_clk_register_pllfhs function fails to register a PLL, it
+> unregisters all PLLs and cleans up itself in its error path before
+> returning, so the function callers don't need to do it.
 > 
-> Hi Brian, from the test done by me and Airoha with their CI on 10000 test,
-> no delay is needed. If we want to be on the save side I can add it anyway
-> for consistency with the other code. What do you think?
-
-10,000 test is probably good enough then.
+> But contrary to mtk_clk_unregister_pllfhs function, that does almost
+> the same sequence, it does not free the IO memory mapped on fhctl node,
+> leading to a leak.
+> 
+> Fix this leak by factorizing the cleanup sequence in a new private
+> function and use it both mtk_clk_register_pllfhs and
+> mtk_clk_unregister_pllfhs functions.
+> 
+> Also, change the loop index start value to avoid the -1 operation on
+> index at each loop.
+> 
+> Fixes: d7964de8a8ea ("clk: mediatek: Add new clock driver to handle FHCTL hardware")
+> Signed-off-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
 
 Reviewed-by: Brian Masney <bmasney@redhat.com>
 
