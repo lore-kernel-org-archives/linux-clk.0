@@ -1,46 +1,45 @@
-Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012040.outbound.protection.outlook.com [40.93.195.40])
+Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010017.outbound.protection.outlook.com [52.101.193.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9460240FDAA;
-	Thu,  9 Jul 2026 11:14:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.40
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA45341166A;
+	Thu,  9 Jul 2026 11:14:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.17
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783595660; cv=fail; b=WSc7wL8I+MiPhPQcdWxIzWk+ojj6N1BJRDs/1855PRvqDA66aZpyaP7+xzMjBxW0l121OYLhCHx9tj+adPPPrPRfwDRTyCoqh2DwvvltrySN3V8Er8pUEtKoOlD0uCrGpeOreOMpGIjCvaDH82hB66icEYMbqmaQkwJJ8f9nkLA=
+	t=1783595662; cv=fail; b=qWTjTTD1gTusWY+6jUzx+WdgyAIPnUV19OQOQ09/ag3OT1QIi6AOCqC13//WSktig9EyORph53fO4/6mpC+x4L92MWhlYgBFDINYJjEt6b0LWxZeqC3/O/SlqlT/beBT14SM8Xyl5jMhZUyFWaBkagGhF88v7gqSM8JjPq3juJc=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783595660; c=relaxed/simple;
-	bh=HxUUKncJU2RZzXpGO15I21HMvZD0ovneEkhG+ooKXrc=;
+	s=arc-20240116; t=1783595662; c=relaxed/simple;
+	bh=LyrH1e5ngtYoU54e72dY0qxd1zl7XVlgXrsu3qEoQ6M=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ENf7zZquTFGmZGvNZa/4LHUz7dv7mb+hy/6v0M+4MRvaJD/pGRU2lYHWUYGRGwQu5+4Ed316Kx9ZHXUgMN2t7eMcMBINRBoEsWh0LxE61wvRJjUrd5i1QCB+fHCJNJiBrk99docdeDwz5MFIsu4sAjM47MtwxpejQJmcQPt+t0U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=mWVNe+H1; arc=fail smtp.client-ip=40.93.195.40
+	 MIME-Version:Content-Type; b=r3emttrMQ0AG+1otC6k4/Ll4pYxfxMoTUZwqyrDPDhhyugPXUmptOxgErBHZ+wYa/LdwVYoBX/xvVwGrykS5XlMhpo16tmp5jcDFmYKDI+PWnRTgtrHwnLDcPVlJOXoHCFVkKtn7Qu8eWmS3UnLsc0pShKb/O+3+abQpBZ619jA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=AJnm9BiT; arc=fail smtp.client-ip=52.101.193.17
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="mWVNe+H1"
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="AJnm9BiT"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kkJvkwWxgf4yPugVGkZrqqzeXg31clRnDMnamNaB5monAQEljQAzLA4EsPAiKynFpK8Q8j85jKzQdsbmpHZTi/xSMjvnd0oDH5MJibxfv5hylra5DB8Tdqex0/xvGoavcDSwx7T7gs1gq0z1wS7u5MbQ1voMoy0J25o1Z2A50MMjJ9g+oRODN4yNdjZ9PM6j9M0d0ju2d7KbIS7BIhGKGLOe9HAMM/cztasymCeRQD6Tl0zTKmr1TN2ejLEF2IpwCh7zbWuMiiIpUO+Y8dAPTUqii/BRulbS0N6d+ZF+KKYC+36RKPBUoPK9rJeaGn0Nl4+hGFWpBCw437ZKwUwiNw==
+ b=b+z4AoOMlFNeeC6/0TccauGNQSciilIu+EVtGoCM1hrPpdm3jiDgascnoJgNanlnkcQazTGzkvjKk+WiJoPUiymdMmLjnTxCHf88DCpdQaShUvVBflXIUT2uFCSA8Jy0Cr03Ol9+OPImM9Mf1EGgMorpliFRSWMidSjloVoz42msS89xy6FiQ98WxSPj7RGEqILGsN7121k9ibPvJkukPvfwP9L/ZdPnlGHt4xW+slnwJgNF0Mfx1mxougeBGPodBbGE53gVDLx6ust2duk9BQEig2bRBDa0YqV5SDZYdQLWDI+wy1TYwlvdOA/Z3+LmzfwElzUCRJVE4MjIuX6R7Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Gol9/XjPsuWC33Y3ZFspoQDpaFNdCRi6rrIQM7LoDsU=;
- b=yBoFtc+AN3+HPnD7uS5jP0YAiu+3tSrjv9dsfqQJlJbTS9EiFxRgk6hk/AGKry/Dcf4RRjQmwt6NwegskGVJj/9sXc80SX//T6q06N5disg462ktf98FFPioyR62+thgGEWqBiBU0l72U/xDeZi+X00L4qffwnQY5kOqVl8FLgo3YEU3XXpt5/1hlLuYJG2WZKsCfz2PYM47H0NRj+kDG6mznfpVpyTR3ievbAhoQnDzJgqK1eKoqFCB5cZUWwcgCo/cbJ90cojke9xWb9wyzs6PFTHXpvIExqIon1SDvSsh5dACH/Zhaz8PEQwAQKX2EM9t4nPy4j3NLBaFnn7iag==
+ bh=MIyw5tLDINXH8zKrc3Dd02EgiOtoDrs4ePTGVfGpc1s=;
+ b=wVUnNRHHBPgdXnS1w6u7XD033859enq5ZUr2bIgyHfBd1MNvtBPhDPEk4BqPy3ryXxH9UPUQAN12ynHrWDCJHL76qUlyLt6u/WGgW6uYwQ8kDzeJZBmjhuQ9HquDIZ8x33AU4T895EXlY0DgSXxctsYvQ3k1UloPaAIPn0R0xRL2NaR3wL2JkInFirU5iOKw/Mms8M6FIFX3y5g47Da0wTG4cjcm7iN60Q4vj31/LOOD4yY5l4b6jgwJYcpGBBntmUfqgHXsmSIdo6Fy+pIPDVCVcrDUSF3sGxE0M9O1aee+bo5VksP8u0fPk6xcWbYdt72NFfSRzOoH6T6JMnDKbQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
  dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
  header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Gol9/XjPsuWC33Y3ZFspoQDpaFNdCRi6rrIQM7LoDsU=;
- b=mWVNe+H1iOqfc2edslgvSWQNTPOj1TBVIivS+ZpnjVM/EQx4t7e2KmB+aRrGjPdntEp5fvYkKfgucT/9c+YpMb7+7DcBaVpJ81YinRVL3RX/DmvHu17v2aGk/6dxNakCAbPjIRbNGMIDxUxIzVvHD8tqBJdsRCn3XdhJZuxV4Y8=
-Received: from SJ0P220CA0023.NAMP220.PROD.OUTLOOK.COM (2603:10b6:a03:41b::21)
- by BL1PR12MB5708.namprd12.prod.outlook.com (2603:10b6:208:387::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.181.10; Thu, 9 Jul
- 2026 11:14:13 +0000
-Received: from BY1PEPF0001AE17.namprd04.prod.outlook.com
- (2603:10b6:a03:41b:cafe::5a) by SJ0P220CA0023.outlook.office365.com
- (2603:10b6:a03:41b::21) with Microsoft SMTP Server (version=TLS1_3,
+ bh=MIyw5tLDINXH8zKrc3Dd02EgiOtoDrs4ePTGVfGpc1s=;
+ b=AJnm9BiTJeMCQB+Fv1AJzfnFpbBVfY7+ZfjvhniaZE1qn+EAkUbIooaEtXiOFgnF0zVQNDJTFco8sNrY/VazSMZXV7Fpk4t6lkJ/cMhyrXGATQR5zTzF9k4wzh0IYo1Yaa8gxBAKlecjqxF0y3x9W0emnilOorTyawO9XmByi1Y=
+Received: from SJ0P220CA0001.NAMP220.PROD.OUTLOOK.COM (2603:10b6:a03:41b::7)
+ by DM4PR12MB6112.namprd12.prod.outlook.com (2603:10b6:8:aa::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.181.10; Thu, 9 Jul 2026 11:14:16 +0000
+Received: from BY1PEPF0001AE1B.namprd04.prod.outlook.com
+ (2603:10b6:a03:41b:cafe::7b) by SJ0P220CA0001.outlook.office365.com
+ (2603:10b6:a03:41b::7) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.21.202.10 via Frontend Transport; Thu, 9
- Jul 2026 11:14:13 +0000
+ Jul 2026 11:14:16 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -48,16 +47,16 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
 Received: from satlexmb07.amd.com (165.204.84.17) by
- BY1PEPF0001AE17.mail.protection.outlook.com (10.167.242.107) with Microsoft
+ BY1PEPF0001AE1B.mail.protection.outlook.com (10.167.242.103) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.181.6 via Frontend Transport; Thu, 9 Jul 2026 11:14:13 +0000
+ 15.21.181.6 via Frontend Transport; Thu, 9 Jul 2026 11:14:16 +0000
 Received: from satlexmb07.amd.com (10.181.42.216) by satlexmb07.amd.com
  (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.41; Thu, 9 Jul
- 2026 06:14:10 -0500
+ 2026 06:14:14 -0500
 Received: from xhdshubhraj40.xilinx.com (10.180.168.240) by satlexmb07.amd.com
  (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.41 via Frontend
- Transport; Thu, 9 Jul 2026 06:14:07 -0500
+ Transport; Thu, 9 Jul 2026 06:14:11 -0500
 From: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
 To: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 CC: <git@amd.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
@@ -65,9 +64,9 @@ CC: <git@amd.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
 	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Michal Simek
 	<michal.simek@amd.com>, Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
 	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH v2 1/8] dt-bindings: clock: clocking-wizard: Add static-config mode support
-Date: Thu, 9 Jul 2026 16:43:56 +0530
-Message-ID: <20260709111403.1579159-2-shubhrajyoti.datta@amd.com>
+Subject: [PATCH v2 2/8] clk: clocking-wizard: Do not map the memory for static-config
+Date: Thu, 9 Jul 2026 16:43:57 +0530
+Message-ID: <20260709111403.1579159-3-shubhrajyoti.datta@amd.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20260709111403.1579159-1-shubhrajyoti.datta@amd.com>
 References: <20260709111403.1579159-1-shubhrajyoti.datta@amd.com>
@@ -81,146 +80,70 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BY1PEPF0001AE17:EE_|BL1PR12MB5708:EE_
-X-MS-Office365-Filtering-Correlation-Id: 85952434-c922-4c94-8d05-08deddab352e
+X-MS-TrafficTypeDiagnostic: BY1PEPF0001AE1B:EE_|DM4PR12MB6112:EE_
+X-MS-Office365-Filtering-Correlation-Id: 828a93a1-31ef-4fd2-3412-08deddab36df
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|36860700016|1800799024|23010399003|82310400026|5023799004|11063799006|3023799007|56012099006|6133799003|22082099003|18002099003;
+	BCL:0;ARA:13230040|376014|1800799024|23010399003|36860700016|82310400026|22082099003|56012099006|11063799006|18002099003;
 X-Microsoft-Antispam-Message-Info:
-	8z1PF2rrPvMSwn/lOXp2OsTLcTloziDGcx46bilAlUfpkQgn75uMPRRbjRp6Ntfgo8dEZqXaWT9j26KOEijmhye6Pd5RBYnVhI74E6E/3p6Xi13etNkA9hIUy+/6udou+3JdRelqY1WBkuRvjM2JedUmcBh0m0rZ3bN0R0J6HO9ERL2b/DL4Xti0Chw2u3NAMP3D3ZG8Zlqr+o/p82gB4xy6/RNWRAIHr7wbaecovNPMKCFHrQH8qakMfxJJp4SyY0L2jf3e5GslfAPbvcq6w7UNAOwz4EHxHy2LgOweScXrQn1xehwStdsdI7uVxQ45SJ2OQdptW08/YA5VDu6Qj9fD22Gzf4G6bz9lAIPZ/0Q2XzvNrrD72NTzIdeWbNOomVui7ulsA2lSG9rAZYTjXQqLyg5GPtDLomeMOdROR0NeksGCBwoJOe+zYUpzEerAjhBxxFQKEu4dOm88jauQ7d04sDBeDArfwRl8tw2bbockld13ZjO2g+0qMG/soghsXb1Gx1+Pxm3WQwhLYpGC8l6bKhQk93NxtjRW8TSKs/5yVI2RgoqcUuVXBJEX0kePELW1VK6YATWQA959UazasBe8Yt+joUoT3lc7G9O7Fqqqqss27BwojduTnykCW4fFfTzdonsoRajk20s8YoFKhBCzF7bvqwzHLudspjMB3ose3LNHjglXR/LLrHLTrZyX67drJQ4dLu5R+V0ad36htA==
+	HFAnvbJRbJWBij9rx0ZFIK+OOhAE48dhFdawfz2cCEABe4CMb8BZVjpvmWGhvWLSwnWJzGaeehGH2wB0no4eOPwjcuhyxgEAmQKiwnon5HjyplwvPwks/NgvHt2j1h2IbUU0EfrzLz2ejRQuCu8H0GG+SmyAaNj9i5vHiRzUXMkC5/LWqBkGbFLP0mLusL727tqulqCBQWxk7aj3wSMAZPAJWxUoecTjZO3XfWw5dELAWC0B8SSINk+KQM7Oz90Zh63bVjQxYThx8di35031R1hsUDbbANa9u/V0xBfqKLRKtcQS5WhEbm4qZOPXUnukyNYzu+3pl04eGpnrjg4BL1SubmCYKC/HFbw9CtP3w5Uw12bIyY7gAXWCJMGky3UlznoOrKdG/5W9bzmuFHUezrMxfJ1akc7iZsEuZ4OTeJ8qAOOP4SKgb/sOme83tqgJ8osDzBV2YQ9wgNdpr9rDahnWGk1DTK2wzA7Na74l+DZOsBO8MK6MSIXdEWCArNlNXuNhkcNiWXgL+55UrAKfE/j1SupzvYym29f8Y7Jq8kPrddESP7jEYc1jaCSH5qwFgUs1ibWBAvSTwKzwI+J5+pz+/zOaC7QE4Y2Ho7iEtGHTNh4As6ekiVfM+x6SkV1vWvIAFrY8mEKLKzn/DL63RhZWxzDOqUbE95HrbBn4W2E/RVy5OgUdOEtjIrTfLE+JNSPW7NPl/ZNpNtbcJ4UGLg==
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700016)(1800799024)(23010399003)(82310400026)(5023799004)(11063799006)(3023799007)(56012099006)(6133799003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(1800799024)(23010399003)(36860700016)(82310400026)(22082099003)(56012099006)(11063799006)(18002099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	l2O4+MVHBPChw1kugVGzeDBuSbMq5yQCww5Klh+bdFvKp4q4FYQ9fxh2ig6y0eLFufwZ1fVMxg2D//ED5t2IjEWQifjzK6CjZLioBM9P8uWHpEb/I6dGId32ExnUoBCpKqriNc4eYcDfinh52mXpfv/IcRo23JB7pFUKFsKOI/l3aWKhVMtsw6+ygyE1hPp0wvmmSJ95Db516MgPtbiLTFEKKWw2BHts0tktVv9cCF+wYzog+ke0L8TJ2NVt9Jt2XOJvxCKwgR0asoAk6Nb3je22zBOCY8V4vHrZFEA9xi07SPEBe529pz6UxMmZu469nDJ/MxU7z8WTVdjGUJy9FGEG4qPvIvYPxzdoFuaxjtS69Zk6TJwCOZW+67mGmHPul9/Doyl+IY8KWuxYJuZgzW+22ktvoNBPBOxjv0qJ0TsaBhK67kmLXkuSPK9Bcb4e
+	Mz3IrBuJqHX2eu5GFwZeno7n62J7+ce9iwrUMHCn+Mqhi4IM/8dU9yYdyCJ36q6eIX6+lzVebFPGE/Cm/d2b4pjNuwL4VtFihQ838NIc00NlIDrvDV1lf7hoLlAoeFO/8LtujmCdy3HmIBNNcn3d/aQL4ltqSrQXQV1Gwhc2Do5lw8D8Uhyd4WrSBjLmQWeF2S1n0aFOG/0xxwwg25wJl8tPyCvGFjcuCAEuKuyG0UChGK1MAWgOZAdlXMvnUI0DoIFYgZsYzCvrFE9lfgcgpGxdZ9L8asF61Z3hPmz1BFueQ615JEdLMOcpXqFg83uwj6PX9Eyj4ANb3brep07HvQ7t4IqTXP9gK+p8Fj+AhEQluOasBMf2c5t0V4LtwfHE55IrEd2cba+4ioa/x0IHuCG82Y1XtICd3faPcGH6EKfd8L/SGH6Mrp2qwIHibpcI
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2026 11:14:13.3568
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2026 11:14:16.2238
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 85952434-c922-4c94-8d05-08deddab352e
+X-MS-Exchange-CrossTenant-Network-Message-Id: 828a93a1-31ef-4fd2-3412-08deddab36df
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	BY1PEPF0001AE17.namprd04.prod.outlook.com
+	BY1PEPF0001AE1B.namprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5708
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6112
 
-Static-config MMCM/PLL ratios are fixed at IP build time, so the kernel
-cannot read per-output multiply/divide from registers and needs DT pairs
-to register fixed-factor clocks. Also add the tuples by pair in example.
-
-In static-config mode the IP exposes only fixed-factor clock outputs and
-has no runtime-programmable registers, so reg is not required.
-Make reg optional for static-config
-
-In static-config mode the AXI bus interface is unused, so s_axi_aclk
-is not required. Allow clocks/clock-names to have only one entry
-(clk_in1) when xlnx,static-config is present and enforce two entries
-otherwise. Update the static-config example accordingly.
+With xlnx,static-config the MMCM/PLL topology is fixed at synthesis time
+and no register programming is performed; only the dynamic path needs
+the AXI register block. Move devm_platform_ioremap_resource() under the
+non-static-config branch.
 
 Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
 ---
 
-Changes in v2:
-Merged the similar patches
-Allow check for current dt even if it is unused.
+(no changes since v1)
 
- .../bindings/clock/xlnx,clocking-wizard.yaml  | 53 +++++++++++++++++--
- 1 file changed, 48 insertions(+), 5 deletions(-)
+ drivers/clk/xilinx/clk-xlnx-clock-wizard.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml b/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
-index b497c28e8094..865927b9f1be 100644
---- a/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
-+++ b/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
-@@ -29,11 +29,13 @@ properties:
-     const: 1
+diff --git a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c b/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
+index 4a0136349f71..e082051221be 100644
+--- a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
++++ b/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
+@@ -1168,10 +1168,6 @@ static int clk_wzrd_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 	platform_set_drvdata(pdev, clk_wzrd);
  
-   clocks:
-+    minItems: 1
-     items:
-       - description: clock input
-       - description: axi clock
+-	clk_wzrd->base = devm_platform_ioremap_resource(pdev, 0);
+-	if (IS_ERR(clk_wzrd->base))
+-		return PTR_ERR(clk_wzrd->base);
+-
+ 	clk_wzrd->axi_clk = devm_clk_get_enabled(&pdev->dev, "s_axi_aclk");
+ 	if (IS_ERR(clk_wzrd->axi_clk))
+ 		return dev_err_probe(&pdev->dev, PTR_ERR(clk_wzrd->axi_clk),
+@@ -1183,6 +1179,10 @@ static int clk_wzrd_probe(struct platform_device *pdev)
+ 	}
  
-   clock-names:
-+    minItems: 1
-     items:
-       - const: clk_in1
-       - const: s_axi_aclk
-@@ -57,27 +59,68 @@ properties:
-     description:
-       Number of outputs.
- 
-+  xlnx,clk-mul-div:
-+    $ref: /schemas/types.yaml#/definitions/uint32-matrix
-+    description:
-+      Fixed MMCM/PLL multiply/divide ratios, one (multiplier, divisor)
-+      pair per clock output relative to clk_in1. The number of entries
-+      must equal xlnx,nr-outputs.
-+    minItems: 1
-+    maxItems: 8
-+    items:
-+      items:
-+        - description: multiplier
-+          minimum: 1
-+        - description: divisor
-+          minimum: 1
+ 	if (!of_property_present(np, "xlnx,static-config")) {
++		clk_wzrd->base = devm_platform_ioremap_resource(pdev, 0);
++		if (IS_ERR(clk_wzrd->base))
++			return PTR_ERR(clk_wzrd->base);
 +
- required:
-   - compatible
--  - reg
-   - "#clock-cells"
-   - clocks
-   - clock-names
-   - xlnx,speed-grade
-   - xlnx,nr-outputs
- 
-+allOf:
-+  - if:
-+      required:
-+        - xlnx,static-config
-+    then:
-+      required:
-+        - xlnx,clk-mul-div
-+    else:
-+      required:
-+        - reg
-+      properties:
-+        clocks:
-+          minItems: 2
-+        clock-names:
-+          minItems: 2
-+
- additionalProperties: false
- 
- examples:
-   - |
--    clock-controller@b0000000  {
-+    clock-controller@b0000000 {
-         compatible = "xlnx,clocking-wizard";
-         reg = <0xb0000000 0x10000>;
-         #clock-cells = <1>;
--        xlnx,static-config;
-+        clocks = <&clkc 15>, <&clkc 18>;
-+        clock-names = "clk_in1", "s_axi_aclk";
-+        xlnx,nr-outputs = <6>;
-         xlnx,speed-grade = <1>;
-+    };
-+
-+  - |
-+    clock-controller {
-+        compatible = "xlnx,clocking-wizard";
-+        #clock-cells = <1>;
-+        clocks = <&clkc 15>;
-+        clock-names = "clk_in1";
-         xlnx,nr-outputs = <6>;
--        clock-names = "clk_in1", "s_axi_aclk";
--        clocks = <&clkc 15>, <&clkc 15>;
-+        xlnx,speed-grade = <1>;
-+        xlnx,static-config;
-+        xlnx,clk-mul-div = <12 1>, <10 2>, <8 1>, <6 1>, <4 2>, <2 1>;
-     };
- ...
+ 		ret = of_property_read_u32(np, "xlnx,speed-grade", &clk_wzrd->speed_grade);
+ 		if (!ret) {
+ 			if (clk_wzrd->speed_grade < 1 || clk_wzrd->speed_grade > 3) {
 -- 
 2.34.1
 
