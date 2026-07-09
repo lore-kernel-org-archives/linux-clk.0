@@ -1,126 +1,81 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C1954DBD60;
-	Thu,  9 Jul 2026 18:12:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16C153876B3;
+	Thu,  9 Jul 2026 18:23:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783620734; cv=none; b=GQVahcJfXsP5eqGL9m2aVKarHuFqhHRIlI1HyA9nxMpsLx69tJx9Tfp0NFfv4qEdwy6Pbzns7vnOrwS/++tXL5HqOgfMDcE8oZK7RrG3jKmTwUzQ2/Azf3vFiUwopeOCyEffNXJJ4+wwaYR+fWwHfZf75qMec1Hax71FfOzforM=
+	t=1783621421; cv=none; b=kNyBtR27dFsfvO5PYeVplAoMy57NWkxHwP9G1QMtpMNzicV2TyarS4bPL7lDy2xfOr09jQ2vX5kXQYKU6aS5k6BB5XQnIFg+zrZB1tFsJ7W1Qwf/hZi3BUmZl2X+fPMd8RiGiGzgmvzdwrSF2qelsxwNMNgY6ZNKyHDTAjwrjcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783620734; c=relaxed/simple;
-	bh=gG/aMUL9K6J7MQeQ3D/OrW9+BsX4y94z01HtY4iuQps=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fqQpovp5J5nKLSj34w5k3ckJHuGJ1TFVBVT3JJTw/ZiqJqo+1UpHEpK2qgBSk09oaCpjUhaklPcjLpD/W8K+vOV2k/btlJhcz2IQ0Aic/05Kw7Y8zHuRS6Zo9k1U6dQCiAGUuhpoJEeJ0bGx8bwrL3IDsKjgKKbMdHkXkrAKHME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gGDgNua5; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gGDgNua5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CDAB1F000E9;
-	Thu,  9 Jul 2026 18:12:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783620732;
-	bh=N6ExRqFYusMX+tjVg7cG0UAnunHkBLlwLxZ3V0z43Yo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=gGDgNua5r/LnOAlUxg9BTyvo5mQCvFnGTGo2oOO+5cSHjWM2J1jOjdJw8UPmHQnVV
-	 NlH8GCheUps5nixZGBXCLRI3924QII5l9IIy6oTlD/eSL8YAg/U1hW6gwouU13vVUF
-	 lRUFbx29bdoVukedcHBj7JgWIYnmDfE4d2QatHh/DGoODhpiv5Pzfzd840SDSL6xvZ
-	 BFBh57Rc5mmIG1MjI/a3Xxt4g6W8VF+0TlOkcDDe8LxtovAtURy5EqMo6DtEi1XVXq
-	 uXMngg8j0bC9Quvo4bGNhGf9LY1O1H6Wd0B58owsFccwEEd4vh4py600QE4bLMDEm0
-	 lO+sQU8ACHo6A==
-Date: Thu, 9 Jul 2026 19:12:07 +0100
-From: Conor Dooley <conor@kernel.org>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Chun-Jie Chen <chun-jie.chen@mediatek.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Edward-JW Yang <edward-jw.yang@mediatek.com>,
-	Richard Cochran <richardcochran@gmail.com>, kernel@collabora.com,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
-	Irving-CH Lin <irving-ch.lin@mediatek.com>
-Subject: Re: [PATCH v2 08/18] dt-bindings: clock: mediatek: Add MT8189 clocks
-Message-ID: <20260709-omission-thievish-45fb4b21f4a2@spud>
-References: <20260709-mt8189-clocks-system-base-v2-0-2926da3db6cf@collabora.com>
- <20260709-mt8189-clocks-system-base-v2-8-2926da3db6cf@collabora.com>
- <39ba7e37-bdd7-41ab-b72d-fed0bdbfc3b6@collabora.com>
+	s=arc-20240116; t=1783621421; c=relaxed/simple;
+	bh=4e/MIi3W1yerU8MpEdCHYx1zGCbn9dCaY/CDYCNnZc8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=p78Snx0UUetuXWVJ+4TmZmNzeOzKxcceXB7PSuI4BRRsz0AIzGce3FsCbDNaZcwdCLnj2Yj9oD0rq5XMyMP7MV2Rsvv1BViVgx7QWRelwmCuCSRwr+mx/J5CRo7Xd7I4sflYqa14NfY0zdoI7uL2gyGjNTpg0GX96SF3NL1Aqxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B32E1F000E9;
+	Thu,  9 Jul 2026 18:23:35 +0000 (UTC)
+From: Claudiu Beznea <claudiu.beznea+renesas@tuxon.dev>
+To: mkl@pengutronix.de,
+	mailhol@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	geert+renesas@glider.be,
+	magnus.damm@gmail.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	bmasney@redhat.com,
+	biju.das.jz@bp.renesas.com,
+	claudiu.beznea.uj@bp.renesas.com,
+	fabrizio.castro.jz@renesas.com
+Cc: claudiu.beznea@tuxon.dev,
+	linux-can@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v2 0/8] can: rcar_canfd: Add support for Renesas RZ/G3S
+Date: Thu,  9 Jul 2026 21:23:24 +0300
+Message-ID: <20260709182332.876408-1-claudiu.beznea+renesas@tuxon.dev>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="UX1C2aIXjTZQUR6q"
-Content-Disposition: inline
-In-Reply-To: <39ba7e37-bdd7-41ab-b72d-fed0bdbfc3b6@collabora.com>
+Content-Transfer-Encoding: 8bit
 
---UX1C2aIXjTZQUR6q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-On Thu, Jul 09, 2026 at 04:05:35PM +0200, AngeloGioacchino Del Regno wrote:
-> On 7/9/26 15:42, Louis-Alexis Eyraud wrote:
-> > Add dt schema and IDs for the clocks of MediaTek MT8189 SoC.
-> > The MT8189 clock IP provide clock control for main system
-> > (apmixedsys, topcksys and vlpcksys) and subsys (eg. peri, scp,
-> > ufs...).
-> >=20
-> > Also, add compatible for frequency hopping and spread spectrum clock
-> > functionality and reset controller header file for MT8189 UFS reset
-> > controller support.
-> >=20
-> > Co-developed-by: Irving-CH Lin <irving-ch.lin@mediatek.com>
-> > Signed-off-by: Irving-CH Lin <irving-ch.lin@mediatek.com>
-> > Signed-off-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
->=20
-> Both the commit description and title are misleading, as in, you're not a=
-dding
-> MT8189 clocks, but *both* clocks *and* resets.
->=20
-> Fix it please.
->=20
-> After which:
->=20
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
-ora.com>
+Hi,
 
-And
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Series adds CAN support for the Renesas RZ/G3S SoC. Along with it a typo
+fix patch was added on the CAN driver.
 
-pw-bot: changes-requested
+Thank you,
+Claudiu
 
-Cheers,
-Conor.
+Changes in v2:
+- collected tags
+- addressed sashiko review comments
 
->=20
-> > ---
-> >   .../bindings/clock/mediatek,mt8186-clock.yaml      |  15 +
-> >   .../bindings/clock/mediatek,mt8186-fhctl.yaml      |   1 +
-> >   .../bindings/clock/mediatek,mt8186-sys-clock.yaml  |   5 +
-> >   include/dt-bindings/clock/mediatek,mt8189-clk.h    | 433 ++++++++++++=
-+++++++++
-> >   include/dt-bindings/reset/mediatek,mt8189-resets.h |  17 +
-> >   5 files changed, 471 insertions(+)
-> >=20
->=20
->=20
+Claudiu Beznea (8):
+  clk: r9a08g045-cpg: Add clocks and resets for CAN-FD
+  dt-bindings: can: renesas,rcar-canfd: Document RZ/G3S SoC
+  can: rcar_canfd: Fix typos in macro names
+  can: rcar_canfd: Allow the CAN FD clock to be sourced from fck
+  can: rcar_canfd: Do not set registers selecting the CAN mode
+  can: rcar_canfd: Add support for Renesas RZ/G3S
+  arm64: dts: renesas: r9a08g045: Add CAN-FD node
+  arm64: dts: renesas: rzg3s-smarc: Enable CAN-FD
 
---UX1C2aIXjTZQUR6q
-Content-Type: application/pgp-signature; name=signature.asc
+ .../bindings/net/can/renesas,rcar-canfd.yaml  | 20 +++++-
+ arch/arm64/boot/dts/renesas/r9a08g045.dtsi    | 39 +++++++++++
+ .../boot/dts/renesas/rzg3s-smarc-switches.h   | 12 ++++
+ arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi  | 46 +++++++++++++
+ drivers/clk/renesas/r9a08g045-cpg.c           |  9 +++
+ drivers/net/can/rcar/rcar_canfd.c             | 64 +++++++++++++++----
+ 6 files changed, 177 insertions(+), 13 deletions(-)
 
------BEGIN PGP SIGNATURE-----
+-- 
+2.43.0
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCak/kdwAKCRB4tDGHoIJi
-0nERAP4kLU13u3da3l4qcBWIw/VmYndpJtfFXpU6Zgypf9MYBQD8DwkM+FWeYAyD
-xhlJbInggvLHDfXzemV0LCSaeSizQAw=
-=+U1Y
------END PGP SIGNATURE-----
-
---UX1C2aIXjTZQUR6q--
