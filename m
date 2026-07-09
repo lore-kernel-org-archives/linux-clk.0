@@ -1,159 +1,158 @@
-Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012023.outbound.protection.outlook.com [40.107.209.23])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF05C41168F;
-	Thu,  9 Jul 2026 11:14:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.23
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783595686; cv=fail; b=GpSZUxvi5ABhdWznTA11IrivbOC0aDYau+yOzLPrYnyxfLTbBJYa6t2aMA6WL/IKR0jvmiUchhUvzeX54MbUOnLWQREgmqJU90kYt5+5Yz5F99m+DbXfyeRhmkXSXE+MgPfySK81yg1sbFDxcpaoxVWxRnCaG/H8VTrW9HF+3SA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783595686; c=relaxed/simple;
-	bh=NHT/yHrDyZFiXLb9/g1E/q19vgcUuOE9cDJK/98BrRA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nG1AN2yLVajga5liaZERSII+EH8U0KlaZ0niaxrPS2MVRr80NItSyH+wAPBYRnBN3n2tvNlxZnKKy4MLmF31l4E4cIN6nReGWQw9PyDFAJ9E+NkROEKZ0bJHjHYhfHNvS3Oizg8K4NizR+Fq9SN18RhY+CJ13alebm+I3OM58q0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=TgzF5FYm; arc=fail smtp.client-ip=40.107.209.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D63F3410D08
+	for <linux-clk@vger.kernel.org>; Thu,  9 Jul 2026 11:24:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1783596260; cv=none; b=HvARwxEabpB3Zas6jYGabG6RDVK+1m3R94v7JGSYkHzRSiU1Bb38GpVDQfPfS6tr/V6Nx1tnx50YxL1CI46lmpsAd5oq0TfvxzKco1UJGD+Sm1mWpbKwu3tp/oWkkH/MfKbmT/nW+E/tJEtT6RkRGqQYscbfmrwb65bqS3Grv8g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1783596260; c=relaxed/simple;
+	bh=CN5h3TyOwEIznSft0b8xErmSRMFj5sNT+X4d3LzCde4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=O8k9x6eMPWHZSWIEhLNAUiL/67HVOTAPLIrk4yiF/2uM5lIsJxvwtihgbH3YAWjBfEf9DruTZerkVbWMMlfwm2UIne6qOPJlzsh2/sFzf/QMPdlW3vAmnEozkNh1J272khPmiiqFpoGUcZUTA74IZ+pplLh/15068Lr+4hAbVog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=je4FqlXd; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=NxVqN75Q; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="TgzF5FYm"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XL4ENeNcXCNw3MnZFAXYHVDVgSKCTUmhcKK81ffHRqRs6bqme/pSty0aBvF0mY7h3Nh01+i3cGoYwVEmkiFQjqD1VEau1qY9fLLoLwvFkdzBXTQeegQYEudB3a1Ixe35ipw2GmuvxQOSSoz4RJt5+ZGVxe5mKaKFRJWp+mYt33IfhoTpdGs67hM5IStvARIL/CT+4o8iQS5k75prUWzC9qYzIMKiXq9wLakpu4SpWpCxjEHLSQUM6bmTCMs3x7YZ/SkytWwuzTw0DbbiNfIm8pwwMmwwVLVTN4hBrqFnLwNLvb5yHCt77DT4/DNPgSkpp0dv8swx7koYbNOXvbxMjg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Rj6vtM/CNVLwlXZDOoxN5Gw67hDe+I2kHtCUTuszPuI=;
- b=COleHlS3OpFE8xz7wDSdI24UhjM/TKrbwTfkCfxOVC+D+2q6Dwk/qaWSAWteQXAMmoqMq+sVBwl6gd/Qrr8thqSZkj9Nrj4WN4T7kJmO/JjUPxji+3xMcrKk2EmEX4cbBjVRBRreOFuLyBy6AzVJW/1Ij/eJyVGtM93uU7/S6DlhkiI/5Il0syb4+iUwPKJanD5sZ+7OGLxw/VMLk3UCZt0Vgkj8CIfybptO27DDTXNIvJKM3BLVYWyCBNn0HuPs9GrWYBXe3lMKnlxDn9PV1UKagwWPB5ZlS0RvEddI3T298oQXNXkHTCvuQ30GYs0l7kzIcDn0XHmRQ94QXWxrcg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Rj6vtM/CNVLwlXZDOoxN5Gw67hDe+I2kHtCUTuszPuI=;
- b=TgzF5FYmFzMXkRzWH2z+D2PgPrKYjZg5skJQKw9kJ+NZ/AYlrnNfVpqukKvsv2AnJzVyoHyOjNUvBsnOn7CscpLPEaZ0KHPiz4GsHMgRUY8OQUNt34Nmbz9hS8a4j9OnEMpDgLBktGj10Ga+cPtPEM1tVhEqnHjJ3KiCt9DTo/c=
-Received: from SJ0PR05CA0064.namprd05.prod.outlook.com (2603:10b6:a03:332::9)
- by DM6PR12MB4044.namprd12.prod.outlook.com (2603:10b6:5:21d::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.181.15; Thu, 9 Jul
- 2026 11:14:38 +0000
-Received: from BY1PEPF0001AE19.namprd04.prod.outlook.com
- (2603:10b6:a03:332:cafe::9b) by SJ0PR05CA0064.outlook.office365.com
- (2603:10b6:a03:332::9) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.202.9 via Frontend Transport; Thu, 9
- Jul 2026 11:14:37 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- BY1PEPF0001AE19.mail.protection.outlook.com (10.167.242.101) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.181.6 via Frontend Transport; Thu, 9 Jul 2026 11:14:37 +0000
-Received: from satlexmb07.amd.com (10.181.42.216) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.41; Thu, 9 Jul
- 2026 06:14:36 -0500
-Received: from xhdshubhraj40.xilinx.com (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.41 via Frontend
- Transport; Thu, 9 Jul 2026 06:14:33 -0500
-From: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
-To: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <git@amd.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Michal Simek
-	<michal.simek@amd.com>, Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH v2 8/8] clk: clocking-wizard: Use separate notifier_block for each clock
-Date: Thu, 9 Jul 2026 16:44:03 +0530
-Message-ID: <20260709111403.1579159-9-shubhrajyoti.datta@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260709111403.1579159-1-shubhrajyoti.datta@amd.com>
-References: <20260709111403.1579159-1-shubhrajyoti.datta@amd.com>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="je4FqlXd";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="NxVqN75Q"
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 669BN7Hn1537221
+	for <linux-clk@vger.kernel.org>; Thu, 9 Jul 2026 11:24:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	TwEVV0cJXSPJJj4UNs7yhLlyqJbVus2sdd9Q6EnUG1c=; b=je4FqlXdnHKAyBSa
+	rdZB8gfHe70pTHbPgRgOG9sP8j3x5sts4MwxSNQT7bXIsIM1uGpk3GgjAcVY7c6l
+	3vH1ty293v5pcSZyvTNChSWhVeppFflSyFp7/Q/kqCrdABwf35CmVcCIZGRxIF5j
+	gCNvYeF71p14zRkKw2kmo7VbxxyR7L1xrilY1OQJmR0RbMBM2JY+JXhw0uUfQayX
+	sdmEJgBOnUc99YaSFcxwqEPfyy1LUG9YKsq5FGeHTBSkoVxKwbvCKdq0+EYySPIk
+	srGLRZnvyvlPmqntq2/2ehf0M4qDbZcWoRislMk9rseudcHUtj2h2lH/Bn6YFQCa
+	F2zmGw==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fa1ydtbpf-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Thu, 09 Jul 2026 11:24:16 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-51c069f73e4so4418081cf.1
+        for <linux-clk@vger.kernel.org>; Thu, 09 Jul 2026 04:24:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1783596256; x=1784201056; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=TwEVV0cJXSPJJj4UNs7yhLlyqJbVus2sdd9Q6EnUG1c=;
+        b=NxVqN75QFzInA6sCLgA+zEndUK9tiJ8dXVmB6y/ospDk8RSfmaegCf2bRILn/e9lRV
+         jI2DDN7CEe0wNZe7uq0fKLMqAC4CW8w8niY4CWHHYP9y467RFSV2x/W4LgGW3BhPFY3N
+         onBYTxgJcC+lcyX2mY939783f+62O72Qh/XxsSw7xfAisRXnqYtuZ4Uy3QChDKDTiLKL
+         Hb8ivpks6TB/Mr/BKFs7ZawdfmV03zpVSm9LMOWtQ7uATC6CQayM9UQaUIOtz7xqSiAl
+         EQ81vjM09PfXbu8WWlQBhGzwf1KMKWN6JS4GY7I2uPcOTtfTZSwxr08Itmv/TTMU7gG/
+         eEkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1783596256; x=1784201056;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=TwEVV0cJXSPJJj4UNs7yhLlyqJbVus2sdd9Q6EnUG1c=;
+        b=roQhmQ/fL0LnPLma2i4q2iaM9Zdm1f19VnlfB7W5OOCOgdMi/Xn824NphygTEKvhDs
+         9lb87k3Ar1kcCpETvz1KHoEu9MSsl5e1PAMtmtCTMVi3mP0OegJLP2OwSbEveUwlThAv
+         ZycdxpG1X45vB3udQkAyzS2onzshog4lJWHozrL4rvi7sQsNzk7ZNT7DLfmpuCCVU1a5
+         eTVsBdi9u20gYDQvoovYVMYB9ua7n9QDjTrZwY/zidLo66cLsX6TpOzK71+I3+/ViT9o
+         dfj7DXg2LKiBp1SEFiPfOJL0Z5m08a6hCUeAFOAlpm3fEL5Ty32zcEYP3NBITd1Vz9XE
+         uhsA==
+X-Forwarded-Encrypted: i=1; AHgh+RpREwJKD0x6xmzvcHcbc3qjAxZ9Bt8ddr4wFlwhhNU2I/ULcyL/49UcuYOhsPAiCzwHSgc/TtFycLw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxrum+6nqoURWrUZlW+lMUYL5r/WspkVcDdnVIxsQ4UbYxZgDsX
+	4qwJj8rDzGVWp37Ep5GpDa1pVF+0WxZRgZu0NfJk3vfrerQ4Iog2oIKzeOepwwDzOXON0snKNJi
+	t9eVBfoxQKgPvWyCNbPCtuCz66wLtWBkgBfJQe7GNdMS+m4Sl/jGMFVlBF5HeTRs=
+X-Gm-Gg: AfdE7cltcegbbg5VXtAJm3xSqRm6FjWzwHTUdSw2MAk27tQsl1MQVdLKBNCS0H1KErB
+	8xDw54shGhxq+mw0iNA+3i6qtCezbn6VVIJXbtm1VymtyqfZp+yMxNSzbK7AZYZqMr7hIF9unbp
+	FYeb8KBuw88VZ+aMYcwr0BXEDPh+nP1W4EML+3r8NeGR3uAGe4HC409RKnLMP1zfsIaipn84m2B
+	MGMAa2jDI1iFA5GSpNONagm6wotUL5MzLpPdJ+o0SNlpENfBnN+Or8wiZ8/1kRkVAVmewJex3v0
+	/7hI7/MlQgOruYqkYQ2cv0Z6LJkDTqqsfyTf3d3bGJ5OjuwYiPp0dMSCVHjUC4C9+w4ak+CYfak
+	NnaxqJVmq0Xev4xNzlN6bWn+hDL0aLfz+GRc=
+X-Received: by 2002:a05:622a:101:b0:517:8999:6c50 with SMTP id d75a77b69052e-51c8b512840mr54792391cf.8.1783596255908;
+        Thu, 09 Jul 2026 04:24:15 -0700 (PDT)
+X-Received: by 2002:a05:622a:101:b0:517:8999:6c50 with SMTP id d75a77b69052e-51c8b512840mr54792201cf.8.1783596255474;
+        Thu, 09 Jul 2026 04:24:15 -0700 (PDT)
+Received: from [192.168.120.193] ([178.235.128.140])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c15c3f5ca3fsm291927166b.51.2026.07.09.04.24.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 Jul 2026 04:24:14 -0700 (PDT)
+Message-ID: <97ee8a04-6278-45a4-80ff-29f1b38e0ddb@oss.qualcomm.com>
+Date: Thu, 9 Jul 2026 13:24:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BY1PEPF0001AE19:EE_|DM6PR12MB4044:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9b97bd61-d1e4-4397-6813-08deddab43c2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|23010399003|376014|36860700016|1800799024|82310400026|22082099003|18002099003|11063799006|56012099006;
-X-Microsoft-Antispam-Message-Info:
-	Ko47kh/lPqGZ+pPUkf+njxXyhSgjJJg2QTXhMN1vEB8MKpqGRupZ3MsJsu3Kpivo0PQ8BkupoKEEPLS6ldyFLDDwcuw86G1PmYH+9Ix3N8vxjWzut/koHqqHOipt3Pf5BDYPFfFT6Qb8cmbLbYQ1apAuxM9cC8WGkRn6tepHhWTAjeb0DHQEVy+pbabmYcRj0pZ19STsM4QdJxIWCfCxn+eupnWR1kazlMYcR5h4tWAss27a2p/kylw4j0jKRYewIFvMr1Qp7YaOZ5OWJqBmHJyNkogXCR3sFyVrR4S6KTK/D2ELwikrGRjjBnR3lDJDccmqiIdJDaIUKEN+RY0DcWIm49DbeEb94UVgIhvubqLhyo39AXS0XFVV3BML98LshuDPlP2KhBKmIcjpcVbITUR+DfOfslRjZ2SauaL52jGBY0BDGr3moGrAd3naSKkb87Sial0Z+5pZIYI8ZKAC8SS30zzKHIItoncwkPPLHvBHk3mTk2R5c7dGdQnJ9wIXi1ihaMm2TFEQ/hyTIRBJC0ARTFe2kuJ3t7l4HomJpO8mepf/ao04UKNZcR1vn0cmYuPdyE+kKr5b46PHTCf1bFUj6gQY3G6IVhXUhT+9xBtDwAqh4E0L1ELv7ThlEYpqW9PxutXsiMFAXaDDDWxuuIv4KXWCj+0aDnyILvXJSRJqOPdtTz/MX4jHfRDkr/0XVJ5gVEyMegV7erKekgZthg==
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(23010399003)(376014)(36860700016)(1800799024)(82310400026)(22082099003)(18002099003)(11063799006)(56012099006);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	33+yvTnOm4CB3jJsON1uMnMVT8e2Nyv54la0khanzZElYTOMIFILA7jDuy8uUfmml2jttGW3VU7EvZ+QDaBfbEqzqokvfODBGfZif1/Jhnp4vOsmRKeSopyASKcN5C0QvroFA/+Fhl67oy36g5PJkvU552WnAuqTJRUeM0cdKJ7ry2UGKRyAPOw7TOZXhcw5t0ibGr3Wr+PCfOBPY9LvzIWozpQWcJ2CXty28tEJ6oeeLAMmF8eVo20kDikWDAE5+l8PzirgyaQL63GG5gQZbXauMsO+Zn6S12v2nnw64bw88pyXl7XrVbMczkKqWLsUjLIZVJZVMCi7I/qoDL03eBJXzvoSsLQWB0yUCogNoYNiqbileddkbemLuk8bBa9E3EtzlCUmt7o+wmRJSIFijYoJMe9USRXYF07d+6evXPbCw5e29SpltyMqoVDTzvns
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2026 11:14:37.8506
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9b97bd61-d1e4-4397-6813-08deddab43c2
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BY1PEPF0001AE19.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4044
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 5/7] clk: qcom: tcsrcc-glymur: Add Mahua QREF regulator
+ support
+To: Qiang Yu <qiang.yu@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Taniya Das
+ <taniya.das@oss.qualcomm.com>, Kees Cook <kees@kernel.org>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-hardening@vger.kernel.org
+References: <20260708-tcsr_qref_0708-v8-0-62c42b5fa269@oss.qualcomm.com>
+ <20260708-tcsr_qref_0708-v8-5-62c42b5fa269@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20260708-tcsr_qref_0708-v8-5-62c42b5fa269@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNzA5MDExMCBTYWx0ZWRfXzKMTAWwWVmMG
+ zbinLqkRtHR8wsLc0jFf6QkxDEPf0dOl/tc1v3beDDdmrZu8v1Om17EV46zLVjmPo8fuUaJrg2t
+ cbXMyolzCo/tc4vnrrhRJr8advwoExc=
+X-Proofpoint-ORIG-GUID: pHfDeexEVGzvzYx2SrxbzN1JC5l7uXaA
+X-Authority-Analysis: v=2.4 cv=cOLQdFeN c=1 sm=1 tr=0 ts=6a4f84e0 cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
+ a=IkcTkHD0fZMA:10 a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_K5XuSEh1TEqbUxoQ0s3:22
+ a=EUspDBNiAAAA:8 a=B6dnFezVkazQL_yb00wA:9 a=QEXdDO2ut3YA:10
+ a=kacYvNCVWA4VmyqE58fU:22
+X-Proofpoint-GUID: pHfDeexEVGzvzYx2SrxbzN1JC5l7uXaA
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzA5MDExMCBTYWx0ZWRfX5eBvEI4D9c7s
+ tHYgQ7RTAO9i6EYgM8N9RsTBsyZwu9+9cYPKwl4IWxT4Z5cSnUIV6H/CqVVjXY7Egn0lBwKuMlC
+ Kz8Hsjhq9Z9Ri9pP2xatEo43BJUB3IfHgrFNaaiFN9LlzMoVVZ1vALwWWJR7247e35sjs7HBSLy
+ 7rC5G4czPQ4i3qWEq0cgHg0L1hwBQVO6bvHXUQDNYooyB0MzdTqNkT4y8gGHsGvOF/OoHC/4HaU
+ lkp0fNXorYrrvZGogRMVqxFNl7JKfZ/THL2QdOeKLDT6PGLH219mOanPfWd/pe5qG0zkcd9yr4O
+ GmdWRZR/xrmjk2M8dWLQ4ikG42MKkUCu/DRiFh/lnah2v17NH5q2lY5h0hOeUHfDLJemum9uL/7
+ zQeT2RekY7vj5q4xOG9476cG9x3LUxAaYCh1ufZTx3j85KO/tYbWAWZrxgvatwNjWIljypAALev
+ mHrsF84ddc33vsQJ5Hw==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-07-09_02,2026-07-09_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 clxscore=1015 priorityscore=1501 bulkscore=0 spamscore=0
+ lowpriorityscore=0 phishscore=0 suspectscore=0 impostorscore=0 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607090110
 
-A struct notifier_block has a single 'next' pointer, so registering the
-same instance to two different notification chains corrupts the linked
-lists. Use a dedicated nb_axi for the s_axi_aclk notifier chain.
+On 7/8/26 12:02 PM, Qiang Yu wrote:
+> Mahua is based on Glymur but uses a different QREF topology, requiring
+> distinct regulator lists and clock descriptors for its PCIe clock
+> references.
+> 
+> Add mahua-specific regulator arrays and clk descriptor table, and use
+> match_data to select the correct descriptor table per compatible string at
+> probe time.
+> 
+> Signed-off-by: Qiang Yu <qiang.yu@oss.qualcomm.com>
+> ---
 
-Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
-patch added for notifiew_block
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
----
-
-(no changes since v1)
-
- drivers/clk/xilinx/clk-xlnx-clock-wizard.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c b/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
-index 289c32ab5cd8..bcbfb4341dba 100644
---- a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
-+++ b/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
-@@ -126,7 +126,8 @@ enum clk_wzrd_int_clks {
- /**
-  * struct clk_wzrd - Clock wizard private data structure
-  *
-- * @nb:			Notifier block
-+ * @nb:			Notifier block for clk_in1
-+ * @nb_axi:		Notifier block for s_axi_aclk
-  * @base:		Memory base
-  * @clk_in1:		Handle to input clock 'clk_in1'
-  * @axi_clk:		Handle to input clock 's_axi_aclk'
-@@ -137,6 +138,7 @@ enum clk_wzrd_int_clks {
-  */
- struct clk_wzrd {
- 	struct notifier_block nb;
-+	struct notifier_block nb_axi;
- 	void __iomem *base;
- 	struct clk *clk_in1;
- 	struct clk *axi_clk;
-@@ -1318,8 +1320,10 @@ static int clk_wzrd_probe(struct platform_device *pdev)
- 				dev_warn(&pdev->dev,
- 					 "unable to register clock notifier\n");
- 
-+			clk_wzrd->nb_axi.notifier_call = clk_wzrd_clk_notifier;
-+
- 			ret = devm_clk_notifier_register(&pdev->dev, clk_wzrd->axi_clk,
--							 &clk_wzrd->nb);
-+							 &clk_wzrd->nb_axi);
- 			if (ret)
- 				dev_warn(&pdev->dev,
- 					 "unable to register clock notifier\n");
--- 
-2.34.1
-
+Konrad
