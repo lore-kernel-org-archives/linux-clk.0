@@ -1,265 +1,133 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773F842EEDA;
-	Thu,  9 Jul 2026 13:43:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C03103F39E9
+	for <linux-clk@vger.kernel.org>; Thu,  9 Jul 2026 13:48:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783604601; cv=none; b=V4SXjZXJ9rKfBEMKG0DzcUTSafJDX+vsCk/Iex5zHoCkcw+DXAiGRm/dETr0zj4FaArE+gkXDLTL6t2SvTqJiNLeEziiOke1iO/I1CFlhqrs7RTIDGTbUYU9FjYGYD1rR8kkyaAylrgblFIpkN6x6O1ymASnFUOXRnhFCOdSIDw=
+	t=1783604911; cv=none; b=CL3Ux1+gxUmO8JmrOghY66xy13AS3litIiocM6531GVJ5QwbGJ38E6AwyPF4YbyJUKBfdkC4aZZCaPcJRsvI6yyMD0gWD6CWENFJ/BfP7RELrMWm4hokWnO6QvTsHuUqgnQTkm3GWUGeJuJsaO99z8z2i2ZCOEyP4gDqreBw6ps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783604601; c=relaxed/simple;
-	bh=Zh06wlUmAIC1iukSKooFVWp0hF17e98otRnRFvdgrT0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jCe3MWJHxmGMIAl2q+xpLv95Xy4MSQEFLfRhlL+9IYqk5ZjvGLebn7MIh9YkPXEthF/1x5vlFxUSSrWEQh+JRbafU+Va1bFBWDs2OlrsiWnv1RaonNg/O+MXomC05AycyxxU6fq8yR83sphCudjeGsnLqdM0LYWBCkIhHHecQXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=njIjOfih; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1783604911; c=relaxed/simple;
+	bh=oTfYNfnr1dfMrSCaR0BJIVASu18bHLDiq6Qq+l4pxOg=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qRn2KlYM8YrPBD46o01AJaswgTeJE6PueUTl2TC8GiN+ZpnsNRu/FwXHg+zMwQAjcyn5GCkH8e8easmr8hU6WFcZPOqVTgX62etaJbB6wxXXlwE5RE+KrLWnxj9C1RUfJv2VAV6skHRVKsWEfCM4MBtVIaxG/uWV0YxJCg0PDdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=liQqdDtS; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="njIjOfih"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1783604597;
-	bh=Zh06wlUmAIC1iukSKooFVWp0hF17e98otRnRFvdgrT0=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=njIjOfihOr89WM74Ecc4NIH3sr+XpmV/usKRBODEOeR6wzO4I9hj8cyvcOl+ofhh8
-	 T9LJNgPTt6SouBPpCvlULnW3MrFNImrNLJIidZmUUoKzBhnBOtXkXggacR0fzDkX8Y
-	 8Biao1yKPeRLwGCTbO/c23QLEmevYRqFrmDR4xKyTXi9OIzVMY6kZsn+B3GACsXu6U
-	 J0zxNs6sbX9oePAGjTouKObhtiA9XxJu8lIxi1fUoiamDMkyT5V8R5SjmQBNQm3Jlx
-	 UfeCRigwdMUwpLwD7xOnx4ZF2Pn+tvwpsD/dsyKA7uE4nl//4podEQIKIS9s2ff1O2
-	 SLW5X7ZWG/nCg==
-Received: from yukiji.home (unknown [100.64.0.131])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: laeyraud)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id AFFDE17E0CDE;
-	Thu, 09 Jul 2026 15:43:16 +0200 (CEST)
-From: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
-Date: Thu, 09 Jul 2026 15:42:58 +0200
-Subject: [PATCH v2 18/18] clk: mediatek: Add MT8189 ufs clock support
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="liQqdDtS"
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-4703bc0a99aso1140639f8f.3
+        for <linux-clk@vger.kernel.org>; Thu, 09 Jul 2026 06:48:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1783604908; x=1784209708; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:subject:cc:to:from:date:message-id:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=RfxNiyfGalcXxYCujFTGDOzvlUn3o2Vt8N79ndZYWsc=;
+        b=liQqdDtSfbk1Yzi6PRyJDbYwSIPq1gusHrdUX95hiY4xeGot7R5IZu8qlF1obnhzSC
+         3HnPNUepfdva0sxbXsxgy+fLEl6MwvS9RRqI50gBlnRKOBSKWGQ1SdBQauz5vbyGG+hz
+         WWmfK0FV7QUTXs0hpfAi0qfvPdwOFizepAjOwbU1wXzCN4gpQwxMfTiCFwBIYwi90lv9
+         Obm9tpNHK0Q7Z96mkitzKylZTHVR/OxrsDdW2Ux33Q74vlzsaer/25xwXt5qECS4BKvD
+         mq1gr2WQG3qWgVjzwkXeobzjhUOZsv6+j3gLGm2iP7eFAihGx2jDTXpICvR05Bki8Rc7
+         3OXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1783604908; x=1784209708;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:subject:cc:to:from:date:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=RfxNiyfGalcXxYCujFTGDOzvlUn3o2Vt8N79ndZYWsc=;
+        b=XxkkdWFk6xvvmhFwLbrwXreRePpXutJoW7MYKv7vQNpdm0PL0Y6nlw0PlM/SahWPU6
+         SR/c07PlkOIq/zoIuzaA1RwEAFGy/9GRnscIlZwPcvR6tSFjZMMoNjWBU2S9LwNuL9De
+         LQmMHyF6vb6wcKM0J5WftWaxfoYjkzpW1LudNuRsOiMgx0SlEeLqw2UtZoXA2JiVf+nR
+         ePYiW4WsAn6fqvC59xy6x5knYoM3C8dQ76J1Zz5D1cz2/Zpl9HYvQVQoecUfTKL7dYad
+         M9wdlIuT/lZVXs0lPpoZ1L9TJMyxjKax+nJOQh1DnHiUC3VgLcC+bV1F9XViM7vG6jda
+         zGBA==
+X-Forwarded-Encrypted: i=1; AHgh+RrXcLAAg1Tg6QkhULZBXF7EvOQB1vIqCiJJuGi4jYmWsSy5i/LKk6oIaf9pNIaYG5EZDvxiGHzXgK8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDIwaQ1+lA/XGri9Rfql/Qca22G9ATfTJ4xrNHyTSZPW5IWcgx
+	XA5FMILf/dOZWDjveEn0pj9VQquYdAjMK8pFkKzVS7Nmle1CYrsMgJ+N
+X-Gm-Gg: AfdE7cn9C6Rn1CjgG0dIsL7neTjkQDXk/KiEVhdFtP0Iq2/Rfi0mosy1Jizxn5QFElU
+	kKWtPI/5ZZCwzw9ym6Y004+kAdIe9Vh9uS4fbdMYaf1O7sT3GOiAr4KV9Vm0GGDrS8WkC/70wJT
+	M8DCJA3XkPL1ChqHM66VmhCd0wnKjQ/5jo6glk8Y9LIMWcef+8BlcDvkHHYDr3WvavzEbOxwzGh
+	+bZQ8jStSRhmD7nO+2qzDPMFZOVyu3sTKtTA+DLWE0x/TRkLvSkdDu2WaurpFTRX2N90CjnISMm
+	AE4+2s9Y/LXHxdDUTcQLVhkvu99E89sDnIudc5sJcbV6GVhQCCqP5Om6UyJ96SpvNYtQlGV4Xem
+	MGifvc2jJY/DndjAc9UJS7lHY2+LSZ7xcyy2oyJ61HXRCj4VO/ZH2ha1R4zd9KV4lUOjOkMU5hM
+	JuyoOvF6E9336ozH9xVs+RGvH0EHWoyJa6aIwa+jQRTQNx2VVuHpjRA9uVl586d9U=
+X-Received: by 2002:a05:6000:4613:b0:47d:ecaa:3f60 with SMTP id ffacd0b85a97d-47df077b2dbmr7296836f8f.46.1783604907964;
+        Thu, 09 Jul 2026 06:48:27 -0700 (PDT)
+Received: from Ansuel-XPS. (host-95-248-227-210.retail.telecomitalia.it. [95.248.227.210])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47a9de1d8cdsm55329868f8f.1.2026.07.09.06.48.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Jul 2026 06:48:27 -0700 (PDT)
+Message-ID: <6a4fa6ab.b2781ae3.385c0f.d696@mx.google.com>
+X-Google-Original-Message-ID: <ak-mqjsTP-TDVfti@Ansuel-XPS.>
+Date: Thu, 9 Jul 2026 15:48:26 +0200
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Brian Masney <bmasney@redhat.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: en7523: reset PCIE HB on init for AN7581
+References: <20260708084045.8380-1-ansuelsmth@gmail.com>
+ <ak6AYe5ZZrzyf1UB@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260709-mt8189-clocks-system-base-v2-18-2926da3db6cf@collabora.com>
-References: <20260709-mt8189-clocks-system-base-v2-0-2926da3db6cf@collabora.com>
-In-Reply-To: <20260709-mt8189-clocks-system-base-v2-0-2926da3db6cf@collabora.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Chun-Jie Chen <chun-jie.chen@mediatek.com>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Edward-JW Yang <edward-jw.yang@mediatek.com>, 
- Richard Cochran <richardcochran@gmail.com>
-Cc: kernel@collabora.com, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- netdev@vger.kernel.org, Irving-CH Lin <irving-ch.lin@mediatek.com>, 
- Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1783604575; l=7242;
- i=louisalexis.eyraud@collabora.com; s=20250113; h=from:subject:message-id;
- bh=Zh06wlUmAIC1iukSKooFVWp0hF17e98otRnRFvdgrT0=;
- b=mcgvx8ea02XMf1eYBOCqpbqokkWD16lTMmQ+XCN8kN3QIUqNBemzFzRiQuu3JV52pENGAJQJT
- 41M0bVisOZyAYcmJYk9RYVHoGaV47EwGDoaj8FfUME10qXyTAzaC1NP
-X-Developer-Key: i=louisalexis.eyraud@collabora.com; a=ed25519;
- pk=CHFBDB2Kqh4EHc6JIqFn69GhxJJAzc0Zr4e8QxtumuM=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ak6AYe5ZZrzyf1UB@redhat.com>
 
-Add support for the MT8189 ufs clock controller,
-which provides clock gate control for Universal Flash Storage.
+On Wed, Jul 08, 2026 at 12:52:49PM -0400, Brian Masney wrote:
+> Hi Christian,
+> 
+> Thanks for the patch.
+> 
+> On Wed, Jul 08, 2026 at 10:40:44AM +0200, Christian Marangi wrote:
+> > It was reported that PCIE HB should be reset for AN7581 or some instability
+> > or link training issue will be present on warm boot scenario.
+> > 
+> > Reset PCIE HB on clk HW init to handle warm boot problem with PCIe.
+> > 
+> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> > ---
+> >  drivers/clk/clk-en7523.c | 7 +++++++
+> >  1 file changed, 7 insertions(+)
+> > 
+> > diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
+> > index 1ab0e2eca5d3..c450d89bfa96 100644
+> > --- a/drivers/clk/clk-en7523.c
+> > +++ b/drivers/clk/clk-en7523.c
+> > @@ -57,6 +57,7 @@
+> >  
+> >  #define REG_RST_CTRL2			0x830
+> >  #define REG_RST_CTRL1			0x834
+> > +#define   REG_PCIE_HB_RST		BIT(29)
+> >  #define EN751221_REG_RST_DMT		0x84
+> >  #define EN751221_REG_RST_USB		0xec
+> >  
+> > @@ -853,6 +854,12 @@ static int en7581_clk_hw_init(struct platform_device *pdev,
+> >  	val = readl(base + REG_NP_SCU_PCIC);
+> >  	writel(val | 3, base + REG_NP_SCU_PCIC);
+> >  
+> > +	val = readl(base + REG_RST_CTRL1);
+> > +	val |= REG_PCIE_HB_RST;
+> > +	writel(val, base + REG_RST_CTRL1);
+> > +	val &= ~REG_PCIE_HB_RST;
+> > +	writel(val, base + REG_RST_CTRL1);
+> > +
+> 
+> Sashiko has a question about whether or not a delay or a flush is needed
+> between the writel() calls?
+> 
+> https://sashiko.dev/#/patchset/20260708084045.8380-1-ansuelsmth%40gmail.com
+>
 
-Co-developed-by: Irving-CH Lin <irving-ch.lin@mediatek.com>
-Signed-off-by: Irving-CH Lin <irving-ch.lin@mediatek.com>
-Co-developed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Signed-off-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
----
- drivers/clk/mediatek/Kconfig          |  12 +++
- drivers/clk/mediatek/Makefile         |   1 +
- drivers/clk/mediatek/clk-mt8189-ufs.c | 133 ++++++++++++++++++++++++++++++++++
- 3 files changed, 146 insertions(+)
-
-diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-index 919a916f1f4f..34a270a377cc 100644
---- a/drivers/clk/mediatek/Kconfig
-+++ b/drivers/clk/mediatek/Kconfig
-@@ -882,6 +882,18 @@ config COMMON_CLK_MT8189_SCP
- 	  management for SCP-related features, ensuring proper clock
- 	  distribution and gating for power efficiency and functionality.
+Hi Brian, from the test done by me and Airoha with their CI on 10000 test,
+no delay is needed. If we want to be on the save side I can add it anyway
+for consistency with the other code. What do you think?
  
-+config COMMON_CLK_MT8189_UFS
-+	tristate "Clock driver for MediaTek MT8189 ufs"
-+	depends on COMMON_CLK_MT8189
-+	default COMMON_CLK_MT8189
-+	help
-+	  Enable this to support the clock management for the Universal Flash
-+	  Storage (UFS) interface on MediaTek MT8189 SoCs. This includes
-+	  clock sources, dividers, and gates that are specific to the UFS
-+	  feature of the MT8189 platform. It is recommended to enable this
-+	  option if the system includes a UFS device that relies on the MT8189
-+	  SoC for clock management.
-+
- config COMMON_CLK_MT8192
- 	tristate "Clock driver for MediaTek MT8192"
- 	depends on ARM64 || COMPILE_TEST
-diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
-index a3a93a16b369..1aa9f4265225 100644
---- a/drivers/clk/mediatek/Makefile
-+++ b/drivers/clk/mediatek/Makefile
-@@ -130,6 +130,7 @@ obj-$(CONFIG_COMMON_CLK_MT8189_DBGAO) += clk-mt8189-dbgao.o
- obj-$(CONFIG_COMMON_CLK_MT8189_DVFSRC) += clk-mt8189-dvfsrc.o
- obj-$(CONFIG_COMMON_CLK_MT8189_IIC) += clk-mt8189-iic.o
- obj-$(CONFIG_COMMON_CLK_MT8189_SCP) += clk-mt8189-scp.o
-+obj-$(CONFIG_COMMON_CLK_MT8189_UFS) += clk-mt8189-ufs.o
- obj-$(CONFIG_COMMON_CLK_MT8192) += clk-mt8192-apmixedsys.o clk-mt8192.o
- obj-$(CONFIG_COMMON_CLK_MT8192_AUDSYS) += clk-mt8192-aud.o
- obj-$(CONFIG_COMMON_CLK_MT8192_CAMSYS) += clk-mt8192-cam.o
-diff --git a/drivers/clk/mediatek/clk-mt8189-ufs.c b/drivers/clk/mediatek/clk-mt8189-ufs.c
-new file mode 100644
-index 000000000000..85afab04420f
---- /dev/null
-+++ b/drivers/clk/mediatek/clk-mt8189-ufs.c
-@@ -0,0 +1,133 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2025-2026 MediaTek Inc.
-+ *                    Qiqi Wang <qiqi.wang@mediatek.com>
-+ *                    Irving-CH Lin <irving-ch.lin@mediatek.com>
-+ * Copyright (C) 2026 Collabora Ltd.
-+ *                    AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-+ *                    Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/module.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+
-+#include "clk-mtk.h"
-+#include "clk-gate.h"
-+
-+#include <dt-bindings/clock/mediatek,mt8189-clk.h>
-+#include <dt-bindings/reset/mediatek,mt8189-resets.h>
-+
-+#define MT8189_UFSCFG_AO_RST0_SET_OFFSET	0x48
-+#define MT8189_UFSCFG_PDN_RST0_SET_OFFSET	0x48
-+
-+static const struct mtk_gate_regs ufscfg_ao_reg_cg_regs = {
-+	.set_ofs = 0x8,
-+	.clr_ofs = 0xc,
-+	.sta_ofs = 0x4,
-+};
-+
-+#define GATE_UFSCFG_AO_REG(_id, _name, _parent, _shift)		\
-+	GATE_MTK(_id, _name, _parent, &ufscfg_ao_reg_cg_regs, _shift, &mtk_clk_gate_ops_setclr)
-+
-+static const struct mtk_gate ufscfg_ao_reg_clks[] = {
-+	GATE_UFSCFG_AO_REG(CLK_UFSCFG_AO_REG_UNIPRO_TX_SYM,
-+			   "ufscfg_ao_unipro_tx_sym", "clk26m", 1),
-+	GATE_UFSCFG_AO_REG(CLK_UFSCFG_AO_REG_UNIPRO_RX_SYM0,
-+			   "ufscfg_ao_unipro_rx_sym0", "clk26m", 2),
-+	GATE_UFSCFG_AO_REG(CLK_UFSCFG_AO_REG_UNIPRO_RX_SYM1,
-+			   "ufscfg_ao_unipro_rx_sym1", "clk26m", 3),
-+	GATE_UFSCFG_AO_REG(CLK_UFSCFG_AO_REG_UNIPRO_SYS,
-+			   "ufscfg_ao_unipro_sys", "ufs_sel", 4),
-+	GATE_UFSCFG_AO_REG(CLK_UFSCFG_AO_REG_U_SAP_CFG,
-+			   "ufscfg_ao_u_sap_cfg", "clk26m", 5),
-+	GATE_UFSCFG_AO_REG(CLK_UFSCFG_AO_REG_U_PHY_TOP_AHB_S_BUS,
-+			   "ufscfg_ao_u_phy_ahb_s_bus", "axi_u_sel", 6),
-+};
-+
-+static u16 ufscfg_ao_rst_ofs[] = {
-+	MT8189_UFSCFG_AO_RST0_SET_OFFSET,
-+};
-+
-+static u16 ufscfg_ao_rst_idx_map[] = {
-+	[MT8189_UFSAO_RST_UFS_MPHY] = 8,
-+};
-+
-+static const struct mtk_clk_rst_desc ufscfg_ao_rst_desc = {
-+	.version = MTK_RST_SET_CLR,
-+	.rst_bank_ofs = ufscfg_ao_rst_ofs,
-+	.rst_bank_nr = ARRAY_SIZE(ufscfg_ao_rst_ofs),
-+	.rst_idx_map = ufscfg_ao_rst_idx_map,
-+	.rst_idx_map_nr = ARRAY_SIZE(ufscfg_ao_rst_idx_map),
-+};
-+
-+static const struct mtk_clk_desc ufscfg_ao_reg_mcd = {
-+	.clks = ufscfg_ao_reg_clks,
-+	.num_clks = ARRAY_SIZE(ufscfg_ao_reg_clks),
-+	.rst_desc = &ufscfg_ao_rst_desc,
-+};
-+
-+static const struct mtk_gate_regs ufscfg_pdn_reg_cg_regs = {
-+	.set_ofs = 0x8,
-+	.clr_ofs = 0xc,
-+	.sta_ofs = 0x4,
-+};
-+
-+#define GATE_UFSCFG_PDN_REG(_id, _name, _parent, _shift)	\
-+	GATE_MTK(_id, _name, _parent, &ufscfg_pdn_reg_cg_regs, _shift, &mtk_clk_gate_ops_setclr)
-+
-+static const struct mtk_gate ufscfg_pdn_reg_clks[] = {
-+	GATE_UFSCFG_PDN_REG(CLK_UFSCFG_REG_UFSHCI_UFS,
-+			    "ufscfg_ufshci_ufs", "ufs_sel", 0),
-+	GATE_UFSCFG_PDN_REG(CLK_UFSCFG_REG_UFSHCI_AES,
-+			    "ufscfg_ufshci_aes", "aes_ufsfde_sel", 1),
-+	GATE_UFSCFG_PDN_REG(CLK_UFSCFG_REG_UFSHCI_U_AHB,
-+			    "ufscfg_ufshci_u_ahb", "axi_u_sel", 3),
-+	GATE_UFSCFG_PDN_REG(CLK_UFSCFG_REG_UFSHCI_U_AXI,
-+			    "ufscfg_ufshci_u_axi", "mem_sub_u_sel", 5),
-+};
-+
-+static u16 ufscfg_pdn_rst_ofs[] = {
-+	MT8189_UFSCFG_PDN_RST0_SET_OFFSET,
-+};
-+
-+static u16 ufscfg_pdn_rst_idx_map[] = {
-+	[MT8189_UFSPDN_RST_UFS_UNIPRO] = 0,
-+	[MT8189_UFSPDN_RST_UFS_CRYPTO] = 1,
-+	[MT8189_UFSPDN_RST_UFS_HCI] = 2,
-+};
-+
-+static const struct mtk_clk_rst_desc ufscfg_pdn_rst_desc = {
-+	.version = MTK_RST_SET_CLR,
-+	.rst_bank_ofs = ufscfg_pdn_rst_ofs,
-+	.rst_bank_nr = ARRAY_SIZE(ufscfg_pdn_rst_ofs),
-+	.rst_idx_map = ufscfg_pdn_rst_idx_map,
-+	.rst_idx_map_nr = ARRAY_SIZE(ufscfg_pdn_rst_idx_map),
-+};
-+
-+static const struct mtk_clk_desc ufscfg_pdn_reg_mcd = {
-+	.clks = ufscfg_pdn_reg_clks,
-+	.num_clks = ARRAY_SIZE(ufscfg_pdn_reg_clks),
-+	.rst_desc = &ufscfg_pdn_rst_desc,
-+};
-+
-+static const struct of_device_id of_match_clk_mt8189_ufs[] = {
-+	{ .compatible = "mediatek,mt8189-ufscfg-ao", .data = &ufscfg_ao_reg_mcd },
-+	{ .compatible = "mediatek,mt8189-ufscfg-pdn", .data = &ufscfg_pdn_reg_mcd },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, of_match_clk_mt8189_ufs);
-+
-+static struct platform_driver clk_mt8189_ufs_drv = {
-+	.probe = mtk_clk_simple_probe,
-+	.remove = mtk_clk_simple_remove,
-+	.driver = {
-+		.name = "clk-mt8189-ufs",
-+		.of_match_table = of_match_clk_mt8189_ufs,
-+	},
-+};
-+module_platform_driver(clk_mt8189_ufs_drv);
-+
-+MODULE_DESCRIPTION("MediaTek MT8189 ufs clocks driver");
-+MODULE_LICENSE("GPL");
-
 -- 
-2.55.0
-
+	Ansuel
