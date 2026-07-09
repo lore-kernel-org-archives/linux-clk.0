@@ -1,160 +1,145 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5951D426EB7;
-	Thu,  9 Jul 2026 15:49:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A92A42846D
+	for <linux-clk@vger.kernel.org>; Thu,  9 Jul 2026 15:50:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783612190; cv=none; b=C1AJZgjU2rVvxAEi7LnGqaFg32gn6kaonzCCICuRSIFJkF2/sgSUIfIzZoWAWJFANF2JEGPNe5vBRJ2kubqHrkbO8pAax7RjZHxhPHhQpv6wT39scPHWNN34BZu2ZVbueMa4zcMeN/Qxs1/Ifa2R1YaAjicb7twObvN0poqGsbQ=
+	t=1783612233; cv=none; b=WCnj2IF4wglLJcTMgja4PonTdrKNN9JdKa6W2Arf6Z/2nTf+okgVROViDjfXIM1P8IRBFACNmJpwyblkTEiNlET3GmmT6v7griZ9lGt4Xan+4RnaIR/Hfl32MNqRgHZjh8XACyZo5isokPvbLL9lh3WbxlLFYRrIRoGyja7MmCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783612190; c=relaxed/simple;
-	bh=ZsaKwAUaY+JsR6IrwdSMe3xghd912Wa8gpID9dHYC30=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hl0QsuZ/9ZJ1k2z0DOMOqqx8nDVv+/gS2E1XWinXwdsvMY1I0rXtKQGY+tjVwlyg1hxmp7TXmJP4DFp1ayW/NExdich+++M64liRadHE57AyBu6FH0mugehs0uW94K83tWrZXgoCsNBUcfWhDoImK/btO/IotSbk7lB6pgYQ0YQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=evPqTocH; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+	s=arc-20240116; t=1783612233; c=relaxed/simple;
+	bh=eom0WPIbBG5Lak9ChFz39EfdnHARVndwf2X4ZpXwW98=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YxMIvXWkYEM0ZhbDg20XzIlCSm3rrMb9XbKibA7grnn8wClX0N9q7EEAd6/9mV9IuwVCHgkfdutBgzOcegxShy9Yqq7+16b7Zvgmk6a9Ks2uWNMf2J8Jk/9fzPgtLDrGpiSriReWQ+SYqKxJ8IGkHKafEBTLGb2wnIKcPARZRxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SoTo8QRY; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="evPqTocH"
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B76163591;
-	Thu,  9 Jul 2026 08:49:41 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D82703FC81;
-	Thu,  9 Jul 2026 08:49:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1783612186; bh=ZsaKwAUaY+JsR6IrwdSMe3xghd912Wa8gpID9dHYC30=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=evPqTocHRC03pIflm2SZxRRhVRTiFHKTvKcjolKMB239pCjvuYrLCRhAd4L02W3jy
-	 OFtPohxvaG0XD94c3XJ/Bfko/yektPa6o5yoouYGp8VpZFlOjWdSIMlvetlMiXttOV
-	 mwgBG7Zg+hn0jDotXznT+qvyAZDMTiIfgXQkn4Eo=
-Date: Thu, 9 Jul 2026 16:49:30 +0100
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Sudeep Holla <sudeep.holla@kernel.org>
-Cc: Hans de Goede <johannes.goede@oss.qualcomm.com>,
-	Brian Masney <bmasney@redhat.com>,
-	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nsc@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	Stephen Boyd <sboyd@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>, Frank Li <Frank.Li@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Jyoti Bhayana <jbhayana@google.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Ulf Hansson <ulfh@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-	imx@lists.linux.dev, linux-hwmon@vger.kernel.org,
-	linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
-	linux-rtc@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] firmware: arm_scmi: Ensure automatic module
- loading
-Message-ID: <ak_DCuTgF5uTI_Lb@pluto>
-References: <20260618-scmi-modalias-v2-0-8c7547c1be21@oss.qualcomm.com>
- <8c2a4ae3-95cc-489a-a7a4-90a3ee2597e9@oss.qualcomm.com>
- <20260709-spicy-fiery-squid-6eec1d@sudeepholla>
- <dae4deba-7e5f-434e-80ae-89033bdeb793@oss.qualcomm.com>
- <ak-h8oPcL69fCUg2@redhat.com>
- <f05860be-dd75-49f8-b27a-bff7b554e71b@oss.qualcomm.com>
- <20260709-exuberant-galago-of-spirit-1c908f@sudeepholla>
- <5fb236b7-7b99-40fb-b80b-fa7e1dfccd70@oss.qualcomm.com>
- <20260709-exuberant-narwhal-of-correction-7f4650@sudeepholla>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SoTo8QRY"
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-c15e3141d02so1996366b.2
+        for <linux-clk@vger.kernel.org>; Thu, 09 Jul 2026 08:50:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1783612230; x=1784217030; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=AzNulL+Y3yaGtB2zj4UUmjmsfxIxbrKupidFWaMr/Xg=;
+        b=SoTo8QRYzRgHEUewqesNyHLSKMU+2EsHm5msBTW8T3pOQQwRvr/IdtPDiVVrbcr5aj
+         da0ZqE/P/r/vmA8IYiMkWaWovEFNXBEJyIVIAgGakNfRFZz1Cw3+Av8eBJsSFHUnQRGu
+         fYZc2cYEbfAOR7aHlzHhV6muKdaAmppCY0cmm5uWvZLgpN2+0+sthCOAXuDErb6Lbrgl
+         WPMqZAmVlEKmJSuRTnVrJoleRonRhrfb6pbd2LPy5aVqIEeqvm/UVjE9JrAUzs5bQzPq
+         Wjn6ww9AiqvFpnOIGCe7LdrmFrkhH6BGhDRuoeY72378cH/poF643VJFEQKcWaoIb+D8
+         v2SA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1783612230; x=1784217030;
+        h=content-transfer-encoding:content-type:in-reply-to:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=AzNulL+Y3yaGtB2zj4UUmjmsfxIxbrKupidFWaMr/Xg=;
+        b=YDSEkOjdKGZ1wip5qekuKGht3hRO1v3tLfv9kW7FFmOWcy40xREUhDVv47CQdUvFUn
+         Wvso4bQ43gTdQ+aMkDS+KvkrCTFPqX7VuKWPj8JdtZzgC3ZamF2Gv9A0i/BJCj1Rnkqw
+         LNFPwp8UwSr28LTdzkeI0/wE+Nfp9AJTSr8683mqcx+Xbu0o1gU1MwDYio0wfivZ3QIR
+         ShJ7DMxIIeT6O7S8UTEOvV+D6cdDrf044ggeKpdC1jz/3cxmG5vZuadmDmaDkpP0tWIy
+         +08tX+fs20Gtz+sNxeFsDBNEK/rHatqrufU/adsfEhpwGWkDwlLMKbBrdONRgrZ9c0ik
+         78jQ==
+X-Forwarded-Encrypted: i=1; AHgh+RrYYsyCdGx9y8rKdr5484irK4P9sJTWeOhg5/SCiVQKJcgoulsBhTE8rAhks81B3yP/l64YbOCPcW0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/met/gTSNU6u338pxk8sZJ1wOdXLJS4KbVFzSsHHcaKmwEBkb
+	Ji1vslePp9pPJyOWA0PRAb3qvStxxFwdK5ryZT+u7s+D1GwfHax78Z0G6w7ZyuRbNB8=
+X-Gm-Gg: AfdE7ckqzx2wqalIrzeaASDda+I+aeU5sjcPp1QjvspKHIfbugAW6OfUQkhq1P21ro+
+	iE8pZ3ScwyyUgWlOU0NXP/2gqFcLHL/OxFArNVpU23ECHjQ74cGgx4bYhc4+jPzQzZ7fZXkN+Y3
+	KLdfQ8yR9Xcu7RZn8owokJ/J+gLsyKdbZjSAjUPGIHqjj9CGnbLygFIggPkPfY837ysdhW/1r36
+	lXfsrpdpeD+98kL4dQIWm2OZ/Da4Q9bwXSzq/dF9qS1yEaE6OF8VqniryUZjQX7JTRMwUMAQxdO
+	tgzOUgPkFN/rXZx8EnEUfSQ8wc8Ph43Rhe0HGtenCSNRzaQskovuJ84CiHdQedLzugb21mKOLVt
+	rhPWVKTwJwMs5EEUSI/IIo9UubnKRDF3QQCZTDgMvaPGVX69cvhstnVbtQEjsmK/CQIkaufcwOv
+	fbr9nSmeCeac8ucMJu2wk+28kc
+X-Received: by 2002:a17:907:2684:b0:c12:cacc:92c6 with SMTP id a640c23a62f3a-c15ce229e98mr373985966b.59.1783612229849;
+        Thu, 09 Jul 2026 08:50:29 -0700 (PDT)
+Received: from [192.168.0.101] ([93.107.71.88])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c15d4bffdbesm284895766b.45.2026.07.09.08.50.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 Jul 2026 08:50:29 -0700 (PDT)
+Message-ID: <abb179ca-a3fb-4bcf-bf7c-9766f939431c@linaro.org>
+Date: Thu, 9 Jul 2026 16:50:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 2/6] dt-bindings: media: qcom,x1e80100-camss: Describe
+ iommu entries
+To: Vikram Sharma <vikram.sharma@oss.qualcomm.com>,
+ Bryan O'Donoghue <bod@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>,
+ Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Loic Poulain <loic.poulain@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+References: <20260708-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v12-0-f8588da41f16@linaro.org>
+ <20260708-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v12-2-f8588da41f16@linaro.org>
+ <HCPw5KYwtYb7jBFED4lssTvcaMo2bK808SHkTWNR77q0DXGPQklaADJXvuyeBrXh_GsEMKdiaaktkzQ9_xeseg==@protonmail.internalid>
+ <cbc1b1eb-0064-4999-b829-2bec451c682a@oss.qualcomm.com>
+ <f307848d-6abd-4e96-9183-36f8599026ce@kernel.org>
+ <85a05836-6298-4111-97ca-80d7e3b3a9c4@oss.qualcomm.com>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Content-Language: en-US
+In-Reply-To: <85a05836-6298-4111-97ca-80d7e3b3a9c4@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260709-exuberant-narwhal-of-correction-7f4650@sudeepholla>
 
-On Thu, Jul 09, 2026 at 03:37:33PM +0100, Sudeep Holla wrote:
-> On Thu, Jul 09, 2026 at 04:31:00PM +0200, Hans de Goede wrote:
-> > Hi,
-> > 
-> > On 9-Jul-26 16:21, Sudeep Holla wrote:
-> [...]
-> > > 
-> > > I need to recall why we moved from static list of devices to dynamic.
-> > > One reason I can think right now is the vendor protocols and their drivers
-> > > But in general it was an attempt to help multiple drivers bind to different
-> > > scmi_devices that have same protocol ID. E.g. the performance protocol
-> > > can be used by cpufreq and devfreq/performance genpd drivers.
-> > 
-> > Note it is ok to have multiple drivers bind to the same modalias,
-> > depending on the reason why there are multiple drivers either one
-> > should detect that it is not compatible and exit probe() with -ENODEV
-> > or there should be some other mechanism to make sure only one driver
-> > loads.
-> > 
-> > E.g. duplicate USB device-ids happen (they shouldn't but they do) and
-> > then the drivers typically figure out if they are talking to the device
-> > which they were written for, or the other device with the same USB-ids
-> > and then one of the 2 drivers exits with -ENODEV.
-> > 
+On 09/07/2026 16:28, Vikram Sharma wrote:
 > 
-> Understood. Sorry I tried to explain with examples assuming you may not
-> be aware of the details, but now reading your response, you have better
-> examples.
+> On 7/9/2026 3:02 AM, Bryan O'Donoghue wrote:
+>> On 08/07/2026 16:15, Vikram Sharma wrote:
+>>>
+>>> On 7/8/2026 5:36 AM, Bryan O'Donoghue wrote:
+>>>>                iommus = <&apps_smmu 0x800 0x60>,
+>>>> +                     <&apps_smmu 0x820 0x60>,
+>>>> +                     <&apps_smmu 0x840 0x60>,
+>>>>                         <&apps_smmu 0x860 0x60>,
+>>>
+>>> I think only "iommus = <&apps_smmu 0x800 0x60>" should be enough as mask which 0x60 is implicitly covering sids like 0x820, 0x840 and 0x860.
+>>>
+>>> Regards,
+>>> Vikram
+>>>
+>>
+>> These all come from the Hamoa iommu defintions in qcom docs.
+>>
+>> Can you double check for yourself and let me know.
+> Hi Bryan,
 > 
-> > >> I wonder if we can just move a small part of the drivers
-> > >> (some mapping table) into the bus code and then just have this work as it
-> > >> does on regular busses. I hope to be able to make some time to look into
-> > >> this soonish.
-> > >>
-> > > 
-> > > I started with that few years ago and we then moved to this dynamic
-> > > device creation. But I agree if it is deviation from the norms(which I
-> > > wasn't aware of at the time), we can remove it.
-> > 
-> > Looking at the issue this is causing for automatic module loading if we
-> > can get back to the bus enumeration code always creating a device without
-> > waiting for the driver kmod to load then that would be good IMHO.
-> > 
+> Confirmed — all four SIDs (0x800, 0x820, 0x840, 0x860) are valid and documented for IFE/SFE. My point was specifically about how the ARM SMMU SMR matching logic handles these with the given mask.
 > 
-> Sure if it fixes the issue for you. Cristian can point out anything I
-> might have missed to consider as he is the one who reworked it and made
-> it dynamic device creation which at the time sounded nice option to
-> solve the issue. We weren't aware that it could cause such issues 🙁.
+> In SMR hardware, the mask field marks bits as "don't care" during stream ID comparison. With SID = 0x800 and MASK = 0x60:
 > 
+> MASK = 0x60 = 0b 0110 0000  →  bits [6:5] are don't-care
+> The four SIDs differ only in bits [6:5]:
+> 
+> 0x800 = 0b 1000 0000 0000  → bits[6:5] = 00
+> 0x820 = 0b 1000 0010 0000  → bits[6:5] = 01
+> 0x840 = 0b 1000 0100 0000  → bits[6:5] = 10
+> 0x860 = 0b 1000 0110 0000  → bits[6:5] = 11
+> 
+> Since 0x60 masks out exactly those differing bits, a single entry <&apps_smmu 0x800 0x60> will match all four SIDs.
+> 
+> That said, I'd say this is more of a preference — both forms are functionally correct, and if you prefer keeping the four explicit entries for clarity or to stay aligned with how the Qcom docs enumerate them, that's perfectly fine too.
+> 
+> Regards,
+> Vikram
 
-The reason for the awkward mechanism of dynamic device creation AFAICR
-was an explicit request by Qualcomm (via its Linaro landing team at
-that time) for the generic vendor module suppport that I was adding to
-be fully self-contained: so that you can write your own protocol and
-add the DT node and that's it, without the need to patch some centrally
-maintained table in the core SCMI stack to add your new vendor protocol.
+I rote-copied with my brain switched off.
 
-Not saying that it was necesarily a good idea to allow that, but that
-was the origin of this....as far as I can remember....together with the
-fact that the internal interfaces were reworked to be absolutely the
-same for standard protocols and vendor protocols...
+Your suggestion seems correct to me.
 
-I thought that the current situation was that auto-loading was working
-for vendor protocols (this autoload issue appeared at first for vendors
-protocols one year ago) then I had made this hacky attempt to make it
-work for standard protocols by forcibly emitting a uevent for all known
-standard protos:
-
-https://lore.kernel.org/arm-scmi/20250203100154.140877-2-cristian.marussi@arm.com/
-
-
-...but that was clearly not the proper way..and all the rework was
-dropped...
-
-Thanks,
-Cristian
+---
+bod
