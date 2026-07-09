@@ -1,143 +1,144 @@
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE7533FA5EF
-	for <linux-clk@vger.kernel.org>; Thu,  9 Jul 2026 10:18:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 667CA3FE67B
+	for <linux-clk@vger.kernel.org>; Thu,  9 Jul 2026 10:24:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783592310; cv=none; b=bK67dih52ZTyqHrWmDpxfpYSUmJcxbbxEtQGJ+JFSUbdF+oZpSh+Pp1lCxEMOASqkI7buihducgJ4BfIV1Y20ry30eNVZdUsKV25/LQVYjY0IH+Q2VPOXz3MzrSiQkt18c2c4W2o5ySe6ZL/Jy1oEJxH/TsZ/vXAn1WAXMpEKiA=
+	t=1783592676; cv=none; b=G6f/eoIDlO2sJUqNWkKKPx1EenGIU9ZEAPXpPhYg4biHNsETCZ9pHZqkadtn4LDdF31bblZ/VcnBsv2/7rbtjN3RHztvGoqm9n2mEyIfUy68qYWyC1YbKMX43b9AccdZKjVqQVw9izGNKXHr5aolow1PYGS8aS/XPA9mabDKcTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783592310; c=relaxed/simple;
-	bh=yaj0W5X6oCbo4WUumWzVBVwkSEBMzMLAlQ6ucjWEMFw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cMvi3YvGA/WE9CJgGA4bPj8qjUfXE+OXTEXwC6T5cDtAEWXdUMeniVA6JzcIhd9iWlQLm8gNs32ggWMWus4YWjt+80N7jJ1EBEShjkFF85SPFTzLuYJM9lje4fjxZ13pJ25YMv/h3/VLwVxGJRTrI4V8KhYagjF8gtyckIG/CrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Fyb7d6Ju; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Fyb7d6Ju"
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5aeb99bc721so179542e87.1
-        for <linux-clk@vger.kernel.org>; Thu, 09 Jul 2026 03:18:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1783592307; x=1784197107; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=zrROiXI0zNUVTumAeHoman/juLPQPZ/xLG3NWye+Z/c=;
-        b=Fyb7d6JuGilbcpyaQj2EFT5YTxZNFhmWDMD7IAaQ4m7antd4YUJ+mmbnARpRawgm3q
-         tebchlo6bQ8mcMikjqs2+92KovTTEsWsN6aGLp3lI0rqyDsvvAlilt6YYqXTaE8xvGMS
-         qmCZHEnLT/CPrk93aJgsWF58cUTe0zW8thZUpdb+U9BpMipZhLPVnymNicwCRrduCka9
-         BzjX6/MnjX22GGp4WePCwEUo62I1YuykEei80m4mcwMVoEZkIFeWcKEWS/Cf5ntE0I8F
-         8aie6gvXzTdya8ZZPy2XewjxQwBeOBczeP9sz4AAUC2C62IMab1+eRPrkTkfT03bbax7
-         AXZw==
+	s=arc-20240116; t=1783592676; c=relaxed/simple;
+	bh=FxUfzWpCleIQzfr8y72a6t+Wi81Fv5S94Ccqz6vyAuY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bfc3AERBBcgFMLdmqTJaXJTa7BJC3OneZViFukiUNFJTd+ncBO0xWXTs77P05cwxOAcnSfIop39OOWzoatVxs5dqt55/Eo6WHX4/LV6IZTKN+dfeBZnLpHtNnD6QyanVKa5UhR/pzE92hQx5//FEICLh+4dZMKWzJzkbWYKgF0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-5bdcbb1f3f2so888886e0c.3
+        for <linux-clk@vger.kernel.org>; Thu, 09 Jul 2026 03:24:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783592307; x=1784197107;
-        h=content-transfer-encoding:content-type:in-reply-to:from:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=zrROiXI0zNUVTumAeHoman/juLPQPZ/xLG3NWye+Z/c=;
-        b=dtTDl8EQop+4LVyhY2wyzb3NwG+WTC7RPb802lU12fLgjkjxTNSiWl3gaQ3zb9INFS
-         qZkt19s5raH6DaGrUhFBq+kEKaAEH1XyUKvMXsuFIXHZsYtLhxha70oCBA+ii14LUVOH
-         2WC1ElNnDGNn5AevIzsdGCGNcnnNd+QMtxiyn4GYlMNUlRkCM3IQ0skgZB1tXrMUaOE+
-         GjInc7WflSpqD5FTDLvGsStqEK8MFGwPmcFexg6keH4w6AQqiM2Pa0MTeH5A9SOts0I1
-         XiHtJN9R60GDqdr9ryQ2Om5uNYv5yTzbO2bLx5LmzSp2OGaONkVYwTYK9W5pDYwCfIPt
-         Te7w==
-X-Forwarded-Encrypted: i=1; AHgh+RoYKZNTkEOS6bGmPxGhJdxRX+1KDfgA4LjIQ41DrlXSGlxUDxWJYaz049pRIp5f7kmEXY8vbiGi5bc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIkKi/q+3KqPZpmX92gEVVb09dfUL/ztr8+OoJG7FF10ZxUIG5
-	jQvGX8/8Pnx5cv8vsnTbDEp/2Dsz8uC5bfXD6dNIcns40hBn7txeWvaYI2qiHrGQ+c86W8i5J6V
-	zOxBpWpM=
-X-Gm-Gg: AfdE7cmmMGUwGfHEx9ar5o3AJbdKaDtojPtvA9qgu8wBha7TQOgX4L+FWiQCr4X8B8i
-	IU5DfCCKUb3qmNjzNXOjE+gVks4FeYRNzBVk8Vewtwrwjz9/BjyGXfi0XLfapGUxz9x7qFBnUCy
-	db1RqCwvIiw1rWqQdWyD4a/dYczWfIuzoXIWSW1fcUPeviK7cOT6nLa9CFR8wXKaOgsNm6N2APl
-	91SgvXRH93+wRFFUHOqtg5azHPfL9NORCXigCf5CrCR4TcbFd805zTvT3mupKuSfjVj7jTDtdZK
-	Grbg2r64SBvVKm9RRgyVTSzrIM/5fLBzES1NjkgSJxv+IwUjr6bSqnmrn+5RqC/pE5B8qtoB0e/
-	PsVisz+S9ag8En6eziiAnpSt/QDCOdV+iNteOWRLFFkiBQL2k88Evu5vVJF8abzpJtNNwENh5if
-	o05quJiZqRcqxHUGdZpn+/gRURW8lJP5HPpW6X/8o4fi7VIu8IHFhji8n3QvzoHAf+918=
-X-Received: by 2002:a05:6512:a351:b0:5ae:bf93:d65a with SMTP id 2adb3069b0e04-5b01552c6bamr289400e87.7.1783592306874;
-        Thu, 09 Jul 2026 03:18:26 -0700 (PDT)
-Received: from [192.168.1.100] (91-159-24-186.elisa-laajakaista.fi. [91.159.24.186])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5b0151b89cfsm531244e87.14.2026.07.09.03.18.25
+        d=1e100.net; s=20251104; t=1783592673; x=1784197473;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=s6cZ9HNvj5euq2IsKqnGtW9n38TCf44UpefkQ/0EfN8=;
+        b=r5DJEXgkPYvR+C2isf5YO/RDCS52xU4LeonFvgeUbcv42Xl/cJFBwS5RLn3sG+UG6A
+         PXf4Ifl93rSGgineMvoKRvC1LhKBMdgzcHV83GAmuxsOJndL+7+wYn+HbUZSatMy0+xS
+         +itoGdeZZfz3PwX7L7vm2lkLK24d35vW5HI2ju3OfuBsv0T3f+Ei83dJAHpPuu7tg3bQ
+         b5zZTOUvTScJJYni8FQZQKKM53cA3g+UTfljLWNuW0qLH70YhHnQH3j2jl3lGUuRNTVK
+         98kWNfMsjgJHsqJOdJ7gl3U3VKw5AY1NKU2mCs6D5Ad23FBiCKXUrZOHo7i79rkT5PQV
+         OhfQ==
+X-Forwarded-Encrypted: i=1; AHgh+RrdlO939IeGMvvsSqNw9tTj56o9m8c4LrcFtCR8Vx3nHYUVeZMY93zct5XOhmyyYsqy5VxaYGhhqao=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgeoCIzYNmUGXgQaO/2S3r1lFKbio0syKEBNabBO4CFg2yMf9t
+	VG3xPLIY9MHE2xduAKyqP3B2dBP9GZWYbJzGz5tQXggVW3sQaKeXL+noouNWRfmiwEc=
+X-Gm-Gg: AfdE7ckk1mDtf5O3U5Tdf4fnaUjRv/5woZEMqX8ExU9YRzhRg+SNP+AFBQgO+umgRIM
+	lew8ZaJjFVzKy3C8DD0DUvFIuBuqnRxD5aK6qSwPJ8j7ET8yL2vDsi6QeG9Y9aJL9dTwkMTpI86
+	bUlR7lTnkyYDI5Jv73o8K6oIV0iESpnZl9XjZ+u9u2ja1fx7BXMlhPZA2wnydvcPX1Z/Ry6INJl
+	d6v785UrAqXVFvf5lzeXflwdGp8DbX9SYZQCRgsVcRwlb2/jF9lxJ71pV3P1BYAjwG/hn7fDqDA
+	Vk/fZeo2MGW5VF18fUfiUZ26w9GwGEn2VBaKZYVk65W2xMwW7zx6EwGcNKHuvgzSk5Z/Su6TiiT
+	PWmgGbtAes9n74MW/Di+xmeCe484E1NwFVpCKx0eXIFDNhG98ckEwIcA2b6zyzv0VVShNTSZRio
+	ljk39UVOKSMaoeKPXwGrcMDvlywajPoUxac34rdISpNxrPWgr5/Q==
+X-Received: by 2002:a05:6122:510:b0:5bd:9c71:11e with SMTP id 71dfb90a1353d-5bf75d7d598mr3981678e0c.4.1783592673272;
+        Thu, 09 Jul 2026 03:24:33 -0700 (PDT)
+Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com. [209.85.217.47])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5bf6f5e1191sm3253528e0c.4.2026.07.09.03.24.30
+        for <linux-clk@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Jul 2026 03:18:26 -0700 (PDT)
-Message-ID: <89cc9f43-891d-4ef6-948f-37341c04411e@linaro.org>
-Date: Thu, 9 Jul 2026 13:18:25 +0300
+        Thu, 09 Jul 2026 03:24:31 -0700 (PDT)
+Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-73720e58dafso715136137.1
+        for <linux-clk@vger.kernel.org>; Thu, 09 Jul 2026 03:24:30 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RqJOHZvkfeYWOGn1Gf8kIjbIHb+ggiGVhDDN92WdyyhwRExnfOSk2a6kFQUuV2F1xAcKOEgFX3lsCs=@vger.kernel.org
+X-Received: by 2002:a05:6102:94f:b0:738:531e:a43e with SMTP id
+ ada2fe7eead31-744e00634cbmr4111626137.7.1783592670751; Thu, 09 Jul 2026
+ 03:24:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] clk: qcom: common: Register reset controller only
- when resets are present
-To: Imran Shaik <imran.shaik@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
-Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
- Taniya Das <taniya.das@oss.qualcomm.com>,
- Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20260708-shikra-audiocorecc-v2-0-b320d822cdd0@oss.qualcomm.com>
- <20260708-shikra-audiocorecc-v2-1-b320d822cdd0@oss.qualcomm.com>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <20260708-shikra-audiocorecc-v2-1-b320d822cdd0@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <cover.1783505142.git.geert+renesas@glider.be> <dca2c4940ba38b897f04b6fb67591de9835900e1.1783505142.git.geert+renesas@glider.be>
+ <59725f93-5269-4b0e-8633-48821219877f@mailbox.org>
+In-Reply-To: <59725f93-5269-4b0e-8633-48821219877f@mailbox.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 9 Jul 2026 12:24:18 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXCooODm3YuE1JjZJAc2BeQuD==kWbA+ZzpXRA3fqa0Vg@mail.gmail.com>
+X-Gm-Features: AUfX_mzHlNNTYZ42llQz3ksPLOjU-3fWPe_bQZCByAo9mLJpSl17fS0OhOffgPc
+Message-ID: <CAMuHMdXCooODm3YuE1JjZJAc2BeQuD==kWbA+ZzpXRA3fqa0Vg@mail.gmail.com>
+Subject: Re: [PATCH v2 6/6] arm64: dts: renesas: r8a78000: Add MDLC nodes
+To: Marek Vasut <marek.vasut@mailbox.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, Ulf Hansson <ulfh@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Marek Vasut <marek.vasut+renesas@mailbox.org>, 
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, devicetree@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 7/8/26 21:25, Imran Shaik wrote:
-> Some clock controller descriptors do not define resets. Avoid registering
-> a reset controller in such cases by checking desc->num_resets.
-> 
-> Signed-off-by: Imran Shaik <imran.shaik@oss.qualcomm.com>
-> ---
->   drivers/clk/qcom/common.c | 24 +++++++++++++-----------
->   1 file changed, 13 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
-> index eec369d2173b5ce24bc1ca860d2ac1bbdce04524..be9b6ebb2fffde05e3f209571c53b601d823d479 100644
-> --- a/drivers/clk/qcom/common.c
-> +++ b/drivers/clk/qcom/common.c
-> @@ -359,17 +359,19 @@ int qcom_cc_really_probe(struct device *dev,
->   		qcom_cc_clk_regs_configure(dev, desc->driver_data, regmap);
->   	}
->   
-> -	reset = &cc->reset;
-> -	reset->rcdev.of_node = dev->of_node;
-> -	reset->rcdev.ops = &qcom_reset_ops;
-> -	reset->rcdev.owner = dev->driver->owner;
-> -	reset->rcdev.nr_resets = desc->num_resets;
-> -	reset->regmap = regmap;
-> -	reset->reset_map = desc->resets;
-> -
-> -	ret = devm_reset_controller_register(dev, &reset->rcdev);
-> -	if (ret)
-> -		goto put_rpm;
-> +	if (desc->num_resets) {
-> +		reset = &cc->reset;
-> +		reset->rcdev.of_node = dev->of_node;
-> +		reset->rcdev.ops = &qcom_reset_ops;
-> +		reset->rcdev.owner = dev->driver->owner;
-> +		reset->rcdev.nr_resets = desc->num_resets;
-> +		reset->regmap = regmap;
-> +		reset->reset_map = desc->resets;
-> +
-> +		ret = devm_reset_controller_register(dev, &reset->rcdev);
-> +		if (ret)
-> +			goto put_rpm;
-> +	}
->   
->   	if (desc->gdscs && desc->num_gdscs) {
->   		scd = devm_kzalloc(dev, sizeof(*scd), GFP_KERNEL);
-> 
+Hi Marek,
 
-Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+On Wed, 8 Jul 2026 at 23:56, Marek Vasut <marek.vasut@mailbox.org> wrote:
+> On 7/8/26 12:15 PM, Geert Uytterhoeven wrote:
+> > Add device nodes for the Module Control (MDLC) blocks on the R-Car X5H
+> > (R8A78000) SoC.
+> >
+> > Complete hardware desciption of all (H)SCIF serial ports, by linking
+> > them to an MDLC for power domains and resets.
+> >
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> [...]
+>
+> > +             mdlc_ddr7: system-controller@e8380000 {
+> > +                     compatible = "renesas,r8a78000-mdlc";
+> > +                     reg = <0 0xe8380000 0 0x1000>;
+> > +                     #power-domain-cells = <2>;
+> > +                     #reset-cells = <1>;
+> > +                     bootph-all;
+> > +             };
+> > +
+> > +             mdlc_hscn: system-controller@c9c90000 {
+> > +                     compatible = "renesas,r8a78000-mdlc";
+> > +                     reg = <0 0xc9c90000 0 0x1000>;
+> > +                     #power-domain-cells = <2>;
+> > +                     #reset-cells = <1>;
+> > +                     bootph-all;
+> > +             };
+> > +
+> > +             mdlc_rt: system-controller@19440000 {
+>
+> Please keep the list sorted (0x19440000 should be before 0xc9c90000).
+
+These are sorted by instance (Module Number), as per Table 18.1
+("Target Module hierarchy of Module Power Gating and Module Standby")
+in the documentation.  This order is indeed a bit odd, as it differs
+from both alphabetical label order (unlike e.g. hscifN), and numerical
+unit address order...
+
+Any guidance?
+
+> > +                     compatible = "renesas,r8a78000-mdlc";
+> > +                     reg = <0 0x19440000 0 0x1000>;
+> > +                     #power-domain-cells = <2>;
+> > +                     #reset-cells = <1>;
+> > +                     bootph-all;
+> > +             };
+> With that fixed:
+>
+> Reviewed-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+
+Thanks! ;-)
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-Best wishes,
-Vladimir
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
