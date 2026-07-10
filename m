@@ -1,142 +1,103 @@
-Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42981405C47
-	for <linux-clk@vger.kernel.org>; Fri, 10 Jul 2026 11:02:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77B6841C2F1
+	for <linux-clk@vger.kernel.org>; Fri, 10 Jul 2026 11:45:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783681377; cv=none; b=C802Qa0oO6xJG9TjrNU+KB6LSQgw1fFImInatJeX/jtncCmNrFkfm6p9utz2wLelLxvorO8I/Hr6fSAIquLulr0SpisjQdW4gJnHFuj23Ag2CLNjDkR18k7MgkFNyf8rxIJRpDVK+It4Oiig5MhtHMahfZaY4cI3oogLaaR/pvg=
+	t=1783683928; cv=none; b=cO8E7UoL+NXceLuzAvmhOXD2nZRsF4n7xqQ6g67AlDDBGyzYtFnSOAtcF7hQKDNJD4XnHcOuQ0vBbWTkLap3u76AzYePf02GjuO+D1uPsOQO7qqKvXgu0Q80hRdZMPT2JSy4l2umzOMLAuBI8iQbQjE93gPwE1sgXjhjiJxJ/d4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783681377; c=relaxed/simple;
-	bh=TAoC8AtqfvyrcOiH125Z48ckCbhqCjSDAUjYBMGFx+c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ujuL1Q2Q4b0pGIPLktXAKZOikIRA4D33IiZ1p12GbOAYFFkJ5SgS3EWRoqdDoAYzLhPYse78HIu8RzeAjbiU3JK/tRX+Whwl3YoeMEndTXmKHPWcPWp+VRUFwvD/JSMRxp+rINQUpfYrCVezb9LJBH9cjdTcLpvRiLXoaAbkUJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-5bdd0779366so203407e0c.1
-        for <linux-clk@vger.kernel.org>; Fri, 10 Jul 2026 04:02:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783681372; x=1784286172;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=MuUmGqSSA58rP0nRidv37IIoymAVqS6FDOb1XQHbyds=;
-        b=TBhfmT2RiTihDHOXIcHBylRJ9zt67vOTVJ3JJLegcNoeQYfSM2J85JeuK1vZ6C1CVI
-         KbFdG1bQuoepcXrHUKw9iy6OYJJBavlC0LFqYJMU3FHp3EYufS8OJd2fyveQ/lvSBRe8
-         eZYjEQZEKzPwDO9Jz2msQthEADsM+zDa5SfalZK3WMc5vwx4U3Md03ZyTc342Co9XTtX
-         5DDvB8kUkMHV0CqMNmlm0eDRjmhjHfGFKJFa+UvvnfrWfjTyirhiw1bbkGh4S+GyT8s+
-         X5ZjCW3o1unEty2aCOj/14eGCJc6DhLtUEXH0GsHChS0apBut1lz68s4lw6JlPsvSUc1
-         fPYA==
-X-Forwarded-Encrypted: i=1; AHgh+RohnA2z/JNER7lsyLh2Wm7NzNllGtwquRs0Z3YwQ5k1+RxQ3IS62HeYtD2vEhzh3Wao61qaDJbAcvA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6HRDzuuXCDub8SNpYb0SqU4vREjKbicxrjytsNk1qIRUk1jby
-	4OlPDmeypM0KEtZPT5w9dztQRHlgwfYXEfNhm8asJ+sTyiIUfm4XCzKEw3DPAkkT6MU=
-X-Gm-Gg: AfdE7clXEMTUgqKsNL0r4kF6fUhrZyWLNOZHC2RhTk0s6TmHIOysPm7lWUgaP66Cfe2
-	iVRm7aCDGxN6dGgIdW34TB1SdRwR7TUGGG2mMTw5ZoQIbKNgSXprM8W5BRkfCnyxowvqrIgQAeE
-	JK19glARo9PJyC32vcdPWnjPS3lAu9skzqOxfNzBwWjBDam2+FT2JZxdvmKZPhv/Paao4cRnr5J
-	zEAAGFE+b/0uSuBwS8WH+/18NfU4YA3mkmmR/jie47omAAKSF8HEtg2dOuSVIh+IFyC2vVhq4uJ
-	C0IlWuKmah912V3qz6pLD+6pojXPO+ncNkyJINcNarOIKi7KV8jy/7dNZX/GAE057G419BVp+34
-	mcJUVKktiDuG4XePPyrgopwYaDq+E9NC53lrNVKqzY8rELb69ZpszzWShrEV6LhKGwdfgEbnQ9t
-	VVDlWlKsdvMRYy8UGw+6QWHp6ILtxn5hGUc+4bZCWPA+hEFQbwIA==
-X-Received: by 2002:a05:6122:6141:b0:5bf:93e4:c937 with SMTP id 71dfb90a1353d-5bf93e5351fmr2812828e0c.3.1783681372361;
-        Fri, 10 Jul 2026 04:02:52 -0700 (PDT)
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com. [209.85.222.51])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5bfa62d4575sm1051318e0c.18.2026.07.10.04.02.51
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Jul 2026 04:02:51 -0700 (PDT)
-Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-9696319e14dso303531241.3
-        for <linux-clk@vger.kernel.org>; Fri, 10 Jul 2026 04:02:51 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RrtKk7wkoaZny3b5O5dDGST8b9lmpf+7PKo3i2Ln5t5alx0r0SDheoi730QLcX1UmJhr+eyss6ijUA=@vger.kernel.org
-X-Received: by 2002:a05:6102:5789:b0:73e:9fae:5844 with SMTP id
- ada2fe7eead31-744e0426fd6mr5821388137.27.1783681371174; Fri, 10 Jul 2026
- 04:02:51 -0700 (PDT)
+	s=arc-20240116; t=1783683928; c=relaxed/simple;
+	bh=u5nphNG168GZ/VoM3JlEPFsfbmOIChAwWaJlqtZYhRU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=LvdNI3Puc+DAQkjOwDMrLRENPsdrKNOfVNxiOWCHi8pvVPZP7HA/uEv8hrEizNcotIGXQ9XJZ04003RIHbeP5i9N+BNanrBVwEZDVXAuWZe0A7dnygd9GHUP40tv+yLhFNIG1mEdrPtxyYIZ/MMZv0ab0V0T2jmsZS1hSfbP4pw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=QYTxTAwl; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="QYTxTAwl"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id BFCC54E40D44;
+	Fri, 10 Jul 2026 11:45:10 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 828E560342;
+	Fri, 10 Jul 2026 11:45:10 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0B21111BD0281;
+	Fri, 10 Jul 2026 13:44:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1783683909; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=lNEfnd2GOwK6OV6o3n233rtSH9H6bRRqMfAyW9Ht5sQ=;
+	b=QYTxTAwl8ZZXjQUPTzcKeqjX0JGuQk0ZxPy1WBaHghwxQ14Zbow3vbxZLkweXwy9an4Rrs
+	iF83k5c+2MPNBs52qoP9HCDa10QpUnqxWF+90v+GHdaaFRIU8sH+BsNMsRcfJIPqNhQoj5
+	/JyDADaosgmQ3YFMvJa/694nNHppGxSrixD96m1Z9qWZ3LfzvDacOcUJfbQ3NT4Yzvy90v
+	Gj3FoBW+DOqcbX/E2tByHZxsmKxfTeDAezvKuaFuFlmdgV4016fhRh1xRKFcbAIEEL9mdG
+	Nchh02+7vjL7SK9qqTVdwab/4W5DIfcjRyILYca8ShWQjF4smF+DWQoc438ZRg==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Brian Masney <bmasney@redhat.com>,  Michael Turquette
+ <mturquette@baylibre.com>,  Rob Herring <robh@kernel.org>,  Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,
+  Thomas Gleixner <tglx@kernel.org>,  Olivia Mackall <olivia@selenic.com>,
+  Herbert Xu <herbert@gondor.apana.org.au>,  Jayesh Choudhary
+ <j-choudhary@ti.com>,  David S. Miller <davem@davemloft.net>,  Christian
+ Marangi <ansuelsmth@gmail.com>,  Antoine Tenart <atenart@kernel.org>,
+  Geert Uytterhoeven <geert+renesas@glider.be>,  Magnus Damm
+ <magnus.damm@gmail.com>,  Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+  Pascal EBERHARD <pascal.eberhard@se.com>,  Wolfram Sang
+ <wsa+renesas@sang-engineering.com>,  linux-clk@vger.kernel.org,
+  devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-crypto@vger.kernel.org,  linux-renesas-soc@vger.kernel.org,  Herve
+ Codina <herve.codina@bootlin.com>
+Subject: Re: [PATCH 10/16] clk: Add support for clock nexus dt bindings
+In-Reply-To: <177595635458.5403.1619739189587608339@lazor> (Stephen Boyd's
+	message of "Sat, 11 Apr 2026 18:12:34 -0700")
+References: <20260327-schneider-v7-0-rc1-crypto-v1-0-5e6ff7853994@bootlin.com>
+	<20260327-schneider-v7-0-rc1-crypto-v1-10-5e6ff7853994@bootlin.com>
+	<acqT3Dh03y3JiLLc@redhat.com> <87y0j76p8o.fsf@bootlin.com>
+	<177595635458.5403.1619739189587608339@lazor>
+User-Agent: mu4e 1.12.7; emacs 30.2
+Date: Fri, 10 Jul 2026 13:44:53 +0200
+Message-ID: <87jyr3gjbe.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1783505329.git.geert+renesas@glider.be> <49726acff0fee1c3606e83c4f242ef6aad25b4b8.1783505329.git.geert+renesas@glider.be>
- <20260710-adventurous-burgundy-chimera-b2fff9@quoll>
-In-Reply-To: <20260710-adventurous-burgundy-chimera-b2fff9@quoll>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 10 Jul 2026 13:02:39 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdV=ckONBbTYELPJU8YWoNzdu3PJ95VR8cz+f_7dUeiPUw@mail.gmail.com>
-X-Gm-Features: AUfX_mypDnJ4qFpPLK-a5R1Mbwkbc6yQr178xDsRkCp5yARGuoX_7FuK_KFx-r8
-Message-ID: <CAMuHMdV=ckONBbTYELPJU8YWoNzdu3PJ95VR8cz+f_7dUeiPUw@mail.gmail.com>
-Subject: Re: [PATCH v2 05/10] dt-bindings: clock: renesas,r8a78000-cpg: Add
- firmware property
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Sudeep Holla <sudeep.holla@kernel.org>, Cristian Marussi <cristian.marussi@arm.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Saravana Kannan <saravanak@kernel.org>, Ulf Hansson <ulfh@kernel.org>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney@redhat.com>, 
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, Vinod Koul <vkoul@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Kevin Hilman <khilman@baylibre.com>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Marek Vasut <marek.vasut+renesas@mailbox.org>, 
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, arm-scmi@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Krzysztof,
+Hello,
 
-On Fri, 10 Jul 2026 at 12:21, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> On Wed, Jul 08, 2026 at 12:16:23PM +0200, Geert Uytterhoeven wrote:
-> > Add a firmware property, for systems where SCMI must be used instead of
-> > direct hardware access.
-> >
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > ---
-> > v2:
-> >   - Spin off from "dt-bindings: clock: Document Renesas R-Car X5H Clock
-> >     Pulse Generator".
-> > ---
-> >  .../devicetree/bindings/clock/renesas,r8a78000-cpg.yaml    | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/clock/renesas,r8a78000-cpg.yaml b/Documentation/devicetree/bindings/clock/renesas,r8a78000-cpg.yaml
-> > index 4e23bba334382346..fc499e7cf52e4f0c 100644
-> > --- a/Documentation/devicetree/bindings/clock/renesas,r8a78000-cpg.yaml
-> > +++ b/Documentation/devicetree/bindings/clock/renesas,r8a78000-cpg.yaml
-> > @@ -35,6 +35,12 @@ properties:
-> >        <dt-bindings/clock/renesas,r8a78000-cpg.h>.
-> >      const: 1
-> >
-> > +  firmware:
+>> > Before I left my Reviewed-by, I should have double checked Sashiko. It
+>> > has several questions about this patch. The first is:
+>> >
+>> >     Are there other places in the clock framework that need to transit=
+ion to the
+>> >     new map API to ensure assigned clocks work?
+>> >=20=20=20=20=20
+>> >     For instance, assigned-clocks and assigned-clock-parents are parse=
+d in
+>> >     drivers/clk/clk-conf.c using of_parse_phandle_with_args(). If a de=
+vice
+>> >     specifies an assigned clock that routes through a nexus node, will=
+ it fail
+>> >     to configure because the map is not traversed?
+>>=20
+>> The goal of the nexus node is to isolate what is behind. Are
+>> assigned-clocks et al. supposed to traverse a nexus node? I am tempted
+>> to say "no", but I'm open to discussing this ofc.
 >
-> RPi is doing similar, but I have doubts. It looks way too close to
-> generic "syscon" which is disallowed.
->
-> I think this should be vendor+purpose specific, e.g.:
-> "renesas,scmi-transport" or "renesas,scmi-firmware"
+> Why would assigned-clocks not traverse the nexus node? If I'm a DT
+> author I would think any clock specifier should be routed properly
+> through the nexus node.
 
-The disadvantage of a vendor-specific property is that there are more
-cases to handle for fw_devlink, cfr. "[PATCH v2 02/10] of: property:
-fw_devlink: Add support for firmware"[1].
+Ok, giving this another thought, it may indeed be relevant to apply a
+default frequency which needs to traverse the nexus to be active. I've
+done the same change in the clk-conf.c file and tested with a dummy
+example, it just works.
 
-> Also we have "firmware" nodes, so this might cause conflicts in dtschema
-> validation.  Anyway, the phandle itself is fine for me, just the naming.
->
-> I'll ping also Rob to chime in.
-
-Thanks!
-
-[1] https://lore.kernel.org/de34ac0c52695d92c67cf950b3d8e9b30095d305.1783505329.git.geert+renesas@glider.be
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks,
+Miqu=C3=A8l
