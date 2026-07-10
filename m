@@ -1,63 +1,63 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40F79407CC0
-	for <linux-clk@vger.kernel.org>; Fri, 10 Jul 2026 12:10:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E0FB4279E4
+	for <linux-clk@vger.kernel.org>; Fri, 10 Jul 2026 12:59:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783685408; cv=none; b=PPrCrd9bwe0RyktZw+Vnp1tN7atw7fezeuULUOwamiqX3xJxVqUg47mMMyhj0JgYX9VqggrTE1KZ0sMxHxCg0KaxVFmfQF/4E33uXOpo+WYp005w735JN5iX2tQrTuhDJQlX5LEyLe7mdBj7Z7vDsRZKHGQFspIGTBT1HKC24R4=
+	t=1783688384; cv=none; b=rAuXttD0kZhDhoCehVap2DtDGchFYygp7YG/ZnERfhBHX3V2WgR3+PafTxlzVlsNn3TNH+MQ8VzhcdFdKmiQediWe+T5LSXURV4k75fslR5d/USRJ8cP9iaCcLU/pW5hSz63EF4wgzy/bP5c2mdZIwwiwY7dkOple17jwAmNi2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783685408; c=relaxed/simple;
-	bh=aQwcX9XYj4VW0rglRN9smWthALe2etv1kQSIKdoKzCE=;
+	s=arc-20240116; t=1783688384; c=relaxed/simple;
+	bh=/6sXJuUOctndqmdSaxuO2kvNa2414Xs031qJp2Qo3/0=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=s8kvnbzXtYa+oZfD3TH8l/r5rhmW2dfwer2w67VaulHNYJvaW+VmxkjIgnBFual7Hyz9WLtpssjNoZIcPoh9qRn4bdhwRJyM4YXX6fcxfJLi1g2FuX3az9GjbSvuysZGWVx/cCH0AnGSqHaAYAAVtZa71ir4+splajgf4co5uzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=qBXCa+db; arc=none smtp.client-ip=185.246.85.4
+	 MIME-Version:Content-Type; b=g6zM48+/jzK8TU7AeT7uoAdbfB5qAHinl31rc6+cQXQDpaW/BfaYjWZ9PtyNjNt5XXmao+TH23yMa5wGwPDC63I60YTVwnvVpD902EDuyqa6PagCV/m7dqexYyWmA4W3jhGai81EJNqc9IzTZzyWhUK5lATgf80eq+wd+SReu0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=eBUf2nVN; arc=none smtp.client-ip=185.246.84.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="qBXCa+db"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="eBUf2nVN"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id CAA304E40D47;
-	Fri, 10 Jul 2026 12:10:03 +0000 (UTC)
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 5044D1A0F3D;
+	Fri, 10 Jul 2026 12:59:35 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 9A00A60342;
-	Fri, 10 Jul 2026 12:10:03 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 685E411BD0BCF;
-	Fri, 10 Jul 2026 14:09:54 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 1629960342;
+	Fri, 10 Jul 2026 12:59:35 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7EEEB11BD041E;
+	Fri, 10 Jul 2026 14:59:26 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1783685402; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1783688373; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=gk9jwtLF3KGI28XFf4LplvEp5Vfvp7PmyBj6FTbwmKM=;
-	b=qBXCa+dbAg0BNoCZk3+hs+XRRziKjwAkvc4JhGgW5DNe5/RJIBfvLG7PIV9YVJ40wWu327
-	HwlDB6D6x6OAvhHiGXr5LdSSGbdnVAvwI2oozlhWDK4jX5Libs1WZqKCB/NX1OqKeX/qvj
-	/JgoCoRzLITcujEVYb75FmyyDBuMF+jNxpOL+pM9YoO7NStT1WQ9deuM4RBUVw+1HufR7P
-	QoXJQfuP7mQ0oxSuDOEqKEw3vIxcpCU/2SG4TMU8PHbwSnLF2Bme6b0altUu8FzzGBGP6l
-	ITuhPTj+bYbZD0FFGJCMpOqGrDNidsELwyq5ggS51pqW576QB7qdwcP89awUjQ==
+	bh=tVE3k2wNc11oGNnWAyHGoU5XfSdc5JYzcD9eXOmLp6c=;
+	b=eBUf2nVN8AVKC6kOJnhTuK/k1N66T/yVJ/bHVl3sko1ofApykwoi8BTLKdwU8HriZh9YsS
+	zJynoQn9LOafgWeqL29qT9ogxPZGhp+EhHgD6oMDDCEMjj97E/FbLfMCaa9KT6OefQ4jm/
+	8IpPdMtr7Wbag7M4Tpv3pgyUYMvS/EyTAmO0PJFUGqUrJzu2/I2YIDHcQv1U9KWvGq56P2
+	/naUd+n9+sIYYhAjAWI0bNvHa9uygtCYzyCnWMZE4S2LJ9jscI3aItLSvm1kvO8FdG4smz
+	kiyq7TvXWb79NO9mRBWB3GnW/rqAQR2400EF5ZK9djy6Mf13KuXeRXKAE7oHmA==
 From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Antoine Tenart <atenart@kernel.org>,  Christian Marangi
- <ansuelsmth@gmail.com>,  Conor Dooley <conor+dt@kernel.org>,  David S.
- Miller <davem@davemloft.net>,  Geert Uytterhoeven
- <geert+renesas@glider.be>,  Herbert Xu <herbert@gondor.apana.org.au>,
-  Jayesh Choudhary <j-choudhary@ti.com>,  Krzysztof Kozlowski
- <krzk+dt@kernel.org>,  Magnus Damm <magnus.damm@gmail.com>,  Michael
- Turquette <mturquette@baylibre.com>,  Olivia Mackall <olivia@selenic.com>,
-  Rob Herring <robh@kernel.org>,  Thomas Gleixner <tglx@kernel.org>,
-  Thomas Petazzoni <thomas.petazzoni@bootlin.com>,  Pascal EBERHARD
+To: Rob Herring <robh@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd
+ <sboyd@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor
+ Dooley <conor+dt@kernel.org>,  Thomas Gleixner <tglx@kernel.org>,  Olivia
+ Mackall <olivia@selenic.com>,  Herbert Xu <herbert@gondor.apana.org.au>,
+  Jayesh Choudhary <j-choudhary@ti.com>,  "David S. Miller"
+ <davem@davemloft.net>,  Christian Marangi <ansuelsmth@gmail.com>,  Antoine
+ Tenart <atenart@kernel.org>,  Geert Uytterhoeven
+ <geert+renesas@glider.be>,  Magnus Damm <magnus.damm@gmail.com>,  Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>,  Pascal EBERHARD
  <pascal.eberhard@se.com>,  Wolfram Sang
  <wsa+renesas@sang-engineering.com>,  linux-clk@vger.kernel.org,
   devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,
   linux-crypto@vger.kernel.org,  linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 07/16] clk: tests: Add Kunit testing for
- of_clk_get_parent_name()
-In-Reply-To: <177595738949.5403.11279360430887628318@lazor> (Stephen Boyd's
-	message of "Sat, 11 Apr 2026 18:29:49 -0700")
+Subject: Re: [PATCH 05/16] dt-bindings: bus: eip150: Describe the EIP-150
+ container node
+In-Reply-To: <20260407194449.GA3542959-robh@kernel.org> (Rob Herring's message
+	of "Tue, 7 Apr 2026 14:44:49 -0500")
 References: <20260327-schneider-v7-0-rc1-crypto-v1-0-5e6ff7853994@bootlin.com>
-	<20260327-schneider-v7-0-rc1-crypto-v1-7-5e6ff7853994@bootlin.com>
-	<177595738949.5403.11279360430887628318@lazor>
+	<20260327-schneider-v7-0-rc1-crypto-v1-5-5e6ff7853994@bootlin.com>
+	<20260407194449.GA3542959-robh@kernel.org>
 User-Agent: mu4e 1.12.7; emacs 30.2
-Date: Fri, 10 Jul 2026 14:09:53 +0200
-Message-ID: <87echbgi5q.fsf@bootlin.com>
+Date: Fri, 10 Jul 2026 14:59:25 +0200
+Message-ID: <875x2ngfv6.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -68,64 +68,121 @@ Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Stephen,
+On 07/04/2026 at 14:44:49 -05, Rob Herring <robh@kernel.org> wrote:
 
-On 11/04/2026 at 18:29:49 -07, Stephen Boyd <sboyd@kernel.org> wrote:
-
-> Quoting Miquel Raynal (Schneider Electric) (2026-03-27 13:09:29)
->> diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
->> index b814b45f1f7e..8a17ad0d185f 100644
->> --- a/drivers/clk/clk_test.c
->> +++ b/drivers/clk/clk_test.c
->> @@ -3651,9 +3651,19 @@ static void clk_parse_clkspec_with_incorrect_inde=
-x_and_name(struct kunit *test)
->>         KUNIT_EXPECT_TRUE(test, IS_ERR(hw));
->>  }
->>=20=20
->
-> Add a comment here to tell us what the test is expecting.
-
-Yep, done.
-
->> +static void clk_parse_and_get_parent_name(struct kunit *test)
->> +{
->> +       struct clk_parse_clkspec_ctx *ctx =3D test->priv;
+> On Fri, Mar 27, 2026 at 09:09:27PM +0100, Miquel Raynal (Schneider Electr=
+ic) wrote:
+>> Part of Inside-Secure's SafeXcel family, the EIP-150 is some kind of
+>> container node composed of:
+>> - a public key accelerator,
+>> - random number generator,
+>> - an interrupt controller.
+>>=20
+>> It also acts as proxy for the clocks.
+>>=20
+>> Signed-off-by: Miquel Raynal (Schneider Electric) <miquel.raynal@bootlin=
+.com>
+>> ---
+>>  .../bus/inside-secure,safexcel-eip150.yaml         | 58 +++++++++++++++=
++++++++
+>>  1 file changed, 58 insertions(+)
+>>=20
+>> diff --git a/Documentation/devicetree/bindings/bus/inside-secure,safexce=
+l-eip150.yaml b/Documentation/devicetree/bindings/bus/inside-secure,safexce=
+l-eip150.yaml
+>> new file mode 100644
+>> index 000000000000..1b3d83a852f5
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/bus/inside-secure,safexcel-eip15=
+0.yaml
+>> @@ -0,0 +1,58 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/bus/inside-secure,safexcel-eip150.ya=
+ml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 >> +
->> +       KUNIT_EXPECT_STREQ(test,
->> +                          of_clk_get_parent_name(ctx->cons_np, 0),
->> +                          clk_parse_clkspec_1_init_data.name);
->> +}
+>> +title: Inside-Secure SafeXcel EIP-150 container
+>> +
+>> +maintainers:
+>> +  - Miquel Raynal <miquel.raynal@bootlin.com>
+>> +
+>> +description:
+>> +  The EIP-150 is a hardware container, it has its own interrupt
+>> +  controller inside to which a random number generator and a public key
+>> +  accelerator are wired.
+>> +
+>> +allOf:
+>> +  - $ref: simple-pm-bus.yaml#
+>> +  - $ref: /schemas/clock/clock-nexus-node.yaml#
 >
-> Reading this test is pretty hard because all the context is in the
-> common setup. Maybe the common setup is too broad in this case and
-> should be simplified so that tests can show more setup and assert code
-> for the things it wants to do. For example, if the name can be passed
-> from this test directly it would clarify by moving context into test
-> function scope.
->
-> 	const char *pname =3D "expected-name";
->
-> 	KUNIT_ASSERT_EQ(test, 0, setup_parent(pname));
->
-> 	KUNIT_EXPECT_STREQ(test, pname,
-> 			   of_clk_get_parent_name(ctx->cons_np, 0));
+> Generally, if a schema has 'select: true', you don't reference it as it=20
+> has already been applied. And you have to list the properties here=20
+> anyways because you need to define how many #clock-cells for example.
 
-While I understand the feeling, provider 1 and 2 are shared with other
-test cases which would require restructuring quite a bit the whole test
-suite for IMHO little benefit. I can however make more obvious the string
-that is actually expected by redefining it in plain sight at the call
-site.
+I see, I'll drop that line. Thanks for the explanation, very appreciated.
 
->>  static struct kunit_case clk_parse_clkspec_test_cases[] =3D {
->>         KUNIT_CASE(clk_parse_clkspec_with_correct_index_and_name),
->>         KUNIT_CASE(clk_parse_clkspec_with_incorrect_index_and_name),
->> +       KUNIT_CASE(clk_parse_and_get_parent_name),
+>> +properties:
+>> +  compatible:
+>> +    items:
+>> +      - const: inside-secure,safexcel-eip150
+>> +      - {} # simple-pm-bus, but not listed here to avoid false select
+>> +
+>> +  clocks:
+>> +    minItems: 1
+
+Should be:
+
+       maxItems: 1
+
+I did the error once, and copy-pasted it two more times in this series.
+
+> Seems to me you are adding this to satisfy simple-pm-bus. Maybe this=20
+> should just be simple-bus?
+
+I really need that clock, it feeds my container and is then populated
+through the child nodes. I actually selected simple-pm-bus on purpose,
+as my use case seems to really fit the description?
+
+>> +  "#address-cells":
+>> +    const: 1
+>> +
+>> +  "#size-cells":
+>> +    const: 1
+>> +
+>> +  ranges: true
+>> +
+>> +patternProperties:
+>> +  "^interrupt-controller@[0-9a-f]+$":
+>> +    type: object
+>> +    $ref: /schemas/interrupt-controller/inside-secure,safexcel-eip201.y=
+aml#
 >
-> Better to call the test something like
-> of_clk_get_parent_name_gets_parent_name to indicate what we're
-> testing.
+> Better to just list a compatible you require. Like this, the schema is=20
+> applied twice.
 
-Fine by me.
+Mmmh, ok!
 
-Thanks,
+>> +  "^rng@[0-9a-f]+$":
+>> +    type: object
+>> +    $ref: /schemas/rng/inside-secure,safexcel-eip76.yaml#
+>> +
+>> +  "^crypto@[0-9a-f]+$":
+>> +    type: object
+>> +    $ref: /schemas/crypto/inside-secure,safexcel-eip28.yaml#
+>> +
+>> +required:
+>> +  - compatible
+>> +  - clocks
+>
+>> +  - "#address-cells"
+>> +  - "#size-cells"
+>> +  - ranges
+>
+> The bus schema requires all these already.
+
+I'll drop them.
+
+Thanks!
 Miqu=C3=A8l
