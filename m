@@ -1,95 +1,245 @@
-Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
+Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A56F44302EE;
-	Fri, 10 Jul 2026 14:49:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.200.13
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783694965; cv=none; b=aIgqEflQ0/YQbVv6sA8TqkFBaY8QFw0SDa2gmc0q0QCaNxPn8WQCKoFfn5WX/w8i8WukSTEQ2zcLHUzACuPPTZyBbPurGs9Ruo88+CP+VahxqFF7GHq3XceI85np16VTWMRW4uS6oD51jrAJT3tMgWvWy1AJSecaZ7ruUUdkBLg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783694965; c=relaxed/simple;
-	bh=HNRMsFFW9sbOTufo575Gsp5etSe6HFFk3WWc1fICwYA=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CBD93F411A;
+	Fri, 10 Jul 2026 14:57:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1783695424; cv=pass; b=k+xhgfX7CdQZFL0K94UYycZVOXfT1TOHgo+RyhPiBEHl/JmaFCeqvLeB6eLDW3sAFrBVtMZh4Jjrr8M92q9bYAmuJear/Z5dMwQcDd2xnADo00Z8NhRsXF406wc3P9FjnRz3hE/UdncGER/i6JufHDCpyhC4m73E97qEMoMCPPM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1783695424; c=relaxed/simple;
+	bh=TwqRt93NLpM0edhLSPUb/caZPdXOiIYc96gS/uk8cvc=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ITlsRg2Y6K03oMDdSLANm3yyXrpgj0SSKAzVwN9Xgx7oYVJ2nR1ymtc7+JI0Tg40g6pouTt8xIJYeTd3BqzdivzrLDERvH/UwidXKc4w/Ms0Lo7wAxutf1iRoQMJqVv2F+FAAMtzxXE9ntJuF2ze8WR5XXKjPTO4uJNIQ4Jud3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.200.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de (drehscheibe.grey.stw.pengutronix.de [IPv6:2a0a:edc0:0:c01:1d::a2])
-	(Authenticated sender: relay-from-drehscheibe.grey.stw.pengutronix.de)
-	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id 372F9200687;
-	Fri, 10 Jul 2026 16:49:16 +0200 (CEST)
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1wiCXU-00162F-0R;
-	Fri, 10 Jul 2026 16:49:16 +0200
-Received: from pza by lupine with local (Exim 4.98.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1wiCXU-00000000EZW-04xu;
-	Fri, 10 Jul 2026 16:49:16 +0200
-Message-ID: <6fd99dbdf7930a98d3dbbd44c0b39658c1d5efd4.camel@pengutronix.de>
-Subject: Re: [PATCH v2 04/10] reset: Add reset_controller_get_provider()
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Geert Uytterhoeven <geert+renesas@glider.be>, Sudeep Holla	
- <sudeep.holla@kernel.org>, Cristian Marussi <cristian.marussi@arm.com>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley	 <conor+dt@kernel.org>, Saravana Kannan <saravanak@kernel.org>, Ulf
- Hansson	 <ulfh@kernel.org>, "Rafael J . Wysocki" <rafael@kernel.org>,
- Michael Turquette	 <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Brian Masney	 <bmasney@redhat.com>, Bartosz Golaszewski
- <bartosz.golaszewski@oss.qualcomm.com>,  Vinod Koul <vkoul@kernel.org>,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Kevin Hilman	
- <khilman@baylibre.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
- Wolfram Sang <wsa+renesas@sang-engineering.com>, Marek Vasut
- <marek.vasut+renesas@mailbox.org>, Kuninori Morimoto
- <kuninori.morimoto.gx@renesas.com>
-Cc: arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-clk@vger.kernel.org, 	linux-renesas-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Date: Fri, 10 Jul 2026 16:49:15 +0200
-In-Reply-To: <c415dc5f468e62cd0e2a6b9639abb92a82c01324.1783505329.git.geert+renesas@glider.be>
-References: <cover.1783505329.git.geert+renesas@glider.be>
-	 <c415dc5f468e62cd0e2a6b9639abb92a82c01324.1783505329.git.geert+renesas@glider.be>
+	 Content-Type:MIME-Version; b=WQoBTWqcdLOnoycnczCrtDEH5ahCugh1JysAaaj4kRHuaQu2U7BV8I3MHXu1IGbLKb4ZiWZ2bF/uXWqNtCnkcip4587PJKJMmfQTZLvnxuO7B5E0uC6dmMwgPktUFR4O9eDxkQc2p0PZ65NCJMjM509jMuEEbgscocDI53clJHM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=m40ImWUg; arc=pass smtp.client-ip=136.143.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="m40ImWUg"
+ARC-Seal: i=1; a=rsa-sha256; t=1783695392; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Ml+DhCpPf45Z/4qAMFDX1inJx4ll4cpAPqHX1XAOkFYrT3SBF+2X1xNUUPJLWRvizcJMZUrNGm2F2YGl/aoMJOcZge7IU26m8GPDfrDoTX1hgMCr9GVbSyGzS3xCtLP82LHD9t/b5hDYAYnC6hvjNE5xA5DCn5XmRu1NlOpUyoY=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1783695392; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=zLiGYp9m/wGqSY8bb0fHrZAj5ElYrLF6yiGUlfJ+qMQ=; 
+	b=M0Eg0nQ4cf9rVWSHsT/sNKKmgpk+zGv+qg8eJwb/b/K4Yr3DkpJx054fB1YayRO8z7wd/DQCiNNHDwc04nIUI9x1nvK1zCDeBO2py7aQ6gcgNnqFwzGKcc9jJrPexN5jFSUJFX/nqh4BdiG2OY5ZzByJNj1JuO/PBfQCP/jeBKM=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=icenowy.me;
+	spf=pass  smtp.mailfrom=uwu@icenowy.me;
+	dmarc=pass header.from=<uwu@icenowy.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1783695392;
+	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=zLiGYp9m/wGqSY8bb0fHrZAj5ElYrLF6yiGUlfJ+qMQ=;
+	b=m40ImWUgrfvL+/QoCcMwwJ+Pgtlgx9LtjVk4mi7IQhGrkVavVKfwHBbkFtCEx2Ud
+	+Jdk0QkYo/qTGfUPcl+d6JuSfpcDp72ihGQWc7IVQYiTZ95yqP5DnbTyciiYdtZIxwe
+	cjQ1Spgu6g5lMsaqJlYOfs2B4CeqjFV5DOubRgrKMfxnPiK0zfeMgD1E0Z97vZDUw7I
+	jPp0Cn42fZt04GrRKzr1h2Qffkvw3f0SejtLcHYPSzl+H0xkk86YquVYa8bd3aWB65A
+	/1oZJabrJh9qMJ/g19xZ/RYhSbc2UJt7EgHL1rU7HbhFnUEv0mIE30v3O3f8IByUtyc
+	foDq8sKiIw==
+Received: by mx.zohomail.com with SMTPS id 1783695388721436.80504654321703;
+	Fri, 10 Jul 2026 07:56:28 -0700 (PDT)
+Message-ID: <b8fc8356212012d92186a1a4cd3ad641f01461a6.camel@icenowy.me>
+Subject: Re: [PATCH 11/12] riscv: dts: thead: Add Lichee Pi 4A IO expansions
+From: Icenowy Zheng <uwu@icenowy.me>
+To: Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei	
+ <wefu@redhat.com>, Michael Turquette <mturquette@baylibre.com>, Stephen
+ Boyd	 <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Vinod
+ Koul	 <vkoul@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Paul Walmsley <pjw@kernel.org>,
+ Palmer Dabbelt <palmer@dabbelt.com>,  Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>, Jisheng Zhang <jszhang@kernel.org>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, linux-riscv@lists.infradead.org,
+ 	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-phy@lists.infradead.org, linux-usb@vger.kernel.org, Han Gao	
+ <rabenda.cn@gmail.com>, Yao Zi <ziyao@disroot.org>, Emil Renner Berthing	
+ <emil.renner.berthing@canonical.com>
+Date: Fri, 10 Jul 2026 22:56:08 +0800
+In-Reply-To: <20260507081710.4090814-12-zhengxingda@iscas.ac.cn>
+References: <20260507081710.4090814-1-zhengxingda@iscas.ac.cn>
+	 <20260507081710.4090814-12-zhengxingda@iscas.ac.cn>
+Organization: Anthon Open-Source Community
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-0+deb13u1 
+User-Agent: Evolution 3.58.3 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-ZohoMailClient: External
 
-On Mi, 2026-07-08 at 12:16 +0200, Geert Uytterhoeven wrote:
-> The reset subsystem differs from the clock subsystem in multiple ways:
->   1. It does not provide a public way to lookup resets from a reset
->      provider (clock has of_clk_get_from_provider()),
->   2. The xlate callback does not return a reset object, but merely an
->      index, which is converted to a reset object by the reset core.
+=E5=9C=A8 2026-05-07=E5=9B=9B=E7=9A=84 16:17 +0800=EF=BC=8CIcenowy Zheng=E5=
+=86=99=E9=81=93=EF=BC=9A
+> From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
 >=20
-> Hence add a public helper reset_controller_get_provider(), which just
-> returns the provider, and will be used by the R-Car X5H Module
-> Controller driver.
+> Lichee Pi 4A has 3 I2C IO expansion chips onboard, connected to the
+> I2C0/1/3 busses.
 >=20
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Add device tree nodes for them.
+>=20
+> Signed-off-by: Emil Renner Berthing
+> <emil.renner.berthing@canonical.com>
+> [Icenowy: added commit description]
+> Signed-off-by: Icenowy Zheng <zhengxingda@iscas.ac.cn>
 
-Please don't. Only the owning reset controller driver and the reset
-core should interact with struct reset_controller_dev internals.
+I am going to send a newer revision of PATCH 9~11 in a few days,
+because the I2C1 controller is already added to the mainline device
+tree for Wi-Fi support, although the already-merged patches are a
+little weird.
 
-I'd be very uncomfortable with a driver reaching directly into another
-drivers reset_control_ops, bypassing the core entirely.
+Thanks,
+Icenowy
 
-I think it would be better to let reset-scmi export a specialized
-scmi_reset_assert/deassert/reset(id) API, and add a possibility to
-suppress registering the reset-scmi reset controller, so that there
-aren't two conflicting paths into scmi_reset_proto_ops.
-
-If you want to stack two reset controllers, the upper one should go
-through the proper channels: request exclusive reset controls and use
-them via the reset_control_*() APIs from the ops.
-
-
-regards
-Philipp
+> ---
+> =C2=A0.../boot/dts/thead/th1520-lichee-pi-4a.dts=C2=A0=C2=A0=C2=A0 | 111
+> ++++++++++++++++++
+> =C2=A01 file changed, 111 insertions(+)
+>=20
+> diff --git a/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
+> b/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
+> index 4198dbf953f06..354f3893aa8cf 100644
+> --- a/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
+> +++ b/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
+> @@ -16,6 +16,9 @@ aliases {
+> =C2=A0		gpio3 =3D &gpio3;
+> =C2=A0		gpio4 =3D &gpio4;
+> =C2=A0		gpio5 =3D &aogpio;
+> +		i2c0 =3D &i2c0;
+> +		i2c1 =3D &i2c1;
+> +		i2c3 =3D &i2c3;
+> =C2=A0		serial0 =3D &uart0;
+> =C2=A0		serial1 =3D &uart1;
+> =C2=A0		serial2 =3D &uart2;
+> @@ -110,6 +113,76 @@ hdmi_out_con: endpoint {
+> =C2=A0	};
+> =C2=A0};
+> =C2=A0
+> +&i2c0 {
+> +	pinctrl-names =3D "default";
+> +	pinctrl-0 =3D <&i2c0_pins>;
+> +	clock-frequency =3D <100000>;
+> +	i2c-sda-hold-time-ns =3D <300>;
+> +	i2c-sda-falling-time-ns =3D <510>;
+> +	i2c-scl-falling-time-ns =3D <510>;
+> +	status =3D "okay";
+> +
+> +	ioexp1: gpio@18 {
+> +		compatible =3D "nxp,pca9557";
+> +		reg =3D <0x18>;
+> +		gpio-controller;
+> +		#gpio-cells =3D <2>;
+> +		gpio-line-names =3D "cam0_dvdd12",
+> +				=C2=A0 "cam0_avdd28",
+> +				=C2=A0 "cam0_dovdd18";
+> +	};
+> +};
+> +
+> +&i2c1 {
+> +	pinctrl-names =3D "default";
+> +	pinctrl-0 =3D <&i2c1_pins>;
+> +	clock-frequency =3D <100000>;
+> +	i2c-sda-hold-time-ns =3D <300>;
+> +	i2c-sda-falling-time-ns =3D <510>;
+> +	i2c-scl-falling-time-ns =3D <510>;
+> +	status =3D "okay";
+> +
+> +	ioexp2: gpio@18 {
+> +		compatible =3D "nxp,pca9557";
+> +		reg =3D <0x18>;
+> +		gpio-controller;
+> +		#gpio-cells =3D <2>;
+> +		gpio-line-names =3D "",
+> +				=C2=A0 "cam0_reset",
+> +				=C2=A0 "cam1_reset",
+> +				=C2=A0 "cam2_reset",
+> +				=C2=A0 "wl_host_wake",
+> +				=C2=A0 "bt_resetn",
+> +				=C2=A0 "",
+> +				=C2=A0 "bt_host_wake";
+> +	};
+> +};
+> +
+> +&i2c3 {
+> +	pinctrl-names =3D "default";
+> +	pinctrl-0 =3D <&i2c3_pins>;
+> +	clock-frequency =3D <100000>;
+> +	i2c-sda-hold-time-ns =3D <300>;
+> +	i2c-sda-falling-time-ns =3D <510>;
+> +	i2c-scl-falling-time-ns =3D <510>;
+> +	status =3D "okay";
+> +
+> +	ioexp3: gpio@18 {
+> +		compatible =3D "nxp,pca9557";
+> +		reg =3D <0x18>;
+> +		gpio-controller;
+> +		#gpio-cells =3D <2>;
+> +		gpio-line-names =3D "tp0_rst",
+> +				=C2=A0 "",
+> +				=C2=A0 "",
+> +				=C2=A0 "vcc5v_usb",
+> +				=C2=A0 "vdd28_tp0",
+> +				=C2=A0 "vdd33_lcd0",
+> +				=C2=A0 "vdd18_lcd0",
+> +				=C2=A0 "lcd0_reset";
+> +	};
+> +};
+> +
+> =C2=A0&padctrl0_apsys {
+> =C2=A0	fan_pins: fan-0 {
+> =C2=A0		pwm1-pins {
+> @@ -123,6 +196,18 @@ pwm1-pins {
+> =C2=A0		};
+> =C2=A0	};
+> =C2=A0
+> +	i2c3_pins: i2c3-0 {
+> +		i2c-pins {
+> +			pins =3D "I2C3_SCL", "I2C3_SDA";
+> +			function =3D "i2c";
+> +			bias-disable; /* external pull-up */
+> +			drive-strength =3D <7>;
+> +			input-enable;
+> +			input-schmitt-enable;
+> +			slew-rate =3D <0>;
+> +		};
+> +	};
+> +
+> =C2=A0	uart0_pins: uart0-0 {
+> =C2=A0		tx-pins {
+> =C2=A0			pins =3D "UART0_TXD";
+> @@ -146,6 +231,32 @@ rx-pins {
+> =C2=A0	};
+> =C2=A0};
+> =C2=A0
+> +&padctrl1_apsys {
+> +	i2c0_pins: i2c0-0 {
+> +		i2c-pins {
+> +			pins =3D "I2C0_SCL", "I2C0_SDA";
+> +			function =3D "i2c";
+> +			bias-disable; /* external pull-up */
+> +			drive-strength =3D <7>;
+> +			input-enable;
+> +			input-schmitt-enable;
+> +			slew-rate =3D <0>;
+> +		};
+> +	};
+> +
+> +	i2c1_pins: i2c1-0 {
+> +		i2c-pins {
+> +			pins =3D "I2C1_SCL", "I2C1_SDA";
+> +			function =3D "i2c";
+> +			bias-disable; /* external pull-up */
+> +			drive-strength =3D <7>;
+> +			input-enable;
+> +			input-schmitt-enable;
+> +			slew-rate =3D <0>;
+> +		};
+> +	};
+> +};
+> +
+> =C2=A0&uart0 {
+> =C2=A0	pinctrl-names =3D "default";
+> =C2=A0	pinctrl-0 =3D <&uart0_pins>;
