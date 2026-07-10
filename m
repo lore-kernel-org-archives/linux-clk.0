@@ -1,96 +1,107 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 427554071E5;
-	Fri, 10 Jul 2026 10:21:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 709984071F5;
+	Fri, 10 Jul 2026 10:23:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783678904; cv=none; b=XXXsWG+xv6umrQQqT0JqhSS1PSvtTZpTUnCEO3zTpb1/OGYyFVE6YbIj9OD1Zbez4a0fdNeYUZN8SF88SSfsQGsD3Ed+w/h6QRDXhAwOALdMFzdlRCUIsNMmnfNJWYDyBLDFd/6GL74gYVrQ+k9pEuQhwW6X/pT+PjUqCrqteFE=
+	t=1783679018; cv=none; b=OyqCVLkAPAqsMCg/7gciAq58TL3kG7d10ckntxXVDRf0J5KOjesS4ZiuLcXRGy4YBpVdpTviUqWXXDoK5shhFxS0MMI/n9A41w2fB/eR+2sWOoG6h0JbtDb9qU30PgZAwCu1fPgiR1AclTMAIF0yhxMiG/xwpjJ4Hl/H67iEDrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783678904; c=relaxed/simple;
-	bh=wtmu73QitmzzmosffXemjGVrBxH7cPBF4G0ijzO2o/s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H0DP4wugOUjBjwLybJLrTEmeGtSlAwY3kk0hpk3Vpr02qt/1rIuaWNWj9pymetSWVTjrwC8bGrqN9brN7/G5B1TNR3AgT+IgOyrRxuu7UZ1d8M+1uLYb6KmqXuUQdyixtgg6lLjQRqDpHLyzj1aW9jbddRebXnMsXmhHpHmdfNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LkrgFSkn; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1783679018; c=relaxed/simple;
+	bh=RAKTEeSeoLlrKHDBTc7eBUZQFZK/4GACdcbJhsXeJfk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=baKVX4SuWNchOVNHBoJCUlD6yWyF0EnQtcnijANJmxwkBlnBjAcwsp17i868TmaH/Sws/4veqzLJRLAZQQbPl7WbjvzRoXKAYqWhg3WXeoISPE6nKCs/X2b9JEKH87wQwxS1COX4/rSUAUmoUmTyy5yAmxTZm60CQCshCRHfJJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=AAfHbqfT; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=Pm10hKbV; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LkrgFSkn"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C57251F000E9;
-	Fri, 10 Jul 2026 10:21:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783678901;
-	bh=8h7oqU5VrbSxzMabjyrEsZfFX/tU8T/jpuFUiUgSMj8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=LkrgFSkndzJ/SFPA+4AIzFpW4hbJopqU6uGT/fWHqtusJv4WlDihe1NYGHYkDuMsY
-	 f4pxfLrC5eyxf18xnDiKEqdyLRNq3Cs+m3UA/eR7SfuHwvZNWzlBLxArTfXMnfjsUp
-	 oXKmcrgYrLMO7oTps7t3Wa3qZ7j6ffYAxNJiRgRkSxqorms1GQyturavm3n0sMBAJD
-	 oXrCUP3bSfKEtD5QpHAgh0jfe7nPbFmiiq0i0Nu99iQzg+dXqx9lSahoOIxFrhtSq9
-	 WTjj9L1/duTwfIPnMcQ+8fkKDkwvMbWZHSiu4KFaOqNfqOTsMmhQ14A3BhRldKIIby
-	 oSpOZqUZapKfg==
-Date: Fri, 10 Jul 2026 12:21:38 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Sudeep Holla <sudeep.holla@kernel.org>, 
-	Cristian Marussi <cristian.marussi@arm.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Saravana Kannan <saravanak@kernel.org>, Ulf Hansson <ulfh@kernel.org>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney@redhat.com>, Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, 
-	Vinod Koul <vkoul@kernel.org>, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
-	Kevin Hilman <khilman@baylibre.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, Marek Vasut <marek.vasut+renesas@mailbox.org>, 
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 05/10] dt-bindings: clock: renesas,r8a78000-cpg: Add
- firmware property
-Message-ID: <20260710-adventurous-burgundy-chimera-b2fff9@quoll>
-References: <cover.1783505329.git.geert+renesas@glider.be>
- <49726acff0fee1c3606e83c4f242ef6aad25b4b8.1783505329.git.geert+renesas@glider.be>
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="AAfHbqfT";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="Pm10hKbV"
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA512)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4gxSbN4YDrzKvvq;
+	Fri, 10 Jul 2026 12:23:28 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1783679008;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=IE88QkjLby3ju5RANsjgYMee3nrOo4fYiqaFhPyeHpY=;
+	b=AAfHbqfThkPL4tBU9AE1v4dA7cCWLKCR4P8IOdm8qbVkUqhBsq5xG3msrOC5Hr1cImHwPZ
+	lIpcvPM79UYhoaW3XFCEJ10twj59mzMsJtjss9Yui/kHg19Si/TVbM/2eExugzpd0mIUcK
+	38YHY0UFPzsOpYxzR4kJjpzMf4Jxd9rkGp03RLV0ia4E2GeEGMxWatXyE5pH0v8pMj3f90
+	Mg/NP9Z+mxyaUkoFfcS2Sn8l2rkX78ZxJjSz9YxPUamOu12VrQjAS6QBoXX6hAN2JzoL4i
+	TyNgpeiki3T7fbwgEvjuh4xvGtjyuE2dHCf+frVGlI3zfWbLc2YceJRKx6rrLA==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=Pm10hKbV;
+	spf=pass (outgoing_mbo_mout: domain of manuelebner@mailbox.org designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=manuelebner@mailbox.org
+From: Manuel Ebner <manuelebner@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1783679007;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=IE88QkjLby3ju5RANsjgYMee3nrOo4fYiqaFhPyeHpY=;
+	b=Pm10hKbVAKtYgQ6WeIzozwuhHbDVUlowk+Y09dNQJpvTrIg0nGTAGtHzgsnBYOG//s+VBN
+	JQ1+KIoHGUntfTVDwKHChCRZ2fqMyE7fIE+lSj55g8g0H0Svdrdg6j0kqcLzB/+xK1bp2j
+	zxOUBp8lZm9Ljgb1hUPTtadRtkwSi/1l5z3A7bIjDeHHDOG7qAJ0xswbfvoqdmvnraBoHh
+	o8UVB5tO3AUsawZzVl2pHcjvgImxwrbac0aTHtETGns1M4XjNmesOGfJieXX047K0I6vUH
+	/87alyURHtOFvW/C+W4sifXNLd1Pi7am3WEqivkVLacBzwEJWn91wChRdEVjZQ==
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Manuel Ebner <manuelebner@mailbox.org>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] dt-bindings: clock: fix bracket
+Date: Fri, 10 Jul 2026 12:21:33 +0200
+Message-ID: <20260710102132.433276-3-manuelebner@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <49726acff0fee1c3606e83c4f242ef6aad25b4b8.1783505329.git.geert+renesas@glider.be>
+Content-Transfer-Encoding: 8bit
+X-MBO-RS-ID: 8e4a3f9aa7bd5e8cac1
+X-MBO-RS-META: 78r3bbajkkmqs1r8sf1pu53udmw4bqro
+X-Rspamd-Queue-Id: 4gxSbN4YDrzKvvq
 
-On Wed, Jul 08, 2026 at 12:16:23PM +0200, Geert Uytterhoeven wrote:
-> Add a firmware property, for systems where SCMI must be used instead of
-> direct hardware access.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> v2:
->   - Spin off from "dt-bindings: clock: Document Renesas R-Car X5H Clock
->     Pulse Generator".
-> ---
->  .../devicetree/bindings/clock/renesas,r8a78000-cpg.yaml    | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/renesas,r8a78000-cpg.yaml b/Documentation/devicetree/bindings/clock/renesas,r8a78000-cpg.yaml
-> index 4e23bba334382346..fc499e7cf52e4f0c 100644
-> --- a/Documentation/devicetree/bindings/clock/renesas,r8a78000-cpg.yaml
-> +++ b/Documentation/devicetree/bindings/clock/renesas,r8a78000-cpg.yaml
-> @@ -35,6 +35,12 @@ properties:
->        <dt-bindings/clock/renesas,r8a78000-cpg.h>.
->      const: 1
->  
-> +  firmware:
+Add ')' and fix sentence structure.
 
-RPi is doing similar, but I have doubts. It looks way too close to
-generic "syscon" which is disallowed.
+Signed-off-by: Manuel Ebner <manuelebner@mailbox.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+[v2]
+ fix subject
+ add reviewed-by
+ .../bindings/clock/renesas,rcar-usb2-clock-sel.yaml           | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-I think this should be vendor+purpose specific, e.g.:
-"renesas,scmi-transport" or "renesas,scmi-firmware"
-
-Also we have "firmware" nodes, so this might cause conflicts in dtschema
-validation.  Anyway, the phandle itself is fine for me, just the naming.
-
-I'll ping also Rob to chime in.
-
-Best regards,
-Krzysztof
+diff --git a/Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.yaml b/Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.yaml
+index c84f29f1810f..a14be249fa33 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.yaml
++++ b/Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.yaml
+@@ -13,8 +13,8 @@ description: |
+   If you connect an external clock to the USB_EXTAL pin only, you should set
+   the clock rate to "usb_extal" node only.
+   If you connect an oscillator to both the USB_XTAL and USB_EXTAL, this module
+-  is not needed because this is default setting. (Of course, you can set the
+-  clock rates to both "usb_extal" and "usb_xtal" nodes.
++  is not needed because this is default setting (Of course, you can set the
++  clock rates to both "usb_extal" and "usb_xtal" nodes).
+ 
+   Case 1: An external clock connects to R-Car SoC
+     +----------+   +--- R-Car ---------------------+
+-- 
+2.54.0
 
