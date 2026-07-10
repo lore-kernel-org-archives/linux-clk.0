@@ -1,52 +1,40 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EBD437B3FE;
-	Fri, 10 Jul 2026 18:07:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D57142DAFAF;
+	Fri, 10 Jul 2026 18:22:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783706842; cv=none; b=e4Mo4Ym2zxZy7piMJEbBvcoz5oknPY5IoUbO8l+4Oh1m/A3EWBdxh71ir4pJBg9kEGctGhwvQaBdavCCnl6ozxnbzNuz/eSX9bwdAiKFKJwVGX61HiWHXXAtSzPQjpc7v6RASod5AEArFEAkzvVJ9xD5rpSm5SBxlwgVPp/Oxgk=
+	t=1783707737; cv=none; b=MRMZH7PNUAYJBgxHC/WREwQjTh3yIV3z0hr3oqgN2wXiijg+tLrzjdYKef3Xw1W5RUkiTBAe1BY++qkZaK37Lghq5R3q2q8Gg/J0QiJyZPl6Dt3cVGS1Huv1BsEWRVsKv9U+eWL76dz27DnDd+EaUdxzCn/EO/IWWtfZK2ykEaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783706842; c=relaxed/simple;
-	bh=Ea2dc/zQmoNHDSZIjzgfaOeZ+qwH3BXjDCO5+0emuis=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Uh+V/EPr0JRGNBO/A0gKkblDGQn3S8022psoaXTY9gIbpFa19bKAEY+ILyuLfPXerZeLneoxkFtWTCxMlQXKvDWD0402UmVt8j1/9HLtN4ZA1wSKwQ0anYSpK5DxI+Wbe65xMLB4NS/ASJG0C2conPj2QDK8Z7oN5sQB8kyE3hQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ko+HQ5mV; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1783707737; c=relaxed/simple;
+	bh=8IbHgRbcl8gGxfUT1yl6/Oi4MeYat92Blo5R0JV3D+c=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=YUpeqSR8XcbsvLLdmw2NL2OGU+JBCwum0Axpa5WViVgRBcXylYoLPnt214h+mXQzDLikvk0ymRnxmdKrOsYCPJ/WoowgOPzdMJC/cm7atJoz3jD3I1ytE3HMYpZvn4MzBOWZcqAj/ObpuF3pt1orK9ak5/CEKGFXrTkwkA7h7+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Ppbabuem; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ko+HQ5mV"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 687DD1F00A3A;
-	Fri, 10 Jul 2026 18:07:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783706840;
-	bh=q64mLoIKKO6acehYZpPZaLa/VgE/uGU2tHBrQbnJjHw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=Ko+HQ5mV6YOD+yBIhB5MOp3yEwOS+SM5J68ioNNDx71Y3gJNlvXGjWmHmSm7p38qo
-	 GIHCXvlIfgVMbMFZ3Dis2HPndxB3gypOoQ3PqmVpPgYOr+Jb5gZDxDzVhUVRg/VczQ
-	 /9qOWtihxB7LiKWVr8iZfyJffSrk49LLvlWqCY3l7X1B1fuRNzoXnTm7Dz1kDpojv4
-	 3pfsBUHHeQUCAR3cw3ogO9glxIDoHt0xNCYpzuPlgQ/t64HrRi4C4E1M5j0HyZ6Sqt
-	 HcZVyMfPpp1+HR55R3E7onMSH1IzL3UsqV/Wc8a30MYsznMQR70gGgrrkQQgT7QfZ9
-	 S3+8T3BUd5p6Q==
-From: Bjorn Andersson <andersson@kernel.org>
-To: krzk+dt@kernel.org,
-	mturquette@baylibre.com,
-	linux-remoteproc@vger.kernel.org,
-	Alexandru Gagniuc <mr.nuke.me@gmail.com>
-Cc: mathieu.poirier@linaro.org,
-	robh@kernel.org,
-	conor+dt@kernel.org,
-	konradybcio@kernel.org,
-	sboyd@kernel.org,
-	p.zabel@pengutronix.de,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: (subset) [PATCH v2 0/9] remoteproc: qcom_q6v5_wcss: add native ipq9574 support
-Date: Fri, 10 Jul 2026 13:07:04 -0500
-Message-ID: <178370682987.2572738.13491033810212556744.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260109043352.3072933-1-mr.nuke.me@gmail.com>
-References: <20260109043352.3072933-1-mr.nuke.me@gmail.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Ppbabuem"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 6BED31A0F46;
+	Fri, 10 Jul 2026 18:22:14 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 3F13F60342;
+	Fri, 10 Jul 2026 18:22:14 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6FB3511BD2BB8;
+	Fri, 10 Jul 2026 20:22:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1783707733; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=tV292ZGhVFQsmqBqRz+ghzzmcfpHApqX9NDMUq/JrC4=;
+	b=PpbabuemKE2jRYaU/wV9QBn/TuZsHUbpMLxutqGCaL3v3kjYFa5gTrLPUNQBV9ihVGOWHX
+	ghxQ30gFQNjm+EdhTTs5NMafY60I/3PajOgE8yLI2zuC0PZUZeZxKBHPSKvnEKveKWSKGf
+	XgH6RyqVTMANCYcuRK3X2pjVukX3FPsLWQtps80c8tgsbGXWz19ywjBLC/WBocV6RGUvaK
+	gX+O3ktt9UHQ3IEZvYnniOAeVV7cVZsO3ifKGJzuey3BtZ847w4Zz3mqmYXXrI7PrtVrKe
+	e+rhuVecV5KLjkMMhkcU0mTgvDu47YaJ/CTcn6+NEkUcE2mpBskFtagY4bIEOQ==
+From: "Miquel Raynal (Schneider Electric)" <miquel.raynal@bootlin.com>
+Subject: [PATCH v2 0/7] clk: Add support for clock nexus
+Date: Fri, 10 Jul 2026 20:21:55 +0200
+Message-Id: <20260710-schneider-v7-2-rc1-eip201-upstream-v2-0-b4680787377e@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -54,36 +42,77 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/x3NQQoCMQxG4asMWRtIg1r0KuKitr9OFtaS6iAMc
+ 3eLy2/z3kodbuh0nlZyLNbtVQd0N1GeU32ArQyTih4lBuGe5worcF4iK3sODGsqgT+tvx3pyWk
+ fBQek20kLjVBz3O37n1yu2/YDZFOomHQAAAA=
+X-Change-ID: 20260710-schneider-v7-2-rc1-eip201-upstream-a470e5eab92d
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Brendan Higgins <brendan.higgins@linux.dev>, David Gow <david@davidgow.net>, 
+ Rae Moar <raemoar63@gmail.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Pascal EBERHARD <pascal.eberhard@se.com>, 
+ Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+ "Miquel Raynal (Schneider Electric)" <miquel.raynal@bootlin.com>, 
+ Herve Codina <herve.codina@bootlin.com>
+X-Mailer: b4 0.14.3
+X-Last-TLS-Session-Version: TLSv1.3
 
+Adding support for clock nexus had some prerequisites requested by
+Stephen, such as adding new selftests, the initial discussions come from:
 
-On Thu, 08 Jan 2026 22:33:35 -0600, Alexandru Gagniuc wrote:
-> Support loading remoteproc firmware on IPQ9574 with the qcom_q6v5_wcss
-> driver. This firmware is usually used to run ath11k firmware and enable
-> wifi with chips such as QCN5024.
-> 
-> When submitting v1, I learned that the firmware can also be loaded by
-> the trustzone firmware. Since TZ is not shipped with the kernel, it
-> makes sense to have the option of a native init sequence, as not all
-> devices come with the latest TZ firmware.
-> 
-> [...]
+Link: https://lore.kernel.org/linux-clk/20260129201003.288605-1-miquel.raynal@bootlin.com/
 
-Applied, thanks!
+Then there has been a bigger series (including patches for other
+subsystems) to show the big picture, but let's split again and focus on
+one subsystem at a time:
 
-[1/9] remoteproc: qcom_q6v5_wcss: drop unused clocks from q6v5 struct
-      commit: 22afc6163c0c7a144d24a09352b87719d64d5f65
-[2/9] dt-bindings: remoteproc: qcom,ipq8074-wcss-pil: convert to DT schema
-      commit: 2a756ac4d98efc97503629fcaddb2e7c46255824
-[4/9] dt-bindings: remoteproc: qcom: add IPQ9574 image loader
-      commit: bc33b5b5e23a389e660c3d696cd2e043fdf33ef7
-[7/9] remoteproc: qcom_q6v5_wcss: support IPQ9574
-      commit: 0149254e603f1fd89cb08aec36174ba7c2f198e3
-[8/9] remoteproc: qcom_q6v5_wcss: support m3 firmware
-      commit: 67804d8274d478ba8d1a84e9437fb340a8d3c26f
-[9/9] remoteproc: qcom_q6v5_wcss: use bulk clk API for q6 clocks in QCS404
-      commit: 920aa0298197a9a116210ac6057f1e880b9edd99
+Changes in v2:
+- Collected tags.
+- Rebased on top of v7.2-rc1
+- Exported (test) clock symbols using the _IF_KUNIT() variant, and
+  imported the NS in the test file.
+- Fixed a leaking node reported by Brian in the tests. Also used
+  existing helpers to simplify the test implementation as he wisely
+  suggested.
+- Reworded the nexus node binding description as suggested by Stephen.
+- Dropped redundant and non restraining properties from the Nexus
+  node as suggested by Rob.
+- Assigned clock/clock-rate properties now traverse Nexus nodes.
+- Rename helpers following Stephen proposals.
+- Rework tests following Stephen hints.
+- Link to v1: https://lore.kernel.org/r/20260327-schneider-v7-0-rc1-crypto-v1-0-5e6ff7853994@bootlin.com
+
+Signed-off-by: Miquel Raynal (Schneider Electric) <miquel.raynal@bootlin.com>
+---
+Miquel Raynal (Schneider Electric) (7):
+      dt-bindings: clock: Introduce nexus nodes
+      clk: tests: Add clk_parse_clkspec() Kunit testing
+      clk: tests: Add Kunit testing for of_clk_get_parent_name()
+      clk: Improve a couple of comments
+      clk: Use the generic OF phandle parsing in only one place
+      clk: Add support for clock nexus dt bindings
+      clk: tests: Add Kunit testing for nexus nodes
+
+ .../bindings/clock/clock-nexus-node.yaml           |  30 +++++
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/clk-conf.c                             |  12 +-
+ drivers/clk/clk.c                                  |  13 +-
+ drivers/clk/clk_kunit_helpers.c                    |  31 +++++
+ drivers/clk/clk_test.c                             | 146 +++++++++++++++++++++
+ drivers/clk/kunit_clk_parse_clkspec.dtso           |  31 +++++
+ include/kunit/clk.h                                |   2 +
+ 8 files changed, 254 insertions(+), 12 deletions(-)
+---
+base-commit: 7f26e010764df304602f33912a0550dcf46e72c2
+change-id: 20260710-schneider-v7-2-rc1-eip201-upstream-a470e5eab92d
 
 Best regards,
 -- 
-Bjorn Andersson <andersson@kernel.org>
+Miquel Raynal (Schneider Electric) <miquel.raynal@bootlin.com>
+
