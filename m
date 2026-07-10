@@ -1,245 +1,240 @@
-Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CBD93F411A;
-	Fri, 10 Jul 2026 14:57:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783695424; cv=pass; b=k+xhgfX7CdQZFL0K94UYycZVOXfT1TOHgo+RyhPiBEHl/JmaFCeqvLeB6eLDW3sAFrBVtMZh4Jjrr8M92q9bYAmuJear/Z5dMwQcDd2xnADo00Z8NhRsXF406wc3P9FjnRz3hE/UdncGER/i6JufHDCpyhC4m73E97qEMoMCPPM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783695424; c=relaxed/simple;
-	bh=TwqRt93NLpM0edhLSPUb/caZPdXOiIYc96gS/uk8cvc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=WQoBTWqcdLOnoycnczCrtDEH5ahCugh1JysAaaj4kRHuaQu2U7BV8I3MHXu1IGbLKb4ZiWZ2bF/uXWqNtCnkcip4587PJKJMmfQTZLvnxuO7B5E0uC6dmMwgPktUFR4O9eDxkQc2p0PZ65NCJMjM509jMuEEbgscocDI53clJHM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=m40ImWUg; arc=pass smtp.client-ip=136.143.188.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="m40ImWUg"
-ARC-Seal: i=1; a=rsa-sha256; t=1783695392; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Ml+DhCpPf45Z/4qAMFDX1inJx4ll4cpAPqHX1XAOkFYrT3SBF+2X1xNUUPJLWRvizcJMZUrNGm2F2YGl/aoMJOcZge7IU26m8GPDfrDoTX1hgMCr9GVbSyGzS3xCtLP82LHD9t/b5hDYAYnC6hvjNE5xA5DCn5XmRu1NlOpUyoY=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1783695392; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=zLiGYp9m/wGqSY8bb0fHrZAj5ElYrLF6yiGUlfJ+qMQ=; 
-	b=M0Eg0nQ4cf9rVWSHsT/sNKKmgpk+zGv+qg8eJwb/b/K4Yr3DkpJx054fB1YayRO8z7wd/DQCiNNHDwc04nIUI9x1nvK1zCDeBO2py7aQ6gcgNnqFwzGKcc9jJrPexN5jFSUJFX/nqh4BdiG2OY5ZzByJNj1JuO/PBfQCP/jeBKM=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=icenowy.me;
-	spf=pass  smtp.mailfrom=uwu@icenowy.me;
-	dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1783695392;
-	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=zLiGYp9m/wGqSY8bb0fHrZAj5ElYrLF6yiGUlfJ+qMQ=;
-	b=m40ImWUgrfvL+/QoCcMwwJ+Pgtlgx9LtjVk4mi7IQhGrkVavVKfwHBbkFtCEx2Ud
-	+Jdk0QkYo/qTGfUPcl+d6JuSfpcDp72ihGQWc7IVQYiTZ95yqP5DnbTyciiYdtZIxwe
-	cjQ1Spgu6g5lMsaqJlYOfs2B4CeqjFV5DOubRgrKMfxnPiK0zfeMgD1E0Z97vZDUw7I
-	jPp0Cn42fZt04GrRKzr1h2Qffkvw3f0SejtLcHYPSzl+H0xkk86YquVYa8bd3aWB65A
-	/1oZJabrJh9qMJ/g19xZ/RYhSbc2UJt7EgHL1rU7HbhFnUEv0mIE30v3O3f8IByUtyc
-	foDq8sKiIw==
-Received: by mx.zohomail.com with SMTPS id 1783695388721436.80504654321703;
-	Fri, 10 Jul 2026 07:56:28 -0700 (PDT)
-Message-ID: <b8fc8356212012d92186a1a4cd3ad641f01461a6.camel@icenowy.me>
-Subject: Re: [PATCH 11/12] riscv: dts: thead: Add Lichee Pi 4A IO expansions
-From: Icenowy Zheng <uwu@icenowy.me>
-To: Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei	
- <wefu@redhat.com>, Michael Turquette <mturquette@baylibre.com>, Stephen
- Boyd	 <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Vinod
- Koul	 <vkoul@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Paul Walmsley <pjw@kernel.org>,
- Palmer Dabbelt <palmer@dabbelt.com>,  Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>, Jisheng Zhang <jszhang@kernel.org>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, linux-riscv@lists.infradead.org,
- 	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-phy@lists.infradead.org, linux-usb@vger.kernel.org, Han Gao	
- <rabenda.cn@gmail.com>, Yao Zi <ziyao@disroot.org>, Emil Renner Berthing	
- <emil.renner.berthing@canonical.com>
-Date: Fri, 10 Jul 2026 22:56:08 +0800
-In-Reply-To: <20260507081710.4090814-12-zhengxingda@iscas.ac.cn>
-References: <20260507081710.4090814-1-zhengxingda@iscas.ac.cn>
-	 <20260507081710.4090814-12-zhengxingda@iscas.ac.cn>
-Organization: Anthon Open-Source Community
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.3 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C861D42E8E9
+	for <linux-clk@vger.kernel.org>; Fri, 10 Jul 2026 15:33:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1783697620; cv=none; b=FFQ7pWWXHnLz7cPYc+BXjAirln8ELHJty9UiejCZ8aM97B/lXKFtvSAKevTZkHZVhq7lWvkwkoBvdjKaKXyBhRl8eEzn8zmNADinTevu9JOOpa4uoqxploogEKzdEAbPWCsFdbzjDyjKa2VprVbGpx3NApx6xEcyWSDGIQwLTzE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1783697620; c=relaxed/simple;
+	bh=+uZ5UXdDa5uhMDpMicnYOj6M0pDzL1+0oF3Co1ShkM4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MX5U2wvXZM6xsOAeV5UoQW3HM9145Dk3dK0bxh5HOevuxIU2OGRp2gema4hDV1hMLJxOJXVCqu5hLCUrqVEbPbykgdPAC71oRlM5iHDpbATgfjJWESnZyZcsfF5Vj6N7IIkW/Le2zzB13Dki0RMV8zKJnBZlzYSFE9u6unLZGIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-74019ed06aeso894668137.3
+        for <linux-clk@vger.kernel.org>; Fri, 10 Jul 2026 08:33:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1783697617; x=1784302417;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=+J9nqX31rcmK2FDgFjQE+og8sL9DsOwtNN74GPHDF2c=;
+        b=NoTfxYVWSxxFIFIrN9FuX6H7Y4rgufQN6egG4so98HFbbCJKNLU8e7lgEaYP8l+BHp
+         DRkuKJciwAyzJiZ5WNQe6VPweMvlSlxcfkKwNW/si+nNgjy/tZx29Jii8DoEs3FQEq8k
+         CjytDobX3ctE55O2cJq92J91PlGYkygGTYPnQ0gor4bo5iwF36Jq01ZWmaYF8BvOdSXX
+         6CAVT8oqyiEUHD8zkst2aVgh1eiimQOfjQph02dADRF7rZUGDZqD3Bc67GT0J/44amoc
+         Wnj4NcAMEPV/6HJ8rC6kotvx69lZcQU+TyfqLRn2EOQK4wb0gpQ1ln9WHhQDaEUw/+5p
+         viWw==
+X-Forwarded-Encrypted: i=1; AHgh+RrT5NUeg7upun84cbzoNmUq9Xr/GDclPvMw+GU6euAi3Ag7SS1aZhuqNWpxNHALVfPTTwd6VZVnlnI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXkjwZr5aT4HfzXsmph8YlIvezMryHFDGnQDGq9OdZ4U0DI92n
+	ulPQXXEHIJGDtfi1WyDxHKb4GjcKl/USgPtlh3XR4khkQW1PIKFnUVb15hUsx7CV
+X-Gm-Gg: AfdE7cmkVSoWCqz3AM+2IW0vSUJNuMgcWUpNQfPMQ8ijKxHRiX3xqzylkGlcFoNfUYl
+	xoh4Uuvbps3J0PWs6lR/EY+mAh5sGmSlfRnwSDVHjK9ac1mcGwhsBn0xP80469T5pYIsd5hYJiX
+	fHxdqm3KAAIoIKOvrChBTmV1wPBLqbBjypuWTGS0T3v98fmSsOBZDObBPOfG0h9ZeNcuiQSx8EY
+	vqdOSw3Td15NUHD+/1RHVqmQ35bp8GE4UeT5AyCNHIiqjIEk5P46+vE/ijUevikMarc+gVfZu+N
+	yOKPtebDKYCLq/lpZlvuRudE+0Qb3gtfXKRwFOvkWmD659RQD1mxeZfqr0KaupCmWzFl38qtzYZ
+	jN453XpRiX0YUtZuIc60m3PltzZ5eJWQp/dssWDNRJ3z6UtqDnqin1ZAFDOd5W6WEw80DnSCzSP
+	WVqzSpEnvcTn4MqRGXTHcgMFNZvklyrhSlabAxSfTenseCYIRHZw==
+X-Received: by 2002:a05:6102:3ed4:b0:738:ff1b:940 with SMTP id ada2fe7eead31-744dfd069c7mr7678752137.4.1783697616589;
+        Fri, 10 Jul 2026 08:33:36 -0700 (PDT)
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com. [209.85.217.45])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-96ed6545095sm4776278241.11.2026.07.10.08.33.36
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 Jul 2026 08:33:36 -0700 (PDT)
+Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-737de525d2eso1192722137.2
+        for <linux-clk@vger.kernel.org>; Fri, 10 Jul 2026 08:33:36 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+Rp5FRdlNDUpXX8MBf3c9pc8QW8bWYac6B9mz9WwaY1hJ7TI6cwo2lZvO9BGzMC1//wVmOmQ/di/cKk=@vger.kernel.org
+X-Received: by 2002:a05:6102:424e:b0:740:4fd:1c40 with SMTP id
+ ada2fe7eead31-744dffe9c44mr7334430137.25.1783697611180; Fri, 10 Jul 2026
+ 08:33:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ZohoMailClient: External
+References: <20260619164030.380098-1-biju.das.jz@bp.renesas.com> <20260619164030.380098-2-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20260619164030.380098-2-biju.das.jz@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 10 Jul 2026 17:33:19 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdU3hKHP-dSVrX7xzQS8oozeJo_2na9Od3vRuPbKDGLt=Q@mail.gmail.com>
+X-Gm-Features: AUfX_mzojKdu_GbcaopGh8X_KXQ0RBr0eGDv_KuWYH0dzXkQTjZt2QCt2fgBU28
+Message-ID: <CAMuHMdU3hKHP-dSVrX7xzQS8oozeJo_2na9Od3vRuPbKDGLt=Q@mail.gmail.com>
+Subject: Re: [PATCH 1/6] clk: renesas: rzg2l: Add DSI divider clock support
+ for RZ/G3L
+To: Biju <biju.das.au@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, Brian Masney <bmasney@redhat.com>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-=E5=9C=A8 2026-05-07=E5=9B=9B=E7=9A=84 16:17 +0800=EF=BC=8CIcenowy Zheng=E5=
-=86=99=E9=81=93=EF=BC=9A
-> From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
->=20
-> Lichee Pi 4A has 3 I2C IO expansion chips onboard, connected to the
-> I2C0/1/3 busses.
->=20
-> Add device tree nodes for them.
->=20
-> Signed-off-by: Emil Renner Berthing
-> <emil.renner.berthing@canonical.com>
-> [Icenowy: added commit description]
-> Signed-off-by: Icenowy Zheng <zhengxingda@iscas.ac.cn>
+Hi Biju,
 
-I am going to send a newer revision of PATCH 9~11 in a few days,
-because the I2C1 controller is already added to the mainline device
-tree for Wi-Fi support, although the already-merged patches are a
-little weird.
+On Fri, 19 Jun 2026 at 18:40, Biju <biju.das.au@gmail.com> wrote:
+> From: Biju Das <biju.das.jz@bp.renesas.com>
+>
+> Add a new DSI divider clock type (CLK_TYPE_G3L_PLLDSI_DIV) for the RZ/G3L
+> SoC, which requires a different divider implementation than the existing
+> RZ/G2L DSI divider clock.
+>
+> The RZ/G3L DSI divider uses two cascaded dividers, DIV_DSI_A and
+> DIV_DSI_B, where the effective divider is:
+>
+>   rate = parent_rate / ((1 << div_a) * (div_b + 1))
+>
+> DIV_DSI_A is a power-of-two divider with values in the range [0, 5],
+> and DIV_DSI_B is a linear divider with values in the range [1, 16].
+>
+> Introduce the g3l_dsi_div_hw_data structure, rzg3l_cpg_dsi_div_ops, and
+> rzg3l_cpg_dsi_div_clk_register() to implement the new clock type, and add
+> the DEF_G3L_PLLDSI_DIV() macro for use in clock table definitions.
+>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-Thanks,
-Icenowy
+Thanks for your patch!
 
-> ---
-> =C2=A0.../boot/dts/thead/th1520-lichee-pi-4a.dts=C2=A0=C2=A0=C2=A0 | 111
-> ++++++++++++++++++
-> =C2=A01 file changed, 111 insertions(+)
->=20
-> diff --git a/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
-> b/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
-> index 4198dbf953f06..354f3893aa8cf 100644
-> --- a/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
-> +++ b/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
-> @@ -16,6 +16,9 @@ aliases {
-> =C2=A0		gpio3 =3D &gpio3;
-> =C2=A0		gpio4 =3D &gpio4;
-> =C2=A0		gpio5 =3D &aogpio;
-> +		i2c0 =3D &i2c0;
-> +		i2c1 =3D &i2c1;
-> +		i2c3 =3D &i2c3;
-> =C2=A0		serial0 =3D &uart0;
-> =C2=A0		serial1 =3D &uart1;
-> =C2=A0		serial2 =3D &uart2;
-> @@ -110,6 +113,76 @@ hdmi_out_con: endpoint {
-> =C2=A0	};
-> =C2=A0};
-> =C2=A0
-> +&i2c0 {
-> +	pinctrl-names =3D "default";
-> +	pinctrl-0 =3D <&i2c0_pins>;
-> +	clock-frequency =3D <100000>;
-> +	i2c-sda-hold-time-ns =3D <300>;
-> +	i2c-sda-falling-time-ns =3D <510>;
-> +	i2c-scl-falling-time-ns =3D <510>;
-> +	status =3D "okay";
-> +
-> +	ioexp1: gpio@18 {
-> +		compatible =3D "nxp,pca9557";
-> +		reg =3D <0x18>;
-> +		gpio-controller;
-> +		#gpio-cells =3D <2>;
-> +		gpio-line-names =3D "cam0_dvdd12",
-> +				=C2=A0 "cam0_avdd28",
-> +				=C2=A0 "cam0_dovdd18";
-> +	};
+> --- a/drivers/clk/renesas/rzg2l-cpg.c
+> +++ b/drivers/clk/renesas/rzg2l-cpg.c
+
+> @@ -834,6 +837,134 @@ rzg2l_cpg_dsi_div_clk_register(const struct cpg_core_clk *core,
+>         return clk_hw->clk;
+>  }
+>
+> +struct g3l_dsi_div_hw_data {
+> +       struct clk_hw hw;
+> +       struct rzg2l_cpg_priv *priv;
+> +       unsigned long rate;
+> +       u32 off;
+> +       u8 div_a;
+> +       u8 div_b;
 > +};
 > +
-> +&i2c1 {
-> +	pinctrl-names =3D "default";
-> +	pinctrl-0 =3D <&i2c1_pins>;
-> +	clock-frequency =3D <100000>;
-> +	i2c-sda-hold-time-ns =3D <300>;
-> +	i2c-sda-falling-time-ns =3D <510>;
-> +	i2c-scl-falling-time-ns =3D <510>;
-> +	status =3D "okay";
+> +#define to_g3l_dsi_div_hw_data(_hw)    container_of(_hw, struct g3l_dsi_div_hw_data, hw)
 > +
-> +	ioexp2: gpio@18 {
-> +		compatible =3D "nxp,pca9557";
-> +		reg =3D <0x18>;
-> +		gpio-controller;
-> +		#gpio-cells =3D <2>;
-> +		gpio-line-names =3D "",
-> +				=C2=A0 "cam0_reset",
-> +				=C2=A0 "cam1_reset",
-> +				=C2=A0 "cam2_reset",
-> +				=C2=A0 "wl_host_wake",
-> +				=C2=A0 "bt_resetn",
-> +				=C2=A0 "",
-> +				=C2=A0 "bt_host_wake";
-> +	};
-> +};
+> +static unsigned long rzg3l_cpg_dsi_div_recalc_rate(struct clk_hw *hw,
+> +                                                  unsigned long parent_rate)
+> +{
+> +       struct g3l_dsi_div_hw_data *dsi_div = to_g3l_dsi_div_hw_data(hw);
+> +       struct rzg2l_cpg_priv *priv = dsi_div->priv;
+> +       int div_a, div_b, val;
 > +
-> +&i2c3 {
-> +	pinctrl-names =3D "default";
-> +	pinctrl-0 =3D <&i2c3_pins>;
-> +	clock-frequency =3D <100000>;
-> +	i2c-sda-hold-time-ns =3D <300>;
-> +	i2c-sda-falling-time-ns =3D <510>;
-> +	i2c-scl-falling-time-ns =3D <510>;
-> +	status =3D "okay";
+> +       val = readl(priv->base + dsi_div->off);
+> +       div_a = FIELD_GET(GENMASK(2, 0), val);
+> +       div_b = FIELD_GET(GENMASK(7, 4), val);
+
+Please add and use
+
+    #define DIV_DSI_A_SET    GENMASK(2, 0)
+    #define DIV_DSI_B_SET    GENMASK(7, 4)
+
+(after having seen G3L_SDIV_DSI_C_SET, I kept on looking for  similar
+ A_SET and B_SET use).
+
 > +
-> +	ioexp3: gpio@18 {
-> +		compatible =3D "nxp,pca9557";
-> +		reg =3D <0x18>;
-> +		gpio-controller;
-> +		#gpio-cells =3D <2>;
-> +		gpio-line-names =3D "tp0_rst",
-> +				=C2=A0 "",
-> +				=C2=A0 "",
-> +				=C2=A0 "vcc5v_usb",
-> +				=C2=A0 "vdd28_tp0",
-> +				=C2=A0 "vdd33_lcd0",
-> +				=C2=A0 "vdd18_lcd0",
-> +				=C2=A0 "lcd0_reset";
-> +	};
-> +};
+> +       return DIV_ROUND_CLOSEST_ULL((u64)parent_rate, (1 << div_a) * (div_b + 1));
+
+You can simplify the divider to "(div_b + 1) << div_a".
+
+> +}
 > +
-> =C2=A0&padctrl0_apsys {
-> =C2=A0	fan_pins: fan-0 {
-> =C2=A0		pwm1-pins {
-> @@ -123,6 +196,18 @@ pwm1-pins {
-> =C2=A0		};
-> =C2=A0	};
-> =C2=A0
-> +	i2c3_pins: i2c3-0 {
-> +		i2c-pins {
-> +			pins =3D "I2C3_SCL", "I2C3_SDA";
-> +			function =3D "i2c";
-> +			bias-disable; /* external pull-up */
-> +			drive-strength =3D <7>;
-> +			input-enable;
-> +			input-schmitt-enable;
-> +			slew-rate =3D <0>;
-> +		};
-> +	};
+> +static int rzg3l_cpg_dsi_div_determine_rate(struct clk_hw *hw,
+> +                                           struct clk_rate_request *req)
+> +{
+> +       struct g3l_dsi_div_hw_data *dsi_div = to_g3l_dsi_div_hw_data(hw);
+> +       struct rzg2l_cpg_priv *priv = dsi_div->priv;
+> +       u32 divider = dsi_div_ab_desired;
+
+unsigned int
+
+> +       bool divider_found = false;
+> +       unsigned int div_a, div_b;
+
+Perhaps move the declarations of the loop counters inside the
+for()-statements?
+
 > +
-> =C2=A0	uart0_pins: uart0-0 {
-> =C2=A0		tx-pins {
-> =C2=A0			pins =3D "UART0_TXD";
-> @@ -146,6 +231,32 @@ rx-pins {
-> =C2=A0	};
-> =C2=A0};
-> =C2=A0
-> +&padctrl1_apsys {
-> +	i2c0_pins: i2c0-0 {
-> +		i2c-pins {
-> +			pins =3D "I2C0_SCL", "I2C0_SDA";
-> +			function =3D "i2c";
-> +			bias-disable; /* external pull-up */
-> +			drive-strength =3D <7>;
-> +			input-enable;
-> +			input-schmitt-enable;
-> +			slew-rate =3D <0>;
-> +		};
-> +	};
+> +       if (dsi_div_target) {
+> +               /* Calculate the DIV_DSI_A and DIV_DSI_B */
+
+Please drop "the".
+
+> +               for (div_a = 5; div_a >= 0 && !divider_found; div_a--) {
+
+div_a is unsigned, so >= is always true
+
+> +                       for (div_b = 0; div_b < 16; div_b++) {
+> +                               divider = (1 << div_a) * (div_b + 1);
+
+(div_b + 1) << div_a
+
+> +                               if (divider == dsi_div_ab_desired) {
+
+divider is 1..512, while dsi_div_ab_desired is only u8.
+
+> +                                       dsi_div->div_a = div_a;
+> +                                       dsi_div->div_b = div_b;
+> +                                       divider_found = true;
+> +                                       break;
+> +                               }
+> +                       }
+> +               }
+> +       } else {
+> +               dsi_div->div_b = 0;
+> +               /* Calculate the DIV_DSI_A */
+
+Please drop "the"
+
+> +               for (div_a = 5; div_a >= 0 && !divider_found; div_a--) {
+> +                       divider = (1 << div_a);
+> +                       if (divider == dsi_div_ab_desired) {
+> +                               dsi_div->div_a = div_a;
+> +                               divider_found = true;
+> +                               break;
+> +                       }
+> +               }
+> +       }
 > +
-> +	i2c1_pins: i2c1-0 {
-> +		i2c-pins {
-> +			pins =3D "I2C1_SCL", "I2C1_SDA";
-> +			function =3D "i2c";
-> +			bias-disable; /* external pull-up */
-> +			drive-strength =3D <7>;
-> +			input-enable;
-> +			input-schmitt-enable;
-> +			slew-rate =3D <0>;
-> +		};
-> +	};
-> +};
+> +       if (!divider_found) {
+> +               dev_err(priv->dev, "failed dsi div for: %u\n", divider);
+> +               return -EINVAL;
+> +       }
 > +
-> =C2=A0&uart0 {
-> =C2=A0	pinctrl-names =3D "default";
-> =C2=A0	pinctrl-0 =3D <&uart0_pins>;
+> +       req->best_parent_rate = req->rate * divider;
+> +
+> +       return 0;
+> +}
+> +
+> +static int rzg3l_cpg_dsi_div_set_rate(struct clk_hw *hw, unsigned long rate,
+> +                                     unsigned long parent_rate)
+> +{
+> +       struct g3l_dsi_div_hw_data *dsi_div = to_g3l_dsi_div_hw_data(hw);
+> +       struct rzg2l_cpg_priv *priv = dsi_div->priv;
+> +
+> +       writel(RZG3L_SDIV_DIV_DSI_A_WEN | RZG3L_SDIV_DIV_DSI_B_WEN |
+> +              (dsi_div->div_a << 0) | (dsi_div->div_b << 4),
+
+FIELD_PREP(DIV_DSI_A_SET, dsi_div->div_a) |
+FIELD_PREP(DIV_DSI_B_SET, dsi_div->div_b)
+
+
+> +              priv->base + dsi_div->off);
+> +
+> +       return 0;
+> +}
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
