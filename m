@@ -1,182 +1,212 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8234937BE98
-	for <linux-clk@vger.kernel.org>; Fri, 10 Jul 2026 18:22:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8CA52857FA
+	for <linux-clk@vger.kernel.org>; Fri, 10 Jul 2026 19:37:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783707757; cv=none; b=nz+IPAUUuSVlk0zDVH84qC/bZwHqN66GLv3uJS1dzxmOCY3QvmnD5NUC2Jeg4eEZ36tkvkdR/Uhw2bYGhkfgtZr6/1V9AOMuqauDY37ZadeFz62zQL9DllXdxuMNUuDD3TOgv8DH1o2qByvfIy/Q/LzYXoSqaFIhkLMHnm3Bl0k=
+	t=1783712235; cv=none; b=VsaYOWfjvG710G5vcWVtp7IUM8qV9RfrsM60ASmgvmPYAvbsYdW0pRCaeL5aFa6aJKRw9+gaf6NuF/b/m9UXdvR6cBUXMCKAXf77P4o+3tJptmNINnHBCuf2+Cg0vJ+WfRwRz6I61aiL+jh6Be9iwRX6M/qAzzTo2jSGOOaz+Yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783707757; c=relaxed/simple;
-	bh=9BD0frHIllOdYuYH6t1kkSctrb7RdeGSymmOSsqpKhU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nHvhbpdO3vwJqQsarmSySpN8JiNDIAQBeyM4M4GqNtaQCjchLJawz1bzDkZnGYZz5rCM9DettriUlZbiBhF5ja3yi3GLaieYESHWeEL9IdJ5kG0g0TAsf5wwtpVXBbfPhKShq2vgYrEqPpg87OCamGxAH1TaLLZjo3RJRSVFUlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ofdl18DB; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1783712235; c=relaxed/simple;
+	bh=+JOidhfjGr0Iz06UJWK2SN/49d4BYeGCXuMWaKrMxOs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kU09OnisaS4MX1VOMWWWv284QnJPzkTGdl12adWdA7J7/T3iHKpn3bq52kwQWGyzR9JFKn0J9gOrWK1uS6ifpp5PtIsktCnO/b+ox7ly+jtESVpVEtIqMI5/OQ2QK+oirj9+YvCkF5S8ZHQ5RMDWRxKsaPKiMqYhu4UxytGar4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=QpJi2/WX; arc=none smtp.client-ip=149.28.215.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ofdl18DB"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 27E8D1A0F46;
-	Fri, 10 Jul 2026 18:22:30 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id EFA4A60342;
-	Fri, 10 Jul 2026 18:22:29 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3FAB711BD2C24;
-	Fri, 10 Jul 2026 20:22:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1783707748; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=Z4iMMdJhqEJQ6QA/P5+O9pqvjmWc5U1l7gvdD0BYF6o=;
-	b=ofdl18DBYwlZmpFxpHUXEBogYh+20Q1xgpbDsSLtbS+ORZehcnwURbhUEtZCbfJ1xSe6bL
-	BIsjJRe1JSyssr97hQIBNc8aAzNiG4e3zyRYBF9ovA9o1KVlfQM5aSjx1hC1KcSY4iIYhr
-	J2WEbmlpmSk0xwnr7QhZ8WouCwzx4vlCzaf8o3/tBHtTVcYNuoAyvlVqHY7gBfmmWL/ZL1
-	YFcnER1B+nSsJgW188PXHm4YZ5PcSCdBUuAo5+zF5kJsHxTBqExBSNVjBrcbAN1pOMEjeO
-	4KqHFvHuqyOCwZmTbdF81MiDV31OgtVhQy1v9bpLR+hYiX027IQH8bMnpSNBsQ==
-From: "Miquel Raynal (Schneider Electric)" <miquel.raynal@bootlin.com>
-Date: Fri, 10 Jul 2026 20:22:01 +0200
-Subject: [PATCH v2 6/7] clk: Add support for clock nexus dt bindings
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="QpJi2/WX"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1783712226;
+ bh=PLRr85CNC1eO28rwGXWbZFk7lEDMqIoxiSt+2izE2og=;
+ b=QpJi2/WXukm1qtMN9eb6EnVYlGdQoxwgJnmrrbsVFYGcNgq4TUn2WTpC0m2bwesGJ4TGzX1ws
+ BE7dKeBXIkpwnIMfLUyEqLwugbjqihqEmuyZgGSER9MG2/1k3+1paurV5meGLzz0VhnS7WQl2mc
+ qbQzS/ekh/W/X5QCCJ8Dd3f7uLMCYS9wsItgZCTqv+Kc6twL+7fCKjxwWMqmQSapDOh3PXz73/J
+ J68BlRPwSZVoDJqHxoaeWlLgDieOPsPwOfQltOh4agdY1BLMWyGF0GS107DTH3iJHl3sMb+3p8e
+ AyeSs6C1mVMesMXRqbXpUeum86R9TSoFYjpr0TR7WPWA==
+X-Forward-Email-ID: 6a5149dcf640ad60663f0665
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 149.28.215.223
+X-Forward-Email-Version: 2.10.2
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+Message-ID: <2a6f03c3-32e1-4d73-857d-1301d7c39fcc@kwiboo.se>
+Date: Fri, 10 Jul 2026 21:36:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/12] dt-bindings: clock: rockchip: Add RV1106 CRU
+ support
+To: Simon Glass <sjg@chromium.org>, Heiko Stuebner <heiko@sntech.de>
+Cc: "linux-rockchip@lists.infradead.org"
+ <linux-rockchip@lists.infradead.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ Fabio Estevam <festevam@nabladev.com>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, Brian Masney <bmasney@redhat.com>,
+ Conor Dooley <conor+dt@kernel.org>, Jeffy Chen <jeffy.chen@rock-chips.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>,
+ Stephen Boyd <sboyd@kernel.org>, huang lin <hl@rock-chips.com>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20260706195818.3906949-1-sjg@chromium.org>
+ <20260706195818.3906949-2-sjg@chromium.org>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <20260706195818.3906949-2-sjg@chromium.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260710-schneider-v7-2-rc1-eip201-upstream-v2-6-b4680787377e@bootlin.com>
-References: <20260710-schneider-v7-2-rc1-eip201-upstream-v2-0-b4680787377e@bootlin.com>
-In-Reply-To: <20260710-schneider-v7-2-rc1-eip201-upstream-v2-0-b4680787377e@bootlin.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Brendan Higgins <brendan.higgins@linux.dev>, David Gow <david@davidgow.net>, 
- Rae Moar <raemoar63@gmail.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Pascal EBERHARD <pascal.eberhard@se.com>, 
- Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
- "Miquel Raynal (Schneider Electric)" <miquel.raynal@bootlin.com>, 
- Herve Codina <herve.codina@bootlin.com>
-X-Mailer: b4 0.14.3
-X-Last-TLS-Session-Version: TLSv1.3
 
-A nexus node is some kind of parent device abstracting the outer
-connections. They are particularly useful for describing connectors-like
-interfaces but not only. Certain IP blocks will typically include inner
-blocks and distribute resources to them.
+Hi Simon,
 
-In the case of clocks, there is already the concept of clock controller,
-but this usually indicates some kind of control over the said clock,
-ie. gate or rate control. When there is none of this, an existing
-approach is to reference the upper clock, which is wrong from a hardware
-point of view.
+On 7/6/2026 9:57 PM, Simon Glass wrote:
+> Add the clock binding header and schema for the Rockchip RV1106 clock
+> and reset unit. The clock IDs match the numbering used by the vendor
+> kernel so that existing devicetrees keep working. The header also
+> covers the GRF clock controller, which provides the MMC drive and
+> sample phase clocks.
+> 
+> The RV1103 is a package variant of the RV1106 and uses the same CRU.
+> 
+> Signed-off-by: Simon Glass <sjg@chromium.org>
+> ---
+> 
+>  .../bindings/clock/rockchip,rv1106-cru.yaml   |  59 ++++
+>  .../dt-bindings/clock/rockchip,rv1106-cru.h   | 301 ++++++++++++++++++
+>  2 files changed, 360 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rv1106-cru.yaml
+>  create mode 100644 include/dt-bindings/clock/rockchip,rv1106-cru.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/rockchip,rv1106-cru.yaml b/Documentation/devicetree/bindings/clock/rockchip,rv1106-cru.yaml
+> new file mode 100644
+> index 000000000000..884a4a8bb0fb
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/rockchip,rv1106-cru.yaml
+> @@ -0,0 +1,59 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/rockchip,rv1106-cru.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Rockchip RV1106 Clock and Reset Unit
+> +
+> +maintainers:
+> +  - Simon Glass <sjg@chromium.org>
+> +  - Heiko Stuebner <heiko@sntech.de>
+> +
+> +description:
+> +  The RV1106 clock controller generates the clock and also implements a
+> +  reset controller for SoC peripherals.
+> +
+> +properties:
+> +  compatible:
+> +    const: rockchip,rv1106-cru
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  "#clock-cells":
+> +    const: 1
+> +
+> +  "#reset-cells":
+> +    const: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  clock-names:
+> +    const: xin24m
+> +
+> +  rockchip,grf:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description:
+> +      Phandle to the syscon managing the "general register files" (GRF),
+> +      if missing pll rates are not changeable, due to the missing pll
+> +      lock status.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - "#clock-cells"
+> +  - "#reset-cells"
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    clock-controller@ff3b0000 {
+> +      compatible = "rockchip,rv1106-cru";
+> +      reg = <0xff3b0000 0x20000>;
+> +      rockchip,grf = <&grf>;
+> +      #clock-cells = <1>;
+> +      #reset-cells = <1>;
+> +    };
+> diff --git a/include/dt-bindings/clock/rockchip,rv1106-cru.h b/include/dt-bindings/clock/rockchip,rv1106-cru.h
+> new file mode 100644
+> index 000000000000..acbf9c1ee6af
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/rockchip,rv1106-cru.h
+> @@ -0,0 +1,301 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
+> +/*
+> + * Copyright (c) 2022 Rockchip Electronics Co. Ltd.
+> + * Author: Elaine Zhang <zhangqing@rock-chips.com>
+> + */
+> +
+> +#ifndef _DT_BINDINGS_CLK_ROCKCHIP_RV1106_H
+> +#define _DT_BINDINGS_CLK_ROCKCHIP_RV1106_H
+> +
+> +/* pll clocks */
+> +#define PLL_APLL		1
 
-Nexus nodes are already part of the device-tree specification and clocks
-are already mentioned:
-https://github.com/devicetree-org/devicetree-specification/blob/v0.4/source/chapter2-devicetree-basics.rst#nexus-nodes-and-specifier-mapping
+Clock indices should start at 0 and be a continuous enumeration.
 
-Following the introductions of nexus nodes support for interrupts, gpios
-and pwms, here is the same logic applied again to the clk subsystem,
-just by transitioning from of_parse_phandle_with_args() to
-of_parse_phandle_with_args_map():
+> +#define PLL_DPLL		2
+> +#define PLL_CPLL		3
+> +#define PLL_GPLL		4
+> +#define ARMCLK			5
+> +
+> +/* clk (clocks) */
+> +#define PCLK_DDRPHY		11
 
-* Nexus OF support:
-commit bd6f2fd5a1d5 ("of: Support parsing phandle argument lists through a nexus node")
-* GPIO adoption:
-commit c11e6f0f04db ("gpio: Support gpio nexus dt bindings")
-* PWM adoption:
-commit e71e46a6f19c ("pwm: Add support for pwm nexus dt bindings")
+As mentioned above, indices should be a continuous enumeration.
 
-Only expected Nexus property:
-- clock-map: maps inner clocks to inlet clocks
-(the other properties have been judged not relevant for clocks)
+> +#define PCLK_DDR_ROOT		12
+> +#define PCLK_DDRMON		13
+> +#define CLK_TIMER_DDRMON	14
+> +#define PCLK_DDRC		15
+> +#define PCLK_DFICTRL		16
+> +#define ACLK_DDR_ROOT		17
+> +#define ACLK_SYS_SHRM		18
+> +#define HCLK_NPU_ROOT		19
 
-Here is an example:
+[snip]
 
-Example:
-    soc_clk: clock-controller {
-        #clock-cells = <1>;
-    };
+> +/* mmc phase clocks provided by the grf-cru */
+> +#define SCLK_EMMC_DRV		1
+> +#define SCLK_EMMC_SAMPLE	2
+> +#define SCLK_SDMMC_DRV		3
+> +#define SCLK_SDMMC_SAMPLE	4
+> +#define SCLK_SDIO_DRV		5
+> +#define SCLK_SDIO_SAMPLE	6
 
-    container: container {
-        #clock-cells = <1>;
-        clock-map = <0 &soc_clk 2>,
-                    <1 &soc_clk 6>;
+For other Rockchip SoCs the grf clocks have been exposed from the CRU,
+please take a look at e.g. SCLK_SDMMC_DRV and other similar clocks for
+RK3528.
 
-        child-device {
-            clocks = <&container 1>;
-	    /* This is equivalent to <&soc_clk 6> */
-        };
-    };
+Regards,
+Jonas
 
-The child device does not need to know about the outer implementation,
-and only knows about what the nexus provides. The nexus acts as a
-pass-through, with no extra control.
-
-Signed-off-by: Miquel Raynal (Schneider Electric) <miquel.raynal@bootlin.com>
-Reviewed-by: Herve Codina <herve.codina@bootlin.com>
-Reviewed-by: Brian Masney <bmasney@redhat.com>
----
- drivers/clk/clk-conf.c | 12 ++++++------
- drivers/clk/clk.c      |  4 ++--
- 2 files changed, 8 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/clk/clk-conf.c b/drivers/clk/clk-conf.c
-index 303a0bb26e54..5380d43b56a4 100644
---- a/drivers/clk/clk-conf.c
-+++ b/drivers/clk/clk-conf.c
-@@ -25,8 +25,8 @@ static int __set_clk_parents(struct device_node *node, bool clk_supplier)
- 		       node);
- 
- 	for (index = 0; index < num_parents; index++) {
--		rc = of_parse_phandle_with_args(node, "assigned-clock-parents",
--					"#clock-cells",	index, &clkspec);
-+		rc = of_parse_phandle_with_args_map(node, "assigned-clock-parents",
-+						    "clock", index, &clkspec);
- 		if (rc < 0) {
- 			/* skip empty (null) phandles */
- 			if (rc == -ENOENT)
-@@ -47,8 +47,8 @@ static int __set_clk_parents(struct device_node *node, bool clk_supplier)
- 			return PTR_ERR(pclk);
- 		}
- 
--		rc = of_parse_phandle_with_args(node, "assigned-clocks",
--					"#clock-cells", index, &clkspec);
-+		rc = of_parse_phandle_with_args_map(node, "assigned-clocks",
-+						    "clock", index, &clkspec);
- 		if (rc < 0)
- 			goto err;
- 		if (clkspec.np == node && !clk_supplier) {
-@@ -121,8 +121,8 @@ static int __set_clk_rates(struct device_node *node, bool clk_supplier)
- 			rate = rates[index];
- 
- 		if (rate) {
--			rc = of_parse_phandle_with_args(node, "assigned-clocks",
--					"#clock-cells",	index, &clkspec);
-+			rc = of_parse_phandle_with_args_map(node, "assigned-clocks",
-+							    "clock", index, &clkspec);
- 			if (rc < 0) {
- 				/* skip empty (null) phandles */
- 				if (rc == -ENOENT)
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index dad4bac10ad4..73ddd9a6aa2e 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -5207,8 +5207,8 @@ static int of_parse_clkspec(const struct device_node *np, int index,
- 		 */
- 		if (name)
- 			index = of_property_match_string(np, "clock-names", name);
--		ret = of_parse_phandle_with_args(np, "clocks", "#clock-cells",
--						 index, out_args);
-+		ret = of_parse_phandle_with_args_map(np, "clocks", "clock",
-+						     index, out_args);
- 		if (!ret)
- 			break;
- 		if (name && index >= 0)
-
--- 
-2.54.0
+> +
+> +#endif
 
