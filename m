@@ -1,107 +1,140 @@
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 709984071F5;
-	Fri, 10 Jul 2026 10:23:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46E8A2E7377;
+	Fri, 10 Jul 2026 10:36:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783679018; cv=none; b=OyqCVLkAPAqsMCg/7gciAq58TL3kG7d10ckntxXVDRf0J5KOjesS4ZiuLcXRGy4YBpVdpTviUqWXXDoK5shhFxS0MMI/n9A41w2fB/eR+2sWOoG6h0JbtDb9qU30PgZAwCu1fPgiR1AclTMAIF0yhxMiG/xwpjJ4Hl/H67iEDrs=
+	t=1783679780; cv=none; b=k9yfHTd4fUpRLdw5RMLB6I3++J3WwgPnbwLxHNVAUyjB5vt0thOwZKtaHAWca9+bVm8QVAUiHWQPq1+vMa0WN+s01BYevpuOT7LMa9SzWEwjNuJ+P9DkwwVFwolH2hvg9+apQ08gFmZZ+QH46hUZApQjKheuFweN9FWn48g14x0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783679018; c=relaxed/simple;
-	bh=RAKTEeSeoLlrKHDBTc7eBUZQFZK/4GACdcbJhsXeJfk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=baKVX4SuWNchOVNHBoJCUlD6yWyF0EnQtcnijANJmxwkBlnBjAcwsp17i868TmaH/Sws/4veqzLJRLAZQQbPl7WbjvzRoXKAYqWhg3WXeoISPE6nKCs/X2b9JEKH87wQwxS1COX4/rSUAUmoUmTyy5yAmxTZm60CQCshCRHfJJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=AAfHbqfT; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=Pm10hKbV; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1783679780; c=relaxed/simple;
+	bh=s8e719fI1lh4iwu6ag1ePU0Hg7fs4+ScAlrOQK5mJEY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=mfRg+TvRzpqmDCmgse7csasDt7c5KzbAvoJ00sf3CeYYvDqFg4nGkMIo++YmqlcNG1VJbX0rjpviTS5wMr6jVhEBtIKPoc62NOrt0boEc9KwYWU7rNMsZ/2PAl2d0fbP8HVU84PZUuhOYnY7kkQs2aynBnVvUkq9LWzaa6+yhYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ivn/hFi6; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="AAfHbqfT";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="Pm10hKbV"
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA512)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4gxSbN4YDrzKvvq;
-	Fri, 10 Jul 2026 12:23:28 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1783679008;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=IE88QkjLby3ju5RANsjgYMee3nrOo4fYiqaFhPyeHpY=;
-	b=AAfHbqfThkPL4tBU9AE1v4dA7cCWLKCR4P8IOdm8qbVkUqhBsq5xG3msrOC5Hr1cImHwPZ
-	lIpcvPM79UYhoaW3XFCEJ10twj59mzMsJtjss9Yui/kHg19Si/TVbM/2eExugzpd0mIUcK
-	38YHY0UFPzsOpYxzR4kJjpzMf4Jxd9rkGp03RLV0ia4E2GeEGMxWatXyE5pH0v8pMj3f90
-	Mg/NP9Z+mxyaUkoFfcS2Sn8l2rkX78ZxJjSz9YxPUamOu12VrQjAS6QBoXX6hAN2JzoL4i
-	TyNgpeiki3T7fbwgEvjuh4xvGtjyuE2dHCf+frVGlI3zfWbLc2YceJRKx6rrLA==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=Pm10hKbV;
-	spf=pass (outgoing_mbo_mout: domain of manuelebner@mailbox.org designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=manuelebner@mailbox.org
-From: Manuel Ebner <manuelebner@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1783679007;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=IE88QkjLby3ju5RANsjgYMee3nrOo4fYiqaFhPyeHpY=;
-	b=Pm10hKbVAKtYgQ6WeIzozwuhHbDVUlowk+Y09dNQJpvTrIg0nGTAGtHzgsnBYOG//s+VBN
-	JQ1+KIoHGUntfTVDwKHChCRZ2fqMyE7fIE+lSj55g8g0H0Svdrdg6j0kqcLzB/+xK1bp2j
-	zxOUBp8lZm9Ljgb1hUPTtadRtkwSi/1l5z3A7bIjDeHHDOG7qAJ0xswbfvoqdmvnraBoHh
-	o8UVB5tO3AUsawZzVl2pHcjvgImxwrbac0aTHtETGns1M4XjNmesOGfJieXX047K0I6vUH
-	/87alyURHtOFvW/C+W4sifXNLd1Pi7am3WEqivkVLacBzwEJWn91wChRdEVjZQ==
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Manuel Ebner <manuelebner@mailbox.org>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] dt-bindings: clock: fix bracket
-Date: Fri, 10 Jul 2026 12:21:33 +0200
-Message-ID: <20260710102132.433276-3-manuelebner@mailbox.org>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ivn/hFi6"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 92E63C2F4FE;
+	Fri, 10 Jul 2026 10:36:23 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id A5AC560342;
+	Fri, 10 Jul 2026 10:36:08 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 61FA011BD295D;
+	Fri, 10 Jul 2026 12:35:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1783679766; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=6+ULItnJf1sGBisnEhPjjWTOmY5NUXBuwBhmcIC8+UQ=;
+	b=ivn/hFi6a/lBi80O3yMvQB+B5mpswIxbNWWE0pYlbkVMWfvJ0d53+YTLfaOeqhKHYWy1Lv
+	IsOt5buug5pmXbjNeNF/MTreiCyObz2CGX2MhHx1i/34ziBh73lVxNvc0OOVdW2bF7k9jh
+	mAQ7grUpbxuTFL5Q3Em+P2MfzyCNoJxXVeXtlypBY4aMBNHCJZXoSfR+VnMQo8m/8iIC1F
+	OLt0pP5DlOs7wKDSQzWCNDPMyig2+5dli64tvbJ8L+oOteUTjVV95+9+Xo+BADYmzXipJL
+	YLV1ForjqpmWJgDfcjxSBKiEV2r2yvRJBCZNCfG7TwQZ0Far/7ghqNcJOxWglQ==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Antoine Tenart <atenart@kernel.org>,  Christian Marangi
+ <ansuelsmth@gmail.com>,  Conor Dooley <conor+dt@kernel.org>,  David S.
+ Miller <davem@davemloft.net>,  Geert Uytterhoeven
+ <geert+renesas@glider.be>,  Herbert Xu <herbert@gondor.apana.org.au>,
+  Jayesh Choudhary <j-choudhary@ti.com>,  Krzysztof Kozlowski
+ <krzk+dt@kernel.org>,  Magnus Damm <magnus.damm@gmail.com>,  Michael
+ Turquette <mturquette@baylibre.com>,  Olivia Mackall <olivia@selenic.com>,
+  Rob Herring <robh@kernel.org>,  Thomas Gleixner <tglx@kernel.org>,
+  Thomas Petazzoni <thomas.petazzoni@bootlin.com>,  Pascal EBERHARD
+ <pascal.eberhard@se.com>,  Wolfram Sang
+ <wsa+renesas@sang-engineering.com>,  linux-clk@vger.kernel.org,
+  devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-crypto@vger.kernel.org,  linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 11/16] clk: tests: Add Kunit testing for nexus nodes
+In-Reply-To: <177595802905.5403.1342882536380309490@lazor> (Stephen Boyd's
+	message of "Sat, 11 Apr 2026 18:40:29 -0700")
+References: <20260327-schneider-v7-0-rc1-crypto-v1-0-5e6ff7853994@bootlin.com>
+	<20260327-schneider-v7-0-rc1-crypto-v1-11-5e6ff7853994@bootlin.com>
+	<177595802905.5403.1342882536380309490@lazor>
+User-Agent: mu4e 1.12.7; emacs 30.2
+Date: Fri, 10 Jul 2026 12:35:57 +0200
+Message-ID: <87se5rgmia.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-MBO-RS-ID: 8e4a3f9aa7bd5e8cac1
-X-MBO-RS-META: 78r3bbajkkmqs1r8sf1pu53udmw4bqro
-X-Rspamd-Queue-Id: 4gxSbN4YDrzKvvq
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-Add ')' and fix sentence structure.
+Hi Stephen,
 
-Signed-off-by: Manuel Ebner <manuelebner@mailbox.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-[v2]
- fix subject
- add reviewed-by
- .../bindings/clock/renesas,rcar-usb2-clock-sel.yaml           | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On 11/04/2026 at 18:40:29 -07, Stephen Boyd <sboyd@kernel.org> wrote:
 
-diff --git a/Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.yaml b/Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.yaml
-index c84f29f1810f..a14be249fa33 100644
---- a/Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.yaml
-+++ b/Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.yaml
-@@ -13,8 +13,8 @@ description: |
-   If you connect an external clock to the USB_EXTAL pin only, you should set
-   the clock rate to "usb_extal" node only.
-   If you connect an oscillator to both the USB_XTAL and USB_EXTAL, this module
--  is not needed because this is default setting. (Of course, you can set the
--  clock rates to both "usb_extal" and "usb_xtal" nodes.
-+  is not needed because this is default setting (Of course, you can set the
-+  clock rates to both "usb_extal" and "usb_xtal" nodes).
- 
-   Case 1: An external clock connects to R-Car SoC
-     +----------+   +--- R-Car ---------------------+
--- 
-2.54.0
+> Quoting Miquel Raynal (Schneider Electric) (2026-03-27 13:09:33)
+>> Add a nexus node with a child requesting a mapped clock in the fake DT
+>> overlay to verify that the parsing is also correctly working.
+>>=20
+>> Suggested-by: Stephen Boyd <sboyd@kernel.org>
+>> Signed-off-by: Miquel Raynal (Schneider Electric) <miquel.raynal@bootlin=
+.com>
+>> ---
+>>  drivers/clk/clk_test.c                   | 20 ++++++++++++++++++++
+>>  drivers/clk/kunit_clk_parse_clkspec.dtso | 10 ++++++++++
+>>  2 files changed, 30 insertions(+)
+>>=20
+>> diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
+>> index 8a17ad0d185f..cb0071955146 100644
+>> --- a/drivers/clk/clk_test.c
+>> +++ b/drivers/clk/clk_test.c
+>> @@ -3660,10 +3660,30 @@ static void clk_parse_and_get_parent_name(struct=
+ kunit *test)
+>>                            clk_parse_clkspec_1_init_data.name);
+>>  }
+>>=20=20
+>> +static void clk_parse_and_get_nexus(struct kunit *test)
+>
+> of_clk_get_hw_maps_thru_nexus()
+>
+>> +{
+>> +       struct clk_parse_clkspec_ctx *ctx =3D test->priv;
+>> +       struct clk_hw *hw1, *hw2;
+>> +       struct device_node *np;
+>> +
+>> +       /* Get clocks by index */
+>> +       np =3D of_find_node_by_name(NULL, "kunit-clock-nexus-child");
+>> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, np);
+>> +       hw1 =3D of_clk_get_hw(np, 0, NULL);
+>> +       KUNIT_EXPECT_NOT_ERR_OR_NULL(test, hw1);
+>> +
+>> +       hw2 =3D of_clk_get_hw(ctx->cons_np, 1, NULL);
+>> +       KUNIT_EXPECT_NOT_ERR_OR_NULL(test, hw2);
+>> +       KUNIT_EXPECT_PTR_EQ(test, hw1, hw2);
+>
+> I think hw2 is expected? Rewrite it like this?
 
+Correct.
+
+> 	struct clk_parse_clkspec_ctx *ctx =3D test->priv;
+> 	struct clk_hw *expected;
+> 	struct device_node *np;
+>=20=09
+> 	np =3D of_find_node_by_name(NULL, "kunit-clock-nexus-child");
+> 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, np);
+> 	expected =3D of_clk_get_hw(ctx->cons_np, 1, NULL);
+> 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, expected);
+>
+> 	KUNIT_EXPECT_PTR_EQ(test, expected, of_clk_get_hw(np, 0, NULL));
+
+I took your proposal.
+
+> We're also leaking the of_node if an assert triggers so we need to use a
+> kunit wrapper version of of_find_node_by_name() or do a hand code
+> version of putting the node when kunit asserts.
+
+Indeed, I just create the _kunit() variant to handle it. I see most
+other similar cases in the test file are handled like that and it looks
+pretty neat afterwards.
+
+Thanks for the suggestions,
+Miqu=C3=A8l
