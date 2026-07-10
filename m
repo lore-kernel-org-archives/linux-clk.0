@@ -1,71 +1,70 @@
-Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C927B3F4127
-	for <linux-clk@vger.kernel.org>; Fri, 10 Jul 2026 10:14:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 234923F8EA1
+	for <linux-clk@vger.kernel.org>; Fri, 10 Jul 2026 10:19:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783678500; cv=none; b=neMMy22qtM/ye6vFRQGzg4CxzfNhFdOo4pAs1PMK0L79nKjqVsDP09/m+hcPs7Gk5aVFJtUzjPFCQQhoUWJTlvPgXxAuLy0AlM2h69JwaS6+VVXUh1epITFxk6EC0SiFCisNZzZM1LZh8XUIi8rnc+sZBYi54p8i+FueDBbUnbE=
+	t=1783678746; cv=none; b=eiF9MSpZpkkXabLE04WI7ONnjDfFjgPRwUvzgJu8iorDJ4p2qEdurg2ktxp4JJU1DLzRwui0l6VZMSCj1vHxL2hw4UdbLzdVRk5O/I7PIg4UO49kZbDS/NQNXk5xy3Qthdzv8ZUSEmXLDdT6+vsojNY6rlM8VXu2RA2ihQaczgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783678500; c=relaxed/simple;
-	bh=jStoTu7RQA8BRTqGbaAV34VwUP2BPEMz29vPuO1fGCc=;
+	s=arc-20240116; t=1783678746; c=relaxed/simple;
+	bh=+p5C07PlzwAnFV8W7DMxCM+4XlX762Bvt4U2R/azgio=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QOWImEEI4ux9jjGy1KJL7RhwmEy7ZCqVn5HI3fUOJq7GetbC9Lr4oPvSaVwxi8O5dpexf0310QUBpC21dsjej5wGhwTV/ktUeGw98HPXY4yEZnRtz4BCzMVwYKM0PrKxwzxwjpOSQ8k12ZpqESLK090HuUl7yYXdON/6Wdg2XyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.170
+	 To:Cc:Content-Type; b=Nm66AWYsh7Dg0pMJ/aP8unPIWRhFpuTzjycxw7u0+K6K3J3cI5WCzvg0II6aYc6Dl4fymYEmyqPZdmsJbJxP4qoMUM0fQ9DDlMmmVQmT27oSjKQ3NUN4q7LfikXQwB1xCuhnQVrUw3NxOCsAB24yCQ9OTVVMDCIzW2xgCY+CVIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-5bd8efccd11so1488458e0c.1
-        for <linux-clk@vger.kernel.org>; Fri, 10 Jul 2026 03:14:58 -0700 (PDT)
+Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-5bdbd631a6aso577258e0c.1
+        for <linux-clk@vger.kernel.org>; Fri, 10 Jul 2026 03:19:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783678498; x=1784283298;
+        d=1e100.net; s=20251104; t=1783678744; x=1784283544;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=GbEWAG6xIcV+3P2phIYnj4SrZfkvn8WstI+WFIFJ95k=;
-        b=Ucojl3M1GZVabwsHx+/7VL7nx1gXNXVpRO/0HnqiUcNmeRZSXgZsNBUUbJDSMDUhdQ
-         vblMYwfXcy3L/g/BC1dfLQUzs0zhfUl+JsoQV8iG84Zcy83Et4/YypfKPBfhPbdD+42F
-         qQOPz8Lj7Ke2JFw1To06gGYSD1MY5JngstQuOyObjtRed35QZJYHsHRPHJICQo9W9gnY
-         rNddzf6egvdhkPj5WaN7XAyyzWVAFOXLNMuLTZgH4luM8dMWicfsUnorLzQkasML57+a
-         83s0PyEP6GOu9kCNbKjlMBcUbIQ2pj+rmtQ7P/hUBFZSfvl8k7RQcG6W9JgXkUwKV8W9
-         ahyw==
-X-Forwarded-Encrypted: i=1; AHgh+RqoClt1+RTgkOOv1bhdzSxRAyP5h8dVzGLWdFxuDJMzuxzzeqiCEWpNV+6WA1Uv50e9Pr/KZSl86mY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywao4tEjDgWllqlavjl6WhYAy0wNcJXPbPIwXKBn1RBAboyJnqj
-	i3tdt2myCyhQ/G1iZsXV6DZtKGoybewVmc3AFpeD0HvVaOdknatuXShMnzBl/m8ABCI=
-X-Gm-Gg: AfdE7clLuea7ASEaUvaychZvXvKpiqWG4C06xooxlprH32mgL2Zp2RaOfowjK2m2wO3
-	znjHO55Dv6pCfP4MllqrYrJFykL75Y6O2sai3Hg56Dz0tRXgl4LxAgBur5R/vgSd6hxdhREHpiJ
-	bwBca73Gz4AB0wcYAvKNSzocRkbRO/uas87BNrEBZDftoVrycmK/SFjJmeqArLzzmWdo668Zxpk
-	m3E7wHrdPJSHxiPAjxXHLnDmSJ0eWj7wOBRMRExdMvwdwfb7XD15K+Lpb0QA9uCHGEQKBw8FV19
-	bpt8TLYEo15ZOKS/1wRp/81aMSqF4K5hTCZLy9BBMICmoZ4gETPLCnliQeIUUlgGypsMGQMJc/y
-	34zzfljn/8wApzCqWxBjvt2u4S6R55QCeBoIW3/q4AP5Pw6tHoIyECgy/q+pJDK0GMJ6Cs2MG46
-	3mMDthc1stWQrmm0JcSAoivYn/6p6O48NTifj7pQ5UXCG1KdhnXQ==
-X-Received: by 2002:a05:6122:16a0:b0:5bb:fa79:56dd with SMTP id 71dfb90a1353d-5bfa554025cmr1572538e0c.7.1783678497679;
-        Fri, 10 Jul 2026 03:14:57 -0700 (PDT)
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com. [209.85.222.47])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5bf6f68d099sm5171544e0c.8.2026.07.10.03.14.56
+        bh=Bwp9IGUDjgmX3mBabgZGirsEvY8TKRimZIn+QIFNSvc=;
+        b=UcZ7KNijnimdFGfFLhUNqWLhYrkk74m5miRenmI2p518nJYRlTLmhcpOLxmFTceKj9
+         0vr4HMoURGksnJ8iKWyPTLH8HApx0BN4/o6kfdeY0iy8ugwmijPyDhrksRD940VbwXou
+         fzftg7h3b7PhVscK0JvqFe69cxQiO0Wh6/Im91nsDIukOij73S3MsWeAWmKqA+v6hkTi
+         QA5jzBrYTMEFSgGzJ/VaPD1YuIlB6zR2E1w5jB8weSnvYpfLEeHHcFDGLtlkTHqXdShn
+         bJ5Fa9GOzFIdrqV+c5gC8c9btuXjLjVwokvtQDA/Av+GhWYdEdEnLedEaLgcL/5M/yQ2
+         qt5Q==
+X-Forwarded-Encrypted: i=1; AHgh+RouY32dQUvD/FhjwUbAGIh+L3yg6QF0WJ3EGnCPcehjH7esMSBe9OR7zJitPCXEuhlPqBBuwykzl94=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDFdcnGKvwqhuuY0DZecO+7rJQDOdxnl2P51A0PX/IPxvKA/8Y
+	i9Q08YTVE723O1POIbzozh9ejkoS6Rh/Nn12VH0gaGWJB2J7a2HEci3KczyvanALbhs=
+X-Gm-Gg: AfdE7cmXe++oo5zLlJqD/TSS9laNOL28nK8AKsR72rM12YTJBOD3Q/9S+TknEKmnvSW
+	54n5hdvUaqljcXcxXFOtq0817GX+JRdRkNbHkla8TpFazGfWaXURqqKvJx2s1hx20xcxe9ad3xz
+	6P82tw80OOsY1axxvegk4MSHOrQ3004xdrhzbilV4yDwEnAdcrPBdqQld51g04STrFQAMisPo2U
+	07IUBDHIxz+SlHz8d9m9F678H/F1fCV+1XV6IjqG3CBbC/iIDRX+aXkmJOIxT4nkoUrJzR1akpo
+	okIIxcffmmY099ddvUz84croBmKiEe4wdzOEX7yDU7dpjeMDIgpJXJnpk8uxH3vn7DHx3ytusmj
+	1neI4uWnz8x6TIckOm4FMQfJzu2BR5EHF29lSVrALhAUhWQyZQb6GAXQXwChXEJHXGb12QlTy6S
+	FXegn+jRsumQJJJdazKBK7M4m8Wle3DRzDcF11zrpLr8VZpKxJ2sreng==
+X-Received: by 2002:a05:6122:311d:b0:5a1:b296:78fc with SMTP id 71dfb90a1353d-5bfa53ad88emr1447736e0c.1.1783678744012;
+        Fri, 10 Jul 2026 03:19:04 -0700 (PDT)
+Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com. [209.85.221.175])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5bf6f8f4283sm4593019e0c.17.2026.07.10.03.19.03
         for <linux-clk@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Jul 2026 03:14:56 -0700 (PDT)
-Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-9674d727c0aso969285241.1
-        for <linux-clk@vger.kernel.org>; Fri, 10 Jul 2026 03:14:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RpcbR/y/uzbwVmyL0rWDqcB649s8xKnssWP+wQjVvWd5KyTxp1Dt6fNbf+Ppo7BTNIo8d0LSiEJi+Y=@vger.kernel.org
-X-Received: by 2002:a05:6102:40cb:20b0:744:f2bf:44d2 with SMTP id
- ada2fe7eead31-7450c6bee09mr1278940137.3.1783678496645; Fri, 10 Jul 2026
- 03:14:56 -0700 (PDT)
+        Fri, 10 Jul 2026 03:19:03 -0700 (PDT)
+Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-5bfa99f8ef8so350562e0c.0
+        for <linux-clk@vger.kernel.org>; Fri, 10 Jul 2026 03:19:03 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RpkSLG8KJ5drEp1V1CQaqHQbunhrAML9SmyJ/V+hms/5YZbnjOHx4Q2id/Tp6xWVtqUkSgvOM3bqGc=@vger.kernel.org
+X-Received: by 2002:a05:6102:8516:20b0:6cc:e6b1:7f84 with SMTP id
+ ada2fe7eead31-7450caa467fmr935740137.17.1783678743107; Fri, 10 Jul 2026
+ 03:19:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260709182332.876408-1-claudiu.beznea+renesas@tuxon.dev> <20260709182332.876408-3-claudiu.beznea+renesas@tuxon.dev>
-In-Reply-To: <20260709182332.876408-3-claudiu.beznea+renesas@tuxon.dev>
+References: <20260709182332.876408-1-claudiu.beznea+renesas@tuxon.dev> <20260709182332.876408-2-claudiu.beznea+renesas@tuxon.dev>
+In-Reply-To: <20260709182332.876408-2-claudiu.beznea+renesas@tuxon.dev>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 10 Jul 2026 12:14:45 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWeCpR70fQ52NYsB_p+Feth0gewdfjSBCbpLWfUCCDvQw@mail.gmail.com>
-X-Gm-Features: AUfX_mxSD2HzC_Ku4zRdh3S4Ewoz9pnRW_48syvAhXfLnIrebj7osOYA05aUezc
-Message-ID: <CAMuHMdWeCpR70fQ52NYsB_p+Feth0gewdfjSBCbpLWfUCCDvQw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/8] dt-bindings: can: renesas,rcar-canfd: Document
- RZ/G3S SoC
+Date: Fri, 10 Jul 2026 12:18:51 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUGKQAuLJ-Vo7=O8E=kMCYiUZ2H=Be9T3PAkjHu+PRqhQ@mail.gmail.com>
+X-Gm-Features: AUfX_mx3pB3dkKwbzFAKhxG_in4zcQzaeWH0J8kav2JP2BfBiNLW4WLUquaQ4F0
+Message-ID: <CAMuHMdUGKQAuLJ-Vo7=O8E=kMCYiUZ2H=Be9T3PAkjHu+PRqhQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/8] clk: r9a08g045-cpg: Add clocks and resets for CAN-FD
 To: Claudiu Beznea <claudiu.beznea+renesas@tuxon.dev>
 Cc: mkl@pengutronix.de, mailhol@kernel.org, robh@kernel.org, 
 	krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com, 
@@ -82,58 +81,19 @@ On Thu, 9 Jul 2026 at 20:23, Claudiu Beznea
 <claudiu.beznea+renesas@tuxon.dev> wrote:
 > From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 >
-> The CAN FD controller found on the Renesas RZ/G3S SoC is largely compatible
-> with the variant present on the RZ/G3E SoC. The main differences are:
-> - the RZ/G3S provides only two CAN FD channels
-> - the RZ/G3S supports only CAN FD operation; the Channel n CAN FD
->   Configuration Register does not implement the bits used to select
->   classical CAN-only mode (bit 30) or CAN FD-only mode (bit 28);
->   consequently, bit 31 (CAN FD Frame Distinction Enable) of the same
->   register is also not implemented
-> - some bits in several registers (mainly reserved or status bits) are
->   read-write on the RZ/G3S but read-only on the RZ/G3E; their behavior is
->   otherwise identical: the bits read back as 0 on both SoCs and software
->   is allowed to write only 0 to them on the RZ/G3S
-> - the RZ/G3S provides 128 acceptance filters, compared to 64 on the
->   RZ/G3E
-> - the RZ/G3S can use PCLK clock as the CAN FD clock source through an
->   internal clock divider, while also supporting an external CAN FD clock
->   source
+> Renesas RZ/G3S SoC has a CAN-FD IP. Add clocks and resets for it.
 >
-> Since:
-> - the SoC clock generator provides to the CAN IP only the peripheral and
->   the RAM clocks
-> - when sourced from the peripheral clock, the CAN-FD clock is obtained
->   inside the IP itself by dividing the peripheral clock
-> - the assigned-clocks and assigned-clock-rates properties are specific to
->   the CAN-FD clock
-> the assigned-clocks and assigned-clock-rates properties were dropped from
-> the required properties list of the Renesas RZ/G3S SoC.
->
-> Add documentation for the Renesas RZ/G3S SoC.
->
+> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > ---
 >
 > Changes in v2:
-> - forbid renesas,no-can-fd and renesas,fd-only since the IP supports
->   only CAN-FD; for this didn't collect Biju's tag
+> - used R9A08G045_CLK_P4 ID for P4 clock
+> - still collected the tags; Biju, Geert, please let me know if you consider
+>   otherwise
 
-Thanks for the update!
-
-> --- a/Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yaml
-> +++ b/Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yaml
-> @@ -267,6 +267,7 @@ allOf:
->            contains:
->              enum:
->                - renesas,r9a09g077-canfd
-> +              - renesas,r9a08g045-canfd
-
-Please preserve sort order (alphabetical).
-
->                - renesas,rcar-gen3-canfd
->                - renesas,rzg2l-canfd
->      then:
+Thanks, will queue this one instead of v1 in renesas-clk for v7.3.
 
 Gr{oetje,eeting}s,
 
