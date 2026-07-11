@@ -1,67 +1,59 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 582ED30B51A;
-	Sat, 11 Jul 2026 19:49:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9968313E1D;
+	Sat, 11 Jul 2026 19:50:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783799400; cv=none; b=B9COwLZcnXRoDGdF7u7zoPqkI85xGw62fOk+5hIUbdVGfOiwZAJvQEb2Ofj2D6Q13t478KtaeT5llqfPpdMIHLaPcDMlheFRnX9Qa7yKcHX/OuVboYJLKOdMhNJLkcgAJeEB2hXgCoR4eDQnpxtko3H2V6d60nTmhpT75J1XBvc=
+	t=1783799401; cv=none; b=cXYnTDQBjxZvciFt90HhVELFrINwNYsm7h70FArLYQFu5OZKQGUDMbGnqjW5Am5u8t5a3X+LV1EQSgKOQNGNA96U8Eb9rBuiO19OpK3yqeJdX3ttfzRJb6jgFmd1dGbvivh0+4aPzlbym2mpumYQiWBPvCBrKkfPFFsf+pLtuG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783799400; c=relaxed/simple;
-	bh=cnStKgouEira5ORQ4Gjr7kEMGeizlIeG1tKsvtb4DZQ=;
+	s=arc-20240116; t=1783799401; c=relaxed/simple;
+	bh=UD0X/VlrqvntugIHHINEwVGMXYZSo3+os2CpK2Uq+9M=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BOUrt2XjPB+0zyPOHK1StxbvLxSgARQWB3ekNQ3u96JdkOjB2RY8ADdc4ANUdfH21mTpAULVNYRDVQZUidmdTs3wVHxJnOjB+u8eQ5NHUnJJoc/ENUaJr2UnEQ3xb6l+HFvtJfWx4HEC1SZDAA8m6CByUwr91IfiD9iVFoNBQh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OzLZmZQM; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version:Content-Type; b=ZajnVzYsOUYX3Ktc4uYFatQ3ibctYHB5ygTNfTWyKjlIanKQXMmMVIVCBPRd6d0GyeO9fzSCn0ImB0sd8UJLcPyKm2Pc+YZeyynjWG0KwW4KN8a94vHFy265aiCdqyZk57OqGxnpeD3OB0ulDESDLZG/qeKD6F/RUV7pDOx2sbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CV9cizgU; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OzLZmZQM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C0501F00A3D;
-	Sat, 11 Jul 2026 19:49:57 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CV9cizgU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3985C1F00A3E;
+	Sat, 11 Jul 2026 19:49:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783799399;
-	bh=35FyaTXq+nGWlA1B1CN4WNG6qY0MnEpe0vs6FvB/xkY=;
+	s=k20260515; t=1783799400;
+	bh=4KW0mDYxxvCs+MdA9V1BDmlww/e9OaKOFuPRGtfySv8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=OzLZmZQMM/6MpC+Q4tqAS/Pt6WTynq1vkOu2tmLEJ2OyxayIY5t5PgJkgJNepPSCv
-	 Ks0dPzcP6kYpI2g64l4NrF2DnxqjZSItS9fRwgrWVzX3iY+CXtK5J7pAyh79s/jah8
-	 jfFoTqjxO12EL7k9FLt1/GnG9rPvJWQpQWy2WAekTG2V5O9VT2nVfkxnpJ7cBHQBwG
-	 vZjl4Sk06BMYzhUILvMedMF5EKEJpxWHq+sVNI4UhA4daT4v0QefdNScpoYbot5Njq
-	 WXsr4NPPergM9gS7VITufQhznlghIUTIheFUpy1Iu6YLo5L5ozg+HcQ3N7mD3K7PvE
-	 YG5vyQMvm7N5w==
+	b=CV9cizgUZHxiVfZXVePzS/iz1smxoeAzfg53JhpVEBDDs2dK+lKh4yPOFlQuvPZqT
+	 0CMXJRjGOWp0LELoIf27NMEyB3rQL16ZTiK6wmedmZwiDiUW2sQd5L603zYP6zYS5S
+	 +MFApwjk6Eo/G/nVi2hpt6/qjlzecRO7UCWU7ZeWNPneg1+MVCJZexWE/EFGGlePOF
+	 dj1Hy3hFGSwb+r/S38zRYqlR9XQ52LBwmRbr0YX22TLYVwg/AEX5izEp3g+rdvwRIL
+	 vTQnCZRxYFA5KhbHFySxlDjDhsA0spuS+VGh0pAapzjSDUUaXKxxqHLKMIafgHjjVF
+	 p5xy1mvG0I5aw==
 From: Bjorn Andersson <andersson@kernel.org>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney@redhat.com>,
+	Konrad Dybcio <konradybcio@kernel.org>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Taniya Das <quic_tdas@quicinc.com>,
-	Jonathan Marek <jonathan@marek.ca>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Bryan O'Donoghue <bod@kernel.org>,
-	Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
-	Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Hans Verkuil <hverkuil@kernel.org>,
-	Stefan Schmidt <stefan.schmidt@linaro.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Dikshita Agarwal <dikshita@qti.qualcomm.com>,
-	Ulf Hansson <ulfh@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+	Rob Clark <robin.clark@oss.qualcomm.com>,
+	Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	"Joerg Roedel (AMD)" <joro@8bytes.org>,
+	Vinod Koul <vkoul@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Esteban Urrutia <esteuwu@proton.me>
 Cc: linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v7 0/2] arm64: dts: qcom: fix power domain handling on SM8250
-Date: Sat, 11 Jul 2026 14:49:39 -0500
-Message-ID: <178379938617.163099.9882135996822796179.b4-ty@kernel.org>
+	devicetree@vger.kernel.org,
+	iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-phy@lists.infradead.org
+Subject: Re: (subset) [PATCH 0/8] SM8450 QoL changes
+Date: Sat, 11 Jul 2026 14:49:40 -0500
+Message-ID: <178379938594.163099.2250376340461760537.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260604-iris-venus-fix-sm8250-v7-0-7bd2f0e5bae8@oss.qualcomm.com>
-References: <20260604-iris-venus-fix-sm8250-v7-0-7bd2f0e5bae8@oss.qualcomm.com>
+In-Reply-To: <20260622-sm8450-qol-v1-0-37e2ee8df9da@proton.me>
+References: <20260622-sm8450-qol-v1-0-37e2ee8df9da@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -72,22 +64,21 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Thu, 04 Jun 2026 19:22:22 +0300, Dmitry Baryshkov wrote:
-> As pointed out by Konrad during the review of SM8350 / SC8280XP
-> patchset, Iris aka Venus description has several flows. It doesn't scale
-> MMCX, the frequencies in the OPP table are wrong, etc.
+On Mon, 22 Jun 2026 20:54:21 -0400, Esteban Urrutia wrote:
+> I've been mainlining an SM8475 based device for quite some time now and
+> I feel now's the proper time to start submitting patches.
+> I'm starting with the smallest part which are mostly modifications
+> regarding the current support for the SM8450 SoC.
 > 
-> Let's correct the Iris/Venus enablement for SM8250 (unfortunately also
-> stopping it from being overclocked).
+> Regards,
+> Esteban
 > 
 > [...]
 
 Applied, thanks!
 
-[1/2] arm64: dts: qcom: sm8250: sort out Iris power domains
-      commit: baa60f0354fdfe186e2876af8aa61e25cf7a070f
-[2/2] arm64: dts: qcom: sm8250: correct frequencies in the Iris OPP table
-      commit: d1fe67315216695df4f9a7aadefb27c3c0e1104e
+[4/8] arm64: dts: qcom: sm8450: Add missing PCM_OUT port
+      commit: 9c510bde799765bf1d28004b0e6555e05565f464
 
 Best regards,
 -- 
