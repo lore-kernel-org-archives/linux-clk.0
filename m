@@ -1,44 +1,54 @@
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 082C133F597;
-	Sat, 11 Jul 2026 08:13:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783757617; cv=pass; b=a9CGDJjt6h9tJYBsfE4K6f7WdoYpPdkXslLt6zoDvIZjQTW7b+OWJqA1oVcVtCM358G4f+qzsORe3Ch4YDP/2x0+ngH49Uog8/O1avT+rKhj5/eNXDyHG7X+PnnsXU8qYzYRK7+Jaqz79cmvS2ExzoajSg1IAy4I6XK16AbJP20=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783757617; c=relaxed/simple;
-	bh=2nbAp5wgLvB3GVbm/bh5SLh3tvImZ6mCw5JMPh8KgPQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=o7IMai1jmwYxomve6KrikaHrNyEwP19Ov+6Uge8DNFsRhYU7QW6dItzb4azV9HJHfWpbJZGCCHAreJoJW1QJHxyXacHXzVdeQk/VirxrVO+CAm0Gbh/aNKn+M3e/DT/iL+96rh9HEDpT8SUohvB4ZBTnHMCraIUGlqvcjXKzpkI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech; spf=pass smtp.mailfrom=pigmoral.tech; dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b=po3bRHUv; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pigmoral.tech
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBAD8233927;
+	Sat, 11 Jul 2026 10:16:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1783765022; cv=none; b=pB7KG0ribP9K1QZ1syyPaEV4NzhNBJQ4cI2oNBD8dCbfYkAVLSErmGqNxOWUhn1TyReyOJgxfIVInovNMI2stfOxzxILGEn/sw7QWpN4VHtdY9dseqf4W0rjSsQgXMr0/3GEjRxeeJ6xTqadrhFdViuMWR0UzAc5jagObCuvbLw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1783765022; c=relaxed/simple;
+	bh=+Q01IOSPpbl6YaJ1sx2U1xpDg/zo1GCHE9ISpCMdGX4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=HTyxsuZ3PPvXCexdGDf3E9ZSNpUanEWpIvdYKNKeYARbb547Cw+Tne91IGDa1Yjy30reX6+2dSnAF5ArFC7FOULU4xYMhczYu2w5Bh0ht+Gv8ISEFQN6gO9Iff5eu+NB9YApl3OmRGzfoawdGaijnUxMKLSBGLDHSHlgc1G7HEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=M/h8gBoO; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=p8w14CPZ; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b="po3bRHUv"
-ARC-Seal: i=1; a=rsa-sha256; t=1783757574; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=B86tUVUVurn1RROWNOeRi7HDvHZ+NJPXU18H7kAni6XpkuIMPi7sfCj+suIFXBo7Z6DIZXffawpGkrwrLnu0mSoEviWZ9krlwW3CurYJYW6V7XOsScUSylzTpC08eo1XnJ9BVIzYi1xE5+OUFhkEEMWVdfr1bkL3B/kpcCN2duE=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1783757574; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=WGl7teXPgThhyd7Mnm7ajod1+36ftebilIYFXIlgL0M=; 
-	b=Eg3Hr7LpcmlWcz1DAEd2GDnyi1R3b5xZzH6iZ85WDmpLmK4Sf3/+lQcoD+WfbHhYOa10O110Z8b0c4WSYyRs51TQ/LKtgsfJ6X+A7ZahSL6wuQ25gaoeM7BhZ/wSRnKhGX6XAnCsRFbVuQCieim3Ca69hLI5eNYGiCOY+Rzlk7w=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=pigmoral.tech;
-	spf=pass  smtp.mailfrom=junhui.liu@pigmoral.tech;
-	dmarc=pass header.from=<junhui.liu@pigmoral.tech>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1783757574;
-	s=zmail; d=pigmoral.tech; i=junhui.liu@pigmoral.tech;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=WGl7teXPgThhyd7Mnm7ajod1+36ftebilIYFXIlgL0M=;
-	b=po3bRHUv6o0xx84bNe5QIus8JM8sM98N3FhxR24HZ2aaqDE2v728A+Om4IP5q+H+
-	pxSp4eSqPeGr5eybdYGnPMqpAoCtMouscJA0LNCeoTD1fyO5l/hhIPkR21B+oIXEGxc
-	w0T6nu4IpdiyOBppUdK3qpczDt9PjpRAetjWWNx0=
-Received: by mx.zohomail.com with SMTPS id 1783757571732200.7153726655515;
-	Sat, 11 Jul 2026 01:12:51 -0700 (PDT)
-From: Junhui Liu <junhui.liu@pigmoral.tech>
-Date: Sat, 11 Jul 2026 16:10:34 +0800
-Subject: [PATCH v2 8/8] clk: sunxi-ng: a733: Add reset lines
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="M/h8gBoO";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="p8w14CPZ"
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA512)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4gy4PP0dlZzKvv9;
+	Sat, 11 Jul 2026 12:16:57 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1783765017;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=U3ImstQrsA9UW+38lhQ1sNds7gu/oGbkbhambfG/NR0=;
+	b=M/h8gBoOZzGcKOjKkhO2U3RWnN/IbG1O1jBcYDl9RQ4AA5snm9OVJEtarFLd9J3rDReFj6
+	cNpOq7imAUFtt6EZ8L/lnnrdHaG+lLjh/ygkcd2tV06KZPvPWWJKqTNn2AItsvYuXUB3Qj
+	iutPsL6iGbqfXhp6eFBgCIjMRq1ZpedOUVrV22S9WqnVI5V4bQpL41lYMBsFU4uc07gPzh
+	+21VEAw93+HcFc9lffr2jdn4pjKKLg6hpVtlv7+7M0dWCcObsRjYFe7i8elsi0z9jB/T7U
+	qGi/mlOMjMCU3zWv8qR3f+MamcxyaSqqFh9Ggfh0srW7njLA+ZfE71s8pqrc+Q==
+From: Maurice Hieronymus <mhi@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1783765014;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=U3ImstQrsA9UW+38lhQ1sNds7gu/oGbkbhambfG/NR0=;
+	b=p8w14CPZ0kWEU7bX10C1ghN0UHreb54mtp4opQHTe3FNRthqsgGq7vqIfcp7mTgjL7iyBq
+	asnDirQLwQNdcRS9mp5FYmRd7q/e6/mY1/lZZA6ZhUE4vayuQXfwjpLnc4EdrPyfF22o0Y
+	8Oo8fFnYiwoNeRIB954FI0S0S3XEnmETjWFaaS4+7O7U5YK2y/nRUrIlLcRoMZHHeyN4LZ
+	QG+4EeZFnI3eJ+YZ+OUv3oApZHbkyxJ7rPX3ZnpxbrVP80sOkGemDtSRB6SWmhVkY4KLpe
+	DWvoxZOHglK7I3Mq+AvdP1sHQshrQl3Q6nSCWDKgmDXKbpll++Y3b4Unh722zQ==
+Subject: [PATCH v4 0/2] rust: clk: Add ExclusiveClk and use it in
+ pwm-th1520
+Date: Sat, 11 Jul 2026 12:16:28 +0200
+Message-Id: <20260711-rate-exclusive-get-th1520-v4-0-8244a0666a71@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -46,197 +56,82 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260711-a733-clk-v2-8-974d188cbe0c@pigmoral.tech>
-References: <20260711-a733-clk-v2-0-974d188cbe0c@pigmoral.tech>
-In-Reply-To: <20260711-a733-clk-v2-0-974d188cbe0c@pigmoral.tech>
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/43QTW7DIBAF4KtYrEsFw4+NV71H1QWGwUZN4hSI5
+ SjK3YuTRVpVirqckeZ7o3chGVPETPrmQhIuMcf5UAf50hA32cOINPo6E2CgmQJNky1IcXW7U44
+ L0hELLRNXwGirpTXSeOQdknp/TBjierPfP+o8xVzmdL5FLXzb/kddOGVUSBeYkMhrxtvext0wr
+ 69zGsnmLvCwqvbMgmppo7RkQ2hBmr+W+GFB98wS1XKtswIHFzQLv63rvYCEX6faabm38Ki0b2q
+ EYoYZ6naftJyPSHPZwhzj1rbeK8V9v6ityMHmup/3+1j6xgDjDMA4OYiuM23gghtf3+UaPASjD
+ Sj0vK0vXL8BKCEg+94BAAA=
+X-Change-ID: 20260526-rate-exclusive-get-th1520-764a949de18e
 To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@kernel.org>, 
- Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Samuel Holland <samuel@sholland.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Junhui Liu <junhui.liu@pigmoral.tech>, Paul Walmsley <pjw@kernel.org>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Alexandre Ghiti <alex@ghiti.fr>, Richard Cochran <richardcochran@gmail.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+ Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+ Boqun Feng <boqun@kernel.org>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+ Danilo Krummrich <dakr@kernel.org>, Drew Fustini <fustini@kernel.org>, 
+ Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
+ Michal Wilczynski <m.wilczynski@samsung.com>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+ Brian Masney <bmasney@redhat.com>
+Cc: Daniel Almeida <daniel.almeida@collabora.com>, 
+ linux-clk@vger.kernel.org, rust-for-linux@vger.kernel.org, 
  linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
- netdev@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1783757449; l=6917;
- i=junhui.liu@pigmoral.tech; s=20251228; h=from:subject:message-id;
- bh=2nbAp5wgLvB3GVbm/bh5SLh3tvImZ6mCw5JMPh8KgPQ=;
- b=hEKIEUQ7/k4zgY9aOi6OTBUpFGX7wJsm0EGyQFA9u7IbtBfkXDW5bXNeraYVJdCjsVLutevno
- ZWU7DKBnd1ZDHpJsZrNYTQVsK4+Fyr9uuWAWUw6QUiUEaC0PrIq7q9+
-X-Developer-Key: i=junhui.liu@pigmoral.tech; a=ed25519;
- pk=3vU0qIPJAH8blXmLyqBhKx+nLOjcLwwYhZXelEpw7h4=
-X-ZohoMailClient: External
+ linux-pwm@vger.kernel.org, Maurice Hieronymus <mhi@mailbox.org>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1783765003; l=2054;
+ i=mhi@mailbox.org; s=20260525; h=from:subject:message-id;
+ bh=+Q01IOSPpbl6YaJ1sx2U1xpDg/zo1GCHE9ISpCMdGX4=;
+ b=wrIw8EiPXBMgXwOPtE10nUhaLnGuBvvXnluKQnp020xOGAt974/hFA4jcJSIM/LAIYqar4qEW
+ TwOwcYvbqCsAW9XZmIYQ5zix6qVPq2cHcCTaxtX3rG7/0g/ox4qJTaR
+X-Developer-Key: i=mhi@mailbox.org; a=ed25519;
+ pk=AHlEkGG3hpXZHntlEzF42Ip/LFyXWOgsNUvaHqAnV80=
+X-MBO-RS-META: p68pwkc35abrj1qzbhy65xyydo66i3rj
+X-MBO-RS-ID: 17a3b90175c5235e027
 
-Add the reset lines for the Allwinner A733 SoC. These reset control bits
-are integrated into the Bus Gate Reset (BGR) registers, typically
-sharing the same register address with their corresponding bus clock
-gates. Integrate them into the main CCU driver using the existing
-sunxi-ng ccu_reset framework, allowing the CCU to also function as a
-reset controller for the SoC.
+Add a Rust binding for clk_rate_exclusive_get() / clk_rate_exclusive_put()
+and use it in pwm-th1520, which previously carried a TODO noting the
+missing binding.
 
-Tested-by: Jerome Brunet <jbrunet@baylibre.com>
-Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
+Signed-off-by: Maurice Hieronymus <mhi@mailbox.org>
 ---
- drivers/clk/sunxi-ng/ccu-sun60i-a733.c | 126 +++++++++++++++++++++++++++++++++
- 1 file changed, 126 insertions(+)
+Changes in v4:
+- Rebased on v5 of https://lore.kernel.org/rust-for-linux/20260706-clk-type-state-v5-0-67c5f326a16c@collabora.com/
+- Link to v3: https://lore.kernel.org/r/20260628-rate-exclusive-get-th1520-v3-0-c7ca3ebcf60f@mailbox.org
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun60i-a733.c b/drivers/clk/sunxi-ng/ccu-sun60i-a733.c
-index 48d7c0395ae8..ff64c35206d2 100644
---- a/drivers/clk/sunxi-ng/ccu-sun60i-a733.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun60i-a733.c
-@@ -17,6 +17,7 @@
- #include "../clk.h"
- 
- #include "ccu_common.h"
-+#include "ccu_reset.h"
- 
- #include "ccu_div.h"
- #include "ccu_gate.h"
-@@ -2156,11 +2157,136 @@ static struct clk_hw_onecell_data sun60i_a733_hw_clks = {
- 	.num	= CLK_FANOUT3 + 1,
- };
- 
-+static struct ccu_reset_map sun60i_a733_ccu_resets[] = {
-+	[RST_BUS_ITS_PCIE0]		= { 0x574, BIT(16) },
-+	[RST_BUS_IOMMU0_SYS]		= { 0x58c, BIT(16) },
-+	[RST_BUS_MSI_LITE0_AHB]		= { 0x594, BIT(16) },
-+	[RST_BUS_MSI_LITE0_MBUS]	= { 0x594, BIT(17) },
-+	[RST_BUS_MSI_LITE1_AHB]		= { 0x59c, BIT(16) },
-+	[RST_BUS_MSI_LITE1_MBUS]	= { 0x59c, BIT(17) },
-+	[RST_BUS_MSI_LITE2_AHB]		= { 0x5a4, BIT(16) },
-+	[RST_BUS_MSI_LITE2_MBUS]	= { 0x5a4, BIT(17) },
-+	[RST_BUS_IOMMU1_SYS]		= { 0x5b4, BIT(16) },
-+	[RST_BUS_DMA0]			= { 0x704, BIT(16) },
-+	[RST_BUS_DMA1]			= { 0x70c, BIT(16) },
-+	[RST_BUS_SPINLOCK]		= { 0x724, BIT(16) },
-+	[RST_BUS_MSGBOX]		= { 0x744, BIT(16) },
-+	[RST_BUS_PWM0]			= { 0x784, BIT(16) },
-+	[RST_BUS_PWM1]			= { 0x78c, BIT(16) },
-+	[RST_BUS_DBG]			= { 0x7a4, BIT(16) },
-+	[RST_BUS_SYSDAP]		= { 0x7ac, BIT(16) },
-+	[RST_BUS_TIMER0]		= { 0x850, BIT(16) },
-+	[RST_BUS_DE0]			= { 0xa04, BIT(16) },
-+	[RST_BUS_DI]			= { 0xa24, BIT(16) },
-+	[RST_BUS_G2D]			= { 0xa44, BIT(16) },
-+	[RST_BUS_EINK]			= { 0xa6c, BIT(16) },
-+	[RST_BUS_DE_SYS]		= { 0xa74, BIT(16) },
-+	[RST_BUS_VE_ENC0]		= { 0xa8c, BIT(16) },
-+	[RST_BUS_VE_DEC0]		= { 0xa8c, BIT(18) },
-+	[RST_BUS_CE]			= { 0xac4, BIT(16) },
-+	[RST_BUS_CE_SYS]		= { 0xac4, BIT(17) },
-+	[RST_BUS_NPU_CORE]		= { 0xb04, BIT(16) },
-+	[RST_BUS_NPU_AXI]		= { 0xb04, BIT(17) },
-+	[RST_BUS_NPU_AHB]		= { 0xb04, BIT(18) },
-+	[RST_BUS_NPU_SRAM]		= { 0xb04, BIT(19) },
-+	[RST_BUS_GPU0]			= { 0xb24, BIT(16) },
-+	[RST_BUS_DRAM0]			= { 0xc0c, BIT(16) },
-+	[RST_BUS_NAND0]			= { 0xc8c, BIT(16) },
-+	[RST_BUS_MMC0]			= { 0xd0c, BIT(16) },
-+	[RST_BUS_MMC1]			= { 0xd1c, BIT(16) },
-+	[RST_BUS_MMC2]			= { 0xd2c, BIT(16) },
-+	[RST_BUS_MMC3]			= { 0xd3c, BIT(16) },
-+	[RST_BUS_UFS_AHB]		= { 0xd8c, BIT(16) },
-+	[RST_BUS_UFS_AXI]		= { 0xd8c, BIT(17) },
-+	[RST_BUS_UFS_PHY]		= { 0xd8c, BIT(18) },
-+	[RST_BUS_UFS_CORE]		= { 0xd8c, BIT(19) },
-+	[RST_BUS_UART0]			= { 0xe00, BIT(16) },
-+	[RST_BUS_UART1]			= { 0xe04, BIT(16) },
-+	[RST_BUS_UART2]			= { 0xe08, BIT(16) },
-+	[RST_BUS_UART3]			= { 0xe0c, BIT(16) },
-+	[RST_BUS_UART4]			= { 0xe10, BIT(16) },
-+	[RST_BUS_UART5]			= { 0xe14, BIT(16) },
-+	[RST_BUS_UART6]			= { 0xe18, BIT(16) },
-+	[RST_BUS_I2C0]			= { 0xe80, BIT(16) },
-+	[RST_BUS_I2C1]			= { 0xe84, BIT(16) },
-+	[RST_BUS_I2C2]			= { 0xe88, BIT(16) },
-+	[RST_BUS_I2C3]			= { 0xe8c, BIT(16) },
-+	[RST_BUS_I2C4]			= { 0xe90, BIT(16) },
-+	[RST_BUS_I2C5]			= { 0xe94, BIT(16) },
-+	[RST_BUS_I2C6]			= { 0xe98, BIT(16) },
-+	[RST_BUS_I2C7]			= { 0xe9c, BIT(16) },
-+	[RST_BUS_I2C8]			= { 0xea0, BIT(16) },
-+	[RST_BUS_I2C9]			= { 0xea4, BIT(16) },
-+	[RST_BUS_I2C10]			= { 0xea8, BIT(16) },
-+	[RST_BUS_I2C11]			= { 0xeac, BIT(16) },
-+	[RST_BUS_I2C12]			= { 0xeb0, BIT(16) },
-+	[RST_BUS_SPI0]			= { 0xf04, BIT(16) },
-+	[RST_BUS_SPI1]			= { 0xf0c, BIT(16) },
-+	[RST_BUS_SPI2]			= { 0xf14, BIT(16) },
-+	[RST_BUS_SPIF]			= { 0xf1c, BIT(16) },
-+	[RST_BUS_SPI3]			= { 0xf24, BIT(16) },
-+	[RST_BUS_SPI4]			= { 0xf2c, BIT(16) }, /* From the vendor kernel. */
-+	[RST_BUS_GPADC0]		= { 0xfc4, BIT(16) },
-+	[RST_BUS_THS0]			= { 0xfe4, BIT(16) },
-+	[RST_BUS_IRRX]			= { 0x1004, BIT(16) },
-+	[RST_BUS_IRTX]			= { 0x100c, BIT(16) },
-+	[RST_BUS_LRADC]			= { 0x1024, BIT(16) },
-+	[RST_BUS_SGPIO]			= { 0x1064, BIT(16) }, /* From the vendor kernel. */
-+	[RST_BUS_LPC]			= { 0x1084, BIT(16) }, /* From the vendor kernel. */
-+	[RST_BUS_I2SPCM0]		= { 0x120c, BIT(16) },
-+	[RST_BUS_I2SPCM1]		= { 0x121c, BIT(16) },
-+	[RST_BUS_I2SPCM2]		= { 0x122c, BIT(16) },
-+	[RST_BUS_I2SPCM3]		= { 0x123c, BIT(16) },
-+	[RST_BUS_I2SPCM4]		= { 0x124c, BIT(16) },
-+	[RST_BUS_SPDIF]			= { 0x128c, BIT(16) },
-+	[RST_BUS_DMIC]			= { 0x12cc, BIT(16) },
-+	[RST_USB_PHY0]			= { 0x1300, BIT(30) },
-+	[RST_BUS_OHCI0]			= { 0x1304, BIT(16) },
-+	[RST_BUS_EHCI0]			= { 0x1304, BIT(20) },
-+	[RST_BUS_OTG]			= { 0x1304, BIT(24) },
-+	[RST_USB_PHY1]			= { 0x1308, BIT(30) },
-+	[RST_BUS_OHCI1]			= { 0x130c, BIT(16) },
-+	[RST_BUS_EHCI1]			= { 0x130c, BIT(20) },
-+	[RST_BUS_USB2]			= { 0x135c, BIT(16) },
-+	[RST_BUS_PCIE_PWRUP]		= { 0x138c, BIT(16) },
-+	[RST_BUS_PCIE]			= { 0x138c, BIT(17) },
-+	[RST_BUS_SERDES]		= { 0x13c4, BIT(16) },
-+	[RST_BUS_GMAC0]			= { 0x141c, BIT(16) },
-+	[RST_BUS_GMAC0_AXI]		= { 0x141c, BIT(17) },
-+	[RST_BUS_GMAC1]			= { 0x142c, BIT(16) }, /* From the vendor kernel. */
-+	[RST_BUS_GMAC1_AXI]		= { 0x142c, BIT(17) }, /* From the vendor kernel. */
-+	[RST_BUS_TCON_LCD0]		= { 0x1504, BIT(16) },
-+	[RST_BUS_TCON_LCD1]		= { 0x150c, BIT(16) },
-+	[RST_BUS_TCON_LCD2]		= { 0x1514, BIT(16) }, /* From the vendor kernel. */
-+	[RST_BUS_LVDS0]			= { 0x1544, BIT(16) },
-+	[RST_BUS_LVDS1]			= { 0x154c, BIT(16) },
-+	[RST_BUS_DSI0]			= { 0x1584, BIT(16) },
-+	[RST_BUS_DSI1]			= { 0x158c, BIT(16) },
-+	[RST_BUS_TCON_TV0]		= { 0x1604, BIT(16) },
-+	[RST_BUS_TCON_TV1]		= { 0x160c, BIT(16) },
-+	[RST_BUS_EDP]			= { 0x164c, BIT(16) },
-+	[RST_BUS_HDMI_MAIN]		= { 0x168c, BIT(16) },
-+	[RST_BUS_HDMI_SUB]		= { 0x168c, BIT(17) },
-+	[RST_BUS_HDMI_HDCP]		= { 0x168c, BIT(18) },
-+	[RST_BUS_DPSS_TOP0]		= { 0x16c4, BIT(16) },
-+	[RST_BUS_DPSS_TOP1]		= { 0x16cc, BIT(16) },
-+	[RST_BUS_VIDEO_OUT0]		= { 0x16e4, BIT(16) },
-+	[RST_BUS_VIDEO_OUT1]		= { 0x16ec, BIT(16) },
-+	[RST_BUS_LEDC]			= { 0x1704, BIT(16) },
-+	[RST_BUS_DSC]			= { 0x1744, BIT(16) },
-+	[RST_BUS_CSI]			= { 0x1844, BIT(16) },
-+	[RST_BUS_VIDEO_IN]		= { 0x1884, BIT(16) },
-+	[RST_BUS_APB2JTAG]		= { 0x1c04, BIT(16) },
-+};
-+
- static const struct sunxi_ccu_desc sun60i_a733_ccu_desc = {
- 	.ccu_clks	= sun60i_a733_ccu_clks,
- 	.num_ccu_clks	= ARRAY_SIZE(sun60i_a733_ccu_clks),
- 
- 	.hw_clks	= &sun60i_a733_hw_clks,
-+
-+	.resets		= sun60i_a733_ccu_resets,
-+	.num_resets	= ARRAY_SIZE(sun60i_a733_ccu_resets),
- };
- 
- static const u32 pll_regs[] = {
+Changes in v3:
+- Add #[inline] to Clk::rate_exclusive_get() (Onur Özkan)
+- Drop intra-doc links from the regular SAFETY comments (Onur Özkan)
+- Rebase on Daniel Almeida's Clk type-state pattern
+  https://lore.kernel.org/rust-for-linux/20260618-clk-type-state-v4-0-8be082786080@collabora.com/
+- Use vertical imports in pwm_th1520.rs
+- Link to v2: https://lore.kernel.org/r/20260605-rate-exclusive-get-th1520-v2-0-695640bf7249@mailbox.org
 
+Changes in v2:
+- Rebase on pwm/for-next
+- Remove newline after [`clk_rate_exclusive_get`] comment
+- Remove unused [`struct clk`] link
+- Put semicolon outside of unsafe block
+- Link to v1: https://lore.kernel.org/r/20260526-rate-exclusive-get-th1520-v1-0-34cf034e1764@mailbox.org
+
+---
+Maurice Hieronymus (2):
+      rust: clk: Add `ExclusiveClk` wrapper for `clk_rate_exclusive_get`
+      pwm: th1520: Lock clock rate with clk_rate_exclusive_get
+
+ drivers/pwm/pwm_th1520.rs | 18 ++++++++-----
+ rust/kernel/clk.rs        | 67 +++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 79 insertions(+), 6 deletions(-)
+---
+base-commit: 92010229c4b38897f1319d260162d2f96925ed17
+change-id: 20260526-rate-exclusive-get-th1520-764a949de18e
+prerequisite-change-id: 20250909-clk-type-state-c01aa7dd551d:v5
+prerequisite-patch-id: 2d3dc45c241d9062a0d2546ec649eec7970fa50a
+prerequisite-patch-id: 67ad535fe110207ebc79045ba022ebb7137b0309
+prerequisite-patch-id: 3d1d8ee5c2a4957edd0807b7a5cb65dabab345b5
+prerequisite-patch-id: e2659037b8aaf51831da099cc568ad5b3c24a4dd
+
+Best regards,
 -- 
-2.54.0
+Maurice Hieronymus <mhi@mailbox.org>
 
