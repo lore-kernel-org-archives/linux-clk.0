@@ -1,52 +1,45 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55D933368BF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF3B533509B;
 	Sat, 11 Jul 2026 19:50:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783799409; cv=none; b=pi4tI4JbNjlBBxzGVkH+z38kGs+/ijqTZW8MMESMeTpp5G7Nq2/XFvDYp0S2tcfxvU9gLm/SuHNov/muULe6ePnxD2VGKgw8GZpHq4AW+gDWFe/P2ETMWRU+pHxmLTiGSnap4PVLTrUB0hvqJ44X5nxGyP5cFIYNP/QOtsWiT58=
+	t=1783799409; cv=none; b=VeoUUzNJ/t5qV9+M0vBPRanV+OYR0qCxfOBM7WcLIu4PLDB9cPhcWfzs6MdCotFqoRWwePGpxYFJF+3eq/kxw3Ip1HCpyMW1i2Pe6GqETVjDqHNlM5XyuERt00BhKJG9jf00+6DP2Fmv9TSQNIfC3tP2t6iwSCY4u9AS3fqYCDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1783799409; c=relaxed/simple;
-	bh=sWRoGkivI19/9mqiyi+4GfECQ/0PVuZ3sjUrb7ueaqM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Qh9JHMQsyctgu8zp/F4oHrdEhLLZLlNIAUiWzOqD3Jd6imYcS2T+Qu+/KuuZEZUi1aiG6zR9K16jfHYJmSn4qqmzmmz/P/hknPt0BNTsn6yYawOqFwUIM/62gY7W7UKrT/UlIxs7tMrgKHE3LlvDACYbrRunyh28AjFej7dfeJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TMX327/V; arc=none smtp.client-ip=100.103.45.18
+	bh=hzznUv4BZKfUoqe4GCJ5xq57knHy0Hx3Hsae9vWbXb4=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iZbKKt1GVpnstd9PCnrEKykZSXlhJXcl+T30DXlLz9oszVorqFblQre10NMbaPA+XQFW0rcer6T2nFaO3lk3jR2Mo9/ZRpkFnUQ9ajDzE12c7BuQwZ5gZeDUlz03v+S9Q4SJJfAdXp4pieBn/nWV3TskJFWEtccFuht+pTn7KDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JJ6iwClt; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TMX327/V"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDB551F00ADB;
-	Sat, 11 Jul 2026 19:50:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JJ6iwClt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23EF61F00ACF;
+	Sat, 11 Jul 2026 19:50:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783799407;
-	bh=wv6D8cyEArFQVvp5s9Mwg8netaicxSm14KRNIPLAUHg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=TMX327/VKJDmVS5hHLs/pf65rTU8NB8pnZacUj9ZaHSqhrqAacrdb5OwZvqD+np6/
-	 gHYLLF1LkDYwCL4hn2gdSS6S+RnMwL2cQ1iCuELS6AUyv+qw3d/935qT2Ff9ItMM77
-	 DpFSHRiTXv0Tu6m5V6bSMy82pY/iY0mmImPma4hTHEB8kIikeof510+7j193JsqhDu
-	 dJ3Re/Iw6iBxuZfBSOZANg4M3XuQ+U786uQYL5H5KCeJA1lP07K0Js2H+Rrm96cIW7
-	 +0rhVxd/v0/a1rQHChgFA+Dy5B5krYCuPptSroN/mC5f5MCUWcJPTzey1mi7jBsJqc
-	 uY3/TkhmFCN+Q==
+	s=k20260515; t=1783799408;
+	bh=dYmulejeYhQJrynlJBhwfOkbg6u5F6EbX23SkcmIoQA=;
+	h=From:To:Subject:Date:In-Reply-To:References;
+	b=JJ6iwCltqDcEQO4DW1vVefgOnaTROnvEY85uwFPG+eNtWHTJpEynImTgw50rlTCjV
+	 /mctiQugYZJdWGcjRWm6kt/Fr4DZsCwyM2Os2WmdhlCCsrcmy3wTHq0e3+uPXSq9Vb
+	 4KAB/FLhLjR08Vtp8+yTyVWsf7XWIJ6SwDnLgJ+lOWWWG4tMAYF2g6y3BjD0zBdOI6
+	 ZZJ0vhnKHSS0/+IVGavnKKuV133Ey98T8zpWyykcAQ0yKmkIctDqlJIGc6zQ8DD9Ce
+	 ynsW7mAiPojCCcG5HfNIlG4Vu0Lw/mX3dpgscTO+ZWXidD11gqugwTnERz+/+PaUgs
+	 t3TG+3GcTjyVg==
 From: Bjorn Andersson <andersson@kernel.org>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
 	Brian Masney <bmasney@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-	Jagadeesh Kona <quic_jkona@quicinc.com>,
-	Taniya Das <taniya.das@oss.qualcomm.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] dt-bindings: clock: qcom: camcc and videocc improvements
-Date: Sat, 11 Jul 2026 14:49:46 -0500
-Message-ID: <178379938603.163099.11379673434084863598.b4-ty@kernel.org>
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Subject: Re: (subset) [PATCH 1/2] clk: qcom: camcc-x1p42100: Constify qcom_cc_driver_data and list of critical CBCR registers
+Date: Sat, 11 Jul 2026 14:49:47 -0500
+Message-ID: <178379938600.163099.15741001325573570402.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260708-dt-bindings-camcc-required-opps-v1-0-ae0871774210@oss.qualcomm.com>
-References: <20260708-dt-bindings-camcc-required-opps-v1-0-ae0871774210@oss.qualcomm.com>
+In-Reply-To: <20260705171811.115542-3-krzysztof.kozlowski@oss.qualcomm.com>
+References: <20260705171811.115542-3-krzysztof.kozlowski@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -57,21 +50,19 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Wed, 08 Jul 2026 11:48:38 +0200, Krzysztof Kozlowski wrote:
-> Hardware needs certain levels on rails, thus document it.
+On Sun, 05 Jul 2026 19:18:12 +0200, Krzysztof Kozlowski wrote:
+> The static 'struct qcom_cc_desc', 'struct qcom_cc_driver_data' and
+> array 'xxx_critical_cbcrs' are already treated by common.c code as
+> pointers to const, so constify few remaining pieces.
 > 
-> Best regards,
-> Krzysztof
 > 
 
 Applied, thanks!
 
-[1/3] dt-bindings: clock: qcom,sm8450-camcc: Drop qcom,sc8280xp-camcc from "if" block
-      commit: f54ac9a7096bc091813e3ef92021e1acf1e725a9
-[2/3] dt-bindings: clock: qcom,sm8450-camcc: Require required-opps on SM8750
-      commit: 9b9139d88c1a14535e8fd85e11e15ee3ccda48c9
-[3/3] dt-bindings: clock: qcom,sm8450-video: Require required-opps on X1E80100
-      commit: ecb42d97c8e143e8d9482e8d7019d06019cd961b
+[1/2] clk: qcom: camcc-x1p42100: Constify qcom_cc_driver_data and list of critical CBCR registers
+      commit: 3fb968b400bd3306ff25852c396a05f581f0d4cc
+[2/2] clk: qcom: videocc-x1p42100: Constify qcom_cc_driver_data and list of critical CBCR registers
+      commit: e5b2050ff760064c84799ad2954ab30aca415cea
 
 Best regards,
 -- 
