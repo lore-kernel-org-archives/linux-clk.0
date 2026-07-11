@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF3A03CAA54;
-	Sat, 11 Jul 2026 16:40:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 958853CAE76;
+	Sat, 11 Jul 2026 16:40:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783788051; cv=none; b=EdA1BuUprt0f4UySdcViU/t8L0OguuY2NtIXf139rzxKJYTx+LZlJXs52lj3pjydTbXfNO/WgvCia1PuSfEUgqnV7GoNICDLdwWOX3CXhiwFeBn7v0FL28OLNWHCMWKtO8NlsGOPWwCb8An2pqcz5TACnRnd4pD96O6URL85+qY=
+	t=1783788058; cv=none; b=uyvnXtKBG27DDogZMfTsKsnDStstZztv1ZBArqFWERfrvkHRGS72EyTTzozrj6h1kR5KtsBpwT74i+NqFoGqcA2uKtrcuODVWjU07Fxb3si3MIgbwivHRXo2cYbAJZBxLJtXrvTDhXOxgPVbWDUgsxlYezJE9ivg3HV+DUA0IFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783788051; c=relaxed/simple;
-	bh=AJTBzz1seoXPE7X19l9bOj98BnrfotS6pXLG/JYE4JM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dz5y9KY+oP+h3ni4kft1KtAsHwh3Mq8xdMPVSW4IxvQ7zh1VH2WxzChs/pz845r9JzgkWCQZ8a+BBLfCOB2B0pHkSl0TpHRfyW9IrXCmDknH5T1ny4gys1heUNW87qlVUEG/XOaBIioWzpLIqANN6b8vH2vGjNTDOD5bVbIUWXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YEQVHrVd; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1783788058; c=relaxed/simple;
+	bh=/fdPJSJU8+xdscb9m0BJRsZOhGnqTjN7jAjo1SX1fSQ=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RcrFi0dtMmtOupQDQrwk21LetA2vHy45eSRdTnmILhU9DmrMA/y7UpMjg4QPkDBPstEvxJSOIvGKCkhOsYLSEF+BBCjkxG0hs8xssNtxh2lEy24u3YyaVwTq50xlefWK4fqmn3xV6wD+8tnu34lv9BpsSJgkCFiO/r/7fghneTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S2+CotMA; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YEQVHrVd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76A8D1F00A3E;
-	Sat, 11 Jul 2026 16:40:48 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S2+CotMA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB6081F00A3D;
+	Sat, 11 Jul 2026 16:40:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783788049;
-	bh=yVw5mffjnIlZHE4iDxRvoUQvwFWcH1yBdkxrebziRVQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=YEQVHrVd11nlZpECX6vCnMb7RudmJv30BvInh6+88kn0iVanvmX5eHBHVXWExGHoc
-	 6OEHfiAslurz6q7OQIRX/Agn0GAXZtneoDjbm95l8O9bQOkGCq0PnQqkL5mwUds3II
-	 oCmzXUZ0SPAeGJ2Gc5t/Evsz1k06vPAHqLMs/Gkej2BQ/tVGsiAVe6eefmjTBXOZZG
-	 CVhm8RiF8RoYBL6sIXJjvEv0DvQUCU7I9enCYgOjopEPSWy8K6gB192XYtakMZ/oBg
-	 SQZJWzs87JOY4IENCErr6Wx93MlGzqkVWRagMD5Md8WAq1RtXks3mT45Teghh8WZ5p
-	 MaInSlzd9T1OQ==
+	s=k20260515; t=1783788052;
+	bh=/nXjUxHvh2AKmCSXEKPK0rOosDRgT/rdBSCg1T+PDfU=;
+	h=From:To:Subject:Date:In-Reply-To:References;
+	b=S2+CotMA0Bb7urH4A+ORnHE4LkYPwov2V6laV8UHYb1N9uNPxP7HdNXTM5aUVgY+d
+	 UtOra0XEKshGE5Ol0aQ9g1Fu/TxeWnSqN9n1er4w068ga+vif/ML3kgCP/CzO73Nhx
+	 le+LeefxYO1eUR0lZk/W8WRrI1pmW5W+HxiI6mgVLJkH03A87hxE20fDo6tqXwlqoT
+	 i7OH1wLFKnAyHciXkS1AX9P/H68CwpE4kc1UjHiSAolCqUjk1fu6RI1p0K6zEoLjoF
+	 tJypR6ICGXFdWE4nTFRYKeqm6L+dHoE9p3H1aq1aUXPidShRtsozvNLi8xsY/OWPWq
+	 V0h0Gt+vwTp8w==
 From: Bjorn Andersson <andersson@kernel.org>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
@@ -33,24 +33,25 @@ To: Michael Turquette <mturquette@baylibre.com>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Barnabas Czeman <barnabas.czeman@mainlining.org>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-	Taniya Das <taniya.das@oss.qualcomm.com>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Subject: Re: (subset) [PATCH v5 0/3] Add camera clock controller support on Glymur platform
-Date: Sat, 11 Jul 2026 11:40:36 -0500
-Message-ID: <178378800448.138068.15504604554748644272.b4-ty@kernel.org>
+	linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Subject: Re: [PATCH v2] dt-bindings: clock: Replace bouncing emails
+Date: Sat, 11 Jul 2026 11:40:38 -0500
+Message-ID: <178378800452.138068.4635491218835073358.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260624-glymur_camcc-v5-0-a321df74b1a1@oss.qualcomm.com>
-References: <20260624-glymur_camcc-v5-0-a321df74b1a1@oss.qualcomm.com>
+In-Reply-To: <20260623073050.36262-2-krzysztof.kozlowski@oss.qualcomm.com>
+References: <20260623073050.36262-2-krzysztof.kozlowski@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -61,16 +62,20 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Wed, 24 Jun 2026 20:20:28 +0530, Jagadeesh Kona wrote:
-> Add support for camera clock controller on Glymur platform
-> for camera clients to be able to request for camcc clocks.
+On Tue, 23 Jun 2026 09:30:51 +0200, Krzysztof Kozlowski wrote:
+> Replace permanently bouncing email addresses (550 5.1.1 Recipient address
+> rejected) of Adam Skladowski, Chanho Park, Anusha Rao and Sireesh
+> Kodali.  There are no new messages from them via other email addresses,
+> so drop them permanently.  Add Alim Akhtar to Samsung ExynosAutov9 SoC
+> clocks, because he looks at other Samsung clock hardware and drivers.
 > 
 > 
+> [...]
 
 Applied, thanks!
 
-[3/3] arm64: dts: qcom: glymur: Add camera clock controller support
-      commit: 7df7325ffc4b959cabedb2e41827c1b9a39c8dab
+[1/1] dt-bindings: clock: Replace bouncing emails
+      commit: 1aa4e2ed7caafbbbedff89fb226a982413469baf
 
 Best regards,
 -- 
