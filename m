@@ -1,37 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65C6B1E4BE;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7496A27A476;
 	Sun, 12 Jul 2026 03:11:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783825893; cv=none; b=PtqDuJGccUcIp0EwuX1hBVCmh5u5I2RtrSbO3jbPH35/8vLceMUvuyzE74/iNvpgnuF6Wt+83sIsugb92QF3mu6t/3lInKJdPrfot3nHE15fmjBG1WNJoYbSOvwtnG/jzNmJqDxURKjWwgSuN/Q1tH/bEntMJNAy0EasW1oFYCY=
+	t=1783825893; cv=none; b=AlFM36phfKZGs035XRMcvJGjYv59ZjBxdAQSCDCpp6ATSZuxb9Qlei26se0C0OKGYD7bIPyvjqM5SOkz3CKb4h56QRM36pVCB1U8brbzCzt97DdGVLbRUQwi6F3/Ij8M8YXgnoFrYM2CrlimYaVbBNclNT9bcrvrSeuBWSALXL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1783825893; c=relaxed/simple;
-	bh=B6McnTUfRV8hsWOIMcBrUnK11VgMMgYLcjKB6pn/gVM=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=pUqmMfDieYeV+zEDpJC8TtHMmcU/Y5XDEOD6XzVs1MKHyPJFs55BuWLqXlOOTuX3FIUa45lGxYIu5cDLpI3mCFKaeiaYRQ3hfmWGGIaBVAcNi6DCCIhCisjx5ArMEfz22KHsQJFUrnYIdG0MMQXBGQw2P+LaC+nJRy9W/30Q58Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XfRfmwH+; arc=none smtp.client-ip=10.30.226.201
+	bh=ffpRq/yZnNx7YKIkRIAyqqnKBxqhvOWldlUoQ94VLnk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=R/dwtgePOa4X8q4ut1pm6nl+ktDaSbciOBwyPdQT3CkMLHdphxB4KOoUjgdHk8YS/lXkRtL6rGLdbsgDiYN77yoPCdqKhW9OsaYAirOyRVB62a2jyu6fb/v6HcAQ/RShxV1QwGeVUirVXTm9wM5r5daLbWb+RrlN43lBqnaTBZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o2d95Jog; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XfRfmwH+"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 1EB9EC2BCC9;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o2d95Jog"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 34C8EC2BCF6;
 	Sun, 12 Jul 2026 03:11:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1783825893;
-	bh=B6McnTUfRV8hsWOIMcBrUnK11VgMMgYLcjKB6pn/gVM=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=XfRfmwH+Hbb1DcIxvjcxdFJFLsYfHt3+euKj/0Jcpk4CC3BcA7xc4/6gVGoYR0i3M
-	 Pya+jAxEoTUk8TLqMAob2cdzeDL7O6PagVxxfBFA0Ljz0cmOZjlXbbedqLehsP+NpA
-	 BWcIUwy7cd/CsQPTqGE2JTw8l5a0jPFk3YHd5MkoCaA1d/yxxpz7PHo8d9mK0AHhVU
-	 kgdBGVR5Kab2/iIswM3nLzd+2H54LO0nz8+gRWJnN5KCdvUVPeU73zaPmbPg/p91sM
-	 Sw/KMHIiEPO+7smOkB9SELJd+ivah4rBdlBW7xn0RrqpxXa5kBvi/TZg1DJDeZg/5A
-	 JdRKeSGAXsMKg==
+	bh=ffpRq/yZnNx7YKIkRIAyqqnKBxqhvOWldlUoQ94VLnk=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=o2d95Joggp4+N+ZF3j0sgXJORMij/S5XGVOskw7gJJl+88k89z1HlVNG813EByfq4
+	 a9jyIGR3iteMzhm4D2bibPGN/sT84dMNsIBnAAVFUqDGCsh6XzbMWaVIIPY2pDJWO4
+	 lXHZzEgFw37R/PZPIIIjZGc8mt1sp7CT+IqEfi5Z10vn/6sET7BjZ9CSwI9cvKy5ME
+	 I30SBbTVxXLrmbeSZtaCgxEL8i2k5TE2e1+GvESKrFOE/asuyAc/RBv6ukR0iTnKtc
+	 RRL1RNHy6oESkXFj2WIuMcpMQJxn4mPW+HosYMfqKiXQcc3OW6ifiePhbyDCeOBU7B
+	 oQEjf7Ys/rCqA==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8F89C43458;
-	Sun, 12 Jul 2026 03:11:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FCC6C44501;
+	Sun, 12 Jul 2026 03:11:33 +0000 (UTC)
 From: Esteban Urrutia via B4 Relay <devnull+esteuwu.proton.me@kernel.org>
-Subject: [PATCH v2 0/3] SM8450 QoL changes (dispcc)
-Date: Sat, 11 Jul 2026 23:10:34 -0400
-Message-Id: <20260711-sm8450-qol-dispcc-v2-0-fc1a07ac5601@proton.me>
+Date: Sat, 11 Jul 2026 23:10:36 -0400
+Subject: [PATCH v2 2/3] clk: qcom: dispcc-sm8450: Migrate to
+ qcom_cc_driver_data
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -40,11 +41,9 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/02Nyw6CMBBFf4V07Zh2lJcr/8OwgHaQMUKxg0RD+
- Hd5bFye5NxzJyUUmERdokkFGlnYdwvgIVK2Kbs7AbuFFWpMdGoMSJudYw0v/wTH0lsLOq8wj43
- DuNJq2fWBav5szVuxs7yrB9lhDa1GwzL48N1OR7N6ez9B/O+PBjScUkKizNW5K6998IPvji2pY
- p7nH87iVXK9AAAA
-X-Change-ID: 20260711-sm8450-qol-dispcc-09b2951d25b0
+Message-Id: <20260711-sm8450-qol-dispcc-v2-2-fc1a07ac5601@proton.me>
+References: <20260711-sm8450-qol-dispcc-v2-0-fc1a07ac5601@proton.me>
+In-Reply-To: <20260711-sm8450-qol-dispcc-v2-0-fc1a07ac5601@proton.me>
 To: Bjorn Andersson <andersson@kernel.org>, 
  Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
@@ -53,11 +52,11 @@ Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org, 
  Esteban Urrutia <esteuwu@proton.me>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1783825891; l=962;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1783825891; l=2649;
  i=esteuwu@proton.me; s=20260622; h=from:subject:message-id;
- bh=B6McnTUfRV8hsWOIMcBrUnK11VgMMgYLcjKB6pn/gVM=;
- b=mDyWgsrxFJ2IVs5jLDFOaznan9Cc4Opdlt4irS6y6ULgoIlnlb/9h3nMD/U1E3GTo9rmWh2It
- mpJ/uhHii6ZA6IFHOxX+ymr43JM1ACSigm8v9NJ/DFX9xcHfb8z8+U8
+ bh=PwdqzjnMeRdkC7srNPy0ZM+7B2sU0GfwVPACjedCviQ=;
+ b=U7SJM3IHNt/ZbMXtLZBCf07N4fRMeZlzSSaaIkpejagx9223suGXBIVnqXw4mL6ANATt8Hcvx
+ HY4UtxlMrFuDaFVM1pigThWj/KkNYYtvNuI/D7ZNMBTi7aSYh5c6ncM
 X-Developer-Key: i=esteuwu@proton.me; a=ed25519;
  pk=wToFt4mOAWkzbqb15Ye1hrhevI13vK9BcMUFiQ/me1M=
 X-Endpoint-Received: by B4 Relay for esteuwu@proton.me/20260622 with
@@ -65,32 +64,77 @@ X-Endpoint-Received: by B4 Relay for esteuwu@proton.me/20260622 with
 X-Original-From: Esteban Urrutia <esteuwu@proton.me>
 Reply-To: esteuwu@proton.me
 
-These patches are mainly focused on getting a flickerless boot process
-on SM8475 based devices.
+From: Esteban Urrutia <esteuwu@proton.me>
+
+Migrate to qcom_cc_driver_data, which is used by other clock controller
+drivers.
 
 Signed-off-by: Esteban Urrutia <esteuwu@proton.me>
 ---
-Changes in v2:
-- Split series in subseries (dispcc, dts, qmp, smmu)
-- Migrate to qcom_cc_driver_data (Konrad)
-- Split mdss patch into 3 patches
-- Use Fixes tag where applicable (Krzysztof)
-- Link to v1: https://patch.msgid.link/20260622-sm8450-qol-v1-0-37e2ee8df9da@proton.me
+ drivers/clk/qcom/dispcc-sm8450.c | 28 +++++++++++++++++++++-------
+ 1 file changed, 21 insertions(+), 7 deletions(-)
 
----
-Esteban Urrutia (3):
-      clk: qcom: dispcc-sm8450: Fix disp_cc_mdss_mdp_clk_src ops
-      clk: qcom: dispcc-sm8450: Migrate to qcom_cc_driver_data
-      clk: qcom: dispcc-sm8450: Keep pll types as is for SM8475
+diff --git a/drivers/clk/qcom/dispcc-sm8450.c b/drivers/clk/qcom/dispcc-sm8450.c
+index c7e04bd315d5..07f22b5b5ee5 100644
+--- a/drivers/clk/qcom/dispcc-sm8450.c
++++ b/drivers/clk/qcom/dispcc-sm8450.c
+@@ -1778,6 +1778,22 @@ static const struct regmap_config disp_cc_sm8450_regmap_config = {
+ 	.fast_io = true,
+ };
+ 
++static struct clk_alpha_pll *disp_cc_sm8450_plls[] = {
++	&disp_cc_pll0,
++	&disp_cc_pll1,
++};
++
++static const u32 disp_cc_sm8450_critical_cbcrs[] = {
++	0xe05c, /* DISP_CC_XO_CLK */
++};
++
++static const struct qcom_cc_driver_data disp_cc_sm8450_driver_data = {
++	.alpha_plls = disp_cc_sm8450_plls,
++	.num_alpha_plls = ARRAY_SIZE(disp_cc_sm8450_plls),
++	.clk_cbcrs = disp_cc_sm8450_critical_cbcrs,
++	.num_clk_cbcrs = ARRAY_SIZE(disp_cc_sm8450_critical_cbcrs),
++};
++
+ static const struct qcom_cc_desc disp_cc_sm8450_desc = {
+ 	.config = &disp_cc_sm8450_regmap_config,
+ 	.clks = disp_cc_sm8450_clocks,
+@@ -1786,6 +1802,7 @@ static const struct qcom_cc_desc disp_cc_sm8450_desc = {
+ 	.num_resets = ARRAY_SIZE(disp_cc_sm8450_resets),
+ 	.gdscs = disp_cc_sm8450_gdscs,
+ 	.num_gdscs = ARRAY_SIZE(disp_cc_sm8450_gdscs),
++	.driver_data = &disp_cc_sm8450_driver_data,
+ };
+ 
+ static const struct of_device_id disp_cc_sm8450_match_table[] = {
+@@ -1823,19 +1840,16 @@ static int disp_cc_sm8450_probe(struct platform_device *pdev)
+ 		disp_cc_pll1.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID_OLE];
+ 		disp_cc_pll1.clkr.hw.init = &sm8475_disp_cc_pll1_init;
+ 
+-		clk_lucid_ole_pll_configure(&disp_cc_pll0, regmap, &sm8475_disp_cc_pll0_config);
+-		clk_lucid_ole_pll_configure(&disp_cc_pll1, regmap, &sm8475_disp_cc_pll1_config);
++		disp_cc_pll0.config = &sm8475_disp_cc_pll0_config;
++		disp_cc_pll1.config = &sm8475_disp_cc_pll1_config;
+ 	} else {
+-		clk_lucid_evo_pll_configure(&disp_cc_pll0, regmap, &disp_cc_pll0_config);
+-		clk_lucid_evo_pll_configure(&disp_cc_pll1, regmap, &disp_cc_pll1_config);
++		disp_cc_pll0.config = &disp_cc_pll0_config;
++		disp_cc_pll1.config = &disp_cc_pll1_config;
+ 	}
+ 
+ 	/* Enable clock gating for MDP clocks */
+ 	regmap_update_bits(regmap, DISP_CC_MISC_CMD, 0x10, 0x10);
+ 
+-	/* Keep some clocks always-on */
+-	qcom_branch_set_clk_en(regmap, 0xe05c); /* DISP_CC_XO_CLK */
+-
+ 	ret = qcom_cc_really_probe(&pdev->dev, &disp_cc_sm8450_desc, regmap);
+ 	if (ret)
+ 		goto err_put_rpm;
 
- drivers/clk/qcom/dispcc-sm8450.c | 32 ++++++++++++++++++++++----------
- 1 file changed, 22 insertions(+), 10 deletions(-)
----
-base-commit: bee763d5f341b99cf472afeb508d4988f62a6ca1
-change-id: 20260711-sm8450-qol-dispcc-09b2951d25b0
-
-Best regards,
---  
-Esteban Urrutia <esteuwu@proton.me>
+-- 
+2.55.0
 
 
