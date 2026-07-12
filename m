@@ -1,122 +1,144 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FB032773DE
-	for <linux-clk@vger.kernel.org>; Sun, 12 Jul 2026 16:04:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783872266; cv=none; b=cmpS1joqXy84yPbNaCE34JNP6AiBNEMf6uZ1IjSm0JJWv7p0C0/y0aZqGe/CAqtUYc/eWwij0rGJy1Q1hg/0zvmRksF5K9eB1tn+m+5yB/IgzNcXVK6Do+Bx7XUmOH3e/oqafSOfGcH+pQXQtFDLaR8+jUKCTv9oXSjquqSmcGI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783872266; c=relaxed/simple;
-	bh=aATECKOCtlFQMaXKY1fICIPDpwmKETh8M/PFHWEOfjM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OLO5eqU9WrQ24o2p6jMLFPZ0nT1IG1cqC9mixA82rrFf2oUSXEOFigqaDrIN7WvRr+CZYRJnpVDtOK+x3vjyUQA9C8mr+RptFPfPqW6vQUS+inklBAYGofXfhOYaPfgfHBhvMkaqHUJ90XrgPTc9AKxa5hvSX7V1avRa8BSvYmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hGbTAgX7; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F7E1367B89
+	for <linux-clk@vger.kernel.org>; Sun, 12 Jul 2026 17:54:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.181
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1783878900; cv=pass; b=iWxm3SBK6WPQH1z98xthzpFodul3z4+nj2lzU6GlqkvxmO/Qmj/o0Dpzc74t6YcEJkcCySu+I39rgZGd4GuXqk2dXOMBJhfSga4fqSMtTZItuPWV9zCSFVB+QIbM98zUqrX7xmpTSFTwwEqzdZJThIiF4OPHX3gq6kGF+gbE6KI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1783878900; c=relaxed/simple;
+	bh=fc+IpUQ3nxL/5ehuQHd+IPjoUpneuBJkM4s9M0NB2Ag=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=c2cPe5oiA7vraIJ9OMsJjvelQX0TyYzvB9AsOESF/oxK04E0YsJfeiBdfbttF7W3idrQfnFWXB1v/8+2e+BwPO7puXt642hPTU2JMXNFBvhsBmM7zOe5g/HWF1SwtKDOSuYCDvZ5OQLNNWMqCHG6QDrSfhzozB0AzdktyWS26Ps=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xk9LW3Oz; arc=pass smtp.client-ip=209.85.214.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hGbTAgX7"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-493b7612475so19020365e9.3
-        for <linux-clk@vger.kernel.org>; Sun, 12 Jul 2026 09:04:25 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xk9LW3Oz"
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2cacf197759so35657105ad.2
+        for <linux-clk@vger.kernel.org>; Sun, 12 Jul 2026 10:54:59 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1783878898; cv=none;
+        d=google.com; s=arc-20260327;
+        b=cqEbdKTPRFBE2Kwb1Yjo23IqLLvG0Svns8eYTW6cy3LD/8aInB8jo7/SAL9DgSjQqi
+         bukv7pfznrOT13P/e/z8bUVbNp80CddZ6Qoab11CoU271MqfkAKrNDtou2LMXtftlJ8T
+         fkLh4fHDlplptuK5MSMtvsEs0eO90jszkdCVj8y1FoaiEYYMH58EamuzKifTtUCgZYa4
+         Ply0KmTJnYA3g6/ZdlZsPT0Wa2OBzWS6wpdyZUpm51KSph3YMjwb03ziFv+FrD67t95E
+         oUSqSxl9xpl4G7/NB80yq2hIzkq61SZpebV3xh9Rq6DyPu07f5ZRDAve5Iuymj5sos5o
+         gOhQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=44M0iHbAGhfU0E5ExDjtW7aZAEv+cpa/Gl2E/ST/Kgo=;
+        fh=AK+QlpK/iXXDctkfI0pGWi1DFe8XrB4t7BQwkb8/hYg=;
+        b=pbyv0KbIZkpsZ3HjaXXNP2nHP/QSYXb+OH95ZQ96bY/OcTo5YVLEUhhJFDjF9A8E9I
+         cZrFXdJrnpC/lWnZFSMTXJhat/wpSNcFJCL+3+/e8FSq6zvBPZSnPtqCmIkcQcFymj79
+         fDQIFiwRxRZpTQI9SdNDFmMVbs+Ymbr68khRCzwVDIUukTHEM6OHoUK3rM5UWcAVJfJj
+         poeywrUGe6IAxL5LNTO/v5EjMDzrlfBapdTTxA9pWWV6r/JgxT+DtS8JVo6jXeHac5ED
+         BBMeI5LaRzHUwfKsNbl2DFNN9O1dMYwN57TQCqh7wlPS8QC1ns2GCKxiv+6RB8zblxzw
+         o3rQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783872264; x=1784477064; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=k7WWDimv3b4NdwES6tpNCGufjtNL62BZYyk5PVukc5o=;
-        b=hGbTAgX7xLAHe7pTU/c8gBumi8wmbJLeHvFcR175u+vn9tx3vpNKiGn2R8q9QDaWEM
-         JASW1kRnwIM6yMvcMDs0xBEDZGWP1HyGMLQaHxWBdW0iSCYTeeadEwgIQsC6zOuvghb4
-         AaEiaGGZmnJojAPuJjRwoJ3Iz5+K7w7lxE+3v+Ypbm5flxDOXI84i7EIwi0PyaMxYJJ2
-         14W9n1HArF3sTUL7/7qEp9Z4TBZbomKQAjHSMakFjkLlC5SnLn0g3h9umzkipvYt14nn
-         lG3em9U4zC6CT/cgSDNEsXcHiF4WmMOqffGSLRjZMI9b6YnGOGkMdnjPIbyX7xqPU1vS
-         NZoA==
+        d=gmail.com; s=20251104; t=1783878898; x=1784483698; darn=vger.kernel.org;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=44M0iHbAGhfU0E5ExDjtW7aZAEv+cpa/Gl2E/ST/Kgo=;
+        b=Xk9LW3OzvRruJ4VOuwqux1+NPk95JeqTGR466IFMnKnrJkBp17kHT1JkIBGVX0XUJO
+         +zBeO+4M/Dab4Jzj2ODDxzOyudxoDFUoqLyMEteALSjk9zd/0g0Xh02DNn5IF3UZqyT6
+         lm4X5AXiWqrPv8e84cHsgFq4UILDjmGZ5n/uRWjIZWbyhH1lRVOg347wI0k03Uqhi0S+
+         QY7impInoaf0Yorchx32dYnwMbjXA5JkyotfDXJsrbBWb70mAuHXS9rTnSz4jRIhsNq+
+         ALg0REAIuFX5519q7mupm+NajEBSI7sA5XvN0VYqVWbdXQ6mCasCz4mnsK61OCD9zYyY
+         211A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783872264; x=1784477064;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=k7WWDimv3b4NdwES6tpNCGufjtNL62BZYyk5PVukc5o=;
-        b=p/G9RlV7VR7S/4acFiFwJ2jNSdLoe84mAFnzAlBc8ms0OV7YHRxhKh9tVg5CmWDUGC
-         77lxSpwmY4B2LNsYbdCDvb6VVcZ1WDuowcfsMw/JzOrhuD7pv18zv24NTjpLAJM7IKSH
-         D7VaeeYKVD2ObMcPu6IrxGR1DU+F4GD+gz25WZ8wJh/NXjz1McveonAfkXVIhRE71IRc
-         Y6n0+Bd6SZxrDepG6K9bynHanVcImwtpSah0z9EIqRjfVTYo3l6VrDfmJUzKKUA4UYtd
-         KGilDyjsQd54yVRTy4Pq7IotEuCHH0f8gBUX/+EscQ7/YdoQs1Z66nhoC5l8xe8CdSD6
-         TI2Q==
-X-Forwarded-Encrypted: i=1; AHgh+Rp5vMwAyRn672e1tePmDEHXWk/V/Bu04cnE8yv/ZqFNYqx2lXzuvY+lwwtSiZ5kpp+l52qjicE4RFA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzj7sMyPKUqzVozXcByjRkjdztJ7sY5LklfP3W6yQex5bHUkvzx
-	89gGLSZiIrXhbdG7lw0EsgNbIbvWBX7D4XABX7+pEcV1lQPffEAiJMTV
-X-Gm-Gg: AfdE7cnP1fFnG1QHGA7esGeH08fq95WS8LbmExSapMgorwXe3QJZWOEpxdQWMG3SpHT
-	AmrfeXZHZkuihhNslcmfawAjJoojvNg/3rrXGC4rl1/bCbOkeI27xdKMa4cv35XK67CvdB2QXlP
-	wwbJnnEz9Q7E2iKeFIS6vwB4nwK1txXNK6JbLzwNlv01B+wgxLHv6fHAyOGbQkw8qEc384048qD
-	3xGbZ46MUgX5GxCcYo3k0KgEFYwdtXl1rHOHfhZOlz8vo30xV2egtTUwVNcLA5suEx8/vYXk23h
-	cSyBBkBRJjaT9jHevUxyHcCqzbhrenM5oxLQAN8xLvYXIhj/qhiqjPW8ECAvnos0DWYjzjRsAJ9
-	gLK3k+4wwzU1q3AoID1odtCXYZ0g7869MIpSGGKA1OTRLS/NP1NhoLOfOouiyHKvOORAoKJ1o4I
-	P/HEvyxCab+81aJVTZJz8K6mC+GtLNaisHGRDk6UBYKvGKRcJpZ3DmJXS3d7oKwWqwsNcHpiu9b
-	CcPkBXB9EDagDT7///PgFixcqVhs7X7yVxGE/ly5SC/BykAnRhhCZ0j
-X-Received: by 2002:a05:600c:5392:b0:493:b811:e549 with SMTP id 5b1f17b1804b1-493f8829963mr60790915e9.29.1783872263381;
-        Sun, 12 Jul 2026 09:04:23 -0700 (PDT)
-Received: from localhost.localdomain (dynamic-095-117-112-249.95.117.pool.telefonica.de. [95.117.112.249])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-493f2c8de2asm204774265e9.1.2026.07.12.09.04.22
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sun, 12 Jul 2026 09:04:22 -0700 (PDT)
-From: Karl Mehltretter <kmehltretter@gmail.com>
-To: Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Ryan Chen <ryan_chen@aspeedtech.com>
-Cc: Joel Stanley <joel@jms.id.au>,
-	Brian Masney <bmasney@redhat.com>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	linux-clk@vger.kernel.org,
-	linux-aspeed@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Karl Mehltretter <kmehltretter@gmail.com>
-Subject: [PATCH] clk: aspeed: ast2700: select AUXILIARY_BUS
-Date: Sun, 12 Jul 2026 18:03:01 +0200
-Message-Id: <20260712160301.98941-1-kmehltretter@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+        d=1e100.net; s=20251104; t=1783878898; x=1784483698;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=44M0iHbAGhfU0E5ExDjtW7aZAEv+cpa/Gl2E/ST/Kgo=;
+        b=PMcEN5fd3D7PdSZRArG+oRZSdWT5gSWFmtes9QrdlIa2U3SHohoIilx4voh1ji7PiY
+         pf43OV9WHmzZ4HYG4zwwMs2rmT8jr0QXBwqLvNyIdoVKPicBhLB0kvT3VHw5vNsSoeHR
+         YXuxDa9aPQuSnVeVIqmrtrreL0hsUrcEcrHRtFeIE6a1cOlFCx4lkoiZ2yBuBICgPqY5
+         XDUVkuA5p6noxYf4jSCj+rj9vl4HSvgUWf5zFQQJX5CQmoXYkrCeExp4xiZi8jFFIxdG
+         HydCVj8wjdFABnMV/UbrluN42aacrA3f63D32hWY/Yq7GTshj4KTKiTNoQNPTOe7TwgS
+         wPRg==
+X-Forwarded-Encrypted: i=1; AHgh+Rqhj4nBgFWYtIXCHN3O78efF//5wriMeIOK4YteJw+A5ty1KBje9QGzEFwRlBU3DfD1WChUNUep+Fs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMUtRYjE2dZ+pm9xrfllJBwT5Ox21oU/67Ilyzq3qCYOEiUSxo
+	/MwC4BjhWMvHAn3W8Stkwt0x4OWr08eT/DeiyzcCIzWXw2nrkuoaVAvJnwPAFfOJnZwE5b0YR72
+	dhbmYsLw0VAhb/JXa9moTDgEg3Z3NF3Y=
+X-Gm-Gg: AfdE7ckTx4nwJ8ivGtNdJRXbwrEVf82WaYp95jidAZGO6Dwco0wR7dZ1Nbc/Ei25Kvm
+	6hrdfmmoelXUus1WuaR4wshC3H9GjvxZCwBbFG0Ug7pMnvQMBTGIDs23aKKCQ1pVDD/z7oVRxlz
+	p+5yZNGT2/o+IBh4vlX0OmRV3Ibobtg1oSC1BOPmv5Mg2chfh8tB0+uI7sT4sPUQFaw8hGor5m1
+	HvuJ/fm0m1l/nePEs2E5WNjGFdSmmNGw6O3qjwsOPlbWo5R5DgHG1OGi/5GP7ICg9Kw6W1+3p7a
+	Ohn9HiW5ugPnOIw2Oh4dBdUVVHo5xrysUWRNpfA/AQ==
+X-Received: by 2002:a17:903:2347:b0:2c9:e961:d256 with SMTP id
+ d9443c01a7336-2ce9ec0f113mr59165295ad.27.1783878898518; Sun, 12 Jul 2026
+ 10:54:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1782909323.git.mazziesaccount@gmail.com>
+ <043fc930caca4c436651e8fa77a1ae16a26d0a98.1782909323.git.mazziesaccount@gmail.com>
+ <20260709104839.GG2045740@google.com>
+In-Reply-To: <20260709104839.GG2045740@google.com>
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+Date: Sun, 12 Jul 2026 20:54:47 +0300
+X-Gm-Features: AVVi8CcL95qrnKnAwDam6L3CmPNXOQrdJCc5kyQJraLZys2_Y9aFOne1g2IfMvw
+Message-ID: <CANhJrGPJDjxv9xqXs9ZQ37O12yvUoxGxmL6chtteb__RdLrTPw@mail.gmail.com>
+Subject: Re: [PATCH 3/8] mfd: Support for ROHM BD73800 PMIC core
+To: Lee Jones <lee@kernel.org>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, 
+	Matti Vaittinen <matti.vaittinen@linux.dev>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney@redhat.com>, Linus Walleij <linusw@kernel.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-rtc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-The AST2700 clock driver also exposes the SoC reset controller: it hands
-its register base to a reset auxiliary device via
-devm_auxiliary_device_create(), which the separate ASPEED reset driver
-(RESET_ASPEED) then binds to. That create call needs the auxiliary bus
-core (AUXILIARY_BUS), not the reset driver itself, but COMMON_CLK_AST2700
-does not select AUXILIARY_BUS.
+to 9.7.2026 klo 13.48 Lee Jones (lee@kernel.org) kirjoitti:
+>
+> /* Sashiko Automation: Reviewed (0 Findings) */
+>
+> On Wed, 01 Jul 2026, Matti Vaittinen wrote:
+>
+> > From: Matti Vaittinen <mazziesaccount@gmail.com>
+> >
+> > The BD73800 integrates regulators, ADC (intended for accumulating current /
+> > voltage / power values), a real-time clock (RTC), clock gate and GPIOs.
+> >
+> > Add core support for ROHM BD73800 Power Management IC.
+> >
+> > Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> > ---
+> >  drivers/mfd/Kconfig              |  15 +-
+> >  drivers/mfd/rohm-bd71828.c       | 145 ++++++++++++++-
+> >  include/linux/mfd/rohm-bd73800.h | 307 +++++++++++++++++++++++++++++++
+> >  include/linux/mfd/rohm-generic.h |   1 +
+> >  4 files changed, 461 insertions(+), 7 deletions(-)
+> >  create mode 100644 include/linux/mfd/rohm-bd73800.h
+> >
 
-It builds today only because RESET_ASPEED selects AUXILIARY_BUS and is
-normally enabled alongside the clock driver. On a randconfig with
-COMMON_CLK_AST2700=y and RESET_ASPEED=n, nothing pulls the auxiliary bus
-in and the kernel fails to link:
+Thank you Lee for review. I agree with your suggestions. I'll re-spin
+this probably at early August.
 
-  ld: drivers/clk/aspeed/clk-ast2700.o: in function `ast2700_soc_clk_probe':
-  clk-ast2700.c:(.text+0x147c): undefined reference to `__devm_auxiliary_device_create'
+Yours.
+    -- Matti
 
-Select AUXILIARY_BUS directly, as other clock drivers that create
-auxiliary devices do, so it builds regardless of the reset driver.
-
-Fixes: fdc1eb624ddc ("clk: aspeed: add AST2700 clock driver")
-Signed-off-by: Karl Mehltretter <kmehltretter@gmail.com>
----
- drivers/clk/aspeed/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/aspeed/Kconfig b/drivers/clk/aspeed/Kconfig
-index ef50481c31ff..2f505eb3ca95 100644
---- a/drivers/clk/aspeed/Kconfig
-+++ b/drivers/clk/aspeed/Kconfig
-@@ -15,6 +15,7 @@ config COMMON_CLK_ASPEED
- config COMMON_CLK_AST2700
-         bool "Clock driver for AST2700 SoC"
-         depends on ARCH_ASPEED || COMPILE_TEST
-+        select AUXILIARY_BUS
-         help
-           This driver provides support for clock on AST2700 SoC.
-           The driver is responsible for managing the various clocks required
 -- 
-2.39.5 (Apple Git-154)
 
+Matti Vaittinen
+Linux kernel developer at ROHM Semiconductors
+Oulu Finland
+
+~~ When things go utterly wrong vim users can always type :help! ~~
+
+Discuss - Estimate - Plan - Report and finally accomplish this:
+void do_work(int time) __attribute__ ((const));
