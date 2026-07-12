@@ -1,144 +1,121 @@
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F7E1367B89
-	for <linux-clk@vger.kernel.org>; Sun, 12 Jul 2026 17:54:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.181
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783878900; cv=pass; b=iWxm3SBK6WPQH1z98xthzpFodul3z4+nj2lzU6GlqkvxmO/Qmj/o0Dpzc74t6YcEJkcCySu+I39rgZGd4GuXqk2dXOMBJhfSga4fqSMtTZItuPWV9zCSFVB+QIbM98zUqrX7xmpTSFTwwEqzdZJThIiF4OPHX3gq6kGF+gbE6KI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783878900; c=relaxed/simple;
-	bh=fc+IpUQ3nxL/5ehuQHd+IPjoUpneuBJkM4s9M0NB2Ag=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=c2cPe5oiA7vraIJ9OMsJjvelQX0TyYzvB9AsOESF/oxK04E0YsJfeiBdfbttF7W3idrQfnFWXB1v/8+2e+BwPO7puXt642hPTU2JMXNFBvhsBmM7zOe5g/HWF1SwtKDOSuYCDvZ5OQLNNWMqCHG6QDrSfhzozB0AzdktyWS26Ps=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xk9LW3Oz; arc=pass smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29A5C37A820
+	for <linux-clk@vger.kernel.org>; Sun, 12 Jul 2026 22:22:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1783894922; cv=none; b=LichoSI0+MEZd069CXYPUbYfyOdiS6/9WWhpQkPxiCsIFPTUymL4dPjXAx+esKABB4Nw2+fK8dZeic+YNgYHMMplKqwOwQprIbIo0Cq5KTFv1AvRLNSkYHAwsVmtmLtm3TEAwASrLTGnzVfTj9XXkGsuGZcNahR7IW9ZPDBYIOM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1783894922; c=relaxed/simple;
+	bh=fGfuu5GVufwu5Qg5o7fhFLMfDUxFownesqiCSdLkQJU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GK8GkGiHIYyEppMQjnSmkPjuu4xIfMg7zVCOVCrBNQLbTC1PEbfOKoebce3eNGOQUMdtFbh3EU7iD04VygOGSpemEG9Ic3OlQLN0Sx4qlRLyBwQQYDDs2WmQz79CbQzWsvn7pKKnYUYV6d97ViadViCDMldz0jfeshN/WwIkLrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=e/CQTj4H; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xk9LW3Oz"
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2cacf197759so35657105ad.2
-        for <linux-clk@vger.kernel.org>; Sun, 12 Jul 2026 10:54:59 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1783878898; cv=none;
-        d=google.com; s=arc-20260327;
-        b=cqEbdKTPRFBE2Kwb1Yjo23IqLLvG0Svns8eYTW6cy3LD/8aInB8jo7/SAL9DgSjQqi
-         bukv7pfznrOT13P/e/z8bUVbNp80CddZ6Qoab11CoU271MqfkAKrNDtou2LMXtftlJ8T
-         fkLh4fHDlplptuK5MSMtvsEs0eO90jszkdCVj8y1FoaiEYYMH58EamuzKifTtUCgZYa4
-         Ply0KmTJnYA3g6/ZdlZsPT0Wa2OBzWS6wpdyZUpm51KSph3YMjwb03ziFv+FrD67t95E
-         oUSqSxl9xpl4G7/NB80yq2hIzkq61SZpebV3xh9Rq6DyPu07f5ZRDAve5Iuymj5sos5o
-         gOhQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=44M0iHbAGhfU0E5ExDjtW7aZAEv+cpa/Gl2E/ST/Kgo=;
-        fh=AK+QlpK/iXXDctkfI0pGWi1DFe8XrB4t7BQwkb8/hYg=;
-        b=pbyv0KbIZkpsZ3HjaXXNP2nHP/QSYXb+OH95ZQ96bY/OcTo5YVLEUhhJFDjF9A8E9I
-         cZrFXdJrnpC/lWnZFSMTXJhat/wpSNcFJCL+3+/e8FSq6zvBPZSnPtqCmIkcQcFymj79
-         fDQIFiwRxRZpTQI9SdNDFmMVbs+Ymbr68khRCzwVDIUukTHEM6OHoUK3rM5UWcAVJfJj
-         poeywrUGe6IAxL5LNTO/v5EjMDzrlfBapdTTxA9pWWV6r/JgxT+DtS8JVo6jXeHac5ED
-         BBMeI5LaRzHUwfKsNbl2DFNN9O1dMYwN57TQCqh7wlPS8QC1ns2GCKxiv+6RB8zblxzw
-         o3rQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="e/CQTj4H"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-493bc8fda98so15058165e9.0
+        for <linux-clk@vger.kernel.org>; Sun, 12 Jul 2026 15:22:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783878898; x=1784483698; darn=vger.kernel.org;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=44M0iHbAGhfU0E5ExDjtW7aZAEv+cpa/Gl2E/ST/Kgo=;
-        b=Xk9LW3OzvRruJ4VOuwqux1+NPk95JeqTGR466IFMnKnrJkBp17kHT1JkIBGVX0XUJO
-         +zBeO+4M/Dab4Jzj2ODDxzOyudxoDFUoqLyMEteALSjk9zd/0g0Xh02DNn5IF3UZqyT6
-         lm4X5AXiWqrPv8e84cHsgFq4UILDjmGZ5n/uRWjIZWbyhH1lRVOg347wI0k03Uqhi0S+
-         QY7impInoaf0Yorchx32dYnwMbjXA5JkyotfDXJsrbBWb70mAuHXS9rTnSz4jRIhsNq+
-         ALg0REAIuFX5519q7mupm+NajEBSI7sA5XvN0VYqVWbdXQ6mCasCz4mnsK61OCD9zYyY
-         211A==
+        d=baylibre.com; s=google; t=1783894919; x=1784499719; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=fGfuu5GVufwu5Qg5o7fhFLMfDUxFownesqiCSdLkQJU=;
+        b=e/CQTj4HijBiyYwPhL6Rlh/ftWug8ND9BukBCL/FoXqQnHY9ECmwEop/QTqT89OaNm
+         8JEx+z8Fl57/tioNaoVLx2b72OJdGcNPywiY4d1v+EkkWX3GqJZD2rFKy9G1zegFXat2
+         YLj0T7PrAzc2HxAMq9wvgeI2SoNp19HJ3Lf2ImiN1DFeezkyNsmfZWPcqXed52N6Vv9H
+         OcYXDtMEO0qGSrov/jaBlmVmTzkhpVec0PTQhDHZgWScQ6fdAo7WMPAjh6PTU6xLyQc4
+         doVFfwvhAKM4oxMB2lfQ/VZOoyhO03nhceahrPCpwzUICdPVCvq/pZ6M4i4I4Z5FgN2Z
+         Y8jQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783878898; x=1784483698;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=44M0iHbAGhfU0E5ExDjtW7aZAEv+cpa/Gl2E/ST/Kgo=;
-        b=PMcEN5fd3D7PdSZRArG+oRZSdWT5gSWFmtes9QrdlIa2U3SHohoIilx4voh1ji7PiY
-         pf43OV9WHmzZ4HYG4zwwMs2rmT8jr0QXBwqLvNyIdoVKPicBhLB0kvT3VHw5vNsSoeHR
-         YXuxDa9aPQuSnVeVIqmrtrreL0hsUrcEcrHRtFeIE6a1cOlFCx4lkoiZ2yBuBICgPqY5
-         XDUVkuA5p6noxYf4jSCj+rj9vl4HSvgUWf5zFQQJX5CQmoXYkrCeExp4xiZi8jFFIxdG
-         HydCVj8wjdFABnMV/UbrluN42aacrA3f63D32hWY/Yq7GTshj4KTKiTNoQNPTOe7TwgS
-         wPRg==
-X-Forwarded-Encrypted: i=1; AHgh+Rqhj4nBgFWYtIXCHN3O78efF//5wriMeIOK4YteJw+A5ty1KBje9QGzEFwRlBU3DfD1WChUNUep+Fs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMUtRYjE2dZ+pm9xrfllJBwT5Ox21oU/67Ilyzq3qCYOEiUSxo
-	/MwC4BjhWMvHAn3W8Stkwt0x4OWr08eT/DeiyzcCIzWXw2nrkuoaVAvJnwPAFfOJnZwE5b0YR72
-	dhbmYsLw0VAhb/JXa9moTDgEg3Z3NF3Y=
-X-Gm-Gg: AfdE7ckTx4nwJ8ivGtNdJRXbwrEVf82WaYp95jidAZGO6Dwco0wR7dZ1Nbc/Ei25Kvm
-	6hrdfmmoelXUus1WuaR4wshC3H9GjvxZCwBbFG0Ug7pMnvQMBTGIDs23aKKCQ1pVDD/z7oVRxlz
-	p+5yZNGT2/o+IBh4vlX0OmRV3Ibobtg1oSC1BOPmv5Mg2chfh8tB0+uI7sT4sPUQFaw8hGor5m1
-	HvuJ/fm0m1l/nePEs2E5WNjGFdSmmNGw6O3qjwsOPlbWo5R5DgHG1OGi/5GP7ICg9Kw6W1+3p7a
-	Ohn9HiW5ugPnOIw2Oh4dBdUVVHo5xrysUWRNpfA/AQ==
-X-Received: by 2002:a17:903:2347:b0:2c9:e961:d256 with SMTP id
- d9443c01a7336-2ce9ec0f113mr59165295ad.27.1783878898518; Sun, 12 Jul 2026
- 10:54:58 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1783894919; x=1784499719;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=fGfuu5GVufwu5Qg5o7fhFLMfDUxFownesqiCSdLkQJU=;
+        b=kLjAPakWhGakPr/6RLAYtBCFsIa4hHnhgxCfPovkt1/y0CinTMSOIhVbbuiwwFznHD
+         L0oo7qeuWhYVF95s52pnNyMGOWyDwyauVrvUa0wsN1y/gkaSzqobV6+AxTK8MxhfzsYH
+         XuMkJ/WzCfUItGO5IdLFuJe0tS3Sic+0AKSzSQL/tHi6WAi/5cwoTAL+WKpKktqOiPz+
+         wOOzx/KEWSt+iJukU96rhP3lfxbCFIAa05FDsGT03d7ZfLNowwNzJCEBcWCS1Z1ahb/S
+         3Dm3gFDbVvQHSir8T/r6sYyPu9MgOHlATdvkwcvov5GutlOmJCnOtzCV2TBuHFAtvmyo
+         V04A==
+X-Forwarded-Encrypted: i=1; AHgh+Rru0W2u0wsf6zn9hLR6bnN7Kv/6QV/EZxx9ViZ5x32fkAuNlzLyomW82WwamooyE+aTUqauag8gKKA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzS5FJjairIzNksW7AH8oBt+qqcL/547VPiAHpcBmAp0h91pizA
+	zrDhG5f4QXM3804bqExYNFSj/Mg8SYcxyTYnEWfFlOgaCAn90irAzrDz3vzmKpfO+aA=
+X-Gm-Gg: AfdE7cneFfMMuKrGlW0BhblY3s9gv7nZpwKFz72J1u6ugN1dKA+4sKF7ac1l4zIrv2o
+	GLN4xYA8HJxOr/+hdBl988d3isCovTR2DOOm2P6kIowOJxrq7vi10JiiyHkZBHKUJNSBwV5sDEx
+	xFi3mMv5qWPqZxUl1ZuCVZRfLZZvd52C+t4w2TfUWOehJNR9dGDETlioY26UrM2TajULCgbAYd4
+	5pWe4zdEwspZ9HbSqh4faWzOAtAiXz/kbWdM+nzdb2R+pidRYDwUhbXPo8Q9BULbiZsyc2rtX5c
+	qe87bHiVlCBua/alEiBEPdYMKRGHpyfaGweyDQXg5oMymmj++692EJh1E6RtOyoS9lHIPIHxNJO
+	TJ0rJ23ASSiNeg7wpJcVh5Nvwhr581Yqsfv1Eu8Dc/zTP8mttzjr3IoI8POa3b4PMHy572ahMHg
+	ku6AixWVsnmhrYJEaZcg==
+X-Received: by 2002:a05:600c:6387:b0:492:7142:f46e with SMTP id 5b1f17b1804b1-493f87d8583mr74199005e9.2.1783894919632;
+        Sun, 12 Jul 2026 15:21:59 -0700 (PDT)
+Received: from localhost ([2a02:8071:56d1:2de0:1d24:d58d:2b65:c291])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-493eb6df417sm335220295e9.8.2026.07.12.15.21.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 12 Jul 2026 15:21:58 -0700 (PDT)
+Date: Mon, 13 Jul 2026 00:21:57 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Imran Shaik <imran.shaik@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney@redhat.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Ajit Pandey <ajit.pandey@oss.qualcomm.com>, Taniya Das <taniya.das@oss.qualcomm.com>, 
+	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 3/4] clk: qcom: Add Audio Core clock controller
+ support on Qualcomm Shikra SoC
+Message-ID: <alQTdqZO2DX4-OxB@monoceros>
+References: <20260708-shikra-audiocorecc-v2-0-b320d822cdd0@oss.qualcomm.com>
+ <20260708-shikra-audiocorecc-v2-3-b320d822cdd0@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1782909323.git.mazziesaccount@gmail.com>
- <043fc930caca4c436651e8fa77a1ae16a26d0a98.1782909323.git.mazziesaccount@gmail.com>
- <20260709104839.GG2045740@google.com>
-In-Reply-To: <20260709104839.GG2045740@google.com>
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-Date: Sun, 12 Jul 2026 20:54:47 +0300
-X-Gm-Features: AVVi8CcL95qrnKnAwDam6L3CmPNXOQrdJCc5kyQJraLZys2_Y9aFOne1g2IfMvw
-Message-ID: <CANhJrGPJDjxv9xqXs9ZQ37O12yvUoxGxmL6chtteb__RdLrTPw@mail.gmail.com>
-Subject: Re: [PATCH 3/8] mfd: Support for ROHM BD73800 PMIC core
-To: Lee Jones <lee@kernel.org>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, 
-	Matti Vaittinen <matti.vaittinen@linux.dev>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney@redhat.com>, Linus Walleij <linusw@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-rtc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="hjdzayijalqv5rgt"
+Content-Disposition: inline
+In-Reply-To: <20260708-shikra-audiocorecc-v2-3-b320d822cdd0@oss.qualcomm.com>
 
-to 9.7.2026 klo 13.48 Lee Jones (lee@kernel.org) kirjoitti:
->
-> /* Sashiko Automation: Reviewed (0 Findings) */
->
-> On Wed, 01 Jul 2026, Matti Vaittinen wrote:
->
-> > From: Matti Vaittinen <mazziesaccount@gmail.com>
-> >
-> > The BD73800 integrates regulators, ADC (intended for accumulating current /
-> > voltage / power values), a real-time clock (RTC), clock gate and GPIOs.
-> >
-> > Add core support for ROHM BD73800 Power Management IC.
-> >
-> > Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-> > ---
-> >  drivers/mfd/Kconfig              |  15 +-
-> >  drivers/mfd/rohm-bd71828.c       | 145 ++++++++++++++-
-> >  include/linux/mfd/rohm-bd73800.h | 307 +++++++++++++++++++++++++++++++
-> >  include/linux/mfd/rohm-generic.h |   1 +
-> >  4 files changed, 461 insertions(+), 7 deletions(-)
-> >  create mode 100644 include/linux/mfd/rohm-bd73800.h
-> >
 
-Thank you Lee for review. I agree with your suggestions. I'll re-spin
-this probably at early August.
+--hjdzayijalqv5rgt
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Subject: Re: [PATCH v2 3/4] clk: qcom: Add Audio Core clock controller
+ support on Qualcomm Shikra SoC
+MIME-Version: 1.0
 
-Yours.
-    -- Matti
+On Wed, Jul 08, 2026 at 11:55:07PM +0530, Imran Shaik wrote:
+> +#include <linux/mod_devicetable.h>
 
--- 
+Please don't add new users for this header file. Only use those
+<linux/device-id/*.h> that you actually need (if any).
 
-Matti Vaittinen
-Linux kernel developer at ROHM Semiconductors
-Oulu Finland
+Thanks
+Uwe
 
-~~ When things go utterly wrong vim users can always type :help! ~~
+--hjdzayijalqv5rgt
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Discuss - Estimate - Plan - Report and finally accomplish this:
-void do_work(int time) __attribute__ ((const));
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmpUE4MACgkQj4D7WH0S
+/k7tcgf/Ug2JeXlzQ2GNsny9qgnwyc0tjIz7D2Ou7jyDzNQ+M4GuuV6R0m2+RRYJ
+Y2YzjYfymF/aFNCI39xtr4cD16kQKhGg3mDXhxtXhwSPfCmdzPWWkt+Tqd9pIfDL
+MeDVbTzwp5uhX+7BRpJQfjUxehs1WC2uMCIMFr6eldJZwGqZvj9jH+bCfiCPc1XH
+/j4KfS+JQgpYW5a1dHcePxn9TlrPsZAfp0DPLa9G0mmzaClQNDuaLE208xssgWrh
+F21F5d2BmOX/xl+cHn6FyM4kx/DmAFnSPpkLBOWU5K6yBJ0LAjhOuX0VIkkGnOkU
+6wHa4a6ws2eR8ZjED1u6QzcB7ocu2g==
+=5+8b
+-----END PGP SIGNATURE-----
+
+--hjdzayijalqv5rgt--
