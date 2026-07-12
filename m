@@ -1,259 +1,122 @@
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66C9A224F3
-	for <linux-clk@vger.kernel.org>; Sun, 12 Jul 2026 16:03:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.215.182
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783872220; cv=pass; b=Q0OgN6qMohF5V1IMeg/JOKrV83FXcMvIqWbT3p5sZLkCn+aAC6iYmT0LYLmfITX5G1nSDL1WEZaBeu46aZ5HvI7j2kZ77ElKIfRHfL0+btFPihAKDuDgbNZtqjGRBT+SymnJUD5tWf0JxmWZXfJVTxdMIqq05296HkpLDN2LaGI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783872220; c=relaxed/simple;
-	bh=Y5U7o3MoFragefFGlIAbSwXv5uezv4fetCvCEUv1FO8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WLG9lbRW0IuTrQiVYQLmpMPG9+mRuMjsYdO4/nBLfu/y+Anq/d56bHvk37G0SakGPoiON7oGDtNylm9rzVVyG4SWrDQPBWdphrVNZkM6Q6pG2kQLs+feFGMNqooRL+0C8uKph+9yiDzcKQL15letdo+H65M/U84ewz9MNCR4gCw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ABFVP7L6; arc=pass smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FB032773DE
+	for <linux-clk@vger.kernel.org>; Sun, 12 Jul 2026 16:04:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1783872266; cv=none; b=cmpS1joqXy84yPbNaCE34JNP6AiBNEMf6uZ1IjSm0JJWv7p0C0/y0aZqGe/CAqtUYc/eWwij0rGJy1Q1hg/0zvmRksF5K9eB1tn+m+5yB/IgzNcXVK6Do+Bx7XUmOH3e/oqafSOfGcH+pQXQtFDLaR8+jUKCTv9oXSjquqSmcGI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1783872266; c=relaxed/simple;
+	bh=aATECKOCtlFQMaXKY1fICIPDpwmKETh8M/PFHWEOfjM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OLO5eqU9WrQ24o2p6jMLFPZ0nT1IG1cqC9mixA82rrFf2oUSXEOFigqaDrIN7WvRr+CZYRJnpVDtOK+x3vjyUQA9C8mr+RptFPfPqW6vQUS+inklBAYGofXfhOYaPfgfHBhvMkaqHUJ90XrgPTc9AKxa5hvSX7V1avRa8BSvYmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hGbTAgX7; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ABFVP7L6"
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-c9b373d5af0so1690693a12.2
-        for <linux-clk@vger.kernel.org>; Sun, 12 Jul 2026 09:03:39 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1783872219; cv=none;
-        d=google.com; s=arc-20260327;
-        b=LVS/Nx+0KT53YFYb91V+m9oNQE6V8rvvDTuTgSjJtjOtlz3ANhthgt7zucLn0BhvmS
-         NUup68tcoFadexbwTxzQLSEI71B+cGA9XOMTgu24Tv4Je4WORJJJCRWmRTdrAWYnKzVL
-         LMED4xHgSMzXYRwkoOhVyRh8uK/peEsy7Pku+jLHAA1kzJPJGt67aP014FPzo9D26XHH
-         CzCkE3QSCfdO9cCjFkeCmlha4oht3kOG6s6UW7UVt7ggn0xp2f2Tt2q3IXpW10SQEhcM
-         DeKtv7gKWPbGn7wkFEpSnltbmcJO76uTQPjp9ikkLyBQGjoFdfSvusaL5Xzg124dsL0K
-         4l6Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=MFvLh7Vsfcz2Mq3+Nid++P/J5oTQIp76A0wwsGSrijA=;
-        fh=G3vXy/OSmGPzQ93Hom6PW6NqDRJh6Mxbk3YJYTSEVMY=;
-        b=hnwTWa45fzsBTlDh11s98VKsZw7LjGq4vSaYlGJoQXuaXD5OsODZiFkI2pUnEQWKUc
-         Fg3tBNXPy2L5QXLbg74sraG5tfZELFscH+LCgr1UhkGq/ViFPwQijbfo+bqD1ZXz0/nS
-         BlOvi0mzWAyDkq7B4Hzlq12ZlC0tLjkLGX9zOKS+K1KvPdS0wbBzQYjZAslZ1mEuTNQ0
-         oadYcEKELObT8Nz3gNqg22jtBZbVawJRrZQuNJ1ocUYPvj00YSNCtydTgtKAVM7m7bUO
-         SX217CjEAUIJKkfv0MSt1vihGxgDf6/RXK1GkXlgu/0rqBLlpvDJwYXS2QHONeJ0ABUx
-         +Kdw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hGbTAgX7"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-493b7612475so19020365e9.3
+        for <linux-clk@vger.kernel.org>; Sun, 12 Jul 2026 09:04:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783872219; x=1784477019; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=MFvLh7Vsfcz2Mq3+Nid++P/J5oTQIp76A0wwsGSrijA=;
-        b=ABFVP7L6ZcZDOqqhS3163siEb0R7G2ESLzjVxUDA4ibW1Tdz5s096oOushjYKYLFle
-         zuk++F68z8EKpuXv1r9FW5DRXx0pesYRp8w48CR22Yv4ZqSwJuBdvDqj+ZU7vWcIDq5U
-         U05Izhi9L5y8BE6cU7pOnzZRBeuSlDOpgmbtRRaJSoil7G6Kz+UBJey2OCMwy5Hh9C95
-         0NnH2jqQjcsB1YXa6Ec5ieLRJtyBfUSt3aCG6Xkb5wi4kcYLJLCP4oxNIVLNMJGilDcN
-         1GuiOWEXXLlALNsJLAasmIFxz3uKgg1W9jmQizZN1KKGoO/wfnLxp4yCQT3Rf7mWL3r5
-         g39w==
+        d=gmail.com; s=20251104; t=1783872264; x=1784477064; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=k7WWDimv3b4NdwES6tpNCGufjtNL62BZYyk5PVukc5o=;
+        b=hGbTAgX7xLAHe7pTU/c8gBumi8wmbJLeHvFcR175u+vn9tx3vpNKiGn2R8q9QDaWEM
+         JASW1kRnwIM6yMvcMDs0xBEDZGWP1HyGMLQaHxWBdW0iSCYTeeadEwgIQsC6zOuvghb4
+         AaEiaGGZmnJojAPuJjRwoJ3Iz5+K7w7lxE+3v+Ypbm5flxDOXI84i7EIwi0PyaMxYJJ2
+         14W9n1HArF3sTUL7/7qEp9Z4TBZbomKQAjHSMakFjkLlC5SnLn0g3h9umzkipvYt14nn
+         lG3em9U4zC6CT/cgSDNEsXcHiF4WmMOqffGSLRjZMI9b6YnGOGkMdnjPIbyX7xqPU1vS
+         NZoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783872219; x=1784477019;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=MFvLh7Vsfcz2Mq3+Nid++P/J5oTQIp76A0wwsGSrijA=;
-        b=NOg6gAVRETuiiLD46YnBDN2PSDIXx1pcjx8cVLdSSeCRh0JOpsDbHbY3aQY7230nLr
-         cbrilEuig4CUQjZvoGd6FFL7W4dZLOM67sy84SlR0Do/lS63nbC17141elgFFItGpavI
-         pFSTzXFTvRtJ/6fqhbtnRvI7SDeX+BetFXdIMGwwHH0jeU4PaaNO3a440eyoc/pwYHky
-         E+Kc1gwymA8Gn/cQ/udsAa4MgHng1uD9Vb0JeqtKZMFkpcsNiDzNl6HTjzK86R0ozR5W
-         x1QIYTDtk1UyD3pAGKSqPsUcvGWnuKDWkPt6QrBjZdzSeoVuT7TasVZP96OeFSJmNopI
-         Vfkw==
-X-Forwarded-Encrypted: i=1; AHgh+RqvDaIjsE+9zzHmp6CctLvRT8eVW/YJsQc1oHqi0VkZCvxo75/I3SrDVwHE/9XWG1YZ7ZQ7FXzCVJk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwG5Pa/hP8Vl+pXCO9EP3O1Tmet3jNF24oJ0142vutWUj6gzkm
-	SNzD+L0ODNz/R0Bd9iUDYSKVrTIU/rLzSJkVfLuWEnpWYJ0BjFfnmLe2lbiAGfGy3lZxQoWCF2+
-	g7rPj+44C9w8b8Q5xpEce1QC4CSKUkyk=
-X-Gm-Gg: AfdE7ckbmS9ejVVV6v9zPidlU5eDomFDiMGZWQTb4M0dsp+9WlWnE26QRMIYfBXSiUl
-	UMoI8lVtgJIewHmjlyvTMQEyUYK+CLAL1vjt/U9QAeaZoyRZ4mKbVNfRlGR2L7uOP4GffybuBtR
-	JP06xMHTCZvr6TZhebBFGdv2YIPbVbgUnhyiwRgHzjcgWA5PpP9DOW2fKOvPFWRDyjNKV1SEGw1
-	5dIewGx3iUv0GNSJ1djndjW3yvgX1dYbVRrC09JJqMUTD/Ruc9QgTFlzWRp7cjnG+ztFjgrJkcx
-	TYh8Wldj7uBpBnAwKZGFb4L9Je0Pf4E=
-X-Received: by 2002:a05:6300:67c2:b0:3b4:75c0:3ec0 with SMTP id
- adf61e73a8af0-3c1103d29f2mr6042129637.30.1783872218804; Sun, 12 Jul 2026
- 09:03:38 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1783872264; x=1784477064;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=k7WWDimv3b4NdwES6tpNCGufjtNL62BZYyk5PVukc5o=;
+        b=p/G9RlV7VR7S/4acFiFwJ2jNSdLoe84mAFnzAlBc8ms0OV7YHRxhKh9tVg5CmWDUGC
+         77lxSpwmY4B2LNsYbdCDvb6VVcZ1WDuowcfsMw/JzOrhuD7pv18zv24NTjpLAJM7IKSH
+         D7VaeeYKVD2ObMcPu6IrxGR1DU+F4GD+gz25WZ8wJh/NXjz1McveonAfkXVIhRE71IRc
+         Y6n0+Bd6SZxrDepG6K9bynHanVcImwtpSah0z9EIqRjfVTYo3l6VrDfmJUzKKUA4UYtd
+         KGilDyjsQd54yVRTy4Pq7IotEuCHH0f8gBUX/+EscQ7/YdoQs1Z66nhoC5l8xe8CdSD6
+         TI2Q==
+X-Forwarded-Encrypted: i=1; AHgh+Rp5vMwAyRn672e1tePmDEHXWk/V/Bu04cnE8yv/ZqFNYqx2lXzuvY+lwwtSiZ5kpp+l52qjicE4RFA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzj7sMyPKUqzVozXcByjRkjdztJ7sY5LklfP3W6yQex5bHUkvzx
+	89gGLSZiIrXhbdG7lw0EsgNbIbvWBX7D4XABX7+pEcV1lQPffEAiJMTV
+X-Gm-Gg: AfdE7cnP1fFnG1QHGA7esGeH08fq95WS8LbmExSapMgorwXe3QJZWOEpxdQWMG3SpHT
+	AmrfeXZHZkuihhNslcmfawAjJoojvNg/3rrXGC4rl1/bCbOkeI27xdKMa4cv35XK67CvdB2QXlP
+	wwbJnnEz9Q7E2iKeFIS6vwB4nwK1txXNK6JbLzwNlv01B+wgxLHv6fHAyOGbQkw8qEc384048qD
+	3xGbZ46MUgX5GxCcYo3k0KgEFYwdtXl1rHOHfhZOlz8vo30xV2egtTUwVNcLA5suEx8/vYXk23h
+	cSyBBkBRJjaT9jHevUxyHcCqzbhrenM5oxLQAN8xLvYXIhj/qhiqjPW8ECAvnos0DWYjzjRsAJ9
+	gLK3k+4wwzU1q3AoID1odtCXYZ0g7869MIpSGGKA1OTRLS/NP1NhoLOfOouiyHKvOORAoKJ1o4I
+	P/HEvyxCab+81aJVTZJz8K6mC+GtLNaisHGRDk6UBYKvGKRcJpZ3DmJXS3d7oKwWqwsNcHpiu9b
+	CcPkBXB9EDagDT7///PgFixcqVhs7X7yVxGE/ly5SC/BykAnRhhCZ0j
+X-Received: by 2002:a05:600c:5392:b0:493:b811:e549 with SMTP id 5b1f17b1804b1-493f8829963mr60790915e9.29.1783872263381;
+        Sun, 12 Jul 2026 09:04:23 -0700 (PDT)
+Received: from localhost.localdomain (dynamic-095-117-112-249.95.117.pool.telefonica.de. [95.117.112.249])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-493f2c8de2asm204774265e9.1.2026.07.12.09.04.22
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Sun, 12 Jul 2026 09:04:22 -0700 (PDT)
+From: Karl Mehltretter <kmehltretter@gmail.com>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Ryan Chen <ryan_chen@aspeedtech.com>
+Cc: Joel Stanley <joel@jms.id.au>,
+	Brian Masney <bmasney@redhat.com>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	linux-clk@vger.kernel.org,
+	linux-aspeed@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Karl Mehltretter <kmehltretter@gmail.com>
+Subject: [PATCH] clk: aspeed: ast2700: select AUXILIARY_BUS
+Date: Sun, 12 Jul 2026 18:03:01 +0200
+Message-Id: <20260712160301.98941-1-kmehltretter@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1782909323.git.mazziesaccount@gmail.com>
- <3e700a3fa7872a96257ff25a77670ec05cfd239c.1782909323.git.mazziesaccount@gmail.com>
- <CAD++jLnaOOoLsLxzib4d1XXLxRpWBPrqCdRwqVVEUmKYS4ad6g@mail.gmail.com>
-In-Reply-To: <CAD++jLnaOOoLsLxzib4d1XXLxRpWBPrqCdRwqVVEUmKYS4ad6g@mail.gmail.com>
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-Date: Sun, 12 Jul 2026 19:03:26 +0300
-X-Gm-Features: AVVi8CcrijvdbHQVpJqjEqeOb1JSN6FIx_2WzRJ2op4hx0-LyN894GNSivE7TBs
-Message-ID: <CANhJrGOHk-Q7zb8sd6PHcf2BfsYxfo97bpm5d3NODBbMgJzTmg@mail.gmail.com>
-Subject: Re: [PATCH 2/8] dt-bindings: mfd: ROHM BD73800 PMIC
-To: Linus Walleij <linusw@kernel.org>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, 
-	Matti Vaittinen <matti.vaittinen@linux.dev>, Lee Jones <lee@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney@redhat.com>, Bartosz Golaszewski <brgl@kernel.org>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-pe 3.7.2026 klo 23.46 Linus Walleij (linusw@kernel.org) kirjoitti:
->
-> Hi Matti,
->
-> thanks for your patch!
+The AST2700 clock driver also exposes the SoC reset controller: it hands
+its register base to a reset auxiliary device via
+devm_auxiliary_device_create(), which the separate ASPEED reset driver
+(RESET_ASPEED) then binds to. That create call needs the auxiliary bus
+core (AUXILIARY_BUS), not the reset driver itself, but COMMON_CLK_AST2700
+does not select AUXILIARY_BUS.
 
-Thank you for the review!
+It builds today only because RESET_ASPEED selects AUXILIARY_BUS and is
+normally enabled alongside the clock driver. On a randconfig with
+COMMON_CLK_AST2700=y and RESET_ASPEED=n, nothing pulls the auxiliary bus
+in and the kernel fails to link:
 
-> I have some inevitable pin control nitpicks!
+  ld: drivers/clk/aspeed/clk-ast2700.o: in function `ast2700_soc_clk_probe':
+  clk-ast2700.c:(.text+0x147c): undefined reference to `__devm_auxiliary_device_create'
 
-Great! That's what the v1 is sent for, right? ;)
+Select AUXILIARY_BUS directly, as other clock drivers that create
+auxiliary devices do, so it builds regardless of the reset driver.
 
->
-> On Wed, Jul 1, 2026 at 2:41=E2=80=AFPM Matti Vaittinen
-> <matti.vaittinen@linux.dev> wrote:
->
-> > +  # The GPIO1, CLKOUT (GPIO2), FAULT_B and EXTEN_OUT pins can be
-> > +  # configured to interrupt pins by OTP.
->
-> Maybe move this helpful comment into the top description: instead?
-> It's kind of generic helpful info.
+Fixes: fdc1eb624ddc ("clk: aspeed: add AST2700 clock driver")
+Signed-off-by: Karl Mehltretter <kmehltretter@gmail.com>
+---
+ drivers/clk/aspeed/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-Sure. I believe Krzk asked for that too.
+diff --git a/drivers/clk/aspeed/Kconfig b/drivers/clk/aspeed/Kconfig
+index ef50481c31ff..2f505eb3ca95 100644
+--- a/drivers/clk/aspeed/Kconfig
++++ b/drivers/clk/aspeed/Kconfig
+@@ -15,6 +15,7 @@ config COMMON_CLK_ASPEED
+ config COMMON_CLK_AST2700
+         bool "Clock driver for AST2700 SoC"
+         depends on ARCH_ASPEED || COMPILE_TEST
++        select AUXILIARY_BUS
+         help
+           This driver provides support for clock on AST2700 SoC.
+           The driver is responsible for managing the various clocks required
+-- 
+2.39.5 (Apple Git-154)
 
->
-> > +# The GPIO1, CLKOUT, FAULT_B and EXTEN_OUT pins may be configured for =
-a
-> > +# specific purpose (like ADC input, 32.768 clk output, fault indicator=
- or
-> > +# delivering power sequence to a companion PMIC when multiple PMICs ar=
-e
-> > +# used) - but also to be either a GPO or GPI. (When used as a GPI the =
-pin
-> > +# can also be used as an IRQ source). The pin purpose is determined by
-> > +# OTP (One Time Programmable memory), typically during device manufact=
-uring.
-> > +# The OTP can't be read at runtime so device-tree should describe the =
-pins.
-> > +  rohm,pin-gpio1:
-> > +    $ref: /schemas/types.yaml#/definitions/string
-> > +    description:
-> > +      Indicate if the GPIO1 pin has been set to GPI or GPO at manufact=
-uring.
-> > +    enum: [gpi, gpo]
-> > +
-> > +  rohm,pin-clkout:
-> > +    $ref: /schemas/types.yaml#/definitions/string
-> > +    description:
-> > +      Indicate if the CLKOUT pin has been set to GPI or GPO at manufac=
-turing.
-> > +    enum: [gpi, gpo]
-> > +
-> > +  rohm,pin-fault-b:
-> > +    $ref: /schemas/types.yaml#/definitions/string
-> > +    description:
-> > +      Indicate if the FAULT_B pin has been set to GPI or GPO at manufa=
-cturing.
-> > +    enum: [gpi, gpo]
-> > +
-> > +  rohm,pin-exten:
-> > +    $ref: /schemas/types.yaml#/definitions/string
-> > +    description:
-> > +      Indicate if the EXTEN_OUT pin has been set to GPI or GPO at
-> > +      manufacturing.
-> > +    enum: [gpi, gpo]
->
-> Can we explain what "GPI" and "GPO" means in this context?
->
-> I read it as "general purpose input" and "general purpose output", but...
-> you just describe the exact purpose? So what is "general purpose"
-> about them in that case?
-
-I see I could improve the description. These properties aren't really
-configuring the pins, but telling the SW how they have been set at the
-manufacturing. For example the CLKOUT pin's "usual" purpose is to be
-the RTC CLK output. If this is what has been set to OTP, then the
-GP(IO) registers have no relation to the pin and they shouldn't be
-used. However, it is possible to configure the OTP so that the CLKOUT
-pin is not outputting the RTC CLK, but is a GPO. (Eg, is an output
-which HIGH/LOW state can be set by the software). In this case it
-truly is a general purpose output. With another OTP config the pin can
-be an input, and state can be read from a register.
-
-So, these properties are intended to describe the hardware for the GPIO dri=
-ver.
-
->
-> I would re-use "input-enable" and "output-enable" from:
-> Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml
-> (I mean don't $rf that, just use these strings).
->
-> I suppose:
-> enum: [input-enable, output-enable]
-
-These sound like control properties to me. To me this sounds like a
-request to enable input/output - and this is something we can't do
-with this IC. But I think you still have a valid point regarding
-re-use. I will check this when I rework the series, but I believe the
-BD72720 does already use these same properties. I might be able to do
-a common binding for these and $ref them from this and BD72720
-bindings. (But I will check this when I am back at the business).
-
->
-> > +  rohm,clkout-open-drain:
-> > +    description: clk32kout mode. Set to 1 for "open-drain" or 0 for "c=
-mos".
-> > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > +    minimum: 0
-> > +    maximum: 1
->
-> Here I would also reuse the generic pinconf properties,
-> something like;
->
-> rohm,clkout-drive-type:
->   enum: [drive-push-pull, drive-open-drain]
->
-> (Push-pull is what is colloquially referred to as "cmos".)
->
-> > +            rohm,pin-gpio1 =3D "gpo";
-> > +            rohm,pin-exten =3D "gpi";
->
-> If you instead use nodes with properties you can do this:
->
-> rohm,pin-clkout {
->     output-enable;
->     drive-push-pull;
-> };
->
-> This collects the clkout config in one place and make
-> it obvious what is going on. But I don't know what the DT
-> maintainers think about this idea.
-
-I will take a better look at this when I am back. Still, the
-"rohm,clkout-open-drain" is also already used by
-rohm,bd71815-pmic.yaml, rohm,bd71828-pmic.yaml and
-rohm,bd72720-pmic.yaml so I am a bit reluctant to changing it as it'd
-require me to either ask people to change their dt-entries (asking for
-a nose bleed) or support both old and new properties in the same
-driver (asking for a nose bleed).  :)
-
-Yours,
-    -- Matti
-
---=20
-
-Matti Vaittinen
-Linux kernel developer at ROHM Semiconductors
-Oulu Finland
-
-~~ When things go utterly wrong vim users can always type :help! ~~
-
-Discuss - Estimate - Plan - Report and finally accomplish this:
-void do_work(int time) __attribute__ ((const));
