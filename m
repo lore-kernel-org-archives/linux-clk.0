@@ -1,103 +1,101 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 753452DCC1F;
-	Sun, 12 Jul 2026 03:11:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B44592BE033
+	for <linux-clk@vger.kernel.org>; Sun, 12 Jul 2026 08:18:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783825893; cv=none; b=d7n+cEUYX/cavx9ttuPNKBTP1d9OfQQl5PWvx7px41a0wKYsioOqwb8tEN3P65hJpRfWhnfjkdGhI/uk3YgIKS3sT2GGVz+1rB94/HcKekEw/MbXRV8iphoguG+SZde4PDVHASDGVUvZylVoi5pN4LSV2oFOwMX4H7bbb0O+b9g=
+	t=1783844330; cv=none; b=pPxmi1ihzXd534yC/BdQGzSeU878JxwoB3FSG8chctvZ/OxvnN6a5oCQPzHfWjAwraO1mCH+WctB52OwAPQ5ptLSUGb6aN00P+Bs7OGw6fgNgrBYtBc2u3AivEAyVuFqc+nImxL7yvmWMftQpC1KvrPvM/JV+q0kgpEoCBSv/sU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783825893; c=relaxed/simple;
-	bh=OfkIYbB3usR2r/HeTYEeAnKhUpEXwsYjhvtLM/7J64k=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=sA86ZlwWRseLpoQlczFbC8DKNs/2D4W4+2wYsYuUTt0zy5a2derOMUUIVwXZILIVyyUV9k5Gf7lkGBbn9U2C61+9nIwtgyx88z2E4gOLsgVkEp7e4Mu4LYUxiNYie0x/FejNmdN0NrAJ66hWbk1qJAyyZk3zX/OubYPv2621P04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VuBH2UwP; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1783844330; c=relaxed/simple;
+	bh=C0pyjdZQVqwifoHGIzoK0dwOSIun05ofQhgr9y/iY4M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lsQd32jgL7yju+gBX4TN0v498nYnnEIFHlpu3qugeL0ljgY/IDDv1qvQlHjMON0ZQ/R7IgGX+xlwyYrLsEUYpCkE8eiuiNGlc5yj15x/kQxuzuwLPy+DIOPZDYVfEUjg+rO6Fj44wBD0AZyJ7xq/eJ9pSgQfSesMTtAcZLC1HjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=MEWiPyFZ; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VuBH2UwP"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 39C6FC2BCF7;
-	Sun, 12 Jul 2026 03:11:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1783825893;
-	bh=OfkIYbB3usR2r/HeTYEeAnKhUpEXwsYjhvtLM/7J64k=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=VuBH2UwPv1PWf/EhqCk+Y09qEbIZisCdNYg88abphO8MCI+Cl7xEZS+BVe3NWDcWB
-	 svF/4iAKoGMGFfipjPwOo1BbXfsP71y90VjNaRlypbnKdgC3wA88NkkTC+Pi5aMm4u
-	 zl9nn+fId0YWBqCOfH9j2KgwXeXWMbF3bL2Bs++3+LFeSCic7HL8dlhmhdKrCT9Faw
-	 d9348ko+6SggTTX9vHwfaqHwhiels2Wphkw57tJZOYFfwhfyqAGc/69qRZXIQWqRYF
-	 E0mUL76kgRk2MCxbGUmNnjjEb90OC/OdNoqUUS+Ow1FsmwB3cqELrU6YuAlAeyCzne
-	 XwpNmqPtaEfYw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C427C44508;
-	Sun, 12 Jul 2026 03:11:33 +0000 (UTC)
-From: Esteban Urrutia via B4 Relay <devnull+esteuwu.proton.me@kernel.org>
-Date: Sat, 11 Jul 2026 23:10:37 -0400
-Subject: [PATCH v2 3/3] clk: qcom: dispcc-sm8450: Keep pll types as is for
- SM8475
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="MEWiPyFZ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=75ub
+	1ZjyI5OqaXxEVT5ISZjS26avsE+iZDfgKAY2wmI=; b=MEWiPyFZReTMXRGm7PFx
+	UAN7gc7KMbteSgPEbjknxZb0LxdTJfKcaEdeG/tgDSGFMppT27TlRwK9cwUY1kCc
+	NGonQ64FNlF1J7BLQfWDyMiRjHEG1fpQcFIxKDLz3/sm0oKMttv/KmYzxI6km0Yz
+	UOvWtRw0SbCRJXPXULRzCX2ZZ6q5iggbrmgMg2I3EDviohXYq89JBMmQc+nXx/79
+	4rYtvtbLjZGnSZa9w2HWetUNOWFkWipRA5/+dzzMxwI44Zz+Ut8xlJg3Faxhyre+
+	j3hZh7RZlcaPa8u0YCyJA1kzmB53uVHRb0nOCvVrau3FSCB7RQQpbxPumiyilfJo
+	TA==
+Received: (qmail 2160944 invoked from network); 12 Jul 2026 10:18:46 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 12 Jul 2026 10:18:46 +0200
+X-UD-Smtp-Session: l3s3148p1@w/lmn2VWvskujnun
+Date: Sun, 12 Jul 2026 10:18:46 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: "Miquel Raynal (Schneider Electric)" <miquel.raynal@bootlin.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	David Gow <david@davidgow.net>, Rae Moar <raemoar63@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Pascal EBERHARD <pascal.eberhard@se.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+	Herve Codina <herve.codina@bootlin.com>
+Subject: Re: [PATCH v2 0/7] clk: Add support for clock nexus
+Message-ID: <alNN5qxBJ4EsB3Li@shikoro>
+References: <20260710-schneider-v7-2-rc1-eip201-upstream-v2-0-b4680787377e@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260711-sm8450-qol-dispcc-v2-3-fc1a07ac5601@proton.me>
-References: <20260711-sm8450-qol-dispcc-v2-0-fc1a07ac5601@proton.me>
-In-Reply-To: <20260711-sm8450-qol-dispcc-v2-0-fc1a07ac5601@proton.me>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
- Dmitry Baryshkov <lumag@kernel.org>, Danila Tikhonov <danila@jiaxyga.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org, 
- Esteban Urrutia <esteuwu@proton.me>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1783825891; l=1363;
- i=esteuwu@proton.me; s=20260622; h=from:subject:message-id;
- bh=t+lNjNa2t6HZO8sfj5j22+PtdnnFFxNblbhbO/qadd0=;
- b=Bj9RlBDSAQxg8KVWCWBDlK+W6DILMgAvBoBCOjSG+SkJQ/cXRWofqsgfJAT3JPEDb+hlrE1ui
- eAx32OOZCQZAnrSdhZglC3MU5gEL+tXYESGra/ckMRRMsugNEG8+xWV
-X-Developer-Key: i=esteuwu@proton.me; a=ed25519;
- pk=wToFt4mOAWkzbqb15Ye1hrhevI13vK9BcMUFiQ/me1M=
-X-Endpoint-Received: by B4 Relay for esteuwu@proton.me/20260622 with
- auth_id=835
-X-Original-From: Esteban Urrutia <esteuwu@proton.me>
-Reply-To: esteuwu@proton.me
-
-From: Esteban Urrutia <esteuwu@proton.me>
-
-While using an OLE PLL type is correct according to downstream code, this
-results in the display flickering at boot for SM8475 because downstream
-uses EVO type configurations for both clocks, while, for some reason,
-upstream uses EVO type configurations for SM8450 and OLE type
-configurations for SM8475.
-So far, no regressions have been observed and the display no longer
-flickers.
-
-Fixes: 7c0e8764dc33 ("clk: qcom: dispcc-sm8450: Add SM8475 support")
-Signed-off-by: Esteban Urrutia <esteuwu@proton.me>
----
- drivers/clk/qcom/dispcc-sm8450.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/clk/qcom/dispcc-sm8450.c b/drivers/clk/qcom/dispcc-sm8450.c
-index 07f22b5b5ee5..2c0edc23eeb1 100644
---- a/drivers/clk/qcom/dispcc-sm8450.c
-+++ b/drivers/clk/qcom/dispcc-sm8450.c
-@@ -1833,11 +1833,9 @@ static int disp_cc_sm8450_probe(struct platform_device *pdev)
- 
- 	if (of_device_is_compatible(pdev->dev.of_node, "qcom,sm8475-dispcc")) {
- 		/* Update DISPCC PLL0 */
--		disp_cc_pll0.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID_OLE];
- 		disp_cc_pll0.clkr.hw.init = &sm8475_disp_cc_pll0_init;
- 
- 		/* Update DISPCC PLL1 */
--		disp_cc_pll1.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID_OLE];
- 		disp_cc_pll1.clkr.hw.init = &sm8475_disp_cc_pll1_init;
- 
- 		disp_cc_pll0.config = &sm8475_disp_cc_pll0_config;
-
--- 
-2.55.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ZVqbSNm8t340mGQs"
+Content-Disposition: inline
+In-Reply-To: <20260710-schneider-v7-2-rc1-eip201-upstream-v2-0-b4680787377e@bootlin.com>
 
 
+--ZVqbSNm8t340mGQs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+Hi Miquel,
+
+> Then there has been a bigger series (including patches for other
+> subsystems) to show the big picture, but let's split again and focus on
+> one subsystem at a time:
+
+This is a good idea IMO. Sadly, for this series, I won't have time for
+review. If you have a branch available for testing, I could provide
+test-tags, though.
+
+Happy hacking,
+
+   Wolfram
+
+
+--ZVqbSNm8t340mGQs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmpTTeYACgkQFA3kzBSg
+KbYtZg/+On4LkPUnhbxowGKevVHFnDhdpxRu9+Dthux7ECfGg1j+ojbarCC1oSQ6
+igQgK4wFWWN3sjYUykr3lvwaEovz6/nlRKK8Gg3XGF6VBKJaIr2XEom0NucteEKb
+NEWztJ6SXfg2s9osPXrheMjBAFPC514tOEzHKa6zSkNY3szh5PyNa2kkt2nf7+yq
+elV7uwKnbGn7jqhvGa1bsKG47y6IcnTMva8BFfXPJHfGeoNOp03ZjsuBLbBoIT4h
+QdUxz5Za4tbcLAl12EqAAMgw/as0T9XyAGAs5PCD6d+3QS9BAYLhSrICm+IB4a75
+HZJP2CQhaBTYvbKgcPK8tWxENUN0F/Go+Duu1BJqyQLsnL1tPYxd7CkY2goNX5fe
+4oWOPsArOyD62/LH2shDesXE6nIyG+49Ku3sz4DK2BckOXkNnTRGEhtdHs9x8y3G
+Cb7y+bOq7CEv3NeS21pw8g8ob9JjXdyPS4kFKqgTUn3FAgV/BaoJ6wtQZ1NXULKo
+z3en5KXa7pg9V68G6qUPOGZNydNpFB1lyqXEGX6dQcwzIYCTbHc6AJNUTQZbiibd
+PYmnknRdhR2eZVqPQHpk1m0zC+YYuDHggZpo+gSeYE1ka7YV5DIDJE12EPdZaoVj
+pT3/0Hzm89T9SonggBakW9PbhpVqQjOX3CCH4VtDKOe/cpv9yWg=
+=3krj
+-----END PGP SIGNATURE-----
+
+--ZVqbSNm8t340mGQs--
