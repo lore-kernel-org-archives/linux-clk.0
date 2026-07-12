@@ -1,49 +1,37 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1095E33B6D3;
-	Sat, 11 Jul 2026 19:50:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65C6B1E4BE;
+	Sun, 12 Jul 2026 03:11:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783799411; cv=none; b=VG7nbm6le7YVJYTDjgpZEkGay7khHjT/ZRvNvwXdHgiUDqKEIcIeezXcmDUIqiYKLL1xfLMdgolTPPDVIX7IU7PJ9qONT6PQJgM6iulEvvauta0/S/5LNd2CjdAeA3i2pYsgsSw/hXzElog2twGqlyikKtOEYiYs+bxCBSSxEqA=
+	t=1783825893; cv=none; b=PtqDuJGccUcIp0EwuX1hBVCmh5u5I2RtrSbO3jbPH35/8vLceMUvuyzE74/iNvpgnuF6Wt+83sIsugb92QF3mu6t/3lInKJdPrfot3nHE15fmjBG1WNJoYbSOvwtnG/jzNmJqDxURKjWwgSuN/Q1tH/bEntMJNAy0EasW1oFYCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783799411; c=relaxed/simple;
-	bh=JpmCUbWyn7ZBnWxlF29dqjkzD2PMwtwhp2dC4dh7x5E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Q0Ai4rrMyDU9+pGaOhBYfIq2T4VkAY21vIHf8AW495ERbfBPb1SMYChhT+TJpmHzbou2hcY+9LNipLupP/RWJsXaIy1V5/vgaaELw0221llg1pS0isKMl86yOUbGhcp0Ig+PIakSh37R8b8HsfPDIt9wbklj1wV/ZyoZQvid0VM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HU677xkP; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1783825893; c=relaxed/simple;
+	bh=B6McnTUfRV8hsWOIMcBrUnK11VgMMgYLcjKB6pn/gVM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=pUqmMfDieYeV+zEDpJC8TtHMmcU/Y5XDEOD6XzVs1MKHyPJFs55BuWLqXlOOTuX3FIUa45lGxYIu5cDLpI3mCFKaeiaYRQ3hfmWGGIaBVAcNi6DCCIhCisjx5ArMEfz22KHsQJFUrnYIdG0MMQXBGQw2P+LaC+nJRy9W/30Q58Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XfRfmwH+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HU677xkP"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA7201F00ADF;
-	Sat, 11 Jul 2026 19:50:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783799409;
-	bh=OADxrFJ+t4Dx8VgY9XZpFEf7YPrxIZ1wR6HGIT2FrNA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=HU677xkPvltNInibF8s6G8JYgYtJocTIpDyXLUFACvIVvNkOFcQaxjFvWcD/DytJQ
-	 9evA707BQqf0wpHB0gKhGYvgO9cqsKmcHK4u3Z1plDllAiNITFiHpcRrZzxDlX2JOC
-	 c+WWEZxB8sz+Xbv8FLBO4e/rocl5EswesUV+KJliZkdoAJEA6N8qt62PqUgbQx1RDV
-	 jxZLh5b58Ps7pQ+7Ir/MZSDqKabWdv2YGeEzs+qSPeLG+rlt9AD4ge+7igCDrpu8k2
-	 av9qoCKh/ccu+lQ1BVvuSejB9iFVz/3zxO8amhk8AKMao+apTY/+08OyGEm/tqNxCC
-	 P23bUYBuLJuBQ==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney@redhat.com>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: (subset) [PATCH v3 0/7] clk: qcom: Add sane defaults and drop defconfig
-Date: Sat, 11 Jul 2026 14:49:48 -0500
-Message-ID: <178379938596.163099.9873273386152252307.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260703-clk-qcom-defaults-v3-0-78894525e54a@oss.qualcomm.com>
-References: <20260703-clk-qcom-defaults-v3-0-78894525e54a@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XfRfmwH+"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 1EB9EC2BCC9;
+	Sun, 12 Jul 2026 03:11:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1783825893;
+	bh=B6McnTUfRV8hsWOIMcBrUnK11VgMMgYLcjKB6pn/gVM=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=XfRfmwH+Hbb1DcIxvjcxdFJFLsYfHt3+euKj/0Jcpk4CC3BcA7xc4/6gVGoYR0i3M
+	 Pya+jAxEoTUk8TLqMAob2cdzeDL7O6PagVxxfBFA0Ljz0cmOZjlXbbedqLehsP+NpA
+	 BWcIUwy7cd/CsQPTqGE2JTw8l5a0jPFk3YHd5MkoCaA1d/yxxpz7PHo8d9mK0AHhVU
+	 kgdBGVR5Kab2/iIswM3nLzd+2H54LO0nz8+gRWJnN5KCdvUVPeU73zaPmbPg/p91sM
+	 Sw/KMHIiEPO+7smOkB9SELJd+ivah4rBdlBW7xn0RrqpxXa5kBvi/TZg1DJDeZg/5A
+	 JdRKeSGAXsMKg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8F89C43458;
+	Sun, 12 Jul 2026 03:11:32 +0000 (UTC)
+From: Esteban Urrutia via B4 Relay <devnull+esteuwu.proton.me@kernel.org>
+Subject: [PATCH v2 0/3] SM8450 QoL changes (dispcc)
+Date: Sat, 11 Jul 2026 23:10:34 -0400
+Message-Id: <20260711-sm8450-qol-dispcc-v2-0-fc1a07ac5601@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -51,32 +39,58 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/02Nyw6CMBBFf4V07Zh2lJcr/8OwgHaQMUKxg0RD+
+ Hd5bFye5NxzJyUUmERdokkFGlnYdwvgIVK2Kbs7AbuFFWpMdGoMSJudYw0v/wTH0lsLOq8wj43
+ DuNJq2fWBav5szVuxs7yrB9lhDa1GwzL48N1OR7N6ez9B/O+PBjScUkKizNW5K6998IPvji2pY
+ p7nH87iVXK9AAAA
+X-Change-ID: 20260711-sm8450-qol-dispcc-09b2951d25b0
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
+ Dmitry Baryshkov <lumag@kernel.org>, Danila Tikhonov <danila@jiaxyga.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org, 
+ Esteban Urrutia <esteuwu@proton.me>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1783825891; l=962;
+ i=esteuwu@proton.me; s=20260622; h=from:subject:message-id;
+ bh=B6McnTUfRV8hsWOIMcBrUnK11VgMMgYLcjKB6pn/gVM=;
+ b=mDyWgsrxFJ2IVs5jLDFOaznan9Cc4Opdlt4irS6y6ULgoIlnlb/9h3nMD/U1E3GTo9rmWh2It
+ mpJ/uhHii6ZA6IFHOxX+ymr43JM1ACSigm8v9NJ/DFX9xcHfb8z8+U8
+X-Developer-Key: i=esteuwu@proton.me; a=ed25519;
+ pk=wToFt4mOAWkzbqb15Ye1hrhevI13vK9BcMUFiQ/me1M=
+X-Endpoint-Received: by B4 Relay for esteuwu@proton.me/20260622 with
+ auth_id=835
+X-Original-From: Esteban Urrutia <esteuwu@proton.me>
+Reply-To: esteuwu@proton.me
 
+These patches are mainly focused on getting a flickerless boot process
+on SM8475 based devices.
 
-On Fri, 03 Jul 2026 12:03:58 +0200, Krzysztof Kozlowski wrote:
-> Merging, Bjorn:
-> ===============
-> All clock changes via Qualcomm clock tree. The defconfig can wait a
-> cycle or could be applied via the same branch on Qualcomm tree. In case
-> of the latter, keep it on separate branch in case this needs to be
-> shared with soc@ tree.
-> 
-> [...]
+Signed-off-by: Esteban Urrutia <esteuwu@proton.me>
+---
+Changes in v2:
+- Split series in subseries (dispcc, dts, qmp, smmu)
+- Migrate to qcom_cc_driver_data (Konrad)
+- Split mdss patch into 3 patches
+- Use Fixes tag where applicable (Krzysztof)
+- Link to v1: https://patch.msgid.link/20260622-sm8450-qol-v1-0-37e2ee8df9da@proton.me
 
-Applied, thanks!
+---
+Esteban Urrutia (3):
+      clk: qcom: dispcc-sm8450: Fix disp_cc_mdss_mdp_clk_src ops
+      clk: qcom: dispcc-sm8450: Migrate to qcom_cc_driver_data
+      clk: qcom: dispcc-sm8450: Keep pll types as is for SM8475
 
-[1/7] clk: qcom: Restrict IPQ5424, IPQ6018,IPQ9574, QCM2290 and others to ARM64
-      commit: 2ce505b437e98adc3c009d22762f491cd2cb15ee
-[2/7] clk: qcom: Restrict A7PLL and IPQ4019 GCC to ARM
-      commit: 9904402cf417140f0dbdd0b9b3b5f5fd0527a447
-[3/7] clk: qcom: Make important ARM64 drivers default
-      commit: 5c38f9b7df7716c2ff54418d6a0aa4328133a58e
-[4/7] clk: qcom: Make important ARM32 drivers default
-      commit: d643934c275d83470a195a115cd16ac13d1ebbd6
-[5/7] clk: qcom: Add defaults for desired arm64 drivers
-      commit: 6b150572bb76dc508b0d9fbe2c5a56a67429e376
+ drivers/clk/qcom/dispcc-sm8450.c | 32 ++++++++++++++++++++++----------
+ 1 file changed, 22 insertions(+), 10 deletions(-)
+---
+base-commit: bee763d5f341b99cf472afeb508d4988f62a6ca1
+change-id: 20260711-sm8450-qol-dispcc-09b2951d25b0
 
 Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+--  
+Esteban Urrutia <esteuwu@proton.me>
+
+
