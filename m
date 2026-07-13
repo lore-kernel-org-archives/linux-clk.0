@@ -1,124 +1,90 @@
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3309E37EFE4
-	for <linux-clk@vger.kernel.org>; Sun, 12 Jul 2026 22:22:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+Received: from zg8tmtyylji0my4xnjeumjiw.icoremail.net (zg8tmtyylji0my4xnjeumjiw.icoremail.net [162.243.161.220])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90A38353A7C;
+	Mon, 13 Jul 2026 02:33:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.161.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783894979; cv=none; b=E0JY2pSdWXZU0MGsk4eqS9Hbdobh1igJaaEmM1yxpa1fVswqi/Cr8yX6ughBiW5Oyt35qKgkyR4wzvRVYxDa1de3AI06W7o2Zu2XaQJ5TWIkVw92DZnZSSJWLGNYTDJyjpikTw/FeWXg6ojs+5PkP4UsUd1t8uc+Q24mxaU6eEs=
+	t=1783910034; cv=none; b=bClxNf5IuPMoG+FhxUfxknDfaoX3iubrNJyhr3qxwlYJAhyjN40TqHBgIaxYj1hLN0OPgnfl32ZwhQBBlCwS6pgNaZPPE+MXttHt8v6ewiPuBryMnbhuIWcBWGyvSo16D4wQ3o2ex9wufErKvXLGz8IwNI2HWCOKVWQ1h0S51CA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783894979; c=relaxed/simple;
-	bh=8WRZxD4H8+tY9oaiz5xLvkGilYbPiA92y2Jesbmxnro=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OlHjr+xw/L2w/JLT4xJvGYpSjSs4e1myAZB11+Otk0hGm4LjfISoXR2S1D29HV6wwUugncmzuS6UBrlvoJSU/bKuMGHHJm5Kq9XynnD0/TE1yTLxvFMFVTQDFY5nMcRzQ7z9MyP3LCYHEMls1kfPCzxB82C4xcou1omkheTzoNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=nAhAIMZo; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="nAhAIMZo"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-47f365afc5aso325972f8f.0
-        for <linux-clk@vger.kernel.org>; Sun, 12 Jul 2026 15:22:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1783894977; x=1784499777; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=8WRZxD4H8+tY9oaiz5xLvkGilYbPiA92y2Jesbmxnro=;
-        b=nAhAIMZo/IvRqATdC2+4nvuMHx8v/2qJHt+WGnwWhoB2TXIYWixQot20r9o2Kl71Ve
-         OjeTS1/8o9ZU9FZ0U9+lb/qkfsq0RiND+FlpB/oaOCDe5jn6WCq6+xbESWEaEv3/o+7q
-         ZB09SviaIZgOp9H1KhmDf4a+j5lMng0+XN+5lFDzHcHxnP/hXhlkNdQNx9tCF0CXgthr
-         /jT4xh6YWYOynhr+KjB00pqQ6vnGlqRDqQ7pG1Q91JpRh49Y256fYjdMxqxvA2DtAKQp
-         FUBIKCNKN4SDMU6hE2T1zTCC+Q0BjX0E7Stjj0RUQdT1t8Gv5Iv5V6jEUQN2vp2MQuyG
-         qlrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783894977; x=1784499777;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=8WRZxD4H8+tY9oaiz5xLvkGilYbPiA92y2Jesbmxnro=;
-        b=d8PBXR21HhO+wsQxbQwV4w/voSd6NWFX0q3V/nsS8FsiEjPXqpJVtStxgfQqUI8xl5
-         FaFAdd7eRZVwg1Hq3UzNGnupXOR/3hmM4dBQWnf2W4HeK1dO6NqtdbcPnHz0t5ILorpz
-         TdewoAxv3ID4kVxTA7Jbjh5RlRliswTUQsT5Bys+l9obnSpi/bhKU3AGqv5D9Y/F1xRn
-         UcUGHDZSUBSW0kSR7CIJEB/NsF/A5S+G4gNzzvcoma5iBhZyhJYPyP5ZkBOKicBAf8UF
-         gvB5LyrqkwP/bBG3DJsuTw4RJouEur6pWQWdnDDX2+1LkZWeBJXfBiUWCy/1yWjQYFVk
-         0McA==
-X-Forwarded-Encrypted: i=1; AHgh+RqQcDBeEZxAjNfm8MYqP3I5XOwI21DisNSKEJV6MFKbXEGCqoe7sqwwtduslOyXTEJV8I1/X9Zu+FE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7wkzi7hTxxrxEf5oRlPePRgXxsi+CbwtavKFSUDoSj5tGOGkC
-	aw7JHMBdvKOqTXQulEL9Sf/GtcaKz9OO5lUGVMe/I7d+CU2Uqu4a/5sTjQOzLtmaxEg=
-X-Gm-Gg: AfdE7ck3QxnzYEhBp52kJa9qv84X3hXtSbrEI0Hl9Y9wU/M21y2WXPadAMUM9/SclJp
-	tvC99ay50Ti3FqRR1MXpXr33CltNBBr0kyIzz4oid190zFTx5sOIlnfxTb/8z3TF0QKAKJYdyuj
-	anE2VZHYRoH3VKG6ljtbIdAwgjA8CVYGlJnuQAqKjDZo/mF9HEdIlZG2sQmlfDOKQgZ5/fR6IeD
-	/dH/b04xDLRpTSaQu7VLFRX3EWCdl9RLQQ4LliRaFZafSIMHkr4kehLgzL0LYRZuwzlnn1rrgXE
-	RzNb+bkSo0Z1y3/a7lqCtFtXJKjxaTV0IstSv2e9cC8+0DkGpNw0EU5acq9LhLMIhmtc8dYr+UB
-	TjXbRCYc++XheIHf37UuGh89hyMDMTyfeLbuLEXPDefJEeyFZftKet4XJjK38BwbFiEDbob8weE
-	DA3OaP40hLF7ynyg7u1yQTnM/NcVEo
-X-Received: by 2002:a5d:59a4:0:b0:472:9bf7:2f58 with SMTP id ffacd0b85a97d-47f2dcc69e2mr6731266f8f.36.1783894976653;
-        Sun, 12 Jul 2026 15:22:56 -0700 (PDT)
-Received: from localhost ([2a02:8071:56d1:2de0:1d24:d58d:2b65:c291])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-47aa0f213e8sm78667437f8f.34.2026.07.12.15.22.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Jul 2026 15:22:55 -0700 (PDT)
-Date: Mon, 13 Jul 2026 00:22:54 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney@redhat.com>, Ulf Hansson <ulfh@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Marek Vasut <marek.vasut+renesas@mailbox.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	s=arc-20240116; t=1783910034; c=relaxed/simple;
+	bh=LemyGesQmMr3daBTCnLNdOLunBZS+rVMJdzXZ5z2N/c=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=dSZJfJaQBpxNadiyG4X0j1scKd2/eudKudDuz80FDebllgp6+Sh31Gl7pohVZ5zhJGl9qil3tqCFfaDKJqJjdyj0TUf79QuR5zJgJ3bQSk/abCG9/ZRUz37TS0FQ/LGesISK/eoFEvgadTKH1RHF5Z/59Jr1ukXhjWdxf0FlbI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=162.243.161.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from dongxuyang$eswincomputing.com ( [10.10.112.210] ) by
+ ajax-webmail-app2 (Coremail) ; Mon, 13 Jul 2026 10:33:15 +0800 (GMT+08:00)
+Date: Mon, 13 Jul 2026 10:33:15 +0800 (GMT+08:00)
+X-CM-HeaderCharset: UTF-8
+From: "Xuyang Dong" <dongxuyang@eswincomputing.com>
+To: "Kostas Damaskinakis" <kostas.damaskinakis@gmail.com>
+Cc: "Yifeng Huang" <huangyifeng@eswincomputing.com>,
+	"Michael Turquette" <mturquette@baylibre.com>,
+	"Stephen Boyd" <sboyd@kernel.org>,
+	"Brian Masney" <bmasney@redhat.com>, linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/6] clk: renesas: Add R-Car X5H CPG driver
-Message-ID: <alQTnZwVRwpVTVUf@monoceros>
-References: <cover.1783505142.git.geert+renesas@glider.be>
- <50f5804f00c55cd60604d00da1bf1f1dc912ba8d.1783505142.git.geert+renesas@glider.be>
+Subject: Re: [PATCH] clk: eswin: Zero-initialize stack-allocated
+ clk_init_data
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2024.2-cmXT6 build
+ 20241203(6b039d88) Copyright (c) 2002-2026 www.mailtech.cn
+ mispb-72143050-eaf5-4703-89e0-86624513b4ce-eswincomputing.com
+In-Reply-To: <20260710141520.285132-1-kostas.damaskinakis@gmail.com>
+References: <20260710141520.285132-1-kostas.damaskinakis@gmail.com>
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ak3qgcbynp5sb6ym"
-Content-Disposition: inline
-In-Reply-To: <50f5804f00c55cd60604d00da1bf1f1dc912ba8d.1783505142.git.geert+renesas@glider.be>
+Message-ID: <41d68552.840f.19f5952553f.Coremail.dongxuyang@eswincomputing.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:TQJkCgAnPJ9sTlRqPK4zAA--.7286W
+X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/1tbiAgEHAmpTwhsWQ
+	AABsx
+X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
+	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
+	daVFxhVjvjDU=
 
+PiAKPiBlc3dpbl9jbGtfcmVnaXN0ZXJfcGxsKCkgYW5kIGVzd2luX3JlZ2lzdGVyX2Nsa2Rpdigp
+IGRlY2xhcmUgYSBzdHJ1Y3QKPiBjbGtfaW5pdF9kYXRhIG9uIHRoZSBzdGFjayBhbmQgb25seSBp
+bml0aWFsaXplIHNvbWUgb2YgaXRzIGZpZWxkcwo+IChwYXJlbnRfZGF0YSByZXNwZWN0aXZlbHkg
+cGFyZW50X2h3cykuIGNsa19jb3JlX3BvcHVsYXRlX3BhcmVudF9tYXAoKQo+IGNoZWNrcyBwYXJl
+bnRfbmFtZXMgZmlyc3QgYW5kIHBhcmVudF9kYXRhIHNlY29uZCBiZWZvcmUgZmFsbGluZyBiYWNr
+Cj4gdG8gcGFyZW50X2h3cywgc28gbGVmdG92ZXIgc3RhY2sgZ2FyYmFnZSBpbiB0aGUgdW5pbml0
+aWFsaXplZCBmaWVsZHMKPiBoaWphY2tzIHBhcmVudCByZXNvbHV0aW9uIGFuZCB0aGUgY2xrIGNv
+cmUgZGVyZWZlcmVuY2VzIGEgYm9ndXMKPiBwb2ludGVyOgo+IAo+ICAgVW5hYmxlIHRvIGhhbmRs
+ZSBrZXJuZWwgTlVMTCBwb2ludGVyIGRlcmVmZXJlbmNlIGF0IHZpcnR1YWwgYWRkcmVzcyAwMDAw
+MDAwMDAwMDAwMDBjCj4gICBPb3BzIFsjMV0KPiAgIGVwYyA6IF9fY2xrX3JlZ2lzdGVyKzB4MzFh
+LzB4N2YwCj4gICBbPGZmZmZmZmZmODA1ZGM3NzQ+XSBfX2Nsa19yZWdpc3RlcisweDMxYS8weDdm
+MAo+ICAgWzxmZmZmZmZmZjgwNWRjZDc2Pl0gZGV2bV9jbGtfaHdfcmVnaXN0ZXIrMHgyYS8weDk0
+Cj4gICBbPGZmZmZmZmZmODA1ZTMxOWE+XSBlc3dpbl9yZWdpc3Rlcl9jbGtkaXYrMHg4MC8weGQw
+Cj4gICBbPGZmZmZmZmZmODA1ZTM0YTA+XSBlc3dpbl9jbGtfcmVnaXN0ZXJfY2xrcysweDE2Mi8w
+eDFhMAo+ICAgWzxmZmZmZmZmZjgwNWUzNzM2Pl0gZWljNzcwMF9jbGtfcHJvYmUrMHgxNDYvMHgx
+ODAKPiAgIFs8ZmZmZmZmZmY4MDY1ZDIzYz5dIHBsYXRmb3JtX3Byb2JlKzB4M2MvMHg3YQo+IAo+
+IE9ic2VydmVkIG9uIEVJQzc3MDAgaGFyZHdhcmUgKHdpdGggdGhlIGRyaXZlciBiYWNrcG9ydGVk
+IHRvIGEgNi4xNwo+IHRyZWUpOyB3aGV0aGVyIHRoZSBidWcgdHJpZ2dlcnMgZGVwZW5kcyBlbnRp
+cmVseSBvbiB3aGF0IHRoZSBzdGFjawo+IGhhcHBlbnMgdG8gY29udGFpbiB3aGVuIHRoZSByZWdp
+c3RyYXRpb24gaGVscGVycyBydW4uCj4gCj4gWmVyby1pbml0aWFsaXplIGJvdGggc3RydWN0dXJl
+cy4KPiAKPiBGaXhlczogY2Q0NGYxMjdjMWQ0ICgiY2xrOiBlc3dpbjogQWRkIGVpYzc3MDAgY2xv
+Y2sgZHJpdmVyIikKPiBTaWduZWQtb2ZmLWJ5OiBLb3N0YXMgRGFtYXNraW5ha2lzIDxrb3N0YXMu
+ZGFtYXNraW5ha2lzQGdtYWlsLmNvbT4KPiAtLS0KPiAgZHJpdmVycy9jbGsvZXN3aW4vY2xrLmMg
+fCA0ICsrLS0KPiAgMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMo
+LSkKPiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbGsvZXN3aW4vY2xrLmMgYi9kcml2ZXJzL2Ns
+ay9lc3dpbi9jbGsuYwo+IGluZGV4IGUwOWE1MmNjMy4uNzlkMWU0YzVlIDEwMDY0NAo+IC0tLSBh
+L2RyaXZlcnMvY2xrL2Vzd2luL2Nsay5jCj4gKysrIGIvZHJpdmVycy9jbGsvZXN3aW4vY2xrLmMK
+PiBAQCAtMjA0LDcgKzIwNCw3IEBAIGludCBlc3dpbl9jbGtfcmVnaXN0ZXJfcGxsKHN0cnVjdCBk
+ZXZpY2UgKmRldiwgc3RydWN0IGVzd2luX3BsbF9jbG9jayAqY2xrcywKPiAgCQkJICAgaW50IG51
+bXMsIHN0cnVjdCBlc3dpbl9jbG9ja19kYXRhICpkYXRhKQo+ICB7Cj4gIAlzdHJ1Y3QgZXN3aW5f
+Y2xrX3BsbCAqcF9jbGsgPSBOVUxMOwo+IC0Jc3RydWN0IGNsa19pbml0X2RhdGEgaW5pdDsKPiAr
+CXN0cnVjdCBjbGtfaW5pdF9kYXRhIGluaXQgPSB7fTsKPiAgCXN0cnVjdCBjbGtfaHcgKmNsa19o
+dzsKPiAgCWludCBpLCByZXQ7Cj4gIAo+IEBAIC00MTksNyArNDE5LDcgQEAgc3RydWN0IGNsa19o
+dyAqZXN3aW5fcmVnaXN0ZXJfY2xrZGl2KHN0cnVjdCBkZXZpY2UgKmRldiwgdW5zaWduZWQgaW50
+IGlkLAo+ICAJCQkJICAgICB1bnNpZ25lZCBsb25nIHByaXZfZmxhZywgc3BpbmxvY2tfdCAqbG9j
+aykKPiAgewo+ICAJc3RydWN0IGVzd2luX2RpdmlkZXJfY2xvY2sgKmRjbGs7Cj4gLQlzdHJ1Y3Qg
+Y2xrX2luaXRfZGF0YSBpbml0Owo+ICsJc3RydWN0IGNsa19pbml0X2RhdGEgaW5pdCA9IHt9Owo+
+ICAJc3RydWN0IGNsa19odyAqY2xrX2h3Owo+ICAJaW50IHJldDsKPiAgCgpBY2tlZC1ieTogWHV5
+YW5nIERvbmcgPGRvbmd4dXlhbmdAZXN3aW5jb21wdXRpbmcuY29tPgoKVGhhbmtzLApYdXlhbmcK
 
---ak3qgcbynp5sb6ym
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH v2 3/6] clk: renesas: Add R-Car X5H CPG driver
-MIME-Version: 1.0
-
-Hello Geert,
-
-On Wed, Jul 08, 2026 at 12:15:08PM +0200, Geert Uytterhoeven wrote:
-> +#include <linux/mod_devicetable.h>
-
-Please don't add new users for this header file. Only use those
-<linux/device-id/*.h> that you actually need (if any).
-
-Ditto for patch 4.
-
-Thanks
-Uwe
-
---ak3qgcbynp5sb6ym
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmpUE7sACgkQj4D7WH0S
-/k692Af/VsqjHq8LAyiXwd69+QSwZHSG0U4MEBmnqkTcJ6mPo3Q1tfbuac0TZGpR
-buYByMLca9o6W+7RHLvf+/Zr3Deak9AlTYe0KCuPpU7D8l92MkJ9qyU4qaQWyxrI
-Hv1YMMYA5G+C8pvTfUspprOv7ql6Xa7cYPsIo3jLpjbhJL3dg7EiCHHjEt/TyipW
-XDBbz9nhJzlzRZZzwDROzHctrH75sRADO/UfFjRhtDmkYC4qRs2tvJk7mEMQ9TG0
-ZBnRKl3liOyOP0apWQ9wSU/MuVwRJ+l7pTHIihy3BPhzxJM+7fQFIzy3bdjFMWZY
-qnwvvfAtAsXvn3SjgrZe5nuPmhpk5A==
-=z1Ow
------END PGP SIGNATURE-----
-
---ak3qgcbynp5sb6ym--
