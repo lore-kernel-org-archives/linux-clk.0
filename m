@@ -1,76 +1,105 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8951369D59;
-	Mon, 13 Jul 2026 07:15:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6657C3A5E84
+	for <linux-clk@vger.kernel.org>; Mon, 13 Jul 2026 08:16:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783926906; cv=none; b=DfMqdphk7akNyCXJsmHrna79X4D2cYrLAkeMT2TbqM6zB5up5CzSr37Q2LhECcgL2pAljnUWgM4BsglUnXuCX2mEEH+bVNGLvsdEt/shZQ7r96ZUEbqz0nqkGx9xLmiWxn/k4p25jDV/LUtzaXoPT/aNv0gWLJOKZXZbKLTeexo=
+	t=1783930615; cv=none; b=CqWH2vQFav9kJ+cBFv8fYZOvryXDMi7T3t8yrv/MuKtjNYLJL5bB5cm3OnwwvBo15kFxJ3hZpXZpxAytIcovmrgojQ1HexavzbaVqeEU6/6YY+dMgE/Cy5zEzImwcAlSLxKMSjX9mHeFBljSDRKdsk6cCFVm+6K2RqZzJcpq3I8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783926906; c=relaxed/simple;
-	bh=qt/ciUhbyJcgydhGc5DaXdaEqvPSjo0LGG//q/JJ3S4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=OnfRXX4m8GERiUlKyLqEk2q8oyboc4TxhpV51jZcgDLcadATPOJhwy1zCx1SBeko/qom56e+dJinJeySTeFAauCT/o+marM/462kUQPJ9jtWr7G0kYXEJF26hC15nvPmhepk0jZVuuNqD7JXhOzTanyD8rMXwJdyrzT28x6Nkdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zoof87+i; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1783930615; c=relaxed/simple;
+	bh=9+3Sww1C+uYKIwyUcbIIOb42X2ECv7xamrybHeNLRDQ=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CRWCI2HqYW3E3Rc4kAEvMy1xDU1Pqrbr6N0j4qdPGSRJLJYqNxK9emL0IJjn1JW40H6A6mMtqFMHwbi6FfkTHQBRJNMeg/58cnEPsZKqPKhJtdUmA+mTPcAQrZ52LNFpQlIFmdMM1mu54TQqlUDW9D9wqUUU16H9dTx8jRosyvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dvirtr+1; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zoof87+i"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FC821F000E9;
-	Mon, 13 Jul 2026 07:15:00 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dvirtr+1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 071541F00A3D
+	for <linux-clk@vger.kernel.org>; Mon, 13 Jul 2026 08:16:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783926905;
-	bh=eLb36tVfJEOKQMQt3uvFaLwJzBn1n6sVBLny6umONd0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=Zoof87+itqVZwOMFUw+cS/Xefo1n3/ceC5P4IE47TXgULDYw5nLqzuvf2E9FYS+iP
-	 pXLyyWbrJN5CvmtLB6z01L9XC9UxYU1n5roWqCK1q8zPPZMgSLLPTIxzev1+QEzCmY
-	 WmnK2e5cDEOPrDAnP74TEPeww1bYljsh9Amp42Tumb4tSzseFuXXW1arTrqqVjoDqi
-	 frMAGJ8gU4KQdtqhd/oB7KPt+u1pXvt/PcgSa/zd4cB2Y5w5usAYyaOyp3nTW5wNbP
-	 D3z60chlJfH1xaj3QHzEnnXUUW2lfV2w9+t/XAi816L+E007Xyt2eSpMoiqiRL0R9n
-	 uI3XSKyzQ7qSw==
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
- Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
- Denzeel Oliva <wachiturroxd150@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20260613-exynos990-peris-fix-v3-v3-0-2b230db78ae4@gmail.com>
-References: <20260613-exynos990-peris-fix-v3-v3-0-2b230db78ae4@gmail.com>
-Subject: Re: [PATCH v3 0/3] clk: samsung: exynos990: Fix PERIS gate clock
- parents and add TMU_SUB
-Message-Id: <178392689997.24587.17631243111899566920.b4-ty@b4>
-Date: Mon, 13 Jul 2026 09:14:59 +0200
+	s=k20260515; t=1783930614;
+	bh=m5F0084nQCC/QhRXj90Uv+t8Z3rbI8iJLW2IgXjNKdk=;
+	h=From:In-Reply-To:References:Date:Subject:To:Cc;
+	b=Dvirtr+1Ru0jx55LjsZRFcmWDXDLldQ0A030RudZy6rYxe2N4W/UZ0UvwF4W9KDHm
+	 fJLxw6HyEQYLDhzML215WQo4PWKZdHRBuGgEYX4eViR9xDilYz/R9pvLNsmn5XDVFF
+	 OQZziqazFDqDRiohOECkNpqIGeFxKdOq36aKTQGpilxXpLluIHw2ffjwb8htvdpBsF
+	 Wxeh3/Vob3pS07O6toE0vsSOMgrNqxmCvgdVfvXFxGWq9dK+I/IeQ2BardntupAQqM
+	 p3peqmiViDs7PQgzN89DQ6ciQb33DZg0vIqAZhQ3/qVVhV1uf3nhXxy974dmT9acRT
+	 V8VpOe5XPcQlQ==
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-39c74c469e8so21735361fa.0
+        for <linux-clk@vger.kernel.org>; Mon, 13 Jul 2026 01:16:53 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RowRjasQz9HTbtMtLwuT7/f7V5DAttNDcxF1Rc27FJCJTwphRqSMVC3cul9JGYwrC8BXwDLHF/mNpE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+08GHcFJ2fjQXeYVpsy8YwvqgnUjhS+EdpcJ1LPMhsHOLXnyF
+	2bVqJDpnurM3TVDejeZCD9OFbcW4rU6nGoPrQ+m9VlxNEZaBU2YAHCmlZut9v6ls7cyxF8CSp5d
+	HknSSN4rpD80nqEHsQul7bjB62AOMPSrx/HYAFVOSxg==
+X-Received: by 2002:a2e:a9a5:0:b0:39c:6f89:c9b3 with SMTP id
+ 38308e7fff4ca-39caa13ca2amr17346001fa.14.1783930612774; Mon, 13 Jul 2026
+ 01:16:52 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 13 Jul 2026 01:16:51 -0700
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 13 Jul 2026 01:16:51 -0700
+From: Bartosz Golaszewski <brgl@kernel.org>
+In-Reply-To: <CANhJrGM9ciyBfgGWBwOM3kNmcXGSq4QVM6a6Js+wtbr9ANtSJA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15.2
+References: <cover.1782909323.git.mazziesaccount@gmail.com>
+ <27fb93d0e61704d495e3adf4ed614edac1642267.1782909323.git.mazziesaccount@gmail.com>
+ <CAMRc=MccLRKb8ZjChcR7WK3TqV3=waSnKX=UX9LR=5hOT=_tsg@mail.gmail.com> <CANhJrGM9ciyBfgGWBwOM3kNmcXGSq4QVM6a6Js+wtbr9ANtSJA@mail.gmail.com>
+Date: Mon, 13 Jul 2026 01:16:51 -0700
+X-Gmail-Original-Message-ID: <CAMRc=MedLP3XBqoUv_zUr5gxBVc+gqwY3ozAyXagBhc_70Kykw@mail.gmail.com>
+X-Gm-Features: AVVi8CfyQ1TAFYvyEQ1X0jI6L1cKq7pX3giTRDhFSopr0iz61Po6th7LT6u3Xr0
+Message-ID: <CAMRc=MedLP3XBqoUv_zUr5gxBVc+gqwY3ozAyXagBhc_70Kykw@mail.gmail.com>
+Subject: Re: [PATCH 7/8] gpio: bd73800: Support ROHM BD73800 PMIC GPIOs
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@linux.dev>, Lee Jones <lee@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney@redhat.com>, Linus Walleij <linusw@kernel.org>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org, 
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Bartosz Golaszewski <brgl@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
+On Sun, 12 Jul 2026 17:42:17 +0200, Matti Vaittinen
+<mazziesaccount@gmail.com> said:
+> pe 3.7.2026 klo 16.11 Bartosz Golaszewski (brgl@kernel.org) kirjoitti:
+>> > +
+>> > +     if (!g->num_pins) {
+>> > +             /*
+>> > +              * The BD73800 may or may not have pins allocated for GPIO
+>> > +              * depending on the OTP used at manufacturing. Free the memory
+>> > +              * and go out if there is no pins as then we have nothing to do
+>> > +              */
+>> > +             dev_dbg(dev, "no GPIO pins\n");
+>> > +             devm_kfree(dev, g);
+>>
+>> No need for that, because...
+>>
+>> > +             return 0;
+>>
+>> ... this will still leave a bound device in the system, I'm not sure we want
+>> it? The correct error code in this case is -ENODEV.
+>
+> I am a bit uncertain. This isn't really an error. It should be very
+> much Ok to configure the support for PMICs with GPIOs to be compiled -
+> and also very much Ok to have a PMIC with no GPIOs. Returning an error
+> doesn't feel right. Furthermore, I am afraid that returning an error
+> might hurt the system start-up? Do you see some really problematic
+> consequences if we return Ok without registering the GPIOs. I'd assume
+> that wastes some bytes but I don't see other really severe
+> consequences.
 
-On Sat, 13 Jun 2026 07:36:15 -0500, Denzeel Oliva wrote:
-> Fix several PERIS CMU clock parent mismatches and add the missing
-> TMU_SUB_PCLK gate clock.  The dt-bindings patch adds the new clock
-> ID.  The second patch adds the TMU_SUB_PCLK gate.  The third patch
-> corrects eight gate clock parents and reorders the GIC mux parents.
+But -ENODEV/-ENXIO error codes are meant to do exactly that - tell the driver
+core to assume this device legitimately cannot be enabled on this system. There
+will be no error splat in the kernel log and the probe will not be deferred.
 
-Applied, thanks!
+This really isn't the first device to need this behavior. :)
 
-[1/3] dt-bindings: clock: exynos990: Add CLK_GOUT_PERIS_TMU_SUB_PCLK
-      https://git.kernel.org/krzk/linux/c/d5083527908a994496519f5b9098b33460f365d6
-[2/3] clk: samsung: exynos990: Add PERIS TMU_SUB_PCLK gate
-      https://git.kernel.org/krzk/linux/c/b7d6221aa44fc523c3418ecd94c582eea6e6d53a
-[3/3] clk: samsung: exynos990: Fix PERIS gate clock parents
-      https://git.kernel.org/krzk/linux/c/a016e89781478e4b756fbf104945d037d0cdc809
-
-Best regards,
--- 
-Krzysztof Kozlowski <krzk@kernel.org>
-
+Bart
