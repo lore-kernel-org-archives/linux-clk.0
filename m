@@ -1,139 +1,70 @@
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail-244122.protonmail.ch (mail-244122.protonmail.ch [109.224.244.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5957282F2A
-	for <linux-clk@vger.kernel.org>; Mon, 13 Jul 2026 16:00:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A81FF20ADF8;
+	Mon, 13 Jul 2026 22:47:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783958450; cv=none; b=Aoy1OM3krdBjH/hbwsPs1lS87TMwfGzNeGDy6LLYTdrG4o+1ZEI4Hl5I5dbHrUzWTbkx40kowxDaWExZNGxZ8qDlBwFLqZTtwZjja5C67/yJJDm2YIuPQIroGNtsSW4FJ4ZaLoC2VRy603+0F0JECJk5AOD2GE2S8aTDskSCtVQ=
+	t=1783982852; cv=none; b=pW37RoTvm+OMb3YNqi2sZSf/ju0EeMmfQH1HIKpOB4v772oxkH6MzYX1G1hOFs6rEUOKeMhqC1QOmIV/+/2JgOLoGQfKVG+OkZn7vOBY0ynIGHzGbJnApH1jj6UppC/g+cgIiRhMPMpVWR50qhy0+P4XvUrpc172G9qXoxYxspU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783958450; c=relaxed/simple;
-	bh=SsOh1enJoELJHzfIclkKXerzvf46Ll/w8xxgwM0UOnc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jgQGzf2fpcphaxhmB7wYVPmkj9aJmtJIhF+UFtsbnyNHuWkAUX5/JgG0VdJyEX6LYrYNo9Gh6vNMgWizgTIGXZiO5Eyb4kFvIH055OPC4+JXkCOerPC1q8bTYYvbpj7LuT8PrrlMW/Yifx+aDL5fd4Iege864kxPYC4R8RMX9zE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-5bfc54558d5so34144e0c.0
-        for <linux-clk@vger.kernel.org>; Mon, 13 Jul 2026 09:00:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783958448; x=1784563248;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=674QbDTihSeDJzkwbUpD4t11m/0pIrH8HDq4q33BUPk=;
-        b=Ge5uTJoHRjVsC716x3h5j4AHbpZJz4ZBPqsMjCT/DbyMjfVW8GDmprkwyG83EZpoY8
-         BPSMRpPFQGl7APGY71upW7rAr+xmcTF8rBofFJTtHUmyIIFlqesFbcTdMxdMteZDisoD
-         cuf5/STVFmWDcO+P0qyugSm/6dEJm1ueFRzbPDKJtCUVDQoyHIDYYhvFr3vg+R3/g2w4
-         i4MTC4FhfsyGYTchgzGdwKXPIb20J+GNuDA+LbrD1kaoOaWuV9hjP/YK4ETtBhoSqECX
-         39+So1QlJBGdH4nLe4K4L1hwowl7N5kVbLurC+GRoallzbDC7WEUSNWtyzyiZDC2v0bS
-         eM0A==
-X-Forwarded-Encrypted: i=1; AHgh+Rol+0vIA+r6adGrjqDnqdTi74Y4oadcSZoUOsdVo7BjL6GKpoViGyA8d+8pTOJhCm4XLtSnhf0mVYQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1cmkFEGgHNE3xQI73MyiDsKQeyZ3ppqC7yCTRw2c/Si+vNfln
-	3CR1RBp2Yp+oSRg4CbKESaSs0nA23rH63ybiiY2yA+d2v0aJZ7Ce0S7tshtwXIX+6UQ=
-X-Gm-Gg: AfdE7cks0qMfK+4qtoBC4KFDd8dxtjp08KhV50SEtYlFChURfG1fTK0ypq1S/7Fehyq
-	soskT2rZ3OVRXK8bfaJaI+0XCOqLj47jnnJUEGu0x/qYYtgBQchW/GP24XVSHEujT2pRJQF2mWs
-	noAP9m8tGlXOIKBEDGLiDrNKZN2A9WP18X4bmUq0fWlThNwaEDdVOk4HBkkNDqc1yu/Rdv5qSin
-	hY3ypN90V7YUnksDwRbjSLMeqIIDutSzLNV5/hqUXcWZ0n4ncm3730bMWJN10IZBFMoU5nWuOyr
-	FofOvnXrvpnmVrc36CvJ0Lv6RGTwWhKucBsVweSBHguSoj4QCbiUmRMr0f3Ae2BQnVpet2o0YsQ
-	4crj/22WD+r26uop9MrvJEaOF9HGhnalGfWaOhibcyxSZz9sdb6wcaJ254rXN8Qm3oDjzgfV3+n
-	1nJZgfwFLEF4OTIPlvaebmwJYx5Ugrzh4zuRYm8wpI3cWKS1OLw1V4MfxKjYpcjQy7
-X-Received: by 2002:a05:6122:5119:10b0:5bf:8166:edc3 with SMTP id 71dfb90a1353d-5bfa47759d9mr5959034e0c.4.1783958447766;
-        Mon, 13 Jul 2026 09:00:47 -0700 (PDT)
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com. [209.85.221.179])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5bf6f5e2e70sm10283328e0c.3.2026.07.13.09.00.47
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Jul 2026 09:00:47 -0700 (PDT)
-Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-5bfc54558d5so34128e0c.0
-        for <linux-clk@vger.kernel.org>; Mon, 13 Jul 2026 09:00:47 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RpraxIdZPsfCUOQvY78E2sVbb5wKXZOAZjNLFm/rBvlGWlvAait+uROwelWZY1wIIjQ9A06+6jbmZM=@vger.kernel.org
-X-Received: by 2002:a05:6122:6310:b0:5bd:a2dd:60ee with SMTP id
- 71dfb90a1353d-5bfa470c003mr6470720e0c.3.1783958447155; Mon, 13 Jul 2026
- 09:00:47 -0700 (PDT)
+	s=arc-20240116; t=1783982852; c=relaxed/simple;
+	bh=jMGWE8tA/29DhQ/N6afaPNZfUuTNcd/k2GMf4/rve6U=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JyMJT0AJ9tLlv5qS+3FGITtiPbsdJYoC8dB2H4opKUtEABg6xW1PfMa/YyF04yO9tiUvhpIZSZP5SwMcdVuTi18ApCNj+qG6aBoqBlgFqJi9zPaNYU9JhTvhPJg1O+NMMksLFRQ7fqXXnmSb4P7lBp8zhM3u7fZhKEPAOJ9g8Fg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=In+B9Cui; arc=none smtp.client-ip=109.224.244.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="In+B9Cui"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=3dkiarpw4bg4zokmj73yonjex4.protonmail; t=1783982844; x=1784242044;
+	bh=jMGWE8tA/29DhQ/N6afaPNZfUuTNcd/k2GMf4/rve6U=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=In+B9CuiPaRuzaxYQwMp4IgoG2wMQ656Nifnp9pcE8NftRUttLfb9sztvdrtvADkJ
+	 oFla/PDOyY9uXaJ5dYYvfLgKVjz4RhYwmpfre5fLa7bHz342234qyhm4yai/VJfS+n
+	 RPgK0oNWGMX+XAKc3vDt8sGSOWkIS7AW+M+iZwgo/rgfQZFHQbSGFMj8M/rZ4oQRWE
+	 nAmPZ8hIskIq/Wgxq8zyBXEwHE7O/fpIdERP0ikOoMRBrunvY8u/hkVm5BBLGcPswP
+	 NBLMQuVxsLXKc5i5245lqlGgFOvonNOcqNFCpk7GppFmoIf7Giqg9aav+dMZsrFnrq
+	 wcKS8TVh02ciQ==
+Date: Mon, 13 Jul 2026 22:47:19 +0000
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, Dmitry Baryshkov <lumag@kernel.org>, Danila Tikhonov <danila@jiaxyga.com>
+From: Esteban Urrutia <esteuwu@proton.me>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] clk: qcom: dispcc-sm8450: Keep pll types as is for SM8475
+Message-ID: <d58a72e3-fbb3-4dad-a706-a61b8267825a@proton.me>
+In-Reply-To: <d6a56ee7-2380-4e2a-b217-6d7398944279@oss.qualcomm.com>
+References: <20260711-sm8450-qol-dispcc-v2-0-fc1a07ac5601@proton.me> <20260711-sm8450-qol-dispcc-v2-3-fc1a07ac5601@proton.me> <d6a56ee7-2380-4e2a-b217-6d7398944279@oss.qualcomm.com>
+Feedback-ID: 147889766:user:proton
+X-Pm-Message-ID: 31ff9d771682dc8a421c67293ce9b4f8748cda45
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260702123112.161160-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20260702123112.161160-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 13 Jul 2026 18:00:36 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUhiBAcJ6P7j0ZxL+0AbVqz88PMo7YX9UiYOK8jM61D1Q@mail.gmail.com>
-X-Gm-Features: AUfX_myKEIDnT9gmvoSHxK3o8Be_bh5PlIka-qGq00orZWkHqkcXT9vOA0tXJpw
-Message-ID: <CAMuHMdUhiBAcJ6P7j0ZxL+0AbVqz88PMo7YX9UiYOK8jM61D1Q@mail.gmail.com>
-Subject: Re: [PATCH RFC v2 0/9] Add System Controller support for RZ/T2H and
- RZ/N2H SoCs
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, 
-	Magnus Damm <magnus.damm@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, 
-	Prabhakar <prabhakar.csengg+renesas@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Prabhakar,
+On 7/13/26 6:57 AM, Konrad Dybcio wrote:
+> No, these are two separate hardware designs and you can't mix the
+> configuration like that just because it so happens to circumvent a bug.
+>=20
+> Taking a peek at clk_lucid_evo_pll_configure, there's an early bailout:
+>=20
+> if (trion_pll_is_enabled(pll, regmap)) {
+> =09pr_debug("Lucid Evo PLL is already enabled, skipping configuration\n")=
+;
+> =09return;
+> }
+>=20
+> I think it should be fine to copy-paste it as-is for LUCID_OLE. Please
+> check if that resolves your issue.
+Indeed, this solves the issue and the display no longer glitches out at
+boot.
+Will correct in v3; thanks for pointing me in the right direction.
 
-On Thu, 2 Jul 2026 at 14:31, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> This series adds support for the System Controller (SYSC) blocks found on
-> the Renesas RZ/T2H and RZ/N2H SoCs. These blocks handle critical low-power
-> management and access control functions.
->
-> Hardware Architecture & Dependency Challenges:
-> ----------------------------------------------
-> The SYSC in these SoCs is a multi-functional block responsible for:
->     - Clock & Reset Control
->     - Low Power Management
->     - Clock Monitor (CLMA)
->     - Access Control
->
-> A key architectural detail is that these SYSC blocks are physically located
-> within the CPG/MSSR (Clock Pulse Generator / Module Standby Software Reset)
-> address space. While the CPG/MSSR driver is already implemented and
-> functional for these SoCs, the integration of SYSC adds a layer of
-> complexity due to a cyclic dependency:
->     - SYSC requires CPG: The system controller needs a clock to operate.
->     - CPG requires SYSC: Access control registers within the SYSC contain
->       bits necessary to control the PLLs managed by the CPG.
->
-> If implemented as a completely separate top-level system controller node, we
-> would face a cyclic dependency between the CPG and SYSC drivers during the
-> boot process.
->
-> Proposed Implementation
-> ----------------------------
-> To resolve this, the SYSC blocks are represented as child nodes of the
-> CPG/MSSR controller in the device tree. The SYSC regmap is registered
-> directly against the CPG device node. This hierarchy correctly models the
-> hardware address space while allowing the drivers to share resources
-> without deadlock.
->
-> I am sending this as an RFC specifically to get feedback on the
-> implementation of the SYSC as child nodes of the CPG to resolve the
-> dependency cycle.
+Regards,
+Esteban
 
-Personally, I am not a big fan of subnodes.  I assume you are using
-subnodes because you can register only a single regmap per syscon node?
-Would it be possible to just extend the existing clock-controller
-node with two more reg entries, and expose them through a single
-combined regmap?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
