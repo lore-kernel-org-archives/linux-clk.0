@@ -1,88 +1,29 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C92C63D0914
-	for <linux-clk@vger.kernel.org>; Mon, 13 Jul 2026 09:04:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+Received: from ultrarisc.com (unknown [218.76.62.146])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 828F7145B3F;
+	Mon, 13 Jul 2026 09:13:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.76.62.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783933491; cv=none; b=M2S577rSqSJy0+nd1yeEy9ejzxE0w560oXD5oNJ+zHmmeXdDiLzo49EPfYMy4vid3mJAn4Es+fx2aEXbGtIHv9RUo1hXFHKbiy7enepk3SQEuRvD2QF6CFpKBZTRQdBXU7pf/+vWbMC/XT5SUP8+d1tcrwAOXaMT2OfXU43d9Ys=
+	t=1783934034; cv=none; b=gfZMQYqtoSSGejpiRxyuhph0+ng9LEdbq33jwN7hcKmBiyX6id8Y+rMF2L7Rm8WvxwyoERGDB/fYHD9FE95wnrCuQ4fdK5OYvwn+BKxNflVJ/Vks8yMSfPR6OG3U/MWk89XWyrm/Vfazhj+6Hpq8zlzyzUUJzJ1mCwbcXblxRD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783933491; c=relaxed/simple;
-	bh=fvzDiZ67AMugJfYnW8hKFy6ptEIPS5tGSZjlOp7y0GU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=LtP9m1iDF2lBkFH67TN2XSI3pmUH081rMAA51wo8bUkoRY5BZJeH0CT+2tkBBNp0vSCz2NQ0Tz4G3XXdDZSrwIYXvtaas52DtlrvIHAtv0AdzOjMXsdM3RjLynNipRlcw4HI3ZoiTWtEl6PGlwbnyn2jlo1YW5ADnbe0qP9FYuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=TtL5+IoD; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=CoazYajp; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1783934034; c=relaxed/simple;
+	bh=dcCDLxbyJUIXwfhBT64SAsExYyiIGV2LF8cYyZrekEI=;
+	h=MIME-Version:Content-Type:Subject:From:To:Cc:In-Reply-To:
+	 References:Date:Message-Id; b=IKyHRJr0uwX+wLnnwg2EhkdQMPiSxxRJEgFkWScz0b/lOQWIqTLm4XgoAkYTtrYvHlBWOMhW0X+lWzvhbSDiiSosWeWoB5WCasGCnDd43mY+uoy41UB0c+nykSvZcXrE/rVlEw8UkaKsY2soLDcYc9WCEvt+79RYjS8RReBF8ao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ultrarisc.com; spf=none smtp.mailfrom=ultrarisc.com; dkim=pass (1024-bit key) header.d=ultrarisc.com header.i=@ultrarisc.com header.b=IUuGB3GK; arc=none smtp.client-ip=218.76.62.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ultrarisc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ultrarisc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="TtL5+IoD";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="CoazYajp"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66D6Nwct674465
-	for <linux-clk@vger.kernel.org>; Mon, 13 Jul 2026 09:04:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	qmzQ69Ie4mcQOk1JreV97QpBgdyvfWbFuRHTnab1d4E=; b=TtL5+IoDiaQq3q1J
-	dOJvBcjoXyZJyTPVt/1FHGGRUxwkG/L/y2Zd1OeP7jaMPI8ESCu1dpVZe6q/aNrD
-	+mkPA88cDx8dWOU2hW8Wq5jt17WpaqsfMmN5SJgjTqCF/hWDmeKai0iJvvZrIhWj
-	O3JeGcYNLiihHjLHMLtbzUqg3SLCbpb0Eoi3uU1nRy9kUWsDxQLAs03zguliiOE4
-	K5SGkuVBjmiU8MsY57IJv2qi7XtqAhJdSFRttvytgk7us5+vZDHypkIcHAau3La9
-	GoxitdVjWzKo6o7HjRxXe6FGet3aKoyTqy1VsdAY0+q4Fvx1UjTyz0AGd3FOAc3i
-	vH3X8g==
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fbecgnbq7-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Mon, 13 Jul 2026 09:04:48 +0000 (GMT)
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-c88aab7c1d4so4214147a12.3
-        for <linux-clk@vger.kernel.org>; Mon, 13 Jul 2026 02:04:48 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=ultrarisc.com header.i=@ultrarisc.com header.b="IUuGB3GK"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1783933488; x=1784538288; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=qmzQ69Ie4mcQOk1JreV97QpBgdyvfWbFuRHTnab1d4E=;
-        b=CoazYajp6YLSli/4wd3VshEX4OJuOOUMtVd9P7a870odib8lmmeixvwM+8DmEGw4yL
-         aNW2+Vw34xayYANpdtjlAhxT0Udf5sXXKkH2/Y3VAHAnBm3LWWH7LhKu2xjglGAUeZIx
-         Ktjt2RAP51x5KwxAf/c4s9drKm0RojMvHa2GW9GpaYWOCt1iU2jS9rLHd+TPdtG44ElX
-         5F5JZUVXl9XuB1BPVmGGMJzgLFIiJnfnnmJ6GWKzbOJfTeCPSmPT4fmpeKIQLSDrvJ5W
-         fAK13dZRKP9DM2Yi9acuIN640u2B6gioZVMqGiVfh5XvwvXX5TPdfoZxYdpBnNlrgfHr
-         zUmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783933488; x=1784538288;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=qmzQ69Ie4mcQOk1JreV97QpBgdyvfWbFuRHTnab1d4E=;
-        b=a4zVUlsiSZW+gY+3BrJEVURXNzKKj7cbWs+pdLPTNiKG0Bk9aHIa4MyUVbWXseDdXH
-         vrp0fDrgsX4dJUdyIMHkP1hCZgN4pUXf8K7ZrxDdtuJNJy0ZsOFoNVoQPSy/ptpsXxCl
-         TGRHHjCJIrrf1o/KKd13K4qc56Uk6kXE48jmZFeDATvHWqibbzzz4QmbTdvYamp0+E4/
-         8JhmnhHIPocv6D+WnJgpLow0+79njBCqRIrquCdAqj+/iW82WQUdQUoxdY+9BlxYr0ly
-         rjWsiyk7EZfeCBEZ3sNLxWkf9wyKM3JmaagUVG4/DRbfw3/M556caFVUd1/LQkvjGpz1
-         PGOA==
-X-Forwarded-Encrypted: i=1; AHgh+Rr6RT9Sb6Kv+6Lwoggkc5c7b4cEmt/QlekGaLd5Zjo7Xao+SVRW5Nvi16Agyy2p1WxWjv7ryXwCkrM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySGR0EQQNQy3luAMrWnM+YQhh7lupayYT6V/EOQOEsvTkxZK5G
-	mUQ/q8tavYwFsNRtU2f2rU51Xzkx1HCTBBLv2K/P27QqMv772HYPvkkseaWHyWHPAVSl/J4sS/L
-	frgjzyBqtAGVXpXVfTLGKzXLE7rrhOywqRZWOjnXPqCoOmXMVYCuqbDm6JHHgmK2reOfGkDI=
-X-Gm-Gg: AfdE7clY/k5oWkPqurQCx+trtEzc8IYRwrsG5sT5UkGhSfx1OQghRgYL8OXRR9SW936
-	TWmAJICQe+6BWGavoqrlvsjvcEekH80FfDdYK6L9X5cT2ON/suCfMIzjDwM4QZ6uPxYTQ7TUjfg
-	imBz/OIMhDlbveroe8XIyD9Gg+IckY65YI26HUIgEGdpqfmifg1gEkKcm7oT5/k1MzfBqvUO7Dt
-	cihFI6DlhwFXWHL3V+Ny3vSkk7dsmITED6TlcDsbJ5wJpD+HDoR/02zgom6/X5YrXiWIM8fMOx5
-	L0w0+g6TR3IE6bt30AaRqM+Souq2BdVHZH7Gws0bPSAokvQ/5Q+3Btncpc9pLtz3B47QSRrawvL
-	xRPxVRFylbYk5vNiROyYtSnwWNjT+AcZvteo=
-X-Received: by 2002:a17:90b:2247:b0:380:ced0:ecf9 with SMTP id 98e67ed59e1d1-38dc7822590mr8390937a91.4.1783933487291;
-        Mon, 13 Jul 2026 02:04:47 -0700 (PDT)
-X-Received: by 2002:a17:90b:2247:b0:380:ced0:ecf9 with SMTP id 98e67ed59e1d1-38dc7822590mr8390911a91.4.1783933486867;
-        Mon, 13 Jul 2026 02:04:46 -0700 (PDT)
-Received: from hu-tdas-hyd.qualcomm.com ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3119c2a7bb5sm43504435eec.25.2026.07.13.02.04.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jul 2026 02:04:46 -0700 (PDT)
-From: Taniya Das <taniya.das@oss.qualcomm.com>
-Date: Mon, 13 Jul 2026 14:34:11 +0530
-Subject: [PATCH v2 5/5] dt-bindings: mailbox: qcom: Document Maili CPUCP
- mailbox controller
+	d=ultrarisc.com; s=dkim; h=Received:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:
+	References:Date:Message-Id; bh=VPrIFSTxqSlGbcvuQoKbhlpKcFEI6JaSI
+	349NQx+Zgk=; b=IUuGB3GKPqgYvkjowh7DX5Zzu4C3USSYRQjbvO1VX9f9DDCI0
+	oi/fbYjO093ziDVtCiTG7iQmizpBk+AhCXBUmFTZ9w6bJH/COQVze/uJQVj5kSEg
+	xinhwYaEDv5LKc7lhvcXh7abbxhjjDnfTuXGhMg2IhSblKdTxGHtCDLSKc=
+Received: from [127.0.0.1] (unknown [192.168.100.1])
+	by localhost.localdomain (Coremail) with SMTP id AQAAfwAnYUJcrFRqA48QAA--.16585S2;
+	Mon, 13 Jul 2026 17:14:05 +0800 (CST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -91,75 +32,98 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260713-maili_initial_clock-v2-5-79548f0bb58f@oss.qualcomm.com>
-References: <20260713-maili_initial_clock-v2-0-79548f0bb58f@oss.qualcomm.com>
-In-Reply-To: <20260713-maili_initial_clock-v2-0-79548f0bb58f@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Taniya Das <taniya.das@oss.qualcomm.com>,
-        Vivek Aknurwar <vivek.aknurwar@oss.qualcomm.com>
-Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
-        Imran Shaik <imran.shaik@oss.qualcomm.com>,
-        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-X-Mailer: b4 0.15-dev-aa3f6
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNzEzMDA5NCBTYWx0ZWRfX0swY3hNgXaEq
- IivSjFMAE8072qIQtoLeqgkM1ViJtL5J4WoI5B6MQLLIYl2LogTDkSPtJyK9pm6rdm2vcPqUyZp
- U0hhHqec8Y3TQRi9qSoLMEOK2PUViXQ=
-X-Proofpoint-ORIG-GUID: ynlCDazJGfX-zWqajUqJ9Ut79T7KkqK7
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzEzMDA5NCBTYWx0ZWRfX60SCue+68HeD
- LQkrpN9jmNhZUg3+ccIFxPNdJoq8V/A2hSelzt1jeWF8tGZo2MXzbbg52HtzVU6VsVp9phPwqjX
- VpUX6Wk5PUvARN1Z21afmTu6nD0ohoCIKNHmC5hIUcvll5GTgnOK4ObAQk57zf3POlLmyjIV2Hs
- 7ulWtMCoW4ewuGRFm/jnVX11NAiosYq6ge2hAbD9g6QFQYnEFH934HE33tVyM9uYrKqI4mphbVH
- Zfufl72oxf3IBdGL1jaWLNQdCC+IPz2ndDo9++MpNJ9Xw8w5akFdZhVEy9bjgDKoWw2Mmbhc2io
- saxdhQjljPSpSpataNYNk9jueD5oSZJfINKNoQHMJ/eSpnTRZVKkyoY7rG+nfXMl1F0LgKdFUm/
- XBev9slqz/S8E4S2uMJaY9uVeWDooO8n5s+1sIvjEHaqOODj4PNZ7AEf15IYRNiYM6bOFGuQXiY
- jRwPjhAD0tZC/C3kVGA==
-X-Proofpoint-GUID: ynlCDazJGfX-zWqajUqJ9Ut79T7KkqK7
-X-Authority-Analysis: v=2.4 cv=KM9qylFo c=1 sm=1 tr=0 ts=6a54aa30 cx=c_pps
- a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=3WHJM1ZQz_JShphwDgj5:22
- a=EUspDBNiAAAA:8 a=5FXc3QUEpXE_4WiDhFYA:9 a=QEXdDO2ut3YA:10
- a=x9snwWr2DeNwDh03kgHS:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-07-13_02,2026-07-10_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 phishscore=0 malwarescore=0 bulkscore=0 lowpriorityscore=0
- clxscore=1015 impostorscore=0 adultscore=0 priorityscore=1501 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607130094
+Subject: Re: [PATCH v2 2/2] clk: ultrarisc: add DP1000 clock driver
+From: Jia Wang <wangjia@ultrarisc.com>
+To: Brian Masney <bmasney@redhat.com>
+Cc: Jia Wang <wangjia@ultrarisc.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <ak5fGAp2NMPgW77M@redhat.com>
+References: <20260617-ultrarisc-clock-v2-0-9cb16083e15e@ultrarisc.com>
+ <20260617-ultrarisc-clock-v2-2-9cb16083e15e@ultrarisc.com>
+ <ak1Zc7uSoqx-F_7Q@redhat.com>
+ <178349718662.2043299.5991323028483371285.b4-reply@b4>
+ <ak5fGAp2NMPgW77M@redhat.com>
+Date: Mon, 13 Jul 2026 17:13:33 +0800
+Message-Id: <178393401383.3197075.7283325660001879501.b4-reply@b4>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1783934014; l=1815;
+ i=wangjia@ultrarisc.com; s=20260515; h=from:subject:message-id;
+ bh=dcCDLxbyJUIXwfhBT64SAsExYyiIGV2LF8cYyZrekEI=;
+ b=mPIF9TaQ0styqNJX6Lj462n06oarXZ44l+TmRuyZeJLmhi2BOM5OAcjSiPW90B1wbclFFBNYM
+ UtV9cdLSWemBz5fAFFeuYa96UwhAVlE/aKxEvQqU1efVY+jIdfbaItU
+X-Developer-Key: i=wangjia@ultrarisc.com; a=ed25519;
+ pk=wGVm18siRScehKOkOz0WKxgxDy7IezHEszhnN4/TUCY=
+X-CM-TRANSID:AQAAfwAnYUJcrFRqA48QAA--.16585S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7trWDWr4UCw13WF15tw4kXrb_yoW8WrWfpF
+	WrGa4jkrW0qF13Zw42v3WqyF9xtw18tayjk3srJw1SvrnIqrySka1fJas8CF1rZry8WFyj
+	vF4jvFyxWw1FyFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9G14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4UJV
+	WxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFylc2xSY4AK6svPMxAIw28IcxkI7VAKI48JMx
+	C20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAF
+	wI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20x
+	vE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v2
+	0xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxV
+	W8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUb8hL5UUUUU==
+X-CM-SenderInfo: pzdqwylld63zxwud2x1vfou0bp/1tbiAQAHEWpUYNAAJgAMsz
 
-Document the CPU Control Processor (CPUCP) mailbox controller for the
-Qualcomm Maili SoC. It is software compatible with the X1E80100 CPUCP
-mailbox controller and uses it as a fallback compatible string.
+On 2026-07-08 10:30 -0400, Brian Masney wrote:
+> On Wed, Jul 08, 2026 at 03:53:06PM +0800, Jia Wang wrote:
+> > On 2026-07-07 15:54 -0400, Brian Masney wrote:
+> > > On Wed, Jun 17, 2026 at 02:02:55PM +0800, Jia Wang wrote:
+> > > > +static struct clk_hw *
+> > > > +ultrarisc_clk_hw_register_composite(struct device *dev, const char *name,
+> > > > +				    const char * const *parent_names,
+> > > > +				    int num_parents, struct clk_hw *mux_hw,
+> > > > +				    const struct clk_ops *mux_ops,
+> > > > +				    struct clk_hw *rate_hw,
+> > > > +				    const struct clk_ops *rate_ops,
+> > > > +				    struct clk_hw *gate_hw,
+> > > > +				    const struct clk_ops *gate_ops,
+> > > > +				    unsigned long flags)
+> > > > +{
+> > > > +	struct clk_hw *hw;
+> > > > +	int ret;
+> > > > +
+> > > > +	hw = clk_hw_register_composite(dev, name, parent_names, num_parents,
+> > > > +				       mux_hw, mux_ops, rate_hw, rate_ops,
+> > > > +				       gate_hw, gate_ops, flags);
+> > > > +	if (IS_ERR(hw))
+> > > > +		return hw;
+> > > > +
+> > > > +	ret = devm_add_action_or_reset(dev, ultrarisc_clk_unregister_composite,
+> > > > +				       hw);
+> > > 
+> > > Use devm_clk_hw_register_composite_pdata()
+> > > 
+> > 
+> > I originally used clk_hw_register_composite() together with
+> > devm_add_action_or_reset() because devm_clk_hw_register_composite_pdata()
+> > is not currently exported, while this driver can be built as a module.
+> > 
+> > If exporting it is acceptable, I can add a preparatory patch in this series
+> > to export it and then switch the driver to use that helper.
+> 
+> Yes, I think that exporting this makes sense.
+>
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
----
- Documentation/devicetree/bindings/mailbox/qcom,cpucp-mbox.yaml | 1 +
- 1 file changed, 1 insertion(+)
+Thanks. I'll add a preparatory patch to export the helper and update the
+driver to use it in the next version.
+ 
+> Brian
+> 
+>
 
-diff --git a/Documentation/devicetree/bindings/mailbox/qcom,cpucp-mbox.yaml b/Documentation/devicetree/bindings/mailbox/qcom,cpucp-mbox.yaml
-index 03359479d926a623c467f1b8ba857d787366d411..2185920e1b5d2154a23b67905106f35e0b71eee9 100644
---- a/Documentation/devicetree/bindings/mailbox/qcom,cpucp-mbox.yaml
-+++ b/Documentation/devicetree/bindings/mailbox/qcom,cpucp-mbox.yaml
-@@ -21,6 +21,7 @@ properties:
-               - qcom,glymur-cpucp-mbox
-               - qcom,hawi-cpucp-mbox
-               - qcom,kaanapali-cpucp-mbox
-+              - qcom,maili-cpucp-mbox
-               - qcom,nord-cpucp-mbox
-               - qcom,sm8750-cpucp-mbox
-           - const: qcom,x1e80100-cpucp-mbox
+Best regards,
+Jia Wang 
 
--- 
-2.34.1
 
