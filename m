@@ -1,105 +1,109 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6657C3A5E84
-	for <linux-clk@vger.kernel.org>; Mon, 13 Jul 2026 08:16:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A19BD376A0A
+	for <linux-clk@vger.kernel.org>; Mon, 13 Jul 2026 08:19:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783930615; cv=none; b=CqWH2vQFav9kJ+cBFv8fYZOvryXDMi7T3t8yrv/MuKtjNYLJL5bB5cm3OnwwvBo15kFxJ3hZpXZpxAytIcovmrgojQ1HexavzbaVqeEU6/6YY+dMgE/Cy5zEzImwcAlSLxKMSjX9mHeFBljSDRKdsk6cCFVm+6K2RqZzJcpq3I8=
+	t=1783930761; cv=none; b=kA0551NLIzDSzTYH2J2dIfybAetpDbiWc7BOfZ52ZyWq1xm++dzuzX90AYI2CoChEp56HRk/gaUa5Z3ryBlkLSLeiKMP6Gxae8JvwDPDcPgSDj0MW3Rn6gnKAWS0f9bZd4h3P7uTBNZIGENhuKo2Hib3PpYzLrj/gpKQZhWMhfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783930615; c=relaxed/simple;
-	bh=9+3Sww1C+uYKIwyUcbIIOb42X2ECv7xamrybHeNLRDQ=;
-	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CRWCI2HqYW3E3Rc4kAEvMy1xDU1Pqrbr6N0j4qdPGSRJLJYqNxK9emL0IJjn1JW40H6A6mMtqFMHwbi6FfkTHQBRJNMeg/58cnEPsZKqPKhJtdUmA+mTPcAQrZ52LNFpQlIFmdMM1mu54TQqlUDW9D9wqUUU16H9dTx8jRosyvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dvirtr+1; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dvirtr+1"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 071541F00A3D
-	for <linux-clk@vger.kernel.org>; Mon, 13 Jul 2026 08:16:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783930614;
-	bh=m5F0084nQCC/QhRXj90Uv+t8Z3rbI8iJLW2IgXjNKdk=;
-	h=From:In-Reply-To:References:Date:Subject:To:Cc;
-	b=Dvirtr+1Ru0jx55LjsZRFcmWDXDLldQ0A030RudZy6rYxe2N4W/UZ0UvwF4W9KDHm
-	 fJLxw6HyEQYLDhzML215WQo4PWKZdHRBuGgEYX4eViR9xDilYz/R9pvLNsmn5XDVFF
-	 OQZziqazFDqDRiohOECkNpqIGeFxKdOq36aKTQGpilxXpLluIHw2ffjwb8htvdpBsF
-	 Wxeh3/Vob3pS07O6toE0vsSOMgrNqxmCvgdVfvXFxGWq9dK+I/IeQ2BardntupAQqM
-	 p3peqmiViDs7PQgzN89DQ6ciQb33DZg0vIqAZhQ3/qVVhV1uf3nhXxy974dmT9acRT
-	 V8VpOe5XPcQlQ==
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-39c74c469e8so21735361fa.0
-        for <linux-clk@vger.kernel.org>; Mon, 13 Jul 2026 01:16:53 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RowRjasQz9HTbtMtLwuT7/f7V5DAttNDcxF1Rc27FJCJTwphRqSMVC3cul9JGYwrC8BXwDLHF/mNpE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+08GHcFJ2fjQXeYVpsy8YwvqgnUjhS+EdpcJ1LPMhsHOLXnyF
-	2bVqJDpnurM3TVDejeZCD9OFbcW4rU6nGoPrQ+m9VlxNEZaBU2YAHCmlZut9v6ls7cyxF8CSp5d
-	HknSSN4rpD80nqEHsQul7bjB62AOMPSrx/HYAFVOSxg==
-X-Received: by 2002:a2e:a9a5:0:b0:39c:6f89:c9b3 with SMTP id
- 38308e7fff4ca-39caa13ca2amr17346001fa.14.1783930612774; Mon, 13 Jul 2026
- 01:16:52 -0700 (PDT)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 13 Jul 2026 01:16:51 -0700
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 13 Jul 2026 01:16:51 -0700
-From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <CANhJrGM9ciyBfgGWBwOM3kNmcXGSq4QVM6a6Js+wtbr9ANtSJA@mail.gmail.com>
+	s=arc-20240116; t=1783930761; c=relaxed/simple;
+	bh=Psfrc3G7bXxsl7ECubdBiSlZDy7VaNL3f7/IvFNPlmU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RFz0rl8AqPaW50xR3E8CNHwsy8sLAY88NwdyHuXongFNNiPF5UwYDcmPbbtL2IOfpBVXhMGIApnlm+485CPJr/1jpXw36bzqK1CMUK3A2XuAATaTOMI3cIH+fTtMo74K+aB1kRpuclO+dFEguD5P3UmQ1tc4fvAU4tvgBhJuFXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-5bfa6766cf6so1868679e0c.3
+        for <linux-clk@vger.kernel.org>; Mon, 13 Jul 2026 01:19:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1783930759; x=1784535559;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=cK7IMBHRP2FdUnWCkfnYLPOObmzv4mtZRa495nyVkt0=;
+        b=hB6Fs556s872gzhP3qQM9Z0dfJ712QWG0TJpwULyFNHxZUKyAOLWtNm8U8ePj7Sy7P
+         GeRmkNjz1Gw1QUuQJ0svuFj5tXfBqo9IIvXR/bgmy4fF66jFtkP8Zq51bT4Jeu+ckDQy
+         5/oV8cAInO6DZc7o94eClne3L0A2mkAj9i47C0zvo9gUik92dlzvjKVfvaZkKPoiSxhZ
+         80t7dkKLjuxO8UHR8ekY4Wohi0ruteQKNpyY9/Y/O6bFDl9j0niCCOStKpiBt5/BXzzG
+         Y807ZBMVSbts77h/tAy+huyjAaTlo+rSHlgV6wTs/4rzWBitPftJpyI+MQtMwO3/o21z
+         wq5g==
+X-Forwarded-Encrypted: i=1; AHgh+RquauYHcAhicHd0H41cosfQQILQsiqbahTxa6h1zMB8/cng2na90VoeC5FWOKBH/Aga7T1h2LE6iuU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGZrff4GXKidqahBxXTK6sL5a7UN1GgOyL7x4z//AseeprOit3
+	XzrjsmVaPB96T9Wgjj5ngKASXiUrL6K7HBZOpJpMNYhkofnu1go1ptUFXUXa7oF1
+X-Gm-Gg: AfdE7clEJUCEyK8LHTzrjg1wwsAJh97x/YY4TSckbYkUVoelbgUAfMQdB2nZC91NhFj
+	M7uGj46+UrNJ/iaP9rTrRqKwX54Wlp+4dsu8nlBzv1wMuZclWpxit1D3l0SZ2MdGwqYTqdpY0r7
+	wkxAHqgPL3kgqTLu4srLDXetUM4ldY+S51i0U3vimzDuK4b3zj/my2OkI13gV4awkI6AxrWM22H
+	CUChvXWwII0s6tVEP2bfiyf621J84+2E+9eEFNjtwDqPaOtTZDqLxeMtC/REgsyWEoQXODT2AyU
+	Mq8HFJ/zy72qgOtpCyF/ZW+JgnwGOMR/TFh+GYBFOrjSt+ceWVzFp+/C92+p2efFdgyntIYKpjE
+	1W3cvxHOiyFmxKj7bT0wWFuknulC2JYYt8aggK4E13qkpRmbdr3VRb0dysmScfos5E99EDWFEqk
+	yr5o3b5tlDDAZCKBDQKm43P9Q/c774PlipYD0FuQfW6zdaU9T/MQ==
+X-Received: by 2002:a05:6122:3c56:b0:5bf:9bfa:53a0 with SMTP id 71dfb90a1353d-5bfbf0a4377mr5075023e0c.1.1783930759665;
+        Mon, 13 Jul 2026 01:19:19 -0700 (PDT)
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com. [209.85.217.45])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5bfc655c77fsm2983871e0c.15.2026.07.13.01.19.15
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Jul 2026 01:19:17 -0700 (PDT)
+Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-74019ed06aeso2350618137.3
+        for <linux-clk@vger.kernel.org>; Mon, 13 Jul 2026 01:19:15 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+Ro0zqdEZTuUUP6L1H1W0JDfjR+qwihIjnNiCQqhDd0xPns2m9/BTxXMcsBAtU6DFQQymgDDr/pwDsM=@vger.kernel.org
+X-Received: by 2002:a05:6102:f83:b0:6f0:3c5b:ce7a with SMTP id
+ ada2fe7eead31-74533d7c9f8mr5298165137.17.1783930755575; Mon, 13 Jul 2026
+ 01:19:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1782909323.git.mazziesaccount@gmail.com>
- <27fb93d0e61704d495e3adf4ed614edac1642267.1782909323.git.mazziesaccount@gmail.com>
- <CAMRc=MccLRKb8ZjChcR7WK3TqV3=waSnKX=UX9LR=5hOT=_tsg@mail.gmail.com> <CANhJrGM9ciyBfgGWBwOM3kNmcXGSq4QVM6a6Js+wtbr9ANtSJA@mail.gmail.com>
-Date: Mon, 13 Jul 2026 01:16:51 -0700
-X-Gmail-Original-Message-ID: <CAMRc=MedLP3XBqoUv_zUr5gxBVc+gqwY3ozAyXagBhc_70Kykw@mail.gmail.com>
-X-Gm-Features: AVVi8CfyQ1TAFYvyEQ1X0jI6L1cKq7pX3giTRDhFSopr0iz61Po6th7LT6u3Xr0
-Message-ID: <CAMRc=MedLP3XBqoUv_zUr5gxBVc+gqwY3ozAyXagBhc_70Kykw@mail.gmail.com>
-Subject: Re: [PATCH 7/8] gpio: bd73800: Support ROHM BD73800 PMIC GPIOs
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@linux.dev>, Lee Jones <lee@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney@redhat.com>, Linus Walleij <linusw@kernel.org>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org, 
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Bartosz Golaszewski <brgl@kernel.org>
+References: <cover.1783505142.git.geert+renesas@glider.be> <50f5804f00c55cd60604d00da1bf1f1dc912ba8d.1783505142.git.geert+renesas@glider.be>
+ <alQTnZwVRwpVTVUf@monoceros>
+In-Reply-To: <alQTnZwVRwpVTVUf@monoceros>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 13 Jul 2026 10:19:02 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWMS0ymenXwSasZ7f5aTcK30kTxq8U2W3Dhj43y1UAcTQ@mail.gmail.com>
+X-Gm-Features: AUfX_mzM4sxy25iOR9jBU-xAME53IzNcexx6a8MgetXZ4RYeb2wzLaySAOrHbao
+Message-ID: <CAMuHMdWMS0ymenXwSasZ7f5aTcK30kTxq8U2W3Dhj43y1UAcTQ@mail.gmail.com>
+Subject: Re: [PATCH v2 3/6] clk: renesas: Add R-Car X5H CPG driver
+To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, Ulf Hansson <ulfh@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Marek Vasut <marek.vasut+renesas@mailbox.org>, 
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, devicetree@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, 12 Jul 2026 17:42:17 +0200, Matti Vaittinen
-<mazziesaccount@gmail.com> said:
-> pe 3.7.2026 klo 16.11 Bartosz Golaszewski (brgl@kernel.org) kirjoitti:
->> > +
->> > +     if (!g->num_pins) {
->> > +             /*
->> > +              * The BD73800 may or may not have pins allocated for GPIO
->> > +              * depending on the OTP used at manufacturing. Free the memory
->> > +              * and go out if there is no pins as then we have nothing to do
->> > +              */
->> > +             dev_dbg(dev, "no GPIO pins\n");
->> > +             devm_kfree(dev, g);
->>
->> No need for that, because...
->>
->> > +             return 0;
->>
->> ... this will still leave a bound device in the system, I'm not sure we want
->> it? The correct error code in this case is -ENODEV.
+Hi Uwe,
+
+On Mon, 13 Jul 2026 at 00:22, Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@baylibre.com> wrote:
+> On Wed, Jul 08, 2026 at 12:15:08PM +0200, Geert Uytterhoeven wrote:
+> > +#include <linux/mod_devicetable.h>
 >
-> I am a bit uncertain. This isn't really an error. It should be very
-> much Ok to configure the support for PMICs with GPIOs to be compiled -
-> and also very much Ok to have a PMIC with no GPIOs. Returning an error
-> doesn't feel right. Furthermore, I am afraid that returning an error
-> might hurt the system start-up? Do you see some really problematic
-> consequences if we return Ok without registering the GPIOs. I'd assume
-> that wastes some bytes but I don't see other really severe
-> consequences.
+> Please don't add new users for this header file. Only use those
+> <linux/device-id/*.h> that you actually need (if any).
+>
+> Ditto for patch 4.
 
-But -ENODEV/-ENXIO error codes are meant to do exactly that - tell the driver
-core to assume this device legitimately cannot be enabled on this system. There
-will be no error splat in the kernel log and the probe will not be deferred.
+Thanks, will do after the rebase to v7.2-rc3 ;-)
 
-This really isn't the first device to need this behavior. :)
+Gr{oetje,eeting}s,
 
-Bart
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
