@@ -1,93 +1,71 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD41A444717
-	for <linux-clk@vger.kernel.org>; Tue, 14 Jul 2026 14:17:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18DB3446856
+	for <linux-clk@vger.kernel.org>; Tue, 14 Jul 2026 15:50:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784038679; cv=none; b=ZR4d0Kd3t+HjEY939Iw4qTSR+IlXVTSird9V9dcSrCcudlzPkjSMkB6EKVHodnkTzhqeYOb+/Xsz2qOeIfXc9X7UoQftpJeth5wdaZ1hIMAbVLn8o4nk04DhsIzz9NU7oxlKosZgKMgKuwuoS7yvpWbF5a4+tClejfB10a6ptTw=
+	t=1784044228; cv=none; b=BvXIoSp1mispGJqQ8AN7NY8amZo0tj1mkNYakUEUknvXYZ65OIpudpUgMXc1FcqMLX7TXzoaZ1dhAzLoDAMCZ/uWu27PAhX3VL8hsAiYiPkGwAOOXmUm8B3uI69q/q1e/SLEnJlkA0cF3qxUJ8SGZfIfXnOVdbK5CrxrRzQdE0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784038679; c=relaxed/simple;
-	bh=NmVoz6joegwYe9CdRnyLHDSMMl4NxXUK4NpBnsbb4q0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fR6xJQtAti8nzbyd8Vi7VtQTCWuDdt5Pq7b3GGcwDJEsyqjtxIlI54unk+crf4/sXlJW6Gbmbm2F05s49yCiv3QT1NPJP24ewdy3obHUZN970UAJCj+EOUNaD9d2j5FETlrcGdovaNH4UePp6aWkohueSAGoCRI974rOeBSBfns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S/P7mupU; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=BmSaWELW; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1784044228; c=relaxed/simple;
+	bh=HvolbyoBY6X05ttoi+SK7pVHAyLB/PfNOG8NaEtuyrk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=jSB2NSGqmEtp/rymkgLNh8S/gkQiswLc9hNPgRIbbSNFrOKNsOL5e1yYeL112NQVUZpZQIbb4F5Zr5nmAV0vv4wepNIBnvzGf1ktneMwVE+ebUO03TCogZqS+dCSBLkJ52P2tYb2E0ozYaSfXbSegd/TX03HAjK1iZSRR7uWFTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cT+1F5IY; arc=none smtp.client-ip=209.85.161.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S/P7mupU";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="BmSaWELW"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1784038676;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vGE7ci+ke1IPkdZhFvGpXaKEwx50Hxeiu/Fd/UCrWm4=;
-	b=S/P7mupUUHY9YnHxqPsilVDOB0gj+bYX7U+Wby4uqNZ1O8iWVfZgkjXrV8s5USRfA2s+Hy
-	7+bnr2SbzJELBNwMtYvzmMduuABLyqo3WI1mO6VKJ+4BwH4pl9MiM81lFYLuxWFhypOx4C
-	KemLKVpjeSZ1q9YET0E01P5SpzQyyGw=
-Received: from mail-oo1-f69.google.com (mail-oo1-f69.google.com
- [209.85.161.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-686-_j-LEn63NcOA9t1oUk-B9g-1; Tue, 14 Jul 2026 10:17:54 -0400
-X-MC-Unique: _j-LEn63NcOA9t1oUk-B9g-1
-X-Mimecast-MFC-AGG-ID: _j-LEn63NcOA9t1oUk-B9g_1784038674
-Received: by mail-oo1-f69.google.com with SMTP id 006d021491bc7-6a13e51ee7fso1647167eaf.2
-        for <linux-clk@vger.kernel.org>; Tue, 14 Jul 2026 07:17:54 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cT+1F5IY"
+Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-6a376ad8fc0so1507117eaf.0
+        for <linux-clk@vger.kernel.org>; Tue, 14 Jul 2026 08:50:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1784038673; x=1784643473; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:content-type
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=vGE7ci+ke1IPkdZhFvGpXaKEwx50Hxeiu/Fd/UCrWm4=;
-        b=BmSaWELWesYNnahjIdEjtnLKxtDrhdOBcYMR1hX39ggMnu0M3MO0uBUoI9f1pvLrnr
-         ge+CNVAYLrTDKJaX+F2oRDulVf4e9MgNpx+9wiNqpciJkGLf8LbFaY1RcL7pzYzQB3QD
-         RxxtXHTCUimV+psGn72cBAI36edjWl3NRgeMOLBo4nbSk+01woFOBXMUALqqrqOY/7nR
-         pJgcNzIvkfdy+EsrObLxwt6XQLAvZS0dreG0q+vWcaCsIrlveVZsCggRoWb4jGYiaqYc
-         +bXCraMtR88bXhRnIzQ8aHOy9JAwgVtEuSwoqsHo5jaYku22dN9WjBWD5Lemqnlf/O37
-         W41g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784038673; x=1784643473;
-        h=user-agent:in-reply-to:content-disposition:content-type
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+        d=gmail.com; s=20251104; t=1784044226; x=1784649026; darn=vger.kernel.org;
+        h=content-disposition:content-type:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=vGE7ci+ke1IPkdZhFvGpXaKEwx50Hxeiu/Fd/UCrWm4=;
-        b=gKpt4+Lefzlt2Q1XjemKnoZLo/EtTIJk/iH1sL37m6aFMOe/9JT28pC7Pic+KsB92M
-         w9b8sPRCyaXwqKUuABK07dfgU/nNHM46wYMJZblME3ya107490tvJqyZy+VZxgeNFGA8
-         O/WdesvI0xSJaEF+7vc6WtYcSpXyc8cXxhvn0Nx36qI/TIa/gRqwk/PeyLqkqUp9KlSe
-         eklcleA7bZJIsPEGMAkfJytGji7o/MAiLNAFRfORfsGUVscD/eF2mds2Skq6Vm0xlAKv
-         0+gh9NvS09REIaERlM87p/h1fz/TxDs/yo6bTauMhAK5qa6jzIjeJiw9fRB4Qsg4bo3L
-         jx6A==
-X-Forwarded-Encrypted: i=1; AFNElJ9/jsSjWtx3NU3C12XYD5WwTNgrCVrfHG7DsnZS+NzsDsQHoXj14laIDec1cwZh7ePab2lBdWZz1VI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzX1Y/wy0aISaWCwpIU8aK8aNICyLDF3fyvCvRr/zYICmag89Ti
-	LA44BxWyZgnmQo3kNYCT6nfyNwMeJ9T1ICZQg6x2NbrGX8hmYLoDKO3IqQn47Ckr3LxURBCRLV1
-	1pL7vEs/s5TyU1lSJR9+afC0C7cQka6LiDnQFyuEgQVZSAHHy9Dy6W8zqvUmtzQ==
-X-Gm-Gg: AfdE7cl4Tt4yJM0JRZypFl1IQBkQKCr7IycIqTEiC2r7mOh3ToH6BQiGVhIztOOTFWM
-	B/DefnFXWoNKNC7XG1unpG2NroXFP0Av0OiXeXVZ+TSHpijmUpKgFo9jxp+Kb2gb5uEF0Lfj58S
-	lznxy0BJ8lsqHL+nCMYk+6Cn7t2PXgi4ahMn4FK7mh03BsH2XygOOpthX/o7B12jiFeSDcqAd0y
-	2kKADQXECSUFdyc0+wE9afVTPh9WJLNC9eYzxt9gqU4feaRp3QQbI87TCRn7KFZxx6oFHsvcEca
-	u9EtNvRIaCCmBfchPo3Wcyet+c0eVcdYW9jx3e1MijOKoBSRbghU3J5nUiTQ6sCDLNPd/6R6r0g
-	dF2w/2JD7
-X-Received: by 2002:a4a:e84b:0:b0:6a0:b429:443e with SMTP id 006d021491bc7-6a39a6737edmr8060434eaf.23.1784038673616;
-        Tue, 14 Jul 2026 07:17:53 -0700 (PDT)
-X-Received: by 2002:a4a:e84b:0:b0:6a0:b429:443e with SMTP id 006d021491bc7-6a39a6737edmr8060419eaf.23.1784038673181;
-        Tue, 14 Jul 2026 07:17:53 -0700 (PDT)
-Received: from redhat.com ([2600:382:8527:6e7:f2a6:402c:94ff:1948])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-6a36a8cb24dsm13607161eaf.14.2026.07.14.07.17.50
+        bh=64SzPGE2xoqq8LCPMxKpT8c3wPEFcVPzYJmlW4gXGCY=;
+        b=cT+1F5IYdnYo9EGyR2ciJtKcxp2JWNXuUj86L5DlnhDd5DOvLIx2xYDmtPvOOraRkq
+         woIbaQtXqYXyHhxxdC+UzJujeungombnhcBo4eIibhNYFog/vxRe+damcEyqO5c/YbuG
+         w40YXLX3xzzWBToQmGXp2O5OfR3Pa7gK00xtkXHUjKTtjg7dxhSWNlolITwa9f3qxj9g
+         HEnS+kYE1992A98vpjAZ++IZCaHGdp3J+5wsCxghLvNMcMwQzf7ePN7LnIs3ggJxQZje
+         K5GzX4dVEXH81sSnj7qHN4TGPnav9w2GHw8cjtzPaohBuUbmI4c58SDpTh18+b5Ly18f
+         gSeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784044226; x=1784649026;
+        h=content-disposition:content-type:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=64SzPGE2xoqq8LCPMxKpT8c3wPEFcVPzYJmlW4gXGCY=;
+        b=YaHhajuYDG3gVZuiyXFSCJq+/kSmoYKmvZQMYg6qimFZU1q0R5gu2FJXxXotGifRZS
+         mEctigbcHFk0cIxKe/OrZtFstUXJnxGlKb+1wHNT5MTvP2CAVft/vhl9FMGb4LYeUcNl
+         hH6paLVm018bzM6Kigu+1fnR0D/iKaT5xWhzDEaa0ZBMA9/7Hco5P6GNRyrEo+03S5+J
+         2YgjqgxmOd4Hes0IrbRdUhoVzluVZIgzArEcrUMzQLunjjsrPTQ7Sb6rnhYohxHQZ/Ko
+         nAiH9B0u1/nMVe3bWiD9M4/5sBv+zJbQl+C6z3kLfgRvO3S6zrBZ3mlh/cyDxrmfjmvM
+         8LwA==
+X-Gm-Message-State: AOJu0YxwypGJKNW/hy2EFDQe+l/WqjsYQzY0uRVtCBzKUhUCucFL7yCh
+	9B2HjjbegwfyRmnQfZcrTD76FnTMvAtBkGgYgGWH3UlTv/2tqLMTHVd5
+X-Gm-Gg: AfdE7cn/U3P8QZ52AzOuXNAl5eXx8LQIO05u5kmH/emTHd6kLvGnmZmj2fKtcEHiFli
+	CnkQUVu1Lvdv9UhD5T0OIaHyXbJXFE+nhxhJgk+DWYMiIf0U0MaVjKmxtZ4V5liEae8Ts6bQ1TQ
+	Ow30wzeMN2AsXI8zstYwfNMV2BcMi3q4MONQnbsqJsnZUQYzjvMAREIOyN7o5ozmV9DqPLbyhmO
+	3/Qd4v1aGKTevMrnJH1cBOCJ1TvPVl04ezzfIxYnJJpR26+ruSBmOBICIxofgpXXM4YHXJMNGEy
+	OL7sEc5VrE3cIASjm9i6cvjtTsNoXyZMgu5tSeZF0cpIhiFi3A2u/fyR895Wke08DD53T/C/bAd
+	0lUm3kVRI/zoshYv7eUN4fyk5Uw0TVgwvKvnWE74AhfCHUd1qepbhOTGL5rGh9vykqcaBdFXxXz
+	88+yYO
+X-Received: by 2002:a05:6820:60a:b0:69e:41bf:fdcd with SMTP id 006d021491bc7-6a39a6e47efmr8043091eaf.38.1784044225906;
+        Tue, 14 Jul 2026 08:50:25 -0700 (PDT)
+Received: from localhost ([74.80.182.78])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-4546f12a6casm9146457fac.8.2026.07.14.08.50.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jul 2026 07:17:51 -0700 (PDT)
-Date: Tue, 14 Jul 2026 10:17:49 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: kdamaski <kostas.damaskinakis@gmail.com>
-Cc: Yifeng Huang <huangyifeng@eswincomputing.com>,
-	Xuyang Dong <dongxuyang@eswincomputing.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: eswin: Zero-initialize stack-allocated clk_init_data
-Message-ID: <alZFDWYkt_ydsKL5@redhat.com>
-References: <20260710141520.285132-1-kostas.damaskinakis@gmail.com>
+        Tue, 14 Jul 2026 08:50:24 -0700 (PDT)
+Date: Tue, 14 Jul 2026 18:50:18 +0300
+From: Dan Carpenter <error27@gmail.com>
+To: Russell King <linux@armlinux.org.uk>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
+Subject: [PATCH] clk: document that clk_get_parent() returns NULL
+Message-ID: <alZaumcBpsRS9tyS@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -96,38 +74,34 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260710141520.285132-1-kostas.damaskinakis@gmail.com>
-User-Agent: Mutt/2.4.0 (2026-06-19)
+X-Mailer: git-send-email haha only kidding
 
-On Fri, Jul 10, 2026 at 05:15:20PM +0300, kdamaski wrote:
-> From: Kostas Damaskinakis <kostas.damaskinakis@gmail.com>
-> 
-> eswin_clk_register_pll() and eswin_register_clkdiv() declare a struct
-> clk_init_data on the stack and only initialize some of its fields
-> (parent_data respectively parent_hws). clk_core_populate_parent_map()
-> checks parent_names first and parent_data second before falling back
-> to parent_hws, so leftover stack garbage in the uninitialized fields
-> hijacks parent resolution and the clk core dereferences a bogus
-> pointer:
-> 
->   Unable to handle kernel NULL pointer dereference at virtual address 000000000000000c
->   Oops [#1]
->   epc : __clk_register+0x31a/0x7f0
->   [<ffffffff805dc774>] __clk_register+0x31a/0x7f0
->   [<ffffffff805dcd76>] devm_clk_hw_register+0x2a/0x94
->   [<ffffffff805e319a>] eswin_register_clkdiv+0x80/0xd0
->   [<ffffffff805e34a0>] eswin_clk_register_clks+0x162/0x1a0
->   [<ffffffff805e3736>] eic7700_clk_probe+0x146/0x180
->   [<ffffffff8065d23c>] platform_probe+0x3c/0x7a
-> 
-> Observed on EIC7700 hardware (with the driver backported to a 6.17
-> tree); whether the bug triggers depends entirely on what the stack
-> happens to contain when the registration helpers run.
-> 
-> Zero-initialize both structures.
-> 
-> Fixes: cd44f127c1d4 ("clk: eswin: Add eic7700 clock driver")
-> Signed-off-by: Kostas Damaskinakis <kostas.damaskinakis@gmail.com>
+The documentation in the clk.h file says that clk_get_parent() returns
+error pointers but it doesn't.  It's also not consistent with the
+comments next to the clk_get_parent() implementation which say that
+it returns NULL when the clk is NULL.  Update the comments so they
+are consistent and accurate and say that it returns NULL.
 
-Reviewed-by: Brian Masney <bmasney@redhat.com>
+Signed-off-by: Dan Carpenter <error27@gmail.com>
+---
+ include/linux/clk.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index 998ba3f261da..aa93ce1fbf37 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -951,8 +951,8 @@ int clk_set_parent(struct clk *clk, struct clk *parent);
+  * clk_get_parent - get the parent clock source for this clock
+  * @clk: clock source
+  *
+- * Returns struct clk corresponding to parent clock source, or
+- * valid IS_ERR() condition containing errno.
++ * Returns struct clk corresponding to parent clock source, or NULL
++ * if clk is NULL.
+  */
+ struct clk *clk_get_parent(struct clk *clk);
+ 
+-- 
+2.53.0
 
