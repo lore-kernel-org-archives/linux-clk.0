@@ -1,107 +1,189 @@
-Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18DB3446856
-	for <linux-clk@vger.kernel.org>; Tue, 14 Jul 2026 15:50:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784044228; cv=none; b=BvXIoSp1mispGJqQ8AN7NY8amZo0tj1mkNYakUEUknvXYZ65OIpudpUgMXc1FcqMLX7TXzoaZ1dhAzLoDAMCZ/uWu27PAhX3VL8hsAiYiPkGwAOOXmUm8B3uI69q/q1e/SLEnJlkA0cF3qxUJ8SGZfIfXnOVdbK5CrxrRzQdE0I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784044228; c=relaxed/simple;
-	bh=HvolbyoBY6X05ttoi+SK7pVHAyLB/PfNOG8NaEtuyrk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=jSB2NSGqmEtp/rymkgLNh8S/gkQiswLc9hNPgRIbbSNFrOKNsOL5e1yYeL112NQVUZpZQIbb4F5Zr5nmAV0vv4wepNIBnvzGf1ktneMwVE+ebUO03TCogZqS+dCSBLkJ52P2tYb2E0ozYaSfXbSegd/TX03HAjK1iZSRR7uWFTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cT+1F5IY; arc=none smtp.client-ip=209.85.161.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 472DD2C375A
+	for <linux-clk@vger.kernel.org>; Tue, 14 Jul 2026 16:51:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1784047872; cv=pass; b=fhJ36EBJzqw9UpOGThToE1RwiType+Tm58t80Ckl4fORAy6P7XYhrAbMOzm7EZIyjRQCa/Ih772W78IhLoaf1Y/b3OMOw6uBGS7r743EREdhQ8FABaY4aPMbau1Ml81BSbPary8y4Reg7SkwQ5jiokO/1LUHgD5DwN4oj/4a61s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1784047872; c=relaxed/simple;
+	bh=UKuXmnxAZy4X4Zfjms3mGb3B8NsNDeeH3MZJWfiGhEs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XodvooVKeTyxHG/054xKPcsw4titgtVHBJg3Z9alnU1G8lWV/xr+JuDBDi/jly0h7lAzFnPCU469sG8Iiw/oLjjFHo0Zh2+w7I37E1ZTPQ4n8vOVDBdKkG0reCWDz+geBTfo+eo2MDvSh4KTCqmFh+u4EYZeaoJ30zo0TtXgfV0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=sUB+07b9; arc=pass smtp.client-ip=209.85.221.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cT+1F5IY"
-Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-6a376ad8fc0so1507117eaf.0
-        for <linux-clk@vger.kernel.org>; Tue, 14 Jul 2026 08:50:26 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sUB+07b9"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-4798bea72f9so2476958f8f.1
+        for <linux-clk@vger.kernel.org>; Tue, 14 Jul 2026 09:51:11 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1784047869; cv=none;
+        d=google.com; s=arc-20260327;
+        b=sh5jfki9VBerELmHFA8k6tY8OwmxQxCMh2kXEKtrcMtYx1s2hnTxMRFXqea67AJg4r
+         BiiYPHU8ckqN7QpDKC/esXryDL4eHvxP+sf4WIRtpLEM8qbOKnIpGcSlXsmZ7oKeg5N4
+         rskmzHj3wJMQ8oy9mA4sF88ig6EOxav9GcUv+3+3EEqHFdIviNzi6LBW3lO30f6aRsop
+         YEQIiCzE6O+v8zwJAy07rWrXI8bajvLddKBPWoK+gimhC+7IVa/PuYV9YebAD0iKeFTK
+         4jgwV14nr45kzmQNm1tjTKdxQNMUIr2X4WnuvC6uo/0woG4bZmbxKmAiEj4C7UseGcXk
+         sF+A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=8BlgmiFQrHiuTd+MM0CeF9cu80lrra6/Pp38WzQSYbE=;
+        fh=cWe1oY32RrtKi+Wu5IuPQCdqv+aRghDHkgh6xC0mofE=;
+        b=gDBcuPSxQq7mKrJPL/szm1bRfOed+2Wpf6FnuTexrTk8sLuzDaDCGfLSDcyT+21iMq
+         Istgol/U+LQrb/Bry0ZSrfqQeLJ5kqxL7DyQP3E9U//DncVB2nWmaELAF6IKH5k6Yo1z
+         dfIOXaP3yA3hX2JUty2Wo/jpaxbdJrFL1EtycXfdyLIbXHjIxSJdEYIFrTgLyE9argpE
+         Be5bQbmMxBl9K7zTk677ayBJvZSeSnkcqDXkSTcLp+SdZBbHsbxKrqRF3Mqyu0jub/cS
+         uV7UgHeCr3rL2KaHLxOkG7Yl7JZ1FegNR7AhlD+vtupqn3kJpk/oIHb7JACh958V25qU
+         hxGg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784044226; x=1784649026; darn=vger.kernel.org;
-        h=content-disposition:content-type:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=64SzPGE2xoqq8LCPMxKpT8c3wPEFcVPzYJmlW4gXGCY=;
-        b=cT+1F5IYdnYo9EGyR2ciJtKcxp2JWNXuUj86L5DlnhDd5DOvLIx2xYDmtPvOOraRkq
-         woIbaQtXqYXyHhxxdC+UzJujeungombnhcBo4eIibhNYFog/vxRe+damcEyqO5c/YbuG
-         w40YXLX3xzzWBToQmGXp2O5OfR3Pa7gK00xtkXHUjKTtjg7dxhSWNlolITwa9f3qxj9g
-         HEnS+kYE1992A98vpjAZ++IZCaHGdp3J+5wsCxghLvNMcMwQzf7ePN7LnIs3ggJxQZje
-         K5GzX4dVEXH81sSnj7qHN4TGPnav9w2GHw8cjtzPaohBuUbmI4c58SDpTh18+b5Ly18f
-         gSeg==
+        d=gmail.com; s=20251104; t=1784047869; x=1784652669; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=8BlgmiFQrHiuTd+MM0CeF9cu80lrra6/Pp38WzQSYbE=;
+        b=sUB+07b97KGV3ebDMkf0d3LU/JbugGI5wAiuag6v2+UK398tluefGUR03Qt2NGVOt3
+         poU3WOZaYSn4pp7yER5a/Tzddw/uxLuMGI+r8BlwLUNOMQpmkEYJ5fOQNP7Rp0zMyeDI
+         g4deAY34diw6dPfpcjDMqPsuLXhuI+1fX4H8oicc3qt5mN0Dw6/KHBTch5etD6Dr3LpF
+         Vo2XBs61rXFmCWC82PizuiU7IC0sO4juLej9ZePmzKnC3CXA/egtX60IONCorzuqrqx9
+         t+T+fSoyeH3ErkF+ezlR0c7Tqpx+FocK+eTnhmz0ZTOTUYKAOcZUUqLhbFWff6hiTyhq
+         fFhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784044226; x=1784649026;
-        h=content-disposition:content-type:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=64SzPGE2xoqq8LCPMxKpT8c3wPEFcVPzYJmlW4gXGCY=;
-        b=YaHhajuYDG3gVZuiyXFSCJq+/kSmoYKmvZQMYg6qimFZU1q0R5gu2FJXxXotGifRZS
-         mEctigbcHFk0cIxKe/OrZtFstUXJnxGlKb+1wHNT5MTvP2CAVft/vhl9FMGb4LYeUcNl
-         hH6paLVm018bzM6Kigu+1fnR0D/iKaT5xWhzDEaa0ZBMA9/7Hco5P6GNRyrEo+03S5+J
-         2YgjqgxmOd4Hes0IrbRdUhoVzluVZIgzArEcrUMzQLunjjsrPTQ7Sb6rnhYohxHQZ/Ko
-         nAiH9B0u1/nMVe3bWiD9M4/5sBv+zJbQl+C6z3kLfgRvO3S6zrBZ3mlh/cyDxrmfjmvM
-         8LwA==
-X-Gm-Message-State: AOJu0YxwypGJKNW/hy2EFDQe+l/WqjsYQzY0uRVtCBzKUhUCucFL7yCh
-	9B2HjjbegwfyRmnQfZcrTD76FnTMvAtBkGgYgGWH3UlTv/2tqLMTHVd5
-X-Gm-Gg: AfdE7cn/U3P8QZ52AzOuXNAl5eXx8LQIO05u5kmH/emTHd6kLvGnmZmj2fKtcEHiFli
-	CnkQUVu1Lvdv9UhD5T0OIaHyXbJXFE+nhxhJgk+DWYMiIf0U0MaVjKmxtZ4V5liEae8Ts6bQ1TQ
-	Ow30wzeMN2AsXI8zstYwfNMV2BcMi3q4MONQnbsqJsnZUQYzjvMAREIOyN7o5ozmV9DqPLbyhmO
-	3/Qd4v1aGKTevMrnJH1cBOCJ1TvPVl04ezzfIxYnJJpR26+ruSBmOBICIxofgpXXM4YHXJMNGEy
-	OL7sEc5VrE3cIASjm9i6cvjtTsNoXyZMgu5tSeZF0cpIhiFi3A2u/fyR895Wke08DD53T/C/bAd
-	0lUm3kVRI/zoshYv7eUN4fyk5Uw0TVgwvKvnWE74AhfCHUd1qepbhOTGL5rGh9vykqcaBdFXxXz
-	88+yYO
-X-Received: by 2002:a05:6820:60a:b0:69e:41bf:fdcd with SMTP id 006d021491bc7-6a39a6e47efmr8043091eaf.38.1784044225906;
-        Tue, 14 Jul 2026 08:50:25 -0700 (PDT)
-Received: from localhost ([74.80.182.78])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-4546f12a6casm9146457fac.8.2026.07.14.08.50.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jul 2026 08:50:24 -0700 (PDT)
-Date: Tue, 14 Jul 2026 18:50:18 +0300
-From: Dan Carpenter <error27@gmail.com>
-To: Russell King <linux@armlinux.org.uk>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
-Subject: [PATCH] clk: document that clk_get_parent() returns NULL
-Message-ID: <alZaumcBpsRS9tyS@stanley.mountain>
+        d=1e100.net; s=20251104; t=1784047869; x=1784652669;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=8BlgmiFQrHiuTd+MM0CeF9cu80lrra6/Pp38WzQSYbE=;
+        b=EiQZ9IH4kIe6/SU0mvrkgC1OeBS1vQrK2oiLi2lxBpE6zenn+/QGw1+d6v9fJ1hV6t
+         W2vJJJrKX9U3C0lN2+x7u89S12FLMfFj+I+zf7uO6E9Thp8HDqkXdxDwVORYuWowr39y
+         82x/gQl8lMfwV2Mz3yqejS3w9TfQf9QVcxW0ab8BRvQ25N3IgrThTfa0Kuwwc9vg3elz
+         UUCNT4sA9tQdfhqgONnkodETMGEtTqW3HnAjZIE2lDn9qauuvQXeV0H7iTq+WO4SPZK1
+         x3vb84kk4gN6btevcaDpdnPUOWDrN4UWiafeYgqhs5Cu9bH3zdGYBvgsiJac/FSw9Zu8
+         lsLg==
+X-Forwarded-Encrypted: i=1; AHgh+RqaIxCc8MATaWwS50Rq3bfL66fuOi04VcNpFLJgzT3cNUh9IOl1kEPPCTJoez9dJiyTsFQAcJlkHbM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZA5oz68JbPUe4giIhIPDYLU/DJdYQ15MDYAbATeWUMVz4U2ty
+	tRGkEaiAsxDBQPlzBtHb7AaxUvo+yxVn5eZ2Si+efTJnTYAtpY3OZUu4Mbxo352G59dr7/tw3FL
+	IA12e3NjRKEFnaIBv98XaClARwOGKGgE=
+X-Gm-Gg: AfdE7cnJRT9cNM/s6S+VcDEf5lpq61xdghbrx7CyHnHegLQup1vVlm2fFhSulUg07ff
+	9X5KtfBUxIn0VTqaE/ED9t6x64Vg7fpdYtkNZoAn0JfQM98x3hHpZrVpEC8Z0+LCxILpjhYtkN6
+	0iGzmZkvqR3CaLPjHtKbsG9QdT5PcgqRTl0Pcwo8I/tDBFu2UrAlnmXnDZiYhfsj8lh++/QfFLG
+	G8v3dWo4orYCHJ29/L24V7j4DIqhzN4hM7GrPhmdqCuwC36CqSzqntBqlmIXgiXC2Wwk6x4nIGX
+	33+np4Y/+WpixjP3mhDxrvNIcJHxkx2E9ojZ6GfSmWUyia4O0zt6VpGqvZnWzU3t53V1nA==
+X-Received: by 2002:a05:6000:46c2:b0:47f:4c49:4318 with SMTP id
+ ffacd0b85a97d-47f4c4944a5mr1473055f8f.49.1784047869366; Tue, 14 Jul 2026
+ 09:51:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+References: <20260702123112.161160-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CAMuHMdUhiBAcJ6P7j0ZxL+0AbVqz88PMo7YX9UiYOK8jM61D1Q@mail.gmail.com> <CA+V-a8uUxfDx2Xnb3uFg2=R+eYnzVmAv4PoEYeXGwAbANxG5Bg@mail.gmail.com>
+In-Reply-To: <CA+V-a8uUxfDx2Xnb3uFg2=R+eYnzVmAv4PoEYeXGwAbANxG5Bg@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Tue, 14 Jul 2026 17:50:42 +0100
+X-Gm-Features: AUfX_mwxd6v5gFWCuMlhAPL7PON29wGJJEnO7K61SQDYcZ5CBYFFPz5abzgomRI
+Message-ID: <CA+V-a8utJuuwVNy8o2zM5jHf9qXx36S79uKGtYr5O=sASh_wpg@mail.gmail.com>
+Subject: Re: [PATCH RFC v2 0/9] Add System Controller support for RZ/T2H and
+ RZ/N2H SoCs
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, 
+	Magnus Damm <magnus.damm@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, 
+	Prabhakar <prabhakar.csengg+renesas@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The documentation in the clk.h file says that clk_get_parent() returns
-error pointers but it doesn't.  It's also not consistent with the
-comments next to the clk_get_parent() implementation which say that
-it returns NULL when the clk is NULL.  Update the comments so they
-are consistent and accurate and say that it returns NULL.
+Hi Geert,
 
-Signed-off-by: Dan Carpenter <error27@gmail.com>
----
- include/linux/clk.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On Tue, Jul 14, 2026 at 2:27=E2=80=AFPM Lad, Prabhakar
+<prabhakar.csengg@gmail.com> wrote:
+>
+> Hi Geert,
+>
+> Thank you for the review.
+>
+> On Mon, Jul 13, 2026 at 5:00=E2=80=AFPM Geert Uytterhoeven <geert@linux-m=
+68k.org> wrote:
+> >
+> > Hi Prabhakar,
+> >
+> > On Thu, 2 Jul 2026 at 14:31, Prabhakar <prabhakar.csengg@gmail.com> wro=
+te:
+> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > This series adds support for the System Controller (SYSC) blocks foun=
+d on
+> > > the Renesas RZ/T2H and RZ/N2H SoCs. These blocks handle critical low-=
+power
+> > > management and access control functions.
+> > >
+> > > Hardware Architecture & Dependency Challenges:
+> > > ----------------------------------------------
+> > > The SYSC in these SoCs is a multi-functional block responsible for:
+> > >     - Clock & Reset Control
+> > >     - Low Power Management
+> > >     - Clock Monitor (CLMA)
+> > >     - Access Control
+> > >
+> > > A key architectural detail is that these SYSC blocks are physically l=
+ocated
+> > > within the CPG/MSSR (Clock Pulse Generator / Module Standby Software =
+Reset)
+> > > address space. While the CPG/MSSR driver is already implemented and
+> > > functional for these SoCs, the integration of SYSC adds a layer of
+> > > complexity due to a cyclic dependency:
+> > >     - SYSC requires CPG: The system controller needs a clock to opera=
+te.
+> > >     - CPG requires SYSC: Access control registers within the SYSC con=
+tain
+> > >       bits necessary to control the PLLs managed by the CPG.
+> > >
+> > > If implemented as a completely separate top-level system controller n=
+ode, we
+> > > would face a cyclic dependency between the CPG and SYSC drivers durin=
+g the
+> > > boot process.
+> > >
+> > > Proposed Implementation
+> > > ----------------------------
+> > > To resolve this, the SYSC blocks are represented as child nodes of th=
+e
+> > > CPG/MSSR controller in the device tree. The SYSC regmap is registered
+> > > directly against the CPG device node. This hierarchy correctly models=
+ the
+> > > hardware address space while allowing the drivers to share resources
+> > > without deadlock.
+> > >
+> > > I am sending this as an RFC specifically to get feedback on the
+> > > implementation of the SYSC as child nodes of the CPG to resolve the
+> > > dependency cycle.
+> >
+> > Personally, I am not a big fan of subnodes.  I assume you are using
+> > subnodes because you can register only a single regmap per syscon node?
+> Yes so that the consumers don't have to specify it by indexing.
+>
+> > Would it be possible to just extend the existing clock-controller
+> > node with two more reg entries, and expose them through a single
+> > combined regmap?
+> >
+> That should be possible. Or would you prefer just to extend the sizes
+> and create a single regmap for it?
+>
+>                cpg: clock-controller@80280000 {
+I wonder wether we rename this to `sysc: system-controller` but the
+compatiable string has "*cpg-mssr" postfix.
 
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index 998ba3f261da..aa93ce1fbf37 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -951,8 +951,8 @@ int clk_set_parent(struct clk *clk, struct clk *parent);
-  * clk_get_parent - get the parent clock source for this clock
-  * @clk: clock source
-  *
-- * Returns struct clk corresponding to parent clock source, or
-- * valid IS_ERR() condition containing errno.
-+ * Returns struct clk corresponding to parent clock source, or NULL
-+ * if clk is NULL.
-  */
- struct clk *clk_get_parent(struct clk *clk);
- 
--- 
-2.53.0
-
+Cheers,
+Prabhakar
