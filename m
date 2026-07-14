@@ -1,88 +1,88 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED2C42E889C
-	for <linux-clk@vger.kernel.org>; Tue, 14 Jul 2026 04:59:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 920782DD5F6
+	for <linux-clk@vger.kernel.org>; Tue, 14 Jul 2026 04:59:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784005195; cv=none; b=CCTZIJfrK2Dg0rby/SrwKeoyyfKUxXcKs/3QXlCD+5+MC5j53oB0RLo4YtvypRmhlva1uX3VuV2AGUXj9ZFwDbfNiTC/aoMI47wrUZSuL1htODqO+QUwEukRgRaZx9GiQo9FfwTc9N/no1zimEEohT/Pk9AWs6pr2cVjVQ8cutM=
+	t=1784005196; cv=none; b=dzIFOV8cc+I6rZNl0+J/M7dNMM3RJhUBnsFLAngivWI7CoNObUvuZAS0Ajz5XeAFYDfdJdv5uqyTmrRzy8DcY1AqbPwerjq2ekKkXO5ISa200jlci4KHCW4YE6xe9JtlTg/zWEwUrX8huNO4RS5XN4bNoLGKAcwVRWxqSY3qmtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784005195; c=relaxed/simple;
-	bh=LKAINk67qcWpTEFbooGQl2hvLx8wgZLI8xl/8ZLIRNI=;
+	s=arc-20240116; t=1784005196; c=relaxed/simple;
+	bh=rWbtb1W+stySBwVTYmTH8aWgwOvBKUz0d7zkndsOrdM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=h9apWvuJynzyTruo0w3CIS37xVcLP7Rt9v2ViZ+OKhdEFAikwKiVTFFq6vUsfRZNua75+uxSQKzDck9gHui6kJFylrjssmDx5aguDK0W6I2128pjSPhEBIgWvCKOc1w+ib69lv/0KAOzGB7t+UcZyM1WlnMAEqQypj6Ipz5EVPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=p0A2q4IN; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=iD+JJyop; arc=none smtp.client-ip=205.220.180.131
+	 In-Reply-To:To:Cc; b=HqiEuD2jgItwWGQ7dCnr72nA2vOwTTd5oD+cWDgSw6ouqsFcbAWG0GsmOmWVEywLJ2+ORB0FPxfR7JAvHvylBHl7lltcQoyslY+K9FZMjp/YyZU6wU2eDjTUHA3ibRr021+Ts6+5Suo+Fubooxuqig3hGilqriYYEb3HR2P/Bh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=g1y6JH1T; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=CWLgc8bV; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="p0A2q4IN";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="iD+JJyop"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66E38Kbx3498913
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="g1y6JH1T";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="CWLgc8bV"
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66E38Phs3303131
 	for <linux-clk@vger.kernel.org>; Tue, 14 Jul 2026 04:59:53 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	x0BcJHYQFSbu4RvEjMIgNWDsUGzhhHcMUNQgh7uDdv8=; b=p0A2q4INMw2XRv//
-	SKRJmuXlEGNNee6OhATXDvS3l6sVIUMp//K6fSYBVGQRePtII9AjRZPWql/RYYR0
-	IOZzUiW6N/RymmtdYhD+l8c4zX/I2qBRwn3/0Rki7G8PjV1nCRuJDEiCdCiY+gnD
-	kTUjJ2h9cyWfxElbaV386QdVNWUqqDk0tJilroZSOtyWXf2Ooq4XSYrROJz4goyX
-	iBOdqGBEGcczDEGYvdNdNmsIs4XPAlyB5KRErWgvN1fcAef9fHK8RXW4WS82NgPM
-	Iuk9YY7LRLkXsiYyEKNuIA0/odioVwEOvvADwyWs3kIp3F+m4TaencXnz8vtrcFg
-	pDC66g==
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fcwda3vw0-1
+	YtW4Ak09kXgiLEZNs7J/4jrifXCWd9zql1exxl35Rg8=; b=g1y6JH1T6DfjzNF6
+	BaerBrMsvlAy9iKUNiWhxq1pTw21/asu3EKKt6xD6zkOXK00gmn+Bj2FpiGbVNGT
+	xUadMmgzdCSf/RayBktt7iLrdPVoMCaImbRO6HFFwe9JYyNX9Cv8HWpWpyb4ZpXy
+	hHebozuIijuySV20hRiuSCCo0N4YY/ILuEXMOplRbG9VlBXmB94xnY4h6SKkPrEO
+	xBhyzK7i90MKeva8FaOY0NTQ4wABXfTkWJnB/Pkw4gcZnoAonjm5ZTYu5Cs4lcyb
+	JJehPMvmjh6yLO7pf1AqUKRyHsidlEsS+wNdsoN/oYnFMUPpOdbX0KNaO6qUvMcl
+	FPAXKg==
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fd44p1yra-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Tue, 14 Jul 2026 04:59:52 +0000 (GMT)
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-ca124bf0189so422259a12.0
-        for <linux-clk@vger.kernel.org>; Mon, 13 Jul 2026 21:59:52 -0700 (PDT)
+	for <linux-clk@vger.kernel.org>; Tue, 14 Jul 2026 04:59:53 +0000 (GMT)
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-38de842a1a9so2623054a91.3
+        for <linux-clk@vger.kernel.org>; Mon, 13 Jul 2026 21:59:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1784005192; x=1784609992; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1784005193; x=1784609993; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=x0BcJHYQFSbu4RvEjMIgNWDsUGzhhHcMUNQgh7uDdv8=;
-        b=iD+JJyopmAhmrBugCwgI1MMe7Ef9G12jq64ePnx6rO4lWaCp8JF4Tn00ZN1cue37g4
-         tDTZftUN7ZlrEVD2zpk0gzf89PryF5S+mkFhrxLFuzphZiCW0US7ifqxlTgdt64juz5W
-         Q0b21Yc9ZO/iqjTndJcUcrqDzlxRNtZBwP0J1lZGXJ1579IVF2PH/nzPVu9QWzRPuFli
-         EQ5Vb5DNxpIJBDJ7K7FXPzw020hyuqk7noI//ieZ1tfdb3Tk7s7/mAZixA/m+fA2eLoU
-         nYt5Yb6N8fqkL7xjcoMfVjzjT6jipJqIlFn+crI+1sFcA3KYLTF3iyPEYXtNrlsqQl3Q
-         j/QQ==
+        bh=YtW4Ak09kXgiLEZNs7J/4jrifXCWd9zql1exxl35Rg8=;
+        b=CWLgc8bV0DXk+CwV2TsVy4TyUq/geqeg7Vz1BvW7Ppn9jrIQCG9uVIFIv7evHI1peu
+         VR2x3edpFOrKLtHstVc5dpvz/2zRGVgH78kopdDhRTSIdWMaV4W6umYn/9PLx0NKdQmj
+         BXn5IYZg/mpVVzXwMPHzNDXxHGCAga/YL3FEfWyd0s7vc8zJIWqBm0p78hmwLeeoUg+2
+         xqAN8skXn+VFwjR+jW8Jktgv5FIMWciASSEwWNIb1NSKMkLdWzt7+OEBixmNY1U0IGZA
+         zVBBco3/1OcJJRc+bN3kA7Tdn3g+06tM410Q+SfywHxqZTQgrDD3nb3FhLUNB/pas4B3
+         SUUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784005192; x=1784609992;
+        d=1e100.net; s=20251104; t=1784005193; x=1784609993;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=x0BcJHYQFSbu4RvEjMIgNWDsUGzhhHcMUNQgh7uDdv8=;
-        b=fifxfQxevzLFi7XD3WxkdWHXwqhkfhqU8VDKqTB/QVx1J7hdCXA7JfOg5xeAexjQqd
-         KFonMrTEMYWZCoyrKo/6kSHGmlXkhbttqmS55QT3ZBYgpoudTtvF3WqBXMxejqhcMHis
-         dFQnxQXA9/NjH6AeBRns+t12CZDmvUXh/XqoE8FRKreFOe7FYK9pU28jPswfha9Bv8j3
-         7O/JTjJELEhHDuNoB9CVANiZT+DQ6F6W3uPK65C9G+F4gJb8Y6aOPXjm9nxZsrRRMAds
-         tfW+4JAC1QLw40o2Yesil9gnvJi+YSqaz05nMgZec+mu3gtiBD/EB4Ypsn+oChGauOpZ
-         Vg0Q==
-X-Forwarded-Encrypted: i=1; AHgh+Ro/20RO37FHs+BdkFHRuRGo38aEHujuhuIWRJvKJ1skl0Y1qnuIKKqPKYzFo2U+yVl0vmdy2apvLCs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSLHSOVxkWcK58etJHb+xhonOmF1v2z63mbzBUFa/lkhA/fL4t
-	Ewm7tfK0Ir0iFoPY5qXbXkqXJMHbOPdJSSFUqttl5aDEIMhrYCBi8H7/JFACwhP7VDDoV4L1x3E
-	8Lwk+574EVMzC/3DvFsAxRh/jTbvz6L8XvY01aIIzWuHHIF9vxFEZeD1yUd+61ls=
-X-Gm-Gg: AfdE7cmumFXM9KsHR1uBfS17FtOD5yUqjcnljwNyW5bthe324fQbDBUhM7yosOicOKt
-	t3oPJnV1ZH0GPusHt9IscB7GIHa4jWKVQV+Pvz9nK2mPLV1AR9FAQ4hDX83mpAfYzi6uAqSTWLB
-	S7RXE/11V2bcHzDAqtjd2Yayz/b79vaHQ5HaBRhsf5zvtmmtMRdyLuDsy8gfK1uflsT5LkKchNU
-	LCe2Z2acrc1S7ev7qaR7ZT8gVpH6MkCzWuFds+BvyyGNgvLYd4viC6El6fQT4cQvOrh40ucOUKO
-	QhHua9ZOcKDj3xwuLZcAZ1bsyhnJp21yhuai4HRB2hZpVRgQjz1vNTGTevDE32UIsnrSYtBS/NY
-	enPmhLoJ3M3buGD2vm62InH7sWoVvOmrueUTJP9+iY7R37KQegajiV0Qv6w==
-X-Received: by 2002:a05:6a20:12d1:b0:3b2:8674:9830 with SMTP id adf61e73a8af0-3c0f093fb96mr18680517637.14.1784005191774;
-        Mon, 13 Jul 2026 21:59:51 -0700 (PDT)
-X-Received: by 2002:a05:6a20:12d1:b0:3b2:8674:9830 with SMTP id adf61e73a8af0-3c0f093fb96mr18680483637.14.1784005191325;
-        Mon, 13 Jul 2026 21:59:51 -0700 (PDT)
+        bh=YtW4Ak09kXgiLEZNs7J/4jrifXCWd9zql1exxl35Rg8=;
+        b=sqxAK8Mjvl1Tc9vGmfl8PT8ELU9FQAFvlT+2A+mzxvsJ2jwffXcPwwSX6l4kngHvW/
+         ptyb2lRiXptq0t7J4iGf+JF0DuVmmtknFVdqlhTLS7k4TDBGZZZcwDMIRKQCs4HAM2kX
+         3P+9P70JAai4C6HDUlntMO9bCzJXssJFvqkOaaT/dFwsRjmTdQCMDDNWdE6Z50+vuTSW
+         3+YdmBFjNwDUoz2WMjUhxPrI2TBkewnhH4JDuLDMoNeLa8IuDXXxlpEJPDIulIVPey52
+         HBD6B5oLOLHNKXQHBZr2D6m44Na0ELzDO6SaB8C5ek6GV/EUaqoF/4hqYB0qxozLIfvv
+         cbCQ==
+X-Forwarded-Encrypted: i=1; AHgh+Rp/a0z+0blDXqgJm6ahn2gPoyKGq9A/tLegZZhQ4Sv7lCsaE64WQvSEn7BD4N5RaQ4m/oxlrQUfv8w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywp75k1c07qLB1qfmOxfWh7b6FdDlv9HN5UwKrJNpPiNxGokxZ0
+	o/nXUbzOgmk0Ynn3Zy33XPhiHAYH6VsIObFAls9x1FdrHP42yFfO7yf4zHL79CvTw8k0+wjdW1R
+	ZCRbPx6OBW1s02XmENSaV7PYra4VYQfjPQyrWYpx1Fw4Oen+OO6jtTkSdaUv/FbE=
+X-Gm-Gg: AfdE7clyDEkpeWhMppDCRLKY8y3lr+j8SUcmg7autQA9SmH1mY33BvoD2GkJYxAW/cs
+	7jqe3Yl6y2dpE/5NtA3EWmX8ExU4Pglq7WA0MCC49MkK3uWDHBUJ4MgLmQo23iDKwSLRUfxRM3t
+	8nKojVjrDw0PvL6Rx8VxAChv8SYHrW4t4uQjmedvqb21WFEZVmRnkG/7Frz1fL8MZYtRBvPeXqG
+	AVGvznFn748VBaaZPFEvPkkC1Zp72GTzGc4JxmkGq3EYLAHeFiesc/ARms0/7vhyv9horDtGYu7
+	SIiIPhCQFLsVCjp+1uioDOcb1DenQ0VVaop9kqEdMNpsSyyxbUkqtKWyniueCj8Dc5FGaceylv1
+	HJji/ncRQHkrdUdCXEP4JZdgc0O7Mbz6LlHliOOgGPxfyZTN7Vi/0pym1ag==
+X-Received: by 2002:a17:90b:2750:b0:387:df8f:1405 with SMTP id 98e67ed59e1d1-38dc77badd3mr10713098a91.38.1784005192950;
+        Mon, 13 Jul 2026 21:59:52 -0700 (PDT)
+X-Received: by 2002:a17:90b:2750:b0:387:df8f:1405 with SMTP id 98e67ed59e1d1-38dc77badd3mr10713061a91.38.1784005192490;
+        Mon, 13 Jul 2026 21:59:52 -0700 (PDT)
 Received: from hu-qianyu-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3120c8e41fcsm41874021eec.15.2026.07.13.21.59.50
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3120c8e41fcsm41874021eec.15.2026.07.13.21.59.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Mon, 13 Jul 2026 21:59:51 -0700 (PDT)
 From: Qiang Yu <qiang.yu@oss.qualcomm.com>
-Date: Mon, 13 Jul 2026 21:59:36 -0700
-Subject: [PATCH v9 1/7] dt-bindings: clock: qcom: Move glymur TCSR to own
- binding
+Date: Mon, 13 Jul 2026 21:59:37 -0700
+Subject: [PATCH v9 2/7] dt-bindings: clock: qcom,glymur-tcsr: Add mahua
+ support
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -91,7 +91,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260713-tcsr_qref_0714-v9-1-373670ab15f9@oss.qualcomm.com>
+Message-Id: <20260713-tcsr_qref_0714-v9-2-373670ab15f9@oss.qualcomm.com>
 References: <20260713-tcsr_qref_0714-v9-0-373670ab15f9@oss.qualcomm.com>
 In-Reply-To: <20260713-tcsr_qref_0714-v9-0-373670ab15f9@oss.qualcomm.com>
 To: Bjorn Andersson <andersson@kernel.org>,
@@ -108,129 +108,76 @@ Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-hardening@vger.kernel.org, Qiang Yu <qiang.yu@oss.qualcomm.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1784005189; l=5632;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1784005189; l=1880;
  i=qiang.yu@oss.qualcomm.com; s=20250513; h=from:subject:message-id;
- bh=LKAINk67qcWpTEFbooGQl2hvLx8wgZLI8xl/8ZLIRNI=;
- b=MCSwBzrCoi31GS/AI8EhewAJanmu/dE9dSWBIP4u0je5ksjs3nQmD4+jJcSBOFeBufFPZICKa
- rhqY/C5MXn8B95xdkvxRk+5FtoTZF+UzXkXc9HjDqOhCwosQnjgscLi
+ bh=rWbtb1W+stySBwVTYmTH8aWgwOvBKUz0d7zkndsOrdM=;
+ b=P8t+Vk9j0quvabeBmT1OdSoFANC9FVLIAbuJevQ1qm4wbN2sJdQmDvyRxiniMg6PzlT4XgYcq
+ TRLkHILtCrhAx7A84t/1I5FRIVZ121m3BHONU9+3jxPhK7UVaGD2dLD
 X-Developer-Key: i=qiang.yu@oss.qualcomm.com; a=ed25519;
  pk=Rr94t+fykoieF1ngg/bXxEfr5KoQxeXPtYxM8fBQTAI=
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNzE0MDA0NyBTYWx0ZWRfXzH00Y3QbvRo5
- MI7I/pn2UXDogmMHQ9vuLrvABwgdjzuBqojZCFJuBt+OFH+49OCCdghvMpQlqWAOBN16/kGJyyT
- JASLTmX8JTPZ7jSSg3w/Umrq+gwLZ64=
-X-Authority-Analysis: v=2.4 cv=cNbQdFeN c=1 sm=1 tr=0 ts=6a55c248 cx=c_pps
- a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNzE0MDA0NyBTYWx0ZWRfX3nBLISXEmr2w
+ ZnpAqFbqPV+RIP2rvjO7rKuCa0dPVb065eJu9aaylNz28FVPhFRiNQ1DoHRIQp9e+q/zxPfWTCp
+ DivTugFmRWlSUVQh/ljgzIuUMNvAo2Y=
+X-Proofpoint-GUID: qvZAW_BhzjFU7GX8J21CBYlnkT1a341L
+X-Proofpoint-ORIG-GUID: qvZAW_BhzjFU7GX8J21CBYlnkT1a341L
+X-Authority-Analysis: v=2.4 cv=BZroFLt2 c=1 sm=1 tr=0 ts=6a55c249 cx=c_pps
+ a=0uOsjrqzRL749jD1oC5vDA==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
  a=IkcTkHD0fZMA:10 a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=3WHJM1ZQz_JShphwDgj5:22
- a=gEfo2CItAAAA:8 a=EUspDBNiAAAA:8 a=VwQbUJbxAAAA:8 a=12nZpKSYVJl7DlM_WUUA:9
- a=QEXdDO2ut3YA:10 a=x9snwWr2DeNwDh03kgHS:22 a=sptkURWiP4Gy88Gu7hUp:22
-X-Proofpoint-GUID: 09LqGyrT7WKWSBY9aFzbLkyd-PmG5PNE
-X-Proofpoint-ORIG-GUID: 09LqGyrT7WKWSBY9aFzbLkyd-PmG5PNE
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzE0MDA0NyBTYWx0ZWRfX2PjERbJmPD0E
- gyBILXz0o/OF4W2J18wwdVa9SsSSLNknibi/Ujca+cKJotA5PQdiSIKSHW+Gx37hjAguTWCr5px
- bktB7RZ8DJMcnt8PpwVqQsLOukXBay4ermTFBiD2T8jvf48OSP5SqpzfmbOsYNlt6tfjUaj2I3O
- SeoZLb7aTLlMOwTcOD6w4diLL9yCvaiwXwmUWbu8UwZefQ9Tx09Z1U+cgIHH/73eJ2P8/VGa9qa
- Gz4erMOAeL9Y99cvsGb+tm3jN56hVjOFp/vVcton0AYM8Mas8Zg+6lGAoFgJiXAoekn2UZ97eKq
- 8y4HDYuDp/47dUJHSSic6gsvuxKgw8g+rRKeE6hdi2ci95n5vxrtSchQurOYZU033wqFDDa5R8G
- lTRIaodcGjvB6BdcWQG49NiI4A8bNT2yV3p2WTnVsGQJh91gL10wGiZir2e7UWFBVt2EYrGjU7i
- FMTVWc1cZceDzQczN8w==
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_K5XuSEh1TEqbUxoQ0s3:22
+ a=EUspDBNiAAAA:8 a=tHEUkVd5BVjdM4dvyhIA:9 a=QEXdDO2ut3YA:10
+ a=mQ_c8vxmzFEMiUWkPHU9:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzE0MDA0NyBTYWx0ZWRfX414TvyUcAW4p
+ MxX7LXWPCFm/DWARg9xU+KcE7foWCanu3ckveWE4HXJ/SejB/9DZntlG1zNS9RgI3e5IOprK6TH
+ cUfwik6TUgN7h+mnd0qgL4eDsHI/wd4fgxZTKz1+HwxEJNNHteZB0K27zblYWgKCqvFOE8QnEoH
+ V1SmkF6JxSNDpT2mCrrzyls8/EmcahTwUi78/QxtJY4daozXo8lW6nbMxjBZVfcYXJVZY7ZUQtF
+ bc8Kpd/YglShrM13GLrZ6EZ6gLxh91XXBduv1fLl9CUhwD29JhQgcsMS9i6z7LsR01g40KKGM0Y
+ R2NT37YutMRaRTgEhREIWYGSGjxVWJ73EBUDXU+H9d69Q65/88NYmgL430xBQhuS8I6ZvjDvdod
+ 6OfvqYIv1aDCkmwSjK0yY89A2snOOGrr4Tf+pGFZ/oUNqTOdn55hygiOA8dONu1e1ZbNOqaCYbP
+ t2ChHaESNceQHqbPz0Q==
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
  definitions=2026-07-14_01,2026-07-10_01,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 bulkscore=0 spamscore=0 suspectscore=0 impostorscore=0
- phishscore=0 clxscore=1015 adultscore=0 malwarescore=0 lowpriorityscore=0
+ phishscore=0 spamscore=0 suspectscore=0 bulkscore=0 priorityscore=1501
+ malwarescore=0 impostorscore=0 lowpriorityscore=0 adultscore=0 clxscore=1015
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607140047
 
-The QREF block supplies reference clocks to PCIe PHYs and requires
-dedicated LDO supplies to operate. The digital control interface for QREF
-(clkref_en registers) resides in TCSR on glymur. Since QREF has no
-dedicated DT node of its own, these supply properties are placed in the
-TCSR node which acts as the control interface for QREF.
+Mahua shares the same QREF TX/RPT/RX component naming as Glymur, but has a
+different topology: a single QREF block fed by REFGEN4 only, rather than
+the two independent blocks fed by REFGEN3 and REFGEN4 on Glymur.
 
-Add a dedicated binding file for qcom,glymur-tcsr and document the supply
-properties. As this binding will grow to cover more SoCs, mark the
-required supplies per compatible using an allOf/if/then conditional.
+Add qcom,mahua-tcsr compatible and document its required supply
+properties. Note that REFGEN4 is supplied by regulators vdda-refgen3-1p2
+and vdda-refgen3-0p9 on Mahua.
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 Signed-off-by: Qiang Yu <qiang.yu@oss.qualcomm.com>
 ---
- .../bindings/clock/qcom,glymur-tcsr.yaml           | 126 +++++++++++++++++++++
- .../bindings/clock/qcom,sm8550-tcsr.yaml           |   2 -
- 2 files changed, 126 insertions(+), 2 deletions(-)
+ .../devicetree/bindings/clock/qcom,glymur-tcsr.yaml  | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/clock/qcom,glymur-tcsr.yaml b/Documentation/devicetree/bindings/clock/qcom,glymur-tcsr.yaml
-new file mode 100644
-index 000000000000..ec89feff89e4
---- /dev/null
+index ec89feff89e4..2b6422627165 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,glymur-tcsr.yaml
 +++ b/Documentation/devicetree/bindings/clock/qcom,glymur-tcsr.yaml
-@@ -0,0 +1,126 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/qcom,glymur-tcsr.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Qualcomm TCSR Clock Controller on Glymur
-+
-+maintainers:
-+  - Bjorn Andersson <andersson@kernel.org>
-+  - Taniya Das <taniya.das@oss.qualcomm.com>
-+
-+description: |
-+  Qualcomm TCSR clock control module provides the clocks, resets and
-+  power domains on Glymur
-+
-+  See also:
-+  - include/dt-bindings/clock/qcom,glymur-tcsr.h
-+
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+          - qcom,glymur-tcsr
-+      - const: syscon
-+
-+  clocks:
-+    items:
-+      - description: TCXO pad clock
-+
-+  reg:
-+    maxItems: 1
-+
-+  '#clock-cells':
-+    const: 1
-+
-+  '#reset-cells':
-+    const: 1
-+
-+  vdda-qrefrpt0-0p9-supply: true
-+  vdda-qrefrpt1-0p9-supply: true
-+  vdda-qrefrpt2-0p9-supply: true
-+  vdda-qrefrpt3-0p9-supply: true
-+  vdda-qrefrpt4-0p9-supply: true
-+  vdda-qrefrpt5-0p9-supply: true
-+  vdda-qrefrx0-0p9-supply: true
-+  vdda-qrefrx1-0p9-supply: true
-+  vdda-qrefrx2-0p9-supply: true
-+  vdda-qrefrx3-0p9-supply: true
-+  vdda-qrefrx4-0p9-supply: true
-+  vdda-qrefrx5-0p9-supply: true
-+  vdda-qreftx0-0p9-supply: true
-+  vdda-qreftx0-1p2-supply: true
-+  vdda-qreftx1-0p9-supply: true
-+  vdda-refgen3-0p9-supply: true
-+  vdda-refgen3-1p2-supply: true
-+  vdda-refgen4-0p9-supply: true
-+  vdda-refgen4-1p2-supply: true
-+
-+allOf:
+@@ -22,6 +22,7 @@ properties:
+     items:
+       - enum:
+           - qcom,glymur-tcsr
++          - qcom,mahua-tcsr
+       - const: syscon
+ 
+   clocks:
+@@ -82,6 +83,25 @@ allOf:
+         - vdda-refgen3-1p2-supply
+         - vdda-refgen4-0p9-supply
+         - vdda-refgen4-1p2-supply
 +  - if:
 +      properties:
 +        compatible:
 +          contains:
-+            const: qcom,glymur-tcsr
++            const: qcom,mahua-tcsr
 +    then:
 +      required:
 +        - vdda-qrefrpt0-0p9-supply
@@ -238,80 +185,16 @@ index 000000000000..ec89feff89e4
 +        - vdda-qrefrpt2-0p9-supply
 +        - vdda-qrefrpt3-0p9-supply
 +        - vdda-qrefrpt4-0p9-supply
-+        - vdda-qrefrx0-0p9-supply
++        - vdda-qrefrpt5-0p9-supply
 +        - vdda-qrefrx1-0p9-supply
 +        - vdda-qrefrx2-0p9-supply
-+        - vdda-qrefrx4-0p9-supply
-+        - vdda-qrefrx5-0p9-supply
-+        - vdda-qreftx0-0p9-supply
-+        - vdda-qreftx0-1p2-supply
++        - vdda-qrefrx3-0p9-supply
 +        - vdda-qreftx1-0p9-supply
 +        - vdda-refgen3-0p9-supply
 +        - vdda-refgen3-1p2-supply
-+        - vdda-refgen4-0p9-supply
-+        - vdda-refgen4-1p2-supply
-+
-+required:
-+  - compatible
-+  - clocks
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/qcom,rpmh.h>
-+
-+    soc {
-+      #address-cells = <2>;
-+      #size-cells = <2>;
-+
-+      clock-controller@1fd5000 {
-+        compatible = "qcom,glymur-tcsr", "syscon";
-+        reg = <0x0 0x1fd5000 0x0 0x21000>;
-+        clocks = <&rpmhcc RPMH_CXO_CLK>;
-+        #clock-cells = <1>;
-+        #reset-cells = <1>;
-+        vdda-qrefrpt0-0p9-supply = <&vreg_l1a>;
-+        vdda-qrefrpt1-0p9-supply = <&vreg_l1a>;
-+        vdda-qrefrpt2-0p9-supply = <&vreg_l1a>;
-+        vdda-qrefrpt3-0p9-supply = <&vreg_l1a>;
-+        vdda-qrefrpt4-0p9-supply = <&vreg_l1a>;
-+        vdda-qrefrx0-0p9-supply = <&vreg_l1a>;
-+        vdda-qrefrx1-0p9-supply = <&vreg_l1a>;
-+        vdda-qrefrx2-0p9-supply = <&vreg_l1a>;
-+        vdda-qrefrx4-0p9-supply = <&vreg_l1a>;
-+        vdda-qrefrx5-0p9-supply = <&vreg_l1a>;
-+        vdda-qreftx0-0p9-supply = <&vreg_l1a>;
-+        vdda-qreftx0-1p2-supply = <&vreg_l2a>;
-+        vdda-qreftx1-0p9-supply = <&vreg_l1a>;
-+        vdda-refgen3-0p9-supply = <&vreg_l1a>;
-+        vdda-refgen3-1p2-supply = <&vreg_l2a>;
-+        vdda-refgen4-0p9-supply = <&vreg_l1a>;
-+        vdda-refgen4-1p2-supply = <&vreg_l2a>;
-+      };
-+    };
-+
-+...
-diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml
-index 08824f848973..19ae0634b922 100644
---- a/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml
-@@ -16,7 +16,6 @@ description: |
  
-   See also:
-   - include/dt-bindings/clock/qcom,eliza-tcsr.h
--  - include/dt-bindings/clock/qcom,glymur-tcsr.h
-   - include/dt-bindings/clock/qcom,hawi-tcsrcc.h
-   - include/dt-bindings/clock/qcom,nord-tcsrcc.h
-   - include/dt-bindings/clock/qcom,sm8550-tcsr.h
-@@ -28,7 +27,6 @@ properties:
-     items:
-       - enum:
-           - qcom,eliza-tcsr
--          - qcom,glymur-tcsr
-           - qcom,hawi-tcsrcc
-           - qcom,kaanapali-tcsr
-           - qcom,milos-tcsr
+ required:
+   - compatible
 
 -- 
 2.34.1
