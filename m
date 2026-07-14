@@ -1,254 +1,210 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F206448CE2
-	for <linux-clk@vger.kernel.org>; Tue, 14 Jul 2026 12:31:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC16A19CCF5
+	for <linux-clk@vger.kernel.org>; Tue, 14 Jul 2026 13:15:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.52
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784032318; cv=pass; b=R6PKbUMYuyEL6EznA40atK3ZEjKP+HjQ3X8QrfPHc0/qaJdxplFUTDSES3LJAfmQKovXIpsSb9X9UvSHuVdOkFzw0wSFhiTe1LxhuJRVmfcEY5HzPHqFnD6QxDSQTdRE0+AY6I38x0tCbuTvlTjtuDR0xZ1Ryyjr/utaV8t60VI=
+	t=1784034919; cv=pass; b=Hw62XSfUA9PZ23pbPqYuxB02gIAeJTBgfwjk3SDipnTTT3txZAIgxAQDaC6yjJMbLesMhwo9zo05OhxDRn1Uy68f1XnN8OegtgW+5djwPf/FF4Q1G5Pl/VM6TvIJHnX7lc62T862E7q9EHbSH8TlfJw55D7f3CfSgD/8NkYrkoM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784032318; c=relaxed/simple;
-	bh=ji3uIpmyKNhCWk9sN5ktVEemOSik2hw33b5vEOk3sQ8=;
+	s=arc-20240116; t=1784034919; c=relaxed/simple;
+	bh=XEp4xPrufFEiSkrjh9AXuD4jVVMbyf5wsJtN2q7RBEM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JO0m8vmLEI/qV3jRXd5fsinWyHQ2bKB+Xii1fCVDki1zo7Eh8ay2YJQySL4wjzM8m3wzyM4Wk8BNJdZoBLR6whJRJWwQs0eZdrBLnjp+1EGlL7WpGvX69OGQeKizO73os7hbdcd4r8X1bRsjaGjDHNSV78Z7CbzC4cuo/+eR4iM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Pc0ZlMeE; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=CIb2hTp9; arc=pass smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	 To:Cc:Content-Type; b=XnglJ2J2tze2CdvQxfwzF5Rlqs53ddtnSLA3DsVnu2zFDU27cVsY1nQS4aO57i57ApmdpdwFPjL2gMbVHQwbwgJvzQ1BJEsU7IDGD+6D5qAFUTzibxtfESnnJs8Q2y7K9GOp8ZquB6NiXl7Ee/LTslj6xkqX9NSoMgT8weQIGEc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SaGz3NUB; arc=pass smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Pc0ZlMeE";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="CIb2hTp9"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66EBOuO9441327
-	for <linux-clk@vger.kernel.org>; Tue, 14 Jul 2026 12:31:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	4Aolgj7ExGp7W3yDVV9JBeGUKfuVnW2a9wH6o4+naGQ=; b=Pc0ZlMeE/Tc18FPN
-	qe3RnE7NymV3SObOIc4FWc/ZMmsgt36U1cCl8yZUhYe7hZglmy8uhaTuB/s83WLL
-	Kq/EvZEn+mmdnNSoFutGXKKBkqoB3Uv/jXvuBI0/yfLbHb66Ig9BvOd7EICXkRyr
-	Db7oeuQkryAz6x4aGnDLAZXZrPJ7nPmQKWDcxLvuPyjFkVKK3SjAfC+hV1G9mVbd
-	oOv/HjEKt4KPkVMfGzAH1ex/t//dsLNli7HfurHC+BUpDUS33YPd1js6RPv9rpwc
-	+yhvdNhoIErbIlzzMeQJRzgNAcVWj9actgAwf0vlMRtNwA8AShY4G5sDGs95XVkg
-	Hu2hEQ==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fdgudh238-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Tue, 14 Jul 2026 12:31:43 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-904ee4473a8so47245856d6.2
-        for <linux-clk@vger.kernel.org>; Tue, 14 Jul 2026 05:31:43 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1784032302; cv=none;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SaGz3NUB"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-490cf322ed0so31464625e9.1
+        for <linux-clk@vger.kernel.org>; Tue, 14 Jul 2026 06:15:17 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1784034916; cv=none;
         d=google.com; s=arc-20260327;
-        b=frFvtL6CUDLYDhHbkyXE0pnehCTQ+rVOvJdEambSmznrvgEf8QFZoKSpKGyH3ACKX2
-         NT52tvu9CFYX9qpCnR99HOJPpUqU+mVIm0cBSZe3lWPJf/apzZpdiETnd/k9/bxyX9kK
-         YyeWoDUWwawAF9KMjQ23wgZW66LtfxdlyWVFAsM8+Ng+XJ1RPFaqvaI930QPEsZNMwtl
-         aDDEoZcdpnG5ImbzGSCyclLLUScHlSOFeM1m2pLmhNmONpWuzoFTXH+9d886vh6jtRkx
-         rXxSBToNno7uu8J4x8SHTMLJ0DhDOWwlhWfAKPWC8Jxo/aRauHdeg2YleGhhIC9a4519
-         HRBw==
+        b=JIrIBbwL1fKshboH/UiizaaU2HrPzZ28Ach1xAQg+ZOdugnbeUlbJtGrc6777muGnG
+         e4v/KspSNmfEBm/Ka4rm1bfzgSXAdjC5VfLqc6JIaa3E/a4t9k77arQagz8DfRnbNiWU
+         8NacVM8o7wUeAhc7x2306e+EBEiDAY2Z8lTCbNKGErtjoMv2oUp3OE6Ki4ep5fjc5VsN
+         Gw8CYONibWNNm+yyKOSuPbrdImNI5C+OnVMOAeIUXrgJ8xm33g5g6nvrUFUT/h1bFwvL
+         f3H5xvdR0dReFwUEFZGgTDmX1koweP79ztzGY3rP06WqHNqmdt4F9yJnb3eppwYZLnuZ
+         lUqA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=4Aolgj7ExGp7W3yDVV9JBeGUKfuVnW2a9wH6o4+naGQ=;
-        fh=x7ksLDD/zWhavk0m5LAY7CbVH1Zm/4kHcTBGbIQWOY8=;
-        b=hr6ah6oRtgogM+6AhHdMmq3u7WpRTzMwI/W+wyCtbOiPOkybgSrJs1F/TE8kPIKelc
-         H3SFg7l56GS9GtVhmTUKw9axtaMSwy983f1DrUdnExkhCL2Q/+Jy6RaWjLjIDOknSVXj
-         3tuFD6P1qJGIlCkI/A0kDj7u4sOjV0yAm8MDQO9UH6R/KyGobFr2UuklA61O9C4Q8vS6
-         Pp2e6V5qjki+a6ZtlskyLxmEKA9jhS+8XkZbTdh7psIM/hhjQwlbfCx+ClOHX1mOt192
-         Mkf0uJChE3EGeea5K/ebVR6irXfrVbEzGHJDpo6wNCEngomTjjeBerx3zddjgdhUTnhV
-         QFMg==;
+        bh=zYR8riHhwHFuYojsg/ml0oqHNKKCoDuF/KqtRlzn4Dg=;
+        fh=oby61eDsHWeVZQu8U+/dE7QQjmW8u9FeSKJNleu8vDU=;
+        b=CKZXIIOvGMykesKCslB2t0BZMjLAbPZ8toe3IjKUUaMHmSEHTK7em4Eztp4XXxU38L
+         Zy114Os3sEitTyqvDkL2Liq0bGKXqNJOfQRNo+uSHOZwWLOmyn90zd52jGHt3E1ycICV
+         OTcRHdwWjUUnS5GluFriQ2DJLKyVQvye9kaH7VVkyJ/8pFUPSnscNRC/5KN3I073zW/6
+         LmJmsYc1MSSHKRUbBnCFHiFv3odqG9nS/JoRJWg+eynlpnCXvs3WeQWwcslLBzwEy8BP
+         XnglabVvrodmjHRWIDpZ9lbN2wIVFlemK9ykGUH5Oa5y3bi7EAetTdADmpixuIuZWj2I
+         D7UA==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1784032302; x=1784637102; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1784034916; x=1784639716; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=4Aolgj7ExGp7W3yDVV9JBeGUKfuVnW2a9wH6o4+naGQ=;
-        b=CIb2hTp9sJ9LNPmkTS8PthiNnwWChroVR6yZEn7mgAn3TMVA1bNWGjhDx69l9L41Km
-         GIBgFwiMvxh0oi1LmrU727+Y6mS8BPmVhdogTOBKwHxywhWbWWeD0u2sGfydrpw5Ltqg
-         XnuPhL0CqSMKSdtYyFMJIxCBxJ/TuQPNKskm3lpn4fzWKLYpw4+UsWfTVA1HVIz5dDNo
-         EUTgv4StgM/GC5AP0dk9F9++hqgAdCUWLYD0cCaxGRj955KvTZb9WqBgp2IVC3hwKrqM
-         +Mj78sEcOWFPOxLJk/KMpJ1q8h7iSVgT6V/NeSmhfcM7eaRriVLa8YUQbbww1hMIsO3p
-         V0GQ==
+        bh=zYR8riHhwHFuYojsg/ml0oqHNKKCoDuF/KqtRlzn4Dg=;
+        b=SaGz3NUBQ2GHG8xCmhlhOvvjGUghtG3Ipcsm6tfITrC8ZZnP7nTePufsvZ6cflZpod
+         QUizEVUcGU6d3lZddyIMOIv9O1IQh8dsIRjpP9mwPudguyeCdMMrrclFFNEtEBl+AVAx
+         gNKfvAEXdo0joezZNbM5vjDxpubz55O09Hq7NJ3t4sGR08aZSdMHP/c/inb9myiKPSdm
+         17NC6765bfaG2+JZuS+rXZOQ4WVUICc3rxVqNp+xviP/1lpldG66Be9oCvjI5yzHjtn3
+         0rAOq9sF66RKv2BkT/+ls8+LNyuEvHybhO6ch5QhudaEIvhozGg2zYqQfsnytjIhsH/C
+         mBLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784032302; x=1784637102;
+        d=1e100.net; s=20251104; t=1784034916; x=1784639716;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=4Aolgj7ExGp7W3yDVV9JBeGUKfuVnW2a9wH6o4+naGQ=;
-        b=Y/0cezTCIVcXxHefvmIOaija/g+13FVR/DbJ701wEd8fuEdSEWTWa6PkvMal4zPEod
-         N0G23/wpgt6HYzBWgMvavONHQW7cSjCIEoo1HQCF3Nc0poh/yySQiwKz3FcXZ14buIZV
-         K6ePDsFnaN4r8SN5dO8KPKzracHJVhMGW4u/IrzMsCpx4P+zsNF/u31x0RaLgTfkYRi6
-         O7CES2wVpFixYsKeol3b/E3e/fT/r+0WoMl/23Ef/ka1OOs0IEQjSjOOaazlU8+MLxQr
-         agQDIK1BOVxIiXSdK+HxNCvtNTBMo37O4JQCkB1X4grIqMnEF9ItzlBGfPiB+Qr3iSVI
-         7eyA==
-X-Forwarded-Encrypted: i=1; AHgh+RpXz06mam/1MAo4IHhhsj/dUCcbUe+ocd4A/ODgY5Xq651vqbkg+4E8AN70ckjcwF+O1mww9Xlujx8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLtxDfROgqgxyf1iHA6WT027/46cxMpzfQqwFFawPg07tDtsh0
-	vKWH+Q2Y5GCIsuKSzvnz9mK5G5VfetU+0PHPd18merebAqxZVdupRK2LvJGyBkpYQyTgkVs7+r1
-	AwCfUIIwtRFsP+5DRSYkB+lqCIVwQuSUTqWhMVdT1lC6FLk1UF/5DMBLxqehpMk754IGQLYFC5j
-	BQBGJx31GdNDIhx/AQ1ZM3HbhyeTvxz7gLWTqZqw==
-X-Gm-Gg: AfdE7cmstrjiloquyDa5JNtHhUi22IISjUxLE+t5+jvh2QJ4aN3yBRUeyJMNthGdyaF
-	WT6L/ORk4VDPn4XWHhCnhF5Ia7X4ZWUUBpP1RLRbthgTjOAxv38Q+EbK97jnadih3+HKJ9ZdLRL
-	GJeJGWXW3XtTYZQrUey6/o5DEeAEBHBq9+U2vq483buVQM/YaXDatDk5IhiYU7xJOMHfRX
-X-Received: by 2002:a05:6214:3385:b0:8fd:6e12:9710 with SMTP id 6a1803df08f44-90747d1cbf4mr35409366d6.62.1784032302417;
-        Tue, 14 Jul 2026 05:31:42 -0700 (PDT)
-X-Received: by 2002:a05:6214:3385:b0:8fd:6e12:9710 with SMTP id
- 6a1803df08f44-90747d1cbf4mr35408856d6.62.1784032302033; Tue, 14 Jul 2026
- 05:31:42 -0700 (PDT)
+        bh=zYR8riHhwHFuYojsg/ml0oqHNKKCoDuF/KqtRlzn4Dg=;
+        b=qqi3r5ClgqJajOR+rBFBLsolKCeAxc/qqSu8J2xYrohq1/RtgVV0AmbyvkUgnu6f3T
+         fmHFn1L8kIIPsLQxgyYr9dFF50+9ViAYseT/E42xzl5l4U0imwtrSb58mCH787Uiqbba
+         Y6AW8Muv7SfoAXw9qV42D6D6mBdmh7ov4jf9JcPuCagNhRtqxsszllvL5nNYUhNS5TqF
+         1RA7Vqmp7X2JpyLSPij+O7HOSielLnRvM92CGxQohq/DCLfmROzfzj1WX9Bq09DICf9c
+         GzjtKhk6Ie1xT+k1CS7NV9KoNEoVEpdjGRg3tJ8eYSB0jl/BS+qIyhn+HzFYTgISSgCI
+         wBhA==
+X-Forwarded-Encrypted: i=1; AHgh+RpwzgSUTqSWEG7u67R2XsiArgmGJsWpIFwhAlhnzkmkz+wl1QKEICVV0xHMwNFNtQAjGqXvQLbPq5A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVbEY+ffh88FHeUnUxl3M0x7JtXp+7Oocf6hXmd73HVCu+Vgwv
+	QyueIpck831owk2VQypml8QkjvkcWGFiKhX2KoZiChgP7ImmNSDErR44YjzQJ7uqTDV9sRWjwLu
+	BKEA7FbGoaOMH3L3GyfhkZfJSStQye+M=
+X-Gm-Gg: AfdE7cmhiYr9Ucw2ULCuN71t03enk0FP846/mVVVA/tmW7GO01qpEd8TDIVt9HQdIwB
+	+S61Se4Mrn9M60XLJeGR/CJ2O4cJQbUxQ+B7H5Y6mJP8bLegDTiOoLy5j5AVEC/JDICJjbxLW+g
+	kyw1KGxJiFXFiYhKXPD3tr+QxzoqvyQayc6LwVQJnronZbFfuTKHVFjY3jlVYXlUCVfVQ1XW6Ip
+	EhT6otOFlJDZtUy2hYgCGuXvftawgrKb+orKS1D9RWiSthdcKKlmOMt9UI8r4piRYvZ+zADziW8
+	m19btEwpqI2o/g4pVHS9qGuyGmHj4bmUK4kG0JNg2x3lmo0izcea8zbbUmE=
+X-Received: by 2002:a05:600d:6413:10b0:494:1cdd:4f9e with SMTP id
+ 5b1f17b1804b1-4941cdd5035mr50422985e9.31.1784034915742; Tue, 14 Jul 2026
+ 06:15:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1783505329.git.geert+renesas@glider.be> <fce1aa52b181082f260a824fe38baf033ba8f56e.1783505329.git.geert+renesas@glider.be>
-In-Reply-To: <fce1aa52b181082f260a824fe38baf033ba8f56e.1783505329.git.geert+renesas@glider.be>
-From: Ulf Hansson <ulf.hansson@oss.qualcomm.com>
-Date: Tue, 14 Jul 2026 14:31:30 +0200
-X-Gm-Features: AUfX_mw1w9aani-kekqL_J3mlM9LGY41ZFq3mfPK3ex6sNHNGM7Yu8pRBTDGFLI
-Message-ID: <CAPx+jO8W3MdqnJ-4EgbmFvODuX9BGcyww=YRn=_CknohfSWOjw@mail.gmail.com>
-Subject: Re: [PATCH v2 03/10] pmdomain: Make genpd_get_from_provider() public
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Sudeep Holla <sudeep.holla@kernel.org>,
-        Cristian Marussi <cristian.marussi@arm.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Saravana Kannan <saravanak@kernel.org>, Ulf Hansson <ulfh@kernel.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
-        Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Marek Vasut <marek.vasut+renesas@mailbox.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+References: <20260702123112.161160-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20260702123112.161160-6-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdXYpDfoRhgfhqeU4_acGQj7f4ivEdB3Ms6SKeeSwY5iLw@mail.gmail.com>
+In-Reply-To: <CAMuHMdXYpDfoRhgfhqeU4_acGQj7f4ivEdB3Ms6SKeeSwY5iLw@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Tue, 14 Jul 2026 14:14:48 +0100
+X-Gm-Features: AUfX_mxf9CoAWS1OaHlxkRnP3RC1vp9ZjYGgKTNfss75dU2ZLfsEhv632kdc6DM
+Message-ID: <CA+V-a8t1TbnD14s-d=UVTL58jWA9Sxcyb6mt9tfgAMBUkoJmRA@mail.gmail.com>
+Subject: Re: [PATCH RFC v2 5/9] dt-bindings: watchdog: renesas,r9a09g057-wdt:
+ Add SYS syscon support
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, 
+	Magnus Damm <magnus.damm@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, 
+	Prabhakar <prabhakar.csengg+renesas@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-GUID: 6JvynPSPfst17BhB1M677NzEn0hfM1Ph
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzE0MDEzMCBTYWx0ZWRfX9886MipRD3x7
- 8vuuaOKVm+C3OYRzSUdFif5HsYorObm+g86kuX0rb7nd7sIVSs8wGgY07kod52tQmm3xCulha8u
- M6CH25fv/bdB//4LqrIoqcxUDGteUk9Rktt3RKA67B8YEA0LyCLPZgY+j2inmal5PrMvIoeqL7p
- n8Cp6eRwWAIm4aeC4W/rIv+dh8yjEmhMulBVk5rPFsZDgNHNvtGkqxRlZuaLM5H+VWuKYRzNEyo
- BlalgbTqlHisbXSxWtKSnNx4HaAJ6eSLaXMwuc03CspIs7V8PkXZwkXf+mQDStpuBDHAfopISFK
- wSFW/gUwcpLkpKBKatJ95hwtfNBBZFsIAx/HsYa85djLiU1/o6zdpRt+UVwNWCr/nzcOsNzLquI
- moI1hFa8p8xe9WVa5Q8KDzCk9N5z8Uq8GXKN7odkTV5+zxDIpGOY3nCCozm9nJ1Rzj8iMvXj8Ri
- /i5QBM4H705mYQ7irnA==
-X-Authority-Analysis: v=2.4 cv=T/O8ifKQ c=1 sm=1 tr=0 ts=6a562c2f cx=c_pps
- a=oc9J++0uMp73DTRD5QyR2A==:117 a=IkcTkHD0fZMA:10 a=RAioF0-LDSMA:10
- a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22
- a=3WHJM1ZQz_JShphwDgj5:22 a=BvHvEDz1nzgFWKTw3gwA:9 a=QEXdDO2ut3YA:10
- a=iYH6xdkBrDN1Jqds4HTS:22
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNzE0MDEzMCBTYWx0ZWRfXx1bWBpWi28L0
- s2dZoyQrxtcJkH/MX2PJJFpKo/HsQZJVx2QGZEOaalLTMntfXb0ImdGGrdG7W9dSaXSSoOqXnr2
- H8R/2s6zXuvM6nsbKiJFJP9XZTUp82c=
-X-Proofpoint-ORIG-GUID: 6JvynPSPfst17BhB1M677NzEn0hfM1Ph
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-07-14_03,2026-07-10_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 malwarescore=0 adultscore=0 spamscore=0 phishscore=0
- clxscore=1015 bulkscore=0 suspectscore=0 impostorscore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607140130
 
-On Wed, Jul 8, 2026 at 12:17=E2=80=AFPM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
->
-> Unlike the corresponding function in the clock subsystem
-> (of_clk_get_from_provider()), genpd_get_from_provider() is private, and
-> thus cannot be used by PM Domain drivers.
->
-> Make it public, so it be used by the R-Car X5H Module Controller driver.
+Hi Geert,
 
-I am a bit reluctant to make it public, because of potential abuse.
-Moreover, there is no protection or reference counting of the genpd
-that is returned, hence the caller needs to be careful.
+Thank you for the review.
 
-That said, if there is a strong argument that it's really needed, I am
-fine with it.
+On Mon, Jul 13, 2026 at 4:55=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Thu, 2 Jul 2026 at 14:31, Prabhakar <prabhakar.csengg@gmail.com> wrote=
+:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > On the Renesas RZ/T2H SoC, the Watchdog Timer Control Register (WDTDCR)
+> > resides within the System Controller (SYS) block rather than the WDT
+> > address space itself.
+> >
+> > Previously, this was handled by including a second register range in th=
+e
+> > "reg" property. However, this is architecturally incorrect as the SYS
+> > block consists of two distinct regions (0x80290000 and 0x81290000) that
+> > contain registers for multiple peripheral blocks.
+> >
+> > Now that the SYS driver provides a unified syscon regmap, introduce the
+> > "renesas,sys" phandle-array property to allow the WDT driver to
+> > access its control register via the system controller.
+> >
+> > Mark the use of a second "reg" entry as deprecated in favor of the
+> > new phandle-array approach for SoCs that require WDTDCR access.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> > v1->v2:
+> > - No change.
+>
+> Thanks for the update!
+>
+> > --- a/Documentation/devicetree/bindings/watchdog/renesas,r9a09g057-wdt.=
+yaml
+> > +++ b/Documentation/devicetree/bindings/watchdog/renesas,r9a09g057-wdt.=
+yaml
+> > @@ -48,6 +48,17 @@ properties:
+> >    resets:
+> >      maxItems: 1
+> >
+> > +  renesas,sys:
+>
+> In Documentation/devicetree/bindings/pci/renesas,r9a08g045-pcie.yaml,
+> the similar property is called "renesas,sysc".
+>
+Ok, I will rename this to "renesas,sysc".
 
+> > +    description:
+> > +      System controller registers control the start/stop of the WDT, a=
+nd halt debug.
+> > +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> > +    items:
+> > +      - items:
+> > +          - description: phandle to system controller
+> > +          - description: watchdog IP instance index
+> > +            minimum: 0
+> > +            maximum: 5
+> > +
+> >    timeout-sec: true
+> >
+> >  required:
+> > @@ -73,15 +84,29 @@ allOf:
+> >            minItems: 2
+> >          clock-names:
+> >            minItems: 2
+> > +        renesas,sys: false
+> >      else:
+> >        properties:
+> >          clocks:
+> >            maxItems: 1
+> >          clock-names:
+> >            maxItems: 1
+> > -        reg:
+> > -          minItems: 2
+> >          resets: false
+> > +      allOf:
+> > +        - if:
+> > +            required:
+> > +              - renesas,sys
+> > +          then:
+> > +            properties:
+> > +              reg:
+> > +                maxItems: 1
+> > +          else:
+> > +            properties:
+> > +              reg:
+> > +                description: Deprecated. Use renesas,sys to pass the o=
+ffset
+> > +                             of WDTDCR register instead.
 >
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> v2:
->   - No changes.
-> ---
->  drivers/pmdomain/core.c   | 4 ++--
->  include/linux/pm_domain.h | 7 +++++++
->  2 files changed, 9 insertions(+), 2 deletions(-)
+> the index of the watchdog IP instance?
 >
-> diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
-> index 842c4169e290677c..7de3c693ddd9a2c8 100644
-> --- a/drivers/pmdomain/core.c
-> +++ b/drivers/pmdomain/core.c
-> @@ -2900,8 +2900,7 @@ EXPORT_SYMBOL_GPL(of_genpd_del_provider);
->   * Returns a valid pointer to struct generic_pm_domain on success or ERR=
-_PTR()
->   * on failure.
->   */
-> -static struct generic_pm_domain *genpd_get_from_provider(
-> -                                       const struct of_phandle_args *gen=
-pdspec)
-> +struct generic_pm_domain *genpd_get_from_provider(const struct of_phandl=
-e_args *genpdspec)
+I will update the description to "Deprecated. Use the renesas,sysc
+property along with the watchdog IP instance index instead."
 
-If we are going to do this, please add "of_" as prefix for the
-function to have consistent names of public genpd functions.
-
->  {
->         struct generic_pm_domain *genpd =3D ERR_PTR(-ENOENT);
->         struct of_genpd_provider *provider;
-> @@ -2923,6 +2922,7 @@ static struct generic_pm_domain *genpd_get_from_pro=
-vider(
->
->         return genpd;
->  }
-> +EXPORT_SYMBOL_GPL(genpd_get_from_provider);
->
->  /**
->   * of_genpd_add_child_ids() - Parse power-domains-child-ids property
-> diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-> index f925614aebdbc914..95fd7e63e87e2095 100644
-> --- a/include/linux/pm_domain.h
-> +++ b/include/linux/pm_domain.h
-> @@ -458,6 +458,7 @@ int of_genpd_add_provider_simple(struct device_node *=
-np,
->  int of_genpd_add_provider_onecell(struct device_node *np,
->                                   struct genpd_onecell_data *data);
->  void of_genpd_del_provider(struct device_node *np);
-> +struct generic_pm_domain *genpd_get_from_provider(const struct of_phandl=
-e_args *genpdspec);
->  int of_genpd_add_device(const struct of_phandle_args *args, struct devic=
-e *dev);
->  int of_genpd_add_subdomain(const struct of_phandle_args *parent_spec,
->                            const struct of_phandle_args *subdomain_spec);
-> @@ -492,6 +493,12 @@ static inline int of_genpd_add_provider_onecell(stru=
-ct device_node *np,
->
->  static inline void of_genpd_del_provider(struct device_node *np) {}
->
-> +static inline struct generic_pm_domain *genpd_get_from_provider(
-> +                               const struct of_phandle_args *genpdspec)
-> +{
-> +       return ERR_PTR(-ENODEV);
-> +}
-> +
->  static inline int of_genpd_add_device(const struct of_phandle_args *args=
-,
->                                       struct device *dev)
->  {
-> --
-> 2.43.0
->
-
-Kind regards
-Uffe
+Cheers,
+Prabhakar
