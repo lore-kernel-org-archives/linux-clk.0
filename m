@@ -1,199 +1,160 @@
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8E6F3191CE
-	for <linux-clk@vger.kernel.org>; Tue, 14 Jul 2026 13:27:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5D44349CC4
+	for <linux-clk@vger.kernel.org>; Tue, 14 Jul 2026 14:14:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.181
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784035653; cv=pass; b=kGFilzS14XtyaJbPw51aPXCAKbZS0SHjpyYyxEBc/N3wYtLLm54gWGN8+dyP/nOWnl+SFiBj5f2HuPuCRXmrofwf/1pEoPQGtLtM6ifCHmxqmDfK1++BwVExLZmR+qrJgsEHBfH/aVjgqy+JbJx186AdExBHpwCZuVvxpnLqHO4=
+	t=1784038494; cv=pass; b=XkI5ztAgPfBADC4H4EP5BIx40pARbMZDs6egwarmNSFUpkU+P3QzGGPbWeJzX2SXFXtLJPyqf6R5EOj6j1zXKUEJCcF/jFCsP0fX+hzMV9VLZq3mKAC8t2O8psrCjLpWzVTZ+9INli13OQ63zFnN000GshEwRVSUBZ2jInL7drg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784035653; c=relaxed/simple;
-	bh=JwVJDiR+cBjS+r4fEWc8OMyrK+FkqxIoisO4S0dbaKs=;
+	s=arc-20240116; t=1784038494; c=relaxed/simple;
+	bh=ZwonBpzAXy48ag2d1XJdBAdRbfwE5+nc6HaosOT+7aE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=icmCjLiQPeMQk4fd8exUDyN/wT8H+lF6YarjD4iYnO8NvV4EDX182jczGNQsNkRhVSnDs3FW0ycbvwD8aQOaKEZAL5MRsyCoMo2BfI2ZMe9Aos3YOKSOcBgzoGLylt7dBrT1raZNav+XMcLJ19yVNenr/7L5eHGBlK3d+PWdpjc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gd1aObQl; arc=pass smtp.client-ip=209.85.221.41
+	 To:Cc:Content-Type; b=K6gByBkJZ3hG8ZeNRGwRpKo+xvgSohxHHPnH9NQ4J9ozdHqtTZo3WbytmLD4m0wTJvgbw70Fu67JFCQUWCjHdMe7lPnkksi1ZsrnpM+9DjxyEuMSknXzKkIPLqI3Gts/HHfVAd1zW2TfCmnYnxoZFjvGGcmQgujQt6jxNrNf980=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=n3fmb1WB; arc=pass smtp.client-ip=209.85.214.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gd1aObQl"
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-472326ca506so3534236f8f.2
-        for <linux-clk@vger.kernel.org>; Tue, 14 Jul 2026 06:27:31 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1784035650; cv=none;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="n3fmb1WB"
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2cc61541f8cso13709265ad.0
+        for <linux-clk@vger.kernel.org>; Tue, 14 Jul 2026 07:14:52 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1784038492; cv=none;
         d=google.com; s=arc-20260327;
-        b=Fwmo1/3vwrrHxXL9c5pEUpzIPEzMqBli9ruOSJc6RRRAJST9hi7BG4VyDdFAFePKrn
-         YJpruqeruVuGYZ4pj97SOiE9ipOtYBhr029MSOzncYj0tiFpRCrUORYAqmXjodxVe8Us
-         N6UNBYv6K0fiUCzx0FCeT+HuWRDYzxGGCfPqr7eyk4Hwmlq8UITXVSet+VcGUrDqACzu
-         bKT1C0CEz4L71Xuf7NmdmKZAdx3TPCNWLyC1UfEomMK0mZZNfTlnPR04xg5lc76ARx2I
-         yJVeK9ACmO+8oYixEi3Te400sr2Tm2ssr/Gud4+aKih6bhDcWuTj8JpKHqLvr29BKsDr
-         pceg==
+        b=ZJLjvTlitDlM1mOLz3jqve5+Kw4HUrwkz4Et9Qhwak+fENMbMcE6M+8g7jzmEFrBiN
+         gDiHqLU3Di9xApXRp4NE7tHfIKWiBnea2fr/LFqHR5pJqtiItDnjGYkrUwBCyLkDjhCm
+         1oXC5+bpW2DzyzjbEVB17DhXa5exwt03jy51Laj6x/MC+hcUmBKabEp+X2hWBgyMJoFF
+         WomafGeCrvkDjacPIEnT5L4JoQ/bmeTLhDZgM5jSkD+E4OG1W+OBBQV4ovj/mLnyDWi2
+         MTio6gc73lpeIqt8/a5qw2VD6TcmmDLZcvtnFA0/97fSo4kGRIGCa8t77BO42q2pj2Gc
+         LlnQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=WRj5C4BZ8aUAwy0UDz9tsH2p/apYNMhkYQtruEiLUFg=;
-        fh=h4cCIv+Tma+zlXQj00qwpumR4ZwFFn1ebMgJOJEb2aI=;
-        b=fbyaCv58WPoKIcWomv0x2de8dj/iGX709rMJBQGPTrYgjufEc/HvGVw30ZhpwMsaxI
-         Ye8praDjTnc1gaIQBayVO0iRt9/OpALl2orpF5QO2k4mW4Jgsp9QF5fqahZBtLZRGc5O
-         wA279nXFcDoWo2KYolaugOmwh3+vbpuu6QAY+3FlEj1LWD4PBSlGBCnzk+p/IAMLYLUt
-         UzqqOQg8HVZeabLSN3k41KV6jBZXNZHfGXhCWiOuYdN7NGo6aM9EXgwfS+F4xn4FfRK+
-         dO/cTpj/pyyynmUEBDdsHAs63joo2+0Hbs+LjhIfmVHv8I8eZRwJrg501wOS9cbQ38ai
-         mOnw==;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=iffoRGhgdfjVMgG8fR7bEUfZMRX8TGqnupkWqKC4uSM=;
+        fh=FHNpojTRwkzvlrGGV6wqWLCh7MRfUfW22YTq7LqVE+I=;
+        b=HQY9y8ifab9Jz83EqB3uXNLRMnAl/6w68djwubYNORu9TXEf9tRIX+ad9i4fuEjhuq
+         c+sRlMRv8r642BJm4g567jsxCAPfyxytCVCxLcfdcc7Rul79yfj4GHWGxlWnAXh6INy5
+         4RVfYeXYsrd8mMnjKBQZabzGKFTGk0k1dWYsFsMvBHGHVVF/0tFGAIkVIaxyvENYo8SE
+         /WlQhsmeiAOLHp6izb0YacCxJ+c1/fPb+TzqXsgy4HGtCB21eD1oozXUVuxGfTMSHen3
+         f51IEVotTdODo/hibPTkSfI9gSmKzWpPKaPKpYFRkmOcZ8cc/0sFoGj9RFUfr+gCAAoJ
+         +WXQ==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784035650; x=1784640450; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=WRj5C4BZ8aUAwy0UDz9tsH2p/apYNMhkYQtruEiLUFg=;
-        b=gd1aObQl+qjxD929Ebl9GEw5vMjRAD5Ra9FjKX70snWGrmmHxmsnIeVpMD18Erdzkp
-         UKkux6CpyLniULXKsfExXEZboQQVJkbJeBHN/C8OmQTYdq7wSEDnf5sj0EdAIX1xDPWH
-         45N61XtWPmVHa1wbOEUhCtCTfUfV/BiihBjoUjZMsm5ffpc4a+NttdzMekEBufsYzzYM
-         q9lRJ6931LUKwD/wZDr8+ZkavKK7+vUJX0St/6vsN9ETG2Fnr4macCZxiosPf4iC0Ojh
-         YMF0QbXrxTkWmzl5LCmZkvMdEteA7C0TWqyYda1VrNJmvlxsro2+WdSFl9sW0dDvtlJh
-         h7Ig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784035650; x=1784640450;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+        d=gmail.com; s=20251104; t=1784038492; x=1784643292; darn=vger.kernel.org;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=WRj5C4BZ8aUAwy0UDz9tsH2p/apYNMhkYQtruEiLUFg=;
-        b=XJ3isC+qPK03LXxz7Qmpvf1ANYco7DuL/tVMsjpMut0Z0e7LEEuI3EuOcVUlU03Ii7
-         5tVBtvGg6sxEKtlNZuQJKlfn71oP/KGEczehc/gEca+pfLa4x0sEnLpIqfAGf/k0XOmK
-         PHTQyU20FU98CiJwp+9kOOB8wZma46b1w/WAQ3TmEfDzfhha8d+dFdRlv5xmRGDnnllk
-         jx9cr8fZaLSGqTT/8tlEOYsqMahT1FjzUCdQaDNFkwlSrmx55o5TyOiLU1p0HmHw/r9Y
-         JWIYFKXEZ0c7vQt84kG5lVHTHJavu4OWMy6AheBVkLOg4ySnbR3GI27LcamfC2QbuhmP
-         MSmg==
-X-Forwarded-Encrypted: i=1; AHgh+RoGWRA5KF94X0qm5uDKBOGIxiXf5TnNTaKKqhEniZG1DZKuPkcrV87XZmqfehT2fq9NInT8FshD86E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRDmw5aNhYYUkCnQavVcESH2Cc3PZ7Pm6QULuog3dLor2TdbZ3
-	21fm0v18rryYbSFWf3dPR8tw3zz7Oh9ZEfvjQ6aXrJe/abqZAy0QmNbgSX4AM6Tn+l2EEFBkBC+
-	CzxLjCbemM1U2UUGbAObuG9Sz8NS4hnBadmNI9D0=
-X-Gm-Gg: AfdE7cn7MqWogmq5dDzUxfldka+5fakMWcIQ+7X09OY+lTho7dWKk/wHOhoUWjwesQg
-	rctrOd2awYuoC+x9RWEn10OYoPKmdB1ilTI+oaV5P0Y+E8uy/OsyPCoyOH90rkmi+nIwc8LAnLu
-	u6x3yONH8iEDEkWxe6UNa2NDW46fdB3qs3QlWyI/p+fDOjxZKWXOYYfS4ekVQD5uOrGeXaVVdu6
-	cKfcZI5SUQwLtQMPu+HqAfe9mi0rdQWUHQfN6c00PCkHJ2Zl1vvaOB4dzj3VVUS2RWjQlpr+gVI
-	TJa1nMcCx4QQP1/07peRLRfWODLwU5Itkcy2TSt4LWpTeCXqL7WP1FLQPkGxXSbjwjzmOA==
-X-Received: by 2002:a05:6000:4693:b0:47f:4650:e45c with SMTP id
- ffacd0b85a97d-47f4650e4e6mr3694089f8f.12.1784035649771; Tue, 14 Jul 2026
- 06:27:29 -0700 (PDT)
+        bh=iffoRGhgdfjVMgG8fR7bEUfZMRX8TGqnupkWqKC4uSM=;
+        b=n3fmb1WBAJCg4vV0D5XcPaUu6YHriNnCtoyKEAUqSzbqntD5+2H7HycTAihki87qAq
+         A++r/tR2LNn2SRYsZZPtut9Gy/l3dehlmI7H+Yfrsleb1AX4DoQL/5ASWfPUkspQaHJU
+         E9XDinFNQ4tpanqZejXcUOWfuxnD5/561GNvOhCJY5wbBV1jsTKmYNnSKBOwVperbkfy
+         FNnIoyZgiZzG7j5HITRVJvNPiZYmTCJxZLAxEW937ivAOW0+JdZS25Z5GE9c15ypp8Eh
+         Eic1dbqPf+gA1bqdxNp0KMzNAODmHNuHvq+zPO5o9IMcNr1DkM6uicQiPar5KSlx4e/U
+         MuZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784038492; x=1784643292;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=iffoRGhgdfjVMgG8fR7bEUfZMRX8TGqnupkWqKC4uSM=;
+        b=puKwR3y0kO7DqivWS7Nm7Fk9haZRU4LszKny7qQCBBiHbyiWPbMYWHlddQM/42LXcw
+         1a2iTAngtAvT/qHhkClLh5+7rF75NvnypWGqrqZjAAGg5MC4hrjxEP11kgngnnE8YzSj
+         IgQWeTsSHNRipKto7bICSyu+/Qnq77SyeXsIY3K+W1PVVgsRoNlsdCyumqgw5VbFE7ul
+         GhoZ8LPek5aiP/ihjHDSd5MoVZPyFZUMSujrkEAUNqOfxDIiy5PUXbciPlCcoSlfBKt3
+         IOiEB2ldrz6aYsJ/e4DLk0TBtmJCzLBZ0Ke6t0zvSMw4s0BbvKpnoXIegwNmTu0il6is
+         btVQ==
+X-Forwarded-Encrypted: i=1; AHgh+Ro1Q++S/Uym3PomMHQsf8i/K0ilgy2eH1JaMBMazAFo2QblStK39Wq9GIemptOX3nrQx/FoDw8ijX0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySr9M1eLrga/qVrl6qOBlGgzW99QnWiVkCElQ40B8on5SCL1Qa
+	v3OGfWaGEyFpY3l2NJTaG7jdj+TY3WTYD29788ReFpb1XkncspaRzn+JYj2jIGAwGkbjB/jx+ge
+	Jh+oiyWLE6wvOZIv9PAf96Qk37qTiCIw=
+X-Gm-Gg: AfdE7clO2zZ9w/a13jtX2BYjFMtvVlVGLQ2NXBgZC6qzF106nCXUhwHFSVybRHxLgL8
+	tXC0/u9zvNqc/edKV8+bz+abEjiBLZdJrIqe4GgMA7+I1idYSqH/l64ekb++aS8tLY5IYGiJVFX
+	TNgsBpmKs/CxXsO+nOsAbhhIkvX1gQVJlnWPsdWkOBnz2kxA3x+LFHQcqOUX8qU1pTwVKr8VLIY
+	ymaRNkghqq6WvZWVsAB5DCvclGR6LoUJreZQITVpeNIwCfE1oEjM8ZiEtDXBIOZIHqEzWgAUMRM
+	RkDJH3d4cfmLmDgvKUMzKq67BPcQaDbGpm1wRADdMg==
+X-Received: by 2002:a17:902:cf0b:b0:2c0:d94f:50c7 with SMTP id
+ d9443c01a7336-2ce82879e0cmr178464175ad.7.1784038492000; Tue, 14 Jul 2026
+ 07:14:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260702123112.161160-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdUhiBAcJ6P7j0ZxL+0AbVqz88PMo7YX9UiYOK8jM61D1Q@mail.gmail.com>
-In-Reply-To: <CAMuHMdUhiBAcJ6P7j0ZxL+0AbVqz88PMo7YX9UiYOK8jM61D1Q@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Tue, 14 Jul 2026 14:27:03 +0100
-X-Gm-Features: AUfX_mz-bUh857aZKLRp6jCySBSNe_W4CR-bQsVZRSwNXqRoLizYQlsdmvEfzQc
-Message-ID: <CA+V-a8uUxfDx2Xnb3uFg2=R+eYnzVmAv4PoEYeXGwAbANxG5Bg@mail.gmail.com>
-Subject: Re: [PATCH RFC v2 0/9] Add System Controller support for RZ/T2H and
- RZ/N2H SoCs
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, 
-	Magnus Damm <magnus.damm@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, 
-	Prabhakar <prabhakar.csengg+renesas@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <cover.1782909323.git.mazziesaccount@gmail.com>
+ <27fb93d0e61704d495e3adf4ed614edac1642267.1782909323.git.mazziesaccount@gmail.com>
+ <CAMRc=MccLRKb8ZjChcR7WK3TqV3=waSnKX=UX9LR=5hOT=_tsg@mail.gmail.com>
+ <CANhJrGM9ciyBfgGWBwOM3kNmcXGSq4QVM6a6Js+wtbr9ANtSJA@mail.gmail.com> <CAMRc=MedLP3XBqoUv_zUr5gxBVc+gqwY3ozAyXagBhc_70Kykw@mail.gmail.com>
+In-Reply-To: <CAMRc=MedLP3XBqoUv_zUr5gxBVc+gqwY3ozAyXagBhc_70Kykw@mail.gmail.com>
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+Date: Tue, 14 Jul 2026 17:14:37 +0300
+X-Gm-Features: AUfX_mwsVtiEKTfAVEpGQxTiufDOYn-DdkejDZRKfFW-BwMpqRjZhGNLCiRQJ_8
+Message-ID: <CANhJrGOZQTG6j9AFse3+p_Yp=BweAUD3SQc5QV394hO-PQegvQ@mail.gmail.com>
+Subject: Re: [PATCH 7/8] gpio: bd73800: Support ROHM BD73800 PMIC GPIOs
+To: Bartosz Golaszewski <brgl@kernel.org>
+Cc: Matti Vaittinen <matti.vaittinen@linux.dev>, Lee Jones <lee@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney@redhat.com>, Linus Walleij <linusw@kernel.org>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org, 
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Geert,
-
-Thank you for the review.
-
-On Mon, Jul 13, 2026 at 5:00=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
+ma 13.7.2026 klo 11.16 Bartosz Golaszewski (brgl@kernel.org) kirjoitti:
 >
-> Hi Prabhakar,
->
-> On Thu, 2 Jul 2026 at 14:31, Prabhakar <prabhakar.csengg@gmail.com> wrote=
-:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > This series adds support for the System Controller (SYSC) blocks found =
-on
-> > the Renesas RZ/T2H and RZ/N2H SoCs. These blocks handle critical low-po=
-wer
-> > management and access control functions.
+> On Sun, 12 Jul 2026 17:42:17 +0200, Matti Vaittinen
+> <mazziesaccount@gmail.com> said:
+> > pe 3.7.2026 klo 16.11 Bartosz Golaszewski (brgl@kernel.org) kirjoitti:
+> >> > +
+> >> > +     if (!g->num_pins) {
+> >> > +             /*
+> >> > +              * The BD73800 may or may not have pins allocated for GPIO
+> >> > +              * depending on the OTP used at manufacturing. Free the memory
+> >> > +              * and go out if there is no pins as then we have nothing to do
+> >> > +              */
+> >> > +             dev_dbg(dev, "no GPIO pins\n");
+> >> > +             devm_kfree(dev, g);
+> >>
+> >> No need for that, because...
+> >>
+> >> > +             return 0;
+> >>
+> >> ... this will still leave a bound device in the system, I'm not sure we want
+> >> it? The correct error code in this case is -ENODEV.
 > >
-> > Hardware Architecture & Dependency Challenges:
-> > ----------------------------------------------
-> > The SYSC in these SoCs is a multi-functional block responsible for:
-> >     - Clock & Reset Control
-> >     - Low Power Management
-> >     - Clock Monitor (CLMA)
-> >     - Access Control
-> >
-> > A key architectural detail is that these SYSC blocks are physically loc=
-ated
-> > within the CPG/MSSR (Clock Pulse Generator / Module Standby Software Re=
-set)
-> > address space. While the CPG/MSSR driver is already implemented and
-> > functional for these SoCs, the integration of SYSC adds a layer of
-> > complexity due to a cyclic dependency:
-> >     - SYSC requires CPG: The system controller needs a clock to operate=
-.
-> >     - CPG requires SYSC: Access control registers within the SYSC conta=
-in
-> >       bits necessary to control the PLLs managed by the CPG.
-> >
-> > If implemented as a completely separate top-level system controller nod=
-e, we
-> > would face a cyclic dependency between the CPG and SYSC drivers during =
-the
-> > boot process.
-> >
-> > Proposed Implementation
-> > ----------------------------
-> > To resolve this, the SYSC blocks are represented as child nodes of the
-> > CPG/MSSR controller in the device tree. The SYSC regmap is registered
-> > directly against the CPG device node. This hierarchy correctly models t=
-he
-> > hardware address space while allowing the drivers to share resources
-> > without deadlock.
-> >
-> > I am sending this as an RFC specifically to get feedback on the
-> > implementation of the SYSC as child nodes of the CPG to resolve the
-> > dependency cycle.
+> > I am a bit uncertain. This isn't really an error. It should be very
+> > much Ok to configure the support for PMICs with GPIOs to be compiled -
+> > and also very much Ok to have a PMIC with no GPIOs. Returning an error
+> > doesn't feel right. Furthermore, I am afraid that returning an error
+> > might hurt the system start-up? Do you see some really problematic
+> > consequences if we return Ok without registering the GPIOs. I'd assume
+> > that wastes some bytes but I don't see other really severe
+> > consequences.
 >
-> Personally, I am not a big fan of subnodes.  I assume you are using
-> subnodes because you can register only a single regmap per syscon node?
-Yes so that the consumers don't have to specify it by indexing.
+> But -ENODEV/-ENXIO error codes are meant to do exactly that - tell the driver
+> core to assume this device legitimately cannot be enabled on this system. There
+> will be no error splat in the kernel log and the probe will not be deferred.
 
-> Would it be possible to just extend the existing clock-controller
-> node with two more reg entries, and expose them through a single
-> combined regmap?
->
-That should be possible. Or would you prefer just to extend the sizes
-and create a single regmap for it?
+Oh, thanks for the explanation. I didn't know this. The -ENODEV not
+causing error splat makes sense. The fact that -ENXIO does that too is
+quite surptizing to me. I thought the -ENXIO is used to indicate
+unexpected failure in bus communication.
 
-               cpg: clock-controller@80280000 {
-                        compatible =3D "renesas,r9a09g077-cpg-mssr";
--                       reg =3D <0 0x80280000 0 0x10000>,
--                             <0 0x81280000 0 0x10000>;
-+                       reg =3D <0 0x80280000 0 0x20000>,
-+                             <0 0x81280000 0 0x20000>;
+I'll go with -ENODEV in the next version.
 
-Cheers,
-Prabhakar
+Yours,
+    -- Matti
 
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
-8k.org
->
-> In personal conversations with technical people, I call myself a hacker. =
-But
-> when I'm talking to journalists I just say "programmer" or something like=
- that.
->                                 -- Linus Torvalds
+-- 
+
+Matti Vaittinen
+Linux kernel developer at ROHM Semiconductors
+Oulu Finland
+
+~~ When things go utterly wrong vim users can always type :help! ~~
+
+Discuss - Estimate - Plan - Report and finally accomplish this:
+void do_work(int time) __attribute__ ((const));
