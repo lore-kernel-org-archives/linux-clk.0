@@ -1,37 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20F6B360EC4;
-	Tue, 14 Jul 2026 01:35:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8E7D18D636;
+	Tue, 14 Jul 2026 03:28:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783992910; cv=none; b=ARvjWeJEDjpvPmTShSPsHtxCTlHyATsR9k2CbeJLjd2YkVdbvXDs7Zr1t9e/lQJ0OkfrpQuH8eR+reb1RiuYgob2I0HXQ2TRSvCRbI/Mko3Nvd+7aLSKO+ZMHXxmWsAplnaQ4T7AZC0bP6BkHbLUeTf4ppvDyhJiO905cM3o95U=
+	t=1783999718; cv=none; b=p/7rJYPjSxW6qHbqJWnC/IDfim1d2kQ/c6MuaWMfsES/3uWnvJ5zD1SIjNZUzA4nfED77ilDhXpgcnq4aYXRn7I44tqyPGfGf61DNAcb3S5VWsYl8LfG03UxlrtC3qLoY6vk5nCErbpDPp3qYE/hUkoSXJ6djggUIpb1+9S26KM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783992910; c=relaxed/simple;
-	bh=i+vNWFu0WMNpWI91QVE2Zdt4dVaM7AXfu0XL56oslRc=;
+	s=arc-20240116; t=1783999718; c=relaxed/simple;
+	bh=tuOyGc2HvqsLhhkEBIqIuJ5wQ1fqizUe9vaqx38ybbk=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=h8byqT+0tUO0/95FIINtkx3QIgho+7GOpd4owZpK/TLrfEHaIaeAPEOlKgdQXV0z1q5b4DqntAinx+wZFqYovo/18ZnaHjCEjYsH8TN5kuIQfCmGbW2lhL3NmUzkIRCljV7iMoFgnyrbHfR6MCrTECXOl8LzQCwaGR+K54WxiLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l9EhaJ3Z; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=Mgy1VKHl1nP7KvQu+LOSiJx1cCNnQmZ707lFE619OgyBRVlQ1OV2EtmAQPU2s7lpYLGYvCPaQQOhCWdotS7GjXCyvaxW3vstnpNIgxG9/ZXJSS8icVVhz+Ks8fEvQGVAQ2bgoakYwqSFtOt2keobKXrz/pyimeKyPCi3MunzI7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mqef01Uk; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l9EhaJ3Z"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id BA7DEC2BCB9;
-	Tue, 14 Jul 2026 01:35:09 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mqef01Uk"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 70055C2BCF7;
+	Tue, 14 Jul 2026 03:28:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1783992909;
-	bh=i+vNWFu0WMNpWI91QVE2Zdt4dVaM7AXfu0XL56oslRc=;
+	s=k20201202; t=1783999718;
+	bh=tuOyGc2HvqsLhhkEBIqIuJ5wQ1fqizUe9vaqx38ybbk=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=l9EhaJ3ZwQo6rzj4WepxsnmgXPrtzzQBTplNoY4ECz1+SRyg1maLKqYe4kJjHPhnt
-	 cLw9DGKuntK2lNxyr6BgPdZBZDplIkhv84AQyw9ZI8EaKPR1RZDlRyKphLExjLqk8c
-	 AhFOR8APl2RqXJzMMXmKcHHzAF+epgxdLT+5CkzAyfwx2xJrNtv7YM2UEqqgKGf0J1
-	 4mU4PgGPz6sqeaA+ntSbeJl4xwgz2x0f/jYLwxiw8asBKBQ/8exV0ycumDDmA8gBD9
-	 QcYk46w4sm8qeW2ok6so/8vNqW6rvPdW2/YizrmuD5hRValaVJY9GqfvFN2OknObO3
-	 FvK6VhYKNBXlw==
+	b=mqef01UkobXMx7cBupSiuGbj2JnGgxFaxzbq+2sQN2AzWBcTgAe0UskH4u6fIoMND
+	 ie4C2JTsnDoQ2Y9SdgpmtaJkA1bWL+iFgd+mzOy5AmCc7kZ8J71fY5DzZiBFGlwk4c
+	 ik54x/midVfTpUe01FDhT3IXKFd7Q2AiveyMH5ei7qzsSFZJnbWNqWjpG8LTvr6Yya
+	 L6yRoj+sdb81QFu6S5fuuV6Jh3MvsmK4Mk9bJu/P0V3gdb9Y9EAp/+4Voe2TxW9pMR
+	 lBXkYjlWOCgpgegTRHzgSdeqcMxeJ7DbhxzvZTw3kdrqytkO0WXGbBK8xuTI4kRpgx
+	 MqScvwCa1FRIw==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C492C44501;
-	Tue, 14 Jul 2026 01:35:09 +0000 (UTC)
-From: Jia Wang via B4 Relay <devnull+wangjia.ultrarisc.com@kernel.org>
-Date: Tue, 14 Jul 2026 09:35:07 +0800
-Subject: [PATCH v3 1/3] clk: composite: Export devm composite pdata helper
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54408C44507;
+	Tue, 14 Jul 2026 03:28:38 +0000 (UTC)
+From: Esteban Urrutia via B4 Relay <devnull+esteuwu.proton.me@kernel.org>
+Date: Mon, 13 Jul 2026 23:28:18 -0400
+Subject: [PATCH v3 2/3] clk: qcom: dispcc-sm8450: Migrate to
+ qcom_cc_driver_data
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -40,53 +41,110 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260714-ultrarisc-clock-v3-1-4b1ccaa26b37@ultrarisc.com>
-References: <20260714-ultrarisc-clock-v3-0-4b1ccaa26b37@ultrarisc.com>
-In-Reply-To: <20260714-ultrarisc-clock-v3-0-4b1ccaa26b37@ultrarisc.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
+Message-Id: <20260713-sm8450-qol-dispcc-v3-2-56fd05822270@proton.me>
+References: <20260713-sm8450-qol-dispcc-v3-0-56fd05822270@proton.me>
+In-Reply-To: <20260713-sm8450-qol-dispcc-v3-0-56fd05822270@proton.me>
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Jia Wang <wangjia@ultrarisc.com>
+ Dmitry Baryshkov <lumag@kernel.org>, 
+ Jagadeesh Kona <quic_jkona@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org, 
+ Esteban Urrutia <esteuwu@proton.me>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1783992908; l=797;
- i=wangjia@ultrarisc.com; s=20260515; h=from:subject:message-id;
- bh=8T/bzSyCQgQUdtW8jZQCk07FkbCd8+9jHeSg8tcJ/w4=;
- b=I66Zq+FmxIu0b3yH8s5tk9YjFDzCEY2GPNmcpVat1RMClR8P7hb4dRbNGPsT7RIjF3vrdGAHC
- /fkb2AITbfCDwgyJ5ikrnate2AnNcqyJH4uyMj9S0Xvwbh6akWkpWyR
-X-Developer-Key: i=wangjia@ultrarisc.com; a=ed25519;
- pk=wGVm18siRScehKOkOz0WKxgxDy7IezHEszhnN4/TUCY=
-X-Endpoint-Received: by B4 Relay for wangjia@ultrarisc.com/20260515 with
- auth_id=779
-X-Original-From: Jia Wang <wangjia@ultrarisc.com>
-Reply-To: wangjia@ultrarisc.com
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1783999716; l=2981;
+ i=esteuwu@proton.me; s=20260622; h=from:subject:message-id;
+ bh=Jbnp8p29U7ihTi5nzGMIrBxFlgzT7kH3/JhcN7BtyIQ=;
+ b=fP44rtzAgx+pYQdrFCgjsq+g5In/H5GO93GUDY8+TCs1kWxhPt+TMwL+PeYzvO77jEhEIK7Oj
+ R4ZGbcf7QKNDewMBceIhAYdqOkN+s4BSBYxICimdeSXj+da/4Pgc53q
+X-Developer-Key: i=esteuwu@proton.me; a=ed25519;
+ pk=wToFt4mOAWkzbqb15Ye1hrhevI13vK9BcMUFiQ/me1M=
+X-Endpoint-Received: by B4 Relay for esteuwu@proton.me/20260622 with
+ auth_id=835
+X-Original-From: Esteban Urrutia <esteuwu@proton.me>
+Reply-To: esteuwu@proton.me
 
-From: Jia Wang <wangjia@ultrarisc.com>
+From: Esteban Urrutia <esteuwu@proton.me>
 
-Allow modular clock drivers to use
-devm_clk_hw_register_composite_pdata() by exporting the helper.
+Migrate to qcom_cc_driver_data, which is used by other clock controller
+drivers.
 
-The non-devm composite helpers are already available to modules. Export
-this devm variant as well so users do not need to open-code devres
-cleanup.
-
-Signed-off-by: Jia Wang <wangjia@ultrarisc.com>
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Signed-off-by: Esteban Urrutia <esteuwu@proton.me>
 ---
- drivers/clk/clk-composite.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/qcom/dispcc-sm8450.c | 38 ++++++++++++++++++++++++++++----------
+ 1 file changed, 28 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/clk/clk-composite.c b/drivers/clk/clk-composite.c
-index 835b1e4e5869..11842bce5918 100644
---- a/drivers/clk/clk-composite.c
-+++ b/drivers/clk/clk-composite.c
-@@ -462,3 +462,4 @@ struct clk_hw *devm_clk_hw_register_composite_pdata(struct device *dev,
- 						rate_hw, rate_ops, gate_hw,
- 						gate_ops, flags);
- }
-+EXPORT_SYMBOL_GPL(devm_clk_hw_register_composite_pdata);
+diff --git a/drivers/clk/qcom/dispcc-sm8450.c b/drivers/clk/qcom/dispcc-sm8450.c
+index c7e04bd315d5..facbf040ab9a 100644
+--- a/drivers/clk/qcom/dispcc-sm8450.c
++++ b/drivers/clk/qcom/dispcc-sm8450.c
+@@ -1778,6 +1778,29 @@ static const struct regmap_config disp_cc_sm8450_regmap_config = {
+ 	.fast_io = true,
+ };
+ 
++static struct clk_alpha_pll *disp_cc_sm8450_plls[] = {
++	&disp_cc_pll0,
++	&disp_cc_pll1,
++};
++
++static const u32 disp_cc_sm8450_critical_cbcrs[] = {
++	0xe05c, /* DISP_CC_XO_CLK */
++};
++
++static void disp_cc_sm8450_clk_regs_configure(struct device *dev, struct regmap *regmap)
++{
++	/* Enable clock gating for MDP clocks */
++	regmap_set_bits(regmap, DISP_CC_MISC_CMD, BIT(4));
++}
++
++static const struct qcom_cc_driver_data disp_cc_sm8450_driver_data = {
++	.alpha_plls = disp_cc_sm8450_plls,
++	.num_alpha_plls = ARRAY_SIZE(disp_cc_sm8450_plls),
++	.clk_cbcrs = disp_cc_sm8450_critical_cbcrs,
++	.num_clk_cbcrs = ARRAY_SIZE(disp_cc_sm8450_critical_cbcrs),
++	.clk_regs_configure = disp_cc_sm8450_clk_regs_configure,
++};
++
+ static const struct qcom_cc_desc disp_cc_sm8450_desc = {
+ 	.config = &disp_cc_sm8450_regmap_config,
+ 	.clks = disp_cc_sm8450_clocks,
+@@ -1786,6 +1809,7 @@ static const struct qcom_cc_desc disp_cc_sm8450_desc = {
+ 	.num_resets = ARRAY_SIZE(disp_cc_sm8450_resets),
+ 	.gdscs = disp_cc_sm8450_gdscs,
+ 	.num_gdscs = ARRAY_SIZE(disp_cc_sm8450_gdscs),
++	.driver_data = &disp_cc_sm8450_driver_data,
+ };
+ 
+ static const struct of_device_id disp_cc_sm8450_match_table[] = {
+@@ -1823,19 +1847,13 @@ static int disp_cc_sm8450_probe(struct platform_device *pdev)
+ 		disp_cc_pll1.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID_OLE];
+ 		disp_cc_pll1.clkr.hw.init = &sm8475_disp_cc_pll1_init;
+ 
+-		clk_lucid_ole_pll_configure(&disp_cc_pll0, regmap, &sm8475_disp_cc_pll0_config);
+-		clk_lucid_ole_pll_configure(&disp_cc_pll1, regmap, &sm8475_disp_cc_pll1_config);
++		disp_cc_pll0.config = &sm8475_disp_cc_pll0_config;
++		disp_cc_pll1.config = &sm8475_disp_cc_pll1_config;
+ 	} else {
+-		clk_lucid_evo_pll_configure(&disp_cc_pll0, regmap, &disp_cc_pll0_config);
+-		clk_lucid_evo_pll_configure(&disp_cc_pll1, regmap, &disp_cc_pll1_config);
++		disp_cc_pll0.config = &disp_cc_pll0_config;
++		disp_cc_pll1.config = &disp_cc_pll1_config;
+ 	}
+ 
+-	/* Enable clock gating for MDP clocks */
+-	regmap_update_bits(regmap, DISP_CC_MISC_CMD, 0x10, 0x10);
+-
+-	/* Keep some clocks always-on */
+-	qcom_branch_set_clk_en(regmap, 0xe05c); /* DISP_CC_XO_CLK */
+-
+ 	ret = qcom_cc_really_probe(&pdev->dev, &disp_cc_sm8450_desc, regmap);
+ 	if (ret)
+ 		goto err_put_rpm;
 
 -- 
-2.34.1
+2.55.0
 
 
