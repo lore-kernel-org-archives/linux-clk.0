@@ -1,38 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8FBB3812FE;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB97739F162;
 	Tue, 14 Jul 2026 03:28:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783999718; cv=none; b=hOZuY9OYmIZBWIIjeC2COgFEe2HyP84yObiZ/62Y2FDTXZ1pWwf8dpX+HBtLwcjXlSo5j6mGUVd+u1gfSHTWdM+BqfSZRiLg2TxR+WJmwEHLCFvkX0l38okSWLHKcbh4+6CeY67JZwpI6XpIweWEOIvHJtA5kxwS6/N5pVpAPyw=
+	t=1783999718; cv=none; b=uUwAaQTH5NoWUSH5cEumrPSTxU+O5zLxlyIkFeXsklqitQcKcclozYBw2J9qcHhX4pBprqL0D19AkseJ1+g44lPxAIANq3bCGGkKpvCM2/jxphAzm3SIEoX4eDPBfsUhZay6svJ5OEClhLJgDeKd82iehUfoyrD8DwhSRGyuDm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1783999718; c=relaxed/simple;
-	bh=PbOq557Ft8YIJ9bXL+Q3CTGy+D0w/GsR+9j5qySpM+4=;
+	bh=tQ+NiSln41kIEiTdEZzg096lDi2b4x36FAPAdGwm71A=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Oy7JdeqKCmdSr0taumuIx4k8+jR4bVlk/9cVaVR/2g+S//3nRz9c3QVl76oR4WPF5yzMtA6hAJg9nNJU9QUu3CqcN62Uxxkz8jacE+dzdItrZUY878T3OWS1YybcGq7unPUdkJtXdUZFdN4F50xo1wPu4sDYdNXJDGqIpehOy9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vHh3+chi; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=NaSuYSeumRb932dFUMcV0z39Ausvi+2TpfdEMP2CPrWNSXCXMJpWhJ7aQVNkETh3uMCv2u5IN1nAiXZvrhBTnsroHymOVWn0d6TqzF+bHFtG0zzO0cK9L4Et1BCH1Hpdx1Rs7XrekG1zpctl46heXzRq1LDCdlrfijT7rYpQveQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p/ODHIJu; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vHh3+chi"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 63F2DC2BCF5;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p/ODHIJu"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 81D58C2BCFB;
 	Tue, 14 Jul 2026 03:28:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1783999718;
-	bh=PbOq557Ft8YIJ9bXL+Q3CTGy+D0w/GsR+9j5qySpM+4=;
+	bh=tQ+NiSln41kIEiTdEZzg096lDi2b4x36FAPAdGwm71A=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=vHh3+chiv/sBRNehBe6ZuPUWfoEST7kLght1ib+EOF7rTkekDrrzdwrYLhDdBsOBK
-	 tb3NGTULFc/BYo6hb3oPlxhByeh8AJepk24FBQ8aaBBfjDT6j3EtW58OJc3EnQ0mCG
-	 cO+ibNYJ7cRlw7F1EkKgZ1eEfbO5/WyWtsuC9QEcRXx771wc+35gp5CUzk/TXEePtE
-	 gGtptSEzkNc+/YAYKaJQyqen9hayATlJgKch3k8y9Vt8aFeDRlqm1bt2NZgU5JECs/
-	 yu+x2cY1FbbHJJGytdzr6i87r8lBkil1frcdc+awL0eBTXopAAsja25zcezwima7f2
-	 jDARUlzcq98Eg==
+	b=p/ODHIJuW9lDcltRCdOxpyZtyidMFwf4a46OOI2eByC7CWVRMmyNok2H/EyzeIi/V
+	 VMbe/b4mrSmkmTQ5dioyj92HHHi/syV0cnzdOipDysyKjF24cLM5TMMXJaDdN2MY8g
+	 fh+/5Iq22YlMt+rvg6sojJFk820mvsjXYycvbif7b97BcZzmKKyqGvD+YyCMNrJE6o
+	 7Pqkj0WbJ6b5S19LKs9rePnRYDM6TsjMP2oEvrkO5E6IbrknFA/T1rzrWp2N+0a5WA
+	 h2NTaopA7ixkmEK7SZNjqxOz1jmS4j3kcXHye9G4npJmScZ3/w8QIEHlXOJZ8GWlHW
+	 3eyIiLyJeABJw==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42656C44508;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65566C43458;
 	Tue, 14 Jul 2026 03:28:38 +0000 (UTC)
 From: Esteban Urrutia via B4 Relay <devnull+esteuwu.proton.me@kernel.org>
-Date: Mon, 13 Jul 2026 23:28:17 -0400
-Subject: [PATCH v3 1/3] clk: qcom: dispcc-sm8450: Fix
- disp_cc_mdss_mdp_clk_src ops
+Date: Mon, 13 Jul 2026 23:28:19 -0400
+Subject: [PATCH v3 3/3] clk: qcom: alpha-pll: Check Lucid Ole PLL status
+ before configuring
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -41,7 +41,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260713-sm8450-qol-dispcc-v3-1-56fd05822270@proton.me>
+Message-Id: <20260713-sm8450-qol-dispcc-v3-3-56fd05822270@proton.me>
 References: <20260713-sm8450-qol-dispcc-v3-0-56fd05822270@proton.me>
 In-Reply-To: <20260713-sm8450-qol-dispcc-v3-0-56fd05822270@proton.me>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -51,14 +51,13 @@ To: Bjorn Andersson <andersson@kernel.org>,
  Jagadeesh Kona <quic_jkona@quicinc.com>
 Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
  linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org, 
- Esteban Urrutia <esteuwu@proton.me>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+ Esteban Urrutia <esteuwu@proton.me>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1783999716; l=965;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1783999716; l=1223;
  i=esteuwu@proton.me; s=20260622; h=from:subject:message-id;
- bh=vJQi+hh68A/9zQqjnQhNDpQToorMCC98uuTiE+EDBpg=;
- b=69njIyVN6Bg2SvOWougSW0JtbBOvtf3urGyNAIUgO/GiYz3QE7Gjn7oPJftY574hrUhlFgpWq
- OM0+hhhZ52HC4qZ2Ez2AgHHHoRF7TOQrBd627rZTfAzrqWyk9lS8RFz
+ bh=GhaCSfwi+m8HFFTiT0PN4OP31ZAcFq2cbK1k4hgXMNo=;
+ b=1PrS4k9a3/d4gCxJxTpsPJ2dM9iDEe0p3/63VdlkKQKp5Dzm13w416iuD2rPKLOdP+eTtx8T1
+ VDP1KW19Bv4B1rW2BNv7g9EAmuueSsKUuRvsQtCATcNhuxWuHX0DrlR
 X-Developer-Key: i=esteuwu@proton.me; a=ed25519;
  pk=wToFt4mOAWkzbqb15Ye1hrhevI13vK9BcMUFiQ/me1M=
 X-Endpoint-Received: by B4 Relay for esteuwu@proton.me/20260622 with
@@ -68,30 +67,36 @@ Reply-To: esteuwu@proton.me
 
 From: Esteban Urrutia <esteuwu@proton.me>
 
-If the clock frequency is changed at registration time, a flicker will be
-visible at boot.
-Switching to clk_rcg2_shared_no_init_park_ops fixes this.
+On some platforms such as SM8475, not doing this may result in graphical
+glitches when the mdss driver takes over.
+This fixes the aforementioned issue.
 
-Fixes: 16fb89f92ec4 ("clk: qcom: Add support for Display Clock Controller on SM8450")
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Fixes: 3132a9a11e57 ("clk: qcom: clk-alpha-pll: Add support for lucid ole pll configure")
 Signed-off-by: Esteban Urrutia <esteuwu@proton.me>
 ---
- drivers/clk/qcom/dispcc-sm8450.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/qcom/clk-alpha-pll.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/clk/qcom/dispcc-sm8450.c b/drivers/clk/qcom/dispcc-sm8450.c
-index 3af120e54cdd..c7e04bd315d5 100644
---- a/drivers/clk/qcom/dispcc-sm8450.c
-+++ b/drivers/clk/qcom/dispcc-sm8450.c
-@@ -613,7 +613,7 @@ static struct clk_rcg2 disp_cc_mdss_mdp_clk_src = {
- 		.parent_data = disp_cc_parent_data_5,
- 		.num_parents = ARRAY_SIZE(disp_cc_parent_data_5),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_shared_ops,
-+		.ops = &clk_rcg2_shared_no_init_park_ops,
- 	},
- };
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index f8313f9d0e30..60173b076cc5 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -2373,6 +2373,15 @@ void clk_lucid_ole_pll_configure(struct clk_alpha_pll *pll, struct regmap *regma
+ {
+ 	u32 lval = config->l;
  
++	/*
++	 * If the bootloader left the PLL enabled it's likely that there are
++	 * RCGs that will lock up if we disable the PLL below.
++	 */
++	if (trion_pll_is_enabled(pll, regmap)) {
++		pr_debug("Lucid Ole PLL is already enabled, skipping configuration\n");
++		return;
++	}
++
+ 	lval |= TRION_PLL_CAL_VAL << LUCID_EVO_PLL_CAL_L_VAL_SHIFT;
+ 	lval |= TRION_PLL_CAL_VAL << LUCID_OLE_PLL_RINGOSC_CAL_L_VAL_SHIFT;
+ 	clk_alpha_pll_write_config(regmap, PLL_L_VAL(pll), lval);
 
 -- 
 2.55.0
