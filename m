@@ -1,284 +1,150 @@
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 439C63E8686
-	for <linux-clk@vger.kernel.org>; Wed, 15 Jul 2026 09:10:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53CC142F71D
+	for <linux-clk@vger.kernel.org>; Wed, 15 Jul 2026 09:31:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784106661; cv=none; b=gf0oaepVll14ln3F5UkyuAEBnKrk2tmNH+EUFN7PpMvwt+eHJzRiC0HGD7yCCP678VVzoM9fmmxNmE/Gq68qcl7waMxs1k51N+GEY35ls2Z9IHiIClYfS2gFHWoWWkF7Z85tQhKt7gTIA6Efm40L/l8t7jjvustdt56JksnX8Mw=
+	t=1784107901; cv=none; b=fXQQnd43iZpQ3IbMToO/4FTFpDKyYOKcVYvQSL10K17webmGuNhsElK6k5st29b5ySR/UxEehZR0DNsreNF79ouBRNsfGaWgAunyNO3+Yg7/gREX/MPyRrITkTcDS3U9ZintmZOwX7iCLL8kmfMMATdlCWTEzJh7LcaEAtWdACU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784106661; c=relaxed/simple;
-	bh=b9PpOJcb8DxhkXY45jY4YE04g6Om+Wyc4fpqhjZ75nM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UaSYmhZxlZSXvh3TxakFcY086XzfF2PM9mRntBhws5fnqSzY9LEosfzWNiy40EzlczWedwpEHd/cyRSH9HSQTjZuBzRdzD5YOHlJfFUQFK/4rLFSwpZZAQwVc4VXFzTwXJiIE2Bs4WDUKV3niyfCP+Ji2oGUcbT1KJ1Zh9V5iLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-5bfc5b77c02so3604295e0c.0
-        for <linux-clk@vger.kernel.org>; Wed, 15 Jul 2026 02:10:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784106658; x=1784711458;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+	s=arc-20240116; t=1784107901; c=relaxed/simple;
+	bh=xPtwZi5RwdtRu4PFwA4mNzCB+LYFKWcb6NhfJw9qcfI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ip9sv6rxwHmkMWbFhAcQeGucy1AqPgo8+JTCpBx5NhO1paahsR43jVRfs4fZcNO4bvG5JxbEYI6CydgFxG3E77Z1FZdLZxHItYqI+hr7gLlJMEHrUKp7QM0YFQrPPXrLW2J5tHpHITHuQZdClkcboY4U8YKLKAH0SCWSij4+m3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KH36m19v; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=bnoULkI8; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KH36m19v";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="bnoULkI8"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66F9SfqL2679746
+	for <linux-clk@vger.kernel.org>; Wed, 15 Jul 2026 09:31:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	L9a+h5TbfD3DZbvHIMi092MFcSpBlC/pDu2Yq75Eu+s=; b=KH36m19vgGV5HK/M
+	w7RV8ACfKQtySVJAuWLU1P62NPNnJuSJUND6v6aoFqcAHuBGroi92gm73Wrrlwtd
+	EvL/UEG9L3mVgVuKW6IUxYEVdorxW2T+6ueEDXM/2qz+sgo7DJo9b35tUcGhPxo/
+	4HSZQ938O+/Mm2bv8WRS0xbPq8+HwSQw0E0Sbe/PIA9aCQTZPO7Mh3zVBeJila8m
+	qMfWQvEmhhNEeYXAk4k0ZPzb0OJszsIndxSqGRs06U5wFEpmb9hedHL/uTVmFf2s
+	L+KCtPV5nkdAM0CqNWhaQb4JtKPTjsiUlY3bSV7iiPpricoFgZoCNpLgSwXNhgrU
+	b651VQ==
+Received: from mail-vs1-f69.google.com (mail-vs1-f69.google.com [209.85.217.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fdnnuv1tb-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Wed, 15 Jul 2026 09:31:30 +0000 (GMT)
+Received: by mail-vs1-f69.google.com with SMTP id ada2fe7eead31-73997bfbbdcso87551137.0
+        for <linux-clk@vger.kernel.org>; Wed, 15 Jul 2026 02:31:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1784107890; x=1784712690; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=XLTXQ+jfU88JSGv7Lh/A+xkjnHoYFHk+Tdqt/10T0QY=;
-        b=RmOVZeDuKXR00MxPPc7vsa71P6N0XOAuKb4Ej+5bU6aLMLvkeDjtHCvZR3j10cSzzD
-         tNUfjM88RbAWD1K6ZVFzP0OwdSNAjJwIp3skNgHbKg0eU8KgAOJnyG14jWckqA67b9V3
-         mf2QPH4h6iPl0caD770fSKJMWyVut1DUFlMfUWAQgl9GGij3XW/0RqJFwrPhLtzfWaZn
-         yrJTLe24owfsfvqFiy4ahcip4lr7C9yl9jR59pQ3XTo7E5iIdCMqz7ky5oQrj6+usZPe
-         kXrvSHtN7T8FQTIN0pocJl8zlKwiz3WNsjeV4Gi9It11S0gPxcxpQcatHQzxkKQOZ3Ht
-         xQsA==
-X-Forwarded-Encrypted: i=1; AHgh+RoN/z2jdn5aDjFq+ub7dMZS06IEA0Xfsp9hYQjXCyOigQWO4l5Wv8AV7BB9qTfLl7s9oyrgX7ShHh0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxmm9Lx9nbMOguvU/mD+3I97Nopy9CkvaY2TrOik4iixOaom9f2
-	A6qW1ubVAplknEL3wh8X14BsSQ+IvPO/cc9Ys6FYoxaIO/3yx/Y8/8FydL1QnYVOvcc=
-X-Gm-Gg: AfdE7ckkkLN+GnPybJq8RfvNtLC5k/3Xqho2zmMYB3yxXkDL0viXtPpNOEFmCben6Tt
-	AOl2y5ABfW+ne3LVKtWLVTz5wIvLuITuBeTXkVI+G2NQHW9b/rndDArewRD6MBbFfw1fyGNybI0
-	mJ2rnL77AFsOzXbpS2cNa45+aEJUm5dB54f+UQgKsc5YYRqDLotLZuazVLEXU1EQeC6V9rFg8b6
-	KACVq1t0lEJsM4zr0/edeqqcghDxQKcK3RHBmzqfbj1mBHQGLq8ORLv30vDZPaMRt7rrL2W55HE
-	oA9jkMveW71OD99lUonwxJ6EV6r8dTcWybnxLZPEifrTfQe8LI7qCBSD6xzOcaCo8e/RoQSzzxW
-	b5hAkJN68uLQxRynrzNpN5B9q+DYDyLHVtPnSfaakH87RF/M01H/Tl8dRbnWLkM/2S0go3beK+P
-	kyOIxUpFN4h+aGu8qAyIWhaOzr3Q+a7qnRAYVkEOHL7ISh3za9wHPNTQ==
-X-Received: by 2002:a05:6122:1699:b0:5c1:1c32:dac2 with SMTP id 71dfb90a1353d-5c1251201ebmr1227814e0c.7.1784106658078;
-        Wed, 15 Jul 2026 02:10:58 -0700 (PDT)
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com. [209.85.221.178])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5bf6f66eb74sm12177541e0c.7.2026.07.15.02.10.57
-        for <linux-clk@vger.kernel.org>
+        bh=L9a+h5TbfD3DZbvHIMi092MFcSpBlC/pDu2Yq75Eu+s=;
+        b=bnoULkI8wTwnTdhpaC0OgbXEuWMxXuouFZ/nerip/j5u7G5bavXQPkhyqHYFy5c4Si
+         GTMaXonvQLDv2xy+Hy6aKfBH3NQ2aFwLVOBE4HwHggJbHgZttjQw4vuyFrzdRiNeXffi
+         Pe3iHr4NseoZfHDjWQsPOnJThUvOSo4mvIKRoMSV471XT11Q2CDj316cRFF6y124ngbl
+         MU5/rdF/aAfuSEqx8WorqeTly6sXTmkpZOU83KjaAF17xmcAojHhCzTHPjeb4AY9MbwK
+         Za7tM1HB6TKTRpgXjB/vqHkuBpwqjJO2FPAjBjPuBuFJEFJlhEDfkwjK8R7knxPGz0yG
+         hxvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784107890; x=1784712690;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=L9a+h5TbfD3DZbvHIMi092MFcSpBlC/pDu2Yq75Eu+s=;
+        b=KdlIq+Y6PQjoFbPefZK350tWbni7yRhcg5mWSve4kyPVjNsdsly8LCr3Mk6VXNa8eE
+         ZA4ZB8y2pCiRlSEu9L82oczl9A3p2gY9ikuZFEqbwedxBdiytNob77onj1KQ1GVedbKQ
+         dj/8+T+hYcHY3mBgWdDTpr9W5U61ftBZXh2g5Y1FsUHMNWxXWkddlxLx2RVrnQIB6r1e
+         aAJouh5TvwhGB8Baf8VQx6gTKZOBw8u173JqvkqsYt/N/3tlFXab+33qRLi2w/GreL6D
+         8kwKKcz8qMexU0KlaHc6q+SUVh80JbB2+Pm7lujIJGd/YjGmVXsaOyBNPjGbQaQ2/xWC
+         wbhA==
+X-Forwarded-Encrypted: i=1; AHgh+RoBeKweNlNF8xxT5bVZI/XU7rPND6exT+hh98rBkJZs+LzP0T1wWeqNUooPhIyX5dprrD2yYXWKeOE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7GP0kNrPJZIw3afEjWSgk6jJ16wBc2MIn9teSQR/YFgmHqIm9
+	sEDfsuSWfIdG+B/LpunDFqikjcmQE42KVwc4jRBcZIcFHJLyB3p4IlCdGo+himb5kEiJpQXz8Yy
+	ZjIZUBocQCafFlS2UQ3HOywwnO+4rT2BqOUUh8Ck3Vz/w8WN+qso66QCuR5gmXcM=
+X-Gm-Gg: AfdE7ckwGF+fBJphAB/6OnvWvSVmcJKgcdaLTUQ+dsH1b8iUs5PUmAcrREFy6kePpIa
+	o5UecwxX9fq2xGn0Epc32In0bpdReqyNBJPFI+R85EUbK3qaiVBchrIFo3s4HPqDBUL6DYQO4zR
+	mJN6cMMBOT5135MjF+QIAfGqe00CM8qvyyI41U+JAS1sozJ49jcwVjeRBeeSxesdWEGmmytH/fR
+	H+Z2qRr+o89fi3dt/RKhEZrvHrwFsPvXodKBA4g5Vh3x7XoewQXcQCQQ3yI8i/iePywRJVlGdj6
+	O6DyioLCpHUGcjfAlVZCWRSc0c4EvSrb4D0g78yhfWeDHs7Xg7o8GQUqFEg6Yl8JljL4ENyVShM
+	BxzJ/YnaCdSAq7JK0gsDvRR1qGhCHBiHVIOc=
+X-Received: by 2002:a05:6102:5e85:b0:6d1:8f7:18a5 with SMTP id ada2fe7eead31-74533b1aa72mr3923445137.1.1784107889864;
+        Wed, 15 Jul 2026 02:31:29 -0700 (PDT)
+X-Received: by 2002:a05:6102:5e85:b0:6d1:8f7:18a5 with SMTP id ada2fe7eead31-74533b1aa72mr3923434137.1.1784107889467;
+        Wed, 15 Jul 2026 02:31:29 -0700 (PDT)
+Received: from [192.168.120.193] ([178.235.128.140])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-69cd288757esm2743992a12.9.2026.07.15.02.31.25
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Jul 2026 02:10:58 -0700 (PDT)
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-5bfc5b77c02so3604284e0c.0
-        for <linux-clk@vger.kernel.org>; Wed, 15 Jul 2026 02:10:57 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RoJyXxlH/DYrA7zcf97EmNTLS5MgrpCvYuTPomaLFrXKohBloBHwjJxCriFhkC0Pprsq4kksL9cpPs=@vger.kernel.org
-X-Received: by 2002:a05:6102:4425:b0:738:2a8c:736b with SMTP id
- ada2fe7eead31-7459a045858mr1258510137.20.1784106657725; Wed, 15 Jul 2026
- 02:10:57 -0700 (PDT)
+        Wed, 15 Jul 2026 02:31:27 -0700 (PDT)
+Message-ID: <40404aa6-7822-4c65-abdf-0ecf1fa073cc@oss.qualcomm.com>
+Date: Wed, 15 Jul 2026 11:31:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1783505142.git.geert+renesas@glider.be> <23f979b0903ca11513ac339ab8b6dd40435603c5.1783505142.git.geert+renesas@glider.be>
- <CAPx+jO-=LF9CvYDrC3O_GBtfHU6GYvq524OLmTG8R1-u27oyKw@mail.gmail.com>
-In-Reply-To: <CAPx+jO-=LF9CvYDrC3O_GBtfHU6GYvq524OLmTG8R1-u27oyKw@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 15 Jul 2026 11:10:46 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUAwxs50S7hwWRsSmtRagD7Gu4rodGund4k3r1x1+A5ug@mail.gmail.com>
-X-Gm-Features: AUfX_myLu6xhapX4cEw1JPlcU_GnqjYP1lw1RxK8SjV_xKv0JfjeAPhzRG7BCHM
-Message-ID: <CAMuHMdUAwxs50S7hwWRsSmtRagD7Gu4rodGund4k3r1x1+A5ug@mail.gmail.com>
-Subject: Re: [PATCH v2 4/6] pmdomain: renesas: Add R-Car X5H MDLC driver
-To: Ulf Hansson <ulf.hansson@oss.qualcomm.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, Ulf Hansson <ulfh@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Marek Vasut <marek.vasut+renesas@mailbox.org>, 
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, devicetree@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/3] clk: qcom: alpha-pll: Check Lucid Ole PLL status
+ before configuring
+To: esteuwu@proton.me, Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org
+References: <20260713-sm8450-qol-dispcc-v3-0-56fd05822270@proton.me>
+ <20260713-sm8450-qol-dispcc-v3-3-56fd05822270@proton.me>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20260713-sm8450-qol-dispcc-v3-3-56fd05822270@proton.me>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: NzpvSwGnzk7M4-_x3wzCk4bfrI-9pE1H
+X-Authority-Analysis: v=2.4 cv=E+v9Y6dl c=1 sm=1 tr=0 ts=6a575372 cx=c_pps
+ a=5HAIKLe1ejAbszaTRHs9Ug==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
+ a=IkcTkHD0fZMA:10 a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22
+ a=EUspDBNiAAAA:8 a=mfgDh_fDUIA9-y0A_ioA:9 a=QEXdDO2ut3YA:10
+ a=gYDTvv6II1OnSo0itH1n:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzE1MDA5MiBTYWx0ZWRfX/fOmHv3OGdfl
+ G+mmGhhDwEbEMsFAhkhDeKrl3JNHUVwWOMiWChfdPjs/wPp/LtNi5Uk2cdYJjCNVFUriU1eCDg0
+ SLznz/yE+VXtaTujuFq5t9NzYKIti6goSgHSMz73uuknIQ0q4CeoNsqC2cu4j01BEDOAm59P9ZS
+ KZMfH8PKhaqAS/nquG5KUdkZEn6p0PzPdh7we3dA27jRYGccwOf2eAbHLeVZSSSVFOQyzVNmpkx
+ gh9CWICo7aT5E7Pj1UMOv/3Tgkp2qz1Pi4VAo/Hlr5hdUbJHyCYu42ORXFew+fKqCe56iZpoKXh
+ w1nxSKr9lqhTSm+SXzQm2HwLAl9bxGcLOX3IofZxd/Sv1Khu0jWyA+K6Q3s/qJrWHDVQ+B5zy1d
+ 5Axrkz4L0N3t9iObrqFoP7qA6X7cnwgxVzB0QQAurDVD6LDgds6DbWMtOTNpGoqI95qOI5AllwV
+ dvZcNBo1rtF6Z3urGEw==
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNzE1MDA5MiBTYWx0ZWRfXyAhD6j4bBBwS
+ cpYjxlLA02d0SnHChxm5lF3vRV14BgrWBOx9+JgZHJn1ZRIa4lG31mespGrfhNSyPmI5CDLGQCl
+ E1gmlQ1h7vpmlnRRMzJqb/ENFXg1QaI=
+X-Proofpoint-GUID: NzpvSwGnzk7M4-_x3wzCk4bfrI-9pE1H
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-07-15_02,2026-07-14_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 suspectscore=0 spamscore=0 lowpriorityscore=0 impostorscore=0
+ adultscore=0 clxscore=1015 bulkscore=0 phishscore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607150092
 
-Hi Ulf,
+On 7/14/26 5:28 AM, Esteban Urrutia via B4 Relay wrote:
+> From: Esteban Urrutia <esteuwu@proton.me>
+> 
+> On some platforms such as SM8475, not doing this may result in graphical
+> glitches when the mdss driver takes over.
+> This fixes the aforementioned issue.
+> 
+> Fixes: 3132a9a11e57 ("clk: qcom: clk-alpha-pll: Add support for lucid ole pll configure")
+> Signed-off-by: Esteban Urrutia <esteuwu@proton.me>
+> ---
 
-On Tue, 14 Jul 2026 at 14:04, Ulf Hansson <ulf.hansson@oss.qualcomm.com> wr=
-ote:
-> On Wed, Jul 8, 2026 at 12:15=E2=80=AFPM Geert Uytterhoeven
-> <geert+renesas@glider.be> wrote:
-> >
-> > Add a minimal Module Controller driver for the R-Car X5H (R8A78000) SoC=
-.
-> > For now this just supports the always-on power domains, and dummy clock=
-s
-> > and resets for the serial console (which is enabled by the boot loader)=
-.
-> >
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-> > --- /dev/null
-> > +++ b/drivers/pmdomain/renesas/r8a78000-mdlc.c
-
-> > +static struct generic_pm_domain *r8a78000_genpd_xlate(
-> > +                       const struct of_phandle_args *spec, void *data)
-> > +{
-> > +       struct r8a78000_mdlc_priv *priv =3D container_of(data,
-> > +                                       struct r8a78000_mdlc_priv, genp=
-d_data);
-> > +       struct device *dev =3D priv->dev;
-> > +       u32 id;
-> > +
-> > +       if (spec->args_count !=3D 2)
-> > +               return ERR_PTR(-EINVAL);
-> > +
-> > +       id =3D spec->args[0];
-> > +
-> > +       if (id >=3D R8A78000_MDLC_PD_AON) {
-> > +               dev_dbg(dev,
-> > +                       "Mapping HW power domain 0x%x to always-on doma=
-in\n",
-> > +                       id);
-> > +               return r8a78000_genpd_always_on;
->
-> This looks odd, but perhaps it's just a temporary mapping that you
-> intend to change later, no?
-
-The hardware has multiple always-on domains, but on the software side,
-using only one is sufficient.  When needed, it can be changed later.
-Other domains will be added later, in the else branch.
-
-> > +       }
-> > +
-> > +       dev_err(dev, "Unknown power domain 0x%x\n", id);
-> > +       return ERR_PTR(-ENOENT);
-> > +}
-
-> > +static int r8a78000_genpd_always_on_singleton(struct device *dev)
-> > +{
-> > +       struct generic_pm_domain *genpd;
-> > +       int ret;
-> > +
-> > +       guard(mutex)(&r8a78000_mdlc_lock);
-> > +
-> > +       if (r8a78000_genpd_always_on)
-> > +               return 0;
-> > +
->
-> I guess the mutex is used to protect the global
-> r8a78000_genpd_always_on, but it looks like that isn't really needed
-> based upon how things are being called during the probe.
-
-Why would it not be needed? There are multiple instances of the MDLC
-device, but only one instance of the always-on domain.
-
-> > +       genpd =3D kzalloc_obj(*genpd);
-> > +       if (!genpd)
-> > +               return -ENOMEM;
-> > +
-> > +       genpd->name =3D "always-on";
-> > +       genpd->attach_dev =3D r8a78000_mdlc_attach_dev;
-> > +
-> > +       ret =3D pm_genpd_init(genpd, &pm_domain_always_on_gov, false);
-> > +       if (ret) {
-> > +               kfree(genpd);
-> > +               return dev_err_probe(dev, ret,
-> > +                                    "Failed to create always-on domain=
-\n");
-> > +       }
-> > +
-> > +       r8a78000_genpd_always_on =3D genpd;
-> > +       return 0;
-> > +}
-> > +
-> > +static int r8a78000_mdlc_probe(struct platform_device *pdev)
-> > +{
-> > +       struct device *dev =3D &pdev->dev;
-> > +       struct device_node *np =3D dev->of_node;
-> > +       struct r8a78000_mdlc_priv *priv;
-> > +       const struct mdlc_info *info;
-> > +       struct resource *res;
-> > +       int ret;
-> > +
-> > +       ret =3D r8a78000_genpd_always_on_singleton(dev);
-> > +       if (ret)
-> > +               return ret;
-> > +
-> > +       info =3D of_device_get_match_data(dev);
-> > +       if (!info)
-> > +               return -ENODEV;
-> > +
-> > +       priv =3D devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> > +       if (!priv)
-> > +               return -ENOMEM;
-> > +
-> > +       priv->dev =3D dev;
-> > +       priv->np =3D np;
-> > +
-> > +       res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> > +       if (!res)
-> > +               return -ENODEV;
-> > +
-> > +       for (; info->base; info++) {
-> > +               if (info->base =3D=3D res->start)
-> > +                       break;
-> > +       }
-> > +
-> > +       if (!info->base) {
-> > +               dev_dbg(dev, "Unsupported MDLC instance 0x%pa\n", &res-=
->start);
-> > +               return -ENODEV;
-> > +       }
-> > +
-> > +       priv->mod_map =3D info->mod_map;
-> > +
-> > +       scoped_guard(mutex, &r8a78000_mdlc_lock) {
-> > +               hlist_add_head(&priv->link, &r8a78000_mdlc_list);
-> > +       }
-> > +
-> > +       ret =3D devm_add_action_or_reset(dev, r8a78000_mdlc_unlink, pri=
-v);
-> > +       if (ret)
-> > +               return dev_err_probe(dev, ret, "failed to add action\n"=
-);
-> > +
-> > +       /* Note that no actual domains are registered, just need transl=
-ation */
-> > +       priv->genpd_data.xlate =3D r8a78000_genpd_xlate;
-> > +       ret =3D of_genpd_add_provider_onecell(np, &priv->genpd_data);
-> > +       if (ret)
-> > +               return dev_err_probe(dev, ret,
-> > +                                    "Failed to register genpd provider=
-\n");
-> > +
-> > +       ret =3D devm_add_action_or_reset(dev, r8a78000_genpd_del_provid=
-er, np);
-> > +       if (ret)
-> > +               return dev_err_probe(dev, ret,
-> > +                                    "failed to add unregister action\n=
-");
-> > +
-> > +       priv->rcdev.ops =3D &r8a78000_mdlc_reset_ops;
-> > +       priv->rcdev.of_node =3D np;
-> > +       priv->rcdev.of_reset_n_cells =3D 1;
-> > +       priv->rcdev.of_xlate =3D r8a78000_mdlc_reset_xlate;
-> > +
-> > +       ret =3D devm_reset_controller_register(dev, &priv->rcdev);
-> > +       if (ret)
-> > +               return dev_err_probe(dev, ret,
-> > +                                    "Failed to register reset controll=
-er\n");
-> > +
->
-> In some of the error paths above it looks like we end up leaking the
-> data allocated for r8a78000_genpd_always_on. Perhaps clean up that
-> somewhere here.
-
-That is intentional: the always-on domain is shared by all MDLC
-instances.  If one MDLC fails to probe, the MDLC instances that did
-succeed still need the always-on domain.
-
->
-> > +       return 0;
-> > +}
->
-> [...]
->
-> In regards to the merge strategy, I intend to pick patch 2 (shared via
-> the immutable dt branch) and $subject patch. Please let me know if
-> there are any issues with that.
-
-That is fine, thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Konrad
