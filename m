@@ -1,176 +1,90 @@
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB80226E710
-	for <linux-clk@vger.kernel.org>; Wed, 15 Jul 2026 15:10:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39EB847A0B8;
+	Wed, 15 Jul 2026 17:22:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784128211; cv=none; b=ikJD8S1yADKsRCwKJyT73klVH+v2pdep8qrjhJf17KCJwIosjRaQEyt487eSwicQ5xb+utZS8p0QlGtfgNSo/6I8lfANdPgu/z4tZpc6kqiVZbeSipZUZHe79wLmJDIwC/z6R4dHsLXTsYFBy64i52Tekbrqi6MpGe7NAc8j7H8=
+	t=1784136174; cv=none; b=VwyEaorNe8/KEclMrAs/EyNkyHt2zSIwPhZ5giGGjaRepkb4sZG8CgLpwyZS+D6EDICgEpeaMlet51yuu8xcio7qKQ0roXy8eo+2emciGp7AOqDYwrBlYoB6ktzzNTCLP+BZKERCzRwTsQ0jy8bTmUA2wu+0wiJ9jabsBgxruxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784128211; c=relaxed/simple;
-	bh=PMWWdWROPx5T2hXnstRMOcMG5ExDZiLP03tLguMc5RE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=PphqHCIswjBAecZwWBbSl2LVE62TBOIoCVRRnckzBrETSPTWMVL69KN6Jq60o4KXmddfFKxo9EdnCoo4JpIU896NucJSizZCDWYTbEGMU/jpSaIJ0O7EfDJMY25whqkWhMrLdYytgQrffKrZejX2h+UQ+OplomNf2pbgcZLuy7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=im5G3xFz; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1784136174; c=relaxed/simple;
+	bh=HVErGlLF+dnztHcNMHi4w5JlAg+xGy/zsv+HTBBaDDg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M6qGXz1Q++CvSESqS6AMTvfnjSwsmXBOg/O6zbpG1nZPTM9T6iKtEI9qnslNQI0xnLQpxhaj2lsFLTGp+f21ZxtcBeAkLvQmggbAQMJCSUvryC4cRNpACGOA7qfU02A9V61ul7EyD3kTt6/UV7J4Y6/ZGjY5rULLx/U7n5RVdb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bi0xmwQk; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="im5G3xFz"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id D376FC2B9CB
-	for <linux-clk@vger.kernel.org>; Wed, 15 Jul 2026 15:10:21 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id B07856035C;
-	Wed, 15 Jul 2026 15:10:04 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B047F11BD15D9;
-	Wed, 15 Jul 2026 17:10:01 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1784128204; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding; bh=OJVhzFpf0dxP3JwX9CMfXgwxYQOoiMVKTMSuLBj7pMg=;
-	b=im5G3xFzC5cwL4REP+C0b6cC3HV0pxOjgN/xEdbVRIQIrluxmp6mTcE6LQ4EYNKpER7MT3
-	AVmK47kNhnubMP3sH2atkHfdFJh5aOc4E7suX4zMaMM1kpAXDL1Jys9ROSMBsf51cVsRll
-	5QUZkjaGL0QFoI7hiu18Jp0eKN7d63/JTm6ohiU/L1EE/laMXdYXOFU+vVpAhaUUtz5paz
-	jhQ+tN8XVlXAvxb6Zk1rYIiU83x0Phzshu+7xrKDV/KpEiAvecVPbGIEZrHzWqGMEnsFvo
-	UvOLzuPSAwK5iK/ESl0Vym4pYt85hmtWJBSeMsfnqSSI90Vz6xMWRr0ovEUEvw==
-From: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Date: Wed, 15 Jul 2026 17:09:56 +0200
-Subject: [PATCH] clk: ti: mux: resolve parent clocks by DT index, not by
- name
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bi0xmwQk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98C4D1F000E9;
+	Wed, 15 Jul 2026 17:22:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1784136170;
+	bh=wyyEWav4MVzun5/KCm1qNMqiiNQ6+CPjHHnawrFHi70=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=bi0xmwQkbfPMjCfaJWTU2h0MpLfQoxiCTbhaj902Jn6drO4twciRUuVCjFQ8ej3KL
+	 biEwsUEL2OgV+GCl3DHBwA50cnANxKo9PB36pNKpSyBQ+N6ZO7fal1VycbkEBJ19Mp
+	 5INo98iUZbYBVK5fozq8vYwGwvSNBueogVFBM1iiPCLg7OyVVhMAoLCrnSlk7wkZzI
+	 YUIWKqSC44q/BK+YPPX65iQtnnU2HEPb50uOKLQpDpnN118B3XKNIGhI2OGE9J0tZh
+	 eRscK2jSHZSROUJT+8XvP+cAgHlEEFKmqqQIRy7N1XuHmI45QoIMR1jUn05C4IMpoo
+	 Be0UXVYWSXibg==
+Date: Wed, 15 Jul 2026 12:22:47 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Rob Herring <robh@kernel.org>
+Cc: krzk+dt@kernel.org, mturquette@baylibre.com, 
+	linux-remoteproc@vger.kernel.org, Alexandru Gagniuc <mr.nuke.me@gmail.com>, 
+	mathieu.poirier@linaro.org, conor+dt@kernel.org, konradybcio@kernel.org, sboyd@kernel.org, 
+	p.zabel@pengutronix.de, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: (subset) [PATCH v2 0/9] remoteproc: qcom_q6v5_wcss: add native
+ ipq9574 support
+Message-ID: <alfBg2Z0sSP6Znem@baldur>
+References: <20260109043352.3072933-1-mr.nuke.me@gmail.com>
+ <178370682987.2572738.13491033810212556744.b4-ty@kernel.org>
+ <20260714214519.GA2851152-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260715-mathieu-wdt-clock-theo-v1-1-da65bba1828b@bootlin.com>
-X-B4-Tracking: v=1; b=H4sIAMOiV2oC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIzMDc0Nj3dzEkozM1FLd8pQS3eSc/ORs3ZKM1HzdNINk06REU4tUI1MLJaD
- mgqLUtMwKsMHRsbW1AFHCfEdoAAAA
-X-Change-ID: 20260713-mathieu-wdt-clock-theo-f0c5ba58e258
-To: Tero Kristo <kristo@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
- Tony Lindgren <tony@atomide.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, 
- =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, 
- linux-omap@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1784128201; l=3770;
- i=mathieu.dubois-briand@bootlin.com; s=20241219; h=from:subject:message-id;
- bh=PMWWdWROPx5T2hXnstRMOcMG5ExDZiLP03tLguMc5RE=;
- b=IoZi1InAliUoFimfrks4wY1FOC09LKyKHTPFMAbXlHjp3qljjNPI7R9pUPNAPXIdk7EZZ49+c
- OrMpLxiwWePAIMpriYP1uYLl2ymlR+2ixX/EZRBRO/z1C54raQwZjbo
-X-Developer-Key: i=mathieu.dubois-briand@bootlin.com; a=ed25519;
- pk=1PVTmzPXfKvDwcPUzG0aqdGoKZJA3b9s+3DqRlm0Lww=
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260714214519.GA2851152-robh@kernel.org>
 
-Resolve parent clocks by their index into the device tree "clocks"
-property rather than matching names as strings. Name-based matching is
-fragile because a clock's "clock-output-names" value in its provider
-node can differ from the name used to reference it in a consumer node,
-and because names must be globally unique across all clock providers.
+On Tue, Jul 14, 2026 at 04:45:19PM -0500, Rob Herring wrote:
+> On Fri, Jul 10, 2026 at 01:07:04PM -0500, Bjorn Andersson wrote:
+> > 
+> > On Thu, 08 Jan 2026 22:33:35 -0600, Alexandru Gagniuc wrote:
+> > > Support loading remoteproc firmware on IPQ9574 with the qcom_q6v5_wcss
+> > > driver. This firmware is usually used to run ath11k firmware and enable
+> > > wifi with chips such as QCN5024.
+> > > 
+> > > When submitting v1, I learned that the firmware can also be loaded by
+> > > the trustzone firmware. Since TZ is not shipped with the kernel, it
+> > > makes sense to have the option of a native init sequence, as not all
+> > > devices come with the latest TZ firmware.
+> > > 
+> > > [...]
+> > 
+> > Applied, thanks!
+> > 
+> > [1/9] remoteproc: qcom_q6v5_wcss: drop unused clocks from q6v5 struct
+> >       commit: 22afc6163c0c7a144d24a09352b87719d64d5f65
+> > [2/9] dt-bindings: remoteproc: qcom,ipq8074-wcss-pil: convert to DT schema
+> >       commit: 2a756ac4d98efc97503629fcaddb2e7c46255824
+> > [4/9] dt-bindings: remoteproc: qcom: add IPQ9574 image loader
+> >       commit: bc33b5b5e23a389e660c3d696cd2e043fdf33ef7
+> 
+> Why is a 6 month old patchset with reported errors being applied? 
 
-On AM335x, this caused broken clock trees where some clocks failed to
-enable because their parents could not be found.
+I did some needed cleaning in the patchwork inbox, but not sure why I
+didn't see your feedback.
 
-Replace of_clk_parent_fill() with a clk_parent_data array that sets
-.index to the array position.
+> Anyways, linux-next is now broken. Please fix.
+> 
 
-Fixes: ec7aa25fa483 ("ARM: dts: Use clock-output-names for am3")
-Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
----
-This commit aims to solve an issue I've been describing a few months ago
-on AM335x SoC [1]. I believe using the parent_data field of
-clk_init_data structure is now the preferred way to convey that data,
-and it should be more reliable than string comparisons.
+Done, I've dropped the changes from the branch again.
 
-[1]: https://lore.kernel.org/all/DI4RUFQNSSNP.2QMSSQWJW9I2O@bootlin.com/
----
- drivers/clk/ti/mux.c | 20 +++++++++++---------
- 1 file changed, 11 insertions(+), 9 deletions(-)
+Regards,
+Bjorn
 
-diff --git a/drivers/clk/ti/mux.c b/drivers/clk/ti/mux.c
-index d6a0ccfd81db..ded4432f7528 100644
---- a/drivers/clk/ti/mux.c
-+++ b/drivers/clk/ti/mux.c
-@@ -119,7 +119,7 @@ const struct clk_ops ti_clk_mux_ops = {
- };
- 
- static struct clk *_register_mux(struct device_node *node, const char *name,
--				 const char * const *parent_names,
-+				 const struct clk_parent_data *parent_data,
- 				 u8 num_parents, unsigned long flags,
- 				 struct clk_omap_reg *reg, u8 shift, u32 mask,
- 				 s8 latch, u8 clk_mux_flags, u32 *table)
-@@ -136,7 +136,7 @@ static struct clk *_register_mux(struct device_node *node, const char *name,
- 	init.name = name;
- 	init.ops = &ti_clk_mux_ops;
- 	init.flags = flags;
--	init.parent_names = parent_names;
-+	init.parent_data = parent_data;
- 	init.num_parents = num_parents;
- 
- 	/* struct clk_mux assignments */
-@@ -167,24 +167,26 @@ static void of_mux_clk_setup(struct device_node *node)
- 	struct clk *clk;
- 	struct clk_omap_reg reg;
- 	unsigned int num_parents;
--	const char **parent_names;
-+	struct clk_parent_data *parent_data;
- 	const char *name;
- 	u8 clk_mux_flags = 0;
- 	u32 mask = 0;
- 	u32 shift = 0;
- 	s32 latch = -EINVAL;
- 	u32 flags = CLK_SET_RATE_NO_REPARENT;
-+	int i;
- 
- 	num_parents = of_clk_get_parent_count(node);
- 	if (num_parents < 2) {
- 		pr_err("mux-clock %pOFn must have parents\n", node);
- 		return;
- 	}
--	parent_names = kcalloc(num_parents, sizeof(char *), GFP_KERNEL);
--	if (!parent_names)
--		goto cleanup;
-+	parent_data = kcalloc(num_parents, sizeof(*parent_data), GFP_KERNEL);
-+	if (!parent_data)
-+		return;
- 
--	of_clk_parent_fill(node, parent_names, num_parents);
-+	for (i = 0; i < num_parents; i++)
-+		parent_data[i].index = i;
- 
- 	if (ti_clk_get_reg_addr(node, 0, &reg))
- 		goto cleanup;
-@@ -207,7 +209,7 @@ static void of_mux_clk_setup(struct device_node *node)
- 	mask = (1 << fls(mask)) - 1;
- 
- 	name = ti_dt_clk_name(node);
--	clk = _register_mux(node, name, parent_names, num_parents,
-+	clk = _register_mux(node, name, parent_data, num_parents,
- 			    flags, &reg, shift, mask, latch, clk_mux_flags,
- 			    NULL);
- 
-@@ -215,7 +217,7 @@ static void of_mux_clk_setup(struct device_node *node)
- 		of_clk_add_provider(node, of_clk_src_simple_get, clk);
- 
- cleanup:
--	kfree(parent_names);
-+	kfree(parent_data);
- }
- CLK_OF_DECLARE(mux_clk, "ti,mux-clock", of_mux_clk_setup);
- 
-
----
-base-commit: a13c140cc289c0b7b3770bce5b3ad42ab35074aa
-change-id: 20260713-mathieu-wdt-clock-theo-f0c5ba58e258
-
-Best regards,
--- 
-Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-
+> Rob
