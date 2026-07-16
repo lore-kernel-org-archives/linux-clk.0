@@ -1,41 +1,41 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7541A40A957
-	for <linux-clk@vger.kernel.org>; Thu, 16 Jul 2026 10:44:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D955440B6F0;
+	Thu, 16 Jul 2026 10:45:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784198702; cv=none; b=tz9kho4d/M0Atk2meaTHwdiw1p6oVgNmbGHIMe0b+m5JYH1lYSy1lbUhsUMD8DNYo7a9wUJbweE4Pn5vbnlbVBpGAbJTOk0DgfcyNAlJeWqdEGkp7MK4mSNE7gjsuKAAxxzDM8ygEjInPniJkmbBh1bu5Ul8/X7Lhs4SK1MFGXs=
+	t=1784198706; cv=none; b=H5yPOrGZkoHc28UTwGSx+okOby9lXs3A2/tuy3hBF3tRt4rYZE/nNRDPk5cA3vtdArzS2Cp+HyQx5Cs6pRYcZXLzxgn4lq/qA6tT2QQ53t9mDQG/6Uel9W1MU7N6qeOEBf8kj/FQ4F2Cpkrq9dDM8udgOPpB4SxSKEBLPAYxxII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784198702; c=relaxed/simple;
-	bh=MKXF36B/N58wgTDVUubwpPnEsfYr+reCs2pY25QG5rc=;
+	s=arc-20240116; t=1784198706; c=relaxed/simple;
+	bh=b0CjsGb9kmZAexs7MyDMPW3zIAktW4SRGSXoUoyHCfY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jjOb3g6mKOGUjifd1JQ2bFtLzk+JBIlt+UCP4hIOm476zw5my5pi2ZkbtRKAKB4D5J+sHodAwgwziRIyvLMPbr/SplsX1wTMu3X02JfEz6FgiTGKUjygu6iQCHmENN4/r1lmx+Qaa9guYBegD4qtF/pErt9lllOjljgSRNvJ/Do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=BoP6fua5; arc=none smtp.client-ip=185.246.84.56
+	 In-Reply-To:To:Cc; b=djeCjGO5NbtQkZwQPjQOFISMmHyxnIuuPp2wY3QwRNCY4Gio0Ns26fMAlmRcwdrGA2zAIFko7L6RPRLFo17ya7ZM3Lh4VqFKIMd2VMilRnyJcxKcEYJlGoAbf89jt+PDUpnYCxnjezXfwgRcsevbnZ8xaZgOGbmkoE6qp5+sy2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=QB5XPfSa; arc=none smtp.client-ip=185.171.202.116
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="BoP6fua5"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="QB5XPfSa"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 609981A101F;
-	Thu, 16 Jul 2026 10:44:54 +0000 (UTC)
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 22257C2B9E4;
+	Thu, 16 Jul 2026 10:45:15 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 34272602B8;
-	Thu, 16 Jul 2026 10:44:54 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 844BE11BD3CDC;
-	Thu, 16 Jul 2026 12:44:51 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id CC947602B8;
+	Thu, 16 Jul 2026 10:44:57 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id F105611BD3CF5;
+	Thu, 16 Jul 2026 12:44:54 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1784198693; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1784198696; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=nTJU2NJ54O6LZ0hZrhPZm1F5PCgRji3kSdkWz/GfYyE=;
-	b=BoP6fua52gszpewJHc1ZBvQp5kZJqEkSw0klTke8gd1nWAV4bA2Juvrjm/G5p4Zpm/kimo
-	q+wrfnjqMM7HXxI9cFaW3I2T5quklx/CtWU8eBv4ioFHyQ2aYJydIvUNKrSIFvNJXRZabc
-	rLqCyLAgnaF4zEBzPtUuXqBUlZrmI8TT+tXLBXfEZx63itxTohww5rjjtL5zfApC4j83yu
-	/+X0sLstu/mtmNxnxfDvMYwOArBtRZ47/gvQ8nNT3PLOYXGuVHCsOgyBFK6NSpH+zsMu+t
-	derWgXC3moCeji0+O30IWRx6p7PQjG5TJgzAqLWAs9g8UujZoa2bFk3RjuCycQ==
+	bh=GZjpVe6V41AU3xoNOUQIWWRtJ354RHz718O41QQI6RQ=;
+	b=QB5XPfSaFtsyQtATGvCO6BdwAw+HkRvc1/45TBkmpq5BsuEMXEzUuXXnDR7PSYVDhoFHQh
+	aCnc+6v6Lux8SNcUka6URQYwWjM7n8HtQncD1yIPY9km4z+nqrt/Fd82+kndOaj/g2sPPo
+	8u9vLEpJOsqPL9nqhZOiwNzc2+b1BgV1148vd87CyFNQTPCMXWDPPZ0w7fmPxwm5L+VNG/
+	IT5J41UfbYea78nB9AHSneCVKwKei1Br0Iq1qpY3UNVR4kcnuMqUv7yfPrgMZ1XEXQHM/3
+	nAnRlVBPst1uheO1NhStRpTACw7zV1Icr8YvUSCkH34jj29TrWrxlTiXCc49jg==
 From: "Miquel Raynal (Schneider Electric)" <miquel.raynal@bootlin.com>
-Date: Thu, 16 Jul 2026 12:44:37 +0200
-Subject: [PATCH v3 4/7] clk: Improve a couple of comments
+Date: Thu, 16 Jul 2026 12:44:39 +0200
+Subject: [PATCH v3 6/7] clk: Add support for clock nexus dt bindings
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -44,7 +44,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260716-schneider-v7-2-rc1-eip201-upstream-v3-4-98454e83845c@bootlin.com>
+Message-Id: <20260716-schneider-v7-2-rc1-eip201-upstream-v3-6-98454e83845c@bootlin.com>
 References: <20260716-schneider-v7-2-rc1-eip201-upstream-v3-0-98454e83845c@bootlin.com>
 In-Reply-To: <20260716-schneider-v7-2-rc1-eip201-upstream-v3-0-98454e83845c@bootlin.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
@@ -58,43 +58,124 @@ Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
  Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-clk@vger.kernel.org, 
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
- "Miquel Raynal (Schneider Electric)" <miquel.raynal@bootlin.com>
+ "Miquel Raynal (Schneider Electric)" <miquel.raynal@bootlin.com>, 
+ Herve Codina <herve.codina@bootlin.com>
 X-Mailer: b4 0.14.3
 X-Last-TLS-Session-Version: TLSv1.3
 
-Avoid mentioning the function names directly in the comments, it makes
-them easily out of sync with the rest of the code. Use a more generic
-wording.
+A nexus node is some kind of parent device abstracting the outer
+connections. They are particularly useful for describing connectors-like
+interfaces but not only. Certain IP blocks will typically include inner
+blocks and distribute resources to them.
 
-Suggested-by: Stephen Boyd <sboyd@kernel.org>
+In the case of clocks, there is already the concept of clock controller,
+but this usually indicates some kind of control over the said clock,
+ie. gate or rate control. When there is none of this, an existing
+approach is to reference the upper clock, which is wrong from a hardware
+point of view.
+
+Nexus nodes are already part of the device-tree specification and clocks
+are already mentioned:
+https://github.com/devicetree-org/devicetree-specification/blob/v0.4/source/chapter2-devicetree-basics.rst#nexus-nodes-and-specifier-mapping
+
+Following the introductions of nexus nodes support for interrupts, gpios
+and pwms, here is the same logic applied again to the clk subsystem,
+just by transitioning from of_parse_phandle_with_args() to
+of_parse_phandle_with_args_map():
+
+* Nexus OF support:
+commit bd6f2fd5a1d5 ("of: Support parsing phandle argument lists through a nexus node")
+* GPIO adoption:
+commit c11e6f0f04db ("gpio: Support gpio nexus dt bindings")
+* PWM adoption:
+commit e71e46a6f19c ("pwm: Add support for pwm nexus dt bindings")
+
+Only expected Nexus property:
+- clock-map: maps inner clocks to inlet clocks
+(the other properties have been judged not relevant for clocks)
+
+Here is an example:
+
+Example:
+    soc_clk: clock-controller {
+        #clock-cells = <1>;
+    };
+
+    container: container {
+        #clock-cells = <1>;
+        clock-map = <0 &soc_clk 2>,
+                    <1 &soc_clk 6>;
+
+        child-device {
+            clocks = <&container 1>;
+	    /* This is equivalent to <&soc_clk 6> */
+        };
+    };
+
+The child device does not need to know about the outer implementation,
+and only knows about what the nexus provides. The nexus acts as a
+pass-through, with no extra control.
+
 Signed-off-by: Miquel Raynal (Schneider Electric) <miquel.raynal@bootlin.com>
+Reviewed-by: Herve Codina <herve.codina@bootlin.com>
 Reviewed-by: Brian Masney <bmasney@redhat.com>
 ---
- drivers/clk/clk.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/clk-conf.c | 12 ++++++------
+ drivers/clk/clk.c      |  4 ++--
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
+diff --git a/drivers/clk/clk-conf.c b/drivers/clk/clk-conf.c
+index 303a0bb26e54..5380d43b56a4 100644
+--- a/drivers/clk/clk-conf.c
++++ b/drivers/clk/clk-conf.c
+@@ -25,8 +25,8 @@ static int __set_clk_parents(struct device_node *node, bool clk_supplier)
+ 		       node);
+ 
+ 	for (index = 0; index < num_parents; index++) {
+-		rc = of_parse_phandle_with_args(node, "assigned-clock-parents",
+-					"#clock-cells",	index, &clkspec);
++		rc = of_parse_phandle_with_args_map(node, "assigned-clock-parents",
++						    "clock", index, &clkspec);
+ 		if (rc < 0) {
+ 			/* skip empty (null) phandles */
+ 			if (rc == -ENOENT)
+@@ -47,8 +47,8 @@ static int __set_clk_parents(struct device_node *node, bool clk_supplier)
+ 			return PTR_ERR(pclk);
+ 		}
+ 
+-		rc = of_parse_phandle_with_args(node, "assigned-clocks",
+-					"#clock-cells", index, &clkspec);
++		rc = of_parse_phandle_with_args_map(node, "assigned-clocks",
++						    "clock", index, &clkspec);
+ 		if (rc < 0)
+ 			goto err;
+ 		if (clkspec.np == node && !clk_supplier) {
+@@ -121,8 +121,8 @@ static int __set_clk_rates(struct device_node *node, bool clk_supplier)
+ 			rate = rates[index];
+ 
+ 		if (rate) {
+-			rc = of_parse_phandle_with_args(node, "assigned-clocks",
+-					"#clock-cells",	index, &clkspec);
++			rc = of_parse_phandle_with_args_map(node, "assigned-clocks",
++							    "clock", index, &clkspec);
+ 			if (rc < 0) {
+ 				/* skip empty (null) phandles */
+ 				if (rc == -ENOENT)
 diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 08874cf9b561..7d63d81ebc09 100644
+index 45f5d7a4ccc1..6acf042673c3 100644
 --- a/drivers/clk/clk.c
 +++ b/drivers/clk/clk.c
-@@ -5202,7 +5202,7 @@ static int of_parse_clkspec(const struct device_node *np, int index,
- 		/*
- 		 * For named clocks, first look up the name in the
- 		 * "clock-names" property.  If it cannot be found, then index
--		 * will be an error code and of_parse_phandle_with_args() will
-+		 * will be an error code and the OF phandle parser will
- 		 * return -EINVAL.
+@@ -5207,8 +5207,8 @@ static int of_parse_clkspec(const struct device_node *np, int index,
  		 */
  		if (name)
-@@ -5275,7 +5275,7 @@ of_clk_get_hw_from_clkspec(struct of_phandle_args *clkspec)
-  *
-  * This function looks up a struct clk from the registered list of clock
-  * providers, an input is a clock specifier data structure as returned
-- * from the of_parse_phandle_with_args() function call.
-+ * from the OF phandle parser.
-  */
- struct clk *of_clk_get_from_provider(struct of_phandle_args *clkspec)
- {
+ 			index = of_property_match_string(np, "clock-names", name);
+-		ret = of_parse_phandle_with_args(np, "clocks", "#clock-cells",
+-						 index, out_args);
++		ret = of_parse_phandle_with_args_map(np, "clocks", "clock",
++						     index, out_args);
+ 		if (!ret)
+ 			break;
+ 		if (name && index >= 0)
 
 -- 
 2.54.0
