@@ -1,129 +1,154 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E52532874F5
-	for <linux-clk@vger.kernel.org>; Thu, 16 Jul 2026 19:16:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 336D72F546D
+	for <linux-clk@vger.kernel.org>; Thu, 16 Jul 2026 19:55:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784229363; cv=none; b=Q3dF0e0G4KM/xl6bapW7TeBqA7y1wQBD8tK0sAT7TJcWV+oZ8w6i7lqygHH2EEPKn2MdzUFhOwsJFE7uEbGFHS2jsqJD+f/ERXRBOJxxg3podGwlToHss2jfW8Q4j77WC47mba2755IUMlSSMGITt3FpFIgRuQ8bOrZ+SJdk89g=
+	t=1784231731; cv=none; b=bIjTXa+H/2oMqPbfK9xw1/205wPPFzGvn2pkHlOmc2uREfpbIB18nhcxVPo5DSzNss4hUE9tCG2O+6zGfcZwMkbzC93OKRhSO02GGGQfLsbGZON9WLxnKMl/vhRAgXw3smhmzAACIOVTG8iVJ9Sum6M5TNBtpSCj6ELBdaaoQ84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784229363; c=relaxed/simple;
-	bh=d5ie8U7cPhn27p+Igsr1dRGiF11f9FBY6Gx2zGXVHCI=;
+	s=arc-20240116; t=1784231731; c=relaxed/simple;
+	bh=xTH5SRivTOjKCeZK/CQzkS1OrhVK53Hs5nd5Py0Ytbs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VdXl61pHugNLM2mUJR+XyXUPvnqTFekNds9QSgH0WT3T2E4da0haHMgRLkiSIRJlfFTv3KC7U4CF9OG0L51VSFStz6bBSZuz4Z4BPR8faxHRGaKmoHFP8TE9MmikMcOPgMIboQV0cR88CtfuFj650sjEM/2bRZZ812ffuKXBlz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AwrSvAoR; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=IPL5kEGf; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=ohUdIZOXe6HHs9QtnDRMrhFb3Oha4kOc8A/S4LyIl5fM7to2IXU6MWXHPrTjZm5oUVKz/FtiQ+rluyZizgKr0qtY/GpCz5VLR1h39SMw4u+6UT8Bh9HQkQ+QNINgebmU/Mqxs8vGqjda5w9dHccA54KomkBFyWSlzP5smPo4kWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=Q58FR6VM; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AwrSvAoR";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="IPL5kEGf"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1784229361;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ww0rJdn3hOUipKhN03+UND2dQfBI3wYOfiNLleaoT6g=;
-	b=AwrSvAoRivy1n7rW7MOMT+8I6nm8gcPzsG00ymfdFCIj5RyMIdm07O//0YGfTxvyUATry5
-	MaLao8sD6Xq+NCAZBlHinyMfx2vmcFZpvAYBkQbDf/4SzBOYGS/z1X7MH9q7115nbH1sB1
-	TPsMXjccQvHMLzlZHnkG0a8SflUG5t0=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-547-y5cSULybMW6ing6QE8tDiA-1; Thu, 16 Jul 2026 15:15:59 -0400
-X-MC-Unique: y5cSULybMW6ing6QE8tDiA-1
-X-Mimecast-MFC-AGG-ID: y5cSULybMW6ing6QE8tDiA_1784229359
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-8fc92c5373bso115183016d6.1
-        for <linux-clk@vger.kernel.org>; Thu, 16 Jul 2026 12:15:59 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="Q58FR6VM"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-490cf322ed0so50627035e9.1
+        for <linux-clk@vger.kernel.org>; Thu, 16 Jul 2026 12:55:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1784229359; x=1784834159; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:content-type:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=ww0rJdn3hOUipKhN03+UND2dQfBI3wYOfiNLleaoT6g=;
-        b=IPL5kEGflFQZSwD2ySXm/inblAgD1LYs84Mx+9FKouYRSpGp6uAiRJmQ/jsk7W+j6s
-         bwBOEXkBs4CPzey7ncNguVCyZyyUMFkj/2aR1Jkv/PiwWQbL1t/iVgTYJZINe1kcUwkD
-         ddfutdIug03dq0HU9VuqjLwrJrRIyN0tlaNgO4NSwNJ4CzqaHghLlKhi62tGRATHrb2g
-         di28qOAH46e9hb/a7SeeQRu4pFkH3l4AHAzSwIjb7Zxczq7NCT6xkR1+sFbBSoWKoKer
-         JRwvme8+aRu3FFaN4/XKR7cQ7Tk/gq1NbYIhuPda9LGPc9d13z/HQ8TuaI2VEKRNwXE0
-         PyMw==
+        d=baylibre.com; s=google; t=1784231726; x=1784836526; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=hFJ0EpzatP7/QvJCIqNNnPldKAnCwWETMXqW+7ClCHY=;
+        b=Q58FR6VMHsD4Fg0Ya3aDFIisk7ZWa2+yoSJebEVVvSpd1C0x5Vgrkl8rK7+ZkydyZ5
+         kHMcKYXGl/ej2po7pSODXahWNOzee5WrTYcRxhOZID6tj4TJ2oBdbPzpG2PrRn9CTxKj
+         kuGxqhJsGJYwzqFE+LRy/TpXb5EiDu9kNMeXj8AzlIIKZMJgXjJLRYYUJck4k2wKtpaN
+         /Y9Uvi/sEc/gV30gm7AAgrtsh4m9GWvfEeOE+ZL/lIufWNivGyzAWH0J5QGHOdHp22a3
+         F8tHh/DfGJCsOV/G1/7EAHZATEE2ldMiASBfqezPjktUV53LDxHrNqZIx14uTW3FUAki
+         F3aQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784229359; x=1784834159;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:content-type:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=ww0rJdn3hOUipKhN03+UND2dQfBI3wYOfiNLleaoT6g=;
-        b=s6+6xrcVp6+IDGz7zkJ6ZUrZQlFn7Rfr0K85/dk39o0zZ4QUWbLyBf/XcmOpCVFsaw
-         SbeEVr1vGvzd6D0duryminl9+MOkIYM3iJADW6NzHLg/m3mB+kOsniZnv2YQvCk2uDwd
-         +wNX6NTkra9PcfRtpLmSsUfga4mObhnieS3nhnJeCthsN6yPFBxt+giXoOvdEI6tyKTa
-         NVcgQR4aKb478IhdTrh/4LKQP82ubXwVIsDC//bixrLwyp38JZdNQxbNd44f7aKjpR3C
-         LXxLppKFJOylFNb9t/RFFiUu5DQhaMTd+4UR9FGjk1ElQTrSN9QVQml5PwGpbA3XSSec
-         tWvQ==
-X-Forwarded-Encrypted: i=1; AHgh+RpUCBjl1DuYqSDqPnamGhVIhWBc3SaPeAiB2NsbPoRqcZ/J1wFsiiwilhYD3P423hXO8azKI7lOHwo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbyhMP03rAlYmsR5Zba+Ra0BioGey2qumY+Pidhl2lYYS99BON
-	sMCZQOCnVlTFDl0CzXFSy5GcM3bJT+3bf6Elajuoqw+DbUghNx3/MOupJ5nQkYZlP2Bj3LMoFO4
-	Co4Q+PnrDO3A5PymrpcW68NYb0BhvMysol+86cOGOxXj85Eho38uCUMeV049t+Q==
-X-Gm-Gg: AfdE7ckFEDXFQ+ebB4+GNOI1wUnSvktcnHdetYv2oJsJ7HUZco4QY3jiRzlB8qHUmvz
-	QNUdVEGFAYzrVfW8+HhWBaKPzZrfmNuybWMJnuUvQwERMVGV2FnNZ5wwSJyRNgY+hs1x+kPebX+
-	nkir9JwsHg1W9YBi63z3KBF88qbe8OOMTw2r08IF6xYMVjkJOD6XFzbZlfZeOEufHDxKzHs0kUk
-	tW2B0C8BkDn2ESbuZb+AYiRGhhk26leH9U7ozv10qKEVDwddI+nIwOc8RVOEvx/B5T9Hrn/yFgA
-	YSPYrtaOQw6AmhoUZ2R9LZoU16Cjqw46Wn0KOCpNjGNUHHuZe1tnPRI+8wg7nmCiCTroV20RucJ
-	MIbMW6sT9YlGakr9vbq/d8elaURXoJPwfFuU=
-X-Received: by 2002:a05:6214:20eb:b0:8ce:e651:5d63 with SMTP id 6a1803df08f44-90758de2fc2mr99117106d6.31.1784229358942;
-        Thu, 16 Jul 2026 12:15:58 -0700 (PDT)
-X-Received: by 2002:a05:6214:20eb:b0:8ce:e651:5d63 with SMTP id 6a1803df08f44-90758de2fc2mr99116606d6.31.1784229358362;
-        Thu, 16 Jul 2026 12:15:58 -0700 (PDT)
-Received: from redhat.com (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-904116650b7sm204511816d6.8.2026.07.16.12.15.56
+        d=1e100.net; s=20251104; t=1784231726; x=1784836526;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=hFJ0EpzatP7/QvJCIqNNnPldKAnCwWETMXqW+7ClCHY=;
+        b=aNy3JC2yb4hKhPN15HF5l10piLfAnMv7YReHd0hvxw/5XlNi1p2Ob9Ek3fgrSQr2BA
+         hAqPiMM57IwVK7d6Ix0kNAcrNwURSDEjUXQxGmuVXx4wKQocyUQqk6cCAhmWqpegFlKt
+         wJI7gu6Sh/2Gi+eOXaIiIh3tgsNstallh6w6F7BAnK8qa8SjR1qdmRzsOkzkWfF1B3/O
+         XFDC+CKgbVQgpuB2Kqt0J8mq2an2dIcU4SMfQygPqvFuBmZ3UqPVmBuE0D0YwVEfEpzh
+         vzyZ16CV/UP/SqDQV010UNnofD+2+EQHFJ7pBC/gtKCaly8aAzkiF8uIarwJ6dZSNzXY
+         bCng==
+X-Forwarded-Encrypted: i=1; AHgh+Rr/CZwOrR/cmpX5dZK/dM4yWlrA9Exd9dyMhuEIy7lR7k5Y9mJR8tjmVMxeM6cqEWA/W+4js7lEZMM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0dG01gH3XyyDSB4jTC+kIXy/9XkBqc9dDoro/h56UCJ92LZQ2
+	yj02n7Y17iFY7obpfCuApe8fiDDJUwnc1v3qPgp0Z4Ra56ZyUx7FGh5N7dC7Rg21WsY=
+X-Gm-Gg: AfdE7cnKjE17rik1xPSWcNbzl1xB5oBC2veonKmGT3Ge3I1t+GiDjza1UuhVsNtbieA
+	2zb+ZcocxJoku1cXD+8bdN9juxE1iV7/PGbukXHm0oSySMjppNx3w5GyPo8yGxkHe17RTcdYSCd
+	/qEQo/GrOSrgBpb5j+BFJdTnXHQDiqjXispDbCF7YnEsXGUBeFmnjqQQ+QZnKbLY0l6oGW77ncs
+	4F3tUdxOdqv7HK2ShzzOR9VxMXiJAj6gtLm0ktfEYmKL2+qVcTfUwcEVtBgZj5TLeAXlmra7hkM
+	Rp9ht44cOl9qA2ide6BOHbpUj9pLV2LQl98/lJuTBtmHPNa4G+y5Ni6BLo42DKH6NoCcyz8Tlq1
+	VY9xPCJSyam3LE+y4eHXHSnAm4rK/R1LNCHTdMh64hUvh3nYty928yVQP05iB0tP4u7q/HxdoQL
+	2mVTTU1Vk=
+X-Received: by 2002:a05:600c:8b6d:b0:495:3fc4:81b4 with SMTP id 5b1f17b1804b1-495403fcaadmr65609285e9.30.1784231726263;
+        Thu, 16 Jul 2026 12:55:26 -0700 (PDT)
+Received: from localhost ([2a02:8071:56d1:2de0:1d24:d58d:2b65:c291])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-49547988756sm14556025e9.6.2026.07.16.12.55.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jul 2026 12:15:57 -0700 (PDT)
-Date: Thu, 16 Jul 2026 15:15:55 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig_=28The_Capable_Hub=29?= <u.kleine-koenig@baylibre.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        Thu, 16 Jul 2026 12:55:25 -0700 (PDT)
+Date: Thu, 16 Jul 2026 21:55:23 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig_=28The_Capable_Hub=29?= <u.kleine-koenig@baylibre.com>
+To: Brian Masney <bmasney@redhat.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
 Subject: Re: [PATCH v1] clk: qcom: Drop inclusions of
  <linux/mod_devicetable.h>
-Message-ID: <alkt62x8pmKE2aKi@redhat.com>
+Message-ID: <alk1--PeUJ7pKbvA@monoceros>
 References: <7b6441aa3b0dba35112ea486bfea3b3171d8527b.1784225976.git.ukleinek@kernel.org>
+ <alkt62x8pmKE2aKi@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="dqkq77d6dtuu255e"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7b6441aa3b0dba35112ea486bfea3b3171d8527b.1784225976.git.ukleinek@kernel.org>
-User-Agent: Mutt/2.4.0 (2026-06-19)
-
-On Thu, Jul 16, 2026 at 08:21:05PM +0200, Uwe Kleine-König (The Capable Hub) wrote:
-> The only used symbol in these four drivers that is provided by
-> <linux/mod_devicetable.h> is of_device_id and this is also provided by
-> <linux/platform_device.h>.
-
-I don't see it defined in platform_device, unless I am missing
-something?
-
-It looks like the reason this compiles is because of this chain of
-includes:
-
-linux/clk-provider.h -> linux/of.h -> linux/device-id/of.h
+In-Reply-To: <alkt62x8pmKE2aKi@redhat.com>
 
 
-> So drop the unneeded include which brings us
-> one step closer to removing <linux/mod_devicetable.h>.
-> 
-> Signed-off-by: Uwe Kleine-König (The Capable Hub) <u.kleine-koenig@baylibre.com>
+--dqkq77d6dtuu255e
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v1] clk: qcom: Drop inclusions of
+ <linux/mod_devicetable.h>
+MIME-Version: 1.0
 
-With an updated commit message:
+Hello Brian,
 
-Reviewed-by: Brian Masney <bmasney@redhat.com>
+On Thu, Jul 16, 2026 at 03:15:55PM -0400, Brian Masney wrote:
+> On Thu, Jul 16, 2026 at 08:21:05PM +0200, Uwe Kleine-K=F6nig (The Capable=
+ Hub) wrote:
+> > The only used symbol in these four drivers that is provided by
+> > <linux/mod_devicetable.h> is of_device_id and this is also provided by
+> > <linux/platform_device.h>.
+>=20
+> I don't see it defined in platform_device, unless I am missing
+> something?
+>=20
+> It looks like the reason this compiles is because of this chain of
+> includes:
+>=20
+> linux/clk-provider.h -> linux/of.h -> linux/device-id/of.h
 
+Well, the chain for <linux/platform_device.h> is:
+
+	   <linux/platform_device.h>
+	-> <linux/device.h>
+	-> <linux/device/driver.h>
+	-> <linux/device-id/of.h>
+
+but the more relevant thing is: <linux/platform_device.h> makes use of
+struct of_device_id and most consumer of that header (typically platform
+drivers) need struct of_device_id. So it's very sensible that
+<linux/platform_device.h> is enough to get that definition. The include
+chain is just an implementation detail.
+=20
+> > So drop the unneeded include which brings us
+> > one step closer to removing <linux/mod_devicetable.h>.
+> >=20
+> > Signed-off-by: Uwe Kleine-K=F6nig (The Capable Hub) <u.kleine-koenig@ba=
+ylibre.com>
+>=20
+> With an updated commit message:
+>=20
+> Reviewed-by: Brian Masney <bmasney@redhat.com>
+
+Does this discussion convince you that the commit log is ok as is?
+
+Thanks
+Uwe
+
+--dqkq77d6dtuu255e
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEyBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmpZNykACgkQj4D7WH0S
+/k6ljgf1H7m6MuWzdTL3PPS2CmQmF0zqeBZ7EYoM32dLL1e9Yr6O0gFZNZwnGWrr
+tTXctZ1u1LJslAfnJ/6Dyc3meHNXlgpOFxJYuQz8G01n/eYKx2yCEq7k5MIRoVj/
+qCTzcuywXdlsDwyVHYyiONlBfJjgVTdMrCENFPObWTjqs5lZkMgaajH74RlF4b6b
+MbJBX1BmlzgPPw+8RTRDvqQUHl/LsXgriWDQb7pBqCsLuCMfVags1CbYsxDdfN1Y
+8VxyKMELO2a1sj6odYEekuTUpZ6JLjwXgR1yne7k01KkyfXAbJyUBLTVInv2jvtr
+k6tuCpT2Maqlu144x/WffOSo8CSQ
+=XhNj
+-----END PGP SIGNATURE-----
+
+--dqkq77d6dtuu255e--
