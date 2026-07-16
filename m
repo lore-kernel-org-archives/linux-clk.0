@@ -1,199 +1,110 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 117BE41F5EE
-	for <linux-clk@vger.kernel.org>; Thu, 16 Jul 2026 12:34:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E90D424671
+	for <linux-clk@vger.kernel.org>; Thu, 16 Jul 2026 14:24:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784205294; cv=none; b=jYtZsIRraHdbaJvTIxl1y5jkwvpq9+0PomDbSRdBOWPRl5ZR+WCxk9IWFxk3tfonE6g3si8ZqtugSDAxuGzu2iPUrlPEplfCpoDTmovYNHYGeYTayjGlc7HcuLkQCfbU860TcqBeqJ4I0qmAWxBjVI3VMD88KNdZE0KJ/d6bWsE=
+	t=1784211844; cv=none; b=V3/YnYs2AD1uwJRQs1CmJGv7LERi+HnphEsSdBhxyIgNKezLIXH2j897nNLNua9wMDhj5RXexn1DNb/Qmc/v/oKHVPn/hufRQdKJ91zs4Y5IU28oDdwo8V/70NF6LzP8DDPrGct2vqGQATzMe/cmTZ9f7Oi1S7PRcVrbsm2r4nk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784205294; c=relaxed/simple;
-	bh=HHq4zZXJ31PucgbPcI9vveGvRcm9kJwMFQOFH7Zu84M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RRV2hdgFanucWAy4NmcsIlC0lqVL61cCmw66C/pDvD6ORWbssrmX0ppfIa9tguUspSte9BFYDYrd0FTYz5aVpHJGtxXrV+YYNQHtmTbBk08hww4VGoP3evL3RN3LcDhCk0i91EbkX1eJ7vIKMwDfW0sC95Xa9UPZLDVnYpuv+GE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kOKhDd7C; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1784211844; c=relaxed/simple;
+	bh=feR03yqekQEo+Zds89bk3LTU1v0JcC9FSph94t/3VWE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hn4CjgPc8HoEKMP13ulKIiIwWYOkj4ytAh9kIi8UHsrqG0xNVR8STlhVSfcVaNLO6tgPDW8iqZagFjOF/oO5CnQt4SqTazHv6zlIIAeGSBSrcoBV3bhIUl7LVVLL305KpSSfG3CJScOyHjkNrkOtag2oRg9j0ZMprkjDaDI4mSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jNOy2AEL; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=NAYaNEtU; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kOKhDd7C"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-49545ba3d4eso892755e9.3
-        for <linux-clk@vger.kernel.org>; Thu, 16 Jul 2026 05:34:50 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jNOy2AEL";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="NAYaNEtU"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1784211842;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=22PyKWT4dqmX4sruE/8FFeaaiF43HFXx7Ngcc5rlNFY=;
+	b=jNOy2AELoBZBLSPWPR8nRmeSm0pfVrfRTrBa5TFFNkeCn9AKSGyY6Xo7wFigdYLwJySzg2
+	ZoFUm1FZPiMpe0F/JH9+KtNEZA9+EgTAUCeWKNz+TVWCRYOrZ44Va9HoocAL/lN1Hc0nzl
+	Rf+gK+BcVx9QQ7oYZJ1J0crPyo6rr1g=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-393-egQtzw1JN0m--iynRZxqJA-1; Thu, 16 Jul 2026 10:23:59 -0400
+X-MC-Unique: egQtzw1JN0m--iynRZxqJA-1
+X-Mimecast-MFC-AGG-ID: egQtzw1JN0m--iynRZxqJA_1784211839
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-8ef8249f871so110745366d6.0
+        for <linux-clk@vger.kernel.org>; Thu, 16 Jul 2026 07:23:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784205289; x=1784810089; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=WYZoYOU2wxBr2JA/EFs2Nu40Y+X1sCL5bFMYyH0wjd4=;
-        b=kOKhDd7Cgp0Fr9q/6GT9L3llrATZl69Xmqrqr3kajA/efu/XlFSUluQOO+6eGFYxoQ
-         tbfYTLXQRh3ar6vJYWcEcs8L+VaEoR51YSmaL94YTGicgjgmguBcsYZAR5yNsFS9VeG9
-         DMKTPxkSwRyOL0+ReBO5/D4blEi/H+VH8bjiUoUQIlxjE/lN+1SKhXZ3hH4VUFGJ4vzV
-         G9dnsV0QIO23G4aJ5x+us68HeBoqaqvByBgbAoVNXExac2Y7IL9JStIHhEuWVUebQSXH
-         ef2tE0uRZtFxlVPRVxf50pnMvTqiMC2MQsydMhE2Szt/ardEv1aFl8WrvGgVfmnXQo+N
-         u9bw==
+        d=redhat.com; s=google; t=1784211839; x=1784816639; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:content-type
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=22PyKWT4dqmX4sruE/8FFeaaiF43HFXx7Ngcc5rlNFY=;
+        b=NAYaNEtUV1b5QSDPXHANVY17NWStbPr1AhcG69gHuJxU6WS80/bTl2jNiwkKpjQC0w
+         YRsRsKkvg5tUN3KodDPv/9dvD2V5pGsPbN30p47baUdQsa5m8/rpL037QoBw035Zs+dC
+         1DG8HuBYeXg9Ny01/Z0nem5rqohZWj7A35bk8pOrq4UTzg/MmBlHztrTqp1Zp1RyFDH0
+         1lrQjO1A5V/AMiz15ZMtV50LuIxk9W5hnweEnJ+l38wInLEKOtIu5c2He3QfZA+25NYI
+         jluoedOLT9ro5hMsh3t+rpCKt//3sr/3jJZUMSkPUMvnofGm4/JP7AAEw8k4biW8J4n9
+         6iAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784205289; x=1784810089;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=WYZoYOU2wxBr2JA/EFs2Nu40Y+X1sCL5bFMYyH0wjd4=;
-        b=SN1kDIfTKlDQC4+S3fdV1yWncHT6Pbqs/5TICx1bUqeaRhyhgKEaexTj0G8rIP490m
-         wz2J/S2bGwo9BRrRWCUgtg2UcIGEE4gBP6Aq5HXx0YAwKPNwEKJqnmGWW0JCVUso9gV3
-         UKaxY+xsksacXNIn2Ndu22c5MBPSbCYXkj5xRTN16K4k+QsyGahriWI51MAPQ0teCtPO
-         zJIeNnw3CenLkINs2EkVlD/CXLkdCe2jVfP79dCiCcDX3NxnhQ+3svqNMsofsJz3oofQ
-         eyhW7rLXpSux9w2i/34Ybmmo6Nm0TPs1NeYa+f/6cFJDNx3fi7Gd7v8hCYBK64pwuiqr
-         cO7w==
-X-Forwarded-Encrypted: i=1; AHgh+Rqb0wKXvWuWCuG5bS3V381a0siwKHMbDHGMCYGqD3SNFAhcV15m+8+FS2wAydwL3Q0qTxEujn96VcE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsnocCSVdhzDrMoK76mJYQtQr5F5Uls+YfwWL3v4xOItR0XT4B
-	LnP9cTUMG3LwC4R1AZc1Z3qhUl1yip9XBxmUZ6sH6FQtJr8aHF1kWgpQ
-X-Gm-Gg: AfdE7clIb55mO7EGZY1hEtqvsXpP0vVz/T+eWMBOFijOGPLiddEyWWvcK6S9msayaBI
-	jckEnahViiJ5e47l7kzUlRUx6PDf6xyoUxIH/YwdOX7yypBCjBlM4NskIY9io0en5jKK51zCF4n
-	OpDCbMNlwJo1s3kaG/Fkcbs/x5G9BlXrMrGY+2sSGL4zXVK2qsBh8XmaXHTdx/6oLoIF9pffMdG
-	nArgGDniunXDxazTKloorP4xS9oaDSx98L60T6/GFq5BjKntjWxMYOWxHceqGvzgzYjCFmPdK1A
-	vmxlUj7MLkZcohN0UQAgSILbxc4ucgP4GvCfJrppb6GlBBd6A4W+1P6dM295HT0ZCmeMUUkoowH
-	leryg4x5OufRtfGJc4+LCYZYxR/VNX662dhHEI+pginyLfY0H48XPrE3Sho+lc+Ga0pvBhhStc/
-	ANXKoLLqWbskoQRnWIe/JV5QS+nLsfudKLSoqDZEDWsrwOpBUBKERpZYBHbxWW/UdZvDi2AJwpk
-	wE/mWch0jVQL4DrhZWP+XW5oxw=
-X-Received: by 2002:a05:600c:4fc4:b0:495:4505:daca with SMTP id 5b1f17b1804b1-4954505dc97mr15870485e9.9.1784205288361;
-        Thu, 16 Jul 2026 05:34:48 -0700 (PDT)
-Received: from iku.Home ([2a06:5906:61b:2d00:4150:a2d7:2b6b:840e])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49541e83d05sm48582645e9.6.2026.07.16.05.34.47
+        d=1e100.net; s=20251104; t=1784211839; x=1784816639;
+        h=user-agent:in-reply-to:content-disposition:content-type
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=22PyKWT4dqmX4sruE/8FFeaaiF43HFXx7Ngcc5rlNFY=;
+        b=igRAHelh+djqWKG5Cpl8zs0FsDhnaveXWEJp+n5xAXq2uIkHdQwDiVc9mBVkBf+Zfx
+         PCkvv34kTShMH3FywHHsb1pfDSdvy31afZygDZoXb18fdBSZ2eP9YrqmXteKI8xTpgXZ
+         fWknUINrDvxVpTSHo39YigCs0S6i3/RsxXcB2HjkXstQJYgMRnRlBdQGt77Z3wXEmpmR
+         olqZ+WYS3AGCvmutJphtw51sAWks+e+fTDga+v0rzigkBN12KX2C2n269gB02L1FB1A+
+         j5thN3Uf4hB7Uiw2dedmOMYNsotr/J19HZvEr7lM9TO2XNuJwFuLiX+9t/yVPIhTwEdf
+         Cahg==
+X-Forwarded-Encrypted: i=1; AHgh+Rqj1vEsbALEIhJoDFzyYnlU+pv81UBWX5PbQLtqhglAnuKZSG7cFitRedJfRdJdm49S5zcU4gMlGYU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTKTsFRdN7gFqDL2v9raZrCOawR+2hF3yuLMObQqQIr1bfolBv
+	siPGpgD5Xvwahcdbzs389WasEeg31y1LN7xhkBAAzjfpTRKu8ieTsskmdYnivz6SlGNU8mtH/Or
+	+AlVWt484PK/pbS7v3Ya0hIjXjN7+TTLpB8EHd5H1QRHRK3a+8iQVeM9rFa/mEQ==
+X-Gm-Gg: AfdE7cknHDkC5oXcIzTTRhFLiKjUHQBoXE8iWEuzGwq3TxR3Gjbcpz8Xj8OhqRE8zhm
+	P+siK6ljlAb36y+gCugJeE2P/XeSF7Hgw+YW25pbi4I0PqrBhGQfxd+yegQDUW4/15jgQlyavfZ
+	g+DvHloq6XWDjxR8CeNLfW03A4K40w6N4cz2+3+O+OMM4YeKDGcM1IwaCf0w+9s2EDIkQ/9yNz6
+	JlDvxs9zJ6dCYSo0I0zaNRsmCL3S0wFbUAFT9lYxboFHPCcHkorSFju81NqevAD8PBh0GU+2jLf
+	IcG0D9BZP8hLDMTIazs8bBALASAV9nvU/cXsBIOWtvuq6pSJXurecgqenQ46k1yw0hNQFAI=
+X-Received: by 2002:a05:6214:2025:b0:907:31a6:c24f with SMTP id 6a1803df08f44-90758de66e0mr96749986d6.41.1784211838890;
+        Thu, 16 Jul 2026 07:23:58 -0700 (PDT)
+X-Received: by 2002:a05:6214:2025:b0:907:31a6:c24f with SMTP id 6a1803df08f44-90758de66e0mr96745136d6.41.1784211833656;
+        Thu, 16 Jul 2026 07:23:53 -0700 (PDT)
+Received: from redhat.com ([69.43.42.202])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-900a7f8f5d6sm206225996d6.15.2026.07.16.07.23.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jul 2026 05:34:48 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	Prabhakar <prabhakar.csengg+renesas@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v3 8/8] arm64: dts: renesas: r9a09g087: Use CPG/MSSR syscon for WDTDCR access
-Date: Thu, 16 Jul 2026 13:34:34 +0100
-Message-ID: <20260716123434.2576253-9-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20260716123434.2576253-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20260716123434.2576253-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Thu, 16 Jul 2026 07:23:52 -0700 (PDT)
+Date: Thu, 16 Jul 2026 10:23:51 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Dan Carpenter <error27@gmail.com>
+Cc: Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
+Subject: Re: [PATCH] clk: document that clk_get_parent() returns NULL
+Message-ID: <aljpdw6_0tEDF87a@redhat.com>
+References: <alZaumcBpsRS9tyS@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alZaumcBpsRS9tyS@stanley.mountain>
+User-Agent: Mutt/2.4.0 (2026-06-19)
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Tue, Jul 14, 2026 at 06:50:18PM +0300, Dan Carpenter wrote:
+> The documentation in the clk.h file says that clk_get_parent() returns
+> error pointers but it doesn't.  It's also not consistent with the
+> comments next to the clk_get_parent() implementation which say that
+> it returns NULL when the clk is NULL.  Update the comments so they
+> are consistent and accurate and say that it returns NULL.
+> 
+> Signed-off-by: Dan Carpenter <error27@gmail.com>
 
-The WDTDCR registers for wdt0-wdt5 reside in the second register region of
-the CPG/MSSR block. This multi-function block is now exposed via a unified
-syscon regmap interface.
-
-Replace the direct mapping of the individual WDTDCR registers with the
-new "renesas,sysc" phandle property pointing to the CPG/MSSR block syscon
-node.
-
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
-v2->v3:
-- Renamed the "renesas,sys" property to "renesas,sysc"
-- Updated commit message
-
-v1->v2:
-- No change.
----
- arch/arm64/boot/dts/renesas/r9a09g087.dtsi | 24 +++++++++++-----------
- 1 file changed, 12 insertions(+), 12 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g087.dtsi b/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
-index 718e6c06b9ba..2a87059dd494 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
-@@ -327,61 +327,61 @@ channel1 {
- 
- 		wdt0: watchdog@80082000 {
- 			compatible = "renesas,r9a09g087-wdt", "renesas,r9a09g077-wdt";
--			reg = <0 0x80082000 0 0x400>,
--			      <0 0x81295100 0 0x04>;
-+			reg = <0 0x80082000 0 0x400>;
- 			clocks = <&cpg CPG_CORE R9A09G087_CLK_PCLKL>;
- 			clock-names = "pclk";
- 			power-domains = <&cpg>;
-+			renesas,sysc = <&cpg 0>;
- 			status = "disabled";
- 		};
- 
- 		wdt1: watchdog@80082400 {
- 			compatible = "renesas,r9a09g087-wdt", "renesas,r9a09g077-wdt";
--			reg = <0 0x80082400 0 0x400>,
--			      <0 0x81295104 0 0x04>;
-+			reg = <0 0x80082400 0 0x400>;
- 			clocks = <&cpg CPG_CORE R9A09G087_CLK_PCLKL>;
- 			clock-names = "pclk";
- 			power-domains = <&cpg>;
-+			renesas,sysc = <&cpg 1>;
- 			status = "disabled";
- 		};
- 
- 		wdt2: watchdog@80082800 {
- 			compatible = "renesas,r9a09g087-wdt", "renesas,r9a09g077-wdt";
--			reg = <0 0x80082800 0 0x400>,
--			      <0 0x81295108 0 0x04>;
-+			reg = <0 0x80082800 0 0x400>;
- 			clocks = <&cpg CPG_CORE R9A09G087_CLK_PCLKL>;
- 			clock-names = "pclk";
- 			power-domains = <&cpg>;
-+			renesas,sysc = <&cpg 2>;
- 			status = "disabled";
- 		};
- 
- 		wdt3: watchdog@80082c00 {
- 			compatible = "renesas,r9a09g087-wdt", "renesas,r9a09g077-wdt";
--			reg = <0 0x80082c00 0 0x400>,
--			      <0 0x8129510c 0 0x04>;
-+			reg = <0 0x80082c00 0 0x400>;
- 			clocks = <&cpg CPG_CORE R9A09G087_CLK_PCLKL>;
- 			clock-names = "pclk";
- 			power-domains = <&cpg>;
-+			renesas,sysc = <&cpg 3>;
- 			status = "disabled";
- 		};
- 
- 		wdt4: watchdog@80083000 {
- 			compatible = "renesas,r9a09g087-wdt", "renesas,r9a09g077-wdt";
--			reg = <0 0x80083000 0 0x400>,
--			      <0 0x81295110 0 0x04>;
-+			reg = <0 0x80083000 0 0x400>;
- 			clocks = <&cpg CPG_CORE R9A09G087_CLK_PCLKL>;
- 			clock-names = "pclk";
- 			power-domains = <&cpg>;
-+			renesas,sysc = <&cpg 4>;
- 			status = "disabled";
- 		};
- 
- 		wdt5: watchdog@80083400 {
- 			compatible = "renesas,r9a09g087-wdt", "renesas,r9a09g077-wdt";
--			reg = <0 0x80083400 0 0x400>,
--			      <0 0x81295114 0 0x04>;
-+			reg = <0 0x80083400 0 0x400>;
- 			clocks = <&cpg CPG_CORE R9A09G087_CLK_PCLKL>;
- 			clock-names = "pclk";
- 			power-domains = <&cpg>;
-+			renesas,sysc = <&cpg 5>;
- 			status = "disabled";
- 		};
- 
--- 
-2.54.0
+Reviewed-by: Brian Masney <bmasney@redhat.com>
 
