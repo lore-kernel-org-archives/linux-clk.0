@@ -1,117 +1,92 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 779BB17B50A;
-	Fri, 17 Jul 2026 01:15:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C48C03769F4;
+	Fri, 17 Jul 2026 03:23:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784250917; cv=none; b=NZ92fEBYwGmktOtoKj1emQzAEQASv/iKx24mNxSyZGaCsC20LVD3JeomcEZJNcFNyzrfyvf7Mcy8w6BlPcRcUU+trQNRmZOzx00UqBu8xyeJOY6whNKGX2hzmYtDLW2qGQi+v2zH5HkaH51okbPFlaLlZGRXcwovVU9uU2+Nl+w=
+	t=1784258616; cv=none; b=EbV9f78mX85xMRW/07TTyudJCHJEyB5O3UrnYmyYa4xmkrPrYPApwNcSMdNLfi+PjXUtOPwOEW/udc4jtiY6ht+LhdsoipC5evwrTmQtMqOgwrisrWrRhzy28RdrszxGf90fdATRQBMQnf+ouwfcodnvkQGWfjI1swkW4u3mrmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784250917; c=relaxed/simple;
-	bh=IT/rhUvKxnUjwSTnczEX0JUrUPEt6H0YklyOCcJpNYs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YnBUuk0wzVGzFB4TfPwI5LWmSnrwn1VgcjSUSzZ/Y9OQErlqoBJiIR4IW1tiRemD0Re7WGZNlmKbei7bxkmDuBQnAYvx0vOmq1aJA5G5s9XXl1jPXHFiUh94pJ5mmOBUepN5ThzTIScPTTD9tJMaZgTl7vbBlCQvMO96v9Z2Zys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R/6fl00O; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1784258616; c=relaxed/simple;
+	bh=1M0To1MU0tImHUkn34uPpb19O3/0IcPwD709mQbCsao=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Y0XgGEwhYk4gFqKjJ8lqlScA5Oq8U+Y1Cvww8+sqSOd91ZAZWrU7YNMA2gT2r8TcRwK28cjRT11viVZZckuGH1Lp1zkfpGb3SCWOdO4ywlN/0ojlvrCYWhDmVQ72UQwVDNhPQE1cu+TNouFVs+Yhz9ZXaTILTgQ2JfS73Fi08es=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BA1Hir2M; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R/6fl00O"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53C8F1F000E9;
-	Fri, 17 Jul 2026 01:15:14 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BA1Hir2M"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABC9B1F00ACA;
+	Fri, 17 Jul 2026 03:23:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784250916;
-	bh=Ms8NC8oprBVh+kGhcsMCSQTckEuQU9O/j7JwpEqpIJQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=R/6fl00OTNQ9ncBL70U71NKLytxHnn4SkDA7b8uxWve0TnB1VGs/Vfr3vIZE9Igxk
-	 jA7/AVZeGBChTjxK0q2jM/n0uiD1nC+i7gfX7VzU5mBR97rCKP8mSFC+Xi92NBjk7B
-	 0Noo34qANgciuIewns3xDuujxyAwM1Hv38SDV9+ngKdhjX1BN+lt2YR9FWtabUGjUi
-	 SxO6aXbNGnsTnHzQ6CxjZ7if+PD/tmo53b6LlIXqZ3RSECtpb2kDDAm7zv8rDHVW6q
-	 UpsoRIa0iCoB0Xwk/p6jyoipLv1M/jtHB9Y364F7/gdVDb0uT7/s79YN2DEjjhtE9N
-	 YiL3Vld3JivCg==
-Date: Thu, 16 Jul 2026 20:15:11 -0500
+	s=k20260515; t=1784258615;
+	bh=o/qb2RKP1gt+o5S5xlP/9GtyvSsasD9MBz/T5eM9AMg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=BA1Hir2MfK2xX48hv5Dv/8u/3o9fb1K0MSIwcwcflO8qaXGLrmZAX3qcSk2B7Mpea
+	 7iErUhOkw/0ru+XTIVdzwXKUPCEr057/BplJiwD22EY7TTJ3Y4HpZp5YQ5U06L3doD
+	 YwMH/OPnPqOUk53awsior0I340c8epHqTHyPXUDm7FKKHUeBQxVfMKI9PmrKkLD4g0
+	 JxVfkcoFZo0q2on9ahvbo3swp7n0fJETP/aSPR766CBsoJrJYGK0fG0HUSaW5E1BZW
+	 2dopaO/8/5zIhrrNArX7xoF3Uzga/8TfgKoIyrvwp3FjjnUkaw2ZhSztwR0pwQxEfw
+	 bIN8cpUpNzy/A==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Taniya Das <taniya.das@oss.qualcomm.com>
-Cc: Abel Vesa <abel.vesa@oss.qualcomm.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Maulik Shah <maulik.shah@oss.qualcomm.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Jyothi Kumar Seerapu <jyothi.seerapu@oss.qualcomm.com>, 
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Brian Masney <bmasney@redhat.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Sibi Sankar <sibi.sankar@oss.qualcomm.com>, 
-	Pankaj Patil <pankaj.patil@oss.qualcomm.com>, Akhil P Oommen <akhilpo@oss.qualcomm.com>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>, 
-	Raviteja Laggyshetty <raviteja.laggyshetty@oss.qualcomm.com>, Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>, 
-	Qiang Yu <qiang.yu@oss.qualcomm.com>, 
-	Manaf Meethalavalappu Pallikunhi <manaf.pallikunhi@oss.qualcomm.com>, Abel Vesa <abelvesa@kernel.org>
-Subject: Re: [PATCH v3 1/3] dt-bindings: clock: qcom: glymur-gcc: Add missing
- CX power domain
-Message-ID: <almBxBhYxTR9n5FZ@baldur>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Taniya Das <taniya.das@oss.qualcomm.com>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Maulik Shah <maulik.shah@oss.qualcomm.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Jyothi Kumar Seerapu <jyothi.seerapu@oss.qualcomm.com>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Brian Masney <bmasney@redhat.com>,
+	Abel Vesa <abel.vesa@oss.qualcomm.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Sibi Sankar <sibi.sankar@oss.qualcomm.com>,
+	Pankaj Patil <pankaj.patil@oss.qualcomm.com>,
+	Akhil P Oommen <akhilpo@oss.qualcomm.com>,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>,
+	Raviteja Laggyshetty <raviteja.laggyshetty@oss.qualcomm.com>,
+	Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>,
+	Qiang Yu <qiang.yu@oss.qualcomm.com>,
+	Manaf Meethalavalappu Pallikunhi <manaf.pallikunhi@oss.qualcomm.com>,
+	Abel Vesa <abelvesa@kernel.org>
+Subject: Re: (subset) [PATCH v3 0/3] clk: qcom: gcc-glymur: Tie the CX power domain to controller
+Date: Thu, 16 Jul 2026 22:23:24 -0500
+Message-ID: <178425854604.1084804.1992392341244608368.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260715-glymur-fix-gcc-cx-scaling-v3-0-72eb5adad156@oss.qualcomm.com>
 References: <20260715-glymur-fix-gcc-cx-scaling-v3-0-72eb5adad156@oss.qualcomm.com>
- <20260715-glymur-fix-gcc-cx-scaling-v3-1-72eb5adad156@oss.qualcomm.com>
- <4b543abe-2482-4381-b41e-623cdf5be9a2@oss.qualcomm.com>
- <olkjcrfq5t32gvqgpcqiuyp5jhf72f4piowz6osxhain77f7bc@ggwuk4nz2ak2>
- <316fd37b-9936-4bca-8521-9a11ee65cbd6@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <316fd37b-9936-4bca-8521-9a11ee65cbd6@oss.qualcomm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 16, 2026 at 04:42:11PM +0530, Taniya Das wrote:
-> 
-> 
-> On 7/16/2026 12:52 PM, Abel Vesa wrote:
-> > On 26-07-16 10:13:48, Taniya Das wrote:
-> >>
-> >>
-> >> On 7/15/2026 6:59 PM, Abel Vesa wrote:
-> >>> The GDSCs provided by the Glymur GCC are supplied by the RPMh CX power
-> >>> domain. Model that parent domain in the GCC binding so the provider can
-> >>> describe the dependency in devicetree.
-> >>>
-> >>> Add a single CX power-domain entry to the binding and make it required,
-> >>> matching the hardware description needed by the GCC node.
-> >>>
-> >>> Fixes: ee2d967030fe ("dt-bindings: clock: qcom: document the Glymur Global Clock Controller")
-> >>> Signed-off-by: Abel Vesa <abel.vesa@oss.qualcomm.com>
-> >>> ---
-> >>>  Documentation/devicetree/bindings/clock/qcom,glymur-gcc.yaml | 8 ++++++++
-> >>>  1 file changed, 8 insertions(+)
-> >>
-> >>
-> >> Abel, I feel we should add the 'required-opps' as well which will ensure
-> >> the clock controllers minimum voltage requirement.
-> > 
-> > But it was agreed in v1 that we should not add the required-opps. So we
-> > dropped it in v2.
-> > 
-> 
-> Okay, sorry, may be I missed that comment.
-> 
-> 
-> > Can you give more details to why you think it is needed ?
-> 
-> My reasoning is that if a clock controller requires a rail, it is
-> preferable to explicitly specify the required operating level rather
-> than rely on system/client vote. This makes the dependency
-> self-contained and easier to reason about. Clients that require a higher
-> operating level than the clock controller's minimum requirement remain
-> free to vote for a higher level as needed.
-> 
 
-You're expressing this in generic terms, can you please provide the
-concrete example of what this would look for in the Glymur GCC case? 
-
-What is the required-opps for the Glymur GCC?
-
-Regards,
-Bjorn
-
+On Wed, 15 Jul 2026 16:29:13 +0300, Abel Vesa wrote:
+> The suggestion of having the CX power domain tied up to the GCC
+> controller started here:
 > 
-> -- 
-> Thanks,
-> Taniya Das
+> https://lore.kernel.org/lkml/fe210f0b-692b-4c45-afc4-fc2bc5e57854@oss.qualcomm.com/
 > 
+> and then, for Glymur, it has been brought up here as well:
+> 
+> [...]
+
+Applied, thanks!
+
+[1/3] dt-bindings: clock: qcom: glymur-gcc: Add missing CX power domain
+      commit: d22a37e9fba7838cdcb8c55b913b1a37a7a4a198
+[2/3] clk: qcom: gcc-glymur: Enable runtime PM
+      commit: 8d4f342369d0d77f32a0211692442d3b6d455872
+
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
