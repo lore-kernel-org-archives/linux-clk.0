@@ -1,263 +1,167 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1C553E00A6
-	for <linux-clk@vger.kernel.org>; Fri, 17 Jul 2026 07:33:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C8BF2EDD78;
+	Fri, 17 Jul 2026 08:05:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784273610; cv=none; b=KN566Yh2b2WOYWxcqHEeJ3DYexwyPDX3QEeKmth22WhWv7cfKe5UOZULlnNADNreeJpLukU48p2j2iNrbuVqaVxxU7TTjyspezAG8DMGmrUSsVFuBzVUY0xnQOFc/gIEsQO1GiXJXXaxfs67vpYpQexLocNA9yG8Bn1z6fR8y0U=
+	t=1784275518; cv=none; b=KouT+CMxNS7hsa4WhQJoxOzbsVN6TxtQQfUJp+NM5o3b3jOLGlgGqL6TXGi8jQiT4AfnaRwIzpyRmrUahKKSNMcHFO9xmbe7u3LhpiWDLK9dPlrOcrRWoIjE8p7F9NbiBkYf5oBwiyBZmJTawTOSxUijQMGmRnqR187Ja5VlLCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784273610; c=relaxed/simple;
-	bh=3RYoy3NwCnlF9xpy5kV6jgraHpowonDh8P0V9h6Z3hg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=c+Sr/PRFx/P369iH0PKiZk7NQ3SxrSJ6SMMFTv/hyz8ewUttKwUrUIXcjw/GyzsOLJEVeGP5t96lZjR8WXBkO3yC1Pbjtxy3bZzL3nrjFvpxUpue5lGQmeDYAKe77qZEJqYbZqiyoyZLN03nSsK+Zz9w1uTbpu5ud5qV+fjYEG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=MnJV9wEr; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=VQHUICwy; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1784275518; c=relaxed/simple;
+	bh=x9JygAPOcH52L+hYgzFwecjlCVuIqXcwZPNFrDd78eM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GG2s1EgTS7BJxfyYKqfy205HZ+shVMwBbfZtxIMVTzQlCIdbt58fYpwYziHMkWEgt4OrmsAdHq8MS907Wn+n3ef56mJ97qMuyOdxL/7VnN2TBpaBeo3d2tQG+GaDGrZDCVvfGSg4VMR3ex725P+dWK1yCANfsm6saoP7VNVe/kQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AAYnRLYR; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="MnJV9wEr";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="VQHUICwy"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66H6cFKN1160799
-	for <linux-clk@vger.kernel.org>; Fri, 17 Jul 2026 07:33:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	+RBNDWpZ0ECEPwpAEHCXeSOceBEtakk936rxO1jOWpw=; b=MnJV9wErPEdcL4v/
-	WKSR65zU1JUYIwRbmwphgTiecxEYF0PY2JjDk/ZyIWSX+n9PA5Cz701OLOMc9IC4
-	SBsbmPbfI3xm0re/ch+V+4HQ7QlW0u3joQCw4030+CC+Ey/DqcBQ94bI42EXEbD2
-	us9LDxyeN0q3y6uGLX8bg0AyqgjRTY9LI4xUplnLS3E/zLe14I9JkMOMsDZw0JP9
-	Vg3OkzEnIcUlvm588nO/hpke/7LGc7lX8nIhHK2X6LhBUvOuvHTkmQomes7YELSE
-	no3zRQEKtwRVME09mZadihIrZ216L9tE4vPw4OTNNXZHPznERfiywsWozSM9JFrO
-	zAaUmA==
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ffd3arpww-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Fri, 17 Jul 2026 07:33:09 +0000 (GMT)
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2cea6a46766so102361685ad.0
-        for <linux-clk@vger.kernel.org>; Fri, 17 Jul 2026 00:33:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1784273589; x=1784878389; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=+RBNDWpZ0ECEPwpAEHCXeSOceBEtakk936rxO1jOWpw=;
-        b=VQHUICwyEamFmF+nOUkeiYvpNVMl1D64rOe4E3CnotzX6cYDcKTOTiqW1XGErkCZVN
-         dyT7bRxH1YdId8fI4rZIbnoTiyl5yMBfTFrjJYi3P3KvjkBJtJKDR3969LKE9cHW3ziv
-         j2WHNO7T7NUuyobP8hLfCMgGsk1pMxDQVSNLnHZ0paaLbgJ/+4UjbnoNRGxKjrRqq4yh
-         /ms/a5/9ZpQSCfvWQCQ0s+DBXXqQRKloWLawWSh9+9r6Cum8+pscfrRhI+X1aaus38kw
-         GYn8LSN1n12/bqZgJHLY1ClLYTPcyDwA5eyABhDoYGzQ7KhRZ7JZjEO34Nbdp70/11O4
-         foyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784273589; x=1784878389;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=+RBNDWpZ0ECEPwpAEHCXeSOceBEtakk936rxO1jOWpw=;
-        b=Jk0lsyxDaNHvwoCYcvCWlb8lTkVUV6V3bEQy6+HvyxAefqpp5hOkcblR5QzvY5SDo7
-         XjFDT67rjDClat3MtaTiqOg9Q+ftynvS231YEYrIISypSEdEceW5m8YN8rNKVEQ5xckF
-         Ym3hUfwJjJFzg5gulKauMlN8+jp0TI/pFEE+DRChfKBUGBrC8b9SO1dwPSx6ViVr6oCa
-         d0pqNWbGbPar+a3xXHCmw/+WOWM7UvdymMii2UEVX1sVcLoCO4dyf1BWPViSJw6tbLTb
-         j0qqGymXpJj7ZRlu3Q2nVy2MiYJQkGFfuh5FBz/X8JhY7XPjOYjM48mGqO7y8uS8QSkt
-         NBtQ==
-X-Forwarded-Encrypted: i=1; AHgh+Rquf33VGYDRCcUrddmb5gQke3/4gK9JhBSF6Q4cmRYBJlYUWC3GaOe/acGojEgTg1W4KBPTlNMnYpw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9XgefNTWIb2wckwzzIcYOOSGpkYWcnokbfipa7oy6/OX2gNSH
-	X7O1Wi9deYUCri3vFKfy/V+KjpPBHB97Qltjyi9UfGSPXxk+YNd1DtCbKYwKF0/UldCGlJrtsUV
-	cSGQbzV0wbC+QzmmwBw1wFSbDLBhId6mitPVbF4gG2nU2LoFZlraJ2EemRqe+Zbo=
-X-Gm-Gg: AfdE7cnA2Osl9rUmk8B5CwRuTjnzqb0m06Tlm25iW+/FRHTIj7q7mWwkPapeyaGey2z
-	b1SlC73+QUmjgAaENxzsWL0BVWaBHGVUzlOAb0jEQMGTRGpCBeFr8LroF2S6vyOFpr9DTp/qJnF
-	YDj1OHBl3pqWFdSwbhR9xt2zvUSr8lp1kOVpeI3wX3RrDacpusz940fbJdtMOp4Ybci3vz5DLmt
-	ZFHbnBiDkxersX/s87ZIUwTGy4lAhaNlLLF576jZXxg4ElNPczK+5W7ll6kXdBNKQHvkBeMRVMl
-	bkEcDeKsCvUS/fKR+nkuBxTWJOjRC0fZ14gKrdntu70Nb/WUIVLE6r/ZK/hO4otWDwy+fp7MOuZ
-	fPsILrFYF9wE8n6o+NrdZO4dJ
-X-Received: by 2002:a17:903:249:b0:2c6:9f66:d573 with SMTP id d9443c01a7336-2cf3489556dmr16156745ad.2.1784273588716;
-        Fri, 17 Jul 2026 00:33:08 -0700 (PDT)
-X-Received: by 2002:a17:903:249:b0:2c6:9f66:d573 with SMTP id d9443c01a7336-2cf3489556dmr16156265ad.2.1784273588273;
-        Fri, 17 Jul 2026 00:33:08 -0700 (PDT)
-Received: from hu-tdas-hyd.qualcomm.com ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2cf3448fba7sm5882525ad.6.2026.07.17.00.33.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Jul 2026 00:33:07 -0700 (PDT)
-From: Taniya Das <taniya.das@oss.qualcomm.com>
-Date: Fri, 17 Jul 2026 13:01:54 +0530
-Subject: [PATCH v8 10/10] arm64: dts: qcom: eliza: Add support for MM clock
- controllers
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AAYnRLYR"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 010A51F000E9;
+	Fri, 17 Jul 2026 08:05:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1784275516;
+	bh=d5wRCC0mU/NbriydP8DlwWMqdbFD0Kyhuy6entsN1ak=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=AAYnRLYR5nSHilgjUq+StjglS3Z+PMb8Planx0U8fjwQeAHn4RuQzeoBuYVptnCay
+	 hku53KZqFAbAVa7h4Ur35l9BwX3MzN2SZY5br4g07/43LCF+AmtuNeuuUooSE03UpF
+	 3X9EBWBd2/Vqy1wnwGyJwPiGB4RSPotIGA0rNEMgCrMfoTRjsAGxYP7j0FTVcqqlhJ
+	 levtY1yoCi31iphVl8xLgppZIvS7g2It7xNujZvWEL0FIjD6HN8Ryz/k5tJgxCGCrO
+	 3GzAUHnZKNs09FbPeDvIOMIG+yF8vPhoO2eFPFCL8tFWBsG2cZDKTyEM5H7ky/b5oU
+	 eASES6yHaGAiw==
+Date: Fri, 17 Jul 2026 09:05:09 +0100
+From: Sudeep Holla <sudeep.holla@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Cristian Marussi <cristian.marussi@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sudeep Holla <sudeep.holla@kernel.org>,
+	Saravana Kannan <saravanak@kernel.org>,
+	Ulf Hansson <ulfh@kernel.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Marek Vasut <marek.vasut+renesas@mailbox.org>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 00/10] R-Car X5H Ironhide CPG/MDLC SCMI remapping
+ support
+Message-ID: <20260715-greedy-ocelot-of-feminism-5be3bf@sudeepholla>
+References: <cover.1783505329.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260717-b4-eliza_mm_cc_v6-v8-10-5cca1bef2e48@oss.qualcomm.com>
-References: <20260717-b4-eliza_mm_cc_v6-v8-0-5cca1bef2e48@oss.qualcomm.com>
-In-Reply-To: <20260717-b4-eliza_mm_cc_v6-v8-0-5cca1bef2e48@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Luca Weiss <luca.weiss@fairphone.com>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
-        Imran Shaik <imran.shaik@oss.qualcomm.com>,
-        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Taniya Das <taniya.das@oss.qualcomm.com>
-X-Mailer: b4 0.15-dev-aa3f6
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNzE3MDA3NCBTYWx0ZWRfXx55SFfSHU63H
- 75SY/+6IIMqfkFsNnJbvBsjnVwSu6tWl5voU6oL+CPRKWWh+TWnaBoWQJhO0CVTQlXxVUq7klmq
- J3RpS9LB4NJCfi3pMCYUKyjGQjrpPFs=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzE3MDA3NCBTYWx0ZWRfXyQ+OMywLusWB
- B2hPmicC7GL+NcDkUB8RFsrEXMAXde1XJQbWjJc0igS7CtzuyOQzhGN4/cq4pSs8j/QfSmOKw8D
- GiPUwCg5j7g1QvOT5/cZtgDSpkmQhJGIZMTbZSvHtVSwtPzcUGnikkXF/IRQJ3lXq3DMGVhQJ9g
- Z7P7BqA2UELKWM1pn8MoNaG/hh32i4J2KILF9sNqqUZjXu1Oh9uAb/ctEKUN5IiogHDLa4OW83C
- 9L3VYoo52VEBTxWoECyF0urK639SmlmO1gVl3aTsZB5aCQCuPxcBHy+arAUOwuz1nj++aPfYi8/
- 4tByq7fRCaBzYUIYpVgSBNL8kxWQBNgcfWzX0rl4atrCVguAxf3iTfEIg7uQf5a+J8l82mtQyx2
- mPxk/8tnAmaX4UUHlbGTsVvwi0n9cml4WZ7JLN/scJtsYAQ8WTUINJcVTqIO/wNkseMOpr9npOk
- ohXcR/ECfXCdXBEZGUA==
-X-Proofpoint-GUID: oAR-OT2OZ7dCUd_Rc8Bym1fZwheqN3mm
-X-Proofpoint-ORIG-GUID: oAR-OT2OZ7dCUd_Rc8Bym1fZwheqN3mm
-X-Authority-Analysis: v=2.4 cv=e/M2j6p/ c=1 sm=1 tr=0 ts=6a59dab5 cx=c_pps
- a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22
- a=EUspDBNiAAAA:8 a=nFpjIs4uCRy3fSY36ugA:9 a=QEXdDO2ut3YA:10
- a=GvdueXVYPmCkWapjIL-Q:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-07-17_02,2026-07-15_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 impostorscore=0 suspectscore=0 phishscore=0 priorityscore=1501
- spamscore=0 malwarescore=0 clxscore=1015 lowpriorityscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607170074
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1783505329.git.geert+renesas@glider.be>
 
-Add the device nodes for the multimedia clock controllers (cambistmclkcc,
-camcc, videocc, gpucc) for Qualcomm Eliza SoC.
+On Wed, Jul 08, 2026 at 12:16:18PM +0200, Geert Uytterhoeven wrote:
+> 	Hi all,
+> 
+> TL;DR:
+> 
+>     Describe hardware in DT, and perform the mapping to SCMI in Linux.
+> 
+> The Renesas R-Car X5H-based Ironhide board is the first Renesas
+> SoC/board combination that implements the ARM System Control and
+> Management Interface (SCMI).
+> 
+> This means Linux can no longer perform various system operations (e.g.
+> clock, power domain, and reset control) by accessing the hardware
+> directly.  Instead, these operations are abstracted according to various
+> SCMI sub-protocols, and Linux has to send messages to an SCMI-compliant
+> firmware running on a System Control Processor (SCP).
+> More specifically, the R-Car X5H SCP FW SCMI controls access to:
+>   1. Core clocks and module clocks,
+>   2. Module resets,
+>   3. Power domains,
+>   4. System power.
+> The latter is not relevant for this discussion.
+> 
+> Using SCMI also has an impact on the board DTS: besides the addition of
+> a firmware/scmi node with protocol-specific subnodes, devices using
+> SCMI-abstracted system resources now have to refer to these resources
+> using resource specifiers containing phandles to the SCMI protocol
+> subnodes, and firmware-specific object IDs[1].
+> 
+> Unfortunately we encountered several issues with this:
+>   - The clock, reset, and power domain IDs are not stable by design,
+>     causing DT incompatibilities.
+>     SCMI requires that the ID space exposed to an agent (i.e. Linux)
+>     starts at zero and is contiguous.  Hence any change in system
+>     partitioning (Application CPU core vs. Realtime CPU core,
+>     virtualization, ...) may mean a renumbering of all SCMI IDs,
+>     implying a massive change to the DT.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
----
- arch/arm64/boot/dts/qcom/eliza.dtsi | 76 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 76 insertions(+)
+Yes it is well known fact. But where this is a feature or limitation
+is debatable. Why would SCP firmware churn and re-number or re-assign
+a differ domain ID everytime it is updated is questionable to me.
 
-diff --git a/arch/arm64/boot/dts/qcom/eliza.dtsi b/arch/arm64/boot/dts/qcom/eliza.dtsi
-index 977de44b816e4295dba89ecb77c6df60f6f08d15..fed88a699fc264cc49e0bda79870a8dfb0b6c7f7 100644
---- a/arch/arm64/boot/dts/qcom/eliza.dtsi
-+++ b/arch/arm64/boot/dts/qcom/eliza.dtsi
-@@ -4,9 +4,13 @@
-  */
- 
- #include <dt-bindings/clock/qcom,dsi-phy-28nm.h>
-+#include <dt-bindings/clock/qcom,eliza-cambistmclkcc.h>
-+#include <dt-bindings/clock/qcom,eliza-camcc.h>
- #include <dt-bindings/clock/qcom,eliza-dispcc.h>
- #include <dt-bindings/clock/qcom,eliza-gcc.h>
-+#include <dt-bindings/clock/qcom,eliza-gpucc.h>
- #include <dt-bindings/clock/qcom,eliza-tcsr.h>
-+#include <dt-bindings/clock/qcom,eliza-videocc.h>
- #include <dt-bindings/clock/qcom,rpmh.h>
- #include <dt-bindings/dma/qcom-gpi.h>
- #include <dt-bindings/gpio/gpio.h>
-@@ -1779,6 +1783,24 @@ aggre2_noc: interconnect@1700000 {
- 			#interconnect-cells = <2>;
- 		};
- 
-+		cambistmclkcc: clock-controller@1760000 {
-+			compatible = "qcom,eliza-cambistmclkcc";
-+			reg = <0x0 0x01760000 0x0 0x6000>;
-+
-+			clocks = <&bi_tcxo_div2>,
-+				 <&sleep_clk>,
-+				 <&gcc GCC_CAM_BIST_MCLK_AHB_CLK>;
-+
-+			power-domains = <&rpmhpd RPMHPD_CX>,
-+					<&rpmhpd RPMHPD_MX>;
-+			required-opps = <&rpmhpd_opp_low_svs>,
-+					<&rpmhpd_opp_low_svs>;
-+
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			#power-domain-cells = <1>;
-+		};
-+
- 		mmss_noc: interconnect@1780000 {
- 			compatible = "qcom,eliza-mmss-noc";
- 			reg = <0x0 0x01780000 0x0 0x7d800>;
-@@ -2657,6 +2679,60 @@ mdss_dp0_out: endpoint {
- 			};
- 		};
- 
-+		gpucc: clock-controller@3d90000 {
-+			compatible = "qcom,eliza-gpucc";
-+			reg = <0x0 0x03d90000 0x0 0xa000>;
-+
-+			clocks = <&bi_tcxo_div2>,
-+				 <&gcc GCC_GPU_GPLL0_CPH_CLK_SRC>,
-+				 <&gcc GCC_GPU_GPLL0_DIV_CPH_CLK_SRC>;
-+
-+			power-domains = <&rpmhpd RPMHPD_MX>,
-+					<&rpmhpd RPMHPD_CX>;
-+			required-opps = <&rpmhpd_opp_low_svs>,
-+					<&rpmhpd_opp_low_svs>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			#power-domain-cells = <1>;
-+		};
-+
-+		videocc: clock-controller@aaf0000 {
-+			compatible = "qcom,eliza-videocc";
-+			reg = <0x0 0xaaf0000 0x0 0x10000>;
-+
-+			clocks = <&bi_tcxo_div2>,
-+				 <&bi_tcxo_ao_div2>,
-+				 <&sleep_clk>,
-+				 <&gcc GCC_VIDEO_AHB_CLK>;
-+
-+			power-domains = <&rpmhpd RPMHPD_CX>,
-+					<&rpmhpd RPMHPD_MX>;
-+			required-opps = <&rpmhpd_opp_low_svs>,
-+					<&rpmhpd_opp_low_svs>;
-+
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			#power-domain-cells = <1>;
-+		};
-+
-+		camcc: clock-controller@ade0000 {
-+			compatible = "qcom,eliza-camcc";
-+			reg = <0x0 0x0ade0000 0x0 0x20000>;
-+
-+			clocks = <&bi_tcxo_div2>,
-+				 <&sleep_clk>,
-+				 <&gcc GCC_CAMERA_AHB_CLK>;
-+
-+			power-domains = <&rpmhpd RPMHPD_CX>,
-+					<&rpmhpd RPMHPD_MX>;
-+			required-opps = <&rpmhpd_opp_low_svs>,
-+					<&rpmhpd_opp_low_svs>;
-+
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			#power-domain-cells = <1>;
-+		};
-+
- 		dispcc: clock-controller@af00000 {
- 			compatible = "qcom,eliza-dispcc";
- 			reg = <0x0 0x0af00000 0x0 0x20000>;
+>   - There may be different SCP firmware lineages, e.g. proprietary and
+>     certified variants, and FLOSS variants,
+
+No sure if I understand the issue here.
+
+>   - SCMI features may differ across firmware versions,
+
+Again, features must be discoverable that is the advantage of DT vs this
+firmware interface, so not sure what is the issue in this matter.
+
+>   - SCMI may abstract the hardware in a different way, requiring changes
+>     in (possibly existing) DT bindings and drivers to support the same
+>     hardware with and without SCMI:
+>       - E.g. the number of SCMI clocks inputs to a hardware block may
+> 	differ from the actual hardware,
+>       - E.g. hardware clock inputs may be abstracted as SCMI power
+> 	domains (or vice versa), like on Qualcomm SA8255P[2].
+
+True, the moment SCMI like interface is used in OSPM, the firmware
+description hides real h/w details and provide what firmware thinks
+OSPM must view hardware as(how VMMs virtualise things for VMs, firmware
+can have similar effect with such interfaces).
+
+>     Experience has taught that not describing the hardware in DT may
+>     lead to major issues later.
+
+OK, that's interesting. But the whole point with these interfaces is to
+hide those, so just don't use such abstraction interface if you want the
+hardware to be described as is to the OSPM.
+
+>   - SCMI does not support the concept of a clock domain, so existing
+>     drivers can no longer rely on Runtime PM, but need to be changed to
+>     manage functional clocks explicitly,
+
+Not sure what that means, you mean clock protocol is not good enough to
+model the h/w clock domains on your platform ? If so, you are welcome to
+improve the specification.
+
+>   - U-Boot IPL (Initial Program Loader) needs a proper hardware
+>     description in DT, not using SCMI.
+> 
+
+I am going to ignore that.
+
+> This list deliberately ignores ID instability and the need for SCMI
+> quirks during development of the SCMI firmware.  While upstream Linux
+> must only support sufficiently mature firmware versions, vendor trees
+> (e.g. renesas-lts) may still want to support development firmware
+> versions.
+> 
+
+Fair enough, but the acceptance of such changes depends on maintenance
+and possible absuse with such spec deviations.
 
 -- 
-2.34.1
-
+Regards,
+Sudeep
