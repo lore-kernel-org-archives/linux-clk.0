@@ -1,106 +1,131 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92D063AC0ED;
-	Fri, 17 Jul 2026 08:07:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2728F3382DA;
+	Fri, 17 Jul 2026 08:16:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784275668; cv=none; b=uovMVd8caEpXH1CdpBHPzNQjkbTGYX9Ja3kURkJzp9qPGEzaDd1AdjUyoe1TQM6jIYZegVOo90ogK7TbhXzMVfGZP9wmulL+AKrp0n+X9bGJkuHFONcQ6odrH4olEpRlKu+Ui6TPYKMBQ/8U6oLPN18AuaDc73Y3/kMQAGrOKH0=
+	t=1784276167; cv=none; b=Z7vI7xwKjgpLuR7RFoINfbei8WAlce9UXZ6pR2GjFI0rrlYYG9INVTVUtcEONuSvFS8yXm+IGkU0D4armiJnSDgzNKZLeXrh2y6UXpQkmRwsksxJ+B6GGcc9tyPe9p/E9zKmjqEfOQ8idO5u4NAJRL6HiFkhL4BY/2VGUTJDFbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784275668; c=relaxed/simple;
-	bh=VZL7Dfked0w2UNCJXV1biw66keezEniSdfHE/FNmBoc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LJtg9Y9ayO8Bn/pYL9uhN9jW9p7dlvnt84MSL2fjnVMJ5+2PmG2Af+cBdnQuvU9icU3zwh1xh7O/+B73P+TkYzLt+Kk1T6HDvS3ATR8JwI8LFqMuugdiPGn7SVIVQrz5xTdLt1J7+Mo4wLPkqyQyWEEhv69yHRNqqhMtpFMx5wE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V4eP2GQ4; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1784276167; c=relaxed/simple;
+	bh=Wu2dcQqSV48sZQw+DcEJjQItHyQr3DRqEgj+tp/gDnM=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=eQHKF2BzNUbyTRwpr0Z7wKLzxyqFFKPRPKbEF3kBvUATkZqlVMuQuwNAlqP+vn7nSMvOIFFCdUpDJK9QHhigBTccR1+/uvT2iIS6FdkVLcBL0XoPI4SdPhx9+JhFeSUc5OSeuchKGI5yjN6PblRuKqJtKgYhAjo2McOCko0Ct/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YdjTJtqq; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V4eP2GQ4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAD471F000E9;
-	Fri, 17 Jul 2026 08:07:42 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YdjTJtqq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76CCE1F000E9;
+	Fri, 17 Jul 2026 08:16:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784275667;
-	bh=Sx70MohSQI5OynyQy2bJT7hUudD6UKCIjL2zOELkr2M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=V4eP2GQ424QXG8DsrGa+QfSculVk9t6+kC9JuclpV+X9VGf3PzNm9R+fyPTZ8LJzO
-	 LqxvITYf97PSGsyN6o8S6POvpbxoVVT3zG4i/hRLi7hD4w8AsST+qyjd164XSQT27g
-	 Uk3hItdMpM1AIe97BLN0+jrPEV4ciR+UM5SmKmaE1IM3Tv4my7Y7Shtuc/2APhR5HA
-	 zU5D5oyvt10g1nMA6zxJIEPZic4+iU/MDnUtd8ysUjJXOWm1u4tISZ0vmch8lIdsYQ
-	 lxQPcxCo2dIRqIF0d+7SMQHNGiwLCUJvBr+zPmbh+iQyJzdLvNLpHwrp7OApPlNMJE
-	 1hHWImuCp055w==
-Date: Fri, 17 Jul 2026 09:07:41 +0100
-From: Sudeep Holla <sudeep.holla@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Cristian Marussi <cristian.marussi@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Sudeep Holla <sudeep.holla@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Saravana Kannan <saravanak@kernel.org>,
-	Ulf Hansson <ulfh@kernel.org>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 06/10] dt-bindings: power: renesas,r8a78000-mdlc: Add
- firmware property
-Message-ID: <20260717-pragmatic-alpaca-of-spirit-ae497e@sudeepholla>
-References: <cover.1783505329.git.geert+renesas@glider.be>
- <b4d16ddb0c0af56f4103feadb3014e71899edec1.1783505329.git.geert+renesas@glider.be>
+	s=k20260515; t=1784276165;
+	bh=+7Nd67iiHmSuvw06r7sfnoXomVEtuqgSBnJLlAkF+OM=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To;
+	b=YdjTJtqqKbr0M2+vL9qCSGhbjH5UJGKkh1WBT/5dtMdEX5la1sEkalWpBl4F9Q4dI
+	 Xqo128VG+Cp+P91gLl9NyVGJk+IEd1nqGKJHgKJdP5/9Cg/a1IzWXUYLZVQVDKh5NP
+	 frYVaKMm3l5ARDYdSIACu2mISee2U622Do1WU3Mh0VhxGdfb4iIlvXEJ6qko01T2kt
+	 JpZxTnKSP3+Vq4Ix7x5DsLkEs3hYcb2v0MRqRR66H8ThTG3Wlaikq6IwCYKvU6FQNv
+	 fQ6A8boXWOvo+mnKec/SUPgEQXTIWjxzHMM2/y6qG2Zyb66er1siBQP6sRw/Jf2X9k
+	 afPD33eS2DctQ==
+Message-ID: <06d11879-b305-422c-bef1-982c968ce899@kernel.org>
+Date: Fri, 17 Jul 2026 10:15:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b4d16ddb0c0af56f4103feadb3014e71899edec1.1783505329.git.geert+renesas@glider.be>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 02/13] dt-bindings: clk: zte: Add zx297520v3 top clock
+ and reset controller
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: =?UTF-8?Q?Stefan_D=C3=B6singer?= <stefandoesinger@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Brian Masney <bmasney@redhat.com>, Vinod Koul <vkoul@kernel.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org
+References: <20260717-zx29clk-v7-0-408411cfcf36@gmail.com>
+ <20260717-zx29clk-v7-2-408411cfcf36@gmail.com>
+ <20260717-berserk-faithful-cat-a34ad8@quoll>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <20260717-berserk-faithful-cat-a34ad8@quoll>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 08, 2026 at 12:16:24PM +0200, Geert Uytterhoeven wrote:
-> Add a firmware property, for systems where SCMI must be used instead of
-> direct hardware access.
+On 17/07/2026 08:36, Krzysztof Kozlowski wrote:
+> On Fri, Jul 17, 2026 at 12:35:38AM +0300, Stefan Dösinger wrote:
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index cb50c2e3b4ea..5f962b9947ab 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -3878,10 +3878,13 @@ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+>>  S:	Odd fixes
+>>  F:	Documentation/arch/arm/zte/
+>>  F:	Documentation/devicetree/bindings/arm/zte.yaml
+>> +F:	Documentation/devicetree/bindings/clock/zte,zx297520v3-topcrm.yaml
+>>  F:	Documentation/devicetree/bindings/phy/zte,zx297520v3-usb-phy.yaml
+>>  F:	arch/arm/boot/dts/zte/
+>>  F:	arch/arm/mach-zte/
+>> +F:	include/dt-bindings/clock/zte,zx297520v3-clk.h
+>>  F:	include/dt-bindings/phy/phy-zte-zx297520v3-usb.h
+>> +F:	include/dt-bindings/reset/zte,zx297520v3-reset.h
+>>  
+>>  ARM/ZYNQ ARCHITECTURE
+>>  M:	Michal Simek <michal.simek@amd.com>
+>> diff --git a/include/dt-bindings/clock/zte,zx297520v3-clk.h b/include/dt-bindings/clock/zte,zx297520v3-clk.h
 > 
+> Same mistake. Filename MUST match the compatible.
 
-Please add more info to explain why you think this is reasonable
-approach. Until then ...
+I did not notice that you combine here all the clock IDs from other
+clock controllers. The header filename is therefore fine (also reset fine).
 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> v2:
->   - Spin off from "dt-bindings: power: Document Renesas R-Car X5H Module
->     Controller".
-> ---
->  .../devicetree/bindings/power/renesas,r8a78000-mdlc.yaml   | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/power/renesas,r8a78000-mdlc.yaml b/Documentation/devicetree/bindings/power/renesas,r8a78000-mdlc.yaml
-> index 1dba1e1b1c5b52d0..9616f0244415896c 100644
-> --- a/Documentation/devicetree/bindings/power/renesas,r8a78000-mdlc.yaml
-> +++ b/Documentation/devicetree/bindings/power/renesas,r8a78000-mdlc.yaml
-> @@ -43,6 +43,12 @@ properties:
->        and thus identical to the second power domain specifier cell.
->      const: 1
->  
-> +  firmware:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description:
-> +      Reference to the SCMI firmware device node on systems where SCMI must be
-> +      used instead of direct hardware access.
-> +
 
-NACK
-
--- 
-Regards,
-Sudeep
+Best regards,
+Krzysztof
