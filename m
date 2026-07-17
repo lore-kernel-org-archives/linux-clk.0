@@ -1,394 +1,128 @@
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from ixit.cz (ixit.cz [185.100.197.86])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20EE037D13A
-	for <linux-clk@vger.kernel.org>; Fri, 17 Jul 2026 18:21:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 247012EC0A4;
+	Fri, 17 Jul 2026 21:08:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.100.197.86
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784312509; cv=none; b=BPOHLR7ekFNwWFBys4svEXSkVflWh9jqDdUgKz+zvc7u9VrjsKzVwR3T5TE6QKuM/o1JTM75I8o2dqMvHps8j5QGiY+y9Pwl41bUJGzBRlbesh1pFh9n6aX+1IHcxluz8d8Tdicci0kD76sNbKnbyrXc7A4W/Z4m+JUijfU12Co=
+	t=1784322514; cv=none; b=eyAVYL9zWMVSJykKgrgVrG3KRsO1xDvDXwdwLiDy64DlceYLqtKrf/9R92cZ7sHo1QSWwUw1Ylc+Ocv3aq7CVKIDXh1YDG+/CjeWv48gQDqX6JLFOrFJao0A+4wgkatS7DMK8qcjArUi6908LdnjPTJW2NXbFhlyNZzDNlSPjho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784312509; c=relaxed/simple;
-	bh=niiZc34oT/FCUZkmHwiDpo+KF9xrgecMmiVx6uBGJjU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=NtkfMi2I0Go1myLI0/F8w4wjXU+OffYvGybmrBliOV0qRhgqKNCGCgvdd+BjH3c8LiUrzmgP5rZOKsCzB95YDpR/vJ6zx/6ilpVyd0e7qU02ODH3ufSqUISzeqT70TJHDo7vXpGGEOrRcDRtsmXyXPRaS2sum+wXJrkw8dZqpWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jqWQ1Y/X; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1784322514; c=relaxed/simple;
+	bh=LJLuFHEJLRrrJT8/uQRejUUpZY7N2clwhlYNSsXTQOI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GFNgXFy0nr6a3jXxclgmeBbQ1M/kx4sy2Zx51fhSGLDOozFvI227CgHlLxSiCqykWLDtp5MTAmspQWeMRRahlmvX3raAI1zqrU/Yu1KMuv85AhZwA7JtvzDSq5lwjraEDaz20KkK62n3IjM4/q5ZCv+3qIsVSoI5ff0vYAcGnlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=bQluLM9h; arc=none smtp.client-ip=185.100.197.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jqWQ1Y/X"
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2cab1f435afso15269015ad.2
-        for <linux-clk@vger.kernel.org>; Fri, 17 Jul 2026 11:21:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784312505; x=1784917305; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=BzztNSmfjCuPS1+BUuTXaof0KOGOp3LQbgIIyx3awS0=;
-        b=jqWQ1Y/XI85N72TKhvCYxCiDsTKtxl4YyXYiF+gH+EhfTXbD7LXAxidgLzvmEzPx/S
-         LVTkDr8dn2hyCLOj0kCPuzfK4uo1Hzs0fJv4qNVb6SJiC/uy8MIRJg5T8waRR2//VlRR
-         prX7SUnENZkfYl6bpdYznrbQTGh9iuqa4NsDHfT0Z4qHLLFOEcVFMl5vkkSpgYhdpAmP
-         U/0z3beyJMOSQFRMXz1VpO4qtSprwQVIej8IRo+jJxdmviamHsDzlsPdlz1Fcs+q0yQ5
-         VM2/nrgm2Mb8rKJqQ7OA+s2jCh5LV5kC2BuJiewFMcy0vz1EP+sagH+61fYc+1cXLS3P
-         rlXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784312505; x=1784917305;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=BzztNSmfjCuPS1+BUuTXaof0KOGOp3LQbgIIyx3awS0=;
-        b=jOeejle/GbcQ/tQxokE3mlC+yB9LyIVbU2d63vFzKTn975u5qEjKPukay1Lohri8BS
-         HNFWUeIWX5EeFhMekgla9sq6NAMHVbIHm+rIiM/uPPbB2e3FmAKBUMbYDJY9SLnKw43V
-         EWhcmhhWJWttyDytGd+yUlOL5/h1plnY5nPaF+s6ayvDnBtj4GBies7tkuvJqvEPY1gw
-         HPmF6O0hXrC9aLHCZA/VwntCz4LMbDvJv9rWojIelE0YoRqRPTBvCZvDe9wWvDYrX0VH
-         hyPH8LXsviUuw3j+CPQoxU7qH3DXBK7zNrIKj40I91lr6gbKrGphUGr5Rowuns+xJfl2
-         ckOg==
-X-Gm-Message-State: AOJu0Yya24Us1Y/82UEVDTF3uaJa9R761+hu4VzozPfvIZ2/Y2eZ3IwT
-	Cs2EPB2apGpqFxl1ooCL2d3hMbfBhLAVmo8JT3J57eGXtos4gJ1grjtE1LyiYw==
-X-Gm-Gg: AfdE7cnkHZB5rhMbwxxgbm8KOX9MCAcK9FnNujLIIVDrW7RKFyz6XvW9OxHZpRSFq2B
-	M1nhMTMPIOiC+NERQIzGQlhdhj6uGHBgrxnRiarE80hgD9/BzBxET/jDkJof+npCzdKPyQKKtMD
-	0AyO3Z3kUbvBmG2NeMlpiu0gQYWXJzPSMPUs4bR9x1TOjXRiyOMS/aC7oZ0SZy343lzUEEuhX3/
-	lxPW3cwz4fwy16wn1T6vVU7sqCx2XAQwX2uWjBjTgs3Ass0pNKWw+qA1aGRVF5ZE26EjV7x+JjX
-	T7dxyofFFxZcFnZs5HXPxjkuL9Oo5YjVYwRQ5D7K3FVRWkeIvge7dExA2FmZoAKhHyB4pYxdQe8
-	PWPh+ij53NqshtdNYAmr3wVP/2GkY8JC4saNrgvFtfhHRNlH7LNtV6cOiFTbcWNjuZhWXgB/6re
-	ShjbFYxHME48uqC+KizAfIYEV4
-X-Received: by 2002:a17:902:da2d:b0:2ca:dc3:5aa with SMTP id d9443c01a7336-2cf3485958cmr31896785ad.2.1784312504803;
-        Fri, 17 Jul 2026 11:21:44 -0700 (PDT)
-Received: from [172.28.140.252] ([2409:40c2:5425:b99:7cf7:c083:fd30:1cea])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-13ce2cd6e6esm7730919c88.13.2026.07.17.11.21.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Jul 2026 11:21:44 -0700 (PDT)
-From: Bhargav Joshi <j.bhargav.u@gmail.com>
-Date: Fri, 17 Jul 2026 23:51:21 +0530
-Subject: [PATCH] dt-bindings: clock: ti,da850-pll: Convert to DT schema
+	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="bQluLM9h"
+Received: from [192.168.1.182] (ip-62-24-73-79.bb.vodafone.cz [62.24.73.79])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ixit.cz (Postfix) with ESMTPSA id 067715340388;
+	Fri, 17 Jul 2026 23:02:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
+	t=1784322133;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Oq9NtYuTPcyfgKc/M4q0GlqItnWYxDvFy2+B0yhwzA0=;
+	b=bQluLM9h0euhySlaxOlCQUmhxsbmDS4q7yxjm+YvOAMq+YwOLdc5sd3yP3spSFsN2QhlOQ
+	2obdn/toUq28ohATAWvS+VY0xscKRoi5INjT5QrJkBYHnn2zOKtvSNR0YUBXc4GiGUxQzs
+	3xIZE3GhAM3TwOS22NBC4Bz/Xt0x8Xg=
+Message-ID: <e43fd30b-4f97-4f14-85f2-7d113c0dc1c3@ixit.cz>
+Date: Fri, 17 Jul 2026 23:02:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] clk: qcom: dispcc-sm8450: Fix
+ disp_cc_mdss_mdp_clk_src ops
+To: esteuwu@proton.me, Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+ Dmitry Baryshkov <lumag@kernel.org>, Jagadeesh Kona
+ <quic_jkona@quicinc.com>, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org
+References: <20260713-sm8450-qol-dispcc-v3-0-56fd05822270@proton.me>
+ <20260713-sm8450-qol-dispcc-v3-1-56fd05822270@proton.me>
+Content-Language: en-US
+From: David Heidelberg <david@ixit.cz>
+Autocrypt: addr=david@ixit.cz; keydata=
+ xsFNBF5v1x4BEADS3EddwsNsvVAI1XF8uQKbdYPY/GhjaSLziwVnbwv5BGwqB1tfXoHnccoA
+ 9kTgKAbiXG/CiZFhD6l4WCIskQDKzyQN3JhCUIxh16Xyw0lECI7iqoW9LmMoN1dNKcUmCO9g
+ lZxQaOl+1bY/7ttd7DapLh9rmBXJ2lKiMEaIpUwb/Nw0d7Enp4Jy2TpkhPywIpUn8CoJCv3/
+ 61qbvI9y5utB/UhfMAUXsaAgwEJyGPAqHlC0YZjaTwOu+YQUE3AFzhCbksq95CwDz4U4gdls
+ dmv9tkATfu2OmzERZQ6vJTehK0Pu4l5KmCAzYg42I9Dy4E6b17x6NncKbcByQFOXMtG0qVUk
+ F1yeeOQUHwu+8t3ZDMBUhCkRL/juuoqLmyDWKMc0hKNNeZ9BNXgB8fXkRLWEUfgDXsFyEkKp
+ NxUy5bDRlivf6XfExnikk5kj9l2gGlNQwqROti/46bfbmlmc/a2GM4k8ZyalHNEAdwtXYSpP
+ 8JJmlbQ7hNTLkc3HQLRsIocN5th/ur7pPMz1Beyp0gbE9GcOceqmdZQB80vJ01XDyCAihf6l
+ AMnzwpXZsjqIqH9r7T7tM6tVEVbPSwPt4eZYXSoJijEBC/43TBbmxDX+5+3txRaSCRQrG9dY
+ k3mMGM3xJLCps2KnaqMcgUnvb1KdTgEFUZQaItw7HyRd6RppewARAQABzSBEYXZpZCBIZWlk
+ ZWxiZXJnIDxkYXZpZEBpeGl0LmN6PsLBlAQTAQgAPgIbAwULCQgHAgYVCgkICwIEFgIDAQIe
+ AQIXgBYhBNd6Cc/u3Cu9U6cEdGACP8TTSSByBQJl+KksBQkPDaAOAAoJEGACP8TTSSBy6IAQ
+ AMqFqVi9LLxCEcUWBn82ssQGiVSDniKpFE/tp7lMXflwhjD5xoftoWOmMYkiWE86t5x5Fsp7
+ afALx7SEDz599F1K1bLnaga+budu55JEAYGudD2WwpLJ0kPzRhqBwGFIx8k6F+goZJzxPDsf
+ loAtXQE62UvEKa4KRRcZmF0GGoRsgA7vE7OnV8LMeocdD3eb2CuXLzauHAfdvqF50IfPH/sE
+ jbzROiAZU+WgrwU946aOzrN8jVU+Cy8XAccGAZxsmPBfhTY5f2VN1IqvfaRdkKKlmWVJWGw+
+ ycFpAEJKFRdfcc5PSjUJcALn5C+hxzL2hBpIZJdfdfStn+DWHXNgBeRDiZj1x6vvyaC43RAb
+ VXvRzOQfG4EaMVMIOvBjBA/FtIpb1gtXA42ewhvPnd5RVCqD9YYUxsVpJ9d+XsAy7uib3BsV
+ W2idAEsPtoqhVhq8bCUs/G4sC2DdyGZK8MRFDJqciJSUbqA+5z1ZCuE8UOPDpZKiW6H/OuOM
+ zDcjh0lOzr4p+/1TSg1PbUh7fQ+nbMuiT044sC1lLtJK0+Zyn0GwhR82oNM4fldNsaHRW42w
+ QGD35+eNo5Pvb3We5XRMlBdhFnj7Siggp4J8/PJ6MJvRyC+RIJPGtbdMB2/RxWunFLn87e5w
+ UgwR9jPMHAstuTR1yR23c4SIYoQ2fzkrRzuazsFNBF5v1x4BEADnlrbta2WL87BlEOotZUh0
+ zXANMrNV15WxexsirLetfqbs0AGCaTRNj+uWlTUDJRXOVIwzmF76Us3I2796+Od2ocNpLheZ
+ 7EIkq8budtLVd1c06qJ+GMraz51zfgSIazVInNMPk9T6fz0lembji5yEcNPNNBA4sHiFmXfo
+ IhepHFOBApjS0CiOPqowYxSTPe/DLcJ/LDwWpTi37doKPhBwlHev1BwVCbrLEIFjY0MLM0aT
+ jiBBlyLJaTqvE48gblonu2SGaNmGtkC3VoQUQFcVYDXtlL9CVbNo7BAt5gwPcNqEqkUL60Jh
+ FtvVSKyQh6gn7HHsyMtgltjZ3NKjv8S3yQd7zxvCn79tCKwoeNevsvoMq/bzlKxc9QiKaRPO
+ aDj3FtW7R/3XoKJBY8Hckyug6uc2qYWRpnuXc0as6S0wfek6gauExUttBKrtSbPPHiuTeNHt
+ NsT4+dyvaJtQKPBTbPHkXpTO8e1+YAg7kPj3aKFToE/dakIh8iqUHLNxywDAamRVn8Ha67WO
+ AEAA3iklJ49QQk2ZyS1RJ2Ul28ePFDZ3QSr9LoJiOBZv9XkbhXS164iRB7rBZk6ZRVgCz3V6
+ hhhjkipYvpJ/fpjXNsVL8jvel1mYNf0a46T4QQDQx4KQj0zXJbC2fFikAtu1AULktF4iEXEI
+ rSjFoqhd4euZ+QARAQABwsF8BBgBCAAmAhsMFiEE13oJz+7cK71TpwR0YAI/xNNJIHIFAmX4
+ qVAFCQ8NoDIACgkQYAI/xNNJIHKN4A/+Ine2Ii7JiuGITjJkcV6pgKlfwYdEs4eFD1pTRb/K
+ 5dprUz3QSLP41u9OJQ23HnESMvn31UENk9ffebNoW7WxZ/8cTQY0JY/cgTTrlNXtyAlGbR3/
+ 3Q/VBJptf04Er7I6TaKAmqWzdVeKTw33LljpkHp02vrbOdylb4JQG/SginLV9purGAFptYRO
+ 8JNa2J4FAQtQTrfOUjulOWMxy7XRkqK3QqLcPW79/CFn7q1yxamPkpoXUJq9/fVjlhk7P+da
+ NYQpe4WQQnktBY29SkFnvfIAwqIVU8ix5Oz8rghuCcAdR7lEJ7hCX9bR0EE05FOXdZy5FWL9
+ GHvFa/Opkq3DPmFl/0nt4HJqq1Nwrr+WR6d0414oo1n2hPEllge/6iD3ZYwptTvOFKEw/v0A
+ yqOoYSiKX9F7Ko7QO+VnYeVDsDDevKic2T/4GDpcSVd9ipiKxCQvUAzKUH7RUpqDTa+rYurm
+ zRKcgRumz2Tc1ouHj6qINlzEe3a5ldctIn/dvR1l2Ko7GBTG+VGp9U5NOAEkGpxHG9yg6eeY
+ fFYnMme51H/HKiyUlFiE3yd5LSmv8Dhbf+vsI4x6BOOOq4Iyop/Exavj1owGxW0hpdUGcCl1
+ ovlwVPO/6l/XLAmSGwdnGqok5eGZQzSst0tj9RC9O0dXO1TZocOsf0tJ8dR2egX4kxM=
+In-Reply-To: <20260713-sm8450-qol-dispcc-v3-1-56fd05822270@proton.me>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260717-ti-pll-v1-1-f6f9ba8c9b5e@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIzMDM2MD3ZJM3YKcHF1LkzSL1CRLS0OLZAsloOKCotS0zAqwQdGxEH5xaVJ
- WanIJSLdSbS0AmcDjFGoAAAA=
-X-Change-ID: 20260630-ti-pll-94f8eb9918c8
-To: David Lechner <david@lechnology.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, goledhruva@gmail.com, m-chawdhry@ti.com, 
- daniel.baluta@gmail.com, simona.toaca@nxp.com, j.bhargav.u@gmail.com
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1784312494; l=7508;
- i=j.bhargav.u@gmail.com; h=from:subject:message-id;
- bh=niiZc34oT/FCUZkmHwiDpo+KF9xrgecMmiVx6uBGJjU=;
- b=N9PDVX9uM36t+0hWqxZMu+lQtc5T6Y8fayNpNVSvHSVb/mfzf5d+iwIwCoJQlHN89ukW1YadJ
- VjIPcLthjBxCM3YDHoiqM2+fFaRRp85r+g0mXtoVIMZ1k76n3K0johV
-X-Developer-Key: i=j.bhargav.u@gmail.com; a=ed25519;
- pk=IqNDwUZKECEA+n8wXctFLBbYL9NhFstZNbOznm/nX1k=
 
-Convert TI da850-pll binding from legacy text to dt schema.
-No functional change is introduced during conversion.
+On 14/07/2026 05:28, Esteban Urrutia via B4 Relay wrote:
+> From: Esteban Urrutia <esteuwu@proton.me>
+> 
+> If the clock frequency is changed at registration time, a flicker will be
+> visible at boot.
+> Switching to clk_rcg2_shared_no_init_park_ops fixes this.
+> 
+> Fixes: 16fb89f92ec4 ("clk: qcom: Add support for Display Clock Controller on SM8450")
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Signed-off-by: Esteban Urrutia <esteuwu@proton.me>
+> ---
+>   drivers/clk/qcom/dispcc-sm8450.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+Heya,
 
-Signed-off-by: Bhargav Joshi <j.bhargav.u@gmail.com>
----
- .../devicetree/bindings/clock/ti/davinci/pll.txt   |  96 -----------
- .../bindings/clock/ti/davinci/ti,da850-pll.yaml    | 177 +++++++++++++++++++++
- 2 files changed, 177 insertions(+), 96 deletions(-)
+it's likely this change will be safe for older sdm845 too? Comma.AI people have 
+it applied downstream on top of 6.18/7.1 [1], so I'm wondering if it's something 
+after testing on available targets could be enabled for 845 too.
 
-diff --git a/Documentation/devicetree/bindings/clock/ti/davinci/pll.txt b/Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
-deleted file mode 100644
-index c9894538315b..000000000000
---- a/Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
-+++ /dev/null
-@@ -1,96 +0,0 @@
--Binding for TI DaVinci PLL Controllers
--
--The PLL provides clocks to most of the components on the SoC. In addition
--to the PLL itself, this controller also contains bypasses, gates, dividers,
--an multiplexers for various clock signals.
--
--Required properties:
--- compatible: shall be one of:
--	- "ti,da850-pll0" for PLL0 on DA850/OMAP-L138/AM18XX
--	- "ti,da850-pll1" for PLL1 on DA850/OMAP-L138/AM18XX
--- reg: physical base address and size of the controller's register area.
--- clocks: phandles corresponding to the clock names
--- clock-names: names of the clock sources - depends on compatible string
--	- for "ti,da850-pll0", shall be "clksrc", "extclksrc"
--	- for "ti,da850-pll1", shall be "clksrc"
--
--Optional properties:
--- ti,clkmode-square-wave: Indicates that the board is supplying a square
--	wave input on the OSCIN pin instead of using a crystal oscillator.
--	This property is only valid when compatible = "ti,da850-pll0".
--
--
--Optional child nodes:
--
--pllout
--	Describes the main PLL clock output (before POSTDIV). The node name must
--	be "pllout".
--
--	Required properties:
--	- #clock-cells: shall be 0
--
--sysclk
--	Describes the PLLDIVn divider clocks that provide the SYSCLKn clock
--	domains. The node name must be "sysclk". Consumers of this node should
--	use "n" in "SYSCLKn" as the index parameter for the clock cell.
--
--	Required properties:
--	- #clock-cells: shall be 1
--
--auxclk
--	Describes the AUXCLK output of the PLL. The node name must be "auxclk".
--	This child node is only valid when compatible = "ti,da850-pll0".
--
--	Required properties:
--	- #clock-cells: shall be 0
--
--obsclk
--	Describes the OBSCLK output of the PLL. The node name must be "obsclk".
--
--	Required properties:
--	- #clock-cells: shall be 0
--
--
--Examples:
--
--	pll0: clock-controller@11000 {
--		compatible = "ti,da850-pll0";
--		reg = <0x11000 0x1000>;
--		clocks = <&ref_clk>, <&pll1_sysclk 3>;
--		clock-names = "clksrc", "extclksrc";
--		ti,clkmode-square-wave;
--
--		pll0_pllout: pllout {
--			#clock-cells = <0>;
--		};
--
--		pll0_sysclk: sysclk {
--			#clock-cells = <1>;
--		};
--
--		pll0_auxclk: auxclk {
--			#clock-cells = <0>;
--		};
--
--		pll0_obsclk: obsclk {
--			#clock-cells = <0>;
--		};
--	};
--
--	pll1: clock-controller@21a000 {
--		compatible = "ti,da850-pll1";
--		reg = <0x21a000 0x1000>;
--		clocks = <&ref_clk>;
--		clock-names = "clksrc";
--
--		pll0_sysclk: sysclk {
--			#clock-cells = <1>;
--		};
--
--		pll0_obsclk: obsclk {
--			#clock-cells = <0>;
--		};
--	};
--
--Also see:
--- Documentation/devicetree/bindings/clock/clock-bindings.txt
-diff --git a/Documentation/devicetree/bindings/clock/ti/davinci/ti,da850-pll.yaml b/Documentation/devicetree/bindings/clock/ti/davinci/ti,da850-pll.yaml
-new file mode 100644
-index 000000000000..5e4109567b75
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/ti/davinci/ti,da850-pll.yaml
-@@ -0,0 +1,177 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/ti/davinci/ti,da850-pll.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: TI DaVinci PLL Controllers
-+
-+maintainers:
-+  - David Lechner <david@lechnology.com>
-+  - Bhargav Joshi <j.bhargav.u@gmail.com>
-+
-+description:
-+  The PLL provides clocks to most of the components on the SoC. In addition to
-+  the PLL itself, this controller also contains bypasses, gates, dividers, an
-+  multiplexers for various clock signals.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - ti,da850-pll0
-+      - ti,da850-pll1
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    minItems: 1
-+    maxItems: 2
-+
-+  clock-names:
-+    minItems: 1
-+    maxItems: 2
-+
-+  ti,clkmode-square-wave:
-+    type: boolean
-+    description:
-+      Indicates that the board is supplying a square wave input on the OSCIN
-+      pin instead of using a crystal oscillator.
-+
-+  pllout:
-+    type: object
-+    description:
-+      Main PLL clock output before POSTDIV.
-+
-+    properties:
-+      '#clock-cells':
-+        const: 0
-+
-+    required:
-+      - '#clock-cells'
-+
-+    additionalProperties: false
-+
-+  sysclk:
-+    type: object
-+    description:
-+      PLLDIVn divider clocks that provide the SYSCLKn clock domains. Consumers
-+      of this node should use "n" in "SYSCLKn" as the index parameter for the
-+      clock cell.
-+
-+    properties:
-+      '#clock-cells':
-+        const: 1
-+
-+    required:
-+      - '#clock-cells'
-+
-+    additionalProperties: false
-+
-+  auxclk:
-+    type: object
-+    description:
-+      AUXCLK output of the PLL
-+
-+    properties:
-+      '#clock-cells':
-+        const: 0
-+
-+    required:
-+      - '#clock-cells'
-+
-+    additionalProperties: false
-+
-+  obsclk:
-+    type: object
-+    description:
-+      the OBSCLK output of the PLL.
-+
-+    properties:
-+      '#clock-cells':
-+        const: 0
-+
-+    required:
-+      - '#clock-cells'
-+
-+    additionalProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+
-+additionalProperties: false
-+
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          const: ti,da850-pll0
-+    then:
-+      properties:
-+        clocks:
-+          items:
-+            - description: Primary reference clock input
-+            - description: External clock source
-+        clock-names:
-+          items:
-+            - const: clksrc
-+            - const: extclksrc
-+
-+  - if:
-+      properties:
-+        compatible:
-+          const: ti,da850-pll1
-+    then:
-+      properties:
-+        clocks:
-+          maxItems: 1
-+        clock-names:
-+          items:
-+            - const: clksrc
-+        ti,clkmode-square-wave: false
-+        auxclk: false
-+
-+examples:
-+  - |
-+    clock-controller@11000 {
-+        compatible = "ti,da850-pll0";
-+        reg = <0x11000 0x1000>;
-+        clocks = <&ref_clk>, <&pll1_sysclk 3>;
-+        clock-names = "clksrc", "extclksrc";
-+        ti,clkmode-square-wave;
-+
-+        pllout {
-+            #clock-cells = <0>;
-+        };
-+
-+        sysclk {
-+            #clock-cells = <1>;
-+        };
-+
-+        auxclk {
-+            #clock-cells = <0>;
-+        };
-+
-+        obsclk {
-+            #clock-cells = <0>;
-+        };
-+    };
-+
-+  - |
-+    clock-controller@21a000 {
-+        compatible = "ti,da850-pll1";
-+        reg = <0x21a000 0x1000>;
-+        clocks = <&ref_clk>;
-+        clock-names = "clksrc";
-+
-+        sysclk {
-+            #clock-cells = <1>;
-+        };
-+
-+        obsclk {
-+            #clock-cells = <0>;
-+        };
-+    };
+David
 
----
-base-commit: dc59e4fea9d83f03bad6bddf3fa2e52491777482
-change-id: 20260630-ti-pll-94f8eb9918c8
-
-Best regards,
--- 
-Bhargav
-
+[1] 
+https://github.com/commaai/vamOS/blob/master/kernel/patches/0004-clk-qcom-dispcc-sdm845-use-no_init_park-ops-for-disp.patch
+[...]
