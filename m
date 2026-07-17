@@ -1,159 +1,252 @@
-Received: from ultrarisc.com (unknown [218.76.62.146])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8328E3033D6;
-	Fri, 17 Jul 2026 05:35:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.76.62.146
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19F673AD534;
+	Fri, 17 Jul 2026 06:32:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784266547; cv=none; b=Ni54CIAdBwcdZFMULL23pD2eFzMpamvnQYWKTZSFCPlZTfDUml6maB+RMLNUAb1AOS3GZfN3t2duJRFQtQv+8xe0G5+g3RFeLHt+kDIuGafFA4W/poBI41TPB6IDFKzuGU+reuTwQjezrqxB0Sns3g5F5NhXR7rwtG+IZAnafuc=
+	t=1784269947; cv=none; b=Zzg0aVtvAszrygEYV6Uva5aRxu93ttxUSa5TsnIpTaKW6yMxT2v3OO4MWFSJAZAskVBSpwT5bRIJqy8TQvwAYK+T7HrabHYNpcGs8EsaQOCqxB0UaUAIm+JNprp7RPHeXn+jOx3ajqbalnBUA3wUx+jPRnx2e1ob4I0edoYPnWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784266547; c=relaxed/simple;
-	bh=YDSxbn9s3W9am5Mo6+HxEvJNqobAfPM8jM9dcKNMoc8=;
-	h=MIME-Version:Content-Type:Subject:From:To:Cc:In-Reply-To:
-	 References:Date:Message-Id; b=e3wKOX9Le1kvpREc3j07qO6oviwbbCEcnmA0rC3UzfeE9eGuCP0nJqKh9aOELJMq2c49dBNnEj0RcTEYCpso9o/Q3/OgwsMsXA5JT8uxiWOS8n6MK2Vi5ovfRvtgD4PrKR9YkG7pUg8nDPimuyekG8dJaxq1n+4h9Nue55pGeIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ultrarisc.com; spf=pass smtp.mailfrom=ultrarisc.com; dkim=pass (1024-bit key) header.d=ultrarisc.com header.i=@ultrarisc.com header.b=di8TkEFT; arc=none smtp.client-ip=218.76.62.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ultrarisc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ultrarisc.com
+	s=arc-20240116; t=1784269947; c=relaxed/simple;
+	bh=tiQGLMndWiRKE5SemlMVI08e5kJ1cjRcFQ+gAFg8sko=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a1h2gIusk7QXhfjtMxdYV5MFswwW+XNjhz7zvPNrTXHlmmGfAHhOrznxVbbz7T1upt4oZlco6GZCfflZrc2myDvF7FF9CRAQCX29GxZPMvMxeN0RB2XWmwe+01GAtbfIB+4SvRPVPZ09xMaB76suTjUK7Be0V4bV5QaLlFGJn2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IMny/Fb2; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ultrarisc.com header.i=@ultrarisc.com header.b="di8TkEFT"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=ultrarisc.com; s=dkim; h=Received:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:
-	References:Date:Message-Id; bh=Ow2kUQN440OzcZ89TGxd2cVBk20szhTPg
-	d1ipxkcXLI=; b=di8TkEFT34xV3XmWZ1BOkD76tAvVCjpg80Z1Djp5TCulYWYuX
-	z772zC0qLZkRDTSkUmHrvL3832tCZ5y+uFw7ru+CJV4oq+7/QfqSUGJA9spRz3SK
-	oVYOEW65E0O7EEp60FitJY96E72uz0l4d6kUAk30HysJuqSX1/PCn8HRkY=
-Received: from [127.0.0.1] (unknown [192.168.100.1])
-	by localhost.localdomain (Coremail) with SMTP id AQAAfwAnYUI9v1lqLjoTAA--.17135S2;
-	Fri, 17 Jul 2026 13:35:57 +0800 (CST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IMny/Fb2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0560C1F000E9;
+	Fri, 17 Jul 2026 06:32:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1784269942;
+	bh=F88kXLHiJluPemsV2dA4XtGRZ7VlVzWVhA8ffVQ3Koc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=IMny/Fb25eeaa/OqOPZX4svMfgDHI7w0zXjZMf26ygEip02soGXnmovgLeF0Zeaqh
+	 5RftwD4Rrg+jPyHRDyTmifGl+hu+9Xtlkk7U/2YbyFKcrg2vTVE9W5YXatBOARy94Y
+	 d3v1r2hey2BjzJ3t349UtnDHdBH1jxf3cGlcHy94vQmV/aX01wcDNHQAZ3jAwZpduN
+	 CgyJtId8oAWdNLYUOisnNsVoYaW38Kxgs3uqBwvBjouNNa5bNTudReiCTkNkyLOJda
+	 Y9P7WGyS2GSQADpXl1q+IUegPM0TTdn8p1lmhnjF9YczbFUkcqI7kwJ9m+2wbJOYR2
+	 Z7Obh8mWh0Tug==
+Date: Fri, 17 Jul 2026 08:32:18 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Stefan =?utf-8?B?RMO2c2luZ2Vy?= <stefandoesinger@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Brian Masney <bmasney@redhat.com>, Vinod Koul <vkoul@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org
+Subject: Re: [PATCH v7 01/13] dt-bindings: phy: Add zx297520v3 USB phy
+ documentation
+Message-ID: <20260717-uncovered-feathered-groundhog-eab16e@quoll>
+References: <20260717-zx29clk-v7-0-408411cfcf36@gmail.com>
+ <20260717-zx29clk-v7-1-408411cfcf36@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH v3 3/3] clk: ultrarisc: Add DP1000 clock driver
-From: Jia Wang <wangjia@ultrarisc.com>
-To: Brian Masney <bmasney@redhat.com>
-Cc: wangjia@ultrarisc.com, Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <alkgIyhI43ypvZdb@redhat.com>
-References: <20260714-ultrarisc-clock-v3-0-4b1ccaa26b37@ultrarisc.com>
- <20260714-ultrarisc-clock-v3-3-4b1ccaa26b37@ultrarisc.com>
- <alkgIyhI43ypvZdb@redhat.com>
-Date: Fri, 17 Jul 2026 13:35:27 +0800
-Message-Id: <178426652713.1335571.11769344745272660761.b4-reply@b4>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1784266527; l=2671;
- i=wangjia@ultrarisc.com; s=20260515; h=from:subject:message-id;
- bh=YDSxbn9s3W9am5Mo6+HxEvJNqobAfPM8jM9dcKNMoc8=;
- b=T1cBaRptEhfrIKUrgotimHb95po3f0x3VVO/U4hqCmw+T4MNtvGbL+L4MRDO0Z+SJq2u5XOYR
- wsCdqVY4GCPC5EIc4Dl0haU6NFHVRJ94CKvoCQH5a94CZbL47kwlgiy
-X-Developer-Key: i=wangjia@ultrarisc.com; a=ed25519;
- pk=wGVm18siRScehKOkOz0WKxgxDy7IezHEszhnN4/TUCY=
-X-CM-TRANSID:AQAAfwAnYUI9v1lqLjoTAA--.17135S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxJry3Xr17JFy3XFyDKFWkXrb_yoW8KFy3pF
-	W8Gay5tFyUJr47Ww1aqw4DAF9YyF1xta43t347ta4xtrn8ZryrtFs7G34fCa1Dur43Crya
-	vr1Uuw13Ca1Yka7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9m14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r1j
-	6r4UM28EF7xvwVC2z280aVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r
-	4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
-	n2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCY02Avz4vE-syl42xK82IYc2Ij64vIr41l4I
-	8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AK
-	xVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcV
-	AFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8I
-	cIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r
-	1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
-X-CM-SenderInfo: pzdqwylld63zxwud2x1vfou0bp/1tbiAQAKEWpYVVAAAwAIsm
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20260717-zx29clk-v7-1-408411cfcf36@gmail.com>
 
-On 2026-07-16 14:17 -0400, Brian Masney wrote:
-> Hi Jia,
-> 
-> I have one minor question below.
-> 
-> On Tue, Jul 14, 2026 at 09:35:09AM +0800, Jia Wang via B4 Relay wrote:
-> > From: Jia Wang <wangjia@ultrarisc.com>
-> > 
-> > Add a clock driver for the UltraRISC DP1000 SoC.
-> > 
-> > The clock tree is driven by a SYSPLL and provides fixed-factor clocks for
-> > the subsystem and PCIe, divider-based root clocks for GMAC and the UART,
-> > I2C, and SPI blocks, and per-instance gate clocks for UART0-3, I2C0-3,
-> > and SPI0-1.
-> > 
-> > Signed-off-by: Jia Wang <wangjia@ultrarisc.com>
-> > ---
-> >  MAINTAINERS                           |   1 +
-> >  drivers/clk/Kconfig                   |   1 +
-> >  drivers/clk/Makefile                  |   1 +
-> >  drivers/clk/ultrarisc/Kconfig         |  18 ++
-> >  drivers/clk/ultrarisc/Makefile        |   4 +
-> >  drivers/clk/ultrarisc/clk-dp1000.c    | 154 +++++++++++++
-> >  drivers/clk/ultrarisc/clk-ultrarisc.c | 407 ++++++++++++++++++++++++++++++++++
-> >  drivers/clk/ultrarisc/clk-ultrarisc.h |  71 ++++++
-> >  8 files changed, 657 insertions(+)
-> 
-> [snip]
-> 
-> > 
-> > +static int ultrarisc_clk_register_dividers(struct platform_device *pdev,
-> > +					   struct clk_hw_onecell_data *clk_data,
-> > +					   const struct ultrarisc_clk_soc_data *soc_data,
-> > +					   void __iomem *base,
-> > +					   spinlock_t *lock)
-> > +{
-> > +	struct device *dev = &pdev->dev;
-> > +	u32 i;
-> > +
-> > +	for (i = 0; i < soc_data->num_dividers; i++) {
-> > +		const struct ultrarisc_divider_desc *desc;
-> > +		struct clk_hw *parent_hw;
-> > +		struct clk_hw *hw;
-> > +
-> > +		desc = &soc_data->dividers[i];
-> > +		if (desc->id >= clk_data->num || desc->parent_id >= clk_data->num)
-> > +			return -EINVAL;
-> > +
-> > +		parent_hw = clk_data->hws[desc->parent_id];
-> > +		if (!parent_hw)
-> > +			return -EINVAL;
-> > +
-> > +		hw = ultrarisc_clk_register_divider(dev, desc, parent_hw, base,
-> > +						    lock);
-> > +		if (IS_ERR(hw))
-> > +			return PTR_ERR(hw);
-> > +
-> > +		if (desc->max_rate) {
-> > +			unsigned long rate;
-> > +
-> > +			clk_hw_set_rate_range(hw, 0, desc->max_rate);
-> > +
-> > +			rate = clk_hw_get_rate(hw);
-> > +			if (rate > desc->max_rate)
-> > +				dev_warn(dev, "%s rate %lu exceeds max %lu\n",
-> > +					 desc->name, rate, desc->max_rate);
-> 
-> At this point in the probe, the clock tree may not be fully propagated
-> yet. Is this check needed?
-> 
+On Fri, Jul 17, 2026 at 12:35:37AM +0300, Stefan D=C3=B6singer wrote:
+> This binding will be used as a subnode of topcrm, which will be added in
+> the next patch.
 
-Agreed, I will drop this diagnostic check in the next version and keep
-only the rate range constraint.
+Irrelevant, drop. Also not true, because next patch is driver patch.
 
-> Everything else in the driver looks fine to me.
-> 
-> Brian
-> 
-> 
+>=20
+> Why is this a child node and not #phy-cells added to topcrm itself,
+> like clocks and resets as writing-bindings.rst suggests? Because
+> of_phy_provider_register checks if the of_node the PHY provider is added
+> to belongs to the device or is a child of the device, so I can't put the
+> PHY driver into an MFD (or AUX) child without its own node.
 
-Best regards,
-Jia Wang
+>=20
+> Signed-off-by: Stefan D=C3=B6singer <stefandoesinger@gmail.com>
+>=20
+> ---
+>=20
+> How do I handle examples? It would be identical to the example in
+> topcrm. The example needs the reset defines from the next patch in
+> either case.
 
+1. No, it does not need. Just use whatever numbers.
+2. Other code would give you the hint: one example in parent's schema.
 
+> ---
+>  .../bindings/phy/zte,zx297520v3-usb-phy.yaml       | 96 ++++++++++++++++=
+++++++
+>  MAINTAINERS                                        |  2 +
+>  include/dt-bindings/phy/phy-zte-zx297520v3-usb.h   | 12 +++
+>  3 files changed, 110 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/phy/zte,zx297520v3-usb-phy=
+=2Eyaml b/Documentation/devicetree/bindings/phy/zte,zx297520v3-usb-phy.yaml
+> new file mode 100644
+> index 000000000000..8bad9365d5cc
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/phy/zte,zx297520v3-usb-phy.yaml
+> @@ -0,0 +1,96 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/phy/zte,zx297520v3-usb-phy.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: ZTE zx297520v3 USB and HSIC PHY
+> +
+> +maintainers:
+> +  - Stefan D=C3=B6singer <stefandoesinger@gmail.com>
+> +
+> +description: |
+> +  This PHY is found on zx297520v3 boards. It has no configurability on i=
+ts own,
+> +  but it does require a correct reset and wait sequence to initialize. I=
+t can
+> +  provide interrupt notification when USB is connected and disconnected.
+> +
+> +  The phy is a component of the board's topcrm controller. The hardware =
+needs to
+> +  be declared as a child node of the zte,zx297520v3-topcrm node.
+> +
+> +  The register space and IRQs always account for two PHYs: One USB 2.0 O=
+TG phy
+> +  and a HSIC PHY. Not all boards have both. If one is missing, the corre=
+sponding
+> +  ready flag will never be set.
+> +
+> +  The "include/dt-bindings/phy/phy-zte-zx297520v3-usb.h" header contains=
+ the
+> +  definition for the PHY indices.
+> +
+> +properties:
+> +  compatible:
+> +    const: zte,zx297520v3-usb-phy
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    items:
+> +      - description: IRQ reporting USB connection
+> +      - description: IRQ reporting USB disconnection
+> +      - description: IRQ reporting HSIC connection
+> +      - description: IRQ reporting HSIC disconnection
+> +
+> +  interrupt-names:
+> +    items:
+> +      - const: usb-up
+> +      - const: usb-down
+> +      - const: hsic-up
+> +      - const: hsic-down
+> +
+> +  resets:
+> +    items:
+> +      - description: USB phy reset
+> +      - description: HSIC phy reset
+
+Why do you reference here resets from the parent? That's a clear signal
+you have one device, so one device node regardless of Linux phy core
+behavior.
+
+> +
+> +  reset-names:
+> +    items:
+> +      - const: usb
+> +      - const: hsic
+> +
+> +  "#phy-cells":
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - interrupt-names
+> +  - resets
+> +  - reset-names
+> +  - "#phy-cells"
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/phy/phy-zte-zx297520v3-usb.h>
+> +
+> +    topcrm: clock-controller {
+> +        compatible =3D "zte,zx297520v3-topcrm", "syscon";
+> +        #address-cells =3D <1>;
+> +        #size-cells =3D <0>;
+> +        #reset-cells =3D <1>;
+
+Drop node, you have warnings.
+
+> +
+> +        usb-phy@84 {
+> +          compatible =3D "zte,zx297520v3-usb-phy";
+> +          reg =3D <0x84>;
+> +          interrupts =3D <GIC_SPI 42 IRQ_TYPE_EDGE_RISING>,
+> +            <GIC_SPI 43 IRQ_TYPE_EDGE_RISING>,
+> +            <GIC_SPI 45 IRQ_TYPE_EDGE_RISING>,
+> +            <GIC_SPI 46 IRQ_TYPE_EDGE_RISING>;
+
+Align it properly/
+
+> +          interrupt-names =3D "usb-up", "usb-down", "hsic-up", "hsic-dow=
+n";
+> +          resets =3D <&topcrm 18>,
+> +            <&topcrm 20>;
+
+Same here.
+
+> +          reset-names =3D "usb", "hsic";
+> +          #phy-cells =3D <1>;
+> +        };
+> +    };
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 8729cea57c3d..cb50c2e3b4ea 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -3878,8 +3878,10 @@ L:	linux-arm-kernel@lists.infradead.org (moderated=
+ for non-subscribers)
+>  S:	Odd fixes
+>  F:	Documentation/arch/arm/zte/
+>  F:	Documentation/devicetree/bindings/arm/zte.yaml
+> +F:	Documentation/devicetree/bindings/phy/zte,zx297520v3-usb-phy.yaml
+>  F:	arch/arm/boot/dts/zte/
+>  F:	arch/arm/mach-zte/
+> +F:	include/dt-bindings/phy/phy-zte-zx297520v3-usb.h
+> =20
+>  ARM/ZYNQ ARCHITECTURE
+>  M:	Michal Simek <michal.simek@amd.com>
+> diff --git a/include/dt-bindings/phy/phy-zte-zx297520v3-usb.h b/include/d=
+t-bindings/phy/phy-zte-zx297520v3-usb.h
+> new file mode 100644
+> index 000000000000..8a0a3ccbdd63
+> --- /dev/null
+> +++ b/include/dt-bindings/phy/phy-zte-zx297520v3-usb.h
+
+Filename MUST match compatible.
+
+> @@ -0,0 +1,12 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +/*
+> + * Copyright (C) Stefan D=C3=B6singer.
+> + */
+> +
+> +#ifndef __DT_BINDINGS_PHY_USB_ZX297520V3_H
+> +#define __DT_BINDINGS_PHY_USB_ZX297520V3_H
+> +
+> +#define ZX297520V3_USB_PHY	0
+> +#define ZX297520V3_HSIC_PHY	1
+> +
+> +#endif /* __DT_BINDINGS_PHY_USB_ZX297520V3_H */
+>=20
+> --=20
+> 2.54.0
+>=20
