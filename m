@@ -1,164 +1,179 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A53BD340418
-	for <linux-clk@vger.kernel.org>; Sat, 18 Jul 2026 17:13:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7CE62931C6;
+	Sat, 18 Jul 2026 21:52:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784394799; cv=none; b=Gj5mELLQDTryd3ep3wpCchs+CDDi2nR0kJT+GyN+GyIhWjx1E8Y37hfCPKvIo4obVW5dJgUZBWPea+tqfhqI6LpnYirS0G+UNio5BmlX2fgXMAwUaDwaxhRKMqU3auXJhMWkaPBL1wqlRLTw2XdjGHN6y3hDrGoFZyopyZrqNkI=
+	t=1784411560; cv=none; b=sP9JAHdRdOs0GhQnhxYyA64zpX/E9r+QJnqqwD+bxUX0cEcamAgsZUqrBZpWoop3WHmLN478CZXIYTPGUAMC8bnZHm4kLKGl9hJzjfiEcKmnqXypFVTlmTNioJfKsXiOE6q6x3c86WA3ykFdF2RKr02BUYcmeSzk279ppz7+kgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784394799; c=relaxed/simple;
-	bh=S1EkaU7CuKKVG2Q/ekdC1+jPTZxizQdSNp8Wl3uI1PQ=;
+	s=arc-20240116; t=1784411560; c=relaxed/simple;
+	bh=jE4vEmWhqDfDnAyeKBZeUXueuYyuLFzU0M2qXfPhGvk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y/y1Q+I5ne+4N/xSqbyWMDrJIQYEP12Gz5xqD8oJxNvfaeLuhDvMuGm+NZtCs1ozF7Jie+ACLmeTXwn0xuNXiHv5NmFKwBnvjtwK1pou+b202kjrrsgE9V+bhZSaQGtGoZ/FRb/Een36mo2Gd+DMJJ8kTiYKqSN2O+F15s09FHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=En6BC+r/; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=oCEX0WkrOox8df1xMvM1Z/FgeyuWG7j31ldgR6cC+FN6EiIOVgsdaP8W4erB2/EQP+m9VylhvrYys903hwQ3e/7fJaoiba/j42CGfj0kbcKeRBXWuy186NnuoB6poxQuQ3d1guBqLoE6RodgTNg+A8Xj7gekhLZQS/hO8N2PiQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YujYHtOC; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="En6BC+r/"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-4703bc0a99aso6001446f8f.3
-        for <linux-clk@vger.kernel.org>; Sat, 18 Jul 2026 10:13:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1784394794; x=1784999594; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=Dz0c3FdjcpiuVW6oJCLp53OXHtRByQkKkOIjTcIPnr8=;
-        b=En6BC+r/r7iTn0hqReJF45m1aQJ5nKgYEMC/Gysd5sm2qO6HYXOlNGZrhQWJ8LRPT5
-         WaUzdJ7Gd671Nwz320hoymlKgH8ZgaSHWX94HBsY5QEm7PfYbNYdj598TNU3loPbKep0
-         5rhCVTl02BLCwT0vEHTflKZFBX7uGiUye2VHKpuK8oZPAEuqRtJPyiU7QwxOCQn406qm
-         0HxqQWLG+KOF6RxaCNvUXXXRgqDc1jj6Ab2mP5WSe38zI5AkuDIG97RC9YH2HLuQJ1lJ
-         kR8YPg/Fw0Rgo1WoPY+la7IQY9e9N39q80VzN1qRkiqx1zeN880LZExQrmciDu9GlidI
-         ui3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784394794; x=1784999594;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=Dz0c3FdjcpiuVW6oJCLp53OXHtRByQkKkOIjTcIPnr8=;
-        b=RzZvuVVhy6wcj/NbJgWe3ekYKx5z5Ie2XMSS5FyOnvsmsuwZYpPjRnDsQVrUkj7CLN
-         jos3uIzd6cjC9jLyNPeg/RQGV6XNFmErGLMEmXj5i54BiLSyygV5SqAxpwKbgbVVE2Qu
-         a4UKsg1Syf6cIejmAlXvm0nzCARlm0Mv0MnP3CGiiLXn8biT70vvEWQ8VGKQKZ5Yrw6W
-         s+NGSCR9lwih4O0G+8WgVK9RNgQ2rzBR3iOHJ8Qaz3oklPIgnKa5jU2SiEI+tI2Ky31K
-         vLLZCGRNBhRtzgqK0Av+9I4WS655K8ARyhejWsnbceskv4Wqyo9VV7dJrDvBA0HLZMox
-         OWuA==
-X-Gm-Message-State: AOJu0YxCczQAYt7sj+AYr3LMcASADhgwEs7PnU9c5t7tslhSca6EC54E
-	oqcTw514BS0E7Wau5YXyEK+dTHJIuumdJI0M2FXPxdGy6LFc8Ebu6CJKh5XU7kKh9AReAHqyZl2
-	lDqyb
-X-Gm-Gg: AfdE7cnV9rFWjis8iBKc0dZYH0kMcmR8he2OUooZcdFlcINZeNQmkMhC8KLYnVXhUYn
-	CPYZVn9Yglg0+14xMK5NlL4JlX2ZRP7dfg8hcPEF078UWeXffog4+WZWEKanQCATLd0LcEYPe4M
-	0otaydv+grp3Xioq5TFw61res6qADhINtliT/k80+vRCOUgAfj24AJfqqRodJEQVmPgshkBHr0P
-	7SHtcpB6sMYT0Z9OSO5LGm38a817UtHp8cAW2eh71BugGY869j5kon4iD996jqcZR2H8YMEDBQH
-	llwxY61KmTYuiDgyUu1nOwU3yocszx8ye+oJxb5AHmhTqNo8tbrDlox+6dA9ib7uQeUDyJ6xboT
-	7696VD/h9Tza29iJihYV9pmO3NtHoU9xUWyhjSWkTLjm55929k4BiCv/YsSZoym3rjaechCyGwi
-	DYGbZYneg=
-X-Received: by 2002:a05:6000:2c0e:b0:475:f0f0:9f05 with SMTP id ffacd0b85a97d-47f62354cf7mr8694373f8f.60.1784394793595;
-        Sat, 18 Jul 2026 10:13:13 -0700 (PDT)
-Received: from localhost ([2a02:8071:56d1:2de0:1d24:d58d:2b65:c291])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-47f63ec7c69sm14475730f8f.17.2026.07.18.10.13.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 18 Jul 2026 10:13:12 -0700 (PDT)
-Date: Sat, 18 Jul 2026 19:13:11 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig_=28The_Capable_Hub=29?= <u.kleine-koenig@baylibre.com>
-To: Brian Masney <bmasney@redhat.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: clk maintenance [Was: Re: [PATCH v1] clk: Use named initializers for
- platform_device_id arrays]
-Message-ID: <aluuES750vojgH3q@monoceros>
-References: <841cf835a24bb2f3acb99a97bb58e583220e03a2.1779963984.git.u.kleine-koenig@baylibre.com>
- <aln6H4A2QTO9w3Rq@monoceros>
- <alpC8l8qPFL955ZB@redhat.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YujYHtOC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BE551F00A3A;
+	Sat, 18 Jul 2026 21:52:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1784411558;
+	bh=lp4SazQGY6OnqYiO++L8vIaDIiazS2LuP5GWhLWSCMc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=YujYHtOCxmRpOy8QFdqyFHsHAqxxlf28YDSXfl9MxaEplTnF0B6gtkTYIAuBq1FbM
+	 magGl0O1n+BUZIGJt2mnULkceBBK5F+vsBRrdiEHwuo+PhnOTSBbiDLN59gQggmcaI
+	 WMln4vOzTRxYXUQUXrYuITr62ue4nD5XhdlUlVRh97MbLNpp/bDImJ8vKYH8yyh0cw
+	 Clq1PI9k+1E0Mmf9aC6J/QtZYTNXt9LkyN1OcYUHBrxRvlqWNRZdPfkNMzCz0CDIuJ
+	 ftPddR0Str88YU3aWExUkubvTJT5SDT/PuhSMNd6xJecIvcQuppktVyNVd26HliIxZ
+	 FwsCjnsIx2U9w==
+Date: Sat, 18 Jul 2026 16:52:34 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Qiang Yu <qiang.yu@oss.qualcomm.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Taniya Das <taniya.das@oss.qualcomm.com>, Kees Cook <kees@kernel.org>, 
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH v9 0/7] clk: qcom: Add common clkref support and migrate
+ Glymur and Mahua
+Message-ID: <alv1Q0ZmGVdUTGCu@baldur>
+References: <20260713-tcsr_qref_0714-v9-0-373670ab15f9@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4ymeazdwlkd7ixoj"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpC8l8qPFL955ZB@redhat.com>
+In-Reply-To: <20260713-tcsr_qref_0714-v9-0-373670ab15f9@oss.qualcomm.com>
 
+On Mon, Jul 13, 2026 at 09:59:35PM -0700, Qiang Yu wrote:
+> This series adds a common clkref_en implementation and converts glymur
+> and mahua to use it, along with the related binding and DTS updates.
+> 
+> The PCIe clkref clocks on Glymur and Mahua gate the QREF block which
+> provides reference clocks to the PCIe PHYs. QREF requires LDO supplies
+> and a reference voltage from the refgen block to operate. The refgen
+> block itself requires vdda-refgen_0p9 and vdda-refgen_1p2 LDOs to
+> function.
+> 
+> Previously, these QREF votes were done in PHY drivers. In earlier
+> discussion [1], the feedback was that this is the wrong ownership point:
+> those supplies are for the QREF controlled by clkref registers, not for
+> the PHY directly. Based on that feedback, this series keeps the
+> regulator handling with the clkref control path.
+> 
+> Another reason for this series is reuse. clkref_en registers may live in
+> different blocks across platforms (for example TCSR on Glymur, TLMM on
+> SM8750 [2]), while the behavior is the same. The common helper lets each
+> driver provide simple descriptors (name, offset, optional supplies) and
+> reuse shared registration and runtime logic.
+> 
+> Glymur and Mahua share the same QREF TX/RPT/RX component naming but
+> have different PCIe QREF topologies. Both are handled in tcsrcc-glymur.c
+> via match_data to select the correct descriptor table per compatible.
+> 
+> [1] https://lore.kernel.org/lkml/aEBfV2M-ZqDF7aRz@hovoldconsulting.com/
+> [2] https://lore.kernel.org/linux-arm-msm/20260202-topic-8750_tcsr-v1-0-cd7e6648c64f@oss.qualcomm.com/
+> 
+> Changes in v9:
+>   - Add reviewed-by tags, no code change.
+>   - Link to v8: https://lore.kernel.org/all/20260708-tcsr_qref_0708-v8-0-62c42b5fa269@oss.qualcomm.com/
+> 
+> Changes in v8:
+>   - Define refs with __counted_by(num_refs) and make provider a single allocation
+>   - Use mahua_tcsr_tx1_rpt012_rx2_regulators for PCIe6.
+>   - Link to v7: https://lore.kernel.org/all/20260702-tcsr_qref_0702-v7-0-776f2811b7af@oss.qualcomm.com/
+> 
+> Changes in v7:
+>   - Define compatible as an enum and add the per-compatible allOf/if/then block upfront for glymur. Reword commit msg for patch1
+>   - Drop Krzysztof's Reviewed-by since the patch changed substantially from what he reviewed.
+>   - Added a comment noting that on Mahua the REFGEN4 block is supplied by the vdda-refgen3-* regulators, and mentioned this in the commit message for patch2.
+>   - Change the descriptor array to an array of pointers (const struct qcom_clk_ref_desc * const *). Skip unpopulated indices with if (!desc)
+>   - Convert tcsr_cc_glymur_clk_descs[] and tcsr_cc_mahua_clk_descs[] to a pointer array.
+>   - Add regulator lists for clkref_en on Mahua.
+>   - Null-check device_get_match_data() result in probe.
+>   - Add rx0 regulator in mahua tcsr node
+>   - Squashed the former patch 8 (switch pcie5_phy ref clock to RPMH_CXO_CLK) into patch7, so Mahua PCIe probes at every commit.
+>  - Link to v6: https://lore.kernel.org/all/20260621-tcsr_qref_0622-v6-0-c939c22ded0c@oss.qualcomm.com/
+> 
+> Changes in v6:
+> - Split dt-bindings patch into two: one to move glymur-tcsr to its own
+>   binding file, and one to add mahua support
+> - Use regmap_set_bits()/regmap_clear_bits() instead of regmap_update_bits()
+>   in clk-ref.c
+> - Move clk_init_data from struct qcom_clk_ref to a stack variable in
+>   qcom_clk_ref_register()
+> - Add Co-developed-by/Reviewed-by tags from Konrad Dybcio
+> - Add missing regulator supplies for EDP and USB clkref_en on glymur
+> - Link to v5: https://patch.msgid.link/20260602-tcsr_qref_0527-v5-0-8ea174a59d7e@oss.qualcomm.com
+> 
+> Changes in v5:
+> - Return 0 if regmap_read fail
+> - Add a separate file for glymur-tcsr and mahua-tcsr
+> - Link to v4: https://patch.msgid.link/20260527-tcsr_qref_0527-v4-0-ded83866c9d9@oss.qualcomm.com
+> 
+> Changes in v4:
+> - Add mahua QREF support (binding, driver, DTS) to avoid dtb check error
+> - Override pcie5_phy ref clock to RPMH_CXO_CLK on mahua since
+>   TCSR_PCIE_1_CLKREF_EN is not available
+> - Rename regulator arrays to topology-based names and merge duplicates
+> - Remove else: false blocks from binding
+> - Sort supply properties alphabetically in binding and DTS
+> - Link to v3: https://lore.kernel.org/all/20260506-qref_vote_0506-v3-0-5ab71d2e6f16@oss.qualcomm.com/
+> 
+> Changes in v3:
+> - Fix dtb check error: allOf:0: 'then' is a dependency of 'if'.
+> - Link to v2: https://lore.kernel.org/all/20260420-vote_qref_in_tcsrcc-v2-0-589a23ae640a@oss.qualcomm.com/
+> 
+> Changes in v2:
+> - RFC tag dropped
+> - Changed back to additionalProperties: false
+> - Moved all Glymur supply properties into top-level properties so they are explicitly defined.
+> - Link to v1: https://lore.kernel.org/all/20260331-qref_vote-v1-0-3fd7fbf87864@oss.qualcomm.com/
+> 
+> Signed-off-by: Qiang Yu <qiang.yu@oss.qualcomm.com>
+> ---
+> Qiang Yu (7):
+>       dt-bindings: clock: qcom: Move glymur TCSR to own binding
+>       dt-bindings: clock: qcom,glymur-tcsr: Add mahua support
+>       clk: qcom: Add generic clkref_en support
+>       clk: qcom: tcsrcc-glymur: Add regulator supplies and migrate to clk_ref helper
+>       clk: qcom: tcsrcc-glymur: Add Mahua QREF regulator support
+>       arm64: dts: qcom: glymur: Add QREF regulator supplies to TCSR
+>       arm64: dts: qcom: mahua: Add QREF regulator supplies to TCSR
+> 
+>  .../bindings/clock/qcom,glymur-tcsr.yaml           | 146 +++++++
+>  .../bindings/clock/qcom,sm8550-tcsr.yaml           |   2 -
+>  arch/arm64/boot/dts/qcom/glymur-crd.dts            |  20 +
+>  arch/arm64/boot/dts/qcom/mahua-crd.dts             |  16 +
+>  arch/arm64/boot/dts/qcom/mahua.dtsi                |  13 +
+>  drivers/clk/qcom/Makefile                          |   1 +
+>  drivers/clk/qcom/clk-ref.c                         | 205 +++++++++
+>  drivers/clk/qcom/tcsrcc-glymur.c                   | 471 +++++++++++----------
+>  include/linux/clk/qcom.h                           |  67 +++
+>  9 files changed, 704 insertions(+), 237 deletions(-)
+> ---
+> base-commit: 3da905eb243cad56200f09bb7eaa060537aed0cc
 
---4ymeazdwlkd7ixoj
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: clk maintenance [Was: Re: [PATCH v1] clk: Use named initializers for
- platform_device_id arrays]
-MIME-Version: 1.0
+I was hoping to apply this series, but I don't have this commit and
+patch 4 ("migrate to clk_ref helper") doesn't apply to my tree.
 
-Hello Brian, Michael and Stephen,
+What did you base this on? Why don't you test your changes on latest
+mainline or linux-next?
 
-[I trimmed recipients as the new topic isn't related only to my patch
-under discussion in this thread.]
+Please rebase and test on a relevant branch.
 
-On Fri, Jul 17, 2026 at 10:57:54AM -0400, Brian Masney wrote:
-> On Fri, Jul 17, 2026 at 11:51:17AM +0200, Uwe Kleine-K=F6nig (The Capable=
- Hub) wrote:
-> > Do you still have it on your radar?
->=20
-> I sent Stephen a pull on June 29th for stuff that I felt was missed during
-> the last merge window and I included 4 of your patches in that pull:
->=20
-> https://lore.kernel.org/linux-clk/akLzCVzbMbUsgDda@redhat.com/T/#u
->=20
-> I haven't heard from Stephen yet. There's 2-3 other pulls waiting as
-> well.
+Regards,
+Bjorn
 
-I only occasionally have clk patches, but my impression is that getting
-feedback takes quite long and without Brian's efforts also things would
-get lost. (Thanks Brian for picking up my stuff!)
-
-Looking at the current maintainers:
-
-	$ git log --format=3Dfuller --since 2026-01-01 next-20260717 drivers/clk |=
- grep -E 'Boyd|Turquette' | sort | uniq -c
-	      8     Acked-by: Stephen Boyd <sboyd@kernel.org>
-	     28 Author:     Stephen Boyd <sboyd@kernel.org>
-	      3     Cc: Michael Turquette <mturquette@baylibre.com>
-	      3     Cc: Stephen Boyd <sboyd@kernel.org>
-	     81 Commit:     Stephen Boyd <sboyd@kernel.org>
-	      1     Pull clk fix from Stephen Boyd:
-	      3     Pull clk updates from Stephen Boyd:
-	     54     Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-	linux$ git log --format=3Doneline --since 2026-01-01 next-20260717 drivers=
-/clk | wc -l
-	453
-
-(Maybe that is because Stephen cares for the core mostly and arch
-maintainers merge stuff about their clks themselves?)
-
-The last commit where Michael Turquette was actively involved is from
-2021 (a331659e32718b31f3a304d7797a77d31610468c) which is also the last
-mail from him on the clk list (see
-https://lore.kernel.org/linux-clk/?q=3Df%3ATurquette).
-
-I only observe from the side line, but with the relevance of the clk
-subsystem I feel maintenance is underpowered today.
-
-Is it time for Michael to step down? Would Brian be ready to become a
-full maintainer? Is there a need for more reviewers? Any volunteers to
-step up?
-
-Best regards
-Uwe
-
---4ymeazdwlkd7ixoj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmpbtCQACgkQj4D7WH0S
-/k7fOggAk+XBwBlFxb4/3QNHCeJJQV4i8X5Fd7vmHsTgUI6Ee1GsGkCVCiUmvzFL
-IIGYDwXnUMLbyGXPNyc9UQW7QGcvBZ0tGY/xA3nB7X7Fr5MjMq+3jc2s17Pa1MM1
-3zRFCjgRpUzyK/eDUspla5mWjbnvEBFnttEEFsnOLovzDIziCF80Zb8zbXNFCAsh
-PhPdWH2oV5o7aOR9OQB2lTQ19PmNcXbpDMy6I5qVj9vy2gixXfknPHmVqPRJrM41
-wNSBBu1qvUza6OofpxwpH4pMXQj0+SVWnBdrhT6+XEFmvWDrmDtemMgTaOLR5x2i
-PiV+CzrbIeF9rGOOspsPnoAi2TsUiA==
-=hsDu
------END PGP SIGNATURE-----
-
---4ymeazdwlkd7ixoj--
+> change-id: 20260713-tcsr_qref_0714-0ee27bc42a07
+> 
+> Best regards,
+> --  
+> Qiang Yu <qiang.yu@oss.qualcomm.com>
+> 
