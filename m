@@ -1,150 +1,207 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAE3C257827
-	for <linux-clk@vger.kernel.org>; Sun, 19 Jul 2026 13:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A728391853
+	for <linux-clk@vger.kernel.org>; Sun, 19 Jul 2026 14:12:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784467791; cv=none; b=tQMhdRy7CZ0alxwJShqK49r3zbSxOGNQKIGcWLwWtTL9lo3m6XrrOTgxWd1pnwTU+5Aq8puY3DHo58YEOJA8e0ShNpF+biju3mUEB3L0rWc6xh19snhVhIZL7MB1KuxhKpuAJLWj0JdggVlGHWPPlXrWtQgGbDqXBA6k7JhsBeg=
+	t=1784470369; cv=none; b=F3q9J+5pQSZFJkR/BQyDJXeyXZstFQo1Iuad5QI4hIhVeVAX+nNUukDypxAKAnIhu3RjsdtrBcJOoQuEP3Vd1EzMiBUvL4rf1xC7Py7AjwUgHADo4k9venYPxtVXEoprK/isghoLYdoa3AlcGtX7UQf2dw63PDIGUBpRPnAx3rA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784467791; c=relaxed/simple;
-	bh=Xaq7RQ3DmIHqyyvVvwMjeuLuuIAP7Ugenr1ER60EbtM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=FYWqS+uXEEIoXddhpqoQ8GNKUzx05cjM1y9MYdqBlrpyqOntZsZBbHH/cvctFbTfpQ6oeKDJVbY+xDcJLXieBIB4aObOLisujSYkc8aRubRIDHaD7Z2RaT6b86yTaRBoVNRmxUTLYlhffT7CBrcY10Ve0wruUwM5db3XlSrHx9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=njfPPkRB; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1784470369; c=relaxed/simple;
+	bh=xSIfMNUlR0w3r1Tri3/aU3oOkWS9pk//wgKxfavPJww=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ezx1S0F6he3kG0A11ZHHbs1g1rrittFZBO4MIs65LlEBBmQCgSUdlwiHkUR/flv0Tq2FdhseFAA4Ddfa1sdWR5K3fZLTqoebwunLVMqvmS02xfLh4kJrJ8TL1lOAof694JBE/tUIH2bQx1gGW2Sz7worn7NySnhmmYlc4G+tR28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ELcqzGFM; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="njfPPkRB"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-490cf322ed0so64348655e9.1
-        for <linux-clk@vger.kernel.org>; Sun, 19 Jul 2026 06:29:48 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ELcqzGFM"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-49554ebb87dso9077965e9.3
+        for <linux-clk@vger.kernel.org>; Sun, 19 Jul 2026 07:12:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1784467787; x=1785072587; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:message-id:date
-         :user-agent:references:in-reply-to:subject:cc:to:from:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=oTTnLvB5EKr1ilWHZeKrVDJrENmEbx/nOStJCKmeMiQ=;
-        b=njfPPkRBoGlVv2ArYuZPZR2D3wW8m5WWYQduo+n5egLfyRUZUEu/K/cQmmvuavdWpo
-         uYAACsGS5yCvnI+wk059pRgWihoUvLN6mixIjmHp5p0U1eHgHQCYPN/xlLT06ukXsFdN
-         Y0uI/6CpWCBOBfeL7ZOUDHlGI711QdUm0iucH+JzWFKrcQdLIcTpQ0kCIuJ0CkAC/DUh
-         LT+HcNYxfGvUurAh1gTc1WW7UNpBZhYMds0rMNG1+Fq8rCjC/AwuLZ9aMlt8xoBKCu7I
-         nzKjMAW70ieALOWlrTk/7QHK3GJlDakpgThf6slLtX3KLbV0Yf7juMxE2YhAIch5PHQg
-         bj8w==
+        d=gmail.com; s=20251104; t=1784470365; x=1785075165; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=NKVLLdp36yWyb0LBWITlczPVpDLZSh0yZVSkaD94rGU=;
+        b=ELcqzGFMVLv9oVPmIPTBrnu5/07yKoPOTJU5wKNI1iaE9FVX8Ff+PRLj+k4pFYB+yN
+         mnw09GFzJNW16w8ZPlZ8/kk/6nM2/QB5JLKLSbzkcwBBXstnPaPcVe0Yw1gj6ERjxBHZ
+         1Uku35FiTHChl1D772WjMIt7sjFPyHVS0wXwL0OOoQUUNykCnHZ6cyONH8v6bMZH949x
+         xkqcSGzOSp6ZNmRwUiaY4FTt4bWI3EhzWBWMUWZwcIzohdFoIUTRFRGsv36pXLX6x00i
+         FcpvWetGi+oO7CgLxpSQFWwWDlry9fc07VTkJK8pA+LXUR3E5d2CiZ8W7dCrPvveQAZv
+         ck5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784467787; x=1785072587;
-        h=content-transfer-encoding:content-type:mime-version:message-id:date
-         :user-agent:references:in-reply-to:subject:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=oTTnLvB5EKr1ilWHZeKrVDJrENmEbx/nOStJCKmeMiQ=;
-        b=YgGMy/CUAMLVXqJRsV+0lhrFS3/1pHwFHMai7PU7idLeyHVV23FMVgKZnIs8qlK1bS
-         dnRwVX1YXL8Dd1nE3iarye+rkoLZDmujOJURmWDpwRWy1MRuIf37tdeDdqjnV1exnm+R
-         9OAzEM4wXP0hEXH+gGMEoFwobDHbO5i2wAJ/DvCrJ2HB/Hl/seed72W6onCwPPKIEoRD
-         83TrESMDT5voRhXRXJeIQM3L43hQZwXwneEa7Jgz/P7fme55fZUgvkawDzWPh3T7fFIi
-         0+Spv5h8HT2dF19Tf/XxfcF0W9/8P6/am3NvbZJfAJ3HzVFmVLvKXQA+Skl6f+6IWKlf
-         d+EQ==
-X-Forwarded-Encrypted: i=1; AHgh+RpVD0bWzfQwgQlY2dXoe0Ytk+gU/rs38NDfjvAhOAiYWIACu4Mdn0b3T4RbROmu2dT/nvNuI93typk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7p9Z3r7DYrULxJeL+Eu0w11zdBJjpNX6XdzECEZhI5aJ0h4Um
-	oJyEFDWzWrgfGTovtsxQEEtf1GCVUY9KHnTf15mR/CzfRWsakBwBxF0BJVeqVpw8GPM=
-X-Gm-Gg: AfdE7cnX5MQIw1cLjAFJ9lt5cfbTNYzjWGKBA5JVMUvo/12O31Ntp6msqJu6RIeUuO+
-	CrtlvAJaRWVRZTQUGKC5x4Wn9pG4IKB6vehgIadmQMFAqj9gUrrj61ov633L07pCSpPxludYY8c
-	BmzPOR0cb4wdk/CTjjRPisbjhZrQFZNO/Fw+gfwa5dTW4iZRZCCClbMEEVbG33OQ7xfs6uD/rt9
-	/1HqlHmbTK/YGk6VmQFETNBtsMToNDIErLwsZlnhAfKMlxBs7ec0UOGECwstWQlBXF5uy8riudT
-	fqxZ4SxPZSSmitq/bdAzZLTasp5w2cUNf0gJ2gX7dcSIZsR5qFM3Foeai5EIzQUwSDtPmnAgatZ
-	u2DGgTpIA0cWHjtHvR6QZZ6f+SOXJOQUH845SfPbbSs0nhQ+d0JZ2pm9e9orguDNWLnOxuPETmN
-	k=
-X-Received: by 2002:a05:600c:4743:b0:493:bc4a:fb55 with SMTP id 5b1f17b1804b1-4954a508d60mr115272795e9.38.1784467786385;
-        Sun, 19 Jul 2026 06:29:46 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:9a7:ef90:b513:8cdd])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4954a2b87c6sm353074595e9.7.2026.07.19.06.29.45
+        d=1e100.net; s=20251104; t=1784470365; x=1785075165;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=NKVLLdp36yWyb0LBWITlczPVpDLZSh0yZVSkaD94rGU=;
+        b=eDczumNb9etIcmY7GG4nQXTBaafkUVKnSX9dmOZp5aYL+RZDTyh3S9ACYTUK1Fo3Z0
+         cpncZjX2Ez4UiGIwBUyGhTis5SeOtP0P9TCofTzBCzf3M58OMsasX2VIQsp0fy3Samue
+         dNkJLZxgQ/Nthnie0AdqFCZULZYzQvYYNPgwqFapKOpojAJRdVUBLgathgt22B3Yfp02
+         m2IrNX+iJI4kJxxSJax9kFkXC3A2hmkiJ2JxTeFvPm4yCuwJY4D01ejpSKi/465Y69kq
+         /OvBJ0wd26EGjbuXLzbAP5cB91cl4KKIH4SBer63P/qGppjdGy956FT/IDpVq9lKAx0r
+         rY7Q==
+X-Forwarded-Encrypted: i=1; AHgh+RoHzjycrciAP8qbdc1ElOjSTYybRS+6fDVMFqWA3wBQH9+vR0vEY+PSQi1UO9avNtd4FuMTBGk5dS0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxv4CEA0S+wSHT2QvJN8dTWEXqCC7rDF+jVpqAS9riXktdQuefQ
+	1cM3eGJhf6vAPg8XsSeKPjf6BbFcRrmhsor9gAC8clyncwDQwhK5uZcOiAr8y6LO
+X-Gm-Gg: AfdE7cmqbenRa/2UMWuZVNqGD8wch7PEFXKK8nJMwTDaGXLn4ueJZn9zSrIUyrXl8/E
+	mtmqNdrHNi51lehRETob0ebpcqrwD4d6uFp1dXXGjtJBoXRPVabpdQ5heyhgfHkCU4odl3ZdIWi
+	dDdI3nMiqE0uVqf/05YIVkyYRt45r+VbdKYD3SVlU5aF3TZH6iLDY2qJzwQDlbfR79fIqonMvCV
+	Crh7McqEYG0Z9LnVP/Sakn1hAKYzfg6A2gQxWq94SdzHYIXq54DPiM+rLRwoTzgtSMgP0oTrUCc
+	T+NIVZTlN7RfTGyopcxTbEG1eVyb2m8ERvkA8niDeqvA9UtnW2S2FoqpPp9h+UeN++D0lTBZRNS
+	U7C84hGGMSFygX6opoxVIio1W+oPjc6OUvOq3qS3oAsHzy6jWz+IztaSgSH+wZEytbyxI4SGAuJ
+	plrER++RI774wE/73NZk3tzvRSQ6Qbucbzeylm9sn7+N1v
+X-Received: by 2002:a05:600c:5657:b0:493:f442:3dd4 with SMTP id 5b1f17b1804b1-4954a516af8mr68375595e9.39.1784470365034;
+        Sun, 19 Jul 2026 07:12:45 -0700 (PDT)
+Received: from localhost.localdomain ([188.26.50.240])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4955dfa4a97sm14334175e9.4.2026.07.19.07.12.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 Jul 2026 06:29:45 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Chen-Yu Tsai <wens@kernel.org>
-Cc: sashiko-reviews@lists.linux.dev,  robh@kernel.org,
-  linux-rtc@vger.kernel.org,  conor+dt@kernel.org,
-  devicetree@vger.kernel.org,  linux-sunxi@lists.linux.dev,  Alexandre
- Belloni <alexandre.belloni@bootlin.com>,  linux-clk
- <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v5 2/4] clk: sunxi-ng: div: add read-only operation support
-In-Reply-To: <CAGb2v65PmMnm=gusbVRJqwHkMFAdKpFyk8coXK=pf0-dBgv8kw@mail.gmail.com>
-	(Chen-Yu Tsai's message of "Sun, 19 Jul 2026 18:59:33 +0800")
-References: <20260717-a733-rtc-v5-0-3874cc26abf7@baylibre.com>
-	<20260717-a733-rtc-v5-2-3874cc26abf7@baylibre.com>
-	<20260717154005.444E41F000E9@smtp.kernel.org>
-	<CAGb2v65PmMnm=gusbVRJqwHkMFAdKpFyk8coXK=pf0-dBgv8kw@mail.gmail.com>
-User-Agent: mu4e 1.12.9; emacs 30.1
-Date: Sun, 19 Jul 2026 15:29:43 +0200
-Message-ID: <1jqzkzds54.fsf@starbuckisacylon.baylibre.com>
+        Sun, 19 Jul 2026 07:12:44 -0700 (PDT)
+From: Eduard Bostina <egbostina@gmail.com>
+To: Brian Masney <bmasney@redhat.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Eduard Bostina <egbostina@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: daniel.baluta@nxp.com,
+	simona.toaca@nxp.com,
+	goledhruva@gmail.com,
+	m-chawdhry@ti.com
+Subject: [PATCH] dt-bindings: clock: Convert TI Palmas Clock to DT schema
+Date: Sun, 19 Jul 2026 14:12:36 +0000
+Message-ID: <20260719141236.3563471-1-egbostina@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On dim. 19 juil. 2026 at 18:59, Chen-Yu Tsai <wens@kernel.org> wrote:
+Convert the Texas Instruments Palmas 32KHz clock bindings
+to DT schema.
 
->
->> > +
->> > +     } else {
->>
->> [ ... ]
->>
->> > @@ -143,3 +157,15 @@ const struct clk_ops ccu_div_ops =3D {
->> >       .set_rate       =3D ccu_div_set_rate,
->> >  };
->> >  EXPORT_SYMBOL_NS_GPL(ccu_div_ops, "SUNXI_CCU");
->> > +
->> > +const struct clk_ops ccu_rodiv_ops =3D {
->> > +     .disable        =3D ccu_div_disable,
->> > +     .enable         =3D ccu_div_enable,
->> > +     .is_enabled     =3D ccu_div_is_enabled,
->> > +
->> > +     .get_parent     =3D ccu_div_get_parent,
->> > +
->> > +     .determine_rate =3D ccu_div_determine_rate,
->> > +     .recalc_rate    =3D ccu_div_recalc_rate,
->> > +};
->>
->> [Severity: High]
->> Could the missing .set_parent callback in ccu_rodiv_ops lead to a silent
->> desynchronization between the software clock tree and the hardware?
->>
->> The struct provides reparenting capabilities via .get_parent and
->> .determine_rate, but omits .set_parent. If a rate request causes
->> ccu_mux_helper_determine_rate() to evaluate and select a new parent, the
->> Common Clock Framework will apply this new parent in software but skip
->> updating the hardware since .set_parent is NULL.
->
-> This is an issue. I'm not sure if what Sashiko says actually happens.
+During the conversion, the node name in the example was updated
+from 'palmas_clk32k@0' to 'clock-controller'. The old example
+contained a unit address without a 'reg' property, which causes
+dtc compilation warnings.
 
-I think it could. I've defenitely made a mistake here.
+Signed-off-by: Eduard Bostina <egbostina@gmail.com>
+---
+ .../clock/clk-palmas-clk32kg-clocks.txt       | 35 ------------
+ .../bindings/clock/ti,palmas-clk32kg.yaml     | 56 +++++++++++++++++++
+ 2 files changed, 56 insertions(+), 35 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/clk-palmas-clk32kg-clocks.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/ti,palmas-clk32kg.yaml
 
-> But 1. this is "read-only divider", not "read-only mux & divider",
+diff --git a/Documentation/devicetree/bindings/clock/clk-palmas-clk32kg-clocks.txt b/Documentation/devicetree/bindings/clock/clk-palmas-clk32kg-clocks.txt
+deleted file mode 100644
+index 4208886d834a..000000000000
+--- a/Documentation/devicetree/bindings/clock/clk-palmas-clk32kg-clocks.txt
++++ /dev/null
+@@ -1,35 +0,0 @@
+-* Palmas 32KHz clocks *
+-
+-Palmas device has two clock output pins for 32KHz, KG and KG_AUDIO.
+-
+-This binding uses the common clock binding ./clock-bindings.txt.
+-
+-Required properties:
+-- compatible :	"ti,palmas-clk32kg" for clk32kg clock
+-		"ti,palmas-clk32kgaudio" for clk32kgaudio clock
+-- #clock-cells : shall be set to 0.
+-
+-Optional property:
+-- ti,external-sleep-control: The external enable input pins controlled the
+-	enable/disable of clocks.  The external enable input pins ENABLE1,
+-	ENABLE2 and NSLEEP. The valid values for the external pins are:
+-		PALMAS_EXT_CONTROL_PIN_ENABLE1 for ENABLE1 pin
+-		PALMAS_EXT_CONTROL_PIN_ENABLE2 for ENABLE2 pin
+-		PALMAS_EXT_CONTROL_PIN_NSLEEP for NSLEEP pin
+-	Option 0 or missing this property means the clock is enabled/disabled
+-	via register access and these pins do not have any control.
+-	The macros of external control pins for DTS is defined at
+-	dt-bindings/mfd/palmas.h
+-
+-Example:
+-	#include <dt-bindings/mfd/palmas.h>
+-	...
+-	palmas: tps65913@58 {
+-		...
+-		clk32kg: palmas_clk32k@0 {
+-			compatible = "ti,palmas-clk32kg";
+-			#clock-cells = <0>;
+-			ti,external-sleep-control = <PALMAS_EXT_CONTROL_PIN_NSLEEP>;
+-		};
+-		...
+-	};
+diff --git a/Documentation/devicetree/bindings/clock/ti,palmas-clk32kg.yaml b/Documentation/devicetree/bindings/clock/ti,palmas-clk32kg.yaml
+new file mode 100644
+index 000000000000..c2a49be9b95a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/ti,palmas-clk32kg.yaml
+@@ -0,0 +1,56 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/ti,palmas-clk32kg.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Texas Instruments Palmas 32KHz Clocks
++
++maintainers:
++  - Eduard Bostina <egbostina@gmail.com>
++
++description:
++  The Palmas device family has two clock output pins for 32KHz,
++  KG and KG_AUDIO.
++
++allOf:
++  - $ref: /schemas/clock/clock.yaml#
++
++properties:
++  compatible:
++    enum:
++      - ti,palmas-clk32kg
++      - ti,palmas-clk32kgaudio
++
++  "#clock-cells":
++    const: 0
++
++  ti,external-sleep-control:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    enum: [ 0, 1, 2, 3 ]
++    description: |
++      The external enable input pins control the enable/disable of clocks.
++      The valid values (defined in dt-bindings/mfd/palmas.h) are:
++        1: PALMAS_EXT_CONTROL_PIN_ENABLE1
++        2: PALMAS_EXT_CONTROL_PIN_ENABLE2
++        3: PALMAS_EXT_CONTROL_PIN_NSLEEP
++      Option 0 or missing this property means the clock is enabled/disabled
++      via register access and these pins do not have any control.
++
++required:
++  - compatible
++  - "#clock-cells"
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/mfd/palmas.h>
++
++    pmic {
++        clock-controller {
++            compatible = "ti,palmas-clk32kg";
++            #clock-cells = <0>;
++            ti,external-sleep-control = <PALMAS_EXT_CONTROL_PIN_NSLEEP>;
++        };
++    };
+-- 
+2.43.0
 
-The correct way to choose between the 2 is CLK_SET_RATE_NO_REPARENT I think.
-
-> so the .set_parent callback should be provided. And 2. this is using
-> the ccu_mux_determine_rate_helper, so it's possible a clk_set_rate()
-> call is going to cause a reparent.
->
-> I can add it while applying if there are no other issues.
-
-As you prefer, I don't mind sending another version in a few days
-(giving some review time to patch #1)
-
->
-> ChenYu
->
->> This would leave all downstream clock rate calculations incorrect.
->>
->> --
->> Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260717-a733-rt=
-c-v5-0-3874cc26abf7@baylibre.com?part=3D2
->>
-
---=20
-Jerome
