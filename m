@@ -1,56 +1,95 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F7A617A2E8
-	for <linux-clk@vger.kernel.org>; Sun, 19 Jul 2026 15:56:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784476600; cv=none; b=eJ0KweLCVcQBRvM/aVITP6/XLToPwMFAzI/0EfRxCwv0jV6CTVtSrTfBARa2m6oPuol1IZTEdEjX+yK9ndkM4lT2gLXawSm5hKkl23+SYNKMADBW4sZs8387txBP/OjLcaiPJjSwwnod4Z+m2YjR4qXHzOGoRG/MPUN2720k4fU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784476600; c=relaxed/simple;
-	bh=8hEf8p+1aUjY17WpxK6uG3QRJJsAfT4nRdtW6K7ULGU=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D08943016E0
+	for <linux-clk@vger.kernel.org>; Sun, 19 Jul 2026 21:09:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.172
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1784495367; cv=pass; b=ca5eNmxFmnYWj0snFgIjxhiABuL2JOUkfy1ge4cnMietL9jnYzIPtPXfofA6SL1B6a7UvFdgO9V+3VNfV6xzh/kjFvgz+e9+kqVyprUPTAzVxaQLkbXBUbkGnMY4RBZEyXJSVAhxFdjbKzsKdepB/7jh97BtBv+7ovpx5t2bB9o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1784495367; c=relaxed/simple;
+	bh=g/5/Kl8DcMdbeuZhnrZTX2rGAUenmbF60rnYbwvssq4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KCEP4spGUGlpKpL/3llbt09u1DM3pGpinqUPh36yGxSa04bw+GIJn9gpPZsMQmql0MBt8RSyflF7pGJonrJ1iOL5TS3hRuFprs3Zu4bBmBEgE2FVhgY20sGxcaAIdhOZNilYQfWId7n5g7i+eAq3fPWF9bdetnLG4hES8AhKRdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UAF1hoTw; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=DAms1DkAFgJY2kEGx4gWknfmxV6PDFkENcseUq4OkPEbsWJz/uQV+MCVq4synAQrcH8nyLP7V4qBzV3YxenjHV2XQAL4z14yDr+GPTibQrB4QL3E3UBxxGGRCxUHituFJ1aEkKKvmHHt0dUXMSaNZtJ7lGXat9hiXj2pXTYyBsg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KhMtN2Ar; arc=pass smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UAF1hoTw"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3453E1F00A3A
-	for <linux-clk@vger.kernel.org>; Sun, 19 Jul 2026 15:56:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784476598;
-	bh=8RRUSArPRAtcFhfXiOE6RwyuQ/wneW5pT3ezkOOHGZc=;
-	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc;
-	b=UAF1hoTwSbk9oSyvS6M7Zs5vGxHczyCegXVXFnG5kUwF9SiuSuVyvgy/qzRAeFsiV
-	 n8Jzo/mr9mchZGQFCQ/uUzOnEXJLyA/cO9sj9MmGOyBnka3CQcD0uOdPBNzhUKuCwy
-	 g1biaR8xpLRZKZaeZ7QAph61W+Wj9ahzyR958J9b0Irkwe5p/pWteL2VqSfmnnmYyV
-	 rhtv1qpuQ3ZvgiRsSvssFmMta7jbb3q4J7b7efKsCO4/q4r8Qiu1i4oEEjAtL6q8fh
-	 cnOmPcdPIasRr5kHVMRpCecA1Zw/liLek9CC7gqUZ4p8EWw1vdpLGpKaZsIdkeirB6
-	 6jPXT6PcM7AnQ==
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5b29599b81cso1126996e87.1
-        for <linux-clk@vger.kernel.org>; Sun, 19 Jul 2026 08:56:38 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RrrxExEXfnrpYbjUkPHNryevTIe9jAsXMFSLlHE9CWef2w0i5nhh/Ok4yFOzAexFJ4iI+X87Hh9kAc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznbqYv8+GsDK1tO6lP/0AzKAD5yGVxlLNBcUPdarvB9xu2D8PQ
-	sVVLxhhGem74frLyUys20AdMZrcWZzA7B1qT7dUKnWOlWWJTNKyGUO6Vx09em5E/U69fcT5LnYA
-	wmrRk/GyElVrLop1y9afFzrlOTZxJ5ME=
-X-Received: by 2002:a05:651c:4413:20b0:39c:699b:22b6 with SMTP id
- 38308e7fff4ca-39eb2807dd7mr14334511fa.18.1784476596626; Sun, 19 Jul 2026
- 08:56:36 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KhMtN2Ar"
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-81ed2a06b9eso40702697b3.3
+        for <linux-clk@vger.kernel.org>; Sun, 19 Jul 2026 14:09:25 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1784495365; cv=none;
+        d=google.com; s=arc-20260327;
+        b=lGWZxgGOeGjUoiftVwm8l5rFIVFk6LQROkV7t1XFW8jNG+HWi9wqD+sp2SgYpGDkoo
+         rK1kLv3DaX4yxt79EKmoxSYolSwPso+HO6WEtDe/2JoEjAc8GRK/aTHlriYi+/0WAo61
+         abnvfK2/AmrMl3Hebsh8gTqToPOwwcJvcAYESqikzc0qEA+J5tw0+BAM3YJf45Lw6O0k
+         yyp/u1HTO2A61XsheQv1p2pm6xHblUXPGPEEuNHgkLOiDk0Hrpl7XbCek86s7ToPJ3WW
+         xHrPqVCH/5auPuukMnWuWHeoP+5LiSek+l5UkWvPKOVSMG9e4cX577kqg83X7+GBBnCj
+         UmLA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=AhtM1hpbjZSDdUK5uO0cI/aNaLK1lqiY4lPHHX9EMZU=;
+        fh=6tZq8ZZggvc7WZYyk43XJ7FDsTNXZorN59JbAWQFsNM=;
+        b=LaUyhwIQv7yo/3n5UuYxTBQKS4byt5FGjyR0jgpbzglGg8IiwL4iJF9q9dJ+SY97IS
+         d4OtOb8GB45hGQWX4K62ayqgXGbJoJPJx9SCyslM+c2QrCwRaIL7vtLHEmqX6JmVFmZ9
+         joiCKMKuX2qzEYiWwSY+j83B4ukY1e+Mmhw5xm3hlTrB7SVYMKR+ZwL+1FjSmTD/06hF
+         /1wjA4oKgXfQXNwjhEO9CoNtagDmDAl5uu8dBuA3Y2EjpbLVJ05rRK5PrazfZHLhm1d5
+         qBS9pTzLVRwRsHi7ZsbBRMnTNu96Zb9oUBM4AdZL46f8z7Sn4ZEkQoeIJZkk0nmEaHKt
+         L0bQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1784495365; x=1785100165; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=AhtM1hpbjZSDdUK5uO0cI/aNaLK1lqiY4lPHHX9EMZU=;
+        b=KhMtN2Ar23o910ZKvT36XJGqRA8XCGF+nTjVC7vlOKOxvSSVY9e+Ei6XhkWjEmCha4
+         4lNczABJqSYLW22vO9a0O2U5ss3w8NBQP72DoiuFXageZFGLbVkGT5bepT+DDAMnzPAH
+         mJkX79wcx+sxuwhpFq+6rK451eVvjXRMFw0jLUucZcxDuGFbS2FpIDpY10a3x3OmOM6E
+         Sqs6/N51Wlcv0W68Sm6PvKtHhhe7/PDRYr4nuiHcuJig9XbgmactGV3VgkytWPDA6nYJ
+         hAjkdvopRHmrTKBHRuWixW8a80DbrobXAEed64IJxhsp807WMbkjfG+7qJHz1W5hsOaT
+         KOiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784495365; x=1785100165;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=AhtM1hpbjZSDdUK5uO0cI/aNaLK1lqiY4lPHHX9EMZU=;
+        b=eFUeKTbKnm9MHEVTDFgjI68Np7xy7qht8NSJsBmJwKRw36aYZF1U5dCUInmvhYVvHh
+         H8BoR2mLwFaVXb3i0PqngAOUKy4+pcnukBOt5M+oyVKXA9zEiUriL/yfsOjbZdCKxZLW
+         ODXuMpJAvJLlMnX1zYR8/4sIY7GTJG9zfVq7jvjdrmEW/l4qVZMnqfC/8Z5tdAWSusMe
+         TuYQrckFyjltNPuWdMde9DRvXuDfogHdFZ7u/cDHtHWmLlnTQubmL63L8U1ySUxcQUvn
+         mOUReiKwz0ZUGZUetRvgzGb3huJ923oIJ9NZtDjncGfu19ctHVgS+18GUWk9/GdYIbUO
+         WmTA==
+X-Forwarded-Encrypted: i=1; AHgh+Ro6PS9y6OYUUrYPzu1I12ReHaLvP+yoZw0KRWhBBohwKikvnbw61zqOrv/ckC09ouBSiQvxn1kXviY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTJJjVSoRe2KLSZMSCM0WLWnw5z5sG83t2W8YDih+GEmU0L0f8
+	/ky5ftihtbHE1kJXFDh9sA3FZa866SUeE2zrNEYjsc8kjdimAQ156BCFfiDD29O8HDw2gE/XcNC
+	alvIb9xl86WyffD5Gd9A+et2EkSwqNqM=
+X-Gm-Gg: AfdE7cmDN7mtNfE+Jcp/8H4QWDIRb/FMb9sUtAdk65u4z6RXoxBl8mC0CAdP9cOce+U
+	hSXiKOp4qOPXd8SC8SeYO+TbPQHe5EEtdxIvW/xzH5CfMunx9ChrVLcTNb74sACcst/K0lHpcsw
+	YzW0Eb36jge9L1sOkqnDvQpvlR/u1GaHyfeiW8Ihf3t9qW0eIkJca9+G9hv5uAXdd8Qw840Dc/E
+	eetTqPkVm/8+pUNdDiNaBlqHdTwvjbEcmOHFCk9vGMB06WG5M2Idzfe7sIXXRkitJ1VcC62EJgj
+	Cd8bh+TO6KGPDgK3QoA=
+X-Received: by 2002:a05:690c:4d83:b0:81d:d035:eb4b with SMTP id
+ 00721157ae682-81ef22f15ecmr41881237b3.19.1784495364767; Sun, 19 Jul 2026
+ 14:09:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260719153122.892013-1-juanmanuellopezcarrillo@gmail.com>
-In-Reply-To: <20260719153122.892013-1-juanmanuellopezcarrillo@gmail.com>
-Reply-To: wens@kernel.org
-From: Chen-Yu Tsai <wens@kernel.org>
-Date: Sun, 19 Jul 2026 23:56:23 +0800
-X-Gmail-Original-Message-ID: <CAGb2v64Mdq-+C2e6GGHEN_n_H6QEEd66zp6O2W9y--58L=5yzQ@mail.gmail.com>
-X-Gm-Features: AUfX_mzNMkNi91y5cTjDJoGF53Wrr_2fF9iQwmrBcMYClRKkR49p3TJHoGg5tB8
-Message-ID: <CAGb2v64Mdq-+C2e6GGHEN_n_H6QEEd66zp6O2W9y--58L=5yzQ@mail.gmail.com>
+References: <20260719153122.892013-1-juanmanuellopezcarrillo@gmail.com> <CAGb2v64Mdq-+C2e6GGHEN_n_H6QEEd66zp6O2W9y--58L=5yzQ@mail.gmail.com>
+In-Reply-To: <CAGb2v64Mdq-+C2e6GGHEN_n_H6QEEd66zp6O2W9y--58L=5yzQ@mail.gmail.com>
+From: Juan Manuel <juanmanuellopezcarrillo@gmail.com>
+Date: Sun, 19 Jul 2026 23:09:12 +0200
+X-Gm-Features: AUfX_mzAKn4OrNAtXWomQRAbZerhdiZ5kkyJSxJPwI1hfOOK1mJBaeXrnWi0ctw
+Message-ID: <CA+c=wxXJCB3Ms=eRy4Bs6fG_uA0owLYpmaXHmxP6woeP+icsWA@mail.gmail.com>
 Subject: Re: [PATCH] clk: sunxi-ng: div: implement set_rate_and_parent
-To: Aureal <juanmanuellopezcarrillo@gmail.com>
+To: wens@kernel.org
 Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
 	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
 	Brian Masney <bmasney@redhat.com>, linux-clk@vger.kernel.org, 
@@ -59,134 +98,59 @@ Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jul 19, 2026 at 11:31=E2=80=AFPM Aureal
-<juanmanuellopezcarrillo@gmail.com> wrote:
+> Reviewed-by: Chen-Yu Tsai <wens@kernel.org>
+
+Thanks a lot for the quick review!
+
+> So the patch itself is OK, but I think there is also something wrong
+> with the GPU mod clock. The GPU clock is not a standard divider, but
+> actually a fractional one. The formula for the output is
 >
-> From: Juan Manuel L=C3=B3pez Carrillo <juanmanuellopezcarrillo@gmail.com>
+>     Clock Source * ((16-M)/16)
 >
-> When a rate change on a ccu_div clock also switches its parent, the
-> clk core, in the absence of a .set_rate_and_parent op, programs the
-> parent first and the divider second.  If the new parent is faster than
-> the old one, the clock transiently runs at new_parent_rate/old_divider
-> between the two register writes, overshooting both the old and the
-> requested rate and potentially violating the consumer's maximum
-> allowed frequency.
->
-> This is not theoretical.  On the Allwinner A523/T527 the GPU clock is
-> a ccu_div muxing between pll-gpu and the fixed pll-periph0 outputs:
-> going from 600 MHz (pll-periph0-600M, M=3D1) down to 400 or 200 MHz
-> (both derived from pll-periph0-800M) makes the Mali G57 run at 800 MHz
-> for the window between the two writes, 33% above the vendor's maximum
-> operating point.  Observed and validated on an Orange Pi 4A (T527)
-> with a downstream GPU devfreq setup; mainline does not yet describe
-> GPU OPPs for this SoC, but any ccu_div consumer whose set_rate ends up
-> crossing parents is affected.
->
-> Implement .set_rate_and_parent with the same ordering rule as
-> clk_composite_set_rate_and_parent(): if keeping the current divider
-> while switching the mux would overshoot the requested rate, program
-> the divider first, otherwise switch the mux first.  The intermediate
-> rate then never exceeds both the old and the new rate.
->
-> Clocks using a prediv feature keep the historical mux-then-divider
-> order: the prediv helpers look the prediv up by the current parent,
-> which is ambiguous while both are changing.
->
-> Fixes: e9b93213103f ("clk: sunxi-ng: Add divider")
-> Signed-off-by: Juan Manuel L=C3=B3pez Carrillo <juanmanuellopezcarrillo@g=
-mail.com>
+> with M being 0~15.
 
-Reviewed-by: Chen-Yu Tsai <wens@kernel.org>
+You were right, and it was worse than I expected.  I checked the T527
+user manual (v0.92, section 2.7.6.58: "FACTOR_M: mask M cycles at 16
+cycles") and then measured it on the Orange Pi 4A, forcing each OPP
+and reading the real GPU frequency with the Mali cycle counter.  With
+the current linear model:
 
-So the patch itself is OK, but I think there is also something wrong
-with the GPU mod clock. The GPU clock is not a standard divider, but
-actually a fractional one. The formula for the output is
+  OPP request    programmed    measured
+  150 MHz        600M, M=3D3     ~487 MHz
+  200 MHz        800M, M=3D3      648 MHz
+  300 MHz        600M, M=3D1      560 MHz
+  400 MHz        800M, M=3D1      749 MHz
+  600 MHz        600M, M=3D0      599 MHz
 
-    Clock Source * ((16-M)/16)
+so every OPP below 600 MHz silently overclocks (thermal throttling to
+"400 MHz" actually raises the clock to 750 MHz).  Interestingly the
+vendor BSP models this register as a linear divider too, so the
+vendor kernel has the same mislabelling; it also removed the 800M
+parent from its parent list citing GPU job faults.
 
-with M being 0~15.
+I have a fix working: a small ccu type implementing the cycle-masking
+semantics, with the A523 GPU clock switched over to it, the 800M
+parent dropped from the selectable parents, and the OPP table for the
+Orange Pi 4A.  Re-measured with the same cycle-counter method the five
+OPPs now come out at 149/199/300/399/597 MHz from the intended
+parents.  I'll send it as a follow-up series referencing this thread.
 
-And we're also missing a notifier to switch the GPU clock away from
-the PLL while the PLL is being changed.
+> And we're also missing a notifier to switch the GPU clock away from
+> the PLL while the PLL is being changed.
 
+Agreed =E2=80=94 the series also registers the existing sunxi-ng mux notifi=
+er
+on pll-gpu (cpux precedent), parking the GPU on pll-periph0-600M
+during PLL rate changes.  The manual states the mux switch is
+glitch-free.  Nothing retunes pll-gpu at runtime yet with the standard
+OPPs, but the higher speed-bin operating points (648-792 MHz) will
+need it as a live parent.
 
-Do you plan on implementing GPU DVFS on mainline?
+> Do you plan on implementing GPU DVFS on mainline?
 
-> ---
-> Note: this touches the same area of ccu_div.c as patch 2/4 of the
-> pending series "clk: sun6i-rtc: Add support for Allwinner A733 SoC" v5
-> (<20260717-a733-rtc-v5-2-3874cc26abf7@baylibre.com>), which adds
-> ccu_rodiv_ops right after ccu_div_ops.  The conflict is trivial
-> (context only); happy to rebase on top of it if it lands first.
+Yes =E2=80=94 see above; the series is on its way.  The speed-bin OPPs (SID
+efuse gated) are left for a follow-up.  Happy to test any related
+series on this board in the meantime.
 
-That is manageable. Thanks for the heads up.
-
-
-ChenYu
-
->
->  drivers/clk/sunxi-ng/ccu_div.c | 36 ++++++++++++++++++++++++++++++++++
->  1 file changed, 36 insertions(+)
->
-> diff --git a/drivers/clk/sunxi-ng/ccu_div.c b/drivers/clk/sunxi-ng/ccu_di=
-v.c
-> index 62d680ccb..9024bcd8c 100644
-> --- a/drivers/clk/sunxi-ng/ccu_div.c
-> +++ b/drivers/clk/sunxi-ng/ccu_div.c
-> @@ -130,6 +130,41 @@ static int ccu_div_set_parent(struct clk_hw *hw, u8 =
-index)
->         return ccu_mux_helper_set_parent(&cd->common, &cd->mux, index);
->  }
->
-> +static int ccu_div_set_rate_and_parent(struct clk_hw *hw, unsigned long =
-rate,
-> +                                      unsigned long parent_rate, u8 inde=
-x)
-> +{
-> +       struct ccu_div *cd =3D hw_to_ccu_div(hw);
-> +
-> +       /*
-> +        * The predivider helpers look it up through the current parent,
-> +        * which is ambiguous while both the parent and the divider are
-> +        * changing, so keep the mux-then-divider order the core would
-> +        * have used for those clocks.
-> +        */
-> +       if (cd->common.features & (CCU_FEATURE_VARIABLE_PREDIV |
-> +                                  CCU_FEATURE_FIXED_PREDIV |
-> +                                  CCU_FEATURE_ALL_PREDIV)) {
-> +               ccu_div_set_parent(hw, index);
-> +               return ccu_div_set_rate(hw, rate, parent_rate);
-> +       }
-> +
-> +       /*
-> +        * Same ordering rule as clk_composite_set_rate_and_parent(): if
-> +        * switching the mux with the current divider would overshoot the
-> +        * requested rate, program the divider first, so the intermediate
-> +        * rate never exceeds both the old and the new rate.
-> +        */
-> +       if (ccu_div_recalc_rate(hw, parent_rate) > rate) {
-> +               ccu_div_set_rate(hw, rate, parent_rate);
-> +               ccu_div_set_parent(hw, index);
-> +       } else {
-> +               ccu_div_set_parent(hw, index);
-> +               ccu_div_set_rate(hw, rate, parent_rate);
-> +       }
-> +
-> +       return 0;
-> +}
-> +
->  const struct clk_ops ccu_div_ops =3D {
->         .disable        =3D ccu_div_disable,
->         .enable         =3D ccu_div_enable,
-> @@ -141,5 +176,6 @@ const struct clk_ops ccu_div_ops =3D {
->         .determine_rate =3D ccu_div_determine_rate,
->         .recalc_rate    =3D ccu_div_recalc_rate,
->         .set_rate       =3D ccu_div_set_rate,
-> +       .set_rate_and_parent =3D ccu_div_set_rate_and_parent,
->  };
->  EXPORT_SYMBOL_NS_GPL(ccu_div_ops, "SUNXI_CCU");
->
-> base-commit: 8cdeaa50eae8dad34885515f62559ee83e7e8dda
-> --
-> 2.47.3
->
+Juan Manuel
