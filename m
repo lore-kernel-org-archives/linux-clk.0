@@ -1,147 +1,178 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ABC831195C
-	for <linux-clk@vger.kernel.org>; Sun, 19 Jul 2026 21:13:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 644552D3EEB
+	for <linux-clk@vger.kernel.org>; Sun, 19 Jul 2026 21:42:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784495638; cv=none; b=ovD6U2g2oWp2jxy0elIOJrTF2Eje0AO7xrUzs9Haoy6ObGqxOiX6/TSBXQo7S0a/J/35KKPKmGrkyAsWDxNsuBwzvFESYrJ9o6p9azvYCgZqkqjEb+YeA40aqRRyg/i6rpxkFfJW1b7CNQxWsS0oozpgciu0oDymPaYH6YbH1vY=
+	t=1784497340; cv=none; b=PcfaSXHhjeHwEk7fW/aMRjPqHXVF0VTN7E9QOACZ8kQfQsDXzfijMIlfH5VOAvJiseCHJcWXtLCOKM346Qw4mBbT5nDdybLZEIdc6qNlpdmHloTeqv3RcK+bXy2C+GRsOkE9b/1I62ALGe3OiO7eP5FydJfZTuUqaZiA0uhGuRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784495638; c=relaxed/simple;
-	bh=DDsOXp+Z72kK9qdiLJoanRdwCGRm/6FA5U02/PGt8IU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GBGef51b1PfmUyln/YBbASnDgGNiJN9lkpxmZ9tTuspbUBedGUgG+Y/sFg7nfml2fUOoqAhvRStMAmRK4UqpaVAyc09mLgadn28evwaPPJa6mLPpSsSDrD32lTGbe+/rg7FSfFHa6ePcmNc1eda2T5Qc4gk6f4Rw7auLyKeOidY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=oIa9gVkV; arc=none smtp.client-ip=209.85.128.49
+	s=arc-20240116; t=1784497340; c=relaxed/simple;
+	bh=EuOv9jLcMZp+voyDhegfUoXXaygT7in+e8n6hogqH5Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UFb70H+H9YjvdEvpqgmADXvohG2jvbx6RiXzHBH3K1qs8LE6vt4sac6qyswX+bBxlDdWlntmlMmzI5XO3WRlrsdckvbcfvBnFqlbGDZrrpxZCvGpgnai4tNHwpAcy6zcAHjNQVBJ/OS+yHsNBn1nhRJQTx5tJPjrtvcFdjM6R54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HLGbAwjS; arc=none smtp.client-ip=209.85.160.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oIa9gVkV"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4954afac04bso20264495e9.0
-        for <linux-clk@vger.kernel.org>; Sun, 19 Jul 2026 14:13:50 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HLGbAwjS"
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-51c0c68aa31so63978951cf.3
+        for <linux-clk@vger.kernel.org>; Sun, 19 Jul 2026 14:42:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784495629; x=1785100429; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=vxznu+hS8HH5ynomOmnxMZ5VSR6lMdMjMbTUGrneUgI=;
-        b=oIa9gVkVF2xKl89QwfpcQQrPKVawR0oHZ07CaJK2gaWCEznKeLVAxMfVmun+MUZ+aO
-         OLytHQfWCdqHRQTCTs9GnUS05Bly0MoZy8hhBq7pS5lnU3hU1raqAulP0Ix1Z9GGZIG5
-         uKBjeJiO/P2RuzR9vbsjBJgexO932ZKEqigZBv4dfXdJEH+ubjFnkotU9SfwzF7n+hbp
-         /qN6+bkpWlcRXq+pbfzrYUiny6MOC/5KWujDE8kkT/zY5qmcRTlJVKuLH5i2iYxuXHgg
-         zZfQ7PSVzGkGbUk2h58o3KUXctWZvpJ7hq+0GR7ycNH8bNnk/PTY3H10d60TdYvyCwdb
-         WQOw==
+        d=gmail.com; s=20251104; t=1784497338; x=1785102138; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=mZBhm6/Xnm6eUcP6ISkUBaaWhYGrLtJvYNKbqJ3t7Vo=;
+        b=HLGbAwjSLPRdXYMoT5qKeWnpdAObE1Hzb2DtLL6Z8tMzcuvw0QzWt/0SQoMzSoa+t+
+         BahTisNgvIFqsuwFZHfFNO/sA2n8iBUCBZ5S+0nMDxJYqWAG9mphDYwayEZNtYiJPnAx
+         e/rvVSayw/4xiTTXagk+Lr2xEwbhmG96y80hfRaVwVcbKAh/gUj8NGqLFAFNa3R8cWDg
+         OgdLSYDCm02dOnEVtV5gUiaLHch/Horo7GsLzRqMebalsvUkrXD/TXyBCQQxldw8uMF0
+         ucbOjRd9l/AZ5XUngQ1RqsVz4tY4kR9NfBUT1oo4TtY6meBmrgSOFNbDnp/lBjDEF5ME
+         khfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784495629; x=1785100429;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=vxznu+hS8HH5ynomOmnxMZ5VSR6lMdMjMbTUGrneUgI=;
-        b=nKAp81Gxbc6haHUGi4ptID+kcOeu/WqL448DQjvQJGHvurTzUc9GWIfgnOHxD8F61+
-         FEtPL/1twNj9NDr7ANTzgSaFtOK5wNjQQdaWd1Fzv6Y8f/XtEmaI5Ah8EWkD12CyvVtt
-         X0G9XnZFrnODo8nUqlezYNeXOGq9TGYhaSEwzlxivK5NP8rmLjzL69+lfbBmjHyyLE+u
-         Hz7nf3e1cwnEz/Fa5dWsFxgYwdqmkcIJCus0xI1KpkyChFk11DkPcOxfrIlUvftKwy6d
-         K5FbETcLbycHG2/oKZL0czFVCtzRGodRtxpPWK8EIo4304a+UNA4BZreKUlR+nm5Nn7C
-         l5GQ==
-X-Forwarded-Encrypted: i=1; AHgh+Rpyc8HYR/Rop7prjYYlA8m/9Iq9LlcpEuUthRKhKsCr8Dymh+vppjOAmsr0fFwQxU63hrgAV+HIxQU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+D5US7X6WLTq7iaVQXDzPAgW+Wqu04Tlm9R+YhSdbKCdIOmGJ
-	9lofW0GQWLc3HxmupuVLwRFuH+hBnuhAqrto72RiLAkL1JD+D7MqohF2
-X-Gm-Gg: AfdE7cm9BmxbMnymYXuiJnodjZyW7k/DQvs5WkPEfDS++fYPJlP79oHoxTgkgt6eHIN
-	EgTqYAF3A/RJdaEE/Q3LxV4QIutHdSGMPuzxgBfu5OF808Yvq7pH8jGqHHy+ls+63nCKlD1ENft
-	1NsAMfRDveoXS48r3uRiYExw3elbYAzVuGz0pqomgKBUoJieTsJOdkgS0xgcdAnvr6Uc1zqd/Z+
-	e49m2+gJXNfwS90CuNFno5dl7AMJRTIejkGuGS1LVLP7dTaUVXQG3z55ZbDI1/4orM29ePgtGDa
-	AeyxncchwhyHXAu6p81wJ0SY4D2YecRMY3cEodtNgFsWYc3BBT0U/yUeitSzUKwwyGjemexpCry
-	0oVahe12OUrObd69rq4NQZwvXx32c0a3v78vOwW0WDeqCt3Mv0WpaHD65tu45WKY5PO2BR/Ripk
-	ngxDOGs7pQiBerhxKUleiQh7427PlVhGW5mJa+
-X-Received: by 2002:a05:600c:4703:b0:495:4e89:3f30 with SMTP id 5b1f17b1804b1-4954e893f8cmr104567935e9.15.1784495629064;
-        Sun, 19 Jul 2026 14:13:49 -0700 (PDT)
-Received: from localhost.localdomain ([2a0d:3344:2841:7708:a101:2b8a:f76:a00f])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49549a3e2a9sm224108815e9.4.2026.07.19.14.13.47
+        d=1e100.net; s=20251104; t=1784497338; x=1785102138;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=mZBhm6/Xnm6eUcP6ISkUBaaWhYGrLtJvYNKbqJ3t7Vo=;
+        b=rrYy7Xp+3POsOnUPfBGiWM6u6sxxw+2cqk3wCBTgUMjPTwcKvFWLdHqc6u0UK0gCqY
+         4bAPnHWLNUNuBNFw5nd4Y3jOs3n3bN7tvMo/ybcPOoPFA9b34rB3A+8P1UZ8z3H4uGgv
+         8TlkGZINxIoAveTin9ri6oSL4NuxXZCNniE3mEgAVS3lyGa3E4koGdqUgJkyO2AG4gf4
+         nrey21LY8fi1d5o+iMZwvKprSIkNyxMz5HN5Zr0ea35bZWGsXt6iIwt7vZ6yKvxeDsg7
+         kLqMAgwTOxNz9rY3Wu2Yt701Y3/MeJiHceETvaBPszURHdpcycWpoJobKL90/BbkgkVW
+         1y5Q==
+X-Gm-Message-State: AOJu0YwXCaqnedkBYsfhcNiEiAMMQOOaPY5JMp1GFZ8oCdiGPgD7w3ZG
+	QDap/JTP4p10OYAPGgJhQTDvIMzkmrDPJtD9jvAhB9tYr6oeFvS9/P8gH16Auw==
+X-Gm-Gg: AfdE7cny8vcUcBKEajYyRZb9/FIYLQLGEXlT9ST59CCLahi1SIUJ6NkyFQAUbgaiK2K
+	5dlUE0M94ZoQSqD5gcKr/bpYBfHcwp0velMU/NeIyNB9Nawb5YwMGcrSsXA399+RA6ppxBC9DQG
+	MgftPpgGr1CAxd/xoN9INnHuZd/JLk9osLepRinfKt7c9JloUytcKD6FbzfE1uqZc29/jDmTL3b
+	7U0/OtAFtBMOByWzi//AfEG0cemQhWltIRl/1H5nJKiAwVSyOMDCwderLDik3GbuxyVKu3OMx89
+	eRty9HjA1CUqlEdI1hxTiXGA8g4FFHK5PVXd9RqDFIhneTr02w2zmHJABeWr337cRBq3hWKJuz7
+	bZL6I/81wAURuO/gafXkzdHPwH/xw7+taT7kVXd+jrZokHfTkVRWNgByf7hdgh6doylWS997vnE
+	n+mJK5rDU+H10XglgbXNjHtzKd5rcOvp941ASlhj2GxKUGJ+cjgDOUICSNSoQ6z/D4KQ4w0h7X6
+	wFANwTk0s45QzoXDzjiIo1XVn3+5CDDnP8f7zd87qGTaFtRYY2AZaI=
+X-Received: by 2002:ac8:5705:0:b0:51c:1cf8:ca4d with SMTP id d75a77b69052e-5213aa6cc57mr107585901cf.13.1784497338222;
+        Sun, 19 Jul 2026 14:42:18 -0700 (PDT)
+Received: from ryzen.lan ([2601:644:8000:7a86::e35])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-5214d09bb08sm60054541cf.12.2026.07.19.14.42.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 Jul 2026 14:13:48 -0700 (PDT)
-From: =?UTF-8?q?Juan=20Manuel=20L=C3=B3pez=20Carrillo?= <juanmanuellopezcarrillo@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
+        Sun, 19 Jul 2026 14:42:16 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Chen-Yu Tsai <wens@kernel.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>
-Cc: Brian Masney <bmasney@redhat.com>,
-	Andre Przywara <andre.przywara@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Juan=20Manuel=20L=C3=B3pez=20Carrillo?= <juanmanuellopezcarrillo@gmail.com>
-Subject: [PATCH v1 3/4] clk: sunxi-ng: sun55i-a523: reparent GPU while pll-gpu changes rate
-Date: Sun, 19 Jul 2026 23:13:18 +0200
-Message-ID: <20260719211319.982285-4-juanmanuellopezcarrillo@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260719211319.982285-1-juanmanuellopezcarrillo@gmail.com>
-References: <20260719211319.982285-1-juanmanuellopezcarrillo@gmail.com>
+	Brian Masney <bmasney@redhat.com>,
+	David Lechner <david@lechnology.com>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCHv2] clk: davinci: add COMPILE_TEST support
+Date: Sun, 19 Jul 2026 14:42:14 -0700
+Message-ID: <20260719214214.726826-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Register the existing sunxi-ng mux notifier on pll-gpu so the GPU mod
-clock is parked on the fixed pll-periph0-600M output while the PLL is
-being reprogrammed, and switched back once it has locked, following the
-cpux precedent of other sunxi SoCs.  The mux switch is glitch-free per
-the T527 manual (GPU_CLK_REG, "The clock selection supports glitch-free
-switch").
+Add driver-scoped Kconfig symbols for the DaVinci clock drivers so they can
+be built through COMPILE_TEST without selecting the ARM DaVinci platform
+symbols.
 
-Nothing retunes pll-gpu at runtime today (the mux does not propagate
-rate requests and all standard OPPs resolve to pll-periph0 outputs),
-but the higher speed-bin operating points (648-792 MHz) will need
-pll-gpu as a live parent, and any direct clk_set_rate() on the PLL is
-now safe.
+Keep the existing ARM platform behavior by defaulting the new symbols from
+the corresponding ARCH_DAVINCI symbols, and use the new symbols for the
+davinci clock Makefile entries.
 
-Signed-off-by: Juan Manuel López Carrillo <juanmanuellopezcarrillo@gmail.com>
+Assisted-by: Codex:GPT-5.5
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
 ---
- drivers/clk/sunxi-ng/ccu-sun55i-a523.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ v2: use COMMON_CLK prefix.
+ drivers/clk/Kconfig          |  1 +
+ drivers/clk/Makefile         |  2 +-
+ drivers/clk/davinci/Kconfig  | 29 +++++++++++++++++++++++++++++
+ drivers/clk/davinci/Makefile |  8 +++-----
+ 4 files changed, 34 insertions(+), 6 deletions(-)
+ create mode 100644 drivers/clk/davinci/Kconfig
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun55i-a523.c b/drivers/clk/sunxi-ng/ccu-sun55i-a523.c
-index 979e53e63..4341eb66c 100644
---- a/drivers/clk/sunxi-ng/ccu-sun55i-a523.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun55i-a523.c
-@@ -1667,6 +1667,17 @@ static const u32 pll_regs[] = {
- 	SUN55I_A523_PLL_NPU_REG,
- };
- 
-+/*
-+ * Park the GPU on the fixed pll-periph0-600M output while pll-gpu
-+ * changes rate; the mux switch is glitch-free (T527 manual, GPU_CLK_REG).
-+ */
-+static struct ccu_mux_nb sun55i_a523_gpu_nb = {
-+	.common		= &gpu_clk.common,
-+	.cm		= &gpu_clk.mux,
-+	.delay_us	= 1,
-+	.bypass_index	= 1, /* pll-periph0-600M */
-+};
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 40e2451ee1d8..16191b297150 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -516,6 +516,7 @@ source "drivers/clk/actions/Kconfig"
+ source "drivers/clk/analogbits/Kconfig"
+ source "drivers/clk/aspeed/Kconfig"
+ source "drivers/clk/bcm/Kconfig"
++source "drivers/clk/davinci/Kconfig"
+ source "drivers/clk/eswin/Kconfig"
+ source "drivers/clk/hisilicon/Kconfig"
+ source "drivers/clk/imgtec/Kconfig"
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 087893f77bec..d90b15bb8e74 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -119,7 +119,7 @@ obj-$(CONFIG_ARCH_ARTPEC)		+= axis/
+ obj-$(CONFIG_ARC_PLAT_AXS10X)		+= axs10x/
+ obj-y					+= bcm/
+ obj-$(CONFIG_ARCH_BERLIN)		+= berlin/
+-obj-$(CONFIG_ARCH_DAVINCI)		+= davinci/
++obj-$(CONFIG_COMMON_CLK_DAVINCI)	+= davinci/
+ obj-$(CONFIG_COMMON_CLK_ESWIN)		+= eswin/
+ obj-$(CONFIG_ARCH_HISI)			+= hisilicon/
+ obj-y					+= imgtec/
+diff --git a/drivers/clk/davinci/Kconfig b/drivers/clk/davinci/Kconfig
+new file mode 100644
+index 000000000000..5bbe2b98db5d
+--- /dev/null
++++ b/drivers/clk/davinci/Kconfig
+@@ -0,0 +1,29 @@
++# SPDX-License-Identifier: GPL-2.0-only
++config COMMON_CLK_DAVINCI
++	bool "Clock drivers for TI DaVinci SoCs"
++	depends on ARCH_DAVINCI || COMPILE_TEST
++	depends on HAS_IOMEM
++	select REGMAP_MMIO
++	select RESET_CONTROLLER
++	default ARCH_DAVINCI
++	help
++	  Support for the clock controllers found on TI DaVinci SoCs.
 +
- static int sun55i_a523_ccu_probe(struct platform_device *pdev)
- {
- 	void __iomem *reg;
-@@ -1698,6 +1709,10 @@ static int sun55i_a523_ccu_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
-+	/* Reparent the GPU during pll-gpu rate changes */
-+	ccu_mux_notifier_register(pll_gpu_clk.common.hw.clk,
-+				  &sun55i_a523_gpu_nb);
++if COMMON_CLK_DAVINCI
 +
- 	return 0;
- }
++config COMMON_CLK_DAVINCI_DA8XX_CFGCHIP
++	bool "TI DA8xx CFGCHIP clock driver"
++	default ARCH_DAVINCI_DA8XX
++	help
++	  Support for the CFGCHIP clock gates found on TI DA8xx/OMAP-L13x
++	  SoCs.
++
++config COMMON_CLK_DAVINCI_DA850
++	bool "TI DA850/OMAP-L138/AM18x clock support"
++	select COMMON_CLK_DAVINCI_DA8XX_CFGCHIP
++	default ARCH_DAVINCI_DA850
++	help
++	  Support for the PLL and PSC clocks found on TI DA850/OMAP-L138/AM18x
++	  SoCs.
++
++endif
+diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
+index f9d5c9a392e4..4899cdf04bd6 100644
+--- a/drivers/clk/davinci/Makefile
++++ b/drivers/clk/davinci/Makefile
+@@ -1,11 +1,9 @@
+ # SPDX-License-Identifier: GPL-2.0
  
+-ifeq ($(CONFIG_COMMON_CLK), y)
+-obj-$(CONFIG_ARCH_DAVINCI_DA8XX)	+= da8xx-cfgchip.o
++obj-$(CONFIG_COMMON_CLK_DAVINCI_DA8XX_CFGCHIP)	+= da8xx-cfgchip.o
+ 
+ obj-y += pll.o
+-obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= pll-da850.o
++obj-$(CONFIG_COMMON_CLK_DAVINCI_DA850)		+= pll-da850.o
+ 
+ obj-y += psc.o
+-obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= psc-da850.o
+-endif
++obj-$(CONFIG_COMMON_CLK_DAVINCI_DA850)		+= psc-da850.o
 -- 
-2.47.3
+2.55.0
 
