@@ -1,156 +1,148 @@
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D08943016E0
-	for <linux-clk@vger.kernel.org>; Sun, 19 Jul 2026 21:09:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.172
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784495367; cv=pass; b=ca5eNmxFmnYWj0snFgIjxhiABuL2JOUkfy1ge4cnMietL9jnYzIPtPXfofA6SL1B6a7UvFdgO9V+3VNfV6xzh/kjFvgz+e9+kqVyprUPTAzVxaQLkbXBUbkGnMY4RBZEyXJSVAhxFdjbKzsKdepB/7jh97BtBv+7ovpx5t2bB9o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784495367; c=relaxed/simple;
-	bh=g/5/Kl8DcMdbeuZhnrZTX2rGAUenmbF60rnYbwvssq4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DAms1DkAFgJY2kEGx4gWknfmxV6PDFkENcseUq4OkPEbsWJz/uQV+MCVq4synAQrcH8nyLP7V4qBzV3YxenjHV2XQAL4z14yDr+GPTibQrB4QL3E3UBxxGGRCxUHituFJ1aEkKKvmHHt0dUXMSaNZtJ7lGXat9hiXj2pXTYyBsg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KhMtN2Ar; arc=pass smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E29B830F7E8
+	for <linux-clk@vger.kernel.org>; Sun, 19 Jul 2026 21:13:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1784495626; cv=none; b=k4MPrApvbE+zfHWfBHvHhslhZQZ1yEVJ/zXRvSUgV37HCl7JbyncHXKq5BqkSOfDrypYhIyEOZA5DXfTUb7SRNkSsZc+rwjXV3sClMVO4gRSVMuxn3Cw8bjeOdrtp2DGjwfZgMVg2YZbDf+DpT1NFnqFqbun075UT9lLISGiW9k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1784495626; c=relaxed/simple;
+	bh=rQT7FnSJWSbCZQvFgg9XlhlbtVZ2Cd5f1GzQeXk++wE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BBEywrOJz9dAZaEUE2EZnQUfcA3MQU4p6z539NjXmJLo/VChSgfBh8XMGzFOrVAkg5aKjMWaKP6t6vx7WhX90hqsvxSM0g9b1Yx3TgDc4dLx3ZsEcPGWL1fygJbR+8qq4SyRlkUUzL5dTJuzFQsHWFUqdD0imf4zC65SnGt0IAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZbUkv84X; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KhMtN2Ar"
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-81ed2a06b9eso40702697b3.3
-        for <linux-clk@vger.kernel.org>; Sun, 19 Jul 2026 14:09:25 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1784495365; cv=none;
-        d=google.com; s=arc-20260327;
-        b=lGWZxgGOeGjUoiftVwm8l5rFIVFk6LQROkV7t1XFW8jNG+HWi9wqD+sp2SgYpGDkoo
-         rK1kLv3DaX4yxt79EKmoxSYolSwPso+HO6WEtDe/2JoEjAc8GRK/aTHlriYi+/0WAo61
-         abnvfK2/AmrMl3Hebsh8gTqToPOwwcJvcAYESqikzc0qEA+J5tw0+BAM3YJf45Lw6O0k
-         yyp/u1HTO2A61XsheQv1p2pm6xHblUXPGPEEuNHgkLOiDk0Hrpl7XbCek86s7ToPJ3WW
-         xHrPqVCH/5auPuukMnWuWHeoP+5LiSek+l5UkWvPKOVSMG9e4cX577kqg83X7+GBBnCj
-         UmLA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=AhtM1hpbjZSDdUK5uO0cI/aNaLK1lqiY4lPHHX9EMZU=;
-        fh=6tZq8ZZggvc7WZYyk43XJ7FDsTNXZorN59JbAWQFsNM=;
-        b=LaUyhwIQv7yo/3n5UuYxTBQKS4byt5FGjyR0jgpbzglGg8IiwL4iJF9q9dJ+SY97IS
-         d4OtOb8GB45hGQWX4K62ayqgXGbJoJPJx9SCyslM+c2QrCwRaIL7vtLHEmqX6JmVFmZ9
-         joiCKMKuX2qzEYiWwSY+j83B4ukY1e+Mmhw5xm3hlTrB7SVYMKR+ZwL+1FjSmTD/06hF
-         /1wjA4oKgXfQXNwjhEO9CoNtagDmDAl5uu8dBuA3Y2EjpbLVJ05rRK5PrazfZHLhm1d5
-         qBS9pTzLVRwRsHi7ZsbBRMnTNu96Zb9oUBM4AdZL46f8z7Sn4ZEkQoeIJZkk0nmEaHKt
-         L0bQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZbUkv84X"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4921eed3fa2so72821575e9.0
+        for <linux-clk@vger.kernel.org>; Sun, 19 Jul 2026 14:13:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784495365; x=1785100165; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=AhtM1hpbjZSDdUK5uO0cI/aNaLK1lqiY4lPHHX9EMZU=;
-        b=KhMtN2Ar23o910ZKvT36XJGqRA8XCGF+nTjVC7vlOKOxvSSVY9e+Ei6XhkWjEmCha4
-         4lNczABJqSYLW22vO9a0O2U5ss3w8NBQP72DoiuFXageZFGLbVkGT5bepT+DDAMnzPAH
-         mJkX79wcx+sxuwhpFq+6rK451eVvjXRMFw0jLUucZcxDuGFbS2FpIDpY10a3x3OmOM6E
-         Sqs6/N51Wlcv0W68Sm6PvKtHhhe7/PDRYr4nuiHcuJig9XbgmactGV3VgkytWPDA6nYJ
-         hAjkdvopRHmrTKBHRuWixW8a80DbrobXAEed64IJxhsp807WMbkjfG+7qJHz1W5hsOaT
-         KOiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784495365; x=1785100165;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+        d=gmail.com; s=20251104; t=1784495623; x=1785100423; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=AhtM1hpbjZSDdUK5uO0cI/aNaLK1lqiY4lPHHX9EMZU=;
-        b=eFUeKTbKnm9MHEVTDFgjI68Np7xy7qht8NSJsBmJwKRw36aYZF1U5dCUInmvhYVvHh
-         H8BoR2mLwFaVXb3i0PqngAOUKy4+pcnukBOt5M+oyVKXA9zEiUriL/yfsOjbZdCKxZLW
-         ODXuMpJAvJLlMnX1zYR8/4sIY7GTJG9zfVq7jvjdrmEW/l4qVZMnqfC/8Z5tdAWSusMe
-         TuYQrckFyjltNPuWdMde9DRvXuDfogHdFZ7u/cDHtHWmLlnTQubmL63L8U1ySUxcQUvn
-         mOUReiKwz0ZUGZUetRvgzGb3huJ923oIJ9NZtDjncGfu19ctHVgS+18GUWk9/GdYIbUO
-         WmTA==
-X-Forwarded-Encrypted: i=1; AHgh+Ro6PS9y6OYUUrYPzu1I12ReHaLvP+yoZw0KRWhBBohwKikvnbw61zqOrv/ckC09ouBSiQvxn1kXviY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTJJjVSoRe2KLSZMSCM0WLWnw5z5sG83t2W8YDih+GEmU0L0f8
-	/ky5ftihtbHE1kJXFDh9sA3FZa866SUeE2zrNEYjsc8kjdimAQ156BCFfiDD29O8HDw2gE/XcNC
-	alvIb9xl86WyffD5Gd9A+et2EkSwqNqM=
-X-Gm-Gg: AfdE7cmDN7mtNfE+Jcp/8H4QWDIRb/FMb9sUtAdk65u4z6RXoxBl8mC0CAdP9cOce+U
-	hSXiKOp4qOPXd8SC8SeYO+TbPQHe5EEtdxIvW/xzH5CfMunx9ChrVLcTNb74sACcst/K0lHpcsw
-	YzW0Eb36jge9L1sOkqnDvQpvlR/u1GaHyfeiW8Ihf3t9qW0eIkJca9+G9hv5uAXdd8Qw840Dc/E
-	eetTqPkVm/8+pUNdDiNaBlqHdTwvjbEcmOHFCk9vGMB06WG5M2Idzfe7sIXXRkitJ1VcC62EJgj
-	Cd8bh+TO6KGPDgK3QoA=
-X-Received: by 2002:a05:690c:4d83:b0:81d:d035:eb4b with SMTP id
- 00721157ae682-81ef22f15ecmr41881237b3.19.1784495364767; Sun, 19 Jul 2026
- 14:09:24 -0700 (PDT)
+        bh=yoqurlPSvAJxWv157dNwPLL8InVlGkCToDlg+t76AwE=;
+        b=ZbUkv84X3Vsh9jErt2iRoW/Hn1KY6LYTAk+7WhKDw9eI/R2C635AXLS/rmsJ/5u1R8
+         bKbY4PCn1wTn4gLU1qqivHCeyUB1WarPnbxyPFDm43iM8yhud88AjKvSFjZS8Ffg2Er7
+         Zd2Fhj+gin+i91C2pkOjwkwYwcT7WkgoVTJ/IZ7I9uWn5kqlzOfJWrd8r+FMHKagKelM
+         I54VUb+VPbDSLc16SHsBaO21WdXKZfrPuzgrUCdgYjKxk4xT+cBO+yhAEXwORbn+vARt
+         1+UbO0u1Q4WR6j/iB2+3YCROGaNh6Kyynhw6wCImHF1cPrtaYd7H+g0SWKsOLoafy+ly
+         jMMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784495623; x=1785100423;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=yoqurlPSvAJxWv157dNwPLL8InVlGkCToDlg+t76AwE=;
+        b=maSmd+rNY8BK+XLE5BACDSExmEjyqZfS605uYDTlPwh9tcfowC7O7io786A45aWGr6
+         rvHgVjRN/vpQVzHl89oeNTLawIR4c/bHPUQvcIV4a0WPkb1bP3cK+lAnBexjPu57RcGY
+         pmxTcpR3iSLCIWQKpVKFwHIuhVaU8AaXFMU64rS08+PQehjQislvWU4gMrTNJGIvcrWp
+         4jRG2IwxjdepH0nHOJeFgewj+PYTAb4V6P2XWYaBjByp6ppEF5U1l8o3/9CepxWx2DJN
+         PwnqWWSGVHxZz2ISMOkGWz7Q+T3+2TF0IPbBB7ZKs+4aUsfibD0F8WK1FaDfPw9yetug
+         57og==
+X-Forwarded-Encrypted: i=1; AHgh+RqUgsGf81i2uZBHnf0XzxIkF0GBSSDvkc4HFQoptl+7FJYZw7xbRBVbpKptz95d+D8WJcTBKsTrP0U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/vf+CyrSZ34p4GYUuqR+cFTe6iKFReav/NrtmmIiwzdh/nb+U
+	o5r9ORcJx20QHjeW/9e3J0VVmR7HWejeZ0s9v9DtRrMpg1J3LSuuyu5w
+X-Gm-Gg: AfdE7cms5k+qcEgKO0UN4Mxciy+n9+naK/XaDSCNldVrnu4Ey8gv1tmlOkY616bvevj
+	QKb3wLbDOaNVAQRC3Rf67184/hUwCcYqcihOaX14BqcTIsSkFN3Xgvu6zso4QlFKBM/C3u6gRmB
+	Q7XPSxev7RVqBFuwRbEtBlAHk2/gdeh83Bh4+6CKEHOp6AAZ896QGQlnCbIB8WMD+APty5TTt8k
+	dlFOZ4IkGEtA1dc/wtJXCceKtO2pT4/7BOMVwRieXxoIqhX+UmEjld6wb8HZrXSdviBn08ibhc8
+	/KCQWXBVCYJoeGtmz2TyD46Gu8rR19T/gbENmKovpHdzvmkPwCpZXUeydmjxTWxWuYQBSP24SGT
+	HEse1XPoRInf6dOdw5fgT7rvQXqkj/ggnfUTPYzwSx4K0F9pDCnpQwOYR9AHMCVwUMwnwIEuDNW
+	tAMaM7uPa84wPnHlRZ7jMOpzK1brHHoxBKlzMke3qlh9I1c/I=
+X-Received: by 2002:a05:600c:3b10:b0:495:4aff:5fce with SMTP id 5b1f17b1804b1-4954aff609amr121711955e9.32.1784495622909;
+        Sun, 19 Jul 2026 14:13:42 -0700 (PDT)
+Received: from localhost.localdomain ([2a0d:3344:2841:7708:a101:2b8a:f76:a00f])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49549a3e2a9sm224108815e9.4.2026.07.19.14.13.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 19 Jul 2026 14:13:42 -0700 (PDT)
+From: =?UTF-8?q?Juan=20Manuel=20L=C3=B3pez=20Carrillo?= <juanmanuellopezcarrillo@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>
+Cc: Brian Masney <bmasney@redhat.com>,
+	Andre Przywara <andre.przywara@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Juan=20Manuel=20L=C3=B3pez=20Carrillo?= <juanmanuellopezcarrillo@gmail.com>
+Subject: [PATCH v1 0/4] clk: sunxi-ng: fix the A523/T527 GPU clock model, enable GPU DVFS
+Date: Sun, 19 Jul 2026 23:13:15 +0200
+Message-ID: <20260719211319.982285-1-juanmanuellopezcarrillo@gmail.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260719153122.892013-1-juanmanuellopezcarrillo@gmail.com> <CAGb2v64Mdq-+C2e6GGHEN_n_H6QEEd66zp6O2W9y--58L=5yzQ@mail.gmail.com>
-In-Reply-To: <CAGb2v64Mdq-+C2e6GGHEN_n_H6QEEd66zp6O2W9y--58L=5yzQ@mail.gmail.com>
-From: Juan Manuel <juanmanuellopezcarrillo@gmail.com>
-Date: Sun, 19 Jul 2026 23:09:12 +0200
-X-Gm-Features: AUfX_mzAKn4OrNAtXWomQRAbZerhdiZ5kkyJSxJPwI1hfOOK1mJBaeXrnWi0ctw
-Message-ID: <CA+c=wxXJCB3Ms=eRy4Bs6fG_uA0owLYpmaXHmxP6woeP+icsWA@mail.gmail.com>
-Subject: Re: [PATCH] clk: sunxi-ng: div: implement set_rate_and_parent
-To: wens@kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Brian Masney <bmasney@redhat.com>, linux-clk@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, =?UTF-8?Q?Andr=C3=A9_Przywara?= <andre.przywara@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-> Reviewed-by: Chen-Yu Tsai <wens@kernel.org>
+This series follows up on the discussion in [1], where Chen-Yu pointed
+out that the A523/T527 GPU mod clock is not a standard divider but a
+fractional one: GPU_CLK = Clock Source * ((16-M)/16), with M 0-15.
 
-Thanks a lot for the quick review!
+I checked this against the T527 user manual (v0.92, section 2.7.6.58,
+"FACTOR_M: mask M cycles at 16 cycles") and verified it on hardware:
+with the current linear model, forcing each OPP on an Orange Pi 4A and
+measuring the real GPU frequency with the Mali cycle counter gives
 
-> So the patch itself is OK, but I think there is also something wrong
-> with the GPU mod clock. The GPU clock is not a standard divider, but
-> actually a fractional one. The formula for the output is
->
->     Clock Source * ((16-M)/16)
->
-> with M being 0~15.
+	OPP request	programmed	measured
+	150 MHz		600M, M=3	~487 MHz
+	200 MHz		800M, M=3	 648 MHz
+	300 MHz		600M, M=1	 560 MHz
+	400 MHz		800M, M=1	 749 MHz
+	600 MHz		600M, M=0	 599 MHz
 
-You were right, and it was worse than I expected.  I checked the T527
-user manual (v0.92, section 2.7.6.58: "FACTOR_M: mask M cycles at 16
-cycles") and then measured it on the Orange Pi 4A, forcing each OPP
-and reading the real GPU frequency with the Mali cycle counter.  With
-the current linear model:
+so every OPP below 600 MHz silently overclocks, up to 25% above the
+vendor ceiling, and thermal throttling to "400 MHz" actually raises
+the GPU frequency.
 
-  OPP request    programmed    measured
-  150 MHz        600M, M=3D3     ~487 MHz
-  200 MHz        800M, M=3D3      648 MHz
-  300 MHz        600M, M=3D1      560 MHz
-  400 MHz        800M, M=3D1      749 MHz
-  600 MHz        600M, M=3D0      599 MHz
+Patch 1 adds a small ccu type implementing the cycle-masking
+semantics.  Patch 2 switches the A523 GPU clock to it, drops
+pll-periph0-800M from the selectable parents (the vendor BSP removed
+it citing GPU job faults) and drops CLK_SET_RATE_PARENT (pll-gpu loses
+its CLK_SET_RATE_GATE protection once the GPU runs from a periph
+output).  Patch 3 registers the existing sunxi-ng mux notifier so the
+GPU is parked on pll-periph0-600M while pll-gpu changes rate, as
+Chen-Yu suggested in the same thread.  Patch 4 adds the BSP operating
+points to the Orange Pi 4A DT, which enables panfrost devfreq.
 
-so every OPP below 600 MHz silently overclocks (thermal throttling to
-"400 MHz" actually raises the clock to 750 MHz).  Interestingly the
-vendor BSP models this register as a linear divider too, so the
-vendor kernel has the same mislabelling; it also removed the 800M
-parent from its parent list citing GPU job faults.
+With the series applied the same cycle-counter measurement reads
+149/199/300/399/597 MHz for the five OPPs, all from the intended
+parents, and devfreq scaling plus thermal throttling (emulated
+temperature) behave correctly under load.
 
-I have a fix working: a small ccu type implementing the cycle-masking
-semantics, with the A523 GPU clock switched over to it, the 800M
-parent dropped from the selectable parents, and the OPP table for the
-Orange Pi 4A.  Re-measured with the same cycle-counter method the five
-OPPs now come out at 149/199/300/399/597 MHz from the intended
-parents.  I'll send it as a follow-up series referencing this thread.
+The higher speed-bin operating points of the BSP (648-792 MHz, gated
+by a SID efuse bin, running from pll-gpu) are left for a follow-up.
 
-> And we're also missing a notifier to switch the GPU clock away from
-> the PLL while the PLL is being changed.
+[1] https://lore.kernel.org/linux-sunxi/20260719153122.892013-1-juanmanuellopezcarrillo@gmail.com/
 
-Agreed =E2=80=94 the series also registers the existing sunxi-ng mux notifi=
-er
-on pll-gpu (cpux precedent), parking the GPU on pll-periph0-600M
-during PLL rate changes.  The manual states the mux switch is
-glitch-free.  Nothing retunes pll-gpu at runtime yet with the standard
-OPPs, but the higher speed-bin operating points (648-792 MHz) will
-need it as a live parent.
+Juan Manuel López Carrillo (4):
+  clk: sunxi-ng: add cycle-masking divider (maskdiv) clock type
+  clk: sunxi-ng: sun55i-a523: GPU clock divider is fractional, not
+    linear
+  clk: sunxi-ng: sun55i-a523: reparent GPU while pll-gpu changes rate
+  arm64: dts: allwinner: t527-orangepi-4a: add GPU OPP table
 
-> Do you plan on implementing GPU DVFS on mainline?
+ .../dts/allwinner/sun55i-t527-orangepi-4a.dts |  30 +++
+ drivers/clk/sunxi-ng/Makefile                 |   1 +
+ drivers/clk/sunxi-ng/ccu-sun55i-a523.c        |  47 ++++-
+ drivers/clk/sunxi-ng/ccu_maskdiv.c            | 199 ++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu_maskdiv.h            |  71 +++++++
+ 5 files changed, 342 insertions(+), 6 deletions(-)
+ create mode 100644 drivers/clk/sunxi-ng/ccu_maskdiv.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu_maskdiv.h
 
-Yes =E2=80=94 see above; the series is on its way.  The speed-bin OPPs (SID
-efuse gated) are left for a follow-up.  Happy to test any related
-series on this board in the meantime.
+-- 
+2.47.3
 
-Juan Manuel
