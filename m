@@ -1,63 +1,63 @@
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB7DF3126BC
-	for <linux-clk@vger.kernel.org>; Sun, 19 Jul 2026 21:50:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DCF02DB780
+	for <linux-clk@vger.kernel.org>; Sun, 19 Jul 2026 21:50:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784497847; cv=none; b=lJ4CTYN+NXhEw9XXQqSB2Qi6PIkMF2vDn42qJSKcn2HBIPBSBF6i0pj/8y76Fwsr4S0az9RN5SNo7AL5J2TMxSJt5rCfPy2+AVBAR3rjrmDiTnFFSLtu21GrRjm+CnxKP5jplwqqur/BP+wpw+4UEeJubtqLiLLdMEOqhy/u4iI=
+	t=1784497854; cv=none; b=mrNzsjr57stRcouduS9qzyvyl/G+rpt44NOOYJq15lmUkSU1Vjl8L/Fl2PiwcXnJ6S0LtrtDKmLj4vydexQqEACmq7h5CRxZwUSuqln89COqTzQBeF/QOvucUnqS5NHmtvt5ieOkwdoxgiEs9kW2u3Ci6l3ApPpx5z8gUXU8VTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784497847; c=relaxed/simple;
-	bh=z2jvO4b7tvtzk/zUy5qdlg4JlkqUFIt42V4sDGTZLWw=;
+	s=arc-20240116; t=1784497854; c=relaxed/simple;
+	bh=0uY0iiDoWci9ie3IlgyibA84n8mhnz5u87H+NUZz4Y8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tGF6BXURjb5IXoosgRWf97WQN1qOSXEMCIxVAb7v1gHEetB8JxOFhMR/i+eR7oi7kN6JO1M9wmr+wRBjzfNBg8L03lHbbCgxHWKf3DFJsOow1sMwWJP8kmWsuTOH11RxEehdplHaS4a2quiJdDE6ywA2HQAHmTUa4Lkr3odcEqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FMBByQT9; arc=none smtp.client-ip=209.85.214.177
+	 MIME-Version; b=T6OFBbjhYZQIzMbv0EwKkGFZuylFbmRw+mueLnViMPT5KIBl2uT6PhC6omBvJPpnnWtiQfoWpNrdjjYuTcH5+EV4mxvA/zPgnODQtu6q4UXsdyUdXYgNi/a0JkLZpBFU70u6eeutdnm8VqPE6pII2Tgc7oT/cchMxY3QR1W7bwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D5f8iz4W; arc=none smtp.client-ip=209.85.214.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FMBByQT9"
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2ceed7018c8so39156085ad.1
-        for <linux-clk@vger.kernel.org>; Sun, 19 Jul 2026 14:50:46 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D5f8iz4W"
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2ced3386430so58864965ad.1
+        for <linux-clk@vger.kernel.org>; Sun, 19 Jul 2026 14:50:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784497846; x=1785102646; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1784497852; x=1785102652; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=VhJl3YkYSOoC4SqmTcp6WH/00PPU77CFhgqYr4GFFyQ=;
-        b=FMBByQT9cLC96gy64fxgmbZrrzNyL1mKscSp7reuIpvATYLiLaJC5RvPmUbrNe//Co
-         147OexWQlCphFzyxE7WGpkwBiw2PNJi5urMNMatpc4yzsx6zzmmoDgn+QLAcETKyirIS
-         5C1goIa45cCLr41EhzdnDynUOobnZbfeHcTRKcLaT3Nggfj5MiTn+t+3tVOVCi7ujY3T
-         ZJulveMge9gFgRwnKI1VqHOPdN+cmUwPgOVfAJ12M6MV/8O6u33SX/RX7BQPcEW5iyLH
-         pCsNlm3F7MdiGTdLUg6lSkpImMvTrw464QcaYQyXHHxrj3931yjeX4MjUyMfP/egbs1G
-         ZRhg==
+        bh=KEZSCCPTXF+79jewlZrbFumF51dyS7Eb1UAau5L87rc=;
+        b=D5f8iz4WZfvo5jvQWYjdx2olt+52IPYfjAn50jJC+cIy/jyxp0C33JopXoNCzSy5FJ
+         PppZiqn2d81poiaka2BTck9sDkuNd0+9yYeB7B4R31tVzp6XNiQMqXTW8ANt9c+i2DF1
+         ba9BdYmfz2wV/ZeYpcG4fAFKnwNqmsZmm5ju1dOdEK4AHRVObxDEZwhOjnqQoIJIp7ZQ
+         rY2MaWLbegBecYCaUzS68J1k6aqORC3uuhfRdsWdaV6gVpKj7DvP1DuKduYW8EUFA5lo
+         ViUh/C5094tldxHYK/yfnTlIuLUk8+MowV3gI5ZDVnDM1hGwL/dJkX6ymEycpudeO+Bq
+         6n3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784497846; x=1785102646;
+        d=1e100.net; s=20251104; t=1784497852; x=1785102652;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=VhJl3YkYSOoC4SqmTcp6WH/00PPU77CFhgqYr4GFFyQ=;
-        b=f/kTCsLbLoI9k3iLQv8bmCc86f/Q2h4+rlUt2KYEZKRQVf1BeNRmGKgpexrkWCNxpf
-         Gosi+3+3h46sVRVy7DVinV/jwnXE7Jn7VywuybZotIjJd5oNtOFGOjF17vMsBmkUxZoW
-         yJBAyqXzrUti2Z3ytShfCcgl5wCNnxTN/tFrBitHBi8sFf+eNpBy6U83Zj1bmcceLA3x
-         abJITCoxyraB+IlWvoLTxrF3u8Z18wgBVKXFov4OI0k54NRyoLNj3vibty0lWzj87UgL
-         KVGUxZI3XVvpH1ZSqkWDB/AKxmGIDA2/4cuNOroZwIT9pZQdGn8MeuAfwQEG3gsCA8zO
-         vVxA==
-X-Gm-Message-State: AOJu0YyH0IdoiPuyt7OEXPQP7f7gvnkpXd5pJX2OqIgY/r9othZ1pBxl
-	9ybDz94c28sPwKz9AlJqQJ21aj/6L8lDuWht1yBvNx/Mp2/Zn5ntcg4vE67a7Cyc
-X-Gm-Gg: AfdE7cm9ag6IqDOgOSg8KxEglVbpU6OT/OC2jIp/ENL+6pau5uOXmlSaeFSkceqNTY3
-	/Y+4ZZr3St4Qhmwm/vka8XpWkEyrVy0yshHdevlCr2hmC4dIvXJ78ev9XqgZ9NzrBF+St6tj/gM
-	Ghm/QwkaE+0tZQH528LrzOY2j/qv+HzH35EDGR2bhh8M6x6FC6vE3M7kfdk9MgNHWajNg3gpqkN
-	fe9eF0XVXw9k9bKhRxNvpL/ErKhIV4/Z4Vh/zGaoI4AJ0pIchbcZGTnvNPqr/xqgT3b+9Pmk6EM
-	aiFvgNNOKa+dZ2GVqSqLKC6sCzLkFv+XgZJe/PQMaKAWcYe7MZoZiOycwvo0D/ljjgAujtNIpvy
-	AZp8YyftRPTrj0pYSAhr9+zjN5rxfAQRGfSlvuev50eO5TMKmzo8J2oAyJxkFnc5ZGvp6OlhhGp
-	1XeKeG/kzvDL8ECOuA/hZ7TrC6bwbEhrtV0EuA6fxgST0ge2zIA88Xje7+p2/NtX+aYpbGBPUyQ
-	l0pHfv8G+9Jpkq7aE2lyVsbSJq38n1fF5hyCNV8JfhTLgpgJRCpMfg=
-X-Received: by 2002:a17:903:a8f:b0:2ce:a600:6022 with SMTP id d9443c01a7336-2cf34850c21mr126436495ad.7.1784497845982;
-        Sun, 19 Jul 2026 14:50:45 -0700 (PDT)
+        bh=KEZSCCPTXF+79jewlZrbFumF51dyS7Eb1UAau5L87rc=;
+        b=YXtlYz5CT5b8mU1wIl7JpgDXI3GdrSKUyd9gi0tK3b8Y5Uj3HOOogLtAE787IoOTWn
+         E335qNtevY9i4yDmhLtvqeVsPLVqTCKe4ht+AQ8L5Uf478OWE3wfBszjYAnH4fpxZoYR
+         Scq+m5ZaVKET+Je5n8wPqZzwjKTDkp8D+HCXBAcDMCLnrQknYlAWxkzTkQ/u5L52rCKp
+         nP1NFQpZt5TTohtEeMhgRuY8wX0cxbpckRwHtZE9O934oQsKHBTuTEUkYSMtuyiITHmM
+         sxqN1r+N+q+FEp6zAGmh6DE2fxhSgHLpXPHGXCBvmlzHykk2dogMzsYVCP4nQOcG2RZw
+         Chzg==
+X-Gm-Message-State: AOJu0YznX0yhgjMhP3ciYC0A5rW/4xO6ZqcLFNN+grPcq/XtkQnCGLKW
+	ZZlAgy4RCrTeboZnE3Xgd1S2fNKWNyd4LKgMqiTJt1nfVZjpsUV9uK6AEj7VSEoG
+X-Gm-Gg: AfdE7cl0glulsmSoJqR8mh1sjzK4R5jZedZcaV4alE56s4aUHMJ3Ih3u5gnLDhAmMwr
+	bSHkqnmazG4nUa8WXf3LMsTJs/djveJiFjRt8FEKnqfnAqGosbNVg3US1fiqtU6t7z3KZ6Doxpd
+	woPAeb0NN1OZQH3PhIGOqAPtZTOqJkAbXWh3N/59l5BTe59lXqbm8s5D9f6SxIppeVV86Vg3i6k
+	FKkHqgJ8bsxbh+8JR1HIuulnbIaMsQ9uGGvZceynDy9rrg8mvgfQ19mXQJrLxZuT4ABmj2JR3iw
+	aexA/ogAC0q4KNbMLUthFf4LgV2UUW/k3hI8tb16KP/cfERHAnv8gywZK0PCBgoa/JBEQtADcKV
+	7NKvS63jlVddzxsYZNHFG1+ATFvNO0QeZYtmwe1IT4hSEHIK+7j2g5KhkCSAX62hlDr17kjCxz4
+	IAM7/bWp2iyAiC1NeQHvxJHzM/PTPrvmz0mn4EU3oeH0FkrlK0Ifx2yJ7DXtIBK8rURfhj0Fftv
+	DpTNGPMDxQA3PtJSSDVIsK5AzbjHyRq3t10YfZ0uQAOiAQCbLiqT5g5i7/hRYbXPg==
+X-Received: by 2002:a17:902:ec8e:b0:2c9:e961:d256 with SMTP id d9443c01a7336-2cf3494afcemr121576355ad.27.1784497852491;
+        Sun, 19 Jul 2026 14:50:52 -0700 (PDT)
 Received: from ryzen.lan ([2601:644:8000:7a86::e35])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2cf344b78e2sm44745845ad.24.2026.07.19.14.50.44
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2cf344b78e2sm44745845ad.24.2026.07.19.14.50.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 Jul 2026 14:50:45 -0700 (PDT)
+        Sun, 19 Jul 2026 14:50:48 -0700 (PDT)
 From: Rosen Penev <rosenp@gmail.com>
 To: linux-clk@vger.kernel.org
 Cc: Michael Turquette <mturquette@baylibre.com>,
@@ -76,9 +76,9 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
 	linux-stm32@st-md-mailman.stormreply.com (moderated list:ARM/STM32 ARCHITECTURE),
 	linux-arm-kernel@lists.infradead.org (moderated list:ARM/STM32 ARCHITECTURE),
 	llvm@lists.linux.dev (open list:CLANG/LLVM BUILD SUPPORT:Keyword:\b(?i:clang|llvm)\b)
-Subject: [PATCHv2 1/2] clk: stm32: add missing bitfield.h header
-Date: Sun, 19 Jul 2026 14:50:39 -0700
-Message-ID: <20260719215040.767232-2-rosenp@gmail.com>
+Subject: [PATCHv2 2/2] clk: stm32: allow STM32MP COMPILE_TEST builds
+Date: Sun, 19 Jul 2026 14:50:40 -0700
+Message-ID: <20260719215040.767232-3-rosenp@gmail.com>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20260719215040.767232-1-rosenp@gmail.com>
 References: <20260719215040.767232-1-rosenp@gmail.com>
@@ -90,40 +90,32 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-It seems some ARM header includes this and the build passes there, but
-nowhere else. Note that the driver has COMPILE_TEST in depends.
+COMMON_CLK_STM32MP already allows COMPILE_TEST, but the parent clock
+Makefile only descends into drivers/clk/stm32 for ARCH_STM32.  Use the
+STM32MP clock symbol for that directory gate instead.
 
-Fixes: 37ae8501cdb0 ("clk: stm32: introduce clocks for STM32MP21 platfor")
+Tested with:
+make LLVM=1 ARCH=loongarch drivers/clk/stm32/
+
+Assisted-by: Codex:GPT-5.5
 Signed-off-by: Rosen Penev <rosenp@gmail.com>
 ---
- drivers/clk/stm32/clk-stm32mp21.c | 1 +
- drivers/clk/stm32/clk-stm32mp25.c | 1 +
- 2 files changed, 2 insertions(+)
+ drivers/clk/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/stm32/clk-stm32mp21.c b/drivers/clk/stm32/clk-stm32mp21.c
-index c8a37b716bd5..bdb17419908c 100644
---- a/drivers/clk/stm32/clk-stm32mp21.c
-+++ b/drivers/clk/stm32/clk-stm32mp21.c
-@@ -4,6 +4,7 @@
-  * Author: Gabriel Fernandez <gabriel.fernandez@foss.st.com> for STMicroelectronics.
-  */
- 
-+#include <linux/bitfield.h>
- #include <linux/bus/stm32_firewall_device.h>
- #include <linux/clk-provider.h>
- #include <linux/io.h>
-diff --git a/drivers/clk/stm32/clk-stm32mp25.c b/drivers/clk/stm32/clk-stm32mp25.c
-index 52f0e8a12926..eb0bc918ecee 100644
---- a/drivers/clk/stm32/clk-stm32mp25.c
-+++ b/drivers/clk/stm32/clk-stm32mp25.c
-@@ -4,6 +4,7 @@
-  * Author: Gabriel Fernandez <gabriel.fernandez@foss.st.com> for STMicroelectronics.
-  */
- 
-+#include <linux/bitfield.h>
- #include <linux/bus/stm32_firewall_device.h>
- #include <linux/clk-provider.h>
- #include <linux/io.h>
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 8383f9f1da51..bbcedf5d60ea 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -151,7 +151,7 @@ obj-y					+= spacemit/
+ obj-$(CONFIG_PLAT_SPEAR)		+= spear/
+ obj-y					+= sprd/
+ obj-$(CONFIG_ARCH_STI)			+= st/
+-obj-$(CONFIG_ARCH_STM32)		+= stm32/
++obj-$(CONFIG_COMMON_CLK_STM32MP)	+= stm32/
+ obj-y					+= starfive/
+ obj-$(CONFIG_ARCH_SUNXI)		+= sunxi/
+ obj-y					+= sunxi-ng/
 -- 
 2.55.0
 
