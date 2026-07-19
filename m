@@ -1,64 +1,89 @@
-Received: from mail-43102.protonmail.ch (mail-43102.protonmail.ch [185.70.43.102])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19F3E1E47C5
-	for <linux-clk@vger.kernel.org>; Sat, 18 Jul 2026 23:28:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.102
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 690EE39150A
+	for <linux-clk@vger.kernel.org>; Sun, 19 Jul 2026 10:53:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784417336; cv=none; b=J03Kh+OMLpe4HiHeanXwDlPUUwvQu0kyZM/U4D7FqHrl6vLGOW24kOjBzde4tk3ObUQgj1ymavbLapbPvu5LHsCzx/zX36EN7cWXxI0gCLygYDdwSrNW1Y5CNCmnqhMtmeHhL5EQRS5vc8O1sf/OAJTXGshqnQ2oyPaZbAFx194=
+	t=1784458396; cv=none; b=t7gaT6vbvIijZo/lqOSTGPjFI/6bZNAuryidnHH8zxX7/RmS4PLdnV1g323Uk7X9na1l4zMaRKwd2/Ay73EFvBg/y6AoagWDFFve/rJY5Lvs+gmwPHKdZqVK55pSnMJHMPysdMs413unhCinZPCnD+rKd1RoXEqmZlRBipMvWVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784417336; c=relaxed/simple;
-	bh=jo9g2GDI/6NeeN99rn8z6/28nXe9vk0uAcnKw2N4GC8=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GLmi0KHoHvjEXdHTyDP8591T5I1PnK6TT3Jqfj/n7FgbYw78dwItnvmd/qQYHa8lzhUzMMTVaVB30dUtFaAA+UZQo4AsrSB24N0vfY+ffu25fw25YRGw6ErAHA4mgTc+yMD3F8eT25IhVkdMsx4ML1DhnagLlfoE/LCstZgHqQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=frmobMaZ; arc=none smtp.client-ip=185.70.43.102
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+	s=arc-20240116; t=1784458396; c=relaxed/simple;
+	bh=xiWJCg+K70PNnHYQYuop9vFbcWQnQg/pw4mdJOG9ZdI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=abRU33zgn7R2693oEYx/XtVI5DjtVeVEvlcXz0BGmiuBFo3ovv4J/KZV8x6Idk7Dwp0h25k+fIUw9lewihnIs7yYi7G9d//kg2m991NvjdIsnPZPRTeqbjq7sLRLgMgc8FcGQP0/+7r5kbCN8TMpCHm3ESLbLE54QZWgsIY7BUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZyTJgIkf; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="frmobMaZ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1784417327; x=1784676527;
-	bh=jo9g2GDI/6NeeN99rn8z6/28nXe9vk0uAcnKw2N4GC8=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=frmobMaZIxC1WXm021Mj8/MUfvktEd3tKzb0XjBD6r+DWrIHHlDRUYl5JJ2MR6CQF
-	 W3WRu5hEK1ixmqhKTQseGv1FDg0HhLQmQyD0MI0nksmwiz2oyfJqWWTKXbr39J26iv
-	 ZNK+ZG0ZhVRNQEp5GnsbpIhpXkA42YgyCDcIYfifzVuiKVjXddIW4Qp8f42Fp/Dc+0
-	 3mIIJcbZPxKOeCuQNmjUf8qin88PeX/D8AYJWn5JsorCXoYVg3I5ijMENcZDO+3nRh
-	 TnHAn1WLKzgqJP7zSQ//MwjvrraQCbl8REO+JxiuazNbGulkYC2yPepEwrDcisgqBN
-	 ADuRN6ucmcNhg==
-Date: Sat, 18 Jul 2026 23:28:43 +0000
-To: David Heidelberg <david@ixit.cz>, Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, Dmitry Baryshkov <lumag@kernel.org>, Jagadeesh Kona <quic_jkona@quicinc.com>, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-From: Esteban Urrutia <esteuwu@proton.me>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] clk: qcom: dispcc-sm8450: Fix disp_cc_mdss_mdp_clk_src ops
-Message-ID: <57bece3e-cfa8-4ddd-811b-eae271b738fd@proton.me>
-In-Reply-To: <e43fd30b-4f97-4f14-85f2-7d113c0dc1c3@ixit.cz>
-References: <20260713-sm8450-qol-dispcc-v3-0-56fd05822270@proton.me> <20260713-sm8450-qol-dispcc-v3-1-56fd05822270@proton.me> <e43fd30b-4f97-4f14-85f2-7d113c0dc1c3@ixit.cz>
-Feedback-ID: 147889766:user:proton
-X-Pm-Message-ID: 4b7f46a2be7eeadc0406834d95ffbd1b2879a764
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZyTJgIkf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C55A21F0155B
+	for <linux-clk@vger.kernel.org>; Sun, 19 Jul 2026 10:53:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1784458394;
+	bh=xiWJCg+K70PNnHYQYuop9vFbcWQnQg/pw4mdJOG9ZdI=;
+	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc;
+	b=ZyTJgIkf1FoSvkAQx9ZMwsuHcg4db2Ntmm6SsBGxLQeVWueg+ib7i3xjE9+4kRM9x
+	 CHUJ3maizZsg4LjP8kh3ujq9uO8PI+0WAESkcMswfHvOt8nI8rjoNPQbfA56eIHE36
+	 1fRboNAK1KhN0aJ1Qmz2q9CrveQHTAGKvHTkpYIlA32H81lD/PqlmfbtMuEuu0PDfA
+	 GNQUvXSdYgdxw83nMt0N69UDsAvWG7Lvhu4QaKK9IcUQl53tQ3bZRQoduheKBKjFQ7
+	 NTQx9IzH2va9jzoz3dtv0LFFguXoqA9V9M0lNviMzFvzT0rGOPPtBHN8hRl1l3mfGv
+	 F7dHQikmWYKwg==
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-39c94d4fdb9so44712421fa.1
+        for <linux-clk@vger.kernel.org>; Sun, 19 Jul 2026 03:53:14 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+Rr5MHo/rLTL0kgs8ZzIDrmos3wdlhGCc65Po+GZmsBgED01kmRlpdS6CfW3PaH/xHz+o6CavwH6LMU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwaQjmnu6VLL2mdS5J533Pyrx3luD6JWn/4r5AS4+l3tg0dSvce
+	JcZ5rb8ApyxdWCamGyapIh7kPp3L2D5F+6yO5QK87vpZSyfFpiLVSWzbH9TphPg2FRi1hOqvak1
+	vk2ADSwcAN9YVVzLizp88KtIZOAZoBHk=
+X-Received: by 2002:a2e:a286:0:b0:39c:6a3c:953a with SMTP id
+ 38308e7fff4ca-39ea015858fmr15722871fa.11.1784458392988; Sun, 19 Jul 2026
+ 03:53:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20260717-a733-rtc-v5-0-3874cc26abf7@baylibre.com> <20260717-a733-rtc-v5-1-3874cc26abf7@baylibre.com>
+In-Reply-To: <20260717-a733-rtc-v5-1-3874cc26abf7@baylibre.com>
+Reply-To: wens@kernel.org
+From: Chen-Yu Tsai <wens@kernel.org>
+Date: Sun, 19 Jul 2026 18:53:00 +0800
+X-Gmail-Original-Message-ID: <CAGb2v657_62Ky=oNyx-WK1=UuSBvOeMxyEZ+ifxp-Gp0LmVCag@mail.gmail.com>
+X-Gm-Features: AUfX_my_i9ygLUgOUcSlS_CiEH1KIWUcMgqwo_sNf9Y9u0foqvVGbsR0em4SCF0
+Message-ID: <CAGb2v657_62Ky=oNyx-WK1=UuSBvOeMxyEZ+ifxp-Gp0LmVCag@mail.gmail.com>
+Subject: Re: [PATCH v5 1/4] clk: sunxi-ng: mux: fix determine helper rate propagation
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Junhui Liu <junhui.liu@pigmoral.tech>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Maxime Ripard <mripard@kernel.org>, linux-rtc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On 7/17/26 5:02 PM, David Heidelberg wrote:
-> it's likely this change will be safe for older sdm845 too? Comma.AI peopl=
-e have
-> it applied downstream on top of 6.18/7.1 [1], so I'm wondering if it's so=
-mething
-> after testing on available targets could be enabled for 845 too.
+On Fri, Jul 17, 2026 at 11:25=E2=80=AFPM Jerome Brunet <jbrunet@baylibre.co=
+m> wrote:
+>
+> Applying the pre divider on the parent rate is wrong because, while
+> handling rate propagation through determine_rate(), the framework will
+> likely round the parent rate again while cycling through the possibilitie=
+s,
+> throwing away the prediv applied. This means, the parent rate will then
+> be wrong when the prediv is unapplied from a parent rate on which it
+> was never applied to begin with.
+>
+> The right way to do it is to unapply the prediv from the requested rate,
+> which is the wanted rate at the input on the clock element, and pass this
+> to framework to do its thing.
+>
+> Change the determine rate mux helper in this way.
+>
+> Fixes: 1c8d7af61b37 ("clk: sunxi-ng: convert from divider_round_rate_pare=
+nt() to divider_determine_rate()")
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 
-Hello.
-I'm not sure, since the patch you linked modifies both mdp and rot clocks
-while I only had to modify mdp for SM8450/8475.
-Both clocks would have to be tested to get a verdict.
+Reviewed-by: Chen-Yu Tsai <wens@kernel.org>
 
-Regards,
-Esteban
-
+Will wait a few more days before merging the series in case anyone
+else spots anything.
