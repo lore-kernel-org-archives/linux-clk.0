@@ -1,268 +1,226 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA103392C34
-	for <linux-clk@vger.kernel.org>; Mon, 20 Jul 2026 06:10:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E72083BF69C;
+	Mon, 20 Jul 2026 07:29:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.200.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784527848; cv=none; b=PuwD1nTN+dt6UPZxGDvZf98F7yPARQKWxvofTIfV+v/UrrVZzrmI35iY+HnbTf7VgYNRyGMGUm2AesNunGB6gvSqaQL5CKm8+K4NtiHwVcsZluiLZS9wtO8kKpmIf+HuiLAc/I3jsGVWv1eqXo0aNg9PplPt1ej9xdyjUUC2qqk=
+	t=1784532596; cv=none; b=VPYPSbu8iL4Z7Jc8kvwJEMP8+Ysq32NP9oaIOX9OtvRTW/DvDjGzBYhSZbXXh9MPAGb4VErOTtlmgOaZ4lcjihtqm/yaZuovg1TkK6VE1QOhTG9JuKnVLVCTB+62T4SxQiuqyr9rUxEwqxx0myQjAGXNOHDVHTqxwWYld2RO9ds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784527848; c=relaxed/simple;
-	bh=4r6ZnfEi0zmrLqc+xZvfOpWYg9iGvvkUC1ZP2gGi/30=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VBjhWUofTe3RpvYwISzLfsDpSDU52Qcen5vnwrwxIxwxVPm0A2bz5FDw0xlfIiN96D11KZxjKKFjLcgflPipoHqeuK473WP7Sg6+K/5E2PBGs0D0sb0F04q/4tWhVsY+KPfzC82wWEGcGZKXu5sxtQ0yH20X6hk1ejTk3UD4HOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=YgBEDqT/; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=A+gchvai; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="YgBEDqT/";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="A+gchvai"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66JNsBvA1019379
-	for <linux-clk@vger.kernel.org>; Mon, 20 Jul 2026 06:10:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=WzlsHGrcqxeLIakOgqDY5gST
-	ZoRDT2RRBCdNI0h9mxg=; b=YgBEDqT/XCc2Zc8FILqre60V5ch6/eGWCiikgNWl
-	Ls4Q9ddErUzATNs8eZZnqA/79MiEGBlACbxJvz5J+RJToPEAJ5qIt8E/BRFZdfp6
-	5kGSk8VkPg18jOrUlrKwKaMbe1tXXxDlBrZ4X4gXIe2L08DtIuiqWgcByEaCT2Gt
-	BZdT2bBnSqktFJTpugVLoi6rqfWDab/Q2YfX9FDvzJpu+8XfV1On/wy7SE9y+jKf
-	oFoYwp5OKs3cFg9I0PD2CEIAVvH67jAwhfY2l73Oe8Gfvvt1QhY004Tx5sFXeEmp
-	gw8Vb/5ICPVGCH4lqQHFFpfGBK5yQa+Z+1vC6R6l92KHRg==
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fg2d94mq3-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Mon, 20 Jul 2026 06:10:39 +0000 (GMT)
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-2ccb6f6a3f4so62139765ad.1
-        for <linux-clk@vger.kernel.org>; Sun, 19 Jul 2026 23:10:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1784527839; x=1785132639; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=WzlsHGrcqxeLIakOgqDY5gSTZoRDT2RRBCdNI0h9mxg=;
-        b=A+gchvailLd6UW6E5msJm6+dkn5v+6ttD6Cn1Umrf+Pph7fwQGkQsDUUvejEF1C4dg
-         OLCBgSCRJf7q1GIXfcaYMnSBD52n3pILe7iOtxVa5ZTTP8pieJWA4xDe2FKpBrABblrO
-         a5UaUQr9HxICPMN0dGOZXVyEB9diCi7y9ZZh7OXXUz15ISG/OpTr8Nj3jY35xeFyGhG4
-         dlxd2nYody1NWRkwC1phWHN3kcTDQMhhW4wTwe1rmpIgaUn7QZ16Ld/JzDffquO8IWSZ
-         Y596OKtipKNIUyfutRgLIWIKeK+ZeLAFgWclhXKLX237lwqho2XDnRjYCtRT9p99sk7h
-         XLfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784527839; x=1785132639;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=WzlsHGrcqxeLIakOgqDY5gSTZoRDT2RRBCdNI0h9mxg=;
-        b=lmv+fnTxH3qypuhH30CAY/KvHw9nsFF+8UPLBJbkzodIbWuaAEHnT0FUn7EjpWujUg
-         enVh91rPCHvGUvYZinOTBv4ta+QMyOUccVuV6jfxb8D0lSijThv5FOhs1lW1DcmXCKuZ
-         2WuZkVQbqs8QaCNqqoloM+SyJk+p4sA+BgU7yJyGtJHVJwvCIqSCx0nviBd7x2iCa6za
-         G1SCnXtGBplciyO4MLnUaMu6Ib+N7FmUFjNa7ac6WVEP2P/MrAtLwX7bdwae2KJJe3KC
-         Ie2ePA0MR9xCj794BoG5btCMGLor0Q6rpb+C10T8R8tf67G/LB9KGxDF5o4gG3yIGQ9L
-         bLCw==
-X-Forwarded-Encrypted: i=1; AHgh+RoAeiSSHRcaEpUQ8fLyOq+hNQ7mVkdR5C09btW4EzFhU1uFh8QXIEi1sFoNlPd74Bv6HGfSYZxeIQw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5IhNdUh18mWcqLtUMuAxOj6ZstE7RhZeDdjXz4YKlFosuDNoq
-	2h+/rM3i8rV/SRCMa1LvI7UhLT3kTvyBVsgFZ8kFgLaKjU86ptJgZ6TCfMmjRyWYQXhY5p1Y7Dk
-	mMA3/QLi2zMcPBBx6kwctDmKL+YNvvAh4qt7Rp3NnEc9K+D9dWaiTv8OEW2kqK0o=
-X-Gm-Gg: AfdE7clBSJO4u8kGuE0eXLdO/nS3pOhiPgv1s6AiV3BbcRSAY4erfVdANDjWTWntmdG
-	8qd3J5/f3AmurQuewbZ+qOIUzD7bVJpT09rBn4j6yWtU5li/ScxdKtseIa2WAiov1XfGNMuFUgp
-	sUTC9u+87ALJmwUkZHzZzeIyR+smBYkRVyEpKDF+Q/o+dHMhOLem6fxuYLf19mNHBhH1G2mlF/3
-	RTFUcP5pbDtwgWMVGZJdBf7vG3v1Ck8YTFYXrrsHTc0oJRpD+J2EsQLzAlyxd/ofmMe85xbxulU
-	/B1BrTtrbuzLaTm4GVAqQO4TkBOwPKS99fkNENerAZGzE80y3cY7mdi8LWDIb94YcxCVN6KKO+r
-	pzXetoPHm/hvHfTmR+zlFS9ko4QrqSZ2CLIlAmPRrdUfPKTw=
-X-Received: by 2002:a17:902:ce0b:b0:2c7:f5c6:c4a6 with SMTP id d9443c01a7336-2cf34878effmr134855815ad.7.1784527838735;
-        Sun, 19 Jul 2026 23:10:38 -0700 (PDT)
-X-Received: by 2002:a17:902:ce0b:b0:2c7:f5c6:c4a6 with SMTP id d9443c01a7336-2cf34878effmr134855465ad.7.1784527838242;
-        Sun, 19 Jul 2026 23:10:38 -0700 (PDT)
-Received: from hu-qianyu-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2cf346d9af5sm50597925ad.54.2026.07.19.23.10.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 Jul 2026 23:10:37 -0700 (PDT)
-Date: Sun, 19 Jul 2026 23:10:35 -0700
-From: Qiang Yu <qiang.yu@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Taniya Das <taniya.das@oss.qualcomm.com>, Kees Cook <kees@kernel.org>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v9 0/7] clk: qcom: Add common clkref support and migrate
- Glymur and Mahua
-Message-ID: <al272986PmAqT94J@hu-qianyu-lv.qualcomm.com>
-References: <20260713-tcsr_qref_0714-v9-0-373670ab15f9@oss.qualcomm.com>
- <alv1Q0ZmGVdUTGCu@baldur>
+	s=arc-20240116; t=1784532596; c=relaxed/simple;
+	bh=uuFR3hQTvgVy6PNb8PItg3yE2m9rP8k0PtC8tl5fFUc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=MIOHpc8rEzTbgaXrFGHZJvgJbR8/qlHhlIhRwS77pRvJx24nxwHljBHwi133htW+gCndGrF3qvxwGng9Nk+rNPQ9f/9JNAg5VWP0+blHMJ9T6X90IVB1FSEWHB/Cg8NMokfPtFWCYZnVoo05aWjHlKZP5PugOqS/KDvB2+AutsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.200.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de (drehscheibe.grey.stw.pengutronix.de [IPv6:2a0a:edc0:0:c01:1d::a2])
+	(Authenticated sender: relay-from-drehscheibe.grey.stw.pengutronix.de)
+	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id 194F0201E75;
+	Mon, 20 Jul 2026 09:20:21 +0200 (CEST)
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1wliIX-000MrJ-04;
+	Mon, 20 Jul 2026 09:20:21 +0200
+Received: from pza by lupine with local (Exim 4.98.2)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1wliIW-0000000049o-3wO4;
+	Mon, 20 Jul 2026 09:20:20 +0200
+Message-ID: <0d0c7befafd2e60b8887245f4e60a504704014dc.camel@pengutronix.de>
+Subject: Re: [PATCH v10 3/4] reset: cix: add sky1 audss auxiliary reset
+ driver
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: joakim.zhang@cixtech.com, mturquette@baylibre.com, sboyd@kernel.org, 
+	bmasney@redhat.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: cix-kernel-upstream@cixtech.com, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Date: Mon, 20 Jul 2026 09:20:20 +0200
+In-Reply-To: <20260720051505.1252774-4-joakim.zhang@cixtech.com>
+References: <20260720051505.1252774-1-joakim.zhang@cixtech.com>
+	 <20260720051505.1252774-4-joakim.zhang@cixtech.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-0+deb13u1 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alv1Q0ZmGVdUTGCu@baldur>
-X-Authority-Analysis: v=2.4 cv=HpxG3UTS c=1 sm=1 tr=0 ts=6a5dbbdf cx=c_pps
- a=JL+w9abYAAE89/QcEU+0QA==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=kj9zAlcOel0A:10 a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22
- a=VwQbUJbxAAAA:8 a=zitRP-D0AAAA:8 a=EUspDBNiAAAA:8 a=bC-a23v3AAAA:8
- a=K50iL3YY-BjGgPklzYcA:9 a=CjuIK1q_8ugA:10 a=324X-CrmTo6CU4MGRt3R:22
- a=xwnAI6pc5liRhupp6brZ:22 a=FO4_E8m0qiDe52t0p3_H:22
-X-Proofpoint-GUID: jZbFbdAUTdhfNgWoN2UHYRIqbhSb_YfR
-X-Proofpoint-ORIG-GUID: jZbFbdAUTdhfNgWoN2UHYRIqbhSb_YfR
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzIwMDA2NiBTYWx0ZWRfX7kRo5PUqKQhn
- XoZqhf5Dr7Hv2cDtb4+TyvlUdlbqDWb1IvUQCmayrDOsPMhFduK0OFurRmqr1ZJGZSKRRGehCcM
- 2zyUrJkMIlyjVtnLTOVRc+KiXf0MXcO1vjOpr4AGOGT1IE8gJC4aLL67Eoj0WOYuG2oZZmrSNZi
- WQpQVluOBv8sXrs2pdsHYN4mMfxlt9+hjmbY3CS4DuBGJkeUOTBluSNRDh4kMJNAwuz1//slHmH
- ZZa/K0N+PJ4p1IduNvOjcIH6H1F0QYi/9d/osxbS+9vm9odbABUSOlLcdIbHcPlMCiFydquHkQ9
- YyKvd/LDeyxi3NHF2mTYvAX5kVM87qi+XqYPiZevEiSNEDFUIbDUlhmQjLUDpCYZqZ5lTuQa95B
- ZPv7+KJ/1HKPBxtaVARAJANlq6GZ0Lynbspt/Y0QZqDFq3IWbpyhzAYdvAcJ1tAgouOVH2vg4z7
- h6hQtYXfL1Z8S+ZJa6g==
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNzIwMDA2NiBTYWx0ZWRfX4+PhpjM8Jb/k
- R3PNo52IXauqDsOOCpmqRU5Dk659JbGqebeNDIG75M4Zuq1eM4Lm6EOpAqrLHtNOyaHK+NeQxrw
- rneid6kT2lRdx3TEaOY3FXXQLgs7bPI=
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-07-19_08,2026-07-17_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 impostorscore=0 malwarescore=0 clxscore=1015 priorityscore=1501
- adultscore=0 spamscore=0 suspectscore=0 lowpriorityscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607200066
 
-On Sat, Jul 18, 2026 at 04:52:34PM -0500, Bjorn Andersson wrote:
-> On Mon, Jul 13, 2026 at 09:59:35PM -0700, Qiang Yu wrote:
-> > This series adds a common clkref_en implementation and converts glymur
-> > and mahua to use it, along with the related binding and DTS updates.
-> > 
-> > The PCIe clkref clocks on Glymur and Mahua gate the QREF block which
-> > provides reference clocks to the PCIe PHYs. QREF requires LDO supplies
-> > and a reference voltage from the refgen block to operate. The refgen
-> > block itself requires vdda-refgen_0p9 and vdda-refgen_1p2 LDOs to
-> > function.
-> > 
-> > Previously, these QREF votes were done in PHY drivers. In earlier
-> > discussion [1], the feedback was that this is the wrong ownership point:
-> > those supplies are for the QREF controlled by clkref registers, not for
-> > the PHY directly. Based on that feedback, this series keeps the
-> > regulator handling with the clkref control path.
-> > 
-> > Another reason for this series is reuse. clkref_en registers may live in
-> > different blocks across platforms (for example TCSR on Glymur, TLMM on
-> > SM8750 [2]), while the behavior is the same. The common helper lets each
-> > driver provide simple descriptors (name, offset, optional supplies) and
-> > reuse shared registration and runtime logic.
-> > 
-> > Glymur and Mahua share the same QREF TX/RPT/RX component naming but
-> > have different PCIe QREF topologies. Both are handled in tcsrcc-glymur.c
-> > via match_data to select the correct descriptor table per compatible.
-> > 
-> > [1] https://lore.kernel.org/lkml/aEBfV2M-ZqDF7aRz@hovoldconsulting.com/
-> > [2] https://lore.kernel.org/linux-arm-msm/20260202-topic-8750_tcsr-v1-0-cd7e6648c64f@oss.qualcomm.com/
-> > 
-> > Changes in v9:
-> >   - Add reviewed-by tags, no code change.
-> >   - Link to v8: https://lore.kernel.org/all/20260708-tcsr_qref_0708-v8-0-62c42b5fa269@oss.qualcomm.com/
-> > 
-> > Changes in v8:
-> >   - Define refs with __counted_by(num_refs) and make provider a single allocation
-> >   - Use mahua_tcsr_tx1_rpt012_rx2_regulators for PCIe6.
-> >   - Link to v7: https://lore.kernel.org/all/20260702-tcsr_qref_0702-v7-0-776f2811b7af@oss.qualcomm.com/
-> > 
-> > Changes in v7:
-> >   - Define compatible as an enum and add the per-compatible allOf/if/then block upfront for glymur. Reword commit msg for patch1
-> >   - Drop Krzysztof's Reviewed-by since the patch changed substantially from what he reviewed.
-> >   - Added a comment noting that on Mahua the REFGEN4 block is supplied by the vdda-refgen3-* regulators, and mentioned this in the commit message for patch2.
-> >   - Change the descriptor array to an array of pointers (const struct qcom_clk_ref_desc * const *). Skip unpopulated indices with if (!desc)
-> >   - Convert tcsr_cc_glymur_clk_descs[] and tcsr_cc_mahua_clk_descs[] to a pointer array.
-> >   - Add regulator lists for clkref_en on Mahua.
-> >   - Null-check device_get_match_data() result in probe.
-> >   - Add rx0 regulator in mahua tcsr node
-> >   - Squashed the former patch 8 (switch pcie5_phy ref clock to RPMH_CXO_CLK) into patch7, so Mahua PCIe probes at every commit.
-> >  - Link to v6: https://lore.kernel.org/all/20260621-tcsr_qref_0622-v6-0-c939c22ded0c@oss.qualcomm.com/
-> > 
-> > Changes in v6:
-> > - Split dt-bindings patch into two: one to move glymur-tcsr to its own
-> >   binding file, and one to add mahua support
-> > - Use regmap_set_bits()/regmap_clear_bits() instead of regmap_update_bits()
-> >   in clk-ref.c
-> > - Move clk_init_data from struct qcom_clk_ref to a stack variable in
-> >   qcom_clk_ref_register()
-> > - Add Co-developed-by/Reviewed-by tags from Konrad Dybcio
-> > - Add missing regulator supplies for EDP and USB clkref_en on glymur
-> > - Link to v5: https://patch.msgid.link/20260602-tcsr_qref_0527-v5-0-8ea174a59d7e@oss.qualcomm.com
-> > 
-> > Changes in v5:
-> > - Return 0 if regmap_read fail
-> > - Add a separate file for glymur-tcsr and mahua-tcsr
-> > - Link to v4: https://patch.msgid.link/20260527-tcsr_qref_0527-v4-0-ded83866c9d9@oss.qualcomm.com
-> > 
-> > Changes in v4:
-> > - Add mahua QREF support (binding, driver, DTS) to avoid dtb check error
-> > - Override pcie5_phy ref clock to RPMH_CXO_CLK on mahua since
-> >   TCSR_PCIE_1_CLKREF_EN is not available
-> > - Rename regulator arrays to topology-based names and merge duplicates
-> > - Remove else: false blocks from binding
-> > - Sort supply properties alphabetically in binding and DTS
-> > - Link to v3: https://lore.kernel.org/all/20260506-qref_vote_0506-v3-0-5ab71d2e6f16@oss.qualcomm.com/
-> > 
-> > Changes in v3:
-> > - Fix dtb check error: allOf:0: 'then' is a dependency of 'if'.
-> > - Link to v2: https://lore.kernel.org/all/20260420-vote_qref_in_tcsrcc-v2-0-589a23ae640a@oss.qualcomm.com/
-> > 
-> > Changes in v2:
-> > - RFC tag dropped
-> > - Changed back to additionalProperties: false
-> > - Moved all Glymur supply properties into top-level properties so they are explicitly defined.
-> > - Link to v1: https://lore.kernel.org/all/20260331-qref_vote-v1-0-3fd7fbf87864@oss.qualcomm.com/
-> > 
-> > Signed-off-by: Qiang Yu <qiang.yu@oss.qualcomm.com>
-> > ---
-> > Qiang Yu (7):
-> >       dt-bindings: clock: qcom: Move glymur TCSR to own binding
-> >       dt-bindings: clock: qcom,glymur-tcsr: Add mahua support
-> >       clk: qcom: Add generic clkref_en support
-> >       clk: qcom: tcsrcc-glymur: Add regulator supplies and migrate to clk_ref helper
-> >       clk: qcom: tcsrcc-glymur: Add Mahua QREF regulator support
-> >       arm64: dts: qcom: glymur: Add QREF regulator supplies to TCSR
-> >       arm64: dts: qcom: mahua: Add QREF regulator supplies to TCSR
-> > 
-> >  .../bindings/clock/qcom,glymur-tcsr.yaml           | 146 +++++++
-> >  .../bindings/clock/qcom,sm8550-tcsr.yaml           |   2 -
-> >  arch/arm64/boot/dts/qcom/glymur-crd.dts            |  20 +
-> >  arch/arm64/boot/dts/qcom/mahua-crd.dts             |  16 +
-> >  arch/arm64/boot/dts/qcom/mahua.dtsi                |  13 +
-> >  drivers/clk/qcom/Makefile                          |   1 +
-> >  drivers/clk/qcom/clk-ref.c                         | 205 +++++++++
-> >  drivers/clk/qcom/tcsrcc-glymur.c                   | 471 +++++++++++----------
-> >  include/linux/clk/qcom.h                           |  67 +++
-> >  9 files changed, 704 insertions(+), 237 deletions(-)
-> > ---
-> > base-commit: 3da905eb243cad56200f09bb7eaa060537aed0cc
-> 
-> I was hoping to apply this series, but I don't have this commit and
-> patch 4 ("migrate to clk_ref helper") doesn't apply to my tree.
-> 
-> What did you base this on? Why don't you test your changes on latest
-> mainline or linux-next?
-> 
-> Please rebase and test on a relevant branch.
+On Mo, 2026-07-20 at 13:15 +0800, joakim.zhang@cixtech.com wrote:
+> From: Joakim Zhang <joakim.zhang@cixtech.com>
+>=20
+> Add an auxiliary reset controller driver for the AUDSS CRU. Sixteen
+> software reset lines for audio subsystem peripherals are controlled
+> through one register in the CRU register map.
+>=20
+> The driver is created by the AUDSS clock platform driver and registers
+> the reset controller on the CRU device node.
+>=20
+> Signed-off-by: Joakim Zhang <joakim.zhang@cixtech.com>
+> ---
+>  drivers/reset/Kconfig            |  13 +++
+>  drivers/reset/Makefile           |   1 +
+>  drivers/reset/reset-sky1-audss.c | 137 +++++++++++++++++++++++++++++++
+>  3 files changed, 151 insertions(+)
+>  create mode 100644 drivers/reset/reset-sky1-audss.c
+>=20
+> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+> index d009eb0849a3..b19e719f2abe 100644
+> --- a/drivers/reset/Kconfig
+> +++ b/drivers/reset/Kconfig
+> @@ -300,6 +300,19 @@ config RESET_SKY1
+>  	help
+>  	  This enables the reset controller for Cix Sky1.
+> =20
+> +config RESET_SKY1_AUDSS
+> +	tristate "Cix Sky1 Audio Subsystem reset controller"
+> +	depends on ARCH_CIX || COMPILE_TEST
+> +	select AUXILIARY_BUS
+> +	default CLK_SKY1_AUDSS
+> +	help
+> +	  Support for block-level software reset lines in the Cix Sky1
+> +	  Audio Subsystem (AUDSS) Clock and Reset Unit. Sixteen reset
+> +	  outputs for audio peripherals are controlled through the CRU
+> +	  register map. The driver binds as an auxiliary device from
+> +	  the AUDSS clock driver. Say M or Y here if you want to build
+> +	  this driver.
+> +
+>  config RESET_SOCFPGA
+>  	bool "SoCFPGA Reset Driver" if COMPILE_TEST && (!ARM || !ARCH_INTEL_SOC=
+FPGA)
+>  	default ARM && ARCH_INTEL_SOCFPGA
+> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
+> index 3e52569bd276..e81407ea3e29 100644
+> --- a/drivers/reset/Makefile
+> +++ b/drivers/reset/Makefile
+> @@ -39,6 +39,7 @@ obj-$(CONFIG_RESET_RZV2H_USB2PHY) +=3D reset-rzv2h-usb2=
+phy.o
+>  obj-$(CONFIG_RESET_SCMI) +=3D reset-scmi.o
+>  obj-$(CONFIG_RESET_SIMPLE) +=3D reset-simple.o
+>  obj-$(CONFIG_RESET_SKY1) +=3D reset-sky1.o
+> +obj-$(CONFIG_RESET_SKY1_AUDSS) +=3D reset-sky1-audss.o
+>  obj-$(CONFIG_RESET_SOCFPGA) +=3D reset-socfpga.o
+>  obj-$(CONFIG_RESET_SUNPLUS) +=3D reset-sunplus.o
+>  obj-$(CONFIG_RESET_SUNXI) +=3D reset-sunxi.o
+> diff --git a/drivers/reset/reset-sky1-audss.c b/drivers/reset/reset-sky1-=
+audss.c
+> new file mode 100644
+> index 000000000000..d31d80e1251a
+> --- /dev/null
+> +++ b/drivers/reset/reset-sky1-audss.c
+> @@ -0,0 +1,137 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Cix Sky1 Audio Subsystem reset controller driver
+> + *
+> + * Copyright 2026 Cix Technology Group Co., Ltd.
+> + */
+> +
+> +#include <dt-bindings/reset/cix,sky1-audss-cru.h>
+> +
+> +#include <linux/auxiliary_bus.h>
+> +#include <linux/delay.h>
+> +#include <linux/device.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
 
-Sorry for the trouble, I based v9 on next-20260713, but I forgot to
-drop this patch
-https://lore.kernel.org/all/20260420133616.88740-2-krzysztof.kozlowski@oss.qualcomm.com/,
-which is a dependency for another series I'm working on, before
-running b4 prep -n.
+What is this used for?
 
-I can git am v9 cleanly onto latest linux-next (next-20260717), but
-I'm not sure if that's the branch you apply against. Could you
-confirm which branch I should rebase onto, so I don't run into the
-same issue again?
+> +#include <linux/regmap.h>
+> +#include <linux/reset-controller.h>
+> +
+> +#define SKY1_RESET_SLEEP_MIN_US		50
+> +#define SKY1_RESET_SLEEP_MAX_US		100
 
-- Qiang Yu
+Is this delay compatible with all possible modules being reset?
+
+Are min and max from a spec or is this just some safe value?
+Maybe you could only define the _MIN_US and use fsleep() below.
+
+> +
+> +#define AUDSS_SW_RST			0x78
+> +
+> +struct sky1_audss_reset_map {
+> +	unsigned int offset;
+> +	unsigned int mask;
+> +};
+> +
+> +struct sky1_audss_reset {
+> +	struct reset_controller_dev rcdev;
+> +	struct regmap *regmap;
+> +	const struct sky1_audss_reset_map *map;
+> +};
+> +
+> +static const struct sky1_audss_reset_map sky1_audss_reset_map[] =3D {
+> +	[AUDSS_I2S0_SW_RST]   =3D { AUDSS_SW_RST, BIT(0) },
+> +	[AUDSS_I2S1_SW_RST]   =3D { AUDSS_SW_RST, BIT(1) },
+> +	[AUDSS_I2S2_SW_RST]   =3D { AUDSS_SW_RST, BIT(2) },
+> +	[AUDSS_I2S3_SW_RST]   =3D { AUDSS_SW_RST, BIT(3) },
+> +	[AUDSS_I2S4_SW_RST]   =3D { AUDSS_SW_RST, BIT(4) },
+> +	[AUDSS_I2S5_SW_RST]   =3D { AUDSS_SW_RST, BIT(5) },
+> +	[AUDSS_I2S6_SW_RST]   =3D { AUDSS_SW_RST, BIT(6) },
+> +	[AUDSS_I2S7_SW_RST]   =3D { AUDSS_SW_RST, BIT(7) },
+> +	[AUDSS_I2S8_SW_RST]   =3D { AUDSS_SW_RST, BIT(8) },
+> +	[AUDSS_I2S9_SW_RST]   =3D { AUDSS_SW_RST, BIT(9) },
+> +	[AUDSS_WDT_SW_RST]    =3D { AUDSS_SW_RST, BIT(10) },
+> +	[AUDSS_TIMER_SW_RST]  =3D { AUDSS_SW_RST, BIT(11) },
+> +	[AUDSS_MB0_SW_RST]    =3D { AUDSS_SW_RST, BIT(12) },
+> +	[AUDSS_MB1_SW_RST]    =3D { AUDSS_SW_RST, BIT(13) },
+> +	[AUDSS_HDA_SW_RST]    =3D { AUDSS_SW_RST, BIT(14) },
+> +	[AUDSS_DMAC_SW_RST]   =3D { AUDSS_SW_RST, BIT(15) },
+> +};
+> +
+> +static struct sky1_audss_reset *to_sky1_audss_reset(struct reset_control=
+ler_dev *rcdev)
+> +{
+> +	return container_of(rcdev, struct sky1_audss_reset, rcdev);
+> +}
+> +
+> +static int sky1_audss_reset_set(struct reset_controller_dev *rcdev,
+> +				unsigned long id, bool assert)
+> +{
+> +	struct sky1_audss_reset *priv =3D to_sky1_audss_reset(rcdev);
+> +	const struct sky1_audss_reset_map *signal =3D &priv->map[id];
+> +	unsigned int value =3D assert ? 0 : signal->mask;
+> +
+> +	return regmap_update_bits(priv->regmap, signal->offset, signal->mask, v=
+alue);
+
+Consider using regmap_assign_bits() instead.
+
+> +}
+> +
+> +static int sky1_audss_reset_assert(struct reset_controller_dev *rcdev,
+> +				   unsigned long id)
+> +{
+> +	int ret;
+> +
+> +	ret =3D sky1_audss_reset_set(rcdev, id, true);
+> +	if (ret)
+> +		return ret;
+> +
+> +	usleep_range(SKY1_RESET_SLEEP_MIN_US, SKY1_RESET_SLEEP_MAX_US);
+> +	return 0;
+> +}
+> +
+> +static int sky1_audss_reset_deassert(struct reset_controller_dev *rcdev,
+> +				     unsigned long id)
+> +{
+> +	int ret;
+> +
+> +	ret =3D sky1_audss_reset_set(rcdev, id, false);
+> +	if (ret)
+> +		return ret;
+> +
+> +	usleep_range(SKY1_RESET_SLEEP_MIN_US, SKY1_RESET_SLEEP_MAX_US);
+
+This is the same in both assert and deassert. You could move it into
+the helper function.
+
+regards
+Philipp
