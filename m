@@ -1,134 +1,183 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF63B428492
-	for <linux-clk@vger.kernel.org>; Mon, 20 Jul 2026 14:08:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97D75426690
+	for <linux-clk@vger.kernel.org>; Mon, 20 Jul 2026 14:43:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784556498; cv=none; b=efE6BpbDf63iJMuN4VJDxPrsxQs2hKQaLeLj9uxHkCUiI/CMTsKl9kMyM9PTWvsNj8BuETeT07dYnxj7zFF0BlByRP+lwrHYdZ6hr9J+AisSEl9Z050BXZuG1y04rLLj9hX2w+Db8d+HvQNL19Pz5I1Zf1wyBcTVLX/iu1m53zw=
+	t=1784558611; cv=none; b=ndNdGPrj7vGsamOGcKBPUolGK9D2TrdTZARPPzvGKF0QKit36+FiJ+WpbevtpbCNTgPcwxODoNEs1eUMjPklPBa68KapO+pnBAoI5PExjIEj7JGloAqQfdpZIW4/vzVTIhnjAFTXU5A2fmHWN70jYQTIEUcN5U6Zjqt8Ou67QZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784556498; c=relaxed/simple;
-	bh=cbNlAQD4vaMPcdCTyxOV3QscBcL0a5EhES5s/lF1+qI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dFoF7qQBemCIOdszNUpYXAvb0JrNJUGhUdQ7AwP8j6j+ydkVgyou6AimIJLGA0240kiocImXmwpdjdAaUm9EzNqlUjAeDxBrn9m1bDBMtiKYKfhKq8O5n2pMOVrXHVkGy7gGiSk4zxvrFsNzxpUX7KDNMAtVdhL7X0yEATYweDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=iYD4Md31; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1784558611; c=relaxed/simple;
+	bh=z4xNGYkf4fETdRDY/WXmkgQmHnFeScnUkN9aeJpb0+8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LjVJzmykW/wsQkj/oPphx35oy1BDS1CkXBjGVC7wS1MuKR8+kNc+V2ArYXzu+qfrnRlA1ztO/NEwqJxQLRNomaLdJyBESfJ03s7LtXF1WJ9UKgMO5pE1BPmzozsK6WURLMpgZKlxUjsOJ+uMjfk8JKHY4sXTHnG+4yBx+rwBR0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ylz9mDKR; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="iYD4Md31"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-493f75f7172so79935855e9.1
-        for <linux-clk@vger.kernel.org>; Mon, 20 Jul 2026 07:08:15 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ylz9mDKR"
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-38e42560ebcso3473029a91.1
+        for <linux-clk@vger.kernel.org>; Mon, 20 Jul 2026 07:43:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1784556494; x=1785161294; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=cbNlAQD4vaMPcdCTyxOV3QscBcL0a5EhES5s/lF1+qI=;
-        b=iYD4Md31igGBFwYYpHorK5kAQUlS3FwGaZcZLzjZHXr6IGL543fNkr/30DfpIeNAns
-         5WgX//L2vxaqFmM7JjUGmKzqXf/jOtnVmIviZaBadigtgJOhuaASKVHvyPYadGAdUdCv
-         T/yL29YpfiBtWxELV/5edoi8duI64BDsoA6J3b1gacLCme3IhqXoATj+Vd/8o+mWDsPD
-         GRiT3s1LIZ1za9HEAraKb3TzX2F2wN6pEL5nN7RfB5W7MMPqxeuFwvXS7GEKhDlWgPa/
-         BQYvUs4Z+TnBdIdbSxu7Fwrs1bdEpD+3kHHZ/hus4gQ8XKHgYQiXgksc+D9CLxDWeSCC
-         KjLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784556494; x=1785161294;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+        d=gmail.com; s=20251104; t=1784558609; x=1785163409; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=cbNlAQD4vaMPcdCTyxOV3QscBcL0a5EhES5s/lF1+qI=;
-        b=kp7eH5mCXUIV35r94xa2Dh1soYlXggVF9HGKMQgwSJ5loOsgvjtbdeioY3iuCG4u9v
-         OMdshtv/gt8iu/CCOQcKZtEEUpKt/0WuHkoPl5ZCDs4fkCIuo70o6Oj2WJAMLERZlWvd
-         vPWItO+nPDT/+Tq+X5efiQr2+u8/sqYsVVOHpktJGab0Fi2AF0I0wWshg2g5cUpE3zaM
-         skGpJ8bht7eWqhKUE0DfaG6buAtCAUDi5vAD2r5b7zSp6lDsrt+a+9k/qPJNArrHqyZT
-         +02f6gerMefk4RiQZsLZyzpjJ+kfnmjINhFzmtVUPW4xxZDmHUsSZDlgTiebox9d6jeX
-         QJQQ==
-X-Forwarded-Encrypted: i=1; AHgh+RplDJ1AtTyTcKinsZYGBA3WAtG36+9+sFaJEUruc9u5NBZ1SklErtc2/xUIWOpCUU86ml1zt04BkKc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzm1708UQ+DXUohY2zvvJhb2c9WDIV9Gjk/RlaEF4w7aZ+WHVmC
-	TzRxPue3EQryqsIiesQ5Ngef4nmZ/Hc9I5D7TbY9gkJ4YhLBhcangT3XSbv+kaOVQAg=
-X-Gm-Gg: AfdE7clhAmWo+35ImnVFs6z4yN1LJ7t5cWK+xj8R5ywNgUPAw6mHewdRq/MI/UIQe/7
-	LcpGfUYiJ5PY+NbQ1ZKEK4z2VkeeIG0tuTbwrPOM+LwuSrWGiOcMX3ieBcIsCVuXP/NBkfeOw29
-	9h1H/imceZF2fubyP+NMgpqEN2Xg1IiCzgsIHIqTntPS2lkPYGBEo6JN9RBzlBXVkDk32x9Zy0U
-	apnmGJ0x5MDb6d/2VypfVBiwiHXq2bpMbzZcoHzqFC7mzNbdcr/JkmWMLPAob4cZrgHeiEc9jLu
-	IBOHwMPGhybSwEH/jV6PMJpY9Jsf2+8NVpZ13cDsHNhS5xk9Klj4BmblCKtl9GCTdoMYzUDrpHc
-	CjqPaigQ6JH8yfefe1um6XwYz02PddCvl64YdtT2bA1s2CvXvu7MSHkQ29zQh2KuaFcI+exwuWT
-	OrZ+H52cZ0N6SrHmDasLC9QvueZiVH75F1dZ910mQ9ElqqSm6zWpSL7RP6y6Dc4SqBIA==
-X-Received: by 2002:a05:600c:4714:b0:495:3f84:a792 with SMTP id 5b1f17b1804b1-4954a3ed494mr166218475e9.12.1784556493925;
-        Mon, 20 Jul 2026 07:08:13 -0700 (PDT)
-Received: from localhost (p200300f65f47db048587886ecb5b26b2.dip0.t-ipconnect.de. [2003:f6:5f47:db04:8587:886e:cb5b:26b2])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-49548e0fcdbsm241920195e9.2.2026.07.20.07.08.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Jul 2026 07:08:13 -0700 (PDT)
-Date: Mon, 20 Jul 2026 16:08:12 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig_=28The_Capable_Hub=29?= <u.kleine-koenig@baylibre.com>
-To: Brian Masney <bmasney@redhat.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Maxime Ripard <mripard@kernel.org>
-Subject: Re: clk maintenance [Was: Re: [PATCH v1] clk: Use named initializers
- for platform_device_id arrays]
-Message-ID: <al4rKFweyMy-s-MH@monoceros>
-References: <841cf835a24bb2f3acb99a97bb58e583220e03a2.1779963984.git.u.kleine-koenig@baylibre.com>
- <aln6H4A2QTO9w3Rq@monoceros>
- <alpC8l8qPFL955ZB@redhat.com>
- <aluuES750vojgH3q@monoceros>
- <al4QKxSTz6wd8EsW@redhat.com>
+        bh=YRPQsRwj+n1ng0H+WDG2QV9LkRG40/jMmpAbf3NOmNY=;
+        b=Ylz9mDKRMe6O4vjS+eQwOXJiakIAaEobGKbnFVNCh0Wek9nIDGMhVCXE0joTv1/Sgh
+         txhsTjkpV2mveGVg5L57b7HM6BUD6LsYgvckzclc1Hlmh3hY8/fv+rR5YqUNnS6F2juW
+         Nu0U4rggrOgtrxaiX8c31rkeT2cCIozh764BKKipQaNlFOdgPl/p+7mEOfbGAjSW+W2V
+         6cMoXsz4vh+ZaAbN+ZFyra1VqkImhvfjbyvJZAfm32cLpiauPZEjvWp2JCCz+cFalAVR
+         7vFBqZ7jKAlbUiFbf3LTLgdSHfGLvQuoPyFKnRdl190kQBr8DIDWb9ktMwguCnCGOvPB
+         tTNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784558609; x=1785163409;
+        h=content-transfer-encoding:content-type:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=YRPQsRwj+n1ng0H+WDG2QV9LkRG40/jMmpAbf3NOmNY=;
+        b=gi/1C5IO+Rrr4dfydxAHyyLxdmpeKGoxMRVDJ2cWyBkS/s96q0EV0LXcoE+FuySvJP
+         zKzVC4gsavL3cnSTDmFE9KHCjnHgzATYJZ8yn+ZOiPtmcc4pYBD5NDO0t4ntnITWhd8X
+         +A+1Oi/hnyv9uR1LGIZQ0zxeSYRzeQDbETfyjXu7YS26CanfTx1ixlnxffOpD7mhYM4b
+         zsFcn/6PyoHUpQyCqWcjc0UXAZWY7YpiH9O26PHPmDQmky0o6xAsMNgm77lTbZEjd/ky
+         7qJBwkHu5BICVromm0hfSJLNXfkT7RD2aDPVtl7kCKcqbxaEUt3+tH0TItDSAE0Zx7O7
+         nrQA==
+X-Forwarded-Encrypted: i=1; AHgh+RqusZ1Mhl+bwrjVrXuRQygSjU668bzSvyp2OiHNUtUaJJJjhg3BZ6jEMfH76XDiYodgseD0kLiQhh4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbnWWq+RoZvOQeGdo8e4tVcM4g4nJMKgPp/NCzI+NQekFBcrxG
+	EVE6m7mIjNWvnSKp5J9fb6G4CsUZYUUXsXYFf3E2hHxY3lcV2rqAspwP
+X-Gm-Gg: AfdE7ckph2uyjHDc2pdZaoSwNlRwTo/Sd8x9IqFZyc2WVPQf/NklBjwyY1wotQnPN2F
+	IUJIjgO2kCIfcOp0r3kmxsNpJ/xgKzWx/+O2yFjLJtp7CaHJr7LJBiy8nuyso67VMOu2XupliPb
+	BzNFbgW/6/LZSTFpUzSJYMZgcY/n81tNDDMOIJYo/LG9GUNqvme0xrsX3JeYt/NRA4yQY+Ycde7
+	gsTOHOo6t4dJFginqsYhx3/TySViIUnEYhh9XrsMsVmOA847FfIFNdAJkxHBMUb1rXie3j/1K0W
+	B2/vN6XNnhtwgb68859Bsv4xlc++Q42M22kClZn2NDBWINbOGo+MENS6C3Fh7sxhLDZozgqXxlI
+	DzB+aGZ7UaVM84fRoPzLWne71O85HOHOZbY3D4tBwY4uzVHdPJ33CtxiD7sy6tiY4hFmxHXKfkL
+	C86A23VNk2yfq6rxPizz5XyqwGHzOHG3NRV2XVf5LvP4BYJTYulAw=
+X-Received: by 2002:a05:6a21:3981:b0:3c0:adec:b3bd with SMTP id adf61e73a8af0-3c3ad9646afmr16051848637.49.1784558608970;
+        Mon, 20 Jul 2026 07:43:28 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-31429f9bb62sm35894013eec.2.2026.07.20.07.43.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Jul 2026 07:43:28 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <612e3496-2917-4d4c-8794-69c3b5b27c5c@roeck-us.net>
+Date: Mon, 20 Jul 2026 07:43:25 -0700
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="elkpkh5zbtozz6y7"
-Content-Disposition: inline
-In-Reply-To: <al4QKxSTz6wd8EsW@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] firmware: scmi: Make SCMI arch independent
+To: Ulf Hansson <ulf.hansson@oss.qualcomm.com>,
+ Cristian Marussi <cristian.marussi@arm.com>
+Cc: Michal Simek <michal.simek@amd.com>, linux-kernel@vger.kernel.org,
+ monstr@monstr.eu, git@amd.com, vincent.guittot@linaro.org,
+ Souvik.Chakravarty@arm.com, Alex Shi <alexs@kernel.org>,
+ Andy Shevchenko <andy@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
+ Brian Masney <bmasney@redhat.com>, David Lechner <dlechner@baylibre.com>,
+ Dongliang Mu <dzm91@hust.edu.cn>, Fabio Estevam <festevam@gmail.com>,
+ Frank Li <Frank.Li@nxp.com>, Jonathan Cameron <jic23@kernel.org>,
+ Jonathan Corbet <corbet@lwn.net>, Len Brown <lenb@kernel.org>,
+ Liam Girdwood <lgirdwood@gmail.com>, Linus Walleij <linusw@kernel.org>,
+ Lukasz Luba <lukasz.luba@arm.com>, Mark Brown <broonie@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Pavel Machek <pavel@kernel.org>,
+ Peng Fan <peng.fan@nxp.com>, Pengutronix Kernel Team
+ <kernel@pengutronix.de>, Philipp Zabel <p.zabel@pengutronix.de>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Shuah Khan
+ <skhan@linuxfoundation.org>, Stephen Boyd <sboyd@kernel.org>,
+ Sudeep Holla <sudeep.holla@kernel.org>, Ulf Hansson <ulfh@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>, Yanteng Si <si.yanteng@linux.dev>,
+ arm-scmi@vger.kernel.org,
+ "open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>,
+ linux-arm-kernel@lists.infradead.org,
+ "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+ "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+ "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+ "open list:HARDWARE MONITORING" <linux-hwmon@vger.kernel.org>,
+ "open list:IIO SUBSYSTEM AND DRIVERS" <linux-iio@vger.kernel.org>,
+ "open list:ENERGY MODEL" <linux-pm@vger.kernel.org>
+References: <d7f7e8c9589d937b60e43168845ab4fda15037a3.1783603600.git.michal.simek@amd.com>
+ <ak_Eu_eQKalPMwo-@pluto>
+ <CAPx+jO9KMcxnmt-wT5jaApj9p7s11B6eSG6K08Jt9J=-vXxjhA@mail.gmail.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <CAPx+jO9KMcxnmt-wT5jaApj9p7s11B6eSG6K08Jt9J=-vXxjhA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+On 7/14/26 06:16, Ulf Hansson wrote:
+> On Thu, Jul 9, 2026 at 5:56 PM Cristian Marussi
+> <cristian.marussi@arm.com> wrote:
+>>
+>> On Thu, Jul 09, 2026 at 03:27:00PM +0200, Michal Simek wrote:
+>>> On heterogenious systems like AMD/Xilinx FPGA there is a need to talk to
+>>> SCMI server from different architectures than ARM that's why remove
+>>> ARM/ARM64 Kconfig dependency with also remove ARM from description and
+>>> rename folder to reflect it.
+>>
+>> While I understand dropping the dependency on ARM (I always wanted to do
+>> that and test if it worked at all on some otehr archs with QEMU), I am
+>> not sure about the whole renaming party ? why is needed just for
+>> cosmetic reasons ? it is at the end an arm originated protocol so I dont
+>> see it as a being wrong to be named as such even though used by other
+>> archs...I have not really strong opinion on this...
+> 
+> This is certainly not my call to make, but I have to admit that I
+> fully agree with the above.
+> 
+> Usually we don't rename files that indicate a legacy platform name,
+> just because a new company/platform wants to make use of it.
+> 
 
---elkpkh5zbtozz6y7
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: clk maintenance [Was: Re: [PATCH v1] clk: Use named initializers
- for platform_device_id arrays]
-MIME-Version: 1.0
+I agree.
 
-Hello Brian,
+Guenter
 
-On Mon, Jul 20, 2026 at 08:10:19AM -0400, Brian Masney wrote:
-> As Chen-Yu mentioned, I talked to Stephen about this at Linux Plumbers
-> in person last December. I'm interested, and given the importance of the
-> subsystem, I think we actually need even more people to help spread the
-> load for a healthy ecosystem.
-
-I mentioned that internally in Baylibre. Maybe someone among my
-colleagues is motivated to spend some review time for clk.
-
-> [... quite some things that Brian did ...]
-
-Judging from where I stand, I like your efforts.
-
-> To help with review, I also think that we should enable Sashiko reviews
-> to the mainglist like some other subsystems currently have enabled.
-
-I created a pull request for that:
-https://github.com/sashiko-dev/sashiko/pull/349
-
-Best regards
-Uwe
-
---elkpkh5zbtozz6y7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmpeK8kACgkQj4D7WH0S
-/k5/2Qf+O4s1NjIClsUopbDwnf2NJHmB75jAu98JmWQUg65K0qVtWdZCfI8ttiBk
-Wm+Azs0ZTBOyDVtm14/fc8gUTB/AEU0wK5OasVQqNYAzxLZIRHLyL0ntYtE/3LaY
-yazydpoA14OiMU2jkjHB/HUS9Xz3ROop5S6Fo344g/Kgucggpj5taCSrxocLkVE9
-vrw/dLT9oueDDRrMHIhA++ZLkWyQYYIdb8Vw/gSTpA/1GJyh6fv2bkRwwGNg/T8+
-2N/7a/6qi5Dco/J9axsQy6PC8t3i7XZSGcyoMdZmbOib3avMBI4Z7QHadGOeo3k4
-Qb+8M+0Z1w60kvI29dr2AkK7SS5t+A==
-=PHkx
------END PGP SIGNATURE-----
-
---elkpkh5zbtozz6y7--
