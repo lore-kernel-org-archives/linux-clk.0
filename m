@@ -1,147 +1,134 @@
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3297B407CDF
-	for <linux-clk@vger.kernel.org>; Mon, 20 Jul 2026 13:09:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF63B428492
+	for <linux-clk@vger.kernel.org>; Mon, 20 Jul 2026 14:08:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784552985; cv=none; b=o2Ddu/pJmyOTFIqz845jLcQW11X9YPu/tDGllcI1h6hOsz6vEVpXoBMSJDJ9mgOyi3ncgc7Kdu/Yo66+3a3GFWMpxUG55MfgdEqMY032lg5gb1bvvVU921y1W0hrn3QpIEiYDjonztPB5Dtn7jBcp/GWVnl2xfFQthBX9EAmUqg=
+	t=1784556498; cv=none; b=efE6BpbDf63iJMuN4VJDxPrsxQs2hKQaLeLj9uxHkCUiI/CMTsKl9kMyM9PTWvsNj8BuETeT07dYnxj7zFF0BlByRP+lwrHYdZ6hr9J+AisSEl9Z050BXZuG1y04rLLj9hX2w+Db8d+HvQNL19Pz5I1Zf1wyBcTVLX/iu1m53zw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784552985; c=relaxed/simple;
-	bh=y8U7PcjMhj0Xr6VHKfIEtPrEwt1bvhUDfHBrlhxvgwY=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=HBMT0OulhXlVB6kx6BlIXQ/z+l3WuDGqM3H7/OcP6P0TqHSodi70b41t0daP0LN91/Tkcs6XYHpCy+RFSSatMWk0Ng9D0o3VrWF5l0w8QGxoKK6J5PxsJTHR1YtjlR9oUKLsogfOGQu9/X/oUNuVu4lBZFDfW2lxFPF1wW0ZzQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dpoBILxA; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1784556498; c=relaxed/simple;
+	bh=cbNlAQD4vaMPcdCTyxOV3QscBcL0a5EhES5s/lF1+qI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dFoF7qQBemCIOdszNUpYXAvb0JrNJUGhUdQ7AwP8j6j+ydkVgyou6AimIJLGA0240kiocImXmwpdjdAaUm9EzNqlUjAeDxBrn9m1bDBMtiKYKfhKq8O5n2pMOVrXHVkGy7gGiSk4zxvrFsNzxpUX7KDNMAtVdhL7X0yEATYweDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=iYD4Md31; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dpoBILxA"
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5b2a1fd0ab0so26346e87.0
-        for <linux-clk@vger.kernel.org>; Mon, 20 Jul 2026 06:09:43 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="iYD4Md31"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-493f75f7172so79935855e9.1
+        for <linux-clk@vger.kernel.org>; Mon, 20 Jul 2026 07:08:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1784552982; x=1785157782; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:references:cc:to
-         :from:subject:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=VKfNjiRL8GQvLjdsOfTfwXC+qCtnnsPDYaibsMDCkR8=;
-        b=dpoBILxAwzv8NMAPr/7ohM5BfFS1BIhzJsP111m78njleixbzzn5mddILaWWq0wMCN
-         jlnaPFEXr8U9Wq2Cxd/YTfRn1PxE4yLfb1GKy4LwN3KG+ExtfOm25Uw0+J10zW9iGaqj
-         wVi+WV+b++BFYL38ycP6kPensea4Y5w2qXbnWpEjNwg8i8U0eae0FLm7YvVPOJ2mQuS4
-         yGG1v/cESrDAY6sUyb5b96eHgVrANcDE9jrGPAMIX8qwzHVGMUx313Fo9YmEKuu6J3rw
-         VFjfZu4H97MqmXTLpklPPEQSkxxA18hu2L4XfKSLP2tUdgFBifoSih0VboLyercZG+OJ
-         oPoQ==
+        d=baylibre.com; s=google; t=1784556494; x=1785161294; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=cbNlAQD4vaMPcdCTyxOV3QscBcL0a5EhES5s/lF1+qI=;
+        b=iYD4Md31igGBFwYYpHorK5kAQUlS3FwGaZcZLzjZHXr6IGL543fNkr/30DfpIeNAns
+         5WgX//L2vxaqFmM7JjUGmKzqXf/jOtnVmIviZaBadigtgJOhuaASKVHvyPYadGAdUdCv
+         T/yL29YpfiBtWxELV/5edoi8duI64BDsoA6J3b1gacLCme3IhqXoATj+Vd/8o+mWDsPD
+         GRiT3s1LIZ1za9HEAraKb3TzX2F2wN6pEL5nN7RfB5W7MMPqxeuFwvXS7GEKhDlWgPa/
+         BQYvUs4Z+TnBdIdbSxu7Fwrs1bdEpD+3kHHZ/hus4gQ8XKHgYQiXgksc+D9CLxDWeSCC
+         KjLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784552982; x=1785157782;
-        h=content-transfer-encoding:content-type:in-reply-to:references:cc:to
-         :from:subject:user-agent:mime-version:date:message-id:x-gm-gg
+        d=1e100.net; s=20251104; t=1784556494; x=1785161294;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=VKfNjiRL8GQvLjdsOfTfwXC+qCtnnsPDYaibsMDCkR8=;
-        b=Sux1qbTz+3EdkCJ/ws4bCi5gQi/PpeonmdCOFyI4vGJzDm1yoQdpGIuuGIooebWxTk
-         fIOv0Kz13V85F78lGQZ7zQDHbHM5YjmJqm7ia2JE272lqPKw8wlgE0Bq703u+PorNhq7
-         IhZLgGAS4QrJS5inFkBtISxakl4C51G4IaDzsDPFrKcGE9iNl9RmCBPi+82Q9uezu9CZ
-         UTPdb75P3SR9i3sRBL9EN/AHt+k27KcnDSZOqk1WEEYWRwHx6TK+m98m8t5pzQL172xB
-         AyVXBf6+8U0X5x8FrEALgaKhWTFY1ng8x0/GSjG7wYXb+KKF+O/VUzWUmD4qg8sYlBRY
-         jIEw==
-X-Forwarded-Encrypted: i=1; AHgh+RpiM6NjcHaIouW0E2nrOPkCXO8a+1o8d4DzuH6vkLhwNf6xNalYWN9Sfkg9y4nzyAeWWJkNh7gjjDA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhrCS2MCnm7UBp3tU3ikdCKvkSwgJxBMtpDM5r+VqQ/xm0duvn
-	lR/igYy11ofH6L4zjcVDPo6QrUKyMVNPu9jbvUpqw9GxVAJYlhe2EffI1FCn3La16awibL0gC8p
-	q5tVm1vI=
-X-Gm-Gg: AfdE7cnU75A+Hav4aK/V+pasngt1hYms9jOnyCeVIgDbk32R4fSiRALQl4IeqMTZloG
-	NDWFI1G4G/Xo0HY0+/UCjp+pZw9/s1Y8w5fvwsCL89FwNy23watIFbQwTbY3jI2XXsgpDkAu05K
-	/VLextJNUv3st+Tj2P3l7B3dFbOBOzHt+13KhGdYoPU3w5f8m5bbclOTKqxt9UqdDd3FkE3YDgv
-	VyV+e9FEV7WEoNSkyz+4E+wnHyRCGsnl2EnLBSPBC3zjFj7KDQjFDASbfddRiHlc2YWVAruoqnD
-	UmpAXoVJ1OVc+JF2Ph7pbAKtg89iJjMteDH1H1bZUSXn6LBeUkeKN2g3H68RFkSA2gbxfsatvyw
-	IPMT1IQou3GOSVRd/aKKVImP/my/vq6CKNtDazNbonXla3jj/NEPEkL9jgWjcpYC3WLf7G1pzmz
-	enrgxkCg2pjQqXYKv7eDeEVdaU36L0IbH4Tn8BxeYoD+tWprOFXe/89cH968klT1eqEkU=
-X-Received: by 2002:a05:6512:39c7:b0:5ae:bad9:8a3c with SMTP id 2adb3069b0e04-5b2a24e5286mr124578e87.5.1784552982084;
-        Mon, 20 Jul 2026 06:09:42 -0700 (PDT)
-Received: from [192.168.1.100] (91-159-24-186.elisa-laajakaista.fi. [91.159.24.186])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5b291d98301sm2291776e87.25.2026.07.20.06.09.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Jul 2026 06:09:41 -0700 (PDT)
-Message-ID: <3ac214ad-cdfb-4f46-9f27-5d581997f61a@linaro.org>
-Date: Mon, 20 Jul 2026 16:09:22 +0300
+        bh=cbNlAQD4vaMPcdCTyxOV3QscBcL0a5EhES5s/lF1+qI=;
+        b=kp7eH5mCXUIV35r94xa2Dh1soYlXggVF9HGKMQgwSJ5loOsgvjtbdeioY3iuCG4u9v
+         OMdshtv/gt8iu/CCOQcKZtEEUpKt/0WuHkoPl5ZCDs4fkCIuo70o6Oj2WJAMLERZlWvd
+         vPWItO+nPDT/+Tq+X5efiQr2+u8/sqYsVVOHpktJGab0Fi2AF0I0wWshg2g5cUpE3zaM
+         skGpJ8bht7eWqhKUE0DfaG6buAtCAUDi5vAD2r5b7zSp6lDsrt+a+9k/qPJNArrHqyZT
+         +02f6gerMefk4RiQZsLZyzpjJ+kfnmjINhFzmtVUPW4xxZDmHUsSZDlgTiebox9d6jeX
+         QJQQ==
+X-Forwarded-Encrypted: i=1; AHgh+RplDJ1AtTyTcKinsZYGBA3WAtG36+9+sFaJEUruc9u5NBZ1SklErtc2/xUIWOpCUU86ml1zt04BkKc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzm1708UQ+DXUohY2zvvJhb2c9WDIV9Gjk/RlaEF4w7aZ+WHVmC
+	TzRxPue3EQryqsIiesQ5Ngef4nmZ/Hc9I5D7TbY9gkJ4YhLBhcangT3XSbv+kaOVQAg=
+X-Gm-Gg: AfdE7clhAmWo+35ImnVFs6z4yN1LJ7t5cWK+xj8R5ywNgUPAw6mHewdRq/MI/UIQe/7
+	LcpGfUYiJ5PY+NbQ1ZKEK4z2VkeeIG0tuTbwrPOM+LwuSrWGiOcMX3ieBcIsCVuXP/NBkfeOw29
+	9h1H/imceZF2fubyP+NMgpqEN2Xg1IiCzgsIHIqTntPS2lkPYGBEo6JN9RBzlBXVkDk32x9Zy0U
+	apnmGJ0x5MDb6d/2VypfVBiwiHXq2bpMbzZcoHzqFC7mzNbdcr/JkmWMLPAob4cZrgHeiEc9jLu
+	IBOHwMPGhybSwEH/jV6PMJpY9Jsf2+8NVpZ13cDsHNhS5xk9Klj4BmblCKtl9GCTdoMYzUDrpHc
+	CjqPaigQ6JH8yfefe1um6XwYz02PddCvl64YdtT2bA1s2CvXvu7MSHkQ29zQh2KuaFcI+exwuWT
+	OrZ+H52cZ0N6SrHmDasLC9QvueZiVH75F1dZ910mQ9ElqqSm6zWpSL7RP6y6Dc4SqBIA==
+X-Received: by 2002:a05:600c:4714:b0:495:3f84:a792 with SMTP id 5b1f17b1804b1-4954a3ed494mr166218475e9.12.1784556493925;
+        Mon, 20 Jul 2026 07:08:13 -0700 (PDT)
+Received: from localhost (p200300f65f47db048587886ecb5b26b2.dip0.t-ipconnect.de. [2003:f6:5f47:db04:8587:886e:cb5b:26b2])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-49548e0fcdbsm241920195e9.2.2026.07.20.07.08.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Jul 2026 07:08:13 -0700 (PDT)
+Date: Mon, 20 Jul 2026 16:08:12 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig_=28The_Capable_Hub=29?= <u.kleine-koenig@baylibre.com>
+To: Brian Masney <bmasney@redhat.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Maxime Ripard <mripard@kernel.org>
+Subject: Re: clk maintenance [Was: Re: [PATCH v1] clk: Use named initializers
+ for platform_device_id arrays]
+Message-ID: <al4rKFweyMy-s-MH@monoceros>
+References: <841cf835a24bb2f3acb99a97bb58e583220e03a2.1779963984.git.u.kleine-koenig@baylibre.com>
+ <aln6H4A2QTO9w3Rq@monoceros>
+ <alpC8l8qPFL955ZB@redhat.com>
+ <aluuES750vojgH3q@monoceros>
+ <al4QKxSTz6wd8EsW@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Revert "clk: qcom: dispcc-sm8250: Enable parents for
- pixel clocks"
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
- Val Packett <val@packett.cool>, Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20260701001147.416518-1-vladimir.zapolskiy@linaro.org>
-In-Reply-To: <20260701001147.416518-1-vladimir.zapolskiy@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="elkpkh5zbtozz6y7"
+Content-Disposition: inline
+In-Reply-To: <al4QKxSTz6wd8EsW@redhat.com>
 
-On 7/1/26 03:11, Vladimir Zapolskiy wrote:
-> This reverts commit acf7a91d0b0e9e3ef374944021de62062125b7e4.
-> 
-> The commit causes quite severe problems in runtime due to the introduced
-> cyclic clock dependency:
-> 
-> * dsi@ae9400 platform device and its probe depends on dispcc clocks,
-> * the reverted commit links dispcc clocks enablement to mdss_dsiX_phy clocks,
-> * at this stage DSI PHY PLL cannot be locked to complete driver initialization,
->    the parent clocks for DISPCC provided mdss_pclkX clocks can not be enabled.
-> 
-> On RB5 board with no connected display panel on boot I get this error report:
-> 
->    DSI PLL(0) lock failed, status=0x00000000
->    PLL(0) lock failed
->    dsi0_phy_pll_out_dsiclk already disabled
->    WARNING: drivers/clk/clk.c:1188 at clk_core_disable+0xa4/0xac, CPU#4: kworker/u32:1/61
->    ...
->    dsi0_phy_pll_out_dsiclk already unprepared
->    WARNING: drivers/clk/clk.c:1047 at clk_core_unprepare+0xe4/0x104, CPU#4: kworker/u32:1/61
->    ...
->    Tainted: [W]=WARN
-> 
-> The problem has been already reported and discussed before [1], the original
-> commit was done for "preventing potential stability issues" reason, and this
-> time fixing a potential issue introduced the actual one unfortunately.
-> 
-> [1] https://lore.kernel.org/linux-arm-msm/2f5b98a4-80a6-4611-9615-ab0202a8c455@samsung.com/
-> 
-> Signed-off-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
 
-I kindly ask to review/comment this pretty trivial fix.
+--elkpkh5zbtozz6y7
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Subject: Re: clk maintenance [Was: Re: [PATCH v1] clk: Use named initializers
+ for platform_device_id arrays]
+MIME-Version: 1.0
 
-> ---
->   drivers/clk/qcom/dispcc-sm8250.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/dispcc-sm8250.c b/drivers/clk/qcom/dispcc-sm8250.c
-> index e59cdadd5647..cdfdb2cfb02b 100644
-> --- a/drivers/clk/qcom/dispcc-sm8250.c
-> +++ b/drivers/clk/qcom/dispcc-sm8250.c
-> @@ -578,7 +578,7 @@ static struct clk_rcg2 disp_cc_mdss_pclk0_clk_src = {
->   		.name = "disp_cc_mdss_pclk0_clk_src",
->   		.parent_data = disp_cc_parent_data_6,
->   		.num_parents = ARRAY_SIZE(disp_cc_parent_data_6),
-> -		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
-> +		.flags = CLK_SET_RATE_PARENT,
->   		.ops = &clk_pixel_ops,
->   	},
->   };
-> @@ -592,7 +592,7 @@ static struct clk_rcg2 disp_cc_mdss_pclk1_clk_src = {
->   		.name = "disp_cc_mdss_pclk1_clk_src",
->   		.parent_data = disp_cc_parent_data_6,
->   		.num_parents = ARRAY_SIZE(disp_cc_parent_data_6),
-> -		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
-> +		.flags = CLK_SET_RATE_PARENT,
->   		.ops = &clk_pixel_ops,
->   	},
->   };
+Hello Brian,
 
--- 
-Best wishes,
-Vladimir
+On Mon, Jul 20, 2026 at 08:10:19AM -0400, Brian Masney wrote:
+> As Chen-Yu mentioned, I talked to Stephen about this at Linux Plumbers
+> in person last December. I'm interested, and given the importance of the
+> subsystem, I think we actually need even more people to help spread the
+> load for a healthy ecosystem.
+
+I mentioned that internally in Baylibre. Maybe someone among my
+colleagues is motivated to spend some review time for clk.
+
+> [... quite some things that Brian did ...]
+
+Judging from where I stand, I like your efforts.
+
+> To help with review, I also think that we should enable Sashiko reviews
+> to the mainglist like some other subsystems currently have enabled.
+
+I created a pull request for that:
+https://github.com/sashiko-dev/sashiko/pull/349
+
+Best regards
+Uwe
+
+--elkpkh5zbtozz6y7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmpeK8kACgkQj4D7WH0S
+/k5/2Qf+O4s1NjIClsUopbDwnf2NJHmB75jAu98JmWQUg65K0qVtWdZCfI8ttiBk
+Wm+Azs0ZTBOyDVtm14/fc8gUTB/AEU0wK5OasVQqNYAzxLZIRHLyL0ntYtE/3LaY
+yazydpoA14OiMU2jkjHB/HUS9Xz3ROop5S6Fo344g/Kgucggpj5taCSrxocLkVE9
+vrw/dLT9oueDDRrMHIhA++ZLkWyQYYIdb8Vw/gSTpA/1GJyh6fv2bkRwwGNg/T8+
+2N/7a/6qi5Dco/J9axsQy6PC8t3i7XZSGcyoMdZmbOib3avMBI4Z7QHadGOeo3k4
+Qb+8M+0Z1w60kvI29dr2AkK7SS5t+A==
+=PHkx
+-----END PGP SIGNATURE-----
+
+--elkpkh5zbtozz6y7--
