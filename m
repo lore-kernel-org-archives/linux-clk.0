@@ -1,41 +1,66 @@
-Received: from galaxy.gendns.com (galaxy.gendns.com [66.235.175.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 579DC4302E7;
-	Mon, 20 Jul 2026 22:11:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.235.175.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94E682877DE
+	for <linux-clk@vger.kernel.org>; Mon, 20 Jul 2026 22:39:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784585505; cv=none; b=mBbOK6xJG++U9sHBLlcsw0Zrifrvzqz4N0LKF0D8f+CDY8/HcgF02cugX43d0veAM1EE7J93XGejo1yAT2akVGF1DK2/7b7hQCx61bGUClkI5k2ZaEFmXLDAioHAxcWtz1ftbA3hH/d4N1xrvuy1R8FGB2l1xijs7bm4csxkBOM=
+	t=1784587169; cv=none; b=CaWJVZiZVBSzngRIskqOuxj+6PmUp4VQDsggorhMCwxLrC05xv0JWpsySgBjbAmroCVmgPtdp6IkM/LW85E2mXrVW5dvDj68qDSJMgBADjOWIYfxptVZnoePKN/2wIgsR85hDgdIUBFFn+l4wkOG9CQ8xoBezDQtr4emeGL6E/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784585505; c=relaxed/simple;
-	bh=IXdkMB90ECmx7ZiabkHQKs4LDZjRWXhiKKmWsNfbcFE=;
+	s=arc-20240116; t=1784587169; c=relaxed/simple;
+	bh=xfUE2DZgn0yvt/8dxChfStSQkvAhF7YKlC2IIEi58Bc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CvSUVQlTHEQhw9UQI1DuejuJak5u4jykaPtDcSX8vQZSG2MUrMWC45NEVAVpY7HUFl9mW3ptZlXMGZLDa5fLQRiau6udJwI95+TG67pizQU+0P9OMmYUqKV+ZCG1aMXoF7q3zaWrI1qMVBFFPcpjJ5ALCE2qLS1SZ6qYH12l4RQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com; spf=pass smtp.mailfrom=lechnology.com; dkim=pass (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b=qadxDWP2; arc=none smtp.client-ip=66.235.175.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lechnology.com
+	 In-Reply-To:Content-Type; b=I66Xzrao/QCTY/q0HrpVzU3HHBmHLdT3wEPFWUEe9xnkPTRVdJFwpCt7QCJKWJe1ymBWCQHV1zqIaWPiEuREdVBk0f+c33sWNiW4cNyRX7AX2kBqCECohwkzT/yZr5xTD/kvc0RD6VpA0dD55DyDCK8R6W48N5thEyJltSYpzK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=q5j7dMDy; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="qadxDWP2"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=+tpkoeW+7VvJHQnX22PK7a9zXsnJPGmjZE7ACZRo5rE=; b=qadxDWP2wCHANzh3cRgiEWTC1v
-	cokMXxJN5iI9FrqFBVpwSDA2nhxLiQbTglart5moLuV+STtvAGA1cJvbGSNksiHaJNpGyod18x8wm
-	Tec3wVb/w7eM3rrJpec7dby646lFnkAXnavYMXtZrwQEtDYzaGuXqo23+w8Lt8Ufw3+W16gx6uS7E
-	svuRmX+oDef9Z5Zg4O3nRLdJi0HSDM3cioU/HmoGic2adOhKPNi+FaFvsGq6N2o1rwyGFyi/T59s0
-	sJ//Werk2wd4OccyDQfsRYgdsdAnuKDzJrZ97M3t6kYDtvJFZKmYGFznqIvntA43Mjtcl5Du7ibHk
-	aZ86164Q==;
-Received: from ip98-183-112-25.ok.ok.cox.net ([98.183.112.25]:40822 helo=[192.168.1.142])
-	by galaxy.gendns.com with essmtpa  (TLS1.3) tls TLS_AES_128_GCM_SHA256
-	(Exim 4.99.4)
-	(envelope-from <david@lechnology.com>)
-	id 1wlwD3-0000000F6Tl-04dF;
-	Mon, 20 Jul 2026 18:11:35 -0400
-Message-ID: <063a6426-3f2c-4682-9e5e-63ae45c95792@lechnology.com>
-Date: Mon, 20 Jul 2026 17:11:34 -0500
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q5j7dMDy"
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-39cc840005cso5905151fa.0
+        for <linux-clk@vger.kernel.org>; Mon, 20 Jul 2026 15:39:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1784587164; x=1785191964; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=8Zu0ELU6pmpUM1jgcMzfCc0cxC2PBXB9BxIZy3tNZzI=;
+        b=q5j7dMDyRmYtKLvaV9M1Jq3qNsV1YG6Ss13QidFcgvZuzqJ1PqGPfATwaFjOaTYPRR
+         RW4usBzhT4ue5+b8kbISIrDj+Tf1PGPXvb+9Yk4+DC/M5poswD28VtI5HVk/Sjq23Jqe
+         E3eh7wViD/abOagvigf6kDiBsLVv2hBRkOTW2PgAOLPmDmo1CehQRZhjDB5FCtm19Nz7
+         IKGxYo7yqppMqJXFskUgbzd0V4bcQr1J7gezfBJfKZAP8MaVBLq2t0dSeR/ed1M6BkKE
+         OVFZjHuNBn7YlwHUWSfz5p8hv7W8Tebmrae5uPI9Cup3krWf9Myi3ZbfY49n+vtgEVQr
+         iLZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784587164; x=1785191964;
+        h=content-transfer-encoding:content-type:in-reply-to:from:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=8Zu0ELU6pmpUM1jgcMzfCc0cxC2PBXB9BxIZy3tNZzI=;
+        b=H3PC5UFL0GZM/S5acfQrqiAbK5nPWxNCaCyFP01Jzm4Lry9l41CdnxNDrgG2/E8KNP
+         bhfLl/vmiZmfsDWnvhVqcbGvOUFlOjiZt+ST7mcLPhZ0+CPHJh9K6lQ3E8GWy1qutc8v
+         kNiOxEOP/m9x0eUHTHYcRF8aFFEeMzy3LFhQSSPTdMTqLSVNbCLvGPJUDcXroVZXHr4x
+         tIJBjE5dzMHQpD/XA4Z0E1OQU6ESZVd22UQWrNcDm+J5lkoKiiPssYKNxUa7NGRHep0D
+         9foQuinw8drbK35eHjm2qeSYe/kcvjzkBb7vgMi1SIQOHUR9Dg+UgthDnOER5YGKjPC4
+         KbSg==
+X-Forwarded-Encrypted: i=1; AHgh+RrG69qIUmVw/RJ67CCHMVBRf8kRfdIP+KSQQU6UbwatW8YQlY5+EyBh+BW797JOvwPvDALLAC1rbAA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeFzn4ryEOAcqFlA7vsQoo86nrs3nUACGJCU5NQfZbbF1AKchx
+	FrgXClr5QQS7griGj9BtqJUwwRyqXx4NUr14KOv89eep8zwXO7NCQiPv5umoH+A6ftA=
+X-Gm-Gg: AR+sD12c9VnP7ZVggkhtO4BU5j8WxWCuU1FS6i1HsfEWY3oxbNz3lWYyJY4Db3VRAcJ
+	TgGVKCD1SwQcZk3bfc+2Pf/nH8jCYmiKmlsOK4X9AKfisA2H9kLyQq152hOF7dZCRx4+bXBLrW5
+	7AtutSw0SFbVG9Sss5pqZJ1efI7NLVQi4gUDRLkO22OqUUt97WknJvAiuZMB0+2VgCGROqYg+QD
+	sjxnIBkZPFJxZR8epwz6xTVUeC1IKO1Jui9g/9I9qMigNNoAN7+YitbfsV9ZXhQP/8MQ5cDfTXh
+	XNVNCMp1sxi/c2Ctp33KZK0cXmsz/TxjvI1v3erKnxQMj0080yjLQV0k0jSRTIEBP4grJUKqmqG
+	vzldtb5O4tVV/7Y166HiT88N65+7yW2Ur8Oqma9UT389FSTBwSpRTfvEMaMuz8KqbwuP8PiKnQ/
+	ixlE8H/OzieBRVR6JDos8k+0tT1z0SkhT/OoUJ5qk9N4nfhZ+G+8+vecViV8GS+GH7q38=
+X-Received: by 2002:a05:6512:2524:b0:5b0:1f1b:854 with SMTP id 2adb3069b0e04-5b28f88030cmr1824187e87.1.1784587164458;
+        Mon, 20 Jul 2026 15:39:24 -0700 (PDT)
+Received: from [192.168.1.100] (91-159-24-186.elisa-laajakaista.fi. [91.159.24.186])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5b291e187e5sm2548462e87.56.2026.07.20.15.39.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Jul 2026 15:39:23 -0700 (PDT)
+Message-ID: <6875d673-4c33-40ed-bec2-d158651194f3@linaro.org>
+Date: Tue, 21 Jul 2026 01:39:23 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -43,134 +68,102 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: clock: ti,da850-pll: Convert to DT schema
-To: Bhargav Joshi <j.bhargav.u@gmail.com>,
+Subject: Re: [PATCH] Revert "clk: qcom: dispcc-sm8250: Enable parents for
+ pixel clocks"
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, goledhruva@gmail.com, m-chawdhry@ti.com,
- daniel.baluta@gmail.com, simona.toaca@nxp.com
-References: <20260717-ti-pll-v1-1-f6f9ba8c9b5e@gmail.com>
-Content-Language: en-US
-From: David Lechner <david@lechnology.com>
-Autocrypt: addr=david@lechnology.com; keydata=
- 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
-In-Reply-To: <20260717-ti-pll-v1-1-f6f9ba8c9b5e@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+ Val Packett <val@packett.cool>, Marek Szyprowski <m.szyprowski@samsung.com>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20260701001147.416518-1-vladimir.zapolskiy@linaro.org>
+ <bjgad2qs6pt2cn5pr353qaelxa3gtpaqfoxjnrwfhwbty4g75f@ngu4ddk5jeyf>
+ <31d1ac01-ccd2-4abc-9828-be120f095de4@linaro.org>
+ <wd5rytfnsj5vppnimpemocstsaaqhmt4xmie4qnppdh45vsnml@2xne3khyalnc>
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+In-Reply-To: <wd5rytfnsj5vppnimpemocstsaaqhmt4xmie4qnppdh45vsnml@2xne3khyalnc>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - galaxy.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: galaxy.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: galaxy.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
 
-On 7/17/26 1:21 PM, Bhargav Joshi wrote:
-> Convert TI da850-pll binding from legacy text to dt schema.
-> No functional change is introduced during conversion.
+On 7/20/26 23:54, Dmitry Baryshkov wrote:
+> On Mon, Jul 20, 2026 at 09:21:03PM +0300, Vladimir Zapolskiy wrote:
+>> On 7/20/26 18:00, Dmitry Baryshkov wrote:
+>>> On Wed, Jul 01, 2026 at 03:11:47AM +0300, Vladimir Zapolskiy wrote:
+>>>> This reverts commit acf7a91d0b0e9e3ef374944021de62062125b7e4.
+>>>>
+>>>> The commit causes quite severe problems in runtime due to the introduced
+>>>> cyclic clock dependency:
+>>>>
+>>>> * dsi@ae9400 platform device and its probe depends on dispcc clocks,
+>>>> * the reverted commit links dispcc clocks enablement to mdss_dsiX_phy clocks,
+>>>> * at this stage DSI PHY PLL cannot be locked to complete driver initialization,
+>>>>     the parent clocks for DISPCC provided mdss_pclkX clocks can not be enabled.
+>>>>
+>>>> On RB5 board with no connected display panel on boot I get this error report:
+>>>>
+>>>>     DSI PLL(0) lock failed, status=0x00000000
+>>>>     PLL(0) lock failed
+>>>
+>>> Why can't it be locked at this stage? Is it underpowered? Or is the code
+>>> trying to lock it on some random, unsupported value?
+>>
+>> Since there is no display panel attached, I believe DSI PLL clocks should
+>> not be enabled at all, however the reverted commit requires it to happen.
 > 
-> Signed-off-by: Bhargav Joshi <j.bhargav.u@gmail.com>
-> ---
+> If there is no display panel, you can keep DSI hosts and DSI PHYs
+> disabled. If they are enabled, they can be configured to some
+> intermediate values (even if for the sake of turning off the GDSC).
+> 
+>>
+>> I don't have a panel for RB5 to test, if the PLL clocks can be locked or
+>> not, when there is an attached panel.
+>>
+>> In general I believe the problem is plainly related to the established
+>> cyclic dependency as it's stated above, and in any case the reverted
+>> commit is a clear regression for RB5 board with no panel.
+> 
+> RB5 ships with the lt9611uxc bridge.
+> 
+> There is no cyclic dependency, AFAIR. It's DSI PHY PLL <- dispcc <- MDSS
+> pclk clocks.
 
-...
+What does '<-' above mean?
 
-> diff --git a/Documentation/devicetree/bindings/clock/ti/davinci/ti,da850-pll.yaml b/Documentation/devicetree/bindings/clock/ti/davinci/ti,da850-pll.yaml
-> new file mode 100644
-> index 000000000000..5e4109567b75
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/ti/davinci/ti,da850-pll.yaml
-> @@ -0,0 +1,177 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/ti/davinci/ti,da850-pll.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: TI DaVinci PLL Controllers
+ From sm8250.dtsi (using labels only):
 
-TI DA850/OMAP-L138/AM18xx PLL Controllers
+* dispcc is supplied by mdss_dsi[01]_phy,
+* mdss_dsi[01]_phy are supplied by dispcc,
+* mdss_dsi[01]_phy are children of mdss,
+* mdss is supplied by dispcc.
 
-(The original binding used to have more, but they have since been removed
-because of obsolescence. We don't expect to ever add more.)
+After the applied commit, which I advocate to revert for now, the ball
+of clocks is no longer left untangled and linear.
 
-> +
-> +maintainers:
-> +  - David Lechner <david@lechnology.com>
-> +  - Bhargav Joshi <j.bhargav.u@gmail.com>
+If there is a clear regression caused by some commit, it would make
+sense to revert it first, then reapply it after an alternative fix
+is ready.
 
-Do you actually have knowledge/interest/hardware needed to
-support this?
+>>>>     dsi0_phy_pll_out_dsiclk already disabled
+>>>>     WARNING: drivers/clk/clk.c:1188 at clk_core_disable+0xa4/0xac, CPU#4: kworker/u32:1/61
+>>>>     ...
+>>>>     dsi0_phy_pll_out_dsiclk already unprepared
+>>>>     WARNING: drivers/clk/clk.c:1047 at clk_core_unprepare+0xe4/0x104, CPU#4: kworker/u32:1/61
+>>>>     ...
+>>>>     Tainted: [W]=WARN
+>>>>
+>>>> The problem has been already reported and discussed before [1], the original
+>>>> commit was done for "preventing potential stability issues" reason, and this
+>>>> time fixing a potential issue introduced the actual one unfortunately.
+>>>>
+>>>> [1] https://lore.kernel.org/linux-arm-msm/2f5b98a4-80a6-4611-9615-ab0202a8c455@samsung.com/
+>>>>
+>>>> Signed-off-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+>>>> ---
+>>>>    drivers/clk/qcom/dispcc-sm8250.c | 4 ++--
+>>>>    1 file changed, 2 insertions(+), 2 deletions(-)
+>>>>
+>>
 
-> +
-> +description:
-> +  The PLL provides clocks to most of the components on the SoC. In addition to
-> +  the PLL itself, this controller also contains bypasses, gates, dividers, an
-> +  multiplexers for various clock signals.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - ti,da850-pll0
-> +      - ti,da850-pll1
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    minItems: 1
-> +    maxItems: 2
-> +
-> +  clock-names:
-> +    minItems: 1
-> +    maxItems: 2
-
-The items: needs to be moved up here. The if: should only limit pll1.
-
+-- 
+Best wishes,
+Vladimir
