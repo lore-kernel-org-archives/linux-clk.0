@@ -1,169 +1,160 @@
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94E682877DE
-	for <linux-clk@vger.kernel.org>; Mon, 20 Jul 2026 22:39:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784587169; cv=none; b=CaWJVZiZVBSzngRIskqOuxj+6PmUp4VQDsggorhMCwxLrC05xv0JWpsySgBjbAmroCVmgPtdp6IkM/LW85E2mXrVW5dvDj68qDSJMgBADjOWIYfxptVZnoePKN/2wIgsR85hDgdIUBFFn+l4wkOG9CQ8xoBezDQtr4emeGL6E/s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784587169; c=relaxed/simple;
-	bh=xfUE2DZgn0yvt/8dxChfStSQkvAhF7YKlC2IIEi58Bc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I66Xzrao/QCTY/q0HrpVzU3HHBmHLdT3wEPFWUEe9xnkPTRVdJFwpCt7QCJKWJe1ymBWCQHV1zqIaWPiEuREdVBk0f+c33sWNiW4cNyRX7AX2kBqCECohwkzT/yZr5xTD/kvc0RD6VpA0dD55DyDCK8R6W48N5thEyJltSYpzK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=q5j7dMDy; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70D7933A711
+	for <linux-clk@vger.kernel.org>; Tue, 21 Jul 2026 01:04:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1784595857; cv=pass; b=uyVVZ9bzz0BpXyg4NeOuYDLK3sbn/YDQEwrl0xkVeE1+wUMC+qj3SjQlAR97j7OTgNlsidtcJwNKJhjXFgpZeOggl5EMK07MRnMK3CtQAakj7bbzzdH+SzRtDzUuyvjl+kKUuJ29Hn5sYYLjIXDOTa6/wIG4oNTVqIni4ajsJ70=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1784595857; c=relaxed/simple;
+	bh=GLZupEyovXd1SdBnMvwTWDIFj/J7xpVBqHa2aOIagrE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sfvIfXiJdYvPnaQ6tWUF9AYtQ2waGl+CyRXc83viVzVAF1nh0YqN/Hh0SveWTLdAmzolssLieN2gkW9/imAH+DDVlId/exVQ5prDoAK+2v9LKglBLOfz/9rTzKxKtnXVw6OLysUYJB1mYcg1vYOlNPw3D9z0vEqWV5gaebKr7Mo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZVvVp/Hk; arc=pass smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q5j7dMDy"
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-39cc840005cso5905151fa.0
-        for <linux-clk@vger.kernel.org>; Mon, 20 Jul 2026 15:39:26 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZVvVp/Hk"
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-69c1220bd51so12299150a12.3
+        for <linux-clk@vger.kernel.org>; Mon, 20 Jul 2026 18:04:16 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1784595855; cv=none;
+        d=google.com; s=arc-20260327;
+        b=Lefnfd4XdkGGREY2SvQqzSXfKaR9ixIEqgnSIpiR0tMD/SDx6i6fOVrPxV5OuLBAYb
+         OeTCXT4rwRDWYdO90wX3v5gReqKJr2B2OIDxLCTZHpEnErmEHlv7FaXOG+TmkAuRevCu
+         EeFbMgl/IEvRf+zMm3X/GtIfaM/ErdUNY+URxLw/Zf6x4ChlZL6duPm3c4guzhQgqjVf
+         qKjzkS9fiedT9iyWOwqNbry3qFC2rzEGIbCcKdsCbFSjkY1nqoO02/MXFah3oWggGM1K
+         E0GpdDQZx1J3P7ywJzMpODt8hWVM4GemMNNoobp8UFtgACwb7Gep3o8JgAiYTHw98N99
+         OzXg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=EHPTMhb9JAbcXOq5Xex7Y15eQjdJiY8OEmA13h9LDA0=;
+        fh=fnjowjLvV0RzgCEX/ol4grhutagxYoCzxcCHPDy4iYU=;
+        b=f5+dXTda0Q+OrUGLVaJzgrgR3k8LnOGuXRr8c079RfAPUX7M1+Wn6SIWIYut2AegwP
+         WqPsiL+Qc+xr+N9VL75LlUOAcb0X3XMa3OTCnFxTbRm+ZTZkXqR0n2k+9fuHhnrrLbFP
+         NsHQ/jAEQf4ii14IUUjQvGz0Rdff6ptpOiMOl/x9CqtTW56eoLbyNSDPN/lOHf6hp+TK
+         JkChTnkglmZ19Kgi0q7XDMyuNzetT1Qkugv1wtTTgq10q8ECeLARWZOGlw4893TRXw+v
+         8SumLviULF+DCpPEwDhWgiNWevkQzmFkDAPPQbFmxerSE0Pu8Z0Gw+QcYLAI02JH55tF
+         lUyw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1784587164; x=1785191964; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=8Zu0ELU6pmpUM1jgcMzfCc0cxC2PBXB9BxIZy3tNZzI=;
-        b=q5j7dMDyRmYtKLvaV9M1Jq3qNsV1YG6Ss13QidFcgvZuzqJ1PqGPfATwaFjOaTYPRR
-         RW4usBzhT4ue5+b8kbISIrDj+Tf1PGPXvb+9Yk4+DC/M5poswD28VtI5HVk/Sjq23Jqe
-         E3eh7wViD/abOagvigf6kDiBsLVv2hBRkOTW2PgAOLPmDmo1CehQRZhjDB5FCtm19Nz7
-         IKGxYo7yqppMqJXFskUgbzd0V4bcQr1J7gezfBJfKZAP8MaVBLq2t0dSeR/ed1M6BkKE
-         OVFZjHuNBn7YlwHUWSfz5p8hv7W8Tebmrae5uPI9Cup3krWf9Myi3ZbfY49n+vtgEVQr
-         iLZQ==
+        d=gmail.com; s=20251104; t=1784595855; x=1785200655; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=EHPTMhb9JAbcXOq5Xex7Y15eQjdJiY8OEmA13h9LDA0=;
+        b=ZVvVp/HkYcU6nhtgpKyaAyPpqnvtuT0kIXWq97bz76+og233QxSAGGmLy3kQtLZzCK
+         nsHtfEqCgAqbmPAKQPSE+YPHxnx+XwrSuApX3g/InQXCoYKFZPF5VvayQYJG1fwJ6S7F
+         d0Vt805KZwOKqw1sjFU6PIFfxsdAES6mk624FWbBM5ip3hk5IqI0+PoznAQbGgJ6ryIQ
+         6eKEBxoCNFpQxXKGBfKoWxAGEqYKmlOpNIl45OD4iWCxieAe97XQyr1jFny/x99Kgvcw
+         VFUinzIhi1SxaO5mVYEc3Dio+34vSfXp2mdm1kL32O3Mm2Y8hjOL6gZSYRNsvI+Vknc5
+         rQ6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784587164; x=1785191964;
-        h=content-transfer-encoding:content-type:in-reply-to:from:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:x-gm-gg
+        d=1e100.net; s=20251104; t=1784595855; x=1785200655;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=8Zu0ELU6pmpUM1jgcMzfCc0cxC2PBXB9BxIZy3tNZzI=;
-        b=H3PC5UFL0GZM/S5acfQrqiAbK5nPWxNCaCyFP01Jzm4Lry9l41CdnxNDrgG2/E8KNP
-         bhfLl/vmiZmfsDWnvhVqcbGvOUFlOjiZt+ST7mcLPhZ0+CPHJh9K6lQ3E8GWy1qutc8v
-         kNiOxEOP/m9x0eUHTHYcRF8aFFEeMzy3LFhQSSPTdMTqLSVNbCLvGPJUDcXroVZXHr4x
-         tIJBjE5dzMHQpD/XA4Z0E1OQU6ESZVd22UQWrNcDm+J5lkoKiiPssYKNxUa7NGRHep0D
-         9foQuinw8drbK35eHjm2qeSYe/kcvjzkBb7vgMi1SIQOHUR9Dg+UgthDnOER5YGKjPC4
-         KbSg==
-X-Forwarded-Encrypted: i=1; AHgh+RrG69qIUmVw/RJ67CCHMVBRf8kRfdIP+KSQQU6UbwatW8YQlY5+EyBh+BW797JOvwPvDALLAC1rbAA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeFzn4ryEOAcqFlA7vsQoo86nrs3nUACGJCU5NQfZbbF1AKchx
-	FrgXClr5QQS7griGj9BtqJUwwRyqXx4NUr14KOv89eep8zwXO7NCQiPv5umoH+A6ftA=
-X-Gm-Gg: AR+sD12c9VnP7ZVggkhtO4BU5j8WxWCuU1FS6i1HsfEWY3oxbNz3lWYyJY4Db3VRAcJ
-	TgGVKCD1SwQcZk3bfc+2Pf/nH8jCYmiKmlsOK4X9AKfisA2H9kLyQq152hOF7dZCRx4+bXBLrW5
-	7AtutSw0SFbVG9Sss5pqZJ1efI7NLVQi4gUDRLkO22OqUUt97WknJvAiuZMB0+2VgCGROqYg+QD
-	sjxnIBkZPFJxZR8epwz6xTVUeC1IKO1Jui9g/9I9qMigNNoAN7+YitbfsV9ZXhQP/8MQ5cDfTXh
-	XNVNCMp1sxi/c2Ctp33KZK0cXmsz/TxjvI1v3erKnxQMj0080yjLQV0k0jSRTIEBP4grJUKqmqG
-	vzldtb5O4tVV/7Y166HiT88N65+7yW2Ur8Oqma9UT389FSTBwSpRTfvEMaMuz8KqbwuP8PiKnQ/
-	ixlE8H/OzieBRVR6JDos8k+0tT1z0SkhT/OoUJ5qk9N4nfhZ+G+8+vecViV8GS+GH7q38=
-X-Received: by 2002:a05:6512:2524:b0:5b0:1f1b:854 with SMTP id 2adb3069b0e04-5b28f88030cmr1824187e87.1.1784587164458;
-        Mon, 20 Jul 2026 15:39:24 -0700 (PDT)
-Received: from [192.168.1.100] (91-159-24-186.elisa-laajakaista.fi. [91.159.24.186])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5b291e187e5sm2548462e87.56.2026.07.20.15.39.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Jul 2026 15:39:23 -0700 (PDT)
-Message-ID: <6875d673-4c33-40ed-bec2-d158651194f3@linaro.org>
-Date: Tue, 21 Jul 2026 01:39:23 +0300
+        bh=EHPTMhb9JAbcXOq5Xex7Y15eQjdJiY8OEmA13h9LDA0=;
+        b=pj9nS7Ltv0Pbe5vhrmuzcjVSOoyU0rXPCRU/3iBrwdK3fY+suesqMy4gba2MITH0uo
+         v3R/xH0bXpTLFfd8d/zHGL834dg7meDHNQ+larKLuRJqmyruaJih6VrnedujyvXgmQag
+         +7nVzJUMetoX+XdgTjPC9qJGfZPsOAfOQYGLtU6yY2D4kW0Hk5u5alhKKhBeKDI19hCG
+         TjAuOxI7ANDGZYs2QaIsned0kifl5Qt8R6ZKJFTz4upkd0Hnp2JGaKlUik+yxxEaSuWw
+         PaQ14QUrGT4C7wiV+YIpam+VO38ylS8JQmKctY9ehD2bPc24DyhsKNQy95tox4BWeNF9
+         j+Tg==
+X-Forwarded-Encrypted: i=1; AHgh+RpEmO/N9bSqcgxHr6DLkSHlL5ld1X27gceAHA5d0plJYNKpNtFicgPxW7g90O+ttLEX0HGPp13X0ag=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzn00CkNoIaQaFPSs+nIQoIrohzVOUnK55+xE1HIlIg+2XzJ2SS
+	Elom9ZgbXednbwd6gx1pimbMAT96IV8uApdlx/xsEjtQigcrT6OvJYIdXUjra/UexCnHGAQfHl8
+	N7WKVcAJlg4cKbQA/XtdSQEYQrjG1xHI=
+X-Gm-Gg: AR+sD11GlwFn6sOITgRp3C49WqrwAYRvZb+E14Q41AgoqfTf3mz3Ae4az3dZBZ1dLRq
+	TQzA4vo8kP+hCNgJA7EBAPpG5Jo6P2HFjvjaUN00KsDNE5x1DrMobS+lvQa87vfOmBkdzKWp5d6
+	YGcI0XznG0Rs/LsjEGJ8NKwfFYGyZ/wRDyJlgp1EIHZ8Yi7uwPHsPhdPMK51Nm9keFWFTWMqR1g
+	jj6CVNZisI32rGJ/AtTv0RRdoyMrf7zl45gIsZQwyo9gVQHLHLkAJQl7xG8oJcSrpSS8AfcJ1sD
+	8XlJQMzKaEYcKJBGXWpam6UauROmUMntE0hSls3dTuP4I2XEB3YFPhg6wz7/ZJBFE6K+AGr8wqL
+	owpggjNBKLzKqSUucshY/3xEgVqAur4mnOYLYyHP4ulNIczdCFm8EyztuoqraHUvmtXicqQxN
+X-Received: by 2002:a05:6402:210d:b0:69a:a9a6:61e4 with SMTP id
+ 4fb4d7f45d1cf-69e65312188mr6060598a12.39.1784595854460; Mon, 20 Jul 2026
+ 18:04:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Revert "clk: qcom: dispcc-sm8250: Enable parents for
- pixel clocks"
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
- Val Packett <val@packett.cool>, Marek Szyprowski <m.szyprowski@samsung.com>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20260701001147.416518-1-vladimir.zapolskiy@linaro.org>
- <bjgad2qs6pt2cn5pr353qaelxa3gtpaqfoxjnrwfhwbty4g75f@ngu4ddk5jeyf>
- <31d1ac01-ccd2-4abc-9828-be120f095de4@linaro.org>
- <wd5rytfnsj5vppnimpemocstsaaqhmt4xmie4qnppdh45vsnml@2xne3khyalnc>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <wd5rytfnsj5vppnimpemocstsaaqhmt4xmie4qnppdh45vsnml@2xne3khyalnc>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20260719214349.734351-1-rosenp@gmail.com> <YBsaITDCQyaUWFnnWTe4Fw@gmail.com>
+ <al6ALM2eIWots1Zr@redhat.com>
+In-Reply-To: <al6ALM2eIWots1Zr@redhat.com>
+From: Rosen Penev <rosenp@gmail.com>
+Date: Mon, 20 Jul 2026 18:04:03 -0700
+X-Gm-Features: AUfX_myGWf8CrBLd-qjrAwYOqQPA4YF8JvhlVdpAVRQMWtpDnQSDVL_bsBB8gd4
+Message-ID: <CAKxU2N9VoHRUGGjEsMCEyGaMxoc=Bw0tuuMb-BYn+54DJRjQWA@mail.gmail.com>
+Subject: Re: [PATCH] clk: mmp: allow COMPILE_TEST builds
+To: Brian Masney <bmasney@redhat.com>
+Cc: =?UTF-8?Q?Duje_Mihanovi=C4=87?= <dujemihanovic32@gmail.com>, 
+	linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, open list <linux-kernel@vger.kernel.org>, 
+	"moderated list:ARM/Marvell PXA1908 SOC support" <linux-arm-kernel@lists.infradead.org>, 
+	"open list:CLANG/LLVM BUILD SUPPORT:Keyword:b(?i:clang|llvm)b" <llvm@lists.linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/20/26 23:54, Dmitry Baryshkov wrote:
-> On Mon, Jul 20, 2026 at 09:21:03PM +0300, Vladimir Zapolskiy wrote:
->> On 7/20/26 18:00, Dmitry Baryshkov wrote:
->>> On Wed, Jul 01, 2026 at 03:11:47AM +0300, Vladimir Zapolskiy wrote:
->>>> This reverts commit acf7a91d0b0e9e3ef374944021de62062125b7e4.
->>>>
->>>> The commit causes quite severe problems in runtime due to the introduced
->>>> cyclic clock dependency:
->>>>
->>>> * dsi@ae9400 platform device and its probe depends on dispcc clocks,
->>>> * the reverted commit links dispcc clocks enablement to mdss_dsiX_phy clocks,
->>>> * at this stage DSI PHY PLL cannot be locked to complete driver initialization,
->>>>     the parent clocks for DISPCC provided mdss_pclkX clocks can not be enabled.
->>>>
->>>> On RB5 board with no connected display panel on boot I get this error report:
->>>>
->>>>     DSI PLL(0) lock failed, status=0x00000000
->>>>     PLL(0) lock failed
->>>
->>> Why can't it be locked at this stage? Is it underpowered? Or is the code
->>> trying to lock it on some random, unsupported value?
->>
->> Since there is no display panel attached, I believe DSI PLL clocks should
->> not be enabled at all, however the reverted commit requires it to happen.
-> 
-> If there is no display panel, you can keep DSI hosts and DSI PHYs
-> disabled. If they are enabled, they can be configured to some
-> intermediate values (even if for the sake of turning off the GDSC).
-> 
->>
->> I don't have a panel for RB5 to test, if the PLL clocks can be locked or
->> not, when there is an attached panel.
->>
->> In general I believe the problem is plainly related to the established
->> cyclic dependency as it's stated above, and in any case the reverted
->> commit is a clear regression for RB5 board with no panel.
-> 
-> RB5 ships with the lt9611uxc bridge.
-> 
-> There is no cyclic dependency, AFAIR. It's DSI PHY PLL <- dispcc <- MDSS
-> pclk clocks.
-
-What does '<-' above mean?
-
- From sm8250.dtsi (using labels only):
-
-* dispcc is supplied by mdss_dsi[01]_phy,
-* mdss_dsi[01]_phy are supplied by dispcc,
-* mdss_dsi[01]_phy are children of mdss,
-* mdss is supplied by dispcc.
-
-After the applied commit, which I advocate to revert for now, the ball
-of clocks is no longer left untangled and linear.
-
-If there is a clear regression caused by some commit, it would make
-sense to revert it first, then reapply it after an alternative fix
-is ready.
-
->>>>     dsi0_phy_pll_out_dsiclk already disabled
->>>>     WARNING: drivers/clk/clk.c:1188 at clk_core_disable+0xa4/0xac, CPU#4: kworker/u32:1/61
->>>>     ...
->>>>     dsi0_phy_pll_out_dsiclk already unprepared
->>>>     WARNING: drivers/clk/clk.c:1047 at clk_core_unprepare+0xe4/0x104, CPU#4: kworker/u32:1/61
->>>>     ...
->>>>     Tainted: [W]=WARN
->>>>
->>>> The problem has been already reported and discussed before [1], the original
->>>> commit was done for "preventing potential stability issues" reason, and this
->>>> time fixing a potential issue introduced the actual one unfortunately.
->>>>
->>>> [1] https://lore.kernel.org/linux-arm-msm/2f5b98a4-80a6-4611-9615-ab0202a8c455@samsung.com/
->>>>
->>>> Signed-off-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
->>>> ---
->>>>    drivers/clk/qcom/dispcc-sm8250.c | 4 ++--
->>>>    1 file changed, 2 insertions(+), 2 deletions(-)
->>>>
->>
-
--- 
-Best wishes,
-Vladimir
+On Mon, Jul 20, 2026 at 1:08=E2=80=AFPM Brian Masney <bmasney@redhat.com> w=
+rote:
+>
+> Hi Duje,
+>
+> On Mon, Jul 20, 2026 at 04:46:40PM +0200, Duje Mihanovi=C4=87 wrote:
+> > On Sunday, 19 July 2026 23:43:49 Central European Summer Time Rosen Pen=
+ev
+> > wrote:
+> >
+> > [...]
+> >
+> > > diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+> > > index 4b2c089f46a1..8383f9f1da51 100644
+> > > --- a/drivers/clk/Makefile
+> > > +++ b/drivers/clk/Makefile
+> > > @@ -130,7 +130,7 @@ obj-y                                   +=3D
+> > mediatek/
+> > >  obj-$(CONFIG_ARCH_MESON)           +=3D meson/
+> > >  obj-y                                      +=3D microchip/
+> > >  ifeq ($(CONFIG_COMMON_CLK), y)
+> > > -obj-$(CONFIG_ARCH_MMP)                     +=3D mmp/
+> > > +obj-$(CONFIG_COMMON_CLK_MMP)               +=3D mmp/
+> >
+> > Could it be possible to select mmp unconditionally, like most of the ot=
+her
+> > subtrees are? AFAICT, that would also require creating new Kconfig symb=
+ols for
+> > the PXA168, PXA910 and PXA1928 clocks, but I suspect it may be the more=
+ proper
+> > choice in the long term.
+>
+> Just by sheer numbers, the CONFIG_COMMON_CLK_XXX approach is the most
+> common use case right now.
+It's much simpler this way.
+>
+>     x1:~/src/linux/linux-next ((next-20260720) %)$ grep "CONFIG_COMMON_CL=
+K" drivers/clk/Makefile | grep "+=3D" | wc -l
+>     68
+>     x1:~/src/linux/linux-next ((next-20260720) %)$ grep "obj-y" drivers/c=
+lk/Makefile | wc -l
+>     25
+>
+> I have no strong opinions about this either way other than to drive
+> consistency across various drivers as much as possible.
+>
+> Currently the mmp directory currently only has COMMON_CLK_PXA1908
+> defined. When the other PXA* drivers are introduced, will there be a
+> CONFIG_COMMON_CLK_MMA_COMMON that all of the drivers will use?
+>
+> If so, we could put that MMA_COMMON in the toplevel clk Makefile.
+>
+> If not, then yes I agree that obj-y will be fine.
+>
+> Brian
+>
