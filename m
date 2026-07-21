@@ -1,133 +1,81 @@
-Received: from smtpbg150.qq.com (smtpbg150.qq.com [18.132.163.193])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7E22239E80;
-	Tue, 21 Jul 2026 12:37:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.132.163.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91E30312825;
+	Tue, 21 Jul 2026 13:22:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784637457; cv=none; b=uOWQrWY0Cq1MSFWzR7zMHihbyX8KcPevwWunukRR5PsZ9e/qcJGH81e4CEawsW/+XKMLxlYbiMhUyDIIfASEG9i9PbD+stguMHC7wuEfTekYUJKyqirV78ZPKLcy1nlcnJQyTQcnF3X7c5vZZ/A/8Rm479ZyFmTTYpXjwiLGq5w=
+	t=1784640169; cv=none; b=rTxvObEWeaST59gtzcaiQzFNiqk4qjYOd1IrOllWrvYGujRrz7k9ygv56k9sSaWylhCJzREupqvJBerByFiCjqrE3ONfbPJDPYdp3FQs8h3AGBrHaVpL+rtm2+e0Tdn+6/bcrpnanF8PHdTPmj6NnIe+9Tzq7Q8YEvPRNYfWM8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784637457; c=relaxed/simple;
-	bh=qhnwwtEuhXcxYk0MypyGlFNJANPxkQlnhPsNlITEluU=;
-	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:In-Reply-To:
-	 References:MIME-Version; b=YKTmuQCQqshizPUKhUG4vYAbFOHjvRmJVdnw/Gez8Q7NBF4A+vRnWFJAJss7UqW8VhPUlRxzLHSXQsP65K89ZHIbWX/Q2BPs/ph/b4s7GWI00DU96BLdhUmqgVBHK8hlc9HX2QQSVUytUhRyUXUqcLEa9GBOGOJUbBFfBhvsv6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=TOoSss+v; arc=none smtp.client-ip=18.132.163.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
+	s=arc-20240116; t=1784640169; c=relaxed/simple;
+	bh=SYHDzD3O5S/2HOy66gQFMFXJuIiLjuUX3+0ZVY389T4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uiFTzB0DM1OOkj0hyDwYcv4E5y8wZ45fLc8QdgQoU2RwHsvFoj+IGBmOJACjT2KorsKi7svtxDyawmZzW5dmq1pMAnQ0otBJzEvpYozOSzB90nZqWp6mJ+SHTK+ogWQ+YHgJ55r6Ueo0X3hOLiY5P5pOwG8K4yuE4DX1skTdeiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NOH/vPbT; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="TOoSss+v"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1784637437;
-	bh=P6/1sr4qvixoiNkBTsBAYtxWyovt0dZLYXNq2QiK1qc=;
-	h=Date:Message-Id:Subject:From:To:MIME-Version;
-	b=TOoSss+vACADodypSEDUPuJVWCmUyvRPI8PJkLWycWiTFxFHbHvv5Km/ArMArSk8w
-	 5J56bZBQOduKmM15G0aC64GfLymIM43mIOyI23gelQTj1D9BCAwhJiJxKdWKVl1GtC
-	 uaoq4GOyOZX4aldF1VnXXsROsLB06eHFo97vxCAA=
-X-QQ-mid: esmtpgz11t1784637435t47ac860c
-X-QQ-Originating-IP: tntK1MQ1IUOg67b1uF/vVh5yYOC+UElvBpzgzBVoRVA=
-Received: from = ( [120.237.158.181])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 21 Jul 2026 20:37:13 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 4120638745816220918
-EX-QQ-RecipientCnt: 15
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 21 Jul 2026 05:37:12 -0700
-Message-Id: <DK4966E0B5GS.3FTMQR43Z9LA8@linux.spacemit.com>
-Cc: <linux-clk@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
- <spacemit@lists.linux.dev>, <linux-kernel@vger.kernel.org>, "Krzysztof
- Kozlowski" <krzysztof.kozlowski@oss.qualcomm.com>,
- <devicetree@vger.kernel.org>, "Troy Mitchell"
- <troy.mitchell@linux.spacemit.com>
-Subject: Re: [PATCH 3/3] clk: spacemit: k3: fix missing /2 factor in i2s
- sysclk dividers
-From: "Troy Mitchell" <troy.mitchell@linux.spacemit.com>
-To: <sashiko-reviews@lists.linux.dev>, "Michael Turquette"
- <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Brian
- Masney" <bmasney@redhat.com>, "Yixun Lan" <dlan@kernel.org>, "Rob Herring"
- <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>
-In-Reply-To: <20260717073701.94A511F000E9@smtp.kernel.org>
-References: <20260717-k3-clk-fix-i2s-v1-0-e95001a692ee@linux.spacemit.com>
-	<20260717-k3-clk-fix-i2s-v1-3-e95001a692ee@linux.spacemit.com>
-	<20260717073701.94A511F000E9@smtp.kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NOH/vPbT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01D1D1F000E9;
+	Tue, 21 Jul 2026 13:22:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1784640168;
+	bh=Q/GjtY1ev0t9VsYGo1JpjvPnq+e0Cu93T5+uLvjeuG0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=NOH/vPbTV2mHYRmI3OHSETWvAcLHfjbDxMx3CTYsZPG5S0+qeQgy+U77auERpHWpH
+	 YH5e87iEtdtuT8BYi9A72HqnodbxhLLZJCVPPn4oqmrGv7yjvGMnDKp9UuweMLnqfG
+	 xudYAzgX0vSsAZku9b7d8OaqGwGomgI78DebJFhw2tAni+BjX3ddZjLQDROtnSU7QA
+	 MePNKta5gygFVYJxhAUQ4Vy6nH3UddyeNCC79KQ+Wj8ZGWMH6Rnw7BQpSp+0L4IUyh
+	 KnbQHSMiCO/GE1+GU0d2xLewBvOYOWVXzpEDFH6ACzrYUglIIcwzxBKFHv9Kac7p+E
+	 GYMFDoUBhMxHQ==
+Date: Tue, 21 Jul 2026 08:22:47 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Bhargav Joshi <j.bhargav.u@gmail.com>
+Cc: Brian Masney <bmasney@redhat.com>, simona.toaca@nxp.com,
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, daniel.baluta@gmail.com,
+	goledhruva@gmail.com, m-chawdhry@ti.com,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+	Tero Kristo <kristo@kernel.org>, devicetree@vger.kernel.org
+Subject: Re: [PATCH v3] dt-bindings: clock: ti,clockdomain: Convert to DT
+ schema
+Message-ID: <178464016699.3250705.12302467353770093561.robh@kernel.org>
+References: <20260717-ti-clockdomain-v3-1-3c263af4e9fb@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpgz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
-X-QQ-XMAILINFO: OE2SNMSfMbmOdjH/0KOsMDPqWwXp1+qMmNWDQNk3sY3D++KK0Iu5FPHn
-	M7QNTt2ei+mSiqmVHJmiodWFJpJxuJp9Nl/gBQ6iUAEOau6z9RiTNTX+9yMzJdhgfK/t4vs
-	FqPCR6q1DM7jdIR/G7U6KLOsJls5GnIcQzWAAforJWl6GLVubDc4xs6T+DpfEONMiBabwFQ
-	bbpRSnhhyeQ1bJbkkPPYR1wwIkJz2JHmqOoWFO1MYi62Tz57bxmCutAS6FV3h/qAtf9Urbz
-	p8TdzXAE917ONn0fML62vNKHd8NhSAYeGeE7WxRhCVdN+lcwcYPuvUdwe2GAyBCyHWMuP2M
-	QvGys04h8gYncwPKwff1oSuk/MtBOxrKtEnxVLyOK3Dg1XfgyQqsOp3wwS/ec0AwqcOFbul
-	FRpx3RsPlTG6OKHvL84uuy7sl2oLMqmNs3uTldALUVuAquqZRrG0+XEmmqHu2Tr/zdjQ+VC
-	0mZRVYdL/gViZylwcUWFrb0LLh99XLLuBUxYAc2oDsR2KQS/0ZJvsBq0viI1U122iwVKpX9
-	8Ya4dEjp4K3sFCewLjOk+x+JU5CXR639EiY/IR+TUXWjab5ynk+3bZLXE/WDuDTMbIQjYCD
-	sSd4TK0XDVcbnYUTo4Fvsnhl8fAQu0F2m2MsGZPDQYSM1I+mizZ9tMOe9bqNDjxIPAE4HzS
-	X2DjXjzyPoMosTD8CKP4atkejkWqxr91SWuThWbPCEc5BXZxjkzqc+SYPMZfNhCubE08CZe
-	Qbg49vUFllo523vVAOJPwPWfZvZ+rWjs6jlGAsxiC90OIDvoAoSKm9drcP/VGCsF2HSR4Ss
-	A4m9631Uv1XXxTzvbogflgAZuoqOhvvxg88uXquTtEGMLqo2Ps1Ft+Zo0xuE8RE/x5xASeg
-	nUboV1zMZIOosMCaxpYcUd4TuagEWlSVgjX7ZQi2Xd/OuYX0NyTbfrBU4M5lmu+X5ud+xRm
-	8JiIX0JND7NXAp+mPXe75UoC8EmHTrJIRd5b1i1xT+BQOIJun7v8WgVTgEGfVHfA6kawB9q
-	eUwuc3F47Dhf/lOZ4U3VKBilczvnHWAkdndh/oIFRURvFA0u0otnkaqw5RLgwVf+BpiAYr0
-	PBqnVVjyrAB
-X-QQ-XMRINFO: OD9hHCdaPRBwH5bRRRw8tsiH4UAatJqXfg==
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260717-ti-clockdomain-v3-1-3c263af4e9fb@gmail.com>
 
-> The i2s{0,2,3,4,5}_sysclk_div DDNs have an additional fixed 1/2
-> divider in the hardware IP after the configurable divider, so the
-> real output rate is:
->
->     rate = parent_rate * num / (den * 2)
->
-> [Severity: Medium]
-> Does this formula mathematically contradict the driver's implementation?
->
-> The code in drivers/clk/spacemit/ccu_ddn.c calculates the rate by
-> multiplying by den and dividing by num:
->
->     return prate * den / pre_div / num;
->
-> Could the commit message be updated to reflect the actual hardware behavior?
 
-Good catch. The formula in the commit message has num and den reversed. The
-correct formula is:
+On Fri, 17 Jul 2026 03:15:42 +0530, Bhargav Joshi wrote:
+> Convert TI clockdomain to yaml DT schema. Drop '#clock-cells' from the
+> required list as this binding doesn't define a new clock binding type,
+> it is used to group existing clock nodes under hardware hierarchy. Most
+> existing dts omit '#clock-cells'.
+> 
+> Update the reference to the old legacy text binding in the description
+> of bindings/clock/ti/ti,gate-clock.yaml to point to the new YAML file.
+> 
+> Signed-off-by: Bhargav Joshi <j.bhargav.u@gmail.com>
+> ---
+> Changes in v3:
+> - set limits for clock-output-names and clocks properties
+> - Link to v2: https://lore.kernel.org/r/20260622-ti-clockdomain-v2-1-434dbe0789e2@gmail.com
+> 
+> Changes in v2:
+> - updating the stale reference to the legacy .txt file inside
+>   bindings/clock/ti/ti,gate-clock.yaml to fix make refcheckdocs error
+> - Link to v1: https://lore.kernel.org/r/20260621-ti-clockdomain-v1-1-e99a56af98ea@gmail.com
+> ---
+>  .../devicetree/bindings/clock/ti/clockdomain.txt   | 25 ------------
+>  .../bindings/clock/ti/ti,clockdomain.yaml          | 44 ++++++++++++++++++++++
+>  .../bindings/clock/ti/ti,gate-clock.yaml           |  2 +-
+>  3 files changed, 45 insertions(+), 26 deletions(-)
+> 
 
-    rate = parent_rate * den / (num * 2)
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-I will correct the commit message in the next revision. The pre_div = 2
-change itself remains correct.
-
-> [...]
->
-> [Severity: High]
-> This is a pre-existing issue, but can this lead to a kernel panic due to an
-> unhandled zero divisor?
->
-> In drivers/clk/spacemit/ccu_ddn.c, ccu_ddn_recalc_rate() reads hardware
-> registers directly:
->
->     num = (val & ddn->num_mask) >> ddn->num_shift;
->     den = (val & ddn->den_mask) >> ddn->den_shift;
->
->     return ccu_ddn_calc_rate(prate, num, den, ddn->pre_div);
->
-> If the register contains 0 for num, ccu_ddn_calc_rate() will divide by zero.
-> Additionally, ccu_ddn_calc_best_rate() can pass num = 0 when
-> prate / ddn->pre_div evaluates to 0.
->
-> Should we add validation to prevent division by zero in these paths?
-
-Yes, these paths should guard against a zero divisor. This issue predates
-the K3 I2S change and is independent of the fixed-divider correction, so I
-will address it in a separate ccu_ddn patch rather than expanding the scope
-of this series.
-
-                                            - Troy
