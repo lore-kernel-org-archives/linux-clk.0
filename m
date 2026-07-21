@@ -1,64 +1,64 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2838632F76D
-	for <linux-clk@vger.kernel.org>; Tue, 21 Jul 2026 16:36:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC69332A3FE
+	for <linux-clk@vger.kernel.org>; Tue, 21 Jul 2026 16:37:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784651774; cv=none; b=E4MKAfbhfOC+RJRUbhU3GRszNb73s6LjY5ZLo4e2UHBAfPCtdOUOpQ8kVsFTTpebkDwc9ehN/z5u7ZlPeKaAuzn7u28hjsoq1u//tRa+sXSgnTNuKSHlsKQIcG+inMX89A4VwIATMDtQBUQ4vpimPLXM5aM/E0ag1+43NdspYuU=
+	t=1784651865; cv=none; b=jvRMdjpSy9XGTnbOGkMHPj4s6ns/whktCDfEVmaFjH1e8akilnzB5gnTAeQbbj6HZJ+/22M8eleW0lmXWgS9iWMwex0TtGoOXpIMWgN2TdwD9j2L0Vr2iM8/FYqkN8wZY8lk0kgc9p4Sk6Rx1yy4GWPNqbgedR3Ve+SlgaT4d5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784651774; c=relaxed/simple;
-	bh=CFYgfkkDESJFwClmB0HCTSrxMkT45WT5ZMfjkAUj4Yw=;
+	s=arc-20240116; t=1784651865; c=relaxed/simple;
+	bh=VjhcrRyFSt0TCIckPnHWQoGZD1/E2QgBBydfNjacV3g=;
 	h=MIME-Version:Content-Type:Subject:From:To:Cc:In-Reply-To:
-	 References:Date:Message-Id; b=LYjwlCgH/kqN04xZjPPRu42F1CW9acDznZrgy5KAzHUnIFizwOsg+PlUu4IH/YeILD1CH6Xqx0evhUIwEANO2fJ3GniZe9s7VeXgkxUqUHB7f4Yow6DJz4jg3awTlpwmVa1B8GBJQtyeajFQwj50K9/20ejZkL0ScvcUKv44BIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=it6d1mgT; arc=none smtp.client-ip=209.85.128.46
+	 References:Date:Message-Id; b=OI1pWLeENX4dYY8n5PpVHAoRvfQ+ng02G4bEnSNwjU+Fw/2b/b2FvPb3c7kcBBeuXCogLOrj4wUmkV0vAoQ0+Z3Vc9jvVcZAHBRWfg/6kctwrjMw+hJ+ioc5s1S9GM4nQT+WtpuQxLkXXaO+vbSktyG/wdqAi9aI9UWmXOxQFe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=BB9vVBnQ; arc=none smtp.client-ip=209.85.128.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="it6d1mgT"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4954afac04bso39242025e9.0
-        for <linux-clk@vger.kernel.org>; Tue, 21 Jul 2026 09:36:10 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="BB9vVBnQ"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-49550ec592cso16622715e9.0
+        for <linux-clk@vger.kernel.org>; Tue, 21 Jul 2026 09:37:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1784651769; x=1785256569; darn=vger.kernel.org;
+        d=baylibre.com; s=google; t=1784651861; x=1785256661; darn=vger.kernel.org;
         h=message-id:date:references:in-reply-to:cc:to:from:subject
          :content-transfer-encoding:content-type:mime-version:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=rkIYTQEQ27vhdTHvUzqbaw98nz3PhZSvg+ClrrD28Z4=;
-        b=it6d1mgTi5OZVaeNpBd9SPhdZl+Apsy7Jf6xCmhajjuBtUmzxj73Bw87R4eEmSvN1P
-         fuHgtlctR3ctNwsv16PWlr0tCz13u+x5OYiP1otHBxAtcFnMw8MVrbWByQSgmtcui6IR
-         dfm30NuIcEVIyjWbzYK5ZkU91bpnOV36ryQ9wbt2Mr6FwHmJgu43nZF3CIEFHogx//LQ
-         pDzK3Dzl/9jQH096pkd6ibqWgLiQkfb4224kV/B4sz7rZbKLk7ZCPYWhbi+rEpFzkrRG
-         VGiEOvbgFc5giEGOv7UGwmobxe7UsPnxhaVtViuq1NnA+SBL5QHSIojlL95FC9v5aSCp
-         f2Eg==
+        bh=40bhvWuLcQuZkugmJitkPWKbQ2rZP6fOMYhTW7vzOYE=;
+        b=BB9vVBnQFYh83f1LRepXies7Uiyv9v1dH8oHj6IVNi6bjNOQ+2XHgdtYrvteumKCB/
+         YXcJNKRc6KUabik3YqdJUy0O6ZVfrXfsRJauTdbbeOvF24ijEP4H31w4jK3ocTZo832P
+         het5rYEUeND+lHPKnehzcPqFFoeD77yAcETV0nwIy6P3pLx3xvaHqgsGrfdIvY776RPO
+         LvwJFd6dZZShknDB4nsBbuKpRxGS0daK/9lnOkOCfdxBJK50BzNIYbVYZzVOopKl+uHG
+         JG6rWPOhY2AGfh2O1yz+3tDLn0vnZlSdwyyyyRKkwRK0lgU2QeayYSJGugBjvo/4Syrf
+         +0JA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784651769; x=1785256569;
+        d=1e100.net; s=20251104; t=1784651861; x=1785256661;
         h=message-id:date:references:in-reply-to:cc:to:from:subject
          :content-transfer-encoding:content-type:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=rkIYTQEQ27vhdTHvUzqbaw98nz3PhZSvg+ClrrD28Z4=;
-        b=kt1Si7mhl/oSSVXodU/zUj+TmS/UZ0R50O+Vfxuxi2/ExQojiGjoDIVGnROSj11ag5
-         8kOAPiCue+/DtQUPR3oHnMDaO4fcFc4IA5GP1BHW2r+U6W+B2PIx8zD4p4Hq8jejeVIL
-         jv2YRmnJ7a9DuQ1StfBl6hQXX7rehj/Ni0zijDbQhubVqIttmBxa49DSI7syjukzi1Vj
-         N65QamQWhNASPGXcWCKCzTRqz0Y1T27rUf8Lkn315s8Oq0/Va9fjQq5eFjh7/zNm7MLX
-         j+YQkk38a5vKxNRJ3t+NIQJXUTb46jFjPwZAoHztxtab02x45p2xAPZrDxgfD8wAzmXU
-         AEBg==
-X-Forwarded-Encrypted: i=1; AHgh+RrCgA6CNJgmi9/H8ApTCRm24ggOJ/J+vLOgQUZTkhRLA1Fq8ANuVvymFP2LSJuLG3vwDmgWJFHTwo8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyH3wBBdnljivHia4yzEjHBhDarN2sdCIZB6rKPPYMtHdZnDg5Y
-	rfz1W2+MS8O87HcbqeRsVBZMaMq04L5PGvPMN6Ba0Rcq4NZanNvv3oWorMMHUkgAJmI=
-X-Gm-Gg: AR+sD13x/WLmED3N9Lfnu9bxQgr5mCZjBVd54Ap/ZgDYqrIbbBM0A0VGOCBDRc0ZOuR
-	j69zt6F0nUl3xX1oZ/OhbMQ1J6ZIb+7+qlrBu8Q42BDZX0pyRnxAaNI+sbXsA2EG1aQVUWJgUWZ
-	DrapLPoQRwXoNRYpz3lB5+Ofo/e/quqBZeP8HtNplf5FWcnHnpHVLaBiof83wDQnu4vwz7dQ0CR
-	cbQPPj72TN2G9hzBHOb/XWL6N0kkOtkh3puv/+rQ2VzXMd+jPPNAM9OKIGdc3vd3c9iD/ApU6q6
-	mzZJEatw5YvyCs0hplRp8bJvQHnIAtQFyHTiWrYxk7DhzlvYbYGtH/ml4yzrbd5FNxJ6cUfAVPh
-	ExgvloPLWwZVzGdp86jYTThf/BVSOBxceujs+TiaJlLodmA7j4iu9Ue6NSQawvMzcigr3PWzVSm
-	DhjVnsFszhnKinGOxWxlj4yC8gx56kAN3nV1M2bD5hkZ/HVTJ70+Ff
-X-Received: by 2002:a05:6000:230c:b0:47f:5289:5606 with SMTP id ffacd0b85a97d-47f622f2a76mr24142270f8f.12.1784651769351;
-        Tue, 21 Jul 2026 09:36:09 -0700 (PDT)
+        bh=40bhvWuLcQuZkugmJitkPWKbQ2rZP6fOMYhTW7vzOYE=;
+        b=NN57Lr9f9g02eSCiUs4isMun13Rb23Wn8GatT3KdgQSkBliW7andMH0wue+b+6hRqW
+         elAPIfx6z61UwWKnFXYtlxfBw2X4DWMLVaW/D20SWvXBKMFNjF/va13UixvrTGxn7oG2
+         oBEz+B3hUN09XmpyFyQ+gYVOcfHbiZiTRnojOI+rKwIMn9Z1VGmQ22jF+kXRKqqMuut0
+         BIIUlSLmL3K/kUazzVe5dL7pCNxaBZSwEgTB6nbB1At9bm5WyPGWbJzt8D+K4OFDA/zW
+         xizGIwbr4/NH433uQswna9B7MIjnLvwSbCzm1wH8NacUfXokO/NeReslqHR9ogbHiw8M
+         EAXQ==
+X-Forwarded-Encrypted: i=1; AHgh+RoqdM+vumS/HzScou6m5VQrDh6My6Vz1PgND0fbrdBksoK525F4/VpUIZecJ1B+RpJva5aR5GsH7ZI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRlB+eVqn1IoiRODvj1ONquejfppo0XclS/U9Bqr9qmc9R40Zp
+	hmaWlrKDjLhI8X4E08306WVCJEOQNOfWdehleqiMWmUXdWQsBVSCxpCbWcmNh+Mm1jQ=
+X-Gm-Gg: AfdE7ckLMAcOfAV9zibyyB/cZXkIm0wAISStvE83c40dn/uQj4kuL/fRLP8EmQAmqXG
+	Jh2q/H1bHhOvo2pGzs5U+CC+HAhBXqReiSYWDYt5pA9cVj/ulYT88Wx5X5cmWBg6z1Y7d+PI5Fe
+	HdBQZCR/E/kjMJ8YgdWZToeIRIO0mpLDXBAi02VsARPxU8JdlC85rBGMbyYFIIO0KolJBmeMRVJ
+	Y3KolpDMi7BJZ6vDyQM5v76jhi5fXOK6spKLiECwu86ED/0BH4UcjFRB587MeMBwCx1VJWTFsgZ
+	Mu1qv+5o2YgX0GBbjMtFDQ97Gt9lcRGHXWskcEG/gL8p77LyIoPLMqIJqoeYTgHwAia4677EucX
+	FKFSm3C6rf40IRAI7z5etkSytxpkDC1yS25HQn0Z72L00Z4BXJ5XDEuG1PznO9nScv/9iOm+B6y
+	F+goavbkHljXW1hGGq/GJYW8XiYkP1D9g1q0F2OxhUNg==
+X-Received: by 2002:a05:600c:4f52:b0:495:3c6f:7c18 with SMTP id 5b1f17b1804b1-4956a4e5a97mr4023405e9.3.1784651860712;
+        Tue, 21 Jul 2026 09:37:40 -0700 (PDT)
 Received: from [192.168.5.218] (88-127-185-231.subs.proxad.net. [88.127.185.231])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-47f63ed244bsm4321698f8f.20.2026.07.21.09.36.08
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4956a4aae16sm5630075e9.0.2026.07.21.09.37.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Jul 2026 09:36:08 -0700 (PDT)
+        Tue, 21 Jul 2026 09:37:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -67,47 +67,44 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH v4 2/3] clk: nuvoton: ma35d1: fix PLL_CTL1_FRAC bit
- field width and fractional calc
+Subject: Re: [PATCH v4 1/3] clk: nuvoton: ma35d1: fix ignored div_u64
+ return values in PLL freq calculation
 From: Alexandre Mergnat <amergnat@baylibre.com>
 To: Joey Lu <a0987203069@gmail.com>
 Cc: mturquette@baylibre.com, sboyd@kernel.org, ychuang3@nuvoton.com, 
  schung@nuvoton.com, yclu4@nuvoton.com, linux-arm-kernel@lists.infradead.org, 
  linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Brian Masney <bmasney@redhat.com>
-In-Reply-To: <20260721021356.288506-3-a0987203069@gmail.com>
+In-Reply-To: <20260721021356.288506-2-a0987203069@gmail.com>
 References: <20260721021356.288506-1-a0987203069@gmail.com>
- <20260721021356.288506-3-a0987203069@gmail.com>
-Date: Tue, 21 Jul 2026 18:35:55 +0200
-Message-Id: <178465175574.2337945.7396666795379567940.b4-review@b4>
+ <20260721021356.288506-2-a0987203069@gmail.com>
+Date: Tue, 21 Jul 2026 18:37:33 +0200
+Message-Id: <178465185379.2337945.12880705771823574527.b4-review@b4>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=701; i=amergnat@baylibre.com;
- h=from:subject:message-id; bh=CFYgfkkDESJFwClmB0HCTSrxMkT45WT5ZMfjkAUj4Yw=;
- b=owEBbQKS/ZANAwAKAStGSZ1+MdRFAcsmYgBqX5/2atjFY4a51+2LLPJxW2xNLMFjP8rGP8zV+
- d3aD2ZOxHqJAjMEAAEKAB0WIQQjG17X8+qqcA5g/osrRkmdfjHURQUCal+f9gAKCRArRkmdfjHU
- RQikD/9KR5YoOwkAizi/b9Mr9lsmmE+PI7aYgaW8ZGWa6f6qyz8waYEjOdwJsKQ7O+6mRWNM0mP
- K73EefIBMpLzBWH0pia2yn8Kxez8Nbhu0VOzxEjGfsWwXbp4cWYHaafMwTNFUFF144/J+wF3d9n
- vBbz+vGK8wJrw8fKq5zv9/myTALwBCIPHnHWxT6jySYywviCgh+0tl+7bh/oxR7lBxjeVrSrnLs
- 1MH/N7o8X7kBXtNz0E1cu3ecmBRlS4DPL748hguEaT3nzVjoKJxGTMCm1yK9FAp5OutkOfMIoHf
- VjTw9XqZOFfoSSuxSLbgke80sZBKKZr9ezbopcICj2+igvAerBfHGK+5IEPogHO3EQ8oklRxAPh
- OMU57aoIZIeOX+bVuIkPe7QoLgBRUQNq5NBdtJj+n2lt3kwro8nAHsQrnDZbPIG0YDJWAtrSxEU
- X6P54/2i7dtLX07vd/fXHYgPz8KxxZwAVTBdKhhqN37Py4eLWVapukB2g81t7Qp+1wMCg33or9z
- Jw1sI7hGF1JoQ0/2cmUwu4lTFRS8NOqPWr5cA1HoBVTZbYVZCBb+WeIjVBqjLHztiSJPh2zvSS8
- XluW2ShErwZm/LTDfIoe/JZ5gFEy228kvVAriAaMEUU8//qqIJXSAWH3Su6/jLuCFgdYYV04ddQ
- 6BXN3OjtoIIPjsw==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=512; i=amergnat@baylibre.com;
+ h=from:subject:message-id; bh=VjhcrRyFSt0TCIckPnHWQoGZD1/E2QgBBydfNjacV3g=;
+ b=owEBbQKS/ZANAwAKAStGSZ1+MdRFAcsmYgBqX6BRL8ADPhNE7seqx/Nl8A9UxAuhtpaz1L2br
+ txXpv/EUGOJAjMEAAEKAB0WIQQjG17X8+qqcA5g/osrRkmdfjHURQUCal+gUQAKCRArRkmdfjHU
+ RTx3EAC42MZzcbWJpEFwTSKiCFHwt4gjkRkZgRUQxWAsDk2tWsQ97GVcI8KqxA+ylS1j9XSzqW+
+ 05CFk8TgChSQv6wtzI16rw6KN4wmcry1MriTqZQfJHOiu+qXKksY+PUSJ9O+fypgf6Gkqpv4WKa
+ mliPSO42H9qUMojFukGZhtF9i19UTAy47MbU+LUemgur7aD39DfTHLHFwj2Zd70G9Z9q/jAf684
+ nY1l83yP/iIO6Vj56eUu37kEMZu77xZhFmZiHquG15aU8a7IgbKIaUPZl5iT81LFE2ofiesiyeb
+ Zyb9u5zjOkJE35qg6D5k700ntoBF09W9YqkN4O12hbnL6y0S9cxpAjgiFpUd08eAKVspHpz8pfs
+ 6kB3zDqD58BCUBRyOxYdksjT57ougOxiJ2oK5sMt3jQOkoUJmc41Py2T6JSaUizvoCwX0O8nMZu
+ CiIx8WPTJxy+mgACTJbHWsYkaq9uU4aK2HDsUKLmOo3zPpLFiQN7Q968uYu27tLWfUJwyWsrTS7
+ d15p0mhBv2/dC7qbW2wPz/sXydM5ob4XYK0zv6p0vLJrPy+DZIH87IkTT8gJS5qLPb977A8JGC0
+ lqiPQCc4RH6XssmdZVjSdMKhs8fsSCufgNufyJ9jpmeRKu3G8pasKqVXiC3LzcRb1ijP08uwTqA
+ kRS/W2MzC3k7f/Q==
 X-Developer-Key: i=amergnat@baylibre.com; a=openpgp;
  fpr=231B5ED7F3EAAA700E60FE8B2B46499D7E31D445
 
-On Tue, 21 Jul 2026 10:13:55 +0800, Joey Lu <a0987203069@gmail.com> wrote:
-> PLL_CTL1_FRAC was defined as GENMASK(31, 24), covering only 8 bits.
-> The hardware fractional field occupies bits [31:8] (24 bits), so the
-> mask must be GENMASK(31, 8).
+On Tue, 21 Jul 2026 10:13:54 +0800, Joey Lu <a0987203069@gmail.com> wrote:
+> div_u64() does not modify its argument in place; the return value must
+> be assigned.  Both ma35d1_calc_smic_pll_freq() and ma35d1_calc_pll_freq()
+> called div_u64() and discarded the result, leaving pll_freq holding the
+> undivided product and thus returning a frequency orders of magnitude too
+> high.
 > 
-> The previous fractional-mode calculation used FIELD_MAX(PLL_CTL1_FRAC)
-> as the denominator to obtain 2 decimal places.  With the corrected 24-bit
-> mask the old divisor is wrong; replace the arithmetic with a proper
-> 24-bit fixed-point rounding to 3 decimal places using the kernel's
-> DIV_ROUND_CLOSEST_ULL helper:
 > 
 > [...]
 
