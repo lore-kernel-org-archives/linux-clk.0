@@ -1,46 +1,43 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11D5D37268F;
-	Tue, 21 Jul 2026 13:47:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88287378D78;
+	Tue, 21 Jul 2026 13:54:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784641668; cv=none; b=PXV8l0++oTIF5KDcgo5lck2NyREGLIM/hXx+Rnd3hOwBmSsTuBa+2ch5KMtp/HOGJMchLECZr/jbUFmYU+cMt0tAuLUStJuxTWuOGdvZgEl+zMZnpIdUqLd46uPn9YmNHXyJdmDPLOJzYZBaf6wRnWqjEjLaFmeO2NMS2/6g0T8=
+	t=1784642092; cv=none; b=Z7MwgMZFAN+Dt8wZ3WCNkYEM/LgDVu1/Pp8lrcwiH/ZOzbcoYZDxkyx3MmgC0Q1qNMDZKI/RBOiEkb96yQ++HivckZdZHl+xeA8PXw7Njs9ORpTE0mFsivaJ7iXZms8AOoBvLb1zo+kUf0QzLX6rbKIeilHVTpNFELwQaIdKhYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784641668; c=relaxed/simple;
-	bh=vMbWJVznoe6uZpU43wj2TirPlLRYOx0D28LBSbpbEyk=;
+	s=arc-20240116; t=1784642092; c=relaxed/simple;
+	bh=bHKPaDC47pac+rbVsIo6MSrFwCc5fyJ185fG+Wzd5GQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qVpE0cSllXhJgAysi1+WFDkahf0hYHCg24v3M2IJOm0F9ui1y3r0goSR86Au9qGJLz5RaQV7L66+a1LqbwsKq8PzGd6UBP/TgVwDcuBAWkOl222dMV/ff64TFAWsfQPmV6FROlr4l8ybVpmarSaEJnPsPc5EoYkijjg9RrC9zrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GTOSxOXG; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=DJ3zMj2dU1AqsRFGQhfaxv5uylFNMFSG0uFHlooHZXylr3seSAVYp+82/5O8kQNyqjF+N6Fr0PL79Q8mIvhsyOPXHIwMmCK0IJ2VjWydLu5Z9/qtx1iMMz67S75NXrwAVUKEWO1/KOVr2mFEbUW0tvfJZ5IRlaN8ypr34y99BmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IOag8JxI; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GTOSxOXG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A41121F000E9;
-	Tue, 21 Jul 2026 13:47:46 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IOag8JxI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A95E1F00A3F;
+	Tue, 21 Jul 2026 13:54:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784641666;
-	bh=awtcumx2hZ91mIrvxY6WxUWD+fwAIYe36IoQhSo0aOg=;
+	s=k20260515; t=1784642090;
+	bh=07nBmD6iQARwb8F+J3AfS+gMadYHBuAG1quRgQMBa6E=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=GTOSxOXGdkgAqhutec7VIdAZjafZkEqwjQqcQ0gfok/K0MaxyGdsLvfdOcuebbyK9
-	 wfCTZi9acda5OE+huyyF0Q4skJ2mDk9a5i5zgkRxCSU6IQP5jH61EPdAdsrGEY0Ugm
-	 wwti5M7wdkN8BQZ1Rwt5vhmIOGanFH7BU1ebr2z/E8fGh6d24r9Wy7Suxht/YX9Fkl
-	 zoHlaK4hsN+TPVyVpjw/6dFne4Bf4PzU+rHP44exNw+lp8hhIOyxMOhn627uEHCIFi
-	 EwkF9hRzlmxpzOm1cB48NnAExZ1TmfFOuEpLjVnIwoHX4OfD9efxw9eFWzWS8fwAd+
-	 jUteJ6lloJGVg==
-Date: Tue, 21 Jul 2026 08:47:46 -0500
-From: Rob Herring <robh@kernel.org>
-To: Bhargav Joshi <j.bhargav.u@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Tony Lindgren <tony@atomide.com>, Tero Kristo <kristo@kernel.org>,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, goledhruva@gmail.com,
-	m-chawdhry@ti.com, daniel.baluta@gmail.com, simona.toaca@nxp.com
-Subject: Re: [PATCH] dt-bindings: clock: ti,dm816-fapll-clock: Convert to DT
- schema
-Message-ID: <20260721134746.GA3401192-robh@kernel.org>
-References: <20260717-ti-fapll-clock-v1-1-1b684cb2543b@gmail.com>
+	b=IOag8JxIa8qh6SktFrd6zN+vIbHusPJSSt5c33vpGxGXcxc3zN63XXHa6HW4/FWK1
+	 5xVLLEmFHJgFEx2wBYToGgooVpVCt2EYK/VZtkJCtZeQqYgPI+kGtWwrkkeh4iz1YF
+	 PoqSQmXrJyA6kf15AojQSbTn8HbbDPU3Bb4C2cBi7HlsmOs0o8mYYhaV/bmn/UXwT8
+	 w10lwiSgmdAKnJSANnArIeat2WMz5NDqq/HmRcCgSYAAMI1v4x+nEXJVxwOgHquS4K
+	 /WKVHf+NF/euC9PgLVjZwFSKGfpDYBQA8tf9BDPTYFqMEs2kVAXT+tQ5+qZAJTPkyK
+	 wfommW2qffCOg==
+Date: Tue, 21 Jul 2026 08:54:49 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Eduard Bostina <egbostina@gmail.com>
+Cc: linux-kernel@vger.kernel.org, daniel.baluta@nxp.com,
+	simona.toaca@nxp.com, Michael Turquette <mturquette@baylibre.com>,
+	Brian Masney <bmasney@redhat.com>, goledhruva@gmail.com,
+	devicetree@vger.kernel.org, m-chawdhry@ti.com,
+	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>
+Subject: Re: [PATCH] dt-bindings: clock: Convert TI Palmas Clock to DT schema
+Message-ID: <178464208934.3487880.1773756669829370514.robh@kernel.org>
+References: <20260719141236.3563471-1-egbostina@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -49,68 +46,26 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260717-ti-fapll-clock-v1-1-1b684cb2543b@gmail.com>
+In-Reply-To: <20260719141236.3563471-1-egbostina@gmail.com>
 
-On Fri, Jul 17, 2026 at 11:43:37PM +0530, Bhargav Joshi wrote:
-> Convert the Texas Instruments DM816 FAPLL clock binding from plain text
-> to YAML DT schema.
+
+On Sun, 19 Jul 2026 14:12:36 +0000, Eduard Bostina wrote:
+> Convert the Texas Instruments Palmas 32KHz clock bindings
+> to DT schema.
 > 
-> The text documented #clock-cells to be set as 0, while the example and
-> existing dt and driver require it to be 1. The schema now strictly
-> enforces #clock-cells = <1>.
+> During the conversion, the node name in the example was updated
+> from 'palmas_clk32k@0' to 'clock-controller'. The old example
+> contained a unit address without a 'reg' property, which causes
+> dtc compilation warnings.
 > 
-> Properties clock-indices and clock-output-names are documented in the
-> binding and added as required as driver strictly requires it and existing
-> dt already use this property.
-> 
-> Signed-off-by: Bhargav Joshi <j.bhargav.u@gmail.com>
+> Signed-off-by: Eduard Bostina <egbostina@gmail.com>
 > ---
->  .../devicetree/bindings/clock/ti/fapll.txt         | 31 ----------
->  .../bindings/clock/ti/ti,dm816-fapll-clock.yaml    | 72 ++++++++++++++++++++++
->  2 files changed, 72 insertions(+), 31 deletions(-)
+>  .../clock/clk-palmas-clk32kg-clocks.txt       | 35 ------------
+>  .../bindings/clock/ti,palmas-clk32kg.yaml     | 56 +++++++++++++++++++
+>  2 files changed, 56 insertions(+), 35 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/clk-palmas-clk32kg-clocks.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/ti,palmas-clk32kg.yaml
+> 
 
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-> diff --git a/Documentation/devicetree/bindings/clock/ti/ti,dm816-fapll-clock.yaml b/Documentation/devicetree/bindings/clock/ti/ti,dm816-fapll-clock.yaml
-> new file mode 100644
-> index 000000000000..9b6b824faa30
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/ti/ti,dm816-fapll-clock.yaml
-> @@ -0,0 +1,72 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/ti/ti,dm816-fapll-clock.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Texas Instruments FAPLL clock
-> +
-> +maintainers:
-> +  - Tony Lindgren <tony@atomide.com>
-> +  - Tero Kristo <kristo@kernel.org>
-> +
-> +description:
-> +  This binding uses the common clock binding. It assumes a register-mapped
-
-Drop the first sentence.
-
-> +  FAPLL with usually two selectable input clocks (reference clock and bypass
-> +  clock), and one or more child synthesizers.
-> +
-> +properties:
-> +  compatible:
-> +    const: ti,dm816-fapll-clock
-> +
-> +  "#clock-cells":
-> +    const: 1
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: phandle for parent clock clk-ref
-> +      - description: phandle for parent clock clk-bypass
-
-Drop 'phandle for'
-
-Rob
