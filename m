@@ -1,69 +1,114 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01E37237180;
-	Tue, 21 Jul 2026 20:31:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E5644AB6A;
+	Tue, 21 Jul 2026 21:19:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784665912; cv=none; b=sqgiqJcVhTK5yYiZby3xhtFOtYHJTXnS2lnftGLISWE73IHfZd8HJNdrYb4WaBhZVAeZ1xalHTMMkJc6nqD4DnbK1Yq7NT3WzlUvCchEKCHVE499/b0nVdTsSk2QV7yeGEANG2VowvqBuPZw7FxGc+eJ1Hzi9tcYkluysEhfDDY=
+	t=1784668769; cv=none; b=ZBipfW5Fi00cX8c9Q0UK01tqeo8mtZ6CRvpnWOvLffz7+HZ6xx8gZMX7w8tJ0+yKVsG9JL1zmAzvLDRr8ekAvwywHHBpOOwjMfyKoc37SxZjemn1rBYPNyKtBsoQxzvxsq8iQVWwhnE1JDZvSmSzwzPQmsQU3ebvGJGmZGyG/CA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784665912; c=relaxed/simple;
-	bh=L7CGoaV6Hl7hZVsrv5nq7cJoEHdEHmBJlPdzSG9qGNI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=AYZ0azazAYDVVxbFdKXGi0z9b5vzOIoAALNgaLjhhe85FiFGOCPGqpQ5z/kVU7AGsbm03mMP7l2l3ws/v2lry+8diRMiYQmn+yrDalVsALcx9w2ZOjgzQO98L5QDw3WXOaoNkDFrjmBOfe17sYX2wNh3iedqSBF9KrJz6C21k7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M9EipnQW; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1784668769; c=relaxed/simple;
+	bh=vfasnWLEc4hBhpiFIZZERUksM1TZ3lCClbpA1+5A6k4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=IT7ZvaiFAH02yfCoCjyy8vl/M5jXVh0kY9+/GyB8m21da74USgp0HJCMVUEnvCOgY7/2afPJ53c9lfPPw0I4Ke0qN/oTyp/A8EDiJA5zX4/KBzVj29gYJyFiezO+cj+X0IZS4Wkw6BTVyRvkeFrw8AmdY6ctHEXy/BgO0gGSRFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=vgjPLbw+; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M9EipnQW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FDF21F000E9;
-	Tue, 21 Jul 2026 20:31:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784665910;
-	bh=MD2w6kulUoIcZFj5hkQ0HxsuO+mt3YlOYhddCSLSlhE=;
-	h=Date:From:To:Cc:Subject;
-	b=M9EipnQWHzM2klQ29Iv5gY6vvMdh37tKaL0psoe/2UipDjjJDrwfR9S9XdwJ5dKhI
-	 5HN4zKVO6ByD4HzJFE55a4s4xK+n7wAnSKC3Ih7X5Xp04hxLdkO1CJZZvRZiMFB9OP
-	 bXy/F3yy00LRR4O6pXTDhmMZGHMRHVr8SudTWtK79bz30p9nxxm/A99VIjcVKqvzDY
-	 1QwqXnrQjLBqBMui3Fh2NMI9v/+1ASZxh4/Ulcz2JoMfZNkH1uDIruH+m3Nd8Y1PiG
-	 hD+qjshqkF8/cpLCP2IqO0mhNNWbA9VWHPmWk5OTm3sE1PJUhmIcJyTx3fa9SaL4xf
-	 jPlOcBAZTG9IQ==
-Date: Tue, 21 Jul 2026 13:31:49 -0700
-From: Drew Fustini <fustini@kernel.org>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Brian Masney <bmasney@redhat.com>, Rosen Penev <rosenp@gmail.com>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	=linux-riscv@lists.infradead.org
-Subject: [GIT PULL] clk: thead: Updates for v7.3
-Message-ID: <al/XNcvZgyeGjXFz@x1>
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="vgjPLbw+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3CBA1F000E9;
+	Tue, 21 Jul 2026 21:19:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxfoundation.org;
+	s=korg; t=1784668768;
+	bh=0hffDQeFpQm7UWpmsu05qStknGureOxHc2+ks/+yNgM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=vgjPLbw+Tx5OvzK4WPCHOzMUiXZwTac6MsI+RFwpWHbAUuYbhWYrrJs1qQWFmbU5H
+	 FfUujPFpGiTnHBt2JD420PZ6l363urYA8ti7zSX7Fn+wX1tHMRiiox/o2ShI//7nJ+
+	 oNB+CWgeuWlYQKE656sIhJQ7U80zv+aJrOAzanTQ=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	patches@lists.linux.dev,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Brian Masney <bmasney@redhat.com>,
+	Sudeep Holla <sudeep.holla@kernel.org>,
+	Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 6.1 0302/1067] clk: scmi: Fix clock rate rounding
+Date: Tue, 21 Jul 2026 17:15:03 +0200
+Message-ID: <20260721152431.354001593@linuxfoundation.org>
+X-Mailer: git-send-email 2.55.0
+In-Reply-To: <20260721152424.521567757@linuxfoundation.org>
+References: <20260721152424.521567757@linuxfoundation.org>
+User-Agent: quilt/0.69
+X-stable: review
+X-Patchwork-Hint: ignore
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-The following changes since commit dc59e4fea9d83f03bad6bddf3fa2e52491777482:
+6.1-stable review patch.  If anyone has any objections, please let me know.
 
-  Linux 7.2-rc1 (2026-06-28 12:01:31 -0700)
+------------------
 
-are available in the Git repository at:
+From: Cristian Marussi <cristian.marussi@arm.com>
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/fustini/linux.git tags/thead-clk-for-v7.3
+[ Upstream commit d0c81a38d06d446d341532700b3a4a43d3b00eb1 ]
 
-for you to fetch changes up to b2ee00d0bf4cca5dd02702fc339d2b523191966f:
+While the do_div() helper used for rounding expects its divisor argument
+to be a 32bits quantity, the currently provided divisor parameter is a
+64bit value that, as a consequence, is silently truncated and a possible
+source of bugs.
 
-  clk: thead: allow COMPILE_TEST builds (2026-07-14 21:42:01 -0700)
+Fix by using the proper div64_ul helper.
 
-----------------------------------------------------------------
-T-HEAD clock changes for v7.3
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org
+Fixes: 7a8655e19bdb ("clk: scmi: Fix the rounding of clock rate")
+Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://patch.msgid.link/20260508153300.2224715-2-cristian.marussi@arm.com
+Reviewed-by: Brian Masney <bmasney@redhat.com>
+Signed-off-by: Sudeep Holla <sudeep.holla@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/clk/clk-scmi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-There is just one change for this cycle. It allows COMPILE_TEST to
-select the th1520 clk driver without having CONFIG_ARCH_THEAD enabled.
+diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
+index fdec715c9ba9b3..096b0691661961 100644
+--- a/drivers/clk/clk-scmi.c
++++ b/drivers/clk/clk-scmi.c
+@@ -9,9 +9,9 @@
+ #include <linux/device.h>
+ #include <linux/err.h>
+ #include <linux/of.h>
++#include <linux/math64.h>
+ #include <linux/module.h>
+ #include <linux/scmi_protocol.h>
+-#include <asm/div64.h>
+ 
+ static const struct scmi_clk_proto_ops *scmi_proto_clk_ops;
+ 
+@@ -61,7 +61,7 @@ static long scmi_clk_round_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	ftmp = rate - fmin;
+ 	ftmp += clk->info->range.step_size - 1; /* to round up */
+-	do_div(ftmp, clk->info->range.step_size);
++	ftmp = div64_ul(ftmp, clk->info->range.step_size);
+ 
+ 	return ftmp * clk->info->range.step_size + fmin;
+ }
+-- 
+2.53.0
 
-----------------------------------------------------------------
-Rosen Penev (1):
-      clk: thead: allow COMPILE_TEST builds
 
- drivers/clk/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+
