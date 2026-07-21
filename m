@@ -1,28 +1,28 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD1B046D544;
-	Tue, 21 Jul 2026 19:19:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F95842A7B4;
+	Tue, 21 Jul 2026 20:27:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784661543; cv=none; b=rE5hhleAVGSrsGPdo9lkwnFyIotffQAo5Yl/Za707cT27ktZzd8Hy3em0DtcBzRdQun8Ln5NxG+ErqMIRwW+hW7J1dA/s4736pPtg+DLxC7x/8Ms4Asd1bcwOy0cwlj9IvTL7EGRFOCJwx7Juqrjp4/bE0Fd+rM9mU4dKBPjhIw=
+	t=1784665680; cv=none; b=A1snxsbZNiWI6xksgdX/1YHZd8Wbp9qHBuHN+AwrFl3LQ3k8jC0EhLuxkZ+DuGlM87OPzDUv/rDlFHzONnd2jPZpEmSbXY3YhnCQJ0Fwmv0gk2/CDnVVjbN/mf5Qv1xAiTwJn9E+BjGwhPcfDH3epVUmZJsyJFbOe1YEbQ3Vc5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784661543; c=relaxed/simple;
-	bh=BQnx7NcFf+MbqQxKalMOmmwaSrjpCVSiVSD/e139uew=;
+	s=arc-20240116; t=1784665680; c=relaxed/simple;
+	bh=UElIcja0Wp1NJVx0dVRkd3CY2Vp0LEJ/8XuOqp9634Q=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=R3mz8zMz3UDhUiceSgXsLtGls1FTFj1glVhnZT6uB6xgu2Yj5PNHr32vxgcV/Jm4jhQaMffHxjULwhqQbxf/y/atMzKIwQQWQV9tFJc8TFMpQ26DCc4DjHP7TFINYUHU9GdKB+I9D/4gf7uVLUP3cghnp0WVPK5yuOBr7xsM/4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=qgIkiLC8; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version; b=Jh+mz2jwCSpngCtzuxCDnaCWrmuzQUOZfvZ3e6P0dcPG8/YMVk5S5S9NvBfSsnMz+z6M7lfs1I88ZDG7fhK64vYNgAhfy9xEgZ4AER0nGBmBnfvFOJkTAQC6gsPyWffyFEbcMk9kTqQuLbT24GWjUEOHVVuL8XEa1+cWa41ApYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=vQ2Bx9WB; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="qgIkiLC8"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 191751F000E9;
-	Tue, 21 Jul 2026 19:19:01 +0000 (UTC)
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="vQ2Bx9WB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 786AA1F000E9;
+	Tue, 21 Jul 2026 20:27:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxfoundation.org;
-	s=korg; t=1784661542;
-	bh=FUs9D+6kDMYseqc1hzVTipWPJ+5qs9hHRzoEjXaNf5g=;
+	s=korg; t=1784665678;
+	bh=DB4KE19jOAAiKk+TUCqUg8Ynky+oVdYO3UoqPeKREWI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=qgIkiLC8Yi6IBg1Oy9ZFbBtO+FxyFvjj52E1fYnwDX5HNfybnt2HTgh4oVhDiAGht
-	 HMLPgfESGDDbrwdA1FstWlFjhAuKExTW4IDGB3o/SYc5QtFRrUbtRV2/JGVnjh8T6P
-	 TWscl29i5wGtkSPC0t0U9vmuO6GoiVjgymBlsWAg=
+	b=vQ2Bx9WBTzNPhyhw6BTeqd8eRgp1DLzOuVDmK5kuvy3O4GDo7CVYZHVqfRvpZVFRl
+	 LLE38QCvEXNQQ8zGqe00heWgAMw8pXxJxtops2NtBbgGXCLZVicgWBIDW5skA2OrYl
+	 9qN6amvakqlbZZz+qXanT37Qqc17u4CwBVjGpQzo=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -36,12 +36,12 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Brian Masney <bmasney@redhat.com>,
 	Sudeep Holla <sudeep.holla@kernel.org>,
 	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.12 0107/1276] clk: scmi: Fix clock rate rounding
-Date: Tue, 21 Jul 2026 17:09:10 +0200
-Message-ID: <20260721152448.492673894@linuxfoundation.org>
+Subject: [PATCH 6.6 0394/1266] clk: scmi: Fix clock rate rounding
+Date: Tue, 21 Jul 2026 17:13:51 +0200
+Message-ID: <20260721152450.645112096@linuxfoundation.org>
 X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20260721152446.065700225@linuxfoundation.org>
-References: <20260721152446.065700225@linuxfoundation.org>
+In-Reply-To: <20260721152441.786066624@linuxfoundation.org>
+References: <20260721152441.786066624@linuxfoundation.org>
 User-Agent: quilt/0.69
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-6.12-stable review patch.  If anyone has any objections, please let me know.
+6.6-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
@@ -84,10 +84,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
-index 7b7ea36333a6bc..c0e9db04f450c8 100644
+index fdec715c9ba9b3..096b0691661961 100644
 --- a/drivers/clk/clk-scmi.c
 +++ b/drivers/clk/clk-scmi.c
-@@ -10,9 +10,9 @@
+@@ -9,9 +9,9 @@
  #include <linux/device.h>
  #include <linux/err.h>
  #include <linux/of.h>
@@ -96,9 +96,9 @@ index 7b7ea36333a6bc..c0e9db04f450c8 100644
  #include <linux/scmi_protocol.h>
 -#include <asm/div64.h>
  
- #define NOT_ATOMIC	false
- #define ATOMIC		true
-@@ -78,7 +78,7 @@ static long scmi_clk_round_rate(struct clk_hw *hw, unsigned long rate,
+ static const struct scmi_clk_proto_ops *scmi_proto_clk_ops;
+ 
+@@ -61,7 +61,7 @@ static long scmi_clk_round_rate(struct clk_hw *hw, unsigned long rate,
  
  	ftmp = rate - fmin;
  	ftmp += clk->info->range.step_size - 1; /* to round up */
