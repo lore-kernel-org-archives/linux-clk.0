@@ -1,92 +1,105 @@
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD89A3C10AB
-	for <linux-clk@vger.kernel.org>; Tue, 21 Jul 2026 22:49:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC9643E121A
+	for <linux-clk@vger.kernel.org>; Tue, 21 Jul 2026 23:04:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784674143; cv=none; b=Ka6P+9nJ24B/0yEIqYpUZp45jNS3iobXrK50xpA7AqjEQa0gxyzKWJwzEuMrbLMtCpuDIj+KbnTiWckEmAo+zWIr552EUvwUTYzr2XZzIwKOHYEmE7IDGgjKYoOIJG7TymH6uRIFVwk1VF6ssJ5gLHDB5gdOJ5DzjsWa4K+wzuY=
+	t=1784675064; cv=none; b=SKVrSXaV80E4CvRgin/QoTiCoSL5Q8hVfxeUjUb/OCAKZ+lgJq9A0QQ8ml2LX94Uj635spRhV9uF9g505lx5VidCdtAiN99q+6AlnQcDzdPC/cR1Lz4eIbbAA4NWrIS3Lnl0Ei8GnvpreELOvKYePsC7ei8lLKHXPNJQud+DrNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784674143; c=relaxed/simple;
-	bh=tERJXwtHw/dwgXThTSdoDXlXxtU+a4flHyUFW7E2D+4=;
+	s=arc-20240116; t=1784675064; c=relaxed/simple;
+	bh=xgOxOMovpA25BbgSbz35rwS0VQ0yjeoylBXXLZfEkck=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TafAm90bCAy080Yw+r3QIpC3DowYSD6jABj/TeJZGJBGR04aQ17uiHOQHiw13IxcPcs7ONSyTCdOzzUd2S+7aDwVBZ6zM26LbJ7hcz5o1EeD8ghdtiXcSgrho4YZsYD5Idq+Adxp4mk2XSvbdk80gpycKz2ECXF1woZx+OGw7Js=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GppMmgb9; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=XO+ndMpp; arc=none smtp.client-ip=170.10.129.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=UNiAmXlvTTOrZ+bdi0cjj+9Nwo6dWewX2c61owc2+GUaMlIK5o5SJdCgHlBhj6+QvVt6qd9yb9lG4u299Kkp33wdUc8C5zbCIzETTPp3n0egLehA82419tbN2nlkYr7Fc+qPcas4Z3+npkHLNKed0yO9kJ2fd2iXqCbbv4ZPsVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EGexj/wp; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=f6IvSn/D; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GppMmgb9";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="XO+ndMpp"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EGexj/wp";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="f6IvSn/D"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1784674140;
+	s=mimecast20190719; t=1784675061;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=rnBRPHoNiq0pTqq6Jfy7fD9vUPKHe4GhNLqfr8ijK2s=;
-	b=GppMmgb9xsCp625upWxDyYpzaTbhqwKkGyRbVcWhNHsedCOTl/L9cl+ba0y7JbpBfNflwm
-	gY5R+49m0SKjFGvFhkqYE3558qvkQ/uVujEsLxBtKLVs3Moo9fK0XN/zAohHnpthOC7ntS
-	baqcDNpXbARJOYPHoAjIC9tVkiLc0wM=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=z9jxxoNk0Zci913QIrLSshdt2n65M0x+d9IlMGmwHh4=;
+	b=EGexj/wpbzem8GSRnIILKx3VU9LaKh7QcOPFMgWyfbZPKHOlyJJi1ANfLQR1blR+dWtjJC
+	sC9LqM3/P133JwMMepKC6Kp6jM7uRi8cd+m3OCk6l6+jIAyKGOycPoM47HMPFd4kGEIlff
+	hkrDWpR9ELi9uGF+feLdqv1p7kibZLM=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-695-zDbRkCPPN7e56J5woZLlNA-1; Tue, 21 Jul 2026 18:48:59 -0400
-X-MC-Unique: zDbRkCPPN7e56J5woZLlNA-1
-X-Mimecast-MFC-AGG-ID: zDbRkCPPN7e56J5woZLlNA_1784674139
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-930f5da3467so16573085a.2
-        for <linux-clk@vger.kernel.org>; Tue, 21 Jul 2026 15:48:59 -0700 (PDT)
+ us-mta-567-JY5ltM5hMWmxSV_0pU31hA-1; Tue, 21 Jul 2026 19:04:20 -0400
+X-MC-Unique: JY5ltM5hMWmxSV_0pU31hA-1
+X-Mimecast-MFC-AGG-ID: JY5ltM5hMWmxSV_0pU31hA_1784675060
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-92e9a2b95b5so2074587285a.2
+        for <linux-clk@vger.kernel.org>; Tue, 21 Jul 2026 16:04:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1784674139; x=1785278939; darn=vger.kernel.org;
+        d=redhat.com; s=google; t=1784675060; x=1785279860; darn=vger.kernel.org;
         h=user-agent:in-reply-to:content-disposition:content-type
          :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to:content-type;
-        bh=rnBRPHoNiq0pTqq6Jfy7fD9vUPKHe4GhNLqfr8ijK2s=;
-        b=XO+ndMppOasi93ePddrJrHzBpg7HwHL8F/QCfn/tigWNcF2sDXyN/TYXEIn1qehC6v
-         Cw5ndESz2VdLqBQNwN0L5cBrnTkAzOgoc7KUwCWJW5EhRf1VkVzEIMIuiJxesCoGqmNM
-         x3wjYror1HaaW44u8nVaF78lq4wnW4tFufQ++OQx7QB3n5ySIN7erWiYxHIafaJPH+WX
-         kULswzqG3jkqYDvTR7WBZzTTSWQ4eRtARSlr+5VZmf8F623/DZGjF+Rs6pJ+E6KniY4M
-         rqpaI1kRL8cZ7KQ5p1YpUGC1S6EaOrQEXd0cPoDoJd4L1ghp8Uv9V8oDBtVE8bJFSngn
-         tRsw==
+        bh=z9jxxoNk0Zci913QIrLSshdt2n65M0x+d9IlMGmwHh4=;
+        b=f6IvSn/D+R+eg/nK/xBdXFNTy52hDpsHHUCWr7Ueq5xmBR0PGn0dyykgtaGMEEl207
+         VSyd/e2BpQoXHShxhGdy7kWdxyBXZJa8OlNrln0pN6E2dKJz+JnItmfNi440NeBPeron
+         eRx5TYxrYVyb8oV18rSsLVImP0q49Oj1zItZ6vZKYhA2YnFtjRGV8Uw+iRNO2z0LSANg
+         9eh+uhGAbNO32zThJUyeoygSA+Nr95NFcdaxVREDqWQO0HMRMejP61co+aoXjdnp6CGe
+         g0yl0ZfXBEkUrCkJHzFOF7Wfcd/fSJ0cZCCtHia+GybhnFbxhzYLsNL+x8Khp2ybuiIW
+         UViw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784674139; x=1785278939;
+        d=1e100.net; s=20251104; t=1784675060; x=1785279860;
         h=user-agent:in-reply-to:content-disposition:content-type
          :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=rnBRPHoNiq0pTqq6Jfy7fD9vUPKHe4GhNLqfr8ijK2s=;
-        b=CfXKtXbDmuKfRmIb32t59/m44IpQsK5vQ8EQGXl328EaTKuE6tA0O16Q92YD9a1MrZ
-         PkbAaj+cYaX2fshSHjP3S4yUQUhvdxSYafVbbHoiHQo9axV4w0jYrzKWpUcMqRK6BaAv
-         2+mYU0hVgD7QiL1+E4XG0s2c+InPVu6YQzvWKyhaHFhysgtID0Sjhz8TGn/rJRE2mhOV
-         z8tyttrcskBaxZgXmFmJWuNOvEXWAAP9hdoYWmFo1Pih1RkbyCmGF9VDF683zlNa0NGL
-         y1IlPR9IWfl8L+PCuuwaspH94nKTxll3dfH8y7YhJkUHbzocrwOwKLjZjrm+rnbl0Xxy
-         BchQ==
-X-Forwarded-Encrypted: i=1; AHgh+RqRpPhxoUtuV4lIP/ozhzEnj2a8UDfvoYxvcSIYqs4hBocBEfjia2HJzn6A9uHKncBHXS1oC9wSh2o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzo4WckR72YgF9be30Z5FDgfF5OUp4WngF8SZISwj8GSWREouB3
-	TYeF8ocLi51GUiXZ5s26dqI/5wWCzI7KhJArzZNk3p8+8wPFLo5pZZblMw5OZ80nhg2VvVjhJEJ
-	o+ZGKfloh3dKWC9TDLpUln0eiBy5vjvuM8kYefq6qOvfgiwUkzCSlPRhfcd/fUA==
-X-Gm-Gg: AR+sD13dLdfjMOidUdjtp9A3SX6FjzhXiLReq1rgXq0jMCFWPRRmQZPXNWcbFf8ax5r
-	3vpfumS08Jbq9FHgQmI9PtaPqsa242IW2AyO9MUewpIAMhq5uur88EG6rdwbB68tWlHe5bzrVhC
-	/MoPhbWvJbp4WG4AzsN/aTkdP6aHmhywE0I7YxHwge3RcJP9mO+diSrI8ANNzJeNQ3ZjRick7as
-	Xa3ogJ0ZuOPUN0nBFb5xZue4014QiuHkthWT6S+NbKCvno+/raKpu0NcfWJ8ZwMIn1kMAZqXlj2
-	NmC6lw0bYgvcow9FWBM13b7K0Fm1P0URMTMEcE5Pb8R90c9iXLHB40A+tNJlAhAcMA+JeCOuB/7
-	uJtFrKYyy56i6GyU9+R/wu5qv941BJTSB2I4=
-X-Received: by 2002:a05:620a:2b98:b0:92e:6637:d98 with SMTP id af79cd13be357-930b3ed9d5cmr1967181385a.18.1784674138807;
-        Tue, 21 Jul 2026 15:48:58 -0700 (PDT)
-X-Received: by 2002:a05:620a:2b98:b0:92e:6637:d98 with SMTP id af79cd13be357-930b3ed9d5cmr1967178985a.18.1784674138334;
-        Tue, 21 Jul 2026 15:48:58 -0700 (PDT)
+        bh=z9jxxoNk0Zci913QIrLSshdt2n65M0x+d9IlMGmwHh4=;
+        b=Lw2HyJYnUeX8PGDaAf6hCYu1CqVEQ9r7D9Kk1kHNawzR0Vl+taj+myeshp2XvrQmpi
+         2OdTeqwJoa2KWig3eTA1lzwYKRtmQfc4oKjmT0U8Hvc/8KGkkVHO8fXmC0ZSv/hct9O+
+         LRP9gzk9uiuWdmcF/sprix/4davykuTislXQxc63NfT/rs3SAOJQFfxkHMRGwu2hwfPV
+         FLEM8BPfEsJt0RaXsEGw3tcjOPmOCkOdyBBctJD1cOY2UfyimyYK4az47Lz4ipqqhoE1
+         HNyHjQjFNnWEjl+ONWBp2f6gLZpvvyPskY5D2c263Ojcz87RlpJF5Qw3AVyctkJ/WXeV
+         SOlw==
+X-Forwarded-Encrypted: i=1; AHgh+RqCNtpmRQsZYBpPrheG5xAcN/T4oMwT42/ZnvHtcT5LJYvY4dEp9MlDEt66SuIfHWN7Whu9Fl49n1s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyk8m7hHQOfDSAjPKESWWCLsMg0DqirGObwrSkLCNO29d7+mAIt
+	FjL330xvtVuL6vWYWDLenAxLSKz9CuW3TTLLIahDbL/nl07auPE7sTgrVTNOPoOQ7I0bHH1ldSR
+	c/ACx1AW24k/UhDNxE5J/ovSWcDlKaG32oNDINX7NZBkMfMYN/+x1dCfiq+4U42SEn8t3nw==
+X-Gm-Gg: AR+sD11EFmkT3fQoGheRn4BqggDwz9dar9zfwVf7qkdKPIDocdjPrGYGKcS4NuGRe+w
+	/yUQaeHnUJEBlDV98V5gFRsZ+CMWbMN/BRNKHzDEuMOsIz6GAppU+Vfja1nnTgn7MbLvzWau7ad
+	TFOcQ16j/i6tnD7VwmO+UddvEskLkKvpjnIpR7b7OGnddUQ0gz0XPCGXo1kB23ZAwMVyIoj9p+P
+	Tdib6qNKkgJpjnlZ1Jfi7m8Nt122LA0h+vJwFpXpDJAcNPuBiHeBvkXqR2POrjVB9X5ic11O0gG
+	gUFnpA4x2Wu5WZwJOcYayTVtfrPu7bcLXGLNcPsCLWdviUhgDgxQym3GrPkrXfqtKMB9OGXMOeD
+	xyANLdAUFb4hwJZtKi2W/i1jJ41VmCxvzAEQ=
+X-Received: by 2002:a05:6214:2301:b0:8ce:ca7d:b099 with SMTP id 6a1803df08f44-9077832dd19mr216149066d6.18.1784675059724;
+        Tue, 21 Jul 2026 16:04:19 -0700 (PDT)
+X-Received: by 2002:a05:6214:2301:b0:8ce:ca7d:b099 with SMTP id 6a1803df08f44-9077832dd19mr216148766d6.18.1784675059293;
+        Tue, 21 Jul 2026 16:04:19 -0700 (PDT)
 Received: from redhat.com (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-930f6a9ffafsm7374685a.45.2026.07.21.15.48.56
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-907ba9e13d1sm7062316d6.28.2026.07.21.16.04.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Jul 2026 15:48:57 -0700 (PDT)
-Date: Tue, 21 Jul 2026 18:48:55 -0400
+        Tue, 21 Jul 2026 16:04:18 -0700 (PDT)
+Date: Tue, 21 Jul 2026 19:04:16 -0400
 From: Brian Masney <bmasney@redhat.com>
-To: Jerome Brunet <jbrunet@baylibre.com>
+To: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
 Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] clk: fix self-consuming provider module pinning
-Message-ID: <al_3V8N9z25ho8g2@redhat.com>
-References: <20260721-clk-provider-pinning-v1-1-63db2e667993@baylibre.com>
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Chun-Jie Chen <chun-jie.chen@mediatek.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Edward-JW Yang <edward-jw.yang@mediatek.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Chen-Yu Tsai <wenst@chromium.org>, kernel@collabora.com,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
+	Irving-CH Lin <irving-ch.lin@mediatek.com>
+Subject: Re: [PATCH v3 09/18] clk: mediatek: Add MT8189 apmixedsys clock
+ support
+Message-ID: <al_68GlP01W0US0x@redhat.com>
+References: <20260720-mt8189-clocks-system-base-v3-0-8e6d99ab3ad2@collabora.com>
+ <20260720-mt8189-clocks-system-base-v3-9-8e6d99ab3ad2@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -95,66 +108,224 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260721-clk-provider-pinning-v1-1-63db2e667993@baylibre.com>
+In-Reply-To: <20260720-mt8189-clocks-system-base-v3-9-8e6d99ab3ad2@collabora.com>
 User-Agent: Mutt/2.4.0 (2026-06-19)
 
-Hi Jerome,
+Hi Louis-Alexis,
 
-On Tue, Jul 21, 2026 at 12:08:17PM +0200, Jerome Brunet wrote:
-> clk_hw_get_clk() lets a provider get a struct clk for one of its own
-> struct clk_hw.
+On Mon, Jul 20, 2026 at 12:04:19PM +0200, Louis-Alexis Eyraud wrote:
+> Add support for the MT8189 apmixedsys clock controller, which provides
+> PLLs generated from SoC 26m.
 > 
-> When a struct clk is created, the module usage count of the provider
-> is unconditionally increased. For a self-consuming provider, this means
-> it pins itself and the module can never be unloaded.
-> 
-> Increasing the module usage count should only be done when the consumer
-> lives in a different module from the provider. Use THIS_MODULE to
-> capture caller's module and increase the module usage count accordingly.
-> 
-> It is OK for consumer-only APIs such as clk_get() or of_clk_get() to
-> pass a NULL owner. As a result, any provider module will get pinned,
-> same as before.
-> 
-> Fixes: 30d6f8c15d2c ("clk: add api to get clk consumer from clk_hw")
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> Co-developed-by: Irving-CH Lin <irving-ch.lin@mediatek.com>
+> Signed-off-by: Irving-CH Lin <irving-ch.lin@mediatek.com>
+> Co-developed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> Signed-off-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
 > ---
-> This issue has been present for a while. Virtually all users of
-> clk_hw_get_clk() are affected. The majority are compiled as builtins
-> according to the defconfigs. It is not problem in this case but it is
-> if the configuration is changed to module.
+>  drivers/clk/mediatek/Kconfig                 |  13 ++
+>  drivers/clk/mediatek/Makefile                |   1 +
+>  drivers/clk/mediatek/clk-mt8189-apmixedsys.c | 196 +++++++++++++++++++++++++++
+>  3 files changed, 210 insertions(+)
 > 
-> The following modules are using clk_hw_get_clk() and are compiled as
-> module with some shipped defconfigs:
-> * drivers/gpu/drm/msm/disp/mdp4/mdp4_lvds_pll.c
-> * drivers/phy/cadence/phy-cadence-sierra.c
-> * drivers/pwm/pwm-meson.c
-> * sound/soc/codecs/lpass-va-macro.c
-> 
-> Currently those module cannot be unloaded once they have been loaded.
-> 
-> """
-> rmmod: ERROR: Module blabla-module is in use
-> """
-> 
-> I initially thought about using the dev parameter and compare it
-> against the clock own device but this proved unreliable. A clock
-> does not always have a backing device and some paths, such as
-> clk_get_sys(), do not provide a device either.
-> 
-> With this applied, we can get back to removing the direct usage
-> of the struct clk in struct clk_hw and eventually remove this
-> struct member entirely.
+> diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
+> index 2c09fd729bab..f67dfb6cd019 100644
+> --- a/drivers/clk/mediatek/Kconfig
+> +++ b/drivers/clk/mediatek/Kconfig
+> @@ -815,6 +815,19 @@ config COMMON_CLK_MT8188_WPESYS
+>  	help
+>  	  This driver supports MediaTek MT8188 Warp Engine clocks.
+>  
+> +config COMMON_CLK_MT8189
+> +	tristate "Clock driver for MediaTek MT8189"
+> +	depends on ARM64 || COMPILE_TEST
+> +	select COMMON_CLK_MEDIATEK
+> +	select COMMON_CLK_MEDIATEK_FHCTL
+> +	default ARCH_MEDIATEK
+> +	help
+> +	  Enable this option to support the clock management for MediaTek MT8189 SoC. This
+> +	  includes handling of all primary clock functions and features specific to the MT8189
+> +	  platform. Enabling this driver ensures that the system's clock functionality aligns
+> +	  with the MediaTek MT8189 hardware capabilities, providing efficient management of
+> +	  clock speeds and power consumption.
+> +
+>  config COMMON_CLK_MT8192
+>  	tristate "Clock driver for MediaTek MT8192"
+>  	depends on ARM64 || COMPILE_TEST
+> diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
+> index d8736a060dbd..66577ccb9b93 100644
+> --- a/drivers/clk/mediatek/Makefile
+> +++ b/drivers/clk/mediatek/Makefile
+> @@ -123,6 +123,7 @@ obj-$(CONFIG_COMMON_CLK_MT8188_VDOSYS) += clk-mt8188-vdo0.o clk-mt8188-vdo1.o
+>  obj-$(CONFIG_COMMON_CLK_MT8188_VENCSYS) += clk-mt8188-venc.o
+>  obj-$(CONFIG_COMMON_CLK_MT8188_VPPSYS) += clk-mt8188-vpp0.o clk-mt8188-vpp1.o
+>  obj-$(CONFIG_COMMON_CLK_MT8188_WPESYS) += clk-mt8188-wpe.o
+> +obj-$(CONFIG_COMMON_CLK_MT8189) += clk-mt8189-apmixedsys.o
+>  obj-$(CONFIG_COMMON_CLK_MT8192) += clk-mt8192-apmixedsys.o clk-mt8192.o
+>  obj-$(CONFIG_COMMON_CLK_MT8192_AUDSYS) += clk-mt8192-aud.o
+>  obj-$(CONFIG_COMMON_CLK_MT8192_CAMSYS) += clk-mt8192-cam.o
+> diff --git a/drivers/clk/mediatek/clk-mt8189-apmixedsys.c b/drivers/clk/mediatek/clk-mt8189-apmixedsys.c
+> new file mode 100644
+> index 000000000000..0657a50c30d9
+> --- /dev/null
+> +++ b/drivers/clk/mediatek/clk-mt8189-apmixedsys.c
+> @@ -0,0 +1,196 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2025-2026 MediaTek Inc.
+> + *                    Qiqi Wang <qiqi.wang@mediatek.com>
+> + *                    Irving-CH Lin <irving-ch.lin@mediatek.com>
+> + * Copyright (C) 2026 Collabora Ltd.
+> + *                    AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> + *                    Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/delay.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/slab.h>
 
-__clk_register() has this comment:
+The list of includes here seems excessive, especially compared to the
+later files in this series.
 
-        /*
-         * Don't call clk_hw_create_clk() here because that would pin the
-         * provider module to itself and prevent it from ever being removed.
-         */
-        hw->clk = alloc_clk(core, NULL, NULL);
+> +
+> +#include "clk-fhctl.h"
+> +#include "clk-mtk.h"
+> +#include "clk-pll.h"
+> +
+> +#include <dt-bindings/clock/mediatek,mt8189-clk.h>
+> +
+> +#define MT8189_PLL_FMAX		(3800UL * MHZ)
+> +#define MT8189_PLL_FMIN		(1500UL * MHZ)
+> +#define MT8189_PLLEN_OFS	0x70
+> +#define MT8189_INTEGER_BITS	8
+> +
+> +#define PLL_SETCLR(_id, _name, _reg, _en_setclr_bit,		\
+> +			_rstb_setclr_bit, _flags, _pd_reg,	\
+> +			_pd_shift, _tuner_reg, _tuner_en_reg,	\
+> +			_tuner_en_bit, _pcw_reg, _pcw_shift,	\
+> +			_pcwbits) {				\
+> +		.id = _id,					\
+> +		.name = _name,					\
+> +		.en_reg = MT8189_PLLEN_OFS,			\
+> +		.reg = _reg,					\
+> +		.pll_en_bit = _en_setclr_bit,			\
+> +		.rst_bar_mask = BIT(_rstb_setclr_bit),		\
+> +		.flags = _flags,				\
+> +		.fmax = MT8189_PLL_FMAX,			\
+> +		.fmin = MT8189_PLL_FMIN,			\
+> +		.pd_reg = _pd_reg,				\
+> +		.pd_shift = _pd_shift,				\
+> +		.tuner_reg = _tuner_reg,			\
+> +		.tuner_en_reg = _tuner_en_reg,			\
+> +		.tuner_en_bit = _tuner_en_bit,			\
+> +		.pcw_reg = _pcw_reg,				\
+> +		.pcw_shift = _pcw_shift,			\
+> +		.pcwbits = _pcwbits,				\
+> +		.pcwibits = MT8189_INTEGER_BITS,		\
+> +	}
 
-With your change, can this code path be updated to use clk_hw_create_clk() ?
+There is no .ops set. mtk_clk_register_pll() in drivers/clk/mediatek/clk-pll.c
+will use mtk_pll_ops when no ops is set. mtk_pll_prepare() reads/writes
+pll->pwr_addr.
+
+> +
+> +static const struct mtk_pll_data apmixed_plls[] = {
+> +	PLL_SETCLR(CLK_APMIXED_ARMPLL_LL, "armpll-ll", 0x204, 18,
+> +		   0, PLL_AO, 0x208, 24, 0, 0, 0, 0x208, 0, 22),
+> +	PLL_SETCLR(CLK_APMIXED_ARMPLL_BL, "armpll-bl", 0x214, 17,
+> +		   0, PLL_AO, 0x218, 24, 0, 0, 0, 0x218, 0, 22),
+> +	PLL_SETCLR(CLK_APMIXED_CCIPLL, "ccipll", 0x224, 16,
+> +		   0, PLL_AO, 0x228, 24, 0, 0, 0, 0x228, 0, 22),
+> +	PLL_SETCLR(CLK_APMIXED_MAINPLL, "mainpll", 0x304, 15,
+> +		   23, HAVE_RST_BAR | PLL_AO,
+> +		   0x308, 24, 0, 0, 0, 0x308, 0, 22),
+> +	PLL_SETCLR(CLK_APMIXED_UNIVPLL, "univpll", 0x314, 14,
+> +		   23, HAVE_RST_BAR, 0x318, 24, 0, 0, 0, 0x318, 0, 22),
+> +	PLL_SETCLR(CLK_APMIXED_MMPLL, "mmpll", 0x324, 13,
+> +		   23, HAVE_RST_BAR, 0x328, 24, 0, 0, 0, 0x328, 0, 22),
+> +	PLL_SETCLR(CLK_APMIXED_MFGPLL, "mfgpll", 0x504, 7,
+> +		   0, 0, 0x508, 24, 0, 0, 0, 0x508, 0, 22),
+> +	PLL_SETCLR(CLK_APMIXED_APLL1, "apll1", 0x404, 11,
+> +		   0, 0, 0x408, 24, 0x040, 0x00c, 0, 0x40c, 0, 32),
+> +	PLL_SETCLR(CLK_APMIXED_APLL2, "apll2", 0x418, 10,
+> +		   0, 0, 0x41c, 24, 0x044, 0x00c, 1, 0x420, 0, 32),
+> +	PLL_SETCLR(CLK_APMIXED_EMIPLL, "emipll", 0x334, 12,
+> +		   0, PLL_AO, 0x338, 24, 0, 0, 0, 0x338, 0, 22),
+> +	PLL_SETCLR(CLK_APMIXED_APUPLL2, "apupll2", 0x614, 2,
+> +		   0, 0, 0x618, 24, 0, 0, 0, 0x618, 0, 22),
+> +	PLL_SETCLR(CLK_APMIXED_APUPLL, "apupll", 0x604, 3,
+> +		   0, 0, 0x608, 24, 0, 0, 0, 0x608, 0, 22),
+> +	PLL_SETCLR(CLK_APMIXED_TVDPLL1, "tvdpll1", 0x42c, 9,
+> +		   0, 0, 0x430, 24, 0, 0, 0, 0x430, 0, 22),
+> +	PLL_SETCLR(CLK_APMIXED_TVDPLL2, "tvdpll2", 0x43c, 8,
+> +		   0, 0, 0x440, 24, 0, 0, 0, 0x440, 0, 22),
+> +	PLL_SETCLR(CLK_APMIXED_ETHPLL, "ethpll", 0x514, 6,
+> +		   0, 0, 0x518, 24, 0, 0, 0, 0x518, 0, 22),
+> +	PLL_SETCLR(CLK_APMIXED_MSDCPLL, "msdcpll", 0x524, 5,
+> +		   0, 0, 0x528, 24, 0, 0, 0, 0x528, 0, 22),
+> +	PLL_SETCLR(CLK_APMIXED_UFSPLL, "ufspll", 0x534, 4,
+> +		   0, 0, 0x538, 24, 0, 0, 0, 0x538, 0, 22),
+> +};
+> +
+> +#define FH(_pllid, _fhid, _offset) {				\
+> +		.data = {					\
+> +			.pll_id = _pllid,			\
+> +			.fh_id = _fhid,				\
+> +			.fh_ver = FHCTL_PLLFH_V2,		\
+> +			.fhx_offset = _offset,			\
+> +			.dds_mask = GENMASK(21, 0),		\
+> +			.slope0_value = 0x6003c97,		\
+> +			.slope1_value = 0x6003c97,		\
+> +			.sfstrx_en = BIT(2),			\
+> +			.frddsx_en = BIT(1),			\
+> +			.fhctlx_en = BIT(0),			\
+> +			.tgl_org = BIT(31),			\
+> +			.dvfs_tri = BIT(31),			\
+> +			.pcwchg = BIT(31),			\
+> +			.dt_val = 0x0,				\
+> +			.df_val = 0x9,				\
+> +			.updnlmt_shft = 16,			\
+> +			.msk_frddsx_dys = GENMASK(23, 20),	\
+> +			.msk_frddsx_dts = GENMASK(19, 16),	\
+> +		},						\
+> +	}
+> +
+> +static struct mtk_pllfh_data pllfhs[] = {
+> +	FH(CLK_APMIXED_ARMPLL_LL, 0, 0x003C),
+> +	FH(CLK_APMIXED_ARMPLL_BL, 1, 0x0050),
+> +	FH(CLK_APMIXED_CCIPLL, 2, 0x0064),
+> +	FH(CLK_APMIXED_MAINPLL, 3, 0x0078),
+> +	FH(CLK_APMIXED_MMPLL, 4, 0x008C),
+> +	FH(CLK_APMIXED_MFGPLL, 5, 0x00A0),
+> +	FH(CLK_APMIXED_EMIPLL, 6, 0x00B4),
+> +	FH(CLK_APMIXED_TVDPLL1, 7, 0x00C8),
+> +	FH(CLK_APMIXED_TVDPLL2, 8, 0x00DC),
+> +	FH(CLK_APMIXED_MSDCPLL, 9, 0x00F0),
+> +	FH(CLK_APMIXED_UFSPLL, 10, 0x0104),
+> +	FH(CLK_APMIXED_APUPLL, 11, 0x0118),
+> +	FH(CLK_APMIXED_APUPLL2, 12, 0x012c),
+> +};
+> +
+> +static const struct of_device_id of_match_clk_mt8189_apmixed[] = {
+> +	{ .compatible = "mediatek,mt8189-apmixedsys" },
+> +	{ /* sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(of, of_match_clk_mt8189_apmixed);
+> +
+> +static int clk_mt8189_apmixed_probe(struct platform_device *pdev)
+> +{
+> +	int r;
+> +	struct clk_hw_onecell_data *clk_data;
+> +	struct device_node *node = pdev->dev.of_node;
+> +	const u8 *fhctl_node = "mediatek,mt8189-fhctl";
+
+Reverse Christmas tree.
 
 Brian
 
