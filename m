@@ -1,48 +1,51 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A88CA296BCD;
-	Wed, 22 Jul 2026 17:12:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F160F4749D6;
+	Wed, 22 Jul 2026 17:16:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784740333; cv=none; b=PEvu/4Awih4QLAZK9ATWZapTvGVoPJKVO2qx75lxGez8tphp/lzHmDBvgEBrCypG6Q6PFWah0c1cjVMHET3T3lV5vFVzMsTyHGU8etm64dgSzOuvzkxymHvSWinBJwHprpexnuzhPFSBaak1xvYue4ygLIQXC8dDT9+uQN/sl/M=
+	t=1784740590; cv=none; b=n3jJMneocmeX3jWGWt6DCxY1aPOwxvhbYII0iIjXJkD1HcYNO9fZJR2b6C3rHPdtNLm63Z1oUew5EFRWeq27WdNtLtsSCdXlw/lKpAGkmEBsJTRIejJEC819/bNsPxzI5NLPzJk0IUZFFCOqnkjPbzEiecggXX7yAXYD5UiqYQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784740333; c=relaxed/simple;
-	bh=pOw0Sd4aBstlJHr1VKDj8Bt76erT2FtxOFbS4NCugME=;
+	s=arc-20240116; t=1784740590; c=relaxed/simple;
+	bh=E8JdTNtjAEU2qZZnCK7UKY1G5BughNsoCAsermk5pBo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tos8t9AtjvLmsduj29VA0zGrHlvBbJ+MCSl2rwXZA+lXc9JrLT0UogJjCjOZpNu8s8W6fNvwk+BGM7Cnq0l76ThFZoNFS7omXMPUdqtmFmRBkVMgx0f73IPxUlNTcnhOH/VxZGdiQoFTN4504wwT9VU8gkfd/Hofo9f+fU+uzpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bZf1kXQo; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=lVY7pUmnYVbLFqt/C+U1v6rzfqwyYoxTmdaBLlSthcaaoPGxusljcfgSYM1YebEP8jQRN+xnw5KVE20Oz9LzR2qaxLCV+9C8ujDdaw36WcJGnZ3iqBb+zlwTG6EuWK1fMIpjb1fKnFu/5Is7KuyD5QUOSToF/z9zF9V/nfT6Kcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kYXSbZv4; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bZf1kXQo"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E09B1F000E9;
-	Wed, 22 Jul 2026 17:12:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kYXSbZv4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 442951F000E9;
+	Wed, 22 Jul 2026 17:16:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784740326;
-	bh=7mD+4FUWhob78Mb44V3gtlplEwc4ek5DfjC69DadIpM=;
+	s=k20260515; t=1784740588;
+	bh=ikw1+fL6btnWMYc4tslEQEKoB0CU6o+pa5SOHWA46gI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=bZf1kXQo4xHv80f0Pz5JipUico6acxDE74mN4GdiEczhr/dx65ciuaVg4r8bAEEcs
-	 g8p3n8IX94S/0xWbA4zB89DDMhTKQTnkV2L/Z3NU/JS3ruAdusq+9L4HeuSfEStQcH
-	 Y7DVFEogTtuW8IovLFTWOIYoBVbSG6mj923ABW1pZrGmQa6vxfSdKOhKADlVOdVYhn
-	 WYIBqfh0w3VNaXxKQy1Fux3hXJ2kSLGBQPtlGX8G5YZmlkGeL9Qb20Z1soM/qQ5FLB
-	 8kVpxX5d027Yr+2QZ7RI9pYf/OwQ7BcgCUQK2cQUvNhPuOKeGp66LjZg4d3bkfTHjE
-	 NEmeE6vRcIPsQ==
-Date: Wed, 22 Jul 2026 12:12:03 -0500
+	b=kYXSbZv4mVL0UQWusAhHj0XYr2/hUbIKw5N9P6IfKdCxtg9TDAMtJL673i/SLQsQy
+	 yAJa3q4gl5e9gvGBdiZjfBZ9E5Io578KTu53K2WPu8rerzMCFmJIp45O9yz9KO3k4A
+	 mBmufbr6HHb84wZAvttFbGoFwI3FJ7xm8jmb44krRBJI5UVID8c3hnWOVw8RJuAr12
+	 J0Aj2JwL88XuuGc5YUsr1b6g2VnmVyWDYjkDEP5Siey6yYEgwS8ULNWFyXAvvYkGG5
+	 1BJMwchk/g+x8CTeg/bR62Tbcwgt+dtLyxFlTIBMBLWC7R4TF8rPxP+uc1/m0CmdOS
+	 p/RGgJRhAhStw==
+Date: Wed, 22 Jul 2026 12:16:25 -0500
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Claudiu Beznea <claudiu.beznea+renesas@tuxon.dev>
-Cc: biju.das.jz@bp.renesas.com, linux-can@vger.kernel.org,
-	mturquette@baylibre.com, claudiu.beznea@tuxon.dev,
-	devicetree@vger.kernel.org, conor+dt@kernel.org,
-	linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	fabrizio.castro.jz@renesas.com, linux-kernel@vger.kernel.org,
-	magnus.damm@gmail.com, bmasney@redhat.com, mailhol@kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	mkl@pengutronix.de, geert+renesas@glider.be, krzk+dt@kernel.org,
-	sboyd@kernel.org
-Subject: Re: [PATCH v3 2/8] dt-bindings: can: renesas,rcar-canfd: Document
- RZ/G3S SoC
-Message-ID: <178474032283.1138528.11209003528871074463.robh@kernel.org>
-References: <20260714173315.1981708-1-claudiu.beznea+renesas@tuxon.dev>
- <20260714173315.1981708-3-claudiu.beznea+renesas@tuxon.dev>
+To: Simon Glass <sjg@chromium.org>
+Cc: Brian Masney <bmasney@redhat.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-kernel@vger.kernel.org, Fabio Estevam <festevam@nabladev.com>,
+	devicetree@vger.kernel.org, huang lin <hl@rock-chips.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	Jeffy Chen <jeffy.chen@rock-chips.com>,
+	Jonas Karlman <jonas@kwiboo.se>, linux-rockchip@lists.infradead.org,
+	Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 1/6] dt-bindings: clock: rockchip: Add RV1106 CRU
+ support
+Message-ID: <178474058544.1144777.17019195106018644429.robh@kernel.org>
+References: <20260714193656.2196447-1-sjg@chromium.org>
+ <20260714193656.2196447-2-sjg@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -51,56 +54,31 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260714173315.1981708-3-claudiu.beznea+renesas@tuxon.dev>
+In-Reply-To: <20260714193656.2196447-2-sjg@chromium.org>
 
 
-On Tue, 14 Jul 2026 20:33:09 +0300, Claudiu Beznea wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On Tue, 14 Jul 2026 13:36:38 -0600, Simon Glass wrote:
+> Add the clock binding header and schema for the Rockchip RV1106 clock
+> and reset unit. The clock IDs are numbered continuously from 0, in the
+> same way as the RV1103B. The header also covers the MMC drive and
+> sample phase clocks, which the CRU provides using control registers in
+> the GRF region.
 > 
-> The CAN FD controller found on the Renesas RZ/G3S SoC is largely compatible
-> with the variant present on the RZ/G3E SoC. The main differences are:
-> - the RZ/G3S provides only two CAN FD channels
-> - the RZ/G3S supports only CAN FD operation; the Channel n CAN FD
->   Configuration Register does not implement the bits used to select
->   classical CAN-only mode (bit 30) or CAN FD-only mode (bit 28);
->   consequently, bit 31 (CAN FD Frame Distinction Enable) of the same
->   register is also not implemented
-> - some bits in several registers (mainly reserved or status bits) are
->   read-write on the RZ/G3S but read-only on the RZ/G3E; their behavior is
->   otherwise identical: the bits read back as 0 on both SoCs and software
->   is allowed to write only 0 to them on the RZ/G3S
-> - the RZ/G3S provides 256 acceptance filters, compared to 768 on the
->   RZ/G3E
-> - the RZ/G3S can use PCLK clock as the CAN FD clock source through an
->   internal clock divider, while also supporting an external CAN FD clock
->   source
+> The RV1103 is a package variant of the RV1106 and uses the same CRU.
 > 
-> Since:
-> - the SoC clock generator provides to the CAN IP only the peripheral and
->   the RAM clocks
-> - when sourced from the peripheral clock, the CAN-FD clock is obtained
->   inside the IP itself by dividing the peripheral clock
-> - the assigned-clocks and assigned-clock-rates properties are specific to
->   the CAN-FD clock
-> the assigned-clocks and assigned-clock-rates properties were dropped from
-> the required properties list of the Renesas RZ/G3S SoC.
-> 
-> Add documentation for the Renesas RZ/G3S SoC.
-> 
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> Signed-off-by: Simon Glass <sjg@chromium.org>
 > ---
 > 
-> Changes in v3:
-> - updated the patch description to reflect RZ/G3S has 256 acceptance
->   filters and RZ/G3E has 768 acceptance filters
-> - kept compatibles alphanumerically sorted
-> 
 > Changes in v2:
-> - forbid renesas,no-can-fd and renesas,fd-only since the IP supports
->   only CAN-FD; for this didn't collect Biju's tag
+> - Renumber the clock IDs to be continuous, starting from 0
+> - Provide the MMC phase clocks from the CRU rather than a grf-cru
+> - Mention the MMC phase clocks in the rockchip,grf description
 > 
->  .../bindings/net/can/renesas,rcar-canfd.yaml  | 20 +++++++++++++++++--
->  1 file changed, 18 insertions(+), 2 deletions(-)
+>  .../bindings/clock/rockchip,rv1106-cru.yaml   |  60 ++++
+>  .../dt-bindings/clock/rockchip,rv1106-cru.h   | 300 ++++++++++++++++++
+>  2 files changed, 360 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rv1106-cru.yaml
+>  create mode 100644 include/dt-bindings/clock/rockchip,rv1106-cru.h
 > 
 
 Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
