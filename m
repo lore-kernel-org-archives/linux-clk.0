@@ -1,85 +1,101 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F160F4749D6;
-	Wed, 22 Jul 2026 17:16:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55CCC416867
+	for <linux-clk@vger.kernel.org>; Wed, 22 Jul 2026 17:37:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784740590; cv=none; b=n3jJMneocmeX3jWGWt6DCxY1aPOwxvhbYII0iIjXJkD1HcYNO9fZJR2b6C3rHPdtNLm63Z1oUew5EFRWeq27WdNtLtsSCdXlw/lKpAGkmEBsJTRIejJEC819/bNsPxzI5NLPzJk0IUZFFCOqnkjPbzEiecggXX7yAXYD5UiqYQY=
+	t=1784741840; cv=none; b=P51135AGPuL2HcnIsi9oOWUDP2dpy8Ca+n6cgiOMF8g2gIheyR8CpyPNv473iGUOQMXcaIbGuF0sXPLBGyl7YLt4pXRDQgGddIX5dCujxLacVPpGtVZgUyjTyURvx1GQ0KgGOpP73+GuJ28lf+118XE1nCI1fhxCGagcCPPL/8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784740590; c=relaxed/simple;
-	bh=E8JdTNtjAEU2qZZnCK7UKY1G5BughNsoCAsermk5pBo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lVY7pUmnYVbLFqt/C+U1v6rzfqwyYoxTmdaBLlSthcaaoPGxusljcfgSYM1YebEP8jQRN+xnw5KVE20Oz9LzR2qaxLCV+9C8ujDdaw36WcJGnZ3iqBb+zlwTG6EuWK1fMIpjb1fKnFu/5Is7KuyD5QUOSToF/z9zF9V/nfT6Kcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kYXSbZv4; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1784741840; c=relaxed/simple;
+	bh=AKDkWaghcNpmaNxqhAmOaHAKvqFX2oI6UORlFQsEgEA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=iQNOm3p7RKKjzVwUP095dTH5C1VPZf1PJwF9pgXJXmiS7vURhaJgqbKqXw2l99axvBOSUG2tw6QYv5wDUrjBeqQP1jDzhFG4a5z4WrGW2Q863g9DauPk+Cbc9E24zS4Wy5Ha4QeJbzCfIg5Ko9go89TLCxDgq5Pwk3dn76952y8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N9B12N3p; arc=none smtp.client-ip=209.85.219.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kYXSbZv4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 442951F000E9;
-	Wed, 22 Jul 2026 17:16:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784740588;
-	bh=ikw1+fL6btnWMYc4tslEQEKoB0CU6o+pa5SOHWA46gI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=kYXSbZv4mVL0UQWusAhHj0XYr2/hUbIKw5N9P6IfKdCxtg9TDAMtJL673i/SLQsQy
-	 yAJa3q4gl5e9gvGBdiZjfBZ9E5Io578KTu53K2WPu8rerzMCFmJIp45O9yz9KO3k4A
-	 mBmufbr6HHb84wZAvttFbGoFwI3FJ7xm8jmb44krRBJI5UVID8c3hnWOVw8RJuAr12
-	 J0Aj2JwL88XuuGc5YUsr1b6g2VnmVyWDYjkDEP5Siey6yYEgwS8ULNWFyXAvvYkGG5
-	 1BJMwchk/g+x8CTeg/bR62Tbcwgt+dtLyxFlTIBMBLWC7R4TF8rPxP+uc1/m0CmdOS
-	 p/RGgJRhAhStw==
-Date: Wed, 22 Jul 2026 12:16:25 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Simon Glass <sjg@chromium.org>
-Cc: Brian Masney <bmasney@redhat.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-kernel@vger.kernel.org, Fabio Estevam <festevam@nabladev.com>,
-	devicetree@vger.kernel.org, huang lin <hl@rock-chips.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	Jeffy Chen <jeffy.chen@rock-chips.com>,
-	Jonas Karlman <jonas@kwiboo.se>, linux-rockchip@lists.infradead.org,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N9B12N3p"
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-8eeadbc5e21so62641646d6.3
+        for <linux-clk@vger.kernel.org>; Wed, 22 Jul 2026 10:37:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1784741837; x=1785346637; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=AKDkWaghcNpmaNxqhAmOaHAKvqFX2oI6UORlFQsEgEA=;
+        b=N9B12N3pJnUIAUVIinvl1A/0ltrJKMqkVtPAsysC1P+9oFMI4hhZGhdeXcGmNqdMWc
+         GlFoD5fA7pPEIiZnTfVBMbfOv/P39btQ5kmtjnT50hBGK8RSnsigOIZd34Bbr+nRVBqr
+         JpRti3pzd9swe8hf+/b2+r06TqEPsYkxmrm8PFl9qDtLAdNTWKnSbTyQic+NsBn6VJ0V
+         5IuBrdOEEfZwlEHgl+mMkE1Uev6/eYw7PL3iiAdkFR6NpalfCO0ZLeyWB0AAFsbPr3uX
+         2VoN9jPqP78ZaC+V7i0Rbr/TLhKBIk3xWZw6Mdd8hWlG9GTlKPhn8MaeM4a9ntdoscFd
+         T3Rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784741837; x=1785346637;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=AKDkWaghcNpmaNxqhAmOaHAKvqFX2oI6UORlFQsEgEA=;
+        b=Pfb0Lh93+uLINO78i2e500oV/6l3+ZBm66PzyiavgJ3gV4RX2PDehvR5SXdjwd8VNu
+         0be4j1kESoaCSKiD9GVI/SAshazyqvj37sWpC1uawa0pT12R6SRRSMescW4aRCZAFjHd
+         tblEatcPQU+/j98u7EutCoKpIwkPBDP2+Qyv7WmXCaocfrBMGDS4OFKa1Cb/XgtYwwom
+         6HeEOOSFNpMy/27THG6MBEHTuhIl3OBYJ25/+t64evJz0oW8OavAf80rvtHHXcGZuED1
+         gkuXRrUQ76OgfVMbYFpDzTmmfki2eZ6oR5y2kvlpqyzj5Yura/MPrScoeE12u0g7xpVL
+         RNPg==
+X-Forwarded-Encrypted: i=1; AHgh+RoHDM8KbygAN9bUsxS6A+uOUY10svW4J5G2Rxt3WPObWgWkX+UPk3z+GJfbtbnPZboiUcv2XE/LDSE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnhxqEdHns5BaKcJlkwMvBli7wqJFaNzCU3S/IzP4OIp9bW8lO
+	8Nu8ZTvZpztBFraY9+ZXv+iQU2sGCabAkyY1y7Noco79gRnLvAT6XLwK
+X-Gm-Gg: AR+sD12k1nFYs+3Qe1UUh3xAR7l2w9ybkcotvCOiFoOju2dkfwHWw72E7oSl9lFRB5X
+	fyYMBGlxvNQgZ4NC1wfc9dx0o8nvFTfynngN4RuaHfN/9yR7PBdDm7GWTBXb4LlqnzWj3bBYZfQ
+	MbXCsRzzzM1KqPDUPO7OqCoLXxh2VYDRlLskixBrXjkt3+3TZSivqtpgsJP3fgfCnrUsEYV/iB/
+	Ki7WizCUy1GVOWydA2AxV639zlY3oDxYofNiDnQoc3n3U0SNfREFc5SYr6nnTHGsPWDhmytch3S
+	La5oIa1rVs4KTVasgFLuQgp2KN44s0Qqn8lsTzC0ZLoimUTCl1POkaDr9r1Zc2v+8KouNpdab8X
+	Mzknhs5WDImq7CPegtu/JazRYq3VP9pYgvho/031o4okXjRHx5bc7nQM538afWxBT/Q8nx3XOQu
+	5aGbid6/sO0ELG2QuVkqSeWtGpy3OUwonsHU6ZYX+SoyNaxdOTG+8/KA==
+X-Received: by 2002:a05:6214:e81:b0:8f0:275e:8b3a with SMTP id 6a1803df08f44-907783cdb5fmr251226006d6.48.1784741836919;
+        Wed, 22 Jul 2026 10:37:16 -0700 (PDT)
+Received: from AMD.home.internal (dhcp-9-244-8-156.gobrightspeed.net. [9.244.8.156])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-907ba8b3e96sm26521476d6.1.2026.07.22.10.37.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Jul 2026 10:37:16 -0700 (PDT)
+From: Enzo Adriano <enzo.adriano.code@gmail.com>
+To: Chen-Yu Tsai <wens@kernel.org>,
+	Andre Przywara <andre.przywara@arm.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 1/6] dt-bindings: clock: rockchip: Add RV1106 CRU
- support
-Message-ID: <178474058544.1144777.17019195106018644429.robh@kernel.org>
-References: <20260714193656.2196447-1-sjg@chromium.org>
- <20260714193656.2196447-2-sjg@chromium.org>
+	Brian Masney <bmasney@redhat.com>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Junhui Liu <junhui.liu@pigmoral.tech>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: sunxi-ng: ccu_mp: fix clocks without P dividers
+Date: Wed, 22 Jul 2026 13:37:14 -0400
+Message-ID: <20260722173714.2394348-1-enzo.adriano.code@gmail.com>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <CAGb2v67GDBTq8vdxNxBfNVSe=oStcgaJzm0ig2WAEXNQSkVa1g@mail.gmail.com>
+References: <20260722005643.1208942-1-enzo.adriano.code@gmail.com> <CAGb2v67GDBTq8vdxNxBfNVSe=oStcgaJzm0ig2WAEXNQSkVa1g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260714193656.2196447-2-sjg@chromium.org>
+Content-Transfer-Encoding: 8bit
 
+Hi Andre, Chen-Yu,
 
-On Tue, 14 Jul 2026 13:36:38 -0600, Simon Glass wrote:
-> Add the clock binding header and schema for the Rockchip RV1106 clock
-> and reset unit. The clock IDs are numbered continuously from 0, in the
-> same way as the RV1103B. The header also covers the MMC drive and
-> sample phase clocks, which the CRU provides using control registers in
-> the GRF region.
-> 
-> The RV1103 is a package variant of the RV1106 and uses the same CRU.
-> 
-> Signed-off-by: Simon Glass <sjg@chromium.org>
-> ---
-> 
-> Changes in v2:
-> - Renumber the clock IDs to be continuous, starting from 0
-> - Provide the MMC phase clocks from the CRU rather than a grf-cru
-> - Mention the MMC phase clocks in the rockchip,grf description
-> 
->  .../bindings/clock/rockchip,rv1106-cru.yaml   |  60 ++++
->  .../dt-bindings/clock/rockchip,rv1106-cru.h   | 300 ++++++++++++++++++
->  2 files changed, 360 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rv1106-cru.yaml
->  create mode 100644 include/dt-bindings/clock/rockchip,rv1106-cru.h
-> 
+Correct, this was not tested on hardware; it was build-tested only.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Thanks for the review. Chen-Yu's point is right: these one-divider clocks
+should use the single-divider clock class, which already supports
+CCU_FEATURE_UPDATE_BIT. I'll drop this generic ccu_mp patch; there will be
+no v2.
 
+This analysis was done with AI assistance and each finding was checked
+against the cited sources.
+
+Regards,
+Enzo
