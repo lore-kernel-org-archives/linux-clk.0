@@ -1,124 +1,140 @@
-Received: from ultrarisc.com (unknown [218.76.62.146])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2011C2D7DCE;
-	Wed, 22 Jul 2026 00:15:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.76.62.146
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46DCC25B08A
+	for <linux-clk@vger.kernel.org>; Wed, 22 Jul 2026 00:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784679326; cv=none; b=mpySrhO/3NUPFE++hZMgyw0Hf1XBB/jsGbFbvXJFloScevQ8NE6n0FR+ReFbnsYfeD/LWaK1kKs8c9fqXOk1JcTgPtWEZZPBhMnQ26+HChD/3+OfalC+TnKYkR7lGeVFpBXjnq30MdtgPUeWUCQiyuIaVctV2G9rf+atcNAJE7A=
+	t=1784681811; cv=none; b=AkOVG/5Dcjy9mqL1fV/msgMwWkcphX4x/NkN1+ox4+K8BjNQW5YqC8fpTsva7Msh+8WQ9fIDhwfOw1VtwQNQ1+M/Kchv1m0jpnlFFoZQbZgvamV5wZvXnw6l3PKHVoxKFP0xUuRddln88u8cbqupVOb++h2qybtQnilNwBFaPDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784679326; c=relaxed/simple;
-	bh=cNLUTybXKA4UkUr95prSBmvnXyEfDjiSjqPicEwBoHQ=;
-	h=MIME-Version:Content-Type:Subject:From:To:Cc:In-Reply-To:
-	 References:Date:Message-Id; b=APVwjY+OYIoeY5ohFn7OriFqlhZCCQNQ34D9udhV71N0J7WB34uDWRXKji/s0C7jcaHAdzcoMc/fD0YcttEv7/5eMaj1GwgZ9GVQRtKL89wCaB+E/90+P0Qdd0rekdvixrdImg3wG0vIKHxccUVuNxF8M4vpXSbP5SIF6NORVX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ultrarisc.com; spf=pass smtp.mailfrom=ultrarisc.com; dkim=pass (1024-bit key) header.d=ultrarisc.com header.i=@ultrarisc.com header.b=k9dJiaap; arc=none smtp.client-ip=218.76.62.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ultrarisc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ultrarisc.com
+	s=arc-20240116; t=1784681811; c=relaxed/simple;
+	bh=41yheuYTzflwsC9az/eVDNLUtGn/wFSKA6g0rPFhxGM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CYw0sebNoTvJW9zlQhot8HrqgrshGI+BGBbnhYye6YskyOuORaaeMJdo4n261+f432RSFoZ7RyBTK9/ujYXLYA3RBqRhDOwFWn+SBxF2Tx0yd38QMW0f/OGIb+O4c3J+RYVvywc+9/uO2nUXGi/BQuBKHr0KdmOQMIeHW1XXbi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KaXhUw/T; arc=none smtp.client-ip=209.85.219.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ultrarisc.com header.i=@ultrarisc.com header.b="k9dJiaap"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KaXhUw/T"
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-8ef1dc934d1so64829196d6.0
+        for <linux-clk@vger.kernel.org>; Tue, 21 Jul 2026 17:56:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=ultrarisc.com; s=dkim; h=Received:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:
-	References:Date:Message-Id; bh=ZKisz1Ne04iXRtMnkOfnTn3thtOBxgjaa
-	dn6CyTjmJQ=; b=k9dJiaapOZxvRslR7YPfqqFzkKBQglFIeLWIhTyDn92R7U7Ra
-	h/phl75gCsB/sA+TdNXikHjscxdhmcYbPY2AWRGBx86nVx37RptDwJiG33LnDUSC
-	p8AIw4h6EhlxMBkbJb1PfK4Y1F8dKiS55DIUizxLidoxQF3vUGXIu0uaXc=
-Received: from [127.0.0.1] (unknown [192.168.100.1])
-	by localhost.localdomain (Coremail) with SMTP id AQAAfwAnEkOsC2Bq9IMUAA--.17601S2;
-	Wed, 22 Jul 2026 08:15:40 +0800 (CST)
+        d=gmail.com; s=20251104; t=1784681806; x=1785286606; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=G3zas7MpBZKk+oDgMVzjx3UamWGdsP8MxVU5Ixr7UTA=;
+        b=KaXhUw/TONstc2DirY7Q4uqPLcbH1BDDlU0FMD+50c1jEC9uoX6XOV/QOzQ3fdQ4oS
+         7gcVAQJahFraCJ5vcMDfiZA3f9HMq8fEIgTzaZ04NZIs+RLhCHCX1X6OlgjrzUkEmUOs
+         Y8Wnwod8asnmCrUqryCyjRSi8QhlUeLnK2ipAx+h3pIb0de7NECLhrIgslDi+oO3iDMq
+         emKR7dV5uQSDtZq22q381Z/RZsBCbNscmzkaBeMShB/Z8qJZuqS6b4kGPjHi2NlyQ39t
+         4ezk1KxZMQfbwrDpC9fH68EB1Lmu4fontOTFr1iFpkfuhBVFEwa9ZqjVmCJ2CtfH8YZV
+         jRSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784681806; x=1785286606;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=G3zas7MpBZKk+oDgMVzjx3UamWGdsP8MxVU5Ixr7UTA=;
+        b=eErZ2r0ZQANcjc2Ho7YyaHfMWn0zDeaHp5wkdQQAhqFs+gEgznYIWBV+BGoJTlCJLg
+         L0LD/xtlT5ZIXJ/2n9NGjKZkUD/Z7n6C0EBxY7EP5aOXO4HVeYFB90I7ivpC/SU0Q5em
+         yqgu6/FhIeSZu2Zq5Jy+McTJmXf7X5v0VoFcR4A4adxD+SYDk4VutrEvl9oTJjzo7j4D
+         4CfeK9H4gTdMlhTt73DCx0udkk2OzZQhEoNMtfSR2t4aPC4//HFL+Z1NSqRcVzbB1JgW
+         xojKQKCEIstG4qVw0zFQ7xJ/cJg7nuHjBWlSri+BO7HwVRTcS/SMs7ep/F/rfTXuMSgJ
+         MhWg==
+X-Forwarded-Encrypted: i=1; AHgh+RqHcrs3hghfI6YAOhZdMT4CpAOtPpnD+E7zVkYM66qQFhx/sz+0Q+OHyZeTE7MQmpyWUNREJKzu9Zw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+lBw8irYNYPHvpKNljRL1pZGI/xZSa7uGupqeaxWASe7bCXmp
+	n8PBNKtXuLW3WTuko9hwP8a8qxpASppfP5BH8PPuONw0ES8yM+jL2PbA
+X-Gm-Gg: AR+sD11wNoH2yDlyRz1yYgkeUVZO7AyHiWBpsuNPENQsZdKxjH0ifcNHIrU87xRayG3
+	0N9y1uXCWW45uIfhCFq+Dcn1W9ehs7lVuJHB2zSIomul1XuQ/V3TbDg0WZtm2lemYof7o/H1ZCM
+	Zo345apDFuWKi1em6t17eXtWNqxP6g3V5pTHYvMjljJtuaXeLWgBs5ybSyJzJDZ4n3hW07oXG7E
+	Ar4tr48WcuL/bmIhDaelN9VNswAs3WOoBXG9U605gIFfWLtHfqxZNnL6qk2d9Ex7s9PRma6A8iz
+	c46Kw8QroS2nABlTKIZaSAc68At3zgd86/N6JXYYOXwfjUJya0FPrt3ZJmka+6uwAuy2m4217U/
+	eC1dV0VvlSim52WD+h92d9b5fNhZcYQLCmVRtU60ssmUWiPdMOfaYN4lPV5vHWQmaTSu4dM+ef3
+	hrMKA/AJVtYAhQt7+QGpdwUY8YSIs29JZP+JXxTPu5v+FeJntqA6lRdQ==
+X-Received: by 2002:ad4:4ee4:0:b0:8f2:22c8:e71b with SMTP id 6a1803df08f44-907b9bfed43mr25560426d6.24.1784681806174;
+        Tue, 21 Jul 2026 17:56:46 -0700 (PDT)
+Received: from AMD.home.internal (dhcp-9-244-8-156.gobrightspeed.net. [9.244.8.156])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-907baa27cfcsm8623966d6.44.2026.07.21.17.56.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Jul 2026 17:56:45 -0700 (PDT)
+From: Enzo Adriano <enzo.adriano.code@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Brian Masney <bmasney@redhat.com>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Andre Przywara <andre.przywara@arm.com>,
+	Junhui Liu <junhui.liu@pigmoral.tech>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: sunxi-ng: ccu_mp: fix clocks without P dividers
+Date: Tue, 21 Jul 2026 20:56:43 -0400
+Message-ID: <20260722005643.1208942-1-enzo.adriano.code@gmail.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH v4 0/3] clk: ultrarisc: add DP1000 clock support
-From: Jia Wang <wangjia@ultrarisc.com>
-To: Brian Masney <bmasney@redhat.com>
-Cc: wangjia@ultrarisc.com, Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Conor Dooley <conor.dooley@microchip.com>
-In-Reply-To: <al_oYeD8EKHAGnPl@redhat.com>
-References: <20260720-ultrarisc-clock-v4-0-fe639d63bbac@ultrarisc.com>
- <al_oYeD8EKHAGnPl@redhat.com>
-Date: Wed, 22 Jul 2026 08:15:10 +0800
-Message-Id: <178467931058.4117678.1808952053832316217.b4-reply@b4>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1784679311; l=1534;
- i=wangjia@ultrarisc.com; s=20260515; h=from:subject:message-id;
- bh=cNLUTybXKA4UkUr95prSBmvnXyEfDjiSjqPicEwBoHQ=;
- b=iV3j9p0EK8AWc4gdSQozmt8ztshsMsv5RraC+Y7Pk85VVdmI7qBlJpv4fzOgorHjynC9NDTTp
- ye/bWcbeE3MAOApMbbY0kRa9JfK2Xl+09I/lCyMNls5Pu42VKSIfwBy
-X-Developer-Key: i=wangjia@ultrarisc.com; a=ed25519;
- pk=wGVm18siRScehKOkOz0WKxgxDy7IezHEszhnN4/TUCY=
-X-CM-TRANSID:AQAAfwAnEkOsC2Bq9IMUAA--.17601S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kr4rXFy7Ary8Ar47WFy8Zrb_yoW8Gw4kpF
-	W8GFs5tFWkX3W2vws29wn2vry5Jas8tFWUJ3yUKry5tF1fWr1jqa97K3WfW3y29Fn5Ar9a
-	yayj9w17AF42vaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9l14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r
-	4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
-	n2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCY02Avz4vE-syl42xK82IYc2Ij64vIr41l4I
-	8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AK
-	xVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcV
-	AFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8I
-	cIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r
-	4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUonmRUUUUU
-X-CM-SenderInfo: pzdqwylld63zxwud2x1vfou0bp/1tbiAQAKEWpYVVAAAwAesw
+Content-Transfer-Encoding: 8bit
 
-On 2026-07-21 17:45 -0400, Brian Masney wrote:
-> Hi Jia,
-> 
-> On Mon, Jul 20, 2026 at 08:38:03AM +0800, Jia Wang via B4 Relay wrote:
-> > This series exports a small common clock helper and adds the devicetree
-> > binding and clock driver for the UltraRISC DP1000 SoC.
-> > 
-> > The clock tree is driven by a SYSPLL and provides fixed-factor clocks for
-> > the subsystem and PCIe, divider-based root clocks for GMAC and the UART,
-> > I2C, and SPI blocks, and per-instance gate clocks for UART0-3, I2C0-3,
-> > and SPI0-1.
-> > 
-> > Testing:
-> > - dt_binding_check and dtbs_check on ultrarisc,dp1000-clk
-> > - Kernel build for RISC-V and boot-tested on DP1000
-> > - Modules build test for CLK_ULTRARISC_DP1000
-> > 
-> > Signed-off-by: Jia Wang <wangjia@ultrarisc.com>
-> > ---
-> > Changes in v4:
-> > - Drop the initial clk_hw_get_rate() max-rate warning after setting the
-> >   divider rate range.
-> 
-> I also see this in the diff between v3 and v4. Is this expected?
->
+Some sunxi-ng MP clocks have an M divider but no P divider. The A523
+MBUS, IOMMU and DRAM clocks use this layout and also require the update
+bit when changing their rate.
 
-Yes, this is expected. The change only fixes the oddiv1/oddiv2 field naming
-to match the hardware definition and does not affect PLL frequency
-calculation.
+ccu_mp_set_rate() unconditionally builds and applies a mask for the P
+field. With a zero-width P field this produces an invalid GENMASK()
+range and can clear bits outside a P divider, including the clock gate.
+
+The callback also ignores CCU_FEATURE_UPDATE_BIT, so hardware that
+requires the update bit may not latch the new divider value.
+
+Only update the P field when it exists, and set CCU_SUNXI_UPDATE_BIT for
+MP clocks carrying the feature. This matches the existing sunxi-ng div,
+mux and gate helper behavior.
+
+Reported-by: Sashiko <sashiko-bot@kernel.org>
+Closes: https://lore.kernel.org/r/20260712081341.9D1431F00A3D@smtp.kernel.org
+Fixes: 6702d17f54a8 ("clk: sunxi-ng: a523: add video mod clocks")
+Assisted-by: Codex:gpt-5
+Signed-off-by: Enzo Adriano <enzo.adriano.code@gmail.com>
+---
+Based on clk-next 8cdeaa50eae8 (Linux 7.2-rc2).
+Tested with strict checkpatch and an arm64 W=1 build of ccu_mp.o.
+No hardware runtime claim is made.
+
+ drivers/clk/sunxi-ng/ccu_mp.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/clk/sunxi-ng/ccu_mp.c b/drivers/clk/sunxi-ng/ccu_mp.c
+index 7cdb0eedc69b..aa6cb20447f1 100644
+--- a/drivers/clk/sunxi-ng/ccu_mp.c
++++ b/drivers/clk/sunxi-ng/ccu_mp.c
+@@ -237,12 +237,17 @@ static int ccu_mp_set_rate(struct clk_hw *hw, unsigned long rate,
  
->  +++ b/drivers/clk/ultrarisc/clk-dp1000.c
->  @@ -0,0 +1,154 @@
-> @@ -309,8 +309,8 @@
->  +	.frac_mask = GENMASK(23, 0),
->  +	.m_mask = GENMASK(23, 16),
->  +	.n_mask = GENMASK(11, 6),
-> -+	.oddiv1_mask = GENMASK(4, 3),
-> -+	.oddiv2_mask = GENMASK(1, 0),
-> ++	.oddiv1_mask = GENMASK(1, 0),
-> ++	.oddiv2_mask = GENMASK(4, 3),
-> 
-> Brian
-> 
-> 
-
-Best regards,
-Jia Wang
-
-
+ 	reg = readl(cmp->common.base + cmp->common.reg);
+ 	reg &= ~GENMASK(cmp->m.width + cmp->m.shift - 1, cmp->m.shift);
+-	reg &= ~GENMASK(cmp->p.width + cmp->p.shift - 1, cmp->p.shift);
++	if (cmp->p.width)
++		reg &= ~GENMASK(cmp->p.width + cmp->p.shift - 1, cmp->p.shift);
++	if (cmp->common.features & CCU_FEATURE_UPDATE_BIT)
++		reg |= CCU_SUNXI_UPDATE_BIT;
+ 	reg |= (m - cmp->m.offset) << cmp->m.shift;
+-	if (shift)
+-		reg |= ilog2(p) << cmp->p.shift;
+-	else
+-		reg |= (p - cmp->p.offset) << cmp->p.shift;
++	if (cmp->p.width) {
++		if (shift)
++			reg |= ilog2(p) << cmp->p.shift;
++		else
++			reg |= (p - cmp->p.offset) << cmp->p.shift;
++	}
+ 
+ 	writel(reg, cmp->common.base + cmp->common.reg);
+ 
+-- 
+2.53.0
