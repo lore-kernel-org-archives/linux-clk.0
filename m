@@ -1,89 +1,97 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CCF935F164
-	for <linux-clk@vger.kernel.org>; Wed, 22 Jul 2026 17:43:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E04644334BC;
+	Wed, 22 Jul 2026 17:46:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784742241; cv=none; b=FPXLbv4Itt7oOV8t4MHopXCDe3jciEGqzeaxCPvvy9fi6aS81e+qqrST/IRFXYF5So44yISdtfb4/8GpZ0gS2hn5mHLxWUydl7hi3U6Ze0YGQtiqVUKlxxxHLNz6YzcWPsdKx4PqDRRZbZjJsvmVE4RZ8B0TtTu1ojeauJrl+Jk=
+	t=1784742414; cv=none; b=MsxQinEViF95CMttKI7LNVc8czJG6GEEk1AjuVB2dQchvnV5SYCQVYNV3i+eWKLWN6YLiLi9BXv4lpA78jgPez1BaxA8OpNuuWiaNYHQ1iu9oPMu2ptrYSUEZgVeska1nAjOu3Iqr8BDY7sW29IjDxYvZhgJMZ7Hj9DhJTfqy7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784742241; c=relaxed/simple;
-	bh=E/g1N4QwqpckT0NASK2yVHIbntEJkDAoohaN0e1WJsM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fYDS56dkelCHbSeBR3WrX3KsFefxorkh/sefACoZjgF9l21FslO/8aZYj8TMfPG76eoeAHPPLvc5UwRcrhc9U/c8rNK9ceNSXF8BE27PbDOI2C26KLJZPlADSmPIed7gsFNGiOqBwgP7T7TEWheYjhRGMZJm76OD4t/UfBBRpWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kxgd6TWy; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1784742414; c=relaxed/simple;
+	bh=kTYYjT5M8kNlgK4vexPnqHan5LuQH3TukAB6V7Z+lug=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fl4+3BuDsROohjWVAmifEPCo1uVteyO4HJ1045uIR3vApNbSYzp+NhZHFub0jkC0ZVLRm92coW+QtW7tDztTZ5vIv6DwPyqeH32HrIjtXSJKOi95pYqTvvWiy+xZZcTGCn73wVVCXRdtG6xt7pjZ8CXMXgeNusCly2oBzPUSQqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KRV249wB; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kxgd6TWy"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 064BB1F00ACA
-	for <linux-clk@vger.kernel.org>; Wed, 22 Jul 2026 17:43:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KRV249wB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BF0F1F000E9;
+	Wed, 22 Jul 2026 17:46:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784742238;
-	bh=E/g1N4QwqpckT0NASK2yVHIbntEJkDAoohaN0e1WJsM=;
-	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc;
-	b=kxgd6TWyY893yueMLrXlnp5ac7BzRiIHAZYIuQsCnoO2GnN/lq4RN3B/ys8WxQyYY
-	 7sh6FM5JJ27QPEAYxgPzf0iGbRRC7wfTNnby5PYgUWPinBSQweW7zUpPWumsBvQnHy
-	 lp2pjT4U+Yo1+dulguWPZHaMGEnjrwJTYM/fjDESEY01KevIllhXu2jcLPPg2NUTC7
-	 fdqTiF38lTID+JxuTjJbJc0/zhakWmably/XXxYC9vvdA07zZD4XX5vD0/HrzcNcAZ
-	 NkGQxUBKJLbPSjm4mS+i4/h9p+dVjWOO6c6rjrrNEmsoNWy0tbDbSER7Z/3i6vHQHG
-	 ywSZeoJdhJBdw==
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-39c8ee87f7eso77840231fa.3
-        for <linux-clk@vger.kernel.org>; Wed, 22 Jul 2026 10:43:57 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+Rq0VWrQXmAqTVNRULzL/vI2lpoxICTzZfvS7pYfowt40l5s2TnIP53BMb+ofa/YgOmiFQ4H9kQ41ik=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxm1Ri4YD/ErwHmBN9bX5n7W/5kJHlv6S3hnRKpwCqRJtF6R36p
-	Ja+1VYXKiOb4Cugg44s4HeZWu1XtVtiGYM688R+wp1gntdeBhsHWg4a5r6jK9QpOLeC0UpXCWyl
-	sjlzkUBfVHZBuiH5DDBoJXqLf8PI41lA=
-X-Received: by 2002:a2e:a593:0:b0:39b:14ba:a5cc with SMTP id
- 38308e7fff4ca-39eb294c024mr42599721fa.41.1784742236447; Wed, 22 Jul 2026
- 10:43:56 -0700 (PDT)
+	s=k20260515; t=1784742412;
+	bh=KZkZF2rPu5ZR/LGvwdw9ibp5FkuwgMTaCsJaW4e51to=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=KRV249wBia2OVTj+hl1wFx+sYZT1cRQ22nXpTMRg6c1m1AuAHN1z5z0YoOYi0rNA9
+	 xNahV+llEnZIX49WanAvWXqJ5AMcVyfxQ3DA8EowWEb8XoCLxNt0xUhTRRZExzt6Vk
+	 adjtncUKTmhvXagkCtHFM3YVOwPFgT68i6h+q7CEYj1TV6IOacy+42MBaFZrkdAdNr
+	 0zhABJrCYgLP81b9k5ocMGCfY7t34HgQHDYQsM2WV8hdCu5GvFAjXg7nFwk7UyKT2M
+	 nxFxk3asIK8EPkmcQNBcevMCEqzAv30uz0bign6Vv/zr6srgqthfx8Mxw8m/sgnqz5
+	 EQBzU92wCC4iA==
+Date: Wed, 22 Jul 2026 12:46:49 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Brian Masney <bmasney@redhat.com>, linux-renesas-soc@vger.kernel.org,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Prabhakar <prabhakar.csengg+renesas@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	devicetree@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>,
+	linux-watchdog@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>
+Subject: Re: [PATCH v3 5/8] dt-bindings: watchdog: renesas,r9a09g057-wdt: Add
+ CPG/MSSR syscon support
+Message-ID: <178474240889.1288517.6935023555003107612.robh@kernel.org>
+References: <20260716123434.2576253-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20260716123434.2576253-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260722005643.1208942-1-enzo.adriano.code@gmail.com>
- <CAGb2v67GDBTq8vdxNxBfNVSe=oStcgaJzm0ig2WAEXNQSkVa1g@mail.gmail.com> <20260722173714.2394348-1-enzo.adriano.code@gmail.com>
-In-Reply-To: <20260722173714.2394348-1-enzo.adriano.code@gmail.com>
-Reply-To: wens@kernel.org
-From: Chen-Yu Tsai <wens@kernel.org>
-Date: Thu, 23 Jul 2026 01:43:43 +0800
-X-Gmail-Original-Message-ID: <CAGb2v668dnH4BT=2rrWq+s0Bc_qfpRpS3a17wEeDWNxifD3t2w@mail.gmail.com>
-X-Gm-Features: AUfX_mxhUF5O2qxLlZC_gBBNFeiWZssw5GcuKnEBQjVfI4pbcu03QcQpsETrUsY
-Message-ID: <CAGb2v668dnH4BT=2rrWq+s0Bc_qfpRpS3a17wEeDWNxifD3t2w@mail.gmail.com>
-Subject: Re: [PATCH] clk: sunxi-ng: ccu_mp: fix clocks without P dividers
-To: Enzo Adriano <enzo.adriano.code@gmail.com>
-Cc: Andre Przywara <andre.przywara@arm.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Junhui Liu <junhui.liu@pigmoral.tech>, linux-clk@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Jul 23, 2026 at 1:37=E2=80=AFAM Enzo Adriano
-<enzo.adriano.code@gmail.com> wrote:
->
-> Hi Andre, Chen-Yu,
->
-> Correct, this was not tested on hardware; it was build-tested only.
-
-For future patches, if you only build-tested it (which is a hard requiremen=
-t),
-please mark the patches with "RFT" (so the subject prefix is "[PATCH RFT]")
-and note in the footer that it needs to be tested on actual hardware.
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260716123434.2576253-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
 
-ChenYu
+On Thu, 16 Jul 2026 13:34:31 +0100, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> 
+> On the Renesas RZ/T2H SoC, the Watchdog Timer Control Register (WDTDCR)
+> resides within the CPG/MSSR block rather than the WDT address space
+> itself.
+> 
+> Previously, this was handled by including a second register range in the
+> "reg" property. However, this is architecturally incorrect as the CPG/MSSR
+> block consists of two distinct regions (0x80280000 and 0x81280000) that
+> contain registers for multiple peripheral blocks.
+> 
+> Since the CPG/MSSR block is a multi-function block, introduce the
+> "renesas,sysc" phandle-array property to allow the WDT driver to access
+> its control register via this shared regmap.
+> 
+> Mark the use of a second "reg" entry as deprecated in favor of the
+> new phandle-array approach for SoCs that require WDTDCR access.
+> 
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> v2->v3:
+> - Updated property name to "renesas,sysc"
+> - Updated description about deprecation and use of the new
+>   phandle-array property.
+> - Updated commit message
+> 
+> v1->v2:
+> - No change.
+> ---
+>  .../watchdog/renesas,r9a09g057-wdt.yaml       | 29 +++++++++++++++++--
+>  1 file changed, 27 insertions(+), 2 deletions(-)
+> 
 
-> Thanks for the review. Chen-Yu's point is right: these one-divider clocks
-> should use the single-divider clock class, which already supports
-> CCU_FEATURE_UPDATE_BIT. I'll drop this generic ccu_mp patch; there will b=
-e
-> no v2.
->
-> This analysis was done with AI assistance and each finding was checked
-> against the cited sources.
->
-> Regards,
-> Enzo
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+
