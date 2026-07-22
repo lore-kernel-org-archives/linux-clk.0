@@ -1,138 +1,140 @@
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF18E233941
-	for <linux-clk@vger.kernel.org>; Wed, 22 Jul 2026 05:12:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C327C312836
+	for <linux-clk@vger.kernel.org>; Wed, 22 Jul 2026 05:59:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784697163; cv=none; b=OX1fchrngLFQavlx3lf0pnMZg8pvdOT5wlH613mXIGV4KUbsHFQ8MBJYrfV8d6kd3YUN3p1bqw0vOcwxFclDyepc6lv4x3lUeAYqJCWsFbpx7Xuf3F7i9GZM+3e3v9vet7LFas2BRHPCj+2m/dDQUsI0s3zhX/hPAf9nRZB8K9k=
+	t=1784699944; cv=none; b=a2DbdK9PLp5YCJUMRUMvgby15iQFRSV7KXriJuJpMnzAC55/YpBnkkCEpgbt7GEr08sfF9v1cPtfrOFXxDVFS/aR9gEgSfgqV5PcCqGKVP4NxxKywHamCblccGIztytAB+BGpCfQAPrLmPCXGV0AUar7sJTqP9HyTXsw2wYprYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784697163; c=relaxed/simple;
-	bh=+PIv0zwvDK7Dtbw1NzJOdvZU98UCOcchphiEw93P0mM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NSlf3Iqcd23MH5d5k1NXxzOQlSNVnlDfEp81z9mHXmPCIawSUq7KWH+Cdgm7D4vokSW7o58F+hFXdfFZj46TiFcqcZJyvCJn57FEpYZz5a9uAUV0YEyAZuhT47M2ec8j6nW4eCodTtzcNOnUWN1J7V9jbBNS4QvKGTFQFZIM9wo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=L8fhP/Dz; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Ofdzer1u; arc=none smtp.client-ip=205.220.168.131
+	s=arc-20240116; t=1784699944; c=relaxed/simple;
+	bh=FMRJ2dCxpLRqMq7VnS3Hat4bMz1Ui//AKEapRVwc5PY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=KxBgA1Daedd1pfc0QBXBxMg8QBlibW1y5vGR0Cn7hlkG/iWs6pCfTh/5E4DESKGLHZXP6EYTq9/zDM9yTWitimDZ3Ri9c/y4FFWSclFROVQHC6Ur1mDgj5/i5BNX691xCtmwG02m3Izj1rkABDaKNn/Lvx2YZflQ+dZSz+eWWww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=bHZ2MLGD; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Kt5p1KHe; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="L8fhP/Dz";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Ofdzer1u"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="bHZ2MLGD";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Kt5p1KHe"
 Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66M53t9i4027579
-	for <linux-clk@vger.kernel.org>; Wed, 22 Jul 2026 05:12:42 GMT
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66M53ehP4027251
+	for <linux-clk@vger.kernel.org>; Wed, 22 Jul 2026 05:59:01 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	oxfo1suLB+uzJXkAtKHEBljNDBF2FOJJ9F91Ccszb5g=; b=L8fhP/DzzjI+4mig
-	f6yDPP96K2hL9htjwPruMMxRjoq+Ib1UytQ6sZ42PottOlu2coc0WLo++cSBv+Ow
-	Tf5pfW4RzCKXSG64+BZA6sVUYEXR7hNZ2Vf6sqqtWERqXl1seW5TXiErGotIe2sD
-	5YstWsP6TCn9idoSltCOY3+2GpmRafADmaPqxQmTkK7ce6tdgxCov0HSqqj0bDBs
-	kfL1xpiZdhOp+dRHuvF/DlwXkicCYfUtFWrLWT6j3UuZtFcy3Qemz6uuWDwv2fJG
-	P57/G2fa4ULpXkY5LC0V4GqijO3KvPzOn9ydfMV8z0m9jihO1cngi8v+Cqcaiwdp
-	ieB8uA==
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fj9bsbk4f-1
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=lHyaO1rr1jxitrI8f4XMNU
+	N/LXcObIJB7mo8ne43U1I=; b=bHZ2MLGDOXTt+fMU1TC35KOvj5q0GlCwhdGami
+	cdKbU2gxEfPXooOjLUb3/F4kRh28XjoZXhNjWR6c4o4N6yv9FfIFqRckJDqz1onx
+	lMKKcwU90ulMfUzUgNhwcnBdTJB/N7pHV5HzNvM1IhDNzWe0QlR9HvTn6E8oyqyO
+	5dcRk8oTpWbvSSQ4xC3O6RYv15n2FP/Qtpeo9pbgTp5WIupy7dX2qffO8Xn9HzCC
+	WtHs/TlpKgPtbxhLJAAp/1/e2Kp+VySTEzLpArsyshZ5MRw25rNgpBxh3iW9E5gV
+	t4sv91L/mrGk5huc/WicpAPeXugLakiIbqmv634NZaT4Hx2Q==
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fj9bsbr1e-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Wed, 22 Jul 2026 05:12:41 +0000 (GMT)
-Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-84870e7f498so12605046b3a.3
-        for <linux-clk@vger.kernel.org>; Tue, 21 Jul 2026 22:12:41 -0700 (PDT)
+	for <linux-clk@vger.kernel.org>; Wed, 22 Jul 2026 05:59:00 +0000 (GMT)
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-84e086f8e0dso2101878b3a.2
+        for <linux-clk@vger.kernel.org>; Tue, 21 Jul 2026 22:59:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1784697161; x=1785301961; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=oxfo1suLB+uzJXkAtKHEBljNDBF2FOJJ9F91Ccszb5g=;
-        b=Ofdzer1u+7nSSbRrP2+2K/0FH4hEe0eAJqGxcDS9xgVhNvcmMTFPWfSTk/I6dQbGST
-         oBy4462QvOOaDOgCZKXfnuTIhCgbBue/DcYTLecCkSsNrok6fplz0WeDfS0vJZN1NL4W
-         0/xDdoZRug3yvinGaiRWvU9MmuIbEDraxLMHBrui6EUCnZybQUxzsZAbH2ZBaEeNQN1S
-         sAJr4YihDp6p6t3+FIgzqOBbbnAMgzJkEsLv6P5rO1qF78CsnV/IFpny4pIsp6xNBdSd
-         kTbuyrT+yA+e5AjPUCP95BbK84F50oswIFo8p4wtbgxCFluvNPRxVO/EmEfEAf0HcCe4
-         j28Q==
+        d=oss.qualcomm.com; s=google; t=1784699940; x=1785304740; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=lHyaO1rr1jxitrI8f4XMNUN/LXcObIJB7mo8ne43U1I=;
+        b=Kt5p1KHerVuZ1i2/po5UDECMVUtPACANqlE3JPUK4HYrjCCUQb8rhH+aF78qAHewYL
+         +wNwoBqr1xYNXMWAydDxriYR4K5M3GeQHPHRktz8Ch0mJ4fRusVAjzy4uGJpAAIdSf1I
+         u3EHMsdP44zieyMEve8Jfz2ZaIrQtOLzdQVIt8Sr4BbfUT9uqSOotKgCwWcc+1y2dtOL
+         DFeExyaidHnDRD9q9W9+g461QH/QiZE2+8/RJNFHS1gel4eJiGLK2CyXPlQUzZPU6sd4
+         adLKSuGDriPt0dgkpP9suiD/Zw8HmtbjRRnQYrTeR2KVihY4dDNwd0RERYCh9G4XuY5e
+         ewYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784697161; x=1785301961;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=oxfo1suLB+uzJXkAtKHEBljNDBF2FOJJ9F91Ccszb5g=;
-        b=YEs03Une6SUB2l9+TqOBqjAeWGJvsAWo6h1MxXOcI6BL9DYp1fKmVdIb+LZGAn70l+
-         wvp1oLq2RWmh9TD+IiygAbNojrl5j7sGFdiMrJPQ9GRdODvyhhmP/uT4BBIKgMcHNCHD
-         usHOVstMXtKxbfkLEvQ5oO+g/XJ9DTlSFAkmdJ+IzKYC5MZxeqvSNs968PipJ6OnXDCE
-         3WlCGoASx6g52GZAGXtn7ycRNGyUaxW+T01abaYsw/r+yTjQX2Oc2CW39AAjQ9c5hnUJ
-         tza7BxYDMM2ILWKUXNSMG1jsvcw8YBnj34TYuUbV+K2LWr73oYtlUo37E8qqLMwGPRQ6
-         AVZg==
-X-Forwarded-Encrypted: i=1; AHgh+RoubdI3BchuC04Z7+Y9sOewIl03OB7TBnT6AFRhxti2oivUY8m3Ul8Kq+FoFG7J0/t0AO5l7ln0P6g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJmeho28Io1HD0ffe3NWvfJt+AapGXNcqzjUvL8OEGO9rQXW/r
-	Q1eLocBFHyOnC6yl6r++46ycegoLLuAN78vc86RgVzWU1hDCnbfln6HlnW33QAJzf5ZBgLwrMs6
-	BujZWxrXbQj4UusrOaHd5Zrqu+oBqSU0cox+oL08gUsnZlced5WfU22kS9wVEmPQ=
-X-Gm-Gg: AR+sD11afkRD0aKEQ88w4DIMO3R+tzm7C/zO3Dq66NymJwwS02YbxqeLEKCHbBbGUAL
-	vSypLpdp/YTJ6H+6oAP4QpZuBDUU+C7ovWG/qBiEVPeAH5J3nhb9Z/uF+iTjbV+K2FerixRArW1
-	2kv8nqHZ7jwdt232sL7vvQ94ou41eH6aDttf8ox1Pf0HgbXZyWUGKQT13hCwgTauLuoF089HKQ8
-	tXZ0r74WzwgoYV0/wYfd/dN//41sb7miF7CWYat2J8d+3Nm/N2n84AlA7pNOxS9CAnKNj5BLP6G
-	k3HYpPp3z410dHlR0qSqjLfBvvYObgYVhzBau3temGqLrdKndvB7VI3/5x0z/gMfr2srCkdvZXL
-	swgJMJ46NcsGmSzvc0L/UE4LRlc8=
-X-Received: by 2002:a05:6a00:21d2:b0:846:8b22:4933 with SMTP id d2e1a72fcca58-84c29333c94mr20107646b3a.17.1784697161198;
-        Tue, 21 Jul 2026 22:12:41 -0700 (PDT)
-X-Received: by 2002:a05:6a00:21d2:b0:846:8b22:4933 with SMTP id d2e1a72fcca58-84c29333c94mr20107612b3a.17.1784697160756;
-        Tue, 21 Jul 2026 22:12:40 -0700 (PDT)
-Received: from [10.218.5.114] ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-84e1728566dsm701761b3a.18.2026.07.21.22.12.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Jul 2026 22:12:40 -0700 (PDT)
-Message-ID: <7c7448fb-085f-40eb-a471-9ed81c55973c@oss.qualcomm.com>
-Date: Wed, 22 Jul 2026 10:42:06 +0530
+        d=1e100.net; s=20251104; t=1784699940; x=1785304740;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=lHyaO1rr1jxitrI8f4XMNUN/LXcObIJB7mo8ne43U1I=;
+        b=Vy0LnEubJyPIZEJmH5uhM4s3rh0nnEWG8p/iIw7IZ5ugz9GoojHq4C4cSg/7rkVKPy
+         /is59Cdr/fJahewEdoMaitVDwpBVsBgyN89fl6xR42wOwG9190nVKSqEMbGvSZw+vgyY
+         Cyyhf8R8loCjY6FDOHkdsGef6AyMMGRR9Mf41hlxHiZm3K2eTQWCJi2snwbbwn0yojRl
+         nAOrMPnfuPH4kcQNlqlQeb7BeBeUi0HJTAMnraP0hdc24tfIECbIehc1bPam/7fvuoaY
+         vSN0X7jXXSyUg1/bdv7GAhqXtfYgGtDOX1zxrHKFaD1mELkhcy4HIlZOwE82akOqxMXJ
+         TbqQ==
+X-Forwarded-Encrypted: i=1; AHgh+RokdrhfReTcum2uBdqvuUqvUlLSIpmQ+Ym34CwGnwxkcfMls2ee67ut5i2cnWBQN9P7iWq4XnBKYTc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkSih5oHLLKuEPO4LUN1IOOLjNN/oEIpFFeWpjN8pTON9Rdm4u
+	UAujCQrNCzTZkYWwLvegxeP+RORANaMQBdXvLBn7DAIxzNuR1iCYTOrUpOH2gy2FdDg7alWo9uL
+	OpWvs9aoapTVq9vWnkhF+D8FiqYw2wi47ve4AMhGw1LFcGjTTYNPAaUaTaFNA/E4=
+X-Gm-Gg: AR+sD11B6O87eBtapTF2WQOOjeYGnCehxMcPrd06S+G6hbGzYSNaMuGsM/exxAE0va/
+	NutHO0ATWmjkSBeRNiAEUqIeDxubm6EnbqGos+9CeUQ/i/58XydEzi7sscm1sfqGkmvH7mPRZ6I
+	d26J1AwmtDJxUBCMqe7odvnet9Z3Gh+8Hk1vnGGKLD9q75QBHjGCyYqarm4iVpYEQBsTmGcp8Uf
+	/r5DbZkvjBavm76MjDfH9r70qz/zr47gch11Acv8RUN9fJzMtLC3zjdFY0axEidKN8AgINwxA6a
+	u7xmTLDRXhM0EglrVZUA70j+djdq86gDrg6KSQZ3KjqOSYJQQtdMDhUaY1e2o088GvDvdiNRRWl
+	qguh2evsk8r7t2PSG2HohzN19rINzzV+ejrL6/yGWtfOThMc=
+X-Received: by 2002:a05:6a00:420e:b0:84a:2fff:ced2 with SMTP id d2e1a72fcca58-84c294d1f79mr21747734b3a.35.1784699940193;
+        Tue, 21 Jul 2026 22:59:00 -0700 (PDT)
+X-Received: by 2002:a05:6a00:420e:b0:84a:2fff:ced2 with SMTP id d2e1a72fcca58-84c294d1f79mr21747713b3a.35.1784699939675;
+        Tue, 21 Jul 2026 22:58:59 -0700 (PDT)
+Received: from hu-qianyu-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-cbb8f0ee1e6sm554013a12.12.2026.07.21.22.58.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Jul 2026 22:58:59 -0700 (PDT)
+From: Qiang Yu <qiang.yu@oss.qualcomm.com>
+Subject: [PATCH v10 0/7] clk: qcom: Add common clkref support and migrate
+ Glymur and Mahua
+Date: Tue, 21 Jul 2026 22:58:55 -0700
+Message-Id: <20260721-tcsr_qre_0721-v10-0-d2fa68c63b78@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] dt-bindings: clock: qcom: Add Qualcomm Shikra
- AudioCoreCC and AudioCoreCSR
-To: Rob Herring <robh@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
-        Taniya Das <taniya.das@oss.qualcomm.com>,
-        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20260708-shikra-audiocorecc-v2-0-b320d822cdd0@oss.qualcomm.com>
- <20260708-shikra-audiocorecc-v2-2-b320d822cdd0@oss.qualcomm.com>
- <20260717135608.GA476084-robh@kernel.org>
-Content-Language: en-US
-From: Imran Shaik <imran.shaik@oss.qualcomm.com>
-In-Reply-To: <20260717135608.GA476084-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: D8QC-326LM9hYcTlcb20bPY-KOuI7Djg
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzIyMDA0NSBTYWx0ZWRfX6Ww7q32V7ffm
- QEXSWV2jbaMCa07hgwmdZMCxyRP0PjySQBgPu+QqwKoh1vhflp4jWnDylAWuDecnBSzeN4Qahcx
- G1Bo7V4Y9MDuTj6qimsurcLOCwWYrXgozjjokfOB5l0t+JIACVgg7xoQiaF2pkAQ5Jc0aWT2Wkg
- zvqaJwlRxdmVHjfm8fNzxtG2o6J4ln+2vF9bmBrpyhNFM8YCEAC1MJSkVkGYWZQQjGDUdzc3HcJ
- EHapklil3vKL+ZTrMXlMelPz3lqZcpEIVz1j/fB4S9b9QmTZvMajnaNaXIHCSREXVndOsrcmM87
- 5/HRWZv/r1F4Zi5jJDVKzWCb1oAC46JTOI0HUvCntbJF7IHPL/yrmSRq3mBI6mbnU6k6+aDAuRE
- vBnKhONNQ+pJlElu8roSrLT7ayOtrjlL7gI0MlAM7GM49fTu5ezGrO1CXyRDO6ZWej0YTBvgvsB
- bjkTLqaqA3OQbc4MpTw==
-X-Proofpoint-GUID: D8QC-326LM9hYcTlcb20bPY-KOuI7Djg
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNzIyMDA0NSBTYWx0ZWRfX2n8dalPXwJl+
- Yvwdn36BcMdq65H5FXMLEQcjh1QY9MqgEkQPPz0X9qpm5kJdjcU3q5v+CeUPBSalZbZob3B3xnQ
- RokcKJw+lsbvtCaXrMiVeTYlPCqy14k=
-X-Authority-Analysis: v=2.4 cv=QK1YgALL c=1 sm=1 tr=0 ts=6a605149 cx=c_pps
- a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+X-B4-Tracking: v=1; b=H4sIAB9cYGoC/yXM3QpAQBCG4VvRHFO7Wyi3IsnuzjIO/MwgJfduc
+ fh89b0XCDKhQJVcwHiQ0DxFaJUm4IZu6jEjHwcwyhSqNDrbnHC7MrafXPB50J1BbzXEz8IY6Py
+ CdfNbdjui294I3PcDNzH/9nIAAAA=
+X-Change-ID: 20260721-tcsr_qre_0721-cfd5f1a2edb1
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Taniya Das <taniya.das@oss.qualcomm.com>, Kees Cook <kees@kernel.org>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-hardening@vger.kernel.org, Qiang Yu <qiang.yu@oss.qualcomm.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1784699937; l=6171;
+ i=qiang.yu@oss.qualcomm.com; s=20250513; h=from:subject:message-id;
+ bh=FMRJ2dCxpLRqMq7VnS3Hat4bMz1Ui//AKEapRVwc5PY=;
+ b=1ml6Ikp8bjC293C43LBR1ygxttmrI+ozvKI3SEN0xKgcGfIyvHTeWuewoSs/Uu0uOwUmJeM7U
+ OedTmRLLLljBOtf34TC6nXFKoR/N6ePXLuYGnF3GV/yPYRviW0p1BnY
+X-Developer-Key: i=qiang.yu@oss.qualcomm.com; a=ed25519;
+ pk=Rr94t+fykoieF1ngg/bXxEfr5KoQxeXPtYxM8fBQTAI=
+X-Proofpoint-ORIG-GUID: 5H5aWb_1XN-ZPBiPduFaDnX8tKM-rWec
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzIyMDA1MyBTYWx0ZWRfXyYGk6mdxXm4e
+ x5BCPVrj79Sr9MY/gJiUvligIHXUuYjNGLVFipyoKVIKMoQtDtJJxbSNZjmzVF011ONYr3tRQlv
+ AttZSui+u1mfXaYmjLSBbeL77KYyVRHdWOqNSjvSyeRicrGQh4Zvahc9s8wHjSbmdpJVDD5YMBP
+ fratYhbFNbEXMohK6ny+hiozx4S23diEtLPkgM9jlK/4IbUOXQmQjvIyQMABCadOcOVMoFiXGG8
+ wJDk004cvIBMdVqZds0UE81+BpIfZA07wNq0LMnskw3p4QAyRQzYmvsROydlrSDgbJnCB1fP/k2
+ R/c/Ib++rBhjK+Nz0kqFbBU5ViaDBmoWJyBFFMHbYMMwIjXd5rkpVc/ySnxn0pd74MjxIW9vcM4
+ Fy955bzImf1NLVzyGobe49WYZ1N3VDK1PCjze6ufo4fFKB3gQqSmlaosC6LgLShO4l/Q1tiQ34c
+ Ul4epGDnDlgql947XkQ==
+X-Proofpoint-GUID: 5H5aWb_1XN-ZPBiPduFaDnX8tKM-rWec
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNzIyMDA1MyBTYWx0ZWRfXyc+ca+XXuLdF
+ me4FiU+c+ZyPpa2mLYJwJco96ECrBL/QKD8lOn2e8kVKyQ5oMkiqM5I6GY76xqlb8gWt/m6OJoN
+ HqpBsZBRjNKEqVWzp9x4s0QFW2VPrOg=
+X-Authority-Analysis: v=2.4 cv=QK1YgALL c=1 sm=1 tr=0 ts=6a605c24 cx=c_pps
+ a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
  a=IkcTkHD0fZMA:10 a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10
  a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=yOCtJkima9RkubShWh1s:22
- a=EUspDBNiAAAA:8 a=fkvVebzWtNyKPa1jhH4A:9 a=QEXdDO2ut3YA:10
- a=zc0IvFSfCIW2DFIPzwfm:22
+ a=VwQbUJbxAAAA:8 a=zitRP-D0AAAA:8 a=EUspDBNiAAAA:8 a=bC-a23v3AAAA:8
+ a=t_4-KwRf5v_2ilwofMIA:9 a=QEXdDO2ut3YA:10 a=OpyuDcXvxspvyRM73sMx:22
+ a=xwnAI6pc5liRhupp6brZ:22 a=FO4_E8m0qiDe52t0p3_H:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
  definitions=2026-07-22_02,2026-07-21_01,2025-10-01_01
@@ -140,28 +142,122 @@ X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
  priorityscore=1501 spamscore=0 phishscore=0 impostorscore=0 bulkscore=0
  suspectscore=0 clxscore=1015 adultscore=0 lowpriorityscore=0 malwarescore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607220045
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607220053
 
+This series adds a common clkref_en implementation and converts glymur
+and mahua to use it, along with the related binding and DTS updates.
 
+The PCIe clkref clocks on Glymur and Mahua gate the QREF block which
+provides reference clocks to the PCIe PHYs. QREF requires LDO supplies
+and a reference voltage from the refgen block to operate. The refgen
+block itself requires vdda-refgen_0p9 and vdda-refgen_1p2 LDOs to
+function.
 
-On 17-07-2026 07:26 pm, Rob Herring wrote:
-> On Wed, Jul 08, 2026 at 11:55:06PM +0530, Imran Shaik wrote:
->> Add device tree bindings for the Audio Core Clock Controller (AudioCoreCC)
->> that provides clocks and Audio Core CSR that provides resets on Qualcomm
->> Shikra SoC.
-> 
-> This should be 2 schema docs. They share very little.
-> 
+Previously, these QREF votes were done in PHY drivers. In earlier
+discussion [1], the feedback was that this is the wrong ownership point:
+those supplies are for the QREF controlled by clkref registers, not for
+the PHY directly. Based on that feedback, this series keeps the
+regulator handling with the clkref control path.
 
-Sure, I will split them into separate schemas and post the next version.
+Another reason for this series is reuse. clkref_en registers may live in
+different blocks across platforms (for example TCSR on Glymur, TLMM on
+SM8750 [2]), while the behavior is the same. The common helper lets each
+driver provide simple descriptors (name, offset, optional supplies) and
+reuse shared registration and runtime logic.
 
-Thanks,
-Imran
+Glymur and Mahua share the same QREF TX/RPT/RX component naming but
+have different PCIe QREF topologies. Both are handled in tcsrcc-glymur.c
+via match_data to select the correct descriptor table per compatible.
 
->>
->> Signed-off-by: Imran Shaik <imran.shaik@oss.qualcomm.com>
->> ---
->>   .../bindings/clock/qcom,shikra-audiocorecc.yaml    | 90 ++++++++++++++++++++++
->>   .../dt-bindings/clock/qcom,shikra-audiocorecc.h    | 49 ++++++++++++
->>   2 files changed, 139 insertions(+)
+[1] https://lore.kernel.org/lkml/aEBfV2M-ZqDF7aRz@hovoldconsulting.com/
+[2] https://lore.kernel.org/linux-arm-msm/20260202-topic-8750_tcsr-v1-0-cd7e6648c64f@oss.qualcomm.com/
+
+Changes in v10:
+  - Rebase on latest linux-next, no code changes.
+  - Link to v9: https://lore.kernel.org/all/20260713-tcsr_qref_0714-v9-0-373670ab15f9@oss.qualcomm.com/
+
+Changes in v9:
+  - Add reviewed-by tags, no code change.
+  - Link to v8: https://lore.kernel.org/all/20260708-tcsr_qref_0708-v8-0-62c42b5fa269@oss.qualcomm.com/
+
+Changes in v8:
+  - Define refs with __counted_by(num_refs) and make provider a single allocation
+  - Use mahua_tcsr_tx1_rpt012_rx2_regulators for PCIe6.
+  - Link to v7: https://lore.kernel.org/all/20260702-tcsr_qref_0702-v7-0-776f2811b7af@oss.qualcomm.com/
+
+Changes in v7:
+  - Define compatible as an enum and add the per-compatible allOf/if/then block upfront for glymur. Reword commit msg for patch1
+  - Drop Krzysztof's Reviewed-by since the patch changed substantially from what he reviewed.
+  - Added a comment noting that on Mahua the REFGEN4 block is supplied by the vdda-refgen3-* regulators, and mentioned this in the commit message for patch2.
+  - Change the descriptor array to an array of pointers (const struct qcom_clk_ref_desc * const *). Skip unpopulated indices with if (!desc)
+  - Convert tcsr_cc_glymur_clk_descs[] and tcsr_cc_mahua_clk_descs[] to a pointer array.
+  - Add regulator lists for clkref_en on Mahua.
+  - Null-check device_get_match_data() result in probe.
+  - Add rx0 regulator in mahua tcsr node
+  - Squashed the former patch 8 (switch pcie5_phy ref clock to RPMH_CXO_CLK) into patch7, so Mahua PCIe probes at every commit.
+ - Link to v6: https://lore.kernel.org/all/20260621-tcsr_qref_0622-v6-0-c939c22ded0c@oss.qualcomm.com/
+
+Changes in v6:
+- Split dt-bindings patch into two: one to move glymur-tcsr to its own
+  binding file, and one to add mahua support
+- Use regmap_set_bits()/regmap_clear_bits() instead of regmap_update_bits()
+  in clk-ref.c
+- Move clk_init_data from struct qcom_clk_ref to a stack variable in
+  qcom_clk_ref_register()
+- Add Co-developed-by/Reviewed-by tags from Konrad Dybcio
+- Add missing regulator supplies for EDP and USB clkref_en on glymur
+- Link to v5: https://patch.msgid.link/20260602-tcsr_qref_0527-v5-0-8ea174a59d7e@oss.qualcomm.com
+
+Changes in v5:
+- Return 0 if regmap_read fail
+- Add a separate file for glymur-tcsr and mahua-tcsr
+- Link to v4: https://patch.msgid.link/20260527-tcsr_qref_0527-v4-0-ded83866c9d9@oss.qualcomm.com
+
+Changes in v4:
+- Add mahua QREF support (binding, driver, DTS) to avoid dtb check error
+- Override pcie5_phy ref clock to RPMH_CXO_CLK on mahua since
+  TCSR_PCIE_1_CLKREF_EN is not available
+- Rename regulator arrays to topology-based names and merge duplicates
+- Remove else: false blocks from binding
+- Sort supply properties alphabetically in binding and DTS
+- Link to v3: https://lore.kernel.org/all/20260506-qref_vote_0506-v3-0-5ab71d2e6f16@oss.qualcomm.com/
+
+Changes in v3:
+- Fix dtb check error: allOf:0: 'then' is a dependency of 'if'.
+- Link to v2: https://lore.kernel.org/all/20260420-vote_qref_in_tcsrcc-v2-0-589a23ae640a@oss.qualcomm.com/
+
+Changes in v2:
+- RFC tag dropped
+- Changed back to additionalProperties: false
+- Moved all Glymur supply properties into top-level properties so they are explicitly defined.
+- Link to v1: https://lore.kernel.org/all/20260331-qref_vote-v1-0-3fd7fbf87864@oss.qualcomm.com/
+
+Signed-off-by: Qiang Yu <qiang.yu@oss.qualcomm.com>
+---
+Qiang Yu (7):
+      dt-bindings: clock: qcom: Move glymur TCSR to own binding
+      dt-bindings: clock: qcom,glymur-tcsr: Add mahua support
+      clk: qcom: Add generic clkref_en support
+      clk: qcom: tcsrcc-glymur: Add regulator supplies and migrate to clk_ref helper
+      clk: qcom: tcsrcc-glymur: Add Mahua QREF regulator support
+      arm64: dts: qcom: glymur: Add QREF regulator supplies to TCSR
+      arm64: dts: qcom: mahua: Add QREF regulator supplies to TCSR
+
+ .../bindings/clock/qcom,glymur-tcsr.yaml           | 146 +++++++
+ .../bindings/clock/qcom,sm8550-tcsr.yaml           |   2 -
+ arch/arm64/boot/dts/qcom/glymur-crd.dts            |  20 +
+ arch/arm64/boot/dts/qcom/mahua-crd.dts             |  16 +
+ arch/arm64/boot/dts/qcom/mahua.dtsi                |  13 +
+ drivers/clk/qcom/Makefile                          |   1 +
+ drivers/clk/qcom/clk-ref.c                         | 205 +++++++++
+ drivers/clk/qcom/tcsrcc-glymur.c                   | 471 +++++++++++----------
+ include/linux/clk/qcom.h                           |  67 +++
+ 9 files changed, 704 insertions(+), 237 deletions(-)
+---
+base-commit: 3fe08b9796f36ef437ab9328e7dd1e5ff2d66603
+change-id: 20260721-tcsr_qre_0721-cfd5f1a2edb1
+
+Best regards,
+--  
+Qiang Yu <qiang.yu@oss.qualcomm.com>
 
