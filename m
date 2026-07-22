@@ -1,126 +1,123 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9AC347DD40
-	for <linux-clk@vger.kernel.org>; Wed, 22 Jul 2026 08:37:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D6A3E2AA1;
+	Wed, 22 Jul 2026 09:24:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784709448; cv=none; b=CKDo9B5Bv5gnv/xYiN7D3362Gxdfj68t1RN+xWMp2HxodnaWBqiK/uDHbvXBHAln39hnhfALvwaPPTS7OQmc+IpkQAJVIPBnkzps9cO/Q2QdIbVKUVE4Wu/2ShizjPubfDtauXrBwYzVwGaq0aebpAfYKfHFh1r76cJnzVDGlQY=
+	t=1784712249; cv=none; b=FAkktbt4PRPymBHUITI4ha64XuwcyLzm67IJFoxFw2kG6g6XtWgabhiMsawABy7YjVUqSSsJR/s5GRk9DBzYqjN+b3fLAdG6roIFqUj/extN435U8gyKl/bqFzieXLF0JUkPTrSVzFtrF8EK47Dw+DIOToBy+045T70rwlUrS0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784709448; c=relaxed/simple;
-	bh=R1aowIMLUKz8Mx0Il2jJ3Lj0sfhpmxClc66d27gkbKA=;
-	h=MIME-Version:Content-Type:Subject:From:To:Cc:In-Reply-To:
-	 References:Date:Message-Id; b=mUdXLgVDs+4tSMcwPfO3ZKkgyB18Kno/OrFewdF6odcrhLQYxd8/6zvwlal6Xg4xo6jxLfPQ0JVG5NIT8L9AGJ1/E/VQstbIidWFfdv37TkNMERqwBKOt6KgOOe/X9+eEbgf5YefthOawYwdwuVSJJq81yQhVlzlwVCThu3QdQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=Pbw628D3; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1784712249; c=relaxed/simple;
+	bh=Ir3qXtFw2yXRB1E/JKi0unWOJWNYoTP6ML4V2JIJIaA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=K6fMScfdzQ7MJQ6I/XVGKMyXc4FILkiv+BB6/DRHp6Md0rNGuFBC2d9kZkQLGCQl9MVOFPQjtFsBOPbqp5rL2YdA67IoH3WwY3IlmAVDwIJlVoCISQuQLHoNxjDNgv0OAtwxynSMVdUSkZt2+pZMCcAiUMU+llKmcTdtsL7AmY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=Tqvcku+r; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="Pbw628D3"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4955de8797cso18968505e9.3
-        for <linux-clk@vger.kernel.org>; Wed, 22 Jul 2026 01:37:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1784709444; x=1785314244; darn=vger.kernel.org;
-        h=message-id:date:references:in-reply-to:cc:to:from:subject
-         :content-transfer-encoding:content-type:mime-version:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=hOhJGwQ/jTppwk40BJWO/omCtNBGTT070lPHgUjC928=;
-        b=Pbw628D3LlwMuBl7Fro2NfESKu4hM7l/dcrQb5v3odRrQlEHbAqGELZORib0AAoUxh
-         DSxPizGtrny/LreGvmxVKMWATOvsyTh6QwmQ2jtt+W99apXQ4iHGoddZXcJpNWvI8Atl
-         3qApKiXmpICM8jJsexbJ52M0jp5K9l6RYb5z1OEdC+RONbFD7mYFruj65phXv1tOmJ8+
-         PT42p/0kwW0ttC5oAqjs7ZIjbkTeNEaHjdOTJkya8pfFP0nGpjsQ/UOtUfpN6Om+t5tp
-         cRGS+INKxT+/JQQh5avc2ZiDPDCq1PWpjp/lBJnQIzCkHWomLOb9QBV1KA10AMxo6ps3
-         QTRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784709444; x=1785314244;
-        h=message-id:date:references:in-reply-to:cc:to:from:subject
-         :content-transfer-encoding:content-type:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=hOhJGwQ/jTppwk40BJWO/omCtNBGTT070lPHgUjC928=;
-        b=LVvN0FS3wdpv5ZrbBHlKXBr1JVnxvUzrYqAI4qC9ob7xp9b7VHWqdgJZq7k3BEA+6s
-         oJG+vE4sr80YyaMstXZaaYe7U1XtBU7yW1zKh2wxY0k4UlcGw7TwJ6QnxYJl7ESk4fsk
-         NHtKhz5rLoKtXwPTJpn2xRMLNGpg+nrv0RpzXgkkmyZiywLrNoXw/LLLMDu9VOkOcNCM
-         G+RGE6pujD/8HH30D7vwdy12FfKgJAHc46vj9G/flKRe8cUfNuyChahgHrX5UNCpfjV+
-         QbL+MrWz64HwySdnJNQEMTr55RyKhA194ZnInfp0gf1yC7fM0WsBtRIW8qatOGa+iF8J
-         S4tg==
-X-Forwarded-Encrypted: i=1; AHgh+RrZCkZvE9swlSfarVPE18fVcKWmUZIhXHYQ8SgSzlLziMpfoU/EBNCVCgH7e0NEd11CnzlXVr2D3Hk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYjshXp8Qj3W+sZk+Vq6UBK2fydWc6h5vuzjMFJ7aOxTj4pWYH
-	y7i9CTPNV5Fnef3Eu+iO/tqVeVpkV+jf7ek69oWjwTTZdL+GbRqAzbWee4fTROQ+Hb4=
-X-Gm-Gg: AR+sD10XMuLnsu4SsN6BQ6frP4y/33Joqi5oNWF0Xz3Sxe1ztzxCw93WBKdfkIxprNs
-	Xkdloa24KLt4TWEuSPZL7dIAIG3yQSOxh1eth+dGFASLzaQE31bvo2YoRfKCWCBJz2q+LTmeKX4
-	1b2ADbtKNXJ1zEIKkn0mIltqk16Bsjg1XknbQHnGsj7z3lqUCgvg3Z7sztPRNEIoWtVKfYdjREs
-	ppa7KSVxp2iy0lQb7c3s5H5cmM1szR/inip9qqKCgjWMaD2fnbUlVRQbXBq1MO+v92p3a6Ab8o9
-	bj5mOY+BszxqZ6CtGAV3O0VhjOPVju5MfNmT9E6tsbvtkJmOQ6e6K17E2TRcAf4GUspkaGu3bCW
-	BMSzplngJsd9eY+QCCB3hdX0tXzpCNRUCwyCL2XqtOnvaMUtJWLPwg+mRvRXAJT2lUZh4o9Kef4
-	5c4aUKDjBBNPGzsejIi7hU
-X-Received: by 2002:a05:600c:1f94:b0:495:3da3:beb with SMTP id 5b1f17b1804b1-4954a3dc491mr258598315e9.10.1784709443731;
-        Wed, 22 Jul 2026 01:37:23 -0700 (PDT)
-Received: from [192.168.5.218] ([88.127.185.231])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4956a63fa41sm57819035e9.14.2026.07.22.01.37.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Jul 2026 01:37:23 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="Tqvcku+r"
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 004FB1595;
+	Wed, 22 Jul 2026 02:24:03 -0700 (PDT)
+Received: from [192.168.178.24] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 10C493F86F;
+	Wed, 22 Jul 2026 02:24:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+	t=1784712247; bh=Ir3qXtFw2yXRB1E/JKi0unWOJWNYoTP6ML4V2JIJIaA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Tqvcku+rEDdH0CB4HC5xFMrjhZhNWsZxkMIjFtcx8EU22CAv7gb8mL0b/6LIrwiZN
+	 ThueiryESniTGqsIn3aquM4p85nK0CTe8EnEgP8z4hufV98x2SV9IlLNLhExLOaMaq
+	 Tjh2cyznk6kzNQT5H2t5kEzZshgBr7O+knB418Ps=
+Message-ID: <2fa7bd81-0091-4001-856f-e21096023f0e@arm.com>
+Date: Wed, 22 Jul 2026 11:24:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: sunxi-ng: ccu_mp: fix clocks without P dividers
+To: Enzo Adriano <enzo.adriano.code@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: Brian Masney <bmasney@redhat.com>, Chen-Yu Tsai <wens@kernel.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>, Junhui Liu <junhui.liu@pigmoral.tech>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20260722005643.1208942-1-enzo.adriano.code@gmail.com>
+Content-Language: en-GB
+From: Andre Przywara <andre.przywara@arm.com>
+In-Reply-To: <20260722005643.1208942-1-enzo.adriano.code@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH v2 2/6] clk: qcom: negcc-nord: keep GPU2 CFG clock
- enabled via critical CBCR
-From: Alexandre Mergnat <amergnat@baylibre.com>
-To: Taniya Das <taniya.das@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
- Shawn Guo <shengchao.guo@oss.qualcomm.com>, 
- Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Ajit Pandey <ajit.pandey@oss.qualcomm.com>, 
- Imran Shaik <imran.shaik@oss.qualcomm.com>, 
- Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>, 
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20260721-nords_mm_v1-v2-2-17e5a445a512@oss.qualcomm.com>
-References: <20260721-nords_mm_v1-v2-0-17e5a445a512@oss.qualcomm.com>
- <20260721-nords_mm_v1-v2-2-17e5a445a512@oss.qualcomm.com>
-Date: Wed, 22 Jul 2026 10:37:12 +0200
-Message-Id: <178470943209.3016846.4248808809182663974.b4-review@b4>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=557; i=amergnat@baylibre.com;
- h=from:subject:message-id; bh=R1aowIMLUKz8Mx0Il2jJ3Lj0sfhpmxClc66d27gkbKA=;
- b=owEBbQKS/ZANAwAKAStGSZ1+MdRFAcsmYgBqYIE+5J9Gg8PbLvC5hMVwlZfdB242pjzBhXe4h
- S5SMDXwJRuJAjMEAAEKAB0WIQQjG17X8+qqcA5g/osrRkmdfjHURQUCamCBPgAKCRArRkmdfjHU
- RRFTEAC/ouSPXHdha4O6c1bMccpH6wqcdaKXdI0tUhSO+53+iP8xLJE9f2LygyxUDuK42ps/Pwj
- ndEv5DMMf+pVNfsjHlXjTEVmbbQOBHwIXrFMHJB3aYZUfbFkros0KkUkgvMQcksQG1p2P518g42
- NBZ1Hy/fA0UKPlMhLvMVl0YkKoI6Wu2n55tOn38NFfBEoh5pwzPyNrgkIZaghiNqGyFaIzooJhd
- CEb4ichOlrmboq2SrCkYOVLYg7SeM7pW1c8sbUt6M5nx2N6HZkE2SBve78kK4lnWAAL/+5MjiMm
- wUPvgiDmr5yCrnOJuEUqQoZ4lzF+G2gR5aSopqgUNTKLvAAkPf2DfEuRHUS2z62hdLo7YoYFRyc
- 4gV2Z9M11K2SiKnEfR6U72Pt4j7Rc6/+uOf+JJmGaRKkKuE780Erh+iP0IYhxSDuXsEyI/yAj9c
- kLA/FC9ihoZUQWplfTfyQcZcuSuH7f4rkJGhFGj0vXHTKvT3HVDuqKtlXa2TnYPlizGPIeQCXzN
- YCAhLjPrVMTYzuYGdNCDP+gCXdTC8LrHg+AgiA1z8wWiSpC5v4vl7R2SbRqhA2skfMGOU/41JdO
- WpmXMpKEeftRt1nz9vwVA7H7i467ejwQ0kQbb2wSHWQr/HBt3gxPmrDFzLCqD+O3Jleep+lIual
- JeSfTRBuX4Tr9yw==
-X-Developer-Key: i=amergnat@baylibre.com; a=openpgp;
- fpr=231B5ED7F3EAAA700E60FE8B2B46499D7E31D445
 
-On Tue, 21 Jul 2026 12:37:17 +0530, Taniya Das <taniya.das@oss.qualcomm.com> wrote:
-> The GPU2 CFG clock must remain enabled for correct operation and
-> should not be exposed as a controllable clk_branch.
+Hi,
+
+On 7/22/26 02:56, Enzo Adriano wrote:
+> Some sunxi-ng MP clocks have an M divider but no P divider. The A523
+> MBUS, IOMMU and DRAM clocks use this layout and also require the update
+> bit when changing their rate.
 > 
-> Remove the clk_branch and mark its CBCR as critical instead to
-> prevent unintended gating. This follows the same approach as
-> 'nw_gcc_gpu_cfg_ahb_clk' and aligns with other always-on clocks in
-> Qualcomm CC drivers.
+> ccu_mp_set_rate() unconditionally builds and applies a mask for the P
+> field. With a zero-width P field this produces an invalid GENMASK()
+> range and can clear bits outside a P divider, including the clock gate.
 > 
-> [...]
+> The callback also ignores CCU_FEATURE_UPDATE_BIT, so hardware that
+> requires the update bit may not latch the new divider value.
+> 
+> Only update the P field when it exists, and set CCU_SUNXI_UPDATE_BIT for
+> MP clocks carrying the feature. This matches the existing sunxi-ng div,
+> mux and gate helper behavior.
+> 
+> Reported-by: Sashiko <sashiko-bot@kernel.org>
+> Closes: https://lore.kernel.org/r/20260712081341.9D1431F00A3D@smtp.kernel.org
+> Fixes: 6702d17f54a8 ("clk: sunxi-ng: a523: add video mod clocks")
+> Assisted-by: Codex:gpt-5
+> Signed-off-by: Enzo Adriano <enzo.adriano.code@gmail.com>
+> ---
+> Based on clk-next 8cdeaa50eae8 (Linux 7.2-rc2).
+> Tested with strict checkpatch and an arm64 W=1 build of ccu_mp.o.
+> No hardware runtime claim is made.
 
-Reviewed-by: Alexandre Mergnat <amergnat@baylibre.com>
+Does that mean it's not tested on hardware?
 
--- 
-Alexandre Mergnat <amergnat@baylibre.com>
+> 
+>   drivers/clk/sunxi-ng/ccu_mp.c | 15 ++++++++++-----
+>   1 file changed, 10 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/clk/sunxi-ng/ccu_mp.c b/drivers/clk/sunxi-ng/ccu_mp.c
+> index 7cdb0eedc69b..aa6cb20447f1 100644
+> --- a/drivers/clk/sunxi-ng/ccu_mp.c
+> +++ b/drivers/clk/sunxi-ng/ccu_mp.c
+> @@ -237,12 +237,17 @@ static int ccu_mp_set_rate(struct clk_hw *hw, unsigned long rate,
+>   
+>   	reg = readl(cmp->common.base + cmp->common.reg);
+>   	reg &= ~GENMASK(cmp->m.width + cmp->m.shift - 1, cmp->m.shift);
+> -	reg &= ~GENMASK(cmp->p.width + cmp->p.shift - 1, cmp->p.shift);
+> +	if (cmp->p.width)
+> +		reg &= ~GENMASK(cmp->p.width + cmp->p.shift - 1, cmp->p.shift);
+> +	if (cmp->common.features & CCU_FEATURE_UPDATE_BIT)
+> +		reg |= CCU_SUNXI_UPDATE_BIT;
+>   	reg |= (m - cmp->m.offset) << cmp->m.shift;
+> -	if (shift)
+> -		reg |= ilog2(p) << cmp->p.shift;
+> -	else
+> -		reg |= (p - cmp->p.offset) << cmp->p.shift;
+> +	if (cmp->p.width) {
+
+Can you merge that into the upper conditional branch? So that it's just 
+one if statement?
+And then apply the same treatment to the M divider, which is set to 0 by 
+some A523 clocks (hstimer and r-timer).
+
+Cheers,
+Andre
+
+> +		if (shift)
+> +			reg |= ilog2(p) << cmp->p.shift;
+> +		else
+> +			reg |= (p - cmp->p.offset) << cmp->p.shift;
+> +	}
+>   
+>   	writel(reg, cmp->common.base + cmp->common.reg);
+>   
+
