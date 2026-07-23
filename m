@@ -1,81 +1,80 @@
-Received: from mail-24428.protonmail.ch (mail-24428.protonmail.ch [109.224.244.28])
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF12A3346A8;
-	Thu, 23 Jul 2026 21:54:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56CC14908C5
+	for <linux-clk@vger.kernel.org>; Thu, 23 Jul 2026 22:33:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784843652; cv=none; b=hQTPRRHZeZQFMDKjhKT6fzEuvJM5OjsUXEOx74gNTr2FlfQxezgHuXLRL5z8LWPm28SzZNO+YQGDDfc0lOq/77nOrFDZ6EhZXce4PjTFHJp1FUgvREqpwQIlTb5rDI8WPHrDTKWIZayavaLoCh8iYjPMG4A8vo/k9z8d+e/dpCE=
+	t=1784846039; cv=none; b=uIHOEXBRjm189bTVrWGPJF+9v/4iiq4vOSCax3Z3TTas83eR4KQtK13jBWnj0kXYBOM74Qb3eMML6ZO7ka/xy7wiGo1apjqBJRHi9M1CJ4Szp4lsv1xXcZcv7REROyO2OWo2BMhMcfySA/8H8yZPYaN/jADoL6xSbjEtRHoD0vw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784843652; c=relaxed/simple;
-	bh=+JWyagTRhRBqhLWVN4liLy4mFdyb13CfKOIn7cO2kUI=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=uHxRwvCAyP8ALRtxddjj6YjIZGKHV64FjBucYjh623XBVfIyLg591B5zAiOt7DM9uOkoPslBKGPhFO3EtJljTXzFb2LMIcx/IasjJg3kmw/X3KJbd01yJo5QA0RET3xtifxDQNSPJRu4fWB3wAxwmfDAk1UQt1MPQ28v/ez7SOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=CJATjGqm; arc=none smtp.client-ip=109.224.244.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+	s=arc-20240116; t=1784846039; c=relaxed/simple;
+	bh=cHeWeXQZOczKTkSUW9xVgQrnidh7z02WC/8HXtGf4oU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ODKbFvOmr0vfhQPTkY6o65KPXsXP0Q3lxbRcDmbnJndn/Dm/0kso3WFZBTTs2nA0yLbcAZinWkJf95r9e3Wj96esWXJ9sIJ7nalfViBx4EroVh5q+m+7nIOwzEIZwDOjkxVt5Y5ASDJpGVZMpUEttKDzy+1ETnxoDstbUgvK+vo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=LYoJwbLR; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="CJATjGqm"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1784843641; x=1785102841;
-	bh=+JWyagTRhRBqhLWVN4liLy4mFdyb13CfKOIn7cO2kUI=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=CJATjGqm1fH9XwaodUqiTYhfluiU/SE/xaFlu1BCiqk/1ImB16qU9alrWtpFiB1cK
-	 ZV9LgGfr/geDtgOhTzZFFLMtPkgDgfDlDNMOO2MpT+qdkoelbsia+AF0K4jmonMOdD
-	 YuBus+Mv8Sw63gv3oIMfBjiOj2on4NNmShXfKnQw0j9dwFvX4gWqNftXOztr2mV/6U
-	 gKqMpCKuH1d3gN98jJ1AflTHSJMBIt/Zen+C5Rw4UTy6spnG6I6BXfEOVGvh83BNdj
-	 ToZfyUsiAHGZMd5kQbiX41wUMKD7R3TSkKes2aqJjQF7/fgzRs4IQYSIYpKySBPw4E
-	 RwGM5KXOJHd2w==
-Date: Thu, 23 Jul 2026 21:53:57 +0000
-To: "aneeshpradhan2004@gmail.com" <aneeshpradhan2004@gmail.com>
-From: Aiden Isik <aidenisik@protonmail.com>
-Cc: "andersson@kernel.org" <andersson@kernel.org>, "aneeshpradhan@acm.org" <aneeshpradhan@acm.org>, "bmasney@redhat.com" <bmasney@redhat.com>, "conor+dt@kernel.org" <conor+dt@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "mturquette@baylibre.com" <mturquette@baylibre.com>, "robh@kernel.org" <robh@kernel.org>, "sboyd@kernel.org" <sboyd@kernel.org>, "serenity@floorchan.org" <serenity@floorchan.org>, "20260723012415.48288-1-aneeshpradhan@acm.org" <20260723012415.48288-1-aneeshpradhan@acm.org>
-Subject: Re: [PATCH v2 0/3] arm64: dts: qcom: initial MSM8920 and Motorola Moto E4 (perry)
-Message-ID: <gQh7CCQKYqMRqPhGEJiGaEHPClClU-x4DxsXkHZ42OS02s6gHd23p_m6n8bDmBRYS3ITCbC0G_62BH6016wSsp-JqW6GiztGAsIMtra6wp4=@protonmail.com>
-Feedback-ID: 46524699:user:proton
-X-Pm-Message-ID: 94f678ccf360fbe8c7d0fd7324b3a26103946ee7
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="LYoJwbLR"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	Message-ID:Date:Subject:Cc:To:From:Reply-To:In-Reply-To:References;
+	bh=MpEHESMNTRc4WI9oAvqXsy9cYc98aqQpHvwBNvy6r/M=; b=LYoJwbLRmOOK88zsXAWXGyU0p4
+	ZkOuAekdXCRuIQH8poWjT1b3CsxALXIH4E6ppW+HTl4++ehT2Z/4ZHU5VtUYBElrJFnjOs8IJkRtG
+	NyaeRWtuMOwUY+KQXQLyncNVK6aOT14AKbeiG01M2lzt885WNxR0fZk6b2rRzkb234mbJSDQvpMYI
+	yDLMSwuvJOnnrfqYHqA7hG6+uj7brrlFlGn4B8hePNALZDb+3UB7vVtfn6gi1BxsplQ90GpbA6Eky
+	h79kTEZNeBm138X21pZ8s0K6nyku9yfZP3Q6AfRfV3NfiqmXaO30qQv5iflBPMe0wYfsoIBooXfQP
+	QuezOEjw==;
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@baylibre.com, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: [GIT PULL] Rockchip clock fixes for 7.2-rc
+Date: Fri, 24 Jul 2026 00:33:43 +0200
+Message-ID: <1912648.b8e9qBsS6s@diego>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-Hi, I'm forwarding this email on behalf of Catherine, as she is
-unable to send emails to the list due to email spam filters.
+Hi Mike, Stephen,
 
--------------------------------------------------------------------
+here is one of those seldom PRs for a needed clock-related fix for the
+current development cycle, which fixes a regression by keeping
+newly added clocks on, if they're not handled by a driver.
 
-Hi,
 
-I just wanted to let you know, this is a drive-by-vibe rendition
-of my patch series from earlier this year. You aren't talking to a
-person, but claude code instead:
-https://github.com/aneesh-pradhan/xylitol/commit/4bdb6eaac4724ae0071095a925=
-795c5e5b8b9985
-I can confirm both the MSM8917 and MSM8920 variants exist in the
-wild, as I own both. As for what you want to do with all this
-information, that's up to you. This also contains hacked up
-versions of my in progress DT for perry available on the msm89x7-mainline g=
-it. A lot of the errors in this PR are results of Claude
-mindlessly copy-pasting my in-progress work (bad whitespace,
-incorrect copyright assignments). I was planning on picking up this
-series when I had time again.
+So, please pull :-) 
 
-Thanks,
-=E2=80=A8Catherine
+Thanks a lot
+Heiko
 
--------------------------------------------------------------------
 
-I (Aiden, not Catherine) would also like to point out that the
-model seems to have been deliberately instructed to omit
-co-authored-by tags:
-https://github.com/aneesh-pradhan/xylitol/blob/5eda9e8987c10d9654f2aace9622=
-ff11b11322d7/AGENTS.md
 
-Regards,
-- Aiden Isik
+The following changes since commit dc59e4fea9d83f03bad6bddf3fa2e52491777482:
+
+  Linux 7.2-rc1 (2026-06-28 12:01:31 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v7.2-rockchip-clkfixes1
+
+for you to fetch changes up to 946352b2f88fd2378f0341312e47dff1e8dc2fac:
+
+  clk: rockchip: rk3588: don't disable unused I2S MCLK output gates (2026-06-28 21:09:50 +0200)
+
+----------------------------------------------------------------
+Fix for the recently added i2s clocks, to make it backwards compatible
+with the existing devicetrees.
+
+----------------------------------------------------------------
+Daniele Briguglio (1):
+      clk: rockchip: rk3588: don't disable unused I2S MCLK output gates
+
+ drivers/clk/rockchip/clk-rk3588.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
 
 
