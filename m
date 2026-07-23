@@ -1,294 +1,179 @@
-Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11022085.outbound.protection.outlook.com [52.101.126.85])
+Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11023098.outbound.protection.outlook.com [52.101.127.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C752D4156E4;
-	Thu, 23 Jul 2026 09:08:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.85
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE2142D7386;
+	Thu, 23 Jul 2026 09:12:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.98
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784797704; cv=fail; b=Zj0KwkM0O428zqJOb33uNlRQlywagY+GOv7b4gh8jOo2AMuF0/LqVrmBcooQUu2ZEseMK01x8Hsi6R8W3I/9hPTHphb26RGF6gsztOfFV+usFi7mGyfY0125nhL7j223HRii+PO/YuEm37RmV3ngA9Ye+hq93piks3a4EtJ5Xv0=
+	t=1784797968; cv=fail; b=tWS/JQIhwjJl+acYPi47zTNnLvND3PV91XU5Fm8tTmOC+loQdm1cq7RvNZdL0ELJ8GLkbkJhwJG1NUNU5IQj5gl18qdJgsIMAf5gv29kmUr5K4GL3xwOmjvdQZGU3y2qeiDPmYJSOmwyItjgHeAT3xDG4xj0krGuqnz3ApPNuxc=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784797704; c=relaxed/simple;
-	bh=P7GVbz0M6JwGdWKQDYnuIW5Ez8o97qcJfuK6ffE4KmQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rAFT65h4vDn5Nc3guoQ+oaF7sst3m+5L5iU6z/awL2GdNBjGcBVQp0ILo4s4ZqxIPYq/fIst8P8NeAtTxGZcCQiGj/A5ZWcGYVvhWXPH44vdqo14uoUo7IEtDKTCvB+F5E3pMFCwUF8998PLG3XgyO233jg+q3GGH+Hxviun4mg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=52.101.126.85
+	s=arc-20240116; t=1784797968; c=relaxed/simple;
+	bh=mzjQfTmt7gP54D2rM47h19Fw30UayfHuOr2YAt0PLp4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=DeUVVwBUBXLJpMa0c9GBA4/mDu3cLtsHry4K498/ywZn2k7G/TWp9fwx6ttOek62gWGEhEm0QPZeHK8sU+GQNESZW65YoIp553bljgxpAzb2Sk25Uflb3gONh2iuAN+xsp+CSg9r8ZlsfZYcecRfCde/hJ39sNP4hqFPkiD7XZE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=52.101.127.98
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=E/xVpBWKfAioikWbFS0GNO9xxuYFg8JaL0lQGvhMuS39hn92mI0uuXvRoSzaK99PUENczynif3GQ7CecHC+XYudu8ObTuix23+qeAble/gyBCQt7A162PT6BfUcA3KNJpS4b2S1JEUbx9nx2ID0gSU648aOn4jsdWBk9QKf9rDw088LA+kkZtQa8N4rlm0ttn1VxO/XCWKXXA/TIsQc4H9MRUjXlChjVZ6++xAXdQul+hVcLxMbbv+14NABF4nU4z4lOYCNDDJHzIDQvNJ7hGmmk9BdDxIYGphZaAPcaNzuVYZ6t6iIp9vABKcDWDjS2vKBlrOUo1tBvOL8B7L3Jiw==
+ b=F5vQutM+9FT1ooOw4x0rUlnIPN9EfOIMYJ8BjfJ7pb8fte54JGU9Ax+c/TnDRdnswic5LCY6npXmuas9GJHClVtdHufVtcWLFe4K4ZvaPe5bau0SRHj4isJRgz7pTB1deGcRPeWddH4lu3xyER/En2aSp64Ni1phrnt6Gv4jvduBHvgpnpFXK2/M+AmKPKJUMQB9homWmemgpeETdklKQnbJDblUdtr07OBLs9OYZACsQcnGyJjxZI+f9FGodIrqbn78jLDasrhINMVx0pV+cju+7HzazK5MXjUuxxnh85cnnjpLWaE90cLekBIU+SmM/vV4oV3Ma3kBnZHnDSornA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Hqod2VNHfaWttBLFYus7WoFDgVmIAo17T6FCGOIDLUI=;
- b=p1DeotkPtCEYIQ49DHNfRiVCHvVncSbbmrvOdE4Q2gPNWZDt8o8oKHQhpUl9CAab2R2b1OMpc7LSfOqUCkL5vKz2/S/nf7x82oLhjp56f13b2jun5dStV5Vq02YJqT6JeHVFqzWZAFtuGaE8MtA6NdTmHv87dU9PcGvb5ywEt8eqiZ9AwoNzqNp0cD1D39bzgS+sjKIe6yMbjvXRlUQWDblOPMi9HWyS23BXH004JTyKLh5rfqWEbxzVMl/h0jvwONdFADx6z+DtdDiE6NjRz0bENVrjlSIOUAZCx3VKMatxz45Qz3/bRyFZEJ82eabPFkWNfc8QCf+vb/dHmZXZKg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 222.71.101.198) smtp.rcpttodomain=baylibre.com smtp.mailfrom=cixtech.com;
- dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
- not signed); arc=none (0)
-Received: from SY5P300CA0053.AUSP300.PROD.OUTLOOK.COM (2603:10c6:10:1fe::18)
- by TYZPR06MB6166.apcprd06.prod.outlook.com (2603:1096:400:340::6) with
+ bh=NDZffqsCZo58RWzt9yrUJl4khkOUa/WQYOIhBM9hIgA=;
+ b=H+gfBqUjrndmK6shnVzr36dMp/TsTEhQBTQK2tsycoOsyBrba1DZoSOq+Tj4l9K89AIdl49/Qy6vby2Wr8Se6onPNJgtLCLg7k9UPl6nGQpb6SqiZSqgmPAPzzhdoACyL6vBsIJxFhEvpM1NItzeTzcLC/A8eKpVB20dwmON8XpsDxQJIne16yg7Hq5thFJ74GjaEGQTGoDa3AU4f++h8STxQRzjrlyfpWIREM3hhp+h5U2pW7qg/qSB6G50P84GmH1bgnJxYl8PfzYU9VexHiAi6k6E5oxIyxNNCTscQkpj8DSJxCorb867mtEadNx8/+wA3AuZR3QFox6cTFIudw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=cixtech.com; dmarc=pass action=none header.from=cixtech.com;
+ dkim=pass header.d=cixtech.com; arc=none
+Received: from SEYPR06MB6226.apcprd06.prod.outlook.com (2603:1096:101:df::13)
+ by JH0PR06MB7200.apcprd06.prod.outlook.com (2603:1096:990:9a::11) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.245.10; Thu, 23 Jul
- 2026 09:08:13 +0000
-Received: from OSA0EPF000000C6.apcprd02.prod.outlook.com
- (2603:10c6:10:1fe:cafe::ae) by SY5P300CA0053.outlook.office365.com
- (2603:10c6:10:1fe::18) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.245.10 via Frontend Transport; Thu,
- 23 Jul 2026 09:08:12 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
- smtp.mailfrom=cixtech.com; dkim=none (message not signed)
- header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
-Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
- 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
-Received: from smtprelay.cixcomputing.com (222.71.101.198) by
- OSA0EPF000000C6.mail.protection.outlook.com (10.167.240.52) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.270.5 via Frontend Transport; Thu, 23 Jul 2026 09:08:11 +0000
-Received: from cix (unknown [172.18.64.61])
-	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id 7EE2440920E2;
-	Thu, 23 Jul 2026 17:08:10 +0800 (CST)
-From: joakim.zhang@cixtech.com
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	bmasney@redhat.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	p.zabel@pengutronix.de
-Cc: cix-kernel-upstream@cixtech.com,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Joakim Zhang <joakim.zhang@cixtech.com>
-Subject: [PATCH v11 3/4] reset: cix: add sky1 audss auxiliary reset driver
-Date: Thu, 23 Jul 2026 17:08:07 +0800
-Message-ID: <20260723090808.1727598-4-joakim.zhang@cixtech.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20260723090808.1727598-1-joakim.zhang@cixtech.com>
-References: <20260723090808.1727598-1-joakim.zhang@cixtech.com>
+ 2026 09:12:43 +0000
+Received: from SEYPR06MB6226.apcprd06.prod.outlook.com
+ ([fe80::56e8:777c:d80e:d364]) by SEYPR06MB6226.apcprd06.prod.outlook.com
+ ([fe80::56e8:777c:d80e:d364%5]) with mapi id 15.21.0245.009; Thu, 23 Jul 2026
+ 09:12:42 +0000
+From: "Joakim  Zhang" <joakim.zhang@cixtech.com>
+To: Brian Masney <bmasney@redhat.com>
+CC: "mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@kernel.org"
+	<sboyd@kernel.org>, "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>, cix-kernel-upstream
+	<cix-kernel-upstream@cixtech.com>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH v10 2/4] clk: cix: add sky1 audss clock controller
+Thread-Topic: [PATCH v10 2/4] clk: cix: add sky1 audss clock controller
+Thread-Index: AQHdGAa+uATadAQ190WzEUhpNkaxArZ4jFaAgAA5c+CAALPkgIABXHnQ
+Date: Thu, 23 Jul 2026 09:12:42 +0000
+Message-ID:
+ <SEYPR06MB622646932266B104660278F882C02@SEYPR06MB6226.apcprd06.prod.outlook.com>
+References: <20260720051505.1252774-1-joakim.zhang@cixtech.com>
+ <20260720051505.1252774-3-joakim.zhang@cixtech.com>
+ <al_vGXIW2bP8uGJ5@redhat.com>
+ <SEYPR06MB6226C74C33B3EE124E3E0F2C82C12@SEYPR06MB6226.apcprd06.prod.outlook.com>
+ <amC2MY4QaCfCBdm-@redhat.com>
+In-Reply-To: <amC2MY4QaCfCBdm-@redhat.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=cixtech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SEYPR06MB6226:EE_|JH0PR06MB7200:EE_
+x-ms-office365-filtering-correlation-id: c4db185d-a1eb-4d38-c945-08dee89a8d6e
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|23010399003|376014|366016|1800799024|38070700021|56012099006|10067099003|4143699003|18002099003|22082099003;
+x-microsoft-antispam-message-info:
+ zKdqu0bGAb381yyc9CWssrmXtR0JKOQh6RRSoivRcu3G/OHOaGcPPYtcyr709yIE+Q+qdLqxiHf1d0TvfnCXr2vBQLpe4c3ohVDoiZgpf4i26aeYYM0Yymb/9oliG0KiFZixgt+OoddmTKaLBbwIcSffWenZQaUp5HDImPVNsbf91DiXsKE4W2jnYrm3Xanqoki+bAZAKGzEpvLYYqlFLgWUSoSPxEtbiwHIkQzwEvMsTRqJK3szOCKv+nF2h8um8GctAN528kRHZO/IDwhCZNnJCmkQe9sXnpRkiDpaR69Tmz4dAdfUBHw6rmwKxN6LwZq/NFT0KT/6WKV3MXt+HumP4HalfeQS59vkseDNyVOePWkmD9IvoXly9RLFYyqoLV2O2p2PvlWy06VFQVKSprj2eNPa8apSGzkUxFdoK1doI/4Q2AJRA82iIIXfTEP7ma02rICDbQCIFFyIpP2C2grWBYHQoC23SVEwlUU2i7P8oujy3mnK+/Y96LHwoscvSUM8s2qbbtAkLZFFmQt00GEk55epoCwluCVeAO8rd4faGNjBdfy0DpezeL/twavUbs3OYXoCWH5Jq4RCn61JkOJYDwsoAJ7S+XsFHokvvpYSVt674ds87K5pwWf474c8bY4BAGOHPP568imua8NGhhIowztg4phE8FuPDSNBBZ/NeBPP9KgHDTXnTJiJatap3r/uj+Y11iskm0FFDiEUU0xV7zsvZ+2l54zQ3vnXsfc=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEYPR06MB6226.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(376014)(366016)(1800799024)(38070700021)(56012099006)(10067099003)(4143699003)(18002099003)(22082099003);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?wyk1/tjHAyxWmpsX8QhfOEyVdWxpWmME/RxwYFGif+ttohheImnanZiXq2dN?=
+ =?us-ascii?Q?6dxeCtR9015Vntv5orswmpcouSUG+WnTWpfuT8r4WJ/qXUdHXuyU8EGYdGLC?=
+ =?us-ascii?Q?ZzaCEEls6Lqdg9yW9C3iN0rw5gvlxL3U9FAxi6ReWIEX0yPQYT8BfCczFFeH?=
+ =?us-ascii?Q?HG9ibjOEJ2w44U6J1tCIyBtHoOAv1/Kimk4ItIl/MP8B1ARzvZz+iVvnyPhs?=
+ =?us-ascii?Q?hSK0tos+/KvdbMeU8V1f90AIMC7xNvxQSD796g2/fQhbu3yCPfil9xTrn4Bl?=
+ =?us-ascii?Q?VcZee/Kkj3LYTHffQuNlRvksqQA1aHQVO3ZDuleXyLk/eQRpMwR/sFjR8p7x?=
+ =?us-ascii?Q?xXodbkOG2ttdPIecq6A5GG33EhoE4XHZFYr6FcxYTI4kSjp8QT9URIdfqFDW?=
+ =?us-ascii?Q?bl5jtbTeXqPpLpPPqYpeCEciNLrDWSR6HKDanWlFKE106zyb0+rUjtIzD7cB?=
+ =?us-ascii?Q?dChl9uk17GBss1hBgl7O4k5+55InFdVQHNKhZCVwYFiX/5P6tOCINoF9nJ+P?=
+ =?us-ascii?Q?7U22B7PKjegF1yOO6X3nhm4G+bpWf7169VfAtXs/gVZGOUOeWOUkfik1IOAK?=
+ =?us-ascii?Q?O6p1OyLu9EXKr585O1XvfiPm34PuBmHCoFEoQdwcCuiLFDzgU7oBARtJ5Ss9?=
+ =?us-ascii?Q?MVQvFiF+1mPMAuwdh19VFGyFzD+buCtsBIF0G99GxeO6mNzEUBOsAeBy+KrF?=
+ =?us-ascii?Q?2rSlvw36IfWl64e+6Wf02H0iOCCpOcRZ0vKZH+ujTeIrfH5RyGTLKDVglXKr?=
+ =?us-ascii?Q?XGLg0A4Iiwo/mK1cBTEHfNYYYpfQY+oO1uUlkD7OzrviBlhBZlh32p6S/g/D?=
+ =?us-ascii?Q?kMeTwW2YzyDMC1yJEg6rdrio5chMWRfDGP5PuxbhHuuS4ZnBBQbOo5E+uDKE?=
+ =?us-ascii?Q?GWTutALfO2ShyfoDhjoY9MH17J6XuEJppjnMaW0eqUuXMlKGLyXWcY/l288b?=
+ =?us-ascii?Q?GjRXXKXn0JDgKOfNCQ6JdE+u17vlSy69zq4yuqWJvIruPjpZxt+L3ZMNm8Kc?=
+ =?us-ascii?Q?KyrP5ph24gZF8QL6hBV9W9HObLdi2yTx0BaxCI1rUcySXUfdXPY0t3FVsmT3?=
+ =?us-ascii?Q?3yApeJCJ2lk49kwb/LFzj3pfP0yygf6KnWwrz5AAEPIZS4QMsLwA3i5b7Mg3?=
+ =?us-ascii?Q?PZTJf35jbSDXkTRDB8lPJQSShYjb0zTmYpSm7Ri/K3T7vb1bhWztk+Qydby+?=
+ =?us-ascii?Q?BE5taVkU3C+8PR57klZ+5OUDE7j/h/mopAtBytdk8AdpDcPI0aEYNvmWvUoo?=
+ =?us-ascii?Q?0MEY+JGYt6fdN6N0K59j7H+ouZy740p9W0N7dsoVaHE2vFy2Nx2ysjUD0T3x?=
+ =?us-ascii?Q?QqLp4S71VibMSoPvLcBRbMVs8G7RlQdQBGtgISgnuSeD2NfgkXJQmCkiz20S?=
+ =?us-ascii?Q?n8WhlaOI9doo8skxynOYwyfZtm5dXWiZfLNUPyh2grcRp9RpH9tLI04sLxq1?=
+ =?us-ascii?Q?KTOmdS5AKsl3+nxtmv4b26LY9hgtlNm7R2Q2AGL47CvE37sNqZIgqD1xUpGY?=
+ =?us-ascii?Q?4mx2q12zp5opyiVlaKL6N0m7YjCIW20SO4lnvEESkTEjjwt/mt4lEK5dwvJe?=
+ =?us-ascii?Q?cBzmLGCub8xcg7Bm4qEjYGMw9i+axWakMTwlmcYmOYW2yVyhtH715PjjFtjV?=
+ =?us-ascii?Q?XcntzbrJWMH1RGI8AtyEeTfnBjxkgR4CMfyOCYPnfaXOrs5lqJ/Jyuk4qhm0?=
+ =?us-ascii?Q?tibFmqqrfnFgPjIdmDdzoraOe6uqAaoPTaCdUedHe4rn4XuxkNr0+/L8mBTq?=
+ =?us-ascii?Q?QDOr3uGOVQ=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: OSA0EPF000000C6:EE_|TYZPR06MB6166:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 06d5e32b-281e-4ff0-cf9e-08dee899ebfd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700016|376014|7416014|23010399003|1800799024|82310400026|5023799004|56012099006|10067099003|18002099003|22082099003|3023799007;
-X-Microsoft-Antispam-Message-Info:
-	PErn9Xp/RuEXdp5Vd4/EzikAKOfZ7+8fFv1k+oNa/i04fLJIXazD7az/IrRAto8NnnySp1cmO4t/ohCSsuxu5SqHcEFlDNsOidFnd7h37gyRoCWcYe/dz2VjFbziquBftNvXjMXkh7mPtF9+KNqW34efaePXtdVkQ5F7iI7T2tyX01afrM+8hhqpFLg7TeNcwwKYPsD/BaHHCS4h807axscAk0lTwynaRWaYo57yqSasIqgwclNHL1qTtOo0sXEpUgbZqniFRR6qXnNQT2QTGh9KDRrQuUvggwLH/QVONLAcxNyJAUd65iaFDiYUUy/M0SZ1TGs6yhs2l7Mffro/DscLI6uqdkq0KNIQf8wsBW8Tumr84HvRByakTGig7Pn3SEdV5x8lO01Wzt0OilAkQPZa/RkdIy0c0QrKgwS5LjdSWVLw4VYvU/UevhX9YFguEqpMFoo72ELOGrBxsRbJQgrUq6Pu/vRPxocso2XOWiXD/M+KI/zFDRQwIsxZFCZFw/A+ii9AqNupq/3LVmoXb5E70yFKLNyScfAc1yx8I8QWoAIeRDTbuhhbE224LFepkw+Iah0DxcpFmW1EaRRNVJ9wF4F/l8pI7WJMTlYsAe04/e9r9um/lZ8lsZ85ZNFh6Gi+v4Q9BYtwif6CiS1oU+JH9Ux6L0FKlENbXO0jcRPT0edpp0lDN/vxHf1vB6CgwtLXldJiT22dxIu/oVbJHQ==
-X-Forefront-Antispam-Report:
-	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700016)(376014)(7416014)(23010399003)(1800799024)(82310400026)(5023799004)(56012099006)(10067099003)(18002099003)(22082099003)(3023799007);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	tq60/iCv2GW2hwLbGqgSv1hwIpbAPb8culvTZ5ZXfefFxoguuVcmgioSlYGin4HEWnZmhzcEz5CkIpXxshSF/Iu9BSdSGh/86ONIJhrQ+JyoFylI4sV7HfqDxLX2YPcCKGS8Cvggh5DD0t+teqVKmiIKMIZNU79XdtxfttqLrW3npaI07xWrqsqydo43P3owRQywj9NwcX0YbIaSIMlVD8BFnlL5drEqgrlGJeQAXMr10WvH4+5XhyvKip8z5GWlXm3vL+Bh+cObOxDXyavVZMTSG3T17d0Wj1xhCQs5EQ/sP/mxH8tPyDbn7InloSV2/Le77SmwSlNi3oEwTfaYZP41vJp4TMu5igl1DC+0IEe1LLbSOtwjbNDKC3iOXjbb2fiIsXEYW3V6ocbuUBuvD7Ie4NPV7kMglbweDrD7yfsleOEfbgZZDa8a0mhOYJ1W
 X-OriginatorOrg: cixtech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2026 09:08:11.7626
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SEYPR06MB6226.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c4db185d-a1eb-4d38-c945-08dee89a8d6e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Jul 2026 09:12:42.8363
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 06d5e32b-281e-4ff0-cf9e-08dee899ebfd
-X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	OSA0EPF000000C6.apcprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB6166
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 0409f77a-e53d-4d23-943e-ccade7cb4811
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: kpnhHRWr5ttyYqKBBKjYM0npklxsG77HfEhsBWbZyQwcXomzBvRbbi79b5anMZEpKT3Igy1441SqbKQp4UBsur+oklV/xLLVW+QvMekYtRo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR06MB7200
 
-From: Joakim Zhang <joakim.zhang@cixtech.com>
+Hi Brian,
 
-Add an auxiliary reset controller driver for the AUDSS CRU. Sixteen
-software reset lines for audio subsystem peripherals are controlled
-through one register in the CRU register map.
+> -----Original Message-----
+> From: Brian Masney <bmasney@redhat.com>
+> Sent: Wednesday, July 22, 2026 8:23 PM
+> To: Joakim Zhang <joakim.zhang@cixtech.com>
+> Cc: mturquette@baylibre.com; sboyd@kernel.org; robh@kernel.org;
+> krzk+dt@kernel.org; conor+dt@kernel.org; p.zabel@pengutronix.de; cix-kern=
+el-
+> upstream <cix-kernel-upstream@cixtech.com>; linux-clk@vger.kernel.org;
+> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-arm-
+> kernel@lists.infradead.org
+> Subject: Re: [PATCH v10 2/4] clk: cix: add sky1 audss clock controller
+>=20
+> EXTERNAL EMAIL
+>=20
+> Hi Joakim,
+>=20
+> On Wed, Jul 22, 2026 at 01:45:52AM +0000, Joakim  Zhang wrote:
+> > > > +static void sky1_audss_clk_gate_disable(struct clk_hw *hw) {
+> > > > +     sky1_audss_clk_gate_endisable(hw, 0);
+> > >
+> > > pm_runtime_put ?
+> >
+> > No. Runtime PM is handled by CCF: rpm_enabled is set when the provider =
+has PM
+> enabled before registration, and clk_prepare() (as well as set_rate/set_p=
+arent)
+> already calls pm_runtime_resume_and_get() on the provider. That runs our
+> runtime_resume before clk ops touch the CRU, so extra get/put in the clk_=
+ops would
+> be redundant. Doing get/put in .enable/.disable would also be wrong becau=
+se those
+> callbacks can run in atomic context and must not sleep.
+>=20
+> OK yes I forgot about that. Yes, I see it now and agree it's not needed i=
+n the driver.
+>=20
+> I think do the two other minor cleanups I mentioned and I think this driv=
+er is good,
+> at least from my vantage point.
 
-The driver is created by the AUDSS clock platform driver and registers
-the reset controller on the CRU device node.
+Thanks for the review and for confirming that part isn't needed in the driv=
+er.
 
-Signed-off-by: Joakim Zhang <joakim.zhang@cixtech.com>
----
- drivers/reset/Kconfig            |  13 ++++
- drivers/reset/Makefile           |   1 +
- drivers/reset/reset-sky1-audss.c | 127 +++++++++++++++++++++++++++++++
- 3 files changed, 141 insertions(+)
- create mode 100644 drivers/reset/reset-sky1-audss.c
+I have already posted v11 with the other two minor cleanups you mentioned. =
+Please take a look when you have a chance. If it looks good to you, a Revie=
+wed-by tag would be much appreciated.
 
-diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-index d009eb0849a3..b19e719f2abe 100644
---- a/drivers/reset/Kconfig
-+++ b/drivers/reset/Kconfig
-@@ -300,6 +300,19 @@ config RESET_SKY1
- 	help
- 	  This enables the reset controller for Cix Sky1.
- 
-+config RESET_SKY1_AUDSS
-+	tristate "Cix Sky1 Audio Subsystem reset controller"
-+	depends on ARCH_CIX || COMPILE_TEST
-+	select AUXILIARY_BUS
-+	default CLK_SKY1_AUDSS
-+	help
-+	  Support for block-level software reset lines in the Cix Sky1
-+	  Audio Subsystem (AUDSS) Clock and Reset Unit. Sixteen reset
-+	  outputs for audio peripherals are controlled through the CRU
-+	  register map. The driver binds as an auxiliary device from
-+	  the AUDSS clock driver. Say M or Y here if you want to build
-+	  this driver.
-+
- config RESET_SOCFPGA
- 	bool "SoCFPGA Reset Driver" if COMPILE_TEST && (!ARM || !ARCH_INTEL_SOCFPGA)
- 	default ARM && ARCH_INTEL_SOCFPGA
-diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-index 3e52569bd276..e81407ea3e29 100644
---- a/drivers/reset/Makefile
-+++ b/drivers/reset/Makefile
-@@ -39,6 +39,7 @@ obj-$(CONFIG_RESET_RZV2H_USB2PHY) += reset-rzv2h-usb2phy.o
- obj-$(CONFIG_RESET_SCMI) += reset-scmi.o
- obj-$(CONFIG_RESET_SIMPLE) += reset-simple.o
- obj-$(CONFIG_RESET_SKY1) += reset-sky1.o
-+obj-$(CONFIG_RESET_SKY1_AUDSS) += reset-sky1-audss.o
- obj-$(CONFIG_RESET_SOCFPGA) += reset-socfpga.o
- obj-$(CONFIG_RESET_SUNPLUS) += reset-sunplus.o
- obj-$(CONFIG_RESET_SUNXI) += reset-sunxi.o
-diff --git a/drivers/reset/reset-sky1-audss.c b/drivers/reset/reset-sky1-audss.c
-new file mode 100644
-index 000000000000..d9735db681c7
---- /dev/null
-+++ b/drivers/reset/reset-sky1-audss.c
-@@ -0,0 +1,127 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Cix Sky1 Audio Subsystem reset controller driver
-+ *
-+ * Copyright 2026 Cix Technology Group Co., Ltd.
-+ */
-+
-+#include <dt-bindings/reset/cix,sky1-audss-cru.h>
-+
-+#include <linux/auxiliary_bus.h>
-+#include <linux/delay.h>
-+#include <linux/device.h>
-+#include <linux/module.h>
-+#include <linux/regmap.h>
-+#include <linux/reset-controller.h>
-+
-+#define SKY1_RESET_SLEEP_US			50
-+
-+#define AUDSS_SW_RST			0x78
-+
-+struct sky1_audss_reset_map {
-+	unsigned int offset;
-+	unsigned int mask;
-+};
-+
-+struct sky1_audss_reset {
-+	struct reset_controller_dev rcdev;
-+	struct regmap *regmap;
-+	const struct sky1_audss_reset_map *map;
-+};
-+
-+static const struct sky1_audss_reset_map sky1_audss_reset_map[] = {
-+	[AUDSS_I2S0_SW_RST]   = { AUDSS_SW_RST, BIT(0) },
-+	[AUDSS_I2S1_SW_RST]   = { AUDSS_SW_RST, BIT(1) },
-+	[AUDSS_I2S2_SW_RST]   = { AUDSS_SW_RST, BIT(2) },
-+	[AUDSS_I2S3_SW_RST]   = { AUDSS_SW_RST, BIT(3) },
-+	[AUDSS_I2S4_SW_RST]   = { AUDSS_SW_RST, BIT(4) },
-+	[AUDSS_I2S5_SW_RST]   = { AUDSS_SW_RST, BIT(5) },
-+	[AUDSS_I2S6_SW_RST]   = { AUDSS_SW_RST, BIT(6) },
-+	[AUDSS_I2S7_SW_RST]   = { AUDSS_SW_RST, BIT(7) },
-+	[AUDSS_I2S8_SW_RST]   = { AUDSS_SW_RST, BIT(8) },
-+	[AUDSS_I2S9_SW_RST]   = { AUDSS_SW_RST, BIT(9) },
-+	[AUDSS_WDT_SW_RST]    = { AUDSS_SW_RST, BIT(10) },
-+	[AUDSS_TIMER_SW_RST]  = { AUDSS_SW_RST, BIT(11) },
-+	[AUDSS_MB0_SW_RST]    = { AUDSS_SW_RST, BIT(12) },
-+	[AUDSS_MB1_SW_RST]    = { AUDSS_SW_RST, BIT(13) },
-+	[AUDSS_HDA_SW_RST]    = { AUDSS_SW_RST, BIT(14) },
-+	[AUDSS_DMAC_SW_RST]   = { AUDSS_SW_RST, BIT(15) },
-+};
-+
-+static struct sky1_audss_reset *to_sky1_audss_reset(struct reset_controller_dev *rcdev)
-+{
-+	return container_of(rcdev, struct sky1_audss_reset, rcdev);
-+}
-+
-+static int sky1_audss_reset_set(struct reset_controller_dev *rcdev,
-+				unsigned long id, bool assert)
-+{
-+	struct sky1_audss_reset *priv = to_sky1_audss_reset(rcdev);
-+	const struct sky1_audss_reset_map *signal = &priv->map[id];
-+	int ret;
-+
-+	ret = regmap_assign_bits(priv->regmap, signal->offset,
-+				 signal->mask, !assert);
-+	if (ret)
-+		return ret;
-+
-+	fsleep(SKY1_RESET_SLEEP_US);
-+	return 0;
-+}
-+
-+static int sky1_audss_reset_assert(struct reset_controller_dev *rcdev,
-+				   unsigned long id)
-+{
-+	return sky1_audss_reset_set(rcdev, id, true);
-+}
-+
-+static int sky1_audss_reset_deassert(struct reset_controller_dev *rcdev,
-+				     unsigned long id)
-+{
-+	return sky1_audss_reset_set(rcdev, id, false);
-+}
-+
-+static const struct reset_control_ops sky1_audss_reset_ops = {
-+	.assert   = sky1_audss_reset_assert,
-+	.deassert = sky1_audss_reset_deassert,
-+};
-+
-+static int sky1_audss_reset_probe(struct auxiliary_device *adev,
-+				  const struct auxiliary_device_id *id)
-+{
-+	struct sky1_audss_reset *priv;
-+	struct device *dev = &adev->dev;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->regmap = dev_get_regmap(dev->parent, NULL);
-+	if (!priv->regmap)
-+		return dev_err_probe(dev, -ENODEV, "failed to get parent regmap\n");
-+
-+	priv->map = sky1_audss_reset_map;
-+	priv->rcdev.owner = THIS_MODULE;
-+	priv->rcdev.nr_resets = ARRAY_SIZE(sky1_audss_reset_map);
-+	priv->rcdev.ops = &sky1_audss_reset_ops;
-+	priv->rcdev.of_node = dev->of_node;
-+	priv->rcdev.dev = dev;
-+
-+	return devm_reset_controller_register(dev, &priv->rcdev);
-+}
-+
-+static const struct auxiliary_device_id sky1_audss_reset_ids[] = {
-+	{ .name = "clk_sky1_audss.reset" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(auxiliary, sky1_audss_reset_ids);
-+
-+static struct auxiliary_driver sky1_audss_reset_driver = {
-+	.probe = sky1_audss_reset_probe,
-+	.id_table = sky1_audss_reset_ids,
-+};
-+module_auxiliary_driver(sky1_audss_reset_driver);
-+
-+MODULE_AUTHOR("Joakim Zhang <joakim.zhang@cixtech.com>");
-+MODULE_DESCRIPTION("Cix Sky1 Audio Subsystem reset driver");
-+MODULE_LICENSE("GPL");
--- 
-2.50.1
+Thanks,
+Joakim
 
