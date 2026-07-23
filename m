@@ -1,65 +1,64 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 408A541378C
-	for <linux-clk@vger.kernel.org>; Thu, 23 Jul 2026 13:21:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74E06449B3A
+	for <linux-clk@vger.kernel.org>; Thu, 23 Jul 2026 13:33:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784812877; cv=none; b=syVPnN4/8h/je+pjeuNKhiSmjbA44HpbqPzk6kZhLZ38AYKkRgM6WtBMs128r6IVLD2Jjq7tQEsXLrB+cEtHYIbBTmLTZnb3q7pQt2OAxZvGLzFYvCLu3py4DX1sgRZ0d+IORQeqWeqTbtkLq9JMqtuygUaXN7UOTaObiaz4u+s=
+	t=1784813633; cv=none; b=UB9tjjcmIrsPxW/Z53nq6FPQbr/O+JgoxgFAzfYgBqL5rQwDt63RvUwERbQNfSc8kq4MmVeSDYq3NIrcQje2FcIktXSdhBMmhKDgduaF3YLbyZZZHrtCoTj8ciXj/gTh0GYWoFuGmJG0AKN/hea8Zd+HaKE4wAODsQEKuuuTQ5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784812877; c=relaxed/simple;
-	bh=5PC1BUPqjn84sMFOiHEFKs/MchmaKpjT7tXqaFk6VQw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=LBYwpD5PBI9il9pt3NFiTbquBknuFmqnLi7/A6Vth99IlREbINiBJTmEz5WBWffbrxC9km0GC8tjUmZ9TV1xP3MJcpFE2beIQUCvOOFHJO9OeqsUo2Knx9i8NnHxVxf1GnaYEzF+Y6Vmwg6UOB/5sdLfaD7xbnS6d5kYoNpzSxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=TnSVEq5F; arc=none smtp.client-ip=209.85.128.46
+	s=arc-20240116; t=1784813633; c=relaxed/simple;
+	bh=g/jvPaYojbRUskGx0vHdkl7waFp++QV7Coa6pHsErts=;
+	h=MIME-Version:Content-Type:Subject:From:To:Cc:In-Reply-To:
+	 References:Date:Message-Id; b=ZlwSWW7hNXVMxznoRS8IGTlazm8JA7vqAMqOVBh/Ls4oPgByS4Jd+lp8lTQqmtEVMzXy4iW8XgHZl0CxUpINB/28h2RtaBvEl0lHwB+Yr1W0+OYsAuJvLcarwNFHhXuSrl0Vs1X5Xcbg6hJMK8zOTn14AwaH1qd5+WMPGUPe+sg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=i59Nkt7c; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="TnSVEq5F"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-49545ba3d4eso3669755e9.3
-        for <linux-clk@vger.kernel.org>; Thu, 23 Jul 2026 06:21:13 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="i59Nkt7c"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-49548aebcd8so5257705e9.3
+        for <linux-clk@vger.kernel.org>; Thu, 23 Jul 2026 06:33:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1784812871; x=1785417671; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=QyplRS1DffUbEFjacDmgZoU8UCPSqbtQ0as41mf0HVc=;
-        b=TnSVEq5Fvt5jKqvfocboHO3R4tEJhIYm1LwiT1pSWMyae6gWpYxbJaiVpxaYvwQfNE
-         BdclrcVY5ABYdXVyASDqWMgg3JSD84jSWHpiCBqf6I9uHTKzy4V9OW42pKEIF6sp9NKz
-         /Y/u1EA8POJeM/+0euNOJuLsBpeADVgEr0wS460P22LC2f/s69hPvMV0eUnU713WoOA4
-         G4B6Zy1zstEvT1JKYFDbHnqGjMJ+voiIJaYSwgyQKPHiD8QDgHuJg9tIcA6aLTL5kl/L
-         Z/DxKWaTzZPTGWIgzUGsi2mJZxiyInY9wiGrPU+sDOmDyPJjyquhDrsz4PawXL+OumZA
-         Q9HQ==
+        d=baylibre.com; s=google; t=1784813628; x=1785418428; darn=vger.kernel.org;
+        h=message-id:date:references:in-reply-to:cc:to:from:subject
+         :content-transfer-encoding:content-type:mime-version:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=xL/tIFxlX8lvL6fJLGCS7MiSw3QU7lBKDSAhIeo/tVw=;
+        b=i59Nkt7c7JzzmaHuhVJxfput0OcwHF4PX5Lfzu2npojqSOH8Afn7pbSzxOBMhc3Mge
+         JmJHPj+uLt4XboqbXqbQi1bKzIxmPrQyqaorSm2JHmBl5tfsvOhmHCxHpgXmenBJ/dQr
+         xA6/AkMaf0kv7OC6OR8jXrOgyEBhtfwnYXY8EFTzLzqu8W1c6Kpsjr8WVPmz/ieUGHwT
+         g/96xCDdiL0kJHJZKyC3dqA5PT9HgCIt32MigB9JPJxohHlRoL47MIqC5RjsVo7CptA2
+         bGal6n6F3GC/T0lGcwQseOzdrwLIiNfFArkDiWDAHS9BYOTOJTN4bC77okruejFaS/6I
+         kAsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784812871; x=1785417671;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=QyplRS1DffUbEFjacDmgZoU8UCPSqbtQ0as41mf0HVc=;
-        b=Vu69/12f0HWzXbgW7W3btxFDwRv/hkhDtv4DsdH3u4VCfu0g6tNrS1HHyUVhO9fqq0
-         oaQyk5FAXddIYXayhJapHcoOfWGcRmUGexpVX40nEY7aPk5cEFTaiON6bRaUJrLIft3V
-         a/4lK7LhxZn8Kvj6UXfCqpSfm0zN+io3XXmxTmxZmOQ5asROuP2cwYzPusubb5v2jRlx
-         PoyHOWFjkBAmJ5gprAunTYdaVqOcebcKMn8X3sEe5SGSaTFNJa3UgIrIoP3KD2R7HMNA
-         SsWxy5tZKSs/KqzvyNW8WgINYqZZYEWKIsMuI/b0ZmdcModfEY68MEEhYYLVIczfVzZC
-         TmHg==
-X-Forwarded-Encrypted: i=1; AHgh+RrXVE0ng3lrR4jESp3T27b/Q4XtCdz/aLmiJSZtkUyw8CUa/1hTsL5ubdP/tAfmMK7YxgupMJ19Y5A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoYUz1CPqCfZu0DpmCnzlEraM20Lw7FoGwV18Z1er8WpWMqWi/
-	yOfPqXMIYmoS93Xv5G/o7wkbKbSwFaqs/0T2y4TCfP+o0fZxtL1q+AlSpW1vLSlLmZM=
-X-Gm-Gg: AR+sD114e+srmFa5ffRSkm0JTfH7SHZjWLFelBrCocGMvjY2eonZd7rBKVdGesKK1sP
-	bknOKp5RZmpZlhXqnf24cdd4dPV2gZtTv7P++6KUEti/A0VMo/sdyhkc2AOnueLwJwPLvoSrcvT
-	aKIE+sSsjUecW9bqIOMd5AIfyS1Og0y7iV6t84Hor8bJAnvUeIxpXRpcmpw3RfxCbquAmqYjQcI
-	w7vx2FUDX+AyV1hgCpVEGSLIZPF4JiVAiRfQanAR1XutrjoPm5OruC7RYAHgNRldu6aPgQkaJ3Y
-	+J1ai4Wm7DMltg1P7gGgkZdw5UbCJ5zDnB8CrUZ7t0ErnxnctCWqt9WfZEI4CjtmYP3K0HUNBrj
-	yWiJPSoUxjgfJXgv4SoUKJL37hUSm23asr46t70FulM9v0YbIL3NQMe0zNykCj448AA0c/6kIS/
-	Y=
-X-Received: by 2002:a05:600c:1989:b0:495:3f99:849c with SMTP id 5b1f17b1804b1-49573cc7cdbmr34884625e9.15.1784812870891;
-        Thu, 23 Jul 2026 06:21:10 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:a867:44d7:3dfb:853])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-495653d38dbsm212834195e9.15.2026.07.23.06.21.10
+        d=1e100.net; s=20251104; t=1784813628; x=1785418428;
+        h=message-id:date:references:in-reply-to:cc:to:from:subject
+         :content-transfer-encoding:content-type:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=xL/tIFxlX8lvL6fJLGCS7MiSw3QU7lBKDSAhIeo/tVw=;
+        b=S0Gnx1GTbr51dCUcqDE4VZaxVgZKZ7ExaDsYSXFmvFerpcUSdLbJE3mHa/2BZEyhSF
+         ZE6Aqgc6d7/l3G48Gd0rCvZx8RnOk/T12dKR+YbqS4omFt0UduySF+7LKOD1juIqnIOr
+         lFdSMyEnjh8H6ewyHQb2Mek3h65yljqwsFDIa4h3WSu7qwg+DRP6UsKuf1HkXTO47zEJ
+         r93hrZuPf7xXL3Zsnn7qxPgcN0Bel4oh2wJB0+sPNB/snNd+FUR1qMvRTAiDOrnqclT/
+         UAz4xPLw19TJO6ziyxMXC2rp25IzBMMo9tPimZeq6SXq6fs0Y9/MzQiDtlrpF7V1Aj59
+         hxaA==
+X-Forwarded-Encrypted: i=1; AHgh+Rqj/2zsKP0RN9J7+eioC6kC5EY4ymhr3Yro01rlnLonPa6yglhnkNg1UfL6oQSgPQ/FfiiAaTko/V0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQtcJpiZtYMj/aSyUA/ZnqDWqOtS5UkWM1NeKkGTWJz4VYaWCt
+	bjMPtyFwnz7mDmIhTJCDSIKKpUT0T4sCv//G3aJfccG+FR7ESxaKstAQri8g4w43aVQ=
+X-Gm-Gg: AR+sD13FvR3tgD2lsaYU9O2hy2o1R3Yn4a5GA3YYy96g8fhHPOTtVGfWI92YixNehhx
+	ItJC1PzN/K7Gx6BQjXKpr2VQ2AeS0QWAlqPQxl6MEVrbWiXEPW6s0EphSda/9swM+MG7w+RCxcH
+	CzjiDx9yjJKYhaSAt9oIjjHuFAoe8s4qYE85i6s8qZBJ+MmYgHYx6A3iOMB3nY288LWEl72QSNK
+	ccT1trQYYaX1swEcUbqgvTDC26HsHWYMj1tI1GQyj+bhhxwCv/dgDup2MWqAylwdySh7jynPRlK
+	9CzCumCqrjioAJiES9eCNOhssid4Ko31L43jUVFxoyPMfPULgIZxePQ3o90ZNaqVYS4fcbdhJ4K
+	7wnVhQYbSospytP4miLwFSin2RS7D65lgLihyJFHhkh1Uiqkd+RjFjHERkjU1uq4B9Icfoz0r63
+	4k1x0aT4ZVMUwGzzgIUxYs7Cd5d+9vGqgTH6YDr39gdw==
+X-Received: by 2002:a05:600c:19d2:b0:495:4815:2c54 with SMTP id 5b1f17b1804b1-49573d22bd0mr36815985e9.34.1784813628420;
+        Thu, 23 Jul 2026 06:33:48 -0700 (PDT)
+Received: from [192.168.5.218] (88-127-185-231.subs.proxad.net. [88.127.185.231])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4956a63fb10sm153054095e9.13.2026.07.23.06.33.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Jul 2026 06:21:10 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Thu, 23 Jul 2026 15:20:59 +0200
-Subject: [PATCH] clk: clean-up simple provider misuse of the consumer API
+        Thu, 23 Jul 2026 06:33:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -68,388 +67,58 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260723-clk-provider-simple-clean-v1-1-0c9668240467@baylibre.com>
-X-B4-Tracking: v=1; b=H4sIADoVYmoC/yXM2wrCMBCE4Vcpe20gxnrAV5FexM2oqzUNu1oKp
- e9u1MtvYP6ZDCowOjYzKUYxGXLFetUQ32K+wkmqpuDDzu/DxnH/cEWHURLUmTxLj7ohZhcPacv
- MLTh4qv+iuMj0a5+6v+19voNf3yAtywfP3KrvfQAAAA==
-X-Change-ID: 20260723-clk-provider-simple-clean-a8d5ccc4ec20
-To: Andrew Lunn <andrew@lunn.ch>, 
- Gregory Clement <gregory.clement@bootlin.com>, 
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, 
+Subject: Re: [PATCH v2 5/6] dt-bindings: clock: qcom: Document Nord GPU
+ clock controllers
+From: Alexandre Mergnat <amergnat@baylibre.com>
+To: Taniya Das <taniya.das@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
  Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Heiko Stuebner <heiko@sntech.de>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
- Thierry Reding <thierry.reding@kernel.org>, 
- Jonathan Hunter <jonathanh@nvidia.com>, Tero Kristo <kristo@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
- linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, 
- Jerome Brunet <jbrunet@baylibre.com>
+ Shawn Guo <shengchao.guo@oss.qualcomm.com>, 
+ Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Ajit Pandey <ajit.pandey@oss.qualcomm.com>, 
+ Imran Shaik <imran.shaik@oss.qualcomm.com>, 
+ Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>, 
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+In-Reply-To: <20260721-nords_mm_v1-v2-5-17e5a445a512@oss.qualcomm.com>
+References: <20260721-nords_mm_v1-v2-0-17e5a445a512@oss.qualcomm.com>
+ <20260721-nords_mm_v1-v2-5-17e5a445a512@oss.qualcomm.com>
+Date: Thu, 23 Jul 2026 15:33:37 +0200
+Message-Id: <178481361789.189434.4101591416999923801.b4-review@b4>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=13042; i=jbrunet@baylibre.com;
- h=from:subject:message-id; bh=5PC1BUPqjn84sMFOiHEFKs/MchmaKpjT7tXqaFk6VQw=;
- b=owEBbQKS/ZANAwAKAeb8Dxw38tqFAcsmYgBqYhVDjFfkfm1vKsz+mUigA8SkOvIt15F0127V1
- hIvrE2Q8O6JAjMEAAEKAB0WIQT04VmuGPP1bV8btxvm/A8cN/LahQUCamIVQwAKCRDm/A8cN/La
- hTnlD/429Tt/FvvQ0DzBJsZvVZonAkS3mHIEFVtSHR/NQK+0YVXAYtZDYK9UPDiFuFeBzFLR+eE
- 15Joa5tz68sHlcCzdtoo9igO1H/LJ73B8DGpIDS3cujHyTxZ4WW14ZmMTu+vYNJeCnIqwpHFbvi
- gjd2D4wiowUOyGGkL9IYwx/pCP2X2etCNOF3DG4CvyTH/4ucNV5CMLvP2ZsYeGhpoUOmykDck68
- WqXKt3MOyZwytEE4y9ybWiYdALwN6qNfiEnZVrC5lQElHGcEIE3vHZxStV4OeKXOSBgb5y1PmXc
- BtRaFxfJcsSiL9rYX0X/GZXlJ9AsVpu8BlLgUlHs5wTygdN4jT1WFmnUJRPnQVJeO3Q+ofprRtg
- SNv088gPNkZng5lF+t/1LHLkSWxFDjhsICel8nXWTtl9/ZbhzCXgeQsj/TddUd/tjDI2YdKFouW
- rCNhtHCCwHDgDAUowpkM/cYWfbmv6kqVloLK8RryhNIci84O9PM2wkwTn4kl1ef1SNUgYmj/NVe
- JyAMm57AvZFa8kOxkJE+KaRP6nvaPl5HPJPwrpHuTnCyaXua7hBn3CQNYhymdyNyAp4XzKm4jt8
- qMRIyIICohIg/rJhlfBb+OPPTVKHBH3KWitWSu4JKXIhz9j+JIT1Rq3btQJO/d8Rim197YKcAFb
- n8mmWNACc+DaRqw==
-X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
- fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
+X-Developer-Signature: v=1; a=openpgp-sha256; l=455; i=amergnat@baylibre.com;
+ h=from:subject:message-id; bh=g/jvPaYojbRUskGx0vHdkl7waFp++QV7Coa6pHsErts=;
+ b=owEBbQKS/ZANAwAKAStGSZ1+MdRFAcsmYgBqYhg2vlKwkDIRyBiuIi9Ojmj4U2q89rW4E82jw
+ Qzq9Zr7s9iJAjMEAAEKAB0WIQQjG17X8+qqcA5g/osrRkmdfjHURQUCamIYNgAKCRArRkmdfjHU
+ RQn7EACwyhwTcLtrl9zLYAmI2t2vA+k041G8lcmqzvtQo3tQxriwB1NMa7Bb82/AwAdryjHXJBI
+ WjmfdzLZdebxQu7a1j4omTW3tAsnAXrJDOT9neWWE28vFNu9DTbh4PxGlfuApiXHnrA7aJwa3/l
+ vrPude41N/nGFQlKXatqMh2Tl5xGC3FfYCVT04G/+oJN2q989Nw7/+Daua0lLzviu9alwuLtUJS
+ 3gEL1TVcQcCPbFm0B6oJbZrMeCBpsXQympJuypVR79Zq4lJ6XuzD0YlftBxEI8bQVqlN0jK6C9Z
+ mIt9qH7j9fP3vzmXoeU4lrXGeC6430N00K9HHxZYOnROGsnuNsU6Ekn1/aqWz+gHbRplPH3O9qJ
+ xtNLmWDtbPL82EckZMzHkO4Zt4EI/sIR0D1Et8eEfj4kpovkLzAxRu3IBnyrBQq5swIGD4k3EBO
+ gnyB3dmoUnyhuWG7gbgJfmBf3xilMaS3mPZEHhqYbNoVnEr30dncLheZJmo8D4s5lMhjn6gg0b3
+ +Pe4V6IEPI+3qaU64dQZMvyqPWy+1v44pVURUg5lAqESqU5N+2WJy0yh/FGOrDO5jCxrSmQJugK
+ 80xPUCGqeIKkN8hd4C8iVYZ7d2uX7Vg0N0vs6kOgPYrP/Wr7vndnayFOgspkJPg+wY07QUXGBzV
+ T43TDC4jdP35LvA==
+X-Developer-Key: i=amergnat@baylibre.com; a=openpgp;
+ fpr=231B5ED7F3EAAA700E60FE8B2B46499D7E31D445
 
-Clock provider should not be using the consumer interface.
-In other words, a provider should not be dealing with struct clk.
+On Tue, 21 Jul 2026 12:37:20 +0530, Taniya Das <taniya.das@oss.qualcomm.com> wrote:
+> Add Device Tree binding documentation for the GPU clock controllers
+> on the Qualcomm Nord platform.
+> 
+> The platform includes two GPU clock controller instances, GPUCC and
+> GPUCC2. Document the compatible strings for both controllers.
+> 
+> 
+> [...]
 
-This change targets occurrences for which the provider uses the
-consumer interface and corresponding clk_hw interface exist:
-* __clk_get_name() -> clk_hw_get_name()
-* __clk_is_enabled() -> clk_hw_is_enabled()
-* clk_get_rate() -> clk_hw_get_rate()
+Reviewed-by: Alexandre Mergnat <amergnat@baylibre.com>
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
-The change being very simple, I did not think it was necessary
-to split it into multiple changes. If you prefer it to be split,
-just let me know how.
----
- drivers/clk/mvebu/clk-cpu.c            |  2 +-
- drivers/clk/qcom/clk-hfpll.c           |  4 ++--
- drivers/clk/qcom/clk-krait.c           |  2 +-
- drivers/clk/qcom/clk-rcg.c             |  4 ++--
- drivers/clk/qcom/clk-rcg2.c            |  2 +-
- drivers/clk/renesas/r9a06g032-clocks.c |  2 +-
- drivers/clk/rockchip/clk-pll.c         | 24 ++++++++++++------------
- drivers/clk/st/clkgen-pll.c            | 20 ++++++++++----------
- drivers/clk/tegra/clk-tegra210.c       |  2 +-
- drivers/clk/ti/clockdomain.c           |  2 +-
- 10 files changed, 32 insertions(+), 32 deletions(-)
-
-diff --git a/drivers/clk/mvebu/clk-cpu.c b/drivers/clk/mvebu/clk-cpu.c
-index 26d52ecaac50..24196e288fe2 100644
---- a/drivers/clk/mvebu/clk-cpu.c
-+++ b/drivers/clk/mvebu/clk-cpu.c
-@@ -153,7 +153,7 @@ static int clk_cpu_on_set_rate(struct clk_hw *hwclk, unsigned long rate,
- static int clk_cpu_set_rate(struct clk_hw *hwclk, unsigned long rate,
- 			    unsigned long parent_rate)
- {
--	if (__clk_is_enabled(hwclk->clk))
-+	if (clk_hw_is_enabled(hwclk))
- 		return clk_cpu_on_set_rate(hwclk, rate, parent_rate);
- 	else
- 		return clk_cpu_off_set_rate(hwclk, rate, parent_rate);
-diff --git a/drivers/clk/qcom/clk-hfpll.c b/drivers/clk/qcom/clk-hfpll.c
-index 705352aff067..9e9118d24df7 100644
---- a/drivers/clk/qcom/clk-hfpll.c
-+++ b/drivers/clk/qcom/clk-hfpll.c
-@@ -166,7 +166,7 @@ static int clk_hfpll_set_rate(struct clk_hw *hw, unsigned long rate,
- 
- 	spin_lock_irqsave(&h->lock, flags);
- 
--	enabled = __clk_is_enabled(hw->clk);
-+	enabled = clk_hw_is_enabled(hw);
- 	if (enabled)
- 		__clk_hfpll_disable(h);
- 
-@@ -220,7 +220,7 @@ static int clk_hfpll_init(struct clk_hw *hw)
- 		regmap_read(regmap, hd->status_reg, &status);
- 		if (!(status & BIT(hd->lock_bit))) {
- 			WARN(1, "HFPLL %s is ON, but not locked!\n",
--			     __clk_get_name(hw->clk));
-+			     clk_hw_get_name(hw));
- 			clk_hfpll_disable(hw);
- 			__clk_hfpll_init_once(hw);
- 		}
-diff --git a/drivers/clk/qcom/clk-krait.c b/drivers/clk/qcom/clk-krait.c
-index f5ce403e1e27..5e4408b7445d 100644
---- a/drivers/clk/qcom/clk-krait.c
-+++ b/drivers/clk/qcom/clk-krait.c
-@@ -68,7 +68,7 @@ static int krait_mux_set_parent(struct clk_hw *hw, u8 index)
- 	sel = clk_mux_index_to_val(mux->parent_map, 0, index);
- 	mux->en_mask = sel;
- 	/* Don't touch mux if CPU is off as it won't work */
--	if (__clk_is_enabled(hw->clk))
-+	if (clk_hw_is_enabled(hw))
- 		__krait_mux_set_sel(mux, sel);
- 
- 	mux->reparent = true;
-diff --git a/drivers/clk/qcom/clk-rcg.c b/drivers/clk/qcom/clk-rcg.c
-index 31f0650b48ba..1664101e8f78 100644
---- a/drivers/clk/qcom/clk-rcg.c
-+++ b/drivers/clk/qcom/clk-rcg.c
-@@ -208,7 +208,7 @@ static int configure_bank(struct clk_dyn_rcg *rcg, const struct freq_tbl *f)
- 	bool banked_p = !!rcg->p[1].pre_div_width;
- 	struct clk_hw *hw = &rcg->clkr.hw;
- 
--	enabled = __clk_is_enabled(hw->clk);
-+	enabled = clk_hw_is_enabled(hw);
- 
- 	ret = regmap_read(rcg->clkr.regmap, rcg->bank_reg, &reg);
- 	if (ret)
-@@ -771,7 +771,7 @@ static int clk_rcg_lcc_set_rate(struct clk_hw *hw, unsigned long rate,
- 	regmap_update_bits(rcg->clkr.regmap, rcg->ns_reg, gfm, 0);
- 	ret = __clk_rcg_set_rate(rcg, f);
- 	/* Switch back to M/N if it's clocking */
--	if (__clk_is_enabled(hw->clk))
-+	if (clk_hw_is_enabled(hw))
- 		regmap_update_bits(rcg->clkr.regmap, rcg->ns_reg, gfm, gfm);
- 
- 	return ret;
-diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index 6064a0e17d51..d7914e59129f 100644
---- a/drivers/clk/qcom/clk-rcg2.c
-+++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -489,7 +489,7 @@ static int clk_rcg2_determine_gp_rate(struct clk_hw *hw,
- 	u64 parent_rate;
- 
- 	parent = clk_hw_get_parent(hw);
--	parent_rate = clk_get_rate(parent->clk);
-+	parent_rate = clk_hw_get_rate(parent);
- 	if (!parent_rate)
- 		return -EINVAL;
- 
-diff --git a/drivers/clk/renesas/r9a06g032-clocks.c b/drivers/clk/renesas/r9a06g032-clocks.c
-index 076f587dfd39..1da25e4fb4d7 100644
---- a/drivers/clk/renesas/r9a06g032-clocks.c
-+++ b/drivers/clk/renesas/r9a06g032-clocks.c
-@@ -1014,7 +1014,7 @@ r9a06g032_div_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
- 	if (clk->index == R9A06G032_DIV_UART ||
- 	    clk->index == R9A06G032_DIV_P2_PG) {
- 		pr_devel("%s div uart hack!\n", __func__);
--		req->rate = clk_get_rate(hw->clk);
-+		req->rate = clk_hw_get_rate(hw);
- 		return 0;
- 	}
- 	req->rate = DIV_ROUND_UP(req->best_parent_rate, div);
-diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
-index 6b853800cb6b..89a783204f0e 100644
---- a/drivers/clk/rockchip/clk-pll.c
-+++ b/drivers/clk/rockchip/clk-pll.c
-@@ -259,13 +259,13 @@ static int rockchip_rk3036_pll_set_rate(struct clk_hw *hw, unsigned long drate,
- 	const struct rockchip_pll_rate_table *rate;
- 
- 	pr_debug("%s: changing %s to %lu with a parent rate of %lu\n",
--		 __func__, __clk_get_name(hw->clk), drate, prate);
-+		 __func__, clk_hw_get_name(hw), drate, prate);
- 
- 	/* Get required rate settings from table */
- 	rate = rockchip_get_pll_settings(pll, drate);
- 	if (!rate) {
- 		pr_err("%s: Invalid rate : %lu for pll clk %s\n", __func__,
--			drate, __clk_get_name(hw->clk));
-+			drate, clk_hw_get_name(hw));
- 		return -EINVAL;
- 	}
- 
-@@ -319,7 +319,7 @@ static int rockchip_rk3036_pll_init(struct clk_hw *hw)
- 
- 	rockchip_rk3036_pll_get_params(pll, &cur);
- 
--	pr_debug("%s: pll %s@%lu: Hz\n", __func__, __clk_get_name(hw->clk),
-+	pr_debug("%s: pll %s@%lu: Hz\n", __func__, clk_hw_get_name(hw),
- 		 drate);
- 	pr_debug("old - fbdiv: %d, postdiv1: %d, refdiv: %d, postdiv2: %d, dsmpd: %d, frac: %d\n",
- 		 cur.fbdiv, cur.postdiv1, cur.refdiv, cur.postdiv2,
-@@ -336,12 +336,12 @@ static int rockchip_rk3036_pll_init(struct clk_hw *hw)
- 
- 		if (!parent) {
- 			pr_warn("%s: parent of %s not available\n",
--				__func__, __clk_get_name(hw->clk));
-+				__func__, clk_hw_get_name(hw));
- 			return 0;
- 		}
- 
- 		pr_debug("%s: pll %s: rate params do not match rate table, adjusting\n",
--			 __func__, __clk_get_name(hw->clk));
-+			 __func__, clk_hw_get_name(hw));
- 		rockchip_rk3036_pll_set_params(pll, rate);
- 	}
- 
-@@ -743,13 +743,13 @@ static int rockchip_rk3399_pll_set_rate(struct clk_hw *hw, unsigned long drate,
- 	const struct rockchip_pll_rate_table *rate;
- 
- 	pr_debug("%s: changing %s to %lu with a parent rate of %lu\n",
--		 __func__, __clk_get_name(hw->clk), drate, prate);
-+		 __func__, clk_hw_get_name(hw), drate, prate);
- 
- 	/* Get required rate settings from table */
- 	rate = rockchip_get_pll_settings(pll, drate);
- 	if (!rate) {
- 		pr_err("%s: Invalid rate : %lu for pll clk %s\n", __func__,
--			drate, __clk_get_name(hw->clk));
-+			drate, clk_hw_get_name(hw));
- 		return -EINVAL;
- 	}
- 
-@@ -803,7 +803,7 @@ static int rockchip_rk3399_pll_init(struct clk_hw *hw)
- 
- 	rockchip_rk3399_pll_get_params(pll, &cur);
- 
--	pr_debug("%s: pll %s@%lu: Hz\n", __func__, __clk_get_name(hw->clk),
-+	pr_debug("%s: pll %s@%lu: Hz\n", __func__, clk_hw_get_name(hw),
- 		 drate);
- 	pr_debug("old - fbdiv: %d, postdiv1: %d, refdiv: %d, postdiv2: %d, dsmpd: %d, frac: %d\n",
- 		 cur.fbdiv, cur.postdiv1, cur.refdiv, cur.postdiv2,
-@@ -820,12 +820,12 @@ static int rockchip_rk3399_pll_init(struct clk_hw *hw)
- 
- 		if (!parent) {
- 			pr_warn("%s: parent of %s not available\n",
--				__func__, __clk_get_name(hw->clk));
-+				__func__, clk_hw_get_name(hw));
- 			return 0;
- 		}
- 
- 		pr_debug("%s: pll %s: rate params do not match rate table, adjusting\n",
--			 __func__, __clk_get_name(hw->clk));
-+			 __func__, clk_hw_get_name(hw));
- 		rockchip_rk3399_pll_set_params(pll, rate);
- 	}
- 
-@@ -992,13 +992,13 @@ static int rockchip_rk3588_pll_set_rate(struct clk_hw *hw, unsigned long drate,
- 	const struct rockchip_pll_rate_table *rate;
- 
- 	pr_debug("%s: changing %s to %lu with a parent rate of %lu\n",
--		 __func__, __clk_get_name(hw->clk), drate, prate);
-+		 __func__, clk_hw_get_name(hw), drate, prate);
- 
- 	/* Get required rate settings from table */
- 	rate = rockchip_get_pll_settings(pll, drate);
- 	if (!rate) {
- 		pr_err("%s: Invalid rate : %lu for pll clk %s\n", __func__,
--			drate, __clk_get_name(hw->clk));
-+			drate, clk_hw_get_name(hw));
- 		return -EINVAL;
- 	}
- 
-diff --git a/drivers/clk/st/clkgen-pll.c b/drivers/clk/st/clkgen-pll.c
-index 9eb2cb83fa69..17551c6a879a 100644
---- a/drivers/clk/st/clkgen-pll.c
-+++ b/drivers/clk/st/clkgen-pll.c
-@@ -260,7 +260,7 @@ static int __clkgen_pll_enable(struct clk_hw *hw)
- 		if (pll->data->switch2pll_en)
- 			CLKGEN_WRITE(pll, switch2pll, 0);
- 
--		pr_debug("%s:%s enabled\n", __clk_get_name(hw->clk), __func__);
-+		pr_debug("%s:%s enabled\n", clk_hw_get_name(hw), __func__);
- 	}
- 
- 	return ret;
-@@ -295,7 +295,7 @@ static void __clkgen_pll_disable(struct clk_hw *hw)
- 
- 	CLKGEN_WRITE(pll, pdn_ctrl, 1);
- 
--	pr_debug("%s:%s disabled\n", __clk_get_name(hw->clk), __func__);
-+	pr_debug("%s:%s disabled\n", clk_hw_get_name(hw), __func__);
- }
- 
- static void clkgen_pll_disable(struct clk_hw *hw)
-@@ -405,14 +405,14 @@ static int stm_pll3200c32_determine_rate(struct clk_hw *hw,
- 					&req->rate);
- 	else {
- 		pr_debug("%s: %s rate %ld Invalid\n", __func__,
--			 __clk_get_name(hw->clk), req->rate);
-+			 clk_hw_get_name(hw), req->rate);
- 		req->rate = 0;
- 
- 		return 0;
- 	}
- 
- 	pr_debug("%s: %s new rate %ld [ndiv=%u] [idf=%u]\n",
--		 __func__, __clk_get_name(hw->clk),
-+		 __func__, clk_hw_get_name(hw),
- 		 req->rate, (unsigned int)params.ndiv,
- 		 (unsigned int)params.idf);
- 
-@@ -434,7 +434,7 @@ static int set_rate_stm_pll3200c32(struct clk_hw *hw, unsigned long rate,
- 		clk_pll3200c32_get_rate(parent_rate, &params, &hwrate);
- 
- 	pr_debug("%s: %s new rate %ld [ndiv=0x%x] [idf=0x%x]\n",
--		 __func__, __clk_get_name(hw->clk),
-+		 __func__, clk_hw_get_name(hw),
- 		 hwrate, (unsigned int)params.ndiv,
- 		 (unsigned int)params.idf);
- 
-@@ -547,7 +547,7 @@ static unsigned long recalc_stm_pll4600c28(struct clk_hw *hw,
- 
- 	clk_pll4600c28_get_rate(parent_rate, &params, &rate);
- 
--	pr_debug("%s:%s rate %lu\n", __clk_get_name(hw->clk), __func__, rate);
-+	pr_debug("%s:%s rate %lu\n", clk_hw_get_name(hw), __func__, rate);
- 
- 	return rate;
- }
-@@ -562,14 +562,14 @@ static int stm_pll4600c28_determine_rate(struct clk_hw *hw,
- 					&req->rate);
- 	} else {
- 		pr_debug("%s: %s rate %ld Invalid\n", __func__,
--			 __clk_get_name(hw->clk), req->rate);
-+			 clk_hw_get_name(hw), req->rate);
- 		req->rate = 0;
- 
- 		return 0;
- 	}
- 
- 	pr_debug("%s: %s new rate %ld [ndiv=%u] [idf=%u]\n",
--		 __func__, __clk_get_name(hw->clk),
-+		 __func__, clk_hw_get_name(hw),
- 		 req->rate, (unsigned int)params.ndiv,
- 		 (unsigned int)params.idf);
- 
-@@ -591,12 +591,12 @@ static int set_rate_stm_pll4600c28(struct clk_hw *hw, unsigned long rate,
- 		clk_pll4600c28_get_rate(parent_rate, &params, &hwrate);
- 	} else {
- 		pr_debug("%s: %s rate %ld Invalid\n", __func__,
--			 __clk_get_name(hw->clk), rate);
-+			 clk_hw_get_name(hw), rate);
- 		return -EINVAL;
- 	}
- 
- 	pr_debug("%s: %s new rate %ld [ndiv=0x%x] [idf=0x%x]\n",
--		 __func__, __clk_get_name(hw->clk),
-+		 __func__, clk_hw_get_name(hw),
- 		 hwrate, (unsigned int)params.ndiv,
- 		 (unsigned int)params.idf);
- 
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index 0c86cff719e3..df1d7b471745 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -1460,7 +1460,7 @@ static int tegra210_pllx_dyn_ramp(struct tegra_clk_pll *pllx,
- 	udelay(1);
- 
- 	pr_debug("%s: dynamic ramp to m = %u n = %u p = %u, Fout = %lu kHz\n",
--		 __clk_get_name(pllx->hw.clk), cfg->m, cfg->n, cfg->p,
-+		 clk_hw_get_name(&pllx->hw), cfg->m, cfg->n, cfg->p,
- 		 cfg->input_rate / cfg->m * cfg->n /
- 		 pllx->params->pdiv_tohw[cfg->p].pdiv / 1000);
- 
-diff --git a/drivers/clk/ti/clockdomain.c b/drivers/clk/ti/clockdomain.c
-index c897ad7e681e..aedbe78bf1e4 100644
---- a/drivers/clk/ti/clockdomain.c
-+++ b/drivers/clk/ti/clockdomain.c
-@@ -104,7 +104,7 @@ int omap2_init_clk_clkdm(struct clk_hw *hw)
- 	if (!clk->clkdm_name)
- 		return 0;
- 
--	clk_name = __clk_get_name(hw->clk);
-+	clk_name = clk_hw_get_name(hw);
- 
- 	clkdm = ti_clk_ll_ops->clkdm_lookup(clk->clkdm_name);
- 	if (clkdm) {
-
----
-base-commit: dc59e4fea9d83f03bad6bddf3fa2e52491777482
-change-id: 20260723-clk-provider-simple-clean-a8d5ccc4ec20
-
-Best regards,
---  
-Jerome
-
+-- 
+Alexandre Mergnat <amergnat@baylibre.com>
