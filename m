@@ -1,76 +1,79 @@
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F3E748380E
-	for <linux-clk@vger.kernel.org>; Thu, 23 Jul 2026 18:46:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB00B4908AC
+	for <linux-clk@vger.kernel.org>; Thu, 23 Jul 2026 19:01:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784832419; cv=none; b=DMGxbxi6MRxN/NNJLb2R2ivpZ8cvam11GvIYuSNDu1Q2e+nFYgL63hRvEdh8y6U3RKoplcNEDpgo7bQipSJ1C8rXavK8x9IkrI0u3LXXVECr0vH71OzaCXFE+29n6yStY1/TgEasdu+qiKoKmNgOmkY4ntb9e9JRKypI3UtLMfQ=
+	t=1784833315; cv=none; b=EuC5s0BTrGply/bARb4P+qPK1IKkOTcdbLPjsNFuCkvNAOb1Ec9XUHA2uNZbd90GHfObPrTwwW4js6GHAxbgUslhW3ZzluQsRSMjc1mvCSO0+21x+S53hULdxtQmiwA5OcadecePvQJSY5t/jMNgW2x8QdHR/ufWO8kcHyuE9AM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784832419; c=relaxed/simple;
-	bh=Cw+Iw1oGtwEx51kVwGrw3fev8VnbppEtNmYYejqZ4k8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=r36+D8jX/1Y6+OAhJg5oB0RZkT5d+qxyUp9HJbMBOiEAF3OyZAJHgxWLKvDnORgUcjZ1MCD3XpmAPmxLEGJSvAuLRuqp0nA6VU85AD1SCrkgMYIi9+pZ5CN07Li99ht+978cBjtX86op85WbUYdUR1ZzFmRglsYFgErSEMOmcvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rrayn80G; arc=none smtp.client-ip=209.85.216.52
+	s=arc-20240116; t=1784833315; c=relaxed/simple;
+	bh=5cZJrlPKOxxy55cU1I+05GjtpUsf/PqzQR7YobX8VZE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sfB4Bl+dt4Jr1nWQCzJxPFYfa5WpunKKIVgHR+7mLRDAxFB6ACtINP4+8iEMC4O/GCY4LyK8jwiRoVfcVzblE5UySSDvXHlzt7Lc1lFVgReSrTOemqs91huPrCzZkRRLlo0NUWyueC+EIWoHIUas/AgJJ2712HR87kxN3wvZRsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=o+4ojjIp; arc=none smtp.client-ip=209.85.221.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rrayn80G"
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-38e42560ebcso889692a91.1
-        for <linux-clk@vger.kernel.org>; Thu, 23 Jul 2026 11:46:49 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="o+4ojjIp"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-47f904e80eeso908916f8f.1
+        for <linux-clk@vger.kernel.org>; Thu, 23 Jul 2026 12:01:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784832404; x=1785437204; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=+53O0vXfEk/QFHYiZ5anDwDOO58yxuSoKuAHDn4vUGA=;
-        b=Rrayn80GyoPbn47Awu8p0FeVSUqRihf4syZGb0mp7OMFHoSLIufvs/gTViqDgiy2+r
-         m50WNTDbGGRdLwOiPPtChc/hcD/JWsMoOek13o40xvXQ0ocDCpBdr4SYU6dwcfwHorb1
-         ErswQHiUI7H+aJW2IkMWIefLGH7H2SNbZdKNiRnQnJBTUSQh/6MD5STi6hG+d5YPUPsX
-         3pEnW6fZ2g262BLmUNGxRDHBbFQrGBtcVgzQTw0dZfLbDGUye5ucWvWI66+P+y934mN2
-         Cs/X6eDVdiGbvpwqc5fT7nJR20kGy5hz6+rTDlVXBA+rZSF7nEI2OmCGt7Ezpg7PLE9z
-         5cIw==
+        d=gmail.com; s=20251104; t=1784833309; x=1785438109; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=o6TslkgUAWDqod3FQpYnfSZ08UmiNf29gC+HqLWyQ4E=;
+        b=o+4ojjIpHiv9VwF2RZql45lORwVH1nS/DmPRwxjhWa+8UP9XdvRnm5neHqlDOMh+h0
+         h1dAQh3HryrR0o0+mG5wnRZVKevJcePL/ndVuhYQ3LS+LY/YBeHFuvvBHVt827PWsWOV
+         ABoj4zjMcMqY32vBzUAafvKQTar7YbnDXDfea3tWfdngM0Fy2Xn8toFHIFYiUUioq21B
+         5ABNeIo1zLlwoBz+8AQclvNU9rED0B2DnakHBvwqGiigvuXb0hiQD1vrk2x157VSv5vV
+         hMOgje1Y1KdkNJPu2vB2B6ctCQx+1v6IMHGZ3Ddh7Nq+YWuhRSnqQPQ8ISKdcNf6VLUy
+         VLrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784832404; x=1785437204;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=+53O0vXfEk/QFHYiZ5anDwDOO58yxuSoKuAHDn4vUGA=;
-        b=kWHSITO5JUw2BoVK69tJonRhJTG9XFADS4AdcIDUxpARcmwQT544syxLTNF2rDnJY6
-         ErjdjynLK6q1cVnzRuoAD8NQINRL4GJyfaRTISxp2O68zJYLWemxRjSuGGA/Gblk2WN7
-         0L1286Fpj6KB47E59yMaL6FfGd49clXSyh2Kpz9wrtw7TfbMlQktvsgf/waLZ+WL2sBX
-         1cyWXCrPVjIX7ZJ/9ixKIpSczmcUMRbwdMCRnlEDTwTQS9FHUuNgFLiAEZbjhHdqbGwg
-         ynWe4E1YYK4LVP3+TFALdD8t+/alAIO846BhGYn9UhFDu8qc8mYOW3hx6BaaEa3Rz1i2
-         Y1BQ==
-X-Forwarded-Encrypted: i=1; AHgh+RpnhA2tDpzerQC/w8kLPjmNNdYtNEGuYlSSgm3FaNAOK2kTirRz7jd4vqdRDkiSeQRqw9Rzgr2PtA8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZ9T38gDqJPPNGbhI5PnSTSR/SwXzL4Iu1Uwk7gBusvWNC+b8W
-	ctwvwR2i4W0t52Jw40Y3WwxJ9UgDsGBViJdtpaGR57pn0UZ+qffFdMcM
-X-Gm-Gg: AR+sD11ifCUR3XKUKbyju3kvi8tpVcXF2AgnzCJl4PtmCGdwqDznNVxJOSzj0H6GzxN
-	Ql+zrb+MqJq1EKy5tT8stkuZvHeQPtx+6juazhziJGrKahTMHd1vDMtz8sEJnHQtBtUo4eW0kQg
-	+Y7+3CxggwAuoZAwbibE1xTbQ0QFlGzcMT2IfuRf4TP3DDK8gtv+fbBROJPsILmlqBzHZ/zxK6S
-	1DYSE2qAnjRbkkngJnoOtz73iQ+Bg/FNELjwNJtaqpQY/4YHFXNZzOmDy3SFMG2Ki6rQL7H5clJ
-	W7BCQwhWOfrmhYOoP16YEjVSdst8+UX1JTb9IpAB8uWZoDB8bmt8J5saquRw9rBrdMdhHj3Q35m
-	5o8XQDalwExFjDsnnoAZ4G1PxbnnJdB4C4Dz20+dQPz9FiyTvg0B9mH/zU108WXsEuLzrNeS2
-X-Received: by 2002:a17:90b:2d10:b0:37f:9cdf:f03e with SMTP id 98e67ed59e1d1-38ec6632b70mr4099341a91.33.1784832403772;
-        Thu, 23 Jul 2026 11:46:43 -0700 (PDT)
-Received: from ubuntu.. ([110.9.142.4])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-38f03af8a45sm308155a91.10.2026.07.23.11.46.42
+        d=1e100.net; s=20251104; t=1784833309; x=1785438109;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=o6TslkgUAWDqod3FQpYnfSZ08UmiNf29gC+HqLWyQ4E=;
+        b=W+ppBOkvC+2uE+tvbVy91kSmWjYsrYzuuIzQibDst7Dr7GnE0KbrSb6oGW+WogpJJt
+         lMwwaehmo6bnltKHBPE2zdkUME6hRxX7oLbbWwl+6xWgJysrWyID9SweDtEB7/TGUKGt
+         aDa/Dk5HGP3Mq3spIjvKHAKIQ8iDn2Q3tqbjCnPw8xc+807mfpJENzOXGpUWq6ZwuLTS
+         1zfwrVsddCHVaTwQP76duUSQ8iCgjrTP/CY+HPdRNSRFTlIHG+TtTrJJQFg3v4/zPXGR
+         WaEbUJrZZuK7xm/3QafP5a1TTRYTvkoACaZWdM0kvCMGmcvnRpHI5yhiSPec4IDU6vr3
+         P5Wg==
+X-Forwarded-Encrypted: i=1; AHgh+RpWi6t2tt3gqZJpIpnnpcS5M216AYYr5wGGWRb2LbWiLYGwbJDdoKmrzVg+0NZ+l7oIHs++cg81X8o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlUKvcHL1oZzIgOkBoDx7gHariyCdXgqq9NQyOaozx5lQCAbuw
+	amCKNjyuSFXiuLslYi671Wxc62mUDTQfDURpmBTmuiasm8X5fBc05ERLdAotag==
+X-Gm-Gg: AR+sD10TLJYWPaf3FkgWwQuAr/EUqt3ZoTlJ3C/YBewFoHRwxKwMCm3T84n34mYEg7G
+	Ku7le96yQA+rS0YlDHZQQZToBtlBDJaYXXbzKooUW9j8LdZ1liUrRvL3oujoWXF86grt74LnwOW
+	PZaGRcjHxJYg8WG7kb2q+d5TBnQZBvXkloMvZoian7XjbUuHCRinAXs1eO0QrT5KT/w6cTFLtKC
+	NixS380S8920BEl1smHessQmlOqNS1w+NcTymE/zaGUjqN5Z3McH98HKK4Z8M4MiONuu1V9dzUx
+	mpKBOUG4jyE/9iuMn9U6wV8lk8FBp06TSjCeNK7hext+tuBhPj3ipfqRgpSbNoa0i3QtMUDtCay
+	rQteOhOYJarxiR0TF0pBkAWN1Lqiszd6FIYQ2GICtKH7lg/dVpdIBoj+3VcAqYTXiDpvH1EuVrj
+	zuNQn3u/MkSar8KF1UHTPSs73Zn6Pr6mRDb2ujKybyO2cZED2PSZ378Vq2rqxhqxeltOvPUd2cD
+	Po=
+X-Received: by 2002:a05:6000:178d:b0:47f:7005:2893 with SMTP id ffacd0b85a97d-47f8da5ad3dmr5571990f8f.58.1784833309413;
+        Thu, 23 Jul 2026 12:01:49 -0700 (PDT)
+Received: from Ansuel-XPS24.localdomain (host-87-3-249-180.retail.telecomitalia.it. [87.3.249.180])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-47f85b9a5d9sm16912197f8f.5.2026.07.23.12.01.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Jul 2026 11:46:43 -0700 (PDT)
-From: Sang-Heon Jeon <ekffu200098@gmail.com>
-To: Julia.Lawall@inria.fr,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: cocci@inria.fr,
+        Thu, 23 Jul 2026 12:01:48 -0700 (PDT)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
 	Brian Masney <bmasney@redhat.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 17/36] clk: remove conditional return with no effect
-Date: Fri, 24 Jul 2026 03:45:19 +0900
-Message-ID: <20260723184538.3888637-18-ekffu200098@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260723184538.3888637-1-ekffu200098@gmail.com>
-References: <20260723184538.3888637-1-ekffu200098@gmail.com>
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Cc: Christian Marangi <ansuelsmth@gmail.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Subject: [PATCH 1/2] dt-bindings: clock: airoha: Add additional reset for PCIe PERSTOUT
+Date: Thu, 23 Jul 2026 21:01:30 +0200
+Message-ID: <20260723190133.22577-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -79,68 +82,29 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Both branches of the check return the same value, so the check has
-no effect. Remove it and return the value directly.
+Add additional reset to control PCIe PERSTOUT reset line for each of the 3
+PCIe lines.
 
-In the lmk04832 driver, the hardware sequence comments are moved
-above the final return by hand.
-
-This is the result of running the Coccinelle script from
-scripts/coccinelle/misc/cond_return_no_effect.cocci.
-
-Signed-off-by: Sang-Heon Jeon <ekffu200098@gmail.com>
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 ---
- drivers/clk/clk-cs2000-cp.c |  6 +-----
- drivers/clk/clk-lmk04832.c  | 12 ++++--------
- 2 files changed, 5 insertions(+), 13 deletions(-)
+ include/dt-bindings/reset/airoha,en7581-reset.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/clk/clk-cs2000-cp.c b/drivers/clk/clk-cs2000-cp.c
-index 8800472ba63f..4de581771d7d 100644
---- a/drivers/clk/clk-cs2000-cp.c
-+++ b/drivers/clk/clk-cs2000-cp.c
-@@ -404,11 +404,7 @@ static int cs2000_enable(struct clk_hw *hw)
- 	if (ret < 0)
- 		return ret;
+diff --git a/include/dt-bindings/reset/airoha,en7581-reset.h b/include/dt-bindings/reset/airoha,en7581-reset.h
+index 6544a1790b83..25e75534daa9 100644
+--- a/include/dt-bindings/reset/airoha,en7581-reset.h
++++ b/include/dt-bindings/reset/airoha,en7581-reset.h
+@@ -62,5 +62,9 @@
+ #define EN7581_CPU_TIMER_RST		50
+ #define EN7581_PCIE_HB_RST		51
+ #define EN7581_XPON_MAC_RST		52
++/* RST_PCIC */
++#define EN7581_PCIC_PERSTOUT0_RST	53
++#define EN7581_PCIC_PERSTOUT1_RST	54
++#define EN7581_PCIC_PERSTOUT2_RST	55
  
--	ret = cs2000_wait_pll_lock(priv);
--	if (ret < 0)
--		return ret;
--
--	return ret;
-+	return cs2000_wait_pll_lock(priv);
- }
- 
- static void cs2000_disable(struct clk_hw *hw)
-diff --git a/drivers/clk/clk-lmk04832.c b/drivers/clk/clk-lmk04832.c
-index 9bf86caad829..f006401c1586 100644
---- a/drivers/clk/clk-lmk04832.c
-+++ b/drivers/clk/clk-lmk04832.c
-@@ -822,13 +822,6 @@ static int lmk04832_sclk_sync_sequence(struct lmk04832 *lmk)
- 	if (ret)
- 		return ret;
- 
--	ret = regmap_update_bits(lmk->regmap, LMK04832_REG_SYNC,
--				 LMK04832_BIT_SYNC_MODE,
--				 FIELD_PREP(LMK04832_BIT_SYNC_MODE,
--					    lmk->sync_mode));
--	if (ret)
--		return ret;
--
- 	/*
- 	 * 9. (optional) if SCLKx_y_DIS_MODE was used to mute SYSREF outputs
- 	 *    during the SYNC event, restore SCLKx_y_DIS_MODE=0 for active state,
-@@ -843,7 +836,10 @@ static int lmk04832_sclk_sync_sequence(struct lmk04832 *lmk)
- 	 *     SYNC pulse to delay the output by some number of VCO counts).
- 	 */
- 
--	return ret;
-+	return regmap_update_bits(lmk->regmap, LMK04832_REG_SYNC,
-+				  LMK04832_BIT_SYNC_MODE,
-+				  FIELD_PREP(LMK04832_BIT_SYNC_MODE,
-+					     lmk->sync_mode));
- }
- 
- static int lmk04832_sclk_is_enabled(struct clk_hw *hw)
+ #endif /* __DT_BINDINGS_RESET_CONTROLLER_AIROHA_EN7581_H_ */
 -- 
-2.43.0
+2.53.0
 
