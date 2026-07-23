@@ -1,66 +1,67 @@
-Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazolkn19011056.outbound.protection.outlook.com [52.103.14.56])
+Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazolkn19011058.outbound.protection.outlook.com [52.103.14.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52BF7175A60;
-	Sun, 26 Jul 2026 16:09:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.14.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5F91175A60;
+	Sun, 26 Jul 2026 16:09:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.14.58
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785082162; cv=fail; b=OR5a3grDc6Hk6FT/phDw2vcckIPZIO/Dvqw80C/AiZoopNz5XsswhUwFkAUuuEJ5SUK3wzlEyWOVe92PlpV5n3a8PQ4taayvpqSrXwmPInhtSE2SfcpC83LIlV/hd39TE7cm3umskBeFCgMJWZ9sf8tG3o3KAQph/NWXcq5KQdk=
+	t=1785082172; cv=fail; b=WCuL7MFiSOGfI941yqceTU+UlLB2d7ZNzdP5OeXrbi90AXLLaBDvsDp+6SD/H0kwY75pBSWdSuSootkASF7ymePSKPIk/qEQDQC4UK5ALn6eTc/96fjfCkSkwyJ3w41YemBEYIhGmDta4s6Aao1/puyNd68xvewlvtoxv2658b0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785082162; c=relaxed/simple;
-	bh=rZw+/CvZu11YJ89b8LrMGWyLergCGvn2wKhpnhCrYYc=;
-	h=Message-ID:From:To:Cc:Date:Subject:Content-Type:MIME-Version; b=pOHWQfm+xztMUcXgfnfXOLr7wn0Y42vJ94XfBuSf/pUSC9CsYjt8hQErzBZQwzd5yLB2BVtxAEt3A5rwo0VpdcpvIEJ7S93PNczCLxlTh7t/08JLu23chpUzHk7EINLhHjYI72AARy2p/rRZT6SZKeKQwF3cjH8JbUooFoqHzdI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=UYn7uwhz; arc=fail smtp.client-ip=52.103.14.56
+	s=arc-20240116; t=1785082172; c=relaxed/simple;
+	bh=NW91+hru9Q58mG9xAAgSCn3uxpwzvA9yiJ2OAy+KqvQ=;
+	h=Message-ID:In-Reply-To:References:From:To:Cc:Date:Subject:
+	 Content-Type:MIME-Version; b=FW5QSFHQTRvTXmzdu+A9PvXsAI2AUVhaIgcsTHHnqQnnJv9a7EtC/BRgMG67xxUpjV++ezrWSA8RUMOMFD1aPegVBGx9OSg5wgedQHnNEuTK1I0M/DxswQs6CLUAdQvHDQGxg2PUZvKlECudI04MSUciy4//7Xp1+5MHBvH4pm8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=GkeucUfd; arc=fail smtp.client-ip=52.103.14.58
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="UYn7uwhz"
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="GkeucUfd"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WIVK6gDWwoAas/92BSQKVmkojJLItbePb/lqnbVy6+K/JPbokNxQQOKhjK6o5pwP0YfO1icHii+R3g9KGjhMG7ovvMPIWLpnNXT0Euf/ZsE2/Say3vPUFhUykuaUPUhaPPgWPHppt2qrecs4axSXpX93oMFNvoXsJWtlCQNFCHaLEu7+un5J+cV3nBknXS3QxQagd8ZaGqsZ0vvTfeb8X/WZiWKcNCOP1QTpMFd1FkMTT+tIIkh5Qa+jGvqBMbF4fg/KTyDJIlArc79TMUFQ9Y9EsvpstODSBoGQX5PgLUc6K8UiTxPiH8pTzsjhtflCIlW6QN9lUgn4ahO0qtnGKA==
+ b=ivNHGZkqq+BMH0oViqoec3Yt60R7yRnPE+ml2kDqzk3QZLJ41zwQ+Dem5ow7VttcxfHLvyFLTh3SEvCjum7no7naxpKRHkPNBC8w1y/jv9h84E70vur6/VjYssx7RDz4x9jQ3/9m3x3hMNBCzmxkjUPoU/dj+APxXVtWxaTx1gIsPky+SH5s5Ccp8PmeAQVlOtsyYESMAOaYFqZMBAea7jkD317fwc+XttWeEOqUQ7mDxZyd3YZUsf4yvOJNfPeo8ND+avXPREtuuN4B/KK7GffjgNCpwPflDfH8kM1Kqtdm+Ie0n6fpq5V1CqvKk6+HV1SiKSuJQDICfccXB/JNnw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vArjTketORLFw/mEFoHRTUMDuuTy+s9AMGsjWG+05BA=;
- b=Cq/jS2CQMP2LW1JtxBpDgwLiyUtbeqBe8y220HUembCMKpMoxfW+rXo1ZtxYP3i6Rg26O5d05jGs5ClU55tJ99cA1AgauBbCBomfTpUS45ENQVjwXy6p+r6sEUf8uHduxMy8mmOgqjcUkJAtCUiQuVneaL1zZdL2oItkMlWorXr0f46fgJBE538/9CQmC3i55v2xCYTvh5KpAksC7HLN/vufXAWks4F3iBKhuQ9nOSEKw108SSvJboNhqpDrGnA69jysZHRh+x420Q7ew/P9P28anMLQ+O1LFHqSn59lr4ts/gVbucGIY2HrAvyu4nbGtb43hahG76zWYCk3YfV5qQ==
+ bh=ieaiLVok+W6Zy/rgpxTHugW0GaXEMswY6bfeth6uyjM=;
+ b=ao+lLAlyiou6r5pkY1M5Upn53scRzfnHYHuLpgwdrvxdC6ROl0tsx9mxhMh42/TH1hLe4wZKFKS3nv05XTggv8BPdTR6/nmtan2823WANRg9AKR4n31xhzVw1C+pzzTVSFIHbKIvH46jQTQSYMgNibowkK11d1zsMD8CYVZM9Hdvabrn5Q8kf77oyyiIsVmS4YEsZ9BJXayw7r0P3KwzDxB2XaZD6Qk8wMN9amDJMvcY29Qw0kK0DCdeUmaDPm/PD8P+3vwyv9lZNaZS7H1tm8goKMe214xEhx1TFQ9gJWwnyy2XpVtIC6ofe1K3Rsitr+MaHlhd3vw+x/XFld/flQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
  dkim=none; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vArjTketORLFw/mEFoHRTUMDuuTy+s9AMGsjWG+05BA=;
- b=UYn7uwhzw6YfNWcySCeTwS7PE+Lg+VSNfl6ZKEXYYwLqmNky0ZhPIwI0KJR2bhahfpxYjZnwbh/qsCEXpfkSJhOgQLO6k+MXchvRZMVP3ldY3VWtAkayo+/N7I1V2G6NXT14xBoty1hktpZPgNoo4N4HSobuHupFfcjIGNe2y+M94+w7TCEjxPF3fXRIgf0wmMOEb3mF1X8o1e3yGQr0C/rJB+AyhK7OwW0tWXa7eeT2FQBGNoKJg+XpB3VWpcb9nU4DG1rOS4Z1nrFEnrvfIeeImtiygQ5BZSI7eLfP1s92866cRJ7ibFe8jw6pdIZek67OM62vcjj+oCElqLH/Kw==
+ bh=ieaiLVok+W6Zy/rgpxTHugW0GaXEMswY6bfeth6uyjM=;
+ b=GkeucUfdKMnbufu5o/oeToNcT2ZyleZaMSjYndBxDdJmBioKjw9aEmMPw0UsA1kqjVlCEPFVrjwRQwq1ZNpgehmfIdYb+xCPaAIQhem9hGgkJyVT6SRAO9MVU9CZGjqSvrvuXP9KyRFuXXQkKGGmioaGzBIYpir+63GkS+7zzriLMSB9hi4ht5+FJVtHt1kl6BRLXJAexMyNc3Tfz4B+QboHnWuvN3/HUWycO3PoX59um2JvOxKkepLiDwm2ti14UKI7JgAfr7m1hhII+15TdpQ8RFG1NRqUve4LI5ZUGWUcFCH2Vhqyd5x74u+SzSkEYuQ0If86KyYU4aOdZ5x/CQ==
 Received: from MN0PR19MB6091.namprd19.prod.outlook.com (2603:10b6:208:382::21)
  by SN7PR19MB4765.namprd19.prod.outlook.com (2603:10b6:806:100::7) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.245.12; Sun, 26 Jul
- 2026 16:09:18 +0000
+ 2026 16:09:28 +0000
 Received: from MN0PR19MB6091.namprd19.prod.outlook.com
  ([fe80::af9a:4cc3:facf:9374]) by MN0PR19MB6091.namprd19.prod.outlook.com
  ([fe80::af9a:4cc3:facf:9374%5]) with mapi id 15.21.0245.012; Sun, 26 Jul 2026
- 16:09:18 +0000
+ 16:09:28 +0000
 Message-ID:
- <MN0PR19MB60913319D62A6F78F6EFFAFEACCD2@MN0PR19MB6091.namprd19.prod.outlook.com>
+ <MN0PR19MB6091D631C39CED4FA19E2983ACCD2@MN0PR19MB6091.namprd19.prod.outlook.com>
+In-Reply-To: <cover.1785080950.git.liucj1228@outlook.com>
+References: <cover.1785080950.git.liucj1228@outlook.com>
 From: Liu Changjie <liucj1228@outlook.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+To: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
  Conor Dooley <conor+dt@kernel.org>,
  Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Brian Masney <bmasney@redhat.com>, Lee Jones <lee@kernel.org>,
- Dario Binacchi <dario.binacchi@amarulasolutions.com>,
- Antonio Borneo <antonio.borneo@foss.st.com>,
- Linus Walleij <linusw@kernel.org>, Russell King <linux@armlinux.org.uk>,
- Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>
-Cc: devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, Lee Jones <lee@kernel.org>,
+ Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, mfd@lists.linux.dev, linux-gpio@vger.kernel.org,
- linux-doc@vger.kernel.org
-Date: Sun, 26 Jul 2026 23:49:10 +0800
-Subject: [PATCH 0/9] ARM: stm32: add STM32H7R7 and ART-Pi2 support
+ mfd@lists.linux.dev
+Date: Thu, 23 Jul 2026 23:48:46 +0800
+Subject: [PATCH 2/9] dt-bindings: clock: stm32: add STM32H7RS RCC
 Content-Type: text/plain
 X-ClientProxiedBy: TPYP295CA0008.TWNP295.PROD.OUTLOOK.COM (2603:1096:7d0:9::9)
  To MN0PR19MB6091.namprd19.prod.outlook.com (2603:10b6:208:382::21)
-X-Microsoft-Original-Message-ID: <cover.1785080950.git.liucj1228@outlook.com>
+X-Microsoft-Original-Message-ID:
+ <c60570d8fb0dc020361b1fc368728658dc5e3ff4.1785080950.git.liucj1228@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -70,60 +71,58 @@ MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: MN0PR19MB6091:EE_|SN7PR19MB4765:EE_
-X-MS-Office365-Filtering-Correlation-Id: df180fe2-c094-45f6-0f0b-08deeb303f1c
+X-MS-Office365-Filtering-Correlation-Id: a443713d-b4e3-483d-9fff-08deeb30451e
 X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|24021099003|15080799012|23021999003|5072599009|4140399003|25010399006|16041099003|37011999003|5062599005|19110799012|8060799015|12121999013|3412199025|440099028|26104999009|53005399003|41105399003|40105399003;
+	BCL:0;ARA:14566002|51005399006|24021099003|15080799012|23021999003|5072599009|25010399006|37011999003|19110799012|8060799015|3412199025|440099028|26104999009|40105399003;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?5JpHw/v71BOCLWhRBFMYQI2UdBw25vOZIcltpRL7/KZiebsX5+MM6zfkHy90?=
- =?us-ascii?Q?6e9V0moM5Ft7wjYuwAM3PLEAfVhEuEffhfVZsTLmSiY8JMsBwgn+ZjSgdyLy?=
- =?us-ascii?Q?Mg9fuZ9BP7PUN+BqbXjKbP3pAAXLHDfcVjwyUV560tqlezFaqELSvSvdMzEc?=
- =?us-ascii?Q?2JoXfIkLY1suSwJLQVyyl9Av6zKut5WIJFk0QKvBvPFlhcdjyIXQ9sNyCAQW?=
- =?us-ascii?Q?kDJCJZWeYHaFsipqZKvWLdMI9cGQX1wFUt7oqhyKDng9EIKUGrOgdmTvPSKr?=
- =?us-ascii?Q?8p6L+xyph40U8hmCPkyQMYDqwXDWlQssceE/yte8Ch8ZuiLOYY5jsmmlp+7h?=
- =?us-ascii?Q?oWaPLlCYfE51xc0MXoIZY6YkREdNaJU2EoGBfDgbZmhYbnYKdFtLSk93+ZAt?=
- =?us-ascii?Q?/+ncYqIZb+e2AXec9BuVMeYmuJx+yb4OkdGgT1gHVsLrhIJL1Q5xiwOAz6BX?=
- =?us-ascii?Q?uuDDedLzLK5B9GFQ338JFXrjpmiQ8OzosjUnfOcAO4q+CLYCP2+Z/znVDqXe?=
- =?us-ascii?Q?lICtpDuY2dOzlJi3Y8PbIa3xXirrLEUT0xsnND4OezBySpIa1VNeWz96DS0t?=
- =?us-ascii?Q?KvzNqJkLRO50XVxhz1BdFdbO+VyaqS7r4fkQ8H8OTh9OeLfcKydIpCoWv//f?=
- =?us-ascii?Q?aNMclGhVhbHMAlIPR7bLuRcokUnyDYFjUryMuspQHFMRZpjWNtJeLw07cff8?=
- =?us-ascii?Q?Z6L8KFDe1Mn1uxLyq4RrfY7OBMSFqGTnyyN87eKDxCl+OB9fcbv/t03QpizC?=
- =?us-ascii?Q?KgYd9hPOZ1chCo559XuX0A3cnI9EACiRZPJYrDwnnetvEU2/m23IMgzn9vd0?=
- =?us-ascii?Q?AspkBryzkR9vuBAWFcYv8f3xd2euzBIiKXBr2FCbI4bnSSCrum6bqB2JNOLN?=
- =?us-ascii?Q?AGCL3A6IJn48QkjKuDKR1DY5PfhpOXW2cn5pg0jaHWm8byX+scA/6xTxd6Xz?=
- =?us-ascii?Q?Le3f6J5hCbe4JoNwc60FJwthnubsLpx1zcSfG5RPPTAm2ddsmKI29+5xnUQe?=
- =?us-ascii?Q?ko35BDpsS2RnkAVNib4T/3XF4Xu8cb7oSCwZdj7n4ayZ2EI21YoJIK8YQMeb?=
- =?us-ascii?Q?M9+MC8+sKs7qVsS7A6m3OPFbG3Wr5g=3D=3D?=
+	=?us-ascii?Q?WjF9r+7qb21N+IngO52L1ksTNUG08b/yFKo5E5+S/i8genq5VZS8F4MMQ1+u?=
+ =?us-ascii?Q?zYmUTf12QYFxYBf/5kRiTMKuc7Da1WIx5XfeXHmzCwlr77fddlE1rSyNRgR9?=
+ =?us-ascii?Q?IKG3B1i3/HtDfmvFsyuMk3qKdqFKZEoMO/35mC2h4ctQGg/IFfLL6VOJmUJk?=
+ =?us-ascii?Q?psYb7N7womqbRss4VhbuUM6wqNKoC2vklD6U0nDjyO+HXMaXPtBUeNmmgPdj?=
+ =?us-ascii?Q?FtgXTZ9wiYuRbdntzKen1lc0/NDcsecB3dPGrCCBzF8A2MKzxriSCZnUOB4U?=
+ =?us-ascii?Q?Etke/BmXT3azK60w2xQWezNcZNrQDCdGXD6kuHraLkDEesCV/HIdUL6K2wOJ?=
+ =?us-ascii?Q?irvgwI0Kioqk/X1Hz5vhg1al6mYK6Wo4WmAN2iW8DzXccqfaogZELRM02wsn?=
+ =?us-ascii?Q?flcBHb2vK6VDUhnYwuf7eCPv3lwTO3gWz+3nCgEsXC+4ekhZhptzBrZ5bRwp?=
+ =?us-ascii?Q?tvWPAJENYiW/h3V+xKrOmMxcVU0JegEmEMrtG6DQ6ECBrBKAILO9lFTmcItd?=
+ =?us-ascii?Q?PmMOChv8Jp7L7aF27nN7s6uj6wfQOVL2XVIDNcABhJOR4tLSHMlMJ4kM4nI1?=
+ =?us-ascii?Q?cwEFxP9Ibmb3YalEEhP8UeATso7m46igIt2DITkZWdYmzQCYu7idMA55+Yu+?=
+ =?us-ascii?Q?3WRAL9wEbRlzOHk1CVbPM2yxYSwJFsp8w21ufshNeOQ6zDqgMc5i6s4nJgU/?=
+ =?us-ascii?Q?lxRu5bozke06gRhFmI2tZgfr92Zr07nAyYbg/fbiYgLHN/qBK7INkAP7jsB2?=
+ =?us-ascii?Q?7D2pmvZpU42BPixtwvOvDTXSjH3OsgHIEF0zzKZBbBmNusT1M54tjZdPO8aZ?=
+ =?us-ascii?Q?hmhR0uUY1C6ZRJl/ngYoiRAwxFHAJPXDf5B1WE6BUDFkOwcWcxcDLIwgDkQf?=
+ =?us-ascii?Q?aJHDjfU8faGCeNmJRZlpSnm4Ge3hihPDjdWRR7m2NZO3QsIVUGNgn+yMrC+V?=
+ =?us-ascii?Q?aloADAYm03oNSWqgmG/qBg=3D=3D?=
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?GHJQZ4kJbUrn5HZ+QXY7lmx+oib3bizhIAOkFRknSfHqLiXKCxERMHO+lICW?=
- =?us-ascii?Q?hIVKuJLrcGsK895lPfxaxnQA268hE/ch4hVIY2UCAVrXKAKp/2tbZVBCi1y4?=
- =?us-ascii?Q?swp+jmfnjLK06xz3R/VdPReksRSMFKuaMHIsX9HTLS7vNhbMyStOQjm//CL3?=
- =?us-ascii?Q?IxcwngAs1q4MJOnyLB5cmh3rqOawjkfAzQmHHZWcsw/2LU9DYbP7zJ0L0sJr?=
- =?us-ascii?Q?5g31Yarn/4p5BzSAOA1C+45gweDcWLmlPAab8RNdM7q6I30+gHvoHje+9k8I?=
- =?us-ascii?Q?3xrm97JAjfqcVJ0P6brO1QvYQww5aUTewLW849q33ieh6TM0WsW1+pK/ovU+?=
- =?us-ascii?Q?6a4DMvrhAPX9Evk4EXpLrNAC15wQtjxgJDF8l098/xEZrgN3VHf+TaDtU1qd?=
- =?us-ascii?Q?aPGC1QxW5o/SkM2gPwYUFOrezj8mQipHrZQqRQ+4C6hNHy78rt8VSifiHgB4?=
- =?us-ascii?Q?C0d3ho2D5tiTffmTD0+M3hKKz5RNx62WhbfCTv5/27A0I5sm4NazzEmKFZrq?=
- =?us-ascii?Q?G50NdOds52IpGSPWScyO10BA/7fd6HBNj+Ht/0E8XCzows3cvljbKzG3Z9TJ?=
- =?us-ascii?Q?pbkbZ0h/dPhqJOiF/NL0mIbJtxvXi1qIvnEz6Oimmj3e4Y/sFyezNhiPLYmV?=
- =?us-ascii?Q?azluiiBaUche1v6nWxf/5Q7EALi7jvcfhPlLs0FrAcXkxKyOrz1Bpx4yBDIy?=
- =?us-ascii?Q?oH1Rx47sM5+aZdHANDIrKZMwlv8ulE5ef7/F9OleaHvuwf+u7svNTGV9ngp0?=
- =?us-ascii?Q?+A2Ga1GFEiw48QYA5OvapSdZW6epb0GRLekMrNGrLzubYK3+jeIcMYR5qY1p?=
- =?us-ascii?Q?Xtk+ZjVvvWWNfpLaunkReleuZy17bcIRi9BvYwRg0PtklJy+OfRsljA9658r?=
- =?us-ascii?Q?CnElLYpeNSfL1qDAA3Cmq9vb56pC3uugNZ09ASnLolXFjvNxhW7mvazKj31j?=
- =?us-ascii?Q?xjFBgmhJQmo1889gv5Q898Dqtc27HKahxw16PV2r/V9OaTp4VMhET+rxAnCz?=
- =?us-ascii?Q?y1BLiL0HzlY3qIpKZiGsPtQw9l/Bg1mqNiSj12CwkHx3ptZ1ZtXxBmKUX5Bd?=
- =?us-ascii?Q?q0lo1vwNA+7Dg+QG64Jqntb77Eqf2XP0GqkY92dTdy59mn1DnfI35HCuD7Ny?=
- =?us-ascii?Q?7njNjdMCOQwhqBEsZ9WeATr8SWZpd2elMQ+96XgKFg4aj2jrcKg+ayCsq8Cf?=
- =?us-ascii?Q?dsKUhZrzCWmGLp1CMYN62bPz4DXWFEkqTQCRU8r3jQGEgNYfZJGLyslgGlWn?=
- =?us-ascii?Q?YgGVyQxdO7xBnLBoz+dsoQSWjwjAf1OKcPZIeJ002hr012r4pgW9e9VdUptT?=
- =?us-ascii?Q?ZdgSv83hfqQ89jESOMCQHTsUmmPVw1zIjY/N+XpgbRDL1TgdZ0FmNAay240L?=
- =?us-ascii?Q?OXpok6eOzslN3ycuob9r/wUdXqph4b0W7V+udhRdTOKK+wPfCg=3D=3D?=
+	=?us-ascii?Q?h1sqezq+1fH8+P5VC6XOt/oRr4qEmx7kaIyBhlRv1d2u0o9NVoLcOP5HNeEQ?=
+ =?us-ascii?Q?c+3LhBUiPztDYGwbAE2UlOKdoFtSecMxzQ17FJS26t3aHzUuwYFdRycu5nAb?=
+ =?us-ascii?Q?yje89sHstSOe00zsImQU6vRS8i1No1L6tWb4X4Wa86O9fKh9oCTFDqoY6FAi?=
+ =?us-ascii?Q?IT8bfrVLA5QpsFYUK+iZst5RNGEaz5COXGVGPkU8DnOMsgWwvGgP88UcXMZa?=
+ =?us-ascii?Q?YyfB0/CdFkg3fkCDCL0NFLPkPaDqsmbhR6poJBaEbrrDMhU+x94GU3ae3Z+s?=
+ =?us-ascii?Q?TSi4buoXmdMIxvlrf1mlR26q7GczZOpD4g52fltEXy37JjcQn4iEWiz8GwVz?=
+ =?us-ascii?Q?RDvFIR3oKLTCV45P7J3hpyIV7aXU84kKFrw5u+pZ0F5no9P1tTGZs4BBNCrv?=
+ =?us-ascii?Q?k6BpIJ3QThykwkZt3sfg5f4Wbz0bBP8zD16ozZEgAKr4DLtP7xnfoDndP7ri?=
+ =?us-ascii?Q?IStBB5YiT5WdYWN8hHw06nf+l19SYAwDvY2c+JIiRoY0uEq/3w0Ew0TrWlcw?=
+ =?us-ascii?Q?SHr24MNy1msjkzObql6ppHwlyrGhjq5JD3P2LQcR+6CUiejBBzHRVFxkMi1G?=
+ =?us-ascii?Q?z7zkdNH+nqI6HKqgXdKQ5i2B9WPrY4fC86QR6fZi0u0ty1Nre82QxBMCWOPA?=
+ =?us-ascii?Q?/dFGRejzLXugnJkTHWiv2nv/M4mmlaxkbVrGBqFef7PuZpJryhH7UTDf3Q/s?=
+ =?us-ascii?Q?5gXX3cTVdCUHUVWylUN9ucHXHMy+b02PVmYQ4TuhADcjByXjyKNq1z42nCYJ?=
+ =?us-ascii?Q?y2XzTeLxKRayQFRmm4WTdfD4bjGaDTxxcpy14i9c1MDuI3OmTQZPtsfMWXHe?=
+ =?us-ascii?Q?1zuMXo1Ks9cDdbpc2pW0lLWpMvAuRXRfvvqHAAgMqM6vv4Oi9mNrZWXhuHuq?=
+ =?us-ascii?Q?TW6JIpHQC5GVjzySfX2t/Em/vlwCkvN2fqA0l5eIvF+Dru2flIKDnb9+n4M9?=
+ =?us-ascii?Q?6u6tH2qYDC4FRsORlZxHZR8acpN5f/5jnvYlWe4L+4M4uTN4ETMXBT++iQCM?=
+ =?us-ascii?Q?JHSl9nVWP7ex1JLadIp5/rr97nOawWsGeF0Gd+g2p418Gf8KnBCEtGim5VM2?=
+ =?us-ascii?Q?oqIckwqJjimBnlUMP76MGyXqg6rk8Ml8w9ihzRfqpuPwOASUc85WBke7PO/r?=
+ =?us-ascii?Q?bWkCmDos5F463XLbVhzw82FzrCUOrP1+ilyPpo1o9nsp7pBkvjWl1E8hHqti?=
+ =?us-ascii?Q?D/xHKHMrhowdMonHn2BzQ9cyBR1o4OItVLiJgd0qBnD4aMhaaQ523XrwWgIl?=
+ =?us-ascii?Q?ExyuQY1zjVNflEpbqTAI9YrLPDtCAI2QYrrNzDCj3mu/XuDkjX93X05LA/kI?=
+ =?us-ascii?Q?7mmOBaLGBSUDxY9cS1UFHxCuf5vrNTWz4usiVDxHk4uJU2aFvDwE0ySgPjTv?=
+ =?us-ascii?Q?B4z94r7H4579k9WVqliISYUvnjjttCEQA0PBrLmOHK6eb5WqYg=3D=3D?=
 X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: df180fe2-c094-45f6-0f0b-08deeb303f1c
+X-MS-Exchange-CrossTenant-Network-Message-Id: a443713d-b4e3-483d-9fff-08deeb30451e
 X-MS-Exchange-CrossTenant-AuthSource: MN0PR19MB6091.namprd19.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jul 2026 16:09:18.5518
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jul 2026 16:09:28.5767
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
@@ -131,104 +130,197 @@ X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
 	00000000-0000-0000-0000-000000000000
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR19MB4765
 
-Add initial mainline support for the STM32H7R7 and the Ruiside ART-Pi2
-development board.
-
-The ART-Pi2 boots through first-stage firmware in the STM32 internal flash.
-That firmware configures the PLLs and memory interfaces before Linux
-executes in place from external XSPI NOR, with 32 MiB of HyperRAM used as
-system RAM.  Reprogramming the PLLs from Linux could therefore stop the
-instruction stream.
-
-The RCC driver in this series intentionally reconstructs the active clock
-rates from the firmware-programmed RCC registers.  It exposes the resulting
-SYSCLK, bus, timer, UART and SDMMC clocks, while Linux owns only the
-peripheral clock gates used by the initial device tree.  It also exposes
-the RCC reset registers through the existing reset-simple driver.  The
-first reset consumer is SDMMC1.
-
-The pinctrl driver covers GPIOA-H and GPIOM-P, including the AF0 trace
-functions described by the STM32H7RS pin-control data.  The board device
-tree enables UART4, TIM5, twelve GPIO banks, two LEDs, the user button and
-the four-bit SDMMC1 interface used by the microSD socket.  The socket has
-no card detect signal connected to the MCU, so the board uses broken-cd.
-
-ARM noMMU selects DMA_GLOBAL_POOL.  The board therefore reserves a 2 MiB
-shared DMA pool for the SDMMC internal DMA descriptor and bounce buffer.
-The pool is required before the mainline mmci-pl18x driver can probe.
-
-Tested on an ART-Pi2:
-
-- booted an XIP kernel from external NOR to a static-FLAT BusyBox
-  userspace;
-- detected 32 MiB of HyperRAM;
-- used UART4 as early and normal console;
-- used TIM5 as clockevent and clocksource;
-- registered all twelve GPIO banks, both LEDs and the gpio-key input
-  device;
-- registered SDMMC1 through mmci-pl18x and detected a 59.5 GiB SDXC card;
-- wrote a 1 MiB random file to an ext4 partition, synced, unmounted and
-  remounted it, and verified identical SHA-256 hashes before deleting the
-  test file and unmounting cleanly;
-- exercised the SDMMC1 reset through the RCC reset controller;
-- built the target DTB with CHECK_DTBS=y;
-- passed dt-doc-validate for all four changed binding files and
-  dt_binding_check for st,stm32-rcc.yaml;
-- passed checkpatch and the local upstream preflight for all nine patches.
-
-The test kernel kept the Cortex-M7 instruction and data caches disabled.
-DMA coherency with the data cache enabled remains to be validated
-separately.
-
-The only dtbs_check diagnostic is the existing lack of a schema matching
-"arm,cortex-m7".
+Extend the STM32 RCC binding for STM32H7RS and add its clock and
+reset IDs. First-stage firmware configures the clock tree for
+external-memory execution, so Linux consumes the active tree and
+controls peripheral gates and resets.
 
 Signed-off-by: Liu Changjie <liucj1228@outlook.com>
-
-Liu Changjie (9):
-  dt-bindings: arm: stm32: add Ruiside ART-Pi2
-  dt-bindings: clock: stm32: add STM32H7RS RCC
-  clk: stm32: add STM32H7RS RCC driver
-  dt-bindings: pinctrl: stm32: add STM32H7RS
-  pinctrl: stm32: add STM32H7RS support
-  ARM: stm32: add STM32H7R7 platform support
-  ARM: dts: stm32: add STM32H7R7 SoC
-  ARM: dts: stm32: add Ruiside ART-Pi2 board
-  ARM: stm32: document STM32H7R7 support
-
- Documentation/arch/arm/index.rst              |    1 +
- .../arch/arm/stm32/stm32h7r7-overview.rst     |   28 +
- .../devicetree/bindings/arm/stm32/stm32.yaml  |    3 +
- .../bindings/clock/st,stm32-rcc.yaml          |   73 +-
- .../bindings/pinctrl/st,stm32-pinctrl.yaml    |    7 +-
- .../devicetree/bindings/vendor-prefixes.yaml  |    2 +
- arch/arm/Kconfig.debug                        |   12 +
- arch/arm/boot/dts/st/Makefile                 |    1 +
- arch/arm/boot/dts/st/stm32h7r7.dtsi           |  255 +++
- arch/arm/boot/dts/st/stm32h7r7l8-art-pi2.dts  |  100 +
- arch/arm/boot/dts/st/stm32h7rs-pinctrl.dtsi   |   63 +
- arch/arm/include/debug/stm32.S                |    2 +-
- arch/arm/mach-stm32/Kconfig                   |    8 +
- arch/arm/mach-stm32/board-dt.c                |    1 +
- drivers/clk/Kconfig                           |    5 +
- drivers/clk/Makefile                          |    1 +
- drivers/clk/clk-stm32h7rs.c                   |  466 +++++
- drivers/pinctrl/stm32/Kconfig                 |   11 +
- drivers/pinctrl/stm32/Makefile                |    1 +
- drivers/pinctrl/stm32/pinctrl-stm32h7rs.c     | 1849 +++++++++++++++++
- include/dt-bindings/clock/stm32h7rs-clks.h    |   32 +
- include/dt-bindings/mfd/stm32h7rs-rcc.h       |   11 +
- 22 files changed, 2916 insertions(+), 16 deletions(-)
- create mode 100644 Documentation/arch/arm/stm32/stm32h7r7-overview.rst
- create mode 100644 arch/arm/boot/dts/st/stm32h7r7.dtsi
- create mode 100644 arch/arm/boot/dts/st/stm32h7r7l8-art-pi2.dts
- create mode 100644 arch/arm/boot/dts/st/stm32h7rs-pinctrl.dtsi
- create mode 100644 drivers/clk/clk-stm32h7rs.c
- create mode 100644 drivers/pinctrl/stm32/pinctrl-stm32h7rs.c
+---
+ .../bindings/clock/st,stm32-rcc.yaml          | 73 +++++++++++++++----
+ include/dt-bindings/clock/stm32h7rs-clks.h    | 32 ++++++++
+ include/dt-bindings/mfd/stm32h7rs-rcc.h       | 11 +++
+ 3 files changed, 102 insertions(+), 14 deletions(-)
  create mode 100644 include/dt-bindings/clock/stm32h7rs-clks.h
  create mode 100644 include/dt-bindings/mfd/stm32h7rs-rcc.h
 
-
-base-commit: 248951ddc14de84de3910f9b13f51491a8cd91df
+diff --git a/Documentation/devicetree/bindings/clock/st,stm32-rcc.yaml b/Documentation/devicetree/bindings/clock/st,stm32-rcc.yaml
+index f83a6120d..48a878c33 100644
+--- a/Documentation/devicetree/bindings/clock/st,stm32-rcc.yaml
++++ b/Documentation/devicetree/bindings/clock/st,stm32-rcc.yaml
+@@ -22,6 +22,7 @@ properties:
+               - st,stm32f42xx-rcc
+               - st,stm32f746-rcc
+               - st,stm32h743-rcc
++              - st,stm32h7rs-rcc
+           - const: st,stm32-rcc
+       - items:
+           - enum:
+@@ -47,6 +48,10 @@ properties:
+     minItems: 2
+     maxItems: 3
+ 
++  clock-names:
++    minItems: 2
++    maxItems: 2
++
+   st,syscfg:
+     $ref: /schemas/types.yaml#/definitions/phandle
+     description:
+@@ -79,14 +84,13 @@ required:
+   - '#reset-cells'
+   - '#clock-cells'
+   - clocks
+-  - st,syscfg
+ 
+ allOf:
+   - if:
+       properties:
+         compatible:
+           contains:
+-            const: st,stm32h743-rcc
++            const: st,stm32h7rs-rcc
+     then:
+       properties:
+         '#clock-cells':
+@@ -97,23 +101,55 @@ allOf:
+           items:
+             - description: high speed external (HSE) clock input
+             - description: low speed external (LSE) clock input
+-            - description: Inter-IC sound (I2S) clock input
++        clock-names:
++          items:
++            - const: hse
++            - const: lse
++        st,syscfg: false
+         st,ssc-modfreq-hz: false
+         st,ssc-moddepth-permyriad: false
+         st,ssc-modmethod: false
++      required:
++        - clock-names
+ 
+     else:
+-      properties:
+-        '#clock-cells':
+-          const: 2
+-          description: |
+-            - The first cell is the clock type, possible values are 0 for
+-              gated clocks and 1 otherwise.
+-            - The second cell is the clock index for the specified type.
+-        clocks:
+-          items:
+-            - description: high speed external (HSE) clock input
+-            - description: Inter-IC sound (I2S) clock input
++      required:
++        - st,syscfg
++      allOf:
++        - if:
++            properties:
++              compatible:
++                contains:
++                  const: st,stm32h743-rcc
++          then:
++            properties:
++              '#clock-cells':
++                const: 1
++                description: |
++                  The clock index for the specified type.
++              clocks:
++                items:
++                  - description: high speed external (HSE) clock input
++                  - description: low speed external (LSE) clock input
++                  - description: Inter-IC sound (I2S) clock input
++              clock-names: false
++              st,ssc-modfreq-hz: false
++              st,ssc-moddepth-permyriad: false
++              st,ssc-modmethod: false
++
++          else:
++            properties:
++              '#clock-cells':
++                const: 2
++                description: |
++                  - The first cell is the clock type, possible values are 0 for
++                    gated clocks and 1 otherwise.
++                  - The second cell is the clock index for the specified type.
++              clocks:
++                items:
++                  - description: high speed external (HSE) clock input
++                  - description: Inter-IC sound (I2S) clock input
++              clock-names: false
+ 
+ additionalProperties: false
+ 
+@@ -140,5 +176,14 @@ examples:
+         clocks = <&clk_hse>, <&clk_lse>, <&clk_i2s>;
+         st,syscfg = <&pwrcfg>;
+     };
++  - |
++    reset-clock-controller@58024400 {
++        compatible = "st,stm32h7rs-rcc", "st,stm32-rcc";
++        reg = <0x58024400 0x400>;
++        #clock-cells = <1>;
++        #reset-cells = <1>;
++        clocks = <&clk_hse>, <&clk_lse>;
++        clock-names = "hse", "lse";
++    };
+ 
+ ...
+diff --git a/include/dt-bindings/clock/stm32h7rs-clks.h b/include/dt-bindings/clock/stm32h7rs-clks.h
+new file mode 100644
+index 000000000..e62e5d7e4
+--- /dev/null
++++ b/include/dt-bindings/clock/stm32h7rs-clks.h
+@@ -0,0 +1,32 @@
++/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
++#ifndef _DT_BINDINGS_CLOCK_STM32H7RS_CLKS_H
++#define _DT_BINDINGS_CLOCK_STM32H7RS_CLKS_H
++
++#define STM32H7RS_SYS_CK	0
++#define STM32H7RS_HCLK		1
++#define STM32H7RS_PCLK1		2
++#define STM32H7RS_PCLK2		3
++#define STM32H7RS_PCLK4		4
++#define STM32H7RS_PCLK5		5
++
++#define STM32H7RS_TIM5_CK	6
++#define STM32H7RS_UART4_CK	7
++
++#define STM32H7RS_GPIOA_CK	8
++#define STM32H7RS_GPIOB_CK	9
++#define STM32H7RS_GPIOC_CK	10
++#define STM32H7RS_GPIOD_CK	11
++#define STM32H7RS_GPIOE_CK	12
++#define STM32H7RS_GPIOF_CK	13
++#define STM32H7RS_GPIOG_CK	14
++#define STM32H7RS_GPIOH_CK	15
++#define STM32H7RS_GPIOM_CK	16
++#define STM32H7RS_GPION_CK	17
++#define STM32H7RS_GPIOO_CK	18
++#define STM32H7RS_GPIOP_CK	19
++
++#define STM32H7RS_SDMMC1_CK	20
++
++#define STM32H7RS_MAX_CLKS	21
++
++#endif /* _DT_BINDINGS_CLOCK_STM32H7RS_CLKS_H */
+diff --git a/include/dt-bindings/mfd/stm32h7rs-rcc.h b/include/dt-bindings/mfd/stm32h7rs-rcc.h
+new file mode 100644
+index 000000000..2302e0df1
+--- /dev/null
++++ b/include/dt-bindings/mfd/stm32h7rs-rcc.h
+@@ -0,0 +1,11 @@
++/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
++#ifndef _DT_BINDINGS_MFD_STM32H7RS_RCC_H
++#define _DT_BINDINGS_MFD_STM32H7RS_RCC_H
++
++/* AHB5 */
++#define STM32H7RS_RCC_AHB5_SDMMC1	8
++
++#define STM32H7RS_AHB5_RESET(bit) \
++	(STM32H7RS_RCC_AHB5_##bit + (0x7c * 8))
++
++#endif /* _DT_BINDINGS_MFD_STM32H7RS_RCC_H */
 -- 
 2.55.0
+
