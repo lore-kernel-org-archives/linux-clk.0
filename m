@@ -1,77 +1,86 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 627FB4C77BD
-	for <linux-clk@vger.kernel.org>; Thu, 23 Jul 2026 17:03:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74D514CA289
+	for <linux-clk@vger.kernel.org>; Thu, 23 Jul 2026 17:04:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784826208; cv=none; b=GxJK1klMGMmEoUD9yD+//1U4PfmImf5vGpSyA6LXrIWk887onMDOEoVKi9TBxnHFE//y7lJsr25kq768T5KdbcW7W2pnA2HhBLLugO58G+t6bnK6AO9x0TDCI4K+sdeIt5MzApJ0XzVjfR3Af/tvs1xNaVfW577OoqriHdU9jSM=
+	t=1784826273; cv=none; b=bIwNdyBrYWYPg2eZ106VJ0w0eFYKnFKY3wdvKpKttfN9/RFWe0kj/+J+ON9hazH5pv/JLpAn4HosNBGEJmNnED+NnhfCyEKKK+N4BWQdtvpkUNI4V/9o1n2TpGN1E4tPQP8WCdKodC4NgpcSu0KOnSCvzl7Vkl5lKPhdZt3lHkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784826208; c=relaxed/simple;
-	bh=HX9hHiD9Q8xG+TX4N8TVpWXrSbck4clGhq83nZuslMo=;
+	s=arc-20240116; t=1784826273; c=relaxed/simple;
+	bh=o9VVTo6S42mbOL5YNHeNddQl83IMRvNt9iVw7Ax1zcs=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Cuvx7okAnOxhocIWb417YWlWyn5V3zwFyWoAUBPPGKHOk9duNDVAJu/XF4nJCJ5yVzB7wHhs3wQojUzgEp1/zTmBLT/5u4FoPCLPQT97dqni4vb4WMSZqVjMIdscfk92t0DlphqWRl/yv3QpmrBUNTbrBUoZiOaVB90zQNYnVyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=HUIzVuKG; arc=none smtp.client-ip=209.85.128.52
+	 MIME-Version:Content-Type; b=i1tiV3C8w90LUN1/1W4MapNdP9FnZuGW9QOF+CZD4HQgRC0n7+c5/m/2s0j8Ob+R6PxX/l1Iv/+T8AtMyb1V7VhIkQGsv4ZeNAb8IiQj7m6uDazaMzPjbYUScozPxc4IeGoP5hEi7s8fs43JpWfotYF6SRJ6aBy6HVmpdn5gXqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=BGcn2pm9; arc=none smtp.client-ip=209.85.221.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="HUIzVuKG"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-49554ebb87dso9631965e9.3
-        for <linux-clk@vger.kernel.org>; Thu, 23 Jul 2026 10:03:17 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="BGcn2pm9"
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-47f3b39f2a1so830448f8f.2
+        for <linux-clk@vger.kernel.org>; Thu, 23 Jul 2026 10:04:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1784826194; x=1785430994; darn=vger.kernel.org;
+        d=baylibre.com; s=google; t=1784826265; x=1785431065; darn=vger.kernel.org;
         h=content-type:mime-version:message-id:date:user-agent:references
          :in-reply-to:subject:cc:to:from:from:to:cc:subject:date:message-id
          :reply-to:content-type;
-        bh=3bmXdjhA3HTwHbyEK6JtJWrwrPDwDFR73RowlJS9lG4=;
-        b=HUIzVuKGgmxTMlPHTaqSHx2dL6Mp1A14WYiQsWg0uRvCi+5s97OCp1I8U5FSGiF3xO
-         eflxzm1zsNoQ7hZ93sSQ5m2yO00WOyO9RXn3JpRU4y2C9bj9ff28sD0VueX8LfBaE4zP
-         p3gR4Lu8Dw4WpBoV3/zP/V/sFb6XgOP3HDLqc+qkKRfY2/0fC3l/vuCk8dLel19lHCz+
-         Ijx0OM6KjiUVVrstuxE7TPUtEAWQh5AT1kPZuPi4BgYvbRSh43SdI8Khl2TvC/zs2zUd
-         ShtNlSdHV+wKBtE4OHhuwD4FUp2Sk6P9tCAIzVrfUcE5+ahTsOVCyI8CQc+Oj1fy46v0
-         zFpQ==
+        bh=jhojDdHC94+BdjAE5gd50YRzJP7qSAXpLrLf8nMSLLo=;
+        b=BGcn2pm9WvAug4PR8l3FANDWOZnBQ4XdbW21YipeI3nJ4ukRiQBaauWySLaXoEROPo
+         KYl4XqRUVJoStP/ov8Y2R4cynD3Uei8U7U/JNr1wxh6PHKu9iPfp+JkqsyRtiimnKIID
+         u94WFQQfdiv8izgm05vPzHzcdo4Vk9kdWiKwzBpidPHKXf02aR/YRfXhapIB5D6i9zKP
+         WecHCnnam4b7nQqsbx9VwAiQrqFyK840l+UkKI084tMkH5P2Ps9pXnEzoplZF157Wy1F
+         bGraUumSEdCftfBBfBiVnH6T0G4KawEtzV9NMJ1YpeeG0ryczMqalGAvviv62T3ZbI9e
+         2ixA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784826194; x=1785430994;
+        d=1e100.net; s=20251104; t=1784826265; x=1785431065;
         h=content-type:mime-version:message-id:date:user-agent:references
          :in-reply-to:subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to:content-type;
-        bh=3bmXdjhA3HTwHbyEK6JtJWrwrPDwDFR73RowlJS9lG4=;
-        b=S3YH3FkntZz10O3jKLHastlMZKZSsqxA3X79aZs2Xo6znjyd5RJdu0xolDaQ+HIgy5
-         lz+l4g8HtNFW2nn4NtZJ+GrA6BwF5xBdpooDkbsgIGUr6Pz8ZCb+EXwRDmrDzSWk1I4R
-         dMuUARvqZj1M/RwVZMOsuyrjvMV8hPCaD4nrR6Wq3EtSYXTOKiG972FjTCJ/TPNgnPXZ
-         vpyxe//0Szg+zGlijePMK2buEv4RZDcoinHcL3CqZuM8olfZj4zEp3jxa2LRFIA4kJZD
-         ivRaCrmLa4Qn+PEjrhPfSOSAaCLddc2yPQDuc6QfkjSfcFZdAR61/n2RAadh4dJNQqTl
-         g6CQ==
-X-Forwarded-Encrypted: i=1; AHgh+Rr9bF2OBo7UXRfc8A7hCkELV+Y0sJaA8hhrg00ZakoMtW0Qs2EKxWlC6kqO4snzVx2+YrW6nMZBMCo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwtdH6ii2J+62qhHwC0t5I/Hr4+3IeJhxpxwWmjPF8kCD46a51
-	rfOSGVlJAd9Vuun0Zd3Abd36kruQhGDpcfVeml4UpZMcj5FLRLYuCL6gbE3etdIWJ7o=
-X-Gm-Gg: AR+sD12lFXa2wdSejohtHapaLgwyNbdVSguDNXRGIP50FZWmigDGz3E3ww1FmdAJCnC
-	Pioh30fozI6CW+Krbs8kf4EIr9ICJtaJ2BAo3C+FSlEDhWiOr84Fj4RxZyaNlWc7bGW73UTD0sY
-	DTl5ysoOjb8o92C/E2cJx27jUylOypkq5w+xw2t5MHoKdFkebdTgYVn6y8KPq43yXp9+LDX1wQd
-	ZGjGL8xyAOX86wLw9x2rBZEiFem7+8E+819VOwKqSu2sITCqZgBmg35ixTOcb3MQu+rc0kQX84o
-	OcVm6MfPf6kM+dwqM515F/3wNIs71DYQOrGC2KMh1EohrScgFMotKl5Q1FuerlUjwP3XPrYxCgI
-	iVOHrM1ui/Cpb5cAjOA2OQm314rY6WBY/AvMaWiwmdMl6X2aFHvm79053HpN26yPb4Ia9kXUefS
-	kdb0T/mF1JesY=
-X-Received: by 2002:a05:600c:4ed1:b0:493:f5bf:4da4 with SMTP id 5b1f17b1804b1-49573d11690mr46042655e9.28.1784826194117;
-        Thu, 23 Jul 2026 10:03:14 -0700 (PDT)
+        bh=jhojDdHC94+BdjAE5gd50YRzJP7qSAXpLrLf8nMSLLo=;
+        b=Z/fI9AUKC/WMi3frZh86dqulEcIY/wA5W5VqqnyhI/OCKf2b6Gch70KnxrKgRyUWjD
+         9znb8942J9EC5IFinP8e01Vqol4hJ1/6kqETd3G/3hdp/6KbCy6IKXTHJVLLyWohs6Zn
+         ON3zKbpnqBn28wU0O6EGLvilr+ShsAZbEuNevalElBiUR+diM5xY8y7PEY5OpNSq6BKV
+         GFnD1mx6vnXAhwd6Ng5ljtgTa4PxyjDtxnrV8/ZmbVfdzt8O8msPHryu4eAWhmefhgRx
+         o35lrj8oKlrm6aahKuADg85YcR9DexUQaRshpbvqWz31ht+IIxQJvoOvDP5pyc+NeApC
+         X6Tg==
+X-Forwarded-Encrypted: i=1; AHgh+RrfigmHhJASJsWod0lGh+Zv9SnteSu6G8gMbZ7VrdyRFdJYv6TYn9mElOevVmFmNC+nSnaTIQ0OnL8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+vq2ZYAvMaYhlSEfGx/agn5VoO6tGfXjJp9uiyKRrbG0PmTWP
+	IXxxzWVkiUjYxB1IUUoOk7UsRZceCWDpRkgGFc4OGc/FU2oo0zChwGs6bmgJ9Jkw6RQ=
+X-Gm-Gg: AR+sD13/bGnZbv+3/hqTTB6GF8xFCIYJvTwbCt+L2c4grgXLcq0twTtRpDG2eXsw2T9
+	h00fdwV9EIeSRGftnT8GtXL1grL75wSnqbVpc8Qfs2Sap/qolXX1s1K4nlEen0Vdge5neNINUqH
+	7E1antp/xONOdaz/rQkNzgLZQg/uf2ZjT2oaxxvyJdMP6Cw6gJuPOXrYBWIHhgUbYKIWY8X3nT+
+	qNQg2Ce2o17CvigiSmDgVcnmawMKmFTA0zlXHrssn1QHTpWWq3LY5bRF9NpS+h5bOPjDWC3K6vn
+	X+RuhP/nkiyOXrFSCc6vcsbI9vgVtHHu5zxn++aSqsR912ZohQfQ7eizmrPaLOuFjePFgFTV/Yr
+	7DdjPlWUD8x3ept3WoBUmiki/VBH8K64BfGt6tyvSZEYMTeuiMNxyH3U1TmiwWC17k/KPyKsund
+	NC
+X-Received: by 2002:a05:6000:230a:b0:47f:8aba:8a9a with SMTP id ffacd0b85a97d-47f8d71c7eamr5497660f8f.18.1784826265170;
+        Thu, 23 Jul 2026 10:04:25 -0700 (PDT)
 Received: from localhost ([2a01:e0a:3c5:5fb1:5f98:8c28:3e2c:1c72])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4957af16f72sm8890055e9.0.2026.07.23.10.03.13
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-47f85c67339sm17937986f8f.31.2026.07.23.10.04.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Jul 2026 10:03:13 -0700 (PDT)
+        Thu, 23 Jul 2026 10:04:22 -0700 (PDT)
 From: Jerome Brunet <jbrunet@baylibre.com>
 To: Brian Masney <bmasney@redhat.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd
- <sboyd@kernel.org>,  Russell King <linux@armlinux.org.uk>,
+Cc: Andrew Lunn <andrew@lunn.ch>,  Gregory Clement
+ <gregory.clement@bootlin.com>,  Sebastian Hesselbarth
+ <sebastian.hesselbarth@gmail.com>,  Michael Turquette
+ <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,  Bjorn
+ Andersson <andersson@kernel.org>,  Geert Uytterhoeven
+ <geert+renesas@glider.be>,  Heiko Stuebner <heiko@sntech.de>,  Prashant
+ Gaikwad <pgaikwad@nvidia.com>,  Thierry Reding
+ <thierry.reding@kernel.org>,  Jonathan Hunter <jonathanh@nvidia.com>,
+  Tero Kristo <kristo@kernel.org>,  linux-arm-kernel@lists.infradead.org,
   linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2] clk: fix self-consuming provider module pinning
-In-Reply-To: <amIn3DO_65uyItS_@redhat.com> (Brian Masney's message of "Thu, 23
-	Jul 2026 10:40:28 -0400")
-References: <20260723-clk-provider-pinning-v2-1-8dad72eb79f0@baylibre.com>
-	<amIn3DO_65uyItS_@redhat.com>
+  linux-arm-msm@vger.kernel.org,  linux-renesas-soc@vger.kernel.org,
+  linux-rockchip@lists.infradead.org,  linux-tegra@vger.kernel.org,
+  linux-omap@vger.kernel.org
+Subject: Re: [PATCH] clk: clean-up simple provider misuse of the consumer API
+In-Reply-To: <amImP6sFlv-sNhMh@redhat.com> (Brian Masney's message of "Thu, 23
+	Jul 2026 10:33:35 -0400")
+References: <20260723-clk-provider-simple-clean-v1-1-0c9668240467@baylibre.com>
+	<amImP6sFlv-sNhMh@redhat.com>
 User-Agent: mu4e 1.12.9; emacs 30.1
-Date: Thu, 23 Jul 2026 19:03:11 +0200
-Message-ID: <1jbjbxd4fk.fsf@starbuckisacylon.baylibre.com>
+Date: Thu, 23 Jul 2026 19:04:08 +0200
+Message-ID: <1j5x25d4dz.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -80,82 +89,45 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
 
-On jeu. 23 juil. 2026 at 10:40, Brian Masney <bmasney@redhat.com> wrote:
+On jeu. 23 juil. 2026 at 10:33, Brian Masney <bmasney@redhat.com> wrote:
 
-> Hi Jerome,
->
-> On Thu, Jul 23, 2026 at 03:00:51PM +0200, Jerome Brunet wrote:
->> clk_hw_get_clk() lets a provider get a struct clk for one of its own
->> struct clk_hw.
+> On Thu, Jul 23, 2026 at 03:20:59PM +0200, Jerome Brunet wrote:
+>> Clock provider should not be using the consumer interface.
+>> In other words, a provider should not be dealing with struct clk.
 >> 
->> When a struct clk is created, the module usage count of the provider
->> is unconditionally increased. For a self-consuming provider, this means
->> it pins itself and the module can never be unloaded.
+>> This change targets occurrences for which the provider uses the
+>> consumer interface and corresponding clk_hw interface exist:
+>> * __clk_get_name() -> clk_hw_get_name()
+>> * __clk_is_enabled() -> clk_hw_is_enabled()
+>> * clk_get_rate() -> clk_hw_get_rate()
 >> 
->> Increasing the module usage count should only be done when the consumer
->> lives in a different module from the provider. Use THIS_MODULE to
->> capture caller's module and increase the module usage count accordingly.
->> 
->> It is OK for consumer-only APIs such as clk_get() or of_clk_get() to
->> pass a NULL owner. As a result, any provider module will get pinned,
->> same as before.
->> 
->> Fixes: 30d6f8c15d2c ("clk: add api to get clk consumer from clk_hw")
 >> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 >> ---
->> This issue has been present for a while. Virtually all users of
->> clk_hw_get_clk() are affected. The majority are compiled as builtins
->> according to the defconfigs. It is not problem in this case but it is
->> if the configuration is changed to module.
->> 
->> The following modules are using clk_hw_get_clk() and are compiled as
->> module with some shipped defconfigs:
->> * drivers/gpu/drm/msm/disp/mdp4/mdp4_lvds_pll.c
->> * drivers/phy/cadence/phy-cadence-sierra.c
->> * drivers/pwm/pwm-meson.c
->> * sound/soc/codecs/lpass-va-macro.c
->> 
->> Currently those module cannot be unloaded once they have been loaded.
->> 
->> """
->> rmmod: ERROR: Module blabla-module is in use
->> """
->> 
->> With this applied, we can get back to removing the direct usage
->> of the struct clk in struct clk_hw and eventually remove this
->> struct member entirely.
+>> The change being very simple, I did not think it was necessary
+>> to split it into multiple changes. If you prefer it to be split,
+>> just let me know how.
 >> ---
->> Changes in v2:
->> - Update comment in __clk_register()
->> - Add missing documention for the new parameter of clk_hw_create_clk()
->> - No functional change
->> - Link to v1: https://patch.msgid.link/20260721-clk-provider-pinning-v1-1-63db2e667993@baylibre.com
+>>  drivers/clk/mvebu/clk-cpu.c            |  2 +-
+>>  drivers/clk/qcom/clk-hfpll.c           |  4 ++--
+>>  drivers/clk/qcom/clk-krait.c           |  2 +-
+>>  drivers/clk/qcom/clk-rcg.c             |  4 ++--
+>>  drivers/clk/qcom/clk-rcg2.c            |  2 +-
+>>  drivers/clk/renesas/r9a06g032-clocks.c |  2 +-
+>>  drivers/clk/rockchip/clk-pll.c         | 24 ++++++++++++------------
+>>  drivers/clk/st/clkgen-pll.c            | 20 ++++++++++----------
+>>  drivers/clk/tegra/clk-tegra210.c       |  2 +-
+>>  drivers/clk/ti/clockdomain.c           |  2 +-
+>>  10 files changed, 32 insertions(+), 32 deletions(-)
+>
+> This looks good to me however can you split this up by clk subsystem at
+> the very least so that the various submaintainers can pick up these up?
+
+Will do
+
+>
+> With that:
 >
 > Reviewed-by: Brian Masney <bmasney@redhat.com>
->
-> This looks good to me. I'm planning to send Stephen a pull next week for
-> content that I think is ready during this development cycle, however I'm
-> not going to include this. I suspect he's going to want a kunit test for
-> this and I know it's going to be complicated. My suggestion is to post
-> some kind of rough test scenario for this, even if it's initially not in
-> kunit. As I get some spare time at work, I can help you to see if we can
-> get a kunit test together for this.
->
-> Brian
-
-I understand but I'm not adding an new API, I'm fixing a real problem in
-an existing one in the kernel now. The related API is already used in
-some kunit, so there is some coverage already.
-
-The problem was known (as the comment in __clk_register() was showing) and
-there was no kunit then ... so it is a bit strange to delay fixing the
-problem because there is not kunit associated with it now.
-
-That said, I'll check was I can do. acutally loading and unloading
-module in kunit does not really feasible. Maybe poking the owner
-field with __clk_hw_get_clk(). This is not really supposed to used
-directly (which is why I did not add the documentation around it)
-and it's bit fake but I do not really a way around it.
 
 -- 
 Jerome
