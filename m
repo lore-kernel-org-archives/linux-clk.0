@@ -1,133 +1,100 @@
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.chunchunmaru.org (mail.chunchunmaru.org [45.79.219.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74D514CA289
-	for <linux-clk@vger.kernel.org>; Thu, 23 Jul 2026 17:04:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 459CD36167B;
+	Thu, 23 Jul 2026 18:15:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.219.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784826273; cv=none; b=bIwNdyBrYWYPg2eZ106VJ0w0eFYKnFKY3wdvKpKttfN9/RFWe0kj/+J+ON9hazH5pv/JLpAn4HosNBGEJmNnED+NnhfCyEKKK+N4BWQdtvpkUNI4V/9o1n2TpGN1E4tPQP8WCdKodC4NgpcSu0KOnSCvzl7Vkl5lKPhdZt3lHkc=
+	t=1784830561; cv=none; b=jFpS+2Kr65uP0b5v5xsVRuLwYsN6XKZV0+5y4/IWiiMhg953sFPXNt0GAkoG6mcsdzhC+AhXaYr1JcQLneZdX7l9uItK6MRVZD+5UJEMeCbAyNkM0tOgoL4VbD6FN9LZ6ak3XDaaV5hLeSVzUFYdAumV0TT/iI5yvyk9sXW08Fk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784826273; c=relaxed/simple;
-	bh=o9VVTo6S42mbOL5YNHeNddQl83IMRvNt9iVw7Ax1zcs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=i1tiV3C8w90LUN1/1W4MapNdP9FnZuGW9QOF+CZD4HQgRC0n7+c5/m/2s0j8Ob+R6PxX/l1Iv/+T8AtMyb1V7VhIkQGsv4ZeNAb8IiQj7m6uDazaMzPjbYUScozPxc4IeGoP5hEi7s8fs43JpWfotYF6SRJ6aBy6HVmpdn5gXqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=BGcn2pm9; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="BGcn2pm9"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-47f3b39f2a1so830448f8f.2
-        for <linux-clk@vger.kernel.org>; Thu, 23 Jul 2026 10:04:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1784826265; x=1785431065; darn=vger.kernel.org;
-        h=content-type:mime-version:message-id:date:user-agent:references
-         :in-reply-to:subject:cc:to:from:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=jhojDdHC94+BdjAE5gd50YRzJP7qSAXpLrLf8nMSLLo=;
-        b=BGcn2pm9WvAug4PR8l3FANDWOZnBQ4XdbW21YipeI3nJ4ukRiQBaauWySLaXoEROPo
-         KYl4XqRUVJoStP/ov8Y2R4cynD3Uei8U7U/JNr1wxh6PHKu9iPfp+JkqsyRtiimnKIID
-         u94WFQQfdiv8izgm05vPzHzcdo4Vk9kdWiKwzBpidPHKXf02aR/YRfXhapIB5D6i9zKP
-         WecHCnnam4b7nQqsbx9VwAiQrqFyK840l+UkKI084tMkH5P2Ps9pXnEzoplZF157Wy1F
-         bGraUumSEdCftfBBfBiVnH6T0G4KawEtzV9NMJ1YpeeG0ryczMqalGAvviv62T3ZbI9e
-         2ixA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784826265; x=1785431065;
-        h=content-type:mime-version:message-id:date:user-agent:references
-         :in-reply-to:subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=jhojDdHC94+BdjAE5gd50YRzJP7qSAXpLrLf8nMSLLo=;
-        b=Z/fI9AUKC/WMi3frZh86dqulEcIY/wA5W5VqqnyhI/OCKf2b6Gch70KnxrKgRyUWjD
-         9znb8942J9EC5IFinP8e01Vqol4hJ1/6kqETd3G/3hdp/6KbCy6IKXTHJVLLyWohs6Zn
-         ON3zKbpnqBn28wU0O6EGLvilr+ShsAZbEuNevalElBiUR+diM5xY8y7PEY5OpNSq6BKV
-         GFnD1mx6vnXAhwd6Ng5ljtgTa4PxyjDtxnrV8/ZmbVfdzt8O8msPHryu4eAWhmefhgRx
-         o35lrj8oKlrm6aahKuADg85YcR9DexUQaRshpbvqWz31ht+IIxQJvoOvDP5pyc+NeApC
-         X6Tg==
-X-Forwarded-Encrypted: i=1; AHgh+RrfigmHhJASJsWod0lGh+Zv9SnteSu6G8gMbZ7VrdyRFdJYv6TYn9mElOevVmFmNC+nSnaTIQ0OnL8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+vq2ZYAvMaYhlSEfGx/agn5VoO6tGfXjJp9uiyKRrbG0PmTWP
-	IXxxzWVkiUjYxB1IUUoOk7UsRZceCWDpRkgGFc4OGc/FU2oo0zChwGs6bmgJ9Jkw6RQ=
-X-Gm-Gg: AR+sD13/bGnZbv+3/hqTTB6GF8xFCIYJvTwbCt+L2c4grgXLcq0twTtRpDG2eXsw2T9
-	h00fdwV9EIeSRGftnT8GtXL1grL75wSnqbVpc8Qfs2Sap/qolXX1s1K4nlEen0Vdge5neNINUqH
-	7E1antp/xONOdaz/rQkNzgLZQg/uf2ZjT2oaxxvyJdMP6Cw6gJuPOXrYBWIHhgUbYKIWY8X3nT+
-	qNQg2Ce2o17CvigiSmDgVcnmawMKmFTA0zlXHrssn1QHTpWWq3LY5bRF9NpS+h5bOPjDWC3K6vn
-	X+RuhP/nkiyOXrFSCc6vcsbI9vgVtHHu5zxn++aSqsR912ZohQfQ7eizmrPaLOuFjePFgFTV/Yr
-	7DdjPlWUD8x3ept3WoBUmiki/VBH8K64BfGt6tyvSZEYMTeuiMNxyH3U1TmiwWC17k/KPyKsund
-	NC
-X-Received: by 2002:a05:6000:230a:b0:47f:8aba:8a9a with SMTP id ffacd0b85a97d-47f8d71c7eamr5497660f8f.18.1784826265170;
-        Thu, 23 Jul 2026 10:04:25 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:5f98:8c28:3e2c:1c72])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-47f85c67339sm17937986f8f.31.2026.07.23.10.04.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Jul 2026 10:04:22 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Brian Masney <bmasney@redhat.com>
-Cc: Andrew Lunn <andrew@lunn.ch>,  Gregory Clement
- <gregory.clement@bootlin.com>,  Sebastian Hesselbarth
- <sebastian.hesselbarth@gmail.com>,  Michael Turquette
- <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,  Bjorn
- Andersson <andersson@kernel.org>,  Geert Uytterhoeven
- <geert+renesas@glider.be>,  Heiko Stuebner <heiko@sntech.de>,  Prashant
- Gaikwad <pgaikwad@nvidia.com>,  Thierry Reding
- <thierry.reding@kernel.org>,  Jonathan Hunter <jonathanh@nvidia.com>,
-  Tero Kristo <kristo@kernel.org>,  linux-arm-kernel@lists.infradead.org,
-  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-arm-msm@vger.kernel.org,  linux-renesas-soc@vger.kernel.org,
-  linux-rockchip@lists.infradead.org,  linux-tegra@vger.kernel.org,
-  linux-omap@vger.kernel.org
-Subject: Re: [PATCH] clk: clean-up simple provider misuse of the consumer API
-In-Reply-To: <amImP6sFlv-sNhMh@redhat.com> (Brian Masney's message of "Thu, 23
-	Jul 2026 10:33:35 -0400")
-References: <20260723-clk-provider-simple-clean-v1-1-0c9668240467@baylibre.com>
-	<amImP6sFlv-sNhMh@redhat.com>
-User-Agent: mu4e 1.12.9; emacs 30.1
-Date: Thu, 23 Jul 2026 19:04:08 +0200
-Message-ID: <1j5x25d4dz.fsf@starbuckisacylon.baylibre.com>
+	s=arc-20240116; t=1784830561; c=relaxed/simple;
+	bh=0LXgM6lBnNy8A6fXRY/1YNF8xjD+3loy2Cl67PFisNg=;
+	h=Message-ID:Date:MIME-Version:Subject:References:To:Cc:From:
+	 In-Reply-To:Content-Type; b=r+K8tpD5uFrN702zNfTzwWcUmlVPloxxpR6nVks5dF9DxgsZsSQw5HEWqkpq+DaHE4yMMK5I7peEcN/dS15WUJ0ms6BAvfPyrK/Z3xKnC4mG6Z2aCcowV0EexgohwvslspZJ6ZEViOcb9Hsubk82N7IQmKqvUZ3CGgywNWEI9uk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=floorchan.org; spf=none smtp.mailfrom=floorchan.org; arc=none smtp.client-ip=45.79.219.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=floorchan.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=floorchan.org
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 05D183208F9;
+	Thu, 23 Jul 2026 18:07:04 +0000 (EDT)
+Message-ID: <247df8ea-49c7-46e4-acfc-e56d0ad9f8ed@floorchan.org>
+Date: Thu, 23 Jul 2026 14:07:06 -0400
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Fwd: [PATCH v2 0/3] arm64: dts: qcom: initial MSM8920 and Motorola
+ Moto E4 (perry)
+References: <4006f966cd5f0c077c413410d79bae1e@floorchan.org>
+Content-Language: en-US
+To: Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Catherine Frederick <serenity@floorchan.org>, linux-clk@vger.kernel.org
+From: Catherine Frederick <serenity@floorchan.org>
+In-Reply-To: <4006f966cd5f0c077c413410d79bae1e@floorchan.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On jeu. 23 juil. 2026 at 10:33, Brian Masney <bmasney@redhat.com> wrote:
+Forwarding to everyone on the list, since this didn't make it there 
+(Damn you roundcube!). A lot of the errors in this PR are results of 
+Claude mindlessly copy-pasting my in-progress work (bad whitespace, 
+incorrect copyright assignments). Fuck man. Sorry in advance if my email 
+client makes a mess on the list.
 
-> On Thu, Jul 23, 2026 at 03:20:59PM +0200, Jerome Brunet wrote:
->> Clock provider should not be using the consumer interface.
->> In other words, a provider should not be dealing with struct clk.
->> 
->> This change targets occurrences for which the provider uses the
->> consumer interface and corresponding clk_hw interface exist:
->> * __clk_get_name() -> clk_hw_get_name()
->> * __clk_is_enabled() -> clk_hw_is_enabled()
->> * clk_get_rate() -> clk_hw_get_rate()
->> 
->> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
->> ---
->> The change being very simple, I did not think it was necessary
->> to split it into multiple changes. If you prefer it to be split,
->> just let me know how.
->> ---
->>  drivers/clk/mvebu/clk-cpu.c            |  2 +-
->>  drivers/clk/qcom/clk-hfpll.c           |  4 ++--
->>  drivers/clk/qcom/clk-krait.c           |  2 +-
->>  drivers/clk/qcom/clk-rcg.c             |  4 ++--
->>  drivers/clk/qcom/clk-rcg2.c            |  2 +-
->>  drivers/clk/renesas/r9a06g032-clocks.c |  2 +-
->>  drivers/clk/rockchip/clk-pll.c         | 24 ++++++++++++------------
->>  drivers/clk/st/clkgen-pll.c            | 20 ++++++++++----------
->>  drivers/clk/tegra/clk-tegra210.c       |  2 +-
->>  drivers/clk/ti/clockdomain.c           |  2 +-
->>  10 files changed, 32 insertions(+), 32 deletions(-)
+-------- Forwarded Message --------
+Subject: 	Re: [PATCH v2 0/3] arm64: dts: qcom: initial MSM8920 and 
+Motorola Moto E4 (perry)
+Date: 	Thu, 23 Jul 2026 08:49:25 -0400
+From: 	serenity@floorchan.org
+To: 	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+
+
+
+On 2026-07-23 08:00, Konrad Dybcio wrote:
+> On 7/23/26 3:46 AM, Aneesh Pradhan wrote:
+>> Initial upstream support for MSM8920 and the Motorola Moto E4 (perry).
+>>
+>> Depends on the separate qcom,rpmcc-msm8920 clk series (binding +
+>> clk-smd-rpm) for the MSM8920 rpmcc compatible used by msm8920.dtsi.
+>>
+>> This is a trimmed mainline-first subset of msm89x7-mainline/linux#48,
+>> rewritten so every phandle exists on qcom/for-next's msm8917 / pm8937 /
+>> pmi8950 (the fork DT assumed richer SoC/PMIC nodes that are not
+>> upstream yet).
+>>
+>> Included: regulators, eMMC/SD, USB OTG (gpio-id extcon), keys, RMI4
+>> touch + reset-gpios, BMA253 (i2c-gpio), WCNSS (wcn3660b), PMI8950 WLED.
+>> Deferred follow-ups: DSI panel, IPA, QDSP6 audio, FG/smbcharger, modem.
+>>
+>> DTB build verified: msm8917-motorola-perry.dtb + 
+>> msm8920-motorola-perry.dtb.
 >
-> This looks good to me however can you split this up by clk subsystem at
-> the very least so that the various submaintainers can pick up these up?
-
-Will do
-
+> Please send all series as separate threads and all revisions as separate
+> threads too. You can use the b4 tool [1] which takes care of that and a
+> couple other annoyances
 >
-> With that:
+> Konrad
 >
-> Reviewed-by: Brian Masney <bmasney@redhat.com>
+> [1] https://b4.docs.kernel.org/en/latest/
+Hi,
 
--- 
-Jerome
+I just wanted to let you know, this is a drive-by-vibe rendition of my 
+patch series from earlier this year. You aren't talking to a person, but 
+claude code instead:
+
+https://github.com/aneesh-pradhan/xylitol/commit/4bdb6eaac4724ae0071095a925795c5e5b8b9985
+
+I can confirm both the MSM8917 and MSM8920 variants exist in the wild, 
+as I own both. As for what you want to do with all this information, 
+that's up to you. This also contains hacked up versions of my in 
+progress DT for perry available on the msm89x7-mainline git. I was 
+planning on picking up this series when I had time again.
+
+Thanks,
+Catherine
