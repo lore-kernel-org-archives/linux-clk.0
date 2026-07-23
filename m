@@ -1,100 +1,358 @@
-Received: from mail.chunchunmaru.org (mail.chunchunmaru.org [45.79.219.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 459CD36167B;
-	Thu, 23 Jul 2026 18:15:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.219.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E1D547127B
+	for <linux-clk@vger.kernel.org>; Thu, 23 Jul 2026 18:40:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784830561; cv=none; b=jFpS+2Kr65uP0b5v5xsVRuLwYsN6XKZV0+5y4/IWiiMhg953sFPXNt0GAkoG6mcsdzhC+AhXaYr1JcQLneZdX7l9uItK6MRVZD+5UJEMeCbAyNkM0tOgoL4VbD6FN9LZ6ak3XDaaV5hLeSVzUFYdAumV0TT/iI5yvyk9sXW08Fk=
+	t=1784832011; cv=none; b=O/8gP6MQ6Jy6n+9EMY5SI+L+EBY9c1VIeQkpu8p7aD6f8Qz5yfZp4EYnfiff9rMMUYDAoXet1p0hgxU8XfN8WlCZlTroBoiOcXmMehVh1nhd4/NrtfNEbDCRqJ6PJE2xuST7lBxppIgU+tqWEu8kA/fuORKabDeakDl262oRxiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784830561; c=relaxed/simple;
-	bh=0LXgM6lBnNy8A6fXRY/1YNF8xjD+3loy2Cl67PFisNg=;
-	h=Message-ID:Date:MIME-Version:Subject:References:To:Cc:From:
-	 In-Reply-To:Content-Type; b=r+K8tpD5uFrN702zNfTzwWcUmlVPloxxpR6nVks5dF9DxgsZsSQw5HEWqkpq+DaHE4yMMK5I7peEcN/dS15WUJ0ms6BAvfPyrK/Z3xKnC4mG6Z2aCcowV0EexgohwvslspZJ6ZEViOcb9Hsubk82N7IQmKqvUZ3CGgywNWEI9uk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=floorchan.org; spf=none smtp.mailfrom=floorchan.org; arc=none smtp.client-ip=45.79.219.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=floorchan.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=floorchan.org
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 05D183208F9;
-	Thu, 23 Jul 2026 18:07:04 +0000 (EDT)
-Message-ID: <247df8ea-49c7-46e4-acfc-e56d0ad9f8ed@floorchan.org>
-Date: Thu, 23 Jul 2026 14:07:06 -0400
+	s=arc-20240116; t=1784832011; c=relaxed/simple;
+	bh=cL4JAZ9BV7u1m206l1hk79KytfDo0V6V2twUyH+3TcU=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tfbragiol03Oa3CIEilTXsdwW118R5ullEAticXThJ9WwKFV9WmpkOXtTsBBIZhMWqlmd3wTc/1DM4iBug7uJKgEhoh3Uew6Z4Ajor9wJ4lOAhSupwi744pJ2Df1RMXdk3MOklbMt5P6b4PpIIOg7V0aqLEHuuaX9O1BZkRzn1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ah3p6xR4; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ah3p6xR4"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-472326ca506so709263f8f.2
+        for <linux-clk@vger.kernel.org>; Thu, 23 Jul 2026 11:40:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1784832007; x=1785436807; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:subject:cc:to:from:date:message-id:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=RHtRx7/TrncyXEUejofUChLHf2uO3p9RQph6fNJ/fvk=;
+        b=Ah3p6xR4FX3FxixjeWpbkMewPQr68P4PJ0meRiwrb2ahHpm32X+Z22JuqbF8aLwBoy
+         sjGyjvxYc2I4uCh7hzDXI93w1eHVijBr9ySWJSdw6KCW5ZnW5cfi2QldTvI7/4j9kHMj
+         QZK/FrXjnOjPdLEwFVYnWBend8f8lUrWhzpPXUvk4Rg8f4gxpWBvw41BeQNY7mIAH+bm
+         dETSR3toAqLdIpl2fWOOX9fgHZ+KZE6GEHzkt5L95L0cjmA9NxPYdclrlWcB+qcu7zqW
+         KhRFoT7QhA2LD0B6f1xFCqDlVTkcuLIKf12LVJwgKp3uikf85BTxGDEJ99Vc1SxkIR7H
+         OzMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784832007; x=1785436807;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:subject:cc:to:from:date:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=RHtRx7/TrncyXEUejofUChLHf2uO3p9RQph6fNJ/fvk=;
+        b=jz+A2N07S3cuqi0hld7Yt+doSrXumUMeiNPpnM+G3stzv9SLdpCCRG4Mf16VmcdL71
+         lSLIprLwheLNULkL1XcTxpWhi4GHP/ler1R/Rqja2MPjG7/0C2ieVrp4RYn6HddIxEMc
+         rrA3rMVsgdtZQ9Ip8iU1HVHStWNEDyZeamyiEbKZvHpkg2jJbFfc8muS+8Bw2lXSlez5
+         L6zI0IeNVj+KLsJgY53b0qz5OE4/2xAMtHL/4w4RFSCYYLq0bsLgojX/Gf3QH9G/n/YU
+         0g/eKwJcTRpMQfi1uPhRf7L5MmjPPH7QGtJvHqde23nKFdYnZNDv2guZdEHUXkNgXTxz
+         FegQ==
+X-Forwarded-Encrypted: i=1; AHgh+Rrqv8sJU85cN553zS5SToSrJfwkMBZ18xjHsa4w9uvgTODlMU61kpC/1Le3qhn/p03nnDti6+qQDP0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNlrj27jRjfzPmZUGZ1D2G89Y+Qye913++OMDkHpDQVENmmw1S
+	VzNqeXb4QulxomuKIxsyfKlr+UJbXjKAoU47tNsn+k5IsLT9b5QM98t7
+X-Gm-Gg: AR+sD10oaRvv0NzXA3HrLM0gSawUx/2VsXpj7c0pejWfe67xlmZtOJFjPKhhLNCWv5g
+	6OyHDXccNy4GgMdRLNsFmj9N2aI+QKoTX8V2krW4y9CDA7kSkWL7Sh38d2t7ulGz0bKFOKWgkDa
+	+z7nA/660UA/T+9MhkUM9eqkuwbQl1jqqUpChji7Dbkk1PnCRZchtQdeZ4b57roViR2mto/FV4W
+	gRMrz8715r0L5I0t7HNAHDmeuMQf4XdL0fvCPg9AYu/ZVKNmxf0DQiZnyfG4oaaJ4l4BXvGCrRS
+	f1zi0XUDY9eHIU7EfG/jcx5Cp4oi4qY/GuFEPOORSn8CK24is921VAPlUg25oSokMY9RRWiUewV
+	DD1UKbPrf1mJVtU5bFP5FHnupt5iMdOBsRhJXGMqIcBdDK3aBgG6m5xBmrZ1XmvUD21keKAUDsp
+	i3M7daOwTHUq2sy0Eu9Kw4eVZWbVhE3ZNy4LelUfR+9V+246M=
+X-Received: by 2002:a05:6000:712:b0:47f:87f5:ed32 with SMTP id ffacd0b85a97d-47f8d75f5f3mr5808844f8f.46.1784832007156;
+        Thu, 23 Jul 2026 11:40:07 -0700 (PDT)
+Received: from Ansuel-XPS. (host-87-3-249-180.retail.telecomitalia.it. [87.3.249.180])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f85c6f076sm18340282f8f.34.2026.07.23.11.40.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Jul 2026 11:40:06 -0700 (PDT)
+Message-ID: <6a626006.4d70c427.b2b96.c939@mx.google.com>
+X-Google-Original-Message-ID: <amJgA6tsUqTinTkZ@Ansuel-XPS.>
+Date: Thu, 23 Jul 2026 20:40:03 +0200
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Ryder Lee <ryder.lee@mediatek.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Jianjun Wang <jianjun.wang@mediatek.com>, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v4 4/4] PCI: mediatek-gen3: Add 2-lanes mode support for
+ Airoha AN7581
+References: <20260714115848.8537-5-ansuelsmth@gmail.com>
+ <20260722174010.GA746214@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Fwd: [PATCH v2 0/3] arm64: dts: qcom: initial MSM8920 and Motorola
- Moto E4 (perry)
-References: <4006f966cd5f0c077c413410d79bae1e@floorchan.org>
-Content-Language: en-US
-To: Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Catherine Frederick <serenity@floorchan.org>, linux-clk@vger.kernel.org
-From: Catherine Frederick <serenity@floorchan.org>
-In-Reply-To: <4006f966cd5f0c077c413410d79bae1e@floorchan.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260722174010.GA746214@bhelgaas>
 
-Forwarding to everyone on the list, since this didn't make it there 
-(Damn you roundcube!). A lot of the errors in this PR are results of 
-Claude mindlessly copy-pasting my in-progress work (bad whitespace, 
-incorrect copyright assignments). Fuck man. Sorry in advance if my email 
-client makes a mess on the list.
-
--------- Forwarded Message --------
-Subject: 	Re: [PATCH v2 0/3] arm64: dts: qcom: initial MSM8920 and 
-Motorola Moto E4 (perry)
-Date: 	Thu, 23 Jul 2026 08:49:25 -0400
-From: 	serenity@floorchan.org
-To: 	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-
-
-
-On 2026-07-23 08:00, Konrad Dybcio wrote:
-> On 7/23/26 3:46 AM, Aneesh Pradhan wrote:
->> Initial upstream support for MSM8920 and the Motorola Moto E4 (perry).
->>
->> Depends on the separate qcom,rpmcc-msm8920 clk series (binding +
->> clk-smd-rpm) for the MSM8920 rpmcc compatible used by msm8920.dtsi.
->>
->> This is a trimmed mainline-first subset of msm89x7-mainline/linux#48,
->> rewritten so every phandle exists on qcom/for-next's msm8917 / pm8937 /
->> pmi8950 (the fork DT assumed richer SoC/PMIC nodes that are not
->> upstream yet).
->>
->> Included: regulators, eMMC/SD, USB OTG (gpio-id extcon), keys, RMI4
->> touch + reset-gpios, BMA253 (i2c-gpio), WCNSS (wcn3660b), PMI8950 WLED.
->> Deferred follow-ups: DSI panel, IPA, QDSP6 audio, FG/smbcharger, modem.
->>
->> DTB build verified: msm8917-motorola-perry.dtb + 
->> msm8920-motorola-perry.dtb.
+On Wed, Jul 22, 2026 at 12:40:10PM -0500, Bjorn Helgaas wrote:
+> On Tue, Jul 14, 2026 at 01:58:46PM +0200, Christian Marangi wrote:
+> > The Airoha AN7581 SoC supports configuring the first PCIe0 lane to 2-lanes
+> > mode (2x link) by bonding it with the second PCIe lane (PCIe1). This is
+> > done by configuring the PCIe MUX in the SCU register.
+> 
+> s/2x/x2/ to match usual convention, e.g., PCIe r7.0 sec 1.2
+> 
+> I mentioned this before at
+> https://lore.kernel.org/all/20260626162508.GA27685@bhelgaas
+> 
+> > To correctly configure PCIe0 in 2x link, define in DT the following
+> > additional property:
+> 
+> s/property/properties/
+> 
+> Add a blank line here and indent the following list a couple spaces:
+> 
+> > - additional reg, 'sec-pcie-mac' for the secondary PCIe.
+> > - PERSTOUT reset for both main and secondary PCIE0, called 'perstout' and
+> >   'sec-perstout'
+> > - airoha,scu property to correctly configure the SCU register for the PCIe
+> >   MUX
+> > - 'num-lanes' set to '2' to enable PCIe0 in 2x link
+> 
+> Add '' around 'airoha,scu' to match the others
+> s/2x/x2/
+> 
+> > In such configuration the EQ preset are configured to the same values.
+> > 
+> > To permit correct configuration of the PCIe line, additional logic is added
+> > to assert and deassert the PERSTOUT resets.
+> 
+> s/line/link/
+> 
+> In the PCIe context, "line" doesn't mean anything.
+> 
+> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> > ---
+> >  drivers/pci/controller/pcie-mediatek-gen3.c | 106 ++++++++++++++++----
+> >  1 file changed, 89 insertions(+), 17 deletions(-)
+> > 
+> > diff --git a/drivers/pci/controller/pcie-mediatek-gen3.c b/drivers/pci/controller/pcie-mediatek-gen3.c
+> > index b0accd828589..764974045340 100644
+> > --- a/drivers/pci/controller/pcie-mediatek-gen3.c
+> > +++ b/drivers/pci/controller/pcie-mediatek-gen3.c
+> > @@ -32,6 +32,11 @@
+> >  
+> >  #include "../pci.h"
+> >  
+> > +/* AN7581 SCU register */
+> > +#define SCU_PCIC			0x88
+> > +#define SCU_PCIC_PCIE_CTRL		GENMASK(7, 0)
+> > +
+> > +/* PCIe register */
+> >  #define PCIE_BASE_CFG_REG		0x14
+> >  #define PCIE_BASE_CFG_SPEED		GENMASK(15, 8)
+> >  
+> > @@ -131,6 +136,7 @@
+> >  #define PCIE_ATR_TLP_TYPE_IO		PCIE_ATR_TLP_TYPE(2)
+> >  
+> >  #define MAX_NUM_PHY_RESETS		3
+> > +#define MAX_NUM_PERSTOUT_RESETS		2
+> >  
+> >  #define PCIE_MTK_RESET_TIME_US		10
+> >  
+> > @@ -203,9 +209,11 @@ struct mtk_msi_set {
+> >  struct mtk_gen3_pcie {
+> >  	struct device *dev;
+> >  	void __iomem *base;
+> > +	void __iomem *sec_base;
+> >  	phys_addr_t reg_base;
+> >  	struct reset_control *mac_reset;
+> >  	struct reset_control_bulk_data phy_resets[MAX_NUM_PHY_RESETS];
+> > +	struct reset_control_bulk_data perstout_resets[MAX_NUM_PERSTOUT_RESETS];
+> >  	struct phy *phy;
+> >  	struct clk_bulk_data *clks;
+> >  	int num_clks;
+> > @@ -928,6 +936,14 @@ static int mtk_pcie_parse_port(struct mtk_gen3_pcie *pcie)
+> >  	if (ret)
+> >  		return dev_err_probe(dev, ret, "failed to get PHY bulk reset\n");
+> >  
+> > +	pcie->perstout_resets[0].id = "perstout";
+> > +	pcie->perstout_resets[1].id = "sec-perstout";
+> > +
+> > +	ret = devm_reset_control_bulk_get_optional_exclusive(dev, MAX_NUM_PERSTOUT_RESETS,
+> > +							     pcie->perstout_resets);
+> > +	if (ret)
+> > +		return dev_err_probe(dev, ret, "failed to get PERSTOUT bulk reset\n");
+> > +
+> >  	pcie->mac_reset = devm_reset_control_get_optional_exclusive(dev, "mac");
+> >  	if (IS_ERR(pcie->mac_reset))
+> >  		return dev_err_probe(dev, PTR_ERR(pcie->mac_reset), "failed to get MAC reset\n");
+> > @@ -949,18 +965,38 @@ static int mtk_pcie_parse_port(struct mtk_gen3_pcie *pcie)
+> >  			pcie->num_lanes = num_lanes;
+> >  	}
+> >  
+> > +	/* Map secondary PCIe for 2-lanes mode for EN7581 */
+> > +	if (pcie->num_lanes == 2 && device_is_compatible(dev, "airoha,en7581-pcie")) {
+> > +		regs = platform_get_resource_byname(pdev, IORESOURCE_MEM, "sec-pcie-mac");
+> > +		if (!regs)
+> > +			return -EINVAL;
+> > +		pcie->sec_base = devm_ioremap_resource(dev, regs);
+> > +		if (IS_ERR(pcie->sec_base))
+> > +			return dev_err_probe(dev, PTR_ERR(pcie->sec_base), "failed to map secondary register base\n");
+> > +	}
+> > +
+> >  	return 0;
+> >  }
+> >  
+> >  static int mtk_pcie_en7581_power_up(struct mtk_gen3_pcie *pcie)
+> >  {
+> >  	struct pci_host_bridge *host = pci_host_bridge_from_priv(pcie);
+> > +	unsigned int num_lanes = max(1, pcie->num_lanes);
+> > +	struct regmap *pbus_regmap, *scu;
+> >  	struct device *dev = pcie->dev;
+> >  	struct resource_entry *entry;
+> > -	struct regmap *pbus_regmap;
+> >  	u32 val, args[2], size;
+> >  	resource_size_t addr;
+> > -	int err;
+> > +	int i, err;
+> > +
+> > +	if (num_lanes > 2)
+> > +		return dev_err_probe(dev, -EINVAL, "unsupported num-lanes, maximum 2 lanes supported\n");
+> > +
+> > +	if (num_lanes == 2) {
+> > +		scu = syscon_regmap_lookup_by_phandle(dev->of_node, "airoha,scu");
+> > +		if (IS_ERR(scu))
+> > +			return dev_err_probe(dev, PTR_ERR(scu), "failed to map SCU regmap\n");
+> > +	}
+> >  
+> >  	/*
+> >  	 * The controller may have been left out of reset by the bootloader
+> > @@ -992,6 +1028,19 @@ static int mtk_pcie_en7581_power_up(struct mtk_gen3_pcie *pcie)
+> >  	size = lower_32_bits(resource_size(entry->res));
+> >  	regmap_write(pbus_regmap, args[1], GENMASK(31, __fls(size)));
+> >  
+> > +	/* Assert PERSTOUT for all relevant lines */
+> 
+> s/lines/lanes/ (also several more places below)
+> 
+> > +	err = reset_control_bulk_assert(MAX_NUM_PERSTOUT_RESETS,
+> > +					pcie->perstout_resets);
+> > +	if (err) {
+> > +		dev_err(dev, "failed to assert PERSTOUTs\n");
+> > +		return err;
+> > +	}
+> > +
+> > +	/* Configure SCU MUX to disable PCIE1 for 2 lines mode */
+> > +	if (num_lanes == 2)
+> > +		regmap_update_bits(scu, SCU_PCIC, SCU_PCIC_PCIE_CTRL,
+> > +				   FIELD_PREP(SCU_PCIC_PCIE_CTRL, BIT(1)));
+> > +
+> >  	/*
+> >  	 * Unlike the other MediaTek Gen3 controllers, the Airoha EN7581
+> >  	 * requires PHY initialization and power-on before PHY reset deassert.
+> > @@ -1024,18 +1073,6 @@ static int mtk_pcie_en7581_power_up(struct mtk_gen3_pcie *pcie)
+> >  	pm_runtime_enable(dev);
+> >  	pm_runtime_get_sync(dev);
+> >  
+> > -	val = FIELD_PREP(PCIE_VAL_LN0_DOWNSTREAM, 0x47) |
+> > -	      FIELD_PREP(PCIE_VAL_LN1_DOWNSTREAM, 0x47) |
+> > -	      FIELD_PREP(PCIE_VAL_LN0_UPSTREAM, 0x41) |
+> > -	      FIELD_PREP(PCIE_VAL_LN1_UPSTREAM, 0x41);
+> > -	writel_relaxed(val, pcie->base + PCIE_EQ_PRESET_01_REG);
+> > -
+> > -	val = PCIE_K_PHYPARAM_QUERY | PCIE_K_QUERY_TIMEOUT |
+> > -	      FIELD_PREP(PCIE_K_PRESET_TO_USE_16G, 0x80) |
+> > -	      FIELD_PREP(PCIE_K_PRESET_TO_USE, 0x2) |
+> > -	      FIELD_PREP(PCIE_K_FINETUNE_MAX, 0xf);
+> > -	writel_relaxed(val, pcie->base + PCIE_PIPE4_PIE8_REG);
+> > -
+> >  	err = clk_bulk_prepare_enable(pcie->num_clks, pcie->clks);
+> >  	if (err) {
+> >  		dev_err(dev, "failed to prepare clock\n");
+> > @@ -1043,14 +1080,47 @@ static int mtk_pcie_en7581_power_up(struct mtk_gen3_pcie *pcie)
+> >  	}
+> >  
+> >  	/*
+> > -	 * Airoha EN7581 performs PCIe reset via clk callbacks since it has a
+> > -	 * hw issue with PCIE_PE_RSTB signal. Add wait for the time needed to
+> > -	 * complete the PCIe reset.
+> > +	 * Old Airoha EN7581 clock driver performed PCIe reset via
+> > +	 * clk callbacks since it has a hw issue with PCIE_PE_RSTB signal.
+> > +	 * This is now handled by dedicated PERSTOUT resets with clk
+> > +	 * driver only enabling the refclk.
+> 
+> This reference to the "old Airoha EN7581 clock driver" makes me think
+> there's a dependency between a EN7581 clock driver change and this
+> PERSTOUT change.  If so, please mention the commit SHA1 for the EN7581
+> clock driver change so they're connected and people backporting to
+> older kernels know to be careful to get both of them.
+> 
+> It sounds like this PERSTOUT change might be independent of the x2
+> configuration support.  If so, it should be done in a separate patch.
 >
-> Please send all series as separate threads and all revisions as separate
-> threads too. You can use the b4 tool [1] which takes care of that and a
-> couple other annoyances
->
-> Konrad
->
-> [1] https://b4.docs.kernel.org/en/latest/
+
 Hi,
 
-I just wanted to let you know, this is a drive-by-vibe rendition of my 
-patch series from earlier this year. You aren't talking to a person, but 
-claude code instead:
+thanks for the review. The clock change can go on a separate patch but
+since the hash will change when it will get merged what should I use as
+reference? Also any hint on the tag to use or the format?
 
-https://github.com/aneesh-pradhan/xylitol/commit/4bdb6eaac4724ae0071095a925795c5e5b8b9985
+Or just describe this in the commit description following the usual
+hash + commit title format?
+ 
+> > +	 * Wait is still needed for refclk to stabilize
+> >  	 */
+> >  	msleep(PCIE_T_PVPERL_MS);
+> >  
+> > +	/* Configure all the lines to the same EQ config */
+> > +	for (i = 0; i < num_lanes; i++) {
+> > +		void __iomem *base = pcie->base;
+> > +
+> > +		if (i == 1)
+> > +			base = pcie->sec_base;
+> > +
+> > +		val = FIELD_PREP(PCIE_VAL_LN0_DOWNSTREAM, 0x47) |
+> > +			FIELD_PREP(PCIE_VAL_LN1_DOWNSTREAM, 0x47) |
+> > +			FIELD_PREP(PCIE_VAL_LN0_UPSTREAM, 0x41) |
+> > +			FIELD_PREP(PCIE_VAL_LN1_UPSTREAM, 0x41);
+> > +		writel_relaxed(val, base + PCIE_EQ_PRESET_01_REG);
+> > +
+> > +		val = PCIE_K_PHYPARAM_QUERY | PCIE_K_QUERY_TIMEOUT |
+> > +			FIELD_PREP(PCIE_K_PRESET_TO_USE_16G, 0x80) |
+> > +			FIELD_PREP(PCIE_K_PRESET_TO_USE, 0x2) |
+> > +			FIELD_PREP(PCIE_K_FINETUNE_MAX, 0xf);
+> > +		writel_relaxed(val, base + PCIE_PIPE4_PIE8_REG);
+> > +	}
+> > +
+> > +	/* Deassert PERSTOUT for all relevant lines */
+> > +	err = reset_control_bulk_deassert(MAX_NUM_PERSTOUT_RESETS,
+> > +					  pcie->perstout_resets);
+> > +	if (err) {
+> > +		dev_err(dev, "failed to deassert PERSTOUTs\n");
+> > +		goto err_perstout_deassert;
+> > +	}
+> > +
+> >  	return 0;
+> >  
+> > +err_perstout_deassert:
+> > +	clk_bulk_disable_unprepare(pcie->num_clks, pcie->clks);
+> >  err_clk_prepare_enable:
+> >  	pm_runtime_put_sync(dev);
+> >  	pm_runtime_disable(dev);
+> > @@ -1136,6 +1206,8 @@ static void mtk_pcie_power_down(struct mtk_gen3_pcie *pcie)
+> >  
+> >  	phy_power_off(pcie->phy);
+> >  	phy_exit(pcie->phy);
+> > +	reset_control_bulk_assert(MAX_NUM_PERSTOUT_RESETS,
+> > +				  pcie->perstout_resets);
+> >  	reset_control_bulk_assert(pcie->soc->phy_resets.num_resets,
+> >  				  pcie->phy_resets);
+> >  }
+> > -- 
+> > 2.53.0
+> > 
 
-I can confirm both the MSM8917 and MSM8920 variants exist in the wild, 
-as I own both. As for what you want to do with all this information, 
-that's up to you. This also contains hacked up versions of my in 
-progress DT for perry available on the msm89x7-mainline git. I was 
-planning on picking up this series when I had time again.
-
-Thanks,
-Catherine
+-- 
+	Ansuel
