@@ -1,213 +1,390 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4658E374E7F
-	for <linux-clk@vger.kernel.org>; Thu, 23 Jul 2026 16:40:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9673D374169
+	for <linux-clk@vger.kernel.org>; Thu, 23 Jul 2026 16:41:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784824817; cv=none; b=gjUp23GLAjErNk4Wlfh4BlmwvL3nwmPugVmF+aRuJ2NelsTo0L2jfx7KihryE8qyvjb3piQDyUct4qgxNb0bQXnu6v8ZhIyT38LbVXhQ6n7AxUDydvj6byhBdAOkNXnOgSyKz9yO6L18W01bONFGHVgE73pgKLRb4gL0xcM3Efo=
+	t=1784824920; cv=none; b=jeCxlwiHZ9gBqbe+Fg6m6RhIhR9cDwFXA/mdAmi3iRNF6X4xzV0AaBcMUI542Q+NitzBBCcl/lRnaFUMNH5YkJRsBY1tqmm6AYIE3q/ggqh05t6iAAA9QR0XG2hybmRhPNz3lY8K/o7pgIxgskTmQ+l5kbJpWnEw8gIJRyzIW3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784824817; c=relaxed/simple;
-	bh=89xsqU4N/16DllPbCM+QgiZcRJvl/c4DSF46VkWkHuI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OEkLhDSA30KPxWd/XXA3ixtCn4bBd0VPdy1Ah8PgilIuMUHzTRXOnehQPxdJjLswfTGhyqyHiQseL6rCmgrkKLdsf1UleMFFGowUmbJG8S+WGeBy6KeW1tX77uQCmPK8dPqwMJFbP/eXBxetNB1Oc47KYvDaa/Zyo7Ds5MhAsKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=cWCI7S9z; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=JVJEiC3n; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1784824920; c=relaxed/simple;
+	bh=nKhLx1YswS+Vk/pEmQ4MSK/q7WPQldLd83B/GE4F460=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=gokZf1ll71h0slrE3ZQueG9mabX0mfzMbt5y8zMuGejL1yCL2cmSefX5zARBTVwScaguNpp6o3xpoN6viEu6D0nd7+7SXQFtewVCarI/jVUamhEgNWjd9CijucBdjGI7SqsbndgZPS/MBnruygLfsx9tKOiFCDF1prdKRP2lGik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bGTECcE1; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="cWCI7S9z";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="JVJEiC3n"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66NCvtAA021495
-	for <linux-clk@vger.kernel.org>; Thu, 23 Jul 2026 16:40:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	lk89yAHBTKggkrt0bGV2u4rtt4D0N+23FXFRfMG2ZEQ=; b=cWCI7S9zt7D3hu+q
-	C+H0WcoEH6uvbsZ6BV6RyI7kjtUV4ajDxRWoV09mVQow+M2zxc/wxGJLzjcajsoQ
-	Hwo4caCngxPV/ftgpHO2i4Qws0iO6hmM4S7n7xpWR4XaI/qAeNFDldpnOHd/W2d4
-	r/W2BNfbHq3wrOID3Gx8ka4msjaY41vpd7PaaSCIuI17+ayzpRmp2nokyUxleZiw
-	XoUz7Kq6MHgTcnlW5tNHMt8sE/3zX+8Y5KTS3w9oB4CoZrOESeqeJLTwb51wsK88
-	KvGh/cDh7iI1wL0aDKLH+LNYxkpE5MgxyKR9SfcG7tjslmGiKYa4szlCg/xV5QW2
-	hSvIXA==
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fk6c7m7ev-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Thu, 23 Jul 2026 16:40:13 +0000 (GMT)
-Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-c9c26587e67so685201a12.0
-        for <linux-clk@vger.kernel.org>; Thu, 23 Jul 2026 09:40:13 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bGTECcE1"
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2cf30af983aso2091825ad.3
+        for <linux-clk@vger.kernel.org>; Thu, 23 Jul 2026 09:41:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1784824813; x=1785429613; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=lk89yAHBTKggkrt0bGV2u4rtt4D0N+23FXFRfMG2ZEQ=;
-        b=JVJEiC3nGUcudoU3+FUMJEnDf47L+MvSM+ClQj375P212o+gxrnTe3sVTcMAvAGsVj
-         t3fkUrl0OQGkoaPRDFKD1uqK6cwUUznBQ6mJLF9iU6Y7BLrazPpZk8v62vLUroirfuuo
-         KLQCkMjAAZwhn3gY2+KplN57aBvSWNtg/n/z0JUrtWhEhiXhzXhlrOJpmDB30N45R7Mz
-         EOOHJuJpTlicrvuHU1Gag9arXiaEeBT6SgEiYGPV5JHiyupYg6S4fuZVwdUYpLFUaCOJ
-         aweOpyObeS3EoDDOrrVxf7dUy9xgBF+dl427yfucro6npii3Bg9izGiAdpvMaTVoDT9/
-         5Gjg==
+        d=gmail.com; s=20251104; t=1784824918; x=1785429718; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=eUmkGTWDsRXiaqfk1EZPrHLsgRDIMS19FQSinDt4Wvg=;
+        b=bGTECcE18lwEtNo8IAZ39QdqN5Go/iFHSLWZ24PTds3Ev5Ceh3m4ClECSOcDRWsOFh
+         acFy68wmsq+NK0teAejoHSaFo0L8rkanRAmQI0WfHyowqM27+/9rgclMKD+6G4b1tQXM
+         9I7k56NBHi8m1vxn90gPEBZhtqoElASWW36RSPfHj3K7E49j6GCWhf8ThCrekYPfGTAi
+         Y0ljsWbZ6Q8qroOl6DF4X7B6EBx/aifPk+lSd9Nlz4OJX5By+BRb2R8F5F7eAeeOAomh
+         7OdC9PJzhzxe4G+QBOTqf8wFlt1eS7IrpCRjABzSxuq6BC8IuhrYOePFPoOTV5/bcyMD
+         SBiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784824813; x=1785429613;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=lk89yAHBTKggkrt0bGV2u4rtt4D0N+23FXFRfMG2ZEQ=;
-        b=Ken8/ThrCNjJv+0Br2yMj1o/Y88MymrP1SjIK5taygtjBnAEiwQqLXKl6EJjLS0D9u
-         IsR+JPWyHc2MJ/xP435HGnJquuGnZuZJ4WsC3OJIACdrwAuhJNoUazlMCn8Q1G2MOi60
-         L5zIphHAFVmaHvJjDLFDyvThoSHpIVnLnLXhu9X8DfMlnpjZav5zm4G5z6OENeZJ+LAp
-         QwkFt4Z8sFYF1yAQUCW2nrciDDRkGvPgxdmh3Ez0utNH0CaBUaJZoWV6OR7sYfwGjg9I
-         JHEWM0yvy+0UxgMnEVwjuxPNJInRaoaJfkAV7t/XMsW4rgxrmNcKfPwQFMuNCRWcDVH8
-         0FXA==
-X-Forwarded-Encrypted: i=1; AHgh+Rp4lNlDOCPnj948qHyZWNau533Pg8Yg7ZhrZDprZkN8qW/u0SpD2Ol0xuQA09mUIDNRdEFXIVYsGmA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtMLvAVf7xDbs4Erg3lHf4MLwv3jD0m9afsOnX34TTPvl2rn7E
-	NdlqmJ409jNLvgitKNTHMg29Q/8l251h6kOk8WHO0i/1E69DcUvwjbWS6hFrl5g0skvHKjMbQUO
-	GRluzIZlOm+t3mQBheo5dSxgdmOcmWCFAAMu8CudqeDqu9R1wD+QXfYghaH1sF70=
-X-Gm-Gg: AR+sD11dDEgFicL42WfWJ8pG+wfclRqijIdFAYtRGoinaYj97PjQUd7HQ+wnnlunzsD
-	dny0FWI4ro5bl9m+KVkMKeV3XNl6bCEq2sViiMQacWvx6F79RgXwIrwZ5lWYtgRAceIZAjErv7u
-	mb2OS87qLV6ynccBWjQtKN6g6sN2RSWyVYXkX2SN7E2vOkNm+/zThp9GwtMugf4GixpdLUpefug
-	ZpoqMPwuaa0qNuwoun34HklwhCkLXD3dw8t/1VZVnC/5aXnIYarzezI9pOd3xcgicuxrsna9Gf2
-	lAnC65UuoxNz3PMlC252uqo59BtbAjhjvp0ZUk4VuB6SIcE4xosoyC+lmq9aDATcGJLzgUcCaNL
-	FxoxXlAHMF13yA7QSNDkhBdJ01JpsLNIw
-X-Received: by 2002:a17:90b:2e46:b0:38e:7297:a92e with SMTP id 98e67ed59e1d1-38ec841fd7emr3114812a91.9.1784824812489;
-        Thu, 23 Jul 2026 09:40:12 -0700 (PDT)
-X-Received: by 2002:a17:90b:2e46:b0:38e:7297:a92e with SMTP id 98e67ed59e1d1-38ec841fd7emr3114762a91.9.1784824811728;
-        Thu, 23 Jul 2026 09:40:11 -0700 (PDT)
-Received: from [192.168.0.5] ([49.204.109.252])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-13d130f55c6sm28488722c88.15.2026.07.23.09.40.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Jul 2026 09:40:11 -0700 (PDT)
-Message-ID: <bbea2bd8-adf9-497d-a159-1871aaa9cce3@oss.qualcomm.com>
-Date: Thu, 23 Jul 2026 22:10:06 +0530
+        d=1e100.net; s=20251104; t=1784824918; x=1785429718;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=eUmkGTWDsRXiaqfk1EZPrHLsgRDIMS19FQSinDt4Wvg=;
+        b=fIb3F/tjyd/DrbHYtEgj+85rDqmnmqbTKkxwqgN3nkULCce/cU+6dBfLKIdiZjqcFl
+         DE+YbeIA/e9B2LdJF4Rr9rR99Ss1zGqhJVMncGx1vZVn6BJ1NuUOIS0YFU1Pbe24LMF/
+         9Ftr3lgT3KVjyoNYaxTGkzUYC0eh0VNbpaADIBbSnOmX19Cin69MwHt/YrorawOKGTt5
+         DRqLJ2sNVO6wqd4R3UB0ZVb7cBsovSweB+EqhM7BoPPqJtk92Yjjm4Ct1P784HdkD5b9
+         uABQo+tbVcrtfvTJctK26T2MSoT+zBpBkQEiiazwwtAY5Uav/rC6ECIOqxRLDFFdNsM+
+         2c0g==
+X-Gm-Message-State: AOJu0YxydxQT7dy1rRChClAALdfqYIAX7oNXQbzeW6q+ZJ3k8/b1cL7V
+	yUm8jVKQWvLH5l4OfVA+v+DtJwOv/QV9t/g2tdFrGuvuAViNf352xMHP
+X-Gm-Gg: AR+sD13tNNZQd4lmHTiI93Pv5P55zxoI/69H95UlGiVRWQXqcGc/bqqBXBtEhkRIOgv
+	sTQ3cx5oTwHm/uzhlvs0YJTCxStYB2oYwmqk4zFf3wcle97mbnvCXZOPdPQOS13Uz/zU+WiEMbN
+	wzUIsDSrW2X4BLSCI4QogEn1+41Z/okYLudL96MDTmalrApxmVHG5xOzF3wK/tlIC+HTegiHMzJ
+	TjIUhNlo2DkgQZ8r/apR9T6XgOOAXagegI1jU6nulsvfHeVexUr/m8iwgsUQKYG1ouVuzKLd4wU
+	XMLLgsR3z/IQUCtpvKe/Gcq78Jk/R2o8r3BrhExslNoWW1d47pyTjRE1d5o6E59yXRzOY67SNoY
+	mj4PYyg/x0SqDUFTb73CZX5GDcbdet1jaafxCXPlszjsoSxeVSrcnpNyRK3yWXTsVjYmx3Tpts3
+	ZwnaVBMtp4rxOo4YI=
+X-Received: by 2002:a17:903:2c0c:b0:2c0:db23:4a6 with SMTP id d9443c01a7336-2cfa6a5bf60mr36710165ad.1.1784824917577;
+        Thu, 23 Jul 2026 09:41:57 -0700 (PDT)
+Received: from [172.28.140.252] ([2409:40c2:5013:6395:c953:26aa:50f8:a5e3])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3147df09ac0sm19023944eec.16.2026.07.23.09.41.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Jul 2026 09:41:57 -0700 (PDT)
+From: Bhargav Joshi <j.bhargav.u@gmail.com>
+Date: Thu, 23 Jul 2026 22:11:38 +0530
+Subject: [PATCH v2] dt-bindings: clock: ti,da850-pll: Convert to DT schema
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: Guard clk_round_rate() against error pointers
-To: Brian Masney <bmasney@redhat.com>
-Cc: bjorn.andersson@oss.qualcomm.com,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, konrad.dybcio@oss.qualcomm.com,
-        mukesh.savaliya@oss.qualcomm.com, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, chandana.chiluveru@oss.qualcomm.com
-References: <20260723-fix_ptr_check_on_clk-v1-1-568a7ed87746@oss.qualcomm.com>
- <amIlYNjWeJQ9tcOB@redhat.com>
-Content-Language: en-US
-From: Praveen Talari <praveen.talari@oss.qualcomm.com>
-In-Reply-To: <amIlYNjWeJQ9tcOB@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: CvRT9lztjLrkmKRdKMZCpHNejFtpp8Yj
-X-Proofpoint-ORIG-GUID: CvRT9lztjLrkmKRdKMZCpHNejFtpp8Yj
-X-Authority-Analysis: v=2.4 cv=baZbluPB c=1 sm=1 tr=0 ts=6a6243ed cx=c_pps
- a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=ki/9DncYKtdbYI9tCPo7qA==:17
- a=IkcTkHD0fZMA:10 a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=yOCtJkima9RkubShWh1s:22
- a=EUspDBNiAAAA:8 a=5vk8l6TQ9dB8fbFmZYYA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=_Vgx9l1VpLgwpw_dHYaR:22
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNzIzMDE2MyBTYWx0ZWRfX2AfgsIHNXiNI
- 8bmxkrviCEaPlc6ZnBVqgIDDTdOJdv4c7kw5NgP1vciKiUyyABBrrmLlQiX0ociAHtiEvdyB5kh
- vbGe57gMMWOcpU2mkyMn1O9ebmQbjlE=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzIzMDE2MyBTYWx0ZWRfXxSPd9vbBZZ+x
- Nr1fnHRRzNJ7qTojywtgdk1dtF736xzRSRsgNQhh0Rt5SsTX9b6m8WZSjj8XzXj/dd3rBdfWA+k
- Dx1YToKxZzacbUXmtiIzWfTzEWfRPrvKc4lGYp9kFmo4DpxjfnX+AXPseqfuMtnAGq0t+sztqkD
- QY0LitIaY77zPi2zgm9n8ACjAknG11ufRZ95Gf/Nl+7lVbR4KKpn6HEgo7Mcy4RoawDfdo7y17n
- XYc6iwfy/FrjUnQ0tFhdrt3g5Cqvjws8ysOxFDIpwSL3JF1rLOcJCnvhFFimDbsz2XmW9C5hnd4
- k8b6C1Z9lvxNIkAyB63H3Q+7sVeyeLvTdId/UbNLBYULutIAMcpWqFn5QXSMEu8sHSNWp6IfP8f
- WazVgCI2K7FsJkjdvPUhpt/5k/T6lWLMiwi+cU7/RVcmoeQXOGPbiRRhhHYVnbxCbv027gVJTV0
- NBHckIeXyRhCY6eNRrw==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-07-23_04,2026-07-22_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 malwarescore=0 lowpriorityscore=0 phishscore=0 suspectscore=0
- adultscore=0 impostorscore=0 priorityscore=1501 bulkscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607230163
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260723-ti-pll-v2-1-cdc5e559a77d@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/zWNyw6CMBBFf4XM2poWFVpW/odh0dYpjOGVFomG9
+ N8tEJcnOffcFQJ6wgBVtoLHhQKNQ4L8lIFt9dAgo2diyHle8OLC2Uxs6jqmrk6iUUpIKyHJk0d
+ Hnz30qA8Ob/NCO2/rzWgpzKP/7k+L2LwjWoryH10EE8wVThktrTI3vDe9pu5sxx7qGOMPTRBdZ
+ a4AAAA=
+X-Change-ID: 20260630-ti-pll-94f8eb9918c8
+To: David Lechner <david@lechnology.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, goledhruva@gmail.com, m-chawdhry@ti.com, 
+ daniel.baluta@gmail.com, simona.toaca@nxp.com, j.bhargav.u@gmail.com
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1784824909; l=7557;
+ i=j.bhargav.u@gmail.com; h=from:subject:message-id;
+ bh=nKhLx1YswS+Vk/pEmQ4MSK/q7WPQldLd83B/GE4F460=;
+ b=KWx9pQGvV5phDXmQ6V3Kv3S0WQOwTUb67fuVjUM72yEWEQXp78OnT6FaZSLsDW8toIuW8h00B
+ 7N5W0MQDeaXABbUl1eOYYnth9y0WrxLAI+QbpoA2fWIkIrGhaWdA0Ub
+X-Developer-Key: i=j.bhargav.u@gmail.com; a=ed25519;
+ pk=IqNDwUZKECEA+n8wXctFLBbYL9NhFstZNbOznm/nX1k=
 
-Hi Brian,
+Convert TI da850-pll binding from legacy text to dt schema.
+No functional change is introduced during conversion.
 
-On 23-07-2026 19:59, Brian Masney wrote:
-> Hi Praveen,
->
-> On Thu, Jul 23, 2026 at 11:40:47AM +0530, Praveen Talari wrote:
->> clk_round_rate() only checks for a NULL clk pointer before
->> dereferencing it, but callers such as dev_pm_opp_set_rate() can pass
->> it an error pointer (e.g. ERR_PTR(-ENOENT) left behind by
->> clk_get() when a device has no Linux clock and is instead managed by
->> firmware via a genpd/OPP performance domain).
->>
->> Dereferencing that error pointer to read clk->exclusive_count
->> crashes with an unhandled kernel NULL pointer dereference, since
->> ERR_PTR(-ENOENT) plus the field's offset lands on a small, unmapped
->> address:
->>
->>    Unable to handle kernel NULL pointer dereference at virtual
->>    address 000000000000002e
->>    ...
->>    pc : clk_round_rate+0x3c/0x188
->>    ...
->>    Call trace:
->>     clk_round_rate+0x3c/0x188 (P)
->>     dev_pm_opp_set_rate+0x114/0x33c
->>
->> Change the guard from "if (!clk)" to "if (IS_ERR_OR_NULL(clk))",
->> matching the pattern already used by other clk consumer API
->> functions such as clk_unprepare(), so an error pointer is rejected
->> the same way a NULL pointer is.
->>
->> Signed-off-by: Praveen Talari <praveen.talari@oss.qualcomm.com>
->> ---
->>   drivers/clk/clk.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
->> index 048adfa86a5d..8c1ad3d10284 100644
->> --- a/drivers/clk/clk.c
->> +++ b/drivers/clk/clk.c
->> @@ -1780,7 +1780,7 @@ long clk_round_rate(struct clk *clk, unsigned long rate)
->>   	struct clk_rate_request req;
->>   	int ret;
->>   
->> -	if (!clk)
->> +	if (IS_ERR_OR_NULL(clk))
-> Can you provide more details about the clk_get() call point that starts this
-> error? Specifically which driver this occurs in and the exact scenario that
-> triggers this.
+Signed-off-by: Bhargav Joshi <j.bhargav.u@gmail.com>
+---
+Changes in v2:
+- Moved 'items' list for clocks and clock-names to the top-level
+  properties block.
+- Dropped redundant maxItems: 2 to fix dt_binding_check warnings.
+- Simplified allOf block to only restrict maxItems for pll1.
+- updated maintainers list
+- Link to v1: https://lore.kernel.org/r/20260717-ti-pll-v1-1-f6f9ba8c9b5e@gmail.com
+---
+ .../devicetree/bindings/clock/ti/davinci/pll.txt   |  96 ------------
+ .../bindings/clock/ti/davinci/ti,da850-pll.yaml    | 164 +++++++++++++++++++++
+ 2 files changed, 164 insertions(+), 96 deletions(-)
 
-On SA8255P platform there is no Linux
-clock for the SE, and the perf domain device's OPPs are populated entirely
-from firmware via devm_pm_opp_of_add_table() (through
-of_genpd_add_provider_simple()/onecell()), so the perf domain's OPP table
-has entries even though no clk_get() ever succeeds for it.
+diff --git a/Documentation/devicetree/bindings/clock/ti/davinci/pll.txt b/Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
+deleted file mode 100644
+index c9894538315b..000000000000
+--- a/Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
++++ /dev/null
+@@ -1,96 +0,0 @@
+-Binding for TI DaVinci PLL Controllers
+-
+-The PLL provides clocks to most of the components on the SoC. In addition
+-to the PLL itself, this controller also contains bypasses, gates, dividers,
+-an multiplexers for various clock signals.
+-
+-Required properties:
+-- compatible: shall be one of:
+-	- "ti,da850-pll0" for PLL0 on DA850/OMAP-L138/AM18XX
+-	- "ti,da850-pll1" for PLL1 on DA850/OMAP-L138/AM18XX
+-- reg: physical base address and size of the controller's register area.
+-- clocks: phandles corresponding to the clock names
+-- clock-names: names of the clock sources - depends on compatible string
+-	- for "ti,da850-pll0", shall be "clksrc", "extclksrc"
+-	- for "ti,da850-pll1", shall be "clksrc"
+-
+-Optional properties:
+-- ti,clkmode-square-wave: Indicates that the board is supplying a square
+-	wave input on the OSCIN pin instead of using a crystal oscillator.
+-	This property is only valid when compatible = "ti,da850-pll0".
+-
+-
+-Optional child nodes:
+-
+-pllout
+-	Describes the main PLL clock output (before POSTDIV). The node name must
+-	be "pllout".
+-
+-	Required properties:
+-	- #clock-cells: shall be 0
+-
+-sysclk
+-	Describes the PLLDIVn divider clocks that provide the SYSCLKn clock
+-	domains. The node name must be "sysclk". Consumers of this node should
+-	use "n" in "SYSCLKn" as the index parameter for the clock cell.
+-
+-	Required properties:
+-	- #clock-cells: shall be 1
+-
+-auxclk
+-	Describes the AUXCLK output of the PLL. The node name must be "auxclk".
+-	This child node is only valid when compatible = "ti,da850-pll0".
+-
+-	Required properties:
+-	- #clock-cells: shall be 0
+-
+-obsclk
+-	Describes the OBSCLK output of the PLL. The node name must be "obsclk".
+-
+-	Required properties:
+-	- #clock-cells: shall be 0
+-
+-
+-Examples:
+-
+-	pll0: clock-controller@11000 {
+-		compatible = "ti,da850-pll0";
+-		reg = <0x11000 0x1000>;
+-		clocks = <&ref_clk>, <&pll1_sysclk 3>;
+-		clock-names = "clksrc", "extclksrc";
+-		ti,clkmode-square-wave;
+-
+-		pll0_pllout: pllout {
+-			#clock-cells = <0>;
+-		};
+-
+-		pll0_sysclk: sysclk {
+-			#clock-cells = <1>;
+-		};
+-
+-		pll0_auxclk: auxclk {
+-			#clock-cells = <0>;
+-		};
+-
+-		pll0_obsclk: obsclk {
+-			#clock-cells = <0>;
+-		};
+-	};
+-
+-	pll1: clock-controller@21a000 {
+-		compatible = "ti,da850-pll1";
+-		reg = <0x21a000 0x1000>;
+-		clocks = <&ref_clk>;
+-		clock-names = "clksrc";
+-
+-		pll0_sysclk: sysclk {
+-			#clock-cells = <1>;
+-		};
+-
+-		pll0_obsclk: obsclk {
+-			#clock-cells = <0>;
+-		};
+-	};
+-
+-Also see:
+-- Documentation/devicetree/bindings/clock/clock-bindings.txt
+diff --git a/Documentation/devicetree/bindings/clock/ti/davinci/ti,da850-pll.yaml b/Documentation/devicetree/bindings/clock/ti/davinci/ti,da850-pll.yaml
+new file mode 100644
+index 000000000000..c6563290a702
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/ti/davinci/ti,da850-pll.yaml
+@@ -0,0 +1,164 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/ti/davinci/ti,da850-pll.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: TI DaVinci PLL Controllers
++
++maintainers:
++  - David Lechner <david@lechnology.com>
++
++description:
++  The PLL provides clocks to most of the components on the SoC. In addition to
++  the PLL itself, this controller also contains bypasses, gates, dividers, an
++  multiplexers for various clock signals.
++
++properties:
++  compatible:
++    enum:
++      - ti,da850-pll0
++      - ti,da850-pll1
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    minItems: 1
++    items:
++      - description: Primary reference clock input
++      - description: External clock source
++
++  clock-names:
++    minItems: 1
++    items:
++      - const: clksrc
++      - const: extclksrc
++
++  ti,clkmode-square-wave:
++    type: boolean
++    description:
++      Indicates that the board is supplying a square wave input on the OSCIN
++      pin instead of using a crystal oscillator.
++
++  pllout:
++    type: object
++    description:
++      Main PLL clock output before POSTDIV.
++
++    properties:
++      '#clock-cells':
++        const: 0
++
++    required:
++      - '#clock-cells'
++
++    additionalProperties: false
++
++  sysclk:
++    type: object
++    description:
++      PLLDIVn divider clocks that provide the SYSCLKn clock domains. Consumers
++      of this node should use "n" in "SYSCLKn" as the index parameter for the
++      clock cell.
++
++    properties:
++      '#clock-cells':
++        const: 1
++
++    required:
++      - '#clock-cells'
++
++    additionalProperties: false
++
++  auxclk:
++    type: object
++    description:
++      AUXCLK output of the PLL
++
++    properties:
++      '#clock-cells':
++        const: 0
++
++    required:
++      - '#clock-cells'
++
++    additionalProperties: false
++
++  obsclk:
++    type: object
++    description:
++      the OBSCLK output of the PLL.
++
++    properties:
++      '#clock-cells':
++        const: 0
++
++    required:
++      - '#clock-cells'
++
++    additionalProperties: false
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++
++additionalProperties: false
++
++allOf:
++  - if:
++      properties:
++        compatible:
++          const: ti,da850-pll1
++    then:
++      properties:
++        clocks:
++          maxItems: 1
++        clock-names:
++          maxItems: 1
++        ti,clkmode-square-wave: false
++        auxclk: false
++
++examples:
++  - |
++    clock-controller@11000 {
++        compatible = "ti,da850-pll0";
++        reg = <0x11000 0x1000>;
++        clocks = <&ref_clk>, <&pll1_sysclk 3>;
++        clock-names = "clksrc", "extclksrc";
++        ti,clkmode-square-wave;
++
++        pllout {
++            #clock-cells = <0>;
++        };
++
++        sysclk {
++            #clock-cells = <1>;
++        };
++
++        auxclk {
++            #clock-cells = <0>;
++        };
++
++        obsclk {
++            #clock-cells = <0>;
++        };
++    };
++
++  - |
++    clock-controller@21a000 {
++        compatible = "ti,da850-pll1";
++        reg = <0x21a000 0x1000>;
++        clocks = <&ref_clk>;
++        clock-names = "clksrc";
++
++        sysclk {
++            #clock-cells = <1>;
++        };
++
++        obsclk {
++            #clock-cells = <0>;
++        };
++    };
 
-The clk_get(-ENOENT) case comes from _update_opp_table_clk() in
-drivers/opp/core.c:
+---
+base-commit: dc59e4fea9d83f03bad6bddf3fa2e52491777482
+change-id: 20260630-ti-pll-94f8eb9918c8
 
-     opp_table->clk = clk_get(dev, NULL);
-     ret = PTR_ERR_OR_ZERO(opp_table->clk);
-     ...
-     if (ret == -ENOENT) {
-         /* ... no clk provided ... */
-         opp_table->clk_count = 1;
-         return opp_table;   /* opp_table->clk left as ERR_PTR(-ENOENT) */
-     }
+Best regards,
+-- 
+Bhargav
 
-Because the perf domain device has no "clocks" property (its OPPs are
-supplied purely as performance states by firmware/genpd), clk_get()
-returns -ENOENT, and opp_table->clk is left holding that error pointer
-rather than being reset to NULL.
-
-
-Praveen
-
->
-> Brian
->
