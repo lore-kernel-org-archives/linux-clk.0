@@ -1,61 +1,63 @@
 Received: from mail-yx1-f48.google.com (mail-yx1-f48.google.com [74.125.224.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C34A2D2394
-	for <linux-clk@vger.kernel.org>; Thu, 23 Jul 2026 01:24:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 132062D77F5
+	for <linux-clk@vger.kernel.org>; Thu, 23 Jul 2026 01:24:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784769861; cv=none; b=H6EOFSMbr/l95pX00vev9Uu2nFkul/sA3StFN0kv69gm3StZxxn2N2X6UDEJXhaPy0IEpEeH0PKJLqI9nYNaboafW08R9izGWezARuacR9i+rOEv2Y3cnvHfSTFsUMUaAX9EdM2bJCt9JvAkX7ueHLQ9H9WQb+el7ajduKHlbyE=
+	t=1784769864; cv=none; b=tuVf7qEGBZzPkbdvk+acL67961o/Waos7v4hu//wdGwlswEmu7yV50ULvpfd1MimL7tliRV72THLMm96zKmnd+s4H66qC2SUcic2/BUfX6uh13hxGWyU21nQ/pw/Fd6VhNv2tnc9izHSiRqUyJcLTZFiq/LQtmlpIDyZHKwtk0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784769861; c=relaxed/simple;
-	bh=lMUvG8FMcDQny9fNqRp3TCG6/uNRxCa0yHENbOIbwBM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZpPftl/PKuek4olmSqAyQtLrnWdgM9gKi/rdt9fL/1y5sFfAaxGSBmAo8cQCtKW/ZYvs52QPVdyvZKmQjV8KeRBa25Ca8Y/+w/634odt6ps1iZMpMov517CltorJmuLELTa+kK/HXVfU2LLpkXGzhjeAyV+Ei8nSRdAoWtoKJJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kh+L3AoG; arc=none smtp.client-ip=74.125.224.48
+	s=arc-20240116; t=1784769864; c=relaxed/simple;
+	bh=LnhLqCtXLycdS/7QOpLkbEiXHoC7lU00ZBptzqR4BvY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=chM9EVgKZRPjbUuFLPORI27mC9SE6O8vQUONdlD+WbwysPz/Jud1PMsdGZQv/s7ok7wW2cQZ3kGWiEVgcIqAl0oyyvTibkrLo1Ru8XMAX3JcgD7NmObmNc4LkdwoQT/DmIBqxpD1PCaGMR57TZGPWoQ0J3zOJQHK9r/ctoajlEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OwSZyqed; arc=none smtp.client-ip=74.125.224.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kh+L3AoG"
-Received: by mail-yx1-f48.google.com with SMTP id 956f58d0204a3-66804667af2so38263d50.0
-        for <linux-clk@vger.kernel.org>; Wed, 22 Jul 2026 18:24:19 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OwSZyqed"
+Received: by mail-yx1-f48.google.com with SMTP id 956f58d0204a3-66807ba2f0fso62921d50.3
+        for <linux-clk@vger.kernel.org>; Wed, 22 Jul 2026 18:24:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784769859; x=1785374659; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=p22cXgqkOK2Uxhc2g0dbrDiY3ACKRgSdYIBGvHqDRE0=;
-        b=Kh+L3AoG4Ukl/AMbbfjZWAeOjnlNvPUbtLm7ECBy6kDEsE2pC21MUlgtDk0IWfZf+c
-         oTOAdaFKIcH7RzGeWawTNwsdF4xkZtbLwnfSWyAhrFWRAbyB+UHuIXOtrBj03kUWD2/h
-         3MxSRN2PKoksLYaOYEj4C83qGOzl+2iE6RxlRFhTYy3+AS5ZIHA39jjq2sHmjEl/H5eO
-         LvnnH0+FAKvViOAj+fN9rBjMNPO3v7p8ldlV/k3MWHmiCU49SiAWgWLznymKI9A8D+R6
-         G7v5UOoLtTh47PBUakrnX62nPyVhvnsMqLI1kgTdOOQLHoorgBJfaNnTE4TSjlaSprwO
-         gsEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784769859; x=1785374659;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1784769862; x=1785374662; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=p22cXgqkOK2Uxhc2g0dbrDiY3ACKRgSdYIBGvHqDRE0=;
-        b=iHbRp3XBK+93U9Js36OTDgwpLNGy/KHA7grByit0m88X2OX4kGB8qoIYdfAeVjGpsw
-         9TYG8SxoKYxQ98jh9RlzHus46/XfLuin0ABWmSrl1zpWCSsZRAy8tc1ktcxvja7ujwKg
-         gfe1lhl/rcXasFaQE+xTXW534mO5xHps9TG0Max00uUMdulPS+Yv5ZC9pGM97R2+quuH
-         a6bTqYK1UdDKECgPTvgW7VmIs5uLRxDrh4bTUTQTCAFEwuZFN8D7m3n69FNbTG70aqTp
-         QfblXiqbPgZ1mx6lyqyxz6s6Pm58csdYXz5bflBQrtD7WU2Z6xq2M+87qXMZktk+OWlS
-         c6Ww==
-X-Forwarded-Encrypted: i=1; AHgh+Rr9YLxTW4wWJgxS+m1pdm+iweICyKv7aLDrI7lkoW+zVFZmoJyWjmZfjJjAt+tdgWqLv3lS5nmj4gU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIWoZBWt0+WP8Vs7rlbMkYkjkln/MAxwO3PoZp7E8nfjII5RSo
-	FDiSkaSgGuo7tfFrejXlMONsGwib3PLr1O5JYayO1AJPATgp998YtHdx
-X-Gm-Gg: AR+sD106LSxQtiF99a9/e9xq0i8P7s+5u6mdNcrCcahXzpQhooZNPnWlm+09MzI6+cS
-	T/U/2tfZBAsILvoXOyTQFnkd2cqhUtE9O2Foez+Kcu1sYtKmUM3U704UMsWxZiPx1UgdO/Mm/ot
-	s93HzuKLNwyyFNK6DZhA1GOlbFFoyKKRN3G/dRu+oO2Hz2/X+6MJDPJ3H9Lf3E6KudAC38DUV+A
-	sF8ZbrgDQc2ByS/vT8PzweIXlG1meavGacH5CK0Ha0CklgbYvT+uyuGFj8oFBqwyLu9FZr+l5L7
-	YHv0UaM2K0OqGSnsUFgnBMJSIMk8Nh6ZWDsvAW5JPNm3aULS8sUAYfBdP9qZ/7NRJIphjQT60fG
-	1iwa5o6T3ELhi05YwgyNXi5Q9BhIFm1Yl1ZpzolYym6O9+xNHHZprX7oKKU47cjLpZKivtiqAyD
-	JmC6Hvz3LquIjIPEmu4dkmbTuR1DVdgFKSFpPu0tk=
-X-Received: by 2002:a53:b884:0:b0:668:2f2b:f246 with SMTP id 956f58d0204a3-668a5041eb4mr198296d50.100.1784769859021;
-        Wed, 22 Jul 2026 18:24:19 -0700 (PDT)
+        bh=2b7MZm7+ICouxJH7SNvKRjGaatdEuN4EiW++/CDI8dM=;
+        b=OwSZyqedpApg5deu1lXJmL3sIdM/KzKFEkddCLO+bk2Pb52cxEgemJjs260B3RaqF1
+         pd/i9aym27uoSIhKbKcwBeyb8/TO2I5okL3IIbMWeIAO95JtDvUGpHIF9+do3S/kLCTb
+         E2kPF8INYAEf5HplO6QWOHtcMeAL3vzEnAqX3ghorc9C9Pwto3+v7ZTCCQJfvmu8LWyU
+         hsHniJ0LRSMg3vvyCeleZgxq0X66pgqVTkR0n8JWlrfdiaxNQ4rRuT/vWE7yl0s4aZor
+         mfTY2HHuHBv2xOeoa59KOJZCwGksH7DuUySKEGJe/BEXmBr6wELB0KoPPRwYsPysNPv6
+         2xZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784769862; x=1785374662;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=2b7MZm7+ICouxJH7SNvKRjGaatdEuN4EiW++/CDI8dM=;
+        b=fRnh77ezFCcyVxKRifVAqCZI71hMfOW1+4BSMtA0l4kISLsbji7Vyv5A3OYUUEsdq9
+         z5KLtn4qZdpw4x0I1tYlBtamdSvjUSHKxkayfSDLDcLDG6bvYnz2ct2PTowRMBKGtuOO
+         93Bl2Dffh8FN2B1NNP/NXZLcODu9xOvCWUzckEKYq+AXOCrfiI0Wx5VLK+Wkv19ZpDF5
+         I8BPcybGIULhJUG2LB7UpidwNo6bLIQEP4/y7Tez98AVPHUHspCC3sUkrvZFqrIiyZ69
+         lK8xSzcmtEgLHKFKjOWuQZbZzMFIVB2NgIowWNPgpv8q3N3Dh0gDS8hTxfXcirO9//Yy
+         SqSg==
+X-Forwarded-Encrypted: i=1; AHgh+RqyEOnEbxsisewKqe24/8cnFGR+C1+YQxTBv1PSl9XOGWjp67oekXNRSHz9z6ebhjLaBWrGFlODdJM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnNnqH+OUyWzP9sKnwLXiLdi74uFOwishrjn227Q4VMz/FWmWd
+	8aARR0Nstjk2LsfBGBa33VyXQUiRtHs0VxD9Me7ltMWC9KeNX+8fBS9a
+X-Gm-Gg: AR+sD13mocOJDXwJ+Y145S5mqBrpL07uKUdCeecCRkdqnCnuod9M1gyDnYisBYr6+i1
+	U+G61K5uoQCCvxLLWWAao89JPyt3uPELw9wPxX6IDPxwSGBZyj8vuny0oWVyugEJJXQ98XkaQPB
+	2LUlZsGftiuoV2ucP+SQYTrT9KQegkVBT8Mt3NdvVcpHZrGspKir22IX9RUmGXFE/aAilVm/CBA
+	ZqEEjpd1WlNFqSQZwGDOBde3aUC7AQc3l5fO4ezRyZWEf+4ZWwdoqxDNQRhlWObzy51/j5PN78w
+	FU7rA9KT419l/w7jcL7yT7/LCpkHFd5T9pR31gP3pIl3saRqWc/pdREniZVgdHGpZ4dJCCiwG/f
+	xBQAZTC1BKD1rnKcT6/J2v/k4Nkr4PEL8ZYBCl4Xa8RNUAMdacNu4VItAmKGDD5eMND3DA90Ce4
+	sgkl56+6JFXDrrw979doT//eKMjQa+
+X-Received: by 2002:a05:690e:4381:b0:668:4cbc:9c99 with SMTP id 956f58d0204a3-668a4fa2ae7mr177580d50.86.1784769861965;
+        Wed, 22 Jul 2026 18:24:21 -0700 (PDT)
 Received: from karli.attlocal.net ([2600:1700:7270:4eb0::19])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-6689056dfbasm2319684d50.9.2026.07.22.18.24.16
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-6689056dfbasm2319684d50.9.2026.07.22.18.24.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Jul 2026 18:24:17 -0700 (PDT)
+        Wed, 22 Jul 2026 18:24:20 -0700 (PDT)
 From: Aneesh Pradhan <aneeshpradhan2004@gmail.com>
 X-Google-Original-From: Aneesh Pradhan <aneeshpradhan@acm.org>
 To: Bjorn Andersson <andersson@kernel.org>,
@@ -71,10 +73,12 @@ Cc: Brian Masney <bmasney@redhat.com>,
 	linux-kernel@vger.kernel.org,
 	Catherine Frederick <serenity@floorchan.org>,
 	Aneesh Pradhan <aneeshpradhan@acm.org>
-Subject: [PATCH 0/2] clk: qcom: add MSM8920 RPM clock controller support
-Date: Wed, 22 Jul 2026 18:24:13 -0700
-Message-ID: <20260723012415.48288-1-aneeshpradhan@acm.org>
+Subject: [PATCH 1/2] dt-bindings: clock: qcom,rpmcc: add MSM8920
+Date: Wed, 22 Jul 2026 18:24:14 -0700
+Message-ID: <20260723012415.48288-2-aneeshpradhan@acm.org>
 X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260723012415.48288-1-aneeshpradhan@acm.org>
+References: <20260723012415.48288-1-aneeshpradhan@acm.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -83,38 +87,39 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add MSM8920 support to the SMD RPM clock controller.
+From: "Catherine Frederick (coolguy)" <serenity@floorchan.org>
 
-MSM8920 is essentially MSM8917 with MSM8953's modem stack, which adds
-an IPA block. The new rpmcc table is MSM8917's clocks plus
-RPM_SMD_IPA_{,A_}CLK (same IPA IDs already used by MSM8940; no new
-dt-bindings/clock/qcom,rpmcc.h entries needed).
+Document the "qcom,rpmcc-msm8920" compatible for the RPM clock
+controller found on MSM8920.
 
-This series is split binding-then-driver so the shared clk-smd-rpm
-changes can land via linux-arm-msm independently of the MSM8920 /
-perry device trees (requested in msm89x7-mainline/linux#48 review).
+Signed-off-by: Catherine Frederick (coolguy) <serenity@floorchan.org>
+[aneesh: split the binding into its own patch per submitting-patches;
+rebased onto qcom/for-next oneOf compatible schema]
+Signed-off-by: Aneesh Pradhan <aneeshpradhan@acm.org>
+---
+ Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Based on qcom/for-next (d36de2e50966). Applies cleanly there; also
-applies to torvalds/master with a trivial yaml-schema context shift
-(flat items vs oneOf) if preferred.
-
-Hardware context: needed for initial MSM8920 + Motorola Moto E4 (perry)
-upstream DTS follow-up. Fork PR tracking: msm89x7-mainline/linux#48.
-
-Catherine Frederick authored the original fork series; this re-roll
-keeps her From:/SoB and adds an [aneesh:] note + SoB for the split /
-rebase onto the current for-next binding schema.
-
-Catherine Frederick (coolguy) (2):
-  dt-bindings: clock: qcom,rpmcc: add MSM8920
-  clk: qcom: smd-rpm: add MSM8920 support
-
- .../devicetree/bindings/clock/qcom,rpmcc.yaml |  2 ++
- drivers/clk/qcom/clk-smd-rpm.c                | 31 +++++++++++++++++++
- 2 files changed, 33 insertions(+)
-
-
-base-commit: d36de2e50966f3dd9ef3482f1faf649b3d697714
+diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml b/Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml
+index af9fc5b14a81..49c00e219ada 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml
+@@ -33,6 +33,7 @@ properties:
+               - qcom,rpmcc-msm8909
+               - qcom,rpmcc-msm8916
+               - qcom,rpmcc-msm8917
++              - qcom,rpmcc-msm8920
+               - qcom,rpmcc-msm8936
+               - qcom,rpmcc-msm8937
+               - qcom,rpmcc-msm8940
+@@ -118,6 +119,7 @@ allOf:
+               - qcom,rpmcc-msm8226
+               - qcom,rpmcc-msm8916
+               - qcom,rpmcc-msm8917
++              - qcom,rpmcc-msm8920
+               - qcom,rpmcc-msm8936
+               - qcom,rpmcc-msm8937
+               - qcom,rpmcc-msm8940
 -- 
 2.53.0
 
