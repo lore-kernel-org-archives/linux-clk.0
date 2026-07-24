@@ -1,99 +1,100 @@
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16DCE42D75B
-	for <linux-clk@vger.kernel.org>; Fri, 24 Jul 2026 15:55:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08EE9441636
+	for <linux-clk@vger.kernel.org>; Fri, 24 Jul 2026 16:01:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784908526; cv=none; b=IA7GL7gqSbJy/4Tpe9P7td7GfxGWWPQQ+vjbkN0J4KR4f4kSKN1CvZ4fO0xasmXspZSZDYzNwi0xxSFKcksTCwIUG6gf0E1+xHIhWhBOzZD6pdC87zokH82Ss92nHp4LRyhoEUjcNJhMlG1lJCpe5CpLNk0/35JuzNqcZQ1pSIg=
+	t=1784908872; cv=none; b=kA8P3IT6V14SFkBUaD/iH7TKTKM02SeOPNAMr/WXzYv5IsjpI1hr8aWQbIWvrPKBCR7GTRtibgnKKnEWnSqfh62+3xCdRuYa8DVl7Nr7AaiwwdFHxm9RrBV+ldyfhpucXm0acAoQmHSO/D4UHkXVkFdf2+R6AOQ42ZhRwlxtaYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784908526; c=relaxed/simple;
-	bh=JhbTbs0FOdbvKTC2L6+5hjqopjEb9VhxHqIQKPO/IAE=;
+	s=arc-20240116; t=1784908872; c=relaxed/simple;
+	bh=Fn1LSFnvcQPwl+OpOHERR5ed7+JefDQcZI+Vfb0q8B0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ESPS9hJEdP+rwMorLq/Tny7Qi9RlqkTNrMkcrm4p3X2tviDyfmRj+KVLo5cYzmhMjz/LzF7Hv2NaICIS67j3eZFMWZwPH2FjZmRgi/ToOJy2SblcYW/kccI/4EhhtwxfdMbgB2LNtARmGk9peGuYLkUPae6lPqroybvygRiOlB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ihWzgHWd; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=NtcYu0q3; arc=none smtp.client-ip=170.10.129.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=EoWyejp7UbMgUwT5yWeszMxjNfFQtEefqEBnmvVdozTA5bQKoQPhOuw7cfZjSN5n5Te9yYko+9C098K1rymF7fFN/B4TNvnbBSkQUjS6ZA+NFJ+SrDuhghFgLieFl1ygBE43aOCLBHhM0TeyothLEiCIlrH3U/iBwhgFjn2q6pw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V2Frpefr; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=CwpGYZlk; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ihWzgHWd";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="NtcYu0q3"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V2Frpefr";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="CwpGYZlk"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1784908524;
+	s=mimecast20190719; t=1784908870;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=aWD66a2ehIm/e4HyZcO15kOI/PXJYRp804FM2jJzuJM=;
-	b=ihWzgHWdFN+9vm500uwFu6ShvceQ3TcZQtzIYaejY1QkCWhStdbPdVqlYGtGhE3YzrhB+A
-	JxXyoApO8Ig8DfRR51UUfDAdynZ0q2wMe960wwlWaU9Pc6Fers9dgC+UTO70EObssxmave
-	2fnfr5uzEK+kZ4gSgt3MaX8NuAYr5+c=
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
- [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=+bkEHSp7uhvmCp1vkWRoofsHVhKJ4GQ+rCHfCWSCHbk=;
+	b=V2Frpefrn+laJxjo6xBnC18ic/k5lWGyDo5ps6ABJ/QP73yoEuUnzhT6Yue2OAkKiU/7qg
+	xJNDYSEaRFg35/wYHhd3nep14QCuaf+9Gbih2Pr94vkGiYtlfJTrTVwrQZrR0H3+oVxpGz
+	TdJwnoNDEXCKU16Iyvgic0N4OM9zTG0=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-57-K1T5xDeLO7SYGlWEEA4qxA-1; Fri, 24 Jul 2026 11:55:22 -0400
-X-MC-Unique: K1T5xDeLO7SYGlWEEA4qxA-1
-X-Mimecast-MFC-AGG-ID: K1T5xDeLO7SYGlWEEA4qxA_1784908522
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-51c01ff996dso5943221cf.2
-        for <linux-clk@vger.kernel.org>; Fri, 24 Jul 2026 08:55:22 -0700 (PDT)
+ us-mta-609-fu4tWmNwOs-XTz-oEcxgVQ-1; Fri, 24 Jul 2026 12:01:08 -0400
+X-MC-Unique: fu4tWmNwOs-XTz-oEcxgVQ-1
+X-Mimecast-MFC-AGG-ID: fu4tWmNwOs-XTz-oEcxgVQ_1784908868
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-92ef13b61bcso101128785a.1
+        for <linux-clk@vger.kernel.org>; Fri, 24 Jul 2026 09:01:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1784908522; x=1785513322; darn=vger.kernel.org;
+        d=redhat.com; s=google; t=1784908868; x=1785513668; darn=vger.kernel.org;
         h=user-agent:in-reply-to:content-disposition:content-type
          :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to:content-type;
-        bh=aWD66a2ehIm/e4HyZcO15kOI/PXJYRp804FM2jJzuJM=;
-        b=NtcYu0q3gtPFzO0aIqg8kMrC3Oly67xUPxCdDkpiALicGk8Go2Y9yVgH6v7/9l1yvc
-         riOU8BW0vjJ9M1hRhfm3qurzHvh21/oaA9pRvi26ckBRxhvxBg7TyE9whbsh9w1/U/XI
-         Dgz5XrKpZSni+c0RyLrKcnz7yx4XImCv5unEIE6q3hgwLffbLFXLZE5VOYZTD+V0KSfD
-         MGM2iQui2rSIL7+uRDOEZaq57Ug5eE6xxth3fRHb/ASQf6/d6yVOKsi9qQg5QJJW+7e4
-         7JTMJuPgXqoeE/M3rF+YPT8JZSgkRpEfHDZJxI4Vd5wsQIzD6wJeS1gokbL4xkdeIw/4
-         5EXg==
+        bh=+bkEHSp7uhvmCp1vkWRoofsHVhKJ4GQ+rCHfCWSCHbk=;
+        b=CwpGYZlkDgp/G3ngl+mG2+2XfhgnlD2VsR4dXhGoqNYtYHFgdkOTZjuVTJDNAdhRR5
+         bJI2jafyYPXtoIWaEwWg+3N925gprqVeMKDuZ1sk9X57zChF5rzZvAbMom+k2JDEhg8Z
+         6C012rbygPKFEV6jEeUn0blJRcR/ofpgZ9nwXBGAVvdPhsRxsmrNNVMdF3742MLylyDB
+         hKAuVDTaUNAgb7kPg1sJqfqCacxyWigD9pab6YGwI2bzRD3+9c7QCCUSSvIrBhm1HaIl
+         jHTcfvqNoJKR/eC6o+/Ucpb4vyxE8gh/UCzFLfMiPPvBkFBy7kO4m0uQYQZ6LTWWYhhr
+         C2pw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784908522; x=1785513322;
+        d=1e100.net; s=20251104; t=1784908868; x=1785513668;
         h=user-agent:in-reply-to:content-disposition:content-type
          :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=aWD66a2ehIm/e4HyZcO15kOI/PXJYRp804FM2jJzuJM=;
-        b=HW4XXErOvnWqS763EFNFQKErBJ4OmVK6nlvCi9SkR1mtnLkIre6rjdy07jXKV9y2zU
-         U7XKvntFGBa94ojmWERDLrpLssEyUdxpcU+1KskYEs4OsARlLU4LtXD6Ig3w3VicT8xm
-         8XvtZl8CS3BTvujCeYw3ggIKEO8QNobOYrVA5ESjee738/3TGOa59+UiC/+VxqQEEOWL
-         +MSmRBJ/iJjcZIqk8efbV7Ew81EBiE3Q0L4Ws4UYFyV3HrEp1JnsDc1YL/08y/XqaGTf
-         foP/nfWAD616aCIpRwu0B+1sTKa2O0L0yv4WbrhaqxnWIkC7wN51AcdSdTu6tmQHyd9K
-         Og3Q==
-X-Forwarded-Encrypted: i=1; AHgh+RoyfJlJrBISXPkal6zqpCavBACO2A/HJRqqaSDpDsy3uTsc6A1+Gt0K+0lvolZXIqmkAe/l69DCblM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQGggzg7lsWurTzsILb+bMNZOYfCvRLwlF2AiVPZNQ609Qpq35
-	N7ggPx7ba0tI9qUKr2S+2Jw+NhUQkICtSHrz3iPKdrcEe42/n3vRR6SXwzkaV9AQwV4zgT3mJGu
-	86DMR1RCc5FlV6Jywz7hmx+QAmjhHwIZXu/PdnhzhwLbQRegvimF6jdBpj2TeIw==
-X-Gm-Gg: AR+sD11RRB3t/WBvxPA7e6Xe8b4xS3TgZcVCvIF1+Y5Gcoqxq6itrtvpbuQPyDz4fj0
-	U6CTsj5fuselDgGdUvb2VxaWHFakiB3PY+G0xUQ4CeUCLvBwccFLgs41lxaHtU4HIIyzw6zBeM4
-	/3H3og+Wb87C4aIsPbP9ELQ1ewAz7QKZkjSZGhrrOIUWi+CsTBSSaMn69kBfBf26NjUxdHmkOuD
-	gqQ4HUctrLrTHQGAlCtR7YIW/Kd2En6zJhjbnOLpSVt4EjjKd2GRiJPh2ERxo4YJ108xPS7vCFS
-	FDBD8P7IqVrq6zBHDcZ1XKSAId/54Kxzip+1pBVDrUJrGxh6U7dN+KcZPMEqlaZr+rhr4pjz18W
-	fjwk33uQzVEgngzszNfMAvyZSuoz2EWRYcgg=
-X-Received: by 2002:a05:622a:164d:b0:51c:25da:903f with SMTP id d75a77b69052e-5283df3a21fmr79139801cf.59.1784908522057;
-        Fri, 24 Jul 2026 08:55:22 -0700 (PDT)
-X-Received: by 2002:a05:622a:164d:b0:51c:25da:903f with SMTP id d75a77b69052e-5283df3a21fmr79139341cf.59.1784908521604;
-        Fri, 24 Jul 2026 08:55:21 -0700 (PDT)
+        bh=+bkEHSp7uhvmCp1vkWRoofsHVhKJ4GQ+rCHfCWSCHbk=;
+        b=G0SaMdl/se1AuELPXMceBVJ2g50UcoDRD2nBjYFk6sQXXRLbt2qgFJtT3BilTW8SyN
+         YudMF+rctk/fLW5Ncz5Jxm3urV/D/x574Hvv+k2o+Ol4EokzjcOIMm9u4zJ5baJNndSC
+         iJVc3lZco0iQ0sg/OsF2u5OJ7WCKdikxcUbUF76D6AUcacpgHWHHIviBS+ojIEEchFXa
+         vaHoXMzvGN0xEwmxICnjc+vLGQkXt0fq1FB+gvtAzXL72ot/jfAoH0F7Mg1YVzgOOyaK
+         YHChdvM7UPtmJIXdzGJTodbEV4Z4xWYHzBcG1Y6AW2HGwCYErswZOJ6dnPbO+QoBTaVT
+         l+vg==
+X-Forwarded-Encrypted: i=1; AHgh+RqrUuyr2ySJRWrsUms+eO06bY/O8XLXohVYR7O/QphqRAsj06k3t3W50ubrhOC6G1lvjGGYyPoyhdE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVXvtMJCBmDDFe0+5Y8LdVATg3QVcnC2NPjVJ0zlXHlNgdyYOr
+	RFesSsJ2EBPvpI+lXZRPSnKoSzZ7DAmOpnR5ZXg3YJtM+Aml6rAqBKSsm/U0LdhV+b985b9DtgU
+	pzWQ+RB4iwKS5WQYus+3UwOufAnSsaw/o6l7LeIFHHxPanMZ+Qv0BswzO6K3GXg==
+X-Gm-Gg: AR+sD13bmMwg9vRUByM8HwxXw9IS/jqzfcrdicpGt7vBKi+vWaSmPCm4orKJt4VXjpR
+	e3fn2ICN3zvWYNzd8PZPsoKUgz9OKltSLxwsDkGPYwxR+SW9l8RZ3qv1vkPZK7z9lMNu2d0EE+K
+	Vp2Q+nMdJko4zFH0BZ/6R79J0PAgJuJ/vSycUMZdlAdwMf49xEU3MYH2Z5XDSWn8Wih22SSuKbQ
+	rd+26uhl0WCg5kvTIco4GpomLrKULNguNBEKk7v7vrgakoqF2/LwR8oDWY4AW2/xI41QHZvyAEv
+	V22fq52JyOhi4AIiVQeWvVkbgilNr6S1+WlsvYQPfiuD9jQJiOzW5bB/iq4eO9gYXyqyPNzaAQg
+	rU5n8bUcIMeEpmBTRhxZJ73hNONJgwT834kY=
+X-Received: by 2002:a05:620a:4706:b0:92e:7c0e:5912 with SMTP id af79cd13be357-93103aee644mr937768985a.56.1784908866917;
+        Fri, 24 Jul 2026 09:01:06 -0700 (PDT)
+X-Received: by 2002:a05:620a:4706:b0:92e:7c0e:5912 with SMTP id af79cd13be357-93103aee644mr937759585a.56.1784908866130;
+        Fri, 24 Jul 2026 09:01:06 -0700 (PDT)
 Received: from redhat.com (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-529a27f4346sm2307631cf.8.2026.07.24.08.55.19
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-930f6a0371asm684521085a.27.2026.07.24.09.01.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jul 2026 08:55:21 -0700 (PDT)
-Date: Fri, 24 Jul 2026 11:55:18 -0400
+        Fri, 24 Jul 2026 09:01:04 -0700 (PDT)
+Date: Fri, 24 Jul 2026 12:01:02 -0400
 From: Brian Masney <bmasney@redhat.com>
-To: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Cc: Tero Kristo <kristo@kernel.org>,
+To: Luo Jie <jie.luo@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Tony Lindgren <tony@atomide.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	=?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>,
-	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
-	linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: ti: mux: resolve parent clocks by DT index, not by
- name
-Message-ID: <amOK5hytg7ouOhtM@redhat.com>
-References: <20260715-mathieu-wdt-clock-theo-v1-1-da65bba1828b@bootlin.com>
- <alkZmw-XmnCOZfOD@redhat.com>
- <DK6W03NSALJN.1SASGAY5HWSPN@bootlin.com>
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	quic_kkumarcs@quicinc.com, quic_linchen@quicinc.com,
+	quic_leiwei@quicinc.com, quic_suruchia@quicinc.com
+Subject: Re: [PATCH 08/12] clk: composite: Export
+ devm_clk_hw_register_composite_pdata
+Message-ID: <amOMPmn1fBE1gGoe@redhat.com>
+References: <20260724-qcom_ipq5210_cmnpll-v1-0-a8b8679d215f@oss.qualcomm.com>
+ <20260724-qcom_ipq5210_cmnpll-v1-8-a8b8679d215f@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -102,55 +103,21 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <DK6W03NSALJN.1SASGAY5HWSPN@bootlin.com>
+In-Reply-To: <20260724-qcom_ipq5210_cmnpll-v1-8-a8b8679d215f@oss.qualcomm.com>
 User-Agent: Mutt/2.4.0 (2026-06-19)
 
-Hi Mathieu,
+On Fri, Jul 24, 2026 at 08:00:30AM -0700, Luo Jie wrote:
+> devm_clk_hw_register_composite_pdata() is defined but not exported,
+> preventing its use from loadable modules. Add EXPORT_SYMBOL_GPL() so
+> that out-of-tree and built-as-module clock drivers can call it.
+> 
+> Signed-off-by: Luo Jie <jie.luo@oss.qualcomm.com>
 
-On Fri, Jul 24, 2026 at 04:56:01PM +0200, Mathieu Dubois-Briand wrote:
-> On Thu Jul 16, 2026 at 7:49 PM CEST, Brian Masney wrote:
-> > On Wed, Jul 15, 2026 at 05:09:56PM +0200, Mathieu Dubois-Briand wrote:
-> >> Resolve parent clocks by their index into the device tree "clocks"
-> >> property rather than matching names as strings. Name-based matching is
-> >> fragile because a clock's "clock-output-names" value in its provider
-> >> node can differ from the name used to reference it in a consumer node,
-> >> and because names must be globally unique across all clock providers.
-> >> 
-> >> On AM335x, this caused broken clock trees where some clocks failed to
-> >> enable because their parents could not be found.
-> >> 
-> >> Replace of_clk_parent_fill() with a clk_parent_data array that sets
-> >> .index to the array position.
-> >> 
-> >> Fixes: ec7aa25fa483 ("ARM: dts: Use clock-output-names for am3")
-> >> Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-> >
-> > So this only updates of_mux_clk_setup(). of_ti_composite_mux_clk_setup()
-> > calls ti_clk_add_component(), which does a name based matching as well.
-> > It would be nice to have this consistent within the same driver. I know
-> > this is going to require a larger refactor.
-> >
-> > Otherwise your fix looks correct to me.
-> >
-> > Brian
-> 
-> Hi Brian,
-> 
-> Thanks for your comment.
-> 
-> Yes, it does make sense to make everything consistent here. I'm not
-> really comfortable with this driver, but I can give it a try.
-> 
-> Just to be sure, are you talking only about drivers/clk/ti/composite.c
-> or is it about more files in drivers/clk/ti/? I'm not sure to understand
-> the whole interactions between each components here.
-> 
-> Fixing drivers/clk/ti/composite.c to use clk_parent_data looks easy, I
-> can definitely send a patch for that. But you are talking about a larger
-> refactor, so I suspect you would like to see more changes.
+Reviewed-by: Brian Masney <bmasney@redhat.com>
 
-I think we should just get drivers/clk/ti/composite.c consistent with
-itself.
+FYI there's a separate series for the UltraRISC DP1000 SoC to export
+this same symbol. It depends on which series Stephen merges first gets
+in.
 
-Brian
+https://lore.kernel.org/linux-clk/20260720-ultrarisc-clock-v4-1-fe639d63bbac@ultrarisc.com/
 
