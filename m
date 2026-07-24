@@ -1,211 +1,191 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011012.outbound.protection.outlook.com [52.101.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CC203CBE9C
-	for <linux-clk@vger.kernel.org>; Fri, 24 Jul 2026 17:16:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784913369; cv=none; b=LFtiETuyU5khZudjacwNpyiZUQqe6No0pHra04f039CEoTxpmYnsxKut2aC7GKRwkBjRstiDYw+bHDQStvSAOcNTflYrONS/Le0j63EqeX3e52wpKrcF8VqY96fNbq71PhL5+zon8QOlPpzi74LQSXvzO+bX561oRmVTLjaTU0U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784913369; c=relaxed/simple;
-	bh=O7qiwaryPlXurWIjq/udwHQ+dZxQnDOzL079xltsr/s=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=srnovK+OJk0H4PEF0YzvMWCkRiLFkkYy/ZAVjls76BiA/SMZ7J0eR6zFBRGQQVa1nWvjlASUfv2jg74MpoWfQc+YDbunlKqkRBFfwZkUNVH2/vBkFCC/TTNBO0KU+zsq6F/zh/f7OJHG6Y9VZ3yhSEyprY94eLccbF0uoQH0aXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KV/J8ps0; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=OPgUWEkq; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 662D037B011;
+	Fri, 24 Jul 2026 18:14:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1784916899; cv=fail; b=IQow19+LAhvZK/xI3soa+JhZ9xcPlsrpI/yyPkiLc3RShbXXmLS9BIGLIaL/uiKqrviDsDErpM1UbKJAL/mTgBkQjljGqcz12+/jQehgpnhUa+sOtvzLg5xVjdlbcQcdY81j+IRGJjY7fNOHItrfQNBK/4U2mV3K2thCn1TuyKQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1784916899; c=relaxed/simple;
+	bh=oAx0EZ/ZWiAacCO2dqLtV67ChuCR14glA8CoWLyh9Po=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=uw27N+tUfuHgOb5WxLUAjRIT3WMxiKm8jfBF2eTLozuHx/yOJ4Nkd6T0YQS7BFQsQTwIP8LHnvtI4qkydNLZA61NFSgWgF+F13A9erjGAm+go5V+COxpqtL2X9aQfv5RLMz36PBwyUttBQKCg1X+F2aZ+r0ktq3s9UKA38mqMBk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=fail (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=gcWk6y7X reason="signature verification failed"; arc=fail smtp.client-ip=52.101.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KV/J8ps0";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="OPgUWEkq"
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66OGqTLr3154017
-	for <linux-clk@vger.kernel.org>; Fri, 24 Jul 2026 17:16:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	tNmXDzaverxKdYg5q+nd9ERkwwkJAFG1IgfvwE1/7Us=; b=KV/J8ps0zO4pQmgP
-	zk23a7TOxo7tmzkoDTg1/val0c7mix7xoUD2t7dn3h6YH1as4RTWYxw+zABJ4c16
-	Vb6rBmEazzxVnylduC3Gx0bLGRdUitIcOcopvNrGTLNRl7utw84IdXwraZOShobq
-	OJPAOAbTNxXCzIJLSQDQauuWwF622rN40JgcGP13XZGA6cIGbzuRNiD+YVZatl90
-	lYZK0P1HiqL0QceF7+8MACeQnrSxJaqEuxlQ178Fjp2FZZkCK0Te+SkQdU2pq2Ck
-	Sf+pGSvW3+Vw1pJCpyFA3rFQMeoe2iaGfEFJMDS/AOAZCyHHWVTABMllXmTNC5Lp
-	QBKuSQ==
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fm8cggyme-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Fri, 24 Jul 2026 17:16:07 +0000 (GMT)
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-38ec0f510a9so1322377a91.2
-        for <linux-clk@vger.kernel.org>; Fri, 24 Jul 2026 10:16:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1784913367; x=1785518167; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=tNmXDzaverxKdYg5q+nd9ERkwwkJAFG1IgfvwE1/7Us=;
-        b=OPgUWEkqIHjDICY027Fb48LUZWVMp2W0+5hY+acB5nwekFvmDyyS3OnVVltpGAGwe9
-         Zes6kSOME6TFl/DzRaRSfLxX0Z1aSJYw6GmKEBSj9qIwpZoATQPhMgN6Bp1eEffCPSQM
-         qkg0iYfW5zGsWbB/S+sjlVIbaVZxMauf+QCbPw18PG9qNxSTggEObK+G9t++a9HbPsGF
-         5R2RHtmZ8uYEaMd/x0jyRdCcpeC3Tu/TRl50ggejFRd7x+AVDPP05ohfiRCkcf0JeA/W
-         v4FIGgKIA8wEiDdBBMb8hTNfhrX5lT2jUGLMwIyHh2OOL0HvnL1jugwlTJQbcipvS+t3
-         Oc4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784913367; x=1785518167;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=tNmXDzaverxKdYg5q+nd9ERkwwkJAFG1IgfvwE1/7Us=;
-        b=F+Yq7l+KNhJSWanw9lShgO2JRzfsazCo7e4ljYPB06ODkZp1un9thiCVcssMWSG0ry
-         uXuuWgcuZUcHFq84qx7/BbfH25QhbGzK/HF9tE2nZPUlLDUWcOnLcKwXSQqmCDmeIbUy
-         cdMvVGPHvWrJRcfR/wQKYydLYjHVxYaFBHZkdaS2r1u0wQ8n/bSLvfR6khuKIDk0SPS7
-         CgW7WmvN+wmWKguIAlJZ2iKTdJ/yFQMM+wchOVBJF5FoKjWvt/iOAmtWx/AdrRTOzgdU
-         elZfKXaS9TKwnyc1M3KUF68bceMrj4vUDqVjiwifLojuqQCxeuKYOVSRTHG/YxVPNx4o
-         zIfw==
-X-Forwarded-Encrypted: i=1; AHgh+Rqhlb3pgDRu4nOkcHGofV8wUJwkSSWYhzG1SeEBbIdBS1l5rGhPI0q0hbesPSUWGIQkAGjaw9B0088=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjvbtpgNP4KxlWhfDyVNBWZp/W8ERMdgJ3kk6vpWtDePsIc3jU
-	L2m4XU0rHm0+bGHxo24GxjlnuYdLqV2fsww8S3YN4lpw1eaKYe13hMKA52KnTbroFTHSlNYRcKN
-	oWsza13AXZdU7zPV3vcSgb9mOqoJ7tvOd5MTSGpWRVxbCf8vNsp5tLxaJpI+P8w4=
-X-Gm-Gg: AR+sD110WzP8/tZiLY1yFhq1PCOxFiiBRBEfU1+4XsaoT2nMbsdKSgnv1yT7ccvjVT9
-	CiECrSDcQ3HGJmfUm63Rotteu4yu38j65FTRVhSnIKv0qLI34CZc72m/zmf0Xt9ouM1MsLLKhvc
-	JM8PwE9uvPurWV7LV2erslyk7qkU3Ee6MceOt35N6bRE95WWBG7vIKiM0csHOd1cccPBI7JeJyC
-	R+Bp5rg13uTRTd80ekSqq+/KFcXPCKlj0dCgkrGKRO087iGJLTtKLJ61l07X3pvMki6Nz7A82x2
-	IBGPVMwsZeGbQQdiJOQUKfPp1XU3bgmtKwZmkr0knrN5wUt+nk0iEs+fm+0lrgpJgU/xo+gQ2mM
-	I9bwIKM0iE9g9MYxlwAQM4qP1h/545QU=
-X-Received: by 2002:a17:90b:3f48:b0:38e:2fa0:491b with SMTP id 98e67ed59e1d1-38ec6877190mr8420959a91.31.1784913366966;
-        Fri, 24 Jul 2026 10:16:06 -0700 (PDT)
-X-Received: by 2002:a17:90b:3f48:b0:38e:2fa0:491b with SMTP id 98e67ed59e1d1-38ec6877190mr8420909a91.31.1784913366470;
-        Fri, 24 Jul 2026 10:16:06 -0700 (PDT)
-Received: from hu-imrashai-hyd.qualcomm.com ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-13d2eb01aa0sm8400892c88.3.2026.07.24.10.16.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jul 2026 10:16:05 -0700 (PDT)
-From: Imran Shaik <imran.shaik@oss.qualcomm.com>
-Date: Fri, 24 Jul 2026 22:45:34 +0530
-Subject: [PATCH v4 3/3] arm64: dts: qcom: shikra: Add support for
- AudioCoreCC and AudioCoreCSR nodes
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="gcWk6y7X"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pXhPhcIwPPpV+Bazein1QL6ksVGbhXbdbvLvKPfdRb2WlcQo8V2olXgTfOfAOfj29dgJfilc+G+fH3+ZCXcygP/O9sR176CSIKERpuCsK4SbcylM9j1DNnOU1srye0FQMeMn6lmK/QPMTwYsYxTYuK9I5MO7Yr1U35eoAZ0YaHyZM+D8RYWtmrLuRFWB9AQlEcpH7pYQK2suY2jd7ez0odmcSXy4SfzywlT1iROSE17GmD3/5s7zr52Qbr8F62IneUf+bPcOT1PXHN2OReLaqwNQ61fBR3EZjPcxFiuNZ5aLETzLiIrnQrHvcAOQNpd+PUKmjM2ZLD8rCsiry1nGfw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gNBYQepuVvJnW51JbWASnXJ0Kn9EXTqWmqEH4lwZwAA=;
+ b=BtAv71LuiXFFO0t5Lq2Y2EG/+++PQfQ1CcTtAmbD6k1enzk0T5cRxvX65XMVvF59CfVKGO8jn9KcfOASykljk3XBWPiLd6WaRtDfOdwpe8+m1iEDmvedxJFFWT1ddTCXcUStwgGRQaHZAKIGwA9Y+VK/UD6JDuV9ayQZuSm4gSy7IC/INLTsye9nJ6c0yL+KzzBNNKcl3s0YcDvFEFNjoX/KTcuN/qz8SkAb4gOme64kObExVQMJkHxrVQ6rQR5x/0aTJpYsGxo2LoU0uWilrdtnIKRJpDhm069Yyov4bleH6I5ZV7qaFU/BI4h0+D7ZWG+ZRJeP+gy/RAvJM99ACA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gNBYQepuVvJnW51JbWASnXJ0Kn9EXTqWmqEH4lwZwAA=;
+ b=gcWk6y7XiBVrZ74NYtAhxjBCssLSo1w04NiQx11hXlTTnKScFxOhN9nQCoy4xWxbNp+Xl6DGrDmsu/gKVjnQIl1Oh9vGrJqJjha3aUS4THxmGZxWG4JHHcoKQOdEY0mwYE2Vn7iL05jaHCqh8blqJCRUkKIi8Eop8yueYWpc3aud/Aq+Bga+LuE1RSTDpYo+HRc7Ae27E866SQsq43FRwsEoy7ud6QV+kiSN1OyFR3HEozZC4bVrnjkx7fWLQ9ST8mrywVn3pxlbpLRTi0TDoJ0l/JgxEMYY2ElDi4OauJL7gf0iEOlH9Lr2k3oo54R9COSaZ6PEFcPUt5ZjY7xx8Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from GV2PR04MB11799.eurprd04.prod.outlook.com (2603:10a6:150:2cf::9)
+ by AM0PR04MB12003.eurprd04.prod.outlook.com (2603:10a6:20b:741::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.245.11; Fri, 24 Jul
+ 2026 18:14:55 +0000
+Received: from GV2PR04MB11799.eurprd04.prod.outlook.com
+ ([fe80::2146:83a2:5329:b7c]) by GV2PR04MB11799.eurprd04.prod.outlook.com
+ ([fe80::2146:83a2:5329:b7c%6]) with mapi id 15.21.0245.010; Fri, 24 Jul 2026
+ 18:14:55 +0000
+Date: Fri, 24 Jul 2026 14:14:47 -0400
+From: Frank Li <Frank.li@oss.nxp.com>
+To: "Miquel Raynal (Schneider Electric)" <miquel.raynal@bootlin.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	David Gow <david@davidgow.net>, Rae Moar <raemoar63@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Pascal EBERHARD <pascal.eberhard@se.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	kunit-dev@googlegroups.com
+Subject: Re: [PATCH v4 1/7] dt-bindings: clock: Introduce nexus nodes
+Message-ID: <amOrl_Rp7-P7hAti@lizhi-Precision-Tower-5810>
+References: <20260717-schneider-v7-2-rc1-eip201-upstream-v4-0-751547e160e5@bootlin.com>
+ <20260717-schneider-v7-2-rc1-eip201-upstream-v4-1-751547e160e5@bootlin.com>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260717-schneider-v7-2-rc1-eip201-upstream-v4-1-751547e160e5@bootlin.com>
+X-ClientProxiedBy: SA9PR13CA0009.namprd13.prod.outlook.com
+ (2603:10b6:806:21::14) To GV2PR04MB11799.eurprd04.prod.outlook.com
+ (2603:10a6:150:2cf::9)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260724-shikra-audiocorecc-v4-3-0a89bb13d817@oss.qualcomm.com>
-References: <20260724-shikra-audiocorecc-v4-0-0a89bb13d817@oss.qualcomm.com>
-In-Reply-To: <20260724-shikra-audiocorecc-v4-0-0a89bb13d817@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
-        Taniya Das <taniya.das@oss.qualcomm.com>,
-        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Imran Shaik <imran.shaik@oss.qualcomm.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Authority-Analysis: v=2.4 cv=JOMLdcKb c=1 sm=1 tr=0 ts=6a639dd7 cx=c_pps
- a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=DJpcGTmdVt4CTyJn9g5Z:22
- a=EUspDBNiAAAA:8 a=3-fpjux48RbdSrvt_gcA:9 a=QEXdDO2ut3YA:10
- a=uKXjsCUrEbL0IQVhDsJ9:22
-X-Proofpoint-ORIG-GUID: m4mQOyWd1UPfzEbIzDyNAoZwRjxNy7jy
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNzI0MDE1NSBTYWx0ZWRfXxUceN+GVi+np
- 4ixr2JuBspYIq4kKBlcC5SFGHmx28MZPMgoppIgHLJCbzYyUBLCjh+5p1UDeHu3qx/XP23z5Hm3
- kqPErNbfKXqaL++zbzDqLKQjWxKR6/E=
-X-Proofpoint-GUID: m4mQOyWd1UPfzEbIzDyNAoZwRjxNy7jy
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzI0MDE1NSBTYWx0ZWRfX/fzkDzOElAqZ
- ABIra0JsoQjDCMg/alA2B1BzZlvpGSzVVTxFqVkQwEIEi+AsYXNBZatW6nK6juRab9LvE013Br7
- nIQyzuj4V0q2H4R4E2zeHIvRNznKiXfZ7itwdH+LNlnwdyTm0hMozwv+iWrv+tqhPrAyzcUTmwU
- KWQEQXYPpfdAivB1p8eazvc5G4+CRTilL4mP+VXG0sXU5a+z1OsALI3Y9mTdqSEHiEzKGAWPkJm
- k8HM3OMbO57qvOh93pW1G6B0nOIDFt4rTBH+x+J2i6i+g5wb2U5yiChimIblihllu3GOIAvahDU
- QjtL9tS9NGU2qGgS2K27b26DX+QHOMPmLarJynHiaP48QwGhcrxAGjV/MkuuAICNKRrVU+O1GPD
- DwnjtX8JaBKtdjSoPbFflbjq5eicD0sP8vJbl4DCNlef/0Z2MyNmN5LO4SpNbdPSPaMEFLrwHuf
- l387OEggdA0IurW0I5Q==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-07-24_04,2026-07-24_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 suspectscore=0 impostorscore=0 spamscore=0 bulkscore=0
- clxscore=1015 adultscore=0 lowpriorityscore=0 priorityscore=1501
- malwarescore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
- definitions=main-2607240155
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: GV2PR04MB11799:EE_|AM0PR04MB12003:EE_
+X-MS-Office365-Filtering-Correlation-Id: 94911162-afc1-490e-542c-08dee9af7671
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|19092799006|366016|1800799024|23010399003|376014|7416014|3023799007|10067099003|56012099006|4143699003|5023799004|11063799006|22082099003|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	W7iivG9/FG1vIHFaiw7XIPeTOo7u48OwEyfSYwiArbWZvtuHKATXTxqd1P9/j0XxyCb0LOvziOfRtEp9bs38FbkkFLtUU+zwGOOeLcBTY+WWWcytrisgpokF6nUn+NiNoSiX9YniLdH5Ne0qczCUNeTNgiEfEMJl3WTXglq81zOgKs/N+mQ0bfze3ud+QF3rz/Ntk/r+yAF8R2Zjwi6l834/LYpAR9g5oSq/z7MYaaG2mXNBXg1fFNmlI8QRV+DOvL2Q6gmveqxs3tFEW3Ob1TJQPfoGhfeEyKneySH4T00u7YGw0Gg+I/tsDCmsj/Qu9bEtrNm3LjzuBVk2DC7NZ+zxXnhXHF3bSIZQErIeRL3cdjz+KWS6la+UnyX0d1+pDPbz6lK24N0KxgWonHayvsEj+5qQfC4oaJ3NkHYVYf6NZ02slZMuZQkY5XxiE0WtkFwGU4qQDzR/2PBUesx6NA8jQYOD+8/qP+uxkJ0KliB0tNme3H4gPUqhGzZ9Mg6yZ33l2mrBEiHRvT7sUtUPkOndzmV+aDheTHw/GSoL/ieIzbgMRNvjMdo+qw+qsRlybioErwtvA0NQdU2SeX1K6Nj0/MwA011XGbhUKmDXvVgDw7R1pD1aRtS0DWxmC1A2
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR04MB11799.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(366016)(1800799024)(23010399003)(376014)(7416014)(3023799007)(10067099003)(56012099006)(4143699003)(5023799004)(11063799006)(22082099003)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?iso-8859-1?Q?J/944iyUZOH9/9biCBqR7VYRHw/i7LeuHKmlDa/r9hiw+pGmzF/X3hBuYd?=
+ =?iso-8859-1?Q?BHuBb3FN2BLogmGBKSj+WDm/+YRBZx6BoKzwrknAqL414NCaoKpT/lcy6b?=
+ =?iso-8859-1?Q?rESP+mEyGxnGFTfmT0maFYn1Z8r+NhIVappJzPvPzR+XjUXFhH+ZIWBhSe?=
+ =?iso-8859-1?Q?nTO6StR3IYOTqhHa3f44gGSPxYHtjV6LN5G8zeQdPv+dO3GsstMNEljxDL?=
+ =?iso-8859-1?Q?7G9lkutmEhHWSEbqJZaglVR21IxqYUNqujWjGJnnFWyR3+HUn/GD1Tac6t?=
+ =?iso-8859-1?Q?NZvrYUD3BFVOBvXgjFUSCXUX7tEGJVWEM7G6AYn3CKRwbmhK2XwXL0ueT2?=
+ =?iso-8859-1?Q?BIKQ/XJBhBZxjg74nZODAgxw3txDFYllDBgAodRebrTBnP9VhHL8e9ycnF?=
+ =?iso-8859-1?Q?wvr5sYhIwJSMZfCbzt76m/5B6ByLLHMqMgf2FyeABfGT3fm25TbIezq/+H?=
+ =?iso-8859-1?Q?9TRzGxfh9Nn10tv3TEsWct5yhf1Q3UOrJxOUd7aQADyuSazb/AdCMK3/Pt?=
+ =?iso-8859-1?Q?VopAL/gLJN17VLZCxfGkywPl8nYOs1pKvD78N1TOsG4ZOLM56WLKGG0CAB?=
+ =?iso-8859-1?Q?YZfd521E8B77HsB0uggPdWLw5yzxqHUkzx4vTBIl6lnpedNmfYwfoKriWC?=
+ =?iso-8859-1?Q?VkprS0jvWt6/ADG+Ec57tqlRTcM2KjXwyFLeMSLQEoMczREAd/pkF9hZye?=
+ =?iso-8859-1?Q?fHF04w6Ar37cNVwAj5pmcnQRwP286U0kB8KNwtKnSa7ldIC222ZmkNylDQ?=
+ =?iso-8859-1?Q?gZq4ggu5BBoQLs2Xqmo3dIO0GZt0rr8xEppTJpNCtE0ovIrmpiCTgAt1je?=
+ =?iso-8859-1?Q?7N1/zqdp4R6uTTmqA9yVnNmphqqVTP6VAiGfPfOn21BNWfUfvftfuWB7tH?=
+ =?iso-8859-1?Q?bo8r7ix/A1vUHcc9G7PXHY1aFCqts39c5EOKEbcFAHZ9kAok0zq9GztXL/?=
+ =?iso-8859-1?Q?qWURHrbUJs2klLhNvT6q8QRcyFj+0itW6F2kjkrFAoNFXpmlm/oSeSY1Rq?=
+ =?iso-8859-1?Q?tPQ/udkr0M7cx6Qwgn7S7VH7vX4kUv4zmT0lvMMM7E9XWZsmkzV2pBPNrM?=
+ =?iso-8859-1?Q?Pwj8b8STxlAoU6KOFFLb3gF8rgKgmHR5TUweXzNVYuTpgjK+n+IWA4JtMD?=
+ =?iso-8859-1?Q?trxoQBkiRM8WCvl6xpEaJYReP8qc4TdFzTT2+sYjD90sVg8cr3l302EXJz?=
+ =?iso-8859-1?Q?wr8wlm0qkdImRsvxUprojE/28bSjLe8pmGfsP8HyxWTiPHoonnEzDtjH5p?=
+ =?iso-8859-1?Q?YNr3AlswVWXYiF9c3QtpL1BDLR/mxIAdIV4lntkO+FZKKvxNyEzwJJX8/Q?=
+ =?iso-8859-1?Q?XLZ3FN3ho0aHEBGtsBrhlzEH/ouchRtZiQBvZ3DQ1eM/ObiiKIPTPp/p1G?=
+ =?iso-8859-1?Q?QE0NADAxxXWGFXl6v5bLKESnrNw7HcN8JMqM+NISfiPlrYM50bqt7r2pL9?=
+ =?iso-8859-1?Q?217gNIx0EgqGAjgdYvmgE0h5i1wArvO6F/aGuekGA2xQU5r3Ke2HPQvSmk?=
+ =?iso-8859-1?Q?c9PirzJzT2fyMWHAurjbwTUU/STyBe2MVQYLWeDiGLYGSYYLJvpKBpcSa1?=
+ =?iso-8859-1?Q?TSt5f94/QB5rvScxmthICE+vppUAXysHQgjJq2gKs/wmxnnrv/Qf9Q5S8l?=
+ =?iso-8859-1?Q?DM/uiwR2Ae+Tb1E0YruCFGo0e0EHb0RSbPZSx+h8xQRzVBLU3YPUadLoPe?=
+ =?iso-8859-1?Q?1mj7qvlzvykXOVq+TFGCoM515b8GK3N01pDvuQlk0YnnaOTNa+jZk6SZgm?=
+ =?iso-8859-1?Q?szoFd6o2Jaf4k8i2FpL3xOB6qXCWeH8tiffVSFRe9MwUF0GAOYNgxosf98?=
+ =?iso-8859-1?Q?Tsc/XxeA3avfa4+778N7Ol8OIcnf5ljdTYEYwf4ZjL6Q7N/eXnvo?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 94911162-afc1-490e-542c-08dee9af7671
+X-MS-Exchange-CrossTenant-AuthSource: GV2PR04MB11799.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jul 2026 18:14:55.1180
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: muIvrFtwJXy5nDgof4mkOIZ2BvhzrZhq4BgyENm2P/EjRpFQ6+yfr0129gN7IPgBuFsXo4DPdvqWAGW3SDneH4d6zsUDdw4zaqueLUoXKjAIl+LZXd7pfFdxQxM1tPO9
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB12003
 
-Add support for Audio Core Clock Controller (AudioCoreCC) and Audio Core
-CSR nodes on Qualcomm Shikra SoC. The Audio Core Clocks and Resets support
-differs across Shikra variants based on Audio subsystem enablement as
-follows:
-- CQM variant: The QAIF driver runs on HLOS, hence both clocks and resets
-are required to be supported on HLOS.
-- CQS variant: The QAIF driver runs on the Modem, and required clocks are
-handled on Modem, so from HLOS only resets are needed.
-- IQS variant: no soundwire codes, hence no clocks/resets are needed.
+On Fri, Jul 17, 2026 at 05:59:17PM +0200, Miquel Raynal (Schneider Electric) wrote:
+> Hardware containers can just decouple external resources like clock
+> without any more control. Nexus nodes already exist for PWM and GPIOs,
+> add a binding to allow them for clocks as well.
+>
+> No examples are given, the file is litteraly a copy-paste from Hervé
+> Codina's work on PWM Nexus nodes, hence we just point to the examples
+> there which already illustrate very clearly the concept of the various
+> properties.
+>
+> Signed-off-by: Miquel Raynal (Schneider Electric) <miquel.raynal@bootlin.com>
+> ---
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Signed-off-by: Imran Shaik <imran.shaik@oss.qualcomm.com>
----
- arch/arm64/boot/dts/qcom/shikra-cqm-evk.dts |  4 ++++
- arch/arm64/boot/dts/qcom/shikra.dtsi        | 17 +++++++++++++++++
- 2 files changed, 21 insertions(+)
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 
-diff --git a/arch/arm64/boot/dts/qcom/shikra-cqm-evk.dts b/arch/arm64/boot/dts/qcom/shikra-cqm-evk.dts
-index 0a52ab9b7a4c34d371f5ac23efe59d1c9d2723f4..0883c480bfbc80d7bead966b9ba932dee8a77bbf 100644
---- a/arch/arm64/boot/dts/qcom/shikra-cqm-evk.dts
-+++ b/arch/arm64/boot/dts/qcom/shikra-cqm-evk.dts
-@@ -23,6 +23,10 @@ chosen {
- 	};
- };
- 
-+&audiocorecc {
-+	status = "okay";
-+};
-+
- &sdhc_1 {
- 	vmmc-supply = <&pm4125_l20>;
- 	vqmmc-supply = <&pm4125_l14>;
-diff --git a/arch/arm64/boot/dts/qcom/shikra.dtsi b/arch/arm64/boot/dts/qcom/shikra.dtsi
-index 4e5bc9e17c8ed8914733ac9fdc9b69128b40216e..b744534572d63349c4274ffbe5cacbb8fdb4197d 100644
---- a/arch/arm64/boot/dts/qcom/shikra.dtsi
-+++ b/arch/arm64/boot/dts/qcom/shikra.dtsi
-@@ -4,6 +4,7 @@
-  */
- 
- #include <dt-bindings/clock/qcom,rpmcc.h>
-+#include <dt-bindings/clock/qcom,shikra-audiocorecc.h>
- #include <dt-bindings/clock/qcom,shikra-gcc.h>
- #include <dt-bindings/interconnect/qcom,icc.h>
- #include <dt-bindings/interconnect/qcom,rpm-icc.h>
-@@ -640,6 +641,22 @@ &clk_virt SLAVE_QUP_CORE_0 RPM_ALWAYS_TAG>,
- 			};
- 		};
- 
-+		audiocorecc: clock-controller@a0a0000 {
-+			compatible = "qcom,shikra-audiocorecc";
-+			reg = <0x0 0x0a0a0000 0x0 0x10000>;
-+			clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
-+				 <&sleep_clk>,
-+				 <0>;
-+			#clock-cells = <1>;
-+			status = "reserved"; /* Owned by Modem firmware */
-+		};
-+
-+		audiocore_csr: reset-controller@a0b4000 {
-+			compatible = "qcom,shikra-audiocore-csr";
-+			reg = <0x0 0x0a0b4000 0x0 0x1000>;
-+			#reset-cells = <1>;
-+		};
-+
- 		sram@c11e000 {
- 			compatible = "qcom,shikra-imem", "mmio-sram";
- 			reg = <0x0 0x0c11e000 0x0 0x1000>;
-
--- 
-2.34.1
-
+>  .../bindings/clock/clock-nexus-node.yaml           | 30 ++++++++++++++++++++++
+>  1 file changed, 30 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/clock/clock-nexus-node.yaml b/Documentation/devicetree/bindings/clock/clock-nexus-node.yaml
+> new file mode 100644
+> index 000000000000..ff3283bd5fb1
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/clock-nexus-node.yaml
+> @@ -0,0 +1,30 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/clock-nexus-node.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Clock Nexus
+> +
+> +description: >
+> +  A nexus node allows to remap a clock specifier list in a consumer node
+> +  through a container or a connector node in a generic way. With this
+> +  remapping, the consumer node needs to know only about the nexus
+> +  node. Resources behind the nexus node are decoupled by the nexus node
+> +  itself.
+> +
+> +maintainers:
+> +  - Miquel Raynal <miquel.raynal@bootlin.com>
+> +
+> +select: true
+> +
+> +properties:
+> +  clock-map:
+> +    $ref: /schemas/types.yaml#/definitions/uint32-matrix
+> +
+> +dependentRequired:
+> +  clock-map: ['#clock-cells']
+> +
+> +additionalProperties: true
+> +
+> +# See the original pwm-nexus-node.yaml description for examples
+>
+> --
+> 2.54.0
+>
