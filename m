@@ -1,48 +1,48 @@
-Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013063.outbound.protection.outlook.com [40.107.162.63])
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011039.outbound.protection.outlook.com [52.101.70.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D2D7317173;
-	Fri, 24 Jul 2026 18:19:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.63
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 199933BCD10;
+	Fri, 24 Jul 2026 18:27:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.39
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784917182; cv=fail; b=F4uQTSZUnXKJEVie71ccNFDth7qe94Gq6FpIT1X2nljo0XXahZ5kaFj5ppXZ8dm8PVUgHFyG2hHCYZyGyz0yMAE6yrrEB2T8qGZ7dRtOystBRUJnJXx+QEfhVOZCkYiaCzRp7wPhqh6HDLcXW/gZufN78ERKOyF116ydwKGms7s=
+	t=1784917625; cv=fail; b=WE2G5IBIHoIeF0T31D9GVLrDANht7Yayz1v9tGlIXQQJafBHDJqKHQboJ67SFafIHtW9tl1Ox0mfNsoynFFUk+zW6H7nRGg2A7VImpYsRiWQ8qyQOpAf+dEZCLd1PkfvhWAjCAX6DLP+f0ieqLAsOH+w8HWsZeccwNvlrTP2O6Y=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784917182; c=relaxed/simple;
-	bh=ghkDmzI/k7ZyWHrJVR+HWIjjg5C0Y2jU2YYEnSfGv1Y=;
+	s=arc-20240116; t=1784917625; c=relaxed/simple;
+	bh=2RZTND7g/twQjZpDKHrdgf4fkX8pR733f7R6tFFLV/w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=ScRNFgiE5gUlYTfNkDDAAgT5WnnyJBh3eOVRXnv3V8o9GRqwBg67ljiehOUoWhNhGMnutkQHxK5DTVkSFfvoCwbMf982Zv4KhUmqKKKk1FV7FLyL4VjIk8TEayWCyx9iWm55hV/ssU3YV7Pk+fAl4yFIuKh6wlqTbtzzOzzVhp4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=CfLh+c4C; arc=fail smtp.client-ip=40.107.162.63
+	 Content-Disposition:In-Reply-To:MIME-Version; b=VgYGLMpuDf1yQIRdenPZDqepuFJCA1+k9D8CEan2j9lJa87SoQvo2IDhVn494kkNgke1e8FOOkBhWBsxVszO0CAwyMhgjRTZXnmd4r5g9GbQctyB9uMcnB5k8HdwZSooHkHc1swUl/icoVtc6/SKSXdzUHXxJGx1kJw5BKJQo70=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=uFgHFW2k; arc=fail smtp.client-ip=52.101.70.39
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="CfLh+c4C"
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="uFgHFW2k"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=zIKAvmAkdt2Fr/Is7Jhi53Su/1KkPzPiF/qVH2gZb6Ck3cBFUiAFBqBfLtRhwFKwgL1S8YzCNMfnhNOGmhSJoKoAdpL9ixYPqhlsTwg9nLwhp4d4CqxL0kshzdJzomBnkYwmTVmN3bOoOozG8t7rkAsKFybK3VAvjqPMFWaw/kcAtRjnoM/2/ayRA25hhRBnbICBA8y+HOH/pj988Bsjs/Kh4WZG3Q5aiAD6Wv/sJrdCouhKIpruCmFJcxNQY1rb0Yg5ZszllIM0G8lfmbkYUAekMymq6ZS81rsqnVN5MRKSeWQg0sO55JCuEHjs7nsWq/rE2bGS0LETiwEKmzpB8A==
+ b=sKUn/G+LxWz6zvg6IsaXL19Gwd+g884CzeUWRKQkM80/A/jCe/2TiISv6szToG3BGDRvosMg1xEqsvfZ+CDYwymWWu4CF5fInphMdApXoif+LSoDy2muEb8SJ7IucXwpLTpmQHGxtEuP+R5l+LyEYNsOOKNhb489NRCEGmjoK1h45dC9cqxguTFGgkLrSOijUseCh3gXwc3w2RflCIikHNM3d8lBLzuGLBEn5/WRVZexgZ3uVaSuTV2hVflB9/RAk+Ed8NCYwjpWq69IjbIX4M8W//uWxGD81FHmqyHWcPHsNWBSc8m1+RTVh0Zcz5Zo+PT/++k+8v3PIE+XiQlkaw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KC0OIXLaMBS5jsfdX/mNEEgB3TgQXWBWAcehFdso3qY=;
- b=slWN+MiOYGuEMhck3x1eGgU7BWqxZOpxqkfl9zhZ5wl61weAG9xWJ+2tA1UJtoYwvVqkEDZ9LR/eCC+0vSQeHqTlVPe0mJ9TOTZ4kWmZ0b16RZ6LFcc/2airhoyyCV3cCLcz/fxvyZRC6Iu5vMMGo56wSa+ZpFrZIW0qvj0s30I9cHu0+V+5DA1pyGJ1zvGNDCQe67vCB9GrxlLHQXuh3ho+ZihLmSiMWytTNyguVIoINrVci6F5rcKiTZUHTlyGIfJiJzzqBbAus8/Ct4XYgTiX45zrcPzED6eI4V8NhHOO5pcUPz8j7Vc1O7DOBDqAr7vsDmwDz4A3H02pDaysHw==
+ bh=74kFEan0LCmoI8MBHR3rxCvRPXr7TSOJdhQvswzDSFE=;
+ b=eA+vUebVJqhbvbfZ5fqubKuZ3rrRjATOWYi2ni7ww5uqjvlSkOknMODl4h/WKF9Hx9ArX2yYN3j+6RnKIzTo93LAo1AZ98CRQTBI28geQnwpimlSwmmYVnee/bwgkKiwMle9eEcf6ONNkAE1Xp7xZLnBP7JWcS/ZfIw3vm8y48722qLDLBXCBCuYPZ5LcfYfoUbppaE4Pe61K8YXISkZDaIpMjjFUzQk4BkCZN9VtxSCds+jDG78dW1vvZsZR1yf2oGzbWr2Xt4u98Kq7MkCVF8qDxyR6AgAC7vwgHJD4HioJaucbKGodowK6NpQAfYDBawrSrv9NfKupdnKuJ9sAg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
  dkim=pass header.d=oss.nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
  s=selector1-NXP1-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KC0OIXLaMBS5jsfdX/mNEEgB3TgQXWBWAcehFdso3qY=;
- b=CfLh+c4CR2XwvQjKBH5BLfJDdtiVN5de9ZY6PnRjA9TG3pdLUiBNFIKVkPh4Ik3obKELhS9lC7k+FIYAuH8zdrOX/ktlXBVPJyjvs97cDv+7HsGqNI/o6YaM7yrkxOeMfxe+yRPXRtcBRP8Q1rtdAsNxFGz9Zhqs69wZVSSuIyg76c8VEyOq7pCwLab/yfW2+J0oshmJhgOyyMFWxoZ90rVDmBKt5CiVEKdAQSnlgoCXbXWhhmKxMZ6E7W5NIcpXYLI2ZTOj+nJGENQ81JJQLsiuG7kjd3izHlN5Vd1hjqFvVfuEO3Q6rOCH9qGC7JiAfllctv3hKSWKfiuqZqMf0g==
+ bh=74kFEan0LCmoI8MBHR3rxCvRPXr7TSOJdhQvswzDSFE=;
+ b=uFgHFW2koMyPzvFIAFKE2ddvFGTQSNDYxlaZ7m/+RWQdOB3SNSYLX103Gwu7VQ6X0kdf0ptQU/JsyLUgqFMwm2nr8lKupeZsoCbeLwhnCasijw9/59X6WxMu/JG1g5dmfHM8soxnOVk34WjRADChpLCqD2TUxBplY63hPKrdijOOGr9hY/qbZfa4DzaxCK7GmN3kFX1l/0uE5eDHJonEpe3I5wZ4HqiOueEBFZ4Zqyzmk6CJ0mxhrPhse7mWASDbT2+vgm2ib93eXW+uJmwX5e/cbuySdXVf7x6M3XOUnkrdNgFE6NNWSjy3uTLbqXayr84LC1Z9+FGo5OuFZwVeHg==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=oss.nxp.com;
 Received: from GV2PR04MB11799.eurprd04.prod.outlook.com (2603:10a6:150:2cf::9)
- by AM9PR04MB8162.eurprd04.prod.outlook.com (2603:10a6:20b:3b5::9) with
+ by AS8PR04MB7895.eurprd04.prod.outlook.com (2603:10a6:20b:2a3::24) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.245.11; Fri, 24 Jul
- 2026 18:19:38 +0000
+ 2026 18:27:00 +0000
 Received: from GV2PR04MB11799.eurprd04.prod.outlook.com
  ([fe80::2146:83a2:5329:b7c]) by GV2PR04MB11799.eurprd04.prod.outlook.com
  ([fe80::2146:83a2:5329:b7c%6]) with mapi id 15.21.0245.010; Fri, 24 Jul 2026
- 18:19:38 +0000
-Date: Fri, 24 Jul 2026 14:19:27 -0400
+ 18:27:00 +0000
+Date: Fri, 24 Jul 2026 14:26:50 -0400
 From: Frank Li <Frank.li@oss.nxp.com>
 To: "Miquel Raynal (Schneider Electric)" <miquel.raynal@bootlin.com>
 Cc: Michael Turquette <mturquette@baylibre.com>,
@@ -57,17 +57,15 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
 	Wolfram Sang <wsa+renesas@sang-engineering.com>,
 	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	kunit-dev@googlegroups.com
-Subject: Re: [PATCH v4 3/7] clk: tests: Add Kunit testing for
- of_clk_get_parent_name()
-Message-ID: <amOsrxO3TGsl9kfF@lizhi-Precision-Tower-5810>
+	kunit-dev@googlegroups.com, Herve Codina <herve.codina@bootlin.com>
+Subject: Re: [PATCH v4 0/7] clk: Add support for clock nexus
+Message-ID: <amOuamq7CHo6xeCW@lizhi-Precision-Tower-5810>
 References: <20260717-schneider-v7-2-rc1-eip201-upstream-v4-0-751547e160e5@bootlin.com>
- <20260717-schneider-v7-2-rc1-eip201-upstream-v4-3-751547e160e5@bootlin.com>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260717-schneider-v7-2-rc1-eip201-upstream-v4-3-751547e160e5@bootlin.com>
-X-ClientProxiedBy: PH0PR07CA0088.namprd07.prod.outlook.com
- (2603:10b6:510:f::33) To GV2PR04MB11799.eurprd04.prod.outlook.com
+In-Reply-To: <20260717-schneider-v7-2-rc1-eip201-upstream-v4-0-751547e160e5@bootlin.com>
+X-ClientProxiedBy: PH7PR03CA0015.namprd03.prod.outlook.com
+ (2603:10b6:510:339::19) To GV2PR04MB11799.eurprd04.prod.outlook.com
  (2603:10a6:150:2cf::9)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -76,103 +74,128 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: GV2PR04MB11799:EE_|AM9PR04MB8162:EE_
-X-MS-Office365-Filtering-Correlation-Id: bf769213-5698-4ae4-c5e4-08dee9b01f30
+X-MS-TrafficTypeDiagnostic: GV2PR04MB11799:EE_|AS8PR04MB7895:EE_
+X-MS-Office365-Filtering-Correlation-Id: 72abaa05-cb8c-42ef-85c5-08dee9b126e9
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|19092799006|366016|1800799024|23010399003|18002099003|22082099003|56012099006|11063799006|4143699003|10067099003;
+	BCL:0;ARA:13230040|23010399003|7416014|376014|366016|19092799006|1800799024|56012099006|11063799006|10067099003|18002099003|22082099003;
 X-Microsoft-Antispam-Message-Info:
-	uYQHG3Z8PA3NZtIt4i544Wf+o0s4Q0M4XhadMK6gVFhs9awtQe5bvgg2zfeJtb8Kcrc6WaNiHaQ7dvGI4YEv5Bjb+GlRnL6ZxsEwZiaoCe1eJQ5Wqju5/T2LhZBIcWXVbMRHCJKmPeAqOSD/e6VMiL6K1bdlqmyHEyMCWAn6HiHQyOWSx/9FhPOJW2uNaEbvwWsm++TB0AGVOgJgvSrjefCB4xfuSX5PhGd04XmZpJCLNg3wl6wXQ2PQakYrnHrK76wyQqd3PIGXoMv42BOF4eEuowXqpZplulJhxQS3xl5vfMlvx2i8VevQr3e1rqCmIHFP0CgBG6lT3oF1ojLhOk+kKI+owCIUMW8gSye6tq5OLijwzVpMEwGNSq/9vnQVVsAsfCj44CPlA/pPZWZNw34Vo4umHKlOlRHfEpFqLpSCY8bBKbbGGPWbqzkEYPsA+Pv93E8MTQWjYNFei4aToZ11EJ7UYblc3UxF4voEjgzE1NAVvSKs28ojDNTw/HSNyuweHnizQIZnqEYm5OIriiiUZCH0ETyhcFRQBRGYvsjLzSiDTic/3d1EM/JGWTbtxu9JqWtSbsezT699YX1kKPy8SSgdGRP5h2G8I1pTeN5ZldsGcWq4lBVf01UQvfioU56yPtJAYVrJ/w3mfVqsSm/Dmhvydb30F+UXKGv/90A=
+	NeJBWUqeZgXmTqEw/rsqThx+E/PhTb2NMqiE5IF1LhDtvwOu15UKF5BBC6MYJqFEUwoE2AONidq/USdTPL2LTOCesFhBRZLNbtdH6Iqb13+jytXZtMGVNWL+z6ztYEBS06TBttmEYC8fR0hWT2kUjHsfDhSiTEMzOnM8ayQ/BOpuD07er7oXgDMXo5+xER2zNpl3QdJ/p5/kn4WzYVnWSMtQ2gAvUMOqQUH+rhzQEWLYRoYyvBChiKJsQ3/5D3qemhLqOjHIrQOaoJjAXr6ZIWoi9B6SRF/TOwYOGtf0zzGYv4O4cbAozv8OP+rFPRpNpkqN8/oW1UH/U1ABmRf91CtXULY2nHTAU8ihnwnpt3BXfLZGJ2xC80AbUtw+r81G5QNJ/OzGpGWS47ek8MgQGgTpf11DYAoiLK4n0qnRO/02bL7tsmFRxW2Ge7UqIjFphYZqbJ35rIlZjD5ud8YJLu4oeKKyibPEkJqnl63Sv4hV6U15Xz9Za0SfIuGDLLEoX+2L62PPX8+QBXjxC9Md5yv0NNv0CTp5dpDsbQnh01li3nBxGVUKk32kvi1de/Se3Ngu4SkMnw2qBQN6RWptWGTIcxvfY3Mq+3io7rXIa6EcHQw4FjWnTItiI1reDeEp
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR04MB11799.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(19092799006)(366016)(1800799024)(23010399003)(18002099003)(22082099003)(56012099006)(11063799006)(4143699003)(10067099003);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR04MB11799.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(7416014)(376014)(366016)(19092799006)(1800799024)(56012099006)(11063799006)(10067099003)(18002099003)(22082099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?IUWHdd9W29kdycacrmMg3+upIzHJMq5Jnd5Q5Dv0xjLhvjglbz/LzQ82VcXI?=
- =?us-ascii?Q?d2kmirBH6C7V73Tigzyzj6thIiEMgUx6k0fLbDL6aA4PO52vMTvJ31ggRkxa?=
- =?us-ascii?Q?AjrMhE4USoRKVxHmEKdKWXX4PtzjM2ITA8Tkaf623k6XHQQ3khfES+ikPDQI?=
- =?us-ascii?Q?tGIFwmmn5oHO7RAKoSeh6UHTqR5w3+IEKm5X+7waYayVddOwMbKndV+Rw3QN?=
- =?us-ascii?Q?0FYqc7E1XT8MiEstYVyinaagWWGCvF+fNDWBqL6e8pLMuG4LmmcsM9fIYVWv?=
- =?us-ascii?Q?rdOc9Dm4kSMvps5h32cYnLpFL+py9G2aVREm3ZJaNb/b6Wi8/O9f674jPgVG?=
- =?us-ascii?Q?Gmxvy4l7z2ylCYyQxEvR8hJNOeZ99p1xgbuQJrEi30yp3Bz4aU6+MLnAiqyR?=
- =?us-ascii?Q?gJxmmjUATWihZ0OPypkzY6KH1bE9Qxgv+CvAV9qtZ6KSdSX+uQ+1/Hvr0I/O?=
- =?us-ascii?Q?MwbH9JakeYKJp7Dq8rlMkhHxJoOYVfhmVFUtbId8D1coDzO2g7K40CfKZWfL?=
- =?us-ascii?Q?HJoAiPvvNlALvZWYJ5M0HUm1vQngjs0SxcDb6WO/qloYxksfj4iGvkGhUlF6?=
- =?us-ascii?Q?slRiVB3vm4BF/ZMF/kxIqZCSPUX3337dSqnG9Fih9DQu0MpKYWZ7K7KR3wpN?=
- =?us-ascii?Q?lVt0a6O9PbcXQuLJ14KPkpON9Dkh2NAsL5sTdo2JyrBt1jssO8puvF0UimpV?=
- =?us-ascii?Q?gcweaHIefydp2EpHfE7UQV3Hx4ZNu3DsBmZvbE4mYDDoaN78wFqeDLbev+bJ?=
- =?us-ascii?Q?RcwqeqwYkmM4LNuLYNkyudhupmTOwhYeM1WP10YMzRZEU2JVX9X6BpT8ZAlg?=
- =?us-ascii?Q?eOMpTWtdB15ZgTXQyohCwkoSd4rl5Mdhk3EbRSn7QMTtN3aXsdN74QR68ID0?=
- =?us-ascii?Q?pFchIK507mkLQzj0FdmFStCuHF6/wdl3YL8BA4fqdSoZbS8C0kLXPZRc4yjT?=
- =?us-ascii?Q?omQP8bsIoDwCu9q2ALRfqWaDHlrO4YhxeawoOJsdpNsG1ppv4E5dtcRPDp+p?=
- =?us-ascii?Q?QZgAToMW8Fr6fzadSObRYh0ZV4VfA1HU+CSWw9rk/kK4opJoYADDUameEU+w?=
- =?us-ascii?Q?eWHjty8qzWQkVTXhgBDbSL280EhEIad7fDwclU6DJCVqP0HiRNRBP51ymndR?=
- =?us-ascii?Q?m293kOr31mbX6KTmK+kcS65q0PRjYn59hzRIqE+OUv836qh6E4i1gjY1hu3H?=
- =?us-ascii?Q?flQx3jURwJtSqVyH+P499dj9AtUpiJyst9QvX3SD3SmDPOZ8cpU5NuQJHkLT?=
- =?us-ascii?Q?1zACrsq84WJZPp0NvQScyqHHB2w7GabMRZPByHfRVz8yk8WThG94vxbTW2Y4?=
- =?us-ascii?Q?nv10iDwqCOX3D413FkjRsxk52cHHJZ71u5h4KVQ6zL3QtJZ8yE1lh5WCsAlM?=
- =?us-ascii?Q?TOQeMX8OeYPaKS3nXNn5UdV5zYZKCLLQsJrTGUAOByoh8PdVSgM093cFf/DO?=
- =?us-ascii?Q?UslEBoRCXqHOTu1QKO2f1ycModuuk2nAmZzczg+sCOB56+2pMeLVqXbTqxgC?=
- =?us-ascii?Q?4mBgRC7gdfq1lqK2WZ8p7kn0k6yaNVoq4aY+S/1D+A3e4iHOkJyukv6/LkHi?=
- =?us-ascii?Q?S8o+MlHeia7UGRJ7tkkVhx64/g7dBkspzfUdUUzw9+dSwLUwUbPZlqfdCC0T?=
- =?us-ascii?Q?OX3EMZEykjvcKpmcDGVpKzmUWlGbQ+b+h9DS+Btqq1B/wtWGEB655U1JH9TZ?=
- =?us-ascii?Q?6m9plGcaHTzTF13zJP2FSubKJ6zrPUcRP9OBeL4kpVgFuHokuP0G0b1toMN5?=
- =?us-ascii?Q?zH3PYYD9nbA+4xiRprKH9Z1J9a9Qs7aeX6A+Brhf6EfPyibZCWkZ?=
+	=?us-ascii?Q?u3/vgbX91S43UfJ7K/lIP4jkCUw1HEgCSXILhyuf4s0S/mjJIftrO/PjPyH/?=
+ =?us-ascii?Q?/6BLZuxf5ZNpVSoYYBUyzrmnCarCZJAHbAvpGMK7BMdIlhfcJJbAqZ0V/3Co?=
+ =?us-ascii?Q?knjrat7Uj5+S3ghKv13JplqrpadEutC3uOnG+MsNHGeQ7aw85L/2982tcHvq?=
+ =?us-ascii?Q?NZ1vmBPv0VMQ60KweSGjUikWC3Mn5A2yFLJD37xkWm5AaBhKtM0G9AcxhS6G?=
+ =?us-ascii?Q?Yrjq6+r3LBR1vsXlbjk8PhzNOln0vJ2urbT9ynojxp8lJN185znL3okU4Qgx?=
+ =?us-ascii?Q?cnAmWGkKMnmpCevIrXf0dsk1ZiRbB26PnRpSDEyQri1ZcniiddYmuWLhEBkp?=
+ =?us-ascii?Q?Lxt99XqXQvV2Zr/gJBrCiV42pwjmftqO0jHW+WAS2GRlg7T4Ns+loDduc2e+?=
+ =?us-ascii?Q?PpMAyFtAKgTrxXVi0iv4dlzqpXR55/bKm7JOyWd1osZVoodTjxfLRINaVz8T?=
+ =?us-ascii?Q?AAqrIBZtCeDedPhHyXbG1gE/nMAFtLyIExLQl7KisltfC/CDDot0aJZ2qlI8?=
+ =?us-ascii?Q?mtc6NhVpHMDMijS4LKe0oviBS2Wv7ll6JbHpbirhAkOXhN9wQr2vJ8Ii4Ejb?=
+ =?us-ascii?Q?ZUYyFAyAB9Y0fcI56zHLbG1Zr4FtPvVFTOdP6Pq2iQoPr0hYagzDJAQrJJpd?=
+ =?us-ascii?Q?2T/R5ruwVu5PAUQGjZieByLgK/TqXltQ7nYlF6DHeqAgW2eqhtUHZFqfbXZa?=
+ =?us-ascii?Q?bbcSf0CjV8pLITubUwaIjua8s1sUeGzD4cw4ISYWo4BozsoNRS+CO5lXaILl?=
+ =?us-ascii?Q?9Fa03R/fs68ZSz83L6cyqHCVZakWGtTjuKojSVeeQ10hVPqu4rAClexZ1OPs?=
+ =?us-ascii?Q?oPIjU+A6V3wilkZecchCo3lXOeqsKhA0l01mpcaNaEIUHe/6uTXEz0SR6ag9?=
+ =?us-ascii?Q?uke3ulCDQbNrlHF9Gl6qNnoJ5SLscnPFOLl0C5bonRMLhTFAn9vwdQn2uLOY?=
+ =?us-ascii?Q?+AQp8mWu57JeH1AV2liWwxq48MeyVQu7imbAgyUBOtJECn3pA5S2WhVlUWXO?=
+ =?us-ascii?Q?V16kaBL6coD3qaUN5iIj9RIN5Vrb2KOrhZ+HdhDOn6utjH/nA5d0rP7tOa/O?=
+ =?us-ascii?Q?1HESHyCZmaFs/UJQAIkNYUy5HVnQPyqvU4gMXCmUBIde2Pntl5vVrhce86RL?=
+ =?us-ascii?Q?e4U7NHcfKC0XFMNw9cZV6rGaUcfK4KK6dvZsqc/8vPyQExw/Cw2iBLWpArzv?=
+ =?us-ascii?Q?dipdbbcdp9stc04rvDeLNNE0K6CMysjdcTTW2K8Tsqa1yCUQ0nnSClJavW1D?=
+ =?us-ascii?Q?9NnAWXocm0EmxRCAgJIoRWUVekpQvXxZVFN9oQv+J3M6NFJ7cpEPakNv5Qv0?=
+ =?us-ascii?Q?x57DFYxrJtbRSPFbPmI2jtFOWOyHnUBxRtJZOVPguW2Xw6wvWiSFk3Rkq323?=
+ =?us-ascii?Q?Yen1Nq281mrMGhLjbCs68992gu+KtxdBnSz9fzSvvnAt5A+T/nJnedpWQvly?=
+ =?us-ascii?Q?XnTgUsxS5gsjwd92KZfe2H49f4lVEP9oqcKFjk6o89jUccjtpKsO35rkg4WG?=
+ =?us-ascii?Q?N9PDoIFY5zDnhPknOqikNMcjC0KRUdV0r8Rog1X5UZirZLaZ1Xuvq58YAEjP?=
+ =?us-ascii?Q?/ZSEfrHHwi7EYV7Bbh1IdZIZGm7GzRj6NqkR+MQqsB421YnbQ0D8tkbMgXBm?=
+ =?us-ascii?Q?V7tU/eV+grxtlej78DWWocLlkNYt7FQ/QxkJByTb7YUF1P5nTrKv8tTD/fQ0?=
+ =?us-ascii?Q?jdmalPVfsy+ushyXFwfQyzQNuF5G9w4B8nFu8yZlHb9Yb03x4esbeack0FJD?=
+ =?us-ascii?Q?zOc/D10mY3WBuKmAKbEQShe6eEItcn4P9521rJDpLxyKEeUorScK?=
 X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bf769213-5698-4ae4-c5e4-08dee9b01f30
+X-MS-Exchange-CrossTenant-Network-Message-Id: 72abaa05-cb8c-42ef-85c5-08dee9b126e9
 X-MS-Exchange-CrossTenant-AuthSource: GV2PR04MB11799.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jul 2026 18:19:38.1615
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jul 2026 18:27:00.6171
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: xU1Qykqf/CZF4oOtBMzgwpEPkV1ws2RmTr9v7O4AecwkHvZ9zlztmArG7tcKp5LY/3dz498EtK2YgUvhyzfoyjwUyGBBkQS2ThSp3GMI7HiZwXwP/67br1dKHm0x/Pnb
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8162
+X-MS-Exchange-CrossTenant-UserPrincipalName: qhurlw6IluBFnfcTPoWWMqCBF344IGq/1nv38HVAR9WvSjDuMk1BZYXFNwj2ZIh2EwUWi0rtiWNQxLW3aT2ZfVhETf/TbDxQo/4R5/HttfliPR9MLetWWbYIbmNM+LEk
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB7895
 
-On Fri, Jul 17, 2026 at 05:59:19PM +0200, Miquel Raynal (Schneider Electric) wrote:
-> Make sure this helper is never broken, especially since we will soon
-> make some changes in it.
+On Fri, Jul 17, 2026 at 05:59:16PM +0200, Miquel Raynal (Schneider Electric) wrote:
+> Adding support for clock nexus had some prerequisites requested by
+> Stephen, such as adding new selftests, the initial discussions come
+> from:
 
-Nit: Ensure this helper remains correct before making upcoming changes to it.
+Please add me to CC list at the next version. we are waiting for this patch
+set.
 
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
+Frank
 
+>
+> Link: https://lore.kernel.org/linux-clk/20260129201003.288605-1-miquel.raynal@bootlin.com/
+>
+> Changes in v4:
+> - Fixed the kernel doc of of_find_node_by_name_kunit() which was lacking
+>   the fact that it could return NULL upon lookup failure. Also improved
+>   the commit message by mentioning the addition of that helper.
+> - All other Sashiko reports have either been disregarded because they
+>   were way too unrelated or just not relevant enough in my opinion.
+> - Link to v3: https://lore.kernel.org/r/20260716-schneider-v7-2-rc1-eip201-upstream-v3-0-98454e83845c@bootlin.com
+>
+> Changes in v3:
+> - Prevent out-of-bounds clock-ranges fallback in of_parse_clkspec()
+> - tests: Check of_clk_add_hw_provider_kunit() return value and fix node
+>   ref leaks
+> - Link to v2: https://lore.kernel.org/r/20260710-schneider-v7-2-rc1-eip201-upstream-v2-0-b4680787377e@bootlin.com
+>
+> Changes in v2:
+> - Collected tags.
+> - Rebased on top of v7.2-rc1
+> - Exported (test) clock symbols using the _IF_KUNIT() variant, and
+>   imported the NS in the test file.
+> - Fixed a leaking node reported by Brian in the tests. Also used
+>   existing helpers to simplify the test implementation as he wisely
+>   suggested.
+> - Reworded the nexus node binding description as suggested by Stephen.
+> - Dropped redundant and non restraining properties from the Nexus
+>   node as suggested by Rob.
+> - Assigned clock/clock-rate properties now traverse Nexus nodes.
+> - Rename helpers following Stephen proposals.
+> - Rework tests following Stephen hints.
+> - Link to v1: https://lore.kernel.org/r/20260327-schneider-v7-0-rc1-crypto-v1-0-5e6ff7853994@bootlin.com
 >
 > Signed-off-by: Miquel Raynal (Schneider Electric) <miquel.raynal@bootlin.com>
 > ---
->  drivers/clk/clk_test.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
+> Miquel Raynal (Schneider Electric) (7):
+>       dt-bindings: clock: Introduce nexus nodes
+>       clk: tests: Add clk_parse_clkspec() Kunit testing
+>       clk: tests: Add Kunit testing for of_clk_get_parent_name()
+>       clk: Improve a couple of comments
+>       clk: Use the generic OF phandle parsing in only one place
+>       clk: Add support for clock nexus dt bindings
+>       clk: tests: Add Kunit testing for nexus nodes
 >
-> diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
-> index f47f81b7d72a..4084559e157d 100644
-> --- a/drivers/clk/clk_test.c
-> +++ b/drivers/clk/clk_test.c
-> @@ -3637,9 +3637,23 @@ static void clk_parse_clkspec_with_incorrect_index_and_name(struct kunit *test)
->  	KUNIT_EXPECT_TRUE(test, IS_ERR(hw));
->  }
+>  .../bindings/clock/clock-nexus-node.yaml           |  30 +++++
+>  drivers/clk/Makefile                               |   1 +
+>  drivers/clk/clk-conf.c                             |  12 +-
+>  drivers/clk/clk.c                                  |  15 ++-
+>  drivers/clk/clk_kunit_helpers.c                    |  31 +++++
+>  drivers/clk/clk_test.c                             | 139 +++++++++++++++++++++
+>  drivers/clk/kunit_clk_parse_clkspec.dtso           |  31 +++++
+>  include/kunit/clk.h                                |   2 +
+>  8 files changed, 249 insertions(+), 12 deletions(-)
+> ---
+> base-commit: 7f26e010764df304602f33912a0550dcf46e72c2
+> change-id: 20260710-schneider-v7-2-rc1-eip201-upstream-a470e5eab92d
 >
-> +/*
-> + * Verify that of_clk_get_parent_name() returns the correct clock name when
-> + * looking up by index through the consumer's clocks property.
-> + */
-> +static void of_clk_get_parent_name_gets_parent_name(struct kunit *test)
-> +{
-> +	struct clk_parse_clkspec_ctx *ctx = test->priv;
-> +	const char *expected_name = "clk_parse_clkspec_1";
-> +
-> +	KUNIT_EXPECT_STREQ(test, expected_name,
-> +			   of_clk_get_parent_name(ctx->cons_np, 0));
-> +}
-> +
->  static struct kunit_case clk_parse_clkspec_test_cases[] = {
->  	KUNIT_CASE(clk_parse_clkspec_with_correct_index_and_name),
->  	KUNIT_CASE(clk_parse_clkspec_with_incorrect_index_and_name),
-> +	KUNIT_CASE(of_clk_get_parent_name_gets_parent_name),
->  	{}
->  };
->
->
+> Best regards,
 > --
-> 2.54.0
+> Miquel Raynal (Schneider Electric) <miquel.raynal@bootlin.com>
 >
