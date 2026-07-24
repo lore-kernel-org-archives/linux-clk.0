@@ -1,132 +1,227 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11023116.outbound.protection.outlook.com [52.101.127.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E5E03815DD;
-	Fri, 24 Jul 2026 06:14:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784873664; cv=none; b=AVV+vhULwRaceJ4NPldnltHIbAl+S6vt+DKKgp54LcsxKjGrU3PkcxI6Xby9SZRSTTC8rL8rp9xUOizci7yyywwlwTeR+2YaWWt6U7VimtbdANUXEpA/2KGQWfUw5dOV8dfFxbPT68A7H8a3cVab6upDXjFdygf1DzTHY/DXMas=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784873664; c=relaxed/simple;
-	bh=quqFfsehoIPo+OxnG+JYpwoECq4WIV7tk58dw5xuApE=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=h5Mxn3LapDjW+OMJpEBMRSFXe3o0gk69y6l4PMpAC1p4v1/OSkJ/VeElNBNKvqj/jZASygR1t4AgH0DvF91spasa0RWcijkNy+Qjfd7JcRXHcjYNB+KF7xrA189C2+LLVnoXDWPRU6h0NbPJCNruwH/FXcNdncO8+v+U53Ae6hs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CnbgOdCy; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CnbgOdCy"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60A761F000E9;
-	Fri, 24 Jul 2026 06:14:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784873663;
-	bh=RmFxaSAvmibvnwSxxQjIk9IcseWiu4rrYLm9RNHPb8g=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To;
-	b=CnbgOdCyUanSuANJJ9HZMDSRCRke2d4eJzeFvqazJy6HYyZsNgcv9M5SmNz9c+MA+
-	 dbHzPGYStWCtenn5U93aHXDvTTlwOBWVk57qHZwKCOjc/g3Z9TIZYRJ8BIU7X5glRM
-	 +7MnbUBY+VoRD+DfMnQD0o+gyMAwZbYzjO95J64Uk+8plPN5vyzaCgChCa07X3YFvF
-	 v17OC7sCXkCYOtL2qG1fZ825LGYAHzqrjvEcIm5LnFxPvYV+arl300Y41gpG0Qvy0y
-	 At0cu7HvEhZscIN7OuDVy12ieP7dCCOP7MWPGZzP62vWrGtUNTwy0erKDoJT2dTzl2
-	 Rv96zdhRWrTqA==
-Message-ID: <2ff56bb7-e929-4495-a524-6c72071de40c@kernel.org>
-Date: Fri, 24 Jul 2026 08:14:14 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE17936492A;
+	Fri, 24 Jul 2026 06:14:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.116
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1784873675; cv=fail; b=X4asrwj1rP3q6773WDHQN8DyXCWrgpR5Nnv76i1QCz057ofqOQV+3nKpJgzCH9QcGcmy7SnelgQGDD/AZUr+koB8KF0xDKwQBTQlLPIDOVV+sxAMzj8PxOAp/sh+x9jWysUaNNyGErdJXWtAbIYGrPv40QvCfRva25yOgFk4UFY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1784873675; c=relaxed/simple;
+	bh=EUthazb2vpD0jIQt9BMJOEqxWdAgwaJMZAsLKFBQqBY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=MMpazIU4togIyVI/GWeS2DAOCLMBJFtO+X47g7gmme2zwxFk+FPPg8qcUxv22OJhnSehy8HgXcUAI04APwQSi9NH5umLGukMkjgAboTg1plBjI18z/FZiVDoHQ4GckKdpJc4QeeGBdJkQ7vDAuqGQ5xm7Uk0HwcwfwlW2cvnyFE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=52.101.127.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=G7buxAfzmHL31P03sDeoagG+KEA+QcJr1vebNwpgVmq6FL2aKGrjagsN5uQx5u206L6glW0xIv7gqS2vpU1/cUowZmIVSDSihy7asW3RDDur5hXrErOsu5fmmYO/WXvnzHcYQndToKSwhZw983jjuaT72dlceyrPG77F57MVc35teA3qCB9STJivEzBT397+ZkQ0/HSWsaikDMuDfyGXyG4dEFdOMFO+msJPq1nSVSDqpwbYTlODgyqwOfnh71bVCgB1uAwuyH8wTpv9jKnqJ6kPZuiIgc53aVxf0xPr2nZIoVE33IJuYQ61+1fr2EkRKYr16bwlFMfXbQDEdIhomw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OpQp9Gol3M81LlrGz7jp+zVWNJ3mdWJ257XENRvvWM0=;
+ b=Ku4hyfuQKhJKTFRKk/3v8mC9ABXQnnhGlE6pqYCu32n1ZFbCmgT4gN6My9YPmqrMObaet9wXKLlAQ1wnv7qsblc5CyWbQZv6OJ4+k8m006hfcRcqym/FqwcKHJBcTLh3tBrQXJKpcdj3q/NfmVrf/3oZO1QGvZP+Y8GlvkYr+hDlGn3KrGaXunkA7ASV+sxmoNe5PrBBvNRa0xWps7/2BR2MI0JWIdPGQwrALn7cU19EArP/FiUwo8L7TFqKkmRynjnTadQymLWMUjfzS0/y45nMxrDcFfGpOCeqofEWo6W5ZzHQ38ib3EmV6RUMotOunJ+1Q0ouNseR8sJPv5bbRA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=cixtech.com; dmarc=pass action=none header.from=cixtech.com;
+ dkim=pass header.d=cixtech.com; arc=none
+Received: from SEYPR06MB6226.apcprd06.prod.outlook.com (2603:1096:101:df::13)
+ by SEZPR06MB5831.apcprd06.prod.outlook.com (2603:1096:101:c9::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.245.11; Fri, 24 Jul
+ 2026 06:14:29 +0000
+Received: from SEYPR06MB6226.apcprd06.prod.outlook.com
+ ([fe80::56e8:777c:d80e:d364]) by SEYPR06MB6226.apcprd06.prod.outlook.com
+ ([fe80::56e8:777c:d80e:d364%5]) with mapi id 15.21.0245.010; Fri, 24 Jul 2026
+ 06:14:29 +0000
+From: "Joakim  Zhang" <joakim.zhang@cixtech.com>
+To: Brian Masney <bmasney@redhat.com>
+CC: "mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@kernel.org"
+	<sboyd@kernel.org>, "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>, cix-kernel-upstream
+	<cix-kernel-upstream@cixtech.com>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH v11 2/4] clk: cix: add sky1 audss clock controller
+Thread-Topic: [PATCH v11 2/4] clk: cix: add sky1 audss clock controller
+Thread-Index: AQHdGoLMF0PonWj+y0ySnEIbcwYxK7Z7T5gAgADc8gA=
+Date: Fri, 24 Jul 2026 06:14:29 +0000
+Message-ID:
+ <SEYPR06MB6226EA6519C74A0FF0AB677482CF2@SEYPR06MB6226.apcprd06.prod.outlook.com>
+References: <20260723090808.1727598-1-joakim.zhang@cixtech.com>
+ <20260723090808.1727598-3-joakim.zhang@cixtech.com>
+ <amJEjofx348vF4Vd@redhat.com>
+In-Reply-To: <amJEjofx348vF4Vd@redhat.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=cixtech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SEYPR06MB6226:EE_|SEZPR06MB5831:EE_
+x-ms-office365-filtering-correlation-id: e1229059-6038-4e5d-b425-08dee94ad1fb
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|366016|23010399003|1800799024|6133799003|18002099003|22082099003|38070700021|56012099006|4143699003|10067099003;
+x-microsoft-antispam-message-info:
+ vIKJeY1Tmn8kXr9jLTWbwwPyTAQ8diaeWC6pTN2EVpvhd5mhY6FiApuToGR+qH43Dbn8IY51ZBdly59fB9tm3II1WFWVpVhdvt5aOyS+Mk+sv+trrXUHQKRWjs/+V1MD+YvGTWomup4etKk78DB3t53M+mIrhDFgthZrxnSXpW9MBBzu3CYPV1QmopliZS2RcBXUP6cTOLSV2o2cGubMISvdcZDkC/YsqtwgW9peVtaBwR36cqL7M7xoK23ycgJ88ds4jXzc6Z74xhSuLEaMlX1/HeMJ7Lc6xbZMpBzR7dv9O+XqtbpEBexQXLAgu6J8Nri15BVj7ekicdcjIwHn0oif8lsTYFgtEVwd5/CrqrsJLBdJiwMcx8aDYbg+czRdiDevuZCo9PFd27E+jSLzOSm4zqLazQ9Pxj2Wecb0m/9pAPZsvOVkzIr4IjYZjNUFfREmwqUY+nTy5zyO27SIE4CCLtw6hznXAzAivtC9hFKVHtx3vpCFAm9htWsPU/gOD5N/eGZEl+OOU3Qg4UT2c8yTEh1VZ4upLu3zl61m1c6LXURc9ORZZswuRwm1jE4qU9q6KnXf0WTKzP2CguWYdF0IwT4ZAMAedHHA7sphvOGSwCxj7vY0rR5Wi8zhDGi/TfY4aFOYJ5yN3Ss1yD8UuhNCZh/r5/NgqZojw45iKPYMuDg9djrepKSRuJEAlCZw7Q8qV8rz7dW6o1nxxFHyolExzuVGf32p4OcI44vcH0Q=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEYPR06MB6226.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(23010399003)(1800799024)(6133799003)(18002099003)(22082099003)(38070700021)(56012099006)(4143699003)(10067099003);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?dFYe9Ptz+OAtPtncU3Fc5r9C68O3gq0+FH+qf8VoZBhNxhX5i+RX4IluA8vE?=
+ =?us-ascii?Q?oS6SVCL+iQj0SE15FBfaOiX6GqnsJaEZBrgPKd0wZD1dAc/Z1P9Fxcx3SkzN?=
+ =?us-ascii?Q?bai+NPCUEZW1Oco9FxC/Tp1NLXuvR58pu83rgPDmCe1KPZnpb3ZhAhqnOXTn?=
+ =?us-ascii?Q?0t14t0DLy9N05XmMSI+kEHO6xAj3HZo8YaIpnBuKWpkq+4tV1Ri5AA2lxwqJ?=
+ =?us-ascii?Q?BEQh9lSozYYiZ4KmXPn9M40HftHyEubiTOTvmEXTVh2Wx5bQayClFyN6S1P6?=
+ =?us-ascii?Q?Can3TQ8QQNV8uXkGMEo3eeCVjV0OvXt0wQNdx2fwZPnm50V0b6PdjQiSvHeG?=
+ =?us-ascii?Q?IhoMRbc91VNTXseIFkIq3nvDVrY5uepSWYGEbmYZr4w7weFlb0nhGucxWhs8?=
+ =?us-ascii?Q?f9A4jMQpDm+CeVlwyPkHQqayw2j0qlgH3gsLpBKmyAZV7CD/M5JWTmO/Ksqz?=
+ =?us-ascii?Q?Hvx/zWjpSPpbzskVTMAH9bSw0/7NcJGcuc+4nfskBm5ifFnwoSBuMC6SQ2g4?=
+ =?us-ascii?Q?fpGBOBVKvLLvuubVEGsn8FmMwKOt0zTMIX3TDeLB/35235gLEohoncvLNsvo?=
+ =?us-ascii?Q?oYMipVV7XBvR2MoubP5xEB+vU0uN/8OM5xLCLIc8jGcDRLdCqX7duMze5MGb?=
+ =?us-ascii?Q?pfD5HYG0rcSzxw3PJCAcPD/WgYYBZIhFQ3Sl8RVxIRmhZAI2hmYhKoT2YejV?=
+ =?us-ascii?Q?6bbbbPej7YvAiJ4Gpyr9LXSfpNNvCLCfPFTF/L7UkE5zhUQrAydnZYE/B3An?=
+ =?us-ascii?Q?GxkoX4Q3amtyMgVwYgZLQxSWMM+vuSiX2bXOA/h5pCIKxt9rY7DU6zTFQJHk?=
+ =?us-ascii?Q?RMl0uSgNIMJ+VrIwWljv4hOIjLcDu2yMGmLg4hjBZ2vRYc2M70Vy7V7QeCx2?=
+ =?us-ascii?Q?qVZQ6REvSTsw5Ehb/81eAVi16bKh6IziANjTJYBkVU2Knj6PBzhJxX+R8yYV?=
+ =?us-ascii?Q?LyS2F8Vzz/tX80MshuPTi2yHfHNx2SIX4ZwnKC4X6l/mIIeh1CpqCZD9eJyF?=
+ =?us-ascii?Q?tOi/iT1R9NS+qF49vGUuu2Di8sOaUmKtTMyom3AlPOoTOBYWR4b/wMGI0o86?=
+ =?us-ascii?Q?dBWnARPm41ektJyIqTGcNvpQtklWqTF4ZL1E5DT12VMiDnGfqJ7bTbZKsZOb?=
+ =?us-ascii?Q?EXdPSC38dO4maMHhtFDwMCl36zINeWCZR5/v7XzQlc1PwQjKmBUN085bq/Wb?=
+ =?us-ascii?Q?FSwEdvjEDX7VDpB6POq+k1iKrSHmSbNOJS4R4YLiXCnX0i93H8VnkdBK8xRw?=
+ =?us-ascii?Q?TZxpO2MREDaUKhPYJxCmFylak1xbDgvgKnRS1HEFOng6uqTQhUpYaP/y9vdh?=
+ =?us-ascii?Q?JBtAB8JhVmm72rJGoBMHlZjjexpi2BNEEE0sR/YbqMHd+fWl53rIO9QbXKev?=
+ =?us-ascii?Q?GtyFhG8y7C42//3GiQxsluY0nVY6tMlzlAC4A9OI03lG8j0aHjblfXN/+GsM?=
+ =?us-ascii?Q?cvQ0s9Biblro+/aVaR28b0WjCm62Opkx1/b+2FCzOb+iG+U9vdNZK/rnNEq8?=
+ =?us-ascii?Q?aJuiLmSPQDLCgTeeulK2LugntIP/utfYHr7FO4K7y6DRAasw7cBDeu4hCrXp?=
+ =?us-ascii?Q?kD6C/ppfsMvbfENt0EQfvNY6j75BRBVATBemp3EAxo4c8r+y2ow+AwtoRAhP?=
+ =?us-ascii?Q?v0iaNvLbKAnmkMOigWfns/svkbO03QVAIL1QP6pekYQYvaXP4eCXIgh45C9Y?=
+ =?us-ascii?Q?aXP9ZhZ7IGqqJvdwjrN8uEXxEVQXYrhdLH/xISXwFb4tEYl9UTph7lM2pC36?=
+ =?us-ascii?Q?uI0tZBykNw=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/5] dt-bindings: clock: samsung: Add Exynos9610 CMU
- bindings
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Alexandru Chimac <alex@chimac.ro>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>,
- Peter Griffin <peter.griffin@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
- Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20260722-exynos9610-clocks-v3-0-c672a2a30889@chimac.ro>
- <20260722-exynos9610-clocks-v3-1-c672a2a30889@chimac.ro>
- <20260724-supportive-jasmine-bandicoot-ed2c8c@quoll>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <20260724-supportive-jasmine-bandicoot-ed2c8c@quoll>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: cixtech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SEYPR06MB6226.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e1229059-6038-4e5d-b425-08dee94ad1fb
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jul 2026 06:14:29.2694
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 0409f77a-e53d-4d23-943e-ccade7cb4811
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: lL0zzDEPNbTiioUHSsQ8DrfBOCR8t9bW4KW5KZXpjd3Q9U5rlQfr9OhiktjynQqnh+2jKf9wUN1ToOnJK54z1gGYM4D+UVH0hfuUI6J5V+E=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB5831
 
-On 24/07/2026 08:13, Krzysztof Kozlowski wrote:
-> On Wed, Jul 22, 2026 at 11:44:02PM +0300, Alexandru Chimac wrote:
->> This clock management unit has a topmost block (CMU_TOP)
->> that generates top clocks for other blocks, alongside 20
->> other blocks, out of which 11 are currently implemented.
-> 
-> This feels not properly wrapped.
-> 
-> Please wrap commit message according to Linux coding style / submission
-> process (neither too early nor over the limit):
-> https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
-> 
->>
->> Signed-off-by: Alexandru Chimac <alex@chimac.ro>
->> ---
->>  .../bindings/clock/samsung,exynos9610-cmu.yaml     | 335 ++++++++++
->>  include/dt-bindings/clock/samsung,exynos9610-cmu.h | 722 +++++++++++++++++++++
->>  2 files changed, 1057 insertions(+)
-> 
-> ...
 
-And since I expect new version:
+Hi Brian,
 
-A nit, subject: drop second/last, redundant "bindings". The
-"dt-bindings" prefix is already stating that these are bindings.
-See also:
-https://elixir.bootlin.com/linux/v7.1-rc7/source/Documentation/devicetree/bindings/submitting-patches.rst#L23
+> -----Original Message-----
+> From: Brian Masney <bmasney@redhat.com>
+> Sent: Friday, July 24, 2026 12:43 AM
+> To: Joakim Zhang <joakim.zhang@cixtech.com>
+> Cc: mturquette@baylibre.com; sboyd@kernel.org; robh@kernel.org;
+> krzk+dt@kernel.org; conor+dt@kernel.org; p.zabel@pengutronix.de; cix-kern=
+el-
+> upstream <cix-kernel-upstream@cixtech.com>; linux-clk@vger.kernel.org;
+> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-arm-
+> kernel@lists.infradead.org
+> Subject: Re: [PATCH v11 2/4] clk: cix: add sky1 audss clock controller
+>=20
+> EXTERNAL EMAIL
+>=20
+> Hi Joakim,
+>=20
+> There's one question from Sashiko that I don't see where you answered tha=
+t seems
+> to be legit.
+>=20
+> On Thu, Jul 23, 2026 at 05:08:06PM +0800, joakim.zhang@cixtech.com wrote:
+> > From: Joakim Zhang <joakim.zhang@cixtech.com>
+> >
+> > Add a platform driver for the Cix Sky1 AUDSS CRU. The driver maps the
+> > CRU registers and registers mux, divider and gate clocks for DSP,
+> > SRAM, HDA, DMAC, I2S, mailbox, watchdog and timer blocks.
+> >
+> > Four SoC-level audio reference clocks are enabled as inputs to the
+> > internal clock tree. The driver releases the AUDSS NOC reset, enables
+> > runtime PM and instantiates the auxiliary reset device.
+> >
+> > Signed-off-by: Joakim Zhang <joakim.zhang@cixtech.com>
+>=20
+> [snip]
+>=20
+> > +static int __maybe_unused sky1_audss_clk_runtime_resume(struct device
+> > +*dev) {
+> > +     struct sky1_audss_clks_priv *priv =3D dev_get_drvdata(dev);
+> > +     const struct sky1_audss_clks_devtype_data *devtype_data =3D priv-
+> >devtype_data;
+> > +     unsigned long flags;
+> > +     int i, ret;
+> > +
+> > +     ret =3D sky1_audss_clks_enable(priv);
+>=20
+> From Sashiko:
+>=20
+>     [Severity: High]
+>     Could this result in a deadlock? When a consumer calls clk_prepare on=
+ an
+>     audss clock, CCF acquires the global prepare_lock mutex and may call
+>     pm_runtime_resume_and_get. This triggers sky1_audss_clk_runtime_resum=
+e,
+>     which calls sky1_audss_clks_enable. Since sky1_audss_clks_enable exec=
+utes
+>     clk_prepare_enable, it will attempt to acquire the non-recursive prep=
+are_lock
+>     again.
 
-Best regards,
-Krzysztof
+prepare_lock is re-entrant for the same task (see clk_prepare_lock(): if pr=
+epare_owner =3D=3D current it just bumps prepare_refcnt). So calling clk_pr=
+epare_enable() on the parent SCMI clocks from runtime_resume(), while alrea=
+dy in clk_prepare() for an AUDSS clock, does not deadlock. This matches how=
+ CCF recursively prepares parents under the same lock.
+
+That safety assumes resume of the AUDSS CRU is driven from CCF while the sa=
+me task already owns prepare_lock. If another device device-links to the AU=
+DSS CRU (or otherwise runtime resumes it outside clk_prepare), a concurrent=
+ clk_prepare() can deadlock:
+  Thread A: holds prepare_lock, waits in pm_runtime for our resume
+  Thread B: in our runtime_resume, clk_prepare_enable() waits for prepare_l=
+ock
+
+We do not have such a device-link usage today. Would you prefer we add a sh=
+ort comment near sky1_audss_clk_runtime_resume() / sky1_audss_clks_enable()=
+ documenting that consumers should use these clocks via CCF and should not =
+PM-resume this device through a device link (or other non-CCF path) that ca=
+n race with clk_prepare? Happy to add that in the next version if useful.
+
+> I found drivers/clk/samsung/clk-exynos-audss.c that is similar to your dr=
+iver and it
+> calls clk_prepare_enable() in probe.
+
+Exynos AUDSS is only partially similar. It clk_prepare_enable()s EPLL in pr=
+obe and keeps it enabled for the lifetime of the driver; its runtime PM cal=
+lbacks only save/restore AUDSS registers and never disable that parent.
+
+We cannot follow that pattern. Our parent clocks come from SCMI and also ga=
+te the audio subsystem power domain. If we clk_prepare_enable() them in pro=
+be and leave them enabled, their enable counts stay non-zero, so after syst=
+em suspend (and on runtime idle) those SCMI clocks cannot be disabled and t=
+he audio SS power domain stays on.
+
+That is why we enable the parent SCMI clocks in runtime_resume() and disabl=
+e them in runtime_suspend(), instead of keeping a permanent prepare/enable =
+from probe like Exynos.
+
+Thanks,
+Joakim
