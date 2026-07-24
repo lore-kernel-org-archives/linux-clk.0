@@ -1,117 +1,128 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9E002DC79A;
-	Fri, 24 Jul 2026 13:16:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9C173382C7;
+	Fri, 24 Jul 2026 14:56:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784899013; cv=none; b=HZQIKUyMUrI+EZBae5GrBX6p7RBKl1CWGFBMMsE7iRZBMNPZgZ9zDKQm7V2BcrkKOFrATcw02mbYb2TZrRxWlZbtrdGVCtbN0TMHT56QEvBMR2DdoFPawJ67OzMhfsXdGeNshg7fY5mOitIxRuwcldUxnk/K4rtXKdechHhyy+k=
+	t=1784904970; cv=none; b=dEqMbTL1C679Z0MUzPp8Q4v1u6B3InV7wHkzOTisbcS8DchU28iJIGU6RP7KC5ykmIS5PZpGaapYXOiiSxiqck9RPcx5Hqwmi2QV0Tt/V93S0apJTbSBgegJ7+JUsr06HJ3Ku9Si1w/zPlvi2kg+scty1mQq1M6bw6dSKsWZfsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784899013; c=relaxed/simple;
-	bh=5fg70FATkdTPlB+r5sELlMsftIy9haRZRX0/8GePUIo=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=SCAqStDwYrLDJS+AQQ3FYRR+gn4F4W7Y+2bl2i7I1zwvYd9pdWrxzXMzfBR328c5ubmOJjmlo3uUr87pcGr45tlCyrhx+KbrLoLZ/+w7Cqq+laVgAcvuUB3g+PVzL3yb9uH7F1kp/R3kOWCsPtdOXQyAdtk8gSSbBrQVKdYnJZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SfT2mN54; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1784904970; c=relaxed/simple;
+	bh=p/sBH7GvWXe9h87iVhtZr/sj144hCGg2f/lFVpzev+o=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
+	 References:In-Reply-To; b=S95uqKivkk7yMZhdxZkhjr01VmN14i2CNrY+SMraHhwkuT15jhTzkyYKvsj5576tnG2h6NUI8KcjKaehTPjLl8xCnr6OANJ0k/5vlIqgkDDc2zUZ7bpEceFTNY18QgorEQPZfh/njuAhsKz4w9Men8BmrweyPeBzosQEfZTpw0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=qdplBXCn; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SfT2mN54"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F5311F000E9;
-	Fri, 24 Jul 2026 13:16:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784899011;
-	bh=J5CUcwtybRsnP7K85MNqacwjWecyslUsjby8+ZC9UXw=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject;
-	b=SfT2mN54HZxMmsREoVtswZlYPLgI8qEJG1+7Hxsj1WWftapWz00QtYB9irMeStjSm
-	 XqMvusvqJsssC6KlCh5TzZIuf+44vryFOMpoU/Bo4ebqVSpEHbdUaSR3YrH/Ep7bRW
-	 rvh1LIp8AkVxRnJJhIbDEJkNF3IumU4S/3G//pZWHyGIAUffaoPla2XCV4fzI/uhOs
-	 S/RawXOOiOwtaew7SnE5ee65HwVkei5jlf8foS8aTrQG3Cg0mDSA6r4VmsdmH8G+1y
-	 4Hu8BmSqKlS3/kpN3tSgEFwgcyHCG9ymFbUjvQuHtFxL6fohbeCYYlo+VXNR742ZTR
-	 0GTFxZKgNBFXA==
-Date: Fri, 24 Jul 2026 08:16:49 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="qdplBXCn"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 780AB4E40F30;
+	Fri, 24 Jul 2026 14:56:05 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 3C6C460395;
+	Fri, 24 Jul 2026 14:56:05 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D198811C1266C;
+	Fri, 24 Jul 2026 16:56:02 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1784904964; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=SZXLp1jkZefR0yww6P15ycBvIS1KbcfYamTfMTfZmhY=;
+	b=qdplBXCn2UCD9g9D+4bO72q2Edpd9WgtgIqWw/P+J0JJ0jVc5GqUeILHCS9fjNkeVywiso
+	4fT2Z+4FQtzHCu4qJK7vBoLqIgTjDCiW9B8JjMvj12hDu5OSr3FPpLEZD9VVoRpd2Yhl8n
+	+eDRTwM24L3K5Cta8nOp808gk8ZSW1WQVt9BYVSQ+ejEtOYw3IAQSKCrx/Qq4hJvkMm6gO
+	TkgzuiqnXhVYr3qVgvpJcDj5Il223YViODN2b6R+fx0oPFOO2liL6gRIG5HjVG5BLmoTAe
+	IoFEJffX0f5AQnOB6pmz37fgZCqdsq/uLuAKuAuU2EnbLahy+M2lwu1YpD/hYQ==
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Danilo Krummrich <dakr@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J . Wysocki" <rafael@kernel.org>, driver-core@lists.linux.dev, 
- netdev@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>, 
- Eric Dumazet <edumazet@google.com>, Shuah Khan <skhan@linuxfoundation.org>, 
- Michal Simek <michal.simek@amd.com>, Jonathan Corbet <corbet@lwn.net>, 
- linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, 
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Shyam Pandey <radhey.shyam.pandey@xilinx.com>, 
- Andrew Lunn <andrew+netdev@lunn.ch>, Conor Dooley <conor+dt@kernel.org>, 
- Russell King <linux@armlinux.org.uk>, 
- "David S . Miller" <davem@davemloft.net>, linux-doc@vger.kernel.org, 
- Brian Masney <bmasney@redhat.com>, harini.katakam@amd.com, 
- Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>, 
- Jakub Kicinski <kuba@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>
-To: Suraj Gupta <suraj.gupta2@amd.com>
-In-Reply-To: <20260723123838.125145-4-suraj.gupta2@amd.com>
-References: <20260723123838.125145-1-suraj.gupta2@amd.com>
- <20260723123838.125145-4-suraj.gupta2@amd.com>
-Message-Id: <178489900988.2774291.12161691819404985580.robh@kernel.org>
-Subject: Re: [PATCH net-next 3/7] dt-bindings: net: xlnx,axi-ethernet: Add
- 10G/25G (XXV) ethernet
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 24 Jul 2026 16:56:01 +0200
+Message-Id: <DK6W03NSALJN.1SASGAY5HWSPN@bootlin.com>
+Subject: Re: [PATCH] clk: ti: mux: resolve parent clocks by DT index, not by
+ name
+Cc: "Tero Kristo" <kristo@kernel.org>, "Michael Turquette"
+ <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Tony
+ Lindgren" <tony@atomide.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, =?utf-8?q?Th=C3=A9o_Lebrun?=
+ <theo.lebrun@bootlin.com>, =?utf-8?q?Gr=C3=A9gory_Clement?=
+ <gregory.clement@bootlin.com>, <linux-omap@vger.kernel.org>,
+ <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+From: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>
+To: "Brian Masney" <bmasney@redhat.com>
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20260715-mathieu-wdt-clock-theo-v1-1-da65bba1828b@bootlin.com>
+ <alkZmw-XmnCOZfOD@redhat.com>
+In-Reply-To: <alkZmw-XmnCOZfOD@redhat.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
+On Thu Jul 16, 2026 at 7:49 PM CEST, Brian Masney wrote:
+> Hi Mathieu,
+>
+> On Wed, Jul 15, 2026 at 05:09:56PM +0200, Mathieu Dubois-Briand wrote:
+>> Resolve parent clocks by their index into the device tree "clocks"
+>> property rather than matching names as strings. Name-based matching is
+>> fragile because a clock's "clock-output-names" value in its provider
+>> node can differ from the name used to reference it in a consumer node,
+>> and because names must be globally unique across all clock providers.
+>>=20
+>> On AM335x, this caused broken clock trees where some clocks failed to
+>> enable because their parents could not be found.
+>>=20
+>> Replace of_clk_parent_fill() with a clk_parent_data array that sets
+>> .index to the array position.
+>>=20
+>> Fixes: ec7aa25fa483 ("ARM: dts: Use clock-output-names for am3")
+>> Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+>
+> So this only updates of_mux_clk_setup(). of_ti_composite_mux_clk_setup()
+> calls ti_clk_add_component(), which does a name based matching as well.
+> It would be nice to have this consistent within the same driver. I know
+> this is going to require a larger refactor.
+>
+> Otherwise your fix looks correct to me.
+>
+> Brian
 
-On Thu, 23 Jul 2026 18:08:34 +0530, Suraj Gupta wrote:
-> The XXV Ethernet IP integrates a 10G/25G Ethernet MAC with an in-core
-> PCS/PMA driving a high-speed serial transceiver. Extend the existing
-> xlnx,axi-ethernet binding to describe it.
-> 
-> Add the "xlnx,xxv-ethernet-1.0" compatible and make the resource
-> requirements conditional based on the XXV compatible string:
-> 
->   - "dmas", "dma-names", and "phy-mode" are required.
->   - Interrupt properties are not required as it does not have a dedicated
->     Ethernet core interrupt.
->   - "phy-handle" is not required as it has internal PCS and PMA.
->   - Add the 10gbase-r and 25gbase-r phy-mode values used by XXV.
-> Annotate the existing compatibles, generalise the title to cover both
-> variants, and add an example node for XXV.
-> 
-> Define properties at top level per binding style and use if/then to
-> constrain requirements and phy-mode per compatible. Forbid 1G-only and
-> unused ethernet-controller properties on XXV nodes.
-> 
-> Signed-off-by: Suraj Gupta <suraj.gupta2@amd.com>
-> ---
->  .../bindings/net/xlnx,axi-ethernet.yaml       | 144 ++++++++++++++----
->  1 file changed, 117 insertions(+), 27 deletions(-)
-> 
+Hi Brian,
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Thanks for your comment.
 
-yamllint warnings/errors:
+Yes, it does make sense to make everything consistent here. I'm not
+really comfortable with this driver, but I can give it a try.
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/xlnx,axi-ethernet.yaml: allOf:2:then:properties:clocks: {'maxItems': 3, 'items': [{'description': 'RX AXI4-Stream clock (rx_core_clk).'}, {'description': 'GT DRP clock (dclk).'}, {'description': 'AXI4-Lite register clock (s_axi_aclk).'}]} should not be valid under {'required': ['maxItems']}
-	hint: "maxItems" is not needed with an "items" list
-	from schema $id: http://devicetree.org/meta-schemas/items.yaml
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/xlnx,axi-ethernet.yaml: allOf:2:then:properties:clock-names: {'maxItems': 3, 'items': [{'const': 'rx_core_clk'}, {'const': 'dclk'}, {'const': 's_axi_aclk'}]} should not be valid under {'required': ['maxItems']}
-	hint: "maxItems" is not needed with an "items" list
-	from schema $id: http://devicetree.org/meta-schemas/items.yaml
+Just to be sure, are you talking only about drivers/clk/ti/composite.c
+or is it about more files in drivers/clk/ti/? I'm not sure to understand
+the whole interactions between each components here.
 
-doc reference errors (make refcheckdocs):
+Fixing drivers/clk/ti/composite.c to use clk_parent_data looks easy, I
+can definitely send a patch for that. But you are talking about a larger
+refactor, so I suspect you would like to see more changes.
 
-See https://patchwork.kernel.org/project/devicetree/patch/20260723123838.125145-4-suraj.gupta2@amd.com
+I had a look at the other files in drivers/clk/ti/, here are my first
+thoughts:
+- drivers/clk/ti/apll.c, drivers/clk/ti/dpll.c, drivers/clk/ti/fapll.c:
+  Changes would be similar to what was made here.
+- drivers/clk/ti/divider.c, drivers/clk/ti/gate.c,
+  drivers/clk/ti/interface.c, drivers/clk/ti/adpll.c: I believe we have
+  to stick with matching parents by name. This could be made using
+  clk_parent_data .name field if we really want to switch to
+  clk_parent_data structure. Is that a target?
+- drivers/clk/ti/clkctrl.c: similarly, I believe we have to stick to
+  clock names. Using clk_parent_data structure requires a lot of changes
+  in drivers/clk/ti/clk-* files, but these changes should be trivial.
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
+What would be the relevant changes here?
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
+Thanks,
+Mathieu
 
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+--=20
+Mathieu Dubois-Briand, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
