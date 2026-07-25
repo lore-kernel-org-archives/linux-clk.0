@@ -1,38 +1,66 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj2-f0.google.com (mail-pj2-f0.google.com [74.125.227.128])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AED863A380C;
-	Sat, 25 Jul 2026 04:51:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 289A7332EAE
+	for <linux-clk@vger.kernel.org>; Sat, 25 Jul 2026 04:55:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.128
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784955085; cv=none; b=tdL9qvZTYMpsll2Vpp4OoSS70L7uEXN068k4Mj9bWvJaQGiacs0xznqe5F9AdSot/laTsXINLajytMMt7MSDoMhO2vvEFmLTWfEEXIHEL4ZnflBMBEzsSbw3N6Eaf/jBFZYk/RNMrWt0zTunVO6Tzq5zJ9TKQk1ff1BaSYo+Kdg=
+	t=1784955352; cv=none; b=MsgzrGs3jJELc3i+0jB0YXBYy65xUb55AazVVjSL5j9gyd+cgxXTc6q/kLLzWga4mCwGLaX/V3m6Hq80+yRggYPofm1CG966mu9XdCE+bAyWxePIy49EfrpFUjixSePIm9Q0DBH4vrKU6LUjYBMZwQBMs/PKfYNQIcZtZstlzpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784955085; c=relaxed/simple;
-	bh=qlqukEpeHs8YwqY+ZJ5WGtGqzc9V6xyMS9RvFf7xyE4=;
+	s=arc-20240116; t=1784955352; c=relaxed/simple;
+	bh=xr0oQcfFPCJzaAeEJhH42CRWzbYWKnP3e2i7y0AjEKQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=sjuRPn03oXIg3Y36g1d+gSb7CYvstSXX6qnH71YtiOPWfBX45zzyN+kPQCkP8c6mcbHCZLRaG1ZrfhgbfD01KxJLLorHEVRoZlH738U3tmwGDyWxArBtxpZX2ivhH5nhrK9Bj4RU5RdQG1HehPdvbJhk4w0d5ffvI0obqd/OXM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cBwMyvs8; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=MebaFbyJt1SagbTs6KEqk+rmr6Jp1PAJlkdJBOpsLmD8gfe5t2IdxCi9LcTj2uI2J/bzG22GBad8ZPdbXMaJlsbtR+qLVqnjudllO+pXKCaJLfoalX02cf74uEVPNSPlpxCeBVRz/01wTbORGsGbEs7HPYcUtT6WGx/AG7TWFpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FvJZWafQ; arc=none smtp.client-ip=74.125.227.128
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cBwMyvs8"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 46B3BC4DDE2;
-	Sat, 25 Jul 2026 04:51:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1784955085;
-	bh=qlqukEpeHs8YwqY+ZJ5WGtGqzc9V6xyMS9RvFf7xyE4=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=cBwMyvs8hABqBqxP2ExG6jNaoEfeM2i1tFpnSpaJD+wnQaUCtVlwYJTRyGXCkFzie
-	 4XfvpO3iLzoNpBV2oNCSUgZhf3q58nsdpJ6WQqT9Is/BfFWhD4GR0hI1y53x4YRHyP
-	 gR0n/El748wIZah0OTvWQC/InMJF71bfgBZMYRZJtlIdpbqmOTQasbcpFrdezIN/FA
-	 E+PNbhkI1sVp893Y13jBOSQVP1Z0O0ykiPo5quEd+9o9XgNh+BnKEZYgse/FCnOn2P
-	 bnS8LksXyp1SONzscqQ/bDafzXszrRrgSij6XwNyNgGCKCdcNYTQgaTHmSBiDswMwg
-	 aYr5pmVPqNE2g==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DD52C53200;
-	Sat, 25 Jul 2026 04:51:25 +0000 (UTC)
-From: Cody Kang via B4 Relay <devnull+codykang.hk.gmail.com@kernel.org>
-Date: Sat, 25 Jul 2026 00:51:26 -0400
-Subject: [PATCH RESEND 17/17] riscv: defconfig: spacemit: k3: enable
- display driver
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FvJZWafQ"
+Received: by mail-pj2-f0.google.com with SMTP id 98e67ed59e1d1-380f4166f80so953437a91.1
+        for <linux-clk@vger.kernel.org>; Fri, 24 Jul 2026 21:55:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1784955350; x=1785560150; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=Fhok3rvowf2V2ZvTr/zIVWuKYiTyiporNQXpy3ArInQ=;
+        b=FvJZWafQwahHEpy4CoQQtpKgC2dmeeNMaED7CmyIAZ9nUPdjC0SAcLNQ9gIGfJWLWp
+         2wo2bvNT9+F7OR4OJjm8YONALO1Lv2sBFBUWJHxCFemPVAm+WWIcCfkLoXAA83P9e7Wd
+         HXY+KQCa6qN2InIm6CUbbD7C2eZ1yiNUvgEVW/TdMt99sk5piItlXUyreoq3bbTePpLO
+         g1a3cA/hcWwAAWt/rhv/iGS0q9W0mKq8Bze32paEGW9UP52C18Oak6TMDJjiHfto9HDE
+         ZbTODOhhGxSTqqLL5+aRim9pB+s4uoxPMd9yd/ZNXdg9WeBT/sPPaHflMuYKS7UX7by0
+         TqSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784955350; x=1785560150;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :content-type:mime-version:subject:date:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=Fhok3rvowf2V2ZvTr/zIVWuKYiTyiporNQXpy3ArInQ=;
+        b=eez3T9AUrdM1681U7E5euX0uCEVqRXNcJCN4Q3jsFb8v6ODXXO+lxDuHZZkp5sG2Hg
+         BKj81teWWsF2cGH6Cw1W3swEPG6XIez7g8JbOd+LaIcD0VlPEE0xLxtORlvLe0N05Pz3
+         F/PqyDANRmExhq4nOSvWDDIuX0s0pkru4jp1G2XPDNsuVC4oOTjOtZ1Vi2jZq7ktMuEi
+         pZj+d/O5+GNSFg5ZL0hK2TTA7FNywxAVo2VSq37TvyBNu/rADQs1QYlqPDXTRKoy6hUY
+         LfiZgLfrEzZXpS9yJk+EjWmTAHN8aTMSu9L5K3s0lZY5r9XyN4PWHQ8X9ABA/n7khuqa
+         AiEw==
+X-Forwarded-Encrypted: i=1; AHgh+RovDnqS+j9lXsVJzn84t1OgQ8FS+eannNSv2iJj5szU8TjmLCOn/EM7okr1Rnne65ouKK8tZ6SUYH4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxhl7tvJ54D9LiJV4kpuvvQIh/4ykHE2d9j+BPZcsJbNq8v2YPR
+	SvSaxTJoTg4AaLQfr5SgxBBKXzy5eLnj5pFffg/Q2SDW0C5hJmtpShje50YKIxe15M4Phg==
+X-Gm-Gg: AR+sD10y/81EO+1+n4BsD+IeAvNe1y3c/mXq6I199kRK1SkV5jaSHyki8bY299mk49o
+	iWIAGQ4CfY5Bv+dnumGn1kXo3pz19XrWGxDNmuP23rbS4VuaZ5GuCMo6K+y/YQ8Z4+4pCHDdJvN
+	NSlqb+qu5etCPI2ACgkdtYRUEfptWJETo6+pAW74ZhGmQ8y9YKzmqzWvOp1yOxi67esg4BPe+T6
+	Fube13XGIs/ki5Qt4qh2UclduEUr6NJbW9sXWkl95JT6Z45JVKJlmsZFpekaZwWCLU4l1Xys3iH
+	8x2vc9GIMJIZG0GG4lLtRjURALu+jFH60GstEW7xAeVE1LCZ8sGBQhykJaCbmtdPA6tDup5S7iD
+	pH5xXYUTEj/KrzyXOAWNops0nWbvuopzldbTqkezIotXLOQGcnHjbigM=
+X-Received: by 2002:aa7:8885:0:b0:84e:2bb:2d3e with SMTP id d2e1a72fcca58-84e594330edmr623584b3a.9.1784949446508;
+        Fri, 24 Jul 2026 20:17:26 -0700 (PDT)
+Received: from [127.0.1.1] ([2a12:a305:4::403c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-84e53432834sm640542b3a.50.2026.07.24.20.17.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Jul 2026 20:17:26 -0700 (PDT)
+From: Cody Kang <codykang.hk@gmail.com>
+Date: Fri, 24 Jul 2026 23:16:34 -0400
+Subject: [PATCH 02/17] dt-bindings: phy: add SpacemiT K3 Innosilicon DP PHY
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -41,9 +69,9 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260725-k3-display-v1-17-6de34d80e86c@gmail.com>
-References: <20260725-k3-display-v1-0-6de34d80e86c@gmail.com>
-In-Reply-To: <20260725-k3-display-v1-0-6de34d80e86c@gmail.com>
+Message-Id: <20260724-k3-display-v1-2-f22a10a52867@gmail.com>
+References: <20260724-k3-display-v1-0-f22a10a52867@gmail.com>
+In-Reply-To: <20260724-k3-display-v1-0-f22a10a52867@gmail.com>
 To: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
  Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
  Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
@@ -60,44 +88,80 @@ Cc: dri-devel@lists.freedesktop.org, linux-riscv@lists.infradead.org,
  linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
  linux-clk@vger.kernel.org, Cody Kang <codykang.hk@gmail.com>
 X-Mailer: b4 0.15.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1784955080; l=721;
- i=codykang.hk@gmail.com; s=codykang; h=from:subject:message-id;
- bh=w6ttYgU0lJiv/SJUYAPaXSKPoe0j2NwHgYQpCKODV1k=;
- b=RuOMqHCM04aU30sdKNUndT2uO/g5y9lCEBtEuaOH6YwkM7KhTjs107cobdqryAZ8eAgMPP1nw
- zlPieTKZ9I1AuWDVZhnYUCrtiEEjAGEEmd5ziVnwjkSjXCIRE2qb+n7
-X-Developer-Key: i=codykang.hk@gmail.com; a=ed25519;
- pk=Osn6/cs9Su/mHHw4P19cmVc3v2FMQfiWahjsN0vEkuk=
-X-Endpoint-Received: by B4 Relay for codykang.hk@gmail.com/codykang with
- auth_id=895
-X-Original-From: Cody Kang <codykang.hk@gmail.com>
-Reply-To: codykang.hk@gmail.com
 
-From: Cody Kang <codykang.hk@gmail.com>
+The SpacemiT K3 DisplayPort controller drives its four transmit lanes
+through an integrated Innosilicon DP PHY, one PHY per controller. Add a
+binding so the controller can reference its transmit PHY and the pixel
+clock the PHY's PLL sources.
 
-Enable the Saturn DPU and the DP/eDP controller as modules, matching the
-other DRM drivers in this defconfig; the DP PHY follows through the
-controller's imply.
+The PHY's registers are interleaved with its parent controller's inside
+one MMIO window, so it owns neither a reg nor a reset and is modelled as
+a child of the controller.
+
+It exposes its PLL-generated pixel clock through #clock-cells, so the
+APMU pixel-clock mux can select it as a parent through the clock
+framework.
 
 Signed-off-by: Cody Kang <codykang.hk@gmail.com>
 ---
- arch/riscv/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+ .../bindings/phy/spacemit,k3-inno-dp-phy.yaml      | 48 ++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
 
-diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
-index 74ba5acc12a4..c38853d69d55 100644
---- a/arch/riscv/configs/defconfig
-+++ b/arch/riscv/configs/defconfig
-@@ -191,6 +191,8 @@ CONFIG_VIDEO_CADENCE_CSI2RX=m
- CONFIG_DRM=m
- CONFIG_DRM_RADEON=m
- CONFIG_DRM_NOUVEAU=m
-+CONFIG_DRM_SPACEMIT=m
-+CONFIG_SPACEMIT_INNO_DP=m
- CONFIG_DRM_SUN4I=m
- CONFIG_DRM_VIRTIO_GPU=m
- CONFIG_FB=y
+diff --git a/Documentation/devicetree/bindings/phy/spacemit,k3-inno-dp-phy.yaml b/Documentation/devicetree/bindings/phy/spacemit,k3-inno-dp-phy.yaml
+new file mode 100644
+index 000000000000..f8f1ef372951
+--- /dev/null
++++ b/Documentation/devicetree/bindings/phy/spacemit,k3-inno-dp-phy.yaml
+@@ -0,0 +1,48 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/phy/spacemit,k3-inno-dp-phy.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: SpacemiT K3 Innosilicon DisplayPort PHY
++
++maintainers:
++  - Cody Kang <codykang.hk@gmail.com>
++
++description:
++  Innosilicon four-lane DisplayPort transmit PHY integrated in the SpacemiT
++  K3 SoC, one per DisplayPort controller. Its registers are interleaved with
++  the controller's own inside a single register window, so it is described as
++  a child of the controller and owns neither a reg nor a reset.
++
++  The PHY provides the pixel clock its PLL generates, which the APMU
++  pixel-clock mux takes as one of its inputs.
++
++properties:
++  compatible:
++    const: spacemit,k3-inno-dp-phy
++
++  "#phy-cells":
++    const: 0
++
++  "#clock-cells":
++    const: 0
++
++  clock-output-names:
++    maxItems: 1
++
++required:
++  - compatible
++  - "#phy-cells"
++  - "#clock-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++    phy {
++        compatible = "spacemit,k3-inno-dp-phy";
++        #phy-cells = <0>;
++        #clock-cells = <0>;
++        clock-output-names = "edp0_pll_pxclk";
++    };
 
 -- 
 2.43.0
-
 
