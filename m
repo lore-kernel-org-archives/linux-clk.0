@@ -1,67 +1,37 @@
-Received: from mail-pz2-f1.google.com (mail-pz2-f1.google.com [74.125.228.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBC0E388885
-	for <linux-clk@vger.kernel.org>; Sat, 25 Jul 2026 03:19:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.228.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CA3C1A5B90;
+	Sat, 25 Jul 2026 04:51:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784949592; cv=none; b=rxIJwm+6sfrXASzZbk6ZIZmgPRmUZ7XVG4/b/Y2JUVv/BqFCDAXydIJU37VeRvYzI3b7LHhSubSCGu7W5b0HkGTaEdX/zk+oUrNmSdI9Co/tiNIRy3Mm2T56Vdxu2/1+hNA8jIE3GnLUpD7moCfIP41J9nQjaESrc86DtoqfW4w=
+	t=1784955084; cv=none; b=P4VG5eOiqc1LhbhxkcISKgTObPKdfJ950id17A9yeJw7ZTktVeh1clVTuANq+IFj3Nvrbl9OseQ0Fb3WKuRaOuqbqrdsz1b+m6rx2UEGlWbbl/wNy7HJbiLFJVRSfK5S8eStMVBqVPZ7bITilJRAnX3sTULIIbMTcI6w0q3iUBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784949592; c=relaxed/simple;
-	bh=w6ttYgU0lJiv/SJUYAPaXSKPoe0j2NwHgYQpCKODV1k=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nnj9IxAgNzBIuhNnxgxE4VUK6vUmT5s+DvC6fhEd1MNwHpNNBvOJixbzNEsWECt2kZZXuUDjAJd0E2bRas6UDDXrmZYuyEpw9yJf6584Jmo3naq7e2bg6r4TRqke0eQFXFplM4t0x9Me1rzrf95kpRCDYq0zsX3PXJERhAgqXTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Chjdcqve; arc=none smtp.client-ip=74.125.228.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1784955084; c=relaxed/simple;
+	bh=EgVjT+COxBwfkFfMbAOE9TowiJfXqUt37nrAlMxhoUc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Bt/YFkQzVk9Jgu3VuKbQ3XBntdHKKO0J0rF4PG7Zx8eVpKn4g6KfjP91sz2Ht3OxXedELJDDeUSTcgenyt8MG1eoDQmIx8Spr843S4pRIgWPjSuPXbOLhv8pA/Rayx6EBEv4JweZIPuc66LJ3TVayt1iaOyZ5s+6I/aUe3s1Y/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E+Kbwisg; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Chjdcqve"
-Received: by mail-pz2-f1.google.com with SMTP id 41be03b00d2f7-ca7d1dc4554so538837a12.1
-        for <linux-clk@vger.kernel.org>; Fri, 24 Jul 2026 20:19:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784949584; x=1785554384; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=DPm4vAPFuqHX+tZvYjtk0Fs8fzHRPkuRBc0bjXwe1GI=;
-        b=ChjdcqveBv+j98UA3BUm5jM9h+n2ym4s/+4heEtse7qfCRM9EXeZyCjSCzq6VhF4cd
-         R0HHyAv9WFequNhlMXsK04hdZtN98FtqvRGyTzNnlIcQUQvzHAw5nma0B2ErQdhduiOm
-         3IF+5wD2UhZiBn7LdJSrOB5ThHzSBf/HrTJCU36qUQ7wjNGYpbvzWAklVdUBWWNgRbX4
-         oZOjXHRkToS8V0l99osKBGa82rJPygoeF0EFsA/IBeomZvEW0Dfq01QtVXWg39JUInfF
-         0ErbuGfTTxr872+vJFBnXYZJs4T0i9TwObRrsNuMJvS4jEk0tevA9wZ9KqdYCoPDQtgw
-         kqcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784949584; x=1785554384;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=DPm4vAPFuqHX+tZvYjtk0Fs8fzHRPkuRBc0bjXwe1GI=;
-        b=kqpDsTP3E+Bj5XdoTHfTGmmWW8s2l7iFN3OnqGxu0JTp4A4zig7Xlqha3lBjCCEzi6
-         C62TBxYMJC8VeMkz+qcGjQOEW0Xyut8UUxVchqZg+K/f/5mTq40J+Ncr2AeK/5LPDa8/
-         qKbXpEuqcKsvteSmapTT6t9hcnTHJe+5AQ+0jExcLN21Do8tpCeb6W+ClqlzG1m1xwXI
-         T4vJ7GeP9fcyaxIKG0vRzTgt27b77zdnSMDZIowLJoMltbvXm4cHkQH+1xDML05U8ELi
-         vgfo1LUmmEkCWWwwH0kHypv0KJQwn85f2jDnSh/ZXZZo9KGraD8ZNaeyzBDw5PRmAinW
-         oRyg==
-X-Forwarded-Encrypted: i=1; AHgh+Rqnb5jbZ9ZQiMcFwNK1xEoYJ+2qerCiKaJD1CyM0Pl5fM8/zp2CCEuEgaTCUoXdMiShRP6lREkPEQg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYwRc5qo1aLWNI/rebrN5dF5vb2tpVJaLDn9Z4mlK9vXeqyiOP
-	C8WFAbjbach/L+OLOd0YBzx3XA5zKKy0tS4AREJQVWVmRhinPAOi+Y9E
-X-Gm-Gg: AR+sD10iNjc6TSBvSVHD/h1VT3tLPQzNahcH/hu0KFpKmBQQVIIbY/GkwwrG8S3vgUw
-	CH6GlfA38AJ05t9cov4Q0lOBIu7Jyd1wCkJNroFH1tPOYAfMJHyNJqcghOo8l9WO2RzNTdqPSuo
-	Q+juqe8ckYNi6jJkiatjfFrHJDtP3A0yoi8mynPwXOOqxszoofpIrrLQwegqHOEVVmE0Y3DXnQf
-	ubdjjSfiQ66bhJbkP7ftKznJTOqR3jmel5z8diIcUcq7/c2EMr2fUSQLxxtTA1IDJrda6qQER/w
-	JmPyzVrBoBL50ri0Q53xbGCxHICMe7Rn4y7blOQ2M6JZj0l4uOXi/ea/qkzLuAhcLPcvBQY3uh+
-	1QDiEvFPzE1pZ2Tnxrsz5DzHQmSo+c6099F24BQbLdSb03mepms0KeIM=
-X-Received: by 2002:a05:6a00:4c11:b0:847:8b0f:2508 with SMTP id d2e1a72fcca58-84e5942eaecmr647092b3a.13.1784949584567;
-        Fri, 24 Jul 2026 20:19:44 -0700 (PDT)
-Received: from [127.0.1.1] ([2a12:a305:4::403c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-84e53432834sm640542b3a.50.2026.07.24.20.19.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jul 2026 20:19:43 -0700 (PDT)
-From: Cody Kang <codykang.hk@gmail.com>
-Date: Fri, 24 Jul 2026 23:16:49 -0400
-Subject: [PATCH 17/17] riscv: defconfig: spacemit: k3: enable display
- driver
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E+Kbwisg"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 08C20C2BCB8;
+	Sat, 25 Jul 2026 04:51:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1784955084;
+	bh=EgVjT+COxBwfkFfMbAOE9TowiJfXqUt37nrAlMxhoUc=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=E+KbwisgZ9YgxTp2EcRIeqcayIcTP01edKsSmBXQac+nOX5UDCVj2Co74GviBaTqa
+	 AJHn+pQ20av2bjxXNi9y/3loke1qDbqX/dc25jEiPL5cwj0mc44VvXIzjO6Nrg69mX
+	 SO+ZWyYeYCNmI37g5mFKdVxX7TD4kL/Use/gFVCBqr1VujAWZt3/pdcoRLkM50vJwF
+	 t7Xa7LnY6tLtTyRMAXONyRv4W9IwX6q3HWkH0u5NSRw7/20E0pLQeeQriqAuaZ21JP
+	 2Vmj7tPKlNfmlVcEmE1tOqH5CHJ3Ld7iMxtGJ15xa5vVhv9b7yHT8I1M3OfblA8oMf
+	 2AuR4leJE8fKA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E71FBC53200;
+	Sat, 25 Jul 2026 04:51:23 +0000 (UTC)
+From: Cody Kang via B4 Relay <devnull+codykang.hk.gmail.com@kernel.org>
+Subject: [PATCH RESEND 00/17] drm/spacemit: add SpacemiT K3 display support
+Date: Sat, 25 Jul 2026 00:51:09 -0400
+Message-Id: <20260725-k3-display-v1-0-6de34d80e86c@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -70,9 +40,6 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260724-k3-display-v1-17-f22a10a52867@gmail.com>
-References: <20260724-k3-display-v1-0-f22a10a52867@gmail.com>
-In-Reply-To: <20260724-k3-display-v1-0-f22a10a52867@gmail.com>
 To: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
  Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
  Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
@@ -89,30 +56,153 @@ Cc: dri-devel@lists.freedesktop.org, linux-riscv@lists.infradead.org,
  linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
  linux-clk@vger.kernel.org, Cody Kang <codykang.hk@gmail.com>
 X-Mailer: b4 0.15.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1784955080; l=7177;
+ i=codykang.hk@gmail.com; s=codykang; h=from:subject:message-id;
+ bh=EgVjT+COxBwfkFfMbAOE9TowiJfXqUt37nrAlMxhoUc=;
+ b=QhedWFFts+zppCl49HEDHDFvg6AdvjVn/qnPm/bX38QgCJ6DFuRpi9a76S5+ILCkUR02tOVtE
+ 6CvICV2M145DCTqKtr8wE7suo6IKBQKr23Bj2pglBXcs7GpDYuFUcYh
+X-Developer-Key: i=codykang.hk@gmail.com; a=ed25519;
+ pk=Osn6/cs9Su/mHHw4P19cmVc3v2FMQfiWahjsN0vEkuk=
+X-Endpoint-Received: by B4 Relay for codykang.hk@gmail.com/codykang with
+ auth_id=895
+X-Original-From: Cody Kang <codykang.hk@gmail.com>
+Reply-To: codykang.hk@gmail.com
 
-Enable the Saturn DPU and the DP/eDP controller as modules, matching the
-other DRM drivers in this defconfig; the DP PHY follows through the
-controller's imply.
+This is a resend of today's earlier posting, which was only partially
+delivered because of a mail failure on the sending side: the cover
+letter and eight of the patches never reached the lists. The patches
+are unchanged. Apologies for the duplicates.
+
+This series adds display support for the SpacemiT K3 [2], a RISC-V SoC:
+a new DRM driver, a new PHY driver and three new bindings.
+
+The display path is three blocks deep:
+
+  Saturn DPU -> Innosilicon DP/eDP controller -> Innosilicon DP PHY
+
+The Saturn DPU is SpacemiT's own display processing unit. It has a private
+address translation unit and a command-list composer that replays a batch
+of register writes when a flush is latched. It exposes one CRTC with one
+primary plane. The K3 instantiates two DPUs, one per display path.
+
+The DPU driver arrives as five staged patches to keep each one a
+reasonable size. The driver only becomes buildable with that last patch.
+Bisect safe.
+
+The DP/eDP controller and its PHY are Innosilicon IP, also two instances
+of each. An instance behaves as embedded DisplayPort or as external
+DisplayPort purely according to what its output port is wired to, so the
+bindings do not distinguish them. The PHY's registers are interleaved
+with the controller's inside one MMIO window, which is why it is
+described as a child node and shares the controller's regmap.
+
+The pixel clock is generated by the DP PHY's PLL, and the SoC's APMU
+pixel-clock mux takes that PLL as an input. Rather than let the display
+driver reach into PHY registers, the PHY registers its PLL as a clock
+provider and the APMU mux is parented to it through the clock framework.
+That is what patches 2, 4, 5 and 6 are for, and it is also what keeps the
+APMU and the DP/eDP controller out of a devicetree provider cycle.
+
+As a first posting of the K3 display subsystem, this patchset supports:
+a single primary plane per CRTC, linear RGB scanout (no plane scaling,
+rotation, YUV or writeback). It does not support DSI, DSC or DP audio,
+and link rates are capped at HBR2.
+
+Based on drm-misc-next at commit 5b9af25f2d0b ("accel/ivpu: Remove
+unnecessary min_t()/max_t() usage"), v7.2-rc2 based.
+
+Testing this series needs a SpacemiT u-boot carrying display support
+[1]. SpacemiT expects to add that support into an official u-boot
+release in August 2026.
+
+Tested on two K3 boards:
+
+  - Pico-ITX: an eDP panel and an external DisplayPort monitor.
+  - CoM260-IFX: DisplayPort only, no eDP.
+
+Note: The eDP panel DTS enablement is not part of this series; a separate
+      series will follow showing how eDP can be verified.
+
+What was run on both boards, with modetest from libdrm and with kmscube:
+
+  - modetest -s, looped over 1920x1080, 1280x720 and 3840x2160
+    on DisplayPort and 2560x1600 on eDP
+  - kmscube, on each head and on both at once
+  - hot-plug and sink swap on the DisplayPort connector
+
+Both built-in and modular configurations were tested, and the runs above
+were repeated in both. Patch 17 defconfig adds them as modules.
+
+[1] https://github.com/spacemit-com/uboot-for-k3-display-verify/tree/k3-br-v1.0.y
+[2] https://www.spacemit.com/community/document/info?lang=en&nodepath=hardware/key_stone/k3
 
 Signed-off-by: Cody Kang <codykang.hk@gmail.com>
 ---
- arch/riscv/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+Cody Kang (17):
+      dt-bindings: display: spacemit: add K3 Saturn DPU controller
+      dt-bindings: phy: add SpacemiT K3 Innosilicon DP PHY
+      dt-bindings: display: spacemit: add K3 Innosilicon DP/eDP controller
+      dt-bindings: soc: spacemit: allow eDP/DP PHY PLL pixel clocks on K3 APMU
+      phy: spacemit: add Innosilicon DP TX PHY driver
+      clk: spacemit: k3: parent eDP/DP pixel clock to the PHY PLL
+      drm/spacemit: add Saturn DPU register model
+      drm/spacemit: add Saturn DPU core types, cmdlist and display MMU
+      drm/spacemit: add Saturn DPU hardware backend
+      drm/spacemit: add Saturn DPU KMS pipeline
+      drm/spacemit: add Saturn DPU DRM device driver
+      drm/spacemit: add Innosilicon DP/eDP controller bridge driver
+      MAINTAINERS: add SpacemiT K3 display driver entry
+      riscv: dts: spacemit: k3: add display nodes
+      riscv: dts: spacemit: k3-pico-itx: enable the DisplayPort output
+      riscv: dts: spacemit: k3-com260-ifx: enable the DisplayPort output
+      riscv: defconfig: spacemit: k3: enable display driver
 
-diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
-index 74ba5acc12a4..c38853d69d55 100644
---- a/arch/riscv/configs/defconfig
-+++ b/arch/riscv/configs/defconfig
-@@ -191,6 +191,8 @@ CONFIG_VIDEO_CADENCE_CSI2RX=m
- CONFIG_DRM=m
- CONFIG_DRM_RADEON=m
- CONFIG_DRM_NOUVEAU=m
-+CONFIG_DRM_SPACEMIT=m
-+CONFIG_SPACEMIT_INNO_DP=m
- CONFIG_DRM_SUN4I=m
- CONFIG_DRM_VIRTIO_GPU=m
- CONFIG_FB=y
-
+ .../display/spacemit/spacemit,k3-inno-dp.yaml      |  140 ++
+ .../display/spacemit/spacemit,k3-saturn-dpu.yaml   |  132 ++
+ .../bindings/phy/spacemit,k3-inno-dp-phy.yaml      |   48 +
+ .../bindings/soc/spacemit/spacemit,k1-syscon.yaml  |   30 +-
+ MAINTAINERS                                        |   10 +
+ arch/riscv/boot/dts/spacemit/k3-com260-ifx.dts     |   11 +
+ arch/riscv/boot/dts/spacemit/k3-display.dtsi       |  156 ++
+ arch/riscv/boot/dts/spacemit/k3-pico-itx.dts       |   11 +
+ arch/riscv/boot/dts/spacemit/k3-pinctrl.dtsi       |   22 +
+ arch/riscv/configs/defconfig                       |    2 +
+ drivers/clk/spacemit/ccu-k3.c                      |    4 +-
+ drivers/gpu/drm/Kconfig                            |    1 +
+ drivers/gpu/drm/Makefile                           |    1 +
+ drivers/gpu/drm/spacemit/Kconfig                   |   37 +
+ drivers/gpu/drm/spacemit/Makefile                  |   15 +
+ drivers/gpu/drm/spacemit/dpu/dpu_saturn.c          |  483 ++++
+ drivers/gpu/drm/spacemit/dpu/dpu_saturn.h          |   35 +
+ drivers/gpu/drm/spacemit/dpu/dpu_saturn_hee.c      |  896 +++++++
+ drivers/gpu/drm/spacemit/dpu/dpu_trace.h           |  350 +++
+ drivers/gpu/drm/spacemit/dpu/saturn_fbcmem.c       |  152 ++
+ drivers/gpu/drm/spacemit/dpu/saturn_fbcmem.h       |   21 +
+ drivers/gpu/drm/spacemit/dpu/saturn_regs/dpu_int.h |   25 +
+ drivers/gpu/drm/spacemit/dpu/saturn_regs/ops_hee.h |   52 +
+ .../gpu/drm/spacemit/dpu/saturn_regs/reg_map_hee.h |   64 +
+ .../drm/spacemit/dpu/saturn_regs/saturn_fields.h   |  298 +++
+ drivers/gpu/drm/spacemit/spacemit_cmdlist.c        |  304 +++
+ drivers/gpu/drm/spacemit/spacemit_cmdlist.h        |  146 ++
+ drivers/gpu/drm/spacemit/spacemit_crtc.c           |  815 +++++++
+ drivers/gpu/drm/spacemit/spacemit_crtc.h           |  259 +++
+ drivers/gpu/drm/spacemit/spacemit_dmmu.c           |  103 +
+ drivers/gpu/drm/spacemit/spacemit_dmmu.h           |   40 +
+ drivers/gpu/drm/spacemit/spacemit_dpu_ids.h        |   22 +
+ drivers/gpu/drm/spacemit/spacemit_dpu_reg.h        |  108 +
+ drivers/gpu/drm/spacemit/spacemit_drm.c            |  132 ++
+ drivers/gpu/drm/spacemit/spacemit_drm.h            |   68 +
+ drivers/gpu/drm/spacemit/spacemit_inno_dp.c        | 2443 ++++++++++++++++++++
+ drivers/gpu/drm/spacemit/spacemit_inno_dp.h        |  328 +++
+ drivers/gpu/drm/spacemit/spacemit_planes.c         |  376 +++
+ drivers/phy/spacemit/Kconfig                       |   13 +
+ drivers/phy/spacemit/Makefile                      |    1 +
+ drivers/phy/spacemit/phy-k3-inno-dp.c              |  948 ++++++++
+ 41 files changed, 9099 insertions(+), 3 deletions(-)
+---
+base-commit: 5b9af25f2d0b574b4058c9f8c84486a597168116
+change-id: 20260713-k3-display-e8ffed67e936
 -- 
-2.43.0
+Cody Kang <codykang.hk@gmail.com>
+
 
