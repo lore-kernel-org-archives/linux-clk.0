@@ -1,38 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60B0C3955F1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 612E1395AE3;
 	Sat, 25 Jul 2026 04:51:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784955085; cv=none; b=dPlqKNhgnwUIaX9MtxY/Zf5afbiDWF68oSr1QV5qMYNwT0lSEqGLqXvRtl/upCm8NZiQJtnasmn0v6Ip447OSLI/az7ESt5sA+WJN9e9ndni6GzYrYNmhDaMVS+n/kvA0v0r/meKnVsknc4PYSIEWMBM3Hx+l/h6O+FnjxUQwBU=
+	t=1784955085; cv=none; b=OvNLw4GU5NlbhAe3cXdCrGLYasaeYEVSgzepDCqViXrtBEu8tJnru0FscKQWfYbnwIKuJaeRGyk5POBAo+eJizDIjydvDcx5U9+FAIdf1z/yKM8mxLr3toE84v3RcTd0GFRFRelN019TKhCadRmBPovx8qToaOpzYgk7+LgA5JE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1784955085; c=relaxed/simple;
-	bh=wonA2vEJhnyXD4bYv5jPRPqPzb4hwC+tlaZ3VFa9dHk=;
+	bh=q1hgaX9wPrPFwUeLicxRrAbMkY6IDsu7w9/+g5n3QoU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=SCt8G+CS6TyWUE/OhG1nbgf/R0uDmahWquxGAeqdJ27biBdzlSwFKWMeB2XOEmz+p7lyNnzqz8cmAH4/zbZgeF8SCOBREOl0ipDVBdihXyPbnL2pTyArpSU53Fz9vKZJ2JJhjX+EHilu3oZbCggTbNjBjNbZPjMegnaq5Z+d6u8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AYuTlsUc; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=NHqFVkwn10eCSGWDq+c3xG22ibLPzE+wuwmA44kUxcXnIPvWiWvu7UCaqqGV3hins8UDedkyJs2bmTAWvo5xBvVi1BGZvLodzmo/jf2wzVESIN+sXNUSj9IWtkMdrM20M52b0mWAveEH8hzP7J1W2QmvryOWwlfr9YPGqFxaWas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S8lOGUEe; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AYuTlsUc"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 12845C4AF13;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S8lOGUEe"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 26D7DC4DDEC;
 	Sat, 25 Jul 2026 04:51:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1784955085;
-	bh=wonA2vEJhnyXD4bYv5jPRPqPzb4hwC+tlaZ3VFa9dHk=;
+	bh=q1hgaX9wPrPFwUeLicxRrAbMkY6IDsu7w9/+g5n3QoU=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=AYuTlsUcxM5dFsQ7xt3r1TZt1hWoixxBMRPYeWjf9eZorntcJFx9lYPP9xM3dv+/7
-	 vm4KfLS20OkyY9CJFVtBvGYwKmtO2V0wM1Ij6D6sQbUXxz8H/+MxUeaqHPkRcQXcT+
-	 gXsuRYiaIvMDat0rt8GkEB3uqK26a2Xs+ZFRGvIOtIIrU2lyQ6V3GWzgzCSgbtnycu
-	 1yEM09Ar3Z17XRHO5aZbp0I4NDXMpjKU1bUqpvtm7sVsSY18mfT4OgpObKK5VP2w8p
-	 MCI1k+f+nO0MfGIpAMYk4YFCKSyn6nIZEbhR+BaadmLBzCE+3BaZXjpeDqLXkqNWgH
-	 7Y3FmcsqNKZEw==
+	b=S8lOGUEe0PArVvRAkC3SnDX6jz5nZMZHsbs2KIMXvjPVeAad7XnPOrRcWrMDk1PoX
+	 y8xuGBpabQN1tZgsGPc0x4EDjw8+0YjreRGzQ5Xc0bu6g45IvfbjJesdS42iF7fOjN
+	 Li7PRlX3bD4DvlK/z4uLy7V+thXrT1kKjnK/N2iMrs2BnI+izAUcq158RqUEbuMZej
+	 1RId2OzQiSzMhoXDVoiu9+Won9axm3QdvZVOxYC8Oa8U+2qj9GDgukTyuT7TLDB1E1
+	 aTIbyV6dbiujyup3TKRiJO08zRuw9S32Avg3OEEk/6ri5jmaLqowN2Gidy7UStc2nE
+	 7mRNhLhjxElgA==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1EDAC53209;
-	Sat, 25 Jul 2026 04:51:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D744C53219;
+	Sat, 25 Jul 2026 04:51:25 +0000 (UTC)
 From: Cody Kang via B4 Relay <devnull+codykang.hk.gmail.com@kernel.org>
-Date: Sat, 25 Jul 2026 00:51:22 -0400
-Subject: [PATCH RESEND 13/17] MAINTAINERS: add SpacemiT K3 display driver
- entry
+Date: Sat, 25 Jul 2026 00:51:24 -0400
+Subject: [PATCH RESEND 15/17] riscv: dts: spacemit: k3-pico-itx: enable the
+ DisplayPort output
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -41,7 +41,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260725-k3-display-v1-13-6de34d80e86c@gmail.com>
+Message-Id: <20260725-k3-display-v1-15-6de34d80e86c@gmail.com>
 References: <20260725-k3-display-v1-0-6de34d80e86c@gmail.com>
 In-Reply-To: <20260725-k3-display-v1-0-6de34d80e86c@gmail.com>
 To: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
@@ -60,11 +60,11 @@ Cc: dri-devel@lists.freedesktop.org, linux-riscv@lists.infradead.org,
  linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
  linux-clk@vger.kernel.org, Cody Kang <codykang.hk@gmail.com>
 X-Mailer: b4 0.15.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1784955080; l=963;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1784955080; l=1628;
  i=codykang.hk@gmail.com; s=codykang; h=from:subject:message-id;
- bh=sD70Be1EFEVlYgvCDT/fN9L+7DpFEJJVPuxwpoqy0M0=;
- b=JunK0B0lMIefh4A2iXSV7mdOgkju4O+Ip2oD/jP3gQ1IV9rknEXR45NmcpGfCiwONNCsyxIa4
- piKVtcIPjs8CV9u1I06GpLyqhHNqh9LkOPsNiDzAwapYUZCCiH8sZ9c
+ bh=itI/1VwTHA3V7ox5PXMT2Vrb2UKYmyIibaQ0egNmgMY=;
+ b=lxKsxyQ3nsiDpUUUscV82alJ6SUbnc6qGxs7f5OilGXmyaEm1t4tajmxCZ6fWzlj3twP++IH3
+ sOVsIHQ/RQ+AoQOv/aZ5YXzfJ5PmovX89KojRK+iFiaU+SLJWpbVNCv
 X-Developer-Key: i=codykang.hk@gmail.com; a=ed25519;
  pk=Osn6/cs9Su/mHHw4P19cmVc3v2FMQfiWahjsN0vEkuk=
 X-Endpoint-Received: by B4 Relay for codykang.hk@gmail.com/codykang with
@@ -74,35 +74,63 @@ Reply-To: codykang.hk@gmail.com
 
 From: Cody Kang <codykang.hk@gmail.com>
 
-Cover the Saturn DPU, the Innosilicon DP/eDP controller, the DP PHY and
-their bindings.
+Pico-ITX brings the second DPU's output to an external DisplayPort
+connector. Enable that DPU and the DisplayPort controller it feeds.
 
 Signed-off-by: Cody Kang <codykang.hk@gmail.com>
 ---
- MAINTAINERS | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/riscv/boot/dts/spacemit/k3-pico-itx.dts | 11 +++++++++++
+ arch/riscv/boot/dts/spacemit/k3-pinctrl.dtsi | 11 +++++++++++
+ 2 files changed, 22 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 6dea93a41962..9f2910a17c38 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -25436,6 +25436,16 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/i2c/spacemit,k1-i2c.yaml
- F:	drivers/i2c/busses/i2c-k1.c
+diff --git a/arch/riscv/boot/dts/spacemit/k3-pico-itx.dts b/arch/riscv/boot/dts/spacemit/k3-pico-itx.dts
+index b89c1521e664..6c31460990a7 100644
+--- a/arch/riscv/boot/dts/spacemit/k3-pico-itx.dts
++++ b/arch/riscv/boot/dts/spacemit/k3-pico-itx.dts
+@@ -6,6 +6,7 @@
+ #include <dt-bindings/gpio/gpio.h>
  
-+SPACEMIT K3 DISPLAY DRIVER
-+M:	Cody Kang <codykang.hk@gmail.com>
-+L:	dri-devel@lists.freedesktop.org
-+L:	linux-riscv@lists.infradead.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/display/spacemit/
-+F:	Documentation/devicetree/bindings/phy/spacemit,k3-inno-dp-phy.yaml
-+F:	drivers/gpu/drm/spacemit/
-+F:	drivers/phy/spacemit/phy-k3-inno-dp.c
+ #include "k3.dtsi"
++#include "k3-display.dtsi"
+ #include "k3-pinctrl.dtsi"
+ 
+ / {
+@@ -221,3 +222,13 @@ hub@1 {
+ &usb2_phy {
+ 	status = "okay";
+ };
 +
- SPANISH DOCUMENTATION
- M:	Carlos Bilbao <carlos.bilbao@kernel.org>
- R:	Avadhut Naik <avadhut.naik@amd.com>
++&dpu1_crtc0 {
++	status = "okay";
++};
++
++&dp1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&dp1_1_cfg>;
++	status = "okay";
++};
+diff --git a/arch/riscv/boot/dts/spacemit/k3-pinctrl.dtsi b/arch/riscv/boot/dts/spacemit/k3-pinctrl.dtsi
+index 3ee1471f3798..2f36eba20f1e 100644
+--- a/arch/riscv/boot/dts/spacemit/k3-pinctrl.dtsi
++++ b/arch/riscv/boot/dts/spacemit/k3-pinctrl.dtsi
+@@ -11,6 +11,17 @@
+ #define K3_GPIO(x)	(x / 32) (x % 32)
+ 
+ &pinctrl {
++	/omit-if-no-ref/
++	dp1_1_cfg: dp1-1-cfg {
++		dp1-pins {
++			pinmux = <K3_PADCONF(24, 6)>;	/* dp1 hpd */
++
++			bias-disable;
++			drive-strength = <25>;
++			power-source = <3300>;
++		};
++	};
++
+ 	gmac0_rgmii_0_cfg: gmac0-rgmii-0-cfg {
+ 		gmac0-rgmii-0-pins {
+ 			pinmux = <K3_PADCONF(0, 1)>,	/* gmac0_rxdv */
 
 -- 
 2.43.0
