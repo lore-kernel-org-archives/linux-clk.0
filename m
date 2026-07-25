@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DE932749DC;
-	Sat, 25 Jul 2026 14:46:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DF2821CFEF;
+	Sat, 25 Jul 2026 14:47:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784990817; cv=none; b=OOSyZAjSqA+Vrx5WOuHftoDf5aWj1k5MJFggPrA49fvfcpCWhRV5FH4jjZlrnk0DmxXN9I3j2W1cgt1b70vA2C2GzWxFsYDBEGywWHF5LsAv1MPtqwsgJYKwmhBb3+hFwSnXmJct9uKdAa0Sh2G/Fi6b2OZ0NB1Leq/snWhSDVg=
+	t=1784990833; cv=none; b=aLnyqkx68OaTjlfciT9whrMB+TPHsD43DW2nDw6NomebAHpWwMLIqiti17p4MWAn00wosEhPkcX5L5kbvk+grp1TYaohJws+xYReAm0I20/Z5PnhOLXOqV5uqODDVzmMAQ4zFboS+jTfG/n/WL9rkWo0zICdRjYzd8UEENDLe/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784990817; c=relaxed/simple;
-	bh=2fQ2Anxt6NY5jKhAVVhjdNRLWISmPuBKqimJzqGEA2U=;
+	s=arc-20240116; t=1784990833; c=relaxed/simple;
+	bh=ftYgWDwY08hriXhljZT4P6e6rLF/2CHavpvWkXdLAns=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tXyyAHlFd0HUIdYQWh7HuUFB/8WC/T8Sex5wEQSMMAwQcJXnYvM2MWPRI77g8R+QZNGzz+KV62rfxDqIUalCta13u5wxCAkComllqv8JG0NMZMeDjYjGnTn1YK5AB3AFEoO7jJXKNuxronN15SYcfDzWMiZwNJRa8Qz1t78KYjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E/Yj3TTX; arc=none smtp.client-ip=100.103.45.18
+	 In-Reply-To:Content-Type; b=tqD9Ci/S3cwzqRQ5BtPq+sozjUkNSJk6+mN7szbWAVgTWn6Y52Ygb3qEqfSBvFQxqDErE40q9znGT5xopxdG1AJqnIpk3WAA+XiYdv16TN3O8+m9T8hd+LpD6sAS5c3WIaFAtHPpr26n23q8xwoEhxEfc4vvsPa5R70cVx1fmec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ui07jVD7; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E/Yj3TTX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B45F31F000E9;
-	Sat, 25 Jul 2026 14:46:49 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ui07jVD7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 411BB1F000E9;
+	Sat, 25 Jul 2026 14:47:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784990816;
-	bh=2fQ2Anxt6NY5jKhAVVhjdNRLWISmPuBKqimJzqGEA2U=;
+	s=k20260515; t=1784990832;
+	bh=AH7musQwdSBmrm7K680xBXlwyD/B2D2oxodOewI599c=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=E/Yj3TTXz2zdmtpk9unD+m7svuSQJLdkukHWVXbMgQbw1iCXumRugDZgqRbhMud1u
-	 WLEaJtp7LqCcVvX0KIiMCveamt89dlRihmtWS+0GcGnxWbbGi+RhE1fGkeZx+4OWnX
-	 LEcK5ZrErJjApcL8U6eB7muHXCNIuJtvpHZmKjHMrC8ktGm4h4R98WjvNCQRPJvnWI
-	 6zdtwUXF7Stz07Gfj5abuz3CveRDtHberzY4YZQXbKwHs3ksiAona6pYjr+soVGGNh
-	 xUbtVreNjKPCdGi7MenPYNyK+qteBYZZCoIk+JftHy+Bn2mXo5PF5JEcQAazsXW2Tn
-	 XKFlRgMywPcFw==
-Message-ID: <c52fc21e-ea58-43a8-a5f6-937ea108fc2a@kernel.org>
-Date: Sat, 25 Jul 2026 16:46:46 +0200
+	b=Ui07jVD7TqPcbEtWi8KQwsiiT3q55LxrbhPz2KIyF83ieFaWTHM2MAA/0Ltu4FlA7
+	 Y8D0i2nB2t2q5uY8sNwJNAC5zrewvwogCX8OmLYq5o8BsOfMtG49AAuzsI04k4m0Oe
+	 WN8RqTTfW4JpFgMEBipzUx+//hgnNQSk91hvuBCegLwQ+5lsZoEn8uDYLtq0sAgkam
+	 3MmjFYVUB+odWpaekFSGqWYSl2Uma0emArQQ6szE+SA6HxctD7wyUasDj4D4SYA4NT
+	 bIPwz5iHfgptyXZbiawMyjJ8CRBpYZudjSaKQQ4AsvFtG2IE2UMItOF+X9BZJi9mPJ
+	 3k3bfZnvzyZww==
+Message-ID: <0eca3486-57c9-469f-b846-8c10ec07ffba@kernel.org>
+Date: Sat, 25 Jul 2026 16:47:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,10 +35,11 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 6/6] media: qcom: camss: Drop legacy PHY descriptions
- from x1e
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
+Subject: Re: [PATCH v12 0/6] Add dt-bindings and PHY updates for CAMSS on
+ x1e80100 silicon
+To: Daniel J Blueman <daniel@quora.org>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
@@ -47,12 +48,12 @@ To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
  <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
  Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
  Bryan O'Donoghue <bod@kernel.org>,
- Loic Poulain <loic.poulain@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org
+ Loic Poulain <loic.poulain@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 References: <20260708-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v12-0-f8588da41f16@linaro.org>
- <20260708-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v12-6-f8588da41f16@linaro.org>
+ <CAMVG2stKmNxe-mdqbqO4MDLDrJCiNXw9kt8SA8egYAmByf9fKw@mail.gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -98,15 +99,32 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
  n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
  qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
-In-Reply-To: <20260708-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v12-6-f8588da41f16@linaro.org>
+In-Reply-To: <CAMVG2stKmNxe-mdqbqO4MDLDrJCiNXw9kt8SA8egYAmByf9fKw@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 08/07/2026 02:07, Bryan O'Donoghue wrote:
-> x1e is the first CAMSS SoC to use the new PHY interface. Drop the redundant
-> legacy CSIPHY descriptions.
+On 25/07/2026 14:47, Daniel J Blueman wrote:
+> On Wed, 8 Jul 2026 at 08:06, Bryan O'Donoghue
+> <bryan.odonoghue@linaro.org> wrote:
+>> Changes in v12:
+>> - Updates camss sensor find method to find the sensor in the CSIPHY port. -
+>>   Neil, Vlad, Bryan
+>> - Drops dependency on passing polarities and positions. Moved into CSIPHY
+>>   port as agreed. Neil, Vlad, Bryan
+>> - Omitted mux to CSID as discussed this will be done when splitting CSID
+>>   out as its own individual node. Neil, Bryan
+>> - Updated Reviewed-by: - Loic
+>> - Link to v11: https://lore.kernel.org/r/20260326-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v11-0-5b93415be6dd@linaro.org
+> [...]
+>> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> 
+> Works for me on 7.2.0-rc4 with 'qcam'.
+> 
+> Tested-by: Daniel J Blueman <daniel@quora.org> # Lenovo Slim 7x X1E80100
+> 
 
-This looks like breaking existing ABI / users.
+You cannot test bindings and I doubt that you actually tested even the
+driver code without DTS.
 
 Best regards,
 Krzysztof
