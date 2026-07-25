@@ -1,64 +1,64 @@
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81FEF3F39CB
-	for <linux-clk@vger.kernel.org>; Sat, 25 Jul 2026 18:48:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B960A3515C6
+	for <linux-clk@vger.kernel.org>; Sat, 25 Jul 2026 20:05:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785005288; cv=none; b=kbqguA7nRTwlibpBXXeYWf/dMW3B+xRgbapFRqSCbiW3atjwdU+9DJ45Wi6WmXHznqw1Ab5TtOECkB2nZ2z1RRxaKPv2fqX/qAmL1qPjAMYv7VfirFZvjIt32Nbl2s+dOK02orPW/r/bplDjdC/kJ07LAv2HOTOeML1CtM+tds0=
+	t=1785009906; cv=none; b=MX8xhwvybST1N4Q6NBHGJFJvQEYf4V6SCBmC9nx8x0OeNv6fHao/sa78sPgnjCZg6Sy8VFNbd3eIm6z4YHAtNpV290XnPEx0fIpaY0TQK8nAdEnwTsvD0AdiDX/A2nlN+5hc5eEhrccg97+xs2xFDmFHrZteguD9vsFkAus8pQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785005288; c=relaxed/simple;
-	bh=Xt3kGZtAAdd+HzHAVAMZgGdEC9llEbMYpKzHMhd/MkQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=cAdjHBEBVavqxU+J8d1sICjW8xpIsVyTynBqcdG0tJWMOrRdHzF8abeulb4O5DXW70ZK9X4ymCtOcI1X6X0h2Im8C/AIdIo40oXGlddEVAarsXMZpsG43YSHBU8Li2otY/Ukl0y4XxO+drY6KNkde7n60OeNFwE7UMcrw8lfJW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bPtLj2E5; arc=none smtp.client-ip=209.85.210.173
+	s=arc-20240116; t=1785009906; c=relaxed/simple;
+	bh=nIlnJRPNwvzsEQ9oqxaZZWX8opcLYnBostsYhgueMJg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=RsQlZ5+BrgfLzZ17iBsGwM12Nl+NkBH8lPPMYYBxA5I6wA3KvuKQFoUfgwWQJQ9UgMQW/iCCkTxFJOHifRREHYBAJON2z5mkeclvPeNpa6DJ6Xn2dk4v0PbYkY5eoHMEh3C9PyjVnsW19wJh253UsncuMDAF0YHD0WCHabf1tzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KEoKA0T2; arc=none smtp.client-ip=209.85.215.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bPtLj2E5"
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-84a3e5ca66eso148055b3a.3
-        for <linux-clk@vger.kernel.org>; Sat, 25 Jul 2026 11:48:06 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KEoKA0T2"
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-c8612812170so170961a12.2
+        for <linux-clk@vger.kernel.org>; Sat, 25 Jul 2026 13:05:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1785005286; x=1785610086; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1785009904; x=1785614704; darn=vger.kernel.org;
         h=cc:to:message-id:content-transfer-encoding:content-type
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to:content-type;
-        bh=KZ0jpJTuTc9mIF747vkGOggfpm0DkF4Pd0GiKsVCCcQ=;
-        b=bPtLj2E56JLZHhv59qBNEl+qnx8s4ZEQcmE5GuZECHOakYCZ+MNpXr/HRtvvjgpIPG
-         UbLcEEYqzuqaKIP7N1wB1h9EeOwZfIO4xI6nObz3gak2RbM78uVeDINVNBrjtoynd2yf
-         WIO5H4ROGgMZ1Hcdk4oK1kSKgFBxzcyTkLjzzLnu+kBIRFqRBz666rC4hWODxSsoU6IG
-         oSvwxVy3Q8xiwRAlyHrfaCHTE9d9xp9HHQczz9XJqIn5IZfchqz8k2QGfsusOeT0lQQ4
-         xBoJcjoYqB7euXoiw8xMwSKk9QdcXZFBqTOBAQvCQfT584V4bme6RkX30zVSlFna0NEk
-         Ie4A==
+        bh=I7YnUNHQ+9mCV7Z3kMgXnU2VDcDD/IXSwFksJNwhhcY=;
+        b=KEoKA0T2mEkyJvTNPM5Vm/Xvyp9hwRzZlnqM16eRfXhdZf9OzsMXH4xKHwsYMihsgl
+         +CEkEZrkc7BWEl0rFWev1ZHfXhTadwHc8TDPcPOXfOulOtkK8lftpWZgPp3bBL2wxyaM
+         EV8YsQ+RnT7g3beOC+Ip5S4ouExrx0EH0XrZwTRMKlydNm8OdQyv7o/52ib17sXK4875
+         iRHrRi+ZIAzzZhGVhPsgmR16r66pqpRQvlzzeOug/VTSXjnvNVWptfVtm2QOQqtHvhMm
+         iHql2kwTLRPwibP38CgFUQtYF4rNR9j9QzolLsjDqYcs5LrvmGJpR6FNen4TF1bis1kH
+         fFeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785005286; x=1785610086;
+        d=1e100.net; s=20251104; t=1785009904; x=1785614704;
         h=cc:to:message-id:content-transfer-encoding:content-type
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to:content-type;
-        bh=KZ0jpJTuTc9mIF747vkGOggfpm0DkF4Pd0GiKsVCCcQ=;
-        b=HNSMD2spMwDqP0wA08y8e6Y2fTDBk+kYiO8XoYUBHYCoPfj7kiZqEV+0nSqVu1SJGK
-         EfZgRPu6RbDDFH9tEds1F1O/kxm/s1EhfV1ezBJ5ChXH+1MpI8KXFOEWomIZswU7H3b8
-         9V+GHi+aAtRMpGTSMfnY5t5Kv0HV0xfJZhIY5xYpxObwYMPNxWw05pbL7nRmIJ+6aZcT
-         gQAb54waZI4st5ITe389BZSa3BV2philj9ET381CpkTHsjqhyy8qIB79vl2WkiPyS10h
-         GJzS8FF5XQQBPupaWhsJzVF5xi87coT4NGtiFwtOCyyu6lkVTgjF3xLCsnF+lIWY2ooG
-         q2CA==
-X-Gm-Message-State: AOJu0YzR7nWVk8EhVShrjR/y3TVutksBZ49UEGQkMAarGXpC0awTBYVt
-	KhvsXK3LR5kjZ+GklMse1hYln7RWjDVVJXJKJc3Mzjyb5EbVf5b98fbk
-X-Gm-Gg: AR+sD12tYW1gdCSdx3EpbgTeyq9uGnDcYgv58s0KYT76GFQ0PndL2mfWVXk71hPMROr
-	LEAt35RKctVFPj+H1e/AqMtTJ7H1wEqaCIZ0OCproLhF+AhLpDaKKa8bbIpgcXmkUH5qoCmfnMu
-	QOQf7x1sVO5a0WU8wtZ1cyYtxGkHJeAzInvpSPX2jjk9oVdKasEzoRkwCZew9Wk8x2iaio6xkfg
-	T+kGdjH5BcRSUQblNms8rrpL4aOa7fifCsDpM08aax1Nrh2IRKqm2raxZygQ2E1AtjRSeG4+pvJ
-	Z2g0DDDis6cDJ/vkwb+ANpLdWiftjxBEOrw1V21CjbvBeaMLUxdUYZ7tq+D2qWFjfNqdqL+viYT
-	Hh8PMVDRLZoiPGtBJ2dTgR4yPvFKeotAd2+ckyLRpQ7A5ZGi+DplfFPU62w30VOGi8eswoIhNqo
-	ha+CkHWI18MtaFSGs=
-X-Received: by 2002:a17:902:d491:b0:2ca:ecf6:9115 with SMTP id d9443c01a7336-2cfde7901b2mr25140865ad.2.1785005285581;
-        Sat, 25 Jul 2026 11:48:05 -0700 (PDT)
+        bh=I7YnUNHQ+9mCV7Z3kMgXnU2VDcDD/IXSwFksJNwhhcY=;
+        b=dFFMQVNUaNdMahTu9oP77zJq4dHNh3CgHUKcgS3tqr7Ath4F8ml5YBGSX41EHv+wzF
+         oWRhu8aNdRTVhsz7nwKZhxMh+dKeluGuSIbIHcHBxLrEoIr+by8i4HQ/QJGCPQXnUt+5
+         CvL7qyBdyWZ2pCLWgYVfG6k+kWJWKw2vA5oYDmA5JGh+9xUMYCBHyvCUtxYgixOIX4jm
+         0GVdS/EzRW6bFvKeJC1Rsn3Iwan7P2VNqg6zsHEDAH6W7yr04Z58ONU+/Qucv6QFhr9h
+         csIiJtTHFDumgtWBiCs4tV+3X6oARwys1vwCfsYJjH8G/D0Ra/OPSdq7iVqTgxoIXx06
+         lwgg==
+X-Gm-Message-State: AOJu0Yy2oDfXe+whq+aVNB2yq8Zev3Ai0itMl4AaIl587lo+9Ro3AUOL
+	rXECnmL4j54Dj/ugyCOGxc1unevEbel0gteRZdbYgg1Rc4i7kDYCWitO6GEUmw==
+X-Gm-Gg: AR+sD10F51TnulJfrpYl9/mTss+sQe4a0Hqr+fnAtiBkxda1sVvU1W6eOt9yvV8X/S0
+	5045fQK2EdkfKTazCfVZLloKyY/eQRzHs35g9fu+c7QAKBsn1tA4CHqnpg5vRtnK0nfmrJ4cADH
+	oixHzzg4OZTcdBL7vgLNC1tRRxkd1uSyft/NgAo2ka6XCExtRkCrEJVnxDeN2cHkanSax3bRODk
+	WfQSZXAQnDAks3J6OyKxHjs76yaflPyTZmMvG5mKdrjB8AKp9MCPQXcbrXPP2cHaKsT8W67XBdR
+	mvZI0s3XuDzmAyd5pFgeXZP9Z+1ceZXdZIZ66THCfwDjoZgkq28787/to2HzjG7LJD4xRusjBcp
+	albFnPLJ0+sBTi9/2v9MmBjIiTvLSW5B2JOdKL4QD0++QtSSNRCsFVZXZR3cx+YGeDj4LK0Wthn
+	vCg+NPshrPWKZlZO0=
+X-Received: by 2002:a17:902:d485:b0:2cf:9e90:8be with SMTP id d9443c01a7336-2cfde882c08mr26162755ad.4.1785009904026;
+        Sat, 25 Jul 2026 13:05:04 -0700 (PDT)
 Received: from [172.28.140.252] ([2409:40c2:5424:789e:7bf2:671d:d7ae:b910])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-314bc3e261fsm14812770eec.6.2026.07.25.11.47.55
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-314bc548e29sm13487817eec.15.2026.07.25.13.04.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 25 Jul 2026 11:48:05 -0700 (PDT)
+        Sat, 25 Jul 2026 13:05:03 -0700 (PDT)
 From: Bhargav Joshi <j.bhargav.u@gmail.com>
-Date: Sun, 26 Jul 2026 00:17:47 +0530
-Subject: [PATCH] dt-bindings: clock: ti,DM814x-ADPLL: Convert to DT schema
+Date: Sun, 26 Jul 2026 01:34:08 +0530
+Subject: [PATCH] dt-bindings: clock: ti,keystone-gate: Convert to DT schema
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -67,201 +67,163 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260726-ti-adpll-v1-1-86f6fc936507@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIzMDcyNT3ZJM3cSUgpwc3ZSUtBQLk1ST1DRDCyWg8oKi1LTMCrBR0bEQfnF
- pUlZqcglIv1JtLQBiOHEObAAAAA==
-X-Change-ID: 20260725-ti-adpll-ddfd84e4ef18
+Message-Id: <20260726-ti-keystone-gate-clk-v1-1-5b2449bc31ee@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/x2MSwqAMBDFriKzdqBWqJ+riIuiTx2UKm0RRby7x
+ WUgyUMBXhCozR7yOCXI7hIUeUbDYt0MljExaaWNqrThKLziDnF34NlG8LCtXE41StWYpFSU0sN
+ jkuvfdv37filDG2BmAAAA
+X-Change-ID: 20260726-ti-keystone-gate-clk-3f8e30966077
 To: Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Tony Lindgren <tony@atomide.com>
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>, 
+ Santosh Shilimkar <santosh.shilimkar@ti.com>, 
+ Murali Karicheri <m-karicheri2@ti.com>
 Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, goledhruva@gmail.com, m-chawdhry@ti.com, 
- daniel.baluta@gmail.com, simona.toaca@nxp.com, j.bhargav.u@gmail.com
+ linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+ goledhruva@gmail.com, m-chawdhry@ti.com, daniel.baluta@gmail.com, 
+ simona.toaca@nxp.com, j.bhargav.u@gmail.com
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1785005275; l=5339;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1785009889; l=4399;
  i=j.bhargav.u@gmail.com; h=from:subject:message-id;
- bh=Xt3kGZtAAdd+HzHAVAMZgGdEC9llEbMYpKzHMhd/MkQ=;
- b=ITeD0cUQVPuY+i/l0gXqbHWzlAktaK4dPooTrjuuFr7CrtQcCu/fKDflhr5pSju008mJsF/bw
- OwBDu8gaUfYC7iYRv8otfvge7B9agH9VWpZgGAQHrLoQW7fvZWItrqK
+ bh=nIlnJRPNwvzsEQ9oqxaZZWX8opcLYnBostsYhgueMJg=;
+ b=tD0xE+8Vd2J6xBsPdrE5/hOSJEeWwG8G8stlnOTdRmfvqtVdO53Vho6dZ2rPDvV+knjEL6iUJ
+ bPQ6WZZhneaADjLF+fTE1J4fS/IhkSeWm+0n6P1IYvLMad/RkBc+I3J
 X-Developer-Key: i=j.bhargav.u@gmail.com; a=ed25519;
  pk=IqNDwUZKECEA+n8wXctFLBbYL9NhFstZNbOznm/nX1k=
 
-Convert the Texas Instruments DM814x ADPLL clock binding to DT schema
-format. Add 'clock-output-names' as required which was missing in
-legacy binding, as the driver (clk-adpll.c) mandates it and fails
-probing if it is missing.
+Convert Texas Instruments keystone PSC clock binding to DT schema.
+
+The vendor-specific 'domain-id' property is intentionally kept without a
+"ti," prefix to preserve existing ABI since driver and existing board
+file use property without "ti," prefix.
+
+Also update the reference to this binding in ti,keystone-rproc.txt to
+point at the new filename.
 
 Signed-off-by: Bhargav Joshi <j.bhargav.u@gmail.com>
 ---
- .../devicetree/bindings/clock/ti/adpll.txt         |  39 --------
- .../bindings/clock/ti/ti,dm814-adpll-clock.yaml    | 108 +++++++++++++++++++++
- 2 files changed, 108 insertions(+), 39 deletions(-)
+ .../devicetree/bindings/clock/keystone-gate.txt    | 27 ----------
+ .../bindings/clock/ti,keystone,psc-clock.yaml      | 60 ++++++++++++++++++++++
+ .../bindings/remoteproc/ti,keystone-rproc.txt      |  2 +-
+ 3 files changed, 61 insertions(+), 28 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/ti/adpll.txt b/Documentation/devicetree/bindings/clock/ti/adpll.txt
+diff --git a/Documentation/devicetree/bindings/clock/keystone-gate.txt b/Documentation/devicetree/bindings/clock/keystone-gate.txt
 deleted file mode 100644
-index 3122360adcf3..000000000000
---- a/Documentation/devicetree/bindings/clock/ti/adpll.txt
+index 43f6fb6c9392..000000000000
+--- a/Documentation/devicetree/bindings/clock/keystone-gate.txt
 +++ /dev/null
-@@ -1,39 +0,0 @@
--Binding for Texas Instruments ADPLL clock.
+@@ -1,27 +0,0 @@
+-Binding for Keystone gate control driver which uses PSC controller IP.
 -
--This binding uses the common clock binding[1]. It assumes a
--register-mapped ADPLL with two to three selectable input clocks
--and three to four children.
+-This binding uses the common clock binding[1].
 -
 -[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
 -
 -Required properties:
--- compatible : shall be one of "ti,dm814-adpll-s-clock" or
--  "ti,dm814-adpll-lj-clock" depending on the type of the ADPLL
--- #clock-cells : from common clock binding; shall be set to 1.
--- clocks : link phandles of parent clocks clkinp and clkinpulow, note
--  that the adpll-s-clock also has an optional clkinphif
--- reg : address and length of the register set for controlling the ADPLL.
+-- compatible : shall be "ti,keystone,psc-clock".
+-- #clock-cells : from common clock binding; shall be set to 0.
+-- clocks : parent clock phandle
+-- reg :	psc control and domain address address space
+-- reg-names : psc control and domain registers
+-- domain-id : psc domain id needed to check the transition state register
 -
--Examples:
--	adpll_mpu_ck: adpll@40 {
--		#clock-cells = <1>;
--		compatible = "ti,dm814-adpll-s-clock";
--		reg = <0x40 0x40>;
--		clocks = <&devosc_ck &devosc_ck &devosc_ck>;
--		clock-names = "clkinp", "clkinpulow", "clkinphif";
--		clock-output-names = "481c5040.adpll.dcoclkldo",
--				     "481c5040.adpll.clkout",
--				     "481c5040.adpll.clkoutx2",
--				     "481c5040.adpll.clkouthif";
+-Optional properties:
+-- clock-output-names : From common clock binding to override the
+-			default output clock name
+-Example:
+-	clkusb: clkusb {
+-		#clock-cells = <0>;
+-		compatible = "ti,keystone,psc-clock";
+-		clocks = <&chipclk16>;
+-		clock-output-names = "usb";
+-		reg = <0x02350008 0xb00>, <0x02350000 0x400>;
+-		reg-names = "control", "domain";
+-		domain-id = <0>;
 -	};
--
--	adpll_dsp_ck: adpll@80 {
--		#clock-cells = <1>;
--		compatible = "ti,dm814-adpll-lj-clock";
--		reg = <0x80 0x30>;
--		clocks = <&devosc_ck &devosc_ck>;
--		clock-names = "clkinp", "clkinpulow";
--		clock-output-names = "481c5080.adpll.dcoclkldo",
--				     "481c5080.adpll.clkout",
--				     "481c5080.adpll.clkoutldo";
--	};
-diff --git a/Documentation/devicetree/bindings/clock/ti/ti,dm814-adpll-clock.yaml b/Documentation/devicetree/bindings/clock/ti/ti,dm814-adpll-clock.yaml
+diff --git a/Documentation/devicetree/bindings/clock/ti,keystone,psc-clock.yaml b/Documentation/devicetree/bindings/clock/ti,keystone,psc-clock.yaml
 new file mode 100644
-index 000000000000..7f551dfca030
+index 000000000000..ed42adb27832
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/ti/ti,dm814-adpll-clock.yaml
-@@ -0,0 +1,108 @@
++++ b/Documentation/devicetree/bindings/clock/ti,keystone,psc-clock.yaml
+@@ -0,0 +1,60 @@
 +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/clock/ti/ti,dm814-adpll-clock.yaml#
++$id: http://devicetree.org/schemas/clock/ti,keystone,psc-clock.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Texas Instruments DM814x ADPLL Clock
++title: TI Keystone PSC clock
 +
 +maintainers:
-+  - Tony Lindgren <tony@atomide.com>
-+
-+description:
-+  The ADPLL is a register-mapped clock generator found on TI DM814x SoCs. It
-+  provides multiple output clocks from two or three selectable input clocks and
-+  three to four children.
++  - Santosh Shilimkar <santosh.shilimkar@ti.com>
++  - Murali Karicheri <m-karicheri2@ti.com>
 +
 +properties:
 +  compatible:
-+    enum:
-+      - ti,dm814-adpll-s-clock
-+      - ti,dm814-adpll-lj-clock
++    const: ti,keystone,psc-clock
 +
 +  reg:
-+    maxItems: 1
++    items:
++      - description: PSC control
++      - description: Domain
 +
-+  '#clock-cells':
-+    const: 1
++  reg-names:
++    items:
++      - const: control
++      - const: domain
++
++  domain-id:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: PSC domain id needed to check the transition state register
 +
 +  clocks:
-+    minItems: 2
-+    maxItems: 3
-+
-+  clock-names:
-+    minItems: 2
-+    maxItems: 3
++    maxItems: 1
 +
 +  clock-output-names:
-+    minItems: 3
-+    maxItems: 4
++    maxItems: 1
++
++  "#clock-cells":
++    const: 0
 +
 +required:
 +  - compatible
 +  - reg
-+  - '#clock-cells'
++  - reg-names
++  - domain-id
 +  - clocks
-+  - clock-output-names
-+
-+if:
-+  properties:
-+    compatible:
-+      contains:
-+        const: ti,dm814-adpll-s-clock
-+then:
-+  properties:
-+    clocks:
-+      minItems: 3
-+    clock-names:
-+      items:
-+        - const: clkinp
-+        - const: clkinpulow
-+        - const: clkinphif
-+    clock-output-names:
-+      items:
-+        - description: dcoclkldo
-+        - description: clkout
-+        - description: clkoutx2
-+        - description: clkouthif
-+else:
-+  properties:
-+    clocks:
-+      maxItems: 2
-+    clock-names:
-+      items:
-+        - const: clkinp
-+        - const: clkinpulow
-+    clock-output-names:
-+      items:
-+        - description: dcoclkldo
-+        - description: clkout
-+        - description: clkoutldo
++  - "#clock-cells"
 +
 +additionalProperties: false
 +
 +examples:
 +  - |
-+    adpll@40 {
-+        compatible = "ti,dm814-adpll-s-clock";
-+        reg = <0x40 0x40>;
-+        #clock-cells = <1>;
-+        clocks = <&devosc_ck &devosc_ck &devosc_ck>;
-+        clock-names = "clkinp", "clkinpulow", "clkinphif";
-+        clock-output-names = "481c5040.adpll.dcoclkldo",
-+                             "481c5040.adpll.clkout",
-+                             "481c5040.adpll.clkoutx2",
-+                             "481c5040.adpll.clkouthif";
++    clkusb@2350008 {
++        compatible = "ti,keystone,psc-clock";
++        reg = <0x02350008 0xb00>, <0x02350000 0x400>;
++        reg-names = "control", "domain";
++        domain-id = <0>;
++        clocks = <&chipclk16>;
++        clock-output-names = "usb";
++        #clock-cells = <0>;
 +    };
-+
-+  - |
-+    adpll@80 {
-+        compatible = "ti,dm814-adpll-lj-clock";
-+        reg = <0x80 0x30>;
-+        #clock-cells = <1>;
-+        clocks = <&devosc_ck &devosc_ck>;
-+        clock-names = "clkinp", "clkinpulow";
-+        clock-output-names = "481c5080.adpll.dcoclkldo",
-+                             "481c5080.adpll.clkout",
-+                             "481c5080.adpll.clkoutldo";
-+    };
+diff --git a/Documentation/devicetree/bindings/remoteproc/ti,keystone-rproc.txt b/Documentation/devicetree/bindings/remoteproc/ti,keystone-rproc.txt
+index 91f0a3b0c0b2..847552133633 100644
+--- a/Documentation/devicetree/bindings/remoteproc/ti,keystone-rproc.txt
++++ b/Documentation/devicetree/bindings/remoteproc/ti,keystone-rproc.txt
+@@ -75,7 +75,7 @@ SoCs only:
+ 
+ - clocks: 		Should contain the device's input clock, and should be
+ 			defined as per the bindings in,
+-			Documentation/devicetree/bindings/clock/keystone-gate.txt
++			Documentation/devicetree/bindings/clock/ti,keystone,psc-clock.yaml
+ 
+ The following are mandatory properties for Keystone 2 66AK2G SoCs only:
+ 
 
 ---
 base-commit: 0ce37745d4bfbc493f718169c3974898ffec8ee7
-change-id: 20260725-ti-adpll-ddfd84e4ef18
+change-id: 20260726-ti-keystone-gate-clk-3f8e30966077
 
 Best regards,
 -- 
