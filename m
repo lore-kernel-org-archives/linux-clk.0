@@ -1,190 +1,125 @@
-Received: from vps.xff.cz (vps.xff.cz [195.181.215.36])
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A584021CC44;
-	Sat, 25 Jul 2026 12:26:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.181.215.36
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784982415; cv=none; b=pFZbgAQ/dOSkj6TxvX0DTwolY+XCm2ZMwSOACVP1uhPxgabxydlCgjHiuHF+JTF1eOt7I5atKCm0S/7RMdd9VcyWM+3Q9GxM8HLbCotuQtN6m1EA0pPCHV4IlIjI1OQgUA0L0DU0xtcV4PbpkWSr42JCr722BmuMRozcBcz25RU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784982415; c=relaxed/simple;
-	bh=lq0/9gAd9eRbQQjoIj0OoViKUp6XNp12/ZfKPhVpr/g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Zc7145rc0kWyztq2/9JYkcCYICO4ThNH0Ny7xXNjbrYJGNVAF3XczxWEErfxkfRdk6Ba6CcT++5iysUXET0w01uIqiA9FHryY/7fgV3xhJ+gmQ7LKmqFRxuG3i8iL1GPd+tTuzuW2lBzZwCZygsY0C9XdySmV1JUx5/J3BXq5E0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xff.cz; spf=pass smtp.mailfrom=xff.cz; dkim=pass (1024-bit key) header.d=xff.cz header.i=@xff.cz header.b=BFeGzKbF; arc=none smtp.client-ip=195.181.215.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xff.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xff.cz
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1BF1212542
+	for <linux-clk@vger.kernel.org>; Sat, 25 Jul 2026 12:47:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.172
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1784983634; cv=pass; b=bB50wrAaHjoWuu1IFNPW/3S/hpoALMe0zIi7RJuU9d8BmGB24mlJHBidRCq2prnc1orfSPNmKNXRL/QZvKAKk+5MVui2nYJb41HBknVgdp8JJcLfr2s08fWjV/MvAxSSZ5P6fMNAgfRdVrPlGjOwgRE0dsnMEUuy/BNKDFlyo6M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1784983634; c=relaxed/simple;
+	bh=nbfEHiFg3ujAMDl8T5Sowr96/ZasmMbVmzrGHikYY2U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=A+6kLtOk8oAW+bqbrAghTcv4X3hsGW3Ir93DidnDE81SX/e+UYvfCH4saRfz9VSuTbr2H9QUEktPcerbzsVmBsCbU4M09PNFkC2+Q5J/oiNTMHtbQRaMOGsejQXmlomHZ3yfVuTojTH8PJONpcCPOaR3K5CmtVbNUNhgzBCWxG8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=quora.org; spf=pass smtp.mailfrom=quora.org; dkim=pass (1024-bit key) header.d=quora.org header.i=@quora.org header.b=hzTnJ1kZ; arc=pass smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=quora.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quora.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xff.cz header.i=@xff.cz header.b="BFeGzKbF"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xff.cz; s=mail;
-	t=1784982411; bh=lq0/9gAd9eRbQQjoIj0OoViKUp6XNp12/ZfKPhVpr/g=;
-	h=From:To:Cc:Subject:Date:From;
-	b=BFeGzKbF1UbplnnnTo699cQJH3h2dyG2ENWDX4brn+HW5uZVLsbrwp0bLGwtCg14Q
-	 OwqeXG7AakE9T+DxzSqCci8nWqulZSiakEmwd87wWXyvtziu3Ola3JWqMvDnQCBFax
-	 27R2RmTr0qyczV5a0eG/uQWCThEdMoCjXXtLa+00=
-From: =?UTF-8?q?Ond=C5=99ej=20Jirman?= <megi@xff.cz>
-To: linux-sunxi@lists.linux.dev
-Cc: linux-kernel@vger.kernel.org,
-	Ondrej Jirman <megi@xff.cz>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney@redhat.com>,
-	Chen-Yu Tsai <wens@kernel.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM/Allwinner sunXi SoC support)
-Subject: [PATCH] clk: sunxi-ng: Change NKMP algorithm for finding factors
-Date: Sat, 25 Jul 2026 14:26:40 +0200
-Message-ID: <20260725122645.2270876-1-megi@xff.cz>
+	dkim=pass (1024-bit key) header.d=quora.org header.i=@quora.org header.b="hzTnJ1kZ"
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2cf6d65d8a7so19989095ad.0
+        for <linux-clk@vger.kernel.org>; Sat, 25 Jul 2026 05:47:12 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1784983632; cv=none;
+        d=google.com; s=arc-20260327;
+        b=V7DLecsxlbQ03CAk1Ulunfj4vG0SnXvyShPVAxha6JhX6QiJtjn7rFTLc28Ps8YeqH
+         gaD/OZr/Cuyi4pahM/eTqcZLO6ehgEImDfZUQiVnzY78szOz/WPh/nKTfZm4LtGA8jWD
+         Bo9Q5aT/93nBl0hzW/jA/OeBmtKFGQWfHX6yNk/eltlpV+ec7S2DEwKl3pNvRu66s61b
+         vzcsMwohPjVPZ4//ojjyoPaEsfmTud9psfaVwPxly7vH5pRwsT3dTBi+tH8fHMjzjSzr
+         Xr8MYuZudWS2L0l40M6AtaHu2W/bZKNg0aOjoQTkdsYocq7fvKUZfSLo+0BBsOO4sQhw
+         F8bw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=NFb3xFmMVZz4nbO4NmTzoVtr612rRjtqaPgKgbVu0P4=;
+        fh=uWpfZjHK+iREUJ60JL5Pn+t+GwlHnOYqBiP7Zfve7oo=;
+        b=saAgzCbVdRo0+j55NNYaEy5OB836o5TDstqFXFgEC+3uBcslI6unon0Gmpnyo1qbiV
+         bk5uPOeDo9fEjLvAUOFGlmq17R978FHSPubxjx40GGlYrM3mAuNuwkZuQl4rAHCegmtV
+         +KrBx/zsOq61CecNxfT0RkSMxIre/Xmmbew3FAmM1v0gSK4BNMEIkArvsAFscNBQ4e0M
+         WcVtr/CB8X7day9GnXGIgsmE2NGEo+78/hE82eOZTvPpv2MWqpSLFlkQY0GOp8Z5f01/
+         TuYkFziOFx6b0ZsjUGzs8HRQ+uf7UD1VuqwkUUaal+y82E/Hlnctl56gQk8+b8541P2F
+         oH1w==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=quora.org; s=google; t=1784983632; x=1785588432; darn=vger.kernel.org;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=NFb3xFmMVZz4nbO4NmTzoVtr612rRjtqaPgKgbVu0P4=;
+        b=hzTnJ1kZ8VTPX2spDgxKSesmfIj1g9m2IqHc8k+xpgUndOW6+Jz0Knq6axDOrDSES0
+         QyWZtsKv1WXuOS5NsC/qsqVOud+XECSiynAMq8yDBGnwOG364hXikPmLhcIVxbMuU+b9
+         cksvPr90Bwm2pExw1Xbz2yowaCUyCF/tOS80s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784983632; x=1785588432;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=NFb3xFmMVZz4nbO4NmTzoVtr612rRjtqaPgKgbVu0P4=;
+        b=dEMXdVPrdfN2/f+XrO+03dOsqZwcVhq27H/urnRI/ry0H8SXyoWzMjT/W4MOwuVyRa
+         b6ZT9bxhD9uIpu/moG2DJ7/tRVJ67nCikTUO3DUTm/bkOkOfqXrcjTa+NnYXfe7yzOvS
+         vBrVTvVej9N1tivcaE05is6wJARFZ3x+X7wh+IVGF8tRe1Dlj1KafroILPxhQ8w23AJK
+         I4VA41Cuekl2VhpN2Qm8gGu7tbii3gZssI6bK5w/O0MftvGsk4l8mpo2kbkKPi1NI/Jo
+         aLnZy5ZQUz0ae1JvB9lMRhx0+LYqJmfSjqTnNmXxWrV74ib4FT7TEVUNOf6AOZcsAVl2
+         OqDw==
+X-Forwarded-Encrypted: i=1; AHgh+Rqnp20ZB4tRwM4L27bl5hQ8aw1XS6dKM+iw1P4EQ4Vhd/gBC+OTFPzZg/GJjXXX3yN0gI+QwjVws+g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVXZiUtbHiEJ3OFPAWGpZP/h/ch5i727D3XHLNpsivmFTYFzuN
+	qKsYFgFLW0AHBb9w5mDFT6p9TdPagMbCj3kpfOAv4/AitQjjTXfjYawN/qWvbVpUOJVqZajENdx
+	vq4y9U62dzv9II/LJtVh19x3jhUEfl1aSAv2VMGk3Eg==
+X-Gm-Gg: AR+sD13sHk2HepDQXxJ0pW9ZsRWcXY7MaKCFMKIQ8+pFm6s2Pr8tX6OHT6lo8RvdfcG
+	FYe2fTo5Ab/lHKXoRTJtUi4+B0cP6AN0BanMnewmPR3K2+9wzHflgeBfkztYLZ2a23dFIebgajR
+	8p8nD6cgFMlri4YPiUufYBuFY4H0Mkem4UVuJdg4goSUpq4bOdvo4TnNPcXdxP7ThRkavA8TxsS
+	42tO4v+zkOC4RgQ13bpMR/GaynC7tkaEgTJ5yfWJEfohKtEQqhLMHZmWggnFihIeCgiDIcEIr8f
+	BDHkGFu1+2C98yaVrpEwT/LjTve4fy09vIbqXbNuJxEi0/ryHT/puHPqt94k8LahJPfSxM03rpG
+	WXm0Rp20t9iz4RKbc5P26o1OnwlCMzs6cg6lidjF20QusZ/eTsu5vC4Q2HsVw7wEk0ReCiOIiOV
+	4fBNfxnz7MDU4nFqCqZHNIOW86/475SEM4HQ1vTRnREGhfwgVNDCA512aVkoYIuYiTBufDeg==
+X-Received: by 2002:a17:903:26cf:b0:2c9:97a9:2098 with SMTP id
+ d9443c01a7336-2cfde895b4bmr22242195ad.44.1784983632412; Sat, 25 Jul 2026
+ 05:47:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260708-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v12-0-f8588da41f16@linaro.org>
+In-Reply-To: <20260708-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v12-0-f8588da41f16@linaro.org>
+From: Daniel J Blueman <daniel@quora.org>
+Date: Sat, 25 Jul 2026 20:47:00 +0800
+X-Gm-Features: AUfX_mwTJNR7-hRaq1ZTUYAiX7Ud5gZGyBy8PdA42w9wDa17cNUs0zXUmHoUAFI
+Message-ID: <CAMVG2stKmNxe-mdqbqO4MDLDrJCiNXw9kt8SA8egYAmByf9fKw@mail.gmail.com>
+Subject: Re: [PATCH v12 0/6] Add dt-bindings and PHY updates for CAMSS on
+ x1e80100 silicon
+To: "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>, 
+	Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, 
+	"Bryan O'Donoghue" <bod@kernel.org>, Loic Poulain <loic.poulain@oss.qualcomm.com>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Ondrej Jirman <megi@xff.cz>
+On Wed, 8 Jul 2026 at 08:06, Bryan O'Donoghue
+<bryan.odonoghue@linaro.org> wrote:
+> Changes in v12:
+> - Updates camss sensor find method to find the sensor in the CSIPHY port. -
+>   Neil, Vlad, Bryan
+> - Drops dependency on passing polarities and positions. Moved into CSIPHY
+>   port as agreed. Neil, Vlad, Bryan
+> - Omitted mux to CSID as discussed this will be done when splitting CSID
+>   out as its own individual node. Neil, Bryan
+> - Updated Reviewed-by: - Loic
+> - Link to v11: https://lore.kernel.org/r/20260326-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v11-0-5b93415be6dd@linaro.org
+[...]
+> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
-Current algorithm is very slow. It searches inefficiently in a brute
-force manner through all possibilities all the time.
+Works for me on 7.2.0-rc4 with 'qcam'.
 
-Eg. it does >1500 iterations on every rate change twice, because
-ccu_nkmp_find_best() function is called multiple times per rate
-change.
+Tested-by: Daniel J Blueman <daniel@quora.org> # Lenovo Slim 7x X1E80100
 
-New algorithm determines correct NKMP factors typically in 1 to 3
-iterations if precise factors can be determined for M = 1, P = 1,
-which is a typical case. If CPU clock frequency can't be derived
-precisely this drops to average 8 iterations needed to determine
-the factors.
-
-The results are identical to the original algorithm, except in cases
-where the original algorithm does not try to satisfy SoC PLL clock
-constraints, like N*K range 10..88 or P factor being limited to output
-frequency < 240 MHz.
-
-These restrictions are based on A64 SoC datasheet. Although they
-are sometimes not documented for other Allwinner SoC variants or are
-slightly different, this is still a significant improvement over
-not respecting any physical restrictions at all, as the previous
-algorithm did not. Hardcoding the values if fine, until someone
-finds some reason for not to.
-
-Motivation for this patch is that cpufreq schedutil scheduler thread
-manages to load one core to 70% all the time just doing these calculations
-while the core is running at just 24MHz during frequency changes.
-This helps improve the performance significantly.
-
-Signed-off-by: Ondrej Jirman <megi@xff.cz>
----
-Sorry, I don't know how to avoid overlong lines here, other than
-maybe not indenting 3 toplevel for blocks and keeping all of them
-at the same level.
-
- drivers/clk/sunxi-ng/ccu_nkmp.c | 80 ++++++++++++++++++++++-----------
- 1 file changed, 55 insertions(+), 25 deletions(-)
-
-diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.c b/drivers/clk/sunxi-ng/ccu_nkmp.c
-index 25efb5b37607..c39b19891431 100644
---- a/drivers/clk/sunxi-ng/ccu_nkmp.c
-+++ b/drivers/clk/sunxi-ng/ccu_nkmp.c
-@@ -32,40 +32,70 @@ static unsigned long ccu_nkmp_calc_rate(unsigned long parent,
- static unsigned long ccu_nkmp_find_best(unsigned long parent, unsigned long rate,
- 					struct _ccu_nkmp *nkmp)
- {
-+	unsigned long _k, _m, _p;
-+	unsigned long max_p = rate >= 240000000 ? 1 : nkmp->max_p;
-+	unsigned approx;
- 	unsigned long best_rate = 0;
--	unsigned long best_n = 0, best_k = 0, best_m = 0, best_p = 0;
--	unsigned long _n, _k, _m, _p;
- 
--	for (_k = nkmp->min_k; _k <= nkmp->max_k; _k++) {
--		for (_n = nkmp->min_n; _n <= nkmp->max_n; _n++) {
-+	for (approx = 0; approx <= 1; approx++) {
-+		for (_p = nkmp->min_p; _p <= max_p; _p <<= 1) {
- 			for (_m = nkmp->min_m; _m <= nkmp->max_m; _m++) {
--				for (_p = nkmp->min_p; _p <= nkmp->max_p; _p <<= 1) {
--					unsigned long tmp_rate;
--
--					tmp_rate = ccu_nkmp_calc_rate(parent,
--								      _n, _k,
--								      _m, _p);
--
--					if (tmp_rate > rate)
--						continue;
--
--					if ((rate - tmp_rate) < (rate - best_rate)) {
--						best_rate = tmp_rate;
--						best_n = _n;
--						best_k = _k;
--						best_m = _m;
--						best_p = _p;
-+				u64 nk = (u64)rate * _m * _p;
-+				unsigned long nk_rem = do_div(nk, parent);
-+
-+				if (nk_rem != 0 && !approx)
-+					continue;
-+
-+				if (nk < 10 || nk > 88)
-+					continue;
-+
-+				for (_k = nkmp->min_k; _k <= nkmp->max_k; _k++) {
-+					if (approx) {
-+						u64 _n = (u64)rate * _m * _p;
-+						unsigned long tmp_rate;
-+
-+						do_div(_n, parent * _k);
-+
-+						if (_n < nkmp->min_n || _n > nkmp->max_n)
-+							continue;
-+
-+						tmp_rate = ccu_nkmp_calc_rate(parent,
-+									      _n, _k,
-+									      _m, _p);
-+						if (tmp_rate > rate)
-+							continue;
-+
-+						if ((rate - tmp_rate) < (rate - best_rate)) {
-+							best_rate = tmp_rate;
-+							nkmp->n = _n;
-+							nkmp->k = _k;
-+							nkmp->m = _m;
-+							nkmp->p = _p;
-+						}
-+					} else {
-+						u64 _n = nk;
-+						unsigned long _n_rem = do_div(_n, _k);
-+
-+						if (_n < nkmp->min_n || _n > nkmp->max_n)
-+							continue;
-+
-+						if (_n_rem == 0) {
-+							nkmp->n = _n;
-+							nkmp->k = _k;
-+							nkmp->m = _m;
-+							nkmp->p = _p;
-+							return ccu_nkmp_calc_rate(parent,
-+										  nkmp->n,
-+										  nkmp->k,
-+										  nkmp->m,
-+										  nkmp->p);
-+						}
- 					}
- 				}
- 			}
- 		}
- 	}
- 
--	nkmp->n = best_n;
--	nkmp->k = best_k;
--	nkmp->m = best_m;
--	nkmp->p = best_p;
--
- 	return best_rate;
- }
- 
+Thanks and fine work!
+  Dan
 -- 
-2.54.0
-
+Daniel J Blueman
