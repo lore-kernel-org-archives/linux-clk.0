@@ -1,66 +1,65 @@
-Received: from mail-yx2-f4.google.com (mail-yx2-f4.google.com [74.125.224.132])
+Received: from mail-pz2-f1.google.com (mail-pz2-f1.google.com [74.125.228.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF1C11FCF41
-	for <linux-clk@vger.kernel.org>; Sat, 25 Jul 2026 05:06:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 469E81F4C96
+	for <linux-clk@vger.kernel.org>; Sat, 25 Jul 2026 05:07:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.228.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784956012; cv=none; b=rKXTDpw2pAkSY3WPUt8VIW4ZNKLX6o0e7njPEq2cJ7/h2xjy709lD3xqDkujGK2tPy5Gtjpzpgd6OhR4Z/6ruzAzrRa5XcaDpPAkzSInpAELseaH3+dTFEnicaEDpkNx9DxvB7LURm3Ho+SeECMkMDJlBd7zgJgI/nma4QpVCCE=
+	t=1784956034; cv=none; b=GM+wNHaNrO3aWtrseD3gJ/a6b0aXLTfL78syM/CG61m4KIMBAT6O7iJm5jPTuPnBTm5gHAxL+b8G27+SsN4LyCOoiVxnzg6DBemG38IgmamWJO6Xn+SaqkqEsmoEthrAaqaw+RpNV3zBri8g9Z3sCT3GJFfmWfblX2H0dn0X0EY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784956012; c=relaxed/simple;
-	bh=HOLYzUwIscX6QiFa09LTVUU69+Md5E/F7luFw9IK3BI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ME2a7HEy3uPHA4O0OE591zvapL29FQZiJWkdzKNsB0/JurQ/0heYZppI8ud9Lfe/pF1ktIFCWwQtpU+O5pLBwjKnKaZygWPbA6+mgYFPFuNMLO6uj13pznxgC/lD+HYUviwpa5UhMoePsz+qvmWlzvCJcSwwuKnPgMw9ppel128=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NJW0p+we; arc=none smtp.client-ip=74.125.224.132
+	s=arc-20240116; t=1784956034; c=relaxed/simple;
+	bh=9gb+3WFUr9T5BUxBHuwx/ljQE1d49u9xE4q8pr9qSw4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=r7b+QuHBnG0RvW7cLcnGKRQu13X+nIbKIP8uF8+jEnhVlM6z08TL+5+Nl1dfNdx5Wauk71yEG8erR/NYS3v+iuMaesnxG0dmk9D0+0KE9TFVvHyK7KGruHiaIcFzWM63F2reJro7/dRRUAu7yUtPGWStuNc7FYjRXRqX6gOPC+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AAfOT8sX; arc=none smtp.client-ip=74.125.228.1
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NJW0p+we"
-Received: by mail-yx2-f4.google.com with SMTP id 956f58d0204a3-665103151e9so393502d50.0
-        for <linux-clk@vger.kernel.org>; Fri, 24 Jul 2026 22:06:49 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AAfOT8sX"
+Received: by mail-pz2-f1.google.com with SMTP id 41be03b00d2f7-cbb8ebaca74so494379a12.1
+        for <linux-clk@vger.kernel.org>; Fri, 24 Jul 2026 22:07:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784956008; x=1785560808; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=iaLsLD73nlqoEEBpkzBJ+sIzt6lJ+EoxEBsqgtMe/4g=;
-        b=NJW0p+weNbVilPW0sNyji3QmliFx7LiSDzjd2cXHU/Hx9wpBI2Qgox4NT24NjHQsQH
-         0kY2LugoZylI1+cZ8w3FLPaBageDSG8p95k6nJLVHNGKnM3zDYEyq0xXUnnfq5bcpLDP
-         J3Z16V5uF5IEoMV4vCD9qrWagPHlfiZNFwstIPtWPxvZtEDAzMnhK5pNJxq6uHjgwwP9
-         ghrWnB6qcvQC4BtihfqSllhezyO7hTA9uuN3gR81f2ZIkMp49Xh8BCMDr/kxB0U/jjYn
-         weEs9hLlFGPJLsCOw9joOB53Vs9mxAXXUBwhP/6RifC//5Fi9xTx4+6+RiHAUmtV01Dn
-         u4cg==
+        d=gmail.com; s=20251104; t=1784956032; x=1785560832; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=lGkHba1dpLm3kZ77OrZxUFezmNhR7Fx9pZtETx4Zo3s=;
+        b=AAfOT8sX92ww3mNl+cbV0wBhuJb62H/oT2Z0xKj+wUtj7LozMgkDH1ktrj0Kr3NzMl
+         PU3A6eqklQY0exj7uGVTDA34zyoR6txd+cFfVhbVlhp2KfPtkonizjxpafFzVCJl4X7q
+         CPY/8zBt64HQlEDHcvGTUYH/EbCpcUQp8v6vt9gMliiYoTIZuKGjFL1xDaSagGr/io4E
+         XKXcxOdU2i5ck3YxSii18NzCBkZLIH0xa44EUm76hJZQbSR4CUbWdVlRk1FvDOMi7N3m
+         enlgP3jquSYnel/R+7Xa2rp0gDwh7QYDvRPryuNbqNOtMB1eQPQgsIS/62VZy5GUb9sx
+         NZ+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784956008; x=1785560808;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=iaLsLD73nlqoEEBpkzBJ+sIzt6lJ+EoxEBsqgtMe/4g=;
-        b=Pmg0UgYLG9a8OuX/qa46dCvPeBvfuBcDf0TdgLe9kHyA4wbki1+5bg3TEYyIshmWVX
-         Evj8l6dHll7RYzpnrLcvm/C/V5RIcUQTiGGxgKGQlJo/jcN1MET+rMLad4Kcd7C9KvHd
-         RL90K9j1dLnOiPCWJRW5LpQHvQXM817OTe5uUp4upDUyWYLRHVwbXMRQWicwdcMxFA9K
-         KqJr2CX+sYiAYBPi0VBm/o/0A2wYlTwXVn62YLw/9ntHix4o5cPDB2aFgBpuq1VKupgV
-         I8MpgiL8suWblRZqhtbSPrXWLTWLKqlNhGqclZHWhPBETbVJA+eWnN+in0YmFCqItXEg
-         S2hQ==
-X-Forwarded-Encrypted: i=1; AHgh+Rpbg6MOQmN1v+yOJZDucn3OhJzagKUltW+cu4elIB7rHJ4ZUiTY0/CQom7WdSycUl2U44LnCkW2RTc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZdNHusD7OeT1pHUleTTXbCvdiqvDFeDrktOnB+MeK+Oz4UrF6
-	JXUtwu4pf8D7EQUnrjOy8rs/NLDvnMId+jr2SLi4y2TKiuhkwFbl+9kH
-X-Gm-Gg: AR+sD13Clmj1I/IuWJ0qzh7vcmszSCBoiboKpJ3fm+BI622xZ4EOT+ABUI0+ujukTld
-	GeimRFEYgO6CAAzoUWp49LNzBJ/CdFtLG/xaPXpg9GgH7sNBUlI+o1tHUpOsSdOf3ZcbPAoZUgC
-	ZngwONzdD9l256juEikfYMvIi/YNpastFf+0SGeSTorxCo2FXio2FhuSv5pPVKCKq3GUWw3gOUf
-	DiUx+H6OmQbOcbpqQdpWCBVxNgqyw5ZnXUiJif9jb9HyRDXAFQpZ0DLs0fkWX2JvL+nOD0wpbaV
-	DhEThO3xZKkdSPFJgOdYjP2EYI6a5FV1xJSeDCOH9QtsgBk1B3WZFJIlfUHOT36uF3GrVmz91rI
-	MnZU0H198vJPM3XOScPd6RU4RtLxqgrN9evy+7tzKBfsoMjo8eK2uO6A=
-X-Received: by 2002:a05:6a00:3d12:b0:84e:915:d7e0 with SMTP id d2e1a72fcca58-84e5955e2edmr622971b3a.44.1784949472763;
-        Fri, 24 Jul 2026 20:17:52 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1784956032; x=1785560832;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=lGkHba1dpLm3kZ77OrZxUFezmNhR7Fx9pZtETx4Zo3s=;
+        b=PsEmXnXLL5bc6PRPYm3w06b1AfpydfAjp+HLYiCBt+VbX9K6zhLOqj6jDgLfEbX8W/
+         2Hy0WP1PaiiLl+Oox31K/80walek3eJt+VZZcUHf6UKQIyMU1FzrNToav+8h0+Rh1UuR
+         FoMXIvmqexDhI7zQHhb3duLLlGyn+o53io13fBMY+hs2dbsVtc2WQDpuAFlMDYAtLVUP
+         W8E8gnUbM4wDF06FiiYp0kZBhKfANM30ASrVdWTk4X6LrkpG5ODKTkNK7WbHjSVdQo2I
+         IGPDih8jF6wLnpPY7LtUreNi148xM16Zf/d+wEO1/xMe47BrNG4qbbDPZ5hK0cFr7DHx
+         K9nA==
+X-Forwarded-Encrypted: i=1; AHgh+Rolh0MBeA3tLvowsfOiv/nuZk0Ur/OY12oSh+vIU6gB59u6DziRovqiA576v3ioFu/nMHTT3o06VVQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2t/+iwzIUAO/6b99PJ8H7u8o+maLAGRk0qiZ9bakb7cm2xbbs
+	CEEKivhe/nCPtJym09zkZZ0Fajx1Tv11yoQOLrCRc/i0xX23buivyxLW
+X-Gm-Gg: AR+sD10kYy/BbWuqVUGt220JKiD5xD3JVB3M9sz0YtX6HPxPWWc7ItuN1mjGNJw7wHG
+	css+3JA0ZMe6i4WtobkOti4LW0dyM6tBJ2FkWdQFvPgikG59U16P+R/a4ldlP+/QqZwgFM05rIE
+	T3aopUs2LtsHgYKWk088pfgMZD4hpKB4K+533bAPCo/fb7JuZQTycVvxk5QP5moJgPy74VhoqTi
+	PthDIJM+CQTJr/rI7bQ5bjBZvcDrYlPkZ0u4i2DFas/SKi/lTrpoWa+ntM4XKYWRtkyNNL6owzm
+	dAXyY8SOMM4kEd5h+mF6P+SCuMoqyr7Id+qEduuGtyfQoSM5WFVoJPRTKVGQudfHrwkuGJpVSh7
+	Qw81UWhUzR1UKyHjVgaZrC3Y7IxRhV3XEjsABKnDyP8olYLDWpXGbb8w=
+X-Received: by 2002:a05:6a00:4218:b0:84a:6726:62f9 with SMTP id d2e1a72fcca58-84e5942e629mr681366b3a.9.1784949429047;
+        Fri, 24 Jul 2026 20:17:09 -0700 (PDT)
 Received: from [127.0.1.1] ([2a12:a305:4::403c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-84e53432834sm640542b3a.50.2026.07.24.20.17.44
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-84e53432834sm640542b3a.50.2026.07.24.20.17.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jul 2026 20:17:52 -0700 (PDT)
+        Fri, 24 Jul 2026 20:17:08 -0700 (PDT)
 From: Cody Kang <codykang.hk@gmail.com>
-Date: Fri, 24 Jul 2026 23:16:37 -0400
-Subject: [PATCH 05/17] phy: spacemit: add Innosilicon DP TX PHY driver
+Subject: [PATCH 00/17] drm/spacemit: add SpacemiT K3 display support
+Date: Fri, 24 Jul 2026 23:16:32 -0400
+Message-Id: <20260724-k3-display-v1-0-f22a10a52867@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -69,9 +68,10 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260724-k3-display-v1-5-f22a10a52867@gmail.com>
-References: <20260724-k3-display-v1-0-f22a10a52867@gmail.com>
-In-Reply-To: <20260724-k3-display-v1-0-f22a10a52867@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAJEqZGoC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIzMDc0Nj3Wxj3ZTM4oKcxErdVIu0tNQUM/NUS2MzJaCGgqLUtMwKsGHRsRB
+ +cWlSVmpyCcgEpdpaAGzX92NuAAAA
+X-Change-ID: 20260713-k3-display-e8ffed67e936
 To: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
  Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
  Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
@@ -89,1009 +89,137 @@ Cc: dri-devel@lists.freedesktop.org, linux-riscv@lists.infradead.org,
  linux-clk@vger.kernel.org, Cody Kang <codykang.hk@gmail.com>
 X-Mailer: b4 0.15.1
 
-The PHY's registers are interleaved into its parent DP controller's MMIO
-window rather than a window of its own, so it probes as a child of the
-controller, carries no reg or reset, and reaches its registers through
-the controller's regmap.
+This series adds display support for the SpacemiT K3 [2], a RISC-V SoC:
+a new DRM driver, a new PHY driver and three new bindings.
 
-It registers its pixel PLL as a clock provider. That lets the display
-controller ask for a mode's pixel rate through clk_set_rate(), and it
-lets the APMU pixel-clock mux parent to the PHY through the clock
-framework. Without it the controller and PHY would have to know each
-other's registers.
+The display path is three blocks deep:
+
+  Saturn DPU -> Innosilicon DP/eDP controller -> Innosilicon DP PHY
+
+The Saturn DPU is SpacemiT's own display processing unit. It has a private
+address translation unit and a command-list composer that replays a batch
+of register writes when a flush is latched. It exposes one CRTC with one
+primary plane. The K3 instantiates two DPUs, one per display path.
+
+The DPU driver arrives as five staged patches to keep each one a
+reasonable size. The driver only becomes buildable with that last patch.
+Bisect safe.
+
+The DP/eDP controller and its PHY are Innosilicon IP, also two instances
+of each. An instance behaves as embedded DisplayPort or as external
+DisplayPort purely according to what its output port is wired to, so the
+bindings do not distinguish them. The PHY's registers are interleaved
+with the controller's inside one MMIO window, which is why it is
+described as a child node and shares the controller's regmap.
+
+The pixel clock is generated by the DP PHY's PLL, and the SoC's APMU
+pixel-clock mux takes that PLL as an input. Rather than let the display
+driver reach into PHY registers, the PHY registers its PLL as a clock
+provider and the APMU mux is parented to it through the clock framework.
+That is what patches 2, 4, 5 and 6 are for, and it is also what keeps the
+APMU and the DP/eDP controller out of a devicetree provider cycle.
+
+As a first posting of the K3 display subsystem, this patchset supports:
+a single primary plane per CRTC, linear RGB scanout (no plane scaling,
+rotation, YUV or writeback). It does not support DSI, DSC or DP audio,
+and link rates are capped at HBR2.
+
+Based on drm-misc-next at commit 5b9af25f2d0b ("accel/ivpu: Remove
+unnecessary min_t()/max_t() usage"), v7.2-rc2 based.
+
+Testing this series needs a SpacemiT u-boot carrying display support
+[1]. SpacemiT expects to add that support into an official u-boot
+release in August 2026.
+
+Tested on two K3 boards:
+
+  - Pico-ITX: an eDP panel and an external DisplayPort monitor.
+  - CoM260-IFX: DisplayPort only, no eDP.
+
+Note: The eDP panel DTS enablement is not part of this series; a separate
+      series will follow showing how eDP can be verified.
+
+What was run on both boards, with modetest from libdrm and with kmscube:
+
+  - modetest -s, looped over 1920x1080, 1280x720 and 3840x2160
+    on DisplayPort and 2560x1600 on eDP
+  - kmscube, on each head and on both at once
+  - hot-plug and sink swap on the DisplayPort connector
+
+Both built-in and modular configurations were tested, and the runs above
+were repeated in both. Patch 17 defconfig adds them as modules.
+
+[1] https://github.com/spacemit-com/uboot-for-k3-display-verify/tree/k3-br-v1.0.y
+[2] https://www.spacemit.com/community/document/info?lang=en&nodepath=hardware/key_stone/k3
 
 Signed-off-by: Cody Kang <codykang.hk@gmail.com>
 ---
- drivers/phy/spacemit/Kconfig          |  13 +
- drivers/phy/spacemit/Makefile         |   1 +
- drivers/phy/spacemit/phy-k3-inno-dp.c | 948 ++++++++++++++++++++++++++++++++++
- 3 files changed, 962 insertions(+)
+Cody Kang (17):
+      dt-bindings: display: spacemit: add K3 Saturn DPU controller
+      dt-bindings: phy: add SpacemiT K3 Innosilicon DP PHY
+      dt-bindings: display: spacemit: add K3 Innosilicon DP/eDP controller
+      dt-bindings: soc: spacemit: allow eDP/DP PHY PLL pixel clocks on K3 APMU
+      phy: spacemit: add Innosilicon DP TX PHY driver
+      clk: spacemit: k3: parent eDP/DP pixel clock to the PHY PLL
+      drm/spacemit: add Saturn DPU register model
+      drm/spacemit: add Saturn DPU core types, cmdlist and display MMU
+      drm/spacemit: add Saturn DPU hardware backend
+      drm/spacemit: add Saturn DPU KMS pipeline
+      drm/spacemit: add Saturn DPU DRM device driver
+      drm/spacemit: add Innosilicon DP/eDP controller bridge driver
+      MAINTAINERS: add SpacemiT K3 display driver entry
+      riscv: dts: spacemit: k3: add display nodes
+      riscv: dts: spacemit: k3-pico-itx: enable the DisplayPort output
+      riscv: dts: spacemit: k3-com260-ifx: enable the DisplayPort output
+      riscv: defconfig: spacemit: k3: enable display driver
 
-diff --git a/drivers/phy/spacemit/Kconfig b/drivers/phy/spacemit/Kconfig
-index 50b0005acf66..098f33998f73 100644
---- a/drivers/phy/spacemit/Kconfig
-+++ b/drivers/phy/spacemit/Kconfig
-@@ -23,3 +23,16 @@ config PHY_SPACEMIT_K1_USB2
- 	help
- 	  Enable this to support K1 USB 2.0 PHY driver. This driver takes care of
- 	  enabling and clock setup and will be used by K1 udc/ehci/otg/xhci driver.
-+
-+config PHY_SPACEMIT_K3_INNO_DP
-+	tristate "SpacemiT K3 Innosilicon DisplayPort PHY driver"
-+	depends on (ARCH_SPACEMIT || COMPILE_TEST) && OF
-+	depends on COMMON_CLK
-+	select GENERIC_PHY
-+	select REGMAP
-+	help
-+	  Enable support for the Innosilicon DisplayPort transmit PHY
-+	  integrated in the SpacemiT K3 SoC. The PHY shares its MMIO window
-+	  with its parent DP/eDP controller (drivers/gpu/drm/spacemit/) and
-+	  exposes lane / rate / vswing / pre-emphasis control through the
-+	  generic PHY framework.
-diff --git a/drivers/phy/spacemit/Makefile b/drivers/phy/spacemit/Makefile
-index a821a21d6142..960c5827f5e5 100644
---- a/drivers/phy/spacemit/Makefile
-+++ b/drivers/phy/spacemit/Makefile
-@@ -1,3 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0-only
- obj-$(CONFIG_PHY_SPACEMIT_K1_PCIE)		+= phy-k1-pcie.o
- obj-$(CONFIG_PHY_SPACEMIT_K1_USB2)		+= phy-k1-usb2.o
-+obj-$(CONFIG_PHY_SPACEMIT_K3_INNO_DP)		+= phy-k3-inno-dp.o
-diff --git a/drivers/phy/spacemit/phy-k3-inno-dp.c b/drivers/phy/spacemit/phy-k3-inno-dp.c
-new file mode 100644
-index 000000000000..9dd62edb7a5a
---- /dev/null
-+++ b/drivers/phy/spacemit/phy-k3-inno-dp.c
-@@ -0,0 +1,948 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * SpacemiT K3 Innosilicon DisplayPort PHY driver.
-+ *
-+ * Copyright (C) 2025-2026 SpacemiT Co., Ltd.
-+ */
-+
-+#include <linux/bitfield.h>
-+#include <linux/bitops.h>
-+#include <linux/clk-provider.h>
-+#include <linux/delay.h>
-+#include <linux/iopoll.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/phy/phy.h>
-+#include <linux/phy/phy-dp.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+/* Offsets are into the parent controller's MMIO window */
-+#define DPTX_PHY_CTRL			0x0100
-+#define DPTX_PHY_CTRL_XMIT_EN		GENMASK(20, 17)
-+#define DPTX_PHY_CTRL_NUM_LANES		GENMASK(6, 5)
-+#define DPTX_PHY_CTRL_RATE		GENMASK(1, 0)
-+
-+/* One 6-bit slot per lane; only the low 4 bits of each slot are used. */
-+#define DPTX_PHY_LANE_TRIM		0x0104
-+#define DPTX_PHY_LANE_BITS_PER		6
-+#define DPTX_PHY_LANE_FIELD_MASK	0xf	/* preemp[1:0] | vswing[1:0] */
-+#define DPTX_PHY_LANE_VSWING_SHIFT	2	/* within the lane field */
-+
-+/* MPLL is the link PLL (lane rate) */
-+#define DPTX_ANA_MPLL			0x0180
-+#define DPTX_ANA_MPLL_FBDIV_LBIT	GENMASK(31, 24)
-+#define DPTX_ANA_MPLL_FBDIV_HBIT	GENMASK(19, 16)
-+#define DPTX_ANA_MPLL_PREDIV		GENMASK(13, 8)
-+#define DPTX_ANA_MPLL_LOCKED		BIT(7)
-+#define DPTX_ANA_MPLL_DACPD		BIT(5)
-+#define DPTX_ANA_MPLL_DSMPD		BIT(4)
-+#define DPTX_ANA_MPLL_PD		BIT(0)
-+
-+#define DPTX_ANA_MPLL_FRAC		0x0184
-+#define DPTX_ANA_MPLL_FRAC_LBIT		GENMASK(23, 16)
-+#define DPTX_ANA_MPLL_FRAC_MBIT		GENMASK(15, 8)
-+#define DPTX_ANA_MPLL_FRAC_HBIT		GENMASK(7, 0)
-+
-+#define DPTX_ANA_MPLL_DIV		0x0188
-+#define DPTX_ANA_MPLL_VCOCLK_DIV8_EN	BIT(16)
-+#define DPTX_ANA_MPLL_POSTDIVEN		BIT(11)
-+#define DPTX_ANA_MPLL_POSTDIV		GENMASK(10, 8)
-+
-+/* PREPLL is the pixel PLL exposed as a clock. */
-+#define DPTX_ANA_PREPLL			0x0190
-+#define DPTX_ANA_PREPLL_FBDIV2_LBIT	GENMASK(31, 24)
-+#define DPTX_ANA_PREPLL_FBDIV2_HBIT	GENMASK(19, 16)
-+#define DPTX_ANA_PREPLL_PREDIV		GENMASK(13, 8)
-+#define DPTX_ANA_PREPLL_LOCKED		BIT(7)
-+#define DPTX_ANA_PREPLL_DACPD		BIT(5)
-+#define DPTX_ANA_PREPLL_DSMPD		BIT(4)
-+#define DPTX_ANA_PREPLL_PCLK_NORMAL	BIT(1)
-+#define DPTX_ANA_PREPLL_PD		BIT(0)
-+
-+#define DPTX_ANA_PREPLL_DIV		0x0194
-+#define DPTX_ANA_PREPLL_PRECLK_DIVM	GENMASK(17, 16)
-+#define DPTX_ANA_PREPLL_PRECLK_DIVAUX	GENMASK(12, 8)
-+
-+#define DPTX_ANA_PREPLL_CTRL		0x0198
-+#define DPTX_ANA_PREPLL_PCLKDIV5_EN	BIT(31)
-+#define DPTX_ANA_PREPLL_PCLK_DIVAUX	GENMASK(28, 24)
-+#define DPTX_ANA_PREPLL_LOCK_BYPEN	BIT(17)
-+#define DPTX_ANA_PREPLL_HDMI_EN		BIT(9)
-+#define DPTX_ANA_PREPLL_DP_EN		BIT(8)
-+
-+#define DPTX_ANA_PREPLL_FRAC		0x019c
-+#define DPTX_ANA_PREPLL_FRAC2_LBIT	GENMASK(23, 16)
-+#define DPTX_ANA_PREPLL_FRAC2_MBIT	GENMASK(15, 8)
-+#define DPTX_ANA_PREPLL_FRAC2_HBIT	GENMASK(7, 0)
-+
-+#define DPTX_ANA_TX_CTRL		0x01a0
-+#define DPTX_ANA_MPLL_CLKDIV_16M	GENMASK(13, 8)
-+
-+/* PRECLK_DIVM register value -> divide factor */
-+static const u8 k3_inno_dp_divm_factors[] = { 1, 2, 3, 5 };
-+
-+#define DPTX_VCO_MIN_KHZ		1000000
-+#define DPTX_VCO_MAX_KHZ		3000000
-+#define DPTX_PLL_FRAC_MOD		(1 << 24)
-+#define DPTX_PLL_ERR_TOLERANCE		10
-+
-+struct k3_inno_dp_phy {
-+	struct device	*dev;
-+	struct regmap	*regmap;
-+	struct phy	*phy;
-+	u8		lanes;		/* tracks last set_lanes */
-+
-+	struct clk_hw	pxclk_hw;	/* the PREPLL's pixel clock */
-+	unsigned long	pxclk_rate;	/* last programmed PREPLL rate */
-+	u32		ref_clk_khz;	/* PLL reference */
-+};
-+
-+static int k3_inno_dp_phy_power_on(struct phy *phy)
-+{
-+	struct k3_inno_dp_phy *p = phy_get_drvdata(phy);
-+	u32 lane_en;
-+	u32 val;
-+	int ret;
-+
-+	switch (p->lanes) {
-+	case 1:
-+		lane_en = 0x1;
-+		break;
-+	case 2:
-+		lane_en = 0x3;
-+		break;
-+	case 4:
-+	default:
-+		lane_en = 0xf;
-+		break;
-+	}
-+
-+	ret = regmap_write_bits(p->regmap, DPTX_ANA_MPLL, DPTX_ANA_MPLL_PD, 0);
-+	if (ret)
-+		return ret;
-+	ret = regmap_write_bits(p->regmap, DPTX_ANA_PREPLL,
-+				DPTX_ANA_PREPLL_PD, 0);
-+	if (ret)
-+		return ret;
-+	usleep_range(2000, 4000);
-+
-+	ret = regmap_write_bits(p->regmap, DPTX_PHY_CTRL,
-+				DPTX_PHY_CTRL_XMIT_EN,
-+				FIELD_PREP(DPTX_PHY_CTRL_XMIT_EN, lane_en));
-+	if (ret)
-+		return ret;
-+	usleep_range(2000, 4000);
-+
-+	ret = regmap_read_poll_timeout(p->regmap, DPTX_ANA_MPLL, val,
-+				       val & DPTX_ANA_MPLL_LOCKED,
-+				       2000, 10 * 1000);
-+	if (ret) {
-+		dev_err(p->dev, "DP PHY core PLL lock timed out\n");
-+		return ret;
-+	}
-+
-+	ret = regmap_read_poll_timeout(p->regmap, DPTX_ANA_PREPLL, val,
-+				       val & DPTX_ANA_PREPLL_LOCKED,
-+				       2000, 10 * 1000);
-+	if (ret)
-+		dev_err(p->dev, "DP PHY pixel PLL lock timed out\n");
-+
-+	return ret;
-+}
-+
-+static int k3_inno_dp_phy_power_off(struct phy *phy)
-+{
-+	struct k3_inno_dp_phy *p = phy_get_drvdata(phy);
-+
-+	regmap_write_bits(p->regmap, DPTX_PHY_CTRL, DPTX_PHY_CTRL_XMIT_EN, 0);
-+	usleep_range(2000, 4000);
-+
-+	regmap_write_bits(p->regmap, DPTX_ANA_PREPLL, DPTX_ANA_PREPLL_PD,
-+			  DPTX_ANA_PREPLL_PD);
-+	usleep_range(2000, 4000);
-+
-+	return 0;
-+}
-+
-+static int k3_inno_dp_phy_set_lanes(struct k3_inno_dp_phy *p, u8 lanes)
-+{
-+	u32 val;
-+	int ret;
-+
-+	switch (lanes) {
-+	case 1:
-+		val = 0;
-+		break;
-+	case 2:
-+		val = 1;
-+		break;
-+	case 4:
-+		val = 2;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	ret = regmap_write_bits(p->regmap, DPTX_PHY_CTRL,
-+				DPTX_PHY_CTRL_NUM_LANES,
-+				FIELD_PREP(DPTX_PHY_CTRL_NUM_LANES, val));
-+	if (ret)
-+		return ret;
-+
-+	p->lanes = lanes;
-+	return 0;
-+}
-+
-+struct k3_inno_dp_mpll_cfg {
-+	unsigned int link_rate;		/* Mbps per lane */
-+	u8 prediv;
-+	u16 fbdiv;
-+	u32 frac;
-+	u8 postdiv;
-+	u8 postdiv_en;
-+	u8 frac_pd;
-+	u8 vcoclk_div8_en;
-+	u8 clk_16mdiv;
-+};
-+
-+static const struct k3_inno_dp_mpll_cfg k3_inno_dp_mpll_cfgs[] = {
-+	{
-+		.link_rate	= 1620,
-+		.prediv		= 0x02,
-+		.fbdiv		= 0x87,
-+		.frac		= 0,
-+		.postdiv	= 0,
-+		.postdiv_en	= 1,
-+		.frac_pd	= 0x3,
-+		.vcoclk_div8_en	= 1,
-+		.clk_16mdiv	= 12,
-+	}, {
-+		.link_rate	= 2700,
-+		.prediv		= 0x02,
-+		.fbdiv		= 0xe1,
-+		.frac		= 0,
-+		.postdiv	= 0,
-+		.postdiv_en	= 1,
-+		.frac_pd	= 0x3,
-+		.vcoclk_div8_en	= 1,
-+		.clk_16mdiv	= 21,
-+	}, {
-+		.link_rate	= 5400,
-+		.prediv		= 0x02,
-+		.fbdiv		= 0xe1,
-+		.frac		= 0,
-+		.postdiv	= 0,
-+		.postdiv_en	= 0,
-+		.frac_pd	= 0x3,
-+		.vcoclk_div8_en	= 0,
-+		.clk_16mdiv	= 42,
-+	},
-+};
-+
-+static void k3_inno_dp_phy_program_mpll(struct k3_inno_dp_phy *p,
-+					const struct k3_inno_dp_mpll_cfg *cfg)
-+{
-+	struct regmap *rm = p->regmap;
-+
-+	/*
-+	 * Shared with an unwired HDMI path: select DP first, otherwise the
-+	 * PLLs still lock but nothing reaches the lanes and AUX times out.
-+	 */
-+	regmap_write_bits(rm, DPTX_ANA_PREPLL_CTRL, DPTX_ANA_PREPLL_DP_EN,
-+		DPTX_ANA_PREPLL_DP_EN);
-+	regmap_write_bits(rm, DPTX_ANA_PREPLL_CTRL, DPTX_ANA_PREPLL_HDMI_EN, 0);
-+
-+	regmap_write_bits(rm, DPTX_ANA_MPLL, DPTX_ANA_MPLL_PD,
-+		FIELD_PREP(DPTX_ANA_MPLL_PD, 1));
-+	usleep_range(2000, 4000);
-+
-+	regmap_write_bits(rm, DPTX_ANA_MPLL, DPTX_ANA_MPLL_PREDIV,
-+		FIELD_PREP(DPTX_ANA_MPLL_PREDIV, cfg->prediv));
-+	regmap_write_bits(rm, DPTX_ANA_MPLL, DPTX_ANA_MPLL_FBDIV_LBIT,
-+		FIELD_PREP(DPTX_ANA_MPLL_FBDIV_LBIT, cfg->fbdiv & 0xff));
-+	regmap_write_bits(rm, DPTX_ANA_MPLL, DPTX_ANA_MPLL_FBDIV_HBIT,
-+		FIELD_PREP(DPTX_ANA_MPLL_FBDIV_HBIT, (cfg->fbdiv >> 8) & 0xf));
-+	regmap_write_bits(rm, DPTX_ANA_MPLL, DPTX_ANA_MPLL_DACPD,
-+		FIELD_PREP(DPTX_ANA_MPLL_DACPD, (cfg->frac_pd >> 1) & 0x1));
-+	regmap_write_bits(rm, DPTX_ANA_MPLL, DPTX_ANA_MPLL_DSMPD,
-+		FIELD_PREP(DPTX_ANA_MPLL_DSMPD, cfg->frac_pd & 0x1));
-+
-+	regmap_write_bits(rm, DPTX_ANA_MPLL_FRAC, DPTX_ANA_MPLL_FRAC_LBIT,
-+		FIELD_PREP(DPTX_ANA_MPLL_FRAC_LBIT, cfg->frac & 0xff));
-+	regmap_write_bits(rm, DPTX_ANA_MPLL_FRAC, DPTX_ANA_MPLL_FRAC_MBIT,
-+		FIELD_PREP(DPTX_ANA_MPLL_FRAC_MBIT, (cfg->frac >> 8) & 0xff));
-+	regmap_write_bits(rm, DPTX_ANA_MPLL_FRAC, DPTX_ANA_MPLL_FRAC_HBIT,
-+		FIELD_PREP(DPTX_ANA_MPLL_FRAC_HBIT, (cfg->frac >> 16) & 0xff));
-+
-+	regmap_write_bits(rm, DPTX_ANA_MPLL_DIV, DPTX_ANA_MPLL_POSTDIV,
-+		FIELD_PREP(DPTX_ANA_MPLL_POSTDIV, cfg->postdiv));
-+	regmap_write_bits(rm, DPTX_ANA_MPLL_DIV, DPTX_ANA_MPLL_POSTDIVEN,
-+		FIELD_PREP(DPTX_ANA_MPLL_POSTDIVEN, cfg->postdiv_en));
-+	regmap_write_bits(rm, DPTX_ANA_MPLL_DIV, DPTX_ANA_MPLL_VCOCLK_DIV8_EN,
-+		FIELD_PREP(DPTX_ANA_MPLL_VCOCLK_DIV8_EN, cfg->vcoclk_div8_en));
-+
-+	regmap_write_bits(rm, DPTX_ANA_TX_CTRL, DPTX_ANA_MPLL_CLKDIV_16M,
-+		FIELD_PREP(DPTX_ANA_MPLL_CLKDIV_16M, cfg->clk_16mdiv));
-+
-+	regmap_write_bits(rm, DPTX_ANA_PREPLL_CTRL, DPTX_ANA_PREPLL_LOCK_BYPEN,
-+		FIELD_PREP(DPTX_ANA_PREPLL_LOCK_BYPEN, 1));
-+
-+	regmap_write_bits(rm, DPTX_ANA_MPLL, DPTX_ANA_MPLL_PD,
-+		FIELD_PREP(DPTX_ANA_MPLL_PD, 0));
-+	usleep_range(2000, 4000);
-+}
-+
-+static int k3_inno_dp_phy_set_rate(struct k3_inno_dp_phy *p,
-+				   unsigned int link_rate)
-+{
-+	const struct k3_inno_dp_mpll_cfg *cfg = NULL;
-+	unsigned int i;
-+	u32 sel;
-+
-+	switch (link_rate) {
-+	case 1620:
-+		sel = 0;
-+		break;
-+	case 2700:
-+		sel = 1;
-+		break;
-+	case 5400:
-+		sel = 2;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	for (i = 0; i < ARRAY_SIZE(k3_inno_dp_mpll_cfgs); i++) {
-+		if (k3_inno_dp_mpll_cfgs[i].link_rate == link_rate) {
-+			cfg = &k3_inno_dp_mpll_cfgs[i];
-+			break;
-+		}
-+	}
-+	if (!cfg)
-+		return -EINVAL;
-+
-+	k3_inno_dp_phy_program_mpll(p, cfg);
-+
-+	return regmap_write_bits(p->regmap, DPTX_PHY_CTRL,
-+				 DPTX_PHY_CTRL_RATE,
-+				 FIELD_PREP(DPTX_PHY_CTRL_RATE, sel));
-+}
-+
-+static int k3_inno_dp_phy_set_voltages(struct k3_inno_dp_phy *p,
-+				       struct phy_configure_opts_dp *opts)
-+{
-+	u8 lane;
-+	int ret;
-+
-+	for (lane = 0; lane < opts->lanes; lane++) {
-+		unsigned int shift = lane * DPTX_PHY_LANE_BITS_PER;
-+		u32 mask = DPTX_PHY_LANE_FIELD_MASK << shift;
-+		u32 val  = (((opts->voltage[lane] & 0x3) << DPTX_PHY_LANE_VSWING_SHIFT) |
-+			    (opts->pre[lane] & 0x3)) << shift;
-+
-+		ret = regmap_write_bits(p->regmap, DPTX_PHY_LANE_TRIM, mask,
-+					val);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int k3_inno_dp_phy_configure(struct phy *phy,
-+				    union phy_configure_opts *opts)
-+{
-+	struct k3_inno_dp_phy *p = phy_get_drvdata(phy);
-+	int ret;
-+
-+	if (opts->dp.set_lanes) {
-+		ret = k3_inno_dp_phy_set_lanes(p, opts->dp.lanes);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	if (opts->dp.set_rate) {
-+		ret = k3_inno_dp_phy_set_rate(p, opts->dp.link_rate);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	if (opts->dp.set_voltages) {
-+		ret = k3_inno_dp_phy_set_voltages(p, &opts->dp);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static u32 k3_inno_dp_div64(u64 *n, u32 base)
-+{
-+	return do_div(*n, base);
-+}
-+
-+static int k3_inno_dp_better_cfg(bool new_valid, bool new_is_int, u8 new_pre, u32 new_vco,
-+				 bool best_valid, bool best_is_int, u8 best_pre, u32 best_vco)
-+{
-+	if (!new_valid)
-+		return 0;
-+	if (!best_valid)
-+		return 1;
-+
-+	if (new_is_int && !best_is_int)
-+		return 1;
-+	if (!new_is_int && best_is_int)
-+		return 0;
-+
-+	if (new_pre < best_pre)
-+		return 1;
-+	if (new_pre > best_pre)
-+		return 0;
-+
-+	if (new_vco > best_vco)
-+		return 1;
-+
-+	return 0;
-+}
-+
-+struct k3_inno_dp_prepll_cfg {
-+	u32 target_pclk_khz;
-+	u32 vco_freq_khz;
-+	u8 prediv;
-+	u16 fbdiv;
-+	u32 frac_pd;
-+	u32 frac;
-+	u8 div5_en;
-+	u8 divm;
-+	u8 divaux;
-+	u8 divp;
-+	u32 actual_pclk_khz;
-+	bool valid;
-+};
-+
-+static const struct k3_inno_dp_prepll_cfg k3_inno_dp_prepll_cfgs[] = {
-+	{ 614400, 2460000, 0x05, 512,  0x3, 0x0, 0x0, 0x1, 0x01, 0x1, 614400, true },
-+	{ 594000, 2376000, 0x01, 99,   0x3, 0x0, 0x0, 0x1, 0x01, 0x1, 594000, true },
-+	{ 551040, 2760000, 0x05, 574,  0x3, 0x0, 0x1, 0x0, 0x00, 0x0, 551040, true },
-+	{ 533250, 2130000, 0x08, 711,  0x3, 0x0, 0x0, 0x1, 0x01, 0x1, 533250, true },
-+	{ 443250, 1770000, 0x08, 591,  0x3, 0x0, 0x0, 0x1, 0x01, 0x1, 443250, true },
-+	{ 375000, 3000000, 0x01, 125,  0x3, 0x0, 0x0, 0x0, 0x04, 0x1, 375000, true },
-+	{ 372000, 2980000, 0x01, 124,  0x3, 0x0, 0x0, 0x0, 0x04, 0x1, 372000, true },
-+	{ 348500, 2790000, 0x06, 697,  0x3, 0x0, 0x0, 0x0, 0x04, 0x1, 348500, true },
-+	{ 307200, 1540000, 0x01, 64,   0x3, 0x0, 0x1, 0x0, 0x00, 0x0, 307200, true },
-+	{ 297000, 2376000, 0x01, 99,   0x3, 0x0, 0x0, 0x0, 0x04, 0x1, 297000, true },
-+	{ 280000, 1680000, 0x01, 70,   0x3, 0x0, 0x0, 0x2, 0x01, 0x1, 280000, true },
-+	{ 277440, 2770000, 0x05, 578,  0x3, 0x0, 0x0, 0x3, 0x01, 0x1, 277440, true },
-+	{ 245760, 2457600, 0x05, 512,  0x3, 0x0, 0x0, 0x3, 0x01, 0x1, 245760, true },
-+	{ 241500, 1932000, 0x02, 161,  0x3, 0x0, 0x0, 0x0, 0x04, 0x1, 241500, true },
-+	{ 236000, 2830000, 0x01, 118,  0x3, 0x0, 0x0, 0x0, 0x06, 0x1, 236000, true },
-+	{ 204800, 2048000, 0x03, 256,  0x3, 0x0, 0x0, 0x3, 0x01, 0x1, 204800, true },
-+	{ 193250, 2320000, 0x08, 773,  0x3, 0x0, 0x0, 0x0, 0x06, 0x1, 193250, true },
-+	{ 189000, 1510000, 0x01,  63,  0x3, 0x0, 0x0, 0x0, 0x04, 0x1, 189000, true },
-+	{ 187500, 3000000, 0x01, 125,  0x3, 0x0, 0x0, 0x0, 0x08, 0x1, 187500, true },
-+	{ 162000, 2592000, 0x01, 108,  0x3, 0x0, 0x0, 0x0, 0x08, 0x1, 162000, true },
-+	{ 156000, 2810000, 0x01, 117,  0x3, 0x0, 0x0, 0x0, 0x09, 0x1, 156000, true },
-+	{ 150000, 3000000, 0x01, 125,  0x3, 0x0, 0x0, 0x0, 0x0a, 0x1, 150000, true },
-+	{ 148500, 2376000, 0x01, 99,   0x3, 0x0, 0x0, 0x0, 0x08, 0x1, 148500, true },
-+	{ 146000, 1750000, 0x01, 73,   0x3, 0x0, 0x0, 0x0, 0x06, 0x1, 146000, true },
-+	{ 142860, 2860000, 0x14, 2381, 0x3, 0x0, 0x0, 0x0, 0x0a, 0x1, 142860, true },
-+	{ 140000, 2520000, 0x01, 105,  0x3, 0x0, 0x0, 0x0, 0x09, 0x1, 140000, true },
-+	{ 138500, 2220000, 0x03, 277,  0x3, 0x0, 0x0, 0x0, 0x08, 0x1, 138500, true },
-+	{ 122000, 2930000, 0x01, 122,  0x3, 0x0, 0x0, 0x0, 0x0c, 0x1, 122000, true },
-+	{ 121750, 2920000, 0x04, 487,  0x3, 0x0, 0x0, 0x0, 0x0c, 0x1, 121750, true },
-+	{ 108000, 2810000, 0x01, 117,  0x3, 0x0, 0x0, 0x0, 0x0d, 0x1, 108000, true },
-+	{ 106500, 1700000, 0x01,  71,  0x3, 0x0, 0x0, 0x0, 0x08, 0x1, 106500, true },
-+	{ 83500,  2000000, 0x02, 167,  0x3, 0x0, 0x0, 0x0, 0x0c, 0x1, 83500,  true },
-+	{ 79500,  2540000, 0x01, 106,  0x3, 0x0, 0x0, 0x0, 0x10, 0x1, 79500,  true },
-+	{ 75000,  3000000, 0x01, 125,  0x3, 0x0, 0x0, 0x0, 0x14, 0x1, 75000,  true },
-+	{ 74250,  2376000, 0x01,  99,  0x3, 0x0, 0x0, 0x0, 0x10, 0x1, 74250,  true },
-+	{ 65000,  1560000, 0x01,  65,  0x3, 0x0, 0x0, 0x0, 0x0c, 0x1, 65000,  true },
-+	{ 40000,  2880000, 0x01, 120,  0x3, 0x0, 0x0, 0x0, 0x12, 0x2, 40000,  true },
-+	{ 27000,  2810000, 0x01, 117,  0x3, 0x0, 0x0, 0x0, 0x1a, 0x2, 27000,  true },
-+	{ 25600,  2300000, 0x01,  96,  0x3, 0x0, 0x0, 0x0, 0x0f, 0x3, 25600,  true },
-+	{ 25200,  2520000, 0x01, 105,  0x3, 0x0, 0x0, 0x0, 0x19, 0x2, 25200,  true },
-+};
-+
-+static u64 k3_inno_dp_abs_diff(u64 a, u64 b)
-+{
-+	return (a > b) ? (a - b) : (b - a);
-+}
-+
-+static u32 k3_inno_dp_pll_rate_khz(u8 pre, u16 fb, u32 frac,
-+				   u32 ref_clk_khz, u32 total_div)
-+{
-+	u64 vco_hz;
-+	u64 ref_hz = (u64)ref_clk_khz * 1000;
-+	u64 int_part;
-+	u64 frac_part;
-+
-+	/* Integer part: (Ref * FB) / Pre */
-+	int_part = ref_hz * fb;
-+	int_part += (pre / 2);
-+	k3_inno_dp_div64(&int_part, pre);
-+
-+	/* Fractional part: (Ref * Frac) / (Pre * 2^24) */
-+	frac_part = ref_hz * frac;
-+
-+	frac_part += (pre / 2);
-+	k3_inno_dp_div64(&frac_part, pre);
-+
-+	frac_part += (DPTX_PLL_FRAC_MOD / 2);
-+	k3_inno_dp_div64(&frac_part, DPTX_PLL_FRAC_MOD);
-+
-+	vco_hz = int_part + frac_part;
-+
-+	/* Final Rate = VCO / total_div */
-+	vco_hz += (total_div / 2);
-+	k3_inno_dp_div64(&vco_hz, total_div);
-+
-+	vco_hz += 500;
-+	k3_inno_dp_div64(&vco_hz, 1000);
-+
-+	return (u32)vco_hz;
-+}
-+
-+static int k3_inno_dp_prepll_div_total(const struct k3_inno_dp_prepll_cfg *cfg,
-+				       u32 *div_total)
-+{
-+	if (!cfg || !div_total || !cfg->valid)
-+		return -EINVAL;
-+
-+	/* div5_en fixes div_total at 5; divp is unused on this path */
-+	if (cfg->div5_en) {
-+		*div_total = 5;
-+		return 0;
-+	}
-+
-+	if (!cfg->divp)
-+		return -EINVAL;
-+
-+	if (cfg->divaux == 1) {
-+		if (cfg->divm >= ARRAY_SIZE(k3_inno_dp_divm_factors))
-+			return -EINVAL;
-+
-+		*div_total = 2 * k3_inno_dp_divm_factors[cfg->divm] * cfg->divp;
-+		return 0;
-+	}
-+
-+	if (cfg->divaux < 2)
-+		return -EINVAL;
-+
-+	*div_total = 2 * cfg->divaux * cfg->divp;
-+	return 0;
-+}
-+
-+static bool k3_inno_dp_prepll_cfg_matches(const struct k3_inno_dp_prepll_cfg *cfg,
-+					  u32 target_pclk_khz,
-+					 u32 ref_clk_khz)
-+{
-+	u32 div_total;
-+	u32 actual_pclk_khz;
-+
-+	if (k3_inno_dp_prepll_div_total(cfg, &div_total))
-+		return false;
-+
-+	actual_pclk_khz = k3_inno_dp_pll_rate_khz(cfg->prediv, cfg->fbdiv,
-+						  cfg->frac, ref_clk_khz,
-+						  div_total);
-+
-+	if (cfg->actual_pclk_khz &&
-+	    k3_inno_dp_abs_diff(actual_pclk_khz,
-+				cfg->actual_pclk_khz) > DPTX_PLL_ERR_TOLERANCE)
-+		return false;
-+
-+	return k3_inno_dp_abs_diff(actual_pclk_khz,
-+				    target_pclk_khz) <= DPTX_PLL_ERR_TOLERANCE;
-+}
-+
-+static const struct k3_inno_dp_prepll_cfg *k3_inno_dp_find_prepll_cfg(u32 pclk_khz,
-+								      u32 ref_clk_khz)
-+{
-+	const struct k3_inno_dp_prepll_cfg *best_match = NULL;
-+	u32 min_diff = 0xFFFFFFFF;
-+	int num_configs = ARRAY_SIZE(k3_inno_dp_prepll_cfgs);
-+
-+	for (int i = 0; i < num_configs; i++) {
-+		u32 current_target = k3_inno_dp_prepll_cfgs[i].target_pclk_khz;
-+		u32 diff = k3_inno_dp_abs_diff(pclk_khz, current_target);
-+
-+		if (diff == 0 && k3_inno_dp_prepll_cfg_matches(&k3_inno_dp_prepll_cfgs[i],
-+							       pclk_khz, ref_clk_khz)) {
-+			return &k3_inno_dp_prepll_cfgs[i];
-+		}
-+
-+		if ((pclk_khz / 100) == (current_target / 100) &&
-+		    k3_inno_dp_prepll_cfg_matches(&k3_inno_dp_prepll_cfgs[i],
-+						  pclk_khz, ref_clk_khz)) {
-+			return &k3_inno_dp_prepll_cfgs[i];
-+		}
-+
-+		if (diff < min_diff && diff < 500 &&
-+		    k3_inno_dp_prepll_cfg_matches(&k3_inno_dp_prepll_cfgs[i],
-+						  pclk_khz, ref_clk_khz)) {
-+			min_diff = diff;
-+			best_match = &k3_inno_dp_prepll_cfgs[i];
-+		}
-+	}
-+
-+	return best_match;
-+}
-+
-+static int k3_inno_dp_solve_frac(u32 target_vco_khz, u32 ref_clk_khz,
-+				 u8 *best_pre, u16 *best_fb, u32 *best_frac)
-+{
-+	u64 min_err = ~0ULL;
-+	int found = 0;
-+	bool best_is_int = false;
-+	int pre;
-+
-+	for (pre = 1; pre <= 63; pre++) {
-+		u64 ref_clk_hz = (u64)ref_clk_khz * 1000;
-+		u64 target_vco_hz = (u64)target_vco_khz * 1000;
-+
-+		/*
-+		 * Calculate required multiplier: Mult = (TargetVCO * Pre) / Ref
-+		 */
-+		u64 num = target_vco_hz * pre;
-+		u64 den = ref_clk_hz;
-+		u64 remainder;
-+		u64 fb_val;
-+		u64 frac_val;
-+		u64 actual_vco;
-+		u64 diff;
-+		bool current_is_int;
-+
-+		fb_val = num;
-+		remainder = k3_inno_dp_div64(&fb_val, (u32)den);
-+
-+		if (fb_val > 4095)
-+			continue;
-+
-+		/* Frac = (Remainder * 2^24 + Ref/2) / Ref */
-+		frac_val = remainder * DPTX_PLL_FRAC_MOD;
-+		frac_val += (den / 2);
-+		k3_inno_dp_div64(&frac_val, (u32)den);
-+
-+		if (frac_val > 0xFFFFFF)
-+			frac_val = 0xFFFFFF;
-+
-+		/* VCO = (Ref * FB / Pre) + (Ref * Frac / (Pre * 2^24)) */
-+		{
-+			u64 vco_int, vco_frac;
-+
-+			vco_int = ref_clk_hz * fb_val;
-+			k3_inno_dp_div64(&vco_int, pre);
-+			vco_frac = ref_clk_hz * frac_val;
-+			k3_inno_dp_div64(&vco_frac, pre);
-+			k3_inno_dp_div64(&vco_frac, DPTX_PLL_FRAC_MOD);
-+
-+			actual_vco = vco_int + vco_frac;
-+		}
-+
-+		diff = k3_inno_dp_abs_diff(actual_vco, target_vco_hz);
-+		current_is_int = (frac_val == 0);
-+
-+		if (diff < min_err) {
-+			min_err = diff;
-+			*best_pre = pre;
-+			*best_fb = (u16)fb_val;
-+			*best_frac = (u32)frac_val;
-+			best_is_int = current_is_int;
-+			found = 1;
-+		} else if (diff == min_err) {
-+			if (current_is_int && !best_is_int) {
-+				*best_pre = pre;
-+				*best_fb = (u16)fb_val;
-+				*best_frac = (u32)frac_val;
-+				best_is_int = true;
-+				found = 1;
-+			}
-+		}
-+	}
-+
-+	return found ? 0 : -EINVAL;
-+}
-+
-+/* divaux must be 1 for the DivM path and > 1 for the DivAux path. */
-+static void k3_inno_dp_try_prepll(u32 target_pclk_khz, u32 ref_clk_khz,
-+				  u32 div_total, u8 div5_en, u8 divaux,
-+				  u8 divm, u8 divp,
-+				  struct k3_inno_dp_prepll_cfg *best)
-+{
-+	struct k3_inno_dp_prepll_cfg curr = {0};
-+	u32 target_vco = target_pclk_khz * div_total;
-+	u32 actual_pclk;
-+	u32 frac;
-+	u16 fb;
-+	u8 pre;
-+
-+	if (target_vco < DPTX_VCO_MIN_KHZ || target_vco > DPTX_VCO_MAX_KHZ)
-+		return;
-+
-+	if (k3_inno_dp_solve_frac(target_vco, ref_clk_khz, &pre, &fb, &frac))
-+		return;
-+
-+	actual_pclk = k3_inno_dp_pll_rate_khz(pre, fb, frac, ref_clk_khz,
-+					      div_total);
-+	if (k3_inno_dp_abs_diff(actual_pclk, target_pclk_khz) > DPTX_PLL_ERR_TOLERANCE)
-+		return;
-+
-+	curr.valid = true;
-+	curr.vco_freq_khz = target_vco;
-+	curr.actual_pclk_khz = actual_pclk;
-+	curr.prediv = pre;
-+	curr.fbdiv = fb;
-+	curr.frac = frac;
-+	curr.frac_pd = (frac == 0) ? 3 : 0;
-+	curr.div5_en = div5_en;
-+	curr.divaux = divaux;
-+	curr.divm = divm;
-+	curr.divp = divp;
-+
-+	if (k3_inno_dp_better_cfg(curr.valid, curr.frac == 0, curr.prediv,
-+				  curr.vco_freq_khz, best->valid,
-+				    best->frac == 0, best->prediv,
-+				    best->vco_freq_khz))
-+		*best = curr;
-+}
-+
-+static int k3_inno_dp_solve_prepll(u32 target_pclk_khz, u32 ref_clk_khz,
-+				   struct k3_inno_dp_prepll_cfg *cfg)
-+{
-+	struct k3_inno_dp_prepll_cfg best = {0};
-+	int pclk_div;
-+	int i;
-+
-+	/* Strategy 1: Div5 path (VCO = PCLK * 5) */
-+	k3_inno_dp_try_prepll(target_pclk_khz, ref_clk_khz, 5, 1, 0, 0, 0,
-+			      &best);
-+
-+	for (pclk_div = 1; pclk_div <= 31; pclk_div++) {
-+		/* Strategy 2: DivM path */
-+		for (i = 0; i < ARRAY_SIZE(k3_inno_dp_divm_factors); i++)
-+			k3_inno_dp_try_prepll(target_pclk_khz, ref_clk_khz,
-+				2 * k3_inno_dp_divm_factors[i] * pclk_div, 0, 1,
-+				i, pclk_div, &best);
-+
-+		/* Strategy 3: DivAux path */
-+		for (i = 2; i <= 31; i++)
-+			k3_inno_dp_try_prepll(target_pclk_khz, ref_clk_khz,
-+					      2 * i * pclk_div,
-+					      0, i, 0, pclk_div, &best);
-+	}
-+
-+	if (!best.valid)
-+		return -EINVAL;
-+
-+	*cfg = best;
-+	return 0;
-+}
-+
-+static void k3_inno_dp_program_prepll(struct k3_inno_dp_phy *p,
-+				      const struct k3_inno_dp_prepll_cfg *cfg)
-+{
-+	regmap_write_bits(p->regmap, DPTX_ANA_PREPLL, DPTX_ANA_PREPLL_PD,
-+		FIELD_PREP(DPTX_ANA_PREPLL_PD, 1));
-+	usleep_range(2000, 4000);
-+
-+	regmap_write_bits(p->regmap, DPTX_ANA_PREPLL, DPTX_ANA_PREPLL_PREDIV,
-+		FIELD_PREP(DPTX_ANA_PREPLL_PREDIV, cfg->prediv));
-+
-+	regmap_write_bits(p->regmap, DPTX_ANA_PREPLL,
-+		DPTX_ANA_PREPLL_FBDIV2_LBIT,
-+		FIELD_PREP(DPTX_ANA_PREPLL_FBDIV2_LBIT, cfg->fbdiv & 0xFF));
-+	regmap_write_bits(p->regmap, DPTX_ANA_PREPLL,
-+		DPTX_ANA_PREPLL_FBDIV2_HBIT,
-+		FIELD_PREP(DPTX_ANA_PREPLL_FBDIV2_HBIT, (cfg->fbdiv >> 8) & 0xF));
-+
-+	regmap_write_bits(p->regmap, DPTX_ANA_PREPLL, DPTX_ANA_PREPLL_DACPD,
-+		FIELD_PREP(DPTX_ANA_PREPLL_DACPD, (cfg->frac_pd >> 1) & 0x1));
-+	regmap_write_bits(p->regmap, DPTX_ANA_PREPLL, DPTX_ANA_PREPLL_DSMPD,
-+		FIELD_PREP(DPTX_ANA_PREPLL_DSMPD, cfg->frac_pd & 0x1));
-+
-+	regmap_write_bits(p->regmap, DPTX_ANA_PREPLL_FRAC,
-+		DPTX_ANA_PREPLL_FRAC2_LBIT,
-+		FIELD_PREP(DPTX_ANA_PREPLL_FRAC2_LBIT, cfg->frac & 0xFF));
-+	regmap_write_bits(p->regmap, DPTX_ANA_PREPLL_FRAC,
-+		DPTX_ANA_PREPLL_FRAC2_MBIT,
-+		FIELD_PREP(DPTX_ANA_PREPLL_FRAC2_MBIT, (cfg->frac >> 8) & 0xFF));
-+	regmap_write_bits(p->regmap, DPTX_ANA_PREPLL_FRAC,
-+		DPTX_ANA_PREPLL_FRAC2_HBIT,
-+		FIELD_PREP(DPTX_ANA_PREPLL_FRAC2_HBIT, (cfg->frac >> 16) & 0xFF));
-+
-+	regmap_write_bits(p->regmap, DPTX_ANA_PREPLL_DIV,
-+		DPTX_ANA_PREPLL_PRECLK_DIVM,
-+		FIELD_PREP(DPTX_ANA_PREPLL_PRECLK_DIVM, cfg->divm));
-+	regmap_write_bits(p->regmap, DPTX_ANA_PREPLL_DIV,
-+		DPTX_ANA_PREPLL_PRECLK_DIVAUX,
-+		FIELD_PREP(DPTX_ANA_PREPLL_PRECLK_DIVAUX, cfg->divaux));
-+
-+	regmap_write_bits(p->regmap, DPTX_ANA_PREPLL_CTRL,
-+		DPTX_ANA_PREPLL_PCLKDIV5_EN,
-+		FIELD_PREP(DPTX_ANA_PREPLL_PCLKDIV5_EN, cfg->div5_en));
-+	regmap_write_bits(p->regmap, DPTX_ANA_PREPLL_CTRL,
-+		DPTX_ANA_PREPLL_PCLK_DIVAUX,
-+		FIELD_PREP(DPTX_ANA_PREPLL_PCLK_DIVAUX, cfg->divp));
-+
-+	regmap_write_bits(p->regmap, DPTX_ANA_PREPLL,
-+		DPTX_ANA_PREPLL_PCLK_NORMAL,
-+		FIELD_PREP(DPTX_ANA_PREPLL_PCLK_NORMAL, 1));
-+	usleep_range(2000, 4000);
-+
-+	regmap_write_bits(p->regmap, DPTX_ANA_PREPLL, DPTX_ANA_PREPLL_PD,
-+		FIELD_PREP(DPTX_ANA_PREPLL_PD, 0));
-+	usleep_range(2000, 4000);
-+}
-+
-+#define to_k3_inno_dp_phy_clk(_hw) \
-+	container_of(_hw, struct k3_inno_dp_phy, pxclk_hw)
-+
-+static unsigned long k3_inno_dp_pxclk_recalc_rate(struct clk_hw *hw,
-+						  unsigned long parent_rate)
-+{
-+	struct k3_inno_dp_phy *p = to_k3_inno_dp_phy_clk(hw);
-+
-+	return p->pxclk_rate;
-+}
-+
-+static int k3_inno_dp_pxclk_determine_rate(struct clk_hw *hw,
-+					   struct clk_rate_request *req)
-+{
-+	struct k3_inno_dp_phy *p = to_k3_inno_dp_phy_clk(hw);
-+	const struct k3_inno_dp_prepll_cfg *cfg;
-+	struct k3_inno_dp_prepll_cfg solved;
-+	u32 khz = div_u64(req->rate, 1000);
-+	int ret;
-+
-+	cfg = k3_inno_dp_find_prepll_cfg(khz, p->ref_clk_khz);
-+	if (cfg) {
-+		req->rate = (unsigned long)cfg->actual_pclk_khz * 1000;
-+		return 0;
-+	}
-+
-+	ret = k3_inno_dp_solve_prepll(khz, p->ref_clk_khz, &solved);
-+	if (ret)
-+		return ret;
-+
-+	req->rate = (unsigned long)solved.actual_pclk_khz * 1000;
-+
-+	return 0;
-+}
-+
-+static int k3_inno_dp_pxclk_set_rate(struct clk_hw *hw, unsigned long rate,
-+				     unsigned long parent_rate)
-+{
-+	struct k3_inno_dp_phy *p = to_k3_inno_dp_phy_clk(hw);
-+	const struct k3_inno_dp_prepll_cfg *cfg;
-+	struct k3_inno_dp_prepll_cfg solved;
-+	u32 khz = div_u64(rate, 1000);
-+	int ret;
-+
-+	cfg = k3_inno_dp_find_prepll_cfg(khz, p->ref_clk_khz);
-+	if (!cfg) {
-+		ret = k3_inno_dp_solve_prepll(khz, p->ref_clk_khz, &solved);
-+		if (ret) {
-+			dev_err(p->dev, "no PLL setting for %lu Hz\n", rate);
-+			return ret;
-+		}
-+		cfg = &solved;
-+	}
-+
-+	k3_inno_dp_program_prepll(p, cfg);
-+	p->pxclk_rate = (unsigned long)cfg->actual_pclk_khz * 1000;
-+
-+	return 0;
-+}
-+
-+static const struct clk_ops k3_inno_dp_pxclk_ops = {
-+	.recalc_rate	= k3_inno_dp_pxclk_recalc_rate,
-+	.determine_rate	= k3_inno_dp_pxclk_determine_rate,
-+	.set_rate	= k3_inno_dp_pxclk_set_rate,
-+};
-+
-+static const struct phy_ops k3_inno_dp_phy_ops = {
-+	.power_on	= k3_inno_dp_phy_power_on,
-+	.power_off	= k3_inno_dp_phy_power_off,
-+	.configure	= k3_inno_dp_phy_configure,
-+	.owner		= THIS_MODULE,
-+};
-+
-+static int k3_inno_dp_phy_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct k3_inno_dp_phy *p;
-+	struct phy_provider *provider;
-+	struct clk_init_data init = {};
-+	int ret;
-+
-+	p = devm_kzalloc(dev, sizeof(*p), GFP_KERNEL);
-+	if (!p)
-+		return -ENOMEM;
-+
-+	p->dev = dev;
-+
-+	p->regmap = dev_get_regmap(dev->parent, "dp");
-+	if (!p->regmap)
-+		return dev_err_probe(dev, -ENODEV,
-+				     "parent DP regmap not available\n");
-+
-+	p->phy = devm_phy_create(dev, dev->of_node, &k3_inno_dp_phy_ops);
-+	if (IS_ERR(p->phy))
-+		return dev_err_probe(dev, PTR_ERR(p->phy),
-+				     "failed to create DP PHY\n");
-+
-+	phy_set_drvdata(p->phy, p);
-+
-+	provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
-+	if (IS_ERR(provider))
-+		return dev_err_probe(dev, PTR_ERR(provider),
-+				     "failed to register PHY provider\n");
-+
-+	/* PHY takes a 24 MHz reference clock */
-+	p->ref_clk_khz = 24000;
-+
-+	/* The APMU pixel-clock mux references this clock by name. */
-+	of_property_read_string(dev->of_node, "clock-output-names", &init.name);
-+	if (!init.name)
-+		init.name = dev_name(dev);
-+	init.ops = &k3_inno_dp_pxclk_ops;
-+	init.parent_names = NULL;
-+	init.num_parents = 0;
-+	init.flags = 0;
-+	p->pxclk_hw.init = &init;
-+
-+	ret = devm_clk_hw_register(dev, &p->pxclk_hw);
-+	if (ret)
-+		return dev_err_probe(dev, ret,
-+				     "failed to register pixel clock\n");
-+
-+	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get,
-+					  &p->pxclk_hw);
-+	if (ret)
-+		return dev_err_probe(dev, ret,
-+				     "failed to add pixel clock provider\n");
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id k3_inno_dp_phy_of_match[] = {
-+	{ .compatible = "spacemit,k3-inno-dp-phy" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, k3_inno_dp_phy_of_match);
-+
-+static struct platform_driver k3_inno_dp_phy_driver = {
-+	.probe = k3_inno_dp_phy_probe,
-+	.driver = {
-+		.name		= "spacemit-k3-inno-dp-phy",
-+		.of_match_table	= k3_inno_dp_phy_of_match,
-+	},
-+};
-+module_platform_driver(k3_inno_dp_phy_driver);
-+
-+MODULE_DESCRIPTION("SpacemiT K3 Innosilicon DisplayPort PHY driver");
-+MODULE_AUTHOR("Cody Kang <codykang.hk@gmail.com>");
-+MODULE_LICENSE("GPL");
+ .../display/spacemit/spacemit,k3-inno-dp.yaml      |  140 ++
+ .../display/spacemit/spacemit,k3-saturn-dpu.yaml   |  132 ++
+ .../bindings/phy/spacemit,k3-inno-dp-phy.yaml      |   48 +
+ .../bindings/soc/spacemit/spacemit,k1-syscon.yaml  |   30 +-
+ MAINTAINERS                                        |   10 +
+ arch/riscv/boot/dts/spacemit/k3-com260-ifx.dts     |   11 +
+ arch/riscv/boot/dts/spacemit/k3-display.dtsi       |  156 ++
+ arch/riscv/boot/dts/spacemit/k3-pico-itx.dts       |   11 +
+ arch/riscv/boot/dts/spacemit/k3-pinctrl.dtsi       |   22 +
+ arch/riscv/configs/defconfig                       |    2 +
+ drivers/clk/spacemit/ccu-k3.c                      |    4 +-
+ drivers/gpu/drm/Kconfig                            |    1 +
+ drivers/gpu/drm/Makefile                           |    1 +
+ drivers/gpu/drm/spacemit/Kconfig                   |   37 +
+ drivers/gpu/drm/spacemit/Makefile                  |   15 +
+ drivers/gpu/drm/spacemit/dpu/dpu_saturn.c          |  483 ++++
+ drivers/gpu/drm/spacemit/dpu/dpu_saturn.h          |   35 +
+ drivers/gpu/drm/spacemit/dpu/dpu_saturn_hee.c      |  896 +++++++
+ drivers/gpu/drm/spacemit/dpu/dpu_trace.h           |  350 +++
+ drivers/gpu/drm/spacemit/dpu/saturn_fbcmem.c       |  152 ++
+ drivers/gpu/drm/spacemit/dpu/saturn_fbcmem.h       |   21 +
+ drivers/gpu/drm/spacemit/dpu/saturn_regs/dpu_int.h |   25 +
+ drivers/gpu/drm/spacemit/dpu/saturn_regs/ops_hee.h |   52 +
+ .../gpu/drm/spacemit/dpu/saturn_regs/reg_map_hee.h |   64 +
+ .../drm/spacemit/dpu/saturn_regs/saturn_fields.h   |  298 +++
+ drivers/gpu/drm/spacemit/spacemit_cmdlist.c        |  304 +++
+ drivers/gpu/drm/spacemit/spacemit_cmdlist.h        |  146 ++
+ drivers/gpu/drm/spacemit/spacemit_crtc.c           |  815 +++++++
+ drivers/gpu/drm/spacemit/spacemit_crtc.h           |  259 +++
+ drivers/gpu/drm/spacemit/spacemit_dmmu.c           |  103 +
+ drivers/gpu/drm/spacemit/spacemit_dmmu.h           |   40 +
+ drivers/gpu/drm/spacemit/spacemit_dpu_ids.h        |   22 +
+ drivers/gpu/drm/spacemit/spacemit_dpu_reg.h        |  108 +
+ drivers/gpu/drm/spacemit/spacemit_drm.c            |  132 ++
+ drivers/gpu/drm/spacemit/spacemit_drm.h            |   68 +
+ drivers/gpu/drm/spacemit/spacemit_inno_dp.c        | 2443 ++++++++++++++++++++
+ drivers/gpu/drm/spacemit/spacemit_inno_dp.h        |  328 +++
+ drivers/gpu/drm/spacemit/spacemit_planes.c         |  376 +++
+ drivers/phy/spacemit/Kconfig                       |   13 +
+ drivers/phy/spacemit/Makefile                      |    1 +
+ drivers/phy/spacemit/phy-k3-inno-dp.c              |  948 ++++++++
+ 41 files changed, 9099 insertions(+), 3 deletions(-)
+---
+base-commit: 5b9af25f2d0b574b4058c9f8c84486a597168116
+change-id: 20260713-k3-display-e8ffed67e936
 
--- 
-2.43.0
+Best regards,
+--  
+Cody Kang <codykang.hk@gmail.com>
 
