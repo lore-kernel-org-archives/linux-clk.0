@@ -1,38 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 612E1395AE3;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7714E399375;
 	Sat, 25 Jul 2026 04:51:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784955085; cv=none; b=OvNLw4GU5NlbhAe3cXdCrGLYasaeYEVSgzepDCqViXrtBEu8tJnru0FscKQWfYbnwIKuJaeRGyk5POBAo+eJizDIjydvDcx5U9+FAIdf1z/yKM8mxLr3toE84v3RcTd0GFRFRelN019TKhCadRmBPovx8qToaOpzYgk7+LgA5JE=
+	t=1784955085; cv=none; b=BcB1TO4reQfgicEnv0LIAkuD1CfmYEn8IrY8S8lSIxI6SlaP2lAZ6fJmxQPGHU7Z/e6Q7e09ZYDsIhipUw0HZpzRh6vzmegQhooV9vAbDDnCen6QUbJvalmftKm0AIlpwcuxI7rn4jcEyWyWFGeMat0FajqkVshZDFYhaXC22cE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1784955085; c=relaxed/simple;
-	bh=q1hgaX9wPrPFwUeLicxRrAbMkY6IDsu7w9/+g5n3QoU=;
+	bh=lS9ZHO5cU1PIgcluobW44ILgdd41TC3FoJ2uJmzxlZg=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=NHqFVkwn10eCSGWDq+c3xG22ibLPzE+wuwmA44kUxcXnIPvWiWvu7UCaqqGV3hins8UDedkyJs2bmTAWvo5xBvVi1BGZvLodzmo/jf2wzVESIN+sXNUSj9IWtkMdrM20M52b0mWAveEH8hzP7J1W2QmvryOWwlfr9YPGqFxaWas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S8lOGUEe; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=ZNo1kuxxsUJ2SlOQqn8yVpr6AUss25KYlPTDwvQWsl6tHmm1iKj8kNiLsPxvLO2HTwxGTWE2MKTnKamlWnGq9vYkAxaJqvMFZ9GovU0nPkgwP5Oky3yl1pFva2dq48DswKze9UjHoz4X3P/54ZNMsM57Sluh0WKOKLG4t3UrHTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OCfYhLcG; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S8lOGUEe"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 26D7DC4DDEC;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OCfYhLcG"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 35739C4AF62;
 	Sat, 25 Jul 2026 04:51:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1784955085;
-	bh=q1hgaX9wPrPFwUeLicxRrAbMkY6IDsu7w9/+g5n3QoU=;
+	bh=lS9ZHO5cU1PIgcluobW44ILgdd41TC3FoJ2uJmzxlZg=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=S8lOGUEe0PArVvRAkC3SnDX6jz5nZMZHsbs2KIMXvjPVeAad7XnPOrRcWrMDk1PoX
-	 y8xuGBpabQN1tZgsGPc0x4EDjw8+0YjreRGzQ5Xc0bu6g45IvfbjJesdS42iF7fOjN
-	 Li7PRlX3bD4DvlK/z4uLy7V+thXrT1kKjnK/N2iMrs2BnI+izAUcq158RqUEbuMZej
-	 1RId2OzQiSzMhoXDVoiu9+Won9axm3QdvZVOxYC8Oa8U+2qj9GDgukTyuT7TLDB1E1
-	 aTIbyV6dbiujyup3TKRiJO08zRuw9S32Avg3OEEk/6ri5jmaLqowN2Gidy7UStc2nE
-	 7mRNhLhjxElgA==
+	b=OCfYhLcGTWSu0OGpNjadtm8op1mPLTctO2pSILFrQ2L3j2MFumVB3xJnvdVnZdKMy
+	 ShwgXb5VXXqeDlcTzWymuL9BTlJsC/Zca4lSiCFaooESHyp3eSmzmd55Yt8qUiFBnc
+	 LwBXypkzOAQKELiaDBL0Q6zIxQf0D61m515ZUfCgXqRZs087O+QxsHnWwV8ZzDa9wI
+	 Cw81qB2GoQ3JLtZRue92DueGgeJdVYQl81kCsIE2bvOFnPFuBx/i2exHNAUWOd/o0w
+	 jMfykA3Ynv4Wm0PLUnwyfzIV10+wEhyCs2fGgqtygblXw2tRfo5G2FD3pOjw9P/ilq
+	 klQWNQlmh8MsA==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D744C53219;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F702C5321B;
 	Sat, 25 Jul 2026 04:51:25 +0000 (UTC)
 From: Cody Kang via B4 Relay <devnull+codykang.hk.gmail.com@kernel.org>
-Date: Sat, 25 Jul 2026 00:51:24 -0400
-Subject: [PATCH RESEND 15/17] riscv: dts: spacemit: k3-pico-itx: enable the
- DisplayPort output
+Date: Sat, 25 Jul 2026 00:51:25 -0400
+Subject: [PATCH RESEND 16/17] riscv: dts: spacemit: k3-com260-ifx: enable
+ the DisplayPort output
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -41,7 +41,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260725-k3-display-v1-15-6de34d80e86c@gmail.com>
+Message-Id: <20260725-k3-display-v1-16-6de34d80e86c@gmail.com>
 References: <20260725-k3-display-v1-0-6de34d80e86c@gmail.com>
 In-Reply-To: <20260725-k3-display-v1-0-6de34d80e86c@gmail.com>
 To: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
@@ -60,11 +60,11 @@ Cc: dri-devel@lists.freedesktop.org, linux-riscv@lists.infradead.org,
  linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
  linux-clk@vger.kernel.org, Cody Kang <codykang.hk@gmail.com>
 X-Mailer: b4 0.15.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1784955080; l=1628;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1784955080; l=1589;
  i=codykang.hk@gmail.com; s=codykang; h=from:subject:message-id;
- bh=itI/1VwTHA3V7ox5PXMT2Vrb2UKYmyIibaQ0egNmgMY=;
- b=lxKsxyQ3nsiDpUUUscV82alJ6SUbnc6qGxs7f5OilGXmyaEm1t4tajmxCZ6fWzlj3twP++IH3
- sOVsIHQ/RQ+AoQOv/aZ5YXzfJ5PmovX89KojRK+iFiaU+SLJWpbVNCv
+ bh=Ich4f6q4tajR0qNR1lNUbENzsTq+U+zWcM4jg4iHZLI=;
+ b=svT50cqkUT9tdXpDqDr8V4BCs5YfVqOAVZzNMJjzwWS+MDxblUOIeTkUanQD2/zeXYdqDIDCB
+ 879Z9RzlqsCAxiurj9ssQLux8/nRm6Sx4LLBYT5iRHCVAXS2c+o8rjy
 X-Developer-Key: i=codykang.hk@gmail.com; a=ed25519;
  pk=Osn6/cs9Su/mHHw4P19cmVc3v2FMQfiWahjsN0vEkuk=
 X-Endpoint-Received: by B4 Relay for codykang.hk@gmail.com/codykang with
@@ -74,30 +74,30 @@ Reply-To: codykang.hk@gmail.com
 
 From: Cody Kang <codykang.hk@gmail.com>
 
-Pico-ITX brings the second DPU's output to an external DisplayPort
-connector. Enable that DPU and the DisplayPort controller it feeds.
+CoM260-IFX carries a single DisplayPort output, so the second DPU and
+the DisplayPort controller it feeds are enabled.
 
 Signed-off-by: Cody Kang <codykang.hk@gmail.com>
 ---
- arch/riscv/boot/dts/spacemit/k3-pico-itx.dts | 11 +++++++++++
- arch/riscv/boot/dts/spacemit/k3-pinctrl.dtsi | 11 +++++++++++
+ arch/riscv/boot/dts/spacemit/k3-com260-ifx.dts | 11 +++++++++++
+ arch/riscv/boot/dts/spacemit/k3-pinctrl.dtsi   | 11 +++++++++++
  2 files changed, 22 insertions(+)
 
-diff --git a/arch/riscv/boot/dts/spacemit/k3-pico-itx.dts b/arch/riscv/boot/dts/spacemit/k3-pico-itx.dts
-index b89c1521e664..6c31460990a7 100644
---- a/arch/riscv/boot/dts/spacemit/k3-pico-itx.dts
-+++ b/arch/riscv/boot/dts/spacemit/k3-pico-itx.dts
-@@ -6,6 +6,7 @@
- #include <dt-bindings/gpio/gpio.h>
+diff --git a/arch/riscv/boot/dts/spacemit/k3-com260-ifx.dts b/arch/riscv/boot/dts/spacemit/k3-com260-ifx.dts
+index 238bb03d0e9e..114d0e02fed9 100644
+--- a/arch/riscv/boot/dts/spacemit/k3-com260-ifx.dts
++++ b/arch/riscv/boot/dts/spacemit/k3-com260-ifx.dts
+@@ -5,6 +5,7 @@
+  */
  
- #include "k3.dtsi"
+ #include "k3-com260.dtsi"
 +#include "k3-display.dtsi"
- #include "k3-pinctrl.dtsi"
  
  / {
-@@ -221,3 +222,13 @@ hub@1 {
- &usb2_phy {
- 	status = "okay";
+ 	model = "SpacemiT K3 CoM260 IFX";
+@@ -19,3 +20,13 @@ chosen {
+ 		stdout-path = "serial0:115200n8";
+ 	};
  };
 +
 +&dpu1_crtc0 {
@@ -106,21 +106,21 @@ index b89c1521e664..6c31460990a7 100644
 +
 +&dp1 {
 +	pinctrl-names = "default";
-+	pinctrl-0 = <&dp1_1_cfg>;
++	pinctrl-0 = <&dp1_3_cfg>;
 +	status = "okay";
 +};
 diff --git a/arch/riscv/boot/dts/spacemit/k3-pinctrl.dtsi b/arch/riscv/boot/dts/spacemit/k3-pinctrl.dtsi
-index 3ee1471f3798..2f36eba20f1e 100644
+index 2f36eba20f1e..dbe8db4a8b76 100644
 --- a/arch/riscv/boot/dts/spacemit/k3-pinctrl.dtsi
 +++ b/arch/riscv/boot/dts/spacemit/k3-pinctrl.dtsi
-@@ -11,6 +11,17 @@
- #define K3_GPIO(x)	(x / 32) (x % 32)
+@@ -22,6 +22,17 @@ dp1-pins {
+ 		};
+ 	};
  
- &pinctrl {
 +	/omit-if-no-ref/
-+	dp1_1_cfg: dp1-1-cfg {
++	dp1_3_cfg: dp1-3-cfg {
 +		dp1-pins {
-+			pinmux = <K3_PADCONF(24, 6)>;	/* dp1 hpd */
++			pinmux = <K3_PADCONF(72, 4)>;	/* dp1 hpd */
 +
 +			bias-disable;
 +			drive-strength = <25>;
