@@ -1,37 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2495D3D953D;
-	Sun, 26 Jul 2026 17:40:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24AE33D9540;
+	Sun, 26 Jul 2026 17:40:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785087631; cv=none; b=cqZ4x25ZopzwDqdsaa4s6gqyLwARymIsIqDrSLRILaPsPvJfRRKV4aUm+rYpxFXtv9WnOLIE6noHGlcG9xf7qdJ4jUCsfBxtkI9/Nzlgo55YVNhUabyDP49Ekso3XQcIUv81eanFtRuIshUo7BffU9r8R4QdnoCBf19lPD1xv0I=
+	t=1785087631; cv=none; b=mA/hSpqcSYUiKJP+2MOPZ6fnFHI9Y0i5oKFj8+zKT50hzCmkMQOtIdbWuLDpSwGbjwe6p2vKcelzgh2n0gVUeTRH/Tmm++oZTd2/eAzOBFprWrQE54NJ6bdQLgizXST608I8i7zu/iApYfFe0s06ZZPHANIVi/utANKjebgCA9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1785087631; c=relaxed/simple;
-	bh=evQSmCFIJoG6zk3B805Y1pKDcHj9eKi75SgQUg+z8C8=;
+	bh=i7iHDswEu0i3kPyzncnt9YWsDb74M/hQtMn+YqLfQ5I=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=r10ty+xXhJo306T7sZApTdz834wi6n2b9rOvidKvA58yfsMeHgtqBPxWbk35aGU2DPQrk2KkIriY5fsdaIO1jgdmazg+QYnhDG7P/+ckaagLDMD33jQ8lKm2IDSoKbKdNgUQw0i6xBUPbYZteRaGUM5qPDf5aOaCcNM57/eLu7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZgRO6P5P; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=SrPHxzA3nA9s5V4T9Svk/1wV6w4icpFje2wErXFoOBuOzHvVYMbrTpu5ERFYw8Nzfwecz2Gt1IwWZ2HAs7HW9gPWE87sR2WQZG55vVfeWGGN9yf3/bFDFqrtYk//Z32n3nXQFGdNBlBXI/1u5Ol4hcuLEPTUtq/z2d1KputBq6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L4Rs91SR; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZgRO6P5P"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id BD7B7C2BCC6;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L4Rs91SR"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id CEAAFC4AF0B;
 	Sun, 26 Jul 2026 17:40:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1785087630;
-	bh=evQSmCFIJoG6zk3B805Y1pKDcHj9eKi75SgQUg+z8C8=;
+	bh=i7iHDswEu0i3kPyzncnt9YWsDb74M/hQtMn+YqLfQ5I=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=ZgRO6P5PaqnmnrWqVTEGNvrEf0u1LXqx4fUPj9ZM/dGC2QnDd5s9J9lceBB6fqY2d
-	 pjMy9PksH9jlVkXP8UlO8//MOJ3ljJ/zVeGHJHthcnMZDMXoKV+N6z8VZbPnTQjIm2
-	 M1pjV14cSbtmyhKhvvc4ng7xJFzijz+KWHrsXpfuY0ffRt4Nm+Ifj4hIUlSMRKOE3H
-	 Wlylm0STXOH5Yo9pckkwfc1TlntwufwC/VwvunlUfKL3mVPp+LelbhDEBwybZgGbRO
-	 w4aXdomQ7cmKdeUErgPgJaANOfQBoYohD8mIbhknpL/iOt0+0B7H/ZdfI21DiSUuyE
-	 rMWOo68HEbZnQ==
+	b=L4Rs91SR1dQcaLcWk+GB6x+k7ZK/UOXrCoQBmlxr9vqvwUDw9vpBKhomfz+BQIP48
+	 pUAh7hjIOAyi/K4hyGh2aY5HUWKPLEtaKEDrT9NzWhr58ISI3DWSV5aL/GBOd2o/ho
+	 WyHJodbAPsChlfMP/NhmSrDGQTt4fO9PdRDGn/FSVH/w60PIwfGQrEONnjz1dU0P8B
+	 Kb2Z5dTEoWoX1sYZackHzmJ5RTRE40uMoyy7wcHK8S/guI5B0P3G0Q48S2AEzg5POJ
+	 YCjRhQDZFCc+GK898aR8lZdktkOBTkeal1LYIUCajrdddN41OoVs+Ppak1FrmgTvPZ
+	 yQcJzTT7CuksQ==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D282C53200;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFD63C531F9;
 	Sun, 26 Jul 2026 17:40:30 +0000 (UTC)
 From: Vyacheslav Yurkov via B4 Relay <devnull+V.Yurkov.EXT.bruker.com@kernel.org>
-Date: Sun, 26 Jul 2026 17:40:24 +0000
-Subject: [PATCH v4 1/2] dt-bindings: Add GPIO-locked fixed clock
+Date: Sun, 26 Jul 2026 17:40:25 +0000
+Subject: [PATCH v4 2/2] clk: Add gpio-locked fixed clock driver
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -40,7 +40,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260726-feature-clock-guard-v4-1-e9c8b372b71c@bruker.com>
+Message-Id: <20260726-feature-clock-guard-v4-2-e9c8b372b71c@bruker.com>
 References: <20260726-feature-clock-guard-v4-0-e9c8b372b71c@bruker.com>
 In-Reply-To: <20260726-feature-clock-guard-v4-0-e9c8b372b71c@bruker.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
@@ -51,11 +51,11 @@ Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, Vyacheslav Yurkov <uvv.mail@gmail.com>, 
  Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1785087629; l=2332;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1785087629; l=9156;
  i=V.Yurkov.EXT@bruker.com; s=20260318; h=from:subject:message-id;
- bh=lEBBaq3E08r1z3XCBu4u0DwQeFjgZxqKA/fT/ORUbSw=;
- b=GLa/f5iqOYIqXGwqg0b+hes392rQs7icNjvSOzhfMLLYcXgEjweC4PeQ4JXMenBHP8B2Gadlp
- OoAxaI4pPhmBIc0D2RVoN5R4/Yty63jmGnxDJSH/jcu2paCjvKoXWVA
+ bh=pXj0couZ/fACl0rMqSXbuwMR/DsWhiHY9v1Yy6J8Tm8=;
+ b=WXxWAAHu68/YFcInujmz/5MnEocRK6citPTAv8TkXe5R7I2+H3C3wQsc4ULwvPDNCBHxsCgKB
+ hYdyKK3oAD1D31Qg657GK4F+9eL/2kfu0DbBDNsqQ5xPdmD05DGaT8C
 X-Developer-Key: i=V.Yurkov.EXT@bruker.com; a=ed25519;
  pk=snJmgYVOKlp7aQtK9tWnEI7QTYxpPpJJvxdVsnxA7Fk=
 X-Endpoint-Received: by B4 Relay for V.Yurkov.EXT@bruker.com/20260318 with
@@ -65,86 +65,344 @@ Reply-To: V.Yurkov.EXT@bruker.com
 
 From: Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>
 
-Some hardware designs provide fixed-frequency clocks generated outside
-software control, such as by FPGA-resident PLLs. While the clock rate is
-fixed, a separate GPIO signal indicates whether the clock source is
-locked and producing a valid output.
-
-Describe a GPIO-locked fixed clock provider that exposes a fixed-rate
-clock whose availability depends on one or more GPIO lock-status
-signals.
+A gpio-locked clock aggregates one or more input clocks and/or one or
+more GPIOs. It's a FPGA-assisted clocking design where peripheral clocks
+are generated by FPGA PLLs that are outside CPU control, with
+clock-valid/PLL-lock status exposed through GPIO signals.
+Consumers can use the output clock to wait until all input
+clocks are locked and only then initialize dependent peripherals.
 
 Signed-off-by: Vyacheslav Yurkov <uvv.mail@gmail.com>
 Signed-off-by: Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>
 ---
- .../bindings/clock/gpio-locked-fixed-clock.yaml    | 59 ++++++++++++++++++++++
- 1 file changed, 59 insertions(+)
+ drivers/clk/Makefile          |   1 +
+ drivers/clk/clk-gpio-locked.c | 306 ++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 307 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/gpio-locked-fixed-clock.yaml b/Documentation/devicetree/bindings/clock/gpio-locked-fixed-clock.yaml
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index cc108a75a900..846383ed0358 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -35,6 +35,7 @@ obj-$(CONFIG_CLK_FD_KUNIT_TEST) += clk-fractional-divider_test.o
+ obj-$(CONFIG_COMMON_CLK)	+= clk-gpio.o
+ ifeq ($(CONFIG_OF), y)
+ obj-$(CONFIG_COMMON_CLK)	+= clk-conf.o
++obj-$(CONFIG_COMMON_CLK)	+= clk-gpio-locked.o
+ endif
+ 
+ # KUnit specific helpers
+diff --git a/drivers/clk/clk-gpio-locked.c b/drivers/clk/clk-gpio-locked.c
 new file mode 100644
-index 000000000000..4d17889c51ad
+index 000000000000..79098f9b6532
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/gpio-locked-fixed-clock.yaml
-@@ -0,0 +1,59 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/gpio-locked-fixed-clock.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
++++ b/drivers/clk/clk-gpio-locked.c
+@@ -0,0 +1,306 @@
++// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++/*
++ * Clock Controller Guard Driver
++ *
++ * Copyright 2026 Bruker Corporation
++ */
 +
-+title: GPIO Locked Fixed Clock
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
++#include <linux/device.h>
++#include <linux/gpio/consumer.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/slab.h>
 +
-+maintainers:
-+  - Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>
++#define MAX_INPUT_GPIO_COUNT 32
 +
-+properties:
-+  compatible:
-+    const: gpio-locked-fixed-clock
++/**
++ * struct gpio_locked_clk_priv - private state for the whole driver
++ * @dev:		platform device
++ *
++ * @clks:		array of input clock descriptors
++ * @num_clks:		number of entries in @inputs
++ *
++ * @gpios:		array of GPIO descriptors
++ * @gpio_names:		GPIO names
++ * @num_gpios:		number of input GPIOs
++ *
++ * @output_hw_clk:      output clock HW descriptor
++ * @output_clock_name:  output clock name
++ */
++struct gpio_locked_clk_priv {
++	struct device *dev;
 +
-+  "#clock-cells":
-+    const: 0
++	struct clk_bulk_data *clks;
++	int num_clks;
 +
-+  clocks:
-+    description: Input clocks whose validity is monitored by this provider.
++	struct gpio_descs *gpios;
++	const char **gpio_names;
++	int num_gpios;
 +
-+  clock-output-names:
-+    description: Names of the clock provided by this controller.
-+    maxItems: 1
++	struct clk_hw output_hw_clk;
++	const char *output_clock_name;
++};
 +
-+  locked-gpios:
-+    description: |
-+      GPIOs to check the lock state.
-+    minItems: 1
-+    maxItems: 32
++#define to_gpio_locked_clk_priv(_hw) \
++	container_of(_hw, struct gpio_locked_clk_priv, output_hw_clk)
 +
-+required:
-+  - compatible
-+  - "#clock-cells"
++static int is_gpio_ready(struct gpio_locked_clk_priv *priv)
++{
++	unsigned long values[BITS_TO_LONGS(MAX_INPUT_GPIO_COUNT)] = {0};
++	int ret = 0;
 +
-+anyOf:
-+  - required:
-+      - clocks
-+  - required:
-+      - locked-gpios
++	if (priv->num_gpios == 0)
++		return 0;
 +
-+additionalProperties: false
++	ret = gpiod_get_array_value(priv->gpios->ndescs,
++		priv->gpios->desc,
++		priv->gpios->info,
++		values);
 +
-+examples:
-+  - |
-+    #include <dt-bindings/gpio/gpio.h>
++	if (ret) {
++		dev_err(priv->dev, "Failed to read GPIOs");
++		return -EIO;
++	}
 +
-+    clk_gpio_locked: gpio-locked-fixed-clock {
-+        compatible = "gpio-locked-fixed-clock";
-+        #clock-cells = <0>;
++	for (int i = 0; i < priv->gpios->ndescs; i++) {
++		if (!test_bit(i, values)) {
++			dev_warn(priv->dev, "GPIO %s is not ready", priv->gpio_names[i]);
++			return -EBUSY;
++		}
++	}
 +
-+        clocks = <&clk0 0>, <&pll 0>;
++	return 0;
++}
 +
-+        locked-gpios = <&gpio0 4 GPIO_ACTIVE_HIGH>,
-+                <&gpio0 5 GPIO_ACTIVE_HIGH>,
-+                <&gpio1 2 GPIO_ACTIVE_LOW>;
++static int gpio_locked_clk_is_enabled(struct clk_hw *hw)
++{
++	struct gpio_locked_clk_priv *priv = to_gpio_locked_clk_priv(hw);
++	int ret = 0;
 +
-+        clock-output-names = "clkout0";
-+    };
++	if (priv->num_gpios > 0) {
++		ret = is_gpio_ready(priv);
++		if (ret < 0)
++			return ret;
++	}
++
++	// Now check for the clocks
++	for (int i = 0; i < priv->num_clks; i++) {
++		struct clk_hw *hw_clk = __clk_get_hw(priv->clks[i].clk);
++
++		if (!clk_hw_is_enabled(hw_clk)) {
++			dev_dbg(priv->dev, "Clock %i (%s) is not ready",
++				i, priv->clks[i].id);
++			return -EBUSY;
++		}
++	}
++
++	return 0;
++}
++
++/* We can't enable the clock, but the Common Clock Framework calls only
++ * enable() not is_enabled()
++ */
++static int gpio_locked_clk_enable(struct clk_hw *hw)
++{
++	return gpio_locked_clk_is_enabled(hw);
++}
++
++/* We have to implement it, but we are not going to control
++ * parent clock selection
++ */
++static u8 gpio_locked_clk_get_parent(struct clk_hw *hw)
++{
++	return 0;
++}
++
++static const struct clk_ops gpio_locked_clk_ops = {
++	.enable =	gpio_locked_clk_enable,
++	.is_enabled =	gpio_locked_clk_is_enabled,
++	.get_parent =	gpio_locked_clk_get_parent,
++};
++
++static int gpio_locked_clk_parse_inputs(struct gpio_locked_clk_priv *priv)
++{
++	struct device *dev = priv->dev;
++	int ret;
++
++	ret = devm_clk_bulk_get_all(dev, &priv->clks);
++	if (ret < 0) {
++		dev_err(dev, "failed to get input clocks: %d\n", ret);
++		return ret ? ret : -ENOENT;
++	}
++
++	priv->num_clks = ret;
++
++	if (priv->num_clks == 0)
++		dev_info(dev, "No input clocks provided\n");
++
++	for (int i = 0; i < priv->num_clks; i++)
++		dev_dbg(dev, "input clk[%d]: name='%s' rate=%lu Hz\n",
++			i, priv->clks[i].id,
++			clk_get_rate(priv->clks[i].clk));
++
++	return 0;
++}
++
++static int gpio_locked_clk_parse_gpios(struct gpio_locked_clk_priv *priv)
++{
++	struct device *dev = priv->dev;
++	struct device_node *np = dev->of_node;
++	int i;
++
++	priv->gpios = devm_gpiod_get_array_optional(dev, "locked", GPIOD_ASIS);
++	if (IS_ERR(priv->gpios)) {
++		dev_err(dev, "failed to get GPIO array: %ld\n",
++				PTR_ERR(priv->gpios));
++		return PTR_ERR(priv->gpios);
++	}
++
++	if (!priv->gpios) {
++		dev_info(dev, "No GPIOs provided, continue\n");
++		priv->num_gpios = 0;
++		return 0;
++	}
++
++	priv->num_gpios = priv->gpios->ndescs;
++	if (priv->num_gpios > MAX_INPUT_GPIO_COUNT) {
++		dev_err(priv->dev, "Maximum number of input GPIOs is 32\n");
++		return -EINVAL;
++	}
++
++	/* gpio_descs carries no names, so read "gpio-names" separately */
++	priv->gpio_names = devm_kcalloc(dev, priv->num_gpios, sizeof(*priv->gpio_names),
++			GFP_KERNEL);
++	if (!priv->gpio_names)
++		return -ENOMEM;
++
++	for (i = 0; i < priv->num_gpios; i++) {
++		of_property_read_string_index(np, "gpio-names", i,
++				&priv->gpio_names[i]);
++
++		dev_dbg(dev, "gpio[%d]: name='%s'\n",
++				i, priv->gpio_names[i] ? priv->gpio_names[i] : "(unnamed)");
++	}
++
++	return 0;
++}
++
++static int gpio_locked_clk_parse_outputs(struct gpio_locked_clk_priv *priv)
++{
++	struct device *dev = priv->dev;
++	struct device_node *np = dev->of_node;
++	struct clk_init_data init = {};
++	int ret;
++
++	of_property_read_string_index(np, "clock-output-names", 0,
++		&priv->output_clock_name);
++
++	if (!priv->output_clock_name)
++		priv->output_clock_name = dev_name(priv->dev);
++
++	init.name = priv->output_clock_name;
++	init.ops = &gpio_locked_clk_ops;
++	init.flags = 0;
++	init.num_parents = priv->num_clks;
++
++	if (priv->num_clks) {
++		const char **parent_names;
++		int j;
++
++		parent_names = devm_kcalloc(dev, priv->num_clks,
++					    sizeof(*parent_names),
++					    GFP_KERNEL);
++		if (!parent_names)
++			return -ENOMEM;
++
++		for (j = 0; j < priv->num_clks; j++)
++			parent_names[j] = priv->clks[j].id;
++
++		init.parent_names = parent_names;
++	}
++
++	priv->output_hw_clk.init = &init;
++
++	ret = devm_clk_hw_register(dev, &priv->output_hw_clk);
++	if (ret) {
++		dev_err(dev, "failed to register output clk'%s': %d\n",
++			priv->output_clock_name, ret);
++		return ret;
++	}
++
++	dev_info(priv->dev, "Output clock '%s' registered\n", priv->output_clock_name);
++
++	return 0;
++}
++
++static int gpio_locked_clk_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct gpio_locked_clk_priv *priv;
++	int ret;
++
++	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	priv->dev = dev;
++	platform_set_drvdata(pdev, priv);
++
++	ret = gpio_locked_clk_parse_inputs(priv);
++	if (ret)
++		return ret;
++
++	ret = gpio_locked_clk_parse_gpios(priv);
++	if (ret)
++		return ret;
++
++	if (priv->num_clks == 0 && priv->num_gpios == 0) {
++		dev_err(priv->dev, "At least 1 input clock or input GPIO is required\n");
++		return -EINVAL;
++	}
++
++	ret = gpio_locked_clk_parse_outputs(priv);
++	if (ret)
++		return ret;
++
++	ret = devm_of_clk_add_hw_provider(priv->dev, of_clk_hw_simple_get,
++		&priv->output_hw_clk);
++	if (ret) {
++		dev_err(priv->dev, "failed to register clock provider '%s': %d\n",
++			priv->output_clock_name, ret);
++		return ret;
++	}
++
++	dev_info(dev, "registered %u input clocks, %u GPIOs\n",
++		 priv->num_clks, priv->num_gpios);
++
++	return 0;
++}
++
++static void gpio_locked_clk_remove(struct platform_device *pdev)
++{
++	dev_dbg(&pdev->dev, "removed\n");
++}
++
++static const struct of_device_id gpio_locked_clk_of_match[] = {
++	{ .compatible = "gpio-locked-fixed-clock" },
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(of, gpio_locked_clk_of_match);
++
++static struct platform_driver gpio_locked_clk_driver = {
++	.probe  = gpio_locked_clk_probe,
++	.remove = gpio_locked_clk_remove,
++	.driver = {
++		.name           = "gpio-locked-fixed-clock",
++		.of_match_table = gpio_locked_clk_of_match,
++	},
++};
++module_platform_driver(gpio_locked_clk_driver);
++
++MODULE_AUTHOR("Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>");
++MODULE_DESCRIPTION("GPIO-locked clock driver");
++MODULE_LICENSE("Dual BSD/GPL");
 
 -- 
 2.34.1
