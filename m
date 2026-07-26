@@ -1,233 +1,113 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBE6C481DD;
-	Sun, 26 Jul 2026 00:14:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E064F9C0
+	for <linux-clk@vger.kernel.org>; Sun, 26 Jul 2026 06:04:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785024878; cv=none; b=hQH7/fSGJN2wd9+Cs8L+N4pLjbJ1nBO4Iyrwc+aL+cK0phPks9c5N3wxej9nzxsxwBadsU6SzX0zpM0uFPFYs6pMswxc68gMJ6yLstPFanHXkEvrVhj/ze0kyOgRlo8+Jp6nHVXtRlAD4xhSI/hw0ge67ggAsWhS75B+NZVqJIM=
+	t=1785045847; cv=none; b=dznnBbpH+hTuPuv7AN5kP9VCUUwSxVN0xIW2Pt+oiGU1acRlj2/tzk0VdaRxr1C24lsxnAXIYpoigaKWl5Hwk223yRCVPouA/9JrGPRFcxzyYm4JrnV8P9RAbIS5Ro+tLCD/4R16oXh7OPr/anhMdFEhMPwJmk5KzGWzSqSeCe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785024878; c=relaxed/simple;
-	bh=R18svsllCAmqAy+rjjLf2xynz3PfEtneGvgR171754Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B7lQooz/csx6rHq3a9iz07Ri0fYYyLDiga2uFhOH5DYKzwlgnmDkkhVIrXnIIw1Ud66RpXGJG5KmrtO5KxFtU2p+lVl8DTFyo2v1YZjrJgPcYmal5exhegCCEqEqnbIHpYGlmHPA7cox9g97pUh3gRhFxjI6YDgOcB5dS60LcLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TnycoZG+; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785045847; c=relaxed/simple;
+	bh=i0axAIOdnWy7kaUM9xsqDJz10jxvLmhCHlXNFaMbGjk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fEqc/EioEeX2wvhey3/piksbVuFfp9/S7HXDN/cvQzypZip/+x2laoLBTETJx1YpvdJ8Q1SP34nXq7HIXnWAzSrGlKzMiz4Vu86SdNLFlgK2PDJ0o2ufpzOpG5CggIDVfOQl+Nqtj7A7Cd4S76xccSWr1YoA23CWz1szb9R7aaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vq8p/IeR; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TnycoZG+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C18F1F000E9;
-	Sun, 26 Jul 2026 00:14:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785024876;
-	bh=vF+enmCQDt9FTlWnhxyPijqOPxOx/bcKcdvXQMBFQeQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=TnycoZG+w0l61r5i2hKpuz/9AHUOv/doGkz5HqnlrMiZBV4AMqOLYlM45UV1UZGiT
-	 OX5pL9WVdwaQuWXjXvyqwXMWC4+93LZMurzGVQ/r+dPygEAeaC4Y2EaalCxEXgWWA3
-	 xAmAxLhEOK7aUZDN8l8jrPrsbVuKlkF2Z+AEWYHIG4xgiTElZyhzBwSqFuVK+/tRzH
-	 dSDzfgnmbqP5vZ3xIXF6nYydHxddtH8sJj9r3LNr5LVXiOpiW9dk2m4YjKrAijGpOb
-	 6GZHL8p1OUfL3889DQEFvjQhm/PZ0ih5/WdWYTv39BUYCgU4Tp6/fBs9ir/WvqDL9I
-	 cXW0PFgfk2B3Q==
-Received: by venus (Postfix, from userid 1000)
-	id AC3CE1802A1; Sun, 26 Jul 2026 02:14:34 +0200 (CEST)
-Date: Sun, 26 Jul 2026 02:14:34 +0200
-From: Sebastian Reichel <sre@kernel.org>
-To: Praveen Talari <praveen.talari@oss.qualcomm.com>
-Cc: bjorn.andersson@oss.qualcomm.com, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney@redhat.com>, konrad.dybcio@oss.qualcomm.com, mukesh.savaliya@oss.qualcomm.com, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	chandana.chiluveru@oss.qualcomm.com
-Subject: Re: [PATCH v2] opp: Use clk_get_optional() to avoid leaving
- opp_table->clk as an error pointer
-Message-ID: <amVRObsTiN2_CZv9@venus>
-References: <20260725-fix_ptr_check_on_clk-v2-1-7f269f7d33f3@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vq8p/IeR"
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-c998fd549a8so1188766a12.2
+        for <linux-clk@vger.kernel.org>; Sat, 25 Jul 2026 23:04:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1785045845; x=1785650645; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=V+26Pgn5yyytqUfGY957+3+8j+6xWmgyw5AfMu8lBmw=;
+        b=Vq8p/IeRcF3YlRTYzHkc+iEPb5GZgdcn4rURupRQ9uQYdIZOy0N7inxAnnGNf/Ip0a
+         zB9AvypCD+lhV0Pj9nAW2E2LDFV3Tri/1Y5BTIAnrdEUaSjbEJudLrBWB7YxWa/xw6tb
+         U02HlzdWPF7lsnkygpU8uEdBP4ibMaX2bZyFL5OPdBvXYswTAx3Z1GD0ubgGdCtSwlSq
+         TIhvK/HTw9kwFQlimPFvJQ0SJCd87xKGjaHDjrqyRNhHjH+ZNnHFOz7qioKuHCKgDw35
+         ZnmJ3AXRdzcsTRqzdiwKg1IGp7kwwT5uxjelXsa5/Gmq/dqbr0D27RCnYrCeHaeJcHJp
+         hJyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785045845; x=1785650645;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=V+26Pgn5yyytqUfGY957+3+8j+6xWmgyw5AfMu8lBmw=;
+        b=Zd1GhtiI78H4h87A9TAOighihAfhe5xEVTaPjia8Mc/p06wy92x5ep+qlPtSANQ/J+
+         wfwRN/D0tCYNwX6wmCl4jxw1ybv4gNL66ajQvmTX/dhph4TQeGJ8Gh1emruUyLEZwyc1
+         QYLlevdKhES9t8yzQa+rWtZjfeSyVaTpWX3uDwyDxi5Z43BYLrqMde+wQo7iS6O1IEEh
+         bXpxxN2relgP1ETSnZ9VuoGvrqOOSO0eK0Ii/kbMGC/QeSs5YXPqCjN2k5vkK9XeSvze
+         bBuzHUoIBnsZHNgpUlA72MX4h69AcqVQ/95m+L1IBMo3TJzk3STAmXeJwKKileWYP4MN
+         2I2Q==
+X-Forwarded-Encrypted: i=1; AHgh+Rq400AM/zR0Bv+/B4HgOYXO2ANacnT8cflA/mky7eBLJZtI2VNBTtKgowz2OpQhpgLe4U+/2uYU5eg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEFCZdCJskbZrcOgqb7GpJ/LVYQ5mlr4miZZ8tC6wbZDF4dkR+
+	Cs/Apb3t7mxh7H1y1np9debZQgugCPfmqQSiD9MWs7vBZPYcbw9DK8Ha
+X-Gm-Gg: AR+sD10gi+wBPwg2mHWuph5AqjQfHPvXG9/ea66gkRhY5Z+O+UpFfbIOGbZsI3oqA6b
+	Ez+dWw8lUpgxFxr3PGCfbtu8Yu74cbpq9WZuJ3xFQm10Eq6QvvMEIZW35Jyc1gM1os6hiP8xqOw
+	aBxIfdb1tHVRNvYp92yg76BaEEomeIisyPx9XG2JA7aqF7JbdCFoBgFJQTrTG2fsx/OJF/rbf2G
+	nejGG5k02XwJP5bluwTCkSBNzCzj8rcaCERdnplHVtk2to0YKhVgOfulkhiKSKXoLItU7WbSmj2
+	AZmu5kXtCvCaj0gq5TdIqkoiv09cmDoSBRWrZNCv0xmnkdH+Z2KvE8Y1gDX5/Aq0HgFOb4GvxZL
+	9RdWQ+f1loaZYV+pt3YzHDMo3qMTHANvdXJhAwBompPqTHLTXSK9yChkpTnktAYejZ3CETsmWjH
+	gPG27EdUE/ZkkboqWo/+KdGwnJWer2pYydNkgTOknxNIR7JfQZ50ocWytQ5wMS9tPZjlvzT8dMA
+	pcLqfTJ0y6uctHEqA==
+X-Received: by 2002:a05:6a20:9186:b0:3c0:9c19:65ad with SMTP id adf61e73a8af0-3c67e16413bmr4106101637.69.1785045844721;
+        Sat, 25 Jul 2026 23:04:04 -0700 (PDT)
+Received: from acer-nitro-anv15-41.entro.com ([118.34.230.2])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-cbbb6623294sm1781164a12.10.2026.07.25.23.04.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 25 Jul 2026 23:04:04 -0700 (PDT)
+From: "shaikh.kamal" <shaikhkamal2012@gmail.com>
+To: Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Avi Fishman <avifishman70@gmail.com>,
+	Tomer Maimon <tmaimon77@gmail.com>,
+	Tali Perry <tali.perry1@gmail.com>,
+	Patrick Venture <venture@google.com>,
+	Nancy Yuen <yuenn@google.com>,
+	Benjamin Fair <benjaminfair@google.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: openbmc@lists.ozlabs.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: clock: nuvoton,npcm750-clk: fix 'suppling' spelling
+Date: Sun, 26 Jul 2026 11:33:54 +0530
+Message-ID: <20260726060354.18755-1-shaikhkamal2012@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4qqb6rf3ru3z77wm"
-Content-Disposition: inline
-In-Reply-To: <20260725-fix_ptr_check_on_clk-v2-1-7f269f7d33f3@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
 
+Fix spelling error reported by codespell: suppling -> supplying.
+No functional change.
 
---4qqb6rf3ru3z77wm
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2] opp: Use clk_get_optional() to avoid leaving
- opp_table->clk as an error pointer
-MIME-Version: 1.0
-
-Hi,
-
-On Sat, Jul 25, 2026 at 11:58:22PM +0530, Praveen Talari wrote:
-> _update_opp_table_clk() uses clk_get(dev, NULL) to acquire the
-> device's clock. On platforms where the perf domain device has no
-> Linux clock and is instead managed entirely by firmware via
-> devm_pm_opp_of_add_table() (through
-> of_genpd_add_provider_simple()/onecell()), clk_get() returns
-> -ENOENT. That case is treated as valid (the OPP table can still
-> have entries sourced from firmware), but opp_table->clk is left
-> holding ERR_PTR(-ENOENT) rather than being reset to NULL:
->=20
-> 	opp_table->clk =3D clk_get(dev, NULL);
-> 	ret =3D PTR_ERR_OR_ZERO(opp_table->clk);
-> 	...
-> 	if (ret =3D=3D -ENOENT) {
-> 		opp_table->clk_count =3D 1;
-> 		return opp_table;   /* opp_table->clk is still ERR_PTR(-ENOENT) */
-> 	}
->=20
-> Consumers that only check IS_ERR(opp_table->clk) treat this as a
-> valid clk and pass it straight into the clk consumer API. In
-> particular, dev_pm_opp_set_rate() calls
-> clk_round_rate(opp_table->clk, target_freq), and clk_round_rate()
-> only guards against a NULL clk, so it dereferences the error pointer
-> to read clk->exclusive_count and crashes:
->=20
->   Unable to handle kernel NULL pointer dereference at virtual
->   address 000000000000002e
->   ...
->   pc : clk_round_rate+0x3c/0x188
->   ...
->   Call trace:
->    clk_round_rate+0x3c/0x188 (P)
->    dev_pm_opp_set_rate+0x114/0x33c
->=20
-> Rather than teaching every clk consumer API to special-case
-> ERR_PTR(-ENOENT), fix it at the source: use clk_get_optional()
-> instead of clk_get() in _update_opp_table_clk(), which already
-> translates -ENOENT into a NULL clk. This documents that the clock is
-> genuinely optional for such devices, and keeps opp_table->clk holding
-> either a valid clk or NULL, never a lingering -ENOENT error pointer.
-> _opp_config_clk_single() is only wired up via opp_table->config_clks
-> when a clk was actually found, and every other opp_table->clk
-> consumer already tolerates NULL through the standard clk API (which
-> treats a NULL clk as a no-op), so no other call site needs to change.
->=20
-> Suggested-by: Sebastian Reichel <sre@kernel.org>
-> Signed-off-by: Praveen Talari <praveen.talari@oss.qualcomm.com>
-
-Reviewed-by: Sebastian Reichel <sre@kernel.org>
-
-Greetings,
-
--- Sebastian
-
-> ---
-> Changes in v2:
-> - Switched from guarding clk_round_rate() against error pointers to
->   fixing the root cause in OPP core: use clk_get_optional() instead
->   of clk_get() in _update_opp_table_clk(), so opp_table->clk is left
->   as NULL (not ERR_PTR(-ENOENT)) when a device has no Linux clock,
->   per Sebastian Reichel's review suggestion.
-> - Dropped the drivers/clk/clk.c change entirely.
-> - Link to v1: https://patch.msgid.link/20260723-fix_ptr_check_on_clk-v1-1=
--568a7ed87746@oss.qualcomm.com
-> ---
->  drivers/opp/core.c | 51 ++++++++++++++++++++++++------------------------=
+Signed-off-by: shaikh.kamal <shaikhkamal2012@gmail.com>
 ---
->  1 file changed, 24 insertions(+), 27 deletions(-)
->=20
-> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-> index b6966e509f7d..80da241d40f5 100644
-> --- a/drivers/opp/core.c
-> +++ b/drivers/opp/core.c
-> @@ -1591,39 +1591,36 @@ static struct opp_table *_update_opp_table_clk(st=
-ruct device *dev,
->  	    opp_table->clks)
->  		return opp_table;
-> =20
-> -	/* Find clk for the device */
-> -	opp_table->clk =3D clk_get(dev, NULL);
-> +	/*
-> +	 * There are few platforms which don't want the OPP core to manage
-> +	 * device's clock settings. In such cases neither the platform
-> +	 * provides the clks explicitly to us, nor the DT contains a valid
-> +	 * clk entry. The OPP nodes in DT may still contain "opp-hz" property
-> +	 * though, which we need to parse and allow the platform to find an
-> +	 * OPP based on freq later on.
-> +	 *
-> +	 * This is a simple solution to take care of such corner cases, i.e.
-> +	 * make the clk_count 1, which lets us allocate space for frequency
-> +	 * in opp->rates and also parse the entries in DT. Use
-> +	 * clk_get_optional() instead of clk_get() so opp_table->clk stays
-> +	 * NULL for such devices, instead of holding an ERR_PTR(-ENOENT) that
-> +	 * consumers must remember to special-case.
-> +	 */
-> +	opp_table->clk =3D clk_get_optional(dev, NULL);
-> =20
->  	ret =3D PTR_ERR_OR_ZERO(opp_table->clk);
-> -	if (!ret) {
-> -		opp_table->config_clks =3D _opp_config_clk_single;
-> -		opp_table->clk_count =3D 1;
-> -		return opp_table;
-> +	if (ret) {
-> +		dev_pm_opp_put_opp_table(opp_table);
-> +		dev_err_probe(dev, ret, "Couldn't find clock\n");
-> +		return ERR_PTR(ret);
->  	}
-> =20
-> -	if (ret =3D=3D -ENOENT) {
-> -		/*
-> -		 * There are few platforms which don't want the OPP core to
-> -		 * manage device's clock settings. In such cases neither the
-> -		 * platform provides the clks explicitly to us, nor the DT
-> -		 * contains a valid clk entry. The OPP nodes in DT may still
-> -		 * contain "opp-hz" property though, which we need to parse and
-> -		 * allow the platform to find an OPP based on freq later on.
-> -		 *
-> -		 * This is a simple solution to take care of such corner cases,
-> -		 * i.e. make the clk_count 1, which lets us allocate space for
-> -		 * frequency in opp->rates and also parse the entries in DT.
-> -		 */
-> -		opp_table->clk_count =3D 1;
-> -
-> -		dev_dbg(dev, "%s: Couldn't find clock: %d\n", __func__, ret);
-> -		return opp_table;
-> -	}
-> +	if (opp_table->clk)
-> +		opp_table->config_clks =3D _opp_config_clk_single;
-> =20
-> -	dev_pm_opp_put_opp_table(opp_table);
-> -	dev_err_probe(dev, ret, "Couldn't find clock\n");
-> +	opp_table->clk_count =3D 1;
-> =20
-> -	return ERR_PTR(ret);
-> +	return opp_table;
->  }
-> =20
->  /*
->=20
-> ---
-> base-commit: b4515cf4156356e8f4fe6e0fdc17f59adab9772f
-> change-id: 20260723-fix_ptr_check_on_clk-603605c3e350
->=20
-> Best regards,
-> -- =20
-> Praveen Talari <praveen.talari@oss.qualcomm.com>
->=20
+ .../devicetree/bindings/clock/nuvoton,npcm750-clk.yaml          | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---4qqb6rf3ru3z77wm
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/Documentation/devicetree/bindings/clock/nuvoton,npcm750-clk.yaml b/Documentation/devicetree/bindings/clock/nuvoton,npcm750-clk.yaml
+index 694dac68619c..b46b4ffb3501 100644
+--- a/Documentation/devicetree/bindings/clock/nuvoton,npcm750-clk.yaml
++++ b/Documentation/devicetree/bindings/clock/nuvoton,npcm750-clk.yaml
+@@ -18,7 +18,7 @@ description: >
+   There are six fixed clocks that are generated outside the BMC. All clocks are of
+   a known fixed value that cannot be changed. clk_refclk, clk_mcbypck and
+   clk_sysbypck are inputs to the clock controller.
+-  clk_rg1refck, clk_rg2refck and clk_xin are external clocks suppling the
++  clk_rg1refck, clk_rg2refck and clk_xin are external clocks supplying the
+   network. They are set on the device tree, but not used by the clock module. The
+   network devices use them directly.
+ 
+-- 
+2.43.0
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmplUWoACgkQ2O7X88g7
-+poSMQ/+P84a3vmtbJ1Fx2uOyDqx+UleoO0LTtUQDfoixcu7RnOnYKM9GQuwWV2U
-Vmrizo+vrhXScadKgraluvQ04colmXb9gRcaIWr3W4IzKrPVK7jNTIeCynKexwdY
-dhBjPmmf47nxzhp2pe0gfX9VAqRhddoGX1NW3yqC/EjT2KNCphqu5i9UiNHHiTUD
-C5e71+KfU/UbRawG6ACf8AK+UxEZ/PV5/qQ/kjrOvKbE693Y+WyBP/6LXT4ajKvQ
-yqNdpLd87k5EQ+he1fiv8nVOZ/FclOOmhBhFZVqKpiYQzK1phAELfmcUPrlEopyq
-xEKyJMYv9hGWJ0EiT8PIR3PlhfAO0nAIZUsFcgttrJmDu5zDKSN7COnGRwvpuwMw
-yjNesxMwcIqKbzPTe36vUWlJP5H6krM4808F7sfrXgc1B+FcqjLhT/H9YXQOGTXR
-EPjkBMZIaJs4UPiHCzCACi+J3wIja9x3oDvAMFAnfG5SHGfqlPrfJJ+QlU4peVoi
-B9zyfCV+GOVCxVs0pn0ceij5J1cR1SUQGdu6ZvZr7jkB2xvisl5vjMB3/9OrPELo
-v7Dt9eg0KKyBNRNMJmyyPvKtFxSMzM1/NWTkBvUgRRklFO15ZnAO1w+RrIREoxC8
-aS2ETdRpG15VdYX2jniVRFVGzY8mEMCeua+1auqC5guPGBMA2Sw=
-=WAGQ
------END PGP SIGNATURE-----
-
---4qqb6rf3ru3z77wm--
