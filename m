@@ -1,36 +1,35 @@
 Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A4BB42A82;
-	Mon, 27 Jul 2026 07:35:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E24863D3486;
+	Mon, 27 Jul 2026 07:35:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.200.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785137742; cv=none; b=r48BYI4QV3JmO1LATBp0CjAV8OQsw+dIRWK6VNZwgupyVYeZY37+FAroggW5BF7hVBib2aV7Qa5IhX6GueaUJaZylKYooCQIN1rMnibJjvl/huyPr4dDbaxPrIyqTTthelTmLdvVbVPrTnVjIE6PDxTSCvuZMFQl2y4Gum/jDaw=
+	t=1785137743; cv=none; b=kgk9Qkj8A7HWHlYjLKTVdZhKSa5NK6pmjxI9Il3Ory1f3O2FEFBiBWEOu06WZnJGPZX4ud4e5Z2iTExq6xCUyXYooaICKT3eJdCgch4so7OG7g5Ne3rmhuTqsg7woOMOig0fiouVX6m1+0TZoybUExUHBufrDHJDhAEmVxeJAcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785137742; c=relaxed/simple;
-	bh=KpM88UNWtFhUZh+I87vyefx720qL9DegkTtGz+0lth0=;
+	s=arc-20240116; t=1785137743; c=relaxed/simple;
+	bh=24VEV6QOH6SHtA+zoAPjnOtQJdLtst7s6tNZS8wCggY=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=iQkIl2WIjq5oYjFV8jD3dELAslrM2LpLVU9e4Vi0yflF/tn651iZbjajpCEB5NpD2xviB5/hik2ZoU2ULv8OzB2Sh/vh2KiEFXuXf2Tvebs+2q1/8R1RUU83eIyXDYHQzRJ0fVHL4Rnz9GmRaMNsed0Clk5VJ40d21ZTV+zvAjo=
+	 Content-Type:MIME-Version; b=jU5n1Q0vgCexlVQVKIwslgmexlBB74Jlhehlp8Tq4i0QaXJXkB5s6fLsL4fDLDXecy2dSkcNbOL/BedJloGcVxi7lsc6zzYQpEw+IjoECv7PxSvWTCSxm2+ZsM2cMbEeQpSCyPmMx/HvcQwTCL/iseJ/tKs5mUjsHlEdylex/nc=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.200.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
 Received: from drehscheibe.grey.stw.pengutronix.de (drehscheibe.grey.stw.pengutronix.de [IPv6:2a0a:edc0:0:c01:1d::a2])
 	(Authenticated sender: relay-from-drehscheibe.grey.stw.pengutronix.de)
-	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id E504A202053;
-	Mon, 27 Jul 2026 09:35:35 +0200 (CEST)
+	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id 1D66B202054;
+	Mon, 27 Jul 2026 09:35:39 +0200 (CEST)
 Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <p.zabel@pengutronix.de>)
-	id 1woFs7-001VMT-2c;
-	Mon, 27 Jul 2026 09:35:35 +0200
+	id 1woFsB-001VMX-07;
+	Mon, 27 Jul 2026 09:35:39 +0200
 Received: from pza by lupine with local (Exim 4.98.2)
 	(envelope-from <p.zabel@pengutronix.de>)
-	id 1woFs7-000000006sn-2xjW;
-	Mon, 27 Jul 2026 09:35:35 +0200
-Message-ID: <3d4204dbd1c73d50193144d1944d8237c625f6e3.camel@pengutronix.de>
-Subject: Re: [PATCH RESEND 08/17] drm/spacemit: add Saturn DPU core types,
- cmdlist and display MMU
+	id 1woFsA-000000006t9-3uCi;
+	Mon, 27 Jul 2026 09:35:38 +0200
+Message-ID: <084a860a77f18aaafcda4b223eec4fdcd96e75c9.camel@pengutronix.de>
+Subject: Re: [PATCH RESEND 10/17] drm/spacemit: add Saturn DPU KMS pipeline
 From: Philipp Zabel <p.zabel@pengutronix.de>
 To: codykang.hk@gmail.com, David Airlie <airlied@gmail.com>, Simona Vetter	
  <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
@@ -47,10 +46,10 @@ Cc: dri-devel@lists.freedesktop.org, linux-riscv@lists.infradead.org,
 	devicetree@vger.kernel.org, spacemit@lists.linux.dev, 
 	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
 	linux-clk@vger.kernel.org
-Date: Mon, 27 Jul 2026 09:35:35 +0200
-In-Reply-To: <20260725-k3-display-v1-8-6de34d80e86c@gmail.com>
+Date: Mon, 27 Jul 2026 09:35:38 +0200
+In-Reply-To: <20260725-k3-display-v1-10-6de34d80e86c@gmail.com>
 References: <20260725-k3-display-v1-0-6de34d80e86c@gmail.com>
-	 <20260725-k3-display-v1-8-6de34d80e86c@gmail.com>
+	 <20260725-k3-display-v1-10-6de34d80e86c@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.56.2-0+deb13u1 
@@ -64,65 +63,94 @@ MIME-Version: 1.0
 On Sa, 2026-07-25 at 00:51 -0400, Cody Kang via B4 Relay wrote:
 > From: Cody Kang <codykang.hk@gmail.com>
 >=20
-> Register programming of the Saturn DPU is batched: the driver builds
-> per-module register lists in memory and the hardware command-list
-> engine replays them at frame boundaries, while scanout buffers are
-> mapped through the DPU's private address translation unit (DMMU)
-> rather than scanned out by physical address.
->=20
-> Add the shared driver types, the MMIO field accessors, the trace
-> events, the command-list builder and the DMMU table code. Some DPU
-> configuration registers are write-only, so a read-modify-write would
-> corrupt neighbouring fields; byte- and halfword-aligned fields are
-> therefore written at their native width instead.
+> Add the atomic KMS implementation on top of the hardware backend: one
+> CRTC and one primary plane per DPU instance. atomic_check validates
+> the plane rectangle 1:1 against the mode and sizes the per-channel FBC
+> line buffer; atomic commit builds the cmdlist batches, maps the
+> framebuffer through the DMMU and arms the cfg-ready handshake, with
+> vblank events driven from the DPU interrupt.
 >=20
 > Signed-off-by: Cody Kang <codykang.hk@gmail.com>
 > ---
->  drivers/gpu/drm/spacemit/dpu/dpu_saturn.h   |  35 +++
->  drivers/gpu/drm/spacemit/dpu/dpu_trace.h    | 350 ++++++++++++++++++++++=
+>  drivers/gpu/drm/spacemit/spacemit_crtc.c   | 815 +++++++++++++++++++++++=
 ++++++
->  drivers/gpu/drm/spacemit/spacemit_cmdlist.c | 304 ++++++++++++++++++++++=
-++
->  drivers/gpu/drm/spacemit/spacemit_cmdlist.h | 146 ++++++++++++
->  drivers/gpu/drm/spacemit/spacemit_crtc.h    | 259 ++++++++++++++++++++
->  drivers/gpu/drm/spacemit/spacemit_dmmu.c    | 103 ++++++++
->  drivers/gpu/drm/spacemit/spacemit_dmmu.h    |  40 ++++
->  drivers/gpu/drm/spacemit/spacemit_dpu_reg.h | 108 +++++++++
->  drivers/gpu/drm/spacemit/spacemit_drm.h     |  68 ++++++
->  9 files changed, 1413 insertions(+)
+>  drivers/gpu/drm/spacemit/spacemit_planes.c | 376 +++++++++++++
+>  2 files changed, 1191 insertions(+)
 >=20
-[...]
-> diff --git a/drivers/gpu/drm/spacemit/spacemit_cmdlist.h b/drivers/gpu/dr=
-m/spacemit/spacemit_cmdlist.h
+> diff --git a/drivers/gpu/drm/spacemit/spacemit_crtc.c b/drivers/gpu/drm/s=
+pacemit/spacemit_crtc.c
 > new file mode 100644
-> index 000000000000..d5acdbeb3b0e
+> index 000000000000..b75ff6320501
 > --- /dev/null
-> +++ b/drivers/gpu/drm/spacemit/spacemit_cmdlist.h
-> @@ -0,0 +1,146 @@
+> +++ b/drivers/gpu/drm/spacemit/spacemit_crtc.c
+> @@ -0,0 +1,815 @@
 [...]
-> +struct spacemit_crtc {
-> +	struct device *dev;
-> +	struct drm_crtc crtc;
-> +	const struct dpu_core_ops *core;
-> +	struct dpu_mmu_tbl mmu_tbl;
-> +	int dev_id;
-> +	int irq_online;
-> +	struct timer_list cfg_rdy_timer;
+> +/*
+> + * The assert and deassert orders are not mirror images: the hardware wa=
+nts
+> + * these.
+> + */
+> +static void dpu_reset_assert(struct device *dev, const char *name,
+> +			     struct reset_control *rstc)
+> +{
+> +	int ret =3D reset_control_assert(rstc);
 > +
-> +	bool is_1st_f;
-> +	bool first_modeset;
-> +	struct dpu_clk_context clk_ctx;
-> +	u32 aclk;
-> +	u32 out_format;
+> +	if (ret)
+> +		dev_warn(dev, "failed to assert %s reset: %d\n", name, ret);
+> +}
 > +
-> +	struct reset_control *mclk_reset;
-> +	struct reset_control *lcd_reset;
-> +	struct reset_control *esc_reset;
-> +	struct reset_control *aclk_reset;
-> +	struct reset_control *dsc_reset;
+> +static void dpu_reset_deassert(struct device *dev, const char *name,
+> +			       struct reset_control *rstc)
+> +{
+> +	int ret =3D reset_control_deassert(rstc);
+> +
+> +	if (ret)
+> +		dev_warn(dev, "failed to deassert %s reset: %d\n", name, ret);
+> +}
+> +
+> +static int dpu_pm_suspend(struct device *dev)
+> +{
+> +	struct spacemit_drm_private *priv =3D dev_get_drvdata(dev);
+> +	struct spacemit_crtc *a_crtc =3D priv->a_crtc;
+> +
+> +	/*
+> +	 * Assert before gating: a reset asserted into an already-gated block
+> +	 * has no clock edges to propagate on and leaves the register file
+> +	 * untouched.
+> +	 */
+> +	dpu_reset_assert(dev, "lcd", a_crtc->lcd_reset);
+> +	dpu_reset_assert(dev, "esc", a_crtc->esc_reset);
+> +	dpu_reset_assert(dev, "mclk", a_crtc->mclk_reset);
 
-Why are these duplicated from spacemit_drm_private?
-dpu_pm_suspend/resume() in patch 10 have access to priv.
+It looks like these three are mirrored, and could be handled by
+reset_control_bulk_assert/deassert().
+
+> +	dpu_reset_assert(dev, "aclk", a_crtc->aclk_reset);
+> +	dpu_reset_assert(dev, "dsc", a_crtc->dsc_reset);
+> +	usleep_range(10000, 20000);
+> +
+> +	if (a_crtc->core && a_crtc->core->disable_clk)
+> +		a_crtc->core->disable_clk(a_crtc);
+> +
+> +	return 0;
+> +}
+> +
+> +static int dpu_pm_resume(struct device *dev)
+> +{
+> +	struct spacemit_drm_private *priv =3D dev_get_drvdata(dev);
+> +	struct spacemit_crtc *a_crtc =3D priv->a_crtc;
+> +
+> +	dpu_reset_deassert(dev, "mclk", a_crtc->mclk_reset);
+> +	dpu_reset_deassert(dev, "esc", a_crtc->esc_reset);
+> +	dpu_reset_deassert(dev, "lcd", a_crtc->lcd_reset);
+> +	dpu_reset_deassert(dev, "aclk", a_crtc->aclk_reset);
+> +	dpu_reset_deassert(dev, "dsc", a_crtc->dsc_reset);
+> +
+> +	if (a_crtc->core && a_crtc->core->enable_clk)
+> +		a_crtc->core->enable_clk(a_crtc);
+> +
+> +	return 0;
+> +}
 
 regards
 Philipp
