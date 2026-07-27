@@ -1,67 +1,86 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B5E343550F
-	for <linux-clk@vger.kernel.org>; Mon, 27 Jul 2026 18:26:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11623432E96
+	for <linux-clk@vger.kernel.org>; Mon, 27 Jul 2026 18:29:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785176791; cv=none; b=S6XZQjdDRn+773huIW8o6/gsjAbyw1LQVolxbeuz670fLnyCXljlIkLl6PaGkebjTghHPvQEnFJuMPZ5NSAznNXsg+YEhr2UM/bqx5rC3+TTiCy12x238sIpv3anRUs2rRlA3XBX8O2W1bm0lvplsXW3v7S9TmCdHLazsCJ7cfU=
+	t=1785176970; cv=none; b=udG8T4oFYAdmFfbH7XezQ9CByYFrOybwHKdQat1I2lVA94RXMa5yZLwmBpgHZWKFwKbg6/4QKlvbXNFTcaBaS4FCFhW9RlKXt5xP6sK3gfcDZm8kIPu1DC9bpM/wlIDo+JkYW/m2t+xffrtEfFDYJ4J4STSPN8GFtaGsuhVEvLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785176791; c=relaxed/simple;
-	bh=9WNPKFjal9TFI7ztjsCWddsA0DdgrD8Tk7Zv4ZNs/pI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=F76lZK9dxRsrcyfMCCNVcVe4jeNOJam6rQJcNdtqT1OLX2jcRhQgEl3Lggf3G9vRmLBwUAr/oXas8RzN3AtzjnIJXlJY+ovqgqzb148oyOFLzevjKqsgLIeKjw0alS40cXsOTrmBwJdl9hxOSRqZJip1JVAyOpFR5KXPxYZ41PY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fx8IP6pO; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1785176970; c=relaxed/simple;
+	bh=JwCLR9iFFFFuRnYMfZ24S/lkYDC1+Mq6uVmbgytz5J4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=b5uG1TFG1yYE4Q6BbEahuV5P/IAxBDwi5RRfU0QU30/EDGvswLzL9zRQztVkbvoIszQruqLe8KffjjSfMudWZVG108SvX3WjZ3BqfukjXf0hgXQfFnWxeTK+YhSOP2kSjyVQPaEKNBI4ZE3ZY5zW3ghJFUEwAfHZO8NeADwRsYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=GIP6F6Uo; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=FLCH2zXb; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fx8IP6pO"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4954dff6536so22197355e9.0
-        for <linux-clk@vger.kernel.org>; Mon, 27 Jul 2026 11:26:28 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="GIP6F6Uo";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="FLCH2zXb"
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66RIC1ja4028793
+	for <linux-clk@vger.kernel.org>; Mon, 27 Jul 2026 18:29:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=s7rXRbvXwU7+wfekH6skCa
+	5uexonXhISDvr9zJy5MwI=; b=GIP6F6Uo6d9hSobkFne6b5FPiO5v8fJjRNTYFU
+	KMCBYZ9WMJwz58geoDhZ0Rzy+ZGXM1TGmelXfNAHWWSobM36tsiiYCeZFxh6QtwM
+	nRWwD8W6TDXZksptgcVHhmrx6SXsgBRO4NZvpOeFwu888zXnmr7Vfj+2IJH1+bfp
+	LR02BdBsiNMCAPgQgzK5FExQ+1vPyETCRX8aT8PXtNjvkWxhmwYVUWDNdpsxBD0w
+	ivdVcpHxg80xmNtTJhyUTLajy8t7MafDMCJMG3DpSxuenwZ3aLVqFTVc49HG6quV
+	6Sn7jzVdPTV8k8ENL3O5bVTzFKfVfIzm09UUCfGUTpCU4fgQ==
+Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fp4v6aat7-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Mon, 27 Jul 2026 18:29:27 +0000 (GMT)
+Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-cbb20f82a0eso3740204a12.0
+        for <linux-clk@vger.kernel.org>; Mon, 27 Jul 2026 11:29:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1785176787; x=1785781587; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=qAtpWFpXBCB2TwlFP1ROJK7e4/4ihHdc0dQDuwgQXcs=;
-        b=Fx8IP6pOXFvuCEcP4g5zmn4lJfivNF+jBo35tUwzKAhq6nVM76wQ5NczBknSWWXATl
-         OAUMlc0VL73WGUerzmv0pcCI5QMuiazO9WlKoS9Pc8UH8pc2xDt0VZnkKCAvbbx4s7PY
-         Sh7gS1m61zLkt7kCEgfv6J7VtvHJ4e0R9w+glWmQjnjxUeEQ5fL8ZhGKZz0MndsjxxXT
-         GVCGC4lJP5v34DI+jXWPfT3vwnmgyDXA5eCJd9v7vEjRHiMGm4Zcch3KEGZvvhwV+ldZ
-         6ny66cyDyfSH7nlMwFLMLjnUlyltSeNMQWHUULDhPaPRiuzsG5bIzvRP0209TWhJr3Cy
-         eWwg==
+        d=oss.qualcomm.com; s=google; t=1785176967; x=1785781767; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=s7rXRbvXwU7+wfekH6skCa5uexonXhISDvr9zJy5MwI=;
+        b=FLCH2zXbyFkA/tf3Y6mAvMzj+lQk4CXvGJcD4VxbV1X4qUifF4NbU+9bFWDyfkGgIZ
+         oMdKzsJzacBrCGE2xHiEyOJMmv/Fn1/LHCeybZiSU387pmEuwSXq/Qf822CaYt1N0nSa
+         cemkKXR/joH1+JpfkL6Dail9hHzDSlp1IBehcIJ1ugYTw6po9/zkwojDsIrdx9dW9Pi1
+         N4yptVWQHWyO+n2n501A4unT5y/6jrHrb3R+Xdqo0nERcVHQdP+a45BdCtzSRJ69r5xW
+         2Cb9aFfUsDiYV/pT/+nkT3NaMwhLzwTkHH4bjai11LutwRgWwGLmBTF7/QdF7+gEA2kr
+         d8mQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785176787; x=1785781587;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=qAtpWFpXBCB2TwlFP1ROJK7e4/4ihHdc0dQDuwgQXcs=;
-        b=pqp8gMqk4idDzAu2qX0srOSw0A1yAkb2QYjUdu4Jq+nWis/nP4bfEgso+tVh44GrSL
-         06TuNx0zv9U1KRjV9HRWAGOU3ditVmGnvtTm5Nzb9KtUIpMdlMmMnSj6+NuW0k/hAUyr
-         rgXwZBDIAU2FmHtLhMCKhpteLEHcy/PdU4JMZxQ2XqXiKWPdvP0+R1pktl5+kvb4GhKk
-         drPr2/lhKtsTY9kyviSjODmFpuFrNtp5LEvOPQcGup7B7en8bpPURgRzxuxdPumumDH3
-         R1d26ZRX0avpgluZgOzguqONj1oO0Me054fd2ce3GL39sqY1pp0kuW4AERZouLhy3DEI
-         i73Q==
-X-Gm-Message-State: AOJu0Yzn7OFcuru/80uo07/ZKG6fRGGZwv5wCsAZxstNDJgWFijocVYd
-	jfYJXQvXCSeUJqxy/xd6Qvc5BKpHUvHR+4/UMcFAZGR1+lPQXc0oCkAM
-X-Gm-Gg: AR+sD127+c4q1kJ+En4cvEI6eKzhavx2IlKfGk1eCjVXEvDJCCi4qQ+AiMOGI+ltIi2
-	ZOo1KJG4fQhA3IZujpUP+/fMbooI0gA9txQU/shCV0QZSy9kGFZIvwLx1U8jzNAyxfVmipd4pWw
-	aueZbXcQbqNGDCxRv1+9BibVTEuEYlyBj/2ydQE9sxri1xiF6yOXoGJNW3j8NVA4qZrTtetxaQa
-	scUzj7spEYXgu8SSF3ecEtAw44WbZRECiFQY01RuF2WDmQhKjnf4HrefS1OjbXuJ7ftVUw9twBl
-	v1u1hTsMrtIevwNebahB/ntZMJU31Vju0wrOzNdnWzTGJu8bCVNwrcUJG/tQSwkKQprcMRf0M6y
-	jMru7y9S/6NT7hwn1IA9YoVYjbdrweAWsIwJOU5IprSTm4RXyJ8wgkqb3viuOVMXUVsxRka57gx
-	+ujmFnG329fpO+nkUxR1k2/co=
-X-Received: by 2002:a05:600c:6986:b0:495:3f48:5df2 with SMTP id 5b1f17b1804b1-496b5722341mr144689655e9.29.1785176786691;
-        Mon, 27 Jul 2026 11:26:26 -0700 (PDT)
-Received: from [192.168.0.2] ([197.250.51.166])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f85c53052sm50689288f8f.18.2026.07.27.11.26.21
+        d=1e100.net; s=20251104; t=1785176967; x=1785781767;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=s7rXRbvXwU7+wfekH6skCa5uexonXhISDvr9zJy5MwI=;
+        b=MgfILKfMIP+8acR3WCZe025askYeqajUXky3adkuHuKaR4iML8CytZKf8cIfkfmhVR
+         3D2/+fbz8437yZi1FNdKrA12dEfdr4xg2iHncQTYvgEWbKZUirjSZH3oL++a9FFgd+rL
+         ha4hwwpDtyERSo1uvgK08a16nMpI6+hL6cUk7VJ9afos7uofRUdBJgGPHZqg+RfKe8MY
+         G1MiB6sqwdz9ybhNriDecr/3dd+dfHZlUu7NY6IErccW3dqZ/4F/l+lzg8/mAhCn++/c
+         tr/T7RpORH+vk5aV77NOH0CR2+El2HVSv+pcfSa0aYtGJi2s/u+F88hYXtR462+08fnZ
+         naGA==
+X-Forwarded-Encrypted: i=1; AHgh+Rr1Aa+5XYTeSBYuLZSQYE/KIu+U+OmzfCSNbPiqjFKbNYVlEoQQ+s9QUmcfdqQJhqYTTkFhrYe6xlA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCIJD92TJG9C2lTdb4ELX2oULiyrGYVlFd62i6P1D/qQSCOzCe
+	hraDjPSbmJWZBw43dBwOdm6a4G9OpwhS9mDizCoGWkro8nVP4MgRIUQhe3GPShWnAMT4mSIbhSj
+	AnoB5gidP6JeNfZ9Shv+j9VqGNFbB54mVUw1827UcYc2lK9F+rwCjw7B24HD68Kw=
+X-Gm-Gg: AR+sD10WovXcgPyaKWQUzrt6PI3MEBP7v2+Y49J+LniGjhpMjaHaiGwNrDdwWLu3PPZ
+	J4GtDe4q+X5WvfTFLkuNRqwYPtaZ2NxNCJyYDzkiJilmWlBU7M5/njsv2N+SeCmF1jQHB8IN2NL
+	qNNZuFg3/Y8jXiKvlD27zQLxskuu3C9pH55ZUrhkA6ILVD13ExumHh8WAGHApDZtW/p9E9397ij
+	rdMNzTmyCsqFhe0WMtn+ZWDtaHVIEBkXyCz2rzTXwW4AzAyY8VobokCHAbo53Lc/DKMdz3Cj81l
+	lW7PtJm2lo4L/nCJerYfwZaxljp5w76QpLWFTKXChqmozGXfeZyQbQg5LmrKKveUYQl+6t+m7Mo
+	VkP9bpKp2XGkm/1ggaVmzdBzDQ9sWJc8=
+X-Received: by 2002:a05:6a21:3418:b0:3bf:b931:b3f4 with SMTP id adf61e73a8af0-3c6c80438d5mr740526637.51.1785176966515;
+        Mon, 27 Jul 2026 11:29:26 -0700 (PDT)
+X-Received: by 2002:a05:6a21:3418:b0:3bf:b931:b3f4 with SMTP id adf61e73a8af0-3c6c80438d5mr740472637.51.1785176965916;
+        Mon, 27 Jul 2026 11:29:25 -0700 (PDT)
+Received: from hu-jkona-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-314bc5a04b2sm31963087eec.28.2026.07.27.11.29.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Jul 2026 11:26:26 -0700 (PDT)
-From: =?utf-8?q?Stefan_D=C3=B6singer?= <stefandoesinger@gmail.com>
-Date: Mon, 27 Jul 2026 21:24:27 +0300
-Subject: [PATCH v8 12/12] ARM: dts: zte: Declare zx297520v3 CRM device
- nodes
+        Mon, 27 Jul 2026 11:29:25 -0700 (PDT)
+From: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
+Subject: [PATCH 0/2] clk: qcom: Add camera clock controllers support for
+ Qualcomm Maili SoC
+Date: Mon, 27 Jul 2026 23:59:08 +0530
+Message-Id: <20260727-maili_camcc-v1-0-01dbd7ddb276@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -69,200 +88,85 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20260727-zx29clk-v8-12-7a107b00f1dd@gmail.com>
-References: <20260727-zx29clk-v8-0-7a107b00f1dd@gmail.com>
-In-Reply-To: <20260727-zx29clk-v8-0-7a107b00f1dd@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
- Brian Masney <bmasney@redhat.com>, Vinod Koul <vkoul@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Russell King <linux@armlinux.org.uk>, Lee Jones <lee@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-phy@lists.infradead.org, mfd@lists.linux.dev, 
- =?utf-8?q?Stefan_D=C3=B6singer?= <stefandoesinger@gmail.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5268;
- i=stefandoesinger@gmail.com; h=from:subject:message-id;
- bh=9WNPKFjal9TFI7ztjsCWddsA0DdgrD8Tk7Zv4ZNs/pI=;
- b=owEBiQJ2/ZANAwAIAT0TvMhUTxoiAcsmYgBqZ6J7FbZD2m/JMVFcXnBCdwNjgRof/lPXlFIYI
- Eof9rYGcc2JAk8EAAEIADkWIQRDFvS2qgVbJ5UyXWw9E7zIVE8aIgUCameiexsUgAAAAAAEAA5t
- YW51MiwyLjUrMS4xMiwyLDIACgkQPRO8yFRPGiIpNg/8CjhYfS1jEJRHFiBgBHY94DxsbwC80LV
- FJ+iqaQIJn9SQuRM8mcsHnPvkhxHspQMK/XJoHvbxDakU6CLMUjEUC/UE23nvkXuFgYGRU/bm/K
- nM30erogA/6Ee87GbATgpz/U4rwxXmsnszROwKfVBppkIKxtV4+rGEuZNe4xaa94+Kft6zZgU3a
- V6G20JybDFvY0lxCpFFJlXMDsEMMUelTb+MkDUP2C5zVJRrgbnbgoXH01jvVZXRbQ2CB6I8DA8f
- UEm03N9S9rFjiivNza1972Ecx7uJQxjeIGgTLegxJdPk21AQZmdz9yggFPWh6aEbjRw828osEss
- NUQVKk18v7d92C2XIQQRUT+qpl4BIHR6qeMfnP6SpTq/m6SWKz/MiVLL2NWLgopShaX7HImgAVx
- /50BLdsMcVsUOsPTZJ/R78p75U2CJ5D9eAdc8WDLV6XYnHQfJmeuoDyFG/jEAayFsrLaPQEi75A
- ldzwsNiYqXbZAYmPVNnaTyB0ZiZTgpGRA/+r2OTLWullukCrBP+WcqVxH59ovKFr+Hn10RGFG1/
- +FVupuf6muERBXFswb3B5VDtNewieyxjenmfbinlRAnBLYtlOX9wL88glUI0pIMrDn1uAiv+hkh
- gxxePgHKcQ6WxmDfdh35grba3iONAhD6V3AuPNNWN5e9ErGqwK0g=
-X-Developer-Key: i=stefandoesinger@gmail.com; a=openpgp;
- fpr=4F9C2C8728019633893EBBB98CB81F9A72BBA155
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHSjZ2oC/02OW07DMBBFtxL5G0uOH7HjraCq8ozHdEQeJQkBq
+ ereMQ0IPs+VztG9iZUWplXE5iYW2nnlearQPjUCL2l6Icm5stBKd8prL8fEA58xjYiSbMkeewu
+ uR1GN60KFPx+159PBC7291+h2jH/N2DyKXftb5Ik3TsMZhxlfJXrSYJ1ROai4G/H/zo/qVJDHj
+ Uv6YGmBQvBkgMDFvf02IK0kcR5H3mJjA6WsvTWQVDE6lOCwvneA2jloS0d9h7kHcbrfvwD/99B
+ UFgEAAA==
+X-Change-ID: 20260727-maili_camcc-e4fd7c94b59c
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Taniya Das <taniya.das@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNzI3MDE3MCBTYWx0ZWRfX7IiAhCRfNuKx
+ TRTzOesjXyYarB89grvaPb2qpU3X2oXsP/R8J2zhDmY8tevapZdYXlJyzJ0YtepeYvLlEmNQEK5
+ GlZZ3L0DZdMVXmcKsWKh5qYFu9mb/3k=
+X-Proofpoint-GUID: nfyPCE6yYGHJPTt0wrGt2a4qFTcNi9Zp
+X-Authority-Analysis: v=2.4 cv=ev3vCIpX c=1 sm=1 tr=0 ts=6a67a387 cx=c_pps
+ a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=IkcTkHD0fZMA:10 a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=DJpcGTmdVt4CTyJn9g5Z:22
+ a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=fMwyTfTMBRYe1uhAUZ8A:9 a=QEXdDO2ut3YA:10
+ a=x9snwWr2DeNwDh03kgHS:22
+X-Proofpoint-ORIG-GUID: nfyPCE6yYGHJPTt0wrGt2a4qFTcNi9Zp
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzI3MDE3MCBTYWx0ZWRfX5Zxcsd4YxAXM
+ nzgZJQRJxFphLTGnPFieNxDOUiDj+HcUCHn7NJuBJDFRZsvjJqRiehzWIYR84f1SeupEPAqWUrV
+ mPQ7bltRUCb423SxOTzPW8iaffy5dYgnJvrjE0eiQdi7ZND7oEZoPKa6uugLurrujaTWQ2dgBsn
+ J+rNyERxMuvuexHdYz3FrVOSnUV2vi8Ywh6j3vL+dbP5C3pU+1gso2gOPin+YPcnUGreVnUfn5N
+ t1OpFt7KV6nV5P1So8BQzwmv9wYGNGP4w0arnSyVOqK/8g2Tf8Zu9IlY0Fzqc9ioB2f5hHdwzGO
+ aSDG+c/QknCkPWBM+hEuZZ/3mxCPMfTZbg9sjrwSg0iKk2Uukd6qunfQ0DmUyZ4rVKpggtP2Wlx
+ RANb2tZDrtP2BTn+CSSf5Oe3jRHS0VGEX4zgHgImNnx6OqY6ECRhNSYtWDsAyz0p7FJBDLfGbx1
+ ZOWd2/9Ufx/51X9qvaA==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-07-27_05,2026-07-27_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 phishscore=0 lowpriorityscore=0 priorityscore=1501
+ suspectscore=0 clxscore=1015 impostorscore=0 bulkscore=0 malwarescore=0
+ spamscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
+ definitions=main-2607270170
 
-This makes use of the driver added in the previous patches. It wires up
-the uart clocks and resets and allows getting rid of the placeholder
-uartclk node.
+This series adds support for the camera clock controllers on the upcoming
+Qualcomm Maili SoC.
 
-Signed-off-by: Stefan Dösinger <stefandoesinger@gmail.com>
+This series is dependent on Maili gcc[1] and Hawi camcc[2] clock series
+[1]: https://lore.kernel.org/all/20260724-maili_initial_clock-v3-0-45b577241c91@oss.qualcomm.com/
+[2]: https://lore.kernel.org/all/20260723-camcc-hawi-v1-0-7057658c5c47@oss.qualcomm.com/
 
+Signed-off-by: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
 ---
+Jagadeesh Kona (2):
+      dt-bindings: clock: qcom: Add Maili camera clock controllers
+      clk: qcom: Add support for camera clock controller on Maili
 
-Version 7:
-Add phy nodes to topcrm
-Remove syscon from matrixclk again
-Adapt remove now-removed extra clk inputs from matrix
-Add reset to LSP
-osc26m -> clock-26m for the fixed rate clocks, likewise for 32k
-
-Version 6:
-Add syscon to matrixclk
-
-Version 5:
-Re-name from *clk to *crm
-Add the syscon-reboot node here because the binding requires it
-Re-add accidentally dropped uart2 IRQ
+ .../bindings/clock/qcom,sm8450-camcc.yaml          |   2 +
+ drivers/clk/qcom/camcc-hawi.c                      | 158 +++++++++++++++++++++
+ 2 files changed, 160 insertions(+)
 ---
- arch/arm/boot/dts/zte/zx297520v3.dtsi | 84 +++++++++++++++++++++++++++++++----
- 1 file changed, 76 insertions(+), 8 deletions(-)
+base-commit: 48ead2743ba0f328f85cfd75bc255b1f6e96cd9b
+change-id: 20260727-maili_camcc-e4fd7c94b59c
+prerequisite-change-id: 20260617-maili_initial_clock-c7e2b4530d80:v3
+prerequisite-patch-id: cb2499a822715bf6d411ea000e525e5feab52e7f
+prerequisite-patch-id: 4280283ee9f782a5ba46e4419ab0b7186add0211
+prerequisite-patch-id: 3e9a75794efb1633818ffe387d1f4e5048c361a4
+prerequisite-patch-id: 4b5fc2ccabb6be0eef59a9a223a228bb1ecba981
+prerequisite-patch-id: 7e5ac7db1fba3258b45b689b11d0ca93d65aa38a
+prerequisite-change-id: 20260508-camcc-hawi-4be887e3beb5:v1
+prerequisite-patch-id: 9fbee6bee0a3235a188c9380c8d7574f5a4774c2
+prerequisite-patch-id: 38b41881b46403d8f8ec68b5eb12654d854995e6
 
-diff --git a/arch/arm/boot/dts/zte/zx297520v3.dtsi b/arch/arm/boot/dts/zte/zx297520v3.dtsi
-index a16c30a164bb..8d911795936b 100644
---- a/arch/arm/boot/dts/zte/zx297520v3.dtsi
-+++ b/arch/arm/boot/dts/zte/zx297520v3.dtsi
-@@ -4,6 +4,8 @@
-  */
- 
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/reset/zte,zx297520v3-reset.h>
-+#include <dt-bindings/clock/zte,zx297520v3-clk.h>
- 
- / {
- 	#address-cells = <1>;
-@@ -20,13 +22,16 @@ cpu@0 {
- 		};
- 	};
- 
--	/* Base bus clock and default for the UART. It will be replaced once a clock driver has
--	 * been added.
--	 */
--	uartclk: uartclk-26000000 {
--		#clock-cells = <0>;
-+	osc26m: clock-26m {
- 		compatible = "fixed-clock";
- 		clock-frequency = <26000000>;
-+		#clock-cells = <0>;
-+	};
-+
-+	osc32k: clock-32k {
-+		compatible = "fixed-clock";
-+		clock-frequency = <32768>;
-+		#clock-cells = <0>;
- 	};
- 
- 	timer {
-@@ -70,13 +75,74 @@ gic: interrupt-controller@f2000000 {
- 			      <0xf2040000 0x20000>;
- 		};
- 
-+		topcrm: clock-controller@13b000 {
-+			compatible = "zte,zx297520v3-topcrm", "syscon";
-+			reg = <0x0013b000 0x400>;
-+			clocks = <&osc26m>, <&osc32k>;
-+			clock-names = "osc26m", "osc32k";
-+			interrupts = <GIC_SPI 42 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 43 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 45 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 46 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "usb-up", "usb-down", "hsic-up", "hsic-down";
-+			resets = <&topcrm ZX297520V3_USB_PHY_RESET>,
-+				 <&topcrm ZX297520V3_HSIC_PHY_RESET>;
-+			reset-names = "usb", "hsic";
-+			#clock-cells = <1>;
-+			#phy-cells = <1>;
-+			#reset-cells = <1>;
-+
-+			syscon-reboot {
-+				compatible = "syscon-reboot";
-+				offset = <0x0>;
-+				value = <0x1>;
-+				mask = <0x1>;
-+			};
-+		};
-+
-+		matrixcrm: clock-controller@1306000 {
-+			compatible = "zte,zx297520v3-matrixcrm";
-+			reg = <0x01306000 0x400>;
-+			clocks = <&osc26m>, <&osc32k>,
-+				 <&topcrm ZX297520V3_MPLL>, <&topcrm ZX297520V3_MPLL_D5>,
-+				 <&topcrm ZX297520V3_DPLL>, <&topcrm ZX297520V3_GPLL>,
-+				 <&topcrm ZX297520V3_GPLL_D2>, <&topcrm ZX297520V3_GATED_OSC26M>;
-+			clock-names = "osc26m", "osc32k", "mpll", "mpll-d5", "dpll",
-+				      "gpll", "gpll-d2", "wclk-osc26m";
-+			#clock-cells = <1>;
-+			#hwlock-cells = <1>;
-+			#reset-cells = <1>;
-+		};
-+
-+		lspcrm: clock-controller@1400000 {
-+			compatible = "zte,zx297520v3-lspcrm";
-+			reg = <0x01400000 0x100>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+
-+			clocks = <&matrixcrm ZX297520V3_LSP_MPLL_D5_WCLK>,
-+				 <&matrixcrm ZX297520V3_LSP_MPLL_D4_WCLK>,
-+				 <&matrixcrm ZX297520V3_LSP_MPLL_D6_WCLK>,
-+				 <&matrixcrm ZX297520V3_LSP_MPLL_D8_WCLK>,
-+				 <&matrixcrm ZX297520V3_LSP_MPLL_D12_WCLK>,
-+				 <&matrixcrm ZX297520V3_LSP_OSC26M_WCLK>,
-+				 <&matrixcrm ZX297520V3_LSP_OSC32K_WCLK>,
-+				 <&matrixcrm ZX297520V3_LSP_PCLK>,
-+				 <&matrixcrm ZX297520V3_LSP_TDM_WCLK>,
-+				 <&matrixcrm ZX297520V3_LSP_DPLL_D4_WCLK>;
-+			clock-names = "mpll-d5", "mpll-d4", "mpll-d6", "mpll-d8", "mpll-d12",
-+				      "osc26m", "osc32k", "pclk", "tdm-wclk", "dpll-d4";
-+			resets = <&matrixcrm ZX297520V3_LSP_RESET>;
-+		};
-+
- 		uart0: serial@131000 {
- 			compatible = "arm,pl011", "arm,primecell";
- 			arm,primecell-periphid = <0x0018c011>;
- 			reg = <0x00131000 0x1000>;
- 			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&uartclk>, <&uartclk>;
-+			clocks = <&topcrm ZX297520V3_UART0_WCLK>, <&topcrm ZX297520V3_UART0_PCLK>;
- 			clock-names = "uartclk", "apb_pclk";
-+			resets = <&topcrm ZX297520V3_UART0_RESET>;
- 			status = "disabled";
- 		};
- 
-@@ -85,8 +151,9 @@ uart1: serial@1408000 {
- 			arm,primecell-periphid = <0x0018c011>;
- 			reg = <0x01408000 0x1000>;
- 			interrupts = <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&uartclk>, <&uartclk>;
-+			clocks = <&lspcrm ZX297520V3_UART1_WCLK>, <&lspcrm ZX297520V3_UART1_PCLK>;
- 			clock-names = "uartclk", "apb_pclk";
-+			resets = <&lspcrm ZX297520V3_UART1_RESET>;
- 			status = "disabled";
- 		};
- 
-@@ -95,8 +162,9 @@ uart2: serial@140d000 {
- 			arm,primecell-periphid = <0x0018c011>;
- 			reg = <0x0140d000 0x1000>;
- 			interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&uartclk>, <&uartclk>;
-+			clocks = <&lspcrm ZX297520V3_UART2_WCLK>, <&lspcrm ZX297520V3_UART2_PCLK>;
- 			clock-names = "uartclk", "apb_pclk";
-+			resets = <&lspcrm ZX297520V3_UART2_RESET>;
- 			status = "disabled";
- 		};
- 	};
-
+Best regards,
 -- 
-2.54.0
+Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
 
