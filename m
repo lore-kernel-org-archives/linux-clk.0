@@ -1,164 +1,210 @@
-Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011048.outbound.protection.outlook.com [40.93.194.48])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 285773F1ADB;
-	Mon, 27 Jul 2026 09:50:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25F563F12C2
+	for <linux-clk@vger.kernel.org>; Mon, 27 Jul 2026 10:01:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=205.220.168.131
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785145854; cv=fail; b=qHB5L7VvZFh4W9vrQT2mEo4f/KqEDrrUgXo+vHUg+7yL09l/W0eV3RNYqz7lw9zYorRcsaQAFj4oaafltFPeTkYrPRNZrnjWDInzlYudDXmkO52/2M8XI0nETVGVHmzIVxmE/Ze7otBCmV84QKIbA/JIdP8YFzAIYpaAlrzIx2M=
+	t=1785146470; cv=pass; b=aH7TD0TvjgC7q4d+Tp/ODIsORt0+833OGsoqR+klUjrlhPdnH9wSWKQAXPJMc88hNJmlwSeXJinPeWRIjqtsamGKCeU6sTPiz0fQWwNTyHCIS8ZTpO7jO7t4+Q5+1RQZU9fh85faVqMZaBZEI+C7UDqh72/BsZ8o24D4M50m3Wo=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785145854; c=relaxed/simple;
-	bh=eV7a8R3bA4BFzEsN1hDsL4yYX/tBkrRM39ehWrrOsTE=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=lIhpwSk68sirZN2z/11OOhCSRSNa7ewGhfck9N+6k8TEldxRNSXu4y4UtJKWrJm3k6JR73Pdvi01crsUXYJzgeJRmwj+lItjJaYvsO0H2H0QBS02l/wZv+GLf5Be/bA8eKHURoa8SwBikaVnJGTl96bK+dh6DbsrdnCDzPXv35I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=naXVSwXC; arc=fail smtp.client-ip=40.93.194.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
+	s=arc-20240116; t=1785146470; c=relaxed/simple;
+	bh=PeyKN0baBhutHLbY8tpY5GwoAhsXPzOWCm1h3cCqBJo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Q+YvW5NTZ0mxTAm9anPVbXNyVnT4hBGEmP9qszrhZyQDa8UQ9z1Q8WgdrUum4XlSaFqCmwZI/YYCCXbyX1AqLp6qEozc1681oJQGW5raa2rprmZTaPDl8RsJNypWmybL5d3TLq0Uwj5pPgUSRgeO3ByJUGEnXUKaLKqQLN84tJk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=pR4g/VVD; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=iQGGMBLg; arc=pass smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="naXVSwXC"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=o/eOwuDMRgdB6om4NnjloT9badweh/cjQprTphQMHGub1uOrcPtAfSNP1+S1o3MFzKXFaLx4BQ65OXENkaE7IBLL8kaGGdrnM8VUq73UIO1Hph843CEDh04w/tzzNOVrIqnfcAOdb9MfHwi6CBBLq3vuHe0R3BDlkEOm197qFCIxHWGMtd03cZpjN/blBLlciw6mFAG1Yegx7bCBECsiK+RlmhhGPcmxt+KjkDy+gr21ba/HCVYHqy0DJSTP+1Bn6h6YxzqWgyUnTUTk0NbJTg4hXUDomf4HdGyoLbqUezJj7J3fTWTLUpDeAf0xc0GcKN/pV4z7TXOjT+utKfb9Gw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WWypBh/YZ0l1i58bXe9RbSgpLjw9ENU7NCgZTadkKUo=;
- b=f7w2U7kQt5yIrmRKBGX8IAjVb0kGDe9ZVcw/ofrEGvDbAnSNb1IXL/ltcoA1sc9rucsrchLlDGoPSKFphQTa4W4vGXSqP2eVd1gaubveQ2rQL8ILKinF2y9sg07thqx3sjBUGLgVFqyI0HgJv/XZIb94X9ukLOsQUjvlmoRPJk1ngqCsug/hTGUVcSZxUoICj9CZd5Hac1qJLyFBD/Qc+H/5fUT0yk5xc0PQaRzlHcd6xkdP3tRp3nzDYaLuozNSp4ixjpR7zrue3sb3vP99+hCA5q84SJPqQAOMQ2lQ2b+dfRf+KJ9UA5uWPNWgvTg0evPHuQ0mMJAoTil3qjZq7w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
- dkim=pass header.d=altera.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WWypBh/YZ0l1i58bXe9RbSgpLjw9ENU7NCgZTadkKUo=;
- b=naXVSwXCdt6uU5U8dbF/Zg9LjwyPcPoPQy0gODXGJKubQrgJN8T7R7A2+DHYDAZAigZUhuz89DrLEtaP4dE7uEC83HbZVw3oXTUTCUa913T3PMM2alxcyie8oFXCB86wmhyChM8tgk8qP7SNgZJlljr1e//EqbqHJ7EKlPL+qmxP4YrrgqJcU8pXkt3AFCmklKIFGtly4joV2H9cy+6UE8GG+/zGbD8wGbOWFWGNmzLCWp9XaUbzJc1YIzlqOcAOIcALh6ZI9JHL/s//nChL5ioNa4AKSBJZa+oAsTZSoRwhEsC8DGIJi7IzYl/tXT5+INq3ckBZuA/kURNR8Qp8hw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=altera.com;
-Received: from LV8PR03MB7398.namprd03.prod.outlook.com (2603:10b6:408:18f::13)
- by PH0PR03MB5751.namprd03.prod.outlook.com (2603:10b6:510:37::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.245.13; Mon, 27 Jul
- 2026 09:50:34 +0000
-Received: from LV8PR03MB7398.namprd03.prod.outlook.com
- ([fe80::9d6:b5c1:7f72:e982]) by LV8PR03MB7398.namprd03.prod.outlook.com
- ([fe80::9d6:b5c1:7f72:e982%4]) with mapi id 15.21.0245.012; Mon, 27 Jul 2026
- 09:50:34 +0000
-From: genevieve.chan@altera.com
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Dinh Nguyen <dinguyen@kernel.org>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: linux driver reviews <linux-drivers-review@altera.com>
-Subject: [PATCH] dt-bindings: clock: agilex: mark mpu_l2ram_clk deprecated
-Date: Mon, 27 Jul 2026 17:49:26 +0800
-Message-Id: <20260727094926.1124-1-genevieve.chan@altera.com>
-X-Mailer: git-send-email 2.32.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI2PR06CA0006.apcprd06.prod.outlook.com
- (2603:1096:4:186::19) To LV8PR03MB7398.namprd03.prod.outlook.com
- (2603:10b6:408:18f::13)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="pR4g/VVD";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="iQGGMBLg"
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66R9WvsV3490831
+	for <linux-clk@vger.kernel.org>; Mon, 27 Jul 2026 10:01:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	fpxga49hr34rpRcBFaAC1QHjhjtKMHjA32E0mhgUj/8=; b=pR4g/VVDUj1stCtg
+	quKe4ihAM1gvEsgmlEWtE+21OkUdNfPYciwb+yeHh03cLS28HXTex7gEzog62RaL
+	N2d+cDiCvfrdjXDv8RwdHJAPqnMTlDlAy0hkXz0A4ojGe/T2xLeCu/2mk7GLi0ZW
+	UrFvVAjMy3d4gC2jrb7+l3RyUUQ7OWlxF76JT8b86VGb1eTfc3nLfUX9X43DLp38
+	G3s+8zd4R4gvaQq4q7cW5lhV98s5ca06f27h24pcadY3WichadQZPEJz/PexHuYd
+	L93y8Az+sWt+fkf/DiFr9bTxglVYH/hyXM8gz+lEINLIgpczhK8smEgferrZ3EUK
+	vAU/MQ==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fngystwu9-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Mon, 27 Jul 2026 10:01:08 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-92e4f27f49bso245137385a.0
+        for <linux-clk@vger.kernel.org>; Mon, 27 Jul 2026 03:01:08 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1785146467; cv=none;
+        d=google.com; s=arc-20260327;
+        b=B4R00klpB+lHSWsxUDedOKaPVynpTRQwZjrQYDV/Qpw+Lkf70/X74a3PwpxBFyNcrp
+         p3fcU/Hx8klLmn+Znv9zQvqIaLkEn+P6x6Xngnd54geqCPcDyhATCdPZ5ynAQf+vttL5
+         KwTX8FEOwAJWXcXBshLKvsp24gIM4GP845z4Zi2ZsvZsmbZ3TIS6k8DoN6XpYcaRQkCW
+         Uz6ZvhLhKZqejSCrx40a5bNj6ZmX28rY8ZmlepPsILhddjI9LbPjYqiAyajuTm+lOOwV
+         jaiPiErxoSzY1eGQMnPaE9JlQBBrQWqo0IvimGNOnGQ+4l0Erw2O0ZhAABW3Sx1RUpvq
+         exrQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=fpxga49hr34rpRcBFaAC1QHjhjtKMHjA32E0mhgUj/8=;
+        fh=c+sBy+DxoIrI4fmIUNTtG8a+W5oW9LVtpTVM8oiD3dE=;
+        b=iFqavg9CHMUm9a5fS6oyqvcZiKdGP05nJGAypE/91oS0/5uObtcAB3RysrdX2Al5B2
+         sCrOyGC59xDxhzxDNLXWvQuOEeg7DdjDEPlYy8dy9VhAcs8p8UR1+lMsTUfJiqlMrgN/
+         L76PsfpIEeoGPj4K9tvIrbqDEwpDVhLu4xDumbmw7jfwo7JGVFnO7ngIkm3WhSgJya13
+         h9JxJWe0ECWeWQ5BkK73amv8HxIkkHNE2W6UB0WXPbcOAvssb5WKq2JkXXRA+0nKKnD9
+         Yi7P9USr7heZIU0p5P6l4e/0UCOBQcqJ/VU6dTdjkeUpnfWMsI3g7L1ooKkcwF3wccyy
+         a7jg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1785146467; x=1785751267; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=fpxga49hr34rpRcBFaAC1QHjhjtKMHjA32E0mhgUj/8=;
+        b=iQGGMBLgqR7YeueMsH0zvOLit92OI7L4dPpP7RVpRObCBoXJXHk47OPtugPUftZp+V
+         7ueQY9c68uEFrQ/ZFisO2jlF0eU+Gflirv3B7kNsz7DgYchgd8uinvPH4eZlhloYYXuk
+         Y0tseC/4JZwFNV1niBAOddoRryMPOfNcmhAetPfQHVMifTbPBLEDAOzt2GfQejmc3FDA
+         VucnZyrWrJrbbgvWGxWp9uir//IYaspBr9ZfX10a2o0/Gz8UiLIemFyFkay9yZzBytN1
+         lde5Icyajr3LuWQCEwxAXUBifNyo5uZYuKRU25HYz5pZyGZ/uw0pypcT/efkZXOeJzn3
+         zvxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785146467; x=1785751267;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=fpxga49hr34rpRcBFaAC1QHjhjtKMHjA32E0mhgUj/8=;
+        b=BXcmKfX/bLHlJKHGqh2LHedEIpGx4Gvwv4uoB2QgFevo3l9tX3Job2eZnJWPnRjba3
+         Ff0XFE/dyy6IOQL6R0Rhwvi1FbjiaLrkvpRieMC+bpu0US5GLco4ocZnyoJqxJkmuESK
+         0HiOEWLTw2OkXmRO/yFA8e3CHBX6lS6H4xhiKaVzy5iAo/mJ6/UJt57dVeeIK4VDYrVv
+         MwJ5ctg+R+SwzofoyKeMvgWyNgYtlDcHa54M5zVDpaLkibEUhNn+4sLzxYugPI9O9s1h
+         pWcm5bE7ihCmqy7P+WVIs7OtA7bwfwZIai6aKA7DH9ijgXBG0tMXh98XDzoVigKvLWhB
+         Rvgg==
+X-Forwarded-Encrypted: i=1; AHgh+RoDuMdbBpTjedP+uzUVUYRnuIx+QyFXUcBAmpsfeIvPMT+adWixJ0cNFJ//m5YLHDt3/0bVanFbiCs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9Dv8tBPDcYytXHY4HV6NOvdZ/NRLuQAPxDyrSWAig3r+sY+sC
+	lQyXdvdfQp9MjzRkLwq6YBDs47rAqYdq7uLK3jt96pdaxS5Be54GBIZaFmoiV5sBmSOmfL+/Iyk
+	EkF5xcDYr5EuG7IgdsL+UyZ2JH731pacwwlnR3l+dU4YhhVgABWVAA5Pja0T9WlMcB5Uu6RAmcm
+	Q44b8yZI79UTt4zAUb68X9zUt1OrAMnRVJMUQQYg==
+X-Gm-Gg: AR+sD116ZwhvncK2zktSwDZ4yh8NeE1GcBPSAivQN6QhTRds3mvo5V/MRcsQF7YCn4K
+	r9tKjaWVnV9V+D4SGhBHaPbtakImiFmIFRt+KWiPS8Bz+b6lt20jw1qAzfy3UR7qol0mFuvdVBu
+	Tdcg5Ji4+V4/xzRbnE/4n18X1SSeRex+aVwhmy7fUTOUr8FNi5Xnb+jrhG8Q==
+X-Received: by 2002:a05:620a:2688:b0:92e:745c:6c5a with SMTP id af79cd13be357-932f948144amr15123685a.14.1785146467044;
+        Mon, 27 Jul 2026 03:01:07 -0700 (PDT)
+X-Received: by 2002:a05:620a:2688:b0:92e:745c:6c5a with SMTP id
+ af79cd13be357-932f948144amr15109385a.14.1785146465706; Mon, 27 Jul 2026
+ 03:01:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR03MB7398:EE_|PH0PR03MB5751:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6ea54bfd-7e15-4217-b9d7-08deebc480d5
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|23010399003|376014|1800799024|366016|18002099003|10067099003|56012099006|55112099003|11063799006|921020;
-X-Microsoft-Antispam-Message-Info:
-	AgG8h5zGq8a1MWHbvJ7WDAH/CJFJpiKEGFSGBRqdYjpc4QavykVfj5nmdIM+HWEgPP2yFgIwNig/dJuLkRtjD9OAzfK+O5nj1f4tiH1BWTkr6n7W4gCxir091mEHuHVt8tAfHhdJsX5h383VAykHyZd5pxXaX6H0tQOeBhudjcNVnWe0/wVit9IAHCMYF4el0UV259gwLOziotb108wo7yzyCxcYIwZYA+Gp+9o6+U14N6v6yPOup9jgKML+TnwzspPA1CqoKbWxsakt+PAI/97FHFmZ3T/ffsdoshvoxLN0FFnUEZ9VNik10mcYoMczeH5LpSR6czeN4SHVpXZLDy7bq86KzBzFSsrzbSV1aaG0JdrCTgMbr0f2YKypF9B4teb3ollYNomvFJ2T65S8q3SWb0HMxbMrqLeHirYb+UgxeHZS44aSZZ4RaqgsO8UWXLDWQ3/hOxBBLhjUBi/yKCC0UyVdRBIIF84jeIj2hNziWahCOPCSpC6L4tuw28xZNvrPdLgWhpvDA8W8eVoZDtwugX5jh72suoWwlIqJ1jvvj+dBs19ccheNgwZX04i8c0v5KMJb9rjrHwaS3wPlA3uwsdrYnsAVHrnuiWrdoH4UDAN8n+BDXEhmodXq24XtlRojOdn0ivKpNE4JhFX2XJebLZqkimw0xVqCsQ+qRw9VNzyPAv9/PnZPDOmDZFGXRjnuBQBiYQjSODZpWxphaA==
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR03MB7398.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(23010399003)(376014)(1800799024)(366016)(18002099003)(10067099003)(56012099006)(55112099003)(11063799006)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?UhrCNkgPo1vg2Vabw8douQrOYpAiK3AltaagT5s8qw8d0A1b2XCF3DyxKVCD?=
- =?us-ascii?Q?CKrAyzG1ZE1ZLtSEiDmDLsK657dwBjwasP9/+moDtsgaGR4e8vudgWGg/k8c?=
- =?us-ascii?Q?UAIoY1XvNh7p3U77vTdqsHY6MYKxn47kY6GTO/1jcKL85/8SYL4BranBFwyG?=
- =?us-ascii?Q?IqBjAOMyq6SpNfCKWWV/Pptpyrd1ogh+8wOcjcdkFmRRp06sqj87oWzXto2q?=
- =?us-ascii?Q?8ymDR6yi51lSOlc81+qWztra146SIpVskMg/MOyMF2TOw8iCe4lX60IhjVx9?=
- =?us-ascii?Q?rxgeWQWqQW2sgmETkOxI/8i1Ee2ZR0++rqx7ENvB8/DPJEMrff3KR92J/2Uo?=
- =?us-ascii?Q?8RGAK/iETbqkzbHZ78zvUxHvAlwsJQYL3F3xxBzYyhZmsNISk0Z24SQxcC+U?=
- =?us-ascii?Q?z+Q6WQDJYuAVfa4cQlY+8UK8a8uliLUgUs4LIy0k1SBBjdDI5A2MpLrV5969?=
- =?us-ascii?Q?5j5+q3UC37gkWAkgVt3xC3AJwCPWTA/un+hKEJntV2Pq4DJnmpR59gPozAZI?=
- =?us-ascii?Q?MGZt87Kd4Lzzj7d9tM8heEMi65zxkZo5c4Wo25fFRwgu5HBYU75QOOVl79lP?=
- =?us-ascii?Q?BNL6KeYxKO2vK1UF+4C/jrrwReO2V3dAwGDltgiYqjFihUE7+YsVF71WxBQr?=
- =?us-ascii?Q?ioCRYdRlKCca9Zt6tROJS+3JQGld68JYv4KFGiH4+dAxKZhuJuQDqrmu/L6l?=
- =?us-ascii?Q?OwuiBf8vyiE4Trv+jbM5cmy3TX2haaBYBxBRlzzCkFsb+XyFeha2iDhDCyOE?=
- =?us-ascii?Q?NuEcestr+d5mXyHu0GOaEY8o8vKXJwy3mOEy7LmUljq9Vug9tViOj+SOVHHs?=
- =?us-ascii?Q?hkvBOUkv3nH6NQ18PlwVIS7UpprYf4gBiI6chzEG1UWLX2nT3RbKJPboNJ1V?=
- =?us-ascii?Q?Aji5Cw1J+jliWyJYSLhtsUIWdOnZMMyAdmO9i8XTmbdPHnOnZrYawjdCjV3p?=
- =?us-ascii?Q?Q44b50dcb9OHjZdZPrQIk2V3mDyQMuDz+LHtDkX2ETXrrIXGOolW2yW9529J?=
- =?us-ascii?Q?EtH3iR2PwBLUEz4ElcsaRsbhnBNefGSKfwuCGmCuvWxJ9Y9CLfeqwzwDvWEu?=
- =?us-ascii?Q?EMf5Hl9HzVFsfsAgnmyhvyS7WAIh3GqKLw68Sve8mg2fo4IVckFIu6zaODT0?=
- =?us-ascii?Q?c3xNAJMqLgMkDb54yJTe0EhtVV4MOPo+spYbQzO+eWXGet07NbTC0L7Qk8n7?=
- =?us-ascii?Q?y0+fsNIhw3TJyBqeyqLEWpyiDviDqTPN1ud8uAw+ZOMx0vHk1Me0eMByBlLz?=
- =?us-ascii?Q?6CHx8JXR65ObDMHcGlzFWyXfpTz7m0zC1djJ++kjpSFwFOCD6nKG7Yvvo6zW?=
- =?us-ascii?Q?doWlWm66oM46y8I0jKEtMNp/9/T8LeYcD5meuJAdiSUhmKhf3IFg5LmI/LH5?=
- =?us-ascii?Q?VvQYXqfoMRflqJyVpu0OGKZe1CWPHK5xEP9jmioHnkIqc3Ycic6O8IjBBPDv?=
- =?us-ascii?Q?SwyLX2EhFzqsvpX0H9HJy4ZE2ZpkxgCv+xKeQo/Gjbk3cbLSbP9i1oAM5ixU?=
- =?us-ascii?Q?YdzxeXCIVLWdRizGRhg0FH5TY/ufnw1DslUqzvZvwpmX7cAfEiXotPRjrK5z?=
- =?us-ascii?Q?K1JZMGeAuVSk2FJ/GAT2vTgwNRS+av+sg1RkLL/Ac/nmcwfsVxoBn1UymCKi?=
- =?us-ascii?Q?LXwu7ayPWPJrgxYdtHFfn6d+KDDj8QiJigE+iRM38UteOP9ervtbT3zJjcl9?=
- =?us-ascii?Q?km/TWnbTZwn33hIIg6xTRNkViE85CQO5cPZCEBJr8m63vg0gOCY+hU4VqdQi?=
- =?us-ascii?Q?CuvWKmiq1QQdTdXqpqqg1Ldl4lz+Z1Y=3D?=
-X-OriginatorOrg: altera.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6ea54bfd-7e15-4217-b9d7-08deebc480d5
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR03MB7398.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jul 2026 09:50:34.3435
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: kxStOmh8+REeKm8ZHYlTGGsSlN5WvRPtsWLEH1THo7D0JOrOabgk5ZmqG7ZANhYnCaC9FkD4mK66qNynAk8ivGSB4ewQ3r3/z74z/8A340w=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR03MB5751
+References: <20260723020524.1886806-1-Zhipeng.wang_1@oss.nxp.com>
+In-Reply-To: <20260723020524.1886806-1-Zhipeng.wang_1@oss.nxp.com>
+From: Ulf Hansson <ulf.hansson@oss.qualcomm.com>
+Date: Mon, 27 Jul 2026 12:00:55 +0200
+X-Gm-Features: AUfX_myrKTD-P-po5naXNkkd8gbbZmT-1aLEtXL0NN10jCpUSfBDEv1NDisfyg0
+Message-ID: <CAPx+jO956WAqXt-zbEyzU5btS7KsXn4fBemaj4r3qQNANNJCKA@mail.gmail.com>
+Subject: Re: [PATCH v5 0/3] pmdomain: imx: build the SCU power domain driver
+ as a module
+To: Zhipeng.wang_1@oss.nxp.com
+Cc: robh@kernel.org, saravanak@kernel.org, ulfh@kernel.org, Frank.Li@nxp.com,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        peng.fan@nxp.com, aisheng.dong@nxp.com, jindong.yue@nxp.com,
+        xuegang.liu@nxp.com, devicetree@vger.kernel.org,
+        linux-pm@vger.kernel.org, imx@lists.linux.dev,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzI3MDA5NyBTYWx0ZWRfX71ZVPy6BRtGX
+ s/J/ps8uNDAcOpFiGrZMkG1Hzyi0FqaVfR3KoinJsQEObevsAMGTmzmipz5yGv6wDBDAa9eqem7
+ 1kHjSrwmVOTZ/yvGe2C9KfVpZC1JSB1JzH/FF4KggGDSuHbD8J5x9n0F1PLqNgFoktXZN9o0hy8
+ NOkrFsunZC3Y7oVmaFhfj5PTDuGehHFMrRTTR1YwmBrf8rvUwRCG87Yx1YzI+JiHm2wZ+DBPV+O
+ wzqiIOYv4QXwX/MHDrqclvxWfx8ns7n4kZ5RU/afeXJFoDiMVANRU/Rkg8ZDfaF2bZjxiBjszty
+ XZK8YcUiShF+x1FKzntM8d2ZtIBrm1TQtoQrkCY21AO6FwZCCW0wZsNNs9R99pPvwOuNZCxYMDC
+ P7nwE/khChbESBePgSR8Z1Gu+v3sGzofiB2SQFO8OpfaRI1WrRuSrwV/uVcko8qe26vo/t1/aB2
+ yu5n34+Mre/tbK+mXVg==
+X-Proofpoint-GUID: V3MGLN6S7TGBZqk9X8X-8JL9ct6ciJ29
+X-Authority-Analysis: v=2.4 cv=DNG/JSNb c=1 sm=1 tr=0 ts=6a672c64 cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=IkcTkHD0fZMA:10 a=RAioF0-LDSMA:10
+ a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22
+ a=yOCtJkima9RkubShWh1s:22 a=8AirrxEcAAAA:8 a=73SNKA1z6Gcgn0qlyfgA:9
+ a=QEXdDO2ut3YA:10 a=PEH46H7Ffwr30OY-TuGO:22 a=ST-jHhOKWsTCqRlWije3:22
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNzI3MDA5NyBTYWx0ZWRfX4L2KUkgIplY3
+ /nK6yhIcc7Bazq4R7l8MeDNYHUxatkIDhwZMVb7i/MBHdQdxaKpHOea+pbN6sedU1cz2vo8xU2C
+ ufm7jgkXMkVC8N3Al+mEd2QybZDTcKU=
+X-Proofpoint-ORIG-GUID: V3MGLN6S7TGBZqk9X8X-8JL9ct6ciJ29
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-07-27_02,2026-07-24_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 clxscore=1015 malwarescore=0 bulkscore=0 adultscore=0
+ suspectscore=0 impostorscore=0 lowpriorityscore=0 phishscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607270097
 
-From: Genevieve Chan <genevieve.chan@altera.com>
+On Thu, Jul 23, 2026 at 4:05=E2=80=AFAM <Zhipeng.wang_1@oss.nxp.com> wrote:
+>
+> From: Zhipeng Wang <zhipeng.wang_1@nxp.com>
+>
+> This series makes the i.MX SCU power domain driver buildable as a
+> loadable module, which is required for Android devices using the
+> Generic Kernel Image (GKI) where SoC-specific drivers must be modules.
+>
+> Patch 1 exports of_stdout (which the driver references to find the
+> console's power domain) from the OF core with EXPORT_SYMBOL_GPL().
+>
+> Patch 2 converts CONFIG_IMX_SCU_PD from bool to tristate and adds
+> MODULE_DEVICE_TABLE() for autoloading. subsys_initcall() is used so
+> that when built-in the provider probes before its consumers (e.g. the
+> SCU clock driver at device_initcall level). No module_exit() is
+> provided since the provider cannot be safely removed at runtime.
+>
+> Patch 3 adds MODULE_SOFTDEP("pre: scu_pd") to the i.MX8QXP clock
+> driver so that modprobe loads the power domain module first when both
+> are built as modules.
+>
+> Because of the cross-subsystem dependency (patches touch drivers/of,
+> drivers/pmdomain, and drivers/clk), I would suggest taking the whole
+> series through one tree.
+>
+> Changes in v5:
+> - Fix MODULE_SOFTDEP module name from imx_scu_pd to scu_pd. (Sashiko
+>   bot)
+> - Add Acked-by from Rob Herring for patch 1.
+>
+> Changes in v4:
+> - Add patch 3: MODULE_SOFTDEP in clk-imx8qxp to guarantee module load
+>   order when both drivers are modules. (Sashiko bot)
+>
+> Changes in v3:
+> - Use subsys_initcall() instead of module_init() to fix probe ordering
+>   between the power domain provider and the SCU clock consumer when
+>   both are built-in. (Sashiko bot)
+>
+> Changes in v2:
+> - Drop module_platform_driver() which provides module_exit() and could
+>   lead to use-after-free on module unload. Use module_init() only, so
+>   the module cannot be unloaded. (Sashiko bot)
+>
+> Zhipeng Wang (3):
+>   of: export of_stdout symbol
+>   pmdomain: imx: scu-pd: allow building as a module
+>   clk: imx: imx8qxp: add soft dependency on SCU power domain driver
+>
+>  drivers/clk/imx/clk-imx8qxp.c | 1 +
+>  drivers/of/base.c             | 1 +
+>  drivers/pmdomain/imx/Kconfig  | 2 +-
+>  drivers/pmdomain/imx/scu-pd.c | 8 +++++++-
+>  4 files changed, 10 insertions(+), 2 deletions(-)
+>
+> --
+> 2.34.1
 
-Preliminary documentation referred to mpu_l2ram_clk, but that clock is
-now mpu_ccu_clk and is already represented by AGILEX_MPU_CCU_CLK.
-Keep AGILEX_MPU_L2RAM_CLK as a legacy ABI-preserved ID (do not use in
-new DTs) and mark clock ID 42 as reserved/unused so it is not reused,
-keeping all existing clock IDs stable for DT ABI compatibility.
+The v5 series applied for next, thanks!
 
-Fixes: 6b3c59780ed3 ("dt-bindings: documentation: add clock bindings information for Agilex")
-Cc: stable@vger.kernel.org # 5.8+
-Signed-off-by: Genevieve Chan <genevieve.chan@altera.com>
----
- include/dt-bindings/clock/agilex-clock.h | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/include/dt-bindings/clock/agilex-clock.h b/include/dt-bindings/clock/agilex-clock.h
-index 06feca07e08e..de7a58a06651 100644
---- a/include/dt-bindings/clock/agilex-clock.h
-+++ b/include/dt-bindings/clock/agilex-clock.h
-@@ -44,6 +44,7 @@
- 
- /* Gate clocks */
- #define AGILEX_MPU_CLK			30
-+/* Legacy ABI ID; do not use in new DTs, use AGILEX_MPU_CCU_CLK */
- #define AGILEX_MPU_L2RAM_CLK		31
- #define AGILEX_MPU_PERIPH_CLK		32
- #define AGILEX_L4_MAIN_CLK		33
-@@ -55,6 +56,7 @@
- #define AGILEX_CS_TIMER_CLK		39
- #define AGILEX_S2F_USER0_CLK		40
- #define AGILEX_EMAC0_CLK		41
-+/* 42 - reserved/unused */
- #define AGILEX_EMAC1_CLK		43
- #define AGILEX_EMAC2_CLK		44
- #define AGILEX_EMAC_PTP_CLK		45
--- 
-2.43.7
-
+Kind regards
+Uffe
