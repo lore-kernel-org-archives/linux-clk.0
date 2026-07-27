@@ -1,246 +1,164 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011048.outbound.protection.outlook.com [40.93.194.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E263B3EFFBD
-	for <linux-clk@vger.kernel.org>; Mon, 27 Jul 2026 09:41:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785145306; cv=none; b=D9gGRYx5eI7o+S18cSq30UFjmw0Cjh0UiugCBaTk6s1QMqB691xbz3JL1XeYQhNJM9re+CqOCiaF7lqn7o23BClCHDND16YoTImNHxkqCNZvsrmpH3WcFLbgMN86kbgJN05VoTGmXAAbNahCphXiKzaCR1+d2pqEIJslpwwNK70=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785145306; c=relaxed/simple;
-	bh=Y5Xn8qE7LpNOzTT8++pEzgKR0yaA8en+5bwEYjw3AC8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PyxHFZtk1EzdFLksyqp5iE40FQ759lHWGVVtskkc0BTbeJY+hP463BlE47KKMWOr8oqECa2Fx6q4JgBCFOdo5NR/Uop6oec2kjeXlp71l/Dl6rkFzLIWKWziHKf7fiFcoP334v81Q+f+jivHl4W5RzS6NDSDisdQ3J8mpcTZoig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=F0FB+cBv; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=JQkQ4DD7; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 285773F1ADB;
+	Mon, 27 Jul 2026 09:50:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1785145854; cv=fail; b=qHB5L7VvZFh4W9vrQT2mEo4f/KqEDrrUgXo+vHUg+7yL09l/W0eV3RNYqz7lw9zYorRcsaQAFj4oaafltFPeTkYrPRNZrnjWDInzlYudDXmkO52/2M8XI0nETVGVHmzIVxmE/Ze7otBCmV84QKIbA/JIdP8YFzAIYpaAlrzIx2M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1785145854; c=relaxed/simple;
+	bh=eV7a8R3bA4BFzEsN1hDsL4yYX/tBkrRM39ehWrrOsTE=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=lIhpwSk68sirZN2z/11OOhCSRSNa7ewGhfck9N+6k8TEldxRNSXu4y4UtJKWrJm3k6JR73Pdvi01crsUXYJzgeJRmwj+lItjJaYvsO0H2H0QBS02l/wZv+GLf5Be/bA8eKHURoa8SwBikaVnJGTl96bK+dh6DbsrdnCDzPXv35I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=naXVSwXC; arc=fail smtp.client-ip=40.93.194.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="F0FB+cBv";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="JQkQ4DD7"
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66R9bZ9b2846523
-	for <linux-clk@vger.kernel.org>; Mon, 27 Jul 2026 09:41:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	oTc9/pF/S1BGmHsWWo0LXh7x2vLZLHXs+ToLsh0cTy4=; b=F0FB+cBvDbVl2sRz
-	hsVrjp8FpZT906w/GYcq7Zr2q3U+nPtPLR6FSBLTo2Vg33LRdSiHVw4T975JUAMQ
-	b4Ky1t+JfZgiCxznzezQ8I+nFv+EMLlZswIob2Pb/rpgVBdwTsJMPzclPcejsH0+
-	+W3TE+nwGonT/r1+x0aji5mHD2UY88p91SEehOYSEOAVi5sq97mUNx5wPcwDz1e5
-	hZaG2cH4tC45sULIrx3yJ6g+Kl7HANQCMAy5Y7O5PgfUfj6MvMKmbF/Czm//3tQW
-	7ojcFkQDyCiJL/cX8gMD2C/s69qRA4X/r6p5Q9Td8e27B61vJGX3/t59JnS0oWYD
-	me2jlw==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fp4v680m1-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Mon, 27 Jul 2026 09:41:44 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2caf4173b1cso50705105ad.3
-        for <linux-clk@vger.kernel.org>; Mon, 27 Jul 2026 02:41:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1785145303; x=1785750103; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=oTc9/pF/S1BGmHsWWo0LXh7x2vLZLHXs+ToLsh0cTy4=;
-        b=JQkQ4DD7GnSF/BkvUx2tCoOeFT09BP4RAaePfPqLJKJII2OvgZ/VC8rjbwdGWRJwfz
-         YOlDfcKte8fQoLoFDzMmeoeN/WX0ua7vnntaRldNR5+zh72nSy5nWaYbNtL0igi4t1yl
-         rE/ZHjpoZltYO+mU+uNTidSBEEXnWh2qj7een9PqY/ncjVYui6K22OHj6ynhFiMHi7zZ
-         tsZSrNyxOqQXQUyr1RdQeIOf0eH5/XoUNHxSd+ie8ar2u9BIonbH14Qf8UYIaQgKIDgD
-         AisqVf4KdiwBTDy9vzgxiiQIjb6i1pIBcBjNkzbR1CxrSbC2FxMNu3pg2mAVHyCwjT9i
-         oiOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785145303; x=1785750103;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=oTc9/pF/S1BGmHsWWo0LXh7x2vLZLHXs+ToLsh0cTy4=;
-        b=gVcrOhI60b7jPNSL581hzr+kOamFGbD6WJe3ACBsMhECw66gJBxDOW6Til5CXX9ltY
-         6psZflXNXuIndidCRmG0VO8soLedaJQpQL/CKMUMSCr8+d4dxCXwv4l3nR24ggTf6Nw/
-         /8pcUL7MJ1YKfHLivfOSn+p6OPogqdzpzrvkenvqZ41Nl9cPc9SYmciaGBt6ljUfbgEO
-         x1M9J3c295NVPWef3ByzWVMM2dFaXax2lTKOo/Oez422fWR/Wttdj4lb6PAKxiHnrw//
-         CVD2sY5NsYoBECd/FARUrTY0LuVseQENMpfVmh8Dv4LhLzaLPGHlfqNDmdz8FQUsBZe+
-         YTqg==
-X-Forwarded-Encrypted: i=1; AHgh+RrRAvWZKKkP2ydj2wC/2L/D3AZnD/PR8jxmPchNiuG8K3HSR1ovPy0CDPdeHm/S1R1BGyGQJx6q2Ww=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkHy8k/Pd+HnlgR2ODX4oFpBKTJj9iC8dze2wzjWvAg9vkYjOy
-	eHqtQvMbK6TCH/ep1OtFejB58mbKNcTXC+Z0cnepTDLP/MUkC1A3E83+1OZUbHInoKUnxYdh1Jx
-	tC9XTcW9dxk7rBNfgaxjKF2ZyKHrMWsuMOIUT43WVDa63UeZ/z4iJI7GiQOCNOyY=
-X-Gm-Gg: AR+sD10p3XD68dnQ4elEm/NlqXBZxn13nvqpDIBoe2ofmk2YNRgvn2nVq9ccvStLf3i
-	ujcDY3n/gi5aFcUAS5OdAftixypZ4GCUP8/+w2NXd8mBisyjp2T1KOw3ZddY/bvrkt+EKktg/Qu
-	6yaI27D1OdOP5NWPNR4E0T2Fmn2r+kiZSTRjwZZth3t0+j2XK6Cv1ZPgJSvW/colxNISHSdFQpN
-	naSO5DeVj3RNpbcW22Rh7+7A4HRB/c56az/TraC5FH0jSot3e1fy4tKXimiz1tcZnacvHgtnMS+
-	h2Utz4cXycvBNBeiONhI+J0XAWzp3Xv0qyq6B3vVkHJDTGkgGRyV/kOIK8N14CiO5fPuCz9+r1v
-	1ByCzwH0a//iMyipZ9XK+s9ElDawwgCw=
-X-Received: by 2002:a17:903:1a24:b0:2ca:329:3d96 with SMTP id d9443c01a7336-2cfde795581mr78353395ad.3.1785145303312;
-        Mon, 27 Jul 2026 02:41:43 -0700 (PDT)
-X-Received: by 2002:a17:903:1a24:b0:2ca:329:3d96 with SMTP id d9443c01a7336-2cfde795581mr78353235ad.3.1785145302847;
-        Mon, 27 Jul 2026 02:41:42 -0700 (PDT)
-Received: from [10.218.14.97] ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-314bc548e29sm30948601eec.15.2026.07.27.02.41.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Jul 2026 02:41:42 -0700 (PDT)
-Message-ID: <f4a3c2a7-0732-4d4c-b252-2ac5ea3db35a@oss.qualcomm.com>
-Date: Mon, 27 Jul 2026 15:11:35 +0530
+	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="naXVSwXC"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=o/eOwuDMRgdB6om4NnjloT9badweh/cjQprTphQMHGub1uOrcPtAfSNP1+S1o3MFzKXFaLx4BQ65OXENkaE7IBLL8kaGGdrnM8VUq73UIO1Hph843CEDh04w/tzzNOVrIqnfcAOdb9MfHwi6CBBLq3vuHe0R3BDlkEOm197qFCIxHWGMtd03cZpjN/blBLlciw6mFAG1Yegx7bCBECsiK+RlmhhGPcmxt+KjkDy+gr21ba/HCVYHqy0DJSTP+1Bn6h6YxzqWgyUnTUTk0NbJTg4hXUDomf4HdGyoLbqUezJj7J3fTWTLUpDeAf0xc0GcKN/pV4z7TXOjT+utKfb9Gw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WWypBh/YZ0l1i58bXe9RbSgpLjw9ENU7NCgZTadkKUo=;
+ b=f7w2U7kQt5yIrmRKBGX8IAjVb0kGDe9ZVcw/ofrEGvDbAnSNb1IXL/ltcoA1sc9rucsrchLlDGoPSKFphQTa4W4vGXSqP2eVd1gaubveQ2rQL8ILKinF2y9sg07thqx3sjBUGLgVFqyI0HgJv/XZIb94X9ukLOsQUjvlmoRPJk1ngqCsug/hTGUVcSZxUoICj9CZd5Hac1qJLyFBD/Qc+H/5fUT0yk5xc0PQaRzlHcd6xkdP3tRp3nzDYaLuozNSp4ixjpR7zrue3sb3vP99+hCA5q84SJPqQAOMQ2lQ2b+dfRf+KJ9UA5uWPNWgvTg0evPHuQ0mMJAoTil3qjZq7w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
+ dkim=pass header.d=altera.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WWypBh/YZ0l1i58bXe9RbSgpLjw9ENU7NCgZTadkKUo=;
+ b=naXVSwXCdt6uU5U8dbF/Zg9LjwyPcPoPQy0gODXGJKubQrgJN8T7R7A2+DHYDAZAigZUhuz89DrLEtaP4dE7uEC83HbZVw3oXTUTCUa913T3PMM2alxcyie8oFXCB86wmhyChM8tgk8qP7SNgZJlljr1e//EqbqHJ7EKlPL+qmxP4YrrgqJcU8pXkt3AFCmklKIFGtly4joV2H9cy+6UE8GG+/zGbD8wGbOWFWGNmzLCWp9XaUbzJc1YIzlqOcAOIcALh6ZI9JHL/s//nChL5ioNa4AKSBJZa+oAsTZSoRwhEsC8DGIJi7IzYl/tXT5+INq3ckBZuA/kURNR8Qp8hw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=altera.com;
+Received: from LV8PR03MB7398.namprd03.prod.outlook.com (2603:10b6:408:18f::13)
+ by PH0PR03MB5751.namprd03.prod.outlook.com (2603:10b6:510:37::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.245.13; Mon, 27 Jul
+ 2026 09:50:34 +0000
+Received: from LV8PR03MB7398.namprd03.prod.outlook.com
+ ([fe80::9d6:b5c1:7f72:e982]) by LV8PR03MB7398.namprd03.prod.outlook.com
+ ([fe80::9d6:b5c1:7f72:e982%4]) with mapi id 15.21.0245.012; Mon, 27 Jul 2026
+ 09:50:34 +0000
+From: genevieve.chan@altera.com
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: linux driver reviews <linux-drivers-review@altera.com>
+Subject: [PATCH] dt-bindings: clock: agilex: mark mpu_l2ram_clk deprecated
+Date: Mon, 27 Jul 2026 17:49:26 +0800
+Message-Id: <20260727094926.1124-1-genevieve.chan@altera.com>
+X-Mailer: git-send-email 2.32.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2PR06CA0006.apcprd06.prod.outlook.com
+ (2603:1096:4:186::19) To LV8PR03MB7398.namprd03.prod.outlook.com
+ (2603:10b6:408:18f::13)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] opp: Use clk_get_optional() to avoid leaving
- opp_table->clk as an error pointer
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: bjorn.andersson@oss.qualcomm.com,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
-        konrad.dybcio@oss.qualcomm.com, mukesh.savaliya@oss.qualcomm.com,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        chandana.chiluveru@oss.qualcomm.com,
-        Sebastian Reichel <sre@kernel.org>, Viresh Kumar <vireshk@kernel.org>,
-        Nishanth Menon <nm@ti.com>, linux-pm@vger.kernel.org
-References: <20260727-fix_ptr_check_on_clk-v3-1-94629ac7aaae@oss.qualcomm.com>
- <sl7wx7n2bocrfcsqj72vp3snchbgvtkuahq4pjzpor54bg46ek@ar62czwob4j5>
-Content-Language: en-US
-From: Praveen Talari <praveen.talari@oss.qualcomm.com>
-In-Reply-To: <sl7wx7n2bocrfcsqj72vp3snchbgvtkuahq4pjzpor54bg46ek@ar62czwob4j5>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNzI3MDA5NSBTYWx0ZWRfX+dhE3/zQFQg7
- VkjvyIWEH1PZaGpZ6xK08C6E6M6lbXpsWQKomRn6cVIdghUbSdOgnHoS7Y01DjaKm4IxlUObT93
- 4tZQsIjX07eY5fyoUoLTMHxrXxrqCm8=
-X-Proofpoint-GUID: CzJdTl0jGwMX6PQQSnXGCUc4_PFGD9tL
-X-Authority-Analysis: v=2.4 cv=ev3vCIpX c=1 sm=1 tr=0 ts=6a6727d8 cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=DJpcGTmdVt4CTyJn9g5Z:22
- a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=aVMEk7OLGE4JoB244ZkA:9 a=QEXdDO2ut3YA:10
- a=uG9DUKGECoFWVXl0Dc02:22
-X-Proofpoint-ORIG-GUID: CzJdTl0jGwMX6PQQSnXGCUc4_PFGD9tL
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzI3MDA5NSBTYWx0ZWRfX1WkdbV+roIBo
- 9LiJzLS6bEd16t+S4AQM13Tl5iSUXnxepeTRItRhhvlCqDWRL7/WavHV2g23s+Kve2kshehuAt5
- LAuVlmdXoLw+xGLejp317Z6c0pgW06s3XpyrAk6KHyrumRugKkIPqfsG8yJ7LGimQaAkvn35/vL
- 4EK7Dz+oe1cEpQ9pS4HZAHf0V9fglVJ+yC05vDjx12napJTT5OJLKyK+bjevL/m55b/zph0q+P6
- OgfkEDFFCyKXGsVHHK9vD7wMh26P/1aJn/gcG+5H+w78i9sSAyF1levMXCNciWixtwxjdj6Z2fv
- 3IO/oTLGdh4Y6fAhcI2302y3cs2X/eaWh5m//CeMh5SqNWnl4gMHF8j8kPYs+FaZKdKcaDUw7Gs
- GFUh1sQgoCX4AxLiyuG5eQrh6R+GcIXWUya9ehsthZDb03npywv+WIdNvJkfkT4Au9hN+CSXHAz
- PTD4UDQydLbUr2532RQ==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-07-27_02,2026-07-24_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 phishscore=0 lowpriorityscore=0 priorityscore=1501
- suspectscore=0 clxscore=1015 impostorscore=0 bulkscore=0 malwarescore=0
- spamscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
- definitions=main-2607270095
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV8PR03MB7398:EE_|PH0PR03MB5751:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6ea54bfd-7e15-4217-b9d7-08deebc480d5
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|23010399003|376014|1800799024|366016|18002099003|10067099003|56012099006|55112099003|11063799006|921020;
+X-Microsoft-Antispam-Message-Info:
+	AgG8h5zGq8a1MWHbvJ7WDAH/CJFJpiKEGFSGBRqdYjpc4QavykVfj5nmdIM+HWEgPP2yFgIwNig/dJuLkRtjD9OAzfK+O5nj1f4tiH1BWTkr6n7W4gCxir091mEHuHVt8tAfHhdJsX5h383VAykHyZd5pxXaX6H0tQOeBhudjcNVnWe0/wVit9IAHCMYF4el0UV259gwLOziotb108wo7yzyCxcYIwZYA+Gp+9o6+U14N6v6yPOup9jgKML+TnwzspPA1CqoKbWxsakt+PAI/97FHFmZ3T/ffsdoshvoxLN0FFnUEZ9VNik10mcYoMczeH5LpSR6czeN4SHVpXZLDy7bq86KzBzFSsrzbSV1aaG0JdrCTgMbr0f2YKypF9B4teb3ollYNomvFJ2T65S8q3SWb0HMxbMrqLeHirYb+UgxeHZS44aSZZ4RaqgsO8UWXLDWQ3/hOxBBLhjUBi/yKCC0UyVdRBIIF84jeIj2hNziWahCOPCSpC6L4tuw28xZNvrPdLgWhpvDA8W8eVoZDtwugX5jh72suoWwlIqJ1jvvj+dBs19ccheNgwZX04i8c0v5KMJb9rjrHwaS3wPlA3uwsdrYnsAVHrnuiWrdoH4UDAN8n+BDXEhmodXq24XtlRojOdn0ivKpNE4JhFX2XJebLZqkimw0xVqCsQ+qRw9VNzyPAv9/PnZPDOmDZFGXRjnuBQBiYQjSODZpWxphaA==
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR03MB7398.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(23010399003)(376014)(1800799024)(366016)(18002099003)(10067099003)(56012099006)(55112099003)(11063799006)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?UhrCNkgPo1vg2Vabw8douQrOYpAiK3AltaagT5s8qw8d0A1b2XCF3DyxKVCD?=
+ =?us-ascii?Q?CKrAyzG1ZE1ZLtSEiDmDLsK657dwBjwasP9/+moDtsgaGR4e8vudgWGg/k8c?=
+ =?us-ascii?Q?UAIoY1XvNh7p3U77vTdqsHY6MYKxn47kY6GTO/1jcKL85/8SYL4BranBFwyG?=
+ =?us-ascii?Q?IqBjAOMyq6SpNfCKWWV/Pptpyrd1ogh+8wOcjcdkFmRRp06sqj87oWzXto2q?=
+ =?us-ascii?Q?8ymDR6yi51lSOlc81+qWztra146SIpVskMg/MOyMF2TOw8iCe4lX60IhjVx9?=
+ =?us-ascii?Q?rxgeWQWqQW2sgmETkOxI/8i1Ee2ZR0++rqx7ENvB8/DPJEMrff3KR92J/2Uo?=
+ =?us-ascii?Q?8RGAK/iETbqkzbHZ78zvUxHvAlwsJQYL3F3xxBzYyhZmsNISk0Z24SQxcC+U?=
+ =?us-ascii?Q?z+Q6WQDJYuAVfa4cQlY+8UK8a8uliLUgUs4LIy0k1SBBjdDI5A2MpLrV5969?=
+ =?us-ascii?Q?5j5+q3UC37gkWAkgVt3xC3AJwCPWTA/un+hKEJntV2Pq4DJnmpR59gPozAZI?=
+ =?us-ascii?Q?MGZt87Kd4Lzzj7d9tM8heEMi65zxkZo5c4Wo25fFRwgu5HBYU75QOOVl79lP?=
+ =?us-ascii?Q?BNL6KeYxKO2vK1UF+4C/jrrwReO2V3dAwGDltgiYqjFihUE7+YsVF71WxBQr?=
+ =?us-ascii?Q?ioCRYdRlKCca9Zt6tROJS+3JQGld68JYv4KFGiH4+dAxKZhuJuQDqrmu/L6l?=
+ =?us-ascii?Q?OwuiBf8vyiE4Trv+jbM5cmy3TX2haaBYBxBRlzzCkFsb+XyFeha2iDhDCyOE?=
+ =?us-ascii?Q?NuEcestr+d5mXyHu0GOaEY8o8vKXJwy3mOEy7LmUljq9Vug9tViOj+SOVHHs?=
+ =?us-ascii?Q?hkvBOUkv3nH6NQ18PlwVIS7UpprYf4gBiI6chzEG1UWLX2nT3RbKJPboNJ1V?=
+ =?us-ascii?Q?Aji5Cw1J+jliWyJYSLhtsUIWdOnZMMyAdmO9i8XTmbdPHnOnZrYawjdCjV3p?=
+ =?us-ascii?Q?Q44b50dcb9OHjZdZPrQIk2V3mDyQMuDz+LHtDkX2ETXrrIXGOolW2yW9529J?=
+ =?us-ascii?Q?EtH3iR2PwBLUEz4ElcsaRsbhnBNefGSKfwuCGmCuvWxJ9Y9CLfeqwzwDvWEu?=
+ =?us-ascii?Q?EMf5Hl9HzVFsfsAgnmyhvyS7WAIh3GqKLw68Sve8mg2fo4IVckFIu6zaODT0?=
+ =?us-ascii?Q?c3xNAJMqLgMkDb54yJTe0EhtVV4MOPo+spYbQzO+eWXGet07NbTC0L7Qk8n7?=
+ =?us-ascii?Q?y0+fsNIhw3TJyBqeyqLEWpyiDviDqTPN1ud8uAw+ZOMx0vHk1Me0eMByBlLz?=
+ =?us-ascii?Q?6CHx8JXR65ObDMHcGlzFWyXfpTz7m0zC1djJ++kjpSFwFOCD6nKG7Yvvo6zW?=
+ =?us-ascii?Q?doWlWm66oM46y8I0jKEtMNp/9/T8LeYcD5meuJAdiSUhmKhf3IFg5LmI/LH5?=
+ =?us-ascii?Q?VvQYXqfoMRflqJyVpu0OGKZe1CWPHK5xEP9jmioHnkIqc3Ycic6O8IjBBPDv?=
+ =?us-ascii?Q?SwyLX2EhFzqsvpX0H9HJy4ZE2ZpkxgCv+xKeQo/Gjbk3cbLSbP9i1oAM5ixU?=
+ =?us-ascii?Q?YdzxeXCIVLWdRizGRhg0FH5TY/ufnw1DslUqzvZvwpmX7cAfEiXotPRjrK5z?=
+ =?us-ascii?Q?K1JZMGeAuVSk2FJ/GAT2vTgwNRS+av+sg1RkLL/Ac/nmcwfsVxoBn1UymCKi?=
+ =?us-ascii?Q?LXwu7ayPWPJrgxYdtHFfn6d+KDDj8QiJigE+iRM38UteOP9ervtbT3zJjcl9?=
+ =?us-ascii?Q?km/TWnbTZwn33hIIg6xTRNkViE85CQO5cPZCEBJr8m63vg0gOCY+hU4VqdQi?=
+ =?us-ascii?Q?CuvWKmiq1QQdTdXqpqqg1Ldl4lz+Z1Y=3D?=
+X-OriginatorOrg: altera.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6ea54bfd-7e15-4217-b9d7-08deebc480d5
+X-MS-Exchange-CrossTenant-AuthSource: LV8PR03MB7398.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jul 2026 09:50:34.3435
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: kxStOmh8+REeKm8ZHYlTGGsSlN5WvRPtsWLEH1THo7D0JOrOabgk5ZmqG7ZANhYnCaC9FkD4mK66qNynAk8ivGSB4ewQ3r3/z74z/8A340w=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR03MB5751
 
-Hi viresh
+From: Genevieve Chan <genevieve.chan@altera.com>
 
-On 27-07-2026 10:44, Viresh Kumar wrote:
-> On 27-07-26, 09:46, Praveen Talari wrote:
->> _update_opp_table_clk() uses clk_get(dev, NULL) to acquire the
->> device's clock. On platforms where the perf domain device has no
->> Linux clock and is instead managed entirely by firmware via
->> devm_pm_opp_of_add_table() (through
->> of_genpd_add_provider_simple()/onecell()), clk_get() returns
->> -ENOENT. That case is treated as valid (the OPP table can still
->> have entries sourced from firmware), but opp_table->clk is left
->> holding ERR_PTR(-ENOENT) rather than being reset to NULL:
->>
->> 	opp_table->clk = clk_get(dev, NULL);
->> 	ret = PTR_ERR_OR_ZERO(opp_table->clk);
->> 	...
->> 	if (ret == -ENOENT) {
->> 		opp_table->clk_count = 1;
->> 		return opp_table;   /* opp_table->clk is still ERR_PTR(-ENOENT) */
->> 	}
->>
->> Consumers that only check IS_ERR(opp_table->clk) treat this as a
->> valid clk and pass it straight into the clk consumer API. In
->> particular, dev_pm_opp_set_rate() calls
->> clk_round_rate(opp_table->clk, target_freq), and clk_round_rate()
->> only guards against a NULL clk, so it dereferences the error pointer
->> to read clk->exclusive_count and crashes:
->>
->>    Unable to handle kernel NULL pointer dereference at virtual
->>    address 000000000000002e
->>    ...
->>    pc : clk_round_rate+0x3c/0x188
->>    ...
->>    Call trace:
->>     clk_round_rate+0x3c/0x188 (P)
->>     dev_pm_opp_set_rate+0x114/0x33c
->>
->> Rather than teaching every clk consumer API to special-case
->> ERR_PTR(-ENOENT), fix it at the source: use clk_get_optional()
->> instead of clk_get() in _update_opp_table_clk(), which already
->> translates -ENOENT into a NULL clk. This documents that the clock is
->> genuinely optional for such devices, and keeps opp_table->clk holding
->> either a valid clk or NULL, never a lingering -ENOENT error pointer.
->> _opp_config_clk_single() is only wired up via opp_table->config_clks
->> when a clk was actually found, and every other opp_table->clk
->> consumer already tolerates NULL through the standard clk API (which
->> treats a NULL clk as a no-op), so no other call site needs to change.
->>
->> Suggested-by: Sebastian Reichel <sre@kernel.org>
->> Reviewed-by: Sebastian Reichel <sre@kernel.org>
->> Signed-off-by: Praveen Talari <praveen.talari@oss.qualcomm.com>
->> ---
-> I am getting this with git am -3, please rebase over [1].
-I have followed below steps but faced conflict while rebasing it.
+Preliminary documentation referred to mpu_l2ram_clk, but that clock is
+now mpu_ccu_clk and is already represented by AGILEX_MPU_CCU_CLK.
+Keep AGILEX_MPU_L2RAM_CLK as a legacy ABI-preserved ID (do not use in
+new DTs) and mark clock ID 42 as reserved/unused so it is not reused,
+keeping all existing clock IDs stable for DT ABI compatibility.
 
-git clone https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-git remote add viresh 
-https://git.kernel.org/pub/scm/linux/kernel/git/vireshk/pm.git
-git fetch viresh
-git rebase viresh/cpufreq/arm/linux-next
+Fixes: 6b3c59780ed3 ("dt-bindings: documentation: add clock bindings information for Agilex")
+Cc: stable@vger.kernel.org # 5.8+
+Signed-off-by: Genevieve Chan <genevieve.chan@altera.com>
+---
+ include/dt-bindings/clock/agilex-clock.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-$git rebase viresh/cpufreq/arm/linux-next
-Auto-merging drivers/gpio/gpio-shared-proxy.c
-CONFLICT (content): Merge conflict in drivers/gpio/gpio-shared-proxy.c
-error: could not apply efecde8a254d... gpio: shared-proxy: always 
-serialize with a sleeping mutex
-hint: Resolve all conflicts manually, mark them as resolved with
-hint: "git add/rm <conflicted_files>", then run "git rebase --continue".
-hint: You can instead skip this commit: run "git rebase --skip".
-hint: To abort and get back to the state before "git rebase", run "git 
-rebase --abort".
+diff --git a/include/dt-bindings/clock/agilex-clock.h b/include/dt-bindings/clock/agilex-clock.h
+index 06feca07e08e..de7a58a06651 100644
+--- a/include/dt-bindings/clock/agilex-clock.h
++++ b/include/dt-bindings/clock/agilex-clock.h
+@@ -44,6 +44,7 @@
+ 
+ /* Gate clocks */
+ #define AGILEX_MPU_CLK			30
++/* Legacy ABI ID; do not use in new DTs, use AGILEX_MPU_CCU_CLK */
+ #define AGILEX_MPU_L2RAM_CLK		31
+ #define AGILEX_MPU_PERIPH_CLK		32
+ #define AGILEX_L4_MAIN_CLK		33
+@@ -55,6 +56,7 @@
+ #define AGILEX_CS_TIMER_CLK		39
+ #define AGILEX_S2F_USER0_CLK		40
+ #define AGILEX_EMAC0_CLK		41
++/* 42 - reserved/unused */
+ #define AGILEX_EMAC1_CLK		43
+ #define AGILEX_EMAC2_CLK		44
+ #define AGILEX_EMAC_PTP_CLK		45
+-- 
+2.43.7
 
-Could not apply efecde8a254d... gpio: shared-proxy: always serialize 
-with a sleeping mutex
-
-How to proceed further?
-
->
-> Applying: opp: Use clk_get_optional() to avoid leaving opp_table->clk as an error pointer
-> error: unrecognized input
-> error: could not build fake ancestor
->
->> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
->> +	opp_table->clk = clk_get_optional(dev, NULL);
->>   
->>   	ret = PTR_ERR_OR_ZERO(opp_table->clk);
->> -	if (!ret) {
->> -		opp_table->config_clks = _opp_config_clk_single;
->> -		opp_table->clk_count = 1;
->> -		return opp_table;
->> +	if (ret) {
-> Since `ret` isn't used later anymore, you can instead do this and drop
-> `ret` ?
->          if (IS_ERR(opp_table->clk))
-
-Sure, will fix in next patch.
-
-
-Thanks,
-
-Praveen Talari
-
->
->> +		dev_pm_opp_put_opp_table(opp_table);
->> +		dev_err_probe(dev, ret, "Couldn't find clock\n");
->> +		return ERR_PTR(ret);
->>   	}
