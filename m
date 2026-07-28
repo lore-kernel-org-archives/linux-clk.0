@@ -1,162 +1,185 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013005.outbound.protection.outlook.com [40.107.159.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7074466B4C
-	for <linux-clk@vger.kernel.org>; Tue, 28 Jul 2026 14:53:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785250388; cv=none; b=j/gEBJZ39y/m6AoEoyAXuERDJ3h3OHGB+fmEQcF5cVjuvlH6ksNPdTnzCt9rv2UpWIHRxWQddxfgc4eolmY4cl60GqehsQshJvqd2Gc0r2OC+EaSHDlF/V9o6g/y7Gnkr1eHBapnLouDnPrsn2zpeyllAYD7TdB0rAnue2F2hV0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785250388; c=relaxed/simple;
-	bh=qoMJ7XfxQqje3odPmthF4AzsD2sC3sVDf+3wDtA5s0c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=awPorMb2E+WhtuVgGpekMM8Tjo1++7rUaNa+g3c1DFQGLONPbWRK9CSwqiVnYTQpLBhSAANkbrOivVdqYCJ2wJOQXLEXWnOnM9ONYDoXUcEywNJxZy4vJrUbzuzjh0Jv4CGThOZMe/8jjUhrhMNPnm1cZlBvt1jA1CxwDcjFXOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KzEE/soK; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=hsCWgm3Q; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BD9E3D3CF5;
+	Tue, 28 Jul 2026 15:08:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.5
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1785251319; cv=fail; b=UEN/m1OhFgeO9YRfPR6cHn6HhOvUIbbOHd46NGDJT0NAmc3f+hYDobfOP/wpiOyTwLSMgFP2Ktf7eV5dRvS0PZFPsAsQTZQYPfHeC91ihuKEXc6z6omSeTiAsneWXLTqgt4bAXsFyn5YhQqhOvNdV9IAqZOMCLURpjMKHp1rUDg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1785251319; c=relaxed/simple;
+	bh=oXnk+i8Coet925+nd/HJ4ce6Z4ULoO/QxRtGduxV43Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=UxuSePcD4Sl123C6TjKSBPhNMjfwZIxL+b5P/1K1uF8NIeNE1SBK8rk3fHFSITLRbw274s0rYQlacMZvtep2h/WMKUvo/jH/nLqduEYQgs+tq6qOjJPyCR0acvYVHqAK161wfOadKyU9S0xDnYa0SLBXHW0dLB8Z5SSusfracec=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=Hjbc+BH+; arc=fail smtp.client-ip=40.107.159.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KzEE/soK";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="hsCWgm3Q"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1785250386;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vS5FrZdtVD7dlOeCODijrDZc+E5kS2K1TH7nZasBrgE=;
-	b=KzEE/soKiBO3hp6/74Pol3eXbGyFMVKCr/ziZDw6Cg4i5NuaI7y22rkqVOehT0cbo/LRyw
-	B7+3TsWZ7JnKTERWfhKOOWG5BUEh2aRcAsgv/XYV+9trigxawAxfwYw0fMrHpJ9ZSRrvuu
-	ftl8+vAB3AOAhj3MjTyCDKOdWKZFTYw=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-473-UO2ccbm8OZKFZ-6y4bRpSw-1; Tue, 28 Jul 2026 10:53:04 -0400
-X-MC-Unique: UO2ccbm8OZKFZ-6y4bRpSw-1
-X-Mimecast-MFC-AGG-ID: UO2ccbm8OZKFZ-6y4bRpSw_1785250384
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-930a098ea19so438582385a.1
-        for <linux-clk@vger.kernel.org>; Tue, 28 Jul 2026 07:53:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1785250384; x=1785855184; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:content-type:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=vS5FrZdtVD7dlOeCODijrDZc+E5kS2K1TH7nZasBrgE=;
-        b=hsCWgm3QWWj9XFeZFvrbW0mZykxJwmARF9HDaC/prNxfer2Bc2N91VNSyWQ0lxBqTA
-         fcHmpseJJvSn4g0Zr3XZvWTohrMKFJ1TiWi0i9f3niqA4/gM+jHquYq0FWxU0JrvXwpd
-         R1yFhG5V+auwjyZl5Tc3ZxkTklsMKcOBtT9xA5Kl0t7E+q9sL5QHfAebret973awFj6W
-         /AEmuheAaYSsxekkVnZroKRz/uPrE05VVBApEUEAAQWI1i+4FoJcS5GFtM0Cl/+D5JJU
-         wwH3ZJ446EIeAFpwa7WkAGLceJ8KV2v8Vg8n0B82G+baqRDO8VmcH0EzsUQvsK/Z9tEC
-         8rGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785250384; x=1785855184;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:content-type:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=vS5FrZdtVD7dlOeCODijrDZc+E5kS2K1TH7nZasBrgE=;
-        b=N/+VgpC5wnW2IZf4CjECPGyusRE+Y3/tIkfEsmfRraxV/YUB51bsouJde2oZpx6kI6
-         mspQYa9QKnZqlq5PFsc6PZaNVny0w/SNke/o3xqidwmU/ALOjNspisblvlLmM4HUDSKB
-         B+d8pqspQNDNQWXvz7u4wX8Sod8hb8i39tRrkxUyAuEv9Q2c+m2B3oW0kf5wbTQTO5bC
-         /BqkIJPNT6t9JNTKb/MPdkyVdcB5Kvel9SkmroDIMTT3WvhkSX+jr78Gvrzux7WCoOl+
-         Q90BkVBBDPHia8ACRv3x5A3B85nJ+u0jOQOTWEOvTl5F4chjxhJFzhReIL9A89iDKaRy
-         ryTQ==
-X-Forwarded-Encrypted: i=1; AHgh+RrZzM6vRdJ4425ov3vj4/PA5f8k575lvkC1EhUhvSiTf6FWd/ba0Pv3zgFJnu/HeQixYqsIyiWct5Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnzQB/sgQYTGm/cuMlLu/yP+X6KY7p3jNQooVNqGKFNncq7HZg
-	XGzBa4Ofm/xuyOfV4FsFXnBJqz+h7/oIlQpVwP6kGASOzdXGbxELxQNr01Rv/W8t//z5gw2af4V
-	jej9rr9yGakUjJYP92zudbRvEbqfRqcSfv6+iKrO3IiASmcGUdZVvqO6ehcMPwQ==
-X-Gm-Gg: AR+sD11X1FCFpl2+mbquDNNnHjyRd8tZYODQtXfBI9S53Ao5nx4wK/Q/My38NHQQsG2
-	GaWqUqny6rxYYgCKudyrjlvG5AiUfiCKcObHpUBVDIyrtLVQtZ7m/I8r08+bYdPHA4b11HFJrU4
-	t/gQs8ODaZTuxcRE7A4GEUpOQ7QfE20heRecEDgJUUGF8ktreqLfEEWRdauey40ARueCidoG574
-	4s4XjU/d2ey/kGKDK40b3AVDK1ukz00VUsJ08UZ1wrCdZhwmUOnW4hA8ECjRAyR9SRrrfTBFI54
-	tOws2a+clsaxcn4OMR/X5XD1CJ6B7/q1qTNLAWASRzoscA0MGhNoYUxsjCJj6HQ/3rmJmO2ItCp
-	ideA7Mk5aUj8Q1uSayauSqOD+QsVstERT6nc=
-X-Received: by 2002:a05:620a:2781:b0:92e:8ad6:210f with SMTP id af79cd13be357-93302640d97mr253740485a.8.1785250383720;
-        Tue, 28 Jul 2026 07:53:03 -0700 (PDT)
-X-Received: by 2002:a05:620a:2781:b0:92e:8ad6:210f with SMTP id af79cd13be357-93302640d97mr253735385a.8.1785250383149;
-        Tue, 28 Jul 2026 07:53:03 -0700 (PDT)
-Received: from redhat.com (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-932de541ac8sm864956085a.16.2026.07.28.07.53.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Jul 2026 07:53:02 -0700 (PDT)
-Date: Tue, 28 Jul 2026 10:53:00 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Akari Tsuyukusa <akkun11.open@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="Hjbc+BH+"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hXBYBQ8TfP2FgZSOngqLU0Jgc24aAPr/mxXoofEndCapFLIriCI6Yj5MAYPjZCo892B9vP8WMu3iJ/QthkUF6TUkgXevop8c5jJS2ie0mBDXcxNl1NT1QeB6kRLK8CsVMh1M5+y7x+OHAIrfx47RP7AsHyep8C7D30OSROrEWKwd+zjJb0jiWAuhjnN+VaD02O7eHsVS6YeGvByaKb9/pdxfLquWh8KBZHXS9mr5nzM8W9LIZAqxO5JPhhHhiyotgJsqKh8t3T/V8QyXZLkUeUvQCMOdxZV4ErhpXmasYrBI6hPTtOPu1RskBF54RTtn4uEx5QNVSRg14RxprlVQzQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nzq2KG8ZteMRFe7Wb/ER6ccj/RBlhwy9Aahxfx9806s=;
+ b=ZOpRiop+TXff//AiV357oSdNuqwWmBACcLlRNfE+sWZCVeLXb9H4Vz+Nn0x/HJv/0FgX7cW+Z1ny16kbDqhPNevhCYJZQKOrHSV61cE6AsGwJz8dCULRS4UQPO8kmgebeRHsuy5tEuljjMeUzw79aAI+jd89v7LuhxuwO97bepbcEV9Ogi5+miCNcnaLcw8eVjannOj8wsDg/JTOwKXesgCJ1gTINr/S4e4GhG3tvpLEIyPQxdG5Kvs3tSRcZWzzF0Nn5lPIakd5IYRFqRQam9kckePa2kDH7OPoeRdv7oPQ6G5dP4pkdCB+/YJqjUyJKHIuBsG4PHe0QR4zoNPxQQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nzq2KG8ZteMRFe7Wb/ER6ccj/RBlhwy9Aahxfx9806s=;
+ b=Hjbc+BH+0gDm1sa9u+leFqw5Y3SeDxf3SN+qgcdobgdJff0i/R7ftUrJyrcIfp9SNFsXNcqVlIcCuXwxOeqvrfHRWCraUKmF3QCgG++KSVea5g+UAMwTvyGCGy2vCgQUH1SZc/AbDJ1HLBFnzfuKLkuZbB4IQFLcO/hN0zXNR048wO0IRfl/LGom0xD4AdKE0y+GKnFqJ6Kz/bm7SCaG1d2V+rwj2DFWV4DgwbsVcu5cVcY9Hfsk44r4Dp+Vdl5D467bjs9D8XD2kLNdJ5da/3paWO63IHC6/30rLugeXTnC7btfC6yHKa6u5FyrqCF8y1wILO9kTK1hjczUg8LAhg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from GV2PR04MB11799.eurprd04.prod.outlook.com (2603:10a6:150:2cf::9)
+ by VI0PR04MB12640.eurprd04.prod.outlook.com (2603:10a6:800:345::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.245.13; Tue, 28 Jul
+ 2026 15:08:32 +0000
+Received: from GV2PR04MB11799.eurprd04.prod.outlook.com
+ ([fe80::2146:83a2:5329:b7c]) by GV2PR04MB11799.eurprd04.prod.outlook.com
+ ([fe80::2146:83a2:5329:b7c%7]) with mapi id 15.21.0270.009; Tue, 28 Jul 2026
+ 15:08:32 +0000
+From: Frank.Li@oss.nxp.com
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Frank Li <frank.li@nxp.com>,
+	Loic Poulain <loic.poulain@oss.qualcomm.com>,
+	Bryan O'Donoghue <bod@kernel.org>,
+	Abel Vesa <abelvesa@kernel.org>,
+	Peng Fan <peng.fan@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-	"open list:ARM/Mediatek SoC support" <linux-kernel@vger.kernel.org>,
-	"moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>,
-	"moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>,
-	stable@vger.kernel.org, Chen-Yu Tsai <wenst@chromium.org>,
-	Miles Chen <miles.chen@mediatek.com>
-Subject: Re: [PATCH v2 5/6] clk: mediatek: mt8173: fix memory leak on module
- removal
-Message-ID: <amjCTJguiANLY0vj@redhat.com>
-References: <20260707074839.240676-1-akkun11.open@gmail.com>
- <20260707074839.240676-6-akkun11.open@gmail.com>
+	guoniu.zhou@oss.nxp.com
+Cc: Frank Li <Frank.Li@nxp.com>,
+	imx@lists.linux.dev,
+	linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Guoniu Zhou <guoniu.zhou@nxp.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Subject: Re: [PATCH v16 0/3] media: nxp: Add CSI Pixel Formatter support
+Date: Tue, 28 Jul 2026 11:08:23 -0400
+Message-ID: <178525127627.3480677.16359772805058311582.b4-ty@b4>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260728-csi_formatter-v16-0-1065ba47530a@oss.nxp.com>
+References: <20260728-csi_formatter-v16-0-1065ba47530a@oss.nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: PH8PR20CA0006.namprd20.prod.outlook.com
+ (2603:10b6:510:23c::11) To GV2PR04MB11799.eurprd04.prod.outlook.com
+ (2603:10a6:150:2cf::9)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260707074839.240676-6-akkun11.open@gmail.com>
-User-Agent: Mutt/2.4.0 (2026-06-19)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: GV2PR04MB11799:EE_|VI0PR04MB12640:EE_
+X-MS-Office365-Filtering-Correlation-Id: af7f078a-e329-4927-b04b-08deecba16a7
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|376014|366016|23010399003|7416014|19092799006|1800799024|56012099006|11063799006|10067099003|6133799003|3023799007|18002099003|22082099003|921020;
+X-Microsoft-Antispam-Message-Info:
+ HGiHdaCakNzqyzwXNUJroZx4pJot8jYxHBQkuug44U9/qeO8B1bEfLeeGqLVemw7ojcjdD7FAuqSDc/JybriymdfSp/uzDwI+QFgLf+kPSP/nLJ/mZznle2Yf862EQUEWmsXR9P3Kym4JTgJ0eDNoFFZV2uokYmpnXVLv+1VLDcTpE2cndhytYtQ5FQOXu8EOuODHdb87IBgWWgyePq5TgejJRwkWiVxcaL3G5B68UmMwSlOJ4zP68iZeDACNU+o0hFXML/qYrBwG6KteH9uKQf7etQZ4ka9lLHBkyQEJwfVJqo1B9F7RauN+dg9Y9PGRdEqV8x61EK83ibq0ey0ckDU9SaXeD7rwtkmBGvn1KGq3+fgdSYGzH+TXvQNz3GD6PiSzGi77IzEi5RgOD7XWqnsksScqW3QM8ECMFyOu/fzzzk0nJqy9AcxlPVwRdGrKRo/3pdUhq3QMisdr2V6Yf9yQk38Og556maKSaoxIEC6AwrdlHFL8S2sUIFibGCqoAK9SEB5JG6NeuHenYfLSe0YaR2ohVZrrn+LidSxXPlinLt3wTOO1Iej+GA0keK3UHqCSbnfqiJg/JmRe8gog66o4/Fsf2A3PEOuwCvH0qlIh3j/unI/l/3WoF6xj8hPEnM1qs0Oc4kcwDRn1MkOonTdgmqg6qWMhHxHpnqSw2jPoAYBYuo8AxMgLahErJ1zkllwH35sJEnoVFp3+ZZchw==
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR04MB11799.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(23010399003)(7416014)(19092799006)(1800799024)(56012099006)(11063799006)(10067099003)(6133799003)(3023799007)(18002099003)(22082099003)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?c3plOFNmNGVwb0RjUjcvSkliU1dMQ2RlVGxHQmxjakIyWTZFcXZ3eXBxdWhE?=
+ =?utf-8?B?T0xvZmN2bCs4YVJ3anFWWDlHdlUxVjBpQ1lZSG8wOTZ3eE5IbnVyYXcxcXR1?=
+ =?utf-8?B?WStkNEFNMjU5djMwT1c5NzFxMDQzOUlaQWJVSE45WUlVc2xObFdDUnBXTXFF?=
+ =?utf-8?B?c2tneXg3Y1lMZm9MS1BxaGZkaEZBeTF5QTA2WnZlUWhJa3d2TndXdFVTZjN2?=
+ =?utf-8?B?YmwrenppT1FaSTdXMGc5dHhmaFVXOEVvdnlKTEt6RDdUaVB3ZE8yRlNnSGV6?=
+ =?utf-8?B?eE0yMVhqRGJoOHgwdWhpZG55cmtCbmtmcnRzcGlmMVpzK0dRNjZiQmphNlJN?=
+ =?utf-8?B?OTMwTVduZFk1SEIxTDBoRGtLd0IvUGlIUkZ4NTJ0Q3hZbmRBTVdSdFA2NTRj?=
+ =?utf-8?B?dUlrYVNlc3hNUnlPTTl5Mlc4Y2c2NEpYbllUSkh2MWkyblBpUGd3T2YyZ1ky?=
+ =?utf-8?B?UUNCWXRIKzdUdEZCYWVySy8wekZEbXFxdGpHSjRRVjg1SXg4RmFJSktRcWgz?=
+ =?utf-8?B?TG9nS0t5YnFZQ0loUGJBMmFjQUhPUXQ2SUJ5SGxKYnJwalJhK2pGV0xldzFq?=
+ =?utf-8?B?aUdxQXpDcWJpZEtkZ0tVWmJucFdRa1JQRWdTYWNXcHBuclo0YWxyMEgwMlpT?=
+ =?utf-8?B?dDNteTdnWE5zZVNHRFB2MW5MOHpmNjlncVZWQU9aSm1EWjRielFRcGhoM1cy?=
+ =?utf-8?B?b2ZJKzA5amE4SC9ycVhjMThnWExQazk0aTY4cTJBSWFXZ3Z5bkZpNUdDdCtj?=
+ =?utf-8?B?YUI0NmxidUsrbjMxLytsdERCUFNxS2RIeHV0eGVMY0EyMFk3MFlDWERrb3NP?=
+ =?utf-8?B?MWlKK3dGbUVpNUl2NGxGREhhelc4N1NCUjNtNUUzUEpKVXdZdDJ5SitScVdO?=
+ =?utf-8?B?dllvakFkMjZ0MjE4ZHFvUkVITUFZc2toL01xZm04QzJkRXQ2N2NYTEVtcHQ1?=
+ =?utf-8?B?dVdnS2ozbW5KMWlKV3R2SzBNRiszTDltaFZjb0s0QVhrK21tOTRoalU4WDJ6?=
+ =?utf-8?B?eFgzVHZPYlBjTzErOUNtVWVLbk9ObnZVSTEvSXQ0cVEva2xuekFLRHRsaWZ2?=
+ =?utf-8?B?OVhmRkhySkQyNktyQmxIbnhKK05KWHcwcmNIMk9UY0hpM3phaXFLYUR2UEY5?=
+ =?utf-8?B?MEtBMlZCYStpNXBoMFJSS3pyYnhDMTJRNEZhcmx6Uy9XUDJ4WXRIdXl3cFdt?=
+ =?utf-8?B?L28rTlBmUGVVZDNWM2QxR2RMQXlHMFpPQjB6dU9oUXRHT1ZUa1lTZFdIT2t4?=
+ =?utf-8?B?VXNtRm9wN1Z6L1ZDMUpzVUk2Y3YxejBuejVOUHZFQVMxVGlZejFmNG9YSjRO?=
+ =?utf-8?B?ckVOUldzdVFVRHFoTjV3NmV2KzdYbzJHa3hiNDUzZzhqTFZJSjVDY3kvTFFJ?=
+ =?utf-8?B?UWJSeXR6UERZNEM0bURXQk5mWWZJTUZJMm9pK2VJcDJvUllIM0lETS96bW9T?=
+ =?utf-8?B?VWVtVDNhTTBIMFlqcCtjL2tZMmFONlJUa2hndHcrTkEva01GZjNvd1VLSFh6?=
+ =?utf-8?B?YStJNVMvdkxhTitJby82d2s3b3FRODhNcG9XT2NvNk1Fa2h3bE1DeG1YUkJ5?=
+ =?utf-8?B?TmRhUUpKeHozWkg3Tk0zZW00NjFTV1V2anhjV1pnRTd0NVU3Z0dOb0VGL2c3?=
+ =?utf-8?B?UGlOaVRRcTk4QmluSUszTzdlQjJJYWZYOXhmSnIrZ0R6Q1VyOG1OalZkYnJT?=
+ =?utf-8?B?L3FZLzFxUDFLRUl5Y04xVHNJeDU2M051eHVSZlpqZXI4Qllrd214cnQ4d3NM?=
+ =?utf-8?B?ZTI1VmZEZWJJT1hTcExSZ0Y3SmVIZmNTajdPVFVITDlGMGVPREVxQ1JZR2FK?=
+ =?utf-8?B?Y3Z5Tk9wbXdjcXQzWG1rNVR4OVYrYmQ5U2VyUGNYZkh2YnRUSkRndmw2MkxY?=
+ =?utf-8?B?TXBlUWpKN0l2VGdRR0h5d3FrWU1FMVlXOXhZRXNGL2pQZXpvcEcxZzFqRnM3?=
+ =?utf-8?B?ZXpDSjY4alV0N2NOMVZQaEdidnJ6YXpwcnBSODVwK2hLSk9LSXdydG12SEox?=
+ =?utf-8?B?S3d2WUdVcU1GcXpSY0J5WXRER1dLWFpmcWNtZml1a0Q2YmY0MTdxZ1RLeC8x?=
+ =?utf-8?B?S2VQK0pPeXRSczFZWWNEQ1B2VFZKVFlGdUcxRzkzbzVSWDdDRjEzdWRuRVFG?=
+ =?utf-8?B?d1UrOTVXSEY4d0pycWdzRUdXVW9IYTNlTC9CdkdxWW1YRVpQU0c3MTdmSjJI?=
+ =?utf-8?B?Vmx0SXl2SGVzM1Frb0VIVXQxUmNxVkVOVWhIejEvYlpWUFZIR3Fabkg3R2pU?=
+ =?utf-8?B?WHJqdjJoRHdHemRrOFVYeVJQTHBNeS94eW9VT2YvNTNtWXNzRnVvdTJXY2xL?=
+ =?utf-8?B?TWV3M0k0OSt2elZiYkFTdnFKRTNaaUpoRDQ1Zk9yUWhwTjMzTkVNbU9XMmxO?=
+ =?utf-8?Q?ZKUTuLub2fhtaK6jaPBj1WidcqbpVeSQeMmgw?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: af7f078a-e329-4927-b04b-08deecba16a7
+X-MS-Exchange-CrossTenant-AuthSource: GV2PR04MB11799.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jul 2026 15:08:32.2735
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: qghomww8Xkw3BhxucNXkSGL8Io3lfipezUBgnlDzUsv1X80mDoPvOXzwV9qpKdcnONvtZDjvqcRWNdA7WZcWYIUKeeUgUfiHJD0e5FOwlmN3ADmHyyYbAM613M8nP1Na
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB12640
 
-Hi Akari,
+From: Frank Li <Frank.Li@nxp.com>
 
-On Tue, Jul 07, 2026 at 04:48:34PM +0900, Akari Tsuyukusa wrote:
-> clk-mt8173-apmixedsys.c and clk-mt8173-infracfg.c do not call
-> platform_set_drvdata() during their driver probe callback,
-> but their remove callback calls platform_get_drvdata().
-> This results in platform_get_drvdata() returning NULL,
-> which leads to calling kfree(NULL) in mtk_free_clk_data(NULL).
-> This leaves clk_data unreleased, causing a memory leak.
+
+On Tue, 28 Jul 2026 14:14:13 +0800, guoniu.zhou@oss.nxp.com wrote:
+> CSI Pixel Formatter is a module found on i.MX95. It could unpack the
+> pixels received by the formatter and reformat them to meet the pixel
+> link format requirement.
 > 
-> Fix this by calling platform_set_drvdata() during probe.
+> This patch series adds a new V4L2 driver for CSI Pixel Formatter.
 > 
-> Fixes: 4c02c9af3cb9 ("clk: mediatek: mt8173: Break down clock drivers and allow module build")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Akari Tsuyukusa <akkun11.open@gmail.com>
-> ---
->  drivers/clk/mediatek/clk-mt8173-apmixedsys.c | 2 ++
->  drivers/clk/mediatek/clk-mt8173-infracfg.c   | 2 ++
->  2 files changed, 4 insertions(+)
+> Background
+> ----------
+> The Camera CSR binding was upstreamed during the pre-silicon phase when
+> the hardware integration details were not fully finalized. At that time,
+> the syscon binding focused on the CSR's primary role as a shared register
+> provider for clock gating, QoS, and error handling across Camera domain IPs.
 > 
-> diff --git a/drivers/clk/mediatek/clk-mt8173-apmixedsys.c b/drivers/clk/mediatek/clk-mt8173-apmixedsys.c
-> index d7d416172ab3..65dc4489a09c 100644
-> --- a/drivers/clk/mediatek/clk-mt8173-apmixedsys.c
-> +++ b/drivers/clk/mediatek/clk-mt8173-apmixedsys.c
-> @@ -179,6 +179,8 @@ static int clk_mt8173_apmixed_probe(struct platform_device *pdev)
->  	if (r)
->  		goto unregister_ref2usb;
->  
-> +	platform_set_drvdata(pdev, clk_data);
-> +
->  	return 0;
->  
->  unregister_ref2usb:
-> diff --git a/drivers/clk/mediatek/clk-mt8173-infracfg.c b/drivers/clk/mediatek/clk-mt8173-infracfg.c
-> index fa2d1d557e04..8b69009e1965 100644
-> --- a/drivers/clk/mediatek/clk-mt8173-infracfg.c
-> +++ b/drivers/clk/mediatek/clk-mt8173-infracfg.c
-> @@ -128,6 +128,8 @@ static int clk_mt8173_infracfg_probe(struct platform_device *pdev)
->  	if (r)
->  		goto unregister_clk_hw;
->  
-> +	platform_set_drvdata(pdev, clk_data);
-> +
+> [...]
 
-This patch doesn't compile.
+Applied, thanks!
 
-    drivers/clk/mediatek/clk-mt8173-infracfg.c: In function ‘clk_mt8173_infracfg_probe’:
-    drivers/clk/mediatek/clk-mt8173-infracfg.c:131:36: error: ‘clk_data’ undeclared (first use in this function); did you mean ‘clk_gate’?
+[1/3] media: dt-bindings: Add CSI Pixel Formatter DT bindings
+      commit: c0af539f5c2841f0756f8ae98808e1eafe4538af
+[2/3] dt-bindings: clock: imx95-blk-ctl: Define formatter child node schema
+      commit: c6cc72164123f777933b0d3453fa3e3ad283e223
+[3/3] media: nxp: Add i.MX95 CSI pixel formatter v4l2 driver
+      commit: cc29462f4d0723502feff17ff1758c690c5fce4d
 
-Brian
-
+Best regards,
+-- 
+Frank Li <Frank.Li@nxp.com>
