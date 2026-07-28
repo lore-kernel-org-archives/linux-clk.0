@@ -1,103 +1,131 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E55642BEB9;
-	Tue, 28 Jul 2026 11:47:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F0C842D768
+	for <linux-clk@vger.kernel.org>; Tue, 28 Jul 2026 11:52:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785239265; cv=none; b=EYkIc7tdEkizjZHnPRLHuVE4bdkP5clioNrG7ZOOwjrzOqRT9z0mxmdUHOLV6y6ruzpWjVn7zFndBCY5A+tZews3p3xsfMbRecoPWm0W3wPY210lp6RK3rogAqzs9YfUVw3peGPVSelclA279dS+fmWQG8DRhAmfoTMvdnhq5so=
+	t=1785239571; cv=none; b=Aa/m9SiMcrwZ8fuSRgskNojRpwXk+XGBHjfgDsB0DtbPvmHogAEcCPe5rSU1etP8ObEdq3ADWHdtrWjOv0haHgJLoGcs/ozueJrOQTMDHk2ZhoPhtDaNuH3XiiKvmPhztCuRycQEtUBBKT/16rg3J9uIZMsEuBOIzhVv+csMEjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785239265; c=relaxed/simple;
-	bh=b/ihtlr15K8JVnOlUyfmiUPDlP+8E/XJpgR0li8qucg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dIR7SDr8e4M6vmPLFmzQqqVnpHa+0L0BRQo8f03HYBHv3PST5KWC6+kV86vAZw82iUb097m3SKlr0havt3n+fjzC4uhgVu8gGWAiLBR+j0P1HMe/7mMWhb0GLaI4S8aCWn0CotWRTmJRrsC3KkOdf0CXFAMOXGGw1Tkt7yYF0TE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=etQeWE0Z; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785239571; c=relaxed/simple;
+	bh=gvFCD8GcQUKN/C8mHn437XP93G9UJdkIewaa0Z0yWlo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=CbvLQRBPRYeuCgN+A95QvZZFhMueMOj7B+EDpfGBViw29buqDSiveMX4tYFcmcYNel7R5dW/Fm+swKtnp6TaP5NZp+zgm3sUzNnx3RnsGDIvbm/xbGRMC0VhZvaRVfJ33rnCXfJnThm+dCvGqIFz7TnT9G3y4jrnMPxS1jgzslw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=dAA7kMbI; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="etQeWE0Z"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B77761F000E9;
-	Tue, 28 Jul 2026 11:47:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785239263;
-	bh=d1kX/2BkcFPx00SzT9s8BBrA//d/t9d2pxkdmPH02XM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=etQeWE0ZOjyJqTVlDWQbq5PZbsEw/jGbJ7o2iN1SX7Zhy7Mw8DMzIKD21YRPN2+rX
-	 CPKcV5T306U77NWVVkYX0UGW9TZY854Ob9JfRUKw7iXsqnOTI7TMcU9g3hlbIlPc16
-	 3vPDw8C2G7usSz4BQ0R1/HDJW1UJe/DdgxPhF2SHX66DijysZcsVeJlULzXVKEcjQk
-	 Q/r/gMf0FlR1A+o5y5loJQCisFASow3ORcjosHXV8pw14gfL2OWtbDPcc9beRDjEVa
-	 W19rBW41tBBVGXXTun5OUKXBKEzkRph0lHTKUbCVh2UMCWC5RtN0Yc0Nu0qU9lqjzx
-	 EPtrqPNcP1ehQ==
-Date: Tue, 28 Jul 2026 11:47:39 +0000
-From: Yixun Lan <dlan@kernel.org>
-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH 0/3] clk: spacemit: k3: fix i2s clock topology and
- divider rates
-Message-ID: <20260728114739-GKD76518@kernel.org>
-References: <20260717-k3-clk-fix-i2s-v1-0-e95001a692ee@linux.spacemit.com>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="dAA7kMbI"
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20260728115247epoutp039bc08e439aadab00d227847a53ab4766~Gce2IL69B2172421724epoutp03Q
+	for <linux-clk@vger.kernel.org>; Tue, 28 Jul 2026 11:52:47 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20260728115247epoutp039bc08e439aadab00d227847a53ab4766~Gce2IL69B2172421724epoutp03Q
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1785239567;
+	bh=hbWzvsTI30SQf61MYJkSumPCBvJo8f5hh8GqDaxsf24=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=dAA7kMbI4pq7a2Bo2RHDnCHLJrve1yAzmyai2VYJp9Y2RlqKgOjZCUP/8NCUdKD4i
+	 fgMxNlSIrfF7q1CzbHe2kGWa/Ky9Z8BRkvfAD5+NzB0+JzbnO31pGI/6BKPDPJ5147
+	 xyqaAf5Ql/o1TUMobpmqAmbhr/ZPhrpe2QhPnpIg=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
+	20260728115246epcas5p4f89d78fccf3a138d0363a7cfc383216d~Gce1pLgQ42034920349epcas5p4w;
+	Tue, 28 Jul 2026 11:52:46 +0000 (GMT)
+Received: from epcas5p1.samsung.com (unknown [182.195.38.93]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4h8Yk60qW5z6B9m9; Tue, 28 Jul
+	2026 11:52:46 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20260728115245epcas5p2ffe1f7c31c6dd85161445d61a94e82e6~Gce0kFyp-0256002560epcas5p24;
+	Tue, 28 Jul 2026 11:52:45 +0000 (GMT)
+Received: from bose.samsungds.net (unknown [107.108.83.9]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20260728115240epsmtip165a648674550bc732bc8949467dc8337~GcevbktXi2401424014epsmtip1h;
+	Tue, 28 Jul 2026 11:52:39 +0000 (GMT)
+From: "raghav.s" <raghav.s@samsung.com>
+To: krzk@kernel.org, s.nawrocki@samsung.com, cw00.choi@samsung.com,
+	peter.griffin@linaro.org, alim.akhtar@samsung.com, mturquette@baylibre.com,
+	sboyd@kernel.org, bmasney@redhat.com, robh@kernel.org, conor+dt@kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, hajun.sung@samsung.com, raghav.s@samsung.com,
+	is.gandhi@samsung.com, ts.amit@samsung.com, pokala.reddy@samsung.com
+Subject: [PATCH 01/13] clk: samsung: clk-pll: Add supoprt for pll_4313
+Date: Tue, 28 Jul 2026 17:40:59 +0530
+Message-Id: <20260728121111.2077860-2-raghav.s@samsung.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20260728121111.2077860-1-raghav.s@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260717-k3-clk-fix-i2s-v1-0-e95001a692ee@linux.spacemit.com>
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20260728115245epcas5p2ffe1f7c31c6dd85161445d61a94e82e6
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-543,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20260728115245epcas5p2ffe1f7c31c6dd85161445d61a94e82e6
+References: <20260728121111.2077860-1-raghav.s@samsung.com>
+	<CGME20260728115245epcas5p2ffe1f7c31c6dd85161445d61a94e82e6@epcas5p2.samsung.com>
 
-On 00:26 Fri 17 Jul     , Troy Mitchell wrote:
-> The K3 i2s clock tree was modelled on the K1 layout but does not match
-> the actual K3 hardware topology, leading to incorrect clock rates being
-> reported and programmed.
-> 
-> Three fixes are provided in dependency order:
-> 
-> First, the MPMU_ISCCR syscon register is renamed to MPMU_ISCCR1 to
-> match the hardware register name, and MPMU_ISCCR0 (offset 0x0040) is
-> added. This prepares the header for the clock topology corrections that
-> follow.
-> 
-> Second, the clock topology is reworked to reflect the real hardware:
-> the common i2s_sysclk DDN at MPMU_ISCCR1 is renamed from "i2s1_sysclk",
-> an implicit 1/2 factor (i2s_bclk_factor) is introduced before i2s_bclk,
-> and the dedicated i2s1 clock path (i2s1_sysclk_src MUX + i2s1_sysclk
-> DDN backed by MPMU_ISCCR0) is added. CLK_MPMU_I2S1_SYSCLK keeps its
-> existing ID but now refers to the real per-instance i2s1 clock; no
-> in-tree user references this ID so the semantic change is contained.
-> 
-> Third, the per-instance i2s sysclk DDNs (i2s{0,2,3,4,5}_sysclk_div)
-> are corrected to account for the hardware-internal 1/2 factor by setting
-> pre_div to 2 instead of 1, so clk_get_rate() and clk_set_rate() report
-> and program the real hardware rate.
-> 
-For the series, looks good
-Reviewed-by: Yixun Lan <dlan@kernel.org>
+From: Alim Akhtar <alim.akhtar@samsung.com>
 
-> ---
-> Troy Mitchell (3):
->       dt-bindings: soc: spacemit: k3: add i2s_sysclk, i2s_bclk_factor and i2s1_sysclk_src IDs
->       clk: spacemit: k3: fix i2s clock topology
->       clk: spacemit: k3: fix missing /2 factor in i2s sysclk dividers
-> 
->  drivers/clk/spacemit/ccu-k3.c                  | 31 +++++++++++++++++---------
->  include/dt-bindings/clock/spacemit,k3-clocks.h |  3 +++
->  include/soc/spacemit/k3-syscon.h               |  3 ++-
->  3 files changed, 26 insertions(+), 11 deletions(-)
-> ---
-> base-commit: c425609d6ac4012c8bbf01ec2e10e801b1923a7b
-> change-id: 20260615-k3-clk-fix-i2s-5e278a472061
-> 
-> Best regards,
-> --  
-> Troy Mitchell <troy.mitchell@linux.spacemit.com>
-> 
+PLLs 4313 are found in the Exynos8855 SoC and it is similar
+to pll_531x except for CON8 offset, so re-using code for
+pll_4313
 
+Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+Signed-off-by: raghav.s <raghav.s@samsung.com>
+---
+ drivers/clk/samsung/clk-pll.c | 11 ++++++++++-
+ drivers/clk/samsung/clk-pll.h |  1 +
+ 2 files changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
+index e74552846ba3..b7605aa3c647 100644
+--- a/drivers/clk/samsung/clk-pll.c
++++ b/drivers/clk/samsung/clk-pll.c
+@@ -1306,7 +1306,15 @@ static unsigned long samsung_pll531x_recalc_rate(struct clk_hw *hw,
+ 	u64 mdiv, fout = parent_rate;
+ 
+ 	pll_con0 = readl_relaxed(pll->con_reg);
+-	pll_con8 = readl_relaxed(pll->con_reg + 20);
++	if (pll->type == pll_4313) {
++		/* Offset for PLL_CON8 which hold FDIV different for PLL_4313
++		 * which is PLL_LOCKTIME_OFFSET - 0x4
++		 */
++		pll_con8 = readl_relaxed(pll->lock_reg - 4);
++	} else {
++		pll_con8 = readl_relaxed(pll->con_reg + 20);
++	}
++
+ 	mdiv = (pll_con0 >> PLL531X_MDIV_SHIFT) & PLL531X_MDIV_MASK;
+ 	pdiv = (pll_con0 >> PLL531X_PDIV_SHIFT) & PLL531X_PDIV_MASK;
+ 	sdiv = (pll_con0 >> PLL531X_SDIV_SHIFT) & PLL531X_SDIV_MASK;
+@@ -1728,6 +1736,7 @@ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
+ 		break;
+ 	case pll_531x:
+ 	case pll_4311:
++	case pll_4313:
+ 		init.ops = &samsung_pll531x_clk_ops;
+ 		break;
+ 	case pll_1031x:
+diff --git a/drivers/clk/samsung/clk-pll.h b/drivers/clk/samsung/clk-pll.h
+index d6eb3246611b..ad47dd7b3ed2 100644
+--- a/drivers/clk/samsung/clk-pll.h
++++ b/drivers/clk/samsung/clk-pll.h
+@@ -49,6 +49,7 @@ enum samsung_pll_type {
+ 	pll_0718x,
+ 	pll_0732x,
+ 	pll_4311,
++	pll_4313,
+ 	pll_1017x,
+ 	pll_1031x,
+ 	pll_a9fracm,
 -- 
-Yixun Lan (dlan)
+2.34.1
+
