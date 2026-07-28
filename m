@@ -1,159 +1,160 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24BD239AD5E
-	for <linux-clk@vger.kernel.org>; Tue, 28 Jul 2026 17:02:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D678339AD2A
+	for <linux-clk@vger.kernel.org>; Tue, 28 Jul 2026 17:03:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785258152; cv=none; b=SOBWAb8gyWB4g/+6+bL9q1ExG4MQx/SPDfHGjMBXE9H7XaYCmihwRL3Kidpy7qjoPnYNiw+dbi0iJgr2CbTVhk1tGy7s/t7RZmkyCDQ8Yk3jV3IFTAIVMIJsqU4YB2kS0eH0XCLd9h8Zr6MXIVphV+GRwmxD+Xb7NoG6CzEoSmo=
+	t=1785258185; cv=none; b=jcjx3cyv/cqQKNKUhAS3KTaSgThkj+Oz7WY6ZbBQJ5PhkkYUG2A4zR83n87zxHtlopuwqxh7R7CflNFP7JsugYJiup2ckyPv9zvTtuSFyOpOGY4zDIkdk7Gcq6ppNNZ23+bbWEpwAAoh6joyNawnv+9P2dcqvVi81cER256iE8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785258152; c=relaxed/simple;
-	bh=bxFyUwwzs7IjS6nJSP45CpJDbZptu7ycVzrkumfnro4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BdrifaKh6P8rW0RtZr70+F1V8dbyV2JiXSI2oNm531pOjrj/3jGKKNdVCZGJJYeHc5rMc1QgF75dguVt9+E24lZ0pHv4e04hnhmf4eWtZ15+Mc3bvNFyFjyXILsp9S0f3JvbyWWXQelgGjK1hrvya4m50zVfU63gGO+NPSR7xjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b82WnSCr; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785258185; c=relaxed/simple;
+	bh=THe/MCYOUCFl3gSUIjbQcNbN3jTDUYeawApb6k2z2BM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fQixLf4b8hfNb4P7QJK89oVs/FWATkPtHGWlDz9809iKVcJ8VMZJuagxhjRhlBB5YLGaX6Z5V61VxVv52vvicCz8rEwL0RKR0yBT+Ow0oFxJiPizYepGvy54RZzJ2LpheMb1rgzSke8pm/ILYndCvXJDcznzOyPaS7tFno7ByjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HfXsxd98; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b82WnSCr"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDB271F00ACF
-	for <linux-clk@vger.kernel.org>; Tue, 28 Jul 2026 17:02:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785258150;
-	bh=9oe9UV20xRbrU+lzvVnG9jZANXjcjtMpLhecIgsxtCo=;
-	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc;
-	b=b82WnSCrWCjiiRXWQJ4BHNCDM9WM11Q5bzIpvuitixDRsOOf1B7FPKsDBcU0VdAd5
-	 TNiFDU/KSlDAXVW6gvISaXu3kH0Vx5NECZHXyxUxarrtY6UNnIQI6Q4sgEsq3JSywu
-	 ZsD+Ll1k5N52fgTMdiPOZIKAZzdI//FDAYmNvZWByV9jEUWq7GlPkW7gK3MucckXme
-	 3VY4SI8yceU6m9fkMhogBCeEz91BxJZAy7g7SCzBjw7WxbAzxqrsClkUEjrBq/f/DV
-	 T1/tIwLr3SfGEEooRAODTmQnVy6kLkBnxXW8PnMNsUxXHnDUNa59TWAIWoM40VW1H5
-	 mhH4NRgl56wKw==
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-39c83acb86eso35989721fa.1
-        for <linux-clk@vger.kernel.org>; Tue, 28 Jul 2026 10:02:30 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RrJh2pKRLSakIRmAGUtsSctHSdPx55iZm52Y3wVFRBkBt8OQXWka21jnUgN57XIAVcCya0Bl5g+zhE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuJ4i34SCrJRyyXo+5uJJ+1fTp0dfheCc9hq4FQGnThZZfk9s8
-	3UZZ0ys0/lS5xQaU2Bjtxo+WZ/WTqYqgb/zgBfCHAjUynLpE79UxmcV/dL3Ooq8Zy+F/aLh4BRz
-	6qiFzg5qIwuFrLcQj146MYC68TJT1NbI=
-X-Received: by 2002:a05:651c:b09:b0:39e:e995:1685 with SMTP id
- 38308e7fff4ca-39f51e523a5mr6555341fa.38.1785258149154; Tue, 28 Jul 2026
- 10:02:29 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HfXsxd98"
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-38e041ea211so96787a91.0
+        for <linux-clk@vger.kernel.org>; Tue, 28 Jul 2026 10:03:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1785258183; x=1785862983; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=H9tbT3MmTWZadkFYtLmnXOyq2+XHjhkh1A8FrJjDKXM=;
+        b=HfXsxd98gAl6vHmkHPb/Qn0em6GKopn1H6G6vOAkyCgQjgzqhfIMxBthvDfrwzwPFx
+         oMtkcSPNA89WvOvgGmLXNE6mJcjX3mhvGBAbLDKiLnRkH+llyaw1qi8qzt+bAtY+bmaz
+         CM/kAJFuwcyacqZz7cY1SadJ9qy5ds9hBxABX8H8YQQzgT0RPtHg02E6sF5xg6NX9Qkg
+         0DwYL70AG3u3Te29FFqe5lD+/f2zJXUCyDfoy+Pp1V7ZZoho0CFiWhqy0dxfoID6BkS0
+         lqDhJQGr9YFoQF4ZSzkVD4NWxDrf1AG5hpoRb+sRdvrLd63KWij1y5CWY29V3mpdlBgE
+         6OSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785258183; x=1785862983;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=H9tbT3MmTWZadkFYtLmnXOyq2+XHjhkh1A8FrJjDKXM=;
+        b=ncaR8eiLtOh7agX+LtYkVacsp019TMQvZa1FFQ9SIGW1Cc5F3Ia8fo8XntcMqMKOjd
+         7yC7zSxRuH6XgtcK9uZ0SqxmmmGVFLTLbn+XGTyv/eRv0afo8iKrmaWh0Cps+fbPAY8t
+         sKSaEt6dd8vXgiFbxMU9coew3IZOQy8lfkVG4lcaXA8PvkS1X99vi4ypYJ1ORrzRb3D+
+         nT5042ERsq7KhmdJR23Hx/pN+S/fuuc9SQkV3esYfTmV/THiqofQx+jwzUTyv6Ra64cV
+         KuDVdLga00raiZTVuESX2UX2VeAz69E1AJsRmRUpDgHvlf6H/+nY3SeTmQxtnublkKqn
+         HfZg==
+X-Forwarded-Encrypted: i=1; AHgh+RoXqqcl0wHqr9opv/lf9+nA33IixYt77BimvfNbfXLtUBsx3/M63BBzDQGzvAIzC+IpcxMP0wU6J80=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXJ7GdqggZSVM1ZFpZXwqwSeS/AE1CPgvIy6iNXeZBKQxXwcpA
+	Sk/+R8b9I9px2vp0wEHZbCmGWkiaVlplZGuFTg13uEtt17PmIiqtaKZp
+X-Gm-Gg: AR+sD12zdqOL1/w3Tw49KCviBWgrCIawWS7eD7/NKhYWh49//hz4idYSO06C5IR6U48
+	ED9EuifycLpDzxhT+qWQ6cp1LLKAEhlUxiEMi7fGN9TitAKNz8ACKPodK++jkAzg7vFic72ozj1
+	Y/f19kPAm2/TFl0m2SUeDOm5zOtv1OCN74fYh4gUCkP24t7Avt7B0MzkBh6IWCjQ0hG72pdFkml
+	M3MCz/hf10lYgEXGThNXB+7cVVsdM0pHGkvYeM2khtYxXb0Ja107znBRompb9miCpOg5sKM6azt
+	zrbR9T/w+YAy4ZRAFlk/ImjJ4su5NiaeBNrdZJ0ABAtXwAcIpzJckg5dQSgpMXSlL3Q/0AJ/sq+
+	nYO0FJXTLzxk0Js5jf45AzEaOWSl0vJ17d9y72Ktj1YLZzEvhw1tpqO1aoJInCd6mGeF9cVNNgq
+	6YiQb/f7yADw2XB4vo+QvCKlYVnzJiOzCPYA==
+X-Received: by 2002:a17:90a:dfc7:b0:36d:9e0b:3801 with SMTP id 98e67ed59e1d1-38f6a33d8c3mr3853027a91.8.1785258183046;
+        Tue, 28 Jul 2026 10:03:03 -0700 (PDT)
+Received: from buffalo-ssd (M014013071096.v4.enabler.ne.jp. [14.13.71.96])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-38f64111441sm1667127a91.1.2026.07.28.10.03.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Jul 2026 10:03:02 -0700 (PDT)
+Date: Wed, 29 Jul 2026 02:02:59 +0900
+From: Akari Tsuyukusa <akkun11.open@gmail.com>
+To: Brian Masney <bmasney@redhat.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>, 
+	"open list:ARM/Mediatek SoC support" <linux-kernel@vger.kernel.org>, 
+	"moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>, 
+	"moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, stable@vger.kernel.org, Chen-Yu Tsai <wenst@chromium.org>, 
+	Miles Chen <miles.chen@mediatek.com>
+Subject: Re: [PATCH v2 5/6] clk: mediatek: mt8173: fix memory leak on module
+ removal
+Message-ID: <amja9vnEoRTstmGN@buffalo-ssd>
+References: <20260707074839.240676-1-akkun11.open@gmail.com>
+ <20260707074839.240676-6-akkun11.open@gmail.com>
+ <amjCTJguiANLY0vj@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260719211319.982285-1-juanmanuellopezcarrillo@gmail.com> <20260719211319.982285-5-juanmanuellopezcarrillo@gmail.com>
-In-Reply-To: <20260719211319.982285-5-juanmanuellopezcarrillo@gmail.com>
-Reply-To: wens@kernel.org
-From: Chen-Yu Tsai <wens@kernel.org>
-Date: Wed, 29 Jul 2026 01:02:16 +0800
-X-Gmail-Original-Message-ID: <CAGb2v65gfLhY3qipJrcuE51CJ2WV=oNSbFDu7QP-6VFKF3v_WA@mail.gmail.com>
-X-Gm-Features: AUfX_mxwEoOQfPBDHt1Bhhdm8fNwHOj6ohky5Q9xhsCCChtpmB1_uNVjxEEhUG4
-Message-ID: <CAGb2v65gfLhY3qipJrcuE51CJ2WV=oNSbFDu7QP-6VFKF3v_WA@mail.gmail.com>
-Subject: Re: [PATCH v1 4/4] arm64: dts: allwinner: t527-orangepi-4a: add GPU
- OPP table
-To: =?UTF-8?Q?Juan_Manuel_L=C3=B3pez_Carrillo?= <juanmanuellopezcarrillo@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Brian Masney <bmasney@redhat.com>, Andre Przywara <andre.przywara@arm.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-clk@vger.kernel.org, linux-sunxi@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <amjCTJguiANLY0vj@redhat.com>
 
-On Mon, Jul 20, 2026 at 5:13=E2=80=AFAM Juan Manuel L=C3=B3pez Carrillo
-<juanmanuellopezcarrillo@gmail.com> wrote:
->
-> Add the Mali-G57 operating points from the vendor BSP universal table
-> (150/200/300/400/600 MHz) so panfrost devfreq can scale the GPU
-> instead of running at the boot clock.
->
-> All operating points use 920 mV: the BSP table specifies 900 mV for
-> every universal OPP, but on this board the GPU rail (AXP717 DCDC2,
-> vdd-gpu-sys) is a fixed 920 mV supply, so the OPP voltage states the
-> actual rail value and voltage transitions are no-ops.  The higher
-> speed-bin points of the BSP (648-792 MHz) are not included: they are
-> gated by a SID efuse bin and need pll-gpu as a live parent.
->
-> Depends on the sun55i-a523 GPU clock divider fix (the OPP rates are
-> only produced correctly with the cycle-masking divider model);
-> validated on hardware with the Mali cycle counter: 149/199/300/399/597
-> MHz measured under load, thermal-emulation throttling included.
->
-> Signed-off-by: Juan Manuel L=C3=B3pez Carrillo <juanmanuellopezcarrillo@g=
-mail.com>
-> ---
->  .../dts/allwinner/sun55i-t527-orangepi-4a.dts | 30 +++++++++++++++++++
->  1 file changed, 30 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/allwinner/sun55i-t527-orangepi-4a.dts b/=
-arch/arm64/boot/dts/allwinner/sun55i-t527-orangepi-4a.dts
-> index 055be86e5..0fd73a1bb 100644
-> --- a/arch/arm64/boot/dts/allwinner/sun55i-t527-orangepi-4a.dts
-> +++ b/arch/arm64/boot/dts/allwinner/sun55i-t527-orangepi-4a.dts
-> @@ -30,6 +30,35 @@ ext_osc32k: ext-osc32k-clk {
->                 clock-output-names =3D "ext_osc32k";
->         };
->
-> +       gpu_opp_table: opp-table-gpu {
+Hi Brian,
 
-The table should be in the .dtsi file. The OPP table reflects the
-requirements of the SoC, not the board. Any board specific adjustments
-are done later.
+On Tue, Jul 28, 2026 at 10:53:00AM -0400, Brian Masney wrote:
+> On Tue, Jul 07, 2026 at 04:48:34PM +0900, Akari Tsuyukusa wrote:
+> > clk-mt8173-apmixedsys.c and clk-mt8173-infracfg.c do not call
+> > platform_set_drvdata() during their driver probe callback,
+> > but their remove callback calls platform_get_drvdata().
+> > This results in platform_get_drvdata() returning NULL,
+> > which leads to calling kfree(NULL) in mtk_free_clk_data(NULL).
+> > This leaves clk_data unreleased, causing a memory leak.
+> > 
+> > Fix this by calling platform_set_drvdata() during probe.
+> > 
+> > Fixes: 4c02c9af3cb9 ("clk: mediatek: mt8173: Break down clock drivers and allow module build")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Akari Tsuyukusa <akkun11.open@gmail.com>
+> > ---
+> >  drivers/clk/mediatek/clk-mt8173-apmixedsys.c | 2 ++
+> >  drivers/clk/mediatek/clk-mt8173-infracfg.c   | 2 ++
+> >  2 files changed, 4 insertions(+)
+> > 
+> > diff --git a/drivers/clk/mediatek/clk-mt8173-apmixedsys.c b/drivers/clk/mediatek/clk-mt8173-apmixedsys.c
+> > index d7d416172ab3..65dc4489a09c 100644
+> > --- a/drivers/clk/mediatek/clk-mt8173-apmixedsys.c
+> > +++ b/drivers/clk/mediatek/clk-mt8173-apmixedsys.c
+> > @@ -179,6 +179,8 @@ static int clk_mt8173_apmixed_probe(struct platform_device *pdev)
+> >  	if (r)
+> >  		goto unregister_ref2usb;
+> >  
+> > +	platform_set_drvdata(pdev, clk_data);
+> > +
+> >  	return 0;
+> >  
+> >  unregister_ref2usb:
+> > diff --git a/drivers/clk/mediatek/clk-mt8173-infracfg.c b/drivers/clk/mediatek/clk-mt8173-infracfg.c
+> > index fa2d1d557e04..8b69009e1965 100644
+> > --- a/drivers/clk/mediatek/clk-mt8173-infracfg.c
+> > +++ b/drivers/clk/mediatek/clk-mt8173-infracfg.c
+> > @@ -128,6 +128,8 @@ static int clk_mt8173_infracfg_probe(struct platform_device *pdev)
+> >  	if (r)
+> >  		goto unregister_clk_hw;
+> >  
+> > +	platform_set_drvdata(pdev, clk_data);
+> > +
+> 
+> This patch doesn't compile.
+> 
+>     drivers/clk/mediatek/clk-mt8173-infracfg.c: In function ‘clk_mt8173_infracfg_probe’:
+>     drivers/clk/mediatek/clk-mt8173-infracfg.c:131:36: error: ‘clk_data’ undeclared (first use in this function); did you mean ‘clk_gate’?
 
-> +               compatible =3D "operating-points-v2";
-> +
-> +               opp-150000000 {
-> +                       opp-hz =3D /bits/ 64 <150000000>;
-> +                       opp-microvolt =3D <920000>;
+Sorry for sending you a broken patch.
+I accidentally built only with ARCH=arm and missed the build failure.
 
-Please use the <min nominal max> variant to specify a voltage range.
-The minimum and nominal voltages should be the one from the BSP table.
-You can set the maximum arbitrarily, but 920 mV should be fine to cover
-this board.
+While fixing this, I noticed that clk-mt8173-infracfg.c can be converted
+to use mtk_clk_simple_probe()/remove() instead of adding driver-specific
+drvdata handling.
 
-> +               };
-> +
-> +               opp-200000000 {
-> +                       opp-hz =3D /bits/ 64 <200000000>;
-> +                       opp-microvolt =3D <920000>;
-> +               };
-> +
-> +               opp-300000000 {
-> +                       opp-hz =3D /bits/ 64 <300000000>;
-> +                       opp-microvolt =3D <920000>;
-> +               };
-> +
-> +               opp-400000000 {
-> +                       opp-hz =3D /bits/ 64 <400000000>;
-> +                       opp-microvolt =3D <920000>;
-> +               };
-> +
-> +               opp-600000000 {
-> +                       opp-hz =3D /bits/ 64 <600000000>;
-> +                       opp-microvolt =3D <920000>;
-> +               };
-> +       };
-> +
->         leds {
->                 compatible =3D "gpio-leds";
->
-> @@ -116,6 +145,7 @@ &gmac1 {
->
->  &gpu {
->         mali-supply =3D <&reg_dcdc2>;
-> +       operating-points-v2 =3D <&gpu_opp_table>;
+The helper currently lacks cpumux support, but I have a reviewed patch
+for it:
+https://lore.kernel.org/lkml/20260304181024.738391-2-akkun11.open@gmail.com/
+(Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>)
 
-Same here. This should be in the .dtsi file. It should be fine to add it
-right now since all boards have the supply added.
+Also, adding PLL support to the helper should allow more MediaTek clock
+drivers to use the common probe/remove path:
+https://github.com/TeamYogaBlade2/linux/commit/d991a61887ab76fd83708dffe8e48192e01023d5
 
+Would it be preferable to extend mtk_clk_simple_probe()/remove() with
+cpumux and PLL support and reorganize this series around it?
+or should I keep this series focused on the current simple fixes?
 
-ChenYu
-
->         status =3D "okay";
->  };
->
-> --
-> 2.47.3
->
+Best Regards,
+Akari
