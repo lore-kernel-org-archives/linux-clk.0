@@ -1,61 +1,60 @@
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE5341D203
-	for <linux-clk@vger.kernel.org>; Tue, 28 Jul 2026 09:18:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2025541DDFC
+	for <linux-clk@vger.kernel.org>; Tue, 28 Jul 2026 09:18:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785230317; cv=none; b=qzfwwS2GztwrC6qKkG51757eG2MOd216bTyA6aO8w76gbG0B0IYL0w+9ewWYS8VhxQ4Ndqv0/1VT8ffjBnLq6gcULrYYffEKupK7xGsgvahJcTk48aQNNtsBWymOBNw8kgxhR8aadLbQDBJ43ayI5So4lzi+V4H8vhn6XzvGs5k=
+	t=1785230321; cv=none; b=Rv7uDmZ31rq2tVrEMHuv6ZPaQ+CmE6Q9/8uZqnsHEe277y+Pq2PrNa742JVgsWyV+B9B8nnw+7lI/EVioB3AZw5BThr2JRaBgii0U36+MHCEmfAs4p66OVEEJfCjyGGLUWZqntRvuAf6UzFUiAaGOs5LZuM1qHLsMsqiJ0Yqlwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785230317; c=relaxed/simple;
-	bh=yhY7mLjZfGOCMMgNPHfCV2Pu5mgEkzZsyZuduXNnUDk=;
+	s=arc-20240116; t=1785230321; c=relaxed/simple;
+	bh=9Pf42jTYd4BOZWSzwEb2fi7Fbo1AsB7wRyp4TwTJs3s=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FT4Lf5IM7BhcffT6gzZsTglP3Kgk0bqLoQBY8jhv953QrgLxUb4OneiH0zT7WLGsGPYu2CK+UW/PV7pfxjNJxdhU5b6mUO+f8+xfPV4fdI9xmxdcuQm7gVl1+j3sgTq8KqVl4VpZHycHDUH8OvoCYF+lkA5KTTgjeipM0PiY3hU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=i7v0Ew4m; arc=none smtp.client-ip=209.85.214.178
+	 MIME-Version; b=s5fa+Yj0RTeH+1DdoXxJX1dZ6WoGsDc4yUhZKYkw5HlL7hAsSx6nyphvQBH/PMtv5NyyZ7gN3g0hzOSFj7fvFoRf1DjcZVpyGfkOAtYwOAwKa3eaZbtyCkvCVr4th3n7mgIvaTG8rKwdPgAqH8x0WjdKKxzygBD0/REzNZWWLfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=XaPNyYAg; arc=none smtp.client-ip=209.85.214.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="i7v0Ew4m"
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2d01663d816so3715435ad.1
-        for <linux-clk@vger.kernel.org>; Tue, 28 Jul 2026 02:18:35 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XaPNyYAg"
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2cf6d65d8a7so53122325ad.0
+        for <linux-clk@vger.kernel.org>; Tue, 28 Jul 2026 02:18:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1785230315; x=1785835115; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1785230319; x=1785835119; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=wxBpcLwQpOW2vKL5WhYL3BFfyuddH3BZqW5fz8lS/T8=;
-        b=i7v0Ew4meJNgNnTbQUMhdPeZp2uWzz/mQ5qdVy7NtRNnYqn5qeHGjqAnkBX/ZkoQkQ
-         VronlCISSWrZIOwCVUU4MItur+fynTB3iW5WcwG73alCnI+CbAIevvebO6DbSuorFjYo
-         2vd+DVrghuoasJ1wnuLJzqrrXpX31v5ErgItk=
+        bh=AETGy+ANMs/4mEVJOXJB8nyO+6HDkmoHxo4KA1OMiIw=;
+        b=XaPNyYAgYYfBJHWuxPo2imNXxmZHKGpNIz6moCpNat+oxEUJyfnX2EenK1zkW0t4LL
+         RQlM/PgQKj+SEO7RGO+hocYUhX8KDgoQmNDrN6+7VGec2p2cFKOJ+Vl0cSYu0gFVOIx9
+         3k/E/2CfptBus0BgkM0M9YNBkP6+ppqmImNV4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785230315; x=1785835115;
+        d=1e100.net; s=20251104; t=1785230319; x=1785835119;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=wxBpcLwQpOW2vKL5WhYL3BFfyuddH3BZqW5fz8lS/T8=;
-        b=eYYAqPffqfcFx9owg3UQMmJQP825Fh2XmtcqwEub/QqZqGaf9NpQwaI5JDFeVXeiyB
-         asy4wid2I0G5FymQ9OEJUoWtlB2ud5vUY8u8SjM2RQ3w5j6y2aJu1n/dbte/vlBvsxTh
-         fwTGuUjc26nx6FG+TaR527z5hVsuVkqKDnNlayxp+XHZhJLs/p2HR7aPDFhpIVpfhGSJ
-         MguhWYisdQQAVsDurgcgdS7ez4KfKi41ZQpVjK53n4El0sDhoi7NRSdDRZyax+sYvl8T
-         IP1wML2Qp+tKaKcLHB59QOLjITgVo3BHmlTWILenBOVf9ji3zPiAKFLnN/TVvTdnJE8I
-         tovw==
-X-Forwarded-Encrypted: i=1; AHgh+RqPU6x3eXMnmQRWsUNjdRIfZWE41/aPAPC3yYmIqBEQZ6HOk0JjIOY31XGY5xgHmPSaFybqS9b9ULM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywn09rLOTKP2uEHg28c2Bgs2sdKSdPL3YbxOk+MsSXF/ZUWI8YW
-	AwL50c2/TnHGZHpgLB7ZExH/pzQukYIxANbV4ObxK42IzIl9et13GheIiM7Jop1kVhVfkLqTOqP
-	+PH9WwQ==
-X-Gm-Gg: AR+sD11dAdY/OruMdQ2vUuqT09CqQPISiOjgGDKQbqWSaUKzdhptErepjL4ie1n0IKA
-	46WUJOL1OfulFN0QZHODzGEyJJu2A/mUenOkXyBmtQ+adlwQS8rk6fCOzmUXFp+Dt8caA376VMa
-	sdq26WAGjCC6oM7HJfF8bWRCw1U4Ez6HI+EFV0KwwLjn1Li1ppUphTWAW6/CkyLP1aIprtEP00l
-	1VqXE2lexvfBrkjEXX3TrDxysRBulQYGVyu0Phyxl1r0P5Zy84NdUKn8JpV6joXmwQTzkI5rswx
-	hYgyH+IWgVd8RCiF7aDTjTzOoeYqtwkFu5FlL/QIMkrGbyGUJjCLo5+PGiA4xTljZIzzrmHy36m
-	XY5VAsFIQk7hkhJV3r1scdbDkjRRWc+BS8+NCHroObPKTRNf0WcLysgWliMvICXU0IBo7Df3KIy
-	9SimZahDhSq4MmqEnlfnWuRqESbzMqyQxN4A4lbKzFzr/U8oqmmYLfNb0R6uo=
-X-Received: by 2002:a17:903:8c6:b0:2cf:6f7f:55d8 with SMTP id d9443c01a7336-2d015cfb0e2mr18391495ad.37.1785230315142;
-        Tue, 28 Jul 2026 02:18:35 -0700 (PDT)
+        bh=AETGy+ANMs/4mEVJOXJB8nyO+6HDkmoHxo4KA1OMiIw=;
+        b=mQKHEaNOZVYjk7cf2Gf4iJz3TbvgagSJqZcLZdUJyt4/xCXlO1qAkIA0cSn/gBmdrc
+         JEtlxPJeqP/PD7Zyb8ZVOrdeGdVad01Ck07UgFY8HKMEWCJMPxtPSkiYD6DtHHUyZeZs
+         d3QALxKruNIi6Mzd4poEcpNq5YcUQ+o9YYTi4vxlR5SWJhnAxhiXglTXgMaR5V7TEzWe
+         +mwDHkh7McnCE8hf+4ZZ2gT7jZuKRi/ArNHu2+V4bvjIu3GAQ60ulADAVPD8sAbOA6kY
+         OQUSdQj1kYPKan6c7/l+bFI/kZQ+W38syjJlWL8jLjKAeT9q2RfYst9TA7j3cu68pOtL
+         Xubg==
+X-Forwarded-Encrypted: i=1; AHgh+RoSWzWpOhMyHFRkzqXzQWWMN4s7YcnWjAlHdOgnZbEN0Jb/ktBpX323CggFbNqz5h77bluM9qe3+p8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJc6xifhYyeoTtwdg8uIXMW3i0fkm7C/msgifyzPfO19paIZdJ
+	wiIAAfMQWrxDNGTfA4J87YnVlkfy+147/zXeGM5N+SItE1Inw1a94n31wcFE1ACGqA==
+X-Gm-Gg: AR+sD11VzER6HPLXMIcW0pi5Ptc1+x2i4IfU4tcA30YyFAuLz7gjzvTizGXQf92Cp4u
+	M5bHHjxS5b4br5BTYuLfB1GkY9n/mSFiADUw+4TpafaFNhZI6PulA+Hnq1WsFaEPyXwq7smbIQB
+	maFwyWBrmY7zrb9dD5G80IcLaQgJFMBHK28cRFpMqEEtsrVU5pGsIssrEPG211lLn3F8Utgm/YW
+	IOKBo8g3wyGyZ9+UlcIa0UB1LF5/vUrHnXop4IjFq1oCA++L9bPGwfMNxbmiNluh9f1mctCHHor
+	28NG7rLu5BMidCrd+zoRekRtVZ3dNsZlXtFI+iZGXVKap4AhddQcH/5CdX36j+tO/9+PF7IN47v
+	wZUblYYCuLwlCysMDTU8y0XWKOxNimUphL/I77Nzw1s0CRPr77fBPEBOW4Pdi+gqr60lV+r/PPM
+	m6PshQcKrPAvA1ga+uk/zdsGaj7HPS3KfqbPd/kv3EQ7mS84i6orYV9dnkoKq+M9bCf5Fl1Q==
+X-Received: by 2002:a17:903:19f0:b0:2c9:fc14:588f with SMTP id d9443c01a7336-2d015f024b4mr18169045ad.29.1785230319419;
+        Tue, 28 Jul 2026 02:18:39 -0700 (PDT)
 Received: from wenstp920.tpe.corp.google.com ([2a00:79e0:201d:8:c85f:b2bb:a077:d544])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2cfde81dcc1sm48616965ad.84.2026.07.28.02.18.30
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2cfde81dcc1sm48616965ad.84.2026.07.28.02.18.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Jul 2026 02:18:34 -0700 (PDT)
+        Tue, 28 Jul 2026 02:18:38 -0700 (PDT)
 From: Chen-Yu Tsai <wenst@chromium.org>
 To: Stephen Boyd <sboyd@kernel.org>,
 	Brian Masney <bmasney@redhat.com>,
@@ -78,9 +77,9 @@ Cc: Chen-Yu Tsai <wenst@chromium.org>,
 	linux-kernel@vger.kernel.org,
 	Icenowy Zheng <zhengxingda@iscas.ac.cn>,
 	YoungJoon Lee <getfeus@gmail.com>
-Subject: [PATCH v4 4/5] arm64: dts: mediatek: mt8173: Fix MFG_ASYNC power domain clock
-Date: Tue, 28 Jul 2026 17:18:02 +0800
-Message-ID: <20260728091804.382753-5-wenst@chromium.org>
+Subject: [PATCH v4 5/5] arm64: dts: mediatek: mt8173: Add GPU device nodes
+Date: Tue, 28 Jul 2026 17:18:03 +0800
+Message-ID: <20260728091804.382753-6-wenst@chromium.org>
 X-Mailer: git-send-email 2.55.0.229.g6434b31f56-goog
 In-Reply-To: <20260728091804.382753-1-wenst@chromium.org>
 References: <20260728091804.382753-1-wenst@chromium.org>
@@ -92,37 +91,65 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The MFG_ASYNC domain, which is likely associated to the whole MFG block,
-currently specifies clk26m as its domain clock. This is bogus, since the
-clock is an external crystal with no controls. Also, the MFG block has
-a independent CLK_TOP_AXI_MFG_IN_SEL clock, which according to the block
-diagram, gates access to the hardware registers. Having this one as the
-domain clock makes much more sense. This also fixes access to the MFGTOP
-registers.
+The MediaTek MT8173 comes with a PowerVR Rogue GX6250, which is part
+of the Series6XT, another variation of the Rogue family of GPUs.
 
-Change the MFG_ASYNC domain clock to CLK_TOP_AXI_MFG_IN_SEL.
+On top of the GPU is a glue layer that handles some clock and power
+signals.
 
-Fixes: 8b6562644df9 ("arm64: dts: mediatek: Add mt8173 power domain controller")
+Add device nodes for both. While there is supposed to be two different
+power domains to the GPU, MediaTek does not have any information on how
+this is integrated internally. Assign the same GPU power domain to both.
+
 Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Tested-by: Icenowy Zheng <zhengxingda@iscas.ac.cn>
 Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 ---
- arch/arm64/boot/dts/mediatek/mt8173.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/mediatek/mt8173.dtsi | 31 ++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-index 78c2ccd5be13..556e806b7787 100644
+index 556e806b7787..169ba4fd183e 100644
 --- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
 +++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-@@ -505,7 +505,7 @@ power-domain@MT8173_POWER_DOMAIN_USB {
- 				};
- 				mfg_async: power-domain@MT8173_POWER_DOMAIN_MFG_ASYNC {
- 					reg = <MT8173_POWER_DOMAIN_MFG_ASYNC>;
--					clocks = <&clk26m>;
-+					clocks = <&topckgen CLK_TOP_AXI_MFG_IN_SEL>;
- 					clock-names = "mfg";
- 					#address-cells = <1>;
- 					#size-cells = <0>;
+@@ -1002,6 +1002,37 @@ u2port1: usb-phy@11291000 {
+ 			};
+ 		};
+ 
++		gpu: gpu@13000000 {
++			compatible = "mediatek,mt8173-gpu", "img,img-gx6250",
++				     "img,img-rogue";
++			reg = <0 0x13000000 0 0x10000>;
++			interrupts = <GIC_SPI 217 IRQ_TYPE_LEVEL_LOW>;
++			clocks = <&mfgtop CLK_MFG_G3D>,
++				 <&mfgtop CLK_MFG_MEM>,
++				 <&mfgtop CLK_MFG_AXI>;
++			clock-names = "core", "mem", "sys";
++			/*
++			 * Binding and GPU core HW have two power domain
++			 * inputs, but MediaTek does not have information
++			 * on how this is done internally.
++			 */
++			power-domains = <&mfgtop>, <&mfgtop>;
++			power-domain-names = "a", "b";
++		};
++
++		mfgtop: clock-controller@13fff000 {
++			compatible = "mediatek,mt8173-mfgtop";
++			reg = <0 0x13fff000 0 0x1000>;
++			clocks = <&topckgen CLK_TOP_AXI_MFG_IN_SEL>,
++				 <&topckgen CLK_TOP_MEM_MFG_IN_SEL>,
++				 <&topckgen CLK_TOP_MFG_SEL>,
++				 <&clk26m>;
++			clock-names = "sys", "mem", "core", "clk26m";
++			power-domains = <&spm MT8173_POWER_DOMAIN_MFG>;
++			#clock-cells = <1>;
++			#power-domain-cells = <0>;
++		};
++
+ 		mmsys: syscon@14000000 {
+ 			compatible = "mediatek,mt8173-mmsys", "syscon";
+ 			reg = <0 0x14000000 0 0x1000>;
 -- 
 2.55.0.229.g6434b31f56-goog
 
