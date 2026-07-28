@@ -1,160 +1,152 @@
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A5623769F3
-	for <linux-clk@vger.kernel.org>; Tue, 28 Jul 2026 12:58:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E97D242AF95
+	for <linux-clk@vger.kernel.org>; Tue, 28 Jul 2026 13:10:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785243513; cv=none; b=YZR18FtDRIoe4/hiR5xK7acqNxL7bHi8pvWp8AUTL49NP88boO6sGwyXNOqdRmMQsWr4CHjYT+GL5DGJw5z/b1XEh5ugRrswJLWe9s13mEm1UYnW6tQhZVQSYrOVBKf7FJ3xqcU9I7DEcOAafNE3ryO4lj6Q0M+SgP0lCLQfaDE=
+	t=1785244211; cv=none; b=Z+C4XbIfGucdvQP0CgSHJafIZ5V7pSPVpUWXJtXFtwylADygVC5lH36uw19wS4xLMHGXbRCitelDj63aqJjJ+56V6GQSLXQO8d7NkN6CPYFqzYFTIszDauxQ7tVGc2TExX/tq8VFoiQuRNIPzoZ11l3L1pxp4XOFPDIGnWwgk9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785243513; c=relaxed/simple;
-	bh=OyeMR3cJ8WscoN9OGaEmLNZDYNaijSeGjPRw6L+pOcQ=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=cQXfMGD6pCxPIdztl3i+CGACkVZHJtApwV2GrqiKq7agMH/LLDraGKxJmlBHIBngAfayXbChu7xP6C8tgj+6Xtpymt6RrXzGDPoXFmO+JTnl3cdg/l1rDmK2mA3fHvf2rBFdSH2wg8S8YOuZFJcVBBQNr8AYW9ynfOcRwWF+1Ig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=jMwErqVP; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1785244211; c=relaxed/simple;
+	bh=U+tfHN98ncg01sZri9VJ7wQMLRSk81hMN/6Uv1K769k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L2ZMm9NzcJ9ng1mkS1YC7/a0B61ahkfRLhjKMWC0i3US2hDAFUHuTg/O1fTyGvRy44cZ76M07ZSLtm10qmJ7luaQaidLCduw2t38yUnB+fXRGvCrdOzaAAGHQIQFEhUR1CKNoyDRki8NO64r9ju8kY3roWGjpXUGdqhm86jV4t0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iGFsRMvp; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=p0p22kzA; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="jMwErqVP"
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20260728125829epoutp04f74c20edd3bd39695e9a974437251483~GdYNSTwE11924719247epoutp04S
-	for <linux-clk@vger.kernel.org>; Tue, 28 Jul 2026 12:58:29 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20260728125829epoutp04f74c20edd3bd39695e9a974437251483~GdYNSTwE11924719247epoutp04S
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1785243509;
-	bh=lP8NFI+OyPbuHpmHiNFGcoCPEUIZN9SjQ1oJW+fJU5w=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=jMwErqVPaYU4tg2Pdd4hiH3qtqC/7+zSM7dugheIyDvJKTz9hpPzdqga2rGaHvoE9
-	 p4a13nPZy0ZabfrCAxTvmW78fWxVfrPzpzX+4PZH4B8ob6O0NVYPl0WUDFSHDktWAw
-	 jr/1ei3zABv0wfGVrpKxrqivB0adp89K203X9544=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
-	20260728125828epcas5p4edd38fced31f7d66d97b9b54ba5e1b47~GdYM0tjCt2003420034epcas5p4b;
-	Tue, 28 Jul 2026 12:58:28 +0000 (GMT)
-Received: from epcas5p1.samsung.com (unknown [182.195.38.88]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4h8b9v4mB8z6B9m5; Tue, 28 Jul
-	2026 12:58:27 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20260728125827epcas5p48c135e631ddefc9fe2b2252ccebc0ab1~GdYLbRdWe2003420034epcas5p4O;
-	Tue, 28 Jul 2026 12:58:27 +0000 (GMT)
-Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20260728125824epsmtip1a9f6f9957fcd7f540921087e09b53790~GdYJAkdYa0610306103epsmtip1P;
-	Tue, 28 Jul 2026 12:58:24 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'raghav.s'"
-	<raghav.s@samsung.com>, <s.nawrocki@samsung.com>, <cw00.choi@samsung.com>,
-	<peter.griffin@linaro.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-	<bmasney@redhat.com>, <robh@kernel.org>, <conor+dt@kernel.org>
-Cc: <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <hajun.sung@samsung.com>,
-	<is.gandhi@samsung.com>, <ts.amit@samsung.com>, <pokala.reddy@samsung.com>
-In-Reply-To: <0c948180-3112-4e92-b752-0015c55fb26c@kernel.org>
-Subject: RE: [PATCH 04/13] arm64: dts: exynos8855: add cmu_top & cmu_peric
- clock DT nodes
-Date: Tue, 28 Jul 2026 18:28:23 +0530
-Message-ID: <079301dd1e90$c7d14ed0$5773ec70$@samsung.com>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iGFsRMvp";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="p0p22kzA"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1785244208;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vxbqXLAunmT2qGsW55SMRVrOQZR4H5ggveSMTVA7VUM=;
+	b=iGFsRMvpJZAlooHC1kvifPbLYQV/8DOBqDFH5Iuu8EaCfl4aAiZIl04+nV2Dizo1DakxZo
+	C7xr3o+6A09+kFwEId/WCxc7Bj5Brdp75+PuDwzZAulA76QM9SgzN3URW65VKjfP0BgnI0
+	Z/CIlCldvJe2xzFt3K550RjvSrp2tuc=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-502-WprB-DI2Poa03ObgV643lQ-1; Tue, 28 Jul 2026 09:10:07 -0400
+X-MC-Unique: WprB-DI2Poa03ObgV643lQ-1
+X-Mimecast-MFC-AGG-ID: WprB-DI2Poa03ObgV643lQ_1785244207
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-92e55721a8cso460445385a.1
+        for <linux-clk@vger.kernel.org>; Tue, 28 Jul 2026 06:10:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1785244207; x=1785849007; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:content-type
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=vxbqXLAunmT2qGsW55SMRVrOQZR4H5ggveSMTVA7VUM=;
+        b=p0p22kzArOn2T8sq6ks/AGowrPuUBT7HpW2XNFLjdvA5si2g0Wq8HJhmYsNIgOWLGS
+         FRzVg5AbanEFCpcwnP3AjOCvpMQTzPyOEJRjPbH/rsIegZegtAgIZdzYTN0D94hdCoqf
+         5Ou3S5v1B5S5HEW9CfqXZf5fm04x+G2ePGoeXHSTH7PJIBFrxu6yHbHv3bn1z050Hlor
+         eEYGzQ8BSAXgoIuyYiakK4DRqq7KAEYkoDNc+ZNbhcBPHb2D+US+ljjfOzXA8lW6MU6V
+         3zeyJLe6N1cYu3YEia9nBr7k/ePbf+b4YvCehNsFBZnzXbtzTRYRn4uf9126EIszJkob
+         wmqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785244207; x=1785849007;
+        h=user-agent:in-reply-to:content-disposition:content-type
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=vxbqXLAunmT2qGsW55SMRVrOQZR4H5ggveSMTVA7VUM=;
+        b=Xqfv+mGGPviYa9NbtkYlbnrMAk4qh0WPJRBU3/Cblvsl3/AoEoJxkr3lIwVv6FH8KS
+         2ct/4n+vEX87UXZyQcCba2nFJ2PhZPRdqjVYWrNhZSBCwVYBLCBXKAf9zztu6mRDdQF6
+         IygUQ93aVhskEfGqfpqyegkJBaqNJkjEg8W5qs6eCbPJFFae91ClpABIE1NSPoIsinYp
+         fB+DO80ZeZPrHy1Ju5PBBwPRx1TthWnr4lsu5rVG96srgz9VMl2Pi0TYvxQFkY8u0YYt
+         gQR70JMAP1mducjH2njJFahSnxRrpqqPdBk7+dAAMcUA1QwbCrp6IZARLbPqYh/iGM5B
+         oBmA==
+X-Forwarded-Encrypted: i=1; AHgh+Rqcb2OVXAK+eYK768zo5gKBrd7PSmyUBmmlfrGdlP3ej0DHA8r3rMYUv0SshKWZJPUAcioHh7Pmmq0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjkOfRcjajcxLHy5WN/pjPGnR5/aKXEmrInFEUzfnrOiZdhTDV
+	lF1hZrwIfU5pIka8GvVUwn42KNZ4BVLbEC2VBDTQfy6ZLw7dqx5N23v5+l6EW/EJOvcdw9mZSI6
+	9H/eZJeyFkOl2b4Yk01Uxd56aYI7BqwmM2tilBu/UJDLLtiLdx/Qm5HlCB1IBKA==
+X-Gm-Gg: AR+sD10/Fi/xF1aGdLTsNSpAfEMBYGRoLf53safLVEQLtukfQHiTmjZiVyANUQjfR0m
+	QocZ21G3HxWLkZDMhuEd5YADrx7hB5UoYDZT1e/Ix3ijoDqYpURI4jVc+hmWmu9XyFdSZFAUTRT
+	5WP9/XX/fFlaRntz6vCgqGTlvyTm9SnSO/y3JEJucjxzIqDJGnJ+6iKaQVoYG47LYjoczX/TG07
+	SxAr/GPgPKLGErpMuEesmVrZ8E6rDpx90nSZwjFzqBnoKpJbsNC1CjM8/1A1i2A8lrGBOOJIb1e
+	caW52ZqO/v8R5+Tzf+eRGpd7P6UBNRb5IBQbehvgPonTgWKLVnpmm9YCZ4V3SRTh1XK6QSCO8c4
+	kS33Twa+u3ocCT85bSfrW5xTypfvpKm1H8Ik=
+X-Received: by 2002:a05:620a:4446:b0:92e:7a3c:add7 with SMTP id af79cd13be357-933025a4606mr215983885a.27.1785244206146;
+        Tue, 28 Jul 2026 06:10:06 -0700 (PDT)
+X-Received: by 2002:a05:620a:4446:b0:92e:7a3c:add7 with SMTP id af79cd13be357-933025a4606mr215965785a.27.1785244204887;
+        Tue, 28 Jul 2026 06:10:04 -0700 (PDT)
+Received: from redhat.com (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-932de635f6csm831797885a.26.2026.07.28.06.10.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Jul 2026 06:10:03 -0700 (PDT)
+Date: Tue, 28 Jul 2026 09:10:01 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Stephen Boyd <sboyd@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Alessio Belle <alessio.belle@imgtec.com>,
+	Luigi Santivetti <luigi.santivetti@imgtec.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	imagination@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Icenowy Zheng <zhengxingda@iscas.ac.cn>,
+	YoungJoon Lee <getfeus@gmail.com>
+Subject: Re: [PATCH v4 0/5] powervr: MT8173 GPU support
+Message-ID: <amiqKRkFItYwD6oL@redhat.com>
+References: <20260728091804.382753-1-wenst@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQIRARWKMB8/axP+0I5R2y9G0OYjygMlHcTpAvLC774CITPxwwH7jt1WAdEvQ0+1uu02gA==
-Content-Language: en-us
-X-CMS-MailID: 20260728125827epcas5p48c135e631ddefc9fe2b2252ccebc0ab1
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-543,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20260728115256epcas5p38cbcfe68218d08301d237705388e6e62
-References: <20260728121111.2077860-1-raghav.s@samsung.com>
-	<CGME20260728115256epcas5p38cbcfe68218d08301d237705388e6e62@epcas5p3.samsung.com>
-	<20260728121111.2077860-5-raghav.s@samsung.com>
-	<8582d4f9-1a78-4f47-bab9-c52393dffbd1@kernel.org>
-	<079201dd1e8b$eca22680$c5e67380$@samsung.com>
-	<0c948180-3112-4e92-b752-0015c55fb26c@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260728091804.382753-1-wenst@chromium.org>
+User-Agent: Mutt/2.4.0 (2026-06-19)
 
-Hi Krzysztof
+Hi Chen-Yu,
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzk=40kernel.org>
-> Sent: Tuesday, July 28, 2026 5:55 PM
-> To: Alim Akhtar <alim.akhtar=40samsung.com>; 'raghav.s'
-> <raghav.s=40samsung.com>; s.nawrocki=40samsung.com;
-> cw00.choi=40samsung.com; peter.griffin=40linaro.org;
-> mturquette=40baylibre.com; sboyd=40kernel.org; bmasney=40redhat.com;
-> robh=40kernel.org; conor+dt=40kernel.org
-> Cc: linux-samsung-soc=40vger.kernel.org; linux-clk=40vger.kernel.org;
-> devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; lin=
-ux-
-> kernel=40vger.kernel.org; hajun.sung=40samsung.com;
-> is.gandhi=40samsung.com; ts.amit=40samsung.com;
-> pokala.reddy=40samsung.com
-> Subject: Re: =5BPATCH 04/13=5D arm64: dts: exynos8855: add cmu_top &
-> cmu_peric clock DT nodes
->=20
-> On 28/07/2026 14:23, Alim Akhtar wrote:
-> > Hi Krzysztof,
-> >
-> >> -----Original Message-----
-> >> From: Krzysztof Kozlowski <krzk=40kernel.org>
-> >> Sent: Tuesday, July 28, 2026 5:30 PM
-> >> To: raghav.s <raghav.s=40samsung.com>; s.nawrocki=40samsung.com;
-> >> cw00.choi=40samsung.com; peter.griffin=40linaro.org;
-> >> alim.akhtar=40samsung.com; mturquette=40baylibre.com;
-> sboyd=40kernel.org;
-> >> bmasney=40redhat.com; robh=40kernel.org; conor+dt=40kernel.org
-> >> Cc: linux-samsung-soc=40vger.kernel.org; linux-clk=40vger.kernel.org;
-> >> devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org;
-> >> linux- kernel=40vger.kernel.org; hajun.sung=40samsung.com;
-> >> is.gandhi=40samsung.com; ts.amit=40samsung.com;
-> pokala.reddy=40samsung.com
-> >> Subject: Re: =5BPATCH 04/13=5D arm64: dts: exynos8855: add cmu_top &
-> >> cmu_peric clock DT nodes
-> >>
-> >> On 28/07/2026 14:11, raghav.s wrote:
-> >>> Add required dt node for cmu_top & cmu_peric block
-> >>>
-> >>> Signed-off-by: raghav.s <raghav.s=40samsung.com>
-> >>> ---
-> >>>  arch/arm64/boot/dts/exynos/exynos8855.dtsi =7C 24
-> >>> ++++++++++++++++++++++
-> >>>  1 file changed, 24 insertions(+)
-> >>
-> >> Please organize your patches in reasonable order. DTS is never in the
-> >> middle, see submitting patches (both documents) and maintainer-soc
-> profile.
-> >>
-> > The thought was to add clks block wise and hence we see DTS coming in
-> between but for the other blocks.
-> > e.g. patch-2 and 3 adds binding and driver for TOP and PERIC and this p=
-atch-
-> 4 adds DTS.
-> > And patch-5 and 6 adds binding and driver for PERIS and patch-7 adds DT=
-S
-> and so on.
-> >
-> > Cover-letter should have explained this.
-> >
-> > Are you suggesting to re-order all the binding first followed by all bl=
-ocks
-> driver and then add a single DTS for all clock controller?
-> >
-> > Does current approach helps in review?
->=20
-> If you ask this, you did not read the docs.
->=20
-I think I just explain the reason why DTS came in-between for each block.
-Probably this series should have been sent in multiple chunks, if not, then=
- as you pointed and docs says DTS to be placed at the end of driver changes=
-. Agreed.=20
-=20
-> Best regards,
-> Krzysztof
+On Tue, Jul 28, 2026 at 05:17:58PM +0800, Chen-Yu Tsai wrote:
+> Hi everyone,
+> 
+> This is v4 of my MT8173 PowerVR GPU support series.
+> 
+> This time around Mesa was ready for basic testing, using both vulkanmark
+> and glmark2-es2-drm (with Zink). Details below.
+> 
+> Changes since v3 (all in the clk driver patch):
+> - Changed pm_runtime_put() to pm_runtime_put_sync()
+> - Added missing of_node_put() in remove function
+> 
+> Changes since v2 (all in the clk driver patch):
+> - Made COMMON_CLK_MT8173_MFGTOP depend on PM
+>   - Needed since the driver implements PM domains using the generic PM
+>     domain library, which also depends on PM
+>   - Fixes build breakage (kernel test robot)
+> - Fixed "RST_DELAY_CNT" name (Brian)
+> - Dropped unused mfg_desc (Brian)
+> - Added check of clk_prepare_enable()'s return value in
+>   clk_mt8173_mfgtop_power_on() (Brian)
+> - Saved error value for return in IS_ERR(data->clk_26m) branch
+>   (Dan Carpenter / kernel test robot w/ smatch)
+> 
+> Changes since v1:
+> - Adapted to changed DT bindings
+> - Dropped driver change
+> - Use same power domain for "a" and "b" GPU power domains
+> 
+> 
+> This series enables the PowerVR GPU found in the MT8173 SoC, found in
+> some Chromebooks.
+
+I'm making a pull for Stephen for the clk changes. Should patches 1,2,4
+go through the clk tree? Patches 3,5 go through the DRM tree?
+
+Brian
 
