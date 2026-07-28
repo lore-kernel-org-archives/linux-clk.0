@@ -1,25 +1,25 @@
 Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14F5C30F547;
-	Tue, 28 Jul 2026 03:08:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFB813128BE;
+	Tue, 28 Jul 2026 03:08:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785208130; cv=none; b=grd6XfKRT/vlYay2AnITp6NYfZLrOn4nHKTg4iXW9PPKmsMJ3csufqz1T8rGckpYDHcpdaDm/EeuIeNWTqwTCO+l1zr2a41pNjG3siQuzEyWjW+BzIQAiDTkHXJJZOgffIwKk3SLVRAZoMsXrILwzwv758POAs2bA6Ai0ySA7gw=
+	t=1785208133; cv=none; b=i99nlmYuB/zgYFIK1UvCRruCxxMuVBnPlivQSrDOeDNdxSwlHY9uAuWxvXm2pggBjptBFFUgH8gGtDp9xVawJoNqwtY1BBgWsat9gdIp9xmhJbLVyRPmXp4Od65h8SOy4/B4wi/T5+zlia5DzsGzyulylVleHpodCNK4S2Oc8iY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785208130; c=relaxed/simple;
-	bh=+Ec4bam2IfjUpUauffmeq2kBL0/okP1PIIz3rCrG3ec=;
+	s=arc-20240116; t=1785208133; c=relaxed/simple;
+	bh=0jLOJTW6/3ZrQ4QMWNF7wKVpDhFVPbcD9/bMN5jynB4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IaWmtoKePm8AIsEAySjl83nEMmfXs4FHGkoMWHQBsS1r6UVe8feX/TRc68DmcexYq6ZMpU/3Rl58d98HmC0V4ekDRRZQQfMD4I+MmvK4LR7IV1ZflfH/JnxYl754nB9U9nkgOEhZhDgpzoHL9tv2o46X618MDi87IBPUQWFyQ1Y=
+	 MIME-Version:Content-Type; b=gzlXZdVtfBb4kpjVTAfyTkUJn6zr3Yhe55r+arBYZ+fQbsgregBRaiPZg1OushL/ivl2NpApbE4KZa5wJu5UuEXqOoBLWUTt/JDlOuk5TkdLFGkossUFPUs93D2Fn9Pj+xDnLesRmmv/EFgukNw/jqQPPifNkxg4YBOBb1gN6GY=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: a272457e8a3111f1aa26b74ffac11d73-20260728
+X-UUID: a3ec672c8a3111f1aa26b74ffac11d73-20260728
 X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.12,REQID:a1dd2ebd-d5a0-45f0-b5cd-c9edc4518a7c,IP:0,U
+X-CID-O-INFO: VERSION:1.3.12,REQID:d755d011-c631-4541-afb5-3ba07bb5851c,IP:0,U
 	RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
 	:release,TS:-5
-X-CID-META: VersionHash:e7bac3a,CLOUDID:2c8ca98b53f1b9014334a41f5d1472d2,BulkI
+X-CID-META: VersionHash:e7bac3a,CLOUDID:7459a9f6fd1bf47d80d90b332cc50c1d,BulkI
 	D:nil,BulkQuantity:0,Recheck:0,SF:81|82|102|865|898,TC:nil,Content:0|15|50
 	,EDM:-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,O
 	SA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
@@ -27,18 +27,18 @@ X-CID-BVR: 2,SSN|SDN
 X-CID-BAS: 2,SSN|SDN,0,_
 X-CID-FACTOR: TF_CID_SPAM_SNR
 X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: a272457e8a3111f1aa26b74ffac11d73-20260728
+X-UUID: a3ec672c8a3111f1aa26b74ffac11d73-20260728
 X-User: liuxixin@kylinos.cn
 Received: from [127.0.1.1] [(10.44.16.150)] by mailgw.kylinos.cn
 	(envelope-from <liuxixin@kylinos.cn>)
 	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 1320906338; Tue, 28 Jul 2026 11:08:40 +0800
+	with ESMTP id 1336185155; Tue, 28 Jul 2026 11:08:43 +0800
 From: Xixin Liu <liuxixin@kylinos.cn>
 To: arm-scmi@vger.kernel.org
 Cc: sudeep.holla@arm.com, cristian.marussi@arm.com, mturquette@baylibre.com, sboyd@kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, liuxixin@kylinos.cn
-Subject: [PATCH v2 1/5] firmware: arm_scpi: fix device_node leak in scpi_dev_domain_id
+Subject: [PATCH v2 2/5] firmware: arm_scpi: reject DVFS OPP count above MAX_DVFS_OPPS
 Date: Tue, 28 Jul 2026 08:50:00 +0800
-Message-ID: <84fdd490495b.v2.1785200642.git.liuxixin@kylinos.cn>
+Message-ID: <022802f0b38f.v2.1785200642.git.liuxixin@kylinos.cn>
 In-Reply-To: <cover.v2.1785200642.git.liuxixin@kylinos.cn>
 References: <cover.1785118770.git.liuxixin@kylinos.cn> <cover.v2.1785200642.git.liuxixin@kylinos.cn>
 Precedence: bulk
@@ -51,40 +51,35 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Mailer: patches/scripts/send-local.py
 
-of_parse_phandle_with_args() takes a reference on clkspec.np that must be
-released with of_node_put(). scpi_dev_domain_id() returned clkspec.args[0]
-without dropping that reference, so every domain lookup leaked a device
-node. Paths such as scpi_dvfs_info() / cpufreq init call this per CPU, so
-the leak accumulates over time.
+scpi_dvfs_get_info() already rejected a zero opp_count, but still trusted
+any larger value from the SCP firmware. The shared-memory reply only holds
+MAX_DVFS_OPPS entries in buf.opps[]; a bigger count over-reads that array
+and then sizes the allocated OPP table incorrectly (garbage OPPs / OOB).
+The missing upper bound dates back to the original SCPI DVFS support.
 
-Save the domain id, of_node_put(clkspec.np), then return the saved value.
+Reject zero and out-of-range counts in one check and return -EINVAL.
 
+Fixes: 8cb7cf56c9fe ("firmware: add support for ARM System Control and Power Interface(SCPI) protocol")
 Signed-off-by: Xixin Liu <liuxixin@kylinos.cn>
 ---
- drivers/firmware/arm_scpi.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/firmware/arm_scpi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/firmware/arm_scpi.c b/drivers/firmware/arm_scpi.c
-index 2acad5fa5a28..43d6d9bbc7a9 100644
+index 43d6d9bbc7a9..68a730d22037 100644
 --- a/drivers/firmware/arm_scpi.c
 +++ b/drivers/firmware/arm_scpi.c
-@@ -661,12 +661,15 @@ static struct scpi_dvfs_info *scpi_dvfs_get_info(u8 domain)
- static int scpi_dev_domain_id(struct device *dev)
- {
- 	struct of_phandle_args clkspec;
-+	int domain;
+@@ -631,8 +631,8 @@ static struct scpi_dvfs_info *scpi_dvfs_get_info(u8 domain)
+ 	if (ret)
+ 		return ERR_PTR(ret);
  
- 	if (of_parse_phandle_with_args(dev->of_node, "clocks", "#clock-cells",
- 				       0, &clkspec))
- 		return -EINVAL;
+-	if (!buf.opp_count)
+-		return ERR_PTR(-ENOENT);
++	if (!buf.opp_count || buf.opp_count > MAX_DVFS_OPPS)
++		return ERR_PTR(-EINVAL);
  
--	return clkspec.args[0];
-+	domain = clkspec.args[0];
-+	of_node_put(clkspec.np);
-+	return domain;
- }
- 
- static struct scpi_dvfs_info *scpi_dvfs_info(struct device *dev)
+ 	info = kmalloc_obj(*info);
+ 	if (!info)
 -- 
 2.53.0
 
