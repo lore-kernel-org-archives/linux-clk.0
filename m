@@ -1,96 +1,133 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3903A2F3621
-	for <linux-clk@vger.kernel.org>; Wed, 29 Jul 2026 12:16:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3C2B42668C
+	for <linux-clk@vger.kernel.org>; Wed, 29 Jul 2026 12:36:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785327412; cv=none; b=dkJ4P0o1j35GIn7Ipsbj5MMtrUJeDPG6V286cVasok0H54f6yamVMA13OivLWqoLcO7DhBlOc3mUbiDfI6nSaISA4EFQQ3g11jcE70ExL9zmA1XZkfoSif0dg2TxOM11U8RYoDQMB5eK7FTqRSMZXWQeE9EpeCNCBDeJ71YNp/o=
+	t=1785328602; cv=none; b=ORcVC3C6TYEB0iMeL79IlsEKcry6IZ4JrPxZjeFYJzL3vXvxX6Nykh6swLaYbtI7ZxgvObRwRxusUcCrP5BMxyrcfHoUU/tUGF2/gVG94QeHvuBPiay9g3/xG2SKL1mbFdQhVErnMAUSO4mgkYDL01Tk2Imsr7rZVe5ApTNiMyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785327412; c=relaxed/simple;
-	bh=ylp76YU0XtE52owKtGGq4bgV6Fwbo7msca70oULOJxQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rf2/773RpU01dQDuA5Skrpz7TylkH/wLBX455FG0RLikQ//9xP8EmcH+WJ1t5fVe1V6pOPIaBHMGCXfo09mnTYc9B8hNR6yP8520OYDHYi9Rgwu3BH72ZyOllKzLRQhJiMZoBoKkDG5V7bWR5KZMWqsjGq/NIWnUF8P1dZxxsl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=olZiCPOd; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785328602; c=relaxed/simple;
+	bh=xGyW1zCh+rLKiJ62hDLL4FkHUX+Lqecc47aUXSHCSkw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oF/V0N3SD1qvx9razwiTICikAGtSqhXl8I3cmR+DlvwsPPD4eDDkhKR8BxpAMYegO7ZnLhdrw+74XOMyq8/vz0oHv26JUBWTbQ3Dr1a4rw1MdzPy61HE0aJlWVvZedo/GYbGkhfTpZBn9A39cdDl76J5cgpQxaQchF2i28ylq6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=A4n5zuzF; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="olZiCPOd"
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 26C961F000E9;
-	Wed, 29 Jul 2026 12:16:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785327410;
-	bh=LVtqqfOciutVm1DpWKAabmhkfxRdHKSaNxSX1waZZ+0=;
-	h=From:To:Cc:Subject:Date;
-	b=olZiCPOd9IhSisi8uQz/SS5/26SKodQpImynjaYwlwZJr9Q7tD8h81nCfH7JmKqYL
-	 Kkakanhe6MQgIlNGjYqygB7aYpWr6LDLnNIRTKhQX33qlZRUkTIOTmCXkmfKb3CNAZ
-	 0ldAfD46CdI1pIaIHYX9r2NQrhVR+PmUUPZpzhDDnKIbXuUvWdsqDMRvBiVFstJ2yd
-	 XpppZJPqASR+H2my7+qCHcLBiQLMLwDgd57+8PajNSQZj2Xk6ux0dgQoJzRzkBLhoX
-	 4EBs7XQOHVKhFiX+zr2h+xaPm+PsWTqYGdnAsK3zvlECkXn0ne6s1Y8r1CFa8ZHUuh
-	 Pc1Gm3dHV8piw==
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney@redhat.com>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: linux-clk@vger.kernel.org
-Subject: [PATCH] Drop Michael Turquette's clk maintainer entry
-Date: Wed, 29 Jul 2026 14:16:40 +0200
-Message-ID: <20260729121640.3864006-2-ukleinek@kernel.org>
-X-Mailer: git-send-email 2.55.0.11.g153666a7d9bb
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="A4n5zuzF"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4954a2e73a9so5711305e9.3
+        for <linux-clk@vger.kernel.org>; Wed, 29 Jul 2026 05:36:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1785328593; x=1785933393; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=xGyW1zCh+rLKiJ62hDLL4FkHUX+Lqecc47aUXSHCSkw=;
+        b=A4n5zuzFbg8PFoMKqr5PFshAMUCFo2Uhn7yQwZ8DAvIL1WoRTB/Zv3fBc9Ej4oE2vK
+         dWLFer2OI3KU9FcIIo9OkX9aXO40PslAht3sbV+JbU+qzDJYvvcvlGwzVzR0iRAB6y6K
+         U7+r1xU+/Z3NlJQ18RXh8oXuQl9qUp90ySjtEJYxEDC1gQYWFWVUPO7fuAKf+JZIw7kt
+         gKZiATxufOSREOfVkW0q7qb69yayXl9tmEqEx1pLwKXug/OS9hladd2/i8cdNlH6L1S3
+         aLueubsCNaUFHJ3W9gkrlEaRNaN1sE9XwnjENsL7d2lZme3usBWwYzdtMOn2ayYcv9G/
+         sFTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785328593; x=1785933393;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=xGyW1zCh+rLKiJ62hDLL4FkHUX+Lqecc47aUXSHCSkw=;
+        b=SEknWmyQRmWrNa1qRBJBsqSA26gb34UovE/+ru+jnGWZFIg+YWiNDVA1AEhe82UVRE
+         Hqa2l3bIUBq3MtqcbLR3JQqb+OAO5eMhSOv2AGWMML2mwEEh/vvmWQhfWZFv7b9bAy6Q
+         DY5V8u7vK46SJdwCilnU0sfSQWD0xD6ZM3eVWGDAyMgy0NhHTX0JP0phGS+W9qWexeQi
+         PeWdgbbWs2HzhwCK70LJpEM7F+XvQto2r4AdGAuRmFis1/lrxQIYLC6fRrOkP691BPtl
+         Z0BhWvyJoLcRejtRlRoVsYfP/11OP2Vpuf9ixHf7dleNyzKAJObgV5qurEpY8zBNpEK5
+         PG4A==
+X-Forwarded-Encrypted: i=1; AHgh+RqdmSc0Qbaza9Stlur6ExRVQcuCpB7hI3UeWz7G9La+UoKprXxGILF/usxyOiZKUKzvK69bZ2cvsP0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw25rqLxbenhwylnS8MwkIb4DH+GH6YvXZ05HU6AQD08IYHAUOM
+	P8GTZYkK91LGxeMZINU2Qm/LnLzzzyn0ncxofxvyemfsMmTM/9z/f52bjnFeBUiNg8g=
+X-Gm-Gg: AR+sD11aPoqROu6BmaTbs/HxU799Bm5AZeBmL1O4uWQjj//Q3ET6RLEPUPuMimdlGxD
+	XeDWYPXZodw/Cl376XCxBEQ/IEUPoL8a4CkEMorRJCIwEiQnhgbdsxK3xQSBqap5oVgXLiIy+oD
+	t5+ws2Nz/Dl0AvtlTmcBdUMr79Zt3eW+9DGdvYs5lwg8EJ/Tz22brppqc93i0JDrH8dLUIMwBDB
+	tvoyB4azqPXfsgvEq/usUso+mfuAivBiEX5ryvpGoUt3/lIbWKqeHa7MOR1MfWaHFl1gaNI1XT6
+	EdjuxDvDINT5IHAu8CEikymbkVRxBeTm2EpxSPHSku+XVhCfs9SF1KX57UW+o3r3j2HvlC06s9R
+	IytW84XDy8+yhCdkqNAi9MT76Duwu/kWHGll20kOmloibbJvTB4NG1E9eRDNGdRXl6pJ1CEOpfN
+	GMRGazIo5vQMeBUUNwQuL35RgFuX2piF4JKayP21UY92Dc/6hiAj0Ff7T8C6SZU1mwOMWjMIlLP
+	7+UDKnGa+BX9/H+tU6YEi3ntSp6sXgH8PT7MwZQsYr/VlN1NmU=
+X-Received: by 2002:a05:600c:3153:b0:495:573e:1c54 with SMTP id 5b1f17b1804b1-496c6428a29mr80996735e9.9.1785328593413;
+        Wed, 29 Jul 2026 05:36:33 -0700 (PDT)
+Received: from localhost (p200300f65f47db0401da7fd03a16a046.dip0.t-ipconnect.de. [2003:f6:5f47:db04:1da:7fd0:3a16:a046])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-496c45b1c76sm146982725e9.6.2026.07.29.05.36.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Jul 2026 05:36:32 -0700 (PDT)
+Date: Wed, 29 Jul 2026 14:36:31 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: codykang.hk@gmail.com
+Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@kernel.org>, 
+	Vinod Koul <vkoul@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Haylen Chu <heylenay@4d2.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Paul Walmsley <pjw@kernel.org>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Alexandre Ghiti <alex@ghiti.fr>, dri-devel@lists.freedesktop.org, linux-riscv@lists.infradead.org, 
+	devicetree@vger.kernel.org, spacemit@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-phy@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH RESEND 05/17] phy: spacemit: add Innosilicon DP TX PHY
+ driver
+Message-ID: <amnzTxDYtSBojHdY@monoceros>
+References: <20260725-k3-display-v1-0-6de34d80e86c@gmail.com>
+ <20260725-k3-display-v1-5-6de34d80e86c@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1302; i=ukleinek@kernel.org; h=from:subject; bh=ylp76YU0XtE52owKtGGq4bgV6Fwbo7msca70oULOJxQ=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBqae8p8BPqiLBowFx4VHvgB78qKZK4fYudhdKfd sZwllmgAd+JATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCamnvKQAKCRCPgPtYfRL+ TgOTCACTycy1WSEeGkgQsVpz29HN3086sdPVgPSAV9UZ02Y+db6DN039cGp2btmifOUBm/yXujN O91LSlAV3WXpMJhzBBQtn6EES/8xMo/4C4v9M3Sp9TphH1EJx01AIrhztWcgEBtvqU7jKXUy/ov B65HHR/e03iFMFAeySQULBjyuqBZIwAZnKVe2OZH4glo5up1qk/E9hHwH/zTypc4DBj6Y7/6kNb kFB0QJAEpI8TwMC7RhAKEhzK7Wyc8nsX3H1HSQiuwQCqZOL8l7/tyg7XzCfCpv4VfPprgGhjEmH XaBEFcoFz6Aa8b/I1E8mWmpZQZecqJotrl2EsoejuYlHhLIG
-X-Developer-Key: i=ukleinek@kernel.org; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="db2zigiccrbrx7pn"
+Content-Disposition: inline
+In-Reply-To: <20260725-k3-display-v1-5-6de34d80e86c@gmail.com>
 
-Mike wasn't publically active for the clk subsystem since years. Stop
-pretending that there is a maintainer team caring for clk.
 
-Signed-off-by: Uwe Kleine-König <ukleinek@kernel.org>
----
+--db2zigiccrbrx7pn
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Subject: Re: [PATCH RESEND 05/17] phy: spacemit: add Innosilicon DP TX PHY
+ driver
+MIME-Version: 1.0
+
 Hello,
 
-I recently[1] wondered about the state of clk maintenance. I think the
-part of my doubts implemented here is not disputed.
+On Sat, Jul 25, 2026 at 12:51:14AM -0400, Cody Kang via B4 Relay wrote:
+> +#include <linux/mod_devicetable.h>
+> [...]
+> +#include <linux/platform_device.h>
+
+<linux/platform_device.h> already makes sure that of_device_id
+is available and <linux/mod_devicetable.h> will go away soon.
+
+So please drop the latter #include.
 
 Best regards
 Uwe
 
- CREDITS     | 4 ++++
- MAINTAINERS | 1 -
- 2 files changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/CREDITS b/CREDITS
-index 0806ab21c1d3..acab439013cf 100644
---- a/CREDITS
-+++ b/CREDITS
-@@ -4107,6 +4107,10 @@ S: 4226 Landgreen Street
- S: Rockville, Maryland 20853
- S: USA
- 
-+N: Michael Turquette
-+E: mturquette@baylibre.com
-+D: common clk maintenance
-+
- N: Stephen Tweedie
- E: sct@redhat.com
- P: 1024/E7A417AD E2 FE A4 20 34 EC ED FC 7D 7E 67 8D E0 31 D1 69
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e95fc6f2ddc6..686431042bfa 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6484,7 +6484,6 @@ F:	include/linux/comedi/
- F:	include/uapi/linux/comedi.h
- 
- COMMON CLK FRAMEWORK
--M:	Michael Turquette <mturquette@baylibre.com>
- M:	Stephen Boyd <sboyd@kernel.org>
- R:	Brian Masney <bmasney@redhat.com>
- L:	linux-clk@vger.kernel.org
+--db2zigiccrbrx7pn
+Content-Type: application/pgp-signature; name="signature.asc"
 
-base-commit: 3652b49adac266a3d27cb41cdfdb7d8790fc3633
--- 
-2.55.0.11.g153666a7d9bb
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmpp88sACgkQj4D7WH0S
+/k6T8gf8DMOwEtZaYC8vvvJqKWATzitxIn2z2YqgDVlNFzaZEYTG61pFLh/KTds+
+sl2cVZmTi8idTg/Of+KXRfO2hxAkSW3C5UbNd60pd0VY+mQSfW0RGGroYO+tusRx
+A6NwUHW15ZrpIuAsbkKepIhd0YmoiVA9SimCLHX85RxW8RuuPoKWsaur8Jv/j+Pz
+dp+m3Lfaj8gG8J21Rdy8YTgKJ8GMpjOVpViSpsqQIROd5gqkOUepPpTGc8Cc+Pr9
+haGqNLM86F9sZOA5aL8HEpYGHDo3Q6hGRmDiUm3CBaNwalgdp6qGUEKWGBjRoi/4
+tgGD4NlIoAze3OTkKRb3ysqj3/8Xng==
+=c0aq
+-----END PGP SIGNATURE-----
+
+--db2zigiccrbrx7pn--
