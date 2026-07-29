@@ -1,134 +1,64 @@
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 624023859EB
-	for <linux-clk@vger.kernel.org>; Wed, 29 Jul 2026 05:12:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 291D339FCBF;
+	Wed, 29 Jul 2026 06:25:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785301982; cv=none; b=sd3mtk6uKvyw4WLiNIQ762ExPETu/OOTfrvjHk9kpkaedn+VULYg4nkJy2HSh1Yb+a4ULMaUDDwZotU8djuVmLVQyYFmwntZcdhcshg6Db342qDLgrBsGlqm8Uzzyoyb+yE8iqrI/nw6kABMgGCEQS0N2xr/BT7ePsJ25hIzRRs=
+	t=1785306323; cv=none; b=pVb+YiHCQZR/PvMPdsHPwFbvtuy7+CUUeODiWmUPwoYCk7WRDKgaWJS/x59nC6hUfanLHm3FprQGxlMsPCzJMy91gGPWsfL8rYzua32bbpmWoK0O4IkatS1fpPtJMGvmsiIYn0oS27Mt+2eN3I42luag6VJjdc3cFMwHa+BO5Qk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785301982; c=relaxed/simple;
-	bh=/bGVb2sOsq4c4h5q3sb73RvMPIuMZ19B7GsWOUQyhGg=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=KCuTGFza8yP9yTjmRGWHYVxHNtbQsWBJV8hCpT0X6cL/CZCbzhCZ0OJgyylSvmkk9KM6N3YS7EzAvWsBNanHO1+dyjEM/T+uvEsu3nQEOV9p2aBgb1ut5vesXFD1cgU/Ff2WqOjuOzclAzkS65aJA2X7lw47GyTmtjtOekowkvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ImEz2bE2; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1785306323; c=relaxed/simple;
+	bh=iIwHndzxHzRQnBZ5w5VhqP9refHC1NyTKivyB6K4r+g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CJMw+1N9vz1JyAZxyL4mS/xJOX38JvES3pPqIvTP7PVwqkkgkneqRdOkKrQlqt+1AORKQm0/CdN1oltSaACxqXD4Y7wjCTBe1nTNNGrzpyHyHyond8t6odG0cNWBKicC2RjVu2zRNFpzOOHbq4SA/XSoqHB0HBWBiJe4H8srtOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GdA0I+IE; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ImEz2bE2"
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20260729051255epoutp04f563e19f22af88d71d9ab56c7d487dc5~GqrABYUQh2399423994epoutp04d
-	for <linux-clk@vger.kernel.org>; Wed, 29 Jul 2026 05:12:55 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20260729051255epoutp04f563e19f22af88d71d9ab56c7d487dc5~GqrABYUQh2399423994epoutp04d
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1785301975;
-	bh=v+0LXEe7UlZ4qE3eCV8kvgvRPi2NEvsLxrOQzLx6Yvk=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=ImEz2bE2DQwyOlD9ImSCB6sD71ilIpBKhuZMl+YqhySZZjNjJTCMiAfKW1pikGDhc
-	 XL6eqv4+D9ETaHYa08bBGil3RWwzJf3Uz83sXXPaKBgfZTZwwgyxM0oDmFC7QCpOkc
-	 dbcq8TIH/nUzENW8M2/zqBhC5Khqi+yAW+2wsQEY=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20260729051254epcas5p1dbd4553584214715ce68952415a0e4b4~Gqq-iW52o2997629976epcas5p1c;
-	Wed, 29 Jul 2026 05:12:54 +0000 (GMT)
-Received: from epcas5p1.samsung.com (unknown [182.195.38.89]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4h90pF5GGYz3hhT9; Wed, 29 Jul
-	2026 05:12:53 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20260729051253epcas5p13c6aaadd8335f3a07aba4f2e53cc10c5~Gqq_A6A3d1861518615epcas5p1C;
-	Wed, 29 Jul 2026 05:12:53 +0000 (GMT)
-Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20260729051250epsmtip2c6d7f586025d0da44e0e2bfeaf1ba87d~Gqq7-YRyG0581705817epsmtip2X;
-	Wed, 29 Jul 2026 05:12:50 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'Alexandru Chimac'" <alex@chimac.ro>, "'Krzysztof Kozlowski'"
-	<krzk@kernel.org>, "'Sylwester Nawrocki'" <s.nawrocki@samsung.com>,
-	"'Chanwoo Choi'" <cw00.choi@samsung.com>, "'Peter	Griffin'"
-	<peter.griffin@linaro.org>, "'Michael Turquette'" <mturquette@baylibre.com>,
-	"'Stephen Boyd'" <sboyd@kernel.org>, "'Brian Masney'" <bmasney@redhat.com>,
-	"'Rob Herring'" <robh@kernel.org>, "'Conor Dooley'" <conor+dt@kernel.org>,
-	"'Krzysztof Kozlowski'" <krzk+dt@kernel.org>
-Cc: <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-In-Reply-To: <20260722-exynos9610-clocks-v3-3-c672a2a30889@chimac.ro>
-Subject: RE: [PATCH v3 3/5] clk: samsung: clk-pll: Add support for pll_1061x
-Date: Wed, 29 Jul 2026 10:42:49 +0530
-Message-ID: <07e101dd1f18$e83ab2a0$b8b017e0$@samsung.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GdA0I+IE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FD471F000E9;
+	Wed, 29 Jul 2026 06:25:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1785306320;
+	bh=iIwHndzxHzRQnBZ5w5VhqP9refHC1NyTKivyB6K4r+g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=GdA0I+IEsh5YT3mzVZicQaUnSz64VfpfrghWmOPimeVzY3OJhMriIj2qUvU0Tre7E
+	 Jtc8FA5obKBpC+pNF61YXe1WeB1TDJ8JzulJxyALEsUQFT6atq1KX3G2Sw4myBoiE8
+	 pz3mTcbLyq4lnDWsT/sDT1FJ7stKd79KIaUaQqTeT+OS2aLO8HWAZrbTqjwo9hgyck
+	 K1E/BxNaJk1xBgGb26wgo9v4Q5ApsupVWvCmhYunOOui1yJGTmvu8Vv8sYRlwz/bPR
+	 NBi0whbtrIea+aXmguOrvNNKUusc4QHjWJJ+J2etHJ9ts0YlcSHQIYa4d75M5Sh0N9
+	 F4iEMWjWKf0eA==
+Date: Wed, 29 Jul 2026 08:25:15 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, Bryan O'Donoghue <bod@kernel.org>, 
+	Loic Poulain <loic.poulain@oss.qualcomm.com>, Vinod Koul <vkoul@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	linux-phy@lists.infradead.org
+Subject: Re: [PATCH v13 5/5] dt-bindings: media: qcom,x1e80100-camss: Make
+ vdd-csiphy supplies optional
+Message-ID: <20260729-uptight-proficient-whippet-1a4aa8@quoll>
+References: <20260728-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v13-0-ae811e2f0799@linaro.org>
+ <20260728-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v13-5-ae811e2f0799@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHTw+ptVoCYShTtVq94NkBsvgZUugKcCweMAdasPym2cxLvQA==
-Content-Language: en-us
-X-CMS-MailID: 20260729051253epcas5p13c6aaadd8335f3a07aba4f2e53cc10c5
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-543,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20260722204419epcas5p4199c800b0a94ff523f0e9e9c5aaeeaba
-References: <20260722-exynos9610-clocks-v3-0-c672a2a30889@chimac.ro>
-	<CGME20260722204419epcas5p4199c800b0a94ff523f0e9e9c5aaeeaba@epcas5p4.samsung.com>
-	<20260722-exynos9610-clocks-v3-3-c672a2a30889@chimac.ro>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20260728-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v13-5-ae811e2f0799@linaro.org>
 
-Hi Alexandru
+On Tue, Jul 28, 2026 at 10:35:36AM +0100, Bryan O'Donoghue wrote:
+> Moving the csiphy to peer nodes means making the current supplies optional.
 
-> -----Original Message-----
-> From: Alexandru Chimac <alex=40chimac.ro>
-> Sent: Thursday, July 23, 2026 2:14 AM
-> To: Krzysztof Kozlowski <krzk=40kernel.org>; Sylwester Nawrocki
-> <s.nawrocki=40samsung.com>; Chanwoo Choi <cw00.choi=40samsung.com>;
-> Peter Griffin <peter.griffin=40linaro.org>; Alim Akhtar
-> <alim.akhtar=40samsung.com>; Michael Turquette
-> <mturquette=40baylibre.com>; Stephen Boyd <sboyd=40kernel.org>; Brian
-> Masney <bmasney=40redhat.com>; Rob Herring <robh=40kernel.org>; Conor
-> Dooley <conor+dt=40kernel.org>; Alexandru Chimac <alex=40chimac.ro>;
-> Krzysztof Kozlowski <krzk+dt=40kernel.org>
-> Cc: linux-samsung-soc=40vger.kernel.org; linux-clk=40vger.kernel.org;
-> devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; lin=
-ux-
-> kernel=40vger.kernel.org
-> Subject: =5BPATCH v3 3/5=5D clk: samsung: clk-pll: Add support for pll_10=
-61x
->=20
-> These PLLs are found in the Exynos9610 and Exynos9810 SoCs, and are simil=
-ar
-> to pll_1460x (using CON3 instead of CON1), so the code for that can handl=
-e
-> this PLL with a few small adaptations.
->=20
-It is good to mention that PLL_1061x is a fractional type PLL and used to s=
-upply BLK_MMC and AUD, atleast on 9610 SoC
+There is no move here, thus this change is incomplete.
 
-> Signed-off-by: Alexandru Chimac <alex=40chimac.ro>
-> ---
->  drivers/clk/samsung/clk-pll.c =7C 29 ++++++++++++++++++++++-------
-> drivers/clk/samsung/clk-pll.h =7C  1 +
->  2 files changed, 23 insertions(+), 7 deletions(-)
->=20
-> diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.=
-c index
-> e74552846ba3..2cda87235fa2 100644
-> --- a/drivers/clk/samsung/clk-pll.c
-> +++ b/drivers/clk/samsung/clk-pll.c
-> =40=40 -781,15 +781,20 =40=40 static unsigned long
-> samsung_pll46xx_recalc_rate(struct clk_hw *hw,
->  	u64 fvco =3D parent_rate;
->=20
->  	pll_con0 =3D readl_relaxed(pll->con_reg);
-> -	pll_con1 =3D readl_relaxed(pll->con_reg + 4);
-> -	mdiv =3D (pll_con0 >> PLL46XX_MDIV_SHIFT) & ((pll->type =3D=3D
-> pll_1460x) ?
-> +	if (pll->type =3D=3D pll_1061x)
-> +		pll_con1 =3D readl_relaxed(pll->con_reg + 0xc);
-Actually this is PLL_CON3 in UM, not suggesting to use a new variable but a=
- comment here will help.=20
-Thanks=21
+Best regards,
+Krzysztof
 
