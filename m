@@ -1,257 +1,380 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB68B45D5E0
-	for <linux-clk@vger.kernel.org>; Wed, 29 Jul 2026 15:24:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEB2B3D75AB;
+	Wed, 29 Jul 2026 20:31:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785338649; cv=none; b=kIsGlKWxYqm5CMmSdq4zqOoKAHFgGkC7vStcVMuX0SWrgLNJzyMoq4mvNfDfmZSfrCZba7yS4+wBW+B7U5MFosApPSRRVcv17U70DPzTylEWO2a9TmT9OGJMDxhWRJC2Y/o7J/vK2xH5IzFq5UwTP8BC8n+a0H6KP5rFTsd2BJE=
+	t=1785357119; cv=none; b=i2KLdADZZcMeoYuO0gir9ic+ud3HA7gWuP/hh0/ogFWCKMAUl8jypMJCH0Ev+4bkG9op42hDK71WjczNuysKh04FqQfL/NMnh8r9eb9m3iy7NcTRlfYxDXmMmxCiBcmqtTRxZ5BL+E1A3s7mOBUr6xqjO6LSumJYY+FUALpH4ZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785338649; c=relaxed/simple;
-	bh=IF3mvxGJ0MO2sFrQjf9weWMiNXHfJPGDAZw23KD0uvE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=sXEulLdAqqgXpGz5BXQNnHtRhdVBpdEyrGfIV2YRu84xW9pUX4/PFotPPQtIgZW8ajkDCw6LN0i1BKWP+EwNxIo3t2F/c+iYSXuSzAgU8TfGglQFfeeVHtJ0SYzVgvjqcvwzJ2KNCEV0u1hhGJq1Qwf9LMc0lPr+Drg8DjBPoO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=JNiKFw7S; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=jRc5vjvh; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1785357119; c=relaxed/simple;
+	bh=TpOPqPM0yfsdY+T7EN3hGc701SXFTUjQWJ3JCuJ9oQw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=G6TmN93A9Pphxf20/6JnG9htuXKEfpgWxW0nqrLc3ZtL3JUISwm5cb+7aMDrPl1lrKEVaJJvapmWlX+wtM6tJT5rHP8XR9WSsePlpDonGUWFT56iTP3yLmFxiq02H+y1UScGIxijOTHvuMG65kp/AzFLmm2kFFJdOvZ/H4L8pQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=elZPAY36; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="JNiKFw7S";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="jRc5vjvh"
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66TF2T351699319
-	for <linux-clk@vger.kernel.org>; Wed, 29 Jul 2026 15:24:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=QutVvloV8VQHn81ETmUh0x
-	rjJt+7iIZspS+kx/oCaGM=; b=JNiKFw7Sqp0y9Owx1pNHYCKUqmrpEagD8Rx1Xz
-	kpY2p5aPDUc2IYTplP+kJWj2N1KpA95VKfieKxZPp5EGI/3wH2YYjnV5DsVz8MJA
-	rhp437e4+08Se1gMp1Drof2gOe0VO/d3J1SAAsKWhR3aAi7TpWyNAX5v6gYqn6e/
-	6uAaUHNIH4XgmpxAqN9JfceVjmaaD/Q7k4Oxeb1kAetCtOJbXABM9Qlz9e8abGOd
-	fmXizXnkJzGX4+FXOGA8z9GOZ3JGiVLcy7Bfsb4vOKfjEXIuOBzpxE0gRtj8UMfz
-	xWJG8Vg+sBBiiAViNUdRwQ7afMi8h75bGhauHI6yjWYOgVaA==
-Received: from mail-yw1-f197.google.com (mail-yw1-f197.google.com [209.85.128.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fqgrj13hv-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Wed, 29 Jul 2026 15:24:07 +0000 (GMT)
-Received: by mail-yw1-f197.google.com with SMTP id 00721157ae682-81e8577d187so38161267b3.1
-        for <linux-clk@vger.kernel.org>; Wed, 29 Jul 2026 08:24:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1785338646; x=1785943446; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=QutVvloV8VQHn81ETmUh0xrjJt+7iIZspS+kx/oCaGM=;
-        b=jRc5vjvhbFb7ifpHuuj8l5SFLWidBz4z4/9vlGJWWYxd0EB1ZsmG+Q942JOOkx0CMB
-         ZJbeSQBjwBFpk9xYS0HAqu4X/nKLNBzrQAiM3CebALj57LSVC26NNGUmTrU/Hs7Lb4YF
-         wutFkQMmzY2KkkfQ19a2swAS/YR4m9cfo/xyhfd4ixEq/Fuei4u7iTMeW4ouIGBFc3fX
-         7mRYBT82EvjUlnlGK3doH25ZJYkarxp59Gdf8Kmhatc7oMt2k4GNPqqJe2T1oThHHcW2
-         5dVjgmobWXM6CcknEnBTHKdmz6/vhG1HAXhoFRtppo8pLPj9CrLWXbHHeeMa0s6Z88vG
-         KBmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785338646; x=1785943446;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=QutVvloV8VQHn81ETmUh0xrjJt+7iIZspS+kx/oCaGM=;
-        b=Gl1HRRhPeSjNa0UOfLFrJKvzYtX7+IYuetXoPqTR7HzZuFG19V4zt1rE3zvlVxRkGE
-         qxAU/Zi8GMBm33jhoK7ud+NWxUouwZJv9CQhsxuwFvxkfBw//n0rKXzIrlbnPGk2ZKm3
-         YQPKIPluBbVA4GlbxgV8yoP86oxLrWCZzniJgPCQ9s1ZE4fmhliQTf9yFt47xjyYyStl
-         x+ryBoj+46drrDAtcLv5omN/w3glimwchAkQTcwTPmKboz2U3Cnz74BG7NKYdTpAgQZL
-         reOAzodfgl5FTfhvBSEZFEch3TLT6J4/rEyle0X3elEg4MrTrKgbL8GEEZU0rbihUqIr
-         BJ6g==
-X-Forwarded-Encrypted: i=1; AHgh+RpEjY0ypzly4wkJHMXZgI5VpNNW4JaLhTrIceEL0QwYwo5b+sQ6bCIJWlZhU0vk2DLLnsErUPBzrZA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1gLXQ63F8BUK/a/GCkYPzHXgRJzp7lmNFfQ8FOxzDy1tly904
-	/OiB7IUWdw4v7NaQ4BmpjR5Pn/3RDHdUGB4bbXrw32aTV7tIKi+R+yNFEWo5vrKekycBXAydQ4c
-	uME7q6lVsV7XL1JdfNzpjSAC5IcrHYXw9oMlA6zRCX5QaaxRiORaVRhimEm/uvxc=
-X-Gm-Gg: AR+sD11uKjcBePMtockZ5l4YG5VG7bD08dwlgR5gGBPWIXBu8FmrKWlcPKCUxbZrxJa
-	SCc9RyqKGwYxOaGB+8e+kcrnS6xA75vvtY0C1zbSZjCEi4n7m+bBhsTf55mxLul7CbtPp3sTApH
-	tsbW/YBI9cUeN9jn6DpmkL15NxiDzyhRWkh8WcIoyC32fq4lO6Y6mRN+9Ri1hc22V3dr/pksezH
-	xK5+lBOwVHzH6x73O2q9PRsQ/Q71FR2OMEHW98FqFb2cBRcVnEi0yCjXjx4qIYvxo7Wu+5VjwiJ
-	SJBPYQVsljPQeU1hU4b8maekeu7CNWYSIkViiooU4LtGOjZEPgvfcBWssOhDNRg24P2P71vY/T9
-	eC8DvajffO97R3MJV8/9cSZItFIrX3Fw=
-X-Received: by 2002:a05:690c:6309:b0:81e:edfb:3194 with SMTP id 00721157ae682-81f9928e45dmr31850607b3.59.1785338646122;
-        Wed, 29 Jul 2026 08:24:06 -0700 (PDT)
-X-Received: by 2002:a05:690c:6309:b0:81e:edfb:3194 with SMTP id 00721157ae682-81f9928e45dmr31850377b3.59.1785338645539;
-        Wed, 29 Jul 2026 08:24:05 -0700 (PDT)
-Received: from hu-imrashai-hyd.qualcomm.com ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-81fa27592f6sm20198977b3.9.2026.07.29.08.23.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Jul 2026 08:24:05 -0700 (PDT)
-From: Imran Shaik <imran.shaik@oss.qualcomm.com>
-Date: Wed, 29 Jul 2026 20:53:47 +0530
-Subject: [PATCH] clk: qcom: Fix test_ctl_hi field for DEFAULT_EVO PLLs
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="elZPAY36"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A80641F000E9;
+	Wed, 29 Jul 2026 20:31:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1785357117;
+	bh=4aKy79id/k5rZYSRIjBweFs5AzGWuqksrl9M8jcvWk4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=elZPAY36keHsXlXbFM49u2/CGDTiCOzc9LZxYhN++GrWR+B0kFSZIEJONUae3EwAn
+	 hqjAH+kNh22vazH6aptgsmGWJezWZn0/bBGjQT9/kCihF4tvRekiuGY8FbUo5++lQV
+	 g7PqZ2evyhq/hLHKvNvN1En5GzVI0epdVZ/FRxh3ynsIVEtp6ij+5AMF+0n/lVZG/s
+	 ol5b+F7rLdOseq4TTxOHKagodTg2vYfuV07E+zg/Z+JM3eNTEK6Ckw7vZpDX9AYrRf
+	 2eQL91UZAnu149Ej4LcblBCa6GhUGdVXmP7qBI6GdzX+trPAJSFwahtuzApj7ip1L4
+	 E9d/F8AoTC4nA==
+Message-ID: <25ef6b91-62b4-4e8e-bc8f-8400dc293273@kernel.org>
+Date: Wed, 29 Jul 2026 21:31:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260729-pll-test-ctrl-fixup-v1-1-246d79589380@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIAAIbamoC/x2MQQqAIBAAvyJ7biEVCvtKdCjbakFK1CIQ/550H
- IaZDJECU4RBZAj0cOTrrCAbAfaYz52Q18qgWtW1vTLoncNEMaFNweHG7+2xM6S1kT0tykItfaA
- q/us4lfIBEQY1a2UAAAA=
-X-Change-ID: 20260729-pll-test-ctrl-fixup-69e33917eb2c
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
-        Rob Herring <robh@kernel.org>, Shawn Guo <shawn.guo@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Iskren Chernev <me@iskren.info>
-Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
-        Taniya Das <taniya.das@oss.qualcomm.com>,
-        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Imran Shaik <imran.shaik@oss.qualcomm.com>, stable@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Authority-Analysis: v=2.4 cv=RJOD2Yi+ c=1 sm=1 tr=0 ts=6a6a1b17 cx=c_pps
- a=0mLRTIufkjop4KoA/9S1MA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=DJpcGTmdVt4CTyJn9g5Z:22
- a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=ZfmlxCiM9nxkjRjWVfQA:9 a=QEXdDO2ut3YA:10
- a=WgItmB6HBUc_1uVUp3mg:22
-X-Proofpoint-ORIG-GUID: Vs5tnMx-JzlhwWX2KLHTA-X5O01FS_Zo
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzI5MDEyNCBTYWx0ZWRfXyWJT+zlvarb5
- BkBcSouJdGCj7J5HB2NnIcc9x+3I6Ni1I2aMKlRC/RZ08wr63cdGOVYRyV246WWy4UuIJyGO5nk
- +YBZzhPJZqr1/jmF+2NgQzXy+v3aX2idd4Lf0pzTf9XA7nBOfAza7Jguh3H9oUgLkMAAHLrv1J1
- eB5lzienSh49GMnwKzOD9alIHzGxU7kWg/kRDWQf0gmqQo3j+d10URx/wRuGSJbD7/+5lpaSzXg
- FyJwHSEbYxSu7Lf75t7BavVj0ug/KRNkTt8Xxnn7O7j5K8hXcoln+VonrFSxKfqm8UauOFsOl0L
- Pn5H1QpVLYuRwPJnyC9l5PNGKFV5uczxWHZTyuYvCH6RtfY7u3HWNSy7BzdYs1r5MTUzepZGber
- qh5TOcn65ppMTU+kEg0oEi6HHVft6Oc/KSNvzCMvKzCxuCjhnLX717lD0fVjbzRMMu3zZu8PNIS
- e4/lJIjtpb90D4UyVKQ==
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNzI5MDEyNCBTYWx0ZWRfXyvtptsVGA+sz
- wplbjUfPVVlu9WL2C9o+bd3mXXxvxF4IBW8k5z6LQnJU2R7js2Vo4o1i3mc2pLR+pUV4GNHIHq5
- qrJbdef4DTUttlOXjH+SOg0rv7Kau/Y=
-X-Proofpoint-GUID: Vs5tnMx-JzlhwWX2KLHTA-X5O01FS_Zo
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-07-29_06,2026-07-29_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 lowpriorityscore=0 priorityscore=1501 bulkscore=0 malwarescore=0
- impostorscore=0 suspectscore=0 clxscore=1015 spamscore=0 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607290124
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v13 3/5] media: qcom: camss: Add support for PHY API
+ devices
+To: Nihal Kumar Gupta <nihal.gupta@oss.qualcomm.com>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>,
+ Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Loic Poulain <loic.poulain@oss.qualcomm.com>, Vinod Koul <vkoul@kernel.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-phy@lists.infradead.org,
+ Krzysztof Kozlowski <krzk@kernel.org>
+References: <20260728-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v13-0-ae811e2f0799@linaro.org>
+ <20260728-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v13-3-ae811e2f0799@linaro.org>
+ <qTmyhh5ukxu4BQAZXvNyyUvZxucwjv6bNoe2v30cfjsdhuzg3ud5DZzGmSBlYICc_POjXS2sSvhbRop0i67mxg==@protonmail.internalid>
+ <8210513c-288b-4d02-9688-1de10e40d9f9@oss.qualcomm.com>
+From: Bryan O'Donoghue <bod@kernel.org>
+Content-Language: en-GB
+Autocrypt: addr=bod@kernel.org; keydata=
+ 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
+In-Reply-To: <8210513c-288b-4d02-9688-1de10e40d9f9@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-CLK_ALPHA_PLL_TYPE_DEFAULT_EVO type PLLs do not have the PLL_TEST_CTL_U1
-register, so clk_alpha_pll_configure() does not program test_ctl_hi1_val
-for this PLL type.
+On 29/07/2026 14:45, Nihal Kumar Gupta wrote:
+> 
+> 
+> On 28-07-2026 15:05, Bryan O'Donoghue wrote:
+>> +				ret = PTR_ERR(csd);
+>> +				goto err_cleanup;
+>> +			}
+>> +		}
+>> +
+>>   		if (IS_ERR(csd)) {
+>>   			ret = PTR_ERR(csd);
+>>   			goto err_cleanup;
+>> @@ -4819,6 +4854,29 @@ static int camss_parse_ports(struct camss *camss)
+>>   	return ret;
+>>   }
+> Hi Bryan,
+> 
+> While rebasing Glymur on the following series I found an issue —
+> Could you please review the changes below.
+> 
+> Tested on
+> 1. Glymur CRD with OV08X40, working as expected.
+> 2. Monaco EVK with IMX577(legacy path) — working as expected.
+> 
+> Picked up following for testing:
+> - PHY driver:     Add a CSI2 MIPI DPHY driver [v14]
+> - CAMSS PHY API:  Add dt-bindings and PHY updates for CAMSS on x1e80100 silicon [v13]
+> - Below patchset
+> - Glymur DT binding/DTS: locally
+> 
+> Holding off formal submission until the above stabilise.
+> 
+> ----------------------------------------------------------------------
+>  From b86af6812bb655e885dbcd23ffd28c92177017cd Mon Sep 17 00:00:00 2001
+> From: Nihal Kumar Gupta <nihal.gupta@oss.qualcomm.com>
+> Date: Wed, 29 Jul 2026 18:18:54 +0530
+> Subject: [PATCH] media: qcom: camss: Read lane config from PHY endpoint for
+>   PHY API path
+> 
+> In the new PHY API topology the CAMSS endpoint carries only port/ID
+> information. The bus-type and data-lane configuration are described on
+> the PHY node's sensor-side endpoint (port@0), not on the CAMSS endpoint.
 
-The GCC PLL configurations for QCM2290, Shikra and SM6115 wrongly use
-test_ctl_hi1_val instead of test_ctl_hi_val, deviating from the hardware
-recommended settings. Fix them to use test_ctl_hi_val.
+So I don't think this model is in-keep with established DT practices - 
+if a driver needs to parse a property it needs to have that property in 
+the device node it handles.
 
-Fixes: 496d1a13d405 ("clk: qcom: Add Global Clock Controller driver for QCM2290")
-Fixes: 01cf3e27824d ("clk: qcom: Add Global clock controller support on Qualcomm Shikra SoC")
-Fixes: e88c533d8a2a ("clk: qcom: gcc-sm6115: Add missing PLL config properties")
-Cc: stable@vger.kernel.org
-Signed-off-by: Imran Shaik <imran.shaik@oss.qualcomm.com>
----
- drivers/clk/qcom/gcc-qcm2290.c | 6 +++---
- drivers/clk/qcom/gcc-shikra.c  | 6 +++---
- drivers/clk/qcom/gcc-sm6115.c  | 6 +++---
- 3 files changed, 9 insertions(+), 9 deletions(-)
+So with data-lanes per existing camss bindings in the IFE/CSID node 
+everything though should work as-is for you.
 
-diff --git a/drivers/clk/qcom/gcc-qcm2290.c b/drivers/clk/qcom/gcc-qcm2290.c
-index 6684cab63ae1160848631d1f8cd3c9cb691ff4ec..690f23793af6b55b205341112b478bf34cf71722 100644
---- a/drivers/clk/qcom/gcc-qcm2290.c
-+++ b/drivers/clk/qcom/gcc-qcm2290.c
-@@ -116,7 +116,7 @@ static const struct alpha_pll_config gpll10_config = {
- 	.vco_mask = GENMASK(21, 20),
- 	.main_output_mask = BIT(0),
- 	.config_ctl_val = 0x4001055B,
--	.test_ctl_hi1_val = 0x1,
-+	.test_ctl_hi_val = 0x1,
- };
- 
- static struct clk_alpha_pll gpll10 = {
-@@ -148,7 +148,7 @@ static const struct alpha_pll_config gpll11_config = {
- 	.vco_mask = GENMASK(21, 20),
- 	.main_output_mask = BIT(0),
- 	.config_ctl_val = 0x4001055B,
--	.test_ctl_hi1_val = 0x1,
-+	.test_ctl_hi_val = 0x1,
- };
- 
- static struct clk_alpha_pll gpll11 = {
-@@ -309,7 +309,7 @@ static const struct alpha_pll_config gpll8_config = {
- 	.post_div_val = 0x1 << 8,
- 	.post_div_mask = GENMASK(11, 8),
- 	.config_ctl_val = 0x4001055B,
--	.test_ctl_hi1_val = 0x1,
-+	.test_ctl_hi_val = 0x1,
- };
- 
- static struct clk_alpha_pll gpll8 = {
-diff --git a/drivers/clk/qcom/gcc-shikra.c b/drivers/clk/qcom/gcc-shikra.c
-index d5222756f214c356214039f95a93a28fc542801b..4974bb64af98167db83f852c124c014a81cd6da8 100644
---- a/drivers/clk/qcom/gcc-shikra.c
-+++ b/drivers/clk/qcom/gcc-shikra.c
-@@ -123,7 +123,7 @@ static const struct alpha_pll_config gpll10_config = {
- 	.vco_mask = GENMASK(21, 20),
- 	.main_output_mask = BIT(0),
- 	.config_ctl_val = 0x4001055b,
--	.test_ctl_hi1_val = 0x1,
-+	.test_ctl_hi_val = 0x1,
- };
- 
- static struct clk_alpha_pll gpll10 = {
-@@ -156,7 +156,7 @@ static const struct alpha_pll_config gpll11_config = {
- 	.vco_mask = GENMASK(21, 20),
- 	.main_output_mask = BIT(0),
- 	.config_ctl_val = 0x4001055b,
--	.test_ctl_hi1_val = 0x1,
-+	.test_ctl_hi_val = 0x1,
- };
- 
- static struct clk_alpha_pll gpll11 = {
-@@ -361,7 +361,7 @@ static const struct alpha_pll_config gpll8_config = {
- 	.post_div_val = BIT(8),
- 	.post_div_mask = GENMASK(11, 8),
- 	.config_ctl_val = 0x4001055b,
--	.test_ctl_hi1_val = 0x1,
-+	.test_ctl_hi_val = 0x1,
- };
- 
- static struct clk_alpha_pll gpll8 = {
-diff --git a/drivers/clk/qcom/gcc-sm6115.c b/drivers/clk/qcom/gcc-sm6115.c
-index c5251aff98864c539f5feec3ffe9adcd2cbddb20..a3c9dbe3a48af130499a722bee7dcf1243b548dd 100644
---- a/drivers/clk/qcom/gcc-sm6115.c
-+++ b/drivers/clk/qcom/gcc-sm6115.c
-@@ -120,7 +120,7 @@ static const struct alpha_pll_config gpll10_config = {
- 	.vco_mask = GENMASK(21, 20),
- 	.main_output_mask = BIT(0),
- 	.config_ctl_val = 0x4001055b,
--	.test_ctl_hi1_val = 0x1,
-+	.test_ctl_hi_val = 0x1,
- 	.test_ctl_hi_mask = 0x1,
- };
- 
-@@ -173,7 +173,7 @@ static const struct alpha_pll_config gpll11_config = {
- 	.vco_val = 0x2 << 20,
- 	.vco_mask = GENMASK(21, 20),
- 	.config_ctl_val = 0x4001055b,
--	.test_ctl_hi1_val = 0x1,
-+	.test_ctl_hi_val = 0x1,
- 	.test_ctl_hi_mask = 0x1,
- };
- 
-@@ -367,7 +367,7 @@ static const struct alpha_pll_config gpll8_config = {
- 	.post_div_val = 0x1 << 8,
- 	.post_div_mask = GENMASK(11, 8),
- 	.config_ctl_val = 0x4001055b,
--	.test_ctl_hi1_val = 0x1,
-+	.test_ctl_hi_val = 0x1,
- 	.test_ctl_hi_mask = 0x1,
- };
- 
+https://gitlab.com/Linaro/arm64-laptops/linux/-/tree/arm64-laptops-v7.2-rc2-camss-v11?ref_type=heads
 
----
-base-commit: 3652b49adac266a3d27cb41cdfdb7d8790fc3633
-change-id: 20260729-pll-test-ctrl-fixup-69e33917eb2c
+https://gitlab.com/Linaro/arm64-laptops/linux/-/blob/arm64-laptops-v7.2-rc2-camss-v11/arch/arm64/boot/dts/qcom/x1-crd.dtsi?ref_type=heads#L947
 
-Best regards,
--- 
-Imran Shaik <imran.shaik@oss.qualcomm.com>
+&camss {
+	status = "okay";
+
+	ports {
+		/*
+		 * port0 => csiphy0
+		 * port1 => csiphy1
+		 * port2 => csiphy2
+		 * port3 => csiphy4
+		 */
+		port@3 {
+			camss_csiphy4_inep: endpoint {
+				data-lanes = <0 1 2 3>;
+				remote-endpoint = <&csiphy4_out_ep>;
+			};
+		};
+	};
+};
+
+&cci1 {
+	status = "okay";
+};
+
+&cci1_i2c1 {
+	camera@36 {
+		compatible = "ovti,ov08x40";
+		reg = <0x36>;
+
+		reset-gpios = <&tlmm 237 GPIO_ACTIVE_LOW>;
+		pinctrl-0 = <&cam_rgb_default>;
+		pinctrl-names = "default";
+
+		clocks = <&camcc CAM_CC_MCLK4_CLK>;
+		assigned-clocks = <&camcc CAM_CC_MCLK4_CLK>;
+		assigned-clock-rates = <19200000>;
+
+		orientation = <0>; /* front facing */
+
+		avdd-supply = <&vreg_l7b_2p8>;
+		dovdd-supply = <&vreg_l3m_1p8>;
+
+		port {
+			ov08x40_out_ep: endpoint {
+				data-lanes = <1 2 3 4>;
+				link-frequencies = /bits/ 64 <400000000>;
+				remote-endpoint = <&csiphy4_in_ep>;
+			};
+		};
+	};
+};
+
+&csiphy4 {
+	vdda-0p9-supply = <&vreg_l2c_0p8>;
+	vdda-1p2-supply = <&vreg_l1c_1p2>;
+
+	status = "okay";
+
+	ports {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		port@0 {
+			reg = <0>;
+			csiphy4_in_ep: endpoint {
+				bus-type = <MEDIA_BUS_TYPE_CSI2_DPHY>;
+				data-lanes = <0 1 2 3>;
+				remote-endpoint = <&ov08x40_out_ep>;
+			};
+		};
+
+		port@1 {
+			reg = <1>;
+			csiphy4_out_ep: endpoint {
+				remote-endpoint = <&camss_csiphy4_inep>;
+			};
+		};
+	};
+};
+
+
+> Add a phy_in parameter to camss_parse_endpoint_node(). Extract csiphy_id
+> from the CAMSS endpoint port number and read bus-type and lane properties
+> from phy_in. Check fwnode_device_is_available() on the PHY node and skip
+> disabled PHYs. Fix missing fwnode_handle_put() on the disabled-PHY early
+> exit path. For legacy DTS phy_in is the CAMSS endpoint itself so existing
+> behaviour is preserved.
+> 
+> Signed-off-by: Nihal Kumar Gupta <nihal.gupta@oss.qualcomm.com>
+> ---
+>   drivers/media/platform/qcom/camss/camss.c | 49 +++++++++++++++++------
+>   1 file changed, 36 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
+> index 84097d82d99c..7254f2b28eb0 100644
+> --- a/drivers/media/platform/qcom/camss/camss.c
+> +++ b/drivers/media/platform/qcom/camss/camss.c
+> @@ -4742,11 +4742,13 @@ static const struct parent_dev_ops vfe_parent_dev_ops = {
+>    */
+>   static int camss_parse_endpoint_node(struct device *dev,
+>   				     struct fwnode_handle *ep,
+> +				     struct fwnode_handle *phy_in,
+>   				     struct camss_async_subdev *csd)
+>   {
+>   	struct csiphy_lanes_cfg *lncfg = &csd->interface.csi2.lane_cfg;
+>   	struct v4l2_mbus_config_mipi_csi2 *mipi_csi2;
+>   	struct v4l2_fwnode_endpoint vep = { { 0 } };
+> +	struct v4l2_fwnode_endpoint phy_vep = { { 0 } };
+>   	unsigned int i;
+>   	int ret;
+> 
+> @@ -4754,18 +4756,26 @@ static int camss_parse_endpoint_node(struct device *dev,
+>   	if (ret)
+>   		return ret;
+> 
+> +	csd->interface.csiphy_id = vep.base.port;
+> +
+> +	/* bus-type and lane config from csiphy endpoint (phy_in) */
+> +	ret = v4l2_fwnode_endpoint_parse(phy_in, &phy_vep);
+> +	if (ret) {
+> +		dev_err(dev, "parse_endpoint: failed to parse phy_in ep (%pfw): %d\n",
+> +			phy_in, ret);
+> +		return ret;
+> +	}
+> +
+>   	/*
+>   	 * Most SoCs support both D-PHY and C-PHY standards, but currently only
+>   	 * D-PHY is supported in the driver.
+>   	 */
+> -	if (vep.bus_type != V4L2_MBUS_CSI2_DPHY) {
+> -		dev_err(dev, "Unsupported bus type %d\n", vep.bus_type);
+> +	if (phy_vep.bus_type != V4L2_MBUS_CSI2_DPHY) {
+> +		dev_err(dev, "Unsupported bus type %d\n", phy_vep.bus_type);
+>   		return -EINVAL;
+>   	}
+> 
+> -	csd->interface.csiphy_id = vep.base.port;
+> -
+> -	mipi_csi2 = &vep.bus.mipi_csi2;
+> +	mipi_csi2 = &phy_vep.bus.mipi_csi2;
+>   	lncfg->clk.pos = mipi_csi2->clock_lane;
+>   	lncfg->clk.pol = mipi_csi2->lane_polarities[0];
+>   	lncfg->num_data = mipi_csi2->num_data_lanes;
+> @@ -4798,15 +4808,15 @@ static int camss_parse_ports(struct camss *camss)
+> 
+>   	fwnode_graph_for_each_endpoint(fwnode, ep) {
+>   		struct camss_async_subdev *csd;
+> -
+> -		if (!fwnode_device_is_available(ep))
+> -			continue;
+> +		struct fwnode_handle *phy_in;
+> 
+>   		if (camss->legacy_phy) {
+>   			csd = v4l2_async_nf_add_fwnode_remote(&camss->notifier, ep,
+>   							      typeof(*csd));
+> +			/* legacy DTS has bus-type/data-lanes on the camss endpoint */
+> +			phy_in = fwnode_handle_get(ep);
+>   		} else {
+> -			struct fwnode_handle *phy_out, *phy_node, *phy_in, *sensor_ep;
+> +			struct fwnode_handle *phy_out, *phy_node, *sensor_ep;
+> 
+>   			phy_out = fwnode_graph_get_remote_endpoint(ep);
+>   			if (!phy_out)
+> @@ -4817,31 +4827,44 @@ static int camss_parse_ports(struct camss *camss)
+>   			if (!phy_node)
+>   				continue;
+> 
+> +			if (!fwnode_device_is_available(phy_node)) {
+> +				dev_info(dev, "parse_ports: phy_node=%s disabled\n",
+> +				 of_node_full_name(to_of_node(phy_node)));
+> +				continue;
+> +			};
+
+This is a correct change I can take into my patch - I'll add you down as 
+Co-developed by.
+
+> +
+> +			/* port@0 of the phy node is the sensor-side input port */
+>   			phy_in = fwnode_graph_get_endpoint_by_id(phy_node, 0, 0, 0);
+>   			fwnode_handle_put(phy_node);
+> -			if (!phy_in)
+> +			if (!phy_in) {
+> +				dev_info(dev, "parse_ports: csiphy port@0 has no endpoint, skip\n");
+>   				continue;
+> +			};
+> 
+>   			sensor_ep = fwnode_graph_get_remote_endpoint(phy_in);
+> -			fwnode_handle_put(phy_in);
+> -			if (!sensor_ep)
+> +			if (!sensor_ep) {
+> +				fwnode_handle_put(phy_in);
+>   				continue;
+> +			};
+> 
+>   			csd = v4l2_async_nf_add_fwnode(&camss->notifier, sensor_ep,
+>   						struct camss_async_subdev);
+>   			fwnode_handle_put(sensor_ep);
+>   			if (IS_ERR(csd)) {
+> +				fwnode_handle_put(phy_in);
+>   				ret = PTR_ERR(csd);
+>   				goto err_cleanup;
+>   			}
+>   		}
+> 
+>   		if (IS_ERR(csd)) {
+> +			fwnode_handle_put(phy_in);
+>   			ret = PTR_ERR(csd);
+>   			goto err_cleanup;
+>   		}
+> 
+> -		ret = camss_parse_endpoint_node(dev, ep, csd);
+> +		ret = camss_parse_endpoint_node(dev, ep, phy_in, csd);
+> +		fwnode_handle_put(phy_in);
+>   		if (ret < 0)
+>   			goto err_cleanup;
+>   	}
+> --
+> 2.34.1
 
