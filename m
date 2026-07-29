@@ -1,53 +1,39 @@
-Received: from mxb.seznam.cz (mxb.seznam.cz [77.75.78.89])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3778747B40D;
-	Wed, 29 Jul 2026 12:01:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=77.75.78.89
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3903A2F3621
+	for <linux-clk@vger.kernel.org>; Wed, 29 Jul 2026 12:16:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785326520; cv=none; b=owXD3waEd0NN5k9i5kXM8fJusaxZ/yvhlzOIXVnfRlTO4k9X0/6FaBirsiZ7r/aRNi5zNh6rPtc58bwq+8/8BtwfOwNzwG/8yF/nNX8ZSKqHEYbJYVi8D5W1ta/OMZwAuuOx/sY46EF6ZVBRnux8xkLj93wCMWKzyUw0N2hKtK8=
+	t=1785327412; cv=none; b=dkJ4P0o1j35GIn7Ipsbj5MMtrUJeDPG6V286cVasok0H54f6yamVMA13OivLWqoLcO7DhBlOc3mUbiDfI6nSaISA4EFQQ3g11jcE70ExL9zmA1XZkfoSif0dg2TxOM11U8RYoDQMB5eK7FTqRSMZXWQeE9EpeCNCBDeJ71YNp/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785326520; c=relaxed/simple;
-	bh=w2DTi4murj2vKpLiI662adWYX3Ihvrtoh/OXug3aI9I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ln9A/Ib0kDeHaFHmnEKG162wd9TSSnj0AtK3Oys9cuQ6cSXtc6YiDBe2ds5E9pJrTV9YisoLIQn0R6d5QJsZbPWD3CDVRHCDUmXd2Qoy49W+736ddvI/BpKiNJ5zaQLXm+x0lnFOd0w4kf7Pal52M+A7HlVOgcS3+UiKICyhszE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loebl.cz; spf=none smtp.mailfrom=loebl.cz; dkim=pass (2048-bit key) header.d=emailprofi.seznam.cz header.i=@emailprofi.seznam.cz header.b=LdNVV1QC; arc=none smtp.client-ip=77.75.78.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loebl.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=loebl.cz
+	s=arc-20240116; t=1785327412; c=relaxed/simple;
+	bh=ylp76YU0XtE52owKtGGq4bgV6Fwbo7msca70oULOJxQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rf2/773RpU01dQDuA5Skrpz7TylkH/wLBX455FG0RLikQ//9xP8EmcH+WJ1t5fVe1V6pOPIaBHMGCXfo09mnTYc9B8hNR6yP8520OYDHYi9Rgwu3BH72ZyOllKzLRQhJiMZoBoKkDG5V7bWR5KZMWqsjGq/NIWnUF8P1dZxxsl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=olZiCPOd; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=emailprofi.seznam.cz header.i=@emailprofi.seznam.cz header.b="LdNVV1QC"
-Received: from email.seznam.cz
-	by smtpc-mxb-6fbd4fd44b-jrm75
-	(smtpc-mxb-6fbd4fd44b-jrm75 [2a02:598:128:8a00::1000:910])
-	id 389e55fc230cd8283c7bec7e;
-	Wed, 29 Jul 2026 14:01:56 +0200 (CEST)
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=emailprofi.seznam.cz; s=szn1; t=1785326516;
-	bh=0cNEBHJ8YypuAMvYccK19bwKBDUcOIjicYfN9f8bbGw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding;
-	b=LdNVV1QCopv9mPJPDmq0viRuZJmLqGdbwbpWFP9070AS8V9DyarRZYqxvX7Y/rTM1
-	 AFwZhs9PmLfYtOXMjDULoSb5Pn8IxQvskgUE1lyjAnxvcfst4A1ZHSVV8nKk1ELHUc
-	 hyGXJE6hrdk3ZEstVkdPkSFSCk13ZtkjPYaHwpJ1paZAlYScfqANDCQmjsaawm1STb
-	 JZTU/intlctQoXCA8rqFRhWBAvXpFzy1K2/HYEUuIlb1JobvLMMdFHynDS0U0iEer9
-	 GxT1GssBEGGbFjEH8z4iIxq4e/8AXWyOKkBHMKvB+bLcXtebuOQflqNcrcUHYawUj/
-	 VZvNyoC9R5g1A==
-Received: from localhost (109-81-114-141.rct.o2.cz [109.81.114.141])
-	by smtpd-relay-7b8c6c77dd-6k8bg (szn-email-smtpd/2.0.79) with ESMTPA
-	id 75d33d37-4aa7-4501-bc9c-48347b9a01c8;
-	Wed, 29 Jul 2026 13:58:34 +0200
-From: =?UTF-8?q?Pavel=20L=C3=B6bl?= <pavel@loebl.cz>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="olZiCPOd"
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 26C961F000E9;
+	Wed, 29 Jul 2026 12:16:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1785327410;
+	bh=LVtqqfOciutVm1DpWKAabmhkfxRdHKSaNxSX1waZZ+0=;
+	h=From:To:Cc:Subject:Date;
+	b=olZiCPOd9IhSisi8uQz/SS5/26SKodQpImynjaYwlwZJr9Q7tD8h81nCfH7JmKqYL
+	 Kkakanhe6MQgIlNGjYqygB7aYpWr6LDLnNIRTKhQX33qlZRUkTIOTmCXkmfKb3CNAZ
+	 0ldAfD46CdI1pIaIHYX9r2NQrhVR+PmUUPZpzhDDnKIbXuUvWdsqDMRvBiVFstJ2yd
+	 XpppZJPqASR+H2my7+qCHcLBiQLMLwDgd57+8PajNSQZj2Xk6ux0dgQoJzRzkBLhoX
+	 4EBs7XQOHVKhFiX+zr2h+xaPm+PsWTqYGdnAsK3zvlECkXn0ne6s1Y8r1CFa8ZHUuh
+	 Pc1Gm3dHV8piw==
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Stephen Boyd <sboyd@kernel.org>,
 	Brian Masney <bmasney@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	=?UTF-8?q?Pavel=20L=C3=B6bl?= <pavel@loebl.cz>
-Subject: [PATCH v3 0/2] Add support for Si549 programmable clock
-Date: Wed, 29 Jul 2026 13:53:08 +0200
-Message-ID: <20260729115310.3490589-1-pavel@loebl.cz>
-X-Mailer: git-send-email 2.53.0
+	Michael Turquette <mturquette@baylibre.com>
+Cc: linux-clk@vger.kernel.org
+Subject: [PATCH] Drop Michael Turquette's clk maintainer entry
+Date: Wed, 29 Jul 2026 14:16:40 +0200
+Message-ID: <20260729121640.3864006-2-ukleinek@kernel.org>
+X-Mailer: git-send-email 2.55.0.11.g153666a7d9bb
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -55,34 +41,56 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1302; i=ukleinek@kernel.org; h=from:subject; bh=ylp76YU0XtE52owKtGGq4bgV6Fwbo7msca70oULOJxQ=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBqae8p8BPqiLBowFx4VHvgB78qKZK4fYudhdKfd sZwllmgAd+JATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCamnvKQAKCRCPgPtYfRL+ TgOTCACTycy1WSEeGkgQsVpz29HN3086sdPVgPSAV9UZ02Y+db6DN039cGp2btmifOUBm/yXujN O91LSlAV3WXpMJhzBBQtn6EES/8xMo/4C4v9M3Sp9TphH1EJx01AIrhztWcgEBtvqU7jKXUy/ov B65HHR/e03iFMFAeySQULBjyuqBZIwAZnKVe2OZH4glo5up1qk/E9hHwH/zTypc4DBj6Y7/6kNb kFB0QJAEpI8TwMC7RhAKEhzK7Wyc8nsX3H1HSQiuwQCqZOL8l7/tyg7XzCfCpv4VfPprgGhjEmH XaBEFcoFz6Aa8b/I1E8mWmpZQZecqJotrl2EsoejuYlHhLIG
+X-Developer-Key: i=ukleinek@kernel.org; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 
-This adds support for Si549 programmable oscillator. It's almost the
-same as already supported Si544, except it uses different internal
-oscillator frequency.
+Mike wasn't publically active for the clk subsystem since years. Stop
+pretending that there is a maintainer team caring for clk.
 
-So new compatible strings are added, and driver data is extended
-to carry both maximum output frequency and internal xtal frequency.
+Signed-off-by: Uwe Kleine-König <ukleinek@kernel.org>
+---
+Hello,
 
-Changes in v3:
-  Added missing xo_freq member description as found by kernel test robot:
+I recently[1] wondered about the state of clk maintenance. I think the
+part of my doubts implemented here is not disputed.
 
-  https://lore.kernel.org/oe-kbuild-all/202607291708.qFSxYL2s-lkp@intel.com/
+Best regards
+Uwe
 
-Changes in v2:
-  Fixed obvious stuff found by Sashiko (extra unused struct member),
-  removing unneeded data argument to calculation functions, xo_freq
-  is now passed in settings struct.
+ CREDITS     | 4 ++++
+ MAINTAINERS | 1 -
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
-Pavel Löbl (2):
-  dt-bindings: clock: si544: add si549 compatible
-  clk: si544: add support for si549
+diff --git a/CREDITS b/CREDITS
+index 0806ab21c1d3..acab439013cf 100644
+--- a/CREDITS
++++ b/CREDITS
+@@ -4107,6 +4107,10 @@ S: 4226 Landgreen Street
+ S: Rockville, Maryland 20853
+ S: USA
+ 
++N: Michael Turquette
++E: mturquette@baylibre.com
++D: common clk maintenance
++
+ N: Stephen Tweedie
+ E: sct@redhat.com
+ P: 1024/E7A417AD E2 FE A4 20 34 EC ED FC 7D 7E 67 8D E0 31 D1 69
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e95fc6f2ddc6..686431042bfa 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6484,7 +6484,6 @@ F:	include/linux/comedi/
+ F:	include/uapi/linux/comedi.h
+ 
+ COMMON CLK FRAMEWORK
+-M:	Michael Turquette <mturquette@baylibre.com>
+ M:	Stephen Boyd <sboyd@kernel.org>
+ R:	Brian Masney <bmasney@redhat.com>
+ L:	linux-clk@vger.kernel.org
 
- .../bindings/clock/silabs,si544.yaml          | 10 ++-
- drivers/clk/Kconfig                           |  6 +-
- drivers/clk/clk-si544.c                       | 83 +++++++++++++++----
- 3 files changed, 76 insertions(+), 23 deletions(-)
-
+base-commit: 3652b49adac266a3d27cb41cdfdb7d8790fc3633
 -- 
-2.53.0
+2.55.0.11.g153666a7d9bb
 
