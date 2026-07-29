@@ -1,85 +1,172 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9326046AA8C;
-	Wed, 29 Jul 2026 11:11:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F009547A865
+	for <linux-clk@vger.kernel.org>; Wed, 29 Jul 2026 11:50:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785323516; cv=none; b=QiM4m8C+zLcQGBiGkLhgEPpI4KrXEee2x9oiHB6qg9yJ1MIk3ubUEgRl1Cp3tgGU4sPGXI9zZQ7qd26wyTn3Y95J85epM+h/jrxWX4U7R3iS5LfXpb16bH65aCR9N98SuWDUrzAuB6fKZxJ9o+a8GcOv9wX//qa4fOeRuof6WVM=
+	t=1785325830; cv=none; b=cJxVd5hfc1tG5EJAmbZNbQ35wN5HP7RYuaBuO1SFrbKJ/DdQLV+YnCe6icc1aaZkSlEAfnz6CBd6epD2zAUAnzX6ofIlrQ9pgiA3CJ5eAwB8wYKOSsvFRVKORR4mZwUpcI/UBnYAQoasrrWm717AHen1qOdFpI8FGOpzfPWMMj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785323516; c=relaxed/simple;
-	bh=be7KVV/NZ2sN+E4MSHg5pSCQZeQ5yT9iwfp61hXdhmM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=O3h92C/1NQ4iGQI2rwgh5cQMMaYwm2JTGwvLWujprzvLylSHPhgWhAdVlLZgCQGVz0J4qTELcGbOeIOSNRL2P1KXem6JLoENvfAq3trpfzTfpSWZ0bRZQPIS/1zkcbtcHc5y0uH0spS6IpurQHzr20sogf+O8ATXcD5FTzo8114=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=TVdQyTYV; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+	s=arc-20240116; t=1785325830; c=relaxed/simple;
+	bh=lR6QyY25Do8SfES/EfGeKw3VaIh37ivecitZT6N2LwQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=itl+amltmTcN9l9Lorzlp6p+GNsBKh+8+/K6DfX/YYS0Ex7hEM0hVFqtGGJq0zq+AIlkzgbtFxyHIN0uHUh6yyAyxZDjw2PeQ7JBnf1KsN+6PoRl7zR9qpcML/bqKRFpEB5SLJVbgZQsvAKYvGwzVImWb35flpGxj11MnkxKk/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mufecqUQ; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="TVdQyTYV"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=BAPnhnAqDRA9bNdTJA6WEATxjymwtLXJIvPEHhgnOfc=; b=TVdQyTYVGtUTSqA4YYJcqNtzX6
-	Ym3d5G2PPJI3JUyfnbwcKnJ98Gkf0lp3Vboq/FzZo1yi5QRRUnhUx7Y2ptGUpt+47YaE0/WNMRjDd
-	+oVMQ5eKSkq3KUfxp7y5+kzIEXIdTohcMvYBCsmvXZq+w3O4LoJRfAvEJu4BMtXv1uzgThSYXR9NG
-	93TkXulFjbvqKanseqzDhjaSirk5k+h7MqaZmmgDOVuKfU76uatSvIWLZ+U4zFPoYMzBHSa2+5plr
-	j0RAuHKujHlOI2wlKBzJWL8cSHsVR+WAngFqVg8G6r2hguxjl3445I7nGweAJLQ9uYN30Imh+6dxH
-	O3Xo7qJw==;
-From: Heiko Stuebner <heiko@sntech.de>
-To: Michael Turquette <mturquette@baylibre.com>,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mufecqUQ"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4954d383e64so5213125e9.1
+        for <linux-clk@vger.kernel.org>; Wed, 29 Jul 2026 04:50:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1785325825; x=1785930625; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=UW2B8F00dGnULpBPWdrKAf1y7uPkeTEHd5iC6/HbnbU=;
+        b=mufecqUQolxuinqRsImnCkL9FFJAz4nKLzx7KCmMM0qtoAMVWGglrkDcUYsPqyT+eY
+         6OlzHI0NP/N278zypR+BlAbz/tQffHkNBJ3joKjmV2dqeVjDmQfywSvsinC+ffBKyIKt
+         XgRPb1tSrYWSyWEcmHCmwWiBKgEam5TQMwEgEB2Jm1sdU+AEkZR/aZJCiAi6UwF1oHNJ
+         Pzc+ySej8Bx3cKMIefx3KOjtoliWWWNBk/v9lgPrmscflXJ8j44fH0pEyRjJLQZ0WdcD
+         gUBz+bTbM5UMbHDbHPhCnnZGksuhjeerXA8k7a5o8N2QlUJAfiylkVjtK6Cpk7Q0VEd/
+         fIaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785325825; x=1785930625;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=UW2B8F00dGnULpBPWdrKAf1y7uPkeTEHd5iC6/HbnbU=;
+        b=PMJ1+VLbHN1mAYA5CvRzIOaU2bxpla+VH2VOMYRKZ7pS1BtRFg8amsdsfMuDeiAOh+
+         yUYVdnqyBydwJ3hx7MizwchSMkQAVzjihGPQVlTfTU2pg16a8A7nZqATnpxiyeiNImke
+         SWOCP56ckkXoX2bUe9AiVH+uEROpkkwqSsVPV6Je1/Zf9DnW4xGZCI4mMb6wBgh9+szA
+         vT6EgRxCoOQOQfF6+6Ui7JSzLasoL5k7mwJ0wvoAMaS52UAi0o0+0bXSDMTlNTg//PIb
+         y2HbzKZJxs4bVR74xRw7Pzgz3Q97KiuoqKsAyv3UGIqw93KV4GhZH2vDVfN2lvalCWzW
+         iL2Q==
+X-Forwarded-Encrypted: i=1; AHgh+Rpf9SwrOkjUml0HJs6f0sFiSyROyjGT257eBn+1EIv8ES7Z8nrQILIq+rC7/C3lnDMZUgi1Pk+rmBI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDLCyrnA2xvwdk9HKhi3aWfNjy0Z/jMdLdxvded1+VKClu5/wc
+	vmgVHHtICWFAQVV1Bh1xqG6FFBqCXoaFf5zngcMc45O2DUCW2IQhq9+I
+X-Gm-Gg: AR+sD1390MqaI/xbmn0Lk9lV3H9Woi+jYYe/mosDvaTzcfJx1KwaJ/V8CXzlI7sIGzz
+	1XWhBcLSb5B9roXA+JHt//UD0uhlBCNjstXYTH3kVoWkuCG3qaiBv/jkEEf0uv+569skXxUvjgJ
+	pOUMuEZFQrn4CDDjMeh6MxGEXIS414LnHHN2paUMoYSMCHxK/34Ulqepoh6zU4dC68gzCnFFspX
+	CB8fQ7bv99W9M9bodKBe3wMqQLeUiV2VdPp4AQttOPclXMZoxJnhCuIaLsRDs1RRCvTR4T6blf0
+	czbpQroANOHsxxPbtD9JKbCoUX8LIFCWniSxmMwpK+7QN5WBqg926QyMzsg6TEK8j1YyYpmygfr
+	0VkGte5OWzik9qbm9qF3YvjrdNOyL5hfulMMpouaUPRrnwpx/a5QOErFpR67eftCRTNyJUM/LsV
+	3VcfOKAlFda73VF/UaerA1izWLgSi5tbqLk3gsaflpajY6tifPsb42bum/6yYX2YrVhlmz0kH38
+	I7JUcecuFeQrw==
+X-Received: by 2002:a05:600c:1907:b0:493:f442:3dd4 with SMTP id 5b1f17b1804b1-496c65d4a28mr81347155e9.39.1785325825029;
+        Wed, 29 Jul 2026 04:50:25 -0700 (PDT)
+Received: from localhost.localdomain ([2a00:23c4:a702:d301:10b8:4461:ee04:15e2])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4957bfc2ff2sm326144165e9.4.2026.07.29.04.50.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Jul 2026 04:50:24 -0700 (PDT)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Vinod Koul <vkoul@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney@redhat.com>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	Finley Xiao <finley.xiao@rock-chips.com>,
-	Elaine Zhang <zhangqing@rock-chips.com>,
-	Detlev Casanova <detlev.casanova@collabora.com>,
-	Sugar Zhang <sugar.zhang@rock-chips.com>,
-	YouMin Chen <cym@rock-chips.com>,
-	Wyon Bi <bivvy.bi@rock-chips.com>,
-	Alexey Charkov <alchark@flipper.net>
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	Dragan Simic <dsimic@manjaro.org>,
-	Liang Chen <cl@rock-chips.com>,
-	Quentin Schulz <quentin.schulz@cherry.de>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] Fix RK3576/RK3588 fractional PLL rate calculation
-Date: Wed, 29 Jul 2026 13:11:35 +0200
-Message-ID: <178532348703.455945.4872478819710322236.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260723-rk3588-fracpll-v2-0-3adfb9dda235@flipper.net>
-References: <20260723-rk3588-fracpll-v2-0-3adfb9dda235@flipper.net>
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH v5 0/9] Add RZ/G3L USB2.0 host support
+Date: Wed, 29 Jul 2026 12:50:08 +0100
+Message-ID: <20260729115022.222340-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-On Thu, 23 Jul 2026 14:21:57 +0400, Alexey Charkov wrote:
-> Fractional PLL rate recalculation for RK3576/RK3588 doesn't correspond to
-> what the hardware actually does due to two issues: wrong denominator for
-> the fractional component, and wrong signedness of the fractional
-> component. The result is the kernel-visible PLL rate being off by about
-> 2 MHz for the two affected PLL rates vs. what the hardware produces.
-> 
-> While this fixes a real bug it's not a regression, as the issue was
-> introduced in the same commit that added the RK3576/RK3588 support.
-> 
-> [...]
+Hi All,
 
-Applied, thanks!
+This patch series aims to add USB2.0 host support for the RZ/G3L SMARC
+EVK. The RZ/G3L USB PHY block is similar to RZ/G3S, but each port
+has an OTG controller, unlike RZ/G3S, which has an OTG controller only on
+port 1. This series migrates regulator driver to use id-table so there
+is hard dependency between reset driver and regulator driver.
 
-[1/2] clk: rockchip: pll: Fix the fractional part denominator on RK3588/RK3576
-      commit: 52aef653c3d0c24013dfa9eccf692594eacdbe17
-[2/2] clk: rockchip: Fractional PLL coefficient on RK3588/RK3576 is two's complement
-      commit: 5814788834774ed6ad1a27ae91b44eeca80cd27f
+Merge strategy:
+  An Ack/Rb tag from Regulator Maintainer for patch#4.
+  Patch #1,#2,#3,#4 - Reset subsystem
+  Patch #5,#6,#7 - PHY subsystem
+  Patch #8,#9 - Renesas SoC
 
-Best regards,
+v4->v5:
+ * Collected Ack tag for regulator driver changes.
+ * Dropped renesas,sysc-pwrrdy for RZ/G3L as pwrrdy signal is modelled as
+   power sequence.
+ * Dropped the tag from Conor due to above change .
+ * Replaced the variable regulator_driver_name->regulator_name in struct
+   rzg2l_usbphy_ctrl_info
+ * Switched to power sequence consumer for controlling pwrrdy signal.
+ * Updated commit description for patch#3.
+v3->v4:
+ * Updated cover letter with merge strategy
+ * Reorder the phy binding patch for easy merging.
+ * Updated the commit description for patch #2,#3, #4.
+ * Moved the handling of regulator_driver_name to patch #3
+   in preparation for id_table match.
+ * Migrated to id_table match using driver_name and reduced the length
+   < 24.
+ * Dropped rzg3l specific platform driver.
+ * Dropped the tag for regulator driver,
+ * Added id_table handling by introducing a common probe().
+ * Dropped renesas,sysc-pwrrdy property for usbphy-ctrl node.
+v2->v3:
+ * Replaced items->enum in reset controller bindings.
+ * Collected the tag for reset binding patch.
+ * Dropped clock patch as it is accepted.
+v1->v2:
+ * Dropped patch#6(Introduce helper for regulator registration)
+ * Passing pointer to an array of regulators to make it scalable.
+ * Dropped regulator1-vbus and added a regulators group node.
+ * Updated commit description for patch#1,#4,#6,#7,#8,#9 and #10.
+ * Added enum instead of const in the compatible section.
+ * Updated schema check.
+ * Collected tag for PHY binding patch.
+   in the regulator driver.
+ * Added regulators group node and its children in SoC dtsi.
+
+Biju Das (9):
+  dt-bindings: reset: renesas,rzg2l-usbphy-ctrl: Document RZ/G3L support
+  reset: rzg2l-usbphy-ctrl: Introduce info struct for match data
+  reset: rzg2l-usbphy-ctrl: Add RZ/G3L support
+  regulator: renesas-usb-vbus-regulator: Add RZ/G3L VBUS regulator
+    support
+  dt-bindings: phy: renesas,usb2-phy: Document RZ/G3L PHY bindings
+  phy: renesas: phy-rcar-gen3-usb2: Add RZ/G3L support
+  phy: renesas: phy-rcar-gen3-usb2: Fix devm action registration for
+    disabled VBUS regulator
+  arm64: dts: renesas: r9a08g046: Add USB2.0 device nodes
+  arm64: dts: renesas: r9a08g046l48-smarc: Add USB2.0 support
+
+ .../bindings/phy/renesas,usb2-phy.yaml        |   2 +
+ .../reset/renesas,rzg2l-usbphy-ctrl.yaml      |  40 ++++++-
+ arch/arm64/boot/dts/renesas/r9a08g046.dtsi    | 104 +++++++++++++++++
+ .../boot/dts/renesas/r9a08g046l48-smarc.dts   |  49 ++++++++
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c      |  20 ++--
+ .../regulator/renesas-usb-vbus-regulator.c    |  74 +++++++++++-
+ drivers/reset/reset-rzg2l-usbphy-ctrl.c       | 109 +++++++++++++++---
+ 7 files changed, 370 insertions(+), 28 deletions(-)
+
 -- 
-Heiko Stuebner <heiko@sntech.de>
+2.43.0
+
