@@ -1,166 +1,204 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F06F446050
-	for <linux-clk@vger.kernel.org>; Thu, 30 Jul 2026 17:38:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 342EE3B0581
+	for <linux-clk@vger.kernel.org>; Thu, 30 Jul 2026 17:54:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785433096; cv=none; b=EoYc+WCh/OAOXkdyFZ0KZAYlwoxjgbe3aYw3fpua2ESOBptkrexMFekBFPOkCjJ7EijAnStEMNqppsUQykqT1nsvjLFM8sEkDjUG+Tg1YJJZdEgN7c/3moNpGgQwzAQeR2k9mhrFQukMsOyq8LmQflAPZyMVtOFqpRiYqa1DruM=
+	t=1785434087; cv=none; b=lSKjKjb3+LwRu5pPvVa6LFwucdJCrjaIodADmszXgB5pLJ2OnJ6emTsoVfKDZXeZ657nGFb4zQsPKRg18Iggmk64MYA2na+mycIEOS/lkNzJVqjkL75uTPB8Wg3PYcI0XsPoe6gYn0llXcgVE0We2OuIgbB+R6r4hhHk2pvctlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785433096; c=relaxed/simple;
-	bh=tcCAaJdWJcVjCNXkGXLQhu11kXbWbdF1H1Q7waoPhQI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kAwuXx5OetXEx9pRMUBwDL0bEFO/y++d+DQdrI8OYnTyEdfCxlmK/uZZ/cA+Ab7TeovW/8W/yj3j98B9s14df59QAbI3lo+VNVsSXASQeY/E7qOpiaulb885G2Pf1KG7PnlxFUDP84Y0soRaeNeNqwxkSQ2bVd1YzyRDfdWUp8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=M3qUsqP8; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=Qmv4/Aed; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1785434087; c=relaxed/simple;
+	bh=/QTaqqQP/iMHUTIsjATiz1okadrXGJ+qYuzqDe4y2uQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=OR6/XGJyxa6K5NogVoKRk95Y839cEQwskVw94OOhuhQD3u1JqDuxHwFYctkr5o5gizh8+ZGbTeredF9L9BGw1kWOf+2ZYHQbabYhIh5mviGzazRONa0cAZurp67d+krn3pl24PJ2kxyjIcrG3K7/akfjHerxQKwHhCdCYwDlTnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=L5RpLKhy; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=GOQGcbgn; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="M3qUsqP8";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="Qmv4/Aed"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1785433093;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PRVLUAMqt9btSYcKLPYN+Dg017FHNaeUxumso8uAL/U=;
-	b=M3qUsqP8UmpFQmYuDNZ5Wlb12fryzpOun/n3qBZTCbJ3qTHMCJM6RwfGH0acb+C9lgADVa
-	SOWp3f7/ZyqC+PQ5zj4WA1POBTLREZhYFm8FtPhHUWJzMqBLNyV+kPdP7nBGnhfPmKQYpd
-	Iw99FSzBpyNSxivOIwaAPvZ7TgO6rKk=
-Received: from mail-yw1-f198.google.com (mail-yw1-f198.google.com
- [209.85.128.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-464-vgBoXsgrMbyV5zoGEZGV4w-1; Thu, 30 Jul 2026 13:38:12 -0400
-X-MC-Unique: vgBoXsgrMbyV5zoGEZGV4w-1
-X-Mimecast-MFC-AGG-ID: vgBoXsgrMbyV5zoGEZGV4w_1785433092
-Received: by mail-yw1-f198.google.com with SMTP id 00721157ae682-81e8a76a273so2899707b3.1
-        for <linux-clk@vger.kernel.org>; Thu, 30 Jul 2026 10:38:12 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="L5RpLKhy";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="GOQGcbgn"
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66UHfF5q1458265
+	for <linux-clk@vger.kernel.org>; Thu, 30 Jul 2026 17:54:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=sOYSAr6uu/0ra4AmicnafZ
+	NxmpLHsj2Ia5yTMbKfemI=; b=L5RpLKhyEoLXRemIGOOWUQghmr9O1XNGFF9GXQ
+	WmsLN2x0f0DUfkKR4OrBYkiDCzOH1FXuPSv5tI+Mi7Do5uJLb83TL72nvVqe+eWE
+	HUUXLVbfLktcELUgVjM3I8ArTCTDsPLpwHuurnIBOtjQ84GEEhYhKAkXNCZaosi2
+	uO0DiLp3nq5qW0U96W4mIyLbdQSeM3nX1+C9NHYCBz3BgdaXPBnvQ2ec9XyI9w19
+	B3mNEXnWX0nQmDLUFp/C48JCaZJi/LPbhcVHJPBUPQM/xuzgSI4g+t2muTimJm1R
+	N8Nxi3tmI4u4NLodwLitoWJU2f0iocmZUicor7L2ghJdqxow==
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4frb7wg20m-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Thu, 30 Jul 2026 17:54:45 +0000 (GMT)
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-ca860baea9fso123638a12.2
+        for <linux-clk@vger.kernel.org>; Thu, 30 Jul 2026 10:54:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1785433092; x=1786037892; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:content-type:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=PRVLUAMqt9btSYcKLPYN+Dg017FHNaeUxumso8uAL/U=;
-        b=Qmv4/Aedan7hcQz8zdo06qi5nF2HNxgwap8nyZp7bAn8QBUXc3TOzbpUdal1eFiUML
-         C0zklhtMi0rR5A4m1KlyOi54aCNThRh8/1nCR0poZuqEpAMZWpI1k/DAz59nd8p+IaMY
-         tcDhI1OybMqq/BZhZQAQEUClDgzELJ/OmpAQ7zz1XpJpsyyMRqmE9+HU9O65nNnsBSrH
-         BWhkVFtHlc85dNdGdzJX7tyBC+ue+SZOH37guVAEXzPs1KZKGve+ATqOcWuo0ej0lQLC
-         PXEBIFcsfmPmaxWRLYgZNRJi9fHbAS5xw681j6aOK0IiCdUBfa5K2YKQ60ft7Ur+VwzO
-         OLVQ==
+        d=oss.qualcomm.com; s=google; t=1785434085; x=1786038885; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=sOYSAr6uu/0ra4AmicnafZNxmpLHsj2Ia5yTMbKfemI=;
+        b=GOQGcbgnnsc/WZHhGpOMWW3lvv8s8PU4ix2REwK7eA8rfPrG4fpTxJgiar7gwnMjfu
+         upK8cqxnivNqaiPopOE8OkaVgrRCG0nTpXTL3mH06wpizu2MZ24Ost/QVTedflm6GQLT
+         ki9Gq/gi8m7Fp5sw8nd3PdObsXfnJ5gfzOYh6sB0H5wpMjKDFDOZKpzNu2fCapN2yGGa
+         8+9/s4Ecsp/ftk7V/99ITD3q3es1nY9aQ97elu0j+wHFw4egYBvg2TUaAlgK6wKVGb8T
+         7XLr6etp9LboZCTiP/pNzPAjwyfKScbnvN/OEvWjMMhH30Ouj5tLlS9Pyw15zSMfUM5h
+         6AMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785433092; x=1786037892;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:content-type:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20251104; t=1785434085; x=1786038885;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=PRVLUAMqt9btSYcKLPYN+Dg017FHNaeUxumso8uAL/U=;
-        b=c6KkNxmxZ25He9yCSqnG45Yd3kaGtUxifH6rfZZoWZdYDAOJWJ3B+U/S+bmKbeqOdX
-         58T8EdcvOoJRuaEV/YX3g+5XlWqnDSyblbQCQDJBLa978nRZ2YmgjFBplD/ECYYC97fE
-         wM/fuyPJRPGOpICDNMqJfzX4gUjdmM6zDKzu0dZs6C/RzEZyAkaV53q4tAQxp7AL7q/5
-         kq1LD1JcCpfbDPPx7i7UR9BhQCFbjTjgBq5WzFewOMcppj98ur4unLcwANwm839xalb2
-         qKNeVXCMvL7LmMHqRWefSGcf5mM0C+kaXh7E+p4dCNHh9+SmmXIJq+3j8XG1azDXSrtb
-         D5QA==
-X-Forwarded-Encrypted: i=1; AHgh+RrBCyWn2N3PQbDnT1jkdnD44hf3HAW+qmS6O28obojaD5dMI6zAjSw0QHmxNOFPoJnIDW9dep9ANow=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfTWVaCaQTb77gBykXVmzwxDUXRItMW9r6lk/mPkF4T4MAsBf7
-	wVajsWzKOy+sOWDwTtN21MsBpGRxwNrP2+H4EiGfBhalx6npaBFVlEb2QCrpU2eDBjg/PFOIPVa
-	6zNAg4/VVvzXBceVObPbk4otlV0DHUBr3KSlZzZijeHGwaEp2sI4SylRgTZbVKKmEIU1VSQ==
-X-Gm-Gg: AR+sD13L0U2LfWbYIRdfXiSePI/X4Xud7MWBQZR086ONs6MKC1hqTYqMBscQddg0whY
-	ifQzSBxabCmpm0qORoUOafBORv6YGFTNBLYkjxsYnxrWbBdpFwvE3BpSQycMSLPiRk9jH2e8mUl
-	/E31RcPD7s3o+8HJ76OKO+1e20EgD0/MzZmqf8kZjHSG7YqwjITNi/jpfAR1FqdxdBCKqVm96xW
-	LCjTGtSs8HVp2++O5VKCzq/7V1h9oikkn0DdHopuibQwLMlVAvkkt10fRzxlWOwwo9m1chJvYlu
-	y2vR05r0nGFQZTuCq/dlsQuobMMCjQmNUCm1dbKgASX+w3TZ/yzGbUVdJOS1m3Ydgb5ZFN//N1I
-	hOO6dR0fIZtPoNqelpvLDNxjgBTI8Ee56KSI=
-X-Received: by 2002:a05:690c:698f:b0:81e:fd36:ff73 with SMTP id 00721157ae682-81fb891d54cmr25018637b3.5.1785433091928;
-        Thu, 30 Jul 2026 10:38:11 -0700 (PDT)
-X-Received: by 2002:a05:690c:698f:b0:81e:fd36:ff73 with SMTP id 00721157ae682-81fb891d54cmr25018367b3.5.1785433091480;
-        Thu, 30 Jul 2026 10:38:11 -0700 (PDT)
-Received: from redhat.com (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-81fb87315cdsm14274757b3.0.2026.07.30.10.38.09
+        bh=sOYSAr6uu/0ra4AmicnafZNxmpLHsj2Ia5yTMbKfemI=;
+        b=jfuMU1Ji/KGZ51cSWSIfhHWGZ9+HI8vQk+C6JrbVx4eYkdazC+xoWy/EfLpXpWVK0S
+         UWf0j9cMJhhqCBGuDAPFkN5i9rMlDPMG+JTZt2pMP5Hk+DMEjoD8gpXSq/HGVqBnOqp0
+         sTbDssFR8GmVSodeaDnyM8PZlk4Iz5zpgfmV9MpMKFaAaPvlehQeFuwiwyg60T8DjR3U
+         HhmK0todNkxCtjDbhmHW3jbVvrrN8QMCKQMtZUJJa7dUIOG52lOIheuP5ov/XV4YrfDE
+         kTbOEFlTjCMaeAGOQ1+j5udrT9r2MUzsX2JDojB9R2bJ2topvwNyQv6eUxq8TTrfmx84
+         odBw==
+X-Forwarded-Encrypted: i=1; AHgh+RpUuFFmOD4v5q/jU6SC3VhcTp6nHlSse1XVfdDKBbC/hq04AEogg6wyvrwCLrAX/9aqI0krdo2hJ9M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkOxVtndlEijLwO6gIuOLvkRgzGB4MSbe+aZm2QPxFvsxKZKHX
+	IzfhvmOPcxcBL81m/1PWA5+zKgy7/YQRmL+zAaKScIDhpayMnhlNFtKGxZsbixEQJE8Ee5LUXMT
+	zvz7FbLtMuZ69kaxcnvCaSQMVkU8X/EwRitEL4Ix3HjW1WVnIUNSCIbPQM4Q6anE=
+X-Gm-Gg: AR+sD12YQ4qtGzpOMoCKTAzxME5HKLUDn2mP5DdFQBnpSiNGXaehlkaqOLG6I0jyN0H
+	IEH7rhaAifwv+/tQ2M3e3za+T3CRb9Lr+ziVJGzhC2uaDV8pHIZ1Pt8jw5ByIHUDfuXf9jE7Nq4
+	bK2Lu5GLkZvFk7a0oKjddA7f/mCziV9bw8tddE+PF28PqXlbFKMxaiVvyWnqdBpvmoloCJZsijy
+	4MfLxKOmWKYOU3oxl+JtzEqz2sVnjR/cLF4Q7mvLLMswqOMgtF6Pbq90U/2jCFhKqnCX/9PBqlD
+	iGg5FehCKB9bKPdZoxpDr/V6crLi3jvimSaaG31Kj7uLqLYgvvcjWICeDCx0eZGCKZHQSBZaFAN
+	D2amQoB/fCZXX1yJ4N3sOarM6
+X-Received: by 2002:a05:6a21:695:b0:3c3:8ead:6df0 with SMTP id adf61e73a8af0-3c900535ef9mr3433706637.28.1785434084628;
+        Thu, 30 Jul 2026 10:54:44 -0700 (PDT)
+X-Received: by 2002:a05:6a21:695:b0:3c3:8ead:6df0 with SMTP id adf61e73a8af0-3c900535ef9mr3433683637.28.1785434084250;
+        Thu, 30 Jul 2026 10:54:44 -0700 (PDT)
+Received: from hu-tdas-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-13e72643a12sm36444098c88.5.2026.07.30.10.54.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Jul 2026 10:38:10 -0700 (PDT)
-Date: Thu, 30 Jul 2026 13:38:08 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Stefan =?iso-8859-1?Q?D=F6singer?= <stefandoesinger@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Vinod Koul <vkoul@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Russell King <linux@armlinux.org.uk>, Lee Jones <lee@kernel.org>,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-phy@lists.infradead.org, mfd@lists.linux.dev
-Subject: Re: [PATCH v8 05/12] clk: zte: Add Clock registration infrastructure
-Message-ID: <amuMADxexEuJJG44@redhat.com>
-References: <20260727-zx29clk-v8-0-7a107b00f1dd@gmail.com>
- <amiw7mfPfSPjLHLH@redhat.com>
- <ami0TaY84IslWZyo@redhat.com>
- <MwDLqBgXR7G6dGkTtCaRrQ@gmail.com>
+        Thu, 30 Jul 2026 10:54:43 -0700 (PDT)
+From: Taniya Das <taniya.das@oss.qualcomm.com>
+Subject: [PATCH v4 0/5] clk: qcom: Introduce initial clock controllers for
+ Maili SoC
+Date: Thu, 30 Jul 2026 23:24:33 +0530
+Message-Id: <20260730-maili_initial_clock-v4-0-ed52ade264f0@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <MwDLqBgXR7G6dGkTtCaRrQ@gmail.com>
-User-Agent: Mutt/2.4.0 (2026-06-19)
+X-B4-Tracking: v=1; b=H4sIANmPa2oC/3XNTQ6CMBAF4KuYri3pLwVX3sMYQkuRiYUqRaIh3
+ N1CYnSBm0ne5M03Ewq2BxvQYTeh3o4QwHcxiP0OmabsLhZDFTNihKUkpQq3JTgooIMBSlcY580
+ VG2WZFpKTKiMoXt56W8NzVU/nmBsIg+9f65ORLtuPl216I8UEV6mtLOGSUcqPPoTk/iid8W2bx
+ IEWdmRfSlG+TbFIqVyKrCZay6z+Q/EfioltikdKSC1VbFCT0w1qnuc3oPmcrlMBAAA=
+X-Change-ID: 20260617-maili_initial_clock-c7e2b4530d80
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Taniya Das <taniya.das@oss.qualcomm.com>,
+        Vivek Aknurwar <vivek.aknurwar@oss.qualcomm.com>
+Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+        Imran Shaik <imran.shaik@oss.qualcomm.com>,
+        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.15-dev-aa3f6
+X-Proofpoint-GUID: gaB1VvIwfz4XCqe6lFKd4xIf73ox1mEY
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNzMwMDEzMyBTYWx0ZWRfX/9WAwMavpyre
+ UY84v0wZDFVWbdXz21k/OFDlFa7Bu37jalBNuHoDtHAvmQi/SQXsX2C0sXSDw63DEPomslwW94q
+ McTIcvltHJlZYoFw4EkwcwoseBvDgbw=
+X-Proofpoint-ORIG-GUID: gaB1VvIwfz4XCqe6lFKd4xIf73ox1mEY
+X-Authority-Analysis: v=2.4 cv=EojiaycA c=1 sm=1 tr=0 ts=6a6b8fe5 cx=c_pps
+ a=oF/VQ+ItUULfLr/lQ2/icg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_K5XuSEh1TEqbUxoQ0s3:22
+ a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=Kp3T8kGXBi3sce7iFlAA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=3WC7DwWrALyhR5TkjVHa:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzMwMDEzMyBTYWx0ZWRfX0JlUVZipFo1q
+ WpJKGZneZFfIc5y14oz5t+jCQ6Y4qfxUFQfjXeOHou9DekU48P/7wPirioCPz/IA4bWueCRBGR7
+ 3WYycKfgmbPWrjs/lQZ2KGaCsjSLLseGrbucGxatJGigfLQE6d740n6kTEk7385UwBGB1vucSTn
+ OGP4HLsEuJmHi8i6UooCScLmMxsK+fvMR2+qYnGVPbgc36eH023ufcEWbvCaRCM6MJmVAOc0bw6
+ ICCRHhj8TaV7AC6d01+DZO/9JX3fCifvT6g4pWaYOsU3b7PrQE4/4rGiNkLIbIAD5eAutHvmGwQ
+ p6QzfHyiiHoFv8SK6gB/z9SIG+LqIpy94XxS7I7KvN4lHe2Rcw/UvBpdCERJEil3+T+H4phQKIy
+ O9IHZGcTdps0kClMRgb8y7ICAYFyy236vE+oovpHXZXmmPcSDN7y59xOuOvYJZ6MlHe3U6PHvBe
+ rvdPIkFC6iwrxlVg7tA==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-07-30_05,2026-07-30_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 spamscore=0 bulkscore=0 lowpriorityscore=0 clxscore=1015
+ phishscore=0 malwarescore=0 suspectscore=0 priorityscore=1501 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607300133
 
-Hi Stefan,
+Introduce the initial set of clock controller bindings and driver
+support for the upcoming Qualcomm Maili SoC.
 
-On Wed, Jul 29, 2026 at 12:25:34AM +0300, Stefan D�singer wrote:
-> Thanks for the review!
-> 
-> Am Dienstag, 28. Juli 2026, 16:53:17 Ostafrikanische Zeit schrieben Sie:
-> > Looking into the other patches. There's more mixing of the clk provider
-> > calling the clk consumer APIs here. It looks like this just takes a
-> > reference and holds them. Would moving to parent_data address this?
-> 
-> I think so. parent_data::fw_name is indeed something I have been looking for 
-> and didn't stumble across myself. And I suspect when you say "use 
-> parent_data", you don't mean "use parent_data.name everywhere".
-> 
-> But it raises the question of how to handle internal clocks, e.g. foo_gate-
-> >foo_div->foo_mux->clock-26m. Only "clock-26m" is passed through the DT and 
-> found via fw_name, and only foo_gate is exported.
-> 
-> For the other clocks I currently rely on the string matching to resolve the 
-> parent named in the static init data to an actual registered clk_hw. The 
-> alternative I see is storing the struct clk_hw * in a table by index and pass 
-> it in parent_data.hw, but that'd require managing the extra indices. Or build 
-> a clock-local name->clk_hw lookup, but then I am just reinventing the old name 
-> matching.
-> 
-> Am I missing something obvious? Is there a canonical implementation somewhere 
-> that implements modern best practices? I learned that looking at existing 
-> drivers isn't always a reliable guide.
+Maili is a new mobile SoC from Qualcomm. It is a derivative of the
+Hawi SoC and shares most of its clock topology. Where the hardware is
+identical, Maili reuses the existing Hawi drivers via fallback
+compatible strings. Where Maili diverges — specifically in the Global
+Clock Controller (GCC), which carries an additional QUPv3 wrapper
+(WRAP5) — the Hawi GCC driver is extended to handle both SoCs.
 
-You'll want to register all of the clocks with the subsystem. Take a
-look at drivers/clk/qcom/gcc-sa8775p.c and here's an example I picked
-at random that shows how you can reference the parents with the
-parent_data:
+The series covers the following clock controllers:
 
-static const struct clk_parent_data gcc_parent_data_8[] = {
-        { .index = DT_BI_TCXO },
-        { .hw = &gcc_gpll7.clkr.hw },
-        { .index = DT_RXC1_REF_CLK },
-        { .hw = &gcc_gpll0_out_even.clkr.hw },
-};
+  - RPMH clock controller: identical to Hawi; uses qcom,hawi-rpmh-clk
+    as fallback.
+  - TCSR clock controller: identical to Hawi; uses qcom,hawi-tcsrcc
+    as fallback.
+  - Global Clock Controller (GCC): extends the Hawi GCC driver with
+    eight additional QUPV3 WRAP5 clocks present only on Maili.
+  - CPUCP mailbox controller: software-compatible with X1E80100; uses
+    qcom,x1e80100-cpucp-mbox as fallback.
 
-static struct clk_rcg2 gcc_emac1_rgmii_clk_src = {
-	...
-        .clkr.hw.init = &(const struct clk_init_data){
-                .name = "gcc_emac1_rgmii_clk_src",
-                .parent_data = gcc_parent_data_8,
-                .num_parents = ARRAY_SIZE(gcc_parent_data_8),
-                .ops = &clk_rcg2_shared_ops,
-        },
-};      
+The devicetree for Maili will be upstreamed later.
 
-Brian
+Changes in v4:
+  - Rebase the binding of tcsr to linux-next.
+  - Add RB-by from Konrad Dybcio on the GCC driver patch.
+  - Link to v3: https://lore.kernel.org/r/20260724-maili_initial_clock-v3-0-45b577241c91@oss.qualcomm.com
+
+Changes in v3:
+  - Update the comment for extending the array appropriately size.
+  - Add RB-by [Krzysztof] from v2
+  - Link to v2: https://lore.kernel.org/r/20260713-maili_initial_clock-v2-0-79548f0bb58f@oss.qualcomm.com
+
+ Changes in v2:
+  - Split the new Maili-only QUPv3 WRAP5 clock IDs out of
+    qcom,hawi-gcc.h into a new qcom,maili-gcc.h header (which includes
+    qcom,hawi-gcc.h), instead of adding them directly to the Hawi
+    header. [Krzysztof]
+  - Update the GCC driver to include the maili-gcc header.
+  - Link to v1: https://lore.kernel.org/r/20260618-maili_initial_clock-v1-0-d6ede0352113@oss.qualcomm.com
+
+---
+Taniya Das (5):
+      dt-bindings: clock: qcom-rpmhcc: Add RPMH clock controller for Maili
+      dt-bindings: clock: qcom: Add Maili TCSR clock controller
+      dt-bindings: clock: qcom: Add Maili global clock controller
+      clk: qcom: gcc-hawi: Add support for global clock controller on Maili
+      dt-bindings: mailbox: qcom: Document Maili CPUCP mailbox controller
+
+ .../devicetree/bindings/clock/qcom,hawi-gcc.yaml   |  11 +-
+ .../devicetree/bindings/clock/qcom,rpmhcc.yaml     |  65 ++++---
+ .../bindings/clock/qcom,sm8550-tcsr.yaml           |  32 ++--
+ .../bindings/mailbox/qcom,cpucp-mbox.yaml          |   1 +
+ drivers/clk/qcom/gcc-hawi.c                        | 201 +++++++++++++++++++++
+ include/dt-bindings/clock/qcom,maili-gcc.h         |  21 +++
+ 6 files changed, 285 insertions(+), 46 deletions(-)
+---
+base-commit: 95d6a9ccef99117115e41e9adb271243bd5e985b
+change-id: 20260617-maili_initial_clock-c7e2b4530d80
+
+Best regards,
+-- 
+Taniya Das <taniya.das@oss.qualcomm.com>
 
