@@ -1,302 +1,153 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C76B83B3895
-	for <linux-clk@vger.kernel.org>; Thu, 30 Jul 2026 18:22:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA4CE422E25
+	for <linux-clk@vger.kernel.org>; Thu, 30 Jul 2026 19:13:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785435774; cv=none; b=g2ZJOhjMX/JHJ63OzeEksppfrQKNaXyqkbjPaYmUTuuV6dto6Jo/N6Cy95hym+5N+CnXkOCBRr7mQX2GjT+CCmkEBubr3XpWlsqyUdpRok26v/URbFID6iySDIaI8JtkebjKTU5r/sU4IEXXDf0ANyBFd7222T2gru1cahvYGuU=
+	t=1785438840; cv=none; b=kKl1tsy5enSJZm1vK1KgzMjp8eZ0RZEmwTpipYa7D4aIVMedCp3+gUkNuyvq7XLI9dDFkiNJUarDBmye0yPeFG+E1S/7rR/VZvoRve5j7CasV0A8zZ0tHbfre4b5Avq8kS2IhQC2Aie9smMMaDNFOlbdDBsZTRllqxVW9d8t11E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785435774; c=relaxed/simple;
-	bh=dDeMXpjPA4/d6nv1lGdAEuc0hbO+ZdPT1uwNq+bzcUw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JaWK0JGXPVOq1Yy3ISCNkdijIOCya/v+uPBdKk0DkC61v7VT0r6eVmg/RaoI34hFN80rnluXyCMIJSscbLxeI5qtR0hZlgYpID3sqx+U5eHqUrjfDdDUx3HvwXwgMvH1m+6Q75NIFCtg0Le7C4rw3MonUYbRLDueQBVitV0uHxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Bgs+D2/w; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=Tu7zf+e1; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1785438840; c=relaxed/simple;
+	bh=Topwf+V3jfuUiuzqOBdaGECWQDvVXswPedPSAJACfQo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JBoJ2BUZtHpSrtVCOZHsvmoHKl5SloYnbrFmZI9I4sBDR4fyqCnA6Dt7Z9CNsCVsALC1ryfqVw9IUqLUySwwx/SoEwhwC3Y68RcgJpQyiJaGJw4DQC57d/cg5C88FmbYPisRCplLbgb3dtCNPLiAMZ91ySjazwTGTWywUkadCJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mr2ny54t; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Bgs+D2/w";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="Tu7zf+e1"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1785435771;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=57rmP4vhcSTbGsoBnLah+TzWrTa5sRCpdridw9cY9ZA=;
-	b=Bgs+D2/w0zk0FPCceFytKcRxM33AObSpgssoBr7mxH/T9VQYwHuEVVwPuqSCDlsRoBWU1G
-	HFZxZiAoJrg30PfEvvQLf1NoixmZC5HPig8EP/EkQGVYnn99S5Xd5bPk0HSeydwmlXLHRS
-	om0lOn9GUwTwZTmH07weYwYmOwS+QIQ=
-Received: from mail-yw1-f197.google.com (mail-yw1-f197.google.com
- [209.85.128.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-339-sxyWO0S4NsatafEs_RT3pQ-1; Thu, 30 Jul 2026 14:22:50 -0400
-X-MC-Unique: sxyWO0S4NsatafEs_RT3pQ-1
-X-Mimecast-MFC-AGG-ID: sxyWO0S4NsatafEs_RT3pQ_1785435770
-Received: by mail-yw1-f197.google.com with SMTP id 00721157ae682-81ed0c52d9cso4405797b3.0
-        for <linux-clk@vger.kernel.org>; Thu, 30 Jul 2026 11:22:50 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mr2ny54t"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4954df200ddso982535e9.0
+        for <linux-clk@vger.kernel.org>; Thu, 30 Jul 2026 12:13:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1785435770; x=1786040570; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:content-type
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=57rmP4vhcSTbGsoBnLah+TzWrTa5sRCpdridw9cY9ZA=;
-        b=Tu7zf+e1Xe1pRBwdRN1iO1n/zFDA0Ct4lb3MsTIMgO4KafAewdBzP6Bsdjz23dstae
-         RLnuBC/+9wPM21JxGF1r65eO9e4m+o1EnNOohQIfCQ8S4KQiYbATjWGtsYNcFl2I/om1
-         djQSOCfmIhPfKLHBFKfzJmGFx/hLc80Ts5MeHf7XebBrZMjoeXtRPglADdehGM5eUZ9q
-         fvghyvqDNFw80UjThoHohyhShhpnq2S6ilebAYW4YfEzafTgv2rPO3Uof3uvW5S7v/XV
-         GOkiL7JULduSoPkXMztFJkno38X0idY+UTBkz2o+8d3o66wcDIuiNSWCF3PEtU/p8AlC
-         B76g==
+        d=gmail.com; s=20251104; t=1785438837; x=1786043637; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=RD3lmsuBeFnVrxhklpYzLfUZAUon1UxgAvihRoA5NDM=;
+        b=mr2ny54tuo212MTH/DQS6J6QiCZLVFtAdpF2X6zZ2VBd91l0ooyVJiFXoOY4ptYY8H
+         wvdGye81wyLx1Iuxa5q98YbSSo4I1tThXaER564wh9ZSNOZUijD57OqP+cRHVkxB0alq
+         Xts18V0K6C8B+3OtGYvNkQpEzyOnpRaiuofhAf19MllXKSyQkJi1Bt/b5auSULJ4xMzF
+         ACRqORVPhprh1HvL2Rc3Sk1OLI+RjfaY2XL/GiDXWrFte3xNKo/FKKvkw3Z0W0Du7Tei
+         iFyzYHjE4FtiOVeumdnxNxB16921UK8RlYselZZBnSnydBX3IVFD4ECNJ6Kfu+vm0rzh
+         Ukig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785435770; x=1786040570;
-        h=user-agent:in-reply-to:content-disposition:content-type
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=57rmP4vhcSTbGsoBnLah+TzWrTa5sRCpdridw9cY9ZA=;
-        b=Nv5zknTq96EE/NSsLzz+ox0DPAU4KhCg+GsiTmA+R35WZ9kZO0lGteusGwxM8AzDOm
-         gh6Hhw7/dypdnJGS3vChYlHo9nVaIdIybonjwUIqW7z8L07IDtei6vbGNH4djRgYHvbq
-         T9uJTGjhJ5DAKdp4CS326Qy2uui2gLVnTojTwM77ALZo0BfJUegnD6RtU0XZu47HB9Me
-         CB5FReq8k+eX34Cj9Roa6PtbxA6EnT5pBZ0ZAvsokbfhOCx6DZaezWYvmdk990S+u/lS
-         1SBgjHZ5lkGJSKn6nVHteHMdHHLA0XsYBY60r+OJ6ADNgzE+D8t+Ve0WuAKFQz75ib/9
-         kfGQ==
-X-Forwarded-Encrypted: i=1; AHgh+RrbdmhkOLqi2h2DQWWaUL5RIDj6wM4BRNq7tKKW2v5i8J4SCdJBD6eBm2Dnlc9H6xM3wZ6wxQMRlOw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/p3LsV5OpgA0Caepz24DyICFmGF5BbqXVfcLT/Fqm4itHMw+w
-	EbEg9b+K6ovRCKr6oO3JwFgGFjG5vn/KljfXnTysFw6Jv1WwuoUu3Bw/ywqTtMCqVA4AM0vN+Fc
-	qHryBwZJ7D+LYXNyLva/N0WF1vwSc7t02JJ9Lqj4dsiSTQ7b5NVCo+x2bq7wWww==
-X-Gm-Gg: AR+sD11Rc4WVqNBy8BZwtDvPtS5AWSJV6WwYMRg870Lz8rIYowZBBl3hTnOdQvt3e/H
-	5RR4cGkTbal2wKMTn+iWWMwcrnncNG8Nh3CrSmK42ASG8F02Khf3UB/CPZ49W1fdsnokBlWJuow
-	mFMTb8NIiWug1ZZnNza9nF5kmBzmYRCG3zWou4ODXo5SgwOE2KaS0ygX2Z3vwP3DIHY9wai7+8C
-	xKNqbvFk+AzPuQAE80UGbIgr96yxi9TGEc76LUJGnQN3+pS2u65T+QEBZ4jKxNt8EHq/XuwMwR7
-	mCI2ddfEFun8KFd/ABKjsmwEa+ekGRB6Gb80kuCZkGyz33BqziroDmugCU2vpf7EMQWqSTZTnEt
-	O44nPbkaZk1YFR400bbO2jRJoHExXbiHQ0YY=
-X-Received: by 2002:a05:690c:3705:b0:7f4:fad5:2087 with SMTP id 00721157ae682-81fb8b36a91mr27760347b3.38.1785435769600;
-        Thu, 30 Jul 2026 11:22:49 -0700 (PDT)
-X-Received: by 2002:a05:690c:3705:b0:7f4:fad5:2087 with SMTP id 00721157ae682-81fb8b36a91mr27759957b3.38.1785435769087;
-        Thu, 30 Jul 2026 11:22:49 -0700 (PDT)
-Received: from redhat.com (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-81fc4175a04sm2847377b3.15.2026.07.30.11.22.46
+        d=1e100.net; s=20251104; t=1785438837; x=1786043637;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=RD3lmsuBeFnVrxhklpYzLfUZAUon1UxgAvihRoA5NDM=;
+        b=Sg+1Rl3MrqIUkU43givAyU2iIA0NQgCqEXltHWyfMVYtGzTfOFujPyOOzg6qM/gDo7
+         xHgpxxe8qqh7BWOKn497Y5y8GUrWXfIitf8vHVjRkHbO2V1L6B4QtmyA/Py6Al6W1uDi
+         S5Q3z2k95P+ceZTi/F84PX7z5MBL+vspLSU++EN7va7roYqYeuTamzSohCKcKoP+a3Ah
+         wnf/Uzofu1SjOBQUwRTj2QEhaaYNyuRbVQGlJKaacuUu0J7K6slNWK50Dq2AxvbX7vDi
+         NyMLdcl218taLzfb3lLyd4d36w+h5GtBsFpVotxp8ZSJF0JxP6M/ev9VPBRWzU5kBE/Q
+         8Nyw==
+X-Forwarded-Encrypted: i=1; AHgh+Ro93PyowfUwDrWSplmTo2MdvTWuzXqp51SN/B0eprl+vOsUJx174LrW0OcxiAkV1TlIX04NCUoxR5s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyn4HPc3hKCqKsKiG3Jpw7eu5ivONZcNumTvmzOtQ2djFC17kJB
+	IjOQ+Oy02FqhAir2ikx1eIEknndbatCptNS4boVdArvR/aIWOwwF4Vy6
+X-Gm-Gg: AR+sD12XbJK7MgDB4ZP2dTnOoMd99QFeKtv2ICRRm6kxJV+XtjnV6IjUfALlEMEza38
+	Rwib0YIlFfEk7RsAkzkOA/aZ+1Moc22xNoEsA6YzZNrMF0Jso4kdNGddLSiUhylx2fFqXlE6GPX
+	LVaRo9BsaPseELI8EvTv/nRDEs00fNMr5oSWD7dtx6BO/FP4BBG5u7ZIJqUvUgzM4h66ipY9KaG
+	I3PFIUSD4S4R4BjXxjLlTZl3qUmNjnQXpiGcHLzlMxOMF6GXV8W+UO7CDdiClp2W9Exw2BUXsKr
+	mtHtxVmYCMlqvCfF3hYk6E8U1EJcbe+kpDjSKnGL+13Gb2i9ynm8qv2xokDEeOZNbzorlD1820G
+	ExviHOsLcmE4Jrd3dlbM0D1CDA7r5rCUhBE+NMkmrImOfUESgRo8bKCVL3dXco3C/N4E4jvQTn9
+	ttp9AOa0Ip6OhTOy9vNoTA59UmyTPTtqUSLXkHIHV6oT+POWyigTEQV/9DRIV2Hsz8fv7FIOGSh
+	XHXmhnCY5MeB57ntNZBQhU7fWQJ6BeCQUBJqwAWvaya9tTkjP4=
+X-Received: by 2002:a05:600c:41c1:b0:495:5b02:23b0 with SMTP id 5b1f17b1804b1-49800eabb56mr33840125e9.26.1785438836682;
+        Thu, 30 Jul 2026 12:13:56 -0700 (PDT)
+Received: from VivoBook-ASUS-X712UA-M712UA.lan (public-gprs192625.centertel.pl. [46.134.91.178])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-498011e5febsm76121635e9.3.2026.07.30.12.13.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Jul 2026 11:22:48 -0700 (PDT)
-Date: Thu, 30 Jul 2026 14:22:45 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Chun-Jie Chen <chun-jie.chen@mediatek.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Edward-JW Yang <edward-jw.yang@mediatek.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Chen-Yu Tsai <wenst@chromium.org>, kernel@collabora.com,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Irving-CH Lin <irving-ch.lin@mediatek.com>
-Subject: Re: [PATCH v4 00/24] MT8189: Add support for system and base clock
- controllers
-Message-ID: <amuWdRD-TBQtFT_4@redhat.com>
-References: <20260729-mt8189-clocks-system-base-v4-0-e356b813a64c@collabora.com>
+        Thu, 30 Jul 2026 12:13:56 -0700 (PDT)
+From: Stanislaw Pal <kuncy7@gmail.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Luo Jie <jie.luo@oss.qualcomm.com>,
+	Brian Masney <bmasney@redhat.com>,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	Stanislaw Pal <kuncy7@gmail.com>
+Subject: [PATCH] clk: qcom: ipq-cmn-pll: keep the CMN block bus clocks enabled
+Date: Thu, 30 Jul 2026 21:13:53 +0200
+Message-ID: <20260730191353.557494-1-kuncy7@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260729-mt8189-clocks-system-base-v4-0-e356b813a64c@collabora.com>
-User-Agent: Mutt/2.4.0 (2026-06-19)
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 29, 2026 at 12:02:44PM +0200, Louis-Alexis Eyraud wrote:
-> This series is a continuation by AngeloGioacchino Del Regno and I of a
-> previous series ([1]), that adds the clock controller support for
-> the Mediatek MT8189 SoC and its variants (MT8371, MT8391).  
-> 
-> The first major changes is the split of the series in two:
-> - one for all basic clock controllers including system ones (this
-> series)
-> - one for the multimedia and graphics related clock controllers (to be
-> send in the future)
-> 
-> We chose to separate the multimedia clock drivers from the base system
-> ones, as there is currently an unsolvable inter-dependency between the
-> power domains and multimedia clocks; the power domains need a
-> dual-stage bring-up, where only a part of the multimedia clocks are
-> accessible in the first power domain powerup stage, and the rest when
-> the second stage (SRAM enablement) is done.
-> The current workarounds for this issue, such as removing the is_enabled
-> operation from the impacted clock controllers clk_ops table or
-> let the multimedia power domain always on, were quickly discarded
-> for upstream.
-> 
-> The second major change is the dt-bindings patch ([2]) that got heavily
-> reworked, not only because of the split choice. We took the opportunity
-> to regroup in the MT8186 clock and system clock dt-bindings the
-> description of several other Mediatek SoC (MT8188, MT8192 and MT8195)
-> and add in them the MT8189 new ones.
-> The rationale is to ease maintainability and have common files for
-> several currently supported SoC or new future ones, that have the same
-> kind of clock controller design.
-> 
-> Finally the pending remarks from peer reviews on the v6 revision of [1]
-> were also taken into account and new fixes and cleanups were also
-> added.
-> 
-> A more detailed changelog between [1] and this series:
-> - Removed multimedia and graphics related clock controllers code and
->   definitions from series
-> - Added new dt-bindings patches to factorise existing MT8188, MT8192
->   and MT8195 in MT8186 clock dt-bindings
-> - Heavily modified the MT8189 dt-bindings to add new compatibles 
->   in MT8186 clock dt-bindings
-> - Created a new dt-bindings include for the MT8189 reset controller
->   definitions (include/dt-bindings/reset/mediatek,mt8189-resets.h)
-> - Removed unnecessary `syscon` compatible fallback from MT8189 base
->   clock controllers
-> - Added missing 'mediatek,mt8189-fhctl' compatible declaration in
->   dt-bindings
-> - Modified Kconfig to COMMON_CLK_MT8189 be tristate (and not bool) to 
->   allow all MT8189 clock controller drivers to be built as modules (it
->   was partial) 
-> - Fix pll unregisters in clk_mt8189_apmixed_probe error case
-> - Reparent several clocks to correct 26M references in clk-mt8189-bus.c,
->   clk-mt8189-topckgen.c and clk-mt8189-vlpckgen.c
-> - Removed CLK_SET_RATE_NO_REPARENT flag from mfg_sel_mfgpll
-> - Rename TOPCKGEN_fmipi_csi_up26m clock to fmipi_csi_up26m to remove caps usage
-> - Implemented reset controllers in clk-mt8189-ufs.c
-> - Updated all file headers to update copyrights and add all authors
-> - Added all co-developed-by trailers
-> 
-> The series is based on linux-next tree (tag: next-20260728) and has
-> been tested on Mediatek Genio 520-EVK (MT8371) and 720-EVK (MT8391)
-> boards, with hardware enablement patch series ([3]), and on Genio
-> 510-EVK (MT8370, variant of MT8188) and Genio 1200-EVK (MT8395,
-> variant of MT8195).
-> 
-> [1]: https://lore.kernel.org/linux-mediatek/20260309120512.3624804-1-irving-ch.lin@mediatek.com/
-> [2]: https://lore.kernel.org/linux-mediatek/20260309120512.3624804-2-irving-ch.lin@mediatek.com/
-> [3]: https://lore.kernel.org/linux-mediatek/20260701-add-mediatek-genio-520-720-evk-v2-0-19d5da4ef984@collabora.com/
-> 
-> ---
-> Changes in v4:
-> - Rebased on next-20260728 tag
-> - Added patches 9 to 14 to add new clock ops data set for PLL and
->   PLL-FHCTL to handle a new PLL switch logic for PLL control and BAR
->   reset, supported by MT8189 SoC
-> - Patch 15:
->   - Removed useless includes (B. Masney)
->   - Fixed variable declaration order in clk_mt8189_apmixed_probe (B.
->     Masney)
->   - Added missing pwr_reg setting setting in PLL_SETCLR macro (B. 
->     Masney, Sashiko)
->   - Added en_set_reg, en_clr_reg, rst_bar_reg, rst_bar_set_reg and
->     rst_bar_clr_reg fixed offsets and new mtk_pll_setclr_ops ops
->     setting in PLL_SETCLR macro
->   - Added pwr_reg offset values in apmixed_plls array
->   - Fixed rst_bar_mask for mainpll univpll, and mmpll in apmixed_plls
->     array to match rst_bar set/clr reg settings
-> - Fixed factor ratio for mainpll_d4_d8, tvdpll1_d16, tvdpll2_d16 and
->   osc_d16 clocks (Sashiko)
-> - Link to v3: https://lore.kernel.org/r/20260720-mt8189-clocks-system-base-v3-0-8e6d99ab3ad2@collabora.com
-> 
-> Changes in v3:
-> - Rebased on next-20260717 tag
-> - Added Fixes tags to patches 1, 2 and 3
-> - Reworded patch 8 subject and description messages
-> - Updated Reviewed-by and Acked-by trailers
-> - Link to v2: https://lore.kernel.org/r/20260709-mt8189-clocks-system-base-v2-0-2926da3db6cf@collabora.com
-> 
-> Changes in v2:
-> - Rebased on next-20260708 tag
-> - Added patch 1,2 and 3 to make the #clock-cells a required property in
->   MT8186, MT8192 and MT8195 clock controller dt-bindings
-> - Patch 5:
->   - Removed conditional blocks to check clock-cells property presence
->     for MT8188 clock controller compatible
->   - Reworded commit message to remove the note (no more applicable)
->   - Fixed incorrect property value in else block for #reset-cells
->     property check.
-> _ Removed from patch 9 conditional blocks to check clock-cells property
->   presence for MT8189 clock controller compatible
-> - Fixed missing MODULE_DEVICE_TABLE in patches 10, 11 and 12.
-> - Added devicetree series link in cover letter
-> - Link to v1: https://lore.kernel.org/r/20260701-mt8189-clocks-system-base-v1-0-2b048feea50a@collabora.com
-> 
-> ---
-> Louis-Alexis Eyraud (24):
->       dt-bindings: clock: mediatek: Make '#clock-cells' required for MT8186
->       dt-bindings: clock: mediatek: Make '#clock-cells' required for MT8192
->       dt-bindings: clock: mediatek: Make '#clock-cells' required for MT8195
->       dt-bindings: clock: mediatek: reorder MT8186 compatibles
->       dt-bindings: clock: mediatek: regroup MT8188 dt-bindings into MT8186
->       dt-bindings: clock: mediatek: regroup MT8192 dt-bindings into MT8186
->       dt-bindings: clock: mediatek: regroup MT8195 dt-bindings into MT8186
->       dt-bindings: clock: mediatek: Add MT8189 system/base clocks and resets
->       clk: mediatek: Harmonize mtk_pll_fenc related symbol names
->       clk: mediatek: pll: Add BAR reset register offsets
->       clk: mediatek: pll: split default prepare/unprepare callbacks
->       clk: mediatek: pll: Add ops for PLLs using set/clr regs
->       clk: mediatek: pllfh: Add configurable clock ops to mtk_pllfh_data
->       clk: mediatek: pllfh: Add ops for PLLs using set/clr regs
->       clk: mediatek: Add MT8189 apmixedsys clock support
->       clk: mediatek: Add MT8189 topckgen clock support
->       clk: mediatek: Add MT8189 vlpckgen clock support
->       clk: mediatek: Add MT8189 vlpcfg clock support
->       clk: mediatek: Add MT8189 bus clock support
->       clk: mediatek: Add MT8189 dbgao clock support
->       clk: mediatek: Add MT8189 dvfsrc clock support
->       clk: mediatek: Add MT8189 i2c clock support
->       clk: mediatek: Add MT8189 scp clock support
->       clk: mediatek: Add MT8189 ufs clock support
-> 
->  .../bindings/clock/mediatek,mt8186-clock.yaml      |  128 ++-
->  .../bindings/clock/mediatek,mt8186-fhctl.yaml      |    1 +
->  .../bindings/clock/mediatek,mt8186-sys-clock.yaml  |   24 +-
->  .../bindings/clock/mediatek,mt8188-clock.yaml      |   93 --
->  .../bindings/clock/mediatek,mt8188-sys-clock.yaml  |   58 --
->  .../bindings/clock/mediatek,mt8192-clock.yaml      |  191 ----
->  .../bindings/clock/mediatek,mt8192-sys-clock.yaml  |   68 --
->  .../bindings/clock/mediatek,mt8195-clock.yaml      |  238 -----
->  .../bindings/clock/mediatek,mt8195-sys-clock.yaml  |   76 --
->  drivers/clk/mediatek/Kconfig                       |   79 ++
->  drivers/clk/mediatek/Makefile                      |    8 +
->  drivers/clk/mediatek/clk-mt8189-apmixedsys.c       |  203 ++++
->  drivers/clk/mediatek/clk-mt8189-bus.c              |  200 ++++
->  drivers/clk/mediatek/clk-mt8189-dbgao.c            |   98 ++
->  drivers/clk/mediatek/clk-mt8189-dvfsrc.c           |   58 ++
->  drivers/clk/mediatek/clk-mt8189-iic.c              |  122 +++
->  drivers/clk/mediatek/clk-mt8189-scp.c              |   77 ++
->  drivers/clk/mediatek/clk-mt8189-topckgen.c         | 1025 ++++++++++++++++++++
->  drivers/clk/mediatek/clk-mt8189-ufs.c              |  133 +++
->  drivers/clk/mediatek/clk-mt8189-vlpcfg.c           |  116 +++
->  drivers/clk/mediatek/clk-mt8189-vlpckgen.c         |  285 ++++++
->  drivers/clk/mediatek/clk-mt8196-apmixedsys.c       |    2 +-
->  drivers/clk/mediatek/clk-mt8196-vlpckgen.c         |    2 +-
->  drivers/clk/mediatek/clk-pll.c                     |  135 ++-
->  drivers/clk/mediatek/clk-pll.h                     |   13 +-
->  drivers/clk/mediatek/clk-pllfh.c                   |   15 +-
->  drivers/clk/mediatek/clk-pllfh.h                   |    3 +
->  include/dt-bindings/clock/mediatek,mt8189-clk.h    |  433 +++++++++
->  include/dt-bindings/reset/mediatek,mt8189-resets.h |   17 +
->  29 files changed, 3135 insertions(+), 766 deletions(-)
+The probe function takes a runtime PM reference to enable the GCC AHB &
+SYS clocks of the CMN PLL block, registers the clocks, and then drops
+the reference. Once the autosuspend kicks in, pm_clk gates both clocks
+a few milliseconds after probe has returned.
 
-Should there be a new MAINTAINERS entry added? There's currently 221
-files under drivers/clk/mediatek/ and there's currently only one
-mediatek maintainer entry:
+That is wrong on two counts:
 
-    MEDIATEK MT6735 CLOCK & RESET DRIVERS.
+  - The clock ops access the CMN PLL registers without taking a runtime
+    PM reference of their own, so any later clk_set_rate() or rate
+    recalculation touches the register file with its bus clock gated.
 
-Is there anyone from mediatek (or elsewhere) that could act as a clk
-subsystem maintainer similar to what the other SoC vendors do? Help with
-reviews, send in pulls, etc?
+  - On IPQ5018 the consequences are not contained to this device:
+    gating the CMN block bus clocks makes the SoC hang on a subsequent
+    bus access. Measured on a TP-Link Archer AX55 v1 (IPQ5018), the
+    machine dies silently within a few milliseconds of the CMN PLL
+    probe returning - mid-character on the UART - and the victim is
+    whichever device happens to probe next. Whether a given boot
+    survives the window is a micro-timing lottery: different binary
+    layouts of the same kernel ranged from occasional failures to a
+    100% reproducible boot loop.
 
-I'll review this one in a bit but this subsystem is big enough that it
-really should have some support from the vendor (or via a consulting
-company) in some form.
+Keep the runtime PM usage count elevated on the probe success path, so
+the bus clocks stay enabled. With this one change the same board went
+from boot-looping to surviving every boot attempt (verified across
+three previously-failing kernel binaries, plus repeated soft and hard
+resets on the final one).
 
-Brian
+Fixes: f81715a4c87c ("clk: qcom: Add CMN PLL clock controller driver for IPQ SoC")
+Cc: stable@vger.kernel.org
+Signed-off-by: Stanislaw Pal <kuncy7@gmail.com>
+---
+One more observation from the same debugging session, for the people
+who know this silicon: on IPQ5018 the CMN_PLL_LOCKED bit (offset 0x64,
+bit 8) never asserts. Every clk_cmn_pll_set_rate() call runs its
+regmap_read_poll_timeout() to the full 100 ms timeout - including under
+the bootloader-programmed configuration the hardware demonstrably runs
+fine with - and nobody notices, because clk_change_rate() ignores the
+.set_rate return value, so the -ETIMEDOUT is swallowed silently. Is the
+lock status readable at a different offset on this SoC, or is the bit
+simply not functional there? Happy to send a follow-up (surfacing the
+error, or skipping the poll where it cannot work) once someone can say
+what the intended behavior is.
+
+ drivers/clk/qcom/ipq-cmn-pll.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
+
+--- a/drivers/clk/qcom/ipq-cmn-pll.c
++++ b/drivers/clk/qcom/ipq-cmn-pll.c
+@@ -454,11 +454,19 @@
+ 
+ 	/* Register CMN PLL clock and fixed rate output clocks. */
+ 	ret = ipq_cmn_pll_register_clks(pdev);
+-	pm_runtime_put(dev);
+-	if (ret)
++	if (ret) {
++		pm_runtime_put(dev);
+ 		return dev_err_probe(dev, ret,
+ 				     "Failed to register CMN PLL clocks\n");
++	}
+ 
++	/*
++	 * Keep the runtime PM usage count elevated on the success path, so
++	 * the CMN block AHB & SYS clocks stay enabled: the clock ops access
++	 * the CMN PLL registers without taking a runtime PM reference, and
++	 * on IPQ5018 gating these clocks after probe hangs the SoC on a
++	 * subsequent bus access.
++	 */
+ 	return 0;
+ }
+ 
 
