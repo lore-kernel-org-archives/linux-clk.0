@@ -1,61 +1,54 @@
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B2B13D567F
-	for <linux-clk@vger.kernel.org>; Fri, 31 Jul 2026 10:08:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E34C9430CEE;
+	Fri, 31 Jul 2026 12:38:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785492504; cv=none; b=Y2QnrMTOcPIer6P0D3TdcUr+k3sGiHShomBFOZBKVltS5SIJz/I74MKA6NYja2Y+RXlZMDGvDMBecXJE8aeXdCM/6K9SNNqvoSVeryrMezLqOmKx+P3W5r1/XwRGh5OJOhJJqh7JZA23b0z/w3yRYTv/8XfveWzVr4soySjiDhE=
+	t=1785501495; cv=none; b=rSQOUWmjnj0YAt7NDiT7b5ztBxHQ02B2eIXMNC59Tmh0YyqO3RBLu5xsjhj9VPtI0oazXkWRYhrq271fHiHWP3xx4qY015HnyN1WInM6R2sSXCCqblAKK9uj2velkqOY7gMx/uQeLnNEdor4ndOZ1mQRVxK+SZ0jWe/sSD6O6Zs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785492504; c=relaxed/simple;
-	bh=c2NKW2S9iI2Ct1eGcq1wh41PlRwF66EdRpl0UNZCfHY=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=QoWE0ypjuiUVrpNR8sr4OaXz5onbf3SSS8bjVvoUrW54N9tYwlvOUj38AS6fDDCtGRJ3WTiPBt+YRCniMki7qrt07n5uiKeRMaxfQEyo45irxq/lPDAqcSlgP1T4QYi/K+zD3/2UKgiB4cEab9Y1mZDb/Y7yMnIfbvym/Cz+G8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=P4LhLTTi; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1785501495; c=relaxed/simple;
+	bh=wBQ3APkiaTLaKqF54V2ia2PFJ3PulrUhaKyYXakis2s=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=t+qbsmQik+opawk57hd52r7ScKmG2ck4xe2mCgygsGJyar/7Y4cTl1YoJCoNxjLP1Tk1VnQ4ehDc82JU3gga9ny66gbBWspmo3ndq17PeQhT0EVrxLzyykTOLDt7avTV9Z6B+saCDAmJhzr8OeDimMtzKI4DujehfjjsHFpU4Ig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=hkZKKq3g; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="P4LhLTTi"
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20260731100809epoutp03aae595a00324df9c95e7b0de1a35f819~HV-WOiLpO0207002070epoutp03a
-	for <linux-clk@vger.kernel.org>; Fri, 31 Jul 2026 10:08:09 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20260731100809epoutp03aae595a00324df9c95e7b0de1a35f819~HV-WOiLpO0207002070epoutp03a
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1785492489;
-	bh=10LooBlvorDPL6o6qEmmZQghJaXs6dTbeegH/Cv+CYQ=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=P4LhLTTi97XTT9oLmysZ+EBs0t5UcZZsH0cUhrQINBRDczwbGhGa4XSHV3xA+Hvjh
-	 AekCgDNWJwD7mGW+YHA/oyH/3PYCxXSvtme5o664fycZ5dnxSrfnQto3009aYoov7I
-	 ufLYFStUX1ZeUo8cybS1998rQLOUC/yUQUok1btM=
-Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
-	20260731100808epcas5p402da4c0a13bfe1989275538a97df1263~HV-VQfXdV2393523935epcas5p4e;
-	Fri, 31 Jul 2026 10:08:08 +0000 (GMT)
-Received: from epcas5p3.samsung.com (unknown [182.195.38.95]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4hBMFz36vdz6B9m8; Fri, 31 Jul
-	2026 10:08:07 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20260731100806epcas5p4e3e2518a0769b38a982e27704eab3711~HV-T3KbNh2478924789epcas5p4o;
-	Fri, 31 Jul 2026 10:08:06 +0000 (GMT)
-Received: from INBRO002198 (unknown [107.122.5.156]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20260731100803epsmtip13330314e6b21ea219f26662e695a5e7c~HV-Q6oEHb2694426944epsmtip1P;
-	Fri, 31 Jul 2026 10:08:03 +0000 (GMT)
-From: "Raghav Sharma" <raghav.s@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <s.nawrocki@samsung.com>,
-	<cw00.choi@samsung.com>, <peter.griffin@linaro.org>,
-	<alim.akhtar@samsung.com>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-	<bmasney@redhat.com>, <robh@kernel.org>, <conor+dt@kernel.org>
-Cc: <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <hajun.sung@samsung.com>,
-	<is.gandhi@samsung.com>, <ts.amit@samsung.com>, <pokala.reddy@samsung.com>
-In-Reply-To: <3ccaa869-c0cb-4708-adc6-f01f7b4412ac@kernel.org>
-Subject: RE: [PATCH 06/13] clk: samsung: exynos8855: add block peris clock
- support
-Date: Fri, 31 Jul 2026 15:38:01 +0530
-Message-ID: <04b301dd20d4$7b047c30$710d7490$@samsung.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="hkZKKq3g"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 33D8E1A1326;
+	Fri, 31 Jul 2026 12:38:11 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 077796039A;
+	Fri, 31 Jul 2026 12:38:11 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4CD9011C167FD;
+	Fri, 31 Jul 2026 14:38:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1785501486; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=0OZKorsCURtd1p3CrckgfEqlsxhaGTh6N6c02LumgJM=;
+	b=hkZKKq3grb5Ig28/XVa/M87eMzKZThMvsztklWO9M5UPwOA77gWmp1L9rHlHODCzBvLpQl
+	xHw7xxzrnmEM2JbWl3Q2uXc3LTIimzdFblKxHPH4b+RsEGULsZ1EySR1YHVMoIDkVrHr71
+	dPzd5f2tp/LeR+hbNC/mVtY145Kp9w/sx2FH0TMFEfCbvw2tNyQCTNUWOnolY9Vwm+XUB2
+	xotQml2TDMl3up6ol2ky8A2OOtdl2leO6WLQO2YoWwm5HwH3XXgoAS7QM9WOvbrRwMOsuY
+	U8ePEHUlZ+hFro+YJX2DQkP9DSDqO8gye0tTuWrskdrMSW+DS5+xip1Y792FIg==
+From: =?UTF-8?B?QmVub8OudA==?= Monin <benoit.monin@bootlin.com>
+To:
+ Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZyAoVGhlIENhcGFibGUgSHViKQ==?=
+ <u.kleine-koenig@baylibre.com>
+Cc: Brian Masney <bmasney@redhat.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject:
+ Re: clk maintenance [Was: Re: [PATCH v1] clk: Use named initializers for
+ platform_device_id arrays]
+Date: Fri, 31 Jul 2026 14:38:04 +0200
+Message-ID: <bGIAL_MMTgKoRvN07QIfIw@bootlin.com>
+In-Reply-To: <aluuES750vojgH3q@monoceros>
+References:
+ <841cf835a24bb2f3acb99a97bb58e583220e03a2.1779963984.git.u.kleine-koenig@baylibre.com>
+ <alpC8l8qPFL955ZB@redhat.com> <aluuES750vojgH3q@monoceros>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -63,72 +56,84 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQIRARWKMB8/axP+0I5R2y9G0OYjygG4VZRiAgpYPWACoDz/R7XsV2sQ
-Content-Language: en-us
-X-CMS-MailID: 20260731100806epcas5p4e3e2518a0769b38a982e27704eab3711
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-543,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20260728115305epcas5p4394f65825a0a04aa7d2bd5068507e8ca
-References: <20260728121111.2077860-1-raghav.s@samsung.com>
-	<CGME20260728115305epcas5p4394f65825a0a04aa7d2bd5068507e8ca@epcas5p4.samsung.com>
-	<20260728121111.2077860-7-raghav.s@samsung.com>
-	<3ccaa869-c0cb-4708-adc6-f01f7b4412ac@kernel.org>
+X-Last-TLS-Session-Version: TLSv1.3
+
+Hi Uwe,
+
+On Saturday, 18 July 2026 at 19:13:11 CEST, Uwe Kleine-K=C3=B6nig (The Capa=
+ble Hub) wrote:
+> Hello Brian, Michael and Stephen,
+>=20
+> [I trimmed recipients as the new topic isn't related only to my patch
+> under discussion in this thread.]
+>=20
+> On Fri, Jul 17, 2026 at 10:57:54AM -0400, Brian Masney wrote:
+> > On Fri, Jul 17, 2026 at 11:51:17AM +0200, Uwe Kleine-K=C3=B6nig (The Ca=
+pable Hub) wrote:
+> > > Do you still have it on your radar?
+> >=20
+> > I sent Stephen a pull on June 29th for stuff that I felt was missed dur=
+ing
+> > the last merge window and I included 4 of your patches in that pull:
+> >=20
+> > https://lore.kernel.org/linux-clk/akLzCVzbMbUsgDda@redhat.com/T/#u
+> >=20
+> > I haven't heard from Stephen yet. There's 2-3 other pulls waiting as
+> > well.
+>=20
+> I only occasionally have clk patches, but my impression is that getting
+> feedback takes quite long and without Brian's efforts also things would
+> get lost. (Thanks Brian for picking up my stuff!)
+>=20
+I also share that impression. I have a series that has been lingering for a
+while now. My last attempt at getting it merged was sending it as a pull
+request and it did not get much reaction, despite Brian's effort to get some
+attention to it:
+
+    [GIT PULL] clk: eyeq: Support for Mobileye EyeQ7H for v7.3
+    https://lore.kernel.org/linux-clk/RcAweJqGSl27gSWWG_TpDg@bootlin.com/
+
+> Looking at the current maintainers:
+>=20
+> 	$ git log --format=3Dfuller --since 2026-01-01 next-20260717 drivers/clk=
+ | grep -E 'Boyd|Turquette' | sort | uniq -c
+> 	      8     Acked-by: Stephen Boyd <sboyd@kernel.org>
+> 	     28 Author:     Stephen Boyd <sboyd@kernel.org>
+> 	      3     Cc: Michael Turquette <mturquette@baylibre.com>
+> 	      3     Cc: Stephen Boyd <sboyd@kernel.org>
+> 	     81 Commit:     Stephen Boyd <sboyd@kernel.org>
+> 	      1     Pull clk fix from Stephen Boyd:
+> 	      3     Pull clk updates from Stephen Boyd:
+> 	     54     Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+> 	linux$ git log --format=3Doneline --since 2026-01-01 next-20260717 drive=
+rs/clk | wc -l
+> 	453
+>=20
+> (Maybe that is because Stephen cares for the core mostly and arch
+> maintainers merge stuff about their clks themselves?)
+>=20
+> The last commit where Michael Turquette was actively involved is from
+> 2021 (a331659e32718b31f3a304d7797a77d31610468c) which is also the last
+> mail from him on the clk list (see
+> https://lore.kernel.org/linux-clk/?q=3Df%3ATurquette).
+>=20
+> I only observe from the side line, but with the relevance of the clk
+> subsystem I feel maintenance is underpowered today.
+>=20
+> Is it time for Michael to step down? Would Brian be ready to become a
+> full maintainer? Is there a need for more reviewers? Any volunteers to
+> step up?
+>=20
+I would like to offer my help. Although I have not followed through, I did a
+few reviews of clock patches and I can have some time allocated to do that.
+I can pick up my reviewing effort if it can help the clk subsystem.
+
+Best regards,
+=2D-=20
+Beno=C3=AEt Monin, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
 
-
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzk=40kernel.org>
-> Sent: Tuesday, July 28, 2026 5:31 PM
-> To: raghav.s <raghav.s=40samsung.com>; s.nawrocki=40samsung.com;
-> cw00.choi=40samsung.com; peter.griffin=40linaro.org;
-> alim.akhtar=40samsung.com; mturquette=40baylibre.com; sboyd=40kernel.org;
-> bmasney=40redhat.com; robh=40kernel.org; conor+dt=40kernel.org
-> Cc: linux-samsung-soc=40vger.kernel.org; linux-clk=40vger.kernel.org;
-> devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; lin=
-ux-
-> kernel=40vger.kernel.org; hajun.sung=40samsung.com;
-> is.gandhi=40samsung.com; ts.amit=40samsung.com;
-> pokala.reddy=40samsung.com
-> Subject: Re: =5BPATCH 06/13=5D clk: samsung: exynos8855: add block peris =
-clock
-> support
->=20
-> On 28/07/2026 14:11, raghav.s wrote:
-> > Register compatible and cmu_info data to support clocks.
-> > CMU_PERIS, this provides clocks for PERIS
-> >
-> > Signed-off-by: raghav.s <raghav.s=40samsung.com>
-> > ---
-> >  drivers/clk/samsung/clk-exynos8855.c =7C 117
-> > ++++++++++++++++++++++++++-
-> >  1 file changed, 114 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/clk/samsung/clk-exynos8855.c
-> > b/drivers/clk/samsung/clk-exynos8855.c
-> > index 93528f0077a4..40745f04be0c 100644
-> > --- a/drivers/clk/samsung/clk-exynos8855.c
-> > +++ b/drivers/clk/samsung/clk-exynos8855.c
-> > =40=40 -17,8 +17,9 =40=40
-> >  =23include =22clk-exynos-arm64.h=22
-> >
-> >  /* NOTE: Must be equal to the last clock ID increased by one */
-> > -=23define CLKS_NR_TOP                     (FOUT_MMC_PLL_DIV2 + 1)
->=20
-> You just added this line, so changing this is odd. Are your patches corre=
-ctly
-> split?
->=20
->=20
-> Best regards,
-> Krzysztof
-
-Hi Krzysztof
-We will re-check the patches' order
-Thanks for your reply
-Regards
-Raghav
 
