@@ -1,85 +1,111 @@
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F30431E4D
-	for <linux-clk@vger.kernel.org>; Fri, 31 Jul 2026 14:59:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D436433BB2
+	for <linux-clk@vger.kernel.org>; Fri, 31 Jul 2026 15:02:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785509961; cv=none; b=gwvFPPRKmB3uPWFRIj3AdLpRkmP0ENWcKKgMOD584hf+ThYyFnkptj03V6ZITu0jhS8IjVxoPQIxgLW+oHAgmK/asvPGa8dDZHy2juk4q0vWF7u4xc8G3ac77ADhFP94xVWVTVr7p2Xq8fWfVP1zzJtrZlhd73rbqTJ2I5qlU4Q=
+	t=1785510136; cv=none; b=eOGCvFuGwYs8LUsqDXFge4EdmQe1tQ/YG8wjDFM++xPbD/lDkMGwRc0+/IZ7lTAA72YjkvhffLTcdNqcTw1mhpVg4I0PKyu4O0RFkVhyNkDEkY7c/Cdc0lJosOwYLK87hiSRbHKTBHUGrdjA1EWAj/3AcyNfWEl971N9kjQ3V+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785509961; c=relaxed/simple;
-	bh=ElGXvGLoskpu0Bmfw7kAcsfTpn6NYDJabJYnb+cF31E=;
+	s=arc-20240116; t=1785510136; c=relaxed/simple;
+	bh=3J5ljbX6F8qfZ/q4Yho7WM5F7BpsbTZh0SmKlt8VwKg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L+/t2qnfhU+YLlZkzId7MSIIwpUVgHA5aZq4KD5SZOvy3Y4AzBfsCZWW/x+1Hu319iHsmLtwptfIwEy83yK8S27a3OYodski0ZvybN48O9exPEtXMvY+gdf/xR2EyKOlb7CDWSQjr2Ff/hzJiE84QLszX4fA6siGuZyzYuhhSfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e5H6h7kT; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=asIuF7wbWlc8409IcUcW7OOf1tKelmSxJ9h7MzkIir6v+TGxTLtd/whMqDaX62QJiVvOIswX87vS8ajrvWVZrXZkQO/cskPod+KMoN3jvGwyof7Xb0jcUWJOttnqca7nDPjYFC2SpryWc43Sb3MGAE9mQNri9aKqq2eXftQJYWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=M4BjpN8N; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=sqDIEsZN; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e5H6h7kT"
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2caed617615so13373205ad.3
-        for <linux-clk@vger.kernel.org>; Fri, 31 Jul 2026 07:59:19 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="M4BjpN8N";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="sqDIEsZN"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1785510134;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VT4GMCV34NLKfagWcQH9V4qPrMyXYT4pruyMrAm0O/w=;
+	b=M4BjpN8NNaCxKRIwXOQSG/x3RLR0yjbg6ND7caHhRuHHJiqS2o3qNHHNYTnso6qFpJIGIv
+	zfd1GWFOMZEyqwz5PqCVLZqBQwvM7APQUlS7P6J4tBp5/FsWDJ6+76ZrO80v2T0j1koRt5
+	ZuqAxx+KrSbkvKSxd2TwrkDVFD5VYyI=
+Received: from mail-yw1-f197.google.com (mail-yw1-f197.google.com
+ [209.85.128.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-684--2fDePvGNDGhaJ5-s1Acyg-1; Fri, 31 Jul 2026 11:02:13 -0400
+X-MC-Unique: -2fDePvGNDGhaJ5-s1Acyg-1
+X-Mimecast-MFC-AGG-ID: -2fDePvGNDGhaJ5-s1Acyg_1785510132
+Received: by mail-yw1-f197.google.com with SMTP id 00721157ae682-81ebbbd60cbso16177207b3.1
+        for <linux-clk@vger.kernel.org>; Fri, 31 Jul 2026 08:02:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1785509959; x=1786114759; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=aOO6TFiM1TPLQ+b9lC0xXQx5BzJNes86bMOqbAvU35g=;
-        b=e5H6h7kTJbQfdEecLnOTVgZaFj1UvzlkkoX6RsvnhkyPG5YLsUJI/auJsivjwnUzSj
-         uFxmYKwC2q2R/Nvot2UbQr0k9IQ+jK+dS/7IRH+UIZOZ22srtPumiLAqpwnDOqtd7NWO
-         tJ2zANYqoIQicb6yKC28+JZEHX3StkhoqEZHZdM/zuqCxIqImMSXJzIus9LPsdQXz+pD
-         BlRjEyrKwYHiDDSk6HDQitz2XKu5cJTwbL+H8nyKwhyBP/NO2pC5J6lTKPTkAARWqwHs
-         08g3NPQ8hzM56Vwp5uyTljeBqWM3Q5Sr8CzZ8pt754Xt8oFJTgVnM7YAT7jfnvP9h9UV
-         ULqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785509959; x=1786114759;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+        d=redhat.com; s=google; t=1785510132; x=1786114932; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:content-type:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=aOO6TFiM1TPLQ+b9lC0xXQx5BzJNes86bMOqbAvU35g=;
-        b=k3wwHz8XVeN4DsMmGVP/COGc9zAyQd+YFlX88ze1vTKeVqjEBRnOd/YFCC84lSXWZN
-         ybbh6XxPtLb7Jnwm7YgLwMd2wLHRKi562ien+/qWIZ2tRS5hDUVqTpyb8KQMKM6o1KMF
-         7Lvr4uMZnWYx2KzYx1FPB54NMac2jUCIjrQhIHdK44v2DzEMwk2zf8i8Yc2yvaMertlb
-         8CX8n+4icxaiF4XTCVUDyM0jR+JVdkZVSc3x7bZg/lgarR4ro9xCo3AzhTmKKz8blt5e
-         ue++sQDHXheI9gI03IegsHB4u9ysZR0sGqXvY4obMuz34Enhb+lUO4pxK4K+2gHsKipv
-         YL3A==
-X-Forwarded-Encrypted: i=1; AHgh+Rp3s6m/eu37vA6ET6vj095JS3WKHcca2bZXFMY0ZD5pXRWYcwrA791z6Y0uNFm8UvwgosMQjDnXm/M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyz8l7gLWZ19XA9smh7iKFC/YrTgnJGdRH2xpOPxk5G6n0POLrX
-	GXy90zrrNP/63vyyjObg26UrWpl0Ftg6OH8LIMPCAzhrCOMn2DxoHCmp
-X-Gm-Gg: AR+sD10EA4HRfe7HuNfjSHmqioO2OXlfomrX8N3NcpkioCKkx4LsUY3YeYkci0bX2pX
-	6zuRfOcNPuBrmhbT6uGcoiz2elmHJ0AVDa17teT3y11Y0pjAfbMeII1Sh+LKurgBzBSpizDd7UW
-	/cXZo6HvXMuzdtdtzoF7qft202GFuU+YYwrb1OQVcWptGFu4dh0qGiDI40utVCGw0Whh57wU1dX
-	/QXgUoGsL3AXMO3Jl/HB+jMYYU6nUpYOwAcO8rk8LWZrmxU851hUH0L7YCO8uYoQLCaY2rp9Oug
-	jh5KyCTG7Xo0qSLZmMknRYl+Pgh1c9+sHatyhtc1yCxVWdPp7y6RKnFAh4WRzReNLsE0GuhyPB0
-	lv/BM3U31m/n12u2c2jq6hXFwqAEMwcq2DER41jIYgrO/C/WCbhCJNI+CCNTr0cnuUaln0VVVp8
-	RfgNxnbuo/rHu4QSowrfRIcXqGDZoteYSnKFGF22/UDIKoT7SIOULsSXyvGV4GWmU=
-X-Received: by 2002:a17:902:ce0d:b0:2c9:97a7:b1eb with SMTP id d9443c01a7336-2d0524723e0mr2815285ad.42.1785509959091;
-        Fri, 31 Jul 2026 07:59:19 -0700 (PDT)
-Received: from localhost ([118.34.230.2])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2d04b0eb491sm6466105ad.42.2026.07.31.07.59.18
+        bh=VT4GMCV34NLKfagWcQH9V4qPrMyXYT4pruyMrAm0O/w=;
+        b=sqDIEsZNKu4X/U+TL2d8kcPJLgyfI3F4OBeZMDvk0kKaxZSE8diP85QEgCkJxgkh+B
+         O3IsvGHDHZmAga7ja7POlScvSqGkGTEu6NSxar2bYMeA8psIqWHTkBhaMdLbzCbO/IAR
+         Sxnqm6Hf42KEIQZ3N+C/BsQVj/XzMM//uNdND2g/wYgScW/RBBPBFt+hJHN+oiLpj8oP
+         wKPvAXBzgfET+IZ1TDiVKLWcTdFiwBNfzOBG115sVWtDUvzME7l+glI/FFtGEkUT1AXm
+         cM8hSs3YpFKf5/aYOY50JvifQSUe2GeN5pzuA+UqK6GCOcRDUDsQciURI6SM6BcX569K
+         gcdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785510132; x=1786114932;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:content-type:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=VT4GMCV34NLKfagWcQH9V4qPrMyXYT4pruyMrAm0O/w=;
+        b=EH2kQY1YiZs6AK+8cit4UBSQ3qu5KRTRYcOKyoA5S2DkqEeutneaYZUx2oimYsXWyw
+         CvE4+Tzbq7qXbzA3PMx9VXp18QrOgrxZkTz+T1Wb+tnxgF9CTIaAaaB0pZwFidH2yevR
+         KQqOGIGfJTP+d1CyLzun1FKjKT8TyjJxgB/yAv7ddPrdUg6i9ZA63jv7Tn3hj7eeLJ1+
+         pmIfc4PGJeGqw14nnm181EiXqRml/Wl+px3lWfSWvMZrvtwCb4SA8a/ebnt155Ki+Vyd
+         pZbhzvMlx4k8PoQZmlMatgGYn05EC8apKOALJ7sFcVBWWHviafgY88pR6/e3qUQMzVII
+         /pgw==
+X-Forwarded-Encrypted: i=1; AHgh+Rr5GBrgv4vQH+gpKiwCZlXL6cNnp9IUGNW9FwZ5f7FMoLflccaIWmksd/wbv90Tmnq2e/GPVZTz2yc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzd78YtjUmrnpAkYJQ2+wsJoiBqf85ObLpaUaJ4OXYrxO+xhzfu
+	q/ilMOzhf8UASniWU3yaqYAzl8z23VPunTVHpnuTnVQkT/4NPl0OpjQ+W5DaK2y6TinH2uGCc3+
+	B3vucyU3EsOZn9bUwX+QKnP8Aw8enHmF78X7EN+a5Wr498fTOQPxEKFj4Czyb7XtlIWbd7w==
+X-Gm-Gg: AR+sD10BORBs21+nwanjkipRDgBzBVNRLKS3CHZkJ65WMrC3g0Dh0y7VDBbuH67eQoi
+	AyyCW/q8vtSCkCdiIsg9PDiLLfGpcE1f2FUKxxd0hcvPF21QxBOQFa96800RKQ8BJEZguxudnbC
+	et89bbKw52lvpivKsTjb5UBR+Y0EkjFJPKFQLewP4DlsWAOVQdROVt6JVmZlBjrALaoRweOhWOg
+	2Z1JzSwunAxueUwoYn+CJ+ectRi+fWUf+abUTBlrtKOXRPsq+A+ZOxYV5mOmM8fDsxorPLFqfb7
+	wlRR9/WoinegF8tPgy8QKSWwosHbAzNQo4gbbfgsDtSudzu+P+bSyGW/1bsCa/7O/HfX+OALNJ4
+	WRiL0IYyMD3KOmRNX08IBsvsu9ZsJ5SprlOg=
+X-Received: by 2002:a05:690c:3705:b0:7fd:e030:23db with SMTP id 00721157ae682-81fd4bc5fbamr1315817b3.31.1785510131742;
+        Fri, 31 Jul 2026 08:02:11 -0700 (PDT)
+X-Received: by 2002:a05:690c:3705:b0:7fd:e030:23db with SMTP id 00721157ae682-81fd4bc5fbamr1313677b3.31.1785510130851;
+        Fri, 31 Jul 2026 08:02:10 -0700 (PDT)
+Received: from redhat.com (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-81fcd11d08esm7875547b3.37.2026.07.31.08.02.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Jul 2026 07:59:18 -0700 (PDT)
-Date: Fri, 31 Jul 2026 20:29:16 +0530
-From: shaikh kamaluddin <shaikhkamal2012@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Avi Fishman <avifishman70@gmail.com>,
-	Tomer Maimon <tmaimon77@gmail.com>,
-	Tali Perry <tali.perry1@gmail.com>,
-	Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>,
-	Benjamin Fair <benjaminfair@google.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, openbmc@lists.ozlabs.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: clock: nuvoton,npcm750-clk: fix 'suppling'
- spelling
-Message-ID: <amy4RBUdtE8tTU5q@acer-nitro-anv15-41>
-References: <20260726060354.18755-1-shaikhkamal2012@gmail.com>
- <8de9061a-dea3-4bdf-8dff-ad8ed4acc200@kernel.org>
+        Fri, 31 Jul 2026 08:02:09 -0700 (PDT)
+Date: Fri, 31 Jul 2026 11:02:06 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Yu-Chun Lin =?utf-8?B?W+ael+elkOWQm10=?= <eleanor.lin@realtek.com>
+Cc: "mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"sboyd@kernel.org" <sboyd@kernel.org>,
+	"robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+	Edgar Lee =?utf-8?B?W+adjuaJv+irrV0=?= <cylee12@realtek.com>,
+	Jyan Chou =?utf-8?B?W+WRqOiKt+WuiV0=?= <jyanchou@realtek.com>,
+	"afaerber@suse.com" <afaerber@suse.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-realtek-soc@lists.infradead.org" <linux-realtek-soc@lists.infradead.org>,
+	James Tai =?utf-8?B?W+aItOW/l+WzsF0=?= <james.tai@realtek.com>,
+	=?utf-8?B?Q1lfSHVhbmdb6buD6Ymm5pmPXQ==?= <cy.huang@realtek.com>,
+	Stanley =?utf-8?B?Q2hhbmdb5piM6IKy5b63XQ==?= <stanley_chang@realtek.com>
+Subject: Re: [PATCH v11 09/11] clk: realtek: Add RTD1625-CRT clock controller
+ driver
+Message-ID: <amy47how40BJnHsn@redhat.com>
+References: <20260728142806.1954638-1-eleanor.lin@realtek.com>
+ <20260728142806.1954638-10-eleanor.lin@realtek.com>
+ <amuBqi43ce9bYbir@redhat.com>
+ <577a6882b25e457fa94fa199e66f3197@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -88,41 +114,66 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <8de9061a-dea3-4bdf-8dff-ad8ed4acc200@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <577a6882b25e457fa94fa199e66f3197@realtek.com>
+User-Agent: Mutt/2.4.0 (2026-06-19)
 
-On Sun, Jul 26, 2026 at 01:26:49PM +0200, Krzysztof Kozlowski wrote:
-> On 26/07/2026 08:03, shaikh.kamal wrote:
-> > Fix spelling error reported by codespell: suppling -> supplying.
-> > No functional change.
+On Fri, Jul 31, 2026 at 08:17:44AM +0000, Yu-Chun Lin [林祐君] wrote:
+> > On Tue, Jul 28, 2026 at 10:28:04PM +0800, Yu-Chun Lin wrote:
+> > > From: Cheng-Yu Lee <cylee12@realtek.com>
+> > >
+> 
+> (...)
+> 
+> > > +
+> > > +static int rtd1625_crt_probe(struct platform_device *pdev) {
+> > > +     const struct rtk_clk_desc *desc;
+> > > +
+> > > +     desc = of_device_get_match_data(&pdev->dev);
 > > 
-> > Signed-off-by: shaikh.kamal <shaikhkamal2012@gmail.com>
-> > ---
-> >  .../devicetree/bindings/clock/nuvoton,npcm750-clk.yaml          | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > of_device_get_match_data() is deprecated. Use
+> > device_get_match_data(&pdev->dev) instead. You should be able to drop the
+> > linux/of_device.h include at the top.
 > > 
 > 
-> One patch for all bindings for such trivialities. This is just churn.
+> Ack.
 > 
-> And wait for review to learn from feedback and do not repeat the same
-> mistakes.
+> > 
+> > > +     if (!desc)
+> > > +             return -EINVAL;
+> > > +
+> > > +     return rtk_clk_probe(pdev, desc); }
+> > > +
+> > > +static const struct of_device_id rtd1625_crt_match[] = {
+> > > +     {.compatible = "realtek,rtd1625-crt-clk", .data =
+> > > +&rtd1625_crt_desc,},
+> > 
+> > Add a space after the { and before the ending }.
+> > 
 > 
-> Name in SoB and From feels incomplete or as login...
+> Ack.
 > 
-> Best regards,
-> Krzysztof
+> > > +     { /* sentinel */ }
+> > > +};
+> > > +MODULE_DEVICE_TABLE(of, rtd1625_crt_match);
+> > > +
+> > > +static struct platform_driver rtd1625_crt_driver = {
+> > > +     .probe = rtd1625_crt_probe,
+> > > +     .driver = {
+> > > +             .name = "rtk-rtd1625-crt-clk",
+> > > +             .of_match_table = rtd1625_crt_match,
+> > > +             .suppress_bind_attrs = true,
+> > 
+> > This driver is listed as a tristate in the Kconfig but then you have this. Is the
+> > intention of this driver to be built in only?
+> > 
+> 
+> I will change the Kconfig options for this driver, as well as the related
+> config, from tristate to bool.
 
-Hi Krzysztof,
+Keep it as a tristate if you are going to use module_platform_driver().
+You can also drop suppress_bind_attrs unless you have a specific need
+why.
 
-Thanks for the review, and apologies for the churn.
+Brian
 
-I have fixed my git configuration, so From and Signed-off-by now carry
-my full name (Shaikh Kamaluddin).
-
-On the granularity: understood, and I won't repeat it. A few of these
-have already been applied by subsystem maintainers, so to avoid
-duplicate work I plan to resend only the still-pending ones (iio, usb,
-ipmi, clock, dma) as a single dt-bindings patch. Let me know if you'd
-prefer them dropped instead.
-
-Thanks,
-Shaikh Kamaluddin
