@@ -1,133 +1,133 @@
-Received: from sender4-op-o11.zoho.com (sender4-op-o11.zoho.com [136.143.188.11])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 127EF1D95A3;
-	Fri, 31 Jul 2026 21:34:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785533650; cv=pass; b=rZb6ujd5xb/grIUW9InKwRbrLFRTs5xfNr+Wi4Iewwui9Tm0HCApkzyJ0TN7w7tSQBWmglALcz2n3lYDLy2FSDmVL9yI1ngYLsPuDLZHN4kTVqakoSqKQcYE3Rr1UCNZwLI4qGg4QQgHbygelY8wgJt7IoYYNXLZiZMSL3IGPLE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785533650; c=relaxed/simple;
-	bh=28SYLaxEswFYrX7pB/BBBjg3ucFfM5uxTXPR0tHPjcc=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=J0pUB0iAWulU8qW0CUexzJKDLZrdmsduhvL3BFa4jfyzTcTnZkoKM+n2rz4+R64+uAUgHrLBqRJNidn2MnIXh58xD52DBhOH2d/I42TLxg+RvjxPaXRV1z0ZKp5vvTYt+8V7m7NDqaDnl5dwydrQsaKnmLHGDDVK93TfKttji8o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=hv8bf7ml; arc=pass smtp.client-ip=136.143.188.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 352E93546DE
+	for <linux-clk@vger.kernel.org>; Sat,  1 Aug 2026 06:46:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1785566793; cv=none; b=qWzKILbOFYJnEXhPTvEKeYGlaa/O1lvrSuIrpUC1ORp+Vr0cxN5hSy6z00vGM9Tjxw/E9gsnhNHozkYZVh0mNAp5zNZlogbDu0ibXpCeL69XHjw7LQdslbVRChnIZ5oazvDutXqtHU/yIFUZEG0ZDBDNc//HmhLKxDCbmiJQGCE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1785566793; c=relaxed/simple;
+	bh=LErCCR4nKC4XHfd7uC4yKWkLcjq9F9iY393Fn8sX9Z4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XJ1+BsZa6CcsRZYZ2/HwHKdIaLnxmQngyZSo+CuTm3d14SMqpSQ6dLEkm7AgJD95oUmPEM370dui3MByWDFpsZLjQsd7VUt8yKHT9fnsYCiek02+yt2oFYVHo7oY0STKOdulbBf6DpmfpSYIfR0A+XyyBLYsFim7liSaO+mqlMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hPCnafdK; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="hv8bf7ml"
-ARC-Seal: i=1; a=rsa-sha256; t=1785533593; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=gHWANFQFZoJJaYEhuKmaZUxWUFD+rkzqPNoml4H2CAPw9Eir1vP5sTf8FH55AQFSTqXbJsRM4yw6PQGOM3+kOK3r7L8MauTZbozYas9fQW65jLiuw5EycL0OsVg5TO4UsvIAt6uzxShq3/IXxF0gXXTGZxTO6NkOGsqXv11V2UU=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1785533593; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=28SYLaxEswFYrX7pB/BBBjg3ucFfM5uxTXPR0tHPjcc=; 
-	b=i9xAT7I6wpEq5+55Y74aQJDsqPQN2QZYJAo6dyuwFyrXGYK6n0G4QS3yvwaIgiUukMsstV9j9UnOUru03iQu3tpTSKc8NBqBw12A1m0IaT/lICrjJ2XXiPUwRW0CKH/UhDz8g4VaX7/e2TkzPCXoFT47bwxxweCbYOXkFnNFTUM=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1785533593;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:To:To:Reply-To;
-	bh=28SYLaxEswFYrX7pB/BBBjg3ucFfM5uxTXPR0tHPjcc=;
-	b=hv8bf7mlLR3lRI+e3WrpA+6efQ42RwhE8qX5b9m1qEMxfc9CGh7FGc46xbl6ss+l
-	VAF4ZyymF+yxhahxdJCFv82nK+92hoPQyWArswJxbPIlUignAZgCeUgrBJk8aUD9AWe
-	bpwEq29KEJWbNIYk7JBR1AT6NZeaCco7hOSh9vog=
-Received: by mx.zohomail.com with SMTPS id 1785533591479424.44668881936855;
-	Fri, 31 Jul 2026 14:33:11 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hPCnafdK"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7F571F00ADB
+	for <linux-clk@vger.kernel.org>; Sat,  1 Aug 2026 06:46:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1785566791;
+	bh=NziBy7OG33oYiNr9JUn+R/txXnPdgHaF2LDnuUeFyYg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=hPCnafdKqYHmdeMbJZS3eiyYSQEMIroHl7dg0JHm/f/ELGhGaKpAyRgsGaTd5d5GH
+	 q2xBIbT2Z1oGBXiFy2QhUOk5T5b7baOmE5iBM6UyfbNdwsKS7ft8QM003C+0t8kJmL
+	 GYH6dcAPXg6blbfGmd/40AYzGSFl4lZc2/T/xR2bmY1700gFIFeGk1lING7ksn9yf0
+	 8i6/VdQfKzUKXEmkCdlzvZtLV4WFuxPZx9u6pTeyiOuxplesbGrXzqDy7TxXEaFa3j
+	 Xt8NKn5NIbYpQg6U5TY3b1m2bNEm4wJDHM5ksVnFEc2eCJqCv7WdWSIVes9qlheM5S
+	 rNOYUEh3fHfjA==
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5b0231a3e86so1711810e87.0
+        for <linux-clk@vger.kernel.org>; Fri, 31 Jul 2026 23:46:31 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RoBf0Jgcx0L6R9LrliKtfvXTstiNo4r2uFHbrzODpSRncI7GX4R+hLwvzZiVvKuyNkyFCkbhKj74Hc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvMI1v32ZOn3NqXCM9BaxF+HsHKHMWFq8q8v+ugWEjZxonp3Ol
+	kJCmpIeKSv5/ixrMgPtLVPfiFNJOG+59/CwY6S6SBU7zfNuKJ989MNeMRtKZTB0Wa3wFk05e1aD
+	RHUBLV8ZqUKyHSef5TR/gm9rJIBCOg7s=
+X-Received: by 2002:a05:6512:3b11:b0:5ae:bfa0:54f1 with SMTP id
+ 2adb3069b0e04-5b2e4f969e1mr490370e87.59.1785566790672; Fri, 31 Jul 2026
+ 23:46:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH v5 0/4] Clk improvements
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20260731183735.15036-1-mhi@mailbox.org>
-Date: Fri, 31 Jul 2026 18:32:48 -0300
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Danilo Krummrich <dakr@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Drew Fustini <fustini@kernel.org>,
- Guo Ren <guoren@kernel.org>,
- Fu Wei <wefu@redhat.com>,
- =?utf-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>,
- Miguel Ojeda <ojeda@kernel.org>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Trevor Gross <tmgross@umich.edu>,
- Michal Wilczynski <m.wilczynski@samsung.com>,
- Boqun Feng <boqun@kernel.org>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- =?utf-8?Q?Onur_=C3=96zkan?= <work@onurozkan.dev>,
- linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org,
- linux-riscv@lists.infradead.org,
- linux-pwm@vger.kernel.org,
- linux-clk@vger.kernel.org,
- rust-for-linux@vger.kernel.org
+MIME-Version: 1.0
+References: <20260730104330.81367-1-longzhao@ambarella.com> <20260730104330.81367-5-longzhao@ambarella.com>
+In-Reply-To: <20260730104330.81367-5-longzhao@ambarella.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Sat, 1 Aug 2026 08:46:18 +0200
+X-Gmail-Original-Message-ID: <CAD++jL=Zw0_jKj4FiVHAVC6ASjRJgOF6WswAJBZD=Y3nQCAauA@mail.gmail.com>
+X-Gm-Features: AUfX_myXQ9tmFb62wnb9uBwgjcMdvhCxVtgyWuLAaEHToUKhGjWH6cV58R5yeJI
+Message-ID: <CAD++jL=Zw0_jKj4FiVHAVC6ASjRJgOF6WswAJBZD=Y3nQCAauA@mail.gmail.com>
+Subject: Re: [PATCH 04/10] dt-bindings: pinctrl: add Ambarella CV75 pinctrl
+To: Long Zhao <longzhao@ambarella.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+	linux-arm-kernel@lists.infradead.org, soc@lists.linux.dev, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	devicetree@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
+	linux-serial@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <E20E4FD3-F4DA-4029-99F7-DB4F93AA2994@collabora.com>
-References: <20260706-clk-type-state-v5-0-67c5f326a16c@collabora.com>
- <20260731183735.15036-1-mhi@mailbox.org>
-To: Maurice Hieronymus <mhi@mailbox.org>
-X-Mailer: Apple Mail (2.3826.700.81)
-X-ZohoMailClient: External
 
-Hi Maurice,
+Hi Long,
 
-> On 31 Jul 2026, at 15:37, Maurice Hieronymus <mhi@mailbox.org> wrote:
->=20
-> Hi Daniel,
->=20
-> at your suggestion [0] I rebased my `clk_rate_exclusive_get()` binding =
-for
-> pwm-th1520 on top of this series, so it is now waiting on it to land. =
-As v5
-> has not seen any comments in the last few weeks, I wanted to ask what =
-the
-> current status is.
+thanks for your patch!
 
-Nobody has replied so far. I don=E2=80=99t think there are any further =
-comments.
+On Thu, Jul 30, 2026 at 12:44=E2=80=AFPM Long Zhao <longzhao@ambarella.com>=
+ wrote:
 
->=20
-> If there are no blockers left and you expect it to be merged soon, I =
-am
-> happy to keep waiting. Otherwise I would offer to send my series =
-standalone
-> against the current `Clk` API and let you rebase on top of mine - it =
-is the
-> much smaller of the two, touching only `Clk::rate_exclusive_get()` and
-> pwm_th1520.rs.
->=20
-> [0]: =
-https://lore.kernel.org/rust-for-linux/140FE1B3-73CA-45EA-B978-648A1A48B57=
-7@collabora.com/
->=20
-> Thanks a lot,
->=20
-> Maurice
+> +  "^[a-z0-9-]+-pins$":
+> +    type: object
+> +    allOf:
+> +      - $ref: pinmux-node.yaml#
+> +      - $ref: pincfg-node.yaml#
+> +    additionalProperties: false
+> +
+> +    properties:
+> +      function: true
+> +
+> +      pinmux:
+> +        $ref: /schemas/types.yaml#/definitions/uint32-array
+> +        minItems: 1
+> +        maxItems: 96
+> +
+> +      bias-disable: true
+> +      bias-pull-down: true
+> +      bias-pull-up: true
+> +
+> +      drive-strength:
+> +        enum: [3, 4, 5, 6, 7, 8, 9, 12]
+> +
+> +    required:
+> +      - function
+> +      - pinmux
 
-Your series might hit the same blocker as this one. Perhaps we can try =
-to get
-both merged at the same time?
+Usually either (function + group) OR pinmux is used, so this looks
+slightly confusing to me.
 
-@Stephen gentle ping here :)
+> +        uart0-pins {
+> +            function =3D "uart0";
+> +            pinmux =3D <AMBA_PINMUX(44, 1)>,
+> +                     <AMBA_PINMUX(45, 1)>;
+> +            bias-disable;
+> +            drive-strength =3D <8>;
+> +        };
+> +    };
 
-=E2=80=94 Daniel
+So I take it that "pinmux" is used for all the muxing while the function "u=
+art0"
+is actually only used for the pin configs, right?
 
+It would be better to encode the groups into the driver I think and then it
+would look like this:
+
+       uart0-pins {
+           function =3D "uart0";
+           groups =3D "uart0tx", "uart0rx";
+           bias-disable;
+           drive-strength =3D <8>;
+       };
+
+As you can see "uart0tx" is easier to read and understand than
+<AMBA_PINMUX(44, 1)>.
+
+Also it hides constants nicely in the driver. I know this is a lot of work.
+
+I know a lot of companies like "pinmux" because it's simple and
+convenient, but it really
+isn't the best for developers writing device trees and debugging.
+
+Yours,
+Linus Walleij
