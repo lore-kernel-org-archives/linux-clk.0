@@ -1,266 +1,183 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+Received: from mail-244107.protonmail.ch (mail-244107.protonmail.ch [109.224.244.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D64E43DA21;
-	Sat,  1 Aug 2026 11:21:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17F4E39D6DA;
+	Sat,  1 Aug 2026 11:23:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785583297; cv=none; b=dVl6SvqavNReys0Z2x8yuZ3IxVu3qV7xruivGzBpil2vt/X68d1jsyLvTW0ZJDIABoJd86PfcQw8qatLESuuhUii66gwNHc3Itq2NqdbgvQ/Diz6FPwj5na4F0m/DiKBZFZjxifsE9I+556F/N0mZJEI4BJ/eTeEJ1pv1T3wWBc=
+	t=1785583391; cv=none; b=u7cpAO5TB6qXDCVz1HvJu/unVVgQGte0PFjgDacVmyKoctOQVwqvsCfwnCuiUInrJofmLmGmX3iWyAYO8VD/uQELiZ1PdCkhJfgih9eBXk3PhQcW65NNNeFUiTA6ajmfZcvxVHxJdS1o4gBcqCJbvGhxZ9CgIaCa6fNuOwPyHLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785583297; c=relaxed/simple;
-	bh=Zh06wlUmAIC1iukSKooFVWp0hF17e98otRnRFvdgrT0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=G3Y7jA4qoI2K6dGDXS5LVokkY+lzjBERGjjfVXo0It7OAUgLL7S2zGndpDH9WhBX5YVdLmOMxSx13fJDFlIXyNzmzYDP0pfg7cWSubbbb4R7QxRLgnSh8U0vUHdnDYPLNaM18mWjK/scGHL2ynV5zx5RNLnh1oqkGlUqT8MOY48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Nn/yOgRy; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1785583391; c=relaxed/simple;
+	bh=65qyerLOMOizFkJF0mqetQ0ueVqUdZIXN/aKIcrO7lM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mp9SZYnECU5JsbB5uZiK43nEGgaBjlWan2Wi0bbGV2mlqoySyvxNhN5URAYdp2NthWoc+k9kg4WBGoyu8aYaTQ8q7oHmPETeFEVVLsC7yCCZpjgBV57Dn2yofOtpp+oCqFc0bycRHG+cJMFJiYd3LTWBa770otjmLPIOiRvS3jU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (2048-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=GBjamspr; arc=none smtp.client-ip=109.224.244.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=onurozkan.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Nn/yOgRy"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1785583293;
-	bh=Zh06wlUmAIC1iukSKooFVWp0hF17e98otRnRFvdgrT0=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Nn/yOgRyBcqemTJVZkvCKtdi+Mn1ouoEGCkRENReu01Cz5c1o9ZorYHWunCrGA0aS
-	 qAvzp+KIhD4QASXWBo3AeredgcK9wbIaQXNZ4454safxw5vUlZzlotFZ/ykHm9zkYN
-	 Gn85F4bE+P5ITFbSfRxjkxC00CIxDZuWFdx2TsIhXyTssmxMzUQrdywzXOlqSxn+lR
-	 MWHZV8QiV14TqJQDK4bEVQRc9xjGEqzV5ZBneUeQvEIw3VIMu07jpmAjjC6kZwU76a
-	 bOcKHBGenP8Jx2I65JOCf9P1NVn0ihMtw6+gyFGfbC2wvs/S0ZMUDXetUQ3wi+sG5J
-	 ljxko75xF6BzA==
-Received: from yukiji.home (unknown [100.64.0.131])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: laeyraud)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 55F7617E092C;
-	Sat, 01 Aug 2026 13:21:32 +0200 (CEST)
-From: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
-Date: Sat, 01 Aug 2026 13:21:11 +0200
-Subject: [PATCH v5 25/25] clk: mediatek: Add MT8189 ufs clock support
+	dkim=pass (2048-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="GBjamspr"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
+	s=protonmail; t=1785583379; x=1785842579;
+	bh=gNRt5vhm5rzA0r9SYRg4vpPJmSNy2rVVGJFfnD3HI1c=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:From:To:
+	 Cc:Date:Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=GBjamsprGcj4PJ+2tZTITaCwpA1KPghVP4Ho1RdnnRiTjaoLl+mtI4hCDjYBkjLBD
+	 82KdhJDeKUC6ujY02rLVX+E1evUhCj5oKPoxhK4rx6b+vSEy0MkLDc9QfVLW9CXQ/O
+	 nTTnvcOMLqAxn1jP/gglcT78OMLop3pPKEj+mMgoNmbaTm2cEvHVaKNZeSSGIuDyj3
+	 BacKGT25+a5IfltXpp5K+ufOdTr/zIaInIjO7KuOvmqeR0D0ueaHmsdtU7+kq6lQwk
+	 kMgPlUQaPo3e10IA8o1AO0u5WjhU+Fuu5lzfIXz/MfaglekZclzpTiRTakMZdZzFC+
+	 KKEqnuS5GK7CA==
+X-Pm-Submission-Id: 4hC0sq5XCMz2Sd4d
+From: =?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Drew Fustini <fustini@kernel.org>,
+	Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>,
+	=?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Gary Guo <gary@garyguo.net>,
+	=?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	Michal Wilczynski <m.wilczynski@samsung.com>,
+	Boqun Feng <boqun@kernel.org>,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-riscv@lists.infradead.org,
+	linux-pwm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	Boris Brezillon <boris.brezillon@collabora.com>,
+	Maurice <mhi@mailbox.org>
+Subject: Re: [PATCH v5 3/4] rust: clk: add devres-managed clks
+Date: Sat,  1 Aug 2026 14:22:52 +0300
+Message-ID: <20260801112254.313381-1-work@onurozkan.dev>
+X-Mailer: git-send-email 2.51.2
+In-Reply-To: <20260706-clk-type-state-v5-3-67c5f326a16c@collabora.com>
+References: <20260706-clk-type-state-v5-0-67c5f326a16c@collabora.com> <20260706-clk-type-state-v5-3-67c5f326a16c@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260801-mt8189-clocks-system-base-v5-25-ac4410697cc2@collabora.com>
-References: <20260801-mt8189-clocks-system-base-v5-0-ac4410697cc2@collabora.com>
-In-Reply-To: <20260801-mt8189-clocks-system-base-v5-0-ac4410697cc2@collabora.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Chun-Jie Chen <chun-jie.chen@mediatek.com>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Edward-JW Yang <edward-jw.yang@mediatek.com>, 
- Richard Cochran <richardcochran@gmail.com>, 
- Chen-Yu Tsai <wenst@chromium.org>
-Cc: kernel@collabora.com, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- netdev@vger.kernel.org, Irving-CH Lin <irving-ch.lin@mediatek.com>, 
- Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1785583261; l=7242;
- i=louisalexis.eyraud@collabora.com; s=20250113; h=from:subject:message-id;
- bh=Zh06wlUmAIC1iukSKooFVWp0hF17e98otRnRFvdgrT0=;
- b=d3sRYvU03PTPb1z11ieG/EmTz/8tjmEsIEkvczuBu9uMslU7E+IcvrifXVQOErEVzdhqIDndf
- Rb3yWhFrUrHC3jd6NmImC1Kllqc0PTkIix+uPqvJM8qwsB7L7UbwOaA
-X-Developer-Key: i=louisalexis.eyraud@collabora.com; a=ed25519;
- pk=CHFBDB2Kqh4EHc6JIqFn69GhxJJAzc0Zr4e8QxtumuM=
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Add support for the MT8189 ufs clock controller,
-which provides clock gate control for Universal Flash Storage.
-
-Co-developed-by: Irving-CH Lin <irving-ch.lin@mediatek.com>
-Signed-off-by: Irving-CH Lin <irving-ch.lin@mediatek.com>
-Co-developed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Signed-off-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
----
- drivers/clk/mediatek/Kconfig          |  12 +++
- drivers/clk/mediatek/Makefile         |   1 +
- drivers/clk/mediatek/clk-mt8189-ufs.c | 133 ++++++++++++++++++++++++++++++++++
- 3 files changed, 146 insertions(+)
-
-diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-index 919a916f1f4f..34a270a377cc 100644
---- a/drivers/clk/mediatek/Kconfig
-+++ b/drivers/clk/mediatek/Kconfig
-@@ -882,6 +882,18 @@ config COMMON_CLK_MT8189_SCP
- 	  management for SCP-related features, ensuring proper clock
- 	  distribution and gating for power efficiency and functionality.
- 
-+config COMMON_CLK_MT8189_UFS
-+	tristate "Clock driver for MediaTek MT8189 ufs"
-+	depends on COMMON_CLK_MT8189
-+	default COMMON_CLK_MT8189
-+	help
-+	  Enable this to support the clock management for the Universal Flash
-+	  Storage (UFS) interface on MediaTek MT8189 SoCs. This includes
-+	  clock sources, dividers, and gates that are specific to the UFS
-+	  feature of the MT8189 platform. It is recommended to enable this
-+	  option if the system includes a UFS device that relies on the MT8189
-+	  SoC for clock management.
-+
- config COMMON_CLK_MT8192
- 	tristate "Clock driver for MediaTek MT8192"
- 	depends on ARM64 || COMPILE_TEST
-diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
-index a3a93a16b369..1aa9f4265225 100644
---- a/drivers/clk/mediatek/Makefile
-+++ b/drivers/clk/mediatek/Makefile
-@@ -130,6 +130,7 @@ obj-$(CONFIG_COMMON_CLK_MT8189_DBGAO) += clk-mt8189-dbgao.o
- obj-$(CONFIG_COMMON_CLK_MT8189_DVFSRC) += clk-mt8189-dvfsrc.o
- obj-$(CONFIG_COMMON_CLK_MT8189_IIC) += clk-mt8189-iic.o
- obj-$(CONFIG_COMMON_CLK_MT8189_SCP) += clk-mt8189-scp.o
-+obj-$(CONFIG_COMMON_CLK_MT8189_UFS) += clk-mt8189-ufs.o
- obj-$(CONFIG_COMMON_CLK_MT8192) += clk-mt8192-apmixedsys.o clk-mt8192.o
- obj-$(CONFIG_COMMON_CLK_MT8192_AUDSYS) += clk-mt8192-aud.o
- obj-$(CONFIG_COMMON_CLK_MT8192_CAMSYS) += clk-mt8192-cam.o
-diff --git a/drivers/clk/mediatek/clk-mt8189-ufs.c b/drivers/clk/mediatek/clk-mt8189-ufs.c
-new file mode 100644
-index 000000000000..85afab04420f
---- /dev/null
-+++ b/drivers/clk/mediatek/clk-mt8189-ufs.c
-@@ -0,0 +1,133 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2025-2026 MediaTek Inc.
-+ *                    Qiqi Wang <qiqi.wang@mediatek.com>
-+ *                    Irving-CH Lin <irving-ch.lin@mediatek.com>
-+ * Copyright (C) 2026 Collabora Ltd.
-+ *                    AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-+ *                    Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/module.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+
-+#include "clk-mtk.h"
-+#include "clk-gate.h"
-+
-+#include <dt-bindings/clock/mediatek,mt8189-clk.h>
-+#include <dt-bindings/reset/mediatek,mt8189-resets.h>
-+
-+#define MT8189_UFSCFG_AO_RST0_SET_OFFSET	0x48
-+#define MT8189_UFSCFG_PDN_RST0_SET_OFFSET	0x48
-+
-+static const struct mtk_gate_regs ufscfg_ao_reg_cg_regs = {
-+	.set_ofs = 0x8,
-+	.clr_ofs = 0xc,
-+	.sta_ofs = 0x4,
-+};
-+
-+#define GATE_UFSCFG_AO_REG(_id, _name, _parent, _shift)		\
-+	GATE_MTK(_id, _name, _parent, &ufscfg_ao_reg_cg_regs, _shift, &mtk_clk_gate_ops_setclr)
-+
-+static const struct mtk_gate ufscfg_ao_reg_clks[] = {
-+	GATE_UFSCFG_AO_REG(CLK_UFSCFG_AO_REG_UNIPRO_TX_SYM,
-+			   "ufscfg_ao_unipro_tx_sym", "clk26m", 1),
-+	GATE_UFSCFG_AO_REG(CLK_UFSCFG_AO_REG_UNIPRO_RX_SYM0,
-+			   "ufscfg_ao_unipro_rx_sym0", "clk26m", 2),
-+	GATE_UFSCFG_AO_REG(CLK_UFSCFG_AO_REG_UNIPRO_RX_SYM1,
-+			   "ufscfg_ao_unipro_rx_sym1", "clk26m", 3),
-+	GATE_UFSCFG_AO_REG(CLK_UFSCFG_AO_REG_UNIPRO_SYS,
-+			   "ufscfg_ao_unipro_sys", "ufs_sel", 4),
-+	GATE_UFSCFG_AO_REG(CLK_UFSCFG_AO_REG_U_SAP_CFG,
-+			   "ufscfg_ao_u_sap_cfg", "clk26m", 5),
-+	GATE_UFSCFG_AO_REG(CLK_UFSCFG_AO_REG_U_PHY_TOP_AHB_S_BUS,
-+			   "ufscfg_ao_u_phy_ahb_s_bus", "axi_u_sel", 6),
-+};
-+
-+static u16 ufscfg_ao_rst_ofs[] = {
-+	MT8189_UFSCFG_AO_RST0_SET_OFFSET,
-+};
-+
-+static u16 ufscfg_ao_rst_idx_map[] = {
-+	[MT8189_UFSAO_RST_UFS_MPHY] = 8,
-+};
-+
-+static const struct mtk_clk_rst_desc ufscfg_ao_rst_desc = {
-+	.version = MTK_RST_SET_CLR,
-+	.rst_bank_ofs = ufscfg_ao_rst_ofs,
-+	.rst_bank_nr = ARRAY_SIZE(ufscfg_ao_rst_ofs),
-+	.rst_idx_map = ufscfg_ao_rst_idx_map,
-+	.rst_idx_map_nr = ARRAY_SIZE(ufscfg_ao_rst_idx_map),
-+};
-+
-+static const struct mtk_clk_desc ufscfg_ao_reg_mcd = {
-+	.clks = ufscfg_ao_reg_clks,
-+	.num_clks = ARRAY_SIZE(ufscfg_ao_reg_clks),
-+	.rst_desc = &ufscfg_ao_rst_desc,
-+};
-+
-+static const struct mtk_gate_regs ufscfg_pdn_reg_cg_regs = {
-+	.set_ofs = 0x8,
-+	.clr_ofs = 0xc,
-+	.sta_ofs = 0x4,
-+};
-+
-+#define GATE_UFSCFG_PDN_REG(_id, _name, _parent, _shift)	\
-+	GATE_MTK(_id, _name, _parent, &ufscfg_pdn_reg_cg_regs, _shift, &mtk_clk_gate_ops_setclr)
-+
-+static const struct mtk_gate ufscfg_pdn_reg_clks[] = {
-+	GATE_UFSCFG_PDN_REG(CLK_UFSCFG_REG_UFSHCI_UFS,
-+			    "ufscfg_ufshci_ufs", "ufs_sel", 0),
-+	GATE_UFSCFG_PDN_REG(CLK_UFSCFG_REG_UFSHCI_AES,
-+			    "ufscfg_ufshci_aes", "aes_ufsfde_sel", 1),
-+	GATE_UFSCFG_PDN_REG(CLK_UFSCFG_REG_UFSHCI_U_AHB,
-+			    "ufscfg_ufshci_u_ahb", "axi_u_sel", 3),
-+	GATE_UFSCFG_PDN_REG(CLK_UFSCFG_REG_UFSHCI_U_AXI,
-+			    "ufscfg_ufshci_u_axi", "mem_sub_u_sel", 5),
-+};
-+
-+static u16 ufscfg_pdn_rst_ofs[] = {
-+	MT8189_UFSCFG_PDN_RST0_SET_OFFSET,
-+};
-+
-+static u16 ufscfg_pdn_rst_idx_map[] = {
-+	[MT8189_UFSPDN_RST_UFS_UNIPRO] = 0,
-+	[MT8189_UFSPDN_RST_UFS_CRYPTO] = 1,
-+	[MT8189_UFSPDN_RST_UFS_HCI] = 2,
-+};
-+
-+static const struct mtk_clk_rst_desc ufscfg_pdn_rst_desc = {
-+	.version = MTK_RST_SET_CLR,
-+	.rst_bank_ofs = ufscfg_pdn_rst_ofs,
-+	.rst_bank_nr = ARRAY_SIZE(ufscfg_pdn_rst_ofs),
-+	.rst_idx_map = ufscfg_pdn_rst_idx_map,
-+	.rst_idx_map_nr = ARRAY_SIZE(ufscfg_pdn_rst_idx_map),
-+};
-+
-+static const struct mtk_clk_desc ufscfg_pdn_reg_mcd = {
-+	.clks = ufscfg_pdn_reg_clks,
-+	.num_clks = ARRAY_SIZE(ufscfg_pdn_reg_clks),
-+	.rst_desc = &ufscfg_pdn_rst_desc,
-+};
-+
-+static const struct of_device_id of_match_clk_mt8189_ufs[] = {
-+	{ .compatible = "mediatek,mt8189-ufscfg-ao", .data = &ufscfg_ao_reg_mcd },
-+	{ .compatible = "mediatek,mt8189-ufscfg-pdn", .data = &ufscfg_pdn_reg_mcd },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, of_match_clk_mt8189_ufs);
-+
-+static struct platform_driver clk_mt8189_ufs_drv = {
-+	.probe = mtk_clk_simple_probe,
-+	.remove = mtk_clk_simple_remove,
-+	.driver = {
-+		.name = "clk-mt8189-ufs",
-+		.of_match_table = of_match_clk_mt8189_ufs,
-+	},
-+};
-+module_platform_driver(clk_mt8189_ufs_drv);
-+
-+MODULE_DESCRIPTION("MediaTek MT8189 ufs clocks driver");
-+MODULE_LICENSE("GPL");
-
--- 
-2.55.0
-
+On Mon, 06 Jul 2026 11:37:14 -0300=0D
+Daniel Almeida <daniel.almeida@collabora.com> wrote:=0D
+=0D
+> The clk API allows fine-grained control, but some drivers might be=0D
+> more interested in a "set and forget" API.=0D
+> =0D
+> Expand the current API to support this. The clock will automatically be=0D
+> disabled, unprepared and freed when the device is unbound from the bus=0D
+> without further intervention by the driver.=0D
+> =0D
+> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>=0D
+> ---=0D
+>  rust/kernel/clk.rs | 46 ++++++++++++++++++++++++++++++++++++++++++++++=0D
+>  1 file changed, 46 insertions(+)=0D
+> =0D
+> diff --git a/rust/kernel/clk.rs b/rust/kernel/clk.rs=0D
+> index dd5fd656271e..b9a44f83843a 100644=0D
+> --- a/rust/kernel/clk.rs=0D
+> +++ b/rust/kernel/clk.rs=0D
+> @@ -96,6 +96,52 @@ impl Sealed for super::Prepared {}=0D
+>          impl Sealed for super::Enabled {}=0D
+>      }=0D
+>  =0D
+> +    /// Obtains and enables a [`devres`]-managed [`Clk`] for a bound dev=
+ice.=0D
+> +    ///=0D
+> +    /// [`devres`]: crate::devres::Devres=0D
+> +    #[inline]=0D
+> +    pub fn devm_enable(dev: &Device<Bound>, name: Option<&CStr>) -> Resu=
+lt {=0D
+> +        let name =3D name.map_or(ptr::null(), |n| n.as_char_ptr());=0D
+> +=0D
+> +        // SAFETY: It is safe to call [`devm_clk_get_enabled`] with a va=
+lid=0D
+=0D
+Intra-doc links won't work in regular comments.=0D
+=0D
+> +        // device pointer.=0D
+> +        from_err_ptr(unsafe { bindings::devm_clk_get_enabled(dev.as_raw(=
+), name) })?;=0D
+> +        Ok(())=0D
+> +    }=0D
+> +=0D
+> +    /// Obtains and enables a [`devres`]-managed [`Clk`] for a bound dev=
+ice.=0D
+> +    ///=0D
+> +    /// This does not print any error messages if the clock is not found=
+.=0D
+> +    ///=0D
+> +    /// [`devres`]: crate::devres::Devres=0D
+> +    #[inline]=0D
+> +    pub fn devm_enable_optional(dev: &Device<Bound>, name: Option<&CStr>=
+) -> Result {=0D
+> +        let name =3D name.map_or(ptr::null(), |n| n.as_char_ptr());=0D
+> +=0D
+> +        // SAFETY: It is safe to call [`devm_clk_get_optional_enabled`] =
+with a=0D
+> +        // valid device pointer.=0D
+> +        from_err_ptr(unsafe { bindings::devm_clk_get_optional_enabled(de=
+v.as_raw(), name) })?;=0D
+> +        Ok(())=0D
+> +    }=0D
+> +=0D
+> +    /// Same as [`devm_enable_optional`], but also sets the rate.=0D
+> +    #[inline]=0D
+> +    pub fn devm_enable_optional_with_rate(=0D
+> +        dev: &Device<Bound>,=0D
+> +        name: Option<&CStr>,=0D
+> +        rate: Hertz,=0D
+> +    ) -> Result {=0D
+> +        let name =3D name.map_or(ptr::null(), |n| n.as_char_ptr());=0D
+> +=0D
+> +        // SAFETY: It is safe to call=0D
+> +        // [`devm_clk_get_optional_enabled_with_rate`] with a valid devi=
+ce=0D
+> +        // pointer.=0D
+> +        from_err_ptr(unsafe {=0D
+> +            bindings::devm_clk_get_optional_enabled_with_rate(dev.as_raw=
+(), name, rate.as_hz())=0D
+> +        })?;=0D
+=0D
+Just fyi, there's currently a bug in the C implementation of=0D
+devm_clk_get_optional_enabled_with_rate() which I caught while reviewing yo=
+ur=0D
+series. The fix patch is already on the list [1]. Other than that, this LGT=
+M.=0D
+=0D
+[1]: https://lore.kernel.org/all/20260801111637.304590-1-work@onurozkan.dev=
+=0D
+=0D
+Regards,=0D
+Onur=0D
+=0D
+> +        Ok(())=0D
+> +    }=0D
+> +=0D
+>      /// A trait representing the different states that a [`Clk`] can be =
+in.=0D
+>      pub trait ClkState: private::Sealed {=0D
+>          /// Whether the clock is enabled in this state.=0D
+> =0D
+> -- =0D
+> 2.54.0=0D
+> =0D
