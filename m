@@ -1,167 +1,225 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mail-08.mail-europe.com (mail-08.mail-europe.com [57.129.93.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2252C3B83E0
-	for <linux-clk@vger.kernel.org>; Sat,  1 Aug 2026 17:31:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27B9E3A255F
+	for <linux-clk@vger.kernel.org>; Sat,  1 Aug 2026 17:44:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.129.93.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785605509; cv=none; b=DAX3vFHPfxTCu6eRnQ4wvqpW1+sBGTbSjcKU7AE2i4cgqQXxFtzNkbEENM88MVYVw7IOMDY7LchlWmbawLKY+PL5ILAPY9UcO4Lb0jWhYcXgxuF0P8PZxl59vvs/zRT2Ski1hxLvyiM3VEwX12VRoYK+W6OC00voCvBqpBkbQhU=
+	t=1785606289; cv=none; b=XmiPN1LJRgsgwNqNsCpu3T+f4YkMHmYuKZy4euG8+gxr8MdWTtsl3Oq7knzJQ3jT/SzarrWH0dVRrcg7mhSRZw+uM2CBmvRRzpISh25gvUE5BfF5D5p/9MDKYl1WyyT5blrVjeP9KDHbTzve1DVE3DwP5yrPiRqKlD4rGTIhIQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785605509; c=relaxed/simple;
-	bh=H1mNg8gEHpjeg+Dw29F2Ce5I2PQAD2Ke3CzBqgLKtVU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=f58uhlgrT9AhLoFg04NKhxWUiI15GmMsWVu1rXx5C/R8FeQIcRdzwU4Gx/919kN9UgTFwCSe4C+NVgYNiJe/tYYASKVMoF5eIrdeA2rmvEUGZQ+sCbwxS6YGk8kGWl7bDqSif63OlXglks5UUh/OQWYCp1/1U930YxwF45dOLnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=L2Ud5j7i; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=dbp7xdN6; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1785606289; c=relaxed/simple;
+	bh=1lkuxakc/9+zFDLtSsm4Kb/GRESUDWvNHeHbUcHfk28=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Sxvs5qxMWYQA1ROXlS5/rEZ0U+w5Q6IoEwYj6QE9KnrdW2/Hf9fc2LCKWt9QrjuMELKLGPAnKmfwJ1d2jrnssSO3/+L4rDnWTfyqyPjK7kwqpSO2mDyBQcRGVEqiNHkhVROIsDndn4IO0gXL3EyO6u7DI0SvunYLIPkGMlOCbKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (2048-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=J0Xo2fx5; arc=none smtp.client-ip=57.129.93.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=onurozkan.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="L2Ud5j7i";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="dbp7xdN6"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 671FaXLO294786
-	for <linux-clk@vger.kernel.org>; Sat, 1 Aug 2026 17:31:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	O51Fgg2/ZbyK/CWM7sBEU1xDckvgir7LEKryAan0C8I=; b=L2Ud5j7iSV4QGWb3
-	GuYtQiw6MN3aALKpKTyN6VgzGcOcAH6WroPBQ8oqXoI58gaWaeRPwRneRBw93CIz
-	6k8wjXb1lFnwfYGWgoZG/eZ7pKRiT0/RpEN1U1TOdYn1OTJhE0zujbmOhIGErRlo
-	9LvTyIp2DOA2Ld0IuFhQrKn1HK/Ds7AYD6H5t7v0uh2JX7Xtpa/bk4Dg6+h0zFHl
-	b2P2E+cvSifQJDtURzS3psX6QlL5/xiKZLfadmUloMxbYYlTprHZ/7dH8oOAazld
-	Q4H5saJTj5BCRY1ZQotsmdU+jXwc3YBRxzt23Utx7J5JUAoEZwDIaTEaLbuAbppL
-	/xTPfA==
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fs8pg1c04-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Sat, 01 Aug 2026 17:31:47 +0000 (GMT)
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-38e7b87ce77so5307811a91.0
-        for <linux-clk@vger.kernel.org>; Sat, 01 Aug 2026 10:31:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1785605507; x=1786210307; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=O51Fgg2/ZbyK/CWM7sBEU1xDckvgir7LEKryAan0C8I=;
-        b=dbp7xdN6XPKuICO/yl/Ai0VjvYk9rbl4NZHwaV54PXhwOCtO/UC/t9/8AxcJZwgn20
-         +Pag8v4JFy7XFnUfQDG+qlaB8tl+MMOwus73C++0QOl6J5YRH+NyDqLA/3GgYg7kRa+o
-         +JSaulJDVaIcM66uNZCLU4BjhpOVC9Q1IK4MdzpNfEyszKpMFsdje1NV251vb0hT7LVS
-         bCo+SwG0IIJ8lSpUyif8wpxzQDuUl/KL29ZNq+uJXRVcpQzhRxn43fyexijULzTqC53x
-         mUeFPgitrmeZPf8OklwHL8Vw+nr/q2YmwzK3N6rvK9pTc8Ge7UXfTq2y/TQiSTIIDFXL
-         O5gw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785605507; x=1786210307;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=O51Fgg2/ZbyK/CWM7sBEU1xDckvgir7LEKryAan0C8I=;
-        b=fupLrGAkFZk4Q4s+2FXFrVEz49OFoGf+ODcR8t/+lKH2fIxTuKY3OPK0YIUEJHR96v
-         nSe2ho/tbbuhupB0hjfNoaa2i1KxYK/EucdGyx3zUqWZO+zIKMiqBPLgz+5tnuMxXr6m
-         uI11mCSO7XOzKJbmsO6j1/0F0WxZQhD15DPsT0PaDqoVsvwCqOe+TkdjBbYoqOm3Jh9Q
-         kQe9IyLY4uIXoxxBetFjYc8NE8Wm2TEoYpATLrfVCGgybERmJmppmuSOCly1rLfbp+9o
-         +WuGAjpV4GUiMoYVTSfk4zVRPZGET+1kcm4ybl7/M0fOt0hRXOpkBYMJvLg3p2lJdETK
-         TLLA==
-X-Forwarded-Encrypted: i=1; AHgh+RrcIDGVFU++qWILK4x5sl/PizR0tLPTxaNLnXCPFgPStXGAzS73wXwI9DobZsv8W2BqiLmibdHrNc0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWjf1nrUeBilLmZxqOCNeQrqgO3Bnl560Hjl7TM3gJbkhwGrBj
-	6HjJ15bTo3qxggMZRwPN9fNsnYeiYAMQAg6OCbnfnJgvH0wSwMaTOOxV2gl3Vt6VaBY8m0KLwak
-	frfBJxP/1W1pVJgeSlgupJHDG4Dv61kymHqxOM/Z6f+gf3bXh2FwEbsAQoMnTL8g=
-X-Gm-Gg: AR+sD103rP+4aL/YmDhHrDVBDXK+EgMvm+XJ4LgX8uoIaWiKWEJ53LnuXVtP5DKWhBx
-	3UnpBfJDMFiDv/7awz4h6Znrecv4Bzu53qfYmnMnI3IvTIBb7uIxIlr4GHGFc91I/r4TITAp2cv
-	8GRY7eYndGeB54gAVBzKobXdjnLbcApis5geRi+JNT1fPLFWW6FXYihIj+IyDdoWcz60qvx++0Z
-	XmJrw3FbrKPfWvFyEg3an+KvNtpW4Nvx+8UkZt5I+/9oImi8ulxsEfPXeEkCecPfkJXBc5ab6pk
-	egmnCiAHa5FGtGovABrEou+HgTk9YguUGImr49OcF73b6WmhZPk3bleulHsnf/tupZV7MCvPusY
-	40Xk1yo5VGiiPgw/tlo3OR9Bl
-X-Received: by 2002:a17:90b:1b46:b0:387:e0db:3faa with SMTP id 98e67ed59e1d1-38fbc560f00mr3142331a91.35.1785605506653;
-        Sat, 01 Aug 2026 10:31:46 -0700 (PDT)
-X-Received: by 2002:a17:90b:1b46:b0:387:e0db:3faa with SMTP id 98e67ed59e1d1-38fbc560f00mr3142314a91.35.1785605506190;
-        Sat, 01 Aug 2026 10:31:46 -0700 (PDT)
-Received: from hu-tdas-hyd.qualcomm.com ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-13fab4e44bcsm21865553c88.12.2026.08.01.10.31.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 Aug 2026 10:31:45 -0700 (PDT)
-From: Taniya Das <taniya.das@oss.qualcomm.com>
-Date: Sat, 01 Aug 2026 23:01:18 +0530
-Subject: [PATCH 2/2] clk: qcom: gpucc-kaanapali: Mark the GPU CX GDSC as
- votable
+	dkim=pass (2048-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="J0Xo2fx5"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
+	s=protonmail; t=1785606275; x=1785865475;
+	bh=GEnf/aEUeF5h5noLn7GPe6Z4ZE8ClVmcGqH+KCbBXJU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:From:To:
+	 Cc:Date:Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=J0Xo2fx5hC6OiriflfmKS/PP8suzBKCpm0cqcbRCFfQhn8RF7TDrqDJhPpLr2liYb
+	 /aeDXqSSr/sNF+/UwhjmCfpTm40X4B0fxWLHez1Tow1p1eSEdc1ZNfwznOnzaNc/uH
+	 PiVpB+uewXSrDqA9eglw8Jx7TVajRxvCBQMp0OX0s/yCJZcB4iJc5A0uNofWToRFty
+	 nWE/xV9JVDfgYrZxaq0fonCTDwmPojO3sIXJGvfjeEoCVzkTd7gAe47owTgZbmtPK3
+	 UgZaRIWDoxCmrJWTjCazKL+a6jsku2/Nay2sSmF1YS/G/w5QBGW7Xjc0t8TkCj3YyI
+	 VD8oEKEnzMlnw==
+X-Pm-Submission-Id: 4hC9L32F1Tz1DDrb
+From: =?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Drew Fustini <fustini@kernel.org>,
+	Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>,
+	=?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Gary Guo <gary@garyguo.net>,
+	=?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	Michal Wilczynski <m.wilczynski@samsung.com>,
+	Boqun Feng <boqun@kernel.org>,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-riscv@lists.infradead.org,
+	linux-pwm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	Boris Brezillon <boris.brezillon@collabora.com>,
+	Maurice <mhi@mailbox.org>,
+	=?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>
+Subject: Re: [PATCH v5 4/4] rust: clk: use 'kernel vertical style' for imports
+Date: Sat,  1 Aug 2026 20:44:24 +0300
+Message-ID: <20260801174426.926785-1-work@onurozkan.dev>
+X-Mailer: git-send-email 2.51.2
+In-Reply-To: <20260706-clk-type-state-v5-4-67c5f326a16c@collabora.com>
+References: <20260706-clk-type-state-v5-0-67c5f326a16c@collabora.com> <20260706-clk-type-state-v5-4-67c5f326a16c@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260801-kaanapali-gpu-voteable-v1-2-fe804d24d2e9@oss.qualcomm.com>
-References: <20260801-kaanapali-gpu-voteable-v1-0-fe804d24d2e9@oss.qualcomm.com>
-In-Reply-To: <20260801-kaanapali-gpu-voteable-v1-0-fe804d24d2e9@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
-        Imran Shaik <imran.shaik@oss.qualcomm.com>,
-        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
-        Taniya Das <taniya.das@oss.qualcomm.com>
-X-Mailer: b4 0.15-dev-aa3f6
-X-Proofpoint-GUID: oxct346K45fdIwuzGUnztYexMZdsXmBl
-X-Proofpoint-ORIG-GUID: oxct346K45fdIwuzGUnztYexMZdsXmBl
-X-Proofpoint-Spam-Info: AW1haW4tMjYwODAxMDE0MSBTYWx0ZWRfXyeKya/1tYBcX
- Jvgsym24I7SNg+15k4lMgIOCFXEpvp/PdFmtQ+xMlsPL9gMoou+Fk922qLX2TTmsn2TvbneAaPn
- tnUUaNaLzHgcQF/Zu3cWb7ybxPnYoao=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODAxMDE0MSBTYWx0ZWRfX6U78BXSPBeWl
- y9cPUOBst4ROxu0lamgBzKB4w2KE0tKlAqvXE8+aVU8HW996mkcxuOuC3Doaxk15Fihoa12+yPd
- D/60Pa01kYxA//1yvR0LjsTT7wKh4Hq2XvRSpgEjIn8bSyyeFcoC8dnurqWR4IQdBayFgs0Licg
- XP6QCh0N9OeqIHcfdjcN8YXlM7ky1N+oKTWEXUTGN1/fUFbF63Tv2YNtLwmck+49A7eJ6O6gu/x
- F4UKrMef2WjAl8j9rZSvD7v4TXq2rJkym0MxjxAMrtH8vnALaYctrZ0T6E7SQEOXDvqZbCyk6vk
- 46Kl4Zouv5WXILXp0bOswbcKyj07JY1omBNh6RgF/HlUOEr0a3g9edsr706UOH6Z3vjRFU9YEuK
- 8INec2KlJ7TY/ZG5z4xfkmjNI6bMJC9lyt/6/VIIBRLbAls+iT4mtA38zn/hSLxPKtCeQWNglOz
- J7GhouhwSJigqOhi/EQ==
-X-Authority-Analysis: v=2.4 cv=U4Oiy+ru c=1 sm=1 tr=0 ts=6a6e2d83 cx=c_pps
- a=RP+M6JBNLl+fLTcSJhASfg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=Sv0fKeRqtYgA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=eoimf2acIAo5FJnRuUoq:22
- a=EUspDBNiAAAA:8 a=1GDNdKNvGV4VtvgizQsA:9 a=QEXdDO2ut3YA:10
- a=iS9zxrgQBfv6-_F4QbHw:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-08-01_02,2026-07-30_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 clxscore=1015 lowpriorityscore=0 spamscore=0 priorityscore=1501
- bulkscore=0 malwarescore=0 impostorscore=0 adultscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2608010141
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-The GPU CX GDSC on Kaanapali is a votable power domain and hence
-should not be polled for power-off status during GDSC disable. Also,
-its power-on status should be read from the GDS hardware control
-register.
-
-Accommodate this by removing POLL_CFG_GDSCR and adding the VOTABLE
-flag for the GPU CX GDSC, similar to other platforms (e.g. SM8750 and
-Milos).
-
-Fixes: 685ec348339b ("clk: qcom: Add support for GPUCC and GXCLK for Kaanapali")
-Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
----
- drivers/clk/qcom/gpucc-kaanapali.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/qcom/gpucc-kaanapali.c b/drivers/clk/qcom/gpucc-kaanapali.c
-index ae5563e516f6770adfcd52252a1712dde2c80b9a..f75f2caa2205c4720f7510c9226b4f91a5403d52 100644
---- a/drivers/clk/qcom/gpucc-kaanapali.c
-+++ b/drivers/clk/qcom/gpucc-kaanapali.c
-@@ -380,7 +380,7 @@ static struct gdsc gpu_cc_cx_gdsc = {
- 		.name = "gpu_cc_cx_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
--	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
-+	.flags = RETAIN_FF_ENABLE | VOTABLE,
- };
- 
- static struct clk_regmap *gpu_cc_kaanapali_clocks[] = {
-
--- 
-2.34.1
-
+On Mon, 06 Jul 2026 11:37:15 -0300=0D
+Daniel Almeida <daniel.almeida@collabora.com> wrote:=0D
+=0D
+> Convert all imports to use the new import style. This will make it easier=
+=0D
+> to land new changes in the future.=0D
+> =0D
+> No change of functionality implied.=0D
+> =0D
+> Link: https://docs.kernel.org/rust/coding-guidelines.html#imports=0D
+> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>=0D
+=0D
+Reviewed-by: Onur =C3=96zkan <work@onurozkan.dev>=0D
+=0D
+> ---=0D
+>  rust/kernel/clk.rs | 66 +++++++++++++++++++++++++++++++++++++++++-------=
+------=0D
+>  1 file changed, 50 insertions(+), 16 deletions(-)=0D
+> =0D
+> diff --git a/rust/kernel/clk.rs b/rust/kernel/clk.rs=0D
+> index b9a44f83843a..e677156ffd21 100644=0D
+> --- a/rust/kernel/clk.rs=0D
+> +++ b/rust/kernel/clk.rs=0D
+> @@ -80,13 +80,23 @@ fn from(freq: Hertz) -> Self {=0D
+>  mod common_clk {=0D
+>      use super::Hertz;=0D
+>      use crate::{=0D
+> -        device::{Bound, Device},=0D
+> -        error::{from_err_ptr, to_result, Result},=0D
+> +        device::{=0D
+> +            Bound,=0D
+> +            Device, //=0D
+> +        },=0D
+> +        error::{=0D
+> +            from_err_ptr,=0D
+> +            to_result, //=0D
+> +        },=0D
+>          prelude::*,=0D
+> -        sync::Arc,=0D
+> +        sync::Arc, //=0D
+>      };=0D
+>  =0D
+> -    use core::{marker::PhantomData, mem::ManuallyDrop, ptr};=0D
+> +    use core::{=0D
+> +        marker::PhantomData,=0D
+> +        mem::ManuallyDrop,=0D
+> +        ptr, //=0D
+> +    };=0D
+>  =0D
+>      mod private {=0D
+>          pub trait Sealed {}=0D
+> @@ -193,9 +203,15 @@ impl<State: ClkState> From<Error<State>> for kernel:=
+:error::Error {=0D
+>          /// original [`Clk`], e.g.:=0D
+>          ///=0D
+>          /// ```=0D
+> -        /// use kernel::clk::{Clk, Enabled, Unprepared};=0D
+> -        /// use kernel::device::{Bound, Device};=0D
+> -        /// use kernel::error::Result;=0D
+> +        /// use kernel::clk::{=0D
+> +        ///     Clk,=0D
+> +        ///     Enabled,=0D
+> +        ///     Unprepared, //=0D
+> +        /// };=0D
+> +        /// use kernel::device::{=0D
+> +        ///     Bound,=0D
+> +        ///     Device, //=0D
+> +        /// };=0D
+>          ///=0D
+>          /// fn get_enabled(dev: &Device<Bound>) -> Result<Clk<Enabled>> =
+{=0D
+>          ///     let clk =3D Clk::<Unprepared>::get(dev, Some(c"apb_clk")=
+)?=0D
+> @@ -245,9 +261,17 @@ fn from(err: Error<State>) -> Self {=0D
+>      /// The following example demonstrates how to obtain and configure a=
+ clock for a device.=0D
+>      ///=0D
+>      /// ```=0D
+> -    /// use kernel::clk::{Clk, Enabled, Hertz, Unprepared, Prepared};=0D
+> -    /// use kernel::device::{Bound, Device};=0D
+> -    /// use kernel::error::Result;=0D
+> +    /// use kernel::clk::{=0D
+> +    ///     Clk,=0D
+> +    ///     Enabled,=0D
+> +    ///     Hertz,=0D
+> +    ///     Prepared,=0D
+> +    ///     Unprepared, //=0D
+> +    /// };=0D
+> +    /// use kernel::device::{=0D
+> +    ///     Bound,=0D
+> +    ///     Device, //=0D
+> +    /// };=0D
+>      ///=0D
+>      /// fn configure_clk(dev: &Device<Bound>) -> Result {=0D
+>      ///     // The fastest way is to use a version of `Clk::get` for the=
+ desired=0D
+> @@ -292,8 +316,11 @@ fn from(err: Error<State>) -> Self {=0D
+>      /// and move between the variants:=0D
+>      ///=0D
+>      /// ```=0D
+> -    /// use kernel::clk::{Clk, Enabled, Prepared};=0D
+> -    /// use kernel::error::Result;=0D
+> +    /// use kernel::clk::{=0D
+> +    ///     Clk,=0D
+> +    ///     Enabled,=0D
+> +    ///     Prepared, //=0D
+> +    /// };=0D
+>      ///=0D
+>      /// enum DeviceClk {=0D
+>      ///     Suspended(Clk<Prepared>),=0D
+> @@ -323,8 +350,11 @@ fn from(err: Error<State>) -> Self {=0D
+>      /// enable a clone of it:=0D
+>      ///=0D
+>      /// ```=0D
+> -    /// use kernel::clk::{Clk, Enabled, Prepared};=0D
+> -    /// use kernel::error::Result;=0D
+> +    /// use kernel::clk::{=0D
+> +    ///     Clk,=0D
+> +    ///     Enabled,=0D
+> +    ///     Prepared, //=0D
+> +    /// };=0D
+>      ///=0D
+>      /// fn use_clk(prepared_clk: &Clk<Prepared>) -> Result {=0D
+>      ///     let enabled_clk: Clk<Enabled> =3D prepared_clk.clone().enabl=
+e()?;=0D
+> @@ -556,8 +586,12 @@ pub fn enable(self) -> Result<Clk<Enabled>, Error<Pr=
+epared>> {=0D
+>          /// clock or threading it through an intermediate state, e.g.:=0D
+>          ///=0D
+>          /// ```=0D
+> -        /// use kernel::clk::{Clk, Enabled, Hertz, Prepared};=0D
+> -        /// use kernel::error::Result;=0D
+> +        /// use kernel::clk::{=0D
+> +        ///     Clk,=0D
+> +        ///     Enabled,=0D
+> +        ///     Hertz,=0D
+> +        ///     Prepared, //=0D
+> +        /// };=0D
+>          ///=0D
+>          /// fn read_rate(clk: &Clk<Prepared>) -> Result<Hertz> {=0D
+>          ///     clk.with_enabled(|clk: &Clk<Enabled>| clk.rate())=0D
+> =0D
+> -- =0D
+> 2.54.0=0D
+> =0D
