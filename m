@@ -1,88 +1,88 @@
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C90530DECE
-	for <linux-clk@vger.kernel.org>; Sat,  1 Aug 2026 14:14:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C782631AF07
+	for <linux-clk@vger.kernel.org>; Sat,  1 Aug 2026 14:14:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785593668; cv=none; b=ISdqAz46+ZOpuFilidqldufB/GZQdXg6vpTd0N7q8JncNfXW/HlFAiNbh3uipCCpWs8qEsNfMwSaG0dLzpLNFErZKy2gHxXGIQk+ro6GlCuFi62nJbT9wKwyy/UtvgLB6XsVP8+cNxSxQGi5Xwj0lNen9gSAtzb2lR5Low9v2SE=
+	t=1785593675; cv=none; b=MSjXdq3PyOQTMjbSVP+eqZEB3rCCCkK95XK/4vqhmovzNvcnKLzzRjNaqo06AWAIke+++eOL64t0vdZVvHkd8Cmdo8DBM1N80nMDLe9EaCCgz3RIiOU/c2DDGWTF5PpCVw3wTXrTlfze92e7Er0GVuieiw80mpiUg0XI6J0TDvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785593668; c=relaxed/simple;
-	bh=TB/Kjode0YLoqDMB8IrGx7SLQGCvzRphoTKGerThxjA=;
+	s=arc-20240116; t=1785593675; c=relaxed/simple;
+	bh=jy1Y4cPl3VQk/7bYr4aTjkr99qsh9OD+limkdq/wlVI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=GaqNFFUUyIST/dPNqTg20ecjrhzM+gRa4NLbzSTwgpyw97f/Ns3yN95gCRlM7J3kWz2zBf1SzfUfjfblza9VMyp/9X2vab9ggCNMFh6HA3zfWvjWIHr5OPNeWi0/6TV8dDSlc1AbbVJ7JQSAuWTTSEbQBwf+09WGfzCKnN4d2/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=S3eNsSzc; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=QDBFjAAu; arc=none smtp.client-ip=205.220.180.131
+	 In-Reply-To:To:Cc; b=HyXm5HDJfJMOPHIa4w7btgYlis439mTut8KdKXYCnJY0vHaQJBrCWsnh7k5VqI1uyg0nvcqYKF/e9rhFSgR7TfutsLYU2ATTwZfbN4VhwEJ1Xb46TWjkBjwbMcijeSyFV9QAcxSgAyUDFy/9GDJicpPr5xJzQGtgP4VxEuJqov4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fVpjCrHz; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=HD7ITP5K; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="S3eNsSzc";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="QDBFjAAu"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 671CaYZx2924962
-	for <linux-clk@vger.kernel.org>; Sat, 1 Aug 2026 14:14:26 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="fVpjCrHz";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="HD7ITP5K"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 671Cadw53218788
+	for <linux-clk@vger.kernel.org>; Sat, 1 Aug 2026 14:14:32 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	sln8nJ7sApAc/Ct+mkqUSRQoOuL1+heJn+LGuT2lmnI=; b=S3eNsSzcof1Kn9Ik
-	NLkXQUD01AHWIowESjY/mwx8tiyyXW1c7ZuzDY9Fngb5oj0TsJFDiEzWLt1Sn3xL
-	v5OLRyRimHKQYfDQvIPTAa7M0Tra4NKLGxUjO7PotbKYu9LEQYe9Nushy0+Zcmps
-	fViipQjeox2SRaGZ01fX2vRmQcqJ5W/SvI3FoFwbU8zH9GGWwoVle3EHNHPizEce
-	71azKpeuzZNx9yXMZbXeIL9VR1jQ0Ku6BarwnvxzdwtTlkVLvgln5UT6EP5R1UeY
-	IEcEmQ1O/tzGqpuMeJ++Rka6PyFJy94eyqx/P22gHWUN/9gglnfW12zV3guQwmjm
-	OXdnZw==
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fs8r6h3af-1
+	tYsuhVJCOMhW7UDz1QnxEptE1z56CTCJNrGIWw/fun0=; b=fVpjCrHz234qtGZe
+	5+Qk7X0V7YwFRk3tLFEv6MJznYsDqD0/WbLzo0m2emJsX13VkWDg4JnZbUnPCOXW
+	JFPQ4S/PSpnQ4xrFNaRdf58ZfiyVcNVLLHbbv33rNNhRrryE9WuOqNhTYo8RYthx
+	CcxHdZwBno6+vUwGjf1KyS0Mmcy4Ru9pQ87Wtokut5TKcOyPWgDeJyNuNy33PKGm
+	3o5+O15bRY3mDWYS+9+pPelSs885rXO37Rqki6+9+LOCVrMJyHNWGvF6DarT2iOp
+	kKUY+QDxcN9ZQzVxqVnGjeHK+HTilyatQWj7MJCmbXfYAWwX6G3+FYo8LqK0haTC
+	/vy91A==
+Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fs8tx12b8-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Sat, 01 Aug 2026 14:14:25 +0000 (GMT)
-Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-c9c26587e67so1676275a12.0
-        for <linux-clk@vger.kernel.org>; Sat, 01 Aug 2026 07:14:25 -0700 (PDT)
+	for <linux-clk@vger.kernel.org>; Sat, 01 Aug 2026 14:14:31 +0000 (GMT)
+Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-ca860baea9fso4631049a12.2
+        for <linux-clk@vger.kernel.org>; Sat, 01 Aug 2026 07:14:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1785593665; x=1786198465; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1785593671; x=1786198471; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=sln8nJ7sApAc/Ct+mkqUSRQoOuL1+heJn+LGuT2lmnI=;
-        b=QDBFjAAuSLKLzY1B0H0OjG+YZfBDAtETPL4sje/U2TUqtnhWnZfH+ffjfnHdScmET+
-         9AavRXQ3fqLYSzffYObqb/R/zlAYNAurB8DkEISN4K3XSsmo0T75RVIBFl+FGxQAjtKk
-         rj8dQUvyxFOWX3Iz6YGDX8vPSRyO13rqqZmgv0vATH9IzYMIz5PC1Qt6eQbyRbMC01IX
-         OcUWrBH2oAxiabNHlyxDDVATv5s53V6WtOsH47is6NtvUaevoWZgvR51w2VTvXZ2Kfeq
-         pNm54JZNCiBaxoRoEZr/YKhZYnpalDT8yjihxqgAZ8uF94aFXfjDaHWxXGgZkUaYN/GT
-         aYLg==
+        bh=tYsuhVJCOMhW7UDz1QnxEptE1z56CTCJNrGIWw/fun0=;
+        b=HD7ITP5KOvA+RvzB4i5DwFE7fSbKdiC9nG5+/Catbfyl3tEVTgxMaH7YNAGIjWkeHq
+         1ZP240QJQ9kL+tQTSe5CwWo7F5ZncD+kMGL0/sk2Ssb8WTlAJRjOV4L3Hy1wJ9NFxfR7
+         OKqv487RU2LkMNFCg+5V65Gd+lDjxK0E9Qp40WeynnQqBryQODMudOHBruPEc2FE8eDI
+         0QD/I30Z4x+If6xURAk0nK+n6C/6eiEkbFpvYxDiHE1+dV6SkOASR6ViCgqdKbIOhUAu
+         xEkrbnVT3VIW+WzqY4nBsOTdCIQc0WHFWIdshpbXoKhCTE4VO8MQRqSzNstkuZdWzEBL
+         MdwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785593665; x=1786198465;
+        d=1e100.net; s=20251104; t=1785593671; x=1786198471;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=sln8nJ7sApAc/Ct+mkqUSRQoOuL1+heJn+LGuT2lmnI=;
-        b=Fnl1E/yAhcj0/+NrFlDKZc60HE9KPJTkTf6Whci36EME+D7IWLZWI2EnjNgW574dOS
-         3ApZUtepB+xslAxng71m5j8skGABrKoOiCXmL6D5eTP5vMENogfDIMp8U6p9MfWgYOYP
-         318lM0dwRZ/SPERnvf6U5XZPTf2jAKPNh0/tR5U9MfppfdTMYkU1HnbjRlcoFcHWwkux
-         erTBWcJ8F0XJMdGgRpMu/sWxquROQJpF9exBjEkIX2UOPV4erfpv6nvUkLTjsEAfmrNZ
-         cShzoNkql3xWRu1mSqwIV/mDD8SO+joRdsUoNHO5F8fCgSVm9dN1i1RkwuKbwrp0rZr4
-         /VtQ==
-X-Forwarded-Encrypted: i=1; AHgh+RqaLOtXqKjqZvkGw0Ih4Yix3Rms3Wn4NvB61pthPwAIU/5x7tcnEAigbeOWpZGu2iuH3Ag1BVkMHtk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxX6fg+ga9O/1et3OE5MzqD3taUirPjd8sWrXSc6Zoi9gS0DtU4
-	1Wl5hVZg5c2Dy4qrAft5ogYAZb1Xbnom0CyjR8pLB2rjOKgPNKI3KeLzb0o/sC4U9+9+uc0BE8p
-	5Wf+liaWgMP1HRJwv3oICjrek41Yj2Qjzs6iNiC/dFCt8koJOdjTv2Cl+rQ6X7f4=
-X-Gm-Gg: AR+sD12EC7ASWX9S9EXTzcs3YRLcq9dKdSPfbywfV6lA7/xcGwYt9jiTHJjk8BBcyck
-	RnA3IObwnhXRxQDwV92WtsX8OS1vl07VEDh9ILEYTcQl5rNRhY+qeBr8ZZJEJvG45dgFrs4Xw9U
-	CJwi/fpmdP0d1x7xsRGNTJ8MYFot2qr19gn6YlZPt8PIpoVGa4S4wcocB5myhy90684L9dEeeZR
-	wkgOpvrKqXdCZq29diJX10EHdRhlvY1T+6vZNELikhoeE1AmU5g5KErAvN2vVNDiBT9n+PmHQlw
-	JeFFXOP2J6hgoY6tKG/t+sRE1RCJTOWZskdsl9SlCBHn94+ndlQpvprWAy7xzsUxnNuJi3mO49q
-	ovtQo8b7j5J3P5kIM6Hu3JlTV
-X-Received: by 2002:a05:6a21:e8b:b0:3a8:800:bdf4 with SMTP id adf61e73a8af0-3c91a9ce3b8mr6205910637.33.1785593664996;
-        Sat, 01 Aug 2026 07:14:24 -0700 (PDT)
-X-Received: by 2002:a05:6a21:e8b:b0:3a8:800:bdf4 with SMTP id adf61e73a8af0-3c91a9ce3b8mr6205890637.33.1785593664573;
-        Sat, 01 Aug 2026 07:14:24 -0700 (PDT)
+        bh=tYsuhVJCOMhW7UDz1QnxEptE1z56CTCJNrGIWw/fun0=;
+        b=Wer1o6Fb4xiynzmfct9I8+SBNWee/FAsh5YpU/x9zFEGw20fZs57aKieSCkvH7wTkS
+         HQA8M9bNFlr06R1YecUsDEEm1m0JbTUUP38Fy6ELXgqogpBar6E9fgNBaazFEKTL7cCy
+         NKD/yRgPqqFavikdaFHvqmodR+tg4oC20zbz+uo+VfX0JrT1q5VbXuYAYVX0grpCuf8L
+         PTtnku+LOQ06QsBuvFD3huI90Ks1cwnKi0rcOLg3YMZY1z3SQHT6gK7ftRB5LJe0Tc6G
+         Retu14FwLenUzR8pGx8MyoPUB4T/acitnBW+XzJi6vvR1UP0orDUPs1IjmvrkSI9rP2S
+         Ojbg==
+X-Forwarded-Encrypted: i=1; AHgh+Rp1CzzNMiKn22/PZBIRkr5Z5Y9tQKzIBtgY+qhs+9nvrXnL4XJEiD9lER6ssLLSTbYSvPVC5ZYhPVQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUTlRr2RNNur90ikyUbPEt39T3tk4MqSvbEqY8m60hsZ2OW8wD
+	YSd4kJqcaIZYZmZ3QbZ0Eal9UP/H67zlVfL5OGBMOfLo11EIdSokbu+ibZVRc58zjKBJFZsurUb
+	o4FCzKt4Q3rHoQsyfoySPeAB6i58ZXmnO42CW/k0GL8y35S/S5ttZrhcp4jLkjGU=
+X-Gm-Gg: AR+sD12OnomK77FfODV06kWh4HmzQ4Zsk6kgsC0m6tkSRrWorgjYf3jO152Q3E1lgX5
+	WRNs1rwP6afoDVi73a8ABN2j6o5WsZnswURu6JHyxcIHQGTgOIiIjasXNo6zIxutLzfEpRc0enW
+	64Sk27RJUxWB7qgMiJ7YaNIaYWSQ/eSX3BHuaMwoCDLAPjUJ9bmZHSarsbQ12BwflwPUtMlOBx6
+	qSOsg7EE//Zbk97DYTceDIl4fCp3wJVEVyNXHm9hDm8/7TbFBBCzoLCxofWyoEK5N51glyM6VOj
+	SM7snL3QTgpyfK2BlquTrtUw2L28HEx+m/MqdBvoxpapc8X607oGptJrx5vRo4Um4m2ZIVlZoEQ
+	qfohe9JWwJ6OsA7iE0oVS0qGo
+X-Received: by 2002:a05:6a20:9143:b0:3c0:9c1b:d0b3 with SMTP id adf61e73a8af0-3c92a907f14mr3888441637.62.1785593670634;
+        Sat, 01 Aug 2026 07:14:30 -0700 (PDT)
+X-Received: by 2002:a05:6a20:9143:b0:3c0:9c1b:d0b3 with SMTP id adf61e73a8af0-3c92a907f14mr3888402637.62.1785593670197;
+        Sat, 01 Aug 2026 07:14:30 -0700 (PDT)
 Received: from hu-tdas-hyd.qualcomm.com ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-13fab4e506csm13570696c88.13.2026.08.01.07.14.19
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-13fab4e506csm13570696c88.13.2026.08.01.07.14.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 Aug 2026 07:14:24 -0700 (PDT)
+        Sat, 01 Aug 2026 07:14:29 -0700 (PDT)
 From: Taniya Das <taniya.das@oss.qualcomm.com>
-Date: Sat, 01 Aug 2026 19:43:55 +0530
-Subject: [PATCH v2 4/6] dt-bindings: clock: qcom: Add support for Camera
- Clock Controller for Nord
+Date: Sat, 01 Aug 2026 19:43:56 +0530
+Subject: [PATCH v2 5/6] clk: qcom: videocc-glymur: Add video clock
+ controller support for Nord
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -91,7 +91,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260801-nord_videocc_camcc-v2-4-674d7718e41f@oss.qualcomm.com>
+Message-Id: <20260801-nord_videocc_camcc-v2-5-674d7718e41f@oss.qualcomm.com>
 References: <20260801-nord_videocc_camcc-v2-0-674d7718e41f@oss.qualcomm.com>
 In-Reply-To: <20260801-nord_videocc_camcc-v2-0-674d7718e41f@oss.qualcomm.com>
 To: Bjorn Andersson <andersson@kernel.org>,
@@ -107,239 +107,163 @@ Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
         Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Taniya Das <taniya.das@oss.qualcomm.com>
+        Taniya Das <taniya.das@oss.qualcomm.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 X-Mailer: b4 0.15-dev-aa3f6
-X-Proofpoint-Spam-Info: AW1haW4tMjYwODAxMDExNCBTYWx0ZWRfXyA+RrrBH8EkJ
- rA5N018OzyiCArG5Lm1UodeXSClP/wiV5GJbkmaA6qLBVYaej2BmEn/r0l60VBGKOiDaReoCPqw
- +8RVY5+5pSyrtjSFyzapL/+POug+Gj8=
-X-Proofpoint-GUID: T_cUwRuSKd-sjvF9temF2gF2Gb5IBWtj
-X-Proofpoint-ORIG-GUID: T_cUwRuSKd-sjvF9temF2gF2Gb5IBWtj
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODAxMDExNCBTYWx0ZWRfXwt2YT6aM1YH3
- 9etrEAVrroTRFNu6do9UIhUh7iDlgJjtSUuWfL2vqGJThOdga+GCQC/JAD4FM2496skvGOO6l8h
- q3lq/bf+gV7RVY/L0Mmorywv0EsXNICvdCYxUZFBu6QPNffvWm4MHqQCo3dqEJQEcVdzODOhc/L
- 9PCsiVKjsl86ATngG8tkCnnHcoYSfGunl+sZqDT0PNLmagWgoT+IVr3Kxv+ohs8bKSlWOEFwwlq
- qmmv+DjLsiHPUJeKdU7ZHejx5itasni3DnjyMsGpldIU8/nabohveON0lTo/Q+zG47XwvOGDRfR
- 7ia4BxS08i9HUnCjded8Z8/mTBo6Thh3/+psCSaIFxnYsqtX0VdhAmmSrTtJRCgJ0R8myPMwEbE
- m2jDLx8623CFnHa7xZOkZarsWsS+HDfrii5kFDVNhzHJHodCYjyBlJRiPfpnVHgI/D/iGAZNaE8
- xqYCLWCchyU0Va617RQ==
-X-Authority-Analysis: v=2.4 cv=Q5ziJY2a c=1 sm=1 tr=0 ts=6a6dff42 cx=c_pps
- a=oF/VQ+ItUULfLr/lQ2/icg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODAxMDExNCBTYWx0ZWRfX2+qTgk4wBqoT
+ Ax1YYRCpApzsZOvKStGU3B5FkGGY0PYBHBgzMqKhy1ke6HLaXNaTeYtzRQp94RnbBASFqOLfbjL
+ 4iK1soi9WcGzX0jzIbYbjbQNZUGL5djQ7pTmDgqdYB97se5R1G9na6kDYCHR25clljo15aKwAYI
+ bWj2pVwBb2OGIFJ9hd40uiMS1VrOsg31TiB38gwR6p37QSdKBgunRwlessdFnaf2IEaYWfN8rQn
+ SHoLECuraCxCsivsfhVjRX3COw0p3FT0ZIIly4HSVSyXBiZSpTr50t7GPBbPCRULdLE5bswR+tI
+ KAjE6Ub6DHhlCZvnlFQbhG3PFndTNqgjTWJ1Wmy+M78y/aelr7rRsEQsAb9fCWmb+hYkmeiVhpI
+ HDC0UB0T7ceBkjbad99W0VqUiSACsthNIzKWrspqU9wl+dyxZ2SL5LvsWkjG+z1DaR6VsndcBff
+ WsMi/BprZPhWlXjUTbg==
+X-Proofpoint-GUID: WW9iSd_WsB3N2WSP75eqU78e6AYTmU59
+X-Authority-Analysis: v=2.4 cv=T9C8ifKQ c=1 sm=1 tr=0 ts=6a6dff47 cx=c_pps
+ a=rz3CxIlbcmazkYymdCej/Q==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
  a=IkcTkHD0fZMA:10 a=Sv0fKeRqtYgA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=rJkE3RaqiGZ5pbrm-msn:22
- a=EUspDBNiAAAA:8 a=npxppRvg8dUom-5OBigA:9 a=QEXdDO2ut3YA:10
- a=3WC7DwWrALyhR5TkjVHa:22
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_glEPmIy2e8OvE2BGh3C:22
+ a=EUspDBNiAAAA:8 a=gGps__zzgqUJur19I4wA:9 a=QEXdDO2ut3YA:10
+ a=bFCP_H2QrGi7Okbo017w:22
+X-Proofpoint-Spam-Info: AW1haW4tMjYwODAxMDExNCBTYWx0ZWRfX80Te1TWyibXX
+ uF74QmcOlaivB3ImsOL1pelLUefH6JfHO/Z+fapwlly47anGO/x/HH7fOs1q6wJNa6OIj9oifYS
+ SpCUUpwIGmFTQmxQFn39/RXYwu1cIew=
+X-Proofpoint-ORIG-GUID: WW9iSd_WsB3N2WSP75eqU78e6AYTmU59
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
  definitions=2026-08-01_01,2026-07-30_01,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 spamscore=0 clxscore=1015 impostorscore=0
- priorityscore=1501 suspectscore=0 adultscore=0 bulkscore=0 malwarescore=0
- phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
+ phishscore=0 lowpriorityscore=0 clxscore=1015 impostorscore=0
+ priorityscore=1501 adultscore=0 suspectscore=0 spamscore=0 malwarescore=0
+ bulkscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
  definitions=main-2608010114
 
-Update the compatible and the bindings for CAMCC support on Nord
-SoC.
+Nord shares the video clock controller topology with Glymur, differing
+only in the PLL0 hardware (Lucid-OLE vs Taycan-EKO-T) and the MVS0
+frequency table. Extend the existing Glymur video clock controller
+driver to also probe on the qcom,nord-videocc compatible, switching to
+the Nord PLL configuration, VCO table, and MVS0 frequency table at
+probe time.
 
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
 ---
- .../bindings/clock/qcom,sm8450-camcc.yaml          |   2 +
- include/dt-bindings/clock/qcom,nord-camcc.h        | 167 +++++++++++++++++++++
- 2 files changed, 169 insertions(+)
+ drivers/clk/qcom/Kconfig          | 11 +++++++++++
+ drivers/clk/qcom/Makefile         |  1 +
+ drivers/clk/qcom/videocc-glymur.c | 38 ++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 50 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
-index b41247b257b193ce1a70e7100b2f88880f9d9bc5..f653807472201e731f9bea43e2c8ab781d817430 100644
---- a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
-@@ -18,6 +18,7 @@ description: |
-   See also:
-     include/dt-bindings/clock/qcom,kaanapali-camcc.h
-     include/dt-bindings/clock/qcom,kaanapali-cambistmclkcc.h
-+    include/dt-bindings/clock/qcom,nord-camcc.h
-     include/dt-bindings/clock/qcom,sm8450-camcc.h
-     include/dt-bindings/clock/qcom,sm8550-camcc.h
-     include/dt-bindings/clock/qcom,sm8650-camcc.h
-@@ -29,6 +30,7 @@ properties:
-     enum:
-       - qcom,kaanapali-cambistmclkcc
-       - qcom,kaanapali-camcc
-+      - qcom,nord-camcc
-       - qcom,sm8450-camcc
-       - qcom,sm8475-camcc
-       - qcom,sm8550-camcc
-diff --git a/include/dt-bindings/clock/qcom,nord-camcc.h b/include/dt-bindings/clock/qcom,nord-camcc.h
-new file mode 100644
-index 0000000000000000000000000000000000000000..655fef2084a580cdaabf8870a209b32b604c8af0
---- /dev/null
-+++ b/include/dt-bindings/clock/qcom,nord-camcc.h
-@@ -0,0 +1,167 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/*
-+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
-+ */
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index 63f271aff1771bea0885fb753dd28d02fd7d4ab6..a5c7faa4dcca1cf7c096ed5c3e16bd1761c46506 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -192,6 +192,17 @@ config CLK_NORD_GCC
+ 	  SPI, I2C, USB, SD/UFS, PCIe etc. The clock controller is a combination
+ 	  of GCC, SE_GCC, NE_GCC and NW_GCC.
+ 
++config CLK_NORD_VIDEOCC
++	tristate "Nord VIDEO Clock Controller"
++	depends on ARM64 || COMPILE_TEST
++	select CLK_NORD_GCC
++	default m if ARCH_QCOM
++	help
++	  Support for the video clock controller on Qualcomm Technologies, Inc.
++	  Nord devices.
++	  Say Y if you want to support video devices and functionality such as
++	  video encode/decode.
 +
-+#ifndef _DT_BINDINGS_CLK_QCOM_CAM_CC_NORD_H
-+#define _DT_BINDINGS_CLK_QCOM_CAM_CC_NORD_H
+ config CLK_SHIKRA_GCC
+ 	tristate "Shikra Global Clock Controller"
+ 	depends on ARM64 || COMPILE_TEST
+diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+index fff069da16deb64311b7e9bdfab4248a706f6b0b..8dbca24fafd012cde3c25993a925b756a9b83608 100644
+--- a/drivers/clk/qcom/Makefile
++++ b/drivers/clk/qcom/Makefile
+@@ -43,6 +43,7 @@ obj-$(CONFIG_CLK_KAANAPALI_TCSRCC) += tcsrcc-kaanapali.o
+ obj-$(CONFIG_CLK_KAANAPALI_VIDEOCC) += videocc-kaanapali.o
+ obj-$(CONFIG_CLK_NORD_GCC) += gcc-nord.o negcc-nord.o nwgcc-nord.o segcc-nord.o
+ obj-$(CONFIG_CLK_NORD_TCSRCC) += tcsrcc-nord.o
++obj-$(CONFIG_CLK_NORD_VIDEOCC) += videocc-glymur.o
+ obj-$(CONFIG_CLK_SHIKRA_GCC) += gcc-shikra.o
+ obj-$(CONFIG_CLK_X1E80100_CAMCC) += camcc-x1e80100.o
+ obj-$(CONFIG_CLK_X1E80100_DISPCC) += dispcc-x1e80100.o
+diff --git a/drivers/clk/qcom/videocc-glymur.c b/drivers/clk/qcom/videocc-glymur.c
+index 18313a65e78d95426a436c94ddf2b26307d6fa80..2776140de3555d27b388d4235d0530523b8f8590 100644
+--- a/drivers/clk/qcom/videocc-glymur.c
++++ b/drivers/clk/qcom/videocc-glymur.c
+@@ -37,6 +37,10 @@ static const struct pll_vco taycan_eko_t_vco[] = {
+ 	{ 249600000, 2500000000, 0 },
+ };
+ 
++static const struct pll_vco lucid_ole_vco[] = {
++	{ 249600000, 2300000000, 0 },
++};
 +
-+/* CAM_CC clocks */
-+#define CAM_CC_CAMNOC_DCD_XO_CLK				0
-+#define CAM_CC_CAMNOC_NRT_AXI_CLK				1
-+#define CAM_CC_CAMNOC_RT_AXI_CLK				2
-+#define CAM_CC_CAMNOC_RT_AXI_CLK_SRC				3
-+#define CAM_CC_CAMNOC_XO_CLK					4
-+#define CAM_CC_CCI_0_CLK					5
-+#define CAM_CC_CCI_0_CLK_SRC					6
-+#define CAM_CC_CCI_1_CLK					7
-+#define CAM_CC_CCI_1_CLK_SRC					8
-+#define CAM_CC_CCI_2_CLK					9
-+#define CAM_CC_CCI_2_CLK_SRC					10
-+#define CAM_CC_CCI_3_CLK					11
-+#define CAM_CC_CCI_3_CLK_SRC					12
-+#define CAM_CC_CCI_4_CLK					13
-+#define CAM_CC_CCI_4_CLK_SRC					14
-+#define CAM_CC_CCU_FAST_AHB_CLK					15
-+#define CAM_CC_CORE_AHB_CLK					16
-+#define CAM_CC_CPHY_RX_CLK_SRC					17
-+#define CAM_CC_CSI0PHYTIMER_CLK					18
-+#define CAM_CC_CSI0PHYTIMER_CLK_SRC				19
-+#define CAM_CC_CSI1PHYTIMER_CLK					20
-+#define CAM_CC_CSI1PHYTIMER_CLK_SRC				21
-+#define CAM_CC_CSI2PHYTIMER_CLK					22
-+#define CAM_CC_CSI2PHYTIMER_CLK_SRC				23
-+#define CAM_CC_CSI3PHYTIMER_CLK					24
-+#define CAM_CC_CSI3PHYTIMER_CLK_SRC				25
-+#define CAM_CC_CSI4PHYTIMER_CLK					26
-+#define CAM_CC_CSI4PHYTIMER_CLK_SRC				27
-+#define CAM_CC_CSID_CLK						28
-+#define CAM_CC_CSID_CLK_SRC					29
-+#define CAM_CC_CSID_CSIPHY_RX_CLK				30
-+#define CAM_CC_CSIPHY0_CLK					31
-+#define CAM_CC_CSIPHY1_CLK					32
-+#define CAM_CC_CSIPHY2_CLK					33
-+#define CAM_CC_CSIPHY3_CLK					34
-+#define CAM_CC_CSIPHY4_CLK					35
-+#define CAM_CC_FAST_AHB_CLK_SRC					36
-+#define CAM_CC_GDSC_CLK						37
-+#define CAM_CC_ICP_0_AHB_CLK					38
-+#define CAM_CC_ICP_0_CLK					39
-+#define CAM_CC_ICP_0_CLK_SRC					40
-+#define CAM_CC_ICP_1_AHB_CLK					41
-+#define CAM_CC_ICP_1_CLK					42
-+#define CAM_CC_ICP_1_CLK_SRC					43
-+#define CAM_CC_IFE_0_MAIN_CLK					44
-+#define CAM_CC_IFE_0_MAIN_CLK_SRC				45
-+#define CAM_CC_IFE_0_MAIN_FAST_AHB_CLK				46
-+#define CAM_CC_IFE_0_PCP_CLK					47
-+#define CAM_CC_IFE_0_PCP_FAST_AHB_CLK				48
-+#define CAM_CC_IFE_0_SCALAR_CLK					49
-+#define CAM_CC_IFE_0_SCALAR_FAST_AHB_CLK			50
-+#define CAM_CC_IFE_0_TMC_CLK					51
-+#define CAM_CC_IFE_0_TMC_FAST_AHB_CLK				52
-+#define CAM_CC_IFE_1_MAIN_CLK					53
-+#define CAM_CC_IFE_1_MAIN_CLK_SRC				54
-+#define CAM_CC_IFE_1_MAIN_FAST_AHB_CLK				55
-+#define CAM_CC_IFE_1_PCP_CLK					56
-+#define CAM_CC_IFE_1_PCP_FAST_AHB_CLK				57
-+#define CAM_CC_IFE_1_SCALAR_CLK					58
-+#define CAM_CC_IFE_1_SCALAR_FAST_AHB_CLK			59
-+#define CAM_CC_IFE_1_TMC_CLK					60
-+#define CAM_CC_IFE_1_TMC_FAST_AHB_CLK				61
-+#define CAM_CC_IFE_2_MAIN_CLK					62
-+#define CAM_CC_IFE_2_MAIN_CLK_SRC				63
-+#define CAM_CC_IFE_2_MAIN_FAST_AHB_CLK				64
-+#define CAM_CC_IFE_2_PCP_CLK					65
-+#define CAM_CC_IFE_2_PCP_FAST_AHB_CLK				66
-+#define CAM_CC_IFE_2_SCALAR_CLK					67
-+#define CAM_CC_IFE_2_SCALAR_FAST_AHB_CLK			68
-+#define CAM_CC_IFE_2_TMC_CLK					69
-+#define CAM_CC_IFE_2_TMC_FAST_AHB_CLK				70
-+#define CAM_CC_IFE_LITE_AHB_CLK					71
-+#define CAM_CC_IFE_LITE_CLK					72
-+#define CAM_CC_IFE_LITE_CLK_SRC					73
-+#define CAM_CC_IFE_LITE_CPHY_RX_CLK				74
-+#define CAM_CC_IFE_LITE_CSID_CLK				75
-+#define CAM_CC_IFE_LITE_CSID_CLK_SRC				76
-+#define CAM_CC_IPE_0_AHB_CLK					77
-+#define CAM_CC_IPE_0_CLK					78
-+#define CAM_CC_IPE_0_CLK_SRC					79
-+#define CAM_CC_IPE_0_FAST_AHB_CLK				80
-+#define CAM_CC_IPE_1_AHB_CLK					81
-+#define CAM_CC_IPE_1_CLK					82
-+#define CAM_CC_IPE_1_CLK_SRC					83
-+#define CAM_CC_IPE_1_FAST_AHB_CLK				84
-+#define CAM_CC_PLL0						85
-+#define CAM_CC_PLL0_OUT_EVEN					86
-+#define CAM_CC_PLL0_OUT_ODD					87
-+#define CAM_CC_PLL2						88
-+#define CAM_CC_PLL2_OUT_EVEN					89
-+#define CAM_CC_PLL3						90
-+#define CAM_CC_PLL3_OUT_EVEN					91
-+#define CAM_CC_PLL4						92
-+#define CAM_CC_PLL4_OUT_EVEN					93
-+#define CAM_CC_PLL5						94
-+#define CAM_CC_PLL5_OUT_EVEN					95
-+#define CAM_CC_PLL6						96
-+#define CAM_CC_PLL6_OUT_EVEN					97
-+#define CAM_CC_QDSS_DEBUG_CLK					98
-+#define CAM_CC_QDSS_DEBUG_CLK_SRC				99
-+#define CAM_CC_QDSS_DEBUG_XO_CLK				100
-+#define CAM_CC_QUP_AHBM_CLK					101
-+#define CAM_CC_QUP_AHBM_CLK_SRC					102
-+#define CAM_CC_QUP_CORE_2X_CLK					103
-+#define CAM_CC_QUP_CORE_2X_CLK_SRC				104
-+#define CAM_CC_QUP_CORE_2X_DIV_CLK_SRC				105
-+#define CAM_CC_QUP_CORE_CLK					106
-+#define CAM_CC_QUP_SE_CLK					107
-+#define CAM_CC_QUP_SE_CLK_SRC					108
-+#define CAM_CC_QUP_SLEEP_CLK					109
-+#define CAM_CC_SFE_LITE_0_CLK					110
-+#define CAM_CC_SFE_LITE_0_FAST_AHB_CLK				111
-+#define CAM_CC_SFE_LITE_1_CLK					112
-+#define CAM_CC_SFE_LITE_1_FAST_AHB_CLK				113
-+#define CAM_CC_SFE_LITE_2_CLK					114
-+#define CAM_CC_SFE_LITE_2_FAST_AHB_CLK				115
-+#define CAM_CC_SLEEP_CLK					116
-+#define CAM_CC_SLEEP_CLK_SRC					117
-+#define CAM_CC_SLOW_AHB_CLK_SRC					118
-+#define CAM_CC_SM_OBS_CLK					119
-+#define CAM_CC_TOP_AHB_CLK					120
-+#define CAM_CC_TOP_FAST_AHB_CLK					121
-+#define CAM_CC_TOP_IFE_0_CLK					122
-+#define CAM_CC_TOP_IFE_1_CLK					123
-+#define CAM_CC_TOP_IFE_2_CLK					124
-+#define CAM_CC_TOP_IFE_LITE_CLK					125
-+#define CAM_CC_TOP_IPE_0_CLK					126
-+#define CAM_CC_TOP_IPE_1_CLK					127
-+#define CAM_CC_TOP_QUP_AHBM_CLK					128
-+#define CAM_CC_TOP_SFE_LITE_0_CLK				129
-+#define CAM_CC_TOP_SFE_LITE_1_CLK				130
-+#define CAM_CC_TOP_SFE_LITE_2_CLK				131
-+#define CAM_CC_TPG_CSIPHY_RX_CLK				132
-+#define CAM_CC_XO_CLK_SRC					133
+ /* 720.0 MHz Configuration */
+ static const struct alpha_pll_config video_cc_pll0_config = {
+ 	.l = 0x25,
+@@ -48,6 +52,21 @@ static const struct alpha_pll_config video_cc_pll0_config = {
+ 	.user_ctl_hi_val = 0x00000002,
+ };
+ 
++/* 720.0 MHz Configuration */
++static const struct alpha_pll_config video_cc_pll0_config_nord = {
++	.l = 0x25,
++	.alpha = 0x8000,
++	.config_ctl_val = 0x20485699,
++	.config_ctl_hi_val = 0x00182261,
++	.config_ctl_hi1_val = 0x82aa299c,
++	.test_ctl_val = 0x00000000,
++	.test_ctl_hi_val = 0x00000003,
++	.test_ctl_hi1_val = 0x00009000,
++	.test_ctl_hi2_val = 0x00000034,
++	.user_ctl_val = 0x00000000,
++	.user_ctl_hi_val = 0x00400005,
++};
 +
-+/* CAM_CC power domains */
-+#define CAM_CC_IFE_0_GDSC					0
-+#define CAM_CC_IFE_1_GDSC					1
-+#define CAM_CC_IFE_2_GDSC					2
-+#define CAM_CC_IPE_0_GDSC					3
-+#define CAM_CC_IPE_1_GDSC					4
-+#define CAM_CC_TITAN_TOP_GDSC					5
+ static struct clk_alpha_pll video_cc_pll0 = {
+ 	.offset = 0x0,
+ 	.config = &video_cc_pll0_config,
+@@ -112,6 +131,15 @@ static struct clk_rcg2 video_cc_ahb_clk_src = {
+ 	},
+ };
+ 
++static const struct freq_tbl ftbl_video_cc_mvs0_clk_src_nord[] = {
++	F(720000000, P_VIDEO_CC_PLL0_OUT_MAIN, 1, 0, 0),
++	F(1305000000, P_VIDEO_CC_PLL0_OUT_MAIN, 1, 0, 0),
++	F(1440000000, P_VIDEO_CC_PLL0_OUT_MAIN, 1, 0, 0),
++	F(1600000000, P_VIDEO_CC_PLL0_OUT_MAIN, 1, 0, 0),
++	F(1680000000, P_VIDEO_CC_PLL0_OUT_MAIN, 1, 0, 0),
++	{ }
++};
 +
-+/* CAM_CC resets */
-+#define CAM_CC_CCU_BCR						0
-+#define CAM_CC_ICP_0_BCR					1
-+#define CAM_CC_ICP_1_BCR					2
-+#define CAM_CC_IFE_0_BCR					3
-+#define CAM_CC_IFE_1_BCR					4
-+#define CAM_CC_IFE_2_BCR					5
-+#define CAM_CC_IPE_0_BCR					6
-+#define CAM_CC_IPE_1_BCR					7
-+#define CAM_CC_QDSS_DEBUG_BCR					8
-+#define CAM_CC_SFE_LITE_0_BCR					9
-+#define CAM_CC_SFE_LITE_1_BCR					10
-+#define CAM_CC_SFE_LITE_2_BCR					11
+ static const struct freq_tbl ftbl_video_cc_mvs0_clk_src[] = {
+ 	F(720000000, P_VIDEO_CC_PLL0_OUT_MAIN, 1, 0, 0),
+ 	F(1014000000, P_VIDEO_CC_PLL0_OUT_MAIN, 1, 0, 0),
+@@ -508,12 +536,22 @@ static const struct qcom_cc_desc video_cc_glymur_desc = {
+ 
+ static const struct of_device_id video_cc_glymur_match_table[] = {
+ 	{ .compatible = "qcom,glymur-videocc" },
++	{ .compatible = "qcom,nord-videocc" },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, video_cc_glymur_match_table);
+ 
+ static int video_cc_glymur_probe(struct platform_device *pdev)
+ {
++	if (of_device_is_compatible(pdev->dev.of_node, "qcom,nord-videocc")) {
++		video_cc_pll0.vco_table = lucid_ole_vco;
++		video_cc_pll0.num_vco = ARRAY_SIZE(lucid_ole_vco);
++		video_cc_pll0.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID_OLE];
++		video_cc_pll0.config = &video_cc_pll0_config_nord;
 +
-+#endif
++		video_cc_mvs0_clk_src.freq_tbl = ftbl_video_cc_mvs0_clk_src_nord;
++	}
++
+ 	return qcom_cc_probe(pdev, &video_cc_glymur_desc);
+ }
+ 
 
 -- 
 2.34.1
