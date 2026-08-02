@@ -1,115 +1,160 @@
-Received: from sonic308-9.consmr.mail.ne1.yahoo.com (sonic308-9.consmr.mail.ne1.yahoo.com [66.163.187.32])
+Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A86B135CB6D
-	for <linux-clk@vger.kernel.org>; Sun,  2 Aug 2026 21:48:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.187.32
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785707314; cv=none; b=pNyCbGOXNmjUtUe8TOSoPkpFKy/2HOafyCRz9OBSw2FMe70S5HgJ30j72I6NwP0pIJbhx0DFDeBCe/usOZUv0IzsiCwGHkx85NnlkH3CcEcvwxncX6IhnYbT6oFtO0z/FilKqkkOuKSCSVICJa4shAhEHAO3IYmLy3fAOM0UkSw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785707314; c=relaxed/simple;
-	bh=+1MY16bzPt4NbE9V8wWBlAuy6VoQh39Dz4XbvEKls5s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tEmgKJfMyfg28aqMohQ8iocJC3rx+2GQdq8J4kP300wxs1yvkdD5m15Mob6Y+sQQj9IOomXkcwvqkHmpU1ZP45QbRLmRDGUSwhrsgFlxyvzvzTlhjo7prus7R0ViO1LfhfxsbIXh8W1AqVBRXnJfb2BtBa/gLapJ3TeSxPSMs0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=Xtyhmxfd; arc=none smtp.client-ip=66.163.187.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8792533E367
+	for <linux-clk@vger.kernel.org>; Sun,  2 Aug 2026 23:34:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.217.44
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1785713676; cv=pass; b=TwIKJj7gRNIafS5Uea/i31TbqPFbFzGVJTDEL4cNWXatBe4uDKr5XWfgl4QNUOvcLwe1Zh53y0uQKpLPEoaBsW5p1inYF2eqLCTMCZuoEZUECaE5BxdCA+W4AoAeg/xQTBRz4O3tyTWxDTlC031cMcVhuNizMua43Xa0Fsz3Erc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1785713676; c=relaxed/simple;
+	bh=r9KgUTKyyUoonVl1aK1Qv482tGrP1f02ChjstcnUuJY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oAr+uiB1unhzhE0Z21Dypa+cIq0IHd0GUh2kcId0BohcrpBUTangSHhZbU2t6i/Q+Ec0JAQyQj/rHvixRQei3/XiBZsLyFo48gu0Rc61he7m2ppnV4wtVdUtOyPUlQjJffSlK81HIJYq10eo/crmJC0Zc51Z2yttIHojxiuq4Ws=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=hVfYhs79; arc=pass smtp.client-ip=209.85.217.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="Xtyhmxfd"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1785707311; bh=mEzogKwXFQyY4BX5HpkwhAYEsRSuIVZrjPgfR0QJz2c=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=Xtyhmxfd4mIQUPLsiCKnCY/DwyAV6e2/nhr+iX8K3Q1UNd6lwKW/HSLvaYimy4/mHyJflnLSxqbf9/hFIdw+D2GOiiqibd3oGhAqbxnhrEbPyHe6gHWDkp9/5vTf2RavWbnkDMo0xwmWqBIPrsfRVYquAItLbxuye5Ge7HmFuL+KB6YA9ai1c+iiebli24Gg/n47Tww/Xq9W44V5yhYXI7ZfgFy1KnsaggFqvqfPL1HoXk8t7nh5ItK2f+8BmV9XRU9ON4BugQkU3z8M89gUYEFF9wVYVskfR/3efZZvwxqaLdIow4YUFNDxwLjDkegqjZ6NoV8/kqQQ0gWM7pKI4Q==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1785707311; bh=vNSj6ZT7X1dBbxZItfLlu+wua3aKDb3I8TDN5Nyl8Dp=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=VDc6h92EBOFrGJN1oaSjaB4WJvO1k2hhXSzldUwcBgtKJYr2960eTwHznicVOy/gOn8c+ILmApYz7RII7c5lM3glXFB9Ej1fHQp6RWX9CTfNbvdj1x2ArukH0Z+JJLalAxpdilMdCJnjuX5kU/wabjaJ+YMdohZOsUBW8qc3wKlWF9tSQdsYEOG4/eyau/OMgcMLMPDnp0Ib6IhxZOK9gORc/uJBrqtpXaQAAkeS9KwMyox3IlKRXAn21XoNJ22sdQLh6Nu21A5THR6OdBYM9w5yVw+t3t6ysyCbDNeo0ToF/B9zedaL8riahe9DjkxvDdp4ueS0cizwae1/x3s99w==
-X-YMail-OSG: CwBv9F0VM1mrQd7HrVIbI6wM1dl2kNiL3SUTDrOVHswp40CmDWgUte5NsMQFP2F
- h715xuz.ZKh9QVkdNwTuj_lqW_i.GxWWum.Li2JOCESaY5VSw5YWoU9kgUR19WNTjaaKSXEoxJuB
- nOE0APysgG__D.kS6D2CO19W6VHDBcjWI82FfSNpI6t34GhUsK3oNgTuok_ZDGt8iboRqEhpfuXx
- jzIcVVU9TUl8hGuZTrBp.F7EC0WBbyxvRQH_54MN7uf7rE.WselQ1yshq7Ch6HSui4ZaX8q5ofUI
- uBjPkeDNamZARj4ACIlM5Nyf8EIf9G4ltSBY5UZ9yZ2HEvDhwGuhGLY2UUJgSs23p.TCoh7HtNwm
- FplWXQIxGBdYxadB8GcgBif6mbnyIb1mVfnPdgsnXKdLE57vguk3O_9ssMtcB_20WQwMNk49Qnfq
- N5ZWzCc7FMiPla6RT.HtvBEpVXx5RApiVHDdjCsJ4diRPV3aqzuwDdUbvCzEKl.uE3kzlUcIuUiE
- S6MmJsdpS48ZqnICRdPGQ7aWFi9POGEXvFgK1l_af3J2OEewwfdADeGdiPmqZQWywbtR4y3Bg.YV
- 4p0hbGpltY3YQSnzjDPRlrqTiPJFjkfmX9oHtlDmO9LC_Oqn4DE6f1nX9vxHBFdf6rUjovCE_YGJ
- py8Sib7dTT4yn5izS5TTBaN7BKNJf0O3H3FANbfkT.WuQIZPSNjIYr_z2x1pqLe7XJKOK1cNyFuL
- RF8TPuIcS4KRacbLtEeDDofzP12CcocoCfL3NgWhGxnulKUofiP.k9PANpLy1kD.oegWLNItj8Du
- RY_2k5acgFCCI4uSCGJMmoBLRPEzXZ9wAElE6CIY6C08_cgacdD6FshSaBkcOl4dPl3vX4.b.0Xe
- ILDnSjiJLPgLhNSQitNETKvBblpUwjAlTi2v62dpqCggqM0hZq8TjDNGdObMvKqIBmpqapP4oTZi
- cvfRVdF8PTR.KGfH6HgHI0XiqqiNNC8aGcZF0.CLKa5jIxtzMBipZnGCSCEMpp0bYhnGlsRsHSe7
- Cpwn71niwMnJTt05n5HFEhejfMXKwdEFvvmKLCv6fuxezY1bSBdjwWZSXml0itVZu4LWQnBNVNvi
- zkkErnsegavUw2qvUN0.owrQcpblhoJwUWPSd1sz7TswXjtP8GO3ZWzRJRZhHdCtbfoICKASWQ9S
- DhPrzTmwv4falWAHAVc7KAFddNqjcUsUMiyIpr_BwXaCqsi9CbLX0G9oSp6VqzcFicRu2qBfGgm1
- brtD3_qj_78x8yaC5TSMIiLEZgimiPZ.tPqW_9ZGFwhGcpuPeclJ0OgVY9xV_C29MACisn8LzxNC
- 0MZhUQ8enJ77BgMM88aPHwqLs04WiMPocOVK4SNbP0J4wuriJNOv1yyGbR04fbU72jmsABtruthA
- 3uaqj17tidV3R.c5j91aJOFuOpr8NGtPHe.HzxUCvEA067J5ikN_MFOIGLjb6QeWngcudtRmkGhG
- _oAVn36geCSxmdJ.30OxuNgJUo.54qxDngIOm_AVLl6zKr5AbX9W_ZRWUkI_87GC1RrfnxGJMnn1
- H9SNgmpylVnA3wCfZif.z1jdMilc4E6UqVsZoKY0Bq90CWKGrX14jTaW.rgz5.sk7CTvHhQjzlKP
- 4j2nhXEwGA.Goy.M0yMcnMiVqaEajlkPcdzuMKYNi5cyW5oc9M7cTrzL5qVCPaiMqaEaQNWOXqnN
- JjkD64D5jGyu12.rtdepIjPhQGmUZsZcoBlVO5Sh1hT.OI9DrYJDB1cCR9RN12kaRl9a.x.ae_rz
- Cc8SOd7f5BSvRu78f3j5TX9Ul9MydVjOjRzpPhebyz869RSLODXMPZojPL6e6CtbctkgzCmnx_6B
- EGI.TDR47FmjQOyGqTCzFQHVfGA9DwbxXEG.FifP_T2xmOUbUmzBCTWy0.uzySTw33lPiOfSAWdd
- k0BczAQ.uif4yunm_ow2Mc4Pvp1Cta37TXPW.ESLRjSiKgkeq2dyE2plEpaolq5EK5_L2kseH7HH
- u0MymQsfjf6ItGqjmgOqlUj3ssJEiCyCeD.2SuvVs4u8UEgYYID6xeDLThWrqoMFsiM45jU8rYav
- nKaNmEhHkGoa2uuTtv9LffX.AE.z98H2WjvlvXIvmITPvuzkx.Zgb6TRjLr8YCdBfNyNH0TPvzRD
- y6oP.ury8Nn4hm9M8ifMIBefWzrNELZtGJL4UePLjwDWq7lqgbaRKNsAavYbcmzqcJ0Rm3cXrVl8
- qkUB4YYFCV49j9lnm.9jkvuHHR1SSnnHR8T9BCBlaE1xw85xztnv0UldsLmJ0yxMuF9r7Y9rY6ns
- sgozWz4P4mBAkA_jliTsV9UeIgOC4CoEPXgpL1w--
-X-Sonic-MF: <namiltd@yahoo.com>
-X-Sonic-ID: ae814843-2d79-4005-91f5-1c49b9393985
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Sun, 2 Aug 2026 21:48:31 +0000
-Received: by hermes--production-ir2-676cb4d88b-zqvpl (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 0d00dc9ab74d64b5db223939a75cca93;
-          Sun, 02 Aug 2026 20:53:48 +0000 (UTC)
-Message-ID: <21ce0556-e32b-4335-bfcb-510cc6064272@yahoo.com>
-Date: Sun, 2 Aug 2026 22:53:45 +0200
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="hVfYhs79"
+Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-74748e3a4d1so1304997137.3
+        for <linux-clk@vger.kernel.org>; Sun, 02 Aug 2026 16:34:33 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1785713672; cv=none;
+        d=google.com; s=arc-20260327;
+        b=OQWBcRXLHjmvVz9eJtT7GmWyyJGO5dWme1JqMxgTEzr7zXaOL9vqZbcNk/GQNYkKzt
+         LJ7XzuYl0KZZ1I0y+8+z//IZEuesDsYcTAmNMT1o481RWCCGr491kQIm0nYmEYHStbrT
+         ROIGYG+z1LnqgDhkzOvLbmOwchOAAEh12jqhuPzgm7Fg1WKGXTELREiaICc5YJPUEIIa
+         HnplxUiDY5y9zvt5DgASocquUDGLTIkbW0KLZDyCJySifaTHraRaQGR9JDV7vyw2u7Jc
+         Uro0cfHnGPr52n8ZEy4dpUm2A8sn4UFtpLpzbGccIheIAbYRKsSLqMuPHu0znr7uN7wG
+         3hgQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=a5fAHkD2zOI/5n+d95DiXodWWMBfRxDbm6CSk1Cj6bA=;
+        fh=2YymucwA/KzFwjnQXjPDSTTQ1cPwmyn1AzSKGalD2eQ=;
+        b=MbFxiMgXlFwZjD7mJgyBTWhLG2NstQ9vkecAN8sq6UZHMTWmHxbjWHGmZBXNuzZ85c
+         aHeULGMUhvt0+VMX5DSI4zmwODd8BNaNoCERPJkS3vqfal/Eo5dkxN17o6nDAnHAhiAh
+         9MVoAs8gj2oESW7U5Drq6j19akbnwkOD9DYhguri3izB5USyeFsPxcCj4zs3H8Ml6x2T
+         dnFdMOORMqiP0/BFHEHxTWHPCYCd9jKLVY9dhFMEpIWNxmbtUSz03QJZuti6zTRFGFFx
+         cSMQQcpj8YFeZ/nDrNkUqOFNLqvV9TCIrl7viPrc20ngz8sgkSQlB0Zylbu2TonyhMkw
+         uyYg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1785713672; x=1786318472; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=a5fAHkD2zOI/5n+d95DiXodWWMBfRxDbm6CSk1Cj6bA=;
+        b=hVfYhs79Ub1p1Pc+0MtO3vf6cx6LKYWXfz3vPy0zRIpznKojwQgXgLk3x21sEEc+Ja
+         3tZ165D5Xud/W5aJ59WUl5k9YMmBB/78fA3TVuQRZ7HaVlTf4VtIodtxnpnalykqBisS
+         8rlGKt09RqY7kG0tmsJ6Do1FYmbe6a6+boI4XMGT0CTPuy4jXhUQ6TvpoAT0mJOimAR5
+         2xJpyQ9dciarkQvgVOhqOP9QU6gkf1/KcwOjxxapx2q831847tsF94Bm7WB7SQUkw+vm
+         PTIK7G6gN3Sbqo4BEUE9fGS8pyCeTkQnHMEHD3lOuaX3ENQBMpb4exlouq13jQLwaN7x
+         WZzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785713672; x=1786318472;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=a5fAHkD2zOI/5n+d95DiXodWWMBfRxDbm6CSk1Cj6bA=;
+        b=hZi/pIl7XZ6Qzb/lpWzbyDJePohbRIFcCzzhwT10cd+IjNnGT7ketr+DlM9rnLhoXH
+         rtsXqtJ3/btEaMPWeAHn4DNLxSrG91Mn4u7/nGd/o2Cvl2rlI5Qb4ftiDYK5l/yK48UA
+         iC4dF23N1ehhhoAfkbXdJ8qYtzYOfCWdEOZEB1IZXLr5W/AkH4OMzTZnwQAauLof50JE
+         pakonT8LpLoPDewp/upItsl4J+CJ4l6K+4Wt3v6IyvRiSbtKfcMHgT21OSZMFVBBoYma
+         eNbuoQaf581EX0nOKlgEiqmYQ2jSNr1bvYx8xzgOdi2msZGvo5OKhjqYRnGXhJA4chFp
+         yCHg==
+X-Forwarded-Encrypted: i=1; AHgh+Rptf8toA+R8Tdvz81a7+pSYCat/08IytmZVuRwwwABglHHteBsQOch8vKYgf4ivZk59taukbMJFdpg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPyoN5ohrCz8Jm8Dg/9/JyctRI4yTivSokgG6zqozQcXuX0QXo
+	nIaBYX26VHK3XqmW04G19PtlCMbJz65Kfff6RxhI3XCB0J2wo9uWb6iz7R3IKOi9Qd/GK9OAZbL
+	up7b8WLp0XlQ/uKpko/rHJdKSyD2QPhJJXPePNz9wasjWcuXXrb/mchI=
+X-Gm-Gg: AR+sD11ksFCFUy5cvX7U8O87BPTsXCY5SPKzRpAtSTNQGn3ad4WPm3ap1FsU3Tg2iNv
+	NHlZiWFKb0aOZ0tLsc97UDXcyWuVEZBjJIbqHNKzCbnhAmBxKCAtnNXJznWApod2/zV2J8w9dtH
+	Sl7vmWh0MBmeUTDGyDXADSsUUVsyf+am3layLINj4VmtaYxNh+jLgbMN6FWdl/EIRei0nGQ7qC7
+	gxFXxvogkZD6EN7dj/0MKlm7I0yuOrcxnv6rkabXExfyaVxSmjgHbz04uh4d4KhFgkWi99w/YJC
+	LpQg84O/lWPzgGEKnQk1y7n84/YiFiZuIwqIeEqTrz/VyFtQlUBXep1Dwr9sqBMwy+wucJr6cdk
+	J7B8=
+X-Received: by 2002:a05:6102:4191:b0:738:133f:8d5e with SMTP id
+ ada2fe7eead31-75b2406db04mr6382421137.12.1785713672465; Sun, 02 Aug 2026
+ 16:34:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: qcom: ipq-cmn-pll: keep the CMN block bus clocks
- enabled
-To: Stanislaw Pal <kuncy7@gmail.com>, Bjorn Andersson <andersson@kernel.org>,
- Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>
-Cc: Luo Jie <jie.luo@oss.qualcomm.com>, Brian Masney <bmasney@redhat.com>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20260730191353.557494-1-kuncy7@gmail.com>
-Content-Language: pl
-From: Mieczyslaw Nalewaj <namiltd@yahoo.com>
-In-Reply-To: <20260730191353.557494-1-kuncy7@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.26180 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+References: <20260729121640.3864006-2-ukleinek@kernel.org>
+In-Reply-To: <20260729121640.3864006-2-ukleinek@kernel.org>
+From: Michael Turquette <mturquette@baylibre.com>
+Date: Sun, 2 Aug 2026 18:34:06 -0500
+X-Gm-Features: AUfX_mwPFzjNyFdiLCGxkGzU-U7WKJnaTqykiRyUcV4PV6lH3oA44wPFRJTkn_I
+Message-ID: <CAEG3pNCwa8ZyQHuDLDiCWXDUrGcuLpT8n6O75yN8tLsgZ5x-Lw@mail.gmail.com>
+Subject: Re: [PATCH] Drop Michael Turquette's clk maintainer entry
+To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Jul 29, 2026 at 7:16=E2=80=AFAM Uwe Kleine-K=C3=B6nig <ukleinek@ker=
+nel.org> wrote:
+>
+> Mike wasn't publically active for the clk subsystem since years. Stop
+> pretending that there is a maintainer team caring for clk.
 
-On 7/30/2026 9:13 PM, Stanislaw Pal wrote:
-> The probe function takes a runtime PM reference to enable the GCC AHB &
-> SYS clocks of the CMN PLL block, registers the clocks, and then drops
-> the reference. Once the autosuspend kicks in, pm_clk gates both clocks
-> a few milliseconds after probe has returned.
-> 
-> That is wrong on two counts:
-> 
->   - The clock ops access the CMN PLL registers without taking a runtime
->     PM reference of their own, so any later clk_set_rate() or rate
->     recalculation touches the register file with its bus clock gated.
-> 
->   - On IPQ5018 the consequences are not contained to this device:
->     gating the CMN block bus clocks makes the SoC hang on a subsequent
->     bus access. Measured on a TP-Link Archer AX55 v1 (IPQ5018), the
->     machine dies silently within a few milliseconds of the CMN PLL
->     probe returning - mid-character on the UART - and the victim is
->     whichever device happens to probe next. Whether a given boot
->     survives the window is a micro-timing lottery: different binary
->     layouts of the same kernel ranged from occasional failures to a
->     100% reproducible boot loop.
-> 
-> Keep the runtime PM usage count elevated on the probe success path, so
-> the bus clocks stay enabled. With this one change the same board went
-> from boot-looping to surviving every boot attempt (verified across
-> three previously-failing kernel binaries, plus repeated soft and hard
-> resets on the final one).
-> 
-> Fixes: f81715a4c87c ("clk: qcom: Add CMN PLL clock controller driver for IPQ SoC")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Stanislaw Pal <kuncy7@gmail.com>
+I was hoping to send this patch myself, and to recommend a couple of
+folks for promotion to the clk subsystem. Alas, you beat me to the
+first half of my plan.
+
+>
+> Signed-off-by: Uwe Kleine-K=C3=B6nig <ukleinek@kernel.org>
+
+Acked-by: Michael Turquette <mturquette@baylibre.com>
+
+Best regards,
+Mike
+
 > ---
-Reviewed-by: Mieczyslaw Nalewaj <namiltd@yahoo.com>
+> Hello,
+>
+> I recently[1] wondered about the state of clk maintenance. I think the
+> part of my doubts implemented here is not disputed.
+>
+> Best regards
+> Uwe
+>
+>  CREDITS     | 4 ++++
+>  MAINTAINERS | 1 -
+>  2 files changed, 4 insertions(+), 1 deletion(-)
+>
+> diff --git a/CREDITS b/CREDITS
+> index 0806ab21c1d3..acab439013cf 100644
+> --- a/CREDITS
+> +++ b/CREDITS
+> @@ -4107,6 +4107,10 @@ S: 4226 Landgreen Street
+>  S: Rockville, Maryland 20853
+>  S: USA
+>
+> +N: Michael Turquette
+> +E: mturquette@baylibre.com
+> +D: common clk maintenance
+> +
+>  N: Stephen Tweedie
+>  E: sct@redhat.com
+>  P: 1024/E7A417AD E2 FE A4 20 34 EC ED FC 7D 7E 67 8D E0 31 D1 69
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index e95fc6f2ddc6..686431042bfa 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -6484,7 +6484,6 @@ F:        include/linux/comedi/
+>  F:     include/uapi/linux/comedi.h
+>
+>  COMMON CLK FRAMEWORK
+> -M:     Michael Turquette <mturquette@baylibre.com>
+>  M:     Stephen Boyd <sboyd@kernel.org>
+>  R:     Brian Masney <bmasney@redhat.com>
+>  L:     linux-clk@vger.kernel.org
+>
+> base-commit: 3652b49adac266a3d27cb41cdfdb7d8790fc3633
+> --
+> 2.55.0.11.g153666a7d9bb
+>
