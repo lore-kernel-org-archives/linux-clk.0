@@ -1,168 +1,279 @@
-Received: from CWXP265CU008.outbound.protection.outlook.com (mail-ukwestazon11020119.outbound.protection.outlook.com [52.101.195.119])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 843BB1F2BAD;
-	Sun,  2 Aug 2026 18:34:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.195.119
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785695648; cv=fail; b=bPScgDJZkdzpSlHxRDOTIYxYZlrs0J0lMP95nhGBLcqZYYYO2OEJ55P71NOvi2TVmbjisEn/1jgXv2nL+FhG/Pyn9y4Ts+QSAX7FAQNWF/ML3K0Yd4VYbAQjR7Wt+Mymn4xBviewBbrUas4eb6r+FasQ+XpUFBt9k/61oNSOzEY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785695648; c=relaxed/simple;
-	bh=dRJ9skN/B49v4Cw9s2xA708iQqCYUG++aC4P1jmwY8g=;
-	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
-	 In-Reply-To:MIME-Version; b=rD063XoHPeXtwgCZRFJ7SaGfkhOr0psdwX/0nRfg88WQMFLnkHUUTnk/pqr+d0xTEPyVBfg3T8yoH2YXdELfCdXYwr+zeGGM9F4CZ/hlz+1k3qombjgBC1z25oyX+7dEl4a5EBSjNAOu1CHq9jDzf/UVkicDEs81Z8Tbh1e8SfI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=I9lt/mV6; arc=fail smtp.client-ip=52.101.195.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=garyguo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D8282F1FED
+	for <linux-clk@vger.kernel.org>; Sun,  2 Aug 2026 20:34:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1785702846; cv=none; b=RN8+hQHRONyDBEssejzo9nrBF2DU2KiIELqGBSxY1VQzChmU4NEShKXFcjk0aoz5bEwYVGAeM1Y1hdPoUmA1sDUwYirNm5fdxNyVCZcKp8Kn971UiOIJ8uTDQRoN9er9Ao/AJzNY6ckQZjvBGXG8zaVJRxA32KgX10DUTjBYyt4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1785702846; c=relaxed/simple;
+	bh=ytkVlGWPC4ZaFYhCIySoL2e+Zt6OCP0DIB5EwOX97uk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=AvYIZPYrr1uOFVEv6tlGPBO8mOSofBGDjftqAiZdLANY592aIN7qzjL46PruVDmXvfmsif4W9HnKzOn1JsxLdsZqD2bBQTT70BY4FODKk9AA1+ZdTQAOqvFcmCQy/bgue0nh9SjHpF4ym0lOZkM7E5yWERXpEDejfzSp0P/2BDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=sn33F1zy; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="I9lt/mV6"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WTy6npGLgY3n+ssBbnQ6ToBaJ13AGElEXZo7d4BoWetgAiV2DFKLq3zCpHjR2itBv0tewInFQUpB1eEE8k9L/e/+ShrzkNbPuzhiSIWv9+VsGEU42D0AY1B9i3PI+2B/gh8iOOzZb+fJtp2n+GiFEOyX8+a/OJfBFViO32YZdsAUvE6G/2z6aC3PjXhGfnvc1F3pBNCXolZ4hYe3Z/+rVHl+V+yVvLgcJMR0umJh6TZ6ftHk86cNTeXmHpRVWweqPYcC+n1mrANV9xUkehFp/0TfWpcIF/9jsu/hGWOOSq2pgwHq9GF4rO5+i0mcdS8ONfR45pAdqPyJs5Pku7OtZA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dRJ9skN/B49v4Cw9s2xA708iQqCYUG++aC4P1jmwY8g=;
- b=a83r9wEEVgwpK4C7hJde2w6KNadew1Oq0TehqCJWMAtkc6JO8GSOAoC13Stph68aA70daOG2Z1XcCtOt1lD0Vx9dbTk0kUepXPosUDFhVdCWHfHmrUvQPFs5ntcUxEqtc1YEjBjxDXId+sTCsxBVX9sR854bFfyOkxY0mhWktB53692BU4Z/s3ptAthfwIz8AnfS1hap7Iv5OsF25bo9fdttzaGjQwdr5rRdPRAwCLpzKxofwGXav1OPrwRROl4cDg4OReMTc6dfS+DXrMRP+s9CYdlRQAyZBO4PlXlxenAbUYGWCeQWLqWx8Pi46Ec4tQQKGmQnq2tRxchwq7RfMA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
- dkim=pass header.d=garyguo.net; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dRJ9skN/B49v4Cw9s2xA708iQqCYUG++aC4P1jmwY8g=;
- b=I9lt/mV64azlnUJAwL2VF4b5sRzkDAyIqCJdBdpwIKz4//yO3bxQH+aPiDj5ZcVtWVgMerazYVtvdwALk5KYSkhVY+swZimp1jDiKC82BzVzZ7NNDHme6EiUMEatb91GNIe5z7bGslgPHGD2fXz2yeB6lGbBD1FjTZ9BHdLRWEY=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=garyguo.net;
-Received: from LOAP265MB8560.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:4ab::19)
- by LOAP265MB8981.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:492::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.270.17; Sun, 2 Aug
- 2026 18:34:04 +0000
-Received: from LOAP265MB8560.GBRP265.PROD.OUTLOOK.COM
- ([fe80::f60b:1537:68d7:4fc1]) by LOAP265MB8560.GBRP265.PROD.OUTLOOK.COM
- ([fe80::f60b:1537:68d7:4fc1%4]) with mapi id 15.21.0270.016; Sun, 2 Aug 2026
- 18:34:04 +0000
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sun, 02 Aug 2026 19:34:03 +0100
-Message-Id: <DKEO9XYE7EGU.XU9OHA368TC3@garyguo.net>
-Cc: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <dri-devel@lists.freedesktop.org>, <linux-riscv@lists.infradead.org>,
- <linux-pwm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>, "Boris Brezillon"
- <boris.brezillon@collabora.com>, =?utf-8?q?Onur_=C3=96zkan?=
- <work@onurozkan.dev>, "Maurice" <mhi@mailbox.org>
-Subject: Re: [PATCH v5 3/4] rust: clk: add devres-managed clks
-From: "Gary Guo" <gary@garyguo.net>
-To: "Daniel Almeida" <daniel.almeida@collabora.com>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Viresh Kumar" <viresh.kumar@linaro.org>, "Danilo
- Krummrich" <dakr@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>, "Maarten
- Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
- <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "David
- Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Drew
- Fustini" <fustini@kernel.org>, "Guo Ren" <guoren@kernel.org>, "Fu Wei"
- <wefu@redhat.com>, =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
- "Michael Turquette" <mturquette@baylibre.com>, "Stephen Boyd"
- <sboyd@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Trevor Gross" <tmgross@umich.edu>,
- "Michal Wilczynski" <m.wilczynski@samsung.com>, "Boqun Feng"
- <boqun@kernel.org>
-X-Mailer: aerc 0.21.0
-References: <20260706-clk-type-state-v5-0-67c5f326a16c@collabora.com>
- <20260706-clk-type-state-v5-3-67c5f326a16c@collabora.com>
-In-Reply-To: <20260706-clk-type-state-v5-3-67c5f326a16c@collabora.com>
-X-ClientProxiedBy: LO4P265CA0025.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:2ae::10) To LOAP265MB8560.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:4ab::19)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sn33F1zy"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-49558ce01afso11012595e9.1
+        for <linux-clk@vger.kernel.org>; Sun, 02 Aug 2026 13:34:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1785702842; x=1786307642; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=tXBqjlY2f6bYpFJSuXlfBIwEMNbQe6Xjdd649Bgo4nA=;
+        b=sn33F1zyzIVqsQKNVwfMFhHVfY+yEcHTrOlIhaNrGvuY3nWKcKeCl5DtNmfPGtvwir
+         tGfj1ftFvScEjMrWxjLUaeSZBJJRFc1etojoQYFlB76r1s3T5Yn9HH6pdfkFPZg06lAj
+         BsSjoddOA2Me62qc/d9BU9r+oHcoMF6M8NZK2cCP5tB78RpMSHJ9dMoXC8SHOYGTe02y
+         FFByFx0T0OErlrc+KR1zeHE/3kTIGudwkOfGhcxF1HuSp4Mslaon7dqjPy/KIfH9DHvz
+         dYcX86xaeRvSRnYoTtsCXv0VOPdzDAcBry17EScXHDJBn3F0w1Qweu3fy6BBF+MPMRIM
+         tXNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785702842; x=1786307642;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=tXBqjlY2f6bYpFJSuXlfBIwEMNbQe6Xjdd649Bgo4nA=;
+        b=MkxVjV49xRiZnTRDLGgI89ynTgVQMVq2utFXemrowXges6COq+r+fW6xLg53y6GXqg
+         ngdr5zoDpzxy/jRVB4xrE695Km6iqJ7y1DJg8+86+tbhNEZ1Lq/lGRCD+eNTgVwnyx0x
+         yNKO136xmvopL/jFENPadsjqxpREy1qy+2j4fUpMGIAbJI66vDFGz/n1foTOpLUJhBti
+         /9FPSTog3RrcvaPnCFAFPt1zc5s9IuBKF0ZUaYOuHBjfutiOTlDddiuisNiZylYplwE6
+         Zy1JRhnv6D/BqHF0WpeGd8VMJXLqZYZCXmXq2rIojHEtLJm799pL7Nq7WtgNN5Cdh98c
+         VYJA==
+X-Gm-Message-State: AOJu0YybS6uSrIEH8B0CacNyrQTTEip87XZVLPtMuU6rd9wWq/CC/mYY
+	/qREOG2/DQbp5nkuxIsNykhKec6Ps3GyCCe5FrZYY4VNE4wjbNcnwYxT
+X-Gm-Gg: AR+sD13FunS8k1S3AFZWy5pbVbaHhGqjyKHWev1klTZU8hsfIYIvCmBshhBnHV6bqEP
+	h+JYnGDm7xMAaJTisABDUqlNel+zbgQZYKrvhi8aRVIdVt7YvYbzseoPxJD92/A1Yfxdy5DYQ6s
+	FyIx8MMGSsqQ3HaQOiUn5aVR7PeLkTFR3b+3uAAtuuBKZDlPQyi5qTWWNdUR/mZQCy8XdiSilHT
+	6Q8PnpyFGst9ElhwbmvtJJJWU0glcefoXnlfxz2F5l+0zlCDAgQTnUmWL4cuSQiCccm5JLhO5IR
+	iOSk7AOI1VdfBpzAbK2EUIvEs0ciXg4Yhgi214F+w+tbbcIrIXSVC1UqE/h9RyUv8Xkw1TXaau7
+	+dpBQLFviGjHobmn8DRJRHVHlSp/b1gqAjCYsp01oi2ozTInUhNhDA7r+0KNmQi+1sDEvyga+J0
+	BtFF0L/wyNWIAiRsLeLiDrV5my8ZkIwR6DqP5HSnnAW6DlZHodcQm8pI/turPNwsvDvPfS6yH+S
+	l+GRFqQhSg=
+X-Received: by 2002:a05:600c:811b:b0:495:6934:414c with SMTP id 5b1f17b1804b1-4980c696c7emr154090745e9.19.1785702842254;
+        Sun, 02 Aug 2026 13:34:02 -0700 (PDT)
+Received: from [192.168.0.2] ([197.250.226.155])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49807bb45ebsm118499905e9.4.2026.08.02.13.33.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 02 Aug 2026 13:34:00 -0700 (PDT)
+From: =?utf-8?q?Stefan_D=C3=B6singer?= <stefandoesinger@gmail.com>
+Subject: [PATCH v9 00/12] ZTE zx297520v3 clock bindings and driver
+Date: Sun, 02 Aug 2026 23:33:32 +0300
+Message-Id: <20260802-zx29clk-v9-0-d05530d85d28@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LOAP265MB8560:EE_|LOAP265MB8981:EE_
-X-MS-Office365-Filtering-Correlation-Id: 936826e1-77a7-4904-3b4a-08def0c4a197
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|10070799003|376014|7416014|23010399003|22082099003|18002099003|4143699003|10067099003|56012099006|921020;
-X-Microsoft-Antispam-Message-Info:
-	EO+zAq5iuhAMtc5mbKEEFMmMYCiQvBPOL49ebDdYxlNbHJcuaMsy4m+HU+juKP84Ib+fwv3StNjJwfEkrHcENjzjy53ZSfb8fKAgdY4Lfi/kaoE1mlm+Ud6ARE9QDJCkSyMO3GG1NcnXiWuGv2ylRKRzDWT5pA8V//72Eq6unJR2SDC2GicbBx0+vt5KDs2qvdxc+7AXzU4JSfZHN8nXY1vUCseEPaJua+YVj9z2lhj2/iWRsmAgSx1AtDuSR/3LukAqJ2kiCzqkJcWPXMDRPr3nnlM/n3WbQPjQYwnMkvxymFiDz5CJE2HZ+WmLN7rRgUmqJ3x96pmzq0HDEuMOFzzrttDiw1XRBN/ZVZFFH/RXFWkNs4stl4g0QHIcn3zIMiqPj2wtwbbgj6VZudCNBvbAie+44gw2z3Z5lrEUzgzX7AEV6ao+mwQqbaBFXOJ4LnitHJDV+BT/O4Z54J9ZsB3uV/v3LhdYaUkNIpPm5//aq0swVxdKt8N7GZkMgneuTA5HP69n3eCeAtaFZZ4qqOxru/YLHogn+/0nAXJQ2zzgzlJ89n225A3XvXr3EChmqQSq5feMmdalq2o6FJcuJPy6Pn5JpkkFe3rtMeTUNiN2rzFJsbuAQ8EyQvN0bwpzKW8gwO6WTYz6x4xmeC0qrUu5pmZJP1br/2gHaMPqmj8zkOycMNlhZELG3B8npVneHJ1+fWojrjiWXv9A5mk1gQ==
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LOAP265MB8560.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(10070799003)(376014)(7416014)(23010399003)(22082099003)(18002099003)(4143699003)(10067099003)(56012099006)(921020);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?aFZBZ3YyaEZIWFRTeERRNE5pdjhUak9BcFY0YjhxWGx6NjM3L2xzUXZVenNa?=
- =?utf-8?B?OHpCZ2NlZmg0MEx6ZmJ1WE9nZGZKUit3dDZ5UXVXVTlQenZOUGZKdmZjOE40?=
- =?utf-8?B?MXZoUkUzc3BQeW10SEUrRWxzZHVMS3J1RXRoZGVGUWNUT3M4WHE4OHJEaHpN?=
- =?utf-8?B?SzlzcDZXWlF6YXdtQWFycGI4UVd6N2dqR0NSRG9idXVUd0FZM1A3K3VoRFFy?=
- =?utf-8?B?dHdXZEg2U3R5ZEdBc3VjNWZvdDl5aWRrYmpvWTNLTkhxWUlJbVlEQVpVV0xw?=
- =?utf-8?B?YWZlZE1tdSswZEdrYS9oMGlxY1FsQ1NmK0NON0MwRndCTDNDQm9CRk0vMVBO?=
- =?utf-8?B?YzFYalFDaWN3YkY5UlZWNU4vM3VvY0FBaVJ4N3hLMC8vTWx5TEh5di9qcHhn?=
- =?utf-8?B?YkZXL3hSS2RQVjY5eEtmMXVkUTV6ZS8vYzBBem5yREJmWlROVHI1RE5Nenp1?=
- =?utf-8?B?dHRaK3FZWlVVVEFpZjRUY21FeUlRUmoyRVhIKzdGL0dXNW0rTVdlcnRmNFUr?=
- =?utf-8?B?RENoaU55dGhHamtkYmYveTBSbDJNbFRNZS9xem4wTDRCM2xCZ3N5bkNoelNT?=
- =?utf-8?B?NHVxdEJWYnA2WmFuTUw4aEFGU09JOEdKcjNwc3ZpRDhHbklwazhMdzlZUWJR?=
- =?utf-8?B?ZmVtT254TytUVGJuNVFJc2hmcTZiZmtPdzlFNkpVWFBZZ1NFQlAzUzVWK2tY?=
- =?utf-8?B?ZWMxUEpXbDhKZ3ZOcXhPa09NWVRzZmZWRkJsVmcxTnFxTEtmWVZuSXRzS25V?=
- =?utf-8?B?KzV0TDVyRlJ6RGdhL090N21HZFRySTRpVDloYnF3WC9lZGFhUkVpbkZrWnFk?=
- =?utf-8?B?M1RWa2RyU1AzUTR0VzhZMldJM1NYZEcvbk1GS3dvWkRZeThFdStieFJkUC9I?=
- =?utf-8?B?NTdBenVBQitBSEE0OFVpQUd4UmlpdDBTbTFvZHRwWHQ3MTRPMFoxMWdSMDNu?=
- =?utf-8?B?SmpmUDY1WVVGS0NzSjZEemlBY0FNMWE2L3l1d3lFRzlTNHNVS0R1ZTBiY242?=
- =?utf-8?B?MHVZQUppQ1d4dUNUcXFiV3FKTVI2VndZTHQ1MGJLaEt1UURhWGFqeUpyeUI0?=
- =?utf-8?B?dzRIODlSb1YwOEdpVXNoTWVONnQzYWVjaU4yY0tBWHZjQjllSFpzMGpsd3Z5?=
- =?utf-8?B?WFp0VkU0VmVuWTA1Yk1nNTUxT1JsRmc2UmZ2QjhMSWx3Rzc5dkRqa21uNWdh?=
- =?utf-8?B?Q2JOMmxYdXhlbHI4c0w4d0NXTWdwaVJEQy9KZlVJWVQzN1RUTmxvdlBMWFdW?=
- =?utf-8?B?eVpaZ1ZyeWV2YkxKcVpUMW5JMEFBakhTMHRaaSt6Ym5UTCtBanpFK0dUZHA5?=
- =?utf-8?B?bjY3Z3Q0UTR6cHBSOUowR0hLYXBqUVVPKzhvUEE2SUk1M2lYSXM3V1ZRMFUz?=
- =?utf-8?B?djFwZkp6NEh4Y0xwayt0bWsxak12My9COGYvV2hKcEF5elNVR3J4b2VEbndl?=
- =?utf-8?B?WFVHU0ZjSGt5SkRaQUhvQ2hUbUI0SEVlcHFYeWk5dUlzbk0weCtBZm5uUEZJ?=
- =?utf-8?B?NDYvQmVqV0o3T0pOVGNwWU5ZUFJ2d3BqaXY2UGJpZ2NwQ1F5ZEpyOEF3Vmh2?=
- =?utf-8?B?bGhNMkdTU0lHSm1kd2xuRU00MThjSkx5enYyZ3IzRTZ0WVRWVWhXdW1yVmlu?=
- =?utf-8?B?b3kzd2c2SjUxZTdKMm9WTzZTRFkvK3ZLY3NIVW5oTnpVeHpjUlppOGhsV0FP?=
- =?utf-8?B?d1FrZUxrVWl4OERESEFxaXd6UVRaMU9WZnRGV2FRTHladHlIR2c5VUVWYmla?=
- =?utf-8?B?dElpQU8yOWxBMStUd3VYTTNlRTFrWkRJZjU4K0ZKQUdZSUw4aUdVbFZGU3M2?=
- =?utf-8?B?R0tYT1RnMis2b3JQMkh0cUg1V1RWZ2pRcWpnQUdCVFFCbWZ1YUprSHdRN3FD?=
- =?utf-8?B?TWt1R2pkM0NDQ0NSQWhwZG50VzEzYXYrdWZ2cXRGcVg0dWV2dUdoazlkRmJu?=
- =?utf-8?B?V2lEckRyTGlxWEltcUpxVVRuUEEyM3poT0duUm1tWkltZ2ZUaDhFZnk5dnBp?=
- =?utf-8?B?ZWs2VmVVcithOWR2dDIxeWlrc0N6WmdoRWh2UDFEVFU2UVU5QklTQU8xdHlM?=
- =?utf-8?B?OEtXZnFhaGV3MWdSZTRIRzdyeHlWS01hRGlZeEg1NkpJV0QyelRvL0kyZXNT?=
- =?utf-8?B?SFQ1dUx1MkhYY0ROc2FDeEkvN0hNZ0FscDNTOHpGSFdwa3IzQjJXT2FxSnZm?=
- =?utf-8?B?SnZhNFAvN0tSMGlTSnJvY3dPMmcydno2ak9VZmZhYWlwVHBhaGpRLzRYNVVk?=
- =?utf-8?B?dmJrSk5wVXdHNU5XNmpCdHRudHBlR0VNVkFjaEw5VHFXUUFkeU5sQnkvRFc5?=
- =?utf-8?B?bWNkV0RjZ3ozRXVhV0pGeFkvUmQrRkt3NzJTYTNpZ2V5cVhReDc4Zz09?=
-X-OriginatorOrg: garyguo.net
-X-MS-Exchange-CrossTenant-Network-Message-Id: 936826e1-77a7-4904-3b4a-08def0c4a197
-X-MS-Exchange-CrossTenant-AuthSource: LOAP265MB8560.GBRP265.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Aug 2026 18:34:04.9001
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: j5jsg5i/VZdXh16E/YkehO7LZ2Oi0rV/UTjp9HIpXjVQuPKLLObpCRjZmqwj6Ck8UFhC9CHZTK3ABbBHTCcuMw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LOAP265MB8981
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/2XQy07DMBAF0F+pvCbIM3b86Ir/QCz8mGkt+oCkR
+ IWq/47bLhzCciyf6zu+iJGGQqNYry5ioKmM5Xiog39aibQNhw11JddZoEQje5Ddzxl92r13SDo
+ rTwrQJVFvfwzE5XxPen17zAN9ftXA0+NQxDBSl477fTmtV5HIGpV7Vhqi94m1xcAUe+my9s6xw
+ WBSAHHL2pbxdBy+7yUnuIf96zNBJzuCGBIzkzf2ZbMPZfdcH7xnTDh30BxWh54l5aSk5H7p1My
+ hb05VlyxTrymoWnjpdHMGTHP65oL3OmZE8nnp+plD11xfnfXMUmvS4HHpTHNWYnOmOmVttFKzk
+ 0kvnZ05sM3Z6rR0GiBxYmWWzs0czpy79Qwgbay/CfnPftfr9RdFFtOHcgIAAA==
+X-Change-ID: 20260510-zx29clk-2e4d39e3128c
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+ Brian Masney <bmasney@redhat.com>, Vinod Koul <vkoul@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Russell King <linux@armlinux.org.uk>, Lee Jones <lee@kernel.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-phy@lists.infradead.org, mfd@lists.linux.dev, 
+ =?utf-8?q?Stefan_D=C3=B6singer?= <stefandoesinger@gmail.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7558;
+ i=stefandoesinger@gmail.com; h=from:subject:message-id;
+ bh=ytkVlGWPC4ZaFYhCIySoL2e+Zt6OCP0DIB5EwOX97uk=;
+ b=owEBiQJ2/ZANAwAIAT0TvMhUTxoiAcsmYgBqb6modbMmWTEjfJLS3Z6rWqgIE4+olimQZbU63
+ SKtgKVYwimJAk8EAAEIADkWIQRDFvS2qgVbJ5UyXWw9E7zIVE8aIgUCam+pqBsUgAAAAAAEAA5t
+ YW51MiwyLjUrMS4xMiwyLDIACgkQPRO8yFRPGiKAphAApm5Me2guqbkgXD/SWGOTxtNV/dl2exj
+ Jeqdx6EpnTWGJwnww9aM9S7eL0OtPfNKAZarMRAKhMhqNPB/FLr5ApZSlGhWG2ZC7eaBLnmcbpt
+ VJC3+YWYPzqLt+87KUD+qbYJgm2FnLqDkG900TWF7TXJeCm7gn/5snqFpxc6epqiyggr1YJ5SbA
+ Rx5YelP9xjPSlItbiIT3yCrt33LD8A7yqb5czo80VdHLGyx8ogkNBQSUK2XVXpK37uvo6SvWs8y
+ pCVEOLBxoBJJ81uku2HXLrNNwcR8UmrbR7RZSz9VfhEw1c/4uQZl/7ZbIRyugm0FoebYD33quxo
+ pDEiT1ocU/M4zroec8ehe4a0b/LAeKcvn8t2zBDa+6RTzK1KY8MqKuXBfSuS7B12/Iv0wZ5S0m3
+ Ne0LNFFOH7BaqSzz5REOR1TXL05Sh98G1ePeV6AiMczrv6J/cJ4dZ9VxV4eOz78wCQ8WNT3ZNom
+ gNwWeZ8q8XR+ucu3FHU2i9hSYRGFzAcCVCCPR6yR84l3VA/adE6PdDYySgVxOshcknUY9yaI37v
+ QNtYr4vpIs5NOFHSCX5FxMbwwUyFnWZ3H34JELxiDrsx/owPhBr9ivZgNkZg+uhaF1n3ULK2nVb
+ QmAueSe4wRQEhk6er4ExNgtkMBUf/lO1VyuNaxdjwxDWxV71dexI=
+X-Developer-Key: i=stefandoesinger@gmail.com; a=openpgp;
+ fpr=4F9C2C8728019633893EBBB98CB81F9A72BBA155
 
-On Mon Jul 6, 2026 at 3:37 PM BST, Daniel Almeida wrote:
-> The clk API allows fine-grained control, but some drivers might be
-> more interested in a "set and forget" API.
->
-> Expand the current API to support this. The clock will automatically be
-> disabled, unprepared and freed when the device is unbound from the bus
-> without further intervention by the driver.
+Hi,
 
-Drivers could just put the enabled clock into their driver data.
+I am sending version 9 of my zx297520v3 clock patch. The main change vs 
+v8 is that the clock driver uses parent_data.hw instead of global names 
+for parent matching.
 
-Given the general shift from devres to lifetime-scoped device resources, do=
- we
-still have a need for this?
+I think the list of clocks in my driver is fairly complete; It is 
+certainly a lot better than what the downstream ZTE drivers have. I 
+deduced a lot of it by trial and error. I am sure there are some clocks 
+missing that will need to be added to the binding later. AFAIU adding 
+clocks is not an issue, but removing or reordering them is an ABI break.
 
-Best,
-Gary
+Merge dependencies: The binding patches (1, 2, 3) and DT patch (12) in 
+order. The MFD parent (4) is independent, although changing the ordering 
+likely needs trivial adjustments in MAINTAINERS. The clock driver 
+patches depend on the headers added by 1-3 and apply in order 
+(5-10). Reset needs headers (1-3), but it is independent of clock.
 
->
-> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
+Though in practice mfd, clock and reset drivers are dead code until 
+patch 12 adds the DT nodes. Clock and reset drivers won't be 
+instantiated without the MFD parent.
+
+Signed-off-by: Stefan Dösinger <stefandoesinger@gmail.com>
+---
+Changes in v9:
+*) Use parent_data in the clock driver instead of parent_names. That 
+required some infrastructure to keep track of registered clocks rather 
+than devm-and-forget. A nice side effect is that it uncovered a missing 
+top->matrix clock link. (Brian)
+
+*) Remove the self-referencing USB PHY reset in topcrm (Krzysztof)
+
+*) (Hopefully) get unevaluatedProperties and additionalProperties right 
+in topcrm (Krzysztof)
+
+*) GMAC and SDIO on the matrixcrm controller need topcrm's ahb clock as 
+parent. It is added to Matrix's binding and fixed in the driver
+
+*) LSP reset and pclk handling moved from clock child to mfd parent 
+driver
+
+- Link to v8: https://lore.kernel.org/r/20260727-zx29clk-v8-0-7a107b00f1dd@gmail.com
+
+Changes in v8:
+*) Put #phy-cells into topcrm. The mfd child will have to assign itself 
+the MFD parent's of_node to satisfy the check in phy-core.c's
+__of_phy_provider_register().
+
+*) Added another register to matrixclk that controls in-controller 
+distribution gates. No functional change, but it nicely confirms the 
+top->matrix interface
+
+*) Changed clock indices to start at 0, adjusted driver to not use 0 as 
+"do not export" marker.
+
+*) Rename DT fixed clock nodes from osc26m -> clock-26m and osc32k -> 
+clock-32k
+
+*) Fixed more issues pointed out by Sashiko
+
+- Link to v7: https://lore.kernel.org/r/20260717-zx29clk-v7-0-408411cfcf36@gmail.com
+
+Changes in v7:
+
+*) Moved DT bindings back to clock/ (Krzysztof)
+*) Added a usb-phy child node to top to expose the USB status register
+*) Add clock gates that control input of PLL clocks into topcrm and 
+forward to matrixcrm. Strip down matrixcrm inputs in the bindings to the 
+known clocks in this register
+*) Add DDR clocks and resets, arm arch timer clock. They are marked 
+critical and tell CCF not to gate off the aforementioned input/forward 
+gates
+*) Remove syscon from matrixcrm (Krzysztof). The DDR mailbox system is 
+on a different controller (soc_sys at 0x140000). ZTE's code merely 
+controlled clocks in matrixcrm, which doesn't require syscon on this 
+controller.
+*) Consistently use double quotes in bindings and full include paths 
+(Krzysztof)
+
+The individual patches call out changes in more detail.
+
+- Link to v6: https://lore.kernel.org/r/20260702-zx29clk-v6-0-377b704f80c4@gmail.com
+
+Changes in v6:
+*) Use MFD for all 3 controllers - I hope both Conor and Philipp will 
+agree. I kept top and matrix bindings in soc/zte and lsp in clock/ 
+though.
+
+*) Clean up issues found by Sashiko. I pointed them out in the individual 
+patches. They are localized fixes and don't affect the overall design
+
+*) Small code consistency: Changed "zx297520v3_lsp" to use "-" , "rst" 
+in driver names to "reset"
+
+Changes in v5:
+*) Use MFD instead of aux bus for top and matrix clocks
+*) Move top and matrix bindings to soc/zte
+*) Give USB PHY its own resets
+*) Other localized changes are noted in the individual patches
+- Link to v4: https://lore.kernel.org/r/20260616-zx29clk-v4-0-ca994bd22e9d@gmail.com
+
+Changes in v4:
+*) Use syscon and regmap instead of raw IO
+*) Move reset to its own driver on the aux bus, but keep reset and clk 
+in the same binding as it matches the way the hardware works
+*) Go back to having matrixclk in its own device because syscon deals 
+poorly with multi io reg devices. List all PLL outputs from topclk as 
+inputs to matrixclk
+*) Some more hardware research: Figure out the parents of the 4 possible
+GPIO clock outputs and declare them in the driver. They are unused on 
+the hardware I have, but they show that all PLLs can be used.
+
+- Link to v3: https://lore.kernel.org/r/20260529-zx29clk-v3-0-c7fe54ea388f@gmail.com
+
+Changes in v3:
+Model top and matrix clocks as one device
+Add PLL driver
+Fixed a few issues found by Sashiko: register lock, some missing devm_, 
+error handling
+
+v2: Fix build issues introduced by checkpatch.pl fixes that I didn't 
+spot earlier.
+
+---
+Stefan Dösinger (12):
+      dt-bindings: clk: zte: Add zx297520v3 top clock and reset controller
+      dt-bindings: clk: zte: Add zx297520v3 matrix clock and reset controller
+      dt-bindings: clk: zte: Add zx297520v3 LSP clock and reset controller
+      mfd: zx297520v3: Add a clock and reset MFD driver
+      clk: zte: Add Clock registration infrastructure
+      clk: zte: Add regmap-based clocks
+      clk: zte: Add zx PLL support infrastructure
+      clk: zte: Introduce a driver for zx297520v3 top clocks
+      clk: zte: Introduce a driver for zx297520v3 matrix clocks
+      clk: zte: Introduce a driver for zx297520v3 LSP clocks
+      reset: zte: Add a zx297520v3 reset driver
+      ARM: dts: zte: Declare zx297520v3 CRM device nodes
+
+ .../bindings/clock/zte,zx297520v3-lspcrm.yaml      |  101 ++
+ .../bindings/clock/zte,zx297520v3-matrixcrm.yaml   |   98 ++
+ .../bindings/clock/zte,zx297520v3-topcrm.yaml      |  122 ++
+ MAINTAINERS                                        |    9 +
+ arch/arm/boot/dts/zte/zx297520v3.dtsi              |   81 +-
+ drivers/clk/Kconfig                                |    1 +
+ drivers/clk/Makefile                               |    1 +
+ drivers/clk/zte/Kconfig                            |   28 +
+ drivers/clk/zte/Makefile                           |    6 +
+ drivers/clk/zte/clk-regmap.c                       |  237 +++
+ drivers/clk/zte/clk-zx.c                           |  189 +++
+ drivers/clk/zte/clk-zx.h                           |  142 ++
+ drivers/clk/zte/clk-zx297520v3.c                   | 1571 ++++++++++++++++++++
+ drivers/clk/zte/pll-zx.c                           |  580 ++++++++
+ drivers/mfd/Kconfig                                |   11 +
+ drivers/mfd/Makefile                               |    2 +
+ drivers/mfd/zte-zx297520v3-crm.c                   |  117 ++
+ drivers/reset/Kconfig                              |   13 +
+ drivers/reset/Makefile                             |    1 +
+ drivers/reset/reset-zte-zx297520v3.c               |  236 +++
+ include/dt-bindings/clock/zte,zx297520v3-clk.h     |  144 ++
+ include/dt-bindings/phy/zte,zx297520v3-topcrm.h    |   12 +
+ include/dt-bindings/reset/zte,zx297520v3-reset.h   |   61 +
+ 23 files changed, 3755 insertions(+), 8 deletions(-)
+---
+base-commit: bee763d5f341b99cf472afeb508d4988f62a6ca1
+change-id: 20260510-zx29clk-2e4d39e3128c
+
+Best regards,
+-- 
+Stefan Dösinger <stefandoesinger@gmail.com>
 
