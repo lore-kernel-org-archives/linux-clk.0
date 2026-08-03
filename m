@@ -1,255 +1,218 @@
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010031.outbound.protection.outlook.com [52.101.56.31])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7555527B35B
-	for <linux-clk@vger.kernel.org>; Mon,  3 Aug 2026 05:49:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785736145; cv=none; b=nRjbkRaTewLNiryFJdrgTTPiTTEGiue84M6pV7iyJ++71shflaNKXH35Do4T5Qo3dZXnNfdaZQhMIGXcY6mKdXBH95Awd31AKtalLW/+wAMyGl2lediEtb889qzusDkVdLgaO5qcSr8frv53t91g36ngRbJx38VrpYy3LQWT+sQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785736145; c=relaxed/simple;
-	bh=x1Z4nUqvVtCWJiVWeGWzCEKbiZv0wMWpiYwZdmMU34k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D5LTtrGILSgjCUHsmfAc84GnmZan4+4sb1HjLaB+CPOtPw9cMspEXtp2Yt2jGOLcTvO0zyl6JFJe792YqDUJEtyNtOvcmJQjQIIcrGdO4MsTy+jz/pjasB6eZXCDpxxsQ2JJ75FOsGmj1wlrHvsvMHhoXIqlGmShI91kk5FS5sg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=qcNL7HwG; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44EC2263C8C;
+	Mon,  3 Aug 2026 06:08:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.31
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1785737298; cv=fail; b=qVuCyR1ucylMF1y2IcYHiCkQ4Bw/AREIbP0V0IPdkRjViJrEWu1WADogK2PKNSgrxBC4RNpLnR+K85C9zyZSZw6FrtTKBz2mdX02788q9tI8HasKKVKxH5i3i7TpGuc1Ewt4dGdO1CEk+CTiNVOeZD0xvwewPt0eph0ojVoOH1c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1785737298; c=relaxed/simple;
+	bh=ToLW4jkaoP0HfqXVWL69JIXv7Kcbx9v6asQn+a3nDJE=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=KkVTNUjfQzZrustPHqIp7j2tjgYRbFS6LDAucoSYBlCJcwSwDc3sGO0nxyWlw9fCrhugsbb/YLXgsvCzzwIFHo5v4UQJtQlPdvNJP+NM/dSh6yKclonPOeIsaATbAmV7V0reb5GtE0eGYhBcj2+CsRJOOLEI7RTsEWaM5KVtF4w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=kopECSWe; arc=fail smtp.client-ip=52.101.56.31
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qcNL7HwG"
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5b29599b81cso4295060e87.1
-        for <linux-clk@vger.kernel.org>; Sun, 02 Aug 2026 22:49:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1785736141; x=1786340941; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=+Z8jXZAUhcjKTtPoIZ4/epKb5xdLnKYJzAnB3Lfizgk=;
-        b=qcNL7HwG00+Ui84qD0786CouAT5q6Fwv392Lrn0nX8l4oULWsE1nbACCco/+cq3qnG
-         Xm8t5vkQ9sl+ejHH7GQrZKy6HqAJwm/1AIA3hlgm0PbNBXdOss6HqMX1yCycRPPwI9kB
-         uXxI5A0jcIJmm6Sj8AdsWe7JXT60dEen+yZN2DAfnmhufcDmu9Cr+S3d/QWUp0e1BsgA
-         /CEDB55XQbpCI2lNU7+tb2PNon8RTqS9CtVyEVrKJLaujMBWl+BYZbMBO+0gs61wScdA
-         Z4bQXrBz6SAeLz2T4eZ7Wuw3Hnsl1DQY6qItdbqwMyEnoqbnUCRAAyujN+nPI237XWkw
-         mmbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785736141; x=1786340941;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=+Z8jXZAUhcjKTtPoIZ4/epKb5xdLnKYJzAnB3Lfizgk=;
-        b=N6M7uy90/UfZzoD/pMXMf+1WZK3Sqsezjm4AiTSzeNjKIWYJli7sOu31WgimrAPGAf
-         Egvwo4hCvfjUQ/8r94xKUl9sJQrISgOSZoZjOqx2bqq6EoveGPBNQyomytnzoDRRssJA
-         m597M+AGBdZpdtmkHdjkLESM4THa6T0E+06vAl5qigp5e1NacC7IBS+c/2HobyyqAgJe
-         7nf2m7z/y5Uzf1Iy90YIgdSKG36MnV+uQrTMvUThlhPxH9funyUz5VO247ocQQfH7g21
-         tSynv5GaUjyHV3uiWGqZRlkKubFNbbI8u9SU2CyapQgGIP6GfX1YQooe4bAFf3uFCdd2
-         k4gg==
-X-Forwarded-Encrypted: i=1; AHgh+RoyCh50KeY71IOgvnQPRIXYCf6qIJZQYPdCrD5YU4TL4YRz0JeL82I0mdvl4J3Nh7PBMWRHOnk0Jts=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbzRIu8Aue4/704yLmWmTUvc/ZdhWdkIZnbd6SFZ6014bQXwY1
-	TvGQLANR66NOPSfZgQI5+sKHw+IBUKvZ38UVrYzJ/iw9JhGctRB7NkrD
-X-Gm-Gg: AR+sD13dBGQ/leQ30kTIIpwSZXmQRPtOf16e3E0u2cX0xFh3XyQ6fajtRm6I7yYzdWO
-	gOCTB1jvsTgY1vPzpP6Kofw4H5/+3t47xJIvdTRKm7h+CBIUrGXUQmGgz0VvrjJm8U88yX47ix0
-	q79It03OU96wWrUUoZMhUU1yvHCS+0YQJPLVgWn9LBfnLR/zdBHKv/zHrYGUY2STTshtGPP6DuS
-	qW+sdFX22MiOT0L2Hu7ZLYHI74yIu+H/3rmXb/6Mg6BXDiF/IU8P2RZSpPoTXVTufRJrhPKZ/8/
-	KrPM10dgMcNE/H5nbuPKkkh+9mFzsbay+8iSRgJ47o+llq9hvdNBq/3wFo6UaKapF2Ig3d/d5cJ
-	b3pd+BKfEdrDDMg/uFCsuv79sv7TPMBM+aCNFY9RJrSxOxYGAWVXwE6ysM9DAk/xSK9qC75AVVB
-	lP9R7zroxEN3Ucd5i0M28UPJMFEE2AD989mJ8VX9fcskooCaNifzQcX4EbrKdyNgBn/8E08TwG2
-	HCIBYx0e0QGlMJPJ53cghiUB5pA5v6qWi8ReLkKVOLlVRmzDNSj9nzgBw==
-X-Received: by 2002:ac2:41c3:0:b0:5ae:b130:1e1 with SMTP id 2adb3069b0e04-5b2e4f3b5c0mr1164615e87.28.1785736141209;
-        Sun, 02 Aug 2026 22:49:01 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5b2e23cb4e6sm1832235e87.22.2026.08.02.22.48.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 02 Aug 2026 22:49:00 -0700 (PDT)
-Message-ID: <db4a8ecc-65c2-4965-bb53-bd637e3765df@gmail.com>
-Date: Mon, 3 Aug 2026 08:48:59 +0300
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="kopECSWe"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KqLhbgVESufF9A/LgNcZyd/PxqabA7zsOOtmPZTVUGaZkXVenE+XZqK+VU4WG5myuZYJxSi+TgLGgFmPF8TgU6fIdegjtXruISfjxXGejTaE8H5py0px3x0xtG7rBATyyDhPl7xqA1S0+xYS9YQuF6D/fFJuwuwwi9YyQJQCHQ3yTuinC6cGEfIn4n81p7WZ+sNaP+KAXjqanb8ZubMQQKKNragsz7ner3oPD/g1jDPm8mTBBtZlt7YeItdYeOMPOSXXcnm1xiiskzdiaYXyHkaZ2IgM6oYWSF154Ubt6E/v3ZFqHTBrD29LOJPG40fkH3dK8s1TIBX3ZU8v5fuk1Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1ngwVYPDk5RKgGaw7LtefJKo8430PSR8oUF5uzkSYh8=;
+ b=ivyYOXbPIeVEUL2kn1TutEi7d0D9Zoud1zPrXyvpeami7mXbsSKBe2WNz0ny/DKYW+eoSvr25+DG5JqUFSU2wkdNv0A3Y1qFMZgRXLIQ8rqjy+p2h+O+lnKjTwyVMIDpXA3yNnMs32Bjy1EoFF/n/sVo5s80wY+2rtzu4vHkSLHoVoOAlO8POPCd93FgrjYai7WnxUrMDPYfXgehSUXKtBRvbkDOd4nQYo10Uq/cGfXJWvaI1FWbL648wrxiVP6PYnLjsU3ri9T0mfVCUks2gabX4a3DnTKqkwGnJYSLNL3IvAeDo4MVDHQpeA96JeOWemsZIQFbPpk8fEvdFF5fqA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1ngwVYPDk5RKgGaw7LtefJKo8430PSR8oUF5uzkSYh8=;
+ b=kopECSWekGXroAalnjkPHpHaepp+UMBFr/Q2FvDzSasUjGk48hJsVpGBKHrF3ynjhqETrcB4ZaYQRBFt5zrTnsytXt6C95ebyH4+KcgBqm7XialDRxaf9/v/1vHrDYx9BVX2ccv4aUaXgoVL2sxEImXdo7lLaFxZiwDS0YEBq/o=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from LV5PR12MB9779.namprd12.prod.outlook.com (2603:10b6:408:301::14)
+ by CH3PR12MB9454.namprd12.prod.outlook.com (2603:10b6:610:1c7::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.270.18; Mon, 3 Aug
+ 2026 06:08:14 +0000
+Received: from LV5PR12MB9779.namprd12.prod.outlook.com
+ ([fe80::8ac8:e862:8ae9:9287]) by LV5PR12MB9779.namprd12.prod.outlook.com
+ ([fe80::8ac8:e862:8ae9:9287%3]) with mapi id 15.21.0270.016; Mon, 3 Aug 2026
+ 06:08:14 +0000
+Message-ID: <5c376cbb-9497-4f0a-8032-ba94758eed12@amd.com>
+Date: Mon, 3 Aug 2026 08:07:17 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: zynq: pll: Fix kernel-doc after determine_rate()
+ conversion
+To: Babanpreet Singh <bbnpreetsingh@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: Brian Masney <bmasney@redhat.com>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20260802013252.7-1-bbnpreetsingh@gmail.com>
+Content-Language: en-US
+From: Michal Simek <michal.simek@amd.com>
+Autocrypt: addr=michal.simek@amd.com; keydata=
+ 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
+ mpwx1d8=
+In-Reply-To: <20260802013252.7-1-bbnpreetsingh@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BY1P220CA0041.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:a03:59e::13) To LV5PR12MB9779.namprd12.prod.outlook.com
+ (2603:10b6:408:301::14)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/8] dt-bindings: mfd: ROHM BD73800 PMIC
-To: Linus Walleij <linusw@kernel.org>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Matti Vaittinen <matti.vaittinen@linux.dev>, Lee Jones <lee@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Brian Masney <bmasney@redhat.com>, Bartosz Golaszewski <brgl@kernel.org>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-rtc@vger.kernel.org
-References: <cover.1782909323.git.mazziesaccount@gmail.com>
- <3e700a3fa7872a96257ff25a77670ec05cfd239c.1782909323.git.mazziesaccount@gmail.com>
- <CAD++jLnaOOoLsLxzib4d1XXLxRpWBPrqCdRwqVVEUmKYS4ad6g@mail.gmail.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <CAD++jLnaOOoLsLxzib4d1XXLxRpWBPrqCdRwqVVEUmKYS4ad6g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV5PR12MB9779:EE_|CH3PR12MB9454:EE_
+X-MS-Office365-Filtering-Correlation-Id: d002754f-d8da-42e4-843e-08def1259aba
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|23010399003|376014|366016|1800799024|56012099006|11063799006|10067099003|18002099003|22082099003|3023799007;
+X-Microsoft-Antispam-Message-Info:
+	1gxb19l0RHixG8H0/40Zd0x825vQPiongiYdV363gJGm3RmpIVROhzN94jXAGGdnYndtQ+JzSpsLzMJe7cAKbUSehpSKSVX12xYLGSNAQ7z6L4fpR6u+GOu1ONPwq7vDDMjaO1Rim0qoRAUifdZymYsOjhs2E73xyNvO7mDN4UN++IsU1dH+3QqZ0VTy5fxdO/y+I83ZOPz52MgIl36BgXF/p/fEOX7E2uPGWffMjJzonIKE7lbm71VdvCPcgnQ0WZGCHzru08WfhzPnpU0mkjFUG1baWSXTQY0B3lru8egn0+jyJaKccZCTKi3FzdzRwbwdmS9LA2AmRVzrjDrQ7HlhLU/mJhsQ76XOquhTraJE0RM2yv20kpaehiPbriPLD9nDY6Gfu7lW9SALVANPMzfxzouu/gmh4EmwoXpdLXk9KVrItUB4PMybVJK6uhWNXQ2Wlx8NsiIvkpxYvNK9w2ImWkaceMbJkDfKQ9U/8XtNijs1EZmtWT5o8Yw2c0aLl6LVnc7dzuVIDt5ihl2BVJWWtmBjmqR/nOGMSbl4GyZHfMykMMS9AlTZaPLv7H4HWuaKeSmZ4JhRDbtufig+MHdvPxTKlmIZ8Yk6FYBJeiF1P0yRCXUOsqnuIO6cNcurKxB0bIgEBB+lELA1EQIpPhihOx2kGQ5G7ADXnMnE1wY=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV5PR12MB9779.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(376014)(366016)(1800799024)(56012099006)(11063799006)(10067099003)(18002099003)(22082099003)(3023799007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?cHlMYjBNdlVjZEJRM3l3MkNkZSt6ZFlDaVJNdTAwZXRZNGhaNGdTMXE3WGIw?=
+ =?utf-8?B?dGhRcW9WemxCKzYwa3ZBSkE3OUo5N3VzamMxakhqYW1NTU43SGxRQWJoMkgw?=
+ =?utf-8?B?eFJ4enNwTjk0aU9EYktYdUFwNnpXOUdxT0JRcW4yM1JtK0hhWFc5RWFuMUxP?=
+ =?utf-8?B?V3YzdUFzNXdFK0dWMzI4U2duUWE4SndJRU9WTzY2TVhnUUkxMWIzL01odGkx?=
+ =?utf-8?B?bGRwNzZiQjQzUW1RSWwzbm9ucE54aXU3Vkd5YWtTd3JyTHlpS3ovNTl5cG4v?=
+ =?utf-8?B?VGtmVlFSZzNKc3lhYjJobXNuUzFuaFdNNUUyRjV1RVBFa1QxRk9JRWllaGQ0?=
+ =?utf-8?B?QlFrOCtBSitYbVZtaVMrK1NYcEJnNFliRlZTUGoyOGFPdlhBSThxeTBTTk9C?=
+ =?utf-8?B?eU1ob01rVjhWdzNralBuZi9nVTd2Tk5aY2FmUm41d2NyckZuN0s5cGxxTUNN?=
+ =?utf-8?B?Ky9VRE1GTVlEbVMyR0JxR21wZkN0K29tWG40U0lzWG1LeHVUSm4xZmFOYmtC?=
+ =?utf-8?B?N0t6czg5R0YxbFMrNnQzMExJYVFwVFZmc09hNk9NMzdEQVprSVN6TmJTMk1R?=
+ =?utf-8?B?ZlBTUU0zamRVcXhuL2J5QU9hK2h5QnZkYUFTSTZHaldEQU8xV3JmOExiU1dz?=
+ =?utf-8?B?N3VPNGRZS1Iwb2VrSUpVWDVSb3E4eU5nZlBBakpjZk5NcTlJdG55L0dOOFVM?=
+ =?utf-8?B?UVpBak81OHA4T2hjcnJCcFMrSWhzUXFmNUh1Y21IQmEvdTc3L1lVWUI4d241?=
+ =?utf-8?B?dTExT3JISW80b2h0aUplcUtmay80WHlXTVVLbWloM09PZUVadjdoZmdkcnJa?=
+ =?utf-8?B?bnB4NDVoVlNhTDUyUEZieVJTM0YrQTREbWlYYzM3cUlmRG9qZE1jdmJFWUpX?=
+ =?utf-8?B?aUN4ZjYyMXg1aUd0SGlJWENmMkJUQ0gvYkJ5WGl4dlI0b3FSNHhxY3Y4VmZs?=
+ =?utf-8?B?a0VDcVN0RHRPdTh3bWZBcktpWG16dDlvc1V2NytxNVVoSGV3b1d5a0VLQnpo?=
+ =?utf-8?B?OTNzN29YaHROc3YwNlNpdXpSK044c2JFVy9wc0JycktRdEFBSjZzcE1RbkI4?=
+ =?utf-8?B?VER2VEZFV0tGRHNNcFFNOU5LbldyMmRYK0ZBTUx4YkxNZ2VHaUJzdElaU3gv?=
+ =?utf-8?B?WkM3dnp2Wk5XNUtVWXkzdTVvUk0rV0pkMWJSUnlLUEdycXczNGcrVllUTElO?=
+ =?utf-8?B?VHF3c1IwN09zRTdya0s0dWRlN1U0ejRLRHNQR3JxNmZvbzZZM2VWWWNOdmsv?=
+ =?utf-8?B?VjlqRWlEbkg0eUxaQnVyTno0MTNwT1hkdTIwSDJsN0Z2YmVOdnd4LzJXcmMw?=
+ =?utf-8?B?NGlIRSt1UW4zYVpRVHNxVGdCdVlVdzhldVdrZlkxd1VlTDYvYjRFTTIzRjRZ?=
+ =?utf-8?B?SGloUVJ4VkpzTWFhQkdMdmw2UmlPMnhRNHFEb2dzeVp6R2tKbHk3RUd4SVFF?=
+ =?utf-8?B?M1VXWmQrSVdZTWg1QWVuMlQzV3dWM25xVVpXVmRkNC9tRTdmYnBlN2NQeFZv?=
+ =?utf-8?B?dHMxZDluajF0UVk0NXd0cWhWenFzUjhTRy9OaWJraTlIL2RvcjJRMzIyVzZh?=
+ =?utf-8?B?cUJUR3NrVW5GUHltRGZkaVQzWFgyTll0a3lkaStxMGpRL2t0TzhXVFRBTHA4?=
+ =?utf-8?B?eGFFL3Y5eDlqZ3hoaTFYVUt5OW9JZHdHMnRGajN6ckd6UTQ3WEZqaGJhOUZ4?=
+ =?utf-8?B?RnZZMFdGMzRBUjlOdzBZM3UzRXdpekVDQ0hVNHdmR0NMbzMvLzBDdSs3UHE3?=
+ =?utf-8?B?anZ0QWU1VFAwTkZpMGV5SGN4YTh0M1ZqbkY1U2VKeHZBblRCbFY0VDhJUkRs?=
+ =?utf-8?B?Y3pHT292L0UzbWJCemo3cDl0a2NxOENyTWhPT1dWdlFCcEFpNHBON0MzNzF0?=
+ =?utf-8?B?cWZNNytxZzhUZXNjb05JYWt2NjFnbTQxQUx4aTA0YjdzcTh2VmJYRWR6eTV0?=
+ =?utf-8?B?MHQ5NEZMT1l3OS9URHhxVW9NMHAvUHF5QjYwSjQ2aU9PdmZDNUI3QjB0ZDdz?=
+ =?utf-8?B?cEFoWTR4d2tzc3JLTTFHTDJCaTJXM3R6eDB1YXdNVUIycEdCRWJwZU5QWXRC?=
+ =?utf-8?B?UGRtdS9reEZ3d2pwSkM4Njc0RFFCcjRiRzVXK1M2QWNlQjRWVnZhcktDRG1Z?=
+ =?utf-8?B?a1RVMTRWbjluZ01uQytaK2I0MVZMQTIwZUVaSlJTa2Nkc2Y4cWhKcmZCT1Vz?=
+ =?utf-8?B?UUxjanhWc2hUMmVYYkZEVFk1Qm4xc1NmQ0trdlpYQ3NDcFAvdGlrdW5XTGFB?=
+ =?utf-8?B?cWVRQUlUYUc0VysrVVhXK0lnOXY3ME0zUVUwVVhwT3N6elZZbjdmNlpYTWRJ?=
+ =?utf-8?Q?JgpYAGtY7LVeBral24?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d002754f-d8da-42e4-843e-08def1259aba
+X-MS-Exchange-CrossTenant-AuthSource: LV5PR12MB9779.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Aug 2026 06:08:14.6488
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: BmRLFqKrufYAqCiLtfcmedz9DTOXbP7wFv1nVGsI13ugqkJDG6El8U5JUxHxujZ1
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9454
 
-Hi dee Ho Linus,
 
-The way too short summer holiday is now gone, so I am back at this :) 
-Thanks again for the comments, I am trying to improve for v2 ;)
 
-On 03/07/2026 23:46, Linus Walleij wrote:
-> On Wed, Jul 1, 2026 at 2:41 PM Matti Vaittinen
-> <matti.vaittinen@linux.dev> wrote:
+On 8/2/26 03:32, Babanpreet Singh wrote:
+> Commit 1547747b55d5 ("clk: zynq: pll: convert from round_rate() to
+> determine_rate()") replaced zynq_pll_round_rate() with
+> zynq_pll_determine_rate() but left its kernel-doc block behind, so the
+> block still names the old function and documents the removed @rate and
+> @prate parameters instead of @req.
 > 
->> +  # The GPIO1, CLKOUT (GPIO2), FAULT_B and EXTEN_OUT pins can be
->> +  # configured to interrupt pins by OTP.
+> Retitle the block and describe @req. The Return: line is updated as
+> well: it described a frequency and referenced the removed @rate, while
+> the function now returns 0 and reports the rounded rate in @req.
 > 
-> Maybe move this helpful comment into the top description: instead?
-> It's kind of generic helpful info.
+> No functional changes.
 > 
->> +# The GPIO1, CLKOUT, FAULT_B and EXTEN_OUT pins may be configured for a
->> +# specific purpose (like ADC input, 32.768 clk output, fault indicator or
->> +# delivering power sequence to a companion PMIC when multiple PMICs are
->> +# used) - but also to be either a GPO or GPI. (When used as a GPI the pin
->> +# can also be used as an IRQ source). The pin purpose is determined by
->> +# OTP (One Time Programmable memory), typically during device manufacturing.
->> +# The OTP can't be read at runtime so device-tree should describe the pins.
->> +  rohm,pin-gpio1:
->> +    $ref: /schemas/types.yaml#/definitions/string
->> +    description:
->> +      Indicate if the GPIO1 pin has been set to GPI or GPO at manufacturing.
->> +    enum: [gpi, gpo]
->> +
->> +  rohm,pin-clkout:
->> +    $ref: /schemas/types.yaml#/definitions/string
->> +    description:
->> +      Indicate if the CLKOUT pin has been set to GPI or GPO at manufacturing.
->> +    enum: [gpi, gpo]
->> +
->> +  rohm,pin-fault-b:
->> +    $ref: /schemas/types.yaml#/definitions/string
->> +    description:
->> +      Indicate if the FAULT_B pin has been set to GPI or GPO at manufacturing.
->> +    enum: [gpi, gpo]
->> +
->> +  rohm,pin-exten:
->> +    $ref: /schemas/types.yaml#/definitions/string
->> +    description:
->> +      Indicate if the EXTEN_OUT pin has been set to GPI or GPO at
->> +      manufacturing.
->> +    enum: [gpi, gpo]
+> Assisted-by: Claude:claude-opus-5 [kernel-doc]
+> Signed-off-by: Babanpreet Singh <bbnpreetsingh@gmail.com>
+> ---
+>   drivers/clk/zynq/pll.c | 8 ++++----
+>   1 file changed, 4 insertions(+), 4 deletions(-)
 > 
-> Can we explain what "GPI" and "GPO" means in this context?
-> 
-> I read it as "general purpose input" and "general purpose output", but...
-> you just describe the exact purpose? So what is "general purpose"
-> about them in that case?
+> diff --git a/drivers/clk/zynq/pll.c b/drivers/clk/zynq/pll.c
+> index 44c6093783641..500586f50d7c1 100644
+> --- a/drivers/clk/zynq/pll.c
+> +++ b/drivers/clk/zynq/pll.c
+> @@ -42,11 +42,11 @@ struct zynq_pll {
+>   #define PLL_FBDIV_MAX	66
+>   
+>   /**
+> - * zynq_pll_round_rate() - Round a clock frequency
+> + * zynq_pll_determine_rate() - Round a clock frequency
+>    * @hw:		Handle between common and hardware-specific interfaces
+> - * @rate:	Desired clock frequency
+> - * @prate:	Clock frequency of parent clock
+> - * Return:	frequency closest to @rate the hardware can generate.
+> + * @req:	Clock rate request, updated with the frequency closest to the
+> + *		requested one that the hardware can generate
+> + * Return:	0 on success.
 
-These property names (pin-gpio1, pin-clkout, pin-fault-b, pin-exten) do 
-not define the purpose of the pin, but they match the pin name in the 
-data-sheet. The idea is indeed to be able to say "the fault-b -pin is 
-not a fault signal, but a general purpose input" - if the IC we are 
-describing here has OTP configuration enabling this.
+0 always. There is no success/failed here.
 
-I am re-using the approach from the BD72720 here. I think I will add a 
-common binding file with these, which can then be referred by multiple 
-rohm ICs (in same fashion I added the 
-Documentation/devicetree/bindings/regulator/rohm,pmic-states.yaml for 
-commonly used ROHM regulator properties). I'll see if it looks Ok (to 
-me), and send it in v2 :)
-
-> I would re-use "input-enable" and "output-enable" from:
-> Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml
-> (I mean don't $rf that, just use these strings).
-> 
-> I suppose:
-> enum: [input-enable, output-enable]
-> 
->> +  rohm,clkout-open-drain:
->> +    description: clk32kout mode. Set to 1 for "open-drain" or 0 for "cmos".
->> +    $ref: /schemas/types.yaml#/definitions/uint32
->> +    minimum: 0
->> +    maximum: 1
-> 
-> Here I would also reuse the generic pinconf properties,
-> something like;
-> 
-> rohm,clkout-drive-type:
->    enum: [drive-push-pull, drive-open-drain]
-
-As I mentioned in my very hasty original reply, this is also an existing 
-binding used in quite a few PMIC device-trees. Changing it now sounds 
-like asking for problems, for (in my opinion) little benefit. Yet, since 
-it is used by a few PMICs, I could perhaps put it in a common rohm 
-binding file as well. Then it would be more obvious it is an existing 
-property if new models re-use this.
-
-> (Push-pull is what is colloquially referred to as "cmos".)
-
-I will at least add a.k.a "push-pull" to the description :)
-
-> 
->> +            rohm,pin-gpio1 = "gpo";
->> +            rohm,pin-exten = "gpi";
-> 
-> If you instead use nodes with properties you can do this:
-> 
-> rohm,pin-clkout {
->      output-enable;
->      drive-push-pull;
-> };
-> 
-> This collects the clkout config in one place and make
-> it obvious what is going on. But I don't know what the DT
-> maintainers think about this idea.
-
-I believe you mean I could translate:
-
-rohm,pin-clkout = "gpo";
-rohm,clkout-open-drain = <0>;
-
-to
-rohm,pin-clkout {
-	output-enable;
-	drive-push-pull;
-};
-right?
-
-I am actually not sure if this would work. The data-sheet made me to 
-assume it might not. There is separate "OUT32K" register, which controls 
-the clock gate. This, as far as I understand, is not usable when the OTP 
-variant sets the CLKOUT -pin to GPO. The mode (open-drain / cmos) 
-configuration resides in this clock gate register.
-
-[Just to complete picture, when OTP is set to GPO, the pin output is 
-controlled by GPIO_OUT register instead. When OTP has set the pin to clk 
-output (or to GPI), then the GPIO_OUT register writes have no impact.]
-
-Thus, in case of the BD73800, the:
-
-rohm,pin-clkout = "gpo";
-rohm,clkout-open-drain = <0>;
-
-might actually be contradicting.
-
-...
-
-Now, I will make a side-note... The data-sheet front page says:
-> 4 GPIOs
-> - OTP Option for GPIOs instead of I/F signals:
-> EXTEN_OUT, FAULT_B, CLKOUT, GPIO1
-> - GPO Supports Open Drain and CMOS Output
-
-I, however, see no register control for the GPO output types. I _assume_ 
-the output type (when pins are used for GPO) depends on OTP again. I 
-will see if I can clarify this.
-
-Yours,
-	-- Matti
-
--- 
-Matti Vaittinen
-Linux kernel developer at ROHM Semiconductors
-Oulu Finland
-
-~~ When things go utterly wrong vim users can always type :help! ~~
+Thanks,
+Michal
