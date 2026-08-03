@@ -1,83 +1,83 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 468BC3438A2
-	for <linux-clk@vger.kernel.org>; Mon,  3 Aug 2026 15:19:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F9C3415F09
+	for <linux-clk@vger.kernel.org>; Mon,  3 Aug 2026 15:23:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785770380; cv=none; b=URYSV/O/Av71zAkdyn8DXDTgm9c4f04Vcwd5PFEfLm1u8e4YbgFXpJ9UbqKMWwy9nh6ERe3zAL2qiePame6LKFA+7CFKz9Ff8KEzuKA1SYmknSRQeNXCFkfAoR0AnW7baCtaZwDv6mV38DyR0WLegFvo/NExMt/+TuUXIQQuml8=
+	t=1785770628; cv=none; b=FOQ8EKEhyBekxn5hKOM3E1aIWR0oihUG5U2alDP2TYCYfV69UHkITs2uX65fk4J9A6k198KXyeMv5P/Vdv2iY+LkFvtniZR52b6M5pozOxn+g6nclOZEBlrMSNVsPksgRlRyP89SngAERa0+9lIExhkNHSoNsVQfThb74C1mwEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785770380; c=relaxed/simple;
-	bh=S4/lIw01byCzq07ylvrJS1kUmYO4YWq751Wf1CZYFTo=;
+	s=arc-20240116; t=1785770628; c=relaxed/simple;
+	bh=OCVftXde3sBO00RpOwzolA/HUS8iy7qx6tDI5+HP70E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aIiGuok+xCq+E9p2Tfbd+PwvG+wKjTHWxprYcFfV/WEntOGzUQoP/XQHNi0oOlkgO1fvfVhvzGZYKYxjVroqKiCry6J8zAZABOacOFbwP3UzYhbNBCoiRZ9pFmbcw7pDbnrRVt1YctdEYfGjb6RZ/5SX7RuYdvVObu4RznCkbzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CZd8vrT1; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=nPwplC0G; arc=none smtp.client-ip=170.10.133.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=bhkKnDWucD1DK6ENk/kLlkHgV37WoWEQvaHkOO91P6rOuXhbRFiryFktJvrnTgzHybvC2QDitpo7a59P/RQmAw875omekiLrQ/5OHZRMErhzT2wtFaHXFvuF4/6GL3zbYF8ghTkOldE9lib9pUIgnt5A5rOymDkbmfhActfqHyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UftY0Tc8; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=g0eVq3n0; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CZd8vrT1";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="nPwplC0G"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UftY0Tc8";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="g0eVq3n0"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1785770378;
+	s=mimecast20190719; t=1785770625;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=mfrwFppqeJr324Y3CbSyZQEjIv8H0QwZoY4+hT00zdY=;
-	b=CZd8vrT1OW76+k8W/aAdKbpAxy90VbE/IAqs6DN/LZXg65RmnGTxDruoiauk7i2pqIm6U9
-	fRslYLtpfxTJOfrcvYFk7+qf94FoRcObMojnKLDZ1W5eFYZjj+YiWSsAFV69Fs96VXA4+r
-	4XOamNY2zVifo+gyhWcv/4VzYIJfhwQ=
-Received: from mail-yw1-f198.google.com (mail-yw1-f198.google.com
- [209.85.128.198]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=B+vZ8FUC6EzJTLpIOuSsz/wpLgYkJ6eDVgEjXOFLrVc=;
+	b=UftY0Tc8pKsWLMe5hB5GJQWPGlSdhH5WfSmhRFXcG6hQIPfCe6PaoxV3Lwp2Qy0nl0NGHW
+	prjtY5PCl7rHmqPM02m1qXlWv9h7cHheHMOuXRHVWWAcTf3goytE584EQCj24x6yDu0p/s
+	s23Gk+NZVGDGyqOWitI2jfaPrG7CXKY=
+Received: from mail-yw1-f197.google.com (mail-yw1-f197.google.com
+ [209.85.128.197]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-502-0NMGmKWhO32Av47gX-X8lw-1; Mon, 03 Aug 2026 11:19:37 -0400
-X-MC-Unique: 0NMGmKWhO32Av47gX-X8lw-1
-X-Mimecast-MFC-AGG-ID: 0NMGmKWhO32Av47gX-X8lw_1785770376
-Received: by mail-yw1-f198.google.com with SMTP id 00721157ae682-81bee860fb7so133697657b3.3
-        for <linux-clk@vger.kernel.org>; Mon, 03 Aug 2026 08:19:37 -0700 (PDT)
+ us-mta-49-oasoGXrGNayJjndAuTjLCQ-1; Mon, 03 Aug 2026 11:23:44 -0400
+X-MC-Unique: oasoGXrGNayJjndAuTjLCQ-1
+X-Mimecast-MFC-AGG-ID: oasoGXrGNayJjndAuTjLCQ_1785770624
+Received: by mail-yw1-f197.google.com with SMTP id 00721157ae682-81e6bb29581so127384807b3.2
+        for <linux-clk@vger.kernel.org>; Mon, 03 Aug 2026 08:23:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1785770376; x=1786375176; darn=vger.kernel.org;
+        d=redhat.com; s=google; t=1785770624; x=1786375424; darn=vger.kernel.org;
         h=user-agent:in-reply-to:content-disposition:content-type
          :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to:content-type;
-        bh=mfrwFppqeJr324Y3CbSyZQEjIv8H0QwZoY4+hT00zdY=;
-        b=nPwplC0GcADwh1aH7FNsy3ba5gPfSbWpgedP/ToQubNjlXEnl9X/HMMkndffhiLNcX
-         ME1WfbG+Uw1S/8iALvtduixOtMGGp4ETCDP7WnjGh8QvEgNaFNIzQNB6jJ1InqGSYyof
-         Ji2Z5m0BlrBh1mnVmFHW2wfjJv1Sug1ygt89aRoZxBZGPVqJX7VlcL3yokI2cJxgqnM6
-         kFyMnvrl6wJED9SvcLEz2ZFOLtbKY7OcDQfnQGjEGizCW30sptDU8RtzfSHSTbQX0QdB
-         uooFYd8b4YPZ1cUrBMyT9dLeqanKQ/jY6/pz68ZQehRom+Tug3L8AgNrHo4s1fIWo5PA
-         C6xg==
+        bh=B+vZ8FUC6EzJTLpIOuSsz/wpLgYkJ6eDVgEjXOFLrVc=;
+        b=g0eVq3n0IGBZygi/e32CtABKv+7haKjof4XMQfYkR0i/0gzykTEQaL2r0ezoP2t5mD
+         5e26HVzsc+sX3Ie8oYJdaehsuzPRxkoWhpIx1LMtX/lu3VttzEfMkJpXE+3h3Lfu2e43
+         tZeEnp2IiLBfFbMkGRdvu8DE79x95rfpQBkf4hjRYhhjvAgMUPyleshAPCzJlZg49cHN
+         +8g5mokC+H8pvY+ATNyxNiNTyRNXg5sruUN3HZb3ZndUe5Kh2FiYksAk7SH7Oc34/Dd9
+         rSjGBhhx/tGRMCy94EHaFIUO0o08ElwRtxshEjijfv+DtPkxrN19/nbl+FTscVxrN+PL
+         7KGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785770376; x=1786375176;
+        d=1e100.net; s=20251104; t=1785770624; x=1786375424;
         h=user-agent:in-reply-to:content-disposition:content-type
          :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=mfrwFppqeJr324Y3CbSyZQEjIv8H0QwZoY4+hT00zdY=;
-        b=L5ukJKnZHG3FoARyANzqJSxl9faiyrKUD7ecDOgrn+NGGJfc2nSE1ijjf7M53MtpfA
-         ih79cgPvEgBrgnY9AUT/h9rOaYMcneK1CUjzqQFTxaAH9BXYL59imEd1Ly4hlX0Es9IB
-         z59UkxDLd9nrbpoup2VXW1Im1i60sPovIwsjVMHHFaENSZVCsipl7TOTnmHWZryJym7I
-         qGx38VojWFReWeIme74qxbp5HVBHDxo4gBzETM81GPMIDFKEDh4s+UozjU/BwMCXRKI5
-         dvtdVJotM9UjhNYl9GMql81uBP4Yk1w4C5ecBG2Yq+xJQflzeDk3juCHFgenz+de/ZpJ
-         4OAA==
-X-Forwarded-Encrypted: i=1; AHgh+Rp4lOTs+CcZuyoSsBDLBqn/f0R/+S5baz9m1XISoGl+MBZji2Bnqi8eyZ2kUCBzRUKD3Bk79pgbZv4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzrf50OFKFrnDI+uRTk2qWgJkF6XgP+Yxn0n04Af4n40c2c1rO4
-	dCN58EBv+y5v00+iN5rU0hzFHB5eDchnUYeaye76cT3dp1QcxVVDX3bNka5XeVnlPC9yZkAZjiw
-	AIUhqpn8uPCpNSRSRfUzFFT3AhDE6P1wI1tK9sAi7hpyL3T96J0R0a3yw49X5uA==
-X-Gm-Gg: AR+sD13GRtM+9FRiixXkYOxEvhmB8YF/NetdN8qqDCfvucG6g33ZrOuTJ4oPddhdYQT
-	CeTwqfqBhPs6Ob9xU0KWgcqnY1v57UYHsFzMbJCYFExMtpCm9rn6DLI2VCOZD0LUm9cdEGAI982
-	zzqtdjDJ41nWx4JznwPBMKm5jHBaDl5vbOkeKtICuqzBJXg0P7kBgxOAs5DTZBBmfZvscxtUYmk
-	Bu32dFSX7oysaIUBrXeQsFZmRv9kMI73Vw9dA/CnWnz9aTj89sr+Uq1OOsgMEsLdG4yL+2iiezS
-	XIm7QfFwNfCGOB84eqAJz2jOiUh5xnwL6tYiPUn3S3l9yXRZaDlpVyMdUGbHUB7l17obnneHaFn
-	PE9JFzwRqBqq4gSazauadg9mdUGyumeY1GuU=
-X-Received: by 2002:a05:690c:278a:b0:81c:a61e:6309 with SMTP id 00721157ae682-81fd4bee7cfmr133566857b3.32.1785770376548;
-        Mon, 03 Aug 2026 08:19:36 -0700 (PDT)
-X-Received: by 2002:a05:690c:278a:b0:81c:a61e:6309 with SMTP id 00721157ae682-81fd4bee7cfmr133566557b3.32.1785770376131;
-        Mon, 03 Aug 2026 08:19:36 -0700 (PDT)
+        bh=B+vZ8FUC6EzJTLpIOuSsz/wpLgYkJ6eDVgEjXOFLrVc=;
+        b=aJ2/MNzx9mOrVCQjrk6dX9vG7BpQK5cyev+ex80Y/b7K0Sl+iN7uLqXG2jnPxVMGkj
+         tfkhFMFnOq9uyh7WUh0YcdcrzSzsZxfWgNYh35tN+0jKP7YQdQrMhJIZg/V1nZpqxFe3
+         t0ccvTdMOQb9Gro59BC2s2JxsVn9Z2eCVa3ztJfchy+40QSWFIT5xn08y6FkLLmllvl0
+         +dFEGxkvwvy0lsc6s4QNGGFe3OUPzt/n6qTfWO0pL/kgyfBwh+CURbiDIULTNrmuowvG
+         F29tjQkrF9RuRGtjjHFy4nvd9gyBxDS6oB/7vrBsEIvInHBEDA7IG/6/RWxnKPW9h68K
+         v8Yg==
+X-Forwarded-Encrypted: i=1; AHgh+Rp7OEocSV1rCkBHezLKGChNCFq4mcuFKSTJhzFZcuSCq19Km8No82kJcW9rBUc7R6ciNW2YqBOShP4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyvhYyjAT/lFG/F4bBY7wVgGgmbeXE+WTZJHyOotBPkJKrAwFl
+	NYbjb0krHmHmPyGlU9C5mlbdKEtnObddbHrZiudjwL+Boch1OAEDuQM+4KVRkWvDLoOmGIM+Coj
+	4zOt3zamUlyxr5mTVbSy+lveH4TZOAmhVLQYpNJCJYEQXt9MQXk8oaGqzRtZgtg==
+X-Gm-Gg: AR+sD11TgDIKJEDplYj3tffnwLO3dw6vDXHlsmkZHSTjOYaoWyeNgJlpDfUWl68h1Yt
+	fO/3ziNNlyoGJc19gLQA/nNOvQypVsTMc73M9rlrw4R9mIonGMI8sq7e5OB/adf3BYjVLo4kZ8T
+	0ZGP2zZMRmIEZX22KKQyo0EDoEQ6Z6MdAAE3sAblh5XEvLI3aDQv9nwKpzpXJ+GeuDbjxOnl31k
+	XdqlOndDlL6nFYjZnBp/YYX9VjizrtjPkUKWZRbUtIbCyECmFKqoRVxCt5RDFdkPvSCNz86ChBx
+	BPy7C9Eauwqa/iHDorNhnjo8YDkBhaOLvDmcJiMUfzT+FGDtfyTY1kkbYNqf6m3llmJdHTUUace
+	JavoMsVJMojtc/qSDYdczAB/vspfawl/ex5M=
+X-Received: by 2002:a05:690c:3709:b0:80c:72a1:fca3 with SMTP id 00721157ae682-81fd4a8e63dmr141736217b3.16.1785770623688;
+        Mon, 03 Aug 2026 08:23:43 -0700 (PDT)
+X-Received: by 2002:a05:690c:3709:b0:80c:72a1:fca3 with SMTP id 00721157ae682-81fd4a8e63dmr141735747b3.16.1785770623266;
+        Mon, 03 Aug 2026 08:23:43 -0700 (PDT)
 Received: from redhat.com (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-81fccf2e2b0sm55932967b3.8.2026.08.03.08.19.33
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-81fcd0d5ec2sm56111587b3.23.2026.08.03.08.23.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Aug 2026 08:19:35 -0700 (PDT)
-Date: Mon, 3 Aug 2026 11:19:33 -0400
+        Mon, 03 Aug 2026 08:23:42 -0700 (PDT)
+Date: Mon, 3 Aug 2026 11:23:40 -0400
 From: Brian Masney <bmasney@redhat.com>
 To: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
 Cc: Michael Turquette <mturquette@baylibre.com>,
@@ -94,11 +94,12 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
 	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>,
 	Irving-CH Lin <irving-ch.lin@mediatek.com>
-Subject: Re: [PATCH v5 19/25] clk: mediatek: Add MT8189 vlpcfg clock support
-Message-ID: <anCxhZEK9Rh1H4U9@redhat.com>
+Subject: Re: [PATCH v5 00/25] MT8189: Add support for system and base clock
+ controllers
+Message-ID: <anCyfAxujzRS3wf2@redhat.com>
 References: <20260801-mt8189-clocks-system-base-v5-0-ac4410697cc2@collabora.com>
- <20260801-mt8189-clocks-system-base-v5-19-ac4410697cc2@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -107,60 +108,47 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260801-mt8189-clocks-system-base-v5-19-ac4410697cc2@collabora.com>
+In-Reply-To: <20260801-mt8189-clocks-system-base-v5-0-ac4410697cc2@collabora.com>
 User-Agent: Mutt/2.4.0 (2026-06-19)
 
-On Sat, Aug 01, 2026 at 01:21:05PM +0200, Louis-Alexis Eyraud wrote:
-> Add support for the MT8189 vlpcfg clock controller,
-> which provides clock gate control for vlp domain IPs.
-> 
-> Co-developed-by: Irving-CH Lin <irving-ch.lin@mediatek.com>
-> Signed-off-by: Irving-CH Lin <irving-ch.lin@mediatek.com>
-> Co-developed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> Signed-off-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
-> ---
->  drivers/clk/mediatek/Makefile            |   2 +-
->  drivers/clk/mediatek/clk-mt8189-vlpcfg.c | 116 +++++++++++++++++++++++++++++++
->  2 files changed, 117 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
-> index 3b25df9e7b50..d9279b237b7b 100644
-> --- a/drivers/clk/mediatek/Makefile
-> +++ b/drivers/clk/mediatek/Makefile
-> @@ -124,7 +124,7 @@ obj-$(CONFIG_COMMON_CLK_MT8188_VENCSYS) += clk-mt8188-venc.o
->  obj-$(CONFIG_COMMON_CLK_MT8188_VPPSYS) += clk-mt8188-vpp0.o clk-mt8188-vpp1.o
->  obj-$(CONFIG_COMMON_CLK_MT8188_WPESYS) += clk-mt8188-wpe.o
->  obj-$(CONFIG_COMMON_CLK_MT8189) += clk-mt8189-apmixedsys.o clk-mt8189-topckgen.o \
-> -				   clk-mt8189-vlpckgen.o
-> +				   clk-mt8189-vlpckgen.o clk-mt8189-vlpcfg.o
->  obj-$(CONFIG_COMMON_CLK_MT8192) += clk-mt8192-apmixedsys.o clk-mt8192.o
->  obj-$(CONFIG_COMMON_CLK_MT8192_AUDSYS) += clk-mt8192-aud.o
->  obj-$(CONFIG_COMMON_CLK_MT8192_CAMSYS) += clk-mt8192-cam.o
-> diff --git a/drivers/clk/mediatek/clk-mt8189-vlpcfg.c b/drivers/clk/mediatek/clk-mt8189-vlpcfg.c
-> new file mode 100644
-> index 000000000000..cc4ebfd46a6f
-> --- /dev/null
-> +++ b/drivers/clk/mediatek/clk-mt8189-vlpcfg.c
-> @@ -0,0 +1,116 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2025-2026 MediaTek Inc.
-> + *                    Qiqi Wang <qiqi.wang@mediatek.com>
-> + *                    Irving-CH Lin <irving-ch.lin@mediatek.com>
-> + * Copyright (C) 2026 Collabora Ltd.
-> + *                    AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> + *                    Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/module.h>
-> +#include <linux/of_device.h>
+On Sat, Aug 01, 2026 at 01:20:46PM +0200, Louis-Alexis Eyraud wrote:
+>  .../bindings/clock/mediatek,mt8186-clock.yaml      |  128 ++-
+>  .../bindings/clock/mediatek,mt8186-fhctl.yaml      |    1 +
+>  .../bindings/clock/mediatek,mt8186-sys-clock.yaml  |   24 +-
+>  .../bindings/clock/mediatek,mt8188-clock.yaml      |   93 --
+>  .../bindings/clock/mediatek,mt8188-sys-clock.yaml  |   58 --
+>  .../bindings/clock/mediatek,mt8192-clock.yaml      |  191 ----
+>  .../bindings/clock/mediatek,mt8192-sys-clock.yaml  |   68 --
+>  .../bindings/clock/mediatek,mt8195-clock.yaml      |  238 -----
+>  .../bindings/clock/mediatek,mt8195-sys-clock.yaml  |   76 --
+>  drivers/clk/mediatek/Kconfig                       |   79 ++
+>  drivers/clk/mediatek/Makefile                      |    8 +
+>  drivers/clk/mediatek/clk-mt8189-apmixedsys.c       |  203 ++++
+>  drivers/clk/mediatek/clk-mt8189-bus.c              |  200 ++++
+>  drivers/clk/mediatek/clk-mt8189-dbgao.c            |   98 ++
+>  drivers/clk/mediatek/clk-mt8189-dvfsrc.c           |   58 ++
+>  drivers/clk/mediatek/clk-mt8189-iic.c              |  122 +++
+>  drivers/clk/mediatek/clk-mt8189-scp.c              |   77 ++
+>  drivers/clk/mediatek/clk-mt8189-topckgen.c         | 1025 ++++++++++++++++++++
+>  drivers/clk/mediatek/clk-mt8189-ufs.c              |  133 +++
+>  drivers/clk/mediatek/clk-mt8189-vlpcfg.c           |  116 +++
+>  drivers/clk/mediatek/clk-mt8189-vlpckgen.c         |  285 ++++++
+>  drivers/clk/mediatek/clk-mt8196-apmixedsys.c       |    2 +-
+>  drivers/clk/mediatek/clk-mt8196-vlpckgen.c         |    2 +-
+>  drivers/clk/mediatek/clk-pll.c                     |  130 ++-
+>  drivers/clk/mediatek/clk-pll.h                     |   13 +-
+>  drivers/clk/mediatek/clk-pllfh.c                   |   15 +-
+>  drivers/clk/mediatek/clk-pllfh.h                   |    3 +
+>  include/dt-bindings/clock/mediatek,mt8189-clk.h    |  433 +++++++++
+>  include/dt-bindings/reset/mediatek,mt8189-resets.h |   17 +
+>  29 files changed, 3136 insertions(+), 760 deletions(-)
 
-of_device.h is deprecated. You can drop this one since what you need
-will be provided by platform_device.h.
+I went through the rest of the series and didn't see anything new in the
+last half dozen or so patches beyond some deprecated headers.
 
-With that fixed:
+Just for completeness: There's still the maintainer issue that I brought up
+in v4 that needs to be addressed. I saw the message from Angelo about
+responding to that in mid September.
 
-Reviewed-by: Brian Masney <bmasney@redhat.com>
+Brian
 
