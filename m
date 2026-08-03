@@ -1,172 +1,71 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C01F4438038
-	for <linux-clk@vger.kernel.org>; Mon,  3 Aug 2026 18:08:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 244F03A1682;
+	Mon,  3 Aug 2026 19:50:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785780489; cv=none; b=kFWtr0A2lyLwMYPjl4LBbwh4L4wJx50eoS24K9LM5ehX2VkyVQ360TrRWMVsG5FN7DvsCn07GyLkiw0QEn7MxpyW11NfVMLjIzWOD4Mhjd5kuZ9dtUNEA7MNMhzGncfLYX8nTyF4MuAsmpjQmDGDLdwvO2kMtHtKchwg09bF+GY=
+	t=1785786637; cv=none; b=lQkRZ/CVHczc0rLsXMjjvETB1DJWAqyklDPYxSqu73HSinFjH0tSq1KpNrlaQAgKB6bqYjNNioxa7a08ODL9tOJswtSMiJLnjUjEUMobr5DKV1wTzIubazMfYY3JZVqX9cQWOsVm5udfYPRNn2lJWIO1FOwEc7nTDXf5pRsxtgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785780489; c=relaxed/simple;
-	bh=PVzzc9du/j/IIUtVI0EpD2qkwZbInKS9/yBMHMA5D4g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=U14aHZoArNkEoKLAM3qrTyl8d8FqbqPmo2gONqm0MOcSEfay4E51szO/vyzaMwqbNmpRdR0/kpv1rFcc9iojZtvtiYhyayxZ+LAkbndOhS2BH3rwNJiHnyzCFj0E06lrEhzFj++Px7IYgUc30bsEtUL5Suw0NlHFE95+im4ZiYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GLXj0ltx; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1785786637; c=relaxed/simple;
+	bh=X4fXAkmXIRkkAWSQqnvwAOPz+LXNGhUWiv5tPPZowq8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YlEXkGwyXXdxv9/NELgou66OWvvE779Xk/tNPNZOl0EH/XelCokpO2Uc9KWBVCFlI1Pljj1t5peK3EZsLqriDwCclRsgSqyS+o51uQQiBYmw+R3iusUdE+iCsqddjntAXHVdRKiPRfF+MN/Sik7coY9cKD1A9QvonrWcr4jotPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F+9ke+lq; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GLXj0ltx"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-47fe377a217so731947f8f.1
-        for <linux-clk@vger.kernel.org>; Mon, 03 Aug 2026 11:08:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1785780486; x=1786385286; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=6BWR8dmRaEKQHkFK66ev0gVEIwNsNYFwR9W/SfWvzP8=;
-        b=GLXj0ltxTXuBowk3JXfV28mbmq4UKfQ7/mmuS+BjJ5pslm9npFMa2JRcZejXKwjL9d
-         sN1vIT4/PRu572j9P4rftUKKEp5cj9aWXLEzJbYkLzG55two+dHipp1LpngJGapDFNwm
-         l3A3WpA4NunpD23SPp+4a7LW3TuoM3unKsxbI0UmZyeO7uCL59uSBnNaBpGz7ar4I1Q+
-         AKW/1kfQ7b4xFvIHUZejiHvoSLQsfvoCDkTb5cLinz3ZP/+d12aFmfzS5Jg39sj1CvN3
-         HVu8YDbRHwOcXAzoYHbWKsxLipfHjFS1akt0zcuG5JXQtf8znu6rC0lhYqoRsrf0bzsP
-         dtbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785780486; x=1786385286;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=6BWR8dmRaEKQHkFK66ev0gVEIwNsNYFwR9W/SfWvzP8=;
-        b=T2nZYHKGr3lLwwg4k2eUFCooJ1qqxH9fBC6O/iyXEtDYNNSeJgXp6ML3oVS3HqEdQX
-         M6tWZldyqnOLyDZXZtXN4zEjzWjOlZ1SUtQqqlvo/mHEHwpOtgs8og7Rjd/k8olQw0pR
-         rjIX7YVj6wCFYYqhiwrbeBcMGcz1SngpN3qjoUN1rWhzLTn7fCDi/wx33Wn1ASD0ARXo
-         wlQQpQVDPqQNMQtJl7Z4BZgyC6IDUM0ZYZFYekKFKfqq1WRWoWsBQ4zFaluMor5sGTto
-         L3ZO2RlBTIv5hXGCVid0TYSjOhBuqDBSQF51o/CzrRDlgcB+3cAZBmq6pSt2rbedYnhv
-         ZW+g==
-X-Forwarded-Encrypted: i=1; AHgh+RphSugfVs+zchKfYjl3uwQ8Gk4wElvZ5TM1Ddw4cV/AhuP0ysfEbqJ1IMPfK4NoxLk4+K7v6kEO8t8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRtLHBRqvkSZhZFjIfAR6uNDNex0tb3K9HJFbnzTO8Baj/wH7N
-	vvV+bk8Fc6qFNSKS/FBfFur7/g6AyviQSCzIlxhhi3SyEBkCJQ0xk8vh
-X-Gm-Gg: AR+sD13O9HJoufFM4JYxDvPgxN/4ewADZ/rUqNjmGn4KhL62B8yf7DTvRvbYxAGp0na
-	oEgqDg6fhdEVW71r/XitbAciFpnu4q2Qb4pzUmeNP8VSiXlx5pknXtTCb+u0mZzu6rY5WSxTS0A
-	+ER3ssULXi0maYaAdPGoO6yOTydi/hssbT3kFpm70z9q5hKyY9y5+X35/F0n3bnL3lkfq4xgjxR
-	7slvcy8iJ8Gd5enxNNqXVGIcJSsrHyO+4PwjAqXVpmBvba+idGWtn33FVw1CG2a7JtRwVn3RFeI
-	9zNQrqaX7QFMCtGXhF3hQxSSvC9NLI01v+m0ckf45ArxKdFE3DobTRh8bAcS3cIPijynGgclY1G
-	RlouX6zrbPxBQ61NDoFYLTBdOlY8l0IyydFaTqlwBaPfBkR/MtRjqaJ6gPakHKZe8RTSb/Fm2R+
-	pItDOQser5L9ClfazgdZe3ZlDHV+JF9sIxpQaTsRD99Gna7gaTu0fKcg99+nzlDT6RwdKgCsgpZ
-	1eaRUpxdUrX+RkXvJ2tb1C9
-X-Received: by 2002:a5d:59c8:0:b0:47f:9404:5185 with SMTP id ffacd0b85a97d-47fd72c78ebmr26973780f8f.24.1785780485932;
-        Mon, 03 Aug 2026 11:08:05 -0700 (PDT)
-Received: from localhost.localdomain ([2a0d:3344:2841:7708:a101:2b8a:f76:a00f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47fd42d91b3sm37950955f8f.14.2026.08.03.11.08.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Aug 2026 11:08:05 -0700 (PDT)
-From: =?UTF-8?q?Juan=20Manuel=20L=C3=B3pez=20Carrillo?= <juanmanuellopezcarrillo@gmail.com>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	wens@kernel.org,
-	jernej.skrabec@gmail.com,
-	samuel@sholland.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org
-Cc: andre.przywara@arm.com,
-	bmasney@redhat.com,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Juan=20Manuel=20L=C3=B3pez=20Carrillo?= <juanmanuellopezcarrillo@gmail.com>
-Subject: [PATCH v2 3/3] arm64: dts: allwinner: a523: add GPU OPP table
-Date: Mon,  3 Aug 2026 20:07:55 +0200
-Message-ID: <20260803180755.288793-4-juanmanuellopezcarrillo@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260803180755.288793-1-juanmanuellopezcarrillo@gmail.com>
-References: <20260803180755.288793-1-juanmanuellopezcarrillo@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F+9ke+lq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC8311F000E9;
+	Mon,  3 Aug 2026 19:50:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1785786635;
+	bh=qLQmoT0Qm+InB+muH0SCnb4r1bw0bnjyIeYCMj4nTDU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=F+9ke+lqECruVGOxyMzEozXERA+qhYXA6J56xw74Ett7xKQf+GPhWNgK7tAb8ZDko
+	 l+4m+fFhhG3hgilmqsZ8GVquUE5tbB8+FzBNaW5gVRWurTt90AOhy466ndC0bNOGnx
+	 PFoFIASClfvOVrSdNEQ9hk7RwDsb6ij2dlHxhfcI83qxUHzb5BHpfdSy2nnSGwu0Cl
+	 1Xysqpi06aCkNZyS/SxlFFwafYytawHNoqQaoQmzeGqbIHQ0Qa78NVf8DxprASxcyj
+	 JGUaeDq9YQ734+pJ/JrOkKhWBIAfF3SOx7ThH0UiUYL3i6UqCxYahNCdKGaJKRD7X8
+	 qdTRaLOzSDn6w==
+Date: Mon, 3 Aug 2026 12:50:34 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Akari Tsuyukusa <akkun11.open@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, Matthias Brugger
+ <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+ <angelogioacchino.delregno@collabora.com>, Yassine Oudjana
+ <y.oudjana@protonmail.com>, Richard Cochran <richardcochran@gmail.com>,
+ Laura Nao <laura.nao@collabora.com>, "=?UTF-8?B?TsOtY29sYXM=?= F. R. A.
+ Prado" <nfraprado@collabora.com>, Chen-Yu Tsai <wenst@chromium.org>,
+ Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, Danilo
+ Krummrich <dakr@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, "Uwe
+ =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= (The Capable Hub)"
+ <u.kleine-koenig@baylibre.com>, Nicolas Frattaroli
+ <nicolas.frattaroli@collabora.com>, Takashi Sakamoto
+ <o-takashi@sakamocchi.jp>, Haotian Zhang <vulab@iscas.ac.cn>, Kees Cook
+ <kees@kernel.org>, Miles Chen <miles.chen@mediatek.com>, Daniel Golle
+ <daniel@makrotopia.org>, Sam Shih <sam.shih@mediatek.com>,
+ linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
+ linux-kernel@vger.kernel.org (open list),
+ linux-arm-kernel@lists.infradead.org (moderated list:ARM/Mediatek SoC
+ support), linux-mediatek@lists.infradead.org (moderated list:ARM/Mediatek
+ SoC support), netdev@vger.kernel.org (open list:PTP HARDWARE CLOCK
+ SUPPORT:Keyword:(?:\b|_)ptp(?:\b|_)), stable@vger.kernel.org
+Subject: Re: [PATCH 00/32] clk: mediatek: Migrate to common probe/remove
+ helpers and fix memory leaks
+Message-ID: <20260803125034.49055f62@kernel.org>
+In-Reply-To: <20260803141659.559129-1-akkun11.open@gmail.com>
+References: <20260803141659.559129-1-akkun11.open@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Add the Mali-G57 operating points from the vendor BSP universal table
-(150/200/300/400/600 MHz) so panfrost devfreq can scale the GPU instead
-of running at the boot clock.
+On Mon,  3 Aug 2026 23:16:27 +0900 Akari Tsuyukusa wrote:
+> This series migrates most MediaTek clock drivers to the common
+> probe/remove helpers provided by the MTK clock framework.
 
-The table describes the SoC rather than any particular board, so it
-lives in the .dtsi and is referenced from the GPU node there; every
-A523/T527 board in tree already provides mali-supply.
-
-The BSP universal table specifies 900 mV for all of these operating
-points, so that is the target and minimum voltage.  The maximum is set
-to 920 mV to also cover boards whose GPU rail is a fixed 920 mV supply
-(the Orange Pi 4A drives it from AXP717 DCDC2, fixed at 920 mV), where
-the voltage transitions are then no-ops.
-
-The higher speed-bin points of the BSP (648-792 MHz) are not included:
-they are gated by a SID efuse bin and need pll-gpu as a live parent.
-
-Depends on the sun55i-a523 GPU clock divider fix: the OPP rates are only
-produced correctly with the cycle-masking divider model.  Validated on
-hardware with the Mali cycle counter: 149/199/300/399/597 MHz measured
-under load, thermal-emulation throttling included.
-
-Signed-off-by: Juan Manuel López Carrillo <juanmanuellopezcarrillo@gmail.com>
----
- .../arm64/boot/dts/allwinner/sun55i-a523.dtsi | 30 +++++++++++++++++++
- 1 file changed, 30 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi b/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
-index 85ef492ffeae..a3164b5dd609 100644
---- a/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
-@@ -85,6 +85,35 @@ osc24M: osc24M-clk {
- 		clock-output-names = "osc24M";
- 	};
- 
-+	gpu_opp_table: opp-table-gpu {
-+		compatible = "operating-points-v2";
-+
-+		opp-150000000 {
-+			opp-hz = /bits/ 64 <150000000>;
-+			opp-microvolt = <900000 900000 920000>;
-+		};
-+
-+		opp-200000000 {
-+			opp-hz = /bits/ 64 <200000000>;
-+			opp-microvolt = <900000 900000 920000>;
-+		};
-+
-+		opp-300000000 {
-+			opp-hz = /bits/ 64 <300000000>;
-+			opp-microvolt = <900000 900000 920000>;
-+		};
-+
-+		opp-400000000 {
-+			opp-hz = /bits/ 64 <400000000>;
-+			opp-microvolt = <900000 900000 920000>;
-+		};
-+
-+		opp-600000000 {
-+			opp-hz = /bits/ 64 <600000000>;
-+			opp-microvolt = <900000 900000 920000>;
-+		};
-+	};
-+
- 	pmu {
- 		compatible = "arm,cortex-a55-pmu";
- 		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_HIGH>;
-@@ -121,6 +150,7 @@ gpu: gpu@1800000 {
- 			interrupt-names = "job", "mmu", "gpu";
- 			clocks = <&ccu CLK_GPU>, <&ccu CLK_BUS_GPU>;
- 			clock-names = "core", "bus";
-+			operating-points-v2 = <&gpu_opp_table>;
- 			power-domains = <&pck600 PD_GPU>;
- 			resets = <&ccu RST_BUS_GPU>;
- 			status = "disabled";
--- 
-2.47.3
-
+Why are you CCing netdev on this? None of it touches networking
