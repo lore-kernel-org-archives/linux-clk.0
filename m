@@ -1,62 +1,64 @@
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E59430D40B
-	for <linux-clk@vger.kernel.org>; Mon,  3 Aug 2026 14:17:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C486C3BC668
+	for <linux-clk@vger.kernel.org>; Mon,  3 Aug 2026 14:17:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785766648; cv=none; b=IXyh0bVys+YxXEsTU4G/F6XbkOsfFlDBGOguWIIclPpOE1D47dfkms7AqtEFfewY31NojBJxkT0F6XOtihEpT6TGODoIWbQtd6k80Uc1lwoIcoRnELyK2znC82joPDLR4NITbu6Y5ugMCtXgoaUyLtEJrSqOc1HrJHF66wuNf1Y=
+	t=1785766653; cv=none; b=DfLR1DCGzfQOCKST+MfwUYmq+TZmD/q9NYgaB+7e4HfA0izhl+aceMo0jDH3Z8gs/xX1e8F0yPL+1tqEFPgFEqzoRe9kyJiqmtIm5kDfSbolPLxCx2kPLB7MGGEGpQz4mEpoO+DUpEZJkXAL9uaBFCDR+MnWbxFnxyv/hTkucBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785766648; c=relaxed/simple;
-	bh=jqo/DmrD6EhhgwisLEA9Ghjd1hqGCYrsHk5HTzUy0/k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IRi43S8Ty3POUkdDsOab5jiIUAhUjVeQmKaBeOJ+FWRV/iA0jRPmcu+u573lYSUW5Ch3VjKj/3x9/nomrgtpt9D6xkP1Himm8W9QnsFRnipz5IEO81G4kANygtAnT+y1mWhV5KzyT22hZihKvggKmFzADxVP7HAIFBS3I5vnBl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QfH3NYTw; arc=none smtp.client-ip=209.85.216.43
+	s=arc-20240116; t=1785766653; c=relaxed/simple;
+	bh=E+PMGIEqdJEzntNkc/cXlKmXnPZXFP5wyGQ4Xlmg9rA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=kImjDBtfBXPbAZIac2MgGU04FyD81RyKV4paMkw5s21EqQLP28XFjXU4wtSkJNMD/BJCDM8IjmDr/MA88twjJ6U8CjYxMk7Gz0zb9XGbkSZ1CfFT8Coa06B/8J7TKWyypXaw88JFNSD9xAKPUAC48bijr6Hspp1ctFPKuacCC2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CWryKh7E; arc=none smtp.client-ip=209.85.216.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QfH3NYTw"
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-38f0f132f56so2978945a91.0
-        for <linux-clk@vger.kernel.org>; Mon, 03 Aug 2026 07:17:27 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CWryKh7E"
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-383cb94f742so3406345a91.3
+        for <linux-clk@vger.kernel.org>; Mon, 03 Aug 2026 07:17:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1785766647; x=1786371447; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=wwjgtRb3Tj4kbI2i//w6Ka0+luCbAxG+sRZKCn0g9Uw=;
-        b=QfH3NYTwZtAUFucVtvsLPPOO00i9UAg712D1L2iCwFTqrbAwXB6r9OcBA+tAsLZ+5f
-         xXEN1vgg9PCMG5r4KFB3Xudr8OKlqvXDzmTSC9niwWU6jnm7elsnDCgyxxBN3x4SV5B0
-         X1PL7gqDZlafGZc0jW+fHG7Md8hmPZWc4zn0tuQ0TN2NhpBQayu4HgOrFtZGm1xkOLkF
-         R+mnhpx9eIkWUoOZzv6lMrmJimv6bO8VzxuBybWpHMoOFQorItcFUE62c0vXF/wezDUE
-         yEQJ+EPIwxGmkN3AYhU196SaIwZpAeVovGcp3nayTH1EwcQHLPFCIfCMFaQbngd85nHR
-         Wu5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785766647; x=1786371447;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1785766651; x=1786371451; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=wwjgtRb3Tj4kbI2i//w6Ka0+luCbAxG+sRZKCn0g9Uw=;
-        b=e2mqc8ySJIUh9AeFXuHGNp0ZKEG1vxHx0vDEwJfri2O9d5Q/QmWNie5Pjro9BINvtF
-         H5Od5/H0JJoc1aFaDe9ShaprzLtRKwhtbJ+KiYBIL9XeY2qYqpQ5tJRxndCO+7xaW+w9
-         oDGEgRYbLnWYCE2kUjjVNSBNql68ZwEm510hZwHowM2RnyEgPFEA72EyUzKR/DsnPP5r
-         GO0PrNKkFIw3bcBr+XEhnMZKq8fYSJ+QwuzMaEDPAYY9QNlNDRgleyVLH567UTERGAi0
-         DRyKe6J9xRYahzEx+MMJd8PGCHmXuaLmOOUnxB+amZloUGSty/4UIqJs/R0lqLrAYhea
-         Zorw==
-X-Forwarded-Encrypted: i=1; AHgh+RqkINwlnc+ZXD+IxvkoKTYoqfy9jOH102SaXf0aOn0Sk6joWQSa7CTr3qd/IqAm7seJef1MnEUO0So=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4nEoehvm/vKhjojwIFsCqt6OQ39JdFvs2L8DsqMj8qc4m1ZX2
-	Gq5XqX0Kw6rpoN6Cp+d9zIHDpiDeQpR0LOwmIhPlW/xTasFl65Rxi+yw
-X-Gm-Gg: AR+sD13vf0qMFzLlNyGcLPf3TcT+Orw+euvb6yJ9h+ME03vPYWTi5rQUJaYyK3zkpvR
-	b4zahd5zM+QYYEFQ1/Z/Vi64tbWcnog1vpcmKaNMtBaVFJ92sbKoAJF2afdT1czFjwpjoImeLNO
-	fcVpOzFOW1RlH5X+bLaWCZertdyfsAJMVxJVpZaBR1FSZVMNYB7paWyA9AQvhkGGm1x9bR2OHwD
-	/2BbBHOoLWfJW13om+JcSwZC6mo2kURXjbBh7Q/7l5QdyWa0b5GSQ6zAHVnJ9VyFwT3YPjIUF9V
-	LbBJP4SuDFj3m3SzDDzoEN9C6vocS+BXUkT3lJ/l3OYeMezCgVZ0p6+0zx9PpLiPxetLg89pfsl
-	xbh63r3uCE+LiVTSfoOfwjmnrnf4304FadLwmD6MvS5MC64F1Pjvf4vUVi3U/d1B+Z6gszvXvVt
-	c9sYtE+p9zi+5M/tbz2jXalRAcSV6JCxW4xmrq5ej9fyq3IlS5ywNsAXeN6c4Fw8XuLk0LOPuLr
-	0NLH8rUE0YQsgsID4tN
-X-Received: by 2002:a17:90b:57ed:b0:385:3ab:fecb with SMTP id 98e67ed59e1d1-38fbc9f3ebemr7249914a91.4.1785766646430;
-        Mon, 03 Aug 2026 07:17:26 -0700 (PDT)
+        bh=4R15TfQbT6I06GeZOzblPl7rBfwuRyPXGr5wu9wmhkM=;
+        b=CWryKh7Eqc60/syD0xcBd1GR/qAJENWYNqRupto/eY3v1p7XLby6WUY5xNGk2PQT6b
+         Zhg0to5yuYa9V76jJLtDlO7OjOPifxehfvEMPpVMeS9zB852p5DBmttdS5JNpuDatM0T
+         pDW4ujTJALNVZpUzmwm5sh2pHO3p9RwWCC1BlexYTQoUk+xS+ZhOnhQkR5w174QQhMXZ
+         w+CRA92qWx3DkCcvzStgiKOFM29NSYsUdEuDwKGCDsmr3pUbneLQ876we1s6IQvDII/y
+         37z63r6SGOnJTisaFwIedo3oCK0YL/3kkXyZSkFyipxCix+o3b9Dud/IfvX0E7Yw7NMD
+         UZJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785766651; x=1786371451;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=4R15TfQbT6I06GeZOzblPl7rBfwuRyPXGr5wu9wmhkM=;
+        b=E4Z5UnOReIGUozWJSi3m21n31q1n4ltovgdvvc8fwoxhnA/R0e7cg/X+/ZZFPlSTUm
+         JLkMhVSLxWpBopR5nQdgPgY15x5EZNqSNfPSSLM9K0J97q5AKxPnqvuZFoW8T/AdI783
+         g3l6/EFyQvCLmGrjMFJFOqsJOUK4oeZPbfLcKuLw7S3pfTKpZUu+m8wVzhy1xQO1z5Jh
+         x12xumFjVA0agrwmBjM8wxTI3AoxoMBWkfwMeAMDhr03HKLqDZuXx+iXosxRw134pmEg
+         6CWILIQ9HsZoOCtb384fJBJJvIlEp1d/6YKW1E45o1PQsuwsqcyK4PTtt15vOhR90iZj
+         A8fw==
+X-Forwarded-Encrypted: i=1; AHgh+RryDp6d3gATA1wItvMa2CMRuVdqCYK7y2O011rDBqZq16qtSka6UQ2P05WwcHOWr6CbH72CQATMtfk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLSM0yUx6Z8HVMwPR1KLW+2UsaMPsgJn7MLX+e+LsBlqNAlfYf
+	FmytCC+FBXxbZxjOnYh+ZHWHhXrtDMN2mGeP4DpoyXodgY85Th0YGjtV
+X-Gm-Gg: AR+sD11IaGaO/dB6lWKWLwhZaB1BbXhQh149CDdBUY8KYnT2vd9IkqEARRKD7wmbTLZ
+	sbou0bZ5TG5Y3scMkGjdgqvA0H4977nxy6urLTTOs4GFaTwwDm9aQR2yPz2mcZQ8QXaQu/GlMiw
+	DtqjFjMIe1fBspBDDbYediVpH0aRYoLgB8PwnFadAVTiEh9bQ6WnDAOAM2keIdvErwX+Y+H2FhG
+	yibqGmSQnajhsLLysIXkElqcFz6H+tInQxOqqeCMaBFT2c85jP8luNjo4IxFqqnqZa6myOC6GXP
+	5nmXTw8xT1kF2fIzTOHAZs15Tm6mCEvVxQBksxyDIBLzps4PEVpV6QXb4sJbGt3VeWyGzSrgjX/
+	6pH2v/fbi8oAQCWJPFFNvE5SMNySf1kPbkL4+y6shxXIidNegbBFOLzaLkUoOH5JELJzKk4lBes
+	vnp5o4aG7CU0rGHP4AZSBTqkOHtB15+d+yIFvnaemC0bQqVFUdAQEVptAQda5ocy72ddb7cC0fU
+	J2xVfzkkvGl6oeRUM3Y
+X-Received: by 2002:a17:90b:48c7:b0:381:26f:8f05 with SMTP id 98e67ed59e1d1-38fbc3ff29dmr8848847a91.3.1785766651087;
+        Mon, 03 Aug 2026 07:17:31 -0700 (PDT)
 Received: from buffalo-ssd (M014013071096.v4.enabler.ne.jp. [14.13.71.96])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-38fb30dff2esm4078462a91.13.2026.08.03.07.17.21
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-38fb30dff2esm4078462a91.13.2026.08.03.07.17.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Aug 2026 07:17:26 -0700 (PDT)
+        Mon, 03 Aug 2026 07:17:30 -0700 (PDT)
 From: Akari Tsuyukusa <akkun11.open@gmail.com>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
@@ -86,10 +88,12 @@ Cc: Laura Nao <laura.nao@collabora.com>,
 	linux-mediatek@lists.infradead.org (moderated list:ARM/Mediatek SoC support),
 	netdev@vger.kernel.org (open list:PTP HARDWARE CLOCK SUPPORT:Keyword:(?:\b|_)ptp(?:\b|_)),
 	stable@vger.kernel.org
-Subject: [PATCH 00/32] clk: mediatek: Migrate to common probe/remove helpers and fix memory leaks
-Date: Mon,  3 Aug 2026 23:16:27 +0900
-Message-ID: <20260803141659.559129-1-akkun11.open@gmail.com>
+Subject: [PATCH 01/32] clk: mediatek: mt2712: fix memory leak on module removal
+Date: Mon,  3 Aug 2026 23:16:28 +0900
+Message-ID: <20260803141659.559129-2-akkun11.open@gmail.com>
 X-Mailer: git-send-email 2.55.0
+In-Reply-To: <20260803141659.559129-1-akkun11.open@gmail.com>
+References: <20260803141659.559129-1-akkun11.open@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -98,124 +102,36 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This series migrates most MediaTek clock drivers to the common
-probe/remove helpers provided by the MTK clock framework.
+clk_mt2712_apmixed_probe() in clk-mt2712-apmixedsys.c does not call
+platform_set_drvdata(), but clk_mt2712_apmixed_remove() callback calls
+platform_get_drvdata().
+This results in platform_get_drvdata() returning NULL, which leads to
+calling kfree(NULL) in mtk_free_clk_data(NULL).
+This leaves clk_data unreleased, causing a memory leak.
 
-Key changes:
-- Fix memory leaks on module removal caused by missing
-  platform_set_drvdata() calls (patches 1-6).
-- Add missing MODULE_DEVICE_TABLE() (patches 7, 8).
-- Add missing support for cpumux, PLL, pllfh, and sub-device
-  auto-population to the common helpers (patches 9-12).
-- Convert all compatible clock drivers to use struct mtk_clk_desc
-  and mtk_clk_simple_probe/remove (patches 13-32).
+Fix this by calling platform_set_drvdata() during probe.
 
-The memory leak and MODULE_DEVICE_TABLE() fixes are split from the
-migration patches to allow backporting to stable.
+Fixes: c6368ce86435 ("clk: mediatek: mt2712-apmixedsys: Add .remove() callback for module build")
+Cc: stable@vger.kernel.org
+Signed-off-by: Akari Tsuyukusa <akkun11.open@gmail.com>
+Reviewed-by: Brian Masney <bmasney@redhat.com>
+---
+ drivers/clk/mediatek/clk-mt2712-apmixedsys.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Drivers not converted:
-- MT6765 apmixedsys: requires direct register init.
-- MT6795 apmixedsys: uses mtk_clk_register_ref2usb_tx().
-- MT7629 eth/sgmiisys: uses a hacked probe sequence (multi-instance
-  sgmii gates).
-- MT8173 apmixedsys: uses mtk_clk_register_ref2usb_tx() and custom
-  divider registration.
-- MT8188/MT8195 topckgen: call devm_clk_hw_register_mux() and register
-  a notifier.
-- MT8196 vlpckgen: requires direct register init.
-- MT8365 apmixedsys: uses devm_clk_hw_register_gate().
-
-Patches 1-6 are based on
-"[PATCH v2 0/6] clk: mediatek: fix memory leak on module removal"
-(In addition fixed a compilation error in mt8173-infracfg)
-https://lore.kernel.org/linux-mediatek/20260707074839.240676-1-akkun11.open@gmail.com/
-
-Patch 9 is based on
-"[PATCH 1/3] clk: mediatek: clk-mtk: Add cpumux support to common probe/remove helpers"
-https://lore.kernel.org/lkml/20260304181024.738391-1-akkun11.open@gmail.com/
-
-Akari Tsuyukusa (32):
-  clk: mediatek: mt2712: fix memory leak on module removal
-  clk: mediatek: mt6795: fix memory leak on module removal
-  clk: mediatek: mt7622: fix memory leak on module removal
-  clk: mediatek: mt8135: fix memory leak on module removal
-  clk: mediatek: mt8173: fix memory leak on module removal
-  clk: mediatek: mt8192: fix memory leak on module removal
-  clk: mediatek: mt6735: Add missing MODULE_DEVICE_TABLE()
-  clk: mediatek: mt7988-apmixed: Add missing MODULE_DEVICE_TABLE()
-  clk: mediatek: Add cpumux support to common probe/remove helpers
-  clk: mediatek: Add PLL support to common probe/remove helpers
-  clk: mediatek: Add auto-population of sub-devices support in simple
-    probe
-  clk: mediatek: Add pllfh support to common probe/remove helpers
-  clk: mediatek: mt2701: Switch to common probe/remove helpers
-  clk: mediatek: mt2712-apmixedsys: Switch to common probe/remove
-    helpers
-  clk: mediatek: mt6735-apmixedsys: Switch to common probe/remove
-    helpers
-  clk: mediatek: mt6779: Switch to common probe/remove helpers
-  clk: mediatek: mt6795: Switch to common probe/remove helpers
-  clk: mediatek: mt6797: Switch to common probe/remove helpers
-  clk: mediatek: mt7622: Switch to common probe/remove helpers
-  clk: mediatek: mt7981-apmixed: Switch to common probe/remove helpers
-  clk: mediatek: mt7986-apmixed: Switch to common probe/remove helpers
-  clk: mediatek: mt7988-apmixed: Switch to common probe/remove helpers
-  clk: mediatek: mt8135-apmixedsys: Switch to common probe/remove
-    helpers
-  clk: mediatek: mt8167-apmixedsys: Switch to common probe/remove
-    helpers
-  clk: mediatek: mt8173-infracfg: Switch to common probe/remove helpers
-  clk: mediatek: mt8183: Switch to common probe/remove helpers
-  clk: mediatek: mt8186-apmixedsys: Switch to common probe/remove
-    helpers
-  clk: mediatek: mt8188-apmixedsys: Switch to common probe/remove
-    helpers
-  clk: mediatek: mt8192: Switch to common probe/remove helpers
-  clk: mediatek: mt8195: Switch to common probe/remove helpers
-  clk: mediatek: mt8196: Switch to common probe/remove helpers
-  clk: mediatek: mt8516-apmixedsys: Switch to common probe/remove
-    helpers
-
- drivers/clk/mediatek/Kconfig                 |  34 +--
- drivers/clk/mediatek/clk-mt2701-aud.c        |  35 +--
- drivers/clk/mediatek/clk-mt2701.c            | 233 +++++--------------
- drivers/clk/mediatek/clk-mt2712-apmixedsys.c |  48 +---
- drivers/clk/mediatek/clk-mt6735-apmixedsys.c |  48 +---
- drivers/clk/mediatek/clk-mt6735-imgsys.c     |   1 +
- drivers/clk/mediatek/clk-mt6735-mfgcfg.c     |   1 +
- drivers/clk/mediatek/clk-mt6735-vdecsys.c    |   1 +
- drivers/clk/mediatek/clk-mt6735-vencsys.c    |   1 +
- drivers/clk/mediatek/clk-mt6779.c            | 124 ++--------
- drivers/clk/mediatek/clk-mt6795-apmixedsys.c |   2 +
- drivers/clk/mediatek/clk-mt6795-infracfg.c   |  70 +-----
- drivers/clk/mediatek/clk-mt6795-pericfg.c    |  71 +-----
- drivers/clk/mediatek/clk-mt6797.c            | 140 ++---------
- drivers/clk/mediatek/clk-mt7622-apmixedsys.c |  60 +----
- drivers/clk/mediatek/clk-mt7622-aud.c        |  35 +--
- drivers/clk/mediatek/clk-mt7622-infracfg.c   |  70 +-----
- drivers/clk/mediatek/clk-mt7981-apmixed.c    |  37 +--
- drivers/clk/mediatek/clk-mt7986-apmixed.c    |  37 +--
- drivers/clk/mediatek/clk-mt7988-apmixed.c    |  40 +---
- drivers/clk/mediatek/clk-mt8135-apmixedsys.c |  48 +---
- drivers/clk/mediatek/clk-mt8167-apmixedsys.c |  50 +---
- drivers/clk/mediatek/clk-mt8173-apmixedsys.c |   2 +
- drivers/clk/mediatek/clk-mt8173-infracfg.c   |  98 ++------
- drivers/clk/mediatek/clk-mt8183-apmixedsys.c |  51 +---
- drivers/clk/mediatek/clk-mt8183-audio.c      |  26 +--
- drivers/clk/mediatek/clk-mt8186-apmixedsys.c |  59 +----
- drivers/clk/mediatek/clk-mt8188-apmixedsys.c |  60 +----
- drivers/clk/mediatek/clk-mt8192-apmixedsys.c |  67 ++----
- drivers/clk/mediatek/clk-mt8192-aud.c        |  26 +--
- drivers/clk/mediatek/clk-mt8195-apmixedsys.c |  67 +-----
- drivers/clk/mediatek/clk-mt8195-apusys_pll.c |  49 +---
- drivers/clk/mediatek/clk-mt8196-apmixedsys.c |  67 +-----
- drivers/clk/mediatek/clk-mt8196-mcu.c        |  96 +++-----
- drivers/clk/mediatek/clk-mt8196-mfg.c        |  84 ++-----
- drivers/clk/mediatek/clk-mt8516-apmixedsys.c |  42 +---
- drivers/clk/mediatek/clk-mtk.c               |  76 +++++-
- drivers/clk/mediatek/clk-mtk.h               |  12 +
- 38 files changed, 472 insertions(+), 1596 deletions(-)
-
+diff --git a/drivers/clk/mediatek/clk-mt2712-apmixedsys.c b/drivers/clk/mediatek/clk-mt2712-apmixedsys.c
+index 54b18e9f83f8..087cf574bcdc 100644
+--- a/drivers/clk/mediatek/clk-mt2712-apmixedsys.c
++++ b/drivers/clk/mediatek/clk-mt2712-apmixedsys.c
+@@ -129,6 +129,8 @@ static int clk_mt2712_apmixed_probe(struct platform_device *pdev)
+ 		goto unregister_plls;
+ 	}
+ 
++	platform_set_drvdata(pdev, clk_data);
++
+ 	return 0;
+ 
+ unregister_plls:
 -- 
 2.55.0
 
