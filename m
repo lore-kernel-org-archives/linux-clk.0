@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 221C33515FA;
-	Mon,  3 Aug 2026 09:37:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5F1A35201F;
+	Mon,  3 Aug 2026 09:38:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785749880; cv=none; b=tTwx2qD1TKZzfVNV+TiUJjFjceR1oxppVKcyiMxshxxqMOk0ccunoiGobDEj1BgROaIdKocCyK+FwNKIxYfXviwXOcLw8cyhwaA/o/ESJsX+qdb74xfzkXnp5idkODhZp1+T2HZouvTPfWFVGXbpIzoLJuNznxLvjJc/OcdBh60=
+	t=1785749912; cv=none; b=Sro6R6bhv6fBT53QRvfrbv4VHESVWVcuTkU4IEsc8I/oBquk5+1+/LFiKSlXlSa/jjtGR3Pzsk0nsEAYKU4x/tbKzjmoeZFrxAUffnP93mbIqwAyefp1IA/qOozR5xXMg0VvU66znILDmvyZnL8SGFVZKnUM52AA9fGIr5p394E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785749880; c=relaxed/simple;
-	bh=wT77AwG/5IhkXQsQlzLm02T/cgJDxDhyW5nDWq6TTms=;
+	s=arc-20240116; t=1785749912; c=relaxed/simple;
+	bh=PPO1Z7cR0A3oMXranBdg/ArTRxdDHieZayCNYL7Eols=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g/fgR2GFS4SgR5Y5Ks1Wecsec73QiaPC6UqqctDxGK1UxeU6GpzdT6YGVxMtZbGn9qR1kFhUHS+OEfn2SyRIWlLTxp3pdCuxKsdZdNHplNGW+yqn+ebtNQVl+a2Wu9BdDq5dgfVetlolsHaC0rRZi2ECtrbaQM6cB7FB0mR1fbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TAkgW0AV; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=kiZdFYRL/ULD4ZFCYv+0JArX5tEtPooTgGK4RnrBn9oZb0n04L2GdBrtkniemK/YrkesbNvLtTGiQN9LuFfdocTn6p6HwtAvMrHWw6bbWKAPtf/iRRKEYSSO+J/qVNeKCeb3Z+E/TVw3UEuYSbxR5S6YssREH6Hv8yQQF61qr3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n1zVBGv3; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TAkgW0AV"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D04D1F000E9;
-	Mon,  3 Aug 2026 09:37:57 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n1zVBGv3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 618971F000E9;
+	Mon,  3 Aug 2026 09:38:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785749878;
-	bh=URXOGB9PVCS9cRHbtkrP3sDOtqeEJkyhutxbfxJdxWQ=;
+	s=k20260515; t=1785749910;
+	bh=+OGnCkpDzoe4UR8+dOoY6fjRalNg6uCxui90h5a0QhQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=TAkgW0AVy6GmjU2IfLvyDVex+kf0fIIg3bzuXw8ltl0wvCZI8OLiodm1MCX5MtJyT
-	 t5s3TMtajvagy2rtTbQnAn2XF/d52igzo+gtI9mAe19N+Vc1rQZnUHvCJZ7Pixq4/v
-	 S3qWXl4M4T2X7NG7FwEyKj/eJ3I3RXZWGzBSwcHuFoiIbBA0ssh6bpekEXhm/MafyN
-	 FRwN4UMX8tGWfibigLNypSSjzI44DmCCgLmN4pSg0m0tF3wlGyxNQji1FbHOM2SxiA
-	 9BH9iJ8/ZfzYznJUJudu8gmZW7IsIqaJzFYWY98TWcN7ktfEP5dRaxGyeLsJdoSiH9
-	 t5+nQYfxqVcZA==
-Date: Mon, 3 Aug 2026 11:37:55 +0200
+	b=n1zVBGv3utFpB1SXLLho2pEqpjksRZ7A9GJPjAq3xWQjDHJqYYkixmnOWYhSOni/m
+	 kHKZh2FsksG0idxEnvOwWKyBEKGtGFVVsSCQ+XwhjZjG+G9Q75MtRrT/5op2PCVPEi
+	 8UWkFSnIN6BMqYe+bIefoZCEpleTl2/Jqhv4SLFE6l0OYmAmbvArPDOFZiO5cSXbgu
+	 l+eCKcBiYTz4WpOZExdHtZX3f6Sodsrb2RjQMxziPclw3+siwljGoAZL3R0cbpYpNl
+	 S976cnuUOiAs50qiShNQbdwV1TULFLOJvEaUNVN+/pGAxMGK1E/XoHsH48bvzhEyQt
+	 K1qpukRvlHC0g==
+Date: Mon, 3 Aug 2026 11:38:26 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Taniya Das <taniya.das@oss.qualcomm.com>
 Cc: Bjorn Andersson <andersson@kernel.org>, 
@@ -37,11 +37,11 @@ Cc: Bjorn Andersson <andersson@kernel.org>,
 	Ajit Pandey <ajit.pandey@oss.qualcomm.com>, Imran Shaik <imran.shaik@oss.qualcomm.com>, 
 	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/6] dt-bindings: clock: qcom: Add GCC video axi reset
- clocks for Nord
-Message-ID: <20260803-keen-sexy-chowchow-c7b3c2@quoll>
+Subject: Re: [PATCH v2 3/6] dt-bindings: clock: qcom: Add video clock
+ controller on Nord SoC
+Message-ID: <20260803-observant-ruddy-kelpie-4f640f@quoll>
 References: <20260801-nord_videocc_camcc-v2-0-674d7718e41f@oss.qualcomm.com>
- <20260801-nord_videocc_camcc-v2-1-674d7718e41f@oss.qualcomm.com>
+ <20260801-nord_videocc_camcc-v2-3-674d7718e41f@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -50,20 +50,18 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260801-nord_videocc_camcc-v2-1-674d7718e41f@oss.qualcomm.com>
+In-Reply-To: <20260801-nord_videocc_camcc-v2-3-674d7718e41f@oss.qualcomm.com>
 
-On Sat, Aug 01, 2026 at 07:43:52PM +0530, Taniya Das wrote:
-> The NW_GCC video axi reset clocks are required by the video SW driver
-> to assert and deassert the clock resets during their power down
-> sequence. Hence add these clock resets.
+On Sat, Aug 01, 2026 at 07:43:54PM +0530, Taniya Das wrote:
+> Add compatible string for Nord video clock controller and the bindings
+> for Nord Qualcomm SoC.
 > 
-> Fixes: 06498d59bb4e ("dt-bindings: clock: qcom: Add Nord Global Clock Controller")
 > Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
 > ---
->  include/dt-bindings/clock/qcom,nord-nwgcc.h | 3 +++
->  1 file changed, 3 insertions(+)
+>  Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
 Best regards,
 Krzysztof
