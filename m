@@ -1,185 +1,174 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD11242123C
-	for <linux-clk@vger.kernel.org>; Mon,  3 Aug 2026 17:48:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64FB6431A54
+	for <linux-clk@vger.kernel.org>; Mon,  3 Aug 2026 18:08:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785779318; cv=none; b=C0GjjpxdtErFFaNrKQ/VjcuYzcXPDczn5nWI5QTJ4eLORBwSjMNtXlDm+rOOJVxfDloTA2/4b3r+2wZYm34Q89wlsGQUeIa7IJAiczz+uF+16OIEu+cOmKd2rrFTJbnP45SwApUNAAGwgkrptA0jJhgx5zEiVb/Cev0fdNMwo14=
+	t=1785780483; cv=none; b=h7n0Fsy9+nf2kCCW97f88vwCllE3cFvDHf1GHUNnXpm/YTbJSnBT3f5vVNMlBO7iw21r82go4mcs4Ej+5ULU/b7p19Ukpvy1Fxx42cjdSBX1tpyYgoRjOM2v31GW+S14W9onz04eFuawsVeyqsuVyZJHH4vwikwgoKFPzFlb+AY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785779318; c=relaxed/simple;
-	bh=qz7YCBMeFmwfqIQRWfN+FmRZ72NOsmo/ZZAIld/ipvQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HBxrfIh+8goSYcJ1oh3Zdfh34wrCyjVmy9A3/slVo4kNXhtcseQjnMJMe/RvmMJqTt4W9PxCwK6VxqRnoJhRNSuQsHYhkvEtols6HHihaAFEurHd2yIxXuXRXY9Vj/WqgatGvwyXvJ7f0D5EzCHSzxlD1fEQkgFGhD0mBUZOk04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=oNUu71fK; arc=none smtp.client-ip=209.85.128.50
+	s=arc-20240116; t=1785780483; c=relaxed/simple;
+	bh=BSB4UnGDRrRR4Js+ooR6Net/lkxWGmujNaDgBq+f7LQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YLAb5KpzwPWZdiBb7DZ6+i33Z4WuxRkaXYQFbz4JDp7Oi/5AiUwELSmYPYKtDtfWZGsIvn8/V99PBRwDaOkgUZGTkebm5DVovhF2NSUpz9ikN+YbH/oMCTMhPHunScs7rhXMsxxKWFQaCTr1ZJz8EckmAknZH5DNVz8MexWMmtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LjmE3mUj; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oNUu71fK"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4954afac04bso28221905e9.0
-        for <linux-clk@vger.kernel.org>; Mon, 03 Aug 2026 10:48:36 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LjmE3mUj"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-496bb7cdf51so24977485e9.2
+        for <linux-clk@vger.kernel.org>; Mon, 03 Aug 2026 11:08:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1785779315; x=1786384115; darn=vger.kernel.org;
-        h=content-type:mime-version:references:in-reply-to:message-id:date
+        d=gmail.com; s=20251104; t=1785780480; x=1786385280; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
          :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=HnDKjAsExIlIO6cGLAGlNzQp1IiRGZFjDF5mAKUFBPE=;
-        b=oNUu71fKbSrPlOF8J98E3ExdEeWbs7gcoApY1UAYspY6MSyG5smSxN86AKKaAN1vpG
-         ju+TmAm/zagDToky8JlgjFBZqa0jzHd94pQKYQV7V099Q9nH7dhvmVHgxdIvoqkfsXLH
-         luOc6N9VFCzjTPJ6Au7rWYoL5rcN954bYXhvYJ+X+XLLc0e4PVtr9T8ZZ6n+AFmimwxc
-         B/TmF4k8jGThMX3AfFj3dSAFRQRUlRkFRBd2BNm3Je7CfrJ7Y3eWdHdZt4MPhkG5skbH
-         jaOGRcWtnIIQWJX41keIXmR2rDsL9ButgCtJIlgM5lfYP3MgTjsdh59j3whdYP5noBdO
-         SnLQ==
+        bh=0FlevvmCUo3pvNfguYi3e7oT4YWOah6gzuJqciMeBMs=;
+        b=LjmE3mUjq6jLd5mECQOZZYOr8K6NcfXvT5vKx54IlkuOOV6M5dUfUJBLcOPR0r2CXw
+         EVDkWgNGwJonlzUDNNfQvxoIJiJObswXQwB0Skix/yNgItUvSX64M5nn8EdI/MCHNaqt
+         VvIrTyA8yXHgwvFRre+DOiC/OkvCWy5OcoFRukryyk6DjE2fLhBtWijpW8dXcoSJrhm+
+         kCgy0YTTILh10PbsPr94p4cZCHB1Yna+h/gx1MC8MPTveP8RGLwhBrRdwig4VOZfIF+M
+         WrH6mgizx8Q2o/I/PPOmqMAwmyLjQPHSUT2enlmqhK3vztOFKT7Gsfb9UApMmOQFI/dF
+         ujug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785779315; x=1786384115;
-        h=content-type:mime-version:references:in-reply-to:message-id:date
+        d=1e100.net; s=20251104; t=1785780480; x=1786385280;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
          :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=HnDKjAsExIlIO6cGLAGlNzQp1IiRGZFjDF5mAKUFBPE=;
-        b=nq87FbTs0Ik7AaCiN8ah0s+u/Sm9FWtQYlovqotJLpCrTF/OKbWBJ9OO0w+IboubG8
-         vY27YE/oS4+OhMhnKDLnUNns0G7jTdM/mbjAzWzkdHx81lQKc/32b/TXQSHI+UOd0yGX
-         8ha8pxNcSpF/ou3uuCCSaNFRuVpr67XIQn0k17SMItfaFXOdWBvOhRgPKwQgY8rHynqf
-         japx7Aq75ijO+KKreub4u8PF2o9UtAZ+Ej8GITLLc327YEb493QjpMQ3Ytb/NI5Rcq2M
-         Ad2yevdms9gsl56YAkzsAFqQZKclpqW4MdkE8SC+nTVC9W1ZoYHgMKuca5554hWQW+EI
-         ZkFw==
-X-Forwarded-Encrypted: i=1; AHgh+RoFQal9KApfZjpD2xRc7ew/ZZNYI1trZxXDh3Nw0c/7ir3l2vM3RPwoBkhC4McVi0uRsX8To0DFrXI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfEeAYKFE24y2CMMk3fHMz0nl+5xtK6zkC2N1uy9HSxOK5jpPs
-	UgFjEy4Bci/+5kigMwV/x79QeR8vF+mG3KhJRcJV53b/yHpFDncYKVZq
-X-Gm-Gg: AR+sD13efaulBHF4e/ex5qxH6r2BYyxZFTO9ScjAdlquW8Ih+BIqG7wsXp3RjmBMoOK
-	XyUR3EQ+UYhnK67951JEZZ8d9j6ZCNhzoBaTQLNt+fVjStBiGVjNwaUrAq+IsN5Hq9WUWvY134c
-	nHeit/Zqtd4CnjOHvecbwnbI0JL3RhpsU5yDLXE7wmLDbMhZdYB+jNdkUt+z0NL1rQPfYU+Ceec
-	PcoYJ3pKlTHgI+JqBVpmYhNv+C1BBTAcVmYuYbU5/FhDnGsrN3RuW+bBPHvLBi99jRZeHvZ4cTP
-	TxrNylq47pSgtJmdrePdyvvjy4rNGHr+FxH4vWO2NxEuhD8uullTx/cNhJ1brpkNHYv7VghAzAz
-	FPpH8VvDGaq1v92vFLAPOgR81SmkQxR7lJ9XPwgQs54L115i1oHapdAdR2oblHHQa1WtjHJSzxX
-	1ubvlMSc1gjcECMNwKTNCDqHQgSpM7rv1j+zRtMFWNMUqK0NuqpOhdQf4BWV8tNLsmRCLSAF2cQ
-	A==
-X-Received: by 2002:a05:600c:314f:b0:495:4572:21af with SMTP id 5b1f17b1804b1-4980c673252mr206970055e9.9.1785779314611;
-        Mon, 03 Aug 2026 10:48:34 -0700 (PDT)
-Received: from strix.localnet ([197.250.226.155])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49807b5b4a2sm295532795e9.1.2026.08.03.10.48.28
+        bh=0FlevvmCUo3pvNfguYi3e7oT4YWOah6gzuJqciMeBMs=;
+        b=R4CEVIRW7AeWPoxa17hYNmTysKS0xWCcbNKkd07v0HtbGoxBHS29lK7R8VQ6d+7Ynh
+         obxPpTwoHDw7rTijiyqMjv6uL905Z0wW/0ughAzCyPyajoDChI+IZ5jKy6d4kZGVvMxT
+         4cMegHZYJ5lebgnqUUVu1LOTTNFR1lWFquYFuViW+t5PCLtA9canUsZC5y5Vc320NzaQ
+         C//YictsgfgZoedoXqQmXp14bhostXabc5cRSvkGHsG8ELRnO3tF/xIRYZUxmSrllAdQ
+         DSH8vtWKrmkCOBLrPbZ26ivp+wvsCcTBV3B21FD8bs7vPYY8g++6lVn61LOSk66QOxjd
+         djfQ==
+X-Forwarded-Encrypted: i=1; AHgh+RrEOCwqaedhgg2fWIM70wvLDrnkAs8jpQw28i+5UosOZWdX8Bkyqp7D8B8NcKLqV6+Z/USSo1Jbp4k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznpMo3YhuqK4YzHHKcj6hpl80h46K9QXUjAau7MW8/XfiNbVK1
+	6+fi7iQrUyysa4Df6f60p5xeCR7A5bMGuRTQPajjxR2eYkd80qnyePzF
+X-Gm-Gg: AR+sD12APbpp5cnXwU3/K+W2CnvldueOOI3QhpChdGaGu/XQnw62MiAH9t36TB8+cVE
+	kuoHK4G8kW38huMuM3c7XqMtOm+RQBwiAtUlYxyv54CPGjJP7Bu2ZFIGwkOcv5ygBPH5GI/gYfV
+	qFZ0bHJuXTU5odgfI0k0z6KBmP/GTVhXBjvY6/ZSUnZUbMWSSc6DUl6qQfWfl9RVXWmHOiTBSK7
+	Qpq/cwUxVUaUAI79hQBWpC7h+cITDUeLckdeowQUGU9yWGxmvbsA572XYgfVKmwVlL1SmQt8PUO
+	u1xaSHeeWLFBG0NBlHLzJih+r7ixZTCatwQ7Nyos6M5x+5BWE0dp2QWvjumlYOKMaDxXZLb0poO
+	CX2wr4PfTH0I80CiEYDI6dv8EMYV61vVFxXyzcey4WXmevq8KA7W5GOsZ9CpIzjmHx/v4BP+kyK
+	Er20uPi1zA28YvOEl67Pxz4Yd7BkU8pcKVvidnKuZLgaOepqtIcF8tLUsnHNDUGyhX3Jor8ZhLj
+	GzPAW7IHHak5UnfKRziu1w=
+X-Received: by 2002:a05:600c:6209:b0:495:6396:8b67 with SMTP id 5b1f17b1804b1-4980c649f67mr273458325e9.4.1785780479424;
+        Mon, 03 Aug 2026 11:07:59 -0700 (PDT)
+Received: from localhost.localdomain ([2a0d:3344:2841:7708:a101:2b8a:f76:a00f])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47fd42d91b3sm37950955f8f.14.2026.08.03.11.07.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Aug 2026 10:48:33 -0700 (PDT)
-From: Stefan =?UTF-8?B?RMO2c2luZ2Vy?= <stefandoesinger@gmail.com>
-To: Brian Masney <bmasney@redhat.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>, Vinod Koul <vkoul@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Russell King <linux@armlinux.org.uk>, Lee Jones <lee@kernel.org>,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-phy@lists.infradead.org, mfd@lists.linux.dev
-Subject: Re: [PATCH v9 05/12] clk: zte: Add Clock registration infrastructure
-Date: Mon, 03 Aug 2026 20:48:18 +0300
-Message-ID: <ky2t5IqOTfWMdfZsXE91Gg@gmail.com>
-In-Reply-To: <anC72Cf1zKcLYWlC@redhat.com>
-References:
- <20260802-zx29clk-v9-0-d05530d85d28@gmail.com>
- <20260802-zx29clk-v9-5-d05530d85d28@gmail.com> <anC72Cf1zKcLYWlC@redhat.com>
+        Mon, 03 Aug 2026 11:07:58 -0700 (PDT)
+From: =?UTF-8?q?Juan=20Manuel=20L=C3=B3pez=20Carrillo?= <juanmanuellopezcarrillo@gmail.com>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	wens@kernel.org,
+	jernej.skrabec@gmail.com,
+	samuel@sholland.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: andre.przywara@arm.com,
+	bmasney@redhat.com,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Juan=20Manuel=20L=C3=B3pez=20Carrillo?= <juanmanuellopezcarrillo@gmail.com>
+Subject: [PATCH v2 0/3] clk: sunxi-ng: fix the A523/T527 GPU clock model, enable GPU DVFS
+Date: Mon,  3 Aug 2026 20:07:52 +0200
+Message-ID: <20260803180755.288793-1-juanmanuellopezcarrillo@gmail.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPartnWZPMUIwR7W-Gw2dYxPvgg";
- micalg="pgp-sha256"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
---nextPartnWZPMUIwR7W-Gw2dYxPvgg
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
-From: Stefan =?UTF-8?B?RMO2c2luZ2Vy?= <stefandoesinger@gmail.com>
-To: Brian Masney <bmasney@redhat.com>
-Subject: Re: [PATCH v9 05/12] clk: zte: Add Clock registration infrastructure
-Date: Mon, 03 Aug 2026 20:48:18 +0300
-Message-ID: <ky2t5IqOTfWMdfZsXE91Gg@gmail.com>
-In-Reply-To: <anC72Cf1zKcLYWlC@redhat.com>
-MIME-Version: 1.0
+Hi,
 
-Hi Brian,
+v2 of the A523/T527 GPU clock series.  v1 is here:
+https://lore.kernel.org/linux-sunxi/20260719211319.982285-1-juanmanuellopezcarrillo@gmail.com/
 
-Thanks again for the review!
+The GPU mod clock is not a linear M+1 divider: the M factor masks M pulses
+out of every 16 parent cycles, so rate = parent * (16 - M) / 16 (T527 user
+manual v0.92, section 2.7.6.58).  Modelling it with ccu_div programs a faster
+clock than requested for every M > 0, which is what mainline does today.
 
-Am Montag, 3. August 2026, 19:03:36 Ostafrikanische Zeit schrieb Brian Masney:
-> > +	/*
-> > +	 * Sanity check: Make sure all parents are there and write a clear
-> > message rather than +	 * leave potential orphans.
-> > +	 */
-> 
-> It's not common for clk drivers to have a validate function like this.
-> That said, I know you are reverse engineering what's in the downstream
-> BSP without documentation, and there is value in having this. I think
-> it'd be useful to clarify that in the comments because code usually gets
-> copied and pasted between drivers over time.
->
-> That said, once it's verified that the clock tree is correct, can these
-> checks be eventually dropped so that this validation logic isn't ran on
-> every boot?
+Measured on an Orange Pi 4A with the Mali cycle counter, the OPPs labelled
+150/200/300/400 MHz were really running at 487/648/560/750 MHz, and thermal
+throttling to "400" actually raised the clock to 750.  With this series the
+same measurement gives 149/199/300/399/597 MHz.
 
-Yes, I plan to remove it eventually when support for the SoC is more mature. 
-It has saved me some head-scratching as I have been working and re-working the 
-clock tree. I'll clarify its driver specific role in the next submission.
+Changes since v1:
 
-Another option I contemplated is wrapping it in #ifdef DEBUG. What do you 
-think about that?
+ - Dropped the pll-gpu reparenting notifier (patch 3/4 in v1).  I wrote it
+   when the plan for the higher speed-bin points was to retune pll-gpu at
+   runtime: it parked the GPU on the fixed pll-periph0-600M output while the
+   PLL was being reprogrammed, so the GPU would never see it relocking.  That
+   plan has been superseded.  The maskdiv in patch 1 can divide any parent
+   down, and the speed-bin work on top of it (first follow-up below) pins
+   pll-gpu once via assigned-clock-rates and reaches every operating point by
+   moving only the mux and the divider.  The PLL therefore never changes rate
+   at runtime, the notifier can never fire, and gpu_clk deliberately does not
+   set CLK_SET_RATE_PARENT either.  That is how the 696 MHz point runs here
+   today, with no notifier.  It would only be needed again if a future series
+   reprograms the PLL instead of pinning it.  Chen-Yu, you asked for this
+   notifier in the v1 discussion: tell me if you would rather have it now
+   anyway and I will put it back.
 
-> > +struct zx_clk_export {
-> > +	unsigned int priv;
-> > +	unsigned int binding;
-> > +};
-> 
-> Sashiko flagged this as unused.
+ - maskdiv: honour CCU_FEATURE_UPDATE_BIT and CCU_FEATURE_KEY_FIELD in
+   set_rate, clamp determine_rate() to the request bounds, and document that
+   CLK_SET_RATE_PARENT is not supported.  These were folded into patch 1 so
+   the new type is correct as introduced, rather than introduced and then
+   fixed.  They also address the two issues the CI bot reported on v1.
 
-Indeed, that is a leftover from earlier - before I realized a simple unsigned 
-int[] does the job fine.
+ - The GPU OPP table moved from the board .dts to sun55i-a523.dtsi, and the
+   operating-points-v2 reference now lives in the SoC's GPU node (Chen-Yu).
 
----
+ - opp-microvolt now uses the <target min max> form, <900000 900000 920000>:
+   900 mV is what the BSP universal table specifies, and the 920 mV ceiling
+   covers boards whose GPU rail is a fixed 920 mV supply (Chen-Yu).
 
-I have a long-standing question about tristate/module support for drivers like 
-this: I don't think the driver can realistically be unloaded. I have been 
-testing driver unloading by removing the UART clocks from the DT (otherwise 
-the clock driver is busy) and marking all clocks critical (otherwise 
-unloading/unbinding will shut down the UART (and more) and lock me out of the 
-system).
+ - Rebased from v7.2-rc4 onto sunxi/for-next.
 
-I have made it tristate because from early research into clock driver state of 
-the art I gathered it was desired, even for drivers necessary for fundamental 
-operation [0]. Did I understand this correctly? It also uncovered some linking 
-errors that weren't obvious when compiling the driver into the kernel.
+Tested on an Orange Pi 4A (T527, 2 GB): rates verified with the Mali cycle
+counter under load, thermal-emulation throttling exercised, no job faults.
 
-That said, I'd prefer to mark my init tables discardable with __initdata and 
-think the module load support is going to go untested and bitrot over time.
+Two follow-ups are already working on the board and I can send them next.
+Tell me which one is more useful to you first, or if you would rather they
+waited:
 
-Cheers,
-Stefan
+ - GPU operating points above 600 MHz, gated on the SoC speed bin read from
+   the SID.  This chip is bin 1, where the vendor table sanctions 696 MHz at
+   the same 900 mV; it has been running games here without job faults.
 
-0: Chen-Yu Tsai's tak here mostly: https://www.youtube.com/watch?v=d1VIAnVb3hI
+ - The A523/T527 CPU clock unit (ccu-sun55i-a523-cpu.c) and the generic
+   sunxi-ng fix it depends on, which is what cpufreq needs on this SoC.  The
+   DSU/L3 clock lives in the same unit.
 
---nextPartnWZPMUIwR7W-Gw2dYxPvgg
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
+Juan Manuel López Carrillo (3):
+  clk: sunxi-ng: add cycle-masking divider (maskdiv) clock type
+  clk: sunxi-ng: sun55i-a523: GPU clock divider is fractional, not
+    linear
+  arm64: dts: allwinner: a523: add GPU OPP table
 
------BEGIN PGP SIGNATURE-----
-
-iQJPBAABCAA5FiEEQxb0tqoFWyeVMl1sPRO8yFRPGiIFAmpw1GIbFIAAAAAABAAO
-bWFudTIsMi41KzEuMTIsMiwyAAoJED0TvMhUTxoi7TkP/05WuGUn0opY7QQ8sZB6
-OuKTG5SinWEzjuroAKgG/nD8WOveL+GRtp0cJ8+CUdvw0WpzZQeuRnSX/zDbSvXa
-2G3pIBOvMcd0MOBBaEHUAtOHArZybsIuoFTVTzsaAYyHf2B7cc7KVbJZWRztmYSH
-Z/OUYaxPHYoD6cHC4FlSNHyJplDqLj0LpgZOwY4zP0jaWLbEJpkCTK9Izl+ZIB4N
-Q15I4WFfnyUi+J+3/mM3Rl4UYrS0U55ydarl5Io0PUsY/ORocxQY7jhXTvFyVmGV
-xEythQnLVsvYici8F6d1tA/VcdG5jbo/JxRgrG53yGGuZX7x31CampUCrUOJRJ7t
-bMsQwZz/VwpxL11Pg92G9bI3mzCHb+CZDRLT5zh+DN8cOkF5u4GBnI0CPKaqFAdw
-deFt0WVnrrosFn0Vf0p17OrTiycj+f72S3L97DLCiH+0A02LR5XC6rxe5ia0xsFj
-zXVl/z67OSLLN+g00eH/Gm7t6wSmRHdNY8QYBxaoIfY7NSPC4sfAm0BPcRfOtHEe
-aN2QkZlUqy6LOPzLMKJXsVo1oXp94QXx5YgJpObLC1OH2GasPwX+teqCVXGyJZpt
-we0fT64SnRaq5A4TfIcEcb2QJZUmH6znzcgROxCXZIJ1Dla1nW0ASQlNw2z5btj/
-bbygfsidb6/n+WxVmEd5JJI+
-=Lf/s
------END PGP SIGNATURE-----
-
---nextPartnWZPMUIwR7W-Gw2dYxPvgg--
+ .../arm64/boot/dts/allwinner/sun55i-a523.dtsi |  30 +++
+ drivers/clk/sunxi-ng/Makefile                 |   1 +
+ drivers/clk/sunxi-ng/ccu-sun55i-a523.c        |  32 ++-
+ drivers/clk/sunxi-ng/ccu_common.h             |   3 +
+ drivers/clk/sunxi-ng/ccu_maskdiv.c            | 213 ++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu_maskdiv.h            |  76 +++++++
+ drivers/clk/sunxi-ng/ccu_mux.c                |   2 -
+ 7 files changed, 349 insertions(+), 8 deletions(-)
+ create mode 100644 drivers/clk/sunxi-ng/ccu_maskdiv.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu_maskdiv.h
 
 
+base-commit: 859c0e1925332d413ca8f9159c8ca5d04eea32a2
+-- 
+2.47.3
 
