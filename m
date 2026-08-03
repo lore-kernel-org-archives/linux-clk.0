@@ -1,113 +1,118 @@
-Received: from sender4-op-o11.zoho.com (sender4-op-o11.zoho.com [136.143.188.11])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D85028D831;
-	Mon,  3 Aug 2026 13:25:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785763537; cv=pass; b=PRxcUX/VME+Iwtk6OSflbr1bh7RunztCV/LIBUfLOt5w+3p0WIv9O9FpYiBH2geeCHWTHimake4s7XZ+KzKK3j4+Lgb9QSCnvNnTuIC8ZCZNj7QX3/rnu47OMPEukMnfSEGDZWdyiLcgt3uoGrh3lHkg04QHMnNG2ysgA8CW/Gg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785763537; c=relaxed/simple;
-	bh=lQ7W80MyLGC4g6TQVRHVS4jqxiCOFRgPhA4MHHto2h4=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=HbutwilvEsERANRuq5OXKgbj2HcfRakz+CJUngs5/NSd02Nlb8SREpCZzfnXOJ6ShzEFmslxvvq2eukQUuuuBNKcOeyFXEmdnrlm04ef7i6e+S3lw082rzCL5CjcJTI8lEn2QLLy6mzhqyPI+kSBBe0KXUdqwsmjViR/IQLCYXM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=C2BVDXKK; arc=pass smtp.client-ip=136.143.188.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9F6A40A940
+	for <linux-clk@vger.kernel.org>; Mon,  3 Aug 2026 13:29:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1785763751; cv=none; b=VwGVbs/7edxZpQe7184DyBSIBNqxgqyeM3SifBdyfYbc21gaSc6niLQb1nAy5+d0Htk0qLige0P8jCb7HyG4QCjNvCyCzwtX54jXg+gZ81/pZRfhooWjba1KgZ8SGA/I6OiGetkn7NYxXT4zJ5SP16ueZCrRoQGpmyOk0rrrm40=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1785763751; c=relaxed/simple;
+	bh=rt6cpLyEfLztXWT5RtkrHWdxHGWl2vr2vrgJc6Px0Zo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U/uyQKjbRvEoZiF82J2QbY4XeL+TDQhrzQXMUl1ufCgujOVPTVFw79C5ck+AHCkD4FnhCvP2r4vN9uqCHTJJMUUypt52K+v6ZfzE6m1wtUu2LpRWdmwWgryH4FpXEuJL9nj+1JHv4XKeIgFpJkg7JabrFgGr6Zfv9TkH70x1D/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eHcLeE3N; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=r1vTWRoh; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="C2BVDXKK"
-ARC-Seal: i=1; a=rsa-sha256; t=1785763466; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=iQda+jXa4ObWd1OpAuOfe8pVvgRFkZcFAhHlQVrSgVPc49t25B1clVVSA2q8yt1BMqT1ETiDUJKcEk6JFPydngJtZTsRQ+mJTDYMDiraUs5nah1xlEwQSLgaC3gvzl/bim1jYqDLI5Y2Fqpiskdei4r+H5HuoO9rqzq3vCP22W8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1785763466; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=lQ7W80MyLGC4g6TQVRHVS4jqxiCOFRgPhA4MHHto2h4=; 
-	b=DQO+XsfpR4SuneJRvJMVC1mIiH+N/OrSB7YkVAKjfdxuP0X3shK7JVCGRTrHB1b5J8oyBWsg4Sy/KUXbK0zRQto5y/Kc7iQgkawU2WSYTi4JrLpJfmyXoAZ21EvXmwqYkFszWPRIh/uMwSfvz87Q+EcQLhyt74KWmMddIDxqef4=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1785763466;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:To:To:Reply-To;
-	bh=lQ7W80MyLGC4g6TQVRHVS4jqxiCOFRgPhA4MHHto2h4=;
-	b=C2BVDXKK+fe1ExBLpGmi9cFtGO/+HeSpprIrmumVp09xPwoaNmpviVgltTRkd+8f
-	9/rwc0v3QEmaWg15gQzCjpdVCq2sL+g4WGiy4yANNvkx70g2YbDmvvuW5bM5f9PIldB
-	smcOO220uadEIoYOO+35eQt2Qzrxg24+3mCkTzwo=
-Received: by mx.zohomail.com with SMTPS id 1785763465078767.4008380254238;
-	Mon, 3 Aug 2026 06:24:25 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eHcLeE3N";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="r1vTWRoh"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1785763746;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cdgp9gIIOAfbXbEpWUgB8/qfQM0ZVMZfTtpI1Q0lJU4=;
+	b=eHcLeE3NQxgkb/KozsggjAwa4dx/pCKH86DCLbj83ZXrUKlZMSX8pJet9nNegRaa8ugoMt
+	Mq5kcNrsjv6hoE82kvl2xaLS2iu0s7mVmtjxcExyK4KKtTr581pG/VjMLSNo0nTYuaIU2U
+	fK6Ta4+upkXbj7nDspfEy9v4/KIoD+c=
+Received: from mail-yw1-f199.google.com (mail-yw1-f199.google.com
+ [209.85.128.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-62-n7egSDczN7KxP2KKUfZTqw-1; Mon, 03 Aug 2026 09:29:00 -0400
+X-MC-Unique: n7egSDczN7KxP2KKUfZTqw-1
+X-Mimecast-MFC-AGG-ID: n7egSDczN7KxP2KKUfZTqw_1785763739
+Received: by mail-yw1-f199.google.com with SMTP id 00721157ae682-81e6bb29581so122845457b3.2
+        for <linux-clk@vger.kernel.org>; Mon, 03 Aug 2026 06:28:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1785763739; x=1786368539; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:content-type:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=cdgp9gIIOAfbXbEpWUgB8/qfQM0ZVMZfTtpI1Q0lJU4=;
+        b=r1vTWRohjkAnSFYC9Bv90N/gg0Wqzm0YcBwvp7/4ECoux3OV5OJs2K2CXc1Bhnevdw
+         YLlqMzYJK3IEUA2BtpNnwo5DHD3Gos0JHPyXgYGgEp8b6HrCQ2SU0SBD6CQkNFBWQnlC
+         Vhb852GR9fazaixGCNunpiMU0YXOBHIuweA/5iTmD1YBMJbEbjVozOnWG3vbG90tslAy
+         L5c0OMYZ3Xl15H2BOc2F5YCIFd/14w5IIqXvofaHt5Cz3kQxgKIC8bX4EfVIjVU1AVE4
+         f43nMtFZ8FcjxW69o7z/3P0/odfkoVqacQE0csVNPVqzRUxfKk6KW80hk0PezyUKxZRD
+         woxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785763739; x=1786368539;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:content-type:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=cdgp9gIIOAfbXbEpWUgB8/qfQM0ZVMZfTtpI1Q0lJU4=;
+        b=Id4USd4W9EGrBOc8RB5frB02aZCSfifKCGYnbNGuJODs2PCEzHNrDSvKl9mh3jnknl
+         d9HK+6zOrQ6dX6CjYnK528FEysI5d0gfHjBVaKVp8e4XArfHzuOS1ROzh7jZdX3lMQSQ
+         +TstafeiAhTOznCtCK50ZZlTPk0NrKwXl8GOMLMMUZuDUZ5f16aM8HC7zGTHmzfbOXcs
+         saWQW70diGjFbl/iaCZMhyC12LW6MLCzd0HZABge2dnuvnbznLTmNT8qTbSHs2IXd5Xv
+         b6vpeI7mYS7E7sXIJh69rFbFquQy4WBPonfv/6O3iQRleCKXCP+yqipfuNtHMO3E+1Vx
+         yn9Q==
+X-Gm-Message-State: AOJu0YwDPrIv3gzqb0lg62NvYCWAhsto5DlrzcOMqmaOywXYu8nd6psW
+	udFXMFzDlZ82FzhwsmL12YWK9Q1Lb08Stv6UZ5MBHYsQizXl+px69v7fAyCwNcg/zkXOJ2F9100
+	nC4lXLnxAIDjrtzsrcxYEBGOEx17dLnXsgG7UyiHAuZZRGEJ2P7i24Ct4Kw/WvQ==
+X-Gm-Gg: AR+sD12DLsjQCVQLCp8Qe1tPKe/CkBC7/4QamBdKKGJ/F2fYSn+jR+CeMSbF/4DfO6l
+	OSEjlhFsECKUusa4z2L8cXbbVfqsPty66nqgitYEcMK/s0sAqIqvTodyPCmRHvzFYO6vsDIGLLF
+	mqqVO8UUnY9yRVxBxuB5+MsrWVI7YWt8JhdA/YgUNLYgnzDXM2m1bH9tCN0mlGlRLONobO/DTVS
+	/ew97DJYQ6fm1wQBpeBXpnofrBrYduPEIzYI1Va1D2Hallf1VZUXTaY0KwX9bILj9u9yHLlEQGW
+	gSSzsmHtA4ie7VCSxuycICcLFY2DAXslYdCNliy/7U0lKE8PN2dy+vApU2daHh0NhQ6aYt/xApK
+	WOSMSRaPlICuUSXwcjqscfgrPkEWeEU0I3Q0=
+X-Received: by 2002:a05:690c:9981:b0:81e:8577:d044 with SMTP id 00721157ae682-81fd4c3a213mr122859567b3.35.1785763739397;
+        Mon, 03 Aug 2026 06:28:59 -0700 (PDT)
+X-Received: by 2002:a05:690c:9981:b0:81e:8577:d044 with SMTP id 00721157ae682-81fd4c3a213mr122859327b3.35.1785763738931;
+        Mon, 03 Aug 2026 06:28:58 -0700 (PDT)
+Received: from redhat.com (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-81fcd164474sm55597127b3.48.2026.08.03.06.28.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Aug 2026 06:28:58 -0700 (PDT)
+Date: Mon, 3 Aug 2026 09:28:56 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Onur =?iso-8859-1?Q?=D6zkan?= <work@onurozkan.dev>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	mturquette@baylibre.com, sboyd@kernel.org,
+	daniel.almeida@collabora.com
+Subject: Re: [PATCH v1] clk: devres: fix cleanup in
+ devm_clk_get_optional_enabled_with_rate()
+Message-ID: <anCXmGAFMnBl4dIt@redhat.com>
+References: <20260801111637.304590-1-work@onurozkan.dev>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH v5 0/4] Clk improvements
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <anCSTCxDpFtKmOgj@redhat.com>
-Date: Mon, 3 Aug 2026 10:24:02 -0300
-Cc: Maurice Hieronymus <mhi@mailbox.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Danilo Krummrich <dakr@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Drew Fustini <fustini@kernel.org>,
- Guo Ren <guoren@kernel.org>,
- Fu Wei <wefu@redhat.com>,
- =?utf-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>,
- Miguel Ojeda <ojeda@kernel.org>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Trevor Gross <tmgross@umich.edu>,
- Michal Wilczynski <m.wilczynski@samsung.com>,
- Boqun Feng <boqun@kernel.org>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- =?utf-8?Q?Onur_=C3=96zkan?= <work@onurozkan.dev>,
- linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org,
- linux-riscv@lists.infradead.org,
- linux-pwm@vger.kernel.org,
- linux-clk@vger.kernel.org,
- rust-for-linux@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <B6441EFC-C2E4-437A-9FDF-F18E2CAD36C3@collabora.com>
-References: <20260706-clk-type-state-v5-0-67c5f326a16c@collabora.com>
- <20260731183735.15036-1-mhi@mailbox.org>
- <E20E4FD3-F4DA-4029-99F7-DB4F93AA2994@collabora.com>
- <anCSTCxDpFtKmOgj@redhat.com>
-To: Brian Masney <bmasney@redhat.com>
-X-Mailer: Apple Mail (2.3826.700.81)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260801111637.304590-1-work@onurozkan.dev>
+User-Agent: Mutt/2.4.0 (2026-06-19)
 
-Hi Brian,
+On Sat, Aug 01, 2026 at 02:16:34PM +0300, Onur Özkan wrote:
+> devm_clk_get_optional_enabled_with_rate() registers its cleanup action
+> before setting the clock rate. If setting the rate fails, it attempts to
+> disable and unprepare a clock that was never enabled. This issue was
+> spotted while reviewing "rust: clk: add devres-managed clks" [1].
+> 
+> Register the cleanup action only after successfully preparing and enabling
+> the clock.
+> 
+> [1]: https://lore.kernel.org/rust-for-linux/20260706-clk-type-state-v5-3-67c5f326a16c@collabora.com
+> 
+> Fixes: 9934a1bd45b2 ("clk: provide devm_clk_get_optional_enabled_with_rate()")
+> Signed-off-by: Onur Özkan <work@onurozkan.dev>
 
-> I can also provide an Acked-by here for clk. I'll admit that I'm not a
-> rust programmer yet (planning to learn this coming Winter), however if =
-the
-> rust maintainers are happy with this, then I'm good.
->=20
-> It looks like there may be some outstanding comments on this series =
-just
-> skimming the comments. I'll wait for the next version to leave an
-> Acked-by.
->=20
-> Brian
->=20
+Reviewed-by: Brian Masney <bmasney@redhat.com>
 
-Yeah, more people chimed in :)
-
-Cool, I will ping you again when I send a new version.
-
-=E2=80=94 Daniel=
