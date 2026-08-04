@@ -1,89 +1,93 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 714332C027F;
-	Tue,  4 Aug 2026 07:49:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785829769; cv=none; b=Zp2uf1BmLbIeXz2btuoSES4U+ZPvOK1DdAVxEMhvQVdsYWwY4HkrloJegIQT4v4PEbk85XC3gkdSuwHBmcgdfC04wPfZ6QLV60YFDL3ccXB32P3NplW5gxukwj/kuUGLSARSBMe6OwIyBcqg8dhW37ejRNtxuAsCazv1ScypeBs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785829769; c=relaxed/simple;
-	bh=hZwkU4v4ZgiZYw7xukxF2CsRmRDO+ILQy+qfT5G5aYM=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76A3B436BC6;
+	Tue,  4 Aug 2026 08:11:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1785831068; cv=pass; b=DjSBti6igX+vvi5OdDg+LZm6q3F1xYPF/tYfbRKLb9B0TCaP9eFbc42poIdFs/V+U+vz/7Jt3gm/+LcPRlzejs7Ee+0sTwmI4M4FybmGMOZUqXS2QyFQD5GOrb+vcAhbo8EPUWXlBWl6LL6udM6ktMPWbfDRyTG2yOS73ZoHuBU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1785831068; c=relaxed/simple;
+	bh=6iE1had4Tg/gR0N8etf03PCwEV/trK2r9t6ymr9IPEg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fQk7GmXLBzyYUzGkxu/tuhqLmx4pZc+UULI0UEM936iV1zpuVpaupBmbm9dvFPgzUcv1mrnJGPb/JS89UZkzBC4YvFxAxcEITttwMPWmG5UbVSFdeTuQBXjTA0pERAe/bQVe/T9FCVWp/UcJGdLVNn2ICHYNkUTC5P6ofpFk/QI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nZZbY807; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=GacXaN2FSonCsNbDBFrpZKEh699Vreq46ER/pu9ndfNhcwxWyyKFhrZ7oBkfT0NiexUidbPv7ejskg/9Mpn/s6/JJmdD+bMrQM2JsXWT4cHljuWl413AWD9q1dpPiXejLSQvkjQpnRTtPyFoEddED2mi9xpCZRLgpGTNrMNkcSQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ziyao.cc; spf=pass smtp.mailfrom=ziyao.cc; dkim=pass (1024-bit key) header.d=ziyao.cc header.i=me@ziyao.cc header.b=ak86VaXI; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ziyao.cc
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziyao.cc
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nZZbY807"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24E8B1F000E9;
-	Tue,  4 Aug 2026 07:49:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785829767;
-	bh=09V/+Tk+VUYyHEsKIEpjSsvjFczTBQklJUtW8tDxN40=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=nZZbY807QBLDeIGpVjtLhBD3Qim0BG2MP7WgzB1rl8HUQ82njtk7SHKnNbVs8KMO6
-	 xPfAcSgHJZiyRj61ezzMmuD0bzOuip+yu/ER+uKkpSO4Dv5hhDZKEUCrR/iuGVV6WZ
-	 i9whdXo+kaydNrgQrafA88PeqFo+qEar+8hfxDZdJkhnlDNUyr0em6Z80fW/KcluXL
-	 x6IPZJzKYFU0Ubur5A5rm+6YYQMJOCF4j2FgQ7TQAROpZhEZ5sBjMzNx811yALSP0t
-	 ClNjoHmZffJdYRALvcOZkxB93GVt1eYJ1JFGJVbJ8ZQlbmVEY7kRniwVpKDGkxKFyS
-	 Zj0uyZllRTn6g==
-Date: Tue, 4 Aug 2026 09:49:23 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: genevieve.chan@altera.com
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Dinh Nguyen <dinguyen@kernel.org>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux driver reviews <linux-drivers-review@altera.com>
-Subject: Re: [PATCH] dt-bindings: clock: agilex: mark mpu_l2ram_clk deprecated
-Message-ID: <20260804-excellent-electric-yak-d2de63@quoll>
-References: <20260727094926.1124-1-genevieve.chan@altera.com>
+	dkim=pass (1024-bit key) header.d=ziyao.cc header.i=me@ziyao.cc header.b="ak86VaXI"
+ARC-Seal: i=1; a=rsa-sha256; t=1785831029; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=QLFfD1V+4nQg5tkAgOyb25zWmDiwfVkh8QfkmFdrnqGMcSwbIwPPlhAEo3ufL4bhC0xieYoX+UbpBE4xWj8Ol5hJ4T6CliKdqgWlraL3tAuylSRDfdCPfPsyi8nOXkzLvNg4tYBRDPfuKSDUkWRCJLE+6ZYxq3i2TflWI67SGUA=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1785831029; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=6iE1had4Tg/gR0N8etf03PCwEV/trK2r9t6ymr9IPEg=; 
+	b=KwbX9K3oE2geWJjVPNeiMO56FgO9ztodEKLXzVYpB8HTUdTwS3bAt5iiJ7K+dROFUfGO2h4CBW3bLslrAQ7Y3OpddqDvV+ZM3SuQSr74Yukc5YUon4OyR4Un1WwQsqduui3RbblU8Bqj90ec2e8YKB9uM8kjykW8RibsEbmRtmQ=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=ziyao.cc;
+	spf=pass  smtp.mailfrom=me@ziyao.cc;
+	dmarc=pass header.from=<me@ziyao.cc>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1785831029;
+	s=zmail; d=ziyao.cc; i=me@ziyao.cc;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=6iE1had4Tg/gR0N8etf03PCwEV/trK2r9t6ymr9IPEg=;
+	b=ak86VaXIIMkrnmk5pJ98XNGP4niTPwXb6zjaTL2AwzA38i4LpOW0EmyWXPaPOW7U
+	GsmdOEkx3f/xTNLuS21iA2fOgVHpWni1e0yeRAOouIe14Hs9TELcShb6MezcOoyvz+m
+	dTd9rpoeYXJfBUppxrEZYgFaPlOTQkJGz+3CWCXc=
+Received: by mx.zohomail.com with SMTPS id 1785831026677755.103961666094;
+	Tue, 4 Aug 2026 01:10:26 -0700 (PDT)
+Date: Tue, 4 Aug 2026 08:10:14 +0000
+From: Yao Zi <me@ziyao.cc>
+To: Troy Mitchell <troy.mitchell@linux.spacemit.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+	Yixun Lan <dlan@kernel.org>, Inochi Amaoto <inochiama@outlook.com>,
+	Alex Elder <elder@riscstar.com>, Haylen Chu <heylenay@4d2.org>
+Cc: linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Yao Zi <me@ziyao.cc>
+Subject: Re: [PATCH 1/2] clk: spacemit: re-enable PLLs after init
+Message-ID: <anGeZk0-YShccqwE@pie>
+References: <20260804-k3-pll5-pll8-1800mhz-v1-0-a3a75866ce32@linux.spacemit.com>
+ <20260804-k3-pll5-pll8-1800mhz-v1-1-a3a75866ce32@linux.spacemit.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260727094926.1124-1-genevieve.chan@altera.com>
+In-Reply-To: <20260804-k3-pll5-pll8-1800mhz-v1-1-a3a75866ce32@linux.spacemit.com>
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-0.2.10.1.5.2/285.815.77
+X-ZohoMailClient: External
 
-On Mon, Jul 27, 2026 at 05:49:26PM +0800, genevieve.chan@altera.com wrote:
-> From: Genevieve Chan <genevieve.chan@altera.com>
-> 
-> Preliminary documentation referred to mpu_l2ram_clk, but that clock is
-> now mpu_ccu_clk and is already represented by AGILEX_MPU_CCU_CLK.
-> Keep AGILEX_MPU_L2RAM_CLK as a legacy ABI-preserved ID (do not use in
-> new DTs) and mark clock ID 42 as reserved/unused so it is not reused,
-> keeping all existing clock IDs stable for DT ABI compatibility.
-> 
-> Fixes: 6b3c59780ed3 ("dt-bindings: documentation: add clock bindings information for Agilex")
-> Cc: stable@vger.kernel.org # 5.8+
-> Signed-off-by: Genevieve Chan <genevieve.chan@altera.com>
-> ---
->  include/dt-bindings/clock/agilex-clock.h | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/include/dt-bindings/clock/agilex-clock.h b/include/dt-bindings/clock/agilex-clock.h
-> index 06feca07e08e..de7a58a06651 100644
-> --- a/include/dt-bindings/clock/agilex-clock.h
-> +++ b/include/dt-bindings/clock/agilex-clock.h
-> @@ -44,6 +44,7 @@
->  
->  /* Gate clocks */
->  #define AGILEX_MPU_CLK			30
-> +/* Legacy ABI ID; do not use in new DTs, use AGILEX_MPU_CCU_CLK */
->  #define AGILEX_MPU_L2RAM_CLK		31
->  #define AGILEX_MPU_PERIPH_CLK		32
->  #define AGILEX_L4_MAIN_CLK		33
-> @@ -55,6 +56,7 @@
->  #define AGILEX_CS_TIMER_CLK		39
->  #define AGILEX_S2F_USER0_CLK		40
->  #define AGILEX_EMAC0_CLK		41
-> +/* 42 - reserved/unused */
+On Tue, Aug 04, 2026 at 12:02:55AM -0700, Troy Mitchell wrote:
+> The PLL and PLLA init callbacks gate off and reprogram a PLL when its
+> firmware configuration is absent from the rate table. However, they
+> leave the PLL gated off after updating the registers.
 
-How IDs can be reserved? These are implemented by drivers (abstract IDs
-not used by hardware), so how driver could reserve it?
+I don't think this patch makes sense.
 
-Best regards,
-Krzysztof
+If this PLL is essential for some components of the systems to work,
+there's no chance to re-program it safely after the kernel gets started,
+since all the PLLs in K1 and K3 are specified as CLK_SET_RATE_GATE.
 
+If the essential clocks could be re-parented glitchlessly, registering
+a notifier and re-parenting it before the PLL disables might be a
+solution. In this case, we need to delay the operation in
+ccu_pll*_init() until clock registration fully completes.
+
+Otherwise, re-enabling the PLL seems totally extra here, they could be
+enabled on the fly when it's going to be used.
+
+> Re-enable the PLL to complete the sequence and propagate any lock
+> timeout to clock registration.
+
+Regards,
+Yao Zi
+
+> Fixes: 1b72c59db0ad ("clk: spacemit: Add clock support for SpacemiT K1 SoC")
+> Fixes: 3a086236c600 ("clk: spacemit: ccu_pll: add plla type clock")
+> Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
