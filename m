@@ -1,135 +1,578 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A452146D2DB
-	for <linux-clk@vger.kernel.org>; Tue,  4 Aug 2026 15:57:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 141154779BF;
+	Tue,  4 Aug 2026 16:39:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785859075; cv=none; b=l67DSeQwSzrqoZTahSkw+45J1kiKIrbpc4EucfbD1iwgK979a2qx+2LJjR7zfjNTFXr+sCsYbPESweaR0y9ePsQy3pe+tggHzLHWGjzqBY60z2fNXJUDI2YFsV3rOdq3Pe28CrfEidUsylcul3TggrUlcQc0j6O8XNn6jULO74w=
+	t=1785861554; cv=none; b=ndMSpobERnUjgiY7tKbqkbgxhFh4eRWB4uZV5v682Kniez/Uxmzi3AtrfxatSTo5uaZI0cqnvDuXgd5CZdzBO0qzMf46dxaxTcWT+9jXHxpzYBOCLvgwhsypgoEBFXylr8vK+5x8aP7N8XgUDnOPCW7/xQfgduWQ4IZsvPKZvYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785859075; c=relaxed/simple;
-	bh=fUTHTx2z/ytGSZ8c6/Jopz376bDKRTBCj+nJjJ+aB5M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mmBBiS3GYPvGn4k8w3/lORa1crJBgeJXDbv3G49lFPWyqSLxrtXPR5XIsvqpmvTPGblElX4ETmoe6mn7c3a2TKxSFu75vRr6hCTgylVofjtbgPDrRKAgGmOkjyiUdQYCvK/8iCle+V+7VUus8aJcIrFqCSIwvImFafHsZrvYyoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MlbAkUbj; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=c0Hkc27x; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1785861554; c=relaxed/simple;
+	bh=N6o2kyU/AFVHz8ZVdsuS9VIK3HL+yjyH9mHBT8SsNGs=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OCO3LZsNbJNgrLNcDImx5tUYd1Twv4cluKYl9vLwYtbJsD6t0oAe+WMPwrElJLN5Sx72YiaTlNMD6POs3TIQjygro4pPXdvo1T513yLorefL6PKzUuIwICa4b5T5bhoLJCVTIr/+5B/W0kR2JXeNmFGn6XWWCAAF28VN3pR7auE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=ZnRV8c+5; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MlbAkUbj";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="c0Hkc27x"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1785859073;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UKSqhVCKV28Q6Z3s7N3OQYhv7gvj0WpLmagy5hhZZl4=;
-	b=MlbAkUbjzv456V/gxt+lSDlICSkkul4MAnbV7ZbkDFJGxdsvLHOFF3Ybx0YHCyXVu98bIk
-	hNO6BPBXLEFIm9dEqCd0PV63X0uUxSzK+gwGcem3AW3JXRDE9Ve/K43CkjaaIfk+e0hqlb
-	6mDgrhyDL7BRZ7Dy4EE2RKOSbCVeqo8=
-Received: from mail-yx1-f71.google.com (mail-yx1-f71.google.com
- [74.125.224.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-76-uGfXWsn2PaWv6nLkLUqLGQ-1; Tue, 04 Aug 2026 11:57:52 -0400
-X-MC-Unique: uGfXWsn2PaWv6nLkLUqLGQ-1
-X-Mimecast-MFC-AGG-ID: uGfXWsn2PaWv6nLkLUqLGQ_1785859071
-Received: by mail-yx1-f71.google.com with SMTP id 956f58d0204a3-6648d902a6eso13761800d50.1
-        for <linux-clk@vger.kernel.org>; Tue, 04 Aug 2026 08:57:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1785859071; x=1786463871; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:content-type:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=UKSqhVCKV28Q6Z3s7N3OQYhv7gvj0WpLmagy5hhZZl4=;
-        b=c0Hkc27xz4h74Sm8vfCjwvp6OX10vAJQ5qVW/aHeQhVRZpmX9j3zdJMis82dbpPaDP
-         31G8WN+H2VW6X1yWIM5YM0vK3Vfq0CXCqMdXhRZ6A2l8/VedTsg/7AF7OVo4la5nrDGO
-         MGMjnEk9bB4pDfD+wBBd4Fv6UR9y1H6pES3Tqgg+YK894/j9Lm6pMVJRXY5lnTK/c8X6
-         EvTsYvArojBsKrhiVAu+qxua5ZUCxJr0zSOBcyKksebHDAc1dcos7KdhlXBR4xi4GU4O
-         UYe7Mu6ZiizQgO1yjecp3jw76E004eg0zLCzS9us5ctlF0tL1h3ySUfENHitm0Tsj/pt
-         plbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785859071; x=1786463871;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:content-type:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=UKSqhVCKV28Q6Z3s7N3OQYhv7gvj0WpLmagy5hhZZl4=;
-        b=NP/0FzKeXcqoTHkxZNoyyOomkpH5qdKAe5ApI+yf0uwsQfTikCIhC9wWHTdcbxm5tu
-         M9smYV17gcAXW6mcw7rvjPTpVgy9r3BO7+j1XsK7ykXdDTf8bkjxVpDgo0bSUdYJlyvI
-         PtytXafnpTGuvPdMy9zDzg1D7WP+c3j14yPW5uugCEgkEvmVoydwuoqTWris/hPVK644
-         8gkLAsdCKtrulDBHxUbYo+8Re30zIhptrlQa/pTbi4xEAL20oKy5LO0c62dSHu7RlmXu
-         ShIAFcTlM9lmD7k/4qG/qI1ec9eqF2yT6k/DpOgnprmhRV1c65ZyyI3tMr0gc9oo/klR
-         9/4g==
-X-Forwarded-Encrypted: i=1; AHgh+Rpv4yzTgq+Gur4h4Dc/AGeim1f3hYciBSsr/qgAgkZTRteZhcB6UT9CF2lS3HM88Ee7t2m9Ltus8ak=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXGNODgIw8yy9eiWDk57LkM1C/O389IwAPqqS8djjlmWOFp17X
-	IR+5jMqODV2nvae5TTXRMA6LzJhYdiet5F3kqRFdCxQ6Uvwzq6KSokZ4ZgokcbK5p/OfPzHfolg
-	+oOEQ91aU+gIbwUquQanZ05ob0VHb9KTHRsJcgoK5sAEnpcDCJcyd4Tyq8AxeLg==
-X-Gm-Gg: AR+sD12cVQOblJW56BjQcBvrxUJGAHNpqbrYqv1IDlecAw63Dysa7vZdQMrgZr6KP3K
-	ejTLBtJtmFWenVmhVCl3H0Qybe8W9+5xdJCv/o2xUqRdjSKu14RBUPNGLuY8AYOH0bPd6KvLv0V
-	/f5rPH5sbLfjq2tmzBlSMklTrS5bPftx/skjwcDsdJZn3gRrtc3EdvrQ+GwlkGdmc8hHQbJRAw6
-	OTvQXN/WQaqD0oIrAAyiC2RZaIJoZCWa0PWEjEbNtE3U7zhuxAFAHulfae2GJxupA2oSiiWsMTI
-	fkjPgY8Wlu+cxAXzUfyYWdwtRzIJMhbXajfPu82e1yLC8/yU18Xo9stI89DZFGr+rm3Px150i15
-	tyb/broPK9MPojv5ckjULaUMG2XNjDg+bUuo=
-X-Received: by 2002:a05:690e:480b:b0:668:42d:95e5 with SMTP id 956f58d0204a3-6694efceb34mr13983397d50.4.1785859071636;
-        Tue, 04 Aug 2026 08:57:51 -0700 (PDT)
-X-Received: by 2002:a05:690e:480b:b0:668:42d:95e5 with SMTP id 956f58d0204a3-6694efceb34mr13983378d50.4.1785859071196;
-        Tue, 04 Aug 2026 08:57:51 -0700 (PDT)
-Received: from redhat.com (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-669915f2307sm914518d50.13.2026.08.04.08.57.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Aug 2026 08:57:50 -0700 (PDT)
-Date: Tue, 4 Aug 2026 11:57:48 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] Drop Michael Turquette's clk maintainer entry
-Message-ID: <anIL_FKn9O4evOlL@redhat.com>
-References: <20260729121640.3864006-2-ukleinek@kernel.org>
- <CAEG3pNCwa8ZyQHuDLDiCWXDUrGcuLpT8n6O75yN8tLsgZ5x-Lw@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="ZnRV8c+5"
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 674GcADf91231951, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1785861490; bh=GS8SmJc+3cm77WhTh3eLE382CSsg3jlQZfTgssXqrbY=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Transfer-Encoding:Content-Type;
+	b=ZnRV8c+53gS9+Ez0KQ19S7R5fkZbrdlai1hRAjqt9wrZtgIzb+TciGTGRY7SMskGX
+	 f5KSRTrwB/BpGuDt/Gw3CaJhc6YxiHU2EKN+OIBTs4llW3mEFjK7K2hQg7d3shN9O7
+	 0BxTIj7GJwoYJuCpxPD1F55oJnJVCaRPDWae/W5qPlf01b6F9tQ0GQT5lpDZQEZ1pc
+	 0vvlkI2OtMMlxrmG5Eij7ZAXVrM+v/Xbyqx3bM8TqV8h2BqOdxHRLP32f4HSv+h6zH
+	 tYqv4E2lVmNpt9ckrlIW0GQq2QRBr2Z3GE4vh+yyy6QZ0YyoGGRsOY3HrBu4ZZKQcS
+	 0K+7m5VJzu1zQ==
+Received: from mail.realtek.com (rtkexhmbs02.realtek.com.tw[172.21.6.41])
+	by rtits2.realtek.com.tw (8.15.2/3.29/5.94) with ESMTPS id 674GcADf91231951
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 5 Aug 2026 00:38:10 +0800
+Received: from RTKEXHMBS01.realtek.com.tw (172.21.6.40) by
+ RTKEXHMBS02.realtek.com.tw (172.21.6.41) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Wed, 5 Aug 2026 00:38:10 +0800
+Received: from RTKEXHMBS05.realtek.com.tw (10.21.1.55) by
+ RTKEXHMBS01.realtek.com.tw (172.21.6.40) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Wed, 5 Aug 2026 00:38:10 +0800
+Received: from cn1dhc-k02 (172.21.252.101) by RTKEXHMBS05.realtek.com.tw
+ (10.21.1.55) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Wed, 5 Aug 2026 00:38:09 +0800
+From: Yu-Chun Lin <eleanor.lin@realtek.com>
+To: <mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <p.zabel@pengutronix.de>,
+	<cylee12@realtek.com>, <jyanchou@realtek.com>, <bmasney@redhat.com>
+CC: <afaerber@suse.com>, <devicetree@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-realtek-soc@lists.infradead.org>, <james.tai@realtek.com>,
+	<cy.huang@realtek.com>, <stanley_chang@realtek.com>,
+	<eleanor.lin@realtek.com>
+Subject: [PATCH v12 08/11] clk: realtek: Add support for MMC-tuned PLL clocks
+Date: Wed, 5 Aug 2026 00:38:04 +0800
+Message-ID: <20260804163807.1285869-9-eleanor.lin@realtek.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20260804163807.1285869-1-eleanor.lin@realtek.com>
+References: <20260804163807.1285869-1-eleanor.lin@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEG3pNCwa8ZyQHuDLDiCWXDUrGcuLpT8n6O75yN8tLsgZ5x-Lw@mail.gmail.com>
-User-Agent: Mutt/2.4.0 (2026-06-19)
+Content-Type: text/plain
 
-On Sun, Aug 02, 2026 at 06:34:06PM -0500, Michael Turquette wrote:
-> On Wed, Jul 29, 2026 at 7:16 AM Uwe Kleine-König <ukleinek@kernel.org> wrote:
-> >
-> > Mike wasn't publically active for the clk subsystem since years. Stop
-> > pretending that there is a maintainer team caring for clk.
-> 
-> I was hoping to send this patch myself, and to recommend a couple of
-> folks for promotion to the clk subsystem. Alas, you beat me to the
-> first half of my plan.
-> 
-> >
-> > Signed-off-by: Uwe Kleine-König <ukleinek@kernel.org>
-> 
-> Acked-by: Michael Turquette <mturquette@baylibre.com>
+From: Cheng-Yu Lee <cylee12@realtek.com>
 
-Thanks Mike for everything you have done over the years with linux-clk.
+Add clk_pll_mmc_ops for enable/disable, prepare, rate control, and status
+operations on MMC PLL clocks.
 
-I posted this patch to make me co-maintainer to help out Stephen:
+Also add clk_pll_mmc_phase_ops to support phase get/set operations.
 
-https://lore.kernel.org/linux-clk/20260804-clk-masney-maintainer-v1-1-de593189a9a1@redhat.com/T/#u
+Signed-off-by: Cheng-Yu Lee <cylee12@realtek.com>
+Co-developed-by: Jyan Chou <jyanchou@realtek.com>
+Signed-off-by: Jyan Chou <jyanchou@realtek.com>
+Co-developed-by: Yu-Chun Lin <eleanor.lin@realtek.com>
+Signed-off-by: Yu-Chun Lin <eleanor.lin@realtek.com>
+---
+Changes in v12:
+- Sort local variables in reverse christmas tree order.
+- Make rtk_clk_regmap_pll_mmc_determine_rate() return the fixed rate.
+- Add '#include <linux/delay.h>'.
+---
+ drivers/clk/realtek/Kconfig       |   3 +
+ drivers/clk/realtek/Makefile      |   2 +
+ drivers/clk/realtek/clk-pll-mmc.c | 431 ++++++++++++++++++++++++++++++
+ drivers/clk/realtek/clk-pll.h     |  13 +
+ 4 files changed, 449 insertions(+)
+ create mode 100644 drivers/clk/realtek/clk-pll-mmc.c
 
-To help make this subsystem more sustainable from a maintenance
-standpoint, I propose:
-
-- To push more vendors to participate in meaningful reviews, and send in pulls.
-  A recent example of where I did that is with Mediatek:
-  https://lore.kernel.org/linux-clk/amuWdRD-TBQtFT_4@redhat.com/
-
-- Try to find more people to help with the subsystem as a whole so that
-  this all isn't on just one person.
-
-Brian
+diff --git a/drivers/clk/realtek/Kconfig b/drivers/clk/realtek/Kconfig
+index ed97531e321d..2ff780581ae0 100644
+--- a/drivers/clk/realtek/Kconfig
++++ b/drivers/clk/realtek/Kconfig
+@@ -27,4 +27,7 @@ config RTK_CLK_COMMON
+ 	  multiple Realtek clock implementations, and include integration
+ 	  with reset controllers where required.
+ 
++config RTK_CLK_PLL_MMC
++	bool
++
+ endif
+diff --git a/drivers/clk/realtek/Makefile b/drivers/clk/realtek/Makefile
+index 217ccaf5644a..52b9cb9c2323 100644
+--- a/drivers/clk/realtek/Makefile
++++ b/drivers/clk/realtek/Makefile
+@@ -6,3 +6,5 @@ clk-rtk-y += clk-pll.o
+ clk-rtk-y += clk-regmap-gate.o
+ clk-rtk-y += clk-regmap-mux.o
+ clk-rtk-y += freq_table.o
++
++clk-rtk-$(CONFIG_RTK_CLK_PLL_MMC) += clk-pll-mmc.o
+diff --git a/drivers/clk/realtek/clk-pll-mmc.c b/drivers/clk/realtek/clk-pll-mmc.c
+new file mode 100644
+index 000000000000..c0d5c10b5c06
+--- /dev/null
++++ b/drivers/clk/realtek/clk-pll-mmc.c
+@@ -0,0 +1,431 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (C) 2021-2026 Realtek Semiconductor Corporation
++ * Author: Cheng-Yu Lee <cylee12@realtek.com>
++ */
++
++#include <linux/bits.h>
++#include <linux/delay.h>
++#include <linux/export.h>
++#include <linux/math64.h>
++#include <linux/minmax.h>
++#include <linux/module.h>
++#include <linux/regmap.h>
++#include "clk-pll.h"
++
++#define RTK_PLL_EMMC1_OFFSET            0x0
++#define RTK_PLL_EMMC2_OFFSET            0x4
++#define RTK_PLL_EMMC3_OFFSET            0x8
++#define RTK_PLL_EMMC4_OFFSET            0xc
++#define RTK_PLL_SSC_DIG_EMMC1_OFFSET    0x0
++#define RTK_PLL_SSC_DIG_EMMC3_OFFSET    0xc
++#define RTK_PLL_SSC_DIG_EMMC4_OFFSET    0x10
++
++#define RTK_PLL_MMC_SSC_DIV_N_VAL       0x1b
++
++#define RTK_PLL_PHRT0_MASK              BIT(0)
++#define RTK_PLL_PHSEL_MASK              GENMASK(4, 0)
++#define RTK_PLL_SSCPLL_RS_MASK          GENMASK(12, 10)
++#define RTK_PLL_SSCPLL_ICP_MASK         GENMASK(9, 5)
++#define RTK_PLL_SSC_DIV_EXT_F_MASK      GENMASK(25, 13)
++#define RTK_PLL_PI_IBSELH_MASK          GENMASK(28, 27)
++#define RTK_PLL_SSC_DIV_N_MASK          GENMASK(23, 16)
++#define RTK_PLL_NCODE_SSC_EMMC_MASK     GENMASK(20, 13)
++#define RTK_PLL_FCODE_SSC_EMMC_MASK     GENMASK(12, 0)
++#define RTK_PLL_GRAN_EST_EM_MC_MASK     GENMASK(20, 0)
++#define RTK_PLL_EN_SSC_EMMC_MASK        BIT(0)
++#define RTK_PLL_FLAG_INITIAL_EMMC_MASK  BIT(8)
++
++#define RTK_PLL_PHRT0_SHIFT             1
++#define RTK_PLL_SSCPLL_RS_SHIFT         10
++#define RTK_PLL_SSCPLL_ICP_SHIFT        5
++#define RTK_PLL_SSC_DIV_EXT_F_SHIFT     13
++#define RTK_PLL_PI_IBSELH_SHIFT         27
++#define RTK_PLL_SSC_DIV_N_SHIFT         16
++#define RTK_PLL_NCODE_SSC_EMMC_SHIFT    13
++#define RTK_PLL_FLAG_INITIAL_EMMC_SHIFT 8
++
++#define CYCLE_DEGREES                   360
++#define PHASE_STEPS                     32
++#define PHASE_SCALE_FACTOR              1125
++
++static inline struct rtk_clk_regmap_pll_mmc *to_clk_pll_mmc(struct clk_hw *hw)
++{
++	struct rtk_clk_regmap *clkr = to_rtk_clk_regmap(hw);
++
++	return container_of(clkr, struct rtk_clk_regmap_pll_mmc, clkr);
++}
++
++static inline int get_phrt0(struct rtk_clk_regmap_pll_mmc *clkm, u32 *val)
++{
++	u32 reg;
++	int ret;
++
++	ret = regmap_read(clkm->clkr.regmap, clkm->pll_ofs + RTK_PLL_EMMC1_OFFSET, &reg);
++	if (ret)
++		return ret;
++
++	*val = (reg >> RTK_PLL_PHRT0_SHIFT) & RTK_PLL_PHRT0_MASK;
++
++	return 0;
++}
++
++static inline int set_phrt0(struct rtk_clk_regmap_pll_mmc *clkm, u32 val)
++{
++	return regmap_update_bits(clkm->clkr.regmap, clkm->pll_ofs + RTK_PLL_EMMC1_OFFSET,
++				  RTK_PLL_PHRT0_MASK << RTK_PLL_PHRT0_SHIFT,
++				  val << RTK_PLL_PHRT0_SHIFT);
++}
++
++static inline int get_phsel(struct rtk_clk_regmap_pll_mmc *clkm, int id, u32 *val)
++{
++	u32 sft = id ? 8 : 3;
++	u32 raw_val;
++	int ret;
++
++	ret = regmap_read(clkm->clkr.regmap, clkm->pll_ofs + RTK_PLL_EMMC1_OFFSET, &raw_val);
++	if (ret)
++		return ret;
++
++	*val = (raw_val >> sft) & RTK_PLL_PHSEL_MASK;
++
++	return 0;
++}
++
++static inline int set_phsel(struct rtk_clk_regmap_pll_mmc *clkm, int id, u32 val)
++{
++	u32 sft = id ? 8 : 3;
++
++	return regmap_update_bits(clkm->clkr.regmap, clkm->pll_ofs + RTK_PLL_EMMC1_OFFSET,
++				  RTK_PLL_PHSEL_MASK << sft, val << sft);
++}
++
++static inline int set_sscpll_rs(struct rtk_clk_regmap_pll_mmc *clkm, u32 val)
++{
++	return regmap_update_bits(clkm->clkr.regmap, clkm->pll_ofs + RTK_PLL_EMMC2_OFFSET,
++				  RTK_PLL_SSCPLL_RS_MASK, val << RTK_PLL_SSCPLL_RS_SHIFT);
++}
++
++static inline int set_sscpll_icp(struct rtk_clk_regmap_pll_mmc *clkm, u32 val)
++{
++	return regmap_update_bits(clkm->clkr.regmap, clkm->pll_ofs + RTK_PLL_EMMC2_OFFSET,
++				  RTK_PLL_SSCPLL_ICP_MASK, val << RTK_PLL_SSCPLL_ICP_SHIFT);
++}
++
++static inline int get_ssc_div_ext_f(struct rtk_clk_regmap_pll_mmc *clkm, u32 *val)
++{
++	u32 raw_val;
++	int ret;
++
++	ret = regmap_read(clkm->clkr.regmap, clkm->pll_ofs + RTK_PLL_EMMC2_OFFSET, &raw_val);
++	if (ret)
++		return ret;
++
++	*val = (raw_val & RTK_PLL_SSC_DIV_EXT_F_MASK) >> RTK_PLL_SSC_DIV_EXT_F_SHIFT;
++
++	return 0;
++}
++
++static inline int set_ssc_div_ext_f(struct rtk_clk_regmap_pll_mmc *clkm, u32 val)
++{
++	return regmap_update_bits(clkm->clkr.regmap, clkm->pll_ofs + RTK_PLL_EMMC2_OFFSET,
++				  RTK_PLL_SSC_DIV_EXT_F_MASK,
++				  val << RTK_PLL_SSC_DIV_EXT_F_SHIFT);
++}
++
++static inline int set_pi_ibselh(struct rtk_clk_regmap_pll_mmc *clkm, u32 val)
++{
++	return regmap_update_bits(clkm->clkr.regmap, clkm->pll_ofs + RTK_PLL_EMMC2_OFFSET,
++				  RTK_PLL_PI_IBSELH_MASK, val << RTK_PLL_PI_IBSELH_SHIFT);
++}
++
++static inline int set_ssc_div_n(struct rtk_clk_regmap_pll_mmc *clkm, u32 val)
++{
++	return regmap_update_bits(clkm->clkr.regmap, clkm->pll_ofs + RTK_PLL_EMMC3_OFFSET,
++				  RTK_PLL_SSC_DIV_N_MASK, val << RTK_PLL_SSC_DIV_N_SHIFT);
++}
++
++static inline int get_ssc_div_n(struct rtk_clk_regmap_pll_mmc *clkm, u32 *val)
++{
++	u32 raw_val;
++	int ret;
++
++	ret = regmap_read(clkm->clkr.regmap, clkm->pll_ofs + RTK_PLL_EMMC3_OFFSET, &raw_val);
++	if (ret)
++		return ret;
++
++	*val = (raw_val & RTK_PLL_SSC_DIV_N_MASK) >> RTK_PLL_SSC_DIV_N_SHIFT;
++
++	return 0;
++}
++
++static inline int set_pow_ctl(struct rtk_clk_regmap_pll_mmc *clkm, u32 val)
++{
++	return regmap_write(clkm->clkr.regmap, clkm->pll_ofs + RTK_PLL_EMMC4_OFFSET, val);
++}
++
++static inline int get_pow_ctl(struct rtk_clk_regmap_pll_mmc *clkm, u32 *val)
++{
++	u32 raw_val;
++	int ret;
++
++	ret = regmap_read(clkm->clkr.regmap, clkm->pll_ofs + RTK_PLL_EMMC4_OFFSET, &raw_val);
++	if (ret)
++		return ret;
++
++	*val = raw_val;
++
++	return 0;
++}
++
++static int rtk_clk_regmap_pll_mmc_phase_set_phase(struct clk_hw *hw, int degrees)
++{
++	struct clk_hw *hwp = clk_hw_get_parent(hw);
++	struct rtk_clk_regmap_pll_mmc *clkm;
++	int phase_id, ret;
++	u32 val;
++
++	if (!hwp)
++		return -ENOENT;
++
++	clkm = to_clk_pll_mmc(hwp);
++	phase_id = (hw == &clkm->phase0_hw) ? 0 : 1;
++	val = DIV_ROUND_CLOSEST(degrees * 100, PHASE_SCALE_FACTOR);
++	ret = set_phsel(clkm, phase_id, val);
++	if (ret)
++		return ret;
++
++	usleep_range(10, 20);
++
++	return 0;
++}
++
++static int rtk_clk_regmap_pll_mmc_phase_get_phase(struct clk_hw *hw)
++{
++	struct rtk_clk_regmap_pll_mmc *clkm;
++	struct clk_hw *hwp;
++	int phase_id, ret;
++	u32 val;
++
++	hwp = clk_hw_get_parent(hw);
++	if (!hwp)
++		return -ENOENT;
++
++	clkm = to_clk_pll_mmc(hwp);
++	phase_id = (hw == &clkm->phase0_hw) ? 0 : 1;
++	ret = get_phsel(clkm, phase_id, &val);
++	if (ret)
++		return ret;
++
++	val = DIV_ROUND_CLOSEST(val * CYCLE_DEGREES, PHASE_STEPS);
++
++	return val;
++}
++
++const struct clk_ops rtk_clk_pll_mmc_phase_ops = {
++	.set_phase = rtk_clk_regmap_pll_mmc_phase_set_phase,
++	.get_phase = rtk_clk_regmap_pll_mmc_phase_get_phase,
++};
++EXPORT_SYMBOL_NS_GPL(rtk_clk_pll_mmc_phase_ops, "CLK_REALTEK");
++
++static int rtk_clk_regmap_pll_mmc_prepare(struct clk_hw *hw)
++{
++	struct rtk_clk_regmap_pll_mmc *clkm = to_clk_pll_mmc(hw);
++
++	return set_pow_ctl(clkm, 7);
++}
++
++static void rtk_clk_regmap_pll_mmc_unprepare(struct clk_hw *hw)
++{
++	struct rtk_clk_regmap_pll_mmc *clkm = to_clk_pll_mmc(hw);
++
++	set_pow_ctl(clkm, 0);
++}
++
++static int rtk_clk_regmap_pll_mmc_is_prepared(struct clk_hw *hw)
++{
++	struct rtk_clk_regmap_pll_mmc *clkm = to_clk_pll_mmc(hw);
++	u32 val;
++	int ret;
++
++	ret = get_pow_ctl(clkm, &val);
++	if (ret)
++		return 1;
++
++	return val != 0x0;
++}
++
++static int rtk_clk_regmap_pll_mmc_enable(struct clk_hw *hw)
++{
++	struct rtk_clk_regmap_pll_mmc *clkm = to_clk_pll_mmc(hw);
++	int ret;
++
++	ret = set_phrt0(clkm, 1);
++	if (ret)
++		return ret;
++
++	udelay(10);
++
++	return 0;
++}
++
++static void rtk_clk_regmap_pll_mmc_disable(struct clk_hw *hw)
++{
++	struct rtk_clk_regmap_pll_mmc *clkm = to_clk_pll_mmc(hw);
++
++	set_phrt0(clkm, 0);
++	udelay(10);
++}
++
++static int rtk_clk_regmap_pll_mmc_is_enabled(struct clk_hw *hw)
++{
++	struct rtk_clk_regmap_pll_mmc *clkm = to_clk_pll_mmc(hw);
++	u32 val;
++	int ret;
++
++	ret = get_phrt0(clkm, &val);
++	if (ret)
++		return 1;
++
++	return val == 0x1;
++}
++
++static unsigned long rtk_clk_regmap_pll_mmc_recalc_rate(struct clk_hw *hw,
++							unsigned long parent_rate)
++{
++	struct rtk_clk_regmap_pll_mmc *clkm = to_clk_pll_mmc(hw);
++	u32 val, ext_f;
++	u64 rate, base;
++	int ret;
++
++	ret = get_ssc_div_n(clkm, &val);
++	if (ret)
++		return 0;
++
++	ret = get_ssc_div_ext_f(clkm, &ext_f);
++	if (ret)
++		return 0;
++
++	base = parent_rate / 4;
++	rate = base * (val + 2);
++	rate += div_u64(base * ext_f, 8192);
++
++	return rate;
++}
++
++static int rtk_clk_regmap_pll_mmc_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
++{
++	u32 val = RTK_PLL_MMC_SSC_DIV_N_VAL + 2;
++	u64 tmp;
++
++	if (!req->best_parent_rate)
++		return -EINVAL;
++
++	req->rate = req->best_parent_rate / 4 * val;
++	tmp = (u64)(req->best_parent_rate / 4) * 1517;
++	req->rate += tmp >> 13;
++
++	return 0;
++}
++
++static int rtk_clk_regmap_pll_mmc_set_rate(struct clk_hw *hw, unsigned long rate,
++					   unsigned long parent_rate)
++{
++	struct rtk_clk_regmap_pll_mmc *clkm = to_clk_pll_mmc(hw);
++	u32 val = RTK_PLL_MMC_SSC_DIV_N_VAL;
++	int ret;
++
++	/*
++	 * The 'rate' and 'parent_rate' are intentionally unused here.
++	 *
++	 * Despite receiving various rate requests (e.g., 26MHz, 52MHz, 200MHz),
++	 * this function consistently configures the hardware for 27MHz (0x1b).
++	 * This is because these settings reflect the input reference clock
++	 * frequency to the SSCPLL, not the final PLL output frequency.
++	 *
++	 * The actual frequency division to achieve the requested eMMC rate
++	 * is handled internally by the downstream eMMC host controller.
++	 */
++
++	ret = regmap_update_bits(clkm->clkr.regmap,
++				 clkm->ssc_dig_ofs + RTK_PLL_SSC_DIG_EMMC1_OFFSET,
++				 RTK_PLL_FLAG_INITIAL_EMMC_MASK,
++				 0x0 << RTK_PLL_FLAG_INITIAL_EMMC_SHIFT);
++	if (ret)
++		return ret;
++
++	ret = set_ssc_div_n(clkm, val);
++	if (ret)
++		return ret;
++
++	ret = set_ssc_div_ext_f(clkm, 1517);
++	if (ret)
++		return ret;
++
++	ret = set_pi_ibselh(clkm, 2);
++	if (ret)
++		return ret;
++
++	ret = set_sscpll_rs(clkm, 3);
++	if (ret)
++		return ret;
++
++	ret = set_sscpll_icp(clkm, 1);
++	if (ret)
++		return ret;
++
++	ret = regmap_update_bits(clkm->clkr.regmap,
++				 clkm->ssc_dig_ofs + RTK_PLL_SSC_DIG_EMMC3_OFFSET,
++				 RTK_PLL_NCODE_SSC_EMMC_MASK,
++				 27 << RTK_PLL_NCODE_SSC_EMMC_SHIFT);
++	if (ret)
++		return ret;
++
++	ret = regmap_update_bits(clkm->clkr.regmap,
++				 clkm->ssc_dig_ofs + RTK_PLL_SSC_DIG_EMMC3_OFFSET,
++				 RTK_PLL_FCODE_SSC_EMMC_MASK, 321);
++	if (ret)
++		return ret;
++
++	ret = regmap_update_bits(clkm->clkr.regmap,
++				 clkm->ssc_dig_ofs + RTK_PLL_SSC_DIG_EMMC4_OFFSET,
++				 RTK_PLL_GRAN_EST_EM_MC_MASK, 5985);
++	if (ret)
++		return ret;
++
++	ret = regmap_update_bits(clkm->clkr.regmap,
++				 clkm->ssc_dig_ofs + RTK_PLL_SSC_DIG_EMMC1_OFFSET,
++				 RTK_PLL_EN_SSC_EMMC_MASK, 0x1);
++	if (ret)
++		return ret;
++
++	ret = regmap_update_bits(clkm->clkr.regmap,
++				 clkm->ssc_dig_ofs + RTK_PLL_SSC_DIG_EMMC1_OFFSET,
++				 RTK_PLL_EN_SSC_EMMC_MASK, 0x0);
++	if (ret)
++		return ret;
++
++	ret = regmap_update_bits(clkm->clkr.regmap,
++				 clkm->ssc_dig_ofs + RTK_PLL_SSC_DIG_EMMC1_OFFSET,
++				 RTK_PLL_FLAG_INITIAL_EMMC_MASK,
++				 0x1 << RTK_PLL_FLAG_INITIAL_EMMC_SHIFT);
++	if (ret)
++		return ret;
++
++	usleep_range(10, 20);
++
++	return 0;
++}
++
++const struct clk_ops rtk_clk_pll_mmc_ops = {
++	.prepare          = rtk_clk_regmap_pll_mmc_prepare,
++	.unprepare        = rtk_clk_regmap_pll_mmc_unprepare,
++	.is_prepared      = rtk_clk_regmap_pll_mmc_is_prepared,
++	.enable           = rtk_clk_regmap_pll_mmc_enable,
++	.disable          = rtk_clk_regmap_pll_mmc_disable,
++	.is_enabled       = rtk_clk_regmap_pll_mmc_is_enabled,
++	.recalc_rate      = rtk_clk_regmap_pll_mmc_recalc_rate,
++	.determine_rate   = rtk_clk_regmap_pll_mmc_determine_rate,
++	.set_rate         = rtk_clk_regmap_pll_mmc_set_rate,
++};
++EXPORT_SYMBOL_NS_GPL(rtk_clk_pll_mmc_ops, "CLK_REALTEK");
+diff --git a/drivers/clk/realtek/clk-pll.h b/drivers/clk/realtek/clk-pll.h
+index 023b49bbcbee..d21793387eee 100644
+--- a/drivers/clk/realtek/clk-pll.h
++++ b/drivers/clk/realtek/clk-pll.h
+@@ -44,4 +44,17 @@ struct rtk_clk_regmap_pll {
+ extern const struct clk_ops rtk_clk_pll_ops;
+ extern const struct clk_ops rtk_clk_pll_ro_ops;
+ 
++struct rtk_clk_regmap_pll_mmc {
++	struct rtk_clk_regmap clkr;
++	unsigned int pll_ofs;
++	unsigned int ssc_dig_ofs;
++	struct clk_hw phase0_hw;
++	struct clk_hw phase1_hw;
++};
++
++#define __rtk_clk_regmap_pll_mmc_hw(_ptr)  __rtk_clk_regmap_hw(&(_ptr)->clkr)
++
++extern const struct clk_ops rtk_clk_pll_mmc_ops;
++extern const struct clk_ops rtk_clk_pll_mmc_phase_ops;
++
+ #endif /* __CLK_REALTEK_CLK_PLL_H */
+-- 
+2.43.0
 
