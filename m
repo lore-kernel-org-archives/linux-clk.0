@@ -1,121 +1,89 @@
-Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 960BD38B15E
-	for <linux-clk@vger.kernel.org>; Tue,  4 Aug 2026 07:04:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 714332C027F;
+	Tue,  4 Aug 2026 07:49:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785827090; cv=none; b=f7Nj0brEcfN9BImyXIVKXcvzA9L/XtL19jfh+3U0oewo8iC0qvRMfmmcw4HVb79+XNynqWepr4nYH2QAm707tKE2zcAM2btwItQnqmPn+bMkLp7iXZYzeCmLL/VNVY1QW8OJFJGfkZUrXAbgWTQ3LQJ9Cwe8plrpJGY/LsIaR8s=
+	t=1785829769; cv=none; b=Zp2uf1BmLbIeXz2btuoSES4U+ZPvOK1DdAVxEMhvQVdsYWwY4HkrloJegIQT4v4PEbk85XC3gkdSuwHBmcgdfC04wPfZ6QLV60YFDL3ccXB32P3NplW5gxukwj/kuUGLSARSBMe6OwIyBcqg8dhW37ejRNtxuAsCazv1ScypeBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785827090; c=relaxed/simple;
-	bh=IW6D+IWdo8RtEKyPetD9zVM5Djt1dC9dceqZ6CPr9gc=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=tKXB/XbX7gA4H76KNO78yOPLU8j7+oFy8za97Gniq0vERtuBIf0NiWX4ST551yIePYPyMOHBMUuPI76tDV4MCGD5a0RLNGv2kOjew+0xsLXcADQL5bTG3zeKc9rv09UdRJDr+VXqMcqKZIbyfioNlgsgZoy8y9xmP2Q+Koy+E94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=XOgqIWtf; arc=none smtp.client-ip=54.204.34.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
+	s=arc-20240116; t=1785829769; c=relaxed/simple;
+	bh=hZwkU4v4ZgiZYw7xukxF2CsRmRDO+ILQy+qfT5G5aYM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fQk7GmXLBzyYUzGkxu/tuhqLmx4pZc+UULI0UEM936iV1zpuVpaupBmbm9dvFPgzUcv1mrnJGPb/JS89UZkzBC4YvFxAxcEITttwMPWmG5UbVSFdeTuQBXjTA0pERAe/bQVe/T9FCVWp/UcJGdLVNn2ICHYNkUTC5P6ofpFk/QI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nZZbY807; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="XOgqIWtf"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1785826987;
-	bh=GImfhL+KrnsR6yE46cScayoU/oHI6MI5dbzBtOBfDtI=;
-	h=From:Subject:Date:Message-Id:MIME-Version:To;
-	b=XOgqIWtfiJ6OXcStDIR+LMtk2As2wIWbX5KT0WloaeYjCj3s0PifaYRakAsdeFmy0
-	 B60G1C3soQF/V+0OO5j4KggSLNCBBIGDL6+n3EhMibKZHDZs0Izm1PtKrqogRbe84H
-	 0m9YDNl4pSZ/s52c/daQV7PQOxgmqRyWwoNL8evs=
-X-QQ-mid: zesmtpsz5t1785826984te45056b7
-X-QQ-Originating-IP: 6Q8/nwFx0eDR6Ricx/U13Cqzlvs5o09g4RmQ9XhTVkg=
-Received: from = ( [120.237.158.181])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 04 Aug 2026 15:03:02 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 11833633272755698400
-EX-QQ-RecipientCnt: 12
-From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Subject: [PATCH 0/2] clk: spacemit: fix PLL init and add K3 1.8 GHz rates
-Date: Tue, 04 Aug 2026 00:02:54 -0700
-Message-Id: <20260804-k3-pll5-pll8-1800mhz-v1-0-a3a75866ce32@linux.spacemit.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nZZbY807"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24E8B1F000E9;
+	Tue,  4 Aug 2026 07:49:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1785829767;
+	bh=09V/+Tk+VUYyHEsKIEpjSsvjFczTBQklJUtW8tDxN40=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=nZZbY807QBLDeIGpVjtLhBD3Qim0BG2MP7WgzB1rl8HUQ82njtk7SHKnNbVs8KMO6
+	 xPfAcSgHJZiyRj61ezzMmuD0bzOuip+yu/ER+uKkpSO4Dv5hhDZKEUCrR/iuGVV6WZ
+	 i9whdXo+kaydNrgQrafA88PeqFo+qEar+8hfxDZdJkhnlDNUyr0em6Z80fW/KcluXL
+	 x6IPZJzKYFU0Ubur5A5rm+6YYQMJOCF4j2FgQ7TQAROpZhEZ5sBjMzNx811yALSP0t
+	 ClNjoHmZffJdYRALvcOZkxB93GVt1eYJ1JFGJVbJ8ZQlbmVEY7kRniwVpKDGkxKFyS
+	 Zj0uyZllRTn6g==
+Date: Tue, 4 Aug 2026 09:49:23 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: genevieve.chan@altera.com
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Dinh Nguyen <dinguyen@kernel.org>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux driver reviews <linux-drivers-review@altera.com>
+Subject: Re: [PATCH] dt-bindings: clock: agilex: mark mpu_l2ram_clk deprecated
+Message-ID: <20260804-excellent-electric-yak-d2de63@quoll>
+References: <20260727094926.1124-1-genevieve.chan@altera.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIzMDCwMj3Wxj3YKcHFMQYaFraGFgkJtRpZtsYWhhbppokGhpYqIE1FpQlJq
- WWQE2NjoWwi8uTcpKTS4BmaVUWwsAZOdEj3gAAAA=
-X-Change-ID: 20260802-k3-pll5-pll8-1800mhz-c81875a0a944
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
- Yixun Lan <dlan@kernel.org>, Inochi Amaoto <inochiama@outlook.com>, 
- Alex Elder <elder@riscstar.com>, Haylen Chu <heylenay@4d2.org>
-Cc: linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org, 
- spacemit@lists.linux.dev, linux-kernel@vger.kernel.org, 
- Troy Mitchell <troy.mitchell@linux.spacemit.com>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1264;
- i=troy.mitchell@linux.spacemit.com; h=from:subject:message-id;
- bh=IW6D+IWdo8RtEKyPetD9zVM5Djt1dC9dceqZ6CPr9gc=;
- b=owGbwMvMwCU2g/N9w09jE33G02pJDFmFfYtkTV5o983YLS3xqe9/+2+mA3uutLnvZM3aoSb25
- pxbVu2bjlIWBjEuBlkxRZbuBzzbCnyibAsECn1h5rAygQxh4OIUgIm4H2BkWC4SbqxxxPTJtN9+
- b51m2HC1hx1yb9zj//Bv1YKayTmt8xj+F/zanH24JqrfPKey8yiHSpRIEX/wrLwSW1WHmzyfso2
- ZAA==
-X-Developer-Key: i=troy.mitchell@linux.spacemit.com; a=openpgp;
- fpr=3FE5535CF1B0E658E57DB59BAE1C2FBEA7DB42E1
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpsz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
-X-QQ-XMAILINFO: M+ZHGjti0A6oh9FAwEzDT/kiYFrs9+o7BPPgEoEV3tfHNOGihGf2QhF3
-	8YLQQRSneIWsKQwvLwGjB2PfMiU00Cr+KqHX/LHFHv9MwpIVYYdosGNTrpVv2vt26wz8AxE
-	FYYfJhL7Z1Z/bP2IYiA8IzmSkrDlJ2KDAXvzf1cNxIME+lmoO/sy6kHzqgZeUUoe/AF7DFP
-	RQw3fp/J0/XPe5XmrynbTc2+jiqKY/IhuEsjZMwmC9GXNM0mUOnTyVfAScXKcVJWApHv4Ln
-	mMTiFJFMqcaiefaDhNo8IQUGoZLutmfLBJWEOmg9X7TiqaymjZkjD3SjOk59QZlxbR4ZbzK
-	d8Zp2EnmpEbySdJeQBsoXIKtniMKDsSNJOtkGlAywv8eVjHvoqXgOlOoxxL4PcBnu0Vi6/A
-	oUwIaYv93nKTA7QnufOQFS/HNR61I3g6EJMHQAa8SPkr3LOHTakoLc/s7iecN52JuzHA2Dc
-	MjxeoFdNVJm1X0pW42iz9Ce2QnJu7QyEkg/0xcJlW8cQL26pLbrnr1qt85hQFdn7v/UqtIE
-	0zL2YbaVrgquzlMKK8D7qjIxY6haw2aTBOPLrOKVqeLQl9G86JjuL5m+CFbIAwQhSadRaE/
-	XU5RGcroDZBfBoqbUyginHGOa3491ZfStiqc3B2yCyr0+V0+yD+opR+jVFyZ3JVXmHzx9R1
-	JauLdpjWTfw5uHFSX3KOiKzBknOHevRPfeJr1iw8E8Y9o9tQXkUntFTcEX1RFHF5i6dazJH
-	hEA0uMxyDy3l4uKfVT0I+p6zzujQrAmWApfrmE5mvGEbkEYNchLF4aaFpaFqjwAGF1bP0yA
-	t226dTmuKuwgs8k5Pty1j970s5+HVIxWI0/J8+QbfVTgP5K8FGYu9FKipYLqOtDpCE21Uy+
-	YhED2fZZ8GU/iHPUf7ChfI6TZmjX43pZQvx8xtU5gxxpUtmQTS85WzUJeNxKNWDz/H44qX6
-	mS3G16BChH0NlyHJymBhohu1qqXkH2xIg8STgv7dLveUzycy+jhooPVld61v1MVRdnQfP0S
-	vhX8esSvefKSZANX4ZLKfUJnn2D1jABqEg41y3CKHsagFEA4gM9zWfq//cKJVjJ45Od+EPS
-	fI4waqVpGpEXpgFWrEVswNG6PRP3mGc9U2O0xGwW8BWWtugc5QqxjrC37BiJ2z3Xp2OPwfx
-	iFYe
-X-QQ-XMRINFO: MPJ6Tf5t3I/ylTmHUqvI8+Wpn+Gzalws3A==
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20260727094926.1124-1-genevieve.chan@altera.com>
 
-The PLL and PLLA init callbacks leave a PLL gated off once they
-reprogram an unmatched firmware configuration. Re-enable the PLL to
-complete the disable-update-enable sequence and propagate any lock
-timeout to clock registration. Apply this to both the K1 PLL and K3
-PLLA implementations.
+On Mon, Jul 27, 2026 at 05:49:26PM +0800, genevieve.chan@altera.com wrote:
+> From: Genevieve Chan <genevieve.chan@altera.com>
+> 
+> Preliminary documentation referred to mpu_l2ram_clk, but that clock is
+> now mpu_ccu_clk and is already represented by AGILEX_MPU_CCU_CLK.
+> Keep AGILEX_MPU_L2RAM_CLK as a legacy ABI-preserved ID (do not use in
+> new DTs) and mark clock ID 42 as reserved/unused so it is not reused,
+> keeping all existing clock IDs stable for DT ABI compatibility.
+> 
+> Fixes: 6b3c59780ed3 ("dt-bindings: documentation: add clock bindings information for Agilex")
+> Cc: stable@vger.kernel.org # 5.8+
+> Signed-off-by: Genevieve Chan <genevieve.chan@altera.com>
+> ---
+>  include/dt-bindings/clock/agilex-clock.h | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/include/dt-bindings/clock/agilex-clock.h b/include/dt-bindings/clock/agilex-clock.h
+> index 06feca07e08e..de7a58a06651 100644
+> --- a/include/dt-bindings/clock/agilex-clock.h
+> +++ b/include/dt-bindings/clock/agilex-clock.h
+> @@ -44,6 +44,7 @@
+>  
+>  /* Gate clocks */
+>  #define AGILEX_MPU_CLK			30
+> +/* Legacy ABI ID; do not use in new DTs, use AGILEX_MPU_CCU_CLK */
+>  #define AGILEX_MPU_L2RAM_CLK		31
+>  #define AGILEX_MPU_PERIPH_CLK		32
+>  #define AGILEX_L4_MAIN_CLK		33
+> @@ -55,6 +56,7 @@
+>  #define AGILEX_CS_TIMER_CLK		39
+>  #define AGILEX_S2F_USER0_CLK		40
+>  #define AGILEX_EMAC0_CLK		41
+> +/* 42 - reserved/unused */
 
-The K3 SoC may not remain stable when its A100 CPU clusters operate
-persistently at 2 GHz. Updated U-Boot firmware therefore configures
-their C2 and C3 clock domains at 1.8 GHz during early initialization.
-PLL5 feeds C2 and PLL8 feeds C3, so add 1.8 GHz as the default
-rate-table entry for both PLLs.
-
-The related U-Boot change is available at:
-https://github.com/spacemit-com/uboot-2022.10/commit/fb95cf3d848b771c61b5a1b3e5cbbee223faf352
-
-Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
----
-Troy Mitchell (2):
-      clk: spacemit: re-enable PLLs after init
-      clk: spacemit: k3: add 1.8 GHz PLL5 and PLL8 rates
-
- drivers/clk/spacemit/ccu-k3.c  | 2 ++
- drivers/clk/spacemit/ccu_pll.c | 4 ++--
- 2 files changed, 4 insertions(+), 2 deletions(-)
----
-base-commit: 1590cf0329716306e948a8fc29f1d3ee87d3989f
-change-id: 20260802-k3-pll5-pll8-1800mhz-c81875a0a944
+How IDs can be reserved? These are implemented by drivers (abstract IDs
+not used by hardware), so how driver could reserve it?
 
 Best regards,
---  
-Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Krzysztof
 
