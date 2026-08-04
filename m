@@ -1,158 +1,252 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12F7B474249
-	for <linux-clk@vger.kernel.org>; Tue,  4 Aug 2026 17:56:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785866202; cv=none; b=tWtI92vSofb8rGEGDxTjTHUd7O2EFK/OLX2lphFRYg78lnEA+maoQIwfbeZqapGUkdmi2wJ3vgQp8oZp9F+66kMJI1xx3BZzWoQjQ62TRbQXtitJ1j2663FVk4dvkmXeedj4bEv+DNP28k+3fjBH3jLtLAbp+lE8dzKs0ei8YMY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785866202; c=relaxed/simple;
-	bh=OuX/C1TtvHCOGmrVIm3mqzAHLgbvc4K8VI0cI+MqO1M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TSxREUn+KMbw8/wqD3ki3N6IJZMoo/txlVCkdJLFpMNhT5hb71P6s7JsJeXOcctM8Ny6kbclyKdjxP43kYOXoeo41aTXB+rm7hX2XHnkq2tclj4nvG20NcIdZ3Jjn6I0QMS5/iLorwR15gDYo8/eh8X8YqKfeM48iyUMp2OI50s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=enbAM0/+; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=SvB3h3Ff; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD5FE411FBB
+	for <linux-clk@vger.kernel.org>; Tue,  4 Aug 2026 18:30:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.218.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1785868207; cv=pass; b=Ym57ZOKBzdYOdPZKaoem5hE0zgAalOVGn6cBrapNf6iG2b0ovKHeGjtRWRW3TXIaJu92ZVwcrgvQ4DkKg5wDABtHdsN17dkoFDTFiqaERR9DR3Eydm18hcZknA0oY6BTPE/JtxrLhHjqVgL7CTnXipzreJpMXjnmMrg3qKjpWjU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1785868207; c=relaxed/simple;
+	bh=YR/o/LTpemAGDYJOLfPVkvZYIaS6LupInQCMHbfOBQk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DjyMgUukL1f9A7nAx2PUo5SPWBRCVp9zsnNiEqaFDGHS/N/pnthKDKSz5p6/pTqhS1JLmQkMCuKhFqCGyhmpsFgvoUjqb0oGRNrE8cCkHWs2tvtkeF8Hm7esfLOKLF8UdTKgHED4m1HaPG158f0bYdKfPGobiioZC4aOpc73FGI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nVEUrt8h; arc=pass smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="enbAM0/+";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="SvB3h3Ff"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 674H4lqg065680
-	for <linux-clk@vger.kernel.org>; Tue, 4 Aug 2026 17:56:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	sEllbW2amjEC6Fq2iKDcJ/pEbGG9Dwld0bfe6YT1m6Q=; b=enbAM0/+7KAK62OZ
-	GdHZhcpSH+V2gELpiyIYQPBNgso4TYVpWNST7F9GpVdmT4YTLPHXmbOwCaLd6+D5
-	cObDTUMxCeqHSFTfQpyEBy3jrYEh0OU4Of0TZvPv/Im/53fENkOa/x2U5+r1j+Xi
-	izc6FCltOUY0mzWuS5drVnmgQ7RnWGq2g4lNXNTqS/OV1rs1jz3KdSjLytTI8NaQ
-	8/PCGCaJUsMJGdifOxLwOVpQzCDD/IOSYq4M7lGVl6gX4rRS1VmF7g20xVho3YVx
-	TymT/LTvNS3DO2vGLmiRDfutwBMTLRDhDpVNyJ6WCD4vYi/5jfFpYprAX1Z6kJ7s
-	Pr6Ssw==
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fum568a9d-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Tue, 04 Aug 2026 17:56:35 +0000 (GMT)
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-cb835525b10so35037a12.2
-        for <linux-clk@vger.kernel.org>; Tue, 04 Aug 2026 10:56:35 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nVEUrt8h"
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-c15df0c154dso3091366b.1
+        for <linux-clk@vger.kernel.org>; Tue, 04 Aug 2026 11:30:05 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1785868204; cv=none;
+        d=google.com; s=arc-20260327;
+        b=MYZMzpGjp2YZ+vrMg0GVAJnz+vkFB9sSXog+j4pD1SsfThiFuMjE4QWYjtODU/WdXI
+         PU3rRkHV51S8qi5SSPuiUNvjecpib6twHXPNN/JCGGqy6OufRX8HjPxKhlxQnhPxhjyI
+         gt6pmbFy4FbxIl7MSTShp255g9c+RYbDRrAjHFRLLiIJsl8nSFXgIAto5mEdEPxj6KXc
+         BdJDnY2BBm4HWaIrAFqdedzD/W8f6JzjeQGiDOUaSNQWZMsTwQ5wZ6v3hRlJ7Qf01UnN
+         iXfmbBDaTFwqV7dFpaFADuNxN8HhN2DFd6cLYrEAD5lna6714VMk7XHLG7tnVeA/tlqo
+         XCnw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=XGjeFPew3WY1hoWUdVOxW+gqoEqKrPAbmGn8EETaFp0=;
+        fh=K1purB982sADvk048ipt0XNxdYKKbD0VHmoyiAl04VY=;
+        b=WrNJQujnYtHW676CL0KsptDC9xgwtyP+qOd9s5F4xbopxQ9tsQiIkMI1uZH4UWG/Jk
+         lXDx9HxUEtZdAw5U8iQPMwR6YzARLvhbziu5wqJKTzuLMkWmZ15s3OaKt4Dzk+WrQCCJ
+         rrIzbaPBLkYS0KTw67L8TOtwdQQUnkuqJPZjJc5LwFIMSW8Lqd0ugR1yI1X74LFUC244
+         CW6Wi214Rl/BQvrKsQqYqeFEG0CUtHef5MLfr2gGNFJ5u2EwZmv/Jvr37z4m0tHIt9ML
+         4eGqWhCVDPE03hqxlqbnyxw1ynSD+A3ij3uf2rgARTj1C/3JGOyIsFT3ex9JWOz/bApg
+         lrEQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1785866194; x=1786470994; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=sEllbW2amjEC6Fq2iKDcJ/pEbGG9Dwld0bfe6YT1m6Q=;
-        b=SvB3h3FftsJbWOditUEM4TRb49DIp+Monb7c7O37/GuDV7TaPP2FTY5NDcDgFEFeb3
-         lS7onigr+3pi2lys5McgyPS7fHRs0/UlEADHBbNTwLKhaq7DGqapz03OdZyMoNywK4B+
-         DbTj6xI4/c1bTWOGC7gHs543Qn7Zv/7HQ93weWphj5wjZ7RSVY3ML96lPeuvaMUesbVD
-         kPTmmOzqJN/7uROtpz0HY1ouJ5pmoGUc0ULGg7HUHvEDxsmYuBihyA/XvD2FXnUiddIY
-         1LMDAenpYmwAYwYRTevvk26hCr6EjgqayDxzRpVRh+MxfpQt9RjO1ewWVB9hSsMzI4L+
-         9A2w==
+        d=gmail.com; s=20251104; t=1785868204; x=1786473004; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=XGjeFPew3WY1hoWUdVOxW+gqoEqKrPAbmGn8EETaFp0=;
+        b=nVEUrt8hJHpt1stGHoiAYCUbZwPi9u5XSS5haDxHedZSAu/S0wbf8T1cQZag4UYeyz
+         f4mJ3gU1Tgg8jBtgq7SUsoBHjCFDZtXGvmAZz+Bw+LRTTGvCHOiFIILiqN7qsqds7V+p
+         PBpxADjYoDKBwnlAli6/SjR5//Ig/qt/4eDMbK135rXnTv96+faT+GD8HO4UnbEuJXP/
+         AaaBbeohpt2xF4/iriteDON64asfErcmISPkbeWKH5qtNqA3A6Sednt4EPABhYVGiD6f
+         1SgEcTkuKtpPY0RqV0T5EzbYk5zRr321ox7vSe067brmcaNXxn6F8tXM8ZNfhtRUhJWj
+         ic/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785866194; x=1786470994;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=sEllbW2amjEC6Fq2iKDcJ/pEbGG9Dwld0bfe6YT1m6Q=;
-        b=Ngtiqq4A8fDfzVbS8vy5SIlMzbtoB3+q1SbYEo7yHJCuRiAl05z4Ms+g+16V8VflgM
-         6um891QoaxBcMLfc9qohPwGM0jL2q7UywX2HYeIshFU24C2NX2Pha7yIKE/CHOMMo8F7
-         u4e8twOCaaHR4nj8hH43K1mXmIP3TzksM8/JruQdd6ebLjWQMQ1CkCJrekdpQaQrvXDK
-         0HNxxl+E/d/TUvVrGA+pMw3IqBMw2NlLj2lkom0ueW3RgkqHoisXK/Cifw5PoaZM6bP7
-         zOOv5Vb0+iOrq6PU1e1qCSAFEMiMkiSew6AWaUb5QAchcuo/QXFJH9/k/L0qH8HGKegL
-         SiCA==
-X-Forwarded-Encrypted: i=1; AHgh+RofoTXQp6y8kXuAQTohykh3/i6RrmWJkr3tyBxKx4u2DJo8YznUga1fTFz/VCADPCGfd+01UIEk1MQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0/EV471BbPkR7mFUP0W/bmonM2q5xhe1Y9AWoKArGH2AbvZCO
-	SqLMBc/ZOyBlCba+3xVHmS2guZAyKgjt5MW/8f7rGRDThhUQSBgumLBHG30/61h83/mD6o2ImxG
-	o3J9wqboyINT1ShmVIg6djBQIWiNwRPrpckubK2w3riTQGDI1OVvGxOGJZymeYsk=
-X-Gm-Gg: AR+sD13pCtm4hCoEM1dePmfJiAGYXks6FywDB3XH1bThjw+JNLEGi4oihD8A7FZE665
-	EnrAJzfyvtqJinbPrQCI/vhHIkFaYLOeyYONvi9LdkWR+BQW+V2S6A7Hp+4CwiBR0ncfQoYRwXr
-	jAxtNdBvsF7t3tMbckXzV1rzAxVcRpO02m/Hukc4jhgy6NJlEpNW4QHN+klNpUp39JdwQZkTJvQ
-	+iqnrhZmAaAjlmJeGJAYpw/Suyfc4Q2CbWRxuVyqmGABwFU1OdlBSLDJ/ibzCviDXX4EbXBpnbs
-	NqpiRCG7lWr8SswMO47R6B9HdoGAS7CWzBq0qKWTPCBu/+5RXGBkHTSpixWl+FAr8PkMEP6hmFf
-	pBS+vuoeXwQRhwKSaDgjaxxzpLA==
-X-Received: by 2002:a05:6a21:a38c:b0:3bf:a681:a262 with SMTP id adf61e73a8af0-3cb8603af5dmr461187637.38.1785866194512;
-        Tue, 04 Aug 2026 10:56:34 -0700 (PDT)
-X-Received: by 2002:a05:6a21:a38c:b0:3bf:a681:a262 with SMTP id adf61e73a8af0-3cb8603af5dmr461155637.38.1785866194119;
-        Tue, 04 Aug 2026 10:56:34 -0700 (PDT)
-Received: from [192.168.0.195] ([49.204.27.1])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3158673be99sm12915825eec.15.2026.08.04.10.56.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Aug 2026 10:56:33 -0700 (PDT)
-Message-ID: <89e7b084-2afa-4841-85ec-51707a6defc8@oss.qualcomm.com>
-Date: Tue, 4 Aug 2026 23:26:26 +0530
+        d=1e100.net; s=20251104; t=1785868204; x=1786473004;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=XGjeFPew3WY1hoWUdVOxW+gqoEqKrPAbmGn8EETaFp0=;
+        b=rRmcfKBEs4mvuiIosPXEIlxFUMEmeoci6OQ/PxZwMXmjV6K6Rurmu2cQQ0CcDb+tJC
+         NTvZ6XjWdN6dpYZC9z78jPjgDpJvc07BFgU+Ls5dpQ9tmkLgohJwalINh425WFj30JwR
+         GD8TWJlMuE66xw0S64m1Zn1pvZ8z0vDCMr6ywkxJQ0XcP+bEbVVcP4gYNfBDuTXVTlcX
+         AAJLbrMVbT1cZ52APVmdOZOWchnCnXiI1hNs0N6Wb3ljNVo+wbw5rS5EbZGYZB2Jnq+C
+         NE2Ynxyj+rVtWdfgpPgaJEWy7ZlRGwoXZT3jEosSwQRl7/HYARJ6Vcu0HtMGUwaBoans
+         7YWw==
+X-Forwarded-Encrypted: i=1; AHgh+Rq7zrN5jHyPuwgSP6T7hYQAMe7JbfrzwI/AyxYupJ7t9qwifUHBA31ITohz+YHesFu6DWJIf+Ow0Go=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yys64WZOFXTFHQ/NOQJQmCoIYAkjEXzieFo25y59SdsFeo7EnZE
+	EgU7vDKviCPKA/cvzcHwKeAzf3obRGbEcno5SGfKjDAKa89TK2k3R68b4v5sIY6dVwJ6wXwHeuP
+	YR3EXi2iFCJu4kKec0hrGw8n8Dx91UCg=
+X-Gm-Gg: AR+sD13cCYI5Ty5RZ6HsRPwS4Vi+Qb9Gy2xK/OGxfx5IRVVTPK74p6z9bm/g0NcOEVm
+	7FJea8rb9vXFjjbTrZW/BYfn1ygqrdA4kEGSgl9ZcZoQtw2XdLpoqrB9zLSJTygQzkevi35WfQi
+	codY1a5Ym1n2y4Gho6+mxsTOWHN6v7BkmLze12Dcs/p/MedVwVtDYtxmZKs7hNtbERa/9a6eUxF
+	aQLMngLSnc5gzbMOAUTaX1b5RktHzRJr9IrX7TcW0VspHhZa41A046rMWfAP8IA0MEJo0ParbNh
+	pSwqG6GKEEL8FrjIA0gB/zpS5inhlM1apU2INtfj8YHeJIFPdV4/5CmyQty6+O77wQe+0QA3g4T
+	huGI=
+X-Received: by 2002:a17:907:a0cf:b0:c12:2aef:af2b with SMTP id
+ a640c23a62f3a-c2039d63cb3mr13321866b.4.1785868203728; Tue, 04 Aug 2026
+ 11:30:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] clk: qcom: Add Graphics clock controller support on
- Qualcomm Maili SoC
-To: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Dongfang Zhao <dongfang.zhao@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20260801-maili_gpucc-v1-0-9d8c37bded69@oss.qualcomm.com>
- <20260801-maili_gpucc-v1-2-9d8c37bded69@oss.qualcomm.com>
-Content-Language: en-US
-From: Taniya Das <taniya.das@oss.qualcomm.com>
-In-Reply-To: <20260801-maili_gpucc-v1-2-9d8c37bded69@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODA0MDE0NSBTYWx0ZWRfX2cLMZrMjQ0Oc
- tc/Wc+xh9UUYRByxPzyA7kWKYPl1VOVZm3jVNu1uXVNsII4lfWLwSFVvlX/kUMqzho3/1fB++VT
- yQ9zNFn5rOsBUo6MoJPT/7IyjMZY/O6op144fNn0Irq4K/q2w9JFFy16Chdy+tXSeyq+FekNG6V
- urj/2G+82HXNCuABPdrYJa83eDXc2Sh1BnyuLqlCjtkn3tRppPpdRya/Vkb2GGFOMf6EgNCgJOh
- njKToyH2ShhlMweDPACcO9yTi6tQwMgwPvoo425EEgk49iNLZKUa0M+4q42jnvnpV89ZLBuh4fY
- Z/3PXGFf4tn7cYdCmK9RezxUuyM77NqrHo8lWOXiV/7in3bTdFlqyiWZaH04SurrhK7KwPtKzOd
- bEuxdyqnE6ZaOemYkHc9dPOMFMkRvDF43UhW1sF/fLtHfBkSRZci50W5/+trTJsD+7xZvXuZU72
- iipfgSVLBHtax6oiuxg==
-X-Proofpoint-Spam-Info: AW1haW4tMjYwODA0MDE0NSBTYWx0ZWRfX8Yait+sNotXW
- Mpf+0acQr+kesoZWbiYBQZrN5IW9C7seEcPSTzVz/weLJuslEwFGgEqYdWTPNEap1XQLNE+59p4
- LPlccD2EzWzpiWxtCdXIfXkOmVmsnbo=
-X-Proofpoint-GUID: gWWt4A-3L7gPyXINVxt0qB5ISU5fXGCE
-X-Proofpoint-ORIG-GUID: gWWt4A-3L7gPyXINVxt0qB5ISU5fXGCE
-X-Authority-Analysis: v=2.4 cv=GL441ONK c=1 sm=1 tr=0 ts=6a7227d3 cx=c_pps
- a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=oJgQA1a84MxBYcMfCYBOLQ==:17
- a=IkcTkHD0fZMA:10 a=Sv0fKeRqtYgA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=yx91gb_oNiZeI1HMLzn7:22
- a=EUspDBNiAAAA:8 a=fCNx6FN-KcjCUQZW59UA:9 a=QEXdDO2ut3YA:10
- a=x9snwWr2DeNwDh03kgHS:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-08-04_03,2026-08-04_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 impostorscore=0 lowpriorityscore=0 spamscore=0
- malwarescore=0 clxscore=1015 bulkscore=0 adultscore=0 phishscore=0
- suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
- definitions=main-2608040145
+References: <20260726-ti-adpll-v1-1-86f6fc936507@gmail.com> <20260803215059.GA638187-robh@kernel.org>
+In-Reply-To: <20260803215059.GA638187-robh@kernel.org>
+From: Bhargav Joshi <j.bhargav.u@gmail.com>
+Date: Tue, 4 Aug 2026 23:59:51 +0530
+X-Gm-Features: AUfX_mxwSCENiGM3gLSFs_OrQ5dfHB7ft3kTamvikK_i48EKp9jKQ4sMVne1v5s
+Message-ID: <CAOWyW_68A9xKd9nrTM4dZxgdNEypT60WHnwOYow-i99eqcUbvQ@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: clock: ti,DM814x-ADPLL: Convert to DT schema
+To: Rob Herring <robh@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney@redhat.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Tony Lindgren <tony@atomide.com>, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	goledhruva@gmail.com, m-chawdhry@ti.com, daniel.baluta@gmail.com, 
+	simona.toaca@nxp.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 8/1/2026 12:42 AM, Jagadeesh Kona wrote:
-> Maili gpucc is a derivative of Hawi gpucc with pll0 configuration change.
-> Hence, reuse the Hawi graphics clock controller and extend it for Qualcomm
-> Maili SoC.
-> 
-> Signed-off-by: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
-> ---
->  drivers/clk/qcom/gpucc-hawi.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-
-Reviewed-by: Taniya Das <taniya.das@oss.qualcomm.com>
-
--- 
-Thanks,
-Taniya Das
-
+On Tue, Aug 4, 2026 at 3:21=E2=80=AFAM Rob Herring <robh@kernel.org> wrote:
+>
+> On Sun, Jul 26, 2026 at 12:17:47AM +0530, Bhargav Joshi wrote:
+> > Convert the Texas Instruments DM814x ADPLL clock binding to DT schema
+> > format. Add 'clock-output-names' as required which was missing in
+> > legacy binding, as the driver (clk-adpll.c) mandates it and fails
+> > probing if it is missing.
+> >
+> > Signed-off-by: Bhargav Joshi <j.bhargav.u@gmail.com>
+> > ---
+> >  .../devicetree/bindings/clock/ti/adpll.txt         |  39 --------
+> >  .../bindings/clock/ti/ti,dm814-adpll-clock.yaml    | 108 +++++++++++++=
+++++++++
+> >  2 files changed, 108 insertions(+), 39 deletions(-)
+>
+> > diff --git a/Documentation/devicetree/bindings/clock/ti/ti,dm814-adpll-=
+clock.yaml b/Documentation/devicetree/bindings/clock/ti/ti,dm814-adpll-cloc=
+k.yaml
+> > new file mode 100644
+> > index 000000000000..7f551dfca030
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/ti/ti,dm814-adpll-clock.y=
+aml
+> > @@ -0,0 +1,108 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/clock/ti/ti,dm814-adpll-clock.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Texas Instruments DM814x ADPLL Clock
+> > +
+> > +maintainers:
+> > +  - Tony Lindgren <tony@atomide.com>
+> > +
+> > +description:
+> > +  The ADPLL is a register-mapped clock generator found on TI DM814x So=
+Cs. It
+> > +  provides multiple output clocks from two or three selectable input c=
+locks and
+> > +  three to four children.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - ti,dm814-adpll-s-clock
+> > +      - ti,dm814-adpll-lj-clock
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  '#clock-cells':
+> > +    const: 1
+> > +
+> > +  clocks:
+> > +    minItems: 2
+> > +    maxItems: 3
+> > +
+> > +  clock-names:
+> > +    minItems: 2
+> > +    maxItems: 3
+> > +
+> > +  clock-output-names:
+> > +    minItems: 3
+> > +    maxItems: 4
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - '#clock-cells'
+> > +  - clocks
+> > +  - clock-output-names
+> > +
+> > +if:
+> > +  properties:
+> > +    compatible:
+> > +      contains:
+> > +        const: ti,dm814-adpll-s-clock
+> > +then:
+> > +  properties:
+> > +    clocks:
+> > +      minItems: 3
+> > +    clock-names:
+> > +      items:
+> > +        - const: clkinp
+> > +        - const: clkinpulow
+> > +        - const: clkinphif
+>
+> This can move to the top level and just 'minItems: 3' here.
+yes sure
+>
+> > +    clock-output-names:
+> > +      items:
+> > +        - description: dcoclkldo
+> > +        - description: clkout
+> > +        - description: clkoutx2
+> > +        - description: clkouthif
+>
+> You don't have to document the clock-output-names.
+>
+Got it. I will drop the item descriptions for clock-output-names.
+> > +else:
+> > +  properties:
+> > +    clocks:
+> > +      maxItems: 2
+> > +    clock-names:
+> > +      items:
+> > +        - const: clkinp
+> > +        - const: clkinpulow
+>
+> And just 'maxItems: 2' here.
+>
+> > +    clock-output-names:
+> > +      items:
+> > +        - description: dcoclkldo
+> > +        - description: clkout
+> > +        - description: clkoutldo
+>
+> And drop. Or maybe just 'maxItems: 3'
+>
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    adpll@40 {
+> > +        compatible =3D "ti,dm814-adpll-s-clock";
+> > +        reg =3D <0x40 0x40>;
+> > +        #clock-cells =3D <1>;
+> > +        clocks =3D <&devosc_ck &devosc_ck &devosc_ck>;
+> > +        clock-names =3D "clkinp", "clkinpulow", "clkinphif";
+> > +        clock-output-names =3D "481c5040.adpll.dcoclkldo",
+> > +                             "481c5040.adpll.clkout",
+> > +                             "481c5040.adpll.clkoutx2",
+> > +                             "481c5040.adpll.clkouthif";
+> > +    };
+> > +
+> > +  - |
+> > +    adpll@80 {
+> > +        compatible =3D "ti,dm814-adpll-lj-clock";
+> > +        reg =3D <0x80 0x30>;
+> > +        #clock-cells =3D <1>;
+> > +        clocks =3D <&devosc_ck &devosc_ck>;
+> > +        clock-names =3D "clkinp", "clkinpulow";
+> > +        clock-output-names =3D "481c5080.adpll.dcoclkldo",
+> > +                             "481c5080.adpll.clkout",
+> > +                             "481c5080.adpll.clkoutldo";
+> > +    };
+>
+> One example is enough.
