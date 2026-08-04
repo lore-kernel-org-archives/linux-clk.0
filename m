@@ -1,126 +1,115 @@
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BEB73590C3
-	for <linux-clk@vger.kernel.org>; Tue,  4 Aug 2026 02:45:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.180
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785811546; cv=pass; b=R1DPw5dXV2RCqKcCeP2AP1Y9OGlK1FKbU5XfQJcvy0vh14m6f62IWp4XXZNIceVWmECtAfQRD8I/ln3wRv/uXkHUZZw4QoF/x//WdV+stt/U8r1ZCaBpzTfNIoSBaJXApnRGrtK2U0W7HoenDe4uljdARYzQx6yy+YWXignz0bs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785811546; c=relaxed/simple;
-	bh=AUHZK43CT/N++9FBcUl1JAIfA+cKuOObfqC5yDHgHUM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cBJ1jP/KV8/tX6ttglngJwRaU4y7sG6AbS8PjZM7VWSb8TKV4iB6wJbSk2JxJpB3Xa9qkvhiihNYvrlO3ql1SyFsq+TmuYZ4UP7AP4CCRyNRg1iu17da2GQvk+PQm8+ktz+tCfBf2vnKNB4OxSY5C8wMQ0JFwH/7oGdijee3mQk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=WgErTmhf; arc=pass smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DFAA26FA60;
+	Tue,  4 Aug 2026 02:51:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1785811878; cv=none; b=rM8NePNFme2UHK/JZW5eRxKD5I88d64NkpE1E3H6s85iBHOGUa7oA7uTWRj2/sFag1gzEVVamA4jYjiJ9a0BjGF5MpZFfd8E5bIUHJnwpn9y4dG1oXI8gfGvjSOgcY1ykg+vwGQBqPHMHtBnOd0mYvwlCYLXfBjJZasmUNFJppw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1785811878; c=relaxed/simple;
+	bh=Glc6UAfiJxXWX4rTJSzOsAmV3soZFnJEPo2fZl86Gno=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=l1yUnIUUuxVctECe9na1Tr7H09Nn9E9DlXvEkM4vi8LSz1kXCkRDbAlnAKVcLHO04Y9ypV3ZZ2thYogfYxo6D3ey/fWqjZrluMSdv+aoHQSt5jd/4KtkDGSTD62BZAbWNQ2+ropyL1O+ZgoEBSGvZ7KZm5rCNLpPAfnZ5S1Y0Nc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=Plg9a3Tt; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WgErTmhf"
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-81ed2a00f12so58825487b3.2
-        for <linux-clk@vger.kernel.org>; Mon, 03 Aug 2026 19:45:45 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1785811544; cv=none;
-        d=google.com; s=arc-20260327;
-        b=laPNZcmS4gdlIEiNHNqkZa4e2XcRxBaxDfYn4JOnYo257VM6hO8xUBAFMEjHKQFlAm
-         k1lhVwVfmv1FbeLH11El6HHkzlUyS8/YtJitZu8nWcvo0ezn/uDO10JsliO9eoITuyYS
-         Q8mGT80Dfst7nRSH77CYNnS/04/4zM1ATgcxoLfLoZ47yZZPDgU6urptcOVXx2ndtLqK
-         bP+kCB+5osvHM0Ie8YLK6GFiA/scLOU0KIIaakXq5lQ4Ys4GVi16rf61fpfAHoPRPdZm
-         pet7AFpRKbtzU0aTQi6G66ySfaB2wWv+3gOHV2YGwZ/n+wGOKhf90C118xuoLacWZLNL
-         Bjqw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=AUHZK43CT/N++9FBcUl1JAIfA+cKuOObfqC5yDHgHUM=;
-        fh=F23BjIVx11IkcVpvyQ+/Z2I4yl1wIpeQzbi4b+6jku0=;
-        b=Vg9HWNMFBVzbpFpBX7P813v/0Le14ktpYk4xTHtKBdofFPe5iwnLAPYupOhasOdrIK
-         UBuotmgXaPVQvhjTkLP4c1bU+fmhigpX70dAOcwNjn/Yb4cEpY1A7qM55M9oBjWvcDrR
-         euJHL5nOeV6Ke/nobZe42bxLV2bHhf4eWGVBIg6CESM44t6YMK4C0qxKP9cW20g8Wucn
-         c6txz6bHSYEdh9pDpge+vk8iEi3oKhL9IcMcPp4H1FvRYdmoIKHMyXNPznAHHeIOnHdx
-         NIYe+9EY5zd7p0Xj9+7PanGC3AGajjFdUiJOujdiXxRC4an3FWl7zYZk2IErFtMIApCG
-         IXsQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1785811544; x=1786416344; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=AUHZK43CT/N++9FBcUl1JAIfA+cKuOObfqC5yDHgHUM=;
-        b=WgErTmhfNRjNzhJhVn1FMcCJZc198tvCR2mywUwTerla7mLgodvReQHOaXBoMRh2Bk
-         p8MDcwBiF5wgNmjRtmlukA3PGBxMXvSt5GJiP1wFZBfBNFTjBM+fYDauqE3vPQ5+4u0/
-         w1Sc02oG6DtdJNiQG2ebax7JXtN8ewys652WY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785811544; x=1786416344;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=AUHZK43CT/N++9FBcUl1JAIfA+cKuOObfqC5yDHgHUM=;
-        b=NWEfYXTgBgf/4cMeovO8vavQ6bqPkCCGw6nHHWhLaWEQTnbBKj6O6kDkfdBojb2c4k
-         oqtMGhk+ko08FbeXqJ0eS7YJ1IMYlkVAXhSGjmH/iOWSB4Br5z1Bc2hngiYEphH7HXts
-         gGop7LnHePxP19CYFRC5Uv8OuzWMpiObh+wtmmrVsDZ4oi+8NU68zA0pw2JJaAIsM12x
-         OEUykHcDcyk8r1SKrlk1FhtaT83NXrqXx2eJbkSdJaSY2eoTfeJhyR9Jx7LMGSY/4Bxu
-         OFBCOWba/pnkTI24Aj7ttIWAlu1zcL9PuagEfP0qDV9fJeIewdSpOUIFpenOn6FraM4X
-         jWFg==
-X-Forwarded-Encrypted: i=1; AHgh+RrRfaf/IIqtjIl/rlXGJsgBYSdLxbKfXLQi0ZHeadz73Wnax2DloDlqTAijvCP+oO0lCMtSboik+z4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzxv/xUKCS9dd2qymvvuaCo02DN45r5X4Qw1VkXGVoxlSAGyzAU
-	TNAwYajr856V2OMxeg9w5jNsmKcBRAWykhLikrFlKMFICXlLc/mAYR1LXttBLPrXJ9OX22j7QsW
-	4+pHVjPsM2QcrAQ2NvkSNBgDHkY0RX/nHf6nq4Lzm
-X-Gm-Gg: AR+sD13+5LCtBDc1Xx/S5k1wpsdcoOgBa2OX2bwtXH/dKJYuccxzyALqtm9qjfYAdC/
-	xOy1tUIyVda9IKgcArYHGtm9m3EgqJY0fbLcATGtd22BOVnx7ajR6/7cCUhfImrU26ZLDECcFj4
-	B1ePPT1kBdc/VNs79jeCSwgWPr76d9xFaH/cjgghfU5H3T73HcvAzocbjeG2K6Sg2KW344LZeE1
-	yicJKh4cJYcRReEsfIeQqA+dGzrxvpPy9qf6YY1X80U7Oq9q9iNJueP4L91NcqmySow5P5CjL6G
-	SpVrKi4U7ULeqMfX5l3JSi3yvwfUGX6yj4J5u4+rmjHBIO4=
-X-Received: by 2002:a05:690c:6d07:b0:81f:27f8:2de4 with SMTP id
- 00721157ae682-81fd4a04799mr160372987b3.8.1785811544182; Mon, 03 Aug 2026
- 19:45:44 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="Plg9a3Tt"
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 6742o8dhD753734, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1785811808; bh=Glc6UAfiJxXWX4rTJSzOsAmV3soZFnJEPo2fZl86Gno=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=Plg9a3TtLhXCfHcQCSCV4Y09eFPDP+DjvmRM8fYh3DyF8ooRXLO32RKf3WtKQVogQ
+	 HlQq3VDzchtYo3Z5quJIg0kfdoUO+Q35OaSGqlv3KurwnE5C4WodJZF93n4s8Qyin0
+	 RAxpCtdtGuB74mBnGuyfdb4+62ED+peb5tYTmOyVMziGaZLPoptJJdAAEVEHlOnMIY
+	 oVFddF9ZXnm0AxsZpVzrk7lhxggKdh+SCDxbf5MJVuVILKik4gdY4D5A8cTRE9bThV
+	 vZd8F+fAbmnNEd6M+0mkHEggQdFlzkmQhPk/9q6GfrOAlMJaoCrlVZzbCTRVXu3sUc
+	 L6UNEPokuWB0w==
+Received: from mail.realtek.com (rtkexhmbs03.realtek.com.tw[10.21.1.53])
+	by rtits2.realtek.com.tw (8.15.2/3.29/5.94) with ESMTPS id 6742o8dhD753734
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 4 Aug 2026 10:50:08 +0800
+Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
+ RTKEXHMBS03.realtek.com.tw (10.21.1.53) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Tue, 4 Aug 2026 10:50:08 +0800
+Received: from RTKEXHMBS06.realtek.com.tw ([::1]) by
+ RTKEXHMBS06.realtek.com.tw ([fe80::e6fd:5a3f:8946:92c4%10]) with mapi id
+ 15.02.2562.017; Tue, 4 Aug 2026 10:50:08 +0800
+From: =?utf-8?B?WXUtQ2h1biBMaW4gW+ael+elkOWQm10=?= <eleanor.lin@realtek.com>
+To: Brian Masney <bmasney@redhat.com>
+CC: "mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@kernel.org"
+	<sboyd@kernel.org>, "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+	=?utf-8?B?RWRnYXIgTGVlIFvmnY7mib/oq61d?= <cylee12@realtek.com>,
+	=?utf-8?B?SnlhbiBDaG91IFvlkajoirflrold?= <jyanchou@realtek.com>,
+	"afaerber@suse.com" <afaerber@suse.com>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	"linux-realtek-soc@lists.infradead.org"
+	<linux-realtek-soc@lists.infradead.org>,
+	=?utf-8?B?SmFtZXMgVGFpIFvmiLTlv5fls7Bd?= <james.tai@realtek.com>,
+	=?utf-8?B?Q1lfSHVhbmdb6buD6Ymm5pmPXQ==?= <cy.huang@realtek.com>,
+	=?utf-8?B?U3RhbmxleSBDaGFuZ1vmmIzogrLlvrdd?= <stanley_chang@realtek.com>
+Subject: RE: [PATCH v11 09/11] clk: realtek: Add RTD1625-CRT clock controller
+ driver
+Thread-Topic: [PATCH v11 09/11] clk: realtek: Add RTD1625-CRT clock controller
+ driver
+Thread-Index: AQHdHp1PRrydlNtj20y7WRFW4A3UiraFxLQAgAGIGQD//+r2AIAE5x2Q//+uAACAAWyoQA==
+Date: Tue, 4 Aug 2026 02:50:08 +0000
+Message-ID: <be6d1e827cba4a779757b81ce084c108@realtek.com>
+References: <20260728142806.1954638-1-eleanor.lin@realtek.com>
+ <20260728142806.1954638-10-eleanor.lin@realtek.com>
+ <amuBqi43ce9bYbir@redhat.com> <577a6882b25e457fa94fa199e66f3197@realtek.com>
+ <amy47how40BJnHsn@redhat.com> <a216b77c125544c0871b40f31c021ef7@realtek.com>
+ <anCRAqhQ93QAihsS@redhat.com>
+In-Reply-To: <anCRAqhQ93QAihsS@redhat.com>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260803141659.559129-1-akkun11.open@gmail.com> <20260803141659.559129-14-akkun11.open@gmail.com>
-In-Reply-To: <20260803141659.559129-14-akkun11.open@gmail.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Tue, 4 Aug 2026 10:45:33 +0800
-X-Gm-Features: AUfX_mwLcNdgKSX0dY1YbYf9cwLK9DsvJWUXl-Ukek71RJiEJ4s-l_75YEo7Ku0
-Message-ID: <CAGXv+5HRsFFhzSYPdk-zmipLTVwxPkHLbuFP=wn_f_D+3ejAMQ@mail.gmail.com>
-Subject: Re: [PATCH 13/32] clk: mediatek: mt2701: Switch to common
- probe/remove helpers
-To: Akari Tsuyukusa <akkun11.open@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney@redhat.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Yassine Oudjana <y.oudjana@protonmail.com>, Richard Cochran <richardcochran@gmail.com>, 
-	Laura Nao <laura.nao@collabora.com>, 
-	=?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>, 
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, Danilo Krummrich <dakr@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig_=28The_Capable_Hub=29?= <u.kleine-koenig@baylibre.com>, 
-	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, 
-	Takashi Sakamoto <o-takashi@sakamocchi.jp>, Haotian Zhang <vulab@iscas.ac.cn>, Kees Cook <kees@kernel.org>, 
-	Miles Chen <miles.chen@mediatek.com>, Daniel Golle <daniel@makrotopia.org>, 
-	Sam Shih <sam.shih@mediatek.com>, 
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
-	"moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>, 
-	"moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, 
-	"open list:PTP HARDWARE CLOCK SUPPORT:Keyword:(?:b|_)ptp(?:b|_)" <netdev@vger.kernel.org>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 3, 2026 at 10:18=E2=80=AFPM Akari Tsuyukusa <akkun11.open@gmail=
-.com> wrote:
->
-> The MT2701 clock drivers can use the MediaTek clock framework
-> common initialization sequence. Reduce boilerplate code by creating
-> struct mtk_clk_desc and using the mtk_clk_simple_probe/remove helpers.
-
-For all the subsequent conversion patches, please try to mention _what_
-led to the converted driver being able to use the common helpers, i.e.
-what prevented it from being used before. Was it the PLL, or PLLFH, or
-something else?
-
-Details matter.
-
-
-ChenYu
+PiBPbiBNb24sIEF1ZyAwMywgMjAyNiBhdCAwOTo1NjowMUFNICswMDAwLCBZdS1DaHVuIExpbiBb
+5p6X56WQ5ZCbXSB3cm90ZToNCj4gPiA+IE9uIEZyaSwgSnVsIDMxLCAyMDI2IGF0IDA4OjE3OjQ0
+QU0gKzAwMDAsIFl1LUNodW4gTGluIFvmnpfnpZDlkJtdIHdyb3RlOg0KPiA+ID4gPiA+IE9uIFR1
+ZSwgSnVsIDI4LCAyMDI2IGF0IDEwOjI4OjA0UE0gKzA4MDAsIFl1LUNodW4gTGluIHdyb3RlOg0K
+PiA+ID4gPiA+ID4gRnJvbTogQ2hlbmctWXUgTGVlIDxjeWxlZTEyQHJlYWx0ZWsuY29tPg0KPiA+
+ID4gPiA+ID4NCj4gPiA+ID4NCj4gPiA+ID4gKC4uLikNCj4gPiA+ID4NCj4gPiA+ID4gPiA+ICsg
+ICAgIHsgLyogc2VudGluZWwgKi8gfQ0KPiA+ID4gPiA+ID4gK307DQo+ID4gPiA+ID4gPiArTU9E
+VUxFX0RFVklDRV9UQUJMRShvZiwgcnRkMTYyNV9jcnRfbWF0Y2gpOw0KPiA+ID4gPiA+ID4gKw0K
+PiA+ID4gPiA+ID4gK3N0YXRpYyBzdHJ1Y3QgcGxhdGZvcm1fZHJpdmVyIHJ0ZDE2MjVfY3J0X2Ry
+aXZlciA9IHsNCj4gPiA+ID4gPiA+ICsgICAgIC5wcm9iZSA9IHJ0ZDE2MjVfY3J0X3Byb2JlLA0K
+PiA+ID4gPiA+ID4gKyAgICAgLmRyaXZlciA9IHsNCj4gPiA+ID4gPiA+ICsgICAgICAgICAgICAg
+Lm5hbWUgPSAicnRrLXJ0ZDE2MjUtY3J0LWNsayIsDQo+ID4gPiA+ID4gPiArICAgICAgICAgICAg
+IC5vZl9tYXRjaF90YWJsZSA9IHJ0ZDE2MjVfY3J0X21hdGNoLA0KPiA+ID4gPiA+ID4gKyAgICAg
+ICAgICAgICAuc3VwcHJlc3NfYmluZF9hdHRycyA9IHRydWUsDQo+ID4gPiA+ID4NCj4gPiA+ID4g
+PiBUaGlzIGRyaXZlciBpcyBsaXN0ZWQgYXMgYSB0cmlzdGF0ZSBpbiB0aGUgS2NvbmZpZyBidXQg
+dGhlbiB5b3UNCj4gPiA+ID4gPiBoYXZlIHRoaXMuIElzIHRoZSBpbnRlbnRpb24gb2YgdGhpcyBk
+cml2ZXIgdG8gYmUgYnVpbHQgaW4gb25seT8NCj4gPiA+ID4gPg0KPiA+ID4gPg0KPiA+ID4gPiBJ
+IHdpbGwgY2hhbmdlIHRoZSBLY29uZmlnIG9wdGlvbnMgZm9yIHRoaXMgZHJpdmVyLCBhcyB3ZWxs
+IGFzIHRoZQ0KPiA+ID4gPiByZWxhdGVkIGNvbmZpZywgZnJvbSB0cmlzdGF0ZSB0byBib29sLg0K
+PiA+ID4NCj4gPiA+IEtlZXAgaXQgYXMgYSB0cmlzdGF0ZSBpZiB5b3UgYXJlIGdvaW5nIHRvIHVz
+ZSBtb2R1bGVfcGxhdGZvcm1fZHJpdmVyKCkuDQo+ID4gPiBZb3UgY2FuIGFsc28gZHJvcCBzdXBw
+cmVzc19iaW5kX2F0dHJzIHVubGVzcyB5b3UgaGF2ZSBhIHNwZWNpZmljIG5lZWQgd2h5Lg0KPiA+
+ID4NCj4gPiA+IEJyaWFuDQo+ID4NCj4gPiBZb3UgYXJlIHJpZ2h0LiBLZWVwaW5nIGl0IHRyaXN0
+YXRlIGlzIGJlbmVmaWNpYWwsIGVzcGVjaWFsbHkgZm9yDQo+ID4gYWxpZ25pbmcgd2l0aCB0aGUg
+QW5kcm9pZCBHS0kgZGVzaWduLg0KPiA+DQo+ID4gVG8gcHJvcGVybHkgc3VwcG9ydCBtb2R1bGUg
+dW5sb2FkaW5nIGFuZCBkcml2ZXIgdW5iaW5kaW5nLCBJIHdpbGwgYWRkDQo+ID4gdGhlIC5yZW1v
+dmUgY2FsbGJhY2sgYW5kIGRyb3Agc3VwcHJlc3NfYmluZF9hdHRycy4NCj4gDQo+IElmIHlvdSBh
+cmUgYWJsZSB0byB1c2UgYWxsIGRldm1fKigpIEFQSXMsIHRoZW4geW91IHNob3VsZG4ndCBuZWVk
+IGEgcmVtb3ZlDQo+IGNhbGxiYWNrLg0KPiANCg0KVGhlIHJlYXNvbiBJIHBsYW5uZWQgdG8gYWRk
+IGEgLnJlbW92ZSBjYWxsYmFjayBpcyBub3QgdG8gZnJlZSBtZW1vcnkgb3INCnVucmVnaXN0ZXIg
+Y2xvY2tzLCBidXQgdG8gY2xlYXIgdGhlIHJlZ21hcCBwb2ludGVycy4NCg0KSSB3YW50IHRvIHNl
+dCBkZXNjLT5jbGtzW2ldLT5yZWdtYXAgPSBOVUxMOyBpbiAucmVtb3ZlIGNhbGxiYWNrLg0KDQpC
+ZXN0IFJlZ2FyZHMsDQpZdS1DaHVuDQoNCj4gQnJpYW4NCj4gDQoNCg==
