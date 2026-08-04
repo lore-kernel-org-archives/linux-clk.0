@@ -1,40 +1,40 @@
-Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
+Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02D513F6C39
-	for <linux-clk@vger.kernel.org>; Tue,  4 Aug 2026 07:04:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 960BD38B15E
+	for <linux-clk@vger.kernel.org>; Tue,  4 Aug 2026 07:04:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785827079; cv=none; b=DxBve937GX7eRZk5TFJnXEgL+ef4bWcVEHQkNiqNr6sIuuhH0d9gV/GLGsvfOdeeB47Iw15hPIf8kfd4AeCKacIy2zCwiyDDDrXUz3cp+5EcMYauFdAhM2a1KQFCbsz6PJynTvPbnljy1pXDHI4ncjma2vMC5+vkjsLMBo2Arkk=
+	t=1785827090; cv=none; b=f7Nj0brEcfN9BImyXIVKXcvzA9L/XtL19jfh+3U0oewo8iC0qvRMfmmcw4HVb79+XNynqWepr4nYH2QAm707tKE2zcAM2btwItQnqmPn+bMkLp7iXZYzeCmLL/VNVY1QW8OJFJGfkZUrXAbgWTQ3LQJ9Cwe8plrpJGY/LsIaR8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785827079; c=relaxed/simple;
-	bh=PlQBymtMAAqNDUPQRPsL7JnHYRZ7ZWqu5bfX531CCtc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UU/ezqFDMcGgyFcW0y/8WohsmI7ZWXYD28uVVuNIOj614ce62pbaVp9tLlADjggPBEQTQBQIs3BlQZGLBaNFWAlhNSy7lbklVXsYaDC5TT+zPEujF87UqJzel5E474Utff1JT+qbHFJkfRWGJ4RqrAGZSUpBtIZDsl9Sru2RvRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=VRciBhIF; arc=none smtp.client-ip=54.92.39.34
+	s=arc-20240116; t=1785827090; c=relaxed/simple;
+	bh=IW6D+IWdo8RtEKyPetD9zVM5Djt1dC9dceqZ6CPr9gc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=tKXB/XbX7gA4H76KNO78yOPLU8j7+oFy8za97Gniq0vERtuBIf0NiWX4ST551yIePYPyMOHBMUuPI76tDV4MCGD5a0RLNGv2kOjew+0xsLXcADQL5bTG3zeKc9rv09UdRJDr+VXqMcqKZIbyfioNlgsgZoy8y9xmP2Q+Koy+E94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=XOgqIWtf; arc=none smtp.client-ip=54.204.34.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="VRciBhIF"
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="XOgqIWtf"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1785826991;
-	bh=rpJs/Hdp1HVbk4XvKcceprK5M09yNTlwySvCQvGJnBc=;
-	h=From:Date:Subject:MIME-Version:Message-Id:To;
-	b=VRciBhIF7o5E1k2alCl4yA4RYM+dReb8gqhRVsL0TaIcjPpHMzLXybN8eZa8LXROU
-	 Wyji7wgiLGiEaXa++2T25mne0oeQBFwygV/NO1HjEjIJH1gwaLhhpkHUwQgxUgiWnR
-	 H5G0hfAUDfLPixg85yjjYyvPkknsOQz8gptHR2Do=
-X-QQ-mid: zesmtpsz3t1785826989t5c85e0da
-X-QQ-Originating-IP: Ii9wABQ3Nyx14c//0/sSvM0K+v1BhIofh9n8So9D91c=
+	s=mxsw2412; t=1785826987;
+	bh=GImfhL+KrnsR6yE46cScayoU/oHI6MI5dbzBtOBfDtI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:To;
+	b=XOgqIWtfiJ6OXcStDIR+LMtk2As2wIWbX5KT0WloaeYjCj3s0PifaYRakAsdeFmy0
+	 B60G1C3soQF/V+0OO5j4KggSLNCBBIGDL6+n3EhMibKZHDZs0Izm1PtKrqogRbe84H
+	 0m9YDNl4pSZ/s52c/daQV7PQOxgmqRyWwoNL8evs=
+X-QQ-mid: zesmtpsz5t1785826984te45056b7
+X-QQ-Originating-IP: 6Q8/nwFx0eDR6Ricx/U13Cqzlvs5o09g4RmQ9XhTVkg=
 Received: from = ( [120.237.158.181])
 	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 04 Aug 2026 15:03:06 +0800 (CST)
+	id ; Tue, 04 Aug 2026 15:03:02 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 3563694009911167884
+X-BIZMAIL-ID: 11833633272755698400
 EX-QQ-RecipientCnt: 12
 From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Date: Tue, 04 Aug 2026 00:02:55 -0700
-Subject: [PATCH 1/2] clk: spacemit: re-enable PLLs after init
+Subject: [PATCH 0/2] clk: spacemit: fix PLL init and add K3 1.8 GHz rates
+Date: Tue, 04 Aug 2026 00:02:54 -0700
+Message-Id: <20260804-k3-pll5-pll8-1800mhz-v1-0-a3a75866ce32@linux.spacemit.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -43,9 +43,10 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260804-k3-pll5-pll8-1800mhz-v1-1-a3a75866ce32@linux.spacemit.com>
-References: <20260804-k3-pll5-pll8-1800mhz-v1-0-a3a75866ce32@linux.spacemit.com>
-In-Reply-To: <20260804-k3-pll5-pll8-1800mhz-v1-0-a3a75866ce32@linux.spacemit.com>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIzMDCwMj3Wxj3YKcHFMQYaFraGFgkJtRpZtsYWhhbppokGhpYqIE1FpQlJq
+ WWQE2NjoWwi8uTcpKTS4BmaVUWwsAZOdEj3gAAAA=
+X-Change-ID: 20260802-k3-pll5-pll8-1800mhz-c81875a0a944
 To: Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
  Yixun Lan <dlan@kernel.org>, Inochi Amaoto <inochiama@outlook.com>, 
@@ -54,74 +55,67 @@ Cc: linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
  spacemit@lists.linux.dev, linux-kernel@vger.kernel.org, 
  Troy Mitchell <troy.mitchell@linux.spacemit.com>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1356;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1264;
  i=troy.mitchell@linux.spacemit.com; h=from:subject:message-id;
- bh=PlQBymtMAAqNDUPQRPsL7JnHYRZ7ZWqu5bfX531CCtc=;
- b=owGbwMvMwCU2g/N9w09jE33G02pJDFmFfYs3ymer2IRen/u2bIebidyKsntNFi/P/lB5mb9wy
- 9E3/CcqOkpZGMS4GGTFFFm6H/BsK/CJsi0QKPSFmcPKBDKEgYtTACaS85rhn/VypcZJ/FNj4//Y
- nXpgusAg+lPgvh+zJG0ePW/ePKlD0YDhf93CZUvN09tPf33LrZIiznYzV5jhGWfZnNPXbjPyHpR
- byQYA
+ bh=IW6D+IWdo8RtEKyPetD9zVM5Djt1dC9dceqZ6CPr9gc=;
+ b=owGbwMvMwCU2g/N9w09jE33G02pJDFmFfYtkTV5o983YLS3xqe9/+2+mA3uutLnvZM3aoSb25
+ pxbVu2bjlIWBjEuBlkxRZbuBzzbCnyibAsECn1h5rAygQxh4OIUgIm4H2BkWC4SbqxxxPTJtN9+
+ b51m2HC1hx1yb9zj//Bv1YKayTmt8xj+F/zanH24JqrfPKey8yiHSpRIEX/wrLwSW1WHmzyfso2
+ ZAA==
 X-Developer-Key: i=troy.mitchell@linux.spacemit.com; a=openpgp;
  fpr=3FE5535CF1B0E658E57DB59BAE1C2FBEA7DB42E1
 X-QQ-SENDSIZE: 520
 Feedback-ID: zesmtpsz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
-X-QQ-XMAILINFO: MQdTMy9oLvVBYiRUFBZfYN0WXPHnYkzlMw5i70YvqjgiFEVWrHiIrK1A
-	x/HiXE7AqWtUuTuLmLvsUlJ+i/NUkRNXTrr6YmY95ATCERWb/KJ4TeARKfz6CAis+0pkW8X
-	sHjenGIbMx0nscF4GOAIB4vHEZi9OjVdHfZ29Ke6VUWRANyyyBt3pD7PNiEPyrPKzvenSFF
-	JPINtQMe3B4p4HqsTsbz/FrrIj6sm9ffk9RhR6wojO6K2l8hmpEf996Z3klngREkW6B3CFD
-	s5NNylzrDrWdP/3+3OoxLOGdmcRCss2fy5GtTitqMXXscm+D9iI5GfOcWu8vd6jNZ8bcPEN
-	MRCJpxQCVNa9JsVsXXCKpo4SO7ONrlf/59IXewoBrwDQ3fU6If+AxtT3ZZQP4xePbHwWTYF
-	9mSHfBjdONm3KI1/zU3uruA8RpW71DkEDj1rDhuILG4puvpejpLBDjYORpkJBSRYCUHCUi2
-	cgWNTGUj9Lc2Q7u4LYNn0ygmhXTnyWx5gUglViE+/QMQP/AwL4qLrI5nN2hYjB5rHuCbzdB
-	kMaugVh3/7F/4fpDSUuEs/JPgvWxLNeeEv6uT0+bBzjQ1kE9CaMWudENAUq4aeHx6J01M/m
-	FUWgqrfNh7iSvNaEg3q69FWJEBbNElBNxOFyT0GKojcXTu25yQSiCJ3hztaLhJjp9k9ogPm
-	fJG6uUE269eZZVblwP8IZhboJciym7a3NGen3XJfQkme48CfqrcTupZIlirIQdNtdK8lAu0
-	0QoehUGsdoZBfxIimqyH80bt+YXqVxVDGnmpAuIuAwNHRAhVH5GRYwJnRsTOo6dFQYbacCk
-	YzY6HhJ1XZ6QNTGS4NJwep5Eh9IRdf7NXcLV1My2VGs51AiTeFGnVg6LhPld1Ekbkv79/63
-	Y2pqsLnUpicEmpQfJHJnxcbOFEOPcLmLGqradvqVyghTqIefnmv1d9AeflLBCGGU2AuafZc
-	sfvWkW52t5zMZ3NZc/Pkd5WzcVaR2P8Ru24TS0ni2EYDoO7YcIZkdEYHDY31qKA8ad6GQnw
-	91FJnEi38hLM1NI7IUTCUCjQV9/OOCsmdr3IMvhBAZYZ/isTXsBAAsDt2La+nyvhjtnxSlF
-	htO57JzjCUPlpF2zqPFrhIH4erXIt8ouqvwD9YZt9yQ
+X-QQ-XMAILINFO: M+ZHGjti0A6oh9FAwEzDT/kiYFrs9+o7BPPgEoEV3tfHNOGihGf2QhF3
+	8YLQQRSneIWsKQwvLwGjB2PfMiU00Cr+KqHX/LHFHv9MwpIVYYdosGNTrpVv2vt26wz8AxE
+	FYYfJhL7Z1Z/bP2IYiA8IzmSkrDlJ2KDAXvzf1cNxIME+lmoO/sy6kHzqgZeUUoe/AF7DFP
+	RQw3fp/J0/XPe5XmrynbTc2+jiqKY/IhuEsjZMwmC9GXNM0mUOnTyVfAScXKcVJWApHv4Ln
+	mMTiFJFMqcaiefaDhNo8IQUGoZLutmfLBJWEOmg9X7TiqaymjZkjD3SjOk59QZlxbR4ZbzK
+	d8Zp2EnmpEbySdJeQBsoXIKtniMKDsSNJOtkGlAywv8eVjHvoqXgOlOoxxL4PcBnu0Vi6/A
+	oUwIaYv93nKTA7QnufOQFS/HNR61I3g6EJMHQAa8SPkr3LOHTakoLc/s7iecN52JuzHA2Dc
+	MjxeoFdNVJm1X0pW42iz9Ce2QnJu7QyEkg/0xcJlW8cQL26pLbrnr1qt85hQFdn7v/UqtIE
+	0zL2YbaVrgquzlMKK8D7qjIxY6haw2aTBOPLrOKVqeLQl9G86JjuL5m+CFbIAwQhSadRaE/
+	XU5RGcroDZBfBoqbUyginHGOa3491ZfStiqc3B2yCyr0+V0+yD+opR+jVFyZ3JVXmHzx9R1
+	JauLdpjWTfw5uHFSX3KOiKzBknOHevRPfeJr1iw8E8Y9o9tQXkUntFTcEX1RFHF5i6dazJH
+	hEA0uMxyDy3l4uKfVT0I+p6zzujQrAmWApfrmE5mvGEbkEYNchLF4aaFpaFqjwAGF1bP0yA
+	t226dTmuKuwgs8k5Pty1j970s5+HVIxWI0/J8+QbfVTgP5K8FGYu9FKipYLqOtDpCE21Uy+
+	YhED2fZZ8GU/iHPUf7ChfI6TZmjX43pZQvx8xtU5gxxpUtmQTS85WzUJeNxKNWDz/H44qX6
+	mS3G16BChH0NlyHJymBhohu1qqXkH2xIg8STgv7dLveUzycy+jhooPVld61v1MVRdnQfP0S
+	vhX8esSvefKSZANX4ZLKfUJnn2D1jABqEg41y3CKHsagFEA4gM9zWfq//cKJVjJ45Od+EPS
+	fI4waqVpGpEXpgFWrEVswNG6PRP3mGc9U2O0xGwW8BWWtugc5QqxjrC37BiJ2z3Xp2OPwfx
+	iFYe
 X-QQ-XMRINFO: MPJ6Tf5t3I/ylTmHUqvI8+Wpn+Gzalws3A==
 X-QQ-RECHKSPAM: 0
 
-The PLL and PLLA init callbacks gate off and reprogram a PLL when its
-firmware configuration is absent from the rate table. However, they
-leave the PLL gated off after updating the registers.
+The PLL and PLLA init callbacks leave a PLL gated off once they
+reprogram an unmatched firmware configuration. Re-enable the PLL to
+complete the disable-update-enable sequence and propagate any lock
+timeout to clock registration. Apply this to both the K1 PLL and K3
+PLLA implementations.
 
-Re-enable the PLL to complete the sequence and propagate any lock
-timeout to clock registration.
+The K3 SoC may not remain stable when its A100 CPU clusters operate
+persistently at 2 GHz. Updated U-Boot firmware therefore configures
+their C2 and C3 clock domains at 1.8 GHz during early initialization.
+PLL5 feeds C2 and PLL8 feeds C3, so add 1.8 GHz as the default
+rate-table entry for both PLLs.
 
-Fixes: 1b72c59db0ad ("clk: spacemit: Add clock support for SpacemiT K1 SoC")
-Fixes: 3a086236c600 ("clk: spacemit: ccu_pll: add plla type clock")
+The related U-Boot change is available at:
+https://github.com/spacemit-com/uboot-2022.10/commit/fb95cf3d848b771c61b5a1b3e5cbbee223faf352
+
 Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
 ---
+Troy Mitchell (2):
+      clk: spacemit: re-enable PLLs after init
+      clk: spacemit: k3: add 1.8 GHz PLL5 and PLL8 rates
+
+ drivers/clk/spacemit/ccu-k3.c  | 2 ++
  drivers/clk/spacemit/ccu_pll.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+---
+base-commit: 1590cf0329716306e948a8fc29f1d3ee87d3989f
+change-id: 20260802-k3-pll5-pll8-1800mhz-c81875a0a944
 
-diff --git a/drivers/clk/spacemit/ccu_pll.c b/drivers/clk/spacemit/ccu_pll.c
-index d4066a0ed452..f9627da0af37 100644
---- a/drivers/clk/spacemit/ccu_pll.c
-+++ b/drivers/clk/spacemit/ccu_pll.c
-@@ -148,7 +148,7 @@ static int ccu_pll_init(struct clk_hw *hw)
- 	ccu_pll_disable(hw);
- 	ccu_pll_update_param(pll, &pll->config.rate_tbl[0]);
- 
--	return 0;
-+	return ccu_pll_enable(hw);
- }
- 
- static const struct ccu_pll_rate_tbl *ccu_plla_lookup_matched_entry(struct ccu_pll *pll)
-@@ -252,7 +252,7 @@ static int ccu_plla_init(struct clk_hw *hw)
- 	ccu_plla_disable(hw);
- 	ccu_plla_update_param(pll, &pll->config.rate_tbl[0]);
- 
--	return 0;
-+	return ccu_plla_enable(hw);
- }
- 
- const struct clk_ops spacemit_ccu_pll_ops = {
-
--- 
-2.55.0
+Best regards,
+--  
+Troy Mitchell <troy.mitchell@linux.spacemit.com>
 
