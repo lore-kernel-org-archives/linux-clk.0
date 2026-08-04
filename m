@@ -1,101 +1,126 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 511813F1ABD;
-	Tue,  4 Aug 2026 06:37:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836A038B15E
+	for <linux-clk@vger.kernel.org>; Tue,  4 Aug 2026 07:04:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785825477; cv=none; b=Ni2bggDUZa//IpTOIftqjADvVHndWPwcX/Cu9HU9lfx+pMFSaTPBWghp/fMow9Tpovm1A3NLCA8K5QovOE+N1IGAh7KtlkrVWvdL8jyZcDS4xJzMIuccRkwpyMR9OTCBbQybp1EUSTA9Bgk1tgNbbovpLyAcBcH/+FJiY3RCHMw=
+	t=1785827077; cv=none; b=QzBJZpzaBGMxjHcFG0KyjsSL8JggG4m1WVWJwyFGOKOVj7sC1KfJpC2AWix3II7yO/gOw+yQwKdxiUQ8jUkQVdfMP/L3GHm8btvFBUHJDX+cZf0OAnHXTD7PkQYxcUHycJmDPoNl7QOkpIwzpoG+Y0ZJxZ5BQClB5Zmgbwh1TLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785825477; c=relaxed/simple;
-	bh=sVV9ANkNdZSlIxQxx6G0UrPV7UdyTkbaOPTjRrwl8xo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y5x8fT9HvTx2Ad7ZAq5vcjEb06qtYuIP4hFUD7tAclh48mVjU0VY5fE1ovjPIxSfoQ9vvRxET9LalhZD62A7dEETDvyFE00dkp9ouRLrO/Nhpe3AxGhzk6Uz7ky2sDR5/M7VBAEYkpwqwkji/UjEMd7s6CeiyXfzgMTdmSnuVwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jaMly5HT; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785827077; c=relaxed/simple;
+	bh=s8SW+2iT48s0IYV1Q5M+r8l+mfKCLpiBxd0Xenj5kRU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=OOLxHFN3B+hkbvZwqkBZcTn3WouZsx09ZpzfbPZ+9Su0H1ZZdqPIl4cotSkiPwb16t78vXAxyWKNJqOiSK6NJdqM9X3pmCCeuwnsAHAUyIPICmtxePdPZP6SfaudS6RQQ2/VFbLiwLLUVFxs/rmDSGQH+3t8hks14oQJPgroVLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=rGpwmOaT; arc=none smtp.client-ip=54.92.39.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jaMly5HT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E77811F000E9;
-	Tue,  4 Aug 2026 06:37:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785825475;
-	bh=sVV9ANkNdZSlIxQxx6G0UrPV7UdyTkbaOPTjRrwl8xo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=jaMly5HTZ3fqszrH4+9Avu8iT9Iu4USutKzAtFZXji71cQ/MKlmxt3iNMousKck4p
-	 0St6s/+igXJGmG6faNAYUPY2KnHGQNaTNxvaFz/nsL/yNENZCNy6pH7KrXDNkwPmRr
-	 qDfoC9OjF5pZE9wMZrpqXpk6ZHOMhFQplfeL4f3AX3WcJzdX41CxFDp+BCJFydpPpG
-	 7o+mt/Rb9Y1kROTR+MJ0oy1e9kAjGKOCWY7Qbk0Om+6ZdlJF6djsB5j9RFbw5R+et8
-	 hmQNo4y9OoTRY6/hLF7yux1HlWKKPvtB0ifjGju0YGkdr05SSK7YFCZF/f5ZN4gcgE
-	 eNa1VxO8oR8Hw==
-Date: Tue, 4 Aug 2026 08:37:52 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Stefan =?utf-8?B?RMO2c2luZ2Vy?= <stefandoesinger@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Brian Masney <bmasney@redhat.com>, Vinod Koul <vkoul@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Russell King <linux@armlinux.org.uk>, Lee Jones <lee@kernel.org>, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org, mfd@lists.linux.dev
-Subject: Re: [PATCH v9 01/12] dt-bindings: clk: zte: Add zx297520v3 top clock
- and reset controller
-Message-ID: <20260804-tough-reindeer-of-zoology-6ccd59@quoll>
-References: <20260802-zx29clk-v9-0-d05530d85d28@gmail.com>
- <20260802-zx29clk-v9-1-d05530d85d28@gmail.com>
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="rGpwmOaT"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
+	s=mxsw2412; t=1785826994;
+	bh=JxeHR9WR6YbITz8Accvq6oKveJ/YQXL91bc8ukBr7BE=;
+	h=From:Date:Subject:MIME-Version:Message-Id:To;
+	b=rGpwmOaTQ2WSjSWyY4HSb6mUNvYyzvA0Fo7wYX67VDEhDRbJDPdc8KbPwj3473efL
+	 twrZnrVkvp78or732ZbLVq+D7KI/d+uyk9W++O8/qzMUYcdZEgCiNe60QdI0jw6u/K
+	 qcioEx8FDMHg7rTRakmk86HPnRwSvwYfYjmvpKzY=
+X-QQ-mid: esmtpsz10t1785826993te7252ff3
+X-QQ-Originating-IP: oPWhoeyklrLrczWg0K86LHDJPUuUkvmNCuHodKu6Nfc=
+Received: from = ( [120.237.158.181])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 04 Aug 2026 15:03:10 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 10466597976480000085
+EX-QQ-RecipientCnt: 12
+From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Date: Tue, 04 Aug 2026 00:02:56 -0700
+Subject: [PATCH 2/2] clk: spacemit: k3: add 1.8 GHz PLL5 and PLL8 rates
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20260802-zx29clk-v9-1-d05530d85d28@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260804-k3-pll5-pll8-1800mhz-v1-2-a3a75866ce32@linux.spacemit.com>
+References: <20260804-k3-pll5-pll8-1800mhz-v1-0-a3a75866ce32@linux.spacemit.com>
+In-Reply-To: <20260804-k3-pll5-pll8-1800mhz-v1-0-a3a75866ce32@linux.spacemit.com>
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
+ Yixun Lan <dlan@kernel.org>, Inochi Amaoto <inochiama@outlook.com>, 
+ Alex Elder <elder@riscstar.com>, Haylen Chu <heylenay@4d2.org>
+Cc: linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org, 
+ spacemit@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ Troy Mitchell <troy.mitchell@linux.spacemit.com>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1351;
+ i=troy.mitchell@linux.spacemit.com; h=from:subject:message-id;
+ bh=s8SW+2iT48s0IYV1Q5M+r8l+mfKCLpiBxd0Xenj5kRU=;
+ b=owGbwMvMwCU2g/N9w09jE33G02pJDFmFfUunZh2qWFuza/KFos78Vv+wRRNrA25480wwPznl2
+ aPyWlmtjlIWBjEuBlkxRZbuBzzbCnyibAsECn1h5rAygQxh4OIUgIl8nsXIsDdBMPzK/pJZV5O2
+ xb7O8DdbzfUkbL3oC+17xw+1mB6Ifcjwh8/o4KTzTA5i53dqfVMNNa3SeXL0sf71iD0zA79mKr0
+ I5wUA
+X-Developer-Key: i=troy.mitchell@linux.spacemit.com; a=openpgp;
+ fpr=3FE5535CF1B0E658E57DB59BAE1C2FBEA7DB42E1
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpsz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
+X-QQ-XMAILINFO: MOrL9Q2bZwNSa47uGVjg/tFZ7iyplumvBW41UC6yVDIdr2du8QecfXEG
+	+xf/QsiPD4vLlvbKYe1/GpSiU5aZooh6uKtSz3NpHgzU6EZJ1yHvILTf4C0jZfQwm2eaffO
+	3c9CoSv0yzIgJbGqc2epDZ+IHVVD8MKv/qzDWRLDeWwvhqqWl6D0BpS7BAafeNydVWV7gFm
+	VB25XFs4uInAK6JeRs7C8w4a2oNFRmUeIPLorqOrsN8MUxWNpIz/j3bO8vEtRexz3+PXvIr
+	L2kjUL1EY02M6hmstfe3NkMAymxG0O1pFAwMBmeokFuDtyC82bR4WvpuzWMmjPCk68WmWZi
+	8feB69ioxA3wANOxCdyU/gAk2QOLeDr8ISqG26x65yCbsqBquK9at4fagwBsIxAwHy12E9k
+	FI3EK2bb3Cetcc9UijDoJDloYwCpO4UPCgQmT85q8lQCo13CylFZTnOUpLBSnQG6HEtdDL0
+	UJb2f+/LIfYg+Rf0WtOJz5v+OOejXW90tuvbDXaRz4rcs8syvC/cpoGoaM92rtJBwqWqJeI
+	zb1FwAwF3CzXm3MvJIJIxi8X2HP96Ycznt5V13cNnSE7R2HoSb0V7lApNa+VTat/MawDUU5
+	56Pseb4OQEMQdQoYXq95+LloOEEASGW4rNc25poEbRSyIvW+tqpW7HH/f1YYDXlx+Mwav3d
+	6GbNU/g4iJ6pFmNQwGE7CG98sCTQjHIu/4k2wtLPEZkClRv6WOy8lEk+o059bGxNAUuGBRL
+	Ir/CdPfHj4YPMik3TmznGrAwfdzm3hW5oRD5iraFEh67mLhU829sp79DNRUJPPV3qFoyKFZ
+	13cZqbhgTOzVbZiS9V4EbCZoF2jlPXGpy57cnykk5dRapTn+Z4pfhsmQxrezVyFzPeMfnOh
+	7vFwwvnPBGn35OkcebbW4os24Zica50S77YwdEUpmhjOhzOLu3Mrd80st2wSQKC37R9qI9C
+	bVUUv8EQqTiGCRAHRp8Kz/M2Rt/V3ipzkv8tFmncfqbcWSAKM8RWa+5F1EJLnrEGDVcO8sE
+	Yyy9pNWzp7pQGDn0zMH6aLN2TZtBeTCc2DIOeC8cPHKqGt8/Gl8uNxYqrq+E+bqHHQ19gYS
+	egsXdfs55o/2TaehwSEyCO2zPB3sZQ8Qg+WkSYet+wElCQLn4oIHEtwQkELluLAw4WGJprz
+	V1jO
+X-QQ-XMRINFO: NyFYKkN4Ny6FuXrnB5Ye7Aabb3ujjtK+gg==
+X-QQ-RECHKSPAM: 0
 
-On Sun, Aug 02, 2026 at 11:33:33PM +0300, Stefan D=C3=B6singer wrote:
-> These SoCs have 3 clock and reset controllers: Top, Matrix and LSP.
-> Clocks go from oscillator -> top -> matrix -> LSP, with a register in
-> top controlling most clocks that get passed to matrix and a register in
-> matrix controlling all the clocks that get passed to LSP.
->=20
-> Generally every device has two clocks (one work clock, and one that
-> connects it to the bus, I call it PCLK), two reset bits (I don't know
-> what the difference is - sometimes asserting one is enough to reset the
-> device, sometimes both need to be asserted). PCLK and WCLK are
-> controlled by individual gates. Some devices have a mux and/or a
-> divider for their work clock. Some devices, like the GPIO controller,
-> only have reset bits and no clocks.
->=20
-> The top clock controller is fed by a 26 MHz external oscillator and has 4
-> PLLs to generate other clock rates. ZTE's kernel mostly relies on the
-> boot ROM to set up PLLs, but one LTE-related PLL is not configured
-> on some boards. Therefore my driver contains code to program PLLs. It
-> produces identical settings as the boot ROM for the pre-programmed
-> frequencies.
->=20
-> Not all clocks will have an explicit user in the end. I am defining a
-> lot of them simply to shut them off. The boot loader sets up a few of
-> the proprietary timers, which will send regular IRQs (although the
-> kernel of course doesn't need to listen to them). I don't plan to add a
-> driver for the proprietary timer as I see no use for them - the ARM arch
-> timer works just fine. I will add a driver for the very similar
-> proprietary watchdog though.
->=20
-> The clock list in this patch is pretty complete but not exhaustive.
-> There are other bits that are enabled, but I couldn't deduce what they
-> are controlling by trial and error. Some of them seem to do nothing.
-> Others cause an instant hang of the board when disabled. It is quite
-> likely that a handful more clocks will be added in the future, but not a
-> large number.
->=20
-> Signed-off-by: Stefan D=C3=B6singer <stefandoesinger@gmail.com>
->=20
-> ---
->=20
-> Changes v8->v9:
+The K3 SoC may not remain stable when its A100 CPU clusters operate
+persistently at 2 GHz. Updated U-Boot firmware therefore configures
+their C2 and C3 clock domains at 1.8 GHz during early initialization.
+PLL5 feeds C2 and PLL8 feeds C3, but 2 GHz is currently the only entry
+in both rate tables.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Add 1.8 GHz as the first entry in the PLL5 and PLL8 rate tables,
+switching the driver default from 2 GHz to 1.8 GHz.
 
-Best regards,
-Krzysztof
+Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+---
+ drivers/clk/spacemit/ccu-k3.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/clk/spacemit/ccu-k3.c b/drivers/clk/spacemit/ccu-k3.c
+index cb0c4277f72a..e8b7ce89c2cb 100644
+--- a/drivers/clk/spacemit/ccu-k3.c
++++ b/drivers/clk/spacemit/ccu-k3.c
+@@ -38,6 +38,7 @@ static const struct ccu_pll_rate_tbl pll4_rate_tbl[] = {
+ };
+ 
+ static const struct ccu_pll_rate_tbl pll5_rate_tbl[] = {
++	CCU_PLLA_RATE(1800000000UL, 0x0b4b0000, 0x00000000, 0xa0458585),
+ 	CCU_PLLA_RATE(2000000000UL, 0x0b292aaa, 0x0000ab00, 0xa0558686),
+ };
+ 
+@@ -50,6 +51,7 @@ static const struct ccu_pll_rate_tbl pll7_rate_tbl[] = {
+ };
+ 
+ static const struct ccu_pll_rate_tbl pll8_rate_tbl[] = {
++	CCU_PLLA_RATE(1800000000UL, 0x0b4b0000, 0x00000000, 0xa0458585),
+ 	CCU_PLLA_RATE(2000000000UL, 0x0b292aaa, 0x0000ab00, 0xa0558686),
+ };
+ 
+
+-- 
+2.55.0
 
