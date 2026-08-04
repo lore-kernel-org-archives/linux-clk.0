@@ -1,149 +1,135 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CDD4399340
-	for <linux-clk@vger.kernel.org>; Tue,  4 Aug 2026 15:33:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A452146D2DB
+	for <linux-clk@vger.kernel.org>; Tue,  4 Aug 2026 15:57:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785857613; cv=none; b=Kfh1grgjvrwkaQ0Ea8mYb+OPyHVJgKRJ3PJKErWN5nhTi+Ea0aQjRRx5vVVwqz5uCnhD7Z34cyJ/Omkc+Q0OdKtK1HPCCDLtGGECT5RCy7CP7JQDCm2wTpYus9hN9GcHZkbhyDoUw7dk2AE1LE/p70wLJH+Wy0l4ULxJmieVaEc=
+	t=1785859075; cv=none; b=l67DSeQwSzrqoZTahSkw+45J1kiKIrbpc4EucfbD1iwgK979a2qx+2LJjR7zfjNTFXr+sCsYbPESweaR0y9ePsQy3pe+tggHzLHWGjzqBY60z2fNXJUDI2YFsV3rOdq3Pe28CrfEidUsylcul3TggrUlcQc0j6O8XNn6jULO74w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785857613; c=relaxed/simple;
-	bh=UDeWptvLj0b5oSam43dNy/seViN/UvQzaOuFKDvdmhs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=GaUHo7sgU8HXEx87gdcvtJ7na8ypkS30aNCfv6Tpf+blsrmECnVM5ukp3v0zQC3NiTHOXGD5LMjXlPOI+41RUnjh+02GFbVkd7Z48yigoht4ID2CF1vG3lc9ZZ8IvsJr5MIzLntOIhLYXz13EIbb1B7hgylwWfNRwPDthXBOpSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MkhOuIXY; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=OsIU74sl; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1785859075; c=relaxed/simple;
+	bh=fUTHTx2z/ytGSZ8c6/Jopz376bDKRTBCj+nJjJ+aB5M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mmBBiS3GYPvGn4k8w3/lORa1crJBgeJXDbv3G49lFPWyqSLxrtXPR5XIsvqpmvTPGblElX4ETmoe6mn7c3a2TKxSFu75vRr6hCTgylVofjtbgPDrRKAgGmOkjyiUdQYCvK/8iCle+V+7VUus8aJcIrFqCSIwvImFafHsZrvYyoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MlbAkUbj; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=c0Hkc27x; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MkhOuIXY";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="OsIU74sl"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MlbAkUbj";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="c0Hkc27x"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1785857611;
+	s=mimecast20190719; t=1785859073;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=4FpnrsdM+ZF4fQJSgsYt1ARWgH+W05xcYTVu+nMglOU=;
-	b=MkhOuIXYQ3WHZN3TL6WjLi8/hetJXx9IKTgfrekRFi+u69SAOnE1/vR0++E+rEui2eqSh/
-	cv3e0j5tmYu7Jr6oNhlYOvEFtWwKspf1BNMNz7JPLyiWslgaQUzzdgzx9/qzu1GyJ75DAB
-	UZqNALQPGTuW7UGonV9VVoqsqnXTeck=
-Received: from mail-yw1-f199.google.com (mail-yw1-f199.google.com
- [209.85.128.199]) by relay.mimecast.com with ESMTP with STARTTLS
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UKSqhVCKV28Q6Z3s7N3OQYhv7gvj0WpLmagy5hhZZl4=;
+	b=MlbAkUbjzv456V/gxt+lSDlICSkkul4MAnbV7ZbkDFJGxdsvLHOFF3Ybx0YHCyXVu98bIk
+	hNO6BPBXLEFIm9dEqCd0PV63X0uUxSzK+gwGcem3AW3JXRDE9Ve/K43CkjaaIfk+e0hqlb
+	6mDgrhyDL7BRZ7Dy4EE2RKOSbCVeqo8=
+Received: from mail-yx1-f71.google.com (mail-yx1-f71.google.com
+ [74.125.224.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-31-Kl52CkCOMZClncgII7xEHA-1; Tue, 04 Aug 2026 11:33:24 -0400
-X-MC-Unique: Kl52CkCOMZClncgII7xEHA-1
-X-Mimecast-MFC-AGG-ID: Kl52CkCOMZClncgII7xEHA_1785857604
-Received: by mail-yw1-f199.google.com with SMTP id 00721157ae682-7fe835353acso72040077b3.2
-        for <linux-clk@vger.kernel.org>; Tue, 04 Aug 2026 08:33:24 -0700 (PDT)
+ us-mta-76-uGfXWsn2PaWv6nLkLUqLGQ-1; Tue, 04 Aug 2026 11:57:52 -0400
+X-MC-Unique: uGfXWsn2PaWv6nLkLUqLGQ-1
+X-Mimecast-MFC-AGG-ID: uGfXWsn2PaWv6nLkLUqLGQ_1785859071
+Received: by mail-yx1-f71.google.com with SMTP id 956f58d0204a3-6648d902a6eso13761800d50.1
+        for <linux-clk@vger.kernel.org>; Tue, 04 Aug 2026 08:57:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1785857604; x=1786462404; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=4FpnrsdM+ZF4fQJSgsYt1ARWgH+W05xcYTVu+nMglOU=;
-        b=OsIU74slFACzuQ16x9wNd8l6MCsDLJrzArBm5tJOEBn5xULnQ302jJxPeJ8wibfel+
-         iExxgq06rlnoT1V6P9GxUQBWL32S1NbTHVHvHo8lO7ZTKQxSKwRUmrjsykgikobF2qQH
-         Jz4x5h7hxPw+qHciFIDiuZRtsL1mhV8PAMCijjj4aLtPXMP/fXebPh4TK0sRTuiAUDKw
-         7fN9iEYV5w8BhuXbXualvYB4Gnetoxk8YK00IIpu+ywOG9qae3TLB5S1xCZ0CjNafi2i
-         ezpJ9BlVKGXRIwbCQSXtx1z9721pVA8rvBzYpzUqSdZNRUsIjMQvZIlQ7eNCEEj/V6kx
-         UhZw==
+        d=redhat.com; s=google; t=1785859071; x=1786463871; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:content-type:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=UKSqhVCKV28Q6Z3s7N3OQYhv7gvj0WpLmagy5hhZZl4=;
+        b=c0Hkc27xz4h74Sm8vfCjwvp6OX10vAJQ5qVW/aHeQhVRZpmX9j3zdJMis82dbpPaDP
+         31G8WN+H2VW6X1yWIM5YM0vK3Vfq0CXCqMdXhRZ6A2l8/VedTsg/7AF7OVo4la5nrDGO
+         MGMjnEk9bB4pDfD+wBBd4Fv6UR9y1H6pES3Tqgg+YK894/j9Lm6pMVJRXY5lnTK/c8X6
+         EvTsYvArojBsKrhiVAu+qxua5ZUCxJr0zSOBcyKksebHDAc1dcos7KdhlXBR4xi4GU4O
+         UYe7Mu6ZiizQgO1yjecp3jw76E004eg0zLCzS9us5ctlF0tL1h3ySUfENHitm0Tsj/pt
+         plbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785857604; x=1786462404;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=4FpnrsdM+ZF4fQJSgsYt1ARWgH+W05xcYTVu+nMglOU=;
-        b=bZ+jle20LigcIOFH9eP0bQvsuJDIo5PtRSZJZIFBw3JHAkl8cJRxfOY2CD48XR+n+5
-         uK8B7yan1QNPlwj4+FeYV5PV7tk5cVJ8pk+raaG8X0wMRFpG2kLqFOK5dH94FxPMQXCh
-         xqcKmNfkVHHzOzvY1/tc0wwwofNA8xvGRTQFa7rAGo9Qd8OuhMMIP67YWdnyNm6qe+Xr
-         4wCvRiTpFfx0oBOtBz90/rjsbBuDT9QjGqw4D9tAM9fGwvu0pivJMBkegK8ZKsFnHc5Q
-         WVl+VKjS2t1CZ+sZ0/j0mD5cSzbDiy7BLA2TYMfCcauGBMBtMSPrCz/tV85GxYhAvfvN
-         flCQ==
-X-Gm-Message-State: AOJu0YyAOyGoj9dY3GMelpGvsecpGDUp33XqytIdj/h2TwhiY2rnswNb
-	HOQUEPEqHEtXnHhVZst1MaKyJaobylxPYGIjOpNuu2sJiWn+Aflj+wUmmJkxwwUWAs+lBwjleCM
-	Ds15UxMslEcX/O+qYIRyZEmog7Lia/g52/FjXA9pVaHwwXDEgu9frOmeVY4kS5w==
-X-Gm-Gg: AR+sD12bvJdXyHgjZSGh9AqAcqOm1ymsa6WCwn4ptUSKY3++elEH31a4PiWPm64w07P
-	PbxYQxFBX0EUqEtyXynmJzRmV+/dNdTl9E/Wxc0b6+Qscd4lcYvCH7SylJsNQgFGbCTzZD1IFfu
-	/2LuH4whQwEXyTQlq79pqSLzXwXK+vTx6gmXpBh5yGur+Sk7vJUMmEDQIT2iZEmDsfSOdAUxWXR
-	F94k0w4+y6N9a0AioEFdbaxvMvtmjA/ob/6i6aonKLoDLMgvLEirro7dqK5WOtnh98cg1tM4nJZ
-	zjBUhQyXMYOQKf13rsoCzJclxoma5SPYKQZzqHoX6gFUBnx0XZOC0csGI40jZSsRZe0hUfRgssh
-	hKuwfe7qMDw0+xjK5z1rNOWlG/c6MFIOTaT7LArM=
-X-Received: by 2002:a05:690c:6b11:b0:80c:3848:bde5 with SMTP id 00721157ae682-81fd4a22e3emr188911187b3.13.1785857604125;
-        Tue, 04 Aug 2026 08:33:24 -0700 (PDT)
-X-Received: by 2002:a05:690c:6b11:b0:80c:3848:bde5 with SMTP id 00721157ae682-81fd4a22e3emr188910687b3.13.1785857603475;
-        Tue, 04 Aug 2026 08:33:23 -0700 (PDT)
-Received: from [192.168.1.3] (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-8201320ec71sm7414657b3.12.2026.08.04.08.33.21
+        d=1e100.net; s=20251104; t=1785859071; x=1786463871;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:content-type:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=UKSqhVCKV28Q6Z3s7N3OQYhv7gvj0WpLmagy5hhZZl4=;
+        b=NP/0FzKeXcqoTHkxZNoyyOomkpH5qdKAe5ApI+yf0uwsQfTikCIhC9wWHTdcbxm5tu
+         M9smYV17gcAXW6mcw7rvjPTpVgy9r3BO7+j1XsK7ykXdDTf8bkjxVpDgo0bSUdYJlyvI
+         PtytXafnpTGuvPdMy9zDzg1D7WP+c3j14yPW5uugCEgkEvmVoydwuoqTWris/hPVK644
+         8gkLAsdCKtrulDBHxUbYo+8Re30zIhptrlQa/pTbi4xEAL20oKy5LO0c62dSHu7RlmXu
+         ShIAFcTlM9lmD7k/4qG/qI1ec9eqF2yT6k/DpOgnprmhRV1c65ZyyI3tMr0gc9oo/klR
+         9/4g==
+X-Forwarded-Encrypted: i=1; AHgh+Rpv4yzTgq+Gur4h4Dc/AGeim1f3hYciBSsr/qgAgkZTRteZhcB6UT9CF2lS3HM88Ee7t2m9Ltus8ak=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXGNODgIw8yy9eiWDk57LkM1C/O389IwAPqqS8djjlmWOFp17X
+	IR+5jMqODV2nvae5TTXRMA6LzJhYdiet5F3kqRFdCxQ6Uvwzq6KSokZ4ZgokcbK5p/OfPzHfolg
+	+oOEQ91aU+gIbwUquQanZ05ob0VHb9KTHRsJcgoK5sAEnpcDCJcyd4Tyq8AxeLg==
+X-Gm-Gg: AR+sD12cVQOblJW56BjQcBvrxUJGAHNpqbrYqv1IDlecAw63Dysa7vZdQMrgZr6KP3K
+	ejTLBtJtmFWenVmhVCl3H0Qybe8W9+5xdJCv/o2xUqRdjSKu14RBUPNGLuY8AYOH0bPd6KvLv0V
+	/f5rPH5sbLfjq2tmzBlSMklTrS5bPftx/skjwcDsdJZn3gRrtc3EdvrQ+GwlkGdmc8hHQbJRAw6
+	OTvQXN/WQaqD0oIrAAyiC2RZaIJoZCWa0PWEjEbNtE3U7zhuxAFAHulfae2GJxupA2oSiiWsMTI
+	fkjPgY8Wlu+cxAXzUfyYWdwtRzIJMhbXajfPu82e1yLC8/yU18Xo9stI89DZFGr+rm3Px150i15
+	tyb/broPK9MPojv5ckjULaUMG2XNjDg+bUuo=
+X-Received: by 2002:a05:690e:480b:b0:668:42d:95e5 with SMTP id 956f58d0204a3-6694efceb34mr13983397d50.4.1785859071636;
+        Tue, 04 Aug 2026 08:57:51 -0700 (PDT)
+X-Received: by 2002:a05:690e:480b:b0:668:42d:95e5 with SMTP id 956f58d0204a3-6694efceb34mr13983378d50.4.1785859071196;
+        Tue, 04 Aug 2026 08:57:51 -0700 (PDT)
+Received: from redhat.com (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-669915f2307sm914518d50.13.2026.08.04.08.57.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Aug 2026 08:33:22 -0700 (PDT)
+        Tue, 04 Aug 2026 08:57:50 -0700 (PDT)
+Date: Tue, 4 Aug 2026 11:57:48 -0400
 From: Brian Masney <bmasney@redhat.com>
-Date: Tue, 04 Aug 2026 11:32:59 -0400
-Subject: [PATCH] MAINTAINERS: Add myself as co-maintainer for clk subsystem
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] Drop Michael Turquette's clk maintainer entry
+Message-ID: <anIL_FKn9O4evOlL@redhat.com>
+References: <20260729121640.3864006-2-ukleinek@kernel.org>
+ <CAEG3pNCwa8ZyQHuDLDiCWXDUrGcuLpT8n6O75yN8tLsgZ5x-Lw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260804-clk-masney-maintainer-v1-1-de593189a9a1@redhat.com>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIzMDCwMT3eScbN3cxOK81EoglZlXAsSpRbrmSSbGJpaJBmkGBiZKQL0FRal
- pmRVgc6Nja2sBppaBC2cAAAA=
-X-Change-ID: 20260804-clk-masney-maintainer-7b4349a0f004
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, 
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Brian Masney <bmasney@redhat.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1356; i=bmasney@redhat.com;
- s=20250903; h=from:subject:message-id;
- bh=UDeWptvLj0b5oSam43dNy/seViN/UvQzaOuFKDvdmhs=;
- b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLKK2CyL5qYIreU57P9O8VXq0x/bWFVlIjauePN6FV9dB
- Oc138OcHaUsDGJcDLJiiixLco0KIlJX2d67o8kCM4eVCWQIAxenAEyE/SQjw5Svimx2x71vn2Va
- vDHpQ4GOdvnUD5Vx0nOeJyTafuy/qsrI0LiwZsfFqHUf7gqcuKhW9iB0Sa9kx36Pb9P3PnNgCtU
- 9yQoA
-X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
- fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEG3pNCwa8ZyQHuDLDiCWXDUrGcuLpT8n6O75yN8tLsgZ5x-Lw@mail.gmail.com>
+User-Agent: Mutt/2.4.0 (2026-06-19)
 
-With Michael Turquette stepping down as a clk co-maintainer, this
-subsystem is big enough that it needs multiple people to keep the
-clk community healthy. I've already been doing a lot of work to
-help with clk maintenance, so let's make it official in the MAINTAINERS
-file.
+On Sun, Aug 02, 2026 at 06:34:06PM -0500, Michael Turquette wrote:
+> On Wed, Jul 29, 2026 at 7:16 AM Uwe Kleine-König <ukleinek@kernel.org> wrote:
+> >
+> > Mike wasn't publically active for the clk subsystem since years. Stop
+> > pretending that there is a maintainer team caring for clk.
+> 
+> I was hoping to send this patch myself, and to recommend a couple of
+> folks for promotion to the clk subsystem. Alas, you beat me to the
+> first half of my plan.
+> 
+> >
+> > Signed-off-by: Uwe Kleine-König <ukleinek@kernel.org>
+> 
+> Acked-by: Michael Turquette <mturquette@baylibre.com>
 
-I slightly changed my email address to help with email filtering on my
-side.
+Thanks Mike for everything you have done over the years with linux-clk.
 
-Link: https://lore.kernel.org/linux-clk/?q=f%3Abmasney%40redhat.com
-Link: https://lore.kernel.org/linux-clk/20260729121640.3864006-2-ukleinek@kernel.org/
-Signed-off-by: Brian Masney <bmasney@redhat.com>
----
-Note: I made this depend on
-https://lore.kernel.org/linux-clk/20260729121640.3864006-2-ukleinek@kernel.org/
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I posted this patch to make me co-maintainer to help out Stephen:
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 07ffdec1c8c7..b9b01a3b70a7 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6448,7 +6448,7 @@ F:	include/uapi/linux/comedi.h
- 
- COMMON CLK FRAMEWORK
- M:	Stephen Boyd <sboyd@kernel.org>
--R:	Brian Masney <bmasney@redhat.com>
-+M:	Brian Masney <bmasney+clk@redhat.com>
- L:	linux-clk@vger.kernel.org
- S:	Maintained
- Q:	http://patchwork.kernel.org/project/linux-clk/list/
+https://lore.kernel.org/linux-clk/20260804-clk-masney-maintainer-v1-1-de593189a9a1@redhat.com/T/#u
 
----
-base-commit: 83adfb8e0c0e26f451564779c90798d1d4c13347
-change-id: 20260804-clk-masney-maintainer-7b4349a0f004
+To help make this subsystem more sustainable from a maintenance
+standpoint, I propose:
 
-Best regards,
--- 
-Brian Masney <bmasney@redhat.com>
+- To push more vendors to participate in meaningful reviews, and send in pulls.
+  A recent example of where I did that is with Mediatek:
+  https://lore.kernel.org/linux-clk/amuWdRD-TBQtFT_4@redhat.com/
+
+- Try to find more people to help with the subsystem as a whole so that
+  this all isn't on just one person.
+
+Brian
 
