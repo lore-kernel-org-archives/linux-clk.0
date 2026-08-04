@@ -1,193 +1,126 @@
-Received: from out-2z4y-a153.jellyfish.systems (out-2z4y-a153.jellyfish.systems [198.54.127.153])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 229E423EAB0
-	for <linux-clk@vger.kernel.org>; Tue,  4 Aug 2026 06:27:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.54.127.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1C323FADFD;
+	Tue,  4 Aug 2026 06:30:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785824841; cv=none; b=CR08FtAYPPrp1vnT8kGYLuJ++lVtyJcmNhytJ6mMsn60JzxsjZnwlrv0Zxc1TPwh2aYr61OYD5lnsOxc5d3/3640CC1YDxnZsA7iM4nqXEXUsLbc556anN3SoTLweJKsC87OfYMl2CuU/qXReXVE4Mw6Rj/bWhnEuFoyw03LZho=
+	t=1785825012; cv=none; b=rhUTg5hT5d8XTS8jUBOyxNQQ+I1tS3H2mDw1XGLturj8XENRqev0WTZ4jtIon0l19Fn/Tw5R67GDl4ngmUEVBKa5x7JcOL36ki5Ws0U4ZYDbYQbhZvW2LO8rfBtmRAJuHpzVK5obkSFMlALzbuqUwbXBOJmVnV5nW/TypcoVne0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785824841; c=relaxed/simple;
-	bh=lOzqX6Wy2nSakwBrRt0SCZhHihdfu3x6QmzMaWt90Jw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h4jW6hZpcdrxePniBuZKoP1LC9kLRVHESIMZK/m68MUEijHl+mJVMjOvSTnPuC2axulD35mQUIeqjNNEzwz+C8Rer1zSZzsxaBiQYQ+KhvWVX042PJn65FyyADii3o42T2u+4fbOfD09IWGxNq1l9ZfinDdW2mvVVqEYssslXWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gurudas.dev; spf=pass smtp.mailfrom=gurudas.dev; dkim=pass (2048-bit key) header.d=gurudas.dev header.i=@gurudas.dev header.b=e52EOm9Q; arc=none smtp.client-ip=198.54.127.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gurudas.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gurudas.dev
+	s=arc-20240116; t=1785825012; c=relaxed/simple;
+	bh=+VwFfGj24XKgd6cRoI4mXjYVZjgG5hl5FA60MKhvvbU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KH0EZwNAhkjHALbrOLuT1iV4e4GBwwdvAOd3tW4/lh61wuWkFE+SQsvTVGo41xbFCbMiwE3EQs9DdkvmOl5pCeYbeiXTCSV3lwEdd2W9Ok5JLKlGdaf1gWci4uFdLwgoehGoIbyi9naBstCwh5EKjacKSXFp9IAPoDujLAAQVKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c4WhJifQ; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gurudas.dev header.i=@gurudas.dev header.b="e52EOm9Q"
-Received: from gurudas.dev (107-194-158-19.lightspeed.sntcca.sbcglobal.net [107.194.158.19])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.spacemail.com (Postfix) with ESMTPSA id 4hDjv55x8rz6tkM;
-	Tue, 04 Aug 2026 06:14:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gurudas.dev;
-	s=spacemail; t=1785824098;
-	bh=oS//Vk7TT83gIs8sXgHDLQHLb8n9YFC0RWYbFuLvwzk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e52EOm9QgsUM2lsTkQXhHST4o2WaGSg4l3MWdBP8iCTgL83XtC30zggMo49sUIW7Q
-	 5VXYgOiAHwvncjTu7mSmJpp8uQT8UKcOwxAFTsNd/E/iTSyV8QllHGoO/vhe5tIPkV
-	 aDAmYyNyF1Q1rtYkSL/Q4oBooQSdMbGnpTi9h4cCBzla1aIXj5QmbT0wQh7qqsfqE+
-	 iX3jSV6EGqoEQsymOKWRqOBfyEvTTjjA9U6U5Fywkv6MaZXowzqb67462xwJdnGw/f
-	 I5UUOlkBtoLoh/W1J9+SyY7lUQjGnUeD8JHHIYGvnXGG368gVVkX7mZ4v0EdafZCEa
-	 94cVR7cuvQRRA==
-Date: Mon, 3 Aug 2026 23:14:55 -0700
-From: Guru Das Srinagesh <linux@gurudas.dev>
-To: Julia Lawall <julia.lawall@inria.fr>
-Cc: Nicolas Palix <nicolas.palix@imag.fr>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-	cocci@inria.fr, Brian Masney <bmasney@redhat.com>,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH] coccinelle: Detect clk_register() anti-pattern
-Message-ID: <anGDX4xWItkoXTo9@gurudas.dev>
-Mail-Followup-To: Julia Lawall <julia.lawall@inria.fr>,
-	Nicolas Palix <nicolas.palix@imag.fr>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-	cocci@inria.fr, Brian Masney <bmasney@redhat.com>,
-	linux-clk@vger.kernel.org
-References: <20260802-cocci-clk-register-v1-1-df68afcb1eef@gurudas.dev>
- <31eb2139-eb3c-912b-9f61-4aa77df7a5ee@inria.fr>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c4WhJifQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7E541F000E9;
+	Tue,  4 Aug 2026 06:30:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1785825011;
+	bh=Mx1XeDGAzXDPK/6rjzRAZe1JCbz5sJKsQhIN2j9b9h4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=c4WhJifQ94PdbagifwbA1MBvyrg4VN3a7Xayvtv2xSKEMbHnOAC2ahKK4MyMwjSMQ
+	 5E97wvx+pKp0LlMSvMEdrzZ87SDWvrBe4+MGuYz1Osk5A1NR22zg3PqtWTzlzkztvc
+	 4KI93vUhLvfoBZGAz4554iJrQeqskt/DSftOnE8n0qSD+UNPj7hUKs0wUH4fCpOimD
+	 72roI7ENIqV6peM2a5O2vLidmY0osp89fZMvdx0fwIcVj6mwvwjFj4v+4C7nzUhFzX
+	 yoxSHLr8uVflV4M0S5CA11K2XcWMUhDU0ZPGZMEeMRuBqp+c7+RwEtppOV6QSz91p3
+	 bjr4/+wvm0+TQ==
+Message-ID: <f4d603f8-4b4a-4983-900a-5f4cca957fb4@kernel.org>
+Date: Tue, 4 Aug 2026 08:30:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <31eb2139-eb3c-912b-9f61-4aa77df7a5ee@inria.fr>
-X-Envelope-From: linux@gurudas.dev
+User-Agent: Mozilla Thunderbird
+Subject: Re: (subset) [PATCH v6 00/16] clk: qcom: Add DISPCC and GPUCC support
+ for the Qualcomm Shikra SoC
+To: Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ Loic Poulain <loic.poulain@oss.qualcomm.com>,
+ Brian Masney <bmasney@redhat.com>, Dmitry Baryshkov <lumag@kernel.org>,
+ Imran Shaik <imran.shaik@oss.qualcomm.com>
+Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+ Taniya Das <taniya.das@oss.qualcomm.com>,
+ Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+References: <20260718-shikra-dispcc-gpucc-v6-0-62703e05ef0f@oss.qualcomm.com>
+ <178572744553.408250.18300678058452023245.b4-ty@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <178572744553.408250.18300678058452023245.b4-ty@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Julia,
-
-Thank you so much for the review.
-
-On Sun, Aug 02, 2026 at 11:01:08AM +0200, Julia Lawall wrote:
+On 03/08/2026 05:23, Bjorn Andersson wrote:
 > 
+> On Sat, 18 Jul 2026 18:26:07 +0530, Imran Shaik wrote:
+>> This series adds support for the Display clock controller (DISPCC) and
+>> GPU Clock Controller (GPUCC) on Qualcomm Shikra SoC, by reusing the
+>> respective QCM2290 SoC drivers, and adds fix-ups for the QCM2290 Clock
+>> drivers.
+>>
+>>
 > 
-> On Sun, 2 Aug 2026, Guru Das Srinagesh wrote:
-
---->8---
-
-> > diff --git a/scripts/coccinelle/api/clk_register.cocci b/scripts/coccinelle/api/clk_register.cocci
-> > new file mode 100644
-> > index 000000000000..fe5bcd4b00d4
-> > --- /dev/null
-> > +++ b/scripts/coccinelle/api/clk_register.cocci
-> > @@ -0,0 +1,125 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/// Remove error messages after clk registration failures, because
-> > +/// clk_register(), clk_hw_register(), and their variants already log
-> > +/// an error when they fail. See commit 12a0fd23e870 ("clk: Print an
-> > +/// error when clk registration fails").
-> > +//
-> > +// Confidence: Medium
-> > +// Options: --include-headers
-> > +
-> > +virtual patch
-> > +virtual context
-> > +virtual org
-> > +virtual report
-> > +
-> > +@depends on context@
-> > +expression clk;
-> > +identifier reg =~ "^(devm_)?clk_register$";
-> > +identifier voidfn =~ "^(dev_err|dev_warn|pr_err|pr_warn)$";
-> > +@@
-> > +
-> > +clk = reg(...);
+> Applied, thanks!
 > 
-> From a performance point of view, it would be desirable to put instead
-> \(devm_clk_register\|clk_register\).  This will trigger some
-> optimizations that won't be triggered by a regular expression.
+> [01/16] dt-bindings: clock: qcom,qcm2290-dispcc: Add missing power-domains property
+>         commit: 70ef527b483f6373c4b954e81bbb73f3bdc3184a
 
-Done.
+This causes new dtbs_check warning for Agatti-based boards which were
+warning free. Please also apply the DTS changes.
 
-> 
-> 
-> > +if ( \( IS_ERR(clk) \| IS_ERR(clk) == 1 \) )
-> > +{
-> > +...
-> > +*voidfn(...);
-> > +...
-> > +}
-> > +
-> > +@depends on patch@
-> > +expression clk;
-> > +identifier reg =~ "^(devm_)?clk_register$";
-> > +identifier voidfn =~ "^(dev_err|dev_warn|pr_err|pr_warn)$";
-> > +@@
-> > +
-> > +clk = reg(...);
-> > +if ( \( IS_ERR(clk) \| IS_ERR(clk) == 1 \) )
-> > +{
-> > +...
-> > +-voidfn(...);
-> > +...
-> > +}
-> > +
-> > +@r1 depends on org || report@
-> > +position p1;
-> > +expression clk;
-> > +identifier reg =~ "^(devm_)?clk_register$";
-> > +identifier voidfn =~ "^(dev_err|dev_warn|pr_err|pr_warn)$";
-> > +@@
-> > +
-> > +clk = reg(...);
-> > +if ( \( IS_ERR(clk) \| IS_ERR(clk) == 1 \) )
-> > +{
-> > +...
-> > +voidfn@p1(...);
-> > +...
-> > +}
-> > +
-> > +@depends on context@
-> > +expression ret;
-> > +identifier reg =~ "^(devm_)?(of_)?clk_hw_register$";
-> > +identifier voidfn =~ "^(dev_err|dev_warn|pr_err|pr_warn)$";
-> > +@@
-> > +
-> > +ret = reg(...);
-> > +if ( \( ret \| ret != 0 \| ret < 0 \) )
-> > +{
-> > +...
-> > +*voidfn(...);
-> > +...
-> > +}
-> > +
-> > +@depends on patch@
-> > +expression ret;
-> > +identifier reg =~ "^(devm_)?(of_)?clk_hw_register$";
-> > +identifier voidfn =~ "^(dev_err|dev_warn|pr_err|pr_warn)$";
-> > +@@
-> > +
-> > +ret = reg(...);
-> > +if ( \( ret \| ret != 0 \| ret < 0 \) )
-> > +{
-> > +...
-> > +-voidfn(...);
-> > +...
-> > +}
-> 
-> I think yourpatch rule should have an extra case for where there are
-> currently only two statements in the if branch.  In that case the {}
-> should be removed.
-> 
-> julia
-
-Done.
-
-> 
-> > +
-> > +@r2 depends on org || report@
-> > +position p2;
-> > +expression ret;
-
---->8---
-
-Thank you.
-
-Guru Das.
+Best regards,
+Krzysztof
