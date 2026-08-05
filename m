@@ -1,280 +1,155 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 003CA400983;
-	Wed,  5 Aug 2026 10:33:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 891432AD2E
+	for <linux-clk@vger.kernel.org>; Wed,  5 Aug 2026 10:47:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785926007; cv=none; b=g7bbyRsiU8O+ddwn9nyo3Ftty6cv05F0JoNeCOj4rrVxUe33uG6R76pf1t9GD/6iP1ffsdB874sWE7Fj6ih/fAgNXZrOiygdmmhwDb6/LnkMNnDrU8VcoEUGxk5NJqkMTOSqOdstKwoKpea2/0ivF7j6LcDMJUjUUaxm1adwIxw=
+	t=1785926845; cv=none; b=IOv7Xj5lLdwaO40YUgWsQT6J8m6nkXEVnNvf2jb5z6CxIjzyaneKmTv1J0uYWj5sgEvPp5nyYWLGIfHqGXwAqpQWWT1MBwG9JFVBLc/0KkUqk9n3M0O/iaPThW0RC/lnoAtpTmZTOfvVIWZqcg6MqajXuD7CC4PKwBx6heAgAss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785926007; c=relaxed/simple;
-	bh=lOmGNFcBI8N/6uHMSF2A/5RwgzKqOPUPDi2PSs4PVUk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Dt93ucMI/FMaqb8K4YEIfI+YyEdDy7cf23VD8lrI/XqSnMUIIHNDbUd+dQMpbLG2nOvNdAJH1JlzwnDJIsNyue+qdAdsjQXKtkKr2Gag2jHEGmgD8bB230zjSvjTa7Tyhp5oyx/wawnvxY7zo5s1zQKkYpOH/9Aj7fYys4ggi0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q3GzjmxU; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1785926845; c=relaxed/simple;
+	bh=uRNyXz3UWPZ9rXTyVqBEU1sjGXfpOGxULryAgGmxECI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LozrUcxapQX1sa7wtBXebG1N02C19ooghZDJO2zTsUn+ANyV+eSyySaYWTtDeHbsEcqXFTeBktHLKdBkR1K9v1DRIHftGD0cSOm0v5z5ELMqLT9OQk4J9zB0BBETrz/uNmTnxfcAtunxjKiqc279kGFtDgkp4T6F5OjryUfKBQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=VA3BqxKi; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=VA2lRW41; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q3GzjmxU"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id B247BC2BCF6;
-	Wed,  5 Aug 2026 10:33:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1785926006;
-	bh=lOmGNFcBI8N/6uHMSF2A/5RwgzKqOPUPDi2PSs4PVUk=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=Q3GzjmxUh9c2O49xyjNAsg7H1M/oR8V15BFtouSoox1jdSVzWzTiFylqs20rb2fYQ
-	 0qGAmSm91hHtfLD0bxXDRFojpCCK7tzcHPfSE26o+jM7n0stM+pJTvJQlcRHaxdjtV
-	 cylgmPHYIkwoD4o8Lj9MFk3NfIm2O77Hkw0ym43kHoyt+1y09LVHOBgTWpaaeYuAqj
-	 UyBP7micU6/kD9zii/fSTuHXmqv5q9amKm3fYhkipeU7FX2Vg7h34dP6YCQlZdN96w
-	 2+bTxZakgHqfP4CyV7iCGuLqZ59ayH/sylSCNYyDq3IE07kN+ixEyqwqiKXmkxLAEM
-	 iBlkcE5YNmt7Q==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 933F2C56203;
-	Wed,  5 Aug 2026 10:33:26 +0000 (UTC)
-From: Sarath Ganapathiraju via B4 Relay <devnull+sarath.ganapathiraju.oss.qualcomm.com@kernel.org>
-Date: Wed, 05 Aug 2026 16:03:20 +0530
-Subject: [PATCH v4 2/2] clk: qcom: Add LPASS VA CSR heartbeat pulse clock
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="VA3BqxKi";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="VA2lRW41"
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6758dZRF1713221
+	for <linux-clk@vger.kernel.org>; Wed, 5 Aug 2026 10:47:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	o5aTDHPkSlm/IBdTwZ9yGUMNn9+nrr9o1NxOD+9vbWA=; b=VA3BqxKikmKPasp2
+	M/t/8sEydH8FRLPuZfTdlERMXbnGkIyQgO5tAAMvO/7j6MEB5qFe0qBnk0RLQnLY
+	t5FTDQImxizHGEThgVRSz3LqHX+VfO8+jObsMS7QqUJ999QGqzIacQ+f36NtRw3S
+	ePRPznDmvL1r1YJNQZzpgtdDQwhHr0t+WVgcAA4sdwil4d1HKjvx00HXp4d6DtLC
+	IUyIx4XzbEu30oUz5YqsrTRfBWEg3vJsJEoEg3a0CJGZeEKwmjtL6TOeBjAhlJus
+	vXaDS2t723JqzM2ToUY7aevTUR3kmpWqOrHX2bu9cXUG0mVg7DukUGrfxYsnoVm/
+	6wzfIw==
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fuwbqsqqx-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Wed, 05 Aug 2026 10:47:23 +0000 (GMT)
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-38e8e864ef0so1358126a91.0
+        for <linux-clk@vger.kernel.org>; Wed, 05 Aug 2026 03:47:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1785926843; x=1786531643; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=o5aTDHPkSlm/IBdTwZ9yGUMNn9+nrr9o1NxOD+9vbWA=;
+        b=VA2lRW41MAnK4tmp+G0FxJZbw5tSgPd/WLv+Js7sOfoTiMFcFUcMPZFuyYCjK9WCUu
+         XoC6NycDtnD0a5s9kpiSI9iPwqofSNcY9vMnCH6TLgG31ILczitjNhPldetZyRLEWrBT
+         Yhp1o6thCawAdWQWxpU/JecI5IFACwkLu1zcadOKYdQvlS1cAEP2yc6BkTvX0tEjxDIi
+         TdF464aMW6ae4WqajvfvslINn06Pbp4bQt9vIGY1ZFXlDS7/9WRiuSlb1O5btvFAzzyA
+         LhINbuio5L1LmkiVtLkZCM8Gj9wcqMCYUsZW5Beq+8q3fwm4wY3ucmydg87ra0wlCSVL
+         SW+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785926843; x=1786531643;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=o5aTDHPkSlm/IBdTwZ9yGUMNn9+nrr9o1NxOD+9vbWA=;
+        b=ay0Y2kGThYRKfZu99oe3ZenpzdhVpy0eqoTjQ7M4FGymQYO1N/Rv/mo51lMTjj4v+y
+         Y+BAow+sKcuE5vQ9yXc+1PXO0RToAYYCwgzRioKMOdyCIg24N9H765edbt4QREKPGkCr
+         2amI0FhougsuJ2kIAZFFUK3KAun5T1tTBFmu7j1oVzzYNNGUg7xA68mJIeMMPEL6lYTk
+         8QRlAiXbj07DTvHu8ThQohZRgch0RqFtkLxrcsqoo6Y2eOhXw3JKC5V1vuBrvdV5l2wy
+         R3TqnPBn1bhZs2+2u5u5cP5ZMy2LsCwMk33QPCvgbJyXwprruCvJHzjRU/hJ7tRymFfS
+         m0Rw==
+X-Forwarded-Encrypted: i=1; AHgh+RpOVBqFtBsm4/u54+yqiYh0WnffsnpFA+qE94uvjS4Q/8bew8FSKJ/iM8eCQgbBr1lKy7ZFH7cuGLs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgOYzfjdFvXctZpbLJiSdBygf6xfhSA2vOZIHka90lvxZVPej+
+	l+pRu9LbKLPI7QkEKKVYpCox+Wya9+v0JVbQM7h3LDsR9uigRkVVl85DyZdchOxWEJ2yK3Kdt0I
+	NZoAtDizRGbH5w7BWojiDqVBavPAgIa7etEamcJcJq6rlUwbupxstP7GvO6KFWFE=
+X-Gm-Gg: AR+sD11X8Du9f1VwWCKOxxEwCOPoKTRknPXdKBt703kHCEvLPh3NRHxnQUVrhZMAcIG
+	jnOIj2D+SGVL+hN283jbIqams5MvGVbZZj5r4iwpRqPd0ojjeUFyv2Kwz/dtTMYC3NBBIdlHBEA
+	+gL4NYFN0gxMVtO9CrICfwEhuSmjdQ2T6cmXZDnvg3vKQ4fNlt26wsPsDSYZTE8dIfOP7OaTUgw
+	xYL+QzAF7FBnPY1kHen7KJJyJS++9GyBh13gakMif2jEe6nswEMkFWK3gKyKxYp6DoovmjMYm/x
+	oFKJRjlG/xzcx/6p3Ru4HeRsOOk1kynZvwxo0xsZmYwg8dgNx4CLfMdsZREluMyOYDwb9kUlEyu
+	TFPk6/jdK03CGFEC/BE1z48svzJMRoPEc
+X-Received: by 2002:a05:6a20:734c:b0:3b4:8ba9:4d8e with SMTP id adf61e73a8af0-3cb85e6c92emr6221570637.23.1785926843128;
+        Wed, 05 Aug 2026 03:47:23 -0700 (PDT)
+X-Received: by 2002:a05:6a20:734c:b0:3b4:8ba9:4d8e with SMTP id adf61e73a8af0-3cb85e6c92emr6221525637.23.1785926842707;
+        Wed, 05 Aug 2026 03:47:22 -0700 (PDT)
+Received: from [10.217.216.47] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-cbe708bfae6sm1270919a12.20.2026.08.05.03.47.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Aug 2026 03:47:22 -0700 (PDT)
+Message-ID: <6166c963-e9e7-4442-ad84-976d389b4663@oss.qualcomm.com>
+Date: Wed, 5 Aug 2026 16:17:17 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] clk: qcom: gpucc-glymur: Mark the GPU CX GDSC as
+ votable
+To: Taniya Das <taniya.das@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+        Imran Shaik <imran.shaik@oss.qualcomm.com>
+References: <20260801-kaanapali-gpu-voteable-v1-0-fe804d24d2e9@oss.qualcomm.com>
+ <20260801-kaanapali-gpu-voteable-v1-1-fe804d24d2e9@oss.qualcomm.com>
+Content-Language: en-US
+From: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
+In-Reply-To: <20260801-kaanapali-gpu-voteable-v1-1-fe804d24d2e9@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260805-master-20260805-sync-v4-2-dfbcbf427c2c@oss.qualcomm.com>
-References: <20260805-master-20260805-sync-v4-0-dfbcbf427c2c@oss.qualcomm.com>
-In-Reply-To: <20260805-master-20260805-sync-v4-0-dfbcbf427c2c@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- prasad.kumpatla@oss.qualcomm.com, 
- Sarath Ganapathiraju <sarath.ganapathiraju@oss.qualcomm.com>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1785926004; l=6599;
- i=sarath.ganapathiraju@oss.qualcomm.com; s=default;
- h=from:subject:message-id;
- bh=DjFlc29XwWELcwQ1H8nX8cjMRr4Pyj2h1iQ9wIHJM7c=;
- b=sf1cUeEa13Qoh+BIbBavTBVvVeHlvWCElBY1OtoJ1qkybf/MakgedRSmUeivhJ+SnxEHPWvcT
- fv3sRoAvhdqBsx9G50RiNZBqxbQVFkTlv/6xONDlj+i6jijIDmTjZI5
-X-Developer-Key: i=sarath.ganapathiraju@oss.qualcomm.com; a=ed25519;
- pk=4p2FWGXM+F2sir13Lu5stw5aKX5trUymK/ttESvgxQg=
-X-Endpoint-Received: by B4 Relay for
- sarath.ganapathiraju@oss.qualcomm.com/default with auth_id=870
-X-Original-From: Sarath Ganapathiraju <sarath.ganapathiraju@oss.qualcomm.com>
-Reply-To: sarath.ganapathiraju@oss.qualcomm.com
+X-Proofpoint-ORIG-GUID: kTy_tZ9b4OITBgltVAu-xcJ7kG6o_qsa
+X-Authority-Analysis: v=2.4 cv=B+uJFutM c=1 sm=1 tr=0 ts=6a7314bb cx=c_pps
+ a=RP+M6JBNLl+fLTcSJhASfg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=Sv0fKeRqtYgA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=DJpcGTmdVt4CTyJn9g5Z:22
+ a=EUspDBNiAAAA:8 a=GvobxVZ8zsqbnvUxSbkA:9 a=QEXdDO2ut3YA:10
+ a=iS9zxrgQBfv6-_F4QbHw:22
+X-Proofpoint-GUID: kTy_tZ9b4OITBgltVAu-xcJ7kG6o_qsa
+X-Proofpoint-Spam-Info: AW1haW4tMjYwODA1MDA4NiBTYWx0ZWRfXy4hqvz2CDJnw
+ GL1ovjOKK2LFu6hX9CptHLjRr1FAgUSwhw3fmgKe2528XubR6c75qslh0y3rouEwghFauuJ/nR5
+ dDxyc8WmF6C+m+mLTVg7kHBQ+cYYapI=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODA1MDA4NiBTYWx0ZWRfX6pcWrnFnTQMF
+ E+lmHKo5LgkIB2ppbzL1ujGrqMcZ7w7AgtNzdJ++wpN5abNh8jdugAQ8A4AWZwEEs7GcW0VdXQw
+ OYjkA/Xlm/YA1+zKy1cADlCpSoHylir8hhsThhZvBlDMeWC8oYCixEdPWkwAXcWpBF6neltlPRL
+ ESOSEK+WPuHGL54iMJ1c9M6MZ9a5nDxhzfQndOCjfN0pkMksH1iJV5t3r5XoSzbod8PqO7j23OL
+ +u3L78r8w4+MQmhcwaSPLCUd0GNq2cPUU7MRsVCxQLcV4oy0g+ktR2jkif10BoHwQhwNnF6IJ2a
+ 66OW4wcvqr8nf42ZWPr2JquYFfrH6wlkOz4LfOHukeXFT4NBHq05R6pdxbvQ+5C+bAnLemoBs5Y
+ UdprrqJHqqF4dONAAUGxU8Cv32ONanrbt5NTMnxH+e6Da7G8HBaqXnyCbC04Htmzi5zWGHDEPOQ
+ 1l6kpxcHO9vdiMDHnrA==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-08-05_03,2026-08-04_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 spamscore=0 lowpriorityscore=0 bulkscore=0 phishscore=0
+ priorityscore=1501 suspectscore=0 malwarescore=0 adultscore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2608050086
 
-From: Sarath Ganapathiraju <sarath.ganapathiraju@oss.qualcomm.com>
 
-The HeartBeat Pulse (also known as RateGen Pulse) synchronizes the
-start of the DMAs and Codec Interfaces for the audio usecases and
-can serve as a periodic wakeup source for the DSP.
 
-Add the LPASS VA CSR driver that models the rate generator as a clock
-provider so it is enabled and disabled automatically alongside the
-other clocks during runtime PM resume and suspend.
+On 8/1/2026 11:01 PM, Taniya Das wrote:
+> The GPU CX GDSC on Glymur is a votable power domain and hence should
+> not be polled for power-off status during GDSC disable. Also, its
+> power-on status should be read from the GDS hardware control register.
+> 
+> Accommodate this by removing POLL_CFG_GDSCR and adding the VOTABLE
+> flag for the GPU CX GDSC, similar to other platforms (e.g. SM8750 and
+> Milos).
+> 
 
-Signed-off-by: Sarath Ganapathiraju <sarath.ganapathiraju@oss.qualcomm.com>
----
- drivers/clk/qcom/Kconfig        |  12 ++++
- drivers/clk/qcom/Makefile       |   1 +
- drivers/clk/qcom/lpass-va-csr.c | 148 ++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 161 insertions(+)
+Reviewed-by: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index d1fc9bf87126..d9a4ceb1d3a0 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -2040,6 +2040,18 @@ config CLK_GFM_LPASS_SM8250
- 	  Support for the Glitch Free Mux (GFM) Low power audio
-           subsystem (LPASS) clocks found on SM8250 SoCs.
- 
-+config QCOM_CLK_LPASS_HEARTBEAT_PULSE
-+	tristate "Qualcomm LPASS VA CSR heartbeat pulse clock provider"
-+	depends on COMMON_CLK
-+	select REGMAP_MMIO
-+	help
-+	  Qualcomm LPASS VA CSR block contains the rate generator hardware
-+	  that produces the HeartBeat Pulse (also known as RateGen Pulse).
-+	  This driver models the rate generator as a clock provider so
-+	  that consumers can enable or disable it via the common clock
-+	  framework, and it can be used to synchronize the start of DMAs
-+	  and Codec Interfaces or as a periodic wakeup source for the DSP.
-+
- config SM_VIDEOCC_8450
- 	tristate "SM8450 Video Clock Controller"
- 	depends on ARM64 || COMPILE_TEST
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index daf25d583be2..8d3e3381bc29 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -25,6 +25,7 @@ obj-$(CONFIG_CLK_ELIZA_DISPCC) += dispcc-eliza.o
- obj-$(CONFIG_CLK_ELIZA_GCC) += gcc-eliza.o
- obj-$(CONFIG_CLK_ELIZA_TCSRCC) += tcsrcc-eliza.o
- obj-$(CONFIG_CLK_GFM_LPASS_SM8250) += lpass-gfm-sm8250.o
-+obj-$(CONFIG_QCOM_CLK_LPASS_HEARTBEAT_PULSE) += lpass-va-csr.o
- obj-$(CONFIG_CLK_GLYMUR_CAMCC) += camcc-glymur.o
- obj-$(CONFIG_CLK_GLYMUR_DISPCC) += dispcc-glymur.o
- obj-$(CONFIG_CLK_GLYMUR_EVACC) += evacc-glymur.o
-diff --git a/drivers/clk/qcom/lpass-va-csr.c b/drivers/clk/qcom/lpass-va-csr.c
-new file mode 100644
-index 000000000000..2e692407a966
---- /dev/null
-+++ b/drivers/clk/qcom/lpass-va-csr.c
-@@ -0,0 +1,148 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/device.h>
-+#include <linux/module.h>
-+#include <linux/of_clk.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+#include <linux/pm_runtime.h>
-+
-+#define LPASS_RATE_GEN_CTRL		0xd000
-+#define LPASS_RATE_GEN_COUNTER_0	0xd004
-+#define LPASS_RATE_GEN_DELAY		0xd010
-+
-+#define LPASS_RATE_GEN_MAX_REG		LPASS_RATE_GEN_DELAY
-+
-+#define LPASS_RG_CTRL_EN		BIT(0)
-+
-+struct lpass_va_csr_data {
-+	u32 counter_0;
-+	u32 delay;
-+};
-+
-+static const struct lpass_va_csr_data hawi_csr_data = {
-+	.counter_0 = 0x960,
-+	.delay = 0x16,
-+};
-+
-+static const struct regmap_config lpass_rate_gen_regmap_config = {
-+	.name = "lpass_rate_gen",
-+	.reg_bits = 32,
-+	.val_bits = 32,
-+	.reg_stride = 4,
-+	.max_register = LPASS_RATE_GEN_MAX_REG,
-+	.cache_type = REGCACHE_MAPLE,
-+};
-+
-+struct lpass_va_csr {
-+	struct regmap *regmap;
-+	const struct lpass_va_csr_data *data;
-+	struct clk_hw hb_hw;
-+};
-+
-+#define to_lpass_va_csr(_hw) container_of(_hw, struct lpass_va_csr, hb_hw)
-+
-+static int heartbeat_pulse_prepare(struct clk_hw *hw)
-+{
-+	struct lpass_va_csr *csr = to_lpass_va_csr(hw);
-+	int ret;
-+
-+	ret = regmap_write(csr->regmap, LPASS_RATE_GEN_COUNTER_0, csr->data->counter_0);
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_write(csr->regmap, LPASS_RATE_GEN_DELAY, csr->data->delay);
-+	if (ret)
-+		return ret;
-+
-+	return regmap_set_bits(csr->regmap, LPASS_RATE_GEN_CTRL, LPASS_RG_CTRL_EN);
-+}
-+
-+static void heartbeat_pulse_unprepare(struct clk_hw *hw)
-+{
-+	struct lpass_va_csr *csr = to_lpass_va_csr(hw);
-+
-+	regmap_clear_bits(csr->regmap, LPASS_RATE_GEN_CTRL, LPASS_RG_CTRL_EN);
-+}
-+
-+static int heartbeat_pulse_is_prepared(struct clk_hw *hw)
-+{
-+	struct lpass_va_csr *csr = to_lpass_va_csr(hw);
-+
-+	return regmap_test_bits(csr->regmap, LPASS_RATE_GEN_CTRL, LPASS_RG_CTRL_EN);
-+}
-+
-+static const struct clk_ops heartbeat_pulse_ops = {
-+	.prepare = heartbeat_pulse_prepare,
-+	.unprepare = heartbeat_pulse_unprepare,
-+	.is_prepared = heartbeat_pulse_is_prepared,
-+};
-+
-+static int lpass_va_csr_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct lpass_va_csr *csr;
-+	struct clk_init_data init = {
-+		.name = "lpass_heartbeat_pulse",
-+		.ops = &heartbeat_pulse_ops,
-+	};
-+	void __iomem *base;
-+	int ret;
-+
-+	csr = devm_kzalloc(dev, sizeof(*csr), GFP_KERNEL);
-+	if (!csr)
-+		return -ENOMEM;
-+
-+	csr->data = of_device_get_match_data(dev);
-+	if (!csr->data)
-+		return dev_err_probe(dev, -EINVAL, "no variant data for compatible\n");
-+
-+	base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	csr->regmap = devm_regmap_init_mmio(dev, base,
-+					    &lpass_rate_gen_regmap_config);
-+	if (IS_ERR(csr->regmap))
-+		return dev_err_probe(dev, PTR_ERR(csr->regmap),
-+				     "failed to init regmap\n");
-+
-+	csr->hb_hw.init = &init;
-+
-+	ret = devm_pm_runtime_enable(dev);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "failed to enable PM runtime\n");
-+
-+	ret = devm_clk_hw_register(dev, &csr->hb_hw);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "failed to register heartbeat clock\n");
-+
-+	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, &csr->hb_hw);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "failed to add clock provider\n");
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id lpass_va_csr_dt_match[] = {
-+	{ .compatible = "qcom,hawi-lpass-va-csr", .data = &hawi_csr_data },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, lpass_va_csr_dt_match);
-+
-+static struct platform_driver lpass_va_csr_driver = {
-+	.driver = {
-+		.name = "qcom-lpass-va-csr",
-+		.of_match_table = lpass_va_csr_dt_match,
-+	},
-+	.probe = lpass_va_csr_probe,
-+};
-+
-+module_platform_driver(lpass_va_csr_driver);
-+
-+MODULE_DESCRIPTION("Qualcomm LPASS VA CSR heartbeat pulse clock provider");
-+MODULE_LICENSE("GPL");
-
--- 
-2.34.1
-
+Thanks,
+Jagadeesh
 
