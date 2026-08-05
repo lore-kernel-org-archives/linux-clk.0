@@ -1,81 +1,187 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD0F4329395;
-	Tue,  4 Aug 2026 22:31:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F3B73CB56A
+	for <linux-clk@vger.kernel.org>; Wed,  5 Aug 2026 04:52:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785882681; cv=none; b=TeAHj5ppAiara+xTUig4GiwExS8bzd6+UrjGd/z2bd4m4mZ+eKbavAnQ166zBqX2sY/du+n+WXZuJwa1NFV7oLrnixcERtzBe7BUT704UhsTojxyixjwxQP0FtLg90pnFcybO3ItU7BmbwQwFsApqzU9/7ffxucFTX29E8lfcyI=
+	t=1785905558; cv=none; b=rYSiBM+87GYeD11IaSCrFQ/Im9rMmUrB6d8Lyr7RMRxfTRs6ICPBwjBE1e+aR2Ky9wx6nAqflRZFLfJd3ePVFAOORNUdKcLM6Csc3/alDq1/s9mSOcoUXvQCbXsMx07Svno+F4nS7OPn/wq90usgqdMHfZaZdY3+nfjAIhRHas0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785882681; c=relaxed/simple;
-	bh=iZZXx+p+t+aQLavw2GTx5WgR7Hbe79SnIChFavfg5Yc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ip3KiSZmWE4jtUso/Nfo9ismzIlh6tCsOLCRvnSRk5H5l0plHOpHryoFWizNH47DiMrE0svZuTkGBn2VWzBq1ZBvSNkKmi+bLq73dEzhrsoxR2+DOfxa0CaXOgSf030rNnGIwesfHYZtwlby+091CHJAklkptEqdnWuRdqlL/CM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iz1d5Qhc; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785905558; c=relaxed/simple;
+	bh=1JtHhocoebZrFTJvALnvfNyMzljsrMzzzAnR9dePObY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IyLI76nzETcPyUAciq7CNUu4mhdMOABG78lKKtFpQ7AWoK4YemcafjXVtr5+E6hyWyPU5qza0rMgQE8Le34O367XRVOHtJELM7WZmVkcsS+/HsXFg40o1oD0/YxNgdpIgBLHEk3mQDIZVo8Wp2z3v0KP1Uu4WfdkJdkie+RJqLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=mm6NVZEx; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=hXPVIOJA; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iz1d5Qhc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F133B1F000E9;
-	Tue,  4 Aug 2026 22:31:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785882680;
-	bh=FHuCkxYCtHrWC4bx7U2O+35ieoVYxKwUTCFcm1Fo7Gc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=iz1d5Qhc5lzpBpKAIprV/0rD+vaq9C9Pza7OqKvdOA/V2rsQi2+iLPk3j8NteSoxe
-	 yZ6l/yHMhjBstXwb52gp8AdIrqFXh8mIriOVeb+UuqTIVYnNwVu0e91W+mW9nv6jHL
-	 evSDeOnDtP09UukP6OylOviRtCuEXuQJCbg6zyOrqwBwePdncHLqSmJ3LWh28YbZUi
-	 NRuS9jIdy+/j7jCBZVJjQxShpm4ryjWEWCCN8bP5axqiAnpxp4RWwoSoFUfzWLA2EP
-	 1RfjwXwcjOEQK+BaRIuivx4lzOrY4jLXcIipdBYXtPxrwnojCQ7h9Sl9EvPMZoDIXA
-	 Rn13uxFJZvRAQ==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Loic Poulain <loic.poulain@oss.qualcomm.com>,
-	Brian Masney <bmasney@redhat.com>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Imran Shaik <imran.shaik@oss.qualcomm.com>
-Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
-	Taniya Das <taniya.das@oss.qualcomm.com>,
-	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Subject: Re: (subset) [PATCH v6 00/16] clk: qcom: Add DISPCC and GPUCC support for the Qualcomm Shikra SoC
-Date: Tue,  4 Aug 2026 17:31:13 -0500
-Message-ID: <178588267271.451855.16602199105874159136.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260718-shikra-dispcc-gpucc-v6-0-62703e05ef0f@oss.qualcomm.com>
-References: <20260718-shikra-dispcc-gpucc-v6-0-62703e05ef0f@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="mm6NVZEx";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="hXPVIOJA"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6752b4KH1532768
+	for <linux-clk@vger.kernel.org>; Wed, 5 Aug 2026 04:52:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Hy3gD/hWNpj5QmMEer9j4z3dhHyI6Fp27IAWNLW3gwg=; b=mm6NVZExLyiYM3HA
+	OxUB9LbBVxc5bLF41vlaWFWfUVpdXNqfEI8fZwayGWQnSWH2AZpwMhCNCqUQL3nj
+	+uAW+efqLKqU/4zzoJkEHIigu2wAD/ZDieB2kWMcIZyuFFvp6hqfIYdLi+GhzUs6
+	T+HdnX8OMnA0QpvjMAb8ydHaTMg0feiwhcY0paXE30dRiBgBMMzslutEGN9dQBEK
+	wVBgqQrB2lgjMfgoi41r5yyWU3OewSfxS98siIhgjL4lQIg0bth+D+P1XThBkXq1
+	gvXD+clWyffFZurqo8km5SKCKIE+znp11mr32WmX+m5g39BLioe6w+iNmSJzuBJf
+	mm+eqQ==
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fujwsk2nt-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Wed, 05 Aug 2026 04:52:35 +0000 (GMT)
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-38e11baa66eso562435a91.2
+        for <linux-clk@vger.kernel.org>; Tue, 04 Aug 2026 21:52:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1785905554; x=1786510354; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=Hy3gD/hWNpj5QmMEer9j4z3dhHyI6Fp27IAWNLW3gwg=;
+        b=hXPVIOJAkPWjEllXUqTZMYQPr/x8ZGrWgYuz6xH6q8K+j551jP/zvDAc/zNhZZbwkP
+         O4eucvnb4KA5vNbjEomayF9UBR20V55lkAr10eNnzhzwf+cw4rnw3pXtAvZjvBKF+qTW
+         mkNZjhvX8KI5/p+GoWGgkmm7KSnzcNxbKuHE9LwJtQ+Wu+MoD8z8jDO2cNn6VK3aM0M5
+         Vl+pEnr8EXl+GrBKHya/Pjyd5vLfMU5VnQ1KvjMxJmfcI6pqyI5cZUAzOqbfbwK9byO1
+         rhq/4MdTMj8lcX1h1Wo05eeTXOPc1UlP6YO8/iywDfNMzyFov/Ut+eLOy6p1cIKJ5CX5
+         8qsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785905554; x=1786510354;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=Hy3gD/hWNpj5QmMEer9j4z3dhHyI6Fp27IAWNLW3gwg=;
+        b=g8Qd39gj8i7s4YJSXl5rVxP7gRcluqFd1/K0pAnUYiL1FfMifDWqxmj8WCXTkaDDIh
+         6T+PDXlYq9390lDiKXkZHZhVQdbO8bu/JXfzCKAYJehdQaRLZYYX3mNm/rfYH0KCI6lE
+         7aA5313ssca4ByuvKA2vzmlJRomNxbUJEKcrBhHt9bUAwK7IlONmvYxQG9ccNCJlazQQ
+         A63rV460AJ7UChIBIttqK9JCiB7nRnemlRFDwarPoTFVazxQMFLo0Jw4C8pe3xWzIOSY
+         +wN+b/vGiK2EmPFDF+LO7FFIvNHwUamp9mI7N7T6X4OTMb2IK69dasmNbeVJqQJYgLLE
+         y6vw==
+X-Forwarded-Encrypted: i=1; AHgh+RoOglJFctErp3jOiRWyO5t6oCrHxJGuAW77D9Lm3mhMzUzx3G9IjnDfE0k1Oe09Spcfnj35MUPQrcs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywesag/9e+Zkr1OkxjrrHeFdxBam+Dfu9dDX3s0Kh2jmaRpqIo8
+	lN+x/PUKOlR1u/4GQHnDACCyCEkS4HsXun9bmAgMrNVO4iIigrgfHDNk1COjMk/cEalBL0IZbek
+	JSNV66zX5oLLWD9gm9LxcBa2+lD5HQ5meA0anoMmH8t9DpvmOblzrhbMSre7IWCo=
+X-Gm-Gg: AR+sD10gVwiKqyWzVv+WL7CIviBgDAI2pVzhgWlKgy8RNADccZZ3CZv1Z1vLTLEEnNo
+	RMD3xgMLfomMGl1YGE3vzY+qldo41CFsxc3JkEa8OZ9r3RYoeB/5gIL4MuQ8/zDXiYeKs3z979P
+	XWQy0nDFUgHD7UW+JCxxSY3YVdHn9d2Af57OZZQHdW+vF6mx5AHNxaiOVwawtapy5lGtxynu3J8
+	ImFd2i4hLzIcx0pjzZIZIF9dTPXpDblpFzc7wT1UpzRo5fpZiGJtsJNHcFsWbPyHDJhaEntqt5b
+	Wsyk4gTy+KEZwtdFz0KFAC0x1Ji/uQUZd5gfsjVq2DKYzyGDrm/Dw4Tyuq6aW2Xgyqo67gHnLR2
+	AjN3V7HpI3J/yUX776yJjmzWvnUemSCYVLD0cNYzTzyCpVWzikD5cJaFWdvAlytnJow==
+X-Received: by 2002:a17:90b:1e53:b0:37f:a915:1c29 with SMTP id 98e67ed59e1d1-3903c5f34c9mr3217742a91.19.1785905554163;
+        Tue, 04 Aug 2026 21:52:34 -0700 (PDT)
+X-Received: by 2002:a17:90b:1e53:b0:37f:a915:1c29 with SMTP id 98e67ed59e1d1-3903c5f34c9mr3217722a91.19.1785905553703;
+        Tue, 04 Aug 2026 21:52:33 -0700 (PDT)
+Received: from [10.133.33.161] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-390392aef87sm1652224a91.13.2026.08.04.21.52.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Aug 2026 21:52:32 -0700 (PDT)
+Message-ID: <1dc44e5e-7787-47f7-938f-1ac0676d96d2@oss.qualcomm.com>
+Date: Wed, 5 Aug 2026 12:52:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: qcom: ipq-cmn-pll: keep the CMN block bus clocks
+ enabled
+To: Stanislaw Pal <kuncy7@gmail.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Mieczyslaw Nalewaj <namiltd@yahoo.com>,
+        Brian Masney <bmasney@redhat.com>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+References: <8af46926-fecc-4396-973e-2290ae285998@oss.qualcomm.com>
+ <20260804115817.16886-1-kuncy7@gmail.com>
+Content-Language: en-US
+From: Jie Luo <jie.luo@oss.qualcomm.com>
+In-Reply-To: <20260804115817.16886-1-kuncy7@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: aEvehDGMSb0qTmwIsGclx5iCAzihPpoD
+X-Proofpoint-ORIG-GUID: aEvehDGMSb0qTmwIsGclx5iCAzihPpoD
+X-Proofpoint-Spam-Info: AW1haW4tMjYwODA1MDAzNCBTYWx0ZWRfX1WW0QAUCLhYn
+ 7eVnOqDmo/CeGRIPIYLP75iOzrbD4y2wf2LRqGVJh1gfjnZj+xBXklBWSK6pkAgDvlgnfLANY5h
+ tMRGec1bxJtLrCH6x/OnGPMshb+qxMY=
+X-Authority-Analysis: v=2.4 cv=Lu6iDHdc c=1 sm=1 tr=0 ts=6a72c193 cx=c_pps
+ a=RP+M6JBNLl+fLTcSJhASfg==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=Sv0fKeRqtYgA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=rJkE3RaqiGZ5pbrm-msn:22
+ a=BeYBAa9Oa5wRmjjIsxoA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=iS9zxrgQBfv6-_F4QbHw:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODA1MDAzNCBTYWx0ZWRfX5OFST+7UroKm
+ SHa/bzvzVbQhp2ar6nD6aL+u6prsJv3w7ZmVX8ffdU40jar2UyoOzy1SzYb+dVc2PCcVQOpp6I+
+ 4q2mCjR7tYsjBFO1gRiXpnahLwWUGkU5xqHAINnmR86IVQF1scKKjD1Cmju1T0DuEv7+rULpnch
+ XPsLFNPRfj1t6JUuWI9drH9RFZWJuP35U4ZgmW5qVDCvuga2cG+9wKVSYMBo0kzlPI+rhPlZLYg
+ E8B84wHdoVRHmgOqtlmU5xJXqh3L3stoFAF1u8f1w/5wJTKHDWSJNtiEzb/qjHeeI+Lm8MmzKqY
+ X913lBDBGj8cKewmFWwQtSIlljbSw3B5djZLhFpg2pYKLJhEc8jrQU9sLxCb1CujpJ1AXMbNiea
+ xke72/woeE0EjLjVl7GOShGJ6j7SFaqbak6X1u9Kyt/uOYnJofjJ//Bhqz69NayKI4yBpm36qA7
+ Sl4KgWgKGaBUiu8eg5g==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-08-05_01,2026-08-04_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 adultscore=0 impostorscore=0 malwarescore=0 spamscore=0
+ priorityscore=1501 clxscore=1015 bulkscore=0 lowpriorityscore=0
+ suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
+ definitions=main-2608050034
 
 
-On Sat, 18 Jul 2026 18:26:07 +0530, Imran Shaik wrote:
-> This series adds support for the Display clock controller (DISPCC) and
-> GPU Clock Controller (GPUCC) on Qualcomm Shikra SoC, by reusing the
-> respective QCM2290 SoC drivers, and adds fix-ups for the QCM2290 Clock
-> drivers.
+
+On 8/4/2026 7:58 PM, Stanislaw Pal wrote:
+> On 8/4/2026 Jie Luo wrote:
+>> The CMN PLL output clocks do not depend on the AHB or SYS clocks. They
+>> continue to operate correctly at the fixed rates even when the AHB
+>> and SYS clocks are disabled. Therefore, once the CMN PLL module is
+>> loaded, its output clocks are expected to operate at the correct
+>> frequencies.
+>>
+>> The downstream consumer is used to keep the AHB and SYS clocks enabled,
+>> allowing the CMN PLL registers to be accessed.
 > 
+> Agreed on both points, and they match what I measured: with the bus
+> clocks gated the PLL outputs keep running (ethernet and wifi stay
+> clocked), only register access dies.
 > 
+> But I think these two points together are exactly the argument for the
+> patch. The register accesses do not stop when there is no consumer: the
+> CCF invokes the driver's ops regardless. clk_cmn_pll_recalc_rate() does
+> two regmap_read()s and runs on any clk_get_rate() of the PLL and on
+> every debugfs clk_summary read - the latter user-triggerable at an
+> arbitrary time. clk_cmn_pll_set_rate() likewise accesses registers
+> whenever a rate is set. On IPQ5018, where no DT consumer exists at all,
+> every one of those calls after probe touches the block with AHB/SYS
+> gated, and that is the measured hang - the boards died during boot with
+> no userspace involved, so an in-kernel path hits it too.
+> 
+> And note the consumer mechanism only guarantees access "while the
+> consumer is active": on the SoCs that do have a DT consumer, a
+> runtime-suspended consumer plus a clk_summary read is the same
+> access-with-gated-clocks situation, just harder to hit. So having the
+> provider hold the reference for as long as it can be asked to service
+> clk ops - i.e. while bound - seems like the robust shape regardless of
+> platform.
+> 
+> I have just posted v2 which does exactly that, in a cleaner form:
+> devm_pm_runtime_get_noresume() in probe, so the reference is dropped
+> automatically on unbind and the existing put in the error path stays
+> untouched.
 
-Applied, thanks!
+Is there any use case that requires accessing the CMN PLL registers when
+no downstream consumer is active? If not, I don’t think a fix is needed
+here. As you may have observed, debugfs clk_summary can still display
+the clock rate correctly even when there is no downstream consumer and
+the AHB and SYS clocks are disabled.
 
-[16/16] arm64: dts: qcom: shikra: Add support for DISPCC/GPUCC nodes
-        commit: 58a273157af32b7d8e6fbd7930db3a5044c2ad10
+> 
+> Thanks,
+> Stanislaw
 
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
