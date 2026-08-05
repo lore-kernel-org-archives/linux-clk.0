@@ -1,130 +1,121 @@
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD05B3E7BC7
-	for <linux-clk@vger.kernel.org>; Wed,  5 Aug 2026 08:12:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0027B2EB10;
+	Wed,  5 Aug 2026 10:33:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785917572; cv=none; b=X2DQBINQdChFaThLKS2PJgKzIXSLnWTenitrgz86opz9R8WT91FBfsSeQdFy8iIXXO3laFTogwqlYiX+kPaOSm2ICIsLOkTIoVMssXe/b/eGBo87bEPPvsqnM1F0oS/FqGyryQ01Jy4bfhSDtG6CXvY8sJu70bBYLTO1aowhO1U=
+	t=1785926007; cv=none; b=hrUJAvNtbnIG5U41m8woTiCAox8INHMl5godq3dplp6VHIjcmFfZ1XuqcvUfQL+/15ogLVao8A3c0Xse9sHFLtGyikzxI4Qj1GbKl9QAVVUOgiJyBKvqEoVtr+O65J8WG0XkMhW4WyyXQPDzReJhsT9DDdTShBgaUllpOXCXD24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785917572; c=relaxed/simple;
-	bh=5+bgqUBoANfi8zQhQSTcZOEP0I32nAOARHOE6mkaSws=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WqWcfxyj+EA7P+htrkMkTiZ8yuRBxwGCHJBXczN7hsQRrMnd3MkLEglVS6PCjIEpcSkGdQ0fgboCJeI3StyhARyXM0aSbvBz40QQ2lCtQ8puOtUBlG9cIHA2iFjxw2gCmsdGAyt6t1TEsJkAFnj1Mo7u56mDhcCK/+kVr3zs1TM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bJrq8eCu; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1785926007; c=relaxed/simple;
+	bh=KpUclSqc6f6re3FfItiLbO3O5MGeREx/fi6Z2V3ow+M=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=BUieCDCISnwm3EKbQyafEdpZzpBqdKMKM8DJWL9fuclDrmJGa0/j8fEFPC/+0ZBCNKTskCcHW8LLC4GazdSG9GqntBvOYPsU2OfQZClidnlljGlxhu13DMXQ25sDB7OkgB1Nj4VgzE2Ztfdg++wqsqQ3TWM+kb7qbOOhMSzjsU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CnrDHDAw; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bJrq8eCu"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-47f904e80eeso560033f8f.1
-        for <linux-clk@vger.kernel.org>; Wed, 05 Aug 2026 01:12:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1785917566; x=1786522366; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=5+bgqUBoANfi8zQhQSTcZOEP0I32nAOARHOE6mkaSws=;
-        b=bJrq8eCuVHp7LVfljgaRbLXcca0CUnL+nFaszoiCUBjj4hS/1tP4p6UPAY4n0l7MlX
-         kaYVSM7KNOj1marNDuiXSXXiOZnvhwjhk0Z1GkgHOPAoKsJxbVVxOFoykqbpx/PN9aYR
-         eR+i0mnwLgOukmeSE5Lviuqy7NnKnyRKvNTDv7RioMbj8PynmVtly6vMFJBjmOx/sCkO
-         CWyHj9hi2bBYEO55+ZX+cq375HTGbOMHvu4ndlJ+lkMxnjKDv54VhKUJms0BsldAAdyR
-         dDT3ewAwCv22AiSYaCtgnXFWVK8GNye28Bi26GXHn/4ZfLd1TVlR85CQYL4HoeQp2qEt
-         NSWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785917566; x=1786522366;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=5+bgqUBoANfi8zQhQSTcZOEP0I32nAOARHOE6mkaSws=;
-        b=fq+rkA1GnCXTGQ4MIsf6wpwdtc8y8KvEKhVXQGmUMuPg23qQq0s2FJxpwlMLZPn8GJ
-         cDi5LZslTy0R9Mtz3Se5WpULEOvczEsIzYV8BTn3OEse2GbwpXQTrfLUlBVDLhcXWjs7
-         YGKq8z38JLHbHwWzTlWfVX91Edfqkb5vyriIBrYLDVjNcTjQ8T1xggggKaJ1CjP8XPER
-         gVLgIYgDQRhcc7EsoKHf4K49YD3LZ+ZVpV56+d/CLPDjh7c98uDRuKVKSMvkrLQJ7esQ
-         zpf1nDIIjFG4XETu7PBR23za36Jc3mdggvx76aqSbbRsExBTw5qpIDUUGOgxVjF1Bfdd
-         L5dA==
-X-Forwarded-Encrypted: i=1; AHgh+RozZRDiPhhArhCVRYx2fivoM5gBJSTal+seYDStPoFYfoEDJ/pz/yCQLX463yTB1Q05D1bRq0bhFrU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0LnIKjNRtt6ZKEcEIJNMFf308Yt7jvOcD+P6/JZW2RSFiTMLl
-	ZeWCrWb68/jGHfHp3XdFON/+3EXDG/ytpmjF+qeQwThyHyUsEow76jFj
-X-Gm-Gg: AR+sD13NhTJDRfcOufdHiFA/Wk4G9FiA45x6xKBLosMpxZobaoewmYUCNsNjYW70nOT
-	XNRqhpeLLH7fgH4znGytECDRuHmV32EN6fPssl7JNmCr+UsaXGMm6Y0Tb1e2G1UyPqPOD8Js8N+
-	MVidEXuFTEwb8TJEyMy+WvyJnvoKwWt48JCodjGFbQXCDMwmm9t2uoDEy0BWB2D6+3m6qazgk0I
-	t7v8AgqxuaW4wYfWqEGXmJd8XcojQFFDBeRdsHzOWaaPpJDseLENkIveTsUA+HBrCuYgWgReZlx
-	WSS5mjku7p1jv7YIY8hTFflW4yQovJyFZNTsr8BF48LFbV2wCXPd1Yk5FmYb/MS75Q7UgNIr3/+
-	AKkCku3vigMy2DpF74bA/orzGziVMDIEL94KUdWy2Uudxad28wXQWYFRdG+6dICXMAaqL5AX4HX
-	jZlWMdiaN4xHjXxZfJTSTI18766t71EKJ7Zx89AjYRtKv5q1PlcfkEcTZogjr0AU0l4PdNLd+9/
-	JpaAD6krKY=
-X-Received: by 2002:a5d:452b:0:b0:47f:8602:6887 with SMTP id ffacd0b85a97d-47fec4f626fmr5676202f8f.11.1785917566086;
-        Wed, 05 Aug 2026 01:12:46 -0700 (PDT)
-Received: from VivoBook-ASUS-X712UA-M712UA.lan ([2a00:f44:cc3:6030:c613:3768:f346:6d76])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47fec24a279sm6544465f8f.35.2026.08.05.01.12.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Aug 2026 01:12:45 -0700 (PDT)
-From: Stanislaw Pal <kuncy7@gmail.com>
-To: Jie Luo <jie.luo@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Mieczyslaw Nalewaj <namiltd@yahoo.com>,
-	Brian Masney <bmasney@redhat.com>,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: ipq-cmn-pll: keep the CMN block bus clocks enabled
-Date: Wed,  5 Aug 2026 10:12:40 +0200
-Message-ID: <20260805081240.11497-1-kuncy7@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <1dc44e5e-7787-47f7-938f-1ac0676d96d2@oss.qualcomm.com>
-References: <1dc44e5e-7787-47f7-938f-1ac0676d96d2@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CnrDHDAw"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 9469FC19425;
+	Wed,  5 Aug 2026 10:33:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1785926006;
+	bh=KpUclSqc6f6re3FfItiLbO3O5MGeREx/fi6Z2V3ow+M=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=CnrDHDAw1PdonmRrQd1zvAdHd7+1OT3uGaIIyNID1oABqAuwHx2DDnSw6QnTCwP6r
+	 914bxKokFTy8e50ARXMZvJPn8ZJa2AupYl5hUePUOeVIpsKf9QNcZzTwLD1DwDhz5C
+	 iCg2AHBWbFMpeqyzCrnE883nDj/jNw5ESwkKsetUJq1EyU6qkioiTHHo9YknSnIlQJ
+	 dVQpIDa/rr5x57W+0cR3dvZLydD8l/DiRM2rv/gg5XVP19Q6sKBvVIymAJl8mlh/qL
+	 IqVI/qa4wj+BdY2axpV8rkD0B0m3vQtH6u7srS5u0sPVhZQhHl8ooQ4ekYnaP5SvXV
+	 QTpqx+MkD44iw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EFF8C56201;
+	Wed,  5 Aug 2026 10:33:26 +0000 (UTC)
+From: Sarath Ganapathiraju via B4 Relay <devnull+sarath.ganapathiraju.oss.qualcomm.com@kernel.org>
+Subject: [PATCH v4 0/2] Add LPASS VA CSR HeartBeat pulse clock support
+Date: Wed, 05 Aug 2026 16:03:18 +0530
+Message-Id: <20260805-master-20260805-sync-v4-0-dfbcbf427c2c@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAG4Rc2oC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyTHQUlJIzE
+ vPSU3UzU4B8JSMDIzMDCwNT3dzE4pLUIl04v7gyL1k3xcLSKM0yxTzRKNVACai1oCg1LbMCbGx
+ 0LIRfXJqUlZpcAjJLqbYWAK/OU3N4AAAA
+X-Change-ID: 20260805-master-20260805-sync-d892f9d7a2e0
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ prasad.kumpatla@oss.qualcomm.com, 
+ Sarath Ganapathiraju <sarath.ganapathiraju@oss.qualcomm.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1785926004; l=2273;
+ i=sarath.ganapathiraju@oss.qualcomm.com; s=default;
+ h=from:subject:message-id;
+ bh=KpUclSqc6f6re3FfItiLbO3O5MGeREx/fi6Z2V3ow+M=;
+ b=YMAW/r8QQ29ZYG/yb1pBb8vdoLuv2Qcdis5Mq6yvn+Q+IYZ4J9C5D9vA9/1mMLQ89GKcAfUVX
+ nD+dzae7tOnBDSsxX9UnwEdbeOHNdZRz2aZFuNvuQRQkicMZ6g3uxfM
+X-Developer-Key: i=sarath.ganapathiraju@oss.qualcomm.com; a=ed25519;
+ pk=4p2FWGXM+F2sir13Lu5stw5aKX5trUymK/ttESvgxQg=
+X-Endpoint-Received: by B4 Relay for
+ sarath.ganapathiraju@oss.qualcomm.com/default with auth_id=870
+X-Original-From: Sarath Ganapathiraju <sarath.ganapathiraju@oss.qualcomm.com>
+Reply-To: sarath.ganapathiraju@oss.qualcomm.com
 
-On 8/5/2026 Jie Luo wrote:
-> Is there any use case that requires accessing the CMN PLL registers when
-> no downstream consumer is active? If not, I don't think a fix is needed
-> here. As you may have observed, debugfs clk_summary can still display
-> the clock rate correctly even when there is no downstream consumer and
-> the AHB and SYS clocks are disabled.
+The LPASS VA CSR block contains rate generator hardware that produces
+a HeartBeat Pulse (also known as RateGen Pulse). This pulse
+synchronizes the start of the DMAs and Codec Interfaces for the audio
+usecases and can serve as a periodic wakeup source for the DSP.
 
-The clk_summary observation does not show what it seems to show, and I
-have to correct my own previous mail on the same point: this driver does
-not set CLK_GET_RATE_NOCACHE, and clk_core_get_rate_recalc() only calls
-.recalc_rate for clocks that have that flag. So clk_summary (and
-clk_get_rate()) return the rate cached at registration time, when probe
-still held the bus clocks enabled - no register access happens at all.
-It displaying correct rates with the clocks gated is exactly the cached
-value; it says nothing about whether an actual access would survive.
+This series adds the DT binding and driver support to model this
+rate generator as a clock provider.
 
-As for the use case: on IPQ5018 it is booting the SoC. With the clocks
-gated after probe, boards hang within milliseconds - 100% reproducible
-on some builds, before userspace exists, with no consumer anywhere - and
-the only variable that changes the outcome is holding this reference.
-That is also why I do not think moving runtime PM references into the
-clk ops would help this platform: by your own argument nothing calls the
-ops at that point, yet the SoC still dies. Whatever the fatal access is
-- a CCF path we have not pinned down, or something else in the same
-clock domain - the platform demonstrably does not survive the gate
-itself.
+Patch 1 adds the YAML binding for the new qcom,hawi-lpass-va-csr
+clock provider node under Documentation/devicetree/bindings/clock/.
 
-One more general point: the CCF gives no guarantee that clk API calls
-only happen while some consumer device is runtime-active. The DT device
-link keeps the supplier active while the consumer *device* is active,
-but a consumer is free to call clk_set_rate()/clk_round_rate() at any
-time, including while itself runtime-suspended - and on IPQ5018 there is
-no link at all. So "registers are only accessed while a consumer is
-active" is not an invariant anything enforces; it just happens to hold
-on the platforms where the DT wiring exists.
+Patch 2 adds the lpass-va-csr driver under drivers/clk/qcom that
+registers the lpass_heartbeat_pulse clock and enables/disables the
+rate generator via regmap when the clock consumer requests it.
 
-If there is an alternative fix you would prefer - a different clock
-handoff from the bootloader state, describing the in-silicon consumers
-in DT, anything else - I am happy to test it on this hardware. But as it
-stands, a mainline kernel cannot boot reliably on IPQ5018 without this
-change, which is why I believe a fix is needed and Cc'd stable.
+Changes in v4:
+- Renamed the binding filename and schema ID to hawi-specific naming:
+  qcom,lpass-va-csr.yaml -> qcom,hawi-lpass-va-csr.yaml.
+- Narrowed the DT example register window to the rate generator
+  registers only, and aligned the node name with the base address:
+  clock-controller@7eed000 with reg <0x0 0x07eed000 0x0 0x14>.
+- Renamed Kconfig symbol QCOM_CLK_LPASS_VA_CSR to
+  QCOM_CLK_LPASS_HEARTBEAT_PULSE.
+- Added devm_pm_runtime_enable() in lpass-va-csr probe path.
+- Dropped the qcom,lpass-va-macro binding extension patch - no in-tree
+  user yet; will be resubmitted with the hawi DTSI changes.
+- Dropped sound/soc/codecs/Kconfig select wiring from this series to
+  keep it clock-only.
+- Link to v3: https://lore.kernel.org/all/20260723-master-v3-0-3d67b79b0515@oss.qualcomm.com/
 
-Thanks,
-Stanislaw
+Signed-off-by: Sarath Ganapathiraju <sarath.ganapathiraju@oss.qualcomm.com>
+---
+Sarath Ganapathiraju (2):
+      dt-bindings: clock: qcom: Add LPASS VA CSR HeartBeat pulse clock
+      clk: qcom: Add LPASS VA CSR heartbeat pulse clock
+
+ .../bindings/clock/qcom,hawi-lpass-va-csr.yaml     |  51 +++++++
+ drivers/clk/qcom/Kconfig                           |  12 ++
+ drivers/clk/qcom/Makefile                          |   1 +
+ drivers/clk/qcom/lpass-va-csr.c                    | 148 +++++++++++++++++++++
+ 4 files changed, 212 insertions(+)
+---
+base-commit: 0f6da28aab51b16762ed82e8fdeaa5042da45b08
+change-id: 20260805-master-20260805-sync-d892f9d7a2e0
+
+Best regards,
+--  
+Sarath Ganapathiraju <sarath.ganapathiraju@oss.qualcomm.com>
+
+
