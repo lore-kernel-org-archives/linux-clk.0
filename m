@@ -1,180 +1,157 @@
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D32C3E316B;
-	Wed,  5 Aug 2026 22:38:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92639477E53
+	for <linux-clk@vger.kernel.org>; Wed,  5 Aug 2026 23:09:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785969539; cv=none; b=S/Z4oL6NnebxiVr8voMurqNrI8uqxml9yeuPPGNZJzlCNGs3WsJCTCwnHNYPEddg6yrzDU/guWPAKDVy55CwAknqHy/1HmyCW1FMPF2Qu7K4S+w7I6+XaPWMviBB7o3/8XaueT1ME4/N1fbMvfQeuqsiShkIQEm9PERw+PJS1VU=
+	t=1785971376; cv=none; b=Wb0MQ61tkyP9j5C7QznNzNQbxiW75DcMxbwRNTcE85YtULSGQJCvOufGWuMqsRcsTaNDoFEk46yV9ghVnJssez8Vj5ZkZQvAUGxh6J0WS4zqLCC66e3BpDDwamVbL7TMrYewv8eNk5pAGAd9R6ImxFfZCrBlHwzCa4R993oOW/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785969539; c=relaxed/simple;
-	bh=fysVipfONh/x9yJFLNjTer3RjlXeynbaGnDOhvC9ZS8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nHTOy/so3RaIqEVrFXMRU42KiwAX880HcbmEf3GDwn4jOd6de4K24Xq7J9xYYQ4VTiwOIoZOb66EqJCcNzhtIM1qRweejdTm6TGmL06igs2gJ9KIdt1kMfxC0XG+nvD+E/ZlDDD4vIBXC1ZAbwNXngU2v/5H89aPbPUaZyL7uqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=Csf9NuPU; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1785971376; c=relaxed/simple;
+	bh=D4WVaJTUDyZHYEYN6SolofWHJINxpNsj+Bu4DVEX2jA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dPyJIUdAKf1GXSBLSbwglrsU9W4unljb4WuhkwuXRh+65upMTVXIRn1rOA7J+7YC/KcVxK1eL6LzCW+EFONoPsRibzghrlicKAmAocWMY+SqoCKnZNcrvQZBDLYhR0aYjejJaTEB6khGck54OoGEU0fuceqCeMIWIFEVOTh141U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LjzPU92m; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=fN0rOdbO; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="Csf9NuPU"
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4hFlgx2py8zMlH2;
-	Thu, 06 Aug 2026 00:38:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1785969533;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LjzPU92m";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="fN0rOdbO"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1785971373;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=uS+RCfKyjG2UtT4+awjQRyRPyTMRZoUZeNGtWmbYJPA=;
-	b=Csf9NuPUw00gLrfyzQpMvzedX0iF5woxs6AsivUK3fODBr/XLypjdeQgDq8UMF1Dw3DMHD
-	QdWCzMYs/AXDgbmp6veIJWmlwG6QzhimzwxZPPEL4qwtLzMdDMut47kb180pVf2WAY3HhA
-	G7l0lspMaE/nrnKj1Mwr46i+vKiy/worVbkZCCo/8L7UARVc1mfRXr8UZzb70vNN4R0xow
-	m1vnQZHcQ/91YoSRewdVdBQRCK8IX6sYjNA788Sxh856Xk7Zs+3Msm27FXAFGdQfOz1Y4Q
-	YI/QyD9et2mr5rQcu5tvxm2CubXt2BwFtcAu2/cj2ffCA+AeWKeN8LPDAX0DJw==
-Message-ID: <0124d3a3-81dc-44ce-88a2-9426c65ac46c@mailbox.org>
-Date: Thu, 6 Aug 2026 00:38:48 +0200
+	bh=P5KkfoazfSd7LbFAmZXs7FVBEh30eBrbBqu13ZxDK8Q=;
+	b=LjzPU92mry71NWcVDAdkCwVQDcKRBRn0xhetpoXBqQY2xRjt+ONEaAAy3uhavyTDZqIaM9
+	C3qUT9qeEy0IigBwB1Zw4+zPXPj1bnX0aFxHNBhFcacudp7FjqU/sCrLJHfWTGCw1jTMEP
+	hCl0ES6nfXqCQBpexkozGQjXsl4DkSM=
+Received: from mail-yx1-f69.google.com (mail-yx1-f69.google.com
+ [74.125.224.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-554-DaZ8EMHBPOGDIRMswe_aDQ-1; Wed, 05 Aug 2026 19:09:27 -0400
+X-MC-Unique: DaZ8EMHBPOGDIRMswe_aDQ-1
+X-Mimecast-MFC-AGG-ID: DaZ8EMHBPOGDIRMswe_aDQ_1785971367
+Received: by mail-yx1-f69.google.com with SMTP id 956f58d0204a3-6688d64bf2fso2350238d50.1
+        for <linux-clk@vger.kernel.org>; Wed, 05 Aug 2026 16:09:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1785971367; x=1786576167; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:content-type:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=P5KkfoazfSd7LbFAmZXs7FVBEh30eBrbBqu13ZxDK8Q=;
+        b=fN0rOdbO0V+3LoKBZ1Bwjtu91DJimb93hEXhexT4W67Z0hChl1BVlt3Zqftvx9X3Sf
+         nEjmdIpPdLMqXc826APrfC4fblVdprVsuegCulX2l2wmIHJx31wAdBcOkDsMJ8Sl01J8
+         7Z8BcuSDyve/XUkros13EAsbbw0VXjwY8g8iAx+/arNL+h/1BvnXY1ekOQVICho2UWRS
+         VY+gltFBRIbP0kO2EazyUFhPdveesdhkVWXSUI48AaBfDEIscdlR0i9nHF8qmztJmcyu
+         cAVmkuZ1/zNCpMc867kDVqtyvWzBVEyAihJVkS0z2pRj5eOVVEjh0jhBLWU7EoepzGrg
+         nfEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785971367; x=1786576167;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:content-type:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=P5KkfoazfSd7LbFAmZXs7FVBEh30eBrbBqu13ZxDK8Q=;
+        b=OBNvUt6ILitB2FB3zUB5FlqFSf0gMkTYyuRYhqDZXLoh29zUyO3th0DkP+yuuVDSaF
+         yGlks+fbUFXfw1opvdcNNOmeQQWtgZIBDkCjwY8hRwR0AVGUIK6EtA8IIGNp4dH2VgVz
+         eUZ73+wj/aVNVK02DUAnOq24bYluDJupfT9gUw9CZpZdf/oJCdo9Kgji3St59GwO+N3l
+         1N70GFM61gMdxOk6BwSBu/QQ72Y4EYRzViby9ggrbIEoGWXJXLDNKdKdPFynrLE8N1o2
+         +wq8FTtiDtf8e1DxGZnmpgfZsBwWEEZ3xbYk4JMWvHVuFH6+l41f+rgHSSEaEP8y+xV4
+         nZ6g==
+X-Forwarded-Encrypted: i=1; AHgh+RpyMu22Zl6bw0zG/3kiRUIGPOKJnFseuGX+OWDw3pethxHPF1Px1HxhVpTrBF0hvSuL5bL3KozX4og=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCOx85Q4PD+oJRQgh3TJRugjOEHU1fNPbh/b2ClTj0cEBkYjgV
+	11b/GYv1Ksj0rUq7xyUCsKpqk+UmyPwiM6ZHI0ThZWx09ik7r2CdMHkt0YgO2AYaQb256+ZpJwI
+	hGk2IQk5XjBhOFoRPGM5nddgFyuIhGxMztbhkOSLm1AI5DLnJSUgBdM6OMuC/gw==
+X-Gm-Gg: AR+sD12ySvveSCE/bXqtgdcnpTa/SkrPTOUP4hflmQJvSYebHC0eN1F7JBzcEMn8y2t
+	XrrjRB6S4HpSQcD2zssUvgysN1DiT9aplGJxO/ffJxpVf4DYYHKhcSemmzN8EN/mNCWnmpYNqOO
+	epZTBm2lzJ4zjbXL2uiPFnknhJuT29euYYnHlLy+9ixzyT+6c1U+4txqWwKZ0U+rVJhMHNte5XI
+	6j6DqaEYJodLTfUPLeT90CiGi62V9ZAaP2sw6gyr/jCsQkVrjDYPJuqOmGT1zbvt0t4Wy2YEdSf
+	fVrE9jGpItKfm0gf/HptkbcCKvfF3dmtjzuWGUXYTTlql6dzmts0IIpo1tgTFuOThusgxxi0Uj0
+	XtJajBHUEUL2GZIVY8jlwC0kPfeZzcof2DKc=
+X-Received: by 2002:a05:690e:250b:10b0:667:a95b:59f0 with SMTP id 956f58d0204a3-6699abcfe28mr5022126d50.34.1785971366740;
+        Wed, 05 Aug 2026 16:09:26 -0700 (PDT)
+X-Received: by 2002:a05:690e:250b:10b0:667:a95b:59f0 with SMTP id 956f58d0204a3-6699abcfe28mr5022102d50.34.1785971366332;
+        Wed, 05 Aug 2026 16:09:26 -0700 (PDT)
+Received: from redhat.com (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-669913b9903sm3924589d50.7.2026.08.05.16.09.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Aug 2026 16:09:25 -0700 (PDT)
+Date: Wed, 5 Aug 2026 19:09:23 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Chen-Yu Tsai <wens@kernel.org>
+Cc: Heiko Stuebner <heiko@sntech.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Daniele Briguglio <hello@superkali.me>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Diederik de Haas <diederik@cknow-tech.com>,
+	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+	Ricardo Pardini <ricardo@pardini.net>
+Subject: Re: [PATCH] clk: rockchip: rk3588: don't disable unused I2S MCLK
+ output gates
+Message-ID: <anPCo9nkOjpBUOlq@redhat.com>
+References: <20260624123914.1767374-1-hello@superkali.me>
+ <178267399833.3089434.5140309637329023610.b4-ty@sntech.de>
+ <CAGb2v64kcadr1nAisu_3kyE-=-4oypDXTvAy--jQHa0VhmYoXg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v3 4/6] pmdomain: renesas: Add R-Car X5H MDLC driver
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
- Ulf Hansson <ulfh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <cover.1785941595.git.geert+renesas@glider.be>
- <89e6a71b35703f10e12f520af1f389b5f40f4b35.1785941595.git.geert+renesas@glider.be>
-Content-Language: en-US
-From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <89e6a71b35703f10e12f520af1f389b5f40f4b35.1785941595.git.geert+renesas@glider.be>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-MBO-RS-ID: a370a64fff6b4dfe338
-X-MBO-RS-META: 355w3c5a4crihgw76irh7wwwrs3zhmwk
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGb2v64kcadr1nAisu_3kyE-=-4oypDXTvAy--jQHa0VhmYoXg@mail.gmail.com>
+User-Agent: Mutt/2.4.0 (2026-06-19)
 
-On 8/5/26 5:20 PM, Geert Uytterhoeven wrote:
+Hi Chen-Yu,
 
-Hello Geert,
+On Thu, Aug 06, 2026 at 01:00:02AM +0800, Chen-Yu Tsai wrote:
+> On Mon, Jun 29, 2026 at 3:13 AM Heiko Stuebner <heiko@sntech.de> wrote:
+> >
+> >
+> > On Wed, 24 Jun 2026 14:39:14 +0200, Daniele Briguglio wrote:
+> > > No in-tree board references these gates yet. Boards drive the codec
+> > > MCLK through the parent I2S*_8CH_MCLKOUT, and now that the gates are
+> > > managed clocks, clk_disable_unused() turns them off at boot. On a board
+> > > that relied on firmware leaving the output enabled, that cuts the MCLK
+> > > and analog audio stops working.
+> > >
+> > > Mark the four gates CLK_IGNORE_UNUSED so an unreferenced gate keeps the
+> > > state firmware left. A board that wants the kernel to own the gate can
+> > > reference I2S*_8CH_MCLKOUT_TO_IO from DT instead.
+> > >
+> > > [...]
+> >
+> > Applied, thanks!
+> >
+> > [1/1] clk: rockchip: rk3588: don't disable unused I2S MCLK output gates
+> >       commit: 946352b2f88fd2378f0341312e47dff1e8dc2fac
+> 
+> In hindsight maybe it would have been a better idea to map the existing
+> clock ID I2S*_8CH_MCLKOUT to the new gates, and add (or not add) new
+> clocks for the internal MCLK gates.
+> 
+> Then you wouldn't need to update the DTs, wouldn't need this workaround,
+> and wouldn't depend on the bootloader to set the registers correctly when
+> booting an old DT.
 
-[...]
+Help me understand for the future: If the approach you describe would
+have been used, then the clocks in the kernel would have been mislabeled
+in the kernel driver compared to what's actually on the SoC, correct?
+That would have been more desirable in order to keep compatibility with
+the older DTs?
 
-> +DEFINE_MDLC_RESET_WRAPPER(reset)
-> +DEFINE_MDLC_RESET_WRAPPER(assert)
-> +DEFINE_MDLC_RESET_WRAPPER(deassert)
-> +DEFINE_MDLC_RESET_WRAPPER(status)
-> +
-> +static const struct reset_control_ops r8a78000_mdlc_reset_ops = {
-> +	.reset = r8a78000_mdlc_reset,
-> +	.assert = r8a78000_mdlc_assert,
-> +	.deassert = r8a78000_mdlc_deassert,
-> +	.status = r8a78000_mdlc_status,
-> +};
+But the older DTs can still reference the mux, correct? From the
+kernel's perspective in this scenario, the important thing is for the
+mux to select the appropriate parent. The end gate will always be left
+on. From a power management perspective, the power will be cut further
+up the clock tree as needed.
 
-Please keep the list sorted alphabetically.
+Brian
 
-> +static int r8a78000_mdlc_attach_dev(struct generic_pm_domain *domain,
-> +				    struct device *dev)
-> +{
-> +	struct device_node *np = dev->of_node;
-> +	struct r8a78000_mdlc_priv *priv;
-> +	struct of_phandle_args pd_spec;
-> +	const struct mod_map *map;
-> +	unsigned int id;
-> +	int ret;
-> +
-> +	ret = of_parse_phandle_with_args(np, "power-domains",
-> +					 "#power-domain-cells", 0, &pd_spec);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	if (pd_spec.args_count != 2) {
-> +		of_node_put(pd_spec.np);
-
-Maybe some "goto error" fail path which does of_node_put() wouldn't hurt 
-here, since the of_node_put() is duplicated in here multiple times.
-
-> +		return -EINVAL;
-> +	}
-> +
-> +	scoped_guard(mutex, &r8a78000_mdlc_lock) {
-> +		hlist_for_each_entry(priv, &r8a78000_mdlc_list, link) {
-> +			if (priv->np == pd_spec.np)
-> +				break;
-> +		}
-> +	}
-> +
-> +	if (!priv) {
-> +		dev_err(dev, "%s: MDLC %pOF not found\n", __func__, pd_spec.np);
-> +		of_node_put(pd_spec.np);
-> +		return -ENODEV;
-> +	}
-> +
-> +	id = pd_spec.args[1];
-> +	of_node_put(pd_spec.np);
-> +
-> +	map = mod_map_find(priv->mod_map, id);
-> +	if (!map) {
-> +		dev_err(dev, "Unknown module 0x%x\n", id);
-> +		return -ENOENT;
-> +	}
-> +
-> +	dev_dbg(dev, "Ignoring HW module 0x%x\n", id);
-> +	return 0;
-> +}
-
-[...]
-
-> +static int r8a78000_mdlc_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct device_node *np = dev->of_node;
-> +	struct r8a78000_mdlc_priv *priv;
-> +	const struct mdlc_info *info;
-> +	struct resource *res;
-> +	int ret;
-> +
-> +	ret = r8a78000_genpd_always_on_singleton(dev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	info = of_device_get_match_data(dev);
-> +	if (!info)
-> +		return -ENODEV;
-> +
-> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +
-> +	priv->dev = dev;
-> +	priv->np = np;
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	if (!res)
-> +		return -ENODEV;
-> +
-> +	for (; info->base; info++) {
-> +		if (info->base == res->start)
-> +			break;
-> +	}
-> +
-> +	if (!info->base) {
-> +		dev_dbg(dev, "Unsupported MDLC instance 0x%pa\n", &res->start);
-
-return dev_err_probe() might be more appropriate here, even if that 
-would be more chatty until the support for various MDLC nodes lands.
-
-Some dev_info_probe() would be even better, but we don't have that.
-
-[...]
