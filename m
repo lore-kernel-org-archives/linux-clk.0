@@ -1,116 +1,94 @@
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B4F3C8C52
-	for <linux-clk@vger.kernel.org>; Wed,  5 Aug 2026 16:54:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3629388393
+	for <linux-clk@vger.kernel.org>; Wed,  5 Aug 2026 17:00:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785948857; cv=none; b=KEBz+/1SHrmVIerI9EkHbHTdoApUtdJs9uJM61zu8HdnjV1HblkAQKoHg7tkZUZLQ8rlN1Hbv0CnaaoGyEAOi3Qd/X4IXr6MngTDU6iFeIK1aap0MOXLnk8SA9R+jes9VCdQ6p7+TqO45Koji/LMM2AsPYHBHOOX8VGFfv//vSs=
+	t=1785949218; cv=none; b=EgaKUlhAULTWtBJVNW251bAeXawg9gv3x9B7z1jXkmKg21nmMzLmL2B/DdKgVsx7zP03ytXroN9JnNjU7aTU+cDO+kffaaeGH3/8BdXN1XEpAVFWv0D1UesBxu/FYTALxzM6kE6FwvYr5JFQ8j7gWahnPMLNws3TRAfsOCWTYOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785948857; c=relaxed/simple;
-	bh=s0lx5fgW992e5Cz/cU4YqatMbomgvYAN8oH/xxnURBY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KjuirHI8UmkPAugR89OEZiSJk7cYuFBw85iK6pkngpmp5mWjCBPHL1/cX00/bzUHv9zLAT3PEG1NG0MlyiI8kXe/OlU8FHoBY+Qr2mHejZnlQv6bhIbJftc8/us4tA+7yyB2KtIOhKXFiJZr1/u4sjF+VBoCUNWbNZaUdMPGcYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NqGIuUr6; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1785949218; c=relaxed/simple;
+	bh=LiQnpzw4HjHZBmtr7rTuwMRq/YYsi4jNApYAqojZlag=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=C/SCKzRdcJC2JB9+vfyUpCsMwaaa3jwwRnHHYi43uPEN0BbY/imJBYubXdL0IM2cxrz2aldiU23QzLdCdtlg13y23XuGudQIhSsmSwXAPp9w5PQU/wFkeWZghuWfRBS99l/D+GfKoo7cM1Hl8XXzLEZ4x98MDC/1tnGENDEeFiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SMWCYEvc; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NqGIuUr6"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-4706f016316so70096f8f.3
-        for <linux-clk@vger.kernel.org>; Wed, 05 Aug 2026 09:54:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1785948854; x=1786553654; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=s0lx5fgW992e5Cz/cU4YqatMbomgvYAN8oH/xxnURBY=;
-        b=NqGIuUr6lio83NuAz7TtTSEKMoaq/E6CgVPh3/lfw3E+esf+tB7wyDmxalmqWfFstE
-         X+T/NEvD2ZUOtvCJ8Gg9HF+8pcLhAi0eftbU1KHO/CWOQ6If7TPELsqQ4sotiVdkRMgi
-         6f7x3THxuD/9NW5NS9jHxjP6UOxCjztz4oSpmHdrgAUKjy7QNuvZ6dJ7/C/jjFWYUjux
-         2KNgBjMd6yECB1y6zSwV8yCGQx3OLWjBAFbifEYZKLY81BmcZCye30Neo6ji6Bd2Sw4i
-         hIDR4ka7KGfdhqyTT2qLRx8rTCUkRRZj3PD/iw4/OmbwAJwIPeEb0vQUspGVIQA6Bd5N
-         mVtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785948854; x=1786553654;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=s0lx5fgW992e5Cz/cU4YqatMbomgvYAN8oH/xxnURBY=;
-        b=n4omP6vd6Nbeo4WlOTIKbYSRTOjbITjbCo641rrnbWmBjZamDBie/JnjEm4qMYSnVm
-         cle4EpWfN+1aEZnzsM2IPTlLX6C3cEabPQJ3Z+BUxruvxzPdHeNdN80ZXan/AgFvp7ML
-         5ehWo9gUVqdaNk1lYxsfgZ9c1gbwBa+UPl2kt5NViSGbfmDnUNocn+IqNKO9ryknEEBo
-         cTTLYzQRtuWt2GeJ/hej6bhhSpESomUxjaFGBfrGaB7dku1RhVwFWDcJg8WgchSrBzcg
-         WmTdXl43K7sIn56tUNBQvoWvssr771F2b6h4Lu7afewW1KS7YUFKMPDyt8q4hgdRfPGN
-         NxYg==
-X-Forwarded-Encrypted: i=1; AHgh+RoNlk7lpW0+KnH9dDD8OQXaq6dkm/2y9DKvhR96AmaPtD8RTZFmj9F/nPRx5raj0En2lLlr9dS3YBY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5YPzVgWbpJD98t6Uy6B5+/gkYXzq30GLj64gzPcI+v/ZrTls7
-	i5bfqW80XNKAmV2lVuGzsLYvYimgffora/UgntVde9MmcERqLAb5ciEq
-X-Gm-Gg: AR+sD123DscKgdd49gYvPd8Yt9XZ+J6qKZdJ4QqVMJDuMYlKmneJ1fuAY82QYlXuce7
-	fxqtmaYaGL2jQ92DV+sIhYMUiQM1Y0Ro8Q+gfKwMqHn3msDuhX+n4EzgtxR3yzOWIBcNzbmFQFV
-	A53kwmGZoWB8e3cA2FaMvXb2fxTCq0K+gLiSBTCe0AmAaYQAHIahfFEOffQzJ7if/8qviUpLIpQ
-	R7b8tugIozrKTK9aoShp+Vx7aS4q1i+r0++Nz5qvUyhXdqLZ+wjCMJpPAggNDKJjJipBnOh7Mpq
-	h+R5eyNjLeZ3ryIxmMybofyDUFZwBZ1EdIRbWf6j1LSMrfLqrZ4AEY4YzLa1LrRKSY6LO9NW3xQ
-	4EAZr4Rd2hHaBucQh7DNTniCgHSKQPqeVYdkArrHRqBdlCWeuUP2LSTnczwI6Gcugx4rkw8D4pb
-	FSX9bnu7GKRdnB4offD0PSoidpTlutmaWOd9O7eQBiS9824Zd9VZJFeyQZ61VxK3Zc+mu0mM/h9
-	gT1wgAtXApWIfc3OkVU78FlrriObjN4yg7MzA1+gUbUYGiMzEbJAuGD4TRa6n9XdYZ6RiGzllzm
-	+O4=
-X-Received: by 2002:a05:6000:200f:b0:46f:7d90:8124 with SMTP id ffacd0b85a97d-47fec528a60mr6555260f8f.2.1785948853795;
-        Wed, 05 Aug 2026 09:54:13 -0700 (PDT)
-Received: from OrangePi5-Plus.BB-HOME (20014C4E1B86F10001BE789C6EE938EE.dsl.pool.telekom.hu. [2001:4c4e:1b86:f100:1be:789c:6ee9:38ee])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47febfda0d7sm9829057f8f.2.2026.08.05.09.54.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Aug 2026 09:54:13 -0700 (PDT)
-From: Igor Paunovic <royalnet026@gmail.com>
-To: Heiko Stuebner <heiko@sntech.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Daniele Briguglio <hello@superkali.me>
-Cc: Ricardo Pardini <ricardo@pardini.net>,
-	Diederik de Haas <diederik@cknow-tech.com>,
-	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Igor Paunovic <royalnet026@gmail.com>
-Subject: Re: [PATCH] clk: rockchip: rk3588: don't disable unused I2S MCLK output gates
-Date: Wed,  5 Aug 2026 18:53:47 +0200
-Message-ID: <20260805165350.14710-1-royalnet026@gmail.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <6cc68287-ee87-4db6-8f40-531ec2d92fb2@pardini.net>
-References: <6cc68287-ee87-4db6-8f40-531ec2d92fb2@pardini.net>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SMWCYEvc"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BB411F00ADE
+	for <linux-clk@vger.kernel.org>; Wed,  5 Aug 2026 17:00:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1785949217;
+	bh=WBGLmgn1KuR6ekaDfS9NzoAp0N4ym3eZDjfC7Q20pVI=;
+	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc;
+	b=SMWCYEvcM74kJ2TgjQBqvWi4t4taCknixxdGSZjw76yTmZQgqVCHjoSNcC7dx3lF8
+	 JlG6+1yM5zXvibUGlYm6788ep6CZfz+1ar5kTlKPrZ7aujiOudwt8i8xq9HrNG5OQ9
+	 ZZWSqdMBikBMNTBBXvUemGwNQ9Z92E8gukI2Gw9bzwjlsCMn1GVttbrrcRfQuass9V
+	 BxS/F+1nrvQ7i2+4hW3sF4VYf8ctqZHfmE1bBfGuc2IGjf875mk8T0UqP3RCqtJr0t
+	 8LGsjrqufehPnoxwzYCrJ1BZqOHDM0ixpygJhMMO72tZPVLd9yul7BPzpabN6l+XNS
+	 QndKgDwiWk5HA==
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-39f91ba1ef7so8564821fa.3
+        for <linux-clk@vger.kernel.org>; Wed, 05 Aug 2026 10:00:17 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RohNfVmj5Xt03HOBLWv3WtjqQX6D4eUfUDGzJ3VKbcmH6SIo3qo25TQTxn3HamabeUlwm7lj7u/D60=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFx9HbeP/3ej5YI150DYfFuy4Jn8S8BobIsg4kbiTme+NhjyQ8
+	U0LS6B8TckCylvLpgMF3OJu/6VKFWh/KArT/65E9Tj0fawgmNNHoBgCPreEkqiRdpMhim2/OsLG
+	AImgqjA1K3bkE7mEhm0szKeCc4ZL+lv8=
+X-Received: by 2002:a2e:9a0b:0:b0:39e:b3b2:e95f with SMTP id
+ 38308e7fff4ca-39fbb2646cbmr11047971fa.18.1785949215957; Wed, 05 Aug 2026
+ 10:00:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260624123914.1767374-1-hello@superkali.me> <178267399833.3089434.5140309637329023610.b4-ty@sntech.de>
+In-Reply-To: <178267399833.3089434.5140309637329023610.b4-ty@sntech.de>
+Reply-To: wens@kernel.org
+From: Chen-Yu Tsai <wens@kernel.org>
+Date: Thu, 6 Aug 2026 01:00:02 +0800
+X-Gmail-Original-Message-ID: <CAGb2v64kcadr1nAisu_3kyE-=-4oypDXTvAy--jQHa0VhmYoXg@mail.gmail.com>
+X-Gm-Features: AUfX_mzxTaQi5lmCrQEStGQqjdfqlwh8KWbld4ds13aZOb9Ofar8XPEAC5gsAkU
+Message-ID: <CAGb2v64kcadr1nAisu_3kyE-=-4oypDXTvAy--jQHa0VhmYoXg@mail.gmail.com>
+Subject: Re: [PATCH] clk: rockchip: rk3588: don't disable unused I2S MCLK
+ output gates
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Daniele Briguglio <hello@superkali.me>, linux-clk@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Diederik de Haas <diederik@cknow-tech.com>, 
+	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, Ricardo Pardini <ricardo@pardini.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Mon, Jun 29, 2026 at 3:13=E2=80=AFAM Heiko Stuebner <heiko@sntech.de> wr=
+ote:
+>
+>
+> On Wed, 24 Jun 2026 14:39:14 +0200, Daniele Briguglio wrote:
+> > No in-tree board references these gates yet. Boards drive the codec
+> > MCLK through the parent I2S*_8CH_MCLKOUT, and now that the gates are
+> > managed clocks, clk_disable_unused() turns them off at boot. On a board
+> > that relied on firmware leaving the output enabled, that cuts the MCLK
+> > and analog audio stops working.
+> >
+> > Mark the four gates CLK_IGNORE_UNUSED so an unreferenced gate keeps the
+> > state firmware left. A board that wants the kernel to own the gate can
+> > reference I2S*_8CH_MCLKOUT_TO_IO from DT instead.
+> >
+> > [...]
+>
+> Applied, thanks!
+>
+> [1/1] clk: rockchip: rk3588: don't disable unused I2S MCLK output gates
+>       commit: 946352b2f88fd2378f0341312e47dff1e8dc2fac
 
-Independent reproduction and a Tested-by for this fix, on a third board
-family: Orange Pi 5 Plus (rk3588, es8388 clocked from I2S0_8CH_MCLKOUT).
+In hindsight maybe it would have been a better idea to map the existing
+clock ID I2S*_8CH_MCLKOUT to the new gates, and add (or not add) new
+clocks for the internal MCLK gates.
 
-On v7.2-rc6 without this patch the analog codec is completely dead in
-both directions - playback silent, capture records exact digital zeroes -
-because clk_disable_unused() closes the new i2s0_8ch_mclkout_to_io GRF
-gate at the end of boot: SYS_GRF SOC_CON6 reads 0x7c7 (bit 0 set) while
-the clock tree shows i2s0_8ch_mclkout enabled for the codec and
-i2s0_8ch_mclkout_to_io with an enable count of 0. Re-opening the gate by
-hand over /dev/mem brings the codec back the same second, and with the
-gate held open the board plays and records normally.
+Then you wouldn't need to update the DTs, wouldn't need this workaround,
+and wouldn't depend on the bootloader to set the registers correctly when
+booting an old DT.
 
-Tested-by: Igor Paunovic <royalnet026@gmail.com>
 
-On scale: grepping v7.2-rc6, every rk3588 board DTS that clocks its
-codec from an I2S MCLKOUT still references the plain id rather than the
-_TO_IO one - I count 21 files (es8316/es8388/es8323/rt5616/nau8822
-across the Orange Pi 5 family, ROCK 5A/5B/5B+/5T/5C/ITX, NanoPC-T6,
-CM3588, ArmSoM, CoolPi, the EVBs, QuartzPro64, Gameforce Ace and
-Firefly) - so all of these ship with broken analog audio if v7.2 goes
-final without this fix. Is anything still blocking it from going in
-with the next -rc?
-
-Thanks,
-Igor
+ChenYu
