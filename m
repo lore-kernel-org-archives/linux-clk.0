@@ -1,121 +1,114 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3AC33DD51D;
-	Thu,  6 Aug 2026 07:58:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D30637CD40;
+	Thu,  6 Aug 2026 08:13:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.200.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786003097; cv=none; b=sXrGN0eAa18otJw+KjXO33Svjo3dW+xTUhiPVVnuB+D5O7vWk8XgKS/Tfny8VPpd1fFdYL39wcIoTRlXpVJljJ2zepZ6E6VDp18a1PDnkkoPGy2fzPMS16FeCoOBvf17zSf1R/Fkc4+S1RRB88boVpPPQiXFCk+OBAQRhYqTdtI=
+	t=1786004005; cv=none; b=IfriH2aaA95KvEia3+doi8BQgh1+G0cnqJ5JfZMBFIPNS0m+f5NQj58uTzLUvcozGag1SxQKZk7N9D47fU2ADsa1G1ssGjk6ce9QxoSXC3UAq4PqFr7VWiNDh182Uacn6SRGBet3E7Eri1nkE5aMe2ZRER0PtCRBOouHJDznwFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786003097; c=relaxed/simple;
-	bh=OegLx0qSHX3UH5wrC3GfRMU/qZjZ0AhaehBnJMvmk0c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hJP2nDPzdCZHM5NIPvdCY465qYA7lNK+19ebvxmazcehr4MWeKNgouBXht/hPV4Hsb27Wh8/X9ZQ6t6dkYwGl2tshDE4XAs56ZKUCOmlle2zNQ3ts1jqMZyt9NqxHZ505CbccRurruDyyEvVoAJhiqIXgrw/K1Hk/HVa7cVBGFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LsP4Smd9; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LsP4Smd9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B80E1F000E9;
-	Thu,  6 Aug 2026 07:58:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786003096;
-	bh=fd84wAkGkI+TSfmqSMarAq4/qXYSh+gCQPRQbA98KBc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=LsP4Smd9QfumG0gMhbOSO6/vav+jZF3xDdViQU2IfnX22RyNKbF1V0obrD+znvOiE
-	 7MEIJcPL7V22TtyzqlNLnJ17T9Vo609eamlil3Iv1PUHrmiqooS7tLRW11pZMU015T
-	 nxTswbtxemeUDp0BC2TZI6QSToLqLsvgPirjEPSf+jvnykfj030JF19gnLaSVr7YmA
-	 52V/FV2SDbL+9Amvk2KBj+s7mqRhL3g2X6CrKJV0cHGW0eSZRWeX7YMH1vrX1W6JaF
-	 AcTTSj8o00FrN+5F30tQeiNqLVopH041gDW5T8Axd1q8MOu9YuklCYocAWurZD6r4W
-	 Bi5OrAGOPjNXA==
-Message-ID: <3daf5a61-c6ab-4e89-b74e-7f9bfc751c45@kernel.org>
-Date: Thu, 6 Aug 2026 09:58:09 +0200
+	s=arc-20240116; t=1786004005; c=relaxed/simple;
+	bh=m+ixxoAKX9ofTb0vud6B0UlDpsMUUasBvg0zQYoPk34=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=LHkSzpH+4iBSSD3V+fbgN18+Wk5EipoUx5KKVtfhyZYGWtfQt+AWaMETee/mvr12cnPNAKYp+7andyt3vAY/rBLQOT40RFhnoUGuSzu75AK3s4NjtvYEPs8vlwNmGhYQOCX4zEaEZ5v7xhVXpZ2997+yUzaJPchwgNF/SSt17DE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.200.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from [IPv6:2a0a:edc0:0:900:1d::4e] (lupine.office.stw.pengutronix.de [IPv6:2a0a:edc0:0:900:1d::4e])
+	(Authenticated sender: pza@pengutronix.de)
+	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id 424B0201EE8;
+	Thu, 06 Aug 2026 10:13:19 +0200 (CEST)
+Message-ID: <7c30baacac8c75037f32c0ac3099a6107cbec38b.camel@pengutronix.de>
+Subject: Re: [PATCH v3 4/6] pmdomain: renesas: Add R-Car X5H MDLC driver
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Geert Uytterhoeven <geert+renesas@glider.be>, Rob Herring
+ <robh@kernel.org>,  Krzysztof Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Michael Turquette	 <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney	 <bmasney@redhat.com>, Ulf
+ Hansson <ulfh@kernel.org>, Wolfram Sang	
+ <wsa+renesas@sang-engineering.com>, Marek Vasut	
+ <marek.vasut+renesas@mailbox.org>, Kuninori Morimoto	
+ <kuninori.morimoto.gx@renesas.com>
+Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Date: Thu, 06 Aug 2026 10:13:19 +0200
+In-Reply-To: <89e6a71b35703f10e12f520af1f389b5f40f4b35.1785941595.git.geert+renesas@glider.be>
+References: <cover.1785941595.git.geert+renesas@glider.be>
+	 <89e6a71b35703f10e12f520af1f389b5f40f4b35.1785941595.git.geert+renesas@glider.be>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-0+deb13u1 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: clock: agilex: mark mpu_l2ram_clk deprecated
-To: "Chan, Genevieve" <genevieve.chan@altera.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Dinh Nguyen <dinguyen@kernel.org>,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- linux driver reviews <linux-drivers-review@altera.com>
-References: <20260727094926.1124-1-genevieve.chan@altera.com>
- <20260804-excellent-electric-yak-d2de63@quoll>
- <6fc29749-67ff-4754-91ee-4f8021d76254@altera.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <6fc29749-67ff-4754-91ee-4f8021d76254@altera.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
-On 06/08/2026 09:43, Chan, Genevieve wrote:
->>> +/* 42 - reserved/unused */
->>
->> How IDs can be reserved? These are implemented by drivers (abstract IDs
->> not used by hardware), so how driver could reserve it?
->>
->> Best regards,
->> Krzysztof
->>
-> You are right. These IDs are DT clock specifier indices (provider one-cell ABI), not hardware IDs. The clk driver registers clocks into hws[id]; unused indices remain -ENOENT.
-> 
-> ID 42 was never defined in the original Agilex binding (EMAC0=41, EMAC1=43). The comment was placed to only documents that historical hole so we do not renumber later IDs. It is not a hardware reservation — it is for ABI hygiene.
-> 
-> Happy to reword to something clearer, e.g. /* 42 never assigned; do not renumber */, or drop the comment if preferred.
-> 
+On Mi, 2026-08-05 at 17:20 +0200, Geert Uytterhoeven wrote:
+> Add a minimal Module Controller driver for the R-Car X5H (R8A78000) SoC.
+> For now this just supports the always-on power domains, and dummy module
+> clocks and resets for the serial console (which is enabled by the boot
+> loader).
+>=20
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v3:
+>   - Replace <linux/mod_devicetable.h> by more specific
+>     <linux/device-id/of.h> in v7.2-rc2,
+>   - Add a comment to document only always-on domains are supported,
+>   - Consistently use /* sentinel */ for zero sentinels,
+>   - Drop trailing commas from sentinels,
+>=20
+> v2:
+>   - Spin off from "pmdomain: renesas: Add R-Car X5H MDLC SCMI remapping
+>     driver",
+>   - Add default support not using SCMI,
+>   - Drop all SCMI remapping support,
+>   - Document use of -1 as a sentinel,
+>   - Rename struct r8a78000_mdlc_info to mdlc_info,
+>   - Print HW IDs in hexadecimal,
+>   - Reduce log level for unsupported MDLC instances from warn to dbg,
+> ---
+>  drivers/pmdomain/renesas/Kconfig         |   4 +
+>  drivers/pmdomain/renesas/Makefile        |   1 +
+>  drivers/pmdomain/renesas/r8a78000-mdlc.c | 330 +++++++++++++++++++++++
+>  drivers/soc/renesas/Kconfig              |   1 +
+>  4 files changed, 336 insertions(+)
+>  create mode 100644 drivers/pmdomain/renesas/r8a78000-mdlc.c
+>=20
+> diff --git a/drivers/pmdomain/renesas/r8a78000-mdlc.c b/drivers/pmdomain/=
+renesas/r8a78000-mdlc.c
+> new file mode 100644
+> index 0000000000000000..5c8acead7cff9bdd
+> --- /dev/null
+> +++ b/drivers/pmdomain/renesas/r8a78000-mdlc.c
+> @@ -0,0 +1,330 @@
+[...]
+> +#define DEFINE_MDLC_RESET_WRAPPER(op)					    \
+> +	static int r8a78000_mdlc_ ## op(struct reset_controller_dev *rcdev, \
+> +					unsigned long id)		    \
+> +	{								    \
+> +		struct r8a78000_mdlc_priv *priv =3D rcdev_to_priv(rcdev);	    \
+> +									    \
+> +		dev_dbg(priv->dev, "%s: Ignoring\n", __func__);		    \
+> +		return 0;						    \
+> +	}
+> +
+> +DEFINE_MDLC_RESET_WRAPPER(reset)
+> +DEFINE_MDLC_RESET_WRAPPER(assert)
+> +DEFINE_MDLC_RESET_WRAPPER(deassert)
+> +DEFINE_MDLC_RESET_WRAPPER(status)
+> +
+> +static const struct reset_control_ops r8a78000_mdlc_reset_ops =3D {
+> +	.reset =3D r8a78000_mdlc_reset,
+> +	.assert =3D r8a78000_mdlc_assert,
+> +	.deassert =3D r8a78000_mdlc_deassert,
+> +	.status =3D r8a78000_mdlc_status,
 
+Are .reset and .status needed by any consumers?
+I'd leave them -ENOTSUPP otherwise.
 
-Please wrap your responses.
-
-Comment is simply not needed.
-
-Best regards,
-Krzysztof
+regards
+Philipp
