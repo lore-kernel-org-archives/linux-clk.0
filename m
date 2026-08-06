@@ -1,95 +1,86 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78DDB43786F;
-	Thu,  6 Aug 2026 10:56:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 688F02D7DCF;
+	Thu,  6 Aug 2026 12:54:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786013793; cv=none; b=i4yFhgcVEXZCp5E2iq5CXwYW/sFlvRuMgik+tD6GpnkoJuGuJsA56tGJrXKlPfSWkeYhLgGYIueV4V3NHAI9TUztCgj4UG4CZhl+xsFP070BeecpN5DiM3DQfyfG+cy+5qV7TmRsoQXEZYLP5T0sSC5na2nY5gmLha2ryaChy5o=
+	t=1786020842; cv=none; b=W7W5Qe49HLg3lGIbkQ4D7aJGGmNyN8+kJHPEv4vSYEdhBALQUWZvyQ9x7BrNvG80+BE209rfS/0x5gGKXo++VJqi2vJUBCNAqWCvvocKWnDW3DN8CMWAtjRt2qLX9NJ81nOJXBFO0qN3OXoMZSi9Hul8hhGxMu7VKJfr1lbbNzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786013793; c=relaxed/simple;
-	bh=sNEUopoyTJUHwBT+rKD2gMVOginLuCDXNd+/Fwk/yS4=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=ciEn1iVA1x9X0A5loZyfBhMxvyGAI7ILJknPDJlVVe+h6PeVttTTFyp93/tHZput549gBw8CnxW82hMIYF4Zwpci1jCWh8N43++fVUGUr+yXHs2EQ3gRE6lDgil2OS/Y6chrL5QyToDQWt5TcciZl+xAu7z6D5YmTFa7Bu5+rhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F7dcb2/y; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1786020842; c=relaxed/simple;
+	bh=4aNJudDXH+RGTN1Q8MDeFjkoURQAlY9fgjB3FjkGJM8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D+k68Ot2GVqKBJ7YYDzVS1Yip45TVRB/fcG5DwmOWP5HuvoEyu2v0kn9SgZ7hk7B7qCuAtFum6d1plbX+Ovm2J4HUM9boa1Bm6jI1HU0a1/3mx+5j3UVNoPMoqvWhtKWi3F1xXGyg34DjHgak7jSXCaGsSRedC6xvovl/s1LsZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=SalejtA8; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F7dcb2/y"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A82B1F000E9;
-	Thu,  6 Aug 2026 10:56:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786013792;
-	bh=Q2SvrgBAvQzWpCgMCUgmcZUm9KIImY+r3a3l7Zd8wi8=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject;
-	b=F7dcb2/yd2Yy3f2kyTTPO1spfJw3CONmketrIR7kFW/uv8tdayy5Kp0RAIdhzjCcS
-	 UO8eEl+c+Sz/raZTKj1eUdW1imC3ygy9gxvGs9GOe1iFGkrtxDcR1Iw2RnJ48iD8Wr
-	 bHXhudad88iuhGqybIQTzHALl1BB4hPIuDGji2MH2n1++fvnnzg/73hgwNRovBBWUp
-	 NrkEdqLIdd0XlyV01PrbaVD3b6L2yf1gfsxMFC4prwo1NikYv3TchGr2jb/wBDSJLf
-	 PiPwTNsk0iCZscT6j8Yl3hpEKFh3oDenDpRmJGPUhgNBgtqmpErEnrZSbBQi+rMe5k
-	 5mtHxrBoi04eQ==
-Date: Thu, 06 Aug 2026 05:56:31 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="SalejtA8"
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4hG6fQ4wWHzKnSY;
+	Thu, 06 Aug 2026 14:53:50 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1786020830;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3gPYjDd+JPWeY1o74poWekzAi3fnx4Dq4Me1Ix+wXdo=;
+	b=SalejtA8AWY6uPEczWcOa/cZXzI/nFLnL5c8pcM7vKPRH0by35LMoHSCPO0bxDVd2UcA6l
+	jhYVkOGyDEHUIMiYPVZ7vyz7VrmgANupuMqL5mgUgpXUnpDSMqZDY/i4lXRPFH5yTuj04w
+	jFI09TbwjbrT+6Pl6EsquKJ44HK4DvMoTNxddBYGN0daeEJ6d2/nBy1rK7d4sFJ4MXMbRD
+	MQN60NJ4i6cAgvb5gbjaFydu+znCZyOX0rbsfRAUZx9bCwphs2rKqd6ijJHI8a3XemtgIJ
+	hpw32DVG+NB7Fme0Huxb6DdsBASNua/51sXMDmu7C8gDtcqN79/h8+K1n3bM1A==
+Message-ID: <5920e231-a8b4-40eb-8239-23656fef02e3@mailbox.org>
+Date: Thu, 6 Aug 2026 14:53:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-gpio@vger.kernel.org, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>, 
- Jiri Slaby <jirislaby@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Conor Dooley <conor+dt@kernel.org>, linux-arm-kernel@lists.infradead.org, 
- linux-serial@vger.kernel.org, Linus Walleij <linusw@kernel.org>, 
- linux-kernel@vger.kernel.org, soc@lists.linux.dev, 
- Catalin Marinas <catalin.marinas@arm.com>, linux-clk@vger.kernel.org, 
- Arnd Bergmann <arnd@arndb.de>, Stephen Boyd <sboyd@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, Will Deacon <will@kernel.org>, 
- devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>
-To: Long Zhao <longzhao@ambarella.com>
-In-Reply-To: <20260806-longzhao-upstream-cv75-v2-v2-3-6b09707c5fe9@ambarella.com>
-References: <20260806-longzhao-upstream-cv75-v2-v2-0-6b09707c5fe9@ambarella.com>
- <20260806-longzhao-upstream-cv75-v2-v2-3-6b09707c5fe9@ambarella.com>
-Message-Id: <178601379135.876323.14270090902806254891.robh@kernel.org>
-Subject: Re: [PATCH v2 03/10] dt-bindings: clock: add Ambarella CV75 RCT
- clock controller
+Subject: Re: [PATCH v3 4/6] pmdomain: renesas: Add R-Car X5H MDLC driver
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+ Ulf Hansson <ulfh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <cover.1785941595.git.geert+renesas@glider.be>
+ <89e6a71b35703f10e12f520af1f389b5f40f4b35.1785941595.git.geert+renesas@glider.be>
+ <0124d3a3-81dc-44ce-88a2-9426c65ac46c@mailbox.org>
+ <CAMuHMdXHPjzCidCkfyF0c9fndAmAte1DuhxGZt=WY=_jxpwU+Q@mail.gmail.com>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <CAMuHMdXHPjzCidCkfyF0c9fndAmAte1DuhxGZt=WY=_jxpwU+Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-META: 9w1txx9bbib55itrouywbtz774kmecwr
+X-MBO-RS-ID: 6c5d70869975684d6c0
 
+On 8/6/26 9:49 AM, Geert Uytterhoeven wrote:
 
-On Thu, 06 Aug 2026 17:34:11 +0800, Long Zhao wrote:
-> Add the CV75 RCT clock controller binding and clock ID header.
+Hello Geert,
+
+>>> +     if (!info->base) {
+>>> +             dev_dbg(dev, "Unsupported MDLC instance 0x%pa\n", &res->start);
+>>
+>> return dev_err_probe() might be more appropriate here, even if that
+>> would be more chatty until the support for various MDLC nodes lands.
 > 
-> Signed-off-by: Long Zhao <longzhao@ambarella.com>
-> ---
->  .../bindings/clock/ambarella,cv75-rct.yaml         | 66 ++++++++++++++++++++++
->  include/dt-bindings/clock/ambarella,cv75-clock.h   | 17 ++++++
->  2 files changed, 83 insertions(+)
-> 
+> Indeed, it would be very chatty, and may confuse users, that's why
+> I used dev_dbg().  We can revisit that later.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+All right.
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/display/mediatek/mediatek,mt8196-tdshp.example.dtb: tdshp@321e0000 (mediatek,mt8196-disp-tdshp): 'clock-names' is a required property
-	from schema $id: http://devicetree.org/schemas/display/mediatek/mediatek,mt8196-tdshp.yaml
-Documentation/devicetree/bindings/display/imx/fsl,imx-lcdc.example.dtb: display0: fsl,pcr: b'\xf0\xc8\x80\x80' is not of type 'object', 'integer', 'array', 'boolean', 'null'
-	from schema $id: http://devicetree.org/schemas/dt-core.yaml
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.kernel.org/project/devicetree/patch/20260806-longzhao-upstream-cv75-v2-v2-3-6b09707c5fe9@ambarella.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+-- 
+Best regards,
+Marek Vasut
