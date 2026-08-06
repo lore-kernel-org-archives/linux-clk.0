@@ -1,162 +1,179 @@
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010060.outbound.protection.outlook.com [52.101.201.60])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D5903F482E
-	for <linux-clk@vger.kernel.org>; Thu,  6 Aug 2026 08:58:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786006729; cv=none; b=jpelmpg5BzXxnZluVKPxkm71PuAVTB8omUen2R4tXfukQr1BENQypEb9/j9sgRJ1p+uaVXfZg11LWB5usSB7a0ykcAuqOV6N8hp7caZwOrdhUP3jpZne0cLuCuLHhfqG5w1yOagJ1kxQD6f8MYj9M7KUtgfy3HRDN2RNONCStwA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786006729; c=relaxed/simple;
-	bh=Wp5Awetz8x1lkJd7iV42zxvDh1yQD5wNbmheE5eZ5No=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qnLMsCR5lihv0JZfKDPxlQROw10udFS9lamxG6LMzsTu/b8sOeBp+kJvtC+SD3FgwRNf00Rlv6drq67gFZcJVhhz+qApec0539yQrwVqDvR0OYMfBQbHLowdhAyksvWTg8FGMoTFDt0myFNtlJ7f1Zx4ayqJAeuWYPbYHKgqshk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-5c2dbaf828eso671862e0c.0
-        for <linux-clk@vger.kernel.org>; Thu, 06 Aug 2026 01:58:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786006726; x=1786611526;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=Y/Tg3lEpqdaiPRfyjPgi2cmAvw9BxKYOOcBoKp4sZn8=;
-        b=O6VZXFpdHjBrLXJZpxtUeRVPXIP+egtQDVsG7HUc7KTAnVXvlZ+LIC6gfk7sLRjWRX
-         TBw8q9l+5ZyxzU1ynwwhVj4Rhxh7CDLOm00JBi9u+8ZfdJFHJzponxRKCtc79sioc9Fz
-         92knflxcnlvLXc9G4dWIDA3GKfH7ITeDwXkbSOh1RL8GFN+hEFpN8js4QyK9VsOBwODW
-         Gb3XPTEdZQzFXrrt4J3wOJE1s86oGpLDUHeGzxuCKbRFx8XJ8dI7KXmr//ECqha3v7BJ
-         ie1ZKWcuLiv/4/o/pb5iiKisRIU95S7wO010SWQ1EhJyRLabVGtyXQUKBSH8W4mbUomf
-         1E5w==
-X-Forwarded-Encrypted: i=1; AHgh+RrckO0Qg/3uTPdiOopLvN7+p2tHof3/HynhOcMY29FLMtIE8g54zq4gXnszvVssLIdVpL8l1x760RU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YweAATHCgXFlXQDZu1YobFS7QjSpSsI+JMDXLCP0evcDMYOeoey
-	uA9+/Y4qhp2XSLwL/q4cajIB4n4DcB15upOghMgOlxohzZzrcPTkM7ZxB2/s9J1i
-X-Gm-Gg: AR+sD12TmJE7MJJYI5SRdLesKLBJ90ijdQuTNX32NzLmpkWiI/677PMgbMxkT6suVKE
-	b9O1OF/ol5XA0w9sQBCaXLJlvQ5y1mN/Vf1jiq31KMTj724LfSUw+llHL0LVHKr4d8Fsn6QspH1
-	S7naC9UdIqbQ3vmq8sVPQKnWsvfUqpla8ok3KLLMCaGM4R5ZtOUORQQB39wHbeVPSnEt3G9tdiJ
-	BCOqaSichzogWv+rFGlsXEYUZitrF5Ofxt+czv1qdemaUWH2ESNWx4HgtjEfh2SrkCxsEcSn80m
-	yfPzGuioI5Ojf2hrbI2qkETaGPcx8j4ToiVBaDoq2oaYqCiEJ/nWMI/lsVhz1++Bb+FIEYDSYVm
-	kfAcq6TtqUHepclkgWkMTpNCLcbfah7CziS+SmviUjRswR/eDo2f4Nwdv5aydBftbiRu/J/iu1c
-	53m8mSb9yK48gEQGSeinbNHXmDWSNilA+RkIESvU1A5LCxyc0gcVFACJ0Czg0W8YCnfpOBdu7jK
-	8I3AUZ1qunS2Elmig7RJeVbCQ==
-X-Received: by 2002:a05:6122:6603:b0:5be:2177:70b3 with SMTP id 71dfb90a1353d-5c3d9270610mr1754861e0c.10.1786006725729;
-        Thu, 06 Aug 2026 01:58:45 -0700 (PDT)
-Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com. [209.85.222.46])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c3eb9f62e8sm1389571e0c.1.2026.08.06.01.58.44
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Aug 2026 01:58:45 -0700 (PDT)
-Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-963a722ed59so507092241.1
-        for <linux-clk@vger.kernel.org>; Thu, 06 Aug 2026 01:58:44 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+Rq6JLUROezz7wpHLhXvuGsCXF9KNBB4VHqUyddry71z+AOBO/LcVjFQ4db4iqkoUBDyWpZNPWqnEgE=@vger.kernel.org
-X-Received: by 2002:a05:6102:374e:b0:739:626d:4473 with SMTP id
- ada2fe7eead31-760e3698c49mr3173857137.0.1786006724650; Thu, 06 Aug 2026
- 01:58:44 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35774420471;
+	Thu,  6 Aug 2026 09:25:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.60
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1786008324; cv=fail; b=SnSTWV2SFeEt/sXEgbEmZi3vZxllxkcCXrOtVf4NUyJMS4lGAAZH0sOBJXDdodmbPZnI8glnOZ8SOZI3n7vZ0APDULDt934d6VcGSK6BgOvwbg2ylHqQnV8CE18pjrvdP0TuHWAPmjIakBOVt+ThHf3wTjukEG2KgIZoIW78C0s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1786008324; c=relaxed/simple;
+	bh=9ubd151bz4/D2IjIXyqBxYeyfWCr7nRURpXtPzlAdU8=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=scMfuL5fBIPcDtDKXjxOaWVaoPgt+brD5xIZISmNsGOHJfcZhYWmiGU/+0BSZX5Aq1XsCESNBcx7c7/O+u8pm/T/t/4OlZykBmg0VcobQ/PN7SPupXYyiSDX8yF8wHRsbqn9BHS8wMMbTvCuYxiC9EpPEabcEYp9EEx5LCgrFlE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=geo/qlyP; arc=fail smtp.client-ip=52.101.201.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="geo/qlyP"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=V8eSNM6wo6AUEyRAfk73HFNq6/VQWpCUCF4Af2LwsSHaKT1mFmI/qHK6bhPMrzN1N5s6zYqhQILTNxpqI3M/aSfyVRtxA8UIlTmFAlxRwaGnwVaWQrC73NyYJ11ikRhhVmGSxqCOtVWZebVVO00oHVjdRTmoAtGIIFX/V3RwP5EU+5TmtaGF8tuIPHBRHhY1nSppneZLAGqRvZG75p/cfQtvP/zDKuOeBpD94xrEtBjWRS+GcJ3Dw4gQ/ebOg++deBHXL0BOjxYL9XXR9J0biYkOm6ttpmPgYc39ZSg2ZBP+2uIaCnQxoSmyfLEqXmEHcJi6KQd7txsgOPmulLdupw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CCPKAXA5pZjC/J9/rrc5HuPeOg7Ct14LFr5vsI2CFG0=;
+ b=ChIHJHg/e1YEWAPy+2k9PoZkOYTFVDFx7c6Wu3CalUk+19K20imK8vANU/Wt3QsiR/xqsPvTCtD+Dg3aW/wHlmZ0s/pveuLe3W3CVe0kOeGUZHjEgD7CLVV8/hFTIZbIavHQjwfgzy6uCO36zywbsflD0L74WhAiMBgB/ji1nQ+QOkhjUixcFwPnpd+YaqdlblzubDnCRniSUP4NkwMuX0hGiTBirKsLm3/HU6wqGNzGO7gRqqvA6pv47Avjr14CfB3f0OWOPO/o8MbxkuGf1UXexmeFWOhxx2FZATF/F670o7Fi0U5lPrW9NirY3LHAri/IEM6FJ/4ntY/6nBMfIQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
+ dkim=pass header.d=altera.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CCPKAXA5pZjC/J9/rrc5HuPeOg7Ct14LFr5vsI2CFG0=;
+ b=geo/qlyPIJHTLpsneG5MC4bwOwX2vEc/jqJIu4kH9pcwZ901Pzy6TGmm2jTeB4Z4ZDz8wyafQlFKU9LazeWIXcDqtaVb7UJUTYnaC16HEWOrfDLxucdMygUO3+9Ea+ZBD/kMgtJtCal27cR8WrkvtD0Vq0m/4W5GtkpgUkgjyc8aMt5bD8CPdZ3liKY2axk1S8xNY9mtUXg3vgWJRt+wobtBFLoLcWjJBu07TyLDadmYHIVT67PSex9TmfOiiR+dFCjTkSklRaNf8hb60R+rhgGb5VlG1J6/fL+Avc2ybsp+ZjIHwjPdLnEqElroWlGh373Y8kLOaxAy+FvwU59gBA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=altera.com;
+Received: from DM4PR03MB6192.namprd03.prod.outlook.com (2603:10b6:5:39c::23)
+ by CH2PR03MB5285.namprd03.prod.outlook.com (2603:10b6:610:9c::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.292.20; Thu, 6 Aug
+ 2026 09:25:19 +0000
+Received: from DM4PR03MB6192.namprd03.prod.outlook.com
+ ([fe80::b75b:5c92:1e9d:514b]) by DM4PR03MB6192.namprd03.prod.outlook.com
+ ([fe80::b75b:5c92:1e9d:514b%4]) with mapi id 15.21.0292.019; Thu, 6 Aug 2026
+ 09:25:19 +0000
+From: evon.chiam@altera.com
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Lothar Rubusch <l.rubusch@gmail.com>,
+	Ng Tze Yee <tzeyee.ng@altera.com>,
+	Nazim Amirul <muhammad.nazim.amirul.nazle.asmade@altera.com>,
+	Adrian Ng Ho Yin <adrian.ho.yin.ng@altera.com>,
+	Brian Masney <bmasney@redhat.com>,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/5] clk: socfpga: add Agilex72 clock manager support
+Date: Thu,  6 Aug 2026 17:25:00 +0800
+Message-ID: <cover.1786006669.git.evon.chiam@altera.com>
+X-Mailer: git-send-email 2.43.7
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SJ0PR03CA0027.namprd03.prod.outlook.com
+ (2603:10b6:a03:33a::32) To DM4PR03MB6192.namprd03.prod.outlook.com
+ (2603:10b6:5:39c::23)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1785941595.git.geert+renesas@glider.be> <89e6a71b35703f10e12f520af1f389b5f40f4b35.1785941595.git.geert+renesas@glider.be>
- <7c30baacac8c75037f32c0ac3099a6107cbec38b.camel@pengutronix.de>
-In-Reply-To: <7c30baacac8c75037f32c0ac3099a6107cbec38b.camel@pengutronix.de>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 6 Aug 2026 10:58:32 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdX3mUVq5HAOcoLxf8_=ALKe_j-0uSTTORA_KyiOq1Bgiw@mail.gmail.com>
-X-Gm-Features: AUfX_mwUZKZac7nMaa-VOsxeMPj2DizVJUU-sXiHc_DXR1wX8yJ0IgF-oPKqM3c
-Message-ID: <CAMuHMdX3mUVq5HAOcoLxf8_=ALKe_j-0uSTTORA_KyiOq1Bgiw@mail.gmail.com>
-Subject: Re: [PATCH v3 4/6] pmdomain: renesas: Add R-Car X5H MDLC driver
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, Ulf Hansson <ulfh@kernel.org>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Marek Vasut <marek.vasut+renesas@mailbox.org>, 
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, devicetree@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR03MB6192:EE_|CH2PR03MB5285:EE_
+X-MS-Office365-Filtering-Correlation-Id: 02db8ba5-92aa-4e6e-0e18-08def39ca207
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|23010399003|366016|376014|7416014|1800799024|6133799003|56012099006|11063799006|10067099003|18002099003|55112099003;
+X-Microsoft-Antispam-Message-Info:
+	7o5XRjYqOojYHwUn1xe6gYYQoEZQ+XeahYXE6D/hbuAUwkzzaU+k39wTRMndPvpufel20GxE1UtxxS8URYTTzRrJcOsbTChpCNLucts0GM1cxMAjsiG8oICD2bR5+txcOKkHjsEO2uGUjZ1l/NkkfvFy8oBDxrWxKnK+HKrh5naoTB4pFYh0IEc9FcU2o02vnhui7sVggeCQLQ3qG/RbpGNERzqpKaSGztA8XHuyeT2FBdBqP6TjoSppWL2Q0CEZkDQwIL+h3XtCZgxuFThx2EZleIJa+ywZnUtZ2K3s4NtLL6w71z4cslFaWhMjM7qi7W70ZFJRaNwh6ODZkiHGSsDUw8ZrnBPi3QFSYq1cMbCOLzYuGnRb2Yw77XH6eo0ynSFjO4ksD29t1FJ0M9QYxHrUhw6ZmCI8DpJ0AJ6lmDoQUopRrIadKRUe6o3+JnRP6cateSvQYdH3U+trUUKPRI2b7gwT1ICl3/TbJlZ8YZf8esrUyIGXxWnw9XaenJ+9wuxlPzpSyNv0O5tlEhd4C8JvAw706FoI1SdtsIm/GOAabovuhFLM7HX1U5zM2tv8X6RECvaYUvwaKd/W7aFFAqWVPkiL8zX4AF+9hB5yvicpW31Q+LY0eV2FsKo9mkJEGuF4t0H1R457HqGJoyM57BG8FasN3zjkpsxhh8qVJm4=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR03MB6192.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(366016)(376014)(7416014)(1800799024)(6133799003)(56012099006)(11063799006)(10067099003)(18002099003)(55112099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?GOpO/RMyhbTaaUUBemqTiXzRahiGBt7flxZ8qWhCsfJPKGCWm6UYHsLEByNc?=
+ =?us-ascii?Q?FjJODMDVNZPCAJmNN4NZ8RtkaNZEuFS9nazOdOZaQEvBxMel2wTw/CyMunwP?=
+ =?us-ascii?Q?2MEMTYSG25lFf7sxGoP3p2EdFcMATEc+lbEnhtrNMVHlEQhb2oFIDlXtwlys?=
+ =?us-ascii?Q?Cwa2yWtj/Hc5RhxJdW7nV6ozCscPwbGdozHalc06oiNsT8qB0L/17/5zn0au?=
+ =?us-ascii?Q?7HFvaf3a9BE+TU/TvC055sEWfSnS9KwdFrmrU68Aa2YmG/ggdgglM5w4yUSw?=
+ =?us-ascii?Q?IxyGUkHANNuoSe5zRW5aGF0+uwh8SfH/9C1q6Z9/eqava7EsvxjBs0viTsHq?=
+ =?us-ascii?Q?IK51Cr7Vnixmp49/PJQ3oVTCUJGy/WLJRz0IwN+ddKv+HBZ1LAnfDqa53ue/?=
+ =?us-ascii?Q?ymQVVTx5e83kgyBy9NKN7/iiStkRb+bqh+SMKPNbxQFrmGHgYliiIB/+Ll5Z?=
+ =?us-ascii?Q?YwVYUJGHnuWNfZf+yrJDOE1+2wcQnxOnEoT+uWNzfnu6ZFHSkypJ33jkOvAu?=
+ =?us-ascii?Q?eQsiC11zUMVrIg6ilgozCIGke2RIACGX2VPK8ePbnoihBlRvsBO2itxbyahc?=
+ =?us-ascii?Q?BmX9/l7RrRsIZEpLWVfhTOi0RHZPBV5K5HYs69J+rPKSjGZxCvpJ4DnnMfOt?=
+ =?us-ascii?Q?LPtWVnBCQ5CV2VFrqFI5IZeLTZvxf9bbO4R+BhqqnE7eJ49nROUtbMr16MKi?=
+ =?us-ascii?Q?xOilS5p2LO9I1F0RtNBiBhhFhWQFAuFefJZjcD5m+U0NdUojHx5ejf7OIPEX?=
+ =?us-ascii?Q?bAUFP//xzFSpa4MNlj6Pf6dP8VKKYg3kX4p55vvHXEImQdkGvJlbQ/13H4H+?=
+ =?us-ascii?Q?e+dO8dwv4WfRq98Xqn9c5Zbnkn2ofuRYMv+vHd2JCFpkADHYYdcFEsCP5WC0?=
+ =?us-ascii?Q?Ti/BNdThRoDwFXyA3D0uaQQcI47gen2hpR5dCpJmyQ7vZJuk35Uf+AHMYq/F?=
+ =?us-ascii?Q?9/qm8oJ+wEiMhyyvyggwMniOo9RMGYmwKbdzE2+L2ERDfdncNpOIbqh8yRBR?=
+ =?us-ascii?Q?KCub/Qu8Thtyh/eZlCkm1MJX/HH3uNSHpFkdJxfrSufcsRZdx4V785Mphw8J?=
+ =?us-ascii?Q?jWfLNJysjYGnxQm+IDIW9BtydKwTi0JRDGI9+i9nQiCwHYr4ovEnLESZ+5d2?=
+ =?us-ascii?Q?6EYAFlzhpRu/Wya+IVlt8+6gmzT3rJy3jDQRT/fAW+PHpoDqYRtK6FmPR2B3?=
+ =?us-ascii?Q?vaPD8KgKevQl3giA31NLV1z2Q4/MIXcHIUWlc6cn6u/KDl6XDFB4zLLoXQ9u?=
+ =?us-ascii?Q?ovKLiQ4OZ6OVejWT92B8mtdyfEUnjrpYkwo4MyrEvuFkPlFC9Nj7Waxa1tdt?=
+ =?us-ascii?Q?se1thyAvBOpvhaY7iUd7W+Xe4H10ieSFWpqusLOSguZvZHpR/MF0Mess+We8?=
+ =?us-ascii?Q?IahkaQi7m+TKZktUU8lRmDifpabKH7oQ4vetqIrhcJ9kNFN6b+7HRaCcbetH?=
+ =?us-ascii?Q?phvs8sDTJUqbLSmp2W3LiA4R1a6+cNYxHRU15s5IOtJaA6HkAScSx+azzme0?=
+ =?us-ascii?Q?gp5i9LLPh3WyRsdOp/k87THpQVsp9Kpgmu/yeGUqfYR2EEf9bMDpZ1trPi6u?=
+ =?us-ascii?Q?7jhKRmSIVdFLslFOx+bs5Yv46Py1GergY5BC1Emrh9vjK0hOQCruv9itXTlK?=
+ =?us-ascii?Q?uZ6prK2MgrQK/v2HzfYj7LUzESq7wep048OFuGU4vIeplouEAVsBgA4F+ZtR?=
+ =?us-ascii?Q?zi745abGeWBA0NKYSG8E1Qj+USGn4dmKGwNGWxMHkntZ8Fq92OWdG/IEHIbI?=
+ =?us-ascii?Q?TOJCgKbI0A=3D=3D?=
+X-OriginatorOrg: altera.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 02db8ba5-92aa-4e6e-0e18-08def39ca207
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR03MB6192.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2026 09:25:19.5499
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2SM2ubeo5VWiF41W1DFkhxMmZXS7Q70VnoGBvz9ypekPCnymgNvLOkCIHcpshHUk4Litl38R0vh+MWA0bhtbtg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR03MB5285
 
-Hi Philipp,
+From: "Chiam, Evon" <evon.chiam@altera.com>
 
-On Thu, 6 Aug 2026 at 10:13, Philipp Zabel <p.zabel@pengutronix.de> wrote:
-> On Mi, 2026-08-05 at 17:20 +0200, Geert Uytterhoeven wrote:
-> > Add a minimal Module Controller driver for the R-Car X5H (R8A78000) SoC.
-> > For now this just supports the always-on power domains, and dummy module
-> > clocks and resets for the serial console (which is enabled by the boot
-> > loader).
-> >
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > ---
-> > v3:
-> >   - Replace <linux/mod_devicetable.h> by more specific
-> >     <linux/device-id/of.h> in v7.2-rc2,
-> >   - Add a comment to document only always-on domains are supported,
-> >   - Consistently use /* sentinel */ for zero sentinels,
-> >   - Drop trailing commas from sentinels,
-> >
-> > v2:
-> >   - Spin off from "pmdomain: renesas: Add R-Car X5H MDLC SCMI remapping
-> >     driver",
-> >   - Add default support not using SCMI,
-> >   - Drop all SCMI remapping support,
-> >   - Document use of -1 as a sentinel,
-> >   - Rename struct r8a78000_mdlc_info to mdlc_info,
-> >   - Print HW IDs in hexadecimal,
-> >   - Reduce log level for unsupported MDLC instances from warn to dbg,
-> > ---
-> >  drivers/pmdomain/renesas/Kconfig         |   4 +
-> >  drivers/pmdomain/renesas/Makefile        |   1 +
-> >  drivers/pmdomain/renesas/r8a78000-mdlc.c | 330 +++++++++++++++++++++++
-> >  drivers/soc/renesas/Kconfig              |   1 +
-> >  4 files changed, 336 insertions(+)
-> >  create mode 100644 drivers/pmdomain/renesas/r8a78000-mdlc.c
-> >
-> > diff --git a/drivers/pmdomain/renesas/r8a78000-mdlc.c b/drivers/pmdomain/renesas/r8a78000-mdlc.c
-> > new file mode 100644
-> > index 0000000000000000..5c8acead7cff9bdd
-> > --- /dev/null
-> > +++ b/drivers/pmdomain/renesas/r8a78000-mdlc.c
-> > @@ -0,0 +1,330 @@
-> [...]
-> > +#define DEFINE_MDLC_RESET_WRAPPER(op)                                            \
-> > +     static int r8a78000_mdlc_ ## op(struct reset_controller_dev *rcdev, \
-> > +                                     unsigned long id)                   \
-> > +     {                                                                   \
-> > +             struct r8a78000_mdlc_priv *priv = rcdev_to_priv(rcdev);     \
-> > +                                                                         \
-> > +             dev_dbg(priv->dev, "%s: Ignoring\n", __func__);             \
-> > +             return 0;                                                   \
-> > +     }
-> > +
-> > +DEFINE_MDLC_RESET_WRAPPER(reset)
-> > +DEFINE_MDLC_RESET_WRAPPER(assert)
-> > +DEFINE_MDLC_RESET_WRAPPER(deassert)
-> > +DEFINE_MDLC_RESET_WRAPPER(status)
-> > +
-> > +static const struct reset_control_ops r8a78000_mdlc_reset_ops = {
-> > +     .reset = r8a78000_mdlc_reset,
-> > +     .assert = r8a78000_mdlc_assert,
-> > +     .deassert = r8a78000_mdlc_deassert,
-> > +     .status = r8a78000_mdlc_status,
->
-> Are .reset and .status needed by any consumers?
-> I'd leave them -ENOTSUPP otherwise.
+This series adds Clock Manager support for the Altera SoCFPGA Agilex72
+platform. It also moves the Agilex72 device trees under dts/altera and
+switches the board/SoC compatible strings to the "altr" vendor prefix,
+matching Agilex7m and vendor-prefixes.yaml.
 
-.reset is used by a variety of R-Car drivers.
-.status is used by the R-Car I2C and PCIe drivers.
+The Agilex72 clock manager exposes multiple register regions (clkmgr and
+three GPPLLs) and provides the peripheral clocks used by the SoC. The
+driver registers the PLL, peripheral, and gate clock tree, while the DT
+describes the external input references and the clock manager node.
 
-So both will be used later.
+Patch summary:
+  1/5: Fix Agilex72 compatible strings in the altera DT binding
+  2/5: Add Agilex72 clock manager DT binding and clock ID header
+  3/5: Add Agilex72 clock manager driver
+  4/5: Move Agilex72 DT from dts/intel to dts/altera and use altr
+  5/5: Add clock manager and input clocks to the Agilex72 DT
 
-Gr{oetje,eeting}s,
+Chiam, Evon (5):
+  dt-bindings: arm: altera: fix Agilex72 compatible vendor prefix
+  dt-bindings: clock: altr,agilex72-clkmgr: add Agilex72 clock manager
+    binding
+  clk: socfpga: agilex72: add clock manager driver for Agilex72
+  arm64: dts: altera: move Agilex72 DT and use altr prefix
+  arm64: dts: altera: agilex72: add clock manager support
 
-                        Geert
+ .../devicetree/bindings/arm/altera.yaml       |    4 +-
+ .../bindings/clock/altr,agilex72-clkmgr.yaml  |   86 ++
+ MAINTAINERS                                   |    5 +
+ arch/arm64/boot/dts/altera/Makefile           |    3 +-
+ .../{intel => altera}/socfpga_agilex72.dtsi   |   48 +-
+ .../socfpga_agilex72_socdk.dts                |   14 +-
+ arch/arm64/boot/dts/intel/Makefile            |    1 -
+ drivers/clk/socfpga/Kconfig                   |    3 +-
+ drivers/clk/socfpga/Makefile                  |    2 +-
+ drivers/clk/socfpga/clk-agilex72.c            | 1181 +++++++++++++++++
+ drivers/clk/socfpga/clk-agilex72.h            |   91 ++
+ .../dt-bindings/clock/altr,agilex72-clkmgr.h  |  116 ++
+ 12 files changed, 1542 insertions(+), 12 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/altr,agilex72-clkmgr.yaml
+ rename arch/arm64/boot/dts/{intel => altera}/socfpga_agilex72.dtsi (74%)
+ rename arch/arm64/boot/dts/{intel => altera}/socfpga_agilex72_socdk.dts (63%)
+ create mode 100644 drivers/clk/socfpga/clk-agilex72.c
+ create mode 100644 drivers/clk/socfpga/clk-agilex72.h
+ create mode 100644 include/dt-bindings/clock/altr,agilex72-clkmgr.h
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.43.7
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
