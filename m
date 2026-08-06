@@ -1,188 +1,182 @@
-Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010012.outbound.protection.outlook.com [52.101.201.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E46038F95A;
-	Thu,  6 Aug 2026 07:43:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786002218; cv=fail; b=tkVOAMbKKETwMAJGilfjR/C+laox6AaFZfjX5MmXsC6z1yY92p8BR2GJRKoiGHdW8IxDEXlJ0vKcjpOpaR4VJb1oLVcYyU9WER/dja2/kobZYrXl5rfoOePPtK5mnGohgI0gENA0qgvXjCu85XbX2dIbsZYL0V3Xc4Yx3poO60Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786002218; c=relaxed/simple;
-	bh=Z2oNXV16408sGwsUj+jWpLDS5ZY/PsqO1631w8/WRHU=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=eqhQCIHDxVvXsJk9MNBhQtyENaP7L+7JC3qSAh2Ojr5FSZyEGqfb4zymWetsbPwiE/TG0tzTdbCOxZ33jc2QzQ06waPJ/bY3o7U84ZVaV20SqSBYnYvvHxuMfzeibzJPk8CGIvh5kBSfzJNyjb9jY2WfSfccS2yMLAe3B5E8Kvg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=IKJ4XRxE; arc=fail smtp.client-ip=52.101.201.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="IKJ4XRxE"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QF7UYIwoTTLICd8N0mGyfyCGZF4DK3i+H2BJDUiDNjsh26p6LPncGZ9Fr19wOCguTY0+cfdcmjP7+ow6rp2qXkuFv0I5P59AuSkxj3Sq9Nr2og5ElirpobWsaJ1pAH+T9DKA+Xu7E6YQkDwoZxNh7b1+9L8MdySAAOS1MIYRDoyF50fX2lBbExulSZVaT7TfXA9KCwz//5PGsyXbTlOMrHXzYF1sBQMT4zadJn5enkI8AOZsboFN3ZGfa3pF0BLy4DuzKWZzNDPaKMKS7sZYBI4arMW+z3T5Gi3qIy0Yr/A+9FHqyf+7qohBEu/MyW5RAl7aLagjBbE8EJ1vBO8oqg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rBggl6VyzEpYZ5CMl2mNZqnzrQYcSMeVO1Z6lW+jHsc=;
- b=b/LBTwQueos9R+Iix5+6n0hz8soPm/xv4U8Aku4yHpLVxZxf2+71OWm+bt9QS8dmUkbjkftWaDJbgySlAWHdNt2HO7+uqPTMYEpygX0Bl3u4p9pvthqZYdGpzgzeXWhHLstxCqXtNfc5Il5abMzJoMWQEcUE57E0ZBI0wMnGzpEllOeGbBgDIKJiLsEdt+8yfy9DqGJ7nkfLWPnFqHNsi2GlTFms1dMgSi+CtOjR0GHLdQ4pPqvTlOn2nGZGBRJJ6HpS6+EwrwYh3cstySdn7m4tsTTF8Jo5+ZS7b+YQomV5N2pXxJxmYo5Xye1IkKAwNRwanOv+GfPvzezw3IEWbA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
- dkim=pass header.d=altera.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rBggl6VyzEpYZ5CMl2mNZqnzrQYcSMeVO1Z6lW+jHsc=;
- b=IKJ4XRxE6YqTTV9DIEg9pGQyJVGZW+1BrfP72rNF2EnAX5mfZONZBFLs7fcOqQSZlhAIfIRoGAFM4le9Bbvu3YrreQ94hrdHfWRWfiyiTWJw7DoDep/nzohfLdE/l95aV602SzcwPuaBTDsfONK4UcAUrue9oWj8jqTNsR5RrEWS6y1VLLAiur3LmydmivFTX8oy3DeP//zjt7E/MoVfsPDC4gB67WeWyPzTo7I3g8hQr66SyfOCLVI+zvDTYzwWAAetha3IyfVBXMoMu5DweMMF2ANgw0qhYD8LL6MZYi1w+9HLfE0mpickyxhlYky1SlSxgCvMGzZUs746XND58Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=altera.com;
-Received: from LV8PR03MB7398.namprd03.prod.outlook.com (2603:10b6:408:18f::13)
- by CO1PR03MB7892.namprd03.prod.outlook.com (2603:10b6:303:272::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.292.19; Thu, 6 Aug
- 2026 07:43:34 +0000
-Received: from LV8PR03MB7398.namprd03.prod.outlook.com
- ([fe80::9d6:b5c1:7f72:e982]) by LV8PR03MB7398.namprd03.prod.outlook.com
- ([fe80::9d6:b5c1:7f72:e982%4]) with mapi id 15.21.0292.019; Thu, 6 Aug 2026
- 07:43:33 +0000
-Message-ID: <6fc29749-67ff-4754-91ee-4f8021d76254@altera.com>
-Date: Thu, 6 Aug 2026 15:43:23 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: clock: agilex: mark mpu_l2ram_clk deprecated
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Dinh Nguyen <dinguyen@kernel.org>,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- linux driver reviews <linux-drivers-review@altera.com>
-References: <20260727094926.1124-1-genevieve.chan@altera.com>
- <20260804-excellent-electric-yak-d2de63@quoll>
-Content-Language: en-US
-From: "Chan, Genevieve" <genevieve.chan@altera.com>
-In-Reply-To: <20260804-excellent-electric-yak-d2de63@quoll>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SI2P153CA0031.APCP153.PROD.OUTLOOK.COM (2603:1096:4:190::7)
- To LV8PR03MB7398.namprd03.prod.outlook.com (2603:10b6:408:18f::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D4AF3DB332
+	for <linux-clk@vger.kernel.org>; Thu,  6 Aug 2026 07:50:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1786002614; cv=none; b=mJYddWcS1HkVooFZgsfBFj9eIylPvuRFeLqNHrlPqnPl2iLnckTD33SSuOdFUpnE82limO2+FfYOJfGodss4SCU6KPuvjjCAJDfpJyAcRcG+QX8PQZuNaS2kfeovLo3dPfuhbQLfADJ/W9m/PmoMg9pj8CiwaWM21QZS9m04NaY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1786002614; c=relaxed/simple;
+	bh=BRzW2/OT2/0yKrT1p+N+QYbs30oY2P+WH549plD4BDA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JWeBlYDXB9Kxsd7GlG2QcQ/0IVwE4cYhaka29VRk/BTUvGhXaF+g9JhiKuUYQElIC2JdCtYDJz07ECgZXg+B1mQylnz5cP822p84fh1Ec+BflkG+1axP40bHWhZE7FGO60rM1esD2h3nEdgvOThbeMD+X1nJaSCRlcyob8YGMyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-5bf8e1edc3aso1010718e0c.0
+        for <linux-clk@vger.kernel.org>; Thu, 06 Aug 2026 00:50:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1786002611; x=1786607411;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=Bw0q5d56LIKtFiT6Te7rkJ4Ur/ITs2O5UDLJ3AFpiL0=;
+        b=DNPLrnOJZd9oRv9FJNR5zKGkEq/odv/1vmoZ0/9YDSaDsyKzPfjQurLHC/Q54Vl9Rn
+         SSNZ+Twg9/3eOGQr3yRP6VNLJ62Ix2ObAJiHkzRsHREjzTXc6bXG3jHIQoTAt98XCDho
+         0tVGLmiBiYRibILK26aeCfohOLm4esy7wi0efm2VzgDPQ29D7hDAY+2OVOFzdo6MrnKU
+         c9v5uE94qBS2Lr1Z89dOqR3GcoA//dbnVEo70ccA3OMNMPO2nzRWGIB6s2n4t6fnIZ/T
+         DN+wsLZF84md4szv2Xq2901SbOUJJqZPFvNSrZRWJ6/C56ZJP91s77iH2hB90o38fRpp
+         sjPw==
+X-Forwarded-Encrypted: i=1; AHgh+RpIdSqQ3B4PnRm7Csz/a35xazJWEAeAildOZat8Hb/S2MyJxNLzFltSAwVZ+N/UUTZGLObrPj3JNek=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7GYwiVETxIdmax0HAAFGkAeX9tFyD8AT45nebgHoObMwR4SiE
+	XBS5JYByjBCsYaE76qcdHCcwGEOdbloP0j5fpeaAPtU1pHkuZPkEV2VsNlUBZr4u
+X-Gm-Gg: AR+sD13GxweD1UsF0lRne3ZdhEMStdcJmwIw580LKNqdXy4VtVGdOnBrFk5Ekya1xkz
+	d2tSqbYRoDT8D3wK+dR/s+yr/+xzEoFbwe4jFH1qd0XYQldrwrDrOnnIj9WYJ9RKTdNLAsdEqjc
+	/bqIyhemWHVYOwXMNSeKx1F+oBBQEuAAY67+491bonuT266duyqB4/IhzjxPqkUFfUbakWxr4wa
+	B5t1zr7juv3TPD3Hv09EdFZZeHFC8mBoPWZ18esiNo0ofUaHjYAR0+c32MrnqUoq8iVd/zvETJl
+	Mrf030Q/G0h6tHO9bLmN5RuCEptW20VjYLLtLpdURI9kqnZHYzFZ1tdml0DRYnmcKBbQ2z+hjNZ
+	G2BZYjEy2wVAMsjxFIrHfPaezuutuC2ZldizOjYJ1xuCSqnqVIk/1jxiyeAB3v6Xan0lDg8x4aM
+	UzmCqxs9xZ44HGEHweiVdqZPe8j2Waq2Bx+LarCo6pfFUsoG0nEsJGH9lgclEj7oCxblxwMvtIA
+	gk8LaNQwpApF6BEcxI3W2kwdTbTldqWtP+SUAjw
+X-Received: by 2002:a05:6122:330d:b0:5bf:8c77:e89a with SMTP id 71dfb90a1353d-5c3d90aca09mr2040805e0c.2.1786002610453;
+        Thu, 06 Aug 2026 00:50:10 -0700 (PDT)
+Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com. [209.85.221.177])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c3d01eab3asm3133193e0c.0.2026.08.06.00.50.10
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Aug 2026 00:50:10 -0700 (PDT)
+Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-5c2c46a428eso1359863e0c.2
+        for <linux-clk@vger.kernel.org>; Thu, 06 Aug 2026 00:50:10 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+Rr2gX/UOqscG9Jvi6h4gMXgQjpt1HYyrT9WHHVGbipi8sCLimkWFybSK4mR7ifNkA6QIX15Z3AHBgQ=@vger.kernel.org
+X-Received: by 2002:a05:6102:5788:b0:74c:7fd8:73f5 with SMTP id
+ ada2fe7eead31-760e7bec35amr3810486137.6.1786002610083; Thu, 06 Aug 2026
+ 00:50:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR03MB7398:EE_|CO1PR03MB7892:EE_
-X-MS-Office365-Filtering-Correlation-Id: cfdaa1bf-8861-4ff2-805c-08def38e6a73
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|23010399003|7416014|376014|55112099003|22082099003|18002099003|11063799006|56012099006|4143699003|10067099003;
-X-Microsoft-Antispam-Message-Info:
-	nCeozpR5Eh047784JvCTkNvZvnsDdlLqRYO6REwJMLwhpEA5rjFMO0u9NMLM/Oaj3sOSgrhLEVcuY3ezG011pc65PNnp6Vpi5arOxN0/rwSu2Oihlu/dkAzS0U3Nlai+MnMR/3FfXRBwCI4m5kU+avGTZxNf6u1zJjvG0ToB75aVnKM5giNu5bgh0xWUaf4vjYmLVagt58kmfdkREiGlKYfolwWSKot94gbP2LnSq1w3Wkr17FUyvGbRLCCX6KRTmHstxA47lAfzSl998ASHacq2nQ4ZzFiXG8LH5sSKsRJY2LPk66nzMEATE//7bGu0QGKP7CcJTQh02UnfHXD929/AQNX/PT6iW4n+fPm2lINOw6jtjGVYcJdgr+ekv2Usulcik8CuosWYzGPjwfHif9TTDiG9R4hzEnYY+OhoHwAzmscVMew8e4tJFsqRR3EiEzBDO1klp0yT9eTJJndfr7HAMD+L3MMY6mNBxYabY8Z6NFzP3oW15gHqrGRSoOpD0tK6kWkMmg/fcUN6HpGU5EqMyHtdhjUMKhZH0ib+yPSRsthOU27ZZVE7/qkNlxx4FzN1CVGvhOpsgozi8Z4Ku8EsZRihfaBiDadVLcnU3wLC+jx+lCFwmWfO9+W1KiQ1j4xW1evAjzp0wNPkbT4wjD+UOEZ3g1CBjLd5AGldIKA=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR03MB7398.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(23010399003)(7416014)(376014)(55112099003)(22082099003)(18002099003)(11063799006)(56012099006)(4143699003)(10067099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?T2k1a01IT3VNNDU0M3pMbXpvN2grbnZWdjBYNzdxUWY1c3pyaUpnTEtwZGJM?=
- =?utf-8?B?bmhGZFl5eUQwdEdDdlNGTkw4YW5ZWFI2aUh3T2cxa1crZnQ1Q2xYSEE1bkh6?=
- =?utf-8?B?K0kxekZ3ei84azRheXozSG9QTXJGekFyQVNZNGlIUVE2b0VITDU3NDB4eUxT?=
- =?utf-8?B?bUdVY2pHMHJIN21UOC9UaGpPaXg2WXNrWjFISWtnTUdBYnpjK1VIYldrRHdk?=
- =?utf-8?B?NDI5WFVzbnNKOUtiVDZTRi9WL0dRSndESzNXbndNM1dKL21VY3VrUThLdTFm?=
- =?utf-8?B?ZENER1dzYTMyKzJkWnpmTVNoNTFPdDk3dTBRSVYvMGRpeHB4akUwMSt0dmdo?=
- =?utf-8?B?RG5jNE1FejZramhWM3dkOEdqRjN4cVZvQjVBM05jNndOT1dMczkvaGJtaEFu?=
- =?utf-8?B?MTJBeTlWTVRTbndsVi9pUXRWTUpNdjBTT2FXb2dCSWZ0S3MwbzV3enlvQ1VJ?=
- =?utf-8?B?Skd3SjdWUWdFTmNLSW9kVEdQVnRFQTBsd0gzSW43VDVVbEw0SWlMek8ySCs1?=
- =?utf-8?B?YWMrY3VIQUt6OTR0Z3U1aHV6ZlNsMEp4bkp0RVFVQXJlTnlVQW8yQzF3ODZ4?=
- =?utf-8?B?M2ZqMmNEN2lhTXRNU3hRVXFTU0plaVlXNFFJOUFWRlEvNWJkUUI3cmxWVjY3?=
- =?utf-8?B?TkdoY0xUVC9CTVp4UjBHL0J1UElLRVN6RWk2RXVSa0NvN29UWHdJZjc3ZklM?=
- =?utf-8?B?Q2VYTjlVT2VyR0pTNHhIemd4MDNiSXZpVndSVEtlM201cWlpeDFvSFhnTm11?=
- =?utf-8?B?cnd3TW9ZNWJWVDVIUE5DaUFVbXBFcVZraFhSdEdtNnpLTy9LZGlid2g5UXhN?=
- =?utf-8?B?T09jMEQxVlkvRVVSOVBZOWZ6YS9QNWZJUGs5WmZ2YnlIOCt6WUZUeTErQ3Nu?=
- =?utf-8?B?WnRwNC82aTRYa1RKOHhPcFlmdUF1NHZOMGdmbzdEV2ZzQnVDWlJ4bnVXWUtB?=
- =?utf-8?B?c2xwSng3aFljNGtLdmxycFdRVThKVTNvMk16ZW5Od010dG8wTXpSTWU5blRJ?=
- =?utf-8?B?WnB6ODJsTEE3L1lpZmdhVi9aU2NJbkJRNUgyUm5ZU0hFME04cURFN245NGp0?=
- =?utf-8?B?QmkyY2g4amNiMFVQV2FTSGY3QXNPb2gyRFRyS0lJYU45V1RkYnFuczVVTFla?=
- =?utf-8?B?S1FZaHNEb09iOFpCdVRaL0VoeENYNWMveCs5aTdSRjhTMGtNN0NUbGhUb1E5?=
- =?utf-8?B?Y3U0c2pMMHVYcGkwa0NtZEtsQTRveEJBMjZKSFUzUDlYdWgrdlB6WnFLb2xv?=
- =?utf-8?B?OXNNcGFKSlZmdGVQejExcGpadFRDUUJ4UitjOFVtc0JJSllUMGhrdG9kL2dG?=
- =?utf-8?B?VW1lK0hYRWF3QnNBZmJic1gwV05DKzdrUjhPSVNCQmQ1OTlJaFA2MlBSRmwr?=
- =?utf-8?B?MExIU0lHZVV4VndZNGxmUVZwRTlzOC84QnNCa0tYRGdHYzZLV1M2eFJMMlBW?=
- =?utf-8?B?SEwvR1M2eW5sVXJRbEhYd25YVGpCVTM5YitnYzQrRnVyaDN2WTZYTW5uQzQv?=
- =?utf-8?B?SVhJeWxPZXlzRmliR2tQRjk3Q3VsamdmOC80Sko5VjEzSTJtaG81bzIvVVAr?=
- =?utf-8?B?M01Ec0xCN2hXQnlGV2VnK0hSTnhOU0c3a1Zna2V5eUxiZFNUWlNkRXYyOHdN?=
- =?utf-8?B?YXZEd0ZYNWFBQVZmOEVDcTFGOWhaTXp3d2I5c1BDRkVGMTl3My9jSTRnaXJw?=
- =?utf-8?B?SlNZcU4zN2ExSEtOekJTZXlUdE04Ky93Q3hEMXUzNTFEMzEzbWs4aVJLQ3hC?=
- =?utf-8?B?ODBEdEJtTE5ubkJBMi9NNGxjVmJOblMvUjY5QW54aWFKVkNvdVdJd2NHQU1P?=
- =?utf-8?B?OVJtdkhOdncyN2lNZzFKVms5Uml0SE5iZUpaMXhUZ2pJOFhGYXlNS3lVOXVX?=
- =?utf-8?B?Q005QS9weXJwUVlsTVY5U1BkMTRyK3RnTFdTZFNIenQzOHl1TlZIQzZ0TFQ1?=
- =?utf-8?B?cFc3bWZkZG5ZVWhZeXNVenEzbDM5b1kzNVJudlJzdHpxak1vTkxEb3d1N3RH?=
- =?utf-8?B?MWNOVGZ2R0dZb2lOSENnY0h1QUZOUG5ieGhIWnpuZmFsakR0NjcreFRPSFdF?=
- =?utf-8?B?eGc1djN6WjBoRjlaOWZPamMreDE2eWxhcHRzUVZ4d1grN09SUHRHZmk0cW9X?=
- =?utf-8?B?SHMyVm5uN2dTYWdjSkZxVHhVTUxCeDQrRWFiRjVLaDVVUnFQaUhESHVSUHZT?=
- =?utf-8?B?czBYcS9FdFNPTTRKQkppWTJDazdKWVF6czhHQ1p6ZXhHYkxwOU8rWE1hSHhu?=
- =?utf-8?B?SmpPczFNRmY3dTRlMmRmZko3b2dlMi9Za09abk1mZy9mSUlhU3ZsNkZqTEhi?=
- =?utf-8?B?aWVBZlZyZGFrQWZSVXlmOEFzdW9kTm1kZUhiTzlocDhEM1k1TFB1amVxNTgx?=
- =?utf-8?Q?y/GTClEE3yJ1npT8=3D?=
-X-OriginatorOrg: altera.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cfdaa1bf-8861-4ff2-805c-08def38e6a73
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR03MB7398.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2026 07:43:33.3882
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: cUi1UuTubcXUSUUFfxAy/9xVvH7tIp0GkT2PkwnRGZCbfXbcb2rnT4OvyOxOEI6+nkraVM+/XK3M0NKqSDqm/b99LLUgWOLxwE51h3wChaY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR03MB7892
+References: <cover.1785941595.git.geert+renesas@glider.be> <89e6a71b35703f10e12f520af1f389b5f40f4b35.1785941595.git.geert+renesas@glider.be>
+ <0124d3a3-81dc-44ce-88a2-9426c65ac46c@mailbox.org>
+In-Reply-To: <0124d3a3-81dc-44ce-88a2-9426c65ac46c@mailbox.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 6 Aug 2026 09:49:58 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXHPjzCidCkfyF0c9fndAmAte1DuhxGZt=WY=_jxpwU+Q@mail.gmail.com>
+X-Gm-Features: AUfX_mxDCMXWQzEKQw-oHDEPLKfBz2gF2hlxdZi1vAhDPfXSN6ZVQ5LCO1qQ5aA
+Message-ID: <CAMuHMdXHPjzCidCkfyF0c9fndAmAte1DuhxGZt=WY=_jxpwU+Q@mail.gmail.com>
+Subject: Re: [PATCH v3 4/6] pmdomain: renesas: Add R-Car X5H MDLC driver
+To: Marek Vasut <marek.vasut@mailbox.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, Ulf Hansson <ulfh@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, devicetree@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Marek,
 
+Thanks for your comments!
 
-On 4/8/2026 3:49 pm, Krzysztof Kozlowski wrote:
-> [You don't often get email from krzk@kernel.org. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
-> 
-> On Mon, Jul 27, 2026 at 05:49:26PM +0800, genevieve.chan@altera.com wrote:
->> From: Genevieve Chan <genevieve.chan@altera.com>
->>
->> Preliminary documentation referred to mpu_l2ram_clk, but that clock is
->> now mpu_ccu_clk and is already represented by AGILEX_MPU_CCU_CLK.
->> Keep AGILEX_MPU_L2RAM_CLK as a legacy ABI-preserved ID (do not use in
->> new DTs) and mark clock ID 42 as reserved/unused so it is not reused,
->> keeping all existing clock IDs stable for DT ABI compatibility.
->>
->> Fixes: 6b3c59780ed3 ("dt-bindings: documentation: add clock bindings information for Agilex")
->> Cc: stable@vger.kernel.org # 5.8+
->> Signed-off-by: Genevieve Chan <genevieve.chan@altera.com>
->> ---
->>   include/dt-bindings/clock/agilex-clock.h | 2 ++
->>   1 file changed, 2 insertions(+)
->>
->> diff --git a/include/dt-bindings/clock/agilex-clock.h b/include/dt-bindings/clock/agilex-clock.h
->> index 06feca07e08e..de7a58a06651 100644
->> --- a/include/dt-bindings/clock/agilex-clock.h
->> +++ b/include/dt-bindings/clock/agilex-clock.h
->> @@ -44,6 +44,7 @@
->>
->>   /* Gate clocks */
->>   #define AGILEX_MPU_CLK                       30
->> +/* Legacy ABI ID; do not use in new DTs, use AGILEX_MPU_CCU_CLK */
->>   #define AGILEX_MPU_L2RAM_CLK         31
->>   #define AGILEX_MPU_PERIPH_CLK                32
->>   #define AGILEX_L4_MAIN_CLK           33
->> @@ -55,6 +56,7 @@
->>   #define AGILEX_CS_TIMER_CLK          39
->>   #define AGILEX_S2F_USER0_CLK         40
->>   #define AGILEX_EMAC0_CLK             41
->> +/* 42 - reserved/unused */
-> 
-> How IDs can be reserved? These are implemented by drivers (abstract IDs
-> not used by hardware), so how driver could reserve it?
-> 
-> Best regards,
-> Krzysztof
-> 
-You are right. These IDs are DT clock specifier indices (provider one-cell ABI), not hardware IDs. The clk driver registers clocks into hws[id]; unused indices remain -ENOENT.
+On Thu, 6 Aug 2026 at 00:38, Marek Vasut <marek.vasut@mailbox.org> wrote:
+> On 8/5/26 5:20 PM, Geert Uytterhoeven wrote:
+> > +DEFINE_MDLC_RESET_WRAPPER(reset)
+> > +DEFINE_MDLC_RESET_WRAPPER(assert)
+> > +DEFINE_MDLC_RESET_WRAPPER(deassert)
+> > +DEFINE_MDLC_RESET_WRAPPER(status)
+> > +
+> > +static const struct reset_control_ops r8a78000_mdlc_reset_ops = {
+> > +     .reset = r8a78000_mdlc_reset,
+> > +     .assert = r8a78000_mdlc_assert,
+> > +     .deassert = r8a78000_mdlc_deassert,
+> > +     .status = r8a78000_mdlc_status,
+> > +};
+>
+> Please keep the list sorted alphabetically.
 
-ID 42 was never defined in the original Agilex binding (EMAC0=41, EMAC1=43). The comment was placed to only documents that historical hole so we do not renumber later IDs. It is not a hardware reservation — it is for ABI hygiene.
+This matches the order in which the members of struct reset_control_ops
+are defined.
 
-Happy to reword to something clearer, e.g. /* 42 never assigned; do not renumber */, or drop the comment if preferred.
+> > +static int r8a78000_mdlc_attach_dev(struct generic_pm_domain *domain,
+> > +                                 struct device *dev)
+> > +{
+> > +     struct device_node *np = dev->of_node;
+> > +     struct r8a78000_mdlc_priv *priv;
+> > +     struct of_phandle_args pd_spec;
+> > +     const struct mod_map *map;
+> > +     unsigned int id;
+> > +     int ret;
+> > +
+> > +     ret = of_parse_phandle_with_args(np, "power-domains",
+> > +                                      "#power-domain-cells", 0, &pd_spec);
+> > +     if (ret < 0)
+> > +             return ret;
+> > +
+> > +     if (pd_spec.args_count != 2) {
+> > +             of_node_put(pd_spec.np);
+>
+> Maybe some "goto error" fail path which does of_node_put() wouldn't hurt
+> here, since the of_node_put() is duplicated in here multiple times.
 
+I'd rather keep it like this, as of_node_put() must not be called in all
+error paths.  Moreover, SCMI remapping will add more error paths,
+and multiple fail* labels.
+
+>
+> > +             return -EINVAL;
+> > +     }
+> > +
+> > +     scoped_guard(mutex, &r8a78000_mdlc_lock) {
+> > +             hlist_for_each_entry(priv, &r8a78000_mdlc_list, link) {
+> > +                     if (priv->np == pd_spec.np)
+> > +                             break;
+> > +             }
+> > +     }
+> > +
+> > +     if (!priv) {
+> > +             dev_err(dev, "%s: MDLC %pOF not found\n", __func__, pd_spec.np);
+> > +             of_node_put(pd_spec.np);
+> > +             return -ENODEV;
+> > +     }
+> > +
+> > +     id = pd_spec.args[1];
+> > +     of_node_put(pd_spec.np);
+> > +
+> > +     map = mod_map_find(priv->mod_map, id);
+> > +     if (!map) {
+> > +             dev_err(dev, "Unknown module 0x%x\n", id);
+> > +             return -ENOENT;
+> > +     }
+> > +
+> > +     dev_dbg(dev, "Ignoring HW module 0x%x\n", id);
+> > +     return 0;
+> > +}
+>
+> [...]
+>
+> > +static int r8a78000_mdlc_probe(struct platform_device *pdev)
+> > +{
+
+> > +     if (!info->base) {
+> > +             dev_dbg(dev, "Unsupported MDLC instance 0x%pa\n", &res->start);
+>
+> return dev_err_probe() might be more appropriate here, even if that
+> would be more chatty until the support for various MDLC nodes lands.
+
+Indeed, it would be very chatty, and may confuse users, that's why
+I used dev_dbg().  We can revisit that later.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
