@@ -1,783 +1,188 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010012.outbound.protection.outlook.com [52.101.201.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FAF63932D5
-	for <linux-clk@vger.kernel.org>; Thu,  6 Aug 2026 05:35:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785994511; cv=none; b=TIZp4FKZ4qgMHsNWJwoc4QvExjYndg0zYI+Z74NX0DJgopCuTTd63TGO55RuOiDLlSpBlawCLMJb4/wCv3aSF7cUBHXXRVurPHLeQeqqn66wHzI7j02eOk41oPhXlPHddeC4zusFJDTvWvdUe46zkW7FaxE04LU4bgjDm43gZJI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785994511; c=relaxed/simple;
-	bh=YMgrQDt6n8SBtCnXboK/aTC4ySe+AkmpAZwiO0FOb8I=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=AMzxMF1wi0Rc/BC7HqvXuO72ZIMIoq9HSR5+QyZ29pnUTQ3rJtnhVvtnAm3Czns1VR3wVYjRFM+dTFDiptn5KrkXE3m3hxnCYU7l/x7057+RykTGSD7IAWU9S24DB4y8weO5SmVTnirgr7Atrk2XNZ8+2Y4TMvUkIrJNbwGoB64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=et8BMUbY; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=RwOIh8bN; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E46038F95A;
+	Thu,  6 Aug 2026 07:43:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1786002218; cv=fail; b=tkVOAMbKKETwMAJGilfjR/C+laox6AaFZfjX5MmXsC6z1yY92p8BR2GJRKoiGHdW8IxDEXlJ0vKcjpOpaR4VJb1oLVcYyU9WER/dja2/kobZYrXl5rfoOePPtK5mnGohgI0gENA0qgvXjCu85XbX2dIbsZYL0V3Xc4Yx3poO60Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1786002218; c=relaxed/simple;
+	bh=Z2oNXV16408sGwsUj+jWpLDS5ZY/PsqO1631w8/WRHU=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=eqhQCIHDxVvXsJk9MNBhQtyENaP7L+7JC3qSAh2Ojr5FSZyEGqfb4zymWetsbPwiE/TG0tzTdbCOxZ33jc2QzQ06waPJ/bY3o7U84ZVaV20SqSBYnYvvHxuMfzeibzJPk8CGIvh5kBSfzJNyjb9jY2WfSfccS2yMLAe3B5E8Kvg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=IKJ4XRxE; arc=fail smtp.client-ip=52.101.201.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="et8BMUbY";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="RwOIh8bN"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6763wcMQ775238
-	for <linux-clk@vger.kernel.org>; Thu, 6 Aug 2026 05:35:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	qJt+V3ieDZ+MqBm9jPgM7ZiDX5wmpvQnMbQUd+p0318=; b=et8BMUbYPB0Nu6kE
-	a6nGviH+WhRYyigytzfz1nhMDVbunHujbpoO6wEWy3Bry1LO6AYilXz/mjFkFR/i
-	nl2X2uw9pYt80wG5/pPN9ozc69Gg9Nzg7Ek+pQTw5bfZOlVOm6lr6rnY7U+KPyAQ
-	ljIJs0tsZda5C/v02PLGIwV141n1X5+aV04hiY32gtR+hhnB1NkUHjSvshaR12Ws
-	IUKH0vaRStg1CITMf5XIUK/Y3DaJ1YXOnjvepfLkyjluLGXE82IWX2vcWnAKDHtr
-	pA5gNnEYkB4moiuxtksWGx0PlVrQM1lPcJ+OymxPUGMenbXb7PcYzGchqD+fzHsh
-	RsWIMw==
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fvju8ga6v-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Thu, 06 Aug 2026 05:35:07 +0000 (GMT)
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2cc86a9ef97so31152065ad.3
-        for <linux-clk@vger.kernel.org>; Wed, 05 Aug 2026 22:35:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1785994506; x=1786599306; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=qJt+V3ieDZ+MqBm9jPgM7ZiDX5wmpvQnMbQUd+p0318=;
-        b=RwOIh8bN6ERGIB+KyUt2+79OhfhXQw5jWkVovDzYQNls1RiaooeT1h+7dvrXCjXtOw
-         SNfw4cPy2k0jt6CdFSLGh0N1E8xqNohicgUO6i01VVKliESHS2nKgA1v2JPDOYdxkp5Y
-         ovjg3z7dEMTY1X3lWVJ4Xk00T+3hdC6JZSsWm+0doRM4u1UCueheFW5wNeaGByE41yBg
-         tzVmkt7fmWMRNvWQK6QRISFkM0atMh5lxSqZFZ33bnrs9MVSBjzyYdTZoXRJDJZgS96t
-         EKGT9EQ66pN1rD+rfPn/b6VUts86IJSA/45FYrjpt8DUJijmTt/Fygu97mvybbal7e5y
-         H9mA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785994506; x=1786599306;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=qJt+V3ieDZ+MqBm9jPgM7ZiDX5wmpvQnMbQUd+p0318=;
-        b=U/O9lxV+DydND6nUZ01IMFFSO6oWSoFzVzjf/wSSfifHvVjnl9y4Rk951Ri4ME9GNb
-         DVK5m5anUX9CFYuUinyXITB2K26ac/bCWDN7U77MzljM12aUodB5StELATxXMDmcmZsr
-         nLKkAFqeOIXMn5eyL32uddKiUPkI6nKCQDaZGgi5Tq8lJeLDZaLK5ATSjcXjIfrIAOy/
-         22Z4swlUjSrXn6UVOIu2V392oQ5OT6dl+WRZE8vvv15RPApokoeGc5QXkyMidjv9OZID
-         7PrPz/wlbi+PAOI5v3Vdj8V6xLRYey09Hb+qFGQxF0YVNQ8VyXx8gGlHkmHluO7HYBFl
-         yvVw==
-X-Forwarded-Encrypted: i=1; AHgh+RqCaSvXnv5ZzHYcw8abefH/dx1RSZYKs4+lLcG576qDigQ5o6hvTICEBn30jbafbekOoB7meLkbLhE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwF4KT2Owhy93zJN9+WMVxhk/O6GZyEK51rvm1sfXkzfQkh921F
-	2b4M/CMe2dSDt7PCe+NXaUOIwAB8ykKsC1N8ei3X0VEIhcw1q5vYdcSwAbQoXMSriMUZ/FW9CNz
-	5B6+dMVquBwXAHi+rBsdSjMGFLbufjuM2B8E9eKiPdlP1kpEEhAIKrZ/+fCtDbVw=
-X-Gm-Gg: AR+sD10Ak1sQ2K5Gc2151RQoNLUkkNYYcgTks15QnK8YsrriLfW5bpkHjNjBjV0YW5U
-	1ExCkZjBLKjhQy2CAFHDRwj33yOjgJJaM9nfNlqSQczrLMzKy3e7Zx8Q0DyL8yHfxxdKuRS3X8G
-	X2wNgFbjU91u1RAgLbRM8v2EtWV7X7Avzk8nkKYOnNAJsg1vD/RekauQ5bO3qtozTthKICoN3AJ
-	3bJ/Kj23zcl2Eie+fWJj4Hsk3AgLsCp5zIBTrz5mSblewHn4aYtTusQNWwrR2xNe471vxU/cDe1
-	CL+hbVJTW7l//FMFxZ+z63dCXyrYZwQgpZhZGpDDeQW9f6sXAmiUAXW6xQNnVVXRwpN4sXMUu+X
-	VAKTp92JzBBQM59ASCdtqopMdDa1OS4xeE6vJWjoHg8IuWXQ=
-X-Received: by 2002:a17:902:e852:b0:2ca:10c6:f69b with SMTP id d9443c01a7336-2d0ca7b54ebmr123142035ad.5.1785994506339;
-        Wed, 05 Aug 2026 22:35:06 -0700 (PDT)
-X-Received: by 2002:a17:902:e852:b0:2ca:10c6:f69b with SMTP id d9443c01a7336-2d0ca7b54ebmr123141295ad.5.1785994505754;
-        Wed, 05 Aug 2026 22:35:05 -0700 (PDT)
-Received: from hu-qianyu-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2d0a9f8fee7sm25780085ad.16.2026.08.05.22.35.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Aug 2026 22:35:05 -0700 (PDT)
-From: Qiang Yu <qiang.yu@oss.qualcomm.com>
-Date: Wed, 05 Aug 2026 22:34:57 -0700
-Subject: [PATCH v2 3/3] arm64: dts: qcom: hamoa/purwa: Add QREF regulator
- supplies
+	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="IKJ4XRxE"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QF7UYIwoTTLICd8N0mGyfyCGZF4DK3i+H2BJDUiDNjsh26p6LPncGZ9Fr19wOCguTY0+cfdcmjP7+ow6rp2qXkuFv0I5P59AuSkxj3Sq9Nr2og5ElirpobWsaJ1pAH+T9DKA+Xu7E6YQkDwoZxNh7b1+9L8MdySAAOS1MIYRDoyF50fX2lBbExulSZVaT7TfXA9KCwz//5PGsyXbTlOMrHXzYF1sBQMT4zadJn5enkI8AOZsboFN3ZGfa3pF0BLy4DuzKWZzNDPaKMKS7sZYBI4arMW+z3T5Gi3qIy0Yr/A+9FHqyf+7qohBEu/MyW5RAl7aLagjBbE8EJ1vBO8oqg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rBggl6VyzEpYZ5CMl2mNZqnzrQYcSMeVO1Z6lW+jHsc=;
+ b=b/LBTwQueos9R+Iix5+6n0hz8soPm/xv4U8Aku4yHpLVxZxf2+71OWm+bt9QS8dmUkbjkftWaDJbgySlAWHdNt2HO7+uqPTMYEpygX0Bl3u4p9pvthqZYdGpzgzeXWhHLstxCqXtNfc5Il5abMzJoMWQEcUE57E0ZBI0wMnGzpEllOeGbBgDIKJiLsEdt+8yfy9DqGJ7nkfLWPnFqHNsi2GlTFms1dMgSi+CtOjR0GHLdQ4pPqvTlOn2nGZGBRJJ6HpS6+EwrwYh3cstySdn7m4tsTTF8Jo5+ZS7b+YQomV5N2pXxJxmYo5Xye1IkKAwNRwanOv+GfPvzezw3IEWbA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
+ dkim=pass header.d=altera.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rBggl6VyzEpYZ5CMl2mNZqnzrQYcSMeVO1Z6lW+jHsc=;
+ b=IKJ4XRxE6YqTTV9DIEg9pGQyJVGZW+1BrfP72rNF2EnAX5mfZONZBFLs7fcOqQSZlhAIfIRoGAFM4le9Bbvu3YrreQ94hrdHfWRWfiyiTWJw7DoDep/nzohfLdE/l95aV602SzcwPuaBTDsfONK4UcAUrue9oWj8jqTNsR5RrEWS6y1VLLAiur3LmydmivFTX8oy3DeP//zjt7E/MoVfsPDC4gB67WeWyPzTo7I3g8hQr66SyfOCLVI+zvDTYzwWAAetha3IyfVBXMoMu5DweMMF2ANgw0qhYD8LL6MZYi1w+9HLfE0mpickyxhlYky1SlSxgCvMGzZUs746XND58Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=altera.com;
+Received: from LV8PR03MB7398.namprd03.prod.outlook.com (2603:10b6:408:18f::13)
+ by CO1PR03MB7892.namprd03.prod.outlook.com (2603:10b6:303:272::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.292.19; Thu, 6 Aug
+ 2026 07:43:34 +0000
+Received: from LV8PR03MB7398.namprd03.prod.outlook.com
+ ([fe80::9d6:b5c1:7f72:e982]) by LV8PR03MB7398.namprd03.prod.outlook.com
+ ([fe80::9d6:b5c1:7f72:e982%4]) with mapi id 15.21.0292.019; Thu, 6 Aug 2026
+ 07:43:33 +0000
+Message-ID: <6fc29749-67ff-4754-91ee-4f8021d76254@altera.com>
+Date: Thu, 6 Aug 2026 15:43:23 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: clock: agilex: mark mpu_l2ram_clk deprecated
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Dinh Nguyen <dinguyen@kernel.org>,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ linux driver reviews <linux-drivers-review@altera.com>
+References: <20260727094926.1124-1-genevieve.chan@altera.com>
+ <20260804-excellent-electric-yak-d2de63@quoll>
+Content-Language: en-US
+From: "Chan, Genevieve" <genevieve.chan@altera.com>
+In-Reply-To: <20260804-excellent-electric-yak-d2de63@quoll>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SI2P153CA0031.APCP153.PROD.OUTLOOK.COM (2603:1096:4:190::7)
+ To LV8PR03MB7398.namprd03.prod.outlook.com (2603:10b6:408:18f::13)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260805-hamoa_tcsr_qref_0805-v2-3-4f1cfb1fcab2@oss.qualcomm.com>
-References: <20260805-hamoa_tcsr_qref_0805-v2-0-4f1cfb1fcab2@oss.qualcomm.com>
-In-Reply-To: <20260805-hamoa_tcsr_qref_0805-v2-0-4f1cfb1fcab2@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Taniya Das <taniya.das@oss.qualcomm.com>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Qiang Yu <qiang.yu@oss.qualcomm.com>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1785994500; l=26246;
- i=qiang.yu@oss.qualcomm.com; s=20250513; h=from:subject:message-id;
- bh=YMgrQDt6n8SBtCnXboK/aTC4ySe+AkmpAZwiO0FOb8I=;
- b=AaqoLMON+Hs03PNggPrumYIc/O36dY63RZ5URsxGQDf6fb8euIXzS6UgEJg+L44hq2axlknuB
- /XXzAhHnsDPAiDXLTkpUB+eBJC9nnnmj6YHGxwb74ZSOlIAhPaZ1ANV
-X-Developer-Key: i=qiang.yu@oss.qualcomm.com; a=ed25519;
- pk=Rr94t+fykoieF1ngg/bXxEfr5KoQxeXPtYxM8fBQTAI=
-X-Proofpoint-GUID: xnky1ebxMI9sFM3MjfTf-jLQew_33qfA
-X-Proofpoint-ORIG-GUID: xnky1ebxMI9sFM3MjfTf-jLQew_33qfA
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODA2MDA0MCBTYWx0ZWRfX0Rm7AR43z9l/
- cFbSA+JuWRDDJaLs0V0fTlwfisT9UoM3oja2gTnEqJui3Z6q6e9YkCLgztg0Qnm5WPqxbeMfCAQ
- MtuwJF41yi8lFdi5NtxvVmfacix/7HNoW5aEYBePDERqXF9BjSlpPKMAs3YmXpCw5ww6O8Em3jq
- F6wlEZQRP5YFu7X5lUVoK1LneHYe8QlmXcbHKPVEy2eaQhq4wponXMgapmtZLoDzpK0H7DWqBEC
- fIuHdArdJAlhuD/cgQHgUJ6dGh45dBcwfL8uyR9RurqOp95x1O9KsAFUv7xq6tRufwI4snJ3foq
- m/YKIp8oUSjq9wuHvWUJ8MGEgwK5VPXnjQB2gC2qOVDMRCy7uE4CN1wRFXy2/MmgTJtMezqIZns
- C3AUGBE/JhdoKq/hRPZDfztJV9hR3O9DDy5yZMrbyZ1n3jiZvyklosxQ0rQ7geSJl51a1t+jRBB
- UnlU+VtK2ieRgomH5tQ==
-X-Authority-Analysis: v=2.4 cv=K5cS2SWI c=1 sm=1 tr=0 ts=6a741d0b cx=c_pps
- a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=IkcTkHD0fZMA:10 a=Sv0fKeRqtYgA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=rJkE3RaqiGZ5pbrm-msn:22
- a=EUspDBNiAAAA:8 a=4vDcivUYQOVtOqHL04gA:9 a=QEXdDO2ut3YA:10
- a=GvdueXVYPmCkWapjIL-Q:22
-X-Proofpoint-Spam-Info: AW1haW4tMjYwODA2MDA0MCBTYWx0ZWRfX9oBku+gLx0e/
- b5xtq1YAmmLJilrBhgTsOkinw0jinEW+manplcXT2Co4bYP+qFI2cUFHfUVUpXqtAV2U5xEz4Nh
- 9Yu8aDF5Fc4LgIyeU4iqV3TO1KMA6pE=
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-08-05_06,2026-08-05_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 malwarescore=0 bulkscore=0 priorityscore=1501 spamscore=0
- clxscore=1015 phishscore=0 lowpriorityscore=0 adultscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2608060040
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV8PR03MB7398:EE_|CO1PR03MB7892:EE_
+X-MS-Office365-Filtering-Correlation-Id: cfdaa1bf-8861-4ff2-805c-08def38e6a73
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|23010399003|7416014|376014|55112099003|22082099003|18002099003|11063799006|56012099006|4143699003|10067099003;
+X-Microsoft-Antispam-Message-Info:
+	nCeozpR5Eh047784JvCTkNvZvnsDdlLqRYO6REwJMLwhpEA5rjFMO0u9NMLM/Oaj3sOSgrhLEVcuY3ezG011pc65PNnp6Vpi5arOxN0/rwSu2Oihlu/dkAzS0U3Nlai+MnMR/3FfXRBwCI4m5kU+avGTZxNf6u1zJjvG0ToB75aVnKM5giNu5bgh0xWUaf4vjYmLVagt58kmfdkREiGlKYfolwWSKot94gbP2LnSq1w3Wkr17FUyvGbRLCCX6KRTmHstxA47lAfzSl998ASHacq2nQ4ZzFiXG8LH5sSKsRJY2LPk66nzMEATE//7bGu0QGKP7CcJTQh02UnfHXD929/AQNX/PT6iW4n+fPm2lINOw6jtjGVYcJdgr+ekv2Usulcik8CuosWYzGPjwfHif9TTDiG9R4hzEnYY+OhoHwAzmscVMew8e4tJFsqRR3EiEzBDO1klp0yT9eTJJndfr7HAMD+L3MMY6mNBxYabY8Z6NFzP3oW15gHqrGRSoOpD0tK6kWkMmg/fcUN6HpGU5EqMyHtdhjUMKhZH0ib+yPSRsthOU27ZZVE7/qkNlxx4FzN1CVGvhOpsgozi8Z4Ku8EsZRihfaBiDadVLcnU3wLC+jx+lCFwmWfO9+W1KiQ1j4xW1evAjzp0wNPkbT4wjD+UOEZ3g1CBjLd5AGldIKA=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR03MB7398.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(23010399003)(7416014)(376014)(55112099003)(22082099003)(18002099003)(11063799006)(56012099006)(4143699003)(10067099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?T2k1a01IT3VNNDU0M3pMbXpvN2grbnZWdjBYNzdxUWY1c3pyaUpnTEtwZGJM?=
+ =?utf-8?B?bmhGZFl5eUQwdEdDdlNGTkw4YW5ZWFI2aUh3T2cxa1crZnQ1Q2xYSEE1bkh6?=
+ =?utf-8?B?K0kxekZ3ei84azRheXozSG9QTXJGekFyQVNZNGlIUVE2b0VITDU3NDB4eUxT?=
+ =?utf-8?B?bUdVY2pHMHJIN21UOC9UaGpPaXg2WXNrWjFISWtnTUdBYnpjK1VIYldrRHdk?=
+ =?utf-8?B?NDI5WFVzbnNKOUtiVDZTRi9WL0dRSndESzNXbndNM1dKL21VY3VrUThLdTFm?=
+ =?utf-8?B?ZENER1dzYTMyKzJkWnpmTVNoNTFPdDk3dTBRSVYvMGRpeHB4akUwMSt0dmdo?=
+ =?utf-8?B?RG5jNE1FejZramhWM3dkOEdqRjN4cVZvQjVBM05jNndOT1dMczkvaGJtaEFu?=
+ =?utf-8?B?MTJBeTlWTVRTbndsVi9pUXRWTUpNdjBTT2FXb2dCSWZ0S3MwbzV3enlvQ1VJ?=
+ =?utf-8?B?Skd3SjdWUWdFTmNLSW9kVEdQVnRFQTBsd0gzSW43VDVVbEw0SWlMek8ySCs1?=
+ =?utf-8?B?YWMrY3VIQUt6OTR0Z3U1aHV6ZlNsMEp4bkp0RVFVQXJlTnlVQW8yQzF3ODZ4?=
+ =?utf-8?B?M2ZqMmNEN2lhTXRNU3hRVXFTU0plaVlXNFFJOUFWRlEvNWJkUUI3cmxWVjY3?=
+ =?utf-8?B?TkdoY0xUVC9CTVp4UjBHL0J1UElLRVN6RWk2RXVSa0NvN29UWHdJZjc3ZklM?=
+ =?utf-8?B?Q2VYTjlVT2VyR0pTNHhIemd4MDNiSXZpVndSVEtlM201cWlpeDFvSFhnTm11?=
+ =?utf-8?B?cnd3TW9ZNWJWVDVIUE5DaUFVbXBFcVZraFhSdEdtNnpLTy9LZGlid2g5UXhN?=
+ =?utf-8?B?T09jMEQxVlkvRVVSOVBZOWZ6YS9QNWZJUGs5WmZ2YnlIOCt6WUZUeTErQ3Nu?=
+ =?utf-8?B?WnRwNC82aTRYa1RKOHhPcFlmdUF1NHZOMGdmbzdEV2ZzQnVDWlJ4bnVXWUtB?=
+ =?utf-8?B?c2xwSng3aFljNGtLdmxycFdRVThKVTNvMk16ZW5Od010dG8wTXpSTWU5blRJ?=
+ =?utf-8?B?WnB6ODJsTEE3L1lpZmdhVi9aU2NJbkJRNUgyUm5ZU0hFME04cURFN245NGp0?=
+ =?utf-8?B?QmkyY2g4amNiMFVQV2FTSGY3QXNPb2gyRFRyS0lJYU45V1RkYnFuczVVTFla?=
+ =?utf-8?B?S1FZaHNEb09iOFpCdVRaL0VoeENYNWMveCs5aTdSRjhTMGtNN0NUbGhUb1E5?=
+ =?utf-8?B?Y3U0c2pMMHVYcGkwa0NtZEtsQTRveEJBMjZKSFUzUDlYdWgrdlB6WnFLb2xv?=
+ =?utf-8?B?OXNNcGFKSlZmdGVQejExcGpadFRDUUJ4UitjOFVtc0JJSllUMGhrdG9kL2dG?=
+ =?utf-8?B?VW1lK0hYRWF3QnNBZmJic1gwV05DKzdrUjhPSVNCQmQ1OTlJaFA2MlBSRmwr?=
+ =?utf-8?B?MExIU0lHZVV4VndZNGxmUVZwRTlzOC84QnNCa0tYRGdHYzZLV1M2eFJMMlBW?=
+ =?utf-8?B?SEwvR1M2eW5sVXJRbEhYd25YVGpCVTM5YitnYzQrRnVyaDN2WTZYTW5uQzQv?=
+ =?utf-8?B?SVhJeWxPZXlzRmliR2tQRjk3Q3VsamdmOC80Sko5VjEzSTJtaG81bzIvVVAr?=
+ =?utf-8?B?M01Ec0xCN2hXQnlGV2VnK0hSTnhOU0c3a1Zna2V5eUxiZFNUWlNkRXYyOHdN?=
+ =?utf-8?B?YXZEd0ZYNWFBQVZmOEVDcTFGOWhaTXp3d2I5c1BDRkVGMTl3My9jSTRnaXJw?=
+ =?utf-8?B?SlNZcU4zN2ExSEtOekJTZXlUdE04Ky93Q3hEMXUzNTFEMzEzbWs4aVJLQ3hC?=
+ =?utf-8?B?ODBEdEJtTE5ubkJBMi9NNGxjVmJOblMvUjY5QW54aWFKVkNvdVdJd2NHQU1P?=
+ =?utf-8?B?OVJtdkhOdncyN2lNZzFKVms5Uml0SE5iZUpaMXhUZ2pJOFhGYXlNS3lVOXVX?=
+ =?utf-8?B?Q005QS9weXJwUVlsTVY5U1BkMTRyK3RnTFdTZFNIenQzOHl1TlZIQzZ0TFQ1?=
+ =?utf-8?B?cFc3bWZkZG5ZVWhZeXNVenEzbDM5b1kzNVJudlJzdHpxak1vTkxEb3d1N3RH?=
+ =?utf-8?B?MWNOVGZ2R0dZb2lOSENnY0h1QUZOUG5ieGhIWnpuZmFsakR0NjcreFRPSFdF?=
+ =?utf-8?B?eGc1djN6WjBoRjlaOWZPamMreDE2eWxhcHRzUVZ4d1grN09SUHRHZmk0cW9X?=
+ =?utf-8?B?SHMyVm5uN2dTYWdjSkZxVHhVTUxCeDQrRWFiRjVLaDVVUnFQaUhESHVSUHZT?=
+ =?utf-8?B?czBYcS9FdFNPTTRKQkppWTJDazdKWVF6czhHQ1p6ZXhHYkxwOU8rWE1hSHhu?=
+ =?utf-8?B?SmpPczFNRmY3dTRlMmRmZko3b2dlMi9Za09abk1mZy9mSUlhU3ZsNkZqTEhi?=
+ =?utf-8?B?aWVBZlZyZGFrQWZSVXlmOEFzdW9kTm1kZUhiTzlocDhEM1k1TFB1amVxNTgx?=
+ =?utf-8?Q?y/GTClEE3yJ1npT8=3D?=
+X-OriginatorOrg: altera.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cfdaa1bf-8861-4ff2-805c-08def38e6a73
+X-MS-Exchange-CrossTenant-AuthSource: LV8PR03MB7398.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2026 07:43:33.3882
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: cUi1UuTubcXUSUUFfxAy/9xVvH7tIp0GkT2PkwnRGZCbfXbcb2rnT4OvyOxOEI6+nkraVM+/XK3M0NKqSDqm/b99LLUgWOLxwE51h3wChaY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR03MB7892
 
-Wire up the LDO supplies required by the QREF and refgen blocks on Purwa
-and Hamoa boards. Purwa's QREF topology is same as Hamoa's, so it reuses
-the same qcom,x1e80100-tcsr compatible and supply set rather than needing
-a dedicated one.
 
-Signed-off-by: Qiang Yu <qiang.yu@oss.qualcomm.com>
----
- arch/arm64/boot/dts/qcom/hamoa-iot-som.dtsi         | 21 +++++++++++++++++++++
- .../qcom/hamoa-lenovo-ideacentre-mini-01q8x10.dts   | 21 +++++++++++++++++++++
- arch/arm64/boot/dts/qcom/purwa-iot-som.dtsi         | 21 +++++++++++++++++++++
- arch/arm64/boot/dts/qcom/x1-asus-vivobook-s15.dtsi  | 21 +++++++++++++++++++++
- arch/arm64/boot/dts/qcom/x1-asus-zenbook-a14.dtsi   | 21 +++++++++++++++++++++
- arch/arm64/boot/dts/qcom/x1-crd.dtsi                | 21 +++++++++++++++++++++
- arch/arm64/boot/dts/qcom/x1-dell-thena.dtsi         | 21 +++++++++++++++++++++
- arch/arm64/boot/dts/qcom/x1-hp-omnibook-x14.dtsi    | 21 +++++++++++++++++++++
- arch/arm64/boot/dts/qcom/x1-microsoft-denali.dtsi   | 21 +++++++++++++++++++++
- arch/arm64/boot/dts/qcom/x1e001de-devkit.dts        | 21 +++++++++++++++++++++
- .../dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi     | 21 +++++++++++++++++++++
- .../boot/dts/qcom/x1e80100-dell-xps13-9345.dts      | 21 +++++++++++++++++++++
- .../dts/qcom/x1e80100-honor-magicbook-art-14.dts    | 21 +++++++++++++++++++++
- .../boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts   | 21 +++++++++++++++++++++
- .../dts/qcom/x1e80100-medion-sprchrgd-14-s1.dts     | 21 +++++++++++++++++++++
- .../boot/dts/qcom/x1e80100-microsoft-romulus.dtsi   | 21 +++++++++++++++++++++
- arch/arm64/boot/dts/qcom/x1e80100-qcp.dts           | 21 +++++++++++++++++++++
- .../boot/dts/qcom/x1p42100-lenovo-thinkbook-16.dts  | 21 +++++++++++++++++++++
- .../boot/dts/qcom/x1p42100-microsoft-sp12in.dts     | 21 +++++++++++++++++++++
- 19 files changed, 399 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/hamoa-iot-som.dtsi b/arch/arm64/boot/dts/qcom/hamoa-iot-som.dtsi
-index 9c5e77df0054..c035bc890f36 100644
---- a/arch/arm64/boot/dts/qcom/hamoa-iot-som.dtsi
-+++ b/arch/arm64/boot/dts/qcom/hamoa-iot-som.dtsi
-@@ -478,6 +478,27 @@ &remoteproc_cdsp {
- 	status = "okay";
- };
- 
-+&tcsr {
-+	vdda-qrefrpt0-0p9-supply = <&vreg_l3c_0p8>;
-+	vdda-qrefrpt1-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrpt2-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrpt3-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qrefrpt4-0p9-supply = <&vreg_l1d_0p8>;
-+	vdda-qrefrx0-0p9-supply = <&vreg_l3c_0p8>;
-+	vdda-qrefrx1-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrx2-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrx3-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qrefrx4-0p9-supply = <&vreg_l1d_0p8>;
-+	vdda-qreftx0-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qreftx0-1p2-supply = <&vreg_l2j_1p2>;
-+	vdda-qreftx1-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qreftx1-1p2-supply = <&vreg_l3e_1p2>;
-+	vdda-refgen0-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-refgen0-1p2-supply = <&vreg_l3e_1p2>;
-+	vdda-refgen2-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-refgen2-1p2-supply = <&vreg_l2j_1p2>;
-+};
-+
- &tlmm {
- 	gpio-reserved-ranges = <34 2>; /* TPM LP & INT */
- 
-diff --git a/arch/arm64/boot/dts/qcom/hamoa-lenovo-ideacentre-mini-01q8x10.dts b/arch/arm64/boot/dts/qcom/hamoa-lenovo-ideacentre-mini-01q8x10.dts
-index bfb7cea56df9..4c77c51768ab 100644
---- a/arch/arm64/boot/dts/qcom/hamoa-lenovo-ideacentre-mini-01q8x10.dts
-+++ b/arch/arm64/boot/dts/qcom/hamoa-lenovo-ideacentre-mini-01q8x10.dts
-@@ -902,6 +902,27 @@ wcd_tx: codec@0,3 {
- 	};
- };
- 
-+&tcsr {
-+	vdda-qrefrpt0-0p9-supply = <&vreg_l3c>;
-+	vdda-qrefrpt1-0p9-supply = <&vreg_l3i>;
-+	vdda-qrefrpt2-0p9-supply = <&vreg_l3i>;
-+	vdda-qrefrpt3-0p9-supply = <&vreg_l3j>;
-+	vdda-qrefrpt4-0p9-supply = <&vreg_l1d>;
-+	vdda-qrefrx0-0p9-supply = <&vreg_l3c>;
-+	vdda-qrefrx1-0p9-supply = <&vreg_l3i>;
-+	vdda-qrefrx2-0p9-supply = <&vreg_l3i>;
-+	vdda-qrefrx3-0p9-supply = <&vreg_l3j>;
-+	vdda-qrefrx4-0p9-supply = <&vreg_l1d>;
-+	vdda-qreftx0-0p9-supply = <&vreg_l3j>;
-+	vdda-qreftx0-1p2-supply = <&vreg_l2j>;
-+	vdda-qreftx1-0p9-supply = <&vreg_l3j>;
-+	vdda-qreftx1-1p2-supply = <&vreg_l3e>;
-+	vdda-refgen0-0p9-supply = <&vreg_l3i>;
-+	vdda-refgen0-1p2-supply = <&vreg_l3e>;
-+	vdda-refgen2-0p9-supply = <&vreg_l3j>;
-+	vdda-refgen2-1p2-supply = <&vreg_l2j>;
-+};
-+
- &tlmm {
- 	gpio-reserved-ranges = <44 4>,  /* SPI11 (TPM) */
- 			       <76 4>,  /* SPI19 (TZ Protected) */
-diff --git a/arch/arm64/boot/dts/qcom/purwa-iot-som.dtsi b/arch/arm64/boot/dts/qcom/purwa-iot-som.dtsi
-index fb2dcbc7c393..bbcc03dc7f7c 100644
---- a/arch/arm64/boot/dts/qcom/purwa-iot-som.dtsi
-+++ b/arch/arm64/boot/dts/qcom/purwa-iot-som.dtsi
-@@ -476,6 +476,27 @@ &remoteproc_cdsp {
- 	status = "okay";
- };
- 
-+&tcsr {
-+	vdda-qrefrpt0-0p9-supply = <&vreg_l3c_0p8>;
-+	vdda-qrefrpt1-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrpt2-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrpt3-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qrefrpt4-0p9-supply = <&vreg_l1d_0p8>;
-+	vdda-qrefrx0-0p9-supply = <&vreg_l3c_0p8>;
-+	vdda-qrefrx1-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrx2-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrx3-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qrefrx4-0p9-supply = <&vreg_l1d_0p8>;
-+	vdda-qreftx0-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qreftx0-1p2-supply = <&vreg_l2j_1p2>;
-+	vdda-qreftx1-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qreftx1-1p2-supply = <&vreg_l3e_1p2>;
-+	vdda-refgen0-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-refgen0-1p2-supply = <&vreg_l3e_1p2>;
-+	vdda-refgen2-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-refgen2-1p2-supply = <&vreg_l2j_1p2>;
-+};
-+
- &tlmm {
- 	gpio-reserved-ranges = <34 2>; /* TPM LP & INT */
- 
-diff --git a/arch/arm64/boot/dts/qcom/x1-asus-vivobook-s15.dtsi b/arch/arm64/boot/dts/qcom/x1-asus-vivobook-s15.dtsi
-index 48c4ad648354..57c306047d7a 100644
---- a/arch/arm64/boot/dts/qcom/x1-asus-vivobook-s15.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1-asus-vivobook-s15.dtsi
-@@ -1036,6 +1036,27 @@ &smb2360_1_eusb2_repeater {
- 	vdd3-supply = <&vreg_l14b_3p0>;
- };
- 
-+&tcsr {
-+	vdda-qrefrpt0-0p9-supply = <&vreg_l3c_0p8>;
-+	vdda-qrefrpt1-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrpt2-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrpt3-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qrefrpt4-0p9-supply = <&vreg_l1d_0p8>;
-+	vdda-qrefrx0-0p9-supply = <&vreg_l3c_0p8>;
-+	vdda-qrefrx1-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrx2-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrx3-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qrefrx4-0p9-supply = <&vreg_l1d_0p8>;
-+	vdda-qreftx0-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qreftx0-1p2-supply = <&vreg_l2j_1p2>;
-+	vdda-qreftx1-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qreftx1-1p2-supply = <&vreg_l3e_1p2>;
-+	vdda-refgen0-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-refgen0-1p2-supply = <&vreg_l3e_1p2>;
-+	vdda-refgen2-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-refgen2-1p2-supply = <&vreg_l2j_1p2>;
-+};
-+
- &tlmm {
- 	gpio-reserved-ranges = <34 2>, /* Unused */
- 			       <44 4>, /* SPI (TPM) */
-diff --git a/arch/arm64/boot/dts/qcom/x1-asus-zenbook-a14.dtsi b/arch/arm64/boot/dts/qcom/x1-asus-zenbook-a14.dtsi
-index 66d566808f58..da6ecd4a1452 100644
---- a/arch/arm64/boot/dts/qcom/x1-asus-zenbook-a14.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1-asus-zenbook-a14.dtsi
-@@ -1272,6 +1272,27 @@ wcd_tx: codec@0,3 {
- 	};
- };
- 
-+&tcsr {
-+	vdda-qrefrpt0-0p9-supply = <&vreg_l3c_0p9>;
-+	vdda-qrefrpt1-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrpt2-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrpt3-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qrefrpt4-0p9-supply = <&vreg_l1d_0p8>;
-+	vdda-qrefrx0-0p9-supply = <&vreg_l3c_0p9>;
-+	vdda-qrefrx1-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrx2-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrx3-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qrefrx4-0p9-supply = <&vreg_l1d_0p8>;
-+	vdda-qreftx0-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qreftx0-1p2-supply = <&vreg_l2j_1p2>;
-+	vdda-qreftx1-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qreftx1-1p2-supply = <&vreg_l3e_1p2>;
-+	vdda-refgen0-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-refgen0-1p2-supply = <&vreg_l3e_1p2>;
-+	vdda-refgen2-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-refgen2-1p2-supply = <&vreg_l2j_1p2>;
-+};
-+
- &tlmm {
- 	gpio-reserved-ranges = <44 4>,  /* SPI11, TZ Protected */
- 			       <90 1>;	/* Unknown, TZ Protected */
-diff --git a/arch/arm64/boot/dts/qcom/x1-crd.dtsi b/arch/arm64/boot/dts/qcom/x1-crd.dtsi
-index 9602d65c8b3d..8bd58f194f82 100644
---- a/arch/arm64/boot/dts/qcom/x1-crd.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1-crd.dtsi
-@@ -1528,6 +1528,27 @@ right_tweeter: speaker@0,1 {
- 	};
- };
- 
-+&tcsr {
-+	vdda-qrefrpt0-0p9-supply = <&vreg_l3c_0p8>;
-+	vdda-qrefrpt1-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrpt2-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrpt3-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qrefrpt4-0p9-supply = <&vreg_l1d_0p8>;
-+	vdda-qrefrx0-0p9-supply = <&vreg_l3c_0p8>;
-+	vdda-qrefrx1-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrx2-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrx3-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qrefrx4-0p9-supply = <&vreg_l1d_0p8>;
-+	vdda-qreftx0-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qreftx0-1p2-supply = <&vreg_l2j_1p2>;
-+	vdda-qreftx1-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qreftx1-1p2-supply = <&vreg_l3e_1p2>;
-+	vdda-refgen0-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-refgen0-1p2-supply = <&vreg_l3e_1p2>;
-+	vdda-refgen2-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-refgen2-1p2-supply = <&vreg_l2j_1p2>;
-+};
-+
- &tlmm {
- 	gpio-reserved-ranges = <34 2>, /* Unused */
- 			       <44 4>, /* SPI (TPM) */
-diff --git a/arch/arm64/boot/dts/qcom/x1-dell-thena.dtsi b/arch/arm64/boot/dts/qcom/x1-dell-thena.dtsi
-index d6de4da02dcd..dd466aac10f2 100644
---- a/arch/arm64/boot/dts/qcom/x1-dell-thena.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1-dell-thena.dtsi
-@@ -1301,6 +1301,27 @@ right_tweeter: speaker@0,1 {
- 	};
- };
- 
-+&tcsr {
-+	vdda-qrefrpt0-0p9-supply = <&vreg_l3c_0p8>;
-+	vdda-qrefrpt1-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrpt2-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrpt3-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qrefrpt4-0p9-supply = <&vreg_l1d_0p8>;
-+	vdda-qrefrx0-0p9-supply = <&vreg_l3c_0p8>;
-+	vdda-qrefrx1-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrx2-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrx3-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qrefrx4-0p9-supply = <&vreg_l1d_0p8>;
-+	vdda-qreftx0-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qreftx0-1p2-supply = <&vreg_l2j_1p2>;
-+	vdda-qreftx1-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qreftx1-1p2-supply = <&vreg_l3e_1p2>;
-+	vdda-refgen0-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-refgen0-1p2-supply = <&vreg_l3e_1p2>;
-+	vdda-refgen2-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-refgen2-1p2-supply = <&vreg_l2j_1p2>;
-+};
-+
- &tlmm {
- 	gpio-reserved-ranges = <44 4>,  /* SPI11 (TPM) */
- 			       <76 4>,  /* SPI19 (TZ Protected) */
-diff --git a/arch/arm64/boot/dts/qcom/x1-hp-omnibook-x14.dtsi b/arch/arm64/boot/dts/qcom/x1-hp-omnibook-x14.dtsi
-index 02708f23a865..224474678ed2 100644
---- a/arch/arm64/boot/dts/qcom/x1-hp-omnibook-x14.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1-hp-omnibook-x14.dtsi
-@@ -1284,6 +1284,27 @@ wcd_tx: codec@0,3 {
- 	};
- };
- 
-+&tcsr {
-+	vdda-qrefrpt0-0p9-supply = <&vreg_l3c_0p8>;
-+	vdda-qrefrpt1-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrpt2-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrpt3-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qrefrpt4-0p9-supply = <&vreg_l1d_0p8>;
-+	vdda-qrefrx0-0p9-supply = <&vreg_l3c_0p8>;
-+	vdda-qrefrx1-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrx2-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrx3-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qrefrx4-0p9-supply = <&vreg_l1d_0p8>;
-+	vdda-qreftx0-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qreftx0-1p2-supply = <&vreg_l2j_1p2>;
-+	vdda-qreftx1-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qreftx1-1p2-supply = <&vreg_l3e_1p2>;
-+	vdda-refgen0-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-refgen0-1p2-supply = <&vreg_l3e_1p2>;
-+	vdda-refgen2-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-refgen2-1p2-supply = <&vreg_l2j_1p2>;
-+};
-+
- &tlmm {
- 	gpio-reserved-ranges = <34 2>, /* Unused */
- 			       <44 4>, /* SPI (TPM) */
-diff --git a/arch/arm64/boot/dts/qcom/x1-microsoft-denali.dtsi b/arch/arm64/boot/dts/qcom/x1-microsoft-denali.dtsi
-index 7559557610ed..9f677319a0e0 100644
---- a/arch/arm64/boot/dts/qcom/x1-microsoft-denali.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1-microsoft-denali.dtsi
-@@ -1107,6 +1107,27 @@ right_spkr: speaker@0,1 {
- 	};
- };
- 
-+&tcsr {
-+	vdda-qrefrpt0-0p9-supply = <&vreg_l3c_0p8>;
-+	vdda-qrefrpt1-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrpt2-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrpt3-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qrefrpt4-0p9-supply = <&vreg_l1d_0p8>;
-+	vdda-qrefrx0-0p9-supply = <&vreg_l3c_0p8>;
-+	vdda-qrefrx1-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrx2-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrx3-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qrefrx4-0p9-supply = <&vreg_l1d_0p8>;
-+	vdda-qreftx0-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qreftx0-1p2-supply = <&vreg_l2j_1p2>;
-+	vdda-qreftx1-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qreftx1-1p2-supply = <&vreg_l3e_1p2>;
-+	vdda-refgen0-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-refgen0-1p2-supply = <&vreg_l3e_1p2>;
-+	vdda-refgen2-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-refgen2-1p2-supply = <&vreg_l2j_1p2>;
-+};
-+
- &tlmm {
- 	gpio-reserved-ranges = <44 4>, /* SPI (TPM) */
- 			       <238 1>; /* UFS Reset */
-diff --git a/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts b/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
-index 2e38402e2c14..9ccfaaa3065e 100644
---- a/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
-@@ -1193,6 +1193,27 @@ wcd_tx: codec@0,3 {
- 	};
- };
- 
-+&tcsr {
-+	vdda-qrefrpt0-0p9-supply = <&vreg_l3c_0p8>;
-+	vdda-qrefrpt1-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrpt2-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrpt3-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qrefrpt4-0p9-supply = <&vreg_l1d_0p8>;
-+	vdda-qrefrx0-0p9-supply = <&vreg_l3c_0p8>;
-+	vdda-qrefrx1-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrx2-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrx3-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qrefrx4-0p9-supply = <&vreg_l1d_0p8>;
-+	vdda-qreftx0-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qreftx0-1p2-supply = <&vreg_l2j_1p2>;
-+	vdda-qreftx1-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qreftx1-1p2-supply = <&vreg_l3e_1p2>;
-+	vdda-refgen0-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-refgen0-1p2-supply = <&vreg_l3e_1p2>;
-+	vdda-refgen2-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-refgen2-1p2-supply = <&vreg_l2j_1p2>;
-+};
-+
- &tlmm {
- 	gpio-reserved-ranges = <44 4>; /* SPI (TPM) */
- 
-diff --git a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi
-index 5d49df41be02..d172d8eb52c6 100644
---- a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi
-@@ -1382,6 +1382,27 @@ wcd_tx: codec@0,3 {
- 	};
- };
- 
-+&tcsr {
-+	vdda-qrefrpt0-0p9-supply = <&vreg_l3c_0p8>;
-+	vdda-qrefrpt1-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrpt2-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrpt3-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qrefrpt4-0p9-supply = <&vreg_l1d_0p8>;
-+	vdda-qrefrx0-0p9-supply = <&vreg_l3c_0p8>;
-+	vdda-qrefrx1-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrx2-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrx3-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qrefrx4-0p9-supply = <&vreg_l1d_0p8>;
-+	vdda-qreftx0-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qreftx0-1p2-supply = <&vreg_l2j_1p2>;
-+	vdda-qreftx1-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qreftx1-1p2-supply = <&vreg_l3e_1p2>;
-+	vdda-refgen0-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-refgen0-1p2-supply = <&vreg_l3e_1p2>;
-+	vdda-refgen2-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-refgen2-1p2-supply = <&vreg_l2j_1p2>;
-+};
-+
- &tlmm {
- 	gpio-reserved-ranges = <34 2>, /* Unused */
- 			       <44 4>, /* SPI (TPM) */
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts b/arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts
-index ce7b10ea89b6..ed812cf349dc 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts
-@@ -1069,6 +1069,27 @@ &smb2360_1_eusb2_repeater {
- 	vdd3-supply = <&vreg_l14b_3p0>;
- };
- 
-+&tcsr {
-+	vdda-qrefrpt0-0p9-supply = <&vreg_l3c_0p9>;
-+	vdda-qrefrpt1-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrpt2-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrpt3-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qrefrpt4-0p9-supply = <&vreg_l1d_0p8>;
-+	vdda-qrefrx0-0p9-supply = <&vreg_l3c_0p9>;
-+	vdda-qrefrx1-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrx2-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrx3-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qrefrx4-0p9-supply = <&vreg_l1d_0p8>;
-+	vdda-qreftx0-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qreftx0-1p2-supply = <&vreg_l2j_1p2>;
-+	vdda-qreftx1-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qreftx1-1p2-supply = <&vreg_l3e_1p2>;
-+	vdda-refgen0-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-refgen0-1p2-supply = <&vreg_l3e_1p2>;
-+	vdda-refgen2-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-refgen2-1p2-supply = <&vreg_l2j_1p2>;
-+};
-+
- &tlmm {
- 	gpio-reserved-ranges = <44 4>,  /* SPI11 (TPM) */
- 			       <76 4>,  /* SPI19 (TZ Protected) */
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-honor-magicbook-art-14.dts b/arch/arm64/boot/dts/qcom/x1e80100-honor-magicbook-art-14.dts
-index b70c1e094bbf..603f6d7717f3 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-honor-magicbook-art-14.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-honor-magicbook-art-14.dts
-@@ -1066,6 +1066,27 @@ right_tweeter: speaker@0,1 {
- 	};
- };
- 
-+&tcsr {
-+	vdda-qrefrpt0-0p9-supply = <&vreg_l3c_0p8>;
-+	vdda-qrefrpt1-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrpt2-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrpt3-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qrefrpt4-0p9-supply = <&vreg_l1d_0p8>;
-+	vdda-qrefrx0-0p9-supply = <&vreg_l3c_0p8>;
-+	vdda-qrefrx1-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrx2-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrx3-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qrefrx4-0p9-supply = <&vreg_l1d_0p8>;
-+	vdda-qreftx0-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qreftx0-1p2-supply = <&vreg_l2j_1p2>;
-+	vdda-qreftx1-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qreftx1-1p2-supply = <&vreg_l3e_1p2>;
-+	vdda-refgen0-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-refgen0-1p2-supply = <&vreg_l3e_1p2>;
-+	vdda-refgen2-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-refgen2-1p2-supply = <&vreg_l2j_1p2>;
-+};
-+
- &tlmm {
- 	gpio-reserved-ranges = <34 2>, /* Unused */
- 			       <44 4>; /* SPI (TPM) */
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts b/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
-index beb1475d7fa0..0ddec7b4a473 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
-@@ -1347,6 +1347,27 @@ right_tweeter: speaker@0,1 {
- 	};
- };
- 
-+&tcsr {
-+	vdda-qrefrpt0-0p9-supply = <&vreg_l3c_0p8>;
-+	vdda-qrefrpt1-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrpt2-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrpt3-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qrefrpt4-0p9-supply = <&vreg_l1d_0p8>;
-+	vdda-qrefrx0-0p9-supply = <&vreg_l3c_0p8>;
-+	vdda-qrefrx1-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrx2-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrx3-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qrefrx4-0p9-supply = <&vreg_l1d_0p8>;
-+	vdda-qreftx0-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qreftx0-1p2-supply = <&vreg_l2j_1p2>;
-+	vdda-qreftx1-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qreftx1-1p2-supply = <&vreg_l3e_1p2>;
-+	vdda-refgen0-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-refgen0-1p2-supply = <&vreg_l3e_1p2>;
-+	vdda-refgen2-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-refgen2-1p2-supply = <&vreg_l2j_1p2>;
-+};
-+
- &tlmm {
- 	gpio-reserved-ranges = <34 2>, /* Unused */
- 			       <44 4>, /* SPI (TPM) */
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-medion-sprchrgd-14-s1.dts b/arch/arm64/boot/dts/qcom/x1e80100-medion-sprchrgd-14-s1.dts
-index f95b1f9f439d..ac4e7943c608 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-medion-sprchrgd-14-s1.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-medion-sprchrgd-14-s1.dts
-@@ -1248,6 +1248,27 @@ right_tweeter: speaker@0,1 {
- 	};
- };
- 
-+&tcsr {
-+	vdda-qrefrpt0-0p9-supply = <&vreg_l3c_0p9>;
-+	vdda-qrefrpt1-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrpt2-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrpt3-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qrefrpt4-0p9-supply = <&vreg_l1d_0p8>;
-+	vdda-qrefrx0-0p9-supply = <&vreg_l3c_0p9>;
-+	vdda-qrefrx1-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrx2-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrx3-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qrefrx4-0p9-supply = <&vreg_l1d_0p8>;
-+	vdda-qreftx0-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qreftx0-1p2-supply = <&vreg_l2j_1p2>;
-+	vdda-qreftx1-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qreftx1-1p2-supply = <&vreg_l3e_1p2>;
-+	vdda-refgen0-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-refgen0-1p2-supply = <&vreg_l3e_1p2>;
-+	vdda-refgen2-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-refgen2-1p2-supply = <&vreg_l2j_1p2>;
-+};
-+
- &tlmm {
- 	gpio-reserved-ranges = <28 4>, /* Unused */
- 			       <44 4>, /* SPI (TPM) */
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi b/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi
-index 28342cb84ded..47018bb4e7ec 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi
-@@ -1322,6 +1322,27 @@ wcd_tx: codec@0,3 {
- 	};
- };
- 
-+&tcsr {
-+	vdda-qrefrpt0-0p9-supply = <&vreg_l3c>;
-+	vdda-qrefrpt1-0p9-supply = <&vreg_l3i>;
-+	vdda-qrefrpt2-0p9-supply = <&vreg_l3i>;
-+	vdda-qrefrpt3-0p9-supply = <&vreg_l3j>;
-+	vdda-qrefrpt4-0p9-supply = <&vreg_l1d>;
-+	vdda-qrefrx0-0p9-supply = <&vreg_l3c>;
-+	vdda-qrefrx1-0p9-supply = <&vreg_l3i>;
-+	vdda-qrefrx2-0p9-supply = <&vreg_l3i>;
-+	vdda-qrefrx3-0p9-supply = <&vreg_l3j>;
-+	vdda-qrefrx4-0p9-supply = <&vreg_l1d>;
-+	vdda-qreftx0-0p9-supply = <&vreg_l3j>;
-+	vdda-qreftx0-1p2-supply = <&vreg_l2j>;
-+	vdda-qreftx1-0p9-supply = <&vreg_l3j>;
-+	vdda-qreftx1-1p2-supply = <&vreg_l3e>;
-+	vdda-refgen0-0p9-supply = <&vreg_l3i>;
-+	vdda-refgen0-1p2-supply = <&vreg_l3e>;
-+	vdda-refgen2-0p9-supply = <&vreg_l3j>;
-+	vdda-refgen2-1p2-supply = <&vreg_l2j>;
-+};
-+
- &tlmm {
- 	gpio-reserved-ranges = <44 4>, /* SPI (TPM) */
- 			       <238 1>; /* UFS Reset */
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts b/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
-index 8afbac349cc9..8c41ff76c68e 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
-@@ -1177,6 +1177,27 @@ wcd_tx: codec@0,3 {
- 	};
- };
- 
-+&tcsr {
-+	vdda-qrefrpt0-0p9-supply = <&vreg_l3c_0p8>;
-+	vdda-qrefrpt1-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrpt2-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrpt3-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qrefrpt4-0p9-supply = <&vreg_l1d_0p8>;
-+	vdda-qrefrx0-0p9-supply = <&vreg_l3c_0p8>;
-+	vdda-qrefrx1-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrx2-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrx3-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qrefrx4-0p9-supply = <&vreg_l1d_0p8>;
-+	vdda-qreftx0-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qreftx0-1p2-supply = <&vreg_l2j_1p2>;
-+	vdda-qreftx1-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qreftx1-1p2-supply = <&vreg_l3e_1p2>;
-+	vdda-refgen0-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-refgen0-1p2-supply = <&vreg_l3e_1p2>;
-+	vdda-refgen2-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-refgen2-1p2-supply = <&vreg_l2j_1p2>;
-+};
-+
- &tlmm {
- 	gpio-reserved-ranges = <33 3>, /* Unused */
- 			       <44 4>, /* SPI (TPM) */
-diff --git a/arch/arm64/boot/dts/qcom/x1p42100-lenovo-thinkbook-16.dts b/arch/arm64/boot/dts/qcom/x1p42100-lenovo-thinkbook-16.dts
-index 9e6f679758a9..c2946cfebaf0 100644
---- a/arch/arm64/boot/dts/qcom/x1p42100-lenovo-thinkbook-16.dts
-+++ b/arch/arm64/boot/dts/qcom/x1p42100-lenovo-thinkbook-16.dts
-@@ -1325,6 +1325,27 @@ wcd_tx: codec@0,3 {
- 	};
- };
- 
-+&tcsr {
-+	vdda-qrefrpt0-0p9-supply = <&vreg_l3c_0p8>;
-+	vdda-qrefrpt1-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrpt2-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrpt3-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qrefrpt4-0p9-supply = <&vreg_l1d_0p8>;
-+	vdda-qrefrx0-0p9-supply = <&vreg_l3c_0p8>;
-+	vdda-qrefrx1-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrx2-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrx3-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qrefrx4-0p9-supply = <&vreg_l1d_0p8>;
-+	vdda-qreftx0-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qreftx0-1p2-supply = <&vreg_l2j_1p2>;
-+	vdda-qreftx1-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qreftx1-1p2-supply = <&vreg_l3e_1p2>;
-+	vdda-refgen0-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-refgen0-1p2-supply = <&vreg_l3e_1p2>;
-+	vdda-refgen2-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-refgen2-1p2-supply = <&vreg_l2j_1p2>;
-+};
-+
- &tlmm {
- 	gpio-reserved-ranges = <34 2>, /* Unused */
- 			       <72 2>; /* Secure EC I2C connection (?) */
-diff --git a/arch/arm64/boot/dts/qcom/x1p42100-microsoft-sp12in.dts b/arch/arm64/boot/dts/qcom/x1p42100-microsoft-sp12in.dts
-index 0314b2246cdb..edcb6b99a384 100644
---- a/arch/arm64/boot/dts/qcom/x1p42100-microsoft-sp12in.dts
-+++ b/arch/arm64/boot/dts/qcom/x1p42100-microsoft-sp12in.dts
-@@ -968,6 +968,27 @@ right_spkr: speaker@0,1 {
- 	};
- };
- 
-+&tcsr {
-+	vdda-qrefrpt0-0p9-supply = <&vreg_l3c_0p8>;
-+	vdda-qrefrpt1-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrpt2-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrpt3-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qrefrpt4-0p9-supply = <&vreg_l1d_0p8>;
-+	vdda-qrefrx0-0p9-supply = <&vreg_l3c_0p8>;
-+	vdda-qrefrx1-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrx2-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-qrefrx3-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qrefrx4-0p9-supply = <&vreg_l1d_0p8>;
-+	vdda-qreftx0-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qreftx0-1p2-supply = <&vreg_l2j_1p2>;
-+	vdda-qreftx1-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-qreftx1-1p2-supply = <&vreg_l3e_1p2>;
-+	vdda-refgen0-0p9-supply = <&vreg_l3i_0p8>;
-+	vdda-refgen0-1p2-supply = <&vreg_l3e_1p2>;
-+	vdda-refgen2-0p9-supply = <&vreg_l3j_0p8>;
-+	vdda-refgen2-1p2-supply = <&vreg_l2j_1p2>;
-+};
-+
- &tlmm {
- 	gpio-reserved-ranges = <34 2>, /* Unused */
- 			       <44 4>; /* SPI (TPM) */
+On 4/8/2026 3:49 pm, Krzysztof Kozlowski wrote:
+> [You don't often get email from krzk@kernel.org. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
+> 
+> On Mon, Jul 27, 2026 at 05:49:26PM +0800, genevieve.chan@altera.com wrote:
+>> From: Genevieve Chan <genevieve.chan@altera.com>
+>>
+>> Preliminary documentation referred to mpu_l2ram_clk, but that clock is
+>> now mpu_ccu_clk and is already represented by AGILEX_MPU_CCU_CLK.
+>> Keep AGILEX_MPU_L2RAM_CLK as a legacy ABI-preserved ID (do not use in
+>> new DTs) and mark clock ID 42 as reserved/unused so it is not reused,
+>> keeping all existing clock IDs stable for DT ABI compatibility.
+>>
+>> Fixes: 6b3c59780ed3 ("dt-bindings: documentation: add clock bindings information for Agilex")
+>> Cc: stable@vger.kernel.org # 5.8+
+>> Signed-off-by: Genevieve Chan <genevieve.chan@altera.com>
+>> ---
+>>   include/dt-bindings/clock/agilex-clock.h | 2 ++
+>>   1 file changed, 2 insertions(+)
+>>
+>> diff --git a/include/dt-bindings/clock/agilex-clock.h b/include/dt-bindings/clock/agilex-clock.h
+>> index 06feca07e08e..de7a58a06651 100644
+>> --- a/include/dt-bindings/clock/agilex-clock.h
+>> +++ b/include/dt-bindings/clock/agilex-clock.h
+>> @@ -44,6 +44,7 @@
+>>
+>>   /* Gate clocks */
+>>   #define AGILEX_MPU_CLK                       30
+>> +/* Legacy ABI ID; do not use in new DTs, use AGILEX_MPU_CCU_CLK */
+>>   #define AGILEX_MPU_L2RAM_CLK         31
+>>   #define AGILEX_MPU_PERIPH_CLK                32
+>>   #define AGILEX_L4_MAIN_CLK           33
+>> @@ -55,6 +56,7 @@
+>>   #define AGILEX_CS_TIMER_CLK          39
+>>   #define AGILEX_S2F_USER0_CLK         40
+>>   #define AGILEX_EMAC0_CLK             41
+>> +/* 42 - reserved/unused */
+> 
+> How IDs can be reserved? These are implemented by drivers (abstract IDs
+> not used by hardware), so how driver could reserve it?
+> 
+> Best regards,
+> Krzysztof
+> 
+You are right. These IDs are DT clock specifier indices (provider one-cell ABI), not hardware IDs. The clk driver registers clocks into hws[id]; unused indices remain -ENOENT.
 
--- 
-2.34.1
+ID 42 was never defined in the original Agilex binding (EMAC0=41, EMAC1=43). The comment was placed to only documents that historical hole so we do not renumber later IDs. It is not a hardware reservation — it is for ABI hygiene.
+
+Happy to reword to something clearer, e.g. /* 42 never assigned; do not renumber */, or drop the comment if preferred.
 
