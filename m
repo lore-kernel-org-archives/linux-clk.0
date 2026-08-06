@@ -1,141 +1,282 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0653B335091
-	for <linux-clk@vger.kernel.org>; Thu,  6 Aug 2026 14:17:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEC403A83B1;
+	Thu,  6 Aug 2026 14:51:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786025873; cv=none; b=Y7mTS7Ix6iGGbTxi449qSantcAp2HJQA/MZtenOHpSMZ+080uvT4CZjf1flKJu5utckzOfdYEV81sf9DSvWboggf+odTUF8TUoE3W8GMMTVeIgPuJU1rPTHCCUHJwg1u+SbxLLxq3L+4DkcdTSRk2LIMAgw1S3WbkuXRJt8hHNM=
+	t=1786027909; cv=none; b=tAux11n2N3143zHpn3oIAiokdlyM9HfW5Dki+1y0PzSkZR4w9YdOaEMKF5TdYmU5XCVCzN7oOcruS/j1oft1Ix/11a5leJoUK8h0DVxJ0vJ2UxIgFEEvWXPK4YHwngolGMg5Np2DNL8l8B3SHMyrjh6hmrULF/6ZwHbmQFzonrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786025873; c=relaxed/simple;
-	bh=aEacxLXLYdB5iAohZ26x7bh8JX+qMm2KFEYV7Y5E4hk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VTtBgVx9FFhasq3D+tyqQAvVWDxD0qe3OeQ3eiqRZB/Ulpj7UXzLgBQhixCkWgZKEDAcWQvvM/0Ol46ii3YfeRb1KncpW/nwrVAN3Dq1UJ3gh36Xl7p6BCp1SMMDGYrzqlcdCpCqkpQYmE61kb47ROF4FZR0I0BnmSHAxYfO3Zs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XQr+eMMR; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=g9Kvlxlj; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1786027909; c=relaxed/simple;
+	bh=soxRym6RY3RfM53rerMfeBGkcyCA5XDKnD5/Hsi4xLM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=qyHmXkPuRCXrXTE/ibOn+3QjbT/sbrI0ifu0qfmTo01whAQX0V/qR408N84pY9VPOyVY9cBQeF2Zifgu/XP7UmUPG27XDbOrXOKgb6w2ibrKZX2FxE0c5Sf322il62eSYBir4IjuPcvqP9AQtXe1wUEWyv46yDN4cpV19WPa7T8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oi1xGXzP; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XQr+eMMR";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="g9Kvlxlj"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1786025871;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lkVg+cVtGuV8k5uAXYEJ309ZVMUd84Lmc55rCI+OidU=;
-	b=XQr+eMMR1h+0QCViDGCP8iF84J34L0VIone4YVJLouo8zlDudkJAtsp8AKMX8flA1RoCtD
-	xQn/JQFsteLfA8HdSfx9YJFHcU11VgrfE9TlAY03lhP2pPO8LZ+QXmqmKtoe8EDqd5Kiw3
-	3V6ZmKXJ0Vh5uXJSPH6g7vTrch/G96g=
-Received: from mail-yx1-f70.google.com (mail-yx1-f70.google.com
- [74.125.224.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-98-KwjQjnErM6aAQ4jo6-lMlg-1; Thu, 06 Aug 2026 10:17:49 -0400
-X-MC-Unique: KwjQjnErM6aAQ4jo6-lMlg-1
-X-Mimecast-MFC-AGG-ID: KwjQjnErM6aAQ4jo6-lMlg_1786025869
-Received: by mail-yx1-f70.google.com with SMTP id 956f58d0204a3-668a55b1809so6619509d50.3
-        for <linux-clk@vger.kernel.org>; Thu, 06 Aug 2026 07:17:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1786025869; x=1786630669; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:content-type:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=lkVg+cVtGuV8k5uAXYEJ309ZVMUd84Lmc55rCI+OidU=;
-        b=g9KvlxljmALswN5jkQkg6jFYptyv/hTbnkSG7dsT5RTOPFQ3BmHjTZOwKaOM28bI/s
-         mIFHF3Sbg3BmPMIoJqdP6FSk/WNYDwqJFgbxDEyL/n142BjR3e7w7AYGO9C+SdLDJu7J
-         4xgCLhGCDTZWTNC9uHLNCDOoxM3RG4IAJeZmseJXnYAW/4hIHMb5nOBS5ndXGHatxrcS
-         OCv+K56rqFvt2taepDnSgwKg7g16+0BMIORnc6icJbnvkvpmAJcKCbd2OBf4QSdvPaOP
-         DaqaxJ+PUCs/AaTX9EkmNH4GmUGPvUyotVfnJ7O2N+7DMaEyGx9vlYX8h6mNKSRKZt78
-         nk2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786025869; x=1786630669;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:content-type:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=lkVg+cVtGuV8k5uAXYEJ309ZVMUd84Lmc55rCI+OidU=;
-        b=Dzt5j7r/bS3mXl5P6RtN6+1kSLKI2awpAyaDhC7QoSYwjiIGd1C6thauIfirU48TRa
-         s6f7vmtEatO2/QdB194Kmpr4GjBohUS4Bwk0EWIDUiQjZLozn1/5G1meYAyVSXdaF3HX
-         r60M5vN/Xe1TqzKn3AuwHgJaQP9n30IGu0z1fncBZ3joF6oyuo9M0k1Bh2MlWzUiW25U
-         zlkdWBxKlREBwzraVYTQWJkImkmH9BsMB1U8qW+pN3EI8nv0PpnmqAat2d3WlAhQrMIs
-         d2//JggL6wgL1S5E/TrAWvUK96vJd9+ZH1hV6Om63TnBtKNIcCq5227jmXncvH9svVIQ
-         9BLA==
-X-Forwarded-Encrypted: i=1; AHgh+RrKLtTkYtxYaxZcH6VthA8/KyTV3QdWH1/R12TG2mYdGhRDaY+SeXKPdNiG9CUKiGJv+uejNzNmjZY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9eDeDCa2LyAC23BbUd2iGMyGkeqidBGszXDL8ajjoapkRloo/
-	waNuHtmAukc/VNobBDII786Qyhu0VQRHIAQyVuvJj22TVMFNjwegG4jgE/PcYiMIOfNQzIXEwby
-	6xvzHO1mmCVJbrZChEIBRtBGhc/sSBI37go9VayR5k8HWPIpiRpF0Vi8+cfQ2LQ==
-X-Gm-Gg: AR+sD13H6PIDIyevtg+FD29P6GmBA1tOzk6Gc6wuq8scYiTGbJFQrMa+T/h8d3L+p13
-	GSFirbgXOfW1SU9tqyUTyv6NMW0tAN57fTWeDycZev2X6QAYflC71eBkCXNm1UFuACHAmbmobkA
-	yJE37UEjfE3nhk/MVehdJj0zThqvV+0rgC3ap4Mb/fOUamJ0wYNPb/9MYC3w0JDLP6A9PXZ3bJp
-	jNDWEXml4+RW11Cv75jeeUaVh/ZLgBhMEkr3WpTSMNwKwj4DGdx5IOLmu4eKHaA8f2rDZ2XDnP+
-	4fNaoOeQSXXnvNzJfYf+vE1Scmoj/0vCciq5lW+6zLyraAaM035lOYm9s+wkrdSl8kMRluV2xyC
-	BckGpPJkey+0MeDpVowKIlMG5AZADFfx9td8=
-X-Received: by 2002:a05:690e:2003:b0:669:48b1:d19f with SMTP id 956f58d0204a3-6699aada291mr7294567d50.39.1786025869100;
-        Thu, 06 Aug 2026 07:17:49 -0700 (PDT)
-X-Received: by 2002:a05:690e:2003:b0:669:48b1:d19f with SMTP id 956f58d0204a3-6699aada291mr7294515d50.39.1786025868576;
-        Thu, 06 Aug 2026 07:17:48 -0700 (PDT)
-Received: from redhat.com (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-6699166e9dcsm5028700d50.20.2026.08.06.07.17.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Aug 2026 07:17:45 -0700 (PDT)
-Date: Thu, 6 Aug 2026 10:17:36 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig_=28The_Capable_Hub=29?= <u.kleine-koenig@baylibre.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] clk: samsung: Don't include <linux/mod_devicetable.h>
-Message-ID: <anSXgKZbdWJmBAkN@redhat.com>
-References: <20260806130050.646488-2-u.kleine-koenig@baylibre.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oi1xGXzP"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 70FFEC2BCFB;
+	Thu,  6 Aug 2026 14:51:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1786027909;
+	bh=soxRym6RY3RfM53rerMfeBGkcyCA5XDKnD5/Hsi4xLM=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=oi1xGXzP4M6ua5KBcjtxymCs4V5pQtOp5rYAjKUw+FSKa+1vd5qdwTxumMPmr+8Ne
+	 3HtByVEb5oK0S7box4p418nEOTkvnbumBbsbtRjAbcA6whp0jAhbU+A8KNZx4a7X02
+	 NK8waTkHi3MKaxH+KGtS0C9UCvYTq7VTKZ67yUvXIvT4uhoX92dDt88nDSjz+MJmNt
+	 ylYor4v/P8g0V82FbgeDsqAEbf+p+SnuzwKC9JEMFNtxFJiWSa4brkDPNI/wczWJod
+	 H8FpJk/HbZtrIy21cwKQ2xAGtlg3sL3mPnYSe+cH5xGAYkGF6rgYjzYkQFd/HhF/+T
+	 Q2PiuUoiolYeg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51D3CC5AC7C;
+	Thu,  6 Aug 2026 14:51:49 +0000 (UTC)
+From: Sarath Ganapathiraju via B4 Relay <devnull+sarath.ganapathiraju.oss.qualcomm.com@kernel.org>
+Date: Thu, 06 Aug 2026 20:21:37 +0530
+Subject: [PATCH v5 2/2] clk: qcom: Add LPASS VA CSR heartbeat pulse clock
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20260806130050.646488-2-u.kleine-koenig@baylibre.com>
-User-Agent: Mutt/2.4.0 (2026-06-19)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260806-master-20260805-sync-v5-2-0ff42e9b6431@oss.qualcomm.com>
+References: <20260806-master-20260805-sync-v5-0-0ff42e9b6431@oss.qualcomm.com>
+In-Reply-To: <20260806-master-20260805-sync-v5-0-0ff42e9b6431@oss.qualcomm.com>
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ prasad.kumpatla@oss.qualcomm.com, 
+ Sarath Ganapathiraju <sarath.ganapathiraju@oss.qualcomm.com>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1786027907; l=6661;
+ i=sarath.ganapathiraju@oss.qualcomm.com; s=default;
+ h=from:subject:message-id;
+ bh=QCZX+fDXiHb3ToEAJRmgWv5daRhV3Xx1Tckmhg/5yfY=;
+ b=NNtJmRDse4DTlxPlb0X+zf53FAcSDL0pkv1wSeV+EF4q5m1PlOAeK0sWBzhWdEyEYl1qplow+
+ 076wDW88awNCEfjZio1WA9IPuF4lnCd3h6FCMVN9UGl1+7gF/ruplk9
+X-Developer-Key: i=sarath.ganapathiraju@oss.qualcomm.com; a=ed25519;
+ pk=4p2FWGXM+F2sir13Lu5stw5aKX5trUymK/ttESvgxQg=
+X-Endpoint-Received: by B4 Relay for
+ sarath.ganapathiraju@oss.qualcomm.com/default with auth_id=870
+X-Original-From: Sarath Ganapathiraju <sarath.ganapathiraju@oss.qualcomm.com>
+Reply-To: sarath.ganapathiraju@oss.qualcomm.com
 
-On Thu, Aug 06, 2026 at 03:00:50PM +0200, Uwe Kleine-K=F6nig (The Capable H=
-ub) wrote:
-> All users of drivers/clk/samsung/clk.h live in drivers/clk/samsung (see
->=20
-> 	git grep samsung/clk.h
->=20
-> ). All these are only using of_device_id from
-> the set of structures defined by this include (see
->=20
-> 	{ git grep -l clk\\.h drivers/clk/samsung/; echo drivers/clk/samsung/clk=
-=2Eh; } | xargs grep -oh -E "\<(acpi_device_id|amba_id|ap_device_id|apr_dev=
-ice_id|auxiliary_device_id|bcma_device_id|ccw_device_id|cdx_device_id|coreb=
-oot_device_id|css_device_id|dfl_device_id|dmi_(device|system)_id|eisa_devic=
-e_id|fsl_mc_device_id|hda_device_id|hid_device_id|hv_vmbus_device_id|i2c_de=
-vice_id|i3c_device_id|ieee1394_device_id|input_device_id|ipack_device_id|is=
-apnp_device_id|ishtp_device_id|mcb_device_id|mdio_device_id|mei_cl_device_i=
-d|mhi_device_id|mips_cdmm_device_id|of_device_id|parisc_device_id|pci_devic=
-e_id|pci_epf_device_id|pcmcia_device_id|platform_device_id|pnp_(card_)?devi=
-ce_id|rio_device_id|rpmsg_device_id|sdio_device_id|sdw_device_id|serio_devi=
-ce_id|slim_device_id|spi_device_id|spmi_device_id|ssam_device_id|ssb_device=
-_id|tb_service_id|tee_client_device_id|typec_device_id|ulpi_device_id|usb_d=
-evice_id|vchiq_device_id|vio_device_id|virtio_device_id|wmi_device_id|x86_(=
-cpu|device)_id|zorro_device_id|cpu_feature)\>" | sort | uniq -c
->=20
-> ).
->=20
-> So <linux/mod_devicetable.h> can be replaced by <linux/device-id/of.h>
-> to get rid of another user of the former header.
->=20
-> Signed-off-by: Uwe Kleine-K=F6nig (The Capable Hub) <u.kleine-koenig@bayl=
-ibre.com>
+From: Sarath Ganapathiraju <sarath.ganapathiraju@oss.qualcomm.com>
 
-Reviewed-by: Brian Masney <bmasney@redhat.com>
+The HeartBeat Pulse (also known as RateGen Pulse) synchronizes the
+start of the DMAs and Codec Interfaces for the audio usecases and
+can serve as a periodic wakeup source for the DSP.
+
+Add the LPASS VA CSR driver that models the rate generator as a clock
+provider so it is enabled and disabled automatically alongside the
+other clocks during runtime PM resume and suspend.
+
+Signed-off-by: Sarath Ganapathiraju <sarath.ganapathiraju@oss.qualcomm.com>
+---
+ drivers/clk/qcom/Kconfig        |  14 ++++
+ drivers/clk/qcom/Makefile       |   1 +
+ drivers/clk/qcom/lpass-va-csr.c | 148 ++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 163 insertions(+)
+
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index d1fc9bf87126..756f6ed727d0 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -2040,6 +2040,20 @@ config CLK_GFM_LPASS_SM8250
+ 	  Support for the Glitch Free Mux (GFM) Low power audio
+           subsystem (LPASS) clocks found on SM8250 SoCs.
+ 
++config QCOM_CLK_LPASS_HEARTBEAT_PULSE
++	tristate "Qualcomm LPASS VA CSR heartbeat pulse clock provider"
++	depends on COMMON_CLK
++	depends on ARM64 || COMPILE_TEST
++	select REGMAP_MMIO
++	default m if ARCH_QCOM
++	help
++	  Qualcomm LPASS VA CSR block contains the rate generator hardware
++	  that produces the HeartBeat Pulse (also known as RateGen Pulse).
++	  This driver models the rate generator as a clock provider so
++	  that consumers can enable or disable it via the common clock
++	  framework, and it can be used to synchronize the start of DMAs
++	  and Codec Interfaces or as a periodic wakeup source for the DSP.
++
+ config SM_VIDEOCC_8450
+ 	tristate "SM8450 Video Clock Controller"
+ 	depends on ARM64 || COMPILE_TEST
+diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+index daf25d583be2..8d3e3381bc29 100644
+--- a/drivers/clk/qcom/Makefile
++++ b/drivers/clk/qcom/Makefile
+@@ -25,6 +25,7 @@ obj-$(CONFIG_CLK_ELIZA_DISPCC) += dispcc-eliza.o
+ obj-$(CONFIG_CLK_ELIZA_GCC) += gcc-eliza.o
+ obj-$(CONFIG_CLK_ELIZA_TCSRCC) += tcsrcc-eliza.o
+ obj-$(CONFIG_CLK_GFM_LPASS_SM8250) += lpass-gfm-sm8250.o
++obj-$(CONFIG_QCOM_CLK_LPASS_HEARTBEAT_PULSE) += lpass-va-csr.o
+ obj-$(CONFIG_CLK_GLYMUR_CAMCC) += camcc-glymur.o
+ obj-$(CONFIG_CLK_GLYMUR_DISPCC) += dispcc-glymur.o
+ obj-$(CONFIG_CLK_GLYMUR_EVACC) += evacc-glymur.o
+diff --git a/drivers/clk/qcom/lpass-va-csr.c b/drivers/clk/qcom/lpass-va-csr.c
+new file mode 100644
+index 000000000000..2e692407a966
+--- /dev/null
++++ b/drivers/clk/qcom/lpass-va-csr.c
+@@ -0,0 +1,148 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/device.h>
++#include <linux/module.h>
++#include <linux/of_clk.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++#include <linux/pm_runtime.h>
++
++#define LPASS_RATE_GEN_CTRL		0xd000
++#define LPASS_RATE_GEN_COUNTER_0	0xd004
++#define LPASS_RATE_GEN_DELAY		0xd010
++
++#define LPASS_RATE_GEN_MAX_REG		LPASS_RATE_GEN_DELAY
++
++#define LPASS_RG_CTRL_EN		BIT(0)
++
++struct lpass_va_csr_data {
++	u32 counter_0;
++	u32 delay;
++};
++
++static const struct lpass_va_csr_data hawi_csr_data = {
++	.counter_0 = 0x960,
++	.delay = 0x16,
++};
++
++static const struct regmap_config lpass_rate_gen_regmap_config = {
++	.name = "lpass_rate_gen",
++	.reg_bits = 32,
++	.val_bits = 32,
++	.reg_stride = 4,
++	.max_register = LPASS_RATE_GEN_MAX_REG,
++	.cache_type = REGCACHE_MAPLE,
++};
++
++struct lpass_va_csr {
++	struct regmap *regmap;
++	const struct lpass_va_csr_data *data;
++	struct clk_hw hb_hw;
++};
++
++#define to_lpass_va_csr(_hw) container_of(_hw, struct lpass_va_csr, hb_hw)
++
++static int heartbeat_pulse_prepare(struct clk_hw *hw)
++{
++	struct lpass_va_csr *csr = to_lpass_va_csr(hw);
++	int ret;
++
++	ret = regmap_write(csr->regmap, LPASS_RATE_GEN_COUNTER_0, csr->data->counter_0);
++	if (ret)
++		return ret;
++
++	ret = regmap_write(csr->regmap, LPASS_RATE_GEN_DELAY, csr->data->delay);
++	if (ret)
++		return ret;
++
++	return regmap_set_bits(csr->regmap, LPASS_RATE_GEN_CTRL, LPASS_RG_CTRL_EN);
++}
++
++static void heartbeat_pulse_unprepare(struct clk_hw *hw)
++{
++	struct lpass_va_csr *csr = to_lpass_va_csr(hw);
++
++	regmap_clear_bits(csr->regmap, LPASS_RATE_GEN_CTRL, LPASS_RG_CTRL_EN);
++}
++
++static int heartbeat_pulse_is_prepared(struct clk_hw *hw)
++{
++	struct lpass_va_csr *csr = to_lpass_va_csr(hw);
++
++	return regmap_test_bits(csr->regmap, LPASS_RATE_GEN_CTRL, LPASS_RG_CTRL_EN);
++}
++
++static const struct clk_ops heartbeat_pulse_ops = {
++	.prepare = heartbeat_pulse_prepare,
++	.unprepare = heartbeat_pulse_unprepare,
++	.is_prepared = heartbeat_pulse_is_prepared,
++};
++
++static int lpass_va_csr_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct lpass_va_csr *csr;
++	struct clk_init_data init = {
++		.name = "lpass_heartbeat_pulse",
++		.ops = &heartbeat_pulse_ops,
++	};
++	void __iomem *base;
++	int ret;
++
++	csr = devm_kzalloc(dev, sizeof(*csr), GFP_KERNEL);
++	if (!csr)
++		return -ENOMEM;
++
++	csr->data = of_device_get_match_data(dev);
++	if (!csr->data)
++		return dev_err_probe(dev, -EINVAL, "no variant data for compatible\n");
++
++	base = devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(base))
++		return PTR_ERR(base);
++
++	csr->regmap = devm_regmap_init_mmio(dev, base,
++					    &lpass_rate_gen_regmap_config);
++	if (IS_ERR(csr->regmap))
++		return dev_err_probe(dev, PTR_ERR(csr->regmap),
++				     "failed to init regmap\n");
++
++	csr->hb_hw.init = &init;
++
++	ret = devm_pm_runtime_enable(dev);
++	if (ret)
++		return dev_err_probe(dev, ret, "failed to enable PM runtime\n");
++
++	ret = devm_clk_hw_register(dev, &csr->hb_hw);
++	if (ret)
++		return dev_err_probe(dev, ret, "failed to register heartbeat clock\n");
++
++	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, &csr->hb_hw);
++	if (ret)
++		return dev_err_probe(dev, ret, "failed to add clock provider\n");
++
++	return 0;
++}
++
++static const struct of_device_id lpass_va_csr_dt_match[] = {
++	{ .compatible = "qcom,hawi-lpass-va-csr", .data = &hawi_csr_data },
++	{}
++};
++MODULE_DEVICE_TABLE(of, lpass_va_csr_dt_match);
++
++static struct platform_driver lpass_va_csr_driver = {
++	.driver = {
++		.name = "qcom-lpass-va-csr",
++		.of_match_table = lpass_va_csr_dt_match,
++	},
++	.probe = lpass_va_csr_probe,
++};
++
++module_platform_driver(lpass_va_csr_driver);
++
++MODULE_DESCRIPTION("Qualcomm LPASS VA CSR heartbeat pulse clock provider");
++MODULE_LICENSE("GPL");
+
+-- 
+2.34.1
+
 
