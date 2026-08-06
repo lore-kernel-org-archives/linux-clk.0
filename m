@@ -1,47 +1,47 @@
-Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011064.outbound.protection.outlook.com [40.93.194.64])
+Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013060.outbound.protection.outlook.com [40.93.196.60])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29199432BCF;
-	Thu,  6 Aug 2026 09:25:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A86E1432E64;
+	Thu,  6 Aug 2026 09:25:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.60
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786008332; cv=fail; b=AjkDX8OtOVUiQ3IpZFtD2e+WmscOURauywU9xnQsnjgIUuOL9ncrhv7yfvrQyxcI89JqRi7zqByaIvK7kuPzUYrY0QLefUibW5v49XxttUYjDkLKJWr5cyWiO22lgRtl6ArrG0x9CtTzHXcEG2Ypsg01r0CdoBDS2rasFRiJNcQ=
+	t=1786008342; cv=fail; b=R43ibD5vRCGXrJlaWZttWP6zz3yZJWkmlJ+87IKNIcwBW7i/Oioyu18qWXJDWkucQY3QFvOLwELYY0BXqnbSjM3gRBx2sAxcErEKS+MTILLtmlrVPsat84fmyBqReqjVw9IBvjlT6sb0kPuZYV/uxVa+QUGOG2pvZJuTeVyJD9g=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786008332; c=relaxed/simple;
-	bh=GQ5Emu2XOHrvAH4gscBlwXjjbgaVkJ2Udc+TK5GwfHY=;
+	s=arc-20240116; t=1786008342; c=relaxed/simple;
+	bh=uMwXlWRSEE/qfjEyc61tqTQiW2G3MkNk7xweMg2bjc0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=aNmplCaq/HZayLYAUUILC3eQzrscwzyCsBZ0vYlay5p2hTKyGKNrwLPPSNdf0QxPWMc1lGb7vK17Af+9cHYIbLs00/wHxqoekMmusLV8ZHtovjFYcwHoguJG77/puqC0O3DOIPvXlZTqrBJo88tpSZTnVkKq7z7Kab+NuD3MU40=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=hX0uajN2; arc=fail smtp.client-ip=40.93.194.64
+	 Content-Type:MIME-Version; b=YRIHReS1xdtvnez5ljEeXt3/1p0x23IKCzXHrh/TSkfWkr2tD1Nwp1Bf8AprRAC3yT6AhV9QU+PnjFLq8OnQRhiJJD6NEGEPAqCYMUEEjGbHOhxSH5lUypVCPk5PkTTgE8KNj/tTu3DBlSVShWz3LjHece0+1SHYOUqNELt6nFw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=RE+sXD5j; arc=fail smtp.client-ip=40.93.196.60
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="hX0uajN2"
+	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="RE+sXD5j"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=f9p7+BlLGvS8KS/Z9GRIECR2ebKwx9F1O8WEFniqVLhRLEIJzkAgG3JgERlCZn2M4jMPbMs2RWBd3BGzBxZJaq8ljmpr5bzpmPK3s6S9Q4Q5TJktk8eUpB2VdSeyoj8FPbzPOIUULwyPF3NTxoBJe0Z2LeD1nBZDRaQ4u7VYdSXQh7AvofnroAHpm9aXSILW0SoHuTYaFvX8c7E25axDqr5JE3Why/gMhsn3tWw9T05axBElpv/KhX7df7TH0a7UIn5kJB72jgXA/i/xcwsFGhZismNQs2SzdYyfJ9G08Klx0HHqxP+oYZU5xkYyrnqMdvCsii+DmAjubqofPktevQ==
+ b=BUsP4Lqkxyhm8dREfGQcP+efzZaUvojhC82JJgwn779aZuoo1zY+GrXZv9pGPMw2+XjVpmI28P8dpNeBrnUBGkeluxsuv8DzzxH3jOmXZYI4+4ck4MbfH/ALslc2xtaibPQ6VV8PPULx1W1Lb1tPTjNyNxw5bxmEDK2wO9yl/wz7IWr85pkkFUJDHCHEJLE7Fs/YZqe+xiVtNJ+gzahp2ZpFp9w2wx5S7ztecSwq7cKG2z5VPzyzbXNXxDXFVyyGxEWRHdyauVtqWH/dtQE/cacWNrov/uz0/X1eoU1Euz/Gu2IimhXiskhMq2W+kFRrY2UypVapYddlciDmMY8OjQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=G9Oke99pPJVE2JHnglGydOJJjemkSOCZO0mEbqUb/pM=;
- b=jI3Z7QIZCvIAdcYTGkiGl1QwPMbv5ZIrW0fcrpDpYl1m7xJsWPZVmheWAsXpuEd1zCmKkDAwvEezSx3zYZ5CIay7fxYdngfRrwk+WcNiF8DZxEFT4f791+Cgei5++8zuXzNWrorQ8+jwHvhojCEz08lVVXI9T23DO3BN0wlOAuKWEZyiIJXqsQOyfahL+8j80OiK3C7u6p/8yFdHUCn51zmuqPFMcLyKKxuD2U+dG71e6buA13sV6k/I5tIDn9/QOWeYCoMHMBfQmg/AP69bon38qhswIqkAbl1uxz8gDax6an3f9xbkwoe5FS56kNqc/+ZDsDoV/220mlZ9xCyJiQ==
+ bh=3pGnWy47rqzfWaD5T791VCzMUsJF6msF4MTuwBl4My4=;
+ b=LmgGncTMrfKOsLoKozOrji3XefwaSSoCDH0j/WXerfHZQhu8lPL3gI9I4IfM8BPp9KNBXitO7yaCVKxhl8VbHV5aE0L3x8yLEj58492LBV+BpTBah+UK046CToRl2i497bR2L9BTDiKSPGULOaIvzYu9BU8P9D8wvsVBycftMHyWUMNTX7kMKtfsDYsAhJrRl+MDMX97XzTIKHgKj95A3hwJMLDkp71xlfCOuqPBkuFasoD0HTelvL+h6AYh9YMk5U7CCHcE1WX7l1Hv3E6EenDAa9unITRnM8XTYCzqJGzZXtPW4YCvNopeEChxq6CPzVVWSz309FwZEXqWyGYGng==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
  dkim=pass header.d=altera.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=G9Oke99pPJVE2JHnglGydOJJjemkSOCZO0mEbqUb/pM=;
- b=hX0uajN2Hpm0FgzEorFvPk32RcJtkc2wzFLU7AQSFQDFZ188kqc3TQFfmMdIrsgiu27q+VmU9mCU+lyRvLQUqbiolXTx4H8CKG+9t3l5yPrhZbsoszDjykT0YV0dWpJzjJeASsp511BOmxIvYRmQhA2VgARXE8zIWHHvZDVyELj8B6i8Wizf+6r6CetlnSvcFiUKVWpMTNEsNgSsk0BPrQq1pyAQs/UI6EY509foIouCX5HWJ79ZcrH4EzAufLFGbAUcy3fweA/YcbzeU19mLRjgGAslsM7nG9kBex0pm8DMtJxFj9Q1w27xw9HgALhOyU4Ozns5m+xgQyp+UK4y3A==
+ bh=3pGnWy47rqzfWaD5T791VCzMUsJF6msF4MTuwBl4My4=;
+ b=RE+sXD5jn/kH+y1GTVUgA9+LPbzafz/ltBImkzhziWBZy0QDuHo2lcFF6v3v85JeQpHZPVKxWO04zKV+VW2PJGHSI0fP0ru8ZDguYH9vDqqKNJGSFAJWKDbHAkgBMoq+0QakNpLP+wVeU/hDK05AL5CkTxBEXUrZpc4LpfYc1xAFhTgyeoa/Ek1DoklFwsYZLieB40njIl9KMHEI25L8l9/dgoxKuxUDJwli7Ikolsvzm9Kx8GPO6/t/zkLwxZ3g9yC5uaZeVf+8xF0D+6atVxV4XL1+xKAt9RVbLo2VAcALHu0nSxelbjAP2LR6zm0kOGi/iU8qTvoX60K8UqQUGg==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=altera.com;
 Received: from DM4PR03MB6192.namprd03.prod.outlook.com (2603:10b6:5:39c::23)
  by CH2PR03MB5285.namprd03.prod.outlook.com (2603:10b6:610:9c::14) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.292.20; Thu, 6 Aug
- 2026 09:25:28 +0000
+ 2026 09:25:33 +0000
 Received: from DM4PR03MB6192.namprd03.prod.outlook.com
  ([fe80::b75b:5c92:1e9d:514b]) by DM4PR03MB6192.namprd03.prod.outlook.com
  ([fe80::b75b:5c92:1e9d:514b%4]) with mapi id 15.21.0292.019; Thu, 6 Aug 2026
- 09:25:28 +0000
+ 09:25:33 +0000
 From: evon.chiam@altera.com
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -57,9 +57,9 @@ Cc: Lothar Rubusch <l.rubusch@gmail.com>,
 	devicetree@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/5] dt-bindings: clock: altr,agilex72-clkmgr: add Agilex72 clock manager binding
-Date: Thu,  6 Aug 2026 17:25:02 +0800
-Message-ID: <39f067c31125b43d9d4ee92cd02828e894de3f45.1786006669.git.evon.chiam@altera.com>
+Subject: [PATCH 3/5] clk: socfpga: agilex72: add clock manager driver for Agilex72
+Date: Thu,  6 Aug 2026 17:25:03 +0800
+Message-ID: <97675c0efd40a9407b6b1a1941cc73b73dd45d39.1786006669.git.evon.chiam@altera.com>
 X-Mailer: git-send-email 2.43.7
 In-Reply-To: <cover.1786006669.git.evon.chiam@altera.com>
 References: <cover.1786006669.git.evon.chiam@altera.com>
@@ -76,286 +76,1399 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: DM4PR03MB6192:EE_|CH2PR03MB5285:EE_
-X-MS-Office365-Filtering-Correlation-Id: 93602e6a-cb0e-4f31-779d-08def39ca763
+X-MS-Office365-Filtering-Correlation-Id: 0c5ef046-50aa-43a1-3b4a-08def39ca9e7
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
 	BCL:0;ARA:13230040|23010399003|366016|376014|7416014|1800799024|56012099006|11063799006|10067099003|18002099003|55112099003|3023799007|22082099003;
 X-Microsoft-Antispam-Message-Info:
-	130x+vzvGjDX8PStEuTpzV5744C+4rBCF6fdLO+z7Iba/hFMld5GIHWnAUjWvoHBAvlvgwXUIZ3/O0RnqCHlWe4Fxn2MdWXAhBmUUC4qxOFBsvDq66COPRvNbhaxu/C3NxtkvxBSIX/ycD6GEHcKwF1xegmvUQ1pkLp/Fb+/66BeDEh3DTa3dYfzkkWNd37QA/YvMxn7csin2EiMkl05vFUhle2H5QaUFxd117bzcDe7q5mCCXk9sDOtR0sIHhxc1/JHric0gGdsqtsTGMJwtDzpUldJgzmUWIa+e1GtnCPz3nZXoxVDpArnQ2GDaHN8bNJisBp752ury7/rfIAlTMOyl3Yj6/7ar6Ee5ORD6z5z+JgK1NkGmZnmx7Nabm+d22ho1J9+g8IcXRHAF+l9TIV2LQNIH2SfSih7h0dmlQdGfp9nMu4RsccWA5d85yWdraxukeIHzwprAYaqeiPqkkV8PaKsnTT12SaETjODUhauELXfP2yGPHEWDoNqZlTYjrmlZodHzoeSf5SKDklHLYG07PPOBBjXQ63fRSuZ+2HYibFUa54OcVYk0A4k5y7qM38gtHWJbwQkxBq93wjlqiuMrkEg0XxJPzwKwPYxfqT6cbesa9sVgFiS98uWCOIVuuLHziagBDBdqq75ZZkqGbR5c3YMs6RTONntAgyStN0=
+	f9S27SwamzCDg99HoReKIZ3XOTaT34gNIy2Din5Smb8sDGjCnGcdlt94vwFa1crgpaqyKwjn+lp8Zn/CAAtlOyCIq0nvZRLXWX1ciTjSl2XuB2xfctKHtil0PeVE7mspIuPu84IW+O+hWhoWblwMfM+DcBLLYEgBz/5b3ocR7nD6EzfTYKYjPCPXA/pooutb1XUdxGe46iiICn+fQOaRb7ZQ+2s8avyJEj7BH6YpI8Uv3aXksTxV8HN8z7hz5Hm3np2YYaUdWiWPIZAcg2dqAEeyQ7zmUMinFjGKbjVtni5CgNKO3kPCnmIlSyvDDPMZ2cAFJId6VsJxayRRcJ7bbD86JuzhaNe49cKxClx9QFNHPlbG4ocnN6tLerlZ9oU8N4po6HonfsOrTsl1A+FKrGP/rc3Ye4aE3F90dAis3MFtqwqwg93lxkExPRb5FVB5ECK7hrPStqyl9AxkkC94lPXT+1hbSg69qA/BBMvKak8encfArtdkE7cOTe5dk6KtATbV3UqeLkqF3tZdpN3C7MuLz6fkoIO0qlZk9rMuzLOuo3n/xruKJZJIrdqIW3rhLfVM1vcTnJJqVcfC/O/MkSqXeAM48b/0S0VMedEcEo1Iq7xzcJIngw7CuHNswPvG/p0p2rp9zl4gLT8q/u6zEugFEpeWQltycYXaHBRMERo=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR03MB6192.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(366016)(376014)(7416014)(1800799024)(56012099006)(11063799006)(10067099003)(18002099003)(55112099003)(3023799007)(22082099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?pPObvnCMZGJlg1NI3Rk2YeMIvIQOFaiO+/HkEfzJ0tpMuwCHIeau05YoPMeK?=
- =?us-ascii?Q?hR/B+goeH3yrO+S5pt080KuajGWu/OZTt6DBH/Iu3zwX1AUtRPHYtjm0oloE?=
- =?us-ascii?Q?+hsuAGRLWfQ6n4pTcD7z17VCpPQvxBUtFjx2JRc6agvOKY9E0QRKaz8gKTu0?=
- =?us-ascii?Q?HHCYLyob9R2Ooszsk+Pk1RLaXb5Zo/TZQPdE6JadEwDNsoY8ArRBm2zsAjsq?=
- =?us-ascii?Q?hpGJBzhWJnKCY42oEbhEoSui8PTwQf0XoW7caMeNoBDaTsnk869QFBOPF6GJ?=
- =?us-ascii?Q?nR8CmykwrF5anf2o2ISEmauK1zOeM9587jfQoKn+SZIvJJopFVzzHyrqcIaF?=
- =?us-ascii?Q?i6F71EoQREVnJxTK2sm6jZd8UnfmxlMrWFAhK7TJlC+0AXEztqJsqfnaWwOK?=
- =?us-ascii?Q?kfQ6ipPXOVAnvIq/HiUulIk8i9lQ1ZTFn1PvPl6dGqMjl86USD1wJWorKpk9?=
- =?us-ascii?Q?+XGfc4TXJ9v7amuoGJLuG9KuGy3hna+J7zQHqWkKDru+aPes53ilmFVRzFdC?=
- =?us-ascii?Q?1Xwjzty8MdEUwnudNq3k+GPeRWpEn6Lk9ZpJSJcb1TL8rc2CGtKZCDdYiSnj?=
- =?us-ascii?Q?ftgYgeX8Fd76VzksKR+6v6BGSkfQiVRsAUk/NDqh4poX0Vs94tCwIhsk4y29?=
- =?us-ascii?Q?RNIQvemEqWgUYgLD2hGRX5CbH4AopaySWgbVCWIqketMxCrh2OsPvMA9PX89?=
- =?us-ascii?Q?iZi4DCZw2re/HUYIaXAzzuU5zfZQQiG4Ra7fK06SIdvBJfRUjGjKVl8Lw7Dl?=
- =?us-ascii?Q?uAHXTtLtizRC+TsgtFkpO+fcy+LhjkCo+CVwPcvIEd5dQ3Shx1ApZh/8ea+z?=
- =?us-ascii?Q?a22S5CT4SmhYzt5aH1H0bim3VHOkO3/h9zYKtVf1Fa0jmS7+YKQ+upokOm6s?=
- =?us-ascii?Q?C0/ftX+LE4HBYVOGz/kw8Bfpyb/heFuLWr5IwZkmuWN27mzChGF4fZucF+bj?=
- =?us-ascii?Q?tVNhyWN+h2h56PZlD74ZEWmBTigLVKXakSwVdvgIYOq9OZ9iqULj+fdvI77n?=
- =?us-ascii?Q?tYXn1PnFUBwqLjM6afwMhs0Hj77KvjLGJUqMFmV0XqSqqGJbLqCVw7xbVIx0?=
- =?us-ascii?Q?1F33yH7niK0TEjGgdgHZgH5Gi+1lvMaq78C7pn5dQCBBiw31zOjNQybOJcVr?=
- =?us-ascii?Q?kPg429iUGH4jLELTbR8rK3JN56Gbpnf/allVaKpJo0cy98cXTvW5m5hZSrwM?=
- =?us-ascii?Q?PU7WxQretMv3hrdRFewAtroI3qz76e0JZBMxhrApLb9fA4DSDqjo9+Wefr3I?=
- =?us-ascii?Q?JCY+lRQJgf7IA+bjXtgdzmTa0UxdGTTh/adON7JemlPp7+K351PhWQ3jyMyw?=
- =?us-ascii?Q?uhQrsNHHpqL6EnV5t9RvXbmtnKxHDU3zxa9HjbYHxJAg/Jmu0a/4P/Pt4ENh?=
- =?us-ascii?Q?e9tAw4t/gfysuTv2UsO1uK8oh9dCLqr4yI+CZyCI1P1WYhOp9ihBuFTSJCxh?=
- =?us-ascii?Q?yRnw+85r3odjLo73TMLsf49a10hnFaR2sibo+5DAiFcI+Iy3kQKoxlcaqYJj?=
- =?us-ascii?Q?2nLaCwwxz+a0ZRFuGZYhRU3QIa0bzbQkWFygU5Ao9wPuO9A2Nk9AsgSWoTaf?=
- =?us-ascii?Q?DS8T7axraBSIvYPvQZmWsreCKYfLCve7/NLsNbaaN53qYzeKmnUFaAdOG2vb?=
- =?us-ascii?Q?T0/NTn6NIKelq1+UD7aPIubANzNAcLfkvd6aM8IRyRMfHEGxfS5XxjMDyAVN?=
- =?us-ascii?Q?pbPfdme0kFMlI+KB4Rnlr5yFO9VJsLtLCIh8RpCrso/YlCzZb6XDyEoSK7zH?=
- =?us-ascii?Q?7T+/xK3vWA=3D=3D?=
+	=?us-ascii?Q?oRRXJT9OyDDDBsNeNqE5nr391kcXsxu6o7w+i1Z7HAd435GAq5G+NlWEUEZz?=
+ =?us-ascii?Q?eiqZn1994ZjlV0XWOuEhIhjGlvZovqPiBdlHOnjj8UzvJT9TXvrGZ3vCwTah?=
+ =?us-ascii?Q?jbskoinzyxSB3SuHdIorsmT0cZ4JKYILSKMUp0MOMdZqnmmRUqMkG+qBc1XP?=
+ =?us-ascii?Q?apQ17Xf4Myck5RgAt73EVWlx8rUw7SJolYKfg/vp5r/0Smz96zUO+spSz0mn?=
+ =?us-ascii?Q?jz6d7KJqRF70L6XL1K3G04Xny0ytsSq55oM89XWdVFE/hPTIaYgyGHfo8s+Y?=
+ =?us-ascii?Q?PL6RgkC3FUzBzZK7T3CQfZfBVw9GyxQYI0C0dqejyG7fUAeKgPcZO+gMb25Q?=
+ =?us-ascii?Q?XlbC2TX6FTmVUy8mFA8Uv9EQwxGlgR+Lq4rLP70t5ZTf/+8jzlXdyaCduEwx?=
+ =?us-ascii?Q?oEKhE4TDdt+ssPEzOjClwvTNTOtp6x+P+9K4gCNBDFkSPmGNStEztbiQ3g1u?=
+ =?us-ascii?Q?+KW7y1IYWwyjHrE/HWQDEVtyUtfIYEcosXpOZAEplWItO6Mf+G0zApdmQyDt?=
+ =?us-ascii?Q?AqNtDmrCZvbtQjIxxVmIe0LfZd117Ueet+wRiFwLqPywBf2TWzGsStccj1GC?=
+ =?us-ascii?Q?1NPubiC99/uJkBP/MSB4OZeD/saDN8QR8aDB4u0Be5Q6oOAkGU5x7p92/gVh?=
+ =?us-ascii?Q?SahRgNRYYcP/5d3MA1b9phjsKbk6ZjJTFjZTPaUX4JAWtX+4hvI6sEXbWAK2?=
+ =?us-ascii?Q?GQubOf9cWVLIkJLVleCK4D7mLI0bSUKiJ4FynSTtLui6wL79qVyAcItbfnuA?=
+ =?us-ascii?Q?xIDF39LM+Y55p6cV6e7W1whUd7jfbpmRUeSRRszur1g2p0aMA5OsCjNuwx+/?=
+ =?us-ascii?Q?VwCiN8iTpSp855V36YrxCsEsPszHOyJ80rZCSjn5HZbO10Eu0J6AE76Z3fj3?=
+ =?us-ascii?Q?V6NzxSLx5dT2SDfB+DLhQfwCZaDptJKUAqssOCXtoz6AX+0HrRvtNkKzCGLA?=
+ =?us-ascii?Q?HloKw3UM/uwrsuZ5D5LQcYxnA+cUARZy9EwwvG1kFM5YTupM10AJEDLwVapC?=
+ =?us-ascii?Q?Pr65DBOepEZ1Uvh7/z1LFEkC9CJjplFtZdWj3WE+5JZSKKsA+SYTxzpxUdeY?=
+ =?us-ascii?Q?U1NOxu+HuTaGhHkugJ7LxeUViFUf5vj864Hqf20TIEk2mMRmgBMZc0F8n6Kb?=
+ =?us-ascii?Q?OmUPg0HLZyxq8Pt9R9Q7+FOu7gLIuf/Jx2a2uovzeaEoKWlg8l1tX0spEBc2?=
+ =?us-ascii?Q?W+eb3y9Jh8l4yFVrf/ZQImXG51GQvNjAkSSalVXgI+2dpAXI0438tyRx4hFA?=
+ =?us-ascii?Q?QKfzdYooCkwJOcu+UD1xjgoVe90r6+I8V/tPNQE+vVEKYoLL+TL6Fu6hsmRH?=
+ =?us-ascii?Q?zTTV9oZ44a0dwLfr9Wc6eWdkFfXV2vTa9yrMzpxgmoQ4GfjdZfXH64SBy8rQ?=
+ =?us-ascii?Q?fM6MpP80ziZiC6ZwjyHoUjVo9xwQsZgegiR22P5Zwjy/S+SJRfvh+EBjRYiB?=
+ =?us-ascii?Q?O1K3mBk1gf5+2gw/80MblObs22CFzMLo7je+mNebkiSmGvE9Nxkd+xA9nUCA?=
+ =?us-ascii?Q?lIKs7mZjacx/n6Oc2GwhjsYDvCTReIRGUyaQzKojA/RiT/qE4J8X00PpR6dP?=
+ =?us-ascii?Q?HprQyyoKlj9myiKXcDqnWMYFZWCsqpK4rMX1BrkN75JIcGksoUKL0kVAiBND?=
+ =?us-ascii?Q?6H8LH32frPo2+eExu8orsWlymVag9ZMGl8d/dHkMTTSAc/W1CLqh0c8MTxAY?=
+ =?us-ascii?Q?ib/xwiacHrp+IbS799zra2XQIAcTVMNLosTQfsuNbhAOWLbZ9Vj8Z/2lveSV?=
+ =?us-ascii?Q?T/eEMBUi6Q=3D=3D?=
 X-OriginatorOrg: altera.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 93602e6a-cb0e-4f31-779d-08def39ca763
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0c5ef046-50aa-43a1-3b4a-08def39ca9e7
 X-MS-Exchange-CrossTenant-AuthSource: DM4PR03MB6192.namprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2026 09:25:28.4566
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2026 09:25:33.0481
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: nYcEJulSzhc8eY8UuME+/VQza86WNgE3m7AO9ItFrkOBTY++X0wRhHRKZ5NsTOWOEVoUDf7r1aPkK7n66JiM+A==
+X-MS-Exchange-CrossTenant-UserPrincipalName: IuukEDO2XAWzF5bZov0AfTUVgUhdrFg47i3p3iaoQshMPJTQC+eE6YoLSS8JtNWTTanY3s+5qaWK4JEBEAp8wg==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR03MB5285
 
 From: "Chiam, Evon" <evon.chiam@altera.com>
 
-Add binding and clock ID header for Altera SoCFPGA Agilex72 clock manager.
+Add new Clock manager driver to support new Altera Agilex72 platform
 
 Signed-off-by: Chiam, Evon <evon.chiam@altera.com>
 ---
- .../bindings/clock/altr,agilex72-clkmgr.yaml  |  86 +++++++++++++
- .../dt-bindings/clock/altr,agilex72-clkmgr.h  | 116 ++++++++++++++++++
- 2 files changed, 202 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/altr,agilex72-clkmgr.yaml
- create mode 100644 include/dt-bindings/clock/altr,agilex72-clkmgr.h
+ MAINTAINERS                        |    5 +
+ drivers/clk/socfpga/Kconfig        |    3 +-
+ drivers/clk/socfpga/Makefile       |    2 +-
+ drivers/clk/socfpga/clk-agilex72.c | 1181 ++++++++++++++++++++++++++++
+ drivers/clk/socfpga/clk-agilex72.h |   91 +++
+ 5 files changed, 1280 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/clk/socfpga/clk-agilex72.c
+ create mode 100644 drivers/clk/socfpga/clk-agilex72.h
 
-diff --git a/Documentation/devicetree/bindings/clock/altr,agilex72-clkmgr.yaml b/Documentation/devicetree/bindings/clock/altr,agilex72-clkmgr.yaml
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 15011f5752a9..1b850dc3d6b6 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -3581,6 +3581,11 @@ S:	Maintained
+ F:	Documentation/devicetree/bindings/media/samsung,s5p-mfc.yaml
+ F:	drivers/media/platform/samsung/s5p-mfc/
+ 
++ARM/SOCFPGA AGILEX72 CLOCK DRIVER
++M:	Chiam, Evon <evon.chiam@altera.com>
++S:	Maintained
++F:	drivers/clk/socfpga/clk-agilex72.[ch]
++
+ ARM/SOCFPGA ARCHITECTURE
+ M:	Dinh Nguyen <dinguyen@kernel.org>
+ S:	Maintained
+diff --git a/drivers/clk/socfpga/Kconfig b/drivers/clk/socfpga/Kconfig
+index d88277e2a898..40cac9428fbe 100644
+--- a/drivers/clk/socfpga/Kconfig
++++ b/drivers/clk/socfpga/Kconfig
+@@ -13,7 +13,8 @@ config CLK_INTEL_SOCFPGA32
+ 	default ARM && ARCH_INTEL_SOCFPGA
+ 
+ config CLK_INTEL_SOCFPGA64
+-	bool "Intel Stratix / Agilex / N5X / Agilex5 clock controller support" if COMPILE_TEST && (!ARM64 || !ARCH_INTEL_SOCFPGA)
++	bool "Intel Stratix / Agilex / N5X / Agilex5 / Agilex72 clock controller support" \
++		if COMPILE_TEST && (!ARM64 || !ARCH_INTEL_SOCFPGA)
+ 	default ARM64 && ARCH_INTEL_SOCFPGA
+ 
+ endif # CLK_INTEL_SOCFPGA
+diff --git a/drivers/clk/socfpga/Makefile b/drivers/clk/socfpga/Makefile
+index a1ea2b988eaf..97af3dfdbbad 100644
+--- a/drivers/clk/socfpga/Makefile
++++ b/drivers/clk/socfpga/Makefile
+@@ -3,4 +3,4 @@ obj-$(CONFIG_CLK_INTEL_SOCFPGA32) += clk.o clk-gate.o clk-pll.o clk-periph.o \
+ 				     clk-pll-a10.o clk-periph-a10.o clk-gate-a10.o
+ obj-$(CONFIG_CLK_INTEL_SOCFPGA64) += clk-s10.o \
+ 				     clk-pll-s10.o clk-periph-s10.o clk-gate-s10.o \
+-				     clk-agilex.o clk-agilex5.o
++				     clk-agilex.o clk-agilex5.o clk-agilex72.o
+diff --git a/drivers/clk/socfpga/clk-agilex72.c b/drivers/clk/socfpga/clk-agilex72.c
 new file mode 100644
-index 000000000000..cb063981f019
+index 000000000000..e350d8a9bb4d
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/altr,agilex72-clkmgr.yaml
-@@ -0,0 +1,86 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/altr,agilex72-clkmgr.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
++++ b/drivers/clk/socfpga/clk-agilex72.c
+@@ -0,0 +1,1181 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2026, Altera Corporation
++ */
++#include <linux/slab.h>
++#include <linux/clk-provider.h>
++#include <linux/io.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/string.h>
++#include <dt-bindings/clock/altr,agilex72-clkmgr.h>
++#include "clk-agilex72.h"
 +
-+title: Altera SoCFPGA Agilex72 clock manager
++#define EMAC_BYPASS_OFFSET          0x10
++#define CLK_MGR_FREE_SHIFT          16
++#define CLK_MGR_FREE_MASK           0x7
++#define PERI_CLK_CNT_DIV_WIDTH      11
++#define BOOTCLKSRC_MASK             0x2000000
++#define BOOTCLKSRC_SHIFT            25
++#define SOCFPGA_PLL_POWER           0
++#define BOOT_CLK                    "boot_clk"
++#define CLK_MGR_PLL_CLK_SRC_SHIFT   27
++#define CLK_MGR_PLL_CLK_SRC_MASK    0x3
++#define PLL_RATE_REG_OFFSET         0x4
++#define PLL_CR_N_HI_MASK            0xFF
++#define PLL_CR_N_LO_MASK            0x1FE00
++#define PLL_CR_N_LO_SHIFT           9
++#define PLL_CRHI_M_MASK             0x1FF00000
++#define PLL_CRHI_M_SHIFT            20
++#define PLL_CR_C_MASK               0xFF
++#define PLL_CR_BYPASS_DIV_MASK      0x100
++#define PLL_FRACT_DIV_REG_OFFSET    0x5c
++#define PLL_CR_FRACT_DIV_MASK       0xFFFFFF
 +
-+maintainers:
-+  - Chiam, Evon <evon.chiam@altera.com>
++static bool agilex72_gate_is_emac(const char *name);
++static u8 agilex72_parent_index(const char * const *parents,
++				size_t num_parents, const char *parent_name);
++static unsigned long agilex72_boot_clk_recalc_rate(struct clk_hw *hwclk,
++						   unsigned long parent_rate);
++static unsigned long agilex72_clk_pll_recalc_rate(struct clk_hw *hwclk,
++						  unsigned long parent_rate);
++static unsigned long agilex72_peri_c_clk_recalc_rate(struct clk_hw *hwclk,
++						     unsigned long parent_rate);
++static unsigned long
++agilex72_clk_peri_cnt_clk_recalc_rate(struct clk_hw *hwclk,
++				      unsigned long parent_rate);
++static unsigned long agilex72_gate_clk_recalc_rate(struct clk_hw *hwclk,
++						   unsigned long parent_rate);
++static u8 agilex72_boot_get_parent(struct clk_hw *hwclk);
++static u8 agilex72_clk_pll_get_parent(struct clk_hw *hwclk);
++static u8 agilex72_peri_c_clk_get_parent(struct clk_hw *hwclk);
++static u8 agilex72_clk_periclk_get_parent(struct clk_hw *hwclk);
++static u8 agilex72_gate_get_parent(struct clk_hw *hwclk);
 +
-+description:
-+  The Altera Agilex72 Clock Manager is an integrated clock controller, which
-+  generates and supplies clock to all the modules.
++/* External parent clocks come from DT via fw_name */
++static const char * const boot_pll_parents[] = {
++	"osc1",
++	"cb-intosc-div2-clk",
++};
 +
-+properties:
-+  compatible:
-+    const: altr,agilex72-clkmgr
++static const char * const gppll0_clk_parents[] = {
++	"osc1",
++	"cb-intosc-div10-clk",
++	"f2s-free-clk",
++};
 +
-+  reg:
-+    items:
-+      - description: Clock manager registers
-+      - description: GPPLL0 registers
-+      - description: GPPLL1 registers
-+      - description: GPPLL2 registers
++static const char * const gppll1_clk_parents[] = {
++	"osc1",
++	"cb-intosc-div10-clk",
++	"f2s-free-clk",
++};
 +
-+  reg-names:
-+    items:
-+      - const: clkmgr
-+      - const: gppll0
-+      - const: gppll1
-+      - const: gppll2
++static const char * const gppll2_clk_parents[] = {
++	"osc1",
++	"cb-intosc-div10-clk",
++	"f2s-free-clk",
++};
 +
-+  '#clock-cells':
-+    const: 1
++/* Core free muxes */
++static const char * const comp0_free_mux[] = {
++	"gppll1-c0",
++	"osc1",
++	"cb-intosc-div2-clk",
++	"f2s-free-clk",
++};
 +
-+required:
-+  - compatible
-+  - reg
-+  - reg-names
-+  - '#clock-cells'
++static const char * const core2_free_mux[] = {
++	"gppll2-c0",
++	"osc1",
++	"cb-intosc-div2-clk",
++	"f2s-free-clk",
++};
 +
-+additionalProperties: false
++static const char * const core3_free_mux[] = {
++	"gppll2-c1",
++	"osc1",
++	"cb-intosc-div2-clk",
++	"f2s-free-clk",
++};
 +
-+examples:
-+  - |
-+    /* External reference clocks supplied to the clock manager */
-+    clocks {
-+      cb_intosc_div2_clk: cb-intosc-div2-clk {
-+        #clock-cells = <0>;
-+        compatible = "fixed-clock";
-+        clock-frequency = <0>;
-+      };
++static const char * const dsu_free_mux[] = {
++	"gppll1-c1",
++	"osc1",
++	"cb-intosc-div2-clk",
++	"f2s-free-clk",
++};
 +
-+      /* cb-intosc divided by 2, then by 5 (total divide-by-10) */
-+      cb_intosc_div10_clk: cb-intosc-div10-clk {
-+        #clock-cells = <0>;
-+        compatible = "fixed-factor-clock";
-+        clocks = <&cb_intosc_div2_clk>;
-+        clock-mult = <1>;
-+        clock-div = <5>;
-+      };
++static const char * const ccu_free_mux[] = {
++	"gppll0-c0",
++	"osc1",
++	"cb-intosc-div2-clk",
++	"f2s-free-clk",
++};
 +
-+      f2s_free_clk: f2s-free-clk {
-+        #clock-cells = <0>;
-+        compatible = "fixed-clock";
-+        clock-frequency = <0>;
-+      };
++static const char * const hsp_noc_free_mux[] = {
++	"gppll0-c0",
++	"osc1",
++	"cb-intosc-div2-clk",
++	"f2s-free-clk",
++};
 +
-+      osc1: osc1 {
-+        #clock-cells = <0>;
-+        compatible = "fixed-clock";
-+        clock-frequency = <0>;
-+      };
-+    };
++static const char * const lsp_noc_free_mux[] = {
++	"gppll0-c1",
++	"osc1",
++	"cb-intosc-div2-clk",
++	"f2s-free-clk",
++};
 +
-+    clkmgr: clock-controller@915c000 {
-+      compatible = "altr,agilex72-clkmgr";
-+      reg = <0x915c000 0x1000>,
-+            <0x915e000 0x1000>,
-+            <0x915f000 0x1000>,
-+            <0x9160000 0x1000>;
-+      reg-names = "clkmgr", "gppll0", "gppll1", "gppll2";
-+      #clock-cells = <1>;
-+    };
-+...
-diff --git a/include/dt-bindings/clock/altr,agilex72-clkmgr.h b/include/dt-bindings/clock/altr,agilex72-clkmgr.h
++static const char * const trace_free_mux[] = {
++	"gppll0-c2",
++	"osc1",
++	"cb-intosc-div2-clk",
++	"f2s-free-clk",
++};
++
++static const char * const emaca_free_mux[] = {
++	"gppll0-c0",
++	"osc1",
++	"cb-intosc-div2-clk",
++	"f2s-free-clk",
++};
++
++static const char * const emacb_free_mux[] = {
++	"gppll0-c0",
++	"osc1",
++	"cb-intosc-div2-clk",
++	"f2s-free-clk",
++};
++
++static const char * const emac_ptp_free_mux[] = {
++	"gppll0-c0",
++	"osc1",
++	"cb-intosc-div2-clk",
++	"f2s-free-clk",
++};
++
++static const char * const gpio_db_free_mux[] = {
++	"gppll0-c1",
++	"osc1",
++	"cb-intosc-div2-clk",
++	"f2s-free-clk",
++};
++
++static const char * const usb31_free_mux[] = {
++	"gppll0-c0",
++	"osc1",
++	"cb-intosc-div2-clk",
++	"f2s-free-clk",
++};
++
++static const char * const s2f_user0_free_mux[] = {
++	"gppll0-c1",
++	"osc1",
++	"cb-intosc-div2-clk",
++	"f2s-free-clk",
++};
++
++static const char * const s2f_user1_free_mux[] = {
++	"gppll0-c1",
++	"osc1",
++	"cb-intosc-div2-clk",
++	"f2s-free-clk",
++};
++
++static const char * const xspi_phy_clk_mux[] = {
++	"gppll0-c3",
++	"osc1",
++	"cb-intosc-div2-clk",
++	"f2s-free-clk",
++};
++
++static const char * const memdevice_phy_clk_mux[] = {
++	"gppll0-c3",
++	"osc1",
++	"cb-intosc-div2-clk",
++	"f2s-free-clk",
++};
++
++/* Secondary muxes between free_clk and boot_clk */
++static const char * const comp0_mux[] = {
++	"comp0_free_clk",
++	BOOT_CLK,
++};
++
++static const char * const core2_mux[] = {
++	"core2_free_clk",
++	BOOT_CLK,
++};
++
++static const char * const core3_mux[] = {
++	"core3_free_clk",
++	BOOT_CLK,
++};
++
++static const char * const mpu_mux[] = {
++	"dsu_free_clk",
++	BOOT_CLK,
++};
++
++static const char * const ccu_mux[] = {
++	"ccu_free_clk",
++	BOOT_CLK,
++};
++
++static const char * const hsp_noc_mux[] = {
++	"hsp_noc_free_clk",
++	BOOT_CLK,
++};
++
++static const char * const lsp_noc_mux[] = {
++	"lsp_noc_free_clk",
++	BOOT_CLK,
++};
++
++static const char * const cs_at_mux[] = {
++	"lsp_noc_free_clk",
++	BOOT_CLK,
++};
++
++static const char * const cs_pdbg_mux[] = {
++	"lsp_noc_free_clk",
++	BOOT_CLK,
++};
++
++static const char * const cs_trace_mux[] = {
++	"trace_free_clk",
++	BOOT_CLK,
++};
++
++static const char * const emac_mux[] = {
++	"emaca_div_clk",
++	"emacb_div_clk",
++	BOOT_CLK,
++};
++
++static const char * const emac_ptp_mux[] = {
++	"emac_ptp_free_clk",
++	BOOT_CLK,
++};
++
++static const char * const gpio_db_mux[] = {
++	"gpio_db_free_clk",
++	BOOT_CLK,
++};
++
++static const char * const usb31_mux[] = {
++	"usb31_free_clk",
++	BOOT_CLK,
++};
++
++static const char * const s2f_user0_mux[] = {
++	"s2f_user0_free_clk",
++	BOOT_CLK,
++};
++
++static const char * const s2f_user1_mux[] = {
++	"s2f_user1_free_clk",
++	BOOT_CLK,
++};
++
++static const char * const xspi_mux[] = {
++	"xspi_phy_free_clk",
++	BOOT_CLK,
++};
++
++static const char * const memdevice_phy_mux[] = {
++	"memdevice_phy_free_clk",
++	BOOT_CLK,
++};
++
++static const struct agilex72_pll_clock pll_clks[] = {
++	{
++		.id = AGILEX72_BOOT_CLK,
++		.name = BOOT_CLK,
++		.parent_names = boot_pll_parents,
++		.num_parents = ARRAY_SIZE(boot_pll_parents),
++		.offset = 0x4,
++	},
++	{
++		.id = AGILEX72_GPPLL0_CLK,
++		.name = "gppll0",
++		.parent_names = gppll0_clk_parents,
++		.num_parents = ARRAY_SIZE(gppll0_clk_parents),
++		.offset = 0x160,
++	},
++	{
++		.id = AGILEX72_GPPLL1_CLK,
++		.name = "gppll1",
++		.parent_names = gppll1_clk_parents,
++		.num_parents = ARRAY_SIZE(gppll1_clk_parents),
++		.offset = 0x80,
++	},
++	{
++		.id = AGILEX72_GPPLL2_CLK,
++		.name = "gppll2",
++		.parent_names = gppll2_clk_parents,
++		.num_parents = ARRAY_SIZE(gppll2_clk_parents),
++		.offset = 0x60,
++	},
++};
++
++static const struct agilex72_perip_c_clock main_perip_c_clks[] = {
++	{ AGILEX72_GPPLL0_C0_CLK,
++	  "gppll0-c0", "gppll0", 1, 0x24, 23,  0, 8, 8 },
++	{ AGILEX72_GPPLL0_C1_CLK,
++	  "gppll0-c1", "gppll0", 1, 0x28, 14, 23, 8, 8 },
++	{ AGILEX72_GPPLL0_C2_CLK,
++	  "gppll0-c2", "gppll0", 1, 0x2c,  0,  9, 8, 8 },
++	{ AGILEX72_GPPLL0_C3_CLK,
++	  "gppll0-c3", "gppll0", 1, 0x30,  0,  9, 8, 8 },
++	{ AGILEX72_GPPLL0_C4_CLK,
++	  "gppll0-c4", "gppll0", 1, 0x38,  0,  9, 8, 8 },
++	{ AGILEX72_GPPLL0_C5_CLK,
++	  "gppll0-c5", "gppll0", 1, 0x3c,  0,  9, 8, 8 },
++	{ AGILEX72_GPPLL0_C6_CLK,
++	  "gppll0-c6", "gppll0", 1, 0x40,  0,  9, 8, 8 },
++	{ AGILEX72_GPPLL1_C0_CLK,
++	  "gppll1-c0", "gppll1", 1, 0x24, 23,  0, 8, 8 },
++	{ AGILEX72_GPPLL1_C1_CLK,
++	  "gppll1-c1", "gppll1", 1, 0x28, 14, 23, 8, 8 },
++	{ AGILEX72_GPPLL2_C0_CLK,
++	  "gppll2-c0", "gppll2", 1, 0x24, 23,  0, 8, 8 },
++	{ AGILEX72_GPPLL2_C1_CLK,
++	  "gppll2-c1", "gppll2", 1, 0x28, 14, 23, 8, 8 },
++};
++
++/* Non-SW clock-gated enabled clocks */
++static const struct agilex72_perip_cnt_clock main_perip_cnt_clks[] = {
++	{ AGILEX72_COMP0_FREE_CLK, "comp0_free_clk",
++	  comp0_free_mux, ARRAY_SIZE(comp0_free_mux), 0xbc },
++	{ AGILEX72_CORE2_FREE_CLK, "core2_free_clk",
++	  core2_free_mux, ARRAY_SIZE(core2_free_mux), 0xb8 },
++	{ AGILEX72_CORE3_FREE_CLK, "core3_free_clk",
++	  core3_free_mux, ARRAY_SIZE(core3_free_mux), 0xb4 },
++	{ AGILEX72_DSU_FREE_CLK, "dsu_free_clk",
++	  dsu_free_mux, ARRAY_SIZE(dsu_free_mux), 0xc0 },
++	{ AGILEX72_CCU_FREE_CLK, "ccu_free_clk",
++	  ccu_free_mux, ARRAY_SIZE(ccu_free_mux), 0xc4 },
++	{ AGILEX72_HSP_NOC_FREE_CLK, "hsp_noc_free_clk",
++	  hsp_noc_free_mux, ARRAY_SIZE(hsp_noc_free_mux), 0x104 },
++	{ AGILEX72_LSP_NOC_FREE_CLK, "lsp_noc_free_clk",
++	  lsp_noc_free_mux, ARRAY_SIZE(lsp_noc_free_mux), 0x108 },
++	{ AGILEX72_TRACE_FREE_CLK, "trace_free_clk",
++	  trace_free_mux, ARRAY_SIZE(trace_free_mux), 0x144 },
++	{ AGILEX72_EMAC_A_FREE_CLK, "emaca_free_clk",
++	  emaca_free_mux, ARRAY_SIZE(emaca_free_mux), 0x128 },
++	{ AGILEX72_EMAC_B_FREE_CLK, "emacb_free_clk",
++	  emacb_free_mux, ARRAY_SIZE(emacb_free_mux), 0x12c },
++	{ AGILEX72_EMAC_PTP_FREE_CLK, "emac_ptp_free_clk",
++	  emac_ptp_free_mux, ARRAY_SIZE(emac_ptp_free_mux), 0x130 },
++	{ AGILEX72_GPIO_DB_FREE_CLK, "gpio_db_free_clk",
++	  gpio_db_free_mux, ARRAY_SIZE(gpio_db_free_mux), 0x134 },
++	{ AGILEX72_USB31_FREE_CLK, "usb31_free_clk",
++	  usb31_free_mux, ARRAY_SIZE(usb31_free_mux), 0x140 },
++	{ AGILEX72_S2F_USER0_FREE_CLK, "s2f_user0_free_clk",
++	  s2f_user0_free_mux, ARRAY_SIZE(s2f_user0_free_mux), 0x138 },
++	{ AGILEX72_S2F_USER1_FREE_CLK, "s2f_user1_free_clk",
++	  s2f_user1_free_mux, ARRAY_SIZE(s2f_user1_free_mux), 0x13c },
++	{ AGILEX72_XSPI_PHY_FREE_CLK, "xspi_phy_free_clk",
++	  xspi_phy_clk_mux, ARRAY_SIZE(xspi_phy_clk_mux), 0x154 },
++	{ AGILEX72_MEMDEVICE_PHY_FREE_CLK, "memdevice_phy_free_clk",
++	  memdevice_phy_clk_mux, ARRAY_SIZE(memdevice_phy_clk_mux), 0x148 },
++};
++
++static const char * const hsp_mp_clk_parent[] = { "hsp_mp_clk" };
++static const char * const lsp_main_parent[] = { "lsp_main_clk" };
++static const char * const lsp_mp_parent[] = { "lsp_mp_clk" };
++static const char * const lsp_sp_parent[] = { "lsp_sp_clk" };
++static const char * const usb31_bus_clk_early_parents[] = { "hsp_main_clk" };
++static const char * const emaca_div_parents[] = { "emaca_free_clk" };
++static const char * const emacb_div_parents[] = { "emacb_free_clk" };
++
++/* SW Clock gate enabled clocks */
++static const struct agilex72_gate_clock gate_clks[] = {
++	{ AGILEX72_COMP0_CLK, "comp0_clk", comp0_mux,
++	  ARRAY_SIZE(comp0_mux), 0x30, 8, 0, 0, 0, 0x3c, 5, 0 },
++	{ AGILEX72_CORE2_CLK, "core2_clk", core2_mux,
++	  ARRAY_SIZE(core2_mux), 0x30, 10, 0, 0, 0, 0x3c, 10, 0 },
++	{ AGILEX72_CORE3_CLK, "core3_clk", core3_mux,
++	  ARRAY_SIZE(core3_mux), 0x30, 11, 0, 0, 0, 0x3c, 11, 0 },
++	{ AGILEX72_MPU_CLK, "mpu_clk", mpu_mux,
++	  ARRAY_SIZE(mpu_mux), 0x30, 7, 0, 0, 0, 0x3c, 4, 0 },
++	{ AGILEX72_CCU_CLK, "ccu_clk", ccu_mux,
++	  ARRAY_SIZE(ccu_mux), 0x30, 6, 0, 0, 0, 0x3c, 3, 0 },
++	{ AGILEX72_APU_SYS_FREE_CLK, "apu_sys_free_clk", ccu_mux,
++	  ARRAY_SIZE(ccu_mux), 0, 0, 0x50, 22, 2, 0x3c, 3, 0 },
++	{ AGILEX72_HSP_SYS_FREE_CLK, "hsp_sys_free_clk", hsp_noc_mux,
++	  ARRAY_SIZE(hsp_noc_mux), 0, 0, 0x10c, 8, 2, 0xf0, 9, 0 },
++	{ AGILEX72_HSP_MAIN_FREE_CLK, "hsp_main_free_clk", hsp_noc_mux,
++	  ARRAY_SIZE(hsp_noc_mux), 0, 0, 0, 0, 0, 0xf0, 9, 0 },
++	{ AGILEX72_HSP_MAIN_CLK, "hsp_main_clk", hsp_noc_mux,
++	  ARRAY_SIZE(hsp_noc_mux), 0xe0, 1, 0, 0, 0, 0xf0, 9, 0 },
++	{ AGILEX72_HSP_MP_CLK, "hsp_mp_clk", hsp_noc_mux,
++	  ARRAY_SIZE(hsp_noc_mux), 0xe0, 2, 0x10c, 10, 2, 0xf0, 9, 0 },
++	{ AGILEX72_HSP_SP_CLK, "hsp_sp_clk", hsp_noc_mux,
++	  ARRAY_SIZE(hsp_noc_mux), 0xe0, 3, 0x10c, 12, 2, 0xf0, 9, 0 },
++	{ AGILEX72_USB2OTG_HCLK, "usb2otg_hclk", hsp_mp_clk_parent,
++	  1, 0xe0, 0, 0, 0, 0, 0, 0, 0 },
++	{ AGILEX72_LSP_SYS_FREE_CLK, "lsp_sys_free_clk", lsp_noc_mux,
++	  ARRAY_SIZE(lsp_noc_mux), 0, 0, 0x10c, 2, 2, 0xf0, 9, 0 },
++	{ AGILEX72_LSP_MAIN_FREE_CLK, "lsp_main_free_clk", lsp_noc_mux,
++	  ARRAY_SIZE(lsp_noc_mux), 0xe0, 0, 0, 0, 0, 0xf0, 9, 0 },
++	{ AGILEX72_LSP_MAIN_CLK, "lsp_main_clk", lsp_noc_mux,
++	  ARRAY_SIZE(lsp_noc_mux), 0xe0, 1, 0, 0, 0, 0xf0, 9, 0 },
++	{ AGILEX72_LSP_MP_CLK, "lsp_mp_clk", lsp_noc_mux,
++	  ARRAY_SIZE(lsp_noc_mux), 0xe0, 2, 0x10c, 4, 2, 0xf0, 9, 0 },
++	{ AGILEX72_LSP_SP_CLK, "lsp_sp_clk", lsp_noc_mux,
++	  ARRAY_SIZE(lsp_noc_mux), 0xe0, 3, 0x10c, 6, 2, 0xf0, 9, 0 },
++	{ AGILEX72_SPIM_0_CLK, "spim_0_clk", lsp_main_parent,
++	  1, 0xd0, 11, 0, 0, 0, 0, 0, 0 },
++	{ AGILEX72_SPIM_1_CLK, "spim_1_clk", lsp_main_parent,
++	  1, 0xd0, 12, 0, 0, 0, 0, 0, 0 },
++	{ AGILEX72_SPIS_0_CLK, "spis_0_clk", lsp_main_parent,
++	  1, 0xd0, 13, 0, 0, 0, 0, 0, 0 },
++	{ AGILEX72_SPIS_1_CLK, "spis_1_clk", lsp_main_parent,
++	  1, 0xd0, 14, 0, 0, 0, 0, 0, 0 },
++	{ AGILEX72_DMA_0_CORE_CLK, "dma_0_core_clk", lsp_main_parent,
++	  1, 0xd0, 15, 0, 0, 0, 0, 0, 0 },
++	{ AGILEX72_DMA_0_HS_CLK, "dma_0_hs_clk", lsp_mp_parent,
++	  1, 0xd0, 15, 0, 0, 0, 0, 0, 0 },
++	{ AGILEX72_DMA_1_CORE_CLK, "dma_1_core_clk", lsp_main_parent,
++	  1, 0xd0, 16, 0, 0, 0, 0, 0, 0 },
++	{ AGILEX72_DMA_1_HS_CLK, "dma_1_hs_clk", lsp_mp_parent,
++	  1, 0xd0, 16, 0, 0, 0, 0, 0, 0 },
++	{ AGILEX72_I3C_0_CORE_CLK, "i3c_0_core_clk", lsp_mp_parent,
++	  1, 0xd0, 22, 0, 0, 0, 0, 0, 0 },
++	{ AGILEX72_I3C_1_CORE_CLK, "i3c_1_core_clk", lsp_mp_parent,
++	  1, 0xd0, 23, 0, 0, 0, 0, 0, 0 },
++	{ AGILEX72_I2C_0_PCLK, "i2c_0_pclk", lsp_sp_parent,
++	  1, 0xd0, 17, 0, 0, 0, 0, 0, 0 },
++	{ AGILEX72_I2C_1_PCLK, "i2c_1_pclk", lsp_sp_parent,
++	  1, 0xd0, 18, 0, 0, 0, 0, 0, 0 },
++	{ AGILEX72_I2C_EMAC0_PCLK, "i2c_emac0_pclk", lsp_sp_parent,
++	  1, 0xd0, 19, 0, 0, 0, 0, 0, 0 },
++	{ AGILEX72_I2C_EMAC1_PCLK, "i2c_emac1_pclk", lsp_sp_parent,
++	  1, 0xd0, 20, 0, 0, 0, 0, 0, 0 },
++	{ AGILEX72_I2C_EMAC2_PCLK, "i2c_emac2_pclk", lsp_sp_parent,
++	  1, 0xd0, 21, 0, 0, 0, 0, 0, 0 },
++	{ AGILEX72_UART_0_PCLK, "uart_0_pclk", lsp_sp_parent,
++	  1, 0xd0, 23, 0, 0, 0, 0, 0, 0 },
++	{ AGILEX72_UART_1_PCLK, "uart_1_pclk", lsp_sp_parent,
++	  1, 0xd0, 24, 0, 0, 0, 0, 0, 0 },
++	{ AGILEX72_UART_2_PCLK, "uart_2_pclk", lsp_sp_parent,
++	  1, 0xd0, 25, 0, 0, 0, 0, 0, 0 },
++	{ AGILEX72_SPTIMER_0_PCLK, "sptimer_0_pclk", lsp_sp_parent,
++	  1, 0xd0, 29, 0, 0, 0, 0, 0, 0 },
++	{ AGILEX72_SPTIMER_1_PCLK, "sptimer_1_pclk", lsp_sp_parent,
++	  1, 0xd0, 30, 0, 0, 0, 0, 0, 0 },
++	{ AGILEX72_CS_AT_CLK, "cs_at_clk", cs_at_mux,
++	  ARRAY_SIZE(cs_at_mux), 0xe0, 4, 0x10c, 24, 2, 0xf0, 9, 0 },
++	{ AGILEX72_CS_PDBG_CLK, "cs_pdbg_clk", cs_pdbg_mux,
++	  ARRAY_SIZE(cs_pdbg_mux), 0xe0, 4, 0x10c, 28, 2, 0xf0, 9, 0 },
++	{ AGILEX72_CS_TRACE_CLK, "cs_trace_clk", cs_trace_mux,
++	  ARRAY_SIZE(cs_trace_mux), 0xe0, 4, 0x10c, 26, 2, 0xf0, 10, 0 },
++	{ AGILEX72_EMACA_DIV_CLK, "emaca_div_clk", emaca_div_parents,
++	  1, 0, 0, 0x118, 8, 2, 0, 0, 0 },
++	{ AGILEX72_EMACB_DIV_CLK, "emacb_div_clk", emacb_div_parents,
++	  1, 0, 0, 0x118, 10, 2, 0, 0, 0 },
++	{ AGILEX72_EMAC0_CLK, "emac0_clk", emac_mux,
++	  ARRAY_SIZE(emac_mux), 0xd0, 0, 0, 0, 0, 0x100, 26, 0 },
++	{ AGILEX72_EMAC1_CLK, "emac1_clk", emac_mux,
++	  ARRAY_SIZE(emac_mux), 0xd0, 1, 0, 0, 0, 0x100, 27, 0 },
++	{ AGILEX72_EMAC2_CLK, "emac2_clk", emac_mux,
++	  ARRAY_SIZE(emac_mux), 0xd0, 2, 0, 0, 0, 0x100, 28, 0 },
++	{ AGILEX72_EMAC_PTP_CLK, "emac_ptp_clk", emac_ptp_mux,
++	  ARRAY_SIZE(emac_ptp_mux), 0xd0, 3, 0, 0, 0, 0xf0, 2, 0 },
++	{ AGILEX72_GPIO_DB_CLK, "gpio_db_clk", gpio_db_mux,
++	  ARRAY_SIZE(gpio_db_mux), 0xd0, 4, 0x114, 0, 16, 0xf0, 3, 1 },
++	{ AGILEX72_USB31_SUSPEND_CLK, "usb31_suspend_clk", usb31_mux,
++	  ARRAY_SIZE(usb31_mux), 0xe0, 7, 0x118, 12, 6, 0xf0, 7, 1 },
++	{ AGILEX72_USB31_BUS_CLK_EARLY, "usb31_bus_clk_early",
++	  usb31_bus_clk_early_parents, 1, 0xe0, 7, 0, 0, 0, 0, 0, 0 },
++	{ AGILEX72_S2F_USER0_CLK, "s2f_user0_clk", s2f_user0_mux,
++	  ARRAY_SIZE(s2f_user0_mux), 0xd0, 27, 0, 0, 0, 0xf0, 4, 0 },
++	{ AGILEX72_S2F_USER1_CLK, "s2f_user1_clk", s2f_user1_mux,
++	  ARRAY_SIZE(s2f_user1_mux), 0xd0, 28, 0, 0, 0, 0xf0, 5, 0 },
++	{ AGILEX72_XSPI_PCLK, "xspi_pclk", lsp_mp_parent,
++	  1, 0xd0, 9, 0, 0, 0, 0, 0, 0 },
++	{ AGILEX72_XSPI_CLK, "xspi_clk", xspi_mux,
++	  ARRAY_SIZE(xspi_mux), 0xd0, 9, 0x110, 8, 2, 0xf0, 14, 0 },
++	{ AGILEX72_XSPI_PHY_CLK, "xspi_phy_clk", xspi_mux,
++	  ARRAY_SIZE(xspi_mux), 0xd0, 9, 0x110, 8, 2, 0xf0, 14, 0 },
++	{ AGILEX72_SDMMC0_SDPHY_REG_CLK, "sdmmc0_sdphy_reg_clk",
++	  lsp_mp_parent, 1, 0xd0, 5, 0, 0, 0, 0, 0, 0 },
++	{ AGILEX72_SDMMC1_SDPHY_REG_CLK, "sdmmc1_sdphy_reg_clk",
++	  lsp_mp_parent, 1, 0xd0, 7, 0, 0, 0, 0, 0, 0 },
++	{ AGILEX72_SDMMC0_SDMCLK, "sdmmc0_sdmclk", memdevice_phy_mux,
++	  ARRAY_SIZE(memdevice_phy_mux), 0xd0, 5, 0x110, 4, 2, 0xf0, 15, 0 },
++	{ AGILEX72_SDMMC1_SDMCLK, "sdmmc1_sdmclk", memdevice_phy_mux,
++	  ARRAY_SIZE(memdevice_phy_mux), 0xd0, 7, 0x110, 6, 2, 0xf0, 15, 0 },
++	{ AGILEX72_SDMMC0_PHY_CLK, "sdmmc0_phy_clk", memdevice_phy_mux,
++	  ARRAY_SIZE(memdevice_phy_mux), 0xd0, 5, 0x110, 4, 2, 0xf0, 15, 0 },
++	{ AGILEX72_SDMMC1_PHY_CLK, "sdmmc1_phy_clk", memdevice_phy_mux,
++	  ARRAY_SIZE(memdevice_phy_mux), 0xd0, 7, 0x110, 6, 2, 0xf0, 15, 0 },
++};
++
++static const struct clk_ops clk_boot_ops = {
++	.recalc_rate = agilex72_boot_clk_recalc_rate,
++	.get_parent = agilex72_boot_get_parent,
++};
++
++static const struct clk_ops clk_gppll_ops = {
++	.recalc_rate = agilex72_clk_pll_recalc_rate,
++	.get_parent = agilex72_clk_pll_get_parent,
++};
++
++static const struct clk_ops peri_c_clk_ops = {
++	.recalc_rate = agilex72_peri_c_clk_recalc_rate,
++	.get_parent = agilex72_peri_c_clk_get_parent,
++};
++
++static const struct clk_ops peri_cnt_clk_ops = {
++	.recalc_rate = agilex72_clk_peri_cnt_clk_recalc_rate,
++	.get_parent = agilex72_clk_periclk_get_parent,
++};
++
++static const struct clk_ops gateclk_ops = {
++	.recalc_rate = agilex72_gate_clk_recalc_rate,
++	.get_parent  = agilex72_gate_get_parent,
++};
++
++static bool agilex72_gate_is_emac(const char *name)
++{
++	unsigned int i;
++
++	for (i = 0; i < ARRAY_SIZE(gate_clks); i++) {
++		switch (gate_clks[i].id) {
++		case AGILEX72_EMAC0_CLK:
++		case AGILEX72_EMAC1_CLK:
++		case AGILEX72_EMAC2_CLK:
++			if (strcmp(name, gate_clks[i].name) == 0)
++				return true;
++			break;
++		default:
++			break;
++		}
++	}
++
++	return false;
++}
++
++static u8 agilex72_parent_index(const char * const *parents,
++				size_t num_parents, const char *parent_name)
++{
++	for (size_t i = 0; i < num_parents; i++) {
++		if (strcmp(parents[i], parent_name) == 0)
++			return (u8)i;
++	}
++
++	return 0;
++}
++
++static unsigned long agilex72_boot_clk_recalc_rate(struct clk_hw *hwclk,
++						   unsigned long parent_rate)
++{
++	return parent_rate;
++}
++
++static unsigned long agilex72_clk_pll_recalc_rate(struct clk_hw *hwclk,
++						  unsigned long parent_rate)
++{
++	struct agilex72_pll *socfpgaclk =
++		container_of(hwclk, struct agilex72_pll, hw.hw);
++	unsigned long long vco_freq;
++	u32 reg, cr_n_hi, cr_n_lo, crhi_m, n_div, cr_fract_div_ratio;
++	bool bypass;
++
++	reg = readl(socfpgaclk->pll_base + PLL_RATE_REG_OFFSET);
++	bypass = (reg & PLL_CR_BYPASS_DIV_MASK);
++
++	cr_n_hi = reg & PLL_CR_N_HI_MASK;
++	cr_n_lo = (reg & PLL_CR_N_LO_MASK) >> PLL_CR_N_LO_SHIFT;
++	crhi_m  = (reg & PLL_CRHI_M_MASK)  >> PLL_CRHI_M_SHIFT;
++
++	reg = readl(socfpgaclk->pll_base + PLL_FRACT_DIV_REG_OFFSET);
++	cr_fract_div_ratio = reg & PLL_CR_FRACT_DIV_MASK;
++
++	/* 0 represents the value 256. */
++	if (!cr_n_hi)
++		cr_n_hi = 256;
++	if (!cr_n_lo)
++		cr_n_lo = 256;
++
++	n_div = bypass ? 1 : cr_n_lo + cr_n_hi;
++
++	/* bypass: vco = parent_rate * (crhi_m + cr_fract_div_ratio / 2^24) / 1
++	 * normal: vco = parent_rate * (crhi_m + cr_fract_div_ratio / 2^24) / n_div
++	 * Rearranged to avoid floating point:
++	 *   num = parent_rate * (crhi_m * 2^24 + cr_fract_div_ratio)
++	 *   vco = num / (n_div * 2^24)
++	 */
++	vco_freq  = (unsigned long long)parent_rate *
++		    (((unsigned long long)crhi_m << 24) + cr_fract_div_ratio);
++	vco_freq /= (unsigned long long)n_div << 24;
++	return (unsigned long)vco_freq;
++}
++
++static unsigned long agilex72_peri_c_clk_recalc_rate(struct clk_hw *hwclk,
++						     unsigned long parent_rate)
++{
++	struct agilex72_periph_clk *socfpgaclk =
++		container_of(hwclk, struct agilex72_periph_clk, hw.hw);
++	u32 reg, crhi_c, crlo_c, c_div;
++	bool bypass;
++
++	reg    = readl(socfpgaclk->div_reg);
++	bypass = (reg >> socfpgaclk->div_hi_shift) & PLL_CR_BYPASS_DIV_MASK;
++
++	crlo_c = (reg >> socfpgaclk->div_lo_shift) & PLL_CR_C_MASK;
++	crhi_c = (reg >> socfpgaclk->div_hi_shift) & PLL_CR_C_MASK;
++
++	/* 0 represents the value 256. */
++	if (!crhi_c)
++		crhi_c = 256;
++	if (!crlo_c)
++		crlo_c = 256;
++
++	c_div = bypass ? 1 : crhi_c + crlo_c;
++
++	return parent_rate / c_div;
++}
++
++static unsigned long
++agilex72_clk_peri_cnt_clk_recalc_rate(struct clk_hw *hwclk,
++				      unsigned long parent_rate)
++{
++	struct agilex72_periph_clk *socfpgaclk;
++	unsigned long div;
++
++	socfpgaclk = container_of(hwclk, struct agilex72_periph_clk, hw.hw);
++	div = readl(socfpgaclk->hw.reg);
++	div &= GENMASK(PERI_CLK_CNT_DIV_WIDTH - 1, 0);
++	div += 1;  /* actual divisor is field_value + 1 */
++
++	return parent_rate / div;
++}
++
++static unsigned long agilex72_gate_clk_recalc_rate(struct clk_hw *hwclk,
++						   unsigned long parent_rate)
++{
++	struct agilex72_gate_clk *socfpgaclk = container_of(hwclk,
++		struct agilex72_gate_clk, hw.hw);
++	u32 div = 1, val;
++
++	if (socfpgaclk->div_reg) {
++		val = readl(socfpgaclk->div_reg) >> socfpgaclk->div_shift;
++		val &= GENMASK(socfpgaclk->div_width - 1, 0);
++		if (socfpgaclk->div_linear)
++			div = val + 1;      /* linear encoding: field_value + 1 */
++		else
++			div = (1 << val);   /* log2 encoding: 2^field_value */
++	}
++	return parent_rate / div;
++}
++
++static u8 agilex72_boot_get_parent(struct clk_hw *hwclk)
++{
++	struct agilex72_pll *socfpgaclk = container_of(hwclk,
++		struct agilex72_pll, hw.hw);
++	u32 pll_src;
++	u8 parent;
++
++	pll_src = readl(socfpgaclk->hw.reg);
++	parent = (pll_src & BOOTCLKSRC_MASK) >> BOOTCLKSRC_SHIFT;
++	return parent;
++}
++
++static u8 agilex72_clk_pll_get_parent(struct clk_hw *hwclk)
++{
++	struct agilex72_pll *socfpgaclk =
++		container_of(hwclk, struct agilex72_pll, hw.hw);
++	u32 pll_src;
++	u8 parent;
++
++	pll_src = readl(socfpgaclk->hw.reg);
++	parent = (pll_src >> CLK_MGR_PLL_CLK_SRC_SHIFT) &
++		 CLK_MGR_PLL_CLK_SRC_MASK;
++	return parent;
++}
++
++static u8 agilex72_peri_c_clk_get_parent(struct clk_hw *hwclk)
++{
++	/* Peripheral C clocks (GPPLL output clocks) have a single fixed parent
++	 * (the GPPLL itself), so the parent index is always 0.
++	 */
++	return 0;
++}
++
++static u8 agilex72_clk_periclk_get_parent(struct clk_hw *hwclk)
++{
++	struct agilex72_periph_clk *socfpgaclk;
++	u32 clk_src;
++	u8 parent = 0;
++
++	socfpgaclk = container_of(hwclk, struct agilex72_periph_clk, hw.hw);
++
++	if (socfpgaclk->hw.reg) {
++		clk_src = readl(socfpgaclk->hw.reg);
++		parent = (clk_src >> CLK_MGR_FREE_SHIFT) & CLK_MGR_FREE_MASK;
++	}
++	return parent;
++}
++
++static u8 agilex72_gate_get_parent(struct clk_hw *hwclk)
++{
++	struct agilex72_gate_clk *socfpgaclk =
++		container_of(hwclk, struct agilex72_gate_clk, hw.hw);
++	void __iomem *bypass_reg = socfpgaclk->bypass_reg;
++	u32 mask, bypass_val, second_bypass;
++	u8 parent = 0;
++	const char *name = clk_hw_get_name(hwclk);
++
++	if (!bypass_reg)
++		return parent;
++
++	mask = (0x1 << socfpgaclk->bypass_shift);
++	bypass_val = readl(bypass_reg);
++	parent = ((bypass_val & mask) >> socfpgaclk->bypass_shift);
++
++	if (agilex72_gate_is_emac(name)) {
++		/*
++		 * EMAC clocks have a second bypass layer in a register
++		 * EMAC_BYPASS_OFFSET bytes below the main bypass register:
++		 *   bit 0: emaca path is bypassed to boot_clk (only when primary
++		 *          parent selects emaca, i.e. parent == 0)
++		 *   bit 1: emacb path is bypassed to boot_clk (only when primary
++		 *          parent selects emacb, i.e. parent == 1)
++		 */
++		u8 bootclk_bypass =
++			agilex72_parent_index(emac_mux, ARRAY_SIZE(emac_mux),
++					      "boot_clk");
++		/*
++		 * The second EMAC bypass register is always EMAC_BYPASS_OFFSET (0x10)
++		 * below the primary bypass register. For all EMAC clocks the primary
++		 * bypass_reg is regbase+0x100, so this gives regbase+0xf0 which is
++		 * within the mapped clkmgr window.
++		 */
++		second_bypass = readl(bypass_reg - EMAC_BYPASS_OFFSET);
++		if (second_bypass & 0x1)
++			if (parent == 0) /* only applicable if parent is emaca */
++				parent = bootclk_bypass;
++
++		if (second_bypass & 0x2)
++			if (parent == 1) /* only applicable if parent is emacb */
++				parent = bootclk_bypass;
++	}
++
++	return parent;
++}
++
++static struct clk_hw *
++agilex72_register_pll(const struct agilex72_pll_clock *clks,
++		      void __iomem *base, void __iomem *pll_base)
++{
++	struct clk_hw *hw_clk;
++	struct agilex72_pll *pll_clk;
++	struct clk_init_data init;
++	const char *name = clks->name;
++	int ret;
++
++	pll_clk = kzalloc_obj(*pll_clk);
++	if (!pll_clk)
++		return ERR_PTR(-ENOMEM);
++
++	if (strcmp(name, BOOT_CLK) == 0) {
++		init.ops = &clk_boot_ops;
++	} else {
++		pll_clk->pll_base = pll_base;
++		init.ops = &clk_gppll_ops;
++	}
++
++	pll_clk->hw.reg = base + clks->offset;
++
++	init.name = name;
++	init.flags = 0;
++	init.num_parents = clks->num_parents;
++	init.parent_names = clks->parent_names;
++	pll_clk->hw.hw.init = &init;
++	pll_clk->hw.bit_idx = SOCFPGA_PLL_POWER;
++	hw_clk = &pll_clk->hw.hw;
++
++	ret = clk_hw_register(NULL, hw_clk);
++	if (ret) {
++		kfree(pll_clk);
++		return ERR_PTR(ret);
++	}
++	return hw_clk;
++}
++
++static struct clk_hw *
++agilex72_register_periph(const struct agilex72_perip_c_clock *clks,
++			 void __iomem *pll_base)
++{
++	struct agilex72_periph_clk *periph_clk;
++	struct clk_init_data init;
++	const char *name = clks->name;
++	struct clk_hw *hw_clk;
++	int ret;
++
++	periph_clk = kzalloc_obj(*periph_clk);
++	if (!periph_clk)
++		return ERR_PTR(-ENOMEM);
++
++	periph_clk->div_lo_shift = clks->div_lo_shift;
++	periph_clk->div_hi_shift = clks->div_hi_shift;
++	periph_clk->div_reg = pll_base + clks->div_offset;
++	periph_clk->hw.reg  = pll_base;
++
++	init.name = name;
++	init.ops = &peri_c_clk_ops;
++	init.flags = 0;
++
++	init.num_parents = clks->num_parents;
++	init.parent_names = &clks->parent_name;
++
++	periph_clk->hw.hw.init = &init;
++	hw_clk = &periph_clk->hw.hw;
++
++	ret = clk_hw_register(NULL, hw_clk);
++	if (ret) {
++		kfree(periph_clk);
++		return ERR_PTR(ret);
++	}
++	return hw_clk;
++}
++
++static struct clk_hw *
++agilex72_register_cnt_periph(const struct agilex72_perip_cnt_clock *clks,
++			     void __iomem *regbase)
++{
++	struct clk_hw *hw_clk;
++	struct agilex72_periph_clk *periph_clk;
++	struct clk_init_data init;
++	const char *name = clks->name;
++	int ret;
++
++	periph_clk = kzalloc_obj(*periph_clk);
++	if (!periph_clk)
++		return ERR_PTR(-ENOMEM);
++
++	periph_clk->hw.reg = regbase + clks->offset;
++
++	init.name = name;
++	init.ops = &peri_cnt_clk_ops;
++	init.flags = 0;
++	init.num_parents = clks->num_parents;
++	init.parent_names = clks->parent_names;
++	periph_clk->hw.hw.init = &init;
++	hw_clk = &periph_clk->hw.hw;
++
++	ret = clk_hw_register(NULL, hw_clk);
++	if (ret) {
++		kfree(periph_clk);
++		return ERR_PTR(ret);
++	}
++	return hw_clk;
++}
++
++static struct clk_hw *
++agilex72_register_gate(const struct agilex72_gate_clock *clks,
++		       void __iomem *regbase)
++{
++	struct clk_hw *hw_clk;
++	struct agilex72_gate_clk *socfpga_clk;
++	struct clk_init_data init;
++	int ret;
++
++	socfpga_clk = kzalloc_obj(*socfpga_clk);
++	if (!socfpga_clk)
++		return ERR_PTR(-ENOMEM);
++
++	socfpga_clk->hw.reg = regbase + clks->gate_reg;
++	socfpga_clk->hw.bit_idx = clks->gate_idx;
++
++	socfpga_clk->div_linear = clks->div_linear;
++
++	if (clks->div_reg)
++		socfpga_clk->div_reg = regbase + clks->div_reg;
++	else
++		socfpga_clk->div_reg = NULL;
++
++	socfpga_clk->div_width = clks->div_width;
++	socfpga_clk->div_shift = clks->div_offset;
++
++	if (clks->bypass_reg)
++		socfpga_clk->bypass_reg = regbase + clks->bypass_reg;
++	else
++		socfpga_clk->bypass_reg = NULL;
++	socfpga_clk->bypass_shift = clks->bypass_shift;
++
++	init.ops = &gateclk_ops;
++
++	init.name        = clks->name;
++	init.flags       = 0;
++	init.num_parents = clks->num_parents;
++	init.parent_names = clks->parent_names;
++	socfpga_clk->hw.hw.init = &init;
++
++	hw_clk = &socfpga_clk->hw.hw;
++
++	ret = clk_hw_register(NULL, &socfpga_clk->hw.hw);
++	if (ret) {
++		kfree(socfpga_clk);
++		return ERR_PTR(ret);
++	}
++	return hw_clk;
++}
++
++static int
++agilex72_clk_register_cnt_perip(const struct agilex72_perip_cnt_clock *clks,
++				int nums, struct agilex72_clock_data *data)
++{
++	struct clk_hw *hw_clk;
++	void __iomem *base = data->base[0];
++	int i;
++
++	for (i = 0; i < nums; i++) {
++		if (WARN_ON(clks[i].id >= data->clk_data.num)) {
++			pr_err("%s: clock %s id %u out of range (max %u)\n",
++			       __func__, clks[i].name, clks[i].id,
++			       data->clk_data.num);
++			continue;
++		}
++		hw_clk = agilex72_register_cnt_periph(&clks[i], base);
++		if (IS_ERR(hw_clk)) {
++			pr_err("%s: failed to register clock %s\n", __func__,
++			       clks[i].name);
++			continue;
++		}
++		data->clk_data.hws[clks[i].id] = hw_clk;
++	}
++
++	return 0;
++}
++
++static int agilex72_clk_register_gate(const struct agilex72_gate_clock *clks,
++				      int nums, struct agilex72_clock_data *data)
++{
++	struct clk_hw *hw_clk;
++	void __iomem *base = data->base[0];
++	int i;
++
++	for (i = 0; i < nums; i++) {
++		if (WARN_ON(clks[i].id >= data->clk_data.num)) {
++			pr_err("%s: clock %s id %u out of range (max %u)\n",
++			       __func__, clks[i].name, clks[i].id,
++			       data->clk_data.num);
++			continue;
++		}
++		hw_clk = agilex72_register_gate(&clks[i], base);
++		if (IS_ERR(hw_clk)) {
++			pr_err("%s: failed to register clock %s\n", __func__,
++			       clks[i].name);
++			continue;
++		}
++		data->clk_data.hws[clks[i].id] = hw_clk;
++	}
++
++	return 0;
++}
++
++/*
++ * Return the MMIO base address of the GPPLL whose DT resource name matches
++ * @name. The names "gppll0", "gppll1", "gppll2" are the resource names used
++ * in the device tree and map directly to base[1..3] as ioremapped in probe.
++ * Returns NULL for any clock that has no dedicated PLL register block
++ * (e.g. BOOT_CLK, which reuses the main clkmgr window via base[0]).
++ */
++static void __iomem *agilex72_pll_get_regbase(const char *name,
++					      void __iomem * const *base)
++{
++	if (!strcmp(name, "gppll0"))
++		return base[1]; /* gppll0 DT resource */
++	if (!strcmp(name, "gppll1"))
++		return base[2]; /* gppll1 DT resource */
++	if (!strcmp(name, "gppll2"))
++		return base[3]; /* gppll2 DT resource */
++	return NULL;
++}
++
++static int
++agilex72_clk_register_c_perip(const struct agilex72_perip_c_clock *clks,
++			      int nums, struct agilex72_clock_data *data)
++{
++	struct clk_hw *hw_clk;
++	int i;
++
++	for (i = 0; i < nums; i++) {
++		if (WARN_ON(clks[i].id >= data->clk_data.num)) {
++			pr_err("%s: clock %s id %u out of range (max %u)\n",
++			       __func__, clks[i].name, clks[i].id,
++			       data->clk_data.num);
++			continue;
++		}
++
++		/*
++		 * clks[i].parent_name holds the name of the parent GPPLL
++		 * (e.g. "gppll0"), which matches the DT resource name and
++		 * therefore the correct MMIO base.
++		 */
++		void __iomem *pll_base =
++			agilex72_pll_get_regbase(clks[i].parent_name, data->base);
++
++		if (!pll_base) {
++			pr_err("%s: no PLL base for clock %s (parent '%s')\n",
++			       __func__, clks[i].name, clks[i].parent_name);
++			continue;
++		}
++		hw_clk = agilex72_register_periph(&clks[i], pll_base);
++		if (IS_ERR(hw_clk)) {
++			pr_err("%s: failed to register clock %s\n", __func__,
++			       clks[i].name);
++			continue;
++		}
++		data->clk_data.hws[clks[i].id] = hw_clk;
++	}
++	return 0;
++}
++
++static int agilex72_clk_register_pll(const struct agilex72_pll_clock *clks,
++				     int nums, struct agilex72_clock_data *data)
++{
++	struct clk_hw *hw_clk;
++	int i;
++
++	for (i = 0; i < nums; i++) {
++		if (WARN_ON(clks[i].id >= data->clk_data.num)) {
++			pr_err("%s: clock %s id %u out of range (max %u)\n",
++			       __func__, clks[i].name, clks[i].id,
++			       data->clk_data.num);
++			continue;
++		}
++
++		/* clks[i].name matches the DT resource name for PLL clocks */
++		void __iomem *pll_base =
++			agilex72_pll_get_regbase(clks[i].name, data->base);
++
++		hw_clk = agilex72_register_pll(&clks[i],
++					       data->base[0], pll_base);
++		if (IS_ERR(hw_clk)) {
++			pr_err("%s: failed to register clock %s\n", __func__,
++			       clks[i].name);
++			continue;
++		}
++		data->clk_data.hws[clks[i].id] = hw_clk;
++	}
++
++	return 0;
++}
++
++static int agilex72_clkmgr_init(struct platform_device *pdev)
++{
++	struct device_node *np = pdev->dev.of_node;
++	struct device *dev = &pdev->dev;
++	struct agilex72_clock_data *clk_data;
++	void __iomem *base[4];
++	int i, num_clks;
++
++	base[0] = devm_platform_ioremap_resource_byname(pdev, "clkmgr");
++	if (IS_ERR(base[0]))
++		return PTR_ERR(base[0]);
++
++	base[1] = devm_platform_ioremap_resource_byname(pdev, "gppll0");
++	if (IS_ERR(base[1]))
++		return PTR_ERR(base[1]);
++
++	base[2] = devm_platform_ioremap_resource_byname(pdev, "gppll1");
++	if (IS_ERR(base[2]))
++		return PTR_ERR(base[2]);
++
++	base[3] = devm_platform_ioremap_resource_byname(pdev, "gppll2");
++	if (IS_ERR(base[3]))
++		return PTR_ERR(base[3]);
++
++	num_clks = AGILEX72_NUM_CLKS;
++
++	clk_data = devm_kzalloc(dev,
++				struct_size(clk_data, clk_data.hws, num_clks),
++				GFP_KERNEL);
++	if (!clk_data)
++		return -ENOMEM;
++
++	clk_data->base[0] = base[0];
++	clk_data->base[1] = base[1];
++	clk_data->base[2] = base[2];
++	clk_data->base[3] = base[3];
++	clk_data->clk_data.num = num_clks;
++
++	for (i = 0; i < num_clks; i++)
++		clk_data->clk_data.hws[i] = ERR_PTR(-ENOENT);
++
++	/*
++	 * Registration order matters: each layer depends on the previous.
++	 *   1. PLLs
++	 *   2. C-peripheral clocks (GPPLL output clocks)
++	 *   3. Cnt-peripheral clocks
++	 *   4. Gate clocks
++	 */
++	agilex72_clk_register_pll(pll_clks, ARRAY_SIZE(pll_clks),
++				  clk_data);
++
++	agilex72_clk_register_c_perip(main_perip_c_clks,
++				      ARRAY_SIZE(main_perip_c_clks),
++					  clk_data);
++
++	agilex72_clk_register_cnt_perip(main_perip_cnt_clks,
++					ARRAY_SIZE(main_perip_cnt_clks),
++					    clk_data);
++
++	agilex72_clk_register_gate(gate_clks,
++				   ARRAY_SIZE(gate_clks), clk_data);
++
++	/*
++	 * usb31_ref_clk is a 1:1 alias of usb31_suspend_clk. The DWC3
++	 * controller uses the same source for both its suspend and reference
++	 * clock inputs on this SoC. Register it as a fixed-factor (passthrough)
++	 * clock so that enabling it propagates to the parent gate without
++	 * touching any gate register of its own.
++	 */
++	clk_data->clk_data.hws[AGILEX72_USB31_REF_CLK] =
++		devm_clk_hw_register_fixed_factor(dev, "usb31_ref_clk",
++						  "usb31_suspend_clk", 0, 1, 1);
++	if (IS_ERR(clk_data->clk_data.hws[AGILEX72_USB31_REF_CLK]))
++		return dev_err_probe(dev,
++			PTR_ERR(clk_data->clk_data.hws[AGILEX72_USB31_REF_CLK]),
++			"failed to register clock usb31_ref_clk\n");
++
++	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, &clk_data->clk_data);
++	return 0;
++}
++
++static int agilex72_clkmgr_probe(struct platform_device *pdev)
++{
++	int (*probe_func)(struct platform_device *init_func);
++
++	probe_func = of_device_get_match_data(&pdev->dev);
++	if (!probe_func)
++		return -ENODEV;
++	return probe_func(pdev);
++}
++
++static const struct of_device_id agilex72_clkmgr_match_table[] = {
++	{ .compatible = "altr,agilex72-clkmgr",
++	  .data = agilex72_clkmgr_init },
++	{}
++};
++
++static struct platform_driver agilex72_clkmgr_driver = {
++	.probe		= agilex72_clkmgr_probe,
++	.driver		= {
++		.name	= "agilex72-clkmgr",
++		.suppress_bind_attrs = true,
++		.of_match_table = agilex72_clkmgr_match_table,
++	},
++};
++
++static int __init agilex72_clk_init(void)
++{
++	return platform_driver_register(&agilex72_clkmgr_driver);
++}
++core_initcall(agilex72_clk_init);
+diff --git a/drivers/clk/socfpga/clk-agilex72.h b/drivers/clk/socfpga/clk-agilex72.h
 new file mode 100644
-index 000000000000..c2158ac75a4f
+index 000000000000..e120fe97fd65
 --- /dev/null
-+++ b/include/dt-bindings/clock/altr,agilex72-clkmgr.h
-@@ -0,0 +1,116 @@
-+/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
++++ b/drivers/clk/socfpga/clk-agilex72.h
+@@ -0,0 +1,91 @@
++/* SPDX-License-Identifier:    GPL-2.0 */
 +/*
 + * Copyright (C) 2026, Altera Corporation
 + */
 +
-+#ifndef __DT_BINDINGS_ALTR_AGILEX72_CLKMGR_H
-+#define __DT_BINDINGS_ALTR_AGILEX72_CLKMGR_H
++#ifndef	__AGILEX72_CLK_H
++#define	__AGILEX72_CLK_H
 +
-+/* fixed rate clocks */
-+#define AGILEX72_OSC1                  0
-+#define AGILEX72_CB_INTOSC_DIV2_CLK    1
-+#define AGILEX72_CB_INTOSC_DIV10_CLK   2
-+#define AGILEX72_F2S_FREE_CLK          3
++#include <linux/clk-provider.h>
 +
-+/* gppll clocks */
-+#define AGILEX72_GPPLL0_CLK            4
-+#define AGILEX72_GPPLL1_CLK            5
-+#define AGILEX72_GPPLL2_CLK            6
-+#define AGILEX72_GPPLL0_C0_CLK         7
-+#define AGILEX72_GPPLL0_C1_CLK         8
-+#define AGILEX72_GPPLL0_C2_CLK         9
-+#define AGILEX72_GPPLL0_C3_CLK         10
-+#define AGILEX72_GPPLL0_C4_CLK         11
-+#define AGILEX72_GPPLL0_C5_CLK         12
-+#define AGILEX72_GPPLL0_C6_CLK         13
-+#define AGILEX72_GPPLL1_C0_CLK         14
-+#define AGILEX72_GPPLL1_C1_CLK         15
-+#define AGILEX72_GPPLL2_C0_CLK         16
-+#define AGILEX72_GPPLL2_C1_CLK         17
++struct agilex72_clock_data {
++	/*
++	 * MMIO bases ioremapped from DT resources with "reg-names" property
++	 * in probe:
++	 *   [0] - "clkmgr"  : main clock manager register block
++	 *   [1] - "gppll0"  : GP PLL 0 register block
++	 *   [2] - "gppll1"  : GP PLL 1 register block
++	 *   [3] - "gppll2"  : GP PLL 2 register block
++	 */
++	void __iomem *base[4];
 +
-+#define AGILEX72_BOOT_CLK              18
++	/* Must be last */
++	struct clk_hw_onecell_data	clk_data;
++};
 +
-+/* fixed factor clocks */
-+#define AGILEX72_COMP0_FREE_CLK        19
-+#define AGILEX72_CORE2_FREE_CLK        20
-+#define AGILEX72_CORE3_FREE_CLK        21
-+#define AGILEX72_DSU_FREE_CLK          22
-+#define AGILEX72_CCU_FREE_CLK          23
-+#define AGILEX72_HSP_NOC_FREE_CLK      24
-+#define AGILEX72_LSP_NOC_FREE_CLK      25
-+#define AGILEX72_TRACE_FREE_CLK        26
-+#define AGILEX72_EMAC_A_FREE_CLK       27
-+#define AGILEX72_EMAC_B_FREE_CLK       28
-+#define AGILEX72_EMAC_PTP_FREE_CLK     29
-+#define AGILEX72_GPIO_DB_FREE_CLK      30
-+#define AGILEX72_USB31_FREE_CLK        31
-+#define AGILEX72_S2F_USER0_FREE_CLK    32
-+#define AGILEX72_S2F_USER1_FREE_CLK    33
-+#define AGILEX72_XSPI_PHY_FREE_CLK     34
-+#define AGILEX72_MEMDEVICE_PHY_FREE_CLK 35
++struct agilex72_pll {
++	struct clk_gate     hw;
++	void __iomem       *pll_base;
++};
 +
-+/* Gate clocks */
-+#define AGILEX72_COMP0_CLK             36
-+#define AGILEX72_CORE2_CLK             37
-+#define AGILEX72_CORE3_CLK             38
-+#define AGILEX72_MPU_CLK               39
-+#define AGILEX72_CCU_CLK               40
-+#define AGILEX72_APU_SYS_FREE_CLK      41
-+#define AGILEX72_HSP_SYS_FREE_CLK      42
-+#define AGILEX72_HSP_MAIN_FREE_CLK     43
-+#define AGILEX72_HSP_MAIN_CLK          44
-+#define AGILEX72_HSP_MP_CLK            45
-+#define AGILEX72_HSP_SP_CLK            46
-+#define AGILEX72_USB2OTG_HCLK          47
-+#define AGILEX72_LSP_SYS_FREE_CLK      48
-+#define AGILEX72_LSP_MAIN_FREE_CLK     49
-+#define AGILEX72_LSP_MAIN_CLK          50
-+#define AGILEX72_LSP_MP_CLK            51
-+#define AGILEX72_LSP_SP_CLK            52
-+#define AGILEX72_SPIM_0_CLK            53
-+#define AGILEX72_SPIM_1_CLK            54
-+#define AGILEX72_SPIS_0_CLK            55
-+#define AGILEX72_SPIS_1_CLK            56
-+#define AGILEX72_DMA_0_CORE_CLK        57
-+#define AGILEX72_DMA_0_HS_CLK          58
-+#define AGILEX72_DMA_1_CORE_CLK        59
-+#define AGILEX72_DMA_1_HS_CLK          60
-+#define AGILEX72_I3C_0_CORE_CLK        61
-+#define AGILEX72_I3C_1_CORE_CLK        62
-+#define AGILEX72_I2C_0_PCLK            63
-+#define AGILEX72_I2C_1_PCLK            64
-+#define AGILEX72_I2C_EMAC0_PCLK        65
-+#define AGILEX72_I2C_EMAC1_PCLK        66
-+#define AGILEX72_I2C_EMAC2_PCLK        67
-+#define AGILEX72_UART_0_PCLK           68
-+#define AGILEX72_UART_1_PCLK           69
-+#define AGILEX72_UART_2_PCLK           70
-+#define AGILEX72_SPTIMER_0_PCLK        71
-+#define AGILEX72_SPTIMER_1_PCLK        72
-+#define AGILEX72_CS_AT_CLK             73
-+#define AGILEX72_CS_PDBG_CLK           74
-+#define AGILEX72_CS_TRACE_CLK          75
-+#define AGILEX72_EMACA_DIV_CLK         76
-+#define AGILEX72_EMACB_DIV_CLK         77
-+#define AGILEX72_EMAC0_CLK             78
-+#define AGILEX72_EMAC1_CLK             79
-+#define AGILEX72_EMAC2_CLK             80
-+#define AGILEX72_EMAC_PTP_CLK          81
-+#define AGILEX72_GPIO_DB_CLK           82
-+#define AGILEX72_USB31_SUSPEND_CLK     83
-+#define AGILEX72_USB31_BUS_CLK_EARLY   84
-+#define AGILEX72_S2F_USER0_CLK         85
-+#define AGILEX72_S2F_USER1_CLK         86
-+#define AGILEX72_XSPI_PCLK             87
-+#define AGILEX72_XSPI_CLK              88
-+#define AGILEX72_XSPI_PHY_CLK          89
-+#define AGILEX72_SDMMC0_SDPHY_REG_CLK  90
-+#define AGILEX72_SDMMC1_SDPHY_REG_CLK  91
-+#define AGILEX72_SDMMC0_SDMCLK         92
-+#define AGILEX72_SDMMC1_SDMCLK         93
-+#define AGILEX72_SDMMC0_PHY_CLK        94
-+#define AGILEX72_SDMMC1_PHY_CLK        95
-+#define AGILEX72_USB31_REF_CLK         96
-+#define AGILEX72_NUM_CLKS              97
++struct agilex72_periph_clk {
++	struct clk_gate  hw;
++	void __iomem    *div_reg;
++	u8               div_lo_shift;
++	u8               div_hi_shift;
++};
 +
-+#endif  /* __DT_BINDINGS_ALTR_AGILEX72_CLKMGR_H */
++struct agilex72_gate_clk {
++	struct clk_gate hw;
++	bool div_linear;
++	void __iomem *div_reg;
++	void __iomem *bypass_reg;
++	u8  div_width;	/* only valid if div_reg != 0 */
++	u8  div_shift;	/* only valid if div_reg != 0 */
++	u8  bypass_shift;      /* only valid if bypass_reg != 0 */
++};
++
++struct agilex72_pll_clock {
++	unsigned int	id;
++	const char	*name;
++	const char	* const *parent_names;
++	u8	num_parents;
++	unsigned long   offset;
++};
++
++struct agilex72_perip_c_clock {
++	unsigned int		id;
++	const char		*name;
++	const char		*parent_name;
++	u8			num_parents;
++	unsigned long		div_offset;
++	u8			div_lo_shift;
++	u8			div_hi_shift;
++	u8			div_lo_width;
++	u8			div_hi_width;
++};
++
++struct agilex72_perip_cnt_clock {
++	unsigned int		id;
++	const char		*name;
++	const char	* const *parent_names;
++	u8			num_parents;
++	unsigned long		offset;
++};
++
++struct agilex72_gate_clock {
++	unsigned int		id;
++	const char		*name;
++	const char	* const *parent_names;
++	u8			num_parents;
++	unsigned long		gate_reg;
++	u8			gate_idx;
++	unsigned long		div_reg;
++	u8			div_offset;
++	u8			div_width;
++	unsigned long		bypass_reg;
++	u8			bypass_shift;
++	bool			div_linear;
++};
++
++#endif	/* __AGILEX72_CLK_H */
 -- 
 2.43.7
 
