@@ -1,151 +1,179 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99578309DB5
-	for <linux-clk@vger.kernel.org>; Thu,  6 Aug 2026 13:01:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49832314B72;
+	Thu,  6 Aug 2026 13:02:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786021273; cv=none; b=BLyCy5BnRBoXR7b2UtEnk/zsfm6qjo+TDXjNiZSK7/n4sjGVf6vJ9stR4/nmk7bUSF3Lh4tjFLOShpGm/ESIH49wdaW5tlgJGOiBOvue9ooBhPYVjL2xBH3WgUHyEyG+5j9GulNTLhPmUnwSExBG0Jy5tR/FbjdREmb/m8yInZo=
+	t=1786021382; cv=none; b=G1/e+P2x9EqM6+8wu1LysoaVGO0l0n1kS0h3iPFjxPD86kRIoECnpMa4b+6mGKqcNYP3bY5KLTlG1lvQ3ElIhbWdzPpgXxDYFdNEe955HUlINUAUEqTYrejuEO6Mjsa0Y+mZjjaBUSKQz/wUAoZlA2tRNroPSZor65I1L9L43yw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786021273; c=relaxed/simple;
-	bh=s04HVknsUgxEi6jihGejSgB/TwVykML3ayZM3Cu0Ci8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MEblkWr1TLSxtSTK2xEIRdTUUZQxaeebJm7+OsmeIc+zGgGG0qRDfB2U+7oj+JM23PvfojvPE6ZzCu6sbncfRqwLTD3CtIzLDQ0bt0jRHziMi3Lww/W1Fu6Dkild4OS50LEc0+AqItwi4zzLQI4SHsGQjQFxe5ECMkDzi19cMfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=KHpvjunu; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1786021382; c=relaxed/simple;
+	bh=hYrDjwLvku5ojxnuYUcL4exJBEemvK5kPuchBihDAsA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ImToNPnoiH9NF3/aed9sNwubULx38nCc6M+4ggf9LA/4HisiabscqWZ0wF2ARBbvv/5VcbFKuDtuQH9TJbdT3LFVsG6MMcxgSYCIsxlLKakHgXkq20Y+5lOgOPS1B4lX7uzmLEzfROzrTCPOnTpov3lQDPsKIyM6aATyh2J6t3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Nk+IH3VC; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="KHpvjunu"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4955158f26aso14289935e9.3
-        for <linux-clk@vger.kernel.org>; Thu, 06 Aug 2026 06:01:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1786021264; x=1786626064; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:message-id:date
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=Zz60dwOt43+w/6UxrOfYd9SvtI6AkTQj3e04Pm3ApbA=;
-        b=KHpvjunuO30xZWFfXZPS5EyWGKAsSUbROB3EOXsZ0cYJkVGMmE5dYIArfAy2ohxDlf
-         Kk1prMsSr19HyRqOuFezX7bbnYRA3Mk1YOFHWdFF78/lmMsrzG0aywXczJulWLtzUHXd
-         2/l0i4Moc3SJ2h60sBxNxqVJXO0lrBgJY4BrAt5/sCkmIoEn59/2moxOVmKE+B7tYqX0
-         +MTxqGwTqa9GYN4p/+5eS2PaZcExTLdit+T/SHq7VN6glPQrcyAxNwO8qpbqk66yNKEw
-         5I0/tYqEqPYtZmbDdn8uULu5GmEhtAjb0cH9NjM73b5HVwAbBGsgu5N93FU4pBvf1Rs5
-         PqUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786021264; x=1786626064;
-        h=content-transfer-encoding:content-type:mime-version:message-id:date
-         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=Zz60dwOt43+w/6UxrOfYd9SvtI6AkTQj3e04Pm3ApbA=;
-        b=bORNXFKQm/t6UtCb2m5zQ4r5dT6SzvMtop7iT+ZS20gC7obRL/WI3zFVOJHdZ5bvi3
-         j53ugCjMx5nwc+vDXz5zZugYMNWeJZHhvmjNduTGi9LY3ATTbvmRz4xOvK6SMcsuzOLu
-         7VWS7usGLoTV9Hojtnbd2eJ0vOqADw/ZD48Yobwv5+F8WlDPWTMCETRelvG1U22qcdit
-         il2roz/oSXxvMlKlzrSiOCAjR4TUo5MtdGQ0UYnsplP5gGs4Dcm4FcftNtuO7mrdPD3x
-         4zQt3W6jjPDBlvYzHNXpVqiJqXhc8Hr198TjSA0a26CBGj7alykLdx3EAkBTTO98diyJ
-         m5Ow==
-X-Forwarded-Encrypted: i=1; AHgh+Rq8+0xIJrR7Vw1jtcplcfEiykVEJBBerACVHzxfwuoxt+91lH+OVARA3w2Q81FdgFeEh4HaBFQlPfI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFNRUS2t5AS97RNJYmY3MWT+0q8IAkGZO3VvUms63AxHQqzNJP
-	jiRTL4Ak7UKn6XZbY5TW1dRbC023i3M+H8h5y4Sq5DJy1Cjl/k7Z7eDs5QEpzK0g3fA=
-X-Gm-Gg: AR+sD136hGXYgUJDzkciKNR2wvije9uZNxrC2dRd2PWP65itW077EASijIWKnYhRTJN
-	iibGBP5tRSQcH5jv/NYVLL8f25KFd43ap7jRWCuk0qyZcofmeLmk4VxRCOqjjEydMuMtMdrvgQD
-	nV5hBcd42p7EjgC3EayY8ihtKBfGDlLu+LSewbKsEcJHcOVfhCPlEX1109FdFqUPmdrsAJUqiar
-	GjBCrUJ9Z0jHOzMeUHPXdQEhEeB0UMSlzeTwRB/g9zfmTn2S8HZIW+lbsVEa44RHIzvrd+MRKW9
-	sTWkmHzd8sipFGt1VFPuBAAz4oMuZfGBSBq4B0JnEcu0MBgBmTfXrivz/1zDKg3fvuFq84/S855
-	J9mc9bG2snG8WML6HvA0pnnGv71Ht/TPZ5Cexp33KubZQEoYmXDDdwu9jQYPU7A1+OLhUDil7NP
-	HsTeeQn+a+CY96Vp3pFYFPRSZqRCr9HX7JHSvcnTec9LWNRjWjpQBQ6pQwCwV5YA2X51jzbMa+2
-	uESpg2/RNeanbCQlRwnLys7KeacPFMb1wR8/gZgAuHpcYbdS/3D
-X-Received: by 2002:a05:600c:4514:b0:496:bbce:f3 with SMTP id 5b1f17b1804b1-4994e71ed7bmr185444205e9.6.1786021264085;
-        Thu, 06 Aug 2026 06:01:04 -0700 (PDT)
-Received: from localhost (p200300f65f0171047a0a39ae84ac36f8.dip0.t-ipconnect.de. [2003:f6:5f01:7104:7a0a:39ae:84ac:36f8])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4994e99319bsm102317795e9.3.2026.08.06.06.01.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Aug 2026 06:01:02 -0700 (PDT)
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig=20=28The=20Capable=20Hub=29?= <u.kleine-koenig@baylibre.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney@redhat.com>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>,
-	linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1] clk: samsung: Don't include <linux/mod_devicetable.h>
-Date: Thu,  6 Aug 2026 15:00:50 +0200
-Message-ID: <20260806130050.646488-2-u.kleine-koenig@baylibre.com>
-X-Mailer: git-send-email 2.55.0.11.g153666a7d9bb
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Nk+IH3VC"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1786021380; x=1817557380;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=hYrDjwLvku5ojxnuYUcL4exJBEemvK5kPuchBihDAsA=;
+  b=Nk+IH3VCB6zBZB0VIQnM/Fj9L63yxbgqtjo77NXSuoQR8aGsvV7wTPP0
+   aHTmKp/qw7nw/DDs0eHUmFkoIJU0DJMgrLL6ya85v6RVgqS5+2XXA6YzR
+   3vrU7pPDOYBdUmS/lxinSnDc1mn99ZfEYz58loj6DKVehQIMvOwvD4QcB
+   bzWmL/SQu8wOXCVvQENqXEWWfFCAxdJZ1KcmdieW2DhnlAFcMg/IWBh7O
+   i9jFak22JxAgNM4B0VRfFgiVPERyNK90KJgxPmJqjuGqj0Tubi0nDgHeH
+   nRH5SDsvS4NmhstG4kzKLP7WjTZMui2IWovRGs49L/A91r2uI7ol5E609
+   Q==;
+X-CSE-ConnectionGUID: 0qc2FoNGTGyyRXgSGarbrg==
+X-CSE-MsgGUID: 0mixByz4RDK7AcBInrpu7g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11867"; a="86557025"
+X-IronPort-AV: E=Sophos;i="6.25,208,1779174000"; 
+   d="scan'208";a="86557025"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2026 06:02:59 -0700
+X-CSE-ConnectionGUID: KgO1AvBZRVaZfc1qBgY8aA==
+X-CSE-MsgGUID: TVod3CvVQr+UPuOI1r6eLg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,208,1779174000"; 
+   d="scan'208";a="260837214"
+Received: from lkp-server01.sh.intel.com (HELO 6eda058d650d) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 06 Aug 2026 06:02:49 -0700
+Received: from kbuild by 6eda058d650d with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1wrxkE-00000000FAj-1p8p;
+	Thu, 06 Aug 2026 13:02:46 +0000
+Date: Thu, 6 Aug 2026 21:02:40 +0800
+From: kernel test robot <lkp@intel.com>
+To: Akari Tsuyukusa <akkun11.open@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Chen-Yu Tsai <wenst@chromium.org>,
+	Miles Chen <miles.chen@mediatek.com>
+Cc: oe-kbuild-all@lists.linux.dev, Akari Tsuyukusa <akkun11.open@gmail.com>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH] clk: mediatek: fix memory leak on module removal
+Message-ID: <202608062020.IFIwVdEc-lkp@intel.com>
+References: <20260629142348.273766-1-akkun11.open@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2343; i=u.kleine-koenig@baylibre.com; h=from:subject; bh=lIHh+rvtmrZa4l9g5kSUL7C6KlSIiEKm7NmxxSo2pLE=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBqdIWCm3HPr0hCHAGrzPj0/DIS42a7yNxhWa3uZ VFUr97OGGaJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCanSFggAKCRCPgPtYfRL+ TtcXB/wOB4MQkk0pa+l2wPt71bxqbbWzB6fo+l+C8SGGq7V68zVdVeFe+oshBLr8v/Ybi84XaGM asLUGXjlJxEOtGu6bkspgEh8vRvRVQghymOKjpS0RPINBrt8c1Y3MYKKYQ3zkL8vgGYm6+453SI gMe6glco7jsfp9eP7O44+PPR15Ph2kU5lkz67rMyfT+iNAQ3CSrfqEMIWUyooJO2ydGx5RTT/bX ADlcMPZhZeOBzb+Mypz/hUwSVGCRasgzjUVHwstfqOE5l22TbE/ElXt4MHME8LciGN06eFKlYRO ee/de81tsT9vPuqcMVm0YNysYjtAL1SUTeBf2y6o6IIf7k6P
-X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260629142348.273766-1-akkun11.open@gmail.com>
 
-All users of drivers/clk/samsung/clk.h live in drivers/clk/samsung (see
+Hi Akari,
 
-	git grep samsung/clk.h
+kernel test robot noticed the following build errors:
 
-). All these are only using of_device_id from
-the set of structures defined by this include (see
+[auto build test ERROR on clk/clk-next]
+[also build test ERROR on linus/master v7.2-rc6 next-20260805]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-	{ git grep -l clk\\.h drivers/clk/samsung/; echo drivers/clk/samsung/clk.h=
-; } | xargs grep -oh -E "\<(acpi_device_id|amba_id|ap_device_id|apr_device_=
-id|auxiliary_device_id|bcma_device_id|ccw_device_id|cdx_device_id|coreboot_=
-device_id|css_device_id|dfl_device_id|dmi_(device|system)_id|eisa_device_id=
-|fsl_mc_device_id|hda_device_id|hid_device_id|hv_vmbus_device_id|i2c_device=
-_id|i3c_device_id|ieee1394_device_id|input_device_id|ipack_device_id|isapnp=
-_device_id|ishtp_device_id|mcb_device_id|mdio_device_id|mei_cl_device_id|mh=
-i_device_id|mips_cdmm_device_id|of_device_id|parisc_device_id|pci_device_id=
-|pci_epf_device_id|pcmcia_device_id|platform_device_id|pnp_(card_)?device_i=
-d|rio_device_id|rpmsg_device_id|sdio_device_id|sdw_device_id|serio_device_i=
-d|slim_device_id|spi_device_id|spmi_device_id|ssam_device_id|ssb_device_id|=
-tb_service_id|tee_client_device_id|typec_device_id|ulpi_device_id|usb_devic=
-e_id|vchiq_device_id|vio_device_id|virtio_device_id|wmi_device_id|x86_(cpu|=
-device)_id|zorro_device_id|cpu_feature)\>" | sort | uniq -c
+url:    https://github.com/intel-lab-lkp/linux/commits/Akari-Tsuyukusa/clk-mediatek-fix-memory-leak-on-module-removal/20260805-032732
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+patch link:    https://lore.kernel.org/r/20260629142348.273766-1-akkun11.open%40gmail.com
+patch subject: [PATCH] clk: mediatek: fix memory leak on module removal
+config: sparc-randconfig-001-20260806 (https://download.01.org/0day-ci/archive/20260806/202608062020.IFIwVdEc-lkp@intel.com/config)
+compiler: sparc-linux-gcc (GCC) 16.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260806/202608062020.IFIwVdEc-lkp@intel.com/reproduce)
 
-).
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202608062020.IFIwVdEc-lkp@intel.com/
 
-So <linux/mod_devicetable.h> can be replaced by <linux/device-id/of.h>
-to get rid of another user of the former header.
+All errors (new ones prefixed by >>):
 
-Signed-off-by: Uwe Kleine-K=C3=B6nig (The Capable Hub) <u.kleine-koenig@bay=
-libre.com>
----
-Hello,
+   drivers/clk/mediatek/clk-mt8173-infracfg.c: In function 'clk_mt8173_infracfg_probe':
+>> drivers/clk/mediatek/clk-mt8173-infracfg.c:131:36: error: 'clk_data' undeclared (first use in this function); did you mean 'clk_gate'?
+     131 |         platform_set_drvdata(pdev, clk_data);
+         |                                    ^~~~~~~~
+         |                                    clk_gate
+   drivers/clk/mediatek/clk-mt8173-infracfg.c:131:36: note: each undeclared identifier is reported only once for each function it appears in
 
-note that this patch depends on
-ad428f5811bd7fb3d91fa002174de533f9da94d7. So if you want to apply it
-without having that commit yet in your tree, I recommend pulling
 
-	https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux device-id-r=
-ework
+vim +131 drivers/clk/mediatek/clk-mt8173-infracfg.c
 
-(or v7.2-rc2) first.
+    78	
+    79	static void clk_mt8173_infra_init_early(struct device_node *node)
+    80	{
+    81		int i;
+    82	
+    83		infra_clk_data = mtk_alloc_clk_data(CLK_INFRA_NR_CLK);
+    84		if (!infra_clk_data)
+    85			return;
+    86	
+    87		for (i = 0; i < CLK_INFRA_NR_CLK; i++)
+    88			infra_clk_data->hws[i] = ERR_PTR(-EPROBE_DEFER);
+    89	
+    90		mtk_clk_register_factors(infra_early_divs,
+    91					 ARRAY_SIZE(infra_early_divs), infra_clk_data);
+    92	
+    93		of_clk_add_hw_provider(node, of_clk_hw_onecell_get, infra_clk_data);
+    94	}
+    95	CLK_OF_DECLARE_DRIVER(mtk_infrasys, "mediatek,mt8173-infracfg",
+    96			      clk_mt8173_infra_init_early);
+    97	
+    98	static int clk_mt8173_infracfg_probe(struct platform_device *pdev)
+    99	{
+   100		struct device_node *node = pdev->dev.of_node;
+   101		int r, i;
+   102	
+   103		if (!infra_clk_data) {
+   104			infra_clk_data = mtk_alloc_clk_data(CLK_INFRA_NR_CLK);
+   105			if (!infra_clk_data)
+   106				return -ENOMEM;
+   107		} else {
+   108			for (i = 0; i < CLK_INFRA_NR_CLK; i++)
+   109				if (infra_clk_data->hws[i] == ERR_PTR(-EPROBE_DEFER))
+   110					infra_clk_data->hws[i] = ERR_PTR(-ENOENT);
+   111		}
+   112	
+   113		r = mtk_clk_register_gates(&pdev->dev, node, infra_gates,
+   114					   ARRAY_SIZE(infra_gates), infra_clk_data);
+   115		if (r)
+   116			return r;
+   117	
+   118		r = mtk_clk_register_cpumuxes(&pdev->dev, node, cpu_muxes,
+   119					      ARRAY_SIZE(cpu_muxes), infra_clk_data);
+   120		if (r)
+   121			goto unregister_gates;
+   122	
+   123		r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, infra_clk_data);
+   124		if (r)
+   125			goto unregister_cpumuxes;
+   126	
+   127		r = mtk_register_reset_controller_with_dev(&pdev->dev, &clk_rst_desc);
+   128		if (r)
+   129			goto unregister_clk_hw;
+   130	
+ > 131		platform_set_drvdata(pdev, clk_data);
+   132		return 0;
+   133	
+   134	unregister_clk_hw:
+   135		of_clk_del_provider(node);
+   136	unregister_cpumuxes:
+   137		mtk_clk_unregister_cpumuxes(cpu_muxes, ARRAY_SIZE(cpu_muxes), infra_clk_data);
+   138	unregister_gates:
+   139		mtk_clk_unregister_gates(infra_gates, ARRAY_SIZE(infra_gates), infra_clk_data);
+   140		return r;
+   141	}
+   142	
 
-Best regards
-Uwe
-
- drivers/clk/samsung/clk.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
-index b1192ca03db5..cc41cd4ad317 100644
---- a/drivers/clk/samsung/clk.h
-+++ b/drivers/clk/samsung/clk.h
-@@ -11,7 +11,7 @@
- #define __SAMSUNG_CLK_H
-=20
- #include <linux/clk-provider.h>
--#include <linux/mod_devicetable.h>
-+#include <linux/device-id/of.h>
- #include <linux/regmap.h>
- #include "clk-pll.h"
- #include "clk-cpu.h"
-
-base-commit: ad428f5811bd7fb3d91fa002174de533f9da94d7
---=20
-2.55.0.11.g153666a7d9bb
-
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
