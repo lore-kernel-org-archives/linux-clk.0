@@ -1,183 +1,182 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6590043786B
-	for <linux-clk@vger.kernel.org>; Thu,  6 Aug 2026 09:58:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E327243F4A0
+	for <linux-clk@vger.kernel.org>; Thu,  6 Aug 2026 10:22:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786010337; cv=none; b=dGOt3YDeSeA05p8v++UIIGFBMhVw21fXixdENcxiJDIn6ZR26JMHQqeJ5G/XJ/QMdeRa6cP1hz5OWGFyVvNB/1HI95POwMY7M9ITRHRK0FSgETh6Hnjywy7mhTnaDU5IsgfOUhGEe9ORJWC270b0Hjac9aFvQB4GJnGFwC8CbWQ=
+	t=1786011735; cv=none; b=opSY4eZR5E6lprcAg+Mxa1mrmyv0YVQ/FRzfJkG1a3bOeupIs4e+sJobDZ/LAcaCmzp9KndT1I8NCUVpxfyd892sf6WC1KMi1W+P/skOKA4ktP/OU7AzBQh86YK81Ar2ACXSdL2U/HHzo/8ptQujX7sEbSvdPHLs5XLV+TFLCMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786010337; c=relaxed/simple;
-	bh=YnnEPpfnUPa5Y9StJluJxI90r1PmLRRMqN1/9yvH/ZA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y0RADD6RbL0G71OdhEaWaa+e/sqLNhz6hTqG9yxgBhNTJuQjyw4E3pQkoEshcfq0mtw9kI6lrQ9H0yUEKenKm3xlo8JZj24QaNdLTTxyGTVIyHFHarxPWr5H8t0QFt41LT3pftiGn25h1XSsEOYJnPuyLXDj2ETjg02CoyGB0+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KmwramH2; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=ITLrXJA4; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1786011735; c=relaxed/simple;
+	bh=BhNchIMHagP5LNiH58a3QPrktwpAXLbNmtJZy3kytRk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UtSwBVfO0ad1/dSAHT1N/JulYmbvgO3vRLcDAY5WQX263RY7ScQ+R0EJYsdrOqps+Za2hH31VF1q3TomZVHOuavR42XzmGfAQjKqx8SgY0zxZZiIToVtd/lOcIvsxAIFkVwld8hK9HXOvOG/2u8zYAH6MhzADXBy+TpDUort9lk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PH3P3bt6; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KmwramH2";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="ITLrXJA4"
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6769nmAP865795
-	for <linux-clk@vger.kernel.org>; Thu, 6 Aug 2026 09:58:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Fx9UkPI2/eVI7/G8hFIhX+SVBVFckt785d9/b/IsG/w=; b=KmwramH2AQ7tLxSZ
-	Jj7I0GUOgipYTvaRdwNWV8APeDGz+UhXcLhK4EstQekIMjncFVmLRSzqsH/XZJFi
-	jQsNSYe+tWcHK152OLTeoJyhMAS9LQpu/3SEFwhgFja5iY1yHZJpiesG3cS1NilW
-	CTT16uublfNjyoRXaBHcKe5mzQr53tkwsZ47y4ZWgmieoTZ4aXWYOtuJi4Ogz8OJ
-	KydxY0QVSDopT2yxptE9xg356iOC/0Lk8dxALtUHSPYXukVPfGiGyEmHTTQpyZcN
-	FxdGLsCTWKYMTegRsBIbsy2mkgBAj+0oci65dYJnn7nSBo7nCmOk9539vKRvfnKs
-	KvijJQ==
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fv9f5bhy9-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Thu, 06 Aug 2026 09:58:53 +0000 (GMT)
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-848d21bbb55so3548556b3a.0
-        for <linux-clk@vger.kernel.org>; Thu, 06 Aug 2026 02:58:53 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PH3P3bt6"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-49553515a8bso30105105e9.1
+        for <linux-clk@vger.kernel.org>; Thu, 06 Aug 2026 03:22:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1786010333; x=1786615133; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=Fx9UkPI2/eVI7/G8hFIhX+SVBVFckt785d9/b/IsG/w=;
-        b=ITLrXJA4RJhO+zdEmVuSShwPZqtEeNY5aaA1oFc5DlmhmExyBV19b1INqm5vy+x0fI
-         uOfjBqP0LgSFO2uLYYSiBGsAwYXErZpw8+YDbYzPT8NCu4RvJR/hdrr45AAGE8/WERjK
-         kvJF2GNVZO6Pjrbi9qyJHK4Ed8Jbt+DYKQ6p3/IwWaRJXa2L0RwnZ59lEAvMjoVAycGU
-         7rN0ep9e23bWxmAcoUm866YjbdUiLWYipnANtJJMZR3gcf+AsGw8W92DCFXDe/MfQE3Q
-         8gUjRhJCO7B53RiHWPXscMUlQ6WlH9jgqUptgrsdU75TqXs8iC1nN4rgV8HNOMUVClaK
-         aGMA==
+        d=gmail.com; s=20251104; t=1786011731; x=1786616531; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=XNH7C3+W1iQuetjKu7PHcF0eka/FhNKK8WPnZOjuhC0=;
+        b=PH3P3bt6Hf3iiq0uXf9D31jPLqsO/DuyrEn+81iZZsPo1+qBRuJ9Ch7NIJXAQa1uZN
+         SQs+XuRLbQWkUz3K6b2o7ZddSP5ryKSWfxcLPkuJ5ZG7e84kf9+fGXdE/1189X0aIK1n
+         rRmRJ5Ey0NaGVVrR9OirxkbrfNyqDgmYJtZ/W1mxU3GMlKSo27OelNPIPj1jxIfTXZpX
+         7H/G0IjInc6X0cvDimzC185OU0QaX/CEmi4qJ4vwh1ftTR3SGVLLZrKqIG52JNDUzBzb
+         JwdnzlgLappTdPT2ubxz16sY1K6rNLrFzKU5x6BRwjpz9fiHMibB0hYABfkixAqHSS1F
+         z4jg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786010333; x=1786615133;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20251104; t=1786011731; x=1786616531;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=Fx9UkPI2/eVI7/G8hFIhX+SVBVFckt785d9/b/IsG/w=;
-        b=Ach8iIQX72KDgHkC9iMXjnjVjEylYkkK1SkbbwP5ve3GRHGFmQjV0C87TQHqX6nt38
-         lyJEV4836wotOXhd9t3Q0WRqy0CWyXPgwSgtaBtO+rji2NHd5F0AqLCKs+t/Jj8azcyK
-         YXaQwm1IpO2WtIHUrkfXUWKe5EB5hpOJhQw9Wf0lxUcy+BZSFKY8zghr2w1hurW8rHK9
-         6OvQr2aVU92dg8xSlocpr9OPylgbQC4MBIw1JlGz55QsbOC1e6yrpYxLxAvN9+CzWl8U
-         OrdrYA0jxB8x0AZObo43Wz1Lzs4kJ5w+GRnTA2Yqpv9FUxcd0866wL15l7MN2f1P2Zsi
-         NeOQ==
-X-Forwarded-Encrypted: i=1; AHgh+Rpq/Bk4noMa5fC3YNzt6QV/pjjGVCizwwZ7FcOycqniMCETWVbJfvkLkoZbUMfwSYvjhs4S20XekKQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQi3XFQFw4urpnxhxVD5dP8xIlOOuh7pVagsIhgQTfDHI+Fbq0
-	zjGGxWEX56u/VwLppe5rVMnGLj82jgGoUYjyij/5H8Egp9D2AnPewPcn7g+8oHMuVtvhWRoDXRe
-	pLKYrx33EUdmTirkQptRoQJNu0J/T7mgEfbBW8Z6F6MAOX/3tCFYdn1Tr1cwki1U=
-X-Gm-Gg: AR+sD109cCwWKugBVye0EMcQcc/EXThE4mjjhhL62VD0enml0OdBdrhiCBvPqfp0E2b
-	lH86h9uzpn9CDpq89N+YRRQjJNyxUzFdpxzDvAiv1BXavdy6S1QSa8CY03ae/WRK0Tc6if9HG9G
-	TaS3e7LO0CaXApfr8FhWbQq+ljWDLq+lt449IlA6oBC1JHBzHI0RuuVL5Prc53Z6S93IZnH2Fsf
-	fVzVG3b4n2l/tU4opDKALpe5uMwuqw/U/PSjrzyVYIyWgmxS/iqmbNpOczdBrlZ6MjkgopjOopA
-	Vk5yBuIeXz8ZFYeEuc9DqjACoWxWXjxqdNNuDVlZITK71cdFVwe3kDBC6s0k3p3OtdZ8awgV01c
-	bBBNTy4gM/LBC4oOL1GoWjBB+/qOH
-X-Received: by 2002:a05:6a00:1f12:b0:848:4f04:87ed with SMTP id d2e1a72fcca58-84f2e0e1b58mr16151713b3a.34.1786010333113;
-        Thu, 06 Aug 2026 02:58:53 -0700 (PDT)
-X-Received: by 2002:a05:6a00:1f12:b0:848:4f04:87ed with SMTP id d2e1a72fcca58-84f2e0e1b58mr16151677b3a.34.1786010332755;
-        Thu, 06 Aug 2026 02:58:52 -0700 (PDT)
-Received: from [10.217.217.131] ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-84f45389e75sm1068934b3a.2.2026.08.06.02.58.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Aug 2026 02:58:52 -0700 (PDT)
-Message-ID: <53fcdfb0-2bad-46ed-a4a5-519a1495cfda@oss.qualcomm.com>
-Date: Thu, 6 Aug 2026 15:28:44 +0530
+        bh=XNH7C3+W1iQuetjKu7PHcF0eka/FhNKK8WPnZOjuhC0=;
+        b=Y9X8YLUvzvOJITgyZnfW89zrFSFNAI82YOiyrMsZ/s7nDpdZRCu6FlVqQQtJkZnSo+
+         H8qxIBEIBMPzw63CFOPEy7wUtEhsaChXqPWz4owiGIBGOCwNXrn3VD6ba+b+WwTLfP5X
+         QfdJDHCcCnmeHNB26oq53KcYg+fpcn1fmwRDrtpV/HmbRMEaSJWbHByAYc0SbA0CqHgU
+         /RELUzFpqMn7482/9xLb+6xGGoM+d72IFDgPwU74Ehlg0XbAypWaNfPB9txhHkLIuC/0
+         w/1T2r6dS/GEnclf3bazB9zp43tojW3llj4f080bdfgubrusI80hfuMis5pyg5vnPunI
+         vWAg==
+X-Forwarded-Encrypted: i=1; AHgh+RoiV+kAQNaLlyQVsW9NQSTgnH3svKKFRutaJW8vwSqbzNxLJBtnxdWEqmD6629eDWCJ1Bp0FvGYEBs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2t5Tty4I5RI2bJ6pxGBJkl4zr8DQUIFOboR79Fi6Uc2PuFTll
+	Vt72Mpn9eYc7U9PzVyBpTbhNbSZNmSqv279ZETD9dHxDCIDlupv+ZH3Q
+X-Gm-Gg: AR+sD1354xfQFcaB8M8gvVXnpVvZ5v/B9qHHd+pK4BKWvmGA/qv5+qpeAFTIjHS3jnX
+	fECrjdW7sl4IWJWRVpKXAOLCE4rcX8m4+S3//plKo93mNjWj8G3bMzVcwr15Xva18tfQ5t7V/Qe
+	QAl7sCh/1fLctAArw+fawwdkYre46cYCQ604R3Cd8ovmLHejHhNW6U5G5+mXXpmevZcWKqrK39b
+	hmLmOwTL1pTHKdgkXj0phEueG1Fm8LfAGD+oKO9aPodrs427LWyEObxxHRvGTUJEOAZKILTTJEO
+	RW0O2IRfBDn3THFGunoViIzpSkIpqE0h+yPmrLLzJJyrGyHtvL6kYB7IAQfSONyd/wXyiIb94Lq
+	g84M8WsmLi3nBaBeeMwtVmWo2tZLc46S92+05D6O/517tsP7mfOi44yTWikIAO24JstrLPIXiht
+	R/t8DqEC3QrSe650xpDv7Kkqcj2xqPcAsS8Mv1jywZWyBy+vXcgBnqLZ3By+5kbMVIkHM2dCGj/
+	fRPY5zkVlO3
+X-Received: by 2002:a7b:c38a:0:b0:495:7538:d4ea with SMTP id 5b1f17b1804b1-49959d790ddmr3341015e9.0.1786011730787;
+        Thu, 06 Aug 2026 03:22:10 -0700 (PDT)
+Received: from localhost.localdomain ([2a00:23c4:a702:d301:a173:17cc:14ec:8d1])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-499542851d6sm58729205e9.12.2026.08.06.03.22.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Aug 2026 03:22:10 -0700 (PDT)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Vinod Koul <vkoul@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH v6 00/10] Add RZ/G3L USB2.0 host support
+Date: Thu,  6 Aug 2026 11:21:48 +0100
+Message-ID: <20260806102206.149110-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 06/10] dt-bindings: clock: qcom: Add support for CAMCC
- for Eliza
-To: Rob Herring <robh@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Luca Weiss <luca.weiss@fairphone.com>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
-        Imran Shaik <imran.shaik@oss.qualcomm.com>,
-        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Konrad Dybcio
- <konrad.dybcio@oss.qualcomm.com>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-References: <20260804-eliza-mm-cc-v9-v9-0-39067760dc3c@oss.qualcomm.com>
- <20260804-eliza-mm-cc-v9-v9-6-39067760dc3c@oss.qualcomm.com>
- <20260805142646.GA795123-robh@kernel.org>
-Content-Language: en-US
-From: Taniya Das <taniya.das@oss.qualcomm.com>
-In-Reply-To: <20260805142646.GA795123-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: ZR8xYkaKDJ2jB3HOFRzF_riomJjJDSbt
-X-Proofpoint-ORIG-GUID: ZR8xYkaKDJ2jB3HOFRzF_riomJjJDSbt
-X-Proofpoint-Spam-Info: AW1haW4tMjYwODA2MDA3NiBTYWx0ZWRfX5D6Ij6zNv3vi
- NxKIVMGRrFouU4g5yxtMdM01qwoWtFhP3Pm4gU4ROKEmDd31MEXA5hzZlyVqGw4WrWW/XIdY8kH
- LK2SAnot4KTbK5oiJUvgItmTJRmmIPI=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODA2MDA3NiBTYWx0ZWRfX8WgjsmaDiEkJ
- pJsUzH1iBPU33DExRccHdVnpVKlMsPfJch3Li7xCGnoJypjPjApbiVm/x2WWMmdmMjLqOAcONS0
- wQRNqlspqwIN1Z7ySCymzXX11lQVjCDse5zOZs+Ujj1WCpD9E/7nLNQQ08IEb6DfGYYaPfQw2PD
- 7AMO16LoLiWb58UdCJF3BHVvd8Gq73oixrmBUImAJMEKTqCdek3A0ATktGb/10FRl5Jhy5QeHRr
- WcCqKSUqxn3i7ak9PlCG5KkTIyqIuCsuXHe45MqGttCVe/cyBi9ZD2mXbt4wXg1aZRpV+9uQmev
- lFK19XWK+r22CwbC6KHPMH/rD2V5sJgHNyVVMh4YufrofijZS+NOmPNvzUfuJKL42Khr3ycN3He
- IVmMJvEOhJ/M/3zEwvVQm5nQiohfoM+6TdNlXyLHgaVemyr21h3axmqawOx+mJreWclOegziasL
- lDp7W8B2OeB4opy+3SA==
-X-Authority-Analysis: v=2.4 cv=d4bFDxjE c=1 sm=1 tr=0 ts=6a745add cx=c_pps
- a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=Sv0fKeRqtYgA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=DJpcGTmdVt4CTyJn9g5Z:22
- a=h0B1KYQZdrYX5eXDyKoA:9 a=QEXdDO2ut3YA:10 a=OpyuDcXvxspvyRM73sMx:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-08-05_06,2026-08-05_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 spamscore=0 lowpriorityscore=0 phishscore=0 bulkscore=0
- suspectscore=0 clxscore=1015 impostorscore=0 adultscore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2608060076
+Content-Transfer-Encoding: 8bit
 
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
+Hi All,
 
-On 8/5/2026 7:56 PM, Rob Herring wrote:
-> On Tue, Aug 04, 2026 at 11:20:19PM +0530, Taniya Das wrote:
->> Eliza camera clock controller is on CX and MX rails similar to Milos.
->> Add compatible string for Eliza camera and camera BIST clock
->> controller to the existing Milos camcc binding and add the
->> dt-bindings header for Eliza.
->>
->> The camera clock controller provides power domains, so 'power-domain-cells'
-> 
-> You mean '#power-domain-cells'?
+This patch series aims to add USB2.0 host support for the RZ/G3L SMARC
+EVK. The RZ/G3L USB PHY block is similar to RZ/G3S, but each port
+has an OTG controller, unlike RZ/G3S, which has an OTG controller only on
+port 1. This series migrates regulator driver to use id-table so there
+is hard dependency between reset driver and regulator driver.
 
-Yeah Rob, I mean #power-domain-cells. I will update the commit text as well.
+Merge strategy:
+  An Ack/Rb tag from Regulator Maintainer for patch#1 and #5.
+  Patch #1,#2,#3,#4,#5 - Reset subsystem
+  Patch #5,#6,#7 - PHY subsystem
+  Patch #8,#9 - Renesas SoC
 
-> 
->> must be present in the device tree node. Add this to required properties
->> to enforce it in the binding schema.
-> 
-> The sashiko report seems valid to me. Should cambistmclkcc be a power 
-> domain provider?
-> 
+v5->v6:
+ * To avoid breaking bisectability, prepared a single patch that
+   does the "rzg2l-usb-vbus-regulator" -> "rzg2l-vbus-regulator"
+   rename in both regulator and reset drivers and that could be
+   merged into both trees.
+ * Replaced dev_err->dev_err_probe() in error path of
+   rzg3l_usb_vbus_regulator_probe().
+ * Retained the tag as the change is trivial.
+v4->v5:
+ * Collected Ack tag for regulator driver changes.
+ * Dropped renesas,sysc-pwrrdy for RZ/G3L as pwrrdy signal is modelled as
+   power sequence.
+ * Dropped the tag from Conor due to above change .
+ * Replaced the variable regulator_driver_name->regulator_name in struct
+   rzg2l_usbphy_ctrl_info
+ * Switched to power sequence consumer for controlling pwrrdy signal.
+ * Updated commit description for patch#3.
+v3->v4:
+ * Updated cover letter with merge strategy
+ * Reorder the phy binding patch for easy merging.
+ * Updated the commit description for patch #2,#3, #4.
+ * Moved the handling of regulator_driver_name to patch #3
+   in preparation for id_table match.
+ * Migrated to id_table match using driver_name and reduced the length
+   < 24.
+ * Dropped rzg3l specific platform driver.
+ * Dropped the tag for regulator driver,
+ * Added id_table handling by introducing a common probe().
+ * Dropped renesas,sysc-pwrrdy property for usbphy-ctrl node.
+v2->v3:
+ * Replaced items->enum in reset controller bindings.
+ * Collected the tag for reset binding patch.
+ * Dropped clock patch as it is accepted.
+v1->v2:
+ * Dropped patch#6(Introduce helper for regulator registration)
+ * Passing pointer to an array of regulators to make it scalable.
+ * Dropped regulator1-vbus and added a regulators group node.
+ * Updated commit description for patch#1,#4,#6,#7,#8,#9 and #10.
+ * Added enum instead of const in the compatible section.
+ * Updated schema check.
+ * Collected tag for PHY binding patch.
+   in the regulator driver.
+ * Added regulators group node and its children in SoC dtsi.
 
-cambistmclkcc is a clock controller similar to camcc, I have tried to
-reuse the same bindings. I will add a constraint to take care of the
-comments from 'sashiko'.
+Biju Das (10):
+  regulator: renesas-usb-vbus-regulator: Rename platform device to
+    rzg2l-vbus-regulator
+  dt-bindings: reset: renesas,rzg2l-usbphy-ctrl: Document RZ/G3L support
+  reset: rzg2l-usbphy-ctrl: Introduce info struct for match data
+  reset: rzg2l-usbphy-ctrl: Add RZ/G3L support
+  regulator: renesas-usb-vbus-regulator: Add RZ/G3L VBUS regulator
+    support
+  dt-bindings: phy: renesas,usb2-phy: Document RZ/G3L PHY bindings
+  phy: renesas: phy-rcar-gen3-usb2: Add RZ/G3L support
+  phy: renesas: phy-rcar-gen3-usb2: Fix devm action registration for
+    disabled VBUS regulator
+  arm64: dts: renesas: r9a08g046: Add USB2.0 device nodes
+  arm64: dts: renesas: r9a08g046l48-smarc: Add USB2.0 support
+
+ .../bindings/phy/renesas,usb2-phy.yaml        |   2 +
+ .../reset/renesas,rzg2l-usbphy-ctrl.yaml      |  40 ++++++-
+ arch/arm64/boot/dts/renesas/r9a08g046.dtsi    | 104 +++++++++++++++++
+ .../boot/dts/renesas/r9a08g046l48-smarc.dts   |  49 ++++++++
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c      |  20 ++--
+ .../regulator/renesas-usb-vbus-regulator.c    |  75 +++++++++++-
+ drivers/reset/reset-rzg2l-usbphy-ctrl.c       | 109 +++++++++++++++---
+ 7 files changed, 370 insertions(+), 29 deletions(-)
 
 -- 
-Thanks,
-Taniya Das
+2.43.0
 
