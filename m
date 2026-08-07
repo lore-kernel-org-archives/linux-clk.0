@@ -1,165 +1,172 @@
-Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010035.outbound.protection.outlook.com [52.101.56.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFA6E22A80D;
-	Fri,  7 Aug 2026 04:03:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDEDC3B995B
+	for <linux-clk@vger.kernel.org>; Fri,  7 Aug 2026 04:55:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.217.49
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786075433; cv=fail; b=HAWAshsIqSJHB39mdyRIBIDtYUUadcCStsK05VhjP4kUD994kR98SRpNnd9BYY0jXddFx5z/SC5D5yC8dwmoW1sM52EIWeV1HCcYWfdS4pseAhYxyPApJHtiPMRfW0UjI1YKzZSK5X8PPhsGww4/5NyN5H9PtzNRmOowHVC+e3A=
+	t=1786078543; cv=pass; b=sWQwNS1cFHbU5SBaVTqgsNIlSyN6v14Exxvjbvf3ZtB6ktU+T+1gqZUI7Ocqz5uFr6JGrcOnlMIo9HD9+ZOp4jvb4mP6yVeMHgGilN9m6dMeO6QTVQZAXnfquZafegATH/wiBnajYt9hMzROAPa+lVUAg52QAXC0CnGyKaY5WKw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786075433; c=relaxed/simple;
-	bh=mN4LQ0wCBILzThRTr7wtO80JZnpYrD8h7vXg6lI4t2s=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=jwxIdPOwbKG9s6/7vYM/vxP6fkXLh812Wrrp12IMEU3Lp8rm48ze9hpBiIsvqVrQ/7Qt7EnqII4vr/kWGUpwOxr3G6OwIgl7i/xHyhESp2gNiHnZLqS1LqEMaOwcY3+64GPEmZKhUm/HzTj6N8iHFD2qIm4Dx996ZMFrgx+uAx8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=U4N3ydlq; arc=fail smtp.client-ip=52.101.56.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
+	s=arc-20240116; t=1786078543; c=relaxed/simple;
+	bh=sKJzLSkS9E51xnBmrifkQEmkhQx5pX2W4VuJkWehw4E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MIZfpr8A1363xKXBKSY2d2of7KEv7eET6ThWRhzv/J11GsYsvh8jjThWj12QvSXMxslzeR8ivFP8cq0FXvobR5FNba2PFE+/z0avng8FQDKD2/Y8TMyyAH/hbdzoCY35lSofw9HbjE0kpDGERKUvGCEo5t1ynh0DZM7hRC3obQg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=XrtBBvy5; arc=pass smtp.client-ip=209.85.217.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="U4N3ydlq"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EylB52X6i/wCgLlcNsa1iJJYuxTQa0An2cUCT89Kw1XmRGLmUNuXPA1S8fiibrZ9kxYr46xrsPphv5NzEVjdFiWSOJZaGilsfdh12bx8MEbKn8K/fkY8/oAJRRaKaaaYzLfNbVKQZLVIKz7L7ceauyid/dLzs9kgGKCGxAfPDO0ETFGrF5PmdbvIVSqkZkrqLue16sBVPn8h7w8EOBY9SA9NxlWbmpOMjBRx6GvZr2TMZupHadMzWdMS2UTfbr77JRd6nNIgX0aAljm2jOLszqsq8qc7pnnAmfyCnJE8nPhZUcmgQ07JBunx3ur/YVYnxNffUzsTCjs1+R35iwxw3g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FFTL6QUaHaP3pOEY7mPsBRIB6B18oL+nE4zRhVbOR/Y=;
- b=PlVFoReSFs9tg10LMeWxt63atOjhfAKPp9DJPtGuVffxVxr2Z3tukArG9r7wrwR9eUYJDIRuxn37nH+4ZHPMpSEN8PXmlnTScrtRVAdJTPMUiOypK8BuInsQKosLllaZ7U24JXzVb5g5qsvu3WaEfYkwev9MxtPXiGYxOGBPXKuam1LdTN7T1KxCYmikHjF1Xlf1/Fn4WsubFHzUk5s0Sf4yODRLI70ZHZAtsrukKs2k7eQPftb4ycAcZjfzDgBa/z6gpWlMkvgXvDGaoe18Nkf2VOEYkCShVLKgi9VPFpSPGFKs22v5bd3lHSTkeig4EWLzTNf5tHkx6FVFSqc+LA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
- dkim=pass header.d=altera.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FFTL6QUaHaP3pOEY7mPsBRIB6B18oL+nE4zRhVbOR/Y=;
- b=U4N3ydlqGYnufulQlElm4p9ZW8UFf+8RHCJDUD0R9aLruWRZ6CUA/ymAieBHv2+FPy0F7BzQjtO9B9h5OJEwmQ/8EDyjFhTu1qSBeUwSkQg0U+C/QuPzoRgsqMTWeeOYub3b3LR5B7ziLLXtYWeNAwffRGQ0Nb3Y0/x58UtRHq6msF0FkFv+XqpnT0o8TurT5nB38fM8l17vAmpNgnBInOJl2nwNg3Szskw0cGzEZ4Ou95URJ0TqnbRPShmh79uePsXOgBLe/3CWd57dulqvcbYpWy0m9yFSjHSAnux3ptWl50VAKSywx6S32ndvBPgy7itGw8Cz7Rv0UFz6Wa7QpQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=altera.com;
-Received: from LV8PR03MB7398.namprd03.prod.outlook.com (2603:10b6:408:18f::13)
- by DS0PR03MB8341.namprd03.prod.outlook.com (2603:10b6:8:28f::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.292.23; Fri, 7 Aug
- 2026 04:03:48 +0000
-Received: from LV8PR03MB7398.namprd03.prod.outlook.com
- ([fe80::9d6:b5c1:7f72:e982]) by LV8PR03MB7398.namprd03.prod.outlook.com
- ([fe80::9d6:b5c1:7f72:e982%4]) with mapi id 15.21.0292.019; Fri, 7 Aug 2026
- 04:03:48 +0000
-Message-ID: <e80d3813-ad95-48a4-a748-c0ca0d8a2a86@altera.com>
-Date: Fri, 7 Aug 2026 12:03:41 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: clock: agilex: mark mpu_l2ram_clk deprecated
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Dinh Nguyen <dinguyen@kernel.org>,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: linux driver reviews <linux-drivers-review@altera.com>
-References: <20260727094926.1124-1-genevieve.chan@altera.com>
- <03c1b493-8296-4818-b00a-70a51cf5e39f@kernel.org>
-Content-Language: en-US
-From: "Chan, Genevieve" <genevieve.chan@altera.com>
-In-Reply-To: <03c1b493-8296-4818-b00a-70a51cf5e39f@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR05CA0151.namprd05.prod.outlook.com
- (2603:10b6:a03:339::6) To LV8PR03MB7398.namprd03.prod.outlook.com
- (2603:10b6:408:18f::13)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="XrtBBvy5"
+Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-74ace427b29so800811137.1
+        for <linux-clk@vger.kernel.org>; Thu, 06 Aug 2026 21:55:34 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1786078533; cv=none;
+        d=google.com; s=arc-20260327;
+        b=nGO4fTOrstsQ52Jc+pm1qGHDkusvSSyOXSiAwspO+qGHPV/wlzq4dc1Xfx9JhkyWiE
+         Fph/l2RRw9vcvora5vu3rMUuGMqIhxif3XuWiVi0B+tC1vOK0ASgc622dzhUCDv0/YmT
+         9dAJ00mByb3AzXBDSH+ksn6s6F10PWY1uNK8gsiwdhf8VO+4wxZD0E3x3qmeiP2LqkUI
+         hsuVpv5TDHAQDhiq70/zKY2V2cbvMxEIbPrvBbUaGzOK4hIr63whSLB55H6b3OLnTFmg
+         4GVVoZkvclZmBYJhQSz6wuqLnmWHr7RKlLzJ4VLZDy/cGyoL6O4Xs/su7qenMkigeiK2
+         9V9Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=Hr8qO/eFVTx9hp0usiSSQteYMYHrCHh6AB41Nwyy/LE=;
+        fh=YTT94tnIpNJTCBEtux+J8OuP074JgWUGDN28PnpLbKc=;
+        b=pkahd8UFTSJ7c91w8u3sG3WN/5xbNs/aPwyAem++ucn5TLLBdybh0LDnozvJt49HgO
+         fd4WU0u5EBl2kik2nRsrhKdWxDoPIf8UzE9NvKifDzVaugBuP8KHGOz/GhbWQZwfuqao
+         +56eGO1Xg5lyvPUsa+P2aTxwUGrDb6qM6nXScoTCmvWU0MRV/wSBpHCloaXvZ6VtqI+4
+         AKVbLJ5+gtgR6B2BfYRfRQ92iruyxOIcnvtSxDiTyPd/pw8baiDnGmX2+LlcNm/optuI
+         CTU10aT7G+p1SonkH/vyTqbFGmWK7UeDWpmmQiJeyI+9R8+hS9KDb9FTKf/4k1zQ7771
+         /aQQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1786078533; x=1786683333; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=Hr8qO/eFVTx9hp0usiSSQteYMYHrCHh6AB41Nwyy/LE=;
+        b=XrtBBvy5feJ7ss/I3OVd0YArKB9zS1hJWgVbgzTe1VC8yClcSm/oyKZ5hGTMfyKo4I
+         DoX7/bTDcWcAg5yZhGfT03j31DSO82dxblTy8ILFgnZIz86aUBqcld9xboajz1xEzcJQ
+         xmsp6v6wYr3iNnOOiOqd4kwNJUiyY3FqMeDsZLIbXBtDKLRdRXZy2DwB5MJNP3i/qKDe
+         kTo4Nr0aEsYe1pANzZWwJBXoIElzg2R/t2cc9qGGHtfAbf9yo6yApCm7CKHBvwwEVhFQ
+         RsZN/mAsncF/dgT5QN0Ym3iqATZij5X3WsnrXpwVRx04EhTb262fMbSd19KBI1HPA1lE
+         TA3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1786078533; x=1786683333;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=Hr8qO/eFVTx9hp0usiSSQteYMYHrCHh6AB41Nwyy/LE=;
+        b=MMfxja6RM5po+15XaAdKe70d/YIxALV6nCkXUbFKZ0jyq7kN5q3hAYl9rlWfYVcRJe
+         /gWCvQPkoV4QlUF2YcpFgNEBtGOS8csPhSNgtaL/odkfn2TlivnFPtjMlWoBzDyOGxHY
+         EU+rmxgh3ArmO6/p03IwZmVgSrlJCxfHZ1Jkwpvyvqalq+iqwHCxKDkjI/CB1K87SVEZ
+         UTcixcvdEvvUKOMlc0HXDbv+69iAPgmuukCpEqk+bdNUPeqXLUH83eQgapc9sgJ41gpl
+         ChAU4lf05wKnNYz+X4QqTp/E7ngMGQqur6s2VIjecSC/7VzH2HwJFjofFMKlRIPIeH3n
+         LcYA==
+X-Forwarded-Encrypted: i=1; AHgh+Rr62NbPgFU44O9dUtsEn73iZBuTyfpTrghv3GjU02pIbK3AscNGiM4Gi6Ir/NG9p2jvvL5yDaK4xTg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOUJDKe2f3kkQNExIj3dO4kmld2RFxdxqo52WeTtjek1oYCx3a
+	ideI/ClGrI81CeNldXYBTQF6Hk0otilvyDvXE3WABb9A0A/dvHh0/1qQgSblcyP77PLWzlfINO8
+	0zthpo4+eY6EfM/Xi+uDPcVE+CO2xHHDrkivSQYUjnA==
+X-Gm-Gg: AR+sD139xdx4wZE0ReSagykhOL0a5oc4zHjq/w9SceawBZm0pNVKFqT6uHvFjE2iG0A
+	7b77y202X4NRQQ+LDlYD8q677KtqsIc8b5vMzhJjo7XxP0ljXJpultAvSGfweN1Pov+sOU/gECw
+	KF5xiiiaNpwB1L8dfkwnoT43xX8j6OB4VQK96So8iI6l19a4Nb9Zefa9pbYcAdutsIX5jkdfdXc
+	h9c5JuRTK8Uip9jDgXZjDItEFMeo5wSkrM2Hz6u0yOuC/L0rP99yNYQp8KkuD7h628LeptWd0Kh
+	3baX/3Vhhina0B3N3e6Yvv4Ly3WEH7H9esvsyLJn9dEz
+X-Received: by 2002:a05:6102:54a0:b0:74a:992e:84f6 with SMTP id
+ ada2fe7eead31-760e9040fb8mr5391590137.10.1786078532703; Thu, 06 Aug 2026
+ 21:55:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR03MB7398:EE_|DS0PR03MB8341:EE_
-X-MS-Office365-Filtering-Correlation-Id: aecc9f74-7188-4f3c-bae5-08def438e230
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|23010399003|376014|7416014|1800799024|921020|56012099006|11063799006|10067099003|4143699003|55112099003|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	+zmD18n66HKRgDH6uuHYT7pfWLJxey7Rs5GC+yH2vKSzxRith+Qr9RJeEU4mz8K25CCwt2KUP8mnDQvrD5m0O4syl1YOgvibdu8UR8cQbameH58X3kp8F0AjJQAPjjyY4bofhxOp4NfwqWWWiCM61JsVIsxBVIq6DKcMpByeoUoVjvgEFJ+AS4p7WwG/Zc0If9F5QCIqYXppuObtrhiND8zs5bxuKU9kWZr8Z/5F8+yfSOoHquguHUoHtoaJKa2XzhCrfW0aTjgz4DX5F5mqVCItW+yWFK+tY5behb7d/0/e7zaeitkq3Fq6nuxD/Rrv8bwavrk6Zo2xWJtvETn7gCOmsf0L3zdNwhJK9QvMzKYYhEc8sCo5WJbDB7ggCORxx+vRIhPtRonVx3b2pp6bK9yb6MX5gB9oWH1BNQ/sU49VxdVixM1Bh+I8Biv/3AKEHfTxns6Ib91eGWOg4BYGIxZBqNYEmnALF3cSkZg1mNuNqiwfXw0bCiMY4HAKza7F7h0NRBAZHvCzmnVQC47ySKFbV/T7QaVjqQMWG/gWKQgMxnTZr/d7d0uhibmveUhuyNp7jrMHla1oqhotwgmu+IOEXpeo1oiInEijGHq1wySUp6lHpd7gNhQ1kzzMTfyNJoH/nJVb97irY8Lih8vhjnpHRwo52YHJ0gOXfYsklemfFZKD+wE6730FkcK6D91rO4ymiAxtqjhppWfZFc47kw==
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR03MB7398.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(23010399003)(376014)(7416014)(1800799024)(921020)(56012099006)(11063799006)(10067099003)(4143699003)(55112099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ekNXOU5xWHJSZWgya0JNT2FKOFJxeHYxOVlaR3BEUVRJUnVPUnJ1YnFXR2sw?=
- =?utf-8?B?VDlNc05Id3g3enU4TWwvR3lXTW1KQmI3SG1PZ0NMcVh2bjlNWG8ybTZCclI3?=
- =?utf-8?B?MENKVTUrQlF1UnRJOGcrUDJTRFJsRG4xa3VnV0lyRW1pam02WEEwY25JdzVD?=
- =?utf-8?B?cllzOW5xQ2NvVzdFcGZVTHF4VUw2NWhoRzA4bysxRXR2c0RMZ0RjSW1Pc0N5?=
- =?utf-8?B?NUNpUjJqbHVJWVMvdFpuc1RSckovbWFwZXk3YnllblVkd05tbkUxMk1IV2Mr?=
- =?utf-8?B?R1JQSnFiQ2JKZGNrbUZuWWVEVHlnMEczc0xLdFJnNXByaTBUQlNBRXNmZGJj?=
- =?utf-8?B?bXE1MlE3clRjcHZ0OXFwdXM3UURYODF3UytCcUJ0RmhZeW1GSkNWcFRTRGdR?=
- =?utf-8?B?UGpjZWpGenZ5Wml1dit6NllXOWpyTVd1bnhRZnhpVXRlTGVibmFhemJGSEp5?=
- =?utf-8?B?VlVqbUpvaGFQZVNyYUMvTERmTkJpSlkyOG5ldy84cDE5TnZqeWZGREVHRGp2?=
- =?utf-8?B?Z28yRmVTc0s4bk9NRWVuVzljU051ZFZ3encyZ3plOG9EdE5ya25oMHVnK3Bx?=
- =?utf-8?B?SWtkS0VJZmZrSTZQcXRCdGJPeFd0dmNGTFBXVENSMzljNUpZb05WZnVTMU1p?=
- =?utf-8?B?ZmdoOFRXaVhIK2ZTTzVTaUlsdHcyR1ZwUWtreTczOHFzbVhMTXZSaHNITUlR?=
- =?utf-8?B?Q0g2cHhwclliYnVIa2JTaVovb21zZXYyUEMyM1ROZFNhMEdZenVYbTJUZkFP?=
- =?utf-8?B?aXlaT0sxUFUwQ0R0QndnNkc5UjViYXJWdFVIZ2NqMkFNV0cvZzRlaTNXUWxl?=
- =?utf-8?B?ZkU1Y2d0RGdtd3N4ZkZveVVYNmQ1aVJHa0t1TE5jdkJnbFJUY29zSWxlWnl3?=
- =?utf-8?B?VW5Ua2JQMXBPZHBwR3NaQjBROSsxQ3IydWx6SzN2WWZFeG8yV2I4aE5PcWdt?=
- =?utf-8?B?cHRpWE8xM21IWVB0MXdOclJsdDlMVVNNbklZYmprRVRIaU1WcXRlWnEwUHBF?=
- =?utf-8?B?RlFTQU4rN3ZHMDh3WEQ3ZDlWdFJiS1NvTEpwUzhLbXNJODF1Q2Z1TDVnc01G?=
- =?utf-8?B?Wmhka1Rha2lFUTB2dklXTUxzV0RkaDM3bEJnTGg0QzZTWEtPYzNHNkJwT2gw?=
- =?utf-8?B?T25NZzRyWWY0YUc2c1BGMWZ1aGROcTZXOTM4ajNkVXEzZjRvQU42UWJza2g3?=
- =?utf-8?B?bXpnOWdJdmUwL2NYeUczQUV4cUtIQ3puQW9JMEVtRXkzNzU1WXA4MkxKRGlj?=
- =?utf-8?B?Ry85K2hUU2pEWWlMMFQ2WTcyYnhnbHdRL0hkREwwcTdDSnVmUXR4bm41Nnp4?=
- =?utf-8?B?aVlUYnBiZnNtMERSaUJ4TXBIMXN4ajlVZGJxcGFlVUc1OEdUa1NmRnM5UVpm?=
- =?utf-8?B?YjZtclZJZWk1bk1UUnJRTUtkWXc1ZlFkS3ZPM0pUTXJvQm1QTGZIcjErcmZt?=
- =?utf-8?B?TzRBSllaY1pyNFk0c3dBdnMyeW1HMytCZVlNZXRscnZRbHlzYUVBaTYzM1py?=
- =?utf-8?B?WVd1Z0lXZWxxcFdRMFJyZExxWnRhMTB1VmVBSUxIMFIwTTVWdUNicXp0cHcx?=
- =?utf-8?B?TVlRSXBVdVU5L09qLzZnZTdWa2xHdmxYUnNTa2REckdveW4wSm1QbHVUSU1C?=
- =?utf-8?B?dURER1BJdTVUTTRsWTduWEwrbGt0RWhMbFBNMHU4RlVqd3hmQ05VaUVraHl3?=
- =?utf-8?B?aGxmVHJRa0xGWUM1U1JjOEcycjlFaWdicTNZUW5RNURYMnNPVmVDMEtqc0xP?=
- =?utf-8?B?N2VJWFhFWktFTCs0SmU2NVovcE1rK3lpMldoNE5qeWpNc2ZIVDBUbkFHZ0Fk?=
- =?utf-8?B?YnhrTHJjK3pXVThxTnhZRHd5UVNvN0o4akhONVNyTEdxNC9qTkZoOFVaUkhl?=
- =?utf-8?B?SDV6R1ZiRlprcGZTTi9RZ3k1VVlUMmMrcGo5MGJOcy96blEvamxET3IrUDg2?=
- =?utf-8?B?SXRDOGc0eVBldzZCVkVuR0ZZMFlaSU1VMkFHS0tRVGRqOGltdGp1NHRlcUNY?=
- =?utf-8?B?b2R6ZzRYdTVtOE9PYlZ2cnBYVGxtRnRxTmFJOVFreUVES1BEcHg1WVpTT2V2?=
- =?utf-8?B?RktNb2l4WE92Ym5iNUhsSTNyRXZrR2doVXoybE9Gdk92L3RpK3A5S2cyLzln?=
- =?utf-8?B?SFExaFdSVjRHNkw2VlIxUURaVkNzdlkxYUN6eElnM1htNjFodWVlV1BORlRk?=
- =?utf-8?B?OW9KMzBGYkVTMDBMbCtvSHQrczhDV0MvWExoajRUdFlhQ0JtVzdRWWMwOEhH?=
- =?utf-8?B?MmV5aEVtOHBaOE5TQVNZSkQxVkhjTm9XSEZoSHJWUXhoS0hkWk8wWDhnVXVQ?=
- =?utf-8?B?bnMwMGE3SlZRRGdUV2NXWjhodHpQR2h1WkZiOGd5VlJmZEdqMm1rc2dxWEFl?=
- =?utf-8?Q?HtqWSGEADzFswtk4=3D?=
-X-OriginatorOrg: altera.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: aecc9f74-7188-4f3c-bae5-08def438e230
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR03MB7398.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2026 04:03:48.4525
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: K8/0GAxKR1+FMmmUYcuhedGP9/63uf9ERbknJdvXwiaQX0P9XILLIKbHKVvSK0D0FMPEW788EOPVmoyUHJeB0zYGSNzJdUgpLaO1vFzbePE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR03MB8341
+References: <20260804-clk-masney-maintainer-v1-1-de593189a9a1@redhat.com>
+In-Reply-To: <20260804-clk-masney-maintainer-v1-1-de593189a9a1@redhat.com>
+From: Michael Turquette <mturquette@baylibre.com>
+Date: Thu, 6 Aug 2026 21:55:04 -0700
+X-Gm-Features: AUfX_mwg8uZRMciarNVr80yM9wYTUsQQ7nZach1val9vL0tanmpjaU6OBeWKAMk
+Message-ID: <CAEG3pNBFyg1uWwDiy8Bd1NKJL4VMOKCvy=_VxoKw+eO_hAdVKw@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: Add myself as co-maintainer for clk subsystem
+To: Brian Masney <bmasney@redhat.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	=?UTF-8?B?SsOpcsO0bWUgQnJ1bmV0?= <jbrunet@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/8/2026 5:58 pm, Krzysztof Kozlowski wrote:
-> [You don't often get email from krzk@kernel.org. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
-> 
-> On 27/07/2026 11:49, genevieve.chan@altera.com wrote:
->> From: Genevieve Chan <genevieve.chan@altera.com>
->>
->> Preliminary documentation referred to mpu_l2ram_clk, but that clock is
->> now mpu_ccu_clk and is already represented by AGILEX_MPU_CCU_CLK.
->> Keep AGILEX_MPU_L2RAM_CLK as a legacy ABI-preserved ID (do not use in
->> new DTs) and mark clock ID 42 as reserved/unused so it is not reused,
->> keeping all existing clock IDs stable for DT ABI compatibility.
->>
-> Why are you Cc-ing non-functional addresses like
-> "<linux-drivers-review@altera.com>"?
-> 
-> This bounces!
-> 
-> "Your message to linux-drivers-review@altera.com couldn't be delivered."
-> 
+Hi Brian,
+
+On Tue, Aug 4, 2026 at 8:33=E2=80=AFAM Brian Masney <bmasney@redhat.com> wr=
+ote:
+>
+> With Michael Turquette stepping down as a clk co-maintainer, this
+> subsystem is big enough that it needs multiple people to keep the
+> clk community healthy. I've already been doing a lot of work to
+> help with clk maintenance, so let's make it official in the MAINTAINERS
+> file.
+
+Acked-by: Michael Turquette <mturquette@baylibre.com>
+
+If someone doesn't pick this up and give you commit access to the
+linux-clk tree on git.kernel.org then let me know and I'll unvault my
+SSH key and merge the patch myself. I'm only a bit embarrassed to say
+that it would be nontrivial for me to blow the cobwebs off and commit
+a patch to kernel.org after all of these years ...
+
+I would also propose to add J=C3=A9r=C3=B4me Brunet <jbrunet@baylibre.com> =
+as a
+co-maintainer. This was proposed a long time ago and there was every
+reason to add him, but I was inactive at the time of the proposal and
+nothing changed. I'd like to make this right by proposing him to join
+the clk co-maintainer team now and help you with the load.
+
+Let me know what you think,
+Mike
+
+
+>
+> I slightly changed my email address to help with email filtering on my
+> side.
+>
+> Link: https://lore.kernel.org/linux-clk/?q=3Df%3Abmasney%40redhat.com
+> Link: https://lore.kernel.org/linux-clk/20260729121640.3864006-2-ukleinek=
+@kernel.org/
+> Signed-off-by: Brian Masney <bmasney@redhat.com>
+> ---
+> Note: I made this depend on
+> https://lore.kernel.org/linux-clk/20260729121640.3864006-2-ukleinek@kerne=
+l.org/
+> ---
+>  MAINTAINERS | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 07ffdec1c8c7..b9b01a3b70a7 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -6448,7 +6448,7 @@ F:        include/uapi/linux/comedi.h
+>
+>  COMMON CLK FRAMEWORK
+>  M:     Stephen Boyd <sboyd@kernel.org>
+> -R:     Brian Masney <bmasney@redhat.com>
+> +M:     Brian Masney <bmasney+clk@redhat.com>
+>  L:     linux-clk@vger.kernel.org
+>  S:     Maintained
+>  Q:     http://patchwork.kernel.org/project/linux-clk/list/
+>
+> ---
+> base-commit: 83adfb8e0c0e26f451564779c90798d1d4c13347
+> change-id: 20260804-clk-masney-maintainer-7b4349a0f004
+>
 > Best regards,
-> Krzysztof
+> --
+> Brian Masney <bmasney@redhat.com>
+>
 
-Hi,
 
-V2 Patch is submitted and removed the non-functional addresses: 
-https://lore.kernel.org/all/20260807035833.16198-1-genevieve.chan@altera.com/
-
+--
+Michael Turquette
+CEO - Dallas, TX
+http://baylibre.com/
