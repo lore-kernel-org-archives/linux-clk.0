@@ -1,248 +1,149 @@
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 518F833938E
-	for <linux-clk@vger.kernel.org>; Fri,  7 Aug 2026 16:57:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79D982DC331
+	for <linux-clk@vger.kernel.org>; Fri,  7 Aug 2026 17:45:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786121849; cv=none; b=Er+1dryHduQOcps9PbKk0jMpyPi6ElHuFba9nWc//+AzmBumbGJV1phdBcySfoal17wiPShOeARGqX1SVuzUmugDLMKU1B8LeJttGVY/66EwC9hZBy30PftoeJKdAJ3Udl0kYcnhobE9qwWnl7tL7hxW0eR2s1hSR0k9mx5HyHQ=
+	t=1786124725; cv=none; b=QlGBPgqCQ9XAuAb3kKWFxK7PYVKL9Mggdhtn6/578bMI51quWrDLGa98pqo1AHwuydVBoOBqYjTcyQlyJiPVGiij1IV4TGSNEy7byEnu4wkdX32eM9xGkMymHe89nEAAyKL8l+DHWRcvObVKHTvDJHhVrfqwNtbnuG9M5+vYxXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786121849; c=relaxed/simple;
-	bh=vPc6vf6UpiLlXJoEYCa/uwMx3ESspZKnGUeVSaDznCE=;
+	s=arc-20240116; t=1786124725; c=relaxed/simple;
+	bh=K9y7+qgOIUgusqqnv2A0lIuXRIzhe19SOiZ/1cedtZM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K5frWJ7EniugY8mlECj+Y0ozBVb/RydnJ13Ho15VDHagetu1KTiPpLiGujUqSWHDqsKwtqq/3hQSnx5r8WESlBR46Hoh4WSJcff3xq7thQrzOy81x7t+FDttmyAdOHIiR9LkWwFcvERsmWgU62/abnfL/DVcKPB81njz5BMrC1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-69fab5a852cso5115953a12.0
-        for <linux-clk@vger.kernel.org>; Fri, 07 Aug 2026 09:57:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786121843; x=1786726643;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=zddzVVYS9F5PpJp+klwF/9jEg03r8YZTMRZfUZl45Bg=;
-        b=spy3jxVoubVTZ3xBUHGoA6dWENvgN07U1VU/GCxKTFu+WZiebf31VJ2nC7aZKuURGl
-         F6kLxNGVkoRp5kucHSZZzGfdsEKe+OYaqdn+ze+4tbJqK9EHSlaed0qkNYBjbfz420+8
-         1UkhYizix6mtncbgip1HG1j1f0RBt7kYydZayGNFam5ZWgkvX3uP4yEE99IsMc3QpjPX
-         /PMUps4RoQ6ye9Y+V1BoVDzBnHHMOXHJwP8Ufw+ggujojUY3ym4IXfCuAVuR5E0Wy9Ct
-         tvlVG2cEOvMDQ9Qln6bjtGBQC6nBUx5VKmrcfHCxAyMwr8riw8/eOjcq7kLcs2X9ESo9
-         jopQ==
-X-Forwarded-Encrypted: i=1; AHgh+RqYuIbCn4kB+72j6oo6DK76v2APcxLNq8lpEx58IU4dDKwC5s8AffC1OoEby9OF5sp7wVlgV8U2QZU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YynlvOxlIplYr4+s63DQtnR6po7OlkP8Qs6SCUpQXLGJl/m642N
-	OzIHuxwQcLaWfYupMTN4YrHcWXNjhavmGEA5YzIphCF4sOvGQQF5/El3eGkMuIjCJdU=
-X-Gm-Gg: AR+sD12M1rXRvsciYqcR9pduASFgjq0GLbM0o2ZhY0HzG6hSzSC+KKWn0ZIMtFc+83w
-	B38pu2XQRdbmYtHTvuIFVXtqu8QD+O4iwuF8/l4g7jmGvilIkYCvA5eO/h8I8DO2UU1pSlIEPRM
-	ZxtqebZhm31lX1Q6a0hcFW47SRTcgh9Z9PJHTFCdDuIC7TRakUXtsvLPZ2m5Ck9CNGFin8MUb5f
-	YL5O53ok6IWiZ6VdLwk2jP+vBfg7ttjFrB50Y97Ck7etSSX05G/eHlUE9LRlg4u3HBUJWUQNwe4
-	bvo90or4wX6v5UfoM8PAuQ4O+AVJSvV5dHasQTuVE33QnZ4zIjQY6IeNFLkmw6hvQ6qQKG2OFQq
-	KIMpJdZ5WTXGOhzpeP0mK/2uDSgodO2NNLhZ967HmSGeXPlK5N+uHMyVgqs1rSKPvkM7KJe3Vjb
-	usaXSLCleKWzKDkNqBPH0uQUICI+Wr66l/5aLpW1pUmYah87obPBj/0pKqLM46A7vpPirJ8C54c
-	lj6Oof7MtgZz7VNWZ/r3EZqG0oX3pP+FPQLPw==
-X-Received: by 2002:a17:907:3f96:b0:c1f:9cdb:9965 with SMTP id a640c23a62f3a-c20731a96c5mr581985766b.2.1786121843161;
-        Fri, 07 Aug 2026 09:57:23 -0700 (PDT)
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com. [209.85.208.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c2080a6f414sm74807566b.17.2026.08.07.09.57.19
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Aug 2026 09:57:20 -0700 (PDT)
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-6a17c04563fso4146227a12.3
-        for <linux-clk@vger.kernel.org>; Fri, 07 Aug 2026 09:57:19 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+Rrbso7preEw1Q7zPInluT89nx3V8rIZJojBky9IKKk43vqWWGHJVSoXLy5YOhIluHBbPrjSohinnD8=@vger.kernel.org
-X-Received: by 2002:a05:6402:444a:b0:6a0:a4ce:1b8e with SMTP id
- 4fb4d7f45d1cf-6a1b49ea41emr5538936a12.0.1786121839381; Fri, 07 Aug 2026
- 09:57:19 -0700 (PDT)
+	 To:Cc:Content-Type; b=F4P3zyfO5KaHLy9OQDvnZGke9j0QhaEPs9vrtJIDV3LeYsxWg9qKb02stEpshIaThZtQJfdXTve9av6oJFO89DMedZEvESfmEryUbC0VPXoEAJ0kRDOONvBaGTA1ZwuF7uWoKk0mf0r5GCpUL5MwqZsVDnQJrBVuN715h44zWDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f9mdM+J7; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f9mdM+J7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E2241F00ACF
+	for <linux-clk@vger.kernel.org>; Fri,  7 Aug 2026 17:45:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1786124724;
+	bh=OyhnxF+idjJakv4GGlOu6M8jr1I7wPOlS/SALR3zs0g=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=f9mdM+J7MWS3rxSYZmb8Ntb5HpemFgXBtzrgLvmiufo0fNS13aqkWAPZ/knkrIyXR
+	 VIny+XIoazS+Wtlhe/qDN6VtJgJROhVR4kWZM9DDwccMVdxHfWIuNctzbIvZIW5owQ
+	 ksjRvnBLj5RBVbW3Lxo5sPVNpuguMjCSupqMwORjLSoUzcdGMHFnlCk0W7rpY2B1IB
+	 s6YVhjxVhd+YSBeTJE+0ZYBwCHJhhM5OgfGi8tsnQGdwrcihn6zWLEwnqn0TqYP0JH
+	 3vc12AuTC3vdzXcFEKGtfsAaCxGcMlA0Yi03Tdfi1h/PLp3ezXgUtxq3Ryl+c40f77
+	 NyerY3Z8luhwA==
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5b2a22c52c1so3553328e87.3
+        for <linux-clk@vger.kernel.org>; Fri, 07 Aug 2026 10:45:24 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RoBYqiFUbIp1LVSzTpAw3YrxxbL4seHb8+zkV71ERf6l3YR9QJZTMRJpALhaV7mrMHMKv4q38Dar1s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyR8sxstvKXhca4LaqqPfM7DcCRL5NSWxMtMfaAraYTMHi3eqPB
+	PgTM2eo7XJDJAPbTCHGjRRdklJ0VqY3jq3IqjVSFDLjnUwihp00vxlNzFcz0fEOIEsUKnfj1TG9
+	eEtXQ4XyxTO+tf3Dje7xaRWUSeArycck=
+X-Received: by 2002:ac2:515b:0:b0:5b2:a483:a367 with SMTP id
+ 2adb3069b0e04-5b2f4cbfd35mr2719806e87.40.1786124722892; Fri, 07 Aug 2026
+ 10:45:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1783505329.git.geert+renesas@glider.be> <20260715-greedy-ocelot-of-feminism-5be3bf@sudeepholla>
-In-Reply-To: <20260715-greedy-ocelot-of-feminism-5be3bf@sudeepholla>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 7 Aug 2026 18:57:06 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXD5eMuLBJWqLAt93M=8pSooBOFQ-H9jBM98N8HUwbRTA@mail.gmail.com>
-X-Gm-Features: AUfX_mwo4EKqALTJkUcOqfKJfKUYp7ByWT2RwJWKEGja2YdKTdPuto8-gpxkDXo
-Message-ID: <CAMuHMdXD5eMuLBJWqLAt93M=8pSooBOFQ-H9jBM98N8HUwbRTA@mail.gmail.com>
-Subject: Re: [PATCH v2 00/10] R-Car X5H Ironhide CPG/MDLC SCMI remapping support
-To: Sudeep Holla <sudeep.holla@kernel.org>
-Cc: Cristian Marussi <cristian.marussi@arm.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Saravana Kannan <saravanak@kernel.org>, Ulf Hansson <ulfh@kernel.org>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney@redhat.com>, 
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, Vinod Koul <vkoul@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Kevin Hilman <khilman@baylibre.com>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Marek Vasut <marek.vasut+renesas@mailbox.org>, 
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, arm-scmi@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20260806-longzhao-upstream-cv75-v2-v2-0-6b09707c5fe9@ambarella.com>
+ <20260806-longzhao-upstream-cv75-v2-v2-7-6b09707c5fe9@ambarella.com>
+In-Reply-To: <20260806-longzhao-upstream-cv75-v2-v2-7-6b09707c5fe9@ambarella.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Fri, 7 Aug 2026 19:45:10 +0200
+X-Gmail-Original-Message-ID: <CAD++jLk0LoOJk=TXin42AL3_z_7eVVkvMnYr1S8090C6A_B+dQ@mail.gmail.com>
+X-Gm-Features: AUfX_mz4THtJsHukdTGhBJPWk-nL3TQtLhDW7VNIYAXq_FOwFa7WqkqY6sFI5Ns
+Message-ID: <CAD++jLk0LoOJk=TXin42AL3_z_7eVVkvMnYr1S8090C6A_B+dQ@mail.gmail.com>
+Subject: Re: [PATCH v2 07/10] pinctrl: ambarella: add Ambarella pin controller
+To: longzhao@ambarella.com, Bartosz Golaszewski <brgl@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jiri Slaby <jirislaby@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-serial@vger.kernel.org, soc@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Sudeep,
+Hi Long,
 
-On Fri, 17 Jul 2026 at 10:05, Sudeep Holla <sudeep.holla@kernel.org> wrote:
-> On Wed, Jul 08, 2026 at 12:16:18PM +0200, Geert Uytterhoeven wrote:
-> > TL;DR:
-> >
-> >     Describe hardware in DT, and perform the mapping to SCMI in Linux.
-> >
-> > The Renesas R-Car X5H-based Ironhide board is the first Renesas
-> > SoC/board combination that implements the ARM System Control and
-> > Management Interface (SCMI).
-> >
-> > This means Linux can no longer perform various system operations (e.g.
-> > clock, power domain, and reset control) by accessing the hardware
-> > directly.  Instead, these operations are abstracted according to various
-> > SCMI sub-protocols, and Linux has to send messages to an SCMI-compliant
-> > firmware running on a System Control Processor (SCP).
-> > More specifically, the R-Car X5H SCP FW SCMI controls access to:
-> >   1. Core clocks and module clocks,
-> >   2. Module resets,
-> >   3. Power domains,
-> >   4. System power.
-> > The latter is not relevant for this discussion.
-> >
-> > Using SCMI also has an impact on the board DTS: besides the addition of
-> > a firmware/scmi node with protocol-specific subnodes, devices using
-> > SCMI-abstracted system resources now have to refer to these resources
-> > using resource specifiers containing phandles to the SCMI protocol
-> > subnodes, and firmware-specific object IDs[1].
-> >
-> > Unfortunately we encountered several issues with this:
-> >   - The clock, reset, and power domain IDs are not stable by design,
-> >     causing DT incompatibilities.
-> >     SCMI requires that the ID space exposed to an agent (i.e. Linux)
-> >     starts at zero and is contiguous.  Hence any change in system
-> >     partitioning (Application CPU core vs. Realtime CPU core,
-> >     virtualization, ...) may mean a renumbering of all SCMI IDs,
-> >     implying a massive change to the DT.
->
-> Yes it is well known fact. But where this is a feature or limitation
-> is debatable. Why would SCP firmware churn and re-number or re-assign
-> a differ domain ID everytime it is updated is questionable to me.
+thanks for your patch!
 
-For an actual product, I tend to agree. But even then there might be
-a need to reconsider partitioning during the long (e.g. automotive ;-)
-lifetime, e.g. to counter a new attack vector.
+On Thu, Aug 6, 2026 at 11:34=E2=80=AFAM Long Zhao via B4 Relay
+<devnull+longzhao.ambarella.com@kernel.org> wrote:
 
-For a development platform, the situation is different: the same board
-will be used for various use cases, with different partitioning of
-responsibilities, and will run various firmware versions.
+> +#define GPIO_DATA_OFFSET               0x00
+> +#define GPIO_DIR_OFFSET                        0x04
+> +#define GPIO_IS_OFFSET                 0x08
+> +#define GPIO_IBE_OFFSET                        0x0c
+> +#define GPIO_IEV_OFFSET                        0x10
+> +#define GPIO_IE_OFFSET                 0x14
+> +#define GPIO_AFSEL_OFFSET              0x18
+> +#define GPIO_RIS_OFFSET                        0x1c
+> +#define GPIO_MIS_OFFSET                        0x20
+> +#define GPIO_IC_OFFSET                 0x24
+> +#define GPIO_MASK_OFFSET               0x28
+> +#define GPIO_ENABLE_OFFSET             0x2c
 
-> >   - There may be different SCP firmware lineages, e.g. proprietary and
-> >     certified variants, and FLOSS variants,
->
-> No sure if I understand the issue here.
+As everyone can see from a mile away this is a modified ARM PL061
+primecell, see drivers/gpio/gpio-pl061.c.
 
-Safety-critical products may require certified firmware, which may
-be completely different from what is generally available.
+I'm not very interested in having two drivers for pretty much the same
+hardware in the kernel. Odds are that there will be new quirks and fixed
+to one of the drivers that the other one doesn't get :/
+Also the PL061 driver is pretty complex and specialized as GPIO
+drivers go already. I certainly don't want to have a second copy
+of that.
 
-> >   - SCMI features may differ across firmware versions,
->
-> Again, features must be discoverable that is the advantage of DT vs this
-> firmware interface, so not sure what is the issue in this matter.
->
-> >   - SCMI may abstract the hardware in a different way, requiring changes
-> >     in (possibly existing) DT bindings and drivers to support the same
-> >     hardware with and without SCMI:
-> >       - E.g. the number of SCMI clocks inputs to a hardware block may
-> >       differ from the actual hardware,
-> >       - E.g. hardware clock inputs may be abstracted as SCMI power
-> >       domains (or vice versa), like on Qualcomm SA8255P[2].
->
-> True, the moment SCMI like interface is used in OSPM, the firmware
-> description hides real h/w details and provide what firmware thinks
-> OSPM must view hardware as(how VMMs virtualise things for VMs, firmware
-> can have similar effect with such interfaces).
+We need to find a way to re-use the PL061 driver with this pin
+controller.
 
-So you end up with multiple compatible values for the same hardware
-blocks, depending on direct hardware access or SCMI, and on the
-actual firmware.
-What is the policy for naming such compatible values?  How many
-different DT bindings are we willing to support for the same hardware?
-What about driver changes? Maintenance of all these drivers?
+1. Modify the existing PL061 driver to use a dynamic register
+  layout, i.e. make the different register locations part of some
+  per-variant data:
 
-> >     Experience has taught that not describing the hardware in DT may
-> >     lead to major issues later.
+struct vendor_data {
+    u32 data_offset;
+    u32 dir_offset;
+...
+};
 
-E.g. one may miss one internal clock input when describing a device in
-DT, where control of the clock turns out to be critical for a specific
-hardware feature?
+Add:
 
-> OK, that's interesting. But the whole point with these interfaces is to
-> hide those, so just don't use such abstraction interface if you want the
-> hardware to be described as is to the OSPM.
+struct pl061 {
+    struct vendor_data *variant;
+...
+};
 
-How do you fix it when everything is hidden, e.g. behind a single
-virtual clock?
+Add vendor data to the PL061 variant:
 
-> >   - SCMI does not support the concept of a clock domain, so existing
-> >     drivers can no longer rely on Runtime PM, but need to be changed to
-> >     manage functional clocks explicitly,
->
-> Not sure what that means, you mean clock protocol is not good enough to
-> model the h/w clock domains on your platform ? If so, you are welcome to
-> improve the specification.
+static struct vendor_data vendor_arm =3D {...};
 
-It is common on embedded SoCs (e.g. TI, Rockchip, Renesas) to not only
-have power domains that can be powered down, but also a clock domain:
-a clock controller provides a common way to put a hardware module into
-standby mode by gating its clock inputs.
+static struct vendor_data vendor_ambarella =3D {...};
 
-In Linux PM Domains, the following callbacks are used:
-  - generic_pm_domain.power_{on,off}(), to power a power domain on/off,
-  - generic_pm_domain.dev_ops.{start,stop}(), to start/stop a device
-    inside a power domain.
-Both are handled automatically through Runtime PM
-(pm_runtime_{resume_and_get,put}(dev)), so drivers don't need to care
-about the intricate details.
-
-However, for this to work, the PM Domain needs to know which clocks are
-meant for module standby.  Without this knowledge, individual drivers
-must control these module clocks explicitly.  During the last two
-decades, lots of drivers have been converted from explicit module clock
-control to Runtime PM, and reversing this would IMHO be a step backward.
-
-I already posted patches before [1] to add support for clock domains
-using a quirk.  Without a quirk, the SCMI clock protocol should be
-extended to advertize whether a clock is intended for power-management
-of a hardware module.  One way to handle this, the SCMI CLOCK_ATTRIBUTES
-could be extended with a new flag in the returned attributes as I
-pointed out in the cover letter of that series.
-
-> >   - U-Boot IPL (Initial Program Loader) needs a proper hardware
-> >     description in DT, not using SCMI.
->
-> I am going to ignore that.
-
-And of course we like the DT used by U-Boot (IPL or not) to be as close
-as possible to the DT used by Linux.
-
-Thanks, and have a nice weekend!
-
-[1] Series "[PATCH/RFC 0/9] R-Car X5H Ironhide pure SCMI proof-of-concept"
-  - "[PATCH/RFC 4/9] firmware: arm_scmi: Add a flag for power-management clocks"
-  - "[PATCH/RFC 5/9] clk: scmi: Add scmi_clk_is_pm_clk()"
-  - "[PATCH/RFC 6/9] dt-bindings: firmware: arm,scmi: Document arm,clock-domain"
-  - "[PATCH/RFC 7/9] pmdomain: arm: scmi: Add clock domain support"
-  - "[PATCH/RFC 8/9] firmware: arm_scmi: quirk: Handle power
-management clocks on R-Car X5H"
-https://lore.kernel.org/all/cover.1781171705.git.geert+renesas@glider.be/
+static const struct amba_id pl061_ids[] =3D {
+        {
+                .id     =3D 0x00041061,
+                .mask   =3D 0x000fffff,
+                . data =3D &vendor_arm;
+        },
+        {
+               .id =3D /* make something up, see include/linux/amba/bus.h *=
+/
+               .mask =3D ....
+               .data =3D &vendor_ambarella;
+        },
 
 
-Gr{oetje,eeting}s,
+Essentially follow the pattern from drivers/spi/spi-pl022.c.
 
-                        Geert
+2. Contemplate if the GPIO should be a separate entity in the
+ device tree or not. If not, Linux needs to spawn the new AMBA
+ device with this pin control driver using e.g.
+ amba_device_alloc() and amba_device_register() etc,
+ see drivers/of/platform.c
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+3. select GPIO_PL061 in Kconfig for this pin controller...
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+This is not a simple solution but it is the right one.
+
+Yours,
+Linus Walleij
