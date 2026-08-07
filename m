@@ -1,172 +1,155 @@
-Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49])
+Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDEDC3B995B
-	for <linux-clk@vger.kernel.org>; Fri,  7 Aug 2026 04:55:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.217.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D82503C73D9
+	for <linux-clk@vger.kernel.org>; Fri,  7 Aug 2026 04:58:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.174
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786078543; cv=pass; b=sWQwNS1cFHbU5SBaVTqgsNIlSyN6v14Exxvjbvf3ZtB6ktU+T+1gqZUI7Ocqz5uFr6JGrcOnlMIo9HD9+ZOp4jvb4mP6yVeMHgGilN9m6dMeO6QTVQZAXnfquZafegATH/wiBnajYt9hMzROAPa+lVUAg52QAXC0CnGyKaY5WKw=
+	t=1786078714; cv=pass; b=CFXycETKVyhiEVFtBMJgu2LNsMmU+dGT3NEYZCLsZEaiFw+ovAomsWCXs8a7SIU9OSysS7xecsOcJ2Hca9QD9myMoxhbVH2cwjf5gv1AYRurlAY7HcpyUlUThqlKvP7QvkWxaWrBvIGSzSSJbSoaaH5QT2hyajxk2M5klENuQUM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786078543; c=relaxed/simple;
-	bh=sKJzLSkS9E51xnBmrifkQEmkhQx5pX2W4VuJkWehw4E=;
+	s=arc-20240116; t=1786078714; c=relaxed/simple;
+	bh=vdhbHRkc4p5LGfMXcZZqf1fXPNueKd8i4kcDxqQnCpY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MIZfpr8A1363xKXBKSY2d2of7KEv7eET6ThWRhzv/J11GsYsvh8jjThWj12QvSXMxslzeR8ivFP8cq0FXvobR5FNba2PFE+/z0avng8FQDKD2/Y8TMyyAH/hbdzoCY35lSofw9HbjE0kpDGERKUvGCEo5t1ynh0DZM7hRC3obQg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=XrtBBvy5; arc=pass smtp.client-ip=209.85.217.49
+	 To:Cc:Content-Type; b=NGn0L5xjIJLBkROpXY33hNTzNN2zuE2vKh55826qeWQyAhqbUXEc18XlOMhasSOOg7AMbkbq7G8gFDd0qWO5g3UsmWLS30mWw16P1yS8L1/Oq8z7UU5bhYlUPPDZnpuTKkhPLhw6QHBne1ZmIxoFK7DH3mVaMqordAFZo9aJ5Yk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=FirXTSmq; arc=pass smtp.client-ip=209.85.221.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="XrtBBvy5"
-Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-74ace427b29so800811137.1
-        for <linux-clk@vger.kernel.org>; Thu, 06 Aug 2026 21:55:34 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1786078533; cv=none;
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="FirXTSmq"
+Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-5bf5370d38fso935743e0c.2
+        for <linux-clk@vger.kernel.org>; Thu, 06 Aug 2026 21:58:28 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1786078704; cv=none;
         d=google.com; s=arc-20260327;
-        b=nGO4fTOrstsQ52Jc+pm1qGHDkusvSSyOXSiAwspO+qGHPV/wlzq4dc1Xfx9JhkyWiE
-         Fph/l2RRw9vcvora5vu3rMUuGMqIhxif3XuWiVi0B+tC1vOK0ASgc622dzhUCDv0/YmT
-         9dAJ00mByb3AzXBDSH+ksn6s6F10PWY1uNK8gsiwdhf8VO+4wxZD0E3x3qmeiP2LqkUI
-         hsuVpv5TDHAQDhiq70/zKY2V2cbvMxEIbPrvBbUaGzOK4hIr63whSLB55H6b3OLnTFmg
-         4GVVoZkvclZmBYJhQSz6wuqLnmWHr7RKlLzJ4VLZDy/cGyoL6O4Xs/su7qenMkigeiK2
-         9V9Q==
+        b=jXYxLwRs9YVg5M4xR2LNAg6tPYByyEBaibYU2nqGi2Lhyie1EOS+Mn3/7gBNKHID/0
+         Ev5Xn4ivieeSEQyZ5Eq1yLXXap3eTnurbsnWPnL+307GDBslRqksS2yYArn4oZBU4fsy
+         77D7KZAxKJbM4hploOYqy1//uXcnfpqSEN3xyo9dgTpu8FbheqXsqBG/ROtVBKwsKTWi
+         hUFLf+qtGt7UfYofSziY3dHNByADzoYfM+gnRLc4joqJna9VJyAmmIzWkvoSiZ9OXAhk
+         XIWp/S8Lhe2Nu17BZeXG8wF7Phv/Aj1AJeiATxseXH3MJNi+q+gedxaIrk4/Rxh6uu/G
+         tSKw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=Hr8qO/eFVTx9hp0usiSSQteYMYHrCHh6AB41Nwyy/LE=;
-        fh=YTT94tnIpNJTCBEtux+J8OuP074JgWUGDN28PnpLbKc=;
-        b=pkahd8UFTSJ7c91w8u3sG3WN/5xbNs/aPwyAem++ucn5TLLBdybh0LDnozvJt49HgO
-         fd4WU0u5EBl2kik2nRsrhKdWxDoPIf8UzE9NvKifDzVaugBuP8KHGOz/GhbWQZwfuqao
-         +56eGO1Xg5lyvPUsa+P2aTxwUGrDb6qM6nXScoTCmvWU0MRV/wSBpHCloaXvZ6VtqI+4
-         AKVbLJ5+gtgR6B2BfYRfRQ92iruyxOIcnvtSxDiTyPd/pw8baiDnGmX2+LlcNm/optuI
-         CTU10aT7G+p1SonkH/vyTqbFGmWK7UeDWpmmQiJeyI+9R8+hS9KDb9FTKf/4k1zQ7771
-         /aQQ==;
+        bh=GyoCsD/0rmHS7KcEa/0ZI40shOpSzJyo3J3k5RnZ7co=;
+        fh=ct++2mHUqKfuYBZp/40x5KmtXhSvRTLzIHTHmMDq47w=;
+        b=e1rZPXN5Wd18VLV7YLa9EEFfg1pa3o94LER99J+CzD23woGDDIwN4WBk+dZpGisr+g
+         Afo0yMvO1xrhj/x3rlek+lzwRDV6BOfm20koHf5SBmbnbVwnsP8iVq8Xyk5mSRVv1gQc
+         Lb/XFRzXRGCJ6emGvsbD7xri87vLBXXt+KbAQeJST0y+wuVqAdr+5NEI7rnDcM6s61i0
+         I6Qe6QRig6arYP54EzwImS8/gfS2JAF8cWkzuf1WSOoQfKn2WBRBJ48KqGOWZHs3mdJl
+         kvWjTrGZsxicBTXaHxKrKi52TuSkPtj2FuAxmKvD2dHqHHgOatbjUAIgivrZ5PBjUzhb
+         yE5A==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1786078533; x=1786683333; darn=vger.kernel.org;
+        d=baylibre.com; s=google; t=1786078704; x=1786683504; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=Hr8qO/eFVTx9hp0usiSSQteYMYHrCHh6AB41Nwyy/LE=;
-        b=XrtBBvy5feJ7ss/I3OVd0YArKB9zS1hJWgVbgzTe1VC8yClcSm/oyKZ5hGTMfyKo4I
-         DoX7/bTDcWcAg5yZhGfT03j31DSO82dxblTy8ILFgnZIz86aUBqcld9xboajz1xEzcJQ
-         xmsp6v6wYr3iNnOOiOqd4kwNJUiyY3FqMeDsZLIbXBtDKLRdRXZy2DwB5MJNP3i/qKDe
-         kTo4Nr0aEsYe1pANzZWwJBXoIElzg2R/t2cc9qGGHtfAbf9yo6yApCm7CKHBvwwEVhFQ
-         RsZN/mAsncF/dgT5QN0Ym3iqATZij5X3WsnrXpwVRx04EhTb262fMbSd19KBI1HPA1lE
-         TA3A==
+        bh=GyoCsD/0rmHS7KcEa/0ZI40shOpSzJyo3J3k5RnZ7co=;
+        b=FirXTSmqeFCJPxwCwADzrbpDr4if7NQaFNr6Fi2WyoZPyArGg0f6PXtNtaI/PLG0sK
+         qqmYDapQJlAJns/itzg8GSIe78FP61Ak6p7LdPYk5wh13jjAf1SBAEk3U4+xEbx7sBXI
+         EtuTF2Ja95JqC8RiyrW/SzSumoBOYtptnnWkZYX5M6+W4i69Aj72G4MZD5tCF2wq57KL
+         +ejJfgvkLYxGbefBRR7ReZbuvkNJkkWt2i0tTa1UaKG6s7VPQj1sHkCP2Obt9S2Swux9
+         tFmr519hxGnPCrzTDTx0ssZ6bU0aOi0kcUgp132+ZJGIytwxhS0S/8ud3KZ9ImRmCBgc
+         N0fg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786078533; x=1786683333;
+        d=1e100.net; s=20251104; t=1786078704; x=1786683504;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=Hr8qO/eFVTx9hp0usiSSQteYMYHrCHh6AB41Nwyy/LE=;
-        b=MMfxja6RM5po+15XaAdKe70d/YIxALV6nCkXUbFKZ0jyq7kN5q3hAYl9rlWfYVcRJe
-         /gWCvQPkoV4QlUF2YcpFgNEBtGOS8csPhSNgtaL/odkfn2TlivnFPtjMlWoBzDyOGxHY
-         EU+rmxgh3ArmO6/p03IwZmVgSrlJCxfHZ1Jkwpvyvqalq+iqwHCxKDkjI/CB1K87SVEZ
-         UTcixcvdEvvUKOMlc0HXDbv+69iAPgmuukCpEqk+bdNUPeqXLUH83eQgapc9sgJ41gpl
-         ChAU4lf05wKnNYz+X4QqTp/E7ngMGQqur6s2VIjecSC/7VzH2HwJFjofFMKlRIPIeH3n
-         LcYA==
-X-Forwarded-Encrypted: i=1; AHgh+Rr62NbPgFU44O9dUtsEn73iZBuTyfpTrghv3GjU02pIbK3AscNGiM4Gi6Ir/NG9p2jvvL5yDaK4xTg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOUJDKe2f3kkQNExIj3dO4kmld2RFxdxqo52WeTtjek1oYCx3a
-	ideI/ClGrI81CeNldXYBTQF6Hk0otilvyDvXE3WABb9A0A/dvHh0/1qQgSblcyP77PLWzlfINO8
-	0zthpo4+eY6EfM/Xi+uDPcVE+CO2xHHDrkivSQYUjnA==
-X-Gm-Gg: AR+sD139xdx4wZE0ReSagykhOL0a5oc4zHjq/w9SceawBZm0pNVKFqT6uHvFjE2iG0A
-	7b77y202X4NRQQ+LDlYD8q677KtqsIc8b5vMzhJjo7XxP0ljXJpultAvSGfweN1Pov+sOU/gECw
-	KF5xiiiaNpwB1L8dfkwnoT43xX8j6OB4VQK96So8iI6l19a4Nb9Zefa9pbYcAdutsIX5jkdfdXc
-	h9c5JuRTK8Uip9jDgXZjDItEFMeo5wSkrM2Hz6u0yOuC/L0rP99yNYQp8KkuD7h628LeptWd0Kh
-	3baX/3Vhhina0B3N3e6Yvv4Ly3WEH7H9esvsyLJn9dEz
-X-Received: by 2002:a05:6102:54a0:b0:74a:992e:84f6 with SMTP id
- ada2fe7eead31-760e9040fb8mr5391590137.10.1786078532703; Thu, 06 Aug 2026
- 21:55:32 -0700 (PDT)
+        bh=GyoCsD/0rmHS7KcEa/0ZI40shOpSzJyo3J3k5RnZ7co=;
+        b=fuCKAY/rdvjYnFWtf2WvVV7SFn/WovMscoW/pp87un22ESFc4u4VWykzPZH3S7Cfym
+         41T+m/LDZfc9sTe7NsIRQzs9kIgLtBcOED8j4RXVNN1vVvx7Q757Ox+auXV1vSt4Lfq/
+         OrfC1lK2FzwIBiAebPfBiGSLenM5e+7P0WsUPppJH6uPYBRyaoX/k3lm5S0s9mpWAoX2
+         sOG+by8fmN2tLN8261c51Rdy7xQIxO9e7EVVVqlLDh4aR8Q1fNHnmSNBredkabnrQrx6
+         oct57pcetm8LY5L+r5gG6x40GT93Efl+92bScLUEmDr5sEKh86m2vPFhAPGnFXvFLM26
+         EcPw==
+X-Forwarded-Encrypted: i=1; AHgh+RojIpbG4i4XTyQcNN8AbmDvs6VmRagkkXLjyMN8Fj7j0bx0cbbe7L8aP9FObknRKCHx5BQ8Zr/DvG8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZurEJlHNnugakNHnkOukloo4ok7e3U5t9DGwUosVngCMVpgaT
+	2HG4LRSh53H7OXPpRObvKQAPYq01Lw24rcO/cG4B7Zz+1qR77XxO7IroWXslKFx8Vm5ffv45CWP
+	P8FOPJictxavRNAA0VggyDd5HTgw7LaL2uciRPyod9g==
+X-Gm-Gg: AR+sD12ydKsc5Sxq+1R2NLDIUhwxEnpJJlpAxchDfyBmYOYdpPxUOj3Ny7v1UWTVNz/
+	lLQZRR0TRH8wuiDe1RDz1OYpjARDQ9+eu+tMkdAk3nTwlvammxqdeCkp25xb0aCyFIGWCAI6YB2
+	iPkrc3oj7GVh5/cShdi7goPISG/xH932Z1vl33s6WwfXQGKv3Dgm6gzY4WLsFrcudvkfCrF3wJ5
+	cRV2BGgGtcvOLyAmzuruPQKFgp2Re1YrR5D+81If2bGbw+pQBgFnfwLbqRJV7sXHOsEDhgB1xZf
+	40LLd1O/EcQRtnmNIjE32e5PYqOguqumFYoIDsHXcwHe
+X-Received: by 2002:a05:6122:4886:b0:5a0:afff:78a6 with SMTP id
+ 71dfb90a1353d-5c3d928f28cmr2879891e0c.14.1786078703917; Thu, 06 Aug 2026
+ 21:58:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260804-clk-masney-maintainer-v1-1-de593189a9a1@redhat.com>
-In-Reply-To: <20260804-clk-masney-maintainer-v1-1-de593189a9a1@redhat.com>
+References: <20260729121640.3864006-2-ukleinek@kernel.org> <CAEG3pNCwa8ZyQHuDLDiCWXDUrGcuLpT8n6O75yN8tLsgZ5x-Lw@mail.gmail.com>
+ <anIL_FKn9O4evOlL@redhat.com>
+In-Reply-To: <anIL_FKn9O4evOlL@redhat.com>
 From: Michael Turquette <mturquette@baylibre.com>
-Date: Thu, 6 Aug 2026 21:55:04 -0700
-X-Gm-Features: AUfX_mwg8uZRMciarNVr80yM9wYTUsQQ7nZach1val9vL0tanmpjaU6OBeWKAMk
-Message-ID: <CAEG3pNBFyg1uWwDiy8Bd1NKJL4VMOKCvy=_VxoKw+eO_hAdVKw@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: Add myself as co-maintainer for clk subsystem
+Date: Thu, 6 Aug 2026 21:57:57 -0700
+X-Gm-Features: AUfX_mzgLPEXYkiHvEPra3XaeDP0B2oNd5TWIzL7HUWjDzPBXzd8rtW6RJDClkE
+Message-ID: <CAEG3pNBTOHz59qN08AKJ1p3yXtB3E=8veq1LN8nyQMx2iGKMHg@mail.gmail.com>
+Subject: Re: [PATCH] Drop Michael Turquette's clk maintainer entry
 To: Brian Masney <bmasney@redhat.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+Cc: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, 
 	=?UTF-8?B?SsOpcsO0bWUgQnJ1bmV0?= <jbrunet@baylibre.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 Hi Brian,
 
-On Tue, Aug 4, 2026 at 8:33=E2=80=AFAM Brian Masney <bmasney@redhat.com> wr=
+On Tue, Aug 4, 2026 at 8:57=E2=80=AFAM Brian Masney <bmasney@redhat.com> wr=
 ote:
 >
-> With Michael Turquette stepping down as a clk co-maintainer, this
-> subsystem is big enough that it needs multiple people to keep the
-> clk community healthy. I've already been doing a lot of work to
-> help with clk maintenance, so let's make it official in the MAINTAINERS
-> file.
+> On Sun, Aug 02, 2026 at 06:34:06PM -0500, Michael Turquette wrote:
+> > On Wed, Jul 29, 2026 at 7:16=E2=80=AFAM Uwe Kleine-K=C3=B6nig <ukleinek=
+@kernel.org> wrote:
+> > >
+> > > Mike wasn't publically active for the clk subsystem since years. Stop
+> > > pretending that there is a maintainer team caring for clk.
+> >
+> > I was hoping to send this patch myself, and to recommend a couple of
+> > folks for promotion to the clk subsystem. Alas, you beat me to the
+> > first half of my plan.
+> >
+> > >
+> > > Signed-off-by: Uwe Kleine-K=C3=B6nig <ukleinek@kernel.org>
+> >
+> > Acked-by: Michael Turquette <mturquette@baylibre.com>
+>
+> Thanks Mike for everything you have done over the years with linux-clk.
+>
+> I posted this patch to make me co-maintainer to help out Stephen:
+>
+> https://lore.kernel.org/linux-clk/20260804-clk-masney-maintainer-v1-1-de5=
+93189a9a1@redhat.com/T/#u
+>
+> To help make this subsystem more sustainable from a maintenance
+> standpoint, I propose:
+>
+> - To push more vendors to participate in meaningful reviews, and send in =
+pulls.
+>   A recent example of where I did that is with Mediatek:
+>   https://lore.kernel.org/linux-clk/amuWdRD-TBQtFT_4@redhat.com/
+>
+> - Try to find more people to help with the subsystem as a whole so that
+>   this all isn't on just one person.
 
-Acked-by: Michael Turquette <mturquette@baylibre.com>
+I acked that patch. Per your second proposal I also suggest that
+Jerome Brunet join you on the team. This is something that should have
+happened forever ago and it's my fault it did not.
 
-If someone doesn't pick this up and give you commit access to the
-linux-clk tree on git.kernel.org then let me know and I'll unvault my
-SSH key and merge the patch myself. I'm only a bit embarrassed to say
-that it would be nontrivial for me to blow the cobwebs off and commit
-a patch to kernel.org after all of these years ...
-
-I would also propose to add J=C3=A9r=C3=B4me Brunet <jbrunet@baylibre.com> =
-as a
-co-maintainer. This was proposed a long time ago and there was every
-reason to add him, but I was inactive at the time of the proposal and
-nothing changed. I'd like to make this right by proposing him to join
-the clk co-maintainer team now and help you with the load.
-
-Let me know what you think,
+Best,
 Mike
 
 
 >
-> I slightly changed my email address to help with email filtering on my
-> side.
->
-> Link: https://lore.kernel.org/linux-clk/?q=3Df%3Abmasney%40redhat.com
-> Link: https://lore.kernel.org/linux-clk/20260729121640.3864006-2-ukleinek=
-@kernel.org/
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
-> ---
-> Note: I made this depend on
-> https://lore.kernel.org/linux-clk/20260729121640.3864006-2-ukleinek@kerne=
-l.org/
-> ---
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 07ffdec1c8c7..b9b01a3b70a7 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -6448,7 +6448,7 @@ F:        include/uapi/linux/comedi.h
->
->  COMMON CLK FRAMEWORK
->  M:     Stephen Boyd <sboyd@kernel.org>
-> -R:     Brian Masney <bmasney@redhat.com>
-> +M:     Brian Masney <bmasney+clk@redhat.com>
->  L:     linux-clk@vger.kernel.org
->  S:     Maintained
->  Q:     http://patchwork.kernel.org/project/linux-clk/list/
->
-> ---
-> base-commit: 83adfb8e0c0e26f451564779c90798d1d4c13347
-> change-id: 20260804-clk-masney-maintainer-7b4349a0f004
->
-> Best regards,
-> --
-> Brian Masney <bmasney@redhat.com>
+> Brian
 >
 
 
---
+--=20
 Michael Turquette
 CEO - Dallas, TX
 http://baylibre.com/
