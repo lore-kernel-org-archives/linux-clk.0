@@ -1,101 +1,86 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59B5643031B;
-	Fri,  7 Aug 2026 13:02:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31A5C47A86A;
+	Fri,  7 Aug 2026 13:08:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786107762; cv=none; b=MEz7fOZTG7+VNXIx6bU0z2ha4kDt9kvG1eJ3QWII3zSU1QzwntxGUbjyKDeGbpwm2/OEz6ZjYMUJVnc8qXLosZMPgQzZxhA+gILoaw7eOzQG1H5ukXNmg57V0g38zyPucPB1CJwjCg/PD7FzVjw+RlYeBTfLyR0r9kg7nccxni0=
+	t=1786108147; cv=none; b=OTlaju51+DK6iFMoRP9iPQXdVKY0Xw5CEUBkY1Z6EqnmizWx1eBuw9fDGh/utc4TPXnjkX6Rmh0zdO849uc/S89R7TnQqvl1nxZ4n3vKrXvn0oiTPKFSwLoNHxLyNCLSz01xAs5KMuQZ9KU/IOK2Jh3bv2DLRRGYB1+CLfbuw1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786107762; c=relaxed/simple;
-	bh=FdWE3jLBu1qUiJGqtka5XAGDIfCU188cWO+v/9kTolg=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=tjuH2lQhNbOH2cHmsxu2iPdKziUF+1iMmvGGTYTyxPd16lXD9YiDxOAVEJ0CuaOQy2gyJRqR0KD2IGc6MlzGBo8mh+f9UyxulB2WoGD2sTLUhKCEC1CzM0kfRwef9drD0fr5UTWEPbWr2UbLnCQtywBsSfPRV6/O2Jfp72o3MEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OecVw22t; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1786108147; c=relaxed/simple;
+	bh=39hw1uijqgPI4iLf860OBuF/9OOCXl9Ic1r1bXtE7Xw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=QDQmx/0owwljARz89FTFkBR+0W9K6DUJySpjqF1/GpwDKo9/UMZ9+0um+4FBBlxCva6+N5OKG4cEZnDiad8X4EYvaIijjB5lUndzrLUnGEuhHIdIZJKH6ajK39hbDKTT3ywdxfarl9UQOyaD2DXSsAs4R6h8tFrVehqA+MkOcfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=nPXZYl+5; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OecVw22t"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 864B01F000E9;
-	Fri,  7 Aug 2026 13:02:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786107752;
-	bh=1ojP9lXDTsgxo+kBprRZYnvCdgavnn52UswOqgtr3nc=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject;
-	b=OecVw22taBzl2gw5knEc7KAsRSOu+xy7WrSl5VJa24e6O4sz1Y6duJxpWBx4xAj00
-	 SxwiVPTLg9TcQZjSpGqD7plpJalJalll0HQP8DDfJWoEbueZPFIiPg4ulIVvdPBonw
-	 K1X8wRNrppJpXuxm0HfMG+kJevTJtd/JyRuwnp5mxcbvJgg93Nuadmj++VtZ+0AbFd
-	 jmRTVO3RY2Se7UzN4HgipbbPMpcjR4guz+7xvEZF6yXh45P7R89orLAyBaV2ATDDij
-	 QVFc4Hma0dAnVVIb//MUH7uVMc8W7eEeLmrohv/eczvy/UyaQI/lMoQYDnxe5b/yuL
-	 2puGqJ6IXaEjw==
-Date: Fri, 07 Aug 2026 08:02:31 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="nPXZYl+5"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 2E9371A14A9;
+	Fri,  7 Aug 2026 13:08:51 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id F3BDC603F0;
+	Fri,  7 Aug 2026 13:08:50 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C4AA211C37825;
+	Fri,  7 Aug 2026 15:08:46 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1786108129; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=39hw1uijqgPI4iLf860OBuF/9OOCXl9Ic1r1bXtE7Xw=;
+	b=nPXZYl+5HZV5UcLXy4QIts2W1wa96utv77R3CodIWlB4tyq1xkaIZAkBRv08R2Nt/6K+qI
+	KQOrQqPR+iHsCFR7rFlQE8s3LN154WcZWGUKaObFazOhVmafhOWh266TEmfUdY3hYdrg3n
+	JOeaaDBQ+L9zxNzV9SFCjseRXLROHEMC6TTf7vgvnhIkWf0/fISVcw6pDXn4JNukcKn+dR
+	tv+TYtGW/rZJNgutGRLzYjCzel1XwpSIU/1FtGIVEeFDxqakehbB6O/zfGr9nZqQGfm5Il
+	gEKYk9BnsROXHIrYLcpb3+aarh7HzNvpz/mjZgWV8elPJzOFM0BNb2QJCTnaAg==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Frank Li <Frank.li@oss.nxp.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd
+ <sboyd@kernel.org>,  Brian Masney <bmasney@redhat.com>,  Rob Herring
+ <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor
+ Dooley <conor+dt@kernel.org>,  Brendan Higgins
+ <brendan.higgins@linux.dev>,  David Gow <david@davidgow.net>,  Rae Moar
+ <raemoar63@gmail.com>,  Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+  Pascal EBERHARD <pascal.eberhard@se.com>,  Wolfram Sang
+ <wsa+renesas@sang-engineering.com>,  linux-clk@vger.kernel.org,
+  devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-kselftest@vger.kernel.org,  kunit-dev@googlegroups.com
+Subject: Re: [PATCH v4 5/7] clk: Use the generic OF phandle parsing in only
+ one place
+In-Reply-To: <amOwe6kq9T1Q5FBL@lizhi-Precision-Tower-5810> (Frank Li's message
+	of "Fri, 24 Jul 2026 14:35:39 -0400")
+References: <20260717-schneider-v7-2-rc1-eip201-upstream-v4-0-751547e160e5@bootlin.com>
+	<20260717-schneider-v7-2-rc1-eip201-upstream-v4-5-751547e160e5@bootlin.com>
+	<amOwe6kq9T1Q5FBL@lizhi-Precision-Tower-5810>
+User-Agent: mu4e 1.12.12; emacs 30.2
+Date: Fri, 07 Aug 2026 15:08:45 +0200
+Message-ID: <87bjbecc2q.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Paul Walmsley <pjw@kernel.org>, Hal Feng <hal.feng@starfivetech.com>, 
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
- Palmer Dabbelt <palmer@dabbelt.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>, Conor Dooley <conor+dt@kernel.org>, 
- linux-hardening@vger.kernel.org, Alexandre Ghiti <alex@ghiti.fr>, 
- linux-clk@vger.kernel.org, Emil Renner Berthing <kernel@esmil.dk>, 
- Stephen Boyd <sboyd@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, Kees Cook <kees@kernel.org>, 
- Albert Ou <aou@eecs.berkeley.edu>, 
- "Gustavo A . R . Silva" <gustavoars@kernel.org>, 
- Richard Cochran <richardcochran@gmail.com>, devicetree@vger.kernel.org, 
- linux-riscv@lists.infradead.org
-To: Changhuang Liang <changhuang.liang@starfivetech.com>
-In-Reply-To: <20260807112923.191627-16-changhuang.liang@starfivetech.com>
-References: <20260807112923.191627-1-changhuang.liang@starfivetech.com>
- <20260807112923.191627-16-changhuang.liang@starfivetech.com>
-Message-Id: <178610775180.4069377.7068076405963189133.robh@kernel.org>
-Subject: Re: [PATCH v3 15/22] dt-bindings: clock: Add StarFive JHB100
- Peripheral-1 clock and reset generator
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
+On 24/07/2026 at 14:35:39 -04, Frank Li <Frank.li@oss.nxp.com> wrote:
 
-On Fri, 07 Aug 2026 04:29:16 -0700, Changhuang Liang wrote:
-> Add bindings for the Peripheral-1 clock and reset generator (PER1CRG)
-> on the JHB100 RISC-V SoC by StarFive Ltd.
-> 
-> Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
-> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->  .../clock/starfive,jhb100-per1crg.yaml        | 70 +++++++++++++++++++
->  .../dt-bindings/clock/starfive,jhb100-crg.h   | 60 ++++++++++++++++
->  .../dt-bindings/reset/starfive,jhb100-crg.h   | 19 +++++
->  3 files changed, 149 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/starfive,jhb100-per1crg.yaml
-> 
+> On Fri, Jul 17, 2026 at 05:59:21PM +0200, Miquel Raynal (Schneider Electr=
+ic) wrote:
+>> There should be one single entry in the OF world, so that the way we
+>> parse the DT is always the same. make sure this is the case by avoid
+>> calling of_parse_phandle_with_args() from of_clk_get_parent_name(). This
+>> is even more relevant as we currently fail to parse clock-ranges. As a
+>> result, it seems to be safer to directly call of_parse_clkspec() there,
+>> but doing so implies that we do not try the "clock-ranges" path if we
+>> already found a "clocks" property..
+>
+> Sorry, I can't understand well what commit said.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+I tried to reorder the commit sentences, hopefully it will make the text
+easier to read.
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/display/mediatek/mediatek,mt8196-tdshp.example.dtb: tdshp@321e0000 (mediatek,mt8196-disp-tdshp): 'clock-names' is a required property
-	from schema $id: http://devicetree.org/schemas/display/mediatek/mediatek,mt8196-tdshp.yaml
-Documentation/devicetree/bindings/display/imx/fsl,imx-lcdc.example.dtb: display0: fsl,pcr: b'\xf0\xc8\x80\x80' is not of type 'object', 'integer', 'array', 'boolean', 'null'
-	from schema $id: http://devicetree.org/schemas/dt-core.yaml
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.kernel.org/project/devicetree/patch/20260807112923.191627-16-changhuang.liang@starfivetech.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+Thanks,
+Miqu=C3=A8l
