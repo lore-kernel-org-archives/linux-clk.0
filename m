@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1F5B37F313;
-	Fri,  7 Aug 2026 23:04:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD4C61A6814;
+	Fri,  7 Aug 2026 23:08:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786143847; cv=none; b=IPFj167a6ZFGE1KxXn9TyoxfWqjKJaBrDQKV00ZUd6IsO7ICXzhM+ZDq6rp/rXBfNZQMvTHGkd9CNk2dyPRYCSHSuTxcoOg7BSbybckKxMHSfYad00yNtZPJm5ymToafRCZ5kqDQXTo6qaobzeXtCtNhZK8JqW0R6O8llZpj7WA=
+	t=1786144106; cv=none; b=HyA1kMa9zvwHlSNN1sIxew3KN0PL4xfaFTnrBszd4/dRV1wqA4qQDJFWHbyew4MueeGG3AwjQrPb5DaJRtFlw495VKPJaozRntNkXj/1wfkUjrgIJT7AZvbcYHWaVVZbGx2vd7ZqGWV7XYetpaTMMEkX4ergNZhgfCcKGkVXQ2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786143847; c=relaxed/simple;
-	bh=JSmYH8NUq9hzUQWk9dCp1q6Q2pn3+VvnBw14ktHgi/w=;
+	s=arc-20240116; t=1786144106; c=relaxed/simple;
+	bh=iSuQctX5onIED//snysTrGOS8xh/b9LPN4lxr1VdNoc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ryQdosO1/coSUWBRZSr3Pxf/Q/ZdG4iusIW+DaLe91W1uDzLUQpdLZGYqd5ph5smRKEjSp5pCIb0ZC6XGCtVttyT08mtUQNt+8mxuTK1B1tV8eikbX7LoSMoks9s2gUQbUUDBiW2dP0EJpleReXLTrT4ay4+vfOMRkywjKlv1ao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VV/XUYcM; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=RlKKdm1FX3AP1Ycj5BJiwu4uLbYi68dhVkRTgr8trNKjXlIUMzH5vWasvniU9X0+fPLkaEkDFz3B3pgel1vzqQz1vekLpEElJTkAa+jDzOXtdb7iCKjxJRVtHsOYPl+5iYdxfwR6rGIk7ysSSWpn0UoSMltOE9hMxVoWeHzgpyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fnEINRfI; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VV/XUYcM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FBB81F000E9;
-	Fri,  7 Aug 2026 23:04:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fnEINRfI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 238321F000E9;
+	Fri,  7 Aug 2026 23:08:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786143845;
-	bh=kx1UpXBKBEnflfmlkyqXJx2dZdKyL+1i3Yt8CewuoiI=;
+	s=k20260515; t=1786144105;
+	bh=wQ0JD0AB/ZMckaLhyMCcytJcM09nVahiftP8BN/zRr4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=VV/XUYcMh8D0sqYrzb6w4ag/Zg3apwKvX86mZCbG+yJ4BrEBzd6D/uVp6XAcfGVu9
-	 xK0K3U1X6w18XuHNER8n2eiovHx2ki/yt8i7e4rVnNMVLrSy45/NhT9manywxGtTq+
-	 OZpQGjBAa3EQOa05D0effL3x/zpXVwtZua2RfujaYDYnlAUiPoewfrtjKTwjxGbwhN
-	 /QeJxfZT28juQPDOxN1mkQjQ4ccmqdX5aYPAPzJfb53i6n9RqrBwGrOEp3VB8xm3XH
-	 80ccLuP5Q0vc1dAUkxDhwNkCnOjAuuInRU6AqpF9LSU3hKFCSwFnDBfzNJPOqrLHuZ
-	 HHSyV1z1pS3cw==
-Date: Fri, 7 Aug 2026 18:04:04 -0500
+	b=fnEINRfI/WLStiFHgYr/N4vDshm6MANIZ293vGjTgkzrxM9QK3Hpe/ipWqLpB8Nk2
+	 bW/kjk4FPdSBkuQtNkbkj8Uf5GqBo+ZqHzgzukevc1IOlnVdLNonX9i+Awx2kyBK75
+	 Vn7VDhMxtF6+1jS4/eDR1xCcJYmCSs66odGLe5emtBWSvtnEGuyUVI1xHc5L4Cz9pU
+	 MHEKjmP5IXncmal1qT1VdKixTr5Cyb9rX7KU4yLnlhFCjENjewgVIlftfdWVXHB3OG
+	 b3SV5BorbrpdPGg0xi/N2HjaSUa7bkr2IQ6WepaCNehV9qPEvLtkYCk0VGjZ2p/Ia8
+	 8FhMav+rBrC3A==
+Date: Fri, 7 Aug 2026 18:08:24 -0500
 From: Rob Herring <robh@kernel.org>
 To: Cody Kang <codykang.hk@gmail.com>
 Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
@@ -47,11 +47,11 @@ Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
 	devicetree@vger.kernel.org, spacemit@lists.linux.dev,
 	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
 	linux-clk@vger.kernel.org
-Subject: Re: [PATCH RESEND 03/17] dt-bindings: display: spacemit: add K3
- Innosilicon DP/eDP controller
-Message-ID: <20260807230404.GA2211679-robh@kernel.org>
+Subject: Re: [PATCH RESEND 04/17] dt-bindings: soc: spacemit: allow eDP/DP
+ PHY PLL pixel clocks on K3 APMU
+Message-ID: <20260807230824.GA2220945-robh@kernel.org>
 References: <20260725-k3-display-v1-0-6de34d80e86c@gmail.com>
- <20260725-k3-display-v1-3-6de34d80e86c@gmail.com>
+ <20260725-k3-display-v1-4-6de34d80e86c@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -60,95 +60,74 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260725-k3-display-v1-3-6de34d80e86c@gmail.com>
+In-Reply-To: <20260725-k3-display-v1-4-6de34d80e86c@gmail.com>
 
-On Sat, Jul 25, 2026 at 12:51:12AM -0400, Cody Kang wrote:
-> Both K3 instances are the same IP and share one compatible; which one
-> behaves as eDP is decided by what its downstream port is wired to, not by
-> which register window it sits in, so the binding does not distinguish them.
+On Sat, Jul 25, 2026 at 12:51:13AM -0400, Cody Kang wrote:
+> The APMU's eDP pixel-clock muxes select the DP PHY PLLs as parents, so the
+> K3 syscon takes two clock inputs the other variants do not have.
+> 
+> Gate them behind the K3 compatible instead of widening the shared clock
+> list, so a non-K3 syscon cannot silently accept clocks it has no mux for.
 > 
 > Signed-off-by: Cody Kang <codykang.hk@gmail.com>
 > ---
->  .../display/spacemit/spacemit,k3-inno-dp.yaml      | 140 +++++++++++++++++++++
->  1 file changed, 140 insertions(+)
+>  .../bindings/soc/spacemit/spacemit,k1-syscon.yaml  | 30 +++++++++++++++++++++-
+>  1 file changed, 29 insertions(+), 1 deletion(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/display/spacemit/spacemit,k3-inno-dp.yaml b/Documentation/devicetree/bindings/display/spacemit/spacemit,k3-inno-dp.yaml
-> new file mode 100644
-> index 000000000000..865ea310daaf
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/spacemit/spacemit,k3-inno-dp.yaml
-> @@ -0,0 +1,140 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/spacemit/spacemit,k3-inno-dp.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: SpacemiT K3 Innosilicon DisplayPort / embedded DisplayPort Controller
-> +
-> +maintainers:
-> +  - Cody Kang <codykang.hk@gmail.com>
-> +
-> +description:
-> +  Innosilicon DisplayPort transmit controller integrated in the SpacemiT K3
-> +  SoC. The K3 has two instances of the same block sharing one compatible;
-> +  each acts as embedded or external DisplayPort depending on whether its
-> +  output port drives a panel or a connector.
-> +
-> +properties:
-> +  compatible:
-> +    const: spacemit,k3-inno-dp
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +    description: Link and hot-plug events.
-> +
-> +  clocks:
-> +    items:
-> +      - description: Pixel clock for the controller.
-> +      - description:
-> +          Pixel clock generated by the DP PHY PLL; the pixel clock above is
-> +          parented onto it in use.
-> +
-> +  clock-names:
-> +    items:
-> +      - const: pxclk
-> +      - const: pll
-> +
-> +  resets:
-> +    maxItems: 1
-> +    description: Controller-wide reset signal.
-> +
-> +  phys:
-> +    maxItems: 1
-> +    description: Phandle to the K3 Innosilicon DP PHY.
-> +
-> +  phy-names:
-> +    items:
-> +      - const: dp
-> +
-> +  ports:
-> +    $ref: /schemas/graph.yaml#/properties/ports
-> +
-> +    properties:
-> +      port@0:
-> +        $ref: /schemas/graph.yaml#/properties/port
-> +        description: Video input from the DPU.
-> +
-> +      port@1:
-> +        $ref: /schemas/graph.yaml#/properties/port
-> +        description: Output to the panel or to the DisplayPort connector.
-> +
-> +    required:
-> +      - port@0
+> diff --git a/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml b/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
+> index d3a7c93c3c54..b8fc6632a392 100644
+> --- a/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
+> +++ b/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
+> @@ -31,14 +31,18 @@ properties:
+>      maxItems: 1
+>  
+>    clocks:
+> -    maxItems: 4
+> +    minItems: 4
+> +    maxItems: 6
+>  
+>    clock-names:
+> +    minItems: 4
+>      items:
+>        - const: osc
+>        - const: vctcxo_1m
+>        - const: vctcxo_3m
+>        - const: vctcxo_24m
+> +      - const: edp0_pll_pxclk
+> +      - const: edp1_pll_pxclk
+>  
+>    "#clock-cells":
+>      const: 1
+> @@ -95,6 +99,30 @@ allOf:
+>          - clocks
+>          - clock-names
+>          - "#clock-cells"
+> +  # Only the K3 APMU exposes the two eDP/DP PHY PLL pixel clocks as extra
+> +  # inputs (parents of its eDP pixel-clock muxes); every other variant has
+> +  # the four base oscillator inputs only.
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: spacemit,k3-syscon-apmu
+> +    then:
+> +      properties:
 
-Shouldn't port@1 be required too?
+> +        clocks:
+> +          minItems: 4
+> +          maxItems: 6
+> +        clock-names:
+> +          minItems: 4
+> +          maxItems: 6
+> +    else:
+> +      properties:
+> +        clocks:
+> +          minItems: 4
+> +          maxItems: 4
+> +        clock-names:
+> +          minItems: 4
+> +          maxItems: 4
 
-Otherwise,
-
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+4 is already the minimum, so it can be dropped on all of these.
 
 Rob
