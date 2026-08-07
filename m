@@ -1,336 +1,172 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011043.outbound.protection.outlook.com [40.107.130.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64DAE305699;
-	Fri,  7 Aug 2026 15:58:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786118316; cv=none; b=adhZ4YaRN2UOElf6ccZQzHATcACzilnbS+tYAGMLE8lsaQVMXerHzJcDFZ3A674y4mtpBvlSO2bWqd2CSRM1rj3OBXTp/w7JX9JLyNtfpsqPXwhwiyVLjgt8nGEG1OF675HcoQez3MJ9BpCNEJJGqWQH/Nj2BaTVy6DpYBW+V88=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786118316; c=relaxed/simple;
-	bh=YypMy5HXk4uX2W1irv6ZbGKdeams1wAJhRa1YNej6jo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Yix0E2St/w5RxCQHVmNe9NP0rHFSLezyKISJC4OQe7XD5g31so5ZCEDMQ8VgPb0iMgQW5f084B8QJmpbvSYaItxcAXbgug3jgL0n1fe8DmsDqkR+ABxLev+DJFaVC1mth2gufRiZ12f5uOrUMQTEFeBgKcyDwliljDM2HpVyh/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h5HYNRu/; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DE5842882B;
+	Fri,  7 Aug 2026 16:23:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1786119840; cv=fail; b=OgDlCsQdOekbvjcS5juOh8TYBXc37AZDEuWgLfLt2RVksBGLe4GsiGoFI0OSvxLrCeK6Jc1U51EIwk2YFEqx9okfbHbmgmFliZRz/VlH7A4Eug+QsrnhhivqIEO2BlG6qa6Nk+NEBCdPGD/HmiHLSeL6jxxn2ttrkorsVy7bdFY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1786119840; c=relaxed/simple;
+	bh=DxdFpdvsJ58Ks0XykMguB+ICb4vcJ4w+xooO4m8XbIM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=BGPqDA5gFYoTFPRyFs8GIRzJtdIElfNgpg3kjARfl5mJZ2yH6GlQilvTfb6bgOXzV1LA4DgFjR/Xwo7qwt5FjSqVKZdL4KXD5rNVHQvgOM101/p4s/6TOfywERANR+qgEb7D+yRW41ZM7Mq6RNJ91ItaJz48jkIjylHwZxU8tlo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=X+cQ1Ewv; arc=fail smtp.client-ip=40.107.130.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h5HYNRu/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6E391F000E9;
-	Fri,  7 Aug 2026 15:58:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786118314;
-	bh=01kctYk5IdKA9UkACtqBMbCGEKvDJapJg0gXo9yw/QM=;
-	h=From:To:Cc:Subject:Date;
-	b=h5HYNRu/hshbzDtvVTkL1jZJ5Q9JHagMTAWCEi/sBdsYi8D4eE5P64zBMcIVeUkwt
-	 qrYlJ3hShlWQyPaAJNFpVRHC717aR/hIXu64DumMXnk+6VOeTI/demIvc2mBBcSF15
-	 FQ8PMOUK/N1y7iECi3xzV5P37/0ZsGW1xfw0/rJMAy9epCpeVactEanJStVlsZclDv
-	 gVTcbBzI2uqwRUeqU6G8vdJR1e4Dg4rE6GI0eTZRG740sk5pEwDpth8a1h4kuWpU+R
-	 fph8CQjvOamToycX5oXQGYHzQK5X7nkvubbJ3iAV4xye7arbTZ7pQ2UDXbOsNQYXii
-	 xdUI3p+Gnvspg==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Imran Shaik <imran.shaik@oss.qualcomm.com>,
-	Taniya Das <taniya.das@oss.qualcomm.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
-	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
-	Stephan Gerhold <stephan.gerhold@linaro.org>,
-	Stephan Gerhold <stephan@gerhold.net>,
-	Qiang Yu <qiang.yu@oss.qualcomm.com>,
-	Herman van Hazendonk <github.com@herrie.org>,
-	Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>,
-	Abel Vesa <abel.vesa@oss.qualcomm.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Lin Li <zhuolin.li@oss.qualcomm.com>,
-	Loic Poulain <loic.poulain@oss.qualcomm.com>,
-	Varadarajan Narayanan <varadarajan.narayanan@oss.qualcomm.com>,
-	Brian Masney <bmasney@redhat.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Luca Weiss <luca.weiss@fairphone.com>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	Vladimir Zapolskiy <vz@kernel.org>
-Subject: [GIT PULL] Qualcomm clock updates for v7.3
-Date: Fri,  7 Aug 2026 10:58:30 -0500
-Message-ID: <20260807155830.603972-1-andersson@kernel.org>
-X-Mailer: git-send-email 2.53.0
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="X+cQ1Ewv"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=piBYzYY4r6r0puctCXt+VUR6BMKpE4obtZ4HChG+ZYvreGViUKiuGzEdk7FzEkj5hxPwytntyzmmiGGaJT/Kkt5I6vMKpPYaKNDQJdeRdJLtDm+pYoNptLCJnj3JkP0wXNxGd+pArBdjWGvsI+v+BRlHyM7iPwR4PG6lcEvOtUREBVyCxSvEqJNM9UItOwHvcq/3pGQAQGMY1iyX2x3TGxP2Ew/AmRtOLBtBWQKTKVKIsY+ydlZk/poxHfFok2+uQ1kNKkQHBMdLaLg8nWMwsH/1NQazJtU/IAgRG5403EdtzfTbbzFXHJDR7DoxTJH3XDnX/WuBAw5HHIWSIqxDPA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SgkojS5UxZQMrx78frFPOQCePO1vletpZ7ezviDziF0=;
+ b=MxYLiX72louOBoNn0knKAlZlj8yEdQ+HXDFFBbrc2DXYRcF4MyLayNTp+AvEA0eNX8Q/dhv0z37nfFWRrAMvgbjwl+mhKYToOgBykV5o7VKYXeA0fVsW6ov/TN1s433Q03la6YXGZF9EjBc7JNsQE7Jihi+4xw0OMk2n/P4PmS8FYlTletyVTGMWgpdzyC8iCW0XV9r1Vi0PT/KJgEQ0OSo6b7Z9SQTirgMf2ibJvrSiglFcLxklG+zFnXbdSYxWowrUGPvzR6Z2HoR1IhvVdU37fG6T313eZ+R5QWZGSAcOfkXdvXQ39sGCZ13xR5Qib3u0I9DjsLtGJ12lAh1vKQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SgkojS5UxZQMrx78frFPOQCePO1vletpZ7ezviDziF0=;
+ b=X+cQ1Ewv7WakwBewpfpY6Nptt14PJJ2L5Vw033sORfMcAtnBJw8aqiI55aOi/FomMJ45wlN61TmHQmeDgUZYRgiicVsMHE3hk/2YADoSrsivFVR1NcHmOaSgn2UjlXqms+yNxy/7z8PO0edmPClVRgh8GpEkQl1YrEr5kSFed2TwEyMdYskpCfFdPI+YtdCrdS0RH/1n4ayzJVAzHj/MiWAPx7ql/YDt00LQFNkSN5VouJPcyYObIYnQL17EksGf3Yjb7phTf1R1x1g0hlT/qEAs6FUuDVvcz5O4ryRQ0mrj8b4mQBS2/tsM7OGQtQ0+E07BIpQzwjAUbOz03yZxMg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from GV2PR04MB11799.eurprd04.prod.outlook.com (2603:10a6:150:2cf::9)
+ by DU2PR04MB9068.eurprd04.prod.outlook.com (2603:10a6:10:2f3::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.292.23; Fri, 7 Aug
+ 2026 16:23:54 +0000
+Received: from GV2PR04MB11799.eurprd04.prod.outlook.com
+ ([fe80::2146:83a2:5329:b7c]) by GV2PR04MB11799.eurprd04.prod.outlook.com
+ ([fe80::2146:83a2:5329:b7c%7]) with mapi id 15.21.0292.018; Fri, 7 Aug 2026
+ 16:23:53 +0000
+Date: Fri, 7 Aug 2026 11:23:43 -0500
+From: Frank Li <Frank.li@oss.nxp.com>
+To: "Miquel Raynal (Schneider Electric)" <miquel.raynal@bootlin.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	David Gow <david@davidgow.net>, Rae Moar <raemoar63@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Pascal EBERHARD <pascal.eberhard@se.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	kunit-dev@googlegroups.com
+Subject: Re: [PATCH v5 4/7] clk: Improve a couple of comments
+Message-ID: <anYGjwh_nRiQAsxO@SMW015318>
+References: <20260807-schneider-v7-2-rc1-eip201-upstream-v5-0-8785f9531cf0@bootlin.com>
+ <20260807-schneider-v7-2-rc1-eip201-upstream-v5-4-8785f9531cf0@bootlin.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260807-schneider-v7-2-rc1-eip201-upstream-v5-4-8785f9531cf0@bootlin.com>
+X-ClientProxiedBy: SA0PR11CA0084.namprd11.prod.outlook.com
+ (2603:10b6:806:d2::29) To GV2PR04MB11799.eurprd04.prod.outlook.com
+ (2603:10a6:150:2cf::9)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: GV2PR04MB11799:EE_|DU2PR04MB9068:EE_
+X-MS-Office365-Filtering-Correlation-Id: 520e6a73-0031-4e94-e82e-08def4a045ac
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|19092799006|7416014|23010399003|56012099006|18002099003|22082099003|4143699003|10067099003|11063799006;
+X-Microsoft-Antispam-Message-Info:
+	s5EDj7eEHqSpzo9fSJ5xbLJ/WhFuY/tdJxPgswTp+nlxBvBf8CsGD4VqWwx+V+TUuNWIDtEMCOtALAioeQejSeqRWOCBjCLjmpreJ77JCInY94y1GQfd2Er37bCbSM+kU52IcpGaUOoNb9EN7y+ryUWJvfX9yHUH7gleZDjFGLmKZUO1/KuP0A1bgkVXm6xrvXrVjn6T2JQhYM2SaDxXcOWuNhOoD9lu3K+w71/ZMhpTrti78zmcYrVkvtxirHaGIyPIuxIw+68M8x7HTO/MZNQIYIipuA+Fe6b9ztMpF9fAVMMgmimESn3zCnHPAjtWme5emLbcxCSmglbmSf0n6upMVdy1Yff8/23nVFyMz/EdYd5YinwBP+B/13GvNU94tYkNpp+t5l/v2sctUmoQC+bOKTclXHyTL4n8AFYBgTniZoImwRP2FLXoxUbIl1wa6LjFiT4ysj32dLQKafq8HwV5aCaNHEmOPqisGuWzWL8lNNHpYq4aVepujDMbK++EgexQipTEfOXUYtzjCWqKCUfS016J2xNiOkJF6nFrORD4KQOTx8P++BBRxyHWBSToVEgt54FAoL+9PF5Gk4QkGsqAbsObzLJ2ovu3orz+V1exshzRysTf5tgJZVwTVXOm8u+KvqIMVPA6VTf5zm/itn3/OqV26kJ6PlkbXq6GV5E=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR04MB11799.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(19092799006)(7416014)(23010399003)(56012099006)(18002099003)(22082099003)(4143699003)(10067099003)(11063799006);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?qkTYcpUUdt/g9n9hpMtlp92G+RSIUj25X+8qIKd3kLWakv+mmAJTZtICr1l9?=
+ =?us-ascii?Q?OLx5OdEgkP481cNrI7j+OzNzSqZ1agwjtt+zFdDFfHYQ4M06V2znhQOx1C2Z?=
+ =?us-ascii?Q?kBfNo+qkOoJoTYzfyqppBCCIFe5LSELtYRxb5ivX/pvSFTJctG2knBdjNKs1?=
+ =?us-ascii?Q?sDrxngxMxFDVakbhsTkSbLKa5BuHV0gXlUNqdnyJSQzyfzKaWZ5+8QVZTwon?=
+ =?us-ascii?Q?CMFsfPR9MQGrE7pziGyXdprrBHdD7JpBe8dbQsUUGYoOZEkcrGJ2/CEjr1zx?=
+ =?us-ascii?Q?TMVKpYHmYoQ8GEYe8e2FDGj/pmd7SjNJUeFgTEFuzlcX8jQ2YXjisozUR9wI?=
+ =?us-ascii?Q?oPBnYVvwEyALpBHHfw2Gjl9K66ijMO3EpcKT6WWDuF7RyMQGQuLQzKhrzW0/?=
+ =?us-ascii?Q?GMTBpF7CBiCGmfLj3YceTi/hP5IngVyBtjbcodqxYz4Xdvx6hXWi8oSV+xGt?=
+ =?us-ascii?Q?wXNy2roTFNtCkpMfLptFH/NI45f+O70a7RG294u380DH/GVGbJOczxMV0AA6?=
+ =?us-ascii?Q?6Llq/RmSMz7GEJyrsunU80YHjMNRAOJhbVgGwnj24LYAvBZUHXxkMhUyREmH?=
+ =?us-ascii?Q?hePiO7rJJykAyDUvgcxf8humMum14ErdPLPKvkyiIiDg+eMW8+TeYIGpm6VQ?=
+ =?us-ascii?Q?vPcDEIzAES88M3qxFx7hEt1vJ+c7yySHGlU8Jy6lSwTYFdhUusSDjnKlPEw0?=
+ =?us-ascii?Q?aDB82aUoxngVkM6LwvJuOtGVfDFugyqJnxvmMOEzXxIhsaj8fsOcWIR1BYug?=
+ =?us-ascii?Q?eWWCTtsuh3sGVj5VMJY+NMzpwXnTPbFkZFOg1QKlh/rulwEwqJVn5G3mNgWz?=
+ =?us-ascii?Q?L0qBxVcM3UIpDekOYrU5Ne80NXGpvDY/aailK4Q0CApvRBCACYy9yRVUyp61?=
+ =?us-ascii?Q?CVqFvb6u9Vn/OJD0TrpvuFHedoHjakh4sqZDa6iBHdsJ19CMoxsuUL9Ob9ss?=
+ =?us-ascii?Q?Hl1/u6kejhBumlFa/n/rV4lE7MPuXfJebcdLy9rbU16pfqyVNaQ36nlK2hGZ?=
+ =?us-ascii?Q?fYbUdyF/ENxIR1MKLWrlvaQWwhOvy2I8OV6HIJifjkjePJB/5p6tDFi7azkI?=
+ =?us-ascii?Q?mYrf3m/4l58EYG2JmpyteMrd+0Z+0weHUHXvtIqjbSifAU852NKRQx8izfC/?=
+ =?us-ascii?Q?nxP0lOvjCVHXM5jCxgYy2O4d+hk3zbS3bT4vGscyDD6Symf32Q1aADlccDqY?=
+ =?us-ascii?Q?b7GcHkN3S/WWfn5G5kIps2nP/veTr1oEXEHU8IKfYU6M7cqVu27IXiuRa+3+?=
+ =?us-ascii?Q?DgtR/3eSo0kAmiq3iLnfoRZribmDpzSADVCNMjknIXxulp0UC1Gqp1IIsCDG?=
+ =?us-ascii?Q?ZuWlz4Uph8uGY2J/DI4yNKKY5kR8BAKDPebxBOSNj/AgEIgF0ZOhcw6XLnVL?=
+ =?us-ascii?Q?ubE+mHuYKFirxGP7viZpFIFavfZ7vwJ/B+nQhWhd/OAl55jNUxLa/y9bR4a2?=
+ =?us-ascii?Q?Mplws52e/JPfK1xoWosl4Kj0QYlK25hQiUe1npaUQOR28jrvCQ+ypyCj75ZK?=
+ =?us-ascii?Q?2uZn88jAAQMOcF6+Gs4+OTddIRQv5UmNRQwzApmZ+A8gGJlsJFzsHI14psFr?=
+ =?us-ascii?Q?+4E9YGTlwjBDJsYkfU353ORUCRq+xBnmezin+IDKqRxg/e2flHozqkZCEV66?=
+ =?us-ascii?Q?WyrraDxj+Ty85QdBVB7Dzvy38ui0tNWILRIdhCn2O6lJbzPsYZDaHcdjqrhr?=
+ =?us-ascii?Q?Ha/iV7gZwz+rDqGhD3GqVXg7cuI7LDFsLSFl+NYvJaP5CJphMWVR11ngqvXK?=
+ =?us-ascii?Q?cvbwUjUxgHbgaRXvTK3P1a6q0U329aM0o07Rue9Qp7LUKjJ39aep?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 520e6a73-0031-4e94-e82e-08def4a045ac
+X-MS-Exchange-CrossTenant-AuthSource: GV2PR04MB11799.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2026 16:23:53.8846
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: EnicHshFZ7MOIJJ2RDPyPwX0plhVkRN4XgfmPkng95GMXJmSZyV5BgWEns3vXqLKGXpjJQNRyT0UKxRyHgrlAKW2JceCAiEZdjr74ww5boRTzstEuAWL8dFRS9W+Unkw
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB9068
 
+On Fri, Aug 07, 2026 at 05:24:05PM +0200, Miquel Raynal (Schneider Electric) wrote:
+> Avoid mentioning the function names directly in the comments, it makes
+> them easily out of sync with the rest of the code. Use a more generic
+> wording.
+>
+> Suggested-by: Stephen Boyd <sboyd@kernel.org>
+> Signed-off-by: Miquel Raynal (Schneider Electric) <miquel.raynal@bootlin.com>
+> Reviewed-by: Brian Masney <bmasney@redhat.com>
+> ---
 
-The following changes since commit dc59e4fea9d83f03bad6bddf3fa2e52491777482:
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 
-  Linux 7.2-rc1 (2026-06-28 12:01:31 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git tags/qcom-clk-for-7.3
-
-for you to fetch changes up to c7d44572a85ae1b897e0bf95357439ee75ddbcc7:
-
-  clk: qcom: Add support for Qualcomm GPU Clock Controller on Shikra (2026-08-04 10:39:11 -0500)
-
-----------------------------------------------------------------
-Qualcomm clock updates for v7.3
-
-Add global, TCSR, RPMh, and video clock controller support for Maili.
-Add global, RPM, GPU, display, and audio core clock controller support for
-Shikra. Add display and graphics clock controllers for Nord.
-
-Add Glymur camera and EVA clock controllers, the IPQ9650 REFGEN clocks, and
-Hawi video clock controller support. Extend the IPQ5210 APSS PLL and RPM
-clock support for Agatti.
-
-Enable runtime PM and regulator-backed reference clock handling where needed.
-Update QCM2290 clock and power-domain handling, critical clock definitions,
-and arm architecture Kconfig defaults.
-
-Correct MDM9607, MSM8916, MSM8939, SM6115, QCS8300, Kaanapali, and Glymur
-clock and power-domain handling. Improve GDSC error propagation and teardown.
-
-Update bindings for the added controllers and required power and OPP
-properties.
-
-----------------------------------------------------------------
-Abel Vesa (2):
-      dt-bindings: clock: qcom: glymur-gcc: Add missing CX power domain
-      clk: qcom: gcc-glymur: Enable runtime PM
-
-Bjorn Andersson (4):
-      Merge branch '20260617-evacc_glymur-v2-2-905108dacaaa@oss.qualcomm.com' into clk-for-7.3
-      Merge branch '20260608-shikra-gcc-rpmcc-clks-v5-2-94cefe092ee3@oss.qualcomm.com' into clk-for-7.3
-      Merge branch '20260624-glymur_camcc-v5-1-a321df74b1a1@oss.qualcomm.com' into clk-for-7.3
-      Merge branch '20260707-b4-ipq9650_refgen_clocks-v1-1-e070624d03d2@oss.qualcomm.com' into clk-for-7.3
-
-Brian Masney (1):
-      clk: qcom: camcc-sc8280xp: unregister CAMCC_GDSC_CLK
-
-Dmitry Baryshkov (2):
-      clk: qcom: gcc-sm6115: Set HW_CTRL_TRIGGER for video GDSC
-      clk: qcom: gcc-qcm2290: don't park QUP RCGs upon registration
-
-Herman van Hazendonk (3):
-      clk: qcom: gdsc: propagate gdsc_check_status() errors from gdsc_poll_status
-      clk: qcom: gdsc: propagate gdsc_enable() failure for ALWAYS_ON domains
-      clk: qcom: gdsc: tear down per-domain genpds in gdsc_unregister()
-
-Imran Shaik (22):
-      dt-bindings: clock: qcom,rpmcc: Add Qualcomm Shikra SoC RPMCC
-      dt-bindings: clock: qcom: Add Qualcomm Shikra SoC Global Clock Controller
-      clk: qcom: smd-rpm: Add missing RF_CLK1/RF_CLK2 clocks support on Agatti
-      clk: qcom: Add Global clock controller support on Qualcomm Shikra SoC
-      clk: qcom: gcc-shikra: Add additional frequencies for EMAC RGMII clocks
-      clk: qcom: Fix test_ctl_hi field for DEFAULT_EVO PLLs
-      dt-bindings: clock: qcom: Add Qualcomm Shikra AudioCoreCC and AudioCoreCSR
-      clk: qcom: Add Audio Core clock controller support on Qualcomm Shikra SoC
-      dt-bindings: clock: qcom,qcm2290-dispcc: Add missing power-domains property
-      clk: qcom: gcc-qcm2290: Keep the critical clocks always-on from probe
-      clk: qcom: dispcc-qcm2290: Move to the latest common qcom_cc_probe() model
-      clk: qcom: dispcc-qcm2290: Enable runtime PM support
-      clk: qcom: qcm2290: Set POLL_CFG_GDSCR flag for DISPCC and GPUCC GDSCs
-      clk: qcom: qcm2290: Add RETAIN_FF_ENABLE flag for DISPCC and GPUCC GDSCs
-      clk: qcom: qcm2290: Update DISPCC and GPUCC GDSC *wait_val values
-      clk: qcom: gpucc-qcm2290: Drop pm_clk handling
-      clk: qcom: gpucc-qcm2290: Move to the latest common qcom_cc_probe() model
-      clk: qcom: gpucc-qcm2290: Keep the critical clocks always-on from probe
-      clk: qcom: gpucc-qcm2290: Park RCG's clk source at XO during disable
-      dt-bindings: clock: qcom: Add Qualcomm Shikra Display clock controller
-      dt-bindings: clock: qcom: Add Qualcomm Shikra GPU clock controller
-      clk: qcom: Add support for Qualcomm GPU Clock Controller on Shikra
-
-Jagadeesh Kona (6):
-      clk: qcom: gdsc: Add custom disable callback for GX GDSC
-      dt-bindings: clock: qcom: Add Glymur camera clock controller
-      clk: qcom: camcc-glymur: Add camera clock controller driver
-      clk: qcom: camcc-glymur: Add const qualifier for driver_data & CBCRs list
-      dt-bindings: clock: qcom: Add Qualcomm Maili video clock controller
-      clk: qcom: Add support for videocc driver on Qualcomm Maili SoC
-
-Jerome Brunet (1):
-      clk: qcom: clean-up simple provider misuse of the consumer API
-
-Kathiravan Thirumoorthy (3):
-      clk: qcom: gcc-ipq5424: drop the CLK_IGNORE_UNUSED flag
-      dt-bindings: clock: qcom: Add IPQ9650 REFGEN clock IDs
-      clk: qcom: ipq9650: Add clocks for the REFGEN block
-
-Krzysztof Kozlowski (10):
-      clk: qcom: Restrict IPQ5424, IPQ6018,IPQ9574, QCM2290 and others to ARM64
-      clk: qcom: Restrict A7PLL and IPQ4019 GCC to ARM
-      clk: qcom: Make important ARM64 drivers default
-      clk: qcom: Make important ARM32 drivers default
-      clk: qcom: Add defaults for desired arm64 drivers
-      clk: qcom: camcc-x1p42100: Constify qcom_cc_driver_data and list of critical CBCR registers
-      clk: qcom: videocc-x1p42100: Constify qcom_cc_driver_data and list of critical CBCR registers
-      dt-bindings: clock: qcom,sm8450-camcc: Drop qcom,sc8280xp-camcc from "if" block
-      dt-bindings: clock: qcom,sm8450-camcc: Require required-opps on SM8750
-      dt-bindings: clock: qcom,sm8450-video: Require required-opps on X1E80100
-
-Lin Li (2):
-      dt-bindings: clock: qcom: Add Hawi video clock controller
-      clk: qcom: Add support for VideoCC driver for Hawi
-
-Loic Poulain (2):
-      clk: qcom: gcc-qcs8300: Use retention for PCIe power domains
-      clk: qcom: gcc-qcs8300: Use retention for USB power domains
-
-Luca Weiss (1):
-      clk: qcom: Don't use all caps for Glymur GPUCC
-
-Qiang Yu (5):
-      dt-bindings: clock: qcom: Move glymur TCSR to own binding
-      dt-bindings: clock: qcom,glymur-tcsr: Add mahua support
-      clk: qcom: Add generic clkref_en support
-      clk: qcom: tcsrcc-glymur: Add regulator supplies and migrate to clk_ref helper
-      clk: qcom: tcsrcc-glymur: Add Mahua QREF regulator support
-
-Stephan Gerhold (12):
-      clk: qcom: gcc-msm8916: Fix enable_reg for gcc_blsp1_sleep_clk
-      clk: qcom: gcc-msm8939: Fix enable_reg for gcc_blsp1_sleep_clk
-      clk: qcom: gcc-mdm9607: Fix enable_reg for gcc_blsp1_sleep_clk
-      clk: qcom: gcc-mdm9607: Fix halt_reg for gcc_apss_axi_clk
-      clk: qcom: gcc-mdm9607: Increase delay for USB PHY reset
-      clk: qcom: gcc-mdm9607: Drop incorrect apss_tcu_clk_src
-      clk: qcom: gcc-mdm9607: Drop incorrect system_noc_bfdcd_clk_src
-      clk: qcom: gcc-mdm9607: Drop incorrect BIMC PLL and related clocks
-      dt-bindings: clock: qcom: gcc-mdm9607: Drop SYSTEM_NOC_BFDCD_CLK_SRC
-      dt-bindings: clock: qcom: gcc-mdm9607: Add missing "clocks" property
-      dt-bindings: clock: qcom: gcc-mdm9607: Use proper address in example
-      clk: qcom: gcc-mdm9607: Drop redundant register update during probe
-
-Taniya Das (18):
-      clk: qcom: gxclkctl: Use custom disable callback for gx_gdsc
-      clk: qcom: common: ensure runtime PM suspend completes on probe
-      clk: qcom: gxclkctl: Remove GX/GMxC rail votes to align with IFPC
-      dt-bindings: clock: qcom: Add EVA clock and reset controller for Glymur SoC
-      clk: qcom: gcc-glymur: Move EVA clocks to critical clock list
-      clk: qcom: Add EVA clock controller driver for Glymur SoC
-      dt-bindings: clock: qcom-rpmhcc: Add RPMH clock controller for Maili
-      dt-bindings: clock: qcom: Add Maili TCSR clock controller
-      dt-bindings: clock: qcom: Add Maili global clock controller
-      clk: qcom: gcc-hawi: Add support for global clock controller on Maili
-      clk: qcom: nord: use BRANCH_HALT_SKIP for PHY pipe clocks
-      clk: qcom: negcc-nord: use clk_regmap_phy_mux for USB3 pipe clock srcs
-      clk: qcom: gcc-nord: mark PCIe link clocks as critical
-      clk: qcom: negcc-nord: keep GPU2 CFG clock enabled via critical CBCR
-      dt-bindings: clock: qcom: Document Nord display clock controller
-      clk: qcom: Add Nord display clock controller support
-      dt-bindings: clock: qcom: Document Nord GPU clock controllers
-      clk: qcom: gpucc: Add Nord graphics clock controller support
-
-Uwe Kleine-König (The Capable Hub) (1):
-      clk: qcom: Drop inclusions of <linux/mod_devicetable.h>
-
-Varadarajan Narayanan (2):
-      dt-bindings: clock: qcom,a53pll: Add IPQ5210 compatible
-      clk: qcom: apss-ipq-pll: Add IPQ5210 support
-
-Vladimir Zapolskiy (1):
-      clk: qcom: Return expected ENOMEM error on dynamic allocation failure
-
- .../devicetree/bindings/clock/qcom,a53pll.yaml     |    1 +
- .../bindings/clock/qcom,gcc-mdm9607.yaml           |   18 +-
- .../bindings/clock/qcom,glymur-evacc.yaml          |   72 +
- .../devicetree/bindings/clock/qcom,glymur-gcc.yaml |    8 +
- .../bindings/clock/qcom,glymur-tcsr.yaml           |  146 +
- .../devicetree/bindings/clock/qcom,hawi-gcc.yaml   |   11 +-
- .../bindings/clock/qcom,qcm2290-dispcc.yaml        |   15 +-
- .../bindings/clock/qcom,qcm2290-gpucc.yaml         |    4 +-
- .../devicetree/bindings/clock/qcom,rpmcc.yaml      |   65 +-
- .../devicetree/bindings/clock/qcom,rpmhcc.yaml     |   65 +-
- .../bindings/clock/qcom,shikra-audiocorecc.yaml    |   55 +
- .../devicetree/bindings/clock/qcom,shikra-gcc.yaml |   70 +
- .../bindings/clock/qcom,sm8450-camcc.yaml          |   12 +-
- .../bindings/clock/qcom,sm8450-gpucc.yaml          |    4 +
- .../bindings/clock/qcom,sm8450-videocc.yaml        |   17 +-
- .../bindings/clock/qcom,sm8550-dispcc.yaml         |    3 +
- .../bindings/clock/qcom,sm8550-tcsr.yaml           |   34 +-
- .../bindings/clock/qcom,x1e80100-camcc.yaml        |    3 +
- .../bindings/reset/qcom,shikra-audiocore-csr.yaml  |   42 +
- drivers/clk/qcom/Kconfig                           |  274 +-
- drivers/clk/qcom/Makefile                          |    9 +
- drivers/clk/qcom/apss-ipq-pll.c                    |   19 +
- drivers/clk/qcom/audiocorecc-shikra.c              |  810 ++++
- drivers/clk/qcom/camcc-glymur.c                    | 2279 ++++++++++
- drivers/clk/qcom/camcc-sc8280xp.c                  |   19 -
- drivers/clk/qcom/camcc-x1p42100.c                  |    6 +-
- drivers/clk/qcom/clk-hfpll.c                       |    4 +-
- drivers/clk/qcom/clk-krait.c                       |    2 +-
- drivers/clk/qcom/clk-rcg.c                         |    4 +-
- drivers/clk/qcom/clk-rcg2.c                        |    2 +-
- drivers/clk/qcom/clk-ref.c                         |  205 +
- drivers/clk/qcom/clk-smd-rpm.c                     |    5 +
- drivers/clk/qcom/common.c                          |    6 +-
- drivers/clk/qcom/dispcc-qcm2290.c                  |   44 +-
- drivers/clk/qcom/dispcc0-nord.c                    | 2004 +++++++++
- drivers/clk/qcom/dispcc1-nord.c                    | 2004 +++++++++
- drivers/clk/qcom/evacc-glymur.c                    |  454 ++
- drivers/clk/qcom/gcc-glymur.c                      |   33 +-
- drivers/clk/qcom/gcc-hawi.c                        |  201 +
- drivers/clk/qcom/gcc-ipq5424.c                     |   11 -
- drivers/clk/qcom/gcc-ipq9650.c                     |   89 +
- drivers/clk/qcom/gcc-mdm9607.c                     |  193 +-
- drivers/clk/qcom/gcc-msm8916.c                     |    5 +-
- drivers/clk/qcom/gcc-msm8939.c                     |    5 +-
- drivers/clk/qcom/gcc-nord.c                        |   45 +-
- drivers/clk/qcom/gcc-qcm2290.c                     |  131 +-
- drivers/clk/qcom/gcc-qcs8300.c                     |    8 +-
- drivers/clk/qcom/gcc-shikra.c                      | 4432 ++++++++++++++++++++
- drivers/clk/qcom/gcc-sm6115.c                      |    7 +-
- drivers/clk/qcom/gdsc.c                            |   47 +-
- drivers/clk/qcom/gdsc.h                            |    1 +
- drivers/clk/qcom/gpu2cc-nord.c                     |  545 +++
- drivers/clk/qcom/gpucc-nord.c                      |  593 +++
- drivers/clk/qcom/gpucc-qcm2290.c                   |  102 +-
- drivers/clk/qcom/gxclkctl-kaanapali.c              |   12 +-
- drivers/clk/qcom/negcc-nord.c                      |   75 +-
- drivers/clk/qcom/tcsrcc-glymur.c                   |  471 +--
- drivers/clk/qcom/videocc-hawi.c                    |  839 ++++
- drivers/clk/qcom/videocc-maili.c                   |  660 +++
- drivers/clk/qcom/videocc-x1p42100.c                |    4 +-
- include/dt-bindings/clock/qcom,gcc-mdm9607.h       |    1 -
- include/dt-bindings/clock/qcom,glymur-camcc.h      |  122 +
- include/dt-bindings/clock/qcom,glymur-evacc.h      |   38 +
- include/dt-bindings/clock/qcom,hawi-videocc.h      |   64 +
- include/dt-bindings/clock/qcom,ipq9650-gcc.h       |    5 +
- include/dt-bindings/clock/qcom,maili-gcc.h         |   21 +
- include/dt-bindings/clock/qcom,maili-videocc.h     |   50 +
- include/dt-bindings/clock/qcom,nord-dispcc.h       |  115 +
- include/dt-bindings/clock/qcom,nord-gpu2cc.h       |   47 +
- include/dt-bindings/clock/qcom,nord-gpucc.h        |   48 +
- .../dt-bindings/clock/qcom,shikra-audiocorecc.h    |   49 +
- include/dt-bindings/clock/qcom,shikra-gcc.h        |  263 ++
- include/linux/clk/qcom.h                           |   67 +
- 73 files changed, 17310 insertions(+), 884 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,glymur-evacc.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,glymur-tcsr.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,shikra-audiocorecc.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,shikra-gcc.yaml
- create mode 100644 Documentation/devicetree/bindings/reset/qcom,shikra-audiocore-csr.yaml
- create mode 100644 drivers/clk/qcom/audiocorecc-shikra.c
- create mode 100644 drivers/clk/qcom/camcc-glymur.c
- create mode 100644 drivers/clk/qcom/clk-ref.c
- create mode 100644 drivers/clk/qcom/dispcc0-nord.c
- create mode 100644 drivers/clk/qcom/dispcc1-nord.c
- create mode 100644 drivers/clk/qcom/evacc-glymur.c
- create mode 100644 drivers/clk/qcom/gcc-shikra.c
- create mode 100644 drivers/clk/qcom/gpu2cc-nord.c
- create mode 100644 drivers/clk/qcom/gpucc-nord.c
- create mode 100644 drivers/clk/qcom/videocc-hawi.c
- create mode 100644 drivers/clk/qcom/videocc-maili.c
- create mode 100644 include/dt-bindings/clock/qcom,glymur-camcc.h
- create mode 100644 include/dt-bindings/clock/qcom,glymur-evacc.h
- create mode 100644 include/dt-bindings/clock/qcom,hawi-videocc.h
- create mode 100644 include/dt-bindings/clock/qcom,maili-gcc.h
- create mode 100644 include/dt-bindings/clock/qcom,maili-videocc.h
- create mode 100644 include/dt-bindings/clock/qcom,nord-dispcc.h
- create mode 100644 include/dt-bindings/clock/qcom,nord-gpu2cc.h
- create mode 100644 include/dt-bindings/clock/qcom,nord-gpucc.h
- create mode 100644 include/dt-bindings/clock/qcom,shikra-audiocorecc.h
- create mode 100644 include/dt-bindings/clock/qcom,shikra-gcc.h
- create mode 100644 include/linux/clk/qcom.h
+>  drivers/clk/clk.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 08874cf9b561..7d63d81ebc09 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -5202,7 +5202,7 @@ static int of_parse_clkspec(const struct device_node *np, int index,
+>  		/*
+>  		 * For named clocks, first look up the name in the
+>  		 * "clock-names" property.  If it cannot be found, then index
+> -		 * will be an error code and of_parse_phandle_with_args() will
+> +		 * will be an error code and the OF phandle parser will
+>  		 * return -EINVAL.
+>  		 */
+>  		if (name)
+> @@ -5275,7 +5275,7 @@ of_clk_get_hw_from_clkspec(struct of_phandle_args *clkspec)
+>   *
+>   * This function looks up a struct clk from the registered list of clock
+>   * providers, an input is a clock specifier data structure as returned
+> - * from the of_parse_phandle_with_args() function call.
+> + * from the OF phandle parser.
+>   */
+>  struct clk *of_clk_get_from_provider(struct of_phandle_args *clkspec)
+>  {
+>
+> --
+> 2.54.0
+>
