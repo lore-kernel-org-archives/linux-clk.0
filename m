@@ -1,174 +1,158 @@
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011025.outbound.protection.outlook.com [52.101.52.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC3294C77D1;
-	Thu,  6 Aug 2026 19:07:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786043241; cv=none; b=XA7yYFuFFFAEYu+M0Hx8Op5xzSjBE853LviW5VeC6mOdihp8C5/MkwcD4iGoZJDTYzhg1X08+eibzaJrd2b1lxxvYLrKpn8SNzHBsszDAXZE88ougZ8Uiw5GlrjAMDegtnknNtNSlAOQq/+Ht0AyCNKjYseQiijCorVYbUvVkdc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786043241; c=relaxed/simple;
-	bh=WXcm2Yb5I04oLe14dcXdrEPwOR8hGoCD+QeGAqYfYQw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AEHc1hF25SowMbEOHH1pCtzo+9NhhXR8eZdjexjXEJITmo4nkfXlmFAGt1iIzc8D9d8ucOiSMcc8J+ZsgNaH6p36PVOAfJwd1Bn33oFKpmet3FB1qRxL7dTgXvVPFzmpP7Ah/od8cky199kShTwnh3+V41NlwUo//i2daPkIZe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=nA1aUYEN; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE63C326927;
+	Fri,  7 Aug 2026 03:59:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.25
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1786075168; cv=fail; b=sz0qOhWrobZ4xnT8DG3YTbPcXHjND4IoGtNvvlkhu+BQk+f1h8YqTO4048CEGEHo1jxnCc98Pf+fjeHDF7qTVeDeIKlGHoJ3BbpP+e/FLYWcRqJnQ9Ng6a2ZhbkLrK1NL6UORmd7P8prprltRyQTYKVGZhu0uMvsAxam1Eqw3E8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1786075168; c=relaxed/simple;
+	bh=cj5U6tAjQ320thwVni81h4y4SYjxhQAg3SaMmscHkps=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=M9JzFAqA4IL+M4JIkFyNRWlTXLt/EFZFZLX7A7VCAYqGh57eQSGHIa+cRLzvqT0cR4RJ+gywHEPaGFqzzRH78YzZw1QCvWiRnScnhBzN+2x0/BPL4zDTI91CAWALbQ8xE/qH4S7+AZ9vCcYDsThJUuEnKyXjvy9DfqKW3HT3x8A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=nabr9T1h; arc=fail smtp.client-ip=52.101.52.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="nA1aUYEN"
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 676Ftr4v4168306;
-	Thu, 6 Aug 2026 19:06:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=85JNUC8SyfLYyGobZYpdZmxyQGF0qjVqbjDUd/Wkets=; b=
-	nA1aUYENomsR9p7hfDkQr6KalTZrWQW8NET0IkudX6kxW006ofYrtz87Qku7QfJU
-	1lbtfpVmJ42Q3AQE1tcbOw0dHj5dJSylYxq+m2+YcyLW9melEp/Zo40HFGHB54iG
-	OcTwtR+niQLcarL+4OWP5kUShgYJOMrLwxEqqSkY7Lj2zjgD/sgtw+C5rg7PDGAH
-	Gv3g1ppfRFvZh8DYeUX2gV+upEZO5qZ40tc03kMw1uUKshv2LOqjagJ3HbvFdCxa
-	5hBpF9vOLZ/60dXew31tSvX4uLcqli6uolj+khGTMmHGGzK/4pK/rJL+YY5xBUHb
-	pPRuZrwRVaPtUZ7W/V2+uA==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4fs8ugpqtf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 06 Aug 2026 19:06:26 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.7/8.18.1.7) with ESMTP id 676J0b6k024663;
-	Thu, 6 Aug 2026 19:06:25 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4fs78w56e3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 06 Aug 2026 19:06:25 +0000 (GMT)
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.1.12) with ESMTP id 676J6LgY011247;
-	Thu, 6 Aug 2026 19:06:24 GMT
-Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 4fs78w56b9-3;
-	Thu, 06 Aug 2026 19:06:24 +0000 (GMT)
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-To: Julia.Lawall@inria.fr, Alex Deucher <alexander.deucher@amd.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Daniel Lezcano <daniel.lezcano@kernel.org>,
-        David Airlie <airlied@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Eric Dumazet <edumazet@google.com>, Florian Westphal <fw@strlen.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hans de Goede <hansg@kernel.org>, Hans Verkuil <hverkuil@kernel.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Jaroslav Kysela <perex@perex.cz>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Jiri Pirko <jiri@resnulli.us>, "Joerg Roedel (AMD)" <joro@8bytes.org>,
-        Johan Hovold <johan@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Julian Anastasov <ja@ssi.bg>, Leon Romanovsky <leon@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Linus Walleij <linusw@kernel.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>, Matthew Sakai <msakai@redhat.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Mike Rapoport <rppt@kernel.org>,
-        Miri Korenblit <miriam.rachel.korenblit@intel.com>,
-        Nicolas Palix <nicolas.palix@imag.fr>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Paolo Abeni <pabeni@redhat.com>, Ping-Ke Shih <pkshih@realtek.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Sebastian Reichel <sre@kernel.org>, Shuah Khan <shuah@kernel.org>,
-        Simona Vetter <simona@ffwll.ch>, Simon Horman <horms@verge.net.au>,
-        Stephen Boyd <sboyd@kernel.org>, Steve French <sfrench@samba.org>,
-        Takashi Iwai <tiwai@suse.com>, Thomas Renninger <trenn@suse.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Tony Luck <tony.luck@intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>,
-        Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-        Vinod Koul <vkoul@kernel.org>, Will Deacon <will@kernel.org>,
-        Yazen Ghannam <Yazen.Ghannam@amd.com>,
-        Sang-Heon Jeon <ekffu200098@gmail.com>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>, cocci@inria.fr,
-        amd-gfx@lists.freedesktop.org, dmaengine@vger.kernel.org,
-        dm-devel@lists.linux.dev, dri-devel@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org, intel-wired-lan@lists.osuosl.org,
-        iommu@lists.linux.dev, linux-cifs@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-edac@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-mm@kvack.org, linux-pm@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-sound@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-wireless@vger.kernel.org, lvs-devel@vger.kernel.org,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        nouveau@lists.freedesktop.org, platform-driver-x86@vger.kernel.org
-Subject: Re: (subset) [PATCH 00/36] treewide: remove conditional returns with no effect
-Date: Thu,  6 Aug 2026 15:06:08 -0400
-Message-ID: <178589207129.336697.9870225893827541543.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260723184538.3888637-1-ekffu200098@gmail.com>
-References: <20260723184538.3888637-1-ekffu200098@gmail.com>
+	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="nabr9T1h"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rVUHo/HOd8GZQvs7znvB0uN9pNx50WTarTdGaDefxGivf1nTzGpkxAiF4NEPRaSPTdEOGO7xmhYLdF8Mvdpp1mL4rCPHVntT1nid1+E0MNSXBa+NVYyZ220g0CxsAYHtRH0HRmtksw2vDJFTYRjwMXlKNbwIHAdWZimxjqabyXVw2grxWxsWEzINQlOnLACr3DNV8nAFRb3cUmv3El3ngp34t/tZcQYR5g565u11nBiwsuwmMK1AwrjJE6qECcbizavfcEUzxoyu3gR1vpIWquSho0PcInPXYfBF31kST/Hdp3rvdia769qi7Yuc1x/Yz0Vv5+5TuBXabit8LhlU3w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xamwpEJEYW0G6UYZWQ/bGqmezrheJbJ+hwC/RZucsxk=;
+ b=TZLhlam8IN46HxqXoKPvoSvebX9vkJY7OgmFmq+oWnDo4//GQZU0/m7fh/W2u3nM0SlSv/DUQjfm1H3b6bl2Qf1i7pW5i6sPImblU1z+b5rHaqoly8g25/w3BnwZt5Q1tpS3ThqeV7wNQ16ndCOyWBvLJhJnVyc116xhrTAbq1pSMwAfzg5+SMIr5O52B1jhYaQRCgnkcs0f0f+d9UgnY9CFAiXq6TPZvT3cSJTYp8hmZ4322/vUlQ2W7SIKO108RQXLWEbm9O9ho270OitjR4yYd1KJo1EvF4wz+dZbFhK+n2fnvzFaXdSgfDoZlYul7YG3jHQApzR51HMq8LIpyQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
+ dkim=pass header.d=altera.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xamwpEJEYW0G6UYZWQ/bGqmezrheJbJ+hwC/RZucsxk=;
+ b=nabr9T1hZ8iySm72+ZEUlupLrnotUVIEtYgAhh5nUbbWHxuecYM59w8E+h5BSSAOISLD9uZPZ+g3pMsrNfe5IQiXHbf5bx4e1xPZRvmeGff3AkgUosR6BrzaO0LXU7EF6DdWmEfAowe/vvXcYYD+oFzoTWIJLz+VBEQDeABaInLAgrNT/9hH8nOzZA6RrMRoOjYRGrT0gVqYpqiJ2fORgSxJP1LynQ93lLT6yV+i4cT6f7Sc9NyMZIq/csPcSv0r0mkI52KweF0bcBbxgrmylb3m3cpWNNjety87QwqvRqFO/Ay9gbzrRuRyLafjYZ+QPPXPNS9d+AQH+VNWDD4e9w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=altera.com;
+Received: from LV8PR03MB7398.namprd03.prod.outlook.com (2603:10b6:408:18f::13)
+ by DM4PR03MB6207.namprd03.prod.outlook.com (2603:10b6:5:39b::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.292.21; Fri, 7 Aug
+ 2026 03:59:23 +0000
+Received: from LV8PR03MB7398.namprd03.prod.outlook.com
+ ([fe80::9d6:b5c1:7f72:e982]) by LV8PR03MB7398.namprd03.prod.outlook.com
+ ([fe80::9d6:b5c1:7f72:e982%4]) with mapi id 15.21.0292.019; Fri, 7 Aug 2026
+ 03:59:23 +0000
+From: genevieve.chan@altera.com
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Genevieve Chan <genevieve.chan@altera.com>
+Subject: [PATCH v2] dt-bindings: clock: agilex: mark mpu_l2ram_clk deprecated
+Date: Fri,  7 Aug 2026 11:58:33 +0800
+Message-Id: <20260807035833.16198-1-genevieve.chan@altera.com>
+X-Mailer: git-send-email 2.32.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2P153CA0001.APCP153.PROD.OUTLOOK.COM (2603:1096:4:140::7)
+ To LV8PR03MB7398.namprd03.prod.outlook.com (2603:10b6:408:18f::13)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-08-06_02,2026-08-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0
- spamscore=0 malwarescore=0 bulkscore=0 lowpriorityscore=0 mlxscore=0
- phishscore=0 mlxlogscore=672 suspectscore=0 classifier=spam adjust=0
- reason=mlx scancount=1 engine=8.19.0-2606160000 definitions=main-2608060149
-X-Proofpoint-ORIG-GUID: XGMDaQGIFMb57T6Q2yvPQTQQt2debxfq
-X-Authority-Analysis: v=2.4 cv=XqnK/1F9 c=1 sm=1 tr=0 ts=6a74db32 b=1 cx=c_pps
- a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
- a=IkcTkHD0fZMA:10 a=Sv0fKeRqtYgA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=jiCTI4zE5U7BLdzWsZGv:22 a=BqU2WV_vvsyTyxaotp0D:22 a=VwQbUJbxAAAA:8
- a=Br-j9HdbvUlrMjNZj6IA:9 a=QEXdDO2ut3YA:10 a=5yU3S35YU4bGjq-dph-N:22
- a=Bho9c0fBagfJEIQBS7DQ:22 cc=ntf awl=host:13510
-X-Proofpoint-Spam-Info: AW1haW4tMjYwODA2MDE0OSBTYWx0ZWRfX6uIK9jT+2Jev
- rYS5Xc6Wjv9hMYRtyD0NY9wioUhY1o9ts8S44XrOIykROIC2fMM+q3H5rjkub44bNgkLDQ3tnSe
- fkx9LiuU0Ioed9eVzRB8PP2qYuZIVaHGDH9Vr333gSb2ZgsHD92v
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODA2MDE0OSBTYWx0ZWRfX43FUiflrVixJ
- FNgAKsr+fsfl0ktZltC3fvW6MVFcRQRy/oySHj8nQQDMOHwfS94QLWHrXArK3j62D1c6aNzQrnl
- 2DtOuGbPQocnjuSCI1ny1WWYx/7jkkjlcfyl+lp7TEesEfkx307+KuCZo0OgIxbIwfa72MWD4em
- tn6/hMd/QXx6zH3wP5OlhrMzlp2qKgIxJlelAMfUWIkruyj4hnvKzGUkqPoF4QRZ71As9I8pV2j
- DMm/cMIaHufC6lXcsuKfUk0yiqWTx1Zr8LtQAR498eW34hEj3pAMHucta0+1CKmEnv9EN7lkU/M
- FG7jgW8yHOjl2TgueMJFzovO4heKYSqjW47oC3CHVujyZPMUqifsWdUKFoxdhd+EKhXdCEJL9b0
- LGCES5HP/CdGIqj2UaaWymZGJVFVJ4RBD/aEk7/710HO5x59Z+gVx3LZGgty2YUYCbgJE7oGTWH
- QPXliDM2eYx5QgvaSSBlrfWn/1V9lBD33lbCDCaI=
-X-Proofpoint-GUID: XGMDaQGIFMb57T6Q2yvPQTQQt2debxfq
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV8PR03MB7398:EE_|DM4PR03MB6207:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7f262545-b58a-4020-2a36-08def4384417
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|23010399003|56012099006|11063799006|10067099003|55112099003|18002099003|921020;
+X-Microsoft-Antispam-Message-Info:
+	8OaGIgO/Q1K57HOY8dNDAS6uch3jRGqRO1RBOomavT8AEyZ4m6ZwVJzT6gsDdnWrBWK8TrFKJJfmFQ0Qb+fcE+CbpsmaRf1ILE8q2FXLf/CcuCCpqr/p3PRyEqCfCpzcMZALViHkcpZ7wcAzmHWwBAqX+iVtQJTnf5/JGi46teBV0c+r+qn8ktDH0whNSxpXg1DNLLX4KGLEDYtOs3G1i7j3lupZgtARY3yTwAc357eAmRCgaai8Sk/jsHa9iErKq2q1TDNXnN1gNAns76JtVQPF/AsIKaDoUv63AlA3nFkzc65t/7gdJjCJjQDcXdcFOh4QJAfQRA42s228aIlbd2pTtaj8QVbl/jKRSsF670eQh13q/3O30YxokC3HAL3BUKBta4w8E06Hghi5XoDzWXwogdygqw55d5L6EiFZV8cY4RDVbDoypjCPfdrrJ4uon1dUFwbz7vtKcBVMdYx+CUX/IBKqwTc0EJ5s23XqqjChH53FKwzYDeBcSWNuCVluQsVGwhGg4PzO1aeYQYSw+udHqFndI8jqCgsH1J377Hm8kXxPzySa8oA5BwMYY0PPFPvOuRsofksX5LQSM3jYiPK/C52PoDS4Kf2V6o/GjXsQuxQLUa6QAYiXnVYpfZkPj7oD1o1jPHFcO374KceEOyKAYuWtAov6tLw7J59adS7d61j1uH8d6nt/Wh5F0RzRm6fgCgAwjKXiS0KeoAenRg==
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR03MB7398.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(23010399003)(56012099006)(11063799006)(10067099003)(55112099003)(18002099003)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?8HqToyrkaAusNAf6Xje/RFZcKJlOeAmjklO6c0dupISuLGMoFqxh3UQE9HxY?=
+ =?us-ascii?Q?11Rg9Xo6/v6TlAh3E4+Axx28Ln7puSBy5ODl9OGVt9X2Ua+xHF/fjKTU29pl?=
+ =?us-ascii?Q?KHFtzssFCB1Qz8IldaE86/llW456imoMpf6BI+05PXGGMwbCdMmQPYc8RDA3?=
+ =?us-ascii?Q?+GlZX9HUwN5qg2bKonZAIuKdWC27HwvkMZdMih5gp9wXxU+J9A47mc01F63q?=
+ =?us-ascii?Q?7QVORkb3GgBFUayDKDaK63bKmfvHMChW+IehBL+yS3GfhcBV+/Xs4hqlN+gP?=
+ =?us-ascii?Q?sdWV87hSZGK+DViXP/El5XavllnJrofop4s4zYZajtAwb6LX60K4Zx1xxNB+?=
+ =?us-ascii?Q?VgxEQGsbYRERBB2fnRb01pl/HtXicVtlCjmdbQAQXtzg3VJmTUXTLkNTNbjR?=
+ =?us-ascii?Q?XvhS8zruUcyz4lloFgzdGw/04XljVrFK/eKtSJy1RvMQIDl0vdVpe2ltkAY/?=
+ =?us-ascii?Q?3rgZ0QK08Stu08MdIVu48kz4O1z/xXMsL7Y3wkxtqY/Ln3qxxvUmkhVEX+Ob?=
+ =?us-ascii?Q?6331/VqrGtEbcAriObL1ZVI4+WL6sX5/oCpYPgJ/yHT0K9GLv5Fda3TD5dyz?=
+ =?us-ascii?Q?zXVQb6JkLvpA1aB0nWrpq/6pou6DqS1uQl7Tnp4EsA+3hac8hgWtWtbrwvwv?=
+ =?us-ascii?Q?s+aHzBnXh27TN2AaFzEgkdzCWcn7O3gQQLWjL89fm6JLSSfYozjA71Y1rAAQ?=
+ =?us-ascii?Q?BW9pSP8iN30BeclN336+seU6Awdm+corRkZ4Yzu37zwSd4/ZD4lgCZY5BIiY?=
+ =?us-ascii?Q?AbhBiHUymz1+pt2k20STxLjm9bL02A5T65wEoaWY8lXZ+SHih2+gdGZURVeS?=
+ =?us-ascii?Q?EmxXf1WoVUbJrBr4ipWdCRVzTHnXBg72ggixNQiS2B5YGBpdLkNXrctkKw6v?=
+ =?us-ascii?Q?uNAyHkuTjWsKA2CTHNxm6ctR8SOP/IWyliFDQhtzwaqFJ7pxjTap27qyCvF4?=
+ =?us-ascii?Q?B1DpawKClU3jnAgCK5b/bRISCrsHERJoMUwNtP/YFCaQXR+/TCAaUZMJ2XGY?=
+ =?us-ascii?Q?PZS6DOsfOFAnX+HNShAecBJjyfHkGZkKSHR6jsn5rx0bxj4Lys0C5kkm/uft?=
+ =?us-ascii?Q?mREGd7egK4q5CfkCrOqFcPMGIY3cqYt/IbkdsvRCz1jv7BDZrCwD09rfAnwP?=
+ =?us-ascii?Q?3wNgpU7XayPUAoxTLpKOmDjCDDyZk0KcYfxTGnfAglLebkqceankdPfQ/QEK?=
+ =?us-ascii?Q?5+/0SQGJ3OAGUP/AkmfqP81kVhBV3BW/rndDLJrxS1J11o3s67iiTF19shGI?=
+ =?us-ascii?Q?e9AZhUOpvs6GKkfKzEkJiAiGf7NgHPeToIRnWNPjFXMlsRwMiGJtRLDwLZH6?=
+ =?us-ascii?Q?mWJqGE2xlARpDM2dHQbDRI95h9Hol4C7NZLYYMYGje0puU6NvN6dfwEyAWqh?=
+ =?us-ascii?Q?ORfPqHiivu38ootFJgZSC7F+4eGpuIO0qRO6Rt8d10Tt6xP/ufGG5axne3DF?=
+ =?us-ascii?Q?fReOJw9o6CpAB7ZTR3jgiQ65FZztcz/KtqE1Ve3okMi+ncWrvrl1kxJks4qB?=
+ =?us-ascii?Q?/DwDnqS9sU7egchgxaJSyn7Tdd6xrRQISVzY+DwJOw4bnMI5Z84+7e7NW0zA?=
+ =?us-ascii?Q?CXMx0rfdY8sTojhVmhVj5r8CuxOmU4AED60LbB9S/fOGaKpU0ydKcIG2MT0m?=
+ =?us-ascii?Q?beE/+fssnqCLUK6ePi74hYhq5ywcVfXFIg1mdFjXysGNpvrIfwmrh7Qqjaqr?=
+ =?us-ascii?Q?8jS18+C3yItZKo0sAQyWCyNgKFubEKZ/5bCxSjZ9mbwS06f6ERAop4uE+1bN?=
+ =?us-ascii?Q?mxz4tXvKspd9/nDv2hyEX20HFlJwNDE=3D?=
+X-OriginatorOrg: altera.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7f262545-b58a-4020-2a36-08def4384417
+X-MS-Exchange-CrossTenant-AuthSource: LV8PR03MB7398.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2026 03:59:23.4999
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: MfDGbel7w/XQORaEejpegqYe/BtPFH8HDdjhZvIzrNHa59jyWdrTY1F5njdYncYwTHoIcHvMZJJbDevNSx83AF0nkgDp9rfb4XGE/aOOCLE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR03MB6207
 
-On Fri, 24 Jul 2026 03:45:02 +0900, Sang-Heon Jeon wrote:
+From: Genevieve Chan <genevieve.chan@altera.com>
 
-> While reading mm/memblock, I found a conditional return where both
-> branches return the same value:
-> 
-> 	err = do_something();
-> 	if (err)
-> 		return err;
-> 	return err;
-> 
-> [...]
+Preliminary documentation referred to mpu_l2ram_clk, but that clock is
+now mpu_ccu_clk and is already represented by AGILEX_MPU_CCU_CLK.
+Keep AGILEX_MPU_L2RAM_CLK as a legacy ABI-preserved ID (do not use in
+new DTs).
 
-Applied to 7.3/scsi-queue, thanks!
+Fixes: 6b3c59780ed3 ("dt-bindings: documentation: add clock bindings information for Agilex")
+Cc: stable@vger.kernel.org # 5.8+
+Signed-off-by: Genevieve Chan <genevieve.chan@altera.com>
+---
+Changes in v2:
+- Remove comment on unused clock ID 42
+- Reword commit message
+---
+ include/dt-bindings/clock/agilex-clock.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-[30/36] scsi: mpt3sas: remove conditional return with no effect
-        https://git.kernel.org/mkp/scsi/c/c79f9bf2d87f
+diff --git a/include/dt-bindings/clock/agilex-clock.h b/include/dt-bindings/clock/agilex-clock.h
+index 06feca07e08e..6206a45e007c 100644
+--- a/include/dt-bindings/clock/agilex-clock.h
++++ b/include/dt-bindings/clock/agilex-clock.h
+@@ -44,6 +44,7 @@
 
--- 
-Martin K. Petersen
+ /* Gate clocks */
+ #define AGILEX_MPU_CLK			30
++/* Legacy ABI ID; do not use in new DTs, use AGILEX_MPU_CCU_CLK */
+ #define AGILEX_MPU_L2RAM_CLK		31
+ #define AGILEX_MPU_PERIPH_CLK		32
+ #define AGILEX_L4_MAIN_CLK		33
+--
+2.32.0
+
