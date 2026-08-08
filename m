@@ -1,62 +1,61 @@
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF62C3A6EF0
-	for <linux-clk@vger.kernel.org>; Sat,  8 Aug 2026 08:02:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA43E3B1ED7
+	for <linux-clk@vger.kernel.org>; Sat,  8 Aug 2026 08:31:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786176153; cv=none; b=BPAgQZtfdIyYxTLZzlVHTteOYGHYlHKSg3jfX05J7P0ydSR95d64Dq1Xmhef46ZRJPXa1biEBvhwATASAOGM50Tzr4aMtymiUsscl2N4MZYJz2owwcATNuOVO7cT4UfsBjuHZyQ3G4L9Kunk8yPlLNvPziyfb8NXCOzg5kRxf2Y=
+	t=1786177915; cv=none; b=gkYpubrl/Cm8YDoi7ra8eEfc2fBTNvQvHFXCtSEzvZq+5vuh1/J8DM72XSxabXYCqF+obmm520iXbDjOCXHBjkBAUFsHS8tAlKQ8pGKTvbh9iUsv19XRTyk2IDN6eNHr4U2d6sz8i5g58SAcnUuGNAXjtxNfAjWqDjfeECO+cSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786176153; c=relaxed/simple;
-	bh=Qtiy299hgXH9miMRATmDtFVX36AP62Lyow4p85Fjtoc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eUcI6Gf88H8cN3Zi6wKruOORe89LlZgsMP8wEtuJc2o8wYaF3eGM+F9K3AoCziXx3DS8QudeWdowFsHF4QYMuEpboaZOt4HJLi7Slb95/KqGz3mB7BvYEC2NV/jK7QCwIxzmawKtj8JRHyz4haLNVxdlX6dK/am/UCyo1HNoxiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JNPg3EaY; arc=none smtp.client-ip=209.85.214.169
+	s=arc-20240116; t=1786177915; c=relaxed/simple;
+	bh=db+z0vzvh2BQdKuvYbDdNDQvp3bZssbayao5QvGWyjY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nrNY3Dc7W0Ov9d0LnI7XHPvDzyIWwQ56nivqRrHQwUz0bdUNKNNWeeCQk4NEeAtT8TtDjM5kZLx4C6oICGEihPfFqUYXsv5reTncCrGFeGRSDtiOrFSzSvv7algKlGacGLmwi6B3akzy+5aOFlKMi2IOncheZ2tswKBSTFnyv3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MCN67prM; arc=none smtp.client-ip=209.85.216.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JNPg3EaY"
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2cedda2ce6fso2905715ad.1
-        for <linux-clk@vger.kernel.org>; Sat, 08 Aug 2026 01:02:32 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MCN67prM"
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-38e69bdb0fcso284845a91.1
+        for <linux-clk@vger.kernel.org>; Sat, 08 Aug 2026 01:31:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1786176152; x=1786780952; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1786177913; x=1786782713; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=mLmbCLzuywYLsOVyyYkrBNI0Jw0ZVFv5psG5aDAHyEg=;
-        b=JNPg3EaYpemhj5aP4kfgqpmVEISAlaurH7WdqXRKhxVvFnqDGkKzu0yK1gGEpRU0Qj
-         wh0UkCLyDpBgdYs0qhnSIes7fNAZg5yJ2XeEc3aNgg3GdhpHvnwsSokZB9w1YSXPFwdU
-         o4+JYc97JZ0w10ekv8zjZ8q4EEO/Jpx4QvrHwE2UChjl8SMfzyiKlMNkQTAtlXZZU7DV
-         naE2yQkAlLVDDFqUf0OIIqTzMrCZFOTV5zH7/hSR4fZh+8OYbJls4dUAUti/iwrRNiGD
-         FPB1dxq3IoFzDvhKo35+Rh0FVHAJRqbRLi0pJlW5pm3AEwvBY/eLJp/VhZZENxprywOF
-         jdZA==
+        bh=VKPZin59jcLEgsj7vGd6U8AiKKUkanMgykS2/LGEdhs=;
+        b=MCN67prM4Elkqg3Xn2YbkpLf71DQrzNvLmM0vC3rYlnzOzh2My3Mt22B4ogxxvkW8x
+         54W5i+7CEQ5qfEDdG+NgzFEdAlVDv9ShS/dbSsGCinc6ywL4/PdDqX9VC3KWUGVvPvRQ
+         8B1WTIOCnzvSGwS4AgGgiH15AggrJvRRiJw9t/DnqldlcUg4GYxdtCVg0EVUKzHrNixo
+         0qJptRckdkscUYpxZhl15GhGtkxPzo+ybKHN91j5Z+Ek9ahlNDRk1wLQZ6bf/IHAI8TI
+         PzXAiGS6ziWRbE2n6knUeK1PK0ubq8M4HqplZJkI6gMrv9avzGj+2aZidrRcanRiElg2
+         C9oQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786176152; x=1786780952;
+        d=1e100.net; s=20251104; t=1786177913; x=1786782713;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=mLmbCLzuywYLsOVyyYkrBNI0Jw0ZVFv5psG5aDAHyEg=;
-        b=lUjhBukoX2A0UpWNsr/9ctK3q0aG700k8MaFViZXTpZBXProz1zHXrdcJ9kZoZpWga
-         iG/EswON6urQHlCL6419wcfnLhuqGMbOmgYPG0iExWBxPAjiH8D+i5nABxyBvU25XSDb
-         jHP0b9pIRRY8FHOYwZ5wT4pKjbC+wVHL9eRIs3Yc4wxiO8fxnVmmg1rQkNZD440X2uL/
-         1XOBr6AktsYJpwfOCforA2xRERBGIfTEyXCIALKRFA90DgGGs2OCj9GFrFPdAm4w+tRe
-         MTNKImBETFkhSBRhq/ULdnrTPxbKk0O/0qYHdre7DqpgkFcVii1vwpjN1MbAUQa9tJgV
-         39Tg==
-X-Forwarded-Encrypted: i=1; AHgh+RqxhFqWDieB+3UG6Es9bn7VYH/wY9rvLunLbYZCRcWZDoT/tf2vr3VVysRQH3vIgeaAdOb3FvtEitE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMiIddJAVNvZsVSVyGyW0c7M/2CAcqg135o2l0I6vRPmMJWrvi
-	f/j1BVT3QpW73eHdWG5ZFQYQmb7qzTDZGFGMkrN/I3LTSRJdPlKBxGq0
-X-Gm-Gg: AR+sD113HtU8MO5IsDDVShpQSU0vfsWmo/lXqS52Ig/4/2IObgfcLTMv7yFaBSrVRxa
-	+Fn8BOZvdQ2USl4Fq7y625Ifd+M+p0m0FM3E7cayk+cwVIpBeYm0HLhIUx0gt/WJPLxFBZ2q22R
-	WofqwWB144VYsXP3Cj2jO4goP/RL8MDfzeuxm2AL/9GjJ7CqqNlvtJDmjfYKZy5Qzjsi1TMbwUf
-	urS9VxrYPQEVf6A4sj9fru11yj1hBYsp1Il9m69NKxpwcS5uMMviX6iMcz41HHGNupYg65RqFXF
-	PjEB7yCkbUDDjYBePXqI4zp1zhEVLcULt34EZ3X6uZyXMPbRZ9JlBlEksxXtO3LflCaFju3J5V0
-	RNPrwn/SuTIbA9Vo9kSjP5/acvuc/KusNTXhNsnsWmQ92P3Qe1g4xtgfki+r5qtvu/ZQZpMr1Dx
-	CxTL8wZEluRSmH80Rr66DNV9b48nnWO6PtcbIeTLu1YBLXXXz5/Xw2V+9p6PHPDgruMWYlIDyRg
-	RVGTXz7
-X-Received: by 2002:a17:90b:1d02:b0:37f:fdc8:71b4 with SMTP id 98e67ed59e1d1-3903c599356mr29221904a91.2.1786176151990;
-        Sat, 08 Aug 2026 01:02:31 -0700 (PDT)
-Received: from lgs.. ([101.76.249.46])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-39085de8ddcsm7774143a91.6.2026.08.08.01.02.27
+        bh=VKPZin59jcLEgsj7vGd6U8AiKKUkanMgykS2/LGEdhs=;
+        b=Fj46jTqTv02k9EVuBofBBgEEEopT4yJGNPXDS5URsyEJbL7Jog1pna5PjotkIqL8Gb
+         dNCpf6pdMJeiLE2WmJDNoERMe+02eqgW4eD/aaM/Vu7m2dGGYk4Xil8HmmTnlFp8pBQO
+         5qWbaZhd3e5pruElVxb5K+YGlUZn5FpbZhZ2FvMgKb932rZZY/suKdi3gGH713+4JDCR
+         aoDhOQrkK5TPLzj+/dwh/dQo+vdn2ipGovWvVBzy2HSJVbN4BruDxj4s7/P5U40DiEre
+         Ze/qSuoNEnu3zHvdNnTZn9fcZ6o/cVzFeKiWryjN0hF6ZZeMVSwW4GFcEIr3Uv+HMEWr
+         AVcA==
+X-Forwarded-Encrypted: i=1; AHgh+RqOUKC2NioziALR8gGb3PNfHKFYIkxIV5d5OmiFd5Pwmwq1rXgzfhDVKXHQmQydm5Lg9sGxOFEBXHc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySYzf7hyGY3ZgLEYpKm5Hs0DurrYjaF68ikXYP3Ld6YISRqTQA
+	dSU9rAzeZsJNe4P/eXahbEkX5v8/fCUv+oTzNKPmLN1IHd1ggHorn47r
+X-Gm-Gg: AR+sD12rs9d2Zgc+7ygFNL3nBdmS/FIXMBUkbO3aBP6Iyj7PMSUuJU/8QnVEOWojd6y
+	9CnhI6p1TblTDIW8fWtjUn/4fshR0v4+twoNiGvAuxVxSj0HMisUXIUWJGfza8Au6IqNjEFJ72T
+	0D+DPDHtFV/8P1eAmSG/6nG4v/tdCDzCVM814H817JQo0cnuF3EVrMbsqJV7gCQjz7D77tm7kfP
+	54N7ACN0nAgODWgvmvG0emtTdz5TCGivjMyafpz8NMmAwaAr/qNCjmf4z37PB2+zP0rGgA8+3YT
+	dMCf3J5LOjR2R/nwtSzGOGYj0aFSQhp/GTr4GZ9pQ08HyNDmGXk6pn354Cf+tULudrHKW/DT7ne
+	em/of+WW7/uVehrdeazc6Mf++1SuPv2LTZxctfkEGdPkE5YkTdLIxgdlH5WSD28YcLkeKJerfGN
+	zoyuSfd0InTQQsxSGKnOsJZ9gx2zlvfocBfA8+O65YBWE=
+X-Received: by 2002:a17:90b:1d4f:b0:38f:7f60:ba35 with SMTP id 98e67ed59e1d1-3903c5381d6mr27967961a91.5.1786177913049;
+        Sat, 08 Aug 2026 01:31:53 -0700 (PDT)
+Received: from lgs.. ([2001:250:5800:1000::f280])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-39085de9f6asm7623040a91.7.2026.08.08.01.31.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 08 Aug 2026 01:02:31 -0700 (PDT)
+        Sat, 08 Aug 2026 01:31:52 -0700 (PDT)
 From: Guangshuo Li <lgs201920130244@gmail.com>
 To: Abel Vesa <abelvesa@kernel.org>,
 	Peng Fan <peng.fan@nxp.com>,
@@ -75,9 +74,9 @@ To: Abel Vesa <abelvesa@kernel.org>,
 	linux-kernel@vger.kernel.org
 Cc: Guangshuo Li <lgs201920130244@gmail.com>,
 	stable@vger.kernel.org
-Subject: [PATCH] clk: imx: imx8qxp-lpcg: fix runtime PM cleanup on error path
-Date: Sat,  8 Aug 2026 16:02:15 +0800
-Message-ID: <20260808080215.2669452-1-lgs201920130244@gmail.com>
+Subject: [PATCH] clk: imx: scu: fix autosuspend cleanup on probe failure
+Date: Sat,  8 Aug 2026 16:29:33 +0800
+Message-ID: <20260808082933.2692878-1-lgs201920130244@gmail.com>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -87,45 +86,50 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-imx_lpcg_parse_clks_from_dt() takes a runtime PM usage reference with
-pm_runtime_get_noresume() and enables autosuspend with
-pm_runtime_use_autosuspend(). The success path drops the usage
-reference with pm_runtime_put_autosuspend(), but the error path only
-disables runtime PM.
+imx_clk_scu_probe() calls pm_runtime_use_autosuspend() for non-CPU
+clocks, but its probe failure paths do not call the matching
+pm_runtime_dont_use_autosuspend() before disabling runtime PM.
 
-As a result, the reference taken by pm_runtime_get_noresume() remains
-unbalanced on registration failure. The autosuspend setting is also
-left enabled instead of being undone with
-pm_runtime_dont_use_autosuspend().
+If the autosuspend delay is set to a negative value while autosuspend
+is enabled, the runtime PM core increments usage_count to prevent
+runtime suspend. Without calling pm_runtime_dont_use_autosuspend()
+during cleanup, this reference is not dropped and usage_count remains
+unbalanced.
 
-Add pm_runtime_dont_use_autosuspend() to undo the autosuspend setting
-and pm_runtime_put_noidle() to drop the usage reference on the error
-path.
+Add the missing pm_runtime_dont_use_autosuspend() calls to the probe
+failure paths before disabling runtime PM.
 
 This issue was found by manual code inspection.
 
-Fixes: 18cdbad40c6c ("clk: imx: clk-imx8qxp-lpcg: add runtime pm support")
+Fixes: 78edeb080330 ("clk: imx: scu: add runtime pm support")
 Cc: stable@vger.kernel.org
 Signed-off-by: Guangshuo Li <lgs201920130244@gmail.com>
 ---
- drivers/clk/imx/clk-imx8qxp-lpcg.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/clk/imx/clk-scu.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/clk/imx/clk-imx8qxp-lpcg.c b/drivers/clk/imx/clk-imx8qxp-lpcg.c
-index 1dae3410ee99..262645bef62d 100644
---- a/drivers/clk/imx/clk-imx8qxp-lpcg.c
-+++ b/drivers/clk/imx/clk-imx8qxp-lpcg.c
-@@ -277,8 +277,9 @@ static int imx_lpcg_parse_clks_from_dt(struct platform_device *pdev,
- 		if (clk_hws[idx])
- 			imx_clk_lpcg_scu_unregister(clk_hws[idx]);
+diff --git a/drivers/clk/imx/clk-scu.c b/drivers/clk/imx/clk-scu.c
+index 9b33df9967ec..6d29fcc2306d 100644
+--- a/drivers/clk/imx/clk-scu.c
++++ b/drivers/clk/imx/clk-scu.c
+@@ -542,6 +542,7 @@ static int imx_clk_scu_probe(struct platform_device *pdev)
+ 		ret = pm_runtime_resume_and_get(dev);
+ 		if (ret) {
+ 			pm_genpd_remove_device(dev);
++			pm_runtime_dont_use_autosuspend(dev);
+ 			pm_runtime_disable(dev);
+ 			return ret;
+ 		}
+@@ -550,6 +551,9 @@ static int imx_clk_scu_probe(struct platform_device *pdev)
+ 	hw = __imx_clk_scu(dev, clk->name, clk->parents, clk->num_parents,
+ 			   clk->rsrc, clk->clk_type);
+ 	if (IS_ERR(hw)) {
++		if (!(clk->rsrc == IMX_SC_R_A35 || clk->rsrc == IMX_SC_R_A53 ||
++		      clk->rsrc == IMX_SC_R_A72))
++			pm_runtime_dont_use_autosuspend(dev);
+ 		pm_runtime_disable(dev);
+ 		return PTR_ERR(hw);
  	}
--
-+	pm_runtime_dont_use_autosuspend(&pdev->dev);
- 	pm_runtime_disable(&pdev->dev);
-+	pm_runtime_put_noidle(&pdev->dev);
- 
- 	return ret;
- }
 -- 
 2.43.0
 
