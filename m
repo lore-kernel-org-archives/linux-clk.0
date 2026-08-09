@@ -1,37 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89D7C29A31C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3BCA29E10F;
 	Sun,  9 Aug 2026 13:15:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786281321; cv=none; b=oDigLiHHvuL8Cpju/tcmCOQBn8PMXahp/cPSr5bedos+1baCnFQSbL3VVbha+OB9rV3XXi7+t0BF6Yq3zc11Imt29iTNxZekwWV/7o6U0quKNEWf2D270RmCWj297PJLPoiePeTp7CDvAeiHdNcfVTB1UVUOCaZ8RXU0QHMOzYM=
+	t=1786281322; cv=none; b=TWGLcO8gWD4myfW2dRPs6PZ8cxthJmyjc2NiBx9L2lnAxizaOa4/ZUuODAEiB9A09iMLfEBQJ+rSiHBrXdnCXOvOyDOHHhuQ7FQC/6PJfNCk2A1LCGpXQDEH8Q8OH2ZQqbgVrlDqBzVSo8YtBC/ssINGgwW+Fc4IRyIr66v4I0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786281321; c=relaxed/simple;
-	bh=8IMEYD3n6yT8ZSbC1ZnVI+oSqA0c5prW8Yu3yOGSG30=;
+	s=arc-20240116; t=1786281322; c=relaxed/simple;
+	bh=d3hk7S6cwDtGRjhxnqeKNqNv2dECeNGKbwrhSJcNI94=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=m7QsQ+cTL0DBt9bhecWtGSxzCE+dNJND3bWbOWJkbIO/+SIZdJMgbivPgYw+TDkefP1YsnbRQjG9hNWwA2ib3BYMxegH1ht4Fb63k1YkKttobX5MRdl5f/tJskTYNeeIUtI7l91MmL54A5+DeWsloHpZngbtWKgQRQbo60FMbJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oIZbW8Wr; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=uYQmekxSsxAeu1pFniMpWejAO1OnD3iUBHVnRGBvjQlaFfPW+CsIyTQEI5tf8BqYj3hroCFSanVFwLFkFpwWhdGxrJl6u4pgSuVXf/GpsVSYhYY6ga7mr8YD7uqEeyHIaKIQ3tuGe4/pnx3iLgZhBE466X85yULGAiQNXOJG5CA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CvIoeumx; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oIZbW8Wr"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 93F15C2BCFA;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CvIoeumx"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id EC775C2BD00;
 	Sun,  9 Aug 2026 13:15:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1786281320;
-	bh=8IMEYD3n6yT8ZSbC1ZnVI+oSqA0c5prW8Yu3yOGSG30=;
+	s=k20201202; t=1786281321;
+	bh=d3hk7S6cwDtGRjhxnqeKNqNv2dECeNGKbwrhSJcNI94=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=oIZbW8WrItwMHYpdn4Hf75VXs8fnpDhQ4NwjdheyknMEB7eCP75ZPWyM9XuR1VplY
-	 TAmnGznDsqF/i0SZiPkfTaKe4MhMe8szqIMKJu1oFkKWTVD2v/Sz+8mAKbGkytlFUZ
-	 +p2RpRHBmhnEQki9bfDyxcN0+zOOgIskLr4qjZPfBXm41wpsGGYLCMxcCc9fDiD/0a
-	 B7Fo5A6/jgLWPykW8uKmRoSi23bT+WLaTOrNb8zgpKxXW5YdWwrQERcZnOwGgIRLWh
-	 U8fAEvbA6WhTK7tM1NbW1d26BZficW/R167rR5sIYu9bSx29VWl7Te1DMja0fLDlLf
-	 WXP7ckvNCXWqQ==
+	b=CvIoeumxnyIvQynPJkYtSy2NpC7axHdV3huqZhYzbZWmL2dBjMyMF7wO+m69uMRUT
+	 TMyrUSJejRLvm1GVZlt8c9MWgwNu0S1+SMkST5/mfcK/sPHg9K0ChBG+aO2/s9dG8n
+	 caXGDSK8Q/3KmN/0nSlgfyTDZzxrF1dUoBwb4IN/gxEVmNgjeLgJYL6fFNjo6RV3rI
+	 ZN1lJI8Ey/2LkVl7dlwpd7ao1m1XJ/AQHodEbNuK/QpOGJ/BtXTjtnwnPfA5eL+X/i
+	 +vfAT/4FXmBJy8JoqfPRHiY4DginlU8uMASY3PDU79I8X6nmJEuZiDoqxF3ZnaAHOt
+	 VBgO8ZQHzx54w==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EA62C5AD68;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D522AC5AD68;
 	Sun,  9 Aug 2026 13:15:20 +0000 (UTC)
 From: Cody Kang via B4 Relay <devnull+codykang.hk.gmail.com@kernel.org>
-Date: Sun, 09 Aug 2026 21:14:14 +0800
-Subject: [PATCH v2 05/17] phy: spacemit: add Innosilicon DP TX PHY driver
+Date: Sun, 09 Aug 2026 21:14:17 +0800
+Subject: [PATCH v2 08/17] drm/spacemit: add Saturn DPU core types, cmdlist
+ and display MMU
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -40,7 +41,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260809-k3-display-v2-5-327d7910bf71@gmail.com>
+Message-Id: <20260809-k3-display-v2-8-327d7910bf71@gmail.com>
 References: <20260809-k3-display-v2-0-327d7910bf71@gmail.com>
 In-Reply-To: <20260809-k3-display-v2-0-327d7910bf71@gmail.com>
 To: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
@@ -61,11 +62,11 @@ Cc: dri-devel@lists.freedesktop.org, linux-riscv@lists.infradead.org,
  linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
  linux-clk@vger.kernel.org, Cody Kang <codykang.hk@gmail.com>
 X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1786281298; l=32412;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1786281298; l=45314;
  i=codykang.hk@gmail.com; s=codykang; h=from:subject:message-id;
- bh=eiAZGYRnjMdS7Ttf5CCg6aP5MonclwmGSHwFKFiDmik=;
- b=NS2m4pt67V1TljSXyH7wKHLFQEhYRgyXvoH1SBFoywEwznBiv15Yct3ffYLnPU0dp2RYPLa6B
- ZHeX5fwwuX4ApI76mnc8FOL5P9RsSav3S6ofOLotVQ6LCvb29x7W1tD
+ bh=0aA0Vkq4JndUPsyOa8h984LQsYZfoTg6AN4cbfpx1t4=;
+ b=8ZYqSpu8xSWQxP3XeIP9vS9kVZrvZaxNhTMWUKqESK4ucGTIuXMVEBoK+0DrjiiUQi1aRZ8MR
+ PWS9dfsOUHrDJQVuea9NM4TbVpV9qNrfMzhsBrlV3hil2bqkvtt/B7z
 X-Developer-Key: i=codykang.hk@gmail.com; a=ed25519;
  pk=Osn6/cs9Su/mHHw4P19cmVc3v2FMQfiWahjsN0vEkuk=
 X-Endpoint-Received: by B4 Relay for codykang.hk@gmail.com/codykang with
@@ -75,1036 +76,1466 @@ Reply-To: codykang.hk@gmail.com
 
 From: Cody Kang <codykang.hk@gmail.com>
 
-The PHY's registers are interleaved into its parent DP controller's MMIO
-window rather than a window of its own, so it probes as a child of the
-controller, carries no reg or reset, and reaches its registers through
-the controller's regmap.
+Register programming of the Saturn DPU is batched: the driver builds
+per-module register lists in memory and the hardware command-list
+engine replays them at frame boundaries, while scanout buffers are
+mapped through the DPU's private address translation unit (DMMU)
+rather than scanned out by physical address.
 
-It registers its pixel PLL as a clock provider. That lets the display
-controller ask for a mode's pixel rate through clk_set_rate(), and it
-lets the APMU pixel-clock mux parent to the PHY through the clock
-framework. Without it the controller and PHY would have to know each
-other's registers.
+Add the shared driver types, the MMIO field accessors, the trace
+events, the command-list builder and the DMMU table code. Some DPU
+configuration registers are write-only, so a read-modify-write would
+corrupt neighbouring fields; byte- and halfword-aligned fields are
+therefore written at their native width instead.
 
 Signed-off-by: Cody Kang <codykang.hk@gmail.com>
 
 ---
 v2:
-- drop the mod_devicetable.h include (Uwe Kleine-Koenig)
-- unwind the lanes and pixel PLL on the power_on lock-timeout paths
-  (Sashiko)
-- document why power_off keeps the MPLL up: it feeds the 16 MHz AUX
-  reference, and AUX must survive link drops (Sashiko)
-- register the PHY and clock providers last in probe (Sashiko)
+- hold the DPU reset lines as one reset_control_bulk_data
+  pipe_resets[5] array in spacemit_drm_private and drop the pointers
+  duplicated into struct spacemit_crtc (Philipp Zabel)
+- drop the INT_VSYNC_UPDATE enum member; it never had an irq_list[]
+  mapping and the register model has no such status bit (Sashiko)
+- drop the unreachable multi-planar arms in spacemit_dmmu_map(); every
+  advertised format is single-planar (Sashiko)
+- drop the unused cmdlist parameter from the crtc_cmdlist op (Sashiko)
 ---
- drivers/phy/spacemit/Kconfig          |  13 +
- drivers/phy/spacemit/Makefile         |   1 +
- drivers/phy/spacemit/phy-k3-inno-dp.c | 967 ++++++++++++++++++++++++++++++++++
- 3 files changed, 981 insertions(+)
+ drivers/gpu/drm/spacemit/dpu/dpu_saturn.h   |  35 +++
+ drivers/gpu/drm/spacemit/dpu/dpu_trace.h    | 350 ++++++++++++++++++++++++++++
+ drivers/gpu/drm/spacemit/spacemit_cmdlist.c | 304 ++++++++++++++++++++++++
+ drivers/gpu/drm/spacemit/spacemit_cmdlist.h | 146 ++++++++++++
+ drivers/gpu/drm/spacemit/spacemit_crtc.h    | 246 +++++++++++++++++++
+ drivers/gpu/drm/spacemit/spacemit_dmmu.c    |  80 +++++++
+ drivers/gpu/drm/spacemit/spacemit_dmmu.h    |  40 ++++
+ drivers/gpu/drm/spacemit/spacemit_dpu_reg.h | 108 +++++++++
+ drivers/gpu/drm/spacemit/spacemit_drm.h     |  61 +++++
+ 9 files changed, 1370 insertions(+)
 
-diff --git a/drivers/phy/spacemit/Kconfig b/drivers/phy/spacemit/Kconfig
-index 50b0005acf663..098f33998f732 100644
---- a/drivers/phy/spacemit/Kconfig
-+++ b/drivers/phy/spacemit/Kconfig
-@@ -23,3 +23,16 @@ config PHY_SPACEMIT_K1_USB2
- 	help
- 	  Enable this to support K1 USB 2.0 PHY driver. This driver takes care of
- 	  enabling and clock setup and will be used by K1 udc/ehci/otg/xhci driver.
-+
-+config PHY_SPACEMIT_K3_INNO_DP
-+	tristate "SpacemiT K3 Innosilicon DisplayPort PHY driver"
-+	depends on (ARCH_SPACEMIT || COMPILE_TEST) && OF
-+	depends on COMMON_CLK
-+	select GENERIC_PHY
-+	select REGMAP
-+	help
-+	  Enable support for the Innosilicon DisplayPort transmit PHY
-+	  integrated in the SpacemiT K3 SoC. The PHY shares its MMIO window
-+	  with its parent DP/eDP controller (drivers/gpu/drm/spacemit/) and
-+	  exposes lane / rate / vswing / pre-emphasis control through the
-+	  generic PHY framework.
-diff --git a/drivers/phy/spacemit/Makefile b/drivers/phy/spacemit/Makefile
-index a821a21d61422..960c5827f5e5f 100644
---- a/drivers/phy/spacemit/Makefile
-+++ b/drivers/phy/spacemit/Makefile
-@@ -1,3 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0-only
- obj-$(CONFIG_PHY_SPACEMIT_K1_PCIE)		+= phy-k1-pcie.o
- obj-$(CONFIG_PHY_SPACEMIT_K1_USB2)		+= phy-k1-usb2.o
-+obj-$(CONFIG_PHY_SPACEMIT_K3_INNO_DP)		+= phy-k3-inno-dp.o
-diff --git a/drivers/phy/spacemit/phy-k3-inno-dp.c b/drivers/phy/spacemit/phy-k3-inno-dp.c
+diff --git a/drivers/gpu/drm/spacemit/dpu/dpu_saturn.h b/drivers/gpu/drm/spacemit/dpu/dpu_saturn.h
 new file mode 100644
-index 0000000000000..42ebfc347b84b
+index 0000000000000..22d77d56eca1a
 --- /dev/null
-+++ b/drivers/phy/spacemit/phy-k3-inno-dp.c
-@@ -0,0 +1,967 @@
-+// SPDX-License-Identifier: GPL-2.0-only
++++ b/drivers/gpu/drm/spacemit/dpu/dpu_saturn.h
+@@ -0,0 +1,35 @@
++/* SPDX-License-Identifier: GPL-2.0 */
 +/*
-+ * SpacemiT K3 Innosilicon DisplayPort PHY driver.
-+ *
 + * Copyright (C) 2025-2026 SpacemiT Co., Ltd.
++ *
 + */
 +
-+#include <linux/bitfield.h>
-+#include <linux/bitops.h>
-+#include <linux/clk-provider.h>
-+#include <linux/delay.h>
-+#include <linux/iopoll.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/phy/phy.h>
-+#include <linux/phy/phy-dp.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
++#ifndef _DPU_SATURN_H_
++#define _DPU_SATURN_H_
 +
-+/* Offsets are into the parent controller's MMIO window */
-+#define DPTX_PHY_CTRL			0x0100
-+#define DPTX_PHY_CTRL_XMIT_EN		GENMASK(20, 17)
-+#define DPTX_PHY_CTRL_NUM_LANES		GENMASK(6, 5)
-+#define DPTX_PHY_CTRL_RATE		GENMASK(1, 0)
++#include "../spacemit_crtc.h"
 +
-+/* One 6-bit slot per lane; only the low 4 bits of each slot are used. */
-+#define DPTX_PHY_LANE_TRIM		0x0104
-+#define DPTX_PHY_LANE_BITS_PER		6
-+#define DPTX_PHY_LANE_FIELD_MASK	0xf	/* preemp[1:0] | vswing[1:0] */
-+#define DPTX_PHY_LANE_VSWING_SHIFT	2	/* within the lane field */
-+
-+/* MPLL is the link PLL (lane rate) */
-+#define DPTX_ANA_MPLL			0x0180
-+#define DPTX_ANA_MPLL_FBDIV_LBIT	GENMASK(31, 24)
-+#define DPTX_ANA_MPLL_FBDIV_HBIT	GENMASK(19, 16)
-+#define DPTX_ANA_MPLL_PREDIV		GENMASK(13, 8)
-+#define DPTX_ANA_MPLL_LOCKED		BIT(7)
-+#define DPTX_ANA_MPLL_DACPD		BIT(5)
-+#define DPTX_ANA_MPLL_DSMPD		BIT(4)
-+#define DPTX_ANA_MPLL_PD		BIT(0)
-+
-+#define DPTX_ANA_MPLL_FRAC		0x0184
-+#define DPTX_ANA_MPLL_FRAC_LBIT		GENMASK(23, 16)
-+#define DPTX_ANA_MPLL_FRAC_MBIT		GENMASK(15, 8)
-+#define DPTX_ANA_MPLL_FRAC_HBIT		GENMASK(7, 0)
-+
-+#define DPTX_ANA_MPLL_DIV		0x0188
-+#define DPTX_ANA_MPLL_VCOCLK_DIV8_EN	BIT(16)
-+#define DPTX_ANA_MPLL_POSTDIVEN		BIT(11)
-+#define DPTX_ANA_MPLL_POSTDIV		GENMASK(10, 8)
-+
-+/* PREPLL is the pixel PLL exposed as a clock. */
-+#define DPTX_ANA_PREPLL			0x0190
-+#define DPTX_ANA_PREPLL_FBDIV2_LBIT	GENMASK(31, 24)
-+#define DPTX_ANA_PREPLL_FBDIV2_HBIT	GENMASK(19, 16)
-+#define DPTX_ANA_PREPLL_PREDIV		GENMASK(13, 8)
-+#define DPTX_ANA_PREPLL_LOCKED		BIT(7)
-+#define DPTX_ANA_PREPLL_DACPD		BIT(5)
-+#define DPTX_ANA_PREPLL_DSMPD		BIT(4)
-+#define DPTX_ANA_PREPLL_PCLK_NORMAL	BIT(1)
-+#define DPTX_ANA_PREPLL_PD		BIT(0)
-+
-+#define DPTX_ANA_PREPLL_DIV		0x0194
-+#define DPTX_ANA_PREPLL_PRECLK_DIVM	GENMASK(17, 16)
-+#define DPTX_ANA_PREPLL_PRECLK_DIVAUX	GENMASK(12, 8)
-+
-+#define DPTX_ANA_PREPLL_CTRL		0x0198
-+#define DPTX_ANA_PREPLL_PCLKDIV5_EN	BIT(31)
-+#define DPTX_ANA_PREPLL_PCLK_DIVAUX	GENMASK(28, 24)
-+#define DPTX_ANA_PREPLL_LOCK_BYPEN	BIT(17)
-+#define DPTX_ANA_PREPLL_HDMI_EN		BIT(9)
-+#define DPTX_ANA_PREPLL_DP_EN		BIT(8)
-+
-+#define DPTX_ANA_PREPLL_FRAC		0x019c
-+#define DPTX_ANA_PREPLL_FRAC2_LBIT	GENMASK(23, 16)
-+#define DPTX_ANA_PREPLL_FRAC2_MBIT	GENMASK(15, 8)
-+#define DPTX_ANA_PREPLL_FRAC2_HBIT	GENMASK(7, 0)
-+
-+#define DPTX_ANA_TX_CTRL		0x01a0
-+#define DPTX_ANA_MPLL_CLKDIV_16M	GENMASK(13, 8)
-+
-+/* PRECLK_DIVM register value -> divide factor */
-+static const u8 k3_inno_dp_divm_factors[] = { 1, 2, 3, 5 };
-+
-+#define DPTX_VCO_MIN_KHZ		1000000
-+#define DPTX_VCO_MAX_KHZ		3000000
-+#define DPTX_PLL_FRAC_MOD		(1 << 24)
-+#define DPTX_PLL_ERR_TOLERANCE		10
-+
-+struct k3_inno_dp_phy {
-+	struct device	*dev;
-+	struct regmap	*regmap;
-+	struct phy	*phy;
-+	u8		lanes;		/* tracks last set_lanes */
-+
-+	struct clk_hw	pxclk_hw;	/* the PREPLL's pixel clock */
-+	unsigned long	pxclk_rate;	/* last programmed PREPLL rate */
-+	u32		ref_clk_khz;	/* PLL reference */
++struct dpu_format_id {
++	u32 format;		/* DRM fourcc */
++	u8 id;
++	u8 bpp;			/* bits per pixel */
 +};
 +
-+static int k3_inno_dp_phy_power_on(struct phy *phy)
-+{
-+	struct k3_inno_dp_phy *p = phy_get_drvdata(phy);
-+	u32 lane_en;
-+	u32 val;
-+	int ret;
++#define SPACEMIT_DPU_INVALID_FORMAT_ID	0xff
 +
-+	switch (p->lanes) {
-+	case 1:
-+		lane_en = 0x1;
-+		break;
-+	case 2:
-+		lane_en = 0x3;
-+		break;
-+	case 4:
-+	default:
-+		lane_en = 0xf;
-+		break;
-+	}
++enum format_features {
++	FORMAT_RGB  = BIT(0),
++};
 +
-+	ret = regmap_write_bits(p->regmap, DPTX_ANA_MPLL, DPTX_ANA_MPLL_PD, 0);
-+	if (ret)
-+		return ret;
-+	ret = regmap_write_bits(p->regmap, DPTX_ANA_PREPLL,
-+				DPTX_ANA_PREPLL_PD, 0);
-+	if (ret)
-+		return ret;
-+	usleep_range(2000, 4000);
++struct spacemit_hw_rdma {
++	u16 formats;
++};
 +
-+	ret = regmap_write_bits(p->regmap, DPTX_PHY_CTRL,
-+				DPTX_PHY_CTRL_XMIT_EN,
-+				FIELD_PREP(DPTX_PHY_CTRL_XMIT_EN, lane_en));
-+	if (ret)
-+		return ret;
-+	usleep_range(2000, 4000);
-+
-+	ret = regmap_read_poll_timeout(p->regmap, DPTX_ANA_MPLL, val,
-+				       val & DPTX_ANA_MPLL_LOCKED,
-+				       2000, 10 * 1000);
-+	if (ret) {
-+		dev_err(p->dev, "DP PHY core PLL lock timed out\n");
-+		goto err_power_down;
-+	}
-+
-+	ret = regmap_read_poll_timeout(p->regmap, DPTX_ANA_PREPLL, val,
-+				       val & DPTX_ANA_PREPLL_LOCKED,
-+				       2000, 10 * 1000);
-+	if (ret) {
-+		dev_err(p->dev, "DP PHY pixel PLL lock timed out\n");
-+		goto err_power_down;
-+	}
-+
-+	return 0;
-+
-+	/*
-+	 * The PHY core does not call power_off after a failed power_on, so
-+	 * park what power_off parks. Not the MPLL: see power_off.
-+	 */
-+err_power_down:
-+	regmap_write_bits(p->regmap, DPTX_PHY_CTRL, DPTX_PHY_CTRL_XMIT_EN, 0);
-+	regmap_write_bits(p->regmap, DPTX_ANA_PREPLL, DPTX_ANA_PREPLL_PD,
-+			  DPTX_ANA_PREPLL_PD);
-+	return ret;
-+}
-+
++int dpu_parse_clocks(struct device *dev, struct dpu_clk_context *clk_ctx);
++u8 spacemit_plane_hw_get_format_id(u32 format);
++u32 saturn_conf_dpuctrl_rdma(struct spacemit_crtc *a_crtc);
++extern const struct spacemit_hw_device k3_saturn_dpu;
++void saturn_enable_irq_mask(struct spacemit_crtc *a_crtc, bool enable,
++			    u32 offset, u32 mask);
++void spacemit_cfg_rdy_timer_handler(struct timer_list *t);
++#endif
+diff --git a/drivers/gpu/drm/spacemit/dpu/dpu_trace.h b/drivers/gpu/drm/spacemit/dpu/dpu_trace.h
+new file mode 100644
+index 0000000000000..abfe34a67a4bd
+--- /dev/null
++++ b/drivers/gpu/drm/spacemit/dpu/dpu_trace.h
+@@ -0,0 +1,350 @@
++/* SPDX-License-Identifier: GPL-2.0 */
 +/*
-+ * Asymmetric with power_on on purpose: the MPLL stays up because it also
-+ * feeds the 16 MHz AUX reference (DPTX_ANA_MPLL_CLKDIV_16M), and AUX must
-+ * keep working while the link is down (EDID, DPCD, panel detection). The
-+ * controller parks the PHY through here on every link drop, including
-+ * right after bind.
++ * Copyright (C) 2025-2026 SpacemiT Co., Ltd.
++ *
 + */
-+static int k3_inno_dp_phy_power_off(struct phy *phy)
++
++#undef TRACE_SYSTEM
++#define TRACE_SYSTEM spacemit_dpu
++
++#if !defined(_DPU_TRACE_H_) || defined(TRACE_HEADER_MULTI_READ)
++#define _DPU_TRACE_H_
++
++#include <linux/stringify.h>
++#include <linux/types.h>
++#include <linux/tracepoint.h>
++
++#include "dpu_saturn.h"
++
++TRACE_EVENT(drm_display_mode_info,
++	    TP_PROTO(struct drm_display_mode *mode),
++	TP_ARGS(mode),
++	TP_STRUCT__entry(
++		__field(u16, hdisplay)
++		__field(u16, hbp)
++		__field(u16, hfp)
++		__field(u16, hsync)
++		__field(u16, vdisplay)
++		__field(u16, vbp)
++		__field(u16, vfp)
++		__field(u16, vsync)
++	),
++	TP_fast_assign(
++		__entry->hdisplay = mode->hdisplay;
++		__entry->hbp = mode->htotal - mode->hsync_end;
++		__entry->hfp = mode->hsync_start - mode->hdisplay;
++		__entry->hsync = mode->hsync_end - mode->hsync_start;
++		__entry->vdisplay = mode->vdisplay;
++		__entry->vbp = mode->vtotal - mode->vsync_end;
++		__entry->vfp = mode->vsync_start - mode->vdisplay;
++		__entry->vsync = mode->vsync_end - mode->vsync_start;
++	),
++	TP_printk("drm_display_mode: hdisplay=%d vdisplay=%d hsync=%d vsync=%d hbp=%d hfp=%d vbp=%d vfp=%d",
++		  __entry->hdisplay, __entry->vdisplay,  __entry->hsync, __entry->vsync,
++		  __entry->hbp, __entry->hfp,  __entry->vbp, __entry->vfp
++	)
++);
++
++TRACE_EVENT(dpu_plane_info,
++	    TP_PROTO(struct drm_plane_state *state, struct drm_framebuffer *fb,
++		     u32 rdma_id, u32 alpha, u32 rotation),
++	TP_ARGS(state, fb, rdma_id, alpha, rotation),
++	TP_STRUCT__entry(
++			__field(u32, rdma_id)
++			__field(u32, src_w)
++			__field(u32, src_h)
++			__field(u32, src_x)
++			__field(u32, src_y)
++			__field(u32, crtc_w)
++			__field(u32, crtc_h)
++			__field(u32, crtc_x)
++			__field(u32, crtc_y)
++			__field(u32, width)
++			__field(u32, height)
++			__field(u32, format)
++			__field(u32, blend_mode)
++			__field(u32, alpha)
++			__field(u32, zpos)
++			__field(u32, rotation)
++	),
++	TP_fast_assign(
++			__entry->rdma_id = rdma_id;
++			__entry->src_w = state->src_w >> 16;
++			__entry->src_h = state->src_h >> 16;
++			__entry->src_x = state->src_x >> 16;
++			__entry->src_y = state->src_y >> 16;
++			__entry->crtc_w = state->crtc_w;
++			__entry->crtc_h = state->crtc_h;
++			__entry->crtc_x = state->crtc_x;
++			__entry->crtc_y = state->crtc_y;
++			__entry->width = fb->width;
++			__entry->height = fb->height;
++			__entry->format = fb->format->format;
++			__entry->blend_mode = state->pixel_blend_mode;
++			__entry->alpha = alpha;
++			__entry->zpos = state->zpos;
++			__entry->rotation = rotation;
++	),
++	TP_printk("rdma_id=%d src: w=%d h=%d x=%d y=%d crtc: w=%d h=%d x=%d y=%d width=%d height=%d fmt=0x%x blend=%d alpha=%d zpos=%d rot=%d",
++		  __entry->rdma_id, __entry->src_w,
++		  __entry->src_h, __entry->src_x,
++		  __entry->src_y, __entry->crtc_w,
++		  __entry->crtc_h, __entry->crtc_x,
++		  __entry->crtc_y, __entry->width,
++		  __entry->height, __entry->format,
++		  __entry->blend_mode, __entry->alpha,
++		  __entry->zpos, __entry->rotation)
++);
++
++DECLARE_EVENT_CLASS(dpu_status_template,
++		    TP_PROTO(const char *name, int status),
++	TP_ARGS(name, status),
++	TP_STRUCT__entry(
++		__string(name_str, name)
++		__field(int, status)
++	),
++	TP_fast_assign(
++		__assign_str(name_str);
++		__entry->status = status;
++	),
++	TP_printk("%s: 0x%x",
++		  __get_str(name_str), __entry->status)
++);
++
++DEFINE_EVENT(dpu_status_template, dpuctrl,
++	     TP_PROTO(const char *name, int status),
++	TP_ARGS(name, status)
++);
++DEFINE_EVENT(dpu_status_template, spacemit_plane_update_hw_channel,
++	     TP_PROTO(const char *name, int status),
++	TP_ARGS(name, status)
++);
++DEFINE_EVENT(dpu_status_template, saturn_irq_enable,
++	     TP_PROTO(const char *name, int status),
++	TP_ARGS(name, status)
++);
++DEFINE_EVENT(dpu_status_template, saturn_enable_vsync,
++	     TP_PROTO(const char *name, int status),
++	TP_ARGS(name, status)
++);
++DEFINE_EVENT(dpu_status_template, dpu_isr_status,
++	     TP_PROTO(const char *name, int status),
++	TP_ARGS(name, status)
++);
++
++DECLARE_EVENT_CLASS(dpu_uint64_t_data_template,
++		    TP_PROTO(const char *name, u64 data),
++	TP_ARGS(name, data),
++	TP_STRUCT__entry(
++		__string(name_str, name)
++		__field(u64, data)
++	),
++	TP_fast_assign(
++		__assign_str(name_str);
++		__entry->data = data;
++	),
++	TP_printk("%s: %lld",
++		  __get_str(name_str), __entry->data)
++);
++
++DEFINE_EVENT(dpu_uint64_t_data_template, u64_data,
++	     TP_PROTO(const char *name, u64 data),
++	TP_ARGS(name, data)
++);
++
++TRACE_EVENT(spacemit_dpu_reg_write,
++	    TP_PROTO(u32 data, u32 base, const char *name),
++	TP_ARGS(data, base, name),
++	TP_STRUCT__entry(
++		__field(u32, data)
++		__field(u32, base)
++		__string(name_str, name)
++	),
++	TP_fast_assign(
++		__entry->data = data;
++		__entry->base = base;
++		__assign_str(name_str);
++	),
++	TP_printk("dpu write 0x%x to addr 0x%x field %s",
++		  __entry->data, __entry->base, __get_str(name_str))
++);
++
++TRACE_EVENT(spacemit_plane_disable_hw_channel,
++	    TP_PROTO(u32 layer_id, u32 rdma_id),
++	TP_ARGS(layer_id, rdma_id),
++	TP_STRUCT__entry(
++		__field(u32, layer_id)
++		__field(u32, rdma_id)
++	),
++	TP_fast_assign(
++		__entry->layer_id = layer_id;
++		__entry->rdma_id = rdma_id;
++	),
++	TP_printk("layer_id:%d rdma_id:%d",
++		  __entry->layer_id, __entry->rdma_id)
++);
++
++DECLARE_EVENT_CLASS(dpu_func_template,
++		    TP_PROTO(u32 dev_id),
++	TP_ARGS(dev_id),
++	TP_STRUCT__entry(
++		__field(u32, dev_id)
++	),
++	TP_fast_assign(
++		__entry->dev_id = dev_id;
++	),
++	TP_printk("dev_id=%d", __entry->dev_id)
++);
++DEFINE_EVENT(dpu_func_template, spacemit_plane_atomic_check,
++	     TP_PROTO(u32 dev_id),
++	TP_ARGS(dev_id)
++);
++DEFINE_EVENT(dpu_func_template, spacemit_plane_atomic_update,
++	     TP_PROTO(u32 dev_id),
++	TP_ARGS(dev_id)
++);
++DEFINE_EVENT(dpu_func_template, spacemit_plane_atomic_duplicate_state,
++	     TP_PROTO(u32 dev_id),
++	TP_ARGS(dev_id)
++);
++DEFINE_EVENT(dpu_func_template, spacemit_plane_atomic_destroy_state,
++	     TP_PROTO(u32 dev_id),
++	TP_ARGS(dev_id)
++);
++DEFINE_EVENT(dpu_func_template, spacemit_plane_init,
++	     TP_PROTO(u32 dev_id),
++	TP_ARGS(dev_id)
++);
++DEFINE_EVENT(dpu_func_template, dpu_enable_clocks,
++	     TP_PROTO(u32 dev_id),
++	TP_ARGS(dev_id)
++);
++DEFINE_EVENT(dpu_func_template, dpu_disable_clocks,
++	     TP_PROTO(u32 dev_id),
++	TP_ARGS(dev_id)
++);
++DEFINE_EVENT(dpu_func_template, dpu_uninit,
++	     TP_PROTO(u32 dev_id),
++	TP_ARGS(dev_id)
++);
++DEFINE_EVENT(dpu_func_template, dpu_isr,
++	     TP_PROTO(u32 dev_id),
++	TP_ARGS(dev_id)
++);
++DEFINE_EVENT(dpu_func_template, dpu_run,
++	     TP_PROTO(u32 dev_id),
++	TP_ARGS(dev_id)
++);
++DEFINE_EVENT(dpu_func_template, spacemit_crtc_atomic_enable,
++	     TP_PROTO(u32 dev_id),
++	TP_ARGS(dev_id)
++);
++DEFINE_EVENT(dpu_func_template, spacemit_crtc_atomic_disable,
++	     TP_PROTO(u32 dev_id),
++	TP_ARGS(dev_id)
++);
++DEFINE_EVENT(dpu_func_template, spacemit_crtc_atomic_check,
++	     TP_PROTO(u32 dev_id),
++	TP_ARGS(dev_id)
++);
++DEFINE_EVENT(dpu_func_template, spacemit_crtc_atomic_begin,
++	     TP_PROTO(u32 dev_id),
++	TP_ARGS(dev_id)
++);
++DEFINE_EVENT(dpu_func_template, spacemit_crtc_atomic_flush,
++	     TP_PROTO(u32 dev_id),
++	TP_ARGS(dev_id)
++);
++DEFINE_EVENT(dpu_func_template, spacemit_crtc_enable_vblank,
++	     TP_PROTO(u32 dev_id),
++	TP_ARGS(dev_id)
++);
++DEFINE_EVENT(dpu_func_template, spacemit_crtc_disable_vblank,
++	     TP_PROTO(u32 dev_id),
++	TP_ARGS(dev_id)
++);
++DEFINE_EVENT(dpu_func_template, spacemit_crtc_run,
++	     TP_PROTO(u32 dev_id),
++	TP_ARGS(dev_id)
++);
++DEFINE_EVENT(dpu_func_template, spacemit_crtc_init,
++	     TP_PROTO(u32 dev_id),
++	TP_ARGS(dev_id)
++);
++DEFINE_EVENT(dpu_func_template, spacemit_crtc_uninit,
++	     TP_PROTO(u32 dev_id),
++	TP_ARGS(dev_id)
++);
++DEFINE_EVENT(dpu_func_template, saturn_ctrl_cfg_ready_timer,
++	     TP_PROTO(u32 dev_id),
++	TP_ARGS(dev_id)
++);
++DECLARE_EVENT_CLASS(dpu_ctrl_template,
++		    TP_PROTO(int id, int enable),
++	TP_ARGS(id, enable),
++	TP_STRUCT__entry(
++		__field(u32, id)
++		__field(u32, enable)
++	),
++	TP_fast_assign(
++		__entry->id = id;
++		__entry->enable = enable;
++	),
++	TP_printk("id=%d enable:%d",
++		  __entry->id, __entry->enable)
++);
++DEFINE_EVENT(dpu_ctrl_template, saturn_ctrl_cfg_ready,
++	     TP_PROTO(int id, int enable),
++	TP_ARGS(id, enable)
++);
++
++DEFINE_EVENT(dpu_ctrl_template, saturn_ctrl_sw_start,
++	     TP_PROTO(int id, int enable),
++	TP_ARGS(id, enable)
++);
++
++TRACE_EVENT(plat_cmdlist_dump_node,
++	    TP_PROTO(char *dump),
++	TP_ARGS(dump),
++	TP_STRUCT__entry(
++		__string(dump_str, dump)
++	),
++	TP_fast_assign(
++		__assign_str(dump_str);
++	),
++	TP_printk("%s", __get_str(dump_str))
++);
++
++TRACE_EVENT(cmdlist_dump_node,
++	    TP_PROTO(char *type, int rdma_id, u8 dev_id, int zpos, u16 nod_len),
++	TP_ARGS(type, rdma_id, dev_id, zpos, nod_len),
++	TP_STRUCT__entry(
++		__string(type_str, type)
++		__field(int, rdma_id)
++		__field(u8, dev_id)
++		__field(int, zpos)
++		__field(u16, nod_len)
++	),
++	TP_fast_assign(
++		__assign_str(type_str);
++		__entry->rdma_id = rdma_id;
++		__entry->dev_id = dev_id;
++		__entry->zpos = zpos;
++		__entry->nod_len = nod_len;
++	),
++	TP_printk("cmdlist[%s]: rdma_id:%d crtc:%d zpos:%d rows:%d",
++		  __get_str(type_str),
++		  __entry->rdma_id,
++		  __entry->dev_id,
++		  __entry->zpos,
++		  __entry->nod_len)
++);
++#endif /* _DPU_TRACE_H_ */
++
++/* This part must be outside protection */
++#undef TRACE_INCLUDE_FILE
++#undef TRACE_INCLUDE_PATH
++#define TRACE_INCLUDE_PATH ../../drivers/gpu/drm/spacemit/dpu/
++
++#define TRACE_INCLUDE_FILE dpu_trace
++#include <trace/define_trace.h>
+diff --git a/drivers/gpu/drm/spacemit/spacemit_cmdlist.c b/drivers/gpu/drm/spacemit/spacemit_cmdlist.c
+new file mode 100644
+index 0000000000000..f4f14eaa12a0f
+--- /dev/null
++++ b/drivers/gpu/drm/spacemit/spacemit_cmdlist.c
+@@ -0,0 +1,304 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2025-2026 SpacemiT Co., Ltd.
++ *
++ */
++
++#include <linux/dma-mapping.h>
++#include <linux/sort.h>
++#include <drm/drm_print.h>
++#include <drm/drm_atomic.h>
++#include <drm/drm_atomic_helper.h>
++#include <drm/drm_crtc_helper.h>
++#include <drm/drm_plane_helper.h>
++#include "spacemit_cmdlist.h"
++#include "spacemit_crtc.h"
++#include "spacemit_dpu_reg.h"
++#include "spacemit_drm.h"
++#include "dpu/dpu_saturn.h"
++#include "dpu/dpu_trace.h"
++
++struct spacemit_plane_state *cl_to_spacemit_pstate(const struct cmdlist *cl)
 +{
-+	struct k3_inno_dp_phy *p = phy_get_drvdata(phy);
-+
-+	regmap_write_bits(p->regmap, DPTX_PHY_CTRL, DPTX_PHY_CTRL_XMIT_EN, 0);
-+	usleep_range(2000, 4000);
-+
-+	regmap_write_bits(p->regmap, DPTX_ANA_PREPLL, DPTX_ANA_PREPLL_PD,
-+			  DPTX_ANA_PREPLL_PD);
-+	usleep_range(2000, 4000);
-+
-+	return 0;
++	return container_of(cl, struct spacemit_plane_state, cl);
 +}
 +
-+static int k3_inno_dp_phy_set_lanes(struct k3_inno_dp_phy *p, u8 lanes)
++struct spacemit_crtc_state *cl_to_spacemit_cstate(const struct cmdlist *cl)
 +{
-+	u32 val;
-+	int ret;
++	return container_of(cl, struct spacemit_crtc_state, cl);
++}
 +
-+	switch (lanes) {
-+	case 1:
-+		val = 0;
-+		break;
-+	case 2:
-+		val = 1;
-+		break;
-+	case 4:
-+		val = 2;
-+		break;
-+	default:
-+		return -EINVAL;
++struct cmdlist *plane_to_cl(struct drm_plane *plane)
++{
++	struct spacemit_plane_state *spacemit_pstate =
++			to_spacemit_plane_state(plane->state);
++
++	return &spacemit_pstate->cl;
++}
++
++struct cmdlist *crtc_to_cl(struct drm_crtc *crtc)
++{
++	struct spacemit_crtc_state *spacemit_cstate =
++			to_spacemit_crtc_state(crtc->state);
++
++	return &spacemit_cstate->cl;
++}
++
++static void cmdlist_dump_node(struct cmdlist *cl)
++{
++	struct spacemit_drm_private *priv;
++	struct spacemit_hw_device *hwdev;
++	struct spacemit_crtc *a_crtc;
++	char *type;
++	int zpos = -1, rdma_id = -1;
++
++	if (!cl)
++		return;
++
++	if (cl->type == CMDLIST_PLANE) {
++		struct spacemit_plane_state *spacemit_pstate =
++				cl_to_spacemit_pstate(cl);
++
++		a_crtc = to_spacemit_crtc(spacemit_pstate->state.crtc);
++		rdma_id = spacemit_pstate->rdma_id;
++		zpos = (int)(spacemit_pstate->state.zpos);
++		type = "RDMA";
++	} else if (cl->type == CMDLIST_CRTC) {
++		struct spacemit_crtc_state *spacemit_cstate =
++				cl_to_spacemit_cstate(cl);
++
++		a_crtc = to_spacemit_crtc(spacemit_cstate->base.crtc);
++		type = "CRTC";
++	} else {
++		return;
 +	}
 +
-+	ret = regmap_write_bits(p->regmap, DPTX_PHY_CTRL,
-+				DPTX_PHY_CTRL_NUM_LANES,
-+				FIELD_PREP(DPTX_PHY_CTRL_NUM_LANES, val));
-+	if (ret)
-+		return ret;
++	trace_cmdlist_dump_node(type, rdma_id, a_crtc->dev_id, zpos,
++				cl->nod_len);
 +
-+	p->lanes = lanes;
-+	return 0;
++	priv = a_crtc->crtc.dev->dev_private;
++	hwdev = priv->hwdev;
++	hwdev->cmdlist_dump_node(cl);
 +}
 +
-+struct k3_inno_dp_mpll_cfg {
-+	unsigned int link_rate;		/* Mbps per lane */
-+	u8 prediv;
-+	u16 fbdiv;
-+	u32 frac;
-+	u8 postdiv;
-+	u8 postdiv_en;
-+	u8 frac_pd;
-+	u8 vcoclk_div8_en;
-+	u8 clk_16mdiv;
-+};
-+
-+static const struct k3_inno_dp_mpll_cfg k3_inno_dp_mpll_cfgs[] = {
-+	{
-+		.link_rate	= 1620,
-+		.prediv		= 0x02,
-+		.fbdiv		= 0x87,
-+		.frac		= 0,
-+		.postdiv	= 0,
-+		.postdiv_en	= 1,
-+		.frac_pd	= 0x3,
-+		.vcoclk_div8_en	= 1,
-+		.clk_16mdiv	= 12,
-+	}, {
-+		.link_rate	= 2700,
-+		.prediv		= 0x02,
-+		.fbdiv		= 0xe1,
-+		.frac		= 0,
-+		.postdiv	= 0,
-+		.postdiv_en	= 1,
-+		.frac_pd	= 0x3,
-+		.vcoclk_div8_en	= 1,
-+		.clk_16mdiv	= 21,
-+	}, {
-+		.link_rate	= 5400,
-+		.prediv		= 0x02,
-+		.fbdiv		= 0xe1,
-+		.frac		= 0,
-+		.postdiv	= 0,
-+		.postdiv_en	= 0,
-+		.frac_pd	= 0x3,
-+		.vcoclk_div8_en	= 0,
-+		.clk_16mdiv	= 42,
-+	},
-+};
-+
-+static void k3_inno_dp_phy_program_mpll(struct k3_inno_dp_phy *p,
-+					const struct k3_inno_dp_mpll_cfg *cfg)
++void cmdlist_regs_packing(struct cmdlist *cl, enum cmdlist_mode_type mod,
++			  struct cmdlist_regs *cl_regs)
 +{
-+	struct regmap *rm = p->regmap;
++	struct spacemit_crtc *a_crtc;
++	struct spacemit_drm_private *priv;
++	struct spacemit_hw_device *hwdev;
++	u32 *reg_base;
++	int i;
++	u32 index;
++
++	if (!cl_regs)
++		return;
++
++	if (cl->type == CMDLIST_PLANE) {
++		struct spacemit_plane_state *spacemit_pstate =
++				cl_to_spacemit_pstate(cl);
++
++		a_crtc = to_spacemit_crtc(spacemit_pstate->state.crtc);
++
++		drm_dbg(a_crtc->crtc.dev, "rch_id = %d, ch_y = %u\n",
++			spacemit_pstate->rdma_id,
++			spacemit_pstate->state.crtc_y);
++	} else if (cl->type == CMDLIST_CRTC) {
++		struct spacemit_crtc_state *spacemit_cstate =
++				cl_to_spacemit_cstate(cl);
++
++		a_crtc = to_spacemit_crtc(spacemit_cstate->base.crtc);
++	} else {
++		WARN_ONCE(1, "unsupported cmdlist type %d\n", cl->type);
++		return;
++	}
++
++	priv = a_crtc->crtc.dev->dev_private;
++	hwdev = priv->hwdev;
++	reg_base = cl_regs->module;
++
++	cl->mode_mask |= mod;
 +
 +	/*
-+	 * Shared with an unwired HDMI path: select DP first, otherwise the
-+	 * PLLs still lock but nothing reaches the lanes and AUX times out.
++	 * Without the atomic_check() buffer the staged register writes vanish.
 +	 */
-+	regmap_write_bits(rm, DPTX_ANA_PREPLL_CTRL, DPTX_ANA_PREPLL_DP_EN,
-+		DPTX_ANA_PREPLL_DP_EN);
-+	regmap_write_bits(rm, DPTX_ANA_PREPLL_CTRL, DPTX_ANA_PREPLL_HDMI_EN, 0);
++	if (drm_WARN_ON(a_crtc->crtc.dev, !cl->va))
++		return;
 +
-+	regmap_write_bits(rm, DPTX_ANA_MPLL, DPTX_ANA_MPLL_PD,
-+		FIELD_PREP(DPTX_ANA_MPLL_PD, 1));
-+	usleep_range(2000, 4000);
++	for (i = 0; i < cl_regs->size;) {
++		u32 value[CMDLIST_ROW_REGS] = {0x0};
++		u32 offset, strobe = 0;
++		u8 regs_in_row = 0;
 +
-+	regmap_write_bits(rm, DPTX_ANA_MPLL, DPTX_ANA_MPLL_PREDIV,
-+		FIELD_PREP(DPTX_ANA_MPLL_PREDIV, cfg->prediv));
-+	regmap_write_bits(rm, DPTX_ANA_MPLL, DPTX_ANA_MPLL_FBDIV_LBIT,
-+		FIELD_PREP(DPTX_ANA_MPLL_FBDIV_LBIT, cfg->fbdiv & 0xff));
-+	regmap_write_bits(rm, DPTX_ANA_MPLL, DPTX_ANA_MPLL_FBDIV_HBIT,
-+		FIELD_PREP(DPTX_ANA_MPLL_FBDIV_HBIT, (cfg->fbdiv >> 8) & 0xf));
-+	regmap_write_bits(rm, DPTX_ANA_MPLL, DPTX_ANA_MPLL_DACPD,
-+		FIELD_PREP(DPTX_ANA_MPLL_DACPD, (cfg->frac_pd >> 1) & 0x1));
-+	regmap_write_bits(rm, DPTX_ANA_MPLL, DPTX_ANA_MPLL_DSMPD,
-+		FIELD_PREP(DPTX_ANA_MPLL_DSMPD, cfg->frac_pd & 0x1));
-+
-+	regmap_write_bits(rm, DPTX_ANA_MPLL_FRAC, DPTX_ANA_MPLL_FRAC_LBIT,
-+		FIELD_PREP(DPTX_ANA_MPLL_FRAC_LBIT, cfg->frac & 0xff));
-+	regmap_write_bits(rm, DPTX_ANA_MPLL_FRAC, DPTX_ANA_MPLL_FRAC_MBIT,
-+		FIELD_PREP(DPTX_ANA_MPLL_FRAC_MBIT, (cfg->frac >> 8) & 0xff));
-+	regmap_write_bits(rm, DPTX_ANA_MPLL_FRAC, DPTX_ANA_MPLL_FRAC_HBIT,
-+		FIELD_PREP(DPTX_ANA_MPLL_FRAC_HBIT, (cfg->frac >> 16) & 0xff));
-+
-+	regmap_write_bits(rm, DPTX_ANA_MPLL_DIV, DPTX_ANA_MPLL_POSTDIV,
-+		FIELD_PREP(DPTX_ANA_MPLL_POSTDIV, cfg->postdiv));
-+	regmap_write_bits(rm, DPTX_ANA_MPLL_DIV, DPTX_ANA_MPLL_POSTDIVEN,
-+		FIELD_PREP(DPTX_ANA_MPLL_POSTDIVEN, cfg->postdiv_en));
-+	regmap_write_bits(rm, DPTX_ANA_MPLL_DIV, DPTX_ANA_MPLL_VCOCLK_DIV8_EN,
-+		FIELD_PREP(DPTX_ANA_MPLL_VCOCLK_DIV8_EN, cfg->vcoclk_div8_en));
-+
-+	regmap_write_bits(rm, DPTX_ANA_TX_CTRL, DPTX_ANA_MPLL_CLKDIV_16M,
-+		FIELD_PREP(DPTX_ANA_MPLL_CLKDIV_16M, cfg->clk_16mdiv));
-+
-+	regmap_write_bits(rm, DPTX_ANA_PREPLL_CTRL, DPTX_ANA_PREPLL_LOCK_BYPEN,
-+		FIELD_PREP(DPTX_ANA_PREPLL_LOCK_BYPEN, 1));
-+
-+	regmap_write_bits(rm, DPTX_ANA_MPLL, DPTX_ANA_MPLL_PD,
-+		FIELD_PREP(DPTX_ANA_MPLL_PD, 0));
-+	usleep_range(2000, 4000);
-+}
-+
-+static int k3_inno_dp_phy_set_rate(struct k3_inno_dp_phy *p,
-+				   unsigned int link_rate)
-+{
-+	const struct k3_inno_dp_mpll_cfg *cfg = NULL;
-+	unsigned int i;
-+	u32 sel;
-+
-+	switch (link_rate) {
-+	case 1620:
-+		sel = 0;
-+		break;
-+	case 2700:
-+		sel = 1;
-+		break;
-+	case 5400:
-+		sel = 2;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	for (i = 0; i < ARRAY_SIZE(k3_inno_dp_mpll_cfgs); i++) {
-+		if (k3_inno_dp_mpll_cfgs[i].link_rate == link_rate) {
-+			cfg = &k3_inno_dp_mpll_cfgs[i];
-+			break;
-+		}
-+	}
-+	if (!cfg)
-+		return -EINVAL;
-+
-+	k3_inno_dp_phy_program_mpll(p, cfg);
-+
-+	return regmap_write_bits(p->regmap, DPTX_PHY_CTRL,
-+				 DPTX_PHY_CTRL_RATE,
-+				 FIELD_PREP(DPTX_PHY_CTRL_RATE, sel));
-+}
-+
-+static int k3_inno_dp_phy_set_voltages(struct k3_inno_dp_phy *p,
-+				       struct phy_configure_opts_dp *opts)
-+{
-+	u8 lane;
-+	int ret;
-+
-+	for (lane = 0; lane < opts->lanes; lane++) {
-+		unsigned int shift = lane * DPTX_PHY_LANE_BITS_PER;
-+		u32 mask = DPTX_PHY_LANE_FIELD_MASK << shift;
-+		u32 val  = (((opts->voltage[lane] & 0x3) << DPTX_PHY_LANE_VSWING_SHIFT) |
-+			    (opts->pre[lane] & 0x3)) << shift;
-+
-+		ret = regmap_write_bits(p->regmap, DPTX_PHY_LANE_TRIM, mask,
-+					val);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int k3_inno_dp_phy_configure(struct phy *phy,
-+				    union phy_configure_opts *opts)
-+{
-+	struct k3_inno_dp_phy *p = phy_get_drvdata(phy);
-+	int ret;
-+
-+	if (opts->dp.set_lanes) {
-+		ret = k3_inno_dp_phy_set_lanes(p, opts->dp.lanes);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	if (opts->dp.set_rate) {
-+		ret = k3_inno_dp_phy_set_rate(p, opts->dp.link_rate);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	if (opts->dp.set_voltages) {
-+		ret = k3_inno_dp_phy_set_voltages(p, &opts->dp);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static u32 k3_inno_dp_div64(u64 *n, u32 base)
-+{
-+	return do_div(*n, base);
-+}
-+
-+static int k3_inno_dp_better_cfg(bool new_valid, bool new_is_int, u8 new_pre, u32 new_vco,
-+				 bool best_valid, bool best_is_int, u8 best_pre, u32 best_vco)
-+{
-+	if (!new_valid)
-+		return 0;
-+	if (!best_valid)
-+		return 1;
-+
-+	if (new_is_int && !best_is_int)
-+		return 1;
-+	if (!new_is_int && best_is_int)
-+		return 0;
-+
-+	if (new_pre < best_pre)
-+		return 1;
-+	if (new_pre > best_pre)
-+		return 0;
-+
-+	if (new_vco > best_vco)
-+		return 1;
-+
-+	return 0;
-+}
-+
-+struct k3_inno_dp_prepll_cfg {
-+	u32 target_pclk_khz;
-+	u32 vco_freq_khz;
-+	u8 prediv;
-+	u16 fbdiv;
-+	u32 frac_pd;
-+	u32 frac;
-+	u8 div5_en;
-+	u8 divm;
-+	u8 divaux;
-+	u8 divp;
-+	u32 actual_pclk_khz;
-+	bool valid;
-+};
-+
-+static const struct k3_inno_dp_prepll_cfg k3_inno_dp_prepll_cfgs[] = {
-+	{ 614400, 2460000, 0x05, 512,  0x3, 0x0, 0x0, 0x1, 0x01, 0x1, 614400, true },
-+	{ 594000, 2376000, 0x01, 99,   0x3, 0x0, 0x0, 0x1, 0x01, 0x1, 594000, true },
-+	{ 551040, 2760000, 0x05, 574,  0x3, 0x0, 0x1, 0x0, 0x00, 0x0, 551040, true },
-+	{ 533250, 2130000, 0x08, 711,  0x3, 0x0, 0x0, 0x1, 0x01, 0x1, 533250, true },
-+	{ 443250, 1770000, 0x08, 591,  0x3, 0x0, 0x0, 0x1, 0x01, 0x1, 443250, true },
-+	{ 375000, 3000000, 0x01, 125,  0x3, 0x0, 0x0, 0x0, 0x04, 0x1, 375000, true },
-+	{ 372000, 2980000, 0x01, 124,  0x3, 0x0, 0x0, 0x0, 0x04, 0x1, 372000, true },
-+	{ 348500, 2790000, 0x06, 697,  0x3, 0x0, 0x0, 0x0, 0x04, 0x1, 348500, true },
-+	{ 307200, 1540000, 0x01, 64,   0x3, 0x0, 0x1, 0x0, 0x00, 0x0, 307200, true },
-+	{ 297000, 2376000, 0x01, 99,   0x3, 0x0, 0x0, 0x0, 0x04, 0x1, 297000, true },
-+	{ 280000, 1680000, 0x01, 70,   0x3, 0x0, 0x0, 0x2, 0x01, 0x1, 280000, true },
-+	{ 277440, 2770000, 0x05, 578,  0x3, 0x0, 0x0, 0x3, 0x01, 0x1, 277440, true },
-+	{ 245760, 2457600, 0x05, 512,  0x3, 0x0, 0x0, 0x3, 0x01, 0x1, 245760, true },
-+	{ 241500, 1932000, 0x02, 161,  0x3, 0x0, 0x0, 0x0, 0x04, 0x1, 241500, true },
-+	{ 236000, 2830000, 0x01, 118,  0x3, 0x0, 0x0, 0x0, 0x06, 0x1, 236000, true },
-+	{ 204800, 2048000, 0x03, 256,  0x3, 0x0, 0x0, 0x3, 0x01, 0x1, 204800, true },
-+	{ 193250, 2320000, 0x08, 773,  0x3, 0x0, 0x0, 0x0, 0x06, 0x1, 193250, true },
-+	{ 189000, 1510000, 0x01,  63,  0x3, 0x0, 0x0, 0x0, 0x04, 0x1, 189000, true },
-+	{ 187500, 3000000, 0x01, 125,  0x3, 0x0, 0x0, 0x0, 0x08, 0x1, 187500, true },
-+	{ 162000, 2592000, 0x01, 108,  0x3, 0x0, 0x0, 0x0, 0x08, 0x1, 162000, true },
-+	{ 156000, 2810000, 0x01, 117,  0x3, 0x0, 0x0, 0x0, 0x09, 0x1, 156000, true },
-+	{ 150000, 3000000, 0x01, 125,  0x3, 0x0, 0x0, 0x0, 0x0a, 0x1, 150000, true },
-+	{ 148500, 2376000, 0x01, 99,   0x3, 0x0, 0x0, 0x0, 0x08, 0x1, 148500, true },
-+	{ 146000, 1750000, 0x01, 73,   0x3, 0x0, 0x0, 0x0, 0x06, 0x1, 146000, true },
-+	{ 142860, 2860000, 0x14, 2381, 0x3, 0x0, 0x0, 0x0, 0x0a, 0x1, 142860, true },
-+	{ 140000, 2520000, 0x01, 105,  0x3, 0x0, 0x0, 0x0, 0x09, 0x1, 140000, true },
-+	{ 138500, 2220000, 0x03, 277,  0x3, 0x0, 0x0, 0x0, 0x08, 0x1, 138500, true },
-+	{ 122000, 2930000, 0x01, 122,  0x3, 0x0, 0x0, 0x0, 0x0c, 0x1, 122000, true },
-+	{ 121750, 2920000, 0x04, 487,  0x3, 0x0, 0x0, 0x0, 0x0c, 0x1, 121750, true },
-+	{ 108000, 2810000, 0x01, 117,  0x3, 0x0, 0x0, 0x0, 0x0d, 0x1, 108000, true },
-+	{ 106500, 1700000, 0x01,  71,  0x3, 0x0, 0x0, 0x0, 0x08, 0x1, 106500, true },
-+	{ 83500,  2000000, 0x02, 167,  0x3, 0x0, 0x0, 0x0, 0x0c, 0x1, 83500,  true },
-+	{ 79500,  2540000, 0x01, 106,  0x3, 0x0, 0x0, 0x0, 0x10, 0x1, 79500,  true },
-+	{ 75000,  3000000, 0x01, 125,  0x3, 0x0, 0x0, 0x0, 0x14, 0x1, 75000,  true },
-+	{ 74250,  2376000, 0x01,  99,  0x3, 0x0, 0x0, 0x0, 0x10, 0x1, 74250,  true },
-+	{ 65000,  1560000, 0x01,  65,  0x3, 0x0, 0x0, 0x0, 0x0c, 0x1, 65000,  true },
-+	{ 40000,  2880000, 0x01, 120,  0x3, 0x0, 0x0, 0x0, 0x12, 0x2, 40000,  true },
-+	{ 27000,  2810000, 0x01, 117,  0x3, 0x0, 0x0, 0x0, 0x1a, 0x2, 27000,  true },
-+	{ 25600,  2300000, 0x01,  96,  0x3, 0x0, 0x0, 0x0, 0x0f, 0x3, 25600,  true },
-+	{ 25200,  2520000, 0x01, 105,  0x3, 0x0, 0x0, 0x0, 0x19, 0x2, 25200,  true },
-+};
-+
-+static u64 k3_inno_dp_abs_diff(u64 a, u64 b)
-+{
-+	return (a > b) ? (a - b) : (b - a);
-+}
-+
-+static u32 k3_inno_dp_pll_rate_khz(u8 pre, u16 fb, u32 frac,
-+				   u32 ref_clk_khz, u32 total_div)
-+{
-+	u64 vco_hz;
-+	u64 ref_hz = (u64)ref_clk_khz * 1000;
-+	u64 int_part;
-+	u64 frac_part;
-+
-+	/* Integer part: (Ref * FB) / Pre */
-+	int_part = ref_hz * fb;
-+	int_part += (pre / 2);
-+	k3_inno_dp_div64(&int_part, pre);
-+
-+	/* Fractional part: (Ref * Frac) / (Pre * 2^24) */
-+	frac_part = ref_hz * frac;
-+
-+	frac_part += (pre / 2);
-+	k3_inno_dp_div64(&frac_part, pre);
-+
-+	frac_part += (DPTX_PLL_FRAC_MOD / 2);
-+	k3_inno_dp_div64(&frac_part, DPTX_PLL_FRAC_MOD);
-+
-+	vco_hz = int_part + frac_part;
-+
-+	/* Final Rate = VCO / total_div */
-+	vco_hz += (total_div / 2);
-+	k3_inno_dp_div64(&vco_hz, total_div);
-+
-+	vco_hz += 500;
-+	k3_inno_dp_div64(&vco_hz, 1000);
-+
-+	return (u32)vco_hz;
-+}
-+
-+static int k3_inno_dp_prepll_div_total(const struct k3_inno_dp_prepll_cfg *cfg,
-+				       u32 *div_total)
-+{
-+	if (!cfg || !div_total || !cfg->valid)
-+		return -EINVAL;
-+
-+	/* div5_en fixes div_total at 5; divp is unused on this path */
-+	if (cfg->div5_en) {
-+		*div_total = 5;
-+		return 0;
-+	}
-+
-+	if (!cfg->divp)
-+		return -EINVAL;
-+
-+	if (cfg->divaux == 1) {
-+		if (cfg->divm >= ARRAY_SIZE(k3_inno_dp_divm_factors))
-+			return -EINVAL;
-+
-+		*div_total = 2 * k3_inno_dp_divm_factors[cfg->divm] * cfg->divp;
-+		return 0;
-+	}
-+
-+	if (cfg->divaux < 2)
-+		return -EINVAL;
-+
-+	*div_total = 2 * cfg->divaux * cfg->divp;
-+	return 0;
-+}
-+
-+static bool k3_inno_dp_prepll_cfg_matches(const struct k3_inno_dp_prepll_cfg *cfg,
-+					  u32 target_pclk_khz,
-+					 u32 ref_clk_khz)
-+{
-+	u32 div_total;
-+	u32 actual_pclk_khz;
-+
-+	if (k3_inno_dp_prepll_div_total(cfg, &div_total))
-+		return false;
-+
-+	actual_pclk_khz = k3_inno_dp_pll_rate_khz(cfg->prediv, cfg->fbdiv,
-+						  cfg->frac, ref_clk_khz,
-+						  div_total);
-+
-+	if (cfg->actual_pclk_khz &&
-+	    k3_inno_dp_abs_diff(actual_pclk_khz,
-+				cfg->actual_pclk_khz) > DPTX_PLL_ERR_TOLERANCE)
-+		return false;
-+
-+	return k3_inno_dp_abs_diff(actual_pclk_khz,
-+				    target_pclk_khz) <= DPTX_PLL_ERR_TOLERANCE;
-+}
-+
-+static const struct k3_inno_dp_prepll_cfg *k3_inno_dp_find_prepll_cfg(u32 pclk_khz,
-+								      u32 ref_clk_khz)
-+{
-+	const struct k3_inno_dp_prepll_cfg *best_match = NULL;
-+	u32 min_diff = 0xFFFFFFFF;
-+	int num_configs = ARRAY_SIZE(k3_inno_dp_prepll_cfgs);
-+
-+	for (int i = 0; i < num_configs; i++) {
-+		u32 current_target = k3_inno_dp_prepll_cfgs[i].target_pclk_khz;
-+		u32 diff = k3_inno_dp_abs_diff(pclk_khz, current_target);
-+
-+		if (diff == 0 && k3_inno_dp_prepll_cfg_matches(&k3_inno_dp_prepll_cfgs[i],
-+							       pclk_khz, ref_clk_khz)) {
-+			return &k3_inno_dp_prepll_cfgs[i];
-+		}
-+
-+		if ((pclk_khz / 100) == (current_target / 100) &&
-+		    k3_inno_dp_prepll_cfg_matches(&k3_inno_dp_prepll_cfgs[i],
-+						  pclk_khz, ref_clk_khz)) {
-+			return &k3_inno_dp_prepll_cfgs[i];
-+		}
-+
-+		if (diff < min_diff && diff < 500 &&
-+		    k3_inno_dp_prepll_cfg_matches(&k3_inno_dp_prepll_cfgs[i],
-+						  pclk_khz, ref_clk_khz)) {
-+			min_diff = diff;
-+			best_match = &k3_inno_dp_prepll_cfgs[i];
++		if (cl_regs->flags[i]) {
++			offset = cl_regs->base + i * sizeof(u32);
++			for (u8 j = 0; j < CMDLIST_ROW_REGS; j++) {
++				index = i + j;
++				if (likely(index < cl_regs->size)) {
++					if (cl_regs->flags[index]) {
++						value[j] = reg_base[index];
++						regs_in_row++;
++						strobe |= CMDLIST_REG_STROBE(j);
++					}
++				} else {
++					break;
++				}
++			}
++			hwdev->cmdlist_fill_data_row(cl, strobe, offset, value);
++			/*
++			 * the row covers the whole window; a shorter stride
++			 * would revisit covered words as duplicate rows
++			 */
++			i += CMDLIST_ROW_REGS;
++			cl->nod_len++;
++		} else {
++			i++;
 +		}
 +	}
 +
-+	return best_match;
++	drm_dbg(a_crtc->crtc.dev, "row_num = %d\n", cl->nod_len);
 +}
 +
-+static int k3_inno_dp_solve_frac(u32 target_vco_khz, u32 ref_clk_khz,
-+				 u8 *best_pre, u16 *best_fb, u32 *best_frac)
++void cmdlist_sort_by_group(struct drm_crtc *crtc)
 +{
-+	u64 min_err = ~0ULL;
-+	int found = 0;
-+	bool best_is_int = false;
-+	int pre;
++	struct cmdlist *first_cl;
++	struct cmdlist *last_cl;
++	struct cmdlist *p;
++	struct cmdlist *prev;
++	struct drm_plane *plane;
++	struct spacemit_crtc_rdma *rdmas =
++			to_spacemit_crtc_state(crtc->state)->rdmas;
++	struct spacemit_drm_private *priv = crtc->dev->dev_private;
 +
-+	for (pre = 1; pre <= 63; pre++) {
-+		u64 ref_clk_hz = (u64)ref_clk_khz * 1000;
-+		u64 target_vco_hz = (u64)target_vco_khz * 1000;
++	drm_atomic_crtc_for_each_plane(plane, crtc) {
++		struct spacemit_plane_state *spacemit_pstate =
++			to_spacemit_plane_state(plane->state);
++		u32 rdma_id = spacemit_pstate->rdma_id;
 +
-+		/*
-+		 * Calculate required multiplier: Mult = (TargetVCO * Pre) / Ref
-+		 */
-+		u64 num = target_vco_hz * pre;
-+		u64 den = ref_clk_hz;
-+		u64 remainder;
-+		u64 fb_val;
-+		u64 frac_val;
-+		u64 actual_vco;
-+		u64 diff;
-+		bool current_is_int;
-+
-+		fb_val = num;
-+		remainder = k3_inno_dp_div64(&fb_val, (u32)den);
-+
-+		if (fb_val > 4095)
++		first_cl = &spacemit_pstate->cl;
++		if (!first_cl->va)
 +			continue;
 +
-+		/* Frac = (Remainder * 2^24 + Ref/2) / Ref */
-+		frac_val = remainder * DPTX_PLL_FRAC_MOD;
-+		frac_val += (den / 2);
-+		k3_inno_dp_div64(&frac_val, (u32)den);
++		last_cl = first_cl;
++		last_cl->next = NULL;
 +
-+		if (frac_val > 0xFFFFFF)
-+			frac_val = 0xFFFFFF;
-+
-+		/* VCO = (Ref * FB / Pre) + (Ref * Frac / (Pre * 2^24)) */
-+		{
-+			u64 vco_int, vco_frac;
-+
-+			vco_int = ref_clk_hz * fb_val;
-+			k3_inno_dp_div64(&vco_int, pre);
-+			vco_frac = ref_clk_hz * frac_val;
-+			k3_inno_dp_div64(&vco_frac, pre);
-+			k3_inno_dp_div64(&vco_frac, DPTX_PLL_FRAC_MOD);
-+
-+			actual_vco = vco_int + vco_frac;
-+		}
-+
-+		diff = k3_inno_dp_abs_diff(actual_vco, target_vco_hz);
-+		current_is_int = (frac_val == 0);
-+
-+		if (diff < min_err) {
-+			min_err = diff;
-+			*best_pre = pre;
-+			*best_fb = (u16)fb_val;
-+			*best_frac = (u32)frac_val;
-+			best_is_int = current_is_int;
-+			found = 1;
-+		} else if (diff == min_err) {
-+			if (current_is_int && !best_is_int) {
-+				*best_pre = pre;
-+				*best_fb = (u16)fb_val;
-+				*best_frac = (u32)frac_val;
-+				best_is_int = true;
-+				found = 1;
++		rdmas[rdma_id].in_use = true;
++		if (priv->cmdlist_groups[rdma_id]) {
++			p = priv->cmdlist_groups[rdma_id];
++			prev = NULL;
++			while (p) {
++				if (cl_to_spacemit_pstate(p)->state.crtc_y <
++				    spacemit_pstate->state.crtc_y) {
++					prev = p;
++					p = p->next;
++				} else {
++					break;
++				}
 +			}
++			if (!prev) {
++				priv->cmdlist_groups[rdma_id] = first_cl;
++				last_cl->next = p;
++			} else {
++				prev->next = first_cl;
++				last_cl->next = p;
++			}
++		} else {
++			priv->cmdlist_groups[rdma_id] = first_cl;
 +		}
 +	}
-+
-+	return found ? 0 : -EINVAL;
 +}
 +
-+/* divaux must be 1 for the DivM path and > 1 for the DivAux path. */
-+static void k3_inno_dp_try_prepll(u32 target_pclk_khz, u32 ref_clk_khz,
-+				  u32 div_total, u8 div5_en, u8 divaux,
-+				  u8 divm, u8 divp,
-+				  struct k3_inno_dp_prepll_cfg *best)
++void cmdlist_atomic_commit(struct drm_crtc *crtc,
++			   struct drm_crtc_state *old_state)
 +{
-+	struct k3_inno_dp_prepll_cfg curr = {0};
-+	u32 target_vco = target_pclk_khz * div_total;
-+	u32 actual_pclk;
-+	u32 frac;
-+	u16 fb;
-+	u8 pre;
-+
-+	if (target_vco < DPTX_VCO_MIN_KHZ || target_vco > DPTX_VCO_MAX_KHZ)
-+		return;
-+
-+	if (k3_inno_dp_solve_frac(target_vco, ref_clk_khz, &pre, &fb, &frac))
-+		return;
-+
-+	actual_pclk = k3_inno_dp_pll_rate_khz(pre, fb, frac, ref_clk_khz,
-+					      div_total);
-+	if (k3_inno_dp_abs_diff(actual_pclk, target_pclk_khz) > DPTX_PLL_ERR_TOLERANCE)
-+		return;
-+
-+	curr.valid = true;
-+	curr.vco_freq_khz = target_vco;
-+	curr.actual_pclk_khz = actual_pclk;
-+	curr.prediv = pre;
-+	curr.fbdiv = fb;
-+	curr.frac = frac;
-+	curr.frac_pd = (frac == 0) ? 3 : 0;
-+	curr.div5_en = div5_en;
-+	curr.divaux = divaux;
-+	curr.divm = divm;
-+	curr.divp = divp;
-+
-+	if (k3_inno_dp_better_cfg(curr.valid, curr.frac == 0, curr.prediv,
-+				  curr.vco_freq_khz, best->valid,
-+				    best->frac == 0, best->prediv,
-+				    best->vco_freq_khz))
-+		*best = curr;
-+}
-+
-+static int k3_inno_dp_solve_prepll(u32 target_pclk_khz, u32 ref_clk_khz,
-+				   struct k3_inno_dp_prepll_cfg *cfg)
-+{
-+	struct k3_inno_dp_prepll_cfg best = {0};
-+	int pclk_div;
 +	int i;
++	struct cmdlist *cur_cl, *first_cl;
++	struct spacemit_crtc *a_crtc = NULL;
++	u32 chy, addrl, addrh;
++	struct spacemit_drm_private *priv = crtc->dev->dev_private;
++	struct spacemit_hw_device *hwdev = priv->hwdev;
++	struct spacemit_crtc_rdma *cur_rdmas =
++			to_spacemit_crtc_state(crtc->state)->rdmas;
++	struct spacemit_crtc_rdma *old_rdmas =
++			to_spacemit_crtc_state(old_state)->rdmas;
 +
-+	/* Strategy 1: Div5 path (VCO = PCLK * 5) */
-+	k3_inno_dp_try_prepll(target_pclk_khz, ref_clk_khz, 5, 1, 0, 0, 0,
-+			      &best);
++	a_crtc = to_spacemit_crtc(crtc);
 +
-+	for (pclk_div = 1; pclk_div <= 31; pclk_div++) {
-+		/* Strategy 2: DivM path */
-+		for (i = 0; i < ARRAY_SIZE(k3_inno_dp_divm_factors); i++)
-+			k3_inno_dp_try_prepll(target_pclk_khz, ref_clk_khz,
-+				2 * k3_inno_dp_divm_factors[i] * pclk_div, 0, 1,
-+				i, pclk_div, &best);
++	for (i = 0; i < hwdev->rdma_nums; i++) {
++		if (old_rdmas[i].in_use)
++			hwdev->enable_cmdlist(a_crtc, hwdev, i, false);
 +
-+		/* Strategy 3: DivAux path */
-+		for (i = 2; i <= 31; i++)
-+			k3_inno_dp_try_prepll(target_pclk_khz, ref_clk_khz,
-+					      2 * i * pclk_div,
-+					      0, i, 0, pclk_div, &best);
-+	}
++		if (cur_rdmas[i].in_use) {
++			drm_dbg(crtc->dev, "cmdlist group = %d\n", i);
++			cur_cl = priv->cmdlist_groups[i];
++			first_cl = cur_cl;
++			while (cur_cl) {
++				hwdev->cmdlist_fill_conf_row(cur_cl, hwdev,
++					CMDLIST_CMP_INVALID);
++				cmdlist_dump_node(cur_cl);
++				cur_cl = cur_cl->next;
++			}
++			chy = cl_to_spacemit_pstate(first_cl)->state.crtc_y;
++			addrl = (lower_32_bits(priv->cmdlist_groups[i]->pa) &
++				 CMDLIST_ADDRL_ALIGN_MASK) >> CMDLIST_ADDRL_ALIGN_BITS;
 +
-+	if (!best.valid)
-+		return -EINVAL;
-+
-+	*cfg = best;
-+	return 0;
-+}
-+
-+static void k3_inno_dp_program_prepll(struct k3_inno_dp_phy *p,
-+				      const struct k3_inno_dp_prepll_cfg *cfg)
-+{
-+	regmap_write_bits(p->regmap, DPTX_ANA_PREPLL, DPTX_ANA_PREPLL_PD,
-+		FIELD_PREP(DPTX_ANA_PREPLL_PD, 1));
-+	usleep_range(2000, 4000);
-+
-+	regmap_write_bits(p->regmap, DPTX_ANA_PREPLL, DPTX_ANA_PREPLL_PREDIV,
-+		FIELD_PREP(DPTX_ANA_PREPLL_PREDIV, cfg->prediv));
-+
-+	regmap_write_bits(p->regmap, DPTX_ANA_PREPLL,
-+		DPTX_ANA_PREPLL_FBDIV2_LBIT,
-+		FIELD_PREP(DPTX_ANA_PREPLL_FBDIV2_LBIT, cfg->fbdiv & 0xFF));
-+	regmap_write_bits(p->regmap, DPTX_ANA_PREPLL,
-+		DPTX_ANA_PREPLL_FBDIV2_HBIT,
-+		FIELD_PREP(DPTX_ANA_PREPLL_FBDIV2_HBIT, (cfg->fbdiv >> 8) & 0xF));
-+
-+	regmap_write_bits(p->regmap, DPTX_ANA_PREPLL, DPTX_ANA_PREPLL_DACPD,
-+		FIELD_PREP(DPTX_ANA_PREPLL_DACPD, (cfg->frac_pd >> 1) & 0x1));
-+	regmap_write_bits(p->regmap, DPTX_ANA_PREPLL, DPTX_ANA_PREPLL_DSMPD,
-+		FIELD_PREP(DPTX_ANA_PREPLL_DSMPD, cfg->frac_pd & 0x1));
-+
-+	regmap_write_bits(p->regmap, DPTX_ANA_PREPLL_FRAC,
-+		DPTX_ANA_PREPLL_FRAC2_LBIT,
-+		FIELD_PREP(DPTX_ANA_PREPLL_FRAC2_LBIT, cfg->frac & 0xFF));
-+	regmap_write_bits(p->regmap, DPTX_ANA_PREPLL_FRAC,
-+		DPTX_ANA_PREPLL_FRAC2_MBIT,
-+		FIELD_PREP(DPTX_ANA_PREPLL_FRAC2_MBIT, (cfg->frac >> 8) & 0xFF));
-+	regmap_write_bits(p->regmap, DPTX_ANA_PREPLL_FRAC,
-+		DPTX_ANA_PREPLL_FRAC2_HBIT,
-+		FIELD_PREP(DPTX_ANA_PREPLL_FRAC2_HBIT, (cfg->frac >> 16) & 0xFF));
-+
-+	regmap_write_bits(p->regmap, DPTX_ANA_PREPLL_DIV,
-+		DPTX_ANA_PREPLL_PRECLK_DIVM,
-+		FIELD_PREP(DPTX_ANA_PREPLL_PRECLK_DIVM, cfg->divm));
-+	regmap_write_bits(p->regmap, DPTX_ANA_PREPLL_DIV,
-+		DPTX_ANA_PREPLL_PRECLK_DIVAUX,
-+		FIELD_PREP(DPTX_ANA_PREPLL_PRECLK_DIVAUX, cfg->divaux));
-+
-+	regmap_write_bits(p->regmap, DPTX_ANA_PREPLL_CTRL,
-+		DPTX_ANA_PREPLL_PCLKDIV5_EN,
-+		FIELD_PREP(DPTX_ANA_PREPLL_PCLKDIV5_EN, cfg->div5_en));
-+	regmap_write_bits(p->regmap, DPTX_ANA_PREPLL_CTRL,
-+		DPTX_ANA_PREPLL_PCLK_DIVAUX,
-+		FIELD_PREP(DPTX_ANA_PREPLL_PCLK_DIVAUX, cfg->divp));
-+
-+	regmap_write_bits(p->regmap, DPTX_ANA_PREPLL,
-+		DPTX_ANA_PREPLL_PCLK_NORMAL,
-+		FIELD_PREP(DPTX_ANA_PREPLL_PCLK_NORMAL, 1));
-+	usleep_range(2000, 4000);
-+
-+	regmap_write_bits(p->regmap, DPTX_ANA_PREPLL, DPTX_ANA_PREPLL_PD,
-+		FIELD_PREP(DPTX_ANA_PREPLL_PD, 0));
-+	usleep_range(2000, 4000);
-+}
-+
-+#define to_k3_inno_dp_phy_clk(_hw) \
-+	container_of(_hw, struct k3_inno_dp_phy, pxclk_hw)
-+
-+static unsigned long k3_inno_dp_pxclk_recalc_rate(struct clk_hw *hw,
-+						  unsigned long parent_rate)
-+{
-+	struct k3_inno_dp_phy *p = to_k3_inno_dp_phy_clk(hw);
-+
-+	return p->pxclk_rate;
-+}
-+
-+static int k3_inno_dp_pxclk_determine_rate(struct clk_hw *hw,
-+					   struct clk_rate_request *req)
-+{
-+	struct k3_inno_dp_phy *p = to_k3_inno_dp_phy_clk(hw);
-+	const struct k3_inno_dp_prepll_cfg *cfg;
-+	struct k3_inno_dp_prepll_cfg solved;
-+	u32 khz = div_u64(req->rate, 1000);
-+	int ret;
-+
-+	cfg = k3_inno_dp_find_prepll_cfg(khz, p->ref_clk_khz);
-+	if (cfg) {
-+		req->rate = (unsigned long)cfg->actual_pclk_khz * 1000;
-+		return 0;
-+	}
-+
-+	ret = k3_inno_dp_solve_prepll(khz, p->ref_clk_khz, &solved);
-+	if (ret)
-+		return ret;
-+
-+	req->rate = (unsigned long)solved.actual_pclk_khz * 1000;
-+
-+	return 0;
-+}
-+
-+static int k3_inno_dp_pxclk_set_rate(struct clk_hw *hw, unsigned long rate,
-+				     unsigned long parent_rate)
-+{
-+	struct k3_inno_dp_phy *p = to_k3_inno_dp_phy_clk(hw);
-+	const struct k3_inno_dp_prepll_cfg *cfg;
-+	struct k3_inno_dp_prepll_cfg solved;
-+	u32 khz = div_u64(rate, 1000);
-+	int ret;
-+
-+	cfg = k3_inno_dp_find_prepll_cfg(khz, p->ref_clk_khz);
-+	if (!cfg) {
-+		ret = k3_inno_dp_solve_prepll(khz, p->ref_clk_khz, &solved);
-+		if (ret) {
-+			dev_err(p->dev, "no PLL setting for %lu Hz\n", rate);
-+			return ret;
++			addrh = upper_32_bits(priv->cmdlist_groups[i]->pa);
++			hwdev->cfg_cmdlist(hwdev, i, chy, addrl, addrh);
++			hwdev->enable_cmdlist(a_crtc, hwdev, i, true);
++			priv->cmdlist_groups[i] = NULL;
 +		}
-+		cfg = &solved;
 +	}
-+
-+	k3_inno_dp_program_prepll(p, cfg);
-+	p->pxclk_rate = (unsigned long)cfg->actual_pclk_khz * 1000;
-+
-+	return 0;
 +}
 +
-+static const struct clk_ops k3_inno_dp_pxclk_ops = {
-+	.recalc_rate	= k3_inno_dp_pxclk_recalc_rate,
-+	.determine_rate	= k3_inno_dp_pxclk_determine_rate,
-+	.set_rate	= k3_inno_dp_pxclk_set_rate,
-+};
-+
-+static const struct phy_ops k3_inno_dp_phy_ops = {
-+	.power_on	= k3_inno_dp_phy_power_on,
-+	.power_off	= k3_inno_dp_phy_power_off,
-+	.configure	= k3_inno_dp_phy_configure,
-+	.owner		= THIS_MODULE,
-+};
-+
-+static int k3_inno_dp_phy_probe(struct platform_device *pdev)
++void crtc_cmdlist_sort_by_group(struct spacemit_crtc *a_crtc)
 +{
-+	struct device *dev = &pdev->dev;
-+	struct k3_inno_dp_phy *p;
-+	struct phy_provider *provider;
-+	struct clk_init_data init = {};
-+	int ret;
++	struct cmdlist *first_cl;
++	struct cmdlist *last_cl;
++	struct drm_crtc *crtc = &a_crtc->crtc;
++	struct spacemit_drm_private *priv = crtc->dev->dev_private;
++	struct spacemit_hw_device *hwdev = priv->hwdev;
++	struct drm_crtc_state *crtc_state = a_crtc->crtc.state;
++	struct spacemit_crtc_state *spacemit_crtc_state =
++			to_spacemit_crtc_state(crtc_state);
++	u8 crtc_id = drm_crtc_index(crtc);
 +
-+	p = devm_kzalloc(dev, sizeof(*p), GFP_KERNEL);
-+	if (!p)
++	first_cl = &spacemit_crtc_state->cl;
++	last_cl = first_cl;
++	last_cl->next = NULL;
++	priv->cmdlist_groups[hwdev->rdma_nums + crtc_id] = first_cl;
++}
++
++void crtc_cmdlist_atomic_commit(struct spacemit_crtc *a_crtc)
++{
++	struct cmdlist *cur_cl;
++	struct drm_crtc *crtc = &a_crtc->crtc;
++	struct spacemit_drm_private *priv = crtc->dev->dev_private;
++	struct spacemit_hw_device *hwdev = priv->hwdev;
++	u8 crtc_id = drm_crtc_index(crtc);
++	u8 dev_id = a_crtc->dev_id;
++
++	drm_dbg(crtc->dev, "cmdlist group = %d\n",
++		hwdev->rdma_nums + crtc_id);
++	cur_cl = priv->cmdlist_groups[hwdev->rdma_nums + crtc_id];
++	while (cur_cl) {
++		hwdev->cmdlist_fill_conf_row(cur_cl, hwdev, dev_id);
++		cmdlist_dump_node(cur_cl);
++		cur_cl = cur_cl->next;
++	}
++	hwdev->crtc_cmdlist(hwdev, priv, crtc_id, dev_id);
++}
++
++/* Called from atomic_check(), where -ENOMEM is still an answer. */
++int spacemit_cmdlist_alloc(struct device *dev, struct cmdlist *cl)
++{
++	if (cl->va)
++		return 0;
++
++	cl->size = PER_CMDLIST_SIZE;
++	cl->va = dma_alloc_coherent(dev, cl->size, &cl->pa,
++				    GFP_KERNEL | __GFP_ZERO);
++	if (!cl->va)
 +		return -ENOMEM;
 +
-+	p->dev = dev;
++	return 0;
++}
+diff --git a/drivers/gpu/drm/spacemit/spacemit_cmdlist.h b/drivers/gpu/drm/spacemit/spacemit_cmdlist.h
+new file mode 100644
+index 0000000000000..d5acdbeb3b0e7
+--- /dev/null
++++ b/drivers/gpu/drm/spacemit/spacemit_cmdlist.h
+@@ -0,0 +1,146 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (C) 2025-2026 SpacemiT Co., Ltd.
++ *
++ */
 +
-+	p->regmap = dev_get_regmap(dev->parent, "dp");
-+	if (!p->regmap)
-+		return dev_err_probe(dev, -ENODEV,
-+				     "parent DP regmap not available\n");
++#ifndef _SATURN_FW_CMDLIST_H_
++#define _SATURN_FW_CMDLIST_H_
 +
-+	p->phy = devm_phy_create(dev, dev->of_node, &k3_inno_dp_phy_ops);
-+	if (IS_ERR(p->phy))
-+		return dev_err_probe(dev, PTR_ERR(p->phy),
-+				     "failed to create DP PHY\n");
++#include <linux/stddef.h>
++#include <linux/types.h>
++#include <drm/drm_crtc.h>
++#include <drm/drm_plane.h>
 +
-+	phy_set_drvdata(p->phy, p);
++struct spacemit_crtc;
++struct spacemit_plane_state;
 +
-+	/* PHY takes a 24 MHz reference clock */
-+	p->ref_clk_khz = 24000;
++#define PER_CMDLIST_SIZE             4096
++#define CMDLIST_ROW_REGS	(3)
++#define CMDLIST_CMP_INVALID	(0xff)
++/* poison for the per-cmdlist compose sentinels, never written to hw */
++#define CMDLIST_SENTINEL_POISON	0xDEADBEEF
 +
-+	/* The APMU pixel-clock mux references this clock by name. */
-+	of_property_read_string(dev->of_node, "clock-output-names", &init.name);
-+	if (!init.name)
-+		init.name = dev_name(dev);
-+	init.ops = &k3_inno_dp_pxclk_ops;
-+	init.parent_names = NULL;
-+	init.num_parents = 0;
-+	init.flags = 0;
-+	p->pxclk_hw.init = &init;
++/**
++ * enum cmdlist_type - what surface owns a cmdlist instance
++ * @CMDLIST_PLANE: Per-plane RDMA register batches.
++ * @CMDLIST_CRTC: Compose-side batches submitted on every flush.
++ */
++enum cmdlist_type {
++	CMDLIST_PLANE = 1,
++	CMDLIST_CRTC,
++};
 +
-+	ret = devm_clk_hw_register(dev, &p->pxclk_hw);
-+	if (ret)
-+		return dev_err_probe(dev, ret,
-+				     "failed to register pixel clock\n");
++/**
++ * struct cmdlist - A DMA-backed batch of register writes replayed at CFG_RDY
++ * @nod_len: Number of register-write rows currently filled.
++ * @size: Capacity of the DMA buffer in bytes.
++ * @mode_mask: cmdlist_mode_type sources; gates which rows are pulled.
++ * @va: Kernel virtual address of the DMA buffer.
++ * @pa: DMA address programmed into the cmdlist base register.
++ * @next: Cmdlists in submission order; the CRTC-level one comes last.
++ * @type: Originating surface; see &enum cmdlist_type.
++ * @rch_start_cmps_y: Compositor-Y start sentinel.
++ * @cmdlist_ch_y_other: Companion sentinel to @rch_start_cmps_y.
++ */
++struct cmdlist {
++	u16 nod_len;
++	u32 size;
++	u32 mode_mask;
++	void *va;
++	dma_addr_t pa;
++	struct cmdlist *next;
++	u8 type;
++	u32 rch_start_cmps_y;
++	u32 cmdlist_ch_y_other;
++};
 +
-+	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get,
-+					  &p->pxclk_hw);
-+	if (ret)
-+		return dev_err_probe(dev, ret,
-+				     "failed to add pixel clock provider\n");
++enum cmdlist_mode_type {
++	CMDLIST_MOD_RDMA = BIT(0),
++	CMDLIST_MOD_COMP = BIT(3),
++	CMDLIST_MOD_DMMU = BIT(6),
++};
 +
-+	/* Providers last: nothing may resolve a half-initialized PHY. */
-+	provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
-+	if (IS_ERR(provider))
-+		return dev_err_probe(dev, PTR_ERR(provider),
-+				     "failed to register PHY provider\n");
++#define CMDLIST_REG_STROBE(index)	(0xf << ((index) * 4))
++
++#define CMDLIST_ADDRL_ALIGN_BITS               (4) /* From cmdlist_reg_0[] in CMDLIST_REG */
++#define CMDLIST_ADDRL_ALIGN_MASK \
++	((u32)(~(BIT(CMDLIST_ADDRL_ALIGN_BITS) - 1)))
++/* NULL on failure is safe: every consumer falls back to direct MMIO. */
++#define alloc_cmdlist_regs(module_name) \
++({ \
++	struct cmdlist_regs *cl = kzalloc(sizeof(*cl), GFP_KERNEL); \
++	if (cl) { \
++		cl->size = module_name##__NWORDS; \
++		cl->module = kzalloc(4 * module_name##__NWORDS, GFP_KERNEL); \
++		cl->flags = kzalloc(module_name##__NWORDS, GFP_KERNEL); \
++		if (!cl->module || !cl->flags) { \
++			kfree(cl->module); \
++			kfree(cl->flags); \
++			kfree(cl); \
++			cl = NULL; \
++		} \
++	} \
++	cl; \
++})
++
++#define free_cmdlist_regs(cl_p) \
++do { \
++	struct cmdlist_regs *cl = (cl_p); \
++	if (cl) { \
++		kfree(cl->module); \
++		kfree(cl->flags); \
++		kfree(cl); \
++	} \
++} while (0)
++
++/*
++ * First touch seeds the word from a live MMIO read: only register blocks that
++ * read back what was written may be routed through cmdlist.
++ */
++#define cmdlist_write_reg(hwdev, module_name, module_base, field, data, cl_regs) \
++do { \
++	struct cmdlist_regs *cl_p = (cl_regs); \
++	u32 *__words = cl_p->module; \
++	const unsigned int __w = dpu_field_word(module_name, field); \
++	if (cl_p->flags[__w] == 0) { \
++		__words[__w] = readl((hwdev)->base + (module_base) + 4 * __w); \
++		cl_p->base = (module_base); \
++		cl_p->flags[__w] = 1; \
++	} \
++	__words[__w] &= ~dpu_field_mask(module_name, field); \
++	__words[__w] |= FIELD_PREP(dpu_field_mask(module_name, field), \
++				   (u32)(data)); \
++} while (0)
++
++/* Raw whole-word variant (the value32[] call sites); no seeding needed. */
++#define cmdlist_write_word(module_base, word, data, cl_regs) \
++do { \
++	struct cmdlist_regs *cl_p = (cl_regs); \
++	u32 *__words = cl_p->module; \
++	cl_p->base = (module_base); \
++	cl_p->flags[(word)] = 1; \
++	__words[(word)] = (u32)(data); \
++} while (0)
++
++struct cmdlist_regs {
++	u32 base;
++	u16 size;
++	u32 *module;
++	u8 *flags;
++};
++
++void cmdlist_regs_packing(struct cmdlist *cl, enum cmdlist_mode_type mod,
++			  struct cmdlist_regs *cl_regs);
++void cmdlist_sort_by_group(struct drm_crtc *crtc);
++void cmdlist_atomic_commit(struct drm_crtc *crtc,
++			   struct drm_crtc_state *old_state);
++struct spacemit_plane_state *cl_to_spacemit_pstate(const struct cmdlist *cl);
++void crtc_cmdlist_sort_by_group(struct spacemit_crtc *a_crtc);
++void crtc_cmdlist_atomic_commit(struct spacemit_crtc *a_crtc);
++struct spacemit_crtc_state *cl_to_spacemit_cstate(const struct cmdlist *cl);
++int spacemit_cmdlist_alloc(struct device *dev, struct cmdlist *cl);
++struct cmdlist *plane_to_cl(struct drm_plane *plane);
++struct cmdlist *crtc_to_cl(struct drm_crtc *crtc);
++
++#endif /* _SATURN_FW_CMDLIST_H_ */
+diff --git a/drivers/gpu/drm/spacemit/spacemit_crtc.h b/drivers/gpu/drm/spacemit/spacemit_crtc.h
+new file mode 100644
+index 0000000000000..7c03102414d00
+--- /dev/null
++++ b/drivers/gpu/drm/spacemit/spacemit_crtc.h
+@@ -0,0 +1,246 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (C) 2025-2026 SpacemiT Co., Ltd.
++ *
++ */
++
++#ifndef _SPACEMIT_CRTC_H_
++#define _SPACEMIT_CRTC_H_
++
++#include <linux/delay.h>
++#include <linux/string.h>
++#include <linux/platform_device.h>
++#include <linux/device.h>
++#include <linux/kernel.h>
++#include <linux/bug.h>
++#include <linux/regmap.h>
++#include <video/videomode.h>
++#include <linux/workqueue.h>
++
++#include <drm/drm_atomic_uapi.h>
++#include <drm/drm_print.h>
++#include <drm/drm_crtc.h>
++#include <drm/drm_fourcc.h>
++#include <drm/drm_vblank.h>
++#include "spacemit_dpu_ids.h"
++#include "spacemit_cmdlist.h"
++#include "spacemit_drm.h"
++#include <linux/spinlock.h>
++
++#define RDMA_INVALID_ID			(~0)
++
++#define DPU_MCLK_DEFAULT	307200000
++#define DPU_AXICLK_DEFAULT	409000000
++
++enum spacemit_dpu_irq {
++	INT_UNDERRUN,
++	INT_CFG_RDY,
++	INT_VSYNC,
++	INT_EOF,
++	INT_REST,
++};
++
++struct spacemit_crtc_fbcmem {
++	u32 start;
++	u32 size;
++	bool map;
++};
++
++struct spacemit_crtc_rdma {
++	struct spacemit_crtc_fbcmem fbcmem;
++	bool in_use;
++	u32 use_cnt;
++};
++
++struct dpu_mmu_tbl {
++	u32 size;
++	void *va;
++	dma_addr_t pa;
++};
++
++
++/**
++ * struct spacemit_crtc - Per-instance state for a Saturn DPU CRTC
++ * @dev: Underlying platform device for this DPU instance.
++ * @crtc: Embedded DRM CRTC; reachable via to_spacemit_crtc().
++ * @core: Vtable of DPU pipeline operations, populated at probe.
++ * @mmu_tbl: DPU-local page table mapping planes' buffers into the TBUs.
++ * @dev_id: Vendor-numbered DPU instance ID (0 or 1 on K3).
++ * @irq_online: Online-compose IRQ, kept for synchronize_irq().
++ * @cfg_rdy_timer: Watchdog for a CFG_RDY that never arrives.
++ * @is_1st_f: True until the first frame of a new modeset is transferred.
++ * @first_modeset: True until the first .atomic_enable after probe; that first
++ *		   pass resets the DPU to stop the U-Boot pipeline.
++ * @clk_ctx: Cached clock handles, enabled by dpu_enable_clocks().
++ * @aclk: Requested DPU AXI clock rate (Hz).
++ * @out_format: Output pixel format register cache.
++ * @cl_rdma: Cmdlist register slot for RDMA programming.
++ * @flip_done: Set once the DPU has committed the most recent page flip.
++ * @clocks_on: True while clocks run; MMIO on a gated DPU stalls the bus.
++ * @ur_reported: True once an underrun has been logged since the last CFG_RDY.
++ * @ur_mask_armed: True while clr_int_sts() may still mask the underrun IRQ.
++ */
++struct spacemit_crtc {
++	struct device *dev;
++	struct drm_crtc crtc;
++	const struct dpu_core_ops *core;
++	struct dpu_mmu_tbl mmu_tbl;
++	int dev_id;
++	int irq_online;
++	struct timer_list cfg_rdy_timer;
++
++	bool is_1st_f;
++	bool first_modeset;
++	struct dpu_clk_context clk_ctx;
++	u32 aclk;
++	u32 out_format;
++
++	struct cmdlist_regs *cl_rdma;
++
++	bool flip_done;
++
++	bool clocks_on;
++
++	bool ur_reported;
++	bool ur_mask_armed;
++};
++
++static inline struct spacemit_crtc *to_spacemit_crtc(struct drm_crtc *crtc)
++{
++	return crtc ? container_of(crtc, struct spacemit_crtc, crtc) : NULL;
++}
++
++struct spacemit_hw_device;
++struct dpu_core_ops {
++	int (*init)(struct spacemit_crtc *a_crtc);
++	void (*uninit)(struct spacemit_crtc *a_crtc);
++	void (*run)(struct drm_crtc *crtc,
++		    struct drm_crtc_state *old_state);
++	void (*disable_vsync)(struct spacemit_crtc *a_crtc);
++	void (*enable_vsync)(struct spacemit_crtc *a_crtc);
++	u32 (*online_isr)(struct spacemit_crtc *a_crtc);
++	int (*enable_clk)(struct spacemit_crtc *a_crtc);
++	int (*disable_clk)(struct spacemit_crtc *a_crtc);
++	int (*cal_layer_fbcmem_size)(struct drm_plane *plane,
++				     struct drm_plane_state *state);
++	int (*adjust_rdma_fbcmem)(struct spacemit_hw_device *hwdev,
++				  struct spacemit_crtc_rdma *rdmas);
++};
++
++extern const struct dpu_core_ops dpu_saturn_ops;
++
++int spacemit_crtc_run(struct drm_crtc *crtc,
++		      struct drm_crtc_state *old_state);
++
++struct spacemit_plane {
++	struct drm_plane plane;
++	struct spacemit_hw_device *hwdev;
++};
++
++/**
++ * struct spacemit_plane_state - Subclassed drm_plane_state for the Saturn DPU
++ * @state: Embedded drm_plane_state; reachable via to_spacemit_plane_state().
++ * @rdma_id: RDMA channel feeding this plane, derived from its zpos.
++ * @format: DPU-internal pixel-format token translated from the fourcc.
++ * @fbcmem_size: Bytes of FBC line buffer reserved for this plane.
++ * @mmu_tbl: Per-plane page table populated by spacemit_dmmu_map().
++ * @cl: Plane-level cmdlist filled during atomic_update.
++ */
++struct spacemit_plane_state {
++	struct drm_plane_state state;
++	u32 rdma_id;
++	u8 format;
++	u32 fbcmem_size;
++	struct dpu_mmu_tbl mmu_tbl;
++	struct cmdlist cl;
++};
++
++struct spacemit_plane *to_spacemit_plane(struct drm_plane *plane);
++
++static inline struct
++spacemit_plane_state *
++to_spacemit_plane_state(const struct drm_plane_state *state)
++{
++	return container_of(state, struct spacemit_plane_state, state);
++}
++
++/**
++ * struct spacemit_crtc_state - Subclassed drm_crtc_state for the Saturn DPU
++ * @base: Embedded drm_crtc_state; reachable via to_spacemit_crtc_state().
++ * @rdmas: Per-RDMA-channel descriptors, hwdev->rdma_nums entries.
++ * @cl: CRTC-level cmdlist used during atomic_flush.
++ */
++struct spacemit_crtc_state {
++	struct drm_crtc_state base;
++	struct spacemit_crtc_rdma *rdmas;
++	struct cmdlist cl;
++};
++
++#define to_spacemit_crtc_state(x) \
++	container_of(x, struct spacemit_crtc_state, base)
++
++struct drm_plane *spacemit_plane_init(struct drm_device *drm,
++				      struct spacemit_crtc *a_crtc);
++
++struct spacemit_plane_state;
++struct spacemit_crtc;
++struct tbu_instance;
++struct dpu_mmu_tbl;
++enum spacemit_dpu_irq;
++
++/*
++ * Per-revision Saturn DPU description and operation vtable. One static instance
++ * per DT compatible, selected at probe; reached through spacemit_crtc::core.
++ */
++struct spacemit_hw_device {
++	void __iomem *base;
++	struct regmap *regmap;
++	u8 plane_nums;
++	u8 rdma_nums;
++	u8 crtc_nums;
++	const struct spacemit_hw_rdma *rdmas;
++	u8 n_formats;
++	const struct dpu_format_id *formats;
++	u8 n_fbcmems;
++	const u32 *fbcmem_sizes;
++	void (*enable_vsync)(struct spacemit_crtc *a_crtc,
++			     struct spacemit_hw_device *hwdev, bool enable);
++	void (*enable_cfg_irq)(struct spacemit_crtc *a_crtc,
++			       struct spacemit_hw_device *hwdev, bool enable);
++	void (*cfg_ready)(struct spacemit_crtc *a_crtc,
++			  struct spacemit_hw_device *hwdev);
++	void (*sw_start)(struct spacemit_crtc *a_crtc,
++			 struct spacemit_hw_device *hwdev);
++	void (*dpu_init)(struct spacemit_crtc *a_crtc);
++	void (*irq_enable)(struct spacemit_crtc *a_crtc, bool enable);
++	void (*plane_update_hw_channel)(struct drm_plane *plane);
++	void (*plane_disable_hw_channel)(struct drm_plane *plane,
++					 struct drm_plane_state *old_state);
++	void (*conf_dpuctrl)(struct drm_crtc *crtc,
++			     struct drm_crtc_state *old_state);
++	u32 (*get_cfg_rdy)(struct spacemit_crtc *a_crtc,
++			   struct spacemit_hw_device *hwdev);
++	u32 (*get_irq_bit)(enum spacemit_dpu_irq irq_id, int dev_id);
++	u32 (*get_int_sts)(struct spacemit_hw_device *hwdev, int dev_id);
++	void (*clr_int_sts)(struct spacemit_crtc *a_crtc, u32 data, int dev_id);
++	void (*enable_cmdlist)(struct spacemit_crtc *a_crtc,
++			       struct spacemit_hw_device *hwdev, int id,
++			       bool enable);
++	void (*cfg_cmdlist)(struct spacemit_hw_device *hwdev, int id, u32 chy,
++			    u32 addrl, u32 addrh);
++	void (*rdma_dmmu)(struct spacemit_hw_device *hwdev, u8 tbu_id,
++			  struct tbu_instance *tbu, struct drm_framebuffer *fb,
++			  u32 val, struct cmdlist_regs *cl_rdma,
++			  struct drm_plane *plane);
++	int (*get_cl_rdma_buf)(struct spacemit_crtc *a_crtc);
++	void (*cmdlist_fill_data_row)(struct cmdlist *cl, u32 strobe,
++				      u32 offset, u32 value[]);
++	void (*cmdlist_fill_conf_row)(struct cmdlist *cl,
++				      struct spacemit_hw_device *hwdev,
++				      u8 dev_id);
++	void (*crtc_cmdlist)(struct spacemit_hw_device *hwdev,
++			     struct spacemit_drm_private *priv, u8 crtc_id,
++			     u8 dev_id);
++	void (*cmdlist_dump_node)(struct cmdlist *cl);
++};
++#endif
+diff --git a/drivers/gpu/drm/spacemit/spacemit_dmmu.c b/drivers/gpu/drm/spacemit/spacemit_dmmu.c
+new file mode 100644
+index 0000000000000..ff4b3378a087c
+--- /dev/null
++++ b/drivers/gpu/drm/spacemit/spacemit_dmmu.c
+@@ -0,0 +1,80 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2023-2026 SpacemiT Co., Ltd.
++ *
++ */
++
++#include <linux/stddef.h>
++#include <linux/gfp.h>
++#include <linux/dma-mapping.h>
++#include <drm/drm_framebuffer.h>
++#include <drm/drm_gem_shmem_helper.h>
++
++#include "spacemit_cmdlist.h"
++#include "spacemit_dmmu.h"
++#include "spacemit_drm.h"
++#include "spacemit_crtc.h"
++#include "spacemit_dpu_reg.h"
++
++static inline void spacemit_dmmu_fill_pgtable(struct dpu_mmu_tbl *tbl,
++					      struct sg_table *sgt)
++{
++	struct sg_dma_page_iter dma_iter;
++	u32 max_entries = tbl->size / 4;
++	u32 *ttbr = tbl->va;
++	u32 i = 0, n = 0, temp = 0;
++
++	for_each_sgtable_dma_page(sgt, &dma_iter, 0) {
++		/*
++		 * atomic_check sized the table off this same fb; catch a drift
++		 */
++		if (WARN_ON_ONCE(n + HW_ALIGN_TTB_NUM >= max_entries))
++			break;
++		ttbr[n++] = (sg_page_iter_dma_address(&dma_iter) >> PAGE_SHIFT) & 0x3FFFFFF;
++	}
++
++	if (WARN_ON_ONCE(!n))
++		return;
++
++	/*
++	 * The silicon over-fetches past the last entry; pad it to avoid a DDR
++	 * fault.
++	 */
++	temp = ttbr[n - 1];
++	for (i = 0; i < HW_ALIGN_TTB_NUM; i++)
++		ttbr[n++] = temp;
++}
++
++int spacemit_dmmu_map(struct drm_framebuffer *fb, struct dpu_mmu_tbl *mmu_tbl,
++		      u8 tbu_id, struct cmdlist_regs *cl_rdma,
++		 struct drm_plane *plane)
++{
++	struct spacemit_drm_private *priv = fb->dev->dev_private;
++	struct spacemit_hw_device *hwdev = priv->hwdev;
++	struct sg_table *sgt = NULL;
++	struct tbu_instance tbu = { };
++	u32 val;
++
++	sgt = drm_gem_shmem_get_pages_sgt(to_drm_gem_shmem_obj(fb->obj[0]));
++	if (IS_ERR(sgt))
++		return PTR_ERR(sgt);
++
++	/* Every advertised format is single-planar */
++	tbu.ttb_pa[0] = mmu_tbl->pa;
++	tbu.tbu_va[0] = TBU_BASE_VA(tbu_id);
++	tbu.ttb_size[0] = roundup(fb->obj[0]->size, PAGE_SIZE) >> PAGE_SHIFT;
++
++	spacemit_dmmu_fill_pgtable(mmu_tbl, sgt);
++
++	/*
++	 * enable = 1, fbc_mode = 0 (linear only)
++	 * single plane in bits [3:2]
++	 */
++	val = 0x1;
++	/* tbu_burst_limit_en = 1, tlb_fetch_active_en = 1 */
++	val |= BIT(4) | BIT(5);
++	val = val | (DPU_QOS_URGENT << 8);
++	hwdev->rdma_dmmu(hwdev, tbu_id, &tbu, fb, val, cl_rdma, plane);
 +
 +	return 0;
 +}
+diff --git a/drivers/gpu/drm/spacemit/spacemit_dmmu.h b/drivers/gpu/drm/spacemit/spacemit_dmmu.h
+new file mode 100644
+index 0000000000000..5aaf1ad77f9f1
+--- /dev/null
++++ b/drivers/gpu/drm/spacemit/spacemit_dmmu.h
+@@ -0,0 +1,40 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (C) 2025-2026 SpacemiT Co., Ltd.
++ *
++ */
 +
-+static const struct of_device_id k3_inno_dp_phy_of_match[] = {
-+	{ .compatible = "spacemit,k3-inno-dp-phy" },
-+	{ }
++#ifndef _SPACEMIT_DMMU_H_
++#define _SPACEMIT_DMMU_H_
++
++#include <linux/types.h>
++
++#include <drm/drm_file.h>
++#include "spacemit_cmdlist.h"
++
++#define DPU_QOS_URGENT	4
++#define DPU_QOS_NORMAL	3
++#define DPU_QOS_LOW	2
++/* Worst-case TLB alignment over-fetch at the maximum 4096 src_x. */
++#define HW_ALIGN_TTB_NUM	60
++
++#define RD_OUTS_NUM             16
++#define RDMA_TIMELIMIT  0xFFFF
++
++#define BASE_VA         0x10000000ULL
++#define VA_STEP_PER_TBU 0x40000000ULL
++
++#define TBU_BASE_VA(tbu_id) ((u64)BASE_VA + (u64)VA_STEP_PER_TBU * (tbu_id))
++
++struct tbu_instance {
++	u64 ttb_pa[3];
++	u64 tbu_va[3];
++	u32 ttb_size[3];
 +};
-+MODULE_DEVICE_TABLE(of, k3_inno_dp_phy_of_match);
 +
-+static struct platform_driver k3_inno_dp_phy_driver = {
-+	.probe = k3_inno_dp_phy_probe,
-+	.driver = {
-+		.name		= "spacemit-k3-inno-dp-phy",
-+		.of_match_table	= k3_inno_dp_phy_of_match,
-+	},
++struct dpu_mmu_tbl;
++int spacemit_dmmu_map(struct drm_framebuffer *fb, struct dpu_mmu_tbl *mmu_tbl,
++		      u8 tbu_id, struct cmdlist_regs *cl_rdma,
++			struct drm_plane *plane);
++
++#endif /* _SPACEMIT_DMMU_H_ */
+diff --git a/drivers/gpu/drm/spacemit/spacemit_dpu_reg.h b/drivers/gpu/drm/spacemit/spacemit_dpu_reg.h
+new file mode 100644
+index 0000000000000..a57ed34d38e2f
+--- /dev/null
++++ b/drivers/gpu/drm/spacemit/spacemit_dpu_reg.h
+@@ -0,0 +1,108 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (C) 2025-2026 SpacemiT Co., Ltd.
++ *
++ * Saturn DPU register accessors.
++ */
++
++#ifndef _SPACEMIT_DPU_REG_H_
++#define _SPACEMIT_DPU_REG_H_
++
++#include <linux/bitfield.h>
++#include <linux/io.h>
++
++#include "dpu/dpu_trace.h"
++#include "dpu/saturn_regs/saturn_fields.h"
++
++#define dpu_field_word(module_name, field)	(module_name##__##field##_WORD)
++#define dpu_field_mask(module_name, field)	(module_name##__##field##_MASK)
++
++/* MMIO field read: returns the field value shifted down to bit 0. */
++#define dpu_read_reg(hwdev, module_name, module_base, field)		\
++	FIELD_GET(dpu_field_mask(module_name, field),			\
++		  readl((hwdev)->base + (module_base) +			\
++			4 * dpu_field_word(module_name, field)))
++
++/* MMIO raw 32-bit register read/write by word index within the block. */
++#define dpu_read_word(hwdev, module_base, word)				\
++	readl((hwdev)->base + (module_base) + 4 * (word))
++
++#define dpu_write_reg_word(hwdev, module_base, word, data)		\
++do {									\
++	trace_spacemit_dpu_reg_write((u32)(data), (module_base), NULL);	\
++	writel((u32)(data),						\
++	       (hwdev)->base + (module_base) + 4 * (word));		\
++} while (0)
++
++/*
++ * Not every DPU config word reads back what was written, so a byte- or
++ * halfword-aligned field is stored at its own width rather than read-modified.
++ */
++#define __dpu_mmio_field_write(__addr, __mask, data)			\
++do {									\
++	if ((__mask) == 0xffU)						\
++		writeb((u8)((data) & 0xffU), __addr);			\
++	else if ((__mask) == 0xff00U)					\
++		writeb((u8)((data) & 0xffU), (__addr) + 1);		\
++	else if ((__mask) == 0xff0000U)					\
++		writeb((u8)((data) & 0xffU), (__addr) + 2);		\
++	else if ((__mask) == 0xff000000U)				\
++		writeb((u8)((data) & 0xffU), (__addr) + 3);		\
++	else if ((__mask) == 0xffffU)					\
++		writew((u16)((data) & 0xffffU), __addr);		\
++	else if ((__mask) == 0xffff0000U)				\
++		writew((u16)((data) & 0xffffU), (__addr) + 2);		\
++	else if ((__mask) == 0xffffffffU)				\
++		writel((u32)(data), __addr);				\
++	else								\
++		writel((readl(__addr) & ~(__mask)) |			\
++		       FIELD_PREP(__mask, (u32)(data)), __addr);	\
++} while (0)
++
++#define dpu_write_reg(hwdev, module_name, module_base, field, data)	\
++do {									\
++	void __iomem *__waddr = (hwdev)->base + (module_base) +	\
++				4 * dpu_field_word(module_name, field);	\
++									\
++	trace_spacemit_dpu_reg_write((u32)(data), (module_base), #field); \
++	__dpu_mmio_field_write(__waddr,					\
++			       dpu_field_mask(module_name, field), data); \
++} while (0)
++
++/* Field write into a register array element; the index is a runtime value. */
++#define dpu_write_reg_arr(hwdev, module_name, module_base, arr, i, field, data) \
++do {									\
++	void __iomem *__waddr = (hwdev)->base + (module_base) +	\
++		4 * module_name##__##arr##__##field##_WORD(i);		\
++									\
++	trace_spacemit_dpu_reg_write((u32)(data), (module_base), #field); \
++	__dpu_mmio_field_write(__waddr,					\
++			       module_name##__##arr##__##field##_MASK,	\
++			       data);					\
++} while (0)
++
++/*
++ * Unified CPU/cmdlist field write; a NULL cl_regs selects the direct MMIO path.
++ */
++#define _dpu_write_reg(hwdev, module_name, module_base, field, data, cl_regs, ...) \
++do {									\
++	if ((cl_regs) != NULL)						\
++		cmdlist_write_reg(hwdev, module_name, module_base,	\
++				  field, data, cl_regs);		\
++	else								\
++		dpu_write_reg(hwdev, module_name, module_base, field,	\
++			      data);					\
++} while (0)
++
++#define dpu_write(...) _dpu_write_reg(__VA_ARGS__, NULL)
++
++/* Unified CPU/cmdlist raw-word write (the value32[] call sites). */
++#define dpu_write_word(hwdev, module_base, word, data, cl_regs)	\
++do {									\
++	if ((cl_regs) != NULL)						\
++		cmdlist_write_word(module_base, word, data, cl_regs);	\
++	else								\
++		dpu_write_reg_word(hwdev, module_base, word, data);	\
++} while (0)
++
++#endif
+diff --git a/drivers/gpu/drm/spacemit/spacemit_drm.h b/drivers/gpu/drm/spacemit/spacemit_drm.h
+new file mode 100644
+index 0000000000000..425f6221a1645
+--- /dev/null
++++ b/drivers/gpu/drm/spacemit/spacemit_drm.h
+@@ -0,0 +1,61 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (C) 2025-2026 SpacemiT Co., Ltd.
++ *
++ */
++
++#ifndef _SPACEMIT_DRM_H_
++#define _SPACEMIT_DRM_H_
++
++#include <drm/drm_print.h>
++#include <drm/drm_atomic.h>
++#include <drm/drm_drv.h>
++#include <drm/drm_vblank.h>
++#include <drm/drm_probe_helper.h>
++#include <linux/dma-mapping.h>
++#include <linux/clk.h>
++#include <linux/reset.h>
++#include "spacemit_dmmu.h"
++
++/* The DPU's clock inputs, as named by the binding. */
++struct dpu_clk_context {
++	struct clk *pxclk;
++	struct clk *mclk;
++	struct clk *escclk;
++	struct clk *aclk;
++	struct clk *dscclk;
 +};
-+module_platform_driver(k3_inno_dp_phy_driver);
 +
-+MODULE_DESCRIPTION("SpacemiT K3 Innosilicon DisplayPort PHY driver");
-+MODULE_AUTHOR("Cody Kang <codykang.hk@gmail.com>");
-+MODULE_LICENSE("GPL");
++/**
++ * struct spacemit_drm_private - Top-level driver state for the SpacemiT DRM
++ * card
++ * @ddev: DRM device, created in the component master bind callback; bind-scope,
++ *	  see spacemit_kms in spacemit_crtc.c.
++ * @dev: The DPU platform device; the DPU is the drm subsystem root.
++ * @a_crtc: Per-DPU CRTC state.
++ * @hwdev: Per-revision Saturn DPU description and vtable.
++ * @cmdlist_groups: Pool of per-pipeline cmdlist groups.
++ * @clk_ctx: The DPU's clocks, acquired once at probe.
++ * @pipe_resets: The DPU reset lines, in assert order; bulk-deassert
++ *		 releases them in reverse.
++ * @irq_online: Online-compose IRQ; requested disabled, enabled at bind.
++ */
++struct spacemit_drm_private {
++	struct drm_device *ddev;
++	struct device *dev;
++	struct spacemit_crtc *a_crtc;
++	struct spacemit_hw_device *hwdev;
++	struct cmdlist **cmdlist_groups;
++
++	struct dpu_clk_context clk_ctx;
++	struct reset_control_bulk_data pipe_resets[5];
++	int irq_online;
++};
++
++extern struct drm_driver spacemit_drm_drv;
++extern const struct component_master_ops spacemit_drm_master_ops;
++
++int spacemit_drm_mode_config_init(struct drm_device *drm);
++int spacemit_drm_of_component_probe(struct device *dev);
++
++#endif /* _SPACEMIT_DRM_H_ */
 
 -- 
 2.43.0
