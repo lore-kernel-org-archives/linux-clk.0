@@ -1,162 +1,142 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9544E2BDC23;
-	Sun,  9 Aug 2026 13:15:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B0C360EC5
+	for <linux-clk@vger.kernel.org>; Sun,  9 Aug 2026 16:10:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786281324; cv=none; b=RWcGr509fqHIT/7DByu6b87eCTSySuICLhZWCps2Hgme0a8TXlOO/BLJZitBa7imUN3YvhRqOb5i3TWmJ69t4Y1ljVvPvrL5AhS9KVeH04RdV7IFuNxTxamiapDVDhWX2fwapFqTODKwfU3c23kyDpMEv6uY125FHZgy06l9sNc=
+	t=1786291826; cv=none; b=V8tSfg7xp9NEUVYEeKlFGlSqQZQZvRk3w7I4uC4OEYpUNsYTyzwVWyHg7pYa/khCwl1Nyi7XQoZW7vM7sKH1R4yyDLMTDQXXiGYhdskIDtvR1JM7Ny4edWrqjduId/P5ljbnB9bDLHTA7U2vJjFHROvwtmZks9srQb2hn/muxR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786281324; c=relaxed/simple;
-	bh=TJKB9gAU8hAV/dp4YGZIrl98K3SXxpdpaQ+kxnNhMsw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=I1oyg5FqLigEbtrPf3WM/IklTpu0tIMAhsfcTumhRr/9E20XKEGVozV1B8XMtaKpVgWg+7+vmT/KfQiqdH9WYx2ab27ZkG2pSzp43c/2Ibt4uuElBVD4XRSKFxoZUzDMZJTHDLawJ0jN0HdjVsGFn0Y+VJX+tOoWHruWJoEGjDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bFTBZBIe; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1786291826; c=relaxed/simple;
+	bh=l/ZEGNAFzHMfVmvEPvd+GUW3qDLOebeT6rsXYOA/+FI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=HAfPooptmmQ/Q72sT6/hN9xHywdrlDQsQiqCtY37kFMFfspQHnYO0srVpQ5BTSAOlHEJ/4baVTJkGzuzsTNoEtZYknOZ4aDH/XlHhZaLmnZscSCyDm7C0gbqxVONwakDbmijbB4qPb0fMkfrOWJ2udbbvFI0pJjkDlHTJkf5H+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QarT4dWv; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bFTBZBIe"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 219BBC2BCF5;
-	Sun,  9 Aug 2026 13:15:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1786281322;
-	bh=TJKB9gAU8hAV/dp4YGZIrl98K3SXxpdpaQ+kxnNhMsw=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=bFTBZBIe3rg1Q4Enak9VZP5g939pWRHlTWxgUQgLGl0GTpmMbI7Vf1NHiPIlzhwtu
-	 Dmc9GMiYE7Ol84WtrdGRFAsDEPERyZyna1wRvrNhQwesBOykQdG0ZuQ0dxD7rOxiur
-	 mUHN8eyAT0eRNjKmcr3CIhFzWYIEfetEtnzWm6HwgONG413E59PJYH3cOzHEx7ZDrk
-	 ffvWTiscVD7WkURxIZphbBckmc7srAE+nxdcGqGP4vYg6oknuGPzT/aslx3q6ljvWJ
-	 I6mvJeezcqsbUHxKZOl2UhDTJIIRXTT/TdZXpN73ECjfCuFPTkkVhT4RorCSpYXs0x
-	 6w1T1EPaVbNZA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D34AC5AD4E;
-	Sun,  9 Aug 2026 13:15:22 +0000 (UTC)
-From: Cody Kang via B4 Relay <devnull+codykang.hk.gmail.com@kernel.org>
-Date: Sun, 09 Aug 2026 21:14:25 +0800
-Subject: [PATCH v2 16/17] riscv: dts: spacemit: k3-com260-ifx: enable the
- DisplayPort output
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QarT4dWv"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-49553515a8bso16976915e9.1
+        for <linux-clk@vger.kernel.org>; Sun, 09 Aug 2026 09:10:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1786291820; x=1786896620; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=nbYtX7IeMY65jB+ZUUL86KrBb5orkg6y9aQT1NrIByY=;
+        b=QarT4dWv4O/TCgXP9Y0p7473UjczdHZCcAQv3NRfcddtK/85XSBdqanpv0qqnCztKQ
+         /hvwqfG3+wD8hgqiTAAWD3z2HyDA7B5BrvlmzG2FZE4AVWDL+YndJQgicRdAUvxY3mbW
+         BL8N6iUT3xDDqV4F9J0oGGrFPM8zjmK6MkmyoVk6Ize5XeyAm4iSVzcI4tVkRD2Eh11m
+         acGNzX2heAC0AM2UGQtKcssQ+MGv+FwCwNrGa1Hd9ub2Jg4IyYgYtxhX4tV+NLvxee97
+         6r2GNjx6OrniMNdIIms1DRI2hHncbaAzTaf7u8HMuUi4FE3/cAKiU5YZaRJ0E1FyloPK
+         jCQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1786291820; x=1786896620;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=nbYtX7IeMY65jB+ZUUL86KrBb5orkg6y9aQT1NrIByY=;
+        b=Tj57NjvSnJH53GAy0olQ1FTZDK0qUeCHKBBaWEZWHhhrZX2FFOPpfAYz/9x2QoEkRV
+         gkfml/Z6XKZDE3e4lAH8y9ZTSsDYRNGr/Zb+LB2UwPbX2Ih6NNZPyxFNjzKcKD3N6gvL
+         s/tkbyVmohpn1PMG4IsnMnWNrCjI2bx+vS9yfveLmjpbfmh1+4RntpJutGMDd3yPzNV8
+         2QP7uk0FVETp6A59Eh0FAez9HNg3LNIP7ckNiwrNOrMgAe1zZgZMi9OFXiC0F4B7ZvNV
+         T9rxZTHCY7meQaDOlVvR9vBjPu8N2C56xCC1Ph7VLpye6xRskcxY+rB7qMERI9A70/0G
+         yliA==
+X-Forwarded-Encrypted: i=1; AHgh+RpwgNKtNShXXVaIsaw96vFWFtWIy+NrYrXm+/iWPPzgAzBg38ZMEtm7/llcUXlvstc1yjCtYUDgRL0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyBM2tJB1OKG4OWykWue6xTg6p/YNXAnM0t54NjStm+7zROOZp
+	V3sie+AeGUlCUm52VM0JygWwD6zGnkeCFVH7pAF1Fm6i2q3Kw/1uyzSZqXIwUKak
+X-Gm-Gg: AR+sD109dpoGY2pFCRsKHqWYcAS4PLKsenYFZ2bYPDDIgCA5o7ctJUUa6SdRmJmW1EN
+	2Ec7D9O5lz80qQiLhX4u4DcLusjbAwhKuyrWzHQmwO6x1Xtu+71ZvhT+LyS7MW2KyKZjUrc0HIJ
+	5URQrD+6SqDSAX393w7Uapw5AIabK9RHrA5keRiakMRlHETRMbg9rm7OtEBicG15v0NWOtAqFpL
+	Ayi7h9nmhaXthnpZfmdBCrkr/AfLZioxA9EJF2XK9EVVzSFgmzGbsjNxWNG78zK+4aCbZ/DGLVJ
+	1HZ0mck72FZIzEfUVTxIE1Kut4swznMvMbhEcMq23uInyNARRS+CPhbCm2R7tF6MiakazICG45x
+	I3cRIGx/Q/T9RpJb6XzkypsvAfcbuOQk/pkvjtulam95cVSoggM9rUOqi6caHvF853u2kJGHABS
+	wpcIdGQAhskCjKx0b9SeUr2OcaESAyWGdOBrPtfWwDa392xkY/HrxK32PWorrUnT+VY03SnSxF5
+	pVgzLeDpKI=
+X-Received: by 2002:a05:600c:c4ac:b0:495:48d7:f178 with SMTP id 5b1f17b1804b1-49959e2f17cmr252118915e9.11.1786291820114;
+        Sun, 09 Aug 2026 09:10:20 -0700 (PDT)
+Received: from VivoBook-ASUS-X712UA-M712UA.lan ([2a00:f44:cc3:6030:e52b:e2ed:f4ea:2bfc])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4995bdc433bsm227957375e9.1.2026.08.09.09.10.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Aug 2026 09:10:19 -0700 (PDT)
+From: Stanislaw Pal <kuncy7@gmail.com>
+To: Mieczyslaw Nalewaj <namiltd@yahoo.com>,
+	Jie Luo <jie.luo@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Brian Masney <bmasney@redhat.com>,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: ipq-cmn-pll: keep the CMN block bus clocks enabled
+Date: Sun,  9 Aug 2026 18:10:12 +0200
+Message-ID: <20260809161012.378743-1-kuncy7@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <fdc4410c-18f3-4f34-8519-deb37862477c@yahoo.com>
+References: <fdc4410c-18f3-4f34-8519-deb37862477c@yahoo.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260809-k3-display-v2-16-327d7910bf71@gmail.com>
-References: <20260809-k3-display-v2-0-327d7910bf71@gmail.com>
-In-Reply-To: <20260809-k3-display-v2-0-327d7910bf71@gmail.com>
-To: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@kernel.org>, 
- Vinod Koul <vkoul@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
- Haylen Chu <heylenay@4d2.org>, Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
- Philipp Zabel <p.zabel@pengutronix.de>, Paul Walmsley <pjw@kernel.org>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Alexandre Ghiti <alex@ghiti.fr>, Yao Zi <me@ziyao.cc>, 
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
- Guodong Xu <docular.xu@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, linux-riscv@lists.infradead.org, 
- devicetree@vger.kernel.org, spacemit@lists.linux.dev, 
- linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
- linux-clk@vger.kernel.org, Cody Kang <codykang.hk@gmail.com>
-X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1786281298; l=1996;
- i=codykang.hk@gmail.com; s=codykang; h=from:subject:message-id;
- bh=bDzCEbg4Ro8zSSgw6S6oLDaHK3U8ySxkW2QdyX9XeEQ=;
- b=PxUeBROVtI/bhvyeufA2ol0EOCQM47kl/BlTY0uhkjcmZ2NM5vq743ZQSfSmVnGnGt5qx5RbG
- pESN31dKvBPApSkV8r8qTHMr0Wwiv4nTD3haNUT9lUFD6lkP5LG9nNj
-X-Developer-Key: i=codykang.hk@gmail.com; a=ed25519;
- pk=Osn6/cs9Su/mHHw4P19cmVc3v2FMQfiWahjsN0vEkuk=
-X-Endpoint-Received: by B4 Relay for codykang.hk@gmail.com/codykang with
- auth_id=895
-X-Original-From: Cody Kang <codykang.hk@gmail.com>
-Reply-To: codykang.hk@gmail.com
+Content-Transfer-Encoding: 8bit
 
-From: Cody Kang <codykang.hk@gmail.com>
+On 8/8/2026 Mieczyslaw Nalewaj wrote:
+> Given the hang is reportedly 100% reproducible pre-userspace, is there
+> a concrete next step to root-cause it, or is v3 the right call for now
+> with a follow-up tracked separately?
 
-CoM260-IFX carries a single DisplayPort output, so the second DPU and
-the DisplayPort controller it feeds are enabled.
+There is a concrete step, and I ran it today on a third board - this
+time with no code of mine involved at all.
 
-Signed-off-by: Cody Kang <codykang.hk@gmail.com>
+Hardware: GL.iNet GL-B3000 (IPQ5018), a supported in-tree OpenWrt
+board, running the current bone-stock OpenWrt snapshot (kernel
+6.18.41, which does not carry this patch). Out of the box it boot
+loops: the last line on earlycon is at ~0.39s (the final initcall
+before the driver probes start), then silence and a watchdog reset,
+100% reproducible.
 
----
-v2:
-- describe the DP receptacle (dp-connector) and link it to dp1 port@1
-  (Rob Herring, on patch 03)
----
- arch/riscv/boot/dts/spacemit/k3-com260-ifx.dts | 27 ++++++++++++++++++++++++++
- arch/riscv/boot/dts/spacemit/k3-pinctrl.dtsi   | 11 +++++++++++
- 2 files changed, 38 insertions(+)
+Adding exactly one thing to the kernel command line - no rebuild, no
+patch:
 
-diff --git a/arch/riscv/boot/dts/spacemit/k3-com260-ifx.dts b/arch/riscv/boot/dts/spacemit/k3-com260-ifx.dts
-index 238bb03d0e9e2..ec87c281e02c6 100644
---- a/arch/riscv/boot/dts/spacemit/k3-com260-ifx.dts
-+++ b/arch/riscv/boot/dts/spacemit/k3-com260-ifx.dts
-@@ -5,6 +5,7 @@
-  */
- 
- #include "k3-com260.dtsi"
-+#include "k3-display.dtsi"
- 
- / {
- 	model = "SpacemiT K3 CoM260 IFX";
-@@ -18,4 +19,30 @@ aliases {
- 	chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
-+
-+	connector {
-+		compatible = "dp-connector";
-+		label = "DP1";
-+		type = "full-size";
-+
-+		port {
-+			dp1_connector_in: endpoint {
-+				remote-endpoint = <&dp1_out>;
-+			};
-+		};
-+	};
-+};
-+
-+&dpu1_crtc0 {
-+	status = "okay";
-+};
-+
-+&dp1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&dp1_3_cfg>;
-+	status = "okay";
-+};
-+
-+&dp1_out {
-+	remote-endpoint = <&dp1_connector_in>;
- };
-diff --git a/arch/riscv/boot/dts/spacemit/k3-pinctrl.dtsi b/arch/riscv/boot/dts/spacemit/k3-pinctrl.dtsi
-index 2f36eba20f1ee..dbe8db4a8b764 100644
---- a/arch/riscv/boot/dts/spacemit/k3-pinctrl.dtsi
-+++ b/arch/riscv/boot/dts/spacemit/k3-pinctrl.dtsi
-@@ -22,6 +22,17 @@ dp1-pins {
- 		};
- 	};
- 
-+	/omit-if-no-ref/
-+	dp1_3_cfg: dp1-3-cfg {
-+		dp1-pins {
-+			pinmux = <K3_PADCONF(72, 4)>;	/* dp1 hpd */
-+
-+			bias-disable;
-+			drive-strength = <25>;
-+			power-source = <3300>;
-+		};
-+	};
-+
- 	gmac0_rgmii_0_cfg: gmac0-rgmii-0-cfg {
- 		gmac0-rgmii-0-pins {
- 			pinmux = <K3_PADCONF(0, 1)>,	/* gmac0_rxdv */
+    initcall_blacklist=ipq_cmn_pll_clk_driver_init
 
--- 
-2.43.0
+makes the same image boot: serial, SPI-NAND, SMEM partitions,
+remoteproc all come up.
 
+Combined with what we already know from the other two boards, this
+isolates the trigger fairly tightly:
 
+  - cmn-pll probe runs, last PM reference dropped (vanilla): dies
+  - cmn-pll probe never runs (blacklist, clocks stay as the
+    bootloader left them, i.e. enabled): boots
+  - cmn-pll probe runs, reference held: boots - verified on this same
+    board today with an image carrying v3 of this patch and nothing
+    else changed; it comes up fully (shell over SSH, NAND, remoteproc),
+    and clk_summary shows the CMN block bus clocks held enabled by the
+    provider device.
+
+The only variable separating the dying case from both surviving ones
+is the AHB/SYS gate after probe. What exactly performs the fatal
+access afterwards is the remaining open question - and this board is
+well suited to answer it, since it has full U-Boot control and can run
+experiment kernels from RAM. I intend to bisect that next (my current
+suspicion is that the CMN block AHB clock also feeds the register path
+of neighbouring blocks in the same region - MDIO at 0x88000/0x90000,
+uniphy at 0x98000, CMN at 0x9b000 - which would explain why the CCF's
+own runtime PM handling around the clk ops cannot help here). I am
+happy to run any experiment Jie would like to see on this hardware.
+
+So to answer the question directly: I believe v3 is the right call now
+- three IPQ5018 boards, including a stock-image one, cannot boot
+without it and the cost of keeping two bus clocks of a small block
+enabled is negligible - with the exact-access root-causing tracked as
+a follow-up. If the follow-up ends up pointing at a cleaner fix (e.g.
+describing the real consumers of these bus clocks in DT), I will
+gladly send it as a successor.
+
+Thanks,
+Stanislaw
