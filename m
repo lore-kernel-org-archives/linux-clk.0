@@ -1,32 +1,32 @@
 Received: from mail.zlab.su (mail.zlab.su [109.73.193.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A44EB3E0241;
-	Mon, 10 Aug 2026 12:16:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B42E23E1204;
+	Mon, 10 Aug 2026 12:16:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.193.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786364163; cv=none; b=beOUdfJCp27jBLLRs9TLdPNOlmCWb8tXn+tkMP/ZnZt1hYYfJmUWB9LzU396sZrJ3ZXlnuvKCXORcE4IHOa66b+ZZ0bqa2e9tWUupy3plD1xvNzQ99Uo2/iKQytotXtbM02ShhYlw+jzkW+NItU58COYULYsNSObAqUqGkMs3LU=
+	t=1786364166; cv=none; b=Szlshy4btmce5kzshawv8RnXGdxjCcPom/TLTPjyz2KyuRbPnQJX7MRd9ztW55ljw4rtw9Eoq+LdP8JAKMuNlfxROGusiXicDI1g3va2kpwX9tuA0QDbdNh5x17/YZQzY23s65DrBahDVkGZxJkKQuuBg+D9Ur63s9U/G8saqLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786364163; c=relaxed/simple;
-	bh=bYGrXRj8Po9cz3ohfc2Ovi9o70pqezxvdpfAPljBFgE=;
+	s=arc-20240116; t=1786364166; c=relaxed/simple;
+	bh=27Dy8S0A0xEFr+M0asXkwaHrlOHrD5IjSfrmKSDKhWM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PvKzoY22NO3gFG41bR6eOJ7jTCHaAp7+t+y+mjE5L873pzbdL8zA3A+6C1RMWCrRsW9YI100QSJ8U5oxT4HQU2Uyw596yGcSWC+kitUg8gr/5L2FHz0TBKn8LxTpTG9oaktYEJ1nclDwgJ5UrejYYd93mS8eR7jYXyS5NMwzoKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zlab.su; spf=pass smtp.mailfrom=zlab.su; dkim=pass (2048-bit key) header.d=zlab.su header.i=@zlab.su header.b=nxvNEE11; arc=none smtp.client-ip=109.73.193.145
+	 MIME-Version; b=eNQazia5VVy8g5wxEXKcLi73jTZDV2Iz3D3F+f7yc1285F6FHdJHhHL9MR7ia6y75uBvF5fxmCytigMeQQMnWA53Re+KxLFMNhhZ6R/SrU/VJwDnJHo5QSs9FpvWwMaiclplFncvSA1bEeWh96NFHQ1AvJ29+gJAf+2mIpfVcfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zlab.su; spf=pass smtp.mailfrom=zlab.su; dkim=pass (2048-bit key) header.d=zlab.su header.i=@zlab.su header.b=hmCIc8Vy; arc=none smtp.client-ip=109.73.193.145
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zlab.su
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zlab.su
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zlab.su header.i=@zlab.su header.b="nxvNEE11"
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 74A56BFAEB;
-	Mon, 10 Aug 2026 15:15:57 +0300 (MSK)
+	dkim=pass (2048-bit key) header.d=zlab.su header.i=@zlab.su header.b="hmCIc8Vy"
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A87B2C0516;
+	Mon, 10 Aug 2026 15:16:00 +0300 (MSK)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zlab.su; s=dkim;
-	t=1786364159; h=from:subject:date:message-id:to:cc:mime-version:
+	t=1786364162; h=from:subject:date:message-id:to:cc:mime-version:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=j1MZTVd373in/IMAt/QC2whUgnWuRGxEI5v6pl6Py28=;
-	b=nxvNEE11H9zqz15OnmCrMYQYJVUrhuPfJ5WkRponEciyDxEGANuP/9yOFyEFfIWBkA5H+Y
-	rhyiOhKu9RCPNXrgS+nlqgxfPzuRwmquKr0w7KjBpVK+osankuAWfKo5PuQUmOa+P4nK0m
-	w9apiw8iaV4D+HMO9JwYh2L5bwDoEOaO0NaKsSOiygJdqzdeI70fuaTWFuwLcyfkPZTf0w
-	8y3KLG8li42QO64gtlqg0m6k9LWGaxibGnllWZA4a2v2u5rin77joC4pgN7pUz64Np+jjO
-	US+kLFL4fZ8GKVC/842mXTb2z5Liz5pCxe4uDh5PADrikeImrigtcXAGCQs0eg==
+	bh=BzpzWg1RUAwQmycNuzrv0GryxIk9OCzfL2FG5/H+8bQ=;
+	b=hmCIc8VyewX65zNXEnQc9R+YNR9iwvyDg8Q3h9nb5IiNtN2DZeK4Ke5ikInUEOvoy1qMvW
+	zqUvDCLNwWkIwy0ZVIym/3eTbZHYgOvBnVIcRCjFZLExGV41ehjeAX/W9NgfbuRFLEppKT
+	Od7zqgHUKettwyfBVj59gPU9qf5ZHSvxDasS6uD0xDMpk2Qah3P/7WZPomichYc2h9UIzo
+	4LwaNN76yddbVUQhGadfxY4DZZDgYYEDO24jj04b/RGX4SJNny9+wyRKJHaxODQzT9ZZzK
+	8sBZqCDDmpPIBkDyo689VwEHp19c04Yatl+/iIeDnlBDIya2S1Zh8s4Sl8nl7A==
 From: Vladislav Leonov <vlad@zlab.su>
 To: linux-rockchip@lists.infradead.org
 Cc: linux-arm-kernel@lists.infradead.org,
@@ -36,14 +36,12 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Vladislav Leonov <vlad@zlab.su>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Heiko Stuebner <heiko@sntech.de>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	linux-usb@vger.kernel.org
-Subject: [PATCH 09/25] dt-bindings: usb: rockchip,dwc3: add RV1106 SoC support
-Date: Mon, 10 Aug 2026 15:11:00 +0300
-Message-ID: <20260810121121.210040-10-vlad@zlab.su>
+	Rob Herring <robh@kernel.org>
+Subject: [PATCH 10/25] ARM: dts: rockchip: Add USB2 PHY and USB3-OTG (DWC3) nodes for RV1106
+Date: Mon, 10 Aug 2026 15:11:01 +0300
+Message-ID: <20260810121121.210040-11-vlad@zlab.su>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260810121121.210040-1-vlad@zlab.su>
 References: <20260810121121.210040-1-vlad@zlab.su>
@@ -56,112 +54,88 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
 
-Document the DWC3 USB controller found on the Rockchip RV1106 SoC.
+Add the u2phy node with its otg-port child, using the disconnect
+interrupt in addition to otg-bvalid/otg-id/linestate.
 
-The RV1106 has a USB2-only (high-speed) OTG controller. Unlike the
-other supported SoCs it has no dedicated suspend clock: it only needs
-the 24 MHz reference clock, the AXI bus clock and the UTMI clock.
+Also add the usbdrd/usbdrd_dwc3 nodes for the DWC3 controller behind
+the PHY, reusing the "rockchip,rk3399-dwc3" glue compatible and the
+snps quirks already used by other Rockchip DWC3 platforms, since
+RV1106 does not need a dedicated glue driver.
 
-Since the top-level clock-names list enforces a fixed order with
-"suspend_clk" as the second entry, relax the second and third entries
-to enums so that the RV1106 clock set (ref_clk, bus_clk, utmi) can be
-expressed, and add a per-SoC clause constraining RV1106 to exactly
-these three clocks. The relaxation is required rather than cosmetic:
-every other compatible's own clause already agrees with the shared
-tuple position-by-position, but RV1106 genuinely reorders it (bus_clk
-before utmi, no suspend_clk), and allOf branches are ANDed, so without
-loosening the shared entries the two clauses would be unsatisfiable
-together.
+Both nodes default to status = "disabled" and are enabled per-board.
 
 Signed-off-by: Vladislav Leonov <vlad@zlab.su>
 ---
 
- .../bindings/usb/rockchip,dwc3.yaml           | 35 ++++++++++++++++---
- 1 file changed, 30 insertions(+), 5 deletions(-)
+ arch/arm/boot/dts/rockchip/rv1106.dtsi | 48 ++++++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/usb/rockchip,dwc3.yaml b/Documentation/devicetree/bindings/usb/rockchip,dwc3.yaml
-index 0554dbc4b854..86e00f251bdb 100644
---- a/Documentation/devicetree/bindings/usb/rockchip,dwc3.yaml
-+++ b/Documentation/devicetree/bindings/usb/rockchip,dwc3.yaml
-@@ -31,6 +31,7 @@ select:
-           - rockchip,rk3568-dwc3
-           - rockchip,rk3576-dwc3
-           - rockchip,rk3588-dwc3
-+          - rockchip,rv1106-dwc3
-   required:
-     - compatible
+diff --git a/arch/arm/boot/dts/rockchip/rv1106.dtsi b/arch/arm/boot/dts/rockchip/rv1106.dtsi
+index 71dd3dcc386c..43db3b1dd4b8 100644
+--- a/arch/arm/boot/dts/rockchip/rv1106.dtsi
++++ b/arch/arm/boot/dts/rockchip/rv1106.dtsi
+@@ -180,6 +180,30 @@ saradc: adc@ff3c0000 {
+ 			status = "disabled";
+ 		};
  
-@@ -44,6 +45,7 @@ properties:
-           - rockchip,rk3568-dwc3
-           - rockchip,rk3576-dwc3
-           - rockchip,rk3588-dwc3
-+          - rockchip,rv1106-dwc3
-       - const: snps,dwc3
++		u2phy: usb2-phy@ff3e0000 {
++			compatible = "rockchip,rv1106-usb2phy";
++			reg = <0xff3e0000 0x8000>;
++			clocks = <&cru CLK_REF_USBPHY>, <&cru PCLK_USBPHY>;
++			clock-names = "phyclk", "pclk";
++			resets = <&cru SRST_USBPHY_POR>, <&cru SRST_P_USBPHY>;
++			reset-names = "phy", "apb";
++			rockchip,usbgrf = <&grf>;
++			#clock-cells = <0>;
++			clock-output-names = "usb480m_phy";
++			status = "disabled";
++
++			u2phy_otg: otg-port {
++				interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>,
++						<GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>,
++						<GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>,
++						<GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>;
++				interrupt-names = "otg-bvalid", "otg-id",
++						"linestate", "disconnect";
++				#phy-cells = <0>;
++				status = "disabled";
++			};
++		};
++
+ 		uart0: serial@ff4a0000 {
+ 			compatible = "rockchip,rv1106-uart", "snps,dw-apb-uart";
+ 			reg = <0xff4a0000 0x100>;
+@@ -378,6 +402,30 @@ sfc: spi@ffac0000 {
+ 			#size-cells = <0>;
+ 			status = "disabled";
+ 		};
++
++		usbdrd_dwc3: usb@ffb00000 {
++			compatible = "rockchip,rv1106-dwc3", "snps,dwc3";
++			reg = <0xffb00000 0x100000>;
++			interrupts = <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cru CLK_REF_USBOTG>, <&cru ACLK_USBOTG>,
++				<&cru CLK_UTMI_USBOTG>;
++			clock-names = "ref_clk", "bus_clk", "utmi";
++			resets = <&cru SRST_A_USBOTG>;
++			dr_mode = "otg";
++			maximum-speed = "high-speed";
++			phys = <&u2phy_otg>;
++			phy-names = "usb2-phy";
++			phy_type = "utmi_wide";
++			snps,dis_enblslpm_quirk;
++			snps,dis-u2-freeclk-exists-quirk;
++			snps,dis_u2_susphy_quirk;
++			snps,dis-del-phy-power-chg-quirk;
++			snps,dis-tx-ipgap-linecheck-quirk;
++			snps,usb2-gadget-lpm-disable;
++			snps,usb2-lpm-disable;
++			snps,parkmode-disable-hs-quirk;
++			status = "disabled";
++		};
+ 	};
+ };
  
-   reg:
-@@ -58,10 +60,11 @@ properties:
-       - description:
-           Controller reference clock, must to be 24 MHz
-       - description:
--          Controller suspend clock, must to be 24 MHz or 32 KHz
-+          Controller suspend clock (must to be 24 MHz or 32 KHz) or
-+          Master/Core clock
-       - description:
-           Master/Core clock, must to be >= 62.5 MHz for SS
--          operation and >= 30MHz for HS operation
-+          operation and >= 30MHz for HS operation, or UTMI clock
-       - description:
-           Controller grf clock OR UTMI clock
-       - description:
-@@ -71,8 +74,12 @@ properties:
-     minItems: 3
-     items:
-       - const: ref_clk
--      - const: suspend_clk
--      - const: bus_clk
-+      - enum:
-+          - suspend_clk
-+          - bus_clk
-+      - enum:
-+          - bus_clk
-+          - utmi
-       - enum:
-           - grf_clk
-           - utmi
-@@ -145,7 +152,10 @@ allOf:
-         clocks:
-           maxItems: 3
-         clock-names:
--          maxItems: 3
-+          items:
-+            - const: ref_clk
-+            - const: suspend_clk
-+            - const: bus_clk
-   - if:
-       properties:
-         compatible:
-@@ -161,6 +171,21 @@ allOf:
-             - const: bus_clk
-             - const: utmi
-             - const: pipe
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: rockchip,rv1106-dwc3
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 3
-+          maxItems: 3
-+        clock-names:
-+          items:
-+            - const: ref_clk
-+            - const: bus_clk
-+            - const: utmi
- 
- examples:
-   - |
 -- 
 2.47.3
 
