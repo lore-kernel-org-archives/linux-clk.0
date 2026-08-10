@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 528373603EE;
-	Mon, 10 Aug 2026 16:05:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 742163290C7;
+	Mon, 10 Aug 2026 16:21:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786377908; cv=none; b=IqTEviGNxKr+Ru2t5CGnktJpWHkDssc2iJuWl4Y7R7rGQFw6OWnGumaL/dttaQ+y80poPZ7vQ3B6EzjtB+qF1O38gbYD2up/C0sxbY552PlpLSpy+pNSw+4s4UJFOXGZYM1tayExI6hyfDprKvOFPzNO1WkHWtCQ744jNef48k8=
+	t=1786378884; cv=none; b=fNzADuB/9zjNjo0V7fUaHpexahZ0okQ8Fn3AUobX9z1px2uA6e4V8JyTIUnevlQMkj+XOb6Kq8jBmqW8ZvbBS1noghIa7vqkmv9ZmSd+1dBeQky4uURtVfuL8ndgLjUkZlyBl9g/AClGEPAJGECit1NuD3pyjgYIZxhvzr28q98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786377908; c=relaxed/simple;
-	bh=PfEHcdpAPF8cm/Vt14RaR/mhzp660oLbTPEnojaWRSE=;
+	s=arc-20240116; t=1786378884; c=relaxed/simple;
+	bh=HqCN5+u7OY3HM9Jn0UtP1HeGLBKrw0/MgLAjG/gYU54=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EN9iQWEIFADWc15f6LX57SQgi2Ng8eLH0+nzbu27MUDjsKZFrlAcO4BbLOiUwMddoTjgwN+NdwnBcDpSinw1hNsabVJRwokMWw3C5/3cNjhRqJRHry9YZwsllzXyXNGS+zUJRqiPisfbXk1xROoFXLEpOjlV/K6LK3bojPxav3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KlT8GMCa; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=e6hWhz9hNiNjxcYV1l7tNO7VFnktYG8QB16TXrQJt+06uYXBQAefpoJ/wKtn7OsJgB9mmvZxiMzKKkXEoTmLSLbCxFjXumRa1uM5+TRWgexa9+SpFiBWGjen+rimPedRZ9I5XrTpv1O8ejipF5AGg7Rk56Oln+mTzqPAZGBEKWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=msiK0/eO; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KlT8GMCa"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 036CB1F000E9;
-	Mon, 10 Aug 2026 16:05:02 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="msiK0/eO"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 927BC1F000E9;
+	Mon, 10 Aug 2026 16:21:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786377907;
-	bh=aZliVbVvGETr0QEqkNRL1i42gj38xTn+l5ropz04LAk=;
+	s=k20260515; t=1786378882;
+	bh=79wU8Yu+NU/DAJsW8oNPy2dh73JmWMKiOiNsiNjnXuk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=KlT8GMCabzHf5JBAPWuurFXxmwDLGnZ+BBl2/GhGPVjWpchX36CtJI+6hYbABn7vk
-	 OoiCyW4qtNLBBtLaikWtB8jzEr8cv5Gz5o4j3HwOEXnVR59ZphEQ5lOzTwpxTi4ooc
-	 WpZtyxdMjSc4OUPaomynH5ULLd2DmZvOjUgpSobuHmbhRw0Larwa/6KzOC5X+aBGta
-	 AbD5lKLXOOl1nRk80R7WfbaCMQLhLmrCMdHbQu0RWsKNo7tXQaNjr9PoBOBSFyyewN
-	 aQm5wdNzZNZjYHhUssgRD7LSGBeCYs1KxkMTV/aLKzkny0+Cl4nL8WiFmbOhM6Q/lS
-	 36sM+uBQtL2aA==
-Date: Mon, 10 Aug 2026 17:05:01 +0100
+	b=msiK0/eO7wCa2Tk2DxziiJ0C3L2OOdlgv+bcr5VxXwDMkczKlG8H8SkRlHH6BSuM7
+	 2PcWoP/n3jPiYRWJEbWoY8Wjin6u6nUBIBlCo7Uk9/D3m7ewxJ22a1c2QOihIbyOF7
+	 yjEq0Epx58Q8OP5hNXhAlSOcIWL4/OjPERr+JL+XAlCBYNPTkdeFKQCLSoPOWx11fj
+	 HW8nHtS/lkJqEb79LQEFG5L7eLPhOh/SJNWWKz6eUXR0leOTvNSkpYyzSqi/Ar3USz
+	 j0UCmYjt5pygnqOFt4Q5mrUri/i+RYh5n3q0IWFP8D4osZ0yApeKBtCaycxDkwKmIK
+	 Uig9r1yrn5XuA==
+Date: Mon, 10 Aug 2026 17:21:16 +0100
 From: Conor Dooley <conor@kernel.org>
 To: Changhuang Liang <changhuang.liang@starfivetech.com>
 Cc: Michael Turquette <mturquette@baylibre.com>,
@@ -45,10 +45,10 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
 	Keguang Zhang <keguang.zhang@gmail.com>, linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v4 7/8] soc: starfive: Add socinfo driver for JHB100 SoC
-Message-ID: <20260810-caress-rack-45615c8d9747@spud>
+Subject: Re: [PATCH v4 8/8] riscv: dts: starfive: jhb100: Add syscon nodes
+Message-ID: <20260810-cattle-cloud-87676dc2b9d7@spud>
 References: <20260809015054.210577-1-changhuang.liang@starfivetech.com>
- <20260809015054.210577-8-changhuang.liang@starfivetech.com>
+ <20260809015054.210577-9-changhuang.liang@starfivetech.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -56,251 +56,326 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="IY6Lbzd1L/jArdrp"
+	protocol="application/pgp-signature"; boundary="y4x6DHvYA0rn/lkY"
 Content-Disposition: inline
-In-Reply-To: <20260809015054.210577-8-changhuang.liang@starfivetech.com>
+In-Reply-To: <20260809015054.210577-9-changhuang.liang@starfivetech.com>
 
---IY6Lbzd1L/jArdrp
+--y4x6DHvYA0rn/lkY
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Aug 08, 2026 at 06:50:53PM -0700, Changhuang Liang wrote:
-> Add socinfo driver for JHB100 SoC. Currently available for distinguishing
-> between the two reversions, A0 and A1.
+On Sat, Aug 08, 2026 at 06:50:54PM -0700, Changhuang Liang wrote:
+> Add syscon nodes for JHB100 RISC-V BMC SoC. They contain
+> pcieep0_ecsr_syscon | host0_syscon | husb0_syscon | husbd0_syscon |
+> pcieep1_ecsr_syscon | host1_syscon | husb1_syscon | husbd1_syscon |
+> gpu0_syscon | gpu1_syscon | husbcmn_syscon | b2h_syscon | h2b_syscon |
+> vout_syscon | pcierp_ecsr_syscon | pcierp_syscon | usb_syscon |
+> npu_syscon | per0_syscon | per1_syscon | per2_syscon | per3_syscon |
+> sys0_syscon | sys1_syscon | sys2_syscon | strap_syscon |
+> sfc0_filter_syscon | sfc1_filter_syscon | sfc2_filter_syscon.
+>=20
+> Also update the references of pll nodes.
 >=20
 > Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
-> ---
->  MAINTAINERS                                   |  6 ++
->  drivers/soc/Kconfig                           |  1 +
->  drivers/soc/Makefile                          |  1 +
->  drivers/soc/starfive/Kconfig                  |  6 ++
->  drivers/soc/starfive/Makefile                 |  2 +
->  drivers/soc/starfive/socinfo/Kconfig          | 11 +++
->  drivers/soc/starfive/socinfo/Makefile         |  2 +
->  drivers/soc/starfive/socinfo/jhb100-socinfo.c | 90 +++++++++++++++++++
->  8 files changed, 119 insertions(+)
->  create mode 100644 drivers/soc/starfive/Kconfig
->  create mode 100644 drivers/soc/starfive/Makefile
->  create mode 100644 drivers/soc/starfive/socinfo/Kconfig
->  create mode 100644 drivers/soc/starfive/socinfo/Makefile
->  create mode 100644 drivers/soc/starfive/socinfo/jhb100-socinfo.c
->=20
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index cecb4f279160..90919c672d4d 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -26040,6 +26040,7 @@ M:	Conor Dooley <conor@kernel.org>
->  S:	Maintained
->  T:	git https://git.kernel.org/pub/scm/linux/kernel/git/conor/linux.git/
->  F:	Documentation/devicetree/bindings/soc/starfive/
-> +F:	drivers/soc/starfive/
-> =20
->  STARFIVE STARLINK PMU DRIVER
->  M:	Ji Sheng Teoh <jisheng.teoh@starfivetech.com>
-> @@ -26094,6 +26095,11 @@ S:	Maintained
->  F:	drivers/reset/starfive/reset-starfive-jhb1*
->  F:	include/dt-bindings/reset/starfive,jhb1*.h
-> =20
-> +STARFIVE JHB100 SOCINFO DRIVER
-> +M:	Changhuang Liang <changhuang.liang@starfivetech.com>
-> +S:	Maintained
-> +F:	drivers/soc/starfive/socinfo/jhb100-socinfo.c
-> +
->  STARFIVE JHB100 SYSCON
->  M:	Changhuang Liang <changhuang.liang@starfivetech.com>
->  S:	Maintained
-> diff --git a/drivers/soc/Kconfig b/drivers/soc/Kconfig
-> index a2d65adffb80..b3b01fc38139 100644
-> --- a/drivers/soc/Kconfig
-> +++ b/drivers/soc/Kconfig
-> @@ -24,6 +24,7 @@ source "drivers/soc/renesas/Kconfig"
->  source "drivers/soc/rockchip/Kconfig"
->  source "drivers/soc/samsung/Kconfig"
->  source "drivers/soc/sophgo/Kconfig"
-> +source "drivers/soc/starfive/Kconfig"
->  source "drivers/soc/sunxi/Kconfig"
->  source "drivers/soc/tegra/Kconfig"
->  source "drivers/soc/ti/Kconfig"
-> diff --git a/drivers/soc/Makefile b/drivers/soc/Makefile
-> index c9e689080ceb..009f85ff891a 100644
-> --- a/drivers/soc/Makefile
-> +++ b/drivers/soc/Makefile
-> @@ -30,6 +30,7 @@ obj-y				+=3D renesas/
->  obj-y				+=3D rockchip/
->  obj-$(CONFIG_SOC_SAMSUNG)	+=3D samsung/
->  obj-y				+=3D sophgo/
-> +obj-y				+=3D starfive/
->  obj-y				+=3D sunxi/
->  obj-$(CONFIG_ARCH_TEGRA)	+=3D tegra/
->  obj-y				+=3D ti/
-> diff --git a/drivers/soc/starfive/Kconfig b/drivers/soc/starfive/Kconfig
-> new file mode 100644
-> index 000000000000..04b020083d3e
-> --- /dev/null
-> +++ b/drivers/soc/starfive/Kconfig
-> @@ -0,0 +1,6 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +menu "StarFive SoC (System On Chip) specific Drivers"
-> +
-> +source "drivers/soc/starfive/socinfo/Kconfig"
-> +
-> +endmenu
-> diff --git a/drivers/soc/starfive/Makefile b/drivers/soc/starfive/Makefile
-> new file mode 100644
-> index 000000000000..ca1e609b8104
-> --- /dev/null
-> +++ b/drivers/soc/starfive/Makefile
-> @@ -0,0 +1,2 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +obj-y +=3D socinfo/
-> diff --git a/drivers/soc/starfive/socinfo/Kconfig b/drivers/soc/starfive/=
-socinfo/Kconfig
-> new file mode 100644
-> index 000000000000..92bbab62895b
-> --- /dev/null
-> +++ b/drivers/soc/starfive/socinfo/Kconfig
-> @@ -0,0 +1,11 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +
-> +config STARFIVE_JHB100_SOCINFO
-> +	bool "StarFive JHB100 SoC Information"
-> +	depends on ARCH_STARFIVE || COMPILE_TEST
-> +	select SOC_BUS
-> +	default y
-> +	help
-> +	  Include support for the SoC bus socinfo for the StarFive JHB100 SoC
-> +	  platforms to provide information about the SoC family and variant
-> +	  to user space.
-> diff --git a/drivers/soc/starfive/socinfo/Makefile b/drivers/soc/starfive=
-/socinfo/Makefile
-> new file mode 100644
-> index 000000000000..26c2bdf1de3b
-> --- /dev/null
-> +++ b/drivers/soc/starfive/socinfo/Makefile
-> @@ -0,0 +1,2 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +obj-$(CONFIG_STARFIVE_JHB100_SOCINFO)	+=3D jhb100-socinfo.o
-> diff --git a/drivers/soc/starfive/socinfo/jhb100-socinfo.c b/drivers/soc/=
-starfive/socinfo/jhb100-socinfo.c
-> new file mode 100644
-> index 000000000000..638f81ef174c
-> --- /dev/null
-> +++ b/drivers/soc/starfive/socinfo/jhb100-socinfo.c
-> @@ -0,0 +1,90 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (C) 2025 StarFive Technology Co., Ltd.
-> + *
-> + * Author: Changhuang Liang <changhuang.liang@starfivetech.com>
-> + */
-> +
-> +#define pr_fmt(fmt) "jhb100-socinfo: " fmt
-> +
-> +#include <linux/bitfield.h>
-> +#include <linux/init.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/of.h>
-> +#include <linux/regmap.h>
-> +#include <linux/slab.h>
-> +#include <linux/string.h>
-> +#include <linux/sys_soc.h>
-> +
-> +#define JHB100_REV_ID			0x38
-> +#define JHB100_REV_ID_CHAR		GENMASK(3, 2)
-> +#define JHB100_REV_ID_NUM		GENMASK(1, 0)
-> +
-> +static int __init starfive_socinfo_init(void)
-> +{
-> +	struct soc_device_attribute *attrs;
-> +	struct soc_device *soc_dev;
-> +	const char *machine =3D NULL;
-> +	struct device_node *np;
-> +	struct regmap *regmap;
-> +	char rev_char;
-> +	u32 rev_id;
-> +	int ret;
-> +
-> +	np =3D of_find_compatible_node(NULL, NULL, "starfive,jhb100-sys0-syscon=
-");
 
-Remind me again why this is not just probed as an mfd cell from the syscon
-driver?
+This looks okay to me. I'll expect to see it later squashed with the
+initial support, as we discussed previously.
 
-(Hint: please put this info in the commit message).
-
-Cheers
+Cheers,
 Conor.
 
-> +	if (!of_device_is_available(np)) {
-> +		of_node_put(np);
-> +		return -ENODEV;
-> +	}
-> +
-> +	regmap =3D syscon_node_to_regmap(np);
-> +	if (IS_ERR(regmap)) {
-> +		of_node_put(np);
-> +		return PTR_ERR(regmap);
-> +	}
-> +
-> +	ret =3D regmap_read(regmap, JHB100_REV_ID, &rev_id);
-> +	if (ret) {
-> +		of_node_put(np);
-> +		return ret;
-> +	}
-> +
-> +	of_node_put(np);
-> +
-> +	rev_char =3D (char)FIELD_GET(JHB100_REV_ID_CHAR, rev_id) + 'A';
-> +	rev_id =3D (u32)FIELD_GET(JHB100_REV_ID_NUM, rev_id);
-> +
-> +	attrs =3D kzalloc_obj(*attrs);
-> +	if (!attrs)
-> +		return -ENOMEM;
-> +
-> +	np =3D of_find_node_by_path("/");
-> +	of_property_read_string(np, "model", &machine);
-> +	if (machine)
-> +		attrs->machine =3D kstrdup(machine, GFP_KERNEL);
-> +	of_node_put(np);
-> +
-> +	attrs->revision =3D kasprintf(GFP_KERNEL, "%c%u", rev_char, rev_id);
-> +	if (!attrs->revision) {
-> +		kfree(attrs->machine);
-> +		kfree(attrs);
-> +		return -ENOMEM;
-> +	}
-> +
-> +	attrs->family =3D "JH";
-> +	attrs->soc_id =3D "JHB100";
-> +
-> +	soc_dev =3D soc_device_register(attrs);
-> +	if (IS_ERR(soc_dev)) {
-> +		kfree(attrs->revision);
-> +		kfree(attrs->machine);
-> +		kfree(attrs);
-> +		return PTR_ERR(soc_dev);
-> +	}
-> +
-> +	pr_info("StarFive %s SoC rev(%s)\n", attrs->soc_id, attrs->revision);
-> +
-> +	return 0;
-> +}
-> +
-> +subsys_initcall(starfive_socinfo_init);
-> --=20
-> 2.25.1
+> ---
+>  arch/riscv/boot/dts/starfive/jhb100.dtsi | 193 +++++++++++++++++++----
+>  1 file changed, 159 insertions(+), 34 deletions(-)
 >=20
+> diff --git a/arch/riscv/boot/dts/starfive/jhb100.dtsi b/arch/riscv/boot/d=
+ts/starfive/jhb100.dtsi
+> index 6b2863fd3fd3..e76cf0f3c380 100644
+> --- a/arch/riscv/boot/dts/starfive/jhb100.dtsi
+> +++ b/arch/riscv/boot/dts/starfive/jhb100.dtsi
+> @@ -282,36 +282,6 @@ pll1: clock-pll1 {
+>  		clock-frequency =3D <1000000000>;
+>  	};
+>=20
+> -	pll2: clock-pll2 {
+> -		compatible =3D "fixed-clock";
+> -		#clock-cells =3D <0>;
+> -		clock-frequency =3D <903168000>;
+> -	};
+> -
+> -	pll4: clock-pll4 {
+> -		compatible =3D "fixed-clock";
+> -		#clock-cells =3D <0>;
+> -		clock-frequency =3D <100700000>;
+> -	};
+> -
+> -	pll5: clock-pll5 {
+> -		compatible =3D "fixed-clock";
+> -		#clock-cells =3D <0>;
+> -		clock-frequency =3D <100700000>;
+> -	};
+> -
+> -	pll6: clock-pll6 {
+> -		compatible =3D "fixed-clock";
+> -		#clock-cells =3D <0>;
+> -		clock-frequency =3D <2400000000>;
+> -	};
+> -
+> -	pll7: clock-pll7 {
+> -		compatible =3D "fixed-clock";
+> -		#clock-cells =3D <0>;
+> -		clock-frequency =3D <1950000000>;
+> -	};
+> -
+>  	per2_gmac2_rgmii_rx: clock-per2-gmac2-rgmii-rx {
+>  		compatible =3D "fixed-clock";
+>  		#clock-cells =3D <0>;
+> @@ -393,6 +363,97 @@ bus_nioc: bus {
+>  				     <0x4 0x00000000 0x4 0x00000000 0x2 0x0>;
+>  			ranges;
+>=20
+> +			pcieep0_ecsr_syscon: syscon@10511000 {
+> +				compatible =3D "starfive,jhb100-pcieep-ecsr-syscon", "syscon";
+> +				reg =3D <0x0 0x10511000 0x0 0x1000>;
+> +			};
+> +
+> +			host0_syscon: syscon@10519000 {
+> +				compatible =3D "starfive,jhb100-host-syscon", "syscon";
+> +				reg =3D <0x0 0x10519000 0x0 0x1000>;
+> +			};
+> +
+> +			husb0_syscon: syscon@10695000 {
+> +				compatible =3D "starfive,jhb100-husb-syscon", "syscon";
+> +				reg =3D <0x0 0x10695000 0x0 0x800>;
+> +			};
+> +
+> +			husbd0_syscon: syscon@10695800 {
+> +				compatible =3D "starfive,jhb100-husbd-syscon", "syscon";
+> +				reg =3D <0x0 0x10695800 0x0 0x800>;
+> +			};
+> +
+> +			gpu0_syscon: syscon@10745000 {
+> +				compatible =3D "starfive,jhb100-gpu-syscon", "syscon";
+> +				reg =3D <0x0 0x10745000 0x0 0x1000>;
+> +			};
+> +
+> +			pcieep1_ecsr_syscon: syscon@10d11000 {
+> +				compatible =3D "starfive,jhb100-pcieep-ecsr-syscon", "syscon";
+> +				reg =3D <0x0 0x10d11000 0x0 0x1000>;
+> +			};
+> +
+> +			host1_syscon: syscon@10d19000 {
+> +				compatible =3D "starfive,jhb100-host-syscon", "syscon";
+> +				reg =3D <0x0 0x10d19000 0x0 0x1000>;
+> +			};
+> +
+> +			husb1_syscon: syscon@10e95000 {
+> +				compatible =3D "starfive,jhb100-husb-syscon", "syscon";
+> +				reg =3D <0x0 0x10e95000 0x0 0x800>;
+> +			};
+> +
+> +			husbd1_syscon: syscon@10e95800 {
+> +				compatible =3D "starfive,jhb100-husbd-syscon", "syscon";
+> +				reg =3D <0x0 0x10e95800 0x0 0x800>;
+> +			};
+> +
+> +			gpu1_syscon: syscon@10f45000 {
+> +				compatible =3D "starfive,jhb100-gpu-syscon", "syscon";
+> +				reg =3D <0x0 0x10f45000 0x0 0x1000>;
+> +			};
+> +
+> +			husbcmn_syscon: syscon@11045000 {
+> +				compatible =3D "starfive,jhb100-husbcmn-syscon", "syscon";
+> +				reg =3D <0x0 0x11045000 0x0 0x1000>;
+> +			};
+> +
+> +			b2h_syscon: syscon@11135000 {
+> +				compatible =3D "starfive,jhb100-b2h-syscon", "syscon";
+> +				reg =3D <0x0 0x11135000 0x0 0x400>;
+> +			};
+> +
+> +			h2b_syscon: syscon@11135400 {
+> +				compatible =3D "starfive,jhb100-h2b-syscon", "syscon";
+> +				reg =3D <0x0 0x11135400 0x0 0x200>;
+> +			};
+> +
+> +			vout_syscon: syscon@11135800 {
+> +				compatible =3D "starfive,jhb100-vout-syscon", "syscon";
+> +				reg =3D <0x0 0x11135800 0x0 0x400>;
+> +			};
+> +
+> +			pcierp_ecsr_syscon: syscon@11711000 {
+> +				compatible =3D "starfive,jhb100-pcierp-ecsr-syscon", "syscon";
+> +				reg =3D <0x0 0x11711000 0x0 0x1000>;
+> +			};
+> +
+> +			pcierp_syscon: syscon@11719000 {
+> +				compatible =3D "starfive,jhb100-pcierp-syscon", "syscon";
+> +				reg =3D <0x0 0x11719000 0x0 0x1000>;
+> +				#reset-cells =3D <1>;
+> +			};
+> +
+> +			usb_syscon: syscon@11820000 {
+> +				compatible =3D "starfive,jhb100-usb-syscon", "syscon";
+> +				reg =3D <0x0 0x11820000 0x0 0x10000>;
+> +			};
+> +
+> +			npu_syscon: syscon@118e5000 {
+> +				compatible =3D "starfive,jhb100-npu-syscon", "syscon";
+> +				reg =3D <0x0 0x118e5000 0x0 0x100>;
+> +			};
+> +
+>  			uart6: serial@11982000 {
+>  				compatible =3D "starfive,jhb100-uart", "snps,dw-apb-uart";
+>  				reg =3D <0x0 0x11982000 0x0 0x400>;
+> @@ -410,7 +471,8 @@ uart6: serial@11982000 {
+>  			per0crg: clock-controller@11a08000 {
+>  				compatible =3D "starfive,jhb100-per0crg";
+>  				reg =3D <0x0 0x11a08000 0x0 0x1000>;
+> -				clocks =3D <&osc>, <&pll6>,
+> +				clocks =3D <&osc>,
+> +					 <&per0_syscon JHB100_PER0PLL_PLL6_OUT>,
+>  					 <&sys0crg JHB100_SYS0CLK_BMCPER0_CFG_400>,
+>  					 <&sys0crg JHB100_SYS0CLK_BMCPER0_CFG_800>,
+>  					 <&sys0crg JHB100_SYS0CLK_BMCPER0_NCNOC_INIT>,
+> @@ -422,10 +484,17 @@ per0crg: clock-controller@11a08000 {
+>  				#reset-cells =3D <1>;
+>  			};
+>=20
+> +			per0_syscon: syscon@11a09000 {
+> +				compatible =3D "starfive,jhb100-per0-syscon", "syscon";
+> +				reg =3D <0x0 0x11a09000 0x0 0x1000>;
+> +				clocks =3D <&osc>;
+> +				#clock-cells =3D <1>;
+> +			};
+> +
+>  			per1crg: clock-controller@11b40000 {
+>  				compatible =3D "starfive,jhb100-per1crg";
+>  				reg =3D <0x0 0x11b40000 0x0 0x1000>;
+> -				clocks =3D <&pll7>,
+> +				clocks =3D <&per1_syscon JHB100_PER1PLL_PLL7_OUT>,
+>  					 <&sys0crg JHB100_SYS0CLK_BMCPER1_NCNOC_INIT>,
+>  					 <&sys0crg JHB100_SYS0CLK_BMCPER1_CFG_800>,
+>  					 <&sys2crg JHB100_SYS2CLK_BMCPER1_NCNOC_TARG>,
+> @@ -437,6 +506,13 @@ per1crg: clock-controller@11b40000 {
+>  				#reset-cells =3D <1>;
+>  			};
+>=20
+> +			per1_syscon: syscon@11b41000 {
+> +				compatible =3D "starfive,jhb100-per1-syscon", "syscon";
+> +				reg =3D <0x0 0x11b41000 0x0 0x1000>;
+> +				clocks =3D <&osc>;
+> +				#clock-cells =3D <1>;
+> +			};
+> +
+>  			per2crg: clock-controller@11bc0000 {
+>  				compatible =3D "starfive,jhb100-per2crg";
+>  				reg =3D <0x0 0x11bc0000 0x0 0x1000>;
+> @@ -458,6 +534,11 @@ per2crg: clock-controller@11bc0000 {
+>  				#reset-cells =3D <1>;
+>  			};
+>=20
+> +			per2_syscon: syscon@11bc1000 {
+> +				compatible =3D "starfive,jhb100-per2-syscon", "syscon";
+> +				reg =3D <0x0 0x11bc1000 0x0 0x1000>;
+> +			};
+> +
+>  			per3crg: clock-controller@11c40000 {
+>  				compatible =3D "starfive,jhb100-per3crg";
+>  				reg =3D <0x0 0x11c40000 0x0 0x1000>;
+> @@ -477,11 +558,16 @@ per3crg: clock-controller@11c40000 {
+>  				#reset-cells =3D <1>;
+>  			};
+>=20
+> +			per3_syscon: syscon@11c41000 {
+> +				compatible =3D "starfive,jhb100-per3-syscon", "syscon";
+> +				reg =3D <0x0 0x11c41000 0x0 0x1000>;
+> +			};
+> +
+>  			sys0crg: clock-controller@13000000 {
+>  				compatible =3D "starfive,jhb100-sys0crg";
+>  				reg =3D <0x0 0x13000000 0x0 0x4000>;
+>  				clocks =3D <&osc>, <&pll0>, <&pll1>,
+> -					 <&pll2>;
+> +					 <&sys0_syscon JHB100_SYS0PLL_PLL2_OUT>;
+>  				clock-names =3D "osc", "pll0", "pll1", "pll2";
+>  				#clock-cells =3D <1>;
+>  				#reset-cells =3D <1>;
+> @@ -491,7 +577,9 @@ sys1crg: clock-controller@13004000 {
+>  				compatible =3D "starfive,jhb100-sys1crg";
+>  				reg =3D <0x0 0x13004000 0x0 0x4000>;
+>  				clocks =3D <&osc>, <&pll0>, <&pll1>,
+> -					 <&pll2>, <&pll4>, <&pll5>,
+> +					 <&sys0_syscon JHB100_SYS0PLL_PLL2_OUT>,
+> +					 <&sys0_syscon JHB100_SYS0PLL_PLL4_OUT>,
+> +					 <&sys0_syscon JHB100_SYS0PLL_PLL5_OUT>,
+>  					 <&sys0crg JHB100_SYS0CLK_NPU_NCNOC_INIT>;
+>  				clock-names =3D "osc", "pll0", "pll1", "pll2",
+>  					      "pll4", "pll5", "npu_ncnoc_init";
+> @@ -511,6 +599,28 @@ sys2crg: clock-controller@13008000 {
+>  				#reset-cells =3D <1>;
+>  			};
+>=20
+> +			sys0_syscon: syscon@13010000 {
+> +				compatible =3D "starfive,jhb100-sys0-syscon", "syscon";
+> +				reg =3D <0x0 0x13010000 0x0 0x2000>;
+> +				clocks =3D <&osc>;
+> +				#clock-cells =3D <1>;
+> +			};
+> +
+> +			sys1_syscon: syscon@13014000 {
+> +				compatible =3D "starfive,jhb100-sys1-syscon", "syscon";
+> +				reg =3D <0x0 0x13014000 0x0 0x4000>;
+> +			};
+> +
+> +			sys2_syscon: syscon@13018000 {
+> +				compatible =3D "starfive,jhb100-sys2-syscon", "syscon";
+> +				reg =3D <0x0 0x13018000 0x0 0x2000>;
+> +			};
+> +
+> +			strap_syscon: syscon@1301a000 {
+> +				compatible =3D "starfive,jhb100-strap-syscon", "syscon";
+> +				reg =3D <0x0 0x1301a000 0x0 0x2000>;
+> +			};
+> +
+>  			intc: interrupt-controller@13220000 {
+>  				compatible =3D "starfive,jhb100-intc";
+>  				reg =3D <0x0 0x13220000 0x0 0x80>;
+> @@ -518,6 +628,21 @@ intc: interrupt-controller@13220000 {
+>  				interrupt-controller;
+>  				#interrupt-cells =3D <1>;
+>  			};
+> +
+> +			sfc0_filter_syscon: syscon@14090000 {
+> +				compatible =3D "starfive,jhb100-sfc-filter-syscon", "syscon";
+> +				reg =3D <0x0 0x14090000 0x0 0x1000>;
+> +			};
+> +
+> +			sfc1_filter_syscon: syscon@14091000 {
+> +				compatible =3D "starfive,jhb100-sfc-filter-syscon", "syscon";
+> +				reg =3D <0x0 0x14091000 0x0 0x1000>;
+> +			};
+> +
+> +			sfc2_filter_syscon: syscon@14092000 {
+> +				compatible =3D "starfive,jhb100-sfc-filter-syscon", "syscon";
+> +				reg =3D <0x0 0x14092000 0x0 0x1000>;
+> +			};
+>  		};
+>  	};
+>  };
+> --
+> 2.25.1
 
---IY6Lbzd1L/jArdrp
+--y4x6DHvYA0rn/lkY
 Content-Type: application/pgp-signature; name=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCann2rAAKCRB4tDGHoIJi
-0ohHAQDdhAr1kJrXXf8gDwzmNcWcdZswvT6sxS4RoDwPoASqtQD9Gdx69wWho21S
-1KaFgDL9u9uMGKVOJPZ+baxhqEpe/ws=
-=maJS
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCann6fAAKCRB4tDGHoIJi
+0hBCAQDVK9rLq93tfFflke4FNIJBMWbcVaXBWPLgEGL6YahE9gEA+J+BgtSwc8rP
++EtwVJ/ULG+ugnCgqveyph9v8NXdrw0=
+=vfMb
 -----END PGP SIGNATURE-----
 
---IY6Lbzd1L/jArdrp--
+--y4x6DHvYA0rn/lkY--
