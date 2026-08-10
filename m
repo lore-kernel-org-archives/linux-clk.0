@@ -1,99 +1,145 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtpbgeu1.qq.com (smtpbgeu1.qq.com [52.59.177.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 340A83A48ED
-	for <linux-clk@vger.kernel.org>; Mon, 10 Aug 2026 08:37:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A69D53A6F16
+	for <linux-clk@vger.kernel.org>; Mon, 10 Aug 2026 08:43:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.59.177.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786351041; cv=none; b=of2ONF3dRjUpr5upogRW/nTz9xszwc7+yzOsNBC5k0uCUwWMkg7YjbEL0hAnBd0V6Pqv06PdIZBVG2LHWJMkYLX1mZwXtCrBTs4KHB1jMa4pGjPh2PnaoSW4+ic0OThN40V3FdPJ+xsUolylrud+xq1njicSdd5Gmiddsy2wRZk=
+	t=1786351434; cv=none; b=acVm+xyqLP+CXdJ5o2T6rtXRGJ63GW1mXyHauUAa6yilDgPHEoxOOxZuFSH+iCwgNdlB2uPYq8kTvNQ2l6g4SVLG2jPFrDH58B87TueQPkitWZxbTLT/IR8RrvxBZnWql9/rXEhNtaHwBHcPcvgoZeT7lk9yz8zUOwK1nTGMqZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786351041; c=relaxed/simple;
-	bh=n3M7vDB+4pdqtoiwS0EDbk/4OUWMutfgaBq4ohs9IUo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V6K0HNxOzC4iJDZjWJa/34xfyc5dm8T6VRW3Q5VApLci44U3uyOaNnJCbOrlUhmZyoXLmF0Cn13Wbu9DAV7YYploVbPKeH1Lik3zS1rB7HNf8jCOjGxzCDc2RdxKh81qexdWZPJp4QAPgste4VnOfE9r0uxaPjFu035KkqIaCs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZG3nsYu4; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1786351434; c=relaxed/simple;
+	bh=zfC7lhtC0ZhBcGSHDYbkMlXmarTuC594GkrsxACApUQ=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=lLqukPxxtXlk9fwlDHj0Ngoi9jLEFDoErInmkw0vtRrNpSRxttaKAco4mqj92V4s5vvRs3wLvip7MOk610N1dpqlA/LdioVb2DNF1oH/8cUAMx+93CCSXigKyW/fQIhguZTxyehV2+FcujmAFp7yEzelfCIYfRP0IFe7tJX3Koc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=YzVpz9fB; arc=none smtp.client-ip=52.59.177.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZG3nsYu4"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4954f5e8020so7898255e9.2
-        for <linux-clk@vger.kernel.org>; Mon, 10 Aug 2026 01:37:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1786351038; x=1786955838; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=FkxIlSiaSZQV6q19WHtk3rSh+il/+YXh4ZFHxv/IYH8=;
-        b=ZG3nsYu437UhNB6PZXOEK0tGMK7fETFA7QBJbFsRtkT7ydG+8Ae+jtGTKYUxi59gRJ
-         drqPKKQ/M9vwB2KQnMP67W3PhxHnkt63B7Oazn537nyjwefR8ok/lvT8BoYzKoOhfND+
-         lP9DxPo1N3m7i8NOg33Lf6XEVi4lwcTgT2AnjTYNw1oj9O+gDn23AUjJDhjg+XmyO6yQ
-         jH7sTN0eAHeuwYymOHYxpRZ0lcG01OpOVZyzMbU7MwPTMBTmsjjW3sQZ0OfPzD0Gp3t0
-         SSYhDmw+KS/MOB8a+CLjHKKXce5sntI+rSy6pA1J48U71oPCXmT/z6WJpg7mxQW2QJSu
-         o7ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786351038; x=1786955838;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=FkxIlSiaSZQV6q19WHtk3rSh+il/+YXh4ZFHxv/IYH8=;
-        b=s45/00GUOVRT6gBh06/zRHL5PVHt5NHsDwYaefxZUAVelN+RoAEorgeEOvN2FT33Ep
-         hyx2nFP6yzUm6S+kDMi8Z95Tj7MpK1M8mWyuDQ96lTpDMqQ1u4V4UYgf+pNEwZE3qHEo
-         tTrI/ZeH+qX7Pq2UlLGCJt3UxafndJK1cdtDg5q98qsuc71NmaFMbJ4idu3/zdgSbOFn
-         lPYkx8a9qLAyVXy1ow7bGjuOShS6UyfArJQsjv8O5WTBxUderPWaNSSgG5H0T7rDsyof
-         JOBnCIwEz6ZkFbnWRHgBqY+Kbx/12heIhtLzJwOyhaFjk55WGTuStviXJovpKA4vz7c5
-         wLpA==
-X-Forwarded-Encrypted: i=1; AHgh+Rpng9CgorDSUxU3QDZdp3cJoWWeAwdDFyVE8lMcNlUwI2r4Lkfr+SrLYmy43cvfJho+9sWlOvs6/9M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhQoHweVB9rOn+wRTw+oSuh0m23Lnmp/NJYSt1Fg8SkqUxjNXI
-	dM8lm2o547xwLJA8RzJewI6YAufOO/AMuJB9+Ue+JDkTKHkMzO2GCrOB5B1yq+QgHgE=
-X-Gm-Gg: AR+sD10dT1uNc3Kqlrg+dZkge8O8uzY0+bWlnmwHapyAKQ+7CvXgx3YyV7LTk1QpiSU
-	S3DDsb090zljgO21Hy4ZWcs7RE3tqYjxjwbvuKpH/OyrVaWzfpIsH6gwNSv1PzWIf9p9IYUx9Hy
-	ws840d+Zt9GbgQwtO45ymn3ldwHaLqDG42sLu7sG7hmCseZJNrZJLipdAmd+48t3NK4Si0y6Cqe
-	noGQiyfR1B7ebprwSFmOQ7DM/tOANDWX6EywjAdEMJzDZz4CoxW5T0W/rvR5q9wsVoN7iEaGwnH
-	qCqMsKRHd9G83g+Qo9w6Fl7ctng46o15Yu9Hrp15m8GJDcoIjtCrKTofF/iQqQ9svjuGklXAktZ
-	VQPlfbO0BQZmFxmE7iX4rgLEZhwFTfE+dQO7JQ6PznQWwci2eAoDYYGclKWTAcSKyTmxK2bF51k
-	rc1KBehz54WEbhA4j+ZHjD4cd2twZJzWQkQQsojziCXGvSlk5ujnZxt/FZ2K/VA2CiIsZ2Mug=
-X-Received: by 2002:a05:600c:35d1:b0:499:5e9e:1f50 with SMTP id 5b1f17b1804b1-4995e9e207dmr298923685e9.4.1786351038298;
-        Mon, 10 Aug 2026 01:37:18 -0700 (PDT)
-Received: from linaro.org ([2a02:2454:ff24:7210:71da:59f:1cf4:ec2e])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4995e9f9424sm241232975e9.8.2026.08.10.01.37.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Aug 2026 01:37:17 -0700 (PDT)
-Date: Mon, 10 Aug 2026 10:37:13 +0200
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
-	Ulf Hansson <ulfh@kernel.org>, linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: mmcc-msm8974: add GENPD_FLAG_NO_STAY_ON
-Message-ID: <anmNuXoOK7Xn73TZ@linaro.org>
-References: <20260809-msm8974-mmcc-fix-v1-1-50f2dcf18d2e@oss.qualcomm.com>
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="YzVpz9fB"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
+	s=mxsw2412; t=1786351336;
+	bh=9b6ShfMeZe2xAUD9+B2Stmwf48m8aw2mvouvW/AlHHI=;
+	h=Mime-Version:Date:Message-Id:Subject:From:To;
+	b=YzVpz9fBx/BiYsAkfqn4CLVmugnwRJkZF8a7Ha7/tN7OjH+otvDzlh9KqyNZBgC6U
+	 6gn8430g/FU1mkYrCtFK6GOKoa+YcKrr2WgWmqA0NGkS3opvvfph0bxN30/iEAcjTV
+	 qNFZynqQGVVAMkhMOwAmqANgcNGsa8JfMuMJxaN4=
+X-QQ-mid: esmtpgz15t1786351327tc93958f4
+X-QQ-Originating-IP: kbLOV7gjYlNvnl0rraFfGXYnouNtT815jhLZiJswT5s=
+Received: from = ( [120.237.158.181])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 10 Aug 2026 16:42:05 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 1439357261299029505
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260809-msm8974-mmcc-fix-v1-1-50f2dcf18d2e@oss.qualcomm.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed;
+ boundary=5c2444142807e9cfb537af5f4976382a35e3a9d6e77c043f51e0fe45cff4;
+ micalg=pgp-sha512; protocol="application/pgp-signature"
+Date: Mon, 10 Aug 2026 16:42:02 +0800
+Message-Id: <DKL4P0ONTLFP.3QG0CCUU76BUG@linux.spacemit.com>
+Cc: <linux-clk@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
+ <spacemit@lists.linux.dev>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] clk: spacemit: re-enable PLLs after init
+From: "Troy Mitchell" <troy.mitchell@linux.spacemit.com>
+To: "Yao Zi" <me@ziyao.cc>, "Michael Turquette" <mturquette@baylibre.com>,
+ "Stephen Boyd" <sboyd@kernel.org>, "Brian Masney" <bmasney@redhat.com>,
+ "Yixun Lan" <dlan@kernel.org>, "Inochi Amaoto" <inochiama@outlook.com>,
+ "Alex Elder" <elder@riscstar.com>, "Haylen Chu" <heylenay@4d2.org>
+References: <20260804-k3-pll5-pll8-1800mhz-v1-0-a3a75866ce32@linux.spacemit.com>
+	<20260804-k3-pll5-pll8-1800mhz-v1-1-a3a75866ce32@linux.spacemit.com>
+	<anGeZk0-YShccqwE@pie>
+In-Reply-To: <anGeZk0-YShccqwE@pie>
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpgz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
+X-QQ-XMAILINFO: Mg1D4hNPaN4xNs8K0vq3tEv8dgERJCWMB9LOGp5Bj2xPYvHj/+zoldkR
+	POwCaG4rKK3apn7ZzuXnwCLPsgBq2dP7PuzsXJm2DK6r9Or+ezbWnf52zq06d01HFpUU02k
+	8te73QVb6+IBr+kgolvyc9LAuxuYLR38V3fNv7mmzoyDfjLVXUTZk2Kdh0TTWVjrltR/EeU
+	AI/iB5Wm8TOonI8Yle/UeQf6mx8FasLAXBNZVgGVOLci6xrCCAU/rFOIoYFwPV62CGvVYU1
+	tlX5hyWSRl4D/Q5JTdxj8s4WUK+xFqMXOGOxDMC0MLqIugORSYaylC/Vcjchk7eyKH3Al+Z
+	mdiacvaheDmFPaA8rNkJxgVcUHzaQzdE7xK8gDiqSLR80MQOczv3yi6Jn3XWaWO3C/bQqgF
+	Cp8mudDd1xSsCeptElIAdsI/C4m9XAhUoM/Es0comzm0kA3An2MAGbxKOoybjiroYvBDuIR
+	N/hVmuFN3uRRBG0vQKelcHJCRhBoAsZf5FuT0IgJpd6m9QUjy4pN2bmi4Vetd0EdohtEIK2
+	2YW9lpyxHyvT77gSXKc+J1Ru44EGAkrezF/dI/CqvJMwyZTkjM5GFgkTwe7xEiQ5V/q6x6/
+	JzzrO/czLW++L3e8bQFiQ9nTjTQzsV1ntj5yAArktIZGUi9LuCAn6LFIKT5WLeA3SubOBy5
+	ag1c0IaOa/JknG7QD0uxagJIFObnF+n7GDVc3JL/KQ1iNsGRHdE47QtB0IdRfSroWLPovtx
+	XoFiZTvY4ws4hvhg+zw07o7d2FdJtMETDmmvpK+EqA/qpWgN2EOJxDtLIBHQPnaUtXtQTgJ
+	Ir18g6oKm1TXlQKjQKslu579Kbzv3E4yLj8xlZ9PyXeriyoduWP0xgZnRb4fe9tIWF7UkOm
+	CXrWNwOsDWE/5w2haymcFC3EyOFj48WpXusatS052skmw6sGOxhSbeV5zm2p4YZSVF1/tur
+	ZtJwFk71wkfYrbf/qGydSyhUEMCMfHLhcRlXELzbGgh5WD6fnfpC5hB5I4CbtRre2tQK7hO
+	KG9MD98K3lUvPqgPDdF8yYXm/MHvbuuvZ6tZGLAY32Vbg8pK3UXguzVaXmukuEStjkMHpbG
+	X+Gq85LhXnVTx2BXsYAUh4=
+X-QQ-XMRINFO: M/715EihBoGS47X28/vv4NpnfpeBLnr4Qg==
+X-QQ-RECHKSPAM: 0
 
-On Sun, Aug 09, 2026 at 09:58:37PM +0300, Dmitry Baryshkov wrote:
-> Commit 13a4b7fb6260 ("pmdomain: core: Leave powered-on genpds on until
-> late_initcall_sync") kept power-domains on longer during boot which is
-> causing DSI clock to get stuck and fail to acquire its configuration on
-> DSI bringup. While this is being investigated, add the flag
-> GENPD_FLAG_NO_STAY_ON for MDSS GDSC on MSM8974 to restore the previous
-> behaviour to fix this.
-> 
-> Fixes: 13a4b7fb6260 ("pmdomain: core: Leave powered-on genpds on until late_initcall_sync")
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+--5c2444142807e9cfb537af5f4976382a35e3a9d6e77c043f51e0fe45cff4
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-Have you tried adding resets = <&mmcc MDSS_RESET>; to the &mdss node,
-similar to the following patch for msm8916.dtsi?
-https://lore.kernel.org/linux-arm-msm/20250915-msm8916-resets-v1-1-a5c705df0c45@linaro.org/
+> I don't think this patch makes sense.
+>
+> If this PLL is essential for some components of the systems to work,
+> there's no chance to re-program it safely after the kernel gets started,
+> since all the PLLs in K1 and K3 are specified as CLK_SET_RATE_GATE.
+>
+> If the essential clocks could be re-parented glitchlessly, registering
+> a notifier and re-parenting it before the PLL disables might be a
+> solution. In this case, we need to delay the operation in
+> ccu_pll*_init() until clock registration fully completes.
+>
+> Otherwise, re-enabling the PLL seems totally extra here, they could be
+> enabled on the fly when it's going to be used.
 
-Thanks,
-Stephan
+You are right. In both hunks, ccu_pll*_disable() has already gated the
+PLL before the newly added ccu_pll*_enable() can run:
+
+> @@ -148,7 +148,7 @@ static int ccu_pll_init(struct clk_hw *hw)
+> 	ccu_pll_disable(hw);
+> 	ccu_pll_update_param(pll, &pll->config.rate_tbl[0]);
+>
+> -	return 0;
+> +	return ccu_pll_enable(hw);
+>  }
+
+> [...]
+>
+> @@ -252,7 +252,7 @@ static int ccu_plla_init(struct clk_hw *hw)
+> 	ccu_plla_disable(hw);
+> 	ccu_plla_update_param(pll, &pll->config.rate_tbl[0]);
+>
+> -	return 0;
+> +	return ccu_plla_enable(hw);
+>  }
+
+Re-enabling the PLL afterwards therefore does not make reprogramming
+safe for a live consumer. I will drop this patch, "[PATCH 1/2]
+clk: spacemit: re-enable PLLs after init", from v2.
+
+To avoid delaying the 1.8 GHz rate-table update while this broader issue
+is investigated, I will resend the current "[PATCH 2/2] clk: spacemit:
+k3: add 1.8 GHz PLL5 and PLL8 rates" as a standalone patch. It only adds
+the firmware-selected 1.8 GHz settings to the rate tables.
+
+The existing problem of reprogramming an unmatched PLL from
+ccu_pll*_init() needs a broader solution and is independent of the rate
+table update. I will address this issue in a separate patch series.
+
+                                            - Troy
+
+--5c2444142807e9cfb537af5f4976382a35e3a9d6e77c043f51e0fe45cff4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iIMEABYKACsWIQSL4Ay2cExaPXAQcU2YCe+A+TM0LwUCanmO2g0caUB0cm95LXku
+b3JnAAoJEJgJ74D5MzQvCy8A/3AS+h5VxUd4a+hzLwgWTitmdjKz5AQxKY9ffa9g
+0PEaAP46TDFaDGtlJxZlgxExHbHVjyTZ7P44F33VqpOtqO4bBw==
+=9C3d
+-----END PGP SIGNATURE-----
+
+--5c2444142807e9cfb537af5f4976382a35e3a9d6e77c043f51e0fe45cff4--
