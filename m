@@ -1,439 +1,288 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-00622301.pphosted.com (mx0a-00622301.pphosted.com [205.220.163.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE39837CD32
-	for <linux-clk@vger.kernel.org>; Sun,  9 Aug 2026 21:29:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786310989; cv=none; b=O+Gv9DREg4wzr2nCHr4jiTLwNVO71tBibCkCKY2+NR6dXWwkNueHc+BtBNNMHbIrtI0M0nu6obQEwtsDr+N2NUllQQQVBpio97GdZq6aQA2934MJz3Z17+W+7Bm5QGcH4atIKTdhYyOICDxhr3y1+87o5EsydlJOmCkgxqBbl5U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786310989; c=relaxed/simple;
-	bh=ZZxckeyA6AJLvKy/8WrFsTFoBp0n9ndwCOBIkhLTkNM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UbJepSMgl8U0qG19vxbei9bLKP+h31rCnK2X3G6WXXqXcfLGShGNSVm6bWxBZSMxmOkq//P2xn24eIC0dtcGur97yOFt9VDPODXrZcDS2gio8tro2joDUyIDsw8Au7SJ5a6ZuOgcjUTln8JzqYOrZkNjV1JBsnzmU14OTDVq65Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kBT6UXy5; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FD604C6D;
+	Mon, 10 Aug 2026 04:02:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.163.205
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1786334553; cv=fail; b=b+nnpjpK/RqlneuFKsdutnimGjVb4QMjxcGAPYs+QiWmi2EuTFR0H6jqBnUN9uEXganO/8taVhpSXCVGmaGR+FlBkI4/MPD/oFyrc+PR60MK4zR+/AvlJ5MF0EzQKdejMuStnf4sy1zf1hM8rCCBSmJOaeS4EUjJewVv54EtL4g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1786334553; c=relaxed/simple;
+	bh=oCfChCD1lPl2Nn4SDjes43Xg6GfF6QsN3DGAWZoYIOI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=X/PCI4IjyhCEsbhdBO5dGnosHSLqeC8TIpxqyV7CWanjypAL2kY+ReJOC3rwUZH/7Wupdz6TPKxKouHoFeVkV16CSwQdu+6uwBe96F8DPTSe/JewXKNd9rJxySn7hn0fqFtGHEVgZMIy5uPjWMeaBL6Q0FJdIDBnKo+dMB6lTVI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ambarella.com; spf=pass smtp.mailfrom=ambarella.com; dkim=pass (2048-bit key) header.d=ambarella.com header.i=@ambarella.com header.b=St0jwkMP; dkim=fail (2048-bit key) header.d=ambarella.com header.i=@ambarella.com header.b=rpDOJTX6 reason="signature verification failed"; arc=fail smtp.client-ip=205.220.163.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ambarella.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ambarella.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kBT6UXy5"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4996f1ee4a4so2111965e9.2
-        for <linux-clk@vger.kernel.org>; Sun, 09 Aug 2026 14:29:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1786310984; x=1786915784; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=cNYQmWR/t+zQADZCU9tCe+GnxduSNSckEGbwvFCqSSs=;
-        b=kBT6UXy5ttrUEyRqFbNMALIKvhd2id5hCEgSq/Ap1rAt/N+IzYsq6IEIAoVk5jv19G
-         J6mN4xnBxgToNiCQLMWguYom1ibE1/T9J+81lC/QUW4YSD1Nwpa0dymZ8FBPsO6mWqkX
-         EpNGiCt5cyIluR1rvT2RtWSv/pYsfuLU6vl/zpR6tW2K9u9px65d6DHRjMXQzDxKqVf4
-         wh97NFJhA0Ki5oCJo+2oG1JWrF5Ut8wt2TNInP/bMVZ0Fm1d2xC4kB4xNvWrHZofsU9J
-         HK97Ro4YZG1yK5Cn2lK/LTpfy4zng9hjvs7EP9HDzRyFu8kSwesofnUIWMTBTx0NBg6V
-         3n4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786310984; x=1786915784;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=cNYQmWR/t+zQADZCU9tCe+GnxduSNSckEGbwvFCqSSs=;
-        b=kAgTu82cyKjFRBt3rKhnYN9ou6klmRy0aniKXnpa4QDXFRVHwxN9lVLqNPTAWAnmV+
-         PtHXLUPXLGtqUP12hFtvpVhcavMLQ+yqgKSb1pPAaMaYJyNhxnJzgtuqoMGR/O8bdzEs
-         xLOuzhPp8wfzt3OcIkhv9EdZGN2SjE/YH2FjIkBppwbUtndtSSpCg8tPA+A8bHCwxfw5
-         GZIn465S4w02iJAdGDaqkb7Lzj8mVjdEVS7vv2jb7jFWoU0IwLfGr3p+A/kIT8nOCAxE
-         Yl4HfxVOBRxecznt3OgVf5/EhSaAWI4t6Hl47gCpa+IYstWVv/87XGZ19YZ5Pb9KdzQb
-         7q3A==
-X-Gm-Message-State: AOJu0Yw/D+dZUvyQK+04vWNnOJWoknzrbaiIwUstpAUhmn/eoq5HLtwm
-	3Z2lPGOGMGnQvHuDhD+h5eqv0tDDej8b8vR2UKArFPRFyNNrMNGWU7Qh
-X-Gm-Gg: AR+sD10qu2UWSqjbUcdjPU2O7ivHCs881zRbGB1anWvsT3owLXHURro9StfiC3ozQZO
-	yc85nXtTl9C6dUCXgIMNhRGEvLjKvyrP9BijmFCsuPIh2eloE8n5MUHyrXnJfawV19jBHYKr0oy
-	boqZouZ+980jdYh5VujaDLz4GlHeFq+u2xRAZsRMhzbxu9CufypATXIp5EhvsG037xCz7YTdt48
-	+yVy9KWBvt2SOUY2GhBwGp3YzJlA1OesSr5/gGIxsh4WFjI7Rwm2t9BGeBU6Dk47eR77FRzdWgb
-	BivF6p/kO8AxV0WNBLFW3jeL+siySLvhagWNh+SbXHr9SEgc8tUi1XtL7ZktrtuAy3jeZMyfqIF
-	iEUEBZlBri4U6cuoT+SzfyvkmWfIQiPZ+G+FPxLyBV2O8zrzbXXbMXeNyc8GWkCgkYh8671VqXP
-	sd6K3ZdQslHnE4XFuTF8mFR6ea8By60BQCrQViJg43E5nA1k9wivVF2wpixmf7K4qGmBM2itDic
-	YMKJSsquQ==
-X-Received: by 2002:a05:600c:630c:b0:499:4d4a:4990 with SMTP id 5b1f17b1804b1-4994e74566bmr402235205e9.3.1786310984187;
-        Sun, 09 Aug 2026 14:29:44 -0700 (PDT)
-Received: from [192.168.0.2] ([197.250.226.68])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-480021e8c5asm28987451f8f.18.2026.08.09.14.29.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Aug 2026 14:29:43 -0700 (PDT)
-From: =?utf-8?q?Stefan_D=C3=B6singer?= <stefandoesinger@gmail.com>
-Date: Mon, 10 Aug 2026 00:28:30 +0300
-Subject: [PATCH v10 11/12] reset: zte: Add a zx297520v3 reset driver
+	dkim=pass (2048-bit key) header.d=ambarella.com header.i=@ambarella.com header.b="St0jwkMP";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=ambarella.com header.i=@ambarella.com header.b="rpDOJTX6"
+Received: from pps.filterd (m0241924.ppops.net [127.0.0.1])
+	by mx0a-00622301.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 67A3tSwE1750567;
+	Sun, 9 Aug 2026 21:01:59 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ambarella.com;
+	 h=cc:content-transfer-encoding:content-type:date:from
+	:in-reply-to:message-id:mime-version:references:subject:to; s=
+	com20210415pp; bh=oCfChCD1lPl2Nn4SDjes43Xg6GfF6QsN3DGAWZoYIOI=; b=
+	St0jwkMPtjqGr5HfFO2zmzt5TvJLma/xyyHuJu5zZouS2cMTHY5NepGSHn9i2DKE
+	XZo4cfCR28hwb6P2WYnxBXZGoF4ld7xvsdkvnUTkemFg7fdYlXrnc9aetyhP/N/+
+	ASoF3z39SEvgcOIlGO6FvI97u3qJ4lYto95gmno77tHDe1Z7Kx+5V9tz5Vi/W9CX
+	kT4mYGhO6paxUzqsUxFz3+dMUhPdtEE8jYiFuwtwL22gNgazdyPXEzYSOq7TW96k
+	FBXxQN0t4lZDgZAMzlF6FWaIjTsJrB2AfFJ7zs5CNH8zhvh/s9oIMn9Z82VN4GJK
+	CGOzWl+Igxl2nAVzOuAh2Q==
+Received: from sn4pr0501cu005.outbound.protection.outlook.com (mail-southcentralusazon11021121.outbound.protection.outlook.com [40.93.194.121])
+	by mx0a-00622301.pphosted.com (PPS) with ESMTPS id 4fx1eb8ysp-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Sun, 09 Aug 2026 21:01:58 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Zs7JWcoQDw1MLIHYrkIrx41CnACWS5ebHvcMlTUw8sFFlc6RxRq8OciZopx+z4AUNOqUlkiNjUy7gHSfvy45D5lwQrUuuimfrlyW1xjkSj8CgT5SoaTa5vgsbKgCSX/5rg0sYz6BGqcAWVPRP/S4LUvrpr91F6mKcsKrag8UlVt58fw74lGwY1NnXAKlblhBOcVVu2yQIdxXglAtDSGcSgQKMwGO+N7RyK0am8bA+HmkkQPxMYRnAdAGN047LRg04jasvjBLgKWsMWretP0Q1fY8jzamiIIppUzxR2qvi21e3xLMEmE/byU/Qyo8t0U8LPOOP9nk683190qpUvWDfg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cFlqvDHny+iFvWwkZNMqKvqH22ODG3IGYWW+l+gTKy4=;
+ b=xZw9yc2fr6eByOITLI4dItvDxE522GCfWmlYRC5pahZSwGXF/iEHkNe1hiB5+XHjh6GzORpHBWS+xizsQk0CcrxcxlVHigY4usZF1+BvvFVnHbpKNbQlTkczbzizlktqspYcSv/3Tf9NATlWBy3+J+mmeGP88k/Uzr2p+tRGutWfXPJCF5Cv2h101qLcySt/gntfsOV9Q+gCbYLUbVAgdv8hE2jpiN1R/dIc6yYKaVFaR3g6Q+c5+UKovH1XwRhIMf9ejAnw0bifmR8k6KSkhRfcpjdbgjVKZNGQtXIg9jbW4BjHBczqtWEWjxWkIxj82Y+KNuXafmpOWJcRAh84TQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=ambarella.com; dmarc=pass action=none
+ header.from=ambarella.com; dkim=pass header.d=ambarella.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ambarella.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cFlqvDHny+iFvWwkZNMqKvqH22ODG3IGYWW+l+gTKy4=;
+ b=rpDOJTX6gXViwsz80MWory9mNZR8pmTc830tJ+SylvjNlvIjNh1O68FVsa2ZjRoACynllgzSSnfpovGia3pYnk0E4Uf0UhbKIIRll8HBTuIIchv8D/8Im+GbC/0fzn3uMFBoZ77oBr10C8a/0Sl0rvJxvuN0pSUez9UuyAmzw1MMOBtkFI9oXaUi4Qi/w8nBnGO+jSb26CWAg2Kfz9kTs8xtL1UriXEWBf4mMq7XHQ1H1prwfogJTJkz9eOVVrdGJWT56rjMz3fhxP3EQgSJIUyJi+i2U0jC/23LwbBNRpP9mc178nVOQ7eI9tP7VutUxZE5NCICVncs5PKZvo+1vw==
+Received: from DS0PR19MB7925.namprd19.prod.outlook.com (2603:10b6:8:163::21)
+ by SJ0PR19MB4400.namprd19.prod.outlook.com (2603:10b6:a03:28b::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.292.20; Mon, 10 Aug
+ 2026 04:01:52 +0000
+Received: from DS0PR19MB7925.namprd19.prod.outlook.com
+ ([fe80::dede:8f9c:d33e:6b8b]) by DS0PR19MB7925.namprd19.prod.outlook.com
+ ([fe80::dede:8f9c:d33e:6b8b%4]) with mapi id 15.21.0292.024; Mon, 10 Aug 2026
+ 04:01:52 +0000
+From: Long Zhao <longzhao@ambarella.com>
+To: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>
+CC: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby
+	<jirislaby@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will
+ Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Alexandre Belloni
+	<alexandre.belloni@bootlin.com>,
+        "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org"
+	<linux-gpio@vger.kernel.org>,
+        "linux-serial@vger.kernel.org"
+	<linux-serial@vger.kernel.org>,
+        "soc@lists.linux.dev" <soc@lists.linux.dev>
+Subject: RE: Re: [PATCH v2 07/10] pinctrl: ambarella: add Ambarella pin
+ controller
+Thread-Topic: Re: [PATCH v2 07/10] pinctrl: ambarella: add Ambarella pin
+ controller
+Thread-Index: AQHdKHz52LqwP35ofUyh1/WoQLt1aA==
+Date: Mon, 10 Aug 2026 04:01:52 +0000
+Message-ID:
+ <DS0PR19MB7925690FD29D578D8AC5D10EDADE2@DS0PR19MB7925.namprd19.prod.outlook.com>
+References:
+ <20260806-longzhao-upstream-cv75-v2-v2-0-6b09707c5fe9@ambarella.com>
+ <20260806-longzhao-upstream-cv75-v2-v2-7-6b09707c5fe9@ambarella.com>
+ <CAD++jLk0LoOJk=TXin42AL3_z_7eVVkvMnYr1S8090C6A_B+dQ@mail.gmail.com>
+In-Reply-To:
+ <CAD++jLk0LoOJk=TXin42AL3_z_7eVVkvMnYr1S8090C6A_B+dQ@mail.gmail.com>
+Accept-Language: en-US, zh-CN, en-001
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DS0PR19MB7925:EE_|SJ0PR19MB4400:EE_
+x-ms-office365-filtering-correlation-id: 962fc15d-2779-4258-5086-08def6941c44
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|366016|376014|7416014|23010399003|18002099003|22082099003|4143699003|56012099006|6133799003|10067099003|38070700021;
+x-microsoft-antispam-message-info:
+ p7jEhP7/tk0Y/u4jCHNax0x5ZOUa3YB95KCRvxEjkacgtorpl1J0zdjdLzxvE8fsIli1fB4vMosUVxn+KDHHaX3UaqpkUZfAmxzHf/WMx1EYcY/fe1BxLyj8iwIMZpDLcdXjLbN0W1DtxRISDcG+NHvVtWMn8ACd9IcdBNhNTBX3JNCrrc2o+qounXv+XoerIu3jYNGC0Dwz5xO2zi6mRUEoXlFhHMgIPiDRbT0EltG1/Nt54Em4GBRRruMcCpjfvy/VcZvZ0yIHFZdmdIDKrhmkwDN2JKa1jp6Fhx/kQKus/Jh5cmviLSERipkVeatHjSrpu9S/n+ysQwXadmWECwWEZ+nRIsZOD4LT3v5ATgftGHx4PpPZjk1sTQ+DZW/qpYiAW4WSw1il2cB3z1g1/ng4tPsP+jWvmcU3a62rYcJMK067T98Op92b4oy5IxagWeSFrvJeu7sjMURsX6coDyMQNsDbMGhZgUzwO+SZQDGdvf+3zS9Li+2/WsS7O5sRHkr9ST+HkRICqe1a/6/4lj9ClB+JuFbCKFJSPY+POTMM96YzECFVmfqk2BbPcs5La/xKIZ+nnYE9Wm0qc6sbvbByfo+9aJN89v501Gbaq8yeoivlfPR7Fk9SLuQPGus/LiRrzbvcw7i3PPw7Le1rj3I0tskA1n+QNQMbUPhGCr4rcSL06TlfzjbLOnjS/sklZ+GWL2wNqAKN3r6l2glw9QIZ2pFT2f19DywQvNyFUfA=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR19MB7925.namprd19.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(23010399003)(18002099003)(22082099003)(4143699003)(56012099006)(6133799003)(10067099003)(38070700021);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?blo3VmZXbk4yZFRpenIyOERzd0JiVkkzNkhEOXpvTTlwL3c5UTJvWldXc1Ew?=
+ =?utf-8?B?KzR5TVlxcTVFeEJ4ZTFwcHFsa29UWTJwbzZqNUkwZHNHRzV6dGlEY0NCeEJi?=
+ =?utf-8?B?dnJXK0NHa0kxTWFQWjNkck1yRmpUUGpoRjZES2YzYlUrcndLMlpHc0drUGtO?=
+ =?utf-8?B?SkZvL1hHRDJXZy9raWs4QWZqcC9ndlNISTk4SFRjYUZqaUdpeDFPNXV0enNx?=
+ =?utf-8?B?WG5uZmtFWGRJc0t3M3NWdW02Vjh6Mlp5dEd1clYvYjNYVnZOSDJ5QVFyRWE3?=
+ =?utf-8?B?R25ZWkQ1SEQvVjVld0JCU3UyOW1ZcmF3YWhvTmNrSGhxaHRuOC9nbnNHcGJQ?=
+ =?utf-8?B?UVpVUTVWYmpNbUZDM2lhY3hBZ0ZZaytHNFd2R09yRGpsa1lCdkRQMWcwWlpY?=
+ =?utf-8?B?T0RWOFh4ak1lZHJkemN5bVNnOXhrdDQ1VGNoT2Y1aDhtNWFBRDB4anJOKzlp?=
+ =?utf-8?B?TFVvTUM1UVFDU3MwTWVuUlF4UUpuYS90a095cjltU3ZjV0p4a0NNL2dNRVV3?=
+ =?utf-8?B?UjBhcEZnS1A1aElqdFBRRXRkSTVQa3pSSGM5d3Q1bXNDelFzWno4d29tTlRT?=
+ =?utf-8?B?Y3JpVnV4cUNLZ2oxVzhjdVlmVnR6dE51WGFwaWR6cDBMTWdCQit1VlBrMGJw?=
+ =?utf-8?B?RGRGWHR2dEI5bmRHK2FXMy9RVUhVeHdKUERKaHFDZWZYYU1yNzQ5cGVGdnFl?=
+ =?utf-8?B?S3JyWlNWVTloQmIyR3ZmbGV6dmJjRHNGRy9MSHFaU2RJUDN0WExsMWpoRjhl?=
+ =?utf-8?B?eEhWNnJsVU5EekVTditHZlZ1T0dGYW5zbDZ5ZUUrcWZHTGFzVCtRTUVmT1E5?=
+ =?utf-8?B?aUNPTjRNQUJQU0E1ZnNYOVZibjdzMGpJS2VLMVVvN1JpWGxWL3QySTJpUDV5?=
+ =?utf-8?B?TGQvUkh1VWhXN1lOUWxvNTk5a0NPTUorQmhsYTdPQXd3bnlrcDlHRFBFTkp0?=
+ =?utf-8?B?Yk80NDk1aVo4SWJIT3dRWnNsS3duK0FSQTZaOVJCTzltZ1V2aHV6dm4xS0VC?=
+ =?utf-8?B?UEpTbCtWd2Q2SVZ6emlPdHQwcnhlU0ppaDZzL1YxN0RNRUFUMEdmNUd1eE4z?=
+ =?utf-8?B?N0dlQVI0b29GQkVUeGl4QmZNSU1GZG5OWmgwUytXOFJaQXRPaU1nZVUvUUhm?=
+ =?utf-8?B?L3o4MlFqbVo3TnM4MnF2SFgyVllkdXc2QTB5UUJSdUZuai9HRGNhTEwvK282?=
+ =?utf-8?B?Z01ueGZ2akxqKzFxcTBmSjYrY0RPeVUxL2lUZTdmVWU2U2MvVWtxVXAxZGFX?=
+ =?utf-8?B?RS9IbXFCMW5DZm1nbk9nV0V4eUEyZGtxdVZEczgxazUrY3R2dDgzcWZQcysz?=
+ =?utf-8?B?OVB6UTNLSGJYeGUyVk16VjZielVpUXhzNUxKSmpiY3hnbDUwbzdFQUc0NmdJ?=
+ =?utf-8?B?c3FSZi9iREY2eDkyRjVmSGxRUGxsa1FOZGNMR2JKSkdzYjZod1JsUndTeUQr?=
+ =?utf-8?B?MCtVMVBCb09MbjVpVTN5WGRFWVJCNncxcUFudEs2eVJMYk9JeDlvekdnVjh4?=
+ =?utf-8?B?NlFkb2xtOEhsTWRTUFRydUFLUHRUZXJva0JTUk1iR2p6UzYvcWgyUmVNSkU0?=
+ =?utf-8?B?aFNuWGpUVllMU3p0OGg2K2h5V1Z5RkRyanE3TGMzUUYwb1FsYUl0VG1aQ3J1?=
+ =?utf-8?B?aGVOcmx0QzFPQXBNYlRBMW44b1ZkV240b1UrT2g2aEwzaTBEdFk5bExWWWRT?=
+ =?utf-8?B?azNzcmdVaWhIb2lRckNsTnpVUjZNT3lZQU5QTWo0YWJaanMwdXJGQVNRYU4w?=
+ =?utf-8?B?WmxwMEIwVDVtVVdhZkQ2OEtuNHVFZzBiSE44M2VxYThRZnVtUytmNlVYQjBJ?=
+ =?utf-8?B?SWxuWFBRRHJrL0V3amY2VU5MelFQYTFDRk4zaks2NVNsRmtXbDZkLzJhWGE0?=
+ =?utf-8?B?dGNXYi8xdXhDTEp1YkRuWGRrT0JOYVBDVDUwL2wzdW1MNUhodWhCYjhSNVk5?=
+ =?utf-8?B?Qk9CY1pPN29HSWJBTTJCZVBHcDR4RUJYV1IxMlpuSmVmTlA5cTlIYVUzTUY5?=
+ =?utf-8?B?Y1RDcjJiYUJ5S0c4aURyUUNuMFJxTTZPZ1kvTmFqcS9yeHZZRDc3a0JwK1Jl?=
+ =?utf-8?B?eDlFRTBlZmh6Z01rY2hjWFpYYVlPQ2l4R295NlhaSS9ZODBXb3R3OENKNmdi?=
+ =?utf-8?B?TXNzUEhzYXlrc3ZHeU5KTVEvZVpLVTNRcDdHbXNpQXdGbVhZOVEwcEszNVpS?=
+ =?utf-8?B?WG14UElxeEdHaEdPa2U4Kzg4WXBIVVprcjVUTERLRWtJdVhBQUlRQlRGa0ZD?=
+ =?utf-8?B?ZDlKakpmNVJ5MWgxazBQMDVyM3p3T2pJblFvcXhsRVZTN3RzaGduN0ZTN2dV?=
+ =?utf-8?B?NENBKzQwREVENkF0enQzcVFKcW83TTJOTUZCcmZrMFRIeCtVNUJxUT09?=
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Exchange-RoutingPolicyChecked:
+	ns9dV7M65piYYt65Kdixu33jXfkic/bqCn3PSuQxOzd8B+Ukwn4sc/3tuP2jYP0ssQMLg5293fX+fzzC5egQj7fwRTF1A3Hl8hVyLfvG1nAn/pwogC/ULySZPesOID9VwAM40SCVccoW6rZHuuZahu7K9kkjJsHuTg3lGClsrnhFC0XIfylpi2qg/fLdPt9Uce4djaNIRPuMJwnLnjlJt4eso0R8XjzcdpBmbB0Q8vGYGQfGt3PPLApcsPCD0Vnsm8dBcBH6iJKAPemnY8MQP9QDBrWDpDjTVr9xrEeEUgaYeCUqYAecbARBOwugWhoL8QjcahJiugdIVdCTvuJNlw==
+X-OriginatorOrg: ambarella.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR19MB7925.namprd19.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 962fc15d-2779-4258-5086-08def6941c44
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Aug 2026 04:01:52.2864
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3ccd3c8d-5f7c-4eb4-ae6f-32d8c106402c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: os9GFJiYrmhDfilxVeKi7QEJzxhXNU9ATvJUmOPEHMdaootmYga/q8jYW4pYsBNNoP+WKjQsAV1vYvOIfjSx7Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR19MB4400
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODEwMDAyOSBTYWx0ZWRfX/oot37qB2XDa
+ 0GiYkLTf/bNzYHpFkVUqqFSs0/VaDN/rj2cyjGW1K1TH5zkbFqSTiXeNhQdZTBcSPUK2yV2kNFt
+ YqX/hAcOvxNJzRr16wXi0lOxpDNw9qJrLqQ4a/HtZCCAJ3fes0GUGjjSl5hVXYhcJEdI0WMCOUd
+ gqjREpbRrCC/0O4Q4EkywVXNk8yxBUSCXkil/OGNb7jazUKfoebeRbM+kxWyAlHF7OnyeNBMDtZ
+ YLK19ddWkfGLLJV3DPJ/AfrBI9XkvSr2YnERbx1aOfqbR/tI+eDwDuSfhdNfDHc707vkGN0rBnZ
+ qV4BO8oZ0E4c2B//XR+M+1H6fy/cHcyBEEMh+xHvjgAbYbW8h4gESJ8kka0LOEIUbVPkI+Hs/bC
+ gqnLLur/ecvmI6m1FsZKmtyazm7JYUXwsHnh03Q2Y/cF14Ga/dCKlKu0VmgGQQuKr4G8E8g4epu
+ SnjcWI5CL13qfIz5IHg==
+X-Proofpoint-ORIG-GUID: S_jn3_TlDdBNn5b2M18debA-EbrFxcUj
+X-Proofpoint-Spam-Info: AW1haW4tMjYwODEwMDAyOSBTYWx0ZWRfX9HzimrfEd012
+ gXeAjwQhZLp/D03GOJsOQT/TLgSTEzb4jC8+eKcc0xNuQS8NH8rIf13zbS8x86Fgda4jGPHiR8a
+ QsOXHgqQSQAMS7mgByaFS6jjPt/O0pIZzs4DPucDOjCBpPPIHe8e
+X-Proofpoint-GUID: S_jn3_TlDdBNn5b2M18debA-EbrFxcUj
+X-Authority-Analysis: v=2.4 cv=Y+jIdBeN c=1 sm=1 tr=0 ts=6a794d36 cx=c_pps
+ a=GRNSBXvNJw0HWouCR8jgEQ==:117 a=fVfL832+mzDTHoFKNp42fb2xq0E=:19
+ a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
+ a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=Sv0fKeRqtYgA:10 a=dkMdDuzY2HgA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=yXVIz-0bn9infC194UBj:22 a=pzaFphlX3Qn9zwH3AKfV:22
+ a=VwQbUJbxAAAA:8 a=ppJngBeKAAAA:8 a=IpJZQVW2AAAA:8 a=ag1SF4gXAAAA:8
+ a=7CQSdrXTAAAA:8 a=P-IC7800AAAA:8 a=JfrnYn6hAAAA:8 a=baHzRV-oNzLVrs8r5KsA:9
+ a=QEXdDO2ut3YA:10 a=IawgGOuG5U0WyFbmm1f5:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+ a=a-qgeE7W1pNrGK8U0ZQC:22 a=d3PnA9EDa4IxuAV0gXij:22 a=1CNFftbPRP8L7MoqJWF3:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-08-09_07,2026-08-07_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 bulkscore=0 phishscore=0 priorityscore=1501 spamscore=0
+ adultscore=0 malwarescore=0 impostorscore=0 lowpriorityscore=0 clxscore=1011
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2608100029
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20260810-zx29clk-v10-11-63846490712c@gmail.com>
-References: <20260810-zx29clk-v10-0-63846490712c@gmail.com>
-In-Reply-To: <20260810-zx29clk-v10-0-63846490712c@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
- Brian Masney <bmasney@redhat.com>, Vinod Koul <vkoul@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Russell King <linux@armlinux.org.uk>, Lee Jones <lee@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-phy@lists.infradead.org, mfd@lists.linux.dev, 
- =?utf-8?q?Stefan_D=C3=B6singer?= <stefandoesinger@gmail.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=13352;
- i=stefandoesinger@gmail.com; h=from:subject:message-id;
- bh=ZZxckeyA6AJLvKy/8WrFsTFoBp0n9ndwCOBIkhLTkNM=;
- b=owEBiQJ2/ZANAwAIAT0TvMhUTxoiAcsmYgBqePEP1W2r1xdUvwYzMM7fYUnolSt/rLWDVXYhi
- qycDbs1D7OJAk8EAAEIADkWIQRDFvS2qgVbJ5UyXWw9E7zIVE8aIgUCanjxDxsUgAAAAAAEAA5t
- YW51MiwyLjUrMS4xMiwyLDIACgkQPRO8yFRPGiIcRg//YK+Ha3CYKpi8pksW4QwI4APm20ZAFBC
- 2VqbKd44vspHQ58RmxcEbDpftj78pNzsuoee0ixjBKWCfRHgS17gtDfugLqDNTRH0YAMi6wBmtd
- LGTnAnn/jjTREChMj5gtQt3GcZOswqldmoeJLSAsEeqfS/Snwz2NjSSozf/u2kKZtVH+xdboSUh
- YNNisA+AEtByyaXid1dsksn0xduxE/A8dNeVcgYDAlHZB5OyNphZq8hc28EfMKN7+W9PS/ZC6Ce
- SRo4aYTYpLeG7tRIRqUmfaNH5YU1nw42g1vZFTlanD317h7HfAY9QkHH7V8upfUTsFWmdXGthrD
- HNhTPrZQeZ0VyOR+WbRa4iiA1pVAbOI93mLVfxGFkdzHtY4SrglPX+TivcmyAK+vm5RKlcexajo
- qPVl3mxOzZVxicz9KWUVabvbQjvYMsvyHd3J+P1UaMUrMYgf4YT0TgNXasGolYDSZr4brkB3VYO
- 0wVc/DM2W6LSGXFIiNHJ7r8KJ4tTVdiUjCjocLZR4/9xjQWR8tTcHDTdaZw93O6DK/MqE05r2bF
- LsOZam2HyYjzlnPYo/R5Beq3FWsDsVlNSiH72rB4g6Tlzkls9D3xMHPz83HZNxCyk62n83M7VsD
- ydMU1r8T0t6K3l1nGu63w3OTxDxtDKnPxNVYdZ/N01B1Bw8y4IZc=
-X-Developer-Key: i=stefandoesinger@gmail.com; a=openpgp;
- fpr=4F9C2C8728019633893EBBB98CB81F9A72BBA155
 
-This drives the MFD child devices created by the zte-zx297520v3-crm
-driver.
-
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-Signed-off-by: Stefan Dösinger <stefandoesinger@gmail.com>
----
-
-v10:
-Add ZSP reset in matrixcrm
-
-v9:
-Remove HSIC and USB PHY resets, the phy driver will access them through
-the shared regmap directly
-Sort include files alphabetically
-Depend on HAS_IOMEM due to "select MFD_SYSCON" (Sashiko). This has some,
-but not consistent, precedent in the same file
-
-v8: Select MFD_SYSCON for COMPILE_TESTing this driver without the MFD
-parent driver.
-
-v7:
-Add MODULE_DEVICE_TABLE (Philipp)
-Add DDR control and LSP resets
-
-v6:
-Add a comment wrt checking all bits in .status() (Philipp)
-include cleanup (Philipp, Sashiko)
-
-v5:
-Make top and matrix MFD children instead of aux devices
-Split USB PHY reset into its own reset ID
-Remove USB reset wait code - this will be handled via syscon from a
-future minimal phy-zx29-usb driver
----
- MAINTAINERS                          |   1 +
- drivers/reset/Kconfig                |  13 ++
- drivers/reset/Makefile               |   1 +
- drivers/reset/reset-zte-zx297520v3.c | 237 +++++++++++++++++++++++++++++++++++
- 4 files changed, 252 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 408bb256d2d4..f1c981979556 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -3911,6 +3911,7 @@ F:	arch/arm/boot/dts/zte/
- F:	arch/arm/mach-zte/
- F:	drivers/clk/zte/
- F:	drivers/mfd/zte-zx297520v3-crm.c
-+F:	drivers/reset/reset-zte-zx297520v3.c
- F:	include/dt-bindings/clock/zte,zx297520v3-clk.h
- F:	include/dt-bindings/phy/zte,zx297520v3-topcrm.h
- F:	include/dt-bindings/reset/zte,zx297520v3-reset.h
-diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-index d009eb0849a3..b92bd0c16517 100644
---- a/drivers/reset/Kconfig
-+++ b/drivers/reset/Kconfig
-@@ -404,6 +404,19 @@ config RESET_UNIPHIER_GLUE
- 	  on UniPhier SoCs. Say Y if you want to control reset signals
- 	  provided by the glue layer.
- 
-+config RESET_ZTE_ZX297520V3
-+	tristate "ZTE zx297520v3 Reset Driver"
-+	depends on HAS_IOMEM
-+	depends on MFD_ZTE_ZX297520V3_CRM || COMPILE_TEST
-+	default SOC_ZX297520V3
-+	select MFD_SYSCON
-+	help
-+	  This enables the reset controllers for ZTE zx297520v3 SoCs. The reset
-+	  controllers are required for booting this board and are part of the
-+	  clock and reset management controllers on this board, so you will also
-+	  need MFD_ZTE_ZX297520V3_CRM. Enable this if you are building a kernel
-+	  for a ZTE zx297520v3 based board.
-+
- config RESET_ZYNQ
- 	bool "ZYNQ Reset Driver" if COMPILE_TEST
- 	default ARCH_ZYNQ
-diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-index 3e52569bd276..9a8a48d44dc4 100644
---- a/drivers/reset/Makefile
-+++ b/drivers/reset/Makefile
-@@ -50,5 +50,6 @@ obj-$(CONFIG_RESET_TI_TPS380X) += reset-tps380x.o
- obj-$(CONFIG_RESET_TN48M_CPLD) += reset-tn48m.o
- obj-$(CONFIG_RESET_UNIPHIER) += reset-uniphier.o
- obj-$(CONFIG_RESET_UNIPHIER_GLUE) += reset-uniphier-glue.o
-+obj-$(CONFIG_RESET_ZTE_ZX297520V3) += reset-zte-zx297520v3.o
- obj-$(CONFIG_RESET_ZYNQ) += reset-zynq.o
- obj-$(CONFIG_RESET_ZYNQMP) += reset-zynqmp.o
-diff --git a/drivers/reset/reset-zte-zx297520v3.c b/drivers/reset/reset-zte-zx297520v3.c
-new file mode 100644
-index 000000000000..48463c553b3f
---- /dev/null
-+++ b/drivers/reset/reset-zte-zx297520v3.c
-@@ -0,0 +1,237 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2026 Stefan Dösinger
-+ */
-+#include <dt-bindings/reset/zte,zx297520v3-reset.h>
-+
-+#include <linux/bits.h>
-+#include <linux/err.h>
-+#include <linux/errno.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+#include <linux/reset-controller.h>
-+#include <linux/types.h>
-+
-+/* Most devices on the zx297520v3 SoC have one reset bit per clock line. As a rule of thumb, the
-+ * lower bit disconnects the device from the bus, similarly to turning off PCLK - registers read 0
-+ * or hang indefinitely. Unlike PCLK, this reset may have a lingering effect after deasserting.
-+ * E.g. timers will be disabled, but retain their counter value.
-+ *
-+ * The other bit resets the actual device registers.
-+ *
-+ * For some devices, e.g. GMAC, both reset bits behave in the same way: They disconnect the device
-+ * and registers will have their default state after deasserting. For devices that have two reset
-+ * bits, both need to be deasserted for the device to function.
-+ */
-+struct zte_reset_reg {
-+	u32 mask;
-+	u16 reg;
-+};
-+
-+struct zte_reset_data {
-+	const struct zte_reset_reg *resets;
-+	unsigned int num;
-+};
-+
-+struct zte_reset {
-+	struct reset_controller_dev rcdev;
-+	struct regmap *map;
-+	const struct zte_reset_reg *resets;
-+};
-+
-+static inline struct zte_reset *to_zte_reset(struct reset_controller_dev *rcdev)
-+{
-+	return container_of(rcdev, struct zte_reset, rcdev);
-+}
-+
-+static int zx29_rst_assert(struct reset_controller_dev *rcdev, unsigned long id)
-+{
-+	struct zte_reset *rst = to_zte_reset(rcdev);
-+
-+	return regmap_clear_bits(rst->map, rst->resets[id].reg, rst->resets[id].mask);
-+}
-+
-+static int zx29_rst_deassert(struct reset_controller_dev *rcdev, unsigned long id)
-+{
-+	struct zte_reset *rst = to_zte_reset(rcdev);
-+
-+	return regmap_set_bits(rst->map, rst->resets[id].reg, rst->resets[id].mask);
-+}
-+
-+static int zx29_rst_status(struct reset_controller_dev *rcdev, unsigned long id)
-+{
-+	struct zte_reset *rst = to_zte_reset(rcdev);
-+	int res;
-+
-+	/* Devices with two reset bits need both deasserted to work. So only report them as
-+	 * deasserted if both bits are set.
-+	 *
-+	 * assert()/deassert() will always clear/set both. The only reason a device might be in a
-+	 * hybrid state is an unexpected handover state from the bootloader.
-+	 */
-+	res = regmap_test_bits(rst->map, rst->resets[id].reg, rst->resets[id].mask);
-+	if (res < 0)
-+		return res;
-+
-+	return !res;
-+}
-+
-+static const struct reset_control_ops zx29_rst_ops = {
-+	.assert		= zx29_rst_assert,
-+	.deassert	= zx29_rst_deassert,
-+	.status		= zx29_rst_status,
-+};
-+
-+static const struct zte_reset_reg zx297520v3_top_resets[] = {
-+	/* This bit is set by ZTE's cpko.ko blob, it looks like a reset bit for the LTE DSP
-+	 * coprocessor. Clocks for it are in matrixcrm.
-+	 */
-+	[ZX297520V3_ZSP_CORE_RESET]  = { .reg = 0x13c, .mask = BIT(0)            },
-+
-+	[ZX297520V3_UART0_RESET]     = { .reg =  0x78, .mask = BIT(6)  | BIT(7)  },
-+	[ZX297520V3_I2C0_RESET]      = { .reg =  0x74, .mask = BIT(8)  | BIT(9)  },
-+	/* Only one reset. Bit 5 is settable but does not do anything observable */
-+	[ZX297520V3_RTC_RESET]       = { .reg =  0x74, .mask = BIT(4)            },
-+	[ZX297520V3_TIMER_T08_RESET] = { .reg =  0x78, .mask = BIT(4)  | BIT(5)  },
-+	[ZX297520V3_TIMER_T09_RESET] = { .reg =  0x78, .mask = BIT(2)  | BIT(3)  },
-+	/* Only one reset. Bit 0 is settable but does not do anything observable */
-+	[ZX297520V3_PMM_RESET]       = { .reg =  0x74, .mask = BIT(1)            },
-+
-+	/* I haven't found any clocks for GPIO. It probably wouldn't make much
-+	 * sense anyway. Only one reset bit per controller.
-+	 */
-+	[ZX297520V3_GPIO_RESET]      = { .reg =  0x74, .mask = BIT(3)            },
-+	[ZX297520V3_GPIO8_RESET]     = { .reg =  0x74, .mask = BIT(2)            },
-+
-+	[ZX297520V3_TIMER_T12_RESET] = { .reg =  0x74, .mask = BIT(6)  | BIT(7)  },
-+	[ZX297520V3_TIMER_T13_RESET] = { .reg =  0x7c, .mask = BIT(0)  | BIT(1)  },
-+	[ZX297520V3_TIMER_T14_RESET] = { .reg =  0x7c, .mask = BIT(2)  | BIT(3)  },
-+	[ZX297520V3_TIMER_T15_RESET] = { .reg =  0x74, .mask = BIT(10) | BIT(11) },
-+	[ZX297520V3_TIMER_T16_RESET] = { .reg =  0x7c, .mask = BIT(4)  | BIT(5)  },
-+	[ZX297520V3_TIMER_T17_RESET] = { .reg = 0x12c, .mask = BIT(0)  | BIT(1)  },
-+	[ZX297520V3_WDT_T18_RESET]   = { .reg =  0x74, .mask = BIT(12) | BIT(13) },
-+	[ZX297520V3_USIM1_RESET]     = { .reg =  0x74, .mask = BIT(14) | BIT(15) },
-+	[ZX297520V3_AHB_RESET]       = { .reg =  0x70, .mask = BIT(0)  | BIT(1)  },
-+
-+	/* USB reset. 0x84 returns the USB device status (0x1 for HSIC up, 0x2 for USB up, but
-+	 * all 3 bits (PCLK, WCLK, PHY) need to be deasserted for the device to report ready.
-+	 * Thus polling the status is the responsibility of the USB PHY driver.
-+	 */
-+	[ZX297520V3_USB_RESET]       = { .reg =  0x80, .mask = BIT(4) | BIT(5)   },
-+	[ZX297520V3_HSIC_RESET]      = { .reg =  0x80, .mask = BIT(1) | BIT(2)   },
-+};
-+
-+static const struct zte_reset_data zx297520v3_topreset_data = {
-+	.resets = zx297520v3_top_resets,
-+	.num = ARRAY_SIZE(zx297520v3_top_resets),
-+};
-+
-+static const struct zte_reset_reg zx297520v3_matrix_resets[] = {
-+	[ZX297520V3_CPU_RESET]       = { .reg =  0x28, .mask = BIT(1)            },
-+	[ZX297520V3_ZSP_BUS_RESET]   = { .reg =  0x3c, .mask = BIT(0)            },
-+	[ZX297520V3_DDR_CTRL_RESET]  = { .reg = 0x100, .mask = BIT(10) | BIT(11) },
-+	[ZX297520V3_EDCP_RESET]      = { .reg =  0x68, .mask = BIT(0)            },
-+	[ZX297520V3_SD0_RESET]       = { .reg =  0x58, .mask = BIT(1)            },
-+	[ZX297520V3_SD1_RESET]       = { .reg =  0x58, .mask = BIT(0)            },
-+	[ZX297520V3_NAND_RESET]      = { .reg =  0x58, .mask = BIT(4)            },
-+	[ZX297520V3_PDCFG_RESET]     = { .reg =  0x94, .mask = BIT(20)           },
-+	[ZX297520V3_SSC_RESET]       = { .reg =  0x94, .mask = BIT(24)           },
-+	[ZX297520V3_GMAC_RESET]      = { .reg = 0x114, .mask = BIT(0)  | BIT(1)  },
-+	[ZX297520V3_VOU_RESET]       = { .reg = 0x16c, .mask = BIT(0)            },
-+	[ZX297520V3_LSP_RESET]       = { .reg =  0x80, .mask = BIT(0)            },
-+};
-+
-+static const struct zte_reset_data zx297520v3_matrixreset_data = {
-+	.resets = zx297520v3_matrix_resets,
-+	.num = ARRAY_SIZE(zx297520v3_matrix_resets),
-+};
-+
-+static const struct zte_reset_reg zx297520v3_lsp_resets[] = {
-+	[ZX297520V3_TIMER_L1_RESET]  = { .reg = 0x04,  .mask = BIT(8)  | BIT(9)  },
-+	[ZX297520V3_WDT_L2_RESET]    = { .reg = 0x08,  .mask = BIT(8)  | BIT(9)  },
-+	[ZX297520V3_WDT_L3_RESET]    = { .reg = 0x0c,  .mask = BIT(8)  | BIT(9)  },
-+	[ZX297520V3_PWM_RESET]       = { .reg = 0x10,  .mask = BIT(8)  | BIT(9)  },
-+	[ZX297520V3_I2S0_RESET]      = { .reg = 0x14,  .mask = BIT(8)  | BIT(9)  },
-+	/* 0x18: Not writeable */
-+	[ZX297520V3_I2S1_RESET]      = { .reg = 0x1c,  .mask = BIT(8)  | BIT(9)  },
-+	/* 0x20: Not writeable */
-+	[ZX297520V3_QSPI_RESET]      = { .reg = 0x24,  .mask = BIT(8)  | BIT(9)  },
-+	[ZX297520V3_UART1_RESET]     = { .reg = 0x28,  .mask = BIT(8)  | BIT(9)  },
-+	[ZX297520V3_I2C1_RESET]      = { .reg = 0x2c,  .mask = BIT(8)  | BIT(9)  },
-+	[ZX297520V3_SPI0_RESET]      = { .reg = 0x30,  .mask = BIT(8)  | BIT(9)  },
-+	[ZX297520V3_TIMER_LB_RESET]  = { .reg = 0x34,  .mask = BIT(8)  | BIT(9)  },
-+	[ZX297520V3_TIMER_LC_RESET]  = { .reg = 0x38,  .mask = BIT(8)  | BIT(9)  },
-+	[ZX297520V3_UART2_RESET]     = { .reg = 0x3c,  .mask = BIT(8)  | BIT(9)  },
-+	[ZX297520V3_WDT_LE_RESET]    = { .reg = 0x40,  .mask = BIT(8)  | BIT(9)  },
-+	[ZX297520V3_TIMER_LF_RESET]  = { .reg = 0x44,  .mask = BIT(8)  | BIT(9)  },
-+	[ZX297520V3_SPI1_RESET]      = { .reg = 0x48,  .mask = BIT(8)  | BIT(9)  },
-+	[ZX297520V3_TIMER_L11_RESET] = { .reg = 0x4c,  .mask = BIT(8)  | BIT(9)  },
-+	[ZX297520V3_TDM_RESET]       = { .reg = 0x50,  .mask = BIT(8)  | BIT(9)  },
-+};
-+
-+static const struct zte_reset_data zx297520v3_lspreset_data = {
-+	.resets = zx297520v3_lsp_resets,
-+	.num = ARRAY_SIZE(zx297520v3_lsp_resets),
-+};
-+
-+static int reset_zx297520v3_probe(struct platform_device *pdev)
-+{
-+	const struct platform_device_id *id = platform_get_device_id(pdev);
-+	struct device *dev = &pdev->dev;
-+	struct device_node *of_node = dev->parent->of_node;
-+	const struct zte_reset_data *data;
-+	struct zte_reset *rst;
-+
-+	if (!id)
-+		return -ENODEV;
-+	data = (const struct zte_reset_data *)id->driver_data;
-+
-+	rst = devm_kzalloc(dev, sizeof(*rst), GFP_KERNEL);
-+	if (!rst)
-+		return -ENOMEM;
-+
-+	rst->resets = data->resets;
-+	rst->rcdev.owner = THIS_MODULE;
-+	rst->rcdev.nr_resets = data->num;
-+	rst->rcdev.ops = &zx29_rst_ops;
-+	rst->rcdev.of_node = of_node;
-+	rst->rcdev.dev = dev;
-+
-+	rst->map = device_node_to_regmap(of_node);
-+	if (IS_ERR(rst->map))
-+		return dev_err_probe(dev, PTR_ERR(rst->map), "Cannot get parent syscon regmap\n");
-+
-+	return devm_reset_controller_register(dev, &rst->rcdev);
-+}
-+
-+static const struct platform_device_id reset_zx297520v3_ids[] = {
-+	{
-+		.name = "zx297520v3-topreset",
-+		.driver_data = (kernel_ulong_t)&zx297520v3_topreset_data,
-+	},
-+	{
-+		.name = "zx297520v3-matrixreset",
-+		.driver_data = (kernel_ulong_t)&zx297520v3_matrixreset_data,
-+	},
-+	{
-+		.name = "zx297520v3-lspreset",
-+		.driver_data = (kernel_ulong_t)&zx297520v3_lspreset_data,
-+	},
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(platform, reset_zx297520v3_ids);
-+
-+static struct platform_driver reset_zx297520v3 = {
-+	.probe = reset_zx297520v3_probe,
-+	.driver = {
-+		.name = "reset-zx297520v3",
-+	},
-+	.id_table = reset_zx297520v3_ids,
-+};
-+module_platform_driver(reset_zx297520v3);
-+
-+MODULE_AUTHOR("Stefan Dösinger <stefandoesinger@gmail.com>");
-+MODULE_DESCRIPTION("ZTE zx297520v3 reset driver");
-+MODULE_LICENSE("GPL");
-
--- 
-2.54.0
-
+SGkgTGludXMsDQoNClRoYW5rcyBmb3IgdGhlIHJldmlldy4gSSB3aWxsIHJld29yayB0aGlzIHRv
+IHJldXNlIHRoZSBQTDA2MSBkcml2ZXIgd2l0aA0KcGVyLXZhcmlhbnQgcmVnaXN0ZXIgb2Zmc2V0
+cywgYW5kIGV2YWx1YXRlIG1vZGVsaW5nIGVhY2ggR1BJTyBiYW5rIGFzIGENCnNlcGFyYXRlIERU
+IGVudGl0eS4gVGhlIGR1cGxpY2F0ZWQgR1BJTyBpbXBsZW1lbnRhdGlvbiB3aWxsIGJlIHJlbW92
+ZWQuDQoNCkJlc3QgcmVnYXJkcywNCkxvbmcNCg0KQW1iYXJlbGxhIFNoYW5naGFpIENvLiwgTHRk
+DQotLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KRnJvbTogTGludXMgV2FsbGVpaiA8bGludXN3
+QGtlcm5lbC5vcmc+IA0KU2VudDogU2F0dXJkYXksIEF1Z3VzdCA4LCAyMDI2IDAxOjQ1DQpUbzog
+TG9uZyBaaGFvIDxsb25nemhhb0BhbWJhcmVsbGEuY29tPjsgQmFydG9zeiBHb2xhc3pld3NraSA8
+YnJnbEBrZXJuZWwub3JnPg0KQ2M6IFJvYiBIZXJyaW5nIDxyb2JoQGtlcm5lbC5vcmc+OyBLcnp5
+c3p0b2YgS296bG93c2tpIDxrcnprK2R0QGtlcm5lbC5vcmc+OyBDb25vciBEb29sZXkgPGNvbm9y
+K2R0QGtlcm5lbC5vcmc+OyBNaWNoYWVsIFR1cnF1ZXR0ZSA8bXR1cnF1ZXR0ZUBiYXlsaWJyZS5j
+b20+OyBTdGVwaGVuIEJveWQgPHNib3lkQGtlcm5lbC5vcmc+OyBHcmVnIEtyb2FoLUhhcnRtYW4g
+PGdyZWdraEBsaW51eGZvdW5kYXRpb24ub3JnPjsgSmlyaSBTbGFieSA8amlyaXNsYWJ5QGtlcm5l
+bC5vcmc+OyBDYXRhbGluIE1hcmluYXMgPGNhdGFsaW4ubWFyaW5hc0Bhcm0uY29tPjsgV2lsbCBE
+ZWFjb24gPHdpbGxAa2VybmVsLm9yZz47IEFybmQgQmVyZ21hbm4gPGFybmRAYXJuZGIuZGU+OyBB
+bGV4YW5kcmUgQmVsbG9uaSA8YWxleGFuZHJlLmJlbGxvbmlAYm9vdGxpbi5jb20+OyBkZXZpY2V0
+cmVlQHZnZXIua2VybmVsLm9yZzsgbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3Jn
+OyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBsaW51eC1jbGtAdmdlci5rZXJuZWwub3Jn
+OyBsaW51eC1ncGlvQHZnZXIua2VybmVsLm9yZzsgbGludXgtc2VyaWFsQHZnZXIua2VybmVsLm9y
+Zzsgc29jQGxpc3RzLmxpbnV4LmRldg0KU3ViamVjdDogW0VYVF0gUmU6IFtQQVRDSCB2MiAwNy8x
+MF0gcGluY3RybDogYW1iYXJlbGxhOiBhZGQgQW1iYXJlbGxhIHBpbiBjb250cm9sbGVyDQoNCkhp
+IExvbmcsDQoNCnRoYW5rcyBmb3IgeW91ciBwYXRjaCENCg0KT24gVGh1LCBBdWcgNiwgMjAyNiBh
+dCAxMTozNOKAr0FNIExvbmcgWmhhbyB2aWEgQjQgUmVsYXkgPGRldm51bGwrbG9uZ3poYW8uYW1i
+YXJlbGxhLmNvbUBrZXJuZWwub3JnPiB3cm90ZToNCg0KPiArI2RlZmluZSBHUElPX0RBVEFfT0ZG
+U0VUICAgICAgICAgICAgICAgMHgwMA0KPiArI2RlZmluZSBHUElPX0RJUl9PRkZTRVQgICAgICAg
+ICAgICAgICAgICAgICAgICAweDA0DQo+ICsjZGVmaW5lIEdQSU9fSVNfT0ZGU0VUICAgICAgICAg
+ICAgICAgICAweDA4DQo+ICsjZGVmaW5lIEdQSU9fSUJFX09GRlNFVCAgICAgICAgICAgICAgICAg
+ICAgICAgIDB4MGMNCj4gKyNkZWZpbmUgR1BJT19JRVZfT0ZGU0VUICAgICAgICAgICAgICAgICAg
+ICAgICAgMHgxMA0KPiArI2RlZmluZSBHUElPX0lFX09GRlNFVCAgICAgICAgICAgICAgICAgMHgx
+NA0KPiArI2RlZmluZSBHUElPX0FGU0VMX09GRlNFVCAgICAgICAgICAgICAgMHgxOA0KPiArI2Rl
+ZmluZSBHUElPX1JJU19PRkZTRVQgICAgICAgICAgICAgICAgICAgICAgICAweDFjDQo+ICsjZGVm
+aW5lIEdQSU9fTUlTX09GRlNFVCAgICAgICAgICAgICAgICAgICAgICAgIDB4MjANCj4gKyNkZWZp
+bmUgR1BJT19JQ19PRkZTRVQgICAgICAgICAgICAgICAgIDB4MjQNCj4gKyNkZWZpbmUgR1BJT19N
+QVNLX09GRlNFVCAgICAgICAgICAgICAgIDB4MjgNCj4gKyNkZWZpbmUgR1BJT19FTkFCTEVfT0ZG
+U0VUICAgICAgICAgICAgIDB4MmMNCg0KQXMgZXZlcnlvbmUgY2FuIHNlZSBmcm9tIGEgbWlsZSBh
+d2F5IHRoaXMgaXMgYSBtb2RpZmllZCBBUk0gUEwwNjEgcHJpbWVjZWxsLCBzZWUgZHJpdmVycy9n
+cGlvL2dwaW8tcGwwNjEuYy4NCg0KSSdtIG5vdCB2ZXJ5IGludGVyZXN0ZWQgaW4gaGF2aW5nIHR3
+byBkcml2ZXJzIGZvciBwcmV0dHkgbXVjaCB0aGUgc2FtZSBoYXJkd2FyZSBpbiB0aGUga2VybmVs
+LiBPZGRzIGFyZSB0aGF0IHRoZXJlIHdpbGwgYmUgbmV3IHF1aXJrcyBhbmQgZml4ZWQgdG8gb25l
+IG9mIHRoZSBkcml2ZXJzIHRoYXQgdGhlIG90aGVyIG9uZSBkb2Vzbid0IGdldCA6LyBBbHNvIHRo
+ZSBQTDA2MSBkcml2ZXIgaXMgcHJldHR5IGNvbXBsZXggYW5kIHNwZWNpYWxpemVkIGFzIEdQSU8g
+ZHJpdmVycyBnbyBhbHJlYWR5LiBJIGNlcnRhaW5seSBkb24ndCB3YW50IHRvIGhhdmUgYSBzZWNv
+bmQgY29weSBvZiB0aGF0Lg0KDQpXZSBuZWVkIHRvIGZpbmQgYSB3YXkgdG8gcmUtdXNlIHRoZSBQ
+TDA2MSBkcml2ZXIgd2l0aCB0aGlzIHBpbiBjb250cm9sbGVyLg0KDQoxLiBNb2RpZnkgdGhlIGV4
+aXN0aW5nIFBMMDYxIGRyaXZlciB0byB1c2UgYSBkeW5hbWljIHJlZ2lzdGVyDQogIGxheW91dCwg
+aS5lLiBtYWtlIHRoZSBkaWZmZXJlbnQgcmVnaXN0ZXIgbG9jYXRpb25zIHBhcnQgb2Ygc29tZQ0K
+ICBwZXItdmFyaWFudCBkYXRhOg0KDQpzdHJ1Y3QgdmVuZG9yX2RhdGEgew0KICAgIHUzMiBkYXRh
+X29mZnNldDsNCiAgICB1MzIgZGlyX29mZnNldDsNCi4uLg0KfTsNCg0KQWRkOg0KDQpzdHJ1Y3Qg
+cGwwNjEgew0KICAgIHN0cnVjdCB2ZW5kb3JfZGF0YSAqdmFyaWFudDsNCi4uLg0KfTsNCg0KQWRk
+IHZlbmRvciBkYXRhIHRvIHRoZSBQTDA2MSB2YXJpYW50Og0KDQpzdGF0aWMgc3RydWN0IHZlbmRv
+cl9kYXRhIHZlbmRvcl9hcm0gPSB7Li4ufTsNCg0Kc3RhdGljIHN0cnVjdCB2ZW5kb3JfZGF0YSB2
+ZW5kb3JfYW1iYXJlbGxhID0gey4uLn07DQoNCnN0YXRpYyBjb25zdCBzdHJ1Y3QgYW1iYV9pZCBw
+bDA2MV9pZHNbXSA9IHsNCiAgICAgICAgew0KICAgICAgICAgICAgICAgIC5pZCAgICAgPSAweDAw
+MDQxMDYxLA0KICAgICAgICAgICAgICAgIC5tYXNrICAgPSAweDAwMGZmZmZmLA0KICAgICAgICAg
+ICAgICAgIC4gZGF0YSA9ICZ2ZW5kb3JfYXJtOw0KICAgICAgICB9LA0KICAgICAgICB7DQogICAg
+ICAgICAgICAgICAuaWQgPSAvKiBtYWtlIHNvbWV0aGluZyB1cCwgc2VlIGluY2x1ZGUvbGludXgv
+YW1iYS9idXMuaCAqLw0KICAgICAgICAgICAgICAgLm1hc2sgPSAuLi4uDQogICAgICAgICAgICAg
+ICAuZGF0YSA9ICZ2ZW5kb3JfYW1iYXJlbGxhOw0KICAgICAgICB9LA0KDQoNCkVzc2VudGlhbGx5
+IGZvbGxvdyB0aGUgcGF0dGVybiBmcm9tIGRyaXZlcnMvc3BpL3NwaS1wbDAyMi5jLg0KDQoyLiBD
+b250ZW1wbGF0ZSBpZiB0aGUgR1BJTyBzaG91bGQgYmUgYSBzZXBhcmF0ZSBlbnRpdHkgaW4gdGhl
+ICBkZXZpY2UgdHJlZSBvciBub3QuIElmIG5vdCwgTGludXggbmVlZHMgdG8gc3Bhd24gdGhlIG5l
+dyBBTUJBICBkZXZpY2Ugd2l0aCB0aGlzIHBpbiBjb250cm9sIGRyaXZlciB1c2luZyBlLmcuDQog
+YW1iYV9kZXZpY2VfYWxsb2MoKSBhbmQgYW1iYV9kZXZpY2VfcmVnaXN0ZXIoKSBldGMsICBzZWUg
+ZHJpdmVycy9vZi9wbGF0Zm9ybS5jDQoNCjMuIHNlbGVjdCBHUElPX1BMMDYxIGluIEtjb25maWcg
+Zm9yIHRoaXMgcGluIGNvbnRyb2xsZXIuLi4NCg0KVGhpcyBpcyBub3QgYSBzaW1wbGUgc29sdXRp
+b24gYnV0IGl0IGlzIHRoZSByaWdodCBvbmUuDQoNCllvdXJzLA0KTGludXMgV2FsbGVpag0KDQoj
+IyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMj
+IyMjIyMjIyMjIyMjDQpUaGlzIEVYVEVSTkFMIGVtYWlsIGhhcyBiZWVuIHNjYW5uZWQgYnkgUHJv
+b2Zwb2ludCBFbWFpbCBQcm90ZWN0IHNlcnZpY2UuDQoKKioqKioqKioqKioqKioqKioqKioqKioq
+KioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKgpUaGlzIGVtYWls
+IGFuZCBhdHRhY2htZW50cyBjb250YWluIEFtYmFyZWxsYSBQcm9wcmlldGFyeSBhbmQvb3IgQ29u
+ZmlkZW50aWFsIEluZm9ybWF0aW9uIGFuZCBpcyBpbnRlbmRlZCBzb2xlbHkgZm9yIHRoZSB1c2Ug
+b2YgdGhlIGluZGl2aWR1YWwocykgdG8gd2hvbSBpdCBpcyBhZGRyZXNzZWQuIEFueSB1bmF1dGhv
+cml6ZWQgcmV2aWV3LCB1c2UsIGRpc2Nsb3N1cmUsIGRpc3RyaWJ1dGUsIGNvcHksIG9yIHByaW50
+IGlzIHByb2hpYml0ZWQuIElmIHlvdSBhcmUgbm90IGFuIGludGVuZGVkIHJlY2lwaWVudCwgcGxl
+YXNlIGNvbnRhY3QgdGhlIHNlbmRlciBieSByZXBseSBlbWFpbCBhbmQgZGVzdHJveSBhbGwgY29w
+aWVzIG9mIHRoZSBvcmlnaW5hbCBtZXNzYWdlLiBUaGFuayB5b3UuCg==
