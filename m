@@ -1,32 +1,32 @@
 Received: from mail.zlab.su (mail.zlab.su [109.73.193.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2062F3EB0E2;
-	Mon, 10 Aug 2026 12:16:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 777C53DC4B6;
+	Mon, 10 Aug 2026 12:16:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.193.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786364186; cv=none; b=qc/twIwbV0bvF7A2JcPYsfGByuoWLbT5fjf/m0zaIiUKTNBhZGqRFteSBd2n4sjwZiqM9xZQGfpcWGneIGSFmQG4gA/gAjrzNtilVks7SVDZeUo35EnrPbCoWj4yJwXcSiat+/7f6Bq5o9u4RHr+NDVMoKyPcRrBGmDAMz5ABEs=
+	t=1786364189; cv=none; b=bJL5NES5bAg6htszfy33xeaKmt8NvyGbP5PPAChUIO1D6Xa+OeGVdn+6dNm85T1Wyw9CQaH9jzaICnMFb/j8Q/iDUTD9iwRimwQBpnUt9Tu0eY36p41NlvG8n7DolhaiqU+wECQoJUeLaJZ3SowFealHll7JA9szKedx8aNWMNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786364186; c=relaxed/simple;
-	bh=RoQUuHMRBOlUT6PMXmijPBzse7gY96zfByIiX3DLl2g=;
+	s=arc-20240116; t=1786364189; c=relaxed/simple;
+	bh=t91XblPqoV6PdJaJMiKtKZWFOUj+j7FoahLhW23CxDA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Qa5AQEurbSDMo1pq1N0gE2rT4qRbyBtYg7lz7+u7EEumjRfQ9ieItc3zFvoPZHEy79Ysf9/c8x4lnTkUnbYhzmZk/tjaWpYVhiI+j+NuCMJNBQokviAbxWeDJRJh3NRnhY+DaiS5P8xyuf3eo3zREqCbWB6MFvf7wE4GGukfsvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zlab.su; spf=pass smtp.mailfrom=zlab.su; dkim=pass (2048-bit key) header.d=zlab.su header.i=@zlab.su header.b=gP+S9Yoa; arc=none smtp.client-ip=109.73.193.145
+	 MIME-Version; b=bM4Wk8PTE+8tdfvXZFvD3hJOY8WsNlvbW/A5XJnIl3+KXBunsOe+ml5iGGOjNLYP4pvTgCgG5wp+C1cYmWUd1qnvI1QdgmrvIspOsWCQulD9s2jpv5bF+KT1iZNNI1laFcYmZRHp4ny02amjIkrW0X9RhgqJBExESX0y6ik/duE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zlab.su; spf=pass smtp.mailfrom=zlab.su; dkim=pass (2048-bit key) header.d=zlab.su header.i=@zlab.su header.b=nFuLd717; arc=none smtp.client-ip=109.73.193.145
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zlab.su
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zlab.su
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zlab.su header.i=@zlab.su header.b="gP+S9Yoa"
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1C870C0514;
-	Mon, 10 Aug 2026 15:16:21 +0300 (MSK)
+	dkim=pass (2048-bit key) header.d=zlab.su header.i=@zlab.su header.b="nFuLd717"
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4EC63C0518;
+	Mon, 10 Aug 2026 15:16:24 +0300 (MSK)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zlab.su; s=dkim;
-	t=1786364183; h=from:subject:date:message-id:to:cc:mime-version:
+	t=1786364186; h=from:subject:date:message-id:to:cc:mime-version:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=PjpXsUWuH/r9E8s8lUfUdg5PLs7m5CliRJpnNLInJrI=;
-	b=gP+S9Yoax+x4I/pvI/7/l8RziF3Wh1xJY/9F+IBe/aiziSieWgj1PjbSrlmdHgpINK9/ur
-	ojW4UQ7TKnmZlPW6z9o7fSPuma/8WSnPdW0txTOI8ysyjVlMqfWLhmtRV7WFJhLZKURKYp
-	z37wYXPacIYGb2jVFV1uNRfrHWJ8AVp9/VVqr5659ry8v+GYEoSGLExVvhde8y5gkddOIa
-	mLsp73El1xT49aklCBSXtnQvGRQ/03i6W2w9zPzKJortrM4TYqFflsnrwqwxeaKm4xIbn9
-	fk4HYtE4xKdp9g2M+165tMF/kv8aKieQYYVTDcXChVaMhiYlIyD7vrHi/97laA==
+	bh=lOe5l9utNgT7rnp1te/CrBZS1W64mKYVhM5GuNKN2to=;
+	b=nFuLd717My9K/2HTU5k1GvZJr8IbjhdkNZTwa0rR081ukM0y7pRzaCclLFR25Os905OgqI
+	c6o6mwtDaf+6mi02TDhDEXbeFYnXSGx+UQQlLB7lR9Rx2FZy6tmqZcqrGVeHaYc9ma4KRJ
+	Zk6zNpKdAQN7kjMzuTMwzdkyX10QQM/QVbCwaR6zSL3ceY2zhqx1Z1H/DE9me6wiFORduy
+	4WNmbKQquo5xf1V4hPd+9pp+nJJ1yxNdcMfGgZVyWum5DzF2PFGgM/TpQCeXau2JvJcVLZ
+	RJQkSfTF2ChmyDoT1FxMsXUAnjZT3FcmeGNeXqXAslDVOp67nJbo8Z+OOVOkMg==
 From: Vladislav Leonov <vlad@zlab.su>
 To: linux-rockchip@lists.infradead.org
 Cc: linux-arm-kernel@lists.infradead.org,
@@ -35,13 +35,19 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Vladislav Leonov <vlad@zlab.su>,
+	Aurelien Jarno <aurelien@aurel32.net>,
 	Conor Dooley <conor+dt@kernel.org>,
+	Daniel Golle <daniel@makrotopia.org>,
 	Heiko Stuebner <heiko@sntech.de>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>
-Subject: [PATCH 19/25] ARM: dts: rockchip: Add SPI nodes for RV1106
-Date: Mon, 10 Aug 2026 15:11:10 +0300
-Message-ID: <20260810121121.210040-20-vlad@zlab.su>
+	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+	Olivia Mackall <olivia@selenic.com>,
+	Rob Herring <robh@kernel.org>,
+	linux-crypto@vger.kernel.org
+Subject: [PATCH 20/25] dt-bindings: rng: rockchip: Add RV1106 compatible
+Date: Mon, 10 Aug 2026 15:11:11 +0300
+Message-ID: <20260810121121.210040-21-vlad@zlab.su>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260810121121.210040-1-vlad@zlab.su>
 References: <20260810121121.210040-1-vlad@zlab.su>
@@ -54,72 +60,39 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
 
-Rockchip RV1106 has two SPI controllers. Add the spi0 and spi1 nodes
-together with their aliases, using the m0 pinmux and the DMA channels
-of the single DMAC.
-
-Compared to Rockchip BSP kernel add missing SCLK_IN_SPI1 to spi1 node.
-
-Both nodes default to status = "disabled" and are enabled per-board.
+Add rockchip,rv1106-rng as a variant of rockchip,rk3588-rng, following
+the pattern used for fallback compatibles in the schema (an items list
+with an enum and a matching const fallback), so RV1106 can reuse the
+existing rk3588-rng driver bindings.
 
 Signed-off-by: Vladislav Leonov <vlad@zlab.su>
 ---
 
- arch/arm/boot/dts/rockchip/rv1106.dtsi | 34 ++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+ .../devicetree/bindings/rng/rockchip,rk3588-rng.yaml  | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/rockchip/rv1106.dtsi b/arch/arm/boot/dts/rockchip/rv1106.dtsi
-index 58ac297e4d75..ce2f169b1acd 100644
---- a/arch/arm/boot/dts/rockchip/rv1106.dtsi
-+++ b/arch/arm/boot/dts/rockchip/rv1106.dtsi
-@@ -30,6 +30,8 @@ aliases {
- 		i2c2 = &i2c2;
- 		i2c3 = &i2c3;
- 		i2c4 = &i2c4;
-+		spi0 = &spi0;
-+		spi1 = &spi1;
- 	};
+diff --git a/Documentation/devicetree/bindings/rng/rockchip,rk3588-rng.yaml b/Documentation/devicetree/bindings/rng/rockchip,rk3588-rng.yaml
+index fcc5be80142d..60ceac2697c0 100644
+--- a/Documentation/devicetree/bindings/rng/rockchip,rk3588-rng.yaml
++++ b/Documentation/devicetree/bindings/rng/rockchip,rk3588-rng.yaml
+@@ -13,10 +13,13 @@ maintainers:
  
- 	cpus {
-@@ -370,6 +372,38 @@ uart5: serial@ff4f0000 {
- 			status = "disabled";
- 		};
+ properties:
+   compatible:
+-    enum:
+-      - rockchip,rk3576-rng
+-      - rockchip,rk3588-rng
+-
++    oneOf:
++      - const: rockchip,rk3576-rng
++      - const: rockchip,rk3588-rng
++      - items:
++          - enum:
++              - rockchip,rv1106-rng
++          - const: rockchip,rk3588-rng
+   reg:
+     maxItems: 1
  
-+		spi0: spi@ff500000 {
-+			compatible = "rockchip,rv1106-spi", "rockchip,rk3066-spi";
-+			reg = <0xff500000 0x1000>;
-+			interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			clocks = <&cru CLK_SPI0>, <&cru PCLK_SPI0>, <&cru SCLK_IN_SPI0>;
-+			clock-names = "spiclk", "apb_pclk", "sclk_in";
-+			dmas = <&dmac 1>, <&dmac 0>;
-+			dma-names = "tx", "rx";
-+			num-cs = <2>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&spi0m0_cs0 &spi0m0_cs1 &spi0m0_pins>;
-+			status = "disabled";
-+		};
-+
-+		spi1: spi@ff510000 {
-+			compatible = "rockchip,rv1106-spi", "rockchip,rk3066-spi";
-+			reg = <0xff510000 0x1000>;
-+			interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			clocks = <&cru CLK_SPI1>, <&cru PCLK_SPI1>, <&cru SCLK_IN_SPI1>;
-+			clock-names = "spiclk", "apb_pclk", "sclk_in";
-+			dmas = <&dmac 3>, <&dmac 2>;
-+			dma-names = "tx", "rx";
-+			num-cs = <2>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&spi1m0_cs0 &spi1m0_cs1 &spi1m0_pins>;
-+			status = "disabled";
-+		};
-+
- 		gpio1_ioc: syscon@ff538000 {
- 			compatible = "rockchip,rv1106-gpio1-ioc", "syscon";
- 			reg = <0xff538000 0x8000>;
 -- 
 2.47.3
 
