@@ -1,68 +1,68 @@
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88B8225B0A3
-	for <linux-clk@vger.kernel.org>; Mon, 10 Aug 2026 05:41:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0EAF1FE471
+	for <linux-clk@vger.kernel.org>; Mon, 10 Aug 2026 05:47:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786340518; cv=none; b=WxvSdIV4sJvP9h8vJ97WKI+MMRQc4H7vJu66fq33a4HlUn4lvh7BsvCGeXpN+yiQwygwJCsAb+gYehMoFdOWe3JCyuMuhHRiKwqZ0qYUmbDyB0/+mTBzRArWEu8regPPX9xl9ByxoLSmw3OSiqZ5YnNObJozpQGLQ/BklX89k2Y=
+	t=1786340863; cv=none; b=Jl/XX8tllDCdvpq7SVYPQC87aSJAHQ4unwSVvuUilIVcBXmEJ7Sjf5CfQwnTdlfZOWCVX5pF7phhvUjYgiUf/6Srq3EyHj+i8ugz1kLsa94Z0tUg4CQs19wmICoMXNvn7ChJkqgl3Dbz/t6M5+bLnreOX9AsZsKJ9ESt1lThYOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786340518; c=relaxed/simple;
-	bh=D0o5SJTwXluNVzLqxh1DrcA6buYS0D5p+5EasedrgvY=;
+	s=arc-20240116; t=1786340863; c=relaxed/simple;
+	bh=AWMJoce7pnftoApbVh15TcpMiuMZ1v3TsqwFuMUo2h8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jH2S/IXvh3v8ga4IunyocJHuHEf8Ys7dqjVKiimLLZMeuRokQejXsgfvZBTNju657X40Wyp4rY66Djq1wUWbUBkH9BTLsOyZAXoKXkbZ0K5h18MzgHbeRWXblz8n1M0Aj1Qnc9fvRwpygeMekOPP3j3RA1N/v7nnvvep5SuzNhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LZL7O7pi; arc=none smtp.client-ip=209.85.167.48
+	 In-Reply-To:Content-Type; b=R/4c2GTYd3BDeoGyXJc+mTlp73QtftIP/3B3yRylTfr3uPhiSWA+8w4F+wRReUpQDB/oJ4e5UiQkYZYjFAJY7HIUPPZFgJIOnqxreRE8ulQFmghZfgozDxrNaNxdSHbpPesFRD8nin9pLPyTiPs3j4fJMSCLBGp22Mp8djqYO1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iFNiR5sy; arc=none smtp.client-ip=209.85.167.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LZL7O7pi"
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5b3119957f0so915728e87.1
-        for <linux-clk@vger.kernel.org>; Sun, 09 Aug 2026 22:41:56 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iFNiR5sy"
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5b0231a3e86so1368756e87.0
+        for <linux-clk@vger.kernel.org>; Sun, 09 Aug 2026 22:47:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1786340514; x=1786945314; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1786340860; x=1786945660; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:in-reply-to:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=9P5dyYkRO7MIgVHZdpUNXFuXh3XDJtlZIqvMU+tJYAw=;
-        b=LZL7O7piLNcBxxrD0luSvFKF3hrDQDtbRiJHs05xH2olstLO7L0RQkdU26kMh7yYeH
-         5WXIL/1UbkBB8BKWm++s0SDb1yBYEldY24uTXoY1P5mMw/eBYn4p1srX+hAVn+TGBxeq
-         n+CtJh1pKSKfD9Zk1vOElECZ3Er/IujDBXp2O+rcc//Qb6QA+vt/oWtnKV5ir9q8XXj0
-         nI3ygrd+Vvusif5J9wC4tpOn4IttlVkTAt6jIEPppIw8XlIcR/05+3oo7POkOcC6txWt
-         SNk46RJGZ20lVNq86szezulcAbs5ebm7In86OMDNZINZPXWD4ek2GA3sIPnMtdKZyq9x
-         gdlA==
+        bh=oUFfp1/cNFOhAWdi1g6pduhZx20pCKXkmLPmJPcXpEc=;
+        b=iFNiR5sy9H3kQkPeeCyrUu18lu08olCZXsaHceSPm3zyMlOZBs82DDo6vuidqJd3F6
+         AIXErZEpwRy6BONhA2E8QruzaPGQFFbVIHveixXOhDXjOfzuWC237ybxgGa8K52CEyoi
+         J2ctiOXw2quhtq4J27MswFJ5VMLzQ1waSZiGxFnbG/n455BXWxyaMwNamb86QHzE5N1d
+         kQo1QlOAUbFJJaKUZzVjSk+EaV+FPtKaU8j00oXKv1LF8EnKTwJ7vYlA+YMedpReFlnG
+         hWIQQNbCDtBGunR1/R9ruEraVEf2hkAeamH18iJa7Hsx1y04xqZXBctX7tu7JabDmdYg
+         MGPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786340514; x=1786945314;
+        d=1e100.net; s=20251104; t=1786340860; x=1786945660;
         h=content-transfer-encoding:content-type:in-reply-to:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=9P5dyYkRO7MIgVHZdpUNXFuXh3XDJtlZIqvMU+tJYAw=;
-        b=Zdp71sGMwlgHlbTGxS8GvrarDeBB5O0fnaRUKVSviVaKoPRU693x06hKpBDpzMPHSf
-         4/HJ5uLX9oDfrpIeo137Qfq29c7gfnJP7ppR3Y9k27Mpoywbwo+ktlRP+Lgunr6Q5skM
-         rUuvuPg3yvW0qIPVfl2Kdtmv36r1CA1fJl+Ksch5qZM2FQKXuV7T3FU+BwVlIHAltTlU
-         YoV8YeAf0e4Pqag0738XtRJR3nzwe2ZCBh3loFUmcZo+GJFA6/SkFJQtSW+2ed2OXDDr
-         NVReLYqYfIA/p33ilF0trX7XM4/9lHYw5Uild+Wl3XxpN+mSmNc+YfJcnvZZaUnSIW2s
-         o22A==
-X-Forwarded-Encrypted: i=1; AHgh+RqyRF6Iae3KyffLqr0/9l4Dmrbz0HyraEpnPf1djI2/G7YycXQuE/PaTohZO1l9MZadqraPUI1VL7k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTHC516+QZlalk64d/GIZkjJU10Vgit69mfiVXs+uw9QS/0S8w
-	YPX5sJZ+Ba+pW2fcLlddCKe+MKM7a2QVzYbvxrh9nFOP2Ogoz/gjh2gm
-X-Gm-Gg: AR+sD13UY+AZik/gI+3zjXGVexlaqg8SzgpzVIKlyR6JhkSpRqMwhMnW65FLtFgUzc1
-	/uW8tavqPtR26q7VsPDAUeUf/fKJGsj1Lu/tNNaFJaw34/GDkW8BStx1Gfy5KTFV/tIgSDZLZG2
-	4kutVzK9qYpHBCe2Y1b/q+hgf8ZJR2i5PjMUZevQjXaAiGYwaN76ixPaWjgylMwBpoZt2ht0lOz
-	jWOWaiJmvq9196CwnFDpxlmEOIJ83oym0Pc80w35pBFDVEf4HEMRhHsQD2E1oab+Ye2/zmIuYS6
-	o4JOPMd/CRC5cJi1aiTczHvyOvs/fEIKI6u+7qFxif+DlZ1Uy/3c4GHgFR+T0/kHD+sih8OmE3v
-	dTdgEPxp8mZwc5eStaXW1BGpNRzuna6EeioACWPIVbmtn9/rO1BNYSeaW/RfpaLlVTgJE2exbrr
-	Hj2QT6hzIMdMhuUDzy47FPYCnOk1RuhIqX8y1kE92SD2wSiPbBipWFI//4fx+621QXcrvK+4kOI
-	l1Aw7I7jXBUrK9UZ2PjpHRhJ2rw+D4sVx66sDlRoGx1uQ==
-X-Received: by 2002:a05:6512:39d1:b0:5b2:add9:d073 with SMTP id 2adb3069b0e04-5b2f4cdbf98mr5877083e87.46.1786340514174;
-        Sun, 09 Aug 2026 22:41:54 -0700 (PDT)
+        bh=oUFfp1/cNFOhAWdi1g6pduhZx20pCKXkmLPmJPcXpEc=;
+        b=iGSKhZlZqdn1LG0zPYoqtv2IyqILw/wZSEBJBBvEjSb6138As3xmSAoYwjKkrsqWGB
+         pk2/VGQKbJPjNT7QmR67bkBjEFoEP/E87UWPyX3DG/+iLs6cI7c7DbWiBY6RD3RZ41wA
+         aJXfELWjRarUvUb4auPgSU75JxIH8QCgdAOsI8lJBhdRgxdU6UfQW0IfTAQ53wdfH/cp
+         hQ2Zv4oYMrspw24An5Lt3t8hpibpWF/B2n/vawEtvGa1GwOajkTl6C8FygkGE6G58Lf1
+         ng567wob1yIHSZms4dMFsL1yUQbL2F1ipFQqM2ZAcatsjL3MWMMxkJHGxvWnJVXdHyPh
+         sApg==
+X-Forwarded-Encrypted: i=1; AHgh+Rr3NO6JG++e+L+vlZo0wMF2fTLkjW1KGWBbgegBpe8cPO5EeoTrEG2deYMT0492v2csZBHTJd07Mwc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywe8oIwogwmOD5UQbYYm+cbXqB+QeaxT0xknX4QrFz8Q6lq/87y
+	x58rVjHs5o/WNpXedgYUn+0/iiPtVRzIIMVfNYV25s8xbe6r97mPwnTI
+X-Gm-Gg: AR+sD12LcZO+uEXbMoDmGgFpl23qEXE42lpO2xBjqV7XU5beBVlE0+o5fTuKThxd6Wy
+	4Yi0e+2HQQra5fxppXuTGKEANJEoriv8cxwH7cOl96WsVTzSM9+PKR1j6KtL+2CRDscNUiPDqaI
+	5+v1kmsv8bS/4JnaxlrngBQoxY1lj1PNfmNLFx6Ovyaqu/w1+jW8NHf19T8OpHjO+Y7UReiNzcd
+	lzCywgCdgUPCCxD+kkUG+Z4JowTfN4NK+CiGHMzQLE5voIrCvBlZnCtT8v943QNLI5M9WJ0DuIA
+	Yp4m1qea6NYyCPCaBZ+z6sPsb3CQp1T+rtxLSo6cUoGwHtjLYqhwi0Rqw1/v3HHSKCVBaPC9aK4
+	SFfuN7wBK9xL5SHSEfsTG756wr5WGIFghKwinImXIoplhJKNzl7Dpa8joZnSM16nTB+5TS5kgaD
+	J1Wc8SZvLvOMCpCgwDZ6ECjEyf5vZ7OwI1ilFLkTJqKtRvP4EtQKG0A+nRXgJFYem1lg4h8aJEL
+	aleH+mUt1bBuq3ibdbRh8BhBJzHdCiyFkOWZ6UprDcfSlnRh4tBoMdadENwVZiMhKX8
+X-Received: by 2002:a05:6512:638c:10b0:5b2:b004:ab9d with SMTP id 2adb3069b0e04-5b30b770fb0mr1599566e87.34.1786340859873;
+        Sun, 09 Aug 2026 22:47:39 -0700 (PDT)
 Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5b304fd20a7sm1813835e87.11.2026.08.09.22.41.52
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-39fdda988bcsm19527201fa.14.2026.08.09.22.47.38
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 09 Aug 2026 22:41:53 -0700 (PDT)
-Message-ID: <e58db15b-9b31-42d9-b9f2-df792dd08804@gmail.com>
-Date: Mon, 10 Aug 2026 08:41:52 +0300
+        Sun, 09 Aug 2026 22:47:39 -0700 (PDT)
+Message-ID: <8af920f3-d856-43a5-9485-f4d39cc7fcb7@gmail.com>
+Date: Mon, 10 Aug 2026 08:47:38 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -70,7 +70,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 01/10] dt-bindings: mfd: common ROHM PMIC properties
+Subject: Re: [PATCH v2 09/10] gpio: bd73800: Support ROHM BD73800 PMIC GPIOs
 To: Linus Walleij <linusw@kernel.org>
 Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
  Matti Vaittinen <matti.vaittinen@linux.dev>, Lee Jones <lee@kernel.org>,
@@ -84,128 +84,95 @@ Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
  linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
  linux-rtc@vger.kernel.org
 References: <cover.1785838584.git.mazziesaccount@gmail.com>
- <838486b443af9188410d8b802a818dc0af20ea9d.1785838585.git.mazziesaccount@gmail.com>
- <CAD++jLky237PRXNmyURjNEOPPgFV00ox1HBeBev=qADxKM3nWQ@mail.gmail.com>
+ <9774b8d6663ea55b1682b32f825ec5689be3e1d8.1785838585.git.mazziesaccount@gmail.com>
+ <CAD++jLmatJFfqhNWfgx=qUW2fEwuatxmJR7NyJLAv45LfLHZnw@mail.gmail.com>
 Content-Language: en-US, en-AU, en-GB, en-BW
 From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <CAD++jLky237PRXNmyURjNEOPPgFV00ox1HBeBev=qADxKM3nWQ@mail.gmail.com>
+In-Reply-To: <CAD++jLmatJFfqhNWfgx=qUW2fEwuatxmJR7NyJLAv45LfLHZnw@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 07/08/2026 23:23, Linus Walleij wrote:
+On 07/08/2026 23:29, Linus Walleij wrote:
 > Hi Matti,
 > 
-> thanks for your patch (and the other comments in reply to the
-> old review).
-
-Nope. Thank You for taking the time to do the review - and read my replies!
-
+> thanks for your patch!
 > 
-> On Tue, Aug 4, 2026 at 12:20 PM Matti Vaittinen
+> On Tue, Aug 4, 2026 at 12:23 PM Matti Vaittinen
 > <matti.vaittinen@linux.dev> wrote:
 > 
->> Sometimes the existing properties aren't 100% what reviewers would
->> prefer. When issues are minor or just cosmetic, changing the existing
->> properties is not feasible. Reviewers can't be expected to know which
->> properties are new, and which are existing - and this can lead to
->> unnecessary review discussion wasting time and energy from everyone.
->>
->> Adding a common file for re-used ROHM PMIC properties should make it
->> clearly visible that a property is re-used, when a new PMIC binding
->> refers to this file instead of (re-)describing all the existing
->> bindings. This will also help keeping the common properties identical
->> across the variants.
->>
->> Add new file listing commonly used ROHM PMIC properties.
 > 
-> I see the upside of this, the DT binding maintainers will decide
-> on it. It has the upside you describe, but it has the downside that
-> new components will always (ab-)use the old properties maybe
-> even when there would be a good opportunity to modernize
-> the syntax, and then the reviewers will not catch it.
-
-I see your point :) I am not intending to "completely hide" these 
-properties from the reviewers. Please, see below.
-
-> But well, maybe that is not a big deal in the universe.
+>> +static int bd73800gpio_get(struct gpio_chip *chip, unsigned int offset)
+>> +{
+>> +       struct bd73800_gpio *data = gpiochip_get_data(chip);
+>> +       struct bd73800_gpio_pin_cfg *pin = &data->pin[offset];
+>> +       int ret, val;
+>> +
+>> +       /* Only pins configured as GPI via OTP can have their status read */
+>> +       if (pin->state != BD73800_PIN_GPI) {
+>> +               dev_dbg(data->dev, "pin %d (%x) not input. State %d\n", offset,
+>> +                       pin->mask, pin->state);
+>> +               return -EINVAL;
+>> +       }
+>> +
+>> +       ret = regmap_read(data->regmap, BD73800_REG_INT_5_SRC, &val);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       return val & pin->mask;
+>> +}
+>> +
+>> +static int bd73800gpo_set(struct gpio_chip *chip, unsigned int offset,
+>> +                         int value)
+>> +{
+>> +       struct bd73800_gpio *data = gpiochip_get_data(chip);
+>> +       struct bd73800_gpio_pin_cfg *pin = &data->pin[offset];
+>> +
+>> +       if (pin->state != BD73800_PIN_GPO) {
+>> +               dev_dbg(data->dev, "pin %d (%d) not output. State %d\n",
+>> +                       offset, pin->mask, pin->state);
+>> +
+>> +               return -EINVAL;
+>> +       }
+>> +
+>> +       if (value)
+>> +               return regmap_set_bits(data->regmap, BD73800_REG_GPO_OUT,
+>> +                                      pin->mask);
+>> +
+>> +       return regmap_clear_bits(data->regmap, BD73800_REG_GPO_OUT, pin->mask);
+>> +}
 > 
-> What about patching those old bindings:
-> Documentation/devicetree/bindings/mfd/rohm,bd71815-pmic.yaml:
-> rohm,clkout-open-drain:
-> Documentation/devicetree/bindings/mfd/rohm,bd71828-pmic.yaml:
-> rohm,clkout-open-drain:
-> Documentation/devicetree/bindings/mfd/rohm,bd72720-pmic.yaml:
-> rohm,clkout-open-drain:
-> ...to include this file as part of this patch, and delete the old defines from
-> those three files?
-
-I am patching them. I, however, am not planning to delete the properties 
-completely (the comment above about not hiding properties from 
-reviewers). For example, the bd71815 and bd71828, do not support (at 
-least all) of the OTP configured pins which are also declared here. 
-Thus, I don't want to allow those unsupported pin properties for them.
-
-My plan is to keep the "additionalProperties: false", and require the 
-supported properties to be explicitly listed in the 
-rohm,bd71828-pmic.yaml and rohm,bd72720-pmic.yaml. And, when the types, 
-descriptions, and allowed values (when common for all PMICs) are in the 
-referenced file, the rohm,bdXXXX-pmic.yaml can become quite simple:
-
-rohm,clkout-open-drain: true;
-
-Enough to remind reviewers that there is legacy - and allow reviewers as 
-well as authors to re-evaluate the properties - while also pointing out 
-that this is existing stuff. (And allow validator scripts to catch use 
-of unsupported common properties - at least if this works as I think it 
-does).
-
-> Then it is clear what is going on.
+> These can probably be handled by the latest version of gpio-regmap
+> helpers (the version in linux-next).
 > 
-> Maybe this happens in later patches, but anyway it should be part
-> of this patch I think.
+> We now support both input-only and output-only in gpio-regmap.
 
-I somehow thought it'd be clearer to split the changes in own patches - 
-but I am fully Ok with squashing these if it is preferred way.
+Allright, I'll take a look at the gpio-regmap again. Thanks for letting 
+me know ...
 
->> +properties:
->> +  rohm,clkout-open-drain:
->> +    description: clk32kout mode. Set to 1 for "open-drain" or 0 for "cmos"
->> +      a.k.a "push-pull".
->> +    $ref: /schemas/types.yaml#/definitions/uint32
->> +    maximum: 1
 > 
-> Yeah I see now that this is already in use in three other bindings...
+> Latest <linux/gpio/regmap.h>:
 > 
-> Today we would for a new component use something like
-> rohm,clkout-drive-mode = "drive-push-pull";
-> rohm,clkout-drive-mode = "drive-open-drain";
-> reflecting pin control.
+>   * @fixed_direction_mask:
+>   *                      (Optional) Bitmap representing the GPIO lines that
+>   *                      make use of the @fixed_direction_output list to
+>   *                      enforce direction of the GPIO. If this is NULL
+>   *                      and @fixed_direction_output is defined, ALL GPIOs
+>   *                      are assumed to be fixed direction (out or in).
+>   * @fixed_direction_output:
+>   *                      (Optional) Bitmap representing the fixed direction of
+>   *                      the GPIO lines. Useful when there are GPIO lines with a
+>   *                      fixed direction mixed together in the same register.
 > 
-> I do understand the idea to keep using the same bindings
-> for all of Rohm MFDs. But when a completely new design
-> arrives with many new properties etc, maybe we can think
-> of something new?
+> It seems you can set up the fixed_direction_output mask from OTP
+> and just use the library, right?
 
-In case of the "rohm,clkout-open-drain" - AFAIR it is not used from new 
-drivers, but the new PMICs which are added, are supported by the same 
-MFD driver. I am not too keen on changing the property values in this 
-driver (because it'd require every user to update their dtses - which 
-feels like a source of problems). Nor am I too excited about supporting 
-old and new values in this driver as it makes the driver (in my opinion 
-unnecessarily) more complex.
-
-What comes to using something else for completely new designs - I'd say 
-(a bit cautiously) that changing the properties there is fine. 
-Cautiously because it is still dancing between "what users have used to 
-see" Vs. "what feels like best course of action - Today" ;) Cautiously 
-also because we don't probably want to support multiple vendor specific 
-properties for same purpose - at least not in a long run.
+... and thanks for going the extra mile and giving me this pointer. 
+Helps a lot! :) I wish all reviewers had the time to give this specific 
+suggestions - although, I understand this is not always feasible with 
+the amount of reviews/tasks to handle.
 
 Yours,
 	-- Matti
-
-Ps, planning to join ELCE/Plumbers this year? It'd be about a time to 
-meet you in person :)
 
 -- 
 Matti Vaittinen
