@@ -1,158 +1,155 @@
-Received: from smtpbgeu1.qq.com (smtpbgeu1.qq.com [52.59.177.22])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C25C939A060;
-	Mon, 10 Aug 2026 08:46:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.59.177.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 586C339FCDC
+	for <linux-clk@vger.kernel.org>; Mon, 10 Aug 2026 08:56:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786351623; cv=none; b=qIUXhyqZNFx+n8pcpemYq8PrtvcKvPHc4HxBV34UmdaT00QGcx0jBnMq5ib8e8CHQDCcFUT7uwQhp43PCdyFiC/451a38xU5bAJbdz0EiRHOMfdbehVZhAk1ZA5U0Ghy4SB7yeN9UGVuqQVcigFFlppgDwMPf4i0TbglHmbTcks=
+	t=1786352205; cv=none; b=KNsQrEKNnLD0uZlmIcos06uZEOhGlwXW+g9zJoFp4qBSxIFUHpFnVVGCsV/76Lu/DWzEJgCsgaiaP+q3Awxw9dJxOhVs8eirAGFDASzsXh7UNhxWhN7yvS1wCzuiOex2TRntt/BYqpRKVDkSZX0BzdX8O46Oagti/o/sHCwkxGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786351623; c=relaxed/simple;
-	bh=PS4d3vonY5cnWvEJCbFrwS8DUvEWQjBP1Nlfw0ZPQwA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=oZ5j+qEQ3pDOjklTFdhEQNvwXJ7MyMoBxt2c5qB6soN5pH44LRTIuQUC0JH0sjXYP9YKCVb8dRGkzgGEABdPhGEDCUYTtVKzMsOW2FDeQJTNJtvFGv7EWSy9kz/oS9gX6TSn7JD3vN0W9iqbpLCiFBH10aeiCKS5Xa7zT3v5ULs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=Wx+qXCPm; arc=none smtp.client-ip=52.59.177.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
+	s=arc-20240116; t=1786352205; c=relaxed/simple;
+	bh=oHlXYPtE3OE0dSgDIiDxQL3Td/GKwGjxBF1m4tS7DJc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eq6BBYlUrSfwEMGZ9RHY1lGNGYkjF+IEpEOM93uJVzTJNnAsXs/HLYxpf/s+K/RekxjdHxTIl5roKSNN3ZsCKnwJnnjBLpbuAPPcprEQ6a/kWWr2BSdl+Kpg41VH9zpFYyZkPH0w5EYeBz4XKuoZq1FCZcfv+tKxlczOQGW3ly0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kRRdvrzY; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Wq2gpawC; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="Wx+qXCPm"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1786351595;
-	bh=M29CFWqH2OirKKpE7HnEh81ikMXn50dgrCAc8pjdIf4=;
-	h=From:Date:Subject:MIME-Version:Message-Id:To;
-	b=Wx+qXCPmMAmZcGzFloBTTZsnehkl/n2GGsR+t5cIkrgua/Ykwaq1Oke7L/Ib2xqLO
-	 jLDbNBtMCHmMgkItzAWbmFI6vYKvNTuuWTEcIRgB/QAc4yf6Kgt2yIvU9Wzpyp9KG+
-	 +zAPIFV+pUd0c7yETbkOnwSsL0+aeecer7GYgn1Q=
-X-QQ-mid: zesmtpgz4t1786351589t253fc5a6
-X-QQ-Originating-IP: 5bw4/46W/vAFFmQLjlD9b2QFb7W2rG/uBYflbHBWBgo=
-Received: from = ( [120.237.158.181])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 10 Aug 2026 16:46:26 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 10674885904044503331
-EX-QQ-RecipientCnt: 16
-From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Date: Mon, 10 Aug 2026 16:46:24 +0800
-Subject: [PATCH v2] clk: spacemit: k3: add 1.8 GHz PLL5 and PLL8 rates
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kRRdvrzY";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Wq2gpawC"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 67A5HeMl1771493
+	for <linux-clk@vger.kernel.org>; Mon, 10 Aug 2026 08:56:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=zdVA3MiUvF3f8zD2NU3rdR0I
+	92/qrwdusVBzawOrc1w=; b=kRRdvrzYvxyI7ieqUYpws+/ELjA7qiWq2ujYYaE+
+	pC7+0E0AHu9DaLFrj1pRSbMS3ideAlOuhfR7J0gHz4OVF6n9n5OdZZdebXYvOSqz
+	m8yTPpb6IvIrcLZxqbzqCPisc8q2jdPDIIU1DmsIdBKnii/raad6ki+4dPADAikG
+	viBCl/PL27lcxQtl3X8AMvsAXgOuQAlxZSfGKkcRJduabR/Bc+0mDZJcV3xW/VEr
+	rTBT64SsLRmvEGZSxdIq0TjhdlCvK92o2gCYf8xqAZtGMkf11laGs69o/KjXpp4C
+	zrJa5a9n6Ewt2vKROux8/xUq5AC/qcmqc4/o17qhzdcMcg==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fy19khne7-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Mon, 10 Aug 2026 08:56:43 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-5283df62d68so18938071cf.0
+        for <linux-clk@vger.kernel.org>; Mon, 10 Aug 2026 01:56:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1786352202; x=1786957002; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=zdVA3MiUvF3f8zD2NU3rdR0I92/qrwdusVBzawOrc1w=;
+        b=Wq2gpawCwo4bwCv5x8BHk71IPZh9YEMxx7ldq78J4AEXi/WW6gcHTq7OGFLidSYpMV
+         XZ6Ukk8UJVUL2cv9E+/7qKa0t4poYad6WS9ZMikzwJUg6ucX2OtQSQLoems8KZvhAqx1
+         zPbsO6boaqgDUda223mlUlRAdG15Q8wP50KNJNA6x2iXCJwU/XVUufyfK3KUrrlNKsug
+         zvPtrrplwc5MaWS4EyDzGXAcb6llaIqs7pMpTSKSEN1li9HXJEWJSjk9vVoWfJiPzOLD
+         S19yHEVP3ONQraXYzqoXlOBv4xt0W5xjqSV3Xri9qjokPycT1Aa46RoOmR7YZrtdV006
+         wZGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1786352202; x=1786957002;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=zdVA3MiUvF3f8zD2NU3rdR0I92/qrwdusVBzawOrc1w=;
+        b=El4BUw2VZY8Yk7sku77TQ+SD8c2kIS99OxBJ2u1mjXlXZIlqESRLtxDDgBP51+XD8M
+         KT1Bq427nn51kQ7qRyS57SO1ltEBDzyEo4RKPHNASTrb4YobGoM3KWzUbHfzVFvAxpSy
+         NCO107Mz98ORXU2ATtd8nrzkfKimJ1ljyinFp9epoFVJDy1lj+8Nx0uahwBJnh8M7tjO
+         BN48jUzeVcNRC6N4QFBR94aW7QhReZq2TEoU9qtPdRv7dS/FIvREc4Eqyu6gYHsU7dLZ
+         /vPPnR+m3GakBjgS7z6i18JdMvF+i4otdUlFbVBZ91UI1PwTnk+LC6Kik5aIcZHnYzsA
+         jOew==
+X-Forwarded-Encrypted: i=1; AHgh+RrgJopguXiyyeTQt9b+CVw36V0k5TmeW388ArHrXXekrCc+Hol9wkbpiwoUzpksDJEwcbONnXZsKBI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8ZdPBsg1q9PTZ9/+FPuWkHUiqvf/nuPFIUQozGne+/bNFCasu
+	DMpkQkQIlkXrzIGbuiG2tizyXGD1iuEUac5vSLtDmxA0SdlTiDi5NSc/iAkM2IKqqyH6iJzongk
+	AIKLlc0YyNr2Dt5uE9XJ3RGakoLu3KB29SK3N4zMXuLDIlv4o9KYjuNW0Hknbwxc=
+X-Gm-Gg: AR+sD12YO5k/a+HsfMFYLRfvUBnwvOwwXP1zMUUdsdTIAJVuSctCa/Ui95ke/zyXTow
+	z+Fa10QZT9qN3DJTUkVR2TiDtOF+dTMFsXDfTOfJo2g3ZZc4U3+meCrZfALun1U0x5s4r/ymJA9
+	4oduwhMzE65yc72D3HacUmIROUSqDXNVXkNwI0k0ubb6++dCaaDVro7XBruziOtDy1naMt8P17Y
+	TdJR9C5ufF9y/KmJ+ST5+FJVEvpEAMLRznodVUBp4jOrYaKAA9O9lfbI532vUYoaUkPIdGvao4P
+	WiBFez+DvPrxKx2JnibmoZvSJCyRDs+D0UqTTGZ8SbfBNncg3gmiaJBMct0RNdrnFbzYrMWbae5
+	L/lF9FfjCf4grA+ymPx8L8SgajiGwfVock/R3INcePF9WHhXhozR6RYN1LUeCeqxEbW3p/cIM1d
+	IEOjTs6K+SGcwqdg==
+X-Received: by 2002:a05:622a:1791:b0:527:f4d0:4bb8 with SMTP id d75a77b69052e-52d4bc37b32mr124361cf.22.1786352202441;
+        Mon, 10 Aug 2026 01:56:42 -0700 (PDT)
+X-Received: by 2002:a05:622a:1791:b0:527:f4d0:4bb8 with SMTP id d75a77b69052e-52d4bc37b32mr124131cf.22.1786352201918;
+        Mon, 10 Aug 2026 01:56:41 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5b307ea6ee3sm1842215e87.4.2026.08.10.01.56.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Aug 2026 01:56:40 -0700 (PDT)
+Date: Mon, 10 Aug 2026 11:56:39 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Stephan Gerhold <stephan.gerhold@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+        Ulf Hansson <ulfh@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: mmcc-msm8974: add GENPD_FLAG_NO_STAY_ON
+Message-ID: <7yn3sn5uj2ttrvkzkrz6rwa37neilqrh3q4m23qexnv5tl3l2n@vxkx32oauak3>
+References: <20260809-msm8974-mmcc-fix-v1-1-50f2dcf18d2e@oss.qualcomm.com>
+ <anmNuXoOK7Xn73TZ@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260810-k3-pll5-pll8-1800mhz-v2-1-aabff510a797@linux.spacemit.com>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/22Nyw6CMBBFf8XM2iFteVVX/odhUesoo7zSAkEJ/
- y7FuHNzk5Pce88MnhyTh+NuBkcje26bFdR+B7Y0zZ2QryuDEioTWih8xthVVRpCo9RC1OUbrZY
- 6T40whySBddo5uvG03Z6LL/vh8iDbh6/QKNn3rXtt3lGG3k+R/FeMEgWa2OSpzjJLsTpV3AxT5
- DtjqeY+sm0NxbIsH03CIcvTAAAA
-X-Change-ID: 20260802-k3-pll5-pll8-1800mhz-c81875a0a944
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
- Yixun Lan <dlan@kernel.org>, Inochi Amaoto <inochiama@outlook.com>, 
- Alex Elder <elder@riscstar.com>, Haylen Chu <heylenay@4d2.org>
-Cc: linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org, 
- spacemit@lists.linux.dev, linux-kernel@vger.kernel.org, 
- Troy Mitchell <troy.mitchell@linux.spacemit.com>, 
- Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, 
- Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2487;
- i=troy.mitchell@linux.spacemit.com; h=from:subject:message-id;
- bh=PS4d3vonY5cnWvEJCbFrwS8DUvEWQjBP1Nlfw0ZPQwA=;
- b=owGbwMvMwCU2g/N9w09jE33G02pJDFmV/Q85y7xOz+g7eSPiS8DlyZ5Nd5dWKvDzNTmdujw1X
- 6Z+648rHaUsDGJcDLJiiizdD3i2FfhE2RYIFPrCzGFlAhnCwMUpABNJ82VkeMTFomN41t6I9+Pl
- +ElMS+xvNKg9izw7u4H/yPVTzx6sDGNk+PA3niP5h6LiAq6qLXFTqp8+113q3bwx5dhHOdOb69Z
- WMAEA
-X-Developer-Key: i=troy.mitchell@linux.spacemit.com; a=openpgp;
- fpr=3FE5535CF1B0E658E57DB59BAE1C2FBEA7DB42E1
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpgz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
-X-QQ-XMAILINFO: NrVFYwNEzNVbuRkGZ3vaGUFPY9RZey4pXxI/rZ+PtGw5xPbzxxl9XdDM
-	w8mgghWz98W4JoJN+eZyYn9ZmXEvgbtXkguOKAEAaMrMi8Np/Swdfl5WL8apgP7MaNtadn/
-	6WIsBgIb4gMGp9lr5zevaZN3yth/oD22IzaYgGKo85+/DNf7Nbtk/82v0BtLtaaRv0MHBgL
-	9aAyC78coocHY7jwGxCRml/PwBqYv+JulZCljoIaHsQ9BoJvZSDLZ9gws3iUbj2JC0C5mn5
-	s6nn3Qwhv+k/xJexYVCZGj8pFBUYM+cWlyIOHomnyQEWwBgJCxtwubsdgvdMDbcRgYjTuIO
-	Hs4OcPs9qP3tBC2HbCHqSEK/EUtCZIZlrITBowK/M3DIo+hliNm14DvLF6z3iIcXXfxL2ow
-	7XTFxo27ED3xruA8w+svq3qPlvzSHc/waacbv6G6cuZgtIhXgtEiD7tI0DuSCfYl8C+tC3l
-	OyWgFrOp9tthTmz+ecq06c77tyFhpET8on+rK7KZ6iT35eXsjY1dJY7+AcVTw3XhkRcqnPV
-	MzvuBDabClqwFzy8MJeCNTvhIHLpCjAF2hG5AwOb9wop77BPvDI8yOevLqCO2d1Z9HVhbcU
-	th8d723PtJfal59elVHguab+8ux7VoPM0Ut/ZdSJO1OUn1ddBGvaffjoP7SCvkVOWqZ5T62
-	RSCDXBSvA1EHm8VUtDn+ScwgqxhmJQbtfzQ4HaRQ/ZtCDxWFmLCCHWpCSCfVjQZ25i0Bme2
-	IU1B+IN9jomuZZ/WiUm8RnXdCh4OVHI/azjIEYk6uwEX/4i50lHLX8edLJ6B3coBoeOQnIH
-	W4tiOwLHbDWrntpNpVoW01Q/d1U9jHfqKNJiudrnd0DfJJuSBKadX2gjNWrc4qv+XAz6UYC
-	U/elNwddWt/mqJp5cGhpYpdpxc8iyUsweTtLJ2GIob9xZxxy4QrCpwSXAQyDFjTOuXVjYMw
-	25Rl9D2I2+c6oCoTmZUP2scVYQKbEmW6glKjw2nXYX85DiaEl0AnUNl/xJ3Yu9hKM/2kUKI
-	yodYUgFrUuwtyEHX4mlFn275b6YDah6USJYbi5x6v2mGoLo61PDXq+q4WnOyGK0OCME871J
-	1EVzAABfGylKUIHB2U1Mx9TPQAcl2p+3E+ZbPNeMsO9YW5eSi+IpJbozBSq7X/1diZORA69
-	6oWWIjDgB0TPM7w=
-X-QQ-XMRINFO: Mp0Kj//9VHAxzExpfF+O8yhSrljjwrznVg==
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <anmNuXoOK7Xn73TZ@linaro.org>
+X-Proofpoint-ORIG-GUID: 0XqPTU7Y-rYawPx6bKw85VONwLWauTrL
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODEwMDA3NyBTYWx0ZWRfX7MqbHRggTJqt
+ WkXS3g6FDobLjHqaQwpVRlHm391cxORXB47AoZ64erPD0bm/aw6cl32UXNjia9EU8ABGMJXCeL5
+ OJ0Ti3YdCfdTteDWW74tDmwPtLiRC9FSrIJp2n9HxB+vmY0iUgvr75JesUxCwyYofNF5+jrGjzQ
+ nbKGRJgWurcAwN0BSvMsweQaLWvA1UnWpf0opzETAEc4KIWfVdZcNZBadMKJw9ZNy3A1uJ3vyI4
+ dkfZicFNSzemWb2H6XWqrcXAXy/Kf495HH3Z89t4cAkfp3y4pmjKPDVCO37Tdotg6UMKaaBLxUg
+ IiHpaLJlzic7mDO/1lXLzYRcC8T1uzqVeuMrul8apCkQNpyULbWG3yFZN2PxvSzjBciD80A5DWz
+ rDhI4yeHeKTaTYBWACwNJz5LWbtVQGG+8R/AddwhW1RUkX9EegcA9yq1m0INZqXOpe6sdX27ReO
+ HCrCKnU+wlnUklH//xA==
+X-Proofpoint-Spam-Info: AW1haW4tMjYwODEwMDA3NyBTYWx0ZWRfXxOoxcZoTfHqi
+ /Gc36JOIDjnrUR4OVRUCUZlB0xMk+IwAH9egIZJSxRNp40ge8UZWfbo6vPckfEaLqWzIXTm2wYR
+ qp2+V0rp1JYa1ZjQt8eZVCoIGtbBz74=
+X-Proofpoint-GUID: 0XqPTU7Y-rYawPx6bKw85VONwLWauTrL
+X-Authority-Analysis: v=2.4 cv=abxRWxot c=1 sm=1 tr=0 ts=6a79924b cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=Sv0fKeRqtYgA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=eoimf2acIAo5FJnRuUoq:22 a=VwQbUJbxAAAA:8
+ a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8 a=GMQ9YdEd6bAW0Yv8tZMA:9 a=CjuIK1q_8ugA:10
+ a=a_PwQJl-kcHnX1M80qC6:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-08-10_01,2026-08-07_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 lowpriorityscore=0 malwarescore=0 suspectscore=0 impostorscore=0
+ priorityscore=1501 spamscore=0 phishscore=0 clxscore=1015 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2608100077
 
-K3 boot firmware configures the C2 and C3 CPU clock domains at
-1.8 GHz. PLL5 feeds C2 and PLL8 feeds C3, but their rate tables
-currently contain only the 2 GHz overclocking operating point.
+On Mon, Aug 10, 2026 at 10:37:13AM +0200, Stephan Gerhold wrote:
+> On Sun, Aug 09, 2026 at 09:58:37PM +0300, Dmitry Baryshkov wrote:
+> > Commit 13a4b7fb6260 ("pmdomain: core: Leave powered-on genpds on until
+> > late_initcall_sync") kept power-domains on longer during boot which is
+> > causing DSI clock to get stuck and fail to acquire its configuration on
+> > DSI bringup. While this is being investigated, add the flag
+> > GENPD_FLAG_NO_STAY_ON for MDSS GDSC on MSM8974 to restore the previous
+> > behaviour to fix this.
+> > 
+> > Fixes: 13a4b7fb6260 ("pmdomain: core: Leave powered-on genpds on until late_initcall_sync")
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> 
+> Have you tried adding resets = <&mmcc MDSS_RESET>; to the &mdss node,
+> similar to the following patch for msm8916.dtsi?
+> https://lore.kernel.org/linux-arm-msm/20250915-msm8916-resets-v1-1-a5c705df0c45@linaro.org/
 
-Add the nominal 1.8 GHz configuration as the first entry in both
-tables. This lets determine_rate() and set_rate() select the firmware
-operating point while retaining 2 GHz as a supported overclocking rate.
+Seems to work, thanks! Indeed, it's a better patch.
 
-Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
----
-The related U-Boot change is available at:
-https://github.com/spacemit-com/uboot-2022.10/commit/fb95cf3d848b771c61b5a1b3e5cbbee223faf352
----
-Changes in v2:
-- Drop "clk: spacemit: re-enable PLLs after init"; the PLL init issue
-  will be handled in a separate series.
-- Send the K3 PLL5 and PLL8 1.8 GHz rate-table update as a standalone
-  patch.
-- Clarify that 1.8 GHz is nominal and 2 GHz is an overclocking rate.
-- Link to v1: https://patch.msgid.link/20260804-k3-pll5-pll8-1800mhz-v1-0-a3a75866ce32@linux.spacemit.com
+> 
+> Thanks,
+> Stephan
 
-To: Michael Turquette <mturquette@baylibre.com>
-To: Stephen Boyd <sboyd@kernel.org>
-To: Brian Masney <bmasney@redhat.com>
-To: Yixun Lan <dlan@kernel.org>
-To: Paul Walmsley <pjw@kernel.org>
-To: Palmer Dabbelt <palmer@dabbelt.com>
-To: Albert Ou <aou@eecs.berkeley.edu>
-To: Alexandre Ghiti <alex@ghiti.fr>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-riscv@lists.infradead.org
-Cc: spacemit@lists.linux.dev
-Cc: linux-kernel@vger.kernel.org
----
- drivers/clk/spacemit/ccu-k3.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/clk/spacemit/ccu-k3.c b/drivers/clk/spacemit/ccu-k3.c
-index cb0c4277f72a..e8b7ce89c2cb 100644
---- a/drivers/clk/spacemit/ccu-k3.c
-+++ b/drivers/clk/spacemit/ccu-k3.c
-@@ -38,6 +38,7 @@ static const struct ccu_pll_rate_tbl pll4_rate_tbl[] = {
- };
- 
- static const struct ccu_pll_rate_tbl pll5_rate_tbl[] = {
-+	CCU_PLLA_RATE(1800000000UL, 0x0b4b0000, 0x00000000, 0xa0458585),
- 	CCU_PLLA_RATE(2000000000UL, 0x0b292aaa, 0x0000ab00, 0xa0558686),
- };
- 
-@@ -50,6 +51,7 @@ static const struct ccu_pll_rate_tbl pll7_rate_tbl[] = {
- };
- 
- static const struct ccu_pll_rate_tbl pll8_rate_tbl[] = {
-+	CCU_PLLA_RATE(1800000000UL, 0x0b4b0000, 0x00000000, 0xa0458585),
- 	CCU_PLLA_RATE(2000000000UL, 0x0b292aaa, 0x0000ab00, 0xa0558686),
- };
- 
-
----
-base-commit: 1590cf0329716306e948a8fc29f1d3ee87d3989f
-change-id: 20260802-k3-pll5-pll8-1800mhz-c81875a0a944
-
-Best regards,
---  
-Troy Mitchell <troy.mitchell@linux.spacemit.com>
-
+-- 
+With best wishes
+Dmitry
