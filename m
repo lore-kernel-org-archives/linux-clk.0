@@ -1,32 +1,32 @@
 Received: from mail.zlab.su (mail.zlab.su [109.73.193.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 777C53DC4B6;
-	Mon, 10 Aug 2026 12:16:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 557753EC816;
+	Mon, 10 Aug 2026 12:16:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.193.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786364189; cv=none; b=bJL5NES5bAg6htszfy33xeaKmt8NvyGbP5PPAChUIO1D6Xa+OeGVdn+6dNm85T1Wyw9CQaH9jzaICnMFb/j8Q/iDUTD9iwRimwQBpnUt9Tu0eY36p41NlvG8n7DolhaiqU+wECQoJUeLaJZ3SowFealHll7JA9szKedx8aNWMNE=
+	t=1786364192; cv=none; b=AlxxnMjggwG9OtmlL4SsRr6KnEe3yS1WSt5Pd7EzUalTOnVXtmxBFoAZGRKGsrQReIAIjRwVKeZxQ7oi7iuATxUtdnFww6i2iEDyHj8pJ7cLPg9olyYiVtlc/x52SlGTAy8YI8rUit6jgwZgN+OHMHM196V3z3Lo5Kkp2/TpXIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786364189; c=relaxed/simple;
-	bh=t91XblPqoV6PdJaJMiKtKZWFOUj+j7FoahLhW23CxDA=;
+	s=arc-20240116; t=1786364192; c=relaxed/simple;
+	bh=Hlb3zGiE/jTTbqr6GH01A5CdzLPFhNzjLR7B2UM6ijY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bM4Wk8PTE+8tdfvXZFvD3hJOY8WsNlvbW/A5XJnIl3+KXBunsOe+ml5iGGOjNLYP4pvTgCgG5wp+C1cYmWUd1qnvI1QdgmrvIspOsWCQulD9s2jpv5bF+KT1iZNNI1laFcYmZRHp4ny02amjIkrW0X9RhgqJBExESX0y6ik/duE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zlab.su; spf=pass smtp.mailfrom=zlab.su; dkim=pass (2048-bit key) header.d=zlab.su header.i=@zlab.su header.b=nFuLd717; arc=none smtp.client-ip=109.73.193.145
+	 MIME-Version; b=KEQtfo/Vwg5dTx6yzyskaCEOvA5qgwg21Ao86r5Y/UwGHQXc9+aNlzfa3ZdAPSGibziA2bFJ4xCplzOkWgPZzLNbhfskCypAKdnCje+RZzQb53zd8Yv/fACOrF1H+i8IZWniJhoew57d8I7c3R6/viWkxeGP6WT72sgEhZAKtC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zlab.su; spf=pass smtp.mailfrom=zlab.su; dkim=pass (2048-bit key) header.d=zlab.su header.i=@zlab.su header.b=pyg4r4ZO; arc=none smtp.client-ip=109.73.193.145
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zlab.su
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zlab.su
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zlab.su header.i=@zlab.su header.b="nFuLd717"
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4EC63C0518;
-	Mon, 10 Aug 2026 15:16:24 +0300 (MSK)
+	dkim=pass (2048-bit key) header.d=zlab.su header.i=@zlab.su header.b="pyg4r4ZO"
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E46DEC0519;
+	Mon, 10 Aug 2026 15:16:27 +0300 (MSK)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zlab.su; s=dkim;
-	t=1786364186; h=from:subject:date:message-id:to:cc:mime-version:
+	t=1786364189; h=from:subject:date:message-id:to:cc:mime-version:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=lOe5l9utNgT7rnp1te/CrBZS1W64mKYVhM5GuNKN2to=;
-	b=nFuLd717My9K/2HTU5k1GvZJr8IbjhdkNZTwa0rR081ukM0y7pRzaCclLFR25Os905OgqI
-	c6o6mwtDaf+6mi02TDhDEXbeFYnXSGx+UQQlLB7lR9Rx2FZy6tmqZcqrGVeHaYc9ma4KRJ
-	Zk6zNpKdAQN7kjMzuTMwzdkyX10QQM/QVbCwaR6zSL3ceY2zhqx1Z1H/DE9me6wiFORduy
-	4WNmbKQquo5xf1V4hPd+9pp+nJJ1yxNdcMfGgZVyWum5DzF2PFGgM/TpQCeXau2JvJcVLZ
-	RJQkSfTF2ChmyDoT1FxMsXUAnjZT3FcmeGNeXqXAslDVOp67nJbo8Z+OOVOkMg==
+	bh=zmEzOagfD/gxsGiGWHAJSJv8bTNucnmIbKN5W/YS2eo=;
+	b=pyg4r4ZOIP9A/e3kdcpDnIlTXtmyR5dwMrmgno9ZP5ew3iEcFwaZVfRNk7YOiaZyLQtYCb
+	rzNSDfG6tyrz/kCInE5gSG2ccLOdw2WGGZAEdIAkCJ+c3kI9H18aLFHKl54NtX0xijNA/R
+	JosPeXsGO+0aMDEM99TwER0f+2rH8oiPgEq8eYfH0lFCFxYXI4WVKtkmdqwDFv/FmJg6Gf
+	LFhaImskTfnvKKDQZuAfBsT9Lf194h04ZYTMnultP+paLeSH2zIA+rCJy11tNsVKQro8wR
+	I5E22s/S55vXFpAjM/+smuqrwfBnBuc8hiSYRQX/BnSFiBTUkbW4Px0p8uujIg==
 From: Vladislav Leonov <vlad@zlab.su>
 To: linux-rockchip@lists.infradead.org
 Cc: linux-arm-kernel@lists.infradead.org,
@@ -35,19 +35,13 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Vladislav Leonov <vlad@zlab.su>,
-	Aurelien Jarno <aurelien@aurel32.net>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Daniel Golle <daniel@makrotopia.org>,
 	Heiko Stuebner <heiko@sntech.de>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
-	Olivia Mackall <olivia@selenic.com>,
-	Rob Herring <robh@kernel.org>,
-	linux-crypto@vger.kernel.org
-Subject: [PATCH 20/25] dt-bindings: rng: rockchip: Add RV1106 compatible
-Date: Mon, 10 Aug 2026 15:11:11 +0300
-Message-ID: <20260810121121.210040-21-vlad@zlab.su>
+	Rob Herring <robh@kernel.org>
+Subject: [PATCH 21/25] ARM: dts: rockchip: Add RNG node for RV1106
+Date: Mon, 10 Aug 2026 15:11:12 +0300
+Message-ID: <20260810121121.210040-22-vlad@zlab.su>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260810121121.210040-1-vlad@zlab.su>
 References: <20260810121121.210040-1-vlad@zlab.su>
@@ -60,39 +54,36 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
 
-Add rockchip,rv1106-rng as a variant of rockchip,rk3588-rng, following
-the pattern used for fallback compatibles in the schema (an items list
-with an enum and a matching const fallback), so RV1106 can reuse the
-existing rk3588-rng driver bindings.
+Add the true random number generator (TRNG) node for RV1106,
+compatible with rockchip,rk3588-rng. The node is left disabled
+by default and can be enabled in board dts files.
 
 Signed-off-by: Vladislav Leonov <vlad@zlab.su>
 ---
 
- .../devicetree/bindings/rng/rockchip,rk3588-rng.yaml  | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/rockchip/rv1106.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/rng/rockchip,rk3588-rng.yaml b/Documentation/devicetree/bindings/rng/rockchip,rk3588-rng.yaml
-index fcc5be80142d..60ceac2697c0 100644
---- a/Documentation/devicetree/bindings/rng/rockchip,rk3588-rng.yaml
-+++ b/Documentation/devicetree/bindings/rng/rockchip,rk3588-rng.yaml
-@@ -13,10 +13,13 @@ maintainers:
+diff --git a/arch/arm/boot/dts/rockchip/rv1106.dtsi b/arch/arm/boot/dts/rockchip/rv1106.dtsi
+index ce2f169b1acd..5db640a6ba90 100644
+--- a/arch/arm/boot/dts/rockchip/rv1106.dtsi
++++ b/arch/arm/boot/dts/rockchip/rv1106.dtsi
+@@ -255,6 +255,15 @@ dmac: dma-controller@ff420000 {
+ 			arm,pl330-periph-burst;
+ 		};
  
- properties:
-   compatible:
--    enum:
--      - rockchip,rk3576-rng
--      - rockchip,rk3588-rng
--
-+    oneOf:
-+      - const: rockchip,rk3576-rng
-+      - const: rockchip,rk3588-rng
-+      - items:
-+          - enum:
-+              - rockchip,rv1106-rng
-+          - const: rockchip,rk3588-rng
-   reg:
-     maxItems: 1
- 
++		rng: rng@ff448000 {
++			compatible = "rockchip,rv1106-rng", "rockchip,rk3588-rng";
++			reg = <0xff448000 0x200>;
++			interrupts = <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cru HCLK_TRNG_NS>;
++			resets = <&cru SRST_H_TRNG_NS>;
++			status = "disabled";
++		};
++
+ 		i2c2: i2c@ff450000 {
+ 			compatible = "rockchip,rv1106-i2c", "rockchip,rk3399-i2c";
+ 			reg = <0xff450000 0x1000>;
 -- 
 2.47.3
 
