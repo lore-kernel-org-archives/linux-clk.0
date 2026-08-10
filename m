@@ -1,30 +1,32 @@
 Received: from mail.zlab.su (mail.zlab.su [109.73.193.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FAC23C276D;
-	Mon, 10 Aug 2026 12:15:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 427333B05AF;
+	Mon, 10 Aug 2026 12:15:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.193.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786364141; cv=none; b=UfrzdYqDfLD7ZmLkg6b4U8KHFD8Hnyun4OXWreznDxuUiBerLnMFrJT8hizknAz++Zh5nGsqFbhThv8LS//Z0Jgmm2BfhehrJLpZCtV6A7j4JPrKplnPd6ubczrgil0QlXpdtc9/WnlrQdj91iZFHoHN7o+9c1o9aVIcP4vhQ54=
+	t=1786364142; cv=none; b=LR3dHIOWL3CsXB/6/OW6I43enqd2mK89iv9KHbTaoOJ2gkDxlNITCMXKzq3vN9kKIlBUqKlgbHj9dYnyeDMPViHo1+71RdLS4XX0rh9EllpRcyaRWTkX1mHJKFP7g1PWybzACNGO1Fs8jgiFXziOmqfvvWMID8unnTQQAfmpNp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786364141; c=relaxed/simple;
-	bh=khwQ1GsiVveOlP9AEL24r6N74e9UZZB8TnsSYugi5ss=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=e2jrs+Y6vSQCctM0G5Mpgoum8LZtzVEi411Z0jqzbKCrPWZ5rc3rJzAc7BkrTUgRgWIhuyHHdESsJF3FGX6iiW7XpHxUOSz2uskKDrLCauRdKsMKjYc/MLqwzewXhKgsBCMX+KeLKXhSAPsHZQV37mEkzFUMoff2BqlCOUBF9ho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zlab.su; spf=pass smtp.mailfrom=zlab.su; dkim=pass (2048-bit key) header.d=zlab.su header.i=@zlab.su header.b=CTVbEZk1; arc=none smtp.client-ip=109.73.193.145
+	s=arc-20240116; t=1786364142; c=relaxed/simple;
+	bh=H5CEku+ITlAjoMrStPbt5ViE5yaSmu2wL1s37Eewqcs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=uVuI7NmKpt/M/PslrjdG1ssv4MdrRPmmr5JEDiG/f7N2PgpXXPdX4YL0r66ivqoGOpoPOUNXy1m6ZCpA9OyOOxOzS2CZtTQH6GLO9ZKWBpydy9FgxcCFl/y4jvH4mhyRk4cDbyzraNNSn9yV8GOau5uUtTkdRWbJK1abx5y3jrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zlab.su; spf=pass smtp.mailfrom=zlab.su; dkim=pass (2048-bit key) header.d=zlab.su header.i=@zlab.su header.b=kmNyjS6Z; arc=none smtp.client-ip=109.73.193.145
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zlab.su
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zlab.su
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zlab.su header.i=@zlab.su header.b="CTVbEZk1"
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9EC0CBFAE6;
-	Mon, 10 Aug 2026 15:15:04 +0300 (MSK)
+	dkim=pass (2048-bit key) header.d=zlab.su header.i=@zlab.su header.b="kmNyjS6Z"
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C4480BFA89;
+	Mon, 10 Aug 2026 15:15:35 +0300 (MSK)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zlab.su; s=dkim;
-	t=1786364134; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding; bh=2dK3m+M9aIXkQVgnJfJNEQmr51pr+7ZSZ5wBURiQagI=;
-	b=CTVbEZk1O91g22l73hfrLfK/HDBLrNdVqWaJoUlOFyMh6T/aNVysy/LqWgNcYYbkV5vNzw
-	gtAKqm+dARKLrZGZrSm3/XKCLRDSZ4ERyvE0b+dkq/s5O0oyHlNwLq4oBFale7R1oRa03R
-	ojkB6VmEHXLVBH8V/ZJ1uaH0DlLdlHSCbgow9PIHETTYMV+MWsmWeeTqDRipse8jg+yBvL
-	j/rfIH8SRFimjK3u+AcfZcPd7+fXS3NRILgxdoAFwPCm9rIGh5AxUTLGVlVMgjYCT8WOJA
-	Qk9z4FiBS7NcfBZGDwudfbosAqeicDMRze0Q9fd6eWlmryJZX3O6N+1esyqs8Q==
+	t=1786364137; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=FEboMO/dpKdx6T83eWgMRJEjA2wYI7OkmJwek6C81zo=;
+	b=kmNyjS6ZWTxxxo0nLbhz9xd1F0Rds6HSjPiauQfAswFOBySIeyvXPHjKZ+Zepqj9EhJZwV
+	brj39BsyjiXhOMGAeDBoqSWFcWSzjgm81z0sf/vkNw62iJgfN3bE2KFfl5vPEENhHLzC7Q
+	msIxQ3mgyM+ujpwzIaqHdSDOISkkU3Cj/WJBfznSgw9JhV3FRK7+CF0jVqUzy3ru5AW/7X
+	j5BAJSddbfJoexyaB88YC4DdT2mvEQemGiF8uqrDKWlXFztHjxm0BlSdJX0ihT5G04SBOT
+	WPQ8T5luWIFS0VvZkT2A7kGYdTx2AXgXiC9p5CXilRV7zFOz8SIlsNXitha+Pg==
 From: Vladislav Leonov <vlad@zlab.su>
 To: linux-rockchip@lists.infradead.org
 Cc: linux-arm-kernel@lists.infradead.org,
@@ -33,46 +35,17 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Vladislav Leonov <vlad@zlab.su>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Aurelien Jarno <aurelien@aurel32.net>,
-	Brian Masney <bmasney@redhat.com>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Daniel Golle <daniel@makrotopia.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	David Wu <david.wu@rock-chips.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Heiko Stuebner <heiko@sntech.de>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Jakub Kicinski <kuba@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
-	Olivia Mackall <olivia@selenic.com>,
-	Paolo Abeni <pabeni@redhat.com>,
 	Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	Vinod Koul <vkoul@kernel.org>,
-	linux-crypto@vger.kernel.org,
-	linux-i2c@vger.kernel.org,
-	linux-phy@lists.infradead.org,
-	linux-pwm@vger.kernel.org,
-	linux-spi@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-usb@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH 00/25] ARM: rockchip: Add peripheral support for RV1106
-Date: Mon, 10 Aug 2026 15:10:51 +0300
-Message-ID: <20260810121121.210040-1-vlad@zlab.su>
+	Rob Herring <robh@kernel.org>
+Subject: [PATCH 01/25] dt-bindings: reset: Add RV1106 CRU reset definitions
+Date: Mon, 10 Aug 2026 15:10:52 +0300
+Message-ID: <20260810121121.210040-2-vlad@zlab.su>
 X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260810121121.210040-1-vlad@zlab.su>
+References: <20260810121121.210040-1-vlad@zlab.su>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -82,92 +55,328 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
 
-Basic support for the Rockchip RV1106/RV1103 SoCs currently under review.
-This series builds on top of that and enables the peripherals needed to
-bring up a board beyond a serial console:
+Add the reset ID definitions for the Rockchip RV1106 clock and
+reset unit (CRU), to be used by the reset controller driver and
+device tree nodes.
 
- - CRU reset controller support (dt-bindings + clk driver), needed
-   by most of the other peripherals below.
- - Ethernet (GMAC) via dwmac-rk.
- - USB2 PHY and USB3-OTG (DWC3).
- - I2C (rk3x).
- - DMA (PL330) + support DMA for the UART nodes.
- - SPI, including a new SCLK_IN_SPI1 clock gate.
- - RNG.
- - SDMMC1.
- - A dts-only quirk (arm,cpu-registers-not-fw-configured) needed on
-   the ARM timer node when booting without a secure firmware that
-   pre-configures the CPU timer registers.
- - PWM.
+Signed-off-by: Vladislav Leonov <vlad@zlab.su>
+---
 
-Each new dt-binding is added ahead of the driver and dts nodes that
-depend on it, so the series bisects cleanly.
-
-This series depends on:
- - "Add support for the Rockchip RV1106 and RV1103" (v3)
-   https://lore.kernel.org/all/20260729133609.3465563-1-sjg@chromium.org
-
- - "pinctrl: Add support for the Rockchip RV1106" (v3)
-   https://lore.kernel.org/all/20260729132736.3807082-1-sjg@chromium.org
-
-Testing: boot-tested on custom RV1106 board, with every peripheral
-touched by this series: reset/CRU, Ethernet, USB2 PHY/USB3 DWC3,
-I2C, DMA+UART, SPI, RNG, SDMMC1 and PWM - exercised and confirmed working.
-
-
-Vladislav Leonov (25):
-  dt-bindings: reset: Add RV1106 CRU reset definitions
-  clk: rockchip: Add reset controller support for RV1106
-  ARM: dts: rockchip: Add reset bindings to RV1106
-  dt-bindings: net: rockchip-dwmac: add RV1106 compatible
-  net: ethernet: stmicro: stmmac: dwmac-rk: Add RV1106 support
-  ARM: dts: rockchip: Add Ethernet GMAC node for RV1106
-  dt-bindings: phy: rockchip,inno-usb2phy: Add RV1106 compatible
-  phy: rockchip: inno-usb2: Add support for RV1106
-  dt-bindings: usb: rockchip,dwc3: add RV1106 SoC support
-  ARM: dts: rockchip: Add USB2 PHY and USB3-OTG (DWC3) nodes for RV1106
-  dt-bindings: i2c: rk3x: Add RV1106 compatible
-  ARM: dts: rockchip: Add I2C nodes for RV1106
-  ARM: dts: rockchip: Add DMAC node for RV1106
-  ARM: dts: rockchip: Add DMA support to UART nodes
-  dt-bindings: clock: rockchip: Add SCLK_IN_SPI1 for RV1106
-  clk: rockchip: Add SCLK_IN_SPI1 gate for RV1106
-  dt-bindings: spi: rockchip: Add RV1106 compatible
-  spi: rockchip: Add support for RV1106
-  ARM: dts: rockchip: Add SPI nodes for RV1106
-  dt-bindings: rng: rockchip: Add RV1106 compatible
-  ARM: dts: rockchip: Add RNG node for RV1106
-  ARM: dts: rockchip: Add SDMMC1 node for RV1106
-  ARM: dts: rockchip: add arm,cpu-registers-not-fw-configured to RV1106
-    timer node
-  dt-bindings: pwm: rockchip: Add RV1106 compatible
-  ARM: dts: rockchip: Add PWM nodes for RV1106
-
- .../devicetree/bindings/i2c/i2c-rk3x.yaml     |   1 +
- .../bindings/net/rockchip-dwmac.yaml          |   2 +
- .../bindings/phy/rockchip,inno-usb2phy.yaml   |   9 +-
- .../devicetree/bindings/pwm/pwm-rockchip.yaml |   8 +
- .../bindings/rng/rockchip,rk3588-rng.yaml     |  11 +-
- .../devicetree/bindings/spi/spi-rockchip.yaml |   5 +
- .../bindings/usb/rockchip,dwc3.yaml           |  35 +-
- arch/arm/boot/dts/rockchip/rv1106.dtsi        | 426 ++++++++++++++++++
- drivers/clk/rockchip/Makefile                 |   2 +-
- drivers/clk/rockchip/clk-rv1106.c             |   4 +
- drivers/clk/rockchip/clk.h                    |   1 +
- drivers/clk/rockchip/rst-rv1106.c             | 340 ++++++++++++++
- .../net/ethernet/stmicro/stmmac/dwmac-rk.c    |  55 +++
- drivers/phy/rockchip/phy-rockchip-inno-usb2.c |  76 ++++
- drivers/spi/spi-rockchip.c                    |   1 +
- .../dt-bindings/clock/rockchip,rv1106-cru.h   |   2 +
- .../dt-bindings/reset/rockchip,rv1106-cru.h   | 305 +++++++++++++
- 17 files changed, 1272 insertions(+), 11 deletions(-)
- create mode 100644 drivers/clk/rockchip/rst-rv1106.c
+ .../dt-bindings/reset/rockchip,rv1106-cru.h   | 305 ++++++++++++++++++
+ 1 file changed, 305 insertions(+)
  create mode 100644 include/dt-bindings/reset/rockchip,rv1106-cru.h
 
----
-base-commit: ac414f5eda0814030636177593400acdacfe5e1e
-branch: rv1106
-
+diff --git a/include/dt-bindings/reset/rockchip,rv1106-cru.h b/include/dt-bindings/reset/rockchip,rv1106-cru.h
+new file mode 100644
+index 000000000000..d2567ccda94e
+--- /dev/null
++++ b/include/dt-bindings/reset/rockchip,rv1106-cru.h
+@@ -0,0 +1,305 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
++/*
++ * Copyright (c) 2022 Rockchip Electronics Co. Ltd.
++ * Author: Elaine Zhang <zhangqing@rock-chips.com>
++ */
++
++#ifndef _DT_BINDINGS_RESET_ROCKCHIP_RV1106_H
++#define _DT_BINDINGS_RESET_ROCKCHIP_RV1106_H
++
++/* ==========================list all of reset fields id=========================== */
++
++/* PMU-->SOFTRST_CON00 */
++#define SRST_P_I2C1		0
++#define SRST_I2C1		1
++#define SRST_H_PMU_BIU		2
++#define SRST_P_PMU_BIU		3
++#define SRST_H_PMU_SRAM		4
++#define SRST_PMU_MCU		5
++#define SRST_PMU_MCU_PWRUP	6
++#define SRST_PMU_MCU_CPU	7
++#define SRST_T_PMU_MCU_CPU	8
++
++/* PMU-->SOFTRST_CON01 */
++#define SRST_P_PMU_GPIO0	9
++#define SRST_PMU_GPIO0		10
++#define SRST_PVTM_PMU		11
++#define SRST_P_PVTM_PMU		12
++#define SRST_DDR_FAIL_SAFE	13
++
++/* PMU-->SOFTRST_CON02 */
++#define SRST_P_PMU_HP_TIMER	14
++#define SRST_PMU_HP_TIMER	15
++#define SRST_PMU_32K_HP_TIMER	16
++#define SRST_P_PMU_IOC		17
++#define SRST_P_PMU_CRU		18
++#define SRST_P_PMU_GRF		19
++#define SRST_P_PMU_SGRF		20
++#define SRST_P_PMU_SGRF_REMAP	21
++#define SRST_P_PMU_WDT		22
++#define SRST_T_PMU_WDT		23
++#define SRST_P_PMU_MAILBOX	24
++
++/* TOP-->SOFTRST_CON02 */
++#define SRST_REF_PVTPLL_0	25
++#define SRST_REF_PVTPLL_1	26
++#define SRST_P_CRU		27
++#define SRST_P_CRU_BIU		28
++
++/* PERI-->SOFTRST_CON00 */
++#define SRST_P_PERI_BIU		29
++#define SRST_A_PERI_BIU		30
++#define SRST_H_PERI_BIU		31
++#define SRST_H_BOOTROM		32
++#define SRST_P_TIMER		33
++#define SRST_TIMER0		34
++#define SRST_TIMER1		35
++#define SRST_TIMER2		36
++#define SRST_TIMER3		37
++#define SRST_TIMER4		38
++#define SRST_TIMER5		39
++#define SRST_P_STIMER		40
++
++/* PERI-->SOFTRST_CON01 */
++#define SRST_STIMER0		41
++#define SRST_STIMER1		42
++#define SRST_P_WDT_NS		43
++#define SRST_T_WDT_NS		44
++#define SRST_P_WDT_S		45
++#define SRST_T_WDT_S		46
++#define SRST_P_I2C0		47
++#define SRST_I2C0		48
++#define SRST_P_I2C2		49
++#define SRST_I2C2		50
++#define SRST_P_I2C3		51
++#define SRST_I2C3		52
++#define SRST_P_I2C4		53
++#define SRST_I2C4		54
++
++/* PERI-->SOFTRST_CON02 */
++#define SRST_P_GPIO4		55
++#define SRST_GPIO4		56
++#define SRST_P_PERI_IOC		57
++#define SRST_P_UART2		58
++#define SRST_S_UART2		59
++#define SRST_P_UART3		60
++#define SRST_S_UART3		61
++#define SRST_P_UART4		62
++#define SRST_S_UART4		63
++#define SRST_P_UART5		64
++
++/* PERI-->SOFTRST_CON03 */
++#define SRST_S_UART5		65
++#define SRST_P_SARADC		66
++#define SRST_SARADC		67
++#define SRST_SARADC_PHY		68
++#define SRST_P_SPI1		69
++#define SRST_SPI1		70
++#define SRST_H_TRNG_NS		71
++#define SRST_H_TRNG_S		72
++#define SRST_CORE_CRYPTO	73
++#define SRST_PKA_CRYPTO		74
++#define SRST_A_CRYPTO		75
++#define SRST_H_CRYPTO		76
++#define SRST_P_PWM1_PERI	77
++
++/* PERI-->SOFTRST_CON04 */
++#define SRST_PWM1_PERI		78
++#define SRST_P_PWM2_PERI	79
++#define SRST_PWM2_PERI		80
++#define SRST_P_PERI_GRF		81
++#define SRST_P_PERI_CRU		82
++#define SRST_A_USBOTG		83
++#define SRST_A_BUS_BIU		84
++#define SRST_H_EMMC		85
++#define SRST_H_SFC		86
++
++/* PERI-->SOFTRST_CON05 */
++#define SRST_S_SFC		87
++#define SRST_P_USBPHY		88
++#define SRST_USBPHY_POR		89
++#define SRST_USBPHY_OTG		90
++#define SRST_A_DMAC		91
++#define SRST_A_DECOM		92
++#define SRST_P_DECOM		93
++#define SRST_D_DECOM		94
++#define SRST_P_PERI_SGRF	95
++#define SRST_H_SAI		96
++#define SRST_M_SAI		97
++#define SRST_M_I2S0_8CH_TX	98
++
++/* PERI-->SOFTRST_CON06 */
++#define SRST_H_I2S0		99
++#define SRST_M_DSM		100
++#define SRST_P_DSM		101
++#define SRST_P_ACODEC		102
++#define SRST_M_I2S0_8CH_RX	103
++#define SRST_P_DFT2APB		104
++#define SRST_H_IVE		105
++#define SRST_A_IVE		106
++#define SRST_P_UART0		107
++#define SRST_S_UART0		108
++#define SRST_P_UART1		109
++
++/* PERI-->SOFTRST_CON07 */
++#define SRST_S_UART1		110
++#define SRST_P_PWM0_PERI	111
++#define SRST_PWM0_PERI		112
++
++/* VI-->SOFTRST_CON00 */
++#define SRST_H_VI_BIU		113
++#define SRST_A_VI_BIU		114
++#define SRST_P_VI_BIU		115
++#define SRST_CORE_ISP3P2	116
++#define SRST_D_VICAP		117
++#define SRST_P_VICAP		118
++#define SRST_A_VICAP		119
++#define SRST_H_VICAP		120
++#define SRST_VICAP_I0		121
++#define SRST_VICAP_I1		122
++
++/* VI-->SOFTRST_CON01 */
++#define SRST_VICAP_RX0		123
++#define SRST_VICAP_RX1		124
++#define SRST_VICAP_ISP0		125
++#define SRST_P_CSIHOST0		126
++#define SRST_P_CSIHOST1		127
++#define SRST_H_SDMMC		128
++#define SRST_SDMMC_DETN_FLT	129
++#define SRST_P_MIPICSIPHY	130
++#define SRST_P_GPIO3		131
++
++/* VI-->SOFTRST_CON02 */
++#define SRST_GPIO3		132
++#define SRST_P_VI_IOC		133
++#define SRST_P_VI_GRF		134
++#define SRST_P_VI_SGRF		135
++#define SRST_P_VI_CRU		136
++#define SRST_P_VI_RTC_TEST	137
++#define SRST_P_VI_RTC_NIU	138
++
++/* NPU-->SOFTRST_CON00 */
++#define SRST_H_NPU_BIU		139
++#define SRST_A_NPU_BIU		140
++#define SRST_P_NPU_BIU		141
++#define SRST_P_NPU_CRU		142
++#define SRST_P_NPU_SGRF		143
++#define SRST_P_NPU_GRF		144
++#define SRST_H_RKNN		145
++#define SRST_A_RKNN		146
++
++/* CORE-->SOFTRST_CON00 */
++#define SRST_NCOREPORESET	147
++#define SRST_NCORESET		148
++#define SRST_NDBGRESET		149
++#define SRST_NL2RESET		150
++#define SRST_A_M_CORE_BIU	151
++#define SRST_P_DBG		152
++#define SRST_POT_DBG		153
++#define SRST_NT_DBG		154
++#define SRST_P_CORE_GRF		155
++#define SRST_H_CPU_BIU		156
++#define SRST_P_CPU_BIU		157
++#define SRST_PVTM_CORE		158
++#define SRST_P_PVTM_CORE	159
++
++/* CORE-->SOFTRST_CON01 */
++#define SRST_REF_PVTPLL_CORE	160
++#define SRST_CORE_MCU		161
++#define SRST_CORE_MCU_PWRUP	162
++#define SRST_CORE_MCU_CPU	163
++#define SRST_T_CORE_MCU_CPU	164
++#define SRST_MCU_BIU		165
++#define SRST_P_MAILBOX		166
++#define SRST_P_INTMUX		167
++#define SRST_P_CORE_CRU		168
++#define SRST_P_CORE_SGRF	169
++#define SRST_H_CACHE		170
++
++/* VEPU-->SOFTRST_CON00 */
++#define SRST_H_VEPU_BIU		171
++#define SRST_A_VEPU_BIU		172
++#define SRST_A_VEPU_COM_BIU	173
++#define SRST_P_VEPU_BIU		174
++#define SRST_H_VEPU		175
++#define SRST_A_VEPU		176
++#define SRST_CORE_VEPU		177
++#define SRST_H_VEPU_PP		178
++#define SRST_A_VEPU_PP		179
++#define SRST_CORE_VEPU_DVBM	180
++#define SRST_P_VICAP_VEPU	181
++#define SRST_P_GPIO1		182
++
++/* VEPU-->SOFTRST_CON01 */
++#define SRST_GPIO1		183
++#define SRST_P_VEPU_IOC		184
++#define SRST_P_SPI0		185
++#define SRST_SPI0		186
++#define SRST_P_VEPU_CRU		187
++#define SRST_P_VEPU_SGRF	188
++#define SRST_P_VEPU_GRF		189
++#define SRST_UART_DETN_FLT	190
++
++/* VO-->SOFTRST_CON00 */
++#define SRST_A_VO_BIU		191
++#define SRST_H_VO_BIU		192
++#define SRST_H_RGA2E		193
++#define SRST_A_RGA2E		194
++#define SRST_CORE_RGA2E		195
++#define SRST_P_VO_GRF		196
++#define SRST_A_VOP_BIU		197
++#define SRST_H_VOP		198
++#define SRST_D_VOP		199
++#define SRST_A_VOP		200
++
++/* VO-->SOFTRST_CON01 */
++#define SRST_P_MAC_BIU		201
++#define SRST_A_MAC_BIU		202
++#define SRST_A_MAC		203
++#define SRST_P_VO_SGRF		204
++#define SRST_P_VO_CRU		205
++#define SRST_H_SDIO		206
++
++/* VO-->SOFTRST_CON02 */
++#define SRST_P_TSADC		207
++#define SRST_TSADC		208
++#define SRST_P_OTPC_NS		209
++#define SRST_SBPI_OTPC_NS	210
++#define SRST_USER_OTPC_NS	211
++#define SRST_P_OTPC_S		212
++#define SRST_SBPI_OTPC_S	213
++#define SRST_USER_OTPC_S	214
++#define SRST_OTPC_ARB		215
++#define SRST_MACPHY		216
++#define SRST_P_OTP_MASK		217
++#define SRST_PMC_OTP		218
++
++/* VO-->SOFTRST_CON03 */
++#define SRST_P_GPIO2		219
++#define SRST_GPIO2		220
++#define SRST_P_VO_IOC		221
++
++/* DDR-->SOFTRST_CON00 */
++#define SRST_P_DDR_BIU		222
++#define SRST_P_DDRC		223
++#define SRST_P_DDRMON		224
++#define SRST_TIMER_DDRMON	225
++#define SRST_P_DFICTRL		226
++#define SRST_A_SYS_SHRM		227
++#define SRST_A_SHRM_NIU		228
++#define SRST_P_DDR_GRF		229
++
++/* DDR-->SOFTRST_CON01 */
++#define SRST_P_DDR_CRU		230
++#define SRST_P_DDR_HWLP		231
++#define SRST_P_DDRPHY		232
++
++/* SUBDDR-->SOFTRST_CON00 */
++#define SRST_MSCH_BIU		233
++#define SRST_A_DDRC		234
++#define SRST_CORE_DDRC		235
++#define SRST_DDRMON		236
++#define SRST_DFICTRL		237
++#define SRST_DDR_PHY		238
++
++#endif
 -- 
 2.47.3
 
