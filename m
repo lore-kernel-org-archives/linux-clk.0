@@ -1,59 +1,52 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A7274398E0;
-	Mon, 10 Aug 2026 18:46:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 579CC439341;
+	Mon, 10 Aug 2026 18:46:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786387571; cv=none; b=k0tXgI2Qi3mPwtbUG2xUmddJ0gzh8+M2qppgWSJQQgQtdWkcoDWYe4FqWzZLewCtWjuKkDleik6fsmxWrf+xbM1iiszcnsdnC4qwT4NKoFtoox24Ksl1v/CXJTsSMDHEkTWFrw0H9wTwdbu7BrXiDXrjqiJ2kLwBLA9ZOqM9a9E=
+	t=1786387574; cv=none; b=Ny9RJgrh0YsrsgUycU0zMiBbt8TqDB56yNppx2+Sh+69SSfBp+575NKCzW2nHtLKdWbRDqWhrUlPVIG5b06tN+a+Bw5C5uK/li9BbzPNfjp3+L95BwpqRi/MrH0046dEbq/+MTBWH/zxT6Dj06ev1RDGkbAO3sO/OJQT+k7LDT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786387571; c=relaxed/simple;
-	bh=m70IAlpke0Jgx0QboMarG9CRcuoVRJeyEqFmPTr0B6I=;
+	s=arc-20240116; t=1786387574; c=relaxed/simple;
+	bh=RaeG9XWA7mldLoLxizRmpC0XSwh28u6EiFB5GwkE+Ck=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mwu3EZfzJ2ELNBRUlMRxtD7q1LxJhUVwhhSxSKrniyKCdeURZlaGd8Rp61g9q15yUpq7L/XtCA20zMdTFayoAb7tAvCCYjDorYFWqZMZ1PsKkAHTm9jIS6zeQ0bzm5GDSgpl8ZQwFwCyzvkmoBN/CWnEcQuppQsxqaCRRytlg+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EBFmaO4O; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version:Content-Type; b=VlAUb1h1RTKR54deC88GCDUHHMFjAkWJE4YkTnmC/r4xBQ+03S+nmN472+7pK/u91ZsRlgwzaD4JpKdlsvBEYH+eERKSckeoUcyNB+Vneun7DCPLnHgDIwkmHtmxgP/iV0H1cmtC0gOx/hhhvilbSKm/N6nDbJR6Y+zu2bVvAvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iWR9T5jd; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EBFmaO4O"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E8171F00A3F;
-	Mon, 10 Aug 2026 18:46:08 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iWR9T5jd"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AA8F1F000E9;
+	Mon, 10 Aug 2026 18:46:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786387569;
-	bh=WFqxySnYvpiot/1T8W6/v7Q0KB5blhTw02nBKJtflvg=;
+	s=k20260515; t=1786387571;
+	bh=2RWgoTvU3gzh2fRnEHOojXiIP4h7W0FRzkSFLMiJgts=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=EBFmaO4OPh60+0r2JoF7V43cA6wvySoFHZO5NIP2jGqGig3aF4pqXE/mamExgin4M
-	 Nb8ok0fJdGMadZO9thUuEVVcRw1PdeEjjTY0J4Bv2mCpV6/tMTy8F0tmZT7FLPlQV7
-	 1F3O5cmiUlb0CqqKTB+FHaa05v8V7I1HZHEv88nZ+xOUZvtZiZ/pMWJj82Z9qh2W0N
-	 KLhpDjJupgEmBOwvmUJkV5jWA/X0CwYj+iGaTnWB66iGuymDN+37EyW0aHDp8Gms5u
-	 F0jj8DiE68j/SO/o2UIDMwnSPXB2GA83QDWpwqhX10ckClCj91plObTYS7IY7JKPtB
-	 i4ephuf/HhiUA==
+	b=iWR9T5jd9y28wGku0q7mXnNpVTPU/BueuuLZoYBWgANV9Sti6FTtBe6q1vFDFFgO1
+	 1wbLrJbsl0xJHetcRJKx7k0ofsK9742gJ17qte9OZKSsiOxJdz++qgmcHXPWSFhhTx
+	 kF0u9VB4B5W4eWyRf7UG+ngFgs9HA8Kw94YGCSAKlUN3pmEyoCDPaG5tbFqk7KvIX0
+	 VhW2c/VAOimdIjenXauRyIOzjSdlKiGdYMV+uGg4xO4naz5e3mVBiHlo7fX40d6EbJ
+	 pvY8+l4qMih0auWo5KuSepBu9Jjq6CMWonWMl3FrWzO+0OJZjSAVIxGYL34DtcAG0O
+	 tHj2NFQkIXWRg==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Bryan O'Donoghue <bod@kernel.org>,
-	Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney@redhat.com>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney@redhat.com>,
-	=?UTF-8?q?Andr=C3=A9=20Apitzsch?= <git@apitzsch.eu>
-Cc: Erikas Bitovtas <xerikasxx@gmail.com>,
+	Imran Shaik <imran.shaik@oss.qualcomm.com>
+Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+	Taniya Das <taniya.das@oss.qualcomm.com>,
+	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
 	linux-arm-msm@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	~postmarketos/upstreaming@lists.sr.ht,
-	phone-devel@vger.kernel.org,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Subject: Re: (subset) [PATCH v10 0/4] media: qcom: venus: add MSM8939 support
-Date: Mon, 10 Aug 2026 13:45:55 -0500
-Message-ID: <178638756045.656675.3286329293875125953.b4-ty@kernel.org>
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] clk: qcom: gcc-qcs8300: Add support for TSCSS clocks
+Date: Mon, 10 Aug 2026 13:45:56 -0500
+Message-ID: <178638756038.656675.9099433987894736177.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260731-msm8939-venus-rfc-v10-0-9ac503250fc7@apitzsch.eu>
-References: <20260731-msm8939-venus-rfc-v10-0-9ac503250fc7@apitzsch.eu>
+In-Reply-To: <20260805-qcs8300-tsc-clks-v1-0-e7a5101ed479@oss.qualcomm.com>
+References: <20260805-qcs8300-tsc-clks-v1-0-e7a5101ed479@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -64,26 +57,19 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Fri, 31 Jul 2026 22:08:19 +0200, André Apitzsch wrote:
-> This patch series adds support for Venus on MSM8939. It is mostly
-> similar to MSM8916 Venus, except it needs two additional cores to be
-> powered on before it can start decoding.
+On Wed, 05 Aug 2026 22:17:12 +0530, Imran Shaik wrote:
+> This series adds support for the GCC TSCSS clocks required for the
+> Timestamp Counter Subsystem (TSCSS) hardware functionality on Qualcomm
+> QCS8300 SoC.
 > 
-> As per Dmitry's request, I am attaching Fluster results and
-> v4l2-compliance output. Fluster results were very inconsistent and
-> caused power collapse fails.
-> H.264: https://pastebin.com/C15qeq5W
-> H.265 (HEVC): https://pastebin.com/WDsnxvuk
-> VP8: https://pastebin.com/egAgEm15
-> v4l2-compliance: https://pastebin.com/VpBhEFc1
-> Power collapse fail log: https://pastebin.com/rTivMcpK
 > 
-> [...]
 
 Applied, thanks!
 
-[1/4] clk: qcom: gcc-msm8939: mark Venus core GDSCs as hardware controlled
-      commit: 04352db59676ec384fae25ecf1e982a0afa62139
+[1/2] dt-bindings: clock: qcom,qcs8300-gcc: Add TSCSS clocks and resets
+      commit: ac814303be8821722c0c04f396a35298009afdb1
+[2/2] clk: qcom: gcc-qcs8300: Add support for TSCSS clocks and resets
+      commit: ec4ce5a61cfd3aabd7af970021a02887641d29a9
 
 Best regards,
 -- 
