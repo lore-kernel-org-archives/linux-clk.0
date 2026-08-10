@@ -1,32 +1,32 @@
 Received: from mail.zlab.su (mail.zlab.su [109.73.193.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 427333B05AF;
-	Mon, 10 Aug 2026 12:15:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BB903BBFC7;
+	Mon, 10 Aug 2026 12:15:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.193.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786364142; cv=none; b=LR3dHIOWL3CsXB/6/OW6I43enqd2mK89iv9KHbTaoOJ2gkDxlNITCMXKzq3vN9kKIlBUqKlgbHj9dYnyeDMPViHo1+71RdLS4XX0rh9EllpRcyaRWTkX1mHJKFP7g1PWybzACNGO1Fs8jgiFXziOmqfvvWMID8unnTQQAfmpNp4=
+	t=1786364144; cv=none; b=ePqRGesUWPyTZ8VEzjTAUp73w+xjNNNXfDJ0knny3IwnKQgglkbZ0qQRVPsPSKZ5ZfMElEi+8748vNMnR14znxjxLBTnHngfJteDdvQBzekj1fugyCfw0Ql7L94DT7X+1klnrNbzA0d1AE/GpV5lnyvK2KWQlnqV0h6/mIlIb9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786364142; c=relaxed/simple;
-	bh=H5CEku+ITlAjoMrStPbt5ViE5yaSmu2wL1s37Eewqcs=;
+	s=arc-20240116; t=1786364144; c=relaxed/simple;
+	bh=LmvlOQgMC9hl07aBqHbiKQeEXzvWxYsIIDpGMPlswTM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uVuI7NmKpt/M/PslrjdG1ssv4MdrRPmmr5JEDiG/f7N2PgpXXPdX4YL0r66ivqoGOpoPOUNXy1m6ZCpA9OyOOxOzS2CZtTQH6GLO9ZKWBpydy9FgxcCFl/y4jvH4mhyRk4cDbyzraNNSn9yV8GOau5uUtTkdRWbJK1abx5y3jrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zlab.su; spf=pass smtp.mailfrom=zlab.su; dkim=pass (2048-bit key) header.d=zlab.su header.i=@zlab.su header.b=kmNyjS6Z; arc=none smtp.client-ip=109.73.193.145
+	 MIME-Version; b=L65CHwJZw8iVXWW1KLcVBTFHwxT0W+lb3YnHWPdmxy++wX41218ZBg++AFxvttdrGQL+p2PYp/UMZX97TU4x65A1A+vnGvra3crTuXQP8890Pg3wmTw+tcBMkBUNbosy9WHBWV41VjjEPRWfAtUOfaKxZdJjUAQy871MvcUn3qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zlab.su; spf=pass smtp.mailfrom=zlab.su; dkim=pass (2048-bit key) header.d=zlab.su header.i=@zlab.su header.b=kSn9sISU; arc=none smtp.client-ip=109.73.193.145
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zlab.su
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zlab.su
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zlab.su header.i=@zlab.su header.b="kmNyjS6Z"
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C4480BFA89;
-	Mon, 10 Aug 2026 15:15:35 +0300 (MSK)
+	dkim=pass (2048-bit key) header.d=zlab.su header.i=@zlab.su header.b="kSn9sISU"
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3A2FAC0515;
+	Mon, 10 Aug 2026 15:15:38 +0300 (MSK)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zlab.su; s=dkim;
-	t=1786364137; h=from:subject:date:message-id:to:cc:mime-version:
+	t=1786364139; h=from:subject:date:message-id:to:cc:mime-version:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=FEboMO/dpKdx6T83eWgMRJEjA2wYI7OkmJwek6C81zo=;
-	b=kmNyjS6ZWTxxxo0nLbhz9xd1F0Rds6HSjPiauQfAswFOBySIeyvXPHjKZ+Zepqj9EhJZwV
-	brj39BsyjiXhOMGAeDBoqSWFcWSzjgm81z0sf/vkNw62iJgfN3bE2KFfl5vPEENhHLzC7Q
-	msIxQ3mgyM+ujpwzIaqHdSDOISkkU3Cj/WJBfznSgw9JhV3FRK7+CF0jVqUzy3ru5AW/7X
-	j5BAJSddbfJoexyaB88YC4DdT2mvEQemGiF8uqrDKWlXFztHjxm0BlSdJX0ihT5G04SBOT
-	WPQ8T5luWIFS0VvZkT2A7kGYdTx2AXgXiC9p5CXilRV7zFOz8SIlsNXitha+Pg==
+	bh=6a87aqRaR39IxOlf9jr04hynwmjap3BR0d8ylmCASYU=;
+	b=kSn9sISUfU3rakYNwxDLNCno9h2PYtqJlplMujYucoqqG37V29tS4F07S39NHetrqRw76j
+	jcentJNJR1dXHo5+v+sOf2a93/sizOPbKaMjiE3L+/rdXfHET9QJJHsN57xUS5axRLmRaj
+	0tA7d+p9TfvnEYWvkVmU8KxTepsBa9w5N0G433zBvDuM1eUnE3WLvyQgKHM55hsWhwCyWx
+	n89sqJ5babzUzsjz8UIvDk7k2ACq2cvjv3R7Ybxsj9nglnbyeguhQa3TAkQvyodtmYuR8m
+	EOjAzaHLNqPdkYdv0bOeYkznWBrZISesD4kJu/jZEq2edI3mNSLo+5ULhbZcKA==
 From: Vladislav Leonov <vlad@zlab.su>
 To: linux-rockchip@lists.infradead.org
 Cc: linux-arm-kernel@lists.infradead.org,
@@ -35,14 +35,13 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Vladislav Leonov <vlad@zlab.su>,
-	Conor Dooley <conor+dt@kernel.org>,
+	Brian Masney <bmasney@redhat.com>,
 	Heiko Stuebner <heiko@sntech.de>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh@kernel.org>
-Subject: [PATCH 01/25] dt-bindings: reset: Add RV1106 CRU reset definitions
-Date: Mon, 10 Aug 2026 15:10:52 +0300
-Message-ID: <20260810121121.210040-2-vlad@zlab.su>
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Subject: [PATCH 02/25] clk: rockchip: Add reset controller support for RV1106
+Date: Mon, 10 Aug 2026 15:10:53 +0300
+Message-ID: <20260810121121.210040-3-vlad@zlab.su>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260810121121.210040-1-vlad@zlab.su>
 References: <20260810121121.210040-1-vlad@zlab.su>
@@ -55,328 +54,405 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
 
-Add the reset ID definitions for the Rockchip RV1106 clock and
-reset unit (CRU), to be used by the reset controller driver and
-device tree nodes.
+Implement the reset controller for the RV1106 CRU by wiring up the
+software reset registers and exposing them through the reset
+framework. Hook the registration into clk-rv1106 and add the
+per-register reset lookup table in rst-rv1106.c.
 
 Signed-off-by: Vladislav Leonov <vlad@zlab.su>
 ---
 
- .../dt-bindings/reset/rockchip,rv1106-cru.h   | 305 ++++++++++++++++++
- 1 file changed, 305 insertions(+)
- create mode 100644 include/dt-bindings/reset/rockchip,rv1106-cru.h
+ drivers/clk/rockchip/Makefile     |   2 +-
+ drivers/clk/rockchip/clk-rv1106.c |   2 +
+ drivers/clk/rockchip/clk.h        |   1 +
+ drivers/clk/rockchip/rst-rv1106.c | 340 ++++++++++++++++++++++++++++++
+ 4 files changed, 344 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/rockchip/rst-rv1106.c
 
-diff --git a/include/dt-bindings/reset/rockchip,rv1106-cru.h b/include/dt-bindings/reset/rockchip,rv1106-cru.h
+diff --git a/drivers/clk/rockchip/Makefile b/drivers/clk/rockchip/Makefile
+index 554b7eb83dc9..e511018477f3 100644
+--- a/drivers/clk/rockchip/Makefile
++++ b/drivers/clk/rockchip/Makefile
+@@ -19,7 +19,7 @@ clk-rockchip-$(CONFIG_RESET_CONTROLLER) += softrst.o
+ 
+ obj-$(CONFIG_CLK_PX30)          += clk-px30.o
+ obj-$(CONFIG_CLK_RV1103B)	+= clk-rv1103b.o
+-obj-$(CONFIG_CLK_RV1106)	+= clk-rv1106.o
++obj-$(CONFIG_CLK_RV1106)	+= clk-rv1106.o rst-rv1106.o
+ obj-$(CONFIG_CLK_RV110X)        += clk-rv1108.o
+ obj-$(CONFIG_CLK_RV1126)        += clk-rv1126.o
+ obj-$(CONFIG_CLK_RV1126B)	+= clk-rv1126b.o rst-rv1126b.o
+diff --git a/drivers/clk/rockchip/clk-rv1106.c b/drivers/clk/rockchip/clk-rv1106.c
+index 3f26573e6cb7..1e3a110192bb 100644
+--- a/drivers/clk/rockchip/clk-rv1106.c
++++ b/drivers/clk/rockchip/clk-rv1106.c
+@@ -1077,6 +1077,8 @@ static int __init clk_rv1106_probe(struct platform_device *pdev)
+ 					ARRAY_SIZE(rv1106_grf_clk_branches));
+ 	}
+ 
++	rv1106_rst_init(np, reg_base);
++
+ 	rockchip_register_restart_notifier(ctx, RV1106_GLB_SRST_FST, NULL);
+ 
+ 	rockchip_clk_of_add_provider(np, ctx);
+diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
+index 9e3503e2ffc2..ef258c77b243 100644
+--- a/drivers/clk/rockchip/clk.h
++++ b/drivers/clk/rockchip/clk.h
+@@ -1392,6 +1392,7 @@ static inline void rockchip_register_softrst(struct device_node *np,
+ 	return rockchip_register_softrst_lut(np, NULL, num_regs, base, flags);
+ }
+ 
++void rv1106_rst_init(struct device_node *np, void __iomem *reg_base);
+ void rv1126b_rst_init(struct device_node *np, void __iomem *reg_base);
+ void rk3506_rst_init(struct device_node *np, void __iomem *reg_base);
+ void rk3528_rst_init(struct device_node *np, void __iomem *reg_base);
+diff --git a/drivers/clk/rockchip/rst-rv1106.c b/drivers/clk/rockchip/rst-rv1106.c
 new file mode 100644
-index 000000000000..d2567ccda94e
+index 000000000000..5055c0a54d3f
 --- /dev/null
-+++ b/include/dt-bindings/reset/rockchip,rv1106-cru.h
-@@ -0,0 +1,305 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
++++ b/drivers/clk/rockchip/rst-rv1106.c
+@@ -0,0 +1,340 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
 +/*
-+ * Copyright (c) 2022 Rockchip Electronics Co. Ltd.
-+ * Author: Elaine Zhang <zhangqing@rock-chips.com>
++ * Copyright (c) 2025 Rockchip Electronics Co., Ltd.
++ * Copyright (c) 2026 Vladislav Leonov <vlad@zlab.su>
++ * Author: Vladislav Leonov <vlad@zlab.su>
++ * Based on Elaine Zhang's implementation for RV1126B
 + */
 +
-+#ifndef _DT_BINDINGS_RESET_ROCKCHIP_RV1106_H
-+#define _DT_BINDINGS_RESET_ROCKCHIP_RV1106_H
++#include <linux/module.h>
++#include <linux/of.h>
++#include <dt-bindings/reset/rockchip,rv1106-cru.h>
++#include "clk.h"
 +
-+/* ==========================list all of reset fields id=========================== */
++#define SOFTRST_CON(x)	((x) * 0x4 + 0xa00)
 +
-+/* PMU-->SOFTRST_CON00 */
-+#define SRST_P_I2C1		0
-+#define SRST_I2C1		1
-+#define SRST_H_PMU_BIU		2
-+#define SRST_P_PMU_BIU		3
-+#define SRST_H_PMU_SRAM		4
-+#define SRST_PMU_MCU		5
-+#define SRST_PMU_MCU_PWRUP	6
-+#define SRST_PMU_MCU_CPU	7
-+#define SRST_T_PMU_MCU_CPU	8
++/* CRU base 0x00000 (PMU) + 0x0A00 */
++#define PMUCRU_RESET_OFFSET(id, reg, bit) [id] = (0x0 * 4 + reg * 16 + bit)
++/* CRU base 0x10000 (TOP) + 0x0A00 */
++#define TOPCRU_RESET_OFFSET(id, reg, bit) [id] = (0x10000 * 4 + reg * 16 + bit)
++/* CRU base 0x12000 (PERI) + 0x0A00 */
++#define PERICRU_RESET_OFFSET(id, reg, bit) [id] = (0x12000 * 4 + reg * 16 + bit)
++/* CRU base 0x14000 (VI) + 0x0A00 */
++#define VICRU_RESET_OFFSET(id, reg, bit) [id] = (0x14000 * 4 + reg * 16 + bit)
++/* CRU base 0x16000 (NPU) + 0x0A00 */
++#define NPUCRU_RESET_OFFSET(id, reg, bit) [id] = (0x16000 * 4 + reg * 16 + bit)
++/* CRU base 0x18000 (CORE) + 0x0A00 */
++#define CORECRU_RESET_OFFSET(id, reg, bit) [id] = (0x18000 * 4 + reg * 16 + bit)
++/* CRU base 0x1a000 (VEPU) + 0x0A00 */
++#define VEPUCRU_RESET_OFFSET(id, reg, bit) [id] = (0x1a000 * 4 + reg * 16 + bit)
++/* CRU base 0x1c000 (VO) + 0x0A00 */
++#define VOCRU_RESET_OFFSET(id, reg, bit) [id] = (0x1c000 * 4 + reg * 16 + bit)
++/* CRU base 0x1e000 (DDR) + 0x0A00 */
++#define DDRCRU_RESET_OFFSET(id, reg, bit) [id] = (0x1e000 * 4 + reg * 16 + bit)
++/* CRU base 0x1f000 (SUBDDR) + 0x0A00 */
++#define SUBDDRCRU_RESET_OFFSET(id, reg, bit) [id] = (0x1f000 * 4 + reg * 16 + bit)
 +
-+/* PMU-->SOFTRST_CON01 */
-+#define SRST_P_PMU_GPIO0	9
-+#define SRST_PMU_GPIO0		10
-+#define SRST_PVTM_PMU		11
-+#define SRST_P_PVTM_PMU		12
-+#define SRST_DDR_FAIL_SAFE	13
++/* =================mapping table for reset ID to register offset================== */
++static const int rv1106_register_offset[] = {
++	/* PMU-->SOFTRST_CON00 */
++	PMUCRU_RESET_OFFSET(SRST_P_I2C1, 0, 3),
++	PMUCRU_RESET_OFFSET(SRST_I2C1, 0, 4),
++	PMUCRU_RESET_OFFSET(SRST_H_PMU_BIU, 0, 6),
++	PMUCRU_RESET_OFFSET(SRST_P_PMU_BIU, 0, 7),
++	PMUCRU_RESET_OFFSET(SRST_H_PMU_SRAM, 0, 8),
++	PMUCRU_RESET_OFFSET(SRST_PMU_MCU, 0, 9),
++	PMUCRU_RESET_OFFSET(SRST_PMU_MCU_PWRUP, 0, 10),
++	PMUCRU_RESET_OFFSET(SRST_PMU_MCU_CPU, 0, 11),
++	PMUCRU_RESET_OFFSET(SRST_T_PMU_MCU_CPU, 0, 12),
 +
-+/* PMU-->SOFTRST_CON02 */
-+#define SRST_P_PMU_HP_TIMER	14
-+#define SRST_PMU_HP_TIMER	15
-+#define SRST_PMU_32K_HP_TIMER	16
-+#define SRST_P_PMU_IOC		17
-+#define SRST_P_PMU_CRU		18
-+#define SRST_P_PMU_GRF		19
-+#define SRST_P_PMU_SGRF		20
-+#define SRST_P_PMU_SGRF_REMAP	21
-+#define SRST_P_PMU_WDT		22
-+#define SRST_T_PMU_WDT		23
-+#define SRST_P_PMU_MAILBOX	24
++	/* PMU-->SOFTRST_CON01 */
++	PMUCRU_RESET_OFFSET(SRST_P_PMU_GPIO0, 1, 2),
++	PMUCRU_RESET_OFFSET(SRST_PMU_GPIO0, 1, 3),
++	PMUCRU_RESET_OFFSET(SRST_PVTM_PMU, 1, 4),
++	PMUCRU_RESET_OFFSET(SRST_P_PVTM_PMU, 1, 5),
++	PMUCRU_RESET_OFFSET(SRST_DDR_FAIL_SAFE, 1, 15),
 +
-+/* TOP-->SOFTRST_CON02 */
-+#define SRST_REF_PVTPLL_0	25
-+#define SRST_REF_PVTPLL_1	26
-+#define SRST_P_CRU		27
-+#define SRST_P_CRU_BIU		28
++	/* PMU-->SOFTRST_CON02 */
++	PMUCRU_RESET_OFFSET(SRST_P_PMU_HP_TIMER, 2, 0),
++	PMUCRU_RESET_OFFSET(SRST_PMU_HP_TIMER, 2, 1),
++	PMUCRU_RESET_OFFSET(SRST_PMU_32K_HP_TIMER, 2, 2),
++	PMUCRU_RESET_OFFSET(SRST_P_PMU_IOC, 2, 3),
++	PMUCRU_RESET_OFFSET(SRST_P_PMU_CRU, 2, 4),
++	PMUCRU_RESET_OFFSET(SRST_P_PMU_GRF, 2, 5),
++	PMUCRU_RESET_OFFSET(SRST_P_PMU_SGRF, 2, 6),
++	PMUCRU_RESET_OFFSET(SRST_P_PMU_SGRF_REMAP, 2, 7),
++	PMUCRU_RESET_OFFSET(SRST_P_PMU_WDT, 2, 8),
++	PMUCRU_RESET_OFFSET(SRST_T_PMU_WDT, 2, 9),
++	PMUCRU_RESET_OFFSET(SRST_P_PMU_MAILBOX, 2, 10),
 +
-+/* PERI-->SOFTRST_CON00 */
-+#define SRST_P_PERI_BIU		29
-+#define SRST_A_PERI_BIU		30
-+#define SRST_H_PERI_BIU		31
-+#define SRST_H_BOOTROM		32
-+#define SRST_P_TIMER		33
-+#define SRST_TIMER0		34
-+#define SRST_TIMER1		35
-+#define SRST_TIMER2		36
-+#define SRST_TIMER3		37
-+#define SRST_TIMER4		38
-+#define SRST_TIMER5		39
-+#define SRST_P_STIMER		40
++	/* TOP-->SOFTRST_CON02 */
++	TOPCRU_RESET_OFFSET(SRST_REF_PVTPLL_0, 2, 7),
++	TOPCRU_RESET_OFFSET(SRST_REF_PVTPLL_1, 2, 8),
++	TOPCRU_RESET_OFFSET(SRST_P_CRU, 2, 10),
++	TOPCRU_RESET_OFFSET(SRST_P_CRU_BIU, 2, 11),
 +
-+/* PERI-->SOFTRST_CON01 */
-+#define SRST_STIMER0		41
-+#define SRST_STIMER1		42
-+#define SRST_P_WDT_NS		43
-+#define SRST_T_WDT_NS		44
-+#define SRST_P_WDT_S		45
-+#define SRST_T_WDT_S		46
-+#define SRST_P_I2C0		47
-+#define SRST_I2C0		48
-+#define SRST_P_I2C2		49
-+#define SRST_I2C2		50
-+#define SRST_P_I2C3		51
-+#define SRST_I2C3		52
-+#define SRST_P_I2C4		53
-+#define SRST_I2C4		54
++	/* PERI-->SOFTRST_CON00 */
++	PERICRU_RESET_OFFSET(SRST_P_PERI_BIU, 0, 4),
++	PERICRU_RESET_OFFSET(SRST_A_PERI_BIU, 0, 5),
++	PERICRU_RESET_OFFSET(SRST_H_PERI_BIU, 0, 6),
++	PERICRU_RESET_OFFSET(SRST_H_BOOTROM, 0, 7),
++	PERICRU_RESET_OFFSET(SRST_P_TIMER, 0, 8),
++	PERICRU_RESET_OFFSET(SRST_TIMER0, 0, 9),
++	PERICRU_RESET_OFFSET(SRST_TIMER1, 0, 10),
++	PERICRU_RESET_OFFSET(SRST_TIMER2, 0, 11),
++	PERICRU_RESET_OFFSET(SRST_TIMER3, 0, 12),
++	PERICRU_RESET_OFFSET(SRST_TIMER4, 0, 13),
++	PERICRU_RESET_OFFSET(SRST_TIMER5, 0, 14),
++	PERICRU_RESET_OFFSET(SRST_P_STIMER, 0, 15),
 +
-+/* PERI-->SOFTRST_CON02 */
-+#define SRST_P_GPIO4		55
-+#define SRST_GPIO4		56
-+#define SRST_P_PERI_IOC		57
-+#define SRST_P_UART2		58
-+#define SRST_S_UART2		59
-+#define SRST_P_UART3		60
-+#define SRST_S_UART3		61
-+#define SRST_P_UART4		62
-+#define SRST_S_UART4		63
-+#define SRST_P_UART5		64
++	/* PERI-->SOFTRST_CON01 */
++	PERICRU_RESET_OFFSET(SRST_STIMER0, 1, 0),
++	PERICRU_RESET_OFFSET(SRST_STIMER1, 1, 1),
++	PERICRU_RESET_OFFSET(SRST_P_WDT_NS, 1, 2),
++	PERICRU_RESET_OFFSET(SRST_T_WDT_NS, 1, 3),
++	PERICRU_RESET_OFFSET(SRST_P_WDT_S, 1, 4),
++	PERICRU_RESET_OFFSET(SRST_T_WDT_S, 1, 5),
++	PERICRU_RESET_OFFSET(SRST_P_I2C0, 1, 6),
++	PERICRU_RESET_OFFSET(SRST_I2C0, 1, 7),
++	PERICRU_RESET_OFFSET(SRST_P_I2C2, 1, 10),
++	PERICRU_RESET_OFFSET(SRST_I2C2, 1, 11),
++	PERICRU_RESET_OFFSET(SRST_P_I2C3, 1, 12),
++	PERICRU_RESET_OFFSET(SRST_I2C3, 1, 13),
++	PERICRU_RESET_OFFSET(SRST_P_I2C4, 1, 14),
++	PERICRU_RESET_OFFSET(SRST_I2C4, 1, 15),
 +
-+/* PERI-->SOFTRST_CON03 */
-+#define SRST_S_UART5		65
-+#define SRST_P_SARADC		66
-+#define SRST_SARADC		67
-+#define SRST_SARADC_PHY		68
-+#define SRST_P_SPI1		69
-+#define SRST_SPI1		70
-+#define SRST_H_TRNG_NS		71
-+#define SRST_H_TRNG_S		72
-+#define SRST_CORE_CRYPTO	73
-+#define SRST_PKA_CRYPTO		74
-+#define SRST_A_CRYPTO		75
-+#define SRST_H_CRYPTO		76
-+#define SRST_P_PWM1_PERI	77
++	/* PERI-->SOFTRST_CON02 */
++	PERICRU_RESET_OFFSET(SRST_P_GPIO4, 2, 0),
++	PERICRU_RESET_OFFSET(SRST_GPIO4, 2, 1),
++	PERICRU_RESET_OFFSET(SRST_P_PERI_IOC, 2, 2),
++	PERICRU_RESET_OFFSET(SRST_P_UART2, 2, 3),
++	PERICRU_RESET_OFFSET(SRST_S_UART2, 2, 6),
++	PERICRU_RESET_OFFSET(SRST_P_UART3, 2, 7),
++	PERICRU_RESET_OFFSET(SRST_S_UART3, 2, 10),
++	PERICRU_RESET_OFFSET(SRST_P_UART4, 2, 11),
++	PERICRU_RESET_OFFSET(SRST_S_UART4, 2, 14),
++	PERICRU_RESET_OFFSET(SRST_P_UART5, 2, 15),
 +
-+/* PERI-->SOFTRST_CON04 */
-+#define SRST_PWM1_PERI		78
-+#define SRST_P_PWM2_PERI	79
-+#define SRST_PWM2_PERI		80
-+#define SRST_P_PERI_GRF		81
-+#define SRST_P_PERI_CRU		82
-+#define SRST_A_USBOTG		83
-+#define SRST_A_BUS_BIU		84
-+#define SRST_H_EMMC		85
-+#define SRST_H_SFC		86
++	/* PERI-->SOFTRST_CON03 */
++	PERICRU_RESET_OFFSET(SRST_S_UART5, 3, 2),
++	PERICRU_RESET_OFFSET(SRST_P_SARADC, 3, 3),
++	PERICRU_RESET_OFFSET(SRST_SARADC, 3, 4),
++	PERICRU_RESET_OFFSET(SRST_SARADC_PHY, 3, 5),
++	PERICRU_RESET_OFFSET(SRST_P_SPI1, 3, 6),
++	PERICRU_RESET_OFFSET(SRST_SPI1, 3, 7),
++	PERICRU_RESET_OFFSET(SRST_H_TRNG_NS, 3, 9),
++	PERICRU_RESET_OFFSET(SRST_H_TRNG_S, 3, 10),
++	PERICRU_RESET_OFFSET(SRST_CORE_CRYPTO, 3, 11),
++	PERICRU_RESET_OFFSET(SRST_PKA_CRYPTO, 3, 12),
++	PERICRU_RESET_OFFSET(SRST_A_CRYPTO, 3, 13),
++	PERICRU_RESET_OFFSET(SRST_H_CRYPTO, 3, 14),
++	PERICRU_RESET_OFFSET(SRST_P_PWM1_PERI, 3, 15),
 +
-+/* PERI-->SOFTRST_CON05 */
-+#define SRST_S_SFC		87
-+#define SRST_P_USBPHY		88
-+#define SRST_USBPHY_POR		89
-+#define SRST_USBPHY_OTG		90
-+#define SRST_A_DMAC		91
-+#define SRST_A_DECOM		92
-+#define SRST_P_DECOM		93
-+#define SRST_D_DECOM		94
-+#define SRST_P_PERI_SGRF	95
-+#define SRST_H_SAI		96
-+#define SRST_M_SAI		97
-+#define SRST_M_I2S0_8CH_TX	98
++	/* PERI-->SOFTRST_CON04 */
++	PERICRU_RESET_OFFSET(SRST_PWM1_PERI, 4, 0),
++	PERICRU_RESET_OFFSET(SRST_P_PWM2_PERI, 4, 2),
++	PERICRU_RESET_OFFSET(SRST_PWM2_PERI, 4, 3),
++	PERICRU_RESET_OFFSET(SRST_P_PERI_GRF, 4, 5),
++	PERICRU_RESET_OFFSET(SRST_P_PERI_CRU, 4, 6),
++	PERICRU_RESET_OFFSET(SRST_A_USBOTG, 4, 7),
++	PERICRU_RESET_OFFSET(SRST_A_BUS_BIU, 4, 10),
++	PERICRU_RESET_OFFSET(SRST_H_EMMC, 4, 13),
++	PERICRU_RESET_OFFSET(SRST_H_SFC, 4, 14),
 +
-+/* PERI-->SOFTRST_CON06 */
-+#define SRST_H_I2S0		99
-+#define SRST_M_DSM		100
-+#define SRST_P_DSM		101
-+#define SRST_P_ACODEC		102
-+#define SRST_M_I2S0_8CH_RX	103
-+#define SRST_P_DFT2APB		104
-+#define SRST_H_IVE		105
-+#define SRST_A_IVE		106
-+#define SRST_P_UART0		107
-+#define SRST_S_UART0		108
-+#define SRST_P_UART1		109
++	/* PERI-->SOFTRST_CON05 */
++	PERICRU_RESET_OFFSET(SRST_S_SFC, 5, 0),
++	PERICRU_RESET_OFFSET(SRST_P_USBPHY, 5, 1),
++	PERICRU_RESET_OFFSET(SRST_USBPHY_POR, 5, 2),
++	PERICRU_RESET_OFFSET(SRST_USBPHY_OTG, 5, 3),
++	PERICRU_RESET_OFFSET(SRST_A_DMAC, 5, 8),
++	PERICRU_RESET_OFFSET(SRST_A_DECOM, 5, 9),
++	PERICRU_RESET_OFFSET(SRST_P_DECOM, 5, 10),
++	PERICRU_RESET_OFFSET(SRST_D_DECOM, 5, 11),
++	PERICRU_RESET_OFFSET(SRST_P_PERI_SGRF, 5, 12),
++	PERICRU_RESET_OFFSET(SRST_H_SAI, 5, 13),
++	PERICRU_RESET_OFFSET(SRST_M_SAI, 5, 14),
++	PERICRU_RESET_OFFSET(SRST_M_I2S0_8CH_TX, 5, 15),
 +
-+/* PERI-->SOFTRST_CON07 */
-+#define SRST_S_UART1		110
-+#define SRST_P_PWM0_PERI	111
-+#define SRST_PWM0_PERI		112
++	/* PERI-->SOFTRST_CON06 */
++	PERICRU_RESET_OFFSET(SRST_H_I2S0, 6, 0),
++	PERICRU_RESET_OFFSET(SRST_M_DSM, 6, 1),
++	PERICRU_RESET_OFFSET(SRST_P_DSM, 6, 2),
++	PERICRU_RESET_OFFSET(SRST_P_ACODEC, 6, 3),
++	PERICRU_RESET_OFFSET(SRST_M_I2S0_8CH_RX, 6, 6),
++	PERICRU_RESET_OFFSET(SRST_P_DFT2APB, 6, 7),
++	PERICRU_RESET_OFFSET(SRST_H_IVE, 6, 9),
++	PERICRU_RESET_OFFSET(SRST_A_IVE, 6, 10),
++	PERICRU_RESET_OFFSET(SRST_P_UART0, 6, 11),
++	PERICRU_RESET_OFFSET(SRST_S_UART0, 6, 14),
++	PERICRU_RESET_OFFSET(SRST_P_UART1, 6, 15),
 +
-+/* VI-->SOFTRST_CON00 */
-+#define SRST_H_VI_BIU		113
-+#define SRST_A_VI_BIU		114
-+#define SRST_P_VI_BIU		115
-+#define SRST_CORE_ISP3P2	116
-+#define SRST_D_VICAP		117
-+#define SRST_P_VICAP		118
-+#define SRST_A_VICAP		119
-+#define SRST_H_VICAP		120
-+#define SRST_VICAP_I0		121
-+#define SRST_VICAP_I1		122
++	/* PERI-->SOFTRST_CON07 */
++	PERICRU_RESET_OFFSET(SRST_S_UART1, 7, 2),
++	PERICRU_RESET_OFFSET(SRST_P_PWM0_PERI, 7, 3),
++	PERICRU_RESET_OFFSET(SRST_PWM0_PERI, 7, 4),
 +
-+/* VI-->SOFTRST_CON01 */
-+#define SRST_VICAP_RX0		123
-+#define SRST_VICAP_RX1		124
-+#define SRST_VICAP_ISP0		125
-+#define SRST_P_CSIHOST0		126
-+#define SRST_P_CSIHOST1		127
-+#define SRST_H_SDMMC		128
-+#define SRST_SDMMC_DETN_FLT	129
-+#define SRST_P_MIPICSIPHY	130
-+#define SRST_P_GPIO3		131
++	/* VI-->SOFTRST_CON00 */
++	VICRU_RESET_OFFSET(SRST_H_VI_BIU, 0, 4),
++	VICRU_RESET_OFFSET(SRST_A_VI_BIU, 0, 5),
++	VICRU_RESET_OFFSET(SRST_P_VI_BIU, 0, 6),
++	VICRU_RESET_OFFSET(SRST_CORE_ISP3P2, 0, 9),
++	VICRU_RESET_OFFSET(SRST_D_VICAP, 0, 10),
++	VICRU_RESET_OFFSET(SRST_P_VICAP, 0, 11),
++	VICRU_RESET_OFFSET(SRST_A_VICAP, 0, 12),
++	VICRU_RESET_OFFSET(SRST_H_VICAP, 0, 13),
++	VICRU_RESET_OFFSET(SRST_VICAP_I0, 0, 14),
++	VICRU_RESET_OFFSET(SRST_VICAP_I1, 0, 15),
 +
-+/* VI-->SOFTRST_CON02 */
-+#define SRST_GPIO3		132
-+#define SRST_P_VI_IOC		133
-+#define SRST_P_VI_GRF		134
-+#define SRST_P_VI_SGRF		135
-+#define SRST_P_VI_CRU		136
-+#define SRST_P_VI_RTC_TEST	137
-+#define SRST_P_VI_RTC_NIU	138
++	/* VI-->SOFTRST_CON01 */
++	VICRU_RESET_OFFSET(SRST_VICAP_RX0, 1, 0),
++	VICRU_RESET_OFFSET(SRST_VICAP_RX1, 1, 1),
++	VICRU_RESET_OFFSET(SRST_VICAP_ISP0, 1, 2),
++	VICRU_RESET_OFFSET(SRST_P_CSIHOST0, 1, 4),
++	VICRU_RESET_OFFSET(SRST_P_CSIHOST1, 1, 6),
++	VICRU_RESET_OFFSET(SRST_H_SDMMC, 1, 12),
++	VICRU_RESET_OFFSET(SRST_SDMMC_DETN_FLT, 1, 13),
++	VICRU_RESET_OFFSET(SRST_P_MIPICSIPHY, 1, 14),
++	VICRU_RESET_OFFSET(SRST_P_GPIO3, 1, 15),
 +
-+/* NPU-->SOFTRST_CON00 */
-+#define SRST_H_NPU_BIU		139
-+#define SRST_A_NPU_BIU		140
-+#define SRST_P_NPU_BIU		141
-+#define SRST_P_NPU_CRU		142
-+#define SRST_P_NPU_SGRF		143
-+#define SRST_P_NPU_GRF		144
-+#define SRST_H_RKNN		145
-+#define SRST_A_RKNN		146
++	/* VI-->SOFTRST_CON02 */
++	VICRU_RESET_OFFSET(SRST_GPIO3, 2, 0),
++	VICRU_RESET_OFFSET(SRST_P_VI_IOC, 2, 1),
++	VICRU_RESET_OFFSET(SRST_P_VI_GRF, 2, 2),
++	VICRU_RESET_OFFSET(SRST_P_VI_SGRF, 2, 3),
++	VICRU_RESET_OFFSET(SRST_P_VI_CRU, 2, 4),
++	VICRU_RESET_OFFSET(SRST_P_VI_RTC_TEST, 2, 5),
++	VICRU_RESET_OFFSET(SRST_P_VI_RTC_NIU, 2, 7),
 +
-+/* CORE-->SOFTRST_CON00 */
-+#define SRST_NCOREPORESET	147
-+#define SRST_NCORESET		148
-+#define SRST_NDBGRESET		149
-+#define SRST_NL2RESET		150
-+#define SRST_A_M_CORE_BIU	151
-+#define SRST_P_DBG		152
-+#define SRST_POT_DBG		153
-+#define SRST_NT_DBG		154
-+#define SRST_P_CORE_GRF		155
-+#define SRST_H_CPU_BIU		156
-+#define SRST_P_CPU_BIU		157
-+#define SRST_PVTM_CORE		158
-+#define SRST_P_PVTM_CORE	159
++	/* NPU-->SOFTRST_CON00 */
++	NPUCRU_RESET_OFFSET(SRST_H_NPU_BIU, 0, 3),
++	NPUCRU_RESET_OFFSET(SRST_A_NPU_BIU, 0, 4),
++	NPUCRU_RESET_OFFSET(SRST_P_NPU_BIU, 0, 5),
++	NPUCRU_RESET_OFFSET(SRST_P_NPU_CRU, 0, 6),
++	NPUCRU_RESET_OFFSET(SRST_P_NPU_SGRF, 0, 7),
++	NPUCRU_RESET_OFFSET(SRST_P_NPU_GRF, 0, 8),
++	NPUCRU_RESET_OFFSET(SRST_H_RKNN, 0, 9),
++	NPUCRU_RESET_OFFSET(SRST_A_RKNN, 0, 10),
 +
-+/* CORE-->SOFTRST_CON01 */
-+#define SRST_REF_PVTPLL_CORE	160
-+#define SRST_CORE_MCU		161
-+#define SRST_CORE_MCU_PWRUP	162
-+#define SRST_CORE_MCU_CPU	163
-+#define SRST_T_CORE_MCU_CPU	164
-+#define SRST_MCU_BIU		165
-+#define SRST_P_MAILBOX		166
-+#define SRST_P_INTMUX		167
-+#define SRST_P_CORE_CRU		168
-+#define SRST_P_CORE_SGRF	169
-+#define SRST_H_CACHE		170
++	/* CORE-->SOFTRST_CON00 */
++	CORECRU_RESET_OFFSET(SRST_NCOREPORESET, 0, 1),
++	CORECRU_RESET_OFFSET(SRST_NCORESET, 0, 2),
++	CORECRU_RESET_OFFSET(SRST_NDBGRESET, 0, 3),
++	CORECRU_RESET_OFFSET(SRST_NL2RESET, 0, 4),
++	CORECRU_RESET_OFFSET(SRST_A_M_CORE_BIU, 0, 5),
++	CORECRU_RESET_OFFSET(SRST_P_DBG, 0, 6),
++	CORECRU_RESET_OFFSET(SRST_POT_DBG, 0, 7),
++	CORECRU_RESET_OFFSET(SRST_NT_DBG, 0, 8),
++	CORECRU_RESET_OFFSET(SRST_P_CORE_GRF, 0, 11),
++	CORECRU_RESET_OFFSET(SRST_H_CPU_BIU, 0, 12),
++	CORECRU_RESET_OFFSET(SRST_P_CPU_BIU, 0, 13),
++	CORECRU_RESET_OFFSET(SRST_PVTM_CORE, 0, 14),
++	CORECRU_RESET_OFFSET(SRST_P_PVTM_CORE, 0, 15),
 +
-+/* VEPU-->SOFTRST_CON00 */
-+#define SRST_H_VEPU_BIU		171
-+#define SRST_A_VEPU_BIU		172
-+#define SRST_A_VEPU_COM_BIU	173
-+#define SRST_P_VEPU_BIU		174
-+#define SRST_H_VEPU		175
-+#define SRST_A_VEPU		176
-+#define SRST_CORE_VEPU		177
-+#define SRST_H_VEPU_PP		178
-+#define SRST_A_VEPU_PP		179
-+#define SRST_CORE_VEPU_DVBM	180
-+#define SRST_P_VICAP_VEPU	181
-+#define SRST_P_GPIO1		182
++	/* CORE-->SOFTRST_CON01 */
++	CORECRU_RESET_OFFSET(SRST_REF_PVTPLL_CORE, 1, 0),
++	CORECRU_RESET_OFFSET(SRST_CORE_MCU, 1, 1),
++	CORECRU_RESET_OFFSET(SRST_CORE_MCU_PWRUP, 1, 2),
++	CORECRU_RESET_OFFSET(SRST_CORE_MCU_CPU, 1, 3),
++	CORECRU_RESET_OFFSET(SRST_T_CORE_MCU_CPU, 1, 4),
++	CORECRU_RESET_OFFSET(SRST_MCU_BIU, 1, 5),
++	CORECRU_RESET_OFFSET(SRST_P_MAILBOX, 1, 8),
++	CORECRU_RESET_OFFSET(SRST_P_INTMUX, 1, 9),
++	CORECRU_RESET_OFFSET(SRST_P_CORE_CRU, 1, 10),
++	CORECRU_RESET_OFFSET(SRST_P_CORE_SGRF, 1, 11),
++	CORECRU_RESET_OFFSET(SRST_H_CACHE, 1, 12),
 +
-+/* VEPU-->SOFTRST_CON01 */
-+#define SRST_GPIO1		183
-+#define SRST_P_VEPU_IOC		184
-+#define SRST_P_SPI0		185
-+#define SRST_SPI0		186
-+#define SRST_P_VEPU_CRU		187
-+#define SRST_P_VEPU_SGRF	188
-+#define SRST_P_VEPU_GRF		189
-+#define SRST_UART_DETN_FLT	190
++	/* VEPU-->SOFTRST_CON00 */
++	VEPUCRU_RESET_OFFSET(SRST_H_VEPU_BIU, 0, 4),
++	VEPUCRU_RESET_OFFSET(SRST_A_VEPU_BIU, 0, 5),
++	VEPUCRU_RESET_OFFSET(SRST_A_VEPU_COM_BIU, 0, 6),
++	VEPUCRU_RESET_OFFSET(SRST_P_VEPU_BIU, 0, 7),
++	VEPUCRU_RESET_OFFSET(SRST_H_VEPU, 0, 8),
++	VEPUCRU_RESET_OFFSET(SRST_A_VEPU, 0, 9),
++	VEPUCRU_RESET_OFFSET(SRST_CORE_VEPU, 0, 10),
++	VEPUCRU_RESET_OFFSET(SRST_H_VEPU_PP, 0, 11),
++	VEPUCRU_RESET_OFFSET(SRST_A_VEPU_PP, 0, 12),
++	VEPUCRU_RESET_OFFSET(SRST_CORE_VEPU_DVBM, 0, 13),
++	VEPUCRU_RESET_OFFSET(SRST_P_VICAP_VEPU, 0, 14),
++	VEPUCRU_RESET_OFFSET(SRST_P_GPIO1, 0, 15),
 +
-+/* VO-->SOFTRST_CON00 */
-+#define SRST_A_VO_BIU		191
-+#define SRST_H_VO_BIU		192
-+#define SRST_H_RGA2E		193
-+#define SRST_A_RGA2E		194
-+#define SRST_CORE_RGA2E		195
-+#define SRST_P_VO_GRF		196
-+#define SRST_A_VOP_BIU		197
-+#define SRST_H_VOP		198
-+#define SRST_D_VOP		199
-+#define SRST_A_VOP		200
++	/* VEPU-->SOFTRST_CON01 */
++	VEPUCRU_RESET_OFFSET(SRST_GPIO1, 1, 0),
++	VEPUCRU_RESET_OFFSET(SRST_P_VEPU_IOC, 1, 1),
++	VEPUCRU_RESET_OFFSET(SRST_P_SPI0, 1, 2),
++	VEPUCRU_RESET_OFFSET(SRST_SPI0, 1, 3),
++	VEPUCRU_RESET_OFFSET(SRST_P_VEPU_CRU, 1, 5),
++	VEPUCRU_RESET_OFFSET(SRST_P_VEPU_SGRF, 1, 6),
++	VEPUCRU_RESET_OFFSET(SRST_P_VEPU_GRF, 1, 7),
++	VEPUCRU_RESET_OFFSET(SRST_UART_DETN_FLT, 1, 8),
 +
-+/* VO-->SOFTRST_CON01 */
-+#define SRST_P_MAC_BIU		201
-+#define SRST_A_MAC_BIU		202
-+#define SRST_A_MAC		203
-+#define SRST_P_VO_SGRF		204
-+#define SRST_P_VO_CRU		205
-+#define SRST_H_SDIO		206
++	/* VO-->SOFTRST_CON00 */
++	VOCRU_RESET_OFFSET(SRST_A_VO_BIU, 0, 3),
++	VOCRU_RESET_OFFSET(SRST_H_VO_BIU, 0, 4),
++	VOCRU_RESET_OFFSET(SRST_H_RGA2E, 0, 7),
++	VOCRU_RESET_OFFSET(SRST_A_RGA2E, 0, 8),
++	VOCRU_RESET_OFFSET(SRST_CORE_RGA2E, 0, 9),
++	VOCRU_RESET_OFFSET(SRST_P_VO_GRF, 0, 10),
++	VOCRU_RESET_OFFSET(SRST_A_VOP_BIU, 0, 12),
++	VOCRU_RESET_OFFSET(SRST_H_VOP, 0, 13),
++	VOCRU_RESET_OFFSET(SRST_D_VOP, 0, 14),
++	VOCRU_RESET_OFFSET(SRST_A_VOP, 0, 15),
 +
-+/* VO-->SOFTRST_CON02 */
-+#define SRST_P_TSADC		207
-+#define SRST_TSADC		208
-+#define SRST_P_OTPC_NS		209
-+#define SRST_SBPI_OTPC_NS	210
-+#define SRST_USER_OTPC_NS	211
-+#define SRST_P_OTPC_S		212
-+#define SRST_SBPI_OTPC_S	213
-+#define SRST_USER_OTPC_S	214
-+#define SRST_OTPC_ARB		215
-+#define SRST_MACPHY		216
-+#define SRST_P_OTP_MASK		217
-+#define SRST_PMC_OTP		218
++	/* VO-->SOFTRST_CON01 */
++	VOCRU_RESET_OFFSET(SRST_P_MAC_BIU, 1, 6),
++	VOCRU_RESET_OFFSET(SRST_A_MAC_BIU, 1, 7),
++	VOCRU_RESET_OFFSET(SRST_A_MAC, 1, 8),
++	VOCRU_RESET_OFFSET(SRST_P_VO_SGRF, 1, 12),
++	VOCRU_RESET_OFFSET(SRST_P_VO_CRU, 1, 13),
++	VOCRU_RESET_OFFSET(SRST_H_SDIO, 1, 15),
 +
-+/* VO-->SOFTRST_CON03 */
-+#define SRST_P_GPIO2		219
-+#define SRST_GPIO2		220
-+#define SRST_P_VO_IOC		221
++	/* VO-->SOFTRST_CON02 */
++	VOCRU_RESET_OFFSET(SRST_P_TSADC, 2, 0),
++	VOCRU_RESET_OFFSET(SRST_TSADC, 2, 1),
++	VOCRU_RESET_OFFSET(SRST_P_OTPC_NS, 2, 3),
++	VOCRU_RESET_OFFSET(SRST_SBPI_OTPC_NS, 2, 5),
++	VOCRU_RESET_OFFSET(SRST_USER_OTPC_NS, 2, 6),
++	VOCRU_RESET_OFFSET(SRST_P_OTPC_S, 2, 7),
++	VOCRU_RESET_OFFSET(SRST_SBPI_OTPC_S, 2, 9),
++	VOCRU_RESET_OFFSET(SRST_USER_OTPC_S, 2, 10),
++	VOCRU_RESET_OFFSET(SRST_OTPC_ARB, 2, 11),
++	VOCRU_RESET_OFFSET(SRST_MACPHY, 2, 13),
++	VOCRU_RESET_OFFSET(SRST_P_OTP_MASK, 2, 14),
++	VOCRU_RESET_OFFSET(SRST_PMC_OTP, 2, 15),
 +
-+/* DDR-->SOFTRST_CON00 */
-+#define SRST_P_DDR_BIU		222
-+#define SRST_P_DDRC		223
-+#define SRST_P_DDRMON		224
-+#define SRST_TIMER_DDRMON	225
-+#define SRST_P_DFICTRL		226
-+#define SRST_A_SYS_SHRM		227
-+#define SRST_A_SHRM_NIU		228
-+#define SRST_P_DDR_GRF		229
++	/* VO-->SOFTRST_CON03 */
++	VOCRU_RESET_OFFSET(SRST_P_GPIO2, 3, 0),
++	VOCRU_RESET_OFFSET(SRST_GPIO2, 3, 1),
++	VOCRU_RESET_OFFSET(SRST_P_VO_IOC, 3, 2),
 +
-+/* DDR-->SOFTRST_CON01 */
-+#define SRST_P_DDR_CRU		230
-+#define SRST_P_DDR_HWLP		231
-+#define SRST_P_DDRPHY		232
++	/* DDR-->SOFTRST_CON00 */
++	DDRCRU_RESET_OFFSET(SRST_P_DDR_BIU, 0, 2),
++	DDRCRU_RESET_OFFSET(SRST_P_DDRC, 0, 5),
++	DDRCRU_RESET_OFFSET(SRST_P_DDRMON, 0, 7),
++	DDRCRU_RESET_OFFSET(SRST_TIMER_DDRMON, 0, 8),
++	DDRCRU_RESET_OFFSET(SRST_P_DFICTRL, 0, 11),
++	DDRCRU_RESET_OFFSET(SRST_A_SYS_SHRM, 0, 13),
++	DDRCRU_RESET_OFFSET(SRST_A_SHRM_NIU, 0, 14),
++	DDRCRU_RESET_OFFSET(SRST_P_DDR_GRF, 0, 15),
 +
-+/* SUBDDR-->SOFTRST_CON00 */
-+#define SRST_MSCH_BIU		233
-+#define SRST_A_DDRC		234
-+#define SRST_CORE_DDRC		235
-+#define SRST_DDRMON		236
-+#define SRST_DFICTRL		237
-+#define SRST_DDR_PHY		238
++	/* DDR-->SOFTRST_CON01 */
++	DDRCRU_RESET_OFFSET(SRST_P_DDR_CRU, 1, 0),
++	DDRCRU_RESET_OFFSET(SRST_P_DDR_HWLP, 1, 2),
++	DDRCRU_RESET_OFFSET(SRST_P_DDRPHY, 1, 3),
 +
-+#endif
++	/* SUBDDR-->SOFTRST_CON00 */
++	SUBDDRCRU_RESET_OFFSET(SRST_MSCH_BIU, 0, 0),
++	SUBDDRCRU_RESET_OFFSET(SRST_A_DDRC, 0, 1),
++	SUBDDRCRU_RESET_OFFSET(SRST_CORE_DDRC, 0, 3),
++	SUBDDRCRU_RESET_OFFSET(SRST_DDRMON, 0, 4),
++	SUBDDRCRU_RESET_OFFSET(SRST_DFICTRL, 0, 5),
++	SUBDDRCRU_RESET_OFFSET(SRST_DDR_PHY, 0, 6),
++};
++
++void rv1106_rst_init(struct device_node *np, void __iomem *reg_base)
++{
++	rockchip_register_softrst_lut(np,
++				      rv1106_register_offset,
++				      ARRAY_SIZE(rv1106_register_offset),
++				      reg_base + SOFTRST_CON(0),
++				      ROCKCHIP_SOFTRST_HIWORD_MASK);
++}
 -- 
 2.47.3
 
