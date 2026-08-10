@@ -1,224 +1,178 @@
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010018.outbound.protection.outlook.com [52.101.84.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1074430C16E
-	for <linux-clk@vger.kernel.org>; Mon, 10 Aug 2026 18:55:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786388121; cv=none; b=fYG7rpiWBzYZ4+AVPdnRz6oza+hCBBXvi8wcEL+kBnQpFvmsUXbLW0a7u9t1K0TOuKq2tp17vaWwT6tEFzAcaFCzkt5gwXAgSaemqnq6gd+s3MYtPwR6KKvehzRZkCfCt+MxBSXRpSfxBsUbkJqrnqBXgkQuMKtpq2nAKAu7Y2A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786388121; c=relaxed/simple;
-	bh=syIuRtPhY3tn7wtaIDeJfEtBlmwR0eFM9qA1M64mqKk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=oYkmn57LyK8dI77CXONnzZxz6RCHgZrZw9OL5kGhXsOEoLe1ioUitmUMeyKmEjRwpDwLV7Z2NfYlw6YPKwri2h31WUBU2+Au5UGEiNopsVK9U/Q5b2iivc7akKos6wJ+5semx4s1+MYUnnYeyqTYfgqp00PzbJ84MI3pgg0r60w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=qaqLhl41; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B21543B6CD;
+	Mon, 10 Aug 2026 19:00:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1786388470; cv=fail; b=teADhOsQmuS6otu8TcMG03gL3sv84fqQ2ppPnUTiFeDhuvTPIHxksgHRt3triaOEIfdb0Xwf77fP8bvwnn6hI5AEYgAovXcbN/lyBzPbouYYTl09qlGfUVt61xVxYzxQemOA6+1RdqaYd5npUDliwvqAB262Eyvcmsp3iJ1X+a8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1786388470; c=relaxed/simple;
+	bh=kyTZXXDVF+DZWp/+0b41AKc+FAxqAeSNnGc0P87OVMw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=kGTJ3/7FjIsV4RIZrU3wDF6lNY7C3Xb3jD+Hy8Ejoga1uOTiRDEG2l1gdi8U33cMAn6jMXeSUZWzGJoDIunfYZOobTQW+buqzqJNyDVhj8dnhdj+aFZo4mdSxuWVo6BrbKqCAItOVZSmuelzw12rxDP//LOX7yiRMiCZ7XkLdaw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=ldAanEBB; arc=fail smtp.client-ip=52.101.84.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qaqLhl41"
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2ceeee8c46bso5946375ad.2
-        for <linux-clk@vger.kernel.org>; Mon, 10 Aug 2026 11:55:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1786388117; x=1786992917; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=9AaWD5cPd4MaJMhCY13hRTM4owhIedKinlDcTDnUg6g=;
-        b=qaqLhl41sOSGQpTSb0669vahVYs5B5aC5HO4sfsCkj7Vs4xQ+lNKLEHT6AEppJitSX
-         JaPsYIXiLEYLBWqye01wndGKoHFk7O+yptNpCc7Fwu3Ur/Om1EkLcFXk3BkkmSZODJPM
-         3ddGCnB7e3i7Zh2yVkOfjWHPUHARlLZTn3b3M4JQORjL0r+i3RhQwtFhWHgCAdYYSwOM
-         P2jt0+I5NEFdfonOYEdmKvAsvrY3HIAq7m9O9QuiBRq1fLH15p0n/E5cZNjcyAXA5N3f
-         MyrR2Cp8FnXGU80t+1rSqMadN6udK+dx7Gf0+77frsb/HpSOUNB69+3h7Z92d1ihDmBV
-         JFhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786388117; x=1786992917;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=9AaWD5cPd4MaJMhCY13hRTM4owhIedKinlDcTDnUg6g=;
-        b=d+lWKzdnEFd1uFpVOrr2C3bxr1bsBg8557ioz9iwovXWNWoFrI6fDuoJdkcc2OnAEN
-         fLIWklzHTZV32ryGtOIW68zdZSPb0pPDx3CkoPunIhVkCAAYg4jUPflA1gVvYKfmyM/f
-         +yArNICiFf7AhaAK/h42g4BcoNND1rBnyMqFM4GGzu2+IHvM2cRp0kLOqdDWMU2ceASC
-         3catyi1TlNJOPe46VglU0DNXCQDyRnNAIbj2+VfjcDiv83y38TkLXO8xdkmTJlCWAtUx
-         knSn/xz/Wc3T1HdTQxwfPUUduUs95Pb2xWgVj1O2MD3e4UvD5rVQ0pEArsyDYR3EZ9Rw
-         wHuw==
-X-Gm-Message-State: AOJu0Yxt5uIFS4Mp6nDRmZFz3IyWirnHxW6bAsGgeCzq3yzfBz42LMIM
-	CxlyKgTQ+xoTZck4EQ7FBWLqTyXAsh5XcHqcxZZ4Czy8ut/QSE3Hiy1N
-X-Gm-Gg: AR+sD10vY9Kd6yEU24CLpL7v9JJ3grGcVVGPcmhy5JTGcpfyFRBZ7B4MG9g4oXiFpoo
-	o/a7LHTsEC0oCjmUZt/L3Kw1FO+LMvfpcTVr66vwP6yQXmFLj3lqF8oFf56UgTs9ghchXpCHRN4
-	ANeHtePVRd38qJ+bxpwYy2OnP18axnHdUWTpM/p/uca+jQgBMZ8pej5aL7cyasSVIgXH5y+FBvw
-	ti9gVsf2SnxOya1Fy6HYq0o6kDUHGtOntHmn5e5BVQAuPChwf5jGb8A4fOUqQKjeoKMu3fBZxTU
-	ZPhW0K5IyxvpyaSiphXNiPPuJatty6pbODUMyeeU1nVNmZn12jLqU+c+6SMzqnzswCD6Odm4aJL
-	TcK3oI6ca1NjHH7s6xN53tgRMCl3aIyDPLVGofBRY3VyLdsC/FBzNR+2Zchnur6RzcXdbhZbEeq
-	spQnxs1agrS2v0YLQLMOghb2J+3SL0KB75E+SLqtizDXKyxLMUoqmlpV8GvihAbN3ImuA=
-X-Received: by 2002:a17:903:2f8f:b0:2ca:d803:5c8f with SMTP id d9443c01a7336-2d0ca73a210mr342752425ad.1.1786388117361;
-        Mon, 10 Aug 2026 11:55:17 -0700 (PDT)
-Received: from [172.17.0.1] ([2409:40c2:5004:a08:95b5:64f6:95fc:7bec])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-315beb88413sm79067062eec.18.2026.08.10.11.55.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Aug 2026 11:55:16 -0700 (PDT)
-From: Bhargav Joshi <j.bhargav.u@gmail.com>
-Date: Tue, 11 Aug 2026 00:24:59 +0530
-Subject: [PATCH v4] dt-bindings: clock: ti,clockdomain: Convert to DT
- schema
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="ldAanEBB"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fcqMmUeULbT6vVVQtdNH/WuA7OCbOW82gRJc3udEDoolZhAddpAFlvPEzH9KOKE/WLjj9GMq1I0IIEqoBNuAHGJowLIEPkyPa8C4P/1q8bahERnRZMw5lhe3wC7ij1Z3hrZPiUl5hqsLnhD22sNBndP2v5TLlYgTlFDioP4abYyR/8g2n1K7HsnnK/d2Kvvk4mIW3B8rRPY8LKAcg8EDY2DfFTiRsgPN5J4i0cTlYk0okLhx93VOvfGeBVuXr1wRxfGmpyJWG3aNFH3JUxY9ddbcj2lzM7N8X5e9+3dTF7tJUqHwuEZIQOL+EdSViwVLjiJJqIC6fuOwwYN+gdlVYg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=M+zGFBcqC+oiIvPfX+QyAzfcYQ1pMo5jj2aoPygDmSI=;
+ b=Rh0MbGMuSNbjwB8Nem28qFwjLV6EuSkq8ryOUVMmGk7wSddq0whreiqwYOf2eun8V7WWCp9J7Z1Pd1zyWgUNbBYfcI3CNtBu2vCsYGoYKQTAP/xum6z6LZyaWiXWd6VQ9Av8XHofj4Z69BmaEGmfkDjIHGSwHBvUjyPaGNaVOpfX8jqxNWVzdw8tjnvpiOPW7xASclzkMwkqZ+F7sWTBTgtlOu6+lKP6plrT7Pzi1bSajhQ1aquPi6cn8kBueBqJIN1lA15d+vAd3tvCm/w/i8WQ82ZEVkvcnU5PK0RXt5Wb2DH8T/o6ONAI9P2yNhUsNBWzjM9UD+aa0aiOy1u4fw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=M+zGFBcqC+oiIvPfX+QyAzfcYQ1pMo5jj2aoPygDmSI=;
+ b=ldAanEBBktfVdE4tGLLhn+bdRrgcKcP+8M7gUDhjcRxXZu1f/+L1DYfFtGZT0/juqzdugwFaqG6W8sIp5XvBEqA3AB+rT9wSh0hu1l4QKbrYpMr3ymAbYqJwqxN5YjMT3Rjp6ZeAAQJ9kUnv/koT58TMgfZEzk/aNwOzK0fhE89pJnVM3vVm9abG/UfExPfpMmp4pEuGZZfVZh79JyqnWy2Rm0amfFt0IWqGoeYIc7c+l1qb5PnOi+mssjOTLG1hUhjTorb+sBXKrQgpCKUEGsy2OrEzBvcWjB6gBax3qFBuJ2jyJerRLWtgeLLNrZsWPXKcWr/t32vhxXZZMXrzsA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from GV2PR04MB11799.eurprd04.prod.outlook.com (2603:10a6:150:2cf::9)
+ by AMBPR04MB11787.eurprd04.prod.outlook.com (2603:10a6:20b:6ee::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.292.25; Mon, 10 Aug
+ 2026 19:00:49 +0000
+Received: from GV2PR04MB11799.eurprd04.prod.outlook.com
+ ([fe80::2146:83a2:5329:b7c]) by GV2PR04MB11799.eurprd04.prod.outlook.com
+ ([fe80::2146:83a2:5329:b7c%7]) with mapi id 15.21.0292.024; Mon, 10 Aug 2026
+ 19:00:49 +0000
+Date: Mon, 10 Aug 2026 14:00:37 -0500
+From: Frank Li <Frank.li@oss.nxp.com>
+To: Guangshuo Li <lgs201920130244@gmail.com>
+Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Dong Aisheng <aisheng.dong@nxp.com>,
+	Shawn Guo <shawnguo@kernel.org>, linux-clk@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] clk: imx: imx8qxp-lpcg: fix runtime PM cleanup on error
+ path
+Message-ID: <anof1XLXF5Epj7IE@SMW015318>
+References: <20260808080215.2669452-1-lgs201920130244@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260808080215.2669452-1-lgs201920130244@gmail.com>
+X-ClientProxiedBy: PH8PR20CA0006.namprd20.prod.outlook.com
+ (2603:10b6:510:23c::11) To GV2PR04MB11799.eurprd04.prod.outlook.com
+ (2603:10a6:150:2cf::9)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260811-ti-clockdomain-v4-1-3ae0c0be94a8@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/2XMSwrCMBSF4a1IxkaSm77iyH2Ig9vkxga1kbQUp
- XTvpkWw1OE58P0j6yh66thxN7JIg+98aNPI9jtmGmyvxL1Nm4GAQhRS8N5zcw/mZsMDfcsRSmu
- FQ4k2Zwk9Izn/WoLnS9qN7/oQ30t/kPP7TYHcpgbJJSetMS/Q6YrwdE3//WDCg82pAdYc/jgkn
- qnM1iTKShNsufrxUpZ/XCWuDBQKXUba1Ws+TdMHoq5IeCoBAAA=
-X-Change-ID: 20260610-ti-clockdomain-a27dd0fa1ad5
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Tero Kristo <kristo@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, goledhruva@gmail.com, m-chawdhry@ti.com, 
- daniel.baluta@gmail.com, simona.toaca@nxp.com, j.bhargav.u@gmail.com
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1786388111; l=4769;
- i=j.bhargav.u@gmail.com; h=from:subject:message-id;
- bh=syIuRtPhY3tn7wtaIDeJfEtBlmwR0eFM9qA1M64mqKk=;
- b=nLCEMgGHJJiYDAdNacVRVgLnAxb0nzpd+/0mSubvAlhrDd3oaWm3BPyDPal0u6ve13bAOCoTm
- ERfw0lqJefyDGDln2z9+wAU1X2jnWizk7neg7YqQIj7vqDeKIcPPiPX
-X-Developer-Key: i=j.bhargav.u@gmail.com; a=ed25519;
- pk=IqNDwUZKECEA+n8wXctFLBbYL9NhFstZNbOznm/nX1k=
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: GV2PR04MB11799:EE_|AMBPR04MB11787:EE_
+X-MS-Office365-Filtering-Correlation-Id: 57c5d51b-7839-4529-0172-08def711b100
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|19092799006|7416014|376014|23010399003|1800799024|18002099003|22082099003|56012099006|10067099003|11063799006;
+X-Microsoft-Antispam-Message-Info:
+	n8MqdcDxCawiJGXTR+WW7oOmXgTulMr2gPU77e6X7HWXD2TEo0Mqg4TnDxoVlVtl4kTlHcQJ6MI8fYAW6fB8olR5VmDXsRFTnvurdKjtvmwglNi895PvU4pRmmO6+lwGaBU1C6N1NLhzduEtIdM/Wj+vPLM5Fmn2v8qFD6pqXZ4squGiIgkkdNesdVYfwtoE4UXmOQWbwU/0vxKif/a6kzWes1TmePblqvlXFkJRwdx8E4JB5jSCBqDrYegnjX5K8sp6p/c8zSB4yk+tIhNC7q5LVccbHw1WafP+o2nSm5nK/Zh1btJBbMYzfGT7QjQ0mADHvW0N4TcXgd375WnM1bxsQIjztKOjt75MP9derhcTNgnQb+oqyWWS354iBkjxMNrYqYjmpw0+TTHPxhNvlsLa6yEmpDxRuw2amK2qPKoIHkDSlxkO1d8Ia30li0nr3ZZxAg2CyA72Ykly12mjxsFyHh7FinbQEQwZ+75BEu+FbrxY9yTeM0tvHvdKVseorfPT9kQtmrDPGwoFsz82SBvhPTclk4AzEzI5qD6po3d0jxuP7mcStG142FRkEQRRJzhRhDkkJaT/k9Ljr/WUSon1vLxuNOTYQledhg0A+ajH8qrMPRsl1rf+CxmNrpi2lv+xjsxWpD3yZpZjSpv84u+489aKVhZcLtfQBoPjZyA=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR04MB11799.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(19092799006)(7416014)(376014)(23010399003)(1800799024)(18002099003)(22082099003)(56012099006)(10067099003)(11063799006);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?ugBKA9o2snWALdrcZJGWWmJ0EzYfJ5BWlR8W5m12+ObJt3Qf+RLVguUR+2EK?=
+ =?us-ascii?Q?50WCfYXrEXgafSmkLAGJbofu7vyWJks8dzS4WfCc3w2SP6z/qoQHnJXjZJxF?=
+ =?us-ascii?Q?LCul/Hmx1PT5z7MvEiO4OaM/MC2oykxm3emzCowBRyKsSZYvpflJLUf3opoM?=
+ =?us-ascii?Q?sAuDlJ8y2Lr7AKsP+02d1jWGo4Yl6FSxcnfuo43RPS7P1W3sVxv7r9eKztxr?=
+ =?us-ascii?Q?wuxytAMY0IYucotJW0qOZyjR9CXdhtYeiigMz/rm3S7EoBjh8uGc4btzHxy1?=
+ =?us-ascii?Q?b5LAROu1YLJMYUXrc/DQz7LG4pMdf4gj6gEnwxEPBnlWLD/FaJvQdP/BW4gi?=
+ =?us-ascii?Q?NYP43AgwaqdgGVlKoB7GMSg0/1I3UU2aILHtEXy15Nj/zlALY5T1mUDRCQvU?=
+ =?us-ascii?Q?f0Tx8IKr2twBftv7l60oMVYBL0MueNJFBPvXJdlprd7ZWoIPq14JrAsJrZvf?=
+ =?us-ascii?Q?sQoDRYDIc1UXCrRAM3SwD8UHsMPjFTvM0gR3HcqOcmGthG31RG5rfvDc7gCb?=
+ =?us-ascii?Q?CcXPwFm2VicJevoJ+bgCqS6Kb/IK92qG9gJrbFlDZMj/6eAgy7nR63R0KisR?=
+ =?us-ascii?Q?ttxwfq2IS8RIF9zK8s3a7+oSu1Gh2epBGi1R/2jzHXdhPSsWdMX8Q/rpuFxL?=
+ =?us-ascii?Q?vep9eLGgD98LYLw1yAJeKMjTm8pbKQ9TsBx1fdl6Eg2tFNjDOnsPSeh6aert?=
+ =?us-ascii?Q?jfeE05tQXqJI7Ua4TRTVllVHScH2C2Kyhh4uK90FFmaCL6IFs6nK7epRKgW9?=
+ =?us-ascii?Q?8J8MMwtNESnbiIBHMBiQ9/jD8otSQ7puRF/WxCyHaJEoij/wY/XYPNtz01v7?=
+ =?us-ascii?Q?OgmtwVd1E008iith9qXbS7js+kUS0WmiI4JyFbwdcMvLobT1DusFULFhoEiL?=
+ =?us-ascii?Q?njqkXwfG2QjOuHZ3Ap33caVrBG/NRfg+5DPN6RZwSnSFLOAqT4Gp4w6V7NH6?=
+ =?us-ascii?Q?iAvbu2PGFlzKnGZ+t/kXWPJorvZSSzvk9Fbdi8ErFTzQpsdj2p7Z/31kHibQ?=
+ =?us-ascii?Q?Uju5elV6uKCGxQDHTU2k9DtvDx/9VDNH9LFHLxKi/OfMCRXr3fALLOUGQPj8?=
+ =?us-ascii?Q?/Rpfzgstcme9mmcK9F34PLpkw78n16vs3nAw9TKKsz0I90Ka/IeS5lPENDBh?=
+ =?us-ascii?Q?fU5VrPRHaHOd05QqA1G1Z+Q/Rj0rmjLIf1n7hTuens7yKDiA0MvRq4Ojb51+?=
+ =?us-ascii?Q?ssKURHGoCRLaZQnQNkMuAmYp6FlMnmI9tsHeA09q5+er9wgdX3YJvkGtDWis?=
+ =?us-ascii?Q?Yc3kApOCN/O57lLALuGWuFjK6NeUZ16RLeONKSDnEQV23471CdylpCOeaj/O?=
+ =?us-ascii?Q?2uy7lu0RnCgEdtULQgdGofiVPInoIeuyE+CH/IGnsTjFiqyY2cu3VQqLvEp7?=
+ =?us-ascii?Q?ajJRvGBtVymknK9OqsXGbRWkK9ytgxi5sYHwVX9ieEGkNo0ogS3qDIVLy6L4?=
+ =?us-ascii?Q?xSB3jagC8HBia1mooFJfPH6oBNfjtGExpLCOQxmbfdm/kd6n1GUPWJ6kXQBL?=
+ =?us-ascii?Q?AGWZo3UHPVYgSY57Aa7x6vSSx5jICWP/MlM+0MxTfnsqaWkQ2Zz97M5riVvs?=
+ =?us-ascii?Q?Yt1nKdw/s0midiM8LAqDD1+TN0RJ9mxWDyZmmwz8IW5lbnF2ZDRL/MatlDTJ?=
+ =?us-ascii?Q?XSxSACm+F5hyU+XjFKsY/eZg6eyrxaHz+nrdvWoafa/Wwp500hiFzP9nrUDc?=
+ =?us-ascii?Q?a9O+WakgBp6bogXDa9CBeyPPHRqWbOAnnT1CWD1EYXV4sysB72YbFTuKjYMh?=
+ =?us-ascii?Q?6wz0G5dI+8beZe1jPj+yJYsLviAZp6tgTGxUkVbA+rvCDU9n3htT?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 57c5d51b-7839-4529-0172-08def711b100
+X-MS-Exchange-CrossTenant-AuthSource: GV2PR04MB11799.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Aug 2026 19:00:49.4343
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: PR/W3kn0AuxxVk0jco8oYtWjLivx0rS/U6N+lOeAoV9s3FliPKX7nPWH9SYR/tWVri3+VI9mG7OUlKM4YijpKd+SZL81eQqUJYHO2bMEzP4j8t1Io0kjvDMwNHy02plP
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AMBPR04MB11787
 
-Convert TI clockdomain to yaml DT schema. Drop '#clock-cells' from the
-required list as this binding doesn't define a new clock binding type,
-it is used to group existing clock nodes under hardware hierarchy. Most
-existing dts omit '#clock-cells'.
+On Sat, Aug 08, 2026 at 04:02:15PM +0800, Guangshuo Li wrote:
+> [You don't often get email from lgs201920130244@gmail.com. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
+>
+> imx_lpcg_parse_clks_from_dt() takes a runtime PM usage reference with
+> pm_runtime_get_noresume() and enables autosuspend with
+> pm_runtime_use_autosuspend(). The success path drops the usage
+> reference with pm_runtime_put_autosuspend(), but the error path only
+> disables runtime PM.
+>
+> As a result, the reference taken by pm_runtime_get_noresume() remains
+> unbalanced on registration failure. The autosuspend setting is also
+> left enabled instead of being undone with
+> pm_runtime_dont_use_autosuspend().
+>
+> Add pm_runtime_dont_use_autosuspend() to undo the autosuspend setting
+> and pm_runtime_put_noidle() to drop the usage reference on the error
+> path.
+>
+> This issue was found by manual code inspection.
+>
+> Fixes: 18cdbad40c6c ("clk: imx: clk-imx8qxp-lpcg: add runtime pm support")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Guangshuo Li <lgs201920130244@gmail.com>
+> ---
+>  drivers/clk/imx/clk-imx8qxp-lpcg.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/imx/clk-imx8qxp-lpcg.c b/drivers/clk/imx/clk-imx8qxp-lpcg.c
+> index 1dae3410ee99..262645bef62d 100644
+> --- a/drivers/clk/imx/clk-imx8qxp-lpcg.c
+> +++ b/drivers/clk/imx/clk-imx8qxp-lpcg.c
+> @@ -277,8 +277,9 @@ static int imx_lpcg_parse_clks_from_dt(struct platform_device *pdev,
+>                 if (clk_hws[idx])
+>                         imx_clk_lpcg_scu_unregister(clk_hws[idx]);
+>         }
+> -
+> +       pm_runtime_dont_use_autosuspend(&pdev->dev);
+>         pm_runtime_disable(&pdev->dev);
+> +       pm_runtime_put_noidle(&pdev->dev);
 
-Update the reference to the old legacy text binding in the description
-of bindings/clock/ti/ti,gate-clock.yaml to point to the new YAML file.
+Can you use devm_pm_runtime_set_active_enabled() to fix this problem.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-Signed-off-by: Bhargav Joshi <j.bhargav.u@gmail.com>
----
-Changes in v4:
-- Rebased to Latest mainline 
-- Link to v3: https://lore.kernel.org/r/20260717-ti-clockdomain-v3-1-3c263af4e9fb@gmail.com
-
-Changes in v3:
-- set limits for clock-output-names and clocks properties
-- Link to v2: https://lore.kernel.org/r/20260622-ti-clockdomain-v2-1-434dbe0789e2@gmail.com
-
-Changes in v2:
-- updating the stale reference to the legacy .txt file inside
-  bindings/clock/ti/ti,gate-clock.yaml to fix make refcheckdocs error
-- Link to v1: https://lore.kernel.org/r/20260621-ti-clockdomain-v1-1-e99a56af98ea@gmail.com
----
- .../devicetree/bindings/clock/ti/clockdomain.txt   | 25 ------------
- .../bindings/clock/ti/ti,clockdomain.yaml          | 44 ++++++++++++++++++++++
- .../bindings/clock/ti/ti,gate-clock.yaml           |  2 +-
- 3 files changed, 45 insertions(+), 26 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/clock/ti/clockdomain.txt b/Documentation/devicetree/bindings/clock/ti/clockdomain.txt
-deleted file mode 100644
-index edf0b5d42768..000000000000
---- a/Documentation/devicetree/bindings/clock/ti/clockdomain.txt
-+++ /dev/null
-@@ -1,25 +0,0 @@
--Binding for Texas Instruments clockdomain.
--
--This binding uses the common clock binding[1] in consumer role.
--Every clock on TI SoC belongs to one clockdomain, but software
--only needs this information for specific clocks which require
--their parent clockdomain to be controlled when the clock is
--enabled/disabled. This binding doesn't define a new clock
--binding type, it is used to group existing clock nodes under
--hardware hierarchy.
--
--[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
--
--Required properties:
--- compatible : shall be "ti,clockdomain"
--- #clock-cells : from common clock binding; shall be set to 0.
--- clocks : link phandles of clocks within this domain
--
--Optional properties:
--- clock-output-names : from common clock binding.
--
--Examples:
--	dss_clkdm: dss_clkdm {
--		compatible = "ti,clockdomain";
--		clocks = <&dss1_alwon_fck_3430es2>, <&dss_ick_3430es2>;
--	};
-diff --git a/Documentation/devicetree/bindings/clock/ti/ti,clockdomain.yaml b/Documentation/devicetree/bindings/clock/ti/ti,clockdomain.yaml
-new file mode 100644
-index 000000000000..95746bfdced4
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/ti/ti,clockdomain.yaml
-@@ -0,0 +1,44 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/ti/ti,clockdomain.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Texas Instruments clockdomain
-+
-+maintainers:
-+  - Tero Kristo <kristo@kernel.org>
-+
-+description:
-+  This binding uses the common clock binding in consumer role. Every clock on TI
-+  SoC belongs to one clockdomain, but software only needs this information for
-+  specific clocks which require their parent clockdomain to be controlled when
-+  the clock is enabled/disabled. This binding doesn't define a new clock binding
-+  type, it is used to group existing clock nodes under hardware hierarchy.
-+
-+properties:
-+  compatible:
-+    const: ti,clockdomain
-+
-+  "#clock-cells":
-+    const: 0
-+
-+  clocks:
-+    minItems: 1
-+    maxItems: 64
-+
-+  clock-output-names:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - clocks
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    dss_clkdm {
-+        compatible = "ti,clockdomain";
-+        clocks = <&dss1_alwon_fck_3430es2>, <&dss_ick_3430es2>;
-+    };
-diff --git a/Documentation/devicetree/bindings/clock/ti/ti,gate-clock.yaml b/Documentation/devicetree/bindings/clock/ti/ti,gate-clock.yaml
-index eaa727ab0d7f..438e190d1067 100644
---- a/Documentation/devicetree/bindings/clock/ti/ti,gate-clock.yaml
-+++ b/Documentation/devicetree/bindings/clock/ti/ti,gate-clock.yaml
-@@ -19,7 +19,7 @@ description: |
-   that is used.
- 
-   [1] Documentation/devicetree/bindings/clock/gpio-gate-clock.yaml
--  [2] Documentation/devicetree/bindings/clock/ti/clockdomain.txt
-+  [2] Documentation/devicetree/bindings/clock/ti/ti,clockdomain.yaml
- 
- properties:
-   compatible:
-
----
-base-commit: d58772d8520c7ef247c4b95c9bd76d3a25da9ff5
-change-id: 20260610-ti-clockdomain-a27dd0fa1ad5
-
-Best regards,
--- 
-Bhargav
-
+Frank
+>
+>         return ret;
+>  }
+> --
+> 2.43.0
+>
+>
