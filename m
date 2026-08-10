@@ -1,32 +1,32 @@
 Received: from mail.zlab.su (mail.zlab.su [109.73.193.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48E753D969B;
-	Mon, 10 Aug 2026 12:15:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B3E3DA5AF;
+	Mon, 10 Aug 2026 12:15:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.193.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786364146; cv=none; b=d6YGT6hxvGg8X3K7Kri2kXugUfNVhV6JD7OMkDUakLKOBiW/elTqLjwLpbHiEnU7ZBVfFddrMvM6FDWRYQVdRzHVUdOYCxlW1TEINpfp5TNNIx5p60dNJ2z1QGM+3WGhwcmyvuMVFhodnoST7MyjyXfd2ouJLZvPWKgLQSotigQ=
+	t=1786364149; cv=none; b=HBU9uapcVrqF2yw161MSvNsBnz8jWMEI1aE2Dn/3TawDPjZHLfHmRzCbVZUEMrLO0qOq5vj0QXTQi0hc8CfuBX5kPJLjCjXwWUTp2Fz6F/Gp08/nodd4qUOMYDkgN3oTMwI/CCdjg2CHyTc1nfQqcd7E/IKNFhsTq5Nu0bLRF5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786364146; c=relaxed/simple;
-	bh=9kpZc3zCVYNc7OjO/sbGTOXmDC+Zl9ah6ei6e88BSKw=;
+	s=arc-20240116; t=1786364149; c=relaxed/simple;
+	bh=M1FEvrydZ3cAT5N5FfbTHX7UZCogZ/FJ8FFgL2S3Yl4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=grZWsfsg6jDRAVxwrTohnMsnMW60z2Nw5SincUsvndrga2kwZmpYjeeXT5Km9EPZXSOILLDzFXsSDkW9QYWF+tBNIzbMC8AbQNEQUoxLmALAma9jw3nPV8Qws1XmdGx5WXP8xdvg5OKfnKrhCYH9RySS28UpR4l5t/t+q+rY5tI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zlab.su; spf=pass smtp.mailfrom=zlab.su; dkim=pass (2048-bit key) header.d=zlab.su header.i=@zlab.su header.b=jd2e4Mtb; arc=none smtp.client-ip=109.73.193.145
+	 MIME-Version; b=EtqFx1ImFllw5peKdtAGS73GewG0TkSZ+ik/4sYJgUaW4rsIW3l2RnOPqSWnt2tpWPF4SqA988nMQLTxsnKa6L2npQxzLVAEXAB9Hyg/Ka24IpGoCs7WOSSwM9Nic17o0/tuwOe5c/4CzClYiXsIygp5yBV0QRZrKh3xf4VLB2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zlab.su; spf=pass smtp.mailfrom=zlab.su; dkim=pass (2048-bit key) header.d=zlab.su header.i=@zlab.su header.b=UeIEk5zM; arc=none smtp.client-ip=109.73.193.145
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zlab.su
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zlab.su
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zlab.su header.i=@zlab.su header.b="jd2e4Mtb"
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7CB72C0516;
-	Mon, 10 Aug 2026 15:15:40 +0300 (MSK)
+	dkim=pass (2048-bit key) header.d=zlab.su header.i=@zlab.su header.b="UeIEk5zM"
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id BB833BFA89;
+	Mon, 10 Aug 2026 15:15:42 +0300 (MSK)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zlab.su; s=dkim;
-	t=1786364141; h=from:subject:date:message-id:to:cc:mime-version:
+	t=1786364144; h=from:subject:date:message-id:to:cc:mime-version:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=v1XLSf6ZDB/wEqrRtkdlR8YK8IVnmgU/VbtIqk1IzZk=;
-	b=jd2e4MtboCVn2w1QPDe/Im5f/LMETb6HuTl6ESnZ4NMjl7H/x6TkM3szAKfDAbQDrU1S0r
-	Xoj2sdSLWDJFDtqPT9hlfMiPQpSH1EQhU04PyARXyehUa4SvzGMVy/ayGzXO8FT2uBKMVF
-	VJLEJSXxNbYUcuOUMrz5UYjOedsXukd440taUfpf1sMxTLEeXCAf1l5DOLKSrVwEIRH2Y+
-	6I7LJLeiW3fa5alzAf1ASqUUYkL4OAk+LykgL7P30kq3l75MerT4ShUdS61brB1xIBc4LK
-	8zHWxqTy4JACFR+c+4XL3g0a0MiNoNlKuquogslOVgqcqjoPCQJm9hua47Kg3Q==
+	bh=Hf3hq9uUQWUEz8YvFbiRVgRTtJAkRTrXQ6MRYpIYIEw=;
+	b=UeIEk5zMajwNW4r8+weqNaNRWkDcX2R+4atx7y05y44m8kQkfK4J0lgfbgNpBSgxIOE/jV
+	gDX1GEexBCpwzJ1mllZ9trQnv7mjFLGJ5ArO7FYqnWxcbizrpnUzbZUk3l4/W+JN6pNUHw
+	A1dfYLT8jDIf5gCCTsbiP275HG8GFp6rJOEfjTneZqocPnbC49wvnftdmeg2iZiEemi54O
+	CwwgmNseusKz7usvNoa7dhbEzLG/lX2EawL5RONj0oViXHKOWq94hFMdHBMqxsaKt8rDaJ
+	kK2UbRp3MYteDJoxE6M5iE4S/1fJ9Xedf4jtwwwqxtMLmUy6+wuaHyb0Mv5XNQ==
 From: Vladislav Leonov <vlad@zlab.su>
 To: linux-rockchip@lists.infradead.org
 Cc: linux-arm-kernel@lists.infradead.org,
@@ -35,13 +35,20 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Vladislav Leonov <vlad@zlab.su>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
 	Conor Dooley <conor+dt@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	David Wu <david.wu@rock-chips.com>,
+	Eric Dumazet <edumazet@google.com>,
 	Heiko Stuebner <heiko@sntech.de>,
+	Jakub Kicinski <kuba@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>
-Subject: [PATCH 03/25] ARM: dts: rockchip: Add reset bindings to RV1106
-Date: Mon, 10 Aug 2026 15:10:54 +0300
-Message-ID: <20260810121121.210040-4-vlad@zlab.su>
+	Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	netdev@vger.kernel.org
+Subject: [PATCH 04/25] dt-bindings: net: rockchip-dwmac: add RV1106 compatible
+Date: Mon, 10 Aug 2026 15:10:55 +0300
+Message-ID: <20260810121121.210040-5-vlad@zlab.su>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260810121121.210040-1-vlad@zlab.su>
 References: <20260810121121.210040-1-vlad@zlab.su>
@@ -54,28 +61,35 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
 
-Include the RV1106 CRU reset-ID header so device tree nodes can
-reference reset lines by name, matching the reset controller support
-added in the previous commit.
+Add compatible string for RV1106 gmac, and constrain it to
+be compatible with Synopsys dwmac 4.20a.
 
 Signed-off-by: Vladislav Leonov <vlad@zlab.su>
 ---
 
- arch/arm/boot/dts/rockchip/rv1106.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ Documentation/devicetree/bindings/net/rockchip-dwmac.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/boot/dts/rockchip/rv1106.dtsi b/arch/arm/boot/dts/rockchip/rv1106.dtsi
-index 70d3da6bd03e..fa5d0d7f4dcb 100644
---- a/arch/arm/boot/dts/rockchip/rv1106.dtsi
-+++ b/arch/arm/boot/dts/rockchip/rv1106.dtsi
-@@ -4,6 +4,7 @@
-  */
+diff --git a/Documentation/devicetree/bindings/net/rockchip-dwmac.yaml b/Documentation/devicetree/bindings/net/rockchip-dwmac.yaml
+index 80c252845349..65eee45f7d7e 100644
+--- a/Documentation/devicetree/bindings/net/rockchip-dwmac.yaml
++++ b/Documentation/devicetree/bindings/net/rockchip-dwmac.yaml
+@@ -29,6 +29,7 @@ select:
+           - rockchip,rk3568-gmac
+           - rockchip,rk3576-gmac
+           - rockchip,rk3588-gmac
++          - rockchip,rv1106-gmac
+           - rockchip,rv1108-gmac
+           - rockchip,rv1126-gmac
+   required:
+@@ -56,6 +57,7 @@ properties:
+               - rockchip,rk3568-gmac
+               - rockchip,rk3576-gmac
+               - rockchip,rk3588-gmac
++              - rockchip,rv1106-gmac
+               - rockchip,rv1126-gmac
+           - const: snps,dwmac-4.20a
  
- #include <dt-bindings/clock/rockchip,rv1106-cru.h>
-+#include <dt-bindings/reset/rockchip,rv1106-cru.h>
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/interrupt-controller/irq.h>
 -- 
 2.47.3
 
