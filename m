@@ -1,281 +1,144 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+Received: from out-93wp-a49.jellyfish.systems (out-93wp-a49.jellyfish.systems [104.207.68.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C8DE39BFF8
-	for <linux-clk@vger.kernel.org>; Mon, 10 Aug 2026 07:03:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1334C39D6F2
+	for <linux-clk@vger.kernel.org>; Mon, 10 Aug 2026 07:18:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=104.207.68.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786345403; cv=none; b=C8yIta/mldJB5CoU/LEme0XpiIt1AiSvUbRDnningfirCY95Y1jZG1nBQrRQAtFmLR5qO8o63UD3oaJzAam6wXvL8Sh6Qg43/UKY1cMeU1nyaiRSii5Ir3FWO+AH8W9NaehIETdu4tTzcQ3aamo8crSsAVXhwOis6mebxwDUJGI=
+	t=1786346322; cv=none; b=oVrkTL9vyGLlnNNSIbUYfFVF3yonFsMbVMLDLe3tRjyrFX89IUz/AuPPBtEVmhhvClPbUf91HVwnzLQcmjT6GkdfkgdZ/00T36vaPcUzv6ZsqOauCfPWdeYNpSHmwM3cGezQl+OVwONwNY9iz0xY94Ef4ghnyLcsj4EAilNbvK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786345403; c=relaxed/simple;
-	bh=dod8uvxlM8AUHtOsxRFNJ1NEJgR2kBawaOyWvDTxkpU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KdKXBViRDbbojTAMCfonDe6aZh3dKcC3TvRsRzeElW3BZ2NyCK1yHzFaJ7Dz2AvgTOe4bU5AybQpl4lj7rP2vcYCX4wy1xeECMvz443zp8EwoXkh41ZMFRhcVhpZL54+7ocA6kjrG0OSkMfNkLEd5BjlNPctPX3DyNgQbvI87bY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k1FeE4gs; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1786346322; c=relaxed/simple;
+	bh=p8Z29qgHYfNDseHQTSQTMub7Kokq0EMvcJvrNS+wEk8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OvBKO4IzrHrFltnB2ba7bgQ59WY9ECpJQBeAwiClkvQIHDNtY20vyoY3Kw5BBpLsdM3/DRkVQI1dyBY8rfmUnnmPsp+x62FGEe9evy2zbbbNeWX8LrE8f/EyBHpKzWSdJXwG/S4GRVh+Tjd18cvAogVu5iI6HEtLyL3AzaPREoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gurudas.dev; spf=pass smtp.mailfrom=gurudas.dev; dkim=pass (2048-bit key) header.d=gurudas.dev header.i=@gurudas.dev header.b=Hx3MEvOw; arc=none smtp.client-ip=104.207.68.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gurudas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gurudas.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k1FeE4gs"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-47f904e80eeso1186036f8f.1
-        for <linux-clk@vger.kernel.org>; Mon, 10 Aug 2026 00:03:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1786345400; x=1786950200; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=UFqgR5GSvMOEuQrtPZNNyIXv51CHwIdUk1flHNLoxSo=;
-        b=k1FeE4gs/rDn/5InHf5UvdivzhwEbOTg3MsgPaSz3k7CyS8IyWCQNy4kPNYvyK0X9W
-         BqwAoj6Rm08r2lq9mLCmUO1tgCKrGOn9xBWLreShbKH3uOFvncV3XBj/qJzgWRP48aB0
-         X7w+MLOQKYMer71HS4LlTPTL7Lp0FGdT4u6/G0TCHA7viC27dvYP9VfieQSHKx77DUQx
-         rHa3aTcpJ6j2nUCGSwop4RBVtld9n776zQhfaqgFDhjXUjemSzScWvAm3N+XE42tzvwp
-         dxWHq1XcpLQSYNboghXrlxcp2VohBBc02ehF3508Q5mntiWmYHxVhMn4wrmPwQBveckE
-         M/SQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786345400; x=1786950200;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=UFqgR5GSvMOEuQrtPZNNyIXv51CHwIdUk1flHNLoxSo=;
-        b=F92Hu6SDqg4i2bgovD6ymFu7wf7sSwQ43qirBNBpfPzfLo1uSwvA1D5W/1GcM3MOss
-         oCskog3XBgoENQVvk/x+6GvNGUp3yswbBimZ68MqLg3j7Gq2Yw/vA2P8iIHKUOirkVCl
-         UzHhDLWw5q5l8Fu3m/IeJhThXZmCIZ0PIwMMdHpQ7ODppIdmWWTEFqIAyF/ork4HL3gP
-         bVcUGSkICgyuubcdCYmMI3MiSdv190rJO/0fsqZOnR3tWYhX3Kq5Gi9dzQSAqmSVciOk
-         D3NAfN5IfVzeig0yzuHwqfpyDUPAS/0qrIV83kmSb69Lb1svoomPy8YAgI5TPMJu0VdP
-         RIeg==
-X-Gm-Message-State: AOJu0YyNBurMg5lqn4iR/OUewWYWJTiELUVDO7Zk3QmZGxc6ET9Jjrzt
-	K2j1C3+saZQWnn7ZOeJgDlusYuO9+WfV3TiSd4D4P9/+mcsYcWNXGxgW
-X-Gm-Gg: AR+sD11cTtuJOTCMuXzDovInTVmtD+zoMLF53AHvqudg/NWaFNq++PNgoSOj0mwHHRM
-	+uRdFerR9MA8XUvHgEn4HuezTlWX1LkpqPML4jq+F1J0vHXC0T6hibPX26zkCYxa4hOqWrTzUFM
-	mYOrZQtoKKeOvNd4dpqehYJHwbBzvMeLbCsAVD63cn4nTkUNL6tMwWameouBmP2h5OkrS+kLp7c
-	6iuA9+vC3p+UlBR9EFrHaDIxwin25eQU+t2+YeqdyzmXlV0oKlooo1kndaRMCmhzCV2RN7aoO5a
-	dRkGGSHHI3R9cw9Z4UXp86TNasjFWZ/gEy9mGnvywTkwkCovf7N2RWbLMht2ttlThz+nUrLcHH3
-	hat1cK8ESMiqYaL5slTaoK//Pln75l1WCfN1RBOVI1FtFcWVzntI/g+cfkJslONqO/KSpar83Mm
-	IPXqyWeZg/JpBgM3soZhaG8rzK2oK+rLLwgdjBf/bfSuY4JOJUOcmCL//TKM5z0WPRBBLSl7K0U
-	rmui3fwN7Y=
-X-Received: by 2002:a05:600c:3b20:b0:499:4893:97d3 with SMTP id 5b1f17b1804b1-4994e7cb8ebmr498120745e9.13.1786345400094;
-        Mon, 10 Aug 2026 00:03:20 -0700 (PDT)
-Received: from strix.doe.home ([197.250.226.68])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4800215078asm30548038f8f.12.2026.08.10.00.03.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Aug 2026 00:03:19 -0700 (PDT)
-From: =?UTF-8?q?Stefan=20D=C3=B6singer?= <stefandoesinger@gmail.com>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	p.zabel@pengutronix.de,
-	bmasney@redhat.com,
-	vkoul@kernel.org,
-	neil.armstrong@linaro.org,
-	linux@armlinux.org.uk,
-	lee@kernel.org
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-phy@lists.infradead.org,
-	mfd@lists.linux.dev
-Subject: [PATCH v10 12/12] ARM: dts: zte: Declare zx297520v3 CRM device nodes
-Date: Mon, 10 Aug 2026 10:03:10 +0300
-Message-ID: <20260810070311.1110849-1-stefandoesinger@gmail.com>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20260810-zx29clk-v10-0-63846490712c@gmail.com>
-References: <20260810-zx29clk-v10-0-63846490712c@gmail.com>
+	dkim=pass (2048-bit key) header.d=gurudas.dev header.i=@gurudas.dev header.b="Hx3MEvOw"
+Received: from gurudas.dev (107-194-158-19.lightspeed.sntcca.sbcglobal.net [107.194.158.19])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.spacemail.com (Postfix) with ESMTPSA id 4hJQvP45D5z2xBB;
+	Mon, 10 Aug 2026 07:13:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gurudas.dev;
+	s=spacemail; t=1786345985;
+	bh=u7n5nk1Q6WJ0NpVun5yyD9tXGMGsft6OO/yOgrv960I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Hx3MEvOw0KG8hM0RyALfZi0eCB02L/UCiKF8Aiw5Ln3RMUJTbxy2+M81OyJqvA3q9
+	 9ugZRhAn7gIElHKiNOcmlXoipgihjx9V8xnpZhsIvq1/907DMV7Ynq2HGEjndeyZpg
+	 FaQaRbzgKF19kKQe7Cs3AbMinwTorIhzXH+JACEgi49S8eb21ge++Q7Xrote4xrbji
+	 2lltqkrFxzzZ3IzBgI89zR/StGJDSlgcRS03eq8IC/vD4zwCUq2Er7faw5MNnzzTdi
+	 59aa7yRq4cekvMFuK6Db6sUbJl8Zh93LL3MkWVIB3LgKF0oQJy8hESMR0DukabdXCF
+	 b2HuqXBFprecg==
+Date: Mon, 10 Aug 2026 00:13:03 -0700
+From: Guru Das Srinagesh <linux@gurudas.dev>
+To: Julia Lawall <julia.lawall@inria.fr>
+Cc: Nicolas Palix <nicolas.palix@imag.fr>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+	cocci@inria.fr, Brian Masney <bmasney@redhat.com>,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3] coccinelle: Detect clk_register() anti-pattern
+Message-ID: <anl5_3932XfoJH9P@gurudas.dev>
+Mail-Followup-To: Julia Lawall <julia.lawall@inria.fr>,
+	Nicolas Palix <nicolas.palix@imag.fr>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+	cocci@inria.fr, Brian Masney <bmasney@redhat.com>,
+	linux-clk@vger.kernel.org
+References: <20260809-cocci-clk-register-v3-1-60d036e13370@gurudas.dev>
+ <b93bd4ac-d76b-2dfe-6945-7111ff20f41b@inria.fr>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <b93bd4ac-d76b-2dfe-6945-7111ff20f41b@inria.fr>
+X-Envelope-From: linux@gurudas.dev
 
-This makes use of the driver added in the previous patches. It wires up
-the uart clocks and resets and allows getting rid of the placeholder
-uartclk node.
+On Mon, Aug 10, 2026 at 08:53:35AM +0200, Julia Lawall wrote:
+> 
+> 
+> On Sun, 9 Aug 2026, Guru Das Srinagesh wrote:
+> 
+> > Enforce commit 12a0fd23e870 ("clk: Print an error when clk registration
+> > fails"): clk_register(), clk_hw_register(), and their devm_/of_ variants
+> > log their own error on failure, so driver-side error prints after these
+> > calls are redundant.
+> >
+> > Two independent match families, one per return-value convention:
+> > pointer return checked via IS_ERR() (clk_register()/devm_clk_register()),
+> > and int return checked via a nonzero value (clk_hw_register()/
+> > devm_clk_hw_register()/of_clk_hw_register()). Both families match
+> > regardless of whether the redundant message's "if" also has a trailing
+> > "else", via an "else S" clause with S otherwise unused.
+> >
+> > In "patch" mode, removing the redundant message also collapses the
+> > enclosing braces when only one statement remains, and deletes the whole
+> > "if" when the message was already the only (braceless) statement.
+> >
+> > Assisted-by: Claude:claude-sonnet-5 coccinelle
+> > Signed-off-by: Guru Das Srinagesh <linux@gurudas.dev>
+> > ---
+> 
+> Hello,
+> 
+> Thanks for the update, which I will look into shortly.
 
-Signed-off-by: Stefan Dösinger <stefandoesinger@gmail.com>
+Thank you for reviewing.
 
----
+> 
+> But you are not structuring your patches in the right way.  The part above
+> the first --- is what will go into the git comit.  That looks fine.
+> 
+> But I don't understand what is the big pile of text below the ---.  When
 
-Version 10: Fix issues with dt-check-style --mode=strict in newly added
-code, but left issues in existing nodes alone.
+That is the cover letter for the patch.
 
-Version 9:
-Sort new nodes by mmio address
-rename syscon-reboot to "reboot"
-adjust to changes in bindings
+I use the b4 tool [1] which is increasingly being used by kernel maintainers and
+contributors alike to work with LKML.
 
-Version 7:
-Add phy nodes to topcrm
-Remove syscon from matrixclk again
-Adapt remove now-removed extra clk inputs from matrix
-Add reset to LSP
-osc26m -> clock-26m for the fixed rate clocks, likewise for 32k
+When there is only one patch in a patchset/series, b4 puts the cover letter under the
+first --- of the patch as described in [2]:
 
-Version 6:
-Add syscon to matrixclk
+	When you only have a single patch, b4 should “mix-in” the contents of the cover
+	letter into the “under-the-cut” portion of the patch itself, where it serves as a
+	source of additional information for the reviewers, but never makes it into the
+	actual commit.
 
-Version 5:
-Re-name from *clk to *crm
-Add the syscon-reboot node here because the binding requires it
-Re-add accidentally dropped uart2 IRQ
----
- arch/arm/boot/dts/zte/zx297520v3.dtsi | 101 +++++++++++++++++++++++---
- 1 file changed, 89 insertions(+), 12 deletions(-)
+[1]: https://b4.docs.kernel.org/en/latest/index.html 
+[2]: https://b4.docs.kernel.org/en/latest/contributor/prep.html#what-if-the-series-only-has-a-single-patch
 
-diff --git a/arch/arm/boot/dts/zte/zx297520v3.dtsi b/arch/arm/boot/dts/zte/zx297520v3.dtsi
-index a16c30a164bb..ebac3cd137df 100644
---- a/arch/arm/boot/dts/zte/zx297520v3.dtsi
-+++ b/arch/arm/boot/dts/zte/zx297520v3.dtsi
-@@ -3,12 +3,26 @@
-  * Copyright (c) 2026 Stefan Dösinger <stefandoesinger@gmail.com>
-  */
- 
-+#include <dt-bindings/clock/zte,zx297520v3-clk.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/reset/zte,zx297520v3-reset.h>
- 
- / {
- 	#address-cells = <1>;
- 	#size-cells = <1>;
- 
-+	osc26m: clock-26m {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <26000000>;
-+	};
-+
-+	osc32k: clock-32k {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <32768>;
-+	};
-+
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -20,15 +34,6 @@ cpu@0 {
- 		};
- 	};
- 
--	/* Base bus clock and default for the UART. It will be replaced once a clock driver has
--	 * been added.
--	 */
--	uartclk: uartclk-26000000 {
--		#clock-cells = <0>;
--		compatible = "fixed-clock";
--		clock-frequency = <26000000>;
--	};
--
- 	timer {
- 		compatible = "arm,armv7-timer";
- 		interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
-@@ -75,18 +80,87 @@ uart0: serial@131000 {
- 			arm,primecell-periphid = <0x0018c011>;
- 			reg = <0x00131000 0x1000>;
- 			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&uartclk>, <&uartclk>;
-+			clocks = <&topcrm ZX297520V3_UART0_WCLK>,
-+				 <&topcrm ZX297520V3_UART0_PCLK>;
- 			clock-names = "uartclk", "apb_pclk";
-+			resets = <&topcrm ZX297520V3_UART0_RESET>;
-+
- 			status = "disabled";
- 		};
- 
-+		topcrm: clock-controller@13b000 {
-+			compatible = "zte,zx297520v3-topcrm", "syscon";
-+			reg = <0x0013b000 0x400>;
-+			#clock-cells = <1>;
-+			clocks = <&osc26m>, <&osc32k>;
-+			clock-names = "osc26m", "osc32k";
-+			interrupts = <GIC_SPI 42 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 43 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 45 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 46 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "usb-up", "usb-down",
-+					  "hsic-up", "hsic-down";
-+			#phy-cells = <1>;
-+			#reset-cells = <1>;
-+
-+			reboot {
-+				compatible = "syscon-reboot";
-+				mask = <0x1>;
-+				offset = <0x0>;
-+				value = <0x1>;
-+			};
-+		};
-+
-+		matrixcrm: clock-controller@1306000 {
-+			compatible = "zte,zx297520v3-matrixcrm";
-+			reg = <0x01306000 0x400>;
-+			#clock-cells = <1>;
-+			clocks = <&osc26m>, <&osc32k>,
-+				 <&topcrm ZX297520V3_AHB_PCLK>,
-+				 <&topcrm ZX297520V3_MPLL>,
-+				 <&topcrm ZX297520V3_MPLL_D5>,
-+				 <&topcrm ZX297520V3_DPLL>,
-+				 <&topcrm ZX297520V3_GPLL>,
-+				 <&topcrm ZX297520V3_GPLL_D2>,
-+				 <&topcrm ZX297520V3_GATED_OSC26M>;
-+			clock-names = "osc26m", "osc32k", "ahb", "mpll",
-+				      "mpll-d5", "dpll", "gpll", "gpll-d2",
-+				      "wclk-osc26m";
-+			#hwlock-cells = <1>;
-+			#reset-cells = <1>;
-+		};
-+
-+		lspcrm: clock-controller@1400000 {
-+			compatible = "zte,zx297520v3-lspcrm";
-+			reg = <0x01400000 0x100>;
-+			#clock-cells = <1>;
-+			clocks = <&matrixcrm ZX297520V3_LSP_MPLL_D5_WCLK>,
-+				 <&matrixcrm ZX297520V3_LSP_MPLL_D4_WCLK>,
-+				 <&matrixcrm ZX297520V3_LSP_MPLL_D6_WCLK>,
-+				 <&matrixcrm ZX297520V3_LSP_MPLL_D8_WCLK>,
-+				 <&matrixcrm ZX297520V3_LSP_MPLL_D12_WCLK>,
-+				 <&matrixcrm ZX297520V3_LSP_OSC26M_WCLK>,
-+				 <&matrixcrm ZX297520V3_LSP_OSC32K_WCLK>,
-+				 <&matrixcrm ZX297520V3_LSP_PCLK>,
-+				 <&matrixcrm ZX297520V3_LSP_TDM_WCLK>,
-+				 <&matrixcrm ZX297520V3_LSP_DPLL_D4_WCLK>;
-+			clock-names = "mpll-d5", "mpll-d4", "mpll-d6",
-+				      "mpll-d8", "mpll-d12", "osc26m", "osc32k",
-+				      "pclk", "tdm-wclk", "dpll-d4";
-+			#reset-cells = <1>;
-+			resets = <&matrixcrm ZX297520V3_LSP_RESET>;
-+		};
-+
- 		uart1: serial@1408000 {
- 			compatible = "arm,pl011", "arm,primecell";
- 			arm,primecell-periphid = <0x0018c011>;
- 			reg = <0x01408000 0x1000>;
- 			interrupts = <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&uartclk>, <&uartclk>;
-+			clocks = <&lspcrm ZX297520V3_UART1_WCLK>,
-+				 <&lspcrm ZX297520V3_UART1_PCLK>;
- 			clock-names = "uartclk", "apb_pclk";
-+			resets = <&lspcrm ZX297520V3_UART1_RESET>;
-+
- 			status = "disabled";
- 		};
- 
-@@ -95,8 +169,11 @@ uart2: serial@140d000 {
- 			arm,primecell-periphid = <0x0018c011>;
- 			reg = <0x0140d000 0x1000>;
- 			interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&uartclk>, <&uartclk>;
-+			clocks = <&lspcrm ZX297520V3_UART2_WCLK>,
-+				 <&lspcrm ZX297520V3_UART2_PCLK>;
- 			clock-names = "uartclk", "apb_pclk";
-+			resets = <&lspcrm ZX297520V3_UART2_RESET>;
-+
- 			status = "disabled";
- 		};
- 	};
--- 
-2.54.0
+> there is a new version, I want to see what has changed as quickly as
+> possible.  So the changes in v3 should be the first thing that I see below
+> the ---, not the last thing.
 
+Sure thing - I will make sure to put the changelog right under the --- as you
+described for any future revisions.
+
+> 
+> For the following information, I'm not sure it should be here at all.
+> Either it is important, in which case it should be above the --- so people
+> in the future can easily benefit from it, or it is not important, in which
+> case it should be dropped.
+> 
+> julia
+
+For reviewers' convenience, the cover letter contains examples of the kind of
+transformations that this script will create when used which I think would be too
+verbose for inclusion in the commit message but useful for reviewing otherwise.
+
+If you feel it is not required/helpful, I could remove everything but the changelog
+from the cover letter for future revisions. Alternatively, I could put the changelog
+right at the top so that it appears right under the first --- with the examples and
+other stuff following that. Going with the former unless you say otherwise.
+
+Thank you.
+
+Guru Das.
