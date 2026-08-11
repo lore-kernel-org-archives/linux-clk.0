@@ -1,64 +1,64 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C048237C902
-	for <linux-clk@vger.kernel.org>; Tue, 11 Aug 2026 18:27:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AD09385D7E
+	for <linux-clk@vger.kernel.org>; Tue, 11 Aug 2026 18:27:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786472863; cv=none; b=OQdlgQrGOJu3nFoqPDugLyFnzSCT3SRudrStoyifdi89pIu3CFj2C2paSIaxqjnJhKzuXrWnLY6IGmGDBZWywDxTGm/FFyzUikQr2rMJSPIR3bR3IEi/wsnvp0x3ShkNYjJLfC1eO9EQgayyxS+p6pRp/16j/6ZiUkp4wCUZAQM=
+	t=1786472864; cv=none; b=nhvlouiiWSIidKJrgbDnnYUeQaTQF0udnkZAZ1nzxqAyxIHe+CTrvFo4UqHpHHGycQ3F3eYq5pPoIgweA/RjxA3+otX+CbZswChda3cf83ce6Ld4tbQKXM6Z3tvnfcHmlRrQc5M4aYBcyNIh2wdpQPlqtpx6MqrSW7kfIiOt72w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786472863; c=relaxed/simple;
-	bh=y82V/y7wUGENbh+MTlJod7CIcKBdfucIx1cjreZViLc=;
+	s=arc-20240116; t=1786472864; c=relaxed/simple;
+	bh=KqOrvF0Ngr2YHJvCxNMWfSlQ1XC20shxMBAkR/0xrFk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PGdHwEEwNgd/10BCYv7pjuACMKOmvUlxHH7U1iKF5v5Lg7+JVrcu8CYw4Pb+wqMRlEqJiM/W5ztHu8NZEcqYz12SaTCbNknFZaVuxBgkQC3xWyWWwV58V4R7g++Vgt5y6ot9IyUq/7u7AOkNbTJOdhBJTM+4Kj79DXhMC/A4tdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l1m7YLsJ; arc=none smtp.client-ip=209.85.128.51
+	 MIME-Version; b=c2b6rr/T+S6J6TbsGlLS3eCyYI/XZCURahcStzZytbfR2mvob+xuxywdJyaoD586mTDRVOxmgWLV/X0fWoi2X8uy660sAle+KfULyg8XG0Ox1oGJVOpDrbdPQcNbILeN4HCUz+5pW7PKKIuAHHXAn74f30pBzzvwMvtwcj0LABE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=pq9bORNX; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l1m7YLsJ"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4956242332dso743965e9.2
-        for <linux-clk@vger.kernel.org>; Tue, 11 Aug 2026 11:27:40 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pq9bORNX"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4997581cdc1so756095e9.3
+        for <linux-clk@vger.kernel.org>; Tue, 11 Aug 2026 11:27:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1786472859; x=1787077659; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1786472860; x=1787077660; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=CvgUchkimOkG9zLWcJshij/hNLupSa9WatTrjiEHw4g=;
-        b=l1m7YLsJ46+JFQMgF+iTHndwP8kp4C6BIFjbYc0CT3xwzn0e1FEtynWwFn+bbI66Ie
-         FX1gI3B2Ue9AB+IR54jBDgMIbkqBn+76kZI7AAsSR0EHaCz/dY8sE3akoDExhbjsdKto
-         B43DsLRYiyTAdyQYg3J2fDVXOl4gnqSamiXUSESMbqmCOul7+oRCflasn2mdLBQPYKdd
-         PJalx3DWQQ6hu8Zfc1ehPeFUZvDryEjGYCFFyVvTvpdgkOzZ6mXlPjVGKkCQ9UGfMqwy
-         H95SLlzALtZguChtIOI6mmRYE6lu3gwfsudWfy0MUNnT17BLrlpbYRJ4KEroA0LyUiJD
-         IEmg==
+        bh=K5Ct9lgEPKcweahYIxO09gEuDKprw03jCz4J9g4FiMM=;
+        b=pq9bORNXRQgEEuyCood874aQ3z65JPxTS8ByG7w+c4I/LqZ1Yaam255vw7lPo7VdLG
+         OTqj0BQgAsLVZ6OITs5J5P5xosfVMkQgM/P7rebH0PSNQKOq8VS9ADu0LzfU1xwqFe21
+         rp+0T3pJxHSumRZ23YCgmUyzTGWAAios5Yf5TYL6sooWXVX4XcyzhPYens7eDlNiY2GU
+         CWy/wkw3fJMvhZLY66BA7puZB+5D8SgIZpdyZeZZjNF3PkRA5x9R2Motk5m39dQ2Bt28
+         Xvf4ZBzXCRKdlptJ4s4XVyxEo6R2G2g1PU8h2qcwjjojf0hzgc4A1T7cPhJ0PF7RYzas
+         jRcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786472859; x=1787077659;
+        d=1e100.net; s=20251104; t=1786472860; x=1787077660;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=CvgUchkimOkG9zLWcJshij/hNLupSa9WatTrjiEHw4g=;
-        b=ZAN1wHF9yyQUUMyVki6QGgUJiLd0FjNg9dCNgQII0EVf8U7r2uZZOjxILOEKzmLF7q
-         mDoRlP976Y33w3dbL06NM5feDAeg6ehqSz9bkCpr2IWD81f33MfDh5CAC5WvQISQqjV3
-         xapZ4UTLLz19nA9uFVE+dC96nK1RGcKXJI19z3zkp8YooeNFEHaKnp5akaJmnWmxa3Zb
-         QwJ9rrDf9Iv2u9FAq9ikXdbKELbumX0muOe2Z8lABozouqtZiU3hmm4oEBmRpJv314Uz
-         J6b34LeVLZANbzwGjBF6t/+KU8/pJ3XlSso9u6AFcYJX92+Btc/GvrQ5n4fcI5IpUDzk
-         th4g==
-X-Forwarded-Encrypted: i=1; AHgh+RomtJiK38mLzpBjEfwJ12MZVgHB/ua2KVYA3W/ed5F7ry/eo1PXh1dlNF8xjOWihF4b6ayOCc0gOE0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2E9vMkTSuwJ5Se7m2z82gSigFh+aIbW8AXNB25+29srY9bzjJ
-	LNSPi5QZya3hTSWnZQ7OE8GJKS4DWrxQ+5y19LJRiUPRhWRQQtFzsKc3
-X-Gm-Gg: AR+sD119mCnmmd5/eag/TNsCVvv9fAdQaSEYR/3dYQbgV6sk58ncQPGQY8SovznxnUP
-	9pYy43diLmMdD2oL7VfDOKw96JzniP3avbYHC5rWkSY046Nl5AIdefizeBkq39dIxqw2ZdY4maj
-	Ev9+/F/WJFFQkhD4E5UjBwpAGiqn079cDioebxkKgxlEbqwf4DqNVygSl1LWUOJT2codCd6efYR
-	tAO1Xy3Xe1XrnATQZ80lhkNfoDmu//HCGH54MwUPfpOw6Ij159KszA4LgLZTgoZMnUcKSBfh1nb
-	/NrbQIafT9/ZPYgClF+Ik/TAfpiuyoXJqG9eG2wCLKvRFKu94VViAiMi68FLUZ3LWdxwEZauvUl
-	K9esHACkdesk+vb+vvxyMk0MrG3zCtuGDVw3TDfmvI3z2iKkXegTuSLMVPw7wJxXe9XjzZ4/hqf
-	5RMK6peVZ0kVJUlNempLA1Yru1UJwwz/vEH84GNUPBJr8jtbmzQTcydOb1x9Cj+BBfN90PFv+Zm
-	WSrWLSGExwU
-X-Received: by 2002:a05:600c:35c4:b0:499:78b3:7b36 with SMTP id 5b1f17b1804b1-49978b37c8bmr106176575e9.11.1786472858658;
-        Tue, 11 Aug 2026 11:27:38 -0700 (PDT)
+        bh=K5Ct9lgEPKcweahYIxO09gEuDKprw03jCz4J9g4FiMM=;
+        b=gEN9Xmv+yZi52AWN/4Ymw8CGzyR6ioNazgm2L3g5FkDDz2ExgT1eBLu/U+cgnHEvfi
+         0Uvqqq+O0DZE9IZIVU32tBK7zna9XIgEcWYZC7O2KeUHSy3jcTN2rzyo3w9qGNQwU5/L
+         1H+GhY/kQDtURXnTiYQqHlB+qn57chwJou9NIuVA7JehLSOdsLwlMLt3EN11vhfo2U1T
+         2SgxswFXFr8ytKtnng8BGKvgErynZojiq8JbrdL0WKDQERDAvgnte0FdhXl/ZjLLfQi2
+         YwSxzmlEnl2p4peMT5g0TUUkkhuNvwmfd8qye5ltWa1rbmAQHitdTQbjGFRcFFusFqiH
+         R4Gg==
+X-Forwarded-Encrypted: i=1; AHgh+RpCT8ryH8TL5vU901r9trPVtmcP/HJB/lr+G1lNsfojmgvl0VCW3zRN8K3pks87xObQyF5qRvVc3p4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeqTIUnV/4XPwduw+MLIdZPYRcV16r7hWUnuQff/eBJvQ/eHX3
+	SV1k3t5P8Rloh0Voe8Y+0SGcTii18QDoOaFLTRuaFKlCE2jlRFIGaDyn
+X-Gm-Gg: AR+sD13JxfL3eVEkATwjf5q7b/C7kCKdZVBP56v1O5y3HR2gLUsXaepIyX2wduSnHr1
+	Uorrvwtj+1qzj93LikWc/3Zd1cn2fkHHClq92Mlztb99VXb2lCsCiEtnhV97P7xLXkfLnwFWJW6
+	3iAj4Q1h1/AR04KPaFzGHm/V75wRCfUbgeSQSWTmAWrJTYwSlymugi428mahxB2/95pe7qEe/Wh
+	XnCU3qycOT/pxKf7H2a7NcbvK3rpZQRY/56M3RRKL9/iV3eHO5T/NZFAI0GKqO2UXXqiKZBsvAS
+	OikGU+KA80GOVnlH4TW1KWRSw193ns+kLKhdtviAsbwJp+WU977ZKhbHaH2vZIdzffgHfgzfv8e
+	pHb4qkUD6KpjkK3eq6bKAb9N9a2ILYRWfJURV3ZVOicEBikPeFtpoD4eMtdksdcTp6JuBMoIcJ6
+	diNIH/BFrK6lCeGMv5HbncWOfWRuykXxXasP2ZywizHmqCjypdT8vnLqrlMNpvUHFivneOsV2dG
+	7Vt6t5cWjKT
+X-Received: by 2002:a05:600c:4693:b0:495:3da3:beb with SMTP id 5b1f17b1804b1-49978468befmr57738645e9.10.1786472860294;
+        Tue, 11 Aug 2026 11:27:40 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:23c4:a702:d301:935c:3ee:d543:9da1])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4997aac8c47sm12499385e9.15.2026.08.11.11.27.38
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4997aac8c47sm12499385e9.15.2026.08.11.11.27.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Aug 2026 11:27:38 -0700 (PDT)
+        Tue, 11 Aug 2026 11:27:40 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
 X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -71,9 +71,9 @@ Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	linux-kernel@vger.kernel.org,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v2 7/9] clk: renesas: r9a08g046: Sort macro definitions alphabetically
-Date: Tue, 11 Aug 2026 19:27:20 +0100
-Message-ID: <20260811182729.360959-8-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v2 9/9] clk: renesas: r9a08g046: Add clock and reset entries for LVDS
+Date: Tue, 11 Aug 2026 19:27:22 +0100
+Message-ID: <20260811182729.360959-10-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260811182729.360959-1-biju.das.jz@bp.renesas.com>
 References: <20260811182729.360959-1-biju.das.jz@bp.renesas.com>
@@ -87,76 +87,40 @@ Content-Transfer-Encoding: 8bit
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Reorder the DDIV_PACK() and SEL_PLL_PACK() macro definitions so they
-are grouped alphabetically by name, improving readability and making
-it easier to spot duplicates or gaps. No functional change.
+Add clock and reset entries for LVDS.
 
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
-v2:
- * New patch.
+v1->v2:
+ * Collected the tag.
 ---
- drivers/clk/renesas/r9a08g046-cpg.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ drivers/clk/renesas/r9a08g046-cpg.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/drivers/clk/renesas/r9a08g046-cpg.c b/drivers/clk/renesas/r9a08g046-cpg.c
-index 4488bd1988e8..aaf329081e15 100644
+index bd3ae08e626b..5878423db151 100644
 --- a/drivers/clk/renesas/r9a08g046-cpg.c
 +++ b/drivers/clk/renesas/r9a08g046-cpg.c
-@@ -35,14 +35,11 @@
- #define G3L_DIVPL2A		DDIV_PACK(G3L_CPG_PL2_DDIV, 0, 2)
- #define G3L_DIVPL2B		DDIV_PACK(G3L_CPG_PL2_DDIV, 4, 2)
- #define G3L_DIVPL3A		DDIV_PACK(G3L_CPG_PL3_DDIV, 0, 2)
--#define G3L_DIV_SDHI0		DDIV_PACK(G3L_CPG_SDHI_DDIV, 0, 2)
--#define G3L_DIV_SDHI1		DDIV_PACK(G3L_CPG_SDHI_DDIV, 4, 2)
--#define G3L_DIV_SDHI2		DDIV_PACK(G3L_CPG_SDHI_DDIV, 8, 2)
--#define G3L_DIV_GE3D		DDIV_PACK(G3L_CPG_GE3D_DDIV, 0, 3)
- #define G3L_DIV_CA55_CORE0	DDIV_PACK(G3L_CPG_CA55CORE_DDIV, 0, 3)
- #define G3L_DIV_CA55_CORE1	DDIV_PACK(G3L_CPG_CA55CORE_DDIV, 4, 3)
- #define G3L_DIV_CA55_CORE2	DDIV_PACK(G3L_CPG_CA55CORE_DDIV, 8, 3)
- #define G3L_DIV_CA55_CORE3	DDIV_PACK(G3L_CPG_CA55CORE_DDIV, 12, 3)
-+#define G3L_DIV_GE3D		DDIV_PACK(G3L_CPG_GE3D_DDIV, 0, 3)
- #define G3L_DIV_RSCI0		DDIV_PACK(G3L_CPG_RSCI_DDIV, 0, 2)
- #define G3L_DIV_RSCI1		DDIV_PACK(G3L_CPG_RSCI_DDIV, 2, 2)
- #define G3L_DIV_RSCI2		DDIV_PACK(G3L_CPG_RSCI_DDIV, 4, 2)
-@@ -50,6 +47,9 @@
- #define G3L_DIV_RSPI0		DDIV_PACK(G3L_CPG_RSPI_DDIV, 0, 2)
- #define G3L_DIV_RSPI1		DDIV_PACK(G3L_CPG_RSPI_DDIV, 2, 2)
- #define G3L_DIV_RSPI2		DDIV_PACK(G3L_CPG_RSPI_DDIV, 4, 2)
-+#define G3L_DIV_SDHI0		DDIV_PACK(G3L_CPG_SDHI_DDIV, 0, 2)
-+#define G3L_DIV_SDHI1		DDIV_PACK(G3L_CPG_SDHI_DDIV, 4, 2)
-+#define G3L_DIV_SDHI2		DDIV_PACK(G3L_CPG_SDHI_DDIV, 8, 2)
- #define G3L_SDIV_ETH_A		DDIV_PACK(G3L_CPG_ETH_SDIV, 0, 2)
- #define G3L_SDIV_ETH_B		DDIV_PACK(G3L_CPG_ETH_SDIV, 4, 1)
- #define G3L_SDIV_ETH_C		DDIV_PACK(G3L_CPG_ETH_SDIV, 8, 2)
-@@ -73,16 +73,13 @@
- #define G3L_DIV_SDHI0_STS	DDIV_PACK(G3L_CLKDIVSTATUS, 24, 1)
- #define G3L_DIV_SDHI1_STS	DDIV_PACK(G3L_CLKDIVSTATUS, 25, 1)
- #define G3L_DIV_SDHI2_STS	DDIV_PACK(G3L_CLKDIVSTATUS, 26, 1)
-+#define G3L_DIV_GE3D_STS	DDIV_PACK(G3L_CLKDIVSTATUS, 27, 1)
+@@ -574,6 +574,10 @@ static const struct rzg2l_mod_clk r9a08g046_mod_clks[] = {
+ 					MSTOP(BUS_MCPU3, BIT(11))),
+ 	DEF_MOD("rsci3_tclk",		R9A08G046_RSCI3_TCLK, R9A08G046_CLK_P16, 0x618, 11,
+ 					MSTOP(BUS_MCPU3, BIT(12))),
++	DEF_MOD("lvds_pllclk",		R9A08G046_LVDS_PLLCLK, R9A08G046_CLK_M2, 0x61c, 0,
++					MSTOP(BUS_PERI_VIDEO, BIT(11))),
++	DEF_MOD("lvds_clk_dot0",	R9A08G046_LVDS_CLK_DOT0, R9A08G046_CLK_M3, 0x61c, 1,
++					MSTOP(BUS_PERI_VIDEO, BIT(11))),
+ };
  
- #define G3L_SEL_SDHI0_STS	SEL_PLL_PACK(G3L_CLKSELSTATUS, 16, 1)
- #define G3L_SEL_SDHI1_STS	SEL_PLL_PACK(G3L_CLKSELSTATUS, 17, 1)
- #define G3L_SEL_SDHI2_STS	SEL_PLL_PACK(G3L_CLKSELSTATUS, 18, 1)
--#define G3L_DIV_GE3D_STS	DDIV_PACK(G3L_CLKDIVSTATUS, 27, 1)
+ static const struct rzg2l_reset r9a08g046_resets[] = {
+@@ -637,6 +641,7 @@ static const struct rzg2l_reset r9a08g046_resets[] = {
+ 	DEF_RST(R9A08G046_RSCI1_TRESETN, 0x918, 9),
+ 	DEF_RST(R9A08G046_RSCI2_TRESETN, 0x918, 10),
+ 	DEF_RST(R9A08G046_RSCI3_TRESETN, 0x918, 11),
++	DEF_RST(R9A08G046_LVDS_RESET_N, 0x91c, 0),
+ };
  
- /* RZ/G3L Specific clocks select. */
--#define G3L_SEL_SDHI0		SEL_PLL_PACK(G3L_CPG_SDHI_DSEL, 0, 2)
--#define G3L_SEL_SDHI1		SEL_PLL_PACK(G3L_CPG_SDHI_DSEL, 4, 2)
--#define G3L_SEL_SDHI2		SEL_PLL_PACK(G3L_CPG_SDHI_DSEL, 8, 2)
- #define G3L_SEL_ETH0_TX		SEL_PLL_PACK(G3L_CPG_ETH_SSEL, 0, 1)
- #define G3L_SEL_ETH0_RX		SEL_PLL_PACK(G3L_CPG_ETH_SSEL, 1, 1)
- #define G3L_SEL_ETH0_RM		SEL_PLL_PACK(G3L_CPG_ETH_SSEL, 2, 1)
-@@ -101,6 +98,9 @@
- #define G3L_SEL_RSPI0		SEL_PLL_PACK(G3L_CPG_RSPI_SSEL, 0, 2)
- #define G3L_SEL_RSPI1		SEL_PLL_PACK(G3L_CPG_RSPI_SSEL, 2, 2)
- #define G3L_SEL_RSPI2		SEL_PLL_PACK(G3L_CPG_RSPI_SSEL, 4, 2)
-+#define G3L_SEL_SDHI0		SEL_PLL_PACK(G3L_CPG_SDHI_DSEL, 0, 2)
-+#define G3L_SEL_SDHI1		SEL_PLL_PACK(G3L_CPG_SDHI_DSEL, 4, 2)
-+#define G3L_SEL_SDHI2		SEL_PLL_PACK(G3L_CPG_SDHI_DSEL, 8, 2)
- 
- enum clk_ids {
- 	/* Core Clock Outputs exported to DT */
+ static const unsigned int r9a08g046_crit_mod_clks[] __initconst = {
 -- 
 2.43.0
 
