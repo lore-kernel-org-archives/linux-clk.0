@@ -1,89 +1,89 @@
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38C3C3C3438
-	for <linux-clk@vger.kernel.org>; Tue, 11 Aug 2026 15:53:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C4EE3CB2D4
+	for <linux-clk@vger.kernel.org>; Tue, 11 Aug 2026 15:53:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786463605; cv=none; b=cYf6TpnoSCQcTOI1hZnMIWs5gyPidMBHaQE6Aq9uncpk/+G+mtUjoffaEAbUxmBrRr4Ms7txIfCWkOIUpxXitn/c1HKQVi844fxehSA8S4xfjLTDUpv+irNDsW5xLegGL8DTmry+9hKX41uI/h+wyjnUgdH4ffEC+l6ATsxvHJ4=
+	t=1786463611; cv=none; b=Kxb3wAyLOkL6qoZriA0KJ3TsJk6glJ6rsbJNNBak8P94DykLyhA/Ga34/zq3IfHpfaDNzhSYc+Xr8KL3GZhSGGewccJ4Jq0M/Gw9xFWf7NeQQNIs05x+0v5eFF37KNHgUe0upCp5BK5q7RXRcz2B+h7ifLM4/Cq1OCY+j9cwUwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786463605; c=relaxed/simple;
-	bh=l+ekHsjdvOsh6sae7GA8C5DSKd0u8GmVxNxbacGaueY=;
+	s=arc-20240116; t=1786463611; c=relaxed/simple;
+	bh=N3bzVgGYgnlRE25Wi/JRlMp6LLGb6HwkYWniEoPG70s=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Mqe22axBcBNzOLTrbWCXrR2iA6qTmpEhGiJvkHpvf4mvaYn89uQuj4WcX/1N3GZpTVMg0UZikgPU/+PDjmNkqzuFBwQWNDIXJlqzKv4HtQNXpQKaN1mAwUloTdOqGYf6X0kspji3lMMKv6HoAugmZwJVEgINZ7kMkzk8t2JnZ7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Yj0eTD2E; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=GMruvLNE; arc=none smtp.client-ip=205.220.180.131
+	 In-Reply-To:To:Cc; b=afabUleqPv3QZoJifOFLk1l5g/kqym+ffQy9w6NI2fWs5ixqGZlPlOD+JzLBGW6La69dpnsrFYSuwI9upBbs65x2S9vkgM8lH7ChsxJ3010P5UAg5vFALf+1gdzD9FbsLXrpPO38JRmIDOnKAnFsGA905QP/C6AGsaauOgLRD/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=T6/qqfsC; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=fI4liYbF; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Yj0eTD2E";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="GMruvLNE"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 67BDWtdj1090819
-	for <linux-clk@vger.kernel.org>; Tue, 11 Aug 2026 15:53:23 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="T6/qqfsC";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="fI4liYbF"
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 67BDWpoS462031
+	for <linux-clk@vger.kernel.org>; Tue, 11 Aug 2026 15:53:29 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	fCyXY68Xed4P1Om/zX71Lm5gbnJzBIFQPJ1AVc2MUvU=; b=Yj0eTD2EFe5L5aS1
-	FAnbD88ODHUpUkUJnF3XmzEZ50UWZdkxN5DnCGE+gWjGO4gtkvQh75IsdnIWHJD3
-	9W8mNBDtwjlPCaQLtik22ZmKhIQMI7X5YfCzC+M+0uLcD+lhszTFcHS3+HubNj32
-	PR6cJZzZyAFwd6yFbWa25E2vQ22kqaCc+jj9/EmFq4pqs7kqfDri8hEMPcJX2FRD
-	R69ksGPGx+kQf+UIkSOSAQuqF1XZtLPVOQaJhlb1iieeN8xS9D12WXC2RGnYpa98
-	pmcPVC5zEa0VE1BqNvb8164QPwpZZ7VoucbSooFdk9j3svdlwCvTNJGnTu+Rrh+J
-	7DhHHw==
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4g049erskd-1
+	JieE+JnpXB5ZYV5RHiKi1Ls3vQ+XE00EuUx/8B1aRTE=; b=T6/qqfsC1xmOIVOh
+	XP9wNLp0Tx+C2+GLmXRmBuCHtUmzN0P8PMPeK6itKRi3yXyqRzeXqPL3Nk5duPN6
+	il6/aaSy+BsfM/b/ACVoB+cyaND+puC/fLTClC7AsRJXljX1w41bzxtRSJiChkIB
+	gWjC5l3K/lx6X/CttcX3w66R3/ZaLiED2/xm2tpme/T9AKK4Ury14aRjz1L7A1tl
+	xMNR/06Tm+5U8P/gGLB73bmpRj0xAgzzZTZyIDMp5QbKy5qf7z7I49oSD4bTv4dC
+	QZ+Y9Mmvf5A2bhPAIPDxOR4J5TZOWRgdpvbRrTpA7tsztQVyYwf7FbLrHnrZkfGa
+	OZmOiQ==
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4g049mgs22-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Tue, 11 Aug 2026 15:53:22 +0000 (GMT)
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-38f283baf1fso11673a91.3
-        for <linux-clk@vger.kernel.org>; Tue, 11 Aug 2026 08:53:22 -0700 (PDT)
+	for <linux-clk@vger.kernel.org>; Tue, 11 Aug 2026 15:53:28 +0000 (GMT)
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-cb4cdf95b5aso6086884a12.1
+        for <linux-clk@vger.kernel.org>; Tue, 11 Aug 2026 08:53:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1786463602; x=1787068402; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1786463608; x=1787068408; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=fCyXY68Xed4P1Om/zX71Lm5gbnJzBIFQPJ1AVc2MUvU=;
-        b=GMruvLNEibQk2DKwPkykhleGUPPjCs12E89ybwJZI6CuAbHrs4TSW1vJtdTInpesH6
-         c2qb5R+xjj8kYEVju9YqzU7L0LypsXuifRKYiXBCA39plBm7aah0/IfLAn3YLVlUG0G8
-         orkG2hKTu9nS9GOaGwDYyucW6rPBNhUWWKxiSLpvUPx61K0BjrlY8vHggsjEKu7i1bRZ
-         nGkiu3suV0NoDxLhv2J4PeKgqFWPjstk23sq/k5AXyHu3lrKAmL6virmjVl7GJaJeOoi
-         AZCk+biquwAMA2WljeG+/aw7h8CVdqodUZMKqQpjhrCRVnC671YBzSHNDg3iCciwWzP4
-         useQ==
+        bh=JieE+JnpXB5ZYV5RHiKi1Ls3vQ+XE00EuUx/8B1aRTE=;
+        b=fI4liYbFuJGDXMx1Oc2vPm2gqnID65wKF80ueDuMxN1cF10vfosxKGUGE0ad52i1Kd
+         GZ7TrCLWWaMXMVR7eKtph6m2+BqBz+T5efeX2tNgYD/idZ9oX+lupwJNmS5f7PpRGe15
+         PtIVYJxscqXXPpbRFezUuBLRiQib3L4TiN6F8mZ9jnm0u8b59BdgMpmhfAfPzAYrYmuD
+         Jbk65MbGQJr7tLXy9GnxpZtZcOm/qlWu5Qg0rKCMX0NjyrsRkU/8YS9/DgqHTRklpHYk
+         mK/vHweQjRF1MBpmdfqagpa8TZogd+1hYgkhTiScSG9/BMiOKIkhd0+GJuc2mEPgVWOH
+         nZUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786463602; x=1787068402;
+        d=1e100.net; s=20251104; t=1786463608; x=1787068408;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=fCyXY68Xed4P1Om/zX71Lm5gbnJzBIFQPJ1AVc2MUvU=;
-        b=ZZVbXQrJUuCLLaM6zDv6m9rv4Fez72us8RTXk3PlJusIfxMLhnk2002/0lsmnz2S35
-         27j4mdV2/mSWrS7CVq+ZHCU+P8MoO0/aksqFLFixpos56Hy4dqNtYVCxxHZQg9HpPLjz
-         Q+f7b8cZDFcDxzEu1w2B4MBTAOJrEy6Df2KB28QHTf5dVjqbC81mvJvZyy+dgDO7JXBx
-         XWN4w6D5uEEi+5M60+UONXLtzVQHGu0wkkR+kT82j30YQVQbmCEmXuY1sZqkziRtrI1z
-         z1hxKEiW35q3fhr6xp5s7mU8BEuMGF0yuNt3sfL+/U4PaGjz2emnbX+wNbe+wwEKXUO+
-         xZpA==
-X-Forwarded-Encrypted: i=1; AHgh+Rr6PpvwqDUFj/d6mgQWqzlalaCrL1kINCjOolCiWwb1xZtvOrPaokDXsXXGVFYkRA7npY9K0vPw7hY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywp1GBn+6lW5CiSr1RpkTTdDqgqlm8DLcP/F8kdhgowQeVgjfvF
-	yEE1yu7z6Et96ARxC5vGpJAxHMrBtIvhxSxd1fNO7ekpNFVGqJ+P0a04n/+Z6iEJEycLGyNF+ej
-	0FXc31cGP7X37QP4Fwz0Mc7F3lHtDNBNfOldFv9AVXjb1RKqTwj1eVHzt6RZJjb0=
-X-Gm-Gg: AR+sD10+KF29wYFISB+0d6BtFq3u4JEQaXPqM0A0GJVrBrBGMiGDZSuogCJPljBllD2
-	L76w6MjLtrUudF0yxq41TESyfLiKgjjpcv5ENeleY05VH07s85DGlT2wrHFza17d6Ag931DUaYX
-	RUtcdxOrcTV2Pm9qg8+O7ynZLxqc7TYAd5e2SOIGH9xtB/tNsmucF6ZaGaXcteDMV/TPT5Wk0Ba
-	L2FDtntwqscneAQWFo75Yxfj05g+EGSWxYFcjTlABDT6N9bLny1fDWB1W9GEV0LG9IiGMVpiWqu
-	o3UkAe+sO09w91xPBY2SIWy5Hmp1SHCOjOaVmanabI625yCeGcPZMVAPyYdTXABasl2t73TLgvR
-	w9gxQ94HoTNR/yBs7FKNc2LN+tv//73TjxDuFZsLzwRtNI/6oR9OxZlKNqe4kk/8ma7zVWim0wH
-	mXdi1xfoB62CIgbZLB5+NxmHQawTGoBHWiIcg=
-X-Received: by 2002:a17:90b:1d45:b0:382:1a6f:ba3b with SMTP id 98e67ed59e1d1-392ec4d3d94mr4600086a91.5.1786463601667;
-        Tue, 11 Aug 2026 08:53:21 -0700 (PDT)
-X-Received: by 2002:a17:90b:1d45:b0:382:1a6f:ba3b with SMTP id 98e67ed59e1d1-392ec4d3d94mr4600021a91.5.1786463601202;
-        Tue, 11 Aug 2026 08:53:21 -0700 (PDT)
+        bh=JieE+JnpXB5ZYV5RHiKi1Ls3vQ+XE00EuUx/8B1aRTE=;
+        b=XUj3qD6MfBlmQ6WHUljrZHqQtSvMbW0NyvmYcvs890lPF+6a5Pi/rQLFOd269jFKFX
+         54PRUvVo3gxqXUSgO5rBJTs+3dNrDdjllyn50PDaPr92DQ0qVT+7G1QDcl2q1ffZ00WH
+         23GPPzXhg9j2pmqKsvJJtfMbJi84LftQtqxHKuSlr02aQWF0oprpTXWGzVzWVzTgObHN
+         /JxaQMY0zSWEEL1gFdjqMEd3wGElHco+YMW4axrj4SLV404ZdZKtGbGMI4/rJLa0LNTc
+         WoiTuTgSnwdgHrduBrakbfdfvdKR6Ec8BfP+893XhfstQTpeu8ytF2sA/vln5JC8T0C+
+         QpqA==
+X-Forwarded-Encrypted: i=1; AHgh+RoKZE+qTm1wC0t4LNMOZ5cg1daJPDiN76UDhzQ9/Zafja862avZOUYLGpfc/L98cgUzwgxLq/Qnlmo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwM/SiWwpiSbWV3OGo6ZgAAXnkinaw/gPSSqocRu6l1bn4h6Nn2
+	il9wJBe7iCeDxPgKBy+5kkdGzp6SaDhYMSTdKm0CuoIR2DQd9pH1o8DMKy5KEl17D7kE8FjyU64
+	M/la1kDkv1GAE5OjONMNOZnbt2anDQvBDuvKLNIfpmwe8ny2n04q7bf21PF00/rc=
+X-Gm-Gg: AR+sD10HYo+IeibXYan9ZyS2kGaIpmHaAN15/dKVFiub/RMEJOOTLCpsSVNYDev7CMd
+	FUCk8bkeYmcQvWJy+Xa9WECljedem2jzoTmED64hu25KQEh1p7wkeV6tBUg6uX1LpZr6K6SO0Hs
+	M/Greh7rTt1TrNMhZ3lbPlM7fAkRmNwclrxvdVpWNUlWYrF8Zm0VqkrEYUdGer/BCrmE1dZbXbD
+	C76neevuu1qKZTedQkmJYRocqf50PImJuhIrw73eURM26uFaLXCrwRzb6ezrFcq3KTftchC+D7m
+	zwcjwHLQdXR8Ow56uL3K2Crqgno97843/RhXr3sa2AYpQBS8bdLqGQYxbU5oQKfzwlPAtbHqZTG
+	bk+HU+ifjKlvWyOGmXzkNw0AK70WSwbBLerGsOW4noiM4xyWxo24e0wcUDD6cRQAp8d1H2eXCza
+	fvcwmYtnFtECFEiMrqZWZKORCLRL/KWSrD6zk=
+X-Received: by 2002:a05:6300:8811:b0:3c3:b57b:6285 with SMTP id adf61e73a8af0-3cc2b8304c5mr5860453637.13.1786463607691;
+        Tue, 11 Aug 2026 08:53:27 -0700 (PDT)
+X-Received: by 2002:a05:6300:8811:b0:3c3:b57b:6285 with SMTP id adf61e73a8af0-3cc2b8304c5mr5860364637.13.1786463607094;
+        Tue, 11 Aug 2026 08:53:27 -0700 (PDT)
 Received: from hu-kathirav-blr.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-31cf6d726f1sm1143032eec.26.2026.08.11.08.53.16
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-31cf6d726f1sm1143032eec.26.2026.08.11.08.53.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Aug 2026 08:53:20 -0700 (PDT)
+        Tue, 11 Aug 2026 08:53:26 -0700 (PDT)
 From: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
-Date: Tue, 11 Aug 2026 21:23:08 +0530
-Subject: [PATCH v2 1/3] dt-bindings: interconnect: Add Qualcomm IPQ9650
- support
+Date: Tue, 11 Aug 2026 21:23:09 +0530
+Subject: [PATCH v2 2/3] clk: qcom: ipq9650: Use icc-clk for enabling NoC
+ related clocks
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -92,7 +92,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260811-ipq9650_icc-v2-1-55b8efbd62c6@oss.qualcomm.com>
+Message-Id: <20260811-ipq9650_icc-v2-2-55b8efbd62c6@oss.qualcomm.com>
 References: <20260811-ipq9650_icc-v2-0-55b8efbd62c6@oss.qualcomm.com>
 In-Reply-To: <20260811-ipq9650_icc-v2-0-55b8efbd62c6@oss.qualcomm.com>
 To: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
@@ -105,85 +105,113 @@ To: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
 Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-clk@vger.kernel.org,
-        Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+        Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 X-Mailer: b4 0.15.2
-X-Proofpoint-Spam-Info: AW1haW4tMjYwODExMDEzMyBTYWx0ZWRfX0IotF2tVWB4U
- DTZdKbaQ8+u179MphLGG+muB1T4DtgUlG7WzXH/Fo9dnZ4lpKRiG660IDX0u7HbrNRL1d7wunq6
- /x9v2HSl4UC3bAbstrWY4WiMxmIKQaE=
-X-Authority-Analysis: v=2.4 cv=DoFmPm/+ c=1 sm=1 tr=0 ts=6a7b4572 cx=c_pps
- a=0uOsjrqzRL749jD1oC5vDA==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+X-Proofpoint-GUID: evKYrogx84BSy9gOW2BGZl0deLQ7reiZ
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODExMDEzMyBTYWx0ZWRfXz+D1nDtZck8Y
+ Cg84K9Lgzb1OBSwhxxzT7ZRDCoTrZZPJpCzVJazqhILu04AN/VL0EfSkJlsOcEJWn/OWxcPat+6
+ l/ixZhMM+KKDtic3tljUl4sHuZ+jPrRUC0RVGEOUI1ayL7zEk4A8kc3xxwwoX0ysgAjHZkq5BHa
+ Rv0IB0Ht4e+m7Oz3E14lJLG8WOfguqNJh3mHzGCbv4KetEyieJ0ET9F1e7vdZ/RNiUbzd3gtI4j
+ ypAuv1iDgApaEw1Xm+SevRP3eDB/72wh9yBoKB40OqxV8Es1ZDdFfe8Url0c/nXOf8R2O2+X0WQ
+ kVh9YLDtqO1K9SJBETFsByfHk4/eBQK6hkjJBC6TtPVczIZAknuRlgJJFbw8iifZSlUWnlq8AHR
+ QTH1hmzG06FafwsxaLrViqw+pfSTkYZcW7XQTeGdvRUlhGF47YdY+B0zLlgCLUm4G3sVaLF2ow/
+ 1qNcgXM9eW+Q9uyeghg==
+X-Proofpoint-ORIG-GUID: evKYrogx84BSy9gOW2BGZl0deLQ7reiZ
+X-Authority-Analysis: v=2.4 cv=FbkHAp+6 c=1 sm=1 tr=0 ts=6a7b4578 cx=c_pps
+ a=oF/VQ+ItUULfLr/lQ2/icg==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
  a=IkcTkHD0fZMA:10 a=Sv0fKeRqtYgA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=3WHJM1ZQz_JShphwDgj5:22
- a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=Cx5HlDUoyQ0isXJhYOIA:9 a=QEXdDO2ut3YA:10
- a=mQ_c8vxmzFEMiUWkPHU9:22
-X-Proofpoint-ORIG-GUID: QTpkSYHODEg9rGZ_QxD2D0c7IuN-mki3
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODExMDEzMyBTYWx0ZWRfX7Gv9pNG0bhE2
- H39fcPLm/edWNFMIoGy7+fP6AN5BsqpHpWomLXir+IGcq6mjHiWvADv/IFBP0PYxjUiUXN3ha4R
- C6XntvA8Y7GBAR0C70G14bUjnaz6Rp0fB2XP34KdUvbsjIyBRypHPUpDdonVL1xor2PbpxfiYnz
- JD8Z1ze7H/ovDuKWp0I79q56uFKuOneECGwQ843JC5/YD+PyRGZgOhIMLxEsF3GPbc9oKS6wOwn
- knLVrCISkEG3CvcdZJJW3Z+5u6VDw+yci3yUNxl74sh20wnV5qQMHOBp8dzofUAFLXZxBmskXrd
- 1QVYaC5j2WXcYRvMz9Gn2XFwPgen1IyWOG7G1rDawBbXzxBU7vRvfOWqOaVXhQy1Bp8YzjYePP5
- +OCN7XtPi8vqroZxn3d6Gp1JhXzhjec0iOEgaLF4VoElszZTEVPnUIGcmjtUdi/90wj165aFZ7j
- A15HVEyH2eAdEuWtZ1A==
-X-Proofpoint-GUID: QTpkSYHODEg9rGZ_QxD2D0c7IuN-mki3
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=yx91gb_oNiZeI1HMLzn7:22
+ a=EUspDBNiAAAA:8 a=mQEdNAxdQoGx0Htu_1MA:9 a=QEXdDO2ut3YA:10
+ a=3WC7DwWrALyhR5TkjVHa:22
+X-Proofpoint-Spam-Info: AW1haW4tMjYwODExMDEzMyBTYWx0ZWRfX2VP5v2I5jzWn
+ mG0CAylCFfi2cQ4BcZc1cIcBfDEc6kFdbhAMmMJzRcA56Ubs9In3smQ+rdsqT76O/Dhf4BHkZbp
+ WejeBj+CKhe8TpBjRkW1asicNiGmO4E=
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
  definitions=2026-08-11_03,2026-08-10_03,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 malwarescore=0 priorityscore=1501 phishscore=0 suspectscore=0
- clxscore=1015 bulkscore=0 adultscore=0 lowpriorityscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2608110133
+ adultscore=0 phishscore=0 clxscore=1011 bulkscore=0 suspectscore=0
+ lowpriorityscore=0 priorityscore=1501 spamscore=0 impostorscore=0
+ malwarescore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
+ definitions=main-2608110133
 
-On Qualcomm IPQ9650 platform the interconnect busses don't have separate
-RPM / RPMh controls. Instead they require direct votes through the GCC.
-To unify hardware descriptions (and software interfaces) between this
-platform and other Qualcomm platforms, make GCC export corresponding NoC
-clocks as interconnects. Add IDs for these Network-on-Chip interfaces.
-The GCC schema already defines #interconnect-cells since it was added in
-the commit f92b778251ad ("dt-bindings: clock: add Qualcomm IPQ9650
-GCC").
+Register NoC clocks for PCIe and USB interconnect paths using the
+icc-clk framework. Without this, the clocks required to create
+interconnect paths and access peripherals connected to these NoCs are
+not properly managed.
 
-Acked-by: Georgi Djakov <djakov@kernel.org>
+Also add icc_sync_state to ensure clock states are synchronized after all
+consumers have probed.
+
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 Signed-off-by: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
 ---
- include/dt-bindings/interconnect/qcom,ipq9650.h | 28 +++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+ drivers/clk/qcom/gcc-ipq9650.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/include/dt-bindings/interconnect/qcom,ipq9650.h b/include/dt-bindings/interconnect/qcom,ipq9650.h
-new file mode 100644
-index 000000000000..023a3878cc08
---- /dev/null
-+++ b/include/dt-bindings/interconnect/qcom,ipq9650.h
-@@ -0,0 +1,28 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+#ifndef INTERCONNECT_QCOM_IPQ9650_H
-+#define INTERCONNECT_QCOM_IPQ9650_H
+diff --git a/drivers/clk/qcom/gcc-ipq9650.c b/drivers/clk/qcom/gcc-ipq9650.c
+index e65a52fdfa91..8c09a757c11d 100644
+--- a/drivers/clk/qcom/gcc-ipq9650.c
++++ b/drivers/clk/qcom/gcc-ipq9650.c
+@@ -4,11 +4,13 @@
+  */
+ 
+ #include <linux/clk-provider.h>
++#include <linux/interconnect-provider.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+ 
+ #include <dt-bindings/clock/qcom,ipq9650-gcc.h>
++#include <dt-bindings/interconnect/qcom,ipq9650.h>
+ #include <dt-bindings/reset/qcom,ipq9650-gcc.h>
+ 
+ #include "clk-alpha-pll.h"
+@@ -3474,6 +3476,22 @@ static const struct qcom_reset_map gcc_ipq9650_resets[] = {
+ 	[GCC_USB_BCR] = { 0x2c000 },
+ };
+ 
++#define IPQ_APPS_ID			9650	/* some unique value */
 +
-+#define MASTER_ANOC_PCIE0		0
-+#define SLAVE_ANOC_PCIE0		1
-+#define MASTER_CNOC_PCIE0		2
-+#define SLAVE_CNOC_PCIE0		3
-+#define MASTER_ANOC_PCIE1		4
-+#define SLAVE_ANOC_PCIE1		5
-+#define MASTER_CNOC_PCIE1		6
-+#define SLAVE_CNOC_PCIE1		7
-+#define MASTER_ANOC_PCIE2		8
-+#define SLAVE_ANOC_PCIE2		9
-+#define MASTER_CNOC_PCIE2		10
-+#define SLAVE_CNOC_PCIE2		11
-+#define MASTER_ANOC_PCIE3		12
-+#define SLAVE_ANOC_PCIE3		13
-+#define MASTER_CNOC_PCIE3		14
-+#define SLAVE_CNOC_PCIE3		15
-+#define MASTER_ANOC_PCIE4		16
-+#define SLAVE_ANOC_PCIE4		17
-+#define MASTER_CNOC_PCIE4		18
-+#define SLAVE_CNOC_PCIE4		19
-+#define MASTER_SNOC_USB			20
-+#define SLAVE_SNOC_USB			21
++static const struct qcom_icc_hws_data icc_ipq9650_hws[] = {
++	{ MASTER_ANOC_PCIE0, SLAVE_ANOC_PCIE0, GCC_ANOC_PCIE0_1LANE_M_CLK },
++	{ MASTER_CNOC_PCIE0, SLAVE_CNOC_PCIE0, GCC_ANOC_PCIE0_1LANE_S_CLK },
++	{ MASTER_ANOC_PCIE1, SLAVE_ANOC_PCIE1, GCC_ANOC_PCIE1_2LANE_M_CLK },
++	{ MASTER_CNOC_PCIE1, SLAVE_CNOC_PCIE1, GCC_ANOC_PCIE1_2LANE_S_CLK },
++	{ MASTER_ANOC_PCIE2, SLAVE_ANOC_PCIE2, GCC_ANOC_PCIE2_2LANE_M_CLK },
++	{ MASTER_CNOC_PCIE2, SLAVE_CNOC_PCIE2, GCC_ANOC_PCIE2_2LANE_S_CLK },
++	{ MASTER_ANOC_PCIE3, SLAVE_ANOC_PCIE3, GCC_ANOC_PCIE3_2LANE_M_CLK },
++	{ MASTER_CNOC_PCIE3, SLAVE_CNOC_PCIE3, GCC_ANOC_PCIE3_2LANE_S_CLK },
++	{ MASTER_ANOC_PCIE4, SLAVE_ANOC_PCIE4, GCC_ANOC_PCIE4_1LANE_M_CLK },
++	{ MASTER_CNOC_PCIE4, SLAVE_CNOC_PCIE4, GCC_ANOC_PCIE4_1LANE_S_CLK },
++	{ MASTER_SNOC_USB, SLAVE_SNOC_USB, GCC_SNOC_USB_CLK },
++};
 +
-+#endif /* INTERCONNECT_QCOM_IPQ9650_H */
+ static const struct of_device_id gcc_ipq9650_match_table[] = {
+ 	{ .compatible = "qcom,ipq9650-gcc" },
+ 	{ }
+@@ -3503,6 +3521,9 @@ static const struct qcom_cc_desc gcc_ipq9650_desc = {
+ 	.num_resets = ARRAY_SIZE(gcc_ipq9650_resets),
+ 	.clk_hws = gcc_ipq9650_hws,
+ 	.num_clk_hws = ARRAY_SIZE(gcc_ipq9650_hws),
++	.icc_hws = icc_ipq9650_hws,
++	.num_icc_hws = ARRAY_SIZE(icc_ipq9650_hws),
++	.icc_first_node_id = IPQ_APPS_ID,
+ };
+ 
+ static int gcc_ipq9650_probe(struct platform_device *pdev)
+@@ -3515,6 +3536,7 @@ static struct platform_driver gcc_ipq9650_driver = {
+ 	.driver = {
+ 		.name   = "qcom,gcc-ipq9650",
+ 		.of_match_table = gcc_ipq9650_match_table,
++		.sync_state = icc_sync_state,
+ 	},
+ };
+ 
 
 -- 
 2.34.1
