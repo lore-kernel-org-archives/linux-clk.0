@@ -1,107 +1,118 @@
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C644E443E4A
-	for <linux-clk@vger.kernel.org>; Tue, 11 Aug 2026 12:09:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 524482652A2;
+	Tue, 11 Aug 2026 12:30:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786450187; cv=none; b=HUaweABfhHd4fbX4DRL0afd2q7S6qtd8f7ou2gcQxOGHOVui5BjJkzyLfVPG/7sZJUTH5N+EVnKBdV0G5XrBJICpLzPUhGpGED+z3aa3w9MH8Iooy664JzI2mCprQWr7q9sAmpOlitWYlPSP9wr0CSTQXpvwcJUl2Bt8AKUu3eE=
+	t=1786451427; cv=none; b=RZNF5UTU0AsAbx8jn1tmO4X+c4qHmSsKcA2tEJsAgQ4YeQVpR2aUMaKj9T+BXu+uO28QnpZHwoHOC0DgR0iNxlftud7GY4HBtzidHHy75d929c7nPIF51zpxxaOG8E7vilUoU96huEFXdKgo2wJA26xp3yx/lRrAqAsc6NY5spY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786450187; c=relaxed/simple;
-	bh=jOz8/RKCdao82EWzssvpPQu6MldBuHaOzLydpj3dJ68=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZomMg2o7OFfzj7eCIHyGLNHt9WraXvixtbOg5a2nyWQlFmubzFWZrZ4LDN/6/3QgjUGZE/F3J13/+Kuft2zB0zctWq05UJIB9hgJ9tL0ZKuNIwVLnlgaEkbgaDYYdw/0gMxdx30uM5g5m6Va71FSiNTPeSt2ohX2ojIwRUYMRJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-5c38568d9e1so1212863e0c.3
-        for <linux-clk@vger.kernel.org>; Tue, 11 Aug 2026 05:09:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786450183; x=1787054983;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=uoVTJmbd8yKwYcWWlgS08ZgHIJGke3bvkQlHT1fmSY4=;
-        b=LSvbqYVrSK9VskoB0s4tXr9LObbTDQ0Jo34mQ+KphLphxwOCvm6IHwF37MCD75fGGs
-         JKJjyo5h/O/hZWBivzhO1eePhbNB2FVb+UNANhmG1IzI+m3jRM0EEiGAQEmwFK3BAfm3
-         oHrftAxXlCHh4hrv3TOG//yU1HWB7fqk3JhWOPKKHY8ZgSlLFxOik1zyekpE6V1kMtVa
-         8cUlRG0sIFMDxao2zImHJFhOe0iLvx7hYVpfErZ2Y1ESPF6zEs2sTPHE0a5HTr7LRiuG
-         KOEisqTPuTHQWKorq6dGDZwS4Pk4kwaom7tsHa6HQPB99feQ5HUo90YnFNZVIq1bxZ4K
-         wW6A==
-X-Forwarded-Encrypted: i=1; AHgh+RqCT3eH+RvnHs65z7joxaEGvwPdRyOkptJgCPJQZnW6ahsRIjtoNAdooldGKqv0w8I4CVoGZICwU80=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybcmCgQZZdmfCpqUOsjhXTpjuwwXRaZXb/xL0fr1/JyzI5XLhx
-	adxtnZSPU0mImkT1O7x4xUh88lO0nyB7uCPcND2C7NKjpoPzlVjv1DrxVRtn7kWB
-X-Gm-Gg: AR+sD105ChgnyLoW/oynOdIwEY/tR3ov4Wb3GHqsDkD9BrnwgNaed2dO5Hn1HAhrYRG
-	SuEVAePQFFMJucLdUam1vnxzVI+9gts0fz6UvSy6/CxlxJ1M2Xa2d3Au5bxGeIpBADPc+EL2/9/
-	MCInNLOzs3BJUyYje9qKNrt/RmWy5Gd+Nqe5DR+9FP3v8hyGL17FOGibrtjhmkzmXQGdV6LW1rg
-	kl+ntSlJqKvdSomnclZPdYgd3zZGW8Asz2MsTa6fchVjENqZK5lXt8HwQQT+qGKDokb/ceCaJ/j
-	yE4IZDahfNQtShhUJnLdJEpUr82k2U5rmEiw2QzYysUW7GGQ2W7rKVrHkpAv2qXEsHJ1XQMrxJD
-	q9Dg8TJ0Vyw7jewI6OiL+Mty63jYAtr4FJbyoR0PuibRnN0HDg8BEboHU6s+GiC3c8e0lAmp0Cv
-	AZ2al/tOT8HGCN372nED/0ukCIBBD1uLqHXUXwfnGIAlLwg5QxFpePjn1FpnltQHtHsCwzUXnUO
-	GiCEv2Iu89ukVI4jxQm0EU/5Q==
-X-Received: by 2002:a05:6102:14a5:b0:76a:fc18:29bc with SMTP id ada2fe7eead31-76b559806c5mr614582137.4.1786450182706;
-        Tue, 11 Aug 2026 05:09:42 -0700 (PDT)
-Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com. [209.85.222.41])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-76b65bb5ddesm451838137.12.2026.08.11.05.09.35
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Aug 2026 05:09:37 -0700 (PDT)
-Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-966eabad303so607817241.1
-        for <linux-clk@vger.kernel.org>; Tue, 11 Aug 2026 05:09:35 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RqcDwrRFQPHKrq1a+zujtFdbkn0BGz+mLaWoIWLNdF5ZYeG34piq/y9wfABc+MgDh98eGi4YBYwwSE=@vger.kernel.org
-X-Received: by 2002:a05:6102:15a3:b0:738:cdc6:f59a with SMTP id
- ada2fe7eead31-76b573b9e9amr650405137.9.1786450174738; Tue, 11 Aug 2026
- 05:09:34 -0700 (PDT)
+	s=arc-20240116; t=1786451427; c=relaxed/simple;
+	bh=L4wS135raQL9yAvIEjvL2iifjW04RO3yfx34u80Am5w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JIlrcCAg9sepdXZzSChWd6IL4kdUav6Ps8GYwJ/1E4n5TNRkT6Scgo3Yhz7lunkBk/mRW8syy5EPiTouBFDP3PJSuRccqKTD2EHfngerFFle7dmNQwa0zHzq/R93wtF5fP4cZJozId4fER1JSMakVAxKb3j8y+pPKAHbHLWwz1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bEoSaTKo; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bEoSaTKo"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1786451425; x=1817987425;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=L4wS135raQL9yAvIEjvL2iifjW04RO3yfx34u80Am5w=;
+  b=bEoSaTKoFV5goligV4v3qnAbhoOSAWGarV36a22yHC/lzgM6nN9FBeQG
+   veej0NnKtOj4Pt/QxZBFfkiipwHfJjnGIWU1gV75bemXfKGjONYTq6Bv+
+   gSgJkUSDMhG8kVDAknX9mrStMTaczsT3OJtPGTwiVNTgx2lOd0+aslHOt
+   pNCGUN0zrDk8nGy2atd1FwSrRTqVj2BhlIYUlYPa2rB7KwOVFpVSAilQa
+   MHm6xjueUWobBmB/UTGgfRtwFH/jViP2kvdH2+xc/mzWH8Nl/qP+QEoQi
+   SK3nlICTXqqegt7qe5dj1ArMPTV/D4bnE3wFZtH4k4dq6fT3rXuQDav/M
+   w==;
+X-CSE-ConnectionGUID: P7DTpMIFR2+kR+uEXWmBCg==
+X-CSE-MsgGUID: WVkQuZuBRp6leb0MEEEvqQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11871"; a="86912172"
+X-IronPort-AV: E=Sophos;i="6.25,217,1779174000"; 
+   d="scan'208";a="86912172"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2026 05:30:25 -0700
+X-CSE-ConnectionGUID: aJPAxQBaQnmYcbqPVa9myA==
+X-CSE-MsgGUID: U+QPQXIkRkmd55u5z7lVcg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,217,1779174000"; 
+   d="scan'208";a="262014516"
+Received: from lkp-server01.sh.intel.com (HELO 6eda058d650d) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 11 Aug 2026 05:30:23 -0700
+Received: from kbuild by 6eda058d650d with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1wtlca-00000000OlK-1eYp;
+	Tue, 11 Aug 2026 12:30:20 +0000
+Date: Tue, 11 Aug 2026 20:29:34 +0800
+From: kernel test robot <lkp@intel.com>
+To: Rosen Penev <rosenp@gmail.com>, linux-clk@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+	David Lechner <david@lechnology.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv2] clk: davinci: add COMPILE_TEST support
+Message-ID: <202608111912.YS4Vg7Jh-lkp@intel.com>
+References: <20260719214214.726826-1-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260724-clk-provider-simple-clean-v2-0-56f306156d25@baylibre.com>
- <20260724-clk-provider-simple-clean-v2-3-56f306156d25@baylibre.com>
-In-Reply-To: <20260724-clk-provider-simple-clean-v2-3-56f306156d25@baylibre.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 11 Aug 2026 14:09:23 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdW15QrpUhbra1Jg1_8rQWf8CE5TQiE5SUAsqvz5YmEwpQ@mail.gmail.com>
-X-Gm-Features: AUfX_mxAADqzKHeccKVpUAgUM-G2gOwUTpW15Dago95Bl-ey6AOZpFlGkzHgs7Y
-Message-ID: <CAMuHMdW15QrpUhbra1Jg1_8rQWf8CE5TQiE5SUAsqvz5YmEwpQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/7] clk: renesas: clean-up simple provider misuse of
- the consumer API
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@bootlin.com>, 
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney@redhat.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
-	Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Tero Kristo <kristo@kernel.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, 
-	linux-omap@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260719214214.726826-1-rosenp@gmail.com>
 
-On Fri, 24 Jul 2026 at 11:04, Jerome Brunet <jbrunet@baylibre.com> wrote:
-> Clock provider should not be using the consumer interface.
-> In other words, a provider should not be dealing with struct clk.
->
-> This change targets occurrences for which the provider uses the
-> consumer interface and corresponding clk_hw interface exist.
->
-> Reviewed-by: Brian Masney <bmasney@redhat.com>
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Hi Rosen,
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v7.4.
+kernel test robot noticed the following build errors:
 
-Gr{oetje,eeting}s,
+[auto build test ERROR on clk/clk-next]
+[also build test ERROR on linus/master v7.2-rc7 next-20260807]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-                        Geert
+url:    https://github.com/intel-lab-lkp/linux/commits/Rosen-Penev/clk-davinci-add-COMPILE_TEST-support/20260810-131535
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+patch link:    https://lore.kernel.org/r/20260719214214.726826-1-rosenp%40gmail.com
+patch subject: [PATCHv2] clk: davinci: add COMPILE_TEST support
+config: xtensa-randconfig-r051-20260811 (https://download.01.org/0day-ci/archive/20260811/202608111912.YS4Vg7Jh-lkp@intel.com/config)
+compiler: xtensa-linux-gcc (GCC) 12.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260811/202608111912.YS4Vg7Jh-lkp@intel.com/reproduce)
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202608111912.YS4Vg7Jh-lkp@intel.com/
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+All errors (new ones prefixed by >>):
+
+   `.exit.text' referenced in section `__jump_table' of fs/fuse/inode.o: defined in discarded section `.exit.text' of fs/fuse/inode.o
+   `.exit.text' referenced in section `__jump_table' of fs/fuse/inode.o: defined in discarded section `.exit.text' of fs/fuse/inode.o
+   `.exit.text' referenced in section `__jump_table' of drivers/target/target_core_configfs.o: defined in discarded section `.exit.text' of drivers/target/target_core_configfs.o
+   `.exit.text' referenced in section `__jump_table' of drivers/target/target_core_configfs.o: defined in discarded section `.exit.text' of drivers/target/target_core_configfs.o
+   `.exit.text' referenced in section `__jump_table' of drivers/rapidio/switches/idt_gen2.o: defined in discarded section `.exit.text' of drivers/rapidio/switches/idt_gen2.o
+   `.exit.text' referenced in section `__jump_table' of drivers/rapidio/switches/idt_gen2.o: defined in discarded section `.exit.text' of drivers/rapidio/switches/idt_gen2.o
+   `.exit.text' referenced in section `__jump_table' of drivers/rapidio/switches/idt_gen2.o: defined in discarded section `.exit.text' of drivers/rapidio/switches/idt_gen2.o
+   `.exit.text' referenced in section `__jump_table' of drivers/rapidio/switches/idt_gen2.o: defined in discarded section `.exit.text' of drivers/rapidio/switches/idt_gen2.o
+>> xtensa-linux-ld: drivers/clk/davinci/pll.o:(.init.literal+0x10): undefined reference to `of_da850_pll0_init'
+>> xtensa-linux-ld: drivers/clk/davinci/pll.o:(.rodata+0x1178): undefined reference to `da850_pll0_init'
+>> xtensa-linux-ld: drivers/clk/davinci/pll.o:(.rodata+0x1194): undefined reference to `da850_pll1_init'
+>> xtensa-linux-ld: drivers/clk/davinci/pll.o:(.rodata+0x12a0): undefined reference to `of_da850_pll1_init'
+   xtensa-linux-ld: drivers/clk/davinci/pll.o: in function `__da850_pll0_of_clk_init_declare':
+   pll.c:(.init.text+0x1e): undefined reference to `of_da850_pll0_init'
+>> xtensa-linux-ld: drivers/clk/davinci/psc.o:(.rodata+0x6b8): undefined reference to `da850_psc0_init_data'
+>> xtensa-linux-ld: drivers/clk/davinci/psc.o:(.rodata+0x6d4): undefined reference to `da850_psc1_init_data'
+>> xtensa-linux-ld: drivers/clk/davinci/psc.o:(.rodata+0x7e0): undefined reference to `of_da850_psc0_init_data'
+>> xtensa-linux-ld: drivers/clk/davinci/psc.o:(.rodata+0x8a4): undefined reference to `of_da850_psc1_init_data'
+   `.exit.text' referenced in section `__jump_table' of drivers/misc/phantom.o: defined in discarded section `.exit.text' of drivers/misc/phantom.o
+   `.exit.text' referenced in section `__jump_table' of drivers/misc/phantom.o: defined in discarded section `.exit.text' of drivers/misc/phantom.o
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
