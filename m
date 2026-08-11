@@ -1,97 +1,104 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E5A43B7763
-	for <linux-clk@vger.kernel.org>; Tue, 11 Aug 2026 16:11:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DAAE3F822B
+	for <linux-clk@vger.kernel.org>; Tue, 11 Aug 2026 16:22:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786464666; cv=none; b=OSyKu4kv9+PTP4BER/ACL5jWMD9QbT3m9T7AhrHpn13aoYJ27PSF0YPLZxZ3FHAAkXFIutQ3rPbBo7dz0lWCQWSDh1SA3ZsRrYIbwOfBwVZgeTT7B0obl7tNzobwrsM4tiHXlL+4VWo+y5EXm28hjeMMsIZCP+fhmyax39BsZjY=
+	t=1786465326; cv=none; b=AY3KnX+lv/Evm77umqmxPsrz+uUOduRQocmOKDCfaOF08kZRyGJXliYFJWO7j+sMyOgxvnrEnaCkW7AMTZTO0bhVJ4ljcsq1YuEgLKjrrwiq5uffY22WfSUPU7qttUARtEjT51B5mdjSGcJo1cR35SXNKtW7kd5Dzz+mcE3JCnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786464666; c=relaxed/simple;
-	bh=s5aYQFH5/TsJrfgH3Hmm3Z5/dP+xYZg4aYmTqt5N98Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KC/O8Own+TMggh1G4113PvsBeW2fUymX4lmn871c/SI3lluqw2APVkn7zHn2ajFike+w5zPIuCxXzJlgYw0luugdbMXsdHa7+9r5BaGY3Uldw90AclzujFZ+i872H1kJp5OmC22T7BRNVRS9eQMeksLe7k9YfR8Y5RTjOC3/5I8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OTxVVdhZ; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1786465326; c=relaxed/simple;
+	bh=rBY73z4VZc4Ny+oWgQzv4zD6snr0f7FgurZo09CYdJs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oNZfwzIS3Hjmnl3PT5eBbcvdzhW5lv0/CYjkz8lO2UK6sctRTbwuLl7c5RpS/NhYrf0gyhxPXQH67m7N4lY87JpHAe8BPx1g8jR2FgMncI6rxSiWb7mddmQmQxwe2jpZJb6kPpOgtAKgtbaGAUTgVI1HYNc6xkxTEfznQb3nN/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fL1EFVtH; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OTxVVdhZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46AA01F00ADF
-	for <linux-clk@vger.kernel.org>; Tue, 11 Aug 2026 16:11:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786464661;
-	bh=s5aYQFH5/TsJrfgH3Hmm3Z5/dP+xYZg4aYmTqt5N98Q=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=OTxVVdhZRmaj9tkDRGlrzrtpdSexA49s47RLI8Twy4X2WCBf/g6bn8k/1d9JPgFpL
-	 y2GfduWi+ZR2W8AtNJ9UUWy0Jzlt8uVWTADljZX6LKKQGowZ1O0DA1++7yUSUqYfDz
-	 xnWwwtP0KKRTajZsIx3bFfJDthsQ422gzilaNI+jKfGTXv9zd8+5AgQY0/dKRdhXYS
-	 QwboSbp6U+VhfW9Nbv3/bE8sNBu3eyksQBNDp2KxA2kffHOk6uRtwaHx0uhnzVPfAW
-	 8PqlY/j+Yxvhi2iP6MxW+SkT2z0UT56qMQcg+PDuGgNUoQpsPbwr0W8foY1KZST59P
-	 GMhX9Wv+0tTEA==
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-6a051904222so1340558a12.2
-        for <linux-clk@vger.kernel.org>; Tue, 11 Aug 2026 09:11:01 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RqFsbiqvlRzs/Y3s00g2r5ys6qp3sKAPOIbT/UeylobDwR8JhLWtA6QEulxxNfwkLs6o597EJ6Bgbo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNr+/BLZBeKnQmZ/ReEzGadP09EAcqY4ujvJ1QC5vYIFh0Bt5d
-	+qXpRLkkK1PnC5AH3eaP8QzTsLzo0gD/85ZJMiAfYXHznecrpyw7KNb++70hOogn91vYRzbDjj6
-	KKINwZs63DvYzd1/VDoExVNwXgUViKA==
-X-Received: by 2002:a17:907:9344:b0:c19:49ee:19b9 with SMTP id
- a640c23a62f3a-c20ecb40d59mr83318066b.15.1786464659836; Tue, 11 Aug 2026
- 09:10:59 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fL1EFVtH"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4953e04ef16so29288635e9.2
+        for <linux-clk@vger.kernel.org>; Tue, 11 Aug 2026 09:22:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1786465322; x=1787070122; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=w5NxFq7IcCs1xSnAO+oR3n9k6fwPCVP/WmcDz5wXiMU=;
+        b=fL1EFVtHJNBf/cKhydRfwhpRSy15sLKaza625CYKP4SdXC3pOqPVKNOKxm0KYh8X6z
+         er4yslziRXVZUQ05WRGzO8uZ/rGMWeGowK5lzJEJrviGfNs8QS7P6EZdIgKKn+bABtW7
+         JPXluRy3sOzSzeG2N3Dt+p5h0t7/66Am3wP/wXZNKBopzZvb5ou7mOtAZRHJ+VT23mv/
+         j7JffcZamDSWS6ySz4cRXlloPhcX8UbgJkdJ2O61+ZUpIMU9bax7wXrFZ6xsu4u12V//
+         BzmSF9EM/E7zTd5KP6uzM4z9GeIVyas6wD2wFM885RiKw9R5aW1zgGcx3t8RkkiqbW5S
+         NFIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1786465322; x=1787070122;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=w5NxFq7IcCs1xSnAO+oR3n9k6fwPCVP/WmcDz5wXiMU=;
+        b=hbezRp8R3atRYjK0h1wQY29Nb3sKmSRGb0SlW2MgTVkuNbhauFr1STS1Cai6TpK0YM
+         HthNdNcjUivUO/EGoCyDbEEzY1kh80CRR+23v2j7O5AGshYv80yzqrU0nqBuuhT/Xqe9
+         8Dj9PYTroV+avPj+RwkUG2rJWopjQWC6Y6c8MmDrEHtyN6FYIUJbVU0tyKOegwZyJo3O
+         51SuP2Ep9oCZz/pWJ0wFx+NLz7/PVEo6wpXDl793Q+HaiSNBQpbGR0wSxRdib9/07J2S
+         s+JYIsrjzoJrDW6GZf2MLBCZ7Dy1BiWOG9MvGMx+i3Xz5APE43WeNyl9JZ7WurMaVcWd
+         LKbQ==
+X-Forwarded-Encrypted: i=1; AHgh+Rp4KWGmZQNpQjFaPFPCJSh4mCmtZ6CblNFc0gcvQv5DWNjb3DA6SHBkU9Jc+khBSAZEV3aUadd2P/Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXTtKKAKV4ay8t5Jv/K4QSr5hIAV4cBgf/ux8Xle/FsJfR3do/
+	SX7ChksWTwAM/loNx6onWaab4DC1NXzE7rkdnkL3s0kqQhqCmwFlV8E3
+X-Gm-Gg: AR+sD12RkTQZ0xBKtFYkTyVs/RLU1cfPgtonWL+u0PR632DUaay6U5ovKpiJY8dLlzd
+	rZjXlayBaiozXEtJANzyMf8n4cr+zFLGWkdlh5qQnoa58kqnMUtiqT4S6vdQ9x2tPAtEg3SOXL3
+	Xg9wdUk7PWRqEQFtcwagt1C9TiT9URewFKOOdmbs1yBgWFu3F0qhaAxDMFjPzC3XASiZYsQPS53
+	wlgYVVQUqluSsBjuvUJ2PeBbcAUrIeGLAPvhMd9f/Of6w0qize6gbVg51YwKdep0aAcGoDvL4Kh
+	vAT5aFQAOYwgIVPlYu13+O1Hv3dlLi5otjhujZhX5sd3eY5o9PPFxkdNYA0ZyCamqU+DfzCfIbN
+	EkJuRt+4cxYpOz3owTjIVlzLGUX85uXJo4FMciWBIMXmn5LG447kvr82vo2LHpWj8PZjdccdQEa
+	5b3VjSE1UGcdv6CJgaqOFtPuAug54eE4w1mimW48MZm/ZRhr2JjqkoqZ6BJ9ffXN305Fkq58u4H
+	q5FusXT1dfRKiiZuawb6GFXxTmov4FaBT2l7JZVSgOVEuPjGwq43xzxrQB3S8uGFc+Nb79+rzHc
+	DBMEw8XO65AQdsik7L1v9ohY/FGc5syTmjoZE3P4RudqtWmO28sqsrCDe6bckLSEpQwoQRzI79r
+	pISY=
+X-Received: by 2002:a05:600c:6088:b0:496:ca1f:a428 with SMTP id 5b1f17b1804b1-49978475c11mr79962715e9.19.1786465321722;
+        Tue, 11 Aug 2026 09:22:01 -0700 (PDT)
+Received: from MacBook-Pro-von-Karl (dynamic-2a02-3100-a133-e401-bc8e-d36c-2d08-c5e0.310.pool.telefonica.de. [2a02:3100:a133:e401:bc8e:d36c:2d08:c5e0])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49977de1fcesm31270905e9.1.2026.08.11.09.22.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Aug 2026 09:22:01 -0700 (PDT)
+Date: Tue, 11 Aug 2026 18:21:58 +0200
+From: Karl Mehltretter <kmehltretter@gmail.com>
+To: Stephen Boyd <sboyd@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Ryan Chen <ryan_chen@aspeedtech.com>
+Cc: Joel Stanley <joel@jms.id.au>, Brian Masney <bmasney@redhat.com>, 
+	Andrew Jeffery <andrew@codeconstruct.com.au>, linux-clk@vger.kernel.org, linux-aspeed@lists.ozlabs.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: aspeed: ast2700: select AUXILIARY_BUS
+Message-ID: <antLQUuTFC_NXWu3@gmail.com>
+References: <20260712160301.98941-1-kmehltretter@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260806-longzhao-upstream-cv75-v2-v2-0-6b09707c5fe9@ambarella.com>
- <20260806-longzhao-upstream-cv75-v2-v2-7-6b09707c5fe9@ambarella.com>
- <CAD++jLk0LoOJk=TXin42AL3_z_7eVVkvMnYr1S8090C6A_B+dQ@mail.gmail.com>
- <DS0PR19MB7925690FD29D578D8AC5D10EDADE2@DS0PR19MB7925.namprd19.prod.outlook.com>
- <CAD++jLkUPU0eujvWc5Hn1tEu4n451LvkuGGT=j6OfirJENpRgg@mail.gmail.com>
-In-Reply-To: <CAD++jLkUPU0eujvWc5Hn1tEu4n451LvkuGGT=j6OfirJENpRgg@mail.gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 11 Aug 2026 11:10:48 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJprX0oC3Gdj=RNNYtPiQ-0NkEPvn-MyQ9ZtFakKcj1ew@mail.gmail.com>
-X-Gm-Features: AUfX_mzXtvkrshAlkiMteNJj8gvRU9rIYBk-lG0usv9XUDyxXzzHJorja6k1J7w
-Message-ID: <CAL_JsqJprX0oC3Gdj=RNNYtPiQ-0NkEPvn-MyQ9ZtFakKcj1ew@mail.gmail.com>
-Subject: Re: Re: [PATCH v2 07/10] pinctrl: ambarella: add Ambarella pin controller
-To: Linus Walleij <linusw@kernel.org>
-Cc: Long Zhao <longzhao@ambarella.com>, Bartosz Golaszewski <brgl@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, 
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, 
-	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "soc@lists.linux.dev" <soc@lists.linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260712160301.98941-1-kmehltretter@gmail.com>
 
-On Mon, Aug 10, 2026 at 2:42=E2=80=AFPM Linus Walleij <linusw@kernel.org> w=
-rote:
->
-> On Mon, Aug 10, 2026 at 6:02=E2=80=AFAM Long Zhao <longzhao@ambarella.com=
-> wrote:
->
-> > Thanks for the review. I will rework this to reuse the PL061 driver wit=
-h
-> > per-variant register offsets, and evaluate modeling each GPIO bank as a
-> > separate DT entity. The duplicated GPIO implementation will be removed.
->
-> Thanks Long, I think it will be easier if you break out the pin control
-> bindings and driver from the patch series and work on it separately,
-> the same with the serial driver at least.
->
-> I understand this can be hard to test on the hardware, I usually
-> put a few patches "underneath" the b4 cover letter, and then the
-> b4 send-email will only send the cover letter and the patches
-> on top.
+On Sun, Jul 12, 2026 at 06:03:01PM +0100, Karl Mehltretter wrote:
+>   clk-ast2700.c:(.text+0x147c): undefined reference to `__devm_auxiliary_device_create'
+> 
+> Select AUXILIARY_BUS directly, as other clock drivers that create
+> auxiliary devices do, so it builds regardless of the reset driver.
+> 
+> Fixes: fdc1eb624ddc ("clk: aspeed: add AST2700 clock driver")
+> Signed-off-by: Karl Mehltretter <kmehltretter@gmail.com>
+> ---
 
-The problem with that advice is then 'base-commit' is useless.
+Friendly ping on this patch. It has Reviewed-by tags
+from Brian Masney and Andrew Jeffery.
 
-Maybe b4 could learn an 'ignore the top N commits" or "only track the
-first N commits".
+I don’t see it in the clk tree or linux-next.
 
-Rob
+Is anything else needed before it can be picked up?
+
+Thanks,
+Karl
