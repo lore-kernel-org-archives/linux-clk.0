@@ -1,87 +1,92 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 719064343E7;
-	Tue, 11 Aug 2026 14:32:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 580EC382298;
+	Tue, 11 Aug 2026 15:53:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786458773; cv=none; b=FqAJLZMxxj6gXb+Jw8tnz6xLJ9Jwc8237Da34iMGJa3wivwEiO1OBZ3UU589iX5/DMJaAbHjoseJR4vER22+ACC9Tf8Sdy+RFAeO8RbmTDfD0YZKfdfFAJlwmQHttege/0DvLw5aSwTcoTlUFZCUbMGd2cEkU6oj3MzJbxW8Gxo=
+	t=1786463596; cv=none; b=mHqiZjwQ7sLj21sOtjVkK3mD6lLaLUbvUsU1HY3Xy0tgXcvQ7p5WD/QKlkI+VbXIkivpf6Mn79WeBKg3clO+SqwzzUfqJM5SSAXJqD9EweY9tw6vdu6Vq0dIjnBVmmKjN+5O1XJHDJ6uyiWKrgHj7YfmDGtPDnxnPiUQReeUiec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786458773; c=relaxed/simple;
-	bh=2FznzG4ydf9U2k5MUHi+JsORAIzn0JqBlHDqTs1P8LU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DPcxqu+DOGr2vPltK6PzguwRGG9wxHC1I+XkTAiz4cD9TSd5j/ebEyrB01RsFfVb/Pbs0Hzo/wNSam2ucqQOu1eYK9ZTUMcpSjUROa6vLUOOoqz594BkTri1vcSGJSDACgILRDrUcqCSUy0uDOY1+kduKfYKmogXyhUQl3iqQTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HkimPLWh; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1786463596; c=relaxed/simple;
+	bh=DnF3aQdkXNx4oU+Fl+i9D15DW8KRXhFLW9FERxBFTB4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pf0KHz/HXir6hiHBh8EQCYWLAmM8nsnYEGLmNyDcgHNfqyeCodvDvwO/njwpYbgWBULQpwXgu9exwh9igBJ/qqfVIfDh712ck7FpyJ/bOj2+p9R7Bmy/hyN7tAos0ndRCmamC2CJYhNiY2NwgGrlafHXlIoBxzvHLrIZHfgUKqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AnBX8YUZ; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HkimPLWh"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24F911F00A3D;
-	Tue, 11 Aug 2026 14:32:48 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AnBX8YUZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B16171F000E9;
+	Tue, 11 Aug 2026 15:53:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786458772;
-	bh=09Exon060ReBdwsGh/xKbGuadWEbTPQ0czNaH2d0FCs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=HkimPLWhDPhB9zSyAZMFsdQXQF+Cal53QOS3GMjIPDmnsY2NUxuTyRIXtem8czUtQ
-	 m+aKqDrqm8sjo7PXLy2QNjz5PJxlV+d8cgrp4nI7phP9nJrrT+qyeHQaVBlx/oEw/e
-	 uHJ5/GdFsVKtCbzgLG3LVv1E0a917uggtuyRwPDv3eZHZEaubG8iV28vwGUnFrvK6i
-	 XvtZi8MgjbhPFHp0GXypz7y4UZpr7/zVPMktJ127OW1j7c8qFYy2XClpjvlfGhT/kr
-	 N4TWxjfZSaBEGGoKgpL2zBUyjcF+s35vaXpkQ0I4QFDTTDQMZ4Uc9c/ANjT0gCe39Z
-	 kya8cvkiaBocA==
-Message-ID: <5e4fb03d-3ab9-4a45-a271-6f4be5c928f8@kernel.org>
-Date: Tue, 11 Aug 2026 17:32:45 +0300
+	s=k20260515; t=1786463595;
+	bh=DnF3aQdkXNx4oU+Fl+i9D15DW8KRXhFLW9FERxBFTB4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=AnBX8YUZAaCz4DWFbJVo8gwN0rMr0SQ87izcGiOCA8nKHT0RqjFPMsRZojovf1ARD
+	 R5XkNTvGzeFQAU5mg2idWrFbIwVVzAD9RSLBSFdfsCWYwNHz4H+gjbsAPn88kJWRk+
+	 wveagclyOQ7huxROaH9sdj2yv6rNO1qXpteNII8BFYSFExL2MDPOcYxWHR7f3mm5LR
+	 /jU41Z3dF5zhd1omvwkQVRIy5/zaud7PaVIy3tHMqxf3jNtOXwVGNc/ZXUC3X6uwqq
+	 DjWjoFk+g0u02Vd8xPFPyxWH/V95eAmH0jPD/oqP3vkmOrLhHgrclkzlhC5O0382d6
+	 uCdkZ/wtPpeJA==
+Date: Tue, 11 Aug 2026 08:53:13 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>
+Cc: Vladislav Leonov <vlad@zlab.su>, linux-rockchip@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, Simon Glass <sjg@chromium.org>,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Alexandre Torgue
+ <alexandre.torgue@foss.st.com>, Andi Shyti <andi.shyti@kernel.org>, Andrew
+ Lunn <andrew+netdev@lunn.ch>, Aurelien Jarno <aurelien@aurel32.net>, Brian
+ Masney <bmasney@redhat.com>, Conor Dooley <conor+dt@kernel.org>, Daniel
+ Golle <daniel@makrotopia.org>, "David S. Miller" <davem@davemloft.net>,
+ David Wu <david.wu@rock-chips.com>, Eric Dumazet <edumazet@google.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Heiko Stuebner
+ <heiko@sntech.de>, Herbert Xu <herbert@gondor.apana.org.au>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Mark Brown <broonie@kernel.org>, Maxime
+ Chevallier <maxime.chevallier@bootlin.com>, Maxime Coquelin
+ <mcoquelin.stm32@gmail.com>, Michael Turquette <mturquette@baylibre.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Nicolas Frattaroli
+ <nicolas.frattaroli@collabora.com>, Olivia Mackall <olivia@selenic.com>,
+ Paolo Abeni <pabeni@redhat.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Vinod Koul
+ <vkoul@kernel.org>, linux-crypto@vger.kernel.org,
+ linux-i2c@vger.kernel.org, linux-phy@lists.infradead.org,
+ linux-pwm@vger.kernel.org, linux-spi@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com, linux-usb@vger.kernel.org,
+ netdev@vger.kernel.org
+Subject: Re: [PATCH 00/25] ARM: rockchip: Add peripheral support for RV1106
+Message-ID: <20260811085313.379ac489@kernel.org>
+In-Reply-To: <anq1ouUnKA02Eauj@monoceros>
+References: <20260810121121.210040-1-vlad@zlab.su>
+	<20260810113548.7fd24d56@kernel.org>
+	<anq1ouUnKA02Eauj@monoceros>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: interconnect: Add Qualcomm IPQ9650
- support
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
- Konrad Dybcio <konradybcio@kernel.org>, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20260519-ipq9650_icc-v1-0-4d3554c94257@oss.qualcomm.com>
- <20260519-ipq9650_icc-v1-1-4d3554c94257@oss.qualcomm.com>
- <n54sewn4sjafsncs2e64hkynxr5ct7qh3xukmgvdqankpsg2iu@kunxe57navul>
-From: Georgi Djakov <djakov@kernel.org>
-Content-Language: en-US
-In-Reply-To: <n54sewn4sjafsncs2e64hkynxr5ct7qh3xukmgvdqankpsg2iu@kunxe57navul>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On 8/11/26 1:19 PM, Dmitry Baryshkov wrote:
-> On Tue, May 19, 2026 at 02:17:05PM +0530, Kathiravan Thirumoorthy wrote:
->> Add master/slave IDs for Qualcomm IPQ9650 Network-on-Chip interfaces to
->> support the gcc-ipq9650 driver in providing interconnect services via
->> the icc-clk framework.
-> 
-> Please consider adding an explanatory text.  Something like:
-> 
-> On Qualcomm IPQ9650 platform the interconnect busses don't have separate
-> RPM / RPMh controls. Instead they require direct votes through the GCC.
-> To unify hardware descriptions (and software interfaces) between this
-> platform and other Qualcomm platforms, make GCC export corresponding NoC
-> clocks as interconnects. Add IDs for these Network-on-Chip interfaces.
-> The GCC schema already defines #interconnect-cells since it was added in
-> the commit f92b778251ad ("dt-bindings: clock: add Qualcomm IPQ9650
-> GCC").
-> 
->> Signed-off-by: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
->> ---
->>   include/dt-bindings/interconnect/qcom,ipq9650.h | 28 +++++++++++++++++++++++++
->>   1 file changed, 28 insertions(+)
-> 
-> Georgi, any feedback from you? Would you ack merging this patch through
-> the Bjorn's trees? Or would you rather pick it up on your own?
-> 
+On Tue, 11 Aug 2026 07:43:16 +0200 Uwe Kleine-K=C3=B6nig wrote:
+> On Mon, Aug 10, 2026 at 11:35:48AM -0700, Jakub Kicinski wrote:
+> > On Mon, 10 Aug 2026 15:10:51 +0300 Vladislav Leonov wrote: =20
+> > > Basic support for the Rockchip RV1106/RV1103 SoCs currently under rev=
+iew.
+> > > This series builds on top of that and enables the peripherals needed =
+to
+> > > bring up a board beyond a serial console: =20
+> >=20
+> > Don't expect maintainers to dig out patches for their subsystems
+> > from a big series. This is not how upstream development works. =20
+>=20
+> I see this from time to time and I personally think it's fine to have
+> these patches together. Also the only the patch that affects my
+> subsystem was Cc:d to me which is how I like it (but I think opinions
+> differ on that one, too).
+>=20
+> `b4 am -P _` is great!
 
-I think it would be best if this goes together with the code that is using it.
-
-Acked-by: Georgi Djakov <djakov@kernel.org>
+We have automation and CI systems which ignore anything that isn't
+scoped to networking to save cost. Not sure if there's a polite way=20
+to say this but the smaller the subsystem the more flexibility can=20
+be afforded? Let's stick to the existing process, please.
