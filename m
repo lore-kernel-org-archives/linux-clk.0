@@ -1,145 +1,162 @@
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AEB52DC798
-	for <linux-clk@vger.kernel.org>; Tue, 11 Aug 2026 19:24:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786476275; cv=pass; b=Kzh23ILKmBDkQKdD9ThfK2C9V08qPMNgRqIVCZfHVpbj5rKbaqKcKtSyUbSWkyf6nbAIbq4x2qoGQiM9mmS1IRrFYkMKOpE+nB7Jjzd3REZMBnw/IDQL6mq0D/+fY8g2VImnh4O/VPxKToE2xHx6OGjpRv8vGONZXuZxHZOVuoc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786476275; c=relaxed/simple;
-	bh=pvM++vc0HsYobIPkT5dR3rREFxAKr7kzE34v4Lzz8BE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZTkNK/AS6e3wXGSEUOi6KczOR802hIhSiaq2SQ2UotzFrewmFakkMkDGVd9M4DFErWBRjaCSlGheoQyv8gukuTAEvIq8v9jSXfV5Wp+Pq+UBpalIkyUUkbChEOsUApPX6Ou3Wnn20Tr0f3P6QKmAhoRwzPzDjknUW0tlLtCulkk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nnW82Tic; arc=pass smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B31636C0C8
+	for <linux-clk@vger.kernel.org>; Tue, 11 Aug 2026 19:53:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1786478005; cv=none; b=phCA7554w/S/vuavBwD3dizHqurAJq4MrspBGMtkI9FNvm/Czn80oC+K8UmiLQyCcsXnTr6/CmiqCdDoa8egPWWWxWnaOn+Vyob2hs+LFpQaZEgXDB4puotE0PKh1XVLLWlKElgXujyWesSKfIRnuVr89d+0DBAbAElzCJAG+EI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1786478005; c=relaxed/simple;
+	bh=nASdhlnQj6W0dV29+7od0oNAJnTGdxlDy+BNJaTPeLA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=YzeegXO9XtXMlKaqNkyND5FM+rmRRe2NVKoD7w7lTGQOadUddlf6LjrragelGZoVOrsW9G7njeoMUk11QX+KnYmipYbjfrPxywBWtJY/0SCTUQ3rYmHQzWZ4BNLIvCn8f5zeQCD3DXanHwJle4CH9knV8L/Q3qZDLqXhPzQXjFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=az3elION; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nnW82Tic"
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-6a1542cdb53so223518a12.2
-        for <linux-clk@vger.kernel.org>; Tue, 11 Aug 2026 12:24:33 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1786476272; cv=none;
-        d=google.com; s=arc-20260327;
-        b=ADV3dKF0JBLQMcf9stFEO8JyGIk3B0bm/z2W62IL1UYkyCTkx03boxueUgcDVzFudF
-         K2Ggp8IoFVA965bm6BeXQyV98DcseBPigHZ9bQcdlzkAXMbRyQcEXHxBasx2OEcWr/uP
-         2la8PWNUsUTMXFNx2rXmEjejTgUYtQqCwcdUnn4twyZO6anVlV1sJIGR5UNkihvLXjbW
-         POpxmfzQDMTq9U4U7lgxBwUkOVxBVrxXyEDrj7jINpmOwKYgys5IJwoNMbU52RTgDfL2
-         AQYCsoN24+3y4t+LHgI1a/Tzcm1XGlTyPjH1G7HqiMlv6LlnTtX9dIb0RGV2RIqj2fi8
-         i+dQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=buQhdfRXPDhdGddRViZT6KrsBkyixNDeK7u3oyQgY5M=;
-        fh=fM4ZI8+hWSv3Fnbj2b8tQ4LUMCJe/yK27MRsZNxqW0A=;
-        b=rETaAsNfvbaTSDOanZDPElKVlWG9kGYUy0JqLpbhlGhxTx5VFUJ5zsp8vI6VG/eAXr
-         MDjF/QaYQCCcaYq9qPIBfV7ZGi1e+b5A84mhQHOPcGVyEgfSEsXu2JFpo6MDUUy2LLCX
-         Bn6kZ3YQUaGl8dzQKZEsl4hwZLBxHe4cUCXtrMqZv3I/8a0kXkWNJi6INASLmJU3v6hA
-         e/JqRtyXFIs4NQaxg+tP4crj3O8tfQEkGeXsbb5iIAKSfVwbP8J1kF8WCP70QdTphvPx
-         UlpBXGHFXdkWotuBIl8BS8LnUqvfYb8d8QVztvKJT5BRiMcFYSumRKV1A1fvdBUTx2+n
-         MGcA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="az3elION"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4954aff6088so579715e9.3
+        for <linux-clk@vger.kernel.org>; Tue, 11 Aug 2026 12:53:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1786476272; x=1787081072; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=buQhdfRXPDhdGddRViZT6KrsBkyixNDeK7u3oyQgY5M=;
-        b=nnW82Ticc68esXxJ3u9tlHY2Hg103gBaT99UqUN8OJoNhLb4PUVaRVckkjZOtysJsE
-         cc0Y6yABYeDPxuHWFktj5yiRj9xyv579kpybM/ASA9sjHiw8jAXJ1RIIXtfJNyDwoyIt
-         H5YAfTtTXZ6M4zgf/oB8/GJkrfv/Mc6Sm+zKr+6jnNU81k5dqSqJC9r/UqOIw8ZrXus0
-         dsxbL4vFLc6ppTcdlgiXWkHLbZ3OiDJsvdQGv1p/9gECEEWXAjorW205EuoLuKywI9LI
-         8BpfpCRKXuOJ+lIarHstLZ0hY1PMEj+1j9emmxi2ioAAEY0jsmEyFGVv5UTMICxEJDcB
-         sw9g==
+        d=gmail.com; s=20251104; t=1786478002; x=1787082802; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=cV+CdfERh/o0eu5vkzQXpmPtNLbsSOir10XB4s2+AHo=;
+        b=az3elIONsfI3tIfDGp3fYNZOug9E9X2Q36kW5e8A6bC1coKZRq2wggjlXD+y6TObdS
+         jrJOvZ66E8UolemXji5R3dOz1vqRENlcnPTd4sAsQVFjKqVxC7Pmx5Y9vZy0GB0nQB/C
+         aR/a5yK6GW3WeSkFU8KL8OK8HXldRSDvTmZgDHz1/AV/HhMRCQllZ2KYX38Zymj1hJ6w
+         BiZJhwPKeCx/z14bDoYsQgYgrqiVSD/8H4DkjCVVI1NfujjtYHmPplizkPtkc0WtXu7v
+         lxgujBqL+2QfKIhPNuA4XlYpy+z8kmpqZFuUGlx7aYnFSYYG7asJGA5QzJnq0c3uUBsR
+         5ttQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786476272; x=1787081072;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=buQhdfRXPDhdGddRViZT6KrsBkyixNDeK7u3oyQgY5M=;
-        b=Lax+dIDcdZM2Ecng2D+PV5Sh6b1CNgh4GTg0TqOi8Z9xLpgOn2Ao165KtD+EHYj+JY
-         fzCtnFJWw4ZVh+mo2aA9IG2VvIGmYh3M+sskJ8A0IpaLy413MjWcqyW0ex2b4TYq0Yjn
-         1SJ63O906Tyao7DkC8/T30c5qVww8BFkeQFbrfMrNiOUfhgMogd5bihY1x6699O5/zwQ
-         MTDyTZw2DPd2YkTaUZyTlaIScPlNX2FaGi5iYNwWa/dgccQlovk4Bd/L653QkHRdPPbb
-         iIqvJjKc5PPGGLPrh16xkgC2TPuM5UOfvkcmn1h/a0R67bhn3Sh9RYxO+9JxCUvdIsbr
-         0GHQ==
-X-Gm-Message-State: AOJu0YxUzHHNuoXqDwa5JWNrI0skSyfx/BUC+/o+Z3dVc1UPVCWajyzf
-	Ee51Ij2f1EtkefhqrlURRlQMpdPTcywkbZmVGvqLuU+FO5Uc7UCil+uOcZJ9N79ibqvJ8yerheY
-	CkKfjreMTmcvf5C+mrFYCrgTIRKjf795Jxw==
-X-Gm-Gg: AR+sD13M8mzNABqJrsfmYqTlDe/Jq0J+BYxZYVgJmdsFdToDEU9eMiUVXr0ymJ1dinp
-	uXWzb2dO9Y4w2uck/N5fdGw7p0b6AcpXuQz7EeqddMlcmTd4CQep8e6cSeryJjQP6gzu+EfZ9j2
-	MQMZnNjVUwaSrBeYGCM9bwvZU4GCSVs94It9jpiRB4PJObfmEcgivwIxOtejwymPwb/Oe6Kj17C
-	nL3XW1aGAvgDXSo2Yy7MP/rzdf425qV6AZ36jp14vG+NA5zWGiOb/pjo1BtMsfv6YQ2I9adYJNM
-	HzGwXZ5MoJ4V/1K8VTQGEq6oysCXtGDWCtZIE3S6NS4wb4AXnNqi9mBbaUKjrEtG/qm3wXmHMBA
-	ULx3wrXG6VMEGF+2Ob4LI0mClA8CzbgvrERpkdV16UCxwv9I04i2rSauLilEDxMKCCxLzMSiEOJ
-	ppcIt+zYapUQ8oxRydanPTeHhxzyhI1pxF3PSb+YTenkT3p3IKov/YoCM=
-X-Received: by 2002:a05:6402:44ca:b0:6a0:567c:c2fe with SMTP id
- 4fb4d7f45d1cf-6a364526ec8mr2810499a12.20.1786476272208; Tue, 11 Aug 2026
- 12:24:32 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1786478002; x=1787082802;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=cV+CdfERh/o0eu5vkzQXpmPtNLbsSOir10XB4s2+AHo=;
+        b=OJW2V6kmOA7cgWLqO+ikJwI8G94RgHZalD2fuvyY66grrmYLMgFO9T4wcZBb8Tv82C
+         NR186iD688vmNyCMgkljch6LFVz837kLp1JnXhKJvFmHDVU5yTu3dXJAMGDDIr9oxmws
+         tP5K492J5ZZng2ZHZJDWP0cTXOIu364ElkdVluHA29fIqATj0mIJ/ik8h14YJ+RTa02P
+         jOzX6E/wb5+QC8BpaABZHbDPZrQ2/UshJF+eMcNxZeT/oREkW6qQ5lhg7ZbivEoX5IF1
+         V6TviwZRLeKtdaRBsn9AHNHV7fSvIMuJ72u/LffBb0IR4+A7iP6MBn8GEbj9wEtLmlsG
+         m4hg==
+X-Forwarded-Encrypted: i=1; AHgh+Rp6odya5etUwM1yusKWyFNe0K3xyNOwzZ3f/+zIZVQmFnu19pyUluwtIJoEeOiVPZibKsMnmIig0P4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTZhCrXn/zgsTEJ6jcHB67206+zjhsPzm3kHRpZHeFxAmILtmJ
+	rCPO0PlHwPjBdiPycAuBHKZhn3FEC0pDyg+s9El4srvhEiUb7CForqAd
+X-Gm-Gg: AR+sD12KgEsQAAw2ZRMYufFvc24aMI2YuBDNbJgG4zimEYMhVPtFDSuwTR8+nmtzu+O
+	KL1GQWt7TAY7+De5e3yfTsPbWUzzYCr0XC/7KJtb5UCWWPHVfHO1b1+VH1FrZzmeR+W91C7UCr0
+	lDkEpKi3/9QbBL9xQEGqnWx4KEg4ej/XuNtZAVdMWv1I05NgFeSmNinx8rvbfUz7W4HkV/TMLTI
+	fHLN1IDSpd4JnAyn//D6K9X4oYbRhHA5Jy+czg+GFkekTHySQRfZ5aFuq6eThphPieT6rPPcRhS
+	jzO3pTtUP4CKjX+c2zHSPYq5lj9Ba9ICf6vNLERRCQ6PNdmoIYNVJwD5byikh9gZ2hzTQY+pwyQ
+	nbAUF74/6jFou5IAiuoQ1pE5VJEpyTfn6fC66VLyGpYZRP/a6ug2JADySpZwaUly+i0g9ExrbFl
+	Z+twJpPbMQDktnaUhye4KX5wWJSIcq0TDwqwknpgrqsrOQvhFDi5BRcx+SEblXOiVrQHhW5AwUD
+	DLVlUhKYg==
+X-Received: by 2002:a05:600c:1c11:b0:495:4b42:8677 with SMTP id 5b1f17b1804b1-499784658eemr81929555e9.18.1786478002355;
+        Tue, 11 Aug 2026 12:53:22 -0700 (PDT)
+Received: from VivoBook-ASUS-X712UA-M712UA.lan ([2a00:f44:cc3:6030:4761:992:27d8:3423])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4997b15b807sm11666785e9.7.2026.08.11.12.53.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Aug 2026 12:53:21 -0700 (PDT)
+From: Stanislaw Pal <kuncy7@gmail.com>
+To: Jie Luo <jie.luo@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Brian Masney <bmasney@redhat.com>,
+	Mieczyslaw Nalewaj <namiltd@yahoo.com>,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: ipq-cmn-pll: keep the CMN block bus clocks enabled
+Date: Tue, 11 Aug 2026 21:53:17 +0200
+Message-ID: <20260811195317.128954-1-kuncy7@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <8248f034-d5a6-4f9c-b6e6-77eeb8ca3ad4@oss.qualcomm.com>
+References: <8248f034-d5a6-4f9c-b6e6-77eeb8ca3ad4@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260811190821.117485-1-rosenp@gmail.com> <20260811191733.CF9141F000E9@smtp.kernel.org>
-In-Reply-To: <20260811191733.CF9141F000E9@smtp.kernel.org>
-From: Rosen Penev <rosenp@gmail.com>
-Date: Tue, 11 Aug 2026 12:24:19 -0700
-X-Gm-Features: AUfX_mxr_vOfRAy0BAUB8fsvi9KMYklBxgQ1bG72ZHw3hguY1KNk8TLFrlo4fDQ
-Message-ID: <CAKxU2N_NJZx3aWrmb3zGDWXVgULOvn4L606NwZJr_6AHpbYJ7Q@mail.gmail.com>
-Subject: Re: [PATCH] clk: davinci: guard da850-specific init data references
-To: sashiko-reviews@lists.linux.dev
-Cc: linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 11, 2026 at 12:17=E2=80=AFPM <sashiko-bot@kernel.org> wrote:
+On 8/11/2026 Jie Luo wrote:
+> The board booted successfully on the IPQ5018 RDP platform.
 >
-> Thank you for your contribution! Sashiko AI review found 1 potential issu=
-e(s) to consider:
-> - [High] The patch uses a non-existent Kconfig macro `CONFIG_COMMON_CLK_D=
-AVINCI_DA850` to guard DA850-specific clock definitions, which will uncondi=
-tionally disable them.
-> --
->
-> --- Patch [1]: [PATCH] clk: davinci: guard da850-specific init data refer=
-ences ---
-> commit 8310fd74805280b1ea31726bf5935e313dcdb916
-> Author: Rosen Penev <rosenp@gmail.com>
->
-> clk: davinci: guard da850-specific init data references
->
-> This commit attempts to fix undefined reference link errors in COMPILE_TE=
-ST
-> builds by wrapping DA850-specific clock data and declarations in a new
-> preprocessor guard.
->
-> Closes: https://lore.kernel.org/oe-kbuild-all/202608111912.YS4Vg7Jh-lkp@i=
-ntel.com/
->
-> > diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
-> > index f73b0ac5d8a08..af95dc27f840d 100644
-> > --- a/drivers/clk/davinci/pll.c
-> > +++ b/drivers/clk/davinci/pll.c
-> > @@ -841,17 +841,23 @@ int of_davinci_pll_init(struct device *dev, struc=
-t device_node *node,
-> >       return 0;
-> >  }
-> >
-> > +#ifdef CONFIG_COMMON_CLK_DAVINCI_DA850
->
-> [Severity: High]
-> Does the CONFIG_COMMON_CLK_DAVINCI_DA850 Kconfig option actually exist?
-yes it does...
->
-> It appears this should be checking CONFIG_ARCH_DAVINCI_DA850 instead. As
-> currently written, this guard evaluates to false unconditionally. Will th=
-is
-> cause DA850 devices to fail to boot because their early clocks and match
-> tables (in both pll.c and psc.c) are no longer compiled in?
->
-> --
-> Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260811190821.11=
-7485-1-rosenp@gmail.com?part=3D1
+> # insmod ipq-cmn-pll.ko
+> # devmem 0x1856308
+> 0x80000000
+> # insmod mdio-ipq4019.ko
+> # ls -l /sys/bus/mdio_bus/devices/
+> 88000.mdio-1:07/  90000.mdio-1:1c/
+
+Thank you for running this. Your result is correct, and I can now
+reproduce the equivalent on the failing board - together the experiments
+finally bound the problem tightly. I spent the evening on a GL-B3000
+running three variants of the same tree, all with the fix reverted
+(i.e. vanilla put in probe). Full data below.
+
+Variant 1: gate delayed to idle. Vanilla behaviour, but the last
+reference is dropped via pm_runtime_put_autosuspend() with a 60 s
+autosuspend delay, and uniphy (the only in-tree consumer of the PLL
+outputs in the OpenWrt tree; mainline has none) disabled in DT so the
+gate actually lands. Result: the gate lands at ~75 s on an idle system
+and the board does not care. runtime_status reads "suspended", both
+WiFi radios keep serving clients, the console works, nothing in dmesg.
+This is your RDP result reproduced on the board that dies: with the
+system quiet, gating these clocks is harmless, and nothing in steady
+state needs them - your efficiency argument is confirmed.
+
+Variant 2: same DT (uniphy disabled), unmodified vanilla driver, so the
+same gate lands right after probe, during early boot. Result over seven
+boots of the identical image: one survived, six died with the familiar
+signature - silence before the serial console comes up, then a watchdog
+reset. So the crash does not need the ethernet path at all: it happens
+with every PLL consumer disabled in DT, and it is probabilistic.
+
+Variant 3 is the stock configuration (uniphy enabled): 100% boot loop
+on this board, and the same on three boards from three vendors.
+
+One methodological note for fairness: variants 1 and 2 are initramfs
+images booted from RAM over tftp, so their early-boot activity profile
+differs from a normal flash boot (no UBI attach in the fatal window,
+for one). The 6-of-7 ratio is specific to that path and I would not
+generalize the number. The stock 100% failure, however, *is* the
+normal NAND boot path, so both paths are represented in the data and
+both die - only the probability differs with the timing profile, which
+is itself consistent with the collision picture.
+
+Putting it together:
+
+  gate at idle          -> safe, deterministically (your RDP, my V1)
+  gate during boot      -> dies, probabilistically (V2: 6 of 7)
+  never gate (this fix) -> boots, deterministically (3 boards)
+
+The only variable separating V1 from V2 is *when* the gate lands. That
+also retires my earlier "shared CSR bridge" theory - with the whole
+ethernet path disabled the board still dies - and explains every odd
+observation from the last month: the victim being whichever device
+probes next, and the failure probability swinging wildly with binary
+layout (both are just micro-timing of an asynchronous pm_clk_suspend
+landing somewhere in early-boot bus activity; which transaction it
+collides with is still not pinned down).
+
+It also shows why a consumer-based model cannot close this hole: the
+fatal window lies *between* the cmn-pll probe and the moment any
+consumer could possibly take its first reference. On boards where
+Linux is entered with these clocks running (every bootloader does), the
+put in probe is what creates that window.
+
+I am open on the shape of the fix - if you would rather see the
+reference dropped once boot has settled, or a synchronous gate, I will
+gladly test that on this board. But the boards are unbootable today,
+and holding the reference is the smallest change that deterministically
+removes the window, so I would still ask for v3 (or an equivalent) now,
+with refinements as follow-ups.
+
+Thanks,
+Stanislaw
