@@ -1,115 +1,133 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2596234D90C;
-	Tue, 11 Aug 2026 17:00:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03906431A4C
+	for <linux-clk@vger.kernel.org>; Tue, 11 Aug 2026 17:11:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786467616; cv=none; b=IK/q87A/CKgd9lcCHACjKQ9AXYIC1xVK/rkmsQlGWx2hf9ZNy+eWy8/+p/0BFuOe5ITsEBD9oqEBcomFheAAAcOvG9CxX4eVQ/N4NwUTVN4/oV3JCroxe23590o6wK9Nj0jca2fxfiiRgnE07737aTkqWSMM0S8VdpiU806zmws=
+	t=1786468309; cv=none; b=MjFI+YU2mnLW3O14t5JbryUV409NTKSYGYGJ9VHbzH6Xo/5FIW6t7L+pSk+JEOOq5FBPhLeRhOQqgzvEUooZwvYFn8eKDM2qxM9trmLOcXF3d0bLkCcr7tX+NS6Bl/I07jP4GY6OMXtc/bQG5X0egEK+FtBvhdUwx+ohFJFA0mc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786467616; c=relaxed/simple;
-	bh=KeZAkrBvvBWBwSug4H9OwlngXqt7DyRbWn+Ol3WFt/Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E6dwHalm5v0kDhCcyeBtSp/gjICIl+9OGyXmE3R77LFjuLG4XUxmc+PDAezlGZTXRIByh2D5I/71RQNVnCHozc2N7gN9jdvisXZFv+5ww+48QTD7PUKDZyqUNUwDxHpj29E2VYiLcZfT0Rx4+Ab3ZGG/DSbtaFAlcll18Tl+63Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FESLREwK; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1786468309; c=relaxed/simple;
+	bh=rjwnMDcP8lzUaLezbQIu5trPA2QoWMepSHmJCqQ2fDs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=l6JenII+OErJBaIDxla+vLstB01HzbjYUHy/QG66Kg9nwbvEhew4tE6pmlsGrXHvQgiwYUnKzOO7F4IDiaf7ZRkMX8LIeyrqWwDRZD8W/QtG0wrhZbOrPqX7nVsa+AIPRR910zaVaXnDy3qI5XAQo6VcfE+5YS28b1QUx1gn4tI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=HdgMSiMk; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FESLREwK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D1D11F000E9;
-	Tue, 11 Aug 2026 17:00:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786467612;
-	bh=uW8hLwKwvgMfYIPD0vwwNI5aDIVNxy/Ai/c+z6t5lHQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=FESLREwKFLBlegXCXYT/pv+Nb0HnRmaCuEj+Iw9y85ATS6bMesQ6zx44iH1sWzaFn
-	 ncYjvjiPDc+AxYqM39dtCSjfL8JMfWR59F2TkPiSz5F4ydRp2CPSV/DYQOxlAL1nvk
-	 18H9IsmnLhIiRU7nc4l8r68q2XSPct3og4r6Jo4P8CKtI94p315/Mobm/yb5XrTkUH
-	 IQSbOmYsgWMStAba4L/mCnnUGHlMx6nW9hh9GCSDJLPTwxTdFwYPFUHj7SrOlU+Od/
-	 cT27FtbUiJ6G3l7AHdr1hF0fzrQu/axY6A0JA7wOeSc2f38VcjtyJvTujRktQBX4p9
-	 V31UL7S6dKSzA==
-Date: Tue, 11 Aug 2026 18:00:06 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Changhuang Liang <changhuang.liang@starfivetech.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney@redhat.com>, Paul Walmsley <pjw@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Inochi Amaoto <inochiama@gmail.com>,
-	Alexey Charkov <alchark@gmail.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Keguang Zhang <keguang.zhang@gmail.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>
-Subject: Re: [PATCH v4 7/8] soc: starfive: Add socinfo driver for JHB100 SoC
-Message-ID: <20260811-populace-afflicted-40a40e0f484c@spud>
-References: <20260809015054.210577-1-changhuang.liang@starfivetech.com>
- <20260809015054.210577-8-changhuang.liang@starfivetech.com>
- <20260810-caress-rack-45615c8d9747@spud>
- <ZQ4PR01MB120276A1DA91FAC19C852F14F2DD2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="HdgMSiMk"
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-476a130c138so23733f8f.0
+        for <linux-clk@vger.kernel.org>; Tue, 11 Aug 2026 10:11:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1786468305; x=1787073105; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :user-agent:references:in-reply-to:subject:cc:to:from:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=Z+8wNfoOmHABTy4g+y7Z1zfdHSKXQmetmB8uqWi9o98=;
+        b=HdgMSiMkOxEu3/xtpWBePm/WaAweXbM8EpTA5cEQr6pT933CWWkx3QVIUZslv/ajNs
+         HH9twtNe5sQF2wf8NLL6aGMsDMMWjI3SohYoYjItrky3jE60KrAop4U9Xlu/e3ix2QRl
+         dAHYDBozEjf5T9qNwlZq4vpEVeCPztw9P1gaRUZMDCVq93GtSzzO4H5MIg5dXSrXu6yC
+         ZtfAyNgp2+XiajGyGbw2+2SwlcA/tdPKdsR4GmOT5X9NPV+3myOIpM8YM6zfsBL4QHwW
+         LVw2uZ37Ll0SU3h4bMxhgx3HSzkPxkOkHV00r6zeI3B910QBtVyUHs8WjcB4zQhmHLS6
+         gw3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1786468305; x=1787073105;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :user-agent:references:in-reply-to:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=Z+8wNfoOmHABTy4g+y7Z1zfdHSKXQmetmB8uqWi9o98=;
+        b=eq8VYwFczTboJ/t0zbBzURSDnq9aUC3FqvmseOZ66Reljy/M0wIztmwheRna3Z5jHX
+         SvQKqkEWfKJTCEBQw0dt2RXCjRLGhurIp+WvOyh9iFB770WngV5dPIV/7iQqibWukVTD
+         gTdaXhDbTmAnk/HSvPnefknr+pfcrQtDNObK/1cqM8uXCnbsvva/UE8XDkKPcz6Qm7Vq
+         0kwpmZGXRaKOnv26Y8xNrC6eKsHUTVj7C6Xcx/DGuvv+XzJYVwqzaCTW0tDFwQFSbQQG
+         QUohb5WARBJjqSV863PqvwlmjkG8jsZFr6pGC6S0jMkE47b3JkKSSCwW94PSAM/a2Hj2
+         KJ2w==
+X-Forwarded-Encrypted: i=1; AHgh+Rplsjmju5DVJ7+Xbfcj0XaKZRv+yKQQLIl1qfZt06sZWWTBvFHGtfzKSFGk5pLEd0UWAMfIRR5sM3E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx41B4hwvY/7AodfMizSU9Xpi6rOfjx7xw5aAmxCkzXasbANpzT
+	CB44SvzOs7vZDgx0vr0g7L8bbyDoQT4dHSy+pJ+4ln4CYaGkGs0ou30muM3UO/7AF7s=
+X-Gm-Gg: AR+sD107GT30PAbtgQi2gW998yk7puOt/OPmlsdBgm1wDg+DD8sLzWsKUj96kwxWPFg
+	VNtvkQSaWlk6y/b9YQFPNfH/Qd3j3sv2E1uLX7RBWGzjOudK/sABUwVajnYgi+Ru/DLz3NOR+O3
+	Li8ZQyWVl7K4C6+6rqavxg+oDoQC08xVeb1R0z8QdHM5WHHu90QHoNAHK4Wa5MQfbKL7JHir6WF
+	9YHT1uYRTXY5QUZKY+f0rHh1xb7VUpS3RLZA+apDJOVteCTCrXUA74FJrkcl01IAdY8ZUalJSux
+	d9TuEK5CH3JQnzymNncK3TI7A3Zezjn1TvxFlCEdWaZEPd3XpkB+zkjIlOZk9dpA/e3a9epSJYG
+	QlLmr8ZZz7SGPPSqp8nEPMaIXHOrCOAnqOMahRAdVgFG8dKPQqNKoLGmk+KpegU2lZBcdNO0XaM
+	9NxscvBbFzrB3y9N0YtFOyAcjX3OxFFjpQPU/IDzYpw938PW0zGZa4XHm3b4U=
+X-Received: by 2002:a05:6000:178f:b0:47f:8cf9:a12b with SMTP id ffacd0b85a97d-4814ad7819emr7011601f8f.6.1786468305202;
+        Tue, 11 Aug 2026 10:11:45 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:b9fa:f7d4:4092:6a23])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-4814a5ac6e6sm5889924f8f.6.2026.08.11.10.11.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Aug 2026 10:11:44 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Brian Masney <bmasney@redhat.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd
+ <sboyd@kernel.org>,  Uwe =?utf-8?Q?Kleine-K=C3=B6nig?=
+ <ukleinek@kernel.org>,
+  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] MAINTAINERS: Add Brian Masney and Jerome Brunet as
+ co-maintainers for clk subsystem
+In-Reply-To: <20260807-clk-masney-maintainer-v2-1-c6d86245cf95@redhat.com>
+	(Brian Masney's message of "Fri, 07 Aug 2026 10:30:34 -0400")
+References: <20260807-clk-masney-maintainer-v2-1-c6d86245cf95@redhat.com>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Date: Tue, 11 Aug 2026 19:11:39 +0200
+Message-ID: <1j7blw60qc.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="CtK5EKNoAsQivl3f"
-Content-Disposition: inline
-In-Reply-To: <ZQ4PR01MB120276A1DA91FAC19C852F14F2DD2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
-
---CtK5EKNoAsQivl3f
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 11, 2026 at 05:36:19AM +0000, Changhuang Liang wrote:
+On ven. 07 ao=C3=BBt 2026 at 10:30, Brian Masney <bmasney@redhat.com> wrote:
 
-> > On Sat, Aug 08, 2026 at 06:50:53PM -0700, Changhuang Liang wrote:
+> With Michael Turquette stepping down as a clk co-maintainer, this
+> subsystem is big enough that it needs multiple people to keep the
+> clk community healthy. Add Brian and Jerome as co-maintainers.
+>
 
-> > > +static int __init starfive_socinfo_init(void) {
-> > > +	struct soc_device_attribute *attrs;
-> > > +	struct soc_device *soc_dev;
-> > > +	const char *machine =3D NULL;
-> > > +	struct device_node *np;
-> > > +	struct regmap *regmap;
-> > > +	char rev_char;
-> > > +	u32 rev_id;
-> > > +	int ret;
-> > > +
-> > > +	np =3D of_find_compatible_node(NULL, NULL,
-> > > +"starfive,jhb100-sys0-syscon");
-> >=20
-> > Remind me again why this is not just probed as an mfd cell from the sys=
-con
-> > driver?
-> >=20
-> > (Hint: please put this info in the commit message).
->=20
-> The discussion result with Krzysztof at that time is recorded here:=20
-> https://lore.kernel.org/all/20260405-strong-watchful-marmot-fdfad6@quoll/
->=20
-> One register should not be treated as a separate device node.
+Happy to join if it works for Stephen too
 
-That's a different question. In the case of an mfd cell probed from the
-syscon driver there would be no devicetree modifications required
-compared to what you have now. e.g. sg2044-topsys.c
+Acked-by: Jerome Brunet <jbrunet@baylibre.com>
 
---CtK5EKNoAsQivl3f
-Content-Type: application/pgp-signature; name=signature.asc
+> Link: https://lore.kernel.org/linux-clk/anW-jTldkWSJK3wl@redhat.com/T/#m0=
+ae01b8dd23c452d82f34b61844a8305977a53a4
+> Acked-by: Michael Turquette <mturquette@baylibre.com>
+> Signed-off-by: Brian Masney <bmasney@redhat.com>
+> ---
+> Changes in v2:
+> - Also add Jerome as co-maintainer based on discussion in v1
+> - Link to v1: https://lore.kernel.org/r/20260804-clk-masney-maintainer-v1=
+-1-de593189a9a1@redhat.com
+> ---
+>  MAINTAINERS | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 07ffdec1c8c7..2c3c80e4761e 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -6448,7 +6448,8 @@ F:	include/uapi/linux/comedi.h
+>=20=20
+>  COMMON CLK FRAMEWORK
+>  M:	Stephen Boyd <sboyd@kernel.org>
+> -R:	Brian Masney <bmasney@redhat.com>
+> +M:	Brian Masney <bmasney+clk@redhat.com>
+> +M:	Jerome Brunet <jbrunet@baylibre.com>
+>  L:	linux-clk@vger.kernel.org
+>  S:	Maintained
+>  Q:	http://patchwork.kernel.org/project/linux-clk/list/
+>
+> ---
+> base-commit: 728e68a889bcf257b1e67298b12c360e5c3a13e0
+> change-id: 20260804-clk-masney-maintainer-7b4349a0f004
+> prerequisite-message-id: 20260729121640.3864006-2-ukleinek@kernel.org
+> prerequisite-patch-id: dc8bae434144f43dd5ec1355d22ef9be3c34c9e9
+>
+> Best regards,
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCantVFgAKCRB4tDGHoIJi
-0lFUAQDQvErhGWh1GPKjl5npBVRgz0mxYgiMDD3N+RV5dXnjfQEA2tMdSc2XqHx8
-20d6W/Qs1vDPymVXp1wbnroZbe4nog8=
-=lAVE
------END PGP SIGNATURE-----
-
---CtK5EKNoAsQivl3f--
+--=20
+Jerome
