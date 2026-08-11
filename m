@@ -1,89 +1,177 @@
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+Received: from mail-yx1-f54.google.com (mail-yx1-f54.google.com [74.125.224.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE15A3A1A5D
-	for <linux-clk@vger.kernel.org>; Tue, 11 Aug 2026 08:48:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE1F5429CF6
+	for <linux-clk@vger.kernel.org>; Tue, 11 Aug 2026 09:21:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786438114; cv=none; b=eO6JR0g2A1KT6RNRckw1s/fe+B2Od/v5Z3N9GNs894+J2D8EI7dzu5DrWNm83vOvmRpWDyHOORljO9WTgO8ph+wkTaq+GaUO3RdidHeg3sI0EmXsEzQzB+ygju1F9qjkHICiK4sD6krlm/KZVJnEi/ZAcPut1WBtZlYYwPR6H6k=
+	t=1786440075; cv=none; b=A+Er5qYxOPqkPBUTkLg+rPR6KCPgmFmiujuv+wWymjqGkt7cj7q8EPvtnUT5FJduOMjAOxPkIHVwKPeiRQG+6iXpObeUW7+KH4ef83XT0VnS/PNfgyv673L9ZPytmF0DYykkQqStcKs8e1H0mHBIrwJE7FzfWQiQ6KuAqzN8qeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786438114; c=relaxed/simple;
-	bh=Vr+pajHFnIxD0QyiHCR6FJH90ILWXHCt3QnNj1iiwuE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type; b=Amy0e4k8XMuajcpPOnkoQ7c7FPS2UdlrROGXU0WeURhId6etuA/9yjq5dulWlhKjTZZdfFALP5SRNM64md5t4spegWmJ+ku+OVGd0ab8CukCi9tLF0xuzxBUw/9pG6Zf1TCF7A9aY2jPVolzBBPLcb+sm9empxfsExHD55qUr8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XdiPX63I; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1786440075; c=relaxed/simple;
+	bh=/UkVbiyABCOWkQkk1ensSSE3l3aZFpZe6kVjhYLKH8s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=b5LlBPaprd6E+SvtcNhFWThmyYJo8OfDHDUWoQpRD8zoEH041nBYCXYj/9htN46PEtlZTx8+cDUTZz7C7d+shbywupGiAJI5bAV0PRmicF8QnQM2eLrqj90/B6+7NvOBXsBDYu6IX5vfK8Jm9HJkw+IuXKLI98rWKqdHao/8Fmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.224.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XdiPX63I"
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-84e84a6c4bfso782713b3a.1
-        for <linux-clk@vger.kernel.org>; Tue, 11 Aug 2026 01:48:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1786438113; x=1787042913; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=Vr+pajHFnIxD0QyiHCR6FJH90ILWXHCt3QnNj1iiwuE=;
-        b=XdiPX63IsEi8FMfoEs1jDc3djqila91IzB4bTdD100yqc5ECMYU3TSJJCmBhSTcwsC
-         Sr/YAcFfl9/zXMs6WSueCQtVsfnv4tB3Um7I05ACEHUtUKy+VPaH8/Gq9Pjt2n2eurFG
-         TVG+2noiLceafD/hXKwmF7/VcRWtddkTUoxFGi0HfPW39pyWP+ffxHqHznRQKr5DkLh+
-         91uuNnHD0k8Qum5saDcUutOOZ/xWVo6k4pLlkL64g1oPXYNTHtRHTJugAgSgUmmqFK+2
-         cAFAnypXcOCj4aIoHKrw5HxjzAsS+t8vo9oYD+AmlXyN463tWE0l39Tr47Ga95A8Jjdq
-         miIw==
+Received: by mail-yx1-f54.google.com with SMTP id 956f58d0204a3-6688acd1a51so767292d50.3
+        for <linux-clk@vger.kernel.org>; Tue, 11 Aug 2026 02:21:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786438113; x=1787042913;
-        h=content-transfer-encoding:content-type:mime-version:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=Vr+pajHFnIxD0QyiHCR6FJH90ILWXHCt3QnNj1iiwuE=;
-        b=ZQfl5mrHl5M/1wMwL0/VlexZUmbGvR8xXRlMLmxKA68G+6cUX45ohOd4z3zwZEDx7q
-         jKHd6PUaqfcaj24lWJgcBXgBj81qPEMN/BXMYSb6Vl/crjDYzLbkRXn+huBcHbRnPPQc
-         h7j4DrBUs9pgdWdCEkqGnsGO3ImO2fS6JvpsaK60RMqNdlcex1VekZ1PvzRWs+i97CaC
-         C9aFxR4FRRbOqBw2VzEudqX3wcuKBjKEC1XhyVVEtYNwAN1Km26NYqDly+99gmuKuY5S
-         lrNiRPMA8K+LbBR1kGZnCiB+kl9LlSqY3ZCheUPUzaKfOM6/Y0Tdlbw0rOoIrHTI78ty
-         TLXA==
-X-Forwarded-Encrypted: i=1; AHgh+RpAbOI8dFvaPpzmLzaEMnRV4SrcXOZIj/7vbpDa/aDoLUrtwOk72lyr0QT3C+eMhYCm9iBGPMUPbTM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxotSITz90YeA0rj+xL0HcLJ1tqMbWUP6BPPN/dQeJjuIALRkNR
-	fs6qkz6sLHSg7OXOkwMFHMAFN4ZKC9v19U+3dT/yhVpxAUreEFnZfcM=
-X-Gm-Gg: AR+sD11Z/K3aART6s1udQ+5CbbGphCiOM5WDkaGxqCUR1kb7urBnh7qnygLHW7HnOHx
-	7XgE8uaQowwi4Rb6GaziAK7DzNtmjnA3WrYSvqZCF4QMueUElg9uivZfYzEv5NSnv4ZMB5PEXYD
-	GkT62w6tDN1IXC7rw1egpL15QnUkG4YDPyfXdilTWtf3obq4BMSox7NmvDH2p0wSGJe9BsyVYMA
-	vcz+d1SLkSPbXeoJ/6AGA3Ud+o6UOx6WkwJ3UhXHye5w1fP771oyRBjFlYuhIFk3US6jYzbrsr6
-	uGmQLr1GCtWiaJnAOJI53bp74H/bLPmkQKfkZqJ0uUvLRnN+Zg1XJUS1N/ERTAGh4idYXa8xL1W
-	SV2ouv8zKZx/K7oJ6bwZfjOEMvECYsvKUaW8TyrS5aPDAh5yfTYuKZ4pwuVeTJ+3q8uppXaKpxL
-	E4VsFLy0IN0pZWwRuqhTTblexEpS3h2hBU/o1MXNWgQIOszUfWawGkhQ==
-X-Received: by 2002:a05:6a00:885:b0:842:3c77:5996 with SMTP id d2e1a72fcca58-84fa887253fmr1605922b3a.1.1786438112862;
-        Tue, 11 Aug 2026 01:48:32 -0700 (PDT)
-Received: from octoberrain ([2405:1200:418f:8400::5d9b:1e58])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-84fa91b63b7sm353541b3a.22.2026.08.11.01.48.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Aug 2026 01:48:32 -0700 (PDT)
-Date: Tue, 11 Aug 2026 17:48:22 +0900
-From: Robert Eckelmann <longnoserob@gmail.com>
-To: vladimir.zapolskiy@linaro.org
-Cc: andersson@kernel.org, bmasney@redhat.com, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, m.szyprowski@samsung.com,
- mturquette@baylibre.com, sboyd@kernel.org, val@packett.cool, david@ixit.cz
-Subject: Re: [PATCH] Revert "clk: qcom: dispcc-sm8250: Enable parents for
- pixel clocks"
-Message-ID: <20260811174822.1f4bcbf8@octoberrain>
-X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-pc-linux-gnu)
-In-Reply-To: <20260701001147.416518-1-vladimir.zapolskiy@linaro.org>
+        d=1e100.net; s=20251104; t=1786440073; x=1787044873;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=14plqPeyH6RsdU2VmFKnJtMB+pmrsGKI/JGoWS24hKY=;
+        b=lG+i2kpMiy7R3SG+V640ucg1R6FYU7JDPieNmsNRVVfSiZduQSCpEhRYNivlnylLGj
+         bChdOs0Vw8f5/Cc+kvLVw88/pOxPD0cmxCH5smeUuk2SJIyBR0inFsbtGewp0KsJzsnH
+         zc7Hy6h0fqwwZICd0VvDF1Q5hnTfUzU2erkB99rPCfxxW79Rtg1ZorQL37Jcy92hYlEZ
+         LHCvffLmj1gvM3Bzfr1lxKdFm7BNbQvzR+1U7ASzuZ5Prgvif24PF0aswb2c+m/EWMct
+         HMqvHSzfeixC86Iy9ODGd9rB0jfd+xor1LcHHaz+odBQ0dARcJzPKWMDpSus1CjFo/fO
+         GBqw==
+X-Forwarded-Encrypted: i=1; AHgh+RrXDAJisEEhJSgzgpPUTIIOpy2bApYU1ayAVaOK1CBhBGUqIUI49YfSRlc84aveNEnaX3ua0v6aI5g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRVj76daXTwpfwabtbjxtapjUOBBu31wJqg+2udWmOqYUOCOaw
+	WkS9Irx3yFOYzVeD1yAvTHt0y4iWnQdSs52/TLQKEZt98LR4fB+k5f2YjDXYn3OZ
+X-Gm-Gg: AR+sD11KlrAyhd30AvtwA0Vi7SkKvvLvlN7P8MnDoaszNeJL4Aiz82O9L+es/IkrBeE
+	F2GmrHUmG6xNxFwNR4VrrKfhCSB5zPAO8hMLFiRVrUsSuVucFiCCFV5UZTtqmysrTiPjEthNk2C
+	1F05SvPmX90PJS0bqjztgxLVlkG8XUyypBheybsfdYXc2DaI6xf+QWPZ/+2kFslGmwKheG0w7lQ
+	lnm8B3zNs9YGa/FtluWnubYG3I7Laz6WcLdpr7YI8oeStpK2Oi5nF2iYuowiSTxs2o5/CR/di2D
+	sjYX2+2clTOpYuUgWC1jS0PFff4ZZpFUbgs2fZKkqRdJxMalvPSHeCYGU2GDJDFJ9l1wHgx/CNF
+	VVllcwjSpTrV98cxnUP4q8rG9BKv2bQVTTbrhSy+5sK7dxxWdAh8zuAlGXKrRVg2mtwTueYyMad
+	qlSIJQCCE7YL4ZsCD32yOHQWb2t8WjewNWjtvyxU7bKVbE6gpae1UyZu3xIJ6mH71BS01dNHMPF
+	SwOBkTDZxTuuv7e9zRGsaE9c6+A1L6Pf+UQ
+X-Received: by 2002:a05:690e:484a:b0:664:9736:424d with SMTP id 956f58d0204a3-66b22e94363mr615134d50.48.1786440072826;
+        Tue, 11 Aug 2026 02:21:12 -0700 (PDT)
+Received: from mail-yx1-f48.google.com (mail-yx1-f48.google.com. [74.125.224.48])
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-66b1ef5f935sm686270d50.1.2026.08.11.02.21.12
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Aug 2026 02:21:12 -0700 (PDT)
+Received: by mail-yx1-f48.google.com with SMTP id 956f58d0204a3-6688acd1a51so767285d50.3
+        for <linux-clk@vger.kernel.org>; Tue, 11 Aug 2026 02:21:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RqhTp/sHExZl1GrBhgTVsDaXzSXevQiS9WOkLobWkq0CsOeyP2gRSOMsmN15S+aqtvdcAmzH/0gaFk=@vger.kernel.org
+X-Received: by 2002:a05:6102:941:b0:738:1fcb:f276 with SMTP id
+ ada2fe7eead31-76b5527db20mr448203137.1.1786439726421; Tue, 11 Aug 2026
+ 02:15:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <cover.1785941595.git.geert+renesas@glider.be> <CAPx+jO87d7H92KSR7R7ObR05sM2JcHBCo+YuUf_1gE-KwhR7CQ@mail.gmail.com>
+ <CAMuHMdW78wFHKP8n2P_MEVASO3MFHCjXkEWSFXfE3-mCjkhsgA@mail.gmail.com>
+In-Reply-To: <CAMuHMdW78wFHKP8n2P_MEVASO3MFHCjXkEWSFXfE3-mCjkhsgA@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 11 Aug 2026 11:15:13 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdV15qa+bntYdeEysEc3rJ4dNhQxiVJd-moAGTNyfPdDkA@mail.gmail.com>
+X-Gm-Features: AUfX_mzrvqkMTS8THhoJKajeDFG8F23c6THOaD8Dreq76GI2rXJHX-LkuIBfF_U
+Message-ID: <CAMuHMdV15qa+bntYdeEysEc3rJ4dNhQxiVJd-moAGTNyfPdDkA@mail.gmail.com>
+Subject: Re: [PATCH v3 0/6] R-Car X5H CPG/MDLC support
+To: Ulf Hansson <ulf.hansson@oss.qualcomm.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, Ulf Hansson <ulfh@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Marek Vasut <marek.vasut+renesas@mailbox.org>, 
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, devicetree@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The same problem also exist on sdm845, esp with sdm845-hdk I saw
-similiar "already unprepared" mesages in dmesg.
+Hi Ulf,
 
-Doing the same changes to drivers/clk/qcom/dispcc-sdm845.c, fixed these
-issues.
-Can provide a patch for dispcc-sdm845.c if wanted.
+On Mon, 10 Aug 2026 at 16:50, Geert Uytterhoeven <geert@linux-m68k.org> wro=
+te:
+> On Mon, 10 Aug 2026 at 16:18, Ulf Hansson <ulf.hansson@oss.qualcomm.com> =
+wrote:
+> > On Wed, Aug 5, 2026 at 5:21=E2=80=AFPM Geert Uytterhoeven
+> > <geert+renesas@glider.be> wrote:
+> > > This patch series adds minimal support for the Renesas R-Car X5H Cloc=
+k
+> > > Pulse Generator (CPG) and Module Controller (MDLC), to aim for replac=
+ing
+> > > the dummy clocks in r8a78000.dtsi with proper hardware description.
+> > > These two components are closely related, in the sense that they are
+> > > both supposed to be accessed through the ARM System Control and
+> > > Management Interface (SCMI) on the Ironhide development board.
+> > >
+> > > This series consists of three parts:
+> > >   1. Patches 1-2 add DT bindings and DT binding definitions,
+> > >   2. Patches 3-4 add minimal CPG and MDLC drivers,
+> > >   3. Patches 5-6 update the DTS.
+> > > Note that this series depends on v7.2-rc2, due to the use of
+> > > <linux/device-id/of.h>.
+> > >
+> > > Changes compared to v2[1]:
+> > >   - Add Acked-by, Reviewed-by,
+> > >   - Add fixed-rate clocks to kerneldoc of r8a78000_cpg_priv.map,
+> > >   - Use devm_clk_hw_register_fixed_rate(), drop unregister_fixed_clks=
+(),
+> > >   - Drop fill_clk_map(), as it is not really needed until SCMI remapp=
+ing
+> > >     support is added later,
+> > >   - Replace <linux/mod_devicetable.h> by more specific
+> > >     <linux/device-id/of.h> in v7.2-rc2,
+> > >   - Add a comment to document only always-on domains are supported,
+> > >   - Consistently use /* sentinel */ for zero sentinels,
+> > >   - Drop trailing commas from sentinels,
+> > >   - Sort MDLC nodes (alphabetically, by label).
+> > >
+> > > Major changes compared to v1[2] (more detail in the individual patche=
+s):
+> > >   - Add default support not using SCMI,
+> > >   - Drop everything related to SCMI.
+> > >
+> > > Note that this series does not use or rely on SCMI in any way.
+> > > SCMI remapping support will be added in a subsequent series (old vers=
+ion
+> > > at [3]).
+> > > Full hardware support without using SCMI could be added, too, if anyo=
+ne
+> > > would care about that use case.
+> > >
+> > > For testing, I have pushed this series plus additional work (includin=
+g
+> > > a rebased and updated version of [3]) to [4].
+> > >
+> > > While I know it is getting late in the cycle, this work (especially t=
+he
+> > > DT bindings) are a dependency for about any R-Car X5H progress, so it
+> > > would be good to have it included in v7.3.
+> > > Hence I plan to queue the clock patches (1, 3) in renesas-clk for v7.=
+3
+> > > (Stephen still hasn't merged my earlier PR for v7.3 anyway).
+> > > Ulf: It would be great if you could take the pmdomain patches (2, 4).
+> >
+> > Patch 2 applied for next, but I left patch4 for now as it didn't apply
+>
+> Thank you!
+>
+> > cleanly (drivers/soc/renesas/Kconfig had a conflict), thanks!
+>
+> I guess your tree still has the duplicate "default ARCH_RENESAS"?
+> Patch 4 just adds a single line there, and the conflict should be easy
+> to fix.
+>
+> If you want to send me a new patch, please let me know.
 
-Best Regards,
-Robert Eckelmann
+I have sent a v4 against pmdomain/next:
+https://lore.kernel.org/all/d4bd0cc7f26c1bcdc260edb994b4971cb5dd3a10.178643=
+8424.git.geert+renesas@glider.be/
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
