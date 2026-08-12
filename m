@@ -1,50 +1,60 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9055E369972;
-	Wed, 12 Aug 2026 02:49:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17A2D345ECD;
+	Wed, 12 Aug 2026 03:09:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786502979; cv=none; b=SDv+8d/7Fhuj9p6GIfSXn1j9wyNuKFxEJ0FUnLXXDrktVlxpqBhKRpPdZYHvlRHu6PzEvG4yxSYeuURFngHniU4PLmMF0zp0iy5N3P2FaN2TBZWjj+N/1vmZhmQwsE3YmcAzBzITNSzw4pmMx/PUz5jwzknaF0emhjTDeTpv73w=
+	t=1786504153; cv=none; b=i76RIIRJJZQiOnWKA+tx341B6ww7Ydksr/rBIOD6VGWl9D3FM4xTFZ+/gIkLV0ofE0htk3GOCIU8iANC9QDv8VZtGD8mAwwSzS7crrUNc3wEbKh/EUAfUVzlYcFkKX5uKb1Edl8CnxAevsC225R7tHxWXPyVJWtGATifLoxaa9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786502979; c=relaxed/simple;
-	bh=daeKRT964P98JkR/AORboeu12VB44V9Vdz2ahgEyyDU=;
+	s=arc-20240116; t=1786504153; c=relaxed/simple;
+	bh=36CUSExhNmUNV45CdFvF7jAP2tEN5nFaZut6iMJQSiU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LOnCBHqfukoB7lrII+pxiBtJQIYSuzv8Dot1ZrGvZFecCspeTCLvIak1dk39e7b+212BRuhmO5q3TwUZL4tPbbxYTvDI8c9aYxw+Nu/n3wOFhuuxSh3CvTAyZmZoCqEU6xSDunhMsLcgMyfbTK/tMOs9Iz+pGSlJE84GDsgkmGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=axHzcEsO; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=XH9JvDmrruffr7ZeyRHTA8rOjS8YeWSVSyRm2ArO2ohcSG/vniQtBm80PLzfk4G/Ogrf8k/WGhfl/MCO8gs+FsxM6NlvcM0o+NKcNazsrRy6HWSK4m1eE/jdRjl08xfzzkRpS4jUL4cKBLMXrIqi82P+ttWor0GpAbGnIS1I4rI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UI0oQMOq; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="axHzcEsO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFB281F000E9;
-	Wed, 12 Aug 2026 02:49:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UI0oQMOq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 392BB1F000E9;
+	Wed, 12 Aug 2026 03:09:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786502978;
-	bh=+bThKGwDN/bKFkN4VURpru942yPa+WAm018gK2eh9Ws=;
+	s=k20260515; t=1786504151;
+	bh=Wq84iKL6ygCiqJNdxYyZKwxW2cAVvh8TSQKqYwcZIsA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=axHzcEsOOkHO/Z1WC2axZoatJKoklKIMjmiRBXSWvLtmXmXqz24NwUjYQ5elfNMHq
-	 Qb5iLB7aQ0QK06/uSdCmNygdHKPCgwQbHKxEpjBOtyhOW4GZPTxmwosMC3lqjQoAm9
-	 Mwuu/MbdBcwi1PnENjTT4DNO0DkG841EEdL6eWCTIkp9J8nh+yAJrHMTWmX+slO3Yu
-	 /R2J7UPtw4wwJCIP+nrfom3CJjlXzV8qU6Og6LO16GZdVcSpsJf+wBn5fzNmAV+8RJ
-	 uWCf4IVunmeOvIMEdDXDPrdZ+yLbsJC65pgsz0E2MfzypZBrZDUriSrcUAOJkyNmTN
-	 SYdocZStHP57Q==
-Date: Tue, 11 Aug 2026 21:49:37 -0500
-From: Rob Herring <robh@kernel.org>
-To: evon.chiam@altera.com
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Dinh Nguyen <dinguyen@kernel.org>,
+	b=UI0oQMOq8J4lT7ZxYWnt7iJe8XtrPaGn69ki5MObrDpjOySp1gDePDUSqdTgCKfF8
+	 LB4gqrSoEu/QbEIV9iCIZwfkXqPDB4cMjjvxzMNezNAlhX8ZYAgxQkLLuR+p8vokrr
+	 jGl/J2xJV0+RpNKeBgYzqacUtmvoogvvRptTZNo4LzmWHXK1bFLraCLRbmRhZzGdRj
+	 IIk08qPZ+jbYf+Eg6eI79EF6HRDhNiFg0H3VGuehuSBTkPhgFc7BVFs2M5BIerb+EQ
+	 EXlBAwVGAIQy3yq2IpEcNvJMukBZHAGVJPnO0ujbTBkAlw0ZhATobsNDy+obRjMwXU
+	 3JYbK9XJEr3qA==
+Date: Tue, 11 Aug 2026 22:09:10 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Suraj Gupta <suraj.gupta2@amd.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
+	Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org,
+	Eric Dumazet <edumazet@google.com>,
+	Brian Masney <bmasney@redhat.com>,
 	Michael Turquette <mturquette@baylibre.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, Michal Simek <michal.simek@amd.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Lothar Rubusch <l.rubusch@gmail.com>,
-	Ng Tze Yee <tzeyee.ng@altera.com>,
-	Nazim Amirul <muhammad.nazim.amirul.nazle.asmade@altera.com>,
-	Adrian Ng Ho Yin <adrian.ho.yin.ng@altera.com>,
-	Brian Masney <bmasney@redhat.com>, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/5] dt-bindings: arm: altera: fix Agilex72 compatible
- vendor prefix
-Message-ID: <20260812024937.GA616612-robh@kernel.org>
-References: <cover.1786006669.git.evon.chiam@altera.com>
- <b467b990e5290a2eccaedff826968a50fb51100a.1786006669.git.evon.chiam@altera.com>
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	driver-core@lists.linux.dev,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	"David S . Miller" <davem@davemloft.net>
+Subject: Re: [PATCH net-next v2 3/7] dt-bindings: net: xlnx,xxv-ethernet: Add
+ Xilinx XXV 10G/25G Ethernet
+Message-ID: <178650415010.657438.15353116551924864643.robh@kernel.org>
+References: <20260723123838.125145-1-suraj.gupta2@amd.com>
+ <20260806181153.1213996-1-suraj.gupta2@amd.com>
+ <20260806181153.1213996-4-suraj.gupta2@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -53,38 +63,27 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b467b990e5290a2eccaedff826968a50fb51100a.1786006669.git.evon.chiam@altera.com>
+In-Reply-To: <20260806181153.1213996-4-suraj.gupta2@amd.com>
 
-On Thu, Aug 06, 2026 at 05:25:01PM +0800, evon.chiam@altera.com wrote:
-> From: "Chiam, Evon" <evon.chiam@altera.com>
+
+On Thu, 06 Aug 2026 23:41:49 +0530, Suraj Gupta wrote:
+> The XXV Ethernet IP integrates a 10G/25G Ethernet MAC with an in-core
+> PCS/PMA driving a high-speed serial transceiver. Its payload is moved by
+> an external AXI DMA (or multichannel DMA) controller referenced through
+> the dmas/dma-names properties. Document the IP in a dedicated schema
+> file.
 > 
-> Altera has separated from Intel. Update the Agilex72 SoC and board
-> compatible strings to use the Altera vendor prefix instead of intel.
-
-Sorry, without better reasoning, you are stuck with them as sashiko 
-pointed out.
-
+> Add the "xlnx,xxv-ethernet-1.0" compatible with the 10gbase-r and
+> 25gbase-r phy-modes, the rx_core/drp/s_axi clocks and the AXI DMA
+> channel properties.
 > 
-> Signed-off-by: Chiam, Evon <evon.chiam@altera.com>
+> Signed-off-by: Suraj Gupta <suraj.gupta2@amd.com>
 > ---
->  Documentation/devicetree/bindings/arm/altera.yaml | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  .../bindings/net/xlnx,xxv-ethernet.yaml       | 107 ++++++++++++++++++
+>  MAINTAINERS                                   |   1 +
+>  2 files changed, 108 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/net/xlnx,xxv-ethernet.yaml
 > 
-> diff --git a/Documentation/devicetree/bindings/arm/altera.yaml b/Documentation/devicetree/bindings/arm/altera.yaml
-> index 3030cf46fe74..2ab53cade2fe 100644
-> --- a/Documentation/devicetree/bindings/arm/altera.yaml
-> +++ b/Documentation/devicetree/bindings/arm/altera.yaml
-> @@ -119,8 +119,8 @@ properties:
->        - description: Agilex72 boards
->          items:
->            - enum:
-> -              - intel,socfpga-agilex72-socdk
-> -          - const: intel,socfpga-agilex72
-> +              - altr,socfpga-agilex72-socdk
-> +          - const: altr,socfpga-agilex72
->  
->        - description: Agilex7m boards
->          items:
-> -- 
-> 2.43.7
-> 
+
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+
