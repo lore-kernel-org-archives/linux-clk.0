@@ -1,342 +1,192 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2495742A15B;
-	Wed, 12 Aug 2026 13:15:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC7D7368D6F
+	for <linux-clk@vger.kernel.org>; Wed, 12 Aug 2026 14:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786540512; cv=none; b=ib931wdc/YSUjkynRss5CHFQdP4INSX+gai5MUsJxnw1jDuzMl9w5Coc0gr6J1aXAWjL0k1DDgivBeibDDrq7GaF8XqdkxVYiEd4nxyOITZRmqEQgtGtWH+G3mC8jSDRL6H6fb1RxxiFnI8JQK1Gr71Q6IzbGfRhCoHSb2WxZjY=
+	t=1786544388; cv=none; b=NQXxDCaZgpY7wWUhQNRUP+npsKcrnoemeeYt/qyrCfk1bsV0Nz3rjfjhvDTKLJ+Mxh4vP5bJ40B2OK+E/x0pst7cON4cP0f9WAXKxiMNE0Lb1qhk4pRql8leH1MpqYlQAlZoHKiv6yajhvMuAtmBr9rqypk9coR/Ckgbsuvv62E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786540512; c=relaxed/simple;
-	bh=czKRYiJJKr8rDGmJqb/8IKm0ZmmmMOQPLIB9B6z/vYQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SqJVjGvlPwnh5OwnkdBwdvcvzkAT9ZE4EB7x8LN0rU+Fbd9T6vX0VYtSokVdcmofFjW3l7GxOXRIrKeCMit4lZf/fXm2DyONu3/ekyGlmtAdqtiU41l5g7xiQe5dULTAUWKklRe4UrG/bVHCUY0+FC3IlLMiYsKE5vAOrR1ZIgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hfxQh1zZ; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1786544388; c=relaxed/simple;
+	bh=RbBcvng6CddAR2Y9GGDoRWyuM/ruQ2W3muwnGr8OInA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=H4J4YdPkZQUtfyKcLUvPjbkgBwmG0twfbYP9oReH/JwFFcOGKJQzGb3XEPSug8t45O8LF35I+AAVRgsMYBqimzxY1SkpYi/vC8zrB00tbIFqG21llvmesMjWV90e1xV32/h+thVE6bnSV02avZKpGGd7K24euKNWaKBnK6F6Yec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=pk5KZwS0; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hfxQh1zZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C9181F000E9;
-	Wed, 12 Aug 2026 13:15:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786540509;
-	bh=7MDSrybxRiXLZo7xpuDMnJEHVcp0ujnYiamwQaTaTIs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=hfxQh1zZx8aeCxAPv8Y2gC3HJw1t+tW+7Jdh48gx4HKMOF/2n2zpY7W7XT8uaEqZw
-	 bV0u2rFKUhIad6Fd3QnVz13bpzLJFLE/SUvDXQcu2/CXtkf3HXBSXcxRcNfkAkAru1
-	 YzoFj4g6R/0ThkBHFTKBi9OOOmbNM2HAZrP9dj+FRcV0fb/v1qEdYyBEZmekSAEqtL
-	 MDRsQIlIv4IDdvAn3u0ft+34JfjBxeDDOEhP0Z6OcL2N9T6qTylbPqzjTNJkD6cXVm
-	 KVQSRnL0oTtiMV5LFPcbCl5l/Zcfhk3Cthrw2+rG5pvHg8lFd3FijN9JSHGcqadMjg
-	 i2ZUR8Ag9/wwg==
-Date: Wed, 12 Aug 2026 14:15:03 +0100
-From: Lee Jones <lee@kernel.org>
-To: Stefan =?iso-8859-1?Q?D=F6singer?= <stefandoesinger@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pk5KZwS0"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-493b966dd74so6722285e9.3
+        for <linux-clk@vger.kernel.org>; Wed, 12 Aug 2026 07:19:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1786544385; x=1787149185; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=jwr53rVuSGmUd6A8uHvMZV2frC8kbj83S7dbcomjXGE=;
+        b=pk5KZwS0Ur1iQwvsd/dy95aV+Zbh1n2mGVnPJ6vpAis0mA3vSCOh8FLCvCjrTyC+NC
+         yov6uNKekaXskGMgV80Zok2Y5e5wyEWhDduw0xygpaOLjAGqi1jSxmC4zmLmNmGrlvtk
+         A1WsrOg32LMBl4kfrCeU4GvZeOO7P3FWdwHi2SXB8PlYW5khgSZTkLp6OuxC6m3uI7VB
+         1Bn5qGFumANjbAhIjHGxl8sNFxpbP8Kl7rR2Wy/E3tVzXNRvLU+WgqUGKCeZEJ/V46A2
+         PE0ws+E2SSjbJCVNiXs692M6PJ6i5+4WpTTc85jDuw2UwN2+upe5C1PUJUSvvgdrKXT4
+         /baw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1786544385; x=1787149185;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=jwr53rVuSGmUd6A8uHvMZV2frC8kbj83S7dbcomjXGE=;
+        b=Tpk/q3uBmXqNxcvcwOmpyVoK6nfyIhBGAKHNg6I0G15uW5MBsIzRUcgCJ1r927IC0a
+         VQXYi4fPzxK3RnVlzO6FHGttGRdeHMPfX06NHisbh8rdDHae4aSwvbEECm8Y1vt491k7
+         H/kByPEI/9HK9BZj0ImSgb1pfRAAbUmTRIkuyeH5dEUbFtYl968b4cfKyj03QJAPw9R7
+         MF57WATiFKbt6vZ1EEnqp7rPn82//dzrz9+iI5iyk+RFNrECeLLA/VMskLNhP8m+vwaD
+         R2NOIU3xPg3Fn2k8fY+rvTKYCP2nB8z9VK6trFfq1ECEKd56jYGlcH98VodJSi1zyyhl
+         k1zw==
+X-Forwarded-Encrypted: i=1; AHgh+Rq+MHxIDTQuA5hG8vaEwJXny+yhoybIkwQKKZ4fFUS7JCjMlzVwb6042htteHIc8NywfoxOdNhI/RA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yym07qNMsvJsHXfrHsV1NNXK4S5Hd9BzIsMkTcKyDgrEIOq5u48
+	syQYvHNvsEvOzcqEG1VeUHb3cOS1vEQCpFp+2XAaNenGBMVkR6zSRKza
+X-Gm-Gg: AR+sD11KiYV0MD/xODCQqBwNdk6eQILk0vZoDrRzlfRqXEw6DL3jU9VLz7K6WTsQder
+	+isuwYkj1+3yyBGfGROTbtV7FzwKBHPlpfVDuMMqs0HpqjllDF+D5zBbQWYxL4gLF473R++Bk+H
+	gSue6skrBGHiOu7UEv8wvN9uU3Dz3gztWiNB065Pqw2wHGjKKs+aRsEWtw7eA68ZUID7ytZ0toF
+	OTzjMnVQpfU+sJhx3Id0gQzBniR9wtNZfShdRWtk5/csQXRvqJsjix9QfJlPfitee0K8+ojXI1G
+	uhFYMw9VamrB3qWH4cFXiOoFeRLhDoeSDAtWpDvASVOXk++j86KhQvN+9M8pOkg/YUDfeTKlABZ
+	cOLq6XY9WgiR08Qrc8Z52FqW/QDUY2FnL1AD9qPfnXmWmclp7Agh1r7QzQokkCTY2zXCWa/jnjM
+	2HyW5HfUzvmZKtFe8mQ+4Vq8/CswtGJfHEcmDDweIQwpgq4wO87LK3gRb3VSAm5Tm1Tlu4KtiQL
+	3LT3EZ9kXdxqA==
+X-Received: by 2002:a05:600c:a41:b0:495:6134:6d61 with SMTP id 5b1f17b1804b1-4997c13be45mr72078085e9.19.1786544384949;
+        Wed, 12 Aug 2026 07:19:44 -0700 (PDT)
+Received: from localhost.localdomain ([2a00:23c4:a702:d301:94c0:1825:d248:50ae])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4997ad78f2fsm47352235e9.1.2026.08.12.07.19.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Aug 2026 07:19:44 -0700 (PDT)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Vinod Koul <vkoul@kernel.org>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Brian Masney <bmasney@redhat.com>, Vinod Koul <vkoul@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Neil Armstrong <neil.armstrong@linaro.org>,
-	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
-	mfd@lists.linux.dev
-Subject: Re: [PATCH v10 04/12] mfd: zx297520v3: Add a clock and reset MFD
- driver
-Message-ID: <20260812131503.GR1072730@google.com>
-References: <20260810-zx29clk-v10-0-63846490712c@gmail.com>
- <20260810-zx29clk-v10-4-63846490712c@gmail.com>
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH v7 0/9] Add RZ/G3L USB2.0 host support
+Date: Wed, 12 Aug 2026 15:19:18 +0100
+Message-ID: <20260812141940.246223-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260810-zx29clk-v10-4-63846490712c@gmail.com>
 
-On Mon, 10 Aug 2026, Stefan Dösinger wrote:
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-> This driver registers child devices for the zx297520v3 clock and reset
-> controllers. The clk-zx297520v3 and reset-zte-zx297520v3 submitted in
-> the next patches will drive the respective functionalities.
-> 
-> Signed-off-by: Stefan Dösinger <stefandoesinger@gmail.com>
-> 
-> ---
-> 
-> What I am still unsure about: How much sense does it make to have this
-> module-capable and able to unbind: In practice, the board doesn't work
-> without this driver and its clock and reset children.
-> 
-> Changes v9:
-> Deassert the LSP reset and enable the LSP pclk here. In practice the
-> boot rom needs to do that because it prints to an LSP-connected UART and
-> reads the boot policy from the LSP connected flash chip.
-> 
-> In doing so, I migrated the match data to an enum as mfd.md suggests.
-> 
-> Changes v8:
-> *) Remove .of_compatible from PHY mfd child
-> 
-> *) Move to drivers/mfd (Sashiko)
-> 
-> For me either soc/zte or mfd/ is fine. Note though that this MFD parent
-> is very specific to the zx297520v3 SoC. I don't expect this to be reused
-> anywhere else. There are two more MFD-ish devices in there: soc_sys at
-> 0x140000, which I plan to handle in the same driver, and an i2c PMIC,
-> which would get its own host driver.
-> 
-> *) Use PLATFORM_DEVID_AUTO (Sashiko). NONE was intentional as I only
-> ever expect one instance, but I don't see any harm in doing the standard
-> thing and use AUTO
-> 
-> *) On the suggestion not to put the link to mfd_cells[] into match data:
-> I see that it is spelled out in Sashiko's mfd.md, written by Lee Jones,
-> the MFD maintainer. I would appreciate some education on the rationale
-> behind it: Putting a pointer into the void *data is a common pattern in
-> the kernel. I don't understand in which situation this can possibly
-> break?
-> 
-> Both structs are static const in the same compilation unit. data is a
-> const void *, not a uintptr_t or kernel_ulong_t, so it seems passing a
-> pointer is the intended use. What am I missing?
-> 
-> Changes v7:
-> Add phy MFD child
-> 
-> Changes v6: Make the ZTE SoC driver section depend on HAS_IOMEM
-> (Sashiko). The entire MFD section, which contains MFD_CORE, depends on
-> HAS_IOMEM even with COMPILE_TEST.
-> 
-> Add a NULL ptr check for of_device_get_match_data (Sashiko). While not
-> uniform, rave-sp, rohm-bd9576, atc260x, da9052-i2c protect against
-> incorrect manual attachment that way.
-> 
-> Add lspclk here as well in an attempt to satisfy both Conor Dooley, who
-> asks for MFD for top and matrix, and Philipp Zabel, who prefers aux but
-> at least wants the reset driver limited to one driver type.
-> 
-> Changes v5: Use MFD instead of Aux bus for top and matrix crm because of
-> extra functionality: Reboot in top, hwlock in Matrix.
-> 
-> LSP clocks stay with the aux bus and are thus not handled in this
-> driver. The clk driver will bind directly to the lspcrm node.
-> ---
->  MAINTAINERS                      |   1 +
->  drivers/mfd/Kconfig              |  13 +++++
->  drivers/mfd/Makefile             |   2 +
->  drivers/mfd/zte-zx297520v3-crm.c | 117 +++++++++++++++++++++++++++++++++++++++
->  4 files changed, 133 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 61dbe959acf5..d50c03fd5a76 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -3909,6 +3909,7 @@ F:	Documentation/devicetree/bindings/clock/zte,zx297520v3-matrixcrm.yaml
->  F:	Documentation/devicetree/bindings/clock/zte,zx297520v3-topcrm.yaml
->  F:	arch/arm/boot/dts/zte/
->  F:	arch/arm/mach-zte/
-> +F:	drivers/mfd/zte-zx297520v3-crm.c
->  F:	include/dt-bindings/clock/zte,zx297520v3-clk.h
->  F:	include/dt-bindings/phy/zte,zx297520v3-topcrm.h
->  F:	include/dt-bindings/reset/zte,zx297520v3-reset.h
-> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> index e4fd4572472f..08138713dfc0 100644
-> --- a/drivers/mfd/Kconfig
-> +++ b/drivers/mfd/Kconfig
-> @@ -2578,5 +2578,18 @@ config MFD_MAX7360
->  	  additional drivers must be enabled in order to use the functionality
->  	  of the device.
->  
-> +config MFD_ZTE_ZX297520V3_CRM
-> +	tristate "ZTE zx297520v3 Clock and Reset Manager"
-> +	depends on ARCH_ZTE || COMPILE_TEST
-> +	select MFD_CORE
-> +	select REGMAP_MMIO
+Hi All,
 
-Is this used?
+This patch series aims to add USB2.0 host support for the RZ/G3L SMARC
+EVK. The RZ/G3L USB PHY block is similar to RZ/G3S, but each port
+has an OTG controller, unlike RZ/G3S, which has an OTG controller only on
+port 1. This series migrates regulator driver to use id-table so there
+is hard dependency between reset driver and regulator driver.
 
->  	default SOC_ZX297520V3
->  	help
->  	  Say yes here to enable the driver for the ZTE zx297520v3 clock and
->  	  reset manager MFD driver. This driver provides the host device for
->  	  the clock and reset drivers and is required to boot the SoC. You
->  	  will also need to enable CLK_ZTE_ZX297520V3 and RESET_ZTE_ZX297520V3
->  	  to build the actual clock and reset child drivers.
-> +
->  endmenu
->  endif
-> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-> index 72d3944b0ad8..ab0cba2042a2 100644
-> --- a/drivers/mfd/Makefile
-> +++ b/drivers/mfd/Makefile
-> @@ -304,3 +304,5 @@ obj-$(CONFIG_MFD_RSMU_SPI)	+= rsmu_spi.o rsmu_core.o
->  obj-$(CONFIG_MFD_UPBOARD_FPGA)	+= upboard-fpga.o
->  
->  obj-$(CONFIG_MFD_LOONGSON_SE)	+= loongson-se.o
-> +
-> +obj-$(CONFIG_MFD_ZTE_ZX297520V3_CRM)	+= zte-zx297520v3-crm.o
-> diff --git a/drivers/mfd/zte-zx297520v3-crm.c b/drivers/mfd/zte-zx297520v3-crm.c
-> new file mode 100644
-> index 000000000000..550ce4ad7ec5
-> --- /dev/null
-> +++ b/drivers/mfd/zte-zx297520v3-crm.c
-> @@ -0,0 +1,117 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (C) 2026 Stefan Dösinger
+Merge strategy:
+  An Ack/Rb tag from Regulator Maintainer for patch#1 and #5.
+  Patch #1,#2,#3,#4,#5 - Reset subsystem
+  Patch #6,#7,#8,#9 - Renesas SoC
 
-Personal copyright, are you sure?
+This patch series has functional dependency on [1]
+[1] https://lore.kernel.org/all/20260812115010.108322-1-biju.das.jz@bp.renesas.com/
 
-Is that okay with ZTE?
+v6->v7:
+ * Dropped PHY subsystem patches as it is accepted.
+ * Merged patch series [2] to here
+ * Collected the tags.
+ * Added additionalProperties: false in regulators node.
+ * Updated commit header of patch#6
+ * Moved the host enable patch.
+ * dr_mode changed to 'host' as function is not enabled yet.
+ * Updated commit description for patch#9
+ * Updated dr_mode = "host" to "otg" in {e,o}hci0 device nodes.
+ [2] https://lore.kernel.org/all/20260707145135.247565-1-biju.das.jz@bp.renesas.com/#t
+v5->v6:
+ * To avoid breaking bisectability, prepared a single patch that
+   does the "rzg2l-usb-vbus-regulator" -> "rzg2l-vbus-regulator"
+   rename in both regulator and reset drivers and that could be
+   merged into both trees.
+ * Replaced dev_err->dev_err_probe() in error path of
+   rzg3l_usb_vbus_regulator_probe().
+ * Retained the tag as the change is trivial.
+v4->v5:
+ * Collected Ack tag for regulator driver changes.
+ * Dropped renesas,sysc-pwrrdy for RZ/G3L as pwrrdy signal is modelled as
+   power sequence.
+ * Dropped the tag from Conor due to above change .
+ * Replaced the variable regulator_driver_name->regulator_name in struct
+   rzg2l_usbphy_ctrl_info
+ * Switched to power sequence consumer for controlling pwrrdy signal.
+ * Updated commit description for patch#3.
+v3->v4:
+ * Updated cover letter with merge strategy
+ * Reorder the phy binding patch for easy merging.
+ * Updated the commit description for patch #2,#3, #4.
+ * Moved the handling of regulator_driver_name to patch #3
+   in preparation for id_table match.
+ * Migrated to id_table match using driver_name and reduced the length
+   < 24.
+ * Dropped rzg3l specific platform driver.
+ * Dropped the tag for regulator driver,
+ * Added id_table handling by introducing a common probe().
+ * Dropped renesas,sysc-pwrrdy property for usbphy-ctrl node.
+v2->v3:
+ * Replaced items->enum in reset controller bindings.
+ * Collected the tag for reset binding patch.
+ * Dropped clock patch as it is accepted.
+v1->v2:
+ * Dropped patch#6(Introduce helper for regulator registration)
+ * Passing pointer to an array of regulators to make it scalable.
+ * Dropped regulator1-vbus and added a regulators group node.
+ * Updated commit description for patch#1,#4,#6,#7,#8,#9 and #10.
+ * Added enum instead of const in the compatible section.
+ * Updated schema check.
+ * Collected tag for PHY binding patch.
+   in the regulator driver.
+ * Added regulators group node and its children in SoC dtsi.
 
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/err.h>
-> +#include <linux/errno.h>
-> +#include <linux/mfd/core.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/reset.h>
-> +
-> +enum zx297520v3_parent_type {
-> +	ZX297520V3_INVALID = 0,
-> +	ZX297520V3_TOPCRM,
-> +	ZX297520V3_MATRIXCRM,
-> +	ZX297520V3_LSPCRM,
+Biju Das (9):
+  regulator: renesas-usb-vbus-regulator: Rename platform device to
+    rzg2l-vbus-regulator
+  dt-bindings: reset: renesas,rzg2l-usbphy-ctrl: Document RZ/G3L support
+  reset: rzg2l-usbphy-ctrl: Introduce info struct for match data
+  reset: rzg2l-usbphy-ctrl: Add RZ/G3L support
+  regulator: renesas-usb-vbus-regulator: Add RZ/G3L VBUS regulator
+    support
+  arm64: dts: renesas: r9a08g046: Add USB2.0 host/phy device nodes
+  arm64: dts: renesas: r9a08g046: Add USB2.0 function device nodes
+  arm64: dts: renesas: r9a08g046l48-smarc: Add USB2.0 Host support
+  arm64: dts: renesas: r9a08g046l48-smarc: Enable USB2.0 function
+    support
 
-None of these are readable.  I suggest you improve the nomenclature.
-
-> +};
-> +
-> +static const struct mfd_cell zx297520v3_topcrm_cells[] = {
-> +	{
-> +		.name = "zx297520v3-topclk",
-> +	},
-> +	{
-> +		.name = "zx297520v3-topreset",
-> +	},
-> +	{
-> +		.name = "reboot",
-> +		.of_compatible = "syscon-reboot",
-> +	},
-> +	{
-> +		.name = "zx297520v3-usb-phy",
-> +	},
-> +};
-> +
-> +static const struct mfd_cell zx297520v3_matrixcrm_cells[] = {
-> +	{
-> +		.name = "zx297520v3-matrixclk",
-> +	},
-> +	{
-> +		.name = "zx297520v3-matrixreset",
-> +	},
-> +	/* A set of hwlock controllers is found here as well, but no driver is implemented yet */
-
-Drop this.
-
-> +};
-> +
-> +static const struct mfd_cell zx297520v3_lspcrm_cells[] = {
-> +	{
-> +		.name = "zx297520v3-lspclk",
-> +	},
-> +	{
-> +		.name = "zx297520v3-lspreset",
-> +	},
-> +};
-
-Use MFD_CELL_*() in all of the above.
-
-> +
-> +static int zx297520v3_crm_probe(struct platform_device *pdev)
-> +{
-> +	enum zx297520v3_parent_type type;
-> +	struct device *dev = &pdev->dev;
-> +	const struct mfd_cell *cells;
-> +	struct reset_control *rst;
-> +	unsigned int num_cells;
-> +	struct clk *pclk;
-> +
-> +	type = (enum zx297520v3_parent_type)(kernel_ulong_t)of_device_get_match_data(dev);
-
-This should be firmware agnostic.
-
-device_get*()
-
-> +	switch (type) {
-> +	case ZX297520V3_TOPCRM:
-> +		cells = zx297520v3_topcrm_cells;
-> +		num_cells = ARRAY_SIZE(zx297520v3_topcrm_cells);
-> +		break;
-> +
-> +	case ZX297520V3_MATRIXCRM:
-> +		cells = zx297520v3_matrixcrm_cells;
-> +		num_cells = ARRAY_SIZE(zx297520v3_matrixcrm_cells);
-> +		break;
-> +
-> +	case ZX297520V3_LSPCRM:
-> +		cells = zx297520v3_lspcrm_cells;
-> +		num_cells = ARRAY_SIZE(zx297520v3_lspcrm_cells);
-> +
-> +		pclk = devm_clk_get_enabled(dev, "pclk");
-> +		if (IS_ERR(pclk))
-> +			return dev_err_probe(dev, PTR_ERR(pclk), "Could not get pclk\n");
-
-Place pclk in 's so we know that's its name.
-
-> +
-> +		rst = devm_reset_control_get_exclusive_deasserted(dev, NULL);
-
-Does 'rst' have to be shortened?
-
-> +		if (IS_ERR(rst))
-> +			return dev_err_probe(dev, PTR_ERR(rst), "Could not get reset\n");
-
-Could we make this error message more descriptive and clear, perhaps using
-'Failed to deassert reset control'?
-
-> +		break;
-> +
-> +	default:
-> +		return -ENODEV;
-> +	}
-> +
-> +	return devm_mfd_add_devices(dev, PLATFORM_DEVID_AUTO, cells, num_cells, NULL, 0, NULL);
-> +}
-> +
-> +static const struct of_device_id of_match_zx297520v3_crm[] = {
-> +	{ .compatible = "zte,zx297520v3-topcrm", .data = (void *)ZX297520V3_TOPCRM },
-> +	{ .compatible = "zte,zx297520v3-matrixcrm", .data = (void *)ZX297520V3_MATRIXCRM },
-> +	{ .compatible = "zte,zx297520v3-lspcrm", .data = (void *)ZX297520V3_LSPCRM },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(of, of_match_zx297520v3_crm);
-> +
-> +static struct platform_driver zx297520v3_crm = {
-> +	.probe = zx297520v3_crm_probe,
-> +	.driver = {
-> +		.name = "zx297520v3-crm",
-> +		.of_match_table = of_match_zx297520v3_crm,
-> +	},
-> +};
-> +module_platform_driver(zx297520v3_crm);
-> +
-> +MODULE_AUTHOR("Stefan Dösinger <stefandoesinger@gmail.com>");
-> +MODULE_DESCRIPTION("ZTE zx297520v3 CRM MFD host driver");
-
-Drop the term MFD.
-
-> +MODULE_LICENSE("GPL");
-> 
-> -- 
-> 2.54.0
-> 
+ .../reset/renesas,rzg2l-usbphy-ctrl.yaml      |  41 ++++-
+ arch/arm64/boot/dts/renesas/r9a08g046.dtsi    | 142 ++++++++++++++++++
+ .../boot/dts/renesas/r9a08g046l48-smarc.dts   |  54 +++++++
+ .../regulator/renesas-usb-vbus-regulator.c    |  75 ++++++++-
+ drivers/reset/reset-rzg2l-usbphy-ctrl.c       | 109 +++++++++++---
+ 5 files changed, 399 insertions(+), 22 deletions(-)
 
 -- 
-Lee Jones
+2.43.0
+
