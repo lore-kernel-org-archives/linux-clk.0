@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8A4130E0D5;
-	Wed, 12 Aug 2026 05:22:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77257270EC3;
+	Wed, 12 Aug 2026 05:46:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786512155; cv=none; b=cAN1BWmm4Y/YFa0Zw+hT0gKqlozviLrSJdg9eRvnf7spxQG8ZPEQB3V0ubN4odOBScbIYSkQ+V9Q70Y6K0hyXFBAzDvrUZObYBzJd5hwaqc/cxUu1klyZWFZn/s1DN23n9OfbxzbChS+eHtpsidw7heZJX2z361hC6WBDd3hTH8=
+	t=1786513593; cv=none; b=mVj+HKfE/3PQOnTo5B6Xw2pQeF5nnZt+ngOESInE2jWZd6BqmsWUiKIyxgJamHsxpzz/07PvkbPkIEjyiwcRuypflD9bCvMd6UK9ghRYg/3UBR2bl6scw/TSNLWx92NV4hlTXyKCEFYqZfIHTrFRtQOGulO6PShy2kJjX9AFJOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786512155; c=relaxed/simple;
-	bh=cJNabvSKy6D6S+wSMhd5JQHpofj3pi/1/w1+JB93TkQ=;
+	s=arc-20240116; t=1786513593; c=relaxed/simple;
+	bh=N++5Z5KdPe5M4c462tftlfQsAVaWMcAMvDxRM9CrRbs=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=b/Z0fdKtknNyTAhTV+08eK0TKZxH8c9P2qHP4U2NEFNMnWdfEjHO8kIVwbHDNpZiGeWBcgvXzA9hiS8/8vNwVoHwVxfRbwxEZ3VLl436PAbWwhR0e1jTzjGH+sktoHyRj9fBzjK7VwwtjlVp+Nbs/Zz6D9/rl4y49rSwZasNXLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QPveumX/; arc=none smtp.client-ip=100.103.45.18
+	 To:Date:Message-ID; b=XqH6oRfJXiqvyd6VaD4te/xyzYpbmklFaWobuErMUKp68krwQrMLMK3zLf63r0FL6+t52S3LkWGFPauNNH6uTbKEZc6iDym8/KoDoveq5asDf7yPBq6DhfvtTnXeiDfmMPDrISfsw5GRNtARVtQzQpVlddHsuvYQcEFNPpEw3qU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AihuxvCI; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QPveumX/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48B1E1F000E9;
-	Wed, 12 Aug 2026 05:22:34 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AihuxvCI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC3ED1F000E9;
+	Wed, 12 Aug 2026 05:46:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786512154;
-	bh=ZPBb4cAV5MPrzvf4K070sFW5PaFLurQzUak2P3Vdyz8=;
+	s=k20260515; t=1786513592;
+	bh=SGSApCPRMb3TnDF5cL9PHxP3javPP2KI/QwBzAazsso=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date;
-	b=QPveumX/9BAkYMdtgUZyMe0989p35NJ/zMIOCea5t/w+G7+lZExnI/ehRI03M4gVW
-	 yLvHNzpxMKU5WWJQKJXkqYwgJBKlm9fNNVtm/m/GiQImqJN84qAdvnaG1Z36uHeFjI
-	 0wJ0bJMOhxtC/HfTdWSedxjAu64DjdOWxh66P2dL58iylcrBTxSB/Mg1MJJV0mUEIV
-	 69at9EczkRFgnU0LnQzMkFT5sRxprN9+MBUauxK3FRo6oN3WntIZR5TCHVx7ccCV/R
-	 hTF4lDo0TwbzKI5tXy0OWPt8nrqYEzTnepYJLfSrciaWH2PBkStpzmvLFYn+wI5Ta5
-	 SazDDbmTaOKwQ==
+	b=AihuxvCIi6PZo50ZKE+UV0N75dHj2XCEHfdjJrO98jtm03YAPs21x8sUkrqKr8v7Z
+	 IhwYjFYquzq1uvXuFuk/typVGRwrgdpOfPnDsRud0kn6FxHtGo2Q343cup3qC9RKbx
+	 logJH33s5RJTmLJjF7wgic0IPnfSzt5boaKVUkWODerD5F6Fap7wtk5TDD7bgQ1xMI
+	 JKNz2TmQ527aHA+JnbnbwkVnTIKysMG4CW7+l2v4HMszmwbam4FeH3NAEhXNylewRu
+	 NoKyUjLG9XcHJyjGQY/FSS3HDR2gkIWT3vwTpcYHr1ZhILSupuPpbwUgS1C6TmIYMI
+	 25GwB5shhToKg==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,23 +34,17 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20260802014217-KYC2734409@kernel.org>
-References: <20260802014217-KYC2734409@kernel.org>
-Subject: Re: [GIT PULL] clk: spacemit: Updates for v7.3
+In-Reply-To: <20260804115610.126049-1-abel.vesa@oss.qualcomm.com>
+References: <20260804115610.126049-1-abel.vesa@oss.qualcomm.com>
+Subject: Re: [GIT PULL] clk: imx: Updates for v7.3
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Yixun Lan <dlan@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Brian Masney <bmasney@redhat.com>, Troy Mitchell <troy.mitchell@linux.spacemit.com>, linux-clk@vger.kernel.org, spacemit@lists.linux.dev, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-To: Yixun Lan <dlan@kernel.org>
-Date: Tue, 11 Aug 2026 22:22:32 -0700
-Message-ID: <178651215252.5862.4480686966770442690@lazor>
+Cc: imx@lists.linux.dev, NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Abel Vesa <abel.vesa@oss.qualcomm.com>, Mike Turquette <mturquette@baylibre.com>
+Date: Tue, 11 Aug 2026 22:46:30 -0700
+Message-ID: <178651359011.5862.5213879268997098861@lazor>
 User-Agent: alot/0.12
 
-Quoting Yixun Lan (2026-08-01 18:42:52)
-> Hi Stephen,
->=20
->    Please pull SpacemiT's clock changes for v7.3
->=20
-> Yixun Lan
->=20
+Quoting Abel Vesa (2026-08-04 04:56:10)
 > The following changes since commit dc59e4fea9d83f03bad6bddf3fa2e524917774=
 82:
 >=20
@@ -58,13 +52,13 @@ Quoting Yixun Lan (2026-08-01 18:42:52)
 >=20
 > are available in the Git repository at:
 >=20
->   https://git.kernel.org/pub/scm/linux/kernel/git/spacemit/linux.git/ tag=
-s/spacemit-clk-for-7.3-1
+>   git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/ tags/=
+clk-imx-7.3
 >=20
-> for you to fetch changes up to 8a7d4b1924d2a424b1a6fe69de4f9464ee1fb485:
+> for you to fetch changes up to 39ec460b56b26319d1f31b459e8be7ea34ae9c67:
 >=20
->   clk: spacemit: k3: fix missing /2 factor in i2s sysclk dividers (2026-0=
-7-29 02:42:06 +0000)
+>   clk: imx95-blk-ctl: Fix REFCLK rise-fall mismatch on i.MX95 (2026-07-30=
+ 17:12:57 +0300)
 >=20
 > ----------------------------------------------------------------
 
