@@ -1,66 +1,67 @@
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7B6A1A9F87
-	for <linux-clk@vger.kernel.org>; Wed, 12 Aug 2026 19:11:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D1A2349CF0
+	for <linux-clk@vger.kernel.org>; Wed, 12 Aug 2026 19:11:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786561895; cv=none; b=HUlRoKtpDMNWkYCEqCobiW11zkMGkhvo0+oJQ/C3RGNPeH3iP+Ul5JgK3+FfNe0BtSIAAUR08SkIdhfgfwNDTKRjH44XWqQwHgcea7uGiRNVOBEBUrKjjtgppe6WL1dFdsciOqoHEB52w8lKR7LqI7H+SvrmruoyCNOMj+YL1jg=
+	t=1786561908; cv=none; b=t37vBLhbF9OF/BUJpLf4CDdbJjm4/GVGvNihVXW2a6r7n5JEzBRmkNtymUJjXke+ZFtXQhIfFTvAT1WLN/OrWWQO+LDsN3hfg2/LvkUaMBViS2W3rvN1E0LIZ0lIJCVin9+KQ5ubGIAhnpBEKfW6nRd6uwm6sIUhpFMstQqXEms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786561895; c=relaxed/simple;
-	bh=AQ9hXB8X/+C0kIfH42Eh0wrN/MNep89eqSlCKfNMfsU=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ZwK4GI00rzMoeqSTwWbM4PLvo3RogwlXnjK/NKxK/EbmCP4krHKI2mVW35UnY2Bkt9cuiBk3XtI4hNJoexmdg9Gat1Oa6CSxd7PTEGRhfeaZUYU7mA41XTqj8oxFts4XmZA4GgyPaXqPrQnmJmZZU7GHaPlQw9EbbGrLXnfmzIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F5mrYzyP; arc=none smtp.client-ip=209.85.214.181
+	s=arc-20240116; t=1786561908; c=relaxed/simple;
+	bh=QRPObjn0T2tfzHzHXODIwHCVbLKA/nQO3o1BxGgfRGw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=t7hsIxHcqCwxu7SejEe/Pg1nyHTvryTI8iJDZT/LDOlIgd7HN5VBsayZE4sYndYUaDlGc4kB4qQmk19rKsHkGQQZFzzUs0bAFIKpIOE0BK/DU/5legQUQ92OWC3TVVbwZyTeU0On97ryzj23JjZzElrTZZMOi7wa/bV6D7G61oo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BwDYCRWh; arc=none smtp.client-ip=209.85.215.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F5mrYzyP"
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2d03fcd26a6so2049265ad.2
-        for <linux-clk@vger.kernel.org>; Wed, 12 Aug 2026 12:11:33 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BwDYCRWh"
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-c9b3f380006so139539a12.1
+        for <linux-clk@vger.kernel.org>; Wed, 12 Aug 2026 12:11:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1786561893; x=1787166693; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:content-type:mime-version
-         :message-id:date:subject:from:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=f2CtspQYSmGu3Vpx+7SNmPrbrZUO95a9YkaE9h3OBWY=;
-        b=F5mrYzyPTOvOzIN6ZoP3fzdOdFDZjj2/uhWTdNG0KtF5TRoJhwSjFva0aCbYJnJ079
-         AyQMdAGfBFsHGDBNps9VK1QrMdb7yHxNxAnviTeoXN5/6nHTfSAGVYzpqni8eNqPGWyC
-         dBShRYiDLyExk0ECs7A5SC4+DsFSwqtFozjvjPnTZ8G99k/QQsAwyzR2W2/q+CjDuYDG
-         KlLc5sUhCRgf16xKyWaKVRZ+tZcJ1JljnRgqUIKj0boqvxGq2mfnbm/1FsZ81Y9+ZRWL
-         zqY965IoAGFyBektEss6ZAyf3Gi1zYHc3aVVRc3T3EvT9Z7bCC/VW9Um+lDRUBCCrH2q
-         Uy4w==
+        d=gmail.com; s=20251104; t=1786561905; x=1787166705; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=3B7kXto184IfdvkiNtrKwwTv2Mmp7EHyOrh+nVPdHPQ=;
+        b=BwDYCRWhz7LcVgEMPmCNUjIiLv0NZj/wCUiXdNz0ddKIp0b1PzMsdzMuQt/S34jLAC
+         iED5j9bDzZtP75M/UHPU3PzDYs1sxfDX7TWtTtxGZuotEjJrEpI74Zp3a5MYWePjwt5d
+         ULnd5ojy2r1UdiYeFnOoVv/Qlym1M6/U+BO37FMif2lTLcGt+Stcr5UjF/xYY1vNmGLZ
+         AL1u42ldmEHATHeaWVtQ7UziJXZ1/0nIrf2xB7HPwOb5MM+IKBb0oCcRr6c2a/Dl2GDr
+         IjEjl+/OosCLCQ3kZeIEfFLlEPAgtw93k96Ft84a57DM2UH740e8Bp0+WooUNiur5HFJ
+         Q6wA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786561893; x=1787166693;
-        h=cc:to:content-transfer-encoding:content-type:mime-version
-         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=f2CtspQYSmGu3Vpx+7SNmPrbrZUO95a9YkaE9h3OBWY=;
-        b=RGLMiRR5bf6f4zVvbDYfGZxpkM4GLca+DEwbq8zVSl7G6/SvQGSWwmbtCEgLDa9YQ2
-         evp7iOardCmGie7xMfSm+BPruz6Gsy0cfZjTLVFQpCw+Q2jGBOzE/ExIlwyEmUosrhkS
-         /JygQbxTHVm/hy9f4sDBMs5lPKf5qLYJZj+FAACdP6BovUwYu+qFVIwtXEOzEHKjvTup
-         nJ99iAjD23dpXtwNOylUtJTrcaD4vigTZXEPeVkqjxLHx79uPZVWCSltvCM31Q5QvfAg
-         D++YRrzqh19OIbvFYsXb+xF43OHiyfRkK4N9L/9Wfq4lU7BXG99CEobzrsey50Uxz9X6
-         WKvg==
-X-Gm-Message-State: AOJu0YzNKruESpkp4UUbG9YCNH7Nfvs4X+NH73O6qBEUw/8Hmv9Jl9Fk
-	Knnl1uOoI81kKg0oweCRrC9P220zrjmaI6sE0eoN+scGalZChPOXLNgQec9kaw==
-X-Gm-Gg: AR+sD12BQxqtflImTOeWynHchYklH4gMW2Q+NYCQrfWKnocjw2AG0Jc+z+D1h9S2suw
-	ZJOzxnSWh5gynmd+NQHqhu3h8J3TxyctZ4oi7Zx7Y6sxDZ1tsXKq7Jionudm5XVD54/jGFUBJVa
-	v1DizWJSXS8d+6CyLeo2e36//UJAdUXfYszwWspocvTbPMDO6SCq/W/NatvjiqJLEmM7gVIcAEP
-	2Yi/psLa9uM03gAQRRCIWInRPUyjHcQSHw6mFC0uK/oHCCoOa6/GDLTm3Ch+tHhZ+eZg/OtXB9N
-	mATpmuflJqnkH4ixr8jh0WqxFBZMLr5BisggdMs9DcHwoqC/tLW/YQ0YLQFH37a0Cl/yhfqtaj/
-	OMRXFC3WAS+uwgSxyuDk2F2NgSmuVYZ8hdZ3ZLjtFhVJNsuN5ci+Rej0yYTyZCBn8srvgHFX7k2
-	1X5XEC28KClgXKgY485GemNQJnk/Rt9uJ8+K2xG946MoHUIWMhX1kJpKDygyoq9oWI4pbnhjPC5
-	O4/4ngKzw==
-X-Received: by 2002:a17:903:1b2c:b0:2c9:8287:fd0d with SMTP id d9443c01a7336-2d37e9a3d6amr1507885ad.3.1786561893151;
-        Wed, 12 Aug 2026 12:11:33 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1786561905; x=1787166705;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :content-type:mime-version:subject:date:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=3B7kXto184IfdvkiNtrKwwTv2Mmp7EHyOrh+nVPdHPQ=;
+        b=rLFs8b7K7U0h7SYWOupDsOk/NlyMgo6x1/2SRnp12Zf76QJV4qL4xc+oezEC/YKSsU
+         BbqZs7J9/71GFWij0GmO5NRdpFzYQhEV5iUMYrh7V+DM0vsJpkq+rm7GrjmZVzDMF4+m
+         nt+XkieATO/0c5yEir5BY3Vmi9ebCfTaz9W6Qta1Axv2qUd96khf9bZIKtt5RaZG7J0f
+         XipP8k1q/UvBpuwuoRvWaW1ykCtF5EeJPmDuvngw1577dDIiAyoBMazXGxgN+mrC/Tj8
+         Rzl/ZlPttEZ3+lmhivMUrhBmP+Zx3WAiQwztrb25qPMUbF0NIJmYQC8PIm58lzpLZn+w
+         6Yxw==
+X-Gm-Message-State: AOJu0Yy/O3hDKvR+PpSCC9PvDggBNHO9t3+AHfIf3CVEwlK9uGFQFXAT
+	JuWC4gdWjEPTaAUECfnKJb9u+NNJsW8+nWtTlAYgmy7l95tqP4sUhRQr
+X-Gm-Gg: AR+sD11/fDQL8D5xWh28jJ+tQ1TRxAX94HNTWUPhz1m5IB+41t0CLMblceO5wf0BiWl
+	uxJeN/5kqwyqmTgEKCyQPhpDInEcVFiDhC6QCDR1uU2Fqn2nzMRfBnW5wHhjgJH9OYVuCDrO0GJ
+	Gl8XQQ0PxwF8qHWiWXg7qndsajBQvoLYBBe1bE+VpvxSC7dqrJJWXOJ36Ib7Z75h5SxV9wes6hE
+	aTMTjkqmQtTNvrko+U2ItsSStrWenBuPrvmKdyKhRne0n3+2Z1lf31Gk/YJj+d1PJRJLiadQdXA
+	AWd6/dUxRgd5U1iCFfRv0JYz7HM9oW9EQmis6FTnTmH0JwbT5fruZbocUr6EM2VmnRe5B0liq9C
+	s4e9E0cuYwpF/Njd3sX1vvdsrwDjI+U6CkHOw2hDKyl45ryPu6lL6LNIvAEy8zb/DtLCZpEoPEV
+	u6JChBd04Y0ASVzQvSbeNL/pIDuhnQq/ZgJYkDWPW/HKO0ubu/otCW25FPUfyEHpiAE5VWNG0=
+X-Received: by 2002:a17:903:184c:b0:2cb:2b50:d9da with SMTP id d9443c01a7336-2d37e8a68bdmr1263255ad.3.1786561905423;
+        Wed, 12 Aug 2026 12:11:45 -0700 (PDT)
 Received: from [10.170.23.252] ([2409:40c2:5017:a6a2:eb70:cb11:a19e:bd5])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-31da7bf64b5sm9496947eec.10.2026.08.12.12.11.22
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-31da7bf64b5sm9496947eec.10.2026.08.12.12.11.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Aug 2026 12:11:32 -0700 (PDT)
+        Wed, 12 Aug 2026 12:11:44 -0700 (PDT)
 From: Bhargav Joshi <j.bhargav.u@gmail.com>
-Subject: [PATCH 0/2] dt-bindings: clock: ti,dra7-atl: convert to dt-schema
-Date: Thu, 13 Aug 2026 00:41:16 +0530
-Message-Id: <20260813-ti-dra7-atl-v1-0-27b691f4cdcf@gmail.com>
+Date: Thu, 13 Aug 2026 00:41:17 +0530
+Subject: [PATCH 1/2] dt-bindings: clock: ti,dra7-atl-clock: convert to DT
+ schema
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -69,10 +70,9 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIzMDC0Mj3ZJM3ZSiRHPdxJIcXZPUZCNzE4M0SwNzAyWgjoKi1LTMCrBp0bE
- QfnFpUlZqcgnICKXaWgA93koMbwAAAA==
-X-Change-ID: 20260812-ti-dra7-atl-4ec2740f9070
+Message-Id: <20260813-ti-dra7-atl-v1-1-27b691f4cdcf@gmail.com>
+References: <20260813-ti-dra7-atl-v1-0-27b691f4cdcf@gmail.com>
+In-Reply-To: <20260813-ti-dra7-atl-v1-0-27b691f4cdcf@gmail.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -81,38 +81,125 @@ Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, goledhruva@gmail.com, m-chawdhry@ti.com, 
  daniel.baluta@gmail.com, simona.toaca@nxp.com, j.bhargav.u@gmail.com
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1786561882; l=1049;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1786561882; l=3600;
  i=j.bhargav.u@gmail.com; h=from:subject:message-id;
- bh=AQ9hXB8X/+C0kIfH42Eh0wrN/MNep89eqSlCKfNMfsU=;
- b=tJ7m642YL5hHG7Lu5Qp/kPHDG6Yud8/e5IRKiw8BdyLu+4LSAkikpfpnmy5rQsYjZtWtwqyAp
- g+ZM27HWzvAArdD+r0IU9s2tcynC02F/jFl7RD/WLXAzn/S2+H4ZPz1
+ bh=QRPObjn0T2tfzHzHXODIwHCVbLKA/nQO3o1BxGgfRGw=;
+ b=DFOrPCV2VjEUWtlAtTbng/bANfNCYOgDCWkZnM4nWP5LqiHMaOnTiphppFuA7aTCGcfjId3YG
+ mURMRC3JBIuAAxOJXKPEoHHpqFVq92gQ8VRK7Yu5QjNKYtWwPMrfPl3
 X-Developer-Key: i=j.bhargav.u@gmail.com; a=ed25519;
  pk=IqNDwUZKECEA+n8wXctFLBbYL9NhFstZNbOznm/nX1k=
 
-Convert the DRA7 ATL (Audio Tracking Logic) text binding to dt-schema.
-The original dra7-atl.txt contains two bindings mixed in one file:
-- ti,dra7-atl-clock: clock output nodes for the common clock framework
-- ti,dra7-atl: IP controller with register configuration
-
-This series splits them into two separate YAML schemas.
-Patch 1 converts the clock output binding.
-Patch 2 converts the IP controller binding.
+Convert the clock output portion of the DRA7 ATL (Audio Tracking Logic)
+binding from text to DT schema. property clock-output-names is added
+that is used by existing dts/dtsi.
 
 Signed-off-by: Bhargav Joshi <j.bhargav.u@gmail.com>
 ---
-Bhargav Joshi (2):
-      dt-bindings: clock: ti,dra7-atl-clock: convert to DT schema
-      dt-bindings: clock: ti,dra7-atl: convert to dt-schema
+ .../devicetree/bindings/clock/ti/dra7-atl.txt      | 38 ----------------------
+ .../bindings/clock/ti/ti,dra7-atl-clock.yaml       | 38 ++++++++++++++++++++++
+ 2 files changed, 38 insertions(+), 38 deletions(-)
 
- .../devicetree/bindings/clock/ti/dra7-atl.txt      | 94 ---------------------
- .../bindings/clock/ti/ti,dra7-atl-clock.yaml       | 38 +++++++++
- .../devicetree/bindings/clock/ti/ti,dra7-atl.yaml  | 98 ++++++++++++++++++++++
- 3 files changed, 136 insertions(+), 94 deletions(-)
----
-base-commit: d58772d8520c7ef247c4b95c9bd76d3a25da9ff5
-change-id: 20260812-ti-dra7-atl-4ec2740f9070
+diff --git a/Documentation/devicetree/bindings/clock/ti/dra7-atl.txt b/Documentation/devicetree/bindings/clock/ti/dra7-atl.txt
+index 68504079f99f..e3c05844ae86 100644
+--- a/Documentation/devicetree/bindings/clock/ti/dra7-atl.txt
++++ b/Documentation/devicetree/bindings/clock/ti/dra7-atl.txt
+@@ -9,20 +9,6 @@ signals - can compensate the drift between the two ws signal.
+ In order to provide the support for ATL and its output clocks (which can be used
+ internally within the SoC or external components) two sets of bindings is needed:
+ 
+-Clock tree binding:
+-This binding uses the common clock binding[1].
+-To be able to integrate the ATL clocks with DT clock tree.
+-Provides ccf level representation of the ATL clocks to be used by drivers.
+-Since the clock instances are part of a single IP this binding is used as a node
+-for the DT clock tree, the IP driver is needed to handle the actual configuration
+-of the IP.
+-
+-[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+-
+-Required properties:
+-- compatible : shall be "ti,dra7-atl-clock"
+-- #clock-cells : from common clock binding; shall be set to 0.
+-- clocks : link phandles to functional clock of ATL
+ 
+ Binding for the IP driver:
+ This binding is used to configure the IP driver which is going to handle the
+@@ -47,30 +33,6 @@ For valid word select signals, see the dt-bindings/clock/ti-dra7-atl.h include
+ file.
+ 
+ Examples:
+-/* clock bindings for atl provided clocks */
+-atl_clkin0_ck: atl_clkin0_ck {
+-	#clock-cells = <0>;
+-	compatible = "ti,dra7-atl-clock";
+-	clocks = <&atl_gfclk_mux>;
+-};
+-
+-atl_clkin1_ck: atl_clkin1_ck {
+-	#clock-cells = <0>;
+-	compatible = "ti,dra7-atl-clock";
+-	clocks = <&atl_gfclk_mux>;
+-};
+-
+-atl_clkin2_ck: atl_clkin2_ck {
+-	#clock-cells = <0>;
+-	compatible = "ti,dra7-atl-clock";
+-	clocks = <&atl_gfclk_mux>;
+-};
+-
+-atl_clkin3_ck: atl_clkin3_ck {
+-	#clock-cells = <0>;
+-	compatible = "ti,dra7-atl-clock";
+-	clocks = <&atl_gfclk_mux>;
+-};
+ 
+ /* binding for the IP */
+ atl: atl@4843c000 {
+diff --git a/Documentation/devicetree/bindings/clock/ti/ti,dra7-atl-clock.yaml b/Documentation/devicetree/bindings/clock/ti/ti,dra7-atl-clock.yaml
+new file mode 100644
+index 000000000000..c0795f4abcfa
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/ti/ti,dra7-atl-clock.yaml
+@@ -0,0 +1,38 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/ti/ti,dra7-atl-clock.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: TI DRA7 ATL (Audio Tracking Logic) clock output
++
++maintainers:
++  - Peter Ujfalusi <peter.ujfalusi@ti.com>
++
++properties:
++  compatible:
++    const: ti,dra7-atl-clock
++
++  "#clock-cells":
++    const: 0
++
++  clocks:
++    maxItems: 1
++
++  clock-output-names:
++    maxItems: 1
++
++required:
++  - compatible
++  - "#clock-cells"
++  - clocks
++
++additionalProperties: false
++
++examples:
++  - |
++    atl_clkin0_ck {
++        compatible = "ti,dra7-atl-clock";
++        #clock-cells = <0>;
++        clocks = <&atl_gfclk_mux>;
++    };
 
-Best regards,
 -- 
-Bhargav
+2.55.0
 
