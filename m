@@ -1,47 +1,47 @@
 Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C1702F9C37;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F52F3655ED;
 	Wed, 12 Aug 2026 02:00:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786500044; cv=none; b=hH/DjP8+rDFpo5R3teM+Vt5GZ0v+BTEmtqks1NHfVhNfz5tJ69+9lcx1DX4QtQdCO2we7E/9Q0Ipfc9US/m1hGifuq9qN9iBGx6FL54nSXYlCA/WLYx633BscwzkeVe9Hz5C7B/cc4YSyLmr2EajCnUostzvkPbhUQjND0SRRgE=
+	t=1786500045; cv=none; b=TZlOFZ7Zb8UeI93jdDv2VWvkwnf6HIuJq+ahZVUUKFSjgHVK+JoBlgnuORMRHilKvGsHoNUL55MXz9XEsM1jGAw3OjMhMD6YTarNkB4zq8gK29trFLBgo/f42q+fanXlX3rGXnJJjr4CGF6J9FFkRu5BQxtMhSooV2xQ9wazoUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786500044; c=relaxed/simple;
-	bh=Q6ed2O2QmNHoDOsEi4KBfe+83w1KLVF1rWCvg1Aj6QI=;
+	s=arc-20240116; t=1786500045; c=relaxed/simple;
+	bh=yrOVifZOCHCNLdhabMPMIXo7quCNRiYD5KLlrHxFpo8=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ze1/u8ykF15lyYqK1Z6033v8nsmyebUNSYYIhnh847a+Hm5Qjoax6wuRCWEhRCBY9CMvX+bQOJ0WcvCHEqTHGB5Q5p8xjK+QwTLxKzk6xx679fcyEJeZ2Oon89pgaLEG15lFRkOOb3G3q7Wdg3AP+QzgRFNJk3zwqOI548l3zjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=t+beRXvs; arc=none smtp.client-ip=211.75.126.72
+	 MIME-Version:Content-Type; b=KLdcnRI+hqsl2Wk++njzpv2Gf3RpP90sLrjSKDGjFnJwFoypqO0NBx5Z+iVLZVZUR8hutB369GuXw8czTGGN3Ot9wmw2yPYaMgUun5udQmqoDqnaynNp0lbCztCIl53ZRxQ/iMqs2w/2wX6EF57aG/TNqB5hvLRY5Ccwd/W9WBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=UBODLLcR; arc=none smtp.client-ip=211.75.126.72
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="t+beRXvs"
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 67C20InF43195425, This message is accepted by code: ctloc85258
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="UBODLLcR"
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 67C20FvO43195385, This message is accepted by code: ctloc85258
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1786500018; bh=QjU8/YGgXf0ugg6vhF4Nk+mZxcTEj5dK/UxEmB7d+wo=;
+	t=1786500016; bh=KgYY+WIycbfduOTkFqy6mvZn2eH5Fig7TzXKxjTlIwk=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
 	 MIME-Version:Content-Transfer-Encoding:Content-Type;
-	b=t+beRXvs/4/Xfog8wBKNwlJOo5BAm9CaLaYcsqXyc7Wnl77kr7ag57sEgKvX9bcmd
-	 QshvWoiNYNx5T+CpPMISoDbPgS+xC53HAwA6w08Vkp9ZQIysXRSj+JZZeBCFepijmQ
-	 hg4wHgSXrba4lUeHqj0IBgM/efXuAcde5jA9OM6skJzsQt5jK1d/SOSS4qT7rnHe+y
-	 igfH8P3KRYwe+R418o4tmCKv7dJ/1iobtdLzfzzNsI/FVK7X+q+f4+RMcMc3LaAAwx
-	 7V0191Yq/FZG/K2oUnUOpOUHb08R+Bz800uqK5TmuYWPmt//WpjvZ938kswGeGtl0b
-	 s/JjqUB3sfK+w==
-Received: from mail.realtek.com (rtkexhmbs04.realtek.com.tw[10.21.1.54])
-	by rtits2.realtek.com.tw (8.15.2/3.29/5.94) with ESMTPS id 67C20InF43195425
+	b=UBODLLcRwZzir1+C2XGYaULygX3Lys4ywcQRmB2fsk01C6WMqVDrH69UYhwkYl5wY
+	 2wRhltMiYwxOA/w67Kix0cryjbnmve9jWR90Z9OvgbOju5l3EEpIaERxwtWHYWzUYB
+	 r/zOnVjVv1ZDttfHU41lMCp9rcrsYw4KrQHgl8UeeaOM73HA29UkQPeSW4lsczb3pj
+	 C51Nz+b9fYEppL2ii8H1dYYcBGiPbOd9vnGo9CVPV0fRgF+OYDHDaV+xjGdk0nF94J
+	 yb66yHZz+x+pScwnBjYK8xtwyKPq+7QvEZqwRKWV8/60uJFsJBDF/jwtZl9DyLp1MS
+	 LhIGiWea+bGmg==
+Received: from mail.realtek.com (rtkexhmbs02.realtek.com.tw[172.21.6.41])
+	by rtits2.realtek.com.tw (8.15.2/3.29/5.94) with ESMTPS id 67C20FvO43195385
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 12 Aug 2026 10:00:18 +0800
-Received: from RTKEXHMBS01.realtek.com.tw (172.21.6.40) by
- RTKEXHMBS04.realtek.com.tw (10.21.1.54) with Microsoft SMTP Server
+	Wed, 12 Aug 2026 10:00:16 +0800
+Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
+ RTKEXHMBS02.realtek.com.tw (172.21.6.41) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.43; Wed, 12 Aug 2026 10:00:17 +0800
+ 15.2.2562.43; Wed, 12 Aug 2026 10:00:15 +0800
 Received: from RTKEXHMBS04.realtek.com.tw (10.21.1.54) by
- RTKEXHMBS01.realtek.com.tw (172.21.6.40) with Microsoft SMTP Server
+ RTKEXHMBS06.realtek.com.tw (10.21.1.56) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.43; Wed, 12 Aug 2026 10:00:17 +0800
+ 15.2.2562.43; Wed, 12 Aug 2026 10:00:15 +0800
 Received: from cn1dhc-k02 (172.21.252.101) by RTKEXHMBS04.realtek.com.tw
  (10.21.1.54) with Microsoft SMTP Server id 15.2.2562.43 via Frontend
- Transport; Wed, 12 Aug 2026 10:00:16 +0800
+ Transport; Wed, 12 Aug 2026 10:00:15 +0800
 From: Yu-Chun Lin <eleanor.lin@realtek.com>
 To: <mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
 	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <p.zabel@pengutronix.de>,
@@ -52,9 +52,9 @@ CC: <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
 	<linux-realtek-soc@lists.infradead.org>, <james.tai@realtek.com>,
 	<cy.huang@realtek.com>, <stanley_chang@realtek.com>,
 	<eleanor.lin@realtek.com>
-Subject: [PATCH v13 11/11] arm64: dts: realtek: Add clock support for RTD1625
-Date: Wed, 12 Aug 2026 10:00:09 +0800
-Message-ID: <20260812020009.3480538-12-eleanor.lin@realtek.com>
+Subject: [PATCH v13 07/11] clk: realtek: Add support for mux clock
+Date: Wed, 12 Aug 2026 10:00:05 +0800
+Message-ID: <20260812020009.3480538-8-eleanor.lin@realtek.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20260812020009.3480538-1-eleanor.lin@realtek.com>
 References: <20260812020009.3480538-1-eleanor.lin@realtek.com>
@@ -67,75 +67,134 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-Add the clock controller nodes and osc27m fixed clock for the
-Realtek RTD1625 SoC.
+From: Cheng-Yu Lee <cylee12@realtek.com>
 
+Add a simple regmap-based clk_ops implementation for Realtek mux clocks.
+
+The implementation supports parent selection and rate determination through
+regmap-backed register access.
+
+Reviewed-by: Brian Masney <bmasney@redhat.com>
+Signed-off-by: Cheng-Yu Lee <cylee12@realtek.com>
+Co-developed-by: Yu-Chun Lin <eleanor.lin@realtek.com>
 Signed-off-by: Yu-Chun Lin <eleanor.lin@realtek.com>
 ---
 Changes in v13:
 - None.
 ---
- arch/arm64/boot/dts/realtek/kent.dtsi | 33 +++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+ drivers/clk/realtek/Makefile         |  1 +
+ drivers/clk/realtek/clk-regmap-mux.c | 41 ++++++++++++++++++++++++++
+ drivers/clk/realtek/clk-regmap-mux.h | 43 ++++++++++++++++++++++++++++
+ 3 files changed, 85 insertions(+)
+ create mode 100644 drivers/clk/realtek/clk-regmap-mux.c
+ create mode 100644 drivers/clk/realtek/clk-regmap-mux.h
 
-diff --git a/arch/arm64/boot/dts/realtek/kent.dtsi b/arch/arm64/boot/dts/realtek/kent.dtsi
-index 8d4293cd4c03..409d46a73c91 100644
---- a/arch/arm64/boot/dts/realtek/kent.dtsi
-+++ b/arch/arm64/boot/dts/realtek/kent.dtsi
-@@ -26,6 +26,15 @@ timer {
- 			     <GIC_PPI  9 IRQ_TYPE_LEVEL_HIGH>;
- 	};
- 
-+	clocks {
-+		osc27m: osc {
-+			compatible = "fixed-clock";
-+			clock-frequency = <27000000>;
-+			clock-output-names = "osc27m";
-+			#clock-cells = <0>;
-+		};
-+	};
+diff --git a/drivers/clk/realtek/Makefile b/drivers/clk/realtek/Makefile
+index 840aff067b61..217ccaf5644a 100644
+--- a/drivers/clk/realtek/Makefile
++++ b/drivers/clk/realtek/Makefile
+@@ -4,4 +4,5 @@ obj-$(CONFIG_RTK_CLK_COMMON) += clk-rtk.o
+ clk-rtk-y += clk-rtk-common.o
+ clk-rtk-y += clk-pll.o
+ clk-rtk-y += clk-regmap-gate.o
++clk-rtk-y += clk-regmap-mux.o
+ clk-rtk-y += freq_table.o
+diff --git a/drivers/clk/realtek/clk-regmap-mux.c b/drivers/clk/realtek/clk-regmap-mux.c
+new file mode 100644
+index 000000000000..1069c95595aa
+--- /dev/null
++++ b/drivers/clk/realtek/clk-regmap-mux.c
+@@ -0,0 +1,41 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (C) 2017-2026 Realtek Semiconductor Corporation
++ * Author: Cheng-Yu Lee <cylee12@realtek.com>
++ */
 +
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -141,6 +150,22 @@ rbus: bus@98000000 {
- 			#address-cells = <1>;
- 			#size-cells = <1>;
- 
-+			cc: clock-controller@0 {
-+				compatible = "realtek,rtd1625-crt-clk";
-+				reg = <0x0 0x900>;
-+				clocks = <&osc27m>;
-+				#clock-cells = <1>;
-+				#reset-cells = <1>;
-+			};
++#include <linux/clk-provider.h>
++#include <linux/export.h>
++#include <linux/regmap.h>
++#include "clk-regmap-mux.h"
 +
-+			ic: clock-controller@7088 {
-+				compatible = "realtek,rtd1625-iso-clk";
-+				reg = <0x7088 0x8>;
-+				clocks = <&osc27m>;
-+				#clock-cells = <1>;
-+				#reset-cells = <1>;
-+			};
++static u8 rtk_clk_regmap_mux_get_parent(struct clk_hw *hw)
++{
++	struct rtk_clk_regmap_mux *clkm = to_rtk_clk_regmap_mux(hw);
++	unsigned int num_parents = clk_hw_get_num_parents(hw);
++	u32 val;
++	int ret;
 +
- 			uart0: serial@7800 {
- 				compatible = "snps,dw-apb-uart";
- 				reg = <0x7800 0x100>;
-@@ -166,6 +191,14 @@ isom_pinctrl: pinctrl@146200 {
- 				reg = <0x146200 0x34>;
- 			};
- 
-+			iso_s_cc: clock-controller@146310 {
-+				compatible = "realtek,rtd1625-iso-s-clk";
-+				reg = <0x146310 0x8>;
-+				clocks = <&osc27m>;
-+				#clock-cells = <1>;
-+				#reset-cells = <1>;
-+			};
++	ret = regmap_read(clkm->clkr.regmap, clkm->mux_ofs, &val);
++	if (ret)
++		return 0xff;
 +
- 			ve4_pinctrl: pinctrl@14e000 {
- 				compatible = "realtek,rtd1625-ve4-pinctrl";
- 				reg = <0x14e000 0x84>;
++	val = (val >> clkm->shift) & clkm->mask;
++
++	return val >= num_parents ? 0xff : val;
++}
++
++static int rtk_clk_regmap_mux_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct rtk_clk_regmap_mux *clkm = to_rtk_clk_regmap_mux(hw);
++
++	return regmap_update_bits(clkm->clkr.regmap, clkm->mux_ofs,
++				  clkm->mask << clkm->shift, (u32)index << clkm->shift);
++}
++
++const struct clk_ops rtk_clk_regmap_mux_ops = {
++	.set_parent = rtk_clk_regmap_mux_set_parent,
++	.get_parent = rtk_clk_regmap_mux_get_parent,
++	.determine_rate = __clk_mux_determine_rate,
++};
++EXPORT_SYMBOL_NS_GPL(rtk_clk_regmap_mux_ops, "CLK_REALTEK");
+diff --git a/drivers/clk/realtek/clk-regmap-mux.h b/drivers/clk/realtek/clk-regmap-mux.h
+new file mode 100644
+index 000000000000..ad524bb86a19
+--- /dev/null
++++ b/drivers/clk/realtek/clk-regmap-mux.h
+@@ -0,0 +1,43 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Copyright (C) 2017-2026 Realtek Semiconductor Corporation
++ * Author: Cheng-Yu Lee <cylee12@realtek.com>
++ */
++
++#ifndef __CLK_REALTEK_CLK_REGMAP_MUX_H
++#define __CLK_REALTEK_CLK_REGMAP_MUX_H
++
++#include "clk-rtk-common.h"
++
++struct rtk_clk_regmap_mux {
++	struct rtk_clk_regmap clkr;
++	unsigned int mux_ofs;
++	unsigned int mask;
++	unsigned int shift;
++};
++
++#define __rtk_clk_regmap_mux_hw(_p) __rtk_clk_regmap_hw(&(_p)->clkr)
++
++#define __RTK_CLK_REGMAP_MUX(_name, _parents, _ops, _flags, _ofs, _sft, _mask) \
++	struct rtk_clk_regmap_mux _name = {                                    \
++		.clkr.hw.init =                                                \
++			CLK_HW_INIT_PARENTS(#_name, _parents, _ops, _flags),   \
++		.mux_ofs = _ofs,                                               \
++		.shift = _sft,                                                 \
++		.mask = _mask,                                                 \
++	}
++
++#define RTK_CLK_REGMAP_MUX(_name, _parents, _flags, _ofs, _sft, _mask)               \
++	__RTK_CLK_REGMAP_MUX(_name, _parents, &rtk_clk_regmap_mux_ops, _flags, _ofs, \
++			     _sft, _mask)
++
++static inline struct rtk_clk_regmap_mux *to_rtk_clk_regmap_mux(struct clk_hw *hw)
++{
++	struct rtk_clk_regmap *clkr = to_rtk_clk_regmap(hw);
++
++	return container_of(clkr, struct rtk_clk_regmap_mux, clkr);
++}
++
++extern const struct clk_ops rtk_clk_regmap_mux_ops;
++
++#endif /* __CLK_REALTEK_CLK_REGMAP_MUX_H */
 -- 
 2.43.0
 
