@@ -1,132 +1,122 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B672B47A0B5;
-	Wed, 12 Aug 2026 15:59:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786550396; cv=none; b=WhYglj9W1Gfi4/sFcdxKDoAL+96496f8LKM+/v7CD2B8WHKB3c5Anj8wfUirt4H9pMkv2oINM3jE5yhoUPXNnB3GBqn/kA+V5CCE+MZn6HWXfhNvJZr/XdIAPi+RuTDvICbqXwZ+K4xIKelxm8+1H4nhpgmREDoq20A7KAYE1Wc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786550396; c=relaxed/simple;
-	bh=aZQt16LGIzHzurcmUs+2QEre0j//O7HWI34VN031cyo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uDlGD2Oum62zd3+R+72iiyJ1g+v+AAroVvrcJSoA9YVL91ymqeNoPs/IsKv3JEjVjrzTWKXfQdNb9ii4j/BepGWlKmdMYQAFKPh/ct96Nsa25rwBdeDHqTOQ2M0rLzA/e4Tod9bZmxDOffTiq/At8dgKjsSUNlc8TbO2S/DAbEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I4x2CJIS; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D108A388E60
+	for <linux-clk@vger.kernel.org>; Wed, 12 Aug 2026 18:21:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1786558871; cv=pass; b=Tab8GzFV2OKs1GTiSvafhDhr6mtqwzxqNfAx2Woi8xMaqoDXFVOBqYdt9H+Qe4TTigJ2li/BDM+N3xyGx4WsKCyeTA+lKsTnOyo/jAPupgO3KzKHMvTmOMiVjuIh89MO7ZUgVRNC3OBLTOe9HW3AXS61kROuqoh4n8JPcSQOORo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1786558871; c=relaxed/simple;
+	bh=wYRwnIOrDTshNQUOcwMnTufYCJHILpuwrSJ8FxA8hgc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oPASImHHmU7h0htV07eDv+EOLnecL5Myyhq7PH6tcPMwDwZiFIFuxozUY2MpX1jOImilIoZRUnRXndpjqK3wYYQSxaGAiEoLZ4s/Pg7pPRmcJZmQ3gMVuE+S6/AnovbnHCJV/RboD8o9MeR4lirzHjebJs++HuKk/URHkeein4E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=s9YrXPbQ; arc=pass smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I4x2CJIS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC2C61F000E9;
-	Wed, 12 Aug 2026 15:59:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786550395;
-	bh=NJMRKZ9D8pGUWxUVQCuDMkaEokEMslK+PwySCE/fC+Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=I4x2CJISHc2FxH+B7UiF7P/CqeEUKKowIsan/P2PhclryvOb5Wh4AHVLrIADFuUCT
-	 3CgcHzSzzqKY6kvrm3Qk2u4z7P/1g2NMASzyhdGi77YRofUgjIWLqfDi2Z5DYuyPGx
-	 j/K24JunkZXfk8zc4FQzotmgKXRozW97FqCSUIkb/D4tYB02W/TWZw8qUefsRTgZ3u
-	 XjYIN8B2KvDorq4w8AVcVu6umKTwi0ifne2raoqr6jfUC9OCcVGYe9lp3YJSN1kcXd
-	 3taGXmyCh5OPHJKwxJ4h/4I5PXGiqB2MdxpYeJG1B/RoqaoGpJlzIBCzJWL73hcVd0
-	 M+kvV8FeUe68Q==
-Date: Wed, 12 Aug 2026 16:59:49 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Changhuang Liang <changhuang.liang@starfivetech.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney@redhat.com>, Paul Walmsley <pjw@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Inochi Amaoto <inochiama@gmail.com>,
-	Alexey Charkov <alchark@gmail.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Keguang Zhang <keguang.zhang@gmail.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>
-Subject: Re: [PATCH v4 7/8] soc: starfive: Add socinfo driver for JHB100 SoC
-Message-ID: <20260812-snowplow-punctured-28d19616f707@spud>
-References: <20260809015054.210577-1-changhuang.liang@starfivetech.com>
- <20260809015054.210577-8-changhuang.liang@starfivetech.com>
- <20260810-caress-rack-45615c8d9747@spud>
- <ZQ4PR01MB120276A1DA91FAC19C852F14F2DD2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
- <20260811-populace-afflicted-40a40e0f484c@spud>
- <ZQ4PR01MB1202DDE6C255441E1FC4F916F2DC2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s9YrXPbQ"
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-6a18e24ad25so1737766a12.1
+        for <linux-clk@vger.kernel.org>; Wed, 12 Aug 2026 11:21:09 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1786558868; cv=none;
+        d=google.com; s=arc-20260327;
+        b=EVz2EYaW/oeDJKrlTfbc9mACgYTww40BS3kFG5MoPSELxY7+R5R0zcdQL5G741uegS
+         TJDS4FADuqnTNYoRdF6Ru4LnmzzrbdUcQm1oYHnO7Q+XmH7SCOeLZuVN4P6TmO/zR/BI
+         LyusIOkx1lCLPAsJ+cWMzdMUeK/c0yNZCQkHwK/dlw4+psIbFJ4YtCPN9O5GPDUnAD02
+         4cheAqyO1yOACphCEdgveQ1tycQylIaQRsbzvhXDJEQvCi43QeLoGmtgzNHcRFBf/GPn
+         6Gxmieh3ju90PS/Gyv6tZ2fzAtYZXd9Yn7FDVaTy3MqAo9AaURYWPcLakDiiEjTI2yi4
+         uTAg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=wYRwnIOrDTshNQUOcwMnTufYCJHILpuwrSJ8FxA8hgc=;
+        fh=RIJ5OKxslitT17VrKCgvbfqcJjgKX4eNo0phdYPtuXE=;
+        b=NDIshnaLMSv6VIEX8KajWsv+MgMs3HZ109fs4Y2Oa/9Wqg9wTA03ssV6rGAx8A5Rjd
+         yuZ4E69sGTk7oSMN5UPjpZaylBLjNlPsAdDrJNjotYk+u8PPPgSBh7tfxOAy6Z05zWjQ
+         sJtauPdf8jtStglLuKwmaxPR73EVHUaWtiJCUH7yjR2Cnz0gRQIpHWz+9Wqzmm9JpBS+
+         EUL0WlFlbsOAqCWmKYGW6JeCNxOt2Glml5ezob0dOajZZAZpIY7TYScBCVJe64dnup2A
+         B3tocS3gzHhbRY24uTjuOAlaTavSIT4go+1ymHGpzLEEtPBN8WbEabbApdp40xZ6e97O
+         BA8Q==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1786558868; x=1787163668; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=wYRwnIOrDTshNQUOcwMnTufYCJHILpuwrSJ8FxA8hgc=;
+        b=s9YrXPbQ3STyEJjQo8cTTWFghCosBn0fiyd7r/SwFa08I4lR/cFMH16LPZ3s/QKA1h
+         AB90/r3/7eCotegJErqVqJSE4g6NMAyaUxAfWGCFDmqvAAryJWOijJhZQsVTuMA3jYJW
+         EQI5Qb+nRRYTMI7tyE1pUKNvC+ZKIIR3/vIST164b0QGyR3ghSRHkKmoVXdbj0caEHfF
+         dL3QGc4FJNWHMY7Xhn7iuZShRo3LWEKds2XZQuWJaP7j0/H2cWUlspqWFOtGZ6T6m/zE
+         U9vgQ7d5VViLq89cN0Wh4mxnqnOJBiDx7YS/y12yZqec0lRT2fxi1te4jLsapaRoBzj6
+         NXBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1786558868; x=1787163668;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=wYRwnIOrDTshNQUOcwMnTufYCJHILpuwrSJ8FxA8hgc=;
+        b=CK45E/t7+JJ3qnIFY10vkpeS2vx3X/9t+V2L+kUnsuuc3khIBUnj/gk6vq3vq35Yxq
+         FootlEEmUgLHUyjPG6ejo9q/kaW3jQ8hz961Iz5MZSqQVqamc4WZVrdBHuuydZg6u5lp
+         VlIjNPOyzMmgLxDRlvUM1p37kHy/jcEJiJHUKRuX9x2ImYpDmGH/Xxn3wrDxODsPyXOq
+         JNE0EIUKY8uCsi4uX1/Id7EanhSZRWWqv2DdlvBc7/ZaxrEvW2gHsEgSeCKM3SsF1LjN
+         kzgDl8ZQ0UEvwNHuPW7oX3GjSzbyBlFsE6YoT4VSe6sDbznrfMU4GT6WX9exToDjH9Jq
+         fvBw==
+X-Gm-Message-State: AOJu0Yx2N4CL6ogz1wJ0L43w5NYz3yWKv5n74T+w8/kpTpIuvPqXsNG5
+	pD4nnnA0Y4hjih/2GHrE49b48Lsw0TmXXg2GAMa28TxEKjAiCkJR7JruLhb6D6M4QjA9xpvTr/0
+	T4qywYI0+/u0JTQJ9bFe3mRz1k/yfiC8=
+X-Gm-Gg: AR+sD10LB2bDLwjuloOMSmJ22qWhdFwAYx6A1G73HO/k1EbnNF3QDyZ8QU+CZ0Sd0Oj
+	xwcf+FC0Nza8ruz/82FNx1Q5e3cwJbPJ8nOgaVZUXPqBY4nee4ETG9EDhs1V51CKCoPB1WY4qtp
+	NRJdFrDZ+R0AwWQ+ZARD4ZqukzP+E67/tLbMKHxvj4GfD3GSc7t12XDfQbRMsImWBuM3Vva+iuI
+	/GNuKpsFSBRvfNZZBfRHp1/240rtKoZ5kBSb+q9rs9uYx34lf9Mp0bnMyrTN6zRtAjFzwkxT3/l
+	CjbieExFfzPpG355LrL5iDbttsBCrg7+tW9MRoxMyazmYS+CZ51NZYRw849YggPeuIDjm/ulThv
+	OvbbafPDRzgMYHo4gN8KQuwtvvzHgG+DwfCkod1xFbfnxU0h/voqfkyzs+C3NEwD9+J3UYcYpEi
+	OOwm9cbP6H8nlZq7MAqtZIfY9Pu/ijqImfxTNOyBSCAZj3sr7KhvSd/LA=
+X-Received: by 2002:a17:906:99d4:b0:c20:fc67:b38b with SMTP id
+ a640c23a62f3a-c2108dfe9b7mr8916966b.1.1786558867881; Wed, 12 Aug 2026
+ 11:21:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="0/8ZYX86hXcV68ER"
-Content-Disposition: inline
-In-Reply-To: <ZQ4PR01MB1202DDE6C255441E1FC4F916F2DC2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
-
---0/8ZYX86hXcV68ER
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20260811190821.117485-1-rosenp@gmail.com> <2c761e07-0a58-46a6-86bf-b5265b2a443a@lechnology.com>
+In-Reply-To: <2c761e07-0a58-46a6-86bf-b5265b2a443a@lechnology.com>
+From: Rosen Penev <rosenp@gmail.com>
+Date: Wed, 12 Aug 2026 11:20:56 -0700
+X-Gm-Features: AUfX_mxHUhlRj_wi9z6V0hWWe_9SaSKsD1UHvOmQSqtp1aMPswmY03yq7B72zF0
+Message-ID: <CAKxU2N-BzB2=ty67YEVHyx_BK_LVt84HWn2nQrGBZ8McG9dVsA@mail.gmail.com>
+Subject: Re: [PATCH] clk: davinci: guard da850-specific init data references
+To: David Lechner <david@lechnology.com>
+Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 12, 2026 at 10:37:16AM +0000, Changhuang Liang wrote:
-> Hi, Conor
->=20
-> Thanks for the review.
->=20
-> > On Tue, Aug 11, 2026 at 05:36:19AM +0000, Changhuang Liang wrote:
-> >=20
-> > > > On Sat, Aug 08, 2026 at 06:50:53PM -0700, Changhuang Liang wrote:
-> >=20
-> > > > > +static int __init starfive_socinfo_init(void) {
-> > > > > +	struct soc_device_attribute *attrs;
-> > > > > +	struct soc_device *soc_dev;
-> > > > > +	const char *machine =3D NULL;
-> > > > > +	struct device_node *np;
-> > > > > +	struct regmap *regmap;
-> > > > > +	char rev_char;
-> > > > > +	u32 rev_id;
-> > > > > +	int ret;
-> > > > > +
-> > > > > +	np =3D of_find_compatible_node(NULL, NULL,
-> > > > > +"starfive,jhb100-sys0-syscon");
-> > > >
-> > > > Remind me again why this is not just probed as an mfd cell from the
-> > > > syscon driver?
-> > > >
-> > > > (Hint: please put this info in the commit message).
-> > >
-> > > The discussion result with Krzysztof at that time is recorded here:
-> > > https://lore.kernel.org/all/20260405-strong-watchful-marmot-fdfad6@quo
-> > > ll/
-> > >
-> > > One register should not be treated as a separate device node.
-> >=20
-> > That's a different question. In the case of an mfd cell probed from the=
- syscon
-> > driver there would be no devicetree modifications required compared to =
-what
-> > you have now. e.g. sg2044-topsys.c
->=20
-> This seems feasible, and I can introduce this modification in the next ve=
-rsion.
-
-
-In fact, you don't even need the mfd cell, because your driver is going
-to be in drivers/soc/starfive anyway? You can just bind directly to the
-sys0 syscon I think.
-
---0/8ZYX86hXcV68ER
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCanyYdQAKCRB4tDGHoIJi
-0mobAQDzgMmD/jVoYQZei6nTfuveJwdi4b685lws443NIXWP0QD8DBQJ1Xj3fQIg
-zQ75R8EGuONF53vKAnR/U0HiwfckDgE=
-=Qh9P
------END PGP SIGNATURE-----
-
---0/8ZYX86hXcV68ER--
+On Wed, Aug 12, 2026 at 7:06=E2=80=AFAM David Lechner <david@lechnology.com=
+> wrote:
+>
+> On 8/11/26 2:08 PM, Rosen Penev wrote:
+> > With COMPILE_TEST support, COMMON_CLK_DAVINCI can be enabled on
+> > architectures without DaVinci support, where COMMON_CLK_DAVINCI_DA850
+> > is not set. pll.c and psc.c unconditionally reference da850 init
+> > functions and init data that are only built with the DA850 option,
+> > resulting in undefined reference link errors.
+> >
+> > Guard the da850 entries in the match tables and the CLK_OF_DECLARE
+> > with CONFIG_COMMON_CLK_DAVINCI_DA850.
+> >
+> > Reported-by: kernel test robot <lkp@intel.com>
+> > Closes: https://lore.kernel.org/oe-kbuild-all/202608111912.YS4Vg7Jh-lkp=
+@intel.com/
+> > Fixes: 34aeb6853fe2 ("clk: davinci: add COMPILE_TEST support")
+> I don't think this patch was ever accepted, so you just need to send
+> a v3 of that patch. Plus I left a comment on v2 that was never
+> addressed.
+Hrm I thought the kernel test bot operated on merged commits. Interesting..=
+.
+>
