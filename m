@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DB98189F43
-	for <linux-clk@vger.kernel.org>; Wed, 12 Aug 2026 06:05:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B991425A645;
+	Wed, 12 Aug 2026 06:06:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786514714; cv=none; b=YU2uobn/mQC6QDlbf85tWEXSX28/2fJYEGnRBARgvskJ3Z5rOzE3TPi/Xhdyl+n502xZXFV9/MeIzZZ6gJqOwyZ8CD0fFwAM//8zvFsOv6du0As/7Mh0wSm0A19RaeiiuXacN29HFDhataWOPA0zkiWkNdOJ9vxQtdx3brP3DFo=
+	t=1786514788; cv=none; b=BulEhbBk+3OoDO2vIgWn9r71yq8lwFWGNJ85g7sdpU3MpyMHEol8xaIo2eQthddIwD0E2Yw6QGiS8RGGfKLDGCPydLeHuGgkya/7L+aTYEBlZbI01sDkJHfayqbQVDP4YNuJBb1uKk8vFIZ0D0avQPsajtw4c5G6dbFsCVfnAMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786514714; c=relaxed/simple;
-	bh=tF8q2KGxIGEqAnL/94A4FYgAzE0IggmPIlI4rDmqALY=;
+	s=arc-20240116; t=1786514788; c=relaxed/simple;
+	bh=2et1wKanz40dbw3hVXk5rV+vq60nF7quTXDWPfYyDBQ=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=SoygqwtKl2kBmdhIIQpav79NxJVQw7RetrA49MGUyZ5Hq87Ga/DvClxwhuuJho6aGQVcKjTBurDv6xrIpfHnkk12Ok5klknvUfCuzn8WfFScgm765AhY45P7MOi2iycWw+1S6y2tLqh9eimld6+hEjKcHwQx3WQWqsK3dUA0TWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fmfxuqD0; arc=none smtp.client-ip=100.103.45.18
+	 To:Date:Message-ID; b=eFjHbtv1T+tZloRuFKJmuww+Whx40XlJ/RlupT/+DGpx2MbLkOwiOte9bhNlB1toR5WBqNuWt0y1dsoJJruyyi+e1a9CP/qJ+jfXlRWATWrP+9eYmJzlzT7K4egWIVx4SHX0UXZnk2U+314oRXljca5G5ArYYvrVdPFv46dtAfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rc5RsEcS; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fmfxuqD0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A09991F000E9;
-	Wed, 12 Aug 2026 06:05:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rc5RsEcS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50C9B1F00A3A;
+	Wed, 12 Aug 2026 06:06:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786514712;
-	bh=Z5kwtcLai9cqB9k96HC7xug55Ee5HhObcrKVWtvYDQk=;
+	s=k20260515; t=1786514787;
+	bh=kCvlCH6G6hLi7/+gEcb5Pr8BYZkvcHnMDP/PheZZ+p8=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date;
-	b=fmfxuqD0N2DIMWW2+XmDXhm5U0sj0eKCKTpYTArDp9qm3F2SGYiUHO216zL9HdZ/i
-	 Ay3z2aA8Jj5VCGehLnIFzRWjb47pwDdubyGGZ9JkZs5fZi4lM6c7RpX6ze7++hqnsk
-	 N1xCBKVzPhN6e/hpJhNuhLOnlQo8C3vTwKgle+EGn5ZSZDBcyBvxsaUuNMHNziJnrU
-	 tAsXkWW0q85jU8FNCzwumS0F+vUT3dIh60U7OUew5DjhVoY8Z8ziHVt5se3rqnfTW8
-	 BKr+zfe0VU2bshkdu4Oj8w9xz9WT9dyGCId7XWBi+QQPM87YdXs25yAF2Lkdem2p0+
-	 MXpxIeupZkI6w==
+	b=Rc5RsEcS+HSaDGPeWT2EOmCf5uMhb0+Gw5gtGTo9ulVSoqWSoIcyZLXoKtVMAzgXd
+	 OdfQPfsPJnqQRyde20g+7gnC1MSLqErxayupPWJkmXGxUweJrgEEib34VuE0offnIB
+	 YMT2mTjj4lTyI9Ju9O7bKuaWyg9see5+X6wksX4ssVf5KsbG0kN27/cBd8bA52li1U
+	 L2KWzeddKJYeoCERHZuUMft+xBtFmTNXwfDltnMtKRFZ1zuyp+bNA70mO1uEmFIgU0
+	 oOcfhT3mHJEcKi9DcjJ/PNmjr+jVZQeL0KUL9oTTBDTBuYdRUxcI2cwfFqr052Utpi
+	 JW6FX/UaAwhnA==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,26 +34,17 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <5218537.CQOukoFCf9@diego>
-References: <5218537.CQOukoFCf9@diego>
-Subject: Re: [GIT PULL] Rockchip clock changes for 7.3 #1
+In-Reply-To: <20260806082130.165665-2-krzk@kernel.org>
+References: <20260806082130.165665-2-krzk@kernel.org>
+Subject: Re: [GIT PULL] clk: samsung: drivers for v7.3
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
-To: Heiko Stuebner <heiko@sntech.de>, mturquette@baylibre.com
-Date: Tue, 11 Aug 2026 23:05:10 -0700
-Message-ID: <178651471066.5862.7206595209942698705@lazor>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org, Sylwester Nawrocki <snawrocki@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Brian Masney <bmasney@redhat.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Michael Turquette <mturquette@baylibre.com>
+Date: Tue, 11 Aug 2026 23:06:25 -0700
+Message-ID: <178651478560.5862.9382305183926307170@lazor>
 User-Agent: alot/0.12
 
-Quoting Heiko Stuebner (2026-08-05 14:23:57)
-> Hi Mike, Stephen,
->=20
-> please find below a pull-request with Rockchip clock changes for 7.3
->=20
-> Please pull.
->=20
-> Thanks
-> Heiko
->=20
+Quoting Krzysztof Kozlowski (2026-08-06 01:21:30)
 > The following changes since commit dc59e4fea9d83f03bad6bddf3fa2e524917774=
 82:
 >=20
@@ -61,13 +52,12 @@ Quoting Heiko Stuebner (2026-08-05 14:23:57)
 >=20
 > are available in the Git repository at:
 >=20
->   https://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.gi=
-t tags/v7.3-rockchip-clk1
+>   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/sam=
+sung-clk-7.3
 >=20
-> for you to fetch changes up to 586ff159ec02533c17dd928641529cb0b52e9c62:
+> for you to fetch changes up to 6d32ae6403694035896cbf0436088fca4c6a35f1:
 >=20
->   clk: rockchip: rk3576: fix source muxes for SPI0..SPI4 (2026-08-05 22:4=
-5:22 +0200)
+>   clk: samsung: pll: use kzalloc_flex (2026-07-18 18:21:13 +0200)
 >=20
 > ----------------------------------------------------------------
 
