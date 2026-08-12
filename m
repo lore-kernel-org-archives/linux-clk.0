@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCA8B384CFA;
-	Wed, 12 Aug 2026 04:11:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B796392822;
+	Wed, 12 Aug 2026 04:12:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786507869; cv=none; b=KJCW1QAdc5HdVlFFBTnB3eKEoL9xfPwUX+iewKKT9KegP9cHkse3a0YD3OC5NwPpSbdQZVznNNIjJj0y4KIARxTrRm/mm28GbJbdCXv4++4EVcnR3sOaqfeDlZUy9QL0iV8+n2OPjXgY6ZgJFbkuQxEvvi2ZEzrQj7UZNlMRh/k=
+	t=1786507978; cv=none; b=o0Si06d0yD5GIgDEZcFvTAR9pLVa4gmEmp+CZb+zfI3D3CLbefpGkQGjccXECZcZ0yWRK6oILLqgMjln05TM38mBhVjVky44LOLp3vF6doPSCq0UvfswJM7rrRfdEW2n8xoZo2zOAIS3zJjZTxjCpFz//DAEUbZtyXCUp5NSJdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786507869; c=relaxed/simple;
-	bh=Rg827rDRcODl/QK4IHiUCFOq7OzX1WuWjygYfP7AzN0=;
+	s=arc-20240116; t=1786507978; c=relaxed/simple;
+	bh=3GyCG4ENPjU2er/ZD6EGkYAtIY++ZEzzHLnDekFIgjk=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=ikfnKjS1WkZXPP62eueJCtmJXrRzeVWZdZ8gIDaRaWHqjz5jqwaA6LvvCVq8di9F4XfgLsJWGJb0tcIKtSRKRWKjrAOMyqaGKXc5cTiBt9qHHT+XyLuPLYzNWuvKfzqAjj+aKiru1Q3UBQ1CfNRgs7ixwpBfQSH8QHiuSM4nI0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VLmtQxyS; arc=none smtp.client-ip=100.103.45.18
+	 To:Date:Message-ID; b=Q6d6kpqcT9XIyppp8Rijw9RLJo4tPM6ekeyBxO0QsPZNAd6OYBvfMVnhuaR0UR9Gjd13tyr50ABqiLy5CSlazGWLuTe0e7e1c2ZOKbrahFLEWyi3LW442DB5bnaxokdfTlE0csESzbqg4qFGzsHvVquXpA//LJ3Rg5Yp3K0ImQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O3mIj5F+; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VLmtQxyS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F9FC1F000E9;
-	Wed, 12 Aug 2026 04:11:08 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O3mIj5F+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E13541F000E9;
+	Wed, 12 Aug 2026 04:12:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786507868;
-	bh=ZLdGvYtPx/SJa2vCX15lKvUKymeUZ/q/AFxjf0rZ/50=;
+	s=k20260515; t=1786507977;
+	bh=RrHE3aGIrKTKDwX3FTWtTlRI2BGruV0cbyers61/ziI=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date;
-	b=VLmtQxyS6fDnxPibwApEFou8yMDV9pgFt69ezH9JAVSi+dDrz09ZwG+xJWGCW7uQ3
-	 Zjp1lREuIJ92vsJcfDwQGGn1jECN71hvuPN390ZolMPQ2gmnNbXantDf5KRsQ6nBB9
-	 03pJCF60OWJzzhvmPB1Yf5+poNGXmA0cpnTV0CgjI+XiX/EdW9VdCQYQW7J12jFKqd
-	 HhKLhKzibevLTbUbpCs5Oxd0ju2aLtJKr6SWnpjaHkPdFSUREkDd3pkzplZKkuEyS/
-	 r9l8tV0bAKS0ICQxwO3vZvpu/LltWvlavzdsTfbXROtsPKOWyvI4tg62YEsaX/cAIJ
-	 VpnhD/ZloxGGQ==
+	b=O3mIj5F+4MY6GAdjIfrFUBGNJPj4AncHaim/thcAVCLfAcLFEDso7WM7HsPL4MlBu
+	 1lVaiAyR9TPxbi2ItFYv1D9jdN/+RSD5CufnoZ1RMsZVcwPFLLuL0Ky5OyZ9ZmY9D1
+	 61OYpwC6BLpGBuD49SNH9M7b3uCPoGsNdZJs8TpSZ2AvTkjRxVwVo8brNdLoBDDmrE
+	 E8RCsqvtAgtrFYQqdVL0kFQyYkzsR4kbEkudvvJ6YEIbQEBn64vQg0EDWZAOuvVxri
+	 D3NRt7On3KapAFqe56m/r7+5ibixvSArrNuAffnY20wfTAI4MQFd9N5x11vnHddIOV
+	 1tgLNZ+DH5HWg==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,33 +34,33 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <cover.1784195202.git.geert+renesas@glider.be>
-References: <cover.1784195202.git.geert+renesas@glider.be>
-Subject: Re: [GIT PULL] clk: renesas: Updates for v7.3
+In-Reply-To: <cover.1786090463.git.geert+renesas@glider.be>
+References: <cover.1786090463.git.geert+renesas@glider.be>
+Subject: Re: [GIT PULL] clk: renesas: Updates for v7.3 (take two)
 From: Stephen Boyd <sboyd@kernel.org>
 Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 To: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>
-Date: Tue, 11 Aug 2026 21:11:06 -0700
-Message-ID: <178650786652.5862.6578978384046656833@lazor>
+Date: Tue, 11 Aug 2026 21:12:55 -0700
+Message-ID: <178650797526.5862.14608140389393921420@lazor>
 User-Agent: alot/0.12
 
-Quoting Geert Uytterhoeven (2026-07-16 03:04:10)
+Quoting Geert Uytterhoeven (2026-08-07 01:19:54)
 >         Hi Mike, Stephen,
 >=20
-> The following changes since commit dc59e4fea9d83f03bad6bddf3fa2e524917774=
-82:
+> The following changes since commit 2df26b8663b6f315d0e9364927c8503280fe3d=
+d3:
 >=20
->   Linux 7.2-rc1 (2026-06-28 12:01:31 -0700)
+>   clk: r9a08g045: Add clocks and resets for CAN-FD (2026-07-13 13:58:01 +=
+0200)
 >=20
 > are available in the Git repository at:
 >=20
 >   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
- tags/renesas-clk-for-v7.3-tag1
+ tags/renesas-clk-for-v7.3-tag2
 >=20
-> for you to fetch changes up to 2df26b8663b6f315d0e9364927c8503280fe3dd3:
+> for you to fetch changes up to 0fb9083a6e56f688aeeccfc7ef7eeba586e57dc6:
 >=20
->   clk: r9a08g045: Add clocks and resets for CAN-FD (2026-07-13 13:58:01 +=
-0200)
+>   clk: renesas: Add R-Car X5H CPG driver (2026-08-06 10:00:14 +0200)
 >=20
 > ----------------------------------------------------------------
 
