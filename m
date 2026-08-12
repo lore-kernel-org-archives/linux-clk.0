@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E422A2D6E44;
-	Wed, 12 Aug 2026 05:05:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB6192D6E44
+	for <linux-clk@vger.kernel.org>; Wed, 12 Aug 2026 05:07:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786511103; cv=none; b=UXKo6/y4ho1XYDPEyY1ZG6/kjtUsTC1FqI5uQ0chHKWD4BujsQDgZ2pg8436mWYJYYgpuVsYvgnBmEYtjjWvmUxpGiXRSTwkie2FN+3VTxNujCzgU+66HWlkuVzYBkaLDSaHegPBxxMfcHT16aMCeld18E9D/pmO9iJGTz/mmvQ=
+	t=1786511221; cv=none; b=bdfPnGg6qVYry0UIdRduu/X2GrM7XPDhsKhIZjXBg17detwb4B+kbernncTR2KVU7ocNGWccuiJpZW1TjR+BOJFBtO2pHaORx8qKC3w9lr0FkhbeEtnntjpsOEQeawejVuADfkciaV7wOLpp0sVKPdPjShbrudda+q/07uivIMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786511103; c=relaxed/simple;
-	bh=g8UsJ6js6XQ8w82LoFRPM82v07mMs+HpK2kRcqWCgdA=;
+	s=arc-20240116; t=1786511221; c=relaxed/simple;
+	bh=VUZIVoN/9aMr574MDKj4Rgi7kY4YGweNyrHS3NGPgtA=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=IDD4JoBlDts6Zad655Mz6v5N8vxIYFmakfY4FA2zimNVb79bZuhMBKsbAOuwwHnjhE3tkGS16ISfjw0Olfk+sTcEBvKoLSeKmeKQ3khfO931NeBLsJBs5bTdKNihInMgcIVQBrVnIKrkHwht4WzF3sttJpfkeG/fMNiHaRPtiSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LRv0de3f; arc=none smtp.client-ip=100.103.45.18
+	 To:Date:Message-ID; b=gt662NXiEG6Hs/DKBTxvHBjkTPTTGE474bJd0oogVlV2w6NjdsMLPikFcS6g9SuNQ9OBs4lVMA2kg4KFhdb4LbkW/1Jyo6Mzx2NNOm6RbmPjJXGqqsOJZVBeocxArWqNgFxCiCjADgj2bLebfRoUzoSbfSi5BTuR2n9QblfZuZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LKbS0+Qi; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LRv0de3f"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 188811F000E9;
-	Wed, 12 Aug 2026 05:05:01 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LKbS0+Qi"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68EDC1F000E9;
+	Wed, 12 Aug 2026 05:07:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786511101;
-	bh=lGRa0j36nHTZvzLPz8m3jS1r9OBEvZJ4DiCu0wGwMYw=;
+	s=k20260515; t=1786511220;
+	bh=utHsm6FG+U4VgEp01NBzjQkdxSyUSz3OrQhJ8WjPFcg=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date;
-	b=LRv0de3fqWTNrooxEvE+dn4DNE0C6iZwt46JCtWtQhm6iA2gornZKM6NnhGRs7ySj
-	 rvk6OtBPSKPFXO/ELJzmgpXDbE+fsvs0DzV5xRXuecJH+Mfw59YebAFTqoLlEmtuHw
-	 HYY3Whq9U/EE/f+b9UtcSoGPxcS607C8EvHLkTLKYpo7/xQpyrFYtjLaDWPKDQ01qT
-	 zLxeuymbISYhPF1p5yEkass7mv0ahGAtSGlzT43NGH8bDLu1TK8wX7+T6mGR+JAq20
-	 05J4CMi5rxLj4McnLpLv5IozHq31Mkd8zEehvIbAIxe0BrhC2bUSYfPOnW2orVqQI4
-	 8s0aMnRDEio4g==
+	b=LKbS0+QiHJlMhTXBXBqGyysX9+L1Ish/0Rj+hd5zxzsf9dJSvqVi5EQjAlIfQU3Rf
+	 cPyrSika0j6jachHkyZRk5NgSex8RZCNh8qXbvDKHSJ9+PbRnrJkdV5DH6J3CO+UEu
+	 TZWYIqjOS0XxIRp4ldUQZFLNGWZzuKOYbOSDxWn/5zl+uG94sD/LM+BK8IoUG/OCUz
+	 dU3wV8ia0l0H6q4OcGbupita3Wq/8ufOGN8q9/r/NI/R8pyVUoSSWIqUVQnIfm1+GN
+	 xLflqCynNi2aVGS5Z3ktyw3gNSsp8K/bfIiHoHygSurtHhdPgykNeCNW4tutem9+4f
+	 i/wy8nxe+GIjg==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,33 +34,27 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <RcAweJqGSl27gSWWG_TpDg@bootlin.com>
-References: <RcAweJqGSl27gSWWG_TpDg@bootlin.com>
-Subject: Re: [GIT PULL] clk: eyeq: Support for Mobileye EyeQ7H for v7.3
+In-Reply-To: <1jmrv7xlyk.fsf@starbuckisacylon.baylibre.com>
+References: <1jmrv7xlyk.fsf@starbuckisacylon.baylibre.com>
+Subject: Re: [GIT PULL] clk: meson: Amlogic clock changes for v7.3
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Brian Masney <bmasney@redhat.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, Gregory CLEMENT <gregory.clement@bootlin.com>, =?utf-8?q?Th=C3=A9o?= Lebrun <theo.lebrun@bootlin.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-To: =?utf-8?q?Beno=C3=AEt?= Monin <benoit.monin@bootlin.com>, Michael Turquette <mturquette@baylibre.com>
-Date: Tue, 11 Aug 2026 22:03:10 -0700
-Message-ID: <178651099021.5862.1840015036350433599@localhost.localdomain>
+Cc: linux-clk <linux-clk@vger.kernel.org>, linux-amlogic <linux-amlogic@lists.infradead.org>, Brian Masney <bmasney@redhat.com>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Date: Tue, 11 Aug 2026 22:06:58 -0700
+Message-ID: <178651121874.5862.15074147400142820342@lazor>
 User-Agent: alot/0.12
 
-Quoting Beno=C3=AEt Monin (2026-07-24 00:54:57)
+Quoting Jerome Brunet (2026-07-31 07:39:15)
 > Hi Stephen,
 >=20
-> Here is a pull for the clk-eyeq driver adding support for Mobileye EyeQ7H
-> SoC. This pull request is a clean rebase of the version that was posted
-> during the last release cycle[1] and it was also posted as a patch series=
-[2].
+> Here are the Amlogic clock changes for v7.3
+> Nothing out of the ordinary, 1 fix for an old chip and 2 new controllers
+> for a new chip.
 >=20
-> Alongside the changes to the clk-eyeq driver, this pull request also
-> provides the dt-bindings reviewed by Krzysztof Kozlowski, a change to the
-> reset-eyeq driver acked by Philipp Zabel and a small rework of the
-> fixed-factor clocks reviewed by Brian Masney.
+> Please Pull.
 >=20
-> [1]: https://lore.kernel.org/linux-clk/h_BA0KRKTGSANQ5Y4eqo6A@bootlin.com
-> [2]: https://patch.msgid.link/20260604-clk-eyeq7-v8-0-53f618174cf6@bootli=
-n.com
->=20
+> Cheers
+> Jerome
 >=20
 > The following changes since commit dc59e4fea9d83f03bad6bddf3fa2e524917774=
 82:
@@ -69,11 +63,12 @@ n.com
 >=20
 > are available in the Git repository at:
 >=20
->   https://github.com/benoitmonin/linux tags/clk-eyeq7h-7.3
+>   https://github.com/BayLibre/clk-meson.git tags/clk-meson-v7.3-1
 >=20
-> for you to fetch changes up to 44af1b974949c8f2f7cca469c0c7eee481750309:
+> for you to fetch changes up to 6f809ca8104b01dff31a20e91fa748b49fe2971f:
 >=20
->   clk: eyeq: Add EyeQ7H compatibles (2026-07-17 10:09:56 +0200)
+>   clk: amlogic: Add A9 peripherals clock controller driver (2026-07-24 18=
+:09:37 +0200)
 >=20
 > ----------------------------------------------------------------
 
