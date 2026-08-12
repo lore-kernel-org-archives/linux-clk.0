@@ -1,136 +1,77 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E7732989B5;
-	Wed, 12 Aug 2026 02:11:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEAF7221F20;
+	Wed, 12 Aug 2026 02:14:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786500677; cv=none; b=Fs5/aSSCdailbSj1bqrnIyorbAvQrBl+AXzLsDiWiy9BBBrpSf8Z31weUt6mvxxNcu8LBCamjvJPqIYpL3iqJBlI/yYvoVUmCuNlTLDlFK0QS62mO2ZIa8CjZgJEDZZ3Pgtk0ys39sttM7xqF97jlfs1uoghXBP+YMDsv6h69xk=
+	t=1786500856; cv=none; b=de3TUVXviUXRCTP9n9KlR8jli9TzoIFqixw0cyOKzXJUjF4WMF7aMFymGrxLJ5LtO5a+Ec8GEryrJErIo74rW1b5BNuookaU/MbOx2S7YAyZxXWKHGbOcNXxmOsEgma9VaeVSLvjluoVNk1dw7yaje5a43zYTCGdczEcLXRFTks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786500677; c=relaxed/simple;
-	bh=RDkVrU46qfbezplnf34lnL8JdN5YKm4gGE8ELdbqDv8=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=gw+5t8VKIGOMZGuHQRCQtl00I+4AsK6m4JpMKrVRSeZMOc+QavGDrdCK8MrEFdCWJnUsR7gmC+KKW2K1LfeVmX771IjUyB2J0D5WYep7/+wgBI3an05ibDW9Fk06mt6OhJA6P26yu5UGVQieqxvzwyodLfSnwsfzklWh9xJBIWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZkcJAR6I; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1786500856; c=relaxed/simple;
+	bh=cjp5466UPtGsRI1oPPhujznS23m0UTvCNCpSRltINWo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=msAS6/UF0WE73tEfBa30+aSfl+026unWBsR1UFOpT+b/o6qsF3bXeY1PAMcunN+z2IBtmkjl6iAHCf534q0cBv9l6zvYt3x4zhpPB7R8PO8eVNsNMxbBd69fCs5FxloUccqWIQ/SGkVL0yQ84QYzsBcnKkVBx+BZ1HOIoZMYnHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kYleE3OX; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZkcJAR6I"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DCFC1F000E9;
-	Wed, 12 Aug 2026 02:11:15 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kYleE3OX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 764D01F000E9;
+	Wed, 12 Aug 2026 02:14:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786500675;
-	bh=p7hWHzo9I5jbN7ixDuyzEfWCZkxWYEDnokTrTpDYiUk=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=ZkcJAR6IJGDDg5ohJ6CoeZ+fSCUDzHCeFDIO4xB0HGQmhOXJFgWwd3hISPW0NgPfL
-	 KafxIKePOUlL7I6OwL8sdAStQoD5gAHFq8L/J2osXSdYEhp87GPZ1JhplnvtZBrl4q
-	 iyXzKHJNlPJ4nJLbKG2NDGQHPNh7ER2Oub/ItBaBC089gRnrHkgm2yy+wGFNAeq1Dr
-	 5hCZItKp5BJ5MOSsIt+BJmuXfQLyYm2UFHcZ4CXOv80OuW6xinVNQWjr5QXiXtxE/C
-	 QFm/+K/0eVpO7NEcv9P/XfW14F23BTYccqg/9+AUOZSxTtZ11FYqB/cvC+CHxFE1X7
-	 f0PdYxZim2baw==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v13 05/11] clk: realtek: Add support for phase locked
- loops (PLLs)
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Yu-Chun Lin" <eleanor.lin@realtek.com>
-Cc: robh@kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, conor+dt@kernel.org
-In-Reply-To: <20260812020009.3480538-6-eleanor.lin@realtek.com>
-References: <20260812020009.3480538-1-eleanor.lin@realtek.com>
- <20260812020009.3480538-6-eleanor.lin@realtek.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 12 Aug 2026 02:11:15 +0000
-Message-Id: <20260812021115.7DCFC1F000E9@smtp.kernel.org>
+	s=k20260515; t=1786500855;
+	bh=y5ZRVDWon254SFNP+iXzizz1fTYM1I6XRxtfO4wD3RU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=kYleE3OXKSup0WqEViKSGN+l5FIYFD+IA3b/JkLgQDZnbGJc/8MORzkhmW9Y1tnZR
+	 YpOSGqnIYh2HHs13NJPQcy+v6+JWvF+Lz+puoEkzvVK7QiICr00uzvHM7rYLSuEEff
+	 Sv5auD9hvcC0rv9BNWRCFfzfpJQ3MsrumWW6TvEmbxQMAewblCwjGy5mnakx61ZqPL
+	 UWQstuHi1yYYg+MOk9tsNQpDO2W15l+uzTNva7m2fS2wiqeQAKM0GbgFTON578yzb5
+	 SB2Iv04FwMSOGlvMLmrrQ7B5yALMyre1tZOdLEcPbb0RmRC85NSL1/PejbuhG1Rb/J
+	 4bH2uMX7CxG5g==
+Date: Tue, 11 Aug 2026 21:14:14 -0500
+From: Rob Herring <robh@kernel.org>
+To: Qiang Yu <qiang.yu@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Taniya Das <taniya.das@oss.qualcomm.com>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] dt-bindings: clock: qcom: Move x1e80100 TCSR to
+ own binding
+Message-ID: <20260812021414.GA544668-robh@kernel.org>
+References: <20260805-hamoa_tcsr_qref_0805-v2-0-4f1cfb1fcab2@oss.qualcomm.com>
+ <20260805-hamoa_tcsr_qref_0805-v2-1-4f1cfb1fcab2@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260805-hamoa_tcsr_qref_0805-v2-1-4f1cfb1fcab2@oss.qualcomm.com>
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
-- [High] Asymmetry in power sequence execution for PLLs without a power sta=
-tus register will lead to permanently disabled clocks.
---
+On Wed, Aug 05, 2026 at 10:34:55PM -0700, Qiang Yu wrote:
+> The QREF block supplies reference clocks to PCIe/USB/UFS PHYs and
+> requires dedicated LDO supplies to operate. The digital control
+> interface for QREF (clkref_en registers) resides in TCSR on x1e80100.
+> Since QREF has no dedicated DT node of its own, these supply
+> properties are placed in the TCSR node which acts as the control
+> interface for QREF.
+> 
+> These LDOs are required by QREF to provide a stable reference clock,
+> without which the USB/PCIe/eDP PHYs cannot work properly, so they are
+> marked required even though it breaks ABI.
+> 
+> Add a dedicated binding file for qcom,x1e80100-tcsr and document the
+> supply properties.
+> 
+> Signed-off-by: Qiang Yu <qiang.yu@oss.qualcomm.com>
+> ---
+>  .../bindings/clock/qcom,sm8550-tcsr.yaml           |   1 -
+>  .../bindings/clock/qcom,x1e80100-tcsr.yaml         | 118 +++++++++++++++++++++
+>  2 files changed, 118 insertions(+), 1 deletion(-)
 
---- Patch [5]: [PATCH v13 05/11] clk: realtek: Add support for phase locked=
- loops (PLLs) ---
-commit e50b49e7f53401294ef59626cc76a96ba5a0781e
-Author: Cheng-Yu Lee <cylee12@realtek.com>
-
-clk: realtek: Add support for phase locked loops (PLLs)
-
-This commit provides a full set of PLL operations for programmable PLLs and=
- a
-read-only variant for fixed or hardware-managed PLLs.
-
-> diff --git a/drivers/clk/realtek/clk-pll.c b/drivers/clk/realtek/clk-pll.c
-> new file mode 100644
-> index 0000000000000..31670b8316cd5
-> --- /dev/null
-> +++ b/drivers/clk/realtek/clk-pll.c
-
-[ ... ]
-
-> +static bool is_power_on(struct rtk_clk_regmap_pll *clkp)
-> +{
-> +	u32 val;
-> +
-> +	/* reg =3D=3D 0 means not configured (assume always on).
-> +	 * Register offset 0 is never a valid address on Realtek SoCs.
-> +	 */
-> +	if (!clkp->power_reg)
-> +		return true;
-
-[Severity: High]
-Could this result in a permanently disabled clock for write-only PLLs?
-
-If a PLL is configured with power-on and power-off sequences but lacks a po=
-wer
-status register (power_reg =3D=3D 0), is_power_on() will always return true.
-
-[ ... ]
-
-> +static void rtk_clk_regmap_pll_disable(struct clk_hw *hw)
-> +{
-> +	struct rtk_clk_regmap_pll *clkp =3D to_rtk_clk_regmap_pll(hw);
-> +	unsigned long flags;
-> +
-> +	if (!clkp->seq_power_off)
-> +		return;
-> +
-> +	spin_lock_irqsave(&clkp->lock, flags);
-> +
-> +	regmap_multi_reg_write(clkp->clkr.regmap, clkp->seq_power_off,
-> +			       clkp->num_seq_power_off);
-
-If such a clock is disabled (e.g., by clk_disable_unused during init), this
-power-off sequence will execute successfully.
-
-[ ... ]
-
-> +static int rtk_clk_regmap_pll_enable(struct clk_hw *hw)
-> +{
-> +	struct rtk_clk_regmap_pll *clkp =3D to_rtk_clk_regmap_pll(hw);
-> +	unsigned long flags;
-> +	int ret =3D 0;
-> +
-> +	if (!clkp->seq_power_on)
-> +		return ret;
-> +
-> +	spin_lock_irqsave(&clkp->lock, flags);
-> +
-> +	if (is_power_on(clkp))
-> +		goto unlock;
-> +
-> +	ret =3D regmap_multi_reg_write(clkp->clkr.regmap, clkp->seq_power_on,
-> +				     clkp->num_seq_power_on);
-
-However, a subsequent call to rtk_clk_regmap_pll_enable() will hit the
-is_power_on() check above, returning true and jumping to unlock before the
-power-on sequence can be written.
-
-Does this cause the clock to remain silently disabled in hardware, while the
-clock framework considers it enabled?
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260812020009.3480=
-538-1-eleanor.lin@realtek.com?part=3D5
+sashiko issue needs to be addressed.
