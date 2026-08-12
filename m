@@ -1,77 +1,112 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C730D3A6F00;
-	Wed, 12 Aug 2026 20:51:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A0F03A8FE6;
+	Wed, 12 Aug 2026 20:55:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786567862; cv=none; b=flASX/AKBtq3Rg46p1U87Z0SfE+ZhgqlxlQ80AdYYkiTIBAXN7eIxz2Ra4mjZwqZUNeEwS86aTqlQyO76ewovvpMNGeEOvgdXmn/u3sIgJxq9JzErv9COEe3n4HH4zjr7K+t5rMxysC5eNsZy8Aj4iCg50pMUVXQlDBCFrTk4nM=
+	t=1786568120; cv=none; b=SyqR4+pD39f+ruMhE6SfYX8N4v/uUQVLvwRI+HWwOCRD6i4UxP/eNaHthUMJjbHCJ66qBZAakmM1S5CJK0QJDU84QQatqWyhu01Wa3Zg9heBVohroxax9xBIsxta6+0UrcUleG75Oesdf4hkVpkMDV6gaMfoncOyigL6VZxF6Tk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786567862; c=relaxed/simple;
-	bh=DGVdyBFPVJ7+b028hudyXKU6gQ5fHSJaaj2NkSFAzkY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FGR31WSEo4sV6fPVRkPqDGNdQ/UEpF0p5JA/rxmigDRsTwg3Y8Wf9fkCI2jg3qPqI9VH6rJ9R0YMFG/GpXE7Id2eqD2CmT5/jpTh1UBHQfJwdu8ealjb5aFI9MSIJvseGlNDEfVBDlNE1F5ANofdIjzSUnSYltm2viHNO9L/XeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EAuPpK9r; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EAuPpK9r"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1493C1F000E9;
-	Wed, 12 Aug 2026 20:51:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786567861;
-	bh=tVJCQZxVeHQkB6OTtlsDBa53lFmpzbh91NLfpeM+XQ0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=EAuPpK9r8/PyF0L2pyWpFgRptVavHNmlIu9+Fu8eUJL4n4iMmnmk8auaBxFWEzKvV
-	 HfupHLur0pEEV5Lw5jX2EMKowl2qWXlfPizLX9alLGZDb8jNFiQ7I0DKxL74vbeNKv
-	 RbssIbY5p3CTXpufM3DLIXSd+8fq3ZntvkPsrtj4fbk6urjycxdBAQbVfUmfWvbXAE
-	 EMqPWsEYsARhS5DnHz2rnyYNPLew99TRys/sd39lXtXs9FaybyTvkCC2TzzJTZBGkH
-	 /S0hDiJNKCE7PCbJLbUyjGcFEAZWccHKxX3IrrBzKf+oHk3QDLWVksb9iMNViCBd/E
-	 SI4xfnZ8xM4kA==
-Date: Wed, 12 Aug 2026 15:51:00 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Luo Jie <jie.luo@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	devicetree@vger.kernel.org, quic_suruchia@quicinc.com,
-	linux-clk@vger.kernel.org, quic_linchen@quicinc.com,
-	Stephen Boyd <sboyd@kernel.org>, quic_leiwei@quicinc.com,
-	Brian Masney <bmasney@redhat.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, quic_kkumarcs@quicinc.com,
-	Konrad Dybcio <konradybcio@kernel.org>
-Subject: Re: [PATCH v2 02/12] dt-bindings: clock: qcom: Add CMN PLL support
- for IPQ5210 SoC
-Message-ID: <178656785983.964931.11187657575515601441.robh@kernel.org>
-References: <20260806-qcom_ipq5210_cmnpll-v2-0-cce718b8ec17@oss.qualcomm.com>
- <20260806-qcom_ipq5210_cmnpll-v2-2-cce718b8ec17@oss.qualcomm.com>
+	s=arc-20240116; t=1786568120; c=relaxed/simple;
+	bh=FrdqQ6kXNnNKfJVjZwswwcKEQOtgoDeMVrYYyQrDqpE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=G2RQoc+vbOnhCIa3WaSsCZSuZsb58bPHCs8WyB4Mdb9lg9RZ8irj5fEiOrSvMsHE/l7T8asZOYiHHgGhrsKHt1P4OGA3NMcD9keZPtQL54OVgxXn+UNqlteDRzf3U0Dkutx6yKGZ8r2PdkMIgvmygDKuYNdvEwdiSEfNPKm8Vx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.helo=mail.mainlining.org; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.helo=mail.mainlining.org
+Message-ID: <b15b2687-0c2e-43b2-ac9e-78e04e77e065@mainlining.org>
+Date: Wed, 12 Aug 2026 23:54:41 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260806-qcom_ipq5210_cmnpll-v2-2-cce718b8ec17@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/33] Add support for Qualcomm Snapdragon SM7150 SoC and
+ Google Pixel 4a
+To: David Heidelberg <david@ixit.cz>, Jens Reidel <adrian@mainlining.org>,
+ Danila Tikhonov <danila@jiaxyga.com>, Miro Mraz <mraz.miro@seznam.cz>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-watchdog@vger.kernel.org, linux-usb@vger.kernel.org,
+ linux-phy@lists.infradead.org, linux-mmc@vger.kernel.org,
+ netdev@vger.kernel.org, linux-scsi@vger.kernel.org,
+ dmaengine@vger.kernel.org, linux-crypto@vger.kernel.org,
+ linux-i2c@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+ linux-remoteproc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ neil.armstrong@linaro.org, linux-hardening@vger.kernel.org,
+ linux@mainlining.org, Connor Mitchell <c.dog29@hotmail.com>
+References: <20250422-sm7150-upstream-v1-0-bf9a9081631d@jiaxyga.com>
+ <2ca2b774-fd7f-4612-b38d-f60e32ff6f9a@mainlining.org>
+ <283096ad-ae1b-42b8-8312-b192f735fc80@linaro.org>
+ <cce3fe36-322e-49ed-8928-3aef813faad7@ixit.cz>
+Content-Language: en-US
+From: Danila Tikhonov <danila@mainlining.org>
+In-Reply-To: <cce3fe36-322e-49ed-8928-3aef813faad7@ixit.cz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+
+Hi David,
+
+Thank you for your comment.
+
+On 12/08/2026 14:40, David Heidelberg wrote:
+>
+>
+> On 23/04/2025 09:26, Neil Armstrong wrote:
+>> Hi,
+>>
+>> On 23/04/2025 00:07, Jens Reidel wrote:
+>>> Hi everyone,
+>>>
+>>> apologies for the mess this created. Danila's mail provider 
+>>> ratelimited him halfway through sending the series and the attempt 
+>>> to re-try sending the second half an hour later ended up with a new 
+>>> message ID (I think due to not using --in-reply-to).
+>>> He asked me to let you know that this will be resolved later and the 
+>>> whole series will be re-sent once the problems are resolved.
+>>
+>> The b4 web submission is a great alternative when the mail provider 
+>> is rate limited:
+>> https://b4.docs.kernel.org/en/latest/contributor/send.html#web-endpoint
+>>
+>
+> I see people interested in moving Pixel 4a forward, but it seems this 
+> was never upstreamed? I looked at sm7150 repository [1] where I see 
+> FROMLIST, but these patches never arrived to the list and this series 
+> is from 2025.
+>
+> Should we expect v2 (re)based on recent tree?
+>
+
+I'd definitely like to get back to upstreaming SM7150 and the devices
+based on it, but I don't think there's much value in continuing with
+this particular series as-is. A lot has changed in the kernel over the
+past year, which would require substantial changes throughout the series
+and would effectively force the maintainers to review it from scratch
+anyway.
+
+I'd also like to split the series up to avoid targeting such a large
+number of maintainers in a single submission. Hopefully, I'll be able to
+find some time to work on this in the near future.
 
 
-On Thu, 06 Aug 2026 23:53:06 -0700, Luo Jie wrote:
-> Add the compatible string for the IPQ5210 CMN PLL clock controller and
-> the dt-bindings clock ID header for IPQ5210.
-> 
-> The IPQ5210 CMN PLL supplies configurable clocks to the NSS (network
-> subsystem), PPE (packet process engine), and PON (passive optical
-> network) hardware blocks. It also supplies a raw EPHY output clock for
-> the integrated Ethernet PHY and several gated fixed-rate outputs to
-> Ethernet PHY and switch devices.
-> 
-> Signed-off-by: Luo Jie <jie.luo@oss.qualcomm.com>
-> ---
->  .../bindings/clock/qcom,ipq9574-cmn-pll.yaml       |  1 +
->  include/dt-bindings/clock/qcom,ipq5210-cmn-pll.h   | 30 ++++++++++++++++++++++
->  2 files changed, 31 insertions(+)
-> 
-
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+> Thanks
+> David
+>
+> [1] 
+> https://github.com/sm7150-mainline/linux/commit/7ea41523c678e94a7c048936052b5b1b1b109cdd
+>
+>> Neil
+>>
+>>>
+>>> Best regards,
+>>> Jens
+>>
+>>
+---
+Best regards,
+Danila
 
