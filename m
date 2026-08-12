@@ -1,156 +1,121 @@
-Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012045.outbound.protection.outlook.com [40.107.209.45])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0843839CCE0;
-	Wed, 12 Aug 2026 07:40:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786520423; cv=fail; b=WqfDcBgwGwCU/Igwktu9qjDvU5b+V3h/b0DIFrV9rTPHM00GGDcFgJ+NQrIuNF02HLt9ro7gOJs5cBNDlJ5irnJu8+5PTeR6Eu4272yhxLM7XcKdqMLa6GTwSh6HcwbpVBmllqHZV6K/rOzaIsFBIJ9IErRFY/Wa/NEfvUXjTwk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786520423; c=relaxed/simple;
-	bh=13HeY6/kRvwHLAOT79u4vk2mlkjHuVUcoHALt6D9rDI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=h+saayf116bHWWeK9UW9xL0y+sJvFQpkE3gWamqqmtYOcI7H2PpSwal3n8eZ4s5xt+wHVK8/zxMNsAnDXDjHRJcQe7tHhg4HvFM4gHMPwKfULJ+71G5Rfgp49zPrtwTYZUW6dbWbyd7y/D7fYpfZwduUm9d8fngSFLjzx31cg/0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=IxCCclUx; arc=fail smtp.client-ip=40.107.209.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37CE8399CFC
+	for <linux-clk@vger.kernel.org>; Wed, 12 Aug 2026 07:40:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1786520439; cv=none; b=XS+QmIc2864AY8QbUZIbnBxGu3ziG1GhScfOnYxMB84nuZhccuxJ9zHhknPGUYm/BBxUmBrB0bZyBnhtCdjxUlTUGWzHwBpuMEClCp5veQF4wTlN+KqtnnpotHEFMTeaauhrKl+5WWxGAz9d/j3ngDozZDc2sTT1UO7DU0Lpuow=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1786520439; c=relaxed/simple;
+	bh=8NIMyonBTLl7p5TcLVhooTgWqOCx0uqDr6kFmRrrkQc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TjJJo7BjLrfef7T9e3wH4adOBTX3FTh8RbYW5b0j6QS6D6sk4DcaLKeJE2I5aPzrBDtT2N93x12DeGu+0UdVNjg5/TnwNQEqliSjNyucGbroZnFFxpGkR9WPwlXovo3GMzJMlfcc8amKgv96/DaxJHjfT4mu/aonV/FQbfmqtLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LpkEHvKv; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="IxCCclUx"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=AgxkrXwT5T1h3uPkErFZmVpkZhlq1mzNok4rZXGfOmQpg174fqSzvszIb0fe2FOofFZytqwjWepyNbYgc+9vmk7wf30azPyDJMwdHhYhICoTzeUNiRS3+LPfE9W5LqRMY07Lx9uUdh+vCrghvlTKXIz0oIQaKODtpj2A587ODKFm0YeJSV7kkMh2MHaF/9fDm2iGY0ZRxzehxzJf4JQPMqbBaeqohLp20LxAILxlTDwP88y7Q5/TfysvH/NDSOzXWj/g2FrI1jDSS3gJWWu0ihR4ZLH6KH3g6LsluAF3ug89j280b0nDRTyeCBoUe9bVaa4JRr2wgGfZpyMORaTyfg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=k9S/4PLZC6Aky78t4YEXAOzoL8dFNPSCN/HqJOfMLRQ=;
- b=kZY5/utOtTyWJljTzplaIBDq4yGywu7ytOzZdvChUuGs+rM/8UwlYxLGVjG4obf+02cWxUAyrC6k9quR5E2N0mKq3miHwfgtGv1ONgVqZh5FrxHZgu4Yu1Of+1+dm4dtvdYUWV1/f5YHQRtjv7jJ1U0wWjB0Hd40xpAzATqA0KBWfHZqw92FDoqJsj1EQ/jLc2cvCe1Z3zywlQ9sjfgDkI8surKUvPG96cDc7VuISLLER9QJ6V5sh4AUHwIwgNdJb0Yg30wgg+mgA8vUAsJCGy4zxQtDe88a5n7JchBed7HdPKD0XXn7Cbo1SDQVA9NcgsO9iZ268H+iuhysx0nnxA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
- dkim=pass header.d=altera.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=k9S/4PLZC6Aky78t4YEXAOzoL8dFNPSCN/HqJOfMLRQ=;
- b=IxCCclUxnXCbdU8yWkqdCeg2Vt1Tkro6iXGEAawJUkLwsXHW0X2bbFnotcF69xoTyCkq/rcAZmMu0vU0vGPH+bJfKKOIq7qr5gR7v3v+0CZWqoZ4pyORQ3WROHRURXtPIcMM2g6SJRltbS0vVNE5YnyHZuvpe3aE9RdpL8dE4W2INYpmAlqUbzTJ2QDeuXdsCtId1exe2RABuax/Qtjtb2mamEsrngyGWKtYPh206Q1DsPsB1GjcLJ5qdRm4fgNgo5nyp8qgwiHNZcdnt3RE1K5jQyVNqK/eBT9dTIGQdz0bOdNisF3T/Wb+5MhHzyiPHocTqd14h/nKCV7susr+8Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=altera.com;
-Received: from DM8PR03MB6230.namprd03.prod.outlook.com (2603:10b6:8:3c::13) by
- BN9PR03MB5979.namprd03.prod.outlook.com (2603:10b6:408:134::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.315.11; Wed, 12 Aug
- 2026 07:40:08 +0000
-Received: from DM8PR03MB6230.namprd03.prod.outlook.com
- ([fe80::abad:9d80:7a13:9542]) by DM8PR03MB6230.namprd03.prod.outlook.com
- ([fe80::abad:9d80:7a13:9542%3]) with mapi id 15.21.0315.012; Wed, 12 Aug 2026
- 07:40:08 +0000
-From: Adrian Ng Ho Yin <adrian.ho.yin.ng@altera.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Dinh Nguyen <dinguyen@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney@redhat.com>,
-	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-	linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Adrian Ng Ho Yin <adrian.ho.yin.ng@altera.com>
-Subject: [PATCH v3 6/6] usb: dwc3: add Altera Agilex5 support to generic platform driver
-Date: Wed, 12 Aug 2026 15:32:59 +0800
-Message-ID: <b1a0734a2e074e2ffbaa4099695406e54206a725.1786518803.git.adrian.ho.yin.ng@altera.com>
-X-Mailer: git-send-email 2.49.GIT
-In-Reply-To: <cover.1786518803.git.adrian.ho.yin.ng@altera.com>
-References: <cover.1786518803.git.adrian.ho.yin.ng@altera.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: JH0PR01CA0156.apcprd01.prod.exchangelabs.com
- (2603:1096:990:7::14) To DM8PR03MB6230.namprd03.prod.outlook.com
- (2603:10b6:8:3c::13)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LpkEHvKv"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F21E1F00ADE
+	for <linux-clk@vger.kernel.org>; Wed, 12 Aug 2026 07:40:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1786520434;
+	bh=8NIMyonBTLl7p5TcLVhooTgWqOCx0uqDr6kFmRrrkQc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=LpkEHvKv4i+JqSzorjwyomLUtI+GEumeJLV0rdgKKmtQ85BFQ4kA6SXsMMTUPTkYM
+	 P5VlIYfTJD8u8o9jB51KRa+12FOpN+SKPS4+tNM8GMzfUNJSbIRcgdpYkx25sxug+V
+	 +I9sgt6S/W1KiWEi3UuSSJ03TyY8PsqKv6ueN71q6X9aZJrWvDn4++VMHD9b1IH/5M
+	 H3tto67xi6IzkmbvZRuTptMR8ce7jI274fUs6UCKpsqbzrke7fcMpu2fkZCAJE95yB
+	 rOGdyS2IekQ2j9nQQu4PgXNKeupPwadWriiRHn3LOMpJiH3A0QH6RT+aHzQcHKW9mf
+	 FxLq9kWjawaXw==
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5b013084dc2so690145e87.0
+        for <linux-clk@vger.kernel.org>; Wed, 12 Aug 2026 00:40:34 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RrykxHmz5SKyfzSC113+r0hWD1MPlz+C8gBJ7+xZQGwEN2bXfuFnoJvNQ/jxE0OFuxvGJ91RTTYqEo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxX7acwzbAA98puVKvF1ecEYwWfxszbrwHzZxJozfwnboHa8RAb
+	qhorch7nXemp7j47klL/443nQJ2JNrWq+61NQ7teTjbr22PpUKW4aZ166ojS7ONdZfYTpWQu6VV
+	zPRM7i4shU3PmUOYoVOD2/HaVMIFYaK8=
+X-Received: by 2002:a05:6512:668e:10b0:5b0:1dd0:f20b with SMTP id
+ 2adb3069b0e04-5b44e2db43emr269927e87.6.1786520432729; Wed, 12 Aug 2026
+ 00:40:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM8PR03MB6230:EE_|BN9PR03MB5979:EE_
-X-MS-Office365-Filtering-Correlation-Id: 97878c80-6df0-4be3-1413-08def844eeb4
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|1800799024|366016|23010399003|22082099003|18002099003|55112099003|11063799006|6133799003|56012099006|10067099003|921020;
-X-Microsoft-Antispam-Message-Info:
-	uL/yj8otXSHgK4HeyYMYODbRJDk5WcbSZ7fQwxnwml4MTge9LUhEzt2CXEvzMMmOXM8JMjpEB3mR8adoBhmqCgDvSXnX6hlBnTPPG55GCeF78B6JPzv7xRQn3RISgbYN+dtCNUnxC1XKjxK37HK/wx+dQ5cgLI8LnMzSBDnFDjUFAEINLYST4S2Qsy4a0vB+UUDXJG2z4oPL7f3yrK+bzoPp3rNBVA93EnR6aADPLEPwN3b9TwUCDVm34P3AotURud3CLTPrBw2DOOyLgl9cuUOg7pHte7Oc3w6+bjV4JyiNa2zBQtCg/AaoIhOv/dgIJADHvewyS9UKgGI3OROpf/JRHNXrqeJYCEQEN5/8Q9PS0IiLpXjqZCcKCe2xmOhzLVuYPZTaaoffcB2tpsqEEiZEYqYBwOKBKeo7wt7LYJhSQmnAisU9UgZxVFDDLRQjVTPjEygwNHuGlIaaLjJVQZBWcKnXcz45ci9fPBSChsO79QryXx/gaDtVpp3fG/Txdqj8haW/VVdt00EcklFAwhbisT+zeKdx5uqnN5P2R4T8M9Ieut4RN4aQg9Ku+GSUCWmDpVXs2UZLkfcsdcSoNfn+jitx0owf1fRFQDvN4P/OBepBpH2ahwrbsfZRqLwkZSHlM7dgIdOBfxzd0Ef9RCKaMzJyzJ6TpC7bm2QLQZEgsr5ACWiDa3IZsKqTppKEQPnjJIsZF1eQlvy9ddPfdQ==
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM8PR03MB6230.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(23010399003)(22082099003)(18002099003)(55112099003)(11063799006)(6133799003)(56012099006)(10067099003)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?K/q7+mx5ew2GZQ8pMnOpdSXFZ8Xx9q04biQrfg2zwWAQS4Q+AgB1TcdzYIgY?=
- =?us-ascii?Q?HbK3H/evziCSZ9X+7ft0n2T59ZKJ5vfyyRaHMqFPju50MtTWrtPMqxrO3AAg?=
- =?us-ascii?Q?8aN+I1RzbuOoQNHtgW5OkmK3SbOGiqk3VpuRnVWjIiPVOlDLiWyxPlr5XC9V?=
- =?us-ascii?Q?kRxNayQMybFIXEhaAqK0z6Uo/8xHTF1vEqrparC4AXX+hOnBKm2mafyfCtMv?=
- =?us-ascii?Q?N0PL8CLJCbXo3QDVuDfPLqaZL91UwEXhU+WWg2wouMynWOBBZwyzMGDUvyzt?=
- =?us-ascii?Q?0gOh0Bwdv8M+/wjoKFzseFjEngNDlhrpZjUSR+n/aJWk/Dn4Qqw+kuaBMG2I?=
- =?us-ascii?Q?F7uGRiEgVCy8edJSJH95ke5N5j26NBkZAXLnuU/CstSuJHGH72jNXRTzJXTs?=
- =?us-ascii?Q?gHGeYOQlLoHf/64gLkdW22GHBnjC+EtdRZ3ty9ECAvXLXXXrTSCvQUn5l2NZ?=
- =?us-ascii?Q?L15x6DOnABu0NKSnrnEmXsXjbDJIe+29+ji5qGruXKmwbi8p2Ao0M8gM8tfw?=
- =?us-ascii?Q?+RydNjGTLSzdcjjLNlw1muI8Mh36DGxL8Q8HNRExZXkCGx8LxBG+Hanzf2dx?=
- =?us-ascii?Q?35ObPuDhtqlhONVMYy92VDebrBg3kDuU1+2IQ23NDB02g6kPLQuB//nHfkAT?=
- =?us-ascii?Q?yXnXYGB05EWoWRpbbaXqiV7tQ093l2r6RJ3/yTsCvdrp13iGVNsdyjAc5gOf?=
- =?us-ascii?Q?gDrCrLNPTVn2iNMYJ+nlYmNFC/cv4tNxSIvL62kqPKXNDurn5RlmTIGZG4//?=
- =?us-ascii?Q?zav24X/dfyzph7BmFctySBQU74p+O9sHJMID66ggBul5/MMzoqeTok2y7uJp?=
- =?us-ascii?Q?3FTGiqXsFhflBY8R8t3oaf0/5G++lA30g6z1SU4qaR/aOsidBlEK7G3XSenP?=
- =?us-ascii?Q?7Zhckk6FGoCPeT2NGjGR04UCOi9LyRuSfih8w+cAZQgX5zQI7JVUyg6WMbJc?=
- =?us-ascii?Q?E/5sDOA8j0TrWV7zggHWlhpWUe9nvfKSl/9VOzY7mWDLUj9N0se2grbooKpx?=
- =?us-ascii?Q?Lu+L9Lm+wLGQVv2EeiC7VUsnsME87M++/0Au3Wmxcn3EPy9pZNFoWVRUdVix?=
- =?us-ascii?Q?nptzgtRGvwbDF+e4nYKqfZ7DqmZ3r4lxHms8njAZI4lcEYH4itdBltP+h6um?=
- =?us-ascii?Q?/9SqrNUASqolKmp4sty3GKg8OgM9OL+U+2oGTx48mwV3PAkOlT0Nu3IsXzJZ?=
- =?us-ascii?Q?nSzmPzIOyHzTw/rANCujSwGl9DnCi5wBr32FNkf5RdXOEyVQaH8WrOIDXfTV?=
- =?us-ascii?Q?qKFwxQcVPDXosS5qhkYinTiFs6weJnS94hbNZevYipfgHh9HdgdvQ+DkI2tA?=
- =?us-ascii?Q?7QUyTISGOE/VpskiMfmBmo8JRJGv7dCtttzRD3waNXZMhst9pgWMfDRVO0dD?=
- =?us-ascii?Q?Bvz30GbnmcBcXlW2+bN18loiJY8AMZq8PY/zw6NfXCElOV4SYMElKLrmJD4N?=
- =?us-ascii?Q?IHvonb4t32f3yIcOZKRBHs1FNU0HIy9f31YcE9nzmoBR3VflL/oZgzpag/WG?=
- =?us-ascii?Q?0SDVPM4HHjrCM96MpHmw4mV0oUf2zbcIQs75an6+2C0k9/GKxke3imy2uwd6?=
- =?us-ascii?Q?eIDQfzDHJIG5/s8zJhHqi9VjX0PwlsvmQXI1Ge1ntnV4tvCytFiB0qYvtdS1?=
- =?us-ascii?Q?NzzktidXYW8GObM4FdrrybOIRwUXCvXsbcWeEA7IDPT5mKQU/aP77yrV0SNB?=
- =?us-ascii?Q?asHliGQRA1jErCc5kGKHJG72xjlFpbSpfSIuM9WRrMg6n35r4RFbsZSDCooX?=
- =?us-ascii?Q?7YgPLgDFZUNGkFaC3w0sgGOCLOEEoXo=3D?=
-X-OriginatorOrg: altera.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 97878c80-6df0-4be3-1413-08def844eeb4
-X-MS-Exchange-CrossTenant-AuthSource: DM8PR03MB6230.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2026 07:40:08.2818
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: D110BiWiNfOfBFoIWXaLLCdSyWK+EljqApnDp8TdMMx4bxfJ1g/UAVZAmAa/GPAZurYcsg8LDweuV0cx6P7G3AfCuMg96LIb78yRmqR/OAs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN9PR03MB5979
+References: <20260806-longzhao-upstream-cv75-v2-v2-0-6b09707c5fe9@ambarella.com>
+ <20260806-longzhao-upstream-cv75-v2-v2-7-6b09707c5fe9@ambarella.com>
+ <CAD++jLk0LoOJk=TXin42AL3_z_7eVVkvMnYr1S8090C6A_B+dQ@mail.gmail.com>
+ <DS0PR19MB7925690FD29D578D8AC5D10EDADE2@DS0PR19MB7925.namprd19.prod.outlook.com>
+ <CAD++jLkUPU0eujvWc5Hn1tEu4n451LvkuGGT=j6OfirJENpRgg@mail.gmail.com> <CAL_JsqJprX0oC3Gdj=RNNYtPiQ-0NkEPvn-MyQ9ZtFakKcj1ew@mail.gmail.com>
+In-Reply-To: <CAL_JsqJprX0oC3Gdj=RNNYtPiQ-0NkEPvn-MyQ9ZtFakKcj1ew@mail.gmail.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Wed, 12 Aug 2026 09:40:19 +0200
+X-Gmail-Original-Message-ID: <CAD++jLn+LNAb-VDsNz94Rj780fn1Z_SF9qxxbBAwLMNuedpccQ@mail.gmail.com>
+X-Gm-Features: AUfX_mwKiQhkB2vUPp0CB68UDRKMeWXa67ucLPOGncEJWQU6-LQSzSsOw8NITtk
+Message-ID: <CAD++jLn+LNAb-VDsNz94Rj780fn1Z_SF9qxxbBAwLMNuedpccQ@mail.gmail.com>
+Subject: Re: Re: [PATCH v2 07/10] pinctrl: ambarella: add Ambarella pin controller
+To: Rob Herring <robh@kernel.org>, Konstantin Babin <Konstantin.Babin@arm.com>
+Cc: Long Zhao <longzhao@ambarella.com>, Bartosz Golaszewski <brgl@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, 
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, 
+	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "soc@lists.linux.dev" <soc@lists.linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add the "altr,agilex5-dwc3" compatible string to dwc3-generic-plat so the
-Agilex5 USB3.1 DWC3 controller can probe through the generic DWC3 platform
-glue.
+(Page Konstantin)
 
-Signed-off-by: Adrian Ng Ho Yin <adrian.ho.yin.ng@altera.com>
----
- drivers/usb/dwc3/dwc3-generic-plat.c | 1 +
- 1 file changed, 1 insertion(+)
+On Tue, Aug 11, 2026 at 6:11=E2=80=AFPM Rob Herring <robh@kernel.org> wrote=
+:
+> On Mon, Aug 10, 2026 at 2:42=E2=80=AFPM Linus Walleij <linusw@kernel.org>=
+ wrote:
+> > On Mon, Aug 10, 2026 at 6:02=E2=80=AFAM Long Zhao <longzhao@ambarella.c=
+om> wrote:
+> >
+> > > Thanks for the review. I will rework this to reuse the PL061 driver w=
+ith
+> > > per-variant register offsets, and evaluate modeling each GPIO bank as=
+ a
+> > > separate DT entity. The duplicated GPIO implementation will be remove=
+d.
+> >
+> > Thanks Long, I think it will be easier if you break out the pin control
+> > bindings and driver from the patch series and work on it separately,
+> > the same with the serial driver at least.
+> >
+> > I understand this can be hard to test on the hardware, I usually
+> > put a few patches "underneath" the b4 cover letter, and then the
+> > b4 send-email will only send the cover letter and the patches
+> > on top.
+>
+> The problem with that advice is then 'base-commit' is useless.
+>
+> Maybe b4 could learn an 'ignore the top N commits" or "only track the
+> first N commits".
 
-diff --git a/drivers/usb/dwc3/dwc3-generic-plat.c b/drivers/usb/dwc3/dwc3-generic-plat.c
-index ca69ac0eb07c..8781d7ec6b9e 100644
---- a/drivers/usb/dwc3/dwc3-generic-plat.c
-+++ b/drivers/usb/dwc3/dwc3-generic-plat.c
-@@ -232,6 +232,7 @@ static const struct dwc3_generic_config eic7700_dwc3 =  {
- };
- 
- static const struct of_device_id dwc3_generic_of_match[] = {
-+	{ .compatible = "altr,agilex5-dwc3", },
- 	{ .compatible = "spacemit,k1-dwc3", &spacemit_k1_dwc3},
- 	{ .compatible = "spacemit,k3-dwc3", },
- 	{ .compatible = "fsl,ls1028a-dwc3", &fsl_ls1028_dwc3},
--- 
-2.49.GIT
+I honestly don't even know what the base-commit is for so that's
+I have blissfully ignored this problem...
 
+So the summa summarum is that the current behaviour kind
+of encourages people to do large patch bombs for a new SoC
+since due to base-commit and the fact that developers tend
+to need to boot test the series (and it won't boot without some
+other SoC-enablement patches) the series must be kept
+toghether.
+
+That explains why it feels like I see *more* of those patch
+bombs these days.
+
+My initial stance would be that a useless base-commit is
+the lesser evil in cases like this.
+
+Konstantin, what's your take on this dilemma?
+
+Yours,
+Linus Walleij
