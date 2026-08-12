@@ -1,100 +1,164 @@
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A1DB410D32;
-	Wed, 12 Aug 2026 09:42:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20062418A5D
+	for <linux-clk@vger.kernel.org>; Wed, 12 Aug 2026 09:47:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786527735; cv=none; b=s55TuTzJWg+ZeX+w7fU2aXwGG3T6x1+wN6GXXGPP8Y/QbNVbwUhaGsWC84K3IMNz5Fc7iv/GhWHrPinU3QzSBPKqZn2eyuFsRkdTWpO8sn4NDMAIQpuCCTI9l6kKakmn55OWcM54mdRynIlaZA17JzeqPPNNdotfqm0wXKxBVwc=
+	t=1786528064; cv=none; b=lpYDngthM2GYUtNcolUI6IWMH4pJbVgFpnBvOeQe6qi2AlybD6K5HdlVL4N0mgBQlLPVluHg0OlA8nvRtMBApt1dnU9QOceMEH4sUpITBgmiBnti/6mqG+GeO0gJT3O7EwCOZVlzbWLtTgn4wBtYJFcYlPQvMpkzET0wvsaJGCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786527735; c=relaxed/simple;
-	bh=D9dgD8NETMczdDIL/VoWWE5yrLNaW/+4UzsIrHmvh40=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=n2rxp3IDpnxdr8TnTVGhf7EZ0gz642bxut7Iq/XGriDTqT2TkVXwyv1zdXCwhINUDhnsuD7Y7Y3OjkXFjp0qnpBGY8TPuHpGFR5q8mkfem0gwjqOSwYdI7nBPYWLKTmk0dp0lwwSnvFOshyUgt/CGNkO7PZohO1fXIQJJJ0D3To=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=rjGVv6bd; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="rjGVv6bd"
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 67C9f6bjD3497543, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1786527666; bh=D9dgD8NETMczdDIL/VoWWE5yrLNaW/+4UzsIrHmvh40=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=rjGVv6bd3y+Z+j8T1xoakVTILwLRMq2USZHsM0ri3blImk+nR+Ib7QftnmLNSutWL
-	 ROdvXm08aoNMoE0AHJfI5TzsF2W30QFeTzdDZKMvr6AovAHzCwESeY19rcN47mH9TO
-	 X5gOYJZSIoM8XwsftLfprUTmCVc4H6i8vojKpjCU9n/SliuOlkixf9hQCtrof6xGv3
-	 p970v9pZ4IcM9G906ZCmLYT9viErmrzTWhuE5oqCkgqu8DjZ5zuoehsjE5xa0z02zd
-	 6pi9mttyMtDaBNqOQqZ83UXEhb4khN3mV7PyfGfldamUZ1ZSYZrzK+2Ky4ImKEfsdt
-	 ySg7Y0k5S9lDA==
-Received: from mail.realtek.com (rtkexhmbs03.realtek.com.tw[10.21.1.53])
-	by rtits2.realtek.com.tw (8.15.2/3.29/5.94) with ESMTPS id 67C9f6bjD3497543
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 12 Aug 2026 17:41:06 +0800
-Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
- RTKEXHMBS03.realtek.com.tw (10.21.1.53) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.43; Wed, 12 Aug 2026 17:41:06 +0800
-Received: from RTKEXHMBS06.realtek.com.tw ([::1]) by
- RTKEXHMBS06.realtek.com.tw ([fe80::126f:59ad:658:674d%10]) with mapi id
- 15.02.2562.043; Wed, 12 Aug 2026 17:41:06 +0800
-From: =?utf-8?B?WXUtQ2h1biBMaW4gW+ael+elkOWQm10=?= <eleanor.lin@realtek.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@kernel.org"
-	<sboyd@kernel.org>, "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
-	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-	=?utf-8?B?RWRnYXIgTGVlIFvmnY7mib/oq61d?= <cylee12@realtek.com>,
-	"afaerber@suse.com" <afaerber@suse.com>,
-	=?utf-8?B?SnlhbiBDaG91IFvlkajoirflrold?= <jyanchou@realtek.com>,
-	"bmasney@redhat.com" <bmasney@redhat.com>
-CC: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	"linux-realtek-soc@lists.infradead.org"
-	<linux-realtek-soc@lists.infradead.org>,
-	=?utf-8?B?SmFtZXMgVGFpIFvmiLTlv5fls7Bd?= <james.tai@realtek.com>,
-	=?utf-8?B?Q1lfSHVhbmdb6buD6Ymm5pmPXQ==?= <cy.huang@realtek.com>,
-	=?utf-8?B?U3RhbmxleSBDaGFuZ1vmmIzogrLlvrdd?= <stanley_chang@realtek.com>
-Subject: RE: [PATCH v13 01/11] dt-bindings: clock: Add Realtek RTD1625 Clock &
- Reset Controller
-Thread-Topic: [PATCH v13 01/11] dt-bindings: clock: Add Realtek RTD1625 Clock
- & Reset Controller
-Thread-Index: AQHdKf6sqK1LXpXPjkadMFMzDtoXkraZlK4AgACT8SA=
-Date: Wed, 12 Aug 2026 09:41:06 +0000
-Message-ID: <fd254ec8d59a4ed3b4ea157b866ce798@realtek.com>
-References: <20260812020009.3480538-1-eleanor.lin@realtek.com>
- <20260812020009.3480538-2-eleanor.lin@realtek.com>
- <313b74fd-1a5f-4e1b-a4e2-a537f7939fad@oss.qualcomm.com>
-In-Reply-To: <313b74fd-1a5f-4e1b-a4e2-a537f7939fad@oss.qualcomm.com>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1786528064; c=relaxed/simple;
+	bh=bWURXCZrQDZ0x80rfdOSm1jqz2Xjezk3ZnaVSR44ifs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Qp2WNkiFoLEwowyd7oCOuYWB48x8ZvaCz8Z3UXlH1Ux3B1kSoGfCmowKmLnLvcGe/zYel+7bif6rIu2zKOr4SF1oVcklAnPzCibDqc7aWz9rJYURc5QAu2LLhQf+xh14nDqGNbjp58zT++YK6nGLoF9nL48e0t64ie74w6kC8fg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-5bf8e1edc3aso390579e0c.0
+        for <linux-clk@vger.kernel.org>; Wed, 12 Aug 2026 02:47:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1786528062; x=1787132862;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=/axx2TQndZ7l7LrHHfpxsCFqNyyCWsv8j2VxY85Jrxc=;
+        b=YisXProPsv1jh9ktRBoBRQVgzp/DBFVvjkSIveid4/UjPltOthY/jIVYmqtJ9TSigE
+         5TF5wJFS2MqhpXZxwNPl8Ll6fz6GFcGtKLSi4WaBmh3JgSwnpWn1+0fX2LLQvE02Y7Fk
+         3cvkNH1QWhKZt4gk+uX6uzZ6ZAXblzkIkedsR64/c8wSfK6vDhtV7wNNH1ABXWkjlW/D
+         fzs2FM7Fq5owxvX6V/5kurnaCdxXJRZE2ImSOh/+W465YsIFC4Cg3pSQ7z794bCI4yi1
+         wZXXSXudqUxeBIvT/SbtijWlleoSKriazUk4CjWLmd2pGSxXQi/dz6+xs+16zzfVUOfV
+         JiYw==
+X-Forwarded-Encrypted: i=1; AHgh+Rra6xk3TrRn9KWBApYVENNKUUVRskWZHv0+CAbjhtbIOHeCf4xwRBJnvXIDnEnW6USSAirD0Ds982A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/2Wnf7timaMOp73K5hwGhZyz1kd3RqhHX/W328XS2Dnn+Juzv
+	B8o1R/pVAa01et7umIhLFch3STI5EIXySjbFWyMY9S5RQiyYBwnak/RAVZzAj4s2
+X-Gm-Gg: AR+sD128Oqbbv3CwMHZzrXUd6gm3ibh3o7kNskS7y/nCvzKSpamAJISkMRTNaXhfFW2
+	rInDApOCQUh0993vDBjqadtHY4NgY207cirjdXqQ/A/KPNn4eG2PSBUiHGn2qBhrkNGLnur0dnp
+	AP4xhc4vb6VZdN98NHgkb78+z4UG0JvVqVHkGET3yBRO3jQ41Cg/VUw4mKMDaZJUFajKO6hHkyG
+	+VW1CLeHC2AYzH5W/lFWUx+qv7imCGN2jIyYDK7t4whNHWJ3859fp8/YyG2/QCHtOO3SmBUNu0i
+	GE2ZhJpVPK9YK1ETg0FFx0Ds7KwJFH67cM8iwnP2+Z884P6YEDHkbKAmzIfvqnaeJtTKIx+w32v
+	m3KlKQXgc1L1xDHXLlZAdR5/9cAxg2KIv00oq41A+8I/24aOdhTyZ+AgtMbnLuKTlHkcV8GGLDn
+	qrycsVKcdSIm97lD6Ky5S5btPm/d5g9A6XwR1ShUi5c2tjLCstLsayMnLQ3D8RQv6HecWVhSLiz
+	VQGs9F93kx3xxjalC4cnub7ndMUwRPY/ozB
+X-Received: by 2002:a05:6122:190a:b0:5c2:c0b2:9880 with SMTP id 71dfb90a1353d-5c4f84251e8mr427594e0c.1.1786528061971;
+        Wed, 12 Aug 2026 02:47:41 -0700 (PDT)
+Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com. [209.85.222.42])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c45b4c2fe9sm980853e0c.5.2026.08.12.02.47.41
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Aug 2026 02:47:41 -0700 (PDT)
+Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-969524c1a63so516781241.0
+        for <linux-clk@vger.kernel.org>; Wed, 12 Aug 2026 02:47:41 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RovKl3azRmcJA4DZjS2rwVbmcb0v9q82UHTX4N7HEwMz3aCPWP2EpB3MgglN4zMSdCwqRL4O8fnhBU=@vger.kernel.org
+X-Received: by 2002:a05:6102:8020:b0:74c:7fd8:73eb with SMTP id
+ ada2fe7eead31-76c87d7044amr1040741137.1.1786528061345; Wed, 12 Aug 2026
+ 02:47:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <cover.1783505329.git.geert+renesas@glider.be> <49726acff0fee1c3606e83c4f242ef6aad25b4b8.1783505329.git.geert+renesas@glider.be>
+ <20260710-adventurous-burgundy-chimera-b2fff9@quoll> <CAMuHMdV=ckONBbTYELPJU8YWoNzdu3PJ95VR8cz+f_7dUeiPUw@mail.gmail.com>
+ <20260716214924.GA1477674-robh@kernel.org> <CAMuHMdU0ss6wUEdjC+OYa3iQS439aJ8b_d9M2ws7Ayn4_kOyMQ@mail.gmail.com>
+ <20260811163334.GA2354701-robh@kernel.org>
+In-Reply-To: <20260811163334.GA2354701-robh@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 12 Aug 2026 11:47:30 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWbzg-QpFBzzDa2hC3HzAmWUkerESC5O-cSVxmWX3_PkQ@mail.gmail.com>
+X-Gm-Features: AUfX_mxykVa-_GVxsMsY5j-WoXLeEw0hqTlxX_hGEjk_L8dF08TYL9-2xHiMqsc
+Message-ID: <CAMuHMdWbzg-QpFBzzDa2hC3HzAmWUkerESC5O-cSVxmWX3_PkQ@mail.gmail.com>
+Subject: Re: [PATCH v2 05/10] dt-bindings: clock: renesas,r8a78000-cpg: Add
+ firmware property
+To: Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Sudeep Holla <sudeep.holla@kernel.org>, 
+	Cristian Marussi <cristian.marussi@arm.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Saravana Kannan <saravanak@kernel.org>, 
+	Ulf Hansson <ulfh@kernel.org>, "Rafael J . Wysocki" <rafael@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, Vinod Koul <vkoul@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Kevin Hilman <khilman@baylibre.com>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Marek Vasut <marek.vasut+renesas@mailbox.org>, 
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, arm-scmi@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-SGkgS3J6eXN6dG9mLA0KDQo+IE9uIDEyLzA4LzIwMjYgMDM6NTksIFl1LUNodW4gTGluIHdyb3Rl
-Og0KPiA+IEFkZCBEVCBiaW5kaW5nIHNjaGVtYSBmb3IgUmVhbHRlayBSVEQxNjI1IGNsb2NrIGFu
-ZCByZXNldCBjb250cm9sbGVyDQo+ID4NCj4gPiBSZXZpZXdlZC1ieTogS3J6eXN6dG9mIEtvemxv
-d3NraSA8a3J6eXN6dG9mLmtvemxvd3NraUBvc3MucXVhbGNvbW0uY29tPg0KPiANCj4gSG93IG15
-IHRhZyBjb3VsZCBhcHBlYXIgaGVyZT8NCj4gDQo+IExvb2s6DQo+IGh0dHBzOi8vbG9yZS5rZXJu
-ZWwub3JnL2xrbWwvMjAyNjAzMjQwMjUzMzIuMzQxNjk3Ny0yLWVsZWFub3IubGluQHJlYWx0ZWsu
-Yw0KPiBvbS8NCj4gDQo+ID4gQ28tZGV2ZWxvcGVkLWJ5OiBDaGVuZy1ZdSBMZWUgPGN5bGVlMTJA
-cmVhbHRlay5jb20+DQo+ID4gU2lnbmVkLW9mZi1ieTogQ2hlbmctWXUgTGVlIDxjeWxlZTEyQHJl
-YWx0ZWsuY29tPg0KPiA+IFNpZ25lZC1vZmYtYnk6IFl1LUNodW4gTGluIDxlbGVhbm9yLmxpbkBy
-ZWFsdGVrLmNvbT4NCj4gDQo+IFdobyBhZGRlZCBteSB0YWc/IFdoYXQgaXMgdGhlIGFjdHVhbCBm
-bG93IG9mIHRoaXMgcGF0Y2g/DQo+IA0KDQpZb3UgZ2F2ZSB5b3VyIFJldmlld2VkLWJ5IHRhZyBp
-biB2NS4gSG93ZXZlciwgYWZ0ZXIgdGhhdCwgU3RlcGhvbiBwcm92aWRlZA0KYWRkaXRpb25hbCBm
-ZWVkYmFjay4gSW4gdjYsIEkgbW9kaWZpZWQgdGhlIHBhdGNoIGJhc2VkIG9uIFN0ZXBob24ncw0K
-Y29tbWVudHMgYW5kIG1hZGUgc29tZSBvdGhlciBjaGFuZ2VzLiBGdXJ0aGVybW9yZSwgSSBhZGRl
-ZCB0aGUgY2xvY2sgSUQNCjE0NCBpbiB2MTEuDQoNCkFmdGVyIHY2LCBJIGRpZG4ndCBkcm9wIHlv
-dXIgdGFnLiBJIGFwb2xvZ2l6ZSBmb3IgdGhlIG1pc3Rha2UgaW4gdGhlIHBhdGNoDQpmbG93Lg0K
-DQpJIHdpbGwgZHJvcCB5b3VyIHRhZyBpbiB2MTQuDQoNCkJlc3QgcmVnYXJkcywNCll1LUNodW4N
-Cg0KPiBCZXN0IHJlZ2FyZHMsDQo+IEtyenlzenRvZg0K
+Hi Rob,
+
+On Tue, 11 Aug 2026 at 18:33, Rob Herring <robh@kernel.org> wrote:
+> On Mon, Aug 03, 2026 at 02:01:18PM +0200, Geert Uytterhoeven wrote:
+> > On Thu, 16 Jul 2026 at 23:49, Rob Herring <robh@kernel.org> wrote:
+> > > On Fri, Jul 10, 2026 at 01:02:39PM +0200, Geert Uytterhoeven wrote:
+> > > > On Fri, 10 Jul 2026 at 12:21, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> > > > > On Wed, Jul 08, 2026 at 12:16:23PM +0200, Geert Uytterhoeven wrote:
+> > > > > > Add a firmware property, for systems where SCMI must be used instead of
+> > > > > > direct hardware access.
+> > > > > >
+> > > > > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > > > > ---
+> > > > > > v2:
+> > > > > >   - Spin off from "dt-bindings: clock: Document Renesas R-Car X5H Clock
+> > > > > >     Pulse Generator".
+> > > > > > ---
+> > > > > >  .../devicetree/bindings/clock/renesas,r8a78000-cpg.yaml    | 7 +++++++
+> > > > > >  1 file changed, 7 insertions(+)
+> > > > > >
+> > > > > > diff --git a/Documentation/devicetree/bindings/clock/renesas,r8a78000-cpg.yaml b/Documentation/devicetree/bindings/clock/renesas,r8a78000-cpg.yaml
+> > > > > > index 4e23bba334382346..fc499e7cf52e4f0c 100644
+> > > > > > --- a/Documentation/devicetree/bindings/clock/renesas,r8a78000-cpg.yaml
+> > > > > > +++ b/Documentation/devicetree/bindings/clock/renesas,r8a78000-cpg.yaml
+> > > > > > @@ -35,6 +35,12 @@ properties:
+> > > > > >        <dt-bindings/clock/renesas,r8a78000-cpg.h>.
+> > > > > >      const: 1
+> > > > > >
+> > > > > > +  firmware:
+> > > > >
+> > > > > RPi is doing similar, but I have doubts. It looks way too close to
+> > > > > generic "syscon" which is disallowed.
+> > > > >
+> > > > > I think this should be vendor+purpose specific, e.g.:
+> > > > > "renesas,scmi-transport" or "renesas,scmi-firmware"
+> > >
+> > > If you can tell me the resource that a 'firmware' provider provides then
+> > > it is fine, but you can't.
+> >
+> > It provides a firmware API, which is not available until the firmware
+> > provider is initialized.
+>
+> I don't know what "a firmware API" is. What does it provide? I know what
+
+It can provide lots of things (everything we are no longer allowed to
+touch directly from Linux ;-)
+
+> a clock, GPIO, reset, interrupt, etc. provider is.
+
+A clock is an object you can access through the clock API.
+(s/clock/.../ for the other cases).
+Firmware is a service (virtual object) you can access through a
+firmware API.
+
+In all cases, the consumer of the object or service needs to know
+which object or service to use (there can be multiple).
+
+In all cases you cannot access the object or service until it is
+available (initialized and registered), for which we have -EPROBE_DEFER,
+and/or "[PATCH v2 02/10] of: property: fw_devlink: Add support for
+firmware".
+
+Thanks for your understanding ;-)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
