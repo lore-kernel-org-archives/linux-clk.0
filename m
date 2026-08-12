@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB6192D6E44
-	for <linux-clk@vger.kernel.org>; Wed, 12 Aug 2026 05:07:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8A4130E0D5;
+	Wed, 12 Aug 2026 05:22:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786511221; cv=none; b=bdfPnGg6qVYry0UIdRduu/X2GrM7XPDhsKhIZjXBg17detwb4B+kbernncTR2KVU7ocNGWccuiJpZW1TjR+BOJFBtO2pHaORx8qKC3w9lr0FkhbeEtnntjpsOEQeawejVuADfkciaV7wOLpp0sVKPdPjShbrudda+q/07uivIMI=
+	t=1786512155; cv=none; b=cAN1BWmm4Y/YFa0Zw+hT0gKqlozviLrSJdg9eRvnf7spxQG8ZPEQB3V0ubN4odOBScbIYSkQ+V9Q70Y6K0hyXFBAzDvrUZObYBzJd5hwaqc/cxUu1klyZWFZn/s1DN23n9OfbxzbChS+eHtpsidw7heZJX2z361hC6WBDd3hTH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786511221; c=relaxed/simple;
-	bh=VUZIVoN/9aMr574MDKj4Rgi7kY4YGweNyrHS3NGPgtA=;
+	s=arc-20240116; t=1786512155; c=relaxed/simple;
+	bh=cJNabvSKy6D6S+wSMhd5JQHpofj3pi/1/w1+JB93TkQ=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=gt662NXiEG6Hs/DKBTxvHBjkTPTTGE474bJd0oogVlV2w6NjdsMLPikFcS6g9SuNQ9OBs4lVMA2kg4KFhdb4LbkW/1Jyo6Mzx2NNOm6RbmPjJXGqqsOJZVBeocxArWqNgFxCiCjADgj2bLebfRoUzoSbfSi5BTuR2n9QblfZuZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LKbS0+Qi; arc=none smtp.client-ip=100.103.45.18
+	 To:Date:Message-ID; b=b/Z0fdKtknNyTAhTV+08eK0TKZxH8c9P2qHP4U2NEFNMnWdfEjHO8kIVwbHDNpZiGeWBcgvXzA9hiS8/8vNwVoHwVxfRbwxEZ3VLl436PAbWwhR0e1jTzjGH+sktoHyRj9fBzjK7VwwtjlVp+Nbs/Zz6D9/rl4y49rSwZasNXLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QPveumX/; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LKbS0+Qi"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68EDC1F000E9;
-	Wed, 12 Aug 2026 05:07:00 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QPveumX/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48B1E1F000E9;
+	Wed, 12 Aug 2026 05:22:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786511220;
-	bh=utHsm6FG+U4VgEp01NBzjQkdxSyUSz3OrQhJ8WjPFcg=;
+	s=k20260515; t=1786512154;
+	bh=ZPBb4cAV5MPrzvf4K070sFW5PaFLurQzUak2P3Vdyz8=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date;
-	b=LKbS0+QiHJlMhTXBXBqGyysX9+L1Ish/0Rj+hd5zxzsf9dJSvqVi5EQjAlIfQU3Rf
-	 cPyrSika0j6jachHkyZRk5NgSex8RZCNh8qXbvDKHSJ9+PbRnrJkdV5DH6J3CO+UEu
-	 TZWYIqjOS0XxIRp4ldUQZFLNGWZzuKOYbOSDxWn/5zl+uG94sD/LM+BK8IoUG/OCUz
-	 dU3wV8ia0l0H6q4OcGbupita3Wq/8ufOGN8q9/r/NI/R8pyVUoSSWIqUVQnIfm1+GN
-	 xLflqCynNi2aVGS5Z3ktyw3gNSsp8K/bfIiHoHygSurtHhdPgykNeCNW4tutem9+4f
-	 i/wy8nxe+GIjg==
+	b=QPveumX/9BAkYMdtgUZyMe0989p35NJ/zMIOCea5t/w+G7+lZExnI/ehRI03M4gVW
+	 yLvHNzpxMKU5WWJQKJXkqYwgJBKlm9fNNVtm/m/GiQImqJN84qAdvnaG1Z36uHeFjI
+	 0wJ0bJMOhxtC/HfTdWSedxjAu64DjdOWxh66P2dL58iylcrBTxSB/Mg1MJJV0mUEIV
+	 69at9EczkRFgnU0LnQzMkFT5sRxprN9+MBUauxK3FRo6oN3WntIZR5TCHVx7ccCV/R
+	 hTF4lDo0TwbzKI5tXy0OWPt8nrqYEzTnepYJLfSrciaWH2PBkStpzmvLFYn+wI5Ta5
+	 SazDDbmTaOKwQ==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,27 +34,22 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1jmrv7xlyk.fsf@starbuckisacylon.baylibre.com>
-References: <1jmrv7xlyk.fsf@starbuckisacylon.baylibre.com>
-Subject: Re: [GIT PULL] clk: meson: Amlogic clock changes for v7.3
+In-Reply-To: <20260802014217-KYC2734409@kernel.org>
+References: <20260802014217-KYC2734409@kernel.org>
+Subject: Re: [GIT PULL] clk: spacemit: Updates for v7.3
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk <linux-clk@vger.kernel.org>, linux-amlogic <linux-amlogic@lists.infradead.org>, Brian Masney <bmasney@redhat.com>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Date: Tue, 11 Aug 2026 22:06:58 -0700
-Message-ID: <178651121874.5862.15074147400142820342@lazor>
+Cc: Yixun Lan <dlan@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Brian Masney <bmasney@redhat.com>, Troy Mitchell <troy.mitchell@linux.spacemit.com>, linux-clk@vger.kernel.org, spacemit@lists.linux.dev, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Yixun Lan <dlan@kernel.org>
+Date: Tue, 11 Aug 2026 22:22:32 -0700
+Message-ID: <178651215252.5862.4480686966770442690@lazor>
 User-Agent: alot/0.12
 
-Quoting Jerome Brunet (2026-07-31 07:39:15)
+Quoting Yixun Lan (2026-08-01 18:42:52)
 > Hi Stephen,
 >=20
-> Here are the Amlogic clock changes for v7.3
-> Nothing out of the ordinary, 1 fix for an old chip and 2 new controllers
-> for a new chip.
+>    Please pull SpacemiT's clock changes for v7.3
 >=20
-> Please Pull.
->=20
-> Cheers
-> Jerome
+> Yixun Lan
 >=20
 > The following changes since commit dc59e4fea9d83f03bad6bddf3fa2e524917774=
 82:
@@ -63,12 +58,13 @@ Quoting Jerome Brunet (2026-07-31 07:39:15)
 >=20
 > are available in the Git repository at:
 >=20
->   https://github.com/BayLibre/clk-meson.git tags/clk-meson-v7.3-1
+>   https://git.kernel.org/pub/scm/linux/kernel/git/spacemit/linux.git/ tag=
+s/spacemit-clk-for-7.3-1
 >=20
-> for you to fetch changes up to 6f809ca8104b01dff31a20e91fa748b49fe2971f:
+> for you to fetch changes up to 8a7d4b1924d2a424b1a6fe69de4f9464ee1fb485:
 >=20
->   clk: amlogic: Add A9 peripherals clock controller driver (2026-07-24 18=
-:09:37 +0200)
+>   clk: spacemit: k3: fix missing /2 factor in i2s sysclk dividers (2026-0=
+7-29 02:42:06 +0000)
 >=20
 > ----------------------------------------------------------------
 
