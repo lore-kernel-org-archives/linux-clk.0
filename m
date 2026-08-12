@@ -1,114 +1,148 @@
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98F0040DB4B;
-	Wed, 12 Aug 2026 10:23:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A3BC40B108
+	for <linux-clk@vger.kernel.org>; Wed, 12 Aug 2026 10:24:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786530205; cv=none; b=o9CC//smzG/YKigmBhCZr4GG5IZPUMEbDVwUBEEBosmLnSp9Hc0uTAEWNww8U32+j6Nl96cqbtNnl7SWN3WPIVKnjZWT1F0q4fWfWDsh9l5S6vZWvqJt8yY671LUUCzIMp1ZvWhDEByIF+4GqNQweLuBH2OistYDbJTBpq6czlA=
+	t=1786530277; cv=none; b=sgXnXz0ce8KK0q0utdw3hI8nK7/RBewFGdlHfg2cpjMNAQ+YXivyMDCkC0yRYLiTrGYyunnDSls0Tn4Sqe7xMLp7jB/643fuXcQL8VgffLgA71QSLY/w2TGJGusCBSL1twE5DSemWGer+iHzizWykBP9EDN1N4B/loy79ZzblXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786530205; c=relaxed/simple;
-	bh=1SAjUtfKAHjhqPstwZeDnPVWH8nkgMFt0Lr5rqjRwLQ=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=jVdTvmagLBetHNcnCVeq8/BKEd3rRWFPMl++vBkKboH4J7HdncEQ5rvSSwZiPuJiz3RWH2Pi3sJahEqab7Ghit2U9lxWliRT386aAk16Yq92h95QxfMZTHs0f6ocSvybbNif1MTL3xq/19RKbhYTlTchlXL5HspHdvorj8MC+Y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=XPsudSQM; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+	s=arc-20240116; t=1786530277; c=relaxed/simple;
+	bh=k2jGqk46sF1bLdy9ZIJ4CzjL14SbrH9QV5M9xpSxDfU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a4oZeretp752qog9vLiIqElqcsLyKyKrLVvfYx/Sd5f4E46KBfdUupqClXzcmvbFN99jqktGZkVHk94rKdb88duqRa6LPLGsUFDReghNMvxH9/RnrJh5EPDxYnOyf/aUG+qA/ZJJR+BvnMHa+eCT/1bU1HY7feZTPRlEaRXuBl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=nSLz45Rk; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=ZoT542if; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="XPsudSQM"
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 67CAMaxG63513210, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1786530156; bh=1SAjUtfKAHjhqPstwZeDnPVWH8nkgMFt0Lr5rqjRwLQ=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=XPsudSQM49Q6t/U/qRJgD88Cw6cQVAg0NqbeYJxXbO19q4kWBMBcdWazshnZZetZH
-	 h7oxCo6h1wCq1LS9VW1LRlAV7v8SVI6SNm1iSnkuwl4RX1ZJmD8uOhsaVzdxTXOldM
-	 44j9fhWgMqqeSbMLrdBe6OTQOTFhrtOQbB7Hcm0QchMjFjTpjJyRaN7NTvTqPSbiFY
-	 mcv7bqrWlRoerJTOWRfukkjrYTexvBSrlO+4NI9MBEFoXkMKWtZaY+6ycJGsPs0HPg
-	 jbtChwobWNrziruIw+Qln8IO1tKnldzAU/UC6N8Y+bf1kcudgaxweyE6v0hf+U7NcK
-	 dxCK0CQq2IzDw==
-Received: from mail.realtek.com (rtkexhmbs04.realtek.com.tw[10.21.1.54])
-	by rtits2.realtek.com.tw (8.15.2/3.29/5.94) with ESMTPS id 67CAMaxG63513210
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 12 Aug 2026 18:22:36 +0800
-Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
- RTKEXHMBS04.realtek.com.tw (10.21.1.54) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.43; Wed, 12 Aug 2026 18:22:36 +0800
-Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
- RTKEXHMBS06.realtek.com.tw (10.21.1.56) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.43; Wed, 12 Aug 2026 18:22:35 +0800
-Received: from RTKEXHMBS06.realtek.com.tw ([::1]) by
- RTKEXHMBS06.realtek.com.tw ([fe80::126f:59ad:658:674d%10]) with mapi id
- 15.02.2562.043; Wed, 12 Aug 2026 18:22:35 +0800
-From: =?utf-8?B?WXUtQ2h1biBMaW4gW+ael+elkOWQm10=?= <eleanor.lin@realtek.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@kernel.org"
-	<sboyd@kernel.org>, "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
-	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-	=?utf-8?B?RWRnYXIgTGVlIFvmnY7mib/oq61d?= <cylee12@realtek.com>,
-	"afaerber@suse.com" <afaerber@suse.com>,
-	=?utf-8?B?SnlhbiBDaG91IFvlkajoirflrold?= <jyanchou@realtek.com>,
-	"bmasney@redhat.com" <bmasney@redhat.com>
-CC: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	"linux-realtek-soc@lists.infradead.org"
-	<linux-realtek-soc@lists.infradead.org>,
-	=?utf-8?B?SmFtZXMgVGFpIFvmiLTlv5fls7Bd?= <james.tai@realtek.com>,
-	=?utf-8?B?Q1lfSHVhbmdb6buD6Ymm5pmPXQ==?= <cy.huang@realtek.com>,
-	=?utf-8?B?U3RhbmxleSBDaGFuZ1vmmIzogrLlvrdd?= <stanley_chang@realtek.com>
-Subject: RE: [PATCH v13 01/11] dt-bindings: clock: Add Realtek RTD1625 Clock &
- Reset Controller
-Thread-Topic: [PATCH v13 01/11] dt-bindings: clock: Add Realtek RTD1625 Clock
- & Reset Controller
-Thread-Index: AQHdKf6sqK1LXpXPjkadMFMzDtoXkraZlK4AgACT8SD//3zlAIAAjtXw
-Date: Wed, 12 Aug 2026 10:22:35 +0000
-Message-ID: <e2c90bd25e654e0f9ce1aea6e0b4f74d@realtek.com>
-References: <20260812020009.3480538-1-eleanor.lin@realtek.com>
- <20260812020009.3480538-2-eleanor.lin@realtek.com>
- <313b74fd-1a5f-4e1b-a4e2-a537f7939fad@oss.qualcomm.com>
- <fd254ec8d59a4ed3b4ea157b866ce798@realtek.com>
- <d55ed65c-b066-47aa-b285-c9582894b84f@oss.qualcomm.com>
-In-Reply-To: <d55ed65c-b066-47aa-b285-c9582894b84f@oss.qualcomm.com>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="nSLz45Rk";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="ZoT542if"
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 67C9frsw3777858
+	for <linux-clk@vger.kernel.org>; Wed, 12 Aug 2026 10:24:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=mGD24sTGT3wBWExobgVbY/RH
+	IhyIVBjaK8WNignEdN0=; b=nSLz45RkGSIJy5nhcvKdBAKmB4Stl1E8gnIrIVU3
+	bEDjFAQoHPb4JXBkrefsxz6aeeXs5ARQc5tcmBJBk1nT8vhkD6r95jtOUFhx/BqW
+	jYEYoGocjrSw/hk6hvVj5rnXBMGx9+YmmwGsRXQyR571aAIvwFEf0f3KlpaTy9Jb
+	Q2VElLJCOSHpVGLE0e2Bk7BvhDapbfscX7ZcVbX0cbH8HRtogse2yGGNN+Bz40od
+	5Hyj4nCjZhMTJmPgbeJPVCZGIFS/ULZMRgdRGOhHBEn2v6hwDr9r0UL3JbnBfSeO
+	bJZ6pxiqP1XNZAGOUHajsYNrr/+ozfIgpmh1zcrBFcVJ6A==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4g0nucgae7-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Wed, 12 Aug 2026 10:24:34 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-51bfe3fa93bso7773531cf.2
+        for <linux-clk@vger.kernel.org>; Wed, 12 Aug 2026 03:24:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1786530274; x=1787135074; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=mGD24sTGT3wBWExobgVbY/RHIhyIVBjaK8WNignEdN0=;
+        b=ZoT542ifDzKSTCKsJWtM3MjKH2LItk8qfdEyA/4zXxry1xDO6+Pzh70DcFmoqUwYy6
+         234aogyQeqRunLB5beR3G2HYULUb52dEQYvii6yZX4KCdmSekbLdjaLwMAejwxYjXvrA
+         iQiFO1/wXXGieF/BDOHsl6khQdu5qx7xP87bzccLLniNX6H64LLODZY1M4M/4V9ScFF2
+         LUIkTOqQd4dsSc7DEGDjuEVoL/4LjSBa66eQ8nt+unVwNSrCt7y47MEmw6PsL3Cfgi8K
+         exSUdraC4F7eQEDSEgp3v3XpTtpIrrqVV9guI/5/Ec2f05j9nfote/si9RkQJWL/iEbY
+         Cf+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1786530274; x=1787135074;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=mGD24sTGT3wBWExobgVbY/RHIhyIVBjaK8WNignEdN0=;
+        b=BLl5At+1iWBQ4sZveR7xJyD6KOf5HbKXCC4XEGxlTOU4Yw9COCxGXmoATVU6ucVxlY
+         QTCv7zAiedEouworbb6gSF6A03UmPYmpgJ1BGoZV25vqn6neXTuyfnCY8DC3NM9r2tak
+         J4U9Rco3F3o+HUt48TTJ15hw8f2+lYO9RjsOEFxEfB9Szsm0qsi0dXSfmDARgcJrtHbx
+         Ld0TI/ea+5tUrbupp17u3swtpQEbOlp26BUkdRhEudob7TrlGvUoFBXIvpebwVt4b/VU
+         IZ+7jDHjQlMYDr7/8CV5/3qIKR3XbLcUwJySc3SX7YMahZ9mHruhgzzSQjd1s7lPzr0p
+         rtcg==
+X-Forwarded-Encrypted: i=1; AHgh+RqBm+UpT97TgQnsZ1usmoyLKfW3ddaVgQ6k60ebjp2vfr6o3r6kGPn4rWqXgQCLD3+HaYpgkxSO8go=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmvlUIL/Wl4jPEPveaT6qVbXE0QPABLurjpTIyT3jlEx2/xm/F
+	Hn0ghgNi1a0eRL5DIoP61nILqTACUrMst/VF7euU/I7mCr/pc3hYpHzkHmTomhzl+3d/WqAqNpM
+	0vykO5c6H+X1bknO/bZl4Ou1lBi5MuS6Kg+8rJQdgT5GhncEaChYkjDgeZ4au068=
+X-Gm-Gg: AR+sD13X4GzwBjI5IUouW5vFnrZgHGpYqZ3mp+8gm5Ls8EDyiZyvk17ATmHVjyzwQ7S
+	48W9su+3Z+9lK18NtkUW4iHnsiiAq+3dEHucv7ELKRj6rx3iBLSJPavqyxb1ZEhKPo5xEKolBlI
+	gy7LHXZE24KAl4fWdM4+xJUjvJzT1ayCKaMRXgm7+Xg82vg6OMCwzGYEcZZ7RG5c/xgot3N/LNI
+	c8OROipMfZcGcdaI1MyMS8BYW2x1vc1IO9EVNpCAOlHzRq/1BmeXSYOVfEXWHavi50Q3WTbOHTs
+	U6mfU23f2Cn6L7dN30ST8xbsZPonwednIYxzVzrYuFN4O/f0EhBzKfOSeqlmemcPClWGzUw6WKx
+	mpI2O58qJYLKxmhM=
+X-Received: by 2002:ac8:5d41:0:b0:51f:20e1:137f with SMTP id d75a77b69052e-52d647607a6mr29057941cf.19.1786530274228;
+        Wed, 12 Aug 2026 03:24:34 -0700 (PDT)
+X-Received: by 2002:ac8:5d41:0:b0:51f:20e1:137f with SMTP id d75a77b69052e-52d647607a6mr29057501cf.19.1786530273692;
+        Wed, 12 Aug 2026 03:24:33 -0700 (PDT)
+Received: from oss.qualcomm.com ([188.27.161.149])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4997aaa5d04sm58938035e9.2.2026.08.12.03.24.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Aug 2026 03:24:32 -0700 (PDT)
+Date: Wed, 12 Aug 2026 13:24:30 +0300
+From: Abel Vesa <abel.vesa@oss.qualcomm.com>
+To: Qiang Yu <qiang.yu@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Taniya Das <taniya.das@oss.qualcomm.com>,
+        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH v3 2/3] clk: qcom: tcsrcc-x1e80100: Migrate to clk_ref
+ helper
+Message-ID: <a3dfeej45s46qkicay5vsnfoe6ndnllm4llmqbcgjvw4unknpf@tcl5puha5qxi>
+References: <20260812-hamoa_tcsr_qref_0812-v3-0-dc7627169c6d@oss.qualcomm.com>
+ <20260812-hamoa_tcsr_qref_0812-v3-2-dc7627169c6d@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260812-hamoa_tcsr_qref_0812-v3-2-dc7627169c6d@oss.qualcomm.com>
+X-Proofpoint-GUID: xosbtwBO0Kz3PgUNVygFw0MKK-2cNovR
+X-Proofpoint-ORIG-GUID: xosbtwBO0Kz3PgUNVygFw0MKK-2cNovR
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODEyMDA4MyBTYWx0ZWRfX1YJEHN7FKsac
+ v1pqg9KsOSqvANtWGG4tkJk84k04MerOS5Py6Hw6k/XwOxIebccAln7GkgU58H9+c1MVuOVS6wE
+ 4J3NGSVettOp4Pe+tqSdhHPQD3IFIXfJ/XLf6NZprxs91LmWin5r4PJ/PLffTZ7P9lg/4P3qgOj
+ JkxTUwnZFvRBz+DESS7pAhuA4G2Wwua2u/I0QF6CHWSzQJl3cXHEzfZeAf+oF4AqKrvDEEK2CBn
+ 8uK10yeHH/DC0E1AeJ8G6gp/3QMUPCBiVVBk94o+k7f9dI+l+z/AP1Ywr2ffDMsF92lFn62ePe9
+ u0JOG60T8Gd+Hj+DQVbKL6Cr7O7d6rcfdQzXAz9n8YLsU+NuMNLyi+DDWJooAByj5ZepW97+Cs6
+ FJYk5MHI35x6aQTJLJ5vbrQ5DJhxmRwkljB47qR1pfgdISOFWsSC5pP8IiGtkuKFDjWPFVrjtGv
+ 8QRGeU6E6oTIkwh/V6g==
+X-Authority-Analysis: v=2.4 cv=VcjH+lp9 c=1 sm=1 tr=0 ts=6a7c49e2 cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=o07dIpAjZdj6OISZKn0kaw==:17
+ a=kj9zAlcOel0A:10 a=Sv0fKeRqtYgA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=3WHJM1ZQz_JShphwDgj5:22
+ a=EUspDBNiAAAA:8 a=h4UwG7AoVW59HMWry4cA:9 a=CjuIK1q_8ugA:10
+ a=uxP6HrT_eTzRwkO_Te1X:22
+X-Proofpoint-Spam-Info: AW1haW4tMjYwODEyMDA4MyBTYWx0ZWRfX7FNTtupFBxst
+ qsvW7gRvH129Hwm3tWTAp5r5wiloWxt59EU32tQzKUuxR6FhR2V5DG4x0W64CEw0y3JS4olfob5
+ 3T0s+ld4SRo8nCjYmHYha13s4c8s9Y0=
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-08-12_03,2026-08-10_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 adultscore=0 priorityscore=1501 phishscore=0 suspectscore=0
+ clxscore=1015 bulkscore=0 lowpriorityscore=0 malwarescore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2608120083
 
-PiBPbiAxMi8wOC8yMDI2IDExOjQxLCBZdS1DaHVuIExpbiBb5p6X56WQ5ZCbXSB3cm90ZToNCj4g
-PiBIaSBLcnp5c3p0b2YsDQo+ID4NCj4gPj4gT24gMTIvMDgvMjAyNiAwMzo1OSwgWXUtQ2h1biBM
-aW4gd3JvdGU6DQo+ID4+PiBBZGQgRFQgYmluZGluZyBzY2hlbWEgZm9yIFJlYWx0ZWsgUlREMTYy
-NSBjbG9jayBhbmQgcmVzZXQgY29udHJvbGxlcg0KPiA+Pj4NCj4gPj4+IFJldmlld2VkLWJ5OiBL
-cnp5c3p0b2YgS296bG93c2tpDQo+ID4+PiA8a3J6eXN6dG9mLmtvemxvd3NraUBvc3MucXVhbGNv
-bW0uY29tPg0KPiA+Pg0KPiA+PiBIb3cgbXkgdGFnIGNvdWxkIGFwcGVhciBoZXJlPw0KPiA+Pg0K
-PiA+PiBMb29rOg0KPiA+PiBodHRwczovL2xvcmUua2VybmVsLm9yZy9sa21sLzIwMjYwMzI0MDI1
-MzMyLjM0MTY5NzctMi1lbGVhbm9yLmxpbkByZWENCj4gPj4gbHRlay5jDQo+ID4+IG9tLw0KPiA+
-Pg0KPiA+Pj4gQ28tZGV2ZWxvcGVkLWJ5OiBDaGVuZy1ZdSBMZWUgPGN5bGVlMTJAcmVhbHRlay5j
-b20+DQo+ID4+PiBTaWduZWQtb2ZmLWJ5OiBDaGVuZy1ZdSBMZWUgPGN5bGVlMTJAcmVhbHRlay5j
-b20+DQo+ID4+PiBTaWduZWQtb2ZmLWJ5OiBZdS1DaHVuIExpbiA8ZWxlYW5vci5saW5AcmVhbHRl
-ay5jb20+DQo+ID4+DQo+ID4+IFdobyBhZGRlZCBteSB0YWc/IFdoYXQgaXMgdGhlIGFjdHVhbCBm
-bG93IG9mIHRoaXMgcGF0Y2g/DQo+ID4+DQo+ID4NCj4gPiBZb3UgZ2F2ZSB5b3VyIFJldmlld2Vk
-LWJ5IHRhZyBpbiB2NS4gSG93ZXZlciwgYWZ0ZXIgdGhhdCwgU3RlcGhvbg0KPiA+IHByb3ZpZGVk
-IGFkZGl0aW9uYWwgZmVlZGJhY2suIEluIHY2LCBJIG1vZGlmaWVkIHRoZSBwYXRjaCBiYXNlZCBv
-bg0KPiA+IFN0ZXBob24ncyBjb21tZW50cyBhbmQgbWFkZSBzb21lIG90aGVyIGNoYW5nZXMuIEZ1
-cnRoZXJtb3JlLCBJIGFkZGVkDQo+ID4gdGhlIGNsb2NrIElEDQo+ID4gMTQ0IGluIHYxMS4NCj4g
-DQo+IFNvIGhvdyBteSB0YWcgY291bGQgYXBwZWFyIGJlZm9yZSBDaGVuZy1ZdSBMZWUgc2lnbmVk
-IG9mZiB0aGUgcGF0Y2g/DQo+IA0KDQpBaCwgSSByZWFkIHRoZSBydWxlcyBzdGF0aW5nIHRoYXQg
-InRoZSBsYXN0IFNpZ25lZC1vZmYtYnk6IG11c3QgYWx3YXlzIGJlDQp0aGF0IG9mIHRoZSBkZXZl
-bG9wZXIgc3VibWl0dGluZyB0aGUgcGF0Y2giLg0KDQpJIG1pc3Rha2VubHkgdGhvdWdodCBteSBT
-aWduZWQtb2ZmLWJ5IGhhZCB0byBiZSB0aGUgYWJzb2x1dGUgbGFzdCBsaW5lIG9mDQp0aGUgZW50
-aXJlIGNvbW1pdCBtZXNzYWdlLiBUaGVyZWZvcmUsIHdoZW4gSSBpbnNlcnRlZCB5b3VyIHRhZyBh
-dCB0aGUgdG9wDQpvZiB0aGUgdGFnIGJsb2NrLiANCg0KSSB3aWxsIHJldmlzZS4gVGhhbmsgeW91
-IGZvciBwb2ludGluZyB0aGlzIG91dC4NCg0KQmVzdCByZWdhcmRzLA0KWXUtQ2h1bg0KDQo+IEJl
-c3QgcmVnYXJkcywNCj4gS3J6eXN6dG9mDQo=
+On 26-08-12 00:27:32, Qiang Yu wrote:
+> Replace local clk_branch-based clkref definitions with descriptor-based
+> registration via qcom_clk_ref_probe().
+> 
+> This keeps the x1e80100 driver focused on clock metadata and reuses
+> common runtime logic for regulator handling, enable/disable sequencing,
+> and OF provider wiring.
+> 
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Signed-off-by: Qiang Yu <qiang.yu@oss.qualcomm.com>
+
+Reviewed-by: Abel Vesa <abel.vesa@oss.qualcomm.com>
