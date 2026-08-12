@@ -1,175 +1,172 @@
-Received: from CHN02-BJS-obe.outbound.protection.partner.outlook.cn (mail-bjschn02on2096.outbound.protection.partner.outlook.cn [139.219.17.96])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44A2A41684D;
-	Wed, 12 Aug 2026 10:37:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.17.96
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786531052; cv=fail; b=FY+vI0NWHQ8EkCJxITCpMNySAPViNHb/5GpumTHMZoyN5VewR/18XnZkCVUaaXHLRfDk3xVL8Zysr+iZ560Fl4oo244+HVnJjbIsye33OKMXM/S0tjunJU6l6n0em7hqkjLOSw3gPmrlM8+j/j/T6I1HZP6JTHzPK3GeeTioI6Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786531052; c=relaxed/simple;
-	bh=m/K57IuG+Hiiezb7zgNMLcz4y/ekJNtgZl/GuomcdZM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=PPOfeTb5lIutLqEc/WnXCejMDevE9gt2dNia6gf27IYTYUTHtqE0eNBR2ruWXsrtOitFusmWemueu7life9rk1Kyei/VNO7MO1dIFxWgu7w1vDoCxX8T5saqhUWgJ2zmzY15g7G/KmSAHtB9mAwaXJ64j9qnuhtnMsSi53h2gq4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.17.96
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=EPORAul9HRdoL+TgXpsEoq+MY7czBsejlaBD2Hea1lXnXrHDzOY9yaOvlVNXiW6ykPV37yr5QzdAO64sOMjsfcYWQFgjNgkh8h/bgQAIOMB7x4oX9wND3Odt5VFLYQ5vkD2412DgkPLJGhG6zJ+HUblDiVLVWn0ZETABB2bdwZWJsId1YuDUZjnZIAgNcQXyVvZ8CUH42CXnTh755orts4h2ai2NDB4vmemEoV8Y+i4FrTlgN3CbA9HQAiUR5WK7RFocUZWN2jg3C1IdgwjX9+E0ibRXfkleCnk3tqBpnThXlOOEBdsfTmHfrt2YODWevXBcjWMEtFzDA0g7KiljHw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mBpMuSIudmHS12y4XRGyMdOAaB6DU+PJVvWsTpXFXJY=;
- b=ATHJaR5NseKGYoYbScRfypG6c1V+bo4XQAJYFlVTELUxhcl65PCFks1Wk+TZRWgFXOZiXln/vAgNQMb21Dsc0xOEmGs3pmRpkHTQ4KUr4ZoxlS/RgEZ0h7BE8IUmJv0IwD5kzSjgavKgs/JNd7bI0leno1B7WaQbiYekN+qPFAMaHGy5jtFxgPS3SxVs+DIUqPkpK40oURN9Un6EI+dpZ65JE23NLqXK2zvkke9AXYcTY8v2Srl3uDiIGlK1zs7EHvIAV4cOe+M0Wb9hJM23rOdhfaY2gTbY55pDUg+Mrbyl95eAgyOknBjjKt10lmXXgPHp3//iH4J8G3KHQDqPlA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=starfivetech.com; dmarc=pass action=none
- header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
-Received: from ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:17::6) by ZQ4PR01MB1251.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:14::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.292.25; Wed, 12 Aug
- 2026 10:37:16 +0000
-Received: from ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
- ([fe80::e7d4:256c:b066:850d]) by
- ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn ([fe80::e7d4:256c:b066:850d%4])
- with mapi id 15.21.0315.011; Wed, 12 Aug 2026 10:37:16 +0000
-From: Changhuang Liang <changhuang.liang@starfivetech.com>
-To: Conor Dooley <conor@kernel.org>
-CC: Michael Turquette <mturquette@baylibre.com>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Brian Masney
-	<bmasney@redhat.com>, Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt
-	<palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti
-	<alex@ghiti.fr>, Philipp Zabel <p.zabel@pengutronix.de>, Emil Renner Berthing
-	<kernel@esmil.dk>, Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto
-	<inochiama@gmail.com>, Alexey Charkov <alchark@gmail.com>, Thomas
- Bogendoerfer <tsbogend@alpha.franken.de>, Keguang Zhang
-	<keguang.zhang@gmail.com>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-riscv@lists.infradead.org"
-	<linux-riscv@lists.infradead.org>
-Subject: Re: [PATCH v4 7/8] soc: starfive: Add socinfo driver for JHB100 SoC
-Thread-Topic: [PATCH v4 7/8] soc: starfive: Add socinfo driver for JHB100 SoC
-Thread-Index: AQHdJ6GQ5ts+ksAe6k+ENksiQTa0y7aXdLuAgADirHCAAL8NAIABJ12Q
-Date: Wed, 12 Aug 2026 10:37:16 +0000
-Message-ID:
- <ZQ4PR01MB1202DDE6C255441E1FC4F916F2DC2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
-References: <20260809015054.210577-1-changhuang.liang@starfivetech.com>
- <20260809015054.210577-8-changhuang.liang@starfivetech.com>
- <20260810-caress-rack-45615c8d9747@spud>
- <ZQ4PR01MB120276A1DA91FAC19C852F14F2DD2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
- <20260811-populace-afflicted-40a40e0f484c@spud>
-In-Reply-To: <20260811-populace-afflicted-40a40e0f484c@spud>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=starfivetech.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: ZQ4PR01MB1202:EE_|ZQ4PR01MB1251:EE_
-x-ms-office365-filtering-correlation-id: 87edb5ab-1330-431d-a165-08def85dad97
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|1800799024|23010399003|376014|7416014|10067099003|56012099006|4143699003|22082099003|18002099003|38070700021;
-x-microsoft-antispam-message-info:
- FPmU/DJpWIqGXbYXayd1vJeb36j3sexqOydqy9NCVpaYe6eq5Y5dws0yiMVVPXXaNTl41jFpeo2W3gRnoQB39ZmerguAlq+ayC1UdVe2NZsIG06vx416aTWxMjyXA0yY+RPYWXNRAjiCjLv4joajzcV3rNeBVQxrHsFVq2b5UrZ2Pk9/1eYzqhv+AACbmchQMVRh93KNQUcAFO6VlY7QvoO/2PLjJKubXuX2Co5kNfa/uN5clQ1eJWYjT+i4uLQCSyT5oSHqu8F2IeXXe1OM9YoAwOIffDhpJei1nnXAt+KeakaO0PmIDMyNjpO0vHx89rq5RSQRvJe0w6XA2S/DkE0Su268ikmqQZPV5BExkYGQF+aN0WNcziSPjy6WYy4yuj5HpxTZ9h41ct51rzP+hUTZnKh0DN1OZQ8iEjSf7ojWHha8FyeOsbHQwTRy8BpEX6w1T0yx8G3bE3eMfKkD+vUNpWOh94QUk6rAugec6LZa86VJvxpdKumHQkTCevQjcdONxoIu02N0P9X/SypF+tvhwBaVAdTb1d396fO5KyVMqrTL3fMxlZ1QKz55GZH5
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(23010399003)(376014)(7416014)(10067099003)(56012099006)(4143699003)(22082099003)(18002099003)(38070700021);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?ARy4ANKMlTYnMLIK/yU8lKIzJmHYKZooJhrROu3x+i10GI2LR9kwGefVjHTu?=
- =?us-ascii?Q?Vg4DnexRlnepDLZSVLo5lRbv9GWADjZTZd9mv+5DUdyoJOAAwN9DejYQeJvA?=
- =?us-ascii?Q?6nhoqzYUW5+4yPkQe2ebUjqY4P/tUwda+S6brMu6MtmdMzEG2ju+KnmqpjRh?=
- =?us-ascii?Q?QpG6AMT6ZmKgdyisdQBakKgKhGPAML2U97t4dxwVAhj/WRoTmzHlz4gzYcYk?=
- =?us-ascii?Q?X4k0sRu4eusZ+ELzFaPwtc1+9BJ/nt1RsWrGgWEoTWbCaqIblq/eFWi8E6/E?=
- =?us-ascii?Q?qpygnKbDidgHOdBGqRDZr3p9V2Q1QnvD2u3HdA8fdFKtRZEUYFHsVP5Wgdgf?=
- =?us-ascii?Q?oCelbUBSFUBbw3Dr8YPRrIYrwqwXsZ1Uk9YgS9hzJ41c2qN0cKwOuaqUlxn3?=
- =?us-ascii?Q?FFQP3qVsr23NwY9J0FgqW/AXnmvZcVaZEnPLvowJb5/ZatgD1MJ2EZG7rKMi?=
- =?us-ascii?Q?QQWg5QTvXs9eDcausOnZB+GdkfrjEJ7kCCwZGB9nAldruQqFFij6CF98CjAy?=
- =?us-ascii?Q?IC3rqcEzmluxb2zjd9PIU45MRXkZ14BpkaSUZiDtZZZ24IEJIHpTyvodRP2P?=
- =?us-ascii?Q?I1OO1NAGKFMNu7Jfp5a8soXm4tuoao477M4Rcj8p4OSnfxJhxYKnsqcjKqnX?=
- =?us-ascii?Q?jM5z8YPzgONMBkRoIyBWJEVa7ql4F6bZGtxF9TVLPP3bBnnyJ0p9RRWSLLwT?=
- =?us-ascii?Q?CihNWOFn/GlvifhemQcvWCmTsQyo/fg6orbRQyJ5EQrJdzD+spncVkSIgc0s?=
- =?us-ascii?Q?NXnTAxEhP1ap18BH9eoQCLmy0vWgO5Xea2cgtuhITxTCHnRRd4UqLZYWB19R?=
- =?us-ascii?Q?oGohwGpNy6o4HwjzE4x+VRXh0Z89wo8zJSMkcow3wOF9yvVefzpRXWsuhQij?=
- =?us-ascii?Q?BQGXA5uYiEA4vgGHEj/ThMchX3N+sdYXr3tlwjPrE58Qq9H4Tu0Kgem5P9rJ?=
- =?us-ascii?Q?rRIoGiq2MgfXzy/nw0k/8k9/cHNZmvKdjHZwmmMmtjsoSMl5wVyCjww3ZNXy?=
- =?us-ascii?Q?7aO/LF7W9PdS7O03FJJ+f/zQpCMSfZujXkh4dHzkOQoUPM9sCGjSoBxLOqxs?=
- =?us-ascii?Q?mnofghFu8yVby0UeqwjgLMDREOEmciexWVFZo1OfFOw2Vsvs2c6W9h6tdxsn?=
- =?us-ascii?Q?oQzs7GDvvMDv7eIuu6EGEbj5MLeal3UsPFn3w8Kxb92ioOFKnI+lEfQuo9pD?=
- =?us-ascii?Q?GbanKICkKS88UnE3GpWdK6WJrCOX5OLoZg/e3oEvLGTJuZ6rnGL38hyBTLiL?=
- =?us-ascii?Q?HR4hyo0DAqGGPmoaVZ1Rlo7bKH4NgZncJVkAa8d5MsT5S17gP+C/l6aJ7bhN?=
- =?us-ascii?Q?abLhuVDC6MXMXMp+4Jc7Hs40Zog3M3qAE1FROfv68z5JlqGpec9jIZz2dUCF?=
- =?us-ascii?Q?IX+dxG7CmUMOVamkOH8cVi0GtXuax/eerYbfl0VutdqahVAClW5EHmMI7HgF?=
- =?us-ascii?Q?Q7cyURx2+JCL6bUoc5a5N4fx+yrEdsu/LGCG+z/jtSg1GZeJTxVq1FFaqru2?=
- =?us-ascii?Q?wfhlmzxoimZeLSOXYhx24Z0oDMKD6wNQFjDFm8n9lPxrjJUINBDKklH1fGq2?=
- =?us-ascii?Q?cShW2Pt6iey0zr2xwlBeRllVu5ixVlG/BVELRTHWdoIhdxWdYmCqTy0lC9cT?=
- =?us-ascii?Q?0EXZsJsdNdStOc5m/jBQWtp8pPtq/hjNp5zGlBZPrUV+lzLaFdLmk1mHli9V?=
- =?us-ascii?Q?UFKPAwEEUEwyFZLy1B2mJGQlW3VfWdGzAISVmJfHeWkHR4v+xVAxiOSyxlUJ?=
- =?us-ascii?Q?l/3gNj3/7p3Yk+cjF/imAy1eejFtP8c=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33FEE41684D;
+	Wed, 12 Aug 2026 10:38:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1786531107; cv=none; b=GrOd4Ql3P5LakWlQ7HdXTHKobC7J8Hbi9YT4f5H/p8L14iU/SIum/hz1+mtMzXSXM23kNiyDHrBsnifazkseCLSk47NhSv9xW2Yms5pVbhF5uu+vsr9VG5RUsBccp99a+RW6HxoiEqs9/7K0fe5UjjvqRKemPJjUAEigXndMnJ0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1786531107; c=relaxed/simple;
+	bh=ZCx+dwrvGPekeMc6SLCsjMITTKLCQ5SSIfGRuEEvko0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PbpfUsNUApb1Xnwl0DSbrXcTA4liqONO++iRX52kRq4xiFy+R6K4yBcvqRwzfJFvpm+Ae6zzDemxGu7YAeEpuVhoWsKM/aiiUVzOsbtL24JKnaPiFx8Yge509tWLkUNF5xOw/CUr9iW7lbeIbLkNZb+y8SIFNbLgSsJGWXsIRyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=blRbcy/n; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="blRbcy/n"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C5011F000E9;
+	Wed, 12 Aug 2026 10:38:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1786531105;
+	bh=Lu/qiEjyLXDw9PVQ3MvX7lPg6/5KHHIEuSsW3VTnccg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=blRbcy/nSgMOHQs7HEFHJPqzROH6mLO3n+/pVLTZwrFBZNl1orRvZXPwnIFB60gSG
+	 Kw7tMtiTrTsitWbBy3RYd/t7iMiSczc+nzoMNRWGzALZhSJEc8yuTdTdZw9+DGHLfj
+	 NODWxMMfbcscYz4Rm5RGH9o52BKZvqmh7Jx4nw/OyazSH36j7TsaLvvufgWWSFayeS
+	 nnUVLuTx0UALHWFVHP9Rrju+DXUqUHUzChvaGh7bi0eyKBmPgmlLKUMJWtZpJ+5fTs
+	 cXN7SzRj7aFN8ll8kOeXEKKzaZVLifKJO4fDFOnZniUvccI1IjLBPpuPxxMAqRt9QH
+	 MO/GuKeDwbnbg==
+Message-ID: <7b066c1f-20b7-407f-9268-e9dbeafab004@kernel.org>
+Date: Wed, 12 Aug 2026 12:38:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: starfivetech.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
-X-MS-Exchange-CrossTenant-Network-Message-Id: 87edb5ab-1330-431d-a165-08def85dad97
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Aug 2026 10:37:16.0968
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: i104mYlo9PGTLHE9jgHSyVInfLHbPlOtb9/FqNjtoX+F/EEq2Ej2Ja7s7S2WfR7B3jrY5i7t1PPw0gll1XP7BNgrXErRvAiMzqfzObwGji3sADiLC0IFW8PAeTYBF4yF
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ4PR01MB1251
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 05/10] dt-bindings: clock: renesas,r8a78000-cpg: Add
+ firmware property
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Rob Herring <robh@kernel.org>, Sudeep Holla <sudeep.holla@kernel.org>,
+ Cristian Marussi <cristian.marussi@arm.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Saravana Kannan <saravanak@kernel.org>,
+ Ulf Hansson <ulfh@kernel.org>, "Rafael J . Wysocki" <rafael@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+ Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+ Vinod Koul <vkoul@kernel.org>, Konrad Dybcio
+ <konrad.dybcio@oss.qualcomm.com>, Kevin Hilman <khilman@baylibre.com>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Marek Vasut <marek.vasut+renesas@mailbox.org>,
+ Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+ arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <cover.1783505329.git.geert+renesas@glider.be>
+ <49726acff0fee1c3606e83c4f242ef6aad25b4b8.1783505329.git.geert+renesas@glider.be>
+ <20260710-adventurous-burgundy-chimera-b2fff9@quoll>
+ <CAMuHMdV=ckONBbTYELPJU8YWoNzdu3PJ95VR8cz+f_7dUeiPUw@mail.gmail.com>
+ <20260716214924.GA1477674-robh@kernel.org>
+ <CAMuHMdU0ss6wUEdjC+OYa3iQS439aJ8b_d9M2ws7Ayn4_kOyMQ@mail.gmail.com>
+ <20260811163334.GA2354701-robh@kernel.org>
+ <CAMuHMdWbzg-QpFBzzDa2hC3HzAmWUkerESC5O-cSVxmWX3_PkQ@mail.gmail.com>
+ <45dfd858-9d59-47e6-91e0-ef9e6e909af6@kernel.org>
+ <CAMuHMdXJFdJQP1GVXrOWRuYO8Si_WF5X+vpzmAgTZY+tQstR1A@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <CAMuHMdXJFdJQP1GVXrOWRuYO8Si_WF5X+vpzmAgTZY+tQstR1A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi, Conor
+On 12/08/2026 12:02, Geert Uytterhoeven wrote:
+> Hi Krzysztof,
+> 
+> On Wed, 12 Aug 2026 at 11:51, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>> On 12/08/2026 11:47, Geert Uytterhoeven wrote:
+>>>>>>>>> +  firmware:
+>>>>>>>>
+>>>>>>>> RPi is doing similar, but I have doubts. It looks way too close to
+>>>>>>>> generic "syscon" which is disallowed.
+>>>>>>>>
+>>>>>>>> I think this should be vendor+purpose specific, e.g.:
+>>>>>>>> "renesas,scmi-transport" or "renesas,scmi-firmware"
+>>>>>>
+>>>>>> If you can tell me the resource that a 'firmware' provider provides then
+>>>>>> it is fine, but you can't.
+>>>>>
+>>>>> It provides a firmware API, which is not available until the firmware
+>>>>> provider is initialized.
+>>>>
+>>>> I don't know what "a firmware API" is. What does it provide? I know what
+>>>
+>>> It can provide lots of things (everything we are no longer allowed to
+>>> touch directly from Linux ;-)
+>>>
+>>>> a clock, GPIO, reset, interrupt, etc. provider is.
+>>>
+>>> A clock is an object you can access through the clock API.
+>>> (s/clock/.../ for the other cases).
+>>> Firmware is a service (virtual object) you can access through a
+>>> firmware API.
+>>>
+>>> In all cases, the consumer of the object or service needs to know
+>>> which object or service to use (there can be multiple).
+>>>
+>>> In all cases you cannot access the object or service until it is
+>>> available (initialized and registered), for which we have -EPROBE_DEFER,
+>>> and/or "[PATCH v2 02/10] of: property: fw_devlink: Add support for
+>>> firmware".
+>>>
+>>> Thanks for your understanding ;-)
+>>
+>> I think that's the difference here. Clock is not an object, but a signal
+>> on a wire or within IC coming from one device (provider) to another
+>> (consumer). Firmware is not a signal, not a wire, not anything which can
+>> be provided from one to another.
+> 
+> Oh yes, it is a service provided by the secure world or a different
+> CPU core to the application core running Linux.
 
-Thanks for the review.
+Service is still not a resource. Not mentioning it is way too generic,
+because anything can be a service. We have entire services-based economies.
 
-> On Tue, Aug 11, 2026 at 05:36:19AM +0000, Changhuang Liang wrote:
->=20
-> > > On Sat, Aug 08, 2026 at 06:50:53PM -0700, Changhuang Liang wrote:
->=20
-> > > > +static int __init starfive_socinfo_init(void) {
-> > > > +	struct soc_device_attribute *attrs;
-> > > > +	struct soc_device *soc_dev;
-> > > > +	const char *machine =3D NULL;
-> > > > +	struct device_node *np;
-> > > > +	struct regmap *regmap;
-> > > > +	char rev_char;
-> > > > +	u32 rev_id;
-> > > > +	int ret;
-> > > > +
-> > > > +	np =3D of_find_compatible_node(NULL, NULL,
-> > > > +"starfive,jhb100-sys0-syscon");
-> > >
-> > > Remind me again why this is not just probed as an mfd cell from the
-> > > syscon driver?
-> > >
-> > > (Hint: please put this info in the commit message).
-> >
-> > The discussion result with Krzysztof at that time is recorded here:
-> > https://lore.kernel.org/all/20260405-strong-watchful-marmot-fdfad6@quo
-> > ll/
-> >
-> > One register should not be treated as a separate device node.
->=20
-> That's a different question. In the case of an mfd cell probed from the s=
-yscon
-> driver there would be no devicetree modifications required compared to wh=
-at
-> you have now. e.g. sg2044-topsys.c
-
-This seems feasible, and I can introduce this modification in the next vers=
-ion.
-
-Best Regards,
-Changhuang
-
+Best regards,
+Krzysztof
