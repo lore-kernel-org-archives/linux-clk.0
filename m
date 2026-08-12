@@ -1,192 +1,128 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from galaxy.gendns.com (galaxy.gendns.com [66.235.175.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC7D7368D6F
-	for <linux-clk@vger.kernel.org>; Wed, 12 Aug 2026 14:19:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC5D244D01F;
+	Wed, 12 Aug 2026 14:38:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.235.175.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786544388; cv=none; b=NQXxDCaZgpY7wWUhQNRUP+npsKcrnoemeeYt/qyrCfk1bsV0Nz3rjfjhvDTKLJ+Mxh4vP5bJ40B2OK+E/x0pst7cON4cP0f9WAXKxiMNE0Lb1qhk4pRql8leH1MpqYlQAlZoHKiv6yajhvMuAtmBr9rqypk9coR/Ckgbsuvv62E=
+	t=1786545503; cv=none; b=Vct5q7zdgEtc+7ejV6rdw9xHFYsP66dezCh6htZPgEtNWtmjLhchy3ImucXz+qdbK5/xNTGzDIdudq2EAxqtpiv2UcW/WB/lCKbtG0rWVyJcyyy75nDfQGvGzE/zZqAyzg07frz33Au9zMc1Tp8Q2ktke019kbWIj0juvRv1fzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786544388; c=relaxed/simple;
-	bh=RbBcvng6CddAR2Y9GGDoRWyuM/ruQ2W3muwnGr8OInA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=H4J4YdPkZQUtfyKcLUvPjbkgBwmG0twfbYP9oReH/JwFFcOGKJQzGb3XEPSug8t45O8LF35I+AAVRgsMYBqimzxY1SkpYi/vC8zrB00tbIFqG21llvmesMjWV90e1xV32/h+thVE6bnSV02avZKpGGd7K24euKNWaKBnK6F6Yec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=pk5KZwS0; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1786545503; c=relaxed/simple;
+	bh=n8kUstQspsfKsyzexHo5Xml7oz7T50ySNyHyYZ09txU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NbPC//te+SCa/Etz2JJdOuW+5CbDXsNU5dm/lGrlfotbOvzP5c8Tj2vzszNp7UeS9Lvp3MSeFloA7NiwJGG5xTVDGp5Xh0uIVROVzYi8El4nmRyyrhRqSJBYAW1BfbLAR6pATmkTgW9feRRmrjJWOb7s3Is1lZZEBeuNWA/wgoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com; spf=pass smtp.mailfrom=lechnology.com; dkim=pass (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b=a/ct2cDw; arc=none smtp.client-ip=66.235.175.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lechnology.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pk5KZwS0"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-493b966dd74so6722285e9.3
-        for <linux-clk@vger.kernel.org>; Wed, 12 Aug 2026 07:19:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1786544385; x=1787149185; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=jwr53rVuSGmUd6A8uHvMZV2frC8kbj83S7dbcomjXGE=;
-        b=pk5KZwS0Ur1iQwvsd/dy95aV+Zbh1n2mGVnPJ6vpAis0mA3vSCOh8FLCvCjrTyC+NC
-         yov6uNKekaXskGMgV80Zok2Y5e5wyEWhDduw0xygpaOLjAGqi1jSxmC4zmLmNmGrlvtk
-         A1WsrOg32LMBl4kfrCeU4GvZeOO7P3FWdwHi2SXB8PlYW5khgSZTkLp6OuxC6m3uI7VB
-         1Bn5qGFumANjbAhIjHGxl8sNFxpbP8Kl7rR2Wy/E3tVzXNRvLU+WgqUGKCeZEJ/V46A2
-         PE0ws+E2SSjbJCVNiXs692M6PJ6i5+4WpTTc85jDuw2UwN2+upe5C1PUJUSvvgdrKXT4
-         /baw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786544385; x=1787149185;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=jwr53rVuSGmUd6A8uHvMZV2frC8kbj83S7dbcomjXGE=;
-        b=Tpk/q3uBmXqNxcvcwOmpyVoK6nfyIhBGAKHNg6I0G15uW5MBsIzRUcgCJ1r927IC0a
-         VQXYi4fPzxK3RnVlzO6FHGttGRdeHMPfX06NHisbh8rdDHae4aSwvbEECm8Y1vt491k7
-         H/kByPEI/9HK9BZj0ImSgb1pfRAAbUmTRIkuyeH5dEUbFtYl968b4cfKyj03QJAPw9R7
-         MF57WATiFKbt6vZ1EEnqp7rPn82//dzrz9+iI5iyk+RFNrECeLLA/VMskLNhP8m+vwaD
-         R2NOIU3xPg3Fn2k8fY+rvTKYCP2nB8z9VK6trFfq1ECEKd56jYGlcH98VodJSi1zyyhl
-         k1zw==
-X-Forwarded-Encrypted: i=1; AHgh+Rq+MHxIDTQuA5hG8vaEwJXny+yhoybIkwQKKZ4fFUS7JCjMlzVwb6042htteHIc8NywfoxOdNhI/RA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yym07qNMsvJsHXfrHsV1NNXK4S5Hd9BzIsMkTcKyDgrEIOq5u48
-	syQYvHNvsEvOzcqEG1VeUHb3cOS1vEQCpFp+2XAaNenGBMVkR6zSRKza
-X-Gm-Gg: AR+sD11KiYV0MD/xODCQqBwNdk6eQILk0vZoDrRzlfRqXEw6DL3jU9VLz7K6WTsQder
-	+isuwYkj1+3yyBGfGROTbtV7FzwKBHPlpfVDuMMqs0HpqjllDF+D5zBbQWYxL4gLF473R++Bk+H
-	gSue6skrBGHiOu7UEv8wvN9uU3Dz3gztWiNB065Pqw2wHGjKKs+aRsEWtw7eA68ZUID7ytZ0toF
-	OTzjMnVQpfU+sJhx3Id0gQzBniR9wtNZfShdRWtk5/csQXRvqJsjix9QfJlPfitee0K8+ojXI1G
-	uhFYMw9VamrB3qWH4cFXiOoFeRLhDoeSDAtWpDvASVOXk++j86KhQvN+9M8pOkg/YUDfeTKlABZ
-	cOLq6XY9WgiR08Qrc8Z52FqW/QDUY2FnL1AD9qPfnXmWmclp7Agh1r7QzQokkCTY2zXCWa/jnjM
-	2HyW5HfUzvmZKtFe8mQ+4Vq8/CswtGJfHEcmDDweIQwpgq4wO87LK3gRb3VSAm5Tm1Tlu4KtiQL
-	3LT3EZ9kXdxqA==
-X-Received: by 2002:a05:600c:a41:b0:495:6134:6d61 with SMTP id 5b1f17b1804b1-4997c13be45mr72078085e9.19.1786544384949;
-        Wed, 12 Aug 2026 07:19:44 -0700 (PDT)
-Received: from localhost.localdomain ([2a00:23c4:a702:d301:94c0:1825:d248:50ae])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4997ad78f2fsm47352235e9.1.2026.08.12.07.19.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Aug 2026 07:19:44 -0700 (PDT)
-From: Biju <biju.das.au@gmail.com>
-X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Vinod Koul <vkoul@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	linux-phy@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v7 0/9] Add RZ/G3L USB2.0 host support
-Date: Wed, 12 Aug 2026 15:19:18 +0100
-Message-ID: <20260812141940.246223-1-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="a/ct2cDw"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=KSPg/rMrUeTYBy9fplNMzsaWH8ps4aBZ7s+zAy+jocw=; b=a/ct2cDwXmIKNdZbAN1AtavIz/
+	6mUfbEWI6sfRH9kNQQrA/h8gjnXHuw+KDB9EGECNqOMLlDqgTiN4yoihrrFwgDHkYZD0kT57SFkdd
+	0BoKrh5SC0RIVK+m0aN0fwJUlsD36Xj0QTQIJ/sYc4Q5c6mSEvBD4rI2B3yeHXWoiEw3+0kWEEjvQ
+	MwoeWE1u4FPsXsRkD1WvyRjGULMS7XsJP5zMxgixDPBiVgbi7PKWiqx6XUa2OBQdUYL2v5XL4Meob
+	zxN4qgnvmsmglan8cHBAqmOlUSg1ZIY5u3N1GNbCdP8zjuUSXu3PTqOtT/qv1wY8lBglHHlB8xDcr
+	cXt2xZ8A==;
+Received: from ip98-183-112-25.ok.ok.cox.net ([98.183.112.25]:49522 helo=[192.168.1.142])
+	by galaxy.gendns.com with essmtpa  (TLS1.3) tls TLS_AES_128_GCM_SHA256
+	(Exim 4.99.5)
+	(envelope-from <david@lechnology.com>)
+	id 1wu9bN-00000004OmR-2HnV;
+	Wed, 12 Aug 2026 10:06:39 -0400
+Message-ID: <2c761e07-0a58-46a6-86bf-b5265b2a443a@lechnology.com>
+Date: Wed, 12 Aug 2026 09:06:39 -0500
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: davinci: guard da850-specific init data references
+To: Rosen Penev <rosenp@gmail.com>, linux-clk@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20260811190821.117485-1-rosenp@gmail.com>
+Content-Language: en-US
+From: David Lechner <david@lechnology.com>
+Autocrypt: addr=david@lechnology.com; keydata=
+ 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
+In-Reply-To: <20260811190821.117485-1-rosenp@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - galaxy.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: galaxy.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: galaxy.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
-
-Hi All,
-
-This patch series aims to add USB2.0 host support for the RZ/G3L SMARC
-EVK. The RZ/G3L USB PHY block is similar to RZ/G3S, but each port
-has an OTG controller, unlike RZ/G3S, which has an OTG controller only on
-port 1. This series migrates regulator driver to use id-table so there
-is hard dependency between reset driver and regulator driver.
-
-Merge strategy:
-  An Ack/Rb tag from Regulator Maintainer for patch#1 and #5.
-  Patch #1,#2,#3,#4,#5 - Reset subsystem
-  Patch #6,#7,#8,#9 - Renesas SoC
-
-This patch series has functional dependency on [1]
-[1] https://lore.kernel.org/all/20260812115010.108322-1-biju.das.jz@bp.renesas.com/
-
-v6->v7:
- * Dropped PHY subsystem patches as it is accepted.
- * Merged patch series [2] to here
- * Collected the tags.
- * Added additionalProperties: false in regulators node.
- * Updated commit header of patch#6
- * Moved the host enable patch.
- * dr_mode changed to 'host' as function is not enabled yet.
- * Updated commit description for patch#9
- * Updated dr_mode = "host" to "otg" in {e,o}hci0 device nodes.
- [2] https://lore.kernel.org/all/20260707145135.247565-1-biju.das.jz@bp.renesas.com/#t
-v5->v6:
- * To avoid breaking bisectability, prepared a single patch that
-   does the "rzg2l-usb-vbus-regulator" -> "rzg2l-vbus-regulator"
-   rename in both regulator and reset drivers and that could be
-   merged into both trees.
- * Replaced dev_err->dev_err_probe() in error path of
-   rzg3l_usb_vbus_regulator_probe().
- * Retained the tag as the change is trivial.
-v4->v5:
- * Collected Ack tag for regulator driver changes.
- * Dropped renesas,sysc-pwrrdy for RZ/G3L as pwrrdy signal is modelled as
-   power sequence.
- * Dropped the tag from Conor due to above change .
- * Replaced the variable regulator_driver_name->regulator_name in struct
-   rzg2l_usbphy_ctrl_info
- * Switched to power sequence consumer for controlling pwrrdy signal.
- * Updated commit description for patch#3.
-v3->v4:
- * Updated cover letter with merge strategy
- * Reorder the phy binding patch for easy merging.
- * Updated the commit description for patch #2,#3, #4.
- * Moved the handling of regulator_driver_name to patch #3
-   in preparation for id_table match.
- * Migrated to id_table match using driver_name and reduced the length
-   < 24.
- * Dropped rzg3l specific platform driver.
- * Dropped the tag for regulator driver,
- * Added id_table handling by introducing a common probe().
- * Dropped renesas,sysc-pwrrdy property for usbphy-ctrl node.
-v2->v3:
- * Replaced items->enum in reset controller bindings.
- * Collected the tag for reset binding patch.
- * Dropped clock patch as it is accepted.
-v1->v2:
- * Dropped patch#6(Introduce helper for regulator registration)
- * Passing pointer to an array of regulators to make it scalable.
- * Dropped regulator1-vbus and added a regulators group node.
- * Updated commit description for patch#1,#4,#6,#7,#8,#9 and #10.
- * Added enum instead of const in the compatible section.
- * Updated schema check.
- * Collected tag for PHY binding patch.
-   in the regulator driver.
- * Added regulators group node and its children in SoC dtsi.
-
-Biju Das (9):
-  regulator: renesas-usb-vbus-regulator: Rename platform device to
-    rzg2l-vbus-regulator
-  dt-bindings: reset: renesas,rzg2l-usbphy-ctrl: Document RZ/G3L support
-  reset: rzg2l-usbphy-ctrl: Introduce info struct for match data
-  reset: rzg2l-usbphy-ctrl: Add RZ/G3L support
-  regulator: renesas-usb-vbus-regulator: Add RZ/G3L VBUS regulator
-    support
-  arm64: dts: renesas: r9a08g046: Add USB2.0 host/phy device nodes
-  arm64: dts: renesas: r9a08g046: Add USB2.0 function device nodes
-  arm64: dts: renesas: r9a08g046l48-smarc: Add USB2.0 Host support
-  arm64: dts: renesas: r9a08g046l48-smarc: Enable USB2.0 function
-    support
-
- .../reset/renesas,rzg2l-usbphy-ctrl.yaml      |  41 ++++-
- arch/arm64/boot/dts/renesas/r9a08g046.dtsi    | 142 ++++++++++++++++++
- .../boot/dts/renesas/r9a08g046l48-smarc.dts   |  54 +++++++
- .../regulator/renesas-usb-vbus-regulator.c    |  75 ++++++++-
- drivers/reset/reset-rzg2l-usbphy-ctrl.c       | 109 +++++++++++---
- 5 files changed, 399 insertions(+), 22 deletions(-)
-
--- 
-2.43.0
+On 8/11/26 2:08 PM, Rosen Penev wrote:
+> With COMPILE_TEST support, COMMON_CLK_DAVINCI can be enabled on
+> architectures without DaVinci support, where COMMON_CLK_DAVINCI_DA850
+> is not set. pll.c and psc.c unconditionally reference da850 init
+> functions and init data that are only built with the DA850 option,
+> resulting in undefined reference link errors.
+> 
+> Guard the da850 entries in the match tables and the CLK_OF_DECLARE
+> with CONFIG_COMMON_CLK_DAVINCI_DA850.
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202608111912.YS4Vg7Jh-lkp@intel.com/
+> Fixes: 34aeb6853fe2 ("clk: davinci: add COMPILE_TEST support")
+I don't think this patch was ever accepted, so you just need to send
+a v3 of that patch. Plus I left a comment on v2 that was never
+addressed.
 
