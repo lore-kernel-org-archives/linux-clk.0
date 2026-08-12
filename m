@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91FD93E5585;
-	Wed, 12 Aug 2026 11:28:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC7143F2102;
+	Wed, 12 Aug 2026 11:32:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786534089; cv=none; b=iTexkQKthYAf7cvTMWYZAdEFwZO3GDgVtEcpGcA4bCgclyRrLWt48Oc9P0bd+zGI547d4fDvGHaO6y111KjkNS1+VeyOP/MZ2ecTvbx78BVffb3POTu/x3hnFxbFujtpXSuL5Gj+fx+Wq1BpZgzl4OhcwKk+WlmnXMhyuDN1rO0=
+	t=1786534364; cv=none; b=D4y0qRJp+Q/5ykmeNFR03Dpcv0hcrd6fLNWw1rvJkqoiGeOLDLReVdx+bCkkjOXru/MoNp2pVBykJ9Y3DxHRPtq5GQNFf4Mf6dtyII9PYWdXt0tB5VQ9r+mkpB/IC0W3rtVUJ+9hz6Glnucv9EushR6OcuvGgRnhfBapsIgPBJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786534089; c=relaxed/simple;
-	bh=BYQ3lZ/FJsJjd2Po0rni1CcuSyhTkem04oN9+BOSTKw=;
+	s=arc-20240116; t=1786534364; c=relaxed/simple;
+	bh=07xUpgZPeveHnmT7Xaev/4PkvvkLrSsNNma2Kk2twQw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P9U4S9kWMmlW63tZ/FVEP91Umakifz+SB66hYQCJ/CnoW/Y961ildlnrsBdnV1kHrquh2oQtZYmQI79R7dicJONlEYwgXH7OMfoKZoZfxZD0OdK0RPVDLGduHE7gOO+Syc586aCqfV1AxVXeatDLxulkdK0GgwfCoHNlJlCM+W8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YLftM2DU; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=MshXigTugWtN5QX+P+RqaxBxNylImKcJ2q5dxwgDGQYA8yFLaturGysm7Ts5v4PCDL4dsD14xC5Y8ljWUhI6gAeGZNCK2okxwucUph9A1uHn1Qzt7Loo0W/cHlsfBVapnO2lUqbmlHEKtE1XoS8hnpnr/nVmjBcPKr9a/zcFWY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q739QriN; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YLftM2DU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B234E1F00A3D;
-	Wed, 12 Aug 2026 11:28:02 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q739QriN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 328D41F000E9;
+	Wed, 12 Aug 2026 11:32:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786534088;
-	bh=6rj9VDAyNwxtlh4ur2Bp15Q7lZN3qVNAZuExRUxFGtM=;
+	s=k20260515; t=1786534363;
+	bh=P8KaAUX9R11bkwR2MOcMBoYfgL/mHkGp9BOIwjZkfIw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=YLftM2DUJ93V7jsnI6hVOusafcAqpi+CzK/HQWi3Omrtb4QFXNemlMTdswm6BPKim
-	 fygOm4TD5pm+vc4NqB7bEJYLTkUco9DSirt2rd/dPVrE2/Pe87zwcPeJ+N05tmM3wq
-	 Kjo8IoErEhP/hqrhYK6a3AjWNgTImfmziOOCAFoqR+CqRHnEjJQIyyUkrdKVazo4cl
-	 g9aSFnE97/IgS17y77beI8dPklY3uCcSl83KRzPJaD73cFlGGVUOM54FGC70TYTVt5
-	 yYufZnQ4d3SPxShkbg5lT/cC9f+Q9UkGjaPJiXWeOP1AIpBEf2vyUpO48oItBaVx/q
-	 NqduA9uYzaE5Q==
-Date: Wed, 12 Aug 2026 13:27:59 +0200
+	b=Q739QriNQvrGpHU/2lKsoQrm8IpU7A4ZAMQQZBWkW9tcrZoakv0WOSzn/5yJH7fAU
+	 +v8DNA7QZzA0YChDKqbiXCGJ8ojQHkXknz/nPYRbOwPxUIz2g4UOjxP+yCvydbH9jR
+	 tXe/OVpKK4Dhwzn0RlEclsFmRnpB+CaBZ+LVfmdsPP2pWNHmkI0cCne5hlpih5e/SK
+	 /a/09kMPlTigwx7dlsiQQHAxOxlKoHH+XxvFP3WEpEHJEgNirUv8wI8BuJi97UpXyY
+	 Pz9kPrxAJmGxrXQklwz/aFfgEt8ELk7q7EQArBMdQor2ShkWAWU9vq3tDuOdYhn2As
+	 18aVW/X989Xew==
+Date: Wed, 12 Aug 2026 13:32:35 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Adrian Ng Ho Yin <adrian.ho.yin.ng@altera.com>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
@@ -36,9 +36,11 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Brian Masney <bmasney@redhat.com>, Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
 	linux-usb@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/6] Add USB3.1 support for Agilex5
-Message-ID: <20260812-gay-dachshund-of-economy-ebbe56@quoll>
+Subject: Re: [PATCH v3 3/6] dt-bindings: usb: add Altera Agilex5 DWC3
+ controller
+Message-ID: <20260812-tan-capuchin-of-faith-12ae0c@quoll>
 References: <cover.1786518803.git.adrian.ho.yin.ng@altera.com>
+ <85e52e1dd400f39e055196fa1462337285a9b875.1786518803.git.adrian.ho.yin.ng@altera.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -47,23 +49,86 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <cover.1786518803.git.adrian.ho.yin.ng@altera.com>
+In-Reply-To: <85e52e1dd400f39e055196fa1462337285a9b875.1786518803.git.adrian.ho.yin.ng@altera.com>
 
-On Wed, Aug 12, 2026 at 03:32:53PM +0800, Adrian Ng Ho Yin wrote:
-> ---
-> 
-> Adrian Ng Ho Yin (6):
->   dt-bindings: clock: agilex5: Add USB3.1 reference clock ID
->   clk: socfpga: agilex5: add usb3.1 reference clock
->   dt-bindings: usb: add Altera Agilex5 DWC3 controller
->   arm64: dts: intel: agilex5: add USB3.1 controller node
->   arm64: dts: intel: agilex5: remove usb0 in Agilex5 SoCDK
->   usb: dwc3: add Altera Agilex5 support to generic platform driver
+On Wed, Aug 12, 2026 at 03:32:56PM +0800, Adrian Ng Ho Yin wrote:
+> +allOf:
+> +  - $ref: snps,dwc3-common.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    const: altr,agilex5-dwc3
+> +
+> +  reg:
+> +    description: DWC3 USB3 controller register region.
 
-Why is this patchset targetting THREE separate subsystems, including USB
-which takes patchset as-is or not? Organize your patches correctly,
-including maintainer preferences (explained on the mailing list and in
-docs more than once).
+Drop description, obvious.
+
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    items:
+> +      - description: Controller reference clock
+> +      - description: Controller suspend clock
+> +      - description: Master/Core bus clock
+> +
+> +  clock-names:
+> +    items:
+> +      - const: ref
+> +      - const: suspend
+> +      - const: bus_early
+
+And the order of entries is taken from?
+
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  phys:
+> +    minItems: 2
+> +    maxItems: 2
+> +
+> +  phy-names:
+> +    items:
+> +      - const: usb2-phy
+> +      - const: usb3-phy
+> +
+> +  iommus:
+> +    maxItems: 1
+> +
+> +  resets:
+> +    description: Resets for the DWC3 core and its ECC block.
+
+Drop description
+
+> +    items:
+> +      - description: DWC3 core reset
+> +      - description: DWC3 ECC reset
+> +
+> +  reset-names:
+> +    items:
+> +      - const: dwc3
+
+core
+
+> +      - const: dwc3-ecc
+
+ecc
+
+Unless both names are coming from other schema?
+
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +  - interrupts
+> +  - phys
+> +  - phy-names
+> +  - resets
+> +  - reset-names
 
 Best regards,
 Krzysztof
