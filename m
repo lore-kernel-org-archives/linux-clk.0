@@ -1,194 +1,431 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B93D34968E2
-	for <linux-clk@vger.kernel.org>; Thu, 13 Aug 2026 17:06:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786640773; cv=none; b=CMNqd3zRmei0lWzvBrn2cAn/FJSufr26Ivn80h4bXpTaXnHttiQkROazCL2Bs/M7vmQB39chtIq1AvCj8cuTYWyqxfmoO8bslk9frHWkYZVBdsYUy/i+zMgviQfKoZq7y0+1onDk72AyVhj8yW3B0YJJNjq4DnVzkwJEDCdezEA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786640773; c=relaxed/simple;
-	bh=B36AwCUnWoIPs+VzBRY/WKH+1J5rKdSdeYvYsq0n9r0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HN6Ecjrt7jygMjca2PU01W64zTKWF0L6dhzW7LFhEEoLrGSg9BdcMTfqNwsPW8kv56JU1/2e/XBbmbwqfDMOVwOE8KY7S6uIZatWIDUOJzPF2XUBzZ/ziI8zYL+rqXtZGoQQgryKlDasHHs4caxfBZZIYmDFmEFMek08N3thMT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=X3uV44kY; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=XoApxam0; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 215B5421A15
+	for <linux-clk@vger.kernel.org>; Thu, 13 Aug 2026 19:09:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1786648199; cv=pass; b=MZepl5vm6YXkjQ8PjKwKiy5ctXFC3rE/0AJmhcLs1W87uihPQK/qtX/McwqlGNvF+Y/Y/0rRSwwp7yuWB+oNSiJ/i+a/FZBcy8j1pHbeQoxkhnjGJSyC5TRyA7FlcjsucE69U2dvYBZH4tcIR5XqdXPrlX7+mwbRywFpt04FT+E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1786648199; c=relaxed/simple;
+	bh=8gQdgSVDySn8ktm44gKnq8LHf9gNvcBUvegVvF9Z4eM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RiT+Fgusu3P0OgapiEg3DjTiZcWD83ku80+NtIR4A3J4BKRotn/On6p66byYJ08MrVO5dkjduYQDSn81bAWgO9PH7NfAl5Gt6eZhA8aA12oT5uUvqAjzBlKZBGRJsdFZ4kaGU9fZJzVyFaWh5wZQvZJ5RjGi/qLWT+o9Z+PAJKM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M9ySuWDK; arc=pass smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="X3uV44kY";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="XoApxam0"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 67DFTkG43707340
-	for <linux-clk@vger.kernel.org>; Thu, 13 Aug 2026 17:06:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=cddrscBfzbjs0vy6WWXuqpnU
-	tgMOMnWbwDcitMMOPPE=; b=X3uV44kY2i7QamZLhCDB4LKDftGTTFVNk2Zdb2dq
-	qFC3OjKKltqMMpnF13ZIERSeEvwBJm65jqAS/KJZE5C3UqAQt1WWiCAKf+RWY19h
-	onxZzvj/pQfLpVmhHyHcxbw4V+F4+IYolURjP2xhNswseOCwx2tjim544b3EFkKT
-	gE1jeWJbrz9IR72nycjsaqobWZ8PZp4e2T6sX4KdrveK85cWq4FTDX7wLHMk8KWn
-	sz82GHbbndhoBAKi2NICI4i8mZ1J+5V+HKFSTZt3L+W1/F5MmjDz7UriR7uYltrB
-	Ci//flbJLfbI6Tn34E6B+S1MshRiEXRKP6t8wPXg2vmtMQ==
-Received: from mail-vs1-f72.google.com (mail-vs1-f72.google.com [209.85.217.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4g18c5jvdy-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Thu, 13 Aug 2026 17:06:10 +0000 (GMT)
-Received: by mail-vs1-f72.google.com with SMTP id ada2fe7eead31-73858d44c8aso29601137.0
-        for <linux-clk@vger.kernel.org>; Thu, 13 Aug 2026 10:06:10 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M9ySuWDK"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4954a9e8490so8232985e9.1
+        for <linux-clk@vger.kernel.org>; Thu, 13 Aug 2026 12:09:56 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1786648195; cv=none;
+        d=google.com; s=arc-20260327;
+        b=i2j0JHiqZoWpOK0foVn13kLaHBH0RmcbcBIopqXk18757e964AOQU8YainmXGqnwi6
+         6FATRF3WeRFpfYZzT8AVBiItytTxrDafFpr7nZKgbKGdT+LY82E95cyg9IZYC6ZGhbJJ
+         R/vxp0jq5vL7DK+9D7iaZECH3MKxt2JVSv6tFp+54scspDz0WNfT5ZevPrykWLROF08h
+         zAuBE9oYBJ7Hxk3bj1wRWfS8hEJueyBRJKTeoSlvhZLhtD7zuyb3sgw10xtnnLbGWI9/
+         qdHtNZEUje7tcxUBOOP4PiI1g2xudu1znpr+eAh+RAddKP2dnj1IuwLtdQQdn2bluXOr
+         U/0g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=Rfq/RQGjXbZCotkkVhsJ/QhgbVblNS0MEiBSiyOaSpE=;
+        fh=eFZdSd2FgXL8D4jB1q83J/N8srQshZoLb2c3r4YI/64=;
+        b=dBfwVfWibXgER/Fsy+YF7mvN4cg5QQO5uO0M61JRoOT6YeIUp1mLXwBY4qkIoQOih5
+         9ZCZODtDxNxZhG1A3UFG/9J2cG93IXpbxn+ZfKm9ReVZQeYg2EPa7oGjVo1TJKW71srE
+         jpnyQ1a6l1Eel0e9614FYjPgO82fXkHy6kkcrJyQHYGWON+ZDDwbzi3qeDRiLlbIpa1S
+         d7OqqxfPTfv0Wgp6UtOtj4/LM46qTedrjxsmX06zHgAxWGAIf2R1SeFdMh1d0uzIp8cB
+         Cgtxx2fJO2KSF89GGYf2qMV2Kv2bR6hxA9mvyxj2wstTJhQdw+pP3XJCPYyJaym8/GN/
+         dklg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1786640769; x=1787245569; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+        d=gmail.com; s=20251104; t=1786648195; x=1787252995; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=cddrscBfzbjs0vy6WWXuqpnUtgMOMnWbwDcitMMOPPE=;
-        b=XoApxam0e0Xd+BWw1vmlbJAb5DYOhv+bsCf6NKW9HmhIDyPV+Pal5vJb5Tob9u3K77
-         u7ohqtilvCPX8gzPVAOWl+YvRfmC8z8o7GIPTKtn8NcyQN1MHF5APKBFpm/JNHWMhYio
-         nbs9/cRRTiag4BWzBTuhx+iqDFe411FB0cKyqNkc2hURBWQ4WTtEr9/W+P+1f1lLFMWs
-         2LD9DNaF5jGvVedkhs5rww3MTlgijzxEl0mRS181C/HgeAuxbf71iuaQHJDxSe234WsN
-         g6wZS9nlszUpgNhX0KGBbKT91W0Z4Kh7o/PriH24vSxU15IGT/D2IiPKdHQpyuq7HP5k
-         vvLA==
+        bh=Rfq/RQGjXbZCotkkVhsJ/QhgbVblNS0MEiBSiyOaSpE=;
+        b=M9ySuWDK2V7Pk/Gwe5If9shrFSv8R80xMLskcq53ssJPCCz7DOz7eIMb2wxhsJvebA
+         wT/WXdxzaqE8MVZ2HNIohrimO/aBsEHM2Dnrf1k66LFSkejkf4Zz5WorPQ5kT1qRUDZo
+         owP+yqvWyetWTfmrSdfA7m0ga0hu20arsgXLEozFSyTvdkP6PYUQUa68y/OrqhoWJdQc
+         ReRtEFfzWbN+g/7vR9l/ZBD+d1Vd3LRPTumGqx4qBfEcGNZxVsKBmjxia0etvNMnha+B
+         ZTpBS9BaE3YI+iMSoj3mtyuS+dwwR4YbkmswytJElnetBOqFGL/N0POc3Azu+8EPIzg1
+         pqAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786640769; x=1787245569;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
+        d=1e100.net; s=20251104; t=1786648195; x=1787252995;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=cddrscBfzbjs0vy6WWXuqpnUtgMOMnWbwDcitMMOPPE=;
-        b=jeKkkMVGB1rkq14SLrjjwB01MhvhnEagy5C5vPbtlkJL0iRmFEq8ut3CnMbi81Y4kc
-         X0hfJPlsZpFWT5nd9tH6N0fHn8deqCN5vw7MLsacoYMqQkI5UNksvmeRwFZzxM3yCL95
-         cX7VoG6nzq8+ctZHqen7BNQUOiM025PkKY7cfV/J2W5jaY/F0WrEuI+GXnZ64vT9A54V
-         wHTaEH127rQ3+bZSmD8drSz9u6aABaLm/U3l5PXi6GCclQCx/j0nh2PS2VUY1YQv5mDe
-         DcZS1acs+/NzkcRh9UZHZG0W5V9+yUUcwqpJbB4mlPlObZdn9c6U9dLmXn0F3sjVepEr
-         ji7Q==
-X-Forwarded-Encrypted: i=1; AHgh+Rq7z3lRI69lTtOx000caaEmHu8APJs0DcYZZlQAdgAx/JMIZssFmz7CI1+9rQTADdC6f4EXuUCv+hA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRUM4NWzAgJzw+K8Fx/OAwfAhK257+vLNIWtDVsY4wO9j3oRN6
-	f5f2flH5ys0b3w9ADXnx1xO3JOY5PTnQNaTjX5GwImaDZSzfgoOqRlMlg78DkotDf0Q+5XwK7QG
-	0VjDxX9OWWEdCkBtYo/Un8RisdRn46LkKIrmADqHV/2I/ZeX+J8wATZX0YMPVJGg=
-X-Gm-Gg: AR+sD13THivLlu1Jv0+ciPRCPlnT2r5rm8Xalf8MpVxZj0UGjXNiVA5LOsWjVLoG/pP
-	hJPXX1tuTzH0I+Do72c9jE6OPXY4mCm21qMTeiSPMx4CA3Pu+jdohY+1ksHknyzbRn3aipLcgQJ
-	aqdnKl/frPr4vFgQ70GcBI4+Ey8KGiYznnzMYMgwy/Nxk3DZGhP+XZtmtA9dBSXuEc5DXqr3FMj
-	GZLWVlUtBwMoxRF9hg0JfnD6arLaO60FkCjNFKN2wxjDgM3PaqD9Zow5zIXkRVOxZbJNQ0lbpWU
-	/9vaqwPfGX2cGKw/CxQjnxUiT+oaKTQ5Tgj1LZdBSva64C53+k+GW20TXXFyikGVfmHvA4hLl15
-	HF+X0BTy5I+rRUvyI9ol/aPC6vsKpRcu40MpvlZmlVVMskAOMI3fNXiF8pLSc1LDHsgDoK5Ofxu
-	J3nZumGPxlUJm2
-X-Received: by 2002:a05:6102:5797:b0:739:d787:be8 with SMTP id ada2fe7eead31-76db748fd89mr1667703137.9.1786640769368;
-        Thu, 13 Aug 2026 10:06:09 -0700 (PDT)
-X-Received: by 2002:a05:6102:5797:b0:739:d787:be8 with SMTP id ada2fe7eead31-76db748fd89mr1667673137.9.1786640768831;
-        Thu, 13 Aug 2026 10:06:08 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5b458b9a8d4sm13061e87.15.2026.08.13.10.06.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Aug 2026 10:06:07 -0700 (PDT)
-Date: Thu, 13 Aug 2026 20:06:05 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Hardeep Sharma <hardeep.sharma@oss.qualcomm.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Ulf Hansson <ulfh@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
-        Taniya Das <quic_tdas@quicinc.com>, Georgi Djakov <djakov@kernel.org>,
-        Bartosz Golaszewski <brgl@kernel.org>,
-        Linus Walleij <linusw@kernel.org>, Thomas Gleixner <tglx@kernel.org>,
-        Radu Rendec <radu@rendec.net>, Robert Marko <robimarko@gmail.com>,
-        Guru Das Srinagesh <linux@gurudas.dev>, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org
-Subject: Re: [PATCH 15/15] ARM: dts: qcom: Add initial device tree for Kuno
- SoC
-Message-ID: <kbft23c77y4ebuivd4yo6wspoyojcv4twhazaltjws4a2st4m3@ene2fdawtw5s>
-References: <20260809-kuno-soc-support-v1-0-5e0ede4a0c72@oss.qualcomm.com>
- <20260809-kuno-soc-support-v1-15-5e0ede4a0c72@oss.qualcomm.com>
- <wjzyvt7q4vpirxclbwexrhsmcoi23hmsqbjjpfto26ofci23t7@uufz7ilar4qk>
- <20260813-generous-romantic-asp-be92e8@quoll>
- <3zqx6nxp4wmzej3nokfggoji7nihosru6yyaquvwjfvtylf2fq@ucr235faztbl>
- <7e42defa-f712-4d90-a328-344d9cee66fa@oss.qualcomm.com>
+        bh=Rfq/RQGjXbZCotkkVhsJ/QhgbVblNS0MEiBSiyOaSpE=;
+        b=agvXVhnBB+ZhXRmyLh2FfaccMyyfmEZ35t915IaRvoVA0IcUGgS98xlb1WxwLcXYXw
+         l1Z8pFQTyG7V51B0TxuhFu3Qm1EBbXe4gYiTBg40sO0r6loIMfstPaWNuxs2e1z6oK6O
+         YeG3eFqbQ9TZ27GPwearVmQDgenOl9ydvXaIknNwAkZz9zRlr5ovpNHdsBJrVVTAH30J
+         xMlROY5O7d1y0hZ2UXn7Pwa2iHwonvQ7T/+1eGoBchJSc1miHU/FDOKQSKFAkW5lKJJx
+         VoCn4+YFFJwJ/G0iTaDhRlAucxYQvH5fceDISBBZ3n87eOsATISyLgP1Scv4Ep9SsOgI
+         fStg==
+X-Forwarded-Encrypted: i=1; AHgh+RqC1WdqdhHKUYfXHTvrbPma2SvOEmRP8E7fzs5hKavYMSxY9Myu2rkr/h4SGtyye/khu/rajEz3Kkw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0JSBP7lFYLoKsvayNXDn3rV9KscMf8yu95LgstvnSASGNj9my
+	9dTafibANwyT+TVj8jCcoLN9e4elSin0lCa+02aVWMAXKLYU7xdnNOhsHhFNLc92ZumY4FAXdVj
+	vqW7VuCg8n8ikre++DhFZ8704nlZekh4=
+X-Gm-Gg: AR+sD10hhxJLPAW0MSJlf/+rtdjmsi9MVZN40QzLKI2LLOg5q/bVwEbQAUHq2AYozO1
+	6RWlumLbIZlq6vx2lTVZNwMJB5YAVTBdIMn9ASu2D/vgYdl0BNlwzVW0VBLLBdgL0A8MaI7Kf+k
+	+ysJG+EdYItLGMVO9UNXv6MLq8YYNoDkT2qDUpPsJu2dzv+EogemSvtkdnc2tjeM1/xtR5i3o4e
+	bmVvUqLks8hfDlSWHtH4wpoMyHxnX1Qirhc+z4hPurS43Rqs7oHtPU/FP1IQS+xsnXKKJ7BnJjN
+	FyzX7AHN22OmIOqFZ/cmaqarZDxmnVofaAxFt5gi8gHduK8T3ULjLSsbAgkaqy3MTRu5aDtcWri
+	CpFvKzui6L4gos+7Of/ElWt5SXqWNsk0robHiOwaBlrrwzFrheSzdPFrW8fsO9V92
+X-Received: by 2002:a05:600c:8b84:b0:495:5d6d:9cc1 with SMTP id
+ 5b1f17b1804b1-499879f5a03mr6178665e9.0.1786648195165; Thu, 13 Aug 2026
+ 12:09:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7e42defa-f712-4d90-a328-344d9cee66fa@oss.qualcomm.com>
-X-Proofpoint-Spam-Info: AW1haW4tMjYwODEzMDEyMyBTYWx0ZWRfX/KXHx+CylVQb
- FxPxGFMDcAQ+GUbHQK7ovo4rX8lehyw3IlDCa5crZPle+2oILUbN+kHWG2aBl9Wh4V9ZcUlFo4X
- 42iyxwr4AxxG4W8bgpPcgNhdV7zWM2w=
-X-Proofpoint-GUID: 0ZBGnjAM0NEF7vn6JDKGK5vst5jkPRJJ
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODEzMDEyMyBTYWx0ZWRfX9k2GIkjf/946
- HxKWOa+0kaqy2rIsqQm4RydFCpOjf0bZrokhvXAQ50nDbWBD6sQsLjv0wEX4jWTkAnnO2xXgH4o
- jQHtA6RosR2YjpmogD/VNXC+SXbyNZ3hP9pELipo3Pve7SnkwfO82cjyFQapXqDjfWCZBeFUtT4
- RM00D046RNTpFkcFMqv+9yGDSynVAUp7909ao5C1eAKfFqcWP5bvfIUyG+vjeReqLfjdB5nCb/v
- KnGXGPXXq8CSyACy6KPXgVLjQii3do3Irk2c7ls4AJbK0ydIp6Ojedh9W2y6YvoOOkOh8ES8yK6
- qyBrZUIN73EcNReYE8VgfCtKcBQGqXBbfE72N3i8a7knPtxuQwdLsYDddVVlRZQGt2GxG/HY/Lv
- nhNSyux9uacUA3QfiVfHivcocaHSG/phlJFInKWDMrzvnLvgP3gqD7Hgm+XPgelyKSbplFDhltp
- O/7MJvCIsfbkNryvnHQ==
-X-Proofpoint-ORIG-GUID: 0ZBGnjAM0NEF7vn6JDKGK5vst5jkPRJJ
-X-Authority-Analysis: v=2.4 cv=VebH+lp9 c=1 sm=1 tr=0 ts=6a7df982 cx=c_pps
- a=DUEm7b3gzWu7BqY5nP7+9g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=Sv0fKeRqtYgA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22 a=EUspDBNiAAAA:8
- a=yeIXzWwml7xpAbmzry4A:9 a=CjuIK1q_8ugA:10 a=-aSRE8QhW-JAV6biHavz:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-08-13_05,2026-08-12_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 phishscore=0 bulkscore=0 suspectscore=0 clxscore=1015
- lowpriorityscore=0 priorityscore=1501 impostorscore=0 spamscore=0
- adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
- definitions=main-2608130123
+References: <20260716123434.2576253-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20260716123434.2576253-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdWEm4yjOH0ziVR3CVDsDJDyJWE7K3GNQpCEiWW5bxaJNw@mail.gmail.com>
+In-Reply-To: <CAMuHMdWEm4yjOH0ziVR3CVDsDJDyJWE7K3GNQpCEiWW5bxaJNw@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Thu, 13 Aug 2026 20:09:28 +0100
+X-Gm-Features: AUfX_mxeU8Ha00rHzs8n1E-TWnr4oVrOzuAz2EGUlHCSm1LQSPamqHGEKbKcUlo
+Message-ID: <CA+V-a8sbvrbVM+TDbhz=h8gAUkX8n7swARStZzZ3QbqpRLLxew@mail.gmail.com>
+Subject: Re: [PATCH v3 2/8] clk: renesas: r9a09g077: Register SYSC regmap
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org, 
+	Prabhakar <prabhakar.csengg+renesas@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 13, 2026 at 10:27:18PM +0530, Hardeep Sharma wrote:
-> 
-> On 8/13/2026 9:31 PM, Dmitry Baryshkov wrote:
-> > On Thu, Aug 13, 2026 at 11:44:28AM +0200, Krzysztof Kozlowski wrote:
-> > > On Tue, Aug 11, 2026 at 04:13:40AM +0300, Dmitry Baryshkov wrote:
-> > > > On Sun, Aug 09, 2026 at 12:57:14PM +0530, Hardeep Sharma wrote:
-> > > > > Add SoC-level DTSI (qcom-kuno.dtsi) and IDP board DTS
-> > > > > (qcom-kuno-idp.dts) for the Qualcomm Kuno SoC.
-> > > > > 
-> > > > > Peripherals included in this initial set:
-> > > > >    - Single Cortex-A7 CPU with PSCI idle states
-> > > > >    - RPMh RSC with clock controller, power domains, and BCM voter
-> > > > >    - GCC (Global Clock Controller)
-> > > > >    - TLMM pin controller (110 GPIOs)
-> > > > >    - Interconnect (aggre-noc, cnoc-main)
-> > > > >    - GENI UART console (QUP SE3)
-> > > > >    - SMEM, hardware spinlocks (TCSR mutex)
-> > > > This is pretty limited without any storage. Does it NAND?
-> > > It has serial connection. this is enough for a start. At least one
-> > > communication interface is needed for early upstreaming.
-> > Yes, but then, as I wrote, it is pretty useless without the backing
-> > storage. Also, it would be nice if we new the future plan. Is it going
-> > to stop at this point? Is it going to be expanded in the next few weeks?
-> > Will we see a spread of conflicting patches 'arm64: qcom: kuno: add
-> > support for foo' with foo in 'USB, PCI, remoteproc, NAND, etc.'.
-> 
-> Hi Dmitry
-> 
-> Thanks for review.
-> 
-> Kuno is 32-bit ARM (Cortex-A7), so follow-ups will be `ARM: qcom:
-> kuno:`, not `arm64:`.
-> 
-> This series is the minimum-viable base (console + core infra),
-> following the sdx55/sdx75 pattern. Storage and the other drivers will
-> follow in coordinated series on top of this base.
+Hi Geert,
 
-Ok, thanks for the confirmation.
+Thank you for the review.
+
+On Mon, Aug 10, 2026 at 5:00=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Thu, 16 Jul 2026 at 14:34, Prabhakar <prabhakar.csengg@gmail.com> wrot=
+e:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Register a syscon regmap for the System Controller (SYSC) integrated in=
+to
+> > the RZ/T2H and RZ/N2H CPG block.
+> >
+> > Unlike traditional Renesas CPG/MSSR implementations, the RZ/T2H and RZ/=
+N2H
+> > CPG block also integrates the SYSC, which provides low-power management=
+,
+> > clock monitoring, write protection and peripheral configuration registe=
+rs
+> > shared by multiple drivers.
+> >
+> > Implement the RZ/T2H-specific .post_init() callback to create and regis=
+ter
+> > a syscon regmap covering the SYSC register space using the CPG device n=
+ode.
+> > For backward compatibility, return without registering the regmap when =
+the
+> > mapped resources correspond to older Device Trees that expose only the
+> > legacy 64 KiB CPG register window.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> > v2->v3:
+> > - Dropped dangerous registers from writeable_readable list.
+> > - Renamed sysc_init to post_init and updated signature to take
+> >   cpg_mssr_pub struct.
+> > - Created a single regmap covering both SYSC register regions
+> >   instead of two separate regmaps.
+> > - Updated commit message
+>
+> Thanks for the update!
+>
+> > --- a/drivers/clk/renesas/r9a09g077-cpg.c
+> > +++ b/drivers/clk/renesas/r9a09g077-cpg.c
+>
+> > @@ -87,6 +90,19 @@ MODULE_IMPORT_NS("RZV2H_CPG");
+> >  #define CPG_PLL_MON(x)         ((x) - 0x10)
+> >  #define CPG_PLL_MON_LOCK       BIT(0)
+> >
+> > +#define RZT2H_SYSC_SIZE                        0x20000
+>
+> This is the size of the two SYSC regions combined (more below).
+>
+> > +#define RZT2H_SYSC_OFFSET              0x10000
+> > +#define RZT2H_SYSC_BLOCK_MASK          BIT(16)
+> > +#define RZT2H_SYSC_OFFSET_MASK         GENMASK(15, 0)
+> > +#define RZT2H_SYSC_BLOCK(x)            FIELD_GET(RZT2H_SYSC_BLOCK_MASK=
+, x)
+> > +#define RZT2H_SYSC_REG_OFFSET(x)       FIELD_GET(RZT2H_SYSC_OFFSET_MAS=
+K, x)
+> > +#define RZT2H_SYSC_BASE(b0, b1, x)     (RZT2H_SYSC_BLOCK(x) ? (b1) : (=
+b0))
+>
+> Passing the two bases looks a bit ugly to me...
+>
+> > +
+> > +struct r9a09g077_sysc_reg {
+> > +       void __iomem *base0;
+> > +       void __iomem *base1;
+>
+> What about combining them into an array?
+>
+>     void __iomem base[2];
+>
+> The you can do
+>
+>     void __iomem *base =3D sysc->base[RZT2H_SYSC_BLOCK(reg)];
+>
+> below?
+>
+That would be elegant, thanks.
+
+> > +};
+> > +
+> >  enum rzt2h_clk_types {
+> >         CLK_TYPE_RZT2H_DIV =3D CLK_TYPE_CUSTOM,   /* Clock with divider=
+ */
+> >         CLK_TYPE_RZT2H_MUX,                     /* Clock with clock sou=
+rce selector */
+> > @@ -875,6 +891,118 @@ r9a09g077_cpg_clk_register(struct device *dev, co=
+nst struct cpg_core_clk *core,
+> >         }
+> >  }
+> >
+> > +static int r9a09g077_regmap_read(void *context, unsigned int reg, unsi=
+gned int *val)
+> > +{
+> > +       struct r9a09g077_sysc_reg *sysc =3D context;
+> > +       void __iomem *base =3D RZT2H_SYSC_BASE(sysc->base0, sysc->base1=
+, reg);
+> > +
+> > +       *val =3D readl(base + RZT2H_SYSC_REG_OFFSET(reg));
+> > +
+> > +       return 0;
+> > +}
+>
+> > +static bool r9a09g077_writeable_readable_sysc0(struct device *dev, uns=
+igned int reg)
+> > +{
+> > +       switch (reg) {
+> > +       /* ELOPA/B and GTIOCSEL */
+> > +       case 0x0000 ... 0x0008:
+> > +       /* Encoder config */
+> > +       case 0x1000 ... 0x1164:
+> > +       /* PCIe config */
+> > +       case 0x2000 ... 0x2024:
+> > +       case 0x2030 ... 0x2054:
+> > +       case 0x2060:
+> > +       /* xSPI config */
+> > +       case 0x3000 ... 0x300C:
+> > +       case 0x3100 ... 0x310C:
+> > +       /* MD_MON */
+> > +       case 0x4100:
+> > +       /* PRCRN */
+> > +       case 0x4200:
+> > +               return true;
+> > +
+> > +       default:
+> > +               return false;
+> > +       }
+> > +}
+> > +
+> > +static bool r9a09g077_writeable_readable_sysc1(struct device *dev, uns=
+igned int reg)
+> > +{
+> > +       switch (reg) {
+> > +       /* WDTDCRm */
+> > +       case 0x5100 ... 0x5114:
+> > +       /* PRCRS */
+> > +       case 0x6000:
+> > +               return true;
+> > +
+> > +       default:
+> > +               return false;
+> > +       }
+> > +}
+> > +
+> > +static bool r9a09g077_writeable_readable_sysc(struct device *dev, unsi=
+gned int reg)
+> > +{
+> > +       if (RZT2H_SYSC_BLOCK(reg))
+> > +               return r9a09g077_writeable_readable_sysc1(dev, RZT2H_SY=
+SC_REG_OFFSET(reg));
+> > +
+> > +       return r9a09g077_writeable_readable_sysc0(dev, RZT2H_SYSC_REG_O=
+FFSET(reg));
+>
+> I like symmetry, though ;-)
+>
+> IMO the separate sysc0 and sysc1 functions don't add much value.
+> What about:
+>
+>     offset =3D RZT2H_SYSC_REG_OFFSET(reg);
+>     switch (RZT2H_SYSC_BLOCK(reg)) {
+>     case 0:
+>             switch (offset) {
+>                     ...
+>             }
+>
+>     case 1:
+>             switch (offset) {
+>                     ...
+>             }
+>     }
+>
+>     return false;
+>
+Ok, I will move it in a single function.
+
+> > +}
+> > +
+> > +static int r9a09g077_post_init(struct device *dev, struct cpg_mssr_pub=
+ *pub)
+> > +{
+> > +       struct regmap_config *regmap_cfg __free(kfree) =3D kzalloc_obj(=
+*regmap_cfg);
+> > +       struct r9a09g077_sysc_reg *sysc_reg;
+> > +       struct regmap *regmap;
+> > +
+> > +       /*
+> > +        * Return early if the SYSC sizes are not as expected for backw=
+ards
+> > +        * compatibility with older device trees.
+> > +        */
+> > +       if (pub->size0 !=3D RZT2H_SYSC_SIZE || pub->size1 !=3D RZT2H_SY=
+SC_SIZE)
+>
+> While RZT2H_SYSC_SIZE is the correct value to use here, it is not
+> correct from a semantic point of view.
+>
+Agreed, I will introduce a new macro for it.
+
+/* Size of each mapped CPG/MSSR register region (base0, base1) */
+#define RZT2H_CPG_REG_SIZE 0x20000
 
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> > +               return 0;
+> > +
+> > +       if (!regmap_cfg)
+> > +               return -ENOMEM;
+> > +
+> > +       sysc_reg =3D devm_kzalloc(dev, sizeof(*sysc_reg), GFP_KERNEL);
+> > +       if (!sysc_reg)
+> > +               return -ENOMEM;
+> > +
+> > +       /* Only allow access in the SYSC regions */
+> > +       sysc_reg->base0 =3D pub->base0 + RZT2H_SYSC_OFFSET;
+> > +       sysc_reg->base1 =3D pub->base1 + RZT2H_SYSC_OFFSET;
+> > +
+> > +       regmap_cfg->name =3D "rzt2h_sysc";
+> > +       regmap_cfg->reg_bits =3D 32;
+> > +       regmap_cfg->reg_stride =3D 4;
+> > +       regmap_cfg->val_bits =3D 32;
+> > +       regmap_cfg->fast_io =3D true;
+> > +       regmap_cfg->max_register =3D RZT2H_SYSC_SIZE - 1;
+>
+> This is the size of the two blocks combined.
+>
+I will add this comment for the macro,
 
+/* This is the size of two SYSC regions combined */
+#define RZT2H_SYSC_SIZE 0x20000
 
+> > +       regmap_cfg->readable_reg =3D r9a09g077_writeable_readable_sysc;
+> > +       regmap_cfg->writeable_reg =3D r9a09g077_writeable_readable_sysc=
+;
+> > +
+> > +       regmap =3D devm_regmap_init(dev, &r9a09g077_sys_regmap_bus, sys=
+c_reg, regmap_cfg);
+> > +       if (IS_ERR(regmap))
+> > +               return PTR_ERR(regmap);
+> > +
+> > +       return of_syscon_register_regmap(dev->of_node, regmap);
+> > +}
+> > +
+> >  const struct cpg_mssr_info r9a09g077_cpg_mssr_info =3D {
+> >         /* Core Clocks */
+> >         .core_clks =3D r9a09g077_core_clks,
+> > @@ -889,4 +1017,6 @@ const struct cpg_mssr_info r9a09g077_cpg_mssr_info=
+ =3D {
+> >
+> >         .reg_layout =3D CLK_REG_LAYOUT_RZ_T2H,
+> >         .cpg_clk_register =3D r9a09g077_cpg_clk_register,
+> > +
+> > +       .post_init =3D r9a09g077_post_init,
+> >  };
+> > diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renes=
+as/renesas-cpg-mssr.c
+> > index 80f4403ea2ba..2987c34f2ba2 100644
+> > --- a/drivers/clk/renesas/renesas-cpg-mssr.c
+> > +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+> > @@ -1267,6 +1267,7 @@ static int __init cpg_mssr_common_init(struct dev=
+ice *dev,
+> >  {
+> >         struct cpg_mssr_priv *priv;
+> >         unsigned int nclks, i;
+> > +       struct resource res;
+> >         int error;
+> >
+> >         if (info->init) {
+> > @@ -1285,13 +1286,23 @@ static int __init cpg_mssr_common_init(struct d=
+evice *dev,
+> >         priv->dev =3D dev;
+> >         spin_lock_init(&priv->pub.rmw_lock);
+> >
+> > -       priv->pub.base0 =3D of_iomap(np, 0);
+> > +       error =3D of_address_to_resource(np, 0, &res);
+> > +       if (error)
+> > +               return error;
+> > +
+> > +       priv->pub.size0 =3D resource_size(&res);
+> > +       priv->pub.base0 =3D ioremap(res.start, priv->pub.size0);
+> >         if (!priv->pub.base0) {
+> >                 error =3D -ENOMEM;
+> >                 goto out_err;
+> >         }
+> >         if (info->reg_layout =3D=3D CLK_REG_LAYOUT_RZ_T2H) {
+> > -               priv->pub.base1 =3D of_iomap(np, 1);
+> > +               error =3D of_address_to_resource(np, 1, &res);
+> > +               if (error)
+> > +                       goto out_err;
+> > +
+> > +               priv->pub.size1 =3D resource_size(&res);
+> > +               priv->pub.base1 =3D ioremap(res.start, priv->pub.size1)=
+;
+>
+> Instead of complicating the code here, r9a09g077_post_init() might as
+> well call of_address_to_resource(dev->of_node) itself.
+>
+Ok, I will move this to post_init.
 
--- 
-With best wishes
-Dmitry
+> >                 if (!priv->pub.base1) {
+> >                         error =3D -ENOMEM;
+> >                         goto out_err;
+> > @@ -1414,6 +1425,9 @@ static int __init cpg_mssr_probe(struct platform_=
+device *pdev)
+> >
+> >         error =3D cpg_mssr_reset_controller_register(priv);
+> >
+> > +       if (!error && info->post_init)
+> > +               error =3D info->post_init(priv->dev, &priv->pub);
+>
+> No cleanup in case of error, so the regmap is considered optional, right?
+>
+regmap is registered with devm_regmap_init() which on failure will
+call regmap_exit. For of_syscon_register_regmap() there is no cleanup
+code and if cpg_mssr_probe() fails the system wouldnt boot.
+
+Cheers,
+Prabhakar
