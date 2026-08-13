@@ -1,73 +1,192 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D00493002B9;
-	Thu, 13 Aug 2026 08:34:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2914D39656D
+	for <linux-clk@vger.kernel.org>; Thu, 13 Aug 2026 08:34:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786610061; cv=none; b=jRuDob8zVThhdjZQmIHb3LUhDIJStuoHDphFN8JbrY178+kOZaIOA+hW/voCfQk+PWOUH6CUsBUwv7UZQk3ws9EY3NpDrBcYgQDuv4cP16SpdzB4XRk9ytPC2sjdsosL8sN77hvaI1SxO5LVSFjG7vtR5ap8l8MMjONMErYubSY=
+	t=1786610065; cv=none; b=X4ZTlkbmSBCTrTEvIhZi7RHjwxM1E97ucMSOobumtbikp0Tn5Zx78djMnrHfJ235cum8uxeWg7ha+yRhe+Qux2gqDRbY0w6CjgCZEu7dg16O7PFzMJEr09as3cOPoHzGdhn1tV3Y8WSKZpkzxZk2rbbavnCaOm8h0cmEm6bNmh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786610061; c=relaxed/simple;
-	bh=T5OE6vfLFkwTA7UckY8AakFKzL2IpkBCaEQOENVAl1w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IQ3IUKKEIcvDDYHIvMa2HuYT5KEJG5KJUGPHNuAKYdkR4aQ0Hjn6tdIcSFOi4+dGb6W+eid027mqbV925nOY4vIbmkJsYHl8fe/SGihSDmq5dVeGWt8Mug1i1oNLOGdQuvauG2g5I/yiT1dx+GkcbRPJP8jgxainXLXP5mFFf2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l/6seGxq; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1786610065; c=relaxed/simple;
+	bh=Et8yr7T4XI2QiD9tHPH6gogO1W8MVDfDmWwZXyvssoM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iQ9R93oqHFgiHXUr8eeYdbAUItAGkqB5GSNLuCIK54QmzE7Nw69sXYhbsSzle1NC5kUUExJiDd6fcsXeZjwtH1kDnN6Byldu/Y57ZQLApg71Esw0rjQZFs4J4Kzgl6QL9eZf5nE8xo5sy26iHyCgmoGswgDdPtIpyuuYWwi2as8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=rRySEaGe; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l/6seGxq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33F0B1F00A3D;
-	Thu, 13 Aug 2026 08:34:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786610060;
-	bh=WpZmjViDNj9nPaLPOPz80qmgBiPaTATNXRxIiuNLGPM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=l/6seGxqYKQq+Tq19hbgN6CZEv31KMnguf9IiS1xtIFwLl5YKjP7K1gQtpVZDA/Xc
-	 ZVP3AgkvfNR2z6bcXXf0z8fyvcMfFOf3c0QEDXeQ0XTOgK6VrZZxztw/ZHZxKVkvbP
-	 YVKvbkyGznmuoWMLr6WGSy0gcM4T2hMZbURDQW0dG/pITzWEMXlIeJikzl8GT0Qace
-	 dTGdCxr7xxAv7ncOfenDSB3BVwOquVDYIXmbDZb9SFdYxNSNxD5S5V0yJt3Mpz4/G7
-	 kt/G4slgftrgO73nkweSgd7/zDI5rmhDGgL9xYGGquorTpWJpcgGABxtQ+DAL8sRz+
-	 N50kXkFG6ghEg==
-Date: Thu, 13 Aug 2026 10:34:12 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
-Cc: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
-	Konrad Dybcio <konradybcio@kernel.org>, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] dt-bindings: interconnect: Add Qualcomm IPQ9650
- support
-Message-ID: <20260813-flashy-topaz-antelope-dc9706@quoll>
-References: <20260811-ipq9650_icc-v2-0-55b8efbd62c6@oss.qualcomm.com>
- <20260811-ipq9650_icc-v2-1-55b8efbd62c6@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rRySEaGe"
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-3a0faa764beso12969471fa.2
+        for <linux-clk@vger.kernel.org>; Thu, 13 Aug 2026 01:34:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1786610061; x=1787214861; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=mUlqoelOp41/qPHMuXnll43fbi7+sd/XaTpVYDwo8o4=;
+        b=rRySEaGe33GGD3rDArMTqpneiUzvS6BHFzj5YOcZyvbNkwUj8ouVDd5CmMG7ODCX4q
+         V9PSxwj/pNhYWS7enXDXJOOKUUSTkXWPQ1i/ub67BYC2xAnLz77u7lOQX0zUevnPUEZB
+         ruACOMxfJrs1H5YJABBisQ/2+oMQ7uaKAhW79YpIvY8eO+KB6DdnmjWPMdGshk/cmwPx
+         inqKF9qxNpYIWrI1ydZ+GF73F3XsR/dR2Nqv2nhBj2+4enluMOjDUdyC2+1utCLtf/hB
+         a4clU4OCAHrVL8uLZT2Kxw+h+mQNZeBXKpuOTtaNNMRoWHPQaodnng5w+d/gjhZU1Ugl
+         rD3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1786610061; x=1787214861;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=mUlqoelOp41/qPHMuXnll43fbi7+sd/XaTpVYDwo8o4=;
+        b=W9eJlSo0PWgDz5IeJSszSCsesfLijLvy3eJv+iE1ENFzjYnZkv1CJ+qQ1mTrk9g9mI
+         Dj4QgyXnytXZ+b6BWKElyUnTboZv8FBfen/G2JrEy3N8N0b8kG0segJaDkxAjnlC7XnU
+         P0DEJFIrIOXaZrpCkCNDMfY9f+oAdiRrV7bAZI1e8Kzs6g0tELFES6ygpdAXMxcxPpF4
+         RJhJY5EeGZsWfCaVKOdtrBFpgPRBLTH4pXpkJ2VQDfZkMmr2EhECiB+Y6nXdCdV+d2di
+         i0JF8APjrT8MK3hzKPIht1gBMVCAV85nNzMZG8T53mVReBqAc8iDqqJk5vtdzbnHbSLa
+         rwwA==
+X-Forwarded-Encrypted: i=1; AHgh+RqbVhPqoMVYmK16kaYgazPkqwLKgF+k98W6rrC6JrdB/kuBWWrgxskH05a97HKRLLmVPIWMLDdATbE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBvey6EdvfKl8TkNuFROa5JfoP5j9KwwlaLqv1F+0gxnYx2lAe
+	GYXPzQUuoHSVg9+gsjpVYSlf068HUo84jaNl5f7Du1aU48tM8Gj9CUjq
+X-Gm-Gg: AR+sD11mq5GqPOn4uILMZ2+hBGaPwOWgjHk/ZX6S91pTXVobONOOhuVA4T1PBnNkC6u
+	o3E2UeCxCVy2+R9Vs53Lxp3QmfczDb4bTGVeZv81pTGtCFrU7qUw4LT4rKdSGkL5+TSQDSWCovz
+	Cgqo6kev4ymxqfxPLHWoQ3pVlO7gPlUGnuJnDLhuL7hoYuHBM97GZPQHZHo23jm/wNTk7tj0q+i
+	vE2yhKJlZTTlAttVGSyWu5BfIYw8cDWgHzBdKPxQSrY1Ph3zxJ4qPUBChCt1F07+p2JBjRB9193
+	jo+o+c0xW3n+IdmdVjkvsbdRk4tvlNI2B07HZ8tO1CHlueGVQbW6/2SciCzzIO5KpOTk8HZrCMp
+	wHhEW8cbkwsGX3kCSgVQnSvkmdkKZlwsfO49FrG+oB7p0YxutX2Ntg5DiA3zbfTVI4bs+8l6TaS
+	kqmcKh6PdsXeccGDsHZyqPEjuctgsc8vj0iNWL7JNZGLTK2EulVjqh7rWfEho0Uqr1319UTIKen
+	LxaOcOZKAyXsXG7u+5/JQmDbdvlSQQnrsEw3/ycSY+nep+13bbCg5pX0dE6fwSHjvx4
+X-Received: by 2002:a05:651c:2108:b0:39c:f58e:5c5b with SMTP id 38308e7fff4ca-3a11a6b4a36mr4705651fa.18.1786610060867;
+        Thu, 13 Aug 2026 01:34:20 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3a11b43f7fbsm2860831fa.37.2026.08.13.01.34.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Aug 2026 01:34:19 -0700 (PDT)
+Message-ID: <f5c241a2-00a8-4a32-bad5-3c89fb204b25@gmail.com>
+Date: Thu, 13 Aug 2026 11:34:17 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260811-ipq9650_icc-v2-1-55b8efbd62c6@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 09/10] gpio: bd73800: Support ROHM BD73800 PMIC GPIOs
+To: Linus Walleij <linusw@kernel.org>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+ Matti Vaittinen <matti.vaittinen@linux.dev>, Lee Jones <lee@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ Brian Masney <bmasney@redhat.com>, Bartosz Golaszewski <brgl@kernel.org>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, mfd@lists.linux.dev,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-rtc@vger.kernel.org
+References: <cover.1785838584.git.mazziesaccount@gmail.com>
+ <9774b8d6663ea55b1682b32f825ec5689be3e1d8.1785838585.git.mazziesaccount@gmail.com>
+ <CAD++jLmatJFfqhNWfgx=qUW2fEwuatxmJR7NyJLAv45LfLHZnw@mail.gmail.com>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <CAD++jLmatJFfqhNWfgx=qUW2fEwuatxmJR7NyJLAv45LfLHZnw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 11, 2026 at 09:23:08PM +0530, Kathiravan Thirumoorthy wrote:
-> On Qualcomm IPQ9650 platform the interconnect busses don't have separate
-> RPM / RPMh controls. Instead they require direct votes through the GCC.
-> To unify hardware descriptions (and software interfaces) between this
-> platform and other Qualcomm platforms, make GCC export corresponding NoC
-> clocks as interconnects. Add IDs for these Network-on-Chip interfaces.
-> The GCC schema already defines #interconnect-cells since it was added in
-> the commit f92b778251ad ("dt-bindings: clock: add Qualcomm IPQ9650
-> GCC").
+On 07/08/2026 23:29, Linus Walleij wrote:
+> Hi Matti,
 > 
-> Acked-by: Georgi Djakov <djakov@kernel.org>
-> Signed-off-by: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
-> ---
->  include/dt-bindings/interconnect/qcom,ipq9650.h | 28 +++++++++++++++++++++++++
->  1 file changed, 28 insertions(+)
+> thanks for your patch!
+> 
+> On Tue, Aug 4, 2026 at 12:23 PM Matti Vaittinen
+> <matti.vaittinen@linux.dev> wrote:
+> 
+> 
+>> +static int bd73800gpio_get(struct gpio_chip *chip, unsigned int offset)
+>> +{
+>> +       struct bd73800_gpio *data = gpiochip_get_data(chip);
+>> +       struct bd73800_gpio_pin_cfg *pin = &data->pin[offset];
+>> +       int ret, val;
+>> +
+>> +       /* Only pins configured as GPI via OTP can have their status read */
+>> +       if (pin->state != BD73800_PIN_GPI) {
+>> +               dev_dbg(data->dev, "pin %d (%x) not input. State %d\n", offset,
+>> +                       pin->mask, pin->state);
+>> +               return -EINVAL;
+>> +       }
+>> +
+>> +       ret = regmap_read(data->regmap, BD73800_REG_INT_5_SRC, &val);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       return val & pin->mask;
+>> +}
+>> +
+>> +static int bd73800gpo_set(struct gpio_chip *chip, unsigned int offset,
+>> +                         int value)
+>> +{
+>> +       struct bd73800_gpio *data = gpiochip_get_data(chip);
+>> +       struct bd73800_gpio_pin_cfg *pin = &data->pin[offset];
+>> +
+>> +       if (pin->state != BD73800_PIN_GPO) {
+>> +               dev_dbg(data->dev, "pin %d (%d) not output. State %d\n",
+>> +                       offset, pin->mask, pin->state);
+>> +
+>> +               return -EINVAL;
+>> +       }
+>> +
+>> +       if (value)
+>> +               return regmap_set_bits(data->regmap, BD73800_REG_GPO_OUT,
+>> +                                      pin->mask);
+>> +
+>> +       return regmap_clear_bits(data->regmap, BD73800_REG_GPO_OUT, pin->mask);
+>> +}
+> 
+> These can probably be handled by the latest version of gpio-regmap
+> helpers (the version in linux-next).
+> 
+> We now support both input-only and output-only in gpio-regmap.
+> 
+> Latest <linux/gpio/regmap.h>:
+> 
+>   * @fixed_direction_mask:
+>   *                      (Optional) Bitmap representing the GPIO lines that
+>   *                      make use of the @fixed_direction_output list to
+>   *                      enforce direction of the GPIO. If this is NULL
+>   *                      and @fixed_direction_output is defined, ALL GPIOs
+>   *                      are assumed to be fixed direction (out or in).
+>   * @fixed_direction_output:
+>   *                      (Optional) Bitmap representing the fixed direction of
+>   *                      the GPIO lines. Useful when there are GPIO lines with a
+>   *                      fixed direction mixed together in the same register.
+> 
+> It seems you can set up the fixed_direction_output mask from OTP
+> and just use the library, right?
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+The BD73800 uses different registers for 'out' and 'in'. So there aren't 
+really "GPIO lines with a fixed direction mixed together in the same 
+register".
 
-Best regards,
-Krzysztof
+I, however, see some good stuff being in the linux-next! Finally a bit 
+of flexibility in a form of callbacks a driver can register is getting 
+in. So I am somewhat hopeful the usability of gpio-regmap will finally 
+increase.
 
+I think the BD73800 can indeed use the gpio-regmap, by keeping the pin 
+direction information in private data and adding a custom xlate, which 
+errors out if get is requested for output pin, or set is requested for 
+input. I am not sure how much of an improvement it is compared to the 
+patch v2, but I'll give it a shot :) I believe the new -rc1 isn't that 
+far away, and hopefully the gpio-regmap -stuff from the next will be in 
+it together with the regulator stuff bindings depended.
+
+Thanks again for the pointer!
+
+Yours,
+	-- Matti
+
+-- 
+Matti Vaittinen
+Linux kernel developer at ROHM Semiconductors
+Oulu Finland
+
+~~ When things go utterly wrong vim users can always type :help! ~~
