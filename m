@@ -1,192 +1,143 @@
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from ixit.cz (ixit.cz [84.42.129.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2914D39656D
-	for <linux-clk@vger.kernel.org>; Thu, 13 Aug 2026 08:34:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A57B432D0F5;
+	Thu, 13 Aug 2026 09:20:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.42.129.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786610065; cv=none; b=X4ZTlkbmSBCTrTEvIhZi7RHjwxM1E97ucMSOobumtbikp0Tn5Zx78djMnrHfJ235cum8uxeWg7ha+yRhe+Qux2gqDRbY0w6CjgCZEu7dg16O7PFzMJEr09as3cOPoHzGdhn1tV3Y8WSKZpkzxZk2rbbavnCaOm8h0cmEm6bNmh4=
+	t=1786612831; cv=none; b=pc9cq6Q0YmGs1plpSl7cb4qXT2mwP9BPVpA+O1vLLYIu/fRkkZppodZ5Wna29qPOKamntEdYkgzdmBuM1xwAyYss1ZGObQmF/ZAp67enW6XPKKY3M6pAS1Emil3A8E3qdKfZcMfjfhQhGAhS5jBFKS5dvWzDIU/k2k1YnO9ytXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786610065; c=relaxed/simple;
-	bh=Et8yr7T4XI2QiD9tHPH6gogO1W8MVDfDmWwZXyvssoM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iQ9R93oqHFgiHXUr8eeYdbAUItAGkqB5GSNLuCIK54QmzE7Nw69sXYhbsSzle1NC5kUUExJiDd6fcsXeZjwtH1kDnN6Byldu/Y57ZQLApg71Esw0rjQZFs4J4Kzgl6QL9eZf5nE8xo5sy26iHyCgmoGswgDdPtIpyuuYWwi2as8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=rRySEaGe; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1786612831; c=relaxed/simple;
+	bh=XSbxuFNDxlXVpQ/cS578M2yFcGMkc7DG8pgNdZPizcw=;
+	h=Content-Type:From:Mime-Version:Subject:Date:Message-Id:References:
+	 Cc:In-Reply-To:To; b=r6MS6xcjUZisslsbzqA12opEBkddOi83zt8xbCOO2KUxk8K1Alxq1JFmsyNhRMdRcyA75EwzAqKvpz/KlsemzRLbfzwH5DeylfJdWt4h1YA/n8rMvHY9+HA5aCb+9rjrx28+gQPrEuxVEBcVNTTmU+qx3xxGv+Kn0vkYzDf9V54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=LZXlAaqM; arc=none smtp.client-ip=84.42.129.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rRySEaGe"
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-3a0faa764beso12969471fa.2
-        for <linux-clk@vger.kernel.org>; Thu, 13 Aug 2026 01:34:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1786610061; x=1787214861; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=mUlqoelOp41/qPHMuXnll43fbi7+sd/XaTpVYDwo8o4=;
-        b=rRySEaGe33GGD3rDArMTqpneiUzvS6BHFzj5YOcZyvbNkwUj8ouVDd5CmMG7ODCX4q
-         V9PSxwj/pNhYWS7enXDXJOOKUUSTkXWPQ1i/ub67BYC2xAnLz77u7lOQX0zUevnPUEZB
-         ruACOMxfJrs1H5YJABBisQ/2+oMQ7uaKAhW79YpIvY8eO+KB6DdnmjWPMdGshk/cmwPx
-         inqKF9qxNpYIWrI1ydZ+GF73F3XsR/dR2Nqv2nhBj2+4enluMOjDUdyC2+1utCLtf/hB
-         a4clU4OCAHrVL8uLZT2Kxw+h+mQNZeBXKpuOTtaNNMRoWHPQaodnng5w+d/gjhZU1Ugl
-         rD3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786610061; x=1787214861;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=mUlqoelOp41/qPHMuXnll43fbi7+sd/XaTpVYDwo8o4=;
-        b=W9eJlSo0PWgDz5IeJSszSCsesfLijLvy3eJv+iE1ENFzjYnZkv1CJ+qQ1mTrk9g9mI
-         Dj4QgyXnytXZ+b6BWKElyUnTboZv8FBfen/G2JrEy3N8N0b8kG0segJaDkxAjnlC7XnU
-         P0DEJFIrIOXaZrpCkCNDMfY9f+oAdiRrV7bAZI1e8Kzs6g0tELFES6ygpdAXMxcxPpF4
-         RJhJY5EeGZsWfCaVKOdtrBFpgPRBLTH4pXpkJ2VQDfZkMmr2EhECiB+Y6nXdCdV+d2di
-         i0JF8APjrT8MK3hzKPIht1gBMVCAV85nNzMZG8T53mVReBqAc8iDqqJk5vtdzbnHbSLa
-         rwwA==
-X-Forwarded-Encrypted: i=1; AHgh+RqbVhPqoMVYmK16kaYgazPkqwLKgF+k98W6rrC6JrdB/kuBWWrgxskH05a97HKRLLmVPIWMLDdATbE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBvey6EdvfKl8TkNuFROa5JfoP5j9KwwlaLqv1F+0gxnYx2lAe
-	GYXPzQUuoHSVg9+gsjpVYSlf068HUo84jaNl5f7Du1aU48tM8Gj9CUjq
-X-Gm-Gg: AR+sD11mq5GqPOn4uILMZ2+hBGaPwOWgjHk/ZX6S91pTXVobONOOhuVA4T1PBnNkC6u
-	o3E2UeCxCVy2+R9Vs53Lxp3QmfczDb4bTGVeZv81pTGtCFrU7qUw4LT4rKdSGkL5+TSQDSWCovz
-	Cgqo6kev4ymxqfxPLHWoQ3pVlO7gPlUGnuJnDLhuL7hoYuHBM97GZPQHZHo23jm/wNTk7tj0q+i
-	vE2yhKJlZTTlAttVGSyWu5BfIYw8cDWgHzBdKPxQSrY1Ph3zxJ4qPUBChCt1F07+p2JBjRB9193
-	jo+o+c0xW3n+IdmdVjkvsbdRk4tvlNI2B07HZ8tO1CHlueGVQbW6/2SciCzzIO5KpOTk8HZrCMp
-	wHhEW8cbkwsGX3kCSgVQnSvkmdkKZlwsfO49FrG+oB7p0YxutX2Ntg5DiA3zbfTVI4bs+8l6TaS
-	kqmcKh6PdsXeccGDsHZyqPEjuctgsc8vj0iNWL7JNZGLTK2EulVjqh7rWfEho0Uqr1319UTIKen
-	LxaOcOZKAyXsXG7u+5/JQmDbdvlSQQnrsEw3/ycSY+nep+13bbCg5pX0dE6fwSHjvx4
-X-Received: by 2002:a05:651c:2108:b0:39c:f58e:5c5b with SMTP id 38308e7fff4ca-3a11a6b4a36mr4705651fa.18.1786610060867;
-        Thu, 13 Aug 2026 01:34:20 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3a11b43f7fbsm2860831fa.37.2026.08.13.01.34.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Aug 2026 01:34:19 -0700 (PDT)
-Message-ID: <f5c241a2-00a8-4a32-bad5-3c89fb204b25@gmail.com>
-Date: Thu, 13 Aug 2026 11:34:17 +0300
+	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="LZXlAaqM"
+Received: from smtpclient.apple (85-70-170-181.rcd.o2.cz [85.70.170.181])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ixit.cz (Postfix) with ESMTPSA id BC3165340217;
+	Thu, 13 Aug 2026 11:20:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
+	t=1786612821;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XSbxuFNDxlXVpQ/cS578M2yFcGMkc7DG8pgNdZPizcw=;
+	b=LZXlAaqMDuz1Eu1qoATS2mQYnT7CsZwlU8A/IXlgD06ajK8b+e6H1n9LYw4UJuCZm5U/K1
+	45EC+UwLTUEFW7hK5NTe7T8cn5/fV82S+8GeZjkxTS2flC4JayGWz1E96Y3dcIj8ur1J4R
+	hWWn2JaZ0EhUTvH7hyEn/4YiTGlPbJw=
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From: David Heidelberg <david@ixit.cz>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 09/10] gpio: bd73800: Support ROHM BD73800 PMIC GPIOs
-To: Linus Walleij <linusw@kernel.org>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Matti Vaittinen <matti.vaittinen@linux.dev>, Lee Jones <lee@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Brian Masney <bmasney@redhat.com>, Bartosz Golaszewski <brgl@kernel.org>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>, mfd@lists.linux.dev,
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH 00/33] Add support for Qualcomm Snapdragon SM7150 SoC and Google Pixel 4a
+Date: Thu, 13 Aug 2026 11:20:11 +0200
+Message-Id: <7B026D92-3826-494D-B1A9-EF01D41B4461@ixit.cz>
+References: <b15b2687-0c2e-43b2-ac9e-78e04e77e065@mainlining.org>
+Cc: Jens Reidel <adrian@mainlining.org>,
+ Danila Tikhonov <danila@jiaxyga.com>, Miro Mraz <mraz.miro@seznam.cz>,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-rtc@vger.kernel.org
-References: <cover.1785838584.git.mazziesaccount@gmail.com>
- <9774b8d6663ea55b1682b32f825ec5689be3e1d8.1785838585.git.mazziesaccount@gmail.com>
- <CAD++jLmatJFfqhNWfgx=qUW2fEwuatxmJR7NyJLAv45LfLHZnw@mail.gmail.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <CAD++jLmatJFfqhNWfgx=qUW2fEwuatxmJR7NyJLAv45LfLHZnw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+ linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-watchdog@vger.kernel.org, linux-usb@vger.kernel.org,
+ linux-phy@lists.infradead.org, linux-mmc@vger.kernel.org,
+ netdev@vger.kernel.org, linux-scsi@vger.kernel.org,
+ dmaengine@vger.kernel.org, linux-crypto@vger.kernel.org,
+ linux-i2c@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+ linux-remoteproc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ neil.armstrong@linaro.org, linux-hardening@vger.kernel.org,
+ linux@mainlining.org, Connor Mitchell <c.dog29@hotmail.com>
+In-Reply-To: <b15b2687-0c2e-43b2-ac9e-78e04e77e065@mainlining.org>
+To: Danila Tikhonov <danila@mainlining.org>
+X-Mailer: iPhone Mail (23G71)
 
-On 07/08/2026 23:29, Linus Walleij wrote:
-> Hi Matti,
-> 
-> thanks for your patch!
-> 
-> On Tue, Aug 4, 2026 at 12:23 PM Matti Vaittinen
-> <matti.vaittinen@linux.dev> wrote:
-> 
-> 
->> +static int bd73800gpio_get(struct gpio_chip *chip, unsigned int offset)
->> +{
->> +       struct bd73800_gpio *data = gpiochip_get_data(chip);
->> +       struct bd73800_gpio_pin_cfg *pin = &data->pin[offset];
->> +       int ret, val;
->> +
->> +       /* Only pins configured as GPI via OTP can have their status read */
->> +       if (pin->state != BD73800_PIN_GPI) {
->> +               dev_dbg(data->dev, "pin %d (%x) not input. State %d\n", offset,
->> +                       pin->mask, pin->state);
->> +               return -EINVAL;
->> +       }
->> +
->> +       ret = regmap_read(data->regmap, BD73800_REG_INT_5_SRC, &val);
->> +       if (ret)
->> +               return ret;
->> +
->> +       return val & pin->mask;
->> +}
->> +
->> +static int bd73800gpo_set(struct gpio_chip *chip, unsigned int offset,
->> +                         int value)
->> +{
->> +       struct bd73800_gpio *data = gpiochip_get_data(chip);
->> +       struct bd73800_gpio_pin_cfg *pin = &data->pin[offset];
->> +
->> +       if (pin->state != BD73800_PIN_GPO) {
->> +               dev_dbg(data->dev, "pin %d (%d) not output. State %d\n",
->> +                       offset, pin->mask, pin->state);
->> +
->> +               return -EINVAL;
->> +       }
->> +
->> +       if (value)
->> +               return regmap_set_bits(data->regmap, BD73800_REG_GPO_OUT,
->> +                                      pin->mask);
->> +
->> +       return regmap_clear_bits(data->regmap, BD73800_REG_GPO_OUT, pin->mask);
->> +}
-> 
-> These can probably be handled by the latest version of gpio-regmap
-> helpers (the version in linux-next).
-> 
-> We now support both input-only and output-only in gpio-regmap.
-> 
-> Latest <linux/gpio/regmap.h>:
-> 
->   * @fixed_direction_mask:
->   *                      (Optional) Bitmap representing the GPIO lines that
->   *                      make use of the @fixed_direction_output list to
->   *                      enforce direction of the GPIO. If this is NULL
->   *                      and @fixed_direction_output is defined, ALL GPIOs
->   *                      are assumed to be fixed direction (out or in).
->   * @fixed_direction_output:
->   *                      (Optional) Bitmap representing the fixed direction of
->   *                      the GPIO lines. Useful when there are GPIO lines with a
->   *                      fixed direction mixed together in the same register.
-> 
-> It seems you can set up the fixed_direction_output mask from OTP
-> and just use the library, right?
 
-The BD73800 uses different registers for 'out' and 'in'. So there aren't 
-really "GPIO lines with a fixed direction mixed together in the same 
-register".
+> On 12. 8. 2026, at 22:54, Danila Tikhonov <danila@mainlining.org> wrote:
+>=20
+> =EF=BB=BFHi David,
+>=20
+> Thank you for your comment.
+>=20
+>> On 12/08/2026 14:40, David Heidelberg wrote:
+>>=20
+>>=20
+>>> On 23/04/2025 09:26, Neil Armstrong wrote:
+>>> Hi,
+>>>=20
+>>> On 23/04/2025 00:07, Jens Reidel wrote:
+>>>> Hi everyone,
+>>>>=20
+>>>> apologies for the mess this created. Danila's mail provider ratelimited=
+ him halfway through sending the series and the attempt to re-try sending th=
+e second half an hour later ended up with a new message ID (I think due to n=
+ot using --in-reply-to).
+>>>> He asked me to let you know that this will be resolved later and the wh=
+ole series will be re-sent once the problems are resolved.
+>>>=20
+>>> The b4 web submission is a great alternative when the mail provider is r=
+ate limited:
+>>> https://b4.docs.kernel.org/en/latest/contributor/send.html#web-endpoint
+>>>=20
+>>=20
+>> I see people interested in moving Pixel 4a forward, but it seems this was=
+ never upstreamed? I looked at sm7150 repository [1] where I see FROMLIST, b=
+ut these patches never arrived to the list and this series is from 2025.
+>>=20
+>> Should we expect v2 (re)based on recent tree?
+>>=20
+>=20
+> I'd definitely like to get back to upstreaming SM7150 and the devices
+> based on it, but I don't think there's much value in continuing with
+> this particular series as-is. A lot has changed in the kernel over the
+> past year, which would require substantial changes throughout the series
+> and would effectively force the maintainers to review it from scratch
+> anyway.
 
-I, however, see some good stuff being in the linux-next! Finally a bit 
-of flexibility in a form of callbacks a driver can register is getting 
-in. So I am somewhat hopeful the usability of gpio-regmap will finally 
-increase.
+After longer period of time maintainers will have to do full review anyway. S=
+ure, the reviews needs to be addressed :)
 
-I think the BD73800 can indeed use the gpio-regmap, by keeping the pin 
-direction information in private data and adding a custom xlate, which 
-errors out if get is requested for output pin, or set is requested for 
-input. I am not sure how much of an improvement it is compared to the 
-patch v2, but I'll give it a shot :) I believe the new -rc1 isn't that 
-far away, and hopefully the gpio-regmap -stuff from the next will be in 
-it together with the regulator stuff bindings depended.
+>=20
+> I'd also like to split the series up to avoid targeting such a large
+> number of maintainers in a single submission.
 
-Thanks again for the pointer!
+Yes, that=E2=80=99s exactly what=E2=80=99s needed (at least for the part pat=
+ches I saw).
 
-Yours,
-	-- Matti
+> Hopefully, I'll be able to
+> find some time to work on this in the near future.
 
--- 
-Matti Vaittinen
-Linux kernel developer at ROHM Semiconductors
-Oulu Finland
+Where the most recent patchset can be found? Just in case someone wanted to p=
+ush some bits in meantime.
 
-~~ When things go utterly wrong vim users can always type :help! ~~
+Thanks
+David
+
+>=20
+>=20
+>> Thanks
+>> David
+>>=20
+>> [1] https://github.com/sm7150-mainline/linux/commit/7ea41523c678e94a7c048=
+936052b5b1b1b109cdd
+>>=20
+>>> Neil
+>>>=20
+>>>>=20
+>>>> Best regards,
+>>>> Jens
+>>>=20
+>>>=20
+> ---
+> Best regards,
+> Danila
