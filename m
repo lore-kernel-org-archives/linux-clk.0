@@ -1,116 +1,130 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D70F3C063A;
-	Thu, 13 Aug 2026 23:00:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C73D32E151;
+	Thu, 13 Aug 2026 23:03:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786662020; cv=none; b=S4B8i6c4Xfsu6UuWwTukQg7xZVcDDbe/S6hSxnOKy+3/JoJRkuH/ggnB85mbRfnYCrJEiLUO7bvLJ2YUO0tbQXvD8PbBM2UibMfSqrK4GCVCYAWiiubHmmYEnwQ9YyjT2DkHHbdwskg8cMAncmjFIWORw7aFLjL9mVojLSB4MAM=
+	t=1786662189; cv=none; b=QAYYQYLOIDGGLLHrgpLliNrDIUSEnqsQp9UQI6Jd8MddDth43YoC0k3DmxstFg/vSIyuOFc1V2egLc84nBL1GOFU1cAXD5WAAsUmoRHwVuLx6pXL8MzwWwStnAANTVVKHljxX0Wc0zk+IbuLYLg4D6HoAV9qxJbT7hBF0jhu46Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786662020; c=relaxed/simple;
-	bh=vCuD0gJk7BDs51E86E4whfyqMe5g5+C/jpXmmwuitjw=;
+	s=arc-20240116; t=1786662189; c=relaxed/simple;
+	bh=oWQz1Q5EfMTSqZUf27WhDgkNNSWJNFCiBPz85pllPtg=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=NVJQjdEDARRpZ432e/jR2baa0lL2zkqqmZRETHYovUXWVfTIKfcLeo9t5od3REEkGnD5nTOQzQppCL/G39swbDJ/hndUcZwkUwQG9MDe31NbqyumK/pYDKICXM3icZiAUdhG1s99d9v1B7cFpuzUH5pvaJXfg4JvCypUwcE0UZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iSWTc14I; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=Lgd0d07i3TLKQca9NbTMtBWtA/XHxydu3ysTMNivOLLpHmQxkFx8+SsWfb7b3tjJ0+JEbCCEygDvVgL0ps8/d0ehBnzqll/pVGiYkw5Yeq2II4A0btG3IOvdjuJqmuowOXERs8XwDSt/y4xt/KFPcptlLjxTWQv5tz6s/t64boU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=laali12m; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iSWTc14I"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 812221F000E9;
-	Thu, 13 Aug 2026 23:00:18 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="laali12m"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38C321F000E9;
+	Thu, 13 Aug 2026 23:03:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786662018;
-	bh=YYEru6m3IQxsef7wGemhNlaqmEokgUl3rXTpfs3WNbQ=;
+	s=k20260515; t=1786662188;
+	bh=BCHnFOoN3knw3+OrutQrKHdqNWjRCW6IR2cXg9s1q7U=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=iSWTc14II88fMEa1WD4trLC5M+4v+da1vzh8MEAnwIFqiCuUZl/BtvQuS+QC8tDC8
-	 zXfaCsyAPM8gaKi29Mh5gDrh2I2xyGj4tXjtsoPlCR8uQcE6WSkZXxabRDRQ29XYom
-	 EFTOkTfssTDRWLgTGuRo8DRy7w9wqjLmTwNoNKZ2upvNEU0FmpEuT6YBkW7VV19Dr1
-	 /DMU4XqvoZGNTzCL44NzsMoge42I09h0nVZZhDYVllVcNMiWf6ysr9vl8yhu4gjDbG
-	 RUGJaL9w98lrEThFqfz6WLiV6ImQZml2PF46DVisTPT3Kgd2Umn2Yp+JDGEafKNEKp
-	 InHYu2vrEf7Zg==
+	b=laali12m3BHQt80zna5+7Vjsqj2hUGPyoJ0yHONLP3SKvoBIyU+iAYdH8VbODInWD
+	 5DsVrNmB9MBoJxdDuGQ8NNHcS46ocBvIkaQEPsFhxX15b4boCOcKN9Lfw32gdiRazM
+	 +9b9fzQAMSghii5FvYvcFY9FjQE9MQLVYkOLg8TVPYNOgkaMEhOFu5jtR1YpsOZZX0
+	 JvOyMAR1UjDMx89mZfD+kdQgxA+tp3uThYx/raVMXmaHwlPRcrhDnj+OGt764BCyrO
+	 vvvknP7zCQrIwO5E9DJ/TSIQ0KKeRC33gk6Cf3L38UrPT7XMG2JmVO2q8AwDumkTIs
+	 Ba5VO8hRcQd2Q==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 04/11] mfd: rz-mtu3: store &pdev->dev in local variable
+Subject: Re: [PATCH 02/11] mfd: rz-mtu3: use device-managed reset deassert
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Cosmin Tanislav" <cosmin-gabriel.tanislav.xa@renesas.com>
-Cc: devicetree@vger.kernel.org, robh@kernel.org, linux-clk@vger.kernel.org, wsa+renesas@sang-engineering.com, conor+dt@kernel.org
-In-Reply-To: <20260327192425.438263-5-cosmin-gabriel.tanislav.xa@renesas.com>
-References: <20260327192425.438263-5-cosmin-gabriel.tanislav.xa@renesas.com>
+Cc: robh@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, wsa+renesas@sang-engineering.com
+In-Reply-To: <20260327192425.438263-3-cosmin-gabriel.tanislav.xa@renesas.com>
+References: <20260327192425.438263-3-cosmin-gabriel.tanislav.xa@renesas.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Thu, 13 Aug 2026 23:00:18 +0000
-Message-Id: <20260813230018.812221F000E9@smtp.kernel.org>
+Date: Thu, 13 Aug 2026 23:03:03 +0000
+Message-Id: <20260813230304.38C321F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 
-Thank you for your contribution! Sashiko AI review found 2 potential issue(=
+Thank you for your contribution! Sashiko AI review found 3 potential issue(=
 s) to consider:
-
-Pre-existing issues:
-- [High] The parent driver exports numerous bespoke accessors (e.g., rz_mtu=
-3_shared_reg_read, rz_mtu3_enable) for child drivers, violating MFD subsyst=
-em guidelines.
-- [High] The driver passes 0 instead of PLATFORM_DEVID_AUTO as the ID in de=
-vm_mfd_add_devices, risking sysfs naming collisions.
+- [Low] The commit message description is not capitalized, violating MFD su=
+bsystem guidelines.
+- [Low] Open-coding of `devm_mfd_add_devices()`.
+- [Low] The newly renamed callback function 'rz_mtu3_mfd_remove' includes t=
+he string 'mfd' and the driver's name.
 --
 
---- Patch [4]: [PATCH 04/11] mfd: rz-mtu3: store &pdev->dev in local variab=
-le ---
-commit 99cfbc12a5f5e788a17b9baa33f5115c64650afc
+--- Patch [2]: [PATCH 02/11] mfd: rz-mtu3: use device-managed reset deasser=
+t ---
+commit f1182ddc967373a6fde2ebff19ae553068ff4988
 Author: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 
-mfd: rz-mtu3: store &pdev->dev in local variable
+mfd: rz-mtu3: use device-managed reset deassert
 
-This commit introduces a local dev variable in rz_mtu3_probe() to store
-&pdev->dev. It replaces multiple occurrences of &pdev->dev with this new
-variable to simplify the code.
+This commit replaces manual reset control handling with
+devm_reset_control_get_exclusive_deasserted(). It also removes the manual
+reset assert in the remove callback and renames it.
+
+> mfd: rz-mtu3: use device-managed reset deassert
+
+[Severity: Low]
+This isn't a bug, but the MFD subsystem guidelines request that the
+description after the subsystem prefix be capitalized. Could this be
+updated to "mfd: rz-mtu3: Use device-managed reset deassert"?
 
 > diff --git a/drivers/mfd/rz-mtu3.c b/drivers/mfd/rz-mtu3.c
-> index 3be6f6c900b82..37d12030e069c 100644
+> index 9cdfef610398f..6b9c6831dffa9 100644
 > --- a/drivers/mfd/rz-mtu3.c
 > +++ b/drivers/mfd/rz-mtu3.c
+
 [ ... ]
-> @@ -347,7 +348,7 @@ static int rz_mtu3_probe(struct platform_device *pdev)
->  		mutex_init(&ddata->channels[i].lock);
->  	}
+
+> @@ -301,13 +300,9 @@ void rz_mtu3_disable(struct rz_mtu3_channel *ch)
+>  }
+>  EXPORT_SYMBOL_GPL(rz_mtu3_disable);
 > =20
-> -	return devm_mfd_add_devices(&pdev->dev, 0, rz_mtu3_devs,
-> +	return devm_mfd_add_devices(dev, 0, rz_mtu3_devs,
->  				    ARRAY_SIZE(rz_mtu3_devs), NULL, 0, NULL);
+> -static void rz_mtu3_reset_assert(void *data)
+> +static void rz_mtu3_mfd_remove(void *data)
+
+[Severity: Low]
+This isn't a bug, but the MFD subsystem guidelines state we should avoid
+including the string "mfd" or the driver's own filename in names. Does it
+make sense to rename this callback to avoid these strings?
+
+>  {
+> -	struct rz_mtu3 *mtu =3D dev_get_drvdata(data);
+> -	struct rz_mtu3_priv *priv =3D mtu->priv_data;
+> -
+>  	mfd_remove_devices(data);
+> -	reset_control_assert(priv->rstc);
 >  }
 
-[Severity: High]
-This isn't a bug introduced by this patch, but is a pre-existing API violat=
-ion.
-Does passing 0 instead of PLATFORM_DEVID_AUTO as the ID in
-devm_mfd_add_devices() risk sysfs naming collisions?
+[ ... ]
 
-According to MFD subsystem guidelines, using hard-coded IDs maps all cell
-IDs to instance numbers, which can lead to device naming collisions in sysfs
-and driver load failures.
+> @@ -361,14 +356,10 @@ static int rz_mtu3_probe(struct platform_device *pd=
+ev)
+>  	ret =3D mfd_add_devices(&pdev->dev, 0, rz_mtu3_devs,
+>  			      ARRAY_SIZE(rz_mtu3_devs), NULL, 0, NULL);
+>  	if (ret < 0)
+> -		goto err_assert;
+> +		return ret;
+> =20
+> -	return devm_add_action_or_reset(&pdev->dev, rz_mtu3_reset_assert,
+> +	return devm_add_action_or_reset(&pdev->dev, rz_mtu3_mfd_remove,
+>  					&pdev->dev);
 
-While reviewing the file, I also noticed another pre-existing issue in the
-parent driver:
+[Severity: Low]
+Since the custom reset assertion has been removed and this callback now only
+calls mfd_remove_devices(), this essentially open-codes devm_mfd_add_device=
+s().
 
-[Severity: High]
-This is a pre-existing issue, but the parent driver exports bespoke accesso=
-rs
-for child drivers. For example:
+Could this code be simplified by calling devm_mfd_add_devices() directly and
+deleting the custom removal callback altogether?
 
-drivers/mfd/rz-mtu3.c:rz_mtu3_shared_reg_read() {
-	struct rz_mtu3 *mtu =3D dev_get_drvdata(ch->dev->parent);
-	struct rz_mtu3_priv *priv =3D mtu->priv_data;
-...
-}
-
-Does exporting custom accessors like rz_mtu3_shared_reg_read() create tight
-coupling between parent and child drivers?
-
-The MFD guidelines indicate that custom parent-child accessors make refacto=
-ring
-fragile and can lead to silent use-after-free bugs if lifetime mismatches
-occur. Child drivers should prefer using standard APIs directly instead.
+> -
+> -err_assert:
+> -	reset_control_assert(priv->rstc);
+> -	return ret;
+>  }
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260327192425.4382=
-63-1-cosmin-gabriel.tanislav.xa@renesas.com?part=3D4
+63-1-cosmin-gabriel.tanislav.xa@renesas.com?part=3D2
