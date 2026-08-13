@@ -1,130 +1,147 @@
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA62D46AF0A;
-	Thu, 13 Aug 2026 12:28:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B0A1477E4D
+	for <linux-clk@vger.kernel.org>; Thu, 13 Aug 2026 12:55:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786624128; cv=none; b=XTiPJIN8tal2OYbo3HGAoqixDi8DJYmkuVpyi/YPCDYMDZhyX11FcCbCma5cOFYSORCLfhqS9+KX6cGJEnkUkuNs9XPEa2eVa97REM/Xz1E3Pu3NDGqO490uVQEGpiEGdooSRGPK4TMNSlp9c2Cd2YrWs+vw2i0/H7uu306nxuA=
+	t=1786625718; cv=none; b=EGCYQyhdu5rYDQARgQmezNAPZTB9oSdDKTjJRig11NA4liXva7AEBKNDR1khiJmiqcyy1ZMx4ou7pWYet/DcJuNp90g+k5n+oVS53CgXKdxPNEfN1hFgBugLvaNWRPD4LgX1Tx8SiwU5rdLji11xa4qW+0mOPUnoPVz6GETeziM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786624128; c=relaxed/simple;
-	bh=7/hIs90LN+YWZ2QTLOrkIPhW7uPAG/CbhH++hkokYbY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ZiybukncnLI/MDd0YbFzcE0CnzCkRz1kCARVkR6NTs5irR6tAdIBkbWe2YO/Sz/MqGl8d1iLmJPwb8IxoAbHFlEG5kNp6anieMXR7Kcnq5Gc2LAnRsfgdlJ9i3ZGXB1NpBpBJEZdEns5I537V6jarNqXySsNAVwBTbVxRTUdFpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=EsUZY+l9; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+	s=arc-20240116; t=1786625718; c=relaxed/simple;
+	bh=HrpuHtXRs3lkzPV2KF4jr4RPVBEPyIUfTr35gw5M1iI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nQklAOVtX6DFjMLaE4yF97Emk4ErRDjPIqUPhDFSYmBCh+gUS7GIx0Sg7nLLWaYXDZKoLURfUZ4Eigja1FrYbnMCVBv6ZCfl/7HVITf58sU25nTBAUgUt7Cc2EfZA6XGzhWzdlG5IPnjYfQK9/xUMh3mLaUhn8ahIaaQQ3Bal0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BOn0wESQ; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="EsUZY+l9"
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 67DCRe0aA324590, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1786624060; bh=7/hIs90LN+YWZ2QTLOrkIPhW7uPAG/CbhH++hkokYbY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=EsUZY+l9fWmfr20KpP8slDU8xItkZMuoTn7c0eSjaSZUqeJ4xeBHHRkm+tZSia56/
-	 u2ewTDRZtCUrLlkX2cXQqgR2TDblh+1Y4lOtLxxV0ls22RCFBYchP74p5+wIGl9pwj
-	 T9WUCSaYhLJIoZR9zeOKwwCgKn0srK5oo3I/pn8eZagQg8bpOC0EL+MSCqXCdjqdD9
-	 KWT+o1KWlGPCQ9n7mcoRlyeq9+4dPX5WNFjD1BXUSNMFXK/zb9+HsuR4j1/AF5VdF3
-	 JrhpuGUfrpPdYyXinT3NiwZDitFGfk/au+s1f7lHDZPmJ1ZObKKXo+NjUEI6EppYY1
-	 9D2ZiKw7kCvnA==
-Received: from mail.realtek.com (rtkexhmbs03.realtek.com.tw[10.21.1.53])
-	by rtits2.realtek.com.tw (8.15.2/3.29/5.94) with ESMTPS id 67DCRe0aA324590
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 13 Aug 2026 20:27:40 +0800
-Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
- RTKEXHMBS03.realtek.com.tw (10.21.1.53) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.43; Thu, 13 Aug 2026 20:27:40 +0800
-Received: from RTKEXHMBS06.realtek.com.tw ([::1]) by
- RTKEXHMBS06.realtek.com.tw ([fe80::126f:59ad:658:674d%10]) with mapi id
- 15.02.2562.043; Thu, 13 Aug 2026 20:27:40 +0800
-From: =?utf-8?B?WXUtQ2h1biBMaW4gW+ael+elkOWQm10=?= <eleanor.lin@realtek.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@kernel.org"
-	<sboyd@kernel.org>, "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
-	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-	=?utf-8?B?RWRnYXIgTGVlIFvmnY7mib/oq61d?= <cylee12@realtek.com>,
-	"afaerber@suse.com" <afaerber@suse.com>,
-	=?utf-8?B?SnlhbiBDaG91IFvlkajoirflrold?= <jyanchou@realtek.com>,
-	"bmasney@redhat.com" <bmasney@redhat.com>
-CC: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	"linux-realtek-soc@lists.infradead.org"
-	<linux-realtek-soc@lists.infradead.org>,
-	=?utf-8?B?SmFtZXMgVGFpIFvmiLTlv5fls7Bd?= <james.tai@realtek.com>,
-	=?utf-8?B?Q1lfSHVhbmdb6buD6Ymm5pmPXQ==?= <cy.huang@realtek.com>,
-	=?utf-8?B?U3RhbmxleSBDaGFuZ1vmmIzogrLlvrdd?= <stanley_chang@realtek.com>
-Subject: RE: [PATCH v13 01/11] dt-bindings: clock: Add Realtek RTD1625 Clock &
- Reset Controller
-Thread-Topic: [PATCH v13 01/11] dt-bindings: clock: Add Realtek RTD1625 Clock
- & Reset Controller
-Thread-Index: AQHdKf6sqK1LXpXPjkadMFMzDtoXkraZlK4AgACT8SD//3zlAIAAjtXw//+jrwCAAhGm4A==
-Date: Thu, 13 Aug 2026 12:27:40 +0000
-Message-ID: <2c6ddfeba0074866b4bd2d4276ec4508@realtek.com>
-References: <20260812020009.3480538-1-eleanor.lin@realtek.com>
- <20260812020009.3480538-2-eleanor.lin@realtek.com>
- <313b74fd-1a5f-4e1b-a4e2-a537f7939fad@oss.qualcomm.com>
- <fd254ec8d59a4ed3b4ea157b866ce798@realtek.com>
- <d55ed65c-b066-47aa-b285-c9582894b84f@oss.qualcomm.com>
- <e2c90bd25e654e0f9ce1aea6e0b4f74d@realtek.com>
- <e5a838f3-609e-48b9-aca6-a25fe5453cd8@oss.qualcomm.com>
-In-Reply-To: <e5a838f3-609e-48b9-aca6-a25fe5453cd8@oss.qualcomm.com>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BOn0wESQ"
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5b0231a3e86so677324e87.0
+        for <linux-clk@vger.kernel.org>; Thu, 13 Aug 2026 05:55:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1786625714; x=1787230514; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=9jhcvNWSwuNAllGIhB4lzw/CqsOc6VTmvp2k274Uc3o=;
+        b=BOn0wESQ+2KXUfLqYEyKA7tfVWjGL0NzreOazkA7IAImC5ucSAw39LOMfRQ3UEcvEv
+         wj3Rna02ifbHSVQffk3mukJmy+YYpoaa1kKKstx2j81X7rSSEANTzC1U7rUJ9qNm3JCN
+         ommatv8rgP5qeRD+TuT52BSwfgkz4UnOZDUQZZHDnlp2gasjvEI9GaikuWeBbHJUdBkg
+         63J+xha/o4O8sN6tQHm/SAMjYzHtNjd1AEVkpWnAEMIxjx6oFhZLntwfUERovklFT7bX
+         SlcSo2AMaJjObiH5DpfPlcGQYwuub9X//jvfJXCsQewrat1qAnynTf9H7PPT++REqjBR
+         x1uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1786625714; x=1787230514;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=9jhcvNWSwuNAllGIhB4lzw/CqsOc6VTmvp2k274Uc3o=;
+        b=oaVZidzagXmpJ/dcOLW/KxTpXCEzGAbxfHhk/5oBHr83ji4pBth7T1Yzbj8L/WkJj4
+         vF+ngZfcCmVG0DZMAasRUbPkehLBxD3IHtVbJJpyr0cPhaJKC8zhA632DBNxTj1hvXwy
+         TTVYs0/+e9gm2Nu7ZPjFqNO/5n3dzn9YXSYgrBtWv+f6de7c9TqLBJjp7Y/4+6uUIFtw
+         8Pop3O0w1HScuYlXMveorKgODo0fybk+ZN9qgjGYptL5PHbvgu644eCf0TfJ1FgGFYyd
+         Kqzjwe0N8L/bu0vcULAtG4QKdtY+QuUPiHOEs3+WAOztbUn6V6zJzspFQf0aOnS/Bbeq
+         8H8g==
+X-Forwarded-Encrypted: i=1; AHgh+RrOoWDPpNKQUBGDWWj3+E+po6MIq1UVqBGVX7x/WHqzl54HsrvDIIS6vw4H7mn8HcLJeWq3qk+sknc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBlh/aDK7W1WidcrvHUkD/o9F1IWx2IEiRheBkyVgxIeP3pnds
+	p4LtUgF/x1Te5jarai+MnuymVR2N89sJMOIphi+7weZ72Yqpm4el8Iqq
+X-Gm-Gg: AR+sD11vMnYGEvuQsKD9OZrdjIBngRpjnT4LwJ7U/GEhrh/RueodGK/zzAgFpNZuorU
+	q/ogQ1io1oUgUpK2mEFAH2yUsH947f2PaD+TIQGLf+irk1o143JnB4D29Hhoefv6c+G3keTKl9d
+	AG1oDaQ3mmDMUexO1X1vKZz0tHzJw0fl5KweqyOVSJzXubdOFKGXvOCyBgX3a49sl4kn85x2Pj/
+	VN2DqjhIOFODME/9yT0Bm3ymFruY03zvujrTOgeK5zzkipP6JvUdRqKWk1IIaiDM+kNrdOcEZvP
+	/PZOcA9ObAOe8fAE6QSmIEOIo5CnbcdvnAYzngf1s5ImoeRulCpbF/rJSogcT4xhvbkl0rWCavf
+	KO+IcQLDfsPuOfU/E/wi3fdEath/hDyDAQNhhglfungxRsGZg9o1YMoH96UqY3MTUPhsm1Oqqko
+	jxi5nEvKxxB6tMoGBTrsSOAvaVJNioWF4b5XTf+nEJOF3eV7W+kdGWaC3bK5Q6UkManzDpl4WPS
+	HYPt9ja1J6hS+hWSxJ3dHikb79XxcdgBqhHy/uZBTdF+MEM5QVxeCQs
+X-Received: by 2002:a05:6512:1284:b0:5ae:b0c0:16bc with SMTP id 2adb3069b0e04-5b453f77a1dmr809693e87.27.1786625714101;
+        Thu, 13 Aug 2026 05:55:14 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5b4539ea237sm456405e87.18.2026.08.13.05.55.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Aug 2026 05:55:13 -0700 (PDT)
+Message-ID: <12f70e0f-5cef-4035-9b44-e2cb252932cf@gmail.com>
+Date: Thu, 13 Aug 2026 15:55:12 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 09/10] gpio: bd73800: Support ROHM BD73800 PMIC GPIOs
+To: Linus Walleij <linusw@kernel.org>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+ Matti Vaittinen <matti.vaittinen@linux.dev>, Lee Jones <lee@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ Brian Masney <bmasney@redhat.com>, Bartosz Golaszewski <brgl@kernel.org>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, mfd@lists.linux.dev,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-rtc@vger.kernel.org
+References: <cover.1785838584.git.mazziesaccount@gmail.com>
+ <9774b8d6663ea55b1682b32f825ec5689be3e1d8.1785838585.git.mazziesaccount@gmail.com>
+ <CAD++jLmatJFfqhNWfgx=qUW2fEwuatxmJR7NyJLAv45LfLHZnw@mail.gmail.com>
+ <f5c241a2-00a8-4a32-bad5-3c89fb204b25@gmail.com>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <f5c241a2-00a8-4a32-bad5-3c89fb204b25@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-PiBPbiAxMi8wOC8yMDI2IDEyOjIyLCBZdS1DaHVuIExpbiBb5p6X56WQ5ZCbXSB3cm90ZToNCj4g
-Pj4gT24gMTIvMDgvMjAyNiAxMTo0MSwgWXUtQ2h1biBMaW4gW+ael+elkOWQm10gd3JvdGU6DQo+
-ID4+PiBIaSBLcnp5c3p0b2YsDQo+ID4+Pg0KPiA+Pj4+IE9uIDEyLzA4LzIwMjYgMDM6NTksIFl1
-LUNodW4gTGluIHdyb3RlOg0KPiA+Pj4+PiBBZGQgRFQgYmluZGluZyBzY2hlbWEgZm9yIFJlYWx0
-ZWsgUlREMTYyNSBjbG9jayBhbmQgcmVzZXQNCj4gPj4+Pj4gY29udHJvbGxlcg0KPiA+Pj4+Pg0K
-PiA+Pj4+PiBSZXZpZXdlZC1ieTogS3J6eXN6dG9mIEtvemxvd3NraQ0KPiA+Pj4+PiA8a3J6eXN6
-dG9mLmtvemxvd3NraUBvc3MucXVhbGNvbW0uY29tPg0KPiA+Pj4+DQo+ID4+Pj4gSG93IG15IHRh
-ZyBjb3VsZCBhcHBlYXIgaGVyZT8NCj4gPj4+Pg0KPiA+Pj4+IExvb2s6DQo+ID4+Pj4gaHR0cHM6
-Ly9sb3JlLmtlcm5lbC5vcmcvbGttbC8yMDI2MDMyNDAyNTMzMi4zNDE2OTc3LTItZWxlYW5vci5s
-aW5Acg0KPiA+Pj4+IGVhDQo+ID4+Pj4gbHRlay5jDQo+ID4+Pj4gb20vDQo+ID4+Pj4NCj4gPj4+
-Pj4gQ28tZGV2ZWxvcGVkLWJ5OiBDaGVuZy1ZdSBMZWUgPGN5bGVlMTJAcmVhbHRlay5jb20+DQo+
-ID4+Pj4+IFNpZ25lZC1vZmYtYnk6IENoZW5nLVl1IExlZSA8Y3lsZWUxMkByZWFsdGVrLmNvbT4N
-Cj4gPj4+Pj4gU2lnbmVkLW9mZi1ieTogWXUtQ2h1biBMaW4gPGVsZWFub3IubGluQHJlYWx0ZWsu
-Y29tPg0KPiA+Pj4+DQo+ID4+Pj4gV2hvIGFkZGVkIG15IHRhZz8gV2hhdCBpcyB0aGUgYWN0dWFs
-IGZsb3cgb2YgdGhpcyBwYXRjaD8NCj4gPj4+Pg0KPiA+Pj4NCj4gPj4+IFlvdSBnYXZlIHlvdXIg
-UmV2aWV3ZWQtYnkgdGFnIGluIHY1LiBIb3dldmVyLCBhZnRlciB0aGF0LCBTdGVwaG9uDQo+ID4+
-PiBwcm92aWRlZCBhZGRpdGlvbmFsIGZlZWRiYWNrLiBJbiB2NiwgSSBtb2RpZmllZCB0aGUgcGF0
-Y2ggYmFzZWQgb24NCj4gPj4+IFN0ZXBob24ncyBjb21tZW50cyBhbmQgbWFkZSBzb21lIG90aGVy
-IGNoYW5nZXMuIEZ1cnRoZXJtb3JlLCBJIGFkZGVkDQo+ID4+PiB0aGUgY2xvY2sgSUQNCj4gPj4+
-IDE0NCBpbiB2MTEuDQo+ID4+DQo+ID4+IFNvIGhvdyBteSB0YWcgY291bGQgYXBwZWFyIGJlZm9y
-ZSBDaGVuZy1ZdSBMZWUgc2lnbmVkIG9mZiB0aGUgcGF0Y2g/DQo+ID4+DQo+ID4NCj4gPiBBaCwg
-SSByZWFkIHRoZSBydWxlcyBzdGF0aW5nIHRoYXQgInRoZSBsYXN0IFNpZ25lZC1vZmYtYnk6IG11
-c3QgYWx3YXlzDQo+ID4gYmUgdGhhdCBvZiB0aGUgZGV2ZWxvcGVyIHN1Ym1pdHRpbmcgdGhlIHBh
-dGNoIi4NCj4gDQo+IFRoaXMgaXMgY29ycmVjdCBpbnRlcnByZXRhdGlvbiAoYWx0aG91Z2ggc29t
-ZSBzdWJzeXN0ZW1zIHdpbGwgaW50ZXJwcmV0IGFib3ZlDQo+IG9ubHkgaW4gcmVzcGVjdCBvZiBv
-dGhlciBTb0JzKS4NCj4gDQo+ID4NCj4gPiBJIG1pc3Rha2VubHkgdGhvdWdodCBteSBTaWduZWQt
-b2ZmLWJ5IGhhZCB0byBiZSB0aGUgYWJzb2x1dGUgbGFzdCBsaW5lDQo+ID4gb2YNCj4gDQo+IFRo
-aXMgaXMgY29ycmVjdC4NCj4gDQo+ID4gdGhlIGVudGlyZSBjb21taXQgbWVzc2FnZS4gVGhlcmVm
-b3JlLCB3aGVuIEkgaW5zZXJ0ZWQgeW91ciB0YWcgYXQgdGhlDQo+ID4gdG9wIG9mIHRoZSB0YWcg
-YmxvY2suDQo+IA0KPiBUaGlzIGlzIG9kZCByZXN1bHQgb2YgZWFybGllciBsb2dpYy4gSWYgeW91
-ciBTb0IgaGFzIHRvIGJlIHRoZSBsYXN0LCB0aGVuIG9idmlvdXMNCj4gY2hvaWNlIGlzIHRvIHB1
-dCB0aGUgUmV2aWV3ZWQtYnkgdGFnIEJFRk9SRSB5b3VyIFNvQi4NCj4gDQo+IEFuZCBpbiBhbnkg
-Y2FzZSB5b3Ugc2hvdWxkIHVzZSBiNCBzaW5jZSBpdCB3b3VsZCBkbyB0aGUgY29ycmVjdCB0aGlu
-Zy4NCj4gQWxsIHBhdGNoIHN1Ym1pc3Npb25zIGFyZSBzdXBwb3NlZCB0byB1c2UgYjQsIHNvIHlv
-dSBkb24ndCBtYWtlIHRyaXZpYWwNCj4gcHJvY2VzcyBtaXN0YWtlcy4NCj4gDQoNClRoYW5rIHlv
-dSBmb3IgdGhlIGV4cGxhbmF0aW9uLiBJJ2xsIGxlYXJuIGhvdyB0byB1c2UgYjQuDQoNCkp1c3Qg
-dG8gYmUgc3VyZSBJIGdldCBpdCByaWdodDogc2hvdWxkIEkga2VlcCB5b3VyIHRhZyBhbmQgbW92
-ZSBpdCBiZXR3ZWVuDQpteSBDby1kZXZlbG9wZWQtYnkgYW5kIFNpZ25lZC1vZmYtYnksIG9yIHNo
-b3VsZCBJIGRyb3AgaXQ/DQoNCkFsc28sIHRvIG1ha2Ugc3VyZSBJIGZvbGxvdyB0aGUgY29ycmVj
-dCBwcm9jZXNzIGFuZCB1bmRlcnN0YW5kIHRoZSBjbG9jaw0KbWFpbnRhaW5lcidzIHByZWZlcmVu
-Y2U6IFNob3VsZCBJIHNlbmQgYSB2MTQgdG8gZml4IHRoZSB0YWcsIG9yIGlzIGl0DQpwb3NzaWJs
-ZSBmb3IgdGhlIGNsb2NrIG1haW50YWluZXIgdG8gaGVscCBhbWVuZCB0aGlzIGlmIHRoZXJlIGFy
-ZSBubyBvdGhlcg0KY2hhbmdlcz8NCg0KQmVzdCByZWdhcmRzLA0KWXUtQ2h1bg0KDQo+IA0KPiBC
-ZXN0IHJlZ2FyZHMsDQo+IEtyenlzenRvZg0K
+On 13/08/2026 11:34, Matti Vaittinen wrote:
+> On 07/08/2026 23:29, Linus Walleij wrote:
+
+...
+
+>>   * @fixed_direction_output:
+>>   *                      (Optional) Bitmap representing the fixed 
+>> direction of
+>>   *                      the GPIO lines. Useful when there are GPIO 
+>> lines with a
+>>   *                      fixed direction mixed together in the same 
+>> register.
+>>
+>> It seems you can set up the fixed_direction_output mask from OTP
+>> and just use the library, right?
+> 
+> The BD73800 uses different registers for 'out' and 'in'. So there aren't 
+> really "GPIO lines with a fixed direction mixed together in the same 
+> register".
+
+...
+
+> I think the BD73800 can indeed use the gpio-regmap, by keeping the pin 
+> direction information in private data and adding a custom xlate, which 
+> errors out if get is requested for output pin, or set is requested for 
+> input. I am not sure how much of an improvement it is compared to the 
+> patch v2, but I'll give it a shot :) I believe the new -rc1 isn't that 
+> far away, and hopefully the gpio-regmap -stuff from the next will be in 
+> it together with the regulator stuff bindings depended.
+
+Gah. Please, ignore the erroring-out part. I don't know where I picked 
+the idea that the hardware would always return '0' when reading the 
+GPO_OUT register. I think this might have been something I have 
+experienced on a setup where the pin was _not_ set to GPO by OTP. 
+Furthermore, the xlate will never get called if user tries to set value 
+for a GPI pin.
+
+Anyways, implementing xlate with op-check allows me to support this 
+PMIC, even though the register to read for pin status depends on OTP.
+
+So yes, v3 should be able to use gpio-regmap. I will probably delay 
+sending it until v7.3-rc1 is out so I get (all?) dependencies in.
+
+Yours,
+	-- Matti
+
+-- 
+Matti Vaittinen
+Linux kernel developer at ROHM Semiconductors
+Oulu Finland
+
+~~ When things go utterly wrong vim users can always type :help! ~~
