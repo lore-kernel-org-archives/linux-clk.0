@@ -1,431 +1,116 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 215B5421A15
-	for <linux-clk@vger.kernel.org>; Thu, 13 Aug 2026 19:09:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786648199; cv=pass; b=MZepl5vm6YXkjQ8PjKwKiy5ctXFC3rE/0AJmhcLs1W87uihPQK/qtX/McwqlGNvF+Y/Y/0rRSwwp7yuWB+oNSiJ/i+a/FZBcy8j1pHbeQoxkhnjGJSyC5TRyA7FlcjsucE69U2dvYBZH4tcIR5XqdXPrlX7+mwbRywFpt04FT+E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786648199; c=relaxed/simple;
-	bh=8gQdgSVDySn8ktm44gKnq8LHf9gNvcBUvegVvF9Z4eM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RiT+Fgusu3P0OgapiEg3DjTiZcWD83ku80+NtIR4A3J4BKRotn/On6p66byYJ08MrVO5dkjduYQDSn81bAWgO9PH7NfAl5Gt6eZhA8aA12oT5uUvqAjzBlKZBGRJsdFZ4kaGU9fZJzVyFaWh5wZQvZJ5RjGi/qLWT+o9Z+PAJKM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M9ySuWDK; arc=pass smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D70F3C063A;
+	Thu, 13 Aug 2026 23:00:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1786662020; cv=none; b=S4B8i6c4Xfsu6UuWwTukQg7xZVcDDbe/S6hSxnOKy+3/JoJRkuH/ggnB85mbRfnYCrJEiLUO7bvLJ2YUO0tbQXvD8PbBM2UibMfSqrK4GCVCYAWiiubHmmYEnwQ9YyjT2DkHHbdwskg8cMAncmjFIWORw7aFLjL9mVojLSB4MAM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1786662020; c=relaxed/simple;
+	bh=vCuD0gJk7BDs51E86E4whfyqMe5g5+C/jpXmmwuitjw=;
+	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=NVJQjdEDARRpZ432e/jR2baa0lL2zkqqmZRETHYovUXWVfTIKfcLeo9t5od3REEkGnD5nTOQzQppCL/G39swbDJ/hndUcZwkUwQG9MDe31NbqyumK/pYDKICXM3icZiAUdhG1s99d9v1B7cFpuzUH5pvaJXfg4JvCypUwcE0UZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iSWTc14I; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M9ySuWDK"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4954a9e8490so8232985e9.1
-        for <linux-clk@vger.kernel.org>; Thu, 13 Aug 2026 12:09:56 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1786648195; cv=none;
-        d=google.com; s=arc-20260327;
-        b=i2j0JHiqZoWpOK0foVn13kLaHBH0RmcbcBIopqXk18757e964AOQU8YainmXGqnwi6
-         6FATRF3WeRFpfYZzT8AVBiItytTxrDafFpr7nZKgbKGdT+LY82E95cyg9IZYC6ZGhbJJ
-         R/vxp0jq5vL7DK+9D7iaZECH3MKxt2JVSv6tFp+54scspDz0WNfT5ZevPrykWLROF08h
-         zAuBE9oYBJ7Hxk3bj1wRWfS8hEJueyBRJKTeoSlvhZLhtD7zuyb3sgw10xtnnLbGWI9/
-         qdHtNZEUje7tcxUBOOP4PiI1g2xudu1znpr+eAh+RAddKP2dnj1IuwLtdQQdn2bluXOr
-         U/0g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=Rfq/RQGjXbZCotkkVhsJ/QhgbVblNS0MEiBSiyOaSpE=;
-        fh=eFZdSd2FgXL8D4jB1q83J/N8srQshZoLb2c3r4YI/64=;
-        b=dBfwVfWibXgER/Fsy+YF7mvN4cg5QQO5uO0M61JRoOT6YeIUp1mLXwBY4qkIoQOih5
-         9ZCZODtDxNxZhG1A3UFG/9J2cG93IXpbxn+ZfKm9ReVZQeYg2EPa7oGjVo1TJKW71srE
-         jpnyQ1a6l1Eel0e9614FYjPgO82fXkHy6kkcrJyQHYGWON+ZDDwbzi3qeDRiLlbIpa1S
-         d7OqqxfPTfv0Wgp6UtOtj4/LM46qTedrjxsmX06zHgAxWGAIf2R1SeFdMh1d0uzIp8cB
-         Cgtxx2fJO2KSF89GGYf2qMV2Kv2bR6hxA9mvyxj2wstTJhQdw+pP3XJCPYyJaym8/GN/
-         dklg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1786648195; x=1787252995; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=Rfq/RQGjXbZCotkkVhsJ/QhgbVblNS0MEiBSiyOaSpE=;
-        b=M9ySuWDK2V7Pk/Gwe5If9shrFSv8R80xMLskcq53ssJPCCz7DOz7eIMb2wxhsJvebA
-         wT/WXdxzaqE8MVZ2HNIohrimO/aBsEHM2Dnrf1k66LFSkejkf4Zz5WorPQ5kT1qRUDZo
-         owP+yqvWyetWTfmrSdfA7m0ga0hu20arsgXLEozFSyTvdkP6PYUQUa68y/OrqhoWJdQc
-         ReRtEFfzWbN+g/7vR9l/ZBD+d1Vd3LRPTumGqx4qBfEcGNZxVsKBmjxia0etvNMnha+B
-         ZTpBS9BaE3YI+iMSoj3mtyuS+dwwR4YbkmswytJElnetBOqFGL/N0POc3Azu+8EPIzg1
-         pqAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786648195; x=1787252995;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=Rfq/RQGjXbZCotkkVhsJ/QhgbVblNS0MEiBSiyOaSpE=;
-        b=agvXVhnBB+ZhXRmyLh2FfaccMyyfmEZ35t915IaRvoVA0IcUGgS98xlb1WxwLcXYXw
-         l1Z8pFQTyG7V51B0TxuhFu3Qm1EBbXe4gYiTBg40sO0r6loIMfstPaWNuxs2e1z6oK6O
-         YeG3eFqbQ9TZ27GPwearVmQDgenOl9ydvXaIknNwAkZz9zRlr5ovpNHdsBJrVVTAH30J
-         xMlROY5O7d1y0hZ2UXn7Pwa2iHwonvQ7T/+1eGoBchJSc1miHU/FDOKQSKFAkW5lKJJx
-         VoCn4+YFFJwJ/G0iTaDhRlAucxYQvH5fceDISBBZ3n87eOsATISyLgP1Scv4Ep9SsOgI
-         fStg==
-X-Forwarded-Encrypted: i=1; AHgh+RqC1WdqdhHKUYfXHTvrbPma2SvOEmRP8E7fzs5hKavYMSxY9Myu2rkr/h4SGtyye/khu/rajEz3Kkw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0JSBP7lFYLoKsvayNXDn3rV9KscMf8yu95LgstvnSASGNj9my
-	9dTafibANwyT+TVj8jCcoLN9e4elSin0lCa+02aVWMAXKLYU7xdnNOhsHhFNLc92ZumY4FAXdVj
-	vqW7VuCg8n8ikre++DhFZ8704nlZekh4=
-X-Gm-Gg: AR+sD10hhxJLPAW0MSJlf/+rtdjmsi9MVZN40QzLKI2LLOg5q/bVwEbQAUHq2AYozO1
-	6RWlumLbIZlq6vx2lTVZNwMJB5YAVTBdIMn9ASu2D/vgYdl0BNlwzVW0VBLLBdgL0A8MaI7Kf+k
-	+ysJG+EdYItLGMVO9UNXv6MLq8YYNoDkT2qDUpPsJu2dzv+EogemSvtkdnc2tjeM1/xtR5i3o4e
-	bmVvUqLks8hfDlSWHtH4wpoMyHxnX1Qirhc+z4hPurS43Rqs7oHtPU/FP1IQS+xsnXKKJ7BnJjN
-	FyzX7AHN22OmIOqFZ/cmaqarZDxmnVofaAxFt5gi8gHduK8T3ULjLSsbAgkaqy3MTRu5aDtcWri
-	CpFvKzui6L4gos+7Of/ElWt5SXqWNsk0robHiOwaBlrrwzFrheSzdPFrW8fsO9V92
-X-Received: by 2002:a05:600c:8b84:b0:495:5d6d:9cc1 with SMTP id
- 5b1f17b1804b1-499879f5a03mr6178665e9.0.1786648195165; Thu, 13 Aug 2026
- 12:09:55 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iSWTc14I"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 812221F000E9;
+	Thu, 13 Aug 2026 23:00:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1786662018;
+	bh=YYEru6m3IQxsef7wGemhNlaqmEokgUl3rXTpfs3WNbQ=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=iSWTc14II88fMEa1WD4trLC5M+4v+da1vzh8MEAnwIFqiCuUZl/BtvQuS+QC8tDC8
+	 zXfaCsyAPM8gaKi29Mh5gDrh2I2xyGj4tXjtsoPlCR8uQcE6WSkZXxabRDRQ29XYom
+	 EFTOkTfssTDRWLgTGuRo8DRy7w9wqjLmTwNoNKZ2upvNEU0FmpEuT6YBkW7VV19Dr1
+	 /DMU4XqvoZGNTzCL44NzsMoge42I09h0nVZZhDYVllVcNMiWf6ysr9vl8yhu4gjDbG
+	 RUGJaL9w98lrEThFqfz6WLiV6ImQZml2PF46DVisTPT3Kgd2Umn2Yp+JDGEafKNEKp
+	 InHYu2vrEf7Zg==
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH 04/11] mfd: rz-mtu3: store &pdev->dev in local variable
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Cosmin Tanislav" <cosmin-gabriel.tanislav.xa@renesas.com>
+Cc: devicetree@vger.kernel.org, robh@kernel.org, linux-clk@vger.kernel.org, wsa+renesas@sang-engineering.com, conor+dt@kernel.org
+In-Reply-To: <20260327192425.438263-5-cosmin-gabriel.tanislav.xa@renesas.com>
+References: <20260327192425.438263-5-cosmin-gabriel.tanislav.xa@renesas.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 13 Aug 2026 23:00:18 +0000
+Message-Id: <20260813230018.812221F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20260716123434.2576253-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20260716123434.2576253-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdWEm4yjOH0ziVR3CVDsDJDyJWE7K3GNQpCEiWW5bxaJNw@mail.gmail.com>
-In-Reply-To: <CAMuHMdWEm4yjOH0ziVR3CVDsDJDyJWE7K3GNQpCEiWW5bxaJNw@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Thu, 13 Aug 2026 20:09:28 +0100
-X-Gm-Features: AUfX_mxeU8Ha00rHzs8n1E-TWnr4oVrOzuAz2EGUlHCSm1LQSPamqHGEKbKcUlo
-Message-ID: <CA+V-a8sbvrbVM+TDbhz=h8gAUkX8n7swARStZzZ3QbqpRLLxew@mail.gmail.com>
-Subject: Re: [PATCH v3 2/8] clk: renesas: r9a09g077: Register SYSC regmap
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org, 
-	Prabhakar <prabhakar.csengg+renesas@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Geert,
+Thank you for your contribution! Sashiko AI review found 2 potential issue(=
+s) to consider:
 
-Thank you for the review.
+Pre-existing issues:
+- [High] The parent driver exports numerous bespoke accessors (e.g., rz_mtu=
+3_shared_reg_read, rz_mtu3_enable) for child drivers, violating MFD subsyst=
+em guidelines.
+- [High] The driver passes 0 instead of PLATFORM_DEVID_AUTO as the ID in de=
+vm_mfd_add_devices, risking sysfs naming collisions.
+--
 
-On Mon, Aug 10, 2026 at 5:00=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
->
-> Hi Prabhakar,
->
-> On Thu, 16 Jul 2026 at 14:34, Prabhakar <prabhakar.csengg@gmail.com> wrot=
-e:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Register a syscon regmap for the System Controller (SYSC) integrated in=
-to
-> > the RZ/T2H and RZ/N2H CPG block.
-> >
-> > Unlike traditional Renesas CPG/MSSR implementations, the RZ/T2H and RZ/=
-N2H
-> > CPG block also integrates the SYSC, which provides low-power management=
-,
-> > clock monitoring, write protection and peripheral configuration registe=
+--- Patch [4]: [PATCH 04/11] mfd: rz-mtu3: store &pdev->dev in local variab=
+le ---
+commit 99cfbc12a5f5e788a17b9baa33f5115c64650afc
+Author: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+
+mfd: rz-mtu3: store &pdev->dev in local variable
+
+This commit introduces a local dev variable in rz_mtu3_probe() to store
+&pdev->dev. It replaces multiple occurrences of &pdev->dev with this new
+variable to simplify the code.
+
+> diff --git a/drivers/mfd/rz-mtu3.c b/drivers/mfd/rz-mtu3.c
+> index 3be6f6c900b82..37d12030e069c 100644
+> --- a/drivers/mfd/rz-mtu3.c
+> +++ b/drivers/mfd/rz-mtu3.c
+[ ... ]
+> @@ -347,7 +348,7 @@ static int rz_mtu3_probe(struct platform_device *pdev)
+>  		mutex_init(&ddata->channels[i].lock);
+>  	}
+> =20
+> -	return devm_mfd_add_devices(&pdev->dev, 0, rz_mtu3_devs,
+> +	return devm_mfd_add_devices(dev, 0, rz_mtu3_devs,
+>  				    ARRAY_SIZE(rz_mtu3_devs), NULL, 0, NULL);
+>  }
+
+[Severity: High]
+This isn't a bug introduced by this patch, but is a pre-existing API violat=
+ion.
+Does passing 0 instead of PLATFORM_DEVID_AUTO as the ID in
+devm_mfd_add_devices() risk sysfs naming collisions?
+
+According to MFD subsystem guidelines, using hard-coded IDs maps all cell
+IDs to instance numbers, which can lead to device naming collisions in sysfs
+and driver load failures.
+
+While reviewing the file, I also noticed another pre-existing issue in the
+parent driver:
+
+[Severity: High]
+This is a pre-existing issue, but the parent driver exports bespoke accesso=
 rs
-> > shared by multiple drivers.
-> >
-> > Implement the RZ/T2H-specific .post_init() callback to create and regis=
-ter
-> > a syscon regmap covering the SYSC register space using the CPG device n=
-ode.
-> > For backward compatibility, return without registering the regmap when =
-the
-> > mapped resources correspond to older Device Trees that expose only the
-> > legacy 64 KiB CPG register window.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > ---
-> > v2->v3:
-> > - Dropped dangerous registers from writeable_readable list.
-> > - Renamed sysc_init to post_init and updated signature to take
-> >   cpg_mssr_pub struct.
-> > - Created a single regmap covering both SYSC register regions
-> >   instead of two separate regmaps.
-> > - Updated commit message
->
-> Thanks for the update!
->
-> > --- a/drivers/clk/renesas/r9a09g077-cpg.c
-> > +++ b/drivers/clk/renesas/r9a09g077-cpg.c
->
-> > @@ -87,6 +90,19 @@ MODULE_IMPORT_NS("RZV2H_CPG");
-> >  #define CPG_PLL_MON(x)         ((x) - 0x10)
-> >  #define CPG_PLL_MON_LOCK       BIT(0)
-> >
-> > +#define RZT2H_SYSC_SIZE                        0x20000
->
-> This is the size of the two SYSC regions combined (more below).
->
-> > +#define RZT2H_SYSC_OFFSET              0x10000
-> > +#define RZT2H_SYSC_BLOCK_MASK          BIT(16)
-> > +#define RZT2H_SYSC_OFFSET_MASK         GENMASK(15, 0)
-> > +#define RZT2H_SYSC_BLOCK(x)            FIELD_GET(RZT2H_SYSC_BLOCK_MASK=
-, x)
-> > +#define RZT2H_SYSC_REG_OFFSET(x)       FIELD_GET(RZT2H_SYSC_OFFSET_MAS=
-K, x)
-> > +#define RZT2H_SYSC_BASE(b0, b1, x)     (RZT2H_SYSC_BLOCK(x) ? (b1) : (=
-b0))
->
-> Passing the two bases looks a bit ugly to me...
->
-> > +
-> > +struct r9a09g077_sysc_reg {
-> > +       void __iomem *base0;
-> > +       void __iomem *base1;
->
-> What about combining them into an array?
->
->     void __iomem base[2];
->
-> The you can do
->
->     void __iomem *base =3D sysc->base[RZT2H_SYSC_BLOCK(reg)];
->
-> below?
->
-That would be elegant, thanks.
+for child drivers. For example:
 
-> > +};
-> > +
-> >  enum rzt2h_clk_types {
-> >         CLK_TYPE_RZT2H_DIV =3D CLK_TYPE_CUSTOM,   /* Clock with divider=
- */
-> >         CLK_TYPE_RZT2H_MUX,                     /* Clock with clock sou=
-rce selector */
-> > @@ -875,6 +891,118 @@ r9a09g077_cpg_clk_register(struct device *dev, co=
-nst struct cpg_core_clk *core,
-> >         }
-> >  }
-> >
-> > +static int r9a09g077_regmap_read(void *context, unsigned int reg, unsi=
-gned int *val)
-> > +{
-> > +       struct r9a09g077_sysc_reg *sysc =3D context;
-> > +       void __iomem *base =3D RZT2H_SYSC_BASE(sysc->base0, sysc->base1=
-, reg);
-> > +
-> > +       *val =3D readl(base + RZT2H_SYSC_REG_OFFSET(reg));
-> > +
-> > +       return 0;
-> > +}
->
-> > +static bool r9a09g077_writeable_readable_sysc0(struct device *dev, uns=
-igned int reg)
-> > +{
-> > +       switch (reg) {
-> > +       /* ELOPA/B and GTIOCSEL */
-> > +       case 0x0000 ... 0x0008:
-> > +       /* Encoder config */
-> > +       case 0x1000 ... 0x1164:
-> > +       /* PCIe config */
-> > +       case 0x2000 ... 0x2024:
-> > +       case 0x2030 ... 0x2054:
-> > +       case 0x2060:
-> > +       /* xSPI config */
-> > +       case 0x3000 ... 0x300C:
-> > +       case 0x3100 ... 0x310C:
-> > +       /* MD_MON */
-> > +       case 0x4100:
-> > +       /* PRCRN */
-> > +       case 0x4200:
-> > +               return true;
-> > +
-> > +       default:
-> > +               return false;
-> > +       }
-> > +}
-> > +
-> > +static bool r9a09g077_writeable_readable_sysc1(struct device *dev, uns=
-igned int reg)
-> > +{
-> > +       switch (reg) {
-> > +       /* WDTDCRm */
-> > +       case 0x5100 ... 0x5114:
-> > +       /* PRCRS */
-> > +       case 0x6000:
-> > +               return true;
-> > +
-> > +       default:
-> > +               return false;
-> > +       }
-> > +}
-> > +
-> > +static bool r9a09g077_writeable_readable_sysc(struct device *dev, unsi=
-gned int reg)
-> > +{
-> > +       if (RZT2H_SYSC_BLOCK(reg))
-> > +               return r9a09g077_writeable_readable_sysc1(dev, RZT2H_SY=
-SC_REG_OFFSET(reg));
-> > +
-> > +       return r9a09g077_writeable_readable_sysc0(dev, RZT2H_SYSC_REG_O=
-FFSET(reg));
->
-> I like symmetry, though ;-)
->
-> IMO the separate sysc0 and sysc1 functions don't add much value.
-> What about:
->
->     offset =3D RZT2H_SYSC_REG_OFFSET(reg);
->     switch (RZT2H_SYSC_BLOCK(reg)) {
->     case 0:
->             switch (offset) {
->                     ...
->             }
->
->     case 1:
->             switch (offset) {
->                     ...
->             }
->     }
->
->     return false;
->
-Ok, I will move it in a single function.
+drivers/mfd/rz-mtu3.c:rz_mtu3_shared_reg_read() {
+	struct rz_mtu3 *mtu =3D dev_get_drvdata(ch->dev->parent);
+	struct rz_mtu3_priv *priv =3D mtu->priv_data;
+...
+}
 
-> > +}
-> > +
-> > +static int r9a09g077_post_init(struct device *dev, struct cpg_mssr_pub=
- *pub)
-> > +{
-> > +       struct regmap_config *regmap_cfg __free(kfree) =3D kzalloc_obj(=
-*regmap_cfg);
-> > +       struct r9a09g077_sysc_reg *sysc_reg;
-> > +       struct regmap *regmap;
-> > +
-> > +       /*
-> > +        * Return early if the SYSC sizes are not as expected for backw=
-ards
-> > +        * compatibility with older device trees.
-> > +        */
-> > +       if (pub->size0 !=3D RZT2H_SYSC_SIZE || pub->size1 !=3D RZT2H_SY=
-SC_SIZE)
->
-> While RZT2H_SYSC_SIZE is the correct value to use here, it is not
-> correct from a semantic point of view.
->
-Agreed, I will introduce a new macro for it.
+Does exporting custom accessors like rz_mtu3_shared_reg_read() create tight
+coupling between parent and child drivers?
 
-/* Size of each mapped CPG/MSSR register region (base0, base1) */
-#define RZT2H_CPG_REG_SIZE 0x20000
+The MFD guidelines indicate that custom parent-child accessors make refacto=
+ring
+fragile and can lead to silent use-after-free bugs if lifetime mismatches
+occur. Child drivers should prefer using standard APIs directly instead.
 
-
-> > +               return 0;
-> > +
-> > +       if (!regmap_cfg)
-> > +               return -ENOMEM;
-> > +
-> > +       sysc_reg =3D devm_kzalloc(dev, sizeof(*sysc_reg), GFP_KERNEL);
-> > +       if (!sysc_reg)
-> > +               return -ENOMEM;
-> > +
-> > +       /* Only allow access in the SYSC regions */
-> > +       sysc_reg->base0 =3D pub->base0 + RZT2H_SYSC_OFFSET;
-> > +       sysc_reg->base1 =3D pub->base1 + RZT2H_SYSC_OFFSET;
-> > +
-> > +       regmap_cfg->name =3D "rzt2h_sysc";
-> > +       regmap_cfg->reg_bits =3D 32;
-> > +       regmap_cfg->reg_stride =3D 4;
-> > +       regmap_cfg->val_bits =3D 32;
-> > +       regmap_cfg->fast_io =3D true;
-> > +       regmap_cfg->max_register =3D RZT2H_SYSC_SIZE - 1;
->
-> This is the size of the two blocks combined.
->
-I will add this comment for the macro,
-
-/* This is the size of two SYSC regions combined */
-#define RZT2H_SYSC_SIZE 0x20000
-
-> > +       regmap_cfg->readable_reg =3D r9a09g077_writeable_readable_sysc;
-> > +       regmap_cfg->writeable_reg =3D r9a09g077_writeable_readable_sysc=
-;
-> > +
-> > +       regmap =3D devm_regmap_init(dev, &r9a09g077_sys_regmap_bus, sys=
-c_reg, regmap_cfg);
-> > +       if (IS_ERR(regmap))
-> > +               return PTR_ERR(regmap);
-> > +
-> > +       return of_syscon_register_regmap(dev->of_node, regmap);
-> > +}
-> > +
-> >  const struct cpg_mssr_info r9a09g077_cpg_mssr_info =3D {
-> >         /* Core Clocks */
-> >         .core_clks =3D r9a09g077_core_clks,
-> > @@ -889,4 +1017,6 @@ const struct cpg_mssr_info r9a09g077_cpg_mssr_info=
- =3D {
-> >
-> >         .reg_layout =3D CLK_REG_LAYOUT_RZ_T2H,
-> >         .cpg_clk_register =3D r9a09g077_cpg_clk_register,
-> > +
-> > +       .post_init =3D r9a09g077_post_init,
-> >  };
-> > diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renes=
-as/renesas-cpg-mssr.c
-> > index 80f4403ea2ba..2987c34f2ba2 100644
-> > --- a/drivers/clk/renesas/renesas-cpg-mssr.c
-> > +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-> > @@ -1267,6 +1267,7 @@ static int __init cpg_mssr_common_init(struct dev=
-ice *dev,
-> >  {
-> >         struct cpg_mssr_priv *priv;
-> >         unsigned int nclks, i;
-> > +       struct resource res;
-> >         int error;
-> >
-> >         if (info->init) {
-> > @@ -1285,13 +1286,23 @@ static int __init cpg_mssr_common_init(struct d=
-evice *dev,
-> >         priv->dev =3D dev;
-> >         spin_lock_init(&priv->pub.rmw_lock);
-> >
-> > -       priv->pub.base0 =3D of_iomap(np, 0);
-> > +       error =3D of_address_to_resource(np, 0, &res);
-> > +       if (error)
-> > +               return error;
-> > +
-> > +       priv->pub.size0 =3D resource_size(&res);
-> > +       priv->pub.base0 =3D ioremap(res.start, priv->pub.size0);
-> >         if (!priv->pub.base0) {
-> >                 error =3D -ENOMEM;
-> >                 goto out_err;
-> >         }
-> >         if (info->reg_layout =3D=3D CLK_REG_LAYOUT_RZ_T2H) {
-> > -               priv->pub.base1 =3D of_iomap(np, 1);
-> > +               error =3D of_address_to_resource(np, 1, &res);
-> > +               if (error)
-> > +                       goto out_err;
-> > +
-> > +               priv->pub.size1 =3D resource_size(&res);
-> > +               priv->pub.base1 =3D ioremap(res.start, priv->pub.size1)=
-;
->
-> Instead of complicating the code here, r9a09g077_post_init() might as
-> well call of_address_to_resource(dev->of_node) itself.
->
-Ok, I will move this to post_init.
-
-> >                 if (!priv->pub.base1) {
-> >                         error =3D -ENOMEM;
-> >                         goto out_err;
-> > @@ -1414,6 +1425,9 @@ static int __init cpg_mssr_probe(struct platform_=
-device *pdev)
-> >
-> >         error =3D cpg_mssr_reset_controller_register(priv);
-> >
-> > +       if (!error && info->post_init)
-> > +               error =3D info->post_init(priv->dev, &priv->pub);
->
-> No cleanup in case of error, so the regmap is considered optional, right?
->
-regmap is registered with devm_regmap_init() which on failure will
-call regmap_exit. For of_syscon_register_regmap() there is no cleanup
-code and if cpg_mssr_probe() fails the system wouldnt boot.
-
-Cheers,
-Prabhakar
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260327192425.4382=
+63-1-cosmin-gabriel.tanislav.xa@renesas.com?part=3D4
