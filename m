@@ -1,44 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E084446C0C;
-	Thu, 13 Aug 2026 10:03:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C71124477E8;
+	Thu, 13 Aug 2026 10:07:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786615407; cv=none; b=h600s2A/jXn5gaN2rjyCGgMlRyvq7bEOuj2+lm06ftltL2RCIuWdy4WDOIeIEV2uOf1GZn51HkDkqMyoC7a0+f4A/Nf3CkHj2+1tA3gCGrR8TaBCUK5TBSkApS6313zp4DdHtdVhdMS8cc6kmSkA8Npdd9W+14Y8tKZs0v2HD8o=
+	t=1786615676; cv=none; b=qfSlOyCyTMeIRA1Jsd0gW9kXdGx3we08m7AAKK82bznAF/srfeTLHjB6iCsv1zhqDodFTC26pA4BnAX9LlDEENQK2jb0pCoUyPMxNVFA6wuFDJvPP4zjAS3Qk1OLFPRcKE4fT/x+ov+o/BmG4NyHF2ln7/2Ng4IHpmLjbdWNHJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786615407; c=relaxed/simple;
-	bh=VOaUJbgZQU+pfw9W12tfoglM3U8ttSUAirKPWGKXiW0=;
+	s=arc-20240116; t=1786615676; c=relaxed/simple;
+	bh=zdwvl04VMvjigzmMvNZcs0DSpMGDUK+4G/xN5AifIDI=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=m9l5DmwH62HGPZFntjRA+Vo9gQCAXpYXHWHb1vyFOjL28/XJdkNrXoA3wJ5ENfueelMdCX8+jFgPfZo5yONTZYzsH0aEg8rbNXn/sLrxtXnPECqbcodNApjtzmTEB469M+pKh1/LreA+Fl82D55ioK1/VZWvOdaQV0QCYR4POyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kNeA7iqP; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=asLK/as0P+APmrrCMKFHFCHnUirQo5XLg1rzEs+r6105LJcgFW4j8iXlx/iZtTbsFQC92dFGTbCahzsYxNFEb6gJXVo5ns8N/XUXY+OZDvcz+bZCzo9m70MvinDT2+B8g1kY6TtSwRyIM1XOJxjiiJdmewEjh41W4pM3cc6G+5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HnJ9dOas; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kNeA7iqP"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3B3C1F00A3D;
-	Thu, 13 Aug 2026 10:03:25 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HnJ9dOas"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAFE51F000E9;
+	Thu, 13 Aug 2026 10:07:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786615406;
-	bh=OWvlJs9FRzUUCi+Kufsya56PwLrKBDMPWP5pJQAeebE=;
+	s=k20260515; t=1786615670;
+	bh=TSkgADSrazBb3o6mhO9EJ7pdpDO7nRNmTYhku+6twQw=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=kNeA7iqPoN0+nrw6FPL27juAaY8KO1PIiVJ8/sYJJNl5Asmr7mlMlmDQT88Vd2tmT
-	 B/rM6+eDyF1qCK8Yizpcl4Iq95tKCvITXK8QEn6nxObWsomFUlkzV8zxQwugdxxksB
-	 pIP/wOlKrAwnhrgjYGNTU//XGxc3jRzbuRI8BdvhC5tOQnWKsKdxuYHjL9WoaRGhey
-	 ARxyqzjpG+jUL7GuOuxkmGWV6fKZYsTCX+Leg2hGa1vhNUGvKRUMpWLRlgWPNy7qzU
-	 fQbGg+xPf7S5HYIDfmX/Vl0is5a4sLf8qdfHr7yG2ZH91RC8tRs9IAe0N3sNX89OlY
-	 Y0wOF84io324Q==
+	b=HnJ9dOasRPqnO5vQoPirjmmGwGR2LSSBsYdNt+QWUw+q1S/j84aV5IdnymxNvK3PF
+	 MXdJFsYPdLAJgF36k01w7VJLgh4ENbAUBAnSGSfarSSI0q877klf2HLFwUjXm+MPx4
+	 ZCT4IRzXS1NtDp1rR0BZgn0qiCot5kgUe1m+E3OW6Cah9kPLXtwdUTjKH/LeCLzMLW
+	 dp7sBzaYXNexAuNUPhQpjMiHpanZei83wf6Si7BIiFnrG70vrFjVeuwjaAxPh0qm9b
+	 IKsstTfm1UATUjIJgyaJrvreJTZ+Orh/3BMW+z2Q0otjOS2S62l8JU6IvpATP8jWWU
+	 NInlB1RbRjb5Q==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v3 2/6] dt-bindings: mfd: syscon: add Ambarella CV75
- secure scratchpad
+Subject: Re: [PATCH v3 5/6] arm64: ambarella: add ARCH_AMBARELLA and CV75
+ EVK DT
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Long Zhao" <longzhao@ambarella.com>
-Cc: robh@kernel.org, linux-clk@vger.kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org
-In-Reply-To: <20260813-cv75-v3-a-v3-2-cfdd20b1b4dd@ambarella.com>
+Cc: robh@kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, conor+dt@kernel.org
+In-Reply-To: <20260813-cv75-v3-a-v3-5-cfdd20b1b4dd@ambarella.com>
 References: <20260813-cv75-v3-a-v3-0-cfdd20b1b4dd@ambarella.com>
- <20260813-cv75-v3-a-v3-2-cfdd20b1b4dd@ambarella.com>
+ <20260813-cv75-v3-a-v3-5-cfdd20b1b4dd@ambarella.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Thu, 13 Aug 2026 10:03:25 +0000
-Message-Id: <20260813100325.C3B3C1F00A3D@smtp.kernel.org>
+Date: Thu, 13 Aug 2026 10:07:49 +0000
+Message-Id: <20260813100749.EAFE51F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -47,60 +47,88 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 
 Thank you for your contribution! Sashiko AI review found 2 potential issue(=
 s) to consider:
-- [Medium] The compatible string 'ambarella,cv75-sec-scratchpad' was omitte=
-d from the 'select' block in syscon.yaml.
-- [Low] The commit message subject for the MFD subsystem change does not ca=
-pitalize the description.
+- [High] ARCH_AMBARELLA selects non-existent and architecture-mismatched Kc=
+onfig symbols, violating Kconfig dependency rules.
+- [Low] The GIC interrupt controller node specifies `#size-cells =3D <1>` w=
+hile `#address-cells =3D <0>`, which is structurally invalid in Devicetree.
 --
 
---- Patch [2]: [PATCH v3 2/6] dt-bindings: mfd: syscon: add Ambarella CV75 =
-secure scratchpad ---
-commit ea79700d5daf0e265e9307d2ab596a80db0d5db8
+--- Patch [5]: [PATCH v3 5/6] arm64: ambarella: add ARCH_AMBARELLA and CV75=
+ EVK DT ---
+commit cf8659acda73b48006f17101c5f47d5bf1d510a1
 Author: Long Zhao <longzhao@ambarella.com>
 
-dt-bindings: mfd: syscon: add Ambarella CV75 secure scratchpad
+arm64: ambarella: add ARCH_AMBARELLA and CV75 EVK DT
 
-Allow ambarella,cv75-sec-scratchpad with syscon for shared secure
-scratchpad registers used by pinctrl pull configuration.
+Enable ARCH_AMBARELLA and add a minimal CV75 SoC / EVK device tree for
+console bring-up with the RCT clocks, UART, pinctrl and GPIO banks.
 
-> dt-bindings: mfd: syscon: add Ambarella CV75 secure scratchpad
+> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+> index d2acfac730037..166430ddb3c93 100644
+> --- a/arch/arm64/Kconfig.platforms
+> +++ b/arch/arm64/Kconfig.platforms
+> @@ -26,6 +26,15 @@ config ARCH_SUNXI
+>  	help
+>  	  This enables support for Allwinner sunxi based SoCs like the A64.
+> =20
+> +config ARCH_AMBARELLA
+> +	bool "Ambarella SoC family"
+> +	select ARM_PSCI
+> +	select HAVE_ARM_ARCH_TIMER
+> +	select PINCTRL
+> +	select PINCTRL_AMB
+
+[Severity: High]
+Does PINCTRL_AMB exist in the kernel tree?
+
+Selecting a non-existent config symbol leaves intended features silently
+disabled when a user enables the SoC config.
+
+Also, are ARM_PSCI and HAVE_ARM_ARCH_TIMER the correct symbols for arm64?
+
+These appear to be 32-bit ARM-specific symbols. On arm64, it seems PSCI
+and the architected timer are managed by ARM_PSCI_FW and ARM_ARCH_TIMER,
+which are already selected by default.
+
+> +	help
+> +	  This enables support for the ARM64 based Ambarella SoCs like CV75.
+> +
+
+[ ... ]
+
+> diff --git a/arch/arm64/boot/dts/ambarella/cv75.dtsi b/arch/arm64/boot/dt=
+s/ambarella/cv75.dtsi
+> new file mode 100644
+> index 0000000000000..994eac6728ce8
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/ambarella/cv75.dtsi
+
+[ ... ]
+
+> +		gic: interrupt-controller@fff0101000 {
+> +			compatible =3D "arm,gic-400";
+> +			reg =3D <0xff 0xf0101000 0x0 0x1000>,
+> +			      <0xff 0xf0102000 0x0 0x2000>,
+> +			      <0xff 0xf0104000 0x0 0x2000>,
+> +			      <0xff 0xf0106000 0x0 0x2000>;
+> +			interrupt-controller;
+> +			#interrupt-cells =3D <3>;
+> +			#address-cells =3D <0>;
+> +			#size-cells =3D <1>;
 
 [Severity: Low]
-This isn't a bug, but should the word "add" be capitalized here to follow
-the MFD subsystem naming conventions?
+Is this #size-cells value correct given that #address-cells is 0?
 
-> diff --git a/Documentation/devicetree/bindings/mfd/syscon.yaml b/Document=
-ation/devicetree/bindings/mfd/syscon.yaml
-> index e228670880631..05c7f59aba5de 100644
-> --- a/Documentation/devicetree/bindings/mfd/syscon.yaml
-> +++ b/Documentation/devicetree/bindings/mfd/syscon.yaml
-> @@ -148,6 +148,7 @@ properties:
->                - allwinner,sun50i-a64-system-controller
->                - altr,l3regs
->                - altr,sdr-ctl
-> +              - ambarella,cv75-sec-scratchpad
->                - amd,pensando-elba-syscon
->                - amlogic,meson-mx-assist
->                - amlogic,meson-mx-bootrom
+When a node has an #address-cells value of 0, it does not define an address
+space for its children, and its #size-cells property should also be 0.
 
-[Severity: Medium]
-Will older dtschema tools skip validation for this new compatible string?
+While this will be ignored at runtime since there are no children, it will
+trigger a dtc compiler warning for being structurally invalid.
 
-It appears this compatible string was omitted from the select block earlier
-in the file, which is required for compatibility with dtschema <2024.02:
-
-select:
-  properties:
-    compatible:
-      contains:
-        enum:
-          ...
-          - altr,sdr-ctl
-          - amd,pensando-elba-syscon
-
-Should ambarella,cv75-sec-scratchpad also be added to this enum block so
-older tools correctly select and apply this schema?
+> +			interrupts =3D <GIC_PPI 9
+> +				      (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
+> +		};
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260813-cv75-v3-a-=
-v3-0-cfdd20b1b4dd@ambarella.com?part=3D2
+v3-0-cfdd20b1b4dd@ambarella.com?part=3D5
