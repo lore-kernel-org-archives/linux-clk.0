@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B2882F7F17;
-	Fri, 14 Aug 2026 05:38:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 818A823ABBF;
+	Fri, 14 Aug 2026 05:39:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786685893; cv=none; b=QX/DExoe7SjIUwtlQpYeq1DFbGw1WRWxIoK56g79DoqlYmN/PQKIk0MywST8NGx/FijURmjF6vuZba1Rtxtn/eN5L7NBakg0Eaa/+xCNZX4KmegbP0tDA+FwQr+OJFF9O7QZ8R5w53+WBFhPtApNaRnXaS3Ney0+bRW87/hu8fY=
+	t=1786685960; cv=none; b=aSuGDZ0VfKGxqUqsz8RszB8Ksc4unbXAsR9wkAuoPC6vkjKV2bf0VM4FToscaxumbe1R8vLBRKHrjI/0XGMvvgvMkLca55fZeMgNLmsjNyz4qvk+xbZvSRIS/wQ0GLdqwPqEqkfWTcC/u8NOkm1BjClPiR1wXAY0/0CmtCS9K4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786685893; c=relaxed/simple;
-	bh=hWEi5PcIiH/HVIy3Rj5t6X1UxIOq14w3/MzwNCqvHzQ=;
+	s=arc-20240116; t=1786685960; c=relaxed/simple;
+	bh=xNzIFmv7R9IBL4x3B2qUuitirgfmuC5WxdpofopR5DI=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=BwoARq6tEAfMWJVGD+cF+SVvw/BZUVj4LWJ03TGCoB9HC9TQdbGoilGxFyxBcdMm8akj4/eVtTDeTxROf15ZmkPhu6/yVGlfNztlWkpHImsQBAwI8qWWvh/Tzzm21L7qQAReZoyAR0OKPd1h8HivBqGokd/6meIQO0nSxZOTiVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L6msycHE; arc=none smtp.client-ip=100.103.45.18
+	 To:Date:Message-ID; b=Wo8L2t7K5ChzUHvlk6F+PmhmEcpQih5dpMwE7dSb9xNycGe6ua4EHllyb5kqPfb/M/NM2kFGMCx9e1TnQo8hBHuUd+hGxgVfIvPGgYtjKJEMFfwabe7Gra0TFUvoUV58P+ril3GD6qzkKJNSpUED0FqPUuIgxBdd6hQzsat9Ua8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Es/0mOro; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L6msycHE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6AC31F000E9;
-	Fri, 14 Aug 2026 05:38:11 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Es/0mOro"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F22491F000E9;
+	Fri, 14 Aug 2026 05:39:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786685891;
-	bh=hWEi5PcIiH/HVIy3Rj5t6X1UxIOq14w3/MzwNCqvHzQ=;
+	s=k20260515; t=1786685959;
+	bh=xNzIFmv7R9IBL4x3B2qUuitirgfmuC5WxdpofopR5DI=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date;
-	b=L6msycHELII2rG6nfk54h6Gv9u09I5Zpy2CcF5QQOUJHqqqe+4TZU22E6rHnfQPG9
-	 W/V/6dZWLtrelNMcoKrfkWoIe6jozrh4GtLG3e45w/X8PFYbOioq9MJZ21VeCjL0V0
-	 FnanYr/eqiai0sDepKTg0/wwQvLD4s0dth5KRFy49yfk+2XVHfPkisAKcc2pbHK6ZS
-	 J3agoEO/yMUiRFsyrfGKMBroZMHmi/fIU4OeMu29yUPXwI9P4rsG19pWlJmw+vWq5V
-	 FJY5A5L1Kz626pFyo8hCun+J6geeqcQKgH6DvVT77yja6O3uJxCBJu3YJqZoNtkWYI
-	 Az/nkUmithz/Q==
+	b=Es/0mOrojt8HUiYQH/SXUjFhII9w0FQSuF1NUICJmgRp58OitpASBX98IhXMw5sNq
+	 S+TVDRrKZ2Fqc9pzVlG1IbB9j5vY0FJvgKeorpVMyj9BP4gxXFdRWBGMxID4m6QQiR
+	 7mOYXuAUSXin/afnj2WACHdM/NV0gMp7btLW6zll96bzrp4yb3XyVfJtmGGQ/CZaVv
+	 Ug53/DERDSZ++ObzhHU6j+Ibkhrpbbm0I7vdxJ02WYJACMIBI8Nx4/VKfYCY9mWN5O
+	 kxM1E1NDfEi07CiJtfC3gEHY83iLLuu062MBMJCfJt7GiImD19z5hGZyGhikXo9H4g
+	 7r+3AiDpPJuvw==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,31 +34,20 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20260803063126.7-1-bbnpreetsingh@gmail.com>
-References: <20260803063126.7-1-bbnpreetsingh@gmail.com>
-Subject: Re: [PATCH v2] clk: zynq: pll: Fix kernel-doc after determine_rate() conversion
+In-Reply-To: <20260730083019.29998-1-egbostina@gmail.com>
+References: <20260730083019.29998-1-egbostina@gmail.com>
+Subject: Re: [PATCH] dt-bindings: clock: ti: Convert APLL clock to DT schema
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Brian Masney <bmasney@redhat.com>, Michal Simek <michal.simek@amd.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Babanpreet Singh <bbnpreetsingh@gmail.com>
-To: Babanpreet Singh <bbnpreetsingh@gmail.com>, Michael Turquette <mturquette@baylibre.com>
-Date: Thu, 13 Aug 2026 22:38:09 -0700
-Message-ID: <178668588985.5897.17245910889427329297@lazor>
+Cc: daniel.baluta@nxp.com, simona.toaca@nxp.com, goledhruva@gmail.com, m-chawdhry@ti.com
+To: Brian Masney <bmasney@redhat.com>, Conor Dooley <conor+dt@kernel.org>, Eduard Bostina <egbostina@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Mark Brown <broonie@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Thu, 13 Aug 2026 22:39:17 -0700
+Message-ID: <178668595730.5897.14063081980943486176@lazor>
 User-Agent: alot/0.12
 
-Quoting Babanpreet Singh (2026-08-02 23:31:26)
-> Commit 1547747b55d5 ("clk: zynq: pll: convert from round_rate() to
-> determine_rate()") replaced zynq_pll_round_rate() with
-> zynq_pll_determine_rate() but left its kernel-doc block behind, so the
-> block still names the old function and documents the removed @rate and
-> @prate parameters instead of @req.
+Quoting Eduard Bostina (2026-07-30 01:30:19)
+> Convert the Texas Instruments APLL clock bindings to DT schema.
 >=20
-> Retitle the block and describe @req. The Return: line described a
-> frequency and referenced the removed @rate; the function returns 0
-> unconditionally and the rounded rate comes back in @req.
->=20
-> No functional changes.
->=20
-> Assisted-by: Claude:claude-opus-5 [kernel-doc]
-> Signed-off-by: Babanpreet Singh <bbnpreetsingh@gmail.com>
+> Signed-off-by: Eduard Bostina <egbostina@gmail.com>
 > ---
 
 Applied to clk-next
