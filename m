@@ -1,185 +1,147 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A21FD48988A;
-	Fri, 14 Aug 2026 16:17:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D2563B6BF9
+	for <linux-clk@vger.kernel.org>; Fri, 14 Aug 2026 16:28:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786724271; cv=none; b=FDSdY9ICn2tEEcR1lKQ6dde8hdwrkhPp+baHi6zH3SwnWjghjPmG2113O1FVCY8kIKZlxJxJc1aTL42saebQVIiybWe3ty23s+r+cfZ2NCa8H7/+yQfoxohneigktN69etxywuDTFYPGMR1a8Q17+GjgRPcsGpKZknvJMiB/wis=
+	t=1786724889; cv=none; b=r0Em5KhritxDt41QdUPJBVa8cKB39UvevfBR1L3vraZssMxMwp1ASSYugzdMet78mRNKRPWJM9swmE1+l2gC5M+Y8GesCr1bLVw6J5rz8FRLI/0I005A1SYbTJKsuhWbZ96U2DGmSxR6ppQ8c5WR4ix4QnezoRf7bQHFo/Pf7JU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786724271; c=relaxed/simple;
-	bh=Hsm0ilBUsFYmcZnIHDNIMH0kZG/jJyXYiYiNXg/ePj0=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=Dokgrn2yd7YnfDaQdgUf6D8u9BjWdGKN054LUU0wCHXKzU0HMFOTJQdU/rcIPrSgCuwPk3c6/V7jb4rzmAFRdQBpLfeHgQBhWgxGNvrweZj9tVWYl5/jZrnUzijtwNDz5+HFFW5EpB3AWHqnOPXPBU3EUQQg+rXmbJAsUE9sCrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=avUjzz+y; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1786724889; c=relaxed/simple;
+	bh=WcYW7YY3eP/L8Ych38cMsTxN4ExIWrqxqknrK5FB3pE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=rb5mJHy1MGm5hvY94Ap31Yr9rqY1hznA3YzHogct1POHaMG4H/Aylh0l6DvVuq8/3AVFEP9KBFGT4DEve8fdNNdQZ4l1ZoNw3gOu6K4EorjCyjyG7HWySypBPhCnQ7/gqw+ymBX3RO3FLqvUiDDoxFSrC1pLT0JBTI+uZyrrb54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=gRJK6rT5; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="avUjzz+y"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AA741F000E9;
-	Fri, 14 Aug 2026 16:17:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786724270;
-	bh=cl56UCgbHJRz1uOcu/M7rczSp3Dhl8lXYJV+SJ/Lhis=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date;
-	b=avUjzz+yEfxOpteWqliw+htABr9q/NMWNGAUsQ6Q4OjaQ+SneYzlYJr68gDXTwhBK
-	 EuvYj1AtZdE/8BegGl0HPNQcDXPvpRPWYNeFMGfdd8ZU7+J13YSAdKhtINaeDNUvvu
-	 MRBHawY9o0PPE4Cmco7/5azcSZ7Ye0BUzTHnb7/TnEfzcl6lI/6JTPGHHSvCPJdo6V
-	 Qf2bnw/Spav0TWabA+Cs00b/BIparu2xFxB8dF16FZDJfhIP3KzgxmsiHSNw7t/2LM
-	 axlX16t36smf9X7VHabvAJIEwkKOsiMFmrg3BZIn0ObrU5oUAkRAoD6febzhr9RLjt
-	 E5dpEx5HvoLZg==
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="gRJK6rT5"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4954a2e73a9so9001545e9.3
+        for <linux-clk@vger.kernel.org>; Fri, 14 Aug 2026 09:28:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1786724885; x=1787329685; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=VvvWZAI2n/cH3PA3j9X+pFa+lBhhOzclmhLuSgZQqqc=;
+        b=gRJK6rT5uN1C3z5++wdOR00jyATKjApUHOzoQVgZGZNRs2aQ3736LfWIwTOQpgYUnb
+         QqKjhZgB/Jigg7+JfnzytWWNNRy7X0PhrubP8n2eAuMPvAkfl3h3Cbn/Ums9UxyzdNkT
+         0t6MWZ7H3cFx5a5kRYeKTXou+0516E6AzC32/WZCITqfoXSpbLuFPYF7fuwGn+WavlFq
+         tEAKAqifMQ7PiYlDO4aH/KizdjLWOm1QH3y9Fb7dNH014feQXkR7+GEeTSj9YiTx02Pi
+         pSgKAsLlq6h/7rNVa7586BaQ21rLQZYll8uXMlWaL8b6ZtJD0PXAQNqfWbPqahUwLriu
+         RA8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1786724885; x=1787329685;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=VvvWZAI2n/cH3PA3j9X+pFa+lBhhOzclmhLuSgZQqqc=;
+        b=oMHauQzRZes1PIzW3xvqbFTkBTPxwAsIoi8zAIf9RRlcUANv1CU5MT2I1qIz5LTRDD
+         4nv/2f1KAgKowqa/jQ+cVVFCe3QLDHRvPYNLqgMRkfPn9zK/6zLo/MrNiI4XFQSGm5Cm
+         TM9XQcpBnhONHXRVjTuqoEoLVWZn7JKIsAUuYplyuOGOqHiRiMiGidCH7/Dkn7603V6O
+         vAgrOY0FH4hIwPUBih/kMhzdx9IsN+aar9LodDb2hzuLwvCiQKIY5TBhwavxshP9YbVb
+         CeAx5l9Ih7uDCB9rvdWwphUkjFsdJ1aBWFj1y0OWsL6yKDevwrymRVhnbbMPcmokjxUD
+         PvZg==
+X-Forwarded-Encrypted: i=1; AHgh+RocQNZfkda4rv3txWHJXIzPmMtSpTWpAdwBzAbPQh/Rz4sjmwRjxnnPE86xWRpxq8/pnpGVmziSuuM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywt+X4O99kcDUAHXvt7UXyd2HSRq0Z/zO5MJUGX0PwTQ1n1LPEt
+	r6Wha1MsapKgKoPDTEE93nbcMbs9zLnO9mMEwjne2bwYfvor32RdB8zkXHxM5/hOvi0=
+X-Gm-Gg: AR+sD11WHYf9/pCnBOz4zNfnnKJgcFSicPkwsM9flQnygnvd0f2TzpYeYZ1+kE0f3/m
+	LPnibWgp4UzrUxmUMpaS0LuN6A69QaHxRocksolAsCqlibB0TldgxrknwYhbOx7DET/lQXknbMS
+	3abMNU7Dd3XXxMkVSfkX0FiFo92H2pnY3C0rSv4XcV880c0BKNFtO5wnB/0hY4DbaaAPfwjACto
+	MmxiwwZKCPy5XRDDR9xYLLeHZPVjzEc70B3yVVUFgQwW+0oaGsE6jNORgSChwnv3ZkaqtEP98Jf
+	8cqoCBwCZx1oDllC2I6jbCmdlQDSi5VjQM4tq6BkG8JJSKB+B3RPqv0fTGFlsKZPiE5V+Qnzca2
+	D1zfqg74cABYhAhqSQBlRv86Y0dYV9YT7KBF7WKOLGPdUpT/dGOE7lL0wT8TyvbMF9A4rNsI2NY
+	UYVB4ehiLgdZUibU7Hg87VchvQpWIscLGeRsYD5ny048c0hLSqvyZcFLi+ZYE=
+X-Received: by 2002:a05:600c:a45:b0:499:48be:3189 with SMTP id 5b1f17b1804b1-499878ccebcmr88526065e9.0.1786724884736;
+        Fri, 14 Aug 2026 09:28:04 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:9886:6a22:ee2a:d5e1])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-49988b25625sm65357715e9.13.2026.08.14.09.28.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Aug 2026 09:28:04 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Fri, 14 Aug 2026 18:27:49 +0200
+Subject: [PATCH v3] MAINTAINERS: Add Brian Masney and Jerome Brunet as
+ co-maintainers for clk subsystem
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20260612085812.AA15D1F000E9@smtp.kernel.org>
-References: <20260612-clk-v10-v10-6-eb92484eda38@nxp.com> <20260612085812.AA15D1F000E9@smtp.kernel.org>
-Subject: Re: [PATCH v10 6/6] clk: scmi: Add i.MX95 OEM extension support for SCMI clock driver
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: robh@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-To: sashiko-bot@kernel.org, sashiko-reviews@lists.linux.dev, Brian Masney <bmasney@redhat.com>, Peng Fan <peng.fan@nxp.com>
-Date: Fri, 14 Aug 2026 09:17:48 -0700
-Message-ID: <178672426822.5897.11563790103554525148@lazor>
-User-Agent: alot/0.12
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260814-clk-next-v3-1-6f7f1410e809@baylibre.com>
+X-B4-Tracking: v=1; b=H4sIAARCf2oC/y2NXQ6DIBAGr2J4Lgbwj5qm6T0aHxBXS1FsAY2J8
+ e5F7csmk8y3syIHVoFDZbQiC7NyajQBkkuE5EuYDrBqAiNGWE44TbHsNTaweMyBtSSrBW94hoL
+ +sdCq5Xj1rE52U/0G6ff937DwnULDnxqqhQMsx2FQvozmImbYSrqrAzgnjngZ3Y52wa6U0Twlc
+ cLDJTlmeNI9KAP6ocEa6OPRdndUbdsPMwADctYAAAA=
+X-Change-ID: 20260814-clk-next-8e2f05ba8d85
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>
+Cc: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Jerome Brunet <jbrunet@baylibre.com>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1622; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=z8Y1oo2h0pBy0HruJJQQru63TW8nkZOLeG44Ih0khqw=;
+ b=kA0DAAoB5vwPHDfy2oUByyZiAGp/QhHIioFsYKFrlrhcmfayYZlVyIuB99cnEoC+7W6TqQO+L
+ IkCMwQAAQoAHRYhBPThWa4Y8/VtXxu3G+b8Dxw38tqFBQJqf0IRAAoJEOb8Dxw38tqFSsoP/3hg
+ s43ZSttRQJW+IoiDAKhpaYwjNNnONEosOOCzbrwka9NYuu9tiF2xnP03gy1O9B+pTmxndSjbsFV
+ DSMeenBcBFn31UoswyuhT7pfap0qbVge3umJ9qby7ERdU2aoPdC2ldy6TYEzhWAa1lAB2tNYuNd
+ uas7fr2/uUM0ls9Ms8gUWYjO39+T6vajz6mVrlNfkXVAzokEc2n4XEQiPK1YfmLZuFpv8WGV+Fg
+ pMK1FY/DqlUBGr2qYhB5l4hjIgofFDzwMgUFIKSzmYoBErlBjlvP33XLtXbmLrEF9exhXJkXMPr
+ s9IUxlhts4eKUcz1ydd02esW0WFq6esbjW3/R3BULNuDTmHI2wiIhah23szSjMTZ8l73pE/lhGy
+ m1o7M6P1opZpa7Q6tW67ka6+BKu0f/6oVPNekCNr0Z0BwxEjzNHk1t3p0sz3YqaDvuT8umld5yA
+ +F4QQVAMluYEuehnH1p9eiNdUEDg3TNBJ2RDYMlpDQoB3M3znx8gpTj46SHUwMAOynfGVpSJzCF
+ uRpmzlB7WJNC//5CBRDoIUWJnIjTZaYn3+nOuko2uYeJ4k4WDIzuQqTrinqrf5A8RxDCiCE3XC5
+ VRGO2WcB9aRt7p/3i3/tsM/ontmOu2ewiZl3PzKCBNQHMlMYhqRkadcqCDfMjSttc3LOFMNVO9k
+ y/10+
+X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
+ fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-+Brian and Peng
+From: Brian Masney <bmasney@redhat.com>
 
-It doesn't link for allmodconfig build
+With Michael Turquette stepping down as a clk co-maintainer, this
+subsystem is big enough that it needs multiple people to keep the
+clk community healthy. Add Brian and Jerome as co-maintainers.
 
-Quoting sashiko-bot@kernel.org (2026-06-12 01:58:12)
-> Thank you for your contribution! Sashiko AI review found 3 potential issu=
-e(s) to consider:
->=20
-> New issues:
-> - [High] The driver fails to link when compiled as a module (`CONFIG_COMM=
-ON_CLK_SCMI=3Dm`) because `clk-scmi.c` and `clk-scmi-oem.c` are built as se=
-parate modules without exporting their shared symbols.
-> - [High] Incorrect unit conversion for spread spectrum percentage causes =
-valid spread values to be truncated to 0.
->=20
-> Pre-existing issues:
-> - [High] Missing bounds check on SCMI firmware-provided parent clock inde=
-x leads to heap out-of-bounds read and wild pointer dereference.
-> --
->=20
-> commit 02412e4d55042034939e6eece844d1bd4d62d5e9
-> Author: Peng Fan <peng.fan@nxp.com>
->=20
-> clk: scmi: Add i.MX95 OEM extension support for SCMI clock driver
->=20
-> Introduces clk-scmi-oem.c to support vendor-specific OEM extensions for t=
-he
-> SCMI clock driver. This enables querying OEM-specific features and setting
-> spread spectrum configurations.
->=20
-> > diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> > index 6a726331b6c9e..c2ae700ec0f2a 100644
-> > --- a/drivers/clk/Makefile
-> > +++ b/drivers/clk/Makefile
-> > @@ -98,7 +98,7 @@ obj-$(CONFIG_COMMON_CLK_RP1)            +=3D clk-rp1.o
-> >  obj-$(CONFIG_COMMON_CLK_RPMI)                +=3D clk-rpmi.o
-> >  obj-$(CONFIG_COMMON_CLK_HI655X)              +=3D clk-hi655x.o
-> >  obj-$(CONFIG_COMMON_CLK_S2MPS11)     +=3D clk-s2mps11.o
-> > -obj-$(CONFIG_COMMON_CLK_SCMI)           +=3D clk-scmi.o
-> > +obj-$(CONFIG_COMMON_CLK_SCMI)           +=3D clk-scmi.o clk-scmi-oem.o
->=20
-> [Severity: High]
-> Will this fail to link when compiled as a module (CONFIG_COMMON_CLK_SCMI=
-=3Dm)?
->=20
-> It looks like Kbuild will treat clk-scmi.o and clk-scmi-oem.o as separate
-> kernel modules rather than linking them into a single composite module.
-> Since neither file exports their shared symbols (like scmi_proto_clk_ops
-> or scmi_clk_oem_init), won't this result in undefined reference errors?
->=20
-> Should this use a composite module definition instead?
->=20
-> scmi-clk-y :=3D clk-scmi.o clk-scmi-oem.o
-> obj-$(CONFIG_COMMON_CLK_SCMI) +=3D scmi-clk.o
->=20
-> [ ... ]
->=20
-> > diff --git a/drivers/clk/clk-scmi-oem.c b/drivers/clk/clk-scmi-oem.c
-> > new file mode 100644
-> > index 0000000000000..be11d359b4ec3
-> > --- /dev/null
-> > +++ b/drivers/clk/clk-scmi-oem.c
->=20
-> [ ... ]
->=20
-> > +static int
-> > +scmi_clk_imx_set_spread_spectrum(struct clk_hw *hw,
-> > +                              const struct clk_spread_spectrum *ss_con=
-f)
-> > +{
-> > +     struct scmi_clk *clk =3D to_scmi_clk(hw);
-> > +     int ret;
-> > +     u32 val;
-> > +
-> > +     /*
-> > +      * extConfigValue[7:0]   - spread percentage (%)
-> > +      * extConfigValue[23:8]  - Modulation Frequency
-> > +      * extConfigValue[24]    - Enable/Disable
-> > +      * extConfigValue[31:25] - Reserved
-> > +      */
-> > +     val =3D FIELD_PREP(SCMI_CLOCK_IMX_SS_PERCENTAGE_MASK, ss_conf->sp=
-read_bp / 10000);
->=20
-> [Severity: High]
-> Does this integer division by 10000 inadvertently truncate valid spread
-> spectrum values to 0?
->=20
-> Since ss_conf->spread_bp is in basis points (where 100 basis points equals
-> 1%), and standard configurations usually range from 50 to 500 basis points
-> (0.5% to 5%), dividing by 10000 will always result in zero. Could this
-> divide by 100 instead to correctly convert basis points to a percentage?
->=20
-> [ ... ]
->=20
-> > diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
-> > index d88e78cc9a12e..2dd50c5b4ea8f 100644
-> > --- a/drivers/clk/clk-scmi.c
-> > +++ b/drivers/clk/clk-scmi.c
->=20
-> [ ... ]
->=20
-> > @@ -406,7 +419,7 @@ static int scmi_clocks_probe(struct scmi_device *sd=
-ev)
-> >                * to avoid sharing the devm_ allocated clk_ops between m=
-ultiple
-> >                * SCMI clk driver instances.
-> >                */
-> > -             scmi_ops =3D scmi_clk_ops_select(sclk, transport_is_atomi=
-c,
-> > +             scmi_ops =3D scmi_clk_ops_select(sdev, sclk, transport_is=
-_atomic,
-> >                                              atomic_threshold_us,
-> >                                              scmi_clk_ops_db,
-> >                                              ARRAY_SIZE(scmi_clk_ops_db=
-));
->=20
-> [Severity: High]
-> This is a pre-existing issue, but is it possible for the SCMI firmware to
-> trigger an out-of-bounds read right after this ops setup?
->=20
-> Looking at scmi_clocks_probe(), it uses the parent index provided by the
-> SCMI firmware to directly access the dynamically allocated hws array:
->=20
-> drivers/clk/clk-scmi.c:scmi_clocks_probe() {
->     ...
->         for (int i =3D 0; i < sclk->info->num_parents; i++) {
->                 sclk->parent_data[i].index =3D sclk->info->parents[i];
->                 sclk->parent_data[i].hw =3D hws[sclk->info->parents[i]];
->     ...
-> }
->=20
-> If the firmware provides an index greater than or equal to the total clock
-> count, won't this result in an out-of-bounds read on the heap, potentially
-> dereferencing a wild pointer? Should this index be verified against count
-> first?
->=20
-> --=20
-> Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260612-clk-v10-=
-v10-0-eb92484eda38@nxp.com?part=3D6
+Link: https://lore.kernel.org/linux-clk/anW-jTldkWSJK3wl@redhat.com/T/#m0ae01b8dd23c452d82f34b61844a8305977a53a4
+Acked-by: Michael Turquette <mturquette@baylibre.com>
+Signed-off-by: Brian Masney <bmasney@redhat.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+Changes in v3:
+- Update Jerome's address
+- Link to v2: https://lore.kernel.org/r/20260807-clk-masney-maintainer-v2-1-c6d86245cf95@redhat.com
+
+Changes in v2:
+- Also add Jerome as co-maintainer based on discussion in v1
+- Link to v1: https://lore.kernel.org/r/20260804-clk-masney-maintainer-v1-1-de593189a9a1@redhat.com
+---
+ MAINTAINERS | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 520d79aacf2f..c682fa6225a5 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6448,7 +6448,8 @@ F:	include/uapi/linux/comedi.h
+ 
+ COMMON CLK FRAMEWORK
+ M:	Stephen Boyd <sboyd@kernel.org>
+-R:	Brian Masney <bmasney@redhat.com>
++M:	Brian Masney <bmasney+clk@redhat.com>
++M:	Jerome Brunet <jbrunet+clk@baylibre.com>
+ L:	linux-clk@vger.kernel.org
+ S:	Maintained
+ Q:	http://patchwork.kernel.org/project/linux-clk/list/
+
+---
+base-commit: 728e68a889bcf257b1e67298b12c360e5c3a13e0
+change-id: 20260814-clk-next-8e2f05ba8d85
+prerequisite-message-id: <20260729121640.3864006-2-ukleinek@kernel.org>
+prerequisite-patch-id: dc8bae434144f43dd5ec1355d22ef9be3c34c9e9
+
+Best regards,
+--  
+Jerome
+
