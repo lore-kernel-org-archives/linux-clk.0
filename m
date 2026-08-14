@@ -1,218 +1,219 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD9A53D093A;
-	Fri, 14 Aug 2026 13:38:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 714D947A868
+	for <linux-clk@vger.kernel.org>; Fri, 14 Aug 2026 13:42:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786714692; cv=none; b=VyTNt4sOPTyGOGeN4oUiS+eX7DRhQWB6Wha/zO2/+NjorPQ0ba6eBx8UJNVTBOCsDxUosQB4To2S6XVtJugObqCy6UL6Q6ezO+ulCCps0eQboFpu9212O1QRanVMEJRgwJml4eyOeVY5j1neFrSMP0Ke83YCcZVNJiIW9tLP6/k=
+	t=1786714925; cv=none; b=ufp4P5jRoyaEogEx1EgDeGip1INaj3Xwv+GJDSmsmHpfIjZ00ZJWxM2dOto6LXXQlBiVB4E+fDxF8bZVz3KRIBHz5G2U4+vAiJ2L3ySLjefKSTzOgBnMgpbztbsOujNEf39WcT2nwUA9F5Om3TguYuJN3zz2jMGucxa2oYdixtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786714692; c=relaxed/simple;
-	bh=ezFvlaRPnGGVbw/wRkHJ8pEQKdswmwUQDcfVzJERjtg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U5+n1An7tYf9cuF22U+a859YiiNltrC1pBo49pw3Qnnms0kft3s/OgdvYjfFkoUbVzGMOtFbI7pV5qW2xX81VIPwEHgrQqvwE33r1PkTHWPrntBxTlEwGgT5ixphcnjVd45/6P5RvaAOQjMQyMYbbCDgTvCmEbtkBP5sK4YFCr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mnCwHyga; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1786714925; c=relaxed/simple;
+	bh=jdM+/aN/09aDljMrxaz9Ru0JnOaXweJ9me5BbEytW2o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CQqY+QUym54qJumm+6SbwTjUmUfijiiMhXxM3Gn1jq8Af1w9dTwuCIQ/OIQpMn36jCqWYh5S497CmQ1XeIuE6o/1LHYIABSUfoDWh+Wbw+SO0POPf38YEwIbu3f8sdPmNXdaKp31ZrrN6JGrNnEqAKrY0lEhpcEluUFmnV+CD8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TL30AGjO; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mnCwHyga"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 707161F00A3A;
-	Fri, 14 Aug 2026 13:38:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786714690;
-	bh=dUqihhCTp+fPeUQLTUG0twiBw++x8qelMHcg/V6RTE8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=mnCwHyga2LHGMJvu1/BL2xhhMRzw6aJZoH+iGvFUBPKCOAzYFTsJ+7IvvKrUFubxt
-	 Ede9+wPexYfc5BHXC19+z8+tbNNDIR6pzTxQM5TcoUBOpQvDU2qmVrXSf46fBpB2dl
-	 63pt6JNQgXu5M9rwsjp5pZM6gSs6SQoZiLkXAtcTw5YKFFsZJkW3S6q4IeNRf0FXxI
-	 VYb80ixX5KpSJpgh1Q8uohFlOZcIxfFhscKPoqYM1ifat8x4YRVv9pNCJGSOBfDDZA
-	 nmPIR/LZguoQlEFEnTZzyyxaUqRRIxJTeiUDzdvoJX7HR/xI5WOmFLr66UN/k7FEur
-	 0jGTM9FGUmL9g==
-Date: Fri, 14 Aug 2026 14:38:04 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Changhuang Liang <changhuang.liang@starfivetech.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TL30AGjO"
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-38e42560ebcso861319a91.1
+        for <linux-clk@vger.kernel.org>; Fri, 14 Aug 2026 06:42:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1786714923; x=1787319723; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=vesdrJBOwlQOlA8CDULI3Zoo3petA5kgW0e7uLS9npA=;
+        b=TL30AGjOUqFY+eJvkPa5C6L9II9uXe65L0yQcWrE3SSY4qehuoEMBOXPowp09YnxgQ
+         2YZX6cIs0iWK2LMQmQKASIIGN/aK4IKWZ9d8MyC4EP5ybDbSH+wESxPimVuCkMMoNamh
+         J3mTYDZQpmtE4DNn+38oqoug2oisr9R1gesX/yWLrFQJYerk55tYfaK+0jHKsaiJ+Mh+
+         E8nHMKMjwtEbY1J0qAId9jUOZdYlA5MDng3PsWvcAfwqUPCNmngCzweK+QokhMvM3Uzg
+         GdzWlNZuBlRbRcOjl/lU5n4xxgpZY57qraIHlZZFIOfQFBC1HipD10E4FxGp7zWykk8b
+         lS8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1786714923; x=1787319723;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=vesdrJBOwlQOlA8CDULI3Zoo3petA5kgW0e7uLS9npA=;
+        b=kfjiw6RgPVC9XhLMvKyLB05TW9efPpIaLrmBIQC61QfU2NvV2db/oZovlISXO7Bjg/
+         PBkHTuoGb7Zm/sfH+XzGLnTUS3cmd97Mek/tfAtUJYJwTgrA1PZv6UEtnyiieFCEryT1
+         1kwSiLNC8RuDx9TrqlxwOsBtNw7umgoW6hBpF12fGIoXOBp6uU7YVb0AZHH5i6cri0LF
+         IgBa7rxGI2wEYxygqJ8Qx81ZWFMentSBNi1vg5+St5vs8vjqZxW+AtsO4/+qFDJT+Dbp
+         Mxb/u9f95gyBoy7yJfwcrT3dcrJJfYgjLdaFr283WirnAwZPUToDbYT3tmn+LE3X8Ixq
+         tUkw==
+X-Gm-Message-State: AOJu0Yy1oL0UyPZRDx7Y2vthOJtm19G5QfP9naRlWdQciNtUrQwWWHnM
+	Aabi8ltm0HgUD/0Svyw3fa0rDGrirIUvU0BPe0r+0+hZ6bNzXovX0zDV
+X-Gm-Gg: AR+sD10BZj6mV4sCRi/iloapXMe+n/Tqg4ELfegKen+Bgxm0Xgy0TwztTnQwgv04Shv
+	0OUroXiTqLoa2QUknfagLpq/Nv3Z6ohm+/gajr7SY6GdOzoFQkNBF4QVYLZLWrrPn/tKeZXMpZZ
+	kI2T7oFi1yVriXpcnDKykOu8aSs2MHmpwIyDMdvOy2EIPB9GSjHM3Vaj/nlXyQfUrul9YZB27gH
+	akClNpHhhbdTuFrl/R+pwNVTI+jzxojGU+w2g2T5rL0441AkCpdNcXLzakQF/bWAGiEyjAB12ps
+	jY/11RJNu0wdR+FuCGtJ+mLXl6AL96+lZr0g+X2nmxVOkACnzIopeEmIEcdSerRv32H2lkO399D
+	thdwZ2e7k5WP2CbgxR17Wx7fmiMonCOB55HkUBZtINJ8LSjzCaoHwzU4owSTk3BaB5Xh7NdouJq
+	ZifwJwcjezpiKjM2H7o439CJI59yioYzN7tuTE0JW17MyaJ1vdqgsZKGPZtvjepPnu8V0ckigGb
+	xxZ+sDB
+X-Received: by 2002:a17:90b:510a:b0:38e:9ef9:eb97 with SMTP id 98e67ed59e1d1-3933ba87422mr6655253a91.16.1786714922710;
+        Fri, 14 Aug 2026 06:42:02 -0700 (PDT)
+Received: from haichao.tail057a43.ts.net ([2001:da8:e000:1206:e9af:7c0e:be31:2c3f])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-394ea972c79sm2932232a91.4.2026.08.14.06.41.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Aug 2026 06:42:02 -0700 (PDT)
+From: Ruoyu Wang <ruoyuw560@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
 	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney@redhat.com>, Paul Walmsley <pjw@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Inochi Amaoto <inochiama@gmail.com>,
-	Alexey Charkov <alchark@gmail.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Keguang Zhang <keguang.zhang@gmail.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>
-Subject: Re: [PATCH v4 7/8] soc: starfive: Add socinfo driver for JHB100 SoC
-Message-ID: <20260814-reverb-mourner-283116bcc014@spud>
-References: <20260809015054.210577-1-changhuang.liang@starfivetech.com>
- <20260809015054.210577-8-changhuang.liang@starfivetech.com>
- <20260810-caress-rack-45615c8d9747@spud>
- <ZQ4PR01MB120276A1DA91FAC19C852F14F2DD2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
- <20260811-populace-afflicted-40a40e0f484c@spud>
- <ZQ4PR01MB1202DDE6C255441E1FC4F916F2DC2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
- <20260812-snowplow-punctured-28d19616f707@spud>
- <ZQ4PR01MB1202F016AD1F1E699429DDC0F2DB2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
- <20260813-presoak-scarily-b6cdecfcb7cc@spud>
- <ZQ4PR01MB1202CD24FCDA9039EDF2C7A0F2DA2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
+	Wenzhen Yu <wenzhen.yu@mediatek.com>,
+	Ryder Lee <ryder.lee@mediatek.com>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Ruoyu Wang <ruoyuw560@gmail.com>
+Subject: [PATCH v2] clk: mediatek: mt7629: Properly use CLK_IS_CRITICAL flag
+Date: Fri, 14 Aug 2026 21:41:56 +0800
+Message-ID: <20260814134156.1388413-1-ruoyuw560@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="q4nI28h3rGiaFoks"
-Content-Disposition: inline
-In-Reply-To: <ZQ4PR01MB1202CD24FCDA9039EDF2C7A0F2DA2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
+Content-Transfer-Encoding: 8bit
 
---q4nI28h3rGiaFoks
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The MT7629 clock driver calls clk_prepare_enable() for six clocks that
+must remain running. These calls create permanent references owned by
+the driver. In topckgen and apmixedsys, provider registration can fail
+after the references are acquired, leaving them unreleased.
 
-On Fri, Aug 14, 2026 at 01:13:38AM +0000, Changhuang Liang wrote:
-> Hi,Conor
->=20
-> Thanks for the review.
->=20
-> > On Thu, Aug 13, 2026 at 08:10:12AM +0000, Changhuang Liang wrote:
-> > > Hi ,Conor
-> > >
-> > > Thanks for the review.
-> > >
-> > > > On Wed, Aug 12, 2026 at 10:37:16AM +0000, Changhuang Liang wrote:
-> > > > > Hi, Conor
-> > > > >
-> > > > > Thanks for the review.
-> > > > >
-> > > > > > On Tue, Aug 11, 2026 at 05:36:19AM +0000, Changhuang Liang wrot=
-e:
-> > > > > >
-> > > > > > > > On Sat, Aug 08, 2026 at 06:50:53PM -0700, Changhuang Liang
-> > wrote:
-> > > > > >
-> > > > > > > > > +static int __init starfive_socinfo_init(void) {
-> > > > > > > > > +	struct soc_device_attribute *attrs;
-> > > > > > > > > +	struct soc_device *soc_dev;
-> > > > > > > > > +	const char *machine =3D NULL;
-> > > > > > > > > +	struct device_node *np;
-> > > > > > > > > +	struct regmap *regmap;
-> > > > > > > > > +	char rev_char;
-> > > > > > > > > +	u32 rev_id;
-> > > > > > > > > +	int ret;
-> > > > > > > > > +
-> > > > > > > > > +	np =3D of_find_compatible_node(NULL, NULL,
-> > > > > > > > > +"starfive,jhb100-sys0-syscon");
-> > > > > > > >
-> > > > > > > > Remind me again why this is not just probed as an mfd cell
-> > > > > > > > from the syscon driver?
-> > > > > > > >
-> > > > > > > > (Hint: please put this info in the commit message).
-> > > > > > >
-> > > > > > > The discussion result with Krzysztof at that time is recorded=
- here:
-> > > > > > > https://lore.kernel.org/all/20260405-strong-watchful-marmot-fd
-> > > > > > > fad6
-> > > > > > > @quo
-> > > > > > > ll/
-> > > > > > >
-> > > > > > > One register should not be treated as a separate device node.
-> > > > > >
-> > > > > > That's a different question. In the case of an mfd cell probed
-> > > > > > from the syscon driver there would be no devicetree
-> > > > > > modifications required compared to what you have now. e.g.
-> > > > > > sg2044-topsys.c
-> > > > >
-> > > > > This seems feasible, and I can introduce this modification in the
-> > > > > next
-> > > > version.
-> > > >
-> > > >
-> > > > In fact, you don't even need the mfd cell, because your driver is
-> > > > going to be in drivers/soc/starfive anyway? You can just bind
-> > > > directly to the
-> > > > sys0 syscon I think.
-> > >
-> > > I suddenly realized that I missed one issue:
-> > > starfive,jhb100-sys0-syscon is already bound to the PLL driver by def=
-ault, I
-> > can't use it to bind another device anymore.
-> > >
-> > > which is why I used
-> > >
-> > > np =3D of_find_compatible_node(NULL, NULL,
-> > > "starfive,jhb100-sys0-syscon");
-> > >
-> > > in jhb100-socinfo.c.
-> > >
-> > > So it seems the MFD cell approach isn't really feasible either?
-> >=20
-> > You could, in that case, probe the clock driver using the mfd_cell like
-> > sg2044-topsys. What else other than the pll controls and the soc info r=
-egister
-> > is in this register region?
->=20
-> We don't have any other drivers right now in this register region.
+Mark ARMPLL, main_core_en, the AXI, memory and DDRPHY selectors, and the
+UART0 gate with CLK_IS_CRITICAL, and remove the manual enable calls. Keep
+CLK_SET_RATE_PARENT on the three muxes while adding the critical flag.
+The common clock framework then preserves the existing always-on behavior
+without driver-owned prepare and enable references.
 
-I'm not asking about what's got a driver right now though, I am wondering
-what else the registers in this region are for.
+This issue was found by a static analysis checker and confirmed by manual
+source review.
 
->=20
-> So does that mean I can revise it to the format below:
->=20
-> static const struct mfd_cell jhb100_sys0_subdev[] =3D {
-> 	{
-> 		.name =3D "jhb100-sys0-pll",
-> 	},
+Fixes: 3b5e748615e7 ("clk: mediatek: add clock support for MT7629 SoC")
+Signed-off-by: Ruoyu Wang <ruoyuw560@gmail.com>
+---
+Changes in v2:
+- Preserve CLK_SET_RATE_PARENT on the AXI, memory and DDRPHY muxes.
+- Rebase onto clk-next and repeat the focused ARM W=1 build.
 
-> 	{
-> 		.name =3D "jhb100-socinfo",
+v1: https://lore.kernel.org/r/20260813153113.3952621-1-ruoyuw560@gmail.com/
 
-Why would this be needed? The driver with the mfd_cell would be the same
-one that provides the soc info, no?
+ drivers/clk/mediatek/clk-mt7629.c | 39 +++++++++++++++----------------
+ 1 file changed, 19 insertions(+), 20 deletions(-)
 
-> 	},
-> };
->=20
-> static const struct mfd_cell jhb100_per0_subdev[] =3D {
-> 	{
-> 		.name =3D "jhb100-per0-pll",
+diff --git a/drivers/clk/mediatek/clk-mt7629.c b/drivers/clk/mediatek/clk-mt7629.c
+index e154771b1b8bb..1a3abffd3238f 100644
+--- a/drivers/clk/mediatek/clk-mt7629.c
++++ b/drivers/clk/mediatek/clk-mt7629.c
+@@ -48,8 +48,9 @@
+ 		_pd_reg, _pd_shift, _tuner_reg, _pcw_reg, _pcw_shift,	\
+ 		NULL, "clk20m")
+ 
+-#define GATE_APMIXED(_id, _name, _parent, _shift)			\
+-	GATE_MTK(_id, _name, _parent, &apmixed_cg_regs, _shift, &mtk_clk_gate_ops_no_setclr_inv)
++#define GATE_APMIXED_AO(_id, _name, _parent, _shift)			\
++	GATE_MTK_FLAGS(_id, _name, _parent, &apmixed_cg_regs, _shift,	\
++		 &mtk_clk_gate_ops_no_setclr_inv, CLK_IS_CRITICAL)
+ 
+ #define GATE_INFRA(_id, _name, _parent, _shift)				\
+ 	GATE_MTK(_id, _name, _parent, &infra_cg_regs, _shift, &mtk_clk_gate_ops_setclr)
+@@ -57,6 +58,10 @@
+ #define GATE_PERI0(_id, _name, _parent, _shift)				\
+ 	GATE_MTK(_id, _name, _parent, &peri0_cg_regs, _shift, &mtk_clk_gate_ops_setclr)
+ 
++#define GATE_PERI0_AO(_id, _name, _parent, _shift)			\
++	GATE_MTK_FLAGS(_id, _name, _parent, &peri0_cg_regs, _shift,	\
++		 &mtk_clk_gate_ops_setclr, CLK_IS_CRITICAL)
++
+ #define GATE_PERI1(_id, _name, _parent, _shift)				\
+ 	GATE_MTK(_id, _name, _parent, &peri1_cg_regs, _shift, &mtk_clk_gate_ops_setclr)
+ 
+@@ -311,7 +316,7 @@ static const struct mtk_gate_regs peri1_cg_regs = {
+ 
+ static const struct mtk_pll_data plls[] = {
+ 	PLL(CLK_APMIXED_ARMPLL, "armpll", 0x0200, 0x020C, 0,
+-	    0, 21, 0x0204, 24, 0, 0x0204, 0),
++	    PLL_AO, 21, 0x0204, 24, 0, 0x0204, 0),
+ 	PLL(CLK_APMIXED_MAINPLL, "mainpll", 0x0210, 0x021C, 0,
+ 	    HAVE_RST_BAR, 21, 0x0214, 24, 0, 0x0214, 0),
+ 	PLL(CLK_APMIXED_UNIV2PLL, "univ2pll", 0x0220, 0x022C, 0,
+@@ -325,7 +330,7 @@ static const struct mtk_pll_data plls[] = {
+ };
+ 
+ static const struct mtk_gate apmixed_clks[] = {
+-	GATE_APMIXED(CLK_APMIXED_MAIN_CORE_EN, "main_core_en", "mainpll", 5),
++	GATE_APMIXED_AO(CLK_APMIXED_MAIN_CORE_EN, "main_core_en", "mainpll", 5),
+ };
+ 
+ static const struct mtk_gate infra_clks[] = {
+@@ -437,7 +442,7 @@ static const struct mtk_gate peri_clks[] = {
+ 	GATE_PERI0(CLK_PERI_PWM_PD, "peri_pwm_pd", "pwm_qtr_26m", 9),
+ 	GATE_PERI0(CLK_PERI_AP_DMA_PD, "peri_ap_dma_pd", "faxi", 12),
+ 	GATE_PERI0(CLK_PERI_MSDC30_1_PD, "peri_msdc30_1", "msdc30_1", 14),
+-	GATE_PERI0(CLK_PERI_UART0_PD, "peri_uart0_pd", "faxi", 17),
++	GATE_PERI0_AO(CLK_PERI_UART0_PD, "peri_uart0_pd", "faxi", 17),
+ 	GATE_PERI0(CLK_PERI_UART1_PD, "peri_uart1_pd", "faxi", 18),
+ 	GATE_PERI0(CLK_PERI_UART2_PD, "peri_uart2_pd", "faxi", 19),
+ 	GATE_PERI0(CLK_PERI_UART3_PD, "peri_uart3_pd", "faxi", 20),
+@@ -459,12 +464,15 @@ static struct mtk_composite infra_muxes[] = {
+ 
+ static struct mtk_composite top_muxes[] = {
+ 	/* CLK_CFG_0 */
+-	MUX_GATE(CLK_TOP_AXI_SEL, "axi_sel", axi_parents,
+-		 0x040, 0, 3, 7),
+-	MUX_GATE(CLK_TOP_MEM_SEL, "mem_sel", mem_parents,
+-		 0x040, 8, 1, 15),
+-	MUX_GATE(CLK_TOP_DDRPHYCFG_SEL, "ddrphycfg_sel", ddrphycfg_parents,
+-		 0x040, 16, 1, 23),
++	MUX_GATE_FLAGS(CLK_TOP_AXI_SEL, "axi_sel", axi_parents,
++		       0x040, 0, 3, 7,
++		       CLK_SET_RATE_PARENT | CLK_IS_CRITICAL),
++	MUX_GATE_FLAGS(CLK_TOP_MEM_SEL, "mem_sel", mem_parents,
++		       0x040, 8, 1, 15,
++		       CLK_SET_RATE_PARENT | CLK_IS_CRITICAL),
++	MUX_GATE_FLAGS(CLK_TOP_DDRPHYCFG_SEL, "ddrphycfg_sel", ddrphycfg_parents,
++		       0x040, 16, 1, 23,
++		       CLK_SET_RATE_PARENT | CLK_IS_CRITICAL),
+ 	MUX_GATE(CLK_TOP_ETH_SEL, "eth_sel", eth_parents,
+ 		 0x040, 24, 3, 31),
+ 	/* CLK_CFG_1 */
+@@ -568,10 +576,6 @@ static int mtk_topckgen_init(struct platform_device *pdev)
+ 				    ARRAY_SIZE(top_muxes), base,
+ 				    &mt7629_clk_lock, clk_data);
+ 
+-	clk_prepare_enable(clk_data->hws[CLK_TOP_AXI_SEL]->clk);
+-	clk_prepare_enable(clk_data->hws[CLK_TOP_MEM_SEL]->clk);
+-	clk_prepare_enable(clk_data->hws[CLK_TOP_DDRPHYCFG_SEL]->clk);
+-
+ 	return of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
+ }
+ 
+@@ -620,8 +624,6 @@ static int mtk_pericfg_init(struct platform_device *pdev)
+ 	if (r)
+ 		return r;
+ 
+-	clk_prepare_enable(clk_data->hws[CLK_PERI_UART0_PD]->clk);
+-
+ 	return 0;
+ }
+ 
+@@ -640,9 +642,6 @@ static int mtk_apmixedsys_init(struct platform_device *pdev)
+ 	mtk_clk_register_gates(&pdev->dev, node, apmixed_clks,
+ 			       ARRAY_SIZE(apmixed_clks), clk_data);
+ 
+-	clk_prepare_enable(clk_data->hws[CLK_APMIXED_ARMPLL]->clk);
+-	clk_prepare_enable(clk_data->hws[CLK_APMIXED_MAIN_CORE_EN]->clk);
+-
+ 	return of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
+ }
+ 
 
-Why do these other ones need to be modified?
-
-> 	},
-> };
->=20
-> static const struct mfd_cell jhb100_per1_subdev[] =3D {
-> 	{
-> 		.name =3D "jhb100-per1-pll",
-> 	},
-> };
->=20
-> static const struct mfd_cell jhb100_ pcierp _subdev[] =3D {
-> 	{
-> 		.name =3D "jhb100-pcierp-reset",
-> 	},
-> };
->=20
-> Best Regards,
-> Changhuang
->=20
-
---q4nI28h3rGiaFoks
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCan8aPAAKCRB4tDGHoIJi
-0kOqAPsGeCAPpE7N46vGdjXobBZre+Ywd6lVU7KwdBnv/LbmawD/Z4/VHI6b3P3F
-pX/Hl1QaTgbFV37yLa8ntnUyfqr3NAs=
-=Plw4
------END PGP SIGNATURE-----
-
---q4nI28h3rGiaFoks--
+base-commit: 684633bd76956b5d7ed59eb799e6fe7f45e47be4
+-- 
+2.51.0
