@@ -1,94 +1,61 @@
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE6FD370AE3;
-	Fri, 14 Aug 2026 09:24:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54AE741B355;
+	Fri, 14 Aug 2026 10:15:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786699458; cv=none; b=iE8CkBQlBHytO48bA1G0Tqg10DKV6UQ6FDQYhVgETap5gXMVBvc27IFS6M/3ZVcNCXNYQ2BCFQzYIWKhHEpHLSuNvEF1Fo98YoxG+/HWtP2h6xSbp7wavdV60cuxSn4suBox+uAbtSQDJ3gj8DPDeD1aBfIk1IvGid8dt+DIuU4=
+	t=1786702550; cv=none; b=kJKcAFjGtNqkJqW2U+yeM2eA51l3ZVJ8i324cJ2C5UgjGV88p7PJdqInDbzZtc8R4t+39Xa2JlS8awaRGngUyLAZxqKl6OpJy4g5aqpUYeQX+KSx30/nxHSmhvL9aM0HMgY9AwYRGO8VmzqreuphCNAO/JKbiHwXEXtrOXCN67s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786699458; c=relaxed/simple;
-	bh=t4H4NDsVqvtOh1B8bIPxsZW4VdsUsKMmQ3HmPurbO7c=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gieFfpwWK0ssJmpSKaLEQ9cLNdAfNc1NcUMSYnp/lESfYi2oY0AbhS4WyPHTum5FzuCBTbHch4Nepc6iWcLDmUV3T0O2DQ+M7DUIxrcuSRY5DDlRjGoTHLRhtisybN3B3yJhfldVLEQMoyi43AhKCW7HTKAhkUWVA8P/aGBQZRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=jn5/ni23; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	s=arc-20240116; t=1786702550; c=relaxed/simple;
+	bh=mwHOjyPcBjFJwUy1wg+Xz3IWBa+kx7JlzZt+oq/NInc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=anFhCmDUEo5OcQRPj1gLCrFC3RjTw5/ahITmzasmxAS7QZylrxAlY5HbdLkuk0K3QiiktbvYcU/KZVUK/mBdbTtcOUDQfFGz6W9XHfd8BkrBjpNO2zRKhod0SKdrCDrFlHbXfF0mfYlUnZCruyJpyC6nkJWat2TUbtnpVd0tSoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FIqmu4aD; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="jn5/ni23"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1786699460; x=1818235460;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=t4H4NDsVqvtOh1B8bIPxsZW4VdsUsKMmQ3HmPurbO7c=;
-  b=jn5/ni23agiW9DJg8+3BBET5LSvS+cJuxt/L/mS4mJs44H5my/zy6Lgc
-   AMa70gVN4HZD1UVQ9GrHjBZAga8SiburZva0f5104IkfQX26yFhY5mDO6
-   02wTUCsqvF4yJyH6PyWtZX1Fe9eM3lQe4eBnJ5mbt11qN0b+9S5g6Tgo5
-   Gy41c0dR75GyY3ZqbT1I32M0i58BjqMUeJSwuONla3VvJFG78uFSyNjOJ
-   7DuRj5FzsihfYlRMDwkvyn5SHWVByIhuCK/vjrFLkr89DlDlvAN5wcbic
-   8yBwPRtjFiHKoAfOdkYqvcvhaTWJTEbligByLI2skpTnsMyHHRDd+eyH2
-   A==;
-X-CSE-ConnectionGUID: aH9GwClsR3igNfp7TJnB4w==
-X-CSE-MsgGUID: BYlb580uRUGqR0UKjiA5+A==
-X-IronPort-AV: E=Sophos;i="6.25,222,1779174000"; 
-   d="scan'208";a="62140907"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 14 Aug 2026 02:24:14 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Fri, 14 Aug 2026 02:24:10 -0700
-Received: from localhost (10.10.85.11) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
- Transport; Fri, 14 Aug 2026 02:24:10 -0700
-From: Pedro Kopper <pedro.kopper@microchip.com>
-To: <linux-kernel@vger.kernel.org>
-CC: <linux-riscv@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<daire.mcnamara@microchip.com>, <mturquette@baylibre.com>,
-	<sboyd@kernel.org>, <bmasney@redhat.com>,
-	<valentina.fernandezalanis@microchip.com>, <conor.dooley@microchip.com>,
-	<pedro.kopper@microchip.com>
-Subject: [PATCH] clk: microchip: mpfs: fix regmap_update_bits() mask/val order
-Date: Fri, 14 Aug 2026 10:22:13 +0100
-Message-ID: <20260814092211.2158337-3-pedro.kopper@microchip.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FIqmu4aD"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BD691F000E9;
+	Fri, 14 Aug 2026 10:15:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1786702535;
+	bh=mwHOjyPcBjFJwUy1wg+Xz3IWBa+kx7JlzZt+oq/NInc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=FIqmu4aDSrKEH+ei+l9NY/L4Yjn7T8I0CLeqZ81qEbTNQAOm7s62Rz7Wx5vyyGdJi
+	 oSpydOQ3VyiDimUK6hJtiSMyexBVgOBzXUwXelgTk/F8d+NhYFVMFa76cVp1H4yfaU
+	 4rzqry5CvYED3LjxqCWlpPelIRkty+vAFsniGKbchN4WDk8JZ+r/g7CaF+wcMMCYt2
+	 7WVAFv3gWq60azC2yj1Rqk4w6n1xzy/9n3f//b68vGVuDj65IJa38ZFmMwFQ9/2XEI
+	 6l6T71Sq1cTycVp9r6RLKYGMRM3dXERDFFl5ACdDMhR+VWdDovbrlCIO2e6yP3k+bw
+	 GU27jVw0OGGtA==
+Date: Fri, 14 Aug 2026 12:15:26 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Vladislav Leonov <vlad@zlab.su>
+Cc: linux-rockchip@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, Simon Glass <sjg@chromium.org>, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 01/25] dt-bindings: reset: Add RV1106 CRU reset
+ definitions
+Message-ID: <20260814-pristine-warthog-of-tolerance-4be5cc@quoll>
+References: <20260810121121.210040-1-vlad@zlab.su>
+ <20260810121121.210040-2-vlad@zlab.su>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20260810121121.210040-2-vlad@zlab.su>
 
-mpfs_cfg_clk_set_rate() passes the mask and value arguments to
-regmap_update_bits() in the wrong order. The resulting write becomes
-reg = orig_reg | val, causing bits to not be cleared if the clock
-divider changes.
+On Mon, Aug 10, 2026 at 03:10:52PM +0300, Vladislav Leonov wrote:
+> Add the reset ID definitions for the Rockchip RV1106 clock and
+> reset unit (CRU), to be used by the reset controller driver and
+> device tree nodes.
 
-Pass the arguments in the correct order so the divider field is updated
-as intended.
+This goes with the binding/compatible using it, where is it?
 
-Fixes: c6f2dddfa7f9 ("clk: microchip: mpfs: use regmap for clocks")
-Signed-off-by: Pedro Kopper <pedro.kopper@microchip.com>
----
- drivers/clk/microchip/clk-mpfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/microchip/clk-mpfs.c b/drivers/clk/microchip/clk-mpfs.c
-index ee58304913ef..7f044775aea8 100644
---- a/drivers/clk/microchip/clk-mpfs.c
-+++ b/drivers/clk/microchip/clk-mpfs.c
-@@ -285,7 +285,7 @@ static int mpfs_cfg_clk_set_rate(struct clk_hw *hw, unsigned long rate, unsigned
- 
- 	mask = clk_div_mask(cfg->width) << cfg->shift;
- 	val = divider_setting << cfg->shift;
--	regmap_update_bits(cfg->map, cfg->map_offset, val, mask);
-+	regmap_update_bits(cfg->map, cfg->map_offset, mask, val);
- 
- 	return 0;
- }
--- 
-2.43.0
+Best regards,
+Krzysztof
 
