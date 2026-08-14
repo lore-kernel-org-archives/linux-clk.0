@@ -1,71 +1,72 @@
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E550745FFDF
-	for <linux-clk@vger.kernel.org>; Fri, 14 Aug 2026 12:34:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D96321BC2A
+	for <linux-clk@vger.kernel.org>; Fri, 14 Aug 2026 12:35:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786710862; cv=none; b=GXkn/Q/Zs5Hz8ONv9/8+F7psSeTSeDNybt82335Db35E1yc5kznU44hkOBkiuG8hb3gMwwX/B+nhJ8fYLxXB6zhkX+pLV4lRGsp5U3CeZ5YBBuTx4lybbYGCtYhcsdyGLa7v5PaoJZ/01ukmh1vWsWtkwXoMQyAVBsmhmwga9j4=
+	t=1786710918; cv=none; b=qWgdao/JoZE1uY9EcpB6cWHV+irB0PM7PIU3N+woyhm2fedsh5g++ukzWA5BHnmn/tvumIvmkJhnrZ6WWdKRMvbdLuorHVBrucc5pkbRJcqojaVaXTffbgxN75FHplqie5TCKqIV5kdbMjorKcLWIWHJ7XGo4WM3ahaMl+47vP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786710862; c=relaxed/simple;
-	bh=8fm1wQqNdK8Pqh1xZ0Yz/MAvNolCHkHoVBPeugbRbLA=;
+	s=arc-20240116; t=1786710918; c=relaxed/simple;
+	bh=8OCXjdlcsorW7F3wlDb9Rg1EhzwfK4LjvHWJgLnbL8A=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aKhZOxmJ2jTTsiZTM5G/wbTolrdES/YwbDh00jAx8LxbzhKPrsTzlJsJTuicPVMyx7frz7/0PFVxw7Jo898+UqnQagWwuVzx3e0Nx0RJQ+h46f432fkfM2ULZq28qgNSsJ40y/M4iE8HqpLlPYWHWY/0+zdODKRePml5y8/eME4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.52
+	 To:Cc:Content-Type; b=q6QX3Ib6aYKerMBXZuV+9PVER8lLHD9VJpWEAhed3DN9BacBdSw/u5j4yCwTRrLCHgKoNIf2WbGoZteOZ9wLUCWrK5ymyLwmKWrIs54YKgYEi4WKtS6yT4gMUdaHM+32ibzbve1mdk0uoYSJPkVMmXb0YmAZjhIBFS17kJkDfaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-6a15d54ac95so1436909a12.0
-        for <linux-clk@vger.kernel.org>; Fri, 14 Aug 2026 05:34:20 -0700 (PDT)
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-c1fbe461f59so151783866b.2
+        for <linux-clk@vger.kernel.org>; Fri, 14 Aug 2026 05:35:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786710859; x=1787315659;
+        d=1e100.net; s=20251104; t=1786710915; x=1787315715;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=5jTjhdgDgezOGQJNdD5S+MhkhGYZML4+d+xIz3mpVms=;
-        b=aGD5zkEIatVgYopLc8KPprcGAzt5b6R2Cm3Cxa0p5RqbdkEj+kUD83AT7cv1fJwHCD
-         s7XW6xdAxm+UL+lEZwnovziKjya+iex7B+aO9mkTUj4vRiNJDlEqnTcF6Xq56NAsjNwk
-         bIsAskMVFSE7NxR+sGNEClwEgUbQTgOBhHricTmKLgkD/DqdXTRhPKPaf8BYsELqxGiv
-         kBWN/fR6hAmOQLUEt2+S77DKRwsBkgUNfRRsLn2VOU5SvoGS39+XFCw2i1SFZIrGlWxH
-         KJZWU7S6oauruObFmm1UbeylX0sYlGlbPNEmaa8MLiz3Spzf1q3zvSQS279e7mkNOcwf
-         pFwg==
-X-Forwarded-Encrypted: i=1; AHgh+Rrb1s/D5iyjqiEotMPNnhw/FrYcxfYpPd5jxR/JrecZd32CcsJ8S4TXTace9fZyxupLEGOaLWf4K94=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycEJ9kt0SEtYgW3VYRVjvbU1ujoBzCMkVN2vITSKdm8dY7yRLr
-	fv5a2kf1KKhsA9y8yN2J+/v2sW5ZVkmGpeL0z5dZLXL8VTfWseMahqj2JwFVCuTp2RM=
-X-Gm-Gg: AR+sD124b7se4MUnCJr6WkUoDVxVCi7uO29EFY6giAyTPDsS9lKY6pGxEWgFxLBTl5I
-	W/eGG8pmvrCA9ES2xbkyX1DHd0773Df+4lYjDSzfy67BvQ/sivArmvFj9QOFsA0YIgBTLEwCLT9
-	g5/7Tj/ExUEOoyK1aSl0wgmZM7jtZ71O4K8n+DBYtMwkQxD4n7nMNe34HHybmq1CvdVSSMY8EQn
-	8Fr59iodq5Paq4rdXA2uiObiL24HKKRlDaRM3Ra1SqCql0pE/x46+gXQO4chtSxA5O16S9kcjHY
-	QY3bDcFpDX57JsMAzwfUTMcfK1Gn0nW2uo9ht4qsenXErfAmYu+KnBk6zDzaoQ1rr7iZapJGw7o
-	WFYa6rbBEVSyNrv5ADYDMwBi054NVSfu892jPxt1zfMrPqn9NZ/68wTN1g2ECeBmLq5g7JR379l
-	Fd8HJCRT2cXyRHXxVyqw5SILAkH2CZ22ZKKC+EYHthf5ZblPnsOuFXIlh2I+AidohvGzya33egS
-	JbhvnfI07+gF2dH2olBzL1Mk4wYtrLRjMT+
-X-Received: by 2002:a05:6402:52cc:b0:698:e614:e4bf with SMTP id 4fb4d7f45d1cf-6a38a83c062mr2254112a12.0.1786710859104;
-        Fri, 14 Aug 2026 05:34:19 -0700 (PDT)
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com. [209.85.208.42])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6a38c9d5f49sm740103a12.2.2026.08.14.05.34.15
+        bh=FB5ANdhijMw8+haLtploY2iQ9eczR6t2NkhhsUQF4JY=;
+        b=L/9fFoAZ3V7EFRts7FoXft4g8XsAWQU+yYKCxSpqTqKytcbtysmk2wpfGSxFK2voZi
+         1UWWj4V01HJMD3wz6faq17dEcZ99IBLYP/4jZu/TI5X6XqkXqSR153ZW1bSmqZ5g3tP3
+         3RI36zHmiB9VlSRqwccbP9K69RIA9nUtKd8gAsPwWQDY6lpaJ4qzf7obiTin5/Rr8C3H
+         oUK2GayuIL+pzDNXHa7V7AV8l3kv9EyVRyzQBAxVF20GlIE++Hq9NYGjq3q0uVrpZBqp
+         zSnzU3W3nxewAbvbL6BaQIVY/5V/Mfm66G0oBzCH1LvXb3cH6rhumucGFIsEHnS7v8wx
+         8SNw==
+X-Forwarded-Encrypted: i=1; AHgh+RrVYNsXu4yJ7UB893R2+uBKs6Vf1qDDzdh+cf8cb3DfvgR2ZCSNy8/6gjDzXXvHHtIJBnYsVKpQswc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnzWAjlb5wcIi4Gb/MFaWLrmGsvOsHjCC+FwU+0A/aFp/+jpiq
+	x7TeyZeJjvWk76Orr4JHepxmZBtvubCTAtqKTGJy991ib+nyxe6O4UXMrMJiD8eej6c=
+X-Gm-Gg: AR+sD12ZiYlxtHWnx7S0HvT2Pn1flCZU/4/I8eNVJdF/hUMk34QniFsYVGEsAYj8jVb
+	KMvaPa8ss6Rt7ds0QhhI2UHoAqGPjqauZlTtkELPdfnR9EmSbdIGMwJjltCu1ttCoF9M5CSjnn0
+	mN5LyJXB+o08igfgmcy8VvH0xJ0VMSrB+NdGeJYXMFcqbT7lRy3qFotii3Y8nf0b52VlY3CQuld
+	GOKofKc/+bFWjgQaicLrT9NA2tIc/0QkoYw7PiGV5KjQDAJaexyrnD73VHnRFXNr3u8QRWD9EXc
+	aJnGJKdUY//NSvtOdOB64xWNXb581xFQP7k/rWXOKwDITDsD94Y6LonSKTh3VmoijPse4Hg4Ufe
+	Fz6+ywdkvwIhvb9DKMrgTlqFXzmIxUCBaqceSTr/VyL7jWb1+UizElTKU+rMHoIqOOo7yahs/1+
+	C6AAh7CyQu6o0it8TN0CiXf0wJeRtik8g5VafWVK+KeJxFHE33O87dKmQpeTKaC6LQcwPqA7Ise
+	gl5I3bqj28uM+7WPtK6Fru0dQ==
+X-Received: by 2002:a17:907:7b9e:b0:c20:33db:41d3 with SMTP id a640c23a62f3a-c2129bd0001mr241187266b.11.1786710914947;
+        Fri, 14 Aug 2026 05:35:14 -0700 (PDT)
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com. [209.85.218.44])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c21234c4893sm98483166b.20.2026.08.14.05.35.12
         for <linux-clk@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Aug 2026 05:34:17 -0700 (PDT)
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6a15d54ac95so1436764a12.0
-        for <linux-clk@vger.kernel.org>; Fri, 14 Aug 2026 05:34:15 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RptKLGP0s7kvNNnJ1kOWWVyMJZ6wHaqZ881gmV2tWpMkjjX7eYA/E9UJ/Pqmw5cwFagMkg0Sr/ah+w=@vger.kernel.org
-X-Received: by 2002:a05:6402:c286:b0:698:6084:db7f with SMTP id
- 4fb4d7f45d1cf-6a38a96199bmr1711549a12.10.1786710855432; Fri, 14 Aug 2026
- 05:34:15 -0700 (PDT)
+        Fri, 14 Aug 2026 05:35:12 -0700 (PDT)
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-c1fbe461f59so151776666b.2
+        for <linux-clk@vger.kernel.org>; Fri, 14 Aug 2026 05:35:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RpApQQOhKU5vjg5UiEtJCs+XactKus1GCbMoQ6q82+cKVU+yRuSuA+M77tZk10hIj8F//7eW0QUzQc=@vger.kernel.org
+X-Received: by 2002:a17:907:c17:b0:c16:13e7:fd63 with SMTP id
+ a640c23a62f3a-c21291fdcfcmr243697466b.0.1786710912661; Fri, 14 Aug 2026
+ 05:35:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260811182729.360959-1-biju.das.jz@bp.renesas.com> <20260811182729.360959-5-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20260811182729.360959-5-biju.das.jz@bp.renesas.com>
+References: <20260811182729.360959-1-biju.das.jz@bp.renesas.com> <20260811182729.360959-6-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20260811182729.360959-6-biju.das.jz@bp.renesas.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 14 Aug 2026 14:34:02 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWu5AQM_x+0JviyhHpA_8GrvOs4cjtMtavUz+JVuYvE-g@mail.gmail.com>
-X-Gm-Features: AUfX_mz94vfWwhgBn2FgWCEksiaALpbjVla2lJItINWmnEhbnvNVKgSFjzFn1qk
-Message-ID: <CAMuHMdWu5AQM_x+0JviyhHpA_8GrvOs4cjtMtavUz+JVuYvE-g@mail.gmail.com>
-Subject: Re: [PATCH v2 4/9] clk: renesas: rzg2l: Add support for divider flags
+Date: Fri, 14 Aug 2026 14:34:59 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdV115FmUP6tiNi1YjEfOevuDvuLib7pLd1da=7JwnsNdg@mail.gmail.com>
+X-Gm-Features: AUfX_mxcx88DEcyLlr5JNAc6a9MM4NBZevz1i_Gg-nCQLWP5aYOxwOMH-wNJ27k
+Message-ID: <CAMuHMdV115FmUP6tiNi1YjEfOevuDvuLib7pLd1da=7JwnsNdg@mail.gmail.com>
+Subject: Re: [PATCH v2 5/9] clk: renesas: rzg2l: Add support for LVDS
+ fixed-factor divider with 4:7 duty cycle
 To: Biju <biju.das.au@gmail.com>
 Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
 	Biju Das <biju.das.jz@bp.renesas.com>, Brian Masney <bmasney@redhat.com>, 
@@ -77,59 +78,36 @@ Content-Type: text/plain; charset="UTF-8"
 Hi Biju,
 
 On Tue, 11 Aug 2026 at 20:27, Biju <biju.das.au@gmail.com> wrote:
+>
 > From: Biju Das <biju.das.jz@bp.renesas.com>
 >
-> Add support for passing divider flags apart from clock flags from soc
-> specific clock drivers.
+> Add a new CLK_TYPE_G3L_LVDS_DIV clock type and register function for
+> a fixed-factor divider used by the LVDS clock, which cannot produce a
+> 50% duty cycle for odd divider values. Implement a custom
+> get_duty_cycle() callback that reports the actual (div + 1) / 2 : div
+> duty cycle, and add the DEF_G3L_LVDS_DIV() macro to define such
+> clocks.
 >
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> ---
-> v1->v2:
->  * Collected tag.
->  * Fixed a check patch warning by using (_div_flags) in DEF_DIV_FLAGS
->    macro.
 
-Thanks for the update!
+Thanks for your patch!
 
-> --- a/drivers/clk/renesas/rzg2l-cpg.h
-> +++ b/drivers/clk/renesas/rzg2l-cpg.h
-> @@ -112,6 +112,7 @@ struct cpg_core_clk {
->         notifier_fn_t notifier;
->         u32 core_flags;
->         u32 mux_flags;
-> +       u32 div_flags;
->         int num_parents;
->  };
->
-> @@ -168,11 +169,18 @@ enum clk_types {
->  #define DEF_DIV(_name, _id, _parent, _conf, _dtable) \
->         DEF_TYPE(_name, _id, CLK_TYPE_DIV, .conf = _conf, \
->                  .parent = _parent, .dtable = _dtable, \
-> -                .core_flags = CLK_DIVIDER_HIWORD_MASK)
-> +                .core_flags = 0, \
-> +                .div_flags = CLK_DIVIDER_HIWORD_MASK)
+> +static int rzg3l_cpg_lvds_div_get_duty_cycle(struct clk_hw *hw,
+> +                                            struct clk_duty *duty)
+> +{
+> +       struct clk_fixed_factor *fix = to_clk_fixed_factor(hw);
+> +
+> +       /*
+> +        * An odd divider cannot generate a 50% duty cycle: the output stays
+> +        * high for (div + 1) / 2 input clock cycles out of div, e.g. a divider
+> +        * of 7 gives a duty cycle of 4/7.
+> +        */
+> +       duty->num = (fix->div + 1) / 2;
 
-This can be simplified to:
+DIV_ROUND_UP()
 
-    DEF_DIV_FLAGS(_name, _id, _parent, _conf, _dtable, 0, 0)
-
-I will do that while queuing in renesas-clk for v7.4.
-
->  #define DEF_DIV_RO(_name, _id, _parent, _conf, _dtable) \
->         DEF_TYPE(_name, _id, CLK_TYPE_DIV, .conf = _conf, \
->                  .parent = _parent, .dtable = _dtable, \
-> -                .core_flags = CLK_DIVIDER_READ_ONLY)
-> +                .core_flags = 0, \
-> +                .div_flags = CLK_DIVIDER_READ_ONLY)
-> +#define DEF_DIV_FLAGS(_name, _id, _parent, _conf, _dtable, _flags, _div_flags) \
-> +       DEF_TYPE(_name, _id, CLK_TYPE_DIV, .conf = _conf, \
-> +                .parent = _parent, .dtable = _dtable, \
-> +                .core_flags = _flags, \
-> +                .div_flags = CLK_DIVIDER_HIWORD_MASK | (_div_flags))
->  #define DEF_G3S_DIV(_name, _id, _parent, _conf, _sconf, _dtable, _invalid_rate, \
->                     _max_rate, _clk_flags, _notif) \
->         DEF_TYPE(_name, _id, CLK_TYPE_G3S_DIV, .conf = _conf, .sconf = _sconf, \
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v7.4, with the above fixed.
 
 Gr{oetje,eeting}s,
 
