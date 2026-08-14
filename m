@@ -1,85 +1,85 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69D4B40F8D0
-	for <linux-clk@vger.kernel.org>; Fri, 14 Aug 2026 07:26:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEC4041686F
+	for <linux-clk@vger.kernel.org>; Fri, 14 Aug 2026 07:28:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786692383; cv=none; b=kGLPstln7FHr5lNz2b1thxTSVcY1K+xYq2urw7MO0Jqg+m3Ppr9Y9BPccq6XAbKYGdVJAc8hSRPCVC/5kXlr7am3Ye9Su0Y2E/U7cQjTiNWWfaN/bmLcb8REDL3zxCuXXWdbSzoxY42P7mv6bJ3XdOe+d7DnyLZAph2kboJviy4=
+	t=1786692515; cv=none; b=eYjDk9LtxQhd5ucNUEYo9lo7EVg7Ocg+BZohJ8DicLKekQROJh1jPYG4Jyn0QGmm6iBKLuYycoWw1PrsQ5s7dxjlsymnbgzLdJjl44xMRb2XDIS3AnsxD5osi+lZ28EqQUW3VvfRrxTLsoF4Eq0vYTPBr21wPwgTuZ0olKZ5N4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786692383; c=relaxed/simple;
-	bh=XUQT37v5nndWRb0WlzDNA/x4ySUuWCY6uRQ4HzaiAOE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Nc1MKQGyECXoVvwHSWPIQV+hds4sQPdT6X/Z4tqqEVcVWmGI+ut2xg84HcYZhS1xVz2H+jcXq4SiZsFAXe0edRyBaW1lBHC35kUEvpWLoFmhc4l6fzQdyEE4Fidr8P1KB5IazHWHLNqs+OYfscjU8Gps/+/KzkgfkPlwi+JEjYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OiACllOF; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1786692515; c=relaxed/simple;
+	bh=qDGQ13IBjiJgy62oQRDtufMFAqPAJd0NT3GMpxMkjkk=;
+	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=MDfsKcY8GgpDPX0hNymnoNQcn/JbBoPQOd+Tgso8yiMgDU+Hw5D5MtOvDp4aU5NM61b9sGftRVgn29qURTC754aRA0QJ327l7Cv6yNITZ0tD2RzL676I/0QvOhacZYOY0mUfD3HG10xHqMUjWln/T7BQ4j0571+VjeG9Y3xsWyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eLtc9ZDG; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OiACllOF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7290C1F00AC4
-	for <linux-clk@vger.kernel.org>; Fri, 14 Aug 2026 07:26:16 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eLtc9ZDG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDAE41F000E9;
+	Fri, 14 Aug 2026 07:28:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786692376;
-	bh=XUQT37v5nndWRb0WlzDNA/x4ySUuWCY6uRQ4HzaiAOE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=OiACllOFO8QIAhf7lvLqsh35TAFyWvCe2xq2GXnZDpaFdAjecqBiw4YZwYFskiXjX
-	 /d8gLs5hZuR3Kq357/4oocJQCGu/IQ/pYyMzccY2/vfFsVN/3m+96EusRCT+RpsYmr
-	 sGL2dn4xdPbeEC+GD4CWZ6I5SLa6AKx6yL5c6SldwZ7KNFuhtbrgQvhzsoYc130sRI
-	 T6+Ud+WZbVXy6WGydsDXWMbs4HbdeEiSU5dVgPq+7+D1If1tyLR797LO+bqv18Ez6g
-	 hrfRD26wtoqXLuim5hUZPNJPO9cl9GfO4O31Ny5vQXr0dwoCBARnKmjZtNL062XH5i
-	 n8TAKAFJ6fsuw==
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5aeb24c0807so489217e87.0
-        for <linux-clk@vger.kernel.org>; Fri, 14 Aug 2026 00:26:16 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+Ro8cgg7JhWhLprQguptSFMO0bO6334jd5VqI3pvEgchuYcvokabQGE/aoWefKxZ3W92NLJDr04dcxk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvfRz+nP/aFO4KLvfvJREunhkVqGsJxI92gg0XY6GBBChvWY3U
-	ajX6MdQsNshJoY7rqNBy5S7fyk2DAeVtXi8RTYGG7I+TTZWYFvc/737RvWIJaCMtXBdZwv/BeFj
-	vEOpTDGr/+mfzQIUWixEKG9En9X+IQFs=
-X-Received: by 2002:ac2:51d1:0:b0:5b2:a328:cdd5 with SMTP id
- 2adb3069b0e04-5b45919ee31mr544880e87.49.1786692375262; Fri, 14 Aug 2026
- 00:26:15 -0700 (PDT)
+	s=k20260515; t=1786692509;
+	bh=qDGQ13IBjiJgy62oQRDtufMFAqPAJd0NT3GMpxMkjkk=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=eLtc9ZDGFLYKVNr7+FtKsZA+T6M7W6aCT8lx+rZISt+trkvn3zERrH+gVOFfBXkab
+	 RlA/TAZdKKwYrNHcQFFio43HIbrT4ef3pLdNRpVdh8cHfLksia6Ur+5jh4n7fe773H
+	 G7sjnfGU8yR5PHWvgdLfCBjZqYG9oM6mhbHpDAXFBZ/3nI+hX8Ktm+earCMRH03Tkd
+	 EosGvPhYj1iyFUxSdGtBecb9+Xt9Pvdz2oHE0ciH1Jiavyy18oPpLGRf2CIHOMqzRM
+	 fI+EkveAK4Jh4KqEirCXEj/tqdOVbY7HJ3ky6AUi8wZNh2cTq4XNOms7WNxCV7Cvip
+	 xMqP4f7tFML+Q==
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH] clk: nuvoton: ma35d1: Use clk_hw pointers as mux
+ parents
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Miquel Raynal" <miquel.raynal@bootlin.com>
+Cc: linux-clk@vger.kernel.org
+In-Reply-To: <20260813-perso-ma35d1-upstream-clk-v1-1-e78e5e6172ea@bootlin.com>
+References: <20260813-perso-ma35d1-upstream-clk-v1-1-e78e5e6172ea@bootlin.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 14 Aug 2026 07:28:28 +0000
+Message-Id: <20260814072828.EDAE41F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <cover.1785838584.git.mazziesaccount@gmail.com> <d419dcf8776f7ea88e4a66b9a0f0087f11e6622c.1785838585.git.mazziesaccount@gmail.com>
-In-Reply-To: <d419dcf8776f7ea88e4a66b9a0f0087f11e6622c.1785838585.git.mazziesaccount@gmail.com>
-From: Linus Walleij <linusw@kernel.org>
-Date: Fri, 14 Aug 2026 09:26:02 +0200
-X-Gmail-Original-Message-ID: <CAD++jLnzLiyBsDi2zeR13_95hpip7i3fOSwMbMXD7KYeJj5X=w@mail.gmail.com>
-X-Gm-Features: AcwNN1XqzgmqVA0UuXzJafrByAbtpxUiXy_C_XbrwJ4yAGRJ9EaFb9OIaRI3WXM
-Message-ID: <CAD++jLnzLiyBsDi2zeR13_95hpip7i3fOSwMbMXD7KYeJj5X=w@mail.gmail.com>
-Subject: Re: [PATCH v2 02/10] dt-bindings: rohm,bd*: Ref common ROHM bindings
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, 
-	Matti Vaittinen <matti.vaittinen@linux.dev>, Lee Jones <lee@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney@redhat.com>, Bartosz Golaszewski <brgl@kernel.org>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, mfd@lists.linux.dev, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-rtc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 4, 2026 at 12:21=E2=80=AFPM Matti Vaittinen
-<matti.vaittinen@linux.dev> wrote:
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
+- [High] Missing IS_ERR() check when retrieving clk_hw pointers for mux par=
+ents leads to a kernel panic if a parent clock failed to register.
+--
 
-> From: Matti Vaittinen <mazziesaccount@gmail.com>
->
-> The commonly used ROHM PMIC bindings were added into
-> rohm,pmic-pins.yaml. Keeping commonly used properties in one file can
-> ease both the maintaining the bindings and the reviewing process.
->
-> Reference the common bindings from rohm,pmic-pins.yaml, instead of
-> declaring them from the scratch for every PMIC using them. Keep the PMIC
-> variant specific information (like supported pin functions) in PMIC the
-> specific files, so unsupported values won't be allowed.
->
-> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+--- Patch [1]: [PATCH] clk: nuvoton: ma35d1: Use clk_hw pointers as mux par=
+ents ---
+Note: The format of this report has been altered to a free-form summary due
+to automated recitation restrictions. Inline diffs are omitted.
 
-Reviewed-by: Linus Walleij <linusw@kernel.org>
+commit cb1ab325c1866a1de7e5ffdc22cd1339fb87557f
+Author: Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: clk: nuvoton: ma35d1: Use clk_hw pointers as mux parents
 
-Yours,
-Linus Walleij
+This patch updates the MA35D1 clock provider to use direct HW clock pointers
+for parent lookups instead of string-based lookups, fixing flat clock trees
+and unassigned frequencies.
+
+[Severity: High]
+Could this lead to a kernel panic if a parent clock registration fails?
+
+In drivers/clk/nuvoton/clk-ma35d1.c, within the ma35d1_clk_mux() function,
+the code iterates over num_parents and assigns hws[parent_idx[i]] to the
+parent_hws array.
+
+If a preceding clock registration function (like ma35d1_reg_clk_pll or
+ma35d1_clk_fixed) fails, it will return an ERR_PTR which gets stored in the
+hws array. Because ma35d1_clk_mux() copies these pointers into parent_hws
+without an IS_ERR check, the ERR_PTR is handed off to the clock core.
+
+Since the common clock framework treats any non-NULL pointer as valid, won't
+this result in an invalid memory dereference when clk_core_fill_parent_inde=
+x()
+attempts to access parent->hw->core?
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260813-perso-ma35=
+d1-upstream-clk-v1-1-e78e5e6172ea@bootlin.com?part=3D1
