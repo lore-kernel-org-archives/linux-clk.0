@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B99F538F94C;
-	Mon, 17 Aug 2026 07:57:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B0BF3AFCFD;
+	Mon, 17 Aug 2026 08:09:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786953426; cv=none; b=dxbyxo586+Ur8HFdTRLwHVEKdOgDDcOqX2kCDI1cznT0GhSMuQJCPkbX+ftfNTTgQ0Z/ZkzEvFShAZoHi/zDFTpJFw0eePVYXPfCuwzoV4sUYIRQoSef6XmuXGILnXg4mpcsh1KiDHR/0k69Wib94jwYFJ0INpLIneZiEqo6pXs=
+	t=1786954153; cv=none; b=N+JW1J9N/eADIa/Bqkhs/TnZURZTksMsKQEV3d3nMS1E7fdpxSQloAPexI6slN+sWK5MT2CgX5szpzNsF52xKoEBwG+SFawbaYqaRPX1LXccJrig/gun10LPvVOLf7p6TqJLJUJpgd9J0F3npH0+u+Tie/VBzb3/1zQRyHdTBqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786953426; c=relaxed/simple;
-	bh=YeDuP5z2WaKdkBoEr1D6eBAIQJgRAExzc2RzVmOysmY=;
+	s=arc-20240116; t=1786954153; c=relaxed/simple;
+	bh=C60FLdtQBj+tDL7hkAVsYd2X95idF0Jphgms4i1/JXQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PtVMv3UPvRbxgsIDc6nCZGKhWcTmCSy75GV8h/GOdzeUEBKttxZRBtKv8LXzj8zJoruhMeyWlIs5QHiqPY09CDfZhn3Oxlp+tCyfh/v3xXCVkyz4IMA4LcurmS8L5autTtOY96smp6kJav4Ucr39GVQMPCaYb/SuE3YMJ2eC2NQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CooNlyiE; arc=none smtp.client-ip=100.103.45.18
+	 In-Reply-To:Content-Type; b=CPbLr4JZoDYxmWmS4oryb0JcvO2TwrWxfUKuG2Cg9ETSALaGdH+po+ae3lnVadwsjLvLDi/A/6jmuBJj7xCptU5eIUY5jrjkKrnwQqsWjBEs2PWeP09XJZauwUxrJc42a4TKxyYzW5brIf76KLj4q0Sd1yrvLr1HPV1Ap8er54I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YV9R2xEi; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CooNlyiE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD7681F000E9;
-	Mon, 17 Aug 2026 07:56:56 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YV9R2xEi"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62D631F000E9;
+	Mon, 17 Aug 2026 08:09:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786953425;
-	bh=DMNyfr+vB6xzROe/nedLxsNSBpjIQIz4TKkDU1bGZHo=;
+	s=k20260515; t=1786954151;
+	bh=HtKqPVA6NvNcDQrkO35/EUcQzSDazN81PV3pgoIIPNc=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=CooNlyiEalGmVPIJWv/C8yFkh5tMwOfRdK/uE2qlWH7OLngt10rA2rrgWe9b5ZfKE
-	 DYzMVq44G+yRGwv0+NCSuASyuRjhRaLNm1D8ObP0vOKDfRNvprdPQ2XyfdQP7UkvjF
-	 TMl+pIako8NA/XPYlupK59IxE8LF3vlPMuab8lyYOnAbLsW5c4fuah1eJ3SkgoGUwt
-	 3Olwu8AHdcDDRk6Yrx1P8oLjowouycEoKkoYOoud63P39CXo0S7MudZqxRuZyl73x9
-	 gSLLJl1z0U86XgBinQrcyLh6ecuTOnR4YHanOBoG2WZz+dv6eBxMCL1H2CxNa4wmd8
-	 OnKA8UU+AasJA==
-Message-ID: <ffb3ee6f-d414-470c-b509-2800e504ba7d@kernel.org>
-Date: Mon, 17 Aug 2026 09:56:54 +0200
+	b=YV9R2xEif3pWbDLfBUC9Y4yKNFvAcZOgCkb0F4h8k1pt3AZuhKNM7c5/hEd1q8nFD
+	 z1Ci1LoHfsSQDjqNpKgt26+59VJPBqsrsmAiHeBRPI6lYL03eF8ExgkPqIEaovtE3L
+	 pzC2m84HKVspGsHwirxyiEhFozD278ketVgDnI7uTv9cpBfmH66qbbwHqp+ncONh+R
+	 AfRGgoJ++J4Wx40mVUwXZ4MJTMBNGJD2FwRwvNGXuN/C0e8/L4bJ9QFDceJEAqm+E/
+	 WYb9dFCa5LfDe/6D5i//FAxazJw8fP3+SElhsCuif5kb8o7BNs9Cy9CZCjQ8UxRowx
+	 FItG4ZJN32WEg==
+Message-ID: <cc70291b-a945-4a2c-9483-9160cc88e50e@kernel.org>
+Date: Mon, 17 Aug 2026 10:09:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,28 +35,15 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 10/15] dt-bindings: clock: qcom: Add Kuno Global Clock
- Controller
-To: Hardeep Sharma <hardeep.sharma@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Ulf Hansson <ulfh@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
- Taniya Das <quic_tdas@quicinc.com>, Georgi Djakov <djakov@kernel.org>,
- Bartosz Golaszewski <brgl@kernel.org>, Linus Walleij <linusw@kernel.org>,
- Thomas Gleixner <tglx@kernel.org>, Radu Rendec <radu@rendec.net>,
- Robert Marko <robimarko@gmail.com>, Guru Das Srinagesh <linux@gurudas.dev>,
- linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-gpio@vger.kernel.org
-References: <20260814-kuno-soc-support-v2-0-3079794f0f73@oss.qualcomm.com>
- <20260814-kuno-soc-support-v2-10-3079794f0f73@oss.qualcomm.com>
- <20260817-speedy-nimble-heron-a4aeeb@quoll>
- <05c743a3-0111-4b80-be98-b65b3a09ce34@oss.qualcomm.com>
+Subject: Re: [PATCH 2/2] dt-bindings: clock: Add GCC clock bindings for SM7250
+To: Sreeshankar K <sreeshankar0910@gmail.com>, andersson@kernel.org,
+ mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: bmasney@redhat.com, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20260816090719.892-1-sreeshankar0910@gmail.com>
+ <20260816090719.892-3-sreeshankar0910@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -102,45 +89,65 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
  n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
  qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
-In-Reply-To: <05c743a3-0111-4b80-be98-b65b3a09ce34@oss.qualcomm.com>
+In-Reply-To: <20260816090719.892-3-sreeshankar0910@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 17/08/2026 09:54, Hardeep Sharma wrote:
+On 16/08/2026 11:07, Sreeshankar K wrote:
+> Add device tree bindings for global clock controller on SM7250 SoC.
 > 
-> On 8/17/2026 1:00 PM, Krzysztof Kozlowski wrote:
->> On Fri, Aug 14, 2026 at 01:01:41PM +0530, Hardeep Sharma wrote:
->>> Document the Global Clock Controller (GCC) binding and associated
->>> clock/reset IDs for the Qualcomm Kuno SoC.
->>>
->>> Signed-off-by: Hardeep Sharma <hardeep.sharma@oss.qualcomm.com>
->> I do not see how you addressed my comments. I should not be needing to
->> verify if each one is implemented and then say again the same.
->>
->> Best regards,
->> Krzysztof
-> 
-> Hi Krzysztof,
-> 
->    Apologies — my v1 reply just said "done in v2" without detailing each
->    point. Both your comments are addressed in v2 patch 10:
-> 
->    1) Commit-message / binding style consistency:
->       Reworded to the same form used across the series:
->       "Document the Global Clock Controller (GCC) binding and associated
->        clock/reset IDs for the Qualcomm Kuno SoC."
-> 
->    2) "Not a power domain provider?":
->       Correct — Kuno GCC has no GDSCs and takes no corner votes. I removed
->       the power-domains block from the schema entirely, and dropped the
->       matching power-domains = <&rpmhpd RPMHPD_CX> and
->       #include <dt-bindings/power/qcom,rpmhpd.h> from the example.
->       (binding 56 -> 50 lines)
+> Signed-off-by: Sreeshankar K <sreeshankar0910@gmail.com>
 
-So if it is not a power domain, then why it is now being made a power
-domain (through qcom,gcc.yaml)? You need to disallow properties which
-are not correct for your device. Look at other bindings for clock
-controllers not being power domain providers.
+Please start using b4. Does this work:
+
+b4 diff '<20260816090719.892-3-sreeshankar0910@gmail.com>'
+
+? No.
+
+
+
+> ---
+>  .../bindings/clock/qcom,gcc-sm7250.yaml       |  60 +++++++
+>  include/dt-bindings/clock/qcom,gcc-sm7250.h   | 163 ++++++++++++++++++
+>  2 files changed, 223 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-sm7250.yaml
+>  create mode 100644 include/dt-bindings/clock/qcom,gcc-sm7250.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sm7250.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-sm7250.yaml
+> new file mode 100644
+> index 000000000..822df7dc1
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sm7250.yaml
+> @@ -0,0 +1,60 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/qcom,gcc-sm7250.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm Global Clock & Reset Controller on SM7250
+> +
+> +maintainers:
+> +  - Bjorn Andersson <andersson@kernel.org>
+> +  - Sreeshankar K <sreeshankar0910@gmail.com>
+> +
+> +description: |
+> +  Qualcomm global clock control module provides the clocks, resets and power
+> +  domains on SM7250.
+> +
+> +  See also: include/dt-bindings/clock/qcom,gcc-sm7250.h
+> +
+> +properties:
+> +  compatible:
+> +    const: qcom,gcc-sm7250
+> +
+> +  clocks:
+> +    items:
+> +      - description: Board XO source
+> +      - description: Board active XO source
+> +      - description: Sleep clock source
+
+Why this cannot go to sm7150 or sm6375 files?
 
 Best regards,
 Krzysztof
