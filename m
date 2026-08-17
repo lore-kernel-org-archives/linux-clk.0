@@ -1,64 +1,91 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD64C39E162;
-	Mon, 17 Aug 2026 16:37:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47D7739EF05;
+	Mon, 17 Aug 2026 16:59:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.200.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786984651; cv=none; b=GwXjTEUZMAdI/3MT+QkFp0XFlqh8WFTwkyVnXr+rx8wCc4+bgpPNKzywBOekE73C2iYbMn4CjkkKAOjw3TREqpCnN8LqChnLlv2+n2oHOHVL7hGwiredqWDYeezqPSZCAwtlfCC2hCkKQOSEvFT9Fuef80LsvNcmo0Dcjb7LUJ4=
+	t=1786985957; cv=none; b=QkZA1RAlbh7NVMiPAdKXmBXsmHcbk81W92DBQWRxaP+9Wy95212bogH38WdFfTzltOtOYqavWrJ73dat8tR0Z0MaaD3ke+JlX+vFY4VBoA3ZxH0Jr6aGyqHeVpyubjn7OIb605a984l71Hc9sgRphs8q4h9lm2ntm53slqmpJhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786984651; c=relaxed/simple;
-	bh=P5lmDpHOO4rhkjggKbW8gdsPM1x+hlNL8EyBq0gxxq4=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=pNxSQLTf386Q7DuAxYea/vB2npIw24hjr82BaurUdb1WEKo7h2KoLFLX1oHlvdIWlLQQ5xm5WMNqvolwX59OV4jrGP7Wj1cLTWAzwZ1WdcRHgpkfKbB3au7CNU9AL58/XJm6zu6lNAd4zrBtO4J2NrGWdO8GEzglR4IbA9e5vL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XRkxfHzW; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XRkxfHzW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 422681F00A3A;
-	Mon, 17 Aug 2026 16:37:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786984650;
-	bh=P5lmDpHOO4rhkjggKbW8gdsPM1x+hlNL8EyBq0gxxq4=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date;
-	b=XRkxfHzWgmMgjevAKHm45KOU5fJG8/sAlQjhyfqZdIyIOLmS6JTnq98jN4zaqTwSI
-	 Q5pqBLOK3u6jQcZwRgYT7C5OC/dveYDqWnZfpWEDk9wL/G3KddihLJwmBVQZN/VlMY
-	 azaKSt7N7iuWXfVS8sLnLgVS3ETIuoVOqN+hVEDnQukKcyokqCudcyTH7AJL7Nzr8J
-	 e2R1NWacXDACqMyXCPzsLqpARui0RhM2eiLhqiAHT1ZDPQtrA46E17AXjYes1lBbyS
-	 YXrL/28zZD6yXnz/fjLF9I4BXiceoDsBIz/UP1myJ6Uw1GrpRLvfL3l2Sj4uYJ/aal
-	 nU9CwPLsT6C8w==
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1786985957; c=relaxed/simple;
+	bh=v3znBcnWZS9ZdOO9gQ8LP4UTTT5x8wBVI5adKyp2OhE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OSbmgeZz0ssNIM9swsgoJQIQU1vp3mdXhDwV0uVDay+GPKN4fxuM90QTA+/8uIjNnF69IOTCrrXoMe9mYELFZhFzjD8O6p0hHT4udgt7ETjBdkqcKjDBMGiVFEv9FXc6pvE63dzVR8CztmD4UNAG9DF941tEzAYouDGWcwn+XjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.200.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de (drehscheibe.grey.stw.pengutronix.de [IPv6:2a0a:edc0:0:c01:1d::a2])
+	(Authenticated sender: relay-from-drehscheibe.grey.stw.pengutronix.de)
+	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id B51AD2009FB;
+	Mon, 17 Aug 2026 18:59:07 +0200 (CEST)
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1ww0fz-001zD9-24;
+	Mon, 17 Aug 2026 18:59:07 +0200
+Received: from pengutronix.de (p4ffb23c7.dip0.t-ipconnect.de [79.251.35.199])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 4A599584EB0;
+	Mon, 17 Aug 2026 16:59:07 +0000 (UTC)
+Date: Mon, 17 Aug 2026 18:59:06 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Cc: Claudiu Beznea <claudiu.beznea+renesas@tuxon.dev>, mailhol@kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, geert+renesas@glider.be, 
+	magnus.damm@gmail.com, mturquette@baylibre.com, sboyd@kernel.org, bmasney@redhat.com, 
+	biju.das.jz@bp.renesas.com, fabrizio.castro.jz@renesas.com, linux-can@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH v3 0/8] can: rcar_canfd: Add support for Renesas RZ/G3S
+Message-ID: <20260817-tricky-monkey-of-admiration-3caebf-mkl@pengutronix.de>
+References: <20260714173315.1981708-1-claudiu.beznea+renesas@tuxon.dev>
+ <7533fcaa-c676-48f4-924e-bba9195d4871@tuxon.dev>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="rj4diajalgdch7zj"
+Content-Disposition: inline
+In-Reply-To: <7533fcaa-c676-48f4-924e-bba9195d4871@tuxon.dev>
+
+
+--rj4diajalgdch7zj
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20260814-clk-next-v3-1-6f7f1410e809@baylibre.com>
-References: <20260814-clk-next-v3-1-6f7f1410e809@baylibre.com>
-Subject: Re: [PATCH v3] MAINTAINERS: Add Brian Masney and Jerome Brunet as co-maintainers for clk subsystem
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Uwe =?utf-8?q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>
-To: Brian Masney <bmasney@redhat.com>, Jerome Brunet <jbrunet@baylibre.com>, Michael Turquette <mturquette@baylibre.com>
-Date: Mon, 17 Aug 2026 09:37:28 -0700
-Message-ID: <178698464801.5030.2102940835263591905@lazor>
-User-Agent: alot/0.12
+Subject: Re: [PATCH v3 0/8] can: rcar_canfd: Add support for Renesas RZ/G3S
+MIME-Version: 1.0
 
-Quoting Jerome Brunet (2026-08-14 09:27:49)
-> From: Brian Masney <bmasney@redhat.com>
->=20
-> With Michael Turquette stepping down as a clk co-maintainer, this
-> subsystem is big enough that it needs multiple people to keep the
-> clk community healthy. Add Brian and Jerome as co-maintainers.
->=20
-> Link: https://lore.kernel.org/linux-clk/anW-jTldkWSJK3wl@redhat.com/T/#m0=
-ae01b8dd23c452d82f34b61844a8305977a53a4
-> Acked-by: Michael Turquette <mturquette@baylibre.com>
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
+On 10.08.2026 16:00:16, Claudiu Beznea wrote:
+> Gentle ping on this series.
 
-Applied to clk-next
+Who takes the DT changes?
 
-Thanks Jerome and Brian for stepping up to help! And thank you Mike for
-all the work over the past decade and a half on the CCF.
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--rj4diajalgdch7zj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSl+MghEFFAdY3pYJLMOmT6rpmt0gUCaoM92AAKCRDMOmT6rpmt
+0lK7AP9+oMyj6ytfdM7z67yrn9wesk0ufamxJGMDNGikBzwafAD+O+VfZ1iehxlN
+oS9IMQQ4PpRSF1EcIwYkk7FOReUh3AA=
+=Bil9
+-----END PGP SIGNATURE-----
+
+--rj4diajalgdch7zj--
