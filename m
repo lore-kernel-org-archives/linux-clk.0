@@ -1,146 +1,161 @@
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4169A431A31
-	for <linux-clk@vger.kernel.org>; Mon, 17 Aug 2026 13:12:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE53435535
+	for <linux-clk@vger.kernel.org>; Mon, 17 Aug 2026 13:20:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786972338; cv=none; b=P5NcEkLSACfwcI6hCjlp5W0Y40xcP+X3CjQj41r9ssuH8CACax3b9sR4YlYqKCTludILt9zvZdLx5eR9BCSG3yfAEMyxmd1DI/MLEvXt+DJXxz5vc0x1Ka+tq1k8AAGxgiPF/LxooyilBZraBzE3agBufuFqhveGFtZYs0NYZg4=
+	t=1786972845; cv=none; b=uoY37pdKyxm49VdyC0Xwvm7g+rCuwbDTpmTcXWqfu92W1lkP+RZkK+74iOzSyHm4s63dPhyFbLjyUHNXnootL+uygnFMieJwA7ggB4cH8mal4l8+LOAqUtFhS0lfVsSthZBEvGuvHGabEdSA2HEUVtt97cG9MYGdux++yX4pV6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786972338; c=relaxed/simple;
-	bh=dQ/H3XY5fTRlGrTTCRMgcg6R2IED5vstP6YDZZ2Lg60=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eNfQ+D6aVEyQFwDq6gXV2Eycz4CkVl57JGm3y5ykn7uocDKKnt1ckQXPPfGcU5kCr+6hFPy8nYiDV8+pkYvZ++VjIUKyqzEB40I86lABpmDXr/VkxqN1SBiX/1UItYNAj4ytPpNBwDWe1HenVNhXtCzFdPoKFLga7ZpIelHV1eQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LLPLY0rq; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1786972845; c=relaxed/simple;
+	bh=voO8sypVqvQZMHIbsiVnjirbHet2jA8QTEFrrGTm2g8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QO7HM+U0uR5YS0Dela5E4kzp85vRut12DUaTe1Fr5BYp2S2iyANeFVoSY34+6JTE4NwKNKo0RX3+ue/0AdOkGkBN7NrgqzyYp9uN3wDiZnLdB2d/4qmfHnlueG3mAwB0rzA2+1bhreODZhwBNbfSLxLwH6Kh2Ouwj46kyL2OgSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=d9jN12bh; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=KqhZ4MTL; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LLPLY0rq"
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-38dcbade417so3377915a91.1
-        for <linux-clk@vger.kernel.org>; Mon, 17 Aug 2026 06:12:12 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="d9jN12bh";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="KqhZ4MTL"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 67HD5nxK2238621
+	for <linux-clk@vger.kernel.org>; Mon, 17 Aug 2026 13:20:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	yceHBo3nFooDEH2xHhsyC5DfpLhq6tasQh2ju1Duoo8=; b=d9jN12bhgXLXzXem
+	VEdveKhdGhqe5nLxCs5296huHVlr/aYrcr5jRQF/aTcs6/VgXK7IdpmH++t/CEXM
+	3tGAXCXEAvPba16A5/Lk+UHWmVAwivmyjzJl0qwKkEn9WztqJkid19mIbMW0gjCA
+	qPG+sn8wuFPf+/x3aFW3VLBBVwgL2Pg2ePiBzmMBC/+IQ8FZgzG5NMnB+N92SHcW
+	u2Iy+DySCSb5rcy9gHLZ8dZOyF5TmgpOd6mTO7wQRxtTgA7wkahmWLIL48otdy3M
+	A3svpb563B8b44/Omh+6vdDAT+GE6B0vX81r3wxSj3npbn7kftMQ13j6Owlk/goI
+	4u7Beg==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4g3xyk92js-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Mon, 17 Aug 2026 13:20:42 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-51c07313be5so4180891cf.2
+        for <linux-clk@vger.kernel.org>; Mon, 17 Aug 2026 06:20:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1786972331; x=1787577131; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=lTHpr993bewVeu2QK28PUz7lB7HML+v/keJBM3aBb4I=;
-        b=LLPLY0rqtVEZmAYEyhp/QqI4NaPWXIOECPv2R2SB1iFC9Rp864xMZgNgpqua+8Wowu
-         0iYkdiG9ov9Qx5aGuk5e/ou+yODJ8h5iNEz7RuEZTn1yJMdv/BSAcsWt6SsmRoD/FN45
-         bSJUv16/5FjH6SgOVNIKnd8IuHU76B1bSMLt/TQsLffz3X2RRJ1ZphVnYJV6o9fAXBca
-         XrgQ1sNOaR//lrLYCM63h2qex2Nq61jiUtZ1Izj3M/vWgS+77BjmZi1WV3RJhGBLDle/
-         LV9SFUvXkQnMOCAFC4SqoZEO+BIr5Viq2LmSczqtx43L7UmQEcgu0efN5q0sFN+P2RsU
-         6ygg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786972331; x=1787577131;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+        d=oss.qualcomm.com; s=google; t=1786972842; x=1787577642; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=lTHpr993bewVeu2QK28PUz7lB7HML+v/keJBM3aBb4I=;
-        b=TZo16ciY9oVa0mxG+y70eV0Km7HZNfN5UVVFhOkSl4Je0jdzdn2wDUi8z/nmnHag0y
-         gmBWNqQyZG892e+IT3GpSgiNwK/bNpCpR/2kg08J9eH45bPG+XhaQRAJh9NeltEwPmyt
-         L/FQOs1WmCP9LaV1EUE92Jgc+iSqb5ZeleFPe05tNU2gMpyNT4CBaOuFG+oJtEy9LUuS
-         iavQHSmC/Q4ZsXvk+dYlK52i5ZnoBP1eBtR4OdMknhMeANoDlR/iLW7/RKu7r2t1wl5A
-         uQ3J8QxHW0L4yhPgYVUwQ6swj7B4S19gWPQ/fOEmf5TL4Ben0K0PExtyS+M7JwBg6Ebc
-         0dsA==
-X-Forwarded-Encrypted: i=1; AHgh+Rpi4PoQG/Y3VuhqvETNqD7m8RGEN360ti6bSqU2pXoNG+bNWxqRCJZh9RtLRUkp7+1dosu1Je8NC/8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9cwymSev91LpfciFfVTsN2JKlmiDsJ8qaqDxmIQrYDVrshEVB
-	w7m3Tnf6UVoxova68gmJMxZeRctW1H/7u74xZBhVnPAPFyNbIOne5lE=
-X-Gm-Gg: AR+sD11Kqhipj8mAu7eBpx9P5GADH9XrBXmKPv0IkED8bAC/AEWXqHcnfknbhjH9UgH
-	4+3HOATVP1o8sDCpaxsIizAJQOoq0mW7ZB0T4HfpPU4qT2LWl7zX3Bwqf9aZnx0kuyuSd8m5nAR
-	vMxmUB1o7mVUInsdCDbeRAlulC5xmEDfOkpeHXj2xSWVugW8bm9xW+t5WH3xSA7pT9+CZPcpTna
-	ZktCWf41/3/faD+12sx3MdYQafZJSa+j54OxAaGUyaxRSz8HB37/CyGHKEf4Sl13asfexIFzT+z
-	IwSNp0WFuuSZksaLD/DlFdK3zcoWLlGcXcqxw8CrIGW4hwR+YvXfJZ9SQJC2/KwNMwas2u9+Y6K
-	gWLLlODKZ4sSIl8PeAfbf2tB4mriCq+zqpWBElkpSPhvLQANKnvuwOycvOzWn4ZG0BsAiLXN8s3
-	dGRoH+Z0n+Mfl+Sz7iiWUywiHDIydpFV81X14+Qpa4oAHST7qhtyUvug==
-X-Received: by 2002:a17:90b:53c8:b0:392:c80b:8ef7 with SMTP id 98e67ed59e1d1-3955aa68f86mr513356a91.18.1786972331373;
-        Mon, 17 Aug 2026 06:12:11 -0700 (PDT)
-Received: from octoberrain ([2405:1200:418f:8400::5d9b:1e58])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-39531e3184bsm4941870a91.1.2026.08.17.06.12.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Aug 2026 06:12:11 -0700 (PDT)
-Date: Mon, 17 Aug 2026 22:12:03 +0900
-From: Robert Eckelmann <longnoserob@gmail.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: vladimir.zapolskiy@linaro.org, andersson@kernel.org, bmasney@redhat.com,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- m.szyprowski@samsung.com, mturquette@baylibre.com, sboyd@kernel.org,
- val@packett.cool, david@ixit.cz
-Subject: Re: [PATCH] Revert "clk: qcom: dispcc-sm8250: Enable parents for
- pixel clocks"
-Message-ID: <20260817221203.462c7d31@octoberrain>
-In-Reply-To: <CAO9ioeX-PB+v=OiuDakFE9NX5tDJdhjwvONJSmURKh1ABM=fgQ@mail.gmail.com>
-References: <20260701001147.416518-1-vladimir.zapolskiy@linaro.org>
-	<20260811174822.1f4bcbf8@octoberrain>
-	<gwdrtsvqcgdfccyrmyjgstcrr575xv4ltotrdl7ml4lzsfof4b@iv4lae7446yx>
-	<CAO9ioeX-PB+v=OiuDakFE9NX5tDJdhjwvONJSmURKh1ABM=fgQ@mail.gmail.com>
-X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-pc-linux-gnu)
+        bh=yceHBo3nFooDEH2xHhsyC5DfpLhq6tasQh2ju1Duoo8=;
+        b=KqhZ4MTL2HauZ89eY5LkZDoH3yoBkTSmhQXjBQWktxz7ws6H2zOEebcWHvCKyn4CUc
+         rA5NQNPz0B/5aEGHtYfcJUr9xDo+/rPjdJx+B1hPt7IvA+GpSuk91XTLD8LrAf7WLzY1
+         MCgODu0JM0HJ9RcUxg+PFEAswFJV8uCVSAFmyii+5X9ekZk/U8ecWcd3Dzw+pIzY+MVS
+         fXmVVf0BBG+WT05py4/EgWaiDJ/Qq+XuXPiyuu+0vltg/b9+20TLqqx9ZmBOOieBXSYr
+         nckBYgbKfkcl3Vsuf4y4l3aB823xy4WxorpMA6o93MzefkGRrCBKVhmgzKEQm68krQWn
+         uAiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1786972842; x=1787577642;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=yceHBo3nFooDEH2xHhsyC5DfpLhq6tasQh2ju1Duoo8=;
+        b=Q1IJD6MtHY7tbyYg5U0N8c9ZMThgggqH5O5qMn0hCPhSlzGlD5qqg3Sb4R41D5rFzM
+         AhQBpII9k7ueJ1xorxzZHglrO0Np4DKfblyaT8ginQy95ghakrIzhUUL3HkFJg46hMOS
+         IWih4Fe9oc8ZpDFCTzAFEbjb91BQdiHuT1WtxikhcLyP8ylre6wp1s42t80w4VM6Li9E
+         ucFWealWdVpTeBAWxVwIZXBPuUm0tL6L1NUZDWkH2lvHOJGe7iPDHN37JMkC1cTor96x
+         Htg0FGujX0oAJtfmK8TBkp3JnN2CPZXdoGao2+B1nZp1pzI1DWMo55M07F6tPYYtE52J
+         4w2w==
+X-Forwarded-Encrypted: i=1; AHgh+RpsGO2aHJugW8VDDXDIiRjKLKI+Lqs0JLkjorz/Y0LhGF4cNqiqW4hwejBQApPqbS7pfdFozQkT+nI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6BJR+RSHNZJxJ4pw+TBd26OKFnmrUOTsKe/g2cZPjs4brEF5p
+	hJwTv7aUwDQg5rm1qSjZvDfnhrAbCEymRbUnTf3OfLZvuIwAooV9wXf1y7F4MWIafn9sD9KgUa0
+	lwFd1goOg2vjHeGyi7FgoDOfiDq3ds5JYB7mpJAGLK/FGyhpOkStxFlhnxer5EqU=
+X-Gm-Gg: AR+sD12s3sfubKgux9R/V4vgjCglePlbAOER/K3J4DblOR/F7e0uuFvjfO2NeE1elYb
+	jK62RiFijsyaNPT/XXTRJPV0KPMExQNd78I4/bHw2pljOcvvswjzThHjYk4f4ok3Rm8Fy4xt1NY
+	4SKF/zrEBkpGN43Uf6Q9vYJMtJlP7TL+zMu2qB8jh4LYpxSllFi6HXMdNKlh8zMG9XyMR2VzHfs
+	khPCXSb5/wJ7Xf0WbvrU1t4GXzIri4PMaFmNdcMTOBydPe7wzbg7suOWRmiW8Gk4tanqEjsUuJ3
+	a+CwJ/j2NARshSyR8F3gKodEiGwwEcqknPU6+C3osxxsRKLXZ9ZWnWVmvgrHyR+ZFKXcQ+D6BQk
+	11eSQ1vUuEKPfCPazAI74rnhO
+X-Received: by 2002:a05:622a:2d6:b0:51c:2101:f0 with SMTP id d75a77b69052e-52d8533db8bmr193422721cf.2.1786972841751;
+        Mon, 17 Aug 2026 06:20:41 -0700 (PDT)
+X-Received: by 2002:a05:622a:2d6:b0:51c:2101:f0 with SMTP id d75a77b69052e-52d8533db8bmr193421921cf.2.1786972841183;
+        Mon, 17 Aug 2026 06:20:41 -0700 (PDT)
+Received: from [192.168.120.193] ([178.235.128.140])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c217fea1e64sm60193666b.21.2026.08.17.06.20.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Aug 2026 06:20:40 -0700 (PDT)
+Message-ID: <efae422c-51e6-4dea-aa80-fb2669496ba3@oss.qualcomm.com>
+Date: Mon, 17 Aug 2026 15:20:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 03/15] pmdomain: qcom: rpmhpd: Add power domains for
+ Kuno
+To: Hardeep Sharma <hardeep.sharma@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Ulf Hansson <ulfh@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+        Taniya Das <quic_tdas@quicinc.com>, Georgi Djakov <djakov@kernel.org>,
+        Bartosz Golaszewski <brgl@kernel.org>,
+        Linus Walleij <linusw@kernel.org>, Thomas Gleixner <tglx@kernel.org>,
+        Radu Rendec <radu@rendec.net>, Robert Marko <robimarko@gmail.com>,
+        Guru Das Srinagesh <linux@gurudas.dev>
+Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org
+References: <20260814-kuno-soc-support-v2-0-3079794f0f73@oss.qualcomm.com>
+ <20260814-kuno-soc-support-v2-3-3079794f0f73@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20260814-kuno-soc-support-v2-3-3079794f0f73@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: BTzZgF-EdjQBDZyZAdRLs9g6k4GMg6SH
+X-Proofpoint-ORIG-GUID: BTzZgF-EdjQBDZyZAdRLs9g6k4GMg6SH
+X-Authority-Analysis: v=2.4 cv=dLaWXuZb c=1 sm=1 tr=0 ts=6a830aaa cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
+ a=IkcTkHD0fZMA:10 a=Sv0fKeRqtYgA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=ZpdpYltYx_vBUK5n70dp:22
+ a=EUspDBNiAAAA:8 a=ugQu5lbr4eJmBGCNh1wA:9 a=QEXdDO2ut3YA:10
+ a=uxP6HrT_eTzRwkO_Te1X:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODE3MDEwMSBTYWx0ZWRfX3o7aACDc6/IZ
+ sW7wtvjNXKI+Hu66rjlnDvOQcGH8lHaCdI4+V+P77HMfdtVyInG4JFM7CtUGw1G2tfI1/kGoVJS
+ FKiPwF4RcGnFWv1Q4Ll7Bx7NDwIIjxSVmV+bn+A6KIBYAV4tCG+xkv9sB6z+TcH3kx5sIjjbvLJ
+ 8QxN4/KvB3u0svzIP8a9Tg2moi6kHjxhGr3rbhdoJkUblDQaACVlh/HP75vYwGx1Wsk+vVNDAbY
+ AgZIjcp06D2O6DbeU9jUwr9WEJrsc80ay+9ClkVsa1t1sTbQYJZF7ROPzfbmPuvitRdHy99aBkx
+ 64AkvRlhuZIZyz3LdgKKNADnAuiF7qgs4o3b60zFhLJgqfP0DOM6tBMRwgVQYqWH3zI5BacZpBX
+ G4dmC/9tngbw71M8q49jSXvbgSBE5Xaug3sbXX/pBJ+w99BNfk7j/52hZG3uyCEgLZPiMM5MmeF
+ fQRayuW3GjWhwyjezKA==
+X-Proofpoint-Spam-Info: AW1haW4tMjYwODE3MDEwMSBTYWx0ZWRfX1Kp7+cVEJpM3
+ wUS8A/jhsOFzAcfbwk1yXuPSnXDpTk/cvgTHv31spMElF2QpEktJ92mGh05EIh9EbFRCKtzd+VW
+ 5OnYjnojvKz6jEzQ7AKjQjXOHPuYFhc=
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-08-17_01,2026-08-12_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 phishscore=0 spamscore=0 lowpriorityscore=0
+ priorityscore=1501 bulkscore=0 suspectscore=0 adultscore=0 malwarescore=0
+ clxscore=1015 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
+ definitions=main-2608170101
 
-On Thu, 13 Aug 2026 16:21:54 +0300
-Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com> wrote:
-
-> > Yes, please.  
+On 8/14/26 9:31 AM, Hardeep Sharma wrote:
+> Add the RPMh power-domain data for the Qualcomm Kuno SoC to enable the
+> new qcom,kuno-rpmhpd compatible to expose RPMh power domains. Kuno
+> exposes CX, MX and MXC domains (including always-on variants).
 > 
-> And then almost immediately (sorry). No. The flag is correct. To
-> unblock SDM845 try adding GENPD_FLAG_NO_STAY_ON to the MDSS_GDSC. The
-> MDSS reset is not working / accessible, so it might be the only way
-> forward for now.
-> 
-> 
+> Signed-off-by: Hardeep Sharma <hardeep.sharma@oss.qualcomm.com>
+> ---
 
-Like this?
+I believe I reviewed this already
 
-diff --git a/drivers/clk/qcom/dispcc-sdm845.c
-b/drivers/clk/qcom/dispcc-sdm845.c index e060097be413..bfa657113ec0
-100644 --- a/drivers/clk/qcom/dispcc-sdm845.c
-+++ b/drivers/clk/qcom/dispcc-sdm845.c
-@@ -764,7 +764,7 @@ static struct gdsc mdss_gdsc = {
-                .name = "mdss_gdsc",
-        },
-        .pwrsts = PWRSTS_OFF_ON,
--       .flags = HW_CTRL | POLL_CFG_GDSCR,
-+       .flags = HW_CTRL | POLL_CFG_GDSCR | GENPD_FLAG_NO_STAY_ON,
- };
- 
- static struct clk_regmap *disp_cc_sdm845_clocks[] = {
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-This alone does not seem to solve the problem, I still get crashreports
-like:
-
-[    3.493402] /soc@0/display-subsystem@ae00000/dsi@ae94000: Fixed
-dependency cycle(s) with
-/soc@0/geniqup@8c0000/i2c@88c000/hdmi-bridge@3b [    3.513397]
-/soc@0/display-subsystem@ae00000/dsi@ae94000: Fixed dependency cycle(s)
-with /soc@0/display-subsystem@ae00000/display-controller@ae01000 [
-3.537096] msm_dsi_phy ae94400.phy: [drm:dsi_pll_10nm_vco_prepare]
-*ERROR* DSI PLL(0) lock failed, status=0x00000000 [    3.547813]
-msm_dsi_phy ae94400.phy: [drm:dsi_pll_10nm_vco_prepare] *ERROR* PLL(0)
-lock failed [    3.548807] qcom-pcie 1c00000.pcie: iATU: unroll F, 32
-ob, 8 ib, align 4K, limit 4G [    3.556493] ------------[ cut here
-]------------ [    3.556495] dsi0_phy_pll_out_dsiclk already disabled [
-   3.556512] WARNING: drivers/clk/clk.c:1188 at
-clk_core_disable+0xb0/0xd0, CPU#4: kworker/u32:1/60 [    3.556518]
-Modules linked in: [    3.556524] CPU: 4 UID: 0 PID: 60 Comm:
-kworker/u32:1 Not tainted 7.2.0-rc7-sdm845 #1-postmarketos-qcom-sdm845
-PREEMPT [    3.556528] Hardware name: qcom  Inc. SDM845 HDK/ Inc.
-SDM845 HDK, BIOS 2026.07-rc1-g2abf33b7c8ea-dirty 07/01/2026 [
-3.556530] Workqueue: events_unbound deferred_probe_work_func [
-3.572719] qcom-pcie 1c08000.pcie: iATU: unroll F, 8 ob, 8 ib, align 4K,
-limit 1024G
-
-[    3.573911] pstate: 604000c5 (nZCv daIF +PAN -UAO -TCO -DIT -SSBS
-BTYPE=--) [    3.573914] pc : clk_core_disable+0xb0/0xd0
-[    3.573916] lr : clk_core_disable+0xb0/0xd0
-
-Can share the full dump off-list if wanted.
-
-BR,
-RObert Eckelmann
+Konrad
