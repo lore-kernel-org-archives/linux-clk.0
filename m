@@ -1,148 +1,129 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14E173E1680;
-	Mon, 17 Aug 2026 10:27:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D8A13C3C07;
+	Mon, 17 Aug 2026 10:37:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786962475; cv=none; b=rnWJJeO4pG0zu4djBfKurgJuDyX45e/y1i1zKoyzn3EQmwuutdligV4WNn0xPrrgVvBhpHFjQ5MRaDx890DlKl4KOTRRGLL3VI/t9/duO4QJl6CPckVdMfMh7RZ8jNY9kwHVCrXzTU1u7G4Rle9OFC/RO4xJi3yV0aFF+HNbsaY=
+	t=1786963033; cv=none; b=HRffFtOj74kQbI2oQh4OQXVNB3eMSKP9pePiRGxh/Oi/elOBgkwNvwCRvHSi0o+aEiK+oCj0uEJSLtpFCffovTOb9HF4AipWMh8D9n70yuiohSMIlZjGb3ttNgq5RQYZ6EKXncCu9xtLH3YanDkN1Hy7uCMN4xWdx7gaXfHDReo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786962475; c=relaxed/simple;
-	bh=Ub2ET0nreelBWuPAy1VNfFijwSt8gbQmMKulCpxzN+Y=;
+	s=arc-20240116; t=1786963033; c=relaxed/simple;
+	bh=zbM4CPPd67pGM0y65qpZihfEffw+EIuSqHKs9JCxwT0=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=FPx8KEWfcPamdZ+CbGNsbPmJ6VQt8RBaFRoUdZjhVsWXe4Vm2vfrOR+BCQpa2D0hgmLEAoAyTeeH0EQ/c3QclO8SNNk2ptkfkpbV1vYoz95Ovj/55MmdNKnecZZfWwKjgP4bremchUqsEMjfFJm1ctLS9wdJ+78yMlc3Qc0L1Mc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CgJ++YgL; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=c3e4iHGInP3hCvI8lh4ptdhZvZtqEtS3wmroc+jXEMjOsVmTyT48m3co1Eg7K9ymbOF5U/pcDntaSlsWM4CkObpiPj5c0D7zO+6CmL063xDnNGvwW1exCI1curd6FyrOAej0Z+4DCYWnj9bek3mTFhjfMAAHNEkO94x0cl1jKac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HuWYatru; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CgJ++YgL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD2711F00A3A;
-	Mon, 17 Aug 2026 10:27:53 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HuWYatru"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 943D81F000E9;
+	Mon, 17 Aug 2026 10:37:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786962474;
-	bh=V1aFH/N/EBeNsvJYXVGPwx5EQiCM1pFTf5ka54Sozm4=;
+	s=k20260515; t=1786963031;
+	bh=d8Mb8/JbidvvMhvqd8j3liKZ8Iu5OhT4F8l2lpVp31U=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=CgJ++YgL1SVnP94dfPU1o76QaC6GiurObr0iybS63gVGAZSGJTW1ocyvvk4gOvwis
-	 YQellKT0wodZ3BhbsxRIhEdlrMy2L6rA/+oxNanYRcU9j869iB6AUv2073VG+RT9+/
-	 4z+oI1x9NWAVeOyZHGs+RtOKvzIn+Js3n6chPTv/9S+nfYL656sPPTmZ01ItXVuUfn
-	 NG0x/ACQMT1mWRlSRYuH4dsZ5QhBifMzvMmTqAZP+cC950Ota3lP71j05oSUjIOfkG
-	 BVznoxVSBGiD2CoFYFFYhRLHE2ZlQ0RUagKjNIcVSkTNA2Lt6zNpFINnwKFrJkRpZN
-	 K8dUqepSAKsdw==
+	b=HuWYatruE3dS6rrpZp1hDOoXSje1FlasuyHVOK/IIryijjPBlh1ou4OouKN2NIjuy
+	 0oiIVFBkvYIXzaXht+ty3vAAgTwbDJaPl8KDEWcfQXuLpT1pOGX+Wzfh0zUIZqsw1a
+	 NRCbbIMzhrktbwtIJnD2g43VdTFpNx71hoTYfS6GgQiOJVHEPNk2cnne7oXy+ZBukJ
+	 Sl2N2KiT4iPeBzVfce5RcbMeGWyeLDmHjHM38igqT0vFnH3gyIjcRZXUTqe0t7RZEC
+	 4Gw/B97PwW4+AO0WqAWgMWzNnio/FcOvAfERdoccCHnpAbCvbOENGkcQkhpGh/BgPa
+	 UBiKe7bt4XKdQ==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 3/3] clk: samsung: Introduce Exynos5515 clock driver
+Subject: Re: [PATCH 2/3] clk: samsung: clk-pll: Add support for pll_309
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Aiden Isik" <aidenisik@member.fsf.org>
-Cc: robh@kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, conor+dt@kernel.org
-In-Reply-To: <20260817-for-next-lucky7-clock-v1-3-032e4b229c76@member.fsf.org>
+Cc: linux-clk@vger.kernel.org, conor+dt@kernel.org, robh@kernel.org, devicetree@vger.kernel.org
+In-Reply-To: <20260817-for-next-lucky7-clock-v1-2-032e4b229c76@member.fsf.org>
 References: <20260817-for-next-lucky7-clock-v1-0-032e4b229c76@member.fsf.org>
- <20260817-for-next-lucky7-clock-v1-3-032e4b229c76@member.fsf.org>
+ <20260817-for-next-lucky7-clock-v1-2-032e4b229c76@member.fsf.org>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Mon, 17 Aug 2026 10:27:53 +0000
-Message-Id: <20260817102753.AD2711F00A3A@smtp.kernel.org>
+Date: Mon, 17 Aug 2026 10:37:11 +0000
+Message-Id: <20260817103711.943D81F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 
-Thank you for your contribution! Sashiko AI review found 3 potential issue(=
+Thank you for your contribution! Sashiko AI review found 2 potential issue(=
 s) to consider:
-- [High] Clock Tree Misconfiguration / Unintended Clock Bypass in CMU_PERI
-- [High] Incorrect Mux Parent Clock Order in CMU_FSYS User MUXes
-- [Medium] Missing Initialization and State Preservation for EXYNOS5515_MEM=
-CLK_OFFSET
+- [High] Logic Error / Out-of-bounds Read when rate_table is empty
+- [Medium] Single-Responsibility Violation: Undocumented architectural refa=
+ctoring
 --
 
---- Patch [3]: [PATCH 3/3] clk: samsung: Introduce Exynos5515 clock driver =
----
-commit 30844f6e4b1e1ae616f216fdbd770df29393e674
+--- Patch [2]: [PATCH 2/3] clk: samsung: clk-pll: Add support for pll_309 -=
+--
+commit d62df56ff2e6bf73437e6e25e1335b3fb4571268
 Author: Aiden Isik <aidenisik@member.fsf.org>
 
-clk: samsung: Introduce Exynos5515 clock driver
+clk: samsung: clk-pll: Add support for pll_309
 
-CMU_TOP is the top level clock management unit which contains PLLs,
-muxes, dividers and gates that feed the other clock management units.
-CMU_PERI provides clocks for USI blocks and their children, PWM, MCT,
-and watchdog timers. CMU_FSYS provides clocks for MMC, USB, GPIO, etc.
+This commit adds support for the pll_309 used in the Exynos5515 SoC, defini=
+ng
+the PLL characteristics which are handled similarly to pll_531x.
 
-> diff --git a/drivers/clk/samsung/clk-exynos5515.c b/drivers/clk/samsung/c=
-lk-exynos5515.c
-> new file mode 100644
-> index 0000000000000..f989a13f1a574
-> --- /dev/null
-> +++ b/drivers/clk/samsung/clk-exynos5515.c
-> @@ -0,0 +1,1485 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-
-[ ... ]
-
-> +static const unsigned long drcg_sysreg[] __initconst =3D {
-> +	EXYNOS5515_DRCG_EN_OFFSET,
-> +};
-
-[Severity: Medium]
-Is it intended that EXYNOS5515_MEMCLK_OFFSET is missing from the drcg_sysreg
-array? Without this offset, the memory clock gating state won't be saved or
-restored across power management suspend/resume cycles.
-
-> +
-> +static const struct samsung_cmu_info top_cmu_info __initconst =3D {
-
-[ ... ]
-
-> +	.gate_dbg_offset	=3D EXYNOS5515_GATE_DBG_OFFSET,
-> +	.option_offset		=3D CMU_CMU_TOP_CONTROLLER_OPTION,
-> +	.drcg_offset		=3D EXYNOS5515_DRCG_EN_OFFSET,
-> +};
+> diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
+> index e74552846ba34..8b1474aeaf0c8 100644
+> --- a/drivers/clk/samsung/clk-pll.c
+> +++ b/drivers/clk/samsung/clk-pll.c
+> @@ -1593,32 +1593,35 @@ static void __init _samsung_clk_register_pll(stru=
+ct samsung_clk_provider *ctx,
+>  {
+>  	struct samsung_clk_pll *pll;
+>  	struct clk_init_data init;
+> -	unsigned int len =3D 0;
+> -	int ret;
+> +	int ret, len;
+> =20
+> -	if (pll_clk->rate_table) {
+> -		/* find count of rates in rate_table */
+> -		while (pll_clk->rate_table[len].rate !=3D 0)
+> -			len++;
+> -	}
+> -
+> -	pll =3D kzalloc_flex(*pll, rate_table, len);
+> +	pll =3D kzalloc_obj(*pll);
 
 [Severity: Medium]
-Will this break the dynamic root clock gating initialization? The
-.memclk_offset =3D EXYNOS5515_MEMCLK_OFFSET assignment seems to be missing
-here, which might prevent samsung_en_dyn_root_clk_gating() from enabling the
-memory clock gate correctly.
+This isn't a bug, but the commit message only mentions adding support for t=
+he
+new pll_309 type, while this code changes the allocation semantics of the
+rate_table across the entire driver, switching from a flexible array member
+to a separate pointer allocation.=20
+
+Could this architectural refactoring be split into a separate patch or
+documented in the commit message?
 
 [ ... ]
 
-> +/* Parent clock list for CMU_PERI muxes */
-> +PNAME(mout_pll_peri_bus_user_p)		=3D { "oscclk",
-> +					    "mout_cmu_peri_bus" };
-> +
-> +PNAME(mout_pll_peri_ip_user_p)		=3D { "oscclk",
-> +					    "mout_cmu_peri_ip" };
+> @@ -1637,7 +1640,7 @@ static void __init _samsung_clk_register_pll(struct=
+ samsung_clk_provider *ctx,
+>  	case pll_a9fracm:
+>  		pll->enable_offs =3D PLL35XX_ENABLE_SHIFT;
+>  		pll->lock_offs =3D PLL35XX_LOCK_STAT_SHIFT;
+> -		if (!pll->rate_count)
+> +		if (!pll->rate_table)
 
 [Severity: High]
-Does this correctly route the clocks from CMU_TOP? Referencing the
-intermediate mout_cmu_peri_* clocks here instead of the final
-dout_cmu_peri_* dividers appears to bypass the hardware gates and dividers
-defined in CMU_TOP. Could this lead to incorrect clock rate calculations and
-resource leaks if the CMU_TOP blocks fail to gate when PERI clocks are
-disabled?
+If a clock is registered with an empty rate table containing only the zero
+terminator, kmemdup_array() is called with a count of 0 earlier in this
+function and returns ZERO_SIZE_PTR rather than NULL.
 
-[ ... ]
+Since ZERO_SIZE_PTR is not NULL, this check evaluates to false, which
+incorrectly assigns the full operations instead of the safe min_ops fallbac=
+k.
 
-> +/* Parent clock list for CMU_FSYS muxes */
-> +PNAME(mout_pll_fsys_bus_user_p)		=3D { "dout_cmu_fsys_bus",
-> +					    "oscclk" };
-> +
-> +/* Parent clock list for CMU_FSYS muxes: for MMC */
-> +PNAME(mout_pll_fsys_mmc_card_user_p)	=3D { "dout_cmu_fsys_mmc_card",
-> +					    "oscclk" };
-> +
-> +PNAME(mout_pll_fsys_mmc_embd_user_p)	=3D { "dout_cmu_fsys_mmc_embd",
-> +					    "oscclk" };
-> +
-> +/* Parent clock list for CMU_FSYS muxes: for USB */
-> +PNAME(mout_pll_fsys_usb20drd_user_p)	=3D { "dout_cmu_fsys_usb20drd",
-> +					    "oscclk" };
+If samsung_pll_determine_rate() is subsequently called, it skips its loop
+because rate_count is 0, and attempts to access rate_table[-1]:
 
-[Severity: High]
-Is the parent clock order inverted in these MUXes? User MUX arrays like tho=
-se
-in CMU_PERI map oscclk to hardware value 0 and the bus clock to 1. Since the
-clock framework uses the array index for the register value, placing oscclk
-at index 1 here will write 0 when requesting the high-speed bus clock,
-inadvertently selecting the 26MHz oscclk instead. Could this cause
-performance degradation and hardware instability?
+samsung_pll_determine_rate() {
+    ...
+    req->rate =3D rate_table[i - 1].rate;
+}
+
+Since rate_table is ZERO_SIZE_PTR, will this result in an out-of-bounds
+memory read?
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260817-for-next-l=
-ucky7-clock-v1-0-032e4b229c76@member.fsf.org?part=3D3
+ucky7-clock-v1-0-032e4b229c76@member.fsf.org?part=3D2
