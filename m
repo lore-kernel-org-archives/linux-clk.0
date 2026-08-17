@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA75B439F9B
-	for <linux-clk@vger.kernel.org>; Mon, 17 Aug 2026 16:29:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD64C39E162;
+	Mon, 17 Aug 2026 16:37:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786984200; cv=none; b=cxlX6y8AawiEnd7HJLD1s2adbW5jmgMaDBWgfcpvT4QN2sCOcaBJpcQ3PG7Bkq7pTBfENzjVvdM0qULJmpH01ZIcm063URPkI5urWo+h+KPpFyIBeSf8i32ZoFYoQv6dsepzxMzWvyMHEVf4ZCm2TBGbNA7tWR5fcnKFMFy+ves=
+	t=1786984651; cv=none; b=GwXjTEUZMAdI/3MT+QkFp0XFlqh8WFTwkyVnXr+rx8wCc4+bgpPNKzywBOekE73C2iYbMn4CjkkKAOjw3TREqpCnN8LqChnLlv2+n2oHOHVL7hGwiredqWDYeezqPSZCAwtlfCC2hCkKQOSEvFT9Fuef80LsvNcmo0Dcjb7LUJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786984200; c=relaxed/simple;
-	bh=bVzCPV4wjDxG9wPLAJM+a71rr0A9R39LmmZ/0gFJN7Q=;
+	s=arc-20240116; t=1786984651; c=relaxed/simple;
+	bh=P5lmDpHOO4rhkjggKbW8gdsPM1x+hlNL8EyBq0gxxq4=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=VGT6144lmENAaOosvBsXWFqcjg8/+ApX3m8rsoCfJ4Y9ZePe1xV4ro2tFDr66DUMDkPxoTn7/Nu5uwT0Sw44vCtw6rc/9YssiJoSZITT7W01cOpcqImE+qVwn6urgb97PdSkihq2xQodN5+5Vfr/xPL1TOIJlzwqvHe0+Q3AraY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YKgYAM8f; arc=none smtp.client-ip=100.103.45.18
+	 To:Date:Message-ID; b=pNxSQLTf386Q7DuAxYea/vB2npIw24hjr82BaurUdb1WEKo7h2KoLFLX1oHlvdIWlLQQ5xm5WMNqvolwX59OV4jrGP7Wj1cLTWAzwZ1WdcRHgpkfKbB3au7CNU9AL58/XJm6zu6lNAd4zrBtO4J2NrGWdO8GEzglR4IbA9e5vL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XRkxfHzW; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YKgYAM8f"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4253F1F00A3A;
-	Mon, 17 Aug 2026 16:29:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XRkxfHzW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 422681F00A3A;
+	Mon, 17 Aug 2026 16:37:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786984199;
-	bh=bVzCPV4wjDxG9wPLAJM+a71rr0A9R39LmmZ/0gFJN7Q=;
+	s=k20260515; t=1786984650;
+	bh=P5lmDpHOO4rhkjggKbW8gdsPM1x+hlNL8EyBq0gxxq4=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date;
-	b=YKgYAM8f+ENTUe+/9NRXbZUAdOzYyZjHaMrohhFoGVtxN5RZOQ8oGpOde9cwfUH27
-	 e/zPzIxXFw32WvUjKI+UJ+uZ3/ExWYVzDV8OZKhpVnbN9VQotDErCXy8JqElH9g7WJ
-	 1c/7BDeSaCJVfBHl9oAr2Vxrk67m5d3EpVGE4HkIpDkmAcprevPaei5f/JZTop+lmD
-	 QLqhos+xJWgoTV6gYqtVLgRB9TYHJ8IKOpWNRoA33jjSkKDplqxWIBxof6F8bmLItd
-	 wkzc3zYJgTCxFtFPzVmRQeRcmqeztYKVrrUFQFWVjVFCn3P6moMxUC9CzZWfaJRTdM
-	 AmC3bmZmORu5Q==
+	b=XRkxfHzWgmMgjevAKHm45KOU5fJG8/sAlQjhyfqZdIyIOLmS6JTnq98jN4zaqTwSI
+	 Q5pqBLOK3u6jQcZwRgYT7C5OC/dveYDqWnZfpWEDk9wL/G3KddihLJwmBVQZN/VlMY
+	 azaKSt7N7iuWXfVS8sLnLgVS3ETIuoVOqN+hVEDnQukKcyokqCudcyTH7AJL7Nzr8J
+	 e2R1NWacXDACqMyXCPzsLqpARui0RhM2eiLhqiAHT1ZDPQtrA46E17AXjYes1lBbyS
+	 YXrL/28zZD6yXnz/fjLF9I4BXiceoDsBIz/UP1myJ6Uw1GrpRLvfL3l2Sj4uYJ/aal
+	 nU9CwPLsT6C8w==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -34,21 +34,31 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20260729121640.3864006-2-ukleinek@kernel.org>
-References: <20260729121640.3864006-2-ukleinek@kernel.org>
-Subject: Re: [PATCH] Drop Michael Turquette's clk maintainer entry
+In-Reply-To: <20260814-clk-next-v3-1-6f7f1410e809@baylibre.com>
+References: <20260814-clk-next-v3-1-6f7f1410e809@baylibre.com>
+Subject: Re: [PATCH v3] MAINTAINERS: Add Brian Masney and Jerome Brunet as co-maintainers for clk subsystem
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org
-To: Brian Masney <bmasney@redhat.com>, Michael Turquette <mturquette@baylibre.com>, Uwe =?utf-8?q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Date: Mon, 17 Aug 2026 09:29:57 -0700
-Message-ID: <178698419721.5030.1912996108307711223@lazor>
+Cc: Uwe =?utf-8?q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>
+To: Brian Masney <bmasney@redhat.com>, Jerome Brunet <jbrunet@baylibre.com>, Michael Turquette <mturquette@baylibre.com>
+Date: Mon, 17 Aug 2026 09:37:28 -0700
+Message-ID: <178698464801.5030.2102940835263591905@lazor>
 User-Agent: alot/0.12
 
-Quoting Uwe Kleine-K=C3=B6nig (2026-07-29 05:16:40)
-> Mike wasn't publically active for the clk subsystem since years. Stop
-> pretending that there is a maintainer team caring for clk.
+Quoting Jerome Brunet (2026-08-14 09:27:49)
+> From: Brian Masney <bmasney@redhat.com>
 >=20
-> Signed-off-by: Uwe Kleine-K=C3=B6nig <ukleinek@kernel.org>
+> With Michael Turquette stepping down as a clk co-maintainer, this
+> subsystem is big enough that it needs multiple people to keep the
+> clk community healthy. Add Brian and Jerome as co-maintainers.
+>=20
+> Link: https://lore.kernel.org/linux-clk/anW-jTldkWSJK3wl@redhat.com/T/#m0=
+ae01b8dd23c452d82f34b61844a8305977a53a4
+> Acked-by: Michael Turquette <mturquette@baylibre.com>
+> Signed-off-by: Brian Masney <bmasney@redhat.com>
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 > ---
 
 Applied to clk-next
+
+Thanks Jerome and Brian for stepping up to help! And thank you Mike for
+all the work over the past decade and a half on the CCF.
