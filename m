@@ -1,203 +1,91 @@
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDC9D4446F7
-	for <linux-clk@vger.kernel.org>; Mon, 17 Aug 2026 19:26:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8C6E347BD4
+	for <linux-clk@vger.kernel.org>; Mon, 17 Aug 2026 21:51:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786994805; cv=none; b=SXRP1/rGK+J53M3jVbOHbaqxa9dLoLk2SH0XiKoGrXWDNTFUeKIOS9oEzw6MTofhYFljpm43tHmBChxfAPaScec8jCzvdqjQxOfuMNna44/cdjVdyzPQDzTIJZ/v5CsMRxGxjd1Cq9lwlwSnGXJ333XnNwAJ6rR2EnCMSHTiafg=
+	t=1787003488; cv=none; b=SWV/hjEzMwi17RO9jBJPMQChU6WMhTh5LjT2r3pHBpX24yrKBJpxoe3Z2dutVV4icz7/lUZnyePy3fmT15dLf//XQY3VQSpFRrHBl1P4JX8p839rA4ZEquzUyTCSLGYq8h386/r8JVvfEjMB06Dxu+SEOQxg585I/hTN1oj1i0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786994805; c=relaxed/simple;
-	bh=NdEBnCUmI8vcYieObvf0+R8QSjffR1RfAbs59Qz31Tk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JiFHT1+kEoNzrlyBRbghPhFbOlY+/RN9PFm8crWByKpf4wU11O00Hfx84j6rcftKAC6KK3tHruuuU6sTk2/Rqcw1oImi8BPgHI7nqyQFRq1azE/Ntx83W4SYwEzsIHTZFg9sEAk+xsZr5eK/sQFiOu14VbPgQgarsPhluYF+FCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jl2dhQhe; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1787003488; c=relaxed/simple;
+	bh=DVwyjrAr8kMS22z9H59apCoMBawHC57fwOl2reBodiU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p5/iuJJmpia2BgHOA0gZllFZhf9upXN6D2VT5SL/fvuaQiQCQu5NWOsAel2DjIaQWrecbketFpFiqNtq1IJOotLYk5Sb9eRKgerDDizYOVyG2WgCXMJgzwD7/OL+v3E0eIhBKmwxyNelgrxaUEjhnoeElU8jz2Ndhj4Bui3QMIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Mc6NLGmk; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jl2dhQhe"
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-cbeea240819so2114625a12.1
-        for <linux-clk@vger.kernel.org>; Mon, 17 Aug 2026 12:26:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1786994802; x=1787599602; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=8JDfCvRVlnDBvbOdUSOi/Q4nr+3vb687RKt9hvjxArk=;
-        b=Jl2dhQheuNrwubvdWus4MPnDpjK1XeduDhXOesEw2fqw9i5gr17+OjVam1Rg3UvMkP
-         aeZcoLX/avqt8ScGTubj/gQkXVs82LSanCje1Smi+kaN8zc/JvfPMyxH7G47TpSEDexy
-         JAYG640Cb0fBtrSdCss9Lhk+QeIYBqn0lbFMGnrk5rbVFAWSHrBLQgZgZyUO2SX0gs2H
-         nZbjrQu9we6s4+GmL00DKT8HbKKVLDNbIQEhwvFKUyndK5YqsbMyO0nRqsy8WbJmA6w9
-         PCfmCWkQsNMHKvF4VKdcKHARtvgKRfvVCzWCTqDmTDVLfHcrJoKyV6vFSqJdpAk7F/1m
-         xRDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786994802; x=1787599602;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=8JDfCvRVlnDBvbOdUSOi/Q4nr+3vb687RKt9hvjxArk=;
-        b=Q6NtzxNam4J+yO700+8uaSI9KY3tATyNX8BJxyTpE+QpaPfLnr/Mrr30tp8yBAwq5w
-         nPPxb5o093x9zXm+TduwsiOunwvbLOHF6yvyXBdA0dnIieSS/Xg9j1qCbhS49jZpiFey
-         3s1nkA+eTN+oBu7JpdXydAUQ++DYifW8+R5dDRKURSj6JGfHJg1Bi3yYwDwYXaI7bIr+
-         qYfJ+r/T1MT14CNrSQdlnFNx8foCHEwuPp3NP30VIbn+aLVOImhCh5uBnBBj6oKA7sAi
-         wq5e+PyZ8xWcg0STL4g7Tuw4NSSJ3KD65Oy18cXxkZCH8p6Kswt5qT+oxrGzkmrKOBcj
-         Z9JA==
-X-Forwarded-Encrypted: i=1; AHgh+RpRoopgWzQyc+3V3wkeg/KINBo/2irrZytW9TI+y804BWH0VYpWmIESOHs7tNvIbYa5pT4wmYae8/U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGNASJA59U01lcvS6auPud69tsy7xTsDveU+3G4c4FR73bdEkv
-	Z9le8W3GbdCu+VNEWlDvIBcxSZI9s3C89Hdgb+Eg74PPxaMmzGrSlSYA
-X-Gm-Gg: AR+sD12XSAl5jIoFwq3c97HJeyGN1gqGqhwUluzf5tdMYwsRhsxUkUVCHCsPKhfHZr1
-	OSdahe8Y/AO8j+dVih3FZrnu2l8JHg9P6Iwa7ZbRP361D3bI4m1UbL69fq6pTphQ4NLANiDpPPL
-	CgLS+/rNeRspK9uwNGnYY1jypURz4TYzytZuLUMUmE91LNPwBy8aJhuBnKxVHQmfj2NWZs1ELnn
-	b6zbiixqCVpp4NR2faFPQMCt7FlCau7NpkX8F+lwrsNbTWWQawFeThkkWpztsFd6yMxFz+Ne2eE
-	auDqpvDNwf+IQ5GuAnjmE1WiyVEZN2C7gocIHWq7gWEmK1jO984kkVSGDw7i0hmLSnZNQG3T7OM
-	fjzsjfvL60/fsyzDetfBJVExd87tMliqOue2DTPZl4D/vtL3X0UDF6GiqUQorUo+OZ1lQBTvB8L
-	XbLxL7qnEQoes86G7WXSsDmTXxPjVrfnCeDohL606xzRMvPojdgD4srJHYCgcJVETb/zhNbPuh4
-	wtxomK561nHHa/5myuLi+5Toy0+8WuRIRvU35aX/cGjc/tPPQkk1qRWU7lpLMJ/Jza2aCprJfTo
-	qxrNs9sQ6A==
-X-Received: by 2002:a05:6a21:134b:b0:3c3:875d:7053 with SMTP id adf61e73a8af0-3ccda403574mr3047275637.8.1786994802009;
-        Mon, 17 Aug 2026 12:26:42 -0700 (PDT)
-Received: from iku.example.org ([2401:4900:1c06:2735:f886:32ae:1e17:ec13])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-326798cb9f5sm10218757eec.13.2026.08.17.12.26.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Aug 2026 12:26:41 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney@redhat.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-watchdog@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Mc6NLGmk"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=DVwy
+	jrAr8kMS22z9H59apCoMBawHC57fwOl2reBodiU=; b=Mc6NLGmkKLK9ifZxn4u3
+	vgh/Bk/96voSrfNMdZqDKI2LIOsfczjY4eqgFIrN2O61rsp2vwpLDXZ0Zt7uYqtP
+	dWUbIb+GZI+NQ6CrnOBn/oUJGwjzdAzvyKaDWikzbgyQya/9VhhtrS/RMJ/Gghq3
+	KpBldcnVSB2oSiUHiOTg2CNXwoElGXYPMAt2PuXP9QmDifhVBqYhn6+waLKrYqSu
+	CwIF9ui6C23jJ9arx3edmUr9Kg4ZhpNchbUtRM+04F8TO7da+mHkCbz7F3RkTJxJ
+	n5loHGQgk071IIup8mbBlff3JQ97EBVBujSTO+euYugH/Ua98e6vun++04ZJf8hb
+	6g==
+Received: (qmail 3577802 invoked from network); 17 Aug 2026 23:51:20 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 17 Aug 2026 23:51:20 +0200
+X-UD-Smtp-Session: l3s3148p1@CJqnK0VZ3rQujnve
+Date: Mon, 17 Aug 2026 23:51:20 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Claudiu Beznea <claudiu.beznea+renesas@tuxon.dev>,
+	mailhol@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, geert+renesas@glider.be, magnus.damm@gmail.com,
+	mturquette@baylibre.com, sboyd@kernel.org, bmasney@redhat.com,
+	biju.das.jz@bp.renesas.com, fabrizio.castro.jz@renesas.com,
+	linux-can@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	Prabhakar <prabhakar.csengg+renesas@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v4 7/7] arm64: dts: renesas: r9a09g087: Use CPG/MSSR syscon for WDTDCR access
-Date: Mon, 17 Aug 2026 20:25:40 +0100
-Message-ID: <20260817192540.423994-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260817192540.423994-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20260817192540.423994-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH v3 0/8] can: rcar_canfd: Add support for Renesas RZ/G3S
+Message-ID: <aoOCWBAKV4lBwLPh@shikoro>
+References: <20260714173315.1981708-1-claudiu.beznea+renesas@tuxon.dev>
+ <7533fcaa-c676-48f4-924e-bba9195d4871@tuxon.dev>
+ <20260817-tricky-monkey-of-admiration-3caebf-mkl@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ZiDiiahQjpJkCpVB"
+Content-Disposition: inline
+In-Reply-To: <20260817-tricky-monkey-of-admiration-3caebf-mkl@pengutronix.de>
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-The WDTDCR registers for wdt0-wdt5 reside in the second register region of
-the CPG/MSSR block. This multi-function block is now exposed via a unified
-syscon regmap interface.
+--ZiDiiahQjpJkCpVB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Replace the direct mapping of the individual WDTDCR registers with the
-new "renesas,sysc" phandle property pointing to the CPG/MSSR block syscon
-node.
+> Who takes the DT changes?
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
-v3->v4:
-- No change
+Geert.
 
-v2->v3:
-- Renamed the "renesas,sys" property to "renesas,sysc"
-- Updated commit message
 
-v1->v2:
-- No change.
----
- arch/arm64/boot/dts/renesas/r9a09g087.dtsi | 24 +++++++++++-----------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+--ZiDiiahQjpJkCpVB
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g087.dtsi b/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
-index 813bb0cb021c..3ede2e89cf67 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
-@@ -327,61 +327,61 @@ channel1 {
- 
- 		wdt0: watchdog@80082000 {
- 			compatible = "renesas,r9a09g087-wdt", "renesas,r9a09g077-wdt";
--			reg = <0 0x80082000 0 0x400>,
--			      <0 0x81295100 0 0x04>;
-+			reg = <0 0x80082000 0 0x400>;
- 			clocks = <&cpg CPG_CORE R9A09G087_CLK_PCLKL>;
- 			clock-names = "pclk";
- 			power-domains = <&cpg>;
-+			renesas,sysc = <&cpg 0>;
- 			status = "disabled";
- 		};
- 
- 		wdt1: watchdog@80082400 {
- 			compatible = "renesas,r9a09g087-wdt", "renesas,r9a09g077-wdt";
--			reg = <0 0x80082400 0 0x400>,
--			      <0 0x81295104 0 0x04>;
-+			reg = <0 0x80082400 0 0x400>;
- 			clocks = <&cpg CPG_CORE R9A09G087_CLK_PCLKL>;
- 			clock-names = "pclk";
- 			power-domains = <&cpg>;
-+			renesas,sysc = <&cpg 1>;
- 			status = "disabled";
- 		};
- 
- 		wdt2: watchdog@80082800 {
- 			compatible = "renesas,r9a09g087-wdt", "renesas,r9a09g077-wdt";
--			reg = <0 0x80082800 0 0x400>,
--			      <0 0x81295108 0 0x04>;
-+			reg = <0 0x80082800 0 0x400>;
- 			clocks = <&cpg CPG_CORE R9A09G087_CLK_PCLKL>;
- 			clock-names = "pclk";
- 			power-domains = <&cpg>;
-+			renesas,sysc = <&cpg 2>;
- 			status = "disabled";
- 		};
- 
- 		wdt3: watchdog@80082c00 {
- 			compatible = "renesas,r9a09g087-wdt", "renesas,r9a09g077-wdt";
--			reg = <0 0x80082c00 0 0x400>,
--			      <0 0x8129510c 0 0x04>;
-+			reg = <0 0x80082c00 0 0x400>;
- 			clocks = <&cpg CPG_CORE R9A09G087_CLK_PCLKL>;
- 			clock-names = "pclk";
- 			power-domains = <&cpg>;
-+			renesas,sysc = <&cpg 3>;
- 			status = "disabled";
- 		};
- 
- 		wdt4: watchdog@80083000 {
- 			compatible = "renesas,r9a09g087-wdt", "renesas,r9a09g077-wdt";
--			reg = <0 0x80083000 0 0x400>,
--			      <0 0x81295110 0 0x04>;
-+			reg = <0 0x80083000 0 0x400>;
- 			clocks = <&cpg CPG_CORE R9A09G087_CLK_PCLKL>;
- 			clock-names = "pclk";
- 			power-domains = <&cpg>;
-+			renesas,sysc = <&cpg 4>;
- 			status = "disabled";
- 		};
- 
- 		wdt5: watchdog@80083400 {
- 			compatible = "renesas,r9a09g087-wdt", "renesas,r9a09g077-wdt";
--			reg = <0 0x80083400 0 0x400>,
--			      <0 0x81295114 0 0x04>;
-+			reg = <0 0x80083400 0 0x400>;
- 			clocks = <&cpg CPG_CORE R9A09G087_CLK_PCLKL>;
- 			clock-names = "pclk";
- 			power-domains = <&cpg>;
-+			renesas,sysc = <&cpg 5>;
- 			status = "disabled";
- 		};
- 
--- 
-2.43.0
+-----BEGIN PGP SIGNATURE-----
 
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmqDglMACgkQFA3kzBSg
+KbZL9A/9HxBzH39Da9KzxPRUXkpQbLNxJsQk18QqE33bmTc5rfeI194Wp2lDXboh
+apgJG+8WD3h3skKgWaREy6m+Q60nEy7IG26SwxbjCyxBClll82JuJJ4Ip55G6Zmf
+J+yPUFK864n65p1UQnM1WWjJ3cczBOH49S4UDNohbqR6kHeNmmWYM8VGaQlwfu5p
+ei9MQONg1uz77+tJ0DUovzxegagKPM0jrqxpV093lCS+s1psP6Ubn2gWlj3rThJ1
+li0mMAwbYjtrWrMEKgTHlASdYqwNOq0zo73hPev+1fdJVHWr4s90eC+nGMo4+pEj
+Zns3Z/9bZzIofB879AXK/6X6KraWzu6A/2DkGp4wgBImAFdwe7Fo3CUxW8bdVyyX
+Uhesx+xK5PojcLbgpGCBQPiZ4Z9ZtWSrstffC/H7QrJv4TzPVeUHqoRTqHEju3nw
+l5VTcClcuCgCzdqkcPDaa7Qwbl/qsbPzhaqQz73HcrlTv4IyXbYjR2gQJkRc/pF6
+SB+LsMPxh9JPgAInvWe4YHqjJgYajKcfpbufhNfFksN7CD+EBk4FBI/I5VZSvRCW
+odhx1ld5w+uQCBm/MIZeNqadi3LEefnfa60xfkUO7SHjb6Q1/cCQVDs3vrT5ucD5
+BXQVclLfD2agTP2pTBv2E4+oV15DlyWJNA7tu3TLdP/0xQR4mB8=
+=VPZU
+-----END PGP SIGNATURE-----
+
+--ZiDiiahQjpJkCpVB--
