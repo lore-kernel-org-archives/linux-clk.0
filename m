@@ -1,91 +1,89 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8C6E347BD4
-	for <linux-clk@vger.kernel.org>; Mon, 17 Aug 2026 21:51:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BDEC32B112;
+	Mon, 17 Aug 2026 23:49:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787003488; cv=none; b=SWV/hjEzMwi17RO9jBJPMQChU6WMhTh5LjT2r3pHBpX24yrKBJpxoe3Z2dutVV4icz7/lUZnyePy3fmT15dLf//XQY3VQSpFRrHBl1P4JX8p839rA4ZEquzUyTCSLGYq8h386/r8JVvfEjMB06Dxu+SEOQxg585I/hTN1oj1i0Y=
+	t=1787010561; cv=none; b=Dghy2PdH5cRyf4Oex6PyZP9oW+oSFLzWv2JCjfh6zdIBQO1rmK/IKC1r8ylvzJ9PWHUytEVLb+GJlwcllkF/jfMbCmhXevtTwiWmPwY7MzKth9lltXAkieOCShA5TaCHcuwjmnJGc16nAfcLDf7EShnluKfiMTZRhfBeIz1hof0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787003488; c=relaxed/simple;
-	bh=DVwyjrAr8kMS22z9H59apCoMBawHC57fwOl2reBodiU=;
+	s=arc-20240116; t=1787010561; c=relaxed/simple;
+	bh=XVUABZf153A17QGNoeDkuHuA9QkNwJGoq4M/QwrWvVo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p5/iuJJmpia2BgHOA0gZllFZhf9upXN6D2VT5SL/fvuaQiQCQu5NWOsAel2DjIaQWrecbketFpFiqNtq1IJOotLYk5Sb9eRKgerDDizYOVyG2WgCXMJgzwD7/OL+v3E0eIhBKmwxyNelgrxaUEjhnoeElU8jz2Ndhj4Bui3QMIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Mc6NLGmk; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=eUE0qo5osIGlYTIFf5knrIyG7njA7ZYsYFTeHTBlBgZJIKbFfm801XWiSeN9T4rUmT5tS+LSKbmHUOnJ5HEdHukSFNaIYnBTnGwB5h4T5L0YqdaWAMQdkB4KPKpODFlzF4IDzgtlP+n48P23Zk6v1EXP0PnV37/wzaQljKWAn4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dAYiy5D8; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Mc6NLGmk"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=DVwy
-	jrAr8kMS22z9H59apCoMBawHC57fwOl2reBodiU=; b=Mc6NLGmkKLK9ifZxn4u3
-	vgh/Bk/96voSrfNMdZqDKI2LIOsfczjY4eqgFIrN2O61rsp2vwpLDXZ0Zt7uYqtP
-	dWUbIb+GZI+NQ6CrnOBn/oUJGwjzdAzvyKaDWikzbgyQya/9VhhtrS/RMJ/Gghq3
-	KpBldcnVSB2oSiUHiOTg2CNXwoElGXYPMAt2PuXP9QmDifhVBqYhn6+waLKrYqSu
-	CwIF9ui6C23jJ9arx3edmUr9Kg4ZhpNchbUtRM+04F8TO7da+mHkCbz7F3RkTJxJ
-	n5loHGQgk071IIup8mbBlff3JQ97EBVBujSTO+euYugH/Ua98e6vun++04ZJf8hb
-	6g==
-Received: (qmail 3577802 invoked from network); 17 Aug 2026 23:51:20 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 17 Aug 2026 23:51:20 +0200
-X-UD-Smtp-Session: l3s3148p1@CJqnK0VZ3rQujnve
-Date: Mon, 17 Aug 2026 23:51:20 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Claudiu Beznea <claudiu.beznea+renesas@tuxon.dev>,
-	mailhol@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, geert+renesas@glider.be, magnus.damm@gmail.com,
-	mturquette@baylibre.com, sboyd@kernel.org, bmasney@redhat.com,
-	biju.das.jz@bp.renesas.com, fabrizio.castro.jz@renesas.com,
-	linux-can@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH v3 0/8] can: rcar_canfd: Add support for Renesas RZ/G3S
-Message-ID: <aoOCWBAKV4lBwLPh@shikoro>
-References: <20260714173315.1981708-1-claudiu.beznea+renesas@tuxon.dev>
- <7533fcaa-c676-48f4-924e-bba9195d4871@tuxon.dev>
- <20260817-tricky-monkey-of-admiration-3caebf-mkl@pengutronix.de>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dAYiy5D8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B33E1F000E9;
+	Mon, 17 Aug 2026 23:49:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1787010559;
+	bh=3KmOAWkkq6vNgl04oOZllB37mH/rLBzXgbWryVTtjlQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=dAYiy5D8oQ1o03PHJOVtpLgpVlEMXd8Kg8yAEXZPPF4UNTO9FqcnqQjvpvm+HzH2O
+	 1m4dGzd+6jUpoI80MgMQc+ipMDIbbWHxOeJor9uqonsMJZjcgXyri8PjVW7+Y4iMtw
+	 iPMnF69GZ9096HaZx7Wj5vAFltNj++la24IZvwKyLow2Xsd5FeYEsEv4SFpf6Fk53I
+	 jlBI301SVZBSHLq8+lRIz+UaPt3jcIWNP5FoAy7gJgOJSlAeUGtUHIrWDzmDzhVUYa
+	 aLrHDW28CtSg+681kz4AoNvz0VUWiHo98lQRqBb/Y2EYYJ+CGNrSxNC0YmjQcmrETk
+	 vjXyBSeuvQZhw==
+Date: Mon, 17 Aug 2026 16:49:18 -0700
+From: Drew Fustini <fustini@kernel.org>
+To: Icenowy Zheng <uwu@icenowy.me>
+Cc: Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-phy@lists.infradead.org,
+	linux-usb@vger.kernel.org, Han Gao <rabenda.cn@gmail.com>,
+	Yao Zi <ziyao@disroot.org>
+Subject: Re: [PATCH 03/12] riscv: dts: thead: add device tree node for MISC
+ clock controller
+Message-ID: <aoOd_i_QtCywStEz@thelio>
+References: <20260507081710.4090814-1-zhengxingda@iscas.ac.cn>
+ <20260507081710.4090814-4-zhengxingda@iscas.ac.cn>
+ <aiehUzl-qZeZDjXP@thelio>
+ <67790d90737c13127100510020262d6921810e34.camel@icenowy.me>
+ <aievq4dae3GHHq0c@thelio>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ZiDiiahQjpJkCpVB"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260817-tricky-monkey-of-admiration-3caebf-mkl@pengutronix.de>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aievq4dae3GHHq0c@thelio>
 
+On Mon, Jun 08, 2026 at 11:16:11PM -0700, Drew Fustini wrote:
+> On Tue, Jun 09, 2026 at 01:35:11PM +0800, Icenowy Zheng wrote:
+> > 在 2026-06-08一的 22:14 -0700，Drew Fustini写道：
+> > > On Thu, May 07, 2026 at 04:17:01PM +0800, Icenowy Zheng wrote:
+> > > > The MISC_SUBSYS clock controller on TH1520 SoC is a clock
+> > > > controller
+> > > > mainly controlling USB-related clocks (which isn't utilized yet)
+> > > > and
+> > > > MMC/SD controllers' AHB bus clocks.
+> > > > 
+> > > > Add the device tree node for it along with the missing bus clock
+> > > > references for MMC/SD controllers.
+> > > 
+> > > Is there a functional reason to modify the mmc nodes in this series?
+> > 
+> > When the clock isn't referenced, Linux will disable it unless
+> > `clk_ignore_unused` parameter is passed.
+> 
+> Ah ok, thanks for explaining.
+> 
+> Drew
 
---ZiDiiahQjpJkCpVB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-> Who takes the DT changes?
-
-Geert.
-
-
---ZiDiiahQjpJkCpVB
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmqDglMACgkQFA3kzBSg
-KbZL9A/9HxBzH39Da9KzxPRUXkpQbLNxJsQk18QqE33bmTc5rfeI194Wp2lDXboh
-apgJG+8WD3h3skKgWaREy6m+Q60nEy7IG26SwxbjCyxBClll82JuJJ4Ip55G6Zmf
-J+yPUFK864n65p1UQnM1WWjJ3cczBOH49S4UDNohbqR6kHeNmmWYM8VGaQlwfu5p
-ei9MQONg1uz77+tJ0DUovzxegagKPM0jrqxpV093lCS+s1psP6Ubn2gWlj3rThJ1
-li0mMAwbYjtrWrMEKgTHlASdYqwNOq0zo73hPev+1fdJVHWr4s90eC+nGMo4+pEj
-Zns3Z/9bZzIofB879AXK/6X6KraWzu6A/2DkGp4wgBImAFdwe7Fo3CUxW8bdVyyX
-Uhesx+xK5PojcLbgpGCBQPiZ4Z9ZtWSrstffC/H7QrJv4TzPVeUHqoRTqHEju3nw
-l5VTcClcuCgCzdqkcPDaa7Qwbl/qsbPzhaqQz73HcrlTv4IyXbYjR2gQJkRc/pF6
-SB+LsMPxh9JPgAInvWe4YHqjJgYajKcfpbufhNfFksN7CD+EBk4FBI/I5VZSvRCW
-odhx1ld5w+uQCBm/MIZeNqadi3LEefnfa60xfkUO7SHjb6Q1/cCQVDs3vrT5ucD5
-BXQVclLfD2agTP2pTBv2E4+oV15DlyWJNA7tu3TLdP/0xQR4mB8=
-=VPZU
------END PGP SIGNATURE-----
-
---ZiDiiahQjpJkCpVB--
+Reviewed-by: Drew Fustini <fustini@kernel.org>
