@@ -1,145 +1,146 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78826314B66
-	for <linux-clk@vger.kernel.org>; Mon, 17 Aug 2026 04:23:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786940587; cv=none; b=uwdnBcsbkig3q7zYyYuGL563pZkj6Z+68LNuLhjPiu1ZFzxbFjgycwSgyRxyGc7pr8tMFazQjX9NOERl+zV+jU+DZlKsuxD7dkirTKP1KMXoNq3af24UjahkSUOgUMnqiTIb4MaddCgZWgg2CxvRMg31mNIb6JPQLnryYlZAVcI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786940587; c=relaxed/simple;
-	bh=4Eq3X4KO/Ipz33FGDKM+RWO723WANUHv1aaioiwwoIw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rjVixxVzVpjYCL2kRbg2fnERrp0QsanKtlTHbzuOvxxDoFTQQBZ7LCl29Y0y/A1nndSVl479xARuFCA7YmbteNuhl6BmDDOVaHA0A2DukHrjoGTYBjoZvHAvNfVGwYViBUbIRz8+sh1PM2JgPxhwklsO3/kFRt+Ko7WtNEZKsLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=pcLnJ4g8; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Y2KuPr4p; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B82A230566F;
+	Mon, 17 Aug 2026 04:25:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1786940712; cv=pass; b=D1/ACbBojr6tkHJF4kBW7ok1l96KwlsP6EHQmujxYzITXgb0SO8itfgYNkrJqqgn62vYc03WJU5L1t/JGOUjpBMazQABRHLkeY+cBQGyHX3B6ed4K99nv0T70h4Y3hwOQhDBuAHyOR9/ornrNYVIrer5WpYfnXJgQXEf3vJ+5Kg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1786940712; c=relaxed/simple;
+	bh=tj/YUrP0Y20IM9wcPZHGiH136Mn0RSuTkslJFuKAkY8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Eb3/1G0bX2J8DKHF+3VmDZJ4Ofe1ewkELu1LM2b7Ra2BO749n+D1pLE3aBrX3xY6knZRTH5d7I0xix+D9F5YRP8uiIXlcG1WRDS302QOqG/CZlNm426obnXAv1yedJ7/D/eH66jPCu/F2WEXsWMNGFwRQwDK4DzT/ItaMqQ0TnY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=HT7ksXPE; arc=pass smtp.client-ip=136.143.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="pcLnJ4g8";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Y2KuPr4p"
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 67GLCNvj4058250
-	for <linux-clk@vger.kernel.org>; Mon, 17 Aug 2026 04:23:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=ASxHMr57CeRiHl4qluMm7euY
-	Vc0vlVaWA8aqdtapJrI=; b=pcLnJ4g8fstRm2x/GdnWW2tP/k0mpFemKLTOrfy6
-	LbgeUUHe+TtslOzAhJ3vRQ7mQDaLiPUh+E0KXc6TbFfzwXuRAdEdgeYioCBXT6JU
-	HwNxCR0jJLS/TWO/UMZQpqbVOvtm6EzbiYKrnd1qU2+Kbb335iT0IGUjpgPqKCMj
-	2IhocavzF/AgaO8LWAWIGiEkBSDSo9RedbiOODH4G2EGmK23G1lEZtc46J3+e2kp
-	WShxWuQ82fQncfMMRUImdpnJMbuemr9fBfu/b5e1jN3rzYurgmNpAbeXi1nNjQ+k
-	X3zY+1EnYXoXvXOcEo7joCPOu5t7tIgf1CVQbpBwU13Low==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4g2hd7vyye-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Mon, 17 Aug 2026 04:23:05 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-92e82060977so304091885a.1
-        for <linux-clk@vger.kernel.org>; Sun, 16 Aug 2026 21:23:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1786940585; x=1787545385; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=ASxHMr57CeRiHl4qluMm7euYVc0vlVaWA8aqdtapJrI=;
-        b=Y2KuPr4pvhWgq9H54CTGFMgyn8++/7SlMFOQSr9xr/6AkHEEAcCdIchzEZyqUNpzez
-         s+E+KuNIkuuyOlsPSxK4ban7qbQSpT1G1bPr+s/4p2E6beK00sEWT7glbMyRIl7kFOGJ
-         /ILda0fjhaQQ1Yjh/kLdK74gn5zYhjpYaqh8u+q2VSN5d6uYZaHlOkUKq+6Hc574Uhmv
-         iX5/MKxClppDanAR6NO8vujKq7eYuEoT8EtucqsE9jvqvJgjGyJAJio2ypuSu0k+Lzjd
-         rHjGGi6kWjOLKHUFLh6ML43F6BiGPN8dFdwmIpQTNoZ/A7EcrI90gwBFoHMo2GxJfn/i
-         tYiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786940585; x=1787545385;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=ASxHMr57CeRiHl4qluMm7euYVc0vlVaWA8aqdtapJrI=;
-        b=CQ32OFd2ufT8Izk5b/DrvoNDSr5mz6f1WD7BRJ02XjNeEyjhvaqKX0Ykcu8zeW9Nx3
-         gVrrlL/B4eoQxmtQYTUOEgNlUIsy5Ve+oHakAn+gjLRzTblmsGAWKrtQ7nc4SYpVCsl0
-         +RIRxfz+k3WG1ynpFTMDobWioyDBz5jKE8gABleFEPrVj/7Jjz0jyMJuzHgZk/dlZYRj
-         mtBOy79nDr0m9RzteMRwBhwdJP5krb6/jBefWHZKlSs5WuJisD4foVOU2NcsE/wxbqTf
-         yZvK/x+5YV1qwPth05ZAa8GI0Rpytt4HnUgBPl0zD3KmZFNz8kZ4mwbkQe7W/v3AHXQr
-         W4rQ==
-X-Forwarded-Encrypted: i=1; AHgh+RoX36f1mzHFjJSdJmmWekdAwwgwKqHaAr1o3UHF/wI/iezU8UW+l9CcQJJNjPtZ4mJ9LcxB6fV62GU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDlFJAlYgmqSZqzae9g3Rqrvw535hmPBF19kwnvo1HpA54B9R8
-	SA7A27AG6eBBk7KYcNsEpGNrIxShaE38uXgNMTESkqk7mOVQjZqhHpKKG+dqX3zagAveoxNqMb8
-	E5adu5SNk9s0G/+0yJzc5EMH9b7mCLNQiYSfKBPYPSR4uE9bewks6hrixiUZgEy0=
-X-Gm-Gg: AR+sD11NnAXZgdb+BNuNER6u6IbiurBuSLI3+PXhRO+NdeMJ/vMss5lk0bmvtBG+CYF
-	5Sjn7dLImlkN0SL7HmLReOtlPBLu5PPKKJn43UZZl2ZEwOPXQ8m+mepzPraDPl7h6E02GZ4j+4x
-	6ZYxOno+9koZ/2aIt27oQgbWCl/jblp8V7E3JQ0smsMF0HVjQGOEsq0ryKPaSYECtdlyL4V3xme
-	Z6u4+KizRVESyp5yroRz+VKr2GdEYNtGNPDglo9PMjK19MtSbm+p+r9972gxOHMsrVjZs2Pi7bd
-	NzOfJ7nMmJLUtXShd2lso8Hdx4rR+3WTqSstNzrAqMlcp753AQABwwkZO4TBFnDldTtJnG92rnR
-	VtTlDqpbb8FKjPt68aGNOmLfQFuxbLt+bjVH3X0CYjGVo8w6dd+ZTS4Y4vrzYwcafKR6sGLJ+6D
-	ETSvFHxUtXBchH
-X-Received: by 2002:a05:620a:468e:b0:934:a0b2:9bde with SMTP id af79cd13be357-936c07ed845mr2962553185a.23.1786940584784;
-        Sun, 16 Aug 2026 21:23:04 -0700 (PDT)
-X-Received: by 2002:a05:620a:468e:b0:934:a0b2:9bde with SMTP id af79cd13be357-936c07ed845mr2962551585a.23.1786940584424;
-        Sun, 16 Aug 2026 21:23:04 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5b46cffeac4sm41308e87.39.2026.08.16.21.23.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Aug 2026 21:23:03 -0700 (PDT)
-Date: Mon, 17 Aug 2026 07:23:00 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Sreeshankar K <sreeshankar0910@gmail.com>
-Cc: andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-        quic_tdas@quicinc.com, bmasney@redhat.com,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] clk: qcom: rpmh: Add SM7250 rpmh clocks
-Message-ID: <gjphxs6ixffy6hp3nbwcwbfvszob7hgfths3um2rnn7joiu4fi@4bhaf24xfw4t>
-References: <20260816131646.10551-1-sreeshankar0910@gmail.com>
- <20260816131646.10551-2-sreeshankar0910@gmail.com>
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="HT7ksXPE"
+ARC-Seal: i=1; a=rsa-sha256; t=1786940677; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=KzI1Y4GT+H6j9FEFK0hC47a08RldjqCxo5u3mTr9qqfKlDZVmoOyUfrXICQG2NwgpZ8FE+Ubh+4UDRciq9CJeHPkxgDzNKgqBl/Yc7CnKd5BKlAw4d8eyYUrBtYaF88x0PBTj8ufzJawkNoFIx2YqR47wv0jdVR13M5opHN3mhk=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1786940677; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=ZSlZwiisO+mhc+1mZ7YoDuogysbfOwIRDw36DrAX+ww=; 
+	b=Aj1FAqPjgK//aBsflzglzkpsIq1CFmmkhwPTMRpw8QY3komjD3d3hIFDz+1EsBOYfH43VRJlBf9SdcMhp3oZJbu88LJtuRVSJKCyJH4uxcb9TCDkt82Exeu41HlBHQTR8YovOzeK73oE61S/5rHI8AKlD9pRVkfAOu1DIjGsbW8=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=icenowy.me;
+	spf=pass  smtp.mailfrom=uwu@icenowy.me;
+	dmarc=pass header.from=<uwu@icenowy.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1786940677;
+	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=ZSlZwiisO+mhc+1mZ7YoDuogysbfOwIRDw36DrAX+ww=;
+	b=HT7ksXPEC2RKhnKUehEHLxm7khUfsKuBuVPRjd073C8/12ktpJHyDz4j/gGZbo+E
+	xPufyVRRYjkXwSygr+EjDBIKq7Cneonu+it5XdiRURMqzCd00KOV1RUnr0Q+8Rr9hAq
+	SDqkRDksgLZ0Au33T6acXvJzZnKPLb64VCWYYOk8XPr4MFvfBrrbD1bj4ZyxrFrYsIb
+	JhW/c+XIqKuZdn0SOuq4cjJYIPxfaLpY055c118UZ/XMuDkgTyVeQBYwoqlY3dyPNhE
+	FM0owtXUDG+0pC1nV9lQrAKteqTvnCOwyctLIoky65KZgPjh8kJvDOP9Tmep2u/Szpn
+	HErGxyxb/g==
+Received: by mx.zohomail.com with SMTPS id 1786940674891707.3346436865633;
+	Sun, 16 Aug 2026 21:24:34 -0700 (PDT)
+Message-ID: <3f0268a19aab46d602dffc9e14fc6683af7a20cd.camel@icenowy.me>
+Subject: Re: [PATCH 02/12] clk: thead: th1520-ap: add support for MISC
+ subsys clocks
+From: Icenowy Zheng <uwu@icenowy.me>
+To: Drew Fustini <fustini@kernel.org>
+Cc: Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Michael Turquette
+	 <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring	
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley	
+ <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>, Neil Armstrong	
+ <neil.armstrong@linaro.org>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>,  Paul Walmsley	 <pjw@kernel.org>, Palmer
+ Dabbelt <palmer@dabbelt.com>, Albert Ou	 <aou@eecs.berkeley.edu>, Alexandre
+ Ghiti <alex@ghiti.fr>, Jisheng Zhang	 <jszhang@kernel.org>, Philipp Zabel
+ <p.zabel@pengutronix.de>, 	linux-riscv@lists.infradead.org,
+ linux-clk@vger.kernel.org, 	devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, 	linux-gpio@vger.kernel.org,
+ linux-phy@lists.infradead.org, 	linux-usb@vger.kernel.org, Han Gao
+ <rabenda.cn@gmail.com>, Yao Zi	 <ziyao@disroot.org>
+Date: Mon, 17 Aug 2026 12:24:26 +0800
+In-Reply-To: <aoH9cvTC8vD4NYpB@x1>
+References: <20260507081710.4090814-1-zhengxingda@iscas.ac.cn>
+	 <20260507081710.4090814-3-zhengxingda@iscas.ac.cn>
+	 <aier9XppLeCkJydw@thelio>
+	 <93b867c1b7f5526cc25cb04f838432cd752f5981.camel@icenowy.me>
+	 <aievi0s-3SO8hV6a@thelio> <aijpEqzJ7fM7rGMH@thelio> <aoH9cvTC8vD4NYpB@x1>
+Organization: Anthon Open-Source Community
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.3 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260816131646.10551-2-sreeshankar0910@gmail.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODE3MDAzMCBTYWx0ZWRfX6K2jbWosvBzk
- e0GX8VRQwnRdsVW5RfdU6YEybdtWT16wvgApn/R3YWq235hitwqqnPiTJPZ7Hv96BKXqTAYu/5O
- oTpqvE6S1lMhpCPzGvPF5V95ZQ4G1wh2tHcrLzSIRVwxZCJmrMA9XqMAT970PYE3Zt44a+zVSIW
- KPyhZV/yKsTZPG4ukmcvlYLgmrkMnZVf/EZA7WqCFxnxNOw9VOzGJjWBzjLyP5UoYJ83n4P2h+8
- 7V3ytjsmqO/lKOuVMrNrqo+zDQn6ZyDBC8HcMFwUxn5JBuetr/arpcN+Zaw8YqLrvYi2nEW4+bw
- 4i3BOBzs28/HqbNpkH/cxgQ2KabFQpWljeeTMcrbecmydkpJd9tgz89LMzJbwlLEGwXBtfkWwlW
- KItS4W6sxqZlQSlK5gugR8maRZIlJfkc+Q1R1lNzhHiLbOQer2lKTnWlDWnr1IdX3t/FFVf9DIi
- gZbxz5Czh0eXidD1edg==
-X-Proofpoint-GUID: EuSMBR0y3bliHU2nZ54Ru6pEwEc6vKRk
-X-Authority-Analysis: v=2.4 cv=Ja2Ma0KV c=1 sm=1 tr=0 ts=6a828ca9 cx=c_pps
- a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=Sv0fKeRqtYgA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=YMgV9FUhrdKAYTUUvYB2:22 a=pGLkceISAAAA:8
- a=EUspDBNiAAAA:8 a=ZfTvDAhhgTXKM-HDKzAA:9 a=CjuIK1q_8ugA:10
- a=PEH46H7Ffwr30OY-TuGO:22
-X-Proofpoint-ORIG-GUID: EuSMBR0y3bliHU2nZ54Ru6pEwEc6vKRk
-X-Proofpoint-Spam-Info: AW1haW4tMjYwODE3MDAzMCBTYWx0ZWRfX+iX4v/GEx7u1
- +TUc9d87RG5VXa+vhmGVS48hWLO4x1amV8piOA+tn8PABHQGsawGW0dsu23VcSAa/so9kPdtgPg
- 1bSOCrKtmWgyRH9GCksixfWO2VbvPAI=
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-08-16_06,2026-08-12_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 malwarescore=0 spamscore=0 suspectscore=0 adultscore=0
- bulkscore=0 impostorscore=0 clxscore=1015 phishscore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2608170030
+X-ZohoMailClient: External
 
-On Sun, Aug 16, 2026 at 01:16:44PM +0000, Sreeshankar K wrote:
-> Add the RPMH clocks present in SM7250 SoC.
-> 
-> Signed-off-by: Sreeshankar K <sreeshankar0910@gmail.com>
-> ---
->  drivers/clk/qcom/clk-rpmh.c | 24 ++++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
-> 
+=E5=9C=A8 2026-08-16=E6=97=A5=E7=9A=84 11:12 -0700=EF=BC=8CDrew Fustini=E5=
+=86=99=E9=81=93=EF=BC=9A
+> On Tue, Jun 09, 2026 at 09:33:22PM -0700, Drew Fustini wrote:
+> > On Mon, Jun 08, 2026 at 11:15:39PM -0700, Drew Fustini wrote:
+> > > On Tue, Jun 09, 2026 at 02:01:43PM +0800, Icenowy Zheng wrote:
+> > > > =E5=9C=A8 2026-06-08=E4=B8=80=E7=9A=84 23:00 -0700=EF=BC=8CDrew Fus=
+tini=E5=86=99=E9=81=93=EF=BC=9A
+> > > > > On Thu, May 07, 2026 at 04:17:00PM +0800, Icenowy Zheng
+> > > > > wrote:
+> > > > > > The TH1520 SoC contains a MISC_SUBSYS clock controller,
+> > > > > > which
+> > > > > > allows
+> > > > > > controlling of USB related clocks and MMC/SD controller AHB
+> > > > > > bus
+> > > > > > clocks.
+> > > > > >=20
+> > > > > > Add support for this clock controller, in order to enable
+> > > > > > USB
+> > > > > > support.
+> > > > > >=20
+> > > > > > Signed-off-by: Icenowy Zheng <zhengxingda@iscas.ac.cn>
+> > > > > > ---
+> > > > > > =C2=A0drivers/clk/thead/clk-th1520-ap.c | 64
+> > > > > > +++++++++++++++++++++++++++++++
+> > > > > > =C2=A01 file changed, 64 insertions(+)
+> > > > > >=20
+> > > > > > diff --git a/drivers/clk/thead/clk-th1520-ap.c
+> > > > > > b/drivers/clk/thead/clk-th1520-ap.c
+> > > > > > index 3a6847f1c950f..24f785f0b329a 100644
+> > > > > > --- a/drivers/clk/thead/clk-th1520-ap.c
+> > > > > > +++ b/drivers/clk/thead/clk-th1520-ap.c
+> > > > > [...]
+> > > > > > @@ -1609,6 +1663,12 @@ static int th1520_clk_probe(struct
+> > > > > > platform_device *pdev)
+> > > > > > =C2=A0			return ret;
+> > > > > > =C2=A0	}
+> > > > > > =C2=A0
+> > > > > > +	if (plat_data =3D=3D &th1520_ap_platdata) {
+> > > > > > +		ret =3D devm_clk_hw_register(dev,
+> > > > > > &usb_suspend_div_clk.hw);
+> > > > > > +		if (ret)
+> > > > > > +			return ret;
+> > > > > > +	}
+> > > > >=20
+> > > > > Should usb_suspend_div_clk.hw instead be registered under
+> > > > > 'if (plat_data =3D=3D &th1520_ap_platdata)'?
+> > > >=20
+> > > > Do you mean misc_platdata?
+> > > >=20
+> > > > Yes, this is an copy-n-paste error that deserves a fix.
+> > >=20
+> > > Hah, yes, I also had a typo :)
+> >=20
+> > Assuming that gets fixed in the next rev:
+> >=20
+> > Reviewed-by: Drew Fusini <fustini@kernel.org>
+>=20
+> I will fixup the typo and apply to thead-clk-for-next once 7.3-rc1 is
+> released.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+BTW I think the binding patch should go through your tree too.
 
+Thanks,
+Icenowy
 
--- 
-With best wishes
-Dmitry
+>=20
+> Thanks,
+> Drew
