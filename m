@@ -1,143 +1,126 @@
-Received: from mail-10699.protonmail.ch (mail-10699.protonmail.ch [79.135.106.99])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10A984B0497;
-	Mon, 17 Aug 2026 11:47:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25DD7419FD1
+	for <linux-clk@vger.kernel.org>; Mon, 17 Aug 2026 12:35:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786967274; cv=none; b=h7tvKsMrXVzChiX0xRsAQ64/1j57lIPPkQDWsKkQsKapJBrxkadpXbb5LaNb8nXkP0AqIpzhCXRrnUSiRwmslPQJlWp3HIfU+Nbca7aCJ3nHPpz/GyKd/xHwZ5u6d7jLvzE+MLS1PDhKTaYp9duzcycz+8Cke6V8PkRGPDBSvb8=
+	t=1786970114; cv=none; b=YDkvRaKIrjufetuQwPknH4ZuAqhzkVwfqW6iwyfimVr890H3tqRybIyILHPtoF/qn4Ixbq5jCcFBThR8eDc7cVs1XwnFo000aeaiY1D11BI0n4dPWzFoK3XOf08oJrFFytnpOEqir2U6tvllrThoeX9Uu3O7ikzaUqYQ0C4Hd8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786967274; c=relaxed/simple;
-	bh=VQk+NKX2QLLmpu+AnKTBzGZpFZgEXg3SbSlRnkYbJQY=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=q8FaJC+W76GzRasgAJFkxSTc//zBL4+MHwWrdOK26NIqfecMeCUDC2x2G1LI+esGdR5RtmPRhdm/dufCr/074qdVht18Iwh47NMYSJZ3TuDvjAUcSBKLsss2amJnWu3E44W4xuXEHOGpq9yDVxFu2KAzOAdhrpegeDpic7bcAVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=nINoI/uM; arc=none smtp.client-ip=79.135.106.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+	s=arc-20240116; t=1786970114; c=relaxed/simple;
+	bh=1A6ly4O2qy9jX3fh5J0Jn7vpphCQE+kxQ2Yqd7sJMh4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BuTtNKuTMpRNWDRkVJVNsy0viOJUuFGcw2Wg70W4KFpytdWwb8dkAMmKlVLjA1m2I6GkGl3qjiUdgOVmRO2MzT1dJBb60kiA7eiIlgwXCLswhB+E1+wOuD4SbeJ34E/FLVwC2BIKVP19R7tcyOvKuzv2+vC7hoW+cgOdXSA5FAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=csseRKHQ; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="nINoI/uM"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1786967263; x=1787226463;
-	bh=ZRu1RYNKFVEiUGNH9uQ6dlTqTZqU/qO7+ZFglPoqZe0=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=nINoI/uMqd+TrP/KKlwOtvJgDa0TodCbL/TAXPhZ1t6peKfSYl2JOmOzj4R2qnJBC
-	 NCTlHj9UW8tSEYLuyFXJYjrRWCeO7FbNzX5gpVkFUJVv0tIcJhzqClsscICPx3yFXR
-	 0Lmj7bXv3FeFwU1Bgeboi857a8V7YnFl0pTN36IyCwR6pdGdBztqOqZJqMrIC9UlTR
-	 75bacJU2uc48lcbubsWjDjstO7XgGgnjLoEharMrLSrLchYIfWQnSuqKNlaJDxAL84
-	 RzBqzKmtc8f7Ai/yLhO35rD7sML2yiD/EysJQcoOZrqv4toJTK4cM5unP+GyyOcA6D
-	 bXGP3Voquo1qw==
-Date: Mon, 17 Aug 2026 11:47:40 +0000
-To: sashiko-reviews@lists.linux.dev
-From: Aiden Isik <aidenisik@protonmail.com>
-Cc: Aiden Isik <aidenisik@member.fsf.org>, linux-clk@vger.kernel.org, conor+dt@kernel.org, robh@kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 2/3] clk: samsung: clk-pll: Add support for pll_309
-Message-ID: <ubD1iFupOIubgrcjfABhlLsSRSjHBgzA5ZmyURWTM9xviGIM0OlLeXehsukZEY9cXqAgwJt_BI2xspZ5BIlCBPROAWUyyReaTWWSL7g08gI=@protonmail.com>
-In-Reply-To: <20260817103711.943D81F000E9@smtp.kernel.org>
-References: <20260817-for-next-lucky7-clock-v1-0-032e4b229c76@member.fsf.org> <20260817-for-next-lucky7-clock-v1-2-032e4b229c76@member.fsf.org> <20260817103711.943D81F000E9@smtp.kernel.org>
-Feedback-ID: 46524699:user:proton
-X-Pm-Message-ID: 805fa40c58baa6408f869d226858baad95d120ff
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="csseRKHQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED1111F00ACA
+	for <linux-clk@vger.kernel.org>; Mon, 17 Aug 2026 12:35:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1786970113;
+	bh=F0BoI1B2SW1Gn2SrMpAVpRAmC4OHC4tZa8DJdUfqO2A=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=csseRKHQX5NyNSjcQKvlDmFWeo5PfxggOGtuQpn/ZKn3CT0o/BTbkT/jpLdYDFc6g
+	 6m+X6vBujvUDQ/iAfwKZ3btQYHMDBk12RR4oCjjdYhEbCUy+3GUxjIfsI9Bg/gyL+4
+	 T4jLVMBE+OiddY33VJ3RFdjS777uavuRurNh1j299B5DSr3W4gxhrwFMvKKUySeebG
+	 H6TobWVt/hJgNN+zPs3GGzbHMN0Cec7n4IdOfMDJ4wmewDkHwhx0qX3YKwM/DYm7/X
+	 dMmMMN2CDqwGdl90e3IIkL3pYpPEUaHUsph2c72yd4FLhNjV82JToznER+tsEqGE2I
+	 qZTh4BSHHlaaA==
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5b45f2e5f58so1863971e87.0
+        for <linux-clk@vger.kernel.org>; Mon, 17 Aug 2026 05:35:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RqafQGxn6m5HEIwRSeHKvGcgy6thr4krX7fsE/dnTFZLExeedvVljuoLdEuD341GWbSCr9zUj648Ys=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAJioPhY3GusAH3D+IojJFLZWS/ZIqNyXhGGwKJh/kOFBA4XG+
+	TrHAdr+btWKHDziMgX6SJYNc/eWg80YAUZEo2OWCMAXYZ5e2ju2e7VAmKtuFCJvXehQmHKwI/JS
+	VP8gDP3ef1HFPvfRMmNr3uoxNmfdx8PY=
+X-Received: by 2002:a05:6512:66cf:b0:5b2:e956:b459 with SMTP id
+ 2adb3069b0e04-5b45915e1e5mr2876859e87.12.1786970111723; Mon, 17 Aug 2026
+ 05:35:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20260814-kuno-soc-support-v2-0-3079794f0f73@oss.qualcomm.com>
+In-Reply-To: <20260814-kuno-soc-support-v2-0-3079794f0f73@oss.qualcomm.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Mon, 17 Aug 2026 14:34:58 +0200
+X-Gmail-Original-Message-ID: <CAD++jLkjDSQMBZGmDwhqzsvF-vds8ynxDgAwNe4QTtpf2mUuvA@mail.gmail.com>
+X-Gm-Features: AcwNN1VfwHAQiclbXAp71Kv0t_X4ZrB4Vq7QuyBm6v6ehpWFekFj-AwEo8Rc4XI
+Message-ID: <CAD++jLkjDSQMBZGmDwhqzsvF-vds8ynxDgAwNe4QTtpf2mUuvA@mail.gmail.com>
+Subject: Re: [PATCH v2 00/15] Add initial support for Qualcomm Kuno SoC
+To: Hardeep Sharma <hardeep.sharma@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Ulf Hansson <ulfh@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney@redhat.com>, Taniya Das <quic_tdas@quicinc.com>, 
+	Georgi Djakov <djakov@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, Thomas Gleixner <tglx@kernel.org>, 
+	Radu Rendec <radu@rendec.net>, Robert Marko <robimarko@gmail.com>, 
+	Guru Das Srinagesh <linux@gurudas.dev>, linux-arm-msm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	Mukesh Savaliya <mukesh.savaliya@oss.qualcomm.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-> Thank you for your contribution! Sashiko AI review found 2 potential issu=
-e(s) to consider:
-> - [High] Logic Error / Out-of-bounds Read when rate_table is empty
-> - [Medium] Single-Responsibility Violation: Undocumented architectural re=
-factoring
-> --
->=20
-> --- Patch [2]: [PATCH 2/3] clk: samsung: clk-pll: Add support for pll_309=
- ---
-> commit d62df56ff2e6bf73437e6e25e1335b3fb4571268
-> Author: Aiden Isik <aidenisik@member.fsf.org>
->=20
-> clk: samsung: clk-pll: Add support for pll_309
->=20
-> This commit adds support for the pll_309 used in the Exynos5515 SoC, defi=
-ning
-> the PLL characteristics which are handled similarly to pll_531x.
->=20
-> > diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pl=
-l.c
-> > index e74552846ba34..8b1474aeaf0c8 100644
-> > --- a/drivers/clk/samsung/clk-pll.c
-> > +++ b/drivers/clk/samsung/clk-pll.c
-> > @@ -1593,32 +1593,35 @@ static void __init _samsung_clk_register_pll(st=
-ruct samsung_clk_provider *ctx,
-> >  {
-> >  =09struct samsung_clk_pll *pll;
-> >  =09struct clk_init_data init;
-> > -=09unsigned int len =3D 0;
-> > -=09int ret;
-> > +=09int ret, len;
-> >
-> > -=09if (pll_clk->rate_table) {
-> > -=09=09/* find count of rates in rate_table */
-> > -=09=09while (pll_clk->rate_table[len].rate !=3D 0)
-> > -=09=09=09len++;
-> > -=09}
-> > -
-> > -=09pll =3D kzalloc_flex(*pll, rate_table, len);
-> > +=09pll =3D kzalloc_obj(*pll);
->=20
-> [Severity: Medium]
-> This isn't a bug, but the commit message only mentions adding support for=
- the
-> new pll_309 type, while this code changes the allocation semantics of the
-> rate_table across the entire driver, switching from a flexible array memb=
-er
-> to a separate pointer allocation.
->=20
-> Could this architectural refactoring be split into a separate patch or
-> documented in the commit message?
+On Fri, Aug 14, 2026 at 9:32=E2=80=AFAM Hardeep Sharma
+<hardeep.sharma@oss.qualcomm.com> wrote:
 
-This was a mistake caused when updating patches against next.
-Will fix in v2.
+> This series adds initial support for the Qualcomm Kuno SoC and the Kuno
+> IDP reference board.
+>
+> Kuno is a 32-bit ARM (Cortex-A7) Qualcomm platform. This series brings up
+> the essential SoC infrastructure required to boot to a serial console:
+>
+>   - Global Clock Controller (GCC) and RPMh clock controller
+>   - RPMh power domains
+>   - Interconnect (NoC) provider
+>   - TLMM pin controller
+>   - PDC interrupt controller and SCM firmware interface
+>   - Devicetree for the SoC and the Kuno IDP board
+>
+> The soc: qcom: geni-se patch allows the GENI serial engine driver to be
+> selected on 32-bit ARM Qualcomm SoCs, which the debug UART console
+> depends on.
+>
+> Signed-off-by: Hardeep Sharma <hardeep.sharma@oss.qualcomm.com>
 
->=20
-> [ ... ]
->=20
-> > @@ -1637,7 +1640,7 @@ static void __init _samsung_clk_register_pll(stru=
-ct samsung_clk_provider *ctx,
-> >  =09case pll_a9fracm:
-> >  =09=09pll->enable_offs =3D PLL35XX_ENABLE_SHIFT;
-> >  =09=09pll->lock_offs =3D PLL35XX_LOCK_STAT_SHIFT;
-> > -=09=09if (!pll->rate_count)
-> > +=09=09if (!pll->rate_table)
->=20
-> [Severity: High]
-> If a clock is registered with an empty rate table containing only the zer=
-o
-> terminator, kmemdup_array() is called with a count of 0 earlier in this
-> function and returns ZERO_SIZE_PTR rather than NULL.
->=20
-> Since ZERO_SIZE_PTR is not NULL, this check evaluates to false, which
-> incorrectly assigns the full operations instead of the safe min_ops fallb=
-ack.
->=20
-> If samsung_pll_determine_rate() is subsequently called, it skips its loop
-> because rate_count is 0, and attempts to access rate_table[-1]:
->=20
-> samsung_pll_determine_rate() {
->     ...
->     req->rate =3D rate_table[i - 1].rate;
-> }
->=20
-> Since rate_table is ZERO_SIZE_PTR, will this result in an out-of-bounds
-> memory read?
->=20
-> --
-> Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260817-for-next=
--lucky7-clock-v1-0-032e4b229c76@member.fsf.org?part=3D2
->=20
+I understand if you wanna be a bit Greta Garbo mysterious about this
+SoC but patch 10 gives the hardware away:
 
-Kind regards,
-- Aiden Isik
+/* GCC clocks */
++#define GCC_EMAC0_AXI_CLK                                      7
+
+Aha it has an ethernet interface.
+
++#define GCC_PCIE_0_CLKREF_EN                                   22
+
+Aha it has PCI.
+
++#define GCC_SDCC4_AHB_CLK                                      53
+
+Aha it has SD/MMC cards.
+
++#define GCC_USB20_MASTER_CLK                                   58
+
+Aha it has USB2.
+
++#define GCC_USB3_PRIM_CLKREF_EN                                        65
+
+And USB 3.
+
+Other files give away that it also has a modem.
+
+Etc.
+
+So what about writing a bit more about the platform in the commit message?
+For a surprising brand new ARM32 platform we (the SoC maintainers) are goin=
+g to
+be curious to know why this is happening in 2026.
+
+Yours,
+Linus Walleij
