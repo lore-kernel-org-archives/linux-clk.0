@@ -1,90 +1,82 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E33D41BA7C
-	for <linux-clk@vger.kernel.org>; Mon, 17 Aug 2026 12:39:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52B97415F03
+	for <linux-clk@vger.kernel.org>; Mon, 17 Aug 2026 12:57:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786970369; cv=none; b=rPSCLDdrE7rzWI9m4JM5fjFD3HSNjLl/WxzbFl+HpidkDtgs8YtRLBBaPefoMpqzjoDDvsQ3Qi0gdo4ypzkPcqlBfGbOTg3QFXy3TdJjSf/h+HAbkYUrYp0j7iPgE1q/ARZ7DePP4rzxQyFbsim4+4wxhd2p5UdqpwW6jiXkLDs=
+	t=1786971439; cv=none; b=uwtfmTYJ9TCukV2jUUwEPXzYLqIfbMIAOfa7Dv8qpwImTTWJYyQKpvgyfxo0hh62ma7K9j7A6Ze9xoBnYyixpiwbueqnFZ59d1pQ7655Ysh2u2cc0pmjynxV64+QGat62Aw++xE+0zOzYgC8+24wJaoMhBww4+j8lXwnW0EPlQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786970369; c=relaxed/simple;
-	bh=MNPvxiEy0C6PIykCUQd6dAErSez7AzTgKFUW5PHeT8c=;
+	s=arc-20240116; t=1786971439; c=relaxed/simple;
+	bh=/BIsi9PY+Fil18OFwk36lg/migCZgU71LLGi3zckc5c=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ORH926B5QLIW/z6WtMwnzBTM31WVMaPEsv66sJuhTA0fGfly5lZgN5wP9rUler1IfPvuf0UZ5bISRrxxFNiJOhxTeKEUM/BW1+1xmW37iV65ZlF5lTlLTqGbSdWQOxj2iyn5ZRIDFacxbXEWhCKX9Hnw6PFPk/5kXFEm0e5EOy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nPLW+2FO; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=ooenU0yvQw06HufQk3M406Iql9omG1eckBgBkcK+Ue6FDHY9cwlJtD+XMMkTakb88wxhfOHFGQd7uZKk+4fDQaArejFJ5G10JCrJbRaZHO1YVV9aejlNx0k7PyA7V2+evD/AeR7aCt7ykrlru/YrlUxzeG2w1cTbNsU55yuWfPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OmhobpQj; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nPLW+2FO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D08FD1F00AC4
-	for <linux-clk@vger.kernel.org>; Mon, 17 Aug 2026 12:39:27 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OmhobpQj"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE11C1F0155E
+	for <linux-clk@vger.kernel.org>; Mon, 17 Aug 2026 12:57:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786970367;
-	bh=idn/pWXHIgw56/aGT8BcsjeFenZq81CxiFxEILonPKU=;
+	s=k20260515; t=1786971437;
+	bh=yMuUitFtpxg4HIwjXPXk2NVd+fQLMlZkoGPUZSp/E0U=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=nPLW+2FO2l8magX9nb0VKajLqiCqJsoYKA94q1CksO426LzonHJ2LrF05RKAXrg0F
-	 vZShumVsmRGsTcDHJGZSfuwiRkJGF4eXkAQ3W5VMDzKTecjDFpqW7oyRxKwjm+HfuN
-	 X894mdGDED43sPHabIrGSAf9brQLkrC8jhk1f/b86k/XP0HEekmRiRySk58J2yUjzd
-	 gwgDsRpA4splgCn5Q0rXpFirj6gf2VK/Vt5Hwjaevgt87CH5dlTQGTs9Bgl5r1S2oI
-	 v/ze5RzdIaoMYcgYwViyIt18xMOhGyvdRJdwSypAWXPRGjwVOv9GYxRPMbxl8PcHt9
-	 U3uBrC/A+qenw==
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5b2a3166398so3715985e87.3
-        for <linux-clk@vger.kernel.org>; Mon, 17 Aug 2026 05:39:27 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+Rqu0expAVLq+kEdhkWZxCnZFoZIVTWT1Iab4RJuT2YDBy/nqP9A+9yILzzwT1Ay+nVPhUheW4mNlyM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgB3sfayhRn+Osl+YFqnDJqyal+IMWjFWuzPL4w8yH7U5jrU4h
-	mbUWu1wEBMsM/AWLXGeG5U7DcXmxhptO1dyzHZTJk6c0yxg1zX3XoVmgv5wsk5yzljmCxlRRGF3
-	nrPaJOXkYgRnBUdd9kAGM1S9sSd5T7Zk=
-X-Received: by 2002:a05:6512:251f:b0:5b0:82d:e90e with SMTP id
- 2adb3069b0e04-5b459166e3emr4172357e87.19.1786970366630; Mon, 17 Aug 2026
- 05:39:26 -0700 (PDT)
+	b=OmhobpQjoS+6L9WtCoV3faqmSY8+5uu0hUcCDQZH298uinfRO7U1LU8Fc+m/S8FCx
+	 MCIET7CjS3P1UVolUMXP4WX0qXFgfLIjT9b6FzDozJe6J7LJCHqtvyOgcrcv6k4aPn
+	 N/rAPxv928QWcFRRWUOvKU1H2CqNI5b7ja1XEm0cIh/SJDcGUgO11ZCt38Dtfmoc5k
+	 kE5SE+WgPLkug5z6u+HvQiS/nHGxpwFPDmUO+3dL6iFbq1t8fbhQlAydqQWAIyB8e5
+	 CEWVTh9IW0yP2PfHNzVYXdY29gCsiIHgWhlJErt4ROPdFJxeji+kSLSyZFExuA8509
+	 MTFGVOXQUpwRA==
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5b28c91fba5so4010998e87.1
+        for <linux-clk@vger.kernel.org>; Mon, 17 Aug 2026 05:57:17 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RroYcBb3RaVxzEPqx00Rx8/NzDSuQ2NJi+A4ZFC+ZIc5+WL5vJ64tlKagf0Bu2o+PvL0mJ/TjI4KNA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRYfkUy336xDMbIdMkKuXPGSOykFzGYv+PRdNXSEW3+dkaF/7n
+	Ko8aLg7HhylH8nhGxsaP966DOzW9IsFsDuq1ZpxUPbPS5D5HwSsEh+I/o6Rn1H89sTtfezLX3bz
+	XB16V0BAvn3K8lu3BFQrbEw4tdXFVuZY=
+X-Received: by 2002:a05:6512:48d0:b0:5b0:1433:13bd with SMTP id
+ 2adb3069b0e04-5b453baa6d9mr4605381e87.9.1786971436523; Mon, 17 Aug 2026
+ 05:57:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260814-kuno-soc-support-v2-0-3079794f0f73@oss.qualcomm.com> <20260814-kuno-soc-support-v2-15-3079794f0f73@oss.qualcomm.com>
-In-Reply-To: <20260814-kuno-soc-support-v2-15-3079794f0f73@oss.qualcomm.com>
+References: <MN0PR19MB6091DB524E7A07E16D108F52ACDF2@MN0PR19MB6091.namprd19.prod.outlook.com>
+In-Reply-To: <MN0PR19MB6091DB524E7A07E16D108F52ACDF2@MN0PR19MB6091.namprd19.prod.outlook.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Mon, 17 Aug 2026 14:39:11 +0200
-X-Gmail-Original-Message-ID: <CAD++jLnkhsz8Uhm5UBMhXiAwBp8dnNkh8A_fFL-dnSZQ_CT91w@mail.gmail.com>
-X-Gm-Features: AcwNN1Xpg_Z0StBfw_5gikXV84b0FzBwXnDsTOtTS7PYbUy9Cd-ZSMo_wHGUYfc
-Message-ID: <CAD++jLnkhsz8Uhm5UBMhXiAwBp8dnNkh8A_fFL-dnSZQ_CT91w@mail.gmail.com>
-Subject: Re: [PATCH v2 15/15] ARM: dts: qcom: Add initial device tree for Kuno SoC
-To: Hardeep Sharma <hardeep.sharma@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Ulf Hansson <ulfh@kernel.org>, 
+Date: Mon, 17 Aug 2026 14:57:03 +0200
+X-Gmail-Original-Message-ID: <CAD++jLnDJRJMb2jrmTO3WSKHw+5t9uWJsibp47N1UkdYe54gzQ@mail.gmail.com>
+X-Gm-Features: AcwNN1Xvw2LSRWcZSMjKKrZ79yk9hYmZyF8Kta8zS68H0_RKHsWW6aSjf7zDgKo
+Message-ID: <CAD++jLnDJRJMb2jrmTO3WSKHw+5t9uWJsibp47N1UkdYe54gzQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/9] ARM: stm32: add STM32H7R7 and ART-Pi2 support
+To: Liu Changjie <liucj1228@outlook.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
 	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney@redhat.com>, Taniya Das <quic_tdas@quicinc.com>, 
-	Georgi Djakov <djakov@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, Thomas Gleixner <tglx@kernel.org>, 
-	Radu Rendec <radu@rendec.net>, Robert Marko <robimarko@gmail.com>, 
-	Guru Das Srinagesh <linux@gurudas.dev>, linux-arm-msm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+	Brian Masney <bmasney@redhat.com>, Antonio Borneo <antonio.borneo@foss.st.com>, 
+	Russell King <linux@armlinux.org.uk>, Lee Jones <lee@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, 
+	Dario Binacchi <dario.binacchi@amarulasolutions.com>, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, mfd@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 14, 2026 at 9:34=E2=80=AFAM Hardeep Sharma
-<hardeep.sharma@oss.qualcomm.com> wrote:
+Hi Liu,
 
-> Add SoC-level DTSI (qcom-kuno.dtsi) and IDP board DTS
-> (qcom-kuno-idp.dts) for the Qualcomm Kuno SoC.
->
-> Peripherals included in this initial set:
->   - Single Cortex-A7 CPU with PSCI idle states
->   - RPMh RSC with clock controller, power domains, and BCM voter
->   - GCC (Global Clock Controller)
->   - TLMM pin controller (110 GPIOs)
->   - Interconnect (aggre-noc, cnoc-main)
->   - GENI UART console (QUP SE3)
->   - SMEM, hardware spinlocks (TCSR mutex)
->
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> Signed-off-by: Hardeep Sharma <hardeep.sharma@oss.qualcomm.com>
+thanks for your patch!
 
-My comment is addressed so:
-Reviewed-by: Linus Walleij <linusw@kernel.org>
+On Sun, Aug 9, 2026 at 12:08=E2=80=AFPM Liu Changjie <liucj1228@outlook.com=
+> wrote:
+>   dt-bindings: pinctrl: stm32: add STM32H7RS
+>   pinctrl: stm32: add STM32H7RS support
+
+If there is no build-time dependency between these two patches and the
+rest, could you send them separately based on v7.3-rc1 once it is out
+so I can merge them to the pinctrl tree independently of the rest of the
+patches?
 
 Yours,
 Linus Walleij
