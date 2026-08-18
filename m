@@ -1,141 +1,153 @@
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFAB0367282
-	for <linux-clk@vger.kernel.org>; Tue, 18 Aug 2026 21:36:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.222.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787089016; cv=pass; b=NPUrjl+gj8FSQ/YV7ypNHtl1UloIme2lm5uj5DY3cGOW9wtB2Trrvnpst3Kzeh+1V6USLQ9q2J2o5UCin24VCNnZtvOX8Ouh52ItLk/tL+BMQagXQhCzZrKuGEOqreAAH717XqUA6NmiHlJ1VRAccG9ChDoLNmJCJVj0ggUXdeg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787089016; c=relaxed/simple;
-	bh=AMUsfXmsN0KUu46E37mETANlAYAnT51+WK05Bfuu0ns=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eIkSdwNEgf7a2k0on6VkRinb8wFoAZ5s5lKE/4i45M7W+PzSlHrLn+38F7dfu1WC4OejGdAgGKmf6g1FuMWg80WnJePXWFcZLA3/y8HhYXHmYcRIqrAiKwh5+rIvMnq53SbU3U7P4P2BDoij+vwi+ZgfOn+91mABP0FDeLQqSAQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EfKJivyY; arc=pass smtp.client-ip=209.85.222.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C09C026296;
+	Tue, 18 Aug 2026 21:58:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1787090325; cv=none; b=LLVA2peKgbb0X3mCVvxfRxRlHTpMC8EbDRCggonTAqd/XsLN0c5GTyeZBhDRKmdYAixZt2hI5ngoAK31jprsXJ++W1jEtgYAeLIOtPJAWu2DWml9NP30JtgcozagRY5Qws9rjk8XK8s9XgjKyTuhaQc5/CD888mrJpdbrWSn8kE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1787090325; c=relaxed/simple;
+	bh=UDNWr97k0IQ0S9m6OO8km8BsOp+W7P/+APdAzwtHDLE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=aI3neonzBoVgNBInKvMoOGrbGNGH3T275nQ1eP5qqrrDbPcxsi6nKzojwm4zU+omSAtoQ79ThSZEkOJlRPuX27HJsKvqp9S4ZfBncrL4BiAfcI18XxILTCmkZE+At3EnVpBneNW+/qxWLuRTIncMhgyVnLQqqAlp7T8640Mz6AI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SvLz9GVC; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EfKJivyY"
-Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-97bf910aa70so93701241.2
-        for <linux-clk@vger.kernel.org>; Tue, 18 Aug 2026 14:36:54 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1787089013; cv=none;
-        d=google.com; s=arc-20260327;
-        b=X58qhu/4CXtEmDe0oXLT0YIHHRKhZRuC8TJcMZ8DcnAQdqTwMNKjfzJtXvQhP7/7On
-         MCU6kRNCAxdnb+Tr5uwZnSmHpqBJ5p1Xg3tcL3dm81tEOeodHAmkPwxe5Mxy9Lj0CyEp
-         +lYVkPmc9fmJIQBPH55GXzJJoRH0dDwXbDalRtNyNU2zmUViw2Qgl0wU5wKt0jeMDa9G
-         SAs4jusCqaL91tTtB2IKxF00cdwTq54/tYA6mCCNr1RQ/MKAtjXvWpHsQSDHAowUiDiq
-         JNFod6tAqW8tgB8J05YWEHLi/7n+IRQdrIMEajWywtfoUG9uFuxNXISnO8xS1yY8j4r4
-         wPqg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=AMUsfXmsN0KUu46E37mETANlAYAnT51+WK05Bfuu0ns=;
-        fh=ze9kTUTL/ZrFoNozHzuOjPtyKtqZ/3K0Y+t/Ilhm68A=;
-        b=V17Qhu3IKZ8aMxDTTA4QIHv8QanjgMHCAkuxbbnw2lCXbKaAkZc1nbrcbiveEAc5br
-         uCEFk6xysUFDUBnCvASVz0GBJSyDBn20zquyKzLRV8iekG9JKVbFp4Q02gabN7L7lnE7
-         9ThvpeY1os2Icw8/Ailrdg3UNKKLhpvLq9eBOIKIOsqB5rG3p2Ywe/NujPgjYOzVk/B7
-         dbsCvGY5jJgE0sOKfxIeJcrnUmvMRU7rFnhGvg8ew7YvVgj7M+D1eg6FyaoKGEPIP/jj
-         M9C9xOnM/OvzzDjkoHCo/59BE6cwxZQ/TewPW+Shz1z9o99Ii+sXAvO98BrGvZfh+Fvm
-         1nzQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1787089013; x=1787693813; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=AMUsfXmsN0KUu46E37mETANlAYAnT51+WK05Bfuu0ns=;
-        b=EfKJivyY3Zsxyw3NllYkg2PF9zayhDDLARkVvR4uSf9RSc7ixt6ZxlN9boKTDJaxnP
-         1YG+EIxNIt6kLWZ3Xz4p/5umB1MA43ySl/0qOlDbMR/ehTct6Yg0ct4HQofUmLZLlQgF
-         NnSx09CX3dfDmxYlFKPKWFPbf5H8Gww4iJ3MCnXWrYOYS0rJJOtsSonGsxKciNDgzrEA
-         xOa4I1VkhiLRDwD66O0SP5BwwnVYPfZWk9NGFA4+HbjclwdpifFJG0My4wHpwEizJaOL
-         /F6Y/lqL+5il+WlOHzdPWKfYVB5h0UOVZ8eTRknB6JVLCvUOfknsqCcyXyclnWmXVZcQ
-         TVKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787089013; x=1787693813;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=AMUsfXmsN0KUu46E37mETANlAYAnT51+WK05Bfuu0ns=;
-        b=Pit+KYTJS7mAFryVrS0TJvQQzduOL9busK5gmJZ7/gEsigWhb3/H9ahpjO5x6zwGFL
-         sEtJoT4lW9Dczz2+JnnNQrYi201A3IV1Eh9B8XAwYRMNKi86fabtztv3it2vL4ALVvge
-         qWz8ya29um1ZiwqBG88XHBtnA+42apUkiMXmFA4B/rjOp7wklRGpIiFsZGe+KKFhA94q
-         qpDBRpv9Xel8jucpoqdDsLsqbcAWWiI6gz2K8ZOKvPpyqfmLJ83N1F7X+N7dPVK17+Ub
-         ZzmEtfd+KozU5t77unUwWrRUQ2Kxprpx3oz6rqYGZzMUvk/FAYRwb3k0mTIaGzbrmiH3
-         TGbA==
-X-Forwarded-Encrypted: i=1; AHgh+RpQMjsqrusJsDqYET0fCvxq9tZ0VUIKO5a0gCwfQfENwGO+hSzSJ6ErHDwiG88faM2DovDamlloewk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1igrDNDRz3JMtcyxvx8BK+CZZFmy52Saxybj2hPxvsrHJVWwC
-	WOCopAjG0o8qDwUnSEdgXYENI1nntQ/6cRiDD/UQskY8j0wbmAivk3tJtHtymxFNxJ41Ms4eSfU
-	SSlJmQhX18kDpxsRuT9Rhvkb2KAVEpwo=
-X-Gm-Gg: AR+sD12TUMAiOtCFOBWgOk/+ZdUWnywx4I1gds+8VX5H5U2r70JoVBOR0T1Wte6DTWk
-	G0Q846yxVdn9VoTpNlvyRM3WowFNtQt4LlVxHU046JINnM5djQ8SHspVTHzgohJOgyDtk2SFjH4
-	tT8d1BflIzL7//+jeOqpI5ha7FcNXkp3U0YO89SXIJkej/xUcvvRGgpKNqp0Fhb1KEciL3LgDBW
-	cwYDkaDMy5Cn+HkpBicLz74Hw+iLdosWxfSK1uSNmC6FoEZjmMvbcUJMfkbHfn5McL4I2f4QXq4
-	TI4ElgdpxPG0ZxhFRzkjoC4VHNrSV8fRGGTQMru0Xxt1d8yC1pqB9hyrokduDKLDB6oUnfSfH3t
-	lE1DAEyeypP/UUH9sZW9iNsqvwfpBr8QueOHsgPWZwTsC6OBXwcuQbfac4cM66+OzcqLpyzQ8pO
-	+nf6VGc57Z70AkkzH/SoxURXpDYiiGhd1RyX25
-X-Received: by 2002:a05:6102:3fa6:b0:6cb:d562:b96a with SMTP id
- ada2fe7eead31-777b89f4818mr417941137.14.1787089013591; Tue, 18 Aug 2026
- 14:36:53 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SvLz9GVC"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 75173C19425;
+	Tue, 18 Aug 2026 21:58:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1787090325;
+	bh=UDNWr97k0IQ0S9m6OO8km8BsOp+W7P/+APdAzwtHDLE=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=SvLz9GVCPXcARdMoexJwm9UUkjPP+XawCVvHDkR//TQZOuDo/Cs/qfTpZhSCbC31a
+	 hZs7j5nG9Oghcd2i+Y7hyF0LQOTz0J09Dequ/NJ0nGN8SNHJvMObELKH2VP5Cr9NEw
+	 kyuF5ygBeC7ybfyWyCQk/DbAWeVOhmjExxHmnozD0uHAZojIN+aXVvht72XFAgt8k/
+	 E77KWpPhSQgeRHo4bXz17xq6KMKCTaCdAEK5BwjN0wucO3ojCQyJhcL+yvWv5OlXuN
+	 tiPxaEhBtnM/wQDQbKsoOKsg2lbFXFGuYSGlMpUixfcXf3uy00pf/PK7caj6Rn8W6N
+	 9UWx6arjLh26w==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EA58C5DF7D;
+	Tue, 18 Aug 2026 21:58:45 +0000 (UTC)
+From: Aiden Isik via B4 Relay <devnull+aidenisik.member.fsf.org@kernel.org>
+Subject: [PATCH v2 0/3] clk: samsung: Introduce Exynos5515 clock driver
+ support
+Date: Tue, 18 Aug 2026 22:58:34 +0100
+Message-Id: <20260818-for-next-lucky7-clock-v2-0-cda0cc80f158@member.fsf.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260703152215.192859-1-richard.genoud@bootlin.com>
- <20260703152215.192859-3-richard.genoud@bootlin.com> <aoQibj7sCd6o8W6h@monoceros>
- <CADvTj4r=uBJyJdmK3T+jD_Nitg2NBs7fZgtE5p6wt9zwWgj6DQ@mail.gmail.com> <aoTMMAGbWelnjJTo@monoceros>
-In-Reply-To: <aoTMMAGbWelnjJTo@monoceros>
-From: James Hilliard <james.hilliard1@gmail.com>
-Date: Tue, 18 Aug 2026 15:36:42 -0600
-X-Gm-Features: AcwNN1WNCOQhs7S_JPB6wAilK0gfWlIi5mTrdxNK2MAHoPVv5VHOpQRIxBhuAGs
-Message-ID: <CADvTj4ovVmY-TN7u_yj6me88qNEzr_0xbuC9DerPguFGdgOEBA@mail.gmail.com>
-Subject: Re: [PATCH v7 2/4] pwm: sun8i: Add H616 PWM support
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>
-Cc: Richard Genoud <richard.genoud@bootlin.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@kernel.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
-	Paul Kocialkowski <paulk@sys-base.io>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
-	John Stultz <jstultz@google.com>, Joao Schim <joao@schimsalabim.eu>, bigunclemax@gmail.com, 
-	linux-pwm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIrVhGoC/3WNyw6CMBBFf4V07ZC2IFVW/odhYccpVB41LRAI4
+ d8FjEuXJ7n3nIUF8pYCy6OFeRptsK7bQJ4ihtWjKwnsc2Mmucz4RZzBOA8dTT00A9azAmwc1pD
+ oVCvKtEBK2fZ9ezJ2Orz34sth0C/Cfpfti8qG3vn5CI9i3/0a6k9jFMCBJ5JSLeUVVXZrqdXkY
+ xNM7HzJinVdP6YX1Y7RAAAA
+X-Change-ID: 20260815-for-next-lucky7-clock-3b4b7e6b1ce4
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+ Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+ Aiden Isik <aidenisik+git@member.fsf.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
+ Aiden Isik <aidenisik@member.fsf.org>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2585;
+ i=aidenisik@member.fsf.org; h=from:subject:message-id;
+ bh=UDNWr97k0IQ0S9m6OO8km8BsOp+W7P/+APdAzwtHDLE=;
+ b=owEBbQKS/ZANAwAIAUknAbLEetfrAcsmYgBqhNWSjMY1I95L0VqIOxvnyDYXRcaVDhL/tc/xa
+ sCiBeSgrnyJAjMEAAEIAB0WIQSDy8UkXGpc3JNbEaVJJwGyxHrX6wUCaoTVkgAKCRBJJwGyxHrX
+ 6/afEACenWvCS6HggKqzTvionUili9AXn0eqVLMpoVEvXucgWGrfDygJS+7bs19W75SU5qtwYpV
+ 7W4VfHSYyg1J+eSOlZCDzJThDAz9GW2T0r/gArrcHQ10Wc8xifFqFViWDRL2NkOgck8A5uIruCw
+ Z8m0Rw7PZ2T2L35B/7E/thKYFyoPMTbazdNHfHsQDi/T4dFOs1RZPlUbq8Xlshcr5Ik8npTe9fZ
+ BFbS1h7wp2ZsfbtMtL4aATrD6sHyGe22TXF78aVe3AZpvD1uqSB9BmzvwU0LlBBBfX1YfL0VIUI
+ z5Nk2OEmCmLzyNxdAVIRbTLfHJ8meRk31AOcfsc1jyEIMoTJBtkaqDwyC57m7bVs0RAhVdwr7xz
+ vLB2Sn+b82Z5nbCuR5AbOD+uO9od3FAApCtMSAJZjfQoKmbCJx8n7WUb423LaFsf/0eFvAMwjIk
+ 1RPDObNmfJk0uduDiP0XAUzABN1TnmhT1BgI1PMKZDLDRPnUDZA6HLY4xzfUCkyyg6DO86DDOVc
+ S9GwDwq7PXLx/0cqfbEa1YyiGr3HvbcYVDDEFwj8lzIKoTesBtI5+xYyiYwi5Mkb8oBSAx8TSpx
+ wl9wbzfyeB6s+dlSg+W36ZEX2cYC4Oo6wrWmDt3lal6nt4jz6w4YRUYt8wkuKTahWU66zoem7VS
+ /V9G+An7Xh30gHw==
+X-Developer-Key: i=aidenisik@member.fsf.org; a=openpgp;
+ fpr=83CBC5245C6A5CDC935B11A5492701B2C47AD7EB
+X-Endpoint-Received: by B4 Relay for aidenisik@member.fsf.org/default with
+ auth_id=956
+X-Original-From: Aiden Isik <aidenisik@member.fsf.org>
+Reply-To: aidenisik@member.fsf.org
 
-On Tue, Aug 18, 2026 at 3:26=E2=80=AFPM Uwe Kleine-K=C3=B6nig <ukleinek@ker=
-nel.org> wrote:
->
-> Hello,
->
-> On Tue, Aug 18, 2026 at 08:12:43AM -0600, James Hilliard wrote:
-> > On Tue, Aug 18, 2026 at 5:00=E2=80=AFAM Uwe Kleine-K=C3=B6nig <ukleinek=
-@kernel.org> wrote:
-> > > I didn't look at Sashiko's feedback
-> > > (https://lore.kernel.org/all/20260703153337.B5AFF1F000E9@smtp.kernel.=
-org)
-> > > but I would expect that not all 9 high-severity issues identified are
-> > > slop. Please look through these for the next revision.
-> >
-> > I sent a v8 that should have fixed all the sashiko issues along with a
-> > bunch of other issues:
-> > https://lore.kernel.org/all/20260804-h616-pwm-v8-v8-0-db37ab8624ae@gmai=
-l.com/T/
->
-> Damn, I missed that because my usual check for newer revisions is using
-> the sender as key (because subjects occasionally change). You didn't
-> write about your patch series being coordinated with Richard, I hope it
-> is.
+Hi there,
 
-Richard was working on this for the same project/board.
+This patchset introduces clock driver support for the Exynos5515 SoC.
 
-> Just looking at your changelog I think most of my manual feedback still
-> needs addressing. Can you (or Richard?) please go through my feedback
-> and address the things still relevant for your v8 please?
+Currently, the following CMU blocks are defined:
+- CMU_TOP (handles clocks for all child CMU blocks)
+- CMU_PERI (handles clocks for USI, watchdog timer, etc)
+- CMU_FSYS (handles clocks for MMC, USB, etc)
 
-From what I could tell most of the v7 review is either already fixed or
-inapplicable to the v8. Probably it needs to be reviewed separately.
+This driver support makes use of HWACG (hardware automatic clock gating),
+so gates do not need to be manually forced on with CLK_IGNORE_UNUSED or
+CLK_IS_CRITICAL. Rather, the hardware handles the clock gating.
+
+Support for more blocks to come as support for the hardware requiring
+them is added.
+
+I am getting some checkpatch warnings telling me to check the MAINTAINERS
+file, as new files have been added. I am assuming these can be ignored as
+I am not a maintainer, and the whole clock driver and samsung subsystems
+already have maintainers listed.
+
+Signed-off-by: Aiden Isik <aidenisik@member.fsf.org>
+---
+Changes in v2:
+- Fixed accidental revert in clk-pll.c
+- Corrected mux parent ordering
+- Corrected Signed-off-by tags
+- Link to v1: https://patch.msgid.link/20260817-for-next-lucky7-clock-v1-0-032e4b229c76@member.fsf.org
+
+To: Krzysztof Kozlowski <krzk@kernel.org>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Chanwoo Choi <cw00.choi@samsung.com>
+To: Peter Griffin <peter.griffin@linaro.org>
+To: Alim Akhtar <alim.akhtar@samsung.com>
+To: Michael Turquette <mturquette@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>
+To: Brian Masney <bmasney@redhat.com>
+To: Rob Herring <robh@kernel.org>
+To: Conor Dooley <conor+dt@kernel.org>
+To: Aiden Isik <aidenisik+git@member.fsf.org>
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-clk@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+
+---
+Aiden Isik (3):
+      dt-bindings: clock: Add Exynos5515 SoC
+      clk: samsung: clk-pll: Add support for pll_309
+      clk: samsung: Introduce Exynos5515 clock driver
+
+ .../bindings/clock/samsung,exynos5515-cmu.yaml     |  145 ++
+ drivers/clk/samsung/Makefile                       |    1 +
+ drivers/clk/samsung/clk-exynos5515.c               | 1485 ++++++++++++++++++++
+ drivers/clk/samsung/clk-pll.c                      |    1 +
+ drivers/clk/samsung/clk-pll.h                      |    1 +
+ include/dt-bindings/clock/samsung,exynos5515-cmu.h |  191 +++
+ 6 files changed, 1824 insertions(+)
+---
+base-commit: acde40ba506aae78633e080b5704d33cf4bc13c6
+change-id: 20260815-for-next-lucky7-clock-3b4b7e6b1ce4
+
+Best regards,
+--  
+Aiden Isik <aidenisik@member.fsf.org>
+
+
