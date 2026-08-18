@@ -1,135 +1,128 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B509D282F1E;
-	Mon, 17 Aug 2026 23:52:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1239B3AC0C3
+	for <linux-clk@vger.kernel.org>; Tue, 18 Aug 2026 03:59:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787010757; cv=none; b=QKcGeLVZPzgcCSgDAt5qVpdn8FCBdtZu89ixINvixRraMwGy/5TgSVfuRow6LT4uhQ5cNNdDUrPoVGkjNaCAnK8w/8NirQcP+ltvfxLhYgueYp0J3Nyf/AwGTVUXZpKt2MFUsSg/gmu946NuJuTjAfSavdpwniHCYbVaY7d/YK0=
+	t=1787025594; cv=none; b=hSubk/w7kP9esOROHbnCA6YyIly+FiIlEdh/ciaAuV3Zu3HWLq7pELFB3kUxXSsA6V4HiiaMvXCGHUde6FUaOqgQTvA4iKuubZ6d6Rrv+VPfpsWxjLlAcCz1wPXs2Md2z0C6tIYCLtAbASXpvjcH4HcVhB0ZdnzjY5KjQjVU3Zw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787010757; c=relaxed/simple;
-	bh=AtD4uFG6MYanMiiRIeueL3WGyuyNAhrdDqYLDHsIitM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=osVFz+PjBX4F20SyLVHxkKFRk6ujrHkm/WZYxG4PEJJCD3utCTwHJBqEtx48ebfkTKdhO0B25tOS3t8WpyWpodO6afXWrDRZrnyzJMIv7v/fvwZ57xQG/Xasqbdcn4NJPU/GSqNekxOYHQUExOl4tEsAgyTSO04mtQ6GnWFQEHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V+hk+Lyc; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1787025594; c=relaxed/simple;
+	bh=cVTG8lZVqP7tC4R+lkdLz1X5btO3fFP6MkuCINexyak=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=m+UbjLn9g4wqKOWNhoaRqvbHdZYO0nn0TnBdaDKalDr/KWfIw/eTOP3MW5P4YTWqMmbeyYHsVQbBqKe3xvdRIy+dr7/Na2PpYPlPYzhG9UC7JbrZv5i0xwnbKm8NyfIAUZmtkqZKPq6x1RvE4NhPeLZMON/PLsoHj53PYeHJa2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Nc0iQO4X; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V+hk+Lyc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FF5D1F000E9;
-	Mon, 17 Aug 2026 23:52:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787010756;
-	bh=koWf55vaeY/YK5s2sXLfuXSB87tJXPWVCUmNqitRZhA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=V+hk+LycGEcXLRgSUp/flcYt0TOp/+5nxDJSpjbCXKVph6Y0rL4yhAwebZhCRcbjc
-	 XQgcNqYrGmOp9ZXyY7mN+58t17njbPXI29hVNP5O6mNWvR/ODCTjkqY15Wg6N61DGt
-	 8tQFTaKg/ZJ27xleGoqhaczD3VcAYDCrUyzfVHDSsx/zdzWn1hdP8SlilEuqUdj6Be
-	 NCzOqG0Msb/3GqAlpsJkiwbgymrR0B8qzBG+I+gkB6KZDzKbVl5QP51Un3gHUyQgMX
-	 klOxX9iyqfyFxSglHVTEIL+dUHGLGWQnktVu8sGC/gWiu3jmiiC2sgrvK0ApX1uJcT
-	 /aZAG5R8VkYGA==
-Date: Mon, 17 Aug 2026 16:52:34 -0700
-From: Drew Fustini <fustini@kernel.org>
-To: Icenowy Zheng <uwu@icenowy.me>
-Cc: Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-phy@lists.infradead.org,
-	linux-usb@vger.kernel.org, Han Gao <rabenda.cn@gmail.com>,
-	Yao Zi <ziyao@disroot.org>
-Subject: Re: [PATCH 02/12] clk: thead: th1520-ap: add support for MISC subsys
- clocks
-Message-ID: <aoOewlbMfey0DLwp@thelio>
-References: <20260507081710.4090814-1-zhengxingda@iscas.ac.cn>
- <20260507081710.4090814-3-zhengxingda@iscas.ac.cn>
- <aier9XppLeCkJydw@thelio>
- <93b867c1b7f5526cc25cb04f838432cd752f5981.camel@icenowy.me>
- <aievi0s-3SO8hV6a@thelio>
- <aijpEqzJ7fM7rGMH@thelio>
- <aoH9cvTC8vD4NYpB@x1>
- <3f0268a19aab46d602dffc9e14fc6683af7a20cd.camel@icenowy.me>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Nc0iQO4X"
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20260818035949epoutp02964638d7e17b22cfdbe9b356d06b4585~Myk5UuZmO2480624806epoutp02j
+	for <linux-clk@vger.kernel.org>; Tue, 18 Aug 2026 03:59:49 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20260818035949epoutp02964638d7e17b22cfdbe9b356d06b4585~Myk5UuZmO2480624806epoutp02j
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1787025589;
+	bh=H2J8nu4Hey8UwWctf5x81wbobgR75wzg5QI2g8k9cZU=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=Nc0iQO4XRZTBEr1C8F63Sl+E62UbVdo8KYySkR6MFrbPVke0tbk56GdvdXEfklsH/
+	 C01WHDKLobFKCq6BC4XddKhZHnnCSnr7mQ7rj0HCw+GAowBfQASYw2L6EFPOtRAAFD
+	 /k4opETaKveiFFpxZ2kHGASy8PxDs/1yVRUmj31E=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
+	20260818035949epcas5p44be5b57e72841931cfbaa3fef7d96f32~Myk41pdgw2027520275epcas5p4e;
+	Tue, 18 Aug 2026 03:59:49 +0000 (GMT)
+Received: from epcas5p2.samsung.com (unknown [182.195.38.94]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4hPGDg5jK6z6B9m5; Tue, 18 Aug
+	2026 03:59:47 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20260818035947epcas5p16adfc8c5f942956df7310bf76fc82e86~Myk2tWgjK1737017370epcas5p1j;
+	Tue, 18 Aug 2026 03:59:47 +0000 (GMT)
+Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20260818035944epsmtip24102c5d9b3cde735c82d29b9288e0537~Myk0MRq1f1699416994epsmtip2C;
+	Tue, 18 Aug 2026 03:59:44 +0000 (GMT)
+From: "Alim Akhtar" <alim.akhtar@samsung.com>
+To: <aidenisik@member.fsf.org>, "'Krzysztof Kozlowski'" <krzk@kernel.org>,
+	"'Sylwester Nawrocki'" <s.nawrocki@samsung.com>, "'Chanwoo Choi'"
+	<cw00.choi@samsung.com>, "'Peter	Griffin'" <peter.griffin@linaro.org>,
+	"'Michael Turquette'" <mturquette@baylibre.com>, "'Stephen Boyd'"
+	<sboyd@kernel.org>, "'Brian Masney'" <bmasney@redhat.com>, "'Rob Herring'"
+	<robh@kernel.org>, "'Conor Dooley'" <conor+dt@kernel.org>, "'Kees Cook'"
+	<kees@kernel.org>, "'Gustavo A. R. Silva'" <gustavoars@kernel.org>
+Cc: <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-hardening@vger.kernel.org>, "'Aiden
+ Isik'" <aidenisik+git@member.fsf.org>
+In-Reply-To: <20260817-for-next-lucky7-clock-v1-2-032e4b229c76@member.fsf.org>
+Subject: RE: [PATCH 2/3] clk: samsung: clk-pll: Add support for pll_309
+Date: Tue, 18 Aug 2026 09:29:42 +0530
+Message-ID: <025901dd2ec6$0245bcf0$06d136d0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3f0268a19aab46d602dffc9e14fc6683af7a20cd.camel@icenowy.me>
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQHOeIyOJ24EK7guGNA1AUHFAM/4yAG4p0XDAgM/Jlq2orpDUA==
+Content-Language: en-us
+X-CMS-MailID: 20260818035947epcas5p16adfc8c5f942956df7310bf76fc82e86
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-543,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20260817101721epcas5p228e56fa915717b7a547df144ff801c8c
+References: <20260817-for-next-lucky7-clock-v1-0-032e4b229c76@member.fsf.org>
+	<CGME20260817101721epcas5p228e56fa915717b7a547df144ff801c8c@epcas5p2.samsung.com>
+	<20260817-for-next-lucky7-clock-v1-2-032e4b229c76@member.fsf.org>
 
-On Mon, Aug 17, 2026 at 12:24:26PM +0800, Icenowy Zheng wrote:
-> 在 2026-08-16日的 11:12 -0700，Drew Fustini写道：
-> > On Tue, Jun 09, 2026 at 09:33:22PM -0700, Drew Fustini wrote:
-> > > On Mon, Jun 08, 2026 at 11:15:39PM -0700, Drew Fustini wrote:
-> > > > On Tue, Jun 09, 2026 at 02:01:43PM +0800, Icenowy Zheng wrote:
-> > > > > 在 2026-06-08一的 23:00 -0700，Drew Fustini写道：
-> > > > > > On Thu, May 07, 2026 at 04:17:00PM +0800, Icenowy Zheng
-> > > > > > wrote:
-> > > > > > > The TH1520 SoC contains a MISC_SUBSYS clock controller,
-> > > > > > > which
-> > > > > > > allows
-> > > > > > > controlling of USB related clocks and MMC/SD controller AHB
-> > > > > > > bus
-> > > > > > > clocks.
-> > > > > > > 
-> > > > > > > Add support for this clock controller, in order to enable
-> > > > > > > USB
-> > > > > > > support.
-> > > > > > > 
-> > > > > > > Signed-off-by: Icenowy Zheng <zhengxingda@iscas.ac.cn>
-> > > > > > > ---
-> > > > > > >  drivers/clk/thead/clk-th1520-ap.c | 64
-> > > > > > > +++++++++++++++++++++++++++++++
-> > > > > > >  1 file changed, 64 insertions(+)
-> > > > > > > 
-> > > > > > > diff --git a/drivers/clk/thead/clk-th1520-ap.c
-> > > > > > > b/drivers/clk/thead/clk-th1520-ap.c
-> > > > > > > index 3a6847f1c950f..24f785f0b329a 100644
-> > > > > > > --- a/drivers/clk/thead/clk-th1520-ap.c
-> > > > > > > +++ b/drivers/clk/thead/clk-th1520-ap.c
-> > > > > > [...]
-> > > > > > > @@ -1609,6 +1663,12 @@ static int th1520_clk_probe(struct
-> > > > > > > platform_device *pdev)
-> > > > > > >  			return ret;
-> > > > > > >  	}
-> > > > > > >  
-> > > > > > > +	if (plat_data == &th1520_ap_platdata) {
-> > > > > > > +		ret = devm_clk_hw_register(dev,
-> > > > > > > &usb_suspend_div_clk.hw);
-> > > > > > > +		if (ret)
-> > > > > > > +			return ret;
-> > > > > > > +	}
-> > > > > > 
-> > > > > > Should usb_suspend_div_clk.hw instead be registered under
-> > > > > > 'if (plat_data == &th1520_ap_platdata)'?
-> > > > > 
-> > > > > Do you mean misc_platdata?
-> > > > > 
-> > > > > Yes, this is an copy-n-paste error that deserves a fix.
-> > > > 
-> > > > Hah, yes, I also had a typo :)
-> > > 
-> > > Assuming that gets fixed in the next rev:
-> > > 
-> > > Reviewed-by: Drew Fusini <fustini@kernel.org>
-> > 
-> > I will fixup the typo and apply to thead-clk-for-next once 7.3-rc1 is
-> > released.
-> 
-> BTW I think the binding patch should go through your tree too.
 
-Yes, I will plan to take patch 1 and 2 through thead-clk-for-next and
-patch 3 through thead-dt-for-next.
 
-Thanks,
-Drew
+> -----Original Message-----
+> From: Aiden Isik via B4 Relay
+> <devnull+aidenisik.member.fsf.org=40kernel.org>
+> Sent: Monday, August 17, 2026 3:47 PM
+> To: Krzysztof Kozlowski <krzk=40kernel.org>; Sylwester Nawrocki
+> <s.nawrocki=40samsung.com>; Chanwoo Choi <cw00.choi=40samsung.com>;
+> Peter Griffin <peter.griffin=40linaro.org>; Alim Akhtar
+> <alim.akhtar=40samsung.com>; Michael Turquette
+> <mturquette=40baylibre.com>; Stephen Boyd <sboyd=40kernel.org>; Brian
+> Masney <bmasney=40redhat.com>; Rob Herring <robh=40kernel.org>; Conor
+> Dooley <conor+dt=40kernel.org>; Kees Cook <kees=40kernel.org>; Gustavo A.
+> R. Silva <gustavoars=40kernel.org>
+> Cc: linux-samsung-soc=40vger.kernel.org; linux-clk=40vger.kernel.org;
+> devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; lin=
+ux-
+> kernel=40vger.kernel.org; linux-hardening=40vger.kernel.org; Aiden Isik
+> <aidenisik+git=40member.fsf.org>
+> Subject: =5BPATCH 2/3=5D clk: samsung: clk-pll: Add support for pll_309
+>=20
+> From: Aiden Isik <aidenisik=40member.fsf.org>
+>=20
+> pll_309 (referred to in the downstream kernel sources as frd_309_rpll) is=
+ one
+> of two PLLs used in the Exynos5515 SoC. It is an integer/fractional PLL w=
+ith an
+> FVCO of 600-2400MHz.
+>=20
+> It has the same locktime (500), and kdiv/mdiv/pdiv/sdiv masks and shifts =
+as
+> pll_531x, so it can be handled in exactly the same way.
+>=20
+> When defining a PLL, the =22con=22 parameter should be set to the CON3 re=
+gister,
+> like this:
+>=20
+> PLL(pll_309, CLK_FOUT_AUD_PLL, =22fout_aud_pll=22, =22oscclk=22,
+>     PLL_LOCKTIME_PLL_AUD, PLL_CON3_PLL_AUD, NULL),
+>=20
+This patch does more then what is described above; please explain all chang=
+es in the commit.=20
+If needed, split this into common and pll_309 specific changes. Thanks=21
+
+Regards,
+Alim
+
