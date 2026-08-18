@@ -1,43 +1,43 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mail-106101.protonmail.ch (mail-106101.protonmail.ch [79.135.106.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EB7B41D13B;
-	Tue, 18 Aug 2026 08:39:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E95633D6ED;
+	Tue, 18 Aug 2026 09:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787042357; cv=none; b=FYCHO3l/J1wVUW20i7icTS3vyZx3G7l2UqcGdD66KGVj9EGUy5jRufc2Gc/QL5AErZ9xizXpAIybWmiVlRwE82e/RmdiMdTe1+OnHVHaYV1KQVuLUw1Rb4DEI8Nu7hKZRI76a12C81VBwbz23fRZywzTi3s2aHq/u1YWN61WPsQ=
+	t=1787044927; cv=none; b=KZEAvvZheNtrWd2IywZ5GrdXa6w/QjtSgwnhqc616274256t9ODkRE0CC8hfnlASb2lw1S8YI+VOBvIgEZjmUUAj+/hQ4NkQDbSC846J+D3ezcFdayvis+FyZfsd6CtZOBMLzLgsQJkN7b+z/c3zrYVPFnjFCiHfs3eIxVVOyhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787042357; c=relaxed/simple;
-	bh=eTXsLc1JiByMlycIe50UlyxBW8XUihjrUs8XtMF3SA4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qvsu9LUGQvAbC3He0N5NA34MTT8Dcc+jJCHApZ5VL5J81Dkhl8Qy1c44jefklKlOVoDTLhiTQ7lug111x/ujwtdpXMKhtVJnm6ZRbeX4RHq5X5KH1RuFzdxujw9oieCsRIfGo+wfaT+Km06oj5EKI5/HBTiq0oKaCGJCaiNSyXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mOBBQO8C; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1787044927; c=relaxed/simple;
+	bh=zTSgW3lqKvxe96bVUgTAt0zx4SrLraeyYO8HpL7beks=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=amzBCT8PWF3Z/s1RKfoJN98+EsbrAAnDD4SYqAgv9kcvydwtOc6vCwtsLJiGFByv+tFjiB2VkWSVmymSR3mH4Po/0ez6hbS9GpghVf7bcC6x2dhzqHBCshyEJWVQiE1+sWsG23n+szYf8qYLIS/FKWpvjxs+Pr6qYa9OTTBi3Cg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=XUxmBcBZ; arc=none smtp.client-ip=79.135.106.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mOBBQO8C"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21DAA1F000E9;
-	Tue, 18 Aug 2026 08:39:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787042355;
-	bh=I7Owhg1nzSRg8qLTtyWVfOmrhJAxPj0PEVlD4Ih4IXs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=mOBBQO8CINqSo8hqnaNly5rcRpips5txY6JlS9+ViTEIwdq5/Z+W2eGCjFlSkUNTY
-	 BA4VA8F59ht2cEv2FK/58b/fB1Jhau0Wc1GQhC2CgyAkCFNZUGFA50Pg45PnXfAHTV
-	 IJi5cYtkLyJT6S5u/+byBNk26f81SsrKWMcBCo05z9OjDF77HlDZqF8+FsDOPBYs9b
-	 sfju+Wt2pbKySr0l+JF3OGzU7KCQEpqIE3q+BBV08BfZH+btJKppCyxg5tq9Xvzl8C
-	 Dkkfu2QSqRYjqAdaNODVEJH5zROTIiZ9Cp8kIOP+R6KHLtqpXt6aRCGCds7rr1ZNVk
-	 vEyMvOVdtBZPA==
-Date: Tue, 18 Aug 2026 10:39:05 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Sreeshankar K <sreeshankar0910@gmail.com>
-Cc: andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, quic_tdas@quicinc.com, 
-	bmasney@redhat.com, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] dt-bindings: clock: qcom,rpmhcc: Document RPMHCC
- bindings for SM7250
-Message-ID: <20260818-perfect-sambar-of-judgment-57ea22@quoll>
-References: <20260816131646.10551-1-sreeshankar0910@gmail.com>
- <20260816131646.10551-3-sreeshankar0910@gmail.com>
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="XUxmBcBZ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1787044922; x=1787304122;
+	bh=zTSgW3lqKvxe96bVUgTAt0zx4SrLraeyYO8HpL7beks=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=XUxmBcBZ5e6SeXUVt+WJsc8HpGpKBN2hWyltd8u6Sm+MWzeQmxGaJT6h2DTsYaXfM
+	 cPaD1wQioujiB9ujpeg0tvQHqtVdPo1v9AxkH5274/GX+l0a3m849a5jC/CqAVg/RH
+	 af4+qMb4PFxu8bFu60P1QSDBjnYGoOZCZk0WxJ0y2SHe7OPenVJArRXb3HOULU9glt
+	 6UFMtwYThNZQZnMdgFnOLFKTeuE3S9wyzXp6CxJUY9OSYsaCHSud3s2+LgGHzs3gmU
+	 m/1dHUZfbqQk9Xf9y7YYQ5sPMoj0+DyDcgl1rBb8szYqjaoOoYxNiGKrSBrwBdWDK/
+	 rlOrmqETvYYSA==
+Date: Tue, 18 Aug 2026 09:21:56 +0000
+To: Alim Akhtar <alim.akhtar@samsung.com>
+From: Aiden Isik <aidenisik@protonmail.com>
+Cc: aidenisik@member.fsf.org, 'Krzysztof Kozlowski' <krzk@kernel.org>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Chanwoo Choi' <cw00.choi@samsung.com>, "'Peter\tGriffin'" <peter.griffin@linaro.org>, 'Michael Turquette' <mturquette@baylibre.com>, 'Stephen Boyd' <sboyd@kernel.org>, 'Brian Masney' <bmasney@redhat.com>, 'Rob Herring' <robh@kernel.org>, 'Conor Dooley' <conor+dt@kernel.org>, 'Kees Cook' <kees@kernel.org>, "'Gustavo A. R. Silva'" <gustavoars@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 'Aiden Isik' <aidenisik+git@member.fsf.org>
+Subject: Re: RE: [PATCH 2/3] clk: samsung: clk-pll: Add support for pll_309
+Message-ID: <WlIHBa8-P07AMfFe5EEKZh_6Wf7Uy5uOuF7Jn23UY5QHcjjSpab2Vw0u_bZLCjHe73lu3fg6IevtFeJrkc3lNcZZtDnN41QJwZ7hzzBAsfg=@protonmail.com>
+In-Reply-To: <025901dd2ec6$0245bcf0$06d136d0$@samsung.com>
+References: <20260817-for-next-lucky7-clock-v1-0-032e4b229c76@member.fsf.org> <CGME20260817101721epcas5p228e56fa915717b7a547df144ff801c8c@epcas5p2.samsung.com> <20260817-for-next-lucky7-clock-v1-2-032e4b229c76@member.fsf.org> <025901dd2ec6$0245bcf0$06d136d0$@samsung.com>
+Feedback-ID: 46524699:user:proton
+X-Pm-Message-ID: cb31ad2511c84fea8b1ab9d40af6ee6983b56437
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -45,24 +45,17 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260816131646.10551-3-sreeshankar0910@gmail.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Aug 16, 2026 at 01:16:45PM +0000, Sreeshankar K wrote:
-> Document RPMHCC bindings for clock rpmh driver on Qualcomm SM7250 SoC.
-> 
-> Signed-off-by: Sreeshankar K <sreeshankar0910@gmail.com>
+> This patch does more then what is described above; please explain all cha=
+nges in the commit.
+> If needed, split this into common and pll_309 specific changes. Thanks!
 
-A nit, subject: drop second/last, redundant "bindings for". The
-"dt-bindings" prefix is already stating that these are bindings.
-See also:
-https://elixir.bootlin.com/linux/v7.1-rc7/source/Documentation/devicetree/bindings/submitting-patches.rst#L23
+This was a mistake I made when rebasing onto a newer commit.
+It's not meant to do that. Will fix in v2. Thanks.
 
-Why is this patchset separate from the other clock patchset? Please make
-it easy and obvious to maintainers.
+> Regards,
+> Alim
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-
-Best regards,
-Krzysztof
-
+Kind regards,
+- Aiden Isik
