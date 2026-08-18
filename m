@@ -1,126 +1,157 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA62B35C1B0;
-	Tue, 18 Aug 2026 19:28:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57440357D0D
+	for <linux-clk@vger.kernel.org>; Tue, 18 Aug 2026 21:14:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787081328; cv=none; b=tEXymPE0tIZTQh3tCzAdgK7Lihy3bfE5BP5nuMPB1nND5IDQTC/k4s7aq1TELg0ORAzBfph3Tz0V9SnoEXjRvHf+aH1MBvzuU3YmNg6Dr/qT+JBFrpRqmLm29nK0z576IU3lkpFx5798JH6J6vHJ9ByCNplswF5x0saqGbszfXg=
+	t=1787087646; cv=none; b=YYuQawMwOG6HFjy3DVd4hnpicq2LkJ5j7ZwiGa2oJelG5092Ffy26eaHdR1zr2ksx/5L9KYDs5fBeRA7sXEBaEWchUEyqNPmsWuOtcvh2Z9oDa87fts8SOkT8Wyn30lQ4VMCL4QS+R2Rr5C6pK8+HlTO9EM9x4QVRF33bsjtevM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787081328; c=relaxed/simple;
-	bh=4Vpv5zCLi44iufKU1afO+rmUwyT2htQzjGQNmOfDyYo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Eqxhq6Aia/aDAklZxr+uVdwEVfTimxBFMLnpAhKC0VA0d2E18r/p58bbDMrsltLfp1yL5hbn10WkQ7KUeuXe/jBx40bDZalTlJiO2+BX8u+Gpaajlcrue3CZNZ15i2nf51nT50FTVHO/r98+9ktftm0xqEW38dIX30gCrh1fBaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KgDRKWw0; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1787087646; c=relaxed/simple;
+	bh=6ohOiM74UD4xMxkO4OFu7OuzhXuuv8SHaskdv78UhzE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZciKhLr2wZg1029P1iYBL2auYFaV5VlKZySCgNw65l6YXHStuHh1IvMlCki/za1U0ojTXknu56T4U5Sw82FSHj1JthogixVcI6c6LhBTiUop20rmaOSifMd4mSIBXflWcS/fIIK51FbHFiOD+LjbDFCD/KQP3kqjqX+2K7kVZhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZIRdSTGX; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZfXKyppD; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KgDRKWw0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D10A1F000E9;
-	Tue, 18 Aug 2026 19:28:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787081327;
-	bh=gBsZ0xwI/Le18b2qGJn/FAvpMBURVFLBFmujAbRyTkU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=KgDRKWw06PAWPw5qGCcc0iYOFW9SZXfNffM8HZ9jYIL9SqRmsBWp+KSmmduq1UYfB
-	 oxnHCtrWoW6vwSNwNhfZJruOuVVVriWKROCZzhlgkP4wcx15UBXQg3AEnghVAVqjNW
-	 4AlMGuJ1xyDdPCi7Qtswd5G5JoQBJ1NAbaNgO09PLyJjJuu13VJohA1mL0D8vlhVjI
-	 2UIzJTKs+pdaChY9kfXg7zKP8Z8xzU9Cfs/aHoOjv1P0aBP0oDFwQ1iHJU36/3Lybc
-	 8q0taZ8XHoAhj0yVTwvMF7SN9gNkGoTk0RX3O/qBZ3TSRshR27VfnEmsnXHxVRzXNx
-	 85pHh+slZSF4A==
-Message-ID: <9f97b734-b92f-425d-920b-2c7ee15a2f9e@kernel.org>
-Date: Tue, 18 Aug 2026 21:28:35 +0200
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZIRdSTGX";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZfXKyppD"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1787087643;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=F0M1lc1PhRG1akNgGaC7ljiaI/Sk2ScYO5cf2onL4Tw=;
+	b=ZIRdSTGXzWYE5KonAi/weK1G+mQAXVfSyHQQmTUpVYstQvk2lK7I4vKcFLO2Jv+EERC/1O
+	9l0qXcxRFFhEcz/MfulOq4pW6bWnmV7mxuB4WmJIeFdvn9n+Whk8uWYtrXa5qWsXaCgQ/S
+	amyoDqdNUJ9XWuS7ffyJ3rc4LPyj1qU=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-670-Svl5FHGKMpSPfYIxr-3hHg-1; Tue, 18 Aug 2026 17:14:01 -0400
+X-MC-Unique: Svl5FHGKMpSPfYIxr-3hHg-1
+X-Mimecast-MFC-AGG-ID: Svl5FHGKMpSPfYIxr-3hHg_1787087641
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-8eec6acbe21so6819146d6.3
+        for <linux-clk@vger.kernel.org>; Tue, 18 Aug 2026 14:14:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1787087641; x=1787692441; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:content-type
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=F0M1lc1PhRG1akNgGaC7ljiaI/Sk2ScYO5cf2onL4Tw=;
+        b=ZfXKyppDdjSxU/R/AKqn21yaoi52+aVXvoEX3AAnqGZLzy/jq+NEHRGmB+KBzV0yWw
+         upARMsBFLkEMckjexi7L5qGra5LeARNc23vzbZUiAZSgQu9/GCSJnDBo2nDEP55qLZDD
+         QZRY8gEUqdRblJ4QimfoAFOcop9Qh1iTgCjDXzMcgYIsXOiMOg0yCdfyvef80FugDnfb
+         SHgsgIZ8on4zmOjNXTgZ+6lhq5fjFvv1KOWfJxindhFUQYQm8SuIP0E9Yd+qEUgiv/Ds
+         ykD725AoWvD3/Ivaibsh60IpQA3647wo3Pa9YwLUZKD2sh2bFg3oNqcx3L+j019pqD6J
+         92oQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787087641; x=1787692441;
+        h=user-agent:in-reply-to:content-disposition:content-type
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=F0M1lc1PhRG1akNgGaC7ljiaI/Sk2ScYO5cf2onL4Tw=;
+        b=hGHF/iNDboTgFzwQE9yOMvMpBPu6aC9tJSe22+rAa4MucbcRSG7okgjvkC7fw/Nerq
+         wJuZgiV9cMdoG5Dc4OG8DLrx6fjc0BBmzfgsNXFckArCuopHaThUdDwWtzZGiVD9UDiV
+         aeS5MdElbfWq0XxRap7tCW4mevZmswjcGpH1/H2tk/MZhPbhZ7yRXzF2j/HK32CGe0lq
+         EDaT1Khmb8YY07eQW/uYbmE81oHnrxotJLt9ofkHxk4NpxQv2Nstdb24lfuKOMRaNjI0
+         rfcyZYCAh+uJy+KLvOuPrzE7fL5ySAasnAw2kZ+Hw9R1uxuV3iJogQ3vWTVQhd0RCL/F
+         33NQ==
+X-Forwarded-Encrypted: i=1; AHgh+RofZrtAnY8jPGTcxxEnLGJjIP23b1T+BuVJAaJLA5BW7KV4JouBYOfy83RLx8XV5YOsY55j69yoRUU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNix0/SUi6l605YgCQGj2BkUVuNencc1OttMD1N6xBIvNKgDgX
+	SCpZTDma89eTRhffPFxZe9dO/Cs7y/pQtyrYUo7tVzmd9IqsfE2mYZpGYB6eKVAFgArlwMaVgvP
+	hOx8LKMre/LKHsMG6ZxekTwafwaa/FEo9Gel3flj2eUZ1DC2H4R9jTH3YhXhqbQ==
+X-Gm-Gg: AR+sD13mM3uIG986AgD3400KrSyO/pqmdL8uZd5uCrRXWsvKwdBAreFDf1cNC9lzT3i
+	QDIZN1Ci1T9Db0RQPKVZt6FRMmqH69UUrO2pNNma5I/l1SrJA7XGHWKBh3PPNPAqmnedZTRTCkl
+	zkmKVtAEg2DaaNODEeOQQcPNpYOTQctV8R/zDvOmsxIggX6vjsgwnwE9yjrmvTl7aiaGYGqFS2A
+	VybUCyJZG2UWrNtwL3DQ/IzRFDkwyTzCOmNhu9KwHrjHx7/LI9Ep+1cnB8hH8IZEGqS7VZQvnkb
+	Lr/nu89PARI7uAJIpRKz1SsRuaIXk9HUzO9X4vmWAXqJpsxkR+Sj2BsM3f06Un5Ffb1OlV6bKh1
+	1YTCdPAwP8eyjxKdrUO7+X/YaJytWN1ICQyU=
+X-Received: by 2002:a05:6214:260f:b0:908:a54a:5b29 with SMTP id 6a1803df08f44-90c5c402044mr14834276d6.24.1787087641169;
+        Tue, 18 Aug 2026 14:14:01 -0700 (PDT)
+X-Received: by 2002:a05:6214:260f:b0:908:a54a:5b29 with SMTP id 6a1803df08f44-90c5c402044mr14833806d6.24.1787087640706;
+        Tue, 18 Aug 2026 14:14:00 -0700 (PDT)
+Received: from redhat.com (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-90c4580fcc4sm41326186d6.4.2026.08.18.14.13.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Aug 2026 14:14:00 -0700 (PDT)
+Date: Tue, 18 Aug 2026 17:13:58 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>,
+	Tero Kristo <kristo@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Tony Lindgren <tony@atomide.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	=?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>,
+	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
+	linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Matti Vaittinen <mazziesaccount@gmail.com>
+Subject: Re: [PATCH v2 1/2] clk: ti: mux: resolve parent clocks by DT index,
+ not by name
+Message-ID: <aoTLFuE0seVTMuMy@redhat.com>
+References: <20260727-mathieu-wdt-clock-theo-v2-0-c048a6394436@bootlin.com>
+ <20260727-mathieu-wdt-clock-theo-v2-1-c048a6394436@bootlin.com>
+ <CAMuHMdU3yVqoyHC4eNF2NuYo8wy+6ODLoYat4R71X99Mxc_=kw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 03/12] dt-bindings: clock: add Ambarella CV75 RCT
-To: longzhao@ambarella.com, Arnd Bergmann <arnd@arndb.de>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>, soc@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Linus Walleij <linusw@kernel.org>,
- Bartosz Golaszewski <brgl@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
- linux-kernel@vger.kernel.org, Brian Masney <bmasney@redhat.com>,
- Lee Jones <lee@kernel.org>, mfd@lists.linux.dev, Long Zhao <zl020895@163.com>
-References: <20260818-cv75-v5-v5-0-7bbb12f0360f@ambarella.com>
- <20260818-cv75-v5-v5-3-7bbb12f0360f@ambarella.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <20260818-cv75-v5-v5-3-7bbb12f0360f@ambarella.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdU3yVqoyHC4eNF2NuYo8wy+6ODLoYat4R71X99Mxc_=kw@mail.gmail.com>
+User-Agent: Mutt/2.4.0 (2026-06-19)
 
-On 18/08/2026 12:31, Long Zhao via B4 Relay wrote:
-> From: Long Zhao <longzhao@ambarella.com>
+Hi Stephen / Geert,
+
+On Tue, Aug 18, 2026 at 06:02:56PM +0200, Geert Uytterhoeven wrote:
+> On Mon, 27 Jul 2026 at 09:44, Mathieu Dubois-Briand
+> <mathieu.dubois-briand@bootlin.com> wrote:
+> > Resolve parent clocks by their index into the device tree "clocks"
+> > property rather than matching names as strings. Name-based matching is
+> > fragile because a clock's "clock-output-names" value in its provider
+> > node can differ from the name used to reference it in a consumer node,
+> > and because names must be globally unique across all clock providers.
+> >
+> > On AM335x, this caused broken clock trees where some clocks failed to
+> > enable because their parents could not be found.
+> >
+> > Replace of_clk_parent_fill() with a clk_parent_data array that sets
+> > .index to the array position.
+> >
+> > Fixes: ec7aa25fa483 ("ARM: dts: Use clock-output-names for am3")
+> > Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
 > 
-> Document the CV75 RCT clock controller and the clock ID header used by
-> DT consumers.
+> Thanks for your patch, which is now commit 667f420c09f1417c ("clk: ti:
+> mux: resolve parent clocks by DT index, not by name") in clk/clk-next.
 > 
-> This initial binding describes only the clock-provider functionality.
-> Reset-controller support is outside scope of this series, so #reset-cells
-> property is intentionally omitted.
+> This breaks booting BeagleBone Black for me: I don't get any output
+> on the serial console, even with "earlycon keep_bootcon".  When the
+> watchdog kicks in (or on kernel panic?), the system reboots.
 > 
+> Reverting this commit fixes the issue.
+> After reverting, I added debug code to print all parents, and compared
+> them to the DTB, but didn't see any discrepancies.
+> 
+> Your similar change to drivers/clk/ti/composite.c does not cause any
+> issues for me.
+> 
+> Do you have a clue?
 
-You received feedback at v1 or v2. You ignored it. It was reminded you
-at v3. You ignored it.
+Stephen: I think the safest thing is to just drop / revert the two
+patches in this series in the pull to Linus next week. I'd do it now,
+however I'm still waiting for my kernel.org account to get created,
+and don't have write access to the clk tree yet.
 
-Now you send this again.
+Mathieu: Feel free to post an updated version, and we can get it merged
+earlier in the development cycle so it'll get more testing in next.
+Hopefully Geert will have time to test an updated version.
 
-NAK, you need to start responding to feedback.
+Brian
 
-
-Best regards,
-Krzysztof
