@@ -1,128 +1,150 @@
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1239B3AC0C3
-	for <linux-clk@vger.kernel.org>; Tue, 18 Aug 2026 03:59:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 158A441B8C6
+	for <linux-clk@vger.kernel.org>; Tue, 18 Aug 2026 08:08:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787025594; cv=none; b=hSubk/w7kP9esOROHbnCA6YyIly+FiIlEdh/ciaAuV3Zu3HWLq7pELFB3kUxXSsA6V4HiiaMvXCGHUde6FUaOqgQTvA4iKuubZ6d6Rrv+VPfpsWxjLlAcCz1wPXs2Md2z0C6tIYCLtAbASXpvjcH4HcVhB0ZdnzjY5KjQjVU3Zw=
+	t=1787040505; cv=none; b=oMt3xhNDWw6GLU3JQSKACOJ4q+LBgQ85TBmavL9apaulLh+sAZAVQ3vUgu7+xGI5PAf3npH7ds/OdagZ1cGiGYBRayM38amWk1NXK6/nhJm7ptah33JEN/yLOr/lawiWHaSe5BDvO3+ZqxXcYALDqZgqOWlyv2g4cQSq7/ZtuMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787025594; c=relaxed/simple;
-	bh=cVTG8lZVqP7tC4R+lkdLz1X5btO3fFP6MkuCINexyak=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=m+UbjLn9g4wqKOWNhoaRqvbHdZYO0nn0TnBdaDKalDr/KWfIw/eTOP3MW5P4YTWqMmbeyYHsVQbBqKe3xvdRIy+dr7/Na2PpYPlPYzhG9UC7JbrZv5i0xwnbKm8NyfIAUZmtkqZKPq6x1RvE4NhPeLZMON/PLsoHj53PYeHJa2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Nc0iQO4X; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1787040505; c=relaxed/simple;
+	bh=0H1l5ai2bzbV4VB1a/jhyZoEvATFbEu45/aKE1f24Lw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lJryg0P8JtWo472RAS3ptBXfNaJ2zVkjDxNTRbs4tFj9p82ndd54lI/EDVAqcNDF7uiPQoZ5TzOPL+fIsK4XBH1O+EIX2WiF8IlSAQuoajqZCPm2HtoAmCILYb4i4Y5kNHeQRtVQWsEghTyad/pOLwgY1HEQKlLNMUgP4Jrrq78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WaODIvos; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Nc0iQO4X"
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20260818035949epoutp02964638d7e17b22cfdbe9b356d06b4585~Myk5UuZmO2480624806epoutp02j
-	for <linux-clk@vger.kernel.org>; Tue, 18 Aug 2026 03:59:49 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20260818035949epoutp02964638d7e17b22cfdbe9b356d06b4585~Myk5UuZmO2480624806epoutp02j
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1787025589;
-	bh=H2J8nu4Hey8UwWctf5x81wbobgR75wzg5QI2g8k9cZU=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=Nc0iQO4XRZTBEr1C8F63Sl+E62UbVdo8KYySkR6MFrbPVke0tbk56GdvdXEfklsH/
-	 C01WHDKLobFKCq6BC4XddKhZHnnCSnr7mQ7rj0HCw+GAowBfQASYw2L6EFPOtRAAFD
-	 /k4opETaKveiFFpxZ2kHGASy8PxDs/1yVRUmj31E=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
-	20260818035949epcas5p44be5b57e72841931cfbaa3fef7d96f32~Myk41pdgw2027520275epcas5p4e;
-	Tue, 18 Aug 2026 03:59:49 +0000 (GMT)
-Received: from epcas5p2.samsung.com (unknown [182.195.38.94]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4hPGDg5jK6z6B9m5; Tue, 18 Aug
-	2026 03:59:47 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20260818035947epcas5p16adfc8c5f942956df7310bf76fc82e86~Myk2tWgjK1737017370epcas5p1j;
-	Tue, 18 Aug 2026 03:59:47 +0000 (GMT)
-Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20260818035944epsmtip24102c5d9b3cde735c82d29b9288e0537~Myk0MRq1f1699416994epsmtip2C;
-	Tue, 18 Aug 2026 03:59:44 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: <aidenisik@member.fsf.org>, "'Krzysztof Kozlowski'" <krzk@kernel.org>,
-	"'Sylwester Nawrocki'" <s.nawrocki@samsung.com>, "'Chanwoo Choi'"
-	<cw00.choi@samsung.com>, "'Peter	Griffin'" <peter.griffin@linaro.org>,
-	"'Michael Turquette'" <mturquette@baylibre.com>, "'Stephen Boyd'"
-	<sboyd@kernel.org>, "'Brian Masney'" <bmasney@redhat.com>, "'Rob Herring'"
-	<robh@kernel.org>, "'Conor Dooley'" <conor+dt@kernel.org>, "'Kees Cook'"
-	<kees@kernel.org>, "'Gustavo A. R. Silva'" <gustavoars@kernel.org>
-Cc: <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-hardening@vger.kernel.org>, "'Aiden
- Isik'" <aidenisik+git@member.fsf.org>
-In-Reply-To: <20260817-for-next-lucky7-clock-v1-2-032e4b229c76@member.fsf.org>
-Subject: RE: [PATCH 2/3] clk: samsung: clk-pll: Add support for pll_309
-Date: Tue, 18 Aug 2026 09:29:42 +0530
-Message-ID: <025901dd2ec6$0245bcf0$06d136d0$@samsung.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WaODIvos"
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2d530328efbso38580685ad.0
+        for <linux-clk@vger.kernel.org>; Tue, 18 Aug 2026 01:08:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1787040503; x=1787645303; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=+D1J/9ZlL6m18wtBnsr3GqvUcikepsKuBSpWqZkiPic=;
+        b=WaODIvosd1D/y6qkw8lmf+dOVZq81xhYnwZMouDL7WVKHQjcTCIuvOnGYKKxEE1bEe
+         zGyyDxhieTwjScQ9RVqg/L2dgIOqI6qRNcaR8/iok8a+0XTlW50RCKJ1N1zLaGVaAay9
+         Y3kA3UjmeY7q2ZBPKg10tJjE156m9STKk988z0KxiYEY8CVvykCHet4ZERDg5MRuG8lc
+         vwKTURN7PEF1YY6Gfj52I7/s4nTYu2GyWldGr+wpCa1yTX+gUB9XvD9KZ203YNAK7LHs
+         Teo038VGzFqxMTnIGjEa5nAtDAR1wwOHNJsyrrQGzwCg5cxx9TtFlNGDzjSt+tBJokDB
+         xUOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787040503; x=1787645303;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=+D1J/9ZlL6m18wtBnsr3GqvUcikepsKuBSpWqZkiPic=;
+        b=CjvI+gBu6BTpli2dISImGx/dyKNNffmKoRI0plQwVf/GklOxIjClvCA+Whtvb4EwNc
+         i7jvhuf+TS+6bPYHO+F8lkFzqlsnY9CLKL0/8IuwESOpHTN3s8mcpvQ/ELsECYk8ygFW
+         elIshiuLAjQclaQLwWP+bu9fr4BcNEeT7BLKW8Z8A4tThiBgqIxbLxArQ+dcIPmArccH
+         PR2VziF678b1tm49O36oTyhDIXVPbZ174luE1ZxXjOT9G1iKAOOB+ZyzNTCmnpx8Bnxm
+         nIx5XOk06y4JwewRPcta+7bsta+hKYyOiASb9PEuIoPANEDZt/gUVyBZMUHzuw/RTBb4
+         M05Q==
+X-Forwarded-Encrypted: i=1; AHgh+RrtDZE6sQJWnm2dxPUQ09SxqEfjn1SFCN4Y4WkvenKSfZlkorX0rVcY+MhkO2w68SU3njfO1rg6dss=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMyKDrnUby+NdZN0FTP1IEfM24cergkhemyhoN0rgC5XbTjRnh
+	4qkeAOSQhwxS1AIHL8pHatTu6nmJuu70fstnEvZ2t6QzB1xJFElXUcB9
+X-Gm-Gg: AR+sD10VZ31VtyLqO8blRHmKkPZAhWhNuGZwHOgo66GqdJl88zL+tUEDTxAVrxAxVut
+	6tsB45xO+LGEwDHIk08dEpXWQkziid72NU2HQqTP9rsLWne/LuEwuTkLNzBrxjHDoss3mHj/wNM
+	kPuFnUF1QS53+Kn+K/mM4UPeJ+Gmi3XqaTQSm8Wh8gMWxg5JxtNTr5s7OVFCoX5NuJ+ogBOY+aZ
+	rNiHxrF9fo3We0Mh8blFOajBXvh1vBJDiyoupfL9iRX7tW/Wy93rOAVri4iL/AQG9v2O5TP7vPk
+	s/QxHwI/ZbG3lf0g+QdUaM2HUEMyoiQRgjj36fmuu/MkkVhuSX4tmaoCA9PEnVsICBEcAvUkIQx
+	gYj16lyaRNPFMgtOr4R4IPFApXEedOwkHQUyUBwjovO3oLbytx/HdTlXOmevJAeOum4cZQWAWkI
+	3HTLSGgjUm2QTBfOPFOGY+NGgntGRyUIBRlDjpD8SM0PrpnVEb/i16uDxzqVlHBSEsDDp3ReG6x
+	Frsvh6CCV6ylC+I8k617w==
+X-Received: by 2002:a17:902:d482:b0:2d0:cc92:f7ac with SMTP id d9443c01a7336-2d5c514d4cdmr67117435ad.14.1787040503171;
+        Tue, 18 Aug 2026 01:08:23 -0700 (PDT)
+Received: from localhost.localdomain ([152.58.217.90])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-32678dd08d6sm22606290eec.4.2026.08.18.01.08.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Aug 2026 01:08:22 -0700 (PDT)
+From: Sreeshankar K <sreeshankar0910@gmail.com>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	andersson@kernel.org,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	konradybcio@kernel.org,
+	tglx@kernel.org,
+	ulfh@kernel.org
+Cc: bmasney@redhat.com,
+	lpieralisi@kernel.org,
+	quic_tdas@quicinc.com,
+	danila@mainlining.org,
+	davidwronek@gmail.com,
+	robimarko@gmail.com,
+	linux@gurudas.dev,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-pm@vger.vger.kernel.org,
+	Sreeshankar K <sreeshankar0910@gmail.com>
+Subject: [PATCH 00/12] Add initial support for Qualcomm SM7250 SoC
+Date: Tue, 18 Aug 2026 08:07:42 +0000
+Message-ID: <20260818080754.4362-1-sreeshankar0910@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHOeIyOJ24EK7guGNA1AUHFAM/4yAG4p0XDAgM/Jlq2orpDUA==
-Content-Language: en-us
-X-CMS-MailID: 20260818035947epcas5p16adfc8c5f942956df7310bf76fc82e86
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-543,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20260817101721epcas5p228e56fa915717b7a547df144ff801c8c
-References: <20260817-for-next-lucky7-clock-v1-0-032e4b229c76@member.fsf.org>
-	<CGME20260817101721epcas5p228e56fa915717b7a547df144ff801c8c@epcas5p2.samsung.com>
-	<20260817-for-next-lucky7-clock-v1-2-032e4b229c76@member.fsf.org>
+Content-Transfer-Encoding: 8bit
 
+This patchset introduces foundational upstream support for the Qualcomm SM7250
+SoC (internally codenamed Lito).
 
+SM7250 is an ARMv8.2-A platform manufactured on a 7nm process, featuring an
+octa-core Kryo 475 CPU configuration (1x Prime Cortex-A77, 1x Gold Cortex-A77,
+and 6x Silver Cortex-A55) and Adreno 620 GPU.
 
-> -----Original Message-----
-> From: Aiden Isik via B4 Relay
-> <devnull+aidenisik.member.fsf.org=40kernel.org>
-> Sent: Monday, August 17, 2026 3:47 PM
-> To: Krzysztof Kozlowski <krzk=40kernel.org>; Sylwester Nawrocki
-> <s.nawrocki=40samsung.com>; Chanwoo Choi <cw00.choi=40samsung.com>;
-> Peter Griffin <peter.griffin=40linaro.org>; Alim Akhtar
-> <alim.akhtar=40samsung.com>; Michael Turquette
-> <mturquette=40baylibre.com>; Stephen Boyd <sboyd=40kernel.org>; Brian
-> Masney <bmasney=40redhat.com>; Rob Herring <robh=40kernel.org>; Conor
-> Dooley <conor+dt=40kernel.org>; Kees Cook <kees=40kernel.org>; Gustavo A.
-> R. Silva <gustavoars=40kernel.org>
-> Cc: linux-samsung-soc=40vger.kernel.org; linux-clk=40vger.kernel.org;
-> devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; lin=
-ux-
-> kernel=40vger.kernel.org; linux-hardening=40vger.kernel.org; Aiden Isik
-> <aidenisik+git=40member.fsf.org>
-> Subject: =5BPATCH 2/3=5D clk: samsung: clk-pll: Add support for pll_309
->=20
-> From: Aiden Isik <aidenisik=40member.fsf.org>
->=20
-> pll_309 (referred to in the downstream kernel sources as frd_309_rpll) is=
- one
-> of two PLLs used in the Exynos5515 SoC. It is an integer/fractional PLL w=
-ith an
-> FVCO of 600-2400MHz.
->=20
-> It has the same locktime (500), and kdiv/mdiv/pdiv/sdiv masks and shifts =
-as
-> pll_531x, so it can be handled in exactly the same way.
->=20
-> When defining a PLL, the =22con=22 parameter should be set to the CON3 re=
-gister,
-> like this:
->=20
-> PLL(pll_309, CLK_FOUT_AUD_PLL, =22fout_aud_pll=22, =22oscclk=22,
->     PLL_LOCKTIME_PLL_AUD, PLL_CON3_PLL_AUD, NULL),
->=20
-This patch does more then what is described above; please explain all chang=
-es in the commit.=20
-If needed, split this into common and pll_309 specific changes. Thanks=21
+This patchset is organized as follows:
+> Document relevant device tree bindings (SoC ID, Kryo 475 CPUs, SCM, PDC,
+RPMh clocks/power domains, and GCC).
+> Add driver support for SM7250 in socinfo, rpmh-clk, rpmhpd, and GCC.
+> Add the base SoC DTSI (sm7250.dtsi) defining the cpus, PSCI,
+interrupt controllers, clock providers, power domains, and reserved memory.
 
-Regards,
-Alim
+Dependencies:
+This series is based on and depends on the following patch:
+> [PATCH] dt-bindings: clock: qcom,sm6375-gcc: Merge SM7150 into SM6375
+Link: https://lore.kernel.org/linux-arm-msm/20260817082457.64797-2-krzysztof.kozlowski@oss.qualcomm.com
+
+Sreeshankar K (12):
+  dt-bindings: arm: qcom,ids: Add SoC ID for SM7250
+  soc: qcom: socinfo: Add SM7250 SoC ID
+  dt-bindings: clock: Add GCC clock bindings for SM7250
+  clk: qcom: Add Global Clock Controller (GCC) driver for SM7250
+  dt-bindings: clock: qcom,rpmhcc: Document RPMHCC bindings for SM7250
+  clk: qcom: rpmh: Add SM7250 rpmh clocks
+  dt-bindings: power: qcom,rpmhpd: Document RPMh power domain for SM7250
+  pmdomain: qcom: rpmhpd: Add RMPh power domains for SM7250
+  dt-bindings: arm: cpus: Document Kryo 475 CPUs
+  dt-bindings: firmware: qcom,scm: Document SM7250 SCM
+  dt-bindings: interrupt-controller: qcom,pdc: Document SM7250 PDC
+  arm64: dts: qcom: Add SM7250 devicetree file
+
+ .../devicetree/bindings/arm/cpus.yaml         |    1 +
+ .../bindings/clock/qcom,rpmhcc.yaml           |    1 +
+ .../bindings/clock/qcom,sm6375-gcc.yaml       |    4 +-
+ .../bindings/firmware/qcom,scm.yaml           |    1 +
+ .../interrupt-controller/qcom,pdc.yaml        |    1 +
+ .../devicetree/bindings/power/qcom,rpmpd.yaml |    1 +
+ arch/arm64/boot/dts/qcom/sm7250.dtsi          |  556 ++++
+ drivers/clk/qcom/Kconfig                      |    9 +
+ drivers/clk/qcom/Makefile                     |    1 +
+ drivers/clk/qcom/clk-rpmh.c                   |   24 +
+ drivers/clk/qcom/gcc-sm7250.c                 | 2347 +++++++++++++++++
+ drivers/pmdomain/qcom/rpmhpd.c                |   19 +
+ drivers/soc/qcom/socinfo.c                    |    1 +
+ include/dt-bindings/arm/qcom,ids.h            |    1 +
+ include/dt-bindings/clock/qcom,sm7250-gcc.h   |  163 ++
+ 15 files changed, 3129 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm64/boot/dts/qcom/sm7250.dtsi
+ create mode 100644 drivers/clk/qcom/gcc-sm7250.c
+ create mode 100644 include/dt-bindings/clock/qcom,sm7250-gcc.h
+
+-- 
+2.43.0
 
