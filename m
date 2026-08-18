@@ -1,256 +1,119 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B913A47B413;
-	Tue, 18 Aug 2026 16:55:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DDA4351C2F;
+	Tue, 18 Aug 2026 19:27:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787072147; cv=none; b=g2UrZ4KiQ2d0f+BgSveTXllW32HmFt2V64E7JGm+AkuuXWv49xkMDPJy9ZfC8CbZb2sbNfPw/q+J8cqspCwwsVz5dEjl1dQ4otZI00LAOOiy9r/4TO0tHHgG+EXLNQzcrmKswiAeeDu1Fliqy94Eu4aRfTSsQFXDuW1SGPeFg78=
+	t=1787081238; cv=none; b=e9Nhw6MI4wQB5ywynTDVe4TLOJeyHP5v32M6FcaJvhaSTJmXKpET5HPF12EEA4TEkaTHNxOnTPJZP+uQOj7QLKIi9ISKESQdT0poaJjMLJJeFShxPbujC8DNwfOiXeOHogTAJm5ZituF2wMYjRbIPmBkhp5hFD8z74v9P6IIsIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787072147; c=relaxed/simple;
-	bh=t3/F+pBj6HfaiJlozGB6tn22HHqd8g1hEeDam9eonBE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NkqixSMB5Qy2ikV/8EZbFE8gJ3PWKimZiQcl2RpABLFIsYfuYKGdBNeZAbkJ6CXACweGeqXGChPi8EO6RwEThl3MXSw9kETF3txaLi3xUtIV9+YcwcbNURbH+5Mkn/Q5iqh8HgWFso8Yu+hmyVqES9BapMB6mNLBEtr/x8c0HsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g5MZn43o; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1787081238; c=relaxed/simple;
+	bh=CaLthcIaUdd4f+DFXAi91i7trcrQA5J2j/5213a+r/M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NDkdZCAVEsKzlUoFAYzj7kew2czhr/HH7l5DYQWMV6Z34BenlTEHkN8iW+B1Jg5LeVBT1HE1eT4vmWpZ+kU5SgC/e3PMYNbSipgokY0mJ9qlRtST4h7xi0sdmp5PkWPI6V8ww51ErFONiiDHyIHXhGw7SchiOuErkBmmhk/U8Ps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OeTDtvHf; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g5MZn43o"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 455E71F000E9;
-	Tue, 18 Aug 2026 16:55:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OeTDtvHf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 890E51F000E9;
+	Tue, 18 Aug 2026 19:27:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787072145;
-	bh=mbannRAkdN1p03r8biMHhQzdxtdlRnNoGSybtXi73Us=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=g5MZn43osZ1EQML0Np29vJraekXMi3vuSrYiQ9DxKMBwPSyHbPNkwoqMOygXI/ITu
-	 +t9/tSfmizYcm4Puf8PpKFSMMPDgNqMO2icV2jEUmsA8RjzyqDwb5vqUUOXVsQ+mJu
-	 Bztfc+j/ZXw96cJg+lqdmUvpPT+GwljBll5EnJtwRW43bqg5qv9MI7l2+jGst4aYoi
-	 yp7SyLN9SWe8RbriJA8byuTKBsYSZkkUrr0kwVvxX7KlMGOi4nelIo6gtgKnAWBzmP
-	 E6ivx4rm+zwySTrXlQom5/zwSfxfaq1A0GIQ8FN5lSwc6Gz9a56AXNUZ6Z4gtqoe7U
-	 s8xutEewfAUzA==
-Date: Tue, 18 Aug 2026 17:55:39 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Changhuang Liang <changhuang.liang@starfivetech.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney@redhat.com>, Paul Walmsley <pjw@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Inochi Amaoto <inochiama@gmail.com>,
-	Alexey Charkov <alchark@gmail.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Keguang Zhang <keguang.zhang@gmail.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>
-Subject: Re: [PATCH v4 7/8] soc: starfive: Add socinfo driver for JHB100 SoC
-Message-ID: <20260818-recall-onion-3279fe070ccd@spud>
-References: <20260810-caress-rack-45615c8d9747@spud>
- <ZQ4PR01MB120276A1DA91FAC19C852F14F2DD2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
- <20260811-populace-afflicted-40a40e0f484c@spud>
- <ZQ4PR01MB1202DDE6C255441E1FC4F916F2DC2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
- <20260812-snowplow-punctured-28d19616f707@spud>
- <ZQ4PR01MB1202F016AD1F1E699429DDC0F2DB2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
- <20260813-presoak-scarily-b6cdecfcb7cc@spud>
- <ZQ4PR01MB1202CD24FCDA9039EDF2C7A0F2DA2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
- <20260814-reverb-mourner-283116bcc014@spud>
- <ZQ4PR01MB1202BE1034795F1FBCF18076F2A72@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
+	s=k20260515; t=1787081237;
+	bh=xw1cEj+Ja4tDSH9V8hNNzU55PwJcLp6Fhxkj/sX0VYI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=OeTDtvHfwlI0+Bq32NykIz1YxvsWe5plQt6TqO5eVvO3pfKuD6uYH8PAiX5FKGbe6
+	 wDBD92Ckp711to4ov+C+Tbot9SdGswTohxqNfdoCBJSvhu9Ym4GgWzoJKwnAyZHu+v
+	 9+/E9xinfQ/SN1/2OHzm36Tls/r3xdefzFv3MUgKPSNoLgCD+XUDKDMJBp96M/1XSY
+	 Ea3kgpLZcC/qDJpQ4mZsBmPgwKbfwW5ykiH4VVE3Zcdy8z+EK95OdB4D3YFm/sH3LX
+	 LiCUrcOrU/Pu8WbktEl0AdM/40FFG6oB9h54ki3rla9S77nTdcv0UHhCkZz59GmPuR
+	 CR6/XxHtiDjRw==
+Message-ID: <6c8471ad-8d68-42d9-bc61-83968a2e8acd@kernel.org>
+Date: Tue, 18 Aug 2026 21:27:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="idcukJczKVSVGVjs"
-Content-Disposition: inline
-In-Reply-To: <ZQ4PR01MB1202BE1034795F1FBCF18076F2A72@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 02/12] dt-bindings: mfd: syscon: add Ambarella CV75
+ secure scratchpad
+To: longzhao@ambarella.com, Arnd Bergmann <arnd@arndb.de>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, soc@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Linus Walleij <linusw@kernel.org>,
+ Bartosz Golaszewski <brgl@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Brian Masney <bmasney@redhat.com>,
+ Lee Jones <lee@kernel.org>, mfd@lists.linux.dev, Long Zhao <zl020895@163.com>
+References: <20260818-cv75-v5-v5-0-7bbb12f0360f@ambarella.com>
+ <20260818-cv75-v5-v5-2-7bbb12f0360f@ambarella.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <20260818-cv75-v5-v5-2-7bbb12f0360f@ambarella.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
---idcukJczKVSVGVjs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 18/08/2026 12:31, Long Zhao via B4 Relay wrote:
+> From: Long Zhao <longzhao@ambarella.com>
+> 
+> Allow ambarella,cv75-sec-scratchpad as a syscon for the shared secure
+> scratchpad registers on CV75.
+> 
+> Signed-off-by: Long Zhao <longzhao@ambarella.com>
 
-On Mon, Aug 17, 2026 at 01:27:08AM +0000, Changhuang Liang wrote:
-> Hi, Conor
->=20
-> Thanks for the review.
->=20
-> > On Fri, Aug 14, 2026 at 01:13:38AM +0000, Changhuang Liang wrote:
-> > > Hi,Conor
-> > >
-> > > Thanks for the review.
-> > >
-> > > > On Thu, Aug 13, 2026 at 08:10:12AM +0000, Changhuang Liang wrote:
-> > > > > Hi ,Conor
-> > > > >
-> > > > > Thanks for the review.
-> > > > >
-> > > > > > On Wed, Aug 12, 2026 at 10:37:16AM +0000, Changhuang Liang
-> > wrote:
-> > > > > > > Hi, Conor
-> > > > > > >
-> > > > > > > Thanks for the review.
-> > > > > > >
-> > > > > > > > On Tue, Aug 11, 2026 at 05:36:19AM +0000, Changhuang Liang
-> > wrote:
-> > > > > > > >
-> > > > > > > > > > On Sat, Aug 08, 2026 at 06:50:53PM -0700, Changhuang
-> > > > > > > > > > Liang
-> > > > wrote:
-> > > > > > > >
-> > > > > > > > > > > +static int __init starfive_socinfo_init(void) {
-> > > > > > > > > > > +	struct soc_device_attribute *attrs;
-> > > > > > > > > > > +	struct soc_device *soc_dev;
-> > > > > > > > > > > +	const char *machine =3D NULL;
-> > > > > > > > > > > +	struct device_node *np;
-> > > > > > > > > > > +	struct regmap *regmap;
-> > > > > > > > > > > +	char rev_char;
-> > > > > > > > > > > +	u32 rev_id;
-> > > > > > > > > > > +	int ret;
-> > > > > > > > > > > +
-> > > > > > > > > > > +	np =3D of_find_compatible_node(NULL, NULL,
-> > > > > > > > > > > +"starfive,jhb100-sys0-syscon");
-> > > > > > > > > >
-> > > > > > > > > > Remind me again why this is not just probed as an mfd
-> > > > > > > > > > cell from the syscon driver?
-> > > > > > > > > >
-> > > > > > > > > > (Hint: please put this info in the commit message).
-> > > > > > > > >
-> > > > > > > > > The discussion result with Krzysztof at that time is reco=
-rded here:
-> > > > > > > > > https://lore.kernel.org/all/20260405-strong-watchful-marmo
-> > > > > > > > > t-fd
-> > > > > > > > > fad6
-> > > > > > > > > @quo
-> > > > > > > > > ll/
-> > > > > > > > >
-> > > > > > > > > One register should not be treated as a separate device n=
-ode.
-> > > > > > > >
-> > > > > > > > That's a different question. In the case of an mfd cell
-> > > > > > > > probed from the syscon driver there would be no devicetree
-> > > > > > > > modifications required compared to what you have now. e.g.
-> > > > > > > > sg2044-topsys.c
-> > > > > > >
-> > > > > > > This seems feasible, and I can introduce this modification in
-> > > > > > > the next
-> > > > > > version.
-> > > > > >
-> > > > > >
-> > > > > > In fact, you don't even need the mfd cell, because your driver
-> > > > > > is going to be in drivers/soc/starfive anyway? You can just bind
-> > > > > > directly to the
-> > > > > > sys0 syscon I think.
-> > > > >
-> > > > > I suddenly realized that I missed one issue:
-> > > > > starfive,jhb100-sys0-syscon is already bound to the PLL driver by
-> > > > > default, I
-> > > > can't use it to bind another device anymore.
-> > > > >
-> > > > > which is why I used
-> > > > >
-> > > > > np =3D of_find_compatible_node(NULL, NULL,
-> > > > > "starfive,jhb100-sys0-syscon");
-> > > > >
-> > > > > in jhb100-socinfo.c.
-> > > > >
-> > > > > So it seems the MFD cell approach isn't really feasible either?
-> > > >
-> > > > You could, in that case, probe the clock driver using the mfd_cell
-> > > > like sg2044-topsys. What else other than the pll controls and the
-> > > > soc info register is in this register region?
-> > >
-> > > We don't have any other drivers right now in this register region.
-> >=20
-> > I'm not asking about what's got a driver right now though, I am wonderi=
-ng
-> > what else the registers in this region are for.
->=20
-> Here are some registers related to debug functionality.
+You already received review at v2 which you did not respond to and did
+not implement.
 
-So probably nothing else that linux will ever need?
-
-> > > So does that mean I can revise it to the format below:
-> > >
-> > > static const struct mfd_cell jhb100_sys0_subdev[] =3D {
-> > > 	{
-> > > 		.name =3D "jhb100-sys0-pll",
-> > > 	},
-> >=20
-> > > 	{
-> > > 		.name =3D "jhb100-socinfo",
-> >=20
-> > Why would this be needed? The driver with the mfd_cell would be the same
-> > one that provides the soc info, no?
->=20
-> My understanding is that one driver can only bind to one device, so the P=
-LL driver=20
-> and the socinfo driver need these two devices respectively, and thus cann=
-ot share
-> one?
-
-Correct, but I am talking about the socinfo driver being the one that
-calls devm_mfd_add_devices() to create a device for the pll so that in
-the end there are a total of two drivers, rather than create something
-identical to sg2044-topsys.c that does nothing other than initialise two
-mfd cells.
-May as well consolidate the mfd_cell definition and call to
-devm_mfd_add_devices() in one file, since it would be in the same
-directory as the socinfo driver anyway.
-
->=20
-> >=20
-> > > 	},
-> > > };
-> > >
-> > > static const struct mfd_cell jhb100_per0_subdev[] =3D {
-> > > 	{
-> > > 		.name =3D "jhb100-per0-pll",
-> >=20
-> > Why do these other ones need to be modified?
->=20
-> I was thinking, since sys0-pll has been adjusted, would it be better to a=
-lso adjust per0-pll and per1-pll together in a unified way?
-
-I wouldn't complicate them with things that they don't need, so it
-depends on if these other syscon regions contain more than just PLLs
-and if there'll ever be drivers for the other stuff in those regions.
-
->=20
-> >=20
-> > > 	},
-> > > };
-> > >
-> > > static const struct mfd_cell jhb100_per1_subdev[] =3D {
-> > > 	{
-> > > 		.name =3D "jhb100-per1-pll",
-> > > 	},
-> > > };
-> > >
-> > > static const struct mfd_cell jhb100_ pcierp _subdev[] =3D {
-> > > 	{
-> > > 		.name =3D "jhb100-pcierp-reset",
-> > > 	},
-> > > };
->=20
-> Best Regards,
-> Changhuang
->=20
-
---idcukJczKVSVGVjs
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaoSOhwAKCRB4tDGHoIJi
-0grZAQDaoZbJ5vI20RP1E84JX+AlFbV6zbVtAJDFnBgJVwX0mwEAjFbmbKuMouEe
-CEd9tCDl1hSU50+qcFRFUi6ra6yqpQ8=
-=IdIB
------END PGP SIGNATURE-----
-
---idcukJczKVSVGVjs--
+Best regards,
+Krzysztof
