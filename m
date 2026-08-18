@@ -1,194 +1,256 @@
-Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2883847ACE7
-	for <linux-clk@vger.kernel.org>; Tue, 18 Aug 2026 16:03:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B913A47B413;
+	Tue, 18 Aug 2026 16:55:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787068995; cv=none; b=U6X/yLOj92U6eBINvku6s+7uMge1FjyyYbO9Thkdu1XaPx+3yzLaF2CSSGJUD5X4nMxWKNo1sGdw7XEv7wWtf80+tRPZJ9Tt68WbZNAAlPk7U17XuXJfeIdFj4QOruoSyvZ7JlV1vPDdOFmuiCr7oyYJZumQNr1RhXG0V+g8r5I=
+	t=1787072147; cv=none; b=g2UrZ4KiQ2d0f+BgSveTXllW32HmFt2V64E7JGm+AkuuXWv49xkMDPJy9ZfC8CbZb2sbNfPw/q+J8cqspCwwsVz5dEjl1dQ4otZI00LAOOiy9r/4TO0tHHgG+EXLNQzcrmKswiAeeDu1Fliqy94Eu4aRfTSsQFXDuW1SGPeFg78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787068995; c=relaxed/simple;
-	bh=mvNQB/sYtoFJ7JcI8nDsv1lOU3y1hBybUljYLNNJ+3k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m8D/f1UXA/xecxjHpELzgd/GBJJT7co2GEXXjFAx/zZKRaNNlRCWVrMIpe9HnYXFRH0YCsfHSPf/6EsoZ5pAevI3mpm7XztzdVA966Q6Rn8JbTCFpA+/iKlhlg9muAIxrWA9RlHLf3SKL4Uhk6f2rD8fHg+Sev1gLAUM6NWC2qY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-5bfa99f8ef8so838618e0c.0
-        for <linux-clk@vger.kernel.org>; Tue, 18 Aug 2026 09:03:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787068990; x=1787673790;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=iw/lbY9kytY8ULR0QLLuK42AbhUxD9iRoxGBf4pN4b0=;
-        b=qVvolzzVPcdlH1hRS0FG6qo9uLfjxU0EVXjAvn17uUu37Gh1z5bNDM1PsuHQzbjmdj
-         b9204qn0r9jds00cy3dWe2Ai9zyA/Ggyu+LOixA0ptxl1gGydDWaHJWZwRCFp7Ujqdbn
-         /Fo1g1ET2gQzE35mZAPYwSfNONSpF5eNAdqlv6w14fpCayMe2wH1utc8g6Q5fxr0iiiI
-         hZG4NXJddy1XhSIzk9wh6V5VHxGS7ihLI20ZYceAvAWSJrXYjL/Gc3DbD8EvI9Aotc6e
-         q4x2SDrGwG1N/hu0aqAhzDDpSOjLLOpG40a/AmXkzaz3tVFeFyJCdWKHhJt4vcg0vWdK
-         RZIQ==
-X-Forwarded-Encrypted: i=1; AHgh+RrquOhj0Bi2HAx8rQDARS4pqX6R4cwyjGqC1Qgo8Q9/azoLoMaMKAvrS/FTf7mE2QGAXDzg7ZKhHI0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywq+91W8Tl7xbVw6s67Oo3kVhn+SmBS/yJZvPEAUbuLeFKddUUS
-	PK6hFHlx168CVWVRWZcJkvhEqy+tG1R3SLgPSiJ+I6Eb6kLGzMNmuuyQfy9frrpJhzA=
-X-Gm-Gg: AR+sD11gOfSWWYGLZDUs53qc4m/YrMXjbgaHOBGR1DIIZdkb9iqwghg5Ikwmn2gMbbD
-	/YGOF8xQwVGbTiU5LBG/cVmz9clASe7UHnGc1zTG0lSs3L9t6Kxmy/VYPNYr8J3a6O7bqENX9ff
-	BqH8PG/pNHXhAuUAc3gEIrpUxKT8N3MmcU8OoJAY6ltOI5aY+VXaaSb967MlvrfxUxz3npCBcRV
-	I+1a97hXdN8WHb1Kqh2LOAfppR+JDWPGC/HS00WnobmGRSOmjyrvW3P0IkfUF2f645Av3NZA7rp
-	OI8af+I3nf8wmWaYnZVeUSOkPE0/z2/IF1HWgtZOxqkF8x3sBDtbtY4GkdPCSi6eCthHH+12cD7
-	JiFjf3dWzhL8WbNanOkAIEV+ZpK36RbnwJ9JboBNxY9Ud7jIuEeKxbJ8R5tXvbORp1aoBIX1t/e
-	CUwQfRjLPl7SPUA2nlSKtOCGm4LpRM1SflnUwKesVPFlyiZ1/y52qhpcJB6GR5uT+0i7Hu3tp6X
-	Ir802AT6mIKl+19/oiCW2RzRQ==
-X-Received: by 2002:a05:6102:5121:b0:73e:e4ab:1c84 with SMTP id ada2fe7eead31-774d4590e9bmr1415314137.5.1787068989624;
-        Tue, 18 Aug 2026 09:03:09 -0700 (PDT)
-Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com. [209.85.217.41])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-773c5089913sm4029541137.8.2026.08.18.09.03.08
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Aug 2026 09:03:08 -0700 (PDT)
-Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-7737a1f65c0so991370137.1
-        for <linux-clk@vger.kernel.org>; Tue, 18 Aug 2026 09:03:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+Ro8ZkA3oE9Vs6ay5weTrPYSlEda3ie3NJXftD0oHCbEUiJQwM3MoU67o8W2b7OGLNeFppKF4hXOZb0=@vger.kernel.org
-X-Received: by 2002:a67:f4d7:0:b0:774:ce64:242f with SMTP id
- ada2fe7eead31-774ce6426a1mr1254990137.20.1787068988285; Tue, 18 Aug 2026
- 09:03:08 -0700 (PDT)
+	s=arc-20240116; t=1787072147; c=relaxed/simple;
+	bh=t3/F+pBj6HfaiJlozGB6tn22HHqd8g1hEeDam9eonBE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NkqixSMB5Qy2ikV/8EZbFE8gJ3PWKimZiQcl2RpABLFIsYfuYKGdBNeZAbkJ6CXACweGeqXGChPi8EO6RwEThl3MXSw9kETF3txaLi3xUtIV9+YcwcbNURbH+5Mkn/Q5iqh8HgWFso8Yu+hmyVqES9BapMB6mNLBEtr/x8c0HsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g5MZn43o; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g5MZn43o"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 455E71F000E9;
+	Tue, 18 Aug 2026 16:55:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1787072145;
+	bh=mbannRAkdN1p03r8biMHhQzdxtdlRnNoGSybtXi73Us=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=g5MZn43osZ1EQML0Np29vJraekXMi3vuSrYiQ9DxKMBwPSyHbPNkwoqMOygXI/ITu
+	 +t9/tSfmizYcm4Puf8PpKFSMMPDgNqMO2icV2jEUmsA8RjzyqDwb5vqUUOXVsQ+mJu
+	 Bztfc+j/ZXw96cJg+lqdmUvpPT+GwljBll5EnJtwRW43bqg5qv9MI7l2+jGst4aYoi
+	 yp7SyLN9SWe8RbriJA8byuTKBsYSZkkUrr0kwVvxX7KlMGOi4nelIo6gtgKnAWBzmP
+	 E6ivx4rm+zwySTrXlQom5/zwSfxfaq1A0GIQ8FN5lSwc6Gz9a56AXNUZ6Z4gtqoe7U
+	 s8xutEewfAUzA==
+Date: Tue, 18 Aug 2026 17:55:39 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Changhuang Liang <changhuang.liang@starfivetech.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney@redhat.com>, Paul Walmsley <pjw@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	Alexey Charkov <alchark@gmail.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Keguang Zhang <keguang.zhang@gmail.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>
+Subject: Re: [PATCH v4 7/8] soc: starfive: Add socinfo driver for JHB100 SoC
+Message-ID: <20260818-recall-onion-3279fe070ccd@spud>
+References: <20260810-caress-rack-45615c8d9747@spud>
+ <ZQ4PR01MB120276A1DA91FAC19C852F14F2DD2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
+ <20260811-populace-afflicted-40a40e0f484c@spud>
+ <ZQ4PR01MB1202DDE6C255441E1FC4F916F2DC2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
+ <20260812-snowplow-punctured-28d19616f707@spud>
+ <ZQ4PR01MB1202F016AD1F1E699429DDC0F2DB2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
+ <20260813-presoak-scarily-b6cdecfcb7cc@spud>
+ <ZQ4PR01MB1202CD24FCDA9039EDF2C7A0F2DA2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
+ <20260814-reverb-mourner-283116bcc014@spud>
+ <ZQ4PR01MB1202BE1034795F1FBCF18076F2A72@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260727-mathieu-wdt-clock-theo-v2-0-c048a6394436@bootlin.com> <20260727-mathieu-wdt-clock-theo-v2-1-c048a6394436@bootlin.com>
-In-Reply-To: <20260727-mathieu-wdt-clock-theo-v2-1-c048a6394436@bootlin.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 18 Aug 2026 18:02:56 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdU3yVqoyHC4eNF2NuYo8wy+6ODLoYat4R71X99Mxc_=kw@mail.gmail.com>
-X-Gm-Features: AcwNN1UX3m2v0gqW9gYIz88rQmzaoFEv7wr1R4REphzgiicb1AXNWUurKBdKrW0
-Message-ID: <CAMuHMdU3yVqoyHC4eNF2NuYo8wy+6ODLoYat4R71X99Mxc_=kw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] clk: ti: mux: resolve parent clocks by DT index,
- not by name
-To: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Cc: Tero Kristo <kristo@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, Tony Lindgren <tony@atomide.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, =?UTF-8?B?VGjDqW8gTGVicnVu?= <theo.lebrun@bootlin.com>, 
-	=?UTF-8?Q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, 
-	linux-omap@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Matti Vaittinen <mazziesaccount@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="idcukJczKVSVGVjs"
+Content-Disposition: inline
+In-Reply-To: <ZQ4PR01MB1202BE1034795F1FBCF18076F2A72@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
 
-Hi Mathieu,
+--idcukJczKVSVGVjs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 27 Jul 2026 at 09:44, Mathieu Dubois-Briand
-<mathieu.dubois-briand@bootlin.com> wrote:
-> Resolve parent clocks by their index into the device tree "clocks"
-> property rather than matching names as strings. Name-based matching is
-> fragile because a clock's "clock-output-names" value in its provider
-> node can differ from the name used to reference it in a consumer node,
-> and because names must be globally unique across all clock providers.
->
-> On AM335x, this caused broken clock trees where some clocks failed to
-> enable because their parents could not be found.
->
-> Replace of_clk_parent_fill() with a clk_parent_data array that sets
-> .index to the array position.
->
-> Fixes: ec7aa25fa483 ("ARM: dts: Use clock-output-names for am3")
-> Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+On Mon, Aug 17, 2026 at 01:27:08AM +0000, Changhuang Liang wrote:
+> Hi, Conor
+>=20
+> Thanks for the review.
+>=20
+> > On Fri, Aug 14, 2026 at 01:13:38AM +0000, Changhuang Liang wrote:
+> > > Hi,Conor
+> > >
+> > > Thanks for the review.
+> > >
+> > > > On Thu, Aug 13, 2026 at 08:10:12AM +0000, Changhuang Liang wrote:
+> > > > > Hi ,Conor
+> > > > >
+> > > > > Thanks for the review.
+> > > > >
+> > > > > > On Wed, Aug 12, 2026 at 10:37:16AM +0000, Changhuang Liang
+> > wrote:
+> > > > > > > Hi, Conor
+> > > > > > >
+> > > > > > > Thanks for the review.
+> > > > > > >
+> > > > > > > > On Tue, Aug 11, 2026 at 05:36:19AM +0000, Changhuang Liang
+> > wrote:
+> > > > > > > >
+> > > > > > > > > > On Sat, Aug 08, 2026 at 06:50:53PM -0700, Changhuang
+> > > > > > > > > > Liang
+> > > > wrote:
+> > > > > > > >
+> > > > > > > > > > > +static int __init starfive_socinfo_init(void) {
+> > > > > > > > > > > +	struct soc_device_attribute *attrs;
+> > > > > > > > > > > +	struct soc_device *soc_dev;
+> > > > > > > > > > > +	const char *machine =3D NULL;
+> > > > > > > > > > > +	struct device_node *np;
+> > > > > > > > > > > +	struct regmap *regmap;
+> > > > > > > > > > > +	char rev_char;
+> > > > > > > > > > > +	u32 rev_id;
+> > > > > > > > > > > +	int ret;
+> > > > > > > > > > > +
+> > > > > > > > > > > +	np =3D of_find_compatible_node(NULL, NULL,
+> > > > > > > > > > > +"starfive,jhb100-sys0-syscon");
+> > > > > > > > > >
+> > > > > > > > > > Remind me again why this is not just probed as an mfd
+> > > > > > > > > > cell from the syscon driver?
+> > > > > > > > > >
+> > > > > > > > > > (Hint: please put this info in the commit message).
+> > > > > > > > >
+> > > > > > > > > The discussion result with Krzysztof at that time is reco=
+rded here:
+> > > > > > > > > https://lore.kernel.org/all/20260405-strong-watchful-marmo
+> > > > > > > > > t-fd
+> > > > > > > > > fad6
+> > > > > > > > > @quo
+> > > > > > > > > ll/
+> > > > > > > > >
+> > > > > > > > > One register should not be treated as a separate device n=
+ode.
+> > > > > > > >
+> > > > > > > > That's a different question. In the case of an mfd cell
+> > > > > > > > probed from the syscon driver there would be no devicetree
+> > > > > > > > modifications required compared to what you have now. e.g.
+> > > > > > > > sg2044-topsys.c
+> > > > > > >
+> > > > > > > This seems feasible, and I can introduce this modification in
+> > > > > > > the next
+> > > > > > version.
+> > > > > >
+> > > > > >
+> > > > > > In fact, you don't even need the mfd cell, because your driver
+> > > > > > is going to be in drivers/soc/starfive anyway? You can just bind
+> > > > > > directly to the
+> > > > > > sys0 syscon I think.
+> > > > >
+> > > > > I suddenly realized that I missed one issue:
+> > > > > starfive,jhb100-sys0-syscon is already bound to the PLL driver by
+> > > > > default, I
+> > > > can't use it to bind another device anymore.
+> > > > >
+> > > > > which is why I used
+> > > > >
+> > > > > np =3D of_find_compatible_node(NULL, NULL,
+> > > > > "starfive,jhb100-sys0-syscon");
+> > > > >
+> > > > > in jhb100-socinfo.c.
+> > > > >
+> > > > > So it seems the MFD cell approach isn't really feasible either?
+> > > >
+> > > > You could, in that case, probe the clock driver using the mfd_cell
+> > > > like sg2044-topsys. What else other than the pll controls and the
+> > > > soc info register is in this register region?
+> > >
+> > > We don't have any other drivers right now in this register region.
+> >=20
+> > I'm not asking about what's got a driver right now though, I am wonderi=
+ng
+> > what else the registers in this region are for.
+>=20
+> Here are some registers related to debug functionality.
 
-Thanks for your patch, which is now commit 667f420c09f1417c ("clk: ti:
-mux: resolve parent clocks by DT index, not by name") in clk/clk-next.
+So probably nothing else that linux will ever need?
 
-This breaks booting BeagleBone Black for me: I don't get any output
-on the serial console, even with "earlycon keep_bootcon".  When the
-watchdog kicks in (or on kernel panic?), the system reboots.
+> > > So does that mean I can revise it to the format below:
+> > >
+> > > static const struct mfd_cell jhb100_sys0_subdev[] =3D {
+> > > 	{
+> > > 		.name =3D "jhb100-sys0-pll",
+> > > 	},
+> >=20
+> > > 	{
+> > > 		.name =3D "jhb100-socinfo",
+> >=20
+> > Why would this be needed? The driver with the mfd_cell would be the same
+> > one that provides the soc info, no?
+>=20
+> My understanding is that one driver can only bind to one device, so the P=
+LL driver=20
+> and the socinfo driver need these two devices respectively, and thus cann=
+ot share
+> one?
 
-Reverting this commit fixes the issue.
-After reverting, I added debug code to print all parents, and compared
-them to the DTB, but didn't see any discrepancies.
+Correct, but I am talking about the socinfo driver being the one that
+calls devm_mfd_add_devices() to create a device for the pll so that in
+the end there are a total of two drivers, rather than create something
+identical to sg2044-topsys.c that does nothing other than initialise two
+mfd cells.
+May as well consolidate the mfd_cell definition and call to
+devm_mfd_add_devices() in one file, since it would be in the same
+directory as the socinfo driver anyway.
 
-Your similar change to drivers/clk/ti/composite.c does not cause any
-issues for me.
+>=20
+> >=20
+> > > 	},
+> > > };
+> > >
+> > > static const struct mfd_cell jhb100_per0_subdev[] =3D {
+> > > 	{
+> > > 		.name =3D "jhb100-per0-pll",
+> >=20
+> > Why do these other ones need to be modified?
+>=20
+> I was thinking, since sys0-pll has been adjusted, would it be better to a=
+lso adjust per0-pll and per1-pll together in a unified way?
 
-Do you have a clue?
-Thanks!
+I wouldn't complicate them with things that they don't need, so it
+depends on if these other syscon regions contain more than just PLLs
+and if there'll ever be drivers for the other stuff in those regions.
 
-> --- a/drivers/clk/ti/mux.c
-> +++ b/drivers/clk/ti/mux.c
-> @@ -119,7 +119,7 @@ const struct clk_ops ti_clk_mux_ops = {
->  };
->
->  static struct clk *_register_mux(struct device_node *node, const char *name,
-> -                                const char * const *parent_names,
-> +                                const struct clk_parent_data *parent_data,
->                                  u8 num_parents, unsigned long flags,
->                                  struct clk_omap_reg *reg, u8 shift, u32 mask,
->                                  s8 latch, u8 clk_mux_flags, u32 *table)
-> @@ -136,7 +136,7 @@ static struct clk *_register_mux(struct device_node *node, const char *name,
->         init.name = name;
->         init.ops = &ti_clk_mux_ops;
->         init.flags = flags;
-> -       init.parent_names = parent_names;
-> +       init.parent_data = parent_data;
->         init.num_parents = num_parents;
->
->         /* struct clk_mux assignments */
-> @@ -167,24 +167,26 @@ static void of_mux_clk_setup(struct device_node *node)
->         struct clk *clk;
->         struct clk_omap_reg reg;
->         unsigned int num_parents;
-> -       const char **parent_names;
-> +       struct clk_parent_data *parent_data;
->         const char *name;
->         u8 clk_mux_flags = 0;
->         u32 mask = 0;
->         u32 shift = 0;
->         s32 latch = -EINVAL;
->         u32 flags = CLK_SET_RATE_NO_REPARENT;
-> +       int i;
->
->         num_parents = of_clk_get_parent_count(node);
->         if (num_parents < 2) {
->                 pr_err("mux-clock %pOFn must have parents\n", node);
->                 return;
->         }
-> -       parent_names = kcalloc(num_parents, sizeof(char *), GFP_KERNEL);
-> -       if (!parent_names)
-> -               goto cleanup;
-> +       parent_data = kcalloc(num_parents, sizeof(*parent_data), GFP_KERNEL);
-> +       if (!parent_data)
-> +               return;
->
-> -       of_clk_parent_fill(node, parent_names, num_parents);
-> +       for (i = 0; i < num_parents; i++)
-> +               parent_data[i].index = i;
->
->         if (ti_clk_get_reg_addr(node, 0, &reg))
->                 goto cleanup;
-> @@ -207,7 +209,7 @@ static void of_mux_clk_setup(struct device_node *node)
->         mask = (1 << fls(mask)) - 1;
->
->         name = ti_dt_clk_name(node);
-> -       clk = _register_mux(node, name, parent_names, num_parents,
-> +       clk = _register_mux(node, name, parent_data, num_parents,
->                             flags, &reg, shift, mask, latch, clk_mux_flags,
->                             NULL);
->
-> @@ -215,7 +217,7 @@ static void of_mux_clk_setup(struct device_node *node)
->                 of_clk_add_provider(node, of_clk_src_simple_get, clk);
->
->  cleanup:
-> -       kfree(parent_names);
-> +       kfree(parent_data);
->  }
->  CLK_OF_DECLARE(mux_clk, "ti,mux-clock", of_mux_clk_setup);
+>=20
+> >=20
+> > > 	},
+> > > };
+> > >
+> > > static const struct mfd_cell jhb100_per1_subdev[] =3D {
+> > > 	{
+> > > 		.name =3D "jhb100-per1-pll",
+> > > 	},
+> > > };
+> > >
+> > > static const struct mfd_cell jhb100_ pcierp _subdev[] =3D {
+> > > 	{
+> > > 		.name =3D "jhb100-pcierp-reset",
+> > > 	},
+> > > };
+>=20
+> Best Regards,
+> Changhuang
+>=20
 
-Gr{oetje,eeting}s,
+--idcukJczKVSVGVjs
+Content-Type: application/pgp-signature; name=signature.asc
 
-                        Geert
+-----BEGIN PGP SIGNATURE-----
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaoSOhwAKCRB4tDGHoIJi
+0grZAQDaoZbJ5vI20RP1E84JX+AlFbV6zbVtAJDFnBgJVwX0mwEAjFbmbKuMouEe
+CEd9tCDl1hSU50+qcFRFUi6ra6yqpQ8=
+=IdIB
+-----END PGP SIGNATURE-----
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--idcukJczKVSVGVjs--
