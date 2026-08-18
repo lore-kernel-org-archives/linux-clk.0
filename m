@@ -1,61 +1,91 @@
-Received: from mail-106101.protonmail.ch (mail-106101.protonmail.ch [79.135.106.101])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E95633D6ED;
-	Tue, 18 Aug 2026 09:22:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84354442B39;
+	Tue, 18 Aug 2026 09:27:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787044927; cv=none; b=KZEAvvZheNtrWd2IywZ5GrdXa6w/QjtSgwnhqc616274256t9ODkRE0CC8hfnlASb2lw1S8YI+VOBvIgEZjmUUAj+/hQ4NkQDbSC846J+D3ezcFdayvis+FyZfsd6CtZOBMLzLgsQJkN7b+z/c3zrYVPFnjFCiHfs3eIxVVOyhU=
+	t=1787045233; cv=none; b=arKjy4LkIY4hKibkpJLyf23+ckNJQJaH88NEFs3sy/0dPu/S4CMVX1d5dB9Wc9nexcgHuM5Ygr0d160zGydQorF4ysCwyGjR3rCSVc+BBGokd9UkdyDaPq383Oy/rCt8yNIMTuZFgUDcLusgJ3IGWbaqUqy6o6fZMwtXI+6zWCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787044927; c=relaxed/simple;
-	bh=zTSgW3lqKvxe96bVUgTAt0zx4SrLraeyYO8HpL7beks=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=amzBCT8PWF3Z/s1RKfoJN98+EsbrAAnDD4SYqAgv9kcvydwtOc6vCwtsLJiGFByv+tFjiB2VkWSVmymSR3mH4Po/0ez6hbS9GpghVf7bcC6x2dhzqHBCshyEJWVQiE1+sWsG23n+szYf8qYLIS/FKWpvjxs+Pr6qYa9OTTBi3Cg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=XUxmBcBZ; arc=none smtp.client-ip=79.135.106.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+	s=arc-20240116; t=1787045233; c=relaxed/simple;
+	bh=QIVFiD43+1OPw/wHvwwLZ/TaoJRXAySqKqdidyBCAj8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WRooAXOs3wvSD3M4FrHVYLud3debyEBpvN+wDMdpeNLa50ibPjOiGkudBlH25PpWJZEwK9EwNiD82kMkyW8RfY9y4zfTrVZPoLQ7ZjWxRPsaBtNfP8PL5tMYfQXIzQzUmNwFUldu9G2ylx0mmgom/TPFYz6+Vcdh0vb4BFitpE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nAg4bcC2; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="XUxmBcBZ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1787044922; x=1787304122;
-	bh=zTSgW3lqKvxe96bVUgTAt0zx4SrLraeyYO8HpL7beks=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=XUxmBcBZ5e6SeXUVt+WJsc8HpGpKBN2hWyltd8u6Sm+MWzeQmxGaJT6h2DTsYaXfM
-	 cPaD1wQioujiB9ujpeg0tvQHqtVdPo1v9AxkH5274/GX+l0a3m849a5jC/CqAVg/RH
-	 af4+qMb4PFxu8bFu60P1QSDBjnYGoOZCZk0WxJ0y2SHe7OPenVJArRXb3HOULU9glt
-	 6UFMtwYThNZQZnMdgFnOLFKTeuE3S9wyzXp6CxJUY9OSYsaCHSud3s2+LgGHzs3gmU
-	 m/1dHUZfbqQk9Xf9y7YYQ5sPMoj0+DyDcgl1rBb8szYqjaoOoYxNiGKrSBrwBdWDK/
-	 rlOrmqETvYYSA==
-Date: Tue, 18 Aug 2026 09:21:56 +0000
-To: Alim Akhtar <alim.akhtar@samsung.com>
-From: Aiden Isik <aidenisik@protonmail.com>
-Cc: aidenisik@member.fsf.org, 'Krzysztof Kozlowski' <krzk@kernel.org>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Chanwoo Choi' <cw00.choi@samsung.com>, "'Peter\tGriffin'" <peter.griffin@linaro.org>, 'Michael Turquette' <mturquette@baylibre.com>, 'Stephen Boyd' <sboyd@kernel.org>, 'Brian Masney' <bmasney@redhat.com>, 'Rob Herring' <robh@kernel.org>, 'Conor Dooley' <conor+dt@kernel.org>, 'Kees Cook' <kees@kernel.org>, "'Gustavo A. R. Silva'" <gustavoars@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 'Aiden Isik' <aidenisik+git@member.fsf.org>
-Subject: Re: RE: [PATCH 2/3] clk: samsung: clk-pll: Add support for pll_309
-Message-ID: <WlIHBa8-P07AMfFe5EEKZh_6Wf7Uy5uOuF7Jn23UY5QHcjjSpab2Vw0u_bZLCjHe73lu3fg6IevtFeJrkc3lNcZZtDnN41QJwZ7hzzBAsfg=@protonmail.com>
-In-Reply-To: <025901dd2ec6$0245bcf0$06d136d0$@samsung.com>
-References: <20260817-for-next-lucky7-clock-v1-0-032e4b229c76@member.fsf.org> <CGME20260817101721epcas5p228e56fa915717b7a547df144ff801c8c@epcas5p2.samsung.com> <20260817-for-next-lucky7-clock-v1-2-032e4b229c76@member.fsf.org> <025901dd2ec6$0245bcf0$06d136d0$@samsung.com>
-Feedback-ID: 46524699:user:proton
-X-Pm-Message-ID: cb31ad2511c84fea8b1ab9d40af6ee6983b56437
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nAg4bcC2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 073451F00ACA;
+	Tue, 18 Aug 2026 09:27:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1787045232;
+	bh=xUcfhj85sX4cPSzt12bp3zzQ/yVXxAtFH+q/piQ/qBI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=nAg4bcC2+xd4rXCg1Xoy05lf0LRLLNQkiFqvbfD1IZWaPZSWI34IBfju7U4vO1r+Q
+	 n4+E3PM/xuCbBLjsOhVYbKrZ+8M+aFTsDHOHiMaAxEIoywpR4tMLpybhBVzRmGXRQf
+	 AmHs+8M/RWjcxUZFa5vlMaQn7c+8SS7wAvccJiyCL7audVJddbgsGZ1dDVtbV1FrTN
+	 65e5nDotPtuakJ7snWZFdnM5i8faaPQOJHezh+irnjm0AlAmnuVkzvZW353tiwG4CB
+	 UpaSA+l+dB3St2LCtm9OcXWuq/cM4LInNCYeVpKbmolYlwbm0hdUyTQWi2w5rB17y0
+	 OXulz5OKBHQLw==
+Received: from johan by xi.lan with local (Exim 4.99.4)
+	(envelope-from <johan@kernel.org>)
+	id 1wwG69-00000000oqO-2TCu;
+	Tue, 18 Aug 2026 11:27:09 +0200
+Date: Tue, 18 Aug 2026 11:27:09 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Guangshuo Li <lgs201920130244@gmail.com>
+Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Dong Aisheng <aisheng.dong@nxp.com>,
+	Shawn Guo <shawnguo@kernel.org>, linux-clk@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] clk: imx: scu: fix autosuspend cleanup on probe failure
+Message-ID: <aoQlbUquNf44_eav@hovoldconsulting.com>
+References: <20260808082933.2692878-1-lgs201920130244@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260808082933.2692878-1-lgs201920130244@gmail.com>
 
-> This patch does more then what is described above; please explain all cha=
-nges in the commit.
-> If needed, split this into common and pll_309 specific changes. Thanks!
+On Sat, Aug 08, 2026 at 04:29:33PM +0800, Guangshuo Li wrote:
+> imx_clk_scu_probe() calls pm_runtime_use_autosuspend() for non-CPU
+> clocks, but its probe failure paths do not call the matching
+> pm_runtime_dont_use_autosuspend() before disabling runtime PM.
+> 
+> If the autosuspend delay is set to a negative value while autosuspend
+> is enabled, the runtime PM core increments usage_count to prevent
+> runtime suspend. Without calling pm_runtime_dont_use_autosuspend()
+> during cleanup, this reference is not dropped and usage_count remains
+> unbalanced.
 
-This was a mistake I made when rebasing onto a newer commit.
-It's not meant to do that. Will fix in v2. Thanks.
+As I've explained elsewhere, this is just misleading. There is no usage
+count leak here as the count is balanced whenever the user re-enables
+autosuspend through sysfs (by writing a non-negative timeout).
 
-> Regards,
-> Alim
+Drivers should clean up after themselves and disable autosuspend, but
+this is more of a clean up than a fix and should not be backported.
 
-Kind regards,
-- Aiden Isik
+You've sent upwards of 60 of these in the matter of just a few days,
+some of which have even been picked up. Please send follow-ups (replies
+or v2s) as soon as possible to prevent further of these from getting
+merged.
+
+> Add the missing pm_runtime_dont_use_autosuspend() calls to the probe
+> failure paths before disabling runtime PM.
+> 
+> This issue was found by manual code inspection.
+> 
+> Fixes: 78edeb080330 ("clk: imx: scu: add runtime pm support")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Guangshuo Li <lgs201920130244@gmail.com>
+
+Johan
