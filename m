@@ -1,673 +1,187 @@
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010056.outbound.protection.outlook.com [52.101.193.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C357441D13B
-	for <linux-clk@vger.kernel.org>; Tue, 18 Aug 2026 08:10:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787040612; cv=none; b=ndBI0taLgcIvfkBtV/obwX5dLgFNO3Bd+THJ4BqdnNCawgw+srBMz/aQTZy2e/tlnN8lKMUSzeTZW6GKsC1LHl00GApU+n/xggOV48EhiOXxBTZ0tKE0lQxsz+NUZdkucAjClagNbltVYJv1CZAe3mqohYGiEdcyaGzkfekq2Uk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787040612; c=relaxed/simple;
-	bh=U7Xe3Ghk6YiOxrcqjcvKcRICzku3TonfbBqw8FCgUS8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pHCSR1tf1cdWxA7livIyTozc6d7JN+3QXyeoKzM3qBle79c1SBHPAyNkt0/Wihj3/1ccWvMu5piSKQ6nLl9gfF98tWtPxRKe9bAhqIM+nArZxtXynHk8f7CYAvKUqv3MGxkvPD/5hoNw/NR4ab2yLk2YhcV+H/1M/ojUNqVb9Uw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=pk1IQ5DV; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5796C420465;
+	Tue, 18 Aug 2026 08:19:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1787041179; cv=fail; b=Cfh0c7rUC+3koHgUvx7wwrJ9TK5vMOehL6HIBIwKn0GwCo/UD5WAqFL34g4KmTVErSwnDZ7j57NfQQUJRKVVUzWF+hIMMqck4xWbZk09a78heAC6ppDzAJQcFVR7IWYX/AN50dsuDya1OmxGFuBSdYBbRFZ5toic4Cj6mll5NOo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1787041179; c=relaxed/simple;
+	bh=6E9Oq9SP2QpBI9RQb5Y0ZSwcWwgFwu9B23dN8pneQQg=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=C4rGfrABK66PUaTKPchUlX88eiLu+c11Dja6gHotTtLw5GSVKSPJvsqIsT/ONH5F/s+gu63TjDsRHVRFYFGCOetrryc4tVUvFIFmnTSJddKvvFzZlzbhEJXbmDLDugL/QqSWG9NrCzkcUcuMQPcQISserUGPVcGjHDf8qJyGMcY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=tzlkfrtz; arc=fail smtp.client-ip=52.101.193.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pk1IQ5DV"
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-38125cebfdaso6288624a91.1
-        for <linux-clk@vger.kernel.org>; Tue, 18 Aug 2026 01:10:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1787040610; x=1787645410; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=aByoav8ekJz/qmyEYpcX1qnDez9t7vTKYg7JjRl3V1w=;
-        b=pk1IQ5DVtoOejaweP7EbCQfw5PJIZbVzCCFj5J0927yC52+iipFQtpJ23Du0ct2pID
-         YusZKEnAPG81OvOjE/Af1ktqUthScthY5fSzxs5UcjYMWRxqmX3PRB19aPOYEOc9dokQ
-         llHQXAGODoZthOABkAbTPhteIbiWTzxPiIi05eEIuM7C/TM8lutadvr+2RMUh7hszAEp
-         Sk6pimARf2ezGHuDvB8G1H6KiSWapt2st78IjKUuokqjZAD2zBYRlSgU4yYVwFtXaq6+
-         WVt1UqxUy6vQ/X6g2/zYynv1oKy56cHVWFbNpKyxGme1KJZsU+yt+NckG6AoD3nb3RPd
-         dCoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787040610; x=1787645410;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=aByoav8ekJz/qmyEYpcX1qnDez9t7vTKYg7JjRl3V1w=;
-        b=QpLQ7buUmlQimAzSZISI26sN8kIbNTSicO66eVDoMagRgjSHoWAG/QsHLtyomOYwSD
-         fg2U8F7UOsE3lRqKVBb9hTtnW1/Nk1IVESLMNRebDO7bXD/jKqSYUurrvFil4DFNM8na
-         uHTkGijKRWRRWP66MTOiomGvEFOk39Cc+SrJDt5t+49oUeSCEogbrMt0akFLTnFAXRcc
-         tKMACbhvvtAaLs55gxuNN+9gzhlc4WgoQdMp4zQ7cRo7CCdYo4z4LIVYaHLD2/vQG3PI
-         pTV1+xnN45N0A5ejVAJ8kGyP7R7b0jnGQ6v0DJIDf17dAihlrgrtN1sSsyEQY9zJDVV+
-         OF/w==
-X-Forwarded-Encrypted: i=1; AHgh+Rq/IaGz60cvnOJnxVQowN+dz0fPz069bf6u/bn51MOyG9mtswIFapKp82twEkNmFMnIq6ji+AfU6Ds=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz08qOXdt4BMUv9G3BNPBZfH9MXzGTHApL3Vu0Uu6InU3QiPPjd
-	OzfcZ0SsZ8tX8TGxne4r2Wzf0mj427ZRzszcEvw7GHo3KEyNCuKXRudb
-X-Gm-Gg: AR+sD12ky6YGwNxHIgIcLjlZpAlECvkHRkcRxcnVS/27PqFyzxDQ+kqYHzJ+MWApE9a
-	txYmD1MqDw2DDJMQ/5MS/nXpS3T0qqy8aCrKsFLFyP7QPtnA9KZ3GtElt3x+5oit3pQeT/hnNZ/
-	uQDCHu09uILKjyP+OBgh7sUFQmg+BHwUGp2XTukBYPVXC05QQNpb+Y25v4H46PYBCYJLhF7a/1M
-	MxAy2wCD4srBTlOH71M9LgAKAtKV3hXaEmbm4gTyxwQDimLvAD/ByeI8BWkiBccLUEpIV5memXV
-	IEYWbxR6g9pPjzyg/wUVa95NJkeD+qqNm1nbvys1C8+hR3OT+FATBnrxklfXZs9Uw78N2BIlYTv
-	aKKOWnIF859KDpITrct2GCyymPJ5N/l0FR+JgOrUu8b/XcQ7+deXkS9tKNp/LjWUNge6AoSxhe1
-	Y29Td/5/VoXIrBnS8kC/g55X2eY9dV5j/z2zsTPnA/1cLBWq9N5l9XM5Vup6oOgcSAblri07VEW
-	KYA7hL/TPs=
-X-Received: by 2002:a17:90b:520d:b0:38f:5801:cd76 with SMTP id 98e67ed59e1d1-3933b6d0171mr36666554a91.3.1787040610155;
-        Tue, 18 Aug 2026 01:10:10 -0700 (PDT)
-Received: from localhost.localdomain ([152.58.217.90])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-32678dd08d6sm22606290eec.4.2026.08.18.01.10.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Aug 2026 01:10:09 -0700 (PDT)
-From: Sreeshankar K <sreeshankar0910@gmail.com>
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	andersson@kernel.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	konradybcio@kernel.org,
-	tglx@kernel.org,
-	ulfh@kernel.org
-Cc: bmasney@redhat.com,
-	lpieralisi@kernel.org,
-	quic_tdas@quicinc.com,
-	danila@mainlining.org,
-	davidwronek@gmail.com,
-	robimarko@gmail.com,
-	linux@gurudas.dev,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-pm@vger.vger.kernel.org,
-	Sreeshankar K <sreeshankar0910@gmail.com>
-Subject: [PATCH 12/12] arm64: dts: qcom: Add SM7250 devicetree file
-Date: Tue, 18 Aug 2026 08:07:54 +0000
-Message-ID: <20260818080754.4362-13-sreeshankar0910@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260818080754.4362-1-sreeshankar0910@gmail.com>
-References: <20260818080754.4362-1-sreeshankar0910@gmail.com>
+	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="tzlkfrtz"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=lBxeNtTfhcvJNrfNpW+aAvOcvrhF9UxUqwNL/XWkt8Ce3U6oyOzO2BAyM/+fk9ADmxhFoZ9/z6ihthvMyFplfOU50nV7Ihb6GCnTtejGjhqteJs88jw5oFMjtZtrauwblAe2ikNwTZJCIppBRFEvWv7wbBrXxlhCnFGbDJrMYV2ZGJRSKChY6G/28PQqFQkv+n9rA7BVVQBEeCSqmBhuUcdRAvbGDK0Htl4ZENJQberGJda44+Ya4AwUpBAKydRkurjnYLJAvA8lFHxw+Dx7sm6wclD71jU9IQCS+C1ubTMUI/g2/Wg8jZkOYmkdM9Pe4QuOJMGuCTt+OJweBN8rcw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ZhhEhRpPDS3B96DG68gA6nEZBSrdpmLbmXT5tdyLKfI=;
+ b=AEb/ZcQSTpTf5BzVKb+SCkMOyrqz9C6fvhNmvBX8qaa9sl+cS443q9Ad6IGTObxZOk5+7Ny6Qlpnk2rp4+AXRf6F7EPBm/IYflrhAqgjJUmjt1RipQ01PXn+Sw/TzxR6CLx1W/9E27WVOZ/YESlaVFVRJs7PqzrR7tEdvJY3frcVnfYGoKiIrKdGpYMqyTblcD61dCfwS+7iGcZNqQfgH3IeBKmNCfrwltU0Q1nvYIt0vmRYpUUd+s1peUgGSHj82WP1WkjH67MWAQm3V8C6Z6wyJCLA47FJblP5Rn8Hb8XWBkwz7ReyUvr7UAZ3kjTc9oSUFisEMM62ZdDkTtpyMg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
+ dkim=pass header.d=altera.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZhhEhRpPDS3B96DG68gA6nEZBSrdpmLbmXT5tdyLKfI=;
+ b=tzlkfrtzymLUN6bLOO1lxIrPLsgTQLbTp39taBaLJEQW6TG90Bm07UOJcOsjH3CZWRn71Kp0q2nbKYN7BSnwdS7SRFUnMEfl2YRP0mgEaPu1e8BtQV13VPBMD7CJiQy9+yjXo38vKiB/pRX5mF4AL/qBPY6wJP64gi0h1BWM5EhS27ioWLJbd0nG++4pmytsLmp/fsG6I6K0iwCyeH04cTWOJ69iRF/CRHaSKUcFFbzF1AfMJN8iiJzQ1FyqgVSt38U7BFE/Rw+qPk9RNwfFfcQ22Gr/UcH1VH0gpGwI5qrXScG05y2/dvz9zFlbYj4rWTIm6n0F2EW2AGxd77f90g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=altera.com;
+Received: from DM4PR03MB6192.namprd03.prod.outlook.com (2603:10b6:5:39c::23)
+ by SJ0PR03MB989394.namprd03.prod.outlook.com (2603:10b6:a03:402::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.315.17; Tue, 18 Aug
+ 2026 08:19:31 +0000
+Received: from DM4PR03MB6192.namprd03.prod.outlook.com
+ ([fe80::b75b:5c92:1e9d:514b]) by DM4PR03MB6192.namprd03.prod.outlook.com
+ ([fe80::b75b:5c92:1e9d:514b%4]) with mapi id 15.21.0315.011; Tue, 18 Aug 2026
+ 08:19:31 +0000
+Message-ID: <00e9e61c-e96b-47d2-b560-9a362c872a50@altera.com>
+Date: Tue, 18 Aug 2026 16:19:22 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/5] dt-bindings: arm: altera: fix Agilex72 compatible
+ vendor prefix
+To: Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Dinh Nguyen <dinguyen@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Lothar Rubusch <l.rubusch@gmail.com>,
+ Ng Tze Yee <tzeyee.ng@altera.com>,
+ Nazim Amirul <muhammad.nazim.amirul.nazle.asmade@altera.com>,
+ Adrian Ng Ho Yin <adrian.ho.yin.ng@altera.com>,
+ Brian Masney <bmasney@redhat.com>, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1786006669.git.evon.chiam@altera.com>
+ <b467b990e5290a2eccaedff826968a50fb51100a.1786006669.git.evon.chiam@altera.com>
+ <20260812024937.GA616612-robh@kernel.org>
+ <b027b8cf-a97b-4670-a57c-1585feccb21e@altera.com>
+ <20260814173551.GC1981719-robh@kernel.org>
+Content-Language: en-US
+From: "Chiam, Evon" <evon.chiam@altera.com>
+In-Reply-To: <20260814173551.GC1981719-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: JH0PR01CA0089.apcprd01.prod.exchangelabs.com
+ (2603:1096:990:55::20) To DM4PR03MB6192.namprd03.prod.outlook.com
+ (2603:10b6:5:39c::23)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR03MB6192:EE_|SJ0PR03MB989394:EE_
+X-MS-Office365-Filtering-Correlation-Id: 267ed127-d3ba-4dcb-eef7-08defd016dc7
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|1800799024|366016|23010399003|56012099006|10067099003|4143699003|11063799006|55112099003|22082099003|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	tza7CwMvZT8vj/XyomA2DudpundTP178m4FTpmKJzcz0agI/qK/pnhdEPkuOlreK3SUtCwO/28JWePD1rBnkD74wUmFscB+1uGXYAK/xfyRCF3sNWbQL74NDoyWxxIL6Ar4m4++bnRRuG1AY975L1NKFE8JwU44NCsd8T67dcmNk+HlfKEVA9sn3/lt33n2mvFmLixENOdnLm1Ga711FzgaVchUFvPM5P3MjZ0WZcmYFRY3eRV/HunyUulSgNjdjX1P3nug+1XTK6xCPht7kDuMVgB77MxXkY7EfWbc4aBxlznDDhgRewiwmdrhJ9Ldt0p6P8C67OjYTYTxR5wUzx9RZS9EKj9t/xljIWsV/8Ctuez0911SBBvTM0uuyXy9FB+DxGyjg/WiW7ggEFxIEbeHj69TIafF8Tek9DVohe+GBzMAuMlRCIv+0XAM9OLIp74l0gTqA7d7PnandeZ1XueqwqyhQJec0PR6kbicARZ5QQQYBCKpUi+jY0r7YHH//Hacb+7cfRCg3TZkLFw8wAfp4VE0uXJ2sOl3aF9V5jGNcUBYlbGun3s2S4rgS4hAXknjDeD9cQMLRRCtcFy1GovALsG6mXVyMn8LzOtYBszz+0K9q04ZA6wAhk87tH/tsKhDq1ScxcWtydN1uSVYAmYEPU9iIUUoj2A7mvOwEe90=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR03MB6192.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(23010399003)(56012099006)(10067099003)(4143699003)(11063799006)(55112099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?cDNudGE0emJLYzN4Ni9GaXRlUU4vaStONnVPZ0g0TE1QS3doNlEvTTlNYVNF?=
+ =?utf-8?B?bWovVFhIYXVLRnowVEw1RU5Mbk1BZUJtUUNkY3ZWRzc1dmVpcFhQeGdYWTlk?=
+ =?utf-8?B?Z2x0VFFBQUg1cjFxdi9QZGt0WmlpeWpXMHFFYXdqSDBiaDZycmNBeGJzTnhV?=
+ =?utf-8?B?ZkoxUHcwSHlJNVIxWmN0TFpGbUlOMU1pN3lKTm81ZHlYVU5MZjVvM0ZSNnFK?=
+ =?utf-8?B?SkhXSVdYV2tOTmxUNW9FS0MycFZkUG90WGxkME92bFEzZVR4M3F1NSsvRGdS?=
+ =?utf-8?B?K1ZGd0hRTVYybHRzVFBxNEZiaFo4NUl6MWs4RFZDM1VEUndhKzVxb2FWZ1Ny?=
+ =?utf-8?B?KzhPMGJFZUMrOUNZSVlpZzVQb1RrT25sY0daVE5oYlhKVUtNSnlHY0YyTVpv?=
+ =?utf-8?B?L090VW9VaUdYUFYwbWIyeHRNT3E3Tmo3a0dHcFNXUisyQVJsVU55NTR6Ulg3?=
+ =?utf-8?B?Z0U4L2ZneXoycWVaYXB6TUtoRXdLUnc3amVQYm1Sc1hXNjJqUU9PWUdnRHJx?=
+ =?utf-8?B?Ny9BdUFhWG45UGprS3UxODlRdlVVYTkvdjlkRnliZDJPbjZsQWYvSDFiUnZ2?=
+ =?utf-8?B?cXB3VTJiR053VWZ5eThxc0FTNzUzRlZXcVhPVkVyZmFwQjZPazBHL0dBNzlj?=
+ =?utf-8?B?QUxNdk9nd3oxMFJ2Lys0bUdGdjhIL3kwbWFITWlBWUVSaHg3ZnZzSzhYS1lk?=
+ =?utf-8?B?b2x0dStRcnR1QTNtcVVtWnFPc3E0YXdaYmVwKzhlb2tpUlhYeHFtWmR0d3ZS?=
+ =?utf-8?B?NmM4anUrV2p0anVSamQ1cDBydyt4MzJPUlVOcnFFQVoxaE1jNWVDazl3cXor?=
+ =?utf-8?B?ODkvK3JkTlBKTlFUbUdPYVRRZ3JnRGFxcFMwaWJIL1AwWUZEWkRpTDFjVHBp?=
+ =?utf-8?B?dzcvdUpoVzhJTVIzWHVSMDViR3VvYmNWTUxMckhNcmUvUUVlVmdTK2JJbVor?=
+ =?utf-8?B?cHB1cGdjaUg5aGozYUVZZ3NacEJSUWVMemJKU1dIZ1ZKMmJ1Yk41aHNGODlO?=
+ =?utf-8?B?K2RQT1lqYmlBSUhibXJmRVl1Zjl0cTRTUkMvUXZ1NkRsdDZkU0tMRmFyZnpH?=
+ =?utf-8?B?V09tUWg1cEd0ZXZKczJROHY1a1dYd1M3dUJKQy9Dd29BcmdyTlFDcGs1VSs3?=
+ =?utf-8?B?SmNUVEtVa3dpS01uSEpZU2tQZzJzZ2YrTmd5dmtsRVBRSHZWZ3JPd1NiL3ZD?=
+ =?utf-8?B?UmoyWE9lRzdyOVhCZUsrMTVkZU5KVXVWN1NKWm8wOHVhbjdtdTdGczBiTFRi?=
+ =?utf-8?B?MzYyakl4dGtYOFpJb3pTSjNPeUZQMUNleVE5WkRTbVI1SXFiclhUZHBwcmkx?=
+ =?utf-8?B?QW1zT2lpZlVYb0c4WnRGbGh0dlBhRWdwUWc1cVRJOHlMVlpremc0ZGQ2Ym42?=
+ =?utf-8?B?eUtSVktQUmFxVmhTN1M1WTBVRkRHNTdMRTE4c0c3Z0NncDlPejlFOC9pVzQv?=
+ =?utf-8?B?KysyOHltSG9rQjBSN3VSQ21VdUhXZFRDYVdGWUt1Z3RqQ3FxY0ZiV2ZPL2Yy?=
+ =?utf-8?B?TFM1MXJkZzRZVENjRmRWMEpzeVIvTEtKSkI2dWhHMVdSMUpNeEhMQ0g4RFVU?=
+ =?utf-8?B?UGxKOXViMjYxcUlHNTJRbzRoVklhUXRFK2FGaDYxTmdoTjMvbzB3Mys5R2p1?=
+ =?utf-8?B?NHZwK3RTOWMvcFhVQmQ2VitzKzBjYmxuVzJySGVaTEgvU1B4Rks3akVDQlF2?=
+ =?utf-8?B?SGdxWHp4YkFoK29Bb2M3NXdQTE8zeHBpME52cW5ha24wVENycURMTFloWlVn?=
+ =?utf-8?B?YzJKN3JRRnhCV1pIME5tanpQY1A1MU5VMkpJcEFVN01NdUNxcEtmQ0s0Ymdu?=
+ =?utf-8?B?S3o4Z0hpMmh1aFpJN2JyTHc5dkREaERxZDhhOXAwTEkwZzdHWC9ZYWZNMG0z?=
+ =?utf-8?B?MFNBcldoa1lRR05TcEE2TGpUeGxHUC96NlpVTWlnSG13WVd1L3Y4aXlhdUYy?=
+ =?utf-8?B?Z2xUWjdaai9rNXFTK3R2ZjJUTStOQzFXUzVBdGhVcExpT0FYaXFaWmVDK2Zo?=
+ =?utf-8?B?WHVScEVoV0tQeUYxRURmQklWMmIvazY2OTdtYXpQWTMrdEZWRlRab2hYVkls?=
+ =?utf-8?B?d3NST1RWNThreDF1Snd0RE9FdDNVWW1PaE9oeXhKRWFLSVVENVR1cThLNEha?=
+ =?utf-8?B?dEgyVkdXWFZjbkRTSXZLMmRUY242L2VhN1p6Y3JyS0JTQ2tEVTFKWUw0M2di?=
+ =?utf-8?B?R2ZNVWZtT2dQeGwvbUdrSitVM3RZaENsRjN4MVRRalhhaWQrdGRFeFI4dkdh?=
+ =?utf-8?B?K3ora3NFb0h2WlhwRXpJVGNOUjA1eVQxTzI3QnRmeG9vSWNjdzE5YktxMDdt?=
+ =?utf-8?B?bTdMSUtvMWVvZTJuaEkvcTVzbkQzWW1wZ28xWVk5VExLNStRdTRnZz09?=
+X-OriginatorOrg: altera.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 267ed127-d3ba-4dcb-eef7-08defd016dc7
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR03MB6192.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Aug 2026 08:19:31.5239
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: JKaMoQdW9v92oCy9H5zVrh904AZl6tTjIHKzieIsz6r0Esb/aMvfz76IYFp3qBNxLOm7BFbI4qiYMbt1pXj1cA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR03MB989394
 
-Add base devicetree file for SM7250 SoC.
-This file adds the basic nodes like cpu, psci and other required
-configuration for booting up to the serial console.
 
-Signed-off-by: Sreeshankar K <sreeshankar0910@gmail.com>
----
- arch/arm64/boot/dts/qcom/sm7250.dtsi | 556 +++++++++++++++++++++++++++
- 1 file changed, 556 insertions(+)
- create mode 100644 arch/arm64/boot/dts/qcom/sm7250.dtsi
 
-diff --git a/arch/arm64/boot/dts/qcom/sm7250.dtsi b/arch/arm64/boot/dts/qcom/sm7250.dtsi
-new file mode 100644
-index 000000000..3f052daef
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/sm7250.dtsi
-@@ -0,0 +1,556 @@
-+// SPDX-License-Identifier: BSD-3-Clause
-+/*
-+ * Copyright (c) 2026, Sreeshankar K <sreeshankar0910@gmail.com>
-+ */
-+
-+#include <dt-bindings/clock/qcom,rpmh.h>
-+#include <dt-bindings/clock/qcom,sm7250-gcc.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/power/qcom,rpmhpd.h>
-+#include <dt-bindings/power/qcom-rpmpd.h>
-+#include <dt-bindings/soc/qcom,rpmh-rsc.h>
-+
-+/ {
-+	interrupt-parent = <&intc>;
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	clocks {
-+		xo_board: xo-board {
-+			compatible = "fixed-clock";
-+			clock-frequency = <38400000>;
-+			#clock-cells = <0>;
-+		};
-+
-+		sleep_clk: sleep-clk {
-+			compatible = "fixed-clock";
-+			clock-frequency = <32764>;
-+			#clock-cells = <0>;
-+		};
-+	};
-+
-+	cpus {
-+		#address-cells = <2>;
-+		#size-cells = <0>;
-+
-+		cpu0: cpu@0 {
-+			device_type = "cpu";
-+			compatible = "qcom,kryo475";
-+			reg = <0x0 0x0>;
-+			enable-method = "psci";
-+			next-level-cache = <&l2_0>;
-+
-+			l2_0: l2-cache {
-+				compatible = "cache";
-+				cache-level = <2>;
-+				cache-size = <0x20000>;
-+				cache-unified;
-+				next-level-cache = <&l3_0>;
-+
-+				l3_0: l3-cache {
-+					compatible = "cache";
-+					cache-level = <3>;
-+					cache-size = <0x200000>;
-+					cache-unified;
-+				};
-+			};
-+		};
-+
-+		cpu1: cpu@100 {
-+			device_type = "cpu";
-+			compatible = "qcom,kryo475";
-+			reg = <0x0 0x100>;
-+			enable-method = "psci";
-+			next-level-cache = <&l2_100>;
-+
-+			l2_100: l2-cache {
-+				compatible = "cache";
-+				cache-level = <2>;
-+				cache-size = <0x20000>;
-+				cache-unified;
-+				next-level-cache = <&l3_0>;
-+			};
-+		};
-+
-+		cpu2: cpu@200 {
-+			device_type = "cpu";
-+			compatible = "qcom,kryo475";
-+			reg = <0x0 0x200>;
-+			enable-method = "psci";
-+			next-level-cache = <&l2_200>;
-+
-+			l2_200: l2-cache {
-+				compatible = "cache";
-+				cache-level = <2>;
-+				cache-size = <0x20000>;
-+				cache-unified;
-+				next-level-cache = <&l3_0>;
-+			};
-+		};
-+
-+		cpu3: cpu@300 {
-+			device_type = "cpu";
-+			compatible = "qcom,kryo475";
-+			reg = <0x0 0x300>;
-+			enable-method = "psci";
-+			next-level-cache = <&l2_300>;
-+
-+			l2_300: l2-cache {
-+				compatible = "cache";
-+				cache-level = <2>;
-+				cache-size = <0x20000>;
-+				cache-unified;
-+				next-level-cache = <&l3_0>;
-+			};
-+		};
-+
-+		cpu4: cpu@400 {
-+			device_type = "cpu";
-+			compatible = "qcom,kryo475";
-+			reg = <0x0 0x400>;
-+			enable-method = "psci";
-+			next-level-cache = <&l2_400>;
-+
-+			l2_400: l2-cache {
-+				compatible = "cache";
-+				cache-level = <2>;
-+				cache-size = <0x20000>;
-+				cache-unified;
-+				next-level-cache = <&l3_0>;
-+			};
-+		};
-+
-+		cpu5: cpu@500 {
-+			device_type = "cpu";
-+			compatible = "qcom,kryo475";
-+			reg = <0x0 0x500>;
-+			enable-method = "psci";
-+			next-level-cache = <&l2_500>;
-+
-+			l2_500: l2-cache {
-+				compatible = "cache";
-+				cache-level = <2>;
-+				cache-size = <0x20000>;
-+				cache-unified;
-+				next-level-cache = <&l3_0>;
-+			};
-+		};
-+
-+		cpu6: cpu@600 {
-+			device_type = "cpu";
-+			compatible = "qcom,kryo475";
-+			reg = <0x0 0x600>;
-+			enable-method = "psci";
-+			next-level-cache = <&l2_600>;
-+
-+			l2_600: l2-cache {
-+				compatible = "cache";
-+				cache-level = <2>;
-+				cache-size = <0x40000>;
-+				cache-unified;
-+				next-level-cache = <&l3_0>;
-+			};
-+		};
-+
-+		cpu7: cpu@700 {
-+			device_type = "cpu";
-+			compatible = "qcom,kryo475";
-+			reg = <0x0 0x700>;
-+			enable-method = "psci";
-+			next-level-cache = <&l2_700>;
-+
-+			l2_700: l2-cache {
-+				compatible = "cache";
-+				cache-level = <2>;
-+				cache-size = <0x80000>;
-+				cache-unified;
-+				next-level-cache = <&l3_0>;
-+			};
-+		};
-+
-+		cpu-map {
-+			cluster0 {
-+				core0 {
-+					cpu = <&cpu0>;
-+				};
-+
-+				core1 {
-+					cpu = <&cpu1>;
-+				};
-+
-+				core2 {
-+					cpu = <&cpu2>;
-+				};
-+
-+				core3 {
-+					cpu = <&cpu3>;
-+				};
-+
-+				core4 {
-+					cpu = <&cpu4>;
-+				};
-+
-+				core5 {
-+					cpu = <&cpu5>;
-+				};
-+			};
-+
-+			cluster1 {
-+				core6 {
-+					cpu = <&cpu6>;
-+				};
-+			};
-+
-+			cluster2 {
-+				core7 {
-+					cpu = <&cpu7>;
-+				};
-+			};
-+		};
-+	};
-+
-+	firmware {
-+		scm: scm {
-+			compatible = "qcom,scm-sm7250", "qcom,scm";
-+			#reset-cells = <1>;
-+		};
-+	};
-+
-+	memory@80000000 {
-+		device_type = "memory";
-+		/* We expect the bootloader to fill in the size */
-+		reg = <0x0 0x80000000 0x0 0x0>;
-+	};
-+
-+	pmu {
-+		compatible = "arm,armv8-pmuv3";
-+		interrupts = <GIC_PPI 5 IRQ_TYPE_LEVEL_HIGH>;
-+	};
-+
-+	psci {
-+		compatible = "arm,psci-1.0";
-+		method = "smc";
-+	};
-+
-+	reserved_memory: reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		hyp_mem: hyp@80000000 {
-+			reg = <0x0 0x80000000 0x0 0x600000>;
-+			no-map;
-+		};
-+
-+		xbl_aop_mem: xbl-aop@80700000 {
-+			reg = <0x0 0x80700000 0x0 0x160000>;
-+			no-map;
-+		};
-+
-+		cmd_db: cmd-db@80860000 {
-+			compatible = "qcom,cmd-db";
-+			reg = <0x0 0x80860000 0x0 0x20000>;
-+			no-map;
-+		};
-+
-+		xbl_uefi_mem: xbl-uefi@80880000 {
-+			reg = <0 0x80880000 0 0x14000>;
-+			no-map;
-+		};
-+
-+		smem_mem: smem@80900000 {
-+			compatible = "qcom,smem";
-+			reg = <0x0 0x80900000 0x0 0x200000>;
-+			no-map;
-+			hwlocks = <&tcsr_mutex 3>;
-+		};
-+
-+		removed_mem: removed@80b00000 {
-+			reg = <0x0 0x80b00000 0x0 0x1300000>;
-+			no-map;
-+		};
-+
-+		camera_mem: camera@86000000 {
-+			reg = <0x0 0x86000000 0x0 0x500000>;
-+			no-map;
-+		};
-+
-+		npu_mem: npu@86500000 {
-+			reg = <0x0 0x86500000 0x0 0x500000>;
-+			no-map;
-+		};
-+
-+		video_mem: video@86a00000 {
-+			reg = <0x0 0x86a00000 0x0 0x500000>;
-+			no-map;
-+		};
-+
-+		cdsp_mem: cdsp@87400000 {
-+			reg = <0x0 0x87400000 0x0 0x1e00000>;
-+			no-map;
-+		};
-+
-+		adsp_mem: adsp@89200000 {
-+			reg = <0x0 0x89200000 0x0 0x2800000>;
-+			no-map;
-+		};
-+
-+		wlan_fw_mem: wlan-fw@8ba00000 {
-+			reg = <0x0 0x8ba00000 0x0 0x200000>;
-+			no-map;
-+		};
-+
-+		ipa_fw_mem: ipa-fw@8bc00000 {
-+			reg = <0x0 0x8bc00000 0x0 0x10000>;
-+			no-map;
-+		};
-+
-+		ipa_gsi_mem: ipa-gsi@8bc10000 {
-+			reg = <0x0 0x8bc10000 0x0 0x5400>;
-+			no-map;
-+		};
-+
-+		gpu_mem: gpu@8bc15400 {
-+			reg = <0x0 0x8bc15400 0x0 0x2000>;
-+			no-map;
-+		};
-+
-+		modem_wlan_mem: modem-wlan@8c000000 {
-+			reg = <0x0 0x8c000000 0x0 0xf800000>;
-+			no-map;
-+		};
-+
-+		cdsp_sec_mem: cdsp-sec@9f400000 {
-+			reg = <0x0 0x9f400000 0x0 0xc00000>;
-+			no-map;
-+		};
-+	};
-+
-+	soc: soc@0 {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges = <0 0 0 0 0x10 0>;
-+		dma-ranges = <0 0 0 0 0x10 0>;
-+		compatible = "simple-bus";
-+
-+		gcc: clock-controller@100000 {
-+			compatible = "qcom,sm7250-gcc";
-+			reg = <0x0 0x00100000 0x0 0x1f0000>;
-+			clock-names = "bi_tcxo",
-+				      "bi_tcxo_ao",
-+				      "sleep_clk";
-+			clocks = <&rpmhcc RPMH_CXO_CLK>,
-+				 <&rpmhcc RPMH_CXO_CLK_A>,
-+				 <&sleep_clk>;
-+			power-domains = <&rpmhpd RPMHPD_CX>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			#power-domain-cells = <1>;
-+		};
-+
-+		qupv3_id_1: geniqup@9c0000 {
-+			compatible = "qcom,geni-se-qup";
-+			reg = <0x0 0x009c0000 0x0 0x6000>;
-+			clock-names = "m-ahb", "s-ahb";
-+			clocks = <&gcc GCC_QUPV3_WRAP_1_M_AHB_CLK>,
-+				 <&gcc GCC_QUPV3_WRAP_1_S_AHB_CLK>;
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+			ranges;
-+			status = "disabled";
-+
-+			uart2: serial@988000 {
-+				compatible = "qcom,geni-debug-uart";
-+				reg = <0 0x00988000 0 0x4000>;
-+				clock-names = "se";
-+				clocks = <&gcc GCC_QUPV3_WRAP1_S2_CLK>;
-+				interrupts = <GIC_SPI 355 IRQ_TYPE_LEVEL_HIGH>;
-+				status = "disabled";
-+			};
-+		};
-+
-+		intc: interrupt-controller@17a00000 {
-+			compatible = "arm,gic-v3";
-+			reg = <0x0 0x17a00000 0x0 0x10000>,     /* GICD */
-+			      <0x0 0x17a60000 0x0 0x100000>;    /* GICR * 8 */
-+			#interrupt-cells = <3>;
-+			interrupt-controller;
-+			interrupts = <GIC_PPI 8 IRQ_TYPE_LEVEL_HIGH>;
-+		};
-+
-+		pdc: interrupt-controller@b220000 {
-+			compatible = "qcom,sm7250-pdc", "qcom,pdc";
-+			reg = <0 0xb220000 0 0x30000>, <0 0x17c000f0 0 0x60>;
-+			qcom,pdc-ranges = <0 480 42>, <42 612 28>,
-+					  <70 63 1>, <71 640 15>, <86 522 52>;
-+			#interrupt-cells = <2>;
-+			interrupt-parent = <&intc>;
-+			interrupt-controller;
-+		};
-+
-+		spmi_bus: spmi@c440000 {
-+			compatible = "qcom,spmi-pmic-arb";
-+			reg = <0x0 0x0c440000 0x0 0x0001100>,
-+			      <0x0 0x0c600000 0x0 0x2000000>,
-+			      <0x0 0x0e600000 0x0 0x0100000>,
-+			      <0x0 0x0e700000 0x0 0x00a0000>,
-+			      <0x0 0x0c40a000 0x0 0x0026000>;
-+			reg-names = "core", "chnls", "obsrvr", "intr", "cnfg";
-+			interrupt-names = "periph_irq";
-+			interrupts-extended = <&pdc 1 IRQ_TYPE_LEVEL_HIGH>;
-+			qcom,ee = <0>;
-+			qcom,channel = <0>;
-+			#address-cells = <2>;
-+			#size-cells = <0>;
-+			interrupt-controller;
-+			#interrupt-cells = <4>;
-+		};
-+
-+		apps_rsc: rsc@18200000 {
-+			compatible = "qcom,rpmh-rsc";
-+			reg = <0x0 0x18200000 0x0 0x10000>,
-+			      <0x0 0x18210000 0x0 0x10000>,
-+			      <0x0 0x18220000 0x0 0x10000>;
-+			reg-names = "drv-0", "drv-1", "drv-2";
-+			interrupts = <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
-+			label = "apps_rsc";
-+			qcom,tcs-offset = <0xd00>;
-+			qcom,drv-id = <2>;
-+			qcom,tcs-config = <ACTIVE_TCS  2>, <SLEEP_TCS   3>,
-+					  <WAKE_TCS    3>, <CONTROL_TCS 1>;
-+
-+			rpmhcc: clock-controller {
-+				compatible = "qcom,sm7250-rpmh-clk";
-+				#clock-cells = <1>;
-+				clock-names = "xo";
-+				clocks = <&xo_board>;
-+			};
-+
-+			rpmhpd: power-controller {
-+				compatible = "qcom,sm7250-rpmhpd";
-+				#power-domain-cells = <1>;
-+				operating-points-v2 = <&rpmhpd_opp_table>;
-+
-+				rpmhpd_opp_table: opp-table {
-+					compatible = "operating-points-v2";
-+
-+					rpmhpd_opp_ret: opp1 {
-+						opp-level = <RPMH_REGULATOR_LEVEL_RETENTION>;
-+					};
-+
-+					rpmhpd_opp_min_svs: opp2 {
-+						opp-level = <RPMH_REGULATOR_LEVEL_MIN_SVS>;
-+					};
-+
-+					rpmhpd_opp_low_svs: opp3 {
-+						opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS>;
-+					};
-+
-+					rpmhpd_opp_svs: opp4 {
-+						opp-level = <RPMH_REGULATOR_LEVEL_SVS>;
-+					};
-+
-+					rpmhpd_opp_svs_l1: opp5 {
-+						opp-level = <RPMH_REGULATOR_LEVEL_SVS_L1>;
-+					};
-+
-+					rpmhpd_opp_nom: opp6 {
-+						opp-level = <RPMH_REGULATOR_LEVEL_NOM>;
-+					};
-+
-+					rpmhpd_opp_nom_l1: opp7 {
-+						opp-level = <RPMH_REGULATOR_LEVEL_NOM_L1>;
-+					};
-+
-+					rpmhpd_opp_nom_l2: opp8 {
-+						opp-level = <RPMH_REGULATOR_LEVEL_NOM_L2>;
-+					};
-+
-+					rpmhpd_opp_turbo: opp9 {
-+						opp-level = <RPMH_REGULATOR_LEVEL_TURBO>;
-+					};
-+
-+					rpmhpd_opp_turbo_l1: opp10 {
-+						opp-level = <RPMH_REGULATOR_LEVEL_TURBO_L1>;
-+					};
-+				};
-+			};
-+		};
-+
-+		tcsr_mutex: hwlock@1f40000 {
-+			compatible = "qcom,tcsr-mutex";
-+			reg = <0x0 0x01f40000 0x0 0x40000>;
-+			#hwlock-cells = <1>;
-+		};
-+
-+		timer@17c20000 {
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges;
-+			compatible = "arm,armv7-timer-mem";
-+			reg = <0x0 0x17c20000 0x0 0x1000>;
-+			clock-frequency = <19200000>;
-+
-+			frame@17c21000 {
-+				frame-number = <0>;
-+				interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
-+					     <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0x17c21000 0x1000>,
-+				      <0x17c22000 0x1000>;
-+			};
-+
-+			frame@17c23000 {
-+				frame-number = <1>;
-+				interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0x17c23000 0x1000>;
-+				status = "disabled";
-+			};
-+
-+			frame@17c25000 {
-+				frame-number = <2>;
-+				interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0x17c25000 0x1000>;
-+				status = "disabled";
-+			};
-+
-+			frame@17c27000 {
-+				frame-number = <3>;
-+				interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0x17c27000 0x1000>;
-+				status = "disabled";
-+			};
-+
-+			frame@17c29000 {
-+				frame-number = <4>;
-+				interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0x17c29000 0x1000>;
-+				status = "disabled";
-+			};
-+
-+			frame@17c2b000 {
-+				frame-number = <5>;
-+				interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0x17c2b000 0x1000>;
-+				status = "disabled";
-+			};
-+
-+			frame@17c2d000 {
-+				frame-number = <6>;
-+				interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0x17c2d000 0x1000>;
-+				status = "disabled";
-+			};
-+		};
-+
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts = <GIC_PPI 1 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_PPI 2 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_PPI 3 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_PPI 0 IRQ_TYPE_LEVEL_LOW>;
-+	};
-+};
--- 
-2.43.0
+On 15/8/2026 1:35 am, Rob Herring wrote:
+> On Fri, Aug 14, 2026 at 04:18:59PM +0800, Chiam, Evon wrote:
+>>
+>>
+>> On 12/8/2026 10:49 am, Rob Herring wrote:
+>>> On Thu, Aug 06, 2026 at 05:25:01PM +0800, evon.chiam@altera.com wrote:
+>>>> From: "Chiam, Evon" <evon.chiam@altera.com>
+>>>>
+>>>> Altera has separated from Intel. Update the Agilex72 SoC and board
+>>>> compatible strings to use the Altera vendor prefix instead of intel.
+>>>
+>>> Sorry, without better reasoning, you are stuck with them as sashiko
+>>> pointed out.
+>>>
+>> Sashiko’s comment on the DTS still using the intel compatible strings was
+>> based on reviewing patch 1/5 alone. Patch 4/5 moves the Agilex72 DT from
+>> arch/arm64/boot/dts/intel/ to arch/arm64/boot/dts/altera/ and updates the
+>> compatible strings to altr. With both patches applied, the bindings and DTS
+>> remain consistent.
+>>
+>> Would you prefer that I combine the patches 1/5 and 4/5 into a single patch
+>> so the binding and DTS updates land together?
+> 
+> Moving the dts directory is fine (though that is really up to SoC
+> maintainers). Changing compatible strings is not. It is not about the
+> patch split. It is an ABI. There are exceptions though. Generally that
+> is if there is no one with the h/w or the current .dts is so incomplete
+> that anyone using the h/w will need to update their DTB anyways.
+> 
+> Rob
+
+Thanks for clarifying.
+
+To provide some context, Agilex72 DTS is still at an early
+stage of development, and most people do not have access to the
+hardware yet. Anyone using the current DTS would need to update their
+DTB, so changing the compatible strings at this stage should
+not cause ABI issues.
+
+Regards,
+Evon
 
