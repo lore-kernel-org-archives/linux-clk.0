@@ -1,187 +1,239 @@
-Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010056.outbound.protection.outlook.com [52.101.193.56])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5796C420465;
-	Tue, 18 Aug 2026 08:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.56
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787041179; cv=fail; b=Cfh0c7rUC+3koHgUvx7wwrJ9TK5vMOehL6HIBIwKn0GwCo/UD5WAqFL34g4KmTVErSwnDZ7j57NfQQUJRKVVUzWF+hIMMqck4xWbZk09a78heAC6ppDzAJQcFVR7IWYX/AN50dsuDya1OmxGFuBSdYBbRFZ5toic4Cj6mll5NOo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787041179; c=relaxed/simple;
-	bh=6E9Oq9SP2QpBI9RQb5Y0ZSwcWwgFwu9B23dN8pneQQg=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=C4rGfrABK66PUaTKPchUlX88eiLu+c11Dja6gHotTtLw5GSVKSPJvsqIsT/ONH5F/s+gu63TjDsRHVRFYFGCOetrryc4tVUvFIFmnTSJddKvvFzZlzbhEJXbmDLDugL/QqSWG9NrCzkcUcuMQPcQISserUGPVcGjHDf8qJyGMcY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=tzlkfrtz; arc=fail smtp.client-ip=52.101.193.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D16D39A7EF;
+	Tue, 18 Aug 2026 08:24:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1787041451; cv=none; b=mutfJbrpXfgUp+RZkYzn+PH9rTjmfsbNkYs7Gy+kDcaCfaMtaKkVYM9IB3WpXpXyRfDxs8eGDN0SGG9QyD4PVmlVHeMA7BQzh2trny5Fitr+j9cZ3+iUkt2aWP1H4BWlhIPuteEgekcUVkmo8wKxI20dffayamKfwHGjyCvN6E4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1787041451; c=relaxed/simple;
+	bh=lqZQxcbwluNGpJ1XgEVpD6pz/r8zeddw3hjBpHIJZTM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SLUt5oorTJqzN5vaJI10Yq9XNKI+ULFLw8S3KuiubwCulIeuK1+G+iCbCmNlbGa6hli8DILX08vVIl/0nNcZV+XPet6jcOyH1bJIPjhRHWdxq+7o9SooY+cruzZ5nFlePMvtV6e2pnqL1QYnuOktXELKwrizIWTFCD768bx4b2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BbalZwD4; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="tzlkfrtz"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lBxeNtTfhcvJNrfNpW+aAvOcvrhF9UxUqwNL/XWkt8Ce3U6oyOzO2BAyM/+fk9ADmxhFoZ9/z6ihthvMyFplfOU50nV7Ihb6GCnTtejGjhqteJs88jw5oFMjtZtrauwblAe2ikNwTZJCIppBRFEvWv7wbBrXxlhCnFGbDJrMYV2ZGJRSKChY6G/28PQqFQkv+n9rA7BVVQBEeCSqmBhuUcdRAvbGDK0Htl4ZENJQberGJda44+Ya4AwUpBAKydRkurjnYLJAvA8lFHxw+Dx7sm6wclD71jU9IQCS+C1ubTMUI/g2/Wg8jZkOYmkdM9Pe4QuOJMGuCTt+OJweBN8rcw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZhhEhRpPDS3B96DG68gA6nEZBSrdpmLbmXT5tdyLKfI=;
- b=AEb/ZcQSTpTf5BzVKb+SCkMOyrqz9C6fvhNmvBX8qaa9sl+cS443q9Ad6IGTObxZOk5+7Ny6Qlpnk2rp4+AXRf6F7EPBm/IYflrhAqgjJUmjt1RipQ01PXn+Sw/TzxR6CLx1W/9E27WVOZ/YESlaVFVRJs7PqzrR7tEdvJY3frcVnfYGoKiIrKdGpYMqyTblcD61dCfwS+7iGcZNqQfgH3IeBKmNCfrwltU0Q1nvYIt0vmRYpUUd+s1peUgGSHj82WP1WkjH67MWAQm3V8C6Z6wyJCLA47FJblP5Rn8Hb8XWBkwz7ReyUvr7UAZ3kjTc9oSUFisEMM62ZdDkTtpyMg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
- dkim=pass header.d=altera.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZhhEhRpPDS3B96DG68gA6nEZBSrdpmLbmXT5tdyLKfI=;
- b=tzlkfrtzymLUN6bLOO1lxIrPLsgTQLbTp39taBaLJEQW6TG90Bm07UOJcOsjH3CZWRn71Kp0q2nbKYN7BSnwdS7SRFUnMEfl2YRP0mgEaPu1e8BtQV13VPBMD7CJiQy9+yjXo38vKiB/pRX5mF4AL/qBPY6wJP64gi0h1BWM5EhS27ioWLJbd0nG++4pmytsLmp/fsG6I6K0iwCyeH04cTWOJ69iRF/CRHaSKUcFFbzF1AfMJN8iiJzQ1FyqgVSt38U7BFE/Rw+qPk9RNwfFfcQ22Gr/UcH1VH0gpGwI5qrXScG05y2/dvz9zFlbYj4rWTIm6n0F2EW2AGxd77f90g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=altera.com;
-Received: from DM4PR03MB6192.namprd03.prod.outlook.com (2603:10b6:5:39c::23)
- by SJ0PR03MB989394.namprd03.prod.outlook.com (2603:10b6:a03:402::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.315.17; Tue, 18 Aug
- 2026 08:19:31 +0000
-Received: from DM4PR03MB6192.namprd03.prod.outlook.com
- ([fe80::b75b:5c92:1e9d:514b]) by DM4PR03MB6192.namprd03.prod.outlook.com
- ([fe80::b75b:5c92:1e9d:514b%4]) with mapi id 15.21.0315.011; Tue, 18 Aug 2026
- 08:19:31 +0000
-Message-ID: <00e9e61c-e96b-47d2-b560-9a362c872a50@altera.com>
-Date: Tue, 18 Aug 2026 16:19:22 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] dt-bindings: arm: altera: fix Agilex72 compatible
- vendor prefix
-To: Rob Herring <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Dinh Nguyen <dinguyen@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Lothar Rubusch <l.rubusch@gmail.com>,
- Ng Tze Yee <tzeyee.ng@altera.com>,
- Nazim Amirul <muhammad.nazim.amirul.nazle.asmade@altera.com>,
- Adrian Ng Ho Yin <adrian.ho.yin.ng@altera.com>,
- Brian Masney <bmasney@redhat.com>, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1786006669.git.evon.chiam@altera.com>
- <b467b990e5290a2eccaedff826968a50fb51100a.1786006669.git.evon.chiam@altera.com>
- <20260812024937.GA616612-robh@kernel.org>
- <b027b8cf-a97b-4670-a57c-1585feccb21e@altera.com>
- <20260814173551.GC1981719-robh@kernel.org>
-Content-Language: en-US
-From: "Chiam, Evon" <evon.chiam@altera.com>
-In-Reply-To: <20260814173551.GC1981719-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: JH0PR01CA0089.apcprd01.prod.exchangelabs.com
- (2603:1096:990:55::20) To DM4PR03MB6192.namprd03.prod.outlook.com
- (2603:10b6:5:39c::23)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BbalZwD4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23F991F00A3E;
+	Tue, 18 Aug 2026 08:24:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1787041450;
+	bh=OfHeIcxWWdTnEuZTttxc/WTa5O0fO8FR/FpFaq3hOQk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=BbalZwD4G3hI1I1Td5/AGuHj/eA5rR5wa3Z0CQnfIALRpu7I+B9KR5XCiG6FkVV5G
+	 gj9zkVkOkDpOBNo2Inb1YOVI9JI+E2buWOxHeAnoYZWMphnkaFAMP96UKFJV/cNBYB
+	 UQno/InpDua917Y+BxT52nd+TCcCnrXdfi/LlWMtvFX1boSgh9HXaTggQVei3LuF3m
+	 zztVhlr4wcF42qPJyv7iF5i4P/gUZgLpl4a4O1i9Vj0TSpgCj3vhG8lzmTBcGUuQXJ
+	 a8yzuDbER7AnB5E1O3Lz8pqTi9Mi/V008KAgFviwTOfDL4s8V4m4IJZatfnQ+7NDpd
+	 6+AssL6O5X6Kg==
+Message-ID: <55153a0a-1cab-49f4-9a54-951aa9c40be1@kernel.org>
+Date: Tue, 18 Aug 2026 10:23:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR03MB6192:EE_|SJ0PR03MB989394:EE_
-X-MS-Office365-Filtering-Correlation-Id: 267ed127-d3ba-4dcb-eef7-08defd016dc7
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|1800799024|366016|23010399003|56012099006|10067099003|4143699003|11063799006|55112099003|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	tza7CwMvZT8vj/XyomA2DudpundTP178m4FTpmKJzcz0agI/qK/pnhdEPkuOlreK3SUtCwO/28JWePD1rBnkD74wUmFscB+1uGXYAK/xfyRCF3sNWbQL74NDoyWxxIL6Ar4m4++bnRRuG1AY975L1NKFE8JwU44NCsd8T67dcmNk+HlfKEVA9sn3/lt33n2mvFmLixENOdnLm1Ga711FzgaVchUFvPM5P3MjZ0WZcmYFRY3eRV/HunyUulSgNjdjX1P3nug+1XTK6xCPht7kDuMVgB77MxXkY7EfWbc4aBxlznDDhgRewiwmdrhJ9Ldt0p6P8C67OjYTYTxR5wUzx9RZS9EKj9t/xljIWsV/8Ctuez0911SBBvTM0uuyXy9FB+DxGyjg/WiW7ggEFxIEbeHj69TIafF8Tek9DVohe+GBzMAuMlRCIv+0XAM9OLIp74l0gTqA7d7PnandeZ1XueqwqyhQJec0PR6kbicARZ5QQQYBCKpUi+jY0r7YHH//Hacb+7cfRCg3TZkLFw8wAfp4VE0uXJ2sOl3aF9V5jGNcUBYlbGun3s2S4rgS4hAXknjDeD9cQMLRRCtcFy1GovALsG6mXVyMn8LzOtYBszz+0K9q04ZA6wAhk87tH/tsKhDq1ScxcWtydN1uSVYAmYEPU9iIUUoj2A7mvOwEe90=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR03MB6192.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(23010399003)(56012099006)(10067099003)(4143699003)(11063799006)(55112099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?cDNudGE0emJLYzN4Ni9GaXRlUU4vaStONnVPZ0g0TE1QS3doNlEvTTlNYVNF?=
- =?utf-8?B?bWovVFhIYXVLRnowVEw1RU5Mbk1BZUJtUUNkY3ZWRzc1dmVpcFhQeGdYWTlk?=
- =?utf-8?B?Z2x0VFFBQUg1cjFxdi9QZGt0WmlpeWpXMHFFYXdqSDBiaDZycmNBeGJzTnhV?=
- =?utf-8?B?ZkoxUHcwSHlJNVIxWmN0TFpGbUlOMU1pN3lKTm81ZHlYVU5MZjVvM0ZSNnFK?=
- =?utf-8?B?SkhXSVdYV2tOTmxUNW9FS0MycFZkUG90WGxkME92bFEzZVR4M3F1NSsvRGdS?=
- =?utf-8?B?K1ZGd0hRTVYybHRzVFBxNEZiaFo4NUl6MWs4RFZDM1VEUndhKzVxb2FWZ1Ny?=
- =?utf-8?B?KzhPMGJFZUMrOUNZSVlpZzVQb1RrT25sY0daVE5oYlhKVUtNSnlHY0YyTVpv?=
- =?utf-8?B?L090VW9VaUdYUFYwbWIyeHRNT3E3Tmo3a0dHcFNXUisyQVJsVU55NTR6Ulg3?=
- =?utf-8?B?Z0U4L2ZneXoycWVaYXB6TUtoRXdLUnc3amVQYm1Sc1hXNjJqUU9PWUdnRHJx?=
- =?utf-8?B?Ny9BdUFhWG45UGprS3UxODlRdlVVYTkvdjlkRnliZDJPbjZsQWYvSDFiUnZ2?=
- =?utf-8?B?cXB3VTJiR053VWZ5eThxc0FTNzUzRlZXcVhPVkVyZmFwQjZPazBHL0dBNzlj?=
- =?utf-8?B?QUxNdk9nd3oxMFJ2Lys0bUdGdjhIL3kwbWFITWlBWUVSaHg3ZnZzSzhYS1lk?=
- =?utf-8?B?b2x0dStRcnR1QTNtcVVtWnFPc3E0YXdaYmVwKzhlb2tpUlhYeHFtWmR0d3ZS?=
- =?utf-8?B?NmM4anUrV2p0anVSamQ1cDBydyt4MzJPUlVOcnFFQVoxaE1jNWVDazl3cXor?=
- =?utf-8?B?ODkvK3JkTlBKTlFUbUdPYVRRZ3JnRGFxcFMwaWJIL1AwWUZEWkRpTDFjVHBp?=
- =?utf-8?B?dzcvdUpoVzhJTVIzWHVSMDViR3VvYmNWTUxMckhNcmUvUUVlVmdTK2JJbVor?=
- =?utf-8?B?cHB1cGdjaUg5aGozYUVZZ3NacEJSUWVMemJKU1dIZ1ZKMmJ1Yk41aHNGODlO?=
- =?utf-8?B?K2RQT1lqYmlBSUhibXJmRVl1Zjl0cTRTUkMvUXZ1NkRsdDZkU0tMRmFyZnpH?=
- =?utf-8?B?V09tUWg1cEd0ZXZKczJROHY1a1dYd1M3dUJKQy9Dd29BcmdyTlFDcGs1VSs3?=
- =?utf-8?B?SmNUVEtVa3dpS01uSEpZU2tQZzJzZ2YrTmd5dmtsRVBRSHZWZ3JPd1NiL3ZD?=
- =?utf-8?B?UmoyWE9lRzdyOVhCZUsrMTVkZU5KVXVWN1NKWm8wOHVhbjdtdTdGczBiTFRi?=
- =?utf-8?B?MzYyakl4dGtYOFpJb3pTSjNPeUZQMUNleVE5WkRTbVI1SXFiclhUZHBwcmkx?=
- =?utf-8?B?QW1zT2lpZlVYb0c4WnRGbGh0dlBhRWdwUWc1cVRJOHlMVlpremc0ZGQ2Ym42?=
- =?utf-8?B?eUtSVktQUmFxVmhTN1M1WTBVRkRHNTdMRTE4c0c3Z0NncDlPejlFOC9pVzQv?=
- =?utf-8?B?KysyOHltSG9rQjBSN3VSQ21VdUhXZFRDYVdGWUt1Z3RqQ3FxY0ZiV2ZPL2Yy?=
- =?utf-8?B?TFM1MXJkZzRZVENjRmRWMEpzeVIvTEtKSkI2dWhHMVdSMUpNeEhMQ0g4RFVU?=
- =?utf-8?B?UGxKOXViMjYxcUlHNTJRbzRoVklhUXRFK2FGaDYxTmdoTjMvbzB3Mys5R2p1?=
- =?utf-8?B?NHZwK3RTOWMvcFhVQmQ2VitzKzBjYmxuVzJySGVaTEgvU1B4Rks3akVDQlF2?=
- =?utf-8?B?SGdxWHp4YkFoK29Bb2M3NXdQTE8zeHBpME52cW5ha24wVENycURMTFloWlVn?=
- =?utf-8?B?YzJKN3JRRnhCV1pIME5tanpQY1A1MU5VMkpJcEFVN01NdUNxcEtmQ0s0Ymdu?=
- =?utf-8?B?S3o4Z0hpMmh1aFpJN2JyTHc5dkREaERxZDhhOXAwTEkwZzdHWC9ZYWZNMG0z?=
- =?utf-8?B?MFNBcldoa1lRR05TcEE2TGpUeGxHUC96NlpVTWlnSG13WVd1L3Y4aXlhdUYy?=
- =?utf-8?B?Z2xUWjdaai9rNXFTK3R2ZjJUTStOQzFXUzVBdGhVcExpT0FYaXFaWmVDK2Zo?=
- =?utf-8?B?WHVScEVoV0tQeUYxRURmQklWMmIvazY2OTdtYXpQWTMrdEZWRlRab2hYVkls?=
- =?utf-8?B?d3NST1RWNThreDF1Snd0RE9FdDNVWW1PaE9oeXhKRWFLSVVENVR1cThLNEha?=
- =?utf-8?B?dEgyVkdXWFZjbkRTSXZLMmRUY242L2VhN1p6Y3JyS0JTQ2tEVTFKWUw0M2di?=
- =?utf-8?B?R2ZNVWZtT2dQeGwvbUdrSitVM3RZaENsRjN4MVRRalhhaWQrdGRFeFI4dkdh?=
- =?utf-8?B?K3ora3NFb0h2WlhwRXpJVGNOUjA1eVQxTzI3QnRmeG9vSWNjdzE5YktxMDdt?=
- =?utf-8?B?bTdMSUtvMWVvZTJuaEkvcTVzbkQzWW1wZ28xWVk5VExLNStRdTRnZz09?=
-X-OriginatorOrg: altera.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 267ed127-d3ba-4dcb-eef7-08defd016dc7
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR03MB6192.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Aug 2026 08:19:31.5239
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: JKaMoQdW9v92oCy9H5zVrh904AZl6tTjIHKzieIsz6r0Esb/aMvfz76IYFp3qBNxLOm7BFbI4qiYMbt1pXj1cA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR03MB989394
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/5] dt-bindings: clock: altr,agilex72-clkmgr: add
+ Agilex72 clock manager binding
+To: evon.chiam@altera.com, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Dinh Nguyen <dinguyen@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: Lothar Rubusch <l.rubusch@gmail.com>, Ng Tze Yee <tzeyee.ng@altera.com>,
+ Nazim Amirul <muhammad.nazim.amirul.nazle.asmade@altera.com>,
+ Adrian Ng Ho Yin <adrian.ho.yin.ng@altera.com>,
+ Brian Masney <bmasney@redhat.com>, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1786006669.git.evon.chiam@altera.com>
+ <39f067c31125b43d9d4ee92cd02828e894de3f45.1786006669.git.evon.chiam@altera.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <39f067c31125b43d9d4ee92cd02828e894de3f45.1786006669.git.evon.chiam@altera.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-
-On 15/8/2026 1:35 am, Rob Herring wrote:
-> On Fri, Aug 14, 2026 at 04:18:59PM +0800, Chiam, Evon wrote:
->>
->>
->> On 12/8/2026 10:49 am, Rob Herring wrote:
->>> On Thu, Aug 06, 2026 at 05:25:01PM +0800, evon.chiam@altera.com wrote:
->>>> From: "Chiam, Evon" <evon.chiam@altera.com>
->>>>
->>>> Altera has separated from Intel. Update the Agilex72 SoC and board
->>>> compatible strings to use the Altera vendor prefix instead of intel.
->>>
->>> Sorry, without better reasoning, you are stuck with them as sashiko
->>> pointed out.
->>>
->> Sashiko’s comment on the DTS still using the intel compatible strings was
->> based on reviewing patch 1/5 alone. Patch 4/5 moves the Agilex72 DT from
->> arch/arm64/boot/dts/intel/ to arch/arm64/boot/dts/altera/ and updates the
->> compatible strings to altr. With both patches applied, the bindings and DTS
->> remain consistent.
->>
->> Would you prefer that I combine the patches 1/5 and 4/5 into a single patch
->> so the binding and DTS updates land together?
+On 06/08/2026 11:25, evon.chiam@altera.com wrote:
+> From: "Chiam, Evon" <evon.chiam@altera.com>
 > 
-> Moving the dts directory is fine (though that is really up to SoC
-> maintainers). Changing compatible strings is not. It is not about the
-> patch split. It is an ABI. There are exceptions though. Generally that
-> is if there is no one with the h/w or the current .dts is so incomplete
-> that anyone using the h/w will need to update their DTB anyways.
+> Add binding and clock ID header for Altera SoCFPGA Agilex72 clock manager.
+
+Please wrap commit message according to Linux coding style / submission
+process (neither too early nor over the limit):
+https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
+
+A nit, subject: drop second/last, redundant "binding". The "dt-bindings"
+prefix is already stating that these are bindings.
+See also:
+https://elixir.bootlin.com/linux/v7.1-rc7/source/Documentation/devicetree/bindings/submitting-patches.rst#L23
+
 > 
-> Rob
+> Signed-off-by: Chiam, Evon <evon.chiam@altera.com>
 
-Thanks for clarifying.
 
-To provide some context, Agilex72 DTS is still at an early
-stage of development, and most people do not have access to the
-hardware yet. Anyone using the current DTS would need to update their
-DTB, so changing the compatible strings at this stage should
-not cause ABI issues.
 
-Regards,
-Evon
+> +
+> +examples:
+> +  - |
+> +    /* External reference clocks supplied to the clock manager */
+> +    clocks {
+> +      cb_intosc_div2_clk: cb-intosc-div2-clk {
+> +        #clock-cells = <0>;
+> +        compatible = "fixed-clock";
+> +        clock-frequency = <0>;
+> +      };
+> +
+> +      /* cb-intosc divided by 2, then by 5 (total divide-by-10) */
+> +      cb_intosc_div10_clk: cb-intosc-div10-clk {
+> +        #clock-cells = <0>;
+> +        compatible = "fixed-factor-clock";
+> +        clocks = <&cb_intosc_div2_clk>;
+> +        clock-mult = <1>;
+> +        clock-div = <5>;
+> +      };
+> +
+> +      f2s_free_clk: f2s-free-clk {
+> +        #clock-cells = <0>;
+> +        compatible = "fixed-clock";
+> +        clock-frequency = <0>;
+> +      };
+> +
+> +      osc1: osc1 {
+> +        #clock-cells = <0>;
+> +        compatible = "fixed-clock";
+> +        clock-frequency = <0>;
+> +      };
+> +    };
 
+None of above are relevant. Drop.
+
+> +
+> +    clkmgr: clock-controller@915c000 {
+> +      compatible = "altr,agilex72-clkmgr";
+> +      reg = <0x915c000 0x1000>,
+> +            <0x915e000 0x1000>,
+> +            <0x915f000 0x1000>,
+> +            <0x9160000 0x1000>;
+> +      reg-names = "clkmgr", "gppll0", "gppll1", "gppll2";
+> +      #clock-cells = <1>;
+> +    };
+
+
+...
+
+> +#define AGILEX72_COMP0_CLK             36
+> +#define AGILEX72_CORE2_CLK             37
+> +#define AGILEX72_CORE3_CLK             38
+> +#define AGILEX72_MPU_CLK               39
+> +#define AGILEX72_CCU_CLK               40
+> +#define AGILEX72_APU_SYS_FREE_CLK      41
+> +#define AGILEX72_HSP_SYS_FREE_CLK      42
+> +#define AGILEX72_HSP_MAIN_FREE_CLK     43
+> +#define AGILEX72_HSP_MAIN_CLK          44
+> +#define AGILEX72_HSP_MP_CLK            45
+> +#define AGILEX72_HSP_SP_CLK            46
+> +#define AGILEX72_USB2OTG_HCLK          47
+> +#define AGILEX72_LSP_SYS_FREE_CLK      48
+> +#define AGILEX72_LSP_MAIN_FREE_CLK     49
+> +#define AGILEX72_LSP_MAIN_CLK          50
+> +#define AGILEX72_LSP_MP_CLK            51
+> +#define AGILEX72_LSP_SP_CLK            52
+> +#define AGILEX72_SPIM_0_CLK            53
+> +#define AGILEX72_SPIM_1_CLK            54
+> +#define AGILEX72_SPIS_0_CLK            55
+> +#define AGILEX72_SPIS_1_CLK            56
+> +#define AGILEX72_DMA_0_CORE_CLK        57
+> +#define AGILEX72_DMA_0_HS_CLK          58
+> +#define AGILEX72_DMA_1_CORE_CLK        59
+> +#define AGILEX72_DMA_1_HS_CLK          60
+> +#define AGILEX72_I3C_0_CORE_CLK        61
+> +#define AGILEX72_I3C_1_CORE_CLK        62
+> +#define AGILEX72_I2C_0_PCLK            63
+> +#define AGILEX72_I2C_1_PCLK            64
+> +#define AGILEX72_I2C_EMAC0_PCLK        65
+> +#define AGILEX72_I2C_EMAC1_PCLK        66
+> +#define AGILEX72_I2C_EMAC2_PCLK        67
+> +#define AGILEX72_UART_0_PCLK           68
+> +#define AGILEX72_UART_1_PCLK           69
+> +#define AGILEX72_UART_2_PCLK           70
+> +#define AGILEX72_SPTIMER_0_PCLK        71
+> +#define AGILEX72_SPTIMER_1_PCLK        72
+> +#define AGILEX72_CS_AT_CLK             73
+> +#define AGILEX72_CS_PDBG_CLK           74
+> +#define AGILEX72_CS_TRACE_CLK          75
+> +#define AGILEX72_EMACA_DIV_CLK         76
+> +#define AGILEX72_EMACB_DIV_CLK         77
+> +#define AGILEX72_EMAC0_CLK             78
+> +#define AGILEX72_EMAC1_CLK             79
+> +#define AGILEX72_EMAC2_CLK             80
+> +#define AGILEX72_EMAC_PTP_CLK          81
+> +#define AGILEX72_GPIO_DB_CLK           82
+> +#define AGILEX72_USB31_SUSPEND_CLK     83
+> +#define AGILEX72_USB31_BUS_CLK_EARLY   84
+> +#define AGILEX72_S2F_USER0_CLK         85
+> +#define AGILEX72_S2F_USER1_CLK         86
+> +#define AGILEX72_XSPI_PCLK             87
+> +#define AGILEX72_XSPI_CLK              88
+> +#define AGILEX72_XSPI_PHY_CLK          89
+> +#define AGILEX72_SDMMC0_SDPHY_REG_CLK  90
+> +#define AGILEX72_SDMMC1_SDPHY_REG_CLK  91
+> +#define AGILEX72_SDMMC0_SDMCLK         92
+> +#define AGILEX72_SDMMC1_SDMCLK         93
+> +#define AGILEX72_SDMMC0_PHY_CLK        94
+> +#define AGILEX72_SDMMC1_PHY_CLK        95
+> +#define AGILEX72_USB31_REF_CLK         96
+
+> +#define AGILEX72_NUM_CLKS              97
+
+No, not a binding. Drop
+
+> +
+> +#endif  /* __DT_BINDINGS_ALTR_AGILEX72_CLKMGR_H */
+
+
+Best regards,
+Krzysztof
