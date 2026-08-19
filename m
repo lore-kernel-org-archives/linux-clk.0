@@ -1,44 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16A7831E833;
-	Wed, 19 Aug 2026 13:12:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ADDE3403E0;
+	Wed, 19 Aug 2026 13:15:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787145127; cv=none; b=SmFfCjsbDpZr5pRc+uSE3OFD6U2ctIaNwoszpoSwhav/RoTkhLG5mDwfbiT/b8lYUmO0l8uZV0bwO8AfgSAD3DjWA3z6jihbSWTaEq/UE2YahwdWNchv/029hxjZobx5kJ5cHQgi3ko0JFdQfXOG1jPF+gyY3viWYUeu9TE5cqc=
+	t=1787145356; cv=none; b=rmevdMwgqYTkweyiZXasP9tm42c1a8UyhUMKI7wI7WvkEltHCmZ5lS+UwEIcRcPzBDq59FyfylI/kLJnUbwmMDhYjJfWAHzJdrqaozQ7kr4OYumeQyRLh8uNdWJqFy40mb0IPFaSMpbmfo7g+sfCNL9yaZ7KrXtAmzTg+NLTG/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787145127; c=relaxed/simple;
-	bh=ua5JO1C6gYq1oucyJAgE3OV3CpA/yemIGIquHOd+FRI=;
+	s=arc-20240116; t=1787145356; c=relaxed/simple;
+	bh=aZxFZqPMHCG7G8Bfv3qTYXK4+Yx+iIZdmOswCDS9sAQ=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=Sv/lk4kEHUqSEVvAqO5WEHxEMeGQgkoREMEF63cfwHH8BcjUQ6AGNOUaY5lGBr1hULCwwIu0ivZpYbYGlJP26dagoo9iHn7rdUsGsKmFMm0Hhwj5Tf+dEjwl4JADfMM0YN43FElIvmPDfs8XY2HpLMLCEXdfN1gp87lBUQPDB2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CjkIr2ZU; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=FXmizUwrI/p4mHoLBGdRN2UsMuShO3XntsAinrCDuvOH+SgGBqth97SVFvcuZeQXspOm/qbynLJ7kBEs4ubXYFRw7EBuFGFr5ZdT4m7jTC9Oce5WAT46tqcGjkDX/4ifuwdKVhR74d0yB92Ozc4txcL83i7yZVcK863OvHZhstE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ODMAik+4; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CjkIr2ZU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCE521F00A3D;
-	Wed, 19 Aug 2026 13:12:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ODMAik+4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 346841F00A3A;
+	Wed, 19 Aug 2026 13:15:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787145126;
-	bh=J0oQUSPZx6LGG6fWFG23s0TEJJSWQvZhAl1exFDEXyc=;
+	s=k20260515; t=1787145352;
+	bh=UBrFJNXNXEZ1rnpl+RINyxZBnJHvzYoAUJRTIWhXE2Y=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=CjkIr2ZUGrCW0fwHO4PhRvI3TRME0DsPysUcBzEbHofD2V86fcgaSzrWtj4yyDkF7
-	 HtRxZ13gNEr3u3+2PhNKlyVGSkfRDqCNxE0kI/8u+cYbxmqKRW3c9j3biWXABxr02a
-	 GOwJfVqAkvbw2qXWMmkSrypPbsTNq+boxDBlrSTZYcEiz4EsWu0crzG+nxbv7yrjls
-	 gewIliru1A25eO9efIx+F21lJTSkbQ8GXZjIGEeUuL6BWrDUWeQ6ShLYc7pCExSXo6
-	 b3LJl/2eAar18kwKzKTsimVMqGuqm2j/I0+DUIu+9ipaeZdn3iAldiUe+WK8ONwbsf
-	 VX1MoZ4pDr9Og==
+	b=ODMAik+41PvilmIpNOsCFCg4D8DY+0OL+5NE+64uwpMtYYQWmjJtxG4X8e046dWKl
+	 b5RPHZEBC6OYGyo6IoSrRak/eIXt/GoTVZIKIhb8exa1Aed22q0PKYdAAZmxRjp4wC
+	 1meB87CtnJxRmwqJYO6kL/bnOQU/WLrD+IPsz+yTz7NffSuPCBvL5jcPcSy+rgo91l
+	 MTM6zK3rheJmTHYohhN6ZDIEldHMeM1/5uOr2y5h6jqQz23EHZj9CPYuHxBBz2viM4
+	 q0MugmZCZgPqRIQmzGNS8jt+SCR/7wiz4cJ5eptJK8jDNu1O0af+417/a1px82b+FT
+	 +as9RneUZc/XQ==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 02/16] clk: qcom: gcc-sm8350: Tie the CX power domain to
+Subject: Re: [PATCH 03/16] clk: qcom: gcc-sm8450: Tie the CX power domain to
  controller
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Abel Vesa" <abel.vesa@oss.qualcomm.com>
-Cc: linux-clk@vger.kernel.org, robh@kernel.org, devicetree@vger.kernel.org, conor+dt@kernel.org
-In-Reply-To: <20260819-qcom-tie-cx-to-gcc-v1-2-840034124e73@oss.qualcomm.com>
+Cc: conor+dt@kernel.org, robh@kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+In-Reply-To: <20260819-qcom-tie-cx-to-gcc-v1-3-840034124e73@oss.qualcomm.com>
 References: <20260819-qcom-tie-cx-to-gcc-v1-0-840034124e73@oss.qualcomm.com>
- <20260819-qcom-tie-cx-to-gcc-v1-2-840034124e73@oss.qualcomm.com>
+ <20260819-qcom-tie-cx-to-gcc-v1-3-840034124e73@oss.qualcomm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 19 Aug 2026 13:12:05 +0000
-Message-Id: <20260819131205.BCE521F00A3D@smtp.kernel.org>
+Date: Wed, 19 Aug 2026 13:15:51 +0000
+Message-Id: <20260819131552.346841F00A3A@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -49,74 +49,73 @@ Thank you for your contribution! Sashiko AI review found 1 potential issue(=
 s) to consider:
 
 Pre-existing issues:
-- [High] Resource leak and Use-After-Free (UAF) in generic power domain reg=
-istration error paths.
+- [High] Unbinding the driver causes a devres ordering issue that leads to =
+a lockless linked list Use-After-Free and permanent power leak.
 --
 
---- Patch [2]: [PATCH 02/16] clk: qcom: gcc-sm8350: Tie the CX power domain=
+--- Patch [3]: [PATCH 03/16] clk: qcom: gcc-sm8450: Tie the CX power domain=
  to controller ---
-commit 2f90d172dae6e2aec9b20b94ed643f0031c58164
+commit fce258c6d28a3b8028f9c7e9bc3065854572f262
 Author: Abel Vesa <abel.vesa@oss.qualcomm.com>
 
-clk: qcom: gcc-sm8350: Tie the CX power domain to controller
+clk: qcom: gcc-sm8450: Tie the CX power domain to controller
 
 Enable runtime PM for the controller so the common GCC probe path resumes
-the attached domain while registering clocks, resets and GDSCs.
+the attached domain while registering clocks, resets and GDSCs. This lets
+GDSC consumers propagate their votes through the GCC provider to the CX
+parent domain.
 
-> diff --git a/drivers/clk/qcom/gcc-sm8350.c b/drivers/clk/qcom/gcc-sm8350.c
-> index 2d94f3046b711..996ee8592fabe 100644
-> --- a/drivers/clk/qcom/gcc-sm8350.c
-> +++ b/drivers/clk/qcom/gcc-sm8350.c
-> @@ -3786,6 +3786,7 @@ static const struct qcom_cc_desc gcc_sm8350_desc =
+> diff --git a/drivers/clk/qcom/gcc-sm8450.c b/drivers/clk/qcom/gcc-sm8450.c
+> index b18bb34889ab2..b3ab458048dc8 100644
+> --- a/drivers/clk/qcom/gcc-sm8450.c
+> +++ b/drivers/clk/qcom/gcc-sm8450.c
+> @@ -3399,6 +3399,7 @@ static const struct qcom_cc_desc gcc_sm8450_desc =
 =3D {
->  	.resets =3D gcc_sm8350_resets,
->  	.num_resets =3D ARRAY_SIZE(gcc_sm8350_resets),
->  	.gdscs =3D gcc_sm8350_gdscs,
+>  	.resets =3D gcc_sm8450_resets,
+>  	.num_resets =3D ARRAY_SIZE(gcc_sm8450_resets),
+>  	.gdscs =3D gcc_sm8450_gdscs,
 > +	.use_rpm =3D true,
 
 [Severity: High]
-This is a pre-existing issue, but since this patch relies on the GDSC
-infrastructure, is there a risk of a use-after-free during error handling
-in the core GDSC registration?
+This is a pre-existing issue, but will setting use_rpm expose a Use-After-F=
+ree
+and power leak during driver unbind?
 
-Looking at gdsc_register() in drivers/clk/qcom/gdsc.c, if a failure occurs
-during gdsc_init(), the function returns directly:
+When the driver unbinds, devres cleanup runs qcom_cc_gdsc_unregister(), whi=
+ch
+calls gdsc_pm_subdomain_remove(). However, at this point platform_remove() =
+has
+already detached the PM domain, making dev->pm_domain NULL.
 
-drivers/clk/qcom/gdsc.c:gdsc_register() {
-    ...
-        ret =3D gdsc_init(scs[i]);
-        if (ret)
-            return ret;
-    ...
-}
+This causes gdsc_pm_subdomain_remove() in drivers/clk/qcom/gdsc.c to skip t=
+he
+safe detachment:
 
-Similarly, if of_genpd_add_provider_onecell() fails, it returns without
-unregistering the initialized domains:
+	else if (!IS_ERR_OR_NULL(dev->pm_domain))
+		pm_genpd_remove_subdomain(pd_to_genpd(dev->pm_domain), &scs[i]->pd);
 
-drivers/clk/qcom/gdsc.c:gdsc_register() {
-    ...
-    return of_genpd_add_provider_onecell(dev->of_node, data);
+As a result, an unsafe fallback execution path is taken in
+drivers/pmdomain/core.c:genpd_remove():
 
-err_pm_subdomain_remove:
-    gdsc_pm_subdomain_remove(desc, i);
+	list_for_each_entry_safe(link, l, &genpd->child_links, child_node) {
+		list_del(&link->parent_node);
+		list_del(&link->child_node);
+		kfree(link);
+	}
 
-    return ret;
-}
+This modifies the parent's parent_links list without acquiring the parent's
+lock, which could lead to a lockless linked list Use-After-Free. It also
+fails to decrement sd_count, which keeps the CX domain powered on forever.
 
-Because pm_genpd_remove() is not called on these error paths, the domains
-remain linked in the global gpd_list.
+Since devm_add_action_or_reset() in
+drivers/clk/qcom/common.c:qcom_cc_really_probe() schedules this cleanup to
+happen after dev->pm_domain is cleared, is there a way to address this devr=
+es
+ordering issue before enabling use_rpm?
 
-When the probe fails, devres will clean up managed resources like regmap.
-Later, when the genpd framework invokes pd->power_off() (such as via
-genpd_power_off_unused() at late_initcall), it calls gdsc_disable() which
-could dereference these freed devres-managed pointers.
-
-Should gdsc_register() be updated to unregister the power domains on these
-error paths to prevent dangling pointers?
-
->  	.num_gdscs =3D ARRAY_SIZE(gcc_sm8350_gdscs),
+>  	.num_gdscs =3D ARRAY_SIZE(gcc_sm8450_gdscs),
 >  };
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260819-qcom-tie-c=
-x-to-gcc-v1-0-840034124e73@oss.qualcomm.com?part=3D2
+x-to-gcc-v1-0-840034124e73@oss.qualcomm.com?part=3D3
