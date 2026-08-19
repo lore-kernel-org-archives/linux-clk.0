@@ -1,43 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F40F221CC5A;
-	Wed, 19 Aug 2026 13:09:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16A7831E833;
+	Wed, 19 Aug 2026 13:12:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787144991; cv=none; b=T76F2KWn3wGTTHH8hBcHcB1pSky+KtF17pLWm64epf68pidvZfhOO92cXDYLB3sbzrz77oXf3yIJXn4RyepWLlPgVh+onSLBCtGf0lDRBjJCJlmX/Fl2wgXtOqqg3YBbHal/tdgsQ5t/Rbtb3i8LHGCmyWsgltcthys/HrJhnOE=
+	t=1787145127; cv=none; b=SmFfCjsbDpZr5pRc+uSE3OFD6U2ctIaNwoszpoSwhav/RoTkhLG5mDwfbiT/b8lYUmO0l8uZV0bwO8AfgSAD3DjWA3z6jihbSWTaEq/UE2YahwdWNchv/029hxjZobx5kJ5cHQgi3ko0JFdQfXOG1jPF+gyY3viWYUeu9TE5cqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787144991; c=relaxed/simple;
-	bh=CCQ9dWTzF1AlLDCozQokjAEYbztArHMgALLpYJNRbcY=;
+	s=arc-20240116; t=1787145127; c=relaxed/simple;
+	bh=ua5JO1C6gYq1oucyJAgE3OV3CpA/yemIGIquHOd+FRI=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=knjooP2c2SqsKUVCZfplSw7Bs3DrRhRkCn5XcmDDMHcmeUdesXFsqDON7mEe/CEKKCz77aQPY1XxN8M+2pgXWWHDFAYPcteBjntBxjonop6oWq2mwJsEEx7A4aYktwZ0u11ccvKxXItnv+RevAHnwFFb4DxUlBTFwFZlYcvSFcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VVyMFUNE; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=Sv/lk4kEHUqSEVvAqO5WEHxEMeGQgkoREMEF63cfwHH8BcjUQ6AGNOUaY5lGBr1hULCwwIu0ivZpYbYGlJP26dagoo9iHn7rdUsGsKmFMm0Hhwj5Tf+dEjwl4JADfMM0YN43FElIvmPDfs8XY2HpLMLCEXdfN1gp87lBUQPDB2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CjkIr2ZU; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VVyMFUNE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C80D1F000E9;
-	Wed, 19 Aug 2026 13:09:49 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CjkIr2ZU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCE521F00A3D;
+	Wed, 19 Aug 2026 13:12:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787144989;
-	bh=Ep5ki+Lq4Glgx0EBhhDSwPV4IXq+D01t9IQOigvX1dc=;
+	s=k20260515; t=1787145126;
+	bh=J0oQUSPZx6LGG6fWFG23s0TEJJSWQvZhAl1exFDEXyc=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=VVyMFUNEBWpr1RkIV30sLSX+7GtLKA6zv6DAZOZ8TfxnDxy/JRRxWccoMKtXLvojx
-	 XcmJCNoUG10v6BOhx85TK3/9FxHkuRtgTMucDkbPOrwoWMpmfxzkwE5BI7DILUMz9v
-	 jtryYy5J7TvLQDTEHdHOqSbeylA6z7MtbLfiPrEC8/VlCE/FyiTnChGaPjhrJdf2gP
-	 wDrRqOgZNINHRS/ZgNOeL8QCFJybyVpFKbQkB2T87LaoaI2/4EY7XEzhh9MeVukVxC
-	 QRPt/WxDNCBZhpDreV0gg1gNokYSMoL8Ls/e0gJOLwYutXIxeE47ef2TGYnET9QT4U
-	 TAwViKifUNi4Q==
+	b=CjkIr2ZUGrCW0fwHO4PhRvI3TRME0DsPysUcBzEbHofD2V86fcgaSzrWtj4yyDkF7
+	 HtRxZ13gNEr3u3+2PhNKlyVGSkfRDqCNxE0kI/8u+cYbxmqKRW3c9j3biWXABxr02a
+	 GOwJfVqAkvbw2qXWMmkSrypPbsTNq+boxDBlrSTZYcEiz4EsWu0crzG+nxbv7yrjls
+	 gewIliru1A25eO9efIx+F21lJTSkbQ8GXZjIGEeUuL6BWrDUWeQ6ShLYc7pCExSXo6
+	 b3LJl/2eAar18kwKzKTsimVMqGuqm2j/I0+DUIu+9ipaeZdn3iAldiUe+WK8ONwbsf
+	 VX1MoZ4pDr9Og==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 13/16] arm64: dts: qcom: sm8650: Add GCC CX power domain
+Subject: Re: [PATCH 02/16] clk: qcom: gcc-sm8350: Tie the CX power domain to
+ controller
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Abel Vesa" <abel.vesa@oss.qualcomm.com>
-Cc: linux-clk@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org
-In-Reply-To: <20260819-qcom-tie-cx-to-gcc-v1-13-840034124e73@oss.qualcomm.com>
+Cc: linux-clk@vger.kernel.org, robh@kernel.org, devicetree@vger.kernel.org, conor+dt@kernel.org
+In-Reply-To: <20260819-qcom-tie-cx-to-gcc-v1-2-840034124e73@oss.qualcomm.com>
 References: <20260819-qcom-tie-cx-to-gcc-v1-0-840034124e73@oss.qualcomm.com>
- <20260819-qcom-tie-cx-to-gcc-v1-13-840034124e73@oss.qualcomm.com>
+ <20260819-qcom-tie-cx-to-gcc-v1-2-840034124e73@oss.qualcomm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 19 Aug 2026 13:09:48 +0000
-Message-Id: <20260819130949.5C80D1F000E9@smtp.kernel.org>
+Date: Wed, 19 Aug 2026 13:12:05 +0000
+Message-Id: <20260819131205.BCE521F00A3D@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -46,41 +47,76 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 
 Thank you for your contribution! Sashiko AI review found 1 potential issue(=
 s) to consider:
-- [Low] The DT schema for SM8650 GCC does not define the 'power-domains' pr=
-operty, resulting in a dtbs_check validation failure.
+
+Pre-existing issues:
+- [High] Resource leak and Use-After-Free (UAF) in generic power domain reg=
+istration error paths.
 --
 
---- Patch [13]: [PATCH 13/16] arm64: dts: qcom: sm8650: Add GCC CX power do=
-main ---
-commit 9a61032f8e0b737e1a6fc6895f1ca5a328c9b7d3
+--- Patch [2]: [PATCH 02/16] clk: qcom: gcc-sm8350: Tie the CX power domain=
+ to controller ---
+commit 2f90d172dae6e2aec9b20b94ed643f0031c58164
 Author: Abel Vesa <abel.vesa@oss.qualcomm.com>
 
-arm64: dts: qcom: sm8650: Add GCC CX power domain
+clk: qcom: gcc-sm8350: Tie the CX power domain to controller
 
-This commit adds the RPMh CX power-domain reference to the SM8650 GCC
-clock-controller node. This ensures consumers of GCC-provided GDSCs correct=
-ly
-trigger the required CX vote when enabling their local domains.
+Enable runtime PM for the controller so the common GCC probe path resumes
+the attached domain while registering clocks, resets and GDSCs.
 
-> diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi b/arch/arm64/boot/dts/q=
-com/sm8650.dtsi
-> index b679fd8afb7d5..962797c15abf5 100644
-> --- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-> @@ -2019,6 +2019,8 @@ gcc: clock-controller@100000 {
-[ ... ]
->  				 <&usb_dp_qmpphy QMP_USB43DP_USB3_PIPE_CLK>;
-> =20
-> +			power-domains =3D <&rpmhpd RPMHPD_CX>;
+> diff --git a/drivers/clk/qcom/gcc-sm8350.c b/drivers/clk/qcom/gcc-sm8350.c
+> index 2d94f3046b711..996ee8592fabe 100644
+> --- a/drivers/clk/qcom/gcc-sm8350.c
+> +++ b/drivers/clk/qcom/gcc-sm8350.c
+> @@ -3786,6 +3786,7 @@ static const struct qcom_cc_desc gcc_sm8350_desc =
+=3D {
+>  	.resets =3D gcc_sm8350_resets,
+>  	.num_resets =3D ARRAY_SIZE(gcc_sm8350_resets),
+>  	.gdscs =3D gcc_sm8350_gdscs,
+> +	.use_rpm =3D true,
 
-[Severity: Low]
-Does this new property require a corresponding update to the DT schema?
+[Severity: High]
+This is a pre-existing issue, but since this patch relies on the GDSC
+infrastructure, is there a risk of a use-after-free during error handling
+in the core GDSC registration?
 
-Looking at Documentation/devicetree/bindings/clock/qcom,sm8650-gcc.yaml,
-it uses unevaluatedProperties: false but does not define the power-domains
-property. Will adding this property to the device tree without updating the
-bindings schema cause a validation failure during make dtbs_check?
+Looking at gdsc_register() in drivers/clk/qcom/gdsc.c, if a failure occurs
+during gdsc_init(), the function returns directly:
+
+drivers/clk/qcom/gdsc.c:gdsc_register() {
+    ...
+        ret =3D gdsc_init(scs[i]);
+        if (ret)
+            return ret;
+    ...
+}
+
+Similarly, if of_genpd_add_provider_onecell() fails, it returns without
+unregistering the initialized domains:
+
+drivers/clk/qcom/gdsc.c:gdsc_register() {
+    ...
+    return of_genpd_add_provider_onecell(dev->of_node, data);
+
+err_pm_subdomain_remove:
+    gdsc_pm_subdomain_remove(desc, i);
+
+    return ret;
+}
+
+Because pm_genpd_remove() is not called on these error paths, the domains
+remain linked in the global gpd_list.
+
+When the probe fails, devres will clean up managed resources like regmap.
+Later, when the genpd framework invokes pd->power_off() (such as via
+genpd_power_off_unused() at late_initcall), it calls gdsc_disable() which
+could dereference these freed devres-managed pointers.
+
+Should gdsc_register() be updated to unregister the power domains on these
+error paths to prevent dangling pointers?
+
+>  	.num_gdscs =3D ARRAY_SIZE(gcc_sm8350_gdscs),
+>  };
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260819-qcom-tie-c=
-x-to-gcc-v1-0-840034124e73@oss.qualcomm.com?part=3D13
+x-to-gcc-v1-0-840034124e73@oss.qualcomm.com?part=3D2
