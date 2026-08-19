@@ -1,283 +1,210 @@
-Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C81C3A1DB
-	for <linux-clk@vger.kernel.org>; Wed, 19 Aug 2026 12:32:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2269130274D
+	for <linux-clk@vger.kernel.org>; Wed, 19 Aug 2026 12:53:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787142768; cv=none; b=bADm1L+E3DXrYGcodWsSqT8+nzFeAU76/1LhUfrVKxp5+aq90NTadLLPlsUvvB+dd5RwBYMeNTZ1exXlnJEIawf6U/JkYt2zqaz60dvHDqs2DfLhcx27/3SGp1Myw3BjawucIfbs9zLhqBEVdAPBXWrXaD1CPnCZbpaVELJUeM4=
+	t=1787143996; cv=none; b=oR5xr3gBhNt4V8rih5yjX8GBRtrUMomuMVgwCNOrVkFpXvZJSnaARl0P/sqATEKdrM9rU9GL0EIr6sY2EktIO9GrS2rMR5RVrzdpC/QcGBPRqv7ghc4qY/rIz5WT+dk7AkRQZXey4xgY/IJExVEFDe58oT3LaJ5XrawgqJ7Om1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787142768; c=relaxed/simple;
-	bh=Qv/Y2/4+5KC9Xpuu4KHuVa8r+6OMl1nd1n6bDxiaXk8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aRrUXRT2KWc1R/1z4xaUuPU4yhZ4D3tQykQlHn0WMYnBdVajBsdm/xmaPXhv6V22c58eAGYRatBWBsBjJ7hJKbqTVtzsjH7WEAkYAy56bOsvFAI3ZGQcunuRFtgaxugnCm6ThWq4mYNO86cA651vYs9CGanrTXWqhY/nhM7kwQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-5bfa99f8ef8so1485004e0c.0
-        for <linux-clk@vger.kernel.org>; Wed, 19 Aug 2026 05:32:46 -0700 (PDT)
+	s=arc-20240116; t=1787143996; c=relaxed/simple;
+	bh=aocfws8Kf4eH/Sw8YBlJiavOC8ubRD9ZJHDiRz8wOdQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=GJfLWBW9OZfci0bK1lHEePcuRI97YIDJPGs9I4EFtjn8DhClYjWQEuSKZoM66/6a1OAb9TAfrBTteeYZz6LZKieC/gngkcyNnf0npVvK7oX6FaZaREg59bsmbbwhwi2raiuXhuJXoaYGwpmwrkTMnuP2OTLXss/er8B22Zm3EJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Mtr60RZz; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=gEn4/P9z; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Mtr60RZz";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="gEn4/P9z"
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 67JClPdd663167
+	for <linux-clk@vger.kernel.org>; Wed, 19 Aug 2026 12:53:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=W4Xj50xooKVvZ41LfzpQRG
+	7HYPYstHlBe1B3U8mLEO0=; b=Mtr60RZzKx7Vi4+bEoyhNS7qjhyaYU3eEfVlkr
+	F1nFZyzU5c64qBW631XDKV3er+PjEgu5mwiU4puMCDklqwhwCn1/4boHHGmMWoWf
+	eWSZqRvga+lF+PxtW3VrQkUDRhdkF/AZ9yC2RAP5/Xxppa6B30v3SLG9HBEb2Wfz
+	TTKt1yn4+Wv0QAsTmYrr9kj5RfZiOFMSx1TkXwB3+LImsJ2Bd6noe1hwaEN+ezgx
+	asYaBbsF7GIHC7qMdhnVHrEBm9yfvTMnIlJhNErUXLBSkREBzUlyWf5XZaAcyt5+
+	IdAnfn0Az5KsMGHkHSaSk8M3txs3jqeuE6NlmBbuLHJ64K/g==
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4g4yfmb7r1-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Wed, 19 Aug 2026 12:53:13 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-936a796a23aso87764785a.2
+        for <linux-clk@vger.kernel.org>; Wed, 19 Aug 2026 05:53:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1787143993; x=1787748793; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=W4Xj50xooKVvZ41LfzpQRG7HYPYstHlBe1B3U8mLEO0=;
+        b=gEn4/P9zpkJ8fMiArJmsvD4MoklPtP3TPi5/LK154jB+BfRPPiinH82CEzRIZNVV42
+         ltl8u6DbcaPdDnB8QsulxWeBOl67D4YbUBiAcqAeCRRC9LYzO3ZdD3PO8wVwdebWrJzd
+         xlIuPgPO1Id1db0i9EuUQfm5mGlksy6IO4buhQOLSZfYIjXLGZEkWkzL/97BtTTK0YvI
+         CkEJxDMRPjB/WgLUlCMWhmVSNnMyGOV78wgOcu/prqvJdpZ/MPnek4gwHMWDDJ03hPR9
+         PoUiKSHvvYinp3vnzfW6O0KqTpQS+XOrRoQo1nfwxqXlmMecH0pQQWHJNkOg1NjZUox2
+         gBeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787142765; x=1787747565;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20251104; t=1787143993; x=1787748793;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=9+R+LcOTcS+vIIZ4NxuztMgKx1+fTkhDLAPmPl8GYBU=;
-        b=hu4hrHiknGdmWSlK4ZouSLwZkCrXXifxVyZBP6W15zGlOIVbOf4c7XcGezGXrIdf4Z
-         zXnB+7nq0bPeNPe6bCe3IUMUB/jRD255eDa1dfYIj8P9DWc4YGDoivezkF6yxEW+xbyY
-         fOr+E6q4YAlfx4gEt8rU3zucgEc0jyOjfcKvowdMSs1haoWraLpF7borNPOhuwvUW5tW
-         YRDoSost1NtY+ttnU9c3/SjlPjdzvBV5bDhwsmPlCwBf60i1ThQnzIux+09t/s6MH6IY
-         m42cIPkpVZMrLqCwZlDY7Ziap8mUPtV6syfim5RJk+6MbUiTzOTMQV24MS6xZAvz0VRA
-         6Xog==
-X-Forwarded-Encrypted: i=1; AHgh+RoLAEvfih5Egl+r0pmW8MGQGFMIy3SBYz+Hv/CES/noyIphiHwKfR9v2YJNRE/aMqxJcNG6/Yi3QrY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQ/wv22SNJ7UPP1g7FyThm4uaP6Hiu6PJxBe+Cisqda4h7kgfA
-	V8tAopR4go71u5WzTbtgeCboONSe2O2u3OmACeHhz2EcQXtDzoULQo7NgijrNfg00X8=
-X-Gm-Gg: AR+sD13X0ffIJWwlpoLQWesZGy2Sbbe0S9N81IAUI2Nwm1WidVj2lY/SFaPr+QDVEN8
-	sJC9d7l5lXwJ77zhtXfwIKG8YXqLb8/rHIuQ+vVWICG5NyS4YJuK/ShIQf5HcYFWynQ2KP3lKAd
-	sLl642tQ/NCU1NVf2PWxT4/WRLQ1mPQSr+RaOq7Ix6V0xjJWiSBILdJqtp8is5tSxzasT0imGmA
-	DsHq95gH1vXkJlMHG5wT28Wlm3Xf0JwM/ACltH2/tm804wqNmLU9RZS4CoX7vh1nNnUGYoH0Djx
-	qAm/6ocog3lQu8rRrI2MkVQt0oIViGiaefF01JHnYggEhQGnuLsc3S4l+ybYlSobkZ7rnHvoFBZ
-	yNX+8kMSmQ/SNppdYZXmLOiivtRVA0M5yqxTsYJYEoDtt691ZSXyWIxN8CnW/Z/uf5oticrtftC
-	Q2Ape9d9kozZv2dN6rmpirES+nr+NLljQjNossFVxKy0Scsng3DdsvemKxevhgyI5pG2awot/b8
-	QiyZVNyPXea/70y1+t5ca9KZQ==
-X-Received: by 2002:a05:6122:1d45:b0:5bf:8166:edc3 with SMTP id 71dfb90a1353d-5c5e22bae31mr1061121e0c.4.1787142765549;
-        Wed, 19 Aug 2026 05:32:45 -0700 (PDT)
-Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com. [209.85.222.53])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c5e27e29e1sm1892583e0c.14.2026.08.19.05.32.44
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Aug 2026 05:32:44 -0700 (PDT)
-Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-977310532a7so1292247241.0
-        for <linux-clk@vger.kernel.org>; Wed, 19 Aug 2026 05:32:44 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RoHOK/0DGC8ple/PdJnPjo9Yz6ma1sLEPYrDgIWblvusP/5KR1yUuM5GadIR8buhgJ0dzC1Yj/nrn8=@vger.kernel.org
-X-Received: by 2002:a67:f70c:0:b0:744:f493:f09a with SMTP id
- ada2fe7eead31-777df717eedmr779634137.14.1787142763870; Wed, 19 Aug 2026
- 05:32:43 -0700 (PDT)
+        bh=W4Xj50xooKVvZ41LfzpQRG7HYPYstHlBe1B3U8mLEO0=;
+        b=HOfOMAySngsxCPqdodKyP0zsEghMgYseYOHA2FYCbdCONoBUPJw8d9ORwuqq7yqZA2
+         HvPNI7bowXFSNNT5F0/Ytajl91x9aGWG+020TnzTRBNP7WsHa0enOoC5JFZAxq+EGkti
+         YgcH8SJXC734+uA7G9Ac24NJvW8ebC5sMcVVXiW3te3TeDz1xDFMnzR+cY0QywI7N/xX
+         mGOQoDa/CdXvlCsfc1w1euZMrASVTyS/HKuWrdRgjAGP+HqDuT0xoZnekzVgDuxNi+7X
+         Qwu+MC/Au8sL+cibEL5dj+XuGq1zECp5qhVfnAgcgo4sUjkTQ/UO8i8i2XM/2ScWzBbZ
+         L4DA==
+X-Forwarded-Encrypted: i=1; AHgh+RoZDBvwEK+6wNXf9O4HEdoRK8Q3UOcSeIJI8VZ3RT8ds4RGy+vbqjLs2+Dglz5Cf2u+GcxWVi1Fp8w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyuAXdUNIYj/n0pvudxGs5w9GHLExGsGOUTpgy0d4jeQs244pd
+	BZImigx6EzaoFKN+pHdH0IcIgwI/Mr0rJkHiEGHBVQiOmquvJcoZ6PwHET7MAYnjIDiyzE2arbo
+	Z8H1qZFTkAi/uxtlVGJaAW8qBOi1q7xuzoouSJnK7WYc5lt3vBHE6xutkkxpGnKw=
+X-Gm-Gg: AR+sD11mfJ6CpZ3D38x2yEU78XrYeGPUIwz165MGWsXVmjiSDzS/IcprHAbl0jN6pwG
+	rFIQMpS90s8xVF1Hq0iDGhz/luMVUymaYt4O6ZsvQOu4nH4oxJ4sgMLy7j3IQx1I0kCQVqDfjcr
+	hzeknVrygzuOTU7S7zKTGdLnGHIbs4spLaRnJI3IKd3lGnautmaQMfMGLeRsj0D3AahfPfL5xBX
+	esunp1Wo3cwa8AOTNGFP2tLvFl/iIncSpn4fh2lXRf18Hk7U59Ko75xVcUxBHYCNyd8PMsuU0z5
+	SaTbSmWhICgUBWcSbChFFN3eKpMDBXc8vE5lQCS+FsoOWnRoPVQcETZNGwzfb21R7RqVe3j7ooa
+	y/H8dFhy4
+X-Received: by 2002:a05:620a:3712:b0:936:e3c3:8cb8 with SMTP id af79cd13be357-9371e6b89d4mr353298285a.45.1787143992978;
+        Wed, 19 Aug 2026 05:53:12 -0700 (PDT)
+X-Received: by 2002:a05:620a:3712:b0:936:e3c3:8cb8 with SMTP id af79cd13be357-9371e6b89d4mr353286085a.45.1787143991242;
+        Wed, 19 Aug 2026 05:53:11 -0700 (PDT)
+Received: from [127.0.1.1] ([188.27.161.240])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-499aa0d6721sm77954795e9.11.2026.08.19.05.53.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Aug 2026 05:53:10 -0700 (PDT)
+From: Abel Vesa <abel.vesa@oss.qualcomm.com>
+Subject: [PATCH 00/16] clk: qcom: Tie CX power domains to GCCs
+Date: Wed, 19 Aug 2026 15:51:45 +0300
+Message-Id: <20260819-qcom-tie-cx-to-gcc-v1-0-840034124e73@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260727-mathieu-wdt-clock-theo-v2-0-c048a6394436@bootlin.com>
- <20260727-mathieu-wdt-clock-theo-v2-1-c048a6394436@bootlin.com>
- <CAMuHMdU3yVqoyHC4eNF2NuYo8wy+6ODLoYat4R71X99Mxc_=kw@mail.gmail.com> <DKSOGEFQ4RJA.3LEW2Y8991H17@bootlin.com>
-In-Reply-To: <DKSOGEFQ4RJA.3LEW2Y8991H17@bootlin.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 19 Aug 2026 14:32:32 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVfFZ0P9Na-yD9EzBaUqkyiwjo8byxA2MouBt1DM8xQtA@mail.gmail.com>
-X-Gm-Features: AcwNN1WiRacvOcIOzMfczjrj_nsgZ0XtEzfTjL0-_yXC_-RpdT5wt5ALyRzFeP0
-Message-ID: <CAMuHMdVfFZ0P9Na-yD9EzBaUqkyiwjo8byxA2MouBt1DM8xQtA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] clk: ti: mux: resolve parent clocks by DT index,
- not by name
-To: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Cc: Tero Kristo <kristo@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, Tony Lindgren <tony@atomide.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, =?UTF-8?B?VGjDqW8gTGVicnVu?= <theo.lebrun@bootlin.com>, 
-	=?UTF-8?Q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, 
-	linux-omap@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Matti Vaittinen <mazziesaccount@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOGmhWoC/yXMTQqDQAxA4atI1g34g7HjVYoLjdGmoKMzowji3
+ Tuty2/x3glenIqHOjnBya5e7RyRPRLgdzuPgtpHQ57mlD4zgyvbCYMK8oHB4siMVAmRqagwXQk
+ xXJwMevynr+a237qPcPid4Lq+X4pV9XYAAAA=
+X-Change-ID: 20260819-qcom-tie-cx-to-gcc-67e6697639b5
+To: Bjorn Andersson <andersson@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Brian Masney <bmasney+clk@redhat.com>,
+        Jerome Brunet <jbrunet+clk@baylibre.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Taniya Das <taniya.das@oss.qualcomm.com>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Tengfei Fan <tengfei.fan@oss.qualcomm.com>,
+        Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Abel Vesa <abel.vesa@oss.qualcomm.com>
+X-Mailer: b4 0.16-dev-0e65f
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2501;
+ i=abel.vesa@oss.qualcomm.com; h=from:subject:message-id;
+ bh=aocfws8Kf4eH/Sw8YBlJiavOC8ubRD9ZJHDiRz8wOdQ=;
+ b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBqhabmcGAQo+AgyO+pdhoONhZ96Vq0a3hnMoZKN
+ g7CUF4C/LuJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCaoWm5gAKCRAbX0TJAJUV
+ VhhOEACw96knL/mvjuEArdHD8XF9el94DR2ie/OGimOQCGjS4UnVDeHFms65M9aJiugfzzu7UIi
+ 6f9VHM7oe5NwcnMbLIlTkj6aJ5eOWZy9pcZX6iH9V+STHEoiIHYnvdsneoJk8maac1P+j45J4ms
+ cbaAtFakeFa6CYlsLfa1vdPVZc5haeh2ZsMVi5TetvkRulyzik1P63SxOWt4wV1NMjTjxoQw7Cd
+ 9ykT7hPuYQCbl7CPpXLqQI7sYajeiB2T/Jtjc7VgMknYlByHXT4+zHVBPtDuBP7feuqlLXLQp5Z
+ mWTvx4x3Q/3DCLZoh3ucBvysGko7n/DFPFzh6YTXCT4RGwloFB7MMoJMxXOX7wJvKcTvIu7iTYs
+ TMx4dTjr+iP0GLrGZgQvocLPv0JtXzBfp5lkpjvyxz1UEE/R66aJdFIgl8CmImoRz2TyhZob1qc
+ F6ov9pSq4tNKyLRNaqU2ZmMvau/LZSqKZJgFIxU6veI4FzIaRqK5Qhv7GnTbbZNaS7uyV8hRoat
+ 87sgdhazgKwf6UdbK4Rt7vCVm7KAb5xkfafHRgTzeNC40RF5n5dgchmfmQqoT5/7st/dCQ71/vD
+ y+ny/gacIeziz4PYm9TqspKqbFiMxjI+PuZOXZvoaWY0l7PuLlRavzFMzjJ2f+2/R5U1yBzsktj
+ r+rO2buiRCodKcg==
+X-Developer-Key: i=abel.vesa@oss.qualcomm.com; a=openpgp;
+ fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
+X-Proofpoint-ORIG-GUID: RmQPRMk6X9qVbMch82P30dIrCH1H23KF
+X-Proofpoint-Spam-Info: AW1haW4tMjYwODE5MDEwMCBTYWx0ZWRfX73Bv7pcuDfmI
+ NiZi0iPWEpclUztwO+qQC6DtjUUHJqpT3hwRlaGyA0pKtdfLh8OQPeqbstA26RYarmUthIbN0mW
+ cho17RZ4EpiYHP+MkcPkF+TrO1p5w2U=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODE5MDEwMCBTYWx0ZWRfX8yFIBegSu4eC
+ GGVxg/n1KDlivXi4fjPrJ3LU8Jzs01eQN4SaDX+EDdG1M5v3pM6yckMIlg6AuLmElrDviHu9XE1
+ oHKMjSDWH4zFWzLCv6ssfOa8GE5gZBQltW4ABGPnexH+htGhHnyoeUn8F2ydt4DMdyxeJeV0TNB
+ GuZ7WEBzktLF+MIDhmAMTM/IyN79Lt0EXQdTz213NUcVHTcP9B305CjA8jI+4OwbRdrTVCqb3WO
+ 12sx+nu7q9LSIKIdiqUfngvvdHcKMTJ3ifUJTm+aKwTa74Ta70psn8eEQKto2987qIpAkTxjKIA
+ kiB0qvGUiOkIA1EJxK7Bvbo8dMqrUbDV8sAxB506xQm5CA5zSJ+JmFrY9fBb6zLrr8UTzXHauHm
+ /ADensfDYY8kK3peQgc0sr8SVnlKCTc12sWrjOdv0gimy0AzF2d0ruPjSEu4CKKkols4Mtr2DeG
+ OSDmX7F6/2ihFRzGZdw==
+X-Authority-Analysis: v=2.4 cv=aNrAb79m c=1 sm=1 tr=0 ts=6a85a739 cx=c_pps
+ a=qKBjSQ1v91RyAK45QCPf5w==:117 a=wUpz7uCjLrEXi01cjX+DLw==:17
+ a=IkcTkHD0fZMA:10 a=Sv0fKeRqtYgA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=3WHJM1ZQz_JShphwDgj5:22
+ a=EUspDBNiAAAA:8 a=iXTosI6WrnVeENpZgjcA:9 a=QEXdDO2ut3YA:10
+ a=NFOGd7dJGGMPyQGDc5-O:22
+X-Proofpoint-GUID: RmQPRMk6X9qVbMch82P30dIrCH1H23KF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-08-19_03,2026-08-19_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 adultscore=0 lowpriorityscore=0 clxscore=1015 bulkscore=0
+ malwarescore=0 suspectscore=0 priorityscore=1501 phishscore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2608190100
 
-Hi Mathieu,
+Tie the CX power domain to GCC clock controller for SM8250, SM8350,
+SM8450, SM8550, SM8650, SM8750, Kaanapali, and QCS615.
 
-On Wed, 19 Aug 2026 at 07:39, Mathieu Dubois-Briand
-<mathieu.dubois-briand@bootlin.com> wrote:
-> On Tue Aug 18, 2026 at 6:02 PM CEST, Geert Uytterhoeven wrote:
-> > On Mon, 27 Jul 2026 at 09:44, Mathieu Dubois-Briand
-> > <mathieu.dubois-briand@bootlin.com> wrote:
-> >> Resolve parent clocks by their index into the device tree "clocks"
-> >> property rather than matching names as strings. Name-based matching is
-> >> fragile because a clock's "clock-output-names" value in its provider
-> >> node can differ from the name used to reference it in a consumer node,
-> >> and because names must be globally unique across all clock providers.
-> >>
-> >> On AM335x, this caused broken clock trees where some clocks failed to
-> >> enable because their parents could not be found.
-> >>
-> >> Replace of_clk_parent_fill() with a clk_parent_data array that sets
-> >> .index to the array position.
-> >>
-> >> Fixes: ec7aa25fa483 ("ARM: dts: Use clock-output-names for am3")
-> >> Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-> >
-> > Thanks for your patch, which is now commit 667f420c09f1417c ("clk: ti:
-> > mux: resolve parent clocks by DT index, not by name") in clk/clk-next.
-> >
-> > This breaks booting BeagleBone Black for me: I don't get any output
-> > on the serial console, even with "earlycon keep_bootcon".  When the
-> > watchdog kicks in (or on kernel panic?), the system reboots.
->
-> Sorry for that!
->
-> It's a bit unexpected, as the beaglebone black was one of my test
-> platforms and I didn't see any issue.
->
-> > Reverting this commit fixes the issue.
-> > After reverting, I added debug code to print all parents, and compared
-> > them to the DTB, but didn't see any discrepancies.
-> >
-> > Your similar change to drivers/clk/ti/composite.c does not cause any
-> > issues for me.
-> >
-> > Do you have a clue?
-> > Thanks!
->
-> Can you describe what bootloader and device tree you are using for your
-> tests? Any specific configuration?
->
-> On my side, I have:
-> - BeagleBone Black Wireless A5
-> - am335x-boneblack-wireless.dtb
-> - U-boot 2025.10-ti-g6825d60bea17. Maybe I should try with u-boot master
->   branch.
+Also enable the runtime PM in each of the GCC provider drivers.
 
-BeagleBone Black Rev C3 (by Seeed Studio)
-am335x-boneblack.dtb
-Stock U-Boot SPL 2019.04-00002-g31a8ae0206 (May 13 2020 - 09:26:17 -0500)
+The existing common GCC schema accepts the standard power-domains property,
+so the bindings require no update.
 
-I am using my own config.
+Only Kaanapali requires a Fixes tag, as runtime PM support was not
+available when the other platforms were upstreamed.
 
-With omap2plus_defconfig and multi_v7_defconfig, it does boot.  However,
-this commit does have an impact on /sys/kernel/debug/clk/clk_summary:
+Signed-off-by: Abel Vesa <abel.vesa@oss.qualcomm.com>
+---
+Abel Vesa (16):
+      clk: qcom: gcc-sm8250: Tie the CX power domain to controller
+      clk: qcom: gcc-sm8350: Tie the CX power domain to controller
+      clk: qcom: gcc-sm8450: Tie the CX power domain to controller
+      clk: qcom: gcc-sm8550: Tie the CX power domain to controller
+      clk: qcom: gcc-sm8650: Tie the CX power domain to controller
+      clk: qcom: gcc-sm8750: Tie the CX power domain to controller
+      clk: qcom: gcc-kaanapali: Tie the CX power domain to controller
+      clk: qcom: gcc-qcs615: Tie the CX power domain to controller
+      arm64: dts: qcom: sm8250: Add GCC CX power domain
+      arm64: dts: qcom: sm8350: Add GCC CX power domain
+      arm64: dts: qcom: sm8450: Add GCC CX power domain
+      arm64: dts: qcom: sm8550: Add GCC CX power domain
+      arm64: dts: qcom: sm8650: Add GCC CX power domain
+      arm64: dts: qcom: sm8750: Add GCC CX power domain
+      arm64: dts: qcom: kaanapali: Add GCC CX power domain
+      arm64: dts: qcom: talos: Add GCC CX power domain
 
---- summary-7.2.0-rc2-00106-g0d4d262c1664       2026-08-19
-10:56:51.622275674 +0200
-+++ summary-7.2.0-rc2-00107-g667f420c09f1       2026-08-19
-10:58:13.929823890 +0200
-@@ -77,10 +77,14 @@
- clk_summary:
+ arch/arm64/boot/dts/qcom/kaanapali.dtsi | 2 ++
+ arch/arm64/boot/dts/qcom/sm8250.dtsi    | 1 +
+ arch/arm64/boot/dts/qcom/sm8350.dtsi    | 1 +
+ arch/arm64/boot/dts/qcom/sm8450.dtsi    | 1 +
+ arch/arm64/boot/dts/qcom/sm8550.dtsi    | 1 +
+ arch/arm64/boot/dts/qcom/sm8650.dtsi    | 2 ++
+ arch/arm64/boot/dts/qcom/sm8750.dtsi    | 2 ++
+ arch/arm64/boot/dts/qcom/talos.dtsi     | 2 ++
+ drivers/clk/qcom/gcc-kaanapali.c        | 1 +
+ drivers/clk/qcom/gcc-qcs615.c           | 1 +
+ drivers/clk/qcom/gcc-sm8250.c           | 1 +
+ drivers/clk/qcom/gcc-sm8350.c           | 1 +
+ drivers/clk/qcom/gcc-sm8450.c           | 1 +
+ drivers/clk/qcom/gcc-sm8550.c           | 1 +
+ drivers/clk/qcom/gcc-sm8650.c           | 1 +
+ drivers/clk/qcom/gcc-sm8750.c           | 1 +
+ 16 files changed, 20 insertions(+)
+---
+base-commit: 5453bc3279e9f8578ac3e534d476240e40c879e1
+change-id: 20260819-qcom-tie-cx-to-gcc-67e6697639b5
 
-deviceless                      no_connection_id
- clk_summary:                clkdiv32k_ck         0       1        0
-     32786       0          0     50000      Y
-deviceless                      of_clk_get_from_provider
- clk_summary:
+Best regards,
+--  
+Abel Vesa <abel.vesa@oss.qualcomm.com>
 
-deviceless                      no_connection_id
--clk_summary:                   clk-24mhz-clkctrl:0000:0 0       4
-   0        32786       0          0     50000      N
-   deviceless                      clkdiv32k_ick
-+clk_summary:                   clk-24mhz-clkctrl:0000:0 0       5
-   0        32786       0          0     50000      N
-   deviceless                      clkdiv32k_ick
- clk_summary:
-
-deviceless                      of_clk_get_from_provider
- clk_summary:
-
-deviceless                      of_clk_get_from_provider
- clk_summary:
-
-deviceless                      no_connection_id
-+clk_summary:                      wdt1_fck       0       1        0
-     32786       0          0     50000      Y
-deviceless                      wdt1_fck
-+clk_summary:
-
-deviceless                      no_connection_id
-+clk_summary:                         l4-wkup-clkctrl:00d4:0 0       1
-       0        32786       0          0     50000      N
-             44e35000.target-module          fck
-+clk_summary:
-
-  deviceless                      no_connection_id
- clk_summary:                      l4-rtc-clkctrl:0000:0 0       1
-   0        32786       0          0     50000      N
-      44e3e074.target-module          fck
- clk_summary:
-
-deviceless                      no_connection_id
- clk_summary:                      l4ls-clkctrl:0074:18 0       2
-  0        32786       0          0     50000      N
-     4804c000.gpio                   dbclk
-@@ -297,17 +301,13 @@
- clk_summary:       l4-cefuse-clkctrl:0020:0      0       0        0
-     24000000    0          0     50000      N         deviceless
-                no_connection_id
- clk_summary: virt_19200000_ck                    0       0        0
-     19200000    0          0     50000      Y   deviceless
-          of_clk_get_from_provider
- clk_summary:
-                                                 deviceless
-          no_connection_id
--clk_summary: clk_rc32k_ck                        0       2        0
-     32000       0          0     50000      Y   deviceless
-          of_clk_get_from_provider
-+clk_summary: clk_rc32k_ck                        0       1        0
-     32000       0          0     50000      Y   deviceless
-          of_clk_get_from_provider
- clk_summary:
-                                                 deviceless
-          no_connection_id
- clk_summary:    gpio0_dbclk_mux_ck               0       1        0
-     32000       0          0     50000      Y      deviceless
-             no_connection_id
- clk_summary:       l4-wkup-clkctrl:0008:18       0       2        0
-     32000       0          0     50000      N         44e07000.gpio
-                dbclk
- clk_summary:
-
-44e07000.target-module          dbclk
- clk_summary:
-                                                       deviceless
-                of_clk_get_from_provider
- clk_summary:
-                                                       deviceless
-                no_connection_id
--clk_summary:    wdt1_fck                         0       1        0
-     32000       0          0     50000      Y      deviceless
-             wdt1_fck
--clk_summary:
-                                                    deviceless
-             no_connection_id
--clk_summary:       l4-wkup-clkctrl:00d4:0        0       1        0
-     32000       0          0     50000      N
-44e35000.target-module          fck
--clk_summary:
-                                                       deviceless
-                no_connection_id
- clk_summary: clk_32768_ck                        1       1        0
-     32768       0          0     50000      Y   deviceless
-          of_clk_get_from_provider
- clk_summary:
-                                                 deviceless
-          no_connection_id
- clk_summary:    sysclkout_pre_ck                 1       1        0
-     32768       0          0     50000      Y      deviceless
-             no_connection_id
-
-I.e. wdt1_fck changed its parent from clk_rc32k_ck to
-clk-24mhz-clkctrl:0000:0, which is probably not intended?
-
-However, that is not the cause of the crash.  My .config has
-CONFIG_INIT_STACK_ALL_PATTERN enabled, so any uninitialized local
-variables contain garbage.
-
-> @@ -136,7 +136,7 @@ static struct clk *_register_mux(struct device_node *node, const char *name,
->         init.name = name;
->         init.ops = &ti_clk_mux_ops;
->         init.flags = flags;
-> -       init.parent_names = parent_names;
-> +       init.parent_data = parent_data;
->         init.num_parents = num_parents;
->
->         /* struct clk_mux assignments
-
-Init is not fully initialized, hence init.parent_names contains garbage
-(before, .parent_data contained garbage).
-As clk_core_populate_parent_map() prioritizes .parent_names over
-.parent_data, the uninitialized .parent_data didn't cause any harm before.
-
-I will send a patch to fix this.  This seems to be a recurring issue:
-lots of clk_init_data structures are not fully initialized...
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
