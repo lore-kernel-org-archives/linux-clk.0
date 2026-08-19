@@ -1,126 +1,150 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C55D935C1A9
-	for <linux-clk@vger.kernel.org>; Wed, 19 Aug 2026 05:39:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E99F3A1D14;
+	Wed, 19 Aug 2026 06:50:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787117999; cv=none; b=diLdJtgTOsgJustq3BBmCTVZslWevyJUm6WevSYNZbwqBMQxl6bN+MjYPyYFPS56vgwT7qJeMr3cz1jIkSXG6s2oY6i1cJCbhrUhepu5DCdjMTvQwFNZIuSjfcHQ3rW+h+TrK5eUaORepIJ1F7pRwm/YDTwINx5f6LbPqaoR/Yw=
+	t=1787122222; cv=none; b=jGf+f7376vfYtRL7J9ticwfEWvPbIiTAYY1lMnjmHZwUMbu1wC0wIUAsEVPiITuH5g5T1ACnY+avoFHbRdwv4kFGXYAf6qlQbcY1Ud+Av3IaR7bDY8X6t0Ua+q5ArxnFPIFSIyMnG4mTHHwcQFIhJVGdq/WMtiSXhXtHVJSJ05k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787117999; c=relaxed/simple;
-	bh=WAFEdBjBZdA9pSuIrw5b5MRDn06xdtbC5evyrWBdFB8=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
-	 References:In-Reply-To; b=GOa10Iyk7CrNC0kSbAdb0igfbHUHYF6AaE7O0Z/L4wTeF3UILbfSBFCFgDLfqXRD8NQDlh0I+MtleNzKd068NEq92Ru2N2WaEbnR7IsJ92lxfft3xuRpuG9AkBTrKPbpxm4WMItT3f46fM3/F9pfcRBA8RJ+n6mzO93eyu3aS4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Zly0of4k; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1787122222; c=relaxed/simple;
+	bh=izjKXIFxi/rqtVADf2M0sBpedoa8cJQqW1TXF55iZ3A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dqla9THKX6A51jJmgiAHWITUYRXSn01tGXVXtnzXyYXIumfbDZ6Wx+2XBUjTO52Oi8cFcEI37JKtCvuSV0t48rjG3yfyC7AeP++x/Ua6U+V9rxlCDwLnx1BxMQfAIXyRYN0a6s0meJTZohciGgQwdM7Q33Jw/FrwlzyN0Lf/tuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mM2knBFF; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Zly0of4k"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id A85544E412C7;
-	Wed, 19 Aug 2026 05:39:53 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 75F59604AA;
-	Wed, 19 Aug 2026 05:39:53 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0646B11C752A4;
-	Wed, 19 Aug 2026 07:39:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1787117992; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=FhXOKgDtnkU3HSTLbDpgInOX86Wa95GP1B82H7rsb5o=;
-	b=Zly0of4k/GiE0/jeo+8zwk+jjetKtB76mRHlL43louPV3YkEjNReacw5eIK+Dtw9DYtjL6
-	NKuVyW/rSJYTp7sbpmI9y7LCk0KBVe7L4kXzXxhrpzDS7lL/AEJpTLMq3mecL2MVt0RXCL
-	nHU4wwMQoLmR6LRz8CrXrbPAVq8NUOwnfNgLLjsScFqWhxIbwLJH1qnZog0ux/3NgwsF8o
-	LYJUGY7t8m6BSXHvS7ApSc25IfADBeHdCIH0DB3x1efTnTV4Gt8Zn4OqiPEl/dEl17hAMz
-	f9iuQ43ysJWMzUFpQVCFXKbuSJ5pjryzHTziGYXhhayCj86Ea5xGtI0eSUC3eg==
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mM2knBFF"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1787122220; x=1818658220;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=izjKXIFxi/rqtVADf2M0sBpedoa8cJQqW1TXF55iZ3A=;
+  b=mM2knBFFGFqRysWIHnSptxhOBFC+LXIi80JPCfgkdfkKLIoEYPhmQ7GA
+   6gWqROSJjYy++GloTHxBIgpIKpxkOz0ii+7nY7Uf1c7EdtAEgs8EgGjuy
+   JpeLaiwhmYlMyVEwniPHJI5N49809VZZ//ObLiyKV2fGxHFPrIt/AqOBp
+   LKqmLvcqYTXzaSn/iHok6jMvzJnCydtwQjV/n2QKskde23rJYr7BibVzj
+   UzTekMdd2p/o2vqZ6CR3P4TOl+06D7slcgt7bNQPdCY7Nn6tgxVYIGuFi
+   dc1KKRg06tnsKl/5/nuFzT5LrFSeJHFHDdCc9xfvF2OM0vLhQ+TtHXuM2
+   g==;
+X-CSE-ConnectionGUID: phjZPAoNQD6TRGLD3KInAw==
+X-CSE-MsgGUID: BiFBqsA9SeeqCHfqNJ7V3w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11879"; a="87829334"
+X-IronPort-AV: E=Sophos;i="6.25,231,1779174000"; 
+   d="scan'208";a="87829334"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2026 23:50:20 -0700
+X-CSE-ConnectionGUID: H1XQ80vSTXqXbOh+BrnsQw==
+X-CSE-MsgGUID: QSkiNZ14S62aTkp1BIOMog==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,231,1779174000"; 
+   d="scan'208";a="268965440"
+Received: from amilburn-desk.amilburn-desk (HELO localhost) ([10.245.244.106])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2026 23:50:14 -0700
+Date: Wed, 19 Aug 2026 09:50:11 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: zl020895 <zl020895@163.com>
+Cc: longzhao <longzhao@ambarella.com>, Arnd Bergmann <arnd@arndb.de>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	soc <soc@lists.linux.dev>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	linux-gpio <linux-gpio@vger.kernel.org>,
+	linux-serial <linux-serial@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	Brian Masney <bmasney@redhat.com>, Lee Jones <lee@kernel.org>,
+	mfd <mfd@lists.linux.dev>
+Subject: Re: Re: [PATCH v5 10/12] serial: 8250: add Ambarella UART driver
+Message-ID: <aoVSI4xcpRqUZIew@ashevche-desk.local>
+References: <20260818-cv75-v5-v5-0-7bbb12f0360f@ambarella.com>
+ <20260818-cv75-v5-v5-10-7bbb12f0360f@ambarella.com>
+ <aoRpc2RK2_X3CdAi@ashevche-desk.local>
+ <162c0385.2c076.1a018b82fa7.Coremail.zl020895@163.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 19 Aug 2026 07:39:49 +0200
-Message-Id: <DKSOGEFQ4RJA.3LEW2Y8991H17@bootlin.com>
-Subject: Re: [PATCH v2 1/2] clk: ti: mux: resolve parent clocks by DT index,
- not by name
-Cc: "Tero Kristo" <kristo@kernel.org>, "Michael Turquette"
- <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Brian
- Masney" <bmasney@redhat.com>, "Tony Lindgren" <tony@atomide.com>, "Thomas
- Petazzoni" <thomas.petazzoni@bootlin.com>, =?utf-8?q?Th=C3=A9o_Lebrun?=
- <theo.lebrun@bootlin.com>, =?utf-8?q?Gr=C3=A9gory_Clement?=
- <gregory.clement@bootlin.com>, <linux-omap@vger.kernel.org>,
- <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Matti
- Vaittinen" <mazziesaccount@gmail.com>
-From: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>
-To: "Geert Uytterhoeven" <geert@linux-m68k.org>
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20260727-mathieu-wdt-clock-theo-v2-0-c048a6394436@bootlin.com>
- <20260727-mathieu-wdt-clock-theo-v2-1-c048a6394436@bootlin.com>
- <CAMuHMdU3yVqoyHC4eNF2NuYo8wy+6ODLoYat4R71X99Mxc_=kw@mail.gmail.com>
-In-Reply-To: <CAMuHMdU3yVqoyHC4eNF2NuYo8wy+6ODLoYat4R71X99Mxc_=kw@mail.gmail.com>
-X-Last-TLS-Session-Version: TLSv1.3
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <162c0385.2c076.1a018b82fa7.Coremail.zl020895@163.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Hi Geert,
+On Wed, Aug 19, 2026 at 02:31:59PM +0800, zl020895 wrote:
 
-On Tue Aug 18, 2026 at 6:02 PM CEST, Geert Uytterhoeven wrote:
-> Hi Mathieu,
->
-> On Mon, 27 Jul 2026 at 09:44, Mathieu Dubois-Briand
-> <mathieu.dubois-briand@bootlin.com> wrote:
->> Resolve parent clocks by their index into the device tree "clocks"
->> property rather than matching names as strings. Name-based matching is
->> fragile because a clock's "clock-output-names" value in its provider
->> node can differ from the name used to reference it in a consumer node,
->> and because names must be globally unique across all clock providers.
->>
->> On AM335x, this caused broken clock trees where some clocks failed to
->> enable because their parents could not be found.
->>
->> Replace of_clk_parent_fill() with a clk_parent_data array that sets
->> .index to the array position.
->>
->> Fixes: ec7aa25fa483 ("ARM: dts: Use clock-output-names for am3")
->> Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
->
-> Thanks for your patch, which is now commit 667f420c09f1417c ("clk: ti:
-> mux: resolve parent clocks by DT index, not by name") in clk/clk-next.
->
-> This breaks booting BeagleBone Black for me: I don't get any output
-> on the serial console, even with "earlycon keep_bootcon".  When the
-> watchdog kicks in (or on kernel panic?), the system reboots.
->
+> This is Ambarella 8250-compatible IP, not Synopsys DesignWare. We
+> first tried 8250_dw after Linus asked us to move to the 8250 library;
+> you then told us not to touch 8250_dw and to use 8250_ambarella
+> instead. That is what this patch is.
+> Background:
+> https://lore.kernel.org/r/CAD++jLm6HzEU1TM-c=Vtjv3FJEBecVP7TyxSgq_Q0zF-YwT6NA@mail.gmail.com/
+> https://lore.kernel.org/linux-serial/an8KvvHWX0naH3Xw@ashevche-desk.local/
+> https://lore.kernel.org/linux-serial/7E774305-3920-4BB7-BA46-E0772D6BED84@ambarella.com/
+> I will also switch to uart_read_port_properties() and trim the
+> 8250_dw-derived boilerplate.
 
-Sorry for that!
+But it has layout like Synopsys? Do you have a link to the datasheet?
 
-It's a bit unexpected, as the beaglebone black was one of my test
-platforms and I didn't see any issue.
+> ---- Replied Message ----
+> | From | Andy Shevchenko<andriy.shevchenko@linux.intel.com> |
+> | Date | 08/18/2026 22:17 |
+> On Tue, Aug 18, 2026 at 06:31:24PM +0800, Long Zhao via B4 Relay wrote:
+> 
+> > Add an 8250 platform driver for Ambarella CV75 instead of claiming
+> > snps,dw-apb-uart compatibility.
+> 
+> This is a record from a changelog. There is nothing in the commit message.
+> ...
+> 
+> The code seems like an almost blind copy of 8250_dw.c.
+> 
+> > +#define AMBARELLA_UART_USR        0x1f
+> > +#define AMBARELLA_UART_USR_BUSY        BIT(0)
+> 
+> So, is it Synopsys IP-based design? How this gets into this platform? This
+> whole story completely made me lost.
+> 
+> > +#define AMBARELLA_UART_IIR_IID        GENMASK(3, 0)
+> > +#define AMBARELLA_UART_IIR_STATUS    GENMASK(5, 0)
 
-> Reverting this commit fixes the issue.
-> After reverting, I added debug code to print all parents, and compared
-> them to the DTB, but didn't see any discrepancies.
->
-> Your similar change to drivers/clk/ti/composite.c does not cause any
-> issues for me.
->
-> Do you have a clue?
-> Thanks!
+...
 
-Can you describe what bootloader and device tree you are using for your
-tests? Any specific configuration?
+> > +    of_property_read_u32(dev->of_node, "reg-shift", &reg_shift);
+> > +    of_property_read_u32(dev->of_node, "reg-io-width", &reg_io_width);
+> > +    uart.port.regshift = reg_shift;
+> 
+> > +    switch (reg_io_width) {
+> > +    case 4:
+> > +        uart.port.iotype = UPIO_MEM32;
+> > +        uart.port.serial_in = ambarella_serial_in;
+> > +        uart.port.serial_out = ambarella_serial_out;
+> > +        break;
+> > +    default:
+> > +        return dev_err_probe(dev, -EINVAL,
+> > +                     "unsupported reg-io-width %u\n",
+> > +                     reg_io_width);
+> > +    }
+> 
+> This is handled by uart_read_port_properties().
 
-On my side, I have:
-- BeagleBone Black Wireless A5
-- am335x-boneblack-wireless.dtb
-- U-boot 2025.10-ti-g6825d60bea17. Maybe I should try with u-boot master
-  branch.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Thanks,
-Mathieu
-
---=20
-Mathieu Dubois-Briand, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
 
