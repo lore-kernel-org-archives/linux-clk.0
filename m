@@ -1,179 +1,86 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34A1029D291
-	for <linux-clk@vger.kernel.org>; Wed, 19 Aug 2026 13:01:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C0292EB856;
+	Wed, 19 Aug 2026 13:03:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787144466; cv=none; b=cvY5B8SdF4r0Yy/GezvSuMQHGzJswuAQWTIuzWMk0dcdBBb+OEdOoTwMbRYqD1Xfe3wnYBAROUWQ08UibJatwqHpbOgdsjoKHNMolMbqsSFIQsE9zLVkSkABBv0YDDKDiWAs/mvHp6LnprnJHmi7c3QSnRjlLF833L6yqTenHvo=
+	t=1787144638; cv=none; b=V+R4BaggPxiX4ZQlJB00Dh7leHJpez/1IznalxP/LXsemljioT9LhW0pU0K3AwnV0fDEeGQcVHYVQotjFrtEAzsp1Mf3J42rDKxPVjUteyM4pSFF4CNcwYuw1D7+O3Z0aSmyVHFwULJ05oaTLJWwgh083XM61EAbg+Df+xen4nk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787144466; c=relaxed/simple;
-	bh=VZHnQPoCn9GBriYz27om5Bobo67ZK2vwUDrWFIKF85I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ctwSJ3PFEI1O+E+6GrmaP6vAJbjgWp4bRZ+BLARcmysr1dcHm++T06L+mzExkG3QFgb53Ei5h3OrPz43AHszsETslqNhWrFhVvkrwLTM7H3VfFV2OCoJ8ZMUZ03+/rBV3EOcd6akrxGUjVQK3hzn7DG18chfuA7S95eGUtHiHHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=GIere6Xj; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=J+w6GP76; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1787144638; c=relaxed/simple;
+	bh=EmtKjy9fKcy47UQKFVz9QnEIa8tPRnJMS1YNzEC33Pc=;
+	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=ScunFCpzlXsWCL2C76dAeuHF1AYQfuKpc+zMCK2ffOiw+Ty0lpiZ4hdEz+qXNPAVjJPhB7B/2axLwpK+oJr/vSaTRqNFX3JeY6FaIG+IY55fs5SytczX5sZzG50jbBVfmV12Dt7Bg8lMJBYplIalTDmq5p7MO7U8G13+d+cmTPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gzl5psVT; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="GIere6Xj";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="J+w6GP76"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 67JD0Imh267983
-	for <linux-clk@vger.kernel.org>; Wed, 19 Aug 2026 13:01:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	VwGkEVKn5pCyCeQJq0GNY+Q9U4bmzQvlyvJMw8F30W4=; b=GIere6Xj2mP7Ceyj
-	fjtfXAJ6BHQQ1bAaW9g1kMMKEixfhCaSs2sBOqAd/qvL/VJo0pQM9Koj08W8JkDG
-	VjevGjMzgXacHnjEcMuNdHqi/II4c11oG50ot0DQ5BI8Us9y6YnxJUQTpOhk03NR
-	eJwlTMugEXTh4U1G+Qu+OENP+cgXFWOUZGu1CHMzo9JekDz7x/0ALlhR2A+bV6Dl
-	OP7+AC9QmfYD5GcXHce18okiMT1b3RbNsSj0ZS6MjUG0WYeFUK6bFuGcS0WtDEkZ
-	5u0zAOf+0KSY1extua4WmchLtPXE6AfrTb1K/s1mpro9uN1ySf2ENIaYB4wnVy6V
-	BY00lg==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4g4yfnb856-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Wed, 19 Aug 2026 13:01:03 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-92e5e21552dso6275485a.0
-        for <linux-clk@vger.kernel.org>; Wed, 19 Aug 2026 06:01:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1787144463; x=1787749263; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=VwGkEVKn5pCyCeQJq0GNY+Q9U4bmzQvlyvJMw8F30W4=;
-        b=J+w6GP76S12E9Wue3gOUBybIeRv/5FE85LfbA44l2Iscpjr9CJ5/c72ZXzEmZDG0D5
-         rgrdyNRKvBZ3Wmmud0PuE1WeiFLTYr4eyGMDXh13AbB0Ar4r+lYAye55ByaPpBqxQv6x
-         ltVzk3KQK5CWVvljZzRBzI/jWluyw3fFR/kftyijA6xSW3ej7fHTvbmfjIoWDtJEPuv1
-         5uTouWKDqJRlH/n+2rXH4l0a4OF1/i4E4Yx9Tz/tL+pjwciBhgp7RhHGJuyGWn0T5EBS
-         QTF53QpL78kMz0ZEC1pMKo4nEXoNwV6xVIb/ktuqzLYu4xdJFUgiYercv7WbD5i36g1W
-         2ibQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787144463; x=1787749263;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=VwGkEVKn5pCyCeQJq0GNY+Q9U4bmzQvlyvJMw8F30W4=;
-        b=Y74PvMCyO6BeDDMZIMActnfW8owGODdiaKJuIxTLFx/1KVJgr5QZ6UQBcljVAOiOGD
-         2XPrY+Ng0W3JNp0IAk3A9xYhmlQ1CZ+SowFXo+8oukd9j462K0tz6uHwhUmxFwlyY8Pw
-         FotRXfHZh1ykdERyyFT6yd3rU4txi2+Win5St2kw+3JgMXk6are9BbrCfCZvvyaxW5uY
-         gVxmQU5A640z4C3SACrZ3xRVfU7AjXnZCJ89/j32TgISWImhJtRKWU+Fy/AfsC4gCQKk
-         n57DvOMCwkQienQo6NqNT2bmMaDdKXb4koPXI6zhi/te3gmQupynsLIDK6tPNSA4fX5k
-         YSjA==
-X-Forwarded-Encrypted: i=1; AHgh+RpQ1TOfooJSVFv94d5BBXphcN9ducRlPnsJClPxTuNGy4uNYa8Msrxp/7vdP5yjU2B3xPQR75lbEUs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFDisdCo5/9BfTCy6oPnhOWAwzqwN5SZPxenL3QyHw0l0h36IZ
-	RbJviCPW4sdqfeaQbkHLJCENUbQc2Ym0wmRpP9e5yWCzxcF4Nz7ZRTOAX2GXE9HdL+G5oxXkkKN
-	olHaxytJAmzKxdFPfPQ2Fj+iJQHFA6Rm+fnAW9NkjXEPEJVF53CEFhhscwqir6AI=
-X-Gm-Gg: AR+sD10wv7cWrs6JTXuEL7y6mmBn/s/AraHwU02hFR3nzzjjWq3RfUx7GjAhLrYYqJv
-	QV47BqEpJiYrKjWeb4XNMg1S7mxQApq/q2ruWpa3/+yG+jZJbhfYhcITT6klN6aEqUPjmGEy5k1
-	ebEXMvQqR09tOzxFI0dGRy2yKyYPbaWgON82lg/GstUZ1YFibg/xiEk+3rUaIJsQnPOrj6DJlIH
-	t9OWc3mnGBd6Bqggi3eysEpTe7VPEyuGTJgMt02gTqMM2vZTlwEeWOJKIc50n9tQibXzFdOJMNs
-	0mJGKUhmz3EbL+VXhSUT3Hdl1dAsABa0J/iaHDKFZQjo54FtXqRRs4tO/9AouFv0CrSRwkiT1Pc
-	PmKuTYkPpZVQV3c+Wh3kCzLBF
-X-Received: by 2002:a05:620a:1728:b0:936:2f59:dfe4 with SMTP id af79cd13be357-9371e1af3d1mr306223985a.0.1787144462668;
-        Wed, 19 Aug 2026 06:01:02 -0700 (PDT)
-X-Received: by 2002:a05:620a:1728:b0:936:2f59:dfe4 with SMTP id af79cd13be357-9371e1af3d1mr306215585a.0.1787144461995;
-        Wed, 19 Aug 2026 06:01:01 -0700 (PDT)
-Received: from [192.168.120.193] ([178.235.128.140])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5b478854951sm502596e87.3.2026.08.19.06.00.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Aug 2026 06:01:00 -0700 (PDT)
-Message-ID: <cd5a25ed-76a3-4f1f-b924-06bb685ff426@oss.qualcomm.com>
-Date: Wed, 19 Aug 2026 15:00:57 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gzl5psVT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D3461F000E9;
+	Wed, 19 Aug 2026 13:03:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1787144636;
+	bh=uii8O7KCRN3qZKzj50uvw3P5wxJKVUqhtSkZWmnKAzo=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=gzl5psVTRfAek3N8h6G9dAinotQqI2UzqbSZZCEm+kRJhX2qgtlkbTHhD01AZz2MT
+	 ssxwkglRpgD0V5zxe4IPdlyML9SNLDHOhptsKwb+ldMaLtzPnMg0jMFZsnE4t65H7P
+	 kKbVfVkPqhePZea17+pgSLP5Hfb0WI8WgW38J6qlO9X5PtTgXnKp/HhEFKsJ2juJtw
+	 mfvvkx+hHMQjHMVXEGvecP2MI7pahkac86FSZqUYeWea0HrZygefH5pdnGI+k7uYat
+	 99AXPFnRxaW1Ua7AZJ/lKMpQFnV/9msPicPW3lnKj4UGHJt5/kc+Gz+aLLs8QJSDlE
+	 4fnN0K4Bi02hw==
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH 12/16] arm64: dts: qcom: sm8550: Add GCC CX power domain
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Abel Vesa" <abel.vesa@oss.qualcomm.com>
+Cc: linux-clk@vger.kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org, robh@kernel.org
+In-Reply-To: <20260819-qcom-tie-cx-to-gcc-v1-12-840034124e73@oss.qualcomm.com>
+References: <20260819-qcom-tie-cx-to-gcc-v1-0-840034124e73@oss.qualcomm.com>
+ <20260819-qcom-tie-cx-to-gcc-v1-12-840034124e73@oss.qualcomm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 19 Aug 2026 13:03:55 +0000
+Message-Id: <20260819130356.4D3461F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: qcom: ipq-cmn-pll: keep the CMN block bus clocks
- enabled
-To: Jie Luo <jie.luo@oss.qualcomm.com>, Stanislaw Pal <kuncy7@gmail.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Mieczyslaw Nalewaj <namiltd@yahoo.com>,
-        Brian Masney <bmasney@redhat.com>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-References: <20260730191353.557494-1-kuncy7@gmail.com>
- <aeeeebf9-dbd4-4f57-847a-5f495b3236a2@oss.qualcomm.com>
- <20260803091003.15285-1-kuncy7@gmail.com>
- <8af46926-fecc-4396-973e-2290ae285998@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <8af46926-fecc-4396-973e-2290ae285998@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=QedWeMbv c=1 sm=1 tr=0 ts=6a85a90f cx=c_pps
- a=qKBjSQ1v91RyAK45QCPf5w==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
- a=IkcTkHD0fZMA:10 a=Sv0fKeRqtYgA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=rJkE3RaqiGZ5pbrm-msn:22
- a=Cml0np4gJbHuCS8qjCYA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=NFOGd7dJGGMPyQGDc5-O:22
-X-Proofpoint-ORIG-GUID: mih8dI2yM5s0WGwKTfZXn6NvgZ4bCtSo
-X-Proofpoint-Spam-Info: AW1haW4tMjYwODE5MDEwMCBTYWx0ZWRfX009y1bAx10W+
- eFPdTDghXONHiqXwoxMoUXdzLMo76R/x4OR5XMHYJanMIijfMI4u4GufCS5KaNp+sozX3Y2nFHL
- xLRzNCCdN0w1JPLDlL54UdHnT/z/vhk=
-X-Proofpoint-GUID: mih8dI2yM5s0WGwKTfZXn6NvgZ4bCtSo
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODE5MDEwMCBTYWx0ZWRfX6kyP2gkC647X
- m9Jli2I0q4Vnpto6l3l78fPSEghitFDYW1UoSxyTo2EXlA+OQ7ux/QDyM+GwPPdNYhxKq40JUlH
- E0LUSpjpo2AzO/BsNjXN7bnZWU02JugxrkIbq2fYVUtqytJ3oQ3e5eqcJlBQlCEA83VUKxApZ1v
- 0j+EoKGrKv7PsTkPG31tkWn9FId6nBco2NF1RdYO2wwWIsuOIPEI5AxRinabbNTdrsxv7gnGkXH
- qQqd6yEN54iZgMuC44j6znECvSq+hcbf5dw4q3nWhuLwK44xi3i4wgDZxkr19l1t818c9VUaM5c
- EP8WLF7X+s4WkSXAjzEEUbwOTf8GBM9qC3LBuYFZBl2yKkDcbNjb19YY/Jyp0zgBMadaHXOK/P3
- t29Tcg4YgSD9PsLhRcBFyLeRo2m2+FIAi4lveJ06G6UJbZ0z8PjpmI7QZnCVryJRWTNzgFCcbND
- 6NkugoSalHrUklQJUpw==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-08-19_03,2026-08-19_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 phishscore=0 bulkscore=0 clxscore=1015 lowpriorityscore=0
- adultscore=0 malwarescore=0 impostorscore=0 priorityscore=1501 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2608190100
 
-On 8/4/26 1:03 PM, Jie Luo wrote:
-> 
-> 
-> On 8/3/2026 5:10 PM, Stanislaw Pal wrote:
->>> The CMN PLL AHB/SYS clocks will remain enabled as long as a downstream
->>> consumer of the CMN PLL clocks is active — this behaviour was confirmed
->>> experimentally on the IPQ9574 platform as example.
->> That is exactly the mechanism - and it is exactly what IPQ5018 does not
->> have. On IPQ9574 the nsscc node consumes the CMN PLL outputs in DT:
->>
->>   ipq9574.dtsi:
->>     nsscc: clock-controller@39b00000 {
->>         clocks = <&xo_board_clk>,
->>                  <&cmn_pll NSS_1200MHZ_CLK>,
->>                  <&cmn_pll PPE_353MHZ_CLK>, ...
->>
->> so the device link holds the supplier active, which is what your
->> insmod/devmem experiment shows.
->>
->> On IPQ5018 there is no such consumer: nothing in ipq5018.dtsi references
->> any cmn_pll output clock - the only occurrences of the phandle are the
->> provider node itself and its own assigned-clocks. The actual users of
->> the CMN outputs on this SoC (the internal GE PHY and the uniphy blocks)
->> take them directly in hardware, with no DT linkage, so no device link
->> ever holds the provider active. A few ms after probe the autosuspend
->> gates the AHB/SYS clocks, and the box dies on the next bus access -
->> which is the measured behaviour the patch description quotes.
-> 
-> The CMN PLL output clocks do not depend on the AHB or SYS clocks. They
-> continue to operate correctly at the fixed rates even when the AHB
-> and SYS clocks are disabled. Therefore, once the CMN PLL module is
-> loaded, its output clocks are expected to operate at the correct
-> frequencies.
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
+- [Low] Adding `power-domains` to the `qcom,sm8550-gcc` device tree node wi=
+thout updating the corresponding YAML binding causes a `dtbs_check` validat=
+ion warning.
+--
 
-Linux sees there's no consumers for the clocks the CMN PLL provides
-and gates them, subsequently also gating the PLL itself as all of
-its children become offline.
+--- Patch [12]: [PATCH 12/16] arm64: dts: qcom: sm8550: Add GCC CX power do=
+main ---
+commit fbc80a89d2b6530024ab43fff461d5268dfeb3c4
+Author: Abel Vesa <abel.vesa@oss.qualcomm.com>
 
-I can't find the docs that would show me what IPs consume this block,
-could you please help out here Jie?
+arm64: dts: qcom: sm8550: Add GCC CX power domain
 
-Konrad
+This commit adds a reference to the RPMh CX power domain for the GCC node
+on SM8550. This ensures that consumer votes propagate properly.
+
+> diff --git a/arch/arm64/boot/dts/qcom/sm8550.dtsi b/arch/arm64/boot/dts/q=
+com/sm8550.dtsi
+> index 0e701e709235c..7137efb453467 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8550.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sm8550.dtsi
+> @@ -1195,6 +1195,7 @@ gcc: clock-controller@100000 {
+>  				 <&ufs_mem_phy 1>,
+>  				 <&ufs_mem_phy 2>,
+>  				 <&usb_dp_qmpphy QMP_USB43DP_USB3_PIPE_CLK>;
+> +			power-domains =3D <&rpmhpd RPMHPD_CX>;
+
+[Severity: Low]
+Does this change require a corresponding update to the device tree bindings
+YAML schema for qcom,sm8550-gcc?
+
+Adding the power-domains property here without documenting it in the binding
+schema will cause a dtbs_check validation warning.
+
+>  		};
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260819-qcom-tie-c=
+x-to-gcc-v1-0-840034124e73@oss.qualcomm.com?part=3D12
