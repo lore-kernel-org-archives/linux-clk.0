@@ -1,196 +1,213 @@
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D066041DE09
-	for <linux-clk@vger.kernel.org>; Thu, 20 Aug 2026 11:47:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 067C743B496
+	for <linux-clk@vger.kernel.org>; Thu, 20 Aug 2026 11:48:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.218.41
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787226470; cv=pass; b=ZEJy9qDFOhAxz+y9nliiwBG4IbVmYcckVXCOLZRJZGa+3jSDsGdiaJRVvCuw9Mh3IX0TFxQHmjYEZ3PiXatSQkUHYNvRuSEdj4OVabpnEISn1/sze2i8CA1TUpV3wE6cXHQWDUMpW97WUVDSHggwhoIuGUc5y0+fiAg12oYZK2g=
+	t=1787226486; cv=pass; b=CzSZrT47buAERrP7Kg8Tz5BNzmGeJlPqgoVn0PCX8zbg/dPomLw+Vo4b+yiJ4PxZ7vkMZQKhrJG/uTs9KQLX0k4rd9cRLuC4DJOQYf41nR0idXXB5tWSvVIKAQddjHjhuxaiggqfHT17p+VOdP9BctN1aPnvLVUrIVE1uqa6AvE=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787226470; c=relaxed/simple;
-	bh=aXPojM4SS6RjwPonXF5sYz2ri5h0M5wozHxrhUCcUsA=;
+	s=arc-20240116; t=1787226486; c=relaxed/simple;
+	bh=N3XcxuvKeFv0jrHZq7jORW96HDTgTe/U58U3ymleexw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l9iS4+euvrfvvuSkGYI/A3ATrW/1ORBMRt1FH/JBvkQvcP6qmN8HrFsuf4OeIbvbOQvPcREFs3D3FpOxw+zCKN9UUqY+rCrhhZzpLLpWCAYCY6cL4wdmT3xmTqPtoIjt0gcukKCdGhzWIuEZjFdZEN7Yo0dbeyV7fBxY3mHqkHk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=KemYWj7K; arc=pass smtp.client-ip=209.85.218.49
+	 To:Cc:Content-Type; b=RloGgQE6XLQ/BA8lRj8y0VmtPACPpow24r7SxIzWhFktwJxNt/WBcgHOSMd9deVC2aBwtYlHrIGdFDkuOSVkIUXwkYb0Zw5a+mHN9OUxQxe5p9v/41qgW3WRCxt63ss2QhJJDeKCCSvwI1OMpSe2n8uUkZ7MT7ifE89sNlP4nrw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=h18HZxoa; arc=pass smtp.client-ip=209.85.218.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KemYWj7K"
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-c15b1da6b82so237523066b.1
-        for <linux-clk@vger.kernel.org>; Thu, 20 Aug 2026 04:47:47 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1787226465; cv=none;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="h18HZxoa"
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-c197eaaab00so391253266b.0
+        for <linux-clk@vger.kernel.org>; Thu, 20 Aug 2026 04:48:03 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1787226482; cv=none;
         d=google.com; s=arc-20260327;
-        b=gqeMOt87kNlXZM8dxnVpAAIY9HSQmwmS01I7pYlN4XQif1cJJoqDbSgJUjwT9GZ+mz
-         mHVayLcPWaw17bEi85UtciUX0VZZUBOOP45HbbURbn3vAJ/bgt/+DrAiU1rZOXPcWw1g
-         N/9EEpv10iEsFWtejyE92xR+9wjDcXeWrgjZaL7EuZecRIB4bNK8IAgKM1rNugrXqdHb
-         +cA1quc1z+VcjWba2+2JNTrsWJENlN2sN3JQEJeHahMkEJ9L4f6T1b06SBpOc/6PQHrC
-         nO5mm6BykZGvaZ4tKdz2iwUoAjFHgsCIzoLTtNtsV1/UnPSlUeIr/+gUn6kps2+JjlI3
-         IL9A==
+        b=BvOd9OC4rNRs72pqs9rvu/9UMe261svNAHWA8CxOO2IHGUG5bmt0EjPPl6qf7bW9A8
+         RCw1Q50TEqeNObXkX/ls8VbMT5zAsL3w8GDi/ZSWZt2C8SRll/n6xRS2ffc4fpO9A3ts
+         XsRjEx5jpJc4NtUjY2RLM2Zgrkb/EXhfn9dRDQ8GP6xymOvdjKEN9j1vusd37Iz+gyCx
+         fDfWu4CcFjMOo8o5FITabEi5nwoFtpq497FSFcVP+gz9FKjsdVtTR3N/J23uJ1RwUzuS
+         QiXqDPhonhl/I8NMY2k3OtE8NB9ndxHjBuzczbKMlzqogpLV25awIjdzlJ1mLgqM+12y
+         MuXQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:dkim-signature;
-        bh=paOojrCaYfkKAM5OrAXgPdy+BI/CSmLloSHESiLn3MQ=;
-        fh=CwGCF+31pHjYlcuzSEjkOCVPKw2TglPp8MJZTMLVtlk=;
-        b=Tt3Q+oAm2FmIkotxg+fhUp+/Sb5u87GE3CVjlSA1WNOZQJH0KEDxtftB4OgNKJVhEd
-         UqPeBxPFwM0VLENak5dksloRw16so9SUiojdH44EzV9bt5g/d9hHt/HePvFG8iRfpBW4
-         rMAmYN30Zsf1Fn6Rl+EFWyPfdghKVKHQC5DodFSb2ASIqYFjvEggQ/Ur8RmxpghA5Hdk
-         /m6RbyDsZK2YZxMIeTtuciMZ/6GFMZvilaMi/JK7cTpHF4xcdTqgSG+ijRInq6SY4jM0
-         eJEBFuPVad2uEZ5HMI4QpuI/T7p0cfAn23SgKPJxwroBCYAJFuNpPcx9VAMs1WdATdyU
-         o+xA==;
+        bh=M4ykTKD26brTAJUSy1BqDUBmv6bxfPzSIe8lWvsCYHQ=;
+        fh=OL9NTGLPcyF2Hi0u18avDFz4vHAQbAqeh/0IAejncP8=;
+        b=Xt4b9PGdcCJQj9wpsHJvm4VoXPjEJpnk0GsXxbX2RCkUvtjT6/kgo4l9TdsFG7lNgQ
+         KSKenUH8C6C9Oispwer4OTOjBGDsPLGYWBQ/Lg8KN2NsqJZvOuccID747K5BcDt0e2xL
+         B7l2WTQOCJNjdN7oRXHClQvSrxQC5StItW7AsWOm5wxQwAqDcljDoM1EnW2sJ+b80pc4
+         uDjCfBVv6z60BzBE9TIQ+Fe2NJBlfuGLtuzALg+2eV9MZHxl/KqQWhgORk3cXkX+KT8a
+         bI1dmzd/3Mb/z/PefKUXD/zIPPC7oJnxos1piGTuPyK/JSry6wfwdhOQbaJ7WhvnTk1Y
+         VSXg==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1787226465; x=1787831265; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1787226482; x=1787831282; darn=vger.kernel.org;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=paOojrCaYfkKAM5OrAXgPdy+BI/CSmLloSHESiLn3MQ=;
-        b=KemYWj7KpONmipbbKFiilT7O9fQwIW6FtjoZLxfIlIgslXNIHByLFcokTd0lN+Gb6d
-         gLSyjn8B1huc57L5lPVpXW0DXdQl2vzpHCMI0KGcLQdok2wbs6cNeOsCYIcVVb2CF98Q
-         CW0sDE8kQBWGZuR9I0RI5uXu9UuhJ9F3TXnLo=
+        bh=M4ykTKD26brTAJUSy1BqDUBmv6bxfPzSIe8lWvsCYHQ=;
+        b=h18HZxoabvn9m/ScdqEyw2LXvAVg3a8Ks6k+ikg3eexYdUFCrjL54D29ghc9LxQC69
+         x9Ih6lttJ/t432qM1uJYNSoVDUi5ARvRmIYuJceIXLw6Vh6PzGybvqvjvr2KFqWwYwak
+         J9s7mTgxn3cyEBGN8r+9ztQuC8DUpUagH4QZQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787226465; x=1787831265;
+        d=1e100.net; s=20251104; t=1787226482; x=1787831282;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=paOojrCaYfkKAM5OrAXgPdy+BI/CSmLloSHESiLn3MQ=;
-        b=PmKbcW/7RwLPF7/lDSJ4w1bwio9wR4JzHy0eM8oev8mKNWgDqjdeDDFkIZdlemir1j
-         IjqbzynbmAENGcY8pn+NVZkLbeJi/cirQBulbxAU74eSw3gE0LUVlWrxhZKEaGYZTM8s
-         +zh4cJKiVVR29Kqgk+vBbTDQtG3838IhHTVr9pCUuYOr61QtCG7u16+HtnJjbY2wvdAg
-         lgp/kiUyXNfSCHShF1VGGYQuZfxpP8I8YpOHUFqSyofbEOTuEo+oEF4cit1EWg6iN+NM
-         XcRSF97/dk0f4HfO03bGNPm7CG8M8cQkxu2qnJsWXA5Mvp8MdqYrlsMK1v81QYi12Q8m
-         LRQg==
-X-Forwarded-Encrypted: i=1; AHgh+RoiQBbTE6ijCw+v35ROFMSdPIw4xA9NVe9imXAG+SD0iZ+ivX4twHGjko5u9XIOBypweHfQ7wXswu4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8u9PsQord8eonHj+dH+Xa9jzrTuppOH564aND0y5CNT1TonQm
-	oo95u6Q3KAxHiS4D8bwx/0ObQmV+/HCIAVq43B4EXG3oY46XPLtN4X0cJIENYGr78AWk+TUl3zO
-	8gl/zx2v5OIOB+5Z7mNcLyDv2/LnBGH9LGUST08tL
-X-Gm-Gg: AR+sD113TmzVtTloq3a/kCrdaPIuRnAKGTEYdn2GYh2gNJIsUKBF3E7HyWD0QmrXO/Y
-	rWedJtYdmRFEkkTjfCMqOF6P+bTeVxyvnmYWewejLIYhB3CB/I2d8HPgihhnGyw+/rHbaNQUgQy
-	6lcH1o9E5NINiU8x4NOvaZhQGxyMcbuOQLjMw/Q+XwIbBurc7OXJQavihTQgQ3AKYWAE5zRHjNA
-	Ic0GiUc8jxdrikiOOf3O/A8+o90Aj9uKk5eaGBdF28rvNwzWVzTnSlPazCEdxDyEua6NfZZWSvs
-	bSWYMuBk4I1WUcW2Y2b1ums/LGNBRx4AJePWBoVFsjQ=
-X-Received: by 2002:a17:907:84b:b0:c20:1c9d:8d4b with SMTP id
- a640c23a62f3a-c23f929e232mr710101966b.2.1787226465039; Thu, 20 Aug 2026
- 04:47:45 -0700 (PDT)
+        bh=M4ykTKD26brTAJUSy1BqDUBmv6bxfPzSIe8lWvsCYHQ=;
+        b=dauXTXmczObUZHQmCdISSgUG9FlZhq/ghTHWHdYMy3IanTX5f7i77gSFCHMWb2VraX
+         TzgrizYlgEWhwNs9BkeUI+/Ov0kbenSvTiogGJXLMhaPkPzAS6b/uWAVf1rz4kdhQNXz
+         bCoIhd2cuk3MeE9vakDlPIKtIW8spljt09NVULDYjb1/Mzkswbm8jBvuXMPT+6SuJVHM
+         TK/uGUsq7cenJtBNDFcjNQ2K/yJOeryV4rtzYr3IkN3zqnLxQB0i7dPS3+sIPCpChEw1
+         lMaaTV9uFtlWNEnua4zELg7cphiTLxNMXqA81aF7FL6KDV1sQ9wdbcXEt/zgzZeFOOf3
+         fn0A==
+X-Forwarded-Encrypted: i=1; AHgh+RpqPTP0vCLRibY6pkQn+VZMDDNjbM3RTXI6UJEFHjRQF3niOni7xiUWRb2NYWI2w4sO4nxQQy+n4g0=@vger.kernel.org
+X-Gm-Message-State: AFuF++neLaa1qkctt53qGE6sApTmKLjrD1BIUC+llADaIJbiDI8wO7UJ
+	Tb2rTOUEgbo72SvzVR4cEAVmHfsjPdG2XkNoao+d3+Qpa8PQ+v7oF0MeSP6N2bX90ELINqtuoKf
+	aZuSVwJ/N1FSoI2qiQj7eu9G4D67Ox01LiV8Lk49r
+X-Gm-Gg: AR+sD12Osv3v6eRIUDHgNszjx3AGK1dshMoqBsOaFNiKI1hxRCUJX02yBNyWp7t94U1
+	3vwbdkJMu3vTX12ZMBf4gFkVbzRBz2niytef3agVIDbcxZKU0H7PtloTrvgPNKjeO37GLYlEFuo
+	uvZ7wHvTmwnKKRQqdBX7xvNZxp2xXCZqO5AtvkU6qwdVGihjESB25UWj6bUpvH7JP1Hekg0xPR+
+	LcTBFwG0OCWwBJgCNtjs/p0qCmGVIYX1bJX4pK5Z7A5aySYfn4heoUoLDPj3TE+v+ifKa184X+8
+	6TpAEJBDsPhPskcz0YyIy+CVk3zs2Kbj0viFTjh4eUY=
+X-Received: by 2002:a17:907:c08c:b0:c21:96e8:578d with SMTP id
+ a640c23a62f3a-c242e22d1e9mr985944566b.15.1787226482262; Thu, 20 Aug 2026
+ 04:48:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260810121121.210040-1-vlad@zlab.su> <20260810121121.210040-7-vlad@zlab.su>
-In-Reply-To: <20260810121121.210040-7-vlad@zlab.su>
+References: <20260810121121.210040-1-vlad@zlab.su>
+In-Reply-To: <20260810121121.210040-1-vlad@zlab.su>
 From: Simon Glass <sjg@chromium.org>
-Date: Thu, 20 Aug 2026 05:47:33 -0600
-X-Gm-Features: AcwNN1Wh5n38wXHkJkuB8H7_benVkiW5QlI5gxabpims6DcR7Y_DZnlEoYHYlzw
-Message-ID: <CAFLszTiuH7KcvCKcpE09tTavFEWGNMj+C1Og0T=k5MvEZdB-OQ@mail.gmail.com>
-Subject: Re: [PATCH 06/25] ARM: dts: rockchip: Add Ethernet GMAC node for RV1106
+Date: Thu, 20 Aug 2026 05:47:49 -0600
+X-Gm-Features: AcwNN1XeIHyrOI_JtbOBD7QmUWCfs6jOmGCxaoJ2CvViBz-nzt4BaJLUZj-8m5s
+Message-ID: <CAFLszTiGPVD1UvGcdE64H1To3OWjOYTd9BNV+jHM0=_dEkMsDQ@mail.gmail.com>
+Subject: Re: [PATCH 00/25] ARM: rockchip: Add peripheral support for RV1106
 To: Vladislav Leonov <vlad@zlab.su>
 Cc: linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
 	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>
+	linux-kernel@vger.kernel.org, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Andi Shyti <andi.shyti@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	Aurelien Jarno <aurelien@aurel32.net>, Brian Masney <bmasney@redhat.com>, 
+	Conor Dooley <conor+dt@kernel.org>, Daniel Golle <daniel@makrotopia.org>, 
+	"David S. Miller" <davem@davemloft.net>, David Wu <david.wu@rock-chips.com>, 
+	Eric Dumazet <edumazet@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Heiko Stuebner <heiko@sntech.de>, Herbert Xu <herbert@gondor.apana.org.au>, 
+	Jakub Kicinski <kuba@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Mark Brown <broonie@kernel.org>, 
+	Maxime Chevallier <maxime.chevallier@bootlin.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, Olivia Mackall <olivia@selenic.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	Vinod Koul <vkoul@kernel.org>, linux-crypto@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	linux-phy@lists.infradead.org, linux-pwm@vger.kernel.org, 
+	linux-spi@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-usb@vger.kernel.org, netdev@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
 Hi Vladislav,
 
 On Mon, 10 Aug 2026 at 06:15, Vladislav Leonov <vlad@zlab.su> wrote:
 >
-> Rockchip RV1106 has GMAC 10/100 ethernet controller.
+> Basic support for the Rockchip RV1106/RV1103 SoCs currently under review.
+> This series builds on top of that and enables the peripherals needed to
+> bring up a board beyond a serial console:
 >
-> Signed-off-by: Vladislav Leonov <vlad@zlab.su>
+>  - CRU reset controller support (dt-bindings + clk driver), needed
+>    by most of the other peripherals below.
+>  - Ethernet (GMAC) via dwmac-rk.
+>  - USB2 PHY and USB3-OTG (DWC3).
+>  - I2C (rk3x).
+>  - DMA (PL330) + support DMA for the UART nodes.
+>  - SPI, including a new SCLK_IN_SPI1 clock gate.
+>  - RNG.
+>  - SDMMC1.
+>  - A dts-only quirk (arm,cpu-registers-not-fw-configured) needed on
+>    the ARM timer node when booting without a secure firmware that
+>    pre-configures the CPU timer registers.
+>  - PWM.
+>
+> Each new dt-binding is added ahead of the driver and dts nodes that
+> depend on it, so the series bisects cleanly.
+>
+> This series depends on:
+>  - "Add support for the Rockchip RV1106 and RV1103" (v3)
+>    https://lore.kernel.org/all/20260729133609.3465563-1-sjg@chromium.org
+>
+>  - "pinctrl: Add support for the Rockchip RV1106" (v3)
+>    https://lore.kernel.org/all/20260729132736.3807082-1-sjg@chromium.org
+>
+> Testing: boot-tested on custom RV1106 board, with every peripheral
+> touched by this series: reset/CRU, Ethernet, USB2 PHY/USB3 DWC3,
+> I2C, DMA+UART, SPI, RNG, SDMMC1 and PWM - exercised and confirmed working.
+>
+>
+> Vladislav Leonov (25):
+>   dt-bindings: reset: Add RV1106 CRU reset definitions
+>   clk: rockchip: Add reset controller support for RV1106
+>   ARM: dts: rockchip: Add reset bindings to RV1106
+>   dt-bindings: net: rockchip-dwmac: add RV1106 compatible
+>   net: ethernet: stmicro: stmmac: dwmac-rk: Add RV1106 support
+>   ARM: dts: rockchip: Add Ethernet GMAC node for RV1106
+>   dt-bindings: phy: rockchip,inno-usb2phy: Add RV1106 compatible
+>   phy: rockchip: inno-usb2: Add support for RV1106
+>   dt-bindings: usb: rockchip,dwc3: add RV1106 SoC support
+>   ARM: dts: rockchip: Add USB2 PHY and USB3-OTG (DWC3) nodes for RV1106
+>   dt-bindings: i2c: rk3x: Add RV1106 compatible
+>   ARM: dts: rockchip: Add I2C nodes for RV1106
+>   ARM: dts: rockchip: Add DMAC node for RV1106
+>   ARM: dts: rockchip: Add DMA support to UART nodes
+>   dt-bindings: clock: rockchip: Add SCLK_IN_SPI1 for RV1106
+>   clk: rockchip: Add SCLK_IN_SPI1 gate for RV1106
+>   dt-bindings: spi: rockchip: Add RV1106 compatible
+>   spi: rockchip: Add support for RV1106
+>   ARM: dts: rockchip: Add SPI nodes for RV1106
+>   dt-bindings: rng: rockchip: Add RV1106 compatible
+>   ARM: dts: rockchip: Add RNG node for RV1106
+>   ARM: dts: rockchip: Add SDMMC1 node for RV1106
+>   ARM: dts: rockchip: add arm,cpu-registers-not-fw-configured to RV1106
+>     timer node
+>   dt-bindings: pwm: rockchip: Add RV1106 compatible
+>   ARM: dts: rockchip: Add PWM nodes for RV1106
+>
+>  .../devicetree/bindings/i2c/i2c-rk3x.yaml     |   1 +
+>  .../bindings/net/rockchip-dwmac.yaml          |   2 +
+>  .../bindings/phy/rockchip,inno-usb2phy.yaml   |   9 +-
+>  .../devicetree/bindings/pwm/pwm-rockchip.yaml |   8 +
+>  .../bindings/rng/rockchip,rk3588-rng.yaml     |  11 +-
+>  .../devicetree/bindings/spi/spi-rockchip.yaml |   5 +
+>  .../bindings/usb/rockchip,dwc3.yaml           |  35 +-
+>  arch/arm/boot/dts/rockchip/rv1106.dtsi        | 426 ++++++++++++++++++
+>  drivers/clk/rockchip/Makefile                 |   2 +-
+>  drivers/clk/rockchip/clk-rv1106.c             |   4 +
+>  drivers/clk/rockchip/clk.h                    |   1 +
+>  drivers/clk/rockchip/rst-rv1106.c             | 340 ++++++++++++++
+>  .../net/ethernet/stmicro/stmmac/dwmac-rk.c    |  55 +++
+>  drivers/phy/rockchip/phy-rockchip-inno-usb2.c |  76 ++++
+>  drivers/spi/spi-rockchip.c                    |   1 +
+>  .../dt-bindings/clock/rockchip,rv1106-cru.h   |   2 +
+>  .../dt-bindings/reset/rockchip,rv1106-cru.h   | 305 +++++++++++++
+>  17 files changed, 1272 insertions(+), 11 deletions(-)
+>  create mode 100644 drivers/clk/rockchip/rst-rv1106.c
+>  create mode 100644 include/dt-bindings/reset/rockchip,rv1106-cru.h
+>
 > ---
+> base-commit: ac414f5eda0814030636177593400acdacfe5e1e
+> branch: rv1106
 >
->  arch/arm/boot/dts/rockchip/rv1106.dtsi | 62 ++++++++++++++++++++++++++
->  1 file changed, 62 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/rockchip/rv1106.dtsi b/arch/arm/boot/dts/rockchip/rv1106.dtsi
-> index fa5d0d7f4dcb..71dd3dcc386c 100644
-> --- a/arch/arm/boot/dts/rockchip/rv1106.dtsi
-> +++ b/arch/arm/boot/dts/rockchip/rv1106.dtsi
-> @@ -19,6 +19,7 @@ / {
->         interrupt-parent = <&gic>;
->
->         aliases {
-> +               ethernet0 = &gmac;
->                 gpio0 = &gpio0;
->                 gpio1 = &gpio1;
->                 gpio2 = &gpio2;
-> @@ -282,6 +283,67 @@ system_sram: sram@ff6c0000 {
->                         ranges = <0 0xff6c0000 0x40000>;
->                 };
->
-> +               gmac: ethernet@ffa80000 {
-> +                       compatible = "rockchip,rv1106-gmac", "snps,dwmac-4.20a";
-> +                       reg = <0xffa80000 0x10000>;
-> +                       interrupts = <GIC_SPI 93 IRQ_TYPE_LEVEL_HIGH>,
-> +                                       <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>;
-> +                       interrupt-names = "macirq", "eth_wake_irq";
-> +                       rockchip,grf = <&grf>;
-> +                       clocks = <&cru CLK_GMAC0_TX_50M_O>, <&cru CLK_GMAC0_REF_50M>,
-> +                               <&cru ACLK_MAC>, <&cru PCLK_MAC>;
-
-Should this have a minItems exception like RK3506 and 3528? As it is
-it fails validation for me as it expects 5 clocks.
-
-> +                       clock-names = "stmmaceth", "clk_mac_ref",
-> +                                       "aclk_mac", "pclk_mac";
-> +                       resets = <&cru SRST_A_MAC>;
-> +                       reset-names = "stmmaceth";
-> +
-> +                       snps,mixed-burst;
-> +                       snps,tso;
-> +
-> +                       snps,axi-config = <&stmmac_axi_setup>;
-> +                       snps,mtl-rx-config = <&mtl_rx_setup>;
-> +                       snps,mtl-tx-config = <&mtl_tx_setup>;
-> +
-> +                       phy-mode = "rmii";
-> +                       clock_in_out = "input";
-> +                       phy-handle = <&rmii_phy>;
-> +
-> +                       status = "disabled";
-> +
-> +                       mdio: mdio {
-> +                               compatible = "snps,dwmac-mdio";
-> +                               #address-cells = <0x1>;
-> +                               #size-cells = <0x0>;
-> +                               rmii_phy: ethernet-phy@2 {
-> +                                       compatible = "ethernet-phy-ieee802.3-c22";
-> +                                       reg = <2>;
-> +                                       clocks = <&cru CLK_MACPHY>;
-> +                                       resets = <&cru SRST_MACPHY>;
-> +                                       phy-is-integrated;
-> +                               };
-> +                       };
-> +
-> +                       stmmac_axi_setup: stmmac-axi-config {
-> +                               snps,wr_osr_lmt = <4>;
-> +                               snps,rd_osr_lmt = <8>;
-> +                               snps,blen = <0 0 0 0 16 8 4>;
-> +                       };
-> +
-> +                       mtl_rx_setup: rx-queues-config {
-> +                               snps,rx-queues-to-use = <1>;
-> +                               queue0 {
-> +                                       status = "okay";
-> +                               };
-> +                       };
-> +
-> +                       mtl_tx_setup: tx-queues-config {
-> +                               snps,tx-queues-to-use = <1>;
-> +                               queue0 {
-> +                                       status = "okay";
-> +                               };
-> +                       };
-> +               };
-> +
->                 emmc: mmc@ffa90000 {
->                         compatible = "rockchip,rv1106-dw-mshc", "rockchip,rk3288-dw-mshc";
->                         reg = <0xffa90000 0x4000>;
 > --
 > 2.47.3
 >
+
+Just to note that I applied this series and tried it on my Luckfox
+Pico Mini B (also RV1103 but more basic) and it boots fine. I enabled
+the RNG node and the driver seems to work (i.e. the CRU is good).
+
+For the series:
+Tested-by: Simon Glass <sjg@chromium.org>  # Luckfox Pico Mini B (RV1103)
 
 Regards,
 Simon
