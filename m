@@ -1,119 +1,196 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADCB941D137;
-	Thu, 20 Aug 2026 12:09:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E14420E023
+	for <linux-clk@vger.kernel.org>; Thu, 20 Aug 2026 13:02:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787227787; cv=none; b=eW+hKidYymPun7yAxAoqrWWf+nezXLcWOycLSZXat+0aY+auGutbYejnyOQJk8YCQAaDXnTLVochzpqtkHv50EbyVLnVxkkxX4TaXa8kj3EP03b29Ai5P8+5R5da6+bWmRLAPz5Oro05aoOokI9kL4ic0Jfs3P0Xrjgdu5KR3tA=
+	t=1787230955; cv=none; b=rc/+s/kYU7P+jnCbz+WJ59PPGL8OKDNQumWGdnoRQehkluE6IR9qfVPv8LsspIh+jQ2Z7qLChxVZ3SnAWgT4aRS98jI9kXhV4JDAV3QzTkPGLSAqSrqgj9jeZBRSCB0sjo7nHRxy5N342UBjbBWgk9VviYNy/bZnciAAsh6uDEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787227787; c=relaxed/simple;
-	bh=xsq/pyY7kRxlmXsi84b9b6vKhqdMjRH7p4CDsqxN4yk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DhpQPT0FVMw1ZSTfpI+e+w2n6hzfX8EyH5xPAZTuo/XpmkCwuANN4SJCTEYhzjMy/ui/AlHXiGfBDW7r5GjTatPyGfIWu6eVxI5eIycBH6yDdny5lAyQFnS6NP47ElFcIzrilN/YSd96YVNKAhWNkBViqEcyPiv95j7rH6TvSmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d+lREly2; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1787230955; c=relaxed/simple;
+	bh=WTaTT030ZqziofZKLRvlnNQqm+oCFioHNX1xQWgwNDI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GUs14Xbln7EAraorRBGpUHKywKnWILmtXsBdt3GhsmM5JHIgDI3FeWWWlWZKbvwl/XYEpgKjv/J+6R8dSluaOu9i77hAWarVPd6Zr+jJ0cx0S5+96H/rHmQk95Rwe0cGbAK1PsWiW1hvkQgcvESL6EdkRld4GQBTMhv2adGtojE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffroot.co.za; spf=none smtp.mailfrom=ffroot.co.za; dkim=pass (2048-bit key) header.d=ffroot-co-za.20251104.gappssmtp.com header.i=@ffroot-co-za.20251104.gappssmtp.com header.b=QOlaZ1Yg; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffroot.co.za
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffroot.co.za
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d+lREly2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAA881F000E9;
-	Thu, 20 Aug 2026 12:09:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787227786;
-	bh=CR7uEG8kWoQ77sl56nrrnB0VpPgSDT1k4hnsHugpPAc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=d+lREly2OV2vPADA/rlyw+nzyKw8+0SXCG1FO7Xm6jUIiNXuWBBFpCpqGWUky33kf
-	 PBpuZsW2wIFgoRY+6HmNy48iCVE3rvVdVsusxlBC6BbudernkEUhAuYBj/Ji3FHFHi
-	 Al81XSbJMSwiPTY2mUHuCddpIP1CzBQ1v6elC1BnEUzbyqHeQntii1FYi0fFWlaFnR
-	 K3KQ8nMxIpP09kr4g722md7ELY0QUxEfnPBOHeyZnvBzAqHuQzj3R1IbzjKZxgdr9o
-	 Kd8ivVOFBw+FQsPs34gSfHSpMrYr26e2FX6scUSe2fFloYIT1SpSVSKm50jc2BYvRi
-	 ufF6b4ddB54cA==
-Message-ID: <b7fe0307-1e8b-4260-bfdb-8b29ea71c9ed@kernel.org>
-Date: Thu, 20 Aug 2026 14:09:40 +0200
+	dkim=pass (2048-bit key) header.d=ffroot-co-za.20251104.gappssmtp.com header.i=@ffroot-co-za.20251104.gappssmtp.com header.b="QOlaZ1Yg"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-499b57cf2f3so2098225e9.0
+        for <linux-clk@vger.kernel.org>; Thu, 20 Aug 2026 06:02:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffroot-co-za.20251104.gappssmtp.com; s=20251104; t=1787230951; x=1787835751; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=lJQEYfDd5lCDevCn6r75/uRZma7oJzqLkyHUzsb8FjE=;
+        b=QOlaZ1YguVjqPJZ9kfvfoe4G3lbJ2t67gbjdxbnJoYY9Ya/KqT0MJtYM9WpPVQwUxV
+         VVf7OEA+ik8I+PkiP0Hj2ydkt7ywSoZyQ1WvqYsfH+3E+Iy/7N2lLDKUwg2yWWOU5tCz
+         hJnlWBbx2Jur7DYE3QgPyW59H6gulsTo9BaHAob6qwHsL8e1wIh6wSAfma3yNR8K60k0
+         IJx5zNuNZKmUvq1fSmn6LtXvfLpVR4Tpjt/N7/75XI4u/jiPHFrT8CP6x7gyrU84Poso
+         wSUbPRwbZzOPWi1nKbPSXwsSZExleP9FFNmS/ZKDf2/aS30q0jYMLpTuE9Ggn9o2qzhJ
+         qO1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787230951; x=1787835751;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=lJQEYfDd5lCDevCn6r75/uRZma7oJzqLkyHUzsb8FjE=;
+        b=BVLkIxbJBKRWsw/ejaD5YWrv9F+ZsbHTGOm4kzcTB+f6ZizVX6xoo0rMOOlCn/F10S
+         rkkYFhlxlAyddPPSkZ1xB1xcZiprJgnzYC5i+aKFcPsLPh/e/i1uKtnrt82rNVcx60RT
+         leOVr80oggbtZWeqkjV+tLQ/UpQ+7nw2FTk9f396PxoVXCDskzWtukA/nbixCYPumDlg
+         QYXhwNkLSpHVb3FDXfrTSOkgL7EK1/E/K+kSmBkZYifzAbWMIvFj5cEaNA8wk2/O8jiR
+         POMpBxKt0138KOvMXJnXDF09Ft42vmvDMknb/Mtdv1ULHjLNLYHFnRyOzv4zD6zK+5At
+         rzLg==
+X-Gm-Message-State: AOJu0YzJ77LOg4omXjROJGFWL3w51TcqLEB2Gxw7gxjOXDiJYgwX9D6E
+	2i/b/3CMCvzsmjXgmMqXtVgxo1QOOaPo4WewOeNe28vo9kvQSMt1ls9MJmBqOCQ83zznErcm4K+
+	l5mtl6nk=
+X-Gm-Gg: AR+sD1091G+spWXGEllMN2vCGJhojzRuRCvadZ/yfwqEuuMqFkvI19AgPF0e8eOcS6l
+	vKsRFIIsisCL7vzMXNS+H5iSwIkaFIUrP5N7a3ff+Bq6dTIpObU+RSVxJYoaSh5Jmhk+jWzK/y7
+	/djh+I5tIbAl0tR3yGs81Uan0YDusWORzbgi4uKhn6SieUfFDWVDiTNAk9dHV/vnIth4kx8bL+1
+	gVOlgplTOL0Jvy24+qfX75+8Ldi83sXnu2R4yapGFS2bTAcF0AH9yD2ukuXzQdFxTNUc2v9VoJM
+	RilVEeCEfapokOEEW1FcWoq/uCMgT+jrFvi7gctfJi1NQOOO2QlkIRUyZDFSqEOpgngf/F41yuv
+	bOgDlxR7G730+tWuz+NixR0Wj188SXPtf8wPIyPlqr/2Qo/SsqYGmozNaSHRapO0Q+tL17PJZif
+	WeW/BxlBsA90DqRe3i25c1jxpWzvweR1JEe6P7c4my2DYODx7+Cp69CHj8n7uNdp1K1ReWeUrkB
+	/5CAeArEK+xbF6TZNvihjvo
+X-Received: by 2002:a05:600c:1d15:b0:499:b2ce:e394 with SMTP id 5b1f17b1804b1-499b2cee3femr55797285e9.5.1787230951264;
+        Thu, 20 Aug 2026 06:02:31 -0700 (PDT)
+Received: from dev-ag.figment.co.za ([102.33.165.38])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-482b1441748sm13584333f8f.8.2026.08.20.06.02.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Aug 2026 06:02:30 -0700 (PDT)
+From: Andrew Gaylard <ag@ffroot.co.za>
+To: linux-clk@vger.kernel.org
+Cc: qinjian@cqplus1.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	bmasney@redhat.com,
+	linux-arm-kernel@lists.infradead.org,
+	Andrew Gaylard <ag@ffroot.co.za>
+Subject: [PATCH] clk: sp7021: fix infrastructure clocks clobbering PLL provider entries
+Date: Thu, 20 Aug 2026 15:02:24 +0200
+Message-ID: <20260820130224.1584902-1-ag@ffroot.co.za>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/25] dt-bindings: reset: Add RV1106 CRU reset
- definitions
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- Vladislav Leonov <vlad@zlab.su>
-Cc: linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- Simon Glass <sjg@chromium.org>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- Rob Herring <robh@kernel.org>
-References: <20260810121121.210040-1-vlad@zlab.su>
- <20260810121121.210040-2-vlad@zlab.su>
- <20260814-pristine-warthog-of-tolerance-4be5cc@quoll>
- <2506382.tdWV9SEqCh@diego>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <2506382.tdWV9SEqCh@diego>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 20/08/2026 14:01, Heiko Stübner wrote:
-> Am Freitag, 14. August 2026, 12:15:26 Mitteleuropäische Sommerzeit schrieb Krzysztof Kozlowski:
->> On Mon, Aug 10, 2026 at 03:10:52PM +0300, Vladislav Leonov wrote:
->>> Add the reset ID definitions for the Rockchip RV1106 clock and
->>> reset unit (CRU), to be used by the reset controller driver and
->>> device tree nodes.
->>
->> This goes with the binding/compatible using it, where is it?
-> 
-> it was not part of the initial CRU submission, so the binding is at
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=713e4d54ff7369b8118f91e98a008220d60b2a5f
-> 
-> slated for the merge-window.
+The sp_clk_gates[] array previously included 9 infrastructure gate
+clocks (CLK_SYSTEM, CLK_IOCTL, etc.) appended after the 64 DT-visible
+gate clocks. The registration loop used the array index directly as the
+hws[] index, so infrastructure clocks at positions 64-72 overwrote
+hws[PLL_A] through hws[PLL_SYS].
 
-Commit msg should briefly explain that (e.g. "add missing" or whatever
-wording efficiently clarifies non-standard approach).
+As a result, DT lookups for <&clkc PLL_E_25> (index 67), PLL_E_2P5
+(66) and PLL_E_112P5 (68) silently resolved to CLK_RBUS, CLK_IOP and
+CLK_SDCTRL0 respectively. The L2SW Ethernet driver believed it was
+holding the PLLE outputs, but was actually double-referencing already-
+critical infrastructure clocks. The real PLLE outputs remained at
+enable_count=0 and were powered down by clk_disable_unused(), causing
+an Ethernet hang on boards with fixed-link MAC-to-MAC connections.
 
-Best regards,
-Krzysztof
+Fix by splitting infrastructure clocks into a separate sp_clk_infra[]
+array and registering them with a dedicated loop that uses a local hw
+variable rather than an hws[] slot. Since these clocks have no DT
+consumer they do not need to appear in the of_clk provider table.
+
+With the provider table correct, the L2SW driver's devm_clk_get_enabled()
+calls now hold the actual PLLE outputs, making CLK_IS_CRITICAL on plle
+and its sub-outputs unnecessary. Remove it.
+
+Signed-off-by: Andrew Gaylard <ag@ffroot.co.za>
+---
+ drivers/clk/clk-sp7021.c | 42 +++++++++++++++++++++++++++++-----------
+ 1 file changed, 31 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/clk/clk-sp7021.c b/drivers/clk/clk-sp7021.c
+index 1d067b0af8a7..50c667cbb3dc 100644
+--- a/drivers/clk/clk-sp7021.c
++++ b/drivers/clk/clk-sp7021.c
+@@ -124,9 +124,14 @@ static const struct sp_clk_gate_info sp_clk_gates[] = {
+ 	{ 0x97 },
+ 	{ 0x98 },		/* CLK_ICM: Input Capture Module */
+ 	{ 0x99, 0, true },	/* CLK_AXI_GLOBAL: AXI interconnect, no driver consumer */
+-	/* Infrastructure clocks: all default to enabled in hardware but
+-	 * have no driver consumer, so marked critical to prevent gating.
+-	 */
++};
++
++/*
++ * Infrastructure clocks have no DT consumer so are not exposed
++ * through the of_clk provider. They are registered separately and
++ * marked CLK_IS_CRITICAL so clk_disable_unused() never gates them.
++ */
++static const struct sp_clk_gate_info sp_clk_infra[] = {
+ 	{ 0x00, 0, true },	/* CLK_SYSTEM:  SYSTEM CLKEN    mo_clken0 bit 0  */
+ 	{ 0x03, 0, true },	/* CLK_IOCTL:   IOCTL CLKEN     mo_clken0 bit 3  */
+ 	{ 0x04, 0, true },	/* CLK_IOP:     IOP CLKEN       mo_clken0 bit 4  */
+@@ -644,25 +649,23 @@ static int sp7021_clk_probe(struct platform_device *pdev)
+ 	/*
+ 	 * PLLE and all its sub-outputs are used by the L2SW Ethernet switch
+ 	 * (50MHz RMII, 25MHz MII/100M, 2.5MHz MII/10M, 112.5MHz MAC fabric).
+-	 * The L2SW driver explicitly claims these via clock-names in DTS, but
+-	 * CLK_IS_CRITICAL is kept as a belt-and-suspenders guard in case the
+-	 * driver consumer reference isn't sufficient on all board configurations.
++	 * The L2SW driver explicitly claims these via clock-names in DTS.
+ 	 */
+ 	hws[PLL_E] = sp_pll_register(dev, "plle", &pd_ext, PLLE_CTL,
+-				     6, 2, 50000000, 0, 0, CLK_IS_CRITICAL);
++				     6, 2, 50000000, 0, 0, 0);
+ 	if (IS_ERR(hws[PLL_E]))
+ 		return PTR_ERR(hws[PLL_E]);
+ 	pd_e.hw = hws[PLL_E];
+ 	hws[PLL_E_2P5] = sp_pll_register(dev, "plle_2p5", &pd_e, PLLE_CTL,
+-					 13, -1, 2500000, 0, 0, CLK_IS_CRITICAL);
++					 13, -1, 2500000, 0, 0, 0);
+ 	if (IS_ERR(hws[PLL_E_2P5]))
+ 		return PTR_ERR(hws[PLL_E_2P5]);
+ 	hws[PLL_E_25] = sp_pll_register(dev, "plle_25", &pd_e, PLLE_CTL,
+-					12, -1, 25000000, 0, 0, CLK_IS_CRITICAL);
++					12, -1, 25000000, 0, 0, 0);
+ 	if (IS_ERR(hws[PLL_E_25]))
+ 		return PTR_ERR(hws[PLL_E_25]);
+ 	hws[PLL_E_112P5] = sp_pll_register(dev, "plle_112p5", &pd_e, PLLE_CTL,
+-					   11, -1, 112500000, 0, 0, CLK_IS_CRITICAL);
++					   11, -1, 112500000, 0, 0, 0);
+ 	if (IS_ERR(hws[PLL_E_112P5]))
+ 		return PTR_ERR(hws[PLL_E_112P5]);
+ 
+@@ -689,7 +692,7 @@ static int sp7021_clk_probe(struct platform_device *pdev)
+ 		return PTR_ERR(hws[PLL_SYS]);
+ 	pd_sys.hw = hws[PLL_SYS];
+ 
+-	/* gates */
++	/* gates, directly mapped into hws[] for DT lookup */
+ 	for (i = 0; i < ARRAY_SIZE(sp_clk_gates); i++) {
+ 		char name[10];
+ 		u32 j = sp_clk_gates[i].reg;
+@@ -706,6 +709,23 @@ static int sp7021_clk_probe(struct platform_device *pdev)
+ 			return PTR_ERR(hws[i]);
+ 	}
+ 
++	/* infrastructure gates, not in hws[] */
++	for (i = 0; i < ARRAY_SIZE(sp_clk_infra); i++) {
++		char name[14];
++		u32 j = sp_clk_infra[i].reg;
++		struct clk_hw *hw;
++
++		sprintf(name, "infra_0x%02x", j);
++		hw = devm_clk_hw_register_gate_parent_data(dev, name, &pd_sys,
++							   CLK_IS_CRITICAL,
++							   clk_base + (j >> 4) * 4,
++							   j & 0x0f,
++							   CLK_GATE_HIWORD_MASK,
++							   NULL);
++		if (IS_ERR(hw))
++			return PTR_ERR(hw);
++	}
++
+ 	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, clk_data);
+ }
+ 
+-- 
+2.53.0
+
