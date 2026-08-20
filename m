@@ -1,154 +1,196 @@
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDFC13C09F5
-	for <linux-clk@vger.kernel.org>; Thu, 20 Aug 2026 07:40:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 009D03CC32E
+	for <linux-clk@vger.kernel.org>; Thu, 20 Aug 2026 07:54:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787211650; cv=none; b=G70TY2EnVF0yuklwI+Vt7GVVR1LPPIZk4HI75e5EBtoxmYbRxyIAh+7pGuH4oVqk0LGdkKNB+qm9ownp4BujqVMjJERwVkFrq+ofk674Wa7fJaiAN3T36MhPN+yMCufWOPY49cMJ9Un4i68j1qfi9aiptUzHNM0l2NWMlQAfCR4=
+	t=1787212475; cv=none; b=sAKPuGXyY/ukPuv2o409Wmk/vzA2J+7STg8bNoKlVMT30WhzL2ZrTUyuUB9DT88sZQczf/7T9h1UVp442FmALmF8jwAaQfDvwDI6IdsdmjsIJDFe1ZCZ+qbQZs1VQoBJNWbJ2MYFt7LeZn6+/0lyHy5ITe3a0cDJB1W3LOxatps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787211650; c=relaxed/simple;
-	bh=MapOTuwbJCCiUZFtCGgs2M9xTj7+mwKoeNjEtUvxTk0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N+Y9pl136TM70e1ghlIDu73bJbOdjp1JJu4iB5xkquGP9uF15F+JotdCqExE8CkEXx9Ah7Q9qZ5ivM2x5nPwiY32LdJXVFhSv0bgz6V7TfERo6+7hMptiQ4H/uYY1AEJ1FADPGJ3lvn/Xh79Kc1HMcTPRpxrZ8+t1tIhIzpIPHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-5bf9506704fso886070e0c.2
-        for <linux-clk@vger.kernel.org>; Thu, 20 Aug 2026 00:40:47 -0700 (PDT)
+	s=arc-20240116; t=1787212475; c=relaxed/simple;
+	bh=JVLxKY/C0/D6kBrPgCv1rh4oFIk66KfsKNnW+q8Oe5E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ol7/ZiI3hto9Mp9AqI5qQJdC576dG6YUm1WKzGEjDiRaastplXnvv5BPBhVOJHhPgyLYFNUUswCOHe+iIpUwyQZLIZFyO+lIVlTvHhpDAropqMjhgv+k7JtkrzksUh7yXIJW4F4TqkRd5+mTbCi+qKJ82pdwyiYm64wXFgUnEec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=asseily.com; spf=pass smtp.mailfrom=asseily.com; dkim=pass (2048-bit key) header.d=asseily.com header.i=@asseily.com header.b=GmnRVakY; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=asseily.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=asseily.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=asseily.com header.i=@asseily.com header.b="GmnRVakY"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-47fecbb7000so1004451f8f.2
+        for <linux-clk@vger.kernel.org>; Thu, 20 Aug 2026 00:54:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=asseily.com; s=google; t=1787212472; x=1787817272; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=+gzOxx9oE6eKHxFZ2hWUiqIgHk0IssfaFnjK3QXCWkg=;
+        b=GmnRVakYGgA8Vki6/jrNgpFxqM4y/aqj3SNzu8hD82Xtv2ybzklwItHfQNtxByiWzO
+         qK64tp3JQIgRRWI2eLc0r+dV1vx8bqCUYmUi2KSPvFgJS0zsM7l/9d5BZuJxaYepWO8j
+         HXOC+BcUBXyOBM5VDYy/JxlRBXPon/dV5DtZwtHW7ufXa+aG7/KnZHtrlG5ItKJydJO5
+         4W02nEeBw0UN2bTBfVhdFjaCw446/iVWI1GqFw1Y/pxX82RMFp11quEWdoFsYYdYcz81
+         AdlFnhmXIcAo5NBIcqQAY+brogxPPrY1gucwwDdbT8IZJVqm382E3ZG3sqaRN9dVuHxI
+         d0vQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787211647; x=1787816447;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=FdPpwGypGBUsvrsSvDXIguPPL189yxwSySBc8xM9coA=;
-        b=WLFx5EroF1pUHfPpi1ST1L8RDLpYIQsVV8yg1sYfkfgw3GV3MfVef05GBz+9ARHdv6
-         A7krITAtc1gqXGfuUooEi/Qs2tE5OVAO/kez+JExHJAhmO+MU7naQd9q2ZRNovRN/yVm
-         DakCb5W8Weh0hirXzbVrBpfIpU0mzKP0gpJhQRT8GSdKrMt/Fyahd4AhJLP0EoHRgTqf
-         KEOL3sWnXwMT4VNAVXDKjLDWK44lDqPIFSJyJ8PjQQpVFg6Zs2vuuXFNGA1a9zWenkJS
-         +iz4Td9etWs+P28OeqU5d8ythEaU35voing6rmE3hukbnhkPxkXfvvGrr7/MNuTxTRyD
-         qNkA==
-X-Forwarded-Encrypted: i=1; AHgh+RobnYZYcpzFHDHwgsrzloLhSnudgT10rjkvaN9DG8Om3nweoAxwqIoATPohMgtL8a4CzOwVu5hjbZo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2YwXWxZ+F1/ugdfJxZsy8EO/62L5lOo1v1rJ8V0cd1wEMeeOZ
-	w4zv5lirC8dsiBnv3RzcVK5AV5B+dNU0zpbfpCta7VbaPnuoe8wFWikwgNj0SWJL
-X-Gm-Gg: AR+sD12VaGY9QxVjWA62mweVMbyfwvH8DpGlodLaKSdP90H/t0rWXqUp5ic0FElFIDe
-	sWXmbjrc+t+OPpkp44NxKy0kqtwhPp2WbsIiKY5xWmnrsXcjl8fqggJiPuIn/MVgPVJCoINawo/
-	DD7IC+ImRXftT1KBAjJ5iM/T4FDe4jdjbOEseHmavZYvtC/s3r0UWy8IFLfxufgd8EiSv0KGlUM
-	3GqPC9GGkkpZ2n0ge4pz658s+hOvUSRN7uR0utFfQhSlstZgWSgg1UeTVGXZxpCdJnk1cOp9dDL
-	TrsR0WLJ+ugrYobyIaldRNh2mffOK6hZ/YuuWY3lTIdiQGmyUC1ThCt6L/DhrrWrLUWPvDQmNlN
-	5j07O7NHX3b3v2gjWmmJP/qL3Gw2+vYT3639KI+yKhdwAVVmkq+yRxHDg908JtyJND3d/On8fxb
-	WZzMaVY9GcbeD2dXLoRBNVl5dA0U9RRRbIfjZjrToenagkPsSWKSCN6AMhGyW6y5HXZo7XHkPiO
-	xuDLJ1c9PPoDzTH21yWZ8a8eGXzYg==
-X-Received: by 2002:a05:6122:46aa:b0:5bf:a179:b2be with SMTP id 71dfb90a1353d-5c5e3e09666mr4214514e0c.7.1787211646626;
-        Thu, 20 Aug 2026 00:40:46 -0700 (PDT)
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com. [209.85.221.175])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c5e2857954sm5118435e0c.18.2026.08.20.00.40.46
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Aug 2026 00:40:46 -0700 (PDT)
-Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-5c2c0e261aeso759705e0c.0
-        for <linux-clk@vger.kernel.org>; Thu, 20 Aug 2026 00:40:46 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RqOiQukff10kCX2QuI8dSwRrVn4f7ScGVxJTaW5xjIFkk12qCmTn768TcrTNfEul0w0p98RsWTZ8uc=@vger.kernel.org
-X-Received: by 2002:a05:6122:882:b0:5bd:86ac:a847 with SMTP id
- 71dfb90a1353d-5c5e3df88c4mr4331225e0c.6.1787211646157; Thu, 20 Aug 2026
- 00:40:46 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1787212472; x=1787817272;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=+gzOxx9oE6eKHxFZ2hWUiqIgHk0IssfaFnjK3QXCWkg=;
+        b=AarNov0MR1nfj1es/5Ff0tmmZIIBN+V9a1bRMW394I0nbw9/giXPpHONpKPz1Q+YQa
+         pU318kMniHsgtA+YYEY7pGa1v8ZJUbQ6lmXxvyiDpKRs1WrpiodBqHhAr7xkN/2upLRg
+         lu0DPE2wqhevQKWpDitkVKjqmMNaAYfFgPnEiwUA5ZXyGB9DZX/PnDpN8RU66GPcSS2Q
+         mmGast3beYLres24bicBBpB84YjTonFfNbAR+pihQ+hJCm2/unpBcxyU4An4WbzhgzRy
+         oZ3NJSLkbUXo5+nLIvNq8nq38/GbyP+luSipmFWFSIzP3iqNeUc62sBJY4dR42ZHc246
+         XWEA==
+X-Forwarded-Encrypted: i=1; AHgh+Rqr/XDn1Pe1ln3YZzu8SWOKKFPGDzZuhjtgx1gek5Ab9UZERqy0XmqLmHNbquYsQ7MSmPmNHDUSb/Y=@vger.kernel.org
+X-Gm-Message-State: AFuF++mux7CfaetflT2P5nnD2Qx7LlDoOwBoC36lN7MsgDgITqHAswdd
+	xtkaZbPwTRG05okWNwSJW0qhXuqQz7/pgEeGa+Rpw9C3E1S84w7DAoonp6OOhimVr7E=
+X-Gm-Gg: AR+sD11j9UjuVGCkS4k1sfXVFqs66gGh6YZyRqZm4RmZsQ/BJbX28QQ8j0HRbE42DRe
+	JqoxyHWQhdJVahW01m7e+rQAuplEviwYlRPyBp7X3q9R/lYh67NhsUc6KOTgpqQUXq/ms6jaRzi
+	azBEFkGUKlw+0pVB34ZdWrHXylYMT9IkoTu0JQrxJ4lB+9ekaNtsEfN7Awb6C26WA7lvcIucy9s
+	BxY2bPMXkglNMSsRCPaLo5l7OmlcgbSOkiJVgE87TDgRDXQU1RIcT7jgT7aH6jOLKwSqHts9H6c
+	r9PPSvKKBxzm2Uw92/BvheDeDVfyRt95gHWch5Uwv1Qs8oXabcVeqW4QWiSQCCn/w2IiH7fKiuC
+	OD+UhYhk8hRslO/Wq2fKaEMJPgisEC3+g8FeqEvHls5Yv+1NVcKRZ2ihYz/cpPtROE/NUmJrSno
+	BRxWkZq0H9SJCQDsqhinUPAFiUb5Me4m/tXDJVsZX/6Cn5rKdOfEmyVdqXQywAvMmW6ou+7+joG
+	rI4OrKjaJ5skA==
+X-Received: by 2002:a5d:5d0f:0:b0:481:51b5:7503 with SMTP id ffacd0b85a97d-482b1e92a63mr16850901f8f.7.1787212472136;
+        Thu, 20 Aug 2026 00:54:32 -0700 (PDT)
+Received: from Behemoth.triland.local ([178.135.23.60])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-482b14d0360sm10342800f8f.33.2026.08.20.00.54.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Aug 2026 00:54:31 -0700 (PDT)
+From: Karl Asseily <karl@asseily.com>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	heiko@sntech.de
+Cc: bmasney@redhat.com,
+	linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Karl Asseily <karl@asseily.com>
+Subject: [PATCH] clk: rockchip: rk3588: let MCLK_SPDIF* rate requests reach the divider
+Date: Thu, 20 Aug 2026 10:54:27 +0300
+Message-Id: <20260820075427.67050-1-karl@asseily.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1787165329.git.geert+renesas@glider.be> <302584628c4c0699239a0218376fe1c11cdc8944.1787165329.git.geert+renesas@glider.be>
- <20260819191316.8F2F21F000E9@smtp.kernel.org>
-In-Reply-To: <20260819191316.8F2F21F000E9@smtp.kernel.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 20 Aug 2026 09:40:35 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWpHicDvj7tvKJB7SCnVJ2gRmidUeTwA+hHxnhsXs7h=w@mail.gmail.com>
-X-Gm-Features: AcwNN1Xf-k2z34g_6wcrswrRilyDIcooOAsIPdAyo4-A___PZ7FNnn6TGkqYEkE
-Message-ID: <CAMuHMdWpHicDvj7tvKJB7SCnVJ2gRmidUeTwA+hHxnhsXs7h=w@mail.gmail.com>
-Subject: Re: [PATCH treewide 4/5] iio: frequency: adf4377: Make sure
- clk_init_data is fully initialized
-To: sashiko-reviews@lists.linux.dev
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
-	neil.armstrong@linaro.org, linux-hwmon@vger.kernel.org, 
-	Jonathan Cameron <jic23@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Sashiko,
+Every MCLK_SPDIFn gate is declared with flags 0, while the CLK_SPDIFn mux
+immediately above it already carries CLK_SET_RATE_PARENT. The rockchip
+S/PDIF driver calls clk_set_rate() on the gate, which has no .set_rate of
+its own and, without CLK_SET_RATE_PARENT, no way to pass the request up.
+The clock core therefore computes "new rate == current rate", returns 0,
+and changes nothing.
 
-On Wed, 19 Aug 2026 at 21:13, <sashiko-bot@kernel.org> wrote:
-> Thank you for your contribution! Sashiko AI review found 1 potential issu=
-e(s) to consider:
->
-> Pre-existing issues:
-> - [High] Incomplete fix for uninitialized stack variables: `struct clk_pa=
-rent_data parent_data` remains uninitialized on the stack, leading to a ker=
-nel crash during clock registration.
-> --
->
-> --- Patch [4]: [PATCH treewide 4/5] iio: frequency: adf4377: Make sure cl=
-k_init_data is fully initialized ---
-> commit 99e024a77f5bce5921d3c6b46054263aa450610d
-> Author: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> iio: frequency: adf4377: Make sure clk_init_data is fully initialized
->
-> This commit initializes the clk_init_data structure in
-> adf4377_clk_register() to zero. This prevents crashes caused by
-> uninitialized fields like parent_names when CONFIG_INIT_STACK_ALL_PATTERN
-> or CONFIG_INIT_STACK_NONE is enabled.
->
-> > diff --git a/drivers/iio/frequency/adf4377.c b/drivers/iio/frequency/ad=
-f4377.c
-> > --- a/drivers/iio/frequency/adf4377.c
-> > +++ b/drivers/iio/frequency/adf4377.c
-> > @@ -999,7 +999,7 @@ static int adf4377_clk_register(struct adf4377_stat=
-e *st)
-> >  {
-> >       struct spi_device *spi =3D st->spi;
-> >       struct device *dev =3D &spi->dev;
-> > -     struct clk_init_data init;
-> > +     struct clk_init_data init =3D {};
-> >       struct clk_parent_data parent_data;
->
-> [Severity: High]
-> This is a pre-existing issue, but does this struct clk_parent_data also
-> need to be zero-initialized?
->
-> Only fw_name is explicitly assigned below, leaving name, hw, and index
-> populated with stack garbage. When adf4377_clk_register() passes this to
-> the clock framework, clk_core_populate_parent_map() will read
-> parent_data.name and pass it to clk_cpy_name(), which ultimately calls
-> strlen() and can cause a page fault during probe.
+The visible effect is that S/PDIF is stuck on whatever divider the
+bootloader left behind. On a board whose audio PLL is parked on the
+48 kHz family, every 44.1 kHz source goes out at 48 kHz, silently, with
+nothing reporting an error. Measured on an RK3588 board playing 44.1 kHz
+material, before and after:
 
-Yes, parent_data has the same issue.
-As Jonathan will rebase against rc1 anyway, I will send a v2.
-Thanks!
+  mclk_spdif0   12287999 Hz    48000 x 256
+  mclk_spdif0   11289598 Hz    44100 x 256
 
->
-> [ ... ]
->
-> >       parent_data.fw_name =3D "ref_in";
-> >
-> >       init.ops =3D &adf4377_clk_ops;
-> >       init.parent_data =3D &parent_data;
->
-> --
-> Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/cover.1787165329.=
-git.geert+renesas@glider.be?part=3D4
+Add CLK_SET_RATE_PARENT to all eight MCLK_SPDIF gates so the request
+propagates to the fractional divider that can satisfy it.
 
-Gr{oetje,eeting}s,
+Propagation stops there. Each chain terminates at CLK_SPDIFn_SRC, which
+is declared with flags 0, so a rate request cannot reach a shared PLL and
+pull unrelated consumers off frequency.
 
-                        Geert
+Two pairs of gates share a divider - mclk_spdif2 and mclk_spdif2_dp0 both
+sit on clk_spdif2_dp0, and mclk_spdif5 and mclk_spdif5_dp1 on
+clk_spdif5_dp1 - so a rate set on one moves the other. That sharing is in
+the hardware and is not introduced here; before this change neither of
+them could set a rate at all.
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+Signed-off-by: Karl Asseily <karl@asseily.com>
+---
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Notes:
+    Generated against broonie/sound.git for-next. clk-rk3588.c
+    carries no ASoC changes, so this should apply to any current tree.
+    
+    Tested on RK3588 hardware running 7.1.3: without this a 44.1 kHz stream leaves
+    the S/PDIF transmitter at 48 kHz; with it mclk_spdif0 retunes and the receiver
+    locks at 44.1 kHz.
+    
+    checkpatch --strict reports "Alignment should match open parenthesis" on the
+    touched lines. That continuation indentation is unchanged by this patch and
+    matches every other clock entry in the file; realigning only these eight would
+    make them the inconsistent ones.
+
+ drivers/clk/rockchip/clk-rk3588.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/clk/rockchip/clk-rk3588.c b/drivers/clk/rockchip/clk-rk3588.c
+index 2ba9976654c..b3d577dccfc 100644
+--- a/drivers/clk/rockchip/clk-rk3588.c
++++ b/drivers/clk/rockchip/clk-rk3588.c
+@@ -960,7 +960,7 @@ static struct rockchip_clk_branch rk3588_early_clk_branches[] __initdata = {
+ 			RK3588_CLKSEL_CON(33), 0,
+ 			RK3588_CLKGATE_CON(9), 0, GFLAGS,
+ 			&rk3588_spdif0_fracmux),
+-	GATE(MCLK_SPDIF0, "mclk_spdif0", "clk_spdif0", 0,
++	GATE(MCLK_SPDIF0, "mclk_spdif0", "clk_spdif0", CLK_SET_RATE_PARENT,
+ 			RK3588_CLKGATE_CON(9), 1, GFLAGS),
+ 
+ 	GATE(HCLK_SPDIF1, "hclk_spdif1", "hclk_audio_root", 0,
+@@ -973,7 +973,7 @@ static struct rockchip_clk_branch rk3588_early_clk_branches[] __initdata = {
+ 			RK3588_CLKSEL_CON(35), 0,
+ 			RK3588_CLKGATE_CON(9), 4, GFLAGS,
+ 			&rk3588_spdif1_fracmux),
+-	GATE(MCLK_SPDIF1, "mclk_spdif1", "clk_spdif1", 0,
++	GATE(MCLK_SPDIF1, "mclk_spdif1", "clk_spdif1", CLK_SET_RATE_PARENT,
+ 			RK3588_CLKGATE_CON(9), 5, GFLAGS),
+ 
+ 	COMPOSITE(ACLK_AV1_ROOT, "aclk_av1_root", gpll_cpll_aupll_p, 0,
+@@ -1868,9 +1868,9 @@ static struct rockchip_clk_branch rk3588_early_clk_branches[] __initdata = {
+ 			RK3588_CLKSEL_CON(123), 0,
+ 			RK3588_CLKGATE_CON(57), 4, GFLAGS,
+ 			&rk3588_spdif2_dp0_fracmux),
+-	GATE(MCLK_SPDIF2_DP0, "mclk_spdif2_dp0", "clk_spdif2_dp0", 0,
++	GATE(MCLK_SPDIF2_DP0, "mclk_spdif2_dp0", "clk_spdif2_dp0", CLK_SET_RATE_PARENT,
+ 			RK3588_CLKGATE_CON(57), 5, GFLAGS),
+-	GATE(MCLK_SPDIF2, "mclk_spdif2", "clk_spdif2_dp0", 0,
++	GATE(MCLK_SPDIF2, "mclk_spdif2", "clk_spdif2_dp0", CLK_SET_RATE_PARENT,
+ 			RK3588_CLKGATE_CON(57), 6, GFLAGS),
+ 	COMPOSITE(CLK_SPDIF5_DP1_SRC, "clk_spdif5_dp1_src", gpll_aupll_p, 0,
+ 			RK3588_CLKSEL_CON(124), 7, 1, MFLAGS, 2, 5, DFLAGS,
+@@ -1880,9 +1880,9 @@ static struct rockchip_clk_branch rk3588_early_clk_branches[] __initdata = {
+ 			RK3588_CLKSEL_CON(125), 0,
+ 			RK3588_CLKGATE_CON(57), 9, GFLAGS,
+ 			&rk3588_spdif5_dp1_fracmux),
+-	GATE(MCLK_SPDIF5_DP1, "mclk_spdif5_dp1", "clk_spdif5_dp1", 0,
++	GATE(MCLK_SPDIF5_DP1, "mclk_spdif5_dp1", "clk_spdif5_dp1", CLK_SET_RATE_PARENT,
+ 			RK3588_CLKGATE_CON(57), 10, GFLAGS),
+-	GATE(MCLK_SPDIF5, "mclk_spdif5", "clk_spdif5_dp1", 0,
++	GATE(MCLK_SPDIF5, "mclk_spdif5", "clk_spdif5_dp1", CLK_SET_RATE_PARENT,
+ 			RK3588_CLKGATE_CON(57), 11, GFLAGS),
+ 	COMPOSITE_NOMUX(CLK_AUX16M_0, "clk_aux16m_0", "gpll", 0,
+ 			RK3588_CLKSEL_CON(117), 0, 8, DFLAGS,
+@@ -2059,7 +2059,7 @@ static struct rockchip_clk_branch rk3588_early_clk_branches[] __initdata = {
+ 			RK3588_CLKSEL_CON(149), 0,
+ 			RK3588_CLKGATE_CON(63), 6, GFLAGS,
+ 			&rk3588_spdif3_fracmux),
+-	GATE(MCLK_SPDIF3, "mclk_spdif3", "clk_spdif3", 0,
++	GATE(MCLK_SPDIF3, "mclk_spdif3", "clk_spdif3", CLK_SET_RATE_PARENT,
+ 			RK3588_CLKGATE_CON(63), 7, GFLAGS),
+ 	COMPOSITE(CLK_SPDIF4_SRC, "clk_spdif4_src", gpll_aupll_p, 0,
+ 			RK3588_CLKSEL_CON(150), 7, 1, MFLAGS, 2, 5, DFLAGS,
+@@ -2069,7 +2069,7 @@ static struct rockchip_clk_branch rk3588_early_clk_branches[] __initdata = {
+ 			RK3588_CLKSEL_CON(151), 0,
+ 			RK3588_CLKGATE_CON(63), 10, GFLAGS,
+ 			&rk3588_spdif4_fracmux),
+-	GATE(MCLK_SPDIF4, "mclk_spdif4", "clk_spdif4", 0,
++	GATE(MCLK_SPDIF4, "mclk_spdif4", "clk_spdif4", CLK_SET_RATE_PARENT,
+ 			RK3588_CLKGATE_CON(63), 11, GFLAGS),
+ 	COMPOSITE(MCLK_SPDIFRX0, "mclk_spdifrx0", gpll_cpll_aupll_p, 0,
+ 			RK3588_CLKSEL_CON(152), 7, 2, MFLAGS, 2, 5, DFLAGS,
+-- 
+2.34.1
+
