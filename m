@@ -1,120 +1,162 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B16E238F249;
-	Thu, 20 Aug 2026 18:53:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 912D53803E1
+	for <linux-clk@vger.kernel.org>; Thu, 20 Aug 2026 21:47:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787252027; cv=none; b=rm7Y4DjqnrpWt9GUtIvdRHQaPVonpJ+zG1Vjb3ghE0X6tnhU9AbmoNAerSEmLQiBdIRBWoPRDDlhw27K0MoTFC8xE5KBv80H4PhCxDODpVdJEiKRudWlfMzBKrNNdexoYlHY++pQ1bXD7nRvMkekhRJiuofMCDHxt92aPnFj+EE=
+	t=1787262449; cv=none; b=F/nwDrzoF2dywz8MAwGkFaRI2DB9RsHPfhoqStjTh70ATtiWFAaqaRivyRkvc02wjb4ScLXDeavUS9lO6oJTPUugOIGiTEEg40a+7JVKucClo0jLHD7f7ETU8M2P9y7TNCvmTX5rAgsTIbP3lFXEpomnn6kJKtdWKq/leO8NS9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787252027; c=relaxed/simple;
-	bh=T4O6Ytd+oVjquoKgE7hf+vP7Dh6bPlJfF2fa2COS54M=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Dj9GnINFDRy68XUdR0/ezzELKPAO8zGln/jeXz+fUurkZ9G/QEV3q3qjhW9a19vtGVaohkNi6EBtsC1RE46OaE/NKSQslWqfg7lnGrn7RnTeTIVr0JkxffDXtc5VndEr2+WKtlPE1Mnpw/eQF0pCNvNQ7+w6M7Im2x5Ad4VErOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H0NP1aHU; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1787262449; c=relaxed/simple;
+	bh=JhG4NqL6xdCiPKoBwOJleJchuXI/zA+DtNmBh2rXsdU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qNlZjfKvnHmTzgZ3mMeKpRc63Ml1C37eDIEss60elGF9Ijy/PdGV7E6RHA7SUrbSK4zbyZ9WKai1hLRbBLR1q6rCtdu5tmgfUItGk7g2tYz6ieQG8KreqsP51LvukUkyzbVkWDu+1QazABbqBQEebk9biVfRBCDbtNd7LhG31f4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R8X0U5iT; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H0NP1aHU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 490B21F000E9;
-	Thu, 20 Aug 2026 18:53:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787252026;
-	bh=j4+HEzu84tHiUAZOxRhDjFI/ug5GzBnvn/WLzOcpkyY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=H0NP1aHU1Kw2CsPh2H8BLbi6yqq5B182IUlX89TgqPSaIxveE5Jr3xi/Qcs3m7Xbd
-	 Y/befz+dDSuMEw7cndcbClLTwxPwc7YMS+Vi8jIm9FtAqL3cw54XFz7L5DBWi3jfUE
-	 VrLuxAHW68PsF4lFUW7glviay0Vqno/Hsk28QJhgmyIzPusNpwE7QnGXQ1kXqITIZd
-	 OpolHzWzmiPZELFdVHuOc73iCDT/vmumH2CHy4zYLFJtx5hsqWVO+H6JB998UjdRTA
-	 Og3YldTWRaRSDHc7iJubIDoaPP5HJp+E6InQYoqeywDSj3o7EzcgG1aOAPxnFpFT5g
-	 dA666zqlo005A==
-From: Mark Brown <broonie@kernel.org>
-To: Tero Kristo <kristo@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
- Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, 
- Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>, 
- Nuno Sa <nuno.sa@analog.com>, Guenter Roeck <linux@roeck-us.net>, 
- Michael Hennerich <Michael.Hennerich@analog.com>, 
- Antoniu Miclaus <antoniu.miclaus@analog.com>, 
- Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
- Andy Shevchenko <andy@kernel.org>, Sunny Luo <sunny.luo@amlogic.com>, 
- Xianwei Zhao <xianwei.zhao@amlogic.com>, Kees Cook <kees@kernel.org>, 
- Kevin Hilman <khilman@baylibre.com>, 
- Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>, 
- Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-hwmon@vger.kernel.org, linux@analog.com, linux-iio@vger.kernel.org, 
- linux-amlogic@lists.infradead.org, linux-spi@vger.kernel.org, 
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <cover.1787165329.git.geert+renesas@glider.be>
-References: <cover.1787165329.git.geert+renesas@glider.be>
-Subject: Re: (subset) [PATCH treewide 0/5] clk: Make sure clk_init_data is
- fully initialized (part 1)
-Message-Id: <178722791204.89147.8075686338925258822.b4-ty@b4>
-Date: Thu, 20 Aug 2026 13:11:52 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R8X0U5iT"
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-69fc9f25118so465635a12.2
+        for <linux-clk@vger.kernel.org>; Thu, 20 Aug 2026 14:47:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1787262446; x=1787867246; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=S5ocIiFd6KFZwrrDp1pILTG65RoVNAY9CNuzSL/XjFc=;
+        b=R8X0U5iTyj4YLJNTjwomSzEa8h/d3k39WKeb2xK+Nd3vlxRrfoM0l8A0W1YXtxlHjw
+         bcK6UgBFuqojx+2ANek3YDsKBZT6nDEpXhjNYr+iE6C0HsYQ+Blxj58qHd28+e9iZVb3
+         ZYgqJxNO4aqmaFsUE9javw8AcoyFJjN/2NJzOxViBJ9nuhjFoxNjpTnE1kyCGT7VQQVi
+         8Ua3cz2dmLwDKbb4joBl0TU0uUsIZKXKaYoS8qsHUf7/NFDkcigXjEZ/XvyU30VhF4RQ
+         bcvFDgpToid0bArLMAxri0QNAR5rk1Rx5diIJvUXDoW1fQJ8jjEBknYY6jX/Tky0zJSH
+         ij1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787262446; x=1787867246;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=S5ocIiFd6KFZwrrDp1pILTG65RoVNAY9CNuzSL/XjFc=;
+        b=clAaXsS03HhEJ6UGAMKI0+bIeqYwoj9eR7ECDzJD3EarrafXT1+XPvFbmM9AizE/ee
+         bHhXt3ryHr1rP41a058jMV7SHjV6pVMjD2fKQ5xgsBWS5p6LTHiOUvxBN45rrxCW20nv
+         7EMAWBxNFbFF+1+d5hTIGMU6g7z3UfjPBJeUhjdLkhCBjzO2OSbyVIY6/2+CFQHgwLkp
+         MkJn6wezgNj56jEnB6BJLJwLJvdwgRYJHxOa+X+uGoPL99oDWH2LnRupFWvV4WIBCJgX
+         GTJMy6Lt4avfRlbmP86PKTNBQd9hq8+gX1iWiAHGIglVQp4ror5M81AlPWBurQcLdOn2
+         7JDg==
+X-Forwarded-Encrypted: i=1; AHgh+Rp8U1gmwis+V0g6uCiBZ9TuslQvqvSGt2zzPEzLtWwV/CMigVjzSUUxJMls8Un7qjLw0nIrwCiHiXw=@vger.kernel.org
+X-Gm-Message-State: AFuF++nMguznkWIhlRuT+T9qasVDiZyrsbVUiqymZP7n4WuPuDgW8qaM
+	RSEUI9LI2n5wOBZCE/pcBVBwmUq1Fmaq9pqrK730KvRiF1TA54m4qCnq
+X-Gm-Gg: AR+sD121ZLnbG3KpBpdSUPjrUwIDxlb3mwzfcukr1Ne1osy9C0v268c9+AR4fV1u/KL
+	WZteHqFyKe4mNuAZ7ECUF5EWmVbDFg8ryYDMrQa9eGQVQh9uapwH+BdEVtuIWXuAil735I1i3ci
+	FrsAdESTnqnL8gWo2TpeggFjIgijNC8n7HARBgSbFh+cOUO4qLJv6kXCi1d3o0Wy+k2agbvHJ53
+	bp+eAialrKoZmpO1rxGx1ynsZSPcAEpW8VoKYPHZcbDzBaSVFnBt32kSUuvrGQDeaw22H4vmxOk
+	q0LwawI3n+YmXoq8PleLDX+qx8f1Y++qFNc1vHEJOVoEuyrivfVRzBEZkdjhC0+f1x2Ta3IgXJ2
+	n4a9cJq1CTWM18Jsv+tYsHnLAfXe9eQD3MS/UvIWtrRVnSN3ZMmeqsrYsqWUuzhXtByi13GUH1f
+	HysB27at4PB5Xj8aEfLR+sGd8UZIhxceem43sgSaKGK/7YSChR5l5Hesez8vFiLmKqe8RYwv3RN
+	fAWTPLP7AQJoBsPhRxop1/pXHGWfF1rrO4ErZtT/L2qHW11r+WpDo8nGw==
+X-Received: by 2002:a05:6402:24c8:b0:6a3:f4fe:9d5f with SMTP id 4fb4d7f45d1cf-6a42f1a34e6mr1355647a12.11.1787262445589;
+        Thu, 20 Aug 2026 14:47:25 -0700 (PDT)
+Received: from GOLDENAXE.office-radnicka.localarea.network (c82-214-103-74.loc.akton.net. [82.214.103.74])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6a3ff1563c5sm3288724a12.14.2026.08.20.14.47.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Aug 2026 14:47:25 -0700 (PDT)
+From: Bruno Banelli <bbanelli@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Ben Peled <bpeled@marvell.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Bruno Banelli <bbanelli@gmail.com>
+Subject: [PATCH] clk: mvebu: ap806: fix legacy binding failing to probe
+Date: Thu, 20 Aug 2026 23:47:21 +0200
+Message-ID: <20260820214721.11879-1-bbanelli@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.17-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1882; i=broonie@kernel.org;
- h=from:subject:message-id; bh=T4O6Ytd+oVjquoKgE7hf+vP7Dh6bPlJfF2fa2COS54M=;
- b=owEBbAGT/pANAwAKASTWi3JdVIfQAcsmYgBqh00yfuqNALH6N3AXS+G0HCah2fOyCOhjzME7f
- KNnVXeAwAOJATIEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaodNMgAKCRAk1otyXVSH
- 0AShB/dhLJEEeXKrFQP9gPrIolmzi20NN0M7zC8KH9y3aa0HDRIJ7TvS+Mlng+fdUJET/6Z7YdN
- WwL1wHIjh3EU33JMDcZr5roVJlS2GMOtkapj/U0/KKGaNeIjzv4dfTSJHfNsGJzAEbsAl1DJOG2
- EL9hRt5A6Bm6qkLavFafXoAOgXgTNPvroZfhwTUzkSICx+buDnmQ0FulKgO8h9wYKRMOsrRfyLO
- 0vz7DyM9o2N/dZFZc+ioL0Zr6TqUFedhtZO+ICe+0AauztCGPgGqinrzsgRgm+I8INFJZoPOmt3
- Ua3StNsCFMpgq0hNzFgNCUVp74ea+Y3GiTcnrWUWzMbP5B8=
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Transfer-Encoding: 8bit
 
-On Wed, 19 Aug 2026 21:05:14 +0200, Geert Uytterhoeven wrote:
-> clk: Make sure clk_init_data is fully initialized (part 1)
-> 
-> 	Hi all,
-> 
-> The clk_init_data structure contains three mutually-exclusive members
-> for different methods to specify the possible parents of a clock,
-> prompting drivers to initialize only the members they need.  When commit
-> fc0c209c147f35ed ("clk: Allow parents to be specified without string
-> names") added the last two methods, this was done in a
-> backwards-compatible way, using a priority-based scheme:
->   - .name, .ops, .num_parents, and .flags must always be initialized,
->   - if .num_parents is non-zero, .parent_names must be initialized,
->       - if .parent_names is NULL, .parent_data must be initialized,
-> 	  - if .parent_data is NULL, .parent_hws must be initialized
-> 	    and valid.
-> 
-> [...]
+Commit be69e55df9af ("clk: mvebu: ap806: Prepare the introduction of
+AP807 clock support") factored the probe path into
+ap806_syscon_common_probe() and added a test that picks the Sample at
+Reset decoding table from the device node's compatible string:
 
-Applied to
+	if (of_device_is_compatible(pdev->dev.of_node,
+				    "marvell,ap806-clock")) {
+		ret = ap806_get_sar_clocks(freq_mode, &cpuclk_freq, &dclk_freq);
+	} else if (of_device_is_compatible(pdev->dev.of_node,
+					   "marvell,ap807-clock")) {
+		ret = ap807_get_sar_clocks(freq_mode, &cpuclk_freq, &dclk_freq);
+	} else {
+		dev_err(dev, "compatible not supported\n");
+		return -EINVAL;
+	}
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-7.3
+That is correct for the current binding, where the clock node carries
+"marvell,ap806-clock" or "marvell,ap807-clock".  It is however also
+reached from ap806_syscon_legacy_probe(), whose device node carries
+"marvell,ap806-system-controller" and "syscon" - neither of the two
+compatibles being tested for.  The legacy path therefore prints its
+three deprecation warnings and then fails unconditionally:
 
-Thanks!
+  marvell-ap806-system-controller f06f4000.system-controller:
+    [Firmware Warn]: Using legacy device tree binding
+    [Firmware Warn]: Update your device tree:
+    [Firmware Warn]: This binding won't be supported in future kernel
+    compatible not supported
+    probe with driver marvell-ap806-system-controller failed, error -22
 
-[5/5] spi: amlogic-spisg: Make sure clk_init_data is fully initialized
-      https://git.kernel.org/broonie/spi/c/b2702908ee23
+The AP806 system controller is the provider of the AP clocks, so no
+clock is registered at all and every consumer defers indefinitely.  On
+an Armada 8040 that includes the console UART:
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+  platform f0512000.serial: deferred probe pending: platform:
+    supplier f06f4000.system-controller not ready
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+which turns the failure into an apparent silent hang once userspace
+starts, rather than a visible probe error.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+Before v5.4, ap806_syscon_common_probe() had no compatible test and went
+straight from reading Sample at Reset to decoding freq_mode, so the
+legacy binding did work.  The commit introducing the test described
+itself as "No functional changes", ap806_syscon_legacy_of_match[] still
+advertises the legacy compatible, and the warnings above state only that
+the binding is deprecated.  The breakage therefore looks unintentional.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+Accept the legacy compatible in the AP806 branch so that the legacy
+binding works again as it did before v5.4, keeping the deprecation
+warnings intact.
 
-Thanks,
-Mark
+Fixes: be69e55df9af ("clk: mvebu: ap806: Prepare the introduction of AP807 clock support")
+Signed-off-by: Bruno Banelli <bbanelli@gmail.com>
+---
+ drivers/clk/mvebu/ap806-system-controller.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
+Found while booting mainline Linux with U-Boot's control FDT on a
+SolidRun MACCHIATObin (Armada 8040). U-Boot's arch/arm/dts/armada-ap80x.dtsi
+still uses the legacy binding, so any board booting Linux via U-Boot's EFI
+handover with the firmware-supplied FDT hits this.
+
+diff --git a/drivers/clk/mvebu/ap806-system-controller.c b/drivers/clk/mvebu/ap806-system-controller.c
+index 948bd1e71aea..332e7c21ea07 100644
+--- a/drivers/clk/mvebu/ap806-system-controller.c
++++ b/drivers/clk/mvebu/ap806-system-controller.c
+@@ -152,7 +152,9 @@ static int ap806_syscon_common_probe(struct platform_device *pdev,
+ 	freq_mode = reg & AP806_SAR_CLKFREQ_MODE_MASK;
+ 
+ 	if (of_device_is_compatible(pdev->dev.of_node,
+-				    "marvell,ap806-clock")) {
++				    "marvell,ap806-clock") ||
++	    of_device_is_compatible(pdev->dev.of_node,
++				    "marvell,ap806-system-controller")) {
+ 		ret = ap806_get_sar_clocks(freq_mode, &cpuclk_freq, &dclk_freq);
+ 	} else if (of_device_is_compatible(pdev->dev.of_node,
+ 					   "marvell,ap807-clock")) {
+-- 
+2.43.0
