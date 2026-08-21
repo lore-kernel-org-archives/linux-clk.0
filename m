@@ -1,44 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC2ED3B27CF
-	for <linux-clk@vger.kernel.org>; Fri, 21 Aug 2026 10:15:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73C8F476CCA;
+	Fri, 21 Aug 2026 10:16:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787307338; cv=none; b=f5tmTwknPD+M/UVdf+mXcfLnqZkZue3Ftp6b+iPkvSbIT6flXuAeRLAyumc+dqqApkL5AJwbvIGKwrpfFIp9A8KawyCoeLIY5EZUtqxJxR5dJTG1rGyFniH7XFnb9XxeBUdGF/aNtMN3y1YnlL0FTZ7KCB+hGJQjj/VU9a52s5c=
+	t=1787307425; cv=none; b=ezvK5B4hmPYe0Esc7pRO0jnbiNpHeWHy2nv/DbV/u9yT6l0hRlu8b+9Gxz/DYdItYdaE2y2OCBpkqDzfxBo+ENNmh9CwPily9XxLn1I4QiLFFUsMMAdjz7xorHJ2gGuGR5WlRhuun3WAYVUCMt7T/4KqVHCIQjNE8clYtRLXsjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787307338; c=relaxed/simple;
-	bh=0/FgIDgcy/xmMQuyW4fs4iM4Mci3MBSDhxcs3Zlaqhs=;
+	s=arc-20240116; t=1787307425; c=relaxed/simple;
+	bh=DKRXayLpP+jU/vG4d/cxT3/634d04+sC7uDEfldQACk=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=DmVhCryMsmtbBCRpaZMqfspnFfaO0YFW7CE0V959m4LvnWQWandNS874fa0/6Mo/TuoGjb6AOccX1oXsK+VJrjSHGKAVCuNALXtCsBRPggJXV58ELqGDoH6whvDYm5+arBNhYSLkdqnH88Ptkd9L9dh552VOYoiyJhMJA4n5JZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JZcgXIAI; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=j4ujHqpCzfLcT6qohIwrgnYzsG8g+mSK3F8+03nM47+NH9x1jCOVP4JdwftBFDQ3zYsDUUb7DVs3uQ6pAbQfxo5Boc9Ac2nCmvAhfoVqUAiR8IRO60wCMsjss/wpW6hDY36YZBX/4I2V4X/s4IlM8kmTVE57A2HwHqyIv0pPnSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EJZx8H9m; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JZcgXIAI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D01291F000E9;
-	Fri, 21 Aug 2026 10:15:23 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EJZx8H9m"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03E591F000E9;
+	Fri, 21 Aug 2026 10:16:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787307324;
-	bh=1782I0SVlKTMUnzkgO7tYHy1NNV0f8J3mXNegURaqj4=;
+	s=k20260515; t=1787307415;
+	bh=S3X67Gsmco8iToK1+9zpnq9MW7luK9kPCYK6ZvJhTnk=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=JZcgXIAInZ7sB2W1n2pC4rTkaKpn0WAPCuujF09nICG1Xt/uEXH1PpnxvRssLq/3I
-	 jABxepZfBuYcjHdaWYMxxJkSJlXMV8O6teGF9dusxwIG12KVs5cgiiQyuf/224p8kk
-	 WYb3NodbH+QXpvphKw62kUzT7pTpCiD9NJ3SsT3wl4GZPxPXiCPk8iqmvjWdBc6pxS
-	 zpgBBP+2cPx/3AWOFRXp8fTO7wRQY9QT2XPM7niWtK9B6+vDxelDPxlEo+F6JIGiNp
-	 XdjJS0cWQamwCcqrfRRm1qa0otyP0zxqrgpMKcve17MNL4HHJ6fBVIw4Ncp4KTOc6k
-	 vE7f41Y8yrc+Q==
+	b=EJZx8H9m5D4tjV1Yev1vTzsLDBJHLiMrEKekJM2v1MP0RgLYlNZyctXClNFPKLt+y
+	 txpb/j7b0J+DwdYa6+QPsrG9GWzQQebdOxLxE1RtdXVyk30ULzzNpwk51ZCmJInFMj
+	 7FNpBFvyPWqJT4DitoQeriStfnmWTZSa9EpY3yxi1xCPQMLsXWE7ZJlaPxzJ34mSO/
+	 Ns7VXTEzgBQMOJ/RvxjVDKGyaox0itdXUgk6iX+nJLUbIBqGk9C37ftGGQMwNvHZyj
+	 ndwAFFHW+yRGYm9Qz2wEeLOZJzExVisSaYuIkX2Ig68I2tMktgSR0/YdExty1Fy3G5
+	 b8+mgHiODN5hQ==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 2/2] mmc: sdhci-of-arasan: Make sure clk_init_data is
- fully initialized
+Subject: Re: [PATCH 1/5] rtc: hym8563: Make sure clk_init_data is fully
+ initialized
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Geert Uytterhoeven" <geert+renesas@glider.be>
-Cc: linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org, neil.armstrong@linaro.org
-In-Reply-To: <0235d3a3d5b71a125eeff6d7be25ddaec80ce539.1787240090.git.geert+renesas@glider.be>
-References: <cover.1787240090.git.geert+renesas@glider.be>
- <0235d3a3d5b71a125eeff6d7be25ddaec80ce539.1787240090.git.geert+renesas@glider.be>
+Cc: linux-clk@vger.kernel.org, "Alexandre Belloni" <alexandre.belloni@bootlin.com>, linux-rtc@vger.kernel.org
+In-Reply-To: <657f2b3a871074087aee0b7a70bf527ab0f48da8.1787241693.git.geert+renesas@glider.be>
+References: <cover.1787241693.git.geert+renesas@glider.be>
+ <657f2b3a871074087aee0b7a70bf527ab0f48da8.1787241693.git.geert+renesas@glider.be>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 21 Aug 2026 10:15:23 +0000
-Message-Id: <20260821101523.D01291F000E9@smtp.kernel.org>
+Date: Fri, 21 Aug 2026 10:16:54 +0000
+Message-Id: <20260821101655.03E591F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -49,85 +49,75 @@ Thank you for your contribution! Sashiko AI review found 2 potential issue(=
 s) to consider:
 
 Pre-existing issues:
-- [High] Another driver in the same subsystem (meson-mx-sdio.c) suffers fro=
-m the exact same uninitialized struct clk_init_data issue that this patch f=
-ixes.
-- [High] The driver registers multiple clock providers for the same device =
-node but only deletes one on teardown, leading to a leaked provider struct,=
- a leaked device node reference, and a dangling UAF pointer in the global c=
-lock providers list.
+- [High] Use-after-free and resource leak on driver unbind or probe failure.
+- [High] RTC alarm interrupts are acknowledged but not reported to the RTC =
+subsystem, breaking alarm functionality.
 --
 
---- Patch [2]: [PATCH 2/2] mmc: sdhci-of-arasan: Make sure clk_init_data is=
- fully initialized ---
-commit 34a49f083df630f25a24052b358249a2c48b6055
+--- Patch [1]: [PATCH 1/5] rtc: hym8563: Make sure clk_init_data is fully i=
+nitialized ---
+commit 706406627c1866b58ba6ad7ce0c506c6e63d88ad
 Author: Geert Uytterhoeven <geert+renesas@glider.be>
 
-mmc: sdhci-of-arasan: Make sure clk_init_data is fully initialized
+rtc: hym8563: Make sure clk_init_data is fully initialized
 
-The clk_init_data structure contains mutually-exclusive members for
-specifying clock parents. Uninitialized members can cause issues exposed by
-certain stack initialization configs. This commit zeroes the struct to prev=
-ent
-bugs and future breakage.
+The clk_init_data structure contains several mutually-exclusive members
+for different methods to specify the possible parents of a clock. This
+commit ensures all members are fully initialized to avoid subtle issues
+with uninitialized stack memory.
 
-[Severity: High]
-This isn't a bug introduced by this patch, but I noticed another driver in
-the same subsystem suffers from the exact same uninitialized struct
-clk_init_data issue that this patch fixes.
-
-In drivers/mmc/host/meson-mx-sdio.c:meson_mx_mmc_register_clks():
-
-	struct clk_init_data init;
-	...
-	init.name =3D devm_kasprintf(host->controller->parent, ...);
-	init.ops =3D &meson_mx_mmc_cfg_div_ops;
-	init.flags =3D 0;
-	...
-
-Does this also need zero-initialization to avoid leaving fields like
-parent_data and parent_hws as stack garbage, which could lead to memory
-corruption during device probe?
-
-> diff --git a/drivers/mmc/host/sdhci-of-arasan.c b/drivers/mmc/host/sdhci-=
-of-arasan.c
-> index 0a4b4696bc01c..aec617aa8e0ca 100644
-> --- a/drivers/mmc/host/sdhci-of-arasan.c
-> +++ b/drivers/mmc/host/sdhci-of-arasan.c
-[ ... ]
-> @@ -1638,8 +1638,8 @@ sdhci_arasan_register_sampleclk(struct sdhci_arasan=
-_data *sdhci_arasan,
->  				struct device *dev)
+> diff --git a/drivers/rtc/rtc-hym8563.c b/drivers/rtc/rtc-hym8563.c
+> index 3156aa5f2d9ff..1d52cc3def02e 100644
+> --- a/drivers/rtc/rtc-hym8563.c
+> +++ b/drivers/rtc/rtc-hym8563.c
+> @@ -376,8 +376,8 @@ static struct clk *hym8563_clkout_register_clk(struct=
+ hym8563 *hym8563)
 >  {
->  	struct sdhci_arasan_clk_data *clk_data =3D &sdhci_arasan->clk_data;
-> +	struct clk_init_data sampleclk_init =3D {};
->  	struct device_node *np =3D dev->of_node;
+>  	struct i2c_client *client =3D hym8563->client;
+>  	struct device_node *node =3D client->dev.of_node;
+> +	struct clk_init_data init =3D {};
+>  	struct clk *clk;
+> -	struct clk_init_data init;
+>  	int ret;
+> =20
+>  	ret =3D i2c_smbus_write_byte_data(client, HYM8563_CLKOUT,
 
 [Severity: High]
-This is a pre-existing issue, but I noticed a potential leak and dangling
-pointer hazard when tearing down these clock providers.
+This isn't a bug introduced by this patch, but could there be a
+use-after-free if devm_rtc_register_device() fails or if the driver is
+unbound?
 
-If #clock-cells > 0, this driver registers both the sdcardclk and sampleclk
-providers for the same dev->of_node via of_clk_add_provider().
+Looking at hym8563_clkout_register_clk(), it registers an unmanaged clock
+and an OF clock provider using clk_register() and of_clk_add_provider().
+However, the hym8563 structure containing the clkout_hw is allocated via
+devm_kzalloc().
 
-During unbind, sdhci_arasan_unregister_sdclk() calls:
+If devm_rtc_register_device() fails in hym8563_probe(), or if the driver
+is later unbound (there is no .remove callback in hym8563_driver), the
+devres framework will free the hym8563 structure. Because the clock is
+never unregistered, the clock framework will retain a pointer to the
+freed clkout_hw, leading to a crash if the clock is accessed later.
 
-	of_clk_del_provider(dev->of_node);
+Should this use devm_clk_register() and devm_of_clk_add_hw_provider(), or
+provide a .remove callback to clean up the clock and OF provider?
 
-Since of_clk_del_provider() stops after deleting the first matching provider
-it finds (which would be sampleclk), does this leave the sdcardclk provider
-on the global list?=20
+[Severity: High]
+This is a pre-existing issue, but does the interrupt handler fail to
+notify the RTC core of alarm events?
 
-When the underlying clock is freed by devm, any subsequent DT lookup on this
-node might fetch the dangling provider and return a freed struct clk pointe=
-r.
-Could we be leaking a provider and device node reference here?
+In hym8563_irq(), the handler reads and clears the hardware alarm flag
+(HYM8563_CTL2_AF) to acknowledge the interrupt at the hardware level, but
+it then exits like this:
 
-> -	struct clk_init_data sampleclk_init;
->  	const char *parent_clk_name;
->  	int ret;
->
+out:
+        rtc_unlock(hym8563->rtc);
+        return IRQ_HANDLED;
+}
+
+It appears to never call rtc_update_irq(). Doesn't this mean rtc->irq_queue
+is never woken up, causing any userspace process waiting for the alarm via
+select(), poll(), or timerfd to stall indefinitely?
 
 --=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/cover.1787240090.gi=
-t.geert+renesas@glider.be?part=3D2
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/cover.1787241693.gi=
+t.geert+renesas@glider.be?part=3D1
