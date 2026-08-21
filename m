@@ -1,191 +1,123 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 939813A782A
-	for <linux-clk@vger.kernel.org>; Fri, 21 Aug 2026 11:29:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49F5C47798C
+	for <linux-clk@vger.kernel.org>; Fri, 21 Aug 2026 11:36:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787311754; cv=none; b=TDzrkDXRjH5ofywAhxv4T0l/CARsFYh6HdjI8ccrDEJ2IOYBCTQWuvzUhNagmpoB01X3wA90UKmbE/+HOPKDz1ojXcBCh4MT7RxyBRUSyRRMJN9Lk+8K7r3hitNpCorEOpzSrhpER53GM96R8kCIkw5blncb92y+whby1kqO+9I=
+	t=1787312195; cv=none; b=lOyF1f1Vn9GahWohk3V7IpEK02BMasTXMr5Y6onRTV9oth0jG4IBMl5jgxchnN13cVMx27NyVNvluSE/+6j+RB9PdaLJCJnDZXw8WpRTelJuUFtbPOz0vM6eiDcH4g2/IonKqaQTCKD1MIvAQr+apFqFFDJvvaHSe/JfcF0CqBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787311754; c=relaxed/simple;
-	bh=rReboDtVWR+LchIn66VCIiRA4RrsNZEU4pEK04rnFMY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mhO8EFXBHQpSjjWZT5BwsIXQuyoEgTPutUPP4ssFfNZ71/dII0nha71Q3vmK0HmCw1L37b+TMH+jXreWnOA3WdRmnZwnWrJ/HL/IS8YwY2/lK51Fro0RIFj2As4Sld8VqLb1Sa8J7GJe+PdlITuCNND5SZRkZ3XAF7YLvKhkE4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=ht/HgGP6; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="ht/HgGP6"
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1F07C165C
-	for <linux-clk@vger.kernel.org>; Fri, 21 Aug 2026 04:29:08 -0700 (PDT)
-Received: from [192.168.0.1] (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id B792D3F763
-	for <linux-clk@vger.kernel.org>; Fri, 21 Aug 2026 04:29:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1787311752; bh=rReboDtVWR+LchIn66VCIiRA4RrsNZEU4pEK04rnFMY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ht/HgGP6tY+jFM8dAefZjizdbMrZ0IVdfeUoD3z6pSBY0+3fNPkjvR+wpDu56hkNK
-	 p9rFxICj2xrbWhgqIznXi9vfC+xsw9416b7Mxpc6zP8im76xwQJOI0i6praej/v+y9
-	 U7JHJ1ieu4LJgRRs9YeFiJCF6xyVvuqC2s1Gag7E=
-Date: Fri, 21 Aug 2026 12:28:01 +0100
-From: Liviu Dudau <liviu.dudau@arm.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Ryan Chen <ryan_chen@aspeedtech.com>, Joel Stanley <joel@jms.id.au>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Billy Tsai <billy_tsai@aspeedtech.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Taichi Sugaya <sugaya.taichi@socionext.com>,
-	Takao Orito <orito.takao@socionext.com>,
-	Linus Walleij <linusw@kernel.org>,
-	Avi Fishman <avifishman70@gmail.com>,
-	Tomer Maimon <tmaimon77@gmail.com>,
-	Tali Perry <tali.perry1@gmail.com>,
-	Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>,
-	Benjamin Fair <benjaminfair@google.com>,
-	Sudeep Holla <sudeep.holla@kernel.org>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	David Lechner <david@lechnology.com>,
-	Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Gregory Clement <gregory.clement@bootlin.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Vladimir Zapolskiy <vz@mleia.com>, Heiko Stuebner <heiko@sntech.de>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Dinh Nguyen <dinguyen@kernel.org>,
-	Viresh Kumar <vireshk@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Emilio =?utf-8?B?TMOzcGV6?= <emilio@elopez.com.ar>,
-	Chen-Yu Tsai <wens@kernel.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Ulf Hansson <ulfh@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Michal Simek <michal.simek@amd.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	linux-clk@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	openbmc@lists.ozlabs.org, arm-scmi@vger.kernel.org,
-	imx@lists.linux.dev, linux-mips@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH 40/45] clk: versatile: Make sure clk_init_data is fully
- initialized
-Message-ID: <aog2QXT_86BrtvTs@e142607>
-References: <cover.1787239813.git.geert+renesas@glider.be>
- <7c480e73222bb51982fb82dc0cc6cd503f2e8b92.1787239813.git.geert+renesas@glider.be>
+	s=arc-20240116; t=1787312195; c=relaxed/simple;
+	bh=zTUqexKzRd/ffgVVQLYyFm6wrBTaM5V92oYObJi9TRQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CNqeNc4FEnUsmXDY3SX5GdkiFftjjEFSEAmnEBBwIDRiqTRXJHQs5+u/kYZSIx1r48UGrWALSWFsXAL3NOgcXexItAyLHfj2zi6PmJ5ymG6Yz6/BoLLTSbvAHGR76GqEDWdPQEaKTHd/4p9FCePTXc4S3aQQh5TjGx52261Q1fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-5c56dbc3a51so323897e0c.0
+        for <linux-clk@vger.kernel.org>; Fri, 21 Aug 2026 04:36:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787312192; x=1787916992;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=ec+NopWifWei3xhy94Jsaew2jyivOXpRYVcmATiWbTA=;
+        b=Z9yAutyvU2ody79o5vBI0cdfY+IMdOIHneL3SIFKFL0xdmMhsbUXHvSyuuDMuJnIKz
+         xXCk4nWX9n3cVGSOdYBduak5WPRdIvZm/BJ8StSCFEIWK9W0pPWfqhjQsHR8llwq0H7R
+         u3jTAsQCmHMsYD5E8E1dTYfkhf3nm4iHL3JjfniWYxeUC0avkGIbbz1u3kEM6wn/aGbt
+         ecym52okP6EP/a6dBYF73qmtDW7YaxQsVvquaMGJg12vR5gm75Z2UROoJCuIPPH7Buas
+         v4GnofZYnHscIu/c+KzyTZtIOQkKS7mjjfq8wZR4iN4HqCxpaDWW8p156Yy1yskCE4MT
+         a5fA==
+X-Forwarded-Encrypted: i=1; AHgh+RqpSvOb76jfCfl6a8HV9T5woIClItI6zoN8ftpu+KByEC0zTFlUJjh2VV6b77LcganjBH++OtPurpM=@vger.kernel.org
+X-Gm-Message-State: AFuF++khw5hCUHekmAydTrYGWUwGufjpgHkquU5hOlz4As1TCkVwvqA3
+	GTy0BBlUD9yhoy8jgKUVmKBSgQYgoQzTyypdo9J+kFT1YViOmaFbEWTZ3OTQ2q8F
+X-Gm-Gg: AR+sD11ZIjLrjT5wYUFGPKVK1zlLpI9LiNQMMRrheAuot3B34XWXpefOP/RDBRogGil
+	4AJ38hjsBq4CI91q7X3imoli4PvN7O9nvW2WnsKFQP+1r2tXjyo6ZdE36v1dIX+blLX8VEIy45s
+	hQ6yPKou5lP6BBhqv2hAFn740YJ5vRybMKaCAB/ChU/OTZBnYMGUwQsPvsaYmTsue3nwZqRLhCg
+	XMxIwUXBiwk2sTmEqODMeejW2Ogg5ryx1Z4b0vBDod5PgQv/p5fPzcc7pG2ozzgcpESyS8Ye4am
+	9KLg3X7DrHBdUm4YrajP4BQ2fEPGFBGmy8iCJfXneXD0Ybo0zInwNbw2o9HX0g38ZQKatbgOqh8
+	foQmFi0t8AMaz/S/AX47ssCLdY4C0Sg+gParNuzSaaER1DHqIAKaFvEYO04NsxuV0AHKIACAzNE
+	528kT6BpF3bEeztBMB9fPhdU6x0O/blmh37k7F9Lu+Gbt60U63OXiKNsAWJo6XejJw0nwmpxGs2
+	G4+Xgw0Rndg3SdToEnOcGzpnxZrrw==
+X-Received: by 2002:a05:6122:1798:b0:5c5:732c:f4f5 with SMTP id 71dfb90a1353d-5c5ff866132mr2035932e0c.8.1787312192211;
+        Fri, 21 Aug 2026 04:36:32 -0700 (PDT)
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com. [209.85.221.169])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c5e276d7ebsm8463687e0c.10.2026.08.21.04.36.30
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Aug 2026 04:36:30 -0700 (PDT)
+Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-5bf9466867cso369549e0c.2
+        for <linux-clk@vger.kernel.org>; Fri, 21 Aug 2026 04:36:30 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RousbPqrlPbLtOZ69rgRHDOlgEe94CD6zqAjvB5zFYDR01ny6tRC2Zqf/L6a+lMOzP6KisN/Qzzsf0=@vger.kernel.org
+X-Received: by 2002:a05:6122:1798:b0:5c5:732c:f4f5 with SMTP id
+ 71dfb90a1353d-5c5ff866132mr2035837e0c.8.1787312190118; Fri, 21 Aug 2026
+ 04:36:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7c480e73222bb51982fb82dc0cc6cd503f2e8b92.1787239813.git.geert+renesas@glider.be>
+References: <cover.1787240090.git.geert+renesas@glider.be> <5d066598-7aff-4912-89c6-23761fdccc7b@amd.com>
+In-Reply-To: <5d066598-7aff-4912-89c6-23761fdccc7b@amd.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 21 Aug 2026 13:36:18 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXSwx36pDJ0kW=CvQztFx53OvcdfMTpv1h2H6J3z2+Wfg@mail.gmail.com>
+X-Gm-Features: AcwNN1Vx5LhEzAerkbLpsNS7FWTQ-s_Hejhf3XNTw2-87OEOYM9RyiJaA3RAFBU
+Message-ID: <CAMuHMdXSwx36pDJ0kW=CvQztFx53OvcdfMTpv1h2H6J3z2+Wfg@mail.gmail.com>
+Subject: Re: [PATCH 0/2] mmc: Make sure clk_init_data is fully initialized
+To: Michal Simek <michal.simek@amd.com>
+Cc: Ulf Hansson <ulfh@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+	Adrian Hunter <adrian.hunter@intel.com>, linux-mmc@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
+	linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Aug 21, 2026 at 10:53:50AM +0200, Geert Uytterhoeven wrote:
-> The clk_init_data structure contains several mutually-exclusive members
-> for different methods to specify the possible parents of a clock,
-> prompting drivers to initialize only the members they need.  However,
-> not initializing all members may cause subtle issues, which are only
-> exposed when CONFIG_INIT_STACK_ALL_PATTERN or CONFIG_INIT_STACK_NONE is
-> enabled.
-> 
-> Make sure all members are fully initialized, to avoid such bugs, and to
-> prevent future breakage when converting drivers to a different method
-> for specifying the parents.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Hi Michal,
 
-Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
+On Fri, 21 Aug 2026 at 12:56, Michal Simek <michal.simek@amd.com> wrote:
+> On 8/21/26 12:06, Geert Uytterhoeven wrote:
+> > The clk_init_data structure contains several mutually-exclusive members
+> > for different methods to specify the possible parents of a clock,
+> > prompting drivers to initialize only the members they need.  However,
+> > not initializing all members may cause subtle issues, which are only
+> > exposed when CONFIG_INIT_STACK_ALL_PATTERN or CONFIG_INIT_STACK_NONE is
+> > enabled.
+> >
+> > Hence this series aims to make sure all members are fully initialized,
+> > to avoid such bugs, and to prevent future breakage when converting
+> > drivers to a different method for specifying the parents.
+> >
+> > Part One[1] fixed all cases that I identified to be real bugs, in
+> > response to a crash I saw on BeagleBone Black.
+> >
+> > This series is the MMC subpart of Part Two, which fixes remaining cases
+> > that are currently harmless.  These are still fragile, and may cause
+> > future breakage when converting drivers to a different method for
+> > specifying the parents.
+> >
+> > Thanks for your comments!
+> >
+> > [1] "[PATCH treewide 0/5] clk: Make sure clk_init_data is fully
+> >       initialized (part 1)"
+> >      https://lore.kernel.org/cover.1787165329.git.geert+renesas@glider.be
+> >
+> > Geert Uytterhoeven (2):
+> >    mmc: meson-gx: FIXME: Make sure clk_init_data is fully initialized
+>
+> It looks like a broken series to me.
 
-Best regards,
-Liviu
+Doh, I made a silly mistake while filling in the correct patch prefix...
 
-> ---
-> Compile-tested only.
-> ---
->  drivers/clk/versatile/clk-icst.c         | 2 +-
->  drivers/clk/versatile/clk-sp810.c        | 2 +-
->  drivers/clk/versatile/clk-vexpress-osc.c | 2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/versatile/clk-icst.c b/drivers/clk/versatile/clk-icst.c
-> index 6bd3db54dd229d28..97a1bfd6cf0ed995 100644
-> --- a/drivers/clk/versatile/clk-icst.c
-> +++ b/drivers/clk/versatile/clk-icst.c
-> @@ -360,8 +360,8 @@ struct clk *icst_clk_setup(struct device *dev,
->  {
->  	struct clk *clk;
->  	struct clk_icst *icst;
-> -	struct clk_init_data init;
->  	struct icst_params *pclone;
-> +	struct clk_init_data init = {};
->  
->  	icst = kzalloc_obj(*icst);
->  	if (!icst)
-> diff --git a/drivers/clk/versatile/clk-sp810.c b/drivers/clk/versatile/clk-sp810.c
-> index b0e69686f7a9a93e..28e5c0cf1fda38e4 100644
-> --- a/drivers/clk/versatile/clk-sp810.c
-> +++ b/drivers/clk/versatile/clk-sp810.c
-> @@ -86,7 +86,7 @@ static void __init clk_sp810_of_setup(struct device_node *node)
->  	const char *parent_names[2];
->  	int num = ARRAY_SIZE(parent_names);
->  	char name[12];
-> -	struct clk_init_data init;
-> +	struct clk_init_data init = {};
->  	static int instance;
->  	int i;
->  	bool deprecated;
-> diff --git a/drivers/clk/versatile/clk-vexpress-osc.c b/drivers/clk/versatile/clk-vexpress-osc.c
-> index 9adbf5c33bd1cada..72e872ec6b7c9b47 100644
-> --- a/drivers/clk/versatile/clk-vexpress-osc.c
-> +++ b/drivers/clk/versatile/clk-vexpress-osc.c
-> @@ -64,7 +64,7 @@ static const struct clk_ops vexpress_osc_ops = {
->  
->  static int vexpress_osc_probe(struct platform_device *pdev)
->  {
-> -	struct clk_init_data init;
-> +	struct clk_init_data init = {};
->  	struct vexpress_osc *osc;
->  	u32 range[2];
->  	int ret;
-> -- 
-> 2.43.0
-> 
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
