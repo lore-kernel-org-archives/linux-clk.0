@@ -1,81 +1,102 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18F83341057
-	for <linux-clk@vger.kernel.org>; Fri, 21 Aug 2026 13:41:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4BFA3382E1
+	for <linux-clk@vger.kernel.org>; Fri, 21 Aug 2026 13:42:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787319701; cv=none; b=fnta9v5HphMefkPxbln0UROolOYCoPao4muDkZ6TK123EGHymISPo8Qt4S5VJB1B+LSGUbhDtPJQSTxBFb7pelyx5q5K2Q3Zi+cZyDV9eUCVIzcGEy+3M1Fu8D2bTrNomcFZ8qTVlJSd4YgD8cUdu3rA4fpdr3IeVWWlXueZj1g=
+	t=1787319771; cv=none; b=TAqRBgRNjmWjA1DP+dfKwCxpAFzyTtMJxyjpR2dCpKf6Olt/d+mfy0kal2RGIbPrquwGYgD1BFYFpkDZSCRSIMwkTOdw+I6x0JAySfGPPhjjHcaGz+aFKpFnqHC2m/+3wSMsGDXX1IxYiTXDfIcg38HHFJue0ICov+uBuWzZiUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787319701; c=relaxed/simple;
-	bh=DO25XK4TR1dwxV01IOu3D0FuR8NayJdrvfq6S4O6NX8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UxdNkLRUeDnlvsTSP4i/BgEqBhBz3a6TKfnGVgXDdRLpXghHDxNSDNfhz7+cM712tMmP/vDP1nLpk6yHotxSSUtgdgYIo3W8yE31qyPOziGlSjITajnrg22Eo6s0zDHsWRZEh0Ts0FDXn7fNhxIMtJvRQ/gYnf7KbDSGwFTnQAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fpY13xRB; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1787319771; c=relaxed/simple;
+	bh=OYblkIPvFK3adzhiYE+dB+hoIVTIAB6uHPDQgjSjkgg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ZbWwsgMsGHNxoimiR0aDLYEQiVV2djdbaJOy+NmX4XivKkTiqU1Trxnqr2vXOyok49dGWyYXhfyxIEX1uQrsBfOub7Ngbb9+jWTQtKBpTLA4adAcOw7xBVJeMAqbtPB3O6cZSXGDPbOPPWjSdMUwS5Aw0PlGjk9aOH2/YuAZgiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=1qSkZtn0; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fpY13xRB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 426A41F01559
-	for <linux-clk@vger.kernel.org>; Fri, 21 Aug 2026 13:41:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787319697;
-	bh=savjDRzypaWpuMo2A7Z9mQU2Ay+uV7mKsZsDzwVuIC0=;
-	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc;
-	b=fpY13xRBJmfBoDF0Fi16I++w19fcPtMULYKneBUd0KSJbWscayXh7wqOrDgsaHm8A
-	 rYs0RZEtuNJhV6ieZrtXcsGmNiIxJeCA1Ze5BtW3sxt7MWxAJceR96nKAfoDyvPTM3
-	 hKtYTFI4zUytKB/tdMi46Y+xL3CDqEvevF7eOVHLmVqtp7drDbnzDb7JJrdcAlHQud
-	 PScVVEgzOk78JUCsthSjeVMaZbnybWIuA0c8FxJQ4JaxP9vL7OyaSTIcUiDkpC4amX
-	 31Gj6tzRjS4/x+rnIns9c/H3lMfFms2dSUzuIzSMfXr2MWdCH0RuS0qPBPW8hUWuk0
-	 IxpZ3/UhF8+yg==
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-39ca300db70so10513111fa.2
-        for <linux-clk@vger.kernel.org>; Fri, 21 Aug 2026 06:41:37 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+Roib95susU61hkNoaNOSErT1ZH2yM3mi7w5MYNt+rXiAbpEmnU4SKJ/NCWEkjobHh8MDgZ0eFkgCPs=@vger.kernel.org
-X-Gm-Message-State: AFuF++mSXHZykYTuUZWWDRU6E9SPrUomddEG3DR0RMzRwY8K15dQ4Jl4
-	1zATROIWm9hX7r3MKl+jnojXmqs4GdFXvZdmFdub6MAI0I5SClxjQjC1hgUj9SADsdnlibjg5gp
-	VLjPOv+RhaILMXq5iXmUIrZXX1f7H6Nc=
-X-Received: by 2002:a2e:a554:0:b0:39b:a75:e8da with SMTP id
- 38308e7fff4ca-3a1aeb53dfdmr17313911fa.3.1787319695666; Fri, 21 Aug 2026
- 06:41:35 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="1qSkZtn0"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1787319769; x=1818855769;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=OYblkIPvFK3adzhiYE+dB+hoIVTIAB6uHPDQgjSjkgg=;
+  b=1qSkZtn0fhXUWf756EguSPwW0WKxZXSPiDsmsyXin0RsHS0yF+01Z78q
+   QlmZTG+DiFj/Bme9tNce8jdpT18k2lvvnOWfUwNQvfoDoJk0eQ7vRtzCK
+   F/pXPelwGfcUSJemfNO5QsVUEejgQdknzJqlIOhL7oWu7nx7Yxqqzz0xQ
+   CIXNUFkBg62YmVdhKp6gU9lJsyGiYuhqeTmI39W5EvBn92bQ+XRWzyqaI
+   EofxhjNxJKxeURD0JzdSv2bB6HqOdSRklT0Lba2HYbKxjM6DwX2sILVkp
+   jePGtrvTy3ZuBfWRBGqmUwxlsX1zZmqzu3UkZ9xY6fwdngR22ksrb7lv1
+   g==;
+X-CSE-ConnectionGUID: aCI/hKX0TluHZkJx/PTHRA==
+X-CSE-MsgGUID: ds4opapdQQ2FMWxHsv5ymg==
+X-IronPort-AV: E=Sophos;i="6.25,235,1779174000"; 
+   d="scan'208";a="293855005"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2026 06:42:45 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.87.152) by
+ chn-vm-ex1.mchp-main.com (10.10.87.30) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.2562.45; Fri, 21 Aug 2026 06:42:44 -0700
+Received: from [10.171.248.60] (10.10.85.11) by chn-vm-ex03.mchp-main.com
+ (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
+ Transport; Fri, 21 Aug 2026 06:42:42 -0700
+Message-ID: <3a3823f1-7dcd-474f-bb81-e5175752f649@microchip.com>
+Date: Fri, 21 Aug 2026 15:42:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1787239944.git.geert+renesas@glider.be> <0f37278d04c02461e17f42032a379dccfb773171.1787239944.git.geert+renesas@glider.be>
-In-Reply-To: <0f37278d04c02461e17f42032a379dccfb773171.1787239944.git.geert+renesas@glider.be>
-Reply-To: wens@kernel.org
-From: Chen-Yu Tsai <wens@kernel.org>
-Date: Fri, 21 Aug 2026 21:41:21 +0800
-X-Gmail-Original-Message-ID: <CAGb2v6468b2sH8uiKtdaLM+T4vw2i69SiH4uf6H3iOhvF4aCJw@mail.gmail.com>
-X-Gm-Features: AcwNN1UwlPg8igVRqeTcbGzuXti5pk8Q0JsLEMMpjQ-PubogbpTOAywOmnQUcf0
-Message-ID: <CAGb2v6468b2sH8uiKtdaLM+T4vw2i69SiH4uf6H3iOhvF4aCJw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] drm/sun4i: Make sure clk_init_data is fully initialized
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Thierry Reding <thierry.reding@kernel.org>, Mikko Perttunen <mperttunen@nvidia.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, dri-devel@lists.freedesktop.org, 
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: at91: main: Drop unneeded cast in
+ at91_clk_register_main_osc()
+To: Geert Uytterhoeven <geert+renesas@glider.be>, Alexandre Belloni
+	<alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>
+CC: Kees Cook <kees@kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+References: <51abd9177801984889c2a0c321ea8587677178c8.1787316176.git.geert+renesas@glider.be>
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
+Content-Language: en-US, fr
+Organization: microchip
+In-Reply-To: <51abd9177801984889c2a0c321ea8587677178c8.1787316176.git.geert+renesas@glider.be>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 21, 2026 at 6:03=E2=80=AFPM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
->
-> The clk_init_data structure contains several mutually-exclusive members
-> for different methods to specify the possible parents of a clock,
-> prompting drivers to initialize only the members they need.  However,
-> not initializing all members may cause subtle issues, which are only
-> exposed when CONFIG_INIT_STACK_ALL_PATTERN or CONFIG_INIT_STACK_NONE is
-> enabled.
->
-> Make sure all members are fully initialized, to avoid such bugs, and to
-> prevent future breakage when converting drivers to a different method
-> for specifying the parents.
->
+On 21/08/2026 at 14:44, Geert Uytterhoeven wrote:
+> When assigning a non-const pointer to a const pointer, no cast is
+> needed.
+> 
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
 
-Acked-by: Chen-Yu Tsai <wens@kernel.org>
+Yes, thanks Geert:
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+
+> ---
+> No changes in generated code.
+> ---
+>   drivers/clk/at91/clk-main.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/at91/clk-main.c b/drivers/clk/at91/clk-main.c
+> index 6074ed2a16cede94..77f905e57e1ab4de 100644
+> --- a/drivers/clk/at91/clk-main.c
+> +++ b/drivers/clk/at91/clk-main.c
+> @@ -170,7 +170,7 @@ at91_clk_register_main_osc(struct regmap *regmap,
+>          init.name = name;
+>          init.ops = &main_osc_ops;
+>          if (parent_data)
+> -               init.parent_data = (const struct clk_parent_data *)parent_data;
+> +               init.parent_data = parent_data;
+>          else
+>                  init.parent_names = &parent_name;
+>          init.num_parents = 1;
+> --
+> 2.43.0
+> 
+
