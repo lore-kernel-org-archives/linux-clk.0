@@ -1,149 +1,110 @@
-Received: from aposti.net (aposti.net [185.119.170.32])
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15765473C93;
-	Fri, 21 Aug 2026 11:03:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.119.170.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C549343E9FC
+	for <linux-clk@vger.kernel.org>; Fri, 21 Aug 2026 11:03:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787310194; cv=none; b=JDwr5eOcUYf0Na98HVKd81tcOElzcbd9ysrKtBd2+pDkgxTJqDaCRMt4xNx5uAati6Kj0Kb14W0jj6ZHrEsKvPBOxyhn5eo0EdvlLn7RwA8VtZCUtWf+VwnOPT68nn9nKFpRRQZcjWyNeG/356FRV0FMWcvAYigyB9Vtg3jwxN0=
+	t=1787310238; cv=none; b=svpucrNG2UnXL12Vr+Gm53wmEILRj/EmyrcGNyXnlrNTLLZu+0ai1wjZy4L2FnpNdmQfPRdmox7NI4xo4KSJlZUB6Ca7Ph66HAhU+qdzFOWF8QmlgN1+Dddj7jF+Eebcv4iFlaHIwtklmaI8YbMyPHUY0rKRkmAIWgjkXozonoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787310194; c=relaxed/simple;
-	bh=vTxNGzhiU+qNcfdup2iOrcIIe1C5zjV7/YGX2sRgMes=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=AsSdwjmduT6f2vlmVKWaWfjh6F2EHe6+j/rnzLMkQKNdwHOZ1no5WBWAK9UEtveS3AsNQITvP61f+1Mj8/1ieXQcMIfmd/KCluQA5sQbzedxG/ixQI/I5wWDsnE4pomwOSh2IddX4nsM8qfbtbG05uoxyn14l0DYvkzcxNtqzyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=crapouillou.net; spf=pass smtp.mailfrom=crapouillou.net; dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b=BpBexqdH; arc=none smtp.client-ip=185.119.170.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=crapouillou.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crapouillou.net
+	s=arc-20240116; t=1787310238; c=relaxed/simple;
+	bh=B38wB0vUMdlZRx2N7kf9ZWst50Iqp8nsPF5uH+lKrGg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=E7QbIuW14lYhoa/+zw0AWF6kMcjW0MT+jNsorMgYJG/1hiXNSsQyGDl1cWoTecFKQA7nNlLIA16Fz5I9uNf1VKi3te2DKhYVL9ji1xD9HLjURQ2aKAvW1wOXoRwreoyVIZ2zU57cj3RVNIHxZCRrpkoH9ctL8rhHzjLU4w5FZaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F61Za3s+; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="BpBexqdH"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=crapouillou.net;
-	s=mail; t=1787309837;
-	bh=vTxNGzhiU+qNcfdup2iOrcIIe1C5zjV7/YGX2sRgMes=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=BpBexqdHP7l9UXTEi7tNsKJ7v5JrQ5ZdZndkkOW3FK62QJkZPxJxds1XBB60/ptCZ
-	 +4FqA3I5gWE42Mn2k6xdUvuXJ8BcmPf1ehfDBkHnO4hKYrgHCV6w9pWnetTgnV1jir
-	 xW2jslhE/JH3XZR6Ix/Z58ce1yPaK58iX5BHv9Jg=
-Message-ID: <3596303d8fc1ccbdbae9277e599b1a37682fac2a.camel@crapouillou.net>
-Subject: Re: [PATCH 14/45] clk: ingenic: Make sure clk_init_data is fully
- initialized
-From: Paul Cercueil <paul@crapouillou.net>
-To: Geert Uytterhoeven <geert+renesas@glider.be>, Ryan Chen	
- <ryan_chen@aspeedtech.com>, Joel Stanley <joel@jms.id.au>, Stephen Boyd	
- <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet	
- <jbrunet+clk@baylibre.com>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
- Billy Tsai <billy_tsai@aspeedtech.com>, Nicolas Ferre
- <nicolas.ferre@microchip.com>, Alexandre Belloni	
- <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-  Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Taichi Sugaya
- <sugaya.taichi@socionext.com>,  Takao Orito <orito.takao@socionext.com>,
- Linus Walleij <linusw@kernel.org>, Avi Fishman	 <avifishman70@gmail.com>,
- Tomer Maimon <tmaimon77@gmail.com>, Tali Perry	 <tali.perry1@gmail.com>,
- Patrick Venture <venture@google.com>, Nancy Yuen	 <yuenn@google.com>,
- Benjamin Fair <benjaminfair@google.com>, Sudeep Holla	
- <sudeep.holla@kernel.org>, Cristian Marussi <cristian.marussi@arm.com>, 
- David Lechner <david@lechnology.com>, Abel Vesa <abelvesa@kernel.org>, Peng
- Fan <peng.fan@nxp.com>, Frank Li	 <Frank.Li@nxp.com>, Sascha Hauer
- <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Santosh Shilimkar	
- <ssantosh@kernel.org>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement	
- <gregory.clement@bootlin.com>, Sebastian Hesselbarth	
- <sebastian.hesselbarth@gmail.com>, Vladimir Zapolskiy <vz@mleia.com>, Heiko
- Stuebner <heiko@sntech.de>, Krzysztof Kozlowski <krzk@kernel.org>,
- Sylwester Nawrocki	 <s.nawrocki@samsung.com>, Chanwoo Choi
- <cw00.choi@samsung.com>, Peter Griffin	 <peter.griffin@linaro.org>, Alim
- Akhtar <alim.akhtar@samsung.com>, Dinh Nguyen	 <dinguyen@kernel.org>,
- Viresh Kumar <vireshk@kernel.org>, Maxime Coquelin	
- <mcoquelin.stm32@gmail.com>, Alexandre Torgue
- <alexandre.torgue@foss.st.com>,  Emilio =?ISO-8859-1?Q?L=F3pez?=	
- <emilio@elopez.com.ar>, Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec	
- <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, Prashant
- Gaikwad <pgaikwad@nvidia.com>, Thierry Reding <thierry.reding@kernel.org>,
- Jonathan Hunter	 <jonathanh@nvidia.com>, Kunihiko Hayashi
- <hayashi.kunihiko@socionext.com>,  Masami Hiramatsu <mhiramat@kernel.org>,
- Ulf Hansson <ulfh@kernel.org>, Liviu Dudau <liviu.dudau@arm.com>, Lorenzo
- Pieralisi <lpieralisi@kernel.org>, Michal Simek <michal.simek@amd.com>,
- Matthias Brugger	 <matthias.bgg@gmail.com>
-Cc: linux-clk@vger.kernel.org, linux-aspeed@lists.ozlabs.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	openbmc@lists.ozlabs.org, arm-scmi@vger.kernel.org, imx@lists.linux.dev, 
-	linux-mips@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	soc@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org
-Date: Fri, 21 Aug 2026 12:57:09 +0200
-In-Reply-To: <e3a8b277773f46eb200f3c4bac98ee380f3a24bc.1787239813.git.geert+renesas@glider.be>
-References: <cover.1787239813.git.geert+renesas@glider.be>
-	 <e3a8b277773f46eb200f3c4bac98ee380f3a24bc.1787239813.git.geert+renesas@glider.be>
-Autocrypt: addr=paul@crapouillou.net; prefer-encrypt=mutual;
- keydata=mQENBF0KhcEBCADkfmrzdTOp/gFOMQX0QwKE2WgeCJiHPWkpEuPH81/HB2dpjPZNW03ZM
- LQfECbbaEkdbN4YnPfXgcc1uBe5mwOAPV1MBlaZcEt4M67iYQwSNrP7maPS3IaQJ18ES8JJ5Uf5Uz
- FZaUawgH+oipYGW+v31cX6L3k+dGsPRM0Pyo0sQt52fsopNPZ9iag0iY7dGNuKenaEqkYNjwEgTtN
- z8dt6s3hMpHIKZFL3OhAGi88wF/21isv0zkF4J0wlf9gYUTEEY3Eulx80PTVqGIcHZzfavlWIdzhe
- +rxHTDGVwseR2Y1WjgFGQ2F+vXetAB8NEeygXee+i9nY5qt9c07m8mzjABEBAAG0JFBhdWwgQ2VyY
- 3VlaWwgPHBhdWxAY3JhcG91aWxsb3UubmV0PokBTgQTAQoAOBYhBNdHYd8OeCBwpMuVxnPua9InSr
- 1BBQJdCoXBAhsDBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAAAoJEHPua9InSr1BgvIH/0kLyrI3V0f
- 33a6D3BJwc1grbygPVYGuC5l5eMnAI+rDmLR19E2yvibRpgUc87NmPEQPpbbtAZt8On/2WZoE5OIP
- dlId/AHNpdgAtGXo0ZX4LGeVPjxjdkbrKVHxbcdcnY+zzaFglpbVSvp76pxqgVg8PgxkAAeeJV+ET
- 4t0823Gz2HzCL/6JZhvKAEtHVulOWoBh368SYdolp1TSfORWmHzvQiCCCA+j0cMkYVGzIQzEQhX7U
- rf9N/nhU5/SGLFEi9DcBfXoGzhyQyLXflhJtKm3XGB1K/pPulbKaPcKAl6rIDWPuFpHkSbmZ9r4KF
- lBwgAhlGy6nqP7O3u7q23hRU=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F61Za3s+"
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-c15d111ca99so101361366b.0
+        for <linux-clk@vger.kernel.org>; Fri, 21 Aug 2026 04:03:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1787310234; x=1787915034; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=pJu78dGyTk0n73zePooVLlpbfkvwvlQMnvrMH6WIan0=;
+        b=F61Za3s+8rXlDe0ZAz+ukvDz7sBbHNEQrRAtwigWg/ZnmLRyJN2gByduRRnOOXO7OP
+         y6k1ftCxt91+kw1+yiftNs+wCPLjXWxaWTFGNRsTy7DJzilA/D00xUZCba2KZ9TXQ97M
+         5kLmw8jInGX8qoYrhqlXr0YnxBwojWp2IHNRzcDHzXTxowFA1jOmkQj/EbzS1VMy1zJb
+         HcTb5lXEpp7xhxEKb6x1/zJ9oFX1H3wlXoGBHyD/gIo/QqLpdZaxs7eQl+w435xtO8tP
+         buOc/2fNGTvMTJqfB0GU6tNkKbDH7LCJr/6wo+pNllDMB6vMYJ0jMPjuE6yxnZRx+gJZ
+         EgnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787310234; x=1787915034;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=pJu78dGyTk0n73zePooVLlpbfkvwvlQMnvrMH6WIan0=;
+        b=tGL0Tl0NsbxT3rtCgpy91XtgJfMe/rBeKELXifGC8TFQPFqsUYrGz+74PFbwbf3ETR
+         JPGuj3/TBcP0PLOUyMVDbSXgsS5yw6pS0p5i8DvRPabSCqkqhb3nmb1xlUDNAAbG/S4O
+         X3MyUfh9kGNdHBC6t70yVCRo4zqbNclhzz0BusBH19k+5Nvk5PNfVvjHQqueVHdoPTcT
+         HsX0EvKOvIioR/ChKOYrHe2wCks0arIuK9KGCUZCuUMsabXmRIF0+5dEm7FVWQiU57gB
+         bmg2g0ppLbJc0VBKHe1UXeYsLErrnDA4LavWMlFmVqMiJOnOrgPl+B97oQmmz0bNwO78
+         wHQg==
+X-Forwarded-Encrypted: i=1; AHgh+RqanDusQwyx0QDkEIISIlzUS5B1ElSKhFrgtQWj86hR1TmccK5fd0WWj33bykZdKkAPOnzxE+Xxzm8=@vger.kernel.org
+X-Gm-Message-State: AFuF++kCKHaG3yLt30vmmriXQzvbg6/S3XlH7iTd37XQGeOTJGJwYyMt
+	K+6jgofjUCpoJ9v2+j7fgDbXI+GouK+Qmmcp5LIfc12K3elQQzxkYbNZ
+X-Gm-Gg: AR+sD13A6NkVnAiMd2aKZglRt+hk2bsCR5AHviWlH8xita+amDUtXXXdz8D6yFd+rO0
+	N9EOpRiBRJ62IPs3mA7xwX/cZEvSeaJWonUeKwmoWd686rkiLE6l+sqB+lmfWuJsASJH/ObOzj/
+	9IVstE3835iDluNuBdoFXaJK7BrNMw9RnUY+Mtp+ypReTzQntYjrFtxoHH2TWJIXRo63s5HtslB
+	B8RwkGnCNb9f/limddtT2PdYqyFgiv1sx9GSDCWk/R9MTAkxXCFIEKwVbrdfRiOSXEZ4cYVX9Zy
+	P4NCeBlNAtq/+ZJIJ8cX9IYzXctX+P9ydLM329REQVTEf6DYGYOihUe5VQ8dslvs8kC2XOPiJAk
+	vTb7kjZDuW5cXvAASSm98uUv50JsMjGtvGvWxtqsj4MbHSH7dEuHKCgdKHe7069mU599kOZAKf6
+	bk7XgQ/+Agjf8idF5xhcgJB31ftMaIlwQ2Sj5CHH9OVpsjunrfUNMk77q8Ht2I1yEfp2Raq/iBz
+	AvagWPn4D9wsrRHl30zZszkqliNX209eMZFMn4EWpnBayvxa7mmpAX2XfjOpfWEn5Lbs952QlvK
+	qLrlb61xTG973sj7OVnZBbmRG/SxxOgEygyULUcc+wpZFqfKhBIuvAwu1vNeyfDh1LuJGCxX9Gi
+	ZsySXetWkRR+SqnSAPT+KNUMXTeHg+oqBItu6+gLpk7M1X9IQ8NSc9/b22LVuX/X5EfASaw==
+X-Received: by 2002:a17:907:e1c5:10b0:c24:6445:d19 with SMTP id a640c23a62f3a-c246a7120d4mr413937166b.17.1787310234188;
+        Fri, 21 Aug 2026 04:03:54 -0700 (PDT)
+Received: from localhost (90-182-112-124.rcp.o2.cz. [90.182.112.124])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c2458b58a50sm456656866b.26.2026.08.21.04.03.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Aug 2026 04:03:53 -0700 (PDT)
+Date: Fri, 21 Aug 2026 13:03:51 +0200
+From: Joshua Crofts <joshua.crofts1@gmail.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner
+ <dlechner@baylibre.com>, Nuno =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, linux-iio@vger.kernel.org,
+ linux@analog.com, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/2] iio: adc: meson-saradc: Make sure clk_init_data is
+ fully initialized
+Message-ID: <20260821130351.000052a0@gmail.com>
+In-Reply-To: <7470364f0d70b6e9c06fd094768cfa91c7784d42.1787240005.git.geert+renesas@glider.be>
+References: <cover.1787240005.git.geert+renesas@glider.be>
+	<7470364f0d70b6e9c06fd094768cfa91c7784d42.1787240005.git.geert+renesas@glider.be>
+X-Mailer: Claws Mail 4.4.0 (GTK 3.24.51; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Geert,
+On Fri, 21 Aug 2026 12:04:06 +0200
+Geert Uytterhoeven <geert+renesas@glider.be> wrote:
 
-Le vendredi 21 ao=C3=BBt 2026 =C3=A0 10:53 +0200, Geert Uytterhoeven a =C3=
-=A9crit=C2=A0:
-> The clk_init_data structure contains several mutually-exclusive
-> members
+> The clk_init_data structure contains several mutually-exclusive members
 > for different methods to specify the possible parents of a clock,
-> prompting drivers to initialize only the members they need.=C2=A0 However=
-,
+> prompting drivers to initialize only the members they need.  However,
 > not initializing all members may cause subtle issues, which are only
-> exposed when CONFIG_INIT_STACK_ALL_PATTERN or CONFIG_INIT_STACK_NONE
-> is
+> exposed when CONFIG_INIT_STACK_ALL_PATTERN or CONFIG_INIT_STACK_NONE is
 > enabled.
->=20
-> Make sure all members are fully initialized, to avoid such bugs, and
-> to
+> 
+> Make sure all members are fully initialized, to avoid such bugs, and to
 > prevent future breakage when converting drivers to a different method
 > for specifying the parents.
->=20
+> 
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Acked-by: Paul Cercueil <paul@crapouillou.net>
-
-Cheers,
--Paul
-
 > ---
-> Compile-tested only.
-> ---
-> =C2=A0drivers/clk/ingenic/cgu.c | 2 +-
-> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/clk/ingenic/cgu.c b/drivers/clk/ingenic/cgu.c
-> index 41e4c69131bd6ec7..ad223aa20e8db5a5 100644
-> --- a/drivers/clk/ingenic/cgu.c
-> +++ b/drivers/clk/ingenic/cgu.c
-> @@ -644,8 +644,8 @@ static const struct clk_ops ingenic_clk_ops =3D {
-> =C2=A0static int ingenic_register_clock(struct ingenic_cgu *cgu, unsigned
-> idx)
-> =C2=A0{
-> =C2=A0	const struct ingenic_cgu_clk_info *clk_info =3D &cgu-
-> >clock_info[idx];
-> -	struct clk_init_data clk_init;
-> =C2=A0	struct ingenic_clk *ingenic_clk =3D NULL;
-> +	struct clk_init_data clk_init =3D {};
-> =C2=A0	struct clk *clk, *parent;
-> =C2=A0	const char *parent_names[4];
-> =C2=A0	unsigned caps, i, num_possible;
+
+Reviewed-by: Joshua Crofts <joshua.crofts1@gmail.com>
+
+-- 
+Kind regards,
+Joshua Crofts
