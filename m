@@ -1,18 +1,19 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BCC04766BF
-	for <linux-clk@vger.kernel.org>; Fri, 21 Aug 2026 10:08:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50A7944C4FF
+	for <linux-clk@vger.kernel.org>; Fri, 21 Aug 2026 10:08:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787306939; cv=none; b=l2nEHYsElsIw3rBsmHWmdf3x75pXRcqDv6ADvnrqCYv9Fn/poJogYJTJnZDS7yqCqMTm+gVBORiJWMpwVnBuFmHJPiimbGYPvOgqoiWAbU7U3cVwwl7k/bup8tJm5Du0LwIe/lAeYZi0vVFhX2/wz0yBKcLMDEaab3KtcazVfCA=
+	t=1787306936; cv=none; b=nHRuPchiKFWU/8CvakfVPBgT5EgtuKurloHsnI7xslCkQn3p6mJrgh3bK6CUxn2Z6fP+zkkLDamNBX+2Wc1jDjXtdZnC2DDKSD27IcSVAZCkrOodCeysneenwIr1/1c17mv1iIEQCgMyAzKdy73uvzFI/adguwqiScaHgKuZ4h8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787306939; c=relaxed/simple;
-	bh=lIP17C85lcagdDuhSPuN6BFoP0fjRRcDdqrUirAQ8ms=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ejDYjB/b5I1eOe2X52gVclFSos/8ssFqJhwUjHTk4pZDIJkeIkclGM0xma8Ud2KhzsbxKdgfa6fE4/K0pwasTqcrUVpCs8g8d6AEhNhIcrs5AtUidOSU+xp9ql/Rc34QX+PgbhWhbxWZNW2tn0vSvc6B9N7t+wMCgS8hx5e1D14=
+	s=arc-20240116; t=1787306936; c=relaxed/simple;
+	bh=MYfwPBHZDFX4gbPf8qzZSNc6ctGFJ8/kYJcvqtcq07E=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=HKf1R5CkYEUqM8nxNtOJ2wWLP7WOAMoaT4c00nwDb5K/fGho1BNV8tQhUSxGOcJ7WzB304+pWV2oZfwZbq6OSG+9rxUGtgh3ePjZYWZLH88oAfn8TpWiE2rj1hgLG57nkidux6lxU/ArezVjwFDKABYLDJhnbY8/wYe++NOYLvo=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B52361F000E9;
-	Fri, 21 Aug 2026 10:08:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BEB81F00A3A;
+	Fri, 21 Aug 2026 10:08:45 +0000 (UTC)
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Vinod Koul <vkoul@kernel.org>,
 	Neil Armstrong <neil.armstrong@linaro.org>,
@@ -23,10 +24,12 @@ Cc: linux-phy@lists.infradead.org,
 	linux-rockchip@lists.infradead.org,
 	linux-clk@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/2] phy: Make sure clk_init_data is fully initialized
-Date: Fri, 21 Aug 2026 12:08:38 +0200
-Message-ID: <cover.1787240165.git.geert+renesas@glider.be>
+Subject: [PATCH 1/2] phy: freescale: fsl-samsung-hdmi: Make sure clk_init_data is fully initialized
+Date: Fri, 21 Aug 2026 12:08:39 +0200
+Message-ID: <3c3be1c676eea5d32102864c57643b1573bc0db0.1787240165.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1787240165.git.geert+renesas@glider.be>
+References: <cover.1787240165.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,8 +38,6 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-	Hi all,
-
 The clk_init_data structure contains several mutually-exclusive members
 for different methods to specify the possible parents of a clock,
 prompting drivers to initialize only the members they need.  However,
@@ -44,45 +45,30 @@ not initializing all members may cause subtle issues, which are only
 exposed when CONFIG_INIT_STACK_ALL_PATTERN or CONFIG_INIT_STACK_NONE is
 enabled.
 
-Hence this series aims to make sure all members are fully initialized,
-to avoid such bugs, and to prevent future breakage when converting
-drivers to a different method for specifying the parents.
+Make sure all members are fully initialized, to avoid such bugs, and to
+prevent future breakage when converting drivers to a different method
+for specifying the parents.
 
-Part One[1] fixed all cases that I identified to be real bugs, in
-response to a crash I saw on BeagleBone Black.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Compile-tested only.
+---
+ drivers/phy/freescale/phy-fsl-samsung-hdmi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This series is the PHY subpart of Part Two, which fixes remaining cases
-that are currently harmless.  These are still fragile, and may cause
-future breakage when converting drivers to a different method for
-specifying the parents.
-
-Thanks for your comments!
-
-[1] "[PATCH treewide 0/5] clk: Make sure clk_init_data is fully
-     initialized (part 1)"
-    https://lore.kernel.org/cover.1787165329.git.geert+renesas@glider.be
-
-Geert Uytterhoeven (2):
-  phy: freescale: fsl-samsung-hdmi: Make sure clk_init_data is fully
-    initialized
-  phy: rockchip: Make sure clk_init_data is fully initialized
-
- drivers/phy/freescale/phy-fsl-samsung-hdmi.c  | 2 +-
- drivers/phy/rockchip/phy-rockchip-inno-hdmi.c | 2 +-
- drivers/phy/rockchip/phy-rockchip-inno-usb2.c | 2 +-
- drivers/phy/rockchip/phy-rockchip-usb.c       | 2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
-
+diff --git a/drivers/phy/freescale/phy-fsl-samsung-hdmi.c b/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
+index 0f25d81de61bb67f..ded142020e725f58 100644
+--- a/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
++++ b/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
+@@ -610,7 +610,7 @@ static int phy_clk_register(struct fsl_samsung_hdmi_phy *phy)
+ {
+ 	struct device *dev = phy->dev;
+ 	struct device_node *np = dev->of_node;
+-	struct clk_init_data init;
++	struct clk_init_data init = {};
+ 	const char *parent_name;
+ 	struct clk *phyclk;
+ 	int ret;
 -- 
 2.43.0
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
