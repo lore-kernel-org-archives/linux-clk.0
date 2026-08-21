@@ -1,86 +1,94 @@
-Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010036.outbound.protection.outlook.com [52.101.229.36])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA7954D2ED9;
-	Fri, 21 Aug 2026 15:06:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.36
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787324768; cv=fail; b=Rbx8kY5xYgRbL0dLZu2o8PDyDkv36HBqCusn7z/W85dUq4sTSHf3POaDAq7RYHwz9lJYxJOCt1WBibLInInY8SIZWEIaUB+6dkAOFEMNXCySE2VFW950+NYNqVgjyVdrJpf0VH/OotJd8V2uxXmUUkeR2mTbmuaQZZb0fbnlt/w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787324768; c=relaxed/simple;
-	bh=5Bk7ltC/ntxPfaUK0i1VEhPrEy8iijYALj6illRAsx4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NiMDkuEYfCbeZkP0NnK0tbsa0SCnJazvHbQSWsmlSLmftkgBbAQzrHyRNRsICqi2vzyQe1bi6yx/tTcHjDmnGZZAKdFV5lU+FGJ8j1F+aK5b5R6OGA1T0EXjmyA2rDyBUfd1hMLvx4PVc0jSk/1ETaywEDTPvTwO3G+5OI4C+8U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=bMQSyt+r; arc=fail smtp.client-ip=52.101.229.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4971641F7FD
+	for <linux-clk@vger.kernel.org>; Fri, 21 Aug 2026 15:40:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1787326857; cv=none; b=m29lJJVNYbcb58xk+T+2eP2UhBJHe1YVK0Sewj56cfC8H11crS3UMl/ljEZ/OmABkMVQKtGfwQBJvHtx5BBVA5WtkMymzVIs6ECLFexL7MgKLqjwomyh0lYn2nhlkG/M16y7ETf+0BhKfDQ7h4CWjCLXFPDU2IioGYK3OZu5Sts=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1787326857; c=relaxed/simple;
+	bh=EBIEK0ctGOLIdYheYSYQ42aVp8zZOSvUXK4M6hrlV7Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tJnouXhiJtpCIdZ8+/l283HSWV3eAXfD2lwbpCYnmF2KZzLbF79npihlUmUARduY+wX3HcG16n4bU7Lkn9LNdo5EkYHqrqC2QI5tAfMrXezy2w56tlFp+sz9l7i0wZjie7SK2QVAypX3LDwV31XiWZdLuqUfIPyMjHiPrjJ7OvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HVobMYnT; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="bMQSyt+r"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dQ31QrqJc0ywgAMJakVhccBucPp8kdXaKKOaYMbsYh4qIHp+U/k3n+tu31BnEbS4dmRDxv/gfhap+IvE6BU7NC+KO2OqkgZlDJspN/LLE1L02wGjGK7333iLumHAVYLCyjXjAzLuhS9W0I7LkCExHCjkk1SGKt9pEkRyg26uLBToQLmS/T1IP/Gx2ETS0dkOKv/kSBMdh2xcYSTly6mfO+NiiOJE0BvruyWDmbeWuaWQIRWzUUsMm2BM1AzTKdpkeJqxdwqrnmD0en1pQnX7ZHRixi/qlupSvVkgkxr00TeE9jFMKW56haBEF4Noi6oSjLeQwdc7+F3DA/ZGIJHoQw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gFbG9eQcK1uMXbs7elrFvAbAiI+H3ZcnUwKdTZLs1Qc=;
- b=xzeEJJLEgjrH7O83N5ZNjOPRjmZ9Kcl2BKOurFmD2XEKtHhV1J1wgNWwMABRLsTF3m7dr7cSP9BZYURp2GY3ULoo2beiuep+A96oEBQVmeVebpudzvRvD5MMkNuOzT/xcnfJhs3aWlb7AFW8qQsdFT4AqbxAlfCo6BuHYoBt0XsIRw5XTlLQEakyzvcPFUsmPaokoAjTeoTg92dggYgncB2rgOnTZyHrEA871NaldQc9WaOM3ZJEevw/qrC4HYVA6eEH/F6V7anTsA1Qjsl2ZNNaXYjca15vheuSdM+Z191PGET8ry6lx/N9+fH4JbTvxz4yZNmbSTdnk4k3mb4YkQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 8.62.32.50) smtp.rcpttodomain=baylibre.com smtp.mailfrom=renesas.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=renesas.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gFbG9eQcK1uMXbs7elrFvAbAiI+H3ZcnUwKdTZLs1Qc=;
- b=bMQSyt+r/v6K3y0F7XKP3exlK9zGuDtrpSIFovU6J7xb+L85ZDksO2/S2K59s6NG4IMXhggwaJ6O3j/Niiez8KQy+DrK0dTe0qtbSpO0k2OKYmEUUOf1riXC5O9B2mntTqDPQXaoKEFoSNivUKFoetEylGGmAdxIpG28aCGNG94=
-Received: from OS7PR01CA0251.jpnprd01.prod.outlook.com (2603:1096:604:24b::8)
- by TYRPR01MB16205.jpnprd01.prod.outlook.com (2603:1096:405:2e7::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.339.11; Fri, 21 Aug
- 2026 15:06:02 +0000
-Received: from OS1PEPF0000D213.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:604:24b:cafe::47) by OS7PR01CA0251.outlook.office365.com
- (2603:1096:604:24b::8) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.339.11 via Frontend Transport; Fri,
- 21 Aug 2026 15:06:02 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 8.62.32.50)
- smtp.mailfrom=renesas.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=renesas.com;
-Received-SPF: Pass (protection.outlook.com: domain of renesas.com designates
- 8.62.32.50 as permitted sender) receiver=protection.outlook.com;
- client-ip=8.62.32.50; helo=ejcrelay005p.adwin.renesas.com; pr=E
-Received: from ejcrelay005p.adwin.renesas.com (8.62.32.50) by
- OS1PEPF0000D213.mail.protection.outlook.com (10.167.240.20) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.21.360.3
- via Frontend Transport; Fri, 21 Aug 2026 15:06:02 +0000
-Received: from laptop.adwin.renesas.com (unknown [10.226.37.103])
-	by ejcrelay005p.adwin.renesas.com (Postfix) with ESMTP id 7409930002AF;
-	Sat, 22 Aug 2026 00:05:57 +0900 (JST)
-From: Ayman Chaudhry <ayman.chaudhry.kc@renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Ulf Hansson <ulfh@kernel.org>
-Cc: Ayman Chaudhry <ayman.chaudhry.kc@renesas.com>,
-	linux-renesas-soc@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HVobMYnT"
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-38e041ea211so1023854a91.0
+        for <linux-clk@vger.kernel.org>; Fri, 21 Aug 2026 08:40:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1787326853; x=1787931653; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=NLDe0BKAQgmPczIiGwzPyNkfTByg7ztvmyU32QDSeyo=;
+        b=HVobMYnTCwDn4VkLjP7zZl7PNvI/+35PNl7vsWxe5fcAD4RyXEn0Q6KeCJT/Yldwx8
+         lWnZU8Pbj4NUAi76M6Pg8i+2vgxeJh1/a1bIDxInpVhJ9d++F+6hb8Wb/8BjXudqCAPP
+         El/2JNbjwXOY9aYKq72kJUnEvJfUyhJ23m8pe/4Tjm7XY1W5qZc+qX+iaTexN7UcTbl4
+         cJl/HaZyQ3STEi5S/AvGeo9biFl80Wq6+Z2TXog2FpfGZ48ABcep+jpsbHh3Ua+FJmbk
+         Xpu4+gzKgyFUg0wUpNIoxZnT92/m8Y3sRIvjTTQxhA5tfAG5isGMxOZBuVI1K03Gdjl2
+         oOBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787326853; x=1787931653;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=NLDe0BKAQgmPczIiGwzPyNkfTByg7ztvmyU32QDSeyo=;
+        b=Ko3xhLQN4zz6hxYeRZcqL5Vev3liOLtNCsRQnEl9Pi2GJ5a2tjzFDYjJHwpuREJ0Yy
+         Tfnc6oajMRYSyD5qlgY8VAeESuX9wGVarYprhbVDUj0JQ+5aW210zMrsbznUBFoorT8s
+         lB7QzOPqk/YX+bOsFro1iH0RgY/sn7DvohqLEfrg0qPtGVyAwHAd7AfX7avldldAojQK
+         TsO1tE42LhmHs1P27P7BMr5MIBzGnB999vH3TB/fhrs6C2ClofoKNL7DUHBZ2lA3zamK
+         tvkBguMkfS601PU85m5TbHKsGiYEgYUhBml7IVhN6MZNWo+Kyrjy2v/1ZyOvhTpz9vyw
+         8EZQ==
+X-Forwarded-Encrypted: i=1; AHgh+RpM74cBujOf/m0LZ1ETEAjyZdbGNY6cD/Aq3g9Sf6XOLfBzLSfyaq5tAUyh74u/JKRqhrjkJqVgP50=@vger.kernel.org
+X-Gm-Message-State: AFuF++nwaFtxSKARXnCIBikqj7Yc4RpoOrQ+GqVhVPexlflzDpXHKTgZ
+	rtLfOl+a48Mpb+1zE3u4v4hmoiGL7xIA3Xh5D3Ci3FPC+l3yctTdm0p8
+X-Gm-Gg: AR+sD10EIfEltpjvtnIlanF10IGJ9CDQE0eKHns/6qbdYrU0PYQ7tQSIWjcaVE4Ujp0
+	+TgZUAQvDF+9I5kBjw2gZkfVyFORl5/QHcTiebuPRISV7MO2Wg1o0OhWwzT4EPG7Kga3lf9PnR6
+	6glmcByTJJAn/eqvt/W5TA4QIfr5eBgN3yfXMFe4QT+Z/2HP8scKWTIIhqeEmGyf8DR0rH2HiYf
+	7h3i+n9lHzeJAN7dMTqnyWwMnmShHqtonaDbDo3nVLuRBgXMdcM0LHxi6fdUN6+Z921GkfYaJrh
+	3rOtnLnUaked+uTB1SbxRNPGvcQ4R95KQDpPTH7AUK613UAtOQl3UP9ave7Q8ttdMD8fDf67KRC
+	4/rLg7JZQYWbIVE00tbUK7WWJhxIFh7pcrYUL5zsEwgulKDZrmXROaPnlJQHKxUH2CKlhcYIaJB
+	JnQnJNBPqDhDG4mNwAUCbwI2HsDrm4W5kD+2dV49KC8kKIQpv/FYaWEzIYaFNdYXcnr7Tmn4scE
+	ZUKU09+P8uM
+X-Received: by 2002:a17:90b:3902:b0:395:bbfe:fc6f with SMTP id 98e67ed59e1d1-395c333710emr12421375a91.3.1787326853054;
+        Fri, 21 Aug 2026 08:40:53 -0700 (PDT)
+Received: from localhost.localdomain ([152.58.217.163])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1416ae5f1ffsm42903185c88.13.2026.08.21.08.40.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Aug 2026 08:40:52 -0700 (PDT)
+From: Sreeshankar K <sreeshankar0910@gmail.com>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	andersson@kernel.org,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	rafael@kernel.org,
+	viresh.kumar@linaro.org,
+	konradybcio@kernel.org,
+	tglx@kernel.org,
+	ulfh@kernel.org
+Cc: bmasney@redhat.com,
+	radu@rendec.net,
+	abel.vesa@oss.qualcomm.com,
+	lpieralisi@kernel.org,
+	quic_tdas@quicinc.com,
+	danila@mainlining.org,
+	davidwronek@gmail.com,
+	mani@kernel.org,
+	robimarko@gmail.com,
+	linux@gurudas.dev,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	linux-pm@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 10/10] arm64: dts: renesas: Add HiHope RZ/G2M v3.0 SoC sub board support
-Date: Fri, 21 Aug 2026 15:03:35 +0000
-Message-ID: <20260821150408.73829-11-ayman.chaudhry.kc@renesas.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260821150408.73829-1-ayman.chaudhry.kc@renesas.com>
-References: <20260821150408.73829-1-ayman.chaudhry.kc@renesas.com>
+	Sreeshankar K <sreeshankar0910@gmail.com>
+Subject: [PATCH v4 00/13] Add initial support for Qualcomm SM7250 SoC
+Date: Fri, 21 Aug 2026 15:40:17 +0000
+Message-ID: <20260821154030.2514-1-sreeshankar0910@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -88,81 +96,71 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: OS1PEPF0000D213:EE_|TYRPR01MB16205:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 79c4c0b0-7154-4507-aab1-08deff95b77f
-X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700016|1800799024|376014|7416014|23010399003|10067099003|56012099006|11063799006|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	3BkzGnK8X1P+Y9ovZlTLdrKh5jB0aB/Q9t2Zx8ELxT00uE+hA476ySg08CzhYuGVvNE1AGo5DMpKipl1FKg1El/ROCE932S/gHRu7cGqQ9ybtB/lZKX9zjAZ2kWl82Ry4cXJVqq0va0Hhi1xXek4bYRl9Kwc4tipRtvdgI51WxAQqJBbpLXpwRxGwm2DkiUyfDV6DFUXEUxeeUwF4NwjZrKHpv8cWuWEMt1d4dnXZmVOR1DeiV5pvEYFYxbbKAj1Zm31SfWErzwpWnOlOTRPZ/5Tf7l1HSOZvx/LSoXb2NKDM9geAtLIFD/ssTJpAmYNkBVVcU9AICFmgj0WVucaKlUqUaaOsAHbnivYLGi51WepEeLLmJAOeYYcRQg89doN+s7OogUitiERpNP1EKK1cnsjjN3cuQvIBNX+rTgKVt4p7MAUEvSP/8ABf9bTzzxRgnH46W+6Ab+gzMEeUyfGkTtYlQK/v/sHFX2nxK98s3s59ojlYJ2bLo5DLV1slzLeBoeePU3VyspxP+cdx8XLHMwOpa8xlGmocSFg+4K6d0IAfM1FNnsGZn9NFdTY2dzcBK2LaCjZV6QxxvpGFpAkLL5UUQHJHzKgBJrQmgiXwcLKpb53ofRbaVfoDRfoFH/n/5NElsz0HPBZAD/Aq6W+bWyXIeOg3UjhbQTDR6GhMFvErj46LA5idzQSJJmiBIE4nxzEEXLJGFbCvjvHjg/5qg==
-X-Forefront-Antispam-Report:
-	CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay005p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700016)(1800799024)(376014)(7416014)(23010399003)(10067099003)(56012099006)(11063799006)(22082099003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	ZARLA8bpk93l5uO01V+3S0IbX4OZH4O39E1rs0olMtHSli2MQ6y4JWBRCuCRTBdprkFMIUhQE1XI5ESPCO6bUBJ8TWsZFPBqFhTivVfh7qnKBgRebVoYPRa/F39E1+YtgO1rfEOsdyQKhCAbViliFkxGAXEIPxodYmLyYQ/kpvQZaOA37zfMIetGNqad0MpJ0V39WywNF2WA3+dcZw1bTjAgKzTcYbC5mdakw7Z0DhSwLOC2MBTpNvCVx0WVGPoi1/N3/b5xVzrEECJJ9F/oY1G2tcQkzxjTIBeYCfk7nfQaIwggBpBg9sEHvenzEsdC27NuQ2s/Np0Q7AbA543Onym75alrjN7b96ILYIv2a8ovkp80UCl7CIuY3FvQikxvydDXYpNhhoDDl2ZGD78nXK+CJ7OVIUkH4G9IWIO2cb/qCY+szxkfqbGN68+L0TIk
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2026 15:06:02.6366
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 79c4c0b0-7154-4507-aab1-08deff95b77f
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=53d82571-da19-47e4-9cb4-625a166a4a2a;Ip=[8.62.32.50];Helo=[ejcrelay005p.adwin.renesas.com]
-X-MS-Exchange-CrossTenant-AuthSource: OS1PEPF0000D213.JPNP286.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYRPR01MB16205
 
-The HiHope RZ/G2M sub board sits below the HiHope RZ/G2M v3.0
-(a.k.a. R8A774A3) SoC main board.
+This patchset introduces foundational upstream support for the Qualcomm SM7250
+SoC (internally codenamed Lito).
 
-The RZ/G2M v3.0 SoC sub board is similar to the RZ/G2M v1.3 SoC sub
-board, so there are already DTSI files available in the kernel. These
-DTSI files will be included once additional support (e.g. CAN, PCIe
-and ethernet) is added for the RZ/G2M v3.0 SoC.
+SM7250 is an ARMv8.2-A platform manufactured on a 7nm process, featuring an
+octa-core Kryo 475 CPU configuration (1x Prime Cortex-A77, 1x Gold Cortex-A77,
+and 6x Silver Cortex-A55) and Adreno 620 GPU.
 
-Signed-off-by: Ayman Chaudhry <ayman.chaudhry.kc@renesas.com>
----
- arch/arm64/boot/dts/renesas/Makefile               |  1 +
- .../boot/dts/renesas/r8a774a3-hihope-rzg2m-ex.dts  | 14 ++++++++++++++
- 2 files changed, 15 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a774a3-hihope-rzg2m-ex.dts
+This patchset is organized as follows:
+> Document relevant device tree bindings (SoC ID, Kryo 475 CPUs, SCM, PDC,
+RPMh clocks/power domains, GCC and cpufreq hardware).
+> Add driver support for SM7250 in socinfo, rpmh-clk, rpmhpd, and GCC.
+> Add the base SoC DTSI (sm7250.dtsi) defining the cpus, PSCI,
+interrupt controllers, clock providers, power domains, and reserved memory.
 
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index 6ae96027664d..346670b10ada 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -9,6 +9,7 @@ dtb-$(CONFIG_ARCH_R8A774A1) += r8a774a1-hihope-rzg2m-rev2-ex.dtb
- dtb-$(CONFIG_ARCH_R8A774A1) += r8a774a1-hihope-rzg2m-rev2-ex-idk-1110wr.dtb
- 
- dtb-$(CONFIG_ARCH_R8A774A3) += r8a774a3-hihope-rzg2m.dtb
-+dtb-$(CONFIG_ARCH_R8A774A3) += r8a774a3-hihope-rzg2m-ex.dtb
- 
- dtb-$(CONFIG_ARCH_R8A774B1) += r8a774b1-beacon-rzg2n-kit.dtb
- dtb-$(CONFIG_ARCH_R8A774B1) += r8a774b1-hihope-rzg2n.dtb
-diff --git a/arch/arm64/boot/dts/renesas/r8a774a3-hihope-rzg2m-ex.dts b/arch/arm64/boot/dts/renesas/r8a774a3-hihope-rzg2m-ex.dts
-new file mode 100644
-index 000000000000..fc46ce321d59
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8a774a3-hihope-rzg2m-ex.dts
-@@ -0,0 +1,14 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for the HiHope RZ/G2M v3.0 SoC sub board
-+ *
-+ * Copyright (C) 2026 Renesas Electronics Corp.
-+ */
-+
-+#include "r8a774a3-hihope-rzg2m.dts"
-+
-+/ {
-+       model = "HopeRun HiHope RZ/G2M v3.0 with sub board";
-+       compatible = "hoperun,hihope-rzg2-ex", "hoperun,hihope-rzg2m",
-+                    "renesas,r8a774a3";
-+};
+Dependencies:
+This patchset depends on the following patch:
+> [PATCH] dt-bindings: clock: qcom,sm6375-gcc: Merge SM7150 into SM6375
+Link: https://lore.kernel.org/linux-arm-msm/20260817082457.64797-2-krzysztof.kozlowski@oss.qualcomm.com
+
+[PATCH v3] Link: https://lore.kernel.org/linux-arm-msm/20260821081125.4522-1-sreeshankar0910@gmail.com
+
+Changes in [PATCH v4]:
+[PATCH v4 04/13] clk: qcom: Add Global Clock Controller (GCC) driver for SM7250
+> Update .fw_name with .index
+[PATCH v4 13/13] arm64: dts: qcom: Add SM7250 devicetree file
+> Added missing capacity-dmips-mhz and dynamic-power-coefficient for cpu@300
+> Added power-domains for cpus and apps_rsc
+
+Sreeshankar K (13):
+  dt-bindings: arm: qcom,ids: Add SoC ID for SM7250
+  soc: qcom: socinfo: Add SM7250 SoC ID
+  dt-bindings: clock: Add SM7250 global clock controller
+  clk: qcom: Add Global Clock Controller (GCC) driver for SM7250
+  dt-bindings: clock: qcom,rpmhcc: Document RPMHCC compatible for SM7250
+  clk: qcom: rpmh: Add SM7250 rpmh clocks
+  dt-bindings: power: qcom,rpmhpd: Document RPMh power domain for SM7250
+  pmdomain: qcom: rpmhpd: Add RMPh power domains for SM7250
+  dt-bindings: arm: cpus: Document Kryo 475 CPUs
+  dt-bindings: firmware: qcom,scm: Document SM7250 SCM
+  dt-bindings: interrupt-controller: qcom,pdc: Document SM7250 PDC
+  dt-bindings: cpufreq: qcom-hw: Document SM7250 cpufreq hardware
+  arm64: dts: qcom: Add SM7250 devicetree file
+
+ .../devicetree/bindings/arm/cpus.yaml         |    1 +
+ .../bindings/clock/qcom,rpmhcc.yaml           |    1 +
+ .../bindings/clock/qcom,sm6375-gcc.yaml       |    4 +-
+ .../bindings/cpufreq/cpufreq-qcom-hw.yaml     |    1 +
+ .../bindings/firmware/qcom,scm.yaml           |    1 +
+ .../interrupt-controller/qcom,pdc.yaml        |    1 +
+ .../devicetree/bindings/power/qcom,rpmpd.yaml |    1 +
+ arch/arm64/boot/dts/qcom/sm7250.dtsi          |  756 ++++++
+ drivers/clk/qcom/Kconfig                      |    9 +
+ drivers/clk/qcom/Makefile                     |    1 +
+ drivers/clk/qcom/clk-rpmh.c                   |   24 +
+ drivers/clk/qcom/gcc-sm7250.c                 | 2274 +++++++++++++++++
+ drivers/pmdomain/qcom/rpmhpd.c                |   19 +
+ drivers/soc/qcom/socinfo.c                    |    1 +
+ include/dt-bindings/arm/qcom,ids.h            |    1 +
+ include/dt-bindings/clock/qcom,sm7250-gcc.h   |  163 ++
+ 16 files changed, 3257 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm64/boot/dts/qcom/sm7250.dtsi
+ create mode 100644 drivers/clk/qcom/gcc-sm7250.c
+ create mode 100644 include/dt-bindings/clock/qcom,sm7250-gcc.h
+
 -- 
-2.34.1
+2.43.0
 
