@@ -1,111 +1,71 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5040D46F484;
-	Fri, 21 Aug 2026 09:04:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A88D8442B3F
+	for <linux-clk@vger.kernel.org>; Fri, 21 Aug 2026 09:04:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787303063; cv=none; b=I9sZJ4wlJ6En6vINkv/hXxU3hB5b9F1f1CP14GpYtoKc2iT33OqKxHuQpniibkai8KtDfPK+r3+zoHCtA+cjCNQIqH8PplwUCxBXTCUiXj4jKD66weYG2y6ZOFtFCFh4miI7VqgoQh+pQdTHjxbL3LXVJsTEiazMOhMxu531KIM=
+	t=1787303077; cv=none; b=c/3ves8CtXAxBIgVFbQz/O5GxPwO/1OoUVd4IAnS1OMU6xD2nbRYMat7mAYXlCE9xViz7gMqBXx3sYZLurmf/rc+e0SyVM7sdAYv1Cmi8jCUGapBG0hIPmfwmNrGd4W96eIhT0eLuc26eFhT37qIDzkX+fmGQ2l83RlmhQEHXAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787303063; c=relaxed/simple;
-	bh=gVJVCDzrVmaJcjsPZPsyq62FV4vugRe0L+ADl3J+7yM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=L2FETemIn3jpxc1WvYR6aXnnt2Zqrw3YMolTPgZMfiFm7VnMFCyQUrkzd1BUz/7Kdj0UhmlOsNNO7KzW7T71I2iqTZg6i48cQlEeQ0TSbIJK2pIXHFeUPumA70mZmolqH08Ksj6zCbJu1zarFBKVKFa6ITDxgAiEDRDLs43g7YY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D49841F00A3E;
-	Fri, 21 Aug 2026 09:03:59 +0000 (UTC)
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Ryan Chen <ryan_chen@aspeedtech.com>,
-	Joel Stanley <joel@jms.id.au>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Billy Tsai <billy_tsai@aspeedtech.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Taichi Sugaya <sugaya.taichi@socionext.com>,
-	Takao Orito <orito.takao@socionext.com>,
-	Linus Walleij <linusw@kernel.org>,
-	Avi Fishman <avifishman70@gmail.com>,
-	Tomer Maimon <tmaimon77@gmail.com>,
-	Tali Perry <tali.perry1@gmail.com>,
-	Patrick Venture <venture@google.com>,
-	Nancy Yuen <yuenn@google.com>,
-	Benjamin Fair <benjaminfair@google.com>,
-	Sudeep Holla <sudeep.holla@kernel.org>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	David Lechner <david@lechnology.com>,
-	Abel Vesa <abelvesa@kernel.org>,
-	Peng Fan <peng.fan@nxp.com>,
-	Frank Li <Frank.Li@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Gregory Clement <gregory.clement@bootlin.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Vladimir Zapolskiy <vz@mleia.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Dinh Nguyen <dinguyen@kernel.org>,
-	Viresh Kumar <vireshk@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
-	Chen-Yu Tsai <wens@kernel.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Ulf Hansson <ulfh@kernel.org>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Michal Simek <michal.simek@amd.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-aspeed@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	openbmc@lists.ozlabs.org,
-	arm-scmi@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-mips@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	soc@lists.linux.dev,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-sunxi@lists.linux.dev,
-	linux-tegra@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 39/45] clk: ux500: Make sure clk_init_data is fully initialized
-Date: Fri, 21 Aug 2026 10:53:49 +0200
-Message-ID: <bd84df92640a05a1a73a8bc775b2d50568a9d0ec.1787239813.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1787239813.git.geert+renesas@glider.be>
-References: <cover.1787239813.git.geert+renesas@glider.be>
+	s=arc-20240116; t=1787303077; c=relaxed/simple;
+	bh=oQErjk26sorVdVO8pYJXRHtppRHpgQQgciErl9KjoIQ=;
+	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=rTQzMVJ4JBOG6GV913tVq5kbkvhEbvabTw6IZx5sVnM8T2OHzVOEbtCQVMcJeVWNrfz+/E8vSBsAdGpNiPel8XPVdiC7ounA8mSGn91HO16XSuIbi9KP8pIEvpUTANGUv0rNm/CEpy1Y7AYaaOTQaTCcH7HD25PEB7xdfSBzRWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nLyOXdkz; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nLyOXdkz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D0981F00A3A;
+	Fri, 21 Aug 2026 09:04:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1787303058;
+	bh=P3/Am/Q1TniiQm9xR1q9M7zezqiw+DpPdnot+e9xfEA=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=nLyOXdkzlfipIqe5CQAbWmPxJ6vl9yjz/1Um+g5oJbs+N2wl28k9U0R0Y8jyk9Ayp
+	 rxweUnk29nGuuRRwmUdtczYPPSDPaPjaY/M/m0xpLj8jD+qfURru+NQvhpU+3pllYT
+	 6PGbSej1oq7ibSJ9iZqiE05NgKp7cemCRBlq2E0Iw/Xb6V+kyqDuo7AsRbrYL+Dy/x
+	 1G/NPy2ruRlkH2mrU/+X+ImYN+NS6O/IEz1Tud+89kIjEOXPHjtJKZjMni+faWxq2K
+	 5lF0kwx07ZTA5T8/Yf7rAe6zVdoPXwWpNSUc8+910rFd2FW744KPAUKfz4Ai6ZcPuJ
+	 GuZCde/mCRGqg==
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH 3/3] ASoC: tlv320aic32x4: Make sure clk_init_data is
+ fully initialized
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Geert Uytterhoeven" <geert+renesas@glider.be>
+Cc: linux-clk@vger.kernel.org
+In-Reply-To: <7acfe448928df59a62418233d716b0c9806559d5.1787239902.git.geert+renesas@glider.be>
+References: <cover.1787239902.git.geert+renesas@glider.be>
+ <7acfe448928df59a62418233d716b0c9806559d5.1787239902.git.geert+renesas@glider.be>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 21 Aug 2026 09:04:17 +0000
+Message-Id: <20260821090418.4D0981F00A3A@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+
+Thank you for your contribution! Sashiko AI review found 6 potential issue(=
+s) to consider:
+
+Pre-existing issues:
+- [High] Memory leak and Use-After-Free via unmanaged clk_lookup entries.
+- [High] Data race and stack Use-After-Free due to assigning a block-scoped=
+ compound literal to a global array.
+- [High] Unchecked return values of resource allocations and clock registra=
+tions mask initialization failures.
+- [High] Hardcoded clock names cause registration failures for multiple cod=
+ec instances.
+- [High] Unvalidated requested clock rate causes a division by zero panic.
+- [High] Unvalidated parent clock rate causes a division by zero panic.
+--
+
+--- Patch [3]: [PATCH 3/3] ASoC: tlv320aic32x4: Make sure clk_init_data is =
+fully initialized ---
+commit bdb202ba7d1e5e85e1733f12689e1c8729d8c7d3
+Author: Geert Uytterhoeven <geert+renesas@glider.be>
+
+ASoC: tlv320aic32x4: Make sure clk_init_data is fully initialized
 
 The clk_init_data structure contains several mutually-exclusive members
 for different methods to specify the possible parents of a clock,
@@ -118,67 +78,116 @@ Make sure all members are fully initialized, to avoid such bugs, and to
 prevent future breakage when converting drivers to a different method
 for specifying the parents.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Compile-tested only.
----
- drivers/clk/ux500/clk-prcc.c    | 2 +-
- drivers/clk/ux500/clk-prcmu.c   | 4 ++--
- drivers/clk/ux500/clk-sysctrl.c | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
+> diff --git a/sound/soc/codecs/tlv320aic32x4-clk.c b/sound/soc/codecs/tlv3=
+20aic32x4-clk.c
+> index deed61650e09d..ad15ce9c60791 100644
+> --- a/sound/soc/codecs/tlv320aic32x4-clk.c
+> +++ b/sound/soc/codecs/tlv320aic32x4-clk.c
+> @@ -451,8 +451,8 @@ static struct aic32x4_clkdesc aic32x4_clkdesc_array[]=
+ =3D {
+>  static struct clk *aic32x4_register_clk(struct device *dev,
+>  					struct aic32x4_clkdesc *desc)
+>  {
+> -	struct clk_init_data init;
+>  	struct clk_aic32x4 *priv;
+> +	struct clk_init_data init =3D {};
+>  	const char *devname =3D dev_name(dev);
+> =20
+>  	init.ops =3D desc->ops;
 
-diff --git a/drivers/clk/ux500/clk-prcc.c b/drivers/clk/ux500/clk-prcc.c
-index dce235df2576dfb2..dde72d2fd0ac67ae 100644
---- a/drivers/clk/ux500/clk-prcc.c
-+++ b/drivers/clk/ux500/clk-prcc.c
-@@ -97,8 +97,8 @@ static struct clk *clk_reg_prcc(const char *name,
- 				unsigned long flags,
- 				const struct clk_ops *clk_prcc_ops)
- {
-+	struct clk_init_data clk_prcc_init = {};
- 	struct clk_prcc *clk;
--	struct clk_init_data clk_prcc_init;
- 	struct clk *clk_reg;
- 
- 	if (!name) {
-diff --git a/drivers/clk/ux500/clk-prcmu.c b/drivers/clk/ux500/clk-prcmu.c
-index ac96c46bd1bbf76b..d89f3b634f8bbd26 100644
---- a/drivers/clk/ux500/clk-prcmu.c
-+++ b/drivers/clk/ux500/clk-prcmu.c
-@@ -200,8 +200,8 @@ static struct clk_hw *clk_reg_prcmu(const char *name,
- 				    unsigned long flags,
- 				    const struct clk_ops *clk_prcmu_ops)
- {
-+	struct clk_init_data clk_prcmu_init = {};
- 	struct clk_prcmu *clk;
--	struct clk_init_data clk_prcmu_init;
- 	int ret;
- 
- 	if (!name) {
-@@ -357,8 +357,8 @@ struct clk_hw *clk_reg_prcmu_clkout(const char *name,
- 				    u8 source, u8 divider)
- 
- {
-+	struct clk_init_data clk_prcmu_clkout_init = {};
- 	struct clk_prcmu_clkout *clk;
--	struct clk_init_data clk_prcmu_clkout_init;
- 	u8 clkout_id;
- 	int ret;
- 
-diff --git a/drivers/clk/ux500/clk-sysctrl.c b/drivers/clk/ux500/clk-sysctrl.c
-index ba3258c88d28e101..2127a949e56ccf27 100644
---- a/drivers/clk/ux500/clk-sysctrl.c
-+++ b/drivers/clk/ux500/clk-sysctrl.c
-@@ -127,8 +127,8 @@ static struct clk *clk_reg_sysctrl(struct device *dev,
- 				unsigned long flags,
- 				const struct clk_ops *clk_sysctrl_ops)
- {
-+	struct clk_init_data clk_sysctrl_init = {};
- 	struct clk_sysctrl *clk;
--	struct clk_init_data clk_sysctrl_init;
- 	struct clk *clk_reg;
- 	int i;
- 
--- 
-2.43.0
+[Severity: High]
+This isn't a bug introduced by this patch, but does hardcoding the clock
+name directly from the static descriptor (init.name =3D desc->name) prevent
+probing multiple instances of this codec?
 
+If devm_clk_register() is called on a system with multiple codecs, will
+it fail with -EEXIST because names like 'pll' and 'codec_clkin' are reused?
+
+
+While reviewing this file, I noticed a few other pre-existing regressions:
+
+[Severity: High]
+This is a pre-existing issue, but is there a clk_lookup entry leaked when
+the device is unbound?
+
+sound/soc/codecs/tlv320aic32x4-clk.c:aic32x4_register_clk() {
+    ...
+	clk_hw_register_clkdev(&priv->hw, desc->name, devname);
+	return devm_clk_register(dev, &priv->hw);
+}
+
+Since clk_hw_register_clkdev() dynamically allocates a clk_lookup on the
+global list without using a devres variant or dropping it in teardown,
+will the lookup retain a dangling pointer to the freed priv->hw if probe
+fails or the driver is unbound?
+
+
+[Severity: High]
+This isn't a bug introduced by this patch, but is stack memory being written
+into the static global aic32x4_clkdesc_array?
+
+sound/soc/codecs/tlv320aic32x4-clk.c:aic32x4_register_clocks() {
+    ...
+	aic32x4_clkdesc_array[0].parent_names =3D
+			(const char* []) { mclk_name, "bclk", "gpio", "din" };
+	aic32x4_clkdesc_array[1].parent_names =3D
+			(const char *[]) { mclk_name, "bclk", "gpio", "pll" };
+    ...
+}
+
+Because these compound literals are block-scoped (stack allocated), if this
+function returns, won't the global array point to dead stack memory, leading
+to a use-after-free when the clock framework reads the parent names?
+
+
+[Severity: High]
+This is a pre-existing issue, but are we discarding the return value of
+aic32x4_register_clk() and masking probe failures?
+
+sound/soc/codecs/tlv320aic32x4-clk.c:aic32x4_register_clocks() {
+    ...
+	for (i =3D 0; i < ARRAY_SIZE(aic32x4_clkdesc_array); ++i)
+		aic32x4_register_clk(dev, &aic32x4_clkdesc_array[i]);
+
+	return 0;
+}
+
+If aic32x4_register_clk() fails due to low memory or clock name collisions,
+will the driver falsely report a successful probe?
+
+
+[Severity: High]
+This isn't a bug introduced by this patch, but could DIV_ROUND_UP() trigger=
+ a
+division by zero panic?
+
+sound/soc/codecs/tlv320aic32x4-clk.c:clk_aic32x4_div_determine_rate() {
+    ...
+	divisor =3D DIV_ROUND_UP(req->best_parent_rate, req->rate);
+    ...
+}
+
+If a 0 rate is supplied via the Common Clock Framework API, will this
+cause a kernel panic?
+
+This same pattern also appears in clk_aic32x4_div_set_rate() where
+DIV_ROUND_UP(parent_rate, rate) is called.
+
+
+[Severity: High]
+This is a pre-existing issue, but might do_div() trigger a division by
+zero panic?
+
+sound/soc/codecs/tlv320aic32x4-clk.c:clk_aic32x4_pll_calc_muldiv() {
+    ...
+	multiplier =3D (u64)rate * settings->p * 10000;
+	do_div(multiplier, parent_rate);
+    ...
+}
+
+If the PLL clock is queried or set when its parent clock is uninitialized or
+reporting a 0 Hz rate, will do_div() divide by zero?
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/cover.1787239902.gi=
+t.geert+renesas@glider.be?part=3D3
