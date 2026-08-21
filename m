@@ -1,32 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF3E4756BA
-	for <linux-clk@vger.kernel.org>; Fri, 21 Aug 2026 10:08:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BCC04766BF
+	for <linux-clk@vger.kernel.org>; Fri, 21 Aug 2026 10:08:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787306903; cv=none; b=FwOMSL3q1cyW4RqVRI2oqEjmaagIbF23i9MbqSBRHVdlxayFvmvav71jdosV3fOaeyNT4JErBDxl+i9gq36ebZcajqmqJnwTYwlqilae/mZe13KgjV1s7820U6NkPevkrNXdSluph+X8jCwrookZ2kvdb0r+TtT9HD4vNoF3BgU=
+	t=1787306939; cv=none; b=l2nEHYsElsIw3rBsmHWmdf3x75pXRcqDv6ADvnrqCYv9Fn/poJogYJTJnZDS7yqCqMTm+gVBORiJWMpwVnBuFmHJPiimbGYPvOgqoiWAbU7U3cVwwl7k/bup8tJm5Du0LwIe/lAeYZi0vVFhX2/wz0yBKcLMDEaab3KtcazVfCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787306903; c=relaxed/simple;
-	bh=oNhkoDCjQhTdo4QlnP2YPleWcSfKqgKiHw9ARc5VHrc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PLBVeS3ngwjloVn3y5oL5QbByD4F3IGD9wR4nKCCDiVBE+Y1Pagy07hEnggfx2QGFb2D334vL+9EHBSIcCGlbg9HzKegYgVUI3peGZ1EatEzx9v8Hw2GQBKAtrS+EN/52U8aB7HjrCbS52S2CxFmd6l0h2EJKTTB9ZR93aU9hsM=
+	s=arc-20240116; t=1787306939; c=relaxed/simple;
+	bh=lIP17C85lcagdDuhSPuN6BFoP0fjRRcDdqrUirAQ8ms=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ejDYjB/b5I1eOe2X52gVclFSos/8ssFqJhwUjHTk4pZDIJkeIkclGM0xma8Ud2KhzsbxKdgfa6fE4/K0pwasTqcrUVpCs8g8d6AEhNhIcrs5AtUidOSU+xp9ql/Rc34QX+PgbhWhbxWZNW2tn0vSvc6B9N7t+wMCgS8hx5e1D14=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0189B1F000E9;
-	Fri, 21 Aug 2026 10:08:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B52361F000E9;
+	Fri, 21 Aug 2026 10:08:43 +0000 (UTC)
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Iwona Winiarska <iwona.winiarska@intel.com>,
-	Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Ryan Chen <ryan_chen@aspeedtech.com>,
-	Billy Tsai <billy_tsai@aspeedtech.com>
-Cc: linux-aspeed@lists.ozlabs.org,
-	openbmc@lists.ozlabs.org,
+To: Vinod Koul <vkoul@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: linux-phy@lists.infradead.org,
 	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
 	linux-clk@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] peci: controller: aspeed: Make sure clk_init_data is fully initialized
-Date: Fri, 21 Aug 2026 12:08:05 +0200
-Message-ID: <48aa77c45e109f78ccd806bc3b7bf380c5bc5e71.1787240145.git.geert+renesas@glider.be>
+Subject: [PATCH 0/2] phy: Make sure clk_init_data is fully initialized
+Date: Fri, 21 Aug 2026 12:08:38 +0200
+Message-ID: <cover.1787240165.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -36,6 +35,8 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
+	Hi all,
+
 The clk_init_data structure contains several mutually-exclusive members
 for different methods to specify the possible parents of a clock,
 prompting drivers to initialize only the members they need.  However,
@@ -43,42 +44,45 @@ not initializing all members may cause subtle issues, which are only
 exposed when CONFIG_INIT_STACK_ALL_PATTERN or CONFIG_INIT_STACK_NONE is
 enabled.
 
-Make sure all members are fully initialized, to avoid such bugs, and to
-prevent future breakage when converting drivers to a different method
-for specifying the parents.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Compile-tested only.
+Hence this series aims to make sure all members are fully initialized,
+to avoid such bugs, and to prevent future breakage when converting
+drivers to a different method for specifying the parents.
 
 Part One[1] fixed all cases that I identified to be real bugs, in
 response to a crash I saw on BeagleBone Black.
 
-This patch is the PECI subpart of Part Two, which fixes remaining cases
+This series is the PHY subpart of Part Two, which fixes remaining cases
 that are currently harmless.  These are still fragile, and may cause
 future breakage when converting drivers to a different method for
 specifying the parents.
 
+Thanks for your comments!
+
 [1] "[PATCH treewide 0/5] clk: Make sure clk_init_data is fully
      initialized (part 1)"
     https://lore.kernel.org/cover.1787165329.git.geert+renesas@glider.be
----
- drivers/peci/controller/peci-aspeed.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/peci/controller/peci-aspeed.c b/drivers/peci/controller/peci-aspeed.c
-index a0c99ecf7f3805a1..2f4ea0e7d7a77dbd 100644
---- a/drivers/peci/controller/peci-aspeed.c
-+++ b/drivers/peci/controller/peci-aspeed.c
-@@ -413,7 +413,7 @@ static struct clk *devm_aspeed_peci_register_clk_div(struct device *dev, struct
- 						     struct aspeed_peci *priv)
- {
- 	struct clk_aspeed_peci *peci_clk;
--	struct clk_init_data init;
-+	struct clk_init_data init = {};
- 	const char *parent_name;
- 	char name[32];
- 	int ret;
+Geert Uytterhoeven (2):
+  phy: freescale: fsl-samsung-hdmi: Make sure clk_init_data is fully
+    initialized
+  phy: rockchip: Make sure clk_init_data is fully initialized
+
+ drivers/phy/freescale/phy-fsl-samsung-hdmi.c  | 2 +-
+ drivers/phy/rockchip/phy-rockchip-inno-hdmi.c | 2 +-
+ drivers/phy/rockchip/phy-rockchip-inno-usb2.c | 2 +-
+ drivers/phy/rockchip/phy-rockchip-usb.c       | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
+
 -- 
 2.43.0
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
