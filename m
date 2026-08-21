@@ -1,118 +1,154 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C623146D0B6
-	for <linux-clk@vger.kernel.org>; Fri, 21 Aug 2026 09:04:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 460BD44213B;
+	Fri, 21 Aug 2026 09:04:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787303095; cv=none; b=j9jqreQW49KkkftYhsyxZdfqYWRvCHOlruokDPsHcEunGVYnOVp7Oh4q/wUKkezdHq0a0t3RyPHqyaoGAz1y4mFWqa8cqSzApFdnXDy30GHzf5jKU9n/iUlsUpJmxCAH8F3K2r0xltuPOQhVZ0hXm67PPkT06IaqaqZqKizhakg=
+	t=1787303099; cv=none; b=EnvW6KLSnU+4528HCPOb+ye77yr9bNw6leAnCmF+8udiyegEOImE0jEG8zl1OfvM0nC/9PHkcwPYPeNAWQK1Zu5mTjNxMLv1C53Cqd+Riv71bWY/5Dfn7fz8j2c8OZhgOtJxJmuLmePt3ekLxcDaPepUXqNGekEQMok6NpjMN2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787303095; c=relaxed/simple;
-	bh=dmTR+xJo0i/EyCFhSQaMnMi4xOqOnegU6WDlUW2Gq1o=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=io01Y1MNsUJM6TJOMxrZf/+alMiWvuiRxxLoa/sL5iLjfpx+Zsn8UkfZnjJFGBsgmG9fdmNzUdtgKQODFdoBjsXP7AqGbq9EFJAiATMMy+nm6gbzTjj1RahW2bm14ZRjhu5rFbLRiwlYGCFfUJow+7wslytnhcP5UCl2nPa+FQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JDNRyfAs; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JDNRyfAs"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 407DB1F00A3A;
-	Fri, 21 Aug 2026 09:04:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787303084;
-	bh=r+kQI4ckCUDvYDZjz8ofTu2S1xyhbuZpra8UNDnDZAs=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=JDNRyfAsMl5iCZuooMp5zfxj2BCUzimkQAGxHE6VkXGiR8EcNJAexQ29NZ6WxbGaP
-	 knWNA2Ms8LcTx59RuTTZG2HcPlM4b2WXrQDhG2gFbLDRx0JMgiHuOijzOHMGPmknHX
-	 38rTKMCdAn7foktkqgLPYPA+jSzoPRHwF0cKtqfma+6Z/lFZnTP1Zb0UCdQXJEqcj/
-	 yCVzM+IMIH+9dL8PeMUyCZfGt3ZxiPcRzzphpS5SHUyAJ2hc4xrFPjM7zpULPa7gqv
-	 aEKlS+Qc7TPZ+1LDTiJr4dzK22WGLZ/IYLum20kOJwtOGkBDqp/F9eA1whhgYKSDNK
-	 1je1JEOhmLDcg==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 2/3] ASoC: codecs: wcd934x: Make sure clk_init_data is
- fully initialized
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Geert Uytterhoeven" <geert+renesas@glider.be>
-Cc: linux-clk@vger.kernel.org
-In-Reply-To: <560811bcde4b8459b5e96c131e50a94ee75664fd.1787239902.git.geert+renesas@glider.be>
-References: <cover.1787239902.git.geert+renesas@glider.be>
- <560811bcde4b8459b5e96c131e50a94ee75664fd.1787239902.git.geert+renesas@glider.be>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 21 Aug 2026 09:04:43 +0000
-Message-Id: <20260821090444.407DB1F00A3A@smtp.kernel.org>
+	s=arc-20240116; t=1787303099; c=relaxed/simple;
+	bh=vbctB0qK/J+nvcjUV8nkKn1D3Pdx7Wv87SuwWXVFo3A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=fHwGyue4ucyOqoCCRK7A4v+9E02I1yIGyWv3QbM8geg29YVfhooC2KE4wf1eU20toUdQyqXajenUm3Hh/WC83rX/6OAroWGcnb0n0LniXPZoATWy9uXksmVSC6IPNwg7B2H93hfAiibpkG4fLWrvJmlVWC41TGtlvho+kmLU3QM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 098391F00A3D;
+	Fri, 21 Aug 2026 09:04:29 +0000 (UTC)
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Ryan Chen <ryan_chen@aspeedtech.com>,
+	Joel Stanley <joel@jms.id.au>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Billy Tsai <billy_tsai@aspeedtech.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Taichi Sugaya <sugaya.taichi@socionext.com>,
+	Takao Orito <orito.takao@socionext.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Avi Fishman <avifishman70@gmail.com>,
+	Tomer Maimon <tmaimon77@gmail.com>,
+	Tali Perry <tali.perry1@gmail.com>,
+	Patrick Venture <venture@google.com>,
+	Nancy Yuen <yuenn@google.com>,
+	Benjamin Fair <benjaminfair@google.com>,
+	Sudeep Holla <sudeep.holla@kernel.org>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	David Lechner <david@lechnology.com>,
+	Abel Vesa <abelvesa@kernel.org>,
+	Peng Fan <peng.fan@nxp.com>,
+	Frank Li <Frank.Li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	Viresh Kumar <vireshk@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Ulf Hansson <ulfh@kernel.org>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Michal Simek <michal.simek@amd.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>
+Cc: linux-clk@vger.kernel.org,
+	linux-aspeed@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	openbmc@lists.ozlabs.org,
+	arm-scmi@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-mips@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	soc@lists.linux.dev,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-sunxi@lists.linux.dev,
+	linux-tegra@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 41/45] clk: vt8500: Make sure clk_init_data is fully initialized
+Date: Fri, 21 Aug 2026 10:53:51 +0200
+Message-ID: <df1b75b7ad9c4181d440422b2e62d66de4e412a7.1787239813.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1787239813.git.geert+renesas@glider.be>
+References: <cover.1787239813.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
-
-Pre-existing issues:
-- [High] Use-After-Free of wcd structure due to mismatched devres lifecycle=
-s.
---
-
---- Patch [2]: [PATCH 2/3] ASoC: codecs: wcd934x: Make sure clk_init_data i=
-s fully initialized ---
-commit ff8f9601f6c3274a4ff6020b3e29ffe892c8e05d
-Author: Geert Uytterhoeven <geert+renesas@glider.be>
-
-ASoC: codecs: wcd934x: Make sure clk_init_data is fully initialized
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
 The clk_init_data structure contains several mutually-exclusive members
 for different methods to specify the possible parents of a clock,
-prompting drivers to initialize only the members they need. However,
-not initializing all members may cause subtle issues. This commit makes
-sure all members are fully initialized.
+prompting drivers to initialize only the members they need.  However,
+not initializing all members may cause subtle issues, which are only
+exposed when CONFIG_INIT_STACK_ALL_PATTERN or CONFIG_INIT_STACK_NONE is
+enabled.
 
-> diff --git a/sound/soc/codecs/wcd934x.c b/sound/soc/codecs/wcd934x.c
-> index caca5cc251004..0ed24cca088f8 100644
-> --- a/sound/soc/codecs/wcd934x.c
-> +++ b/sound/soc/codecs/wcd934x.c
-> @@ -2130,9 +2130,9 @@ static struct clk *wcd934x_register_mclk_output(str=
-uct wcd934x_codec *wcd)
->  	struct device *dev =3D wcd->dev;
->  	struct device_node *np =3D dev->parent->of_node;
->  	const char *parent_clk_name =3D NULL;
-> +	struct clk_init_data init =3D {};
->  	const char *clk_name =3D "mclk";
->  	struct clk_hw *hw;
-> -	struct clk_init_data init;
->  	int ret;
-> =20
->  	if (of_property_read_u32(np, "clock-frequency", &wcd->rate))
+Make sure all members are fully initialized, to avoid such bugs, and to
+prevent future breakage when converting drivers to a different method
+for specifying the parents.
 
-[Severity: High]
-This is a pre-existing issue, but is there a use-after-free risk due to
-mismatched devres lifecycles when the driver is unbound?
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Compile-tested only.
+---
+ drivers/clk/clk-vt8500.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-The wcd structure is allocated using devm_kzalloc on the codec device's
-lifecycle in wcd934x_codec_probe:
+diff --git a/drivers/clk/clk-vt8500.c b/drivers/clk/clk-vt8500.c
+index 3e62cb853d5e90e7..581ac00c31bc0448 100644
+--- a/drivers/clk/clk-vt8500.c
++++ b/drivers/clk/clk-vt8500.c
+@@ -227,8 +227,8 @@ static __init void vtwm_device_clk_init(struct device_node *node)
+ 	struct clk_hw *hw;
+ 	struct clk_device *dev_clk;
+ 	const char *clk_name = node->name;
++	struct clk_init_data init = {};
+ 	const char *parent_name;
+-	struct clk_init_data init;
+ 	int rc;
+ 	int clk_init_flags = 0;
+ 
+@@ -687,8 +687,8 @@ static __init void vtwm_pll_clk_init(struct device_node *node, int pll_type)
+ 	struct clk_hw *hw;
+ 	struct clk_pll *pll_clk;
+ 	const char *clk_name = node->name;
++	struct clk_init_data init = {};
+ 	const char *parent_name;
+-	struct clk_init_data init;
+ 	int rc;
+ 
+ 	if (!pmc_base)
+-- 
+2.43.0
 
-sound/soc/codecs/wcd934x.c:wcd934x_codec_probe() {
-    ...
-    wcd =3D devm_kzalloc(dev, sizeof(*wcd), GFP_KERNEL);
-    ...
-}
-
-However, further down in wcd934x_register_mclk_output, the embedded clock
-hardware is registered against the parent device's lifecycle:
-
-sound/soc/codecs/wcd934x.c:wcd934x_register_mclk_output() {
-    ...
-    ret =3D devm_clk_hw_register(wcd->dev->parent, hw);
-    ...
-}
-
-When the parent MFD driver is unbound (e.g. via rmmod), the driver core
-first unbinds all child devices. The codec device unbinds, freeing wcd.
-Then, the parent MFD device unbinds, and its devres cleanup invokes
-clk_hw_unregister on the now-freed hw pointer.
-
-Does devm_clk_hw_register need to be called on the child dev instead of
-the parent?
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/cover.1787239902.gi=
-t.geert+renesas@glider.be?part=3D2
