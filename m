@@ -1,189 +1,148 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C47A45FFAD;
-	Fri, 21 Aug 2026 10:25:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E323F3A6F19
+	for <linux-clk@vger.kernel.org>; Fri, 21 Aug 2026 10:29:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787307913; cv=none; b=JGWqFwUjBTklreu0hCxSt2I8jP37ZbslK+N+ZxFhZERKzZG3e92WCnPNWh4SnNIf5AkdCFX3CITkEqDKdHaxD5lxvfdw1h+Aijcx5qXKHhmnj9uhOOgJyoC5h7BIpbt9Hb50WukYvicDw+WOifQkFqnK+nNw0a6/LYIj/hPLWO0=
+	t=1787308192; cv=none; b=Msl+/67gYI/gDts52jH2svI8maOb1Y3KFTjRCwMr+r1PDG98HUNF0lJ+KqvHum46F6ENnpSaVjhCZf4d8qsdivgkkq0G6nn59VlNl84RCSGb9G5utZzs3hUepPV4RgFpIuYA0d/Z1V4x803W7nj3vb1u5ggfk9orhbTRf+AbAUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787307913; c=relaxed/simple;
-	bh=8w4slWG1zvQSvAUTYTqpua9ZHjZstrFMX29GOnEWpT4=;
+	s=arc-20240116; t=1787308192; c=relaxed/simple;
+	bh=g3jIMLojJDeQoKl5vjznPMQaNEyk2dHwnjXrdv2Ux20=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=Hdh5iCr99OPX0OJG9Og/UF0dqgGcmR8F7B/lYrNN0b4Hw5D6as617T2LoMmeFJyU7RKtR7vHaNbaccXuzKZPMFgfOQ1POkFmhPxver8T0JD1q0vcCY2in3aC+dg6lxa2u2VJZmWN7igBGUl5ZJBgnbo/op4LS9pqTErVilM+fFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UOPOumCc; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=XKSlzlBy2gySNPEQZD49+61D2eUxDAQdWPHdHmznALwlsnX7j5u9cX8RFSbkJhXYHvN63yQPRBi1PqW6sMgXIZnSGKjMbDIcB3PK1dUG1R61NCj6f5xoXs26Q3RC5ISop4z74x7dj4LIayEGSzT+VWuY+x0jrql7O2dXx9VdyjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JNfInL2e; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UOPOumCc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79ADA1F000E9;
-	Fri, 21 Aug 2026 10:25:04 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JNfInL2e"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2AEE1F000E9;
+	Fri, 21 Aug 2026 10:29:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787307904;
-	bh=d+iPz2R3iu+FVv3Ba37P3wWOk2poGBppSVZkdrZH+v8=;
+	s=k20260515; t=1787308177;
+	bh=wJPeVQgm5j/WSE7VShIXcWxl9EhpW+1WepDlwjN0hBo=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=UOPOumCczqJsa23VgveGYYNO4CJ3AznTpxcKeOMm0k1JEjuxaEH5TcOVmdrK4yJmR
-	 94dC7WAJiBvLCuTFBumYg5ntT6iRH4LT9EGSp4V+fUWvbgatPhJaKhDjPvEmd4k0vA
-	 8Epz6AY2wE40iJdC5rEJ2uBBBeqonU6CSSQbI8wTZnfVFOz7xfqvmUItKqOGHcFgu/
-	 gmcWRQrTqfOCGv40K15QKv0sjaf7j985lJI2NWUzNRO8wV9SuXY7jIaAAA7f+befpt
-	 zB6Z1ZDrRymcWcuhCw7LDCFu/xX/VY1Cnaqij4m1XeyZtwDwUrS22eTHF6EYBuE0jj
-	 rTdrWlCrqeBLw==
+	b=JNfInL2eM/U2Lv09rwG8C/4uN2uGeNF5d3GAhCuePHmFbHsYCyLYbolc0vAqhQ7at
+	 wxz6rQxS/1s9zgMoMVPoj8xyZx0IxH5aAuuuZt8ndu4oEDTdowC6KmDLSWli1hu9do
+	 GbQvsFGSFE2b8jLV1qfzPhY4RB5+3WtOVqTROiMDGsdS8gtlxxqGbw6UU9/BLym/TE
+	 yp2WC1PhZD1d6t76BI1ypCR6MXc120GPDKNGVGi7MNm9PQ/kJmmL7rAWchhsQaEB1v
+	 u7h1vvAqQi8OJNjIx6Aih+KnfTwWNTIT9sy+z/nymf4Zv9P0UX+nVXA6hjsvQJf0oe
+	 wkwraRC5e/KzA==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 2/5] rtc: m41t80: Make sure clk_init_data is fully
+Subject: Re: [PATCH 2/2] phy: rockchip: Make sure clk_init_data is fully
  initialized
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Geert Uytterhoeven" <geert+renesas@glider.be>
-Cc: linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org, "Alexandre Belloni" <alexandre.belloni@bootlin.com>
-In-Reply-To: <c5290fb9a28b45d6bcec724d5897f8bcbf96ea50.1787241693.git.geert+renesas@glider.be>
-References: <cover.1787241693.git.geert+renesas@glider.be>
- <c5290fb9a28b45d6bcec724d5897f8bcbf96ea50.1787241693.git.geert+renesas@glider.be>
+Cc: linux-clk@vger.kernel.org, neil.armstrong@linaro.org, olteanv@gmail.com, vkoul@kernel.org, linux-phy@lists.infradead.org
+In-Reply-To: <adb5bd47343dd31661748d5de14cb28a2bae2d17.1787240165.git.geert+renesas@glider.be>
+References: <cover.1787240165.git.geert+renesas@glider.be>
+ <adb5bd47343dd31661748d5de14cb28a2bae2d17.1787240165.git.geert+renesas@glider.be>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 21 Aug 2026 10:25:04 +0000
-Message-Id: <20260821102504.79ADA1F000E9@smtp.kernel.org>
+Date: Fri, 21 Aug 2026 10:29:36 +0000
+Message-Id: <20260821102936.F2AEE1F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 
-Thank you for your contribution! Sashiko AI review found 4 potential issue(=
+Thank you for your contribution! Sashiko AI review found 2 potential issue(=
 s) to consider:
 
 Pre-existing issues:
-- [High] Missing cleanup of clock registration and OF provider on probe fai=
-lure and device unbind leads to memory leaks and Use-After-Free.
-- [High] Missing cleanup of watchdog device and reboot notifier on probe fa=
-ilure causes resource leaks and Use-After-Free.
-- [High] The seconds register is corrupted with the flags register value du=
-ring time setting.
-- [High] Clock operations race with RTC operations causing I2C register cor=
-ruption.
+- [High] Incorrect validation of the `refclk` pointer results in registerin=
+g a clock with 1 parent but a NULL parent name if the optional 'phyclk' is =
+missing.
+- [High] Missing `of_clk_del_provider` on the error path of `inno_hdmi_phy_=
+probe`, leading to a use-after-free in the OF clock provider list.
 --
 
---- Patch [2]: [PATCH 2/5] rtc: m41t80: Make sure clk_init_data is fully in=
-itialized ---
-commit 11533c947dd31e7928f8df0ec766e6dae1e6ced8
+--- Patch [2]: [PATCH 2/2] phy: rockchip: Make sure clk_init_data is fully =
+initialized ---
+commit 830443ad1b9c48211b68c5bb691a7101b0e76d09
 Author: Geert Uytterhoeven <geert+renesas@glider.be>
 
-rtc: m41t80: Make sure clk_init_data is fully initialized
+phy: rockchip: Make sure clk_init_data is fully initialized
 
-The clk_init_data structure contains several mutually-exclusive members for
-different methods to specify the possible parents of a clock, prompting
-drivers to initialize only the members they need. Make sure all members are
-fully initialized, to avoid bugs and prevent future breakage.
+This commit zero-initializes the clk_init_data structures across several
+rockchip phy drivers to ensure all mutually-exclusive members are cleared.
+This prevents subtle bugs when specific initialization configurations are
+enabled.
 
-> diff --git a/drivers/rtc/rtc-m41t80.c b/drivers/rtc/rtc-m41t80.c
-> index 3c8c379392c14..ec86ca3f2c4c8 100644
-> --- a/drivers/rtc/rtc-m41t80.c
-> +++ b/drivers/rtc/rtc-m41t80.c
-> @@ -574,8 +574,8 @@ static struct clk *m41t80_sqw_register_clk(struct m41=
-t80_data *m41t80)
->  	struct i2c_client *client =3D m41t80->client;
->  	struct device_node *node =3D client->dev.of_node;
->  	struct device_node *fixed_clock;
-> +	struct clk_init_data init =3D {};
->  	struct clk *clk;
+> diff --git a/drivers/phy/rockchip/phy-rockchip-inno-hdmi.c b/drivers/phy/=
+rockchip/phy-rockchip-inno-hdmi.c
+> index 1483907413faa..80aeed965c3f3 100644
+> --- a/drivers/phy/rockchip/phy-rockchip-inno-hdmi.c
+> +++ b/drivers/phy/rockchip/phy-rockchip-inno-hdmi.c
+> @@ -999,7 +999,7 @@ static int inno_hdmi_phy_clk_register(struct inno_hdm=
+i_phy *inno)
+>  {
+>  	struct device *dev =3D inno->dev;
+>  	struct device_node *np =3D dev->of_node;
 > -	struct clk_init_data init;
+> +	struct clk_init_data init =3D {};
+>  	const char *parent_name;
 >  	int ret;
 
 [Severity: High]
-This is a pre-existing issue, but does m41t80_sqw_register_clk() leak the
-registered clock and OF provider?
+This isn't a bug introduced by this patch, but does the clock provider
+registration here leak on the probe error path?
 
-If devm_rtc_register_device() fails in m41t80_probe(), or when the driver
-unbinds and calls m41t80_remove(), the m41t80_data struct is freed. However,
-the clock and its OF provider remain registered:
+In inno_hdmi_phy_probe(), if devm_of_phy_provider_register() fails after
+the clock is registered:
 
-m41t80_sqw_register_clk() {
+inno_hdmi_phy_probe() {
     ...
-    clk =3D clk_register(&client->dev, &m41t80->sqw);
-    if (!IS_ERR(clk))
-        of_clk_add_provider(node, of_clk_src_simple_get, clk);
+    ret =3D inno_hdmi_phy_clk_register(inno);
+        // Calls of_clk_add_provider() which adds to global list
     ...
+    phy_provider =3D devm_of_phy_provider_register(...);
+    return PTR_ERR_OR_ZERO(phy_provider);
 }
 
-Will subsequent clock operations dereference the freed m41t80->sqw field?
+If the phy provider registration fails, the probe aborts without calling
+of_clk_del_provider(). Devres will free inno->phyclk, leaving a dangling
+pointer in the global of_clk_providers list which could trigger a
+use-after-free during subsequent clock lookups.
+
+> diff --git a/drivers/phy/rockchip/phy-rockchip-inno-usb2.c b/drivers/phy/=
+rockchip/phy-rockchip-inno-usb2.c
+> index 7d8a533f24aea..e47b89015586f 100644
+> --- a/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
+> +++ b/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
+> @@ -400,7 +400,7 @@ static int
+>  rockchip_usb2phy_clk480m_register(struct rockchip_usb2phy *rphy)
+>  {
+>  	struct device_node *node =3D rphy->dev->of_node;
+> -	struct clk_init_data init;
+> +	struct clk_init_data init =3D {};
+>  	struct clk *refclk =3D NULL;
+>  	const char *clk_name;
+>  	int i;
 
 [Severity: High]
-This is a pre-existing issue, but is there a missing cleanup of the watchdog
-device and reboot notifier on probe failure?
+This is a pre-existing issue, but does this function correctly handle
+missing optional clocks later in the logic?
 
-In m41t80_probe(), the watchdog device and reboot notifier are registered:
+If the optional phyclk is not found, refclk remains NULL. However, the
+validation check further down evaluates NULL as true:
 
-m41t80_probe() {
+rockchip_usb2phy_clk480m_register() {
     ...
-    rc =3D misc_register(&wdt_dev);
-    if (rc)
-        return rc;
-    rc =3D register_reboot_notifier(&wdt_notifier);
-    ...
+    if (!IS_ERR(refclk)) {
+        clk_name =3D __clk_get_name(refclk);
+        init.parent_names =3D &clk_name;
+        init.num_parents =3D 1;
+    } else {
+        ...
+    }
 }
 
-If devm_rtc_register_device() subsequently fails, the driver returns the
-error directly without deregistering the watchdog device or the reboot
-notifier:
+Since !IS_ERR(NULL) is true, it attempts to register the clock with 1 parent
+and a NULL parent name, causing clk_register() to fail with -EINVAL and
+breaking USB PHY support on platforms missing this clock.
 
-m41t80_probe() {
-    ...
-    rc =3D devm_rtc_register_device(m41t80_data->rtc);
-    if (rc)
-        return rc;
-    ...
-}
-
-Could this lead to a use-after-free if userspace then accesses /dev/watchdo=
-g,
-causing wdt_ping() to dereference the freed clientdata memory?
-
-[Severity: High]
-This is a pre-existing issue, but does m41t80_rtc_set_time() inadvertently
-corrupt the seconds register?
-
-During time setting, when attempting to clear the STOP bit in the seconds
-register, it writes the flags variable instead:
-
-m41t80_rtc_set_time() {
-    ...
-    err =3D i2c_smbus_write_byte_data(client, M41T80_REG_SEC,
-                                    flags & ~M41T80_SEC_ST);
-    ...
-}
-
-Since flags is populated earlier by reading the FLAGS register
-(M41T80_REG_FLAGS), would this write the raw value of the FLAGS register in=
-to
-the seconds register, overwriting the previously set time?
-
-[Severity: High]
-This is a pre-existing issue, but can clock operations race with RTC
-operations and corrupt I2C registers?
-
-The CCF clock callbacks perform read-modify-write sequences on the
-M41T80_REG_ALARM_MON and M41T80_REG_WDAY registers without holding a lock
-that protects against concurrent time-setting operations:
-
-m41t80_sqw_control() {
-    ...
-    int ret =3D i2c_smbus_read_byte_data(client, M41T80_REG_ALARM_MON);
-    ...
-    ret =3D i2c_smbus_write_byte_data(client, M41T80_REG_ALARM_MON, ret);
-    ...
-}
-
-m41t80_sqw_set_rate() {
-    ...
-    reg =3D i2c_smbus_read_byte_data(client, reg_sqw);
-    ...
-    ret =3D i2c_smbus_write_byte_data(client, reg_sqw, reg);
-    ...
-}
-
-Meanwhile, the RTC core callbacks modify these same registers under the
-protection of the RTC subsystem's rtc_lock.
-
-Since the CCF operations execute asynchronously under clock framework locks
-and do not acquire the rtc_lock, could concurrent modifications by both
-subsystems clobber the shared I2C registers?
+[ ... ]
 
 --=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/cover.1787241693.gi=
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/cover.1787240165.gi=
 t.geert+renesas@glider.be?part=3D2
