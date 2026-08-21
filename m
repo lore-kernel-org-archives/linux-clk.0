@@ -1,123 +1,198 @@
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49F5C47798C
-	for <linux-clk@vger.kernel.org>; Fri, 21 Aug 2026 11:36:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5F4348C405
+	for <linux-clk@vger.kernel.org>; Fri, 21 Aug 2026 11:45:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787312195; cv=none; b=lOyF1f1Vn9GahWohk3V7IpEK02BMasTXMr5Y6onRTV9oth0jG4IBMl5jgxchnN13cVMx27NyVNvluSE/+6j+RB9PdaLJCJnDZXw8WpRTelJuUFtbPOz0vM6eiDcH4g2/IonKqaQTCKD1MIvAQr+apFqFFDJvvaHSe/JfcF0CqBI=
+	t=1787312710; cv=none; b=SuN4yaKMWTB19FT37hw2LQlE9ka1tbL22b7KT8Ena6pUBJQT8TToW99dXTXy7otGNFSXMwT7TrAht2XHnfxt5YBCmy1gqSjW+pZh9m2163YM3VyODqsAajSHPmo3Eud7vwUrU6smAuJ6Gf5cXEileOdRPBgbGhZTOa/XS0hwVy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787312195; c=relaxed/simple;
-	bh=zTUqexKzRd/ffgVVQLYyFm6wrBTaM5V92oYObJi9TRQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CNqeNc4FEnUsmXDY3SX5GdkiFftjjEFSEAmnEBBwIDRiqTRXJHQs5+u/kYZSIx1r48UGrWALSWFsXAL3NOgcXexItAyLHfj2zi6PmJ5ymG6Yz6/BoLLTSbvAHGR76GqEDWdPQEaKTHd/4p9FCePTXc4S3aQQh5TjGx52261Q1fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-5c56dbc3a51so323897e0c.0
-        for <linux-clk@vger.kernel.org>; Fri, 21 Aug 2026 04:36:33 -0700 (PDT)
+	s=arc-20240116; t=1787312710; c=relaxed/simple;
+	bh=t6UzDLEI5sFGDTGO7Y5vJvN9sIzuySwnVE5VSaZ8VfI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=prk1P82Ky4Ue2UYvMZIEtdVCk2bMhxIQgdgS6mmZDHJtFu7y6fdGns4YHb1+VLsVwfgM95BD1aRS52wyH/T/g4ZHm1xY45wH8ni2gAnV8iPrlDQXJ6ums0rvgUI96JJGuG60ueuG72oJS8qf5kvHUevmPOh44b0u6KMJe4SBueI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=VdgImv2G; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=RA+H+oQU; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="VdgImv2G";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="RA+H+oQU"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 67L9M4nF789994
+	for <linux-clk@vger.kernel.org>; Fri, 21 Aug 2026 11:45:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=2dAxTCvnWQHdzet60v9peB5B
+	pAu+xzdvRTiBy/vj54k=; b=VdgImv2GIIYlPoA7bawOCdd/z5eOizLUkWtHiKHG
+	fMJ8kehGNhTBZ0h8fQUpLmO4aHVb4Mho+58HJbtXJmK7pzA7iwmysMFI9YwLuJLd
+	0vJSyyQpP6DmL8TfPIZx52bXvBmaOa490uwxGO8tVnTT5LQPCWLV/uSDteUOUqma
+	tE65aj8LOjjW4Z/rx/aq+6zvt9jwn5DM+o8amnjPhmorMlOraz66r8EKsa6q4pa0
+	p5Q6NGTAo6FeLQBpnvIZHqRMWgICdneh/tjNO4EQy9HTiegVbpRhgIpeHu85e56G
+	ImFfg188wowSrriSTZS6q40qjqQT91C/Gs57w7aUUKPu3Q==
+Received: from mail-vs1-f69.google.com (mail-vs1-f69.google.com [209.85.217.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4g6ebusra5-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Fri, 21 Aug 2026 11:45:06 +0000 (GMT)
+Received: by mail-vs1-f69.google.com with SMTP id ada2fe7eead31-744dc532943so863621137.3
+        for <linux-clk@vger.kernel.org>; Fri, 21 Aug 2026 04:45:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1787312705; x=1787917505; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=2dAxTCvnWQHdzet60v9peB5BpAu+xzdvRTiBy/vj54k=;
+        b=RA+H+oQUhTPtfVPIqMCkLqZ/KoO821hQwKZL3Ia2QfjU7bLx5l1HOFKt9KRuHJTVz4
+         uRMLtqSd+s8bN2SLZqvKbg7QRX1MfhQkFU9O6NzVP9m93WClz198YD4vSpjWY1YP8oX8
+         i6xH/JlR/SNZHf+1MZuzC30voWSLJvkGQC7SQWgCM9wxSzuaY49HAe+bb80j2a2Za2Zk
+         SQWYloXjKPVQ5XFu1q3pRsgP4E0CcHkgNMFF+Tzvv3wa++dYEVPELjY1r5GceO3FkV0m
+         Co4UuBaSb3WdQSXGSeGqaIgB7+CbiwgspLxWerxb0dR+81WshPgaTdyk8PNpqBcDqKXq
+         qtHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787312192; x=1787916992;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=ec+NopWifWei3xhy94Jsaew2jyivOXpRYVcmATiWbTA=;
-        b=Z9yAutyvU2ody79o5vBI0cdfY+IMdOIHneL3SIFKFL0xdmMhsbUXHvSyuuDMuJnIKz
-         xXCk4nWX9n3cVGSOdYBduak5WPRdIvZm/BJ8StSCFEIWK9W0pPWfqhjQsHR8llwq0H7R
-         u3jTAsQCmHMsYD5E8E1dTYfkhf3nm4iHL3JjfniWYxeUC0avkGIbbz1u3kEM6wn/aGbt
-         ecym52okP6EP/a6dBYF73qmtDW7YaxQsVvquaMGJg12vR5gm75Z2UROoJCuIPPH7Buas
-         v4GnofZYnHscIu/c+KzyTZtIOQkKS7mjjfq8wZR4iN4HqCxpaDWW8p156Yy1yskCE4MT
-         a5fA==
-X-Forwarded-Encrypted: i=1; AHgh+RqpSvOb76jfCfl6a8HV9T5woIClItI6zoN8ftpu+KByEC0zTFlUJjh2VV6b77LcganjBH++OtPurpM=@vger.kernel.org
-X-Gm-Message-State: AFuF++khw5hCUHekmAydTrYGWUwGufjpgHkquU5hOlz4As1TCkVwvqA3
-	GTy0BBlUD9yhoy8jgKUVmKBSgQYgoQzTyypdo9J+kFT1YViOmaFbEWTZ3OTQ2q8F
-X-Gm-Gg: AR+sD11ZIjLrjT5wYUFGPKVK1zlLpI9LiNQMMRrheAuot3B34XWXpefOP/RDBRogGil
-	4AJ38hjsBq4CI91q7X3imoli4PvN7O9nvW2WnsKFQP+1r2tXjyo6ZdE36v1dIX+blLX8VEIy45s
-	hQ6yPKou5lP6BBhqv2hAFn740YJ5vRybMKaCAB/ChU/OTZBnYMGUwQsPvsaYmTsue3nwZqRLhCg
-	XMxIwUXBiwk2sTmEqODMeejW2Ogg5ryx1Z4b0vBDod5PgQv/p5fPzcc7pG2ozzgcpESyS8Ye4am
-	9KLg3X7DrHBdUm4YrajP4BQ2fEPGFBGmy8iCJfXneXD0Ybo0zInwNbw2o9HX0g38ZQKatbgOqh8
-	foQmFi0t8AMaz/S/AX47ssCLdY4C0Sg+gParNuzSaaER1DHqIAKaFvEYO04NsxuV0AHKIACAzNE
-	528kT6BpF3bEeztBMB9fPhdU6x0O/blmh37k7F9Lu+Gbt60U63OXiKNsAWJo6XejJw0nwmpxGs2
-	G4+Xgw0Rndg3SdToEnOcGzpnxZrrw==
-X-Received: by 2002:a05:6122:1798:b0:5c5:732c:f4f5 with SMTP id 71dfb90a1353d-5c5ff866132mr2035932e0c.8.1787312192211;
-        Fri, 21 Aug 2026 04:36:32 -0700 (PDT)
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com. [209.85.221.169])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c5e276d7ebsm8463687e0c.10.2026.08.21.04.36.30
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Aug 2026 04:36:30 -0700 (PDT)
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-5bf9466867cso369549e0c.2
-        for <linux-clk@vger.kernel.org>; Fri, 21 Aug 2026 04:36:30 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RousbPqrlPbLtOZ69rgRHDOlgEe94CD6zqAjvB5zFYDR01ny6tRC2Zqf/L6a+lMOzP6KisN/Qzzsf0=@vger.kernel.org
-X-Received: by 2002:a05:6122:1798:b0:5c5:732c:f4f5 with SMTP id
- 71dfb90a1353d-5c5ff866132mr2035837e0c.8.1787312190118; Fri, 21 Aug 2026
- 04:36:30 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1787312705; x=1787917505;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=2dAxTCvnWQHdzet60v9peB5BpAu+xzdvRTiBy/vj54k=;
+        b=nVlDThdg6aFxOOtjfcx0JZ5yJzq8lWcPYIMq8yH980U7G2fbwx1EhuQvpwqbptrHuL
+         XNphj2QWOPKn9dp7Q1CdTzzKuNdvU0BOZishm1+1u4y4v5ZWiCSY2xtcvvR1EyY7/DY9
+         nPKkZcSXGgWXJ7qG/zwKCQW/EB/UrwNWerMcRamnEJ0RImC1jC7Ku9vsmDLVzaZt1cxR
+         gcp7GFnj8JtaLJUjbcwF5PkUW1Gv1+PJwIBGSiG5Kmp5tlmKSx9cukL902ASQ6a8imm3
+         mBGD0UXytHk+T8l28l2bpqvPYnkJBGdLdBiy7nfwF/oRvxTGnfHLf44DenP4wBXUade2
+         CxQg==
+X-Forwarded-Encrypted: i=1; AHgh+RpBMxlZWP4SWrSxInTKJ+WAjosr6M/7nUC/4a3FWemipN0PJ2yo2bIr1wurZ9tVnrIv7A5cT2dEbLY=@vger.kernel.org
+X-Gm-Message-State: AFuF++kR3JszgZuvGZmbWa/sVXG/ATzR6s5jSlM3/aZCbweN9xgBAC+Q
+	2r1F+f0NkxfET9ke4/tGkXOO7jKIgEcNJv9kbcYeVRLp68stN7mkQWJMhvo2SsBYvDwF93G97Gn
+	tLZZ/kDMeIbYSysURSeOsnI6lCwtOJNFY4+mi0v9F12AmdVyk1Boq3pikJFcackA=
+X-Gm-Gg: AR+sD11IXr+FLx1c+GUUTLlcSH1RDfZ8+wqcNuCrnZjOEyvQcdCwRLX+2W5FdOAhhLc
+	UttTvyh8Mm+NxH5E5Tlm77dEmtQiHkwzSaAAsLGmo5PimDqAdUPcTXvVHPPDIwzY7Nb3RAoe5yt
+	RJ3jykw0TAZChMfBtEHawdTKr8JdDWiVKWB/dYTL+pq/iPEWBQ6JX1HyIF4Q6vaUzAQKiI1Gezv
+	CWKUms0hbQPRggiyHfOkEHgxFYK9ek+yHaUjeEitqMzIVoj56yGC4pn4zB/mI93eyj7xfXphNoV
+	uSw2RdQGls6MYNT55ldsDkWpGF354zi4B0T2l3dPJTfkiicKPLIlMx2Rfu1DU4o05uWrhuuGky2
+	/NX/qS4dw91gnTj8=
+X-Received: by 2002:a05:6102:8083:b0:77b:63e3:6555 with SMTP id ada2fe7eead31-77b63e3c773mr239182137.12.1787312705049;
+        Fri, 21 Aug 2026 04:45:05 -0700 (PDT)
+X-Received: by 2002:a05:6102:8083:b0:77b:63e3:6555 with SMTP id ada2fe7eead31-77b63e3c773mr239156137.12.1787312704554;
+        Fri, 21 Aug 2026 04:45:04 -0700 (PDT)
+Received: from oss.qualcomm.com ([188.27.161.240])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6a3feec9d52sm6458300a12.2.2026.08.21.04.44.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Aug 2026 04:45:03 -0700 (PDT)
+Date: Fri, 21 Aug 2026 14:44:57 +0300
+From: Abel Vesa <abel.vesa@oss.qualcomm.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Ryan Chen <ryan_chen@aspeedtech.com>, Joel Stanley <joel@jms.id.au>,
+        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+        Jerome Brunet <jbrunet+clk@baylibre.com>,
+        Andrew Jeffery <andrew@codeconstruct.com.au>,
+        Billy Tsai <billy_tsai@aspeedtech.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@tuxon.dev>, Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+        Taichi Sugaya <sugaya.taichi@socionext.com>,
+        Takao Orito <orito.takao@socionext.com>,
+        Linus Walleij <linusw@kernel.org>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>, Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Sudeep Holla <sudeep.holla@kernel.org>,
+        Cristian Marussi <cristian.marussi@arm.com>,
+        David Lechner <david@lechnology.com>, Abel Vesa <abelvesa@kernel.org>,
+        Peng Fan <peng.fan@nxp.com>, Frank Li <Frank.Li@nxp.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Santosh Shilimkar <ssantosh@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Vladimir Zapolskiy <vz@mleia.com>, Heiko Stuebner <heiko@sntech.de>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Peter Griffin <peter.griffin@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Dinh Nguyen <dinguyen@kernel.org>, Viresh Kumar <vireshk@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Emilio =?utf-8?B?TMOzcGV6?= <emilio@elopez.com.ar>,
+        Chen-Yu Tsai <wens@kernel.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Thierry Reding <thierry.reding@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>, Ulf Hansson <ulfh@kernel.org>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Michal Simek <michal.simek@amd.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>, linux-clk@vger.kernel.org,
+        linux-aspeed@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org,
+        arm-scmi@vger.kernel.org, imx@lists.linux.dev,
+        linux-mips@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+        soc@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+        linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH 13/45] clk: imx: Make sure clk_init_data is fully
+ initialized
+Message-ID: <gj4re27ahv3pusk5coh55xqrtj5dkigywa3sqysnifxpwsf5ch@fl6guu2elgnb>
+References: <cover.1787239813.git.geert+renesas@glider.be>
+ <7300fde72b6449d2cd7c043e4caec9a6c4171424.1787239813.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1787240090.git.geert+renesas@glider.be> <5d066598-7aff-4912-89c6-23761fdccc7b@amd.com>
-In-Reply-To: <5d066598-7aff-4912-89c6-23761fdccc7b@amd.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 21 Aug 2026 13:36:18 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXSwx36pDJ0kW=CvQztFx53OvcdfMTpv1h2H6J3z2+Wfg@mail.gmail.com>
-X-Gm-Features: AcwNN1Vx5LhEzAerkbLpsNS7FWTQ-s_Hejhf3XNTw2-87OEOYM9RyiJaA3RAFBU
-Message-ID: <CAMuHMdXSwx36pDJ0kW=CvQztFx53OvcdfMTpv1h2H6J3z2+Wfg@mail.gmail.com>
-Subject: Re: [PATCH 0/2] mmc: Make sure clk_init_data is fully initialized
-To: Michal Simek <michal.simek@amd.com>
-Cc: Ulf Hansson <ulfh@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
-	Adrian Hunter <adrian.hunter@intel.com>, linux-mmc@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
-	linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7300fde72b6449d2cd7c043e4caec9a6c4171424.1787239813.git.geert+renesas@glider.be>
+X-Proofpoint-GUID: p3iuMEZhLT8tl1wN6dcZdy4a5D79fK5i
+X-Proofpoint-ORIG-GUID: p3iuMEZhLT8tl1wN6dcZdy4a5D79fK5i
+X-Proofpoint-Spam-Info: AW1haW4tMjYwODIxMDA4OSBTYWx0ZWRfX3ftEvs4stzwM
+ F8P7KdFEYO02Gi3TdNvohVi3g3PfYcNLRVex1oAIFScTGttxawUjeK2xGlXbf5/WCzcsYP9wd5E
+ IGD7Nreap/TRRJSsPyNE2HURWH028jk=
+X-Authority-Analysis: v=2.4 cv=QJlYgALL c=1 sm=1 tr=0 ts=6a883a42 cx=c_pps
+ a=5HAIKLe1ejAbszaTRHs9Ug==:117 a=wUpz7uCjLrEXi01cjX+DLw==:17
+ a=kj9zAlcOel0A:10 a=Sv0fKeRqtYgA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_glEPmIy2e8OvE2BGh3C:22
+ a=EUspDBNiAAAA:8 a=yQKkdfHF0SNApnWj8YgA:9 a=CjuIK1q_8ugA:10 a=zZCYzV9kfG8A:10
+ a=gYDTvv6II1OnSo0itH1n:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODIxMDA4OSBTYWx0ZWRfX71aEi2SZuaI0
+ 5mJdJWW/48lcGpi9ZEJsGoaT/GT1NQzdQc0CmOAxxfL2Z2Fxo7lYyk+LAy8hwyaXgJiWpM5thdV
+ 8IJUqQaee8qjscVkMLU5eNJ7Rlp4Iktr2nvtfd/dSwnKfDHLjaFYYtjql3tbbRKI62hOUVHSa/H
+ H++gY8e5SHxp8zrdkAB1EkmX5617/Gz+cyylzCiuqfZuFzEKyE4DqmO20P6jssZudfQwK1rO7Gh
+ dNIdCSPnwpZ11d5qaZqcNETaCQIyyl7tExjcxvgVQcCvcIwlOztDxG8CpCQVSm5aCn67Vi0Cwjs
+ pi1a6xFJdQrsGhnWU1Ec+KL8P7K+rhkf+hRD/5+k3H/H3/yJF8RS7fpUi8oMyv3PifZovPjgidB
+ OKpnDONXw+Sgg720krkipo06KxQqEvOBzeZrm/VSfEva+e2GADcBrkom0CbOnyiy1ympXtIoTv5
+ vAEmHTAzjN5NRtTB5ww==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-08-21_03,2026-08-21_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 bulkscore=0 suspectscore=0 impostorscore=0 clxscore=1015
+ priorityscore=1501 spamscore=0 lowpriorityscore=0 phishscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2608210089
 
-Hi Michal,
+On 26-08-21 10:53:23, Geert Uytterhoeven wrote:
+> The clk_init_data structure contains several mutually-exclusive members
+> for different methods to specify the possible parents of a clock,
+> prompting drivers to initialize only the members they need.  However,
+> not initializing all members may cause subtle issues, which are only
+> exposed when CONFIG_INIT_STACK_ALL_PATTERN or CONFIG_INIT_STACK_NONE is
+> enabled.
+> 
+> Make sure all members are fully initialized, to avoid such bugs, and to
+> prevent future breakage when converting drivers to a different method
+> for specifying the parents.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-On Fri, 21 Aug 2026 at 12:56, Michal Simek <michal.simek@amd.com> wrote:
-> On 8/21/26 12:06, Geert Uytterhoeven wrote:
-> > The clk_init_data structure contains several mutually-exclusive members
-> > for different methods to specify the possible parents of a clock,
-> > prompting drivers to initialize only the members they need.  However,
-> > not initializing all members may cause subtle issues, which are only
-> > exposed when CONFIG_INIT_STACK_ALL_PATTERN or CONFIG_INIT_STACK_NONE is
-> > enabled.
-> >
-> > Hence this series aims to make sure all members are fully initialized,
-> > to avoid such bugs, and to prevent future breakage when converting
-> > drivers to a different method for specifying the parents.
-> >
-> > Part One[1] fixed all cases that I identified to be real bugs, in
-> > response to a crash I saw on BeagleBone Black.
-> >
-> > This series is the MMC subpart of Part Two, which fixes remaining cases
-> > that are currently harmless.  These are still fragile, and may cause
-> > future breakage when converting drivers to a different method for
-> > specifying the parents.
-> >
-> > Thanks for your comments!
-> >
-> > [1] "[PATCH treewide 0/5] clk: Make sure clk_init_data is fully
-> >       initialized (part 1)"
-> >      https://lore.kernel.org/cover.1787165329.git.geert+renesas@glider.be
-> >
-> > Geert Uytterhoeven (2):
-> >    mmc: meson-gx: FIXME: Make sure clk_init_data is fully initialized
->
-> It looks like a broken series to me.
-
-Doh, I made a silly mistake while filling in the correct patch prefix...
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Acked-by: Abel Vesa <abel.vesa@oss.qualcomm.com>
