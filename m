@@ -1,44 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE22E4582FE;
-	Fri, 21 Aug 2026 10:13:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14DDD471D1F;
+	Fri, 21 Aug 2026 10:13:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787307219; cv=none; b=rATlSFpE2/P7VA2PlZouSV+RHY9KYmq+hS+6AhCoDla4w8ZbV5IdAumxK4T+e44rC/DfSoJAvj5DZTJhEomMLEIH3o/BnGXRfbC0BEm7PMaDOI/Jy9PL1pWZAA4EhM+3veEKTwNpaDIZLBpKDvF4NBHxksJXt59Bi+EPlQhY5vA=
+	t=1787307237; cv=none; b=Dino3wa3Q4Zm9hLytfUHReIkXmZrMN/FrGY8xCfUbg5PP0uPuSmqs2mcIOuOyqCroXu8K50aVQbOkVSKEHqJxYRlxD2fjOaUOp1iWXcBEkdwVUXmrE6Lms2GuHlk/qniseEzGGqLVV6RZEIh7agg4TsAroydbFughNhWDLbIThg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787307219; c=relaxed/simple;
-	bh=vBrBcFMQO+oRABaXN0UyS84HUnWltQinVbf0YSAKesQ=;
+	s=arc-20240116; t=1787307237; c=relaxed/simple;
+	bh=W+PFBVMEdJKaJp9SnIWR4g8CktcIACGbhsr0j/XR0Pc=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=R3T+Afhmq57KWx0zsX3zUbyjpN6uPb87SvZ0lTFXl71XO1vgZCSiDoYR9Dpc0M5CdnoxEBIYrw+PZ4t6gaO4jis8w45RygLqDsb6EI186yvohctUmuH3HdF2z/iAKbRNiCgvxLRDENl9IwkljnI88A1jhQe8kgNvdiVH6P5Zaqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T5MopKC2; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=BvHxMGPqtqsTnGJqQPOJh64tyiGhCU+tukFUlFfNat1mJCDHt7U9kAnMXzfm/mzA/axx1ZycQOnk6vR1MDInj9xOkzOz/rTTIujnEi3CbAOSmshfGgr3GB9utnD7Jaj96P9WG7tdGS132VFrLaF0r43uBmv01AXFsQX48QEnLEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z5i5MvRF; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T5MopKC2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5103C1F00A3A;
-	Fri, 21 Aug 2026 10:13:26 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z5i5MvRF"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D3C11F000E9;
+	Fri, 21 Aug 2026 10:13:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787307206;
-	bh=PHQhzTG9KdaKdfk6ton+B1lLOm5RG/1WaKSqx6nGfpc=;
+	s=k20260515; t=1787307227;
+	bh=ogetkg0Uuo6RHrWZmvNz4/ua4kBg7pP+uQeMUOIcWBM=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=T5MopKC2hJ6MzWs28qtOffc9jE2pCvVBSNW1VJQjIw74Dyr5XkPsRfCBtnLIIqTim
-	 2keb7tKQ00/LK+3xWaYJgEU3iXkKJ7LP1QORsXyY93/PnZxBZnu/sce1MV0ZEQsUq7
-	 f2DWGD9KQ4Hg4OY7wNJyW9jItgbnAVtxBl7f3KSHgpcEkqx5xUAN/GEtZ6paqvTB6+
-	 kWwY2d6M9GwCS3fltJKx0SMmFNw8WdDAvKJAt1ZGU5HzBrl85MOt5Oceyef9vargM9
-	 f13b6RE3jvs4bEcRBt4LtBeqgtLER+gM+oCGGuXbWuQjFMGkTsrnFAlqW3Yub3/MEs
-	 FspKA1l7zItlA==
+	b=Z5i5MvRFtgRlxMrMTzO/HxWLZgaSBkrTy2uIjTBmb8BJ91SfxlFU/TjABdejbOusQ
+	 m0Yk+Q/TU8UjcdbtTsOb0G/sfKuHc9Hu49rCmRYWxEz6P28HNfvBac+ORaCj6Ehy6o
+	 5bTW01s7JGPTD1igVzZmcEgQ/PC+m+XSoZrLfTu7ODYWUCWHwUWi6z4W43tah/XD1N
+	 vKKkt7viXZuUL0n3jM53hl+DD3UDFnmoNAjifyHYUkccq3moFai1WO6/MMzcoQdyX9
+	 Urr0fVOwO5eP1n8PxOmZm8sVA4TX1NndHJVG1VXuzjdW8zNXKHsI6+NUQbm+DrlnVq
+	 uj8jJjj9BvotQ==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 1/2] drm/sun4i: Make sure clk_init_data is fully
+Subject: Re: [PATCH 2/2] drm/tegra: Make sure clk_init_data is fully
  initialized
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Geert Uytterhoeven" <geert+renesas@glider.be>
-Cc: dri-devel@lists.freedesktop.org, linux-sunxi@lists.linux.dev, linux-clk@vger.kernel.org
-In-Reply-To: <0f37278d04c02461e17f42032a379dccfb773171.1787239944.git.geert+renesas@glider.be>
+Cc: linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-sunxi@lists.linux.dev
+In-Reply-To: <9bc5029f7ad84b0b1e02be231a5abd7e5fa03946.1787239944.git.geert+renesas@glider.be>
 References: <cover.1787239944.git.geert+renesas@glider.be>
- <0f37278d04c02461e17f42032a379dccfb773171.1787239944.git.geert+renesas@glider.be>
+ <9bc5029f7ad84b0b1e02be231a5abd7e5fa03946.1787239944.git.geert+renesas@glider.be>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 21 Aug 2026 10:13:25 +0000
-Message-Id: <20260821101326.5103C1F00A3A@smtp.kernel.org>
+Date: Fri, 21 Aug 2026 10:13:46 +0000
+Message-Id: <20260821101347.1D3C11F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -49,64 +49,76 @@ Thank you for your contribution! Sashiko AI review found 1 potential issue(=
 s) to consider:
 
 Pre-existing issues:
-- [High] Resource leak and duplicate registration failure due to misuse of =
-`devm_` APIs against an external device in a component `.bind` callback.
+- [High] Missing bounds check on the `nvidia,interface` device tree propert=
+y causes out-of-bounds array indexing and arbitrary MMIO access.
 --
 
---- Patch [1]: [PATCH 1/2] drm/sun4i: Make sure clk_init_data is fully init=
+--- Patch [2]: [PATCH 2/2] drm/tegra: Make sure clk_init_data is fully init=
 ialized ---
-commit c10328b2f0b88fab02ca03cdd9ba8cea5c03c556
+commit d6e18a3c09cc145658765914a32b191ad5da6aa8
 Author: Geert Uytterhoeven <geert+renesas@glider.be>
 
-drm/sun4i: Make sure clk_init_data is fully initialized
+drm/tegra: Make sure clk_init_data is fully initialized
 
-This commit zero-initializes the clk_init_data structure to ensure all
-members are fully initialized. This prevents subtle issues when only
-some mutually-exclusive members are set, especially under certain stack
-initialization configs.
+The clk_init_data structure contains several mutually-exclusive members
+for different methods to specify the possible parents of a clock,
+prompting drivers to initialize only the members they need.  However,
+not initializing all members may cause subtle issues, which are only
+exposed when CONFIG_INIT_STACK_ALL_PATTERN or CONFIG_INIT_STACK_NONE is
+enabled. Make sure all members are fully initialized, to avoid such bugs,
+and to prevent future breakage when converting drivers to a different
+method for specifying the parents.
+
+> diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
+> index 802d2db7007af..c28557d0c96e5 100644
+> --- a/drivers/gpu/drm/tegra/sor.c
+> +++ b/drivers/gpu/drm/tegra/sor.c
+> @@ -596,8 +596,8 @@ static const struct clk_ops tegra_clk_sor_pad_ops =3D=
+ {
+>  static struct clk *tegra_clk_sor_pad_register(struct tegra_sor *sor,
+>  					      const char *name)
+>  {
+> +	struct clk_init_data init =3D {};
+>  	struct tegra_clk_sor_pad *pad;
+> -	struct clk_init_data init;
+>  	struct clk *clk;
+> =20
+>  	pad =3D devm_kzalloc(sor->dev, sizeof(*pad), GFP_KERNEL);
 
 [ ... ]
 
-> diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c b/drivers/gpu/drm=
-/sun4i/sun8i_hdmi_phy_clk.c
-> index a4d31fe3abff1..bd0dba95421b3 100644
-> --- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c
-> +++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c
-> @@ -143,7 +143,7 @@ static const struct clk_ops sun8i_phy_clk_ops =3D {
->  int sun8i_phy_clk_create(struct sun8i_hdmi_phy *phy, struct device *dev,
->  			 bool second_parent)
->  {
-> -	struct clk_init_data init;
-> +	struct clk_init_data init =3D {};
->  	struct sun8i_phy_clk *priv;
->  	const char *parents[2];
+>  	pad->sor =3D sor;
 > =20
+>  	init.name =3D name;
+>  	init.flags =3D 0;
+>  	init.parent_names =3D tegra_clk_sor_pad_parents[sor->index];
 
 [Severity: High]
-This isn't a bug introduced by this patch, but I noticed a potential problem
-with resource lifetimes in this function.
+This is a pre-existing issue, but can this out-of-bounds array indexing
+occur if the Device Tree provides an invalid "nvidia,interface" value?
 
-During the component bind phase, this code uses devm_kzalloc() and
-devm_clk_register() against the external PHY platform device:
+In tegra_sor_parse_dt(), the "nvidia,interface" property is read and
+assigned directly to sor->index without any bounds checking:
 
-sun8i_phy_clk_create() {
-    ...
-	priv =3D devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-    ...
-	phy->clk_phy =3D devm_clk_register(dev, &priv->hw);
-    ...
+drivers/gpu/drm/tegra/sor.c:tegra_sor_parse_dt() {
+	...
+	err =3D of_property_read_u32(np, "nvidia,interface", &value);
+	if (err < 0)
+		return err;
+
+	sor->index =3D value;
+	...
 }
 
-Because the devres group is attached to the external PHY device (`dev`) rat=
-her
-than the component device, it escapes the component unbind cycle.
+If a malformed Device Tree is provided, does using this unbounded sor->inde=
+x to
+access the tegra_clk_sor_pad_parents array lead to an out-of-bounds memory =
+read?
 
-When the HDMI component is unbound and re-bound, sun8i_phy_clk_create() runs
-again. Will this permanently leak the memory allocated for `priv`?
-
-Furthermore, will devm_clk_register() fail with -EEXIST on the second bind
-since the previous clock was never unregistered?
+It appears it could also cause arbitrary MMIO reads and writes when computi=
+ng
+register offsets using DC_DISP_CORE_SOR_SET_CONTROL(sor->index).
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/cover.1787239944.gi=
-t.geert+renesas@glider.be?part=3D1
+t.geert+renesas@glider.be?part=3D2
