@@ -1,282 +1,119 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BDAA2931FE;
-	Fri, 21 Aug 2026 17:56:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81726331EC0
+	for <linux-clk@vger.kernel.org>; Fri, 21 Aug 2026 23:58:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787335012; cv=none; b=NQtmmqZBOsKJwNWI2DDS/TeTaDVigJLEV/Mp0raIi/yY8yfdxFtDVVTOhwGE5BcZKHc8ZFxoBYs8dax9TEejdjT8RYH+WKktBULjDR9Xn4HJD9kTOepn3dsAhGPlld6eQpSvrPll+MWogTpuc5dnumwvCokcjFw2N8/VWh33ilM=
+	t=1787356733; cv=none; b=jjRcpdIPC9dca4t9/8Sdiz5vjuQC0LKfucQvRiiTLdgIwwKAN63+r0qPHqcx6dDMx1CVNEwnC0uGsAg2ry8f+uBzmnXhmz5+DGXpo8klxCOzt6+eed17L1NAN+SrZL/QYHFOorNZkPnifu5zfKbgXfhMTCx5VjP09A8mttnVjYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787335012; c=relaxed/simple;
-	bh=hL+RVHESgMeJ0wCfwfzcm4+HyeyJS/QPc7GeZ+PODik=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=IDo5cY6LMLX8vVMCkw8AsBPgVLjL8WHYpDuZ6SfMvwfegt2QHEa6lFldd53h1oLUVQ/Dt+Q4qyTeMSNlMmYitL+WFMsbggZaIVXC8KuHQCLondHs+wlCAYmLW9YH1V4BkKW7WJm8X2Z3XCvuY7rbV56PYBEbab5q1z6yx9Y7JuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ni7C6X1j; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1787356733; c=relaxed/simple;
+	bh=TuE2c0iZfNH1S7lUSfDr5VyClYyuD1z0aAEc0nKSpIU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ua0LCS99V1OlBuRfgfVb/xDCJcP7oY/WPXQ4gbYKQSuiLCoJTxA/yC4OJySGyosRXi2zGa1jqy/AaS4FRljLlm7aGGxPpCgTA/J4dYADUp38F88rXR/s8sJeDMuWEKvqY0Vq8K0SODaJoZ3DcfB/zs8UsWPo5Sj3Uj9kFOiWvUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=As7C00g6; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ni7C6X1j"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 0F9E5C2BCF4;
-	Fri, 21 Aug 2026 17:56:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1787335012;
-	bh=hL+RVHESgMeJ0wCfwfzcm4+HyeyJS/QPc7GeZ+PODik=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=ni7C6X1jNKjSKVsZu4hqf/Kz/Uii2VatU/UXsmycwdyHHNqzKNUd6j6IRatfdo4Mz
-	 gi0y+VN5jUQruv7TlR/7XUyt28x+ofF3la8NxTySI461J9UZY4ytV2PhSiq7jsszl3
-	 T8rENs5OkJ6WZHVc86+fejC30q8snl/yOuyHsEBJH7lGG4i9HPSoydTyoFRgpgNCtd
-	 08iKI5WjNmV3L0IuXO+6VD6YSA7POpN+HTuvVVSzvMGhaLfYDCAXkY34N7JT4N+VN3
-	 LBvpdnxoDBRm/r4e51x7qOsBfIHjodsWnRhnk5I6MC++zHlVc4vOwB1OIfHLiyyXGx
-	 G+MMg26cmvKFg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1F76C5DF97;
-	Fri, 21 Aug 2026 17:56:51 +0000 (UTC)
-From: Sarath Ganapathiraju via B4 Relay <devnull+sarath.ganapathiraju.oss.qualcomm.com@kernel.org>
-Date: Fri, 21 Aug 2026 23:26:51 +0530
-Subject: [PATCH v6 2/2] clk: qcom: Add LPASS VA CSR heartbeat pulse clock
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="As7C00g6"
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2caed617615so17296775ad.3
+        for <linux-clk@vger.kernel.org>; Fri, 21 Aug 2026 16:58:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1787356732; x=1787961532; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=yfADMu2KMEVkqXjLqt2cOsbz+PXBarm0PZCvaHp/dFA=;
+        b=As7C00g6TpzJja9PyFzEBDQ4XYuH/J2UU3OfZ2wlejhe2xaLMHUq/rRfyEdiNhHUI+
+         U7Lm812jIMzMGuGxUeWQOjTVixIFAnONyRFix0Z5ysg798C8ljM/Sy03QEQmMldxv5Kk
+         yMzUA9Of1gD6vN73GUJMrx5Owaz9dzRVYsfk1T4eB7dyJ8LgmJ5uBWsYZ0tmGampUHOJ
+         liilIZH/qdiqhMYLHRJPxl7Ow+kP+AKXfTmQeGuQxC3YFNcn+nJf6ltNubNDN6d4jFnv
+         Cr2z+Z2s9qIQEyeZqhNvFFruxvqJtOgcdb5kFAhBLtmD4gPEWSsYWIrv3dmVDicdWzFQ
+         8Opw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787356732; x=1787961532;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=yfADMu2KMEVkqXjLqt2cOsbz+PXBarm0PZCvaHp/dFA=;
+        b=Jx9Lk8MMHX7g9n+DowQk7tRpfuMIQmGnZnt3rb1lOm/6RNezqvTmJxfuKH/Iaau5LI
+         qDRYtcxkmbiz99ksqlX/E53Y5j9I8JuKCyHIN/24KarWNTgB2b83npTlZJ8BYxSE4GvK
+         8HT3YdfgU9nAG+ugU8moigAOC4EZLB2b+j7D7aJwmHTZ6VPhhBVTAyOKpmRO1A17V7Hx
+         DsuTxG5MOr0ShfzJIoUDo37JkqcZltmaKmXFS5yf+tZrrea8zc7e9TraSCQcE3SQ5/Rj
+         8QYV3zCDuo/b/JO7bbrWALwikoq/XUa6beKYQGzjPDAstbIs9vAYHXqzw5IyNFopy8Nx
+         b7Vw==
+X-Forwarded-Encrypted: i=1; AHgh+RpQYvSUgj0zNTZ/ArJsjkBZn/erY7hKVUhA8i8x8DjAb2Hbvbrh8HQt8RFrHsLoT4WR09s4NyCry+8=@vger.kernel.org
+X-Gm-Message-State: AFuF++lq3wHnHuZ23rMCWs+7U7BxKjFz0dB0pLfWojwSoGvshQKNbTmg
+	R6KuxUrgptz/jENZnl/hFhWor3OQvAOhZEW6kpFcXuYuy2khOjtie556
+X-Gm-Gg: AR+sD1209IJ5uH/0NHQjK0GdrWGpahNea990wX6L+0g0s1OsqwDm758307dQbeUwLtz
+	XzEVgnXIHwhfkDKMllBRI8pHAVTS8jusMsiKu3q4ouhyvn/SgL1n7pJii5Ep1BU9O4hokNCsLNR
+	ePr7YxsbMZdMit+hrvgzxcXdSDuAwU4iO8i4JTQQDyHGZ5AYtN3SKxDHok0KCsFYD6q1JdK1dTZ
+	ljy6nK7AXmXhpAKg6LKkhyu8kxTJzDRxuEn8I/EVaPSqMh74jCAV/5sZ3lsZS8Qn2uiIvTtvo6l
+	ph1NDsON8iT2LH3CR8wjAsY+XPbTX7GFLifx1xgCtnqES4/3FswaDVvRhvcButDfV1LbJmLqZ1C
+	wtFV2SDxQJvRX8TihEK6/XUmU7tLu294UIA0ru7wdL909vG7Fse0RjNmPg/ftf48n92un4BTkT1
+	FZ735AiTJywCApKpMjczjWwgKUQg9VwrXWv03ZXTARtkpeiKWzBP5aKGhzsQejJpXmoWjYms2wz
+	IuzWdHn1MoXZF9C/zrBG2FjKzQIK2j9zvFf3wc2ds7eh4ihQVlq
+X-Received: by 2002:a17:903:a90:b0:2c0:a555:80d6 with SMTP id d9443c01a7336-2d670b60ceemr33715055ad.2.1787356731807;
+        Fri, 21 Aug 2026 16:58:51 -0700 (PDT)
+Received: from hanzj-mi.. (ec2-99-79-140-187.ca-central-1.compute.amazonaws.com. [99.79.140.187])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2d6768b9c0fsm196965ad.59.2026.08.21.16.58.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Aug 2026 16:58:51 -0700 (PDT)
+From: hanzhijian <hanzhijian1991@gmail.com>
+To: Daniel Palmer <daniel@thingy.jp>,
+	Romain Perier <romain.perier@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Brian Masney <bmasney@redhat.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	hanzhijian <hanzhijian1991@gmail.com>
+Subject: [PATCH] clk: mstar: msc313-mpll: fix off-by-one in clock array allocation
+Date: Sat, 22 Aug 2026 07:58:37 +0800
+Message-ID: <20260821235837.2341179-1-hanzhijian1991@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260821-heartbeat-v6-next-20260821-send-v6-2-62c5df84ce21@oss.qualcomm.com>
-References: <20260821-heartbeat-v6-next-20260821-send-v6-0-62c5df84ce21@oss.qualcomm.com>
-In-Reply-To: <20260821-heartbeat-v6-next-20260821-send-v6-0-62c5df84ce21@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
- Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Sarath Ganapathiraju <sarath.ganapathiraju@oss.qualcomm.com>, 
- prasad.kumpatla@oss.qualcomm.com
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1787335010; l=6667;
- i=sarath.ganapathiraju@oss.qualcomm.com; s=default;
- h=from:subject:message-id;
- bh=KBDrlQEytxmwbO1eLzVG/VjEj8q1MEkayOXlhNTb7+w=;
- b=73kq1Pwc7peyUML1EphzXA7eQlbONVzDoxeYcEeS5t6Q4uy23EBZtn6Wy/rk6C2TdTRzSJDdE
- mAFADVp+gphD28cl+LSk+QulvffyRBS0kR1GaMt1bO3GRpeiQkuOX2y
-X-Developer-Key: i=sarath.ganapathiraju@oss.qualcomm.com; a=ed25519;
- pk=4p2FWGXM+F2sir13Lu5stw5aKX5trUymK/ttESvgxQg=
-X-Endpoint-Received: by B4 Relay for
- sarath.ganapathiraju@oss.qualcomm.com/default with auth_id=870
-X-Original-From: Sarath Ganapathiraju <sarath.ganapathiraju@oss.qualcomm.com>
-Reply-To: sarath.ganapathiraju@oss.qualcomm.com
+Content-Transfer-Encoding: 8bit
 
-From: Sarath Ganapathiraju <sarath.ganapathiraju@oss.qualcomm.com>
+The hws array of mpll->clk_data is allocated with struct_size() using
+ARRAY_SIZE(output_dividers) as the element count, giving it 7 elements.
+But the probe function stores the MPLL clock at hws[0] and one
+fixed-factor clock for each output divider at hws[i + 1] for i in
+[0, ARRAY_SIZE(output_dividers)), writing 8 elements in total.  The
+final write to hws[7] is past the end of the allocation.
 
-The HeartBeat Pulse (also known as RateGen Pulse) synchronizes the
-start of the DMAs and Codec Interfaces for the audio usecases and can
-serve as a periodic wakeup source for the DSP.
+clk_data->num is also set to NUMOUTPUTS (8), so the clock framework
+reads hws[0..7], again accessing hws[7] out of bounds.
 
-Add the LPASS VA CSR driver that models the rate generator as a clock
-provider so it is enabled and disabled automatically alongside the other
-clocks during runtime PM resume and suspend.
+Use NUMOUTPUTS as the element count so the allocation matches the
+number of clocks actually stored and exposed.
 
-Signed-off-by: Sarath Ganapathiraju <sarath.ganapathiraju@oss.qualcomm.com>
+Found by smatch:
+  drivers/clk/mstar/clk-msc313-mpll.c:134 msc313_mpll_probe()
+  error: buffer overflow 'mpll->clk_data->hws' 7 <= 7
+
+Signed-off-by: hanzhijian <hanzhijian1991@gmail.com>
 ---
- drivers/clk/qcom/Kconfig        |  14 ++++
- drivers/clk/qcom/Makefile       |   1 +
- drivers/clk/qcom/lpass-va-csr.c | 148 ++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 163 insertions(+)
+ drivers/clk/mstar/clk-msc313-mpll.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index e609a7819e07..502acd86efd6 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -2105,6 +2105,20 @@ config CLK_GFM_LPASS_SM8250
- 	  Support for the Glitch Free Mux (GFM) Low power audio
-           subsystem (LPASS) clocks found on SM8250 SoCs.
+diff --git a/drivers/clk/mstar/clk-msc313-mpll.c b/drivers/clk/mstar/clk-msc313-mpll.c
+index 61beb4e87..bd45aa0ae 100644
+--- a/drivers/clk/mstar/clk-msc313-mpll.c
++++ b/drivers/clk/mstar/clk-msc313-mpll.c
+@@ -105,7 +105,7 @@ static int msc313_mpll_probe(struct platform_device *pdev)
+ 		return PTR_ERR(mpll->loop_div_second);
  
-+config QCOM_CLK_LPASS_HEARTBEAT_PULSE
-+	tristate "Qualcomm LPASS VA CSR heartbeat pulse clock provider"
-+	depends on COMMON_CLK
-+	depends on ARM64 || COMPILE_TEST
-+	select REGMAP_MMIO
-+	default m if ARCH_QCOM
-+	help
-+	  Qualcomm LPASS VA CSR block contains the rate generator hardware
-+	  that produces the HeartBeat Pulse (also known as RateGen Pulse).
-+	  This driver models the rate generator as a clock provider so
-+	  that consumers can enable or disable it via the common clock
-+	  framework, and it can be used to synchronize the start of DMAs
-+	  and Codec Interfaces or as a periodic wakeup source for the DSP.
-+
- config SM_VIDEOCC_8450
- 	tristate "SM8450 Video Clock Controller"
- 	depends on ARM64 || COMPILE_TEST
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index b8590963736a..3f6a52cc7ec7 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -28,6 +28,7 @@ obj-$(CONFIG_CLK_ELIZA_GPUCC) += gpucc-eliza.o
- obj-$(CONFIG_CLK_ELIZA_TCSRCC) += tcsrcc-eliza.o
- obj-$(CONFIG_CLK_ELIZA_VIDEOCC) += videocc-eliza.o
- obj-$(CONFIG_CLK_GFM_LPASS_SM8250) += lpass-gfm-sm8250.o
-+obj-$(CONFIG_QCOM_CLK_LPASS_HEARTBEAT_PULSE) += lpass-va-csr.o
- obj-$(CONFIG_CLK_GLYMUR_CAMCC) += camcc-glymur.o
- obj-$(CONFIG_CLK_GLYMUR_DISPCC) += dispcc-glymur.o
- obj-$(CONFIG_CLK_GLYMUR_EVACC) += evacc-glymur.o
-diff --git a/drivers/clk/qcom/lpass-va-csr.c b/drivers/clk/qcom/lpass-va-csr.c
-new file mode 100644
-index 000000000000..8438d000814e
---- /dev/null
-+++ b/drivers/clk/qcom/lpass-va-csr.c
-@@ -0,0 +1,148 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/device.h>
-+#include <linux/module.h>
-+#include <linux/of_clk.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/regmap.h>
-+
-+#define LPASS_RATE_GEN_CTRL		0xd000
-+#define LPASS_RATE_GEN_COUNTER_0	0xd004
-+#define LPASS_RATE_GEN_DELAY		0xd010
-+
-+#define LPASS_RATE_GEN_MAX_REG		LPASS_RATE_GEN_DELAY
-+
-+#define LPASS_RG_CTRL_EN		BIT(0)
-+
-+struct lpass_va_csr_data {
-+	u32 counter_0;
-+	u32 delay;
-+};
-+
-+static const struct lpass_va_csr_data hawi_csr_data = {
-+	.counter_0 = 0x960,
-+	.delay = 0x16,
-+};
-+
-+static const struct regmap_config lpass_rate_gen_regmap_config = {
-+	.name = "lpass_rate_gen",
-+	.reg_bits = 32,
-+	.val_bits = 32,
-+	.reg_stride = 4,
-+	.max_register = LPASS_RATE_GEN_MAX_REG,
-+	.cache_type = REGCACHE_MAPLE,
-+};
-+
-+struct lpass_va_csr {
-+	struct regmap *regmap;
-+	const struct lpass_va_csr_data *data;
-+	struct clk_hw hb_hw;
-+};
-+
-+#define to_lpass_va_csr(_hw) container_of(_hw, struct lpass_va_csr, hb_hw)
-+
-+static int heartbeat_pulse_prepare(struct clk_hw *hw)
-+{
-+	struct lpass_va_csr *csr = to_lpass_va_csr(hw);
-+	int ret;
-+
-+	ret = regmap_write(csr->regmap, LPASS_RATE_GEN_COUNTER_0, csr->data->counter_0);
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_write(csr->regmap, LPASS_RATE_GEN_DELAY, csr->data->delay);
-+	if (ret)
-+		return ret;
-+
-+	return regmap_set_bits(csr->regmap, LPASS_RATE_GEN_CTRL, LPASS_RG_CTRL_EN);
-+}
-+
-+static void heartbeat_pulse_unprepare(struct clk_hw *hw)
-+{
-+	struct lpass_va_csr *csr = to_lpass_va_csr(hw);
-+
-+	regmap_clear_bits(csr->regmap, LPASS_RATE_GEN_CTRL, LPASS_RG_CTRL_EN);
-+}
-+
-+static int heartbeat_pulse_is_prepared(struct clk_hw *hw)
-+{
-+	struct lpass_va_csr *csr = to_lpass_va_csr(hw);
-+
-+	return regmap_test_bits(csr->regmap, LPASS_RATE_GEN_CTRL, LPASS_RG_CTRL_EN);
-+}
-+
-+static const struct clk_ops heartbeat_pulse_ops = {
-+	.prepare = heartbeat_pulse_prepare,
-+	.unprepare = heartbeat_pulse_unprepare,
-+	.is_prepared = heartbeat_pulse_is_prepared,
-+};
-+
-+static int lpass_va_csr_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct lpass_va_csr *csr;
-+	struct clk_init_data init = {
-+		.name = "lpass_heartbeat_pulse",
-+		.ops = &heartbeat_pulse_ops,
-+	};
-+	void __iomem *base;
-+	int ret;
-+
-+	csr = devm_kzalloc(dev, sizeof(*csr), GFP_KERNEL);
-+	if (!csr)
-+		return -ENOMEM;
-+
-+	csr->data = of_device_get_match_data(dev);
-+	if (!csr->data)
-+		return dev_err_probe(dev, -EINVAL, "no variant data for compatible\n");
-+
-+	base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	csr->regmap = devm_regmap_init_mmio(dev, base,
-+					    &lpass_rate_gen_regmap_config);
-+	if (IS_ERR(csr->regmap))
-+		return dev_err_probe(dev, PTR_ERR(csr->regmap),
-+				     "failed to init regmap\n");
-+
-+	csr->hb_hw.init = &init;
-+
-+	ret = devm_pm_runtime_enable(dev);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "failed to enable PM runtime\n");
-+
-+	ret = devm_clk_hw_register(dev, &csr->hb_hw);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "failed to register heartbeat clock\n");
-+
-+	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, &csr->hb_hw);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "failed to add clock provider\n");
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id lpass_va_csr_dt_match[] = {
-+	{ .compatible = "qcom,hawi-lpass-va-csr", .data = &hawi_csr_data },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, lpass_va_csr_dt_match);
-+
-+static struct platform_driver lpass_va_csr_driver = {
-+	.driver = {
-+		.name = "qcom-lpass-va-csr",
-+		.of_match_table = lpass_va_csr_dt_match,
-+	},
-+	.probe = lpass_va_csr_probe,
-+};
-+
-+module_platform_driver(lpass_va_csr_driver);
-+
-+MODULE_DESCRIPTION("Qualcomm LPASS VA CSR heartbeat pulse clock provider");
-+MODULE_LICENSE("GPL");
-
+ 	mpll->clk_data = devm_kzalloc(dev, struct_size(mpll->clk_data, hws,
+-			ARRAY_SIZE(output_dividers)), GFP_KERNEL);
++				NUMOUTPUTS), GFP_KERNEL);
+ 	if (!mpll->clk_data)
+ 		return -ENOMEM;
+ 
 -- 
-2.34.1
-
+2.43.0
 
