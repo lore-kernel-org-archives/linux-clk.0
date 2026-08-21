@@ -1,123 +1,155 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73C8F476CCA;
-	Fri, 21 Aug 2026 10:16:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE87843C7C2
+	for <linux-clk@vger.kernel.org>; Fri, 21 Aug 2026 10:17:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787307425; cv=none; b=ezvK5B4hmPYe0Esc7pRO0jnbiNpHeWHy2nv/DbV/u9yT6l0hRlu8b+9Gxz/DYdItYdaE2y2OCBpkqDzfxBo+ENNmh9CwPily9XxLn1I4QiLFFUsMMAdjz7xorHJ2gGuGR5WlRhuun3WAYVUCMt7T/4KqVHCIQjNE8clYtRLXsjk=
+	t=1787307434; cv=none; b=N7k8IDN5289UmXxygmkb80yX4P8+ZzlWjLUpjHuo1WV48vr8NXQvLlPUozVDu54fuRYpoykYeHE6XFMZkSx8IcVxh3LJa60QTAd0HCp+GL8uTFxzVwLwmn5xCL3YjtorbOYJz6Oc71tqP5nhGN4qNmNyxmPsvbVHTb3PNwTJ4Do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787307425; c=relaxed/simple;
-	bh=DKRXayLpP+jU/vG4d/cxT3/634d04+sC7uDEfldQACk=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=j4ujHqpCzfLcT6qohIwrgnYzsG8g+mSK3F8+03nM47+NH9x1jCOVP4JdwftBFDQ3zYsDUUb7DVs3uQ6pAbQfxo5Boc9Ac2nCmvAhfoVqUAiR8IRO60wCMsjss/wpW6hDY36YZBX/4I2V4X/s4IlM8kmTVE57A2HwHqyIv0pPnSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EJZx8H9m; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EJZx8H9m"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03E591F000E9;
-	Fri, 21 Aug 2026 10:16:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787307415;
-	bh=S3X67Gsmco8iToK1+9zpnq9MW7luK9kPCYK6ZvJhTnk=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=EJZx8H9m5D4tjV1Yev1vTzsLDBJHLiMrEKekJM2v1MP0RgLYlNZyctXClNFPKLt+y
-	 txpb/j7b0J+DwdYa6+QPsrG9GWzQQebdOxLxE1RtdXVyk30ULzzNpwk51ZCmJInFMj
-	 7FNpBFvyPWqJT4DitoQeriStfnmWTZSa9EpY3yxi1xCPQMLsXWE7ZJlaPxzJ34mSO/
-	 Ns7VXTEzgBQMOJ/RvxjVDKGyaox0itdXUgk6iX+nJLUbIBqGk9C37ftGGQMwNvHZyj
-	 ndwAFFHW+yRGYm9Qz2wEeLOZJzExVisSaYuIkX2Ig68I2tMktgSR0/YdExty1Fy3G5
-	 b8+mgHiODN5hQ==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 1/5] rtc: hym8563: Make sure clk_init_data is fully
- initialized
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Geert Uytterhoeven" <geert+renesas@glider.be>
-Cc: linux-clk@vger.kernel.org, "Alexandre Belloni" <alexandre.belloni@bootlin.com>, linux-rtc@vger.kernel.org
-In-Reply-To: <657f2b3a871074087aee0b7a70bf527ab0f48da8.1787241693.git.geert+renesas@glider.be>
-References: <cover.1787241693.git.geert+renesas@glider.be>
- <657f2b3a871074087aee0b7a70bf527ab0f48da8.1787241693.git.geert+renesas@glider.be>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 21 Aug 2026 10:16:54 +0000
-Message-Id: <20260821101655.03E591F000E9@smtp.kernel.org>
+	s=arc-20240116; t=1787307434; c=relaxed/simple;
+	bh=TajKrkP7iAilCm/Wf9qOw7yL7OS5AMPI8Bf5cDTLAK4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 Cc:Content-Type; b=V281gUD4ll7m5XmUdFPupn66yL1qbDZBbCbXXJh/fwl7EcbvvZR8Y/Uni+kLXnvL08kPI1KzMLPa+EyMluO7wYV/z18tsL6ZOSS76d9W2y+HsS2VYy0Aag02MZIxI2YaBuOq2zhXZwOMVLmgVC0rhRXKduHMdIaECw+i99Yz8Og=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-97c4fa7ba1bso431948241.2
+        for <linux-clk@vger.kernel.org>; Fri, 21 Aug 2026 03:17:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787307418; x=1787912218;
+        h=content-type:cc:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=NZ9qFWwtyy0CyLFBazZArycje1mFKlJigB1GC39CAP0=;
+        b=ggJ7PuLC/mwSS5lnZNt/6vmXnzgdoLW+vvxH+EKkn64Vp1fcRIEpknOulF/B5dYw9T
+         b8TZZvaW4r82QkoEyLKoT2iQDQXhsvybX1VCvh9BgaXEW2mg4AB69nIfqQ34/dfzspWv
+         8n+ExcVkukjRfgrqUyKYHS7m7KdUIvTWdRLVHkF5FsrStjIfrNgOQVmN7bnCfdq6g7l0
+         oDWtTSD3MEspOgg1QyCxa7ZxOH2Ekc5N0MSYF1VQT0kmVrH1PV0EOTLYjeoDT6CuF1eG
+         1f7QqWDyEoKWFkETAEe+LbixAc1DGuXOhOwHKQzUQmn+SbwxNefiGbEQKVsPlsSJJOm5
+         A7Dw==
+X-Forwarded-Encrypted: i=1; AHgh+Rpu8bWR1eV/gV26pyB4FfoAm+zisepMsw5PRzc7iw95amPMnS3QKTLFFid0RM86d0TYZrwcmDqCcm8=@vger.kernel.org
+X-Gm-Message-State: AFuF++nlQtQn7/bIXd6b5mvvZDzziG0jD8tpQXz6DoqpS0mSqf6ENDdp
+	fSyjtVmqyaIxeaRhnXkPV8KRO/CDBlJUlIxYgB6m59nu7bvTuYowKsTShr2UEYMK
+X-Gm-Gg: AR+sD120LLQUPIQMmJc7GjRRsTxnZpLMzfZ61UI1Lgo80hfGz1sDNoIiS6D9dhgxbBM
+	42fJT7LK/BM8f/BCrZ9/eASur60baP6aB5KbtguWv1QwOD2XY3CEVk3lt0ylnOYUG7XS4i0WIuq
+	kGQs/kDYRQUyuBnyMykboM4d3NKG4oyvZ2EbxWvjVkFzG94IOERz474poxuTjeXxqAiXLcGIl6r
+	vuHhCzfmXimgYs/+GOCZUqPCkCFoDiV6yDVsF1CHLvAkqk18bZpKA2ZqOfbfxII2xAOpIg8uWOJ
+	VN+nOHQ9zMMqz9fZLYepAjMfgfEb+0d4A6I8Ya94p+igArW/lBl0MbvYHy/7/BszOVOtEgGeWhr
+	bZtIfIslPYNn3X3nibQU1ze5/AxKdYIEWbd4TTwCD9Ovze2K0yI40o15MsANBqAEFyKk9oQWr/o
+	baHU2FHIyZrHT0Da7fG2tNVQpfRgeAaCTR6hC2effC9CMyoIcG4b/cKdd1qUxa+I/9xz8gqA5b2
+	3bSdjjUVawWzcnl5PSFZusKYQ==
+X-Received: by 2002:a05:6102:5cc5:b0:76a:fc18:29c8 with SMTP id ada2fe7eead31-77a63a3d22emr2197148137.8.1787307418525;
+        Fri, 21 Aug 2026 03:16:58 -0700 (PDT)
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com. [209.85.217.53])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-97c4e76040fsm8354731241.3.2026.08.21.03.16.56
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Aug 2026 03:16:57 -0700 (PDT)
+Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-74ab99038afso600460137.3
+        for <linux-clk@vger.kernel.org>; Fri, 21 Aug 2026 03:16:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RpUgl+cwUiiAXf6Hw2/r/spzb906tQeyF3r1Tm8nsEmxLXCHCH8Jq6PI6yHLyYSC9oyCGiQmEtUhRY=@vger.kernel.org
+X-Received: by 2002:a05:6102:512b:b0:778:5bbb:b2d2 with SMTP id
+ ada2fe7eead31-77a64358362mt4198077137.11.1787307416387; Fri, 21 Aug 2026
+ 03:16:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <cover.1787165329.git.geert+renesas@glider.be>
+In-Reply-To: <cover.1787165329.git.geert+renesas@glider.be>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 21 Aug 2026 12:16:44 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXaxV9K8=yQ3KU-V2dV-eFqFqMR9WDyt2RVKADLS51Dcg@mail.gmail.com>
+X-Gm-Features: AcwNN1XMP476J77X05DStUZ6YHTKoquM1cTbXZSuVIS6ygsja8ReRo486qzyWdY
+Message-ID: <CAMuHMdXaxV9K8=yQ3KU-V2dV-eFqFqMR9WDyt2RVKADLS51Dcg@mail.gmail.com>
+Subject: Re: [PATCH treewide 0/5] clk: Make sure clk_init_data is fully
+ initialized (part 1)
+Cc: Tero Kristo <kristo@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
+	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>, Nuno Sa <nuno.sa@analog.com>, 
+	Guenter Roeck <linux@roeck-us.net>, Michael Hennerich <Michael.Hennerich@analog.com>, 
+	Antoniu Miclaus <antoniu.miclaus@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
+	David Lechner <dlechner@baylibre.com>, Andy Shevchenko <andy@kernel.org>, 
+	Sunny Luo <sunny.luo@amlogic.com>, Xianwei Zhao <xianwei.zhao@amlogic.com>, 
+	Mark Brown <broonie@kernel.org>, Kees Cook <kees@kernel.org>, 
+	Kevin Hilman <khilman@baylibre.com>, 
+	Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>, linux-omap@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-hwmon@vger.kernel.org, 
+	linux@analog.com, linux-iio@vger.kernel.org, 
+	linux-amlogic@lists.infradead.org, linux-spi@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Content-Type: text/plain; charset="UTF-8"
 
-Thank you for your contribution! Sashiko AI review found 2 potential issue(=
-s) to consider:
+On Wed, 19 Aug 2026 at 21:05, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> The clk_init_data structure contains three mutually-exclusive members
+> for different methods to specify the possible parents of a clock,
+> prompting drivers to initialize only the members they need.  When commit
+> fc0c209c147f35ed ("clk: Allow parents to be specified without string
+> names") added the last two methods, this was done in a
+> backwards-compatible way, using a priority-based scheme:
+>   - .name, .ops, .num_parents, and .flags must always be initialized,
+>   - if .num_parents is non-zero, .parent_names must be initialized,
+>       - if .parent_names is NULL, .parent_data must be initialized,
+>           - if .parent_data is NULL, .parent_hws must be initialized
+>             and valid.
+>
+> However, not initializing all members may cause subtle issues, which are
+> only exposed when CONFIG_INIT_STACK_ALL_PATTERN or
+> CONFIG_INIT_STACK_NONE is enabled.
+>
+> Hence this series makes sure all members are fully initialized, to fix
+> such bugs, and to avoid future breakage when converting drivers to a
+> different method for specifying the parents.
+>
+> This (small) series is part 1, and fixes all cases that I identified to
+> be real bugs:
+>   - The first patch fixes a crash I saw on BeagleBone Black,
+>   - The other patches are only compile-tested.
+> All patches in this series can be applied independently.
+>
+> Part 2 will be much larger (touching 185 files), and will fix the
+> remaining cases that are currently harmless.
 
-Pre-existing issues:
-- [High] Use-after-free and resource leak on driver unbind or probe failure.
-- [High] RTC alarm interrupts are acknowledged but not reported to the RTC =
-subsystem, breaking alarm functionality.
---
+FTR, I split part two in 13 subparts, per subsystem:
+  - "[PATCH 0/2] ARM/soc: Make sure clk_init_data is fully initialized"
+    https://lore.kernel.org/cover.1787239869.git.geert+renesas@glider.be>
+  - "[PATCH 0/3] ASoC: Make sure clk_init_data is fully initialized"
+    https://lore.kernel.org/cover.1787239902.git.geert+renesas@glider.be>
+  - "[PATCH 00/45] clk: Make sure clk_init_data is fully initialized (part two)"
+    https://lore.kernel.org/cover.1787239813.git.geert+renesas@glider.be>
+  - "[PATCH 0/2] drm: Make sure clk_init_data is fully initialized"
+    https://lore.kernel.org/cover.1787239944.git.geert+renesas@glider.be>
+  - "[PATCH] i2c: bcm2835: Make sure clk_init_data is fully initialized"
+    https://lore.kernel.org/9f82f37e6d6c069cd44326bcd5e5a2a8069a13a9.1787239980.git.geert+renesas@glider.be>
+  - "[PATCH 0/2] iio: Make sure clk_init_data is fully initialized"
+    https://lore.kernel.org/cover.1787240005.git.geert+renesas@glider.be>
+  - "[PATCH 0/3] media: Make sure clk_init_data is fully initialized"
+    https://lore.kernel.org/cover.1787240035.git.geert+renesas@glider.be>
+  - "[PATCH] MIPS: Alchemy: clock: Make sure clk_init_data is fully"
+    https://lore.kernel.org/3610b51df642abb1fbb39f5bd93fddea43f8f164.1787240060.git.geert+renesas@glider.be>
+  - "[PATCH 0/2] mmc: Make sure clk_init_data is fully initialized"
+    https://lore.kernel.org/cover.1787240090.git.geert+renesas@glider.be>
+  - "[PATCH net-next 0/3] net: Make sure clk_init_data is fully initialized"
+    https://lore.kernel.org/cover.1787240118.git.geert+renesas@glider.be>
+  - "[PATCH] peci: controller: aspeed: Make sure clk_init_data is fully"
+    https://lore.kernel.org/48aa77c45e109f78ccd806bc3b7bf380c5bc5e71.1787240145.git.geert+renesas@glider.be>
+  - "[PATCH 0/2] phy: Make sure clk_init_data is fully initialized"
+    https://lore.kernel.org/cover.1787240165.git.geert+renesas@glider.be>
+  - "[PATCH 0/5] rtc: Make sure clk_init_data is fully initialized"
+    https://lore.kernel.org/cover.1787241693.git.geert+renesas@glider.be>
 
---- Patch [1]: [PATCH 1/5] rtc: hym8563: Make sure clk_init_data is fully i=
-nitialized ---
-commit 706406627c1866b58ba6ad7ce0c506c6e63d88ad
-Author: Geert Uytterhoeven <geert+renesas@glider.be>
+Gr{oetje,eeting}s,
 
-rtc: hym8563: Make sure clk_init_data is fully initialized
+                        Geert
 
-The clk_init_data structure contains several mutually-exclusive members
-for different methods to specify the possible parents of a clock. This
-commit ensures all members are fully initialized to avoid subtle issues
-with uninitialized stack memory.
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-> diff --git a/drivers/rtc/rtc-hym8563.c b/drivers/rtc/rtc-hym8563.c
-> index 3156aa5f2d9ff..1d52cc3def02e 100644
-> --- a/drivers/rtc/rtc-hym8563.c
-> +++ b/drivers/rtc/rtc-hym8563.c
-> @@ -376,8 +376,8 @@ static struct clk *hym8563_clkout_register_clk(struct=
- hym8563 *hym8563)
->  {
->  	struct i2c_client *client =3D hym8563->client;
->  	struct device_node *node =3D client->dev.of_node;
-> +	struct clk_init_data init =3D {};
->  	struct clk *clk;
-> -	struct clk_init_data init;
->  	int ret;
-> =20
->  	ret =3D i2c_smbus_write_byte_data(client, HYM8563_CLKOUT,
-
-[Severity: High]
-This isn't a bug introduced by this patch, but could there be a
-use-after-free if devm_rtc_register_device() fails or if the driver is
-unbound?
-
-Looking at hym8563_clkout_register_clk(), it registers an unmanaged clock
-and an OF clock provider using clk_register() and of_clk_add_provider().
-However, the hym8563 structure containing the clkout_hw is allocated via
-devm_kzalloc().
-
-If devm_rtc_register_device() fails in hym8563_probe(), or if the driver
-is later unbound (there is no .remove callback in hym8563_driver), the
-devres framework will free the hym8563 structure. Because the clock is
-never unregistered, the clock framework will retain a pointer to the
-freed clkout_hw, leading to a crash if the clock is accessed later.
-
-Should this use devm_clk_register() and devm_of_clk_add_hw_provider(), or
-provide a .remove callback to clean up the clock and OF provider?
-
-[Severity: High]
-This is a pre-existing issue, but does the interrupt handler fail to
-notify the RTC core of alarm events?
-
-In hym8563_irq(), the handler reads and clears the hardware alarm flag
-(HYM8563_CTL2_AF) to acknowledge the interrupt at the hardware level, but
-it then exits like this:
-
-out:
-        rtc_unlock(hym8563->rtc);
-        return IRQ_HANDLED;
-}
-
-It appears to never call rtc_update_irq(). Doesn't this mean rtc->irq_queue
-is never woken up, causing any userspace process waiting for the alarm via
-select(), poll(), or timerfd to stall indefinitely?
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/cover.1787241693.gi=
-t.geert+renesas@glider.be?part=3D1
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
