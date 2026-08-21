@@ -1,39 +1,27 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE49A471415;
-	Fri, 21 Aug 2026 10:04:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9DC544C4FF;
+	Fri, 21 Aug 2026 10:05:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787306695; cv=none; b=NrfTGzN4sX3l+QrJgoJEc+kw5qyvx50M0aof08+jSTLfu7Eo/5pdvaG4Z6KIAD5tjyT7zYd8UhnPZMa/bYx/3q/ZdZQYdtwdGGTW1wxI/2aCpro4nNl1i0QqnslXD3crO+Om1/R4N61QuS1pXy3Pi9S6KcP4KdDhiErLTw0gBBE=
+	t=1787306730; cv=none; b=TLdkEGYQgyflLxXXuQ1yKtfR8a8cIUD6OBnJrLGscITEdEqjqyFV6Db9fASHQbq9ywOEOQoNHmx5QBVn9D2Uod3clQ4EJ71bj8AM/q1xCF827DtFWMkqk+GmyNsxUOKqjt/b20coelPef3sGOyZ93//FCocU+wXOGJe4Sl/4i6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787306695; c=relaxed/simple;
-	bh=To7vyG7S8WVuaTVrTZ/xL3g3igge1x/p+fRyyG5urJg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TlKVaUgwlTQB8WFrY1nzoRAxA2YDPQBblZnjjNIs6AgRsnVRCIj1u60sSJgGHkRSg0dzvNPkuvQA11DOa8K715nQljy7HmTiZQ9BlKtL71JVXhJwthengaSGGtWqKBWVgJm5Xkb5a5gwd8G1AzsVpfSBPng290j5g8rFjoSXHCM=
+	s=arc-20240116; t=1787306730; c=relaxed/simple;
+	bh=JXbRXNW+nzT+G1mWEFJpN2bsZuiPKU8aSyiCtUNt3V0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZURF0UKe8SQ88aLecDpD0c8vjYwMDV/Lv7Uj4W0qjWMteCPDM1NOoAemAjLmqavzjHaviTkNLhTondi0N3BDeyM1TAc4dzoSyh0GkBxyQgJb8MZlVzrV/ySEC+h/L/hZ26vHzLX69D+xEwN3hGAhDDss2SuxCGM3aW9yMJbBARk=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D948F1F00A3E;
-	Fri, 21 Aug 2026 10:04:41 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56CD61F000E9;
+	Fri, 21 Aug 2026 10:05:18 +0000 (UTC)
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-	Hans Verkuil <hverkuil@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Eugen Hristev <ehristev@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: linux-media@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: linux-mips@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/3] media: samsung: exynos4-is: Make sure clk_init_data is fully initialized
-Date: Fri, 21 Aug 2026 12:04:30 +0200
-Message-ID: <2cace1b92cc8333eca63874de17dd5d5b1f9e5d6.1787240035.git.geert+renesas@glider.be>
+Subject: [PATCH] MIPS: Alchemy: clock: Make sure clk_init_data is fully initialized
+Date: Fri, 21 Aug 2026 12:05:15 +0200
+Message-ID: <3610b51df642abb1fbb39f5bd93fddea43f8f164.1787240060.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1787240035.git.geert+renesas@glider.be>
-References: <cover.1787240035.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -56,23 +44,64 @@ for specifying the parents.
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 Compile-tested only.
----
- drivers/media/platform/samsung/exynos4-is/media-dev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/samsung/exynos4-is/media-dev.c b/drivers/media/platform/samsung/exynos4-is/media-dev.c
-index 2e08c4435859e8d2..638babf52822113c 100644
---- a/drivers/media/platform/samsung/exynos4-is/media-dev.c
-+++ b/drivers/media/platform/samsung/exynos4-is/media-dev.c
-@@ -1313,7 +1313,7 @@ static int fimc_md_register_clk_provider(struct fimc_md *fmd)
+Part One[1] fixed all cases that I identified to be real bugs, in
+response to a crash I saw on BeagleBone Black.
+
+This patch is the MIPS subpart of Part Two, which fixes remaining cases
+that are currently harmless.  These are still fragile, and may cause
+future breakage when converting drivers to a different method for
+specifying the parents.
+
+[1] "[PATCH treewide 0/5] clk: Make sure clk_init_data is fully
+     initialized (part 1)"
+    https://lore.kernel.org/cover.1787165329.git.geert+renesas@glider.be
+---
+ arch/mips/alchemy/common/clock.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/arch/mips/alchemy/common/clock.c b/arch/mips/alchemy/common/clock.c
+index 62a7304ff35f6190..b5d2cbb7c69ec475 100644
+--- a/arch/mips/alchemy/common/clock.c
++++ b/arch/mips/alchemy/common/clock.c
+@@ -150,7 +150,7 @@ static const struct clk_ops alchemy_clkops_cpu = {
+ static struct clk __init *alchemy_clk_setup_cpu(const char *parent_name,
+ 						int ctype)
+ {
+-	struct clk_init_data id;
++	struct clk_init_data id = {};
+ 	struct clk_hw *h;
+ 	struct clk *clk;
  
- 	for (i = 0; i < FIMC_MAX_CAMCLKS; i++) {
- 		struct cam_clk *camclk = &cp->camclk[i];
--		struct clk_init_data init;
-+		struct clk_init_data init = {};
- 		const char *p_name;
+@@ -245,7 +245,7 @@ static struct clk __init *alchemy_clk_setup_aux(const char *parent_name,
+ 						char *name, int maxmult,
+ 						unsigned long reg)
+ {
+-	struct clk_init_data id;
++	struct clk_init_data id = {};
+ 	struct clk *c;
+ 	struct alchemy_auxpll_clk *a;
  
- 		ret = of_property_read_string_index(dev->of_node,
+@@ -754,7 +754,7 @@ static const char * const alchemy_clk_fgen_names[] = {
+ static int __init alchemy_clk_init_fgens(int ctype)
+ {
+ 	struct clk *c;
+-	struct clk_init_data id;
++	struct clk_init_data id = {};
+ 	struct alchemy_fgcs_clk *a;
+ 	unsigned long v;
+ 	int i, ret;
+@@ -959,9 +959,9 @@ static int alchemy_csrc_dt2[] = { 1, 4, 3, 2 };	/* Au1300 */
+ 
+ static int __init alchemy_clk_setup_imux(int ctype)
+ {
++	struct clk_init_data id = {};
+ 	struct alchemy_fgcs_clk *a;
+ 	const char * const *names;
+-	struct clk_init_data id;
+ 	unsigned long v;
+ 	int i, ret, *dt;
+ 	struct clk *c;
 -- 
 2.43.0
 
