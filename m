@@ -1,188 +1,191 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4C67476040
-	for <linux-clk@vger.kernel.org>; Fri, 21 Aug 2026 10:34:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C770370D6E;
+	Fri, 21 Aug 2026 10:37:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787308480; cv=none; b=QI1rpIOxUJx4vWFXX5h/wDaRmZEp5AkptCVfGCHYcBARk1WYraI7hTvYAacZuLWkCaMELWLkNW862JwCLsqzSNKuleD+4AMV0QZ9TDG++8ZFr4kD3mHGRfbX03csZyPVKKxxagfrs+EfFRAGvSWRJipGN0Ho/wZRcoWAAMBDn5Q=
+	t=1787308634; cv=none; b=SNnYpMyJA6XyyGf65LLuNokSbDr6qMCVdAGuAvK/JVmCVlWdoCFsPDpd0EaEUPHMxSp8OjxQxlcn5gsNTnVG+48qPZY30nrfTbgS8LkicURgxH+oVGR8foXZxAZBeyKaLEAAgLUlHwFO5LLQ+hoaCtO3hDxXrzs7vQL+1rq1Cbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787308480; c=relaxed/simple;
-	bh=5zMdoPmIoLyyM0dKvIT55YTmQvzQmNq41lcYOrJS61k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NcH8zkIwAmZ9LrHAtaxr12NsA1XPmKeevV+QY0SUF5dv0KuKXLDCcjOX8fgSYZGFl88LomWk+rSJDKclzwbU/t8rm3C6Vx0IUyQZSvcGz8M9Q07M2AYtpOcCGBRKpsWT4TYyP/wMuJWUaRW6sB6Gmewe+AFGwQ0LUuFj7/rT6JY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=nIL73qzp; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=MBQpwF3p; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1787308634; c=relaxed/simple;
+	bh=zCscsBoLLm3IYcbhPT7Z/B1c6ayiDAku+pqhdanIq8U=;
+	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=dYzAuFiB+aLCm9woIZzsC4W0vB5JG3lOAVYfZyiubp77ocZd8J1RVluDxZhnUj5gqy59xa6dnreASnI6eryudBXNMVPrLEjvdmV8vEFUSZqA6f/nPLMtbNjs5OduXGsA6hsfvDCNxEtcuj8UzaDAX+bbjpFDIZ45WWGGf3guNCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kgJyKi25; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="nIL73qzp";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="MBQpwF3p"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 67L9M93m1550681
-	for <linux-clk@vger.kernel.org>; Fri, 21 Aug 2026 10:34:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	UOjHPgH/1h78uGEI85ecUIBarzFNIpLpo5cgkB5sGqs=; b=nIL73qzpgMjL3Fbm
-	Vvug8kPON1rFtGhYYtMsDLx2TIYe3eLV/GLvhFwh06koXcVOfzYiHqFXttycE0hC
-	f/Dk6+w5d6y/HjGbXBzBJNWRwSnsBZQEViTH6cer9GQOmmPfWBJ0Q9bjdvxnN+dK
-	zBhVOKHHGeQVZxYZl97q27YrQWAd4n4jjf0XrEVtIDu93CCcrkQDuvPnLzN29621
-	AjEU+Nv4qbZ4j7xitpYt1RxWTOW04rvedqn8gh52NKOPJLsADiTf52xffWiPMica
-	ezWFzW/mP3NkwH1CDEB8lVYCj4/8PkV/GvbEbBr0/aYkw3QDlReknlcZni03ZBRU
-	SeMtww==
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4g6d069s94-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Fri, 21 Aug 2026 10:34:28 +0000 (GMT)
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-84f0d3ab2f4so640139b3a.1
-        for <linux-clk@vger.kernel.org>; Fri, 21 Aug 2026 03:34:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1787308468; x=1787913268; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=UOjHPgH/1h78uGEI85ecUIBarzFNIpLpo5cgkB5sGqs=;
-        b=MBQpwF3piHKG19aTmJB78wCCUdYQoLnkLuqv974ubnCPidkzGL2enshXkCHU3gy9PG
-         Wlom50MGAb/aFt+K/K1/vq1292embPePzlibkWqbJXsPf/NvvXJVZU6irhQ2xkos6TXJ
-         w0nIZSot4vS+IXdjPxU8qLSGOi8j27CPSswl3ZH0aKYeR7hO1kVh5WqQrgULori4k2bq
-         cX+kzLNv6EuA41Na39HTFM7MbKSmXPXc8ZKE/NI0BnL4oNw6Mc72AIpsk3m4sW6CJJgU
-         F7w3TuSaXcFbvp8BEbIxc91csHTILtt+gORhHbEUKeXB9+1H6y4uMQcisYqN8l1euhTs
-         Thmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787308468; x=1787913268;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=UOjHPgH/1h78uGEI85ecUIBarzFNIpLpo5cgkB5sGqs=;
-        b=h5zIrwX1A2/wV8oh22RhQIMpH2R03udjSzzrMdZTWsXNmaM3SQ70lQxJQrbN/8A58J
-         SJ6VIckmFAUSwhk5lmfPTGSyhqzKwrDpxSDmUGo5uTUKCGtTXudxdzxhEMg7IkkVs9Rh
-         kiBgVE1J5fZtBf7oXxKy20STX5o6XpVB90CuCwXQv/CFPz93IBcECHB2yRXqIS25uhoA
-         ZmUBGQyyl5NS67MaifTEnLr09slwuxlZWJt5kbI4KPO8bjKCcPO+OIJHzGVc9t5zHWdj
-         RZ8zTfdvUBVmr+DfAHEhUeakJtA8c1/zMXjdPC0Cyj7rR6MM96ffWQo5ossFPLoZDkgy
-         POKw==
-X-Forwarded-Encrypted: i=1; AHgh+RphniK+YBpE44lj9PHIvK51hWOQdOvNn2Inj58AHzH5Xfr10S2O4v4yd9bIyW2hTZmWjuoCRaaOBNE=@vger.kernel.org
-X-Gm-Message-State: AFuF++mCsCprQ0MsyXijQL6ipVm+0ewYmEkFPRIHMUOzXDZckDLP8bou
-	HjpTvI8kAQWNHbF4tbqtoqsF8+dZsV184txhesg/SBuKNY1Vx7dg19oGPWdKaXRibayrhoUG4pz
-	7qk+Dz1ICB+6z5VyL/+y88ygGetW/SFOS1JyfmDtLVhSEptp2oeHzJ/4HcV5F3Lw=
-X-Gm-Gg: AR+sD12ovkSnl/ajTNYoHKVWClTnlGXt7OAfpSoe/pFq/swbcsF65aE9thSw3QVrAr9
-	Qc6Bo4ofL5pM8AFbB/i33eok4Hw3PnFluK0skWdT+yTtbt5OWPEF32q3ixR0gm7wOHeX9orPUiA
-	2bKtBwkj6tSkBgd/muhmqnwFwC/77eP/I1bPAR9nGLogwlO7JSOf4f3/5XkYYCs8AwDBG3GDzW7
-	ZR8VMHX+yhvoDvgbnvC0ZEvIG5d2zbYAUDGmuWHZpr9M3pQ61oKYCvqAL2A/ISA3Z98/SKB/RZn
-	jYDlfU90uTYa4/nOs3dTQfmxZOQvqhXlZFtCB8tH1nKEEC+saGmvfkULTWw2jLbVDFxkG/rKEl+
-	piAtM2XAURAd+xmxTC8jmCmzb7lTmCdNFwuHL
-X-Received: by 2002:a05:6a00:2305:b0:851:8bde:7873 with SMTP id d2e1a72fcca58-851f9f42680mr7475545b3a.8.1787308467378;
-        Fri, 21 Aug 2026 03:34:27 -0700 (PDT)
-X-Received: by 2002:a05:6a00:2305:b0:851:8bde:7873 with SMTP id d2e1a72fcca58-851f9f42680mr7475452b3a.8.1787308466823;
-        Fri, 21 Aug 2026 03:34:26 -0700 (PDT)
-Received: from [192.168.31.188] ([152.56.14.147])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-851d3362860sm2688575b3a.8.2026.08.21.03.34.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Aug 2026 03:34:26 -0700 (PDT)
-Message-ID: <812d71fe-40e2-47c8-ac4c-ddb8a45f582d@oss.qualcomm.com>
-Date: Fri, 21 Aug 2026 16:04:14 +0530
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kgJyKi25"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 544741F000E9;
+	Fri, 21 Aug 2026 10:37:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1787308622;
+	bh=Ty4c7dx0rrcNYUxNKu46mmG116xzQVjfwXXQdiZwi+Y=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=kgJyKi25/7HfM5c6Oh2NR6ABzorXElSX0fdZVqNrewKWz+3Vm8yrzRVh87dwXvYjp
+	 ueHlaOp2Hc8A3FwNuAFm9Lkd+HVC+KQZ45wKwO0JiwmReBVmAQL7E7vFGrd8WbVOQ7
+	 vuiWAcff18nGda55UjY95Kp51VYkCr9m8malWM/xNEuMzEeb+uxHuBWIH60Pq+0MFM
+	 Br/UqAp8HWHE5xSSlbN7zmX/Wcb98+HweBQfhhaoIRxgbWH1Ya1zD5l2lll+ideJ0P
+	 r915y+hE1MrQb/D3g4aRdI7czvADTdoxea/+xb7c5K5ZZ2CzCRJeHHl/0zlZwnJX6C
+	 8zWkvtULVU/kw==
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH 3/5] rtc: nct3018y: Make sure clk_init_data is fully
+ initialized
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Geert Uytterhoeven" <geert+renesas@glider.be>
+Cc: linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org, "Alexandre Belloni" <alexandre.belloni@bootlin.com>
+In-Reply-To: <6dba18b645aeea279a67f4625d5ec48037c76f0c.1787241693.git.geert+renesas@glider.be>
+References: <cover.1787241693.git.geert+renesas@glider.be>
+ <6dba18b645aeea279a67f4625d5ec48037c76f0c.1787241693.git.geert+renesas@glider.be>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 21 Aug 2026 10:37:01 +0000
+Message-Id: <20260821103702.544741F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/3] clk: qcom: gcc-glymur: Tie the CX power domain to
- controller
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Abel Vesa <abel.vesa@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Taniya Das <taniya.das@oss.qualcomm.com>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Maulik Shah <maulik.shah@oss.qualcomm.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Jyothi Kumar Seerapu <jyothi.seerapu@oss.qualcomm.com>,
-        Brian Masney <bmasney@redhat.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-        Sibi Sankar <sibi.sankar@oss.qualcomm.com>,
-        Akhil P Oommen <akhilpo@oss.qualcomm.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>,
-        Raviteja Laggyshetty <raviteja.laggyshetty@oss.qualcomm.com>,
-        Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>,
-        Qiang Yu <qiang.yu@oss.qualcomm.com>,
-        Manaf Meethalavalappu Pallikunhi <manaf.pallikunhi@oss.qualcomm.com>,
-        Abel Vesa <abelvesa@kernel.org>
-References: <20260715-glymur-fix-gcc-cx-scaling-v3-0-72eb5adad156@oss.qualcomm.com>
- <9a3b9b76-abb0-47a5-ada6-cd0a576b0782@oss.qualcomm.com>
- <3df2f139-bc7a-403f-bece-7e820b202bd1@oss.qualcomm.com>
-Content-Language: en-US
-From: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
-In-Reply-To: <3df2f139-bc7a-403f-bece-7e820b202bd1@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODIxMDA3OCBTYWx0ZWRfX+OxPH9mfWaZJ
- vDRo4dMxkZOeMrOn+qy+kkO3U2MR2i1bzduOzWpuAVyNgar8y43BKt6w6KsZavdcwfC6wOB01qv
- i3k6WSw5u2j5et9PoBEwrqxrGg+WsKB0OOQiFJL7bZhHHwVrOj/heJTsruoHKPgFpz5JeqTWbIv
- KuVbBHH/i0CwkmOZ1turHi04fBPMe5SLXY0VqiiJWatux82g3Ou+JnZHbXFzIDYNMkt1bU7+V9S
- RbtLG81B3bZ3ADvho75HXJ4kZo1WgnIst2To0DSgLrG+ZP/gyMTjGrQ7UNmFJNZ5JDuPIvplxW5
- QwxBsBjtPsUYNHqctUAkM9YnmRZcwz1b1kqp3CXD0ODlfsKDym2y9Z7UdziptWG1f/UU4PuDCSg
- ZICTD1MEqF/w4MYl0feVKfIh1dt3hr9sOY0SrJ4NcexOdfLNZC8DmA+sJFV139dXBhumNv/mcwy
- HL188bu+5yf/LuzfJAw==
-X-Proofpoint-Spam-Info: AW1haW4tMjYwODIxMDA3OCBTYWx0ZWRfX/O/DP/qEk7LW
- 05cpdaQqv7u0Bc+QZiA4RyH1hYyubjyQbc1f7r5ettC8K5DqhFywFSgOn3U30x1zjGc2EJ06dA+
- +M2kNiUNfhL/Y0+QA+SCGWOYP2EIWpc=
-X-Authority-Analysis: v=2.4 cv=DdQnbPtW c=1 sm=1 tr=0 ts=6a8829b4 cx=c_pps
- a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=UgjVaFD1vmiot8dKuSzQiw==:17
- a=IkcTkHD0fZMA:10 a=Sv0fKeRqtYgA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_K5XuSEh1TEqbUxoQ0s3:22
- a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=F55jpGqvRUC9acNfLbcA:9 a=QEXdDO2ut3YA:10
- a=OpyuDcXvxspvyRM73sMx:22
-X-Proofpoint-ORIG-GUID: PRlECzFoNLMs_2GhvB_1qoyGMEcMnQ4r
-X-Proofpoint-GUID: PRlECzFoNLMs_2GhvB_1qoyGMEcMnQ4r
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-08-21_03,2026-08-21_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 clxscore=1015 priorityscore=1501 phishscore=0 bulkscore=0
- impostorscore=0 suspectscore=0 adultscore=0 lowpriorityscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2608210078
 
-On 8/17/2026 3:40 PM, Konrad Dybcio wrote:
-> On 8/14/26 8:30 AM, Pankaj Patil wrote:
->> On 7/15/2026 6:59 PM, Abel Vesa wrote:
->>> The suggestion of having the CX power domain tied up to the GCC
->>> controller started here:
->>>
->>> https://lore.kernel.org/lkml/fe210f0b-692b-4c45-afc4-fc2bc5e57854@oss.qualcomm.com/
->>>
->>> and then, for Glymur, it has been brought up here as well:
->>>
->>> https://lore.kernel.org/all/0248dc51-1036-426c-b1de-dbc71696e2c1@oss.qualcomm.com/
->>>
->>> These plus a discussion off-list led to this patchset being done.
->>>
->>
->> This series prevents cx collapse during suspend on recent linux-next tag: next-20260806
->> Reproducible on latest tag next-20260813 as well
-> 
-> Yes and the ""fix"" is to disable the GPU nodes because the custom
-> runtime pm dance done in the gxclkctl driver keeps a vote online
-> 
-> That should be fixed instead
-> 
-> FWIW ath12k is causing some issues for me in this regard too..
-> 
-> Konrad
+Thank you for your contribution! Sashiko AI review found 4 potential issue(=
+s) to consider:
 
-There's no need to disable gpu nodes for cx collapse on s2idle, I can reach cx 
-collapse after disabling crypto, camcc and evacc nodes along with reverting
-this series, Specifically arm64: dts: qcom: glymur: Add CX power domain to GCC
-Can you share the steps to reproduce? Are you running additional steps before
-triggering suspend?
+Pre-existing issues:
+- [High] Unmanaged OF clock provider registration causes a resource leak an=
+d potential use-after-free on probe failure or driver unbind.
+- [High] Missing restore of NCT3018Y_REG_CTRL state on error paths in nct30=
+18y_rtc_set_time.
+- [High] Data race due to missing lock for read-modify-write sequences on N=
+CT3018Y_REG_CTRL.
+- [High] Unhandled I2C short block reads lead to uninitialized kernel stack=
+ memory being used and potentially leaked to userspace.
+--
 
+--- Patch [3]: [PATCH 3/5] rtc: nct3018y: Make sure clk_init_data is fully =
+initialized ---
+commit 3afc7c4d645666922e04824eeba8803bb2dbf8c0
+Author: Geert Uytterhoeven <geert+renesas@glider.be>
+
+rtc: nct3018y: Make sure clk_init_data is fully initialized
+
+This commit fixes a potential issue where uninitialized members in the
+clk_init_data structure could cause subtle bugs depending on stack
+initialization configs. It fully initializes the structure to avoid
+future breakage.
+
+> diff --git a/drivers/rtc/rtc-nct3018y.c b/drivers/rtc/rtc-nct3018y.c
+> index 700a395fad3a6..2f7ad57057a4b 100644
+> --- a/drivers/rtc/rtc-nct3018y.c
+> +++ b/drivers/rtc/rtc-nct3018y.c
+> @@ -459,8 +459,8 @@ static struct clk *nct3018y_clkout_register_clk(struc=
+t nct3018y *nct3018y)
+>  {
+>  	struct i2c_client *client =3D nct3018y->client;
+>  	struct device_node *node =3D client->dev.of_node;
+> +	struct clk_init_data init =3D {};
+>  	struct clk *clk;
+> -	struct clk_init_data init;
+> =20
+>  	init.name =3D "nct3018y-clkout";
+>  	init.ops =3D &nct3018y_clkout_ops;
+
+[Severity: High]
+This isn't a bug introduced by this patch, but does this function leak the
+clock provider on probe failure or driver unbind?
+
+Further down in nct3018y_clkout_register_clk():
+
+    of_clk_add_provider(node, of_clk_src_simple_get, clk);
+   =20
+When of_clk_add_provider() is called without a corresponding remove path or
+devres wrapper like devm_of_clk_add_hw_provider, it looks like a dangling
+pointer could be left in the global of_clk_providers list. If the memory
+backing the clock is freed via devres and another device queries the clock,
+can this lead to a use-after-free?
+
+
+[Severity: High]
+This is a pre-existing issue, but is there a missing restore of the
+register state on error paths in nct3018y_rtc_set_time?
+
+drivers/rtc/rtc-nct3018y.c:nct3018y_rtc_set_time() {
+    ...
+    err =3D i2c_smbus_write_byte_data(client, NCT3018Y_REG_SC, buf[0]);
+    if (err < 0) {
+        dev_dbg(&client->dev, "Unable to write NCT3018Y_REG_SC\n");
+        return err;
+    }
+    ...
+}
+
+If an I2C write error occurs during time setting, the driver returns early
+without restoring NCT3018Y_REG_CTRL. Does this leave the hardware in an
+inconsistent state with the NCT3018Y_BIT_TWO flag set incorrectly?
+
+
+[Severity: High]
+This isn't a bug introduced by this patch, but is there a data race on
+NCT3018Y_REG_CTRL?
+
+nct3018y_rtc_set_time() executes in process context and performs a
+read-modify-write:
+
+drivers/rtc/rtc-nct3018y.c:nct3018y_rtc_set_time() {
+    ...
+    flags =3D i2c_smbus_read_byte_data(client, NCT3018Y_REG_CTRL);
+    ...=20
+    flags |=3D NCT3018Y_BIT_TWO;
+    err =3D i2c_smbus_write_byte_data(client, NCT3018Y_REG_CTRL, flags);
+    ...
+}
+   =20
+Simultaneously, the threaded IRQ handler can call nct3018y_set_alarm_mode()
+which does the same:
+
+drivers/rtc/rtc-nct3018y.c:nct3018y_set_alarm_mode() {
+    ...
+    flags =3D i2c_smbus_read_byte_data(client, NCT3018Y_REG_CTRL);
+    ...
+    flags |=3D NCT3018Y_BIT_CIE;
+    err =3D i2c_smbus_write_byte_data(client, NCT3018Y_REG_CTRL, flags);
+    ...
+}
+   =20
+Since the RTC core's ops_lock doesn't serialize against the threaded IRQ
+handler, can concurrent operations overwrite each other's register state
+and lead to missed alarms?
+
+
+[Severity: High]
+This is a pre-existing issue, but could unhandled short reads leak
+uninitialized kernel stack memory to userspace?
+
+drivers/rtc/rtc-nct3018y.c:nct3018y_rtc_read_time() {
+    ...
+    err =3D i2c_smbus_read_i2c_block_data(client, NCT3018Y_REG_SC,
+                                        sizeof(buf), buf);
+    if (err < 0)
+        return err;
+       =20
+    tm->tm_sec =3D bcd2bin(buf[0] & 0x7F);
+    ...
+}
+   =20
+i2c_smbus_read_i2c_block_data() returns the number of bytes read on success.
+If it returns fewer bytes than requested, the remainder of the stack buffer
+remains uninitialized but is still parsed into the rtc_time struct.
+
+Can this uninitialized memory then be read by userspace via the RTC_RD_TIME
+ioctl?
+
+The same pattern appears to exist in nct3018y_rtc_read_alarm():
+
+drivers/rtc/rtc-nct3018y.c:nct3018y_rtc_read_alarm() {
+    ...
+    err =3D i2c_smbus_read_i2c_block_data(client, NCT3018Y_REG_SCA,
+                                        sizeof(buf), buf);
+    if (err < 0) {
+    ...
+}
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/cover.1787241693.gi=
+t.geert+renesas@glider.be?part=3D3
