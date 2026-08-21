@@ -1,126 +1,133 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 542F03DB635
-	for <linux-clk@vger.kernel.org>; Fri, 21 Aug 2026 10:15:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC2ED3B27CF
+	for <linux-clk@vger.kernel.org>; Fri, 21 Aug 2026 10:15:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787307317; cv=none; b=AQ/3D6TOpOg32bH1Z2y16UsP5LtpoudHdHVtx2Tqniabefq/UrNhID49M4bLOUu8FmWGUMZmqsYsMec/nk/m9Wzg0+hk8giNjaiB84CQBG/wdm2zDjW+Iic8SPQlI5VG3sDee0VGWKTlsuAwF4F15X28cj3d/xOIIId9vIY6SxI=
+	t=1787307338; cv=none; b=f5tmTwknPD+M/UVdf+mXcfLnqZkZue3Ftp6b+iPkvSbIT6flXuAeRLAyumc+dqqApkL5AJwbvIGKwrpfFIp9A8KawyCoeLIY5EZUtqxJxR5dJTG1rGyFniH7XFnb9XxeBUdGF/aNtMN3y1YnlL0FTZ7KCB+hGJQjj/VU9a52s5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787307317; c=relaxed/simple;
-	bh=3qERxUk3y0KNFGC0v54gS3ZXyPW3mXzB41z0sGGPUAw=;
+	s=arc-20240116; t=1787307338; c=relaxed/simple;
+	bh=0/FgIDgcy/xmMQuyW4fs4iM4Mci3MBSDhxcs3Zlaqhs=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=TZcLOLyT5g5Ed6NfhbowW7A4nM2Ok6PIeGTSBdc5AecT/ddGC81ILhDdq8gXwC85FkFrMMmQMjbskQ60Yu7u9QdqVSZDlemMy2asiNOcBFuMkKAet1nYTAwV7Yy/0WHa1AnmK20nKES6SqplqMbkZ7DxOUBRvyfEdsvZFrQSNz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JwRWFDcP; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=DmVhCryMsmtbBCRpaZMqfspnFfaO0YFW7CE0V959m4LvnWQWandNS874fa0/6Mo/TuoGjb6AOccX1oXsK+VJrjSHGKAVCuNALXtCsBRPggJXV58ELqGDoH6whvDYm5+arBNhYSLkdqnH88Ptkd9L9dh552VOYoiyJhMJA4n5JZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JZcgXIAI; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JwRWFDcP"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F29471F000E9;
-	Fri, 21 Aug 2026 10:15:02 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JZcgXIAI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D01291F000E9;
+	Fri, 21 Aug 2026 10:15:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787307303;
-	bh=qC59Yc1xbdYmOehKc5dawCJSVC2bdsfspeH6AOhNNQ8=;
+	s=k20260515; t=1787307324;
+	bh=1782I0SVlKTMUnzkgO7tYHy1NNV0f8J3mXNegURaqj4=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=JwRWFDcP1xt1/3t5+wZeVp8ZNlPD/MM0duA9tfCkKHurX5/kBcYopX/J/npRTQVPC
-	 cA/IwlGW/ctcPKyj6OR9Jif3XLjr+rePwaIDEfVOSB30FqVE/zGpagCi/LEBBw5qZq
-	 5Knaj97rL4WkrxZt87HAr5KJk663iLrPKipJCdQAXDQUq5+RmKSXQX9uWlyAkRtpIL
-	 /vpZXvBkiLRYXGBIXYrNVuiTVzEeuuont7u16H8U8UXF29dpEWSGKp3MkxGf7B4EO1
-	 /SUBNys+Czl6M1627CfdTaArUWqT1CsvT6gGT+1CU3uFPbGHqjDt0DwUFCi5JI854w
-	 3SuXQMUpZEdnQ==
+	b=JZcgXIAInZ7sB2W1n2pC4rTkaKpn0WAPCuujF09nICG1Xt/uEXH1PpnxvRssLq/3I
+	 jABxepZfBuYcjHdaWYMxxJkSJlXMV8O6teGF9dusxwIG12KVs5cgiiQyuf/224p8kk
+	 WYb3NodbH+QXpvphKw62kUzT7pTpCiD9NJ3SsT3wl4GZPxPXiCPk8iqmvjWdBc6pxS
+	 zpgBBP+2cPx/3AWOFRXp8fTO7wRQY9QT2XPM7niWtK9B6+vDxelDPxlEo+F6JIGiNp
+	 XdjJS0cWQamwCcqrfRRm1qa0otyP0zxqrgpMKcve17MNL4HHJ6fBVIw4Ncp4KTOc6k
+	 vE7f41Y8yrc+Q==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 3/3] media: samsung: exynos4-is: Make sure clk_init_data
- is fully initialized
+Subject: Re: [PATCH 2/2] mmc: sdhci-of-arasan: Make sure clk_init_data is
+ fully initialized
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Geert Uytterhoeven" <geert+renesas@glider.be>
-Cc: linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org, media-ci@linuxtv.org, neil.armstrong@linaro.org
-In-Reply-To: <2cace1b92cc8333eca63874de17dd5d5b1f9e5d6.1787240035.git.geert+renesas@glider.be>
-References: <cover.1787240035.git.geert+renesas@glider.be>
- <2cace1b92cc8333eca63874de17dd5d5b1f9e5d6.1787240035.git.geert+renesas@glider.be>
+Cc: linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org, neil.armstrong@linaro.org
+In-Reply-To: <0235d3a3d5b71a125eeff6d7be25ddaec80ce539.1787240090.git.geert+renesas@glider.be>
+References: <cover.1787240090.git.geert+renesas@glider.be>
+ <0235d3a3d5b71a125eeff6d7be25ddaec80ce539.1787240090.git.geert+renesas@glider.be>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 21 Aug 2026 10:15:02 +0000
-Message-Id: <20260821101502.F29471F000E9@smtp.kernel.org>
+Date: Fri, 21 Aug 2026 10:15:23 +0000
+Message-Id: <20260821101523.D01291F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+Thank you for your contribution! Sashiko AI review found 2 potential issue(=
 s) to consider:
 
 Pre-existing issues:
-- [High] Double free and use-after-free of device node references in OF ite=
-rator loop.
+- [High] Another driver in the same subsystem (meson-mx-sdio.c) suffers fro=
+m the exact same uninitialized struct clk_init_data issue that this patch f=
+ixes.
+- [High] The driver registers multiple clock providers for the same device =
+node but only deletes one on teardown, leading to a leaked provider struct,=
+ a leaked device node reference, and a dangling UAF pointer in the global c=
+lock providers list.
 --
 
---- Patch [3]: [PATCH 3/3] media: samsung: exynos4-is: Make sure clk_init_d=
-ata is fully initialized ---
-commit f3a10ad891243d9b897aed17537077a8bb8725bc
+--- Patch [2]: [PATCH 2/2] mmc: sdhci-of-arasan: Make sure clk_init_data is=
+ fully initialized ---
+commit 34a49f083df630f25a24052b358249a2c48b6055
 Author: Geert Uytterhoeven <geert+renesas@glider.be>
 
-    media: samsung: exynos4-is: Make sure clk_init_data is fully initialized
-   =20
-    The clk_init_data structure contains mutually-exclusive members for
-    specifying clock parents. This commit ensures all members are fully
-    initialized to zero, preventing subtle bugs with uninitialized data.
+mmc: sdhci-of-arasan: Make sure clk_init_data is fully initialized
 
-> diff --git a/drivers/media/platform/samsung/exynos4-is/media-dev.c b/driv=
-ers/media/platform/samsung/exynos4-is/media-dev.c
-> index 2e08c4435859e..638babf528221 100644
-> --- a/drivers/media/platform/samsung/exynos4-is/media-dev.c
-> +++ b/drivers/media/platform/samsung/exynos4-is/media-dev.c
-> @@ -1313,7 +1313,7 @@ static int fimc_md_register_clk_provider(struct fim=
-c_md *fmd)
-> =20
->  	for (i =3D 0; i < FIMC_MAX_CAMCLKS; i++) {
->  		struct cam_clk *camclk =3D &cp->camclk[i];
-> -		struct clk_init_data init;
-> +		struct clk_init_data init =3D {};
->  		const char *p_name;
-> =20
->  		ret =3D of_property_read_string_index(dev->of_node,
+The clk_init_data structure contains mutually-exclusive members for
+specifying clock parents. Uninitialized members can cause issues exposed by
+certain stack initialization configs. This commit zeroes the struct to prev=
+ent
+bugs and future breakage.
 
 [Severity: High]
-This is a pre-existing issue, but I noticed a potential double-free of devi=
-ce
-node references elsewhere in this file.
+This isn't a bug introduced by this patch, but I noticed another driver in
+the same subsystem suffers from the exact same uninitialized struct
+clk_init_data issue that this patch fixes.
 
-Looking at fimc_md_parse_port_node(), it iterates over child nodes using the
-scoped iterator macro:
+In drivers/mmc/host/meson-mx-sdio.c:meson_mx_mmc_register_clks():
 
-drivers/media/platform/samsung/exynos4-is/media-dev.c:fimc_md_parse_port_no=
-de() {
-    ...
-	for_each_child_of_node_scoped(port, ep) {
-		ret =3D fimc_md_parse_one_endpoint(fmd, ep);
-		if (ret < 0)
-			return ret;
-	}
-    ...
-}
+	struct clk_init_data init;
+	...
+	init.name =3D devm_kasprintf(host->controller->parent, ...);
+	init.ops =3D &meson_mx_mmc_cfg_div_ops;
+	init.flags =3D 0;
+	...
 
-This macro automatically manages the reference counting for ep, dropping it
-implicitly when the loop advances or exits.
+Does this also need zero-initialization to avoid leaving fields like
+parent_data and parent_hws as stack garbage, which could lead to memory
+corruption during device probe?
 
-However, inside fimc_md_parse_one_endpoint(), the code explicitly calls
-of_node_put(ep) on all paths:
+> diff --git a/drivers/mmc/host/sdhci-of-arasan.c b/drivers/mmc/host/sdhci-=
+of-arasan.c
+> index 0a4b4696bc01c..aec617aa8e0ca 100644
+> --- a/drivers/mmc/host/sdhci-of-arasan.c
+> +++ b/drivers/mmc/host/sdhci-of-arasan.c
+[ ... ]
+> @@ -1638,8 +1638,8 @@ sdhci_arasan_register_sampleclk(struct sdhci_arasan=
+_data *sdhci_arasan,
+>  				struct device *dev)
+>  {
+>  	struct sdhci_arasan_clk_data *clk_data =3D &sdhci_arasan->clk_data;
+> +	struct clk_init_data sampleclk_init =3D {};
+>  	struct device_node *np =3D dev->of_node;
 
-drivers/media/platform/samsung/exynos4-is/media-dev.c:fimc_md_parse_one_end=
-point() {
-    ...
-	asd =3D v4l2_async_nf_add_fwnode_remote(&fmd->subdev_notifier,
-					      of_fwnode_handle(ep),
-					      struct v4l2_async_connection);
+[Severity: High]
+This is a pre-existing issue, but I noticed a potential leak and dangling
+pointer hazard when tearing down these clock providers.
 
-	of_node_put(ep);
-    ...
-}
+If #clock-cells > 0, this driver registers both the sdcardclk and sampleclk
+providers for the same dev->of_node via of_clk_add_provider().
 
-Because the reference is already dropped in the helper function, wouldn't t=
-he
-subsequent put by the iterator's loop advance or scope exit result in a
-double-free and a use-after-free of the device node?
+During unbind, sdhci_arasan_unregister_sdclk() calls:
+
+	of_clk_del_provider(dev->of_node);
+
+Since of_clk_del_provider() stops after deleting the first matching provider
+it finds (which would be sampleclk), does this leave the sdcardclk provider
+on the global list?=20
+
+When the underlying clock is freed by devm, any subsequent DT lookup on this
+node might fetch the dangling provider and return a freed struct clk pointe=
+r.
+Could we be leaking a provider and device node reference here?
+
+> -	struct clk_init_data sampleclk_init;
+>  	const char *parent_clk_name;
+>  	int ret;
+>
 
 --=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/cover.1787240035.gi=
-t.geert+renesas@glider.be?part=3D3
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/cover.1787240090.gi=
+t.geert+renesas@glider.be?part=3D2
