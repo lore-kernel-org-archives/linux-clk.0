@@ -1,44 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD18F47607C
-	for <linux-clk@vger.kernel.org>; Fri, 21 Aug 2026 10:18:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EA0E3AE6E2
+	for <linux-clk@vger.kernel.org>; Fri, 21 Aug 2026 10:19:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787307506; cv=none; b=M7MIamWxK6xcGAoUcJZyXuB59/g5sjlGZ1YTI6G9tCdv2+dwRav0AaOqVZZ1XJJgkf+UWp3k6Rwbh0+yuWeMj7d2Gp3UmkTYvb2hyV4YeAV/PZF88FVX4Oda6uU+AQW+pXHvcvjaqtt+iVbYmgP3ARWR+DmNvcd1hZdsehfuW8I=
+	t=1787307579; cv=none; b=ccZd/eOkhP4CuQrkeDitw3hu0Y+Q+Fya4P86vcXVJ8wB8STqYTKE1Bqdgk8CxFX0hLPf5+WpKKYac0npetsr+3siQPH7DC52dwJYn+iSRUAIRggSsJQdkPIk5zl7CScA6zoxmcclXCO3YY+oHFfLSzkFcIWUWIeikfbdsAiQLxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787307506; c=relaxed/simple;
-	bh=UwzabSCv70RAiIUIKV3RJFkTPkv9hHyljirEgN9ilXc=;
+	s=arc-20240116; t=1787307579; c=relaxed/simple;
+	bh=P2HxezIUarLP1MOZcC/+7eaBgwKc5Hll7MDrt++CT88=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=GaWalL/lu7JOH4uFlFkvBZpuZEQo16z8xHRO/1Rv0lReytoVTyZvK9xXsAIhMF79rI9fQwbDfXnDmCPYmZvEO+rO95AK8HyHIbxdi9fn+5PZSNHQV2LR8WufxBd+OMpn+bK/7AcfSEjtHjptFz2jfiDWBcqGRJLiQmvqTPPxUZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XogmDiCD; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=c+DFm3X5qqEsk+XrBM76BBcQQPL1B/8HSEoYkvqxYh1Hz32/s5eDCG5rj7YQfBQ+SfRyzZfwEJVj4h2cnQjsNYf1W08k3XRVnOfgCIQFixlhnKsv4t69NORubI+6VjwjBlPJ3T9MfXRv7dYl9KQaUD6R99OERXxcEeiL+Ni0lYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TSBQLWxf; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XogmDiCD"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D012A1F000E9;
-	Fri, 21 Aug 2026 10:18:20 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TSBQLWxf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B162B1F00A3A;
+	Fri, 21 Aug 2026 10:19:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787307501;
-	bh=whinKhOnbBpFaLiJHM5JFGDjF73h4ClZ7n5vppHJv8c=;
+	s=k20260515; t=1787307572;
+	bh=pltpl88MKbeeVdKGrQ7s9RfJnANxTJ5ndZAsX2xoPXw=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=XogmDiCDZCbN29RyE+PEREi0zxt3OlYeYf3yJGtNU/mNla/0qeQeqoLvO5Y3tGWK+
-	 BtBG6dv27MM//JfJLrYeTD76+K8hl3P6nCGgUjYyHGAapkviNRBiFt0mTt21Jw0I/f
-	 z5SAOC3IhuK595CAvZN+5M7hNLd1jM0F7NR2bj2bK87f+iy0LDicTDz/FFH1xE8vWQ
-	 zT4ntlyswSHh9OFvtEVU3AtkZ64AJTEBn4jQMl1114xe2mh7g1ReqaoO+shNCCG7Dp
-	 hGyutxET2Xb3CDZSKsi3C1sB2ayg6jJNbioJV6uBNKkenI9J/pIDEyxTu71Q39JZP/
-	 za76CqE4hTG3g==
+	b=TSBQLWxfDxDa764fJb61bhLCaME/btB/QPV5TLTNNmod6DZTiaqceUPwNYcs5pIE5
+	 2ynrr6MbvZgwdYxsAwDZEfo39NL6vQbbdOANaa1mGMYXjOqkQanpwr3E6WRyTbFJiF
+	 xwX47cJYDfJYe9rP5DXT89POZoiwCUefiALsCs/zOpm02OroK2fsIdO3/hjaPNZIQL
+	 H5H6130UcvhqvQIW1XcnU2dP/AuITh00PEIjo6SN2oADRNgh8s8hbAto8mAbZ+ymgw
+	 ErsbKqxd7AEwHMF0KUwD57BxkmfdF+/Tnxk5rCrn7saTZ6iN8OHXZ24Bt0j6IUK7k5
+	 icVs6jI3wtytA==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 1/2] mmc: meson-gx: FIXME: Make sure clk_init_data is
- fully initialized
+Subject: Re: [PATCH 1/2] phy: freescale: fsl-samsung-hdmi: Make sure
+ clk_init_data is fully initialized
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Geert Uytterhoeven" <geert+renesas@glider.be>
-Cc: linux-clk@vger.kernel.org, neil.armstrong@linaro.org, linux-amlogic@lists.infradead.org
-In-Reply-To: <4b9a377a810b69a4eb885fc00cb34ef63e7fc1f1.1787240090.git.geert+renesas@glider.be>
-References: <cover.1787240090.git.geert+renesas@glider.be>
- <4b9a377a810b69a4eb885fc00cb34ef63e7fc1f1.1787240090.git.geert+renesas@glider.be>
+Cc: neil.armstrong@linaro.org, linux-clk@vger.kernel.org, linux-phy@lists.infradead.org, olteanv@gmail.com, vkoul@kernel.org
+In-Reply-To: <3c3be1c676eea5d32102864c57643b1573bc0db0.1787240165.git.geert+renesas@glider.be>
+References: <cover.1787240165.git.geert+renesas@glider.be>
+ <3c3be1c676eea5d32102864c57643b1573bc0db0.1787240165.git.geert+renesas@glider.be>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 21 Aug 2026 10:18:20 +0000
-Message-Id: <20260821101820.D012A1F000E9@smtp.kernel.org>
+Date: Fri, 21 Aug 2026 10:19:31 +0000
+Message-Id: <20260821101931.B162B1F00A3A@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -49,69 +49,84 @@ Thank you for your contribution! Sashiko AI review found 1 potential issue(=
 s) to consider:
 
 Pre-existing issues:
-- [High] Uninitialized spinlock access in interrupt handler
+- [High] A global static variable is mutated during clock rate queries, cau=
+sing data races and state corruption with PM resume operations.
 --
 
---- Patch [1]: [PATCH 1/2] mmc: meson-gx: FIXME: Make sure clk_init_data is=
- fully initialized ---
-commit 20368821444f654f1165c58c0816283a3774d376
+--- Patch [1]: [PATCH 1/2] phy: freescale: fsl-samsung-hdmi: Make sure clk_=
+init_data is fully initialized ---
+commit eace776c1e0b617b09367e8f7566adff67211a9f
 Author: Geert Uytterhoeven <geert+renesas@glider.be>
 
-mmc: meson-gx: FIXME: Make sure clk_init_data is fully initialized
+phy: freescale: fsl-samsung-hdmi: Make sure clk_init_data is fully initiali=
+zed
 
-This commit fully initializes the clk_init_data structure to avoid subtle
-initialization issues. By ensuring all members are zeroed, it prevents bugs
-when specific stack initialization configs are enabled.
+The clk_init_data structure contains several mutually-exclusive members
+for different methods to specify the possible parents of a clock,
+prompting drivers to initialize only the members they need.  However,
+not initializing all members may cause subtle issues, which are only
+exposed when CONFIG_INIT_STACK_ALL_PATTERN or CONFIG_INIT_STACK_NONE is
+enabled.
 
-> diff --git a/drivers/mmc/host/meson-gx-mmc.c b/drivers/mmc/host/meson-gx-=
-mmc.c
-> index 694bb443d5f3f..698febdcd4988 100644
-> --- a/drivers/mmc/host/meson-gx-mmc.c
-> +++ b/drivers/mmc/host/meson-gx-mmc.c
-> @@ -418,7 +418,7 @@ static int meson_mmc_clk_set(struct meson_host *host,=
- unsigned long rate,
->   */
->  static int meson_mmc_clk_init(struct meson_host *host)
+> diff --git a/drivers/phy/freescale/phy-fsl-samsung-hdmi.c b/drivers/phy/f=
+reescale/phy-fsl-samsung-hdmi.c
+> index d010fec15671d..76c0d571e3155 100644
+> --- a/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
+> +++ b/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
+> @@ -610,7 +610,7 @@ static int phy_clk_register(struct fsl_samsung_hdmi_p=
+hy *phy)
 >  {
+>  	struct device *dev =3D phy->dev;
+>  	struct device_node *np =3D dev->of_node;
 > -	struct clk_init_data init;
 > +	struct clk_init_data init =3D {};
->  	struct clk_mux *mux;
->  	struct clk_divider *div;
->  	char clk_name[32];
+>  	const char *parent_name;
+>  	struct clk *phyclk;
+>  	int ret;
 
 [Severity: High]
-This is a pre-existing issue, but I noticed a potential problem in how the
-interrupt handler is registered relative to lock initialization in this dri=
-ver.
+This is a pre-existing issue, but does mutating the global static variable
+calculated_phy_pll_cfg during side-effect-free clock queries cause state
+corruption?
 
-In drivers/mmc/host/meson-gx-mmc.c:meson_mmc_probe(), the interrupt is
-requested before the spinlock is initialized:
+In fsl_samsung_hdmi_phy_find_settings(), the global variable is modified
+unconditionally:
 
-	ret =3D request_threaded_irq(host->irq, meson_mmc_irq,
-				   meson_mmc_irq_thread, IRQF_ONESHOT,
-				   dev_name(&pdev->dev), host);
-	if (ret)
-		goto err_init_clk;
-
-	spin_lock_init(&host->lock);
-
-If an interrupt fires immediately upon registration, the interrupt handler
-can begin execution and attempt to acquire the uninitialized lock:
-
-drivers/mmc/host/meson-gx-mmc.c:meson_mmc_irq() {
-	...
-	if (status & IRQ_SDIO) {
-		spin_lock(&host->lock);
-		__meson_mmc_enable_sdio_irq(host->mmc, 0);
-		sdio_signal_irq(host->mmc);
-		spin_unlock(&host->lock);
-	...
+drivers/phy/freescale/phy-fsl-samsung-hdmi.c:fsl_samsung_hdmi_phy_find_sett=
+ings() {
+    ...
+	/* Calculate the integer divider */
+	int_div_clk =3D fsl_samsung_hdmi_phy_find_pms(rate, &p, &m, &s);
+	fsl_samsung_hdmi_calculate_phy(&calculated_phy_pll_cfg, int_div_clk, p, m,=
+ s);
+    ...
 }
 
-Could this result in a lockdep warning or kernel oops if a spurious interru=
-pt
-or pending hardware event triggers before spin_lock_init() completes?
+Then in fsl_samsung_hdmi_phy_configure(), a pointer to this global is saved:
+
+drivers/phy/freescale/phy-fsl-samsung-hdmi.c:fsl_samsung_hdmi_phy_configure=
+() {
+    ...
+	phy->cur_cfg =3D cfg;
+    ...
+}
+
+If a clock driver sets a rate (saving the pointer) and later performs a
+clk_round_rate() query, the query will overwrite calculated_phy_pll_cfg.
+
+When the device resumes, it restores the hardware using this potentially
+corrupted pointer:
+
+drivers/phy/freescale/phy-fsl-samsung-hdmi.c:fsl_samsung_hdmi_phy_resume() {
+    ...
+	if (phy->cur_cfg)
+		ret =3D fsl_samsung_hdmi_phy_configure(phy, phy->cur_cfg);
+    ...
+}
+
+Can this lead to the hardware being restored to an incorrect frequency
+upon PM resume?
 
 --=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/cover.1787240090.gi=
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/cover.1787240165.gi=
 t.geert+renesas@glider.be?part=3D1
