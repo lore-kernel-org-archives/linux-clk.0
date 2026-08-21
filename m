@@ -1,44 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 814133290D2;
-	Fri, 21 Aug 2026 16:21:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 420CE3537F8;
+	Fri, 21 Aug 2026 16:23:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787329287; cv=none; b=kEHMxbJYavPUuPgQO0BF4Faf649iukS2oVFXKpuPz18YeupPkGu7+xnIb7uqE2YuFQjVvqMj6s2oZgvw64VivClQdLoEDVz+NtiKTbZMzZUA4H9oVytPxjaPeKrdcrXU7HsJTeR1D7eGgnz9vVyhGFBW5/DeZo8PEEOsVfMCPes=
+	t=1787329404; cv=none; b=cQfYkHcNitcBN+EtK0RXd+cwS5ikauVnjx30r0+eYhjCDqOlDdAE2809yoHGF73A0Iyi7WNTrr0E7crdwzJgEmtLMXa8LcGamk0xg1EpaOmJWoAaQcmmYBDuj8yHrnn9xibWChAZc3dI9iuspa9sFZhX8i4+uxwTW/vAfi26zJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787329287; c=relaxed/simple;
-	bh=wzCsiyYsJu+TgEpKsOc8sD7LcypFdV4TyZb2hbIm3Lg=;
+	s=arc-20240116; t=1787329404; c=relaxed/simple;
+	bh=ulvfZXQzTUkFvEz7JU/Z3XzucEqMxotA0JOVjSTfcRw=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=Ltc20MYKS3593zT7hNZJv4kSmB64VZFPc66OQsCjvf0hkMdSgvSxObgJJ46hhjYPnVn0SrlNnpin8s7kgP539IZvJWaHJjtx2YZZzf0wjLINM3JXyfz1V+C1ttrv9MJRWHzD6DksG4xJIdph4adIdHRZjLFbTVtqs+pveM7mUSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kcrkP1F5; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=PyBUSCkL7WtWFpeVYs6nzubUrqmBLT8sHzOJkHwSaXfIIiYLNy9YjUforqsdD43j4akV8eWh1agS8x62ZLpYYRvrs7SoSlit5DIsotGlnDQ1yxsIuDXfO8zjDIBeGvkszP9jYpl6DT4POV4rM1d+L6/+nY6swVY4nk+S0+F9m08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ASRciImN; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kcrkP1F5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4C6D1F000E9;
-	Fri, 21 Aug 2026 16:21:25 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ASRciImN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B4E01F000E9;
+	Fri, 21 Aug 2026 16:23:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787329286;
-	bh=gIjxxZGPTmuC61ihs3lfS9K2kmn/qnGa1FBCfZFJ5tw=;
+	s=k20260515; t=1787329402;
+	bh=N2UDTYfmLglZrKw1/bB4MPJY7i/oQkrP8HXDbP6lJBE=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=kcrkP1F5wPXw4dOjXhAk5EBo6C+1RF0u33a92ebMd4TQ75yu4/a8oqwin1gXIbtoU
-	 mJG5rlLTgxTZAQmHsHgrnRmtTwGb3lPQJ3frf/UJXo5aS+mKBYyPTezGJGqCFucUuR
-	 rR9KWf6psA7YhCdtayYNihnkba2NbxFk0t8ODBK+k1rs1Uyr+4BCRNcCNszDIRqxu4
-	 vzhDTEEzG7f+FdfZY0H+lR+8soDUbiLNNPAcbBLZ636lZ+1PhgcHl6NCxw4/WDx6xa
-	 fFhobpNr+AGB4MPNS2F70Q81ANnDsvgqextULHOafA1fpWn0lP6UYPJcIx+waEP+LV
-	 oMGrI68NoNo6Q==
+	b=ASRciImNYvEkrq70UHirGpfdQJG49z1vN9GUwDmS6A1rLr/ffnRuDiXxORrG4ynow
+	 CYqadqEG+0WTb+Gv9ks7DrBU4noaLcdxSCPUuqpfAb3KcJTswNbrcQuX9FYupK9had
+	 cAZrBAMMXPJ1jRNTaLk2ZleV0KpYMErZcbPF80N0I1ePKYisx3JrVLsfEeMCsopSPB
+	 yjD75cbC3EWWdjhF62N2rAQBG8XQYbo37/GpIxkaS/9anhcwM3D02axGow8RfeTz9t
+	 svqOxm7ekMpzDT9KpjnSYInImxc+EbsdyVE3kwa6NmG41GXzNvcxaTPfUUZMq/8lC2
+	 5A+iH3IaGspbg==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v3 05/15] clk: qcom: clk-rpmh: Add support for Kuno RPMh
- clocks
+Subject: Re: [PATCH v3 15/15] ARM: dts: qcom: Add initial device tree for
+ Kuno SoC
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Hardeep Sharma" <hardeep.sharma@oss.qualcomm.com>
 Cc: devicetree@vger.kernel.org, robh@kernel.org, linux-clk@vger.kernel.org, conor+dt@kernel.org
-In-Reply-To: <20260821-kuno-soc-support-v3-5-196e2b306368@oss.qualcomm.com>
+In-Reply-To: <20260821-kuno-soc-support-v3-15-196e2b306368@oss.qualcomm.com>
 References: <20260821-kuno-soc-support-v3-0-196e2b306368@oss.qualcomm.com>
- <20260821-kuno-soc-support-v3-5-196e2b306368@oss.qualcomm.com>
+ <20260821-kuno-soc-support-v3-15-196e2b306368@oss.qualcomm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 21 Aug 2026 16:21:25 +0000
-Message-Id: <20260821162125.D4C6D1F000E9@smtp.kernel.org>
+Date: Fri, 21 Aug 2026 16:23:22 +0000
+Message-Id: <20260821162322.8B4E01F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -47,84 +47,60 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 
 Thank you for your contribution! Sashiko AI review found 1 potential issue(=
 s) to consider:
-
-Pre-existing issues:
-- [High] Probe function mutates globally shared static state, causing accum=
-ulative corruption on probe retry or unbind/bind.
+- [Medium] The `tlmm` node is missing the `wakeup-parent` property, which b=
+reaks GPIO-based system wakeups from deep sleep.
 --
 
---- Patch [5]: [PATCH v3 05/15] clk: qcom: clk-rpmh: Add support for Kuno R=
-PMh clocks ---
-commit 6a55939d348aa54a2946c4b7160f00630d3c9710
+--- Patch [15]: [PATCH v3 15/15] ARM: dts: qcom: Add initial device tree fo=
+r Kuno SoC ---
+commit a3ae80ec946ae96cfeef01d12c9e58806dffcb0b
 Author: Hardeep Sharma <hardeep.sharma@oss.qualcomm.com>
 
-clk: qcom: clk-rpmh: Add support for Kuno RPMh clocks
+ARM: dts: qcom: Add initial device tree for Kuno SoC
 
-Add the RPMh clock description for the Qualcomm Kuno SoC so the
-qcom,kuno-rpmh-clk compatible can provide the RPMh-managed clocks to
-consumers: the CXO div-2 (and always-on variant), RF clock 1 (and
-always-on variant), the QPIC BCM clock and the IPA clock.
-
-> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-> index 6367b2a5a4e08..d8c3a6b12d4a4 100644
-> --- a/drivers/clk/qcom/clk-rpmh.c
-> +++ b/drivers/clk/qcom/clk-rpmh.c
+This commit adds the initial SoC-level device tree (qcom-kuno.dtsi) and
+IDP board device tree (qcom-kuno-idp.dts) for the Qualcomm Kuno SoC. It
+includes basic peripherals like the CPU, RPMh RSC, GCC, TLMM, and GENI UART.
 
 [ ... ]
 
-> @@ -943,6 +943,20 @@ static const struct clk_rpmh_desc clk_rpmh_kaanapali=
- =3D {
->  	.num_clks =3D ARRAY_SIZE(kaanapali_rpmh_clocks),
->  };
-> =20
-> +static struct clk_hw *kuno_rpmh_clocks[] =3D {
-> +	[RPMH_CXO_CLK]		=3D &clk_rpmh_bi_tcxo_div2.hw,
-> +	[RPMH_CXO_CLK_A]	=3D &clk_rpmh_bi_tcxo_div2_ao.hw,
-> +	[RPMH_RF_CLK1]		=3D &clk_rpmh_rf_clk1_a.hw,
-> +	[RPMH_RF_CLK1_A]	=3D &clk_rpmh_rf_clk1_a_ao.hw,
-> +	[RPMH_QPIC_CLK]		=3D &clk_rpmh_qpic_clk.hw,
-> +	[RPMH_IPA_CLK]		=3D &clk_rpmh_ipa.hw,
-> +};
+> diff --git a/arch/arm/boot/dts/qcom/qcom-kuno.dtsi b/arch/arm/boot/dts/qc=
+om/qcom-kuno.dtsi
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/qcom/qcom-kuno.dtsi
 
-[Severity: High]
-This is a pre-existing issue, but does adding this new clock array expose it
-to state corruption during probe retries or unbind/bind sequences?
+[ ... ]
 
-Looking at clk_rpmh_probe() in drivers/clk/qcom/clk-rpmh.c, if a clock
-resource is missing or if probe fails transitorily and is retried, the
-function mutates the statically allocated array:
+> +		tlmm: pinctrl@f000000 {
+> +			compatible =3D "qcom,kuno-tlmm";
+> +			reg =3D <0x0f000000 0x400000>;
+> +			interrupts =3D <GIC_SPI 212 IRQ_TYPE_LEVEL_HIGH>;
+> +			gpio-controller;
+> +			#gpio-cells =3D <2>;
+> +			gpio-ranges =3D <&tlmm 0 0 110>;
+> +			interrupt-controller;
+> +			#interrupt-cells =3D <2>;
 
-drivers/clk/qcom/clk-rpmh.c:clk_rpmh_probe() {
-    ...
-    hw_clks[i] =3D NULL;
-    ...
-    rpmh_clk->res_addr +=3D res_addr;
-    rpmh_clk->dev =3D &pdev->dev;
-    ...
-}
+[Severity: Medium]
+Will GPIO-based interrupts be able to wake the system from deep sleep witho=
+ut
+a wakeup-parent property here?
 
-Since kuno_rpmh_clocks is a globally shared static structure, writing NULL =
-here
-permanently erases the clock definition for any future bindings.
+The Kuno SoC defines deep sleep states (standalone-pc and pc) where the
+primary GIC is powered off. Without wakeup-parent =3D <&pdc>; in the tlmm n=
+ode,
+the pinctrl-msm driver won't establish the hierarchical IRQ domain linking
+GPIO interrupts to the always-on Power Domain Controller.=20
 
-Additionally, modifying res_addr accumulates the hardware address on subseq=
-uent
-probe attempts, leading to corrupted register offsets.
-
-Could we avoid mutating these static clock structures by allocating a per-d=
-evice
-copy during probe, or isolating the runtime state from the static clock
-descriptions?
+Doesn't this mean GPIO wakeups will only route to the GIC and be lost during
+sleep?
 
 > +
-> +static const struct clk_rpmh_desc clk_rpmh_kuno =3D {
-> +	.clks =3D kuno_rpmh_clocks,
-> +	.num_clks =3D ARRAY_SIZE(kuno_rpmh_clocks),
-> +};
-> +
+> +			uart_console_active: uart-console-active-state {
+> +				pins =3D "gpio8", "gpio9";
 
 [ ... ]
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260821-kuno-soc-s=
-upport-v3-0-196e2b306368@oss.qualcomm.com?part=3D5
+upport-v3-0-196e2b306368@oss.qualcomm.com?part=3D15
