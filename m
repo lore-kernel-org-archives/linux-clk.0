@@ -1,18 +1,19 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD0CA34751B;
-	Fri, 21 Aug 2026 10:04:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 781D73998AF;
+	Fri, 21 Aug 2026 10:04:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787306685; cv=none; b=WahXoBfrGU8xbwsJJTJ7ZN0ffidgs9236uGoiBO/lMx65y9LWnSLEL+660iHgoYI7yHu9WP9LvbGqHuQoj0y5oBZe7caTjRSVGccdjB4Jor6rZYclabV/tOe6Nz/h3wjL9Kdxy2cniDqedyrmmMI6lrTXvlVsEAC+qro0KjNxRQ=
+	t=1787306687; cv=none; b=mA54RioTZWnvLYZGtawBXGMmpNR/PCMCARr8ZISFvgL5055HeS3zuiu1X2pFA7PkH0aqnQ/r7yP8JbjjFgseDggkoAsNIO+yOXX2Ltfj8B8LttCQKqHJmJFxJml9JK1/VnrVmUIr4F4J+8qR8qvx2dnethkVtwzK3mWb0qk4m4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787306685; c=relaxed/simple;
-	bh=+FlQSyN3kBveePfQtCtWEi+puBW1z+s/r4GrexnV6hE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=b8+rLUepBOkCSlsXOkZ13HL90OOc3iY3Ejeha2IP33x1s5eCkaYZCvf922fIhs9CmC5pE2g26YAvs0yHMXhquhVUqGWaIbKJwKTfksjLCR4kPTbOU4gF35OmnXIj2s14krdcUDsfNeZijNdxa3y2TUl5nx8rc8gnv60gtS6yR3Y=
+	s=arc-20240116; t=1787306687; c=relaxed/simple;
+	bh=Q2+OFzkirIw97B5n25s1Q34G0KQ8TiVVQA/FDXHrZoI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=IB4zgLNe2yViUn4uOOi+8PWEx8mnkVdAnj5DbirfHSBEXtOdqL9cAlb5joUmU4Pvr+Fmvlq/uXrVXZBoaVkIc0XT7Qutw+Pq3pMPPR8NOHXk73Y6d7DeJZETHx70G8m5Trr2NxCwgmgJxhwP3cE160lcA7A6sHExCzzQXMUDZIY=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CD341F00A3A;
-	Fri, 21 Aug 2026 10:04:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 946B91F00A3D;
+	Fri, 21 Aug 2026 10:04:35 +0000 (UTC)
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Neil Armstrong <neil.armstrong@linaro.org>,
 	Hans Verkuil <hverkuil@kernel.org>,
@@ -27,10 +28,12 @@ Cc: linux-media@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-clk@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/3] media: Make sure clk_init_data is fully initialized
-Date: Fri, 21 Aug 2026 12:04:27 +0200
-Message-ID: <cover.1787240035.git.geert+renesas@glider.be>
+Subject: [PATCH 1/3] media: cec: meson: ao-cec-g12a: Make sure clk_init_data is fully initialized
+Date: Fri, 21 Aug 2026 12:04:28 +0200
+Message-ID: <abed943813acabc374db35591af52663198baddd.1787240035.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1787240035.git.geert+renesas@glider.be>
+References: <cover.1787240035.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -39,8 +42,6 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-	Hi all,
-
 The clk_init_data structure contains several mutually-exclusive members
 for different methods to specify the possible parents of a clock,
 prompting drivers to initialize only the members they need.  However,
@@ -48,46 +49,30 @@ not initializing all members may cause subtle issues, which are only
 exposed when CONFIG_INIT_STACK_ALL_PATTERN or CONFIG_INIT_STACK_NONE is
 enabled.
 
-Hence this series aims to make sure all members are fully initialized,
-to avoid such bugs, and to prevent future breakage when converting
-drivers to a different method for specifying the parents.
+Make sure all members are fully initialized, to avoid such bugs, and to
+prevent future breakage when converting drivers to a different method
+for specifying the parents.
 
-Part One[1] fixed all cases that I identified to be real bugs, in
-response to a crash I saw on BeagleBone Black.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Compile-tested only.
+---
+ drivers/media/cec/platform/meson/ao-cec-g12a.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This series is the media subpart of Part Two, which fixes remaining
-cases that are currently harmless.  These are still fragile, and may
-cause future breakage when converting drivers to a different method for
-specifying the parents.
-
-Thanks for your comments!
-
-[1] "[PATCH treewide 0/5] clk: Make sure clk_init_data is fully
-     initialized (part 1)"
-    https://lore.kernel.org/cover.1787165329.git.geert+renesas@glider.be
-
-Geert Uytterhoeven (3):
-  media: cec: meson: ao-cec-g12a: Make sure clk_init_data is fully
-    initialized
-  media: microchip: Make sure clk_init_data is fully initialized
-  media: samsung: exynos4-is: Make sure clk_init_data is fully
-    initialized
-
- drivers/media/cec/platform/meson/ao-cec-g12a.c        | 2 +-
- drivers/media/platform/microchip/microchip-isc-clk.c  | 2 +-
- drivers/media/platform/samsung/exynos4-is/media-dev.c | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
-
+diff --git a/drivers/media/cec/platform/meson/ao-cec-g12a.c b/drivers/media/cec/platform/meson/ao-cec-g12a.c
+index b175be3f2bf4de87..55bd0d416460f820 100644
+--- a/drivers/media/cec/platform/meson/ao-cec-g12a.c
++++ b/drivers/media/cec/platform/meson/ao-cec-g12a.c
+@@ -334,7 +334,7 @@ static int meson_ao_cec_g12a_setup_clk(struct meson_ao_cec_g12a_device *ao_cec)
+ {
+ 	struct meson_ao_cec_g12a_dualdiv_clk *dualdiv_clk;
+ 	struct device *dev = &ao_cec->pdev->dev;
+-	struct clk_init_data init;
++	struct clk_init_data init = {};
+ 	const char *parent_name;
+ 	struct clk *clk;
+ 	char *name;
 -- 
 2.43.0
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
