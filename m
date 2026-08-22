@@ -1,44 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 107B1351C2D
-	for <linux-clk@vger.kernel.org>; Sat, 22 Aug 2026 10:08:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DE173806C8
+	for <linux-clk@vger.kernel.org>; Sat, 22 Aug 2026 10:08:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787393286; cv=none; b=P/nQXwXmktgw2sLmIqjpOoGQi4mDGTwChVHXJQY0Pas8cDdrE/6NzANQ1+7ziqzSu+zzAxsq0x6C5bpHuTgjLrm6i8M1PnhlsyNEJ33v7UgxSiscjtqLwD+SLcG7COUxyt8ldPlM65iiSzSqJUoHSa5KVpRi8t6MxCVjkXiwZio=
+	t=1787393286; cv=none; b=KU7VfpBoZPpfvYZ9pNwAWEPeoYMomU+5wqTYLpl7ju7cdNaE+Tt2VqGbOg2l2uo7RVc0xgXbkih/ReNYZOoh2U3F1CXotM41M6wKyIvYzCPCKHreNKNJTbEI2Nl9k5DErn6xEdL9YNAs+WOZxUHQSJFbpbZbChsZelxBbNe7e0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1787393286; c=relaxed/simple;
-	bh=eFn050gy/9rllf3csD5S8DPnIkx2aAoMjMyCL9y+Bsg=;
+	bh=cZu96uVe3P2z6zOyOUFsCY0Vqc1FywbJHBLH8HLn/Uk=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=fQVlifGkDOkQN9U5ZW/y649nerPw2lku3mxSfX9nFhdiaBvCdF9g2VC9mMaz5yQqGTZJvGNmG8LRz8aBGc6E1P2gnxGtcYpM5rfWlx9HoT4e/vF+BaujHjjSE2go6nC1vmqaWiLTXnDVpVCkeFDcSeSJFnpobfadKX89xPbozJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XwKPyYFW; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=oWd+2hrlThi4rWrTqw8/JmrD0nMHDcji80ArRh84yPDrmzqMd2zQJgphpE8wLSJX2/IUBdu4NOWkXQEpQoNegjwXGHZvPvn1yjTNpuX2IWmyJ/cO5CYBQoUFtEXqALJ1DZUkvPUTFioeND/cwbJwDx+WsyohMH0s8EYNgm1wcFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SfVByST2; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XwKPyYFW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E9961F000E9;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SfVByST2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F26681F00A3A;
 	Sat, 22 Aug 2026 10:08:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787393284;
-	bh=be5cKA1YghPdvtiqYO/6wGJ2/nWfF2lc+uo/0No6aws=;
+	s=k20260515; t=1787393285;
+	bh=tg5kjStL0tCD6eQ9sGookoa7WJnCMLpD6A94KGeYygU=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=XwKPyYFWRU2vTUnPtUNsKoTml791Houk8QmxFZ9kTe4ChAd4/rtzJWRGtOHsdIxu2
-	 BsVyR2DFbjFY1xxzYQWntAvB14LaV+Hk/XrpOIib/BNYwwS/DXE4VVbBtyvFz0RVRl
-	 vSRqd31ISgbSLyWxEbI9M5NjJbYGFkAJheD9q1trawo0vIQin6z1/77UHJu4YUuo5J
-	 9aWxYs+Ip2rwOBrZlUyQ50sTCgCsCMpzwFeFQ6MU6mrqhPTiFNkvOS4/b3wwRXrPcY
-	 sa8y84kg8lhd2mZSQrXdfkELr/4fACqYBJjgp0wMYhDe0MQc5HfSVvs/1ywj4jtitA
-	 HdnavLtaBJzdQ==
+	b=SfVByST27BjnBU3hMZ1TnEVqTN4Bt1BfIdusaJtyjb8SCGCURd840qON+odz/ZTkg
+	 QDzOjcyrooJgcpKLdObdOJd7gLg7d8rCchcwnOhFxpeNa0K/rw3h4IW1tqc0rOuT8l
+	 pLj/WYxAWZySSGazaHKMOPcrzGoAH7weEt0D/8AkFPXxGMlZgFR4tdzcwIfox5pmtP
+	 kTfGk/fV3LucIt5rqNCs6s2LYFCk68zQ9pYUNl7dAdADRZb5wKLVNMRVxQRsAqexE1
+	 BzkkCFQoNAsRPySaVk8nni71RQMKccKlUYdI5JFfpDp3OvprFIx5bHgMCaGVdQ4QUx
+	 UodhKjUwBYX+w==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH net-next 1/3] net: macb: Make sure clk_init_data is
- fully initialized
+Subject: Re: [PATCH net-next 2/3] net: mdio: mux-meson-g12a: Make sure
+ clk_init_data is fully initialized
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Geert Uytterhoeven" <geert+renesas@glider.be>
-Cc: linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org, neil.armstrong@linaro.org
-In-Reply-To: <00772e2fb1f8433a5d6c47dbd28cb4149495e1ab.1787240118.git.geert+renesas@glider.be>
+Cc: neil.armstrong@linaro.org, linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org
+In-Reply-To: <ae6cfac64d3983801b9baa2abb30bf09c3d7ce3b.1787240118.git.geert+renesas@glider.be>
 References: <cover.1787240118.git.geert+renesas@glider.be>
- <00772e2fb1f8433a5d6c47dbd28cb4149495e1ab.1787240118.git.geert+renesas@glider.be>
+ <ae6cfac64d3983801b9baa2abb30bf09c3d7ce3b.1787240118.git.geert+renesas@glider.be>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Sat, 22 Aug 2026 10:08:03 +0000
-Message-Id: <20260822100804.3E9961F000E9@smtp.kernel.org>
+Date: Sat, 22 Aug 2026 10:08:04 +0000
+Message-Id: <20260822100804.F26681F00A3A@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -49,53 +49,65 @@ Thank you for your contribution! Sashiko AI review found 1 potential issue(=
 s) to consider:
 
 Pre-existing issues:
-- [High] The TX error recovery task modifies TX ring pointers and state wit=
-hout holding `queue->tx_ptr_lock`, racing with `macb_start_xmit`.
+- [High] Busy-wait loop of up to 1 second with interrupts disabled in atomi=
+c clock enable callback
 --
 
---- Patch [1]: [PATCH net-next 1/3] net: macb: Make sure clk_init_data is f=
-ully initialized ---
-commit 72f05b5fbec22828f860396d626f5a6bbaacd336
+--- Patch [2]: [PATCH net-next 2/3] net: mdio: mux-meson-g12a: Make sure cl=
+k_init_data is fully initialized ---
+commit 061a72e517f35ad4bc41a274d2b768db77d84ad1
 Author: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: net: mdio: mux-meson-g12a: Make sure clk_init_data is fully initia=
+lized
 
-net: macb: Make sure clk_init_data is fully initialized
+This commit ensures the clk_init_data structure is fully initialized by
+adding an empty initializer. This prevents subtle bugs related to mutually
+exclusive members when different stack initialization patterns are enabled.
 
-This commit initializes the clk_init_data structure to prevent issues with
-uninitialized mutually-exclusive members when stack initialization patterns
-are enabled.
-
-> diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ether=
-net/cadence/macb_main.c
-> index 1476bce77f34d..319e43098f57e 100644
-> --- a/drivers/net/ethernet/cadence/macb_main.c
-> +++ b/drivers/net/ethernet/cadence/macb_main.c
-
-[ ... ]
+> diff --git a/drivers/net/mdio/mdio-mux-meson-g12a.c b/drivers/net/mdio/md=
+io-mux-meson-g12a.c
+> --- a/drivers/net/mdio/mdio-mux-meson-g12a.c
+> +++ b/drivers/net/mdio/mdio-mux-meson-g12a.c
+> @@ -223,7 +223,7 @@ static int g12a_ephy_glue_clk_register(struct device =
+*dev)
+>  {
+>  	struct g12a_mdio_mux *priv =3D dev_get_drvdata(dev);
+>  	const char *parent_names[PLL_MUX_NUM_PARENT];
+> -	struct clk_init_data init;
+> +	struct clk_init_data init =3D {};
 
 [Severity: High]
-This isn't a bug introduced by this patch, but I noticed a pre-existing data
-race between macb_tx_error_task() and macb_start_xmit() in this file.
+This is a pre-existing issue, but while reviewing this clock initialization=
+,=20
+I noticed a potential lockup in the related PLL operations.
 
-Does macb_tx_error_task() race with macb_start_xmit() by modifying TX ring
-pointers without holding queue->tx_ptr_lock?
+Does g12a_ephy_pll_enable() risk triggering the hard lockup detector?
 
-In macb_tx_error_task(), the ring pointers are reset without a lock:
+The g12a_ephy_pll_ops struct is used later in this function to initialize=20
+the pll clock, and its .enable callback maps to g12a_ephy_pll_enable():
 
-    queue->tx_head =3D 0;
-    queue->tx_tail =3D 0;
+drivers/net/mdio/mdio-mux-meson-g12a.c:g12a_ephy_pll_enable() {
+    ...
+    return readl_poll_timeout(pll->base + ETH_PLL_CTL0, val,
+                              val & PLL_CTL0_LOCK_DIG, 0, PLL_LOCK_TIMEOUT);
+}
 
-Concurrently, macb_start_xmit() acquires the lock and updates tx_head:
+The clock framework calls the .enable callback with the enable_lock spinlock
+held and local interrupts disabled. Since the delay parameter is 0 and=20
+PLL_LOCK_TIMEOUT is 1,000,000, readl_poll_timeout() evaluates to a tight
+busy-wait loop.=20
 
-    spin_lock_irqsave(&queue->tx_ptr_lock, flags);
+If the PLL hardware fails to lock or takes a long time, could this stall=20
+the CPU for up to 1 second in an interrupt-disabled context?
 
-Since netif_tx_stop_all_queues() only marks the queue as stopped but does n=
-ot
-wait for an already-executing ndo_start_xmit() to finish, could this race
-corrupt the software TX ring pointers?=20
+Would it be possible to move this hardware initialization sequence to the=20
+.prepare callback instead, which executes in a preemptible context where=20
+sleeping delays are permitted?
 
-This might lead to out-of-bounds DMA or use-after-free when the
-desynchronized ring is subsequently processed after a transmission error.
+>  	struct g12a_ephy_pll *pll;
+>  	struct clk_mux *mux;
+>  	struct clk *clk;
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/cover.1787240118.gi=
-t.geert+renesas@glider.be?part=3D1
+t.geert+renesas@glider.be?part=3D2
