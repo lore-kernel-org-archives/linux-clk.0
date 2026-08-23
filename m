@@ -1,120 +1,90 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8DEE380FD1
-	for <linux-clk@vger.kernel.org>; Sun, 23 Aug 2026 15:40:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 102FC277CA5;
+	Sun, 23 Aug 2026 19:50:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787499647; cv=none; b=kcyIIRhHfo11Lhnv3zdCSMCfnC5HXheKQHZcqRfsddtEckZhPhpnRbP6Z2DRydmwIG2XE1r6I764RsugX/5teSINsAgbgzrL2wgielSkUMiqMeKh45imX6l8W7J6hxygp1Ncf1s3kSOqisak18E4OlSrw1xMNPDReeINpIEhfH0=
+	t=1787514642; cv=none; b=kci7i7KpUfjGWG5BrWrFuzvbDivmTazGHmlK4LrirPN+aO3GrR3QpYlgg01D7CoIv7pIuOUWmNqJ5H3c9HHGK38Ej4LZeIcHfxXUcTTaWs7mX1Gj3DRm4j/7NRdmAjQVakST0WkcCN67d6dAxJyOL/QPNVUHSI7DWF/eF+MH5s8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787499647; c=relaxed/simple;
-	bh=nP6om09oC2Yb+vrhtvu1ZSljcK3njbcGqTcyG2xxmP4=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=qcV0qVJ5B+8AtAVTESd9A+jfartGuF8QttsGnD2XzFaBhedyF644oKLkXw7HzbSwamS/XGDWrHh8AgaNbKA5IGZPIdSJlpWt+6Yix1Vk3kIzxgiPjbIxfzQMguAZZTbQrbTXZRY8qddNTJVLWQItAyKAWePGQ6b3GgFAsTPUdnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-47f904e80eeso762374f8f.1
-        for <linux-clk@vger.kernel.org>; Sun, 23 Aug 2026 08:40:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787499644; x=1788104444;
-        h=content-transfer-encoding:content-type:subject:from:cc:to
-         :content-language:user-agent:mime-version:date:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=bGssleoR8j5d5BjeV9KwAwh1Wr2o/KlpY4sV/yr+LHU=;
-        b=lPa/T8lmIohlEFCh7yYS2BcOpoWIfpOmsRBnQJj0YC551+zq1DtxUzl/Vd5M1fm/WP
-         ka5h48l3uSPZ5gKD3pEZP4xVZkx+f7jBwR/4iw40RRr1CuCkwCdG9in2qBsZc2ketUta
-         cYJvGNmmisox12djwSwefQ0m3GTFNq5Zq1wjPL+e4Av0UT9QOjYqwJCP+bzj0i2uqsiW
-         W30PbO9BXZWnP/Bj4jtpfBr8j7CoJPA/QdkPAUQqz+xfJT8qFuKUWyWi0s3AuIthABk2
-         RNGgARWkm9Ig5pbcQwav4awMpZdAyvnD10Ul13SWeO9rrN7S36h84IpFRhOB72gPN7Ur
-         YlJg==
-X-Forwarded-Encrypted: i=1; AHgh+RrZwGWbFx69jvkFSb+w+yww+Pyr43BQLexH9OvQLAOUZk0OM2xvv01mZWIQZGc6+wAR/JkifwEdnms=@vger.kernel.org
-X-Gm-Message-State: AFuF++mtKQpoDFQbNWOjn5HrIwvH/eHL25GtBNgsZq+SsDpauQhxCvYK
-	Mve18mSsmr85VEhdOjOimZ3KGCmxDMHpLPzgvFsbZUxfTTRJD0E63RRW
-X-Gm-Gg: AR+sD13ZmQ1tbF1DWXM39pWRQdVglOL+0y7cJ7nUX1izH3h2zKhXa9P/2acVAurDqNw
-	emIBYi8rxxZmI6S5hBi9ifTIA6c/pZcTe3db2cmghItNEWcN2XWsWKyFNmJz5TAnT09FcSeMj74
-	hMwac2L0Sr6aKSf3PoPChwiQTPR8P9e6m3Dk3hlgMjWfHF8NXMHAN7HVWL14KosHgPjrLyPswKz
-	OBnti5iDo7iyOI2AWPSFKBuqMsfWklfSPzdilmjxtRf9xGZZq0kdykL7XkhxCcnJYuhod+k8nLl
-	GQwmUk1ZzkeMmLXA3inpPl1lQ2wLDvoKf38NZ3+AFu/ObDxeKVH5GkNlpsnoExVaZJIaLU9Eo2Q
-	PR2EubQ9Ajxjgaj5zQoxFuQqzU3RTM+7oZGxZoDwazLyk70yQOz93ctWfi3IaFDQjxNXbJ00Lir
-	CwhHGOZxGr4Pr/+sDkz29Yiufx5mAv3GBcArW6SSU0luJP/ZhRzvdZ4OalUgOHWBnPWGGY9kyms
-	Bv5tzD4ofjEify5dvU2yA==
-X-Received: by 2002:a05:6000:2dc9:b0:482:9a18:d753 with SMTP id ffacd0b85a97d-482c0b44acbmr22762075f8f.5.1787499643925;
-        Sun, 23 Aug 2026 08:40:43 -0700 (PDT)
-Received: from [192.168.1.135] ([83.106.158.114])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-482c9c0acaesm5321239f8f.29.2026.08.23.08.40.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 23 Aug 2026 08:40:42 -0700 (PDT)
-Message-ID: <3930906f-783b-4d72-9260-ba25cc8081cb@linux.com>
-Date: Sun, 23 Aug 2026 16:40:42 +0100
+	s=arc-20240116; t=1787514642; c=relaxed/simple;
+	bh=5w7/RMbc/STrPAtBYUdnaxXihsHr+6L1l3qYPU5FER0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=myve11DaXCLpMERp4dhDbKI91HpbF+KbagcFpLhC0qnLklrNz77QDiSkUzW4fY+LYj+r+u7g+SFdUKmbwvXx6zMrhRa+TEEf3OD/rz9oCRg471OVztyQIjBNU8paTurPK5cdr2yTZiQsSAeuvcOBN7tE8JVIP5ruQ0CwdS6rOwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=zT0+RV6X; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="zT0+RV6X"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id E96704E41372;
+	Sun, 23 Aug 2026 19:50:34 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 9767C60378;
+	Sun, 23 Aug 2026 19:50:34 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2A0C311C78576;
+	Sun, 23 Aug 2026 21:50:26 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1787514629; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=FI8iZwkb9AvvBWAVl1SifeWOG9uPTOrrRE1ZW7PiES0=;
+	b=zT0+RV6X0lDfRVw2+6MB1Vq6VeJNkBZiZJ4CTJrFwV6lYaB2LqE90RriDutE0RSnPUZDqH
+	7FmKvvsO8/Gmv1cIcQYTNTWKPXhIQTlZYJpZGvoa+wiZBHh3tc5+5xIABv/Pka7HigYBBS
+	BPl7XytZcj+lhP5sZddnYmRS8/BWwAYV4Ef01PEgjEBFI1yCBwDNlUg9xTEAAao8Qxx/DX
+	vJz8WgtU1qnh/T4JSjAYnvaN25SowSFJVEIcqgBdaSIM1aIOcfvpUf7eYuOyUCaEt1tFWG
+	3aGIFVhOls7QE8Ma4JZv8sqWC8jFpp/3yFZf11oXbxE02ZDAjHxRvt5Cky4u7Q==
+Date: Sun, 23 Aug 2026 21:50:25 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Avi Fishman <avifishman70@gmail.com>,
+	Tomer Maimon <tmaimon77@gmail.com>,
+	Tali Perry <tali.perry1@gmail.com>,
+	Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>,
+	Benjamin Fair <benjaminfair@google.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-rtc@vger.kernel.org, openbmc@lists.ozlabs.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 0/5] rtc: Make sure clk_init_data is fully initialized
+Message-ID: <178751460908.816082.16865012450264727395.b4-ty@b4>
+References: <cover.1787241693.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Neil Armstrong <neil.armstrong@linaro.org>,
- Jerome Brunet <jbrunet@baylibre.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
- Jian Hu <jian.hu@amlogic.com>
-Cc: Brian Masney <bmasney@redhat.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-From: Lucas Tanure <tanure@linux.com>
-Subject: [RFC] clk: meson: t7: Intermittent boot instability and memory
- corruption on VIM4
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1787241693.git.geert+renesas@glider.be>
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi,
+On Fri, 21 Aug 2026 12:09:01 +0200, Geert Uytterhoeven wrote:
+> 	Hi all,
+> 
+> The clk_init_data structure contains several mutually-exclusive members
+> for different methods to specify the possible parents of a clock,
+> prompting drivers to initialize only the members they need.  However,
+> not initializing all members may cause subtle issues, which are only
+> exposed when CONFIG_INIT_STACK_ALL_PATTERN or CONFIG_INIT_STACK_NONE is
+> enabled.
+> 
+> [...]
 
-While testing mainline Linux on the Khadas VIM4 (Amlogic A311D2 / T7), I 
-am hitting intermittent system instability, storage loss, and memory 
-corruption during boot, unless I append clk_ignore_unused to the kernel 
-command line.
+Applied, thanks!
 
-Because the failure is intermittent, I am running 100-reboot test 
-campaigns to bisect the remaining clocks and isolate which clocks are 
-critical and cannot be safely disabled.
+[1/5] rtc: hym8563: Make sure clk_init_data is fully initialized
+      https://git.kernel.org/abelloni/c/db005bdaa5ff
+[2/5] rtc: m41t80: Make sure clk_init_data is fully initialized
+      https://git.kernel.org/abelloni/c/bdcedfee8b87
+[3/5] rtc: nct3018y: Make sure clk_init_data is fully initialized
+      https://git.kernel.org/abelloni/c/096c7ef4ef66
+[4/5] rtc: philips: Make sure clk_init_data is fully initialized
+      https://git.kernel.org/abelloni/c/5ef3d51a3aaa
+[5/5] rtc: microcrystal: Make sure clk_init_data is fully initialized
+      https://git.kernel.org/abelloni/c/a12eac458814
 
-As testing takes significant time over serial console, I wanted to check 
-if Amlogic or the maintainers could shed light on this:
+Best regards,
 
-Are there specific T7 clocks or hardware domains that must remain 
-critical/protected even without an explicit in-kernel consumer?
-
-Current clocks being disabled that don't kill the board on a test run:
-
-[    0.380313] clk: Disabling unused clocks
-[    0.380413] clk: Disabled unused clock: rtc_dualdiv
-[    0.380718] clk: Disabled unused clock: rtc_duandiv_in
-[    0.381377] clk: Unprepared unused clock: a73_div16
-[    0.381972] clk: Unprepared unused clock: cpu_div16
-[    0.382605] clk: Unprepared unused clock: f50m
-[    0.383174] clk: Unprepared unused clock: fixed_pll_dco
-[    0.383786] clk: Unprepared unused clock: hdmi_pll_osc
-[    0.384416] clk: Unprepared unused clock: sys1_pll_osc
-[    0.385056] clk: Unprepared unused clock: earc_osc
-[    0.385652] clk: Unprepared unused clock: pcie_refclk_osc
-[    0.386323] clk: Unprepared unused clock: eth_pll_osc
-[    0.386961] clk: Unprepared unused clock: pcie_osc
-[    0.387548] clk: Unprepared unused clock: mclk_pll_osc
-[    0.388187] clk: Unprepared unused clock: usb_pll1_osc
-[    0.388826] clk: Unprepared unused clock: usb_pll0_osc
-[    0.389465] clk: Unprepared unused clock: tcon_pll_osc
-[    0.390105] clk: Unprepared unused clock: top_pll_osc
-[    0.390738] clk: Unprepared unused clock: aud_pll_osc
-[    0.391361] clk: Unprepared unused clock: ddr_pll_osc
-
-I am not forcing any clock to be disabled; I am forcing all clocks to 
-stay on and letting them be disabled if unused one by one.
-
-Any guidance or hints on required platform clocks would be greatly 
-appreciated.
-
-Thanks,
-Lucas Tanure
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
