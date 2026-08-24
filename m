@@ -1,123 +1,120 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic314-21.consmr.mail.ne1.yahoo.com (sonic314-21.consmr.mail.ne1.yahoo.com [66.163.189.147])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39A9E4334D8
-	for <linux-clk@vger.kernel.org>; Mon, 24 Aug 2026 16:37:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD265317145
+	for <linux-clk@vger.kernel.org>; Mon, 24 Aug 2026 20:01:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.189.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787589461; cv=none; b=pmbv+2phpwAsZPRSZWJCprIXd0UB8wKE2u5Xei/eW9DHK4qH15uZfnhW9fEtSx16sTBCinZ3WHjIxya8mTplZACV2hSKHJ6gS3D8GHuOJFfcKa6EEjwn1HA8qjsNtz6Ys+LF+ACNcHJwiSVgX7h7+XkwjU40S7iIHXhG5sR1ei0=
+	t=1787601672; cv=none; b=CGMaIcM6pK0UDT9FsGsqEGdt9mVmbxPz/Q5g/3VgpNnt5cPwfVZHtJX13NX5mwsBphgd8N9WbblPpkRlCarwj7ggA1nR9lBvjuUl5LEC2+/ZZ87vYSUddH6h45Tp7eXoTIHmEuLdtcWC8SfjfyjlTSlAGKdxK1ldxmC2iC7ufiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787589461; c=relaxed/simple;
-	bh=hWENBImIPP+6lqHY2Toh7sBtjVGcFhFo/7k7z6+Z4SM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OkA8gTIbqE5veWI0k7v9+waNaBfReQWkPCzl19reMvQkv4n0wRl3+a1LZCeBxnqBB+N33R+BSiWi+PK0bwhxC66lSW3VSRufLjYZktJoJev84JhGm7UKu29qRSmlVnXUk/8dxlMGqRf4s8vVspnsOqRyU6SaS+JdmJ2jVMLltZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J8TzFRiK; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=EqL1Nxd8; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1787601672; c=relaxed/simple;
+	bh=jG6rlCttz4zfS3cypQxsfUVtISfDgjFUmP9l8ju5kvc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZCexZ9zS9bcRyBUjKrHPU2FhJNaZBnPVWhv1DXOlp++R1T35XzFGyPFV36m6UvkpsUrXFrU7McD/GqK29puuGXgs51Evq5SHvBloh58KxGgn0x93wg4D+7ITdjNk4CIsSv7WZ5BGUuRawFn9vdOiexB5f6adxzrFdBkk/bOK9SA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=J2HVUhE5; arc=none smtp.client-ip=66.163.189.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J8TzFRiK";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="EqL1Nxd8"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1787589459;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EFsaFrYRTmZ8yaCBdCceEEFXMYdp9KxTljIHPL6reDo=;
-	b=J8TzFRiKUnho+pbGnvw93+4V0NMcd92BkNbhRPEDIxjrNCusc6D9qPwC+8YTdwgqVre2Vx
-	ShIxRaRFzyygA3BFlMX5ycIEqs/mLt1jWxVRdh/XSbRyhvNUDLceQ1f+lnYur5IGDpr8jM
-	P1tEiOp2rrPYXGZZKaz/oobH8/8FeIY=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-549-fDNr7Fs8Op-rj5LVOKQsiA-1; Mon, 24 Aug 2026 12:37:37 -0400
-X-MC-Unique: fDNr7Fs8Op-rj5LVOKQsiA-1
-X-Mimecast-MFC-AGG-ID: fDNr7Fs8Op-rj5LVOKQsiA_1787589457
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-52de40127adso41112921cf.3
-        for <linux-clk@vger.kernel.org>; Mon, 24 Aug 2026 09:37:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1787589457; x=1788194257; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:content-type
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=EFsaFrYRTmZ8yaCBdCceEEFXMYdp9KxTljIHPL6reDo=;
-        b=EqL1Nxd8r4K1uThVVSL6ds/W/5HeaWx92aZZbx7gY2ukYTSwL4fDe0O86XEnDUoTd2
-         ve+Wb/XwbE5gAEWG2NgrcMa+l6+OvnVuO9nn9bRdloXb4jKAuIh20fPl2rMKTiqp/Pmd
-         KR0HteDrjhPepmwgufdXm3T6SJczMxxAB3JDeBwcC2zT2rntk+RYZS/Ebh5+sZtr2UR/
-         zGyUAvr7tL6rihp4pJbxY4SbcrMncc4g9CjCEkCSIqds09KY/qnoqQSj1s9SAO3rgBA5
-         5RZBgO6u2OFW/qTbdlKoOyxFmM3L3ybneJUIbGVVSh4Mn7cZPMCF5MWALrxzwIFZJ9DU
-         TuTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787589457; x=1788194257;
-        h=user-agent:in-reply-to:content-disposition:content-type
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=EFsaFrYRTmZ8yaCBdCceEEFXMYdp9KxTljIHPL6reDo=;
-        b=JeIZ0YyJkO0B/m0IMPtr5dmAEB3cStdyNeH+zpgKtPNZgReK6oWf8Lwz6vgWhCmWK4
-         wvQr1QileCaIIgSPhTKHa4BbeolcTaZt3RPJnqYY58jqu9dVlOIEYaQ2XUYKagOEPZie
-         F2mAIQMuZXwfdQNi4HCBgDrOX0YpsZuDKV+4eqs4Mst12KSnyeaFDBdxR71pevhZts3c
-         P2MRgKuWeclCqvr0QeCas1proDqtI27MoMmmQNDimAaeCFgLgObK2Li96c4WKWXqOqtD
-         XdbcKSnh8M9eWDDlALwVK1uXZvyUPgf2LjM9y109YA6izKihVUtmsRbftd3toygkMpi9
-         8uAA==
-X-Forwarded-Encrypted: i=1; AHgh+Rojt72hkzm9Poody52rE1xy3hGg4h/dnC7ezbSJBJUgevlDYh9PPxt17K7QRTxMjngrYrzg1B1FUCs=@vger.kernel.org
-X-Gm-Message-State: AFuF++lRGtKh/0gs4u7enktb9fdJQkJrzmEwBuDU7x/A2+r/qbk0NXB+
-	8FLtvMecXoQXT6Rc/zMtafAUSIIquhngKu3OuuV7QET/rODiyry3v9Cyensd1d2VtKnhSGD/lKG
-	z/XGGV6gt1/8WCa/A9lT/aoTtf8YJakBarOqcb669opqFP7fkbMqzPDucbGRGlblMUdh3WcsM
-X-Gm-Gg: AR+sD12TMiaCWbWTqzO7t8jZCCNFttm10MXjEPp85jmtBR72C5G6DAnUnDhl6gT60c7
-	5jxtQuB++SMETVR9HUks3z91EFu8hIwVUJ1r3r+QsmtC0cdUINCg3HreJ80tTXMGAUkjyV3r69t
-	b3A3GWFZGVDoWCuMiRFz1nnsKeKeDIWQeC9rvu/91RpJ0cpocsrqaHz+LKJTdUD8ClzzdjuKXm3
-	IsLohs3dJl5jkMMnx/z4yIhkY9fFbcTbAAwk7oOnhD/H1mYotjNRR4b9d2+HztSkQXTOLLdjLxS
-	aNgeWpHetpGNGhEiXMxAfDlb0WCHToZyaTickYyE4/bUo+68rl0VbJAFnBCPFZljQK86to6MpAF
-	zw9x1EKJRjsF7PwgUgPsFvkjfmJKqvZtHx9o=
-X-Received: by 2002:ac8:5714:0:b0:51c:8432:1753 with SMTP id d75a77b69052e-52e09caf410mr169150391cf.30.1787589457114;
-        Mon, 24 Aug 2026 09:37:37 -0700 (PDT)
-X-Received: by 2002:ac8:5714:0:b0:51c:8432:1753 with SMTP id d75a77b69052e-52e09caf410mr169149781cf.30.1787589456499;
-        Mon, 24 Aug 2026 09:37:36 -0700 (PDT)
-Received: from redhat.com (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-90c93614a3dsm65275916d6.19.2026.08.24.09.37.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Aug 2026 09:37:35 -0700 (PDT)
-Date: Mon, 24 Aug 2026 12:37:34 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Jia Wang <wangjia@ultrarisc.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: ultrarisc: Register DP1000 clock provider earlier
-Message-ID: <aoxzTneslr61sZmd@redhat.com>
-References: <20260820-ultrarisc-clock-fix-v1-1-f27c6a980b42@ultrarisc.com>
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="J2HVUhE5"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1787601669; bh=jG6rlCttz4zfS3cypQxsfUVtISfDgjFUmP9l8ju5kvc=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=J2HVUhE5GNNoIPmNDFxFQ9zutN0DhdGX8tvOYLFLA9l7Q2uiA2HqED5GkkqkXC2T6S7ReoJAQGfy8GbY/coVW+7ndSgekzTgOuVn+EelzMFEcRcT9cFgz0qYrmO4SUSkKSOpeH6H3OrmaujPpfca5FDkyWWCJPDC7R24rPtgddfBuI00S/4PV5B8zKSlaPXN7f8pI3fdxwsMxn0ntbIpTyg3Zs+2F8J6L7xIw2Pcg5SmXwv8VLqeae7rdcEKXBPzGA9KZxghlp5a3BtTlJuxkeDHCFVdRqvYITlhVx4KmPd51XXhyh7AUOqqB1Jxxd2hjTKpmlYUEcgGeqS+mrmtKQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1787601669; bh=ZpzOT8bi/WVAiKWttmSST4qVtYr4iesQ/MDWyxqVIlW=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=s8ov/Q9tFuXJNs8zGa+zruaDLvrN1bWU+KVrEry0ZQrLsnZI6VxMXZRbsda6T3hK6Fo2oBe844hVGqktWIEAhpJJV2xSSZQU2e/LqnQ51c3YdSdkYHZuENtJwDmmWn8V3294Nq9M5ual5wb/zxKsMw7nsbi15vh50IlflEf2MwO+RtAujioTyOnSgJqDNNN4Te82LYUlOkNMEViaBJ3MapDkSl1rvMLvHu8m91RpMMkuTY3i1iO9okYRdv5ewrEcq8Cm4puVjNqFLiJWXJBl/1+C1CiC5ougv7WBNxw4QxIoLrAP485JqtqIJHFk98WKY6g7uKB95IuuULiAaJse7w==
+X-YMail-OSG: .0qRR40VM1nMzXmVXcFsRGNO4RmEkFhJGKHG.FzpWuBs68wqW8KVKs9MOYkYp7T
+ OiMYBV_yd4C_6whhR9derhmCAEOk3oqs4HDjnSJF8ywermGOOihRjGcOep6rWtkNsmOg0CqV2mB2
+ OwKY10qyMFbTX.Upx6yTlQ0qKHeguRhf8fNQ1TtE0c_BfibyTQlFZPT5GSmfYCUAfzfuLLExdWrs
+ UPHXf8jZ3lpAutznWhVAzcclm9moR72ol7n5klbawAydrjeJYGthuna26qNAQZCrNRjbGjhHvsNa
+ B5p8nmh5OgJfIoacTRHE3IeKPPzPp25HxwUkEoKund_qaUeaB2ypNBtsUmHwMEdhcUCYWHMYopLc
+ 59tdfx24OQOiXlKaLvw1CG6OwvsaXxQfslhtfdJSlxEVO_vWXC3ZIamo.VCxxtlq.MJZ_F1Tezfm
+ 1zvacVOIMw7iy9oFW0V8epAH19ZXGy4Gk.G5bnuUoqjZNCZr2RHMBjyjFz4sxVUb1KnQtMt0_pkV
+ FTpyj7DdrCF0h3T80T0d3zO8.2za.s8MstHHyG_1RSy1ctJwVHScsReQ5ZGucoxGJLYvamAstDEw
+ TjokSAD82Z.xDbRhnqycBea9gNplnSKuvTvO_Kkqt.gbNBw9yOB0n1QuO4pLmrs7_fvgONYKDG34
+ BigX0kolobw.YMx6vH6Z7YhyOQMKkVl23HTACyEsSt0U.tys7ZSwMG2puTvmF1i_NNqj_KvGi21Q
+ Yfk.l8svbcF3LN5mjIG4uck6Hz.DJXC.acPJlUVinLfMNdBvPzjKbqF4u331ljWHbSbWgcL17XJX
+ .5vVhBapn2vVzDNrNlFNFAHUX0tYAKDiabipKsN4NPgvRCXYCfhJblPQgd.d9tR7ESDaa7xDGqIe
+ sWJ3s6Zs9RXtHac9fevdKaBVAZmtHKSh0mMwvtiEtz7guAzFeg1Sa1BSdJQfUWH7yYTyVwxnWsE9
+ aa0fXKWYc5iOkj7rgsXHc309dhWW07SNF564tGAR9PkBlEm_J9iRf267Dr4I4cM8Ge6jua2ANwCw
+ GmKhWkmHXMkU5QLftB01JZpkFaRA_ua42AhJS_c94fjYsj_4FCmPf2wio.ZGvBk6adnjE5V6ViEm
+ J0vu2bi1aAE8jlC9IWB5yf2W8j_g07UQNKEjsaGZt2i3RsI.Q5G6lag3ARrIRZc5Hrj5zarUPB2y
+ z6F5jyxVsf5.WY4IuxvDHPZhFc8ndf3e71kpR45YytIYk.aKAt.RDy1Ti6Q0D34zDKrkr_azLxVd
+ EZP19BT27QZK9AOlr3jtOxmTfvHc7i7raxq0W2S6KAL3FB7aQEvQS6wbIkuykAbOCZSfR6xuWUci
+ XBk5WG0o_UE6QpW.HsVy6OJMgfUGVPSLiQEIkkTpW50dI5CFWzaw0xc2QGJf_hY.y.EZucusD4kp
+ 4Z3HHdZPMRBFroZ3c4lHHt2ABlW7tZ8XFk0hxxCsBgsPQI5_aBhULgoIOJhjhhihqFrjB7se8qyh
+ 4ATjbcE9eun3HVJPpa0pTW6WbcPYqW4pnD_3c9SCp6NBHx8R4zrwjmDSeEmoz_XLo0viIQEF1toJ
+ b.NIP26BQ7x60DHqGBcOTMGpRFB8pRowhYAt1H1vyo5Bjv5Z9scX9ieGTiikJqh07C2QOlhfhc.Q
+ AWVlvkQNnKJoN7xjt8UHFNiJXr40zGjOLwx43SmtD8sQyhYeEwbwQsbI1_TePtpw4.Af85g4wbp.
+ liVRFDAEFLFAW9T6L5YZNqZFH9JZxHdfRLDINPN2qQtl7BU9Xvuxy6D_meWT8ZupEtBpPlHGJTRL
+ epdXkHnVqKFMPVlld33H0HJy8ZXaZOFJgdHnXLqDqJev4Pqkhj3Ir2QIYg0Ue3d0bNr8ubczqe4R
+ MMBP9oYU4A7XwWmmVXruBlE.ZQRBcx6qakPmWUMzOBqpdllj.G03gOaiBNpODz1YgqK3PZZwiG8G
+ nG0DFBxBj1pWP2VZsuHxZCh0YcnozHM_SAsJmLggpbP9MD1pGPCvmEzkOi5Fo1wAxeIWkptEAID8
+ ejsF5vkX5349M8fuqo4_NA8iZsUPtsivsU4BDnTbdymGptlc2E79325by90ssFjz4HN6eWTzouvi
+ E3ftrUS7Mpwk1BGrGAmi7efNJfEbpF_bDNykNz7i7IbGRe39IbawdZ13TPpW9h1QrjNqgmXaVlbu
+ J6saY3ceEuVSYyqnb2t0iTpAxcOzGHoMbmTwNdSSgaL8MCPlyKlHLUQ5PZekcgozv1qyNteQl_fs
+ hLMqJbDJ2v2iKtHSepY0QHkilz9I7sOCDHoJKVAd2W2GnCoRcSsQUpGynMTTiU6i7UGbe32KijF5
+ yTfJZeTAdNfu40bpbYMviU9YemCEjoc6flJgY2nP.ZA--
+X-Sonic-MF: <namiltd@yahoo.com>
+X-Sonic-ID: 3ffb26c4-2b83-4bfc-aaaa-fb382edc7209
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.ne1.yahoo.com with HTTP; Mon, 24 Aug 2026 20:01:09 +0000
+Received: by hermes--production-ir2-cddf86dcf-rfhhn (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 8051616196a71b1caf318bbe8a22d6b1;
+          Mon, 24 Aug 2026 19:06:23 +0000 (UTC)
+Message-ID: <8a3f22a7-43ec-469a-a1a7-3a073c24854c@yahoo.com>
+Date: Mon, 24 Aug 2026 21:06:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260820-ultrarisc-clock-fix-v1-1-f27c6a980b42@ultrarisc.com>
-User-Agent: Mutt/2.4.0 (2026-06-19)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: qcom: ipq-cmn-pll: keep the CMN block bus clocks
+ enabled
+To: Jie Luo <jie.luo@oss.qualcomm.com>,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Stanislaw Pal <kuncy7@gmail.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Brian Masney <bmasney@redhat.com>, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20260730191353.557494-1-kuncy7@gmail.com>
+ <aeeeebf9-dbd4-4f57-847a-5f495b3236a2@oss.qualcomm.com>
+ <20260803091003.15285-1-kuncy7@gmail.com>
+ <8af46926-fecc-4396-973e-2290ae285998@oss.qualcomm.com>
+ <cd5a25ed-76a3-4f1f-b924-06bb685ff426@oss.qualcomm.com>
+ <181944c2-2484-4384-9c91-45cc87f31955@oss.qualcomm.com>
+ <8286b42e-0314-477b-ac2e-4b410a97d833@yahoo.com>
+ <f8b9192f-fe88-4a8e-86f0-6e2c33ed3f31@oss.qualcomm.com>
+Content-Language: pl
+From: Mieczyslaw Nalewaj <namiltd@yahoo.com>
+In-Reply-To: <f8b9192f-fe88-4a8e-86f0-6e2c33ed3f31@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.26380 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Thu, Aug 20, 2026 at 10:50:47AM +0800, Jia Wang wrote:
-> The DP1000 PCIe and clock drivers both register at the device initcall
-> level. Since the PCIe driver is linked first, its probe runs before the
-> clock provider is available and defers.
-> 
-> sysfb_init() runs at the same initcall level before deferred probes are
-> retried. It claims the firmware framebuffer aperture, so the later PCIe
-> host probe cannot allocate the overlapping prefetchable window and the
-> GPU is not enumerated.
-> 
-> Register the clock provider with subsys_initcall() when built in so PCIe
-> host probing completes before sysfb_init(). Keep module builds using the
-> normal module init and exit paths.
-> 
-> Fixes: 3948a36be42b ("clk: ultrarisc: Add DP1000 clock driver")
-> Signed-off-by: Jia Wang <wangjia@ultrarisc.com>
+On Thu, Aug 20, 2026 at 01:39:52PM +0800, Jie Luo wrote:
+> As far as I understand, there is no expectation that the CMN PLL
+> registers need to be accessed after the CMN PLL driver has finished
+> loading on IPQ5018.
+>
+> Could we identify which module is blocked after the CMN PLL driver probe
+> completes?
 
-Reviewed-by: Brian Masney <bmasney@redhat.com>
+I don't have a captured trace to point to — this was found through
+code inspection, not a reproduced hang on hardware, and I'd rather
+say that plainly than overstate it.
 
-I see this same pattern is also used by lots of qcom gcc drivers, 4
-Renesas drivers, and a few other drivers.
+That said, "no expectation of post-probe access" isn't something CCF
+enforces. debugfs (clk_summary and similar) can read back rate/state
+for any registered clk at any time regardless of whether a formal
+consumer exists, and nothing stops a future driver — including a
+possible upstream UNIPHY driver — from calling clk_get_rate() or
+clk_round_rate() on this provider later. Leaving the AHB/SYS
+interface gated while the provider is still registered and
+advertised as active seems fragile on those grounds alone, even
+without a concrete stack trace in hand today.
 
-Brian
+If anyone on this thread has access to IPQ5018 hardware and can
+force autosuspend then read back clk_summary for this provider,
+that would settle it either way — I don't currently have access
+to test this myself.
+
+Reviewed-by: Mieczyslaw Nalewaj <namiltd@yahoo.com>
 
