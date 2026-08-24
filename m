@@ -1,156 +1,146 @@
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 281DC386C3E
-	for <linux-clk@vger.kernel.org>; Mon, 24 Aug 2026 20:23:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 665AD38E8D3;
+	Mon, 24 Aug 2026 20:39:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787603001; cv=none; b=VLOur3ks/UDi6DXjlaBEHt3LzxazYBD1np0T/YnCF3c5F8oexpscp6idwpjbJWT+Q+JJNQv39Wb1NcD3urGI5M0IDbyiJDw/j6PVoBVjqKhorQBdSHwoTnA5tuTY/Yc0vH2Y3Iz2yBQbpHmz/oulYPDs+2DZvk2/Mf0YgUlZ0Ww=
+	t=1787603979; cv=none; b=dFOhxgs3Fty5FLf6UF+D4+r9BRGafp3hZNhxB5a0NTpfYp5/BjW2RX+/l1kPrLoY+jxRJQM3oZkko6wh3AFjS3pH0NQ+TRo+DyhzzWYetfN64SGd+Q9M9sanmqNYOxA71l/qHd+ZdLuiiF3lttZ+Mea4lPHzjDVNhiar9uk/6nY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787603001; c=relaxed/simple;
-	bh=btENLVdFB8/s+Xjru3gkV7mTsUnieYaafKgbgWSlUg8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZX6Bzsyivr7eTIc72JJ3uXi7CS4ZyEuWytEJluMpow94xPSwAIdup+Zu8DU2To1Euvwx9bs4wyd5KMjAKSgmuY4rqtxeie5xATRkDrRI+UXl9bYWSywBnk+ylpV3i1+v4i22APb3YDOcTzyUQOdmPh2+RaycfOerAP59/y+XVTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SbrXYcvk; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1787603979; c=relaxed/simple;
+	bh=CrMHWQZWfexFwnF92QdtRMpzd3Kx8o5qxQx7P+2UO20=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=expCr565PeYHCKaxArgUQb1cMZApP57tv0+lBtH9Hkr74fefLlZyEgmDW62+1wynRCCPbodA8vtmp+wO2d/ST5WP12dwpZ3pWA81sGQIh9yrlwWWernOuwZbi3b9aJZp+m8lnFmGF3wFx7zIDrxVPXF94d1rxqQ/6rmwvsJKbdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h7HHcQpI; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SbrXYcvk"
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-6a3fda88184so6200237a12.3
-        for <linux-clk@vger.kernel.org>; Mon, 24 Aug 2026 13:23:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1787602998; x=1788207798; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=7ivaCNP58c6toCkGyegef+e8/VsJt1P++x42BHAWvM8=;
-        b=SbrXYcvkdjShlJEBANccdI95lYf5UQ8dkfREX6j7acloh3/L2yJyslItqyvyMULQyk
-         ouo2vhoKjwNMTABesW/Y7XDQZl/qgiE9fitVjWNM/rtseDhMP9+dKV0yLCxs/SnBF2ic
-         Sx9RYzh7nATY9khn7KqAiOS3fF3CWX22bWS5ZrXeA902pVe3Ug/D9GJ5Y1nAuaZ4cDik
-         AdemvfoS8MtcIM3/RnqtbE1wlJtsRvR7Lp0cGihyN16mPUAaSQpnsYTGUMLoPyvmMOSv
-         PF+ZpkFrGPqP7mWqsRh8enocIDhQbPpaQmaXsfL7DOHMEr5NytOe8tlmMelGZ2cKlxhp
-         95LQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787602998; x=1788207798;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=7ivaCNP58c6toCkGyegef+e8/VsJt1P++x42BHAWvM8=;
-        b=s3TlcG80+m1dMbHHeoqbeCPZHE/NNiN1eZ9782yfoHzLHFQNTMq77N4jXqMlUHRykA
-         dL8HvkW6ei/i10B7Bh+fDCgmFQ5UIXzkQFhQsqUlxucw0KB6EtgwrXvpA1lmpkQO95G1
-         npG0+44/MQ/QrWfnFKUXaLlnIdfn1UdvAEhfOWOpup/S/SOAWN1xSKIlg5u/NE+e6ddj
-         eORbwz4WlDn41vc72pSYQrThFKaqQYdeqoLNC47tQtsk8NdN4dAIDcDmuTOQTfX6EAp0
-         2V5rI8wkUnLu51fQh+EMGBI3ca6oPI3pP4C910RyQY6YAg4T3T3k5GsdsI6AeF0DbUjG
-         69/Q==
-X-Forwarded-Encrypted: i=1; AHgh+RoyYVYvbXrgzz+JbgnpLhxXVhDW+a/AXsxdGrWI/GMv7iMYm1N4SzmVQi7KF3nkzu1XeipO6nR9FeU=@vger.kernel.org
-X-Gm-Message-State: AFuF++mURmeRMsPOG2N4RJijvGH0HNNBakGd2Zl3hSgGIE2m9CRhcArc
-	ABYP7MiaqdugM5NxfUt0fRIvLsSzpPrY8T6KQk8iYAnXIgsvOHEMe4Yi
-X-Gm-Gg: AR+sD13p/mXKcECN+nfPOifAxDBPaA5GrVMn4/UVXqcbX7T9ZEjeZhlxyPIruQvUgwx
-	qg/Rf23Sf97Z3/mcqm6HeeadjR3VAop6DhPnZhlFzwFqJYGOzoiPV59T7kHHr11t2LKH7i464E4
-	OS7mt+bisb3SDNYmfQkckJVA3o0sRBKXIfv7YIBwsKVzHPCCkdeO0ZmT0TCZ7LHagE645eYjhDI
-	kwM7ufwkLwuJ31xkwILRFzdoMcs5XgXgE29rAPTb2bRJ9uA66KI0ZBOH2D/d1xk5+5Ru0KS6sqL
-	gYb3jRX3B7P30YaayIG6wP4HE9CzYI5788y5KiJ2F7ISr12gRLRRPJjUtmQ4eIEoIUipPKAj5ob
-	0xcr2ajJtcM2K39IfQ+AqomenwsCrg+VD6/TM6jBVIGMpwFl7q/DNOYUBiopyTc8bZa5+q8jZ/C
-	BUaZ1ArHyrzDsi2ZmvmWcnx9QXxNLWsHBxKM9hYX4fitM8cZvpQg5bTjIzRndjm+9CfR2xd6eoH
-	4CJdviCqTg=
-X-Received: by 2002:a05:6402:551a:b0:6a4:ae0:52d5 with SMTP id 4fb4d7f45d1cf-6a5c40d8fa5mr1195434a12.2.1787602998354;
-        Mon, 24 Aug 2026 13:23:18 -0700 (PDT)
-Received: from VivoBook-ASUS-X712UA-M712UA.lan ([2a00:f44:cb3:c624:acfd:1650:e62f:5668])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6a59e001095sm10826690a12.6.2026.08.24.13.23.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Aug 2026 13:23:16 -0700 (PDT)
-From: Stanislaw Pal <kuncy7@gmail.com>
-To: Jie Luo <jie.luo@oss.qualcomm.com>,
-	Mieczyslaw Nalewaj <namiltd@yahoo.com>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Georg Seema <georgseema@gmail.com>,
-	Brian Masney <bmasney@redhat.com>,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: ipq-cmn-pll: keep the CMN block bus clocks enabled
-Date: Mon, 24 Aug 2026 22:23:09 +0200
-Message-ID: <20260824202309.1196418-1-kuncy7@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <f8b9192f-fe88-4a8e-86f0-6e2c33ed3f31@oss.qualcomm.com>
-References: <f8b9192f-fe88-4a8e-86f0-6e2c33ed3f31@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h7HHcQpI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CA971F000E9;
+	Mon, 24 Aug 2026 20:39:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1787603977;
+	bh=+nW+h2UHWsYrSdLRtcajnv7EmPnCQNQ36j2T2RdgJb4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=h7HHcQpIdeFgIPTs9s4Mbzcc91nkd8JRFCUfdgBUXfq5sywSnWr5/MjmsD6QvWMJ6
+	 hcxUuqaM6LBOF/rDGnKL6uNyJVG1WOCNf8BvU3RDDXuM1AjH6FPtPKpt9Ujk/P5rj4
+	 mCY5y1S+qQAFAyq+cfVWX5KUUDjYwIy7VpfHY914BszjdXfk7qjHGqr0HiD4/OMmoq
+	 +4/ZSc+BMYtD4Ba9LOVKU/CznXrlIyDjVGcIC0E6/lNpa49pskPkpDFBaxpatBTR8E
+	 8+VsEpCYe4DRhZAbp8gR683uh6QviDTtrdOwu+ebAYArIH+KL9DYBIIddoqp6J4aOV
+	 m9/iIVaBjhwQA==
+Message-ID: <6d8b7fc0-9bd5-4bfa-97b0-a20bf01779c5@kernel.org>
+Date: Mon, 24 Aug 2026 22:39:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 01/47] dt-bindings: clock: qcom: gcc-sdm845: Add CX
+ power domain
+To: Abel Vesa <abel.vesa@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+ Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Taniya Das <taniya.das@oss.qualcomm.com>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Tengfei Fan <tengfei.fan@oss.qualcomm.com>,
+ Jingyi Wang <jingyi.wang@oss.qualcomm.com>, Vinod Koul <vkoul@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20260824-qcom-tie-cx-to-gcc-v3-0-f1205a92682b@oss.qualcomm.com>
+ <20260824-qcom-tie-cx-to-gcc-v3-1-f1205a92682b@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <20260824-qcom-tie-cx-to-gcc-v3-1-f1205a92682b@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 8/24/26 12:28 PM, Jie Luo wrote:
-> As far as I understand, there is no expectation that the CMN PLL
-> registers need to be accessed after the CMN PLL driver has finished
-> loading on IPQ5018.
+On 24/08/2026 13:53, Abel Vesa wrote:
+> Describe the CX power-domain dependency for SDM845 and SDM670 GCCs, and
+> require it for both compatibles.
+> 
+> Signed-off-by: Abel Vesa <abel.vesa@oss.qualcomm.com>
+> ---
+>  Documentation/devicetree/bindings/clock/qcom,gcc-sdm845.yaml | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sdm845.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-sdm845.yaml
+> index a7523a414341..980edcd244a2 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,gcc-sdm845.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sdm845.yaml
+> @@ -31,6 +31,8 @@ properties:
+>      maxItems: 5
+>  
+>    power-domains:
+> +    description:
+> +      A phandle and PM domain specifier for the CX power domain.
 
-Agreed, and measured: with the AHB/SYS pair gated on a fully booted
-GL-B3000 (runtime PM autosuspend, gate landing ~75 s after probe,
-runtime_status "suspended"), the board keeps running, both radios keep
-serving clients, nothing complains. Nothing in Linux needs those
-registers after probe, and the v4 commit message says so. The fix is
-not about post-probe register access.
+Describe items instead:
+items:
+  - description:
 
-To Mieczyslaw's point on clk_summary: that read does not reach the
-hardware either way. The provider ops are wrapped in
-clk_pm_runtime_get()/put() by the framework (clk.c: recalc_rate at
-~1923, prepare at ~1110, set_rate at ~2415/2539 in 6.18), so a debugfs
-read would resume the block before touching it - and the outputs are
-registered without CLK_GET_RATE_NOCACHE, so clk_summary reports the
-cached rate without recalc at all. Accesses through CCF are safe with
-or without this patch; the argument for it never rested on them.
+Also, "A phandle and PM domain specifier for the" is redundant part of
+sentence. This cannot be anything else than phandle and PM domain, thus
+just say "CX power domain".
 
-> Could we identify which module is blocked after the CMN PLL driver
-> probe completes?
+>      maxItems: 1
+>  
+>  required:
+> @@ -56,6 +58,8 @@ allOf:
+>              - const: bi_tcxo
+>              - const: bi_tcxo_ao
+>              - const: sleep_clk
+> +      required:
+> +        - power-domains
 
-None gets the chance. This is not a driver hanging on a register - the
-SoC dies and the watchdog resets it, silently, with no console output
-after the CMN PLL probe. Georg's timing on the Cudy P5: probe completes
-in ~628 us, pm_runtime_put() returns, and the board is dead before the
-next initcall starts. So the question "which module" has no answer in
-the form of a stuck driver; what exists is a window right after probe
-in which the asynchronous gate is fatal, and outside of which (idle
-system, above) the very same gate is harmless.
+Why? Commit msg should tell me why you are changing ABI. It is actual
+ABI break without an explanation...
 
-> The UNIPHY block is the consumer of this 50 MHz clock. It divides and
-> gates the 50 MHz clock, then routes it to the connected PHY or switch
-> on the IPQ5018 platform.
-
-Thank you - that confirms the picture from the DT side (the GE PHY
-clocks are fixed-clock stubs in ipq5018.dtsi and no node references
-&cmn_pll, so Linux sees a provider with zero consumers while the
-consumer is wired in silicon). The 0x74 divider/gate description is
-useful and I have noted it.
-
-> Would you be able to try this approach in your code workspace? Since
-> the UNIPHY driver is not currently available in the upstream kernel,
-> this may be a practical way to validate whether keeping the relevant
-> clock path active through the UNIPHY side resolves the issue.
-
-Two measurements already bracket this, so let me put them on the table
-before anyone spends time on it:
-
- - GL-B3000, UNIPHY0 disabled in DT (no uniphy driver ever probes),
-   vanilla put: 6 of 7 boots die. The failure does not need the uniphy
-   driver, or its clock path, to exist.
- - Cudy P5: the board dies before the next initcall after the CMN PLL
-   probe - i.e. before any uniphy driver could run at all.
-
-So the fatal window opens and closes before the uniphy side gets to
-execute anything, upstream driver or not. A fix on the uniphy side can
-only start acting after that window, which is why holding the reference
-in the provider - the one place that exists at that moment - is what
-boots deterministically on all three boards. That said, the gating
-behaviour of 0x74 is worth understanding for the uniphy driver that will
-eventually come upstream, and I will keep it in mind for that work.
-
-The full set of numbers (per-block isolation, the 15 ms / 2 s delay
-experiments on two boards, the idle-gate result) is in v4:
-https://lore.kernel.org/linux-clk/20260813093351.178419-1-kuncy7@gmail.com/
+Best regards,
+Krzysztof
