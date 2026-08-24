@@ -1,44 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07E9A411FBE;
-	Mon, 24 Aug 2026 12:08:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB2FD412270;
+	Mon, 24 Aug 2026 12:08:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787573296; cv=none; b=QHj4vzpuKkF6nxN/JMzfA8Ncw+c3URORd+PvFTYocdkpkna65M9X/uw11GRUXY+Jqr+9dECyrvF4WsTw61oxaCKIhl30alpjEoQ0IIGVbjBZPN2D6G34wipY7CIlhm3kQI5PGQ8kvfKdhEvnD4IVMIrqdr16/jJWlNfkiXuxn0w=
+	t=1787573327; cv=none; b=TFPA3EqemEceBnO9DjphtGcYaUCTPkW0GvqFlk9RbdjLMrM8syF53f2KpU4P0nfC4toQ2Pb1ifzRJmqL+haxvY8ur1jlcXekQphj6J3Kec/4Qf5dOM9fTg67xZDdLarQ1a/vOfqOr1KPEABGBGClVdg59PZkLz7ja6lPHd6An/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787573296; c=relaxed/simple;
-	bh=UxzYee5uqZctT/lK1V9L5P0zStyUYJd2juUKNdq7gzc=;
+	s=arc-20240116; t=1787573327; c=relaxed/simple;
+	bh=kDktB8hk2UsIpK638B3c+yLzWkR4I5jS6z4fe2JtEPg=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=J905ZdqF+mom1VJV+t6Ho6RdMxlXiItDBE1DkGNMmZVcJOLJarXbEfAO7q+IwJlKz8LZZWq47A/QDz+LYjuVGygRNKKZSKvJFs8LyvT0yQJwQyeKg834/XR67VmjNIZ6wIaCHwateUUmq6R5izkZZv0J6UPIiGNNNyw8jV44ruA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fBFpk7ED; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=HWcOjJrRilL4iJ67QiV9zRRjwhYe8mM6GExV+GcBNK6DYmaPcChCcb26PnbH9dnTDcrSvUw/ziNqYNeDj67suAEwdWGvwlADUi99shFcOyJlarCIihj3UQSIAaSccoB7oOc4MlPePeE1pQD/XtuGAckPDa7gcSX/ujldf1jLGHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N5lgEqMR; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fBFpk7ED"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56DE71F000E9;
-	Mon, 24 Aug 2026 12:08:14 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N5lgEqMR"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FE0D1F00A3A;
+	Mon, 24 Aug 2026 12:08:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787573294;
-	bh=BJNw/A7EJwUq7bjWoPqgdPyCYyihqIFj3DcMwf70Gio=;
+	s=k20260515; t=1787573325;
+	bh=XmqKY2Ol02TXgqf6Qc5HgfhZxESygUot6iq4xas4fPU=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=fBFpk7EDJSgt/Rv3Rb62PsFOxN+Ztgr71OxC+eKQS7wQRCT+3gQkaZzgxGP8TFH2r
-	 9IturorovmfkfMnwgICA5lQ6MaQ8DiyDeTRSsF1MV4YRveler1XJRtixlkJSia4YvK
-	 jbqnK2BckHzZR2ihzHCz8uGqF2ieJUT7Y2qdJlKJ2nB9bUShqroELP00qbUXo/RAgz
-	 ozDXP8DsAxzhh433JKk8HRuHvqEDeQigcGmTXrJeNzUxWGRqgjh6V5rIk37ZeJEvsB
-	 hXVBu7xSAYy7nNbYd7BvhPFk0tnl/IPb7b9rcF9cONOXMZNr9SRX6BBL1YAzYsq0vt
-	 jfWVsEqMjysaQ==
+	b=N5lgEqMRDxIioYq1BDUFdk+en7Pb5bAdZffQkMF+Nif4DUzIEjeXnVlBSjnpzqkJj
+	 Rf7Y285o6hIOn+hHOdOGedf6ijdVyTu8h/7jnIpsz2+zsWOY9zxlvDlk3rEKZK2K1P
+	 gYKbSkep9PhNLbMe1dfWDpbmz8TA1Ap//g8ZgOeS1IbIJfLOoONQmeMQQOeGr/Q+CX
+	 vpo6hBCO0bt0zJnGZOIkZOJKVbvaGsBZBhrAQfiQDDsbPIDcNyvP47+uYDSNWmJYo8
+	 677h7ibP5bjCrKLrkeyipXLoW3OQMICPJJ64KtRVixjHM/XBhvWMBPOPYEOas9Er4E
+	 UUo6T4mRugAnA==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v3 07/47] dt-bindings: clock: qcom: sm8550-gcc: Add CX
+Subject: Re: [PATCH v3 08/47] dt-bindings: clock: qcom: sm8650-gcc: Add CX
  power domain
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Abel Vesa" <abel.vesa@oss.qualcomm.com>
-Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, robh@kernel.org
-In-Reply-To: <20260824-qcom-tie-cx-to-gcc-v3-7-f1205a92682b@oss.qualcomm.com>
+Cc: devicetree@vger.kernel.org, conor+dt@kernel.org, robh@kernel.org, linux-clk@vger.kernel.org
+In-Reply-To: <20260824-qcom-tie-cx-to-gcc-v3-8-f1205a92682b@oss.qualcomm.com>
 References: <20260824-qcom-tie-cx-to-gcc-v3-0-f1205a92682b@oss.qualcomm.com>
- <20260824-qcom-tie-cx-to-gcc-v3-7-f1205a92682b@oss.qualcomm.com>
+ <20260824-qcom-tie-cx-to-gcc-v3-8-f1205a92682b@oss.qualcomm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Mon, 24 Aug 2026 12:08:13 +0000
-Message-Id: <20260824120814.56DE71F000E9@smtp.kernel.org>
+Date: Mon, 24 Aug 2026 12:08:44 +0000
+Message-Id: <20260824120845.2FE0D1F00A3A@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -47,56 +47,56 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 
 Thank you for your contribution! Sashiko AI review found 2 potential issue(=
 s) to consider:
-- [Low] Making `power-domains` unconditionally `required` breaks schema bac=
-kwards compatibility for existing Device Trees.
-- [Low] Inconsistent indentation in the YAML example node.
+- [Low] The YAML example includes the legacy RPM power domain header instea=
+d of the correct RPMh header.
+- [Low] Incorrect indentation for the added `power-domains` property in the=
+ YAML example.
 --
 
---- Patch [7]: [PATCH v3 07/47] dt-bindings: clock: qcom: sm8550-gcc: Add C=
+--- Patch [8]: [PATCH v3 08/47] dt-bindings: clock: qcom: sm8650-gcc: Add C=
 X power domain ---
-commit 6ec2187de5227c13379772ac36b81930a158c612
+commit 1e67472888818783bc114028708b08007c44b70d
 Author: Abel Vesa <abel.vesa@oss.qualcomm.com>
 
-dt-bindings: clock: qcom: sm8550-gcc: Add CX power domain
+dt-bindings: clock: qcom: sm8650-gcc: Add CX power domain
 
-This commit adds the CX power domain to the SM8550 GCC binding so the provi=
-der
-can describe the dependency in devicetree. It also updates the required
-properties list and adds the property to the example.
+This commit adds a required CX power domain to the SM8650 GCC clock
+binding. It updates the schema to reflect this requirement and adds
+the power domain to the example.
 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8550-gcc.yaml=
- b/Documentation/devicetree/bindings/clock/qcom,sm8550-gcc.yaml
-> index c4e9b9bb63f51..26b78bd0afe6b 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,sm8550-gcc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8550-gcc.yaml
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8650-gcc.yaml=
+ b/Documentation/devicetree/bindings/clock/qcom,sm8650-gcc.yaml
+> --- a/Documentation/devicetree/bindings/clock/qcom,sm8650-gcc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8650-gcc.yaml
+
 [ ... ]
-> @@ -31,9 +31,15 @@ properties:
-[ ... ]
->  required:
->    - compatible
->    - clocks
-> +  - power-domains
+
+> @@ -45,6 +51,7 @@ unevaluatedProperties: false
+>  examples:
+>    - |
+>      #include <dt-bindings/clock/qcom,rpmh.h>
+> +    #include <dt-bindings/power/qcom-rpmpd.h>
 
 [Severity: Low]
-Does making power-domains unconditionally required here break schema valida=
-tion
-for older devicetrees that were created before this property was introduced?
+Does this example include the correct header? This includes the legacy RPM=
+=20
+power domain header (qcom-rpmpd.h) rather than the RPMh header appropriate=
+=20
+for the SM8650 SoC.
 
->    - '#power-domain-cells'
-> =20
->  allOf:
-[ ... ]
-> @@ -55,6 +62,7 @@ examples:
+>      clock-controller@100000 {
+>        compatible =3D "qcom,sm8650-gcc";
+>        reg =3D <0x00100000 0x001f4200>;
+> @@ -58,6 +65,7 @@ examples:
 >                 <&ufs_mem_phy 1>,
 >                 <&ufs_mem_phy 2>,
 >                 <&usb_1_qmpphy>;
 > +       power-domains =3D <&rpmhpd RPMHPD_CX>;
 
 [Severity: Low]
-This isn't a bug, but the indentation here uses 7 spaces whereas the surrou=
-nding
-properties use 6. Should this be aligned to match the rest of the example n=
-ode?
+This is just a stylistic formatting issue, but is the indentation here
+aligned correctly? The power-domains property appears to be indented with
+7 spaces, whereas the sibling properties below it use 6 spaces.
 
 >        #clock-cells =3D <1>;
 >        #reset-cells =3D <1>;
@@ -104,4 +104,4 @@ ode?
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260824-qcom-tie-c=
-x-to-gcc-v3-0-f1205a92682b@oss.qualcomm.com?part=3D7
+x-to-gcc-v3-0-f1205a92682b@oss.qualcomm.com?part=3D8
