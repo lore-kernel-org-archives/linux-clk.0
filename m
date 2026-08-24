@@ -1,121 +1,98 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE9CD416855;
-	Mon, 24 Aug 2026 12:22:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A94132D43C;
+	Mon, 24 Aug 2026 12:22:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787574155; cv=none; b=owdYe4RABPVeydY0Ikji3io1+8fvta3dFY+BARtlNUB6ovjAjAPN1yJJZ3iZaZ27WKyK9r9YI4m/SSa1X8U+EcXJstPOvk3LMOo8YWrosITj/Xiqhk6FjWVL5q1rVOe1mUe86cmJ2WS3dc5lI1mdeEUwFtpmpY3YBZH9yykSmSM=
+	t=1787574180; cv=none; b=LofD7JPWi4kfawoaMbkq2tI1W2+60L2IUfrjg6BrFTSRBLfy06lgc2WuW6zR95omiAsYmkLihWS7wOnq3Hd68HF41SmCKQoR9+AT89oWUf19YMdSkJlxp6p+yzSnEC4WlWUKiHrJ5d9yfI8GY6ei5qADLQunyuoQGw+W/aBZJr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787574155; c=relaxed/simple;
-	bh=xkwor4uCH5+w4J7hmElltk8ITkpl7EF0QbX6ERXb+cI=;
+	s=arc-20240116; t=1787574180; c=relaxed/simple;
+	bh=7mq0C7+TGqk/zOniKrXQ1rc7LNWzQoSvkDfFL2+GcmA=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=kXKpVjFSiF6NuMTTMaPqZ7YF3PyVUr/A+sHpmJYOMevkiO+OSyMrbs6gAlt0fnJ43tMbymUBwR7C5p9hSpRSYWK+VnXwoKdFVwiM5Q/MN1f9/Oo1jg4otWTC9kj61+PeaTx4RMfHmNPRehXJZ1FRE2KxG04p9Ohv1o/PNvaDeF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dc/UDxtI; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=ORSL4HERtQtRtr77cHdV7ELJD0Unis7nfs4Pf9R8C5wpoChhKbM9E35YPOogCb/HF9B5KLpTP+vd+kYIs8uFFJfHF4Y3tjFU8sZiOa1MzzxpvibLNn1cJEg9mRobhqOX0DJjOdFBfKWnYoXFA1XSFz/LWT3okgjZVHBpk2M0oAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LiOAI+Pe; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dc/UDxtI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4166A1F00A3D;
-	Mon, 24 Aug 2026 12:22:33 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LiOAI+Pe"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A6AE1F000E9;
+	Mon, 24 Aug 2026 12:22:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787574153;
-	bh=CcKmrm8WwpxVB3RAL5L/JKHhCZjV/eky7ta3W8nxdf8=;
+	s=k20260515; t=1787574179;
+	bh=NtIq8a1zKhN4EUTnwvqgYGJBj6ph7t29n4AUB3eFSsE=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=dc/UDxtIZXPsI3/7h3aF27QPMejnN7j8hHzAwnw4qF7kaeBr54EVpP6V9Z/hVA5UO
-	 Me03anEB/Ja0zHwSEXFc0P6CkgvzNXuJuY8FntTNv91ReKo/7spUDdZg+SnkvRA6Cp
-	 OmzD/5OQ0cP7NLg+162vPHbjuJ+bxmy3PaDO1DmnS1k9FP1J+RN4scD6912uUBzhi6
-	 ZYyHWeqOpPyUdl7N5MxuWPZfqkfg6w5i8aOWmEzgZSfWfAgDJko8ov4gMnGV9BBNwf
-	 IGDW/DZkelPd9x69tm2UPGt4b7WtScdtJHaVMhYvyFQLTJsqOwhcy0RypXYDKExN4C
-	 EbgeKZ2E6bAew==
+	b=LiOAI+PewM/z11TTT1ll574l/HQBsvRrkdtbZBc3n6SoV6oJfVVl8VwkuydbJo+xu
+	 XuUbEhDQmfDvNTm5q5z7einojHOnDPWVkXiGr2H1y1IXFSKL5ILGjhccWEVxYODwJM
+	 gMRIqWKZTdF1EFjaNtgbHxqq0r4yLrjn0H+xusMpy/sp9ekIVGBhpf8ve4gaHU0ot1
+	 2cYYeQjfJ4AN/EVVf8Z8/mMB+2ljwVF+Ewk2lQ7dCBGo7YQz/mhpkfR4A7Ncta8CWe
+	 1I1CA8X6bERWsB7aJ4lQ/ebs+au4pnAQclYxJfFWwfNQi1b0j3Qrnp1z0wegLq2YzQ
+	 BOD8EfUODSj9g==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v3 17/47] clk: qcom: gcc-sc7180: Tie the CX power domain
+Subject: Re: [PATCH v3 23/47] clk: qcom: gcc-sm6350: Tie the CX power domain
  to controller
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Abel Vesa" <abel.vesa@oss.qualcomm.com>
-Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, conor+dt@kernel.org, robh@kernel.org
-In-Reply-To: <20260824-qcom-tie-cx-to-gcc-v3-17-f1205a92682b@oss.qualcomm.com>
+Cc: robh@kernel.org, devicetree@vger.kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org
+In-Reply-To: <20260824-qcom-tie-cx-to-gcc-v3-23-f1205a92682b@oss.qualcomm.com>
 References: <20260824-qcom-tie-cx-to-gcc-v3-0-f1205a92682b@oss.qualcomm.com>
- <20260824-qcom-tie-cx-to-gcc-v3-17-f1205a92682b@oss.qualcomm.com>
+ <20260824-qcom-tie-cx-to-gcc-v3-23-f1205a92682b@oss.qualcomm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Mon, 24 Aug 2026 12:22:32 +0000
-Message-Id: <20260824122233.4166A1F00A3D@smtp.kernel.org>
+Date: Mon, 24 Aug 2026 12:22:58 +0000
+Message-Id: <20260824122259.0A6AE1F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 
-Thank you for your contribution! Sashiko AI review found 2 potential issue(=
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
 s) to consider:
-- [Medium] Enabling runtime PM on the gcc-sc7180 controller fails to allow =
-the CX power domain to power down because CLK_IS_CRITICAL clocks hold perma=
-nent PM runtime references.
-- [Medium] Manual register configurations performed in probe() will be perm=
-anently lost if the CX power domain successfully powers down.
+- [Medium] The GCC controller will never enter runtime suspend, preventing =
+the CX power domain from powering down at runtime as intended due to critic=
+al clocks.
 --
 
---- Patch [17]: [PATCH v3 17/47] clk: qcom: gcc-sc7180: Tie the CX power do=
+--- Patch [23]: [PATCH v3 23/47] clk: qcom: gcc-sm6350: Tie the CX power do=
 main to controller ---
-commit bda4bbdc6882e3eeb0fc4bbaf2482c52d18aab7d
+commit 5be3761ba3c42a260ccac2e7a6451b101d998dad
 Author: Abel Vesa <abel.vesa@oss.qualcomm.com>
 
-clk: qcom: gcc-sc7180: Tie the CX power domain to controller
-   =20
-Enable runtime PM for the controller, allowing CX to be powered down
-once all GCC consumers have released their clocks and GDSCs.
+clk: qcom: gcc-sm6350: Tie the CX power domain to controller
 
-> diff --git a/drivers/clk/qcom/gcc-sc7180.c b/drivers/clk/qcom/gcc-sc7180.c
-> index 4a49ad7a9e5be..f3a245470a4de 100644
-> --- a/drivers/clk/qcom/gcc-sc7180.c
-> +++ b/drivers/clk/qcom/gcc-sc7180.c
-> @@ -2418,6 +2418,7 @@ static const struct qcom_cc_desc gcc_sc7180_desc =
+This commit sets use_rpm =3D true in the gcc_sm6350_desc struct to enable
+runtime PM for the GCC controller. The stated intent is to allow the CX
+power domain to be powered down once all consumers have released their
+clocks and GDSCs.
+
+> diff --git a/drivers/clk/qcom/gcc-sm6350.c b/drivers/clk/qcom/gcc-sm6350.c
+> index a4d6dff9d0f7f..b99a5bc530483 100644
+> --- a/drivers/clk/qcom/gcc-sm6350.c
+> +++ b/drivers/clk/qcom/gcc-sm6350.c
+> @@ -2545,6 +2545,7 @@ static const struct qcom_cc_desc gcc_sm6350_desc =
 =3D {
->  	.num_resets =3D ARRAY_SIZE(gcc_sc7180_resets),
->  	.gdscs =3D gcc_sc7180_gdscs,
->  	.num_gdscs =3D ARRAY_SIZE(gcc_sc7180_gdscs),
+>  	.num_resets =3D ARRAY_SIZE(gcc_sm6350_resets),
+>  	.gdscs =3D gcc_sm6350_gdscs,
+>  	.num_gdscs =3D ARRAY_SIZE(gcc_sm6350_gdscs),
 > +	.use_rpm =3D true,
 
 [Severity: Medium]
-Will the CX power domain actually be able to power down?
+Will this actually allow the GCC controller to enter runtime suspend?
 
-The Common Clock Framework automatically prepares clocks marked with
-CLK_IS_CRITICAL during initialization, such as gcc_cpuss_ahb_clk:
+Looking at drivers/clk/qcom/gcc-sm6350.c, there are multiple clocks
+registered with the CLK_IS_CRITICAL flag, such as gcc_camera_ahb_clk.
 
-drivers/clk/qcom/gcc-sc7180.c:gcc_cpuss_ahb_clk {
-    ...
-			.flags =3D CLK_IS_CRITICAL | CLK_SET_RATE_PARENT,
-    ...
-}
+When use_rpm is set to true, the clock core takes a runtime PM reference on
+the GCC device during clock preparation. Since critical clocks are prepared
+during initialization and never unprepared, their runtime PM references are
+never dropped.
 
-Preparing these clocks calls clk_pm_runtime_get(), which increments the
-runtime PM usage counter of the GCC provider device. Since critical clocks
-are never unprepared, this reference is never dropped.
-
-Does this prevent the controller's usage count from ever reaching zero?
-
-[Severity: Medium]
-If the controller does manage to runtime suspend and the CX power domain
-powers off, will the manual register configurations performed in
-gcc_sc7180_probe() be lost?
-
-For example:
-
-drivers/clk/qcom/gcc-sc7180.c:gcc_sc7180_probe() {
-    ...
-	regmap_update_bits(regmap, 0x09ffc, 0x3, 0x3);
-	regmap_update_bits(regmap, 0x4d110, 0x3, 0x3);
-	regmap_update_bits(regmap, 0x71028, 0x3, 0x3);
-    ...
-}
-
-Because gcc_sc7180_driver lacks dev_pm_ops with a runtime_resume callback
-to restore these settings, and does not use a regcache, will the controller
-resume in an uninitialized default state?
+Won't the usage counter permanently stay above zero, preventing the CX power
+domain from ever powering down?
 
 >  };
 > =20
->  static const struct of_device_id gcc_sc7180_match_table[] =3D {
+>  static const struct of_device_id gcc_sm6350_match_table[] =3D {
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260824-qcom-tie-c=
-x-to-gcc-v3-0-f1205a92682b@oss.qualcomm.com?part=3D17
+x-to-gcc-v3-0-f1205a92682b@oss.qualcomm.com?part=3D23
