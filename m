@@ -1,54 +1,54 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5052838E8C7
-	for <linux-clk@vger.kernel.org>; Mon, 24 Aug 2026 20:39:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84B0838E8C3
+	for <linux-clk@vger.kernel.org>; Mon, 24 Aug 2026 20:40:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787603981; cv=none; b=edDZW5TogEf7IjH9VnBgqG2ZF1RnrNtsa3PjTxZDvCG4pD03Uohy0vrfW2bbKw158gbo1rkgV4MgVSeASOPHN3BlMbufk3xT0nADcQ+51IDRwN3OsdEhDWnvxJz3ujyGGU5lgN2fi/UH7WwaJiv5zGWUN8HzruCitSu0NuKcHvM=
+	t=1787604001; cv=none; b=WN/c+ktBb8D+2xcwhLQYF+u+PHToRQgW+EfFLb2OGXZqRgFT//vfxkwRGR6cewweiyqs2dMRAE13Lx2a73w1vKedVv6mqynwL468MttVf5jKgj5kMUdVL+LYLw4W+1l6xZwuW8qX2V1d5qVfS9gmG0CpFJQ7k3kERvytQL0TTnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787603981; c=relaxed/simple;
+	s=arc-20240116; t=1787604001; c=relaxed/simple;
 	bh=EVUwDkr+aRcYVofgEibvAtJX7CxRusSErPl1ti71pZs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=c1iycSu/lB7MK4CITxpXUmRoK1RqGPTgoAwZQRiaXEMAE5Xry/0Q5C8Kll1J1FkXHYfh+gQFqFrx7TZ2csKwZkN7DFVcEtvKdLFyMmBEHRfR91iM+oiOzd0kJIAUcMHlVIryDK5RvoKWDhVsL8SXBzvBcrDOhU2eIxygyAUb0us=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=op1PqS0Z; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=f44Zpopr31jy8OWHvJiASbghkd9phP0Re5P5VvSoiZD/Q9RYIT4Zdg5WW5Q9c9M2qhUFHmft90M2Ew203aNcBNeJYX6srL1rEwrW6EA96jzk8wo+oCC9cXIHErPysyMBta0HmBZ8m2/ecFjL0rQ85+tGSeP7swu1UeNjkWeF7v8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fud7BxQ3; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="op1PqS0Z"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 411061F01561
-	for <linux-clk@vger.kernel.org>; Mon, 24 Aug 2026 20:39:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fud7BxQ3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D4F61F01577
+	for <linux-clk@vger.kernel.org>; Mon, 24 Aug 2026 20:39:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787603977;
+	s=k20260515; t=1787603999;
 	bh=LEMIXlW7UB4hHdDf5XWpYKY9mKhf7DDvl0I5DYYVcWI=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=op1PqS0ZcwJX9065pz+7n7Mhcirj6eX3k7xLqlZ+ppKs9SUQjaRYatOf7zFET/tfn
-	 ul80C8GWnGTALvbcy587qsJUwsDqASYiSFMYfHcPITUgCg3TZF48GkIuTKGWZKFR9M
-	 4KN8Sznl1jMlE46rBL1TjVyK3aAD3CngSTThQG0+P9d0RdhdZTKci8rg+oXU2+Knhy
-	 NbhSdxhVqpnJaSio1FP0K7pN0IwaOCStdR+sCf1wtsi2SseznQCBLMUxP19S9nO/9Q
-	 MUef/TEDW6ujepu5thZa0JHNFheaGU558HmIHS4lCPCIS/Hkxb7SN9fJwNlrWxn60U
-	 rLdy0en7BtOBg==
-Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-448b69cfc6dso3840387fac.3
-        for <linux-clk@vger.kernel.org>; Mon, 24 Aug 2026 13:39:37 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+Ro+4Be7+dTGRIX/ZYocjr5f+mB6vQoDCgifI+2w+gurEc+7ZKoeHwWSXN7gMgba7LdjK8ENDg8ykPg=@vger.kernel.org
-X-Gm-Message-State: AFuF++lzGfNe4+w3puOOCnhGNyfD/zh7jSwlXpdcNeIv0kt6+K6wdnjP
-	Pr4p5e9Bpu5AcKMEjSluK/gRdzy00ETrxlejTdEA7guOd13mtV9kctenTbMl1CjLF4Ftk4R+N0S
-	B/E6BVFkswTz4O+qyq5zn4CCpF8pEhnk=
-X-Received: by 2002:a05:6871:331c:b0:457:ed1a:9da3 with SMTP id
- 586e51a60fabf-4644af0a69cmr1563335fac.17.1787603975698; Mon, 24 Aug 2026
- 13:39:35 -0700 (PDT)
+	b=fud7BxQ3mGLqvIlEbg6ad9ks7USWBuldJ1rhesQ/I5Z0P2TbTL/B4yjUjL1TSSrTD
+	 v9RK49uFy/MyVlVnS8Z/JZDw9ZTdeNWDOS0e+/wAdfU7LjgosBNO5vMauS2LOkhSwL
+	 h9es8uX1/IuSMbLrikq26C8DDQWS9jjYsQIWnhTN/9oY8wwhg8Ib5NngWTfnaG5VPb
+	 QNRFXSnXUIyQ729E68Byd/f2DVHD/1gkoUs1R571cy1A1O4+ogllCKGvmvCpO5h+eL
+	 qJLr9moIGO2e0IP8EFl/5HO0egD7wqzSaMyNhD5h7CfhF2rFlDdbxcC/fexzhM8k3F
+	 Rj5nuaFX6ztWw==
+Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-451fd21113cso186658fac.1
+        for <linux-clk@vger.kernel.org>; Mon, 24 Aug 2026 13:39:58 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RpqO5GxvZjuxWtt6cLHVYZ1wMzaBDR2FYAYgD3lAquPzwmPP6KqATHUCWRREhjtGwZhQjNZCj2766Y=@vger.kernel.org
+X-Gm-Message-State: AFuF++k4WNDOoBziOJ3ohpiio1IpO6sUortO69gYVhB/kZF8AINewrmX
+	RFhw7QKQbdIqoNcgfMC8WXTC5oEmBY7SgWVYWAcxzU/pq+u3TtTIwnLfSWMdFjF/b7ZjSz18a53
+	dDE23QvDTV8LFPvPomPW56LT3JXi+Esk=
+X-Received: by 2002:a05:6820:4b83:b0:6b1:779:89f6 with SMTP id
+ 006d021491bc7-6b18fa810bemr1569885eaf.3.1787603998213; Mon, 24 Aug 2026
+ 13:39:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1787239813.git.geert+renesas@glider.be> <33f8a87834a75b6677894f1993c90f00eb6a2547.1787239813.git.geert+renesas@glider.be>
-In-Reply-To: <33f8a87834a75b6677894f1993c90f00eb6a2547.1787239813.git.geert+renesas@glider.be>
+References: <cover.1787239813.git.geert+renesas@glider.be> <631df13629bf77d55bda770f94c7b1863690f2e2.1787239813.git.geert+renesas@glider.be>
+In-Reply-To: <631df13629bf77d55bda770f94c7b1863690f2e2.1787239813.git.geert+renesas@glider.be>
 From: Linus Walleij <linusw@kernel.org>
-Date: Mon, 24 Aug 2026 22:39:20 +0200
-X-Gmail-Original-Message-ID: <CAD++jLnWF5Y+=Dz4XxFyHqrxuOtGucvYLaqMGDNH4XoR1S+rrQ@mail.gmail.com>
-X-Gm-Features: AcwNN1XmhR7K3AKRJKXT4Sd3qYlnwrUuNbhbfYVIv-485OoNG4okiQZloSgYvOE
-Message-ID: <CAD++jLnWF5Y+=Dz4XxFyHqrxuOtGucvYLaqMGDNH4XoR1S+rrQ@mail.gmail.com>
-Subject: Re: [PATCH 10/45] clk: gemini: Make sure clk_init_data is fully initialized
+Date: Mon, 24 Aug 2026 22:39:40 +0200
+X-Gmail-Original-Message-ID: <CAD++jLkQd4ZfKAxzCaOobfQKyYqa3jdaCiPEd8Tp=yyC4YeLuQ@mail.gmail.com>
+X-Gm-Features: AcwNN1WWNgSFLas9lNi7aTz9dpo8225CQLxghuyz8Km9gH4_yLCmhqwBO9vh3BQ
+Message-ID: <CAD++jLkQd4ZfKAxzCaOobfQKyYqa3jdaCiPEd8Tp=yyC4YeLuQ@mail.gmail.com>
+Subject: Re: [PATCH 22/45] clk: nomadik: Make sure clk_init_data is fully initialized
 To: Geert Uytterhoeven <geert+renesas@glider.be>
 Cc: Ryan Chen <ryan_chen@aspeedtech.com>, Joel Stanley <joel@jms.id.au>, 
 	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
