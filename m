@@ -1,151 +1,216 @@
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 456AB486E6D
-	for <linux-clk@vger.kernel.org>; Tue, 25 Aug 2026 15:03:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93B1B486B8F
+	for <linux-clk@vger.kernel.org>; Tue, 25 Aug 2026 15:11:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787670189; cv=none; b=tz3lnejVySJ0mlAJMcTYIPqMTsx9ZjtvIMsKmmGEGwUyLybwQ87MYQw2luqt+lMVJ5hAT6bSBOzaiIgXLcwvxH4tWPQrE07Rcgkt9VltcY324+NZIaRu5iJyO+DduagmZSZX907U2oS7iYguCzWRg8zGmtVyKlZ3jSxBaO62JoU=
+	t=1787670719; cv=none; b=bodUsBnGPLdWyJfd2JHY1bvra/thI7hul7qTCi2Y4x+XfiyzfrDRuZNAeqEMsWXTPhM70q9Y/0SqvKqn1nmT8DjW589OldMo/t+jrtn1wtrbmdzEh3dBJK4cxyfPMYOZFLnSyZd+mBNBRTJXIWodYtDFxIfXntpIE/3CE+uCPe8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787670189; c=relaxed/simple;
-	bh=Loh7CxMJyj/c0rgZ7iXlS8miTtj/q5VnJdY302NtqGM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ftW3IwlWb60eQAxH0bbHxfKN7DHDWO2MI4rvjYsMhzFgXrJL4Jiz6cOCwE/QCNYO+ZWB3dNoj3C8oH/HJbQ75tUfo9vM/1FQytDZHlftdxsy2WFy6fRN9nksOC3l4X3MATophc0TLseSXulEYXYJbf/oniMgjHj8cZAjCwYZZlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-c15d47266baso569157766b.3
-        for <linux-clk@vger.kernel.org>; Tue, 25 Aug 2026 08:03:06 -0700 (PDT)
+	s=arc-20240116; t=1787670719; c=relaxed/simple;
+	bh=VSfhDbGuaO6bj6wZHF4WXo8dJZaWBr1sYjz3PhauiKg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NxQQRkISv7yiczNoK/5ZRvPToPZXLCsLlQJiiux8DkFsulL+sHSCLxBY/eZT2HEyWpWc/w6ScRgh+n7GKiYrYOdD0lEodoCFJsUkxS6TelpZjMbim/aufANvapzCeOmEZwdSyskJ7w+kmomnQ4gsjPSkZ5Fny/k6z9OVf2m0Qeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cmNwOCPW; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=nY8NWXxz; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cmNwOCPW";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="nY8NWXxz"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1787670715;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=l2TAxOwHRDlM6cSmZF0xTyxxMoyKXBFa/St1ecjf+fY=;
+	b=cmNwOCPW0pCLo1vgxbiI8024BSzxbFhi3JiPy5Bv8SJO4i3CWLe8pnJoGKFUOrad+B/b/+
+	ss0febDjN34CvxqR7kDJPsYhRohx65REzsx6IYHVayw4b9b70DhLTuDcUesPRiEXiPUqHm
+	uTFVlFozsf2xG5Uyv+HbX3OiX5QSvDo=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-642-icndonmEOBSm4ikAklemVg-1; Tue, 25 Aug 2026 11:11:53 -0400
+X-MC-Unique: icndonmEOBSm4ikAklemVg-1
+X-Mimecast-MFC-AGG-ID: icndonmEOBSm4ikAklemVg_1787670713
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-52d7b3adda4so51313721cf.3
+        for <linux-clk@vger.kernel.org>; Tue, 25 Aug 2026 08:11:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1787670713; x=1788275513; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:content-type:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=l2TAxOwHRDlM6cSmZF0xTyxxMoyKXBFa/St1ecjf+fY=;
+        b=nY8NWXxzUsDInqAxCpLmy+ZgNlGKxq/kfQsQxAorLaiici4SgkZ0nof+e8JjT1U/LZ
+         7AHvlkxixLUX5HEIw+pWo9TO/OL2yqXDquuBuFM7tTPMsNCeu9PMYrRxxq+25OWbVXqx
+         s3BZ0P1vtgY4EGOmC8gfkBPDo/Tq0KFNuU5pafXZLWKj3S2OULCL1Y9s7AZIZamf3uaL
+         NNBTYUzW5TbZBD/PtLCT7eZMLHQO4Y4q5XX6uG03hKeolBMKbUXLrtuYB/YRo9hDPwG4
+         VheOijSCYInUzGi5mDeobEqmFnxTsh4xa3N4Qv0gB/vEyazaFFf2Va+MpVMnP8zgrtG7
+         bkNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787670185; x=1788274985;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20251104; t=1787670713; x=1788275513;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:content-type:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=8UDG6348hQ5hCNqa39+P1Xgwy7V8Kyi97ymwy69cGkw=;
-        b=Iw+SXQJelI6Ul1jomYEOnUzAlrGS6vvfRt2ltj4tSguSZARnZt3q0pMkZaR2UIBFTo
-         TCqyKPHbYWEfX8lDnJEhWIWF1+OkquXAr1EYWfmbqJpiW4qYx2VWY9czQH8V+UXp1hwJ
-         3EyROW+xlNW/W68VtV6aMD8pviBI3LE33s9msRXjlTi/vqb1LNnUCQQDLcJ+pWTCVlec
-         whdFTSQfaRiwMTxOXgpJ7n/jlpzgqOPnbmYRTrFUl20nMuLxWKV92mh1ShNRbuQ57udb
-         nDbqBK61Lho+loG82f6qhLg7LGTiMU7ASAU9fykYv3/4lraWqECFRwu3kO5PPlvLjCjL
-         jHuQ==
-X-Forwarded-Encrypted: i=1; AHgh+Rrhy1o1LWW20EA4MwYVrFRAJ9jkJ/75YBULjC5jd9Iimi+AgmNOyd6vnrduf4Q2iOaeXYL6wHutA6s=@vger.kernel.org
-X-Gm-Message-State: AFuF++lTvoOiJ9H9UMXjjnZ5So9LU2RXEb+CSQk35sId54FYhbQjKR4N
-	Z7jq16Rq0fLzaP3hLBA44LWjhvoz3KZiTLKHPJeLVXJf2+Z5QA6Nc3sxSfRkWZXf52c=
-X-Gm-Gg: AR+sD11LAPFaPfM0O8IEinRk6OYQCVu/I1eolb5La4ZHlm5qsxlUbQ6/tkL9Jim1Bew
-	XpFNKqm11D3a6hcBf/fTgHYKb7QVj8r6byXrKaXN7OjMzFTK3rpnuPAHyAtHVY7FJ6HHj+DdPRn
-	T4ZKc0WOKvsOk6FxV3u4w0+N4xdtOlS6gbHdVL1Iow3GyB+2enCBrYgaQ0yryE8Jw+p3v+PL1nr
-	uxQ5DiGU7kr3G/LEeBlrU5/3oFzFJrJPYVooApPz+ah4MAn7ip3YSOFP6mcUjkjhTB9YZoVImrr
-	WAX7tgfnhMoKjDkZkB3LtP1nGVtGcgSiID2OOUw1COkD+MCNj62Uu74D//f29lfH7vatS7NLulR
-	PXPojxxBkmQNjpedTkA2+funD+U7mThjdG6XV3M1m7nS2/jYd+gAAxZqleW8TzuJb5ACJ8SgwcO
-	UWDX+jCLbOfZq58nnVzedpqaPk8kchGyi0ntWM9KIQizGjJO+70xvbQkB8/IJuCBZmLq9JdHPV5
-	P1nRMxUhjbd+N/APwd/3d7Jag==
-X-Received: by 2002:a17:907:1c19:b0:c20:2eee:97be with SMTP id a640c23a62f3a-c24e5899c85mr837089166b.7.1787670184958;
-        Tue, 25 Aug 2026 08:03:04 -0700 (PDT)
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com. [209.85.208.53])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c249685ab3csm1878384766b.49.2026.08.25.08.03.01
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Aug 2026 08:03:01 -0700 (PDT)
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-69fab5a852cso8256153a12.0
-        for <linux-clk@vger.kernel.org>; Tue, 25 Aug 2026 08:03:01 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RryqXuv/4XRKGI4zhh8EIYrcxERIB/Rt97yPI8k+k/vPBjgrFMEgzVRd9SXER2L3wRvQjXQ8aBKFCk=@vger.kernel.org
-X-Received: by 2002:a05:6402:2490:b0:6a1:f93c:f0a6 with SMTP id
- 4fb4d7f45d1cf-6a5c4157aa7mr9125375a12.12.1787670181340; Tue, 25 Aug 2026
- 08:03:01 -0700 (PDT)
+        bh=l2TAxOwHRDlM6cSmZF0xTyxxMoyKXBFa/St1ecjf+fY=;
+        b=SfIz5/LAmVAlOeQt93kbDGHgSdHRz3j3d16MWJXWmQO2Q9zE8hPFxOaf8Wo9j3zu+J
+         AzTzFkkfBy7y4ve7U3d1in5uUjl0IyMOb36b8L8+w0wtyiy0NYeKgtdDcntChBriZtsT
+         zmcw5RJI6k16WZzJkhyGS5bWv+4dqbJVU1aJe+XOMkBAFxET2rlISgmR6PVwnnfhMs0G
+         AjoXLBF8OB7e4l9NC8QQ9u+8DaXQnvXzHc2Hysu+DGrmArMFNA/GOhGoW9mquQSo7/T8
+         yo8n/0mDa2WVuWSlA3Z10KxIuYBmvWVTA5O7U+A67xLztw9/VIHAa7omp4iHMFxfihSm
+         Kymw==
+X-Forwarded-Encrypted: i=1; AHgh+RogUY+jFGI1J9pynl9lWrHj396rEd9HvsSmYWehc2kk7yigo2L15Pe07wR9QG52MU1lnUdzTcckxOI=@vger.kernel.org
+X-Gm-Message-State: AFuF++k5YWgs5nBLzSm7IBB4a6LjZdKN0xXG867PVCSJv0krFwqy+aZU
+	gUxxBwka/NvoogfssHjiLq0S1mGg+ac66XhPjId0ltIxuY8GmlRRvsM94kHwbFNVbrnF8mEuY4r
+	T17hi221wV6Qm6jpv5+ejw2tL/Rv65ELj6xCYIvumI2nuSZr+wJvhJqcBK3CEYQ==
+X-Gm-Gg: AR+sD1214Y8L14AaEHkQcUV6d0hVEF8ZWItuPRlBhVVJ6dDlF+jIHL/FXJ2HzxKfm7a
+	0jsUC/fn8rjNpd4YgzEZD7R0m2Y4o5QTe713xHnrJHRY82wPE4HEjjm8DKAOgzSk99mxuOWQMPk
+	koE38umNAdILsmUMLsnNFi/ZS/V79LSsfW/9mrfLQE30vtWtm1i+Ic2NmNBfZ+lE0m1RXf9hJ/B
+	t+EqxPeVVDa14eHRQBe+ISjr/LD4BmA7TpSQFzzTHZEauXErvw7kMjQtOaGGU3VVGHS66Oi7tfR
+	qO+5KgiwSjZ4OK3qP1SgL/WkK7KZiDVgOxVjBlpeYFHhLC/MojllaZrnAnlOX592xPZZ6RERAIW
+	sTvR2u1ifev2mzt9E0LQ657mp3DlOzSA2f+w=
+X-Received: by 2002:ac8:7d13:0:b0:52d:3d46:bfd0 with SMTP id d75a77b69052e-52df5a4a41emr343135681cf.32.1787670712344;
+        Tue, 25 Aug 2026 08:11:52 -0700 (PDT)
+X-Received: by 2002:ac8:7d13:0:b0:52d:3d46:bfd0 with SMTP id d75a77b69052e-52df5a4a41emr343134781cf.32.1787670711664;
+        Tue, 25 Aug 2026 08:11:51 -0700 (PDT)
+Received: from redhat.com (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-52e09aad030sm71209161cf.15.2026.08.25.08.11.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Aug 2026 08:11:50 -0700 (PDT)
+Date: Tue, 25 Aug 2026 11:11:47 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Cc: Ryan Chen <ryan_chen@aspeedtech.com>, Joel Stanley <joel@jms.id.au>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Billy Tsai <billy_tsai@aspeedtech.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Taichi Sugaya <sugaya.taichi@socionext.com>,
+	Takao Orito <orito.takao@socionext.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Avi Fishman <avifishman70@gmail.com>,
+	Tomer Maimon <tmaimon77@gmail.com>,
+	Tali Perry <tali.perry1@gmail.com>,
+	Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>,
+	Benjamin Fair <benjaminfair@google.com>,
+	Sudeep Holla <sudeep.holla@kernel.org>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	David Lechner <david@lechnology.com>,
+	Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	Viresh Kumar <vireshk@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Ulf Hansson <ulfh@kernel.org>, Liviu Dudau <liviu.dudau@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Michal Simek <michal.simek@amd.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-clk@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	openbmc@lists.ozlabs.org, arm-scmi@vger.kernel.org,
+	imx@lists.linux.dev, linux-mips@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH 00/45] clk: Make sure clk_init_data is fully initialized
+ (part two)
+Message-ID: <ao2ws3ZA-o8ZVjTh@redhat.com>
+References: <cover.1787239813.git.geert+renesas@glider.be>
+ <3074509.irdbgypaU6@diego>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260714173315.1981708-1-claudiu.beznea+renesas@tuxon.dev> <20260714173315.1981708-9-claudiu.beznea+renesas@tuxon.dev>
-In-Reply-To: <20260714173315.1981708-9-claudiu.beznea+renesas@tuxon.dev>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 25 Aug 2026 17:02:45 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWYyGci_NNG8u+erL+vGeL+8vUXBsZ+1gcaBq-QYFWV2g@mail.gmail.com>
-X-Gm-Features: AcwNN1XuzkfLnm_UPDcmDBLz-Zu37ChvVAcOyLsURutDp-p8VMVRi7QPa69l3QY
-Message-ID: <CAMuHMdWYyGci_NNG8u+erL+vGeL+8vUXBsZ+1gcaBq-QYFWV2g@mail.gmail.com>
-Subject: Re: [PATCH v3 8/8] arm64: dts: renesas: rzg3s-smarc: Enable CAN-FD
-To: Claudiu Beznea <claudiu.beznea+renesas@tuxon.dev>
-Cc: mkl@pengutronix.de, mailhol@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com, 
-	mturquette@baylibre.com, sboyd@kernel.org, bmasney@redhat.com, 
-	biju.das.jz@bp.renesas.com, fabrizio.castro.jz@renesas.com, 
-	claudiu.beznea@tuxon.dev, linux-can@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3074509.irdbgypaU6@diego>
+User-Agent: Mutt/2.4.0 (2026-06-19)
 
-Hi Claudiu,
+Hi Heiko,
 
-On Tue, 14 Jul 2026 at 19:34, Claudiu Beznea
-<claudiu.beznea+renesas@tuxon.dev> wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> The two CAN FD channels available on the Renesas RZ/G3S SoC are routed
-> through the Renesas SMARC Carrier II board when used with the Renesas
-> RZ/G3S SMARC Module.
->
-> The CAN transceiver on the Carrier II board has its standby pins connected
-> to GPIOs that are selected through the SW_GPIO_CAN_PMOD switches. By
-> default, these switches route the GPIOs to the PMOD interfaces.
->
-> Enable the CAN FD controller and its two available channels.
->
-> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On Mon, Aug 24, 2026 at 11:11:32PM +0200, Heiko Stübner wrote:
+> Am Freitag, 21. August 2026, 10:53:10 Mitteleuropäische Sommerzeit schrieb Geert Uytterhoeven:
+> > 	Hi all,
+> > 
+> > The clk_init_data structure contains several mutually-exclusive members
+> > for different methods to specify the possible parents of a clock,
+> > prompting drivers to initialize only the members they need.  However,
+> > not initializing all members may cause subtle issues, which are only
+> > exposed when CONFIG_INIT_STACK_ALL_PATTERN or CONFIG_INIT_STACK_NONE is
+> > enabled.
+> > 
+> > Hence this series aims to make sure all members are fully initialized,
+> > to avoid such bugs, and to prevent future breakage when converting
+> > drivers to a different method for specifying the parents.
+> > 
+> > Part One[1] fixed all cases that I identified to be real bugs, in
+> > response to a crash I saw on BeagleBone Black.
+> > 
+> > This series is the clock subpart of Part Two, which fixes remaining
+> > cases that are currently harmless.  These are still fragile, and may
+> > cause future breakage when converting drivers to a different method for
+> > specifying the parents.
+> > 
+> > Thanks for your comments!
+> 
+> I guess more a handling question, how do you expect this series to be
+> applied?
+> 
+> I.e. each clk-arch-maintainer, or in one big thing by the core clock
+> maintainers? Just wondering if I should pick the Rockchip patch
+> or just let the whole series get applied by the clock maintainers.
 
-Thanks for your patch!
+Before you pick up anything, let's see if Stephen picks up this series
+the next few days before he sends his pull to Linus.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Next development cycle, Jerome Brunet and I will be clk co-maintainers
+[1] and will start collecting patches then. If Stephen doesn't pick up
+this whole series this week, then pick up the patch(es) relevant for
+your tree and send Jerome and I pull as usual. That's just in case
+there's other patches that come in during the next development cycle to
+these files and to avoid merge conflicts. I don't have a strong opinion
+about this though, and could be convinced to take the whole series for
+simplicity.
 
-> --- a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
-> @@ -68,6 +68,24 @@ codec_dai: simple-audio-card,codec {
->                 };
->         };
->
-> +       can_transceiver0: can-phy0 {
-> +               compatible = "ti,tcan1042";
-> +               #phy-cells = <0>;
-> +               max-bitrate = <8000000>;
-> +#if SW_GPIO_CAN_PMOD1 == SW_OFF
-> +               standby-gpios = <&pinctrl RZG2L_GPIO(13, 0) GPIO_ACTIVE_HIGH>;
-> +#endif
-> +       };
-> +
-> +       can_transceiver1: can-phy1 {
-> +               compatible = "ti,tcan1042";
-> +               #phy-cells = <0>;
-> +               max-bitrate = <8000000>;
-> +#if SW_GPIO_CAN_PMOD2 == SW_OFF
-> +               standby-gpios = <&pinctrl RZG2L_GPIO(13, 1) GPIO_ACTIVE_HIGH>;
-> +#endif
-> +       };
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/commit/?h=clk-next&id=8bc7ceadce1f362a8b0e88075ef3d926b286c01c
 
-Actually this is a single dual-channel TI TCAN1046V, which is modelled
-here as two TCAN1042 instances.
+Brian
 
-Recently, we got real support for TCAN1046V, so this should probably be\
-rewritten, cfr. "[PATCH/RFT] arm64: dts: renesas: r9a09g047e57-smarc:
-Update CAN transceivers"[1] (which I wrote a while ago, but never
-submitted before)
-
-> +
->         vcc_sdhi1: regulator-vcc-sdhi1 {
->                 compatible = "regulator-fixed";
->                 regulator-name = "SDHI1 Vcc";
-
-[1] https://lore.kernel.org/2a759a486337e4cc8156bc94079471a6552faefc.1787669487.git.geert+renesas@glider.be
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
