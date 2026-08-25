@@ -1,168 +1,141 @@
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D88248A8CD
-	for <linux-clk@vger.kernel.org>; Tue, 25 Aug 2026 15:44:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 926B9488DAD
+	for <linux-clk@vger.kernel.org>; Tue, 25 Aug 2026 15:58:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787672698; cv=none; b=sxeYZnd9N3VaQrR5OTuX1Y2IZwLJV8HZAXffhZ/QbMKQk0mUZLxD86dC+ZnR4kePrm1KCt6JTkgF9KgdoUT2F7a612o3aJouAxYY1qmiTH9sPVZLRyp3k0+o5ce35ubgMw+217BG5G5WmRNgGW52CaPAnXLIfHIwpyz4MHnlyME=
+	t=1787673512; cv=none; b=CS8YMm7RZHr/oNW3gU7btlDNYKsgBAvY0weTuSEDojF0bqmuJSr1+5ziW4NKhRIE+ktF8fa22S99+YzChrqc6NCH+YmEWIeYqzj/vAlbRMRqThpxANgcs/MSQUNUpj1kzEtHk2wHlb1+3lqtUJ/tyNFk3TJCTMuaze+4UvE+Gnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787672698; c=relaxed/simple;
-	bh=RoNxwuvIkkCUrkl/TSTIGHMAvWivzZj78lAAeQ0oWkg=;
+	s=arc-20240116; t=1787673512; c=relaxed/simple;
+	bh=6fYdnRk6pjxrSAxMwAMTe/HvBW3p3tPhqo9+iE/1eec=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q3DiwOVU3kViKDWg+3JTVN5PGWbtFKNkLRLz//g0AcdM666KXN7wSkkAxG//URHk3E8hSyAkSjKOmNk1LhNDYeeqI58A7xAXaiMndc4ZS6uSrlQc09hVehqJfuJK2u6dZ5iRPuE7T71etQNahSc1qio84fuJINyvFASPTVguDoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iDa4HXY4; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=aHQ2O5VY; arc=none smtp.client-ip=170.10.129.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=D316bNwgy2jsLCw4JKtJxA1VL8SgUzmxp4WeI+pT7JHPj1/7W0c4bsKO7LybK7o7h2YCV1UuXgQ5IH7qf7EIJmSO4PZES5fRlIzQ26RZzPlRJ46Bp37WPdOwbCWD0mKaqs8677ge5R4F1w4f/gZ2CGPaILKARQXTGq9ZlICQMtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c2he3xVX; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=gROz/wtF; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iDa4HXY4";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="aHQ2O5VY"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c2he3xVX";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="gROz/wtF"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1787672694;
+	s=mimecast20190719; t=1787673510;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Jh5qdzgU4/sI1NAzoiIMyEleZO6Z0K521x8atNlCujM=;
-	b=iDa4HXY4eXUAXT5J8bEbN4cJEfL31jJg+QU5BOe4VSttVMVOFNt03hAIwJvLkjQGZs+r/z
-	bcSDdsT5P2QGlfma5M8QdtdluNDq5gCOAPPwoSuwGbzfJ6+5E1k596IVxcsLDH7t6OgSmp
-	G+cKIpgiMR0lWPuJBi1fWk/pi3MAmb8=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=zw8rgTkqg/RMXzjbEGS0cAS0wOEwqckgtTyrqfWP7Hc=;
+	b=c2he3xVXIDvIlSvS1ysNqij7f6EfiG6t9GJItyYbkjQV9ZXqm995T81Jw2uGoqRUcKA+Mg
+	FwHZ0hDEuAm70p88MGkK7SfvgE4EdYSpqmRyLsobc12/93gA1Qwo1hFDnv6/+ST+griI1R
+	kKyskUNSBFRFtRq1ZiviJFym3NtxKok=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-253-ttLKuwsMNjmgsqX_lUUE2A-1; Tue, 25 Aug 2026 11:44:52 -0400
-X-MC-Unique: ttLKuwsMNjmgsqX_lUUE2A-1
-X-Mimecast-MFC-AGG-ID: ttLKuwsMNjmgsqX_lUUE2A_1787672692
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-5283df62d68so66035331cf.0
-        for <linux-clk@vger.kernel.org>; Tue, 25 Aug 2026 08:44:52 -0700 (PDT)
+ us-mta-675-z3nqOszoNDm8V22dIHIAuQ-1; Tue, 25 Aug 2026 11:58:28 -0400
+X-MC-Unique: z3nqOszoNDm8V22dIHIAuQ-1
+X-Mimecast-MFC-AGG-ID: z3nqOszoNDm8V22dIHIAuQ_1787673508
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-8f1e4e0eac1so26869656d6.1
+        for <linux-clk@vger.kernel.org>; Tue, 25 Aug 2026 08:58:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1787672692; x=1788277492; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:content-type
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=Jh5qdzgU4/sI1NAzoiIMyEleZO6Z0K521x8atNlCujM=;
-        b=aHQ2O5VYcDzeXlAclW9m3+Ja9nFR95ZesFvRsZ/5uTJmuz2mJ/9U9n6cnoTv/PBmL9
-         1aLEqaeLr8ifmcx0zxrFPMk+/pSidqUJbEoyWkLzm2/7oqc4BppOk8B3RJJkwzvcBr3d
-         I6gPK7mjDy96ygSxV+/RrPwVmxCz2VihQkDsoYp9sWVb81MFFVMW6iZO2xYjr9lkzglb
-         Kl+dk3m20QPb96i2T3Q66BOKa2gf2bvyGFwL4nXNdz50uqa7SBTcStQTCI2a8Pq1Qx7/
-         K8hMczmB9zMYTQOHGpNYNqqxRyl+cIUnNqdG97uQj0ZbcY88Av7P25fG+qmwuIRM5nd+
-         gicA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787672692; x=1788277492;
-        h=user-agent:in-reply-to:content-disposition:content-type
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+        d=redhat.com; s=google; t=1787673508; x=1788278308; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:content-type:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=Jh5qdzgU4/sI1NAzoiIMyEleZO6Z0K521x8atNlCujM=;
-        b=YVnRsS0oyJOW4wE4hSvbLdGMg1GRpK9MwiO4iqa9TgYSEW3IPb9LMaauR5rAy346iB
-         SgVblD5HrXxES2jgrijm0Dp31ryVBGaXIftctbToWIDlx8wKsud3b7JtOLvh3KmoM7FV
-         n6k2DHfdrAT30j7EU1KGJAOkCFu+KY67dbruRpkNQZZ5YkWivtNS9eat1P73m5IKFlKH
-         LfucyDhQ+tX8oLpXAI+HueHBfzUdcDx/gIRD666PxgSUH1i/GszIPTnePS0LeI8Hdy27
-         KWPeNfOMt5f0tSBZPziE4J+EuQx+cp1EsKo1fC9xkI4SSy5p+cYS5UxsukqEkLElmzEp
-         u8hw==
-X-Forwarded-Encrypted: i=1; AHgh+RrSQ/rSz241JkKxEWdHCzEdfKDNuN6zqienVL0DaEXnNZUMbjc4ZxAHpBX4gBgK2GoTDPcNG3pc91A=@vger.kernel.org
-X-Gm-Message-State: AFuF++mivPYxl2rlFYj9GLj0b8pPzwbTnYdOf9zfvSxu1Wzf6LULZs7Z
-	Z3EYR67LdRsFUHraWX31h0NoM2eQTeclxolZ98oYdg7z18emCSFTH8gDEIqdC4dQFc/ACUThqcU
-	3UFf/fq5fJDPqT47TJzlsKgJW6ohmr1G6AfkYnB0RiANYr59p+Q+UIuCSWGGv2g==
-X-Gm-Gg: AR+sD123DIkfT/HVLf/p4C6zS37ZXUo2aRULAMfj5hTPvtUdRYJeE8L7XqTBqLX0Yvl
-	2B/iCzov1MAzBeU7EqQeK0lbbMEem5d28cOfGl76oEBJVWTTJ5YeXxbbWIbjLrAbjiBunay4aWL
-	035X+fgGhM/ULrmAAWoOwGcgb1iVxUEMSbdWj7xzT1ZHk9QnR2Qo8ajH1ZSPNRvRphAScUAZKOQ
-	yWcEV6wSf3ZQlmmcRybJmAjhBfcu2ynqmyh4TkdGHwiMcJH7P4daOWSORPwE8JT8X0/+TNZrC7H
-	826MeGHo5uGm12fhUXm6XiD+WRnnM0lu4i04shTAMJDkEjmd5tPPuk79AhNKoQooyLN6rSD5rN6
-	FKAKKS0vBH2wAhpNWsuPlbmihNL6r+VbHKEg=
-X-Received: by 2002:a05:622a:1f0a:b0:517:7e26:36a4 with SMTP id d75a77b69052e-52df5a7601dmr383864171cf.34.1787672692204;
-        Tue, 25 Aug 2026 08:44:52 -0700 (PDT)
-X-Received: by 2002:a05:622a:1f0a:b0:517:7e26:36a4 with SMTP id d75a77b69052e-52df5a7601dmr383863391cf.34.1787672691646;
-        Tue, 25 Aug 2026 08:44:51 -0700 (PDT)
+        bh=zw8rgTkqg/RMXzjbEGS0cAS0wOEwqckgtTyrqfWP7Hc=;
+        b=gROz/wtFHyFHm7b1Xh61kdHuGftMMumJHsK9fR25bIBWs4rbNbz0szWvAqpLzwiGPj
+         M4H4KMy+YTIS2fXIx7esRrwnwAxHivJYp5ZUlnPOePEg+bqF/OxfRwc+4QDH52zNCCIr
+         aUh7j3DIbC2hP1DFNWIl+z3dF45mpDIxxybgaY5VfdI2cYlNktn/VltyoB3b2CBounLi
+         BaG66ytaML9TSDJf1tYssG8tDdBt6+eNs99c3A9EReLPYrz7W7OG3s0AS2ZI5rXFWEAE
+         MxUHYE25RzqvhNvoO6JI7Kht6gtqDvi8MgCnxZ2vckM+PXanwajWjbvOTN8MOnQGfOR4
+         OhyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787673508; x=1788278308;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:content-type:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=zw8rgTkqg/RMXzjbEGS0cAS0wOEwqckgtTyrqfWP7Hc=;
+        b=MaZIt/106BvMV/VIhdkKBtsDBz8qh1f0+XrO3z/k9SprSXl7xozk3cZPz0VBZEy0lC
+         G37JpAhffGf1PbXZ5f8oy7qKPd2Y+Bdt5EJmKmQJmZu/uPxNfNIlAiWTB8q5BpfGL899
+         HRlqIoLCvoSaLaXIo+eaOqLwq8C+MUbKC2qxAYMyiNISnLoeTdp+Yk0aApdF1W5b/Bps
+         OtF9Fe7vpum24KF1LafZEx+mkr6oHAXCN0XaHQfRoDE6WJAFqy7QZOUoesb7WkzfAPzr
+         siSxojjugkfxJGbrT+wLDNuqOfZA+yXreGkkzkraIalNcjmark3BWBQG+F8cfXlEoTko
+         Q53g==
+X-Forwarded-Encrypted: i=1; AHgh+Rpb9AiNU9e4NjTPLdGaTqNZPFIsOxASJIFZ+PulZx0BQevppWYua2cvHrwHoVdh7amLW9UNWTo5eWQ=@vger.kernel.org
+X-Gm-Message-State: AFuF++nGXzPlVuLT+J1fHmMcRKV2oFVhLSZKSgg3a8BBuYwHd/LDe0nw
+	LuwcRJO4f12Ifl984kjrOrGE5uiHejjcPn9lAwcSf/369QUJnC5nfcZdiTVY//F3eUZalwejxfU
+	enkoAlaNN8kDPbe2XwfcKd4Teqxk/48zrT6xonF8x6SUKZ1whlopqXO5Zklxldw==
+X-Gm-Gg: AR+sD13uV0UJ2fkebTSr7rXOi/BLZs1wG8aqszwmYXxltXu7WlCPwJjBXBzhrC934iS
+	RYSvl7n9H5PAxcM4pQJuR2SR4K8hmMpz5485+zHTjff4oU1qFA64fvZZyVssVOqhwAYudrOs6Tv
+	D8G7A6HwXbwD/czn13v1VDNZPLk33XRNOcosOOJpPQ2tbH5Hf0f9RWnAmCpHmDydBc5Jn5xNSu8
+	C1iylIt9/nYG3LtRYZ0qGfS9Mcv288VO/uAB9C1Bfl/UWgNeL92wnukehQkftBxZdIpZu1D13iZ
+	rNM2JUge1J0v9VcgFJv2yI45hI/8cYA2F839V821205hVMplWCFqOvEhoR7Yw6UxhYk/910j0H2
+	Zr9zoOk1T5mg0fBZSEXpjXQePlpDae+vnRKQ=
+X-Received: by 2002:ad4:5aed:0:b0:90c:6936:b508 with SMTP id 6a1803df08f44-90c807b2784mr342748336d6.0.1787673507538;
+        Tue, 25 Aug 2026 08:58:27 -0700 (PDT)
+X-Received: by 2002:ad4:5aed:0:b0:90c:6936:b508 with SMTP id 6a1803df08f44-90c807b2784mr342747526d6.0.1787673506916;
+        Tue, 25 Aug 2026 08:58:26 -0700 (PDT)
 Received: from redhat.com (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-52e09974dc5sm71521911cf.1.2026.08.25.08.44.50
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-90cc64216c6sm1915416d6.22.2026.08.25.08.58.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Aug 2026 08:44:50 -0700 (PDT)
-Date: Tue, 25 Aug 2026 11:44:49 -0400
+        Tue, 25 Aug 2026 08:58:26 -0700 (PDT)
+Date: Tue, 25 Aug 2026 11:58:25 -0400
 From: Brian Masney <bmasney@redhat.com>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Felix Fietkau <nbd@nbd.name>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 2/3] clk: en7523: generalize register clocks function
-Message-ID: <ao24cTsN_V-1O_6L@redhat.com>
-References: <20260819221458.30040-1-ansuelsmth@gmail.com>
- <20260819221458.30040-3-ansuelsmth@gmail.com>
+To: Yang Zi <2959243019@qq.com>
+Cc: sboyd@kernel.org, mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: si5341: Fix NULL pointer dereference in probe
+Message-ID: <ao27oVjo2svicHc8@redhat.com>
+References: <tencent_CF54C6DBF6CC64E627F5231BD1CB408C2F05@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20260819221458.30040-3-ansuelsmth@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <tencent_CF54C6DBF6CC64E627F5231BD1CB408C2F05@qq.com>
 User-Agent: Mutt/2.4.0 (2026-06-19)
 
-Hi Christian,
+Hi Yang,
 
-On Thu, Aug 20, 2026 at 12:14:55AM +0200, Christian Marangi wrote:
-> Airoha AN7583 SoC will use the same logic used by Airoha EN7581 SoC to
-> register clocks. Generalize it to register clocks defined in soc_data.
+On Tue, Aug 25, 2026 at 04:59:56PM +0800, Yang Zi wrote:
+> si5341_probe() dereferences client->dev.of_node->name without first
+> checking that a device tree node is present. When the device is
+> instantiated without DT, e.g. via sysfs "new_device", client->dev.of_node
+> is NULL and probe crashes with a NULL pointer dereference.
 > 
-> Add the clocks definition in EN7581 SoC to support this new implementation.
+> Add an early check and return -ENODEV when no of_node is available, since
+> this driver requires device tree bindings.
 > 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> ---
->  drivers/clk/clk-en7523.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
-> index 5c45aacb6409..924e4f3e36b6 100644
-> --- a/drivers/clk/clk-en7523.c
-> +++ b/drivers/clk/clk-en7523.c
-> @@ -116,6 +116,7 @@ struct en_rst_data {
->  
->  struct en_clk_soc_data {
->  	u32 num_clocks;
-> +	const struct en_clk_desc *base_clks;
+> Signed-off-by: Yang Zi <2959243019@qq.com>
 
-What do you think about adding a num_base_clks member as well to avoid
-the soc_data->num_clocks - 1 below?
+This patch doesn't apply against linux-next. Otherwise the change looks
+fine to me.
 
 Brian
 
 
-
->  	const struct clk_ops pcie_ops;
->  	int (*hw_init)(struct platform_device *pdev,
->  		       struct clk_hw_onecell_data *clk_data);
-> @@ -714,12 +715,15 @@ static int en7523_clk_hw_init(struct platform_device *pdev,
->  static void en7581_register_clocks(struct device *dev, struct clk_hw_onecell_data *clk_data,
->  				   struct regmap *map, void __iomem *base)
->  {
-> +	const struct en_clk_soc_data *soc_data;
->  	struct clk_hw *hw;
->  	u32 rate;
->  	int i;
->  
-> -	for (i = 0; i < ARRAY_SIZE(en7581_base_clks); i++) {
-> -		const struct en_clk_desc *desc = &en7581_base_clks[i];
-> +	soc_data = device_get_match_data(dev);
+> ---
+>  drivers/clk/clk-si5341.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/clk/clk-si5341.c b/drivers/clk/clk-si5341.c
+> index 2499b771cd83..9d901c2fd0df 100644
+> --- a/drivers/clk/clk-si5341.c
+> +++ b/drivers/clk/clk-si5341.c
+> @@ -1567,6 +1567,9 @@ static int si5341_probe(struct i2c_client *client)
+>      bool initialization_required;
+>      u32 status;
+>  
+> +    if (!client->dev.of_node)
+> +        return -ENODEV;
 > +
-> +	for (i = 0; i < soc_data->num_clocks - 1; i++) {
-> +		const struct en_clk_desc *desc = &soc_data->base_clks[i];
->  		u32 val, reg = desc->div_reg ? desc->div_reg : desc->base_reg;
->  		int err;
->  
-> @@ -1014,6 +1018,7 @@ static const struct en_clk_soc_data en7523_data = {
->  };
->  
->  static const struct en_clk_soc_data en7581_data = {
-> +	.base_clks = en7581_base_clks,
->  	/* We increment num_clocks by 1 to account for additional PCIe clock */
->  	.num_clocks = ARRAY_SIZE(en7581_base_clks) + 1,
->  	.pcie_ops = {
-> -- 
-> 2.53.0
+>      data = devm_kzalloc(&client->dev, sizeof(*data), GFP_KERNEL);
+>      if (!data)
+>          return -ENOMEM;
+> 
 > 
 
