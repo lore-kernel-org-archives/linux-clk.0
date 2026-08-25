@@ -1,135 +1,178 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD4EF1FC110;
-	Mon, 24 Aug 2026 21:12:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A791F3D56;
+	Tue, 25 Aug 2026 05:18:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787605953; cv=none; b=nyPSubCCgHNHnie1csG+oGRnQgCcmfbrMPMQ1JqhQlSm2sFtNfdjJLt1S/lkMqP9ts09FfE1Dke7arlv1Jw/G5GHt74mST3h+c/HlOFNBItprhbdClGY68Ml2gL3L3WpKw2VA6uYlbH6lGixytONIyEorCNCDDXdCXd6pjmTMcg=
+	t=1787635098; cv=none; b=n34qpddvKKv8BL+e22pC9PWiwWGKWbviJAipFmCBwleazk6yDL7C19wea1qJ02PiYAvkTmtLgDbh2fWOCPADJTUzmGQecf/oiyXN5tUMFBUu1uktHmaImz+GAn1geFk8SNQuXTB+r2kGsw9vhDAD/9Z4ZFnuWYdInf6aD99b5hU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787605953; c=relaxed/simple;
-	bh=hGtroxhvwuDcQoqg/UFYIfOq90LSG6yXB8udPS3pFLs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cF00QoxUDJmd8T4yVQEui2KSsn3wsRApJBpFufgVMhxuU/zh3gWDPJz9boNkW0pHCVksx/5j/gxTidgh2ozTHMYHYKWc/62wU0rdd8pSp6ED92u09YVwYGqwlM8m4M8w1JeTG55oV0Fx7xrzK8WbGUKtJ3rBbh9zkhLV5PMKkB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=gWJzN7dM; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+	s=arc-20240116; t=1787635098; c=relaxed/simple;
+	bh=1vJXSwb71+DIkIBLQxNtwxCWQXMAvT77Lw0qeqLFOm4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=U5Esl3aki24X0S3uXwscGuYqyP1I0aFhDV4+L+qmagqcTFwhjVPectWgWkzBaXfttm6WS/K9w3YrXy3J8ahAH29QNAppKfTTILAWZt2qOuDbpaD2c0r053ud1Ff91PDpLHCHkVi+lrCIpTGXAvQHYZR/Wirnbwt43y5wy2CGFf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EpJklauP; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="gWJzN7dM"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=jVWHXt5kccAnCww2YkWc7+CJixLQqoOYi0ZBcColNt0=; b=gWJzN7dM/JTTPxhl+cIzoI7bqh
-	xTglornZsWzyUT6gAWwHlVLJetXnZ2Z5EMuCLuAg11XlHgvf1Wk6a0btrtLN5HhjjAG2Q7UH6bgeO
-	5pNpJ0MEntul+ICrSfwFAc4fEk57NsAyll35Dcvwjx0oFXGnLlTCERbbZn+mD4nieMTql+KosEbZ5
-	inUdcsXbrlIQoUmUoxvJUnR4iJIkSUSNyx7MXP5QpUmuaGKDqp5W4m9eiveS9GyjB0lnwBJYC7Lm9
-	QtCoKLycKYO2D/67maCOOnaxcZahjOMGWSvtkjJmVar4K8lyd1CaB5mAfEoncOElmin1FKJV0R227
-	TIkdKuAg==;
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: Ryan Chen <ryan_chen@aspeedtech.com>, Joel Stanley <joel@jms.id.au>,
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>,
- Andrew Jeffery <andrew@codeconstruct.com.au>,
- Billy Tsai <billy_tsai@aspeedtech.com>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, Ray Jui <rjui@broadcom.com>,
- Scott Branden <sbranden@broadcom.com>,
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
- Taichi Sugaya <sugaya.taichi@socionext.com>,
- Takao Orito <orito.takao@socionext.com>, Linus Walleij <linusw@kernel.org>,
- Avi Fishman <avifishman70@gmail.com>, Tomer Maimon <tmaimon77@gmail.com>,
- Tali Perry <tali.perry1@gmail.com>, Patrick Venture <venture@google.com>,
- Nancy Yuen <yuenn@google.com>, Benjamin Fair <benjaminfair@google.com>,
- Sudeep Holla <sudeep.holla@kernel.org>,
- Cristian Marussi <cristian.marussi@arm.com>,
- David Lechner <david@lechnology.com>, Abel Vesa <abelvesa@kernel.org>,
- Peng Fan <peng.fan@nxp.com>, Frank Li <Frank.Li@nxp.com>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Paul Cercueil <paul@crapouillou.net>,
- Santosh Shilimkar <ssantosh@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
- Gregory Clement <gregory.clement@bootlin.com>,
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
- Vladimir Zapolskiy <vz@mleia.com>, Krzysztof Kozlowski <krzk@kernel.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>,
- Peter Griffin <peter.griffin@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Dinh Nguyen <dinguyen@kernel.org>,
- Viresh Kumar <vireshk@kernel.org>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Emilio =?UTF-8?B?TMOzcGV6?= <emilio@elopez.com.ar>,
- Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>, Prashant Gaikwad <pgaikwad@nvidia.com>,
- Thierry Reding <thierry.reding@kernel.org>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
- Masami Hiramatsu <mhiramat@kernel.org>, Ulf Hansson <ulfh@kernel.org>,
- Liviu Dudau <liviu.dudau@arm.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Michal Simek <michal.simek@amd.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-clk@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- openbmc@lists.ozlabs.org, arm-scmi@vger.kernel.org, imx@lists.linux.dev,
- linux-mips@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- soc@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com,
- linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
- linux-mediatek@lists.infradead.org,
- Geert Uytterhoeven <geert+renesas@glider.be>
-Subject:
- Re: [PATCH 00/45] clk: Make sure clk_init_data is fully initialized (part
- two)
-Date: Mon, 24 Aug 2026 23:11:32 +0200
-Message-ID: <3074509.irdbgypaU6@diego>
-In-Reply-To: <cover.1787239813.git.geert+renesas@glider.be>
-References: <cover.1787239813.git.geert+renesas@glider.be>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EpJklauP"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 99D95C2BCFA;
+	Tue, 25 Aug 2026 05:18:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1787635097;
+	bh=1vJXSwb71+DIkIBLQxNtwxCWQXMAvT77Lw0qeqLFOm4=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=EpJklauPLAqPyoFLSLdBB6FXWQbFMgl5529wAVYn7xoFbeY/v/yakHMueEi+6sMkC
+	 fvQWQc6pkp4k3D3bHX0p8gJEyMP4J1e9wsJWIRznfZfMJV8wTOLS3BUdIf7wGq4O8l
+	 NDa6TCgWiq4+d0RcGq4aqAgbFNv/RC6PBAbgZAX70P9j67uTppXJ5+9/GKzYOShpaz
+	 z+Z1cHXbKdzjNsFYyoDFaQX6DYIgTYKBn0KKi9+lc6485wD9+1Vk7gO0tMiZZnaZHy
+	 VuTqvv45SK6bnboNDoGmk52LaEMSx1VT38d4xJ98imM5Ix8LBrVmFWJIXeULvO4TW4
+	 2lxxfgdHP87og==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 859CEC61CE3;
+	Tue, 25 Aug 2026 05:18:17 +0000 (UTC)
+From: Rudraksha Gupta via B4 Relay <devnull+guptarud.gmail.com@kernel.org>
+Date: Mon, 24 Aug 2026 22:18:17 -0700
+Subject: [PATCH v2 2/2] clk: rk808: Select the clock function of CLK32KOUT2
+ on the RK818
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20260824-ppp_connectivity-v2-2-a4b0e11cd62c@gmail.com>
+References: <20260824-ppp_connectivity-v2-0-a4b0e11cd62c@gmail.com>
+In-Reply-To: <20260824-ppp_connectivity-v2-0-a4b0e11cd62c@gmail.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+ Lee Jones <lee@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Rudraksha Gupta <guptarud@gmail.com>, linux-clk@vger.kernel.org, 
+ mfd@lists.linux.dev, Martijn Braam <martijn@brixit.nl>
+X-Mailer: b4 0.16.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1787635096; l=3455;
+ i=guptarud@gmail.com; s=20240916; h=from:subject:message-id;
+ bh=btBxv1+lK3NuJ3bLMeNAP2UZMK2asFecMzZxkL+Msaw=;
+ b=hc3J13W/s34ea0bH6JLfnQLZaWIagLwAHIyZadpZ16gudpVF+ttaRbDdXkMoHA+ARJ6eYeZ0m
+ tdH+itjfuWeAqhiMtIVBnJgnrFLkeqGRqL+4Xo8BRLA3st+1wFsA2iB
+X-Developer-Key: i=guptarud@gmail.com; a=ed25519;
+ pk=ETrudRugWAtOpr0OhRiheQ1lXM4Kk4KGFnBySlKDi2I=
+X-Endpoint-Received: by B4 Relay for guptarud@gmail.com/20240916 with
+ auth_id=211
+X-Original-From: Rudraksha Gupta <guptarud@gmail.com>
+Reply-To: guptarud@gmail.com
 
-Hi Geert,
+From: Martijn Braam <martijn@brixit.nl>
 
-Am Freitag, 21. August 2026, 10:53:10 Mitteleurop=C3=A4ische Sommerzeit sch=
-rieb Geert Uytterhoeven:
-> 	Hi all,
->=20
-> The clk_init_data structure contains several mutually-exclusive members
-> for different methods to specify the possible parents of a clock,
-> prompting drivers to initialize only the members they need.  However,
-> not initializing all members may cause subtle issues, which are only
-> exposed when CONFIG_INIT_STACK_ALL_PATTERN or CONFIG_INIT_STACK_NONE is
-> enabled.
->=20
-> Hence this series aims to make sure all members are fully initialized,
-> to avoid such bugs, and to prevent future breakage when converting
-> drivers to a different method for specifying the parents.
->=20
-> Part One[1] fixed all cases that I identified to be real bugs, in
-> response to a crash I saw on BeagleBone Black.
->=20
-> This series is the clock subpart of Part Two, which fixes remaining
-> cases that are currently harmless.  These are still fragile, and may
-> cause future breakage when converting drivers to a different method for
-> specifying the parents.
->=20
-> Thanks for your comments!
+On the RK818 the CLK32KOUT2 pin is shared between the 32.768 kHz clock
+output and a recovery function, selected by bit 1 of RK808_CLK32OUT_REG.
+CLK32KOUT2_EN only takes effect on the clock function, so the output can
+be enabled and still be silent. The datasheet resets the register to
+zero, but that cannot be relied on: on the Pine64 PinePhone Pro it reads
+0x03 once Linux is up, leaving the wifi and bluetooth without their
+32.768 kHz reference.
 
-I guess more a handling question, how do you expect this series to be
-applied?
+Select the clock function when the output is prepared, so that it can
+also be given back, and report the output as prepared only when it is
+enabled and on the clock function. The bit is not defined on the other
+variants, so give the RK818 its own clk_ops. Boards that never take the
+clock are unaffected.
 
-I.e. each clk-arch-maintainer, or in one big thing by the core clock
-maintainers? Just wondering if I should pick the Rockchip patch
-or just let the whole series get applied by the clock maintainers.
+Based on an out-of-tree patch by Martijn Braam & Kamil Trzciński,
+carried by Ondrej Jirman.
 
+Signed-off-by: Martijn Braam <martijn@brixit.nl>
+Signed-off-by: Rudraksha Gupta <guptarud@gmail.com>
+---
+ drivers/clk/clk-rk808.c   | 46 +++++++++++++++++++++++++++++++++++++++++++++-
+ include/linux/mfd/rk808.h |  1 +
+ 2 files changed, 46 insertions(+), 1 deletion(-)
 
-Heiko
+diff --git a/drivers/clk/clk-rk808.c b/drivers/clk/clk-rk808.c
+index 5a75b5c91555..4aabe0234769 100644
+--- a/drivers/clk/clk-rk808.c
++++ b/drivers/clk/clk-rk808.c
+@@ -71,6 +71,49 @@ static const struct clk_ops rk808_clkout2_ops = {
+ 	.recalc_rate = rk808_clkout_recalc_rate,
+ };
+ 
++static int rk818_clkout2_enable(struct clk_hw *hw, bool enable)
++{
++	struct rk808_clkout *rk808_clkout = container_of(hw,
++							 struct rk808_clkout,
++							 clkout2_hw);
++
++	return regmap_update_bits(rk808_clkout->regmap, RK808_CLK32OUT_REG,
++				  RK818_CLK32KOUT2_FUNC_MASK | CLK32KOUT2_EN,
++				  enable ? CLK32KOUT2_EN : 0);
++}
++
++static int rk818_clkout2_prepare(struct clk_hw *hw)
++{
++	return rk818_clkout2_enable(hw, true);
++}
++
++static void rk818_clkout2_unprepare(struct clk_hw *hw)
++{
++	rk818_clkout2_enable(hw, false);
++}
++
++static int rk818_clkout2_is_prepared(struct clk_hw *hw)
++{
++	struct rk808_clkout *rk808_clkout = container_of(hw,
++							 struct rk808_clkout,
++							 clkout2_hw);
++	u32 val;
++
++	int ret = regmap_read(rk808_clkout->regmap, RK808_CLK32OUT_REG, &val);
++
++	if (ret < 0)
++		return 0;
++
++	return (val & (RK818_CLK32KOUT2_FUNC_MASK | CLK32KOUT2_EN)) == CLK32KOUT2_EN;
++}
++
++static const struct clk_ops rk818_clkout2_ops = {
++	.prepare = rk818_clkout2_prepare,
++	.unprepare = rk818_clkout2_unprepare,
++	.is_prepared = rk818_clkout2_is_prepared,
++	.recalc_rate = rk808_clkout_recalc_rate,
++};
++
+ static struct clk_hw *
+ of_clk_rk808_get(struct of_phandle_args *clkspec, void *data)
+ {
+@@ -134,11 +177,12 @@ static const struct clk_ops *rkpmic_get_ops(long variant)
+ 	case RK809_ID:
+ 	case RK817_ID:
+ 		return &rk817_clkout2_ops;
++	case RK818_ID:
++		return &rk818_clkout2_ops;
+ 	/*
+ 	 * For the default case, it match the following PMIC type.
+ 	 * RK805_ID
+ 	 * RK808_ID
+-	 * RK818_ID
+ 	 */
+ 	default:
+ 		return &rk808_clkout2_ops;
+diff --git a/include/linux/mfd/rk808.h b/include/linux/mfd/rk808.h
+index 7ffc904c864c..e3cb586d34a0 100644
+--- a/include/linux/mfd/rk808.h
++++ b/include/linux/mfd/rk808.h
+@@ -1051,6 +1051,7 @@ enum rk806_dvs_mode {
+ 
+ #define VOUT_LO_INT	BIT(0)
+ #define CLK32KOUT2_EN	BIT(0)
++#define RK818_CLK32KOUT2_FUNC_MASK	BIT(1)
+ 
+ #define TEMP105C			0x08
+ #define TEMP115C			0x0c
+
+-- 
+2.55.0
 
 
