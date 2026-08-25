@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52AA73CC9E4;
-	Tue, 25 Aug 2026 07:11:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4F413CC9E4;
+	Tue, 25 Aug 2026 07:12:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787641908; cv=none; b=noeubtJDamQlO1X5KytnlsbexBPdGGl6RO0PsAec8ySCyohEcMDPhoXYV1SSqmsm4VQmFlgLoN8L0HUtiTBK8Qp3nrZ0KnHBdeqDlRP+5TbhCV3v5tlpdfYnRA8zNAsGyMXR68LhU24+hnXffTZ6dGjmRWQf09yZn1vYZAEYbSg=
+	t=1787641937; cv=none; b=j9+r73TruAV+r7pXxQN2oWobuGFJyb+BIAbzcSr9EyCAHbYCv6IgsbyOl3wcM800ptwC9B4j5nSIGnNb+0IOLrs17eesNqs4zQFYKDHBIErjMKOdNbte94pdfIRMni0OoHB6d5kZddybYS3khXHYOaX0kmR4NmQB1djxZwFw+e0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787641908; c=relaxed/simple;
-	bh=PgJaEOHfHDttF9Ol4dpR9Rr0dxomhxioemQPletPLgw=;
+	s=arc-20240116; t=1787641937; c=relaxed/simple;
+	bh=oYOyK3iYkhUPRGuMM1qEQOxhiXz4aE0wnlypMnueDtQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nlnBxCXdFWWLHsYf2/YF6EeUh2pKcnN+vLEWRTLQYsdHRnbdUsYitJGv9SyNodzPSZvsbQUKwMIzn3u/A54YBS+WqAAJSIcTnQvPfdDNWBm+JTLZHA+PQACHrBnZyVPYp203jXpc9aln65ALEUFgLA94n5lTMV5SiWvczx8Lkwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jkD6u/eu; arc=none smtp.client-ip=100.103.45.18
+	 In-Reply-To:Content-Type; b=AZgLnCrUyP9luZoouQ5mPXoU0xTNsaqV1MiS0JVL5AclkfnWc6idTJrHPH7MCqv4W1qMhsCUAN+S+PP+dwTYN0Yqq1SjHgsEmZWTIU2QjKgXt7uUAasko/pmUB3EF+Ukd/0HUyAAU+k1txWLATnT2YZiwPrj+YF5b1yc2yh8peI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cloPaIDU; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jkD6u/eu"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 428551F000E9;
-	Tue, 25 Aug 2026 07:11:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cloPaIDU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D74AD1F000E9;
+	Tue, 25 Aug 2026 07:12:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787641906;
-	bh=ySuHospDeKpEWQLhapNnjbco2HRQ6tBz/x27PDFmvy4=;
+	s=k20260515; t=1787641936;
+	bh=7u+Ry7eN5O3AbyKcEMUGNbPR0jiiJGmuEGUEznQ2Myo=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=jkD6u/euRoWRMs1U2CxyMHXGhJjk6N7FaxTAkWdKtUPFge/oXEjHntgXI27qdlJZm
-	 vFafdrVR6i0tfLGK/phT8gZErs6/cNS8lmXpkWJ6uMpSc76Lngyxaue/M+8W/BPKpF
-	 7OIIbd6ykwra+ezUtOzadKf1BfL3ymb1VHgZqYjR9FeZQBSFEIFeeGlbSw1mcG4QrI
-	 FsZ5nTN9NGr1am48f9hGRS1XxAHHW1Elw5MJrtXwYWfOWJ8xuwiL6MdxR+s2A2rhWC
-	 9b/5eNmFmIXh/mN7D/pfawXg+yD5+kpEhZdaDG/hMT6TmckUIkr4erFnLuGQPZidUT
-	 5L2/gsBnoVDzg==
-Message-ID: <5bd09f42-56ce-4bbd-843c-df4ba6d567cc@kernel.org>
-Date: Tue, 25 Aug 2026 09:11:40 +0200
+	b=cloPaIDUKyPKeahsT3iuLDEj6B4hKIhzCSFHi0AX2UY8Jv4gsCWwCAG89n1He77Ne
+	 7xhuMtCabnfKmr1ZIKqTdSJivIJ3XF3oVfR4+vGNuvhLy9AocsyrTM4DFD+uWc0JLm
+	 Qz+kNMV/UUsjA31Fp85rgqt7nxQsmW9dWcq3hMCvDJ/rAYLJCLT94iIGq/NL0vU7rw
+	 OM8sG2QnCmktAjDPnc0Ma2GEUY5NtJlnd+ydnNiYuZTH97nkuWf56+YPa7THi19s48
+	 WQJrkMJ0sZKbuiPWiD+kflWwgdl1pEBVxWujkBmdjMw54H5g2gsxvWNwZpYvH4l1jB
+	 3NRmoTxGQI5wg==
+Message-ID: <8a407cf4-0c63-4424-89c0-b03b0a889b03@kernel.org>
+Date: Tue, 25 Aug 2026 09:12:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -37,18 +37,20 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH 1/2] dt-bindings: clock: qcom: Add EMAC CNOC APB clocks
  for Nord
-To: Taniya Das <taniya.das@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+To: Abel Vesa <abel.vesa@oss.qualcomm.com>,
+ Taniya Das <taniya.das@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
  Brian Masney <bmasney+clk@redhat.com>,
  Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
  Imran Shaik <imran.shaik@oss.qualcomm.com>,
  Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
  linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20260824-nords_emac_apb_clk-v1-0-290767386bf5@oss.qualcomm.com>
  <20260824-nords_emac_apb_clk-v1-1-290767386bf5@oss.qualcomm.com>
+ <atahvswxprmw7bggfihchccl5pvmkta6d2fpsadmnldhw3wjuk@chsmbftw4olp>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -94,17 +96,21 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
  n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
  qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
-In-Reply-To: <20260824-nords_emac_apb_clk-v1-1-290767386bf5@oss.qualcomm.com>
+In-Reply-To: <atahvswxprmw7bggfihchccl5pvmkta6d2fpsadmnldhw3wjuk@chsmbftw4olp>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 24/08/2026 08:53, Taniya Das wrote:
-> Add the EMAC0 and EMAC1 CNOC APB clock IDs to the SE_GCC clock
-> controller bindings for the Qualcomm Nord SoC.
+On 24/08/2026 10:11, Abel Vesa wrote:
+> On 26-08-24 12:23:29, Taniya Das wrote:
+>> Add the EMAC0 and EMAC1 CNOC APB clock IDs to the SE_GCC clock
+>> controller bindings for the Qualcomm Nord SoC.
+>>
+>> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
 > 
+> Fixes tag, maybe ?
 
-
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Then also describe the observable bug. Fixes tag should not be used if
+there is no bug.
 
 Best regards,
 Krzysztof
