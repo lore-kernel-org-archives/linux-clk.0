@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4F413CC9E4;
-	Tue, 25 Aug 2026 07:12:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AEDB3D1ABD;
+	Tue, 25 Aug 2026 07:12:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787641937; cv=none; b=j9+r73TruAV+r7pXxQN2oWobuGFJyb+BIAbzcSr9EyCAHbYCv6IgsbyOl3wcM800ptwC9B4j5nSIGnNb+0IOLrs17eesNqs4zQFYKDHBIErjMKOdNbte94pdfIRMni0OoHB6d5kZddybYS3khXHYOaX0kmR4NmQB1djxZwFw+e0=
+	t=1787641971; cv=none; b=PWnd2TUeUyeAdKVHshbcNgo+TMSEEdAygICu+j5DVQ0ZSha/vrtcmTFnRWkmBIhOHCgYwUTO/ZS25m8EZffgOgM0+Tk5NEeGjLdXlMF1cfR2OnKa58UahxOeDigRp3p51kcLEbdthO2utaRD5Fm+RdQpK+DM4c1VvwDRON4ROr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787641937; c=relaxed/simple;
-	bh=oYOyK3iYkhUPRGuMM1qEQOxhiXz4aE0wnlypMnueDtQ=;
+	s=arc-20240116; t=1787641971; c=relaxed/simple;
+	bh=xzGZTYkrQ9nyfVHqZW6veLzcSWAuPzDQYLKZUOZAVqA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AZgLnCrUyP9luZoouQ5mPXoU0xTNsaqV1MiS0JVL5AclkfnWc6idTJrHPH7MCqv4W1qMhsCUAN+S+PP+dwTYN0Yqq1SjHgsEmZWTIU2QjKgXt7uUAasko/pmUB3EF+Ukd/0HUyAAU+k1txWLATnT2YZiwPrj+YF5b1yc2yh8peI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cloPaIDU; arc=none smtp.client-ip=100.103.45.18
+	 In-Reply-To:Content-Type; b=SdCGJVbwVSi7ARRjw/IDw0G1NJlxcSGRY6U3S4Z905wQ3f46+DcjmfisuOsQr/FyDolRH06yCoaxD57ftmrketvSuLw8mWn5Nq430tTJlUphevLO98/9qrUKPJCzh8RxCziR2voysey16Xnnu945Qse75zuTXffHovKnGKuvwWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=an+fMrXi; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cloPaIDU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D74AD1F000E9;
-	Tue, 25 Aug 2026 07:12:10 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="an+fMrXi"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6CFE1F00ACF;
+	Tue, 25 Aug 2026 07:12:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787641936;
-	bh=7u+Ry7eN5O3AbyKcEMUGNbPR0jiiJGmuEGUEznQ2Myo=;
+	s=k20260515; t=1787641969;
+	bh=fSnPxOXxbPqn44HU8F1vVplrQwAFdhDYxhZwMac+fCo=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=cloPaIDUKyPKeahsT3iuLDEj6B4hKIhzCSFHi0AX2UY8Jv4gsCWwCAG89n1He77Ne
-	 7xhuMtCabnfKmr1ZIKqTdSJivIJ3XF3oVfR4+vGNuvhLy9AocsyrTM4DFD+uWc0JLm
-	 Qz+kNMV/UUsjA31Fp85rgqt7nxQsmW9dWcq3hMCvDJ/rAYLJCLT94iIGq/NL0vU7rw
-	 OM8sG2QnCmktAjDPnc0Ma2GEUY5NtJlnd+ydnNiYuZTH97nkuWf56+YPa7THi19s48
-	 WQJrkMJ0sZKbuiPWiD+kflWwgdl1pEBVxWujkBmdjMw54H5g2gsxvWNwZpYvH4l1jB
-	 3NRmoTxGQI5wg==
-Message-ID: <8a407cf4-0c63-4424-89c0-b03b0a889b03@kernel.org>
-Date: Tue, 25 Aug 2026 09:12:08 +0200
+	b=an+fMrXiyWYpott+Z6owFw/JOtZH9cA8hHYiKw7TP3fiB9xeEnfYIKAdBo/evUxSW
+	 ER4IqZZPuiRHN2bC0VI9e/tla+FocezAQV05KqNqePxG+wYeu+ALfEuP3pM0WkN0Ks
+	 CqiaCLJK8BNlGpLPJklx1YIDwMPvwKSqC+GNqAcejxoWqLQPEd0ivwEYIdEcnud2Ry
+	 iZXEKx2zBCpvwaLVNgz8EtgG6/Aoav2dcH31F1UGmj771KH3/fuAMXo07HNWXh40HQ
+	 U7OO5oINerfba7ZU4Pnzlw0SGZ3IQRJj7X/n82AZZkjVWYi57ojILaPHdFMWQafX5i
+	 Cr+TRrAJVTfPQ==
+Message-ID: <115c74e0-2e08-48ac-a70b-c11d2fa808f5@kernel.org>
+Date: Tue, 25 Aug 2026 09:12:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,8 +35,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: clock: qcom: Add EMAC CNOC APB clocks
- for Nord
+Subject: Re: [PATCH 2/2] clk: qcom: segcc-nord: Add EMAC CNOC APB clocks for
+ Nord SoC
 To: Abel Vesa <abel.vesa@oss.qualcomm.com>,
  Taniya Das <taniya.das@oss.qualcomm.com>
 Cc: Bjorn Andersson <andersson@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
@@ -49,8 +49,8 @@ Cc: Bjorn Andersson <andersson@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
  linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20260824-nords_emac_apb_clk-v1-0-290767386bf5@oss.qualcomm.com>
- <20260824-nords_emac_apb_clk-v1-1-290767386bf5@oss.qualcomm.com>
- <atahvswxprmw7bggfihchccl5pvmkta6d2fpsadmnldhw3wjuk@chsmbftw4olp>
+ <20260824-nords_emac_apb_clk-v1-2-290767386bf5@oss.qualcomm.com>
+ <z3d2awmpulr5cwexhso24verb24ec4rsnj4pxfhhqxwezrfjat@pwoxszguelpg>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -96,21 +96,22 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
  n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
  qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
-In-Reply-To: <atahvswxprmw7bggfihchccl5pvmkta6d2fpsadmnldhw3wjuk@chsmbftw4olp>
+In-Reply-To: <z3d2awmpulr5cwexhso24verb24ec4rsnj4pxfhhqxwezrfjat@pwoxszguelpg>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 24/08/2026 10:11, Abel Vesa wrote:
-> On 26-08-24 12:23:29, Taniya Das wrote:
->> Add the EMAC0 and EMAC1 CNOC APB clock IDs to the SE_GCC clock
->> controller bindings for the Qualcomm Nord SoC.
+On 24/08/2026 10:12, Abel Vesa wrote:
+> On 26-08-24 12:23:30, Taniya Das wrote:
+>> Add the EMAC0 and EMAC1 CNOC APB clocks to the SE_GCC clock controller
+>> on the Qualcomm Nord SoC. These branch clocks gate the config NoC APB
+>> access to the two EMAC controllers and are required for register access
+>> to the Ethernet MACs.
 >>
 >> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
 > 
-> Fixes tag, maybe ?
+> Fixes tag, maybe?
 
-Then also describe the observable bug. Fixes tag should not be used if
-there is no bug.
+Same here. Fixes needs proper bug description.
 
 Best regards,
 Krzysztof
