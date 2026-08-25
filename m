@@ -1,71 +1,71 @@
-Received: from mail-yx1-f53.google.com (mail-yx1-f53.google.com [74.125.224.53])
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D20CE331A53
-	for <linux-clk@vger.kernel.org>; Tue, 25 Aug 2026 14:47:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 456AB486E6D
+	for <linux-clk@vger.kernel.org>; Tue, 25 Aug 2026 15:03:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787669235; cv=none; b=rvYnoAeKBNda3ahZKkXHoBOQjVk+dAULiylx4VPP6oBz5+p3bRISRRSS6Ng7IIjr5b0ZWeKvlZ86xpQGvrRtmoAYy/6Sboyjskvfo27vQD1GRewmIhVwkQ9T7d/7utqHFTyAgwrxR3HyOac1rwVAj8Y3esuIqSZEv6ho1I5VCRA=
+	t=1787670189; cv=none; b=tz3lnejVySJ0mlAJMcTYIPqMTsx9ZjtvIMsKmmGEGwUyLybwQ87MYQw2luqt+lMVJ5hAT6bSBOzaiIgXLcwvxH4tWPQrE07Rcgkt9VltcY324+NZIaRu5iJyO+DduagmZSZX907U2oS7iYguCzWRg8zGmtVyKlZ3jSxBaO62JoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787669235; c=relaxed/simple;
-	bh=nLpkCbwZynXDMfJEEM7Od0jmnvS7H38PKmlDset+WdA=;
+	s=arc-20240116; t=1787670189; c=relaxed/simple;
+	bh=Loh7CxMJyj/c0rgZ7iXlS8miTtj/q5VnJdY302NtqGM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=T1P/nO8fkI0QjfMnJ6SPzVpGJkkNJ5yvN1TjiP/4ylCTq4d1yMrxALTEWdwbnXNfv/IVnYxLn+nywda/NA9b5QB71lnwUloPBatBQa+qQ4nHwYKIZMbK/nC6Nd7FtCqZ+KJiioBuDGtnrAX/vMve3J+ms/W4pGIHo1ejkihbke0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.224.53
+	 To:Cc:Content-Type; b=ftW3IwlWb60eQAxH0bbHxfKN7DHDWO2MI4rvjYsMhzFgXrJL4Jiz6cOCwE/QCNYO+ZWB3dNoj3C8oH/HJbQ75tUfo9vM/1FQytDZHlftdxsy2WFy6fRN9nksOC3l4X3MATophc0TLseSXulEYXYJbf/oniMgjHj8cZAjCwYZZlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yx1-f53.google.com with SMTP id 956f58d0204a3-66c83e34212so5991426d50.0
-        for <linux-clk@vger.kernel.org>; Tue, 25 Aug 2026 07:47:12 -0700 (PDT)
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-c15d47266baso569157766b.3
+        for <linux-clk@vger.kernel.org>; Tue, 25 Aug 2026 08:03:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787669230; x=1788274030;
+        d=1e100.net; s=20251104; t=1787670185; x=1788274985;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=U2zVX3GQV5dux+TGrNQ7XOJ1BZI/EApCvZgLsrH7Hjs=;
-        b=A6CWjq0zf9RkGF1VOzllQsU9Im88QeCn3bZfS8L4r2mS4r0TMKI3QPgAXt3mpZwh/g
-         0RJd4CuVUw9xDvdg8qzdOG625x8fDBFTkktc2KtaLcrFIlVcno8ZyGNGPROhbx/h16no
-         uVxDkOldVfCoXpNErBXWOt9ZJ91R8sVirhlfMG0TSwbmIl3y/imAqHMbQ2Ayd9zUh4u/
-         iareVJUFLdQWpkG4fJPn4NbA98xxjE1SMXet73czVrD2LN1VpIxS5IHd/rMQ07wvn1Jk
-         XeHGBkRYI9gYLj9Ra0hcKmpe/3rhcK6RvHS9XpxsuJSeD7WZ8qaBFeZjY+1uxAPRcMzb
-         6yRg==
-X-Forwarded-Encrypted: i=1; AHgh+Rp9E/oNCRcd1OZ6ULmS6g4I/EQgOb38XjqojKLNQoMsTEGqZQ22w1/VuGZcfjJOXUOcJZd1B/3FteA=@vger.kernel.org
-X-Gm-Message-State: AFuF++npJPD8do03mPQVgYr4dHtgXsKJBTnK+3NVV8EDZDiJha8nrq/T
-	szgvxBjy0nZ+YiqKa1qewydEcoETMrv5zhUK2ruI4FDembr/JndKm0W6xvGmHdHX8Dw=
-X-Gm-Gg: AR+sD13GieKBJBDXMS3DvEw34HldRacXne9imFdJWKGnTkY/TjG3sYOJTiKbPAk28fP
-	GJUsMYnkdUqSiGD7CUfAM45DpePcUMDXaiathAOo5BsY9AriCRG57KGEmNoK2RcjpciFYaYNspU
-	4eaapiGLr2D42RredZlOk4ikWI6KSfKsg8RB1jU3c+i9/XRS96hWKdv/CSjK2Tg26Y/O3Um1SvO
-	rLYOH5IlMFn4R7MvZyiihxjEusNAuM/L6Q+gyh0NkEMk8fp6IM4h4l5m+EmG+2rILA11Mj7K8RQ
-	g3qmAwXcOWnzvLk3W+hYRWm+IjnlVMuHgCe2ssE4j6+a22sPmLhaWpHSGVJilWFYv3nq90WFAOg
-	NEie31EjuGR6buVpqqYHqNAlfA4n4AnZtXYjxYcRGehtwC9/5mI9sN5q6L45kfivAgtsvJXOm64
-	mSZBdE2f3M5mORreHryQ5iy0DrMIOAeKo3puUhIeTNcL40BmZ0s7trj9o5jAx9n/WnnRDBmgBLy
-	RVwazGe0TnbNu83MPZvgcOIsmWT1A==
-X-Received: by 2002:a53:ad08:0:b0:66d:236b:dc75 with SMTP id 956f58d0204a3-66d23eed08fmr187926d50.48.1787669230140;
-        Tue, 25 Aug 2026 07:47:10 -0700 (PDT)
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com. [209.85.128.180])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-66d245524a8sm64451d50.1.2026.08.25.07.47.09
+        bh=8UDG6348hQ5hCNqa39+P1Xgwy7V8Kyi97ymwy69cGkw=;
+        b=Iw+SXQJelI6Ul1jomYEOnUzAlrGS6vvfRt2ltj4tSguSZARnZt3q0pMkZaR2UIBFTo
+         TCqyKPHbYWEfX8lDnJEhWIWF1+OkquXAr1EYWfmbqJpiW4qYx2VWY9czQH8V+UXp1hwJ
+         3EyROW+xlNW/W68VtV6aMD8pviBI3LE33s9msRXjlTi/vqb1LNnUCQQDLcJ+pWTCVlec
+         whdFTSQfaRiwMTxOXgpJ7n/jlpzgqOPnbmYRTrFUl20nMuLxWKV92mh1ShNRbuQ57udb
+         nDbqBK61Lho+loG82f6qhLg7LGTiMU7ASAU9fykYv3/4lraWqECFRwu3kO5PPlvLjCjL
+         jHuQ==
+X-Forwarded-Encrypted: i=1; AHgh+Rrhy1o1LWW20EA4MwYVrFRAJ9jkJ/75YBULjC5jd9Iimi+AgmNOyd6vnrduf4Q2iOaeXYL6wHutA6s=@vger.kernel.org
+X-Gm-Message-State: AFuF++lTvoOiJ9H9UMXjjnZ5So9LU2RXEb+CSQk35sId54FYhbQjKR4N
+	Z7jq16Rq0fLzaP3hLBA44LWjhvoz3KZiTLKHPJeLVXJf2+Z5QA6Nc3sxSfRkWZXf52c=
+X-Gm-Gg: AR+sD11LAPFaPfM0O8IEinRk6OYQCVu/I1eolb5La4ZHlm5qsxlUbQ6/tkL9Jim1Bew
+	XpFNKqm11D3a6hcBf/fTgHYKb7QVj8r6byXrKaXN7OjMzFTK3rpnuPAHyAtHVY7FJ6HHj+DdPRn
+	T4ZKc0WOKvsOk6FxV3u4w0+N4xdtOlS6gbHdVL1Iow3GyB+2enCBrYgaQ0yryE8Jw+p3v+PL1nr
+	uxQ5DiGU7kr3G/LEeBlrU5/3oFzFJrJPYVooApPz+ah4MAn7ip3YSOFP6mcUjkjhTB9YZoVImrr
+	WAX7tgfnhMoKjDkZkB3LtP1nGVtGcgSiID2OOUw1COkD+MCNj62Uu74D//f29lfH7vatS7NLulR
+	PXPojxxBkmQNjpedTkA2+funD+U7mThjdG6XV3M1m7nS2/jYd+gAAxZqleW8TzuJb5ACJ8SgwcO
+	UWDX+jCLbOfZq58nnVzedpqaPk8kchGyi0ntWM9KIQizGjJO+70xvbQkB8/IJuCBZmLq9JdHPV5
+	P1nRMxUhjbd+N/APwd/3d7Jag==
+X-Received: by 2002:a17:907:1c19:b0:c20:2eee:97be with SMTP id a640c23a62f3a-c24e5899c85mr837089166b.7.1787670184958;
+        Tue, 25 Aug 2026 08:03:04 -0700 (PDT)
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com. [209.85.208.53])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c249685ab3csm1878384766b.49.2026.08.25.08.03.01
         for <linux-clk@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Aug 2026 07:47:09 -0700 (PDT)
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-8565d77c277so6813957b3.0
-        for <linux-clk@vger.kernel.org>; Tue, 25 Aug 2026 07:47:09 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RqYalnfD1SWrCVYpZQL8N25ylM6XW7T0KSzbV8I8nCEeLPPHFZJIv+FZbhH/QL5h6z/rG6gp+72/1s=@vger.kernel.org
-X-Received: by 2002:a05:6102:956:b0:778:9e3c:5760 with SMTP id
- ada2fe7eead31-77bd288c901mr8711759137.11.1787668885681; Tue, 25 Aug 2026
- 07:41:25 -0700 (PDT)
+        Tue, 25 Aug 2026 08:03:01 -0700 (PDT)
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-69fab5a852cso8256153a12.0
+        for <linux-clk@vger.kernel.org>; Tue, 25 Aug 2026 08:03:01 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RryqXuv/4XRKGI4zhh8EIYrcxERIB/Rt97yPI8k+k/vPBjgrFMEgzVRd9SXER2L3wRvQjXQ8aBKFCk=@vger.kernel.org
+X-Received: by 2002:a05:6402:2490:b0:6a1:f93c:f0a6 with SMTP id
+ 4fb4d7f45d1cf-6a5c4157aa7mr9125375a12.12.1787670181340; Tue, 25 Aug 2026
+ 08:03:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260714173315.1981708-1-claudiu.beznea+renesas@tuxon.dev> <20260714173315.1981708-7-claudiu.beznea+renesas@tuxon.dev>
-In-Reply-To: <20260714173315.1981708-7-claudiu.beznea+renesas@tuxon.dev>
+References: <20260714173315.1981708-1-claudiu.beznea+renesas@tuxon.dev> <20260714173315.1981708-9-claudiu.beznea+renesas@tuxon.dev>
+In-Reply-To: <20260714173315.1981708-9-claudiu.beznea+renesas@tuxon.dev>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 25 Aug 2026 16:41:14 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXMhfr=rp9G8X-+=AR5vqW5VrJfrKwjVrHEKk_kJOh0ZQ@mail.gmail.com>
-X-Gm-Features: AcwNN1XcBg5LXeoVHCFcLS1DZhjQyfJuS_scF13yf7YemR1ca_DnmJdOHtxK55I
-Message-ID: <CAMuHMdXMhfr=rp9G8X-+=AR5vqW5VrJfrKwjVrHEKk_kJOh0ZQ@mail.gmail.com>
-Subject: Re: [PATCH v3 6/8] can: rcar_canfd: Add support for Renesas RZ/G3S
+Date: Tue, 25 Aug 2026 17:02:45 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWYyGci_NNG8u+erL+vGeL+8vUXBsZ+1gcaBq-QYFWV2g@mail.gmail.com>
+X-Gm-Features: AcwNN1XuzkfLnm_UPDcmDBLz-Zu37ChvVAcOyLsURutDp-p8VMVRi7QPa69l3QY
+Message-ID: <CAMuHMdWYyGci_NNG8u+erL+vGeL+8vUXBsZ+1gcaBq-QYFWV2g@mail.gmail.com>
+Subject: Re: [PATCH v3 8/8] arm64: dts: renesas: rzg3s-smarc: Enable CAN-FD
 To: Claudiu Beznea <claudiu.beznea+renesas@tuxon.dev>
 Cc: mkl@pengutronix.de, mailhol@kernel.org, robh@kernel.org, 
 	krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com, 
@@ -79,27 +79,65 @@ Content-Type: text/plain; charset="UTF-8"
 
 Hi Claudiu,
 
-On Tue, 14 Jul 2026 at 19:33, Claudiu Beznea
+On Tue, 14 Jul 2026 at 19:34, Claudiu Beznea
 <claudiu.beznea+renesas@tuxon.dev> wrote:
 > From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 >
-> Add support for Renesas RZ/G3S
+> The two CAN FD channels available on the Renesas RZ/G3S SoC are routed
+> through the Renesas SMARC Carrier II board when used with the Renesas
+> RZ/G3S SMARC Module.
 >
-> The Renesas RZ/G3S CAN-FD controller is largely compatible with the
-> variant found on the Renesas RZ/G3E. The main differences are:
-> - the RZ/G3S provides 16 AFL pages
-> - the RZ/G3S supports only two channels
-> - the RZ/G3S supports only CAN-FD operation and does not implement the
->   bits used to select between classical CAN-only and CAN FD-only modes.
-> - the RZ/G3S includes an internal divider that allows the peripheral
->   clock to be used as the CAN FD clock source.
+> The CAN transceiver on the Carrier II board has its standby pins connected
+> to GPIOs that are selected through the SW_GPIO_CAN_PMOD switches. By
+> default, these switches route the GPIOs to the PMOD interfaces.
 >
-> Add support for the Renesas RZ/G3S.
+> Enable the CAN FD controller and its two available channels.
 >
 > Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
 > Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
+Thanks for your patch!
+
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+> --- a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
+> @@ -68,6 +68,24 @@ codec_dai: simple-audio-card,codec {
+>                 };
+>         };
+>
+> +       can_transceiver0: can-phy0 {
+> +               compatible = "ti,tcan1042";
+> +               #phy-cells = <0>;
+> +               max-bitrate = <8000000>;
+> +#if SW_GPIO_CAN_PMOD1 == SW_OFF
+> +               standby-gpios = <&pinctrl RZG2L_GPIO(13, 0) GPIO_ACTIVE_HIGH>;
+> +#endif
+> +       };
+> +
+> +       can_transceiver1: can-phy1 {
+> +               compatible = "ti,tcan1042";
+> +               #phy-cells = <0>;
+> +               max-bitrate = <8000000>;
+> +#if SW_GPIO_CAN_PMOD2 == SW_OFF
+> +               standby-gpios = <&pinctrl RZG2L_GPIO(13, 1) GPIO_ACTIVE_HIGH>;
+> +#endif
+> +       };
+
+Actually this is a single dual-channel TI TCAN1046V, which is modelled
+here as two TCAN1042 instances.
+
+Recently, we got real support for TCAN1046V, so this should probably be\
+rewritten, cfr. "[PATCH/RFT] arm64: dts: renesas: r9a09g047e57-smarc:
+Update CAN transceivers"[1] (which I wrote a while ago, but never
+submitted before)
+
+> +
+>         vcc_sdhi1: regulator-vcc-sdhi1 {
+>                 compatible = "regulator-fixed";
+>                 regulator-name = "SDHI1 Vcc";
+
+[1] https://lore.kernel.org/2a759a486337e4cc8156bc94079471a6552faefc.1787669487.git.geert+renesas@glider.be
 
 Gr{oetje,eeting}s,
 
