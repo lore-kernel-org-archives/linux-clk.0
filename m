@@ -1,38 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A791F3D56;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2B6338B7D4;
 	Tue, 25 Aug 2026 05:18:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787635098; cv=none; b=n34qpddvKKv8BL+e22pC9PWiwWGKWbviJAipFmCBwleazk6yDL7C19wea1qJ02PiYAvkTmtLgDbh2fWOCPADJTUzmGQecf/oiyXN5tUMFBUu1uktHmaImz+GAn1geFk8SNQuXTB+r2kGsw9vhDAD/9Z4ZFnuWYdInf6aD99b5hU=
+	t=1787635098; cv=none; b=MX5Bjg7UqSnSYvxhTSXOWKxCMFN0kYeNz+tyLm74qFPmrRMCBIzUSusJy80eBMnhmAKwEZ9S90Jp8GaU24FvpmcbgbOauWMvzDXFA+DLoro9bGw2GaP+d3C7inT0SDGmgtVGlW+Bvvm/l/ByY1SVE/Xq3SZ29JbJPv+1kkAUAgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1787635098; c=relaxed/simple;
-	bh=1vJXSwb71+DIkIBLQxNtwxCWQXMAvT77Lw0qeqLFOm4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=U5Esl3aki24X0S3uXwscGuYqyP1I0aFhDV4+L+qmagqcTFwhjVPectWgWkzBaXfttm6WS/K9w3YrXy3J8ahAH29QNAppKfTTILAWZt2qOuDbpaD2c0r053ud1Ff91PDpLHCHkVi+lrCIpTGXAvQHYZR/Wirnbwt43y5wy2CGFf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EpJklauP; arc=none smtp.client-ip=10.30.226.201
+	bh=c8m+kP4UJbinGZZP2vZ7BLyVif62dvbVb9w5w4QtJ2c=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=DDRUMFRATVDKVa2nRV9IFuPpyqmuf61bFf3qJpirckGpN86ePmMKctOSfDonwSfn5brsMzJyhgVFXp1qZ+uBUy/zKIWyzE59qX6Ck5RhGwQrMA/fE9gbpcKV52dyHADJJDdSTcFw8st5Md/ccCYpiMOWfPK9dQhXK0GanpP8iXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GlvZm08+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EpJklauP"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 99D95C2BCFA;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GlvZm08+"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 86997C2BCB8;
 	Tue, 25 Aug 2026 05:18:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1787635097;
-	bh=1vJXSwb71+DIkIBLQxNtwxCWQXMAvT77Lw0qeqLFOm4=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=EpJklauPLAqPyoFLSLdBB6FXWQbFMgl5529wAVYn7xoFbeY/v/yakHMueEi+6sMkC
-	 fvQWQc6pkp4k3D3bHX0p8gJEyMP4J1e9wsJWIRznfZfMJV8wTOLS3BUdIf7wGq4O8l
-	 NDa6TCgWiq4+d0RcGq4aqAgbFNv/RC6PBAbgZAX70P9j67uTppXJ5+9/GKzYOShpaz
-	 z+Z1cHXbKdzjNsFYyoDFaQX6DYIgTYKBn0KKi9+lc6485wD9+1Vk7gO0tMiZZnaZHy
-	 VuTqvv45SK6bnboNDoGmk52LaEMSx1VT38d4xJ98imM5Ix8LBrVmFWJIXeULvO4TW4
-	 2lxxfgdHP87og==
+	bh=c8m+kP4UJbinGZZP2vZ7BLyVif62dvbVb9w5w4QtJ2c=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=GlvZm08+42w6wLq6hwEcRYRNHi+RyJXY9zp8MJI4NpgWSBe7BaDWDXlpkF7QVZcx5
+	 bNR1NCG61x3IqaWsFIgol7BKR+Mdyp292HyRHWaWZlWKn2wONi8W3Z6FWawpfs+zCC
+	 +ITBBUPWd+B9tMIrbJCmDgutdeLcdcDb5fshQJfCHe21V5bbWhS1aaYustaSPSbqSS
+	 079hLZLMhQcgu2OA2Z4VyI2WvgG92VltBphNoJsczaTp9uSgOsMhw/uvSpvyRrscQ5
+	 cD8CF3ssojd/SEf3M251aS1lJhDR0lepakd5GUOGKwmiIuIiyY0ercEMiBnBlOjPD7
+	 wwyaGhfJom5SA==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 859CEC61CE3;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62541C5B572;
 	Tue, 25 Aug 2026 05:18:17 +0000 (UTC)
 From: Rudraksha Gupta via B4 Relay <devnull+guptarud.gmail.com@kernel.org>
-Date: Mon, 24 Aug 2026 22:18:17 -0700
-Subject: [PATCH v2 2/2] clk: rk808: Select the clock function of CLK32KOUT2
- on the RK818
+Subject: [PATCH v2 0/2] Pinephone Pro Connectivity: Adding Modem,
+ Bluetooth, and Wi-Fi
+Date: Mon, 24 Aug 2026 22:18:15 -0700
+Message-Id: <20260824-ppp_connectivity-v2-0-a4b0e11cd62c@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -40,10 +40,12 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20260824-ppp_connectivity-v2-2-a4b0e11cd62c@gmail.com>
-References: <20260824-ppp_connectivity-v2-0-a4b0e11cd62c@gmail.com>
-In-Reply-To: <20260824-ppp_connectivity-v2-0-a4b0e11cd62c@gmail.com>
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/3WOQQ6CMBBFr0JmbUlbEZSV9zDEQBlhEmlrWxsJ4
+ e5WWDu7N/nz5i/g0RF6qLMFHEbyZHQCechAja0ekFGfGCSXJRdCMmvtXRmtUQWKFGZ2wj5N1RU
+ XXkA6sw4f9NmUt2Znh693Mod9CV3rkSkzTRTqLFa5hF9uJB+Mm7cmUWzB/0+jYJzJc9GXeD52U
+ sjrMLX0zJMVmnVdv9b81hvYAAAA
+X-Change-ID: 20260112-ppp_connectivity-5edddd7b4904
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
  Lee Jones <lee@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
@@ -53,11 +55,11 @@ Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  Rudraksha Gupta <guptarud@gmail.com>, linux-clk@vger.kernel.org, 
  mfd@lists.linux.dev, Martijn Braam <martijn@brixit.nl>
 X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1787635096; l=3455;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1787635096; l=3246;
  i=guptarud@gmail.com; s=20240916; h=from:subject:message-id;
- bh=btBxv1+lK3NuJ3bLMeNAP2UZMK2asFecMzZxkL+Msaw=;
- b=hc3J13W/s34ea0bH6JLfnQLZaWIagLwAHIyZadpZ16gudpVF+ttaRbDdXkMoHA+ARJ6eYeZ0m
- tdH+itjfuWeAqhiMtIVBnJgnrFLkeqGRqL+4Xo8BRLA3st+1wFsA2iB
+ bh=c8m+kP4UJbinGZZP2vZ7BLyVif62dvbVb9w5w4QtJ2c=;
+ b=eDOMM9OmCwYq19j0gxgg9RZnGrdgNhF6ujkRI210fik9net1+FPePUNOMqma7F1PoPW9p2xeD
+ a56SRW7MxFjBjIRkeG3gkYif1H3LKFgLDw4rHnhD4d1/WZDeoDS1HWG
 X-Developer-Key: i=guptarud@gmail.com; a=ed25519;
  pk=ETrudRugWAtOpr0OhRiheQ1lXM4Kk4KGFnBySlKDi2I=
 X-Endpoint-Received: by B4 Relay for guptarud@gmail.com/20240916 with
@@ -65,114 +67,78 @@ X-Endpoint-Received: by B4 Relay for guptarud@gmail.com/20240916 with
 X-Original-From: Rudraksha Gupta <guptarud@gmail.com>
 Reply-To: guptarud@gmail.com
 
-From: Martijn Braam <martijn@brixit.nl>
+Continuing the work on upstreaming Pinephone Pro functionality,
+this patch series gets the connectivity side of the Pinephone Pro
+mainlined. Here are the following sources:
 
-On the RK818 the CLK32KOUT2 pin is shared between the 32.768 kHz clock
-output and a recovery function, selected by bit 1 of RK808_CLK32OUT_REG.
-CLK32KOUT2_EN only takes effect on the clock function, so the output can
-be enabled and still be silent. The datasheet resets the register to
-zero, but that cannot be relied on: on the Pine64 PinePhone Pro it reads
-0x03 once Linux is up, leaving the wifi and bluetooth without their
-32.768 kHz reference.
+- https://codeberg.org/megi/linux
+- https://gitlab.com/pine64-org/linux/-/commit/f9f847c6fd1
 
-Select the clock function when the output is prepared, so that it can
-also be given back, and report the output as prepared only when it is
-enabled and on the clock function. The bit is not defined on the other
-variants, so give the RK818 its own clk_ops. Boards that never take the
-clock are unaffected.
+All credits to the following folks:
+- Martijn Braam: original author for the Pinephone Pro bringup
+- Kamil Trzcinski: original author for the Pinephone Pro bringup. No
+  longer credited as I can't seem to contact this person
+- Ondrej Jirman: maintains https://codeberg.org/megi/linux
+- Dang Huynh: for the modem patch above
 
-Based on an out-of-tree patch by Martijn Braam & Kamil Trzciński,
-carried by Ondrej Jirman.
+As far as I can tell, I've credited everyone that I know about, but
+may be missing some because of how long its been since the original
+implementation till now has been.
 
-Signed-off-by: Martijn Braam <martijn@brixit.nl>
+I've also included a short guide on how to test these patches. This
+generally follows this page:
+https://wiki.postmarketos.org/wiki/PINE64_PinePhone_Pro_(pine64-pinephonepro)
+
+To test, please follow the following steps:
+    https://wiki.postmarketos.org/wiki/PINE64_PinePhone_Pro_(pine64-pinephonepro)#External_storage_(microSD_card)
+
+To build your own image, you will need to do something like this:
+pmbootstrap init    # I typically choose Phosh. Defaults should work
+wget https://gitlab.postmarketos.org/postmarketOS/pmaports/-/raw/main/device/community/linux-pine64-pinephonepro/config-pine64-pinephonepro.aarch64 -O arch/arm64/configs/orangepi_defconfig
+make LLVM=1 CC="ccache clang" O=.output ARCH=arm64 -j $(nproc) W=1 orangepi_defconfig all
+pmbootstrap build --envkernel linux-pine64-pinephonepro
+pmbootstrap build --force device-pine64-pinephonepro
+pmbootstrap install --sdcard=/dev/sdX    # Change /dev/sdX appropriately
+pmbootstrap -y zap -a    # Cleanup everything
+
 Signed-off-by: Rudraksha Gupta <guptarud@gmail.com>
 ---
- drivers/clk/clk-rk808.c   | 46 +++++++++++++++++++++++++++++++++++++++++++++-
- include/linux/mfd/rk808.h |  1 +
- 2 files changed, 46 insertions(+), 1 deletion(-)
+Changes in v2:
+- dropped removing the interrupt GPIO for Wifi as that is now merged into mainline
+- reworked clkout2
+- dropped all the signed-off-by's. credited in cover letter
+- Link to v1: https://lore.kernel.org/r/20260112-ppp_connectivity-v1-0-284d6e83b212@gmail.com
 
-diff --git a/drivers/clk/clk-rk808.c b/drivers/clk/clk-rk808.c
-index 5a75b5c91555..4aabe0234769 100644
---- a/drivers/clk/clk-rk808.c
-+++ b/drivers/clk/clk-rk808.c
-@@ -71,6 +71,49 @@ static const struct clk_ops rk808_clkout2_ops = {
- 	.recalc_rate = rk808_clkout_recalc_rate,
- };
- 
-+static int rk818_clkout2_enable(struct clk_hw *hw, bool enable)
-+{
-+	struct rk808_clkout *rk808_clkout = container_of(hw,
-+							 struct rk808_clkout,
-+							 clkout2_hw);
-+
-+	return regmap_update_bits(rk808_clkout->regmap, RK808_CLK32OUT_REG,
-+				  RK818_CLK32KOUT2_FUNC_MASK | CLK32KOUT2_EN,
-+				  enable ? CLK32KOUT2_EN : 0);
-+}
-+
-+static int rk818_clkout2_prepare(struct clk_hw *hw)
-+{
-+	return rk818_clkout2_enable(hw, true);
-+}
-+
-+static void rk818_clkout2_unprepare(struct clk_hw *hw)
-+{
-+	rk818_clkout2_enable(hw, false);
-+}
-+
-+static int rk818_clkout2_is_prepared(struct clk_hw *hw)
-+{
-+	struct rk808_clkout *rk808_clkout = container_of(hw,
-+							 struct rk808_clkout,
-+							 clkout2_hw);
-+	u32 val;
-+
-+	int ret = regmap_read(rk808_clkout->regmap, RK808_CLK32OUT_REG, &val);
-+
-+	if (ret < 0)
-+		return 0;
-+
-+	return (val & (RK818_CLK32KOUT2_FUNC_MASK | CLK32KOUT2_EN)) == CLK32KOUT2_EN;
-+}
-+
-+static const struct clk_ops rk818_clkout2_ops = {
-+	.prepare = rk818_clkout2_prepare,
-+	.unprepare = rk818_clkout2_unprepare,
-+	.is_prepared = rk818_clkout2_is_prepared,
-+	.recalc_rate = rk808_clkout_recalc_rate,
-+};
-+
- static struct clk_hw *
- of_clk_rk808_get(struct of_phandle_args *clkspec, void *data)
- {
-@@ -134,11 +177,12 @@ static const struct clk_ops *rkpmic_get_ops(long variant)
- 	case RK809_ID:
- 	case RK817_ID:
- 		return &rk817_clkout2_ops;
-+	case RK818_ID:
-+		return &rk818_clkout2_ops;
- 	/*
- 	 * For the default case, it match the following PMIC type.
- 	 * RK805_ID
- 	 * RK808_ID
--	 * RK818_ID
- 	 */
- 	default:
- 		return &rk808_clkout2_ops;
-diff --git a/include/linux/mfd/rk808.h b/include/linux/mfd/rk808.h
-index 7ffc904c864c..e3cb586d34a0 100644
---- a/include/linux/mfd/rk808.h
-+++ b/include/linux/mfd/rk808.h
-@@ -1051,6 +1051,7 @@ enum rk806_dvs_mode {
- 
- #define VOUT_LO_INT	BIT(0)
- #define CLK32KOUT2_EN	BIT(0)
-+#define RK818_CLK32KOUT2_FUNC_MASK	BIT(1)
- 
- #define TEMP105C			0x08
- #define TEMP115C			0x0c
+To: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Conor Dooley <conor+dt@kernel.org>
+To: Heiko Stuebner <heiko@sntech.de>
+To: Michael Turquette <mturquette@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>
+To: Brian Masney <bmasney@redhat.com>
+To: Lee Jones <lee@kernel.org>
+Cc: devicetree@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-rockchip@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-clk@vger.kernel.org
+Cc: mfd@lists.linux.dev
 
--- 
-2.55.0
+---
+Martijn Braam (2):
+      arm64: dts: rockchip: Enable the EG25-G modem on the Pinephone Pro
+      clk: rk808: Select the clock function of CLK32KOUT2 on the RK818
+
+ .../boot/dts/rockchip/rk3399-pinephone-pro.dts     | 69 ++++++++++++++++++++++
+ drivers/clk/clk-rk808.c                            | 46 ++++++++++++++-
+ include/linux/mfd/rk808.h                          |  1 +
+ 3 files changed, 115 insertions(+), 1 deletion(-)
+---
+base-commit: 237a1c39e8dfd3e1c6f1f023eea37a48ec04cc63
+change-id: 20260112-ppp_connectivity-5edddd7b4904
+
+Best regards,
+--  
+Rudraksha Gupta <guptarud@gmail.com>
 
 
