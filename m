@@ -1,53 +1,53 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2EEA3E315E
-	for <linux-clk@vger.kernel.org>; Wed, 26 Aug 2026 09:55:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CCFC3BE638
+	for <linux-clk@vger.kernel.org>; Wed, 26 Aug 2026 09:57:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787738139; cv=none; b=I5LQ+muua/zEu5PEUgyhs7L9qtrg6V+XSU4lPEWwxAsa/hnhCe4cCUYlUw2SwQ9LzaYw6W6uyFRL89vAwe0q6zYCS6sgoS0QaKl3gDvlc5JXN0hr6gcR8VePKoJqqStMrmNUxjtJ52CXdUD3NvnB/6Ckqn+2kktwqDp9mBQO9+w=
+	t=1787738259; cv=none; b=e78Yf97unATlyj7GgcVVVmRHV/tyLzJ93Ry8PRk8ig3YMz3YbsIf6B2quJufQ/PFU5XPoC8EXtee3MkQY1AHM0DWZc2y5OJgU2GFX4BK6naOZP8J5+zKFYfovRzjTDXZB0XI48w4GcXYzN5Db4Sorf7nj0b6KiaGgFeuSjDZ42w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787738139; c=relaxed/simple;
-	bh=cQJViyiRFF8Su4cLTioV8AEYhWE9fZW3c8POWUZWSrY=;
+	s=arc-20240116; t=1787738259; c=relaxed/simple;
+	bh=HCKLdImOdMKQJJMilraP0Wk/2XAp3iAJOfJcTrNeEdc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oITqiL+R+KqDRA0ociUpiNhRZVW32C93UOKHXU8syKNtlYJuYywBdHz1PgOoQlTDHGQBxyDThtyxTrfDsL/Z/e9+U3nsmlU9ZbSEJLIXQU/8Ja5to3+577Li3duFuwO8LIkXSaEdfGBBXPUvSNmIdi5ryWaOM1XRS5vA9m0++Sc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.54
+	 In-Reply-To:Content-Type; b=Q/KWnqpTZ1M5X61/sHEsMKcqPoJNaujqC6rWsBk2Lnh+Y6wrFViBsN3J79AM8aokXF14Y5vlHfctWmMlflPCKLWtorgYTI7xo0ZlM3qRPg4jHVuTRry8hpLHKy6MJwVUJ87HSDsobWvnJZYI3fSKgP6gmW54r5AmvbSHcMxrjoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4956869750eso4452765e9.2
-        for <linux-clk@vger.kernel.org>; Wed, 26 Aug 2026 02:55:37 -0700 (PDT)
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-49a97714f5dso703995e9.0
+        for <linux-clk@vger.kernel.org>; Wed, 26 Aug 2026 02:57:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787738136; x=1788342936;
+        d=1e100.net; s=20251104; t=1787738256; x=1788343056;
         h=content-transfer-encoding:content-type:in-reply-to:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=/QbukygbVrN8gnIcgkSWM0X9DmiBJ+CcZt8S0h2LL9s=;
-        b=ZKLawMFm8nGmYgiAnIPyMJNBqImb1exb0rhWzbuAJBJ9GbgyZ3ZO18c5p3zV3jVAA3
-         +kc6qKnIEzpOlrD1wUz8I+vnMYiJAFdG4xJlvCg/Sitmd+WajNf6sdcysI/dC/Zp6vDw
-         Q+oAUmxURGa27BRovHNkQvR/a3RrBU5sPvCwlE/wweRtbEyi0rqEuCcEogEJjHsEiRvv
-         uX3FzZ8Kpjp6/ieleeA/YgKi08rmuSdv9wSY98lwx4X1OpCcPKJjffYsrwa31nvMG5OV
-         gKMlGm5S6Wo/nmuJ2FprCg83zr80k/6H88Gd1qXTfYd8Pfb61iPQ45MNS2fdiRG/wNSc
-         bIaA==
-X-Forwarded-Encrypted: i=1; AHgh+Ro9LXkr2qu7cY7GPmOzN7ZCWdv5RWfZq5L1o0+w7RKgRUAhGvsEc7hF/bYho1urGu/4CV9ORe4D5IE=@vger.kernel.org
-X-Gm-Message-State: AFuF++m8vIs8HAzZPwMlIm4CKKABFJWJbcXoX7kPUWoW7A1+1gWhBqkU
-	jVhRWmX8FyvxTUkuk919fG6CrVdEUhOJePGBuRYv7C6wjbP4ADu8kETK
-X-Gm-Gg: AR+sD13X1wexyEvQ31cub2CrdDVUgSPPOV6EblRhK2tCq1PWGeQftd7zScmRrr55GTy
-	vexlFVN6o+x63dAcNC6iEj1OQ840jRTWW9ze84huRE5Ogws3AiAAYHdzdlwoJt7HVdkn8ZnjI49
-	kxtmojVojRBbkfUImKC2e2PaStryFBm1UmaePwICHHC6qCNiD+Z1yEmWSxrqR9cXD20D+S1AT7o
-	n6Z2tXDEgpZ4SX7j5Ss3mkLay/Wx41RWIa76As0RjDFMZCX51MwCa+3Udao+PjsOGqK7De/SEST
-	aOiXUX2SLj6wdX5njd001bi2eRWjEe58zisrFVykd6sePBu3fOM7YCdkTCxYFU3/GIMyKfqTrCM
-	LVTrVq9RBjhO1j12ZWQae4KWB4CuWlSs175b9MdHOQ5sm3/9M/p0wV3pVqm8gxgq7Suy7H3ZJM0
-	LVp68ZNitf/QkmaCHnEn64f7dffF1sq1z6+YVbPR2Qn69yecMc6tXIJ51xuXWtlnFRHNbw+h7VJ
-	NSwhJ7QPUd4rFTqf2n8mA==
-X-Received: by 2002:a05:600c:474a:b0:499:8aff:59b6 with SMTP id 5b1f17b1804b1-499dc82ad0fmr40013725e9.14.1787738135905;
-        Wed, 26 Aug 2026 02:55:35 -0700 (PDT)
+        bh=rqs/JjM/rhFjmn0l/Jy51z8ISXKwBj5TSNnqoIe2ZtQ=;
+        b=XolvEz+N1Rn5QIO6Cl8+uUMqYRFfnJV3tzu6zUA0AEJ1fylGD7KtMElpkXwxLEfFKD
+         1wAzGJBNKA27PsSosfs/Ug0w/lcKiDPCXc19MJtlSMczCgv61NCC87rML/Yhsm4vPJCf
+         ZDNh3KXd2aojMotVZ5Z2wLKexbSVGWJqkJN2p2+tx53UapuRG08UDVyaXd7pDaCSrfXa
+         JpD2/wkLkgMnKnNrb+wVwMCBQGCBkEXwj1xv8HrU8JGg4QEE9NnW/61m+n9/F6qEFwKU
+         uamMbn/gYgAC1uiWkVl9nqm6Apw+iS3bU2GWpBiDyU29cMVwOqViBqUMPYSFvLC0NzGc
+         Ow+g==
+X-Forwarded-Encrypted: i=1; AHgh+RqvAJV+UdumK4JxRjR4wsGWHQE6q18VQkR5l3aTC47oksFbpEuwEl/UA/1BHTkMuvO/YMMB2ZnxGis=@vger.kernel.org
+X-Gm-Message-State: AFuF++lMdn72XY2Y92+pjDA7YyVczxtTxp8HkmbEOECl7yczbYseCyfF
+	B46994J3WPqxtzmA+684Bo7py17RmMdzvbD8iKWesQVymEPurvp+AtoN
+X-Gm-Gg: AR+sD11nQSFVbErROGZ0TReqWNkE3biB5U3+bJ4CoFYyRPRIEN5k0gwZbbBYMpjG/ik
+	j5kUjrhgX7N2igahhblmhamCBVP7LowF/y6NAClKJjSuhUgEhB4Cs/hE5O8ZLpH+vkG+0xNceER
+	HTNMxr8P9c6+d0N6VIwa+pRjAnORgiPkr+RY0Ka0QeiAYPCIhRpTkDs1YCcgkQygtEBK5V+1oyD
+	HD0H8YSn7ZoFrXUNKL3QLT5yF/JPflquIMJ0Kh7fHSSe1yIu1/qt/atwlbWWP5smJHpt0WB/FwE
+	CtCbNCZrUKBCefN4J1vH4y4qWWN/hSq68HYbnpvcJhQ0Oq0C4Z5BIaYQPKEO6gvNuhxWyFFLbMB
+	kgCirykGfdcaLXaBHyu8vLdHTk3cwCfhuSSfQDWrCkpaat0JPRTfIPwayzscDJWMiArj87Zj4ly
+	n98snxSo9Y9W5amlAHkfnTXciO6hQWQUDIdhwf4o54C2rXpx1X3fxN/ZZhYW8qQY/d0I2i59lUl
+	qcKm2k6OlzgypzWaKJjsA==
+X-Received: by 2002:a05:600c:620b:b0:499:516b:83d5 with SMTP id 5b1f17b1804b1-499dc7240a3mr44654155e9.11.1787738255490;
+        Wed, 26 Aug 2026 02:57:35 -0700 (PDT)
 Received: from [192.168.1.135] ([83.106.158.114])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-499dcad25ffsm20206255e9.9.2026.08.26.02.55.34
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-499dcae3216sm20357655e9.15.2026.08.26.02.57.34
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Aug 2026 02:55:35 -0700 (PDT)
-Message-ID: <57d796bd-7a3c-46b9-bd65-d6860adbd355@linux.com>
-Date: Wed, 26 Aug 2026 10:55:32 +0100
+        Wed, 26 Aug 2026 02:57:34 -0700 (PDT)
+Message-ID: <2800152c-25e0-401f-950c-15942c4f9a04@linux.com>
+Date: Wed, 26 Aug 2026 10:57:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -57,83 +57,89 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [RFC] clk: meson: t7: Intermittent boot instability and memory
  corruption on VIM4
-To: Brian Masney <bmasney@redhat.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+To: Neil Armstrong <neil.armstrong@linaro.org>,
  Jerome Brunet <jbrunet@baylibre.com>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
- Jian Hu <jian.hu@amlogic.com>,
+ Jian Hu <jian.hu@amlogic.com>
+Cc: Brian Masney <bmasney@redhat.com>,
  Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
  linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 References: <3930906f-783b-4d72-9260-ba25cc8081cb@linux.com>
- <aoxjX3HabY0brgXk@redhat.com>
+ <048697c8-8331-42aa-accf-d114774ac5fd@linaro.org>
 Content-Language: en-US
 From: Lucas Tanure <tanure@linux.com>
-In-Reply-To: <aoxjX3HabY0brgXk@redhat.com>
+In-Reply-To: <048697c8-8331-42aa-accf-d114774ac5fd@linaro.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 24/08/2026 16:29, Brian Masney wrote:
-> Hi Lucas,
-> 
-> On Sun, Aug 23, 2026 at 04:40:42PM +0100, Lucas Tanure wrote:
->> While testing mainline Linux on the Khadas VIM4 (Amlogic A311D2 / T7), I am
->> hitting intermittent system instability, storage loss, and memory corruption
->> during boot, unless I append clk_ignore_unused to the kernel command line.
+On 26/08/2026 10:02, Neil Armstrong wrote:
+> On 8/23/26 17:40, Lucas Tanure wrote:
+>> Hi,
 >>
->> Because the failure is intermittent, I am running 100-reboot test campaigns
->> to bisect the remaining clocks and isolate which clocks are critical and
->> cannot be safely disabled.
+>> While testing mainline Linux on the Khadas VIM4 (Amlogic A311D2 / T7), 
+>> I am hitting intermittent system instability, storage loss, and memory 
+>> corruption during boot, unless I append clk_ignore_unused to the 
+>> kernel command line.
 >>
->> As testing takes significant time over serial console, I wanted to check if
->> Amlogic or the maintainers could shed light on this:
+>> Because the failure is intermittent, I am running 100-reboot test 
+>> campaigns to bisect the remaining clocks and isolate which clocks are 
+>> critical and cannot be safely disabled.
 >>
->> Are there specific T7 clocks or hardware domains that must remain
+>> As testing takes significant time over serial console, I wanted to 
+>> check if Amlogic or the maintainers could shed light on this:
+>>
+>> Are there specific T7 clocks or hardware domains that must remain 
 >> critical/protected even without an explicit in-kernel consumer?
 >>
 >> Current clocks being disabled that don't kill the board on a test run:
 >>
->> [    0.380313] clk: Disabling unused clocks
->> [    0.380413] clk: Disabled unused clock: rtc_dualdiv
->> [    0.380718] clk: Disabled unused clock: rtc_duandiv_in
->> [    0.381377] clk: Unprepared unused clock: a73_div16
->> [    0.381972] clk: Unprepared unused clock: cpu_div16
->> [    0.382605] clk: Unprepared unused clock: f50m
->> [    0.383174] clk: Unprepared unused clock: fixed_pll_dco
->> [    0.383786] clk: Unprepared unused clock: hdmi_pll_osc
->> [    0.384416] clk: Unprepared unused clock: sys1_pll_osc
->> [    0.385056] clk: Unprepared unused clock: earc_osc
->> [    0.385652] clk: Unprepared unused clock: pcie_refclk_osc
->> [    0.386323] clk: Unprepared unused clock: eth_pll_osc
->> [    0.386961] clk: Unprepared unused clock: pcie_osc
->> [    0.387548] clk: Unprepared unused clock: mclk_pll_osc
->> [    0.388187] clk: Unprepared unused clock: usb_pll1_osc
->> [    0.388826] clk: Unprepared unused clock: usb_pll0_osc
->> [    0.389465] clk: Unprepared unused clock: tcon_pll_osc
->> [    0.390105] clk: Unprepared unused clock: top_pll_osc
->> [    0.390738] clk: Unprepared unused clock: aud_pll_osc
->> [    0.391361] clk: Unprepared unused clock: ddr_pll_osc
+>> [    0.380313] clk: Disabling unused clocks
+>> [    0.380413] clk: Disabled unused clock: rtc_dualdiv
+>> [    0.380718] clk: Disabled unused clock: rtc_duandiv_in
+> 
+> Those could be used by low power stuff aswell, not only RTC
+> 
+>> [    0.381377] clk: Unprepared unused clock: a73_div16
+>> [    0.381972] clk: Unprepared unused clock: cpu_div16
+> 
+> Those should probably be left enabled if they're used by the DVFS code
+> 
+>> [    0.382605] clk: Unprepared unused clock: f50m
+>> [    0.383174] clk: Unprepared unused clock: fixed_pll_dco
+>> [    0.383786] clk: Unprepared unused clock: hdmi_pll_osc
+>> [    0.384416] clk: Unprepared unused clock: sys1_pll_osc
+>> [    0.385056] clk: Unprepared unused clock: earc_osc
+>> [    0.385652] clk: Unprepared unused clock: pcie_refclk_osc
+>> [    0.386323] clk: Unprepared unused clock: eth_pll_osc
+>> [    0.386961] clk: Unprepared unused clock: pcie_osc
+>> [    0.387548] clk: Unprepared unused clock: mclk_pll_osc
+>> [    0.388187] clk: Unprepared unused clock: usb_pll1_osc
+>> [    0.388826] clk: Unprepared unused clock: usb_pll0_osc
+>> [    0.389465] clk: Unprepared unused clock: tcon_pll_osc
+>> [    0.390105] clk: Unprepared unused clock: top_pll_osc
+>> [    0.390738] clk: Unprepared unused clock: aud_pll_osc
+>> [    0.391361] clk: Unprepared unused clock: ddr_pll_osc
 >>
->> I am not forcing any clock to be disabled; I am forcing all clocks to stay
->> on and letting them be disabled if unused one by one.
+>> I am not forcing any clock to be disabled; I am forcing all clocks to 
+>> stay on and letting them be disabled if unused one by one.
 >>
->> Any guidance or hints on required platform clocks would be greatly
+>> Any guidance or hints on required platform clocks would be greatly 
 >> appreciated.
 > 
-> I have an outstanding series that disables unused clocks via the
-> sync_state callback:
+> It's hard to say, this is dependent on each family, Amlogic should be 
+> able to help here.
+Yes, Amlogic, please help.>
+> You list some clocks, but I don't understand you say that it's stable 
+> only if you have clk_ignore_unused, so how did you get this clock list ?
+I got this list when I add logs to the clock framework and run without 
+clk_ignore_unused.
 > 
-> https://lore.kernel.org/linux-clk/20260626-clk-sync-state-v1-0-4156d8196dc8@redhat.com/
+> Neil
 > 
-> Be sure to not have clk_ignore_unused in your kernel command line.
-> 
-> I suggest comparing the list of which clocks are disabled with that
-> series against your list of clocks above.
-Thanks for the input, it did not solve the issue. I am going to produce 
-the list with a diff in disabled clocks with and without our change, but
-it did not solve the issue.
-> 
-> Brian
+>>
+>> Thanks,
+>> Lucas Tanure
 > 
 
