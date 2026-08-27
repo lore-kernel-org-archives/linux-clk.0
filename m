@@ -1,184 +1,400 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7869C41D202
-	for <linux-clk@vger.kernel.org>; Thu, 27 Aug 2026 17:01:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7DD036F915;
+	Thu, 27 Aug 2026 17:36:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787850116; cv=none; b=maqlws+/aC5kFmBiLcCEGURyWLWYkcY+RSs/2uacEenKLaJiV5Nw4DDy+3ntyNZLUY47QhjsfMVEe+Xt3SA7z2FEAE1bxEg9/8wbVY32OxwfoYpnvQgATwUrM4ednmsktiIWyKsVo1ejpQrdNelCZzjivlg/D+NiWsY2q2WYD7M=
+	t=1787852218; cv=none; b=kfbvyqXMmyVnITqEVQAtQKQOSgUerJyVYlqZL6VoTBR6adSVsr5yCswkzKu+1FGQQzQBRvhu5gQy4JKvhEyOlTIrjspY81SUCKs4IAn1U9B1lUfzh6UmBuPVZzakHpWGYilIyrDwlONw3lvAp7FCpd6S2yBZiNt1ctYlHspIkEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787850116; c=relaxed/simple;
-	bh=VLth3SEu7qG3r5aWNeqIN5rjqfJQ3Q9Ak0EseKunHjM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZTDzdsaYVcMJy03MVb1Ni4+0iFgER+WY5/ccNaldH9HWOHhMehe6hV3G4yDYZeuS+xn3+MBoep1Ll1/e+UjVPqP95Jf9B4bLWzxDvYOBHfg3zjSU8sQoooUbdZqdv+FfMJVJvxYUyatPc30Gr0EpJ5JQo+gzMMmcQritOLCm5gg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=jecm9R01; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Umlqj17J; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1787852218; c=relaxed/simple;
+	bh=PiArryQFkq2pGYcHA51qmh/BEiVorOPh2gCrnxo3gew=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PVss9KNqZO0q6tYu5knnQ98MSCpX1nv6iZlLGVZwpvigUR+nz9HmWfoZUVoW1bF7TZR5prUFr2bhDKkZRDM6MKvkIwLuxUw7BXrZESMbdZY7A57BmyNg28E9Y3I6XzIOs9waW6oqqAS7tphfw5jspocWFYyhDvuKirIJYfm6rtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TPwdWZTS; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="jecm9R01";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Umlqj17J"
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 67RFbdqF3829325
-	for <linux-clk@vger.kernel.org>; Thu, 27 Aug 2026 17:01:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	6ZGn09uCQecSpHGhjI37UCupzc36L0CgFZmzAcMQoKM=; b=jecm9R016Au4SOfa
-	9DHqvLJPactOk7aQdK/C4SVlQIDFnr46AJq3kT1lRpuuzEuEStjSDhuWZmBgFhwz
-	+tgf26c9sVpNxGmxBxVJKgPo8eW8YRfojy/11FRy9/tXbIUvFT1TfgQ4KI2g3dio
-	U/qubr+FLspGfIB0dJYsqmwmjLn+q2pPEB5ISe67RM2QzunWZDMDi+jnlzc7hGIH
-	vBhKrjHxmmNe63U6F8+esRq4NhYizZhKei7/m+4Ujojc7EZ7NDs7M5w7jdR5CEPh
-	yVwGzKt9J5X8o3P1gx6ZSVuO8ThEdUAk+MeKeJl9E8tazr0mt+TLc3A1As2Jakl0
-	MWu9Bg==
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4game7sc1d-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Thu, 27 Aug 2026 17:01:50 +0000 (GMT)
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-84a67b16217so224502b3a.3
-        for <linux-clk@vger.kernel.org>; Thu, 27 Aug 2026 10:01:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1787850110; x=1788454910; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=6ZGn09uCQecSpHGhjI37UCupzc36L0CgFZmzAcMQoKM=;
-        b=Umlqj17JRtiVoyDa42/OpuypxTSUCM5VnbGWWtbswpMLHiBHT5hTTbPanOvf0ZZNxA
-         cjH1odyx6JVeqB9gbobnGy/ckw1ECn/E/sTWLIPiZYD7r2eLkBI3G3qwu8JMWHi+lKAp
-         1S+30KAJcQSav1Orw2k65VMWmV5l48SId+D0jPoS+nMw5vEM4WByBWuzPWoSDXziZi/Z
-         zJUD4OKDkfU/5pnQe43nbEsND+OTR5JFqCBvNCsp9de+8p4CMTNhzU6ABkpkoC63hrQV
-         7xLJSqTmKe00JuOrD3k0M5TQCVXejmzcx1LMCnQonknkBsQO1OtLfF+myeyNMtxMCkj+
-         bS/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787850110; x=1788454910;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=6ZGn09uCQecSpHGhjI37UCupzc36L0CgFZmzAcMQoKM=;
-        b=O715a6RejRrdfyt0142bCaY1fWIruvemsCCt0lNGOF9XwzRMOFRxG9R+eA1zZSlX/q
-         EJ1nVMINvFOCkds2WALlceAraM/HLFDi/EHw1ZQnn7XS3WVBC91UcxFndY9GKRL8BcrB
-         H1NFEnlwBXIU6yBBD9oP9tGdnqjspxN6tVLeVwPmCa5mq+BQz4rMQR16B8xrUdgfjxN6
-         Vn1NUQsKZNoIK8bbT1WJkQRwNTqqeGO0hpfcPFEU/XMQ+CA4Ws4fUaltyOK96Q+xK6XW
-         Q2HQnzKvsIA5YKCEVSWFDQwuR+7SelZBNUeQ8BjCu/cYy1E7NDXZW96JD/TPMYCRGzgy
-         lMaw==
-X-Forwarded-Encrypted: i=1; AHgh+RoAUSHnAAQN12P5+IwZTL+k+VidAcFG6jny/GjMOZ0qA8YXxtZ47rCQKV15AW1LWOtLbpDRW8xT6as=@vger.kernel.org
-X-Gm-Message-State: AFuF++mczPhMfDptodBgvyaDHzej700wCLmg2icUO2XfXPN0LsPrY6Ar
-	7Jv9WV5b1gjPNOXysxuv9k12gEeTC8HbK/qfrqbo07ZqwXId3hJU3GZXaWQF0Xp5w96ZJLsoIXn
-	YEcPCHRmJ/UaYVzJCLNwBzwaNgME8yrDl4iftAimNXa8jM2/TQrx7Bim8kKAIK3c=
-X-Gm-Gg: AR+sD13jyUGIBTp0vcXkYn+yvDs9coIao4VhUU34K/Cc0dN9v1X8xgBTJxbzXW1GA4+
-	rEX/n19mIlHGB2SsrtTZAGL341wDvK3bzsp0Sl7wd5Zlbukj/+sCBFnoV57MX6xkT9k63KWZASZ
-	HFQDRDYdRID8AHx6+3votdhWJH4jtKG7K/PFP6p7DRBoOy25HVgFJVbBJP+2oNlQUztwxlF9xqV
-	8y95nyAqIA3FnIhJxY3si05SokNIqFpJS+F/pQQV+y0Rgtdr4OIBfSBGaVHYBSgVS8QI03bzGYj
-	qmHanClwsLuGIfmRVKeYnJybm/wEoAynjmemqqtFx+SD79WJ+M4DpAgsBFpQODgjw3iRBcbELU4
-	612xh6d994Iukj1CgYMK8cQU8ivzlF7w=
-X-Received: by 2002:a05:6a00:4b41:b0:847:9aa8:d3bb with SMTP id d2e1a72fcca58-8562953f64dmr1115411b3a.12.1787850109579;
-        Thu, 27 Aug 2026 10:01:49 -0700 (PDT)
-X-Received: by 2002:a05:6a00:4b41:b0:847:9aa8:d3bb with SMTP id d2e1a72fcca58-8562953f64dmr1115017b3a.12.1787850107481;
-        Thu, 27 Aug 2026 10:01:47 -0700 (PDT)
-Received: from [192.168.1.6] ([122.171.23.69])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8535cd81d22sm2404824b3a.35.2026.08.27.10.01.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Aug 2026 10:01:47 -0700 (PDT)
-Message-ID: <4466c3eb-4de1-4240-8fec-765a4910b217@oss.qualcomm.com>
-Date: Thu, 27 Aug 2026 22:31:38 +0530
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TPwdWZTS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63F7A1F000E9;
+	Thu, 27 Aug 2026 17:36:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1787852216;
+	bh=k3bwMPba/sR3oI0+gNWXKTJPdy5UtHTLwVkPv98WeiQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=TPwdWZTSHmrzaJohefJXfWBOIGeNBqG/henF91BdpuDYvEFZHB7E+VicDtWh5BlH1
+	 bxSzv3vpKZNYqmGayCWoOf24C7fkgdKB3zf1Srmw4kdpoS5JuL2QjPZptv3+2ok6i1
+	 CytjBLOHtPxaY4smpE7RHoTni7q+6RC0xbh2fZVUDS/gqLy9QSlGInZfhsLByDchJl
+	 atcZrBHZrddcv4ri5xcGNrlrbZc45geWW2RirpYjnsgGkiRLWPBOYTQbcpxJfrjGgR
+	 lfaYxZvTU+NDAa5hlvKYMhKWto61mps6xQNP9BiBExxTZKjJlBoZElcfc9Jus6hQMZ
+	 DjWEgjRy6JwCQ==
+Date: Thu, 27 Aug 2026 18:36:50 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Changhuang Liang <changhuang.liang@starfivetech.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney@redhat.com>, Paul Walmsley <pjw@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	Alexey Charkov <alchark@gmail.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Keguang Zhang <keguang.zhang@gmail.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>
+Subject: Re: [PATCH v4 7/8] soc: starfive: Add socinfo driver for JHB100 SoC
+Message-ID: <20260827-stack-aerosol-e1b1360b6ff5@spud>
+References: <ZQ4PR01MB1202DDE6C255441E1FC4F916F2DC2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
+ <20260812-snowplow-punctured-28d19616f707@spud>
+ <ZQ4PR01MB1202F016AD1F1E699429DDC0F2DB2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
+ <20260813-presoak-scarily-b6cdecfcb7cc@spud>
+ <ZQ4PR01MB1202CD24FCDA9039EDF2C7A0F2DA2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
+ <20260814-reverb-mourner-283116bcc014@spud>
+ <ZQ4PR01MB1202BE1034795F1FBCF18076F2A72@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
+ <20260818-recall-onion-3279fe070ccd@spud>
+ <ZQ4PR01MB12027CF8ADC7A2B39F7FB32CF2A52@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
+ <ZQ4PR01MB1202AFE1B8600DFBE0DEB083F2AD2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 06/15] dt-bindings: interconnect: Add Qualcomm Kuno NoC
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Ulf Hansson <ulfh@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
-        Taniya Das <quic_tdas@quicinc.com>, Georgi Djakov <djakov@kernel.org>,
-        Bartosz Golaszewski <brgl@kernel.org>,
-        Linus Walleij <linusw@kernel.org>, Thomas Gleixner <tglx@kernel.org>,
-        Radu Rendec <radu@rendec.net>, Robert Marko <robimarko@gmail.com>,
-        Guru Das Srinagesh <linux@gurudas.dev>, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
-References: <20260821-kuno-soc-support-v3-0-196e2b306368@oss.qualcomm.com>
- <20260821-kuno-soc-support-v3-6-196e2b306368@oss.qualcomm.com>
- <20260827-predictable-mauve-catfish-3d5ad0@quoll>
-Content-Language: en-US
-From: Hardeep Sharma <hardeep.sharma@oss.qualcomm.com>
-In-Reply-To: <20260827-predictable-mauve-catfish-3d5ad0@quoll>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODI3MDE0NCBTYWx0ZWRfX/oZcdgvuagvP
- UcgrhEaLa6Ed6xY+C1Plz4jbEFhbs9z13Vzpe5GjtXA9uJAZDLFHqT5O92cGbFTTkfDZq3eyObH
- vbljfKfPU8qwqhKLjRqTlIL/Ax9Rfd8ExERLkBfZjeinGvzdK9h1F7jaks0IapDBXQpMzvV/hSV
- yJGOHkCnCPHVLoHschS6WJmjCv9SD0CDnQnFXPo91DZAWglIHvUbyl8BCsxz050YgqmcQTBOFcT
- asNsjFIzsRlytgb82rQiZau6OBafKCGe8tU2EbQ5mINKpTk+YTeV1Cc4Ecv/4WlND2uWSNi5Jqx
- NebLtC8kR+JGw5CIf063Q01YdmUfR1xfVltm3guDp8QwU4XRGqIAQh07ftTLmKCgMXC7gMUkHL2
- wKwULztb0TmMXdOnley0Xay1rwDFzjwsmOBAZSpYuY281/O/+tyvEAleOPZwL2y3DQ8V/ptbfUc
- hI5+Lrs+5msLmI8RtHg==
-X-Proofpoint-GUID: LcTb-_o4Hp9G5jBhLfFp6RRuwFizCLtg
-X-Authority-Analysis: v=2.4 cv=Yrc/gYYX c=1 sm=1 tr=0 ts=6a906d7e cx=c_pps
- a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=WTDSa4fX56zQulHxy5BIwg==:17
- a=IkcTkHD0fZMA:10 a=Sv0fKeRqtYgA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=YMgV9FUhrdKAYTUUvYB2:22
- a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=XeEooGCi7Zy1lAdgIjAA:9 a=QEXdDO2ut3YA:10
- a=OpyuDcXvxspvyRM73sMx:22
-X-Proofpoint-ORIG-GUID: LcTb-_o4Hp9G5jBhLfFp6RRuwFizCLtg
-X-Proofpoint-Spam-Info: AW1haW4tMjYwODI3MDE0NCBTYWx0ZWRfX6HVFLjlzVncT
- V4UGKADyeY5rWlsIG68/N6gScJ2c2ApqYHWvA+3pIobp4Qr9ZqjdVEBpwezBsahv9C0O/gBZVOt
- Qt2ZRRrCewll66O5FroMwuays17Lvns=
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-08-27_07,2026-08-27_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 clxscore=1015 spamscore=0 priorityscore=1501 adultscore=0
- impostorscore=0 bulkscore=0 suspectscore=0 lowpriorityscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2608270144
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="eZkx4DJCinx3comH"
+Content-Disposition: inline
+In-Reply-To: <ZQ4PR01MB1202AFE1B8600DFBE0DEB083F2AD2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
 
+--eZkx4DJCinx3comH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 8/27/2026 5:50 PM, Krzysztof Kozlowski wrote:
-> On Fri, Aug 21, 2026 at 09:38:59PM +0530, Hardeep Sharma wrote:
->> +properties:
->> +  compatible:
->> +    enum:
->> +      - qcom,kuno-aggre-noc
->> +      - qcom,kuno-clk-virt
->> +      - qcom,kuno-cnoc-main
->> +      - qcom,kuno-dc-noc
->> +      - qcom,kuno-mc-virt
->> +      - qcom,kuno-mem-noc
->> +      - qcom,kuno-pcie-anoc
->> +      - qcom,kuno-system-noc
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  clocks:
-> Missing minItems. I asked to open other bindings to see how this is
-> done. So for example you took qcom,maili-rpmh.yaml. What do you see
-> there but you do not see here?
->
-> Best regards,
-> Krzysztof
-Apologies!!
+On Thu, Aug 27, 2026 at 06:22:20AM +0000, Changhuang Liang wrote:
+> Hi, Conor
+>=20
+> > Thanks for the review.
+> >=20
+> > > On Mon, Aug 17, 2026 at 01:27:08AM +0000, Changhuang Liang wrote:
+> > > > Hi, Conor
+> > > >
+> > > > Thanks for the review.
+> > > >
+> > > > > On Fri, Aug 14, 2026 at 01:13:38AM +0000, Changhuang Liang wrote:
+> > > > > > Hi,Conor
+> > > > > >
+> > > > > > Thanks for the review.
+> > > > > >
+> > > > > > > On Thu, Aug 13, 2026 at 08:10:12AM +0000, Changhuang Liang
+> > wrote:
+> > > > > > > > Hi ,Conor
+> > > > > > > >
+> > > > > > > > Thanks for the review.
+> > > > > > > >
+> > > > > > > > > On Wed, Aug 12, 2026 at 10:37:16AM +0000, Changhuang Liang
+> > > > > wrote:
+> > > > > > > > > > Hi, Conor
+> > > > > > > > > >
+> > > > > > > > > > Thanks for the review.
+> > > > > > > > > >
+> > > > > > > > > > > On Tue, Aug 11, 2026 at 05:36:19AM +0000, Changhuang
+> > > > > > > > > > > Liang
+> > > > > wrote:
+> > > > > > > > > > >
+> > > > > > > > > > > > > On Sat, Aug 08, 2026 at 06:50:53PM -0700,
+> > > > > > > > > > > > > Changhuang Liang
+> > > > > > > wrote:
+> > > > > > > > > > >
+> > > > > > > > > > > > > > +static int __init starfive_socinfo_init(void) {
+> > > > > > > > > > > > > > +	struct soc_device_attribute *attrs;
+> > > > > > > > > > > > > > +	struct soc_device *soc_dev;
+> > > > > > > > > > > > > > +	const char *machine =3D NULL;
+> > > > > > > > > > > > > > +	struct device_node *np;
+> > > > > > > > > > > > > > +	struct regmap *regmap;
+> > > > > > > > > > > > > > +	char rev_char;
+> > > > > > > > > > > > > > +	u32 rev_id;
+> > > > > > > > > > > > > > +	int ret;
+> > > > > > > > > > > > > > +
+> > > > > > > > > > > > > > +	np =3D of_find_compatible_node(NULL, NULL,
+> > > > > > > > > > > > > > +"starfive,jhb100-sys0-syscon");
+> > > > > > > > > > > > >
+> > > > > > > > > > > > > Remind me again why this is not just probed as an
+> > > > > > > > > > > > > mfd cell from the syscon driver?
+> > > > > > > > > > > > >
+> > > > > > > > > > > > > (Hint: please put this info in the commit message=
+).
+> > > > > > > > > > > >
+> > > > > > > > > > > > The discussion result with Krzysztof at that time is
+> > > > > > > > > > > > recorded
+> > > here:
+> > > > > > > > > > > > https://lore.kernel.org/all/20260405-strong-watchful
+> > > > > > > > > > > > -m
+> > > > > > > > > > > > armo
+> > > > > > > > > > > > t-fd
+> > > > > > > > > > > > fad6
+> > > > > > > > > > > > @quo
+> > > > > > > > > > > > ll/
+> > > > > > > > > > > >
+> > > > > > > > > > > > One register should not be treated as a separate de=
+vice
+> > node.
+> > > > > > > > > > >
+> > > > > > > > > > > That's a different question. In the case of an mfd
+> > > > > > > > > > > cell probed from the syscon driver there would be no
+> > > > > > > > > > > devicetree modifications required compared to what you
+> > > > > > > > > > > have
+> > > now. e.g.
+> > > > > > > > > > > sg2044-topsys.c
+> > > > > > > > > >
+> > > > > > > > > > This seems feasible, and I can introduce this
+> > > > > > > > > > modification in the next
+> > > > > > > > > version.
+> > > > > > > > >
+> > > > > > > > >
+> > > > > > > > > In fact, you don't even need the mfd cell, because your
+> > > > > > > > > driver is going to be in drivers/soc/starfive anyway? You
+> > > > > > > > > can just bind directly to the
+> > > > > > > > > sys0 syscon I think.
+> > > > > > > >
+> > > > > > > > I suddenly realized that I missed one issue:
+> > > > > > > > starfive,jhb100-sys0-syscon is already bound to the PLL
+> > > > > > > > driver by default, I
+> > > > > > > can't use it to bind another device anymore.
+> > > > > > > >
+> > > > > > > > which is why I used
+> > > > > > > >
+> > > > > > > > np =3D of_find_compatible_node(NULL, NULL,
+> > > > > > > > "starfive,jhb100-sys0-syscon");
+> > > > > > > >
+> > > > > > > > in jhb100-socinfo.c.
+> > > > > > > >
+> > > > > > > > So it seems the MFD cell approach isn't really feasible eit=
+her?
+> > > > > > >
+> > > > > > > You could, in that case, probe the clock driver using the
+> > > > > > > mfd_cell like sg2044-topsys. What else other than the pll
+> > > > > > > controls and the soc info register is in this register region?
+> > > > > >
+> > > > > > We don't have any other drivers right now in this register regi=
+on.
+> > > > >
+> > > > > I'm not asking about what's got a driver right now though, I am
+> > > > > wondering what else the registers in this region are for.
+> > > >
+> > > > Here are some registers related to debug functionality.
+> > >
+> > > So probably nothing else that linux will ever need?
+> >=20
+> > Yes.
+> >=20
+> > >
+> > > > > > So does that mean I can revise it to the format below:
+> > > > > >
+> > > > > > static const struct mfd_cell jhb100_sys0_subdev[] =3D {
+> > > > > > 	{
+> > > > > > 		.name =3D "jhb100-sys0-pll",
+> > > > > > 	},
+> > > > >
+> > > > > > 	{
+> > > > > > 		.name =3D "jhb100-socinfo",
+> > > > >
+> > > > > Why would this be needed? The driver with the mfd_cell would be
+> > > > > the same one that provides the soc info, no?
+> > > >
+> > > > My understanding is that one driver can only bind to one device, so
+> > > > the PLL driver and the socinfo driver need these two devices
+> > > > respectively, and thus cannot share one?
+> > >
+> > > Correct, but I am talking about the socinfo driver being the one that
+> > > calls
+> > > devm_mfd_add_devices() to create a device for the pll so that in the
+> > > end there are a total of two drivers, rather than create something
+> > > identical to sg2044-topsys.c that does nothing other than initialise =
+two mfd
+> > cells.
+> > > May as well consolidate the mfd_cell definition and call to
+> > > devm_mfd_add_devices() in one file, since it would be in the same
+> > > directory as the socinfo driver anyway.
+> >=20
+> > Okay, I will use this method.
+>=20
+> During the process of attempting this modification, there will be accompa=
+nying changes to the PLL driver.=20
+> The main changes include the following:
+>=20
+> 1. Addition of platform device ID table: A new platform_device_id array i=
+s introduced, enabling the driver to
+> be matched by device name when no OF compatible string is available.
+>=20
+> 2. Dynamic device node resolution: The driver now attempts to obtain the =
+device node using dev_of_node(dev).
+>  If the device has no node of its own (as is the case when instantiated a=
+s an MFD child cell), it falls back to=20
+> using the parent device's DT node (dev_of_node(dev->parent)). This ensure=
+s the syscon regmap can still be=20
+> correctly retrieved.
+>=20
+> The current initial draft of the PLL changes is generally as follows: Do =
+you have any better suggestions on
+> your side?
 
-You're right, minItems was missing. Fixed in v4 by adding it to the 
-clocks property.
+It's not beautiful, but it is sane - or at least I think so.
 
-v4 : 
-https://lore.kernel.org/all/20260827-kuno-soc-support-v4-0-dd34f235fc1a@oss.qualcomm.com/ 
+>=20
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D
+>=20
+> 	const struct jhb100_pll_match_data *match_data;
+> +	struct device *dev =3D &pdev->dev;
+> +	struct device_node *np;
+>  	struct jhb100_pll_priv *priv;
+>  	unsigned int idx;
+>  	int ret;
+> =20
+> -	match_data =3D of_device_get_match_data(&pdev->dev);
+> -	if (!match_data)
+> -		return -EINVAL;
+> +	match_data =3D of_device_get_match_data(dev);
+> +	if (!match_data) {
+> +		const struct platform_device_id *id =3D platform_get_device_id(pdev);
+> +
+> +		if (!id)
+> +			return dev_err_probe(dev, -EINVAL, "no match data\n");
+> +
+> +		match_data =3D (const struct jhb100_pll_match_data *)id->driver_data;
+> +	}
+> =20
+>  	priv =3D devm_kzalloc(&pdev->dev,
+> 			    struct_size(priv, pll, match_data->num_pll),
+>  			    GFP_KERNEL);
+>  	if (!priv)
+>  		return -ENOMEM;
+> =20
+>  	priv->match_data =3D match_data;
+> -	priv->dev =3D &pdev->dev;
+> -	priv->regmap =3D syscon_node_to_regmap(priv->dev->of_node);
+> -	if (IS_ERR(priv->regmap))
+> -		return PTR_ERR(priv->regmap);
+> +	priv->dev =3D dev;
+> +
+> +	/*
+> +	 * When instantiated as an MFD cell of the sys0 system controller this
+> +	 * device has no DT node of its own, so use the parent syscon node.
+> +	 */
+> +	np =3D dev_of_node(dev) ? : dev_of_node(dev->parent);
 
+I think I'd probably check that you're on the device you think you are
+(sys0) before doing the dev_of_node(dev->parent), but...
 
-Best Wishes
-Hardeep Sharma
+> +	priv->regmap =3D syscon_node_to_regmap(np);
 
+=2E..this will fail if you are not on sys0 and somehow dev_of_node(dev)
+returned null so it's probably fine.
 
+Thanks,
+Conor.
+
+> +	if (IS_ERR(priv->regmap))
+> +		return dev_err_probe(dev, PTR_ERR(priv->regmap),
+> +				     "failed to get syscon regmap\n");
+>=20
+>  static const struct of_device_id jhb100_pll_match[] =3D {
+> -	{
+> -		.compatible =3D "starfive,jhb100-sys0-syscon",
+> -		.data =3D &jhb100_sys0_pll,
+> -	},
+>  	{
+>  		.compatible =3D "starfive,jhb100-per0-syscon",
+>  		.data =3D &jhb100_per0_pll,
+>  	},
+>  	{
+>  		.compatible =3D "starfive,jhb100-per1-syscon",
+>  		.data =3D &jhb100_per1_pll,
+>  	},
+>  	{ /* sentinel */ }
+>  };
+>  MODULE_DEVICE_TABLE(of, jhb100_pll_match);
+> =20
+> +static const struct platform_device_id jhb100_pll_ids[] =3D {
+> +	{
+> +		.name =3D "jhb100-sys0-pll",
+> +		.driver_data =3D (unsigned long)&jhb100_sys0_pll,
+> +	},
+> +	{ /* sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(platform, jhb100_pll_ids);
+> +
+>  static struct platform_driver jhb100_pll_driver =3D {
+>  	.probe =3D jhb100_pll_probe,
+> +	.id_table =3D jhb100_pll_ids,
+>  	.driver =3D {
+>  		.name =3D "clk-starfive-jhb100-pll",
+>  		.of_match_table =3D jhb100_pll_match,
+>  		.suppress_bind_attrs =3D true,
+>  	},
+>  };
+>=20
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>=20
+> > >
+> > > >
+> > > > >
+> > > > > > 	},
+> > > > > > };
+> > > > > >
+> > > > > > static const struct mfd_cell jhb100_per0_subdev[] =3D {
+> > > > > > 	{
+> > > > > > 		.name =3D "jhb100-per0-pll",
+> > > > >
+> > > > > Why do these other ones need to be modified?
+> > > >
+> > > > I was thinking, since sys0-pll has been adjusted, would it be better
+> > > > to also
+> > > adjust per0-pll and per1-pll together in a unified way?
+> > >
+> > > I wouldn't complicate them with things that they don't need, so it
+> > > depends on if these other syscon regions contain more than just PLLs
+> > > and if there'll ever be drivers for the other stuff in those regions.
+> > >
+> > > >
+> > > > >
+> > > > > > 	},
+> > > > > > };
+> > > > > >
+> > > > > > static const struct mfd_cell jhb100_per1_subdev[] =3D {
+> > > > > > 	{
+> > > > > > 		.name =3D "jhb100-per1-pll",
+> > > > > > 	},
+> > > > > > };
+> > > > > >
+> > > > > > static const struct mfd_cell jhb100_ pcierp _subdev[] =3D {
+> > > > > > 	{
+> > > > > > 		.name =3D "jhb100-pcierp-reset",
+> > > > > > 	},
+> > > > > > };
+> > > >
+>=20
+> Best Regards,
+> Changhuang
+>=20
+
+--eZkx4DJCinx3comH
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCapB1sgAKCRB4tDGHoIJi
+0hQHAP9b2jc04ZVINeEbE32l/s/LWGWHD4cV+YPL0C5e5JWWfQD8DCs0NPKf6XFC
+47t4wKiSlS1UOsuSgDvufVQXMWr00wE=
+=eQ6Y
+-----END PGP SIGNATURE-----
+
+--eZkx4DJCinx3comH--
