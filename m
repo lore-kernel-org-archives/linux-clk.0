@@ -1,771 +1,289 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 198BE47D95E;
-	Thu, 27 Aug 2026 14:39:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C3AF484241
+	for <linux-clk@vger.kernel.org>; Thu, 27 Aug 2026 16:38:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787841566; cv=none; b=nT6DNZgE8UK1ctcbwhh610kLVKpShHcCHOcpUOJYst3YhZY4EbqRxjfJgLrTglYhObup4pQeoNegYH1u1OaVFe824+GfrVXTV7jD5QYvAniS+eSkn1WA46tDLmMQDobCzp3Vu2qj/j/TMlqX6Ym0ZgXdcWPCjOuX3vfyKF0tHMA=
+	t=1787848702; cv=none; b=JPjAf6fdmOfoOlcTzwJHEes8T0uLdNPuVsCO0JnVEGQc0X7cxRhiePYtejkuJ820CHGZDyGrxpXZUWbOLhSfmfuFBNYS4qswCjrDLGBCto2BcrU3UqYhGveYpwroK1LjQ66Z6w2skB0+EdXLDRdnXwzDCvZS/mhw2tqQwb/QmwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787841566; c=relaxed/simple;
-	bh=4CAvsdNuYr1TOINvsiS1bTij7h5KBCM5YfX9B09fXK0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KWjEdrlYcjBZOpAvPCifNQESDlc33jyaFXcoZQ9bUNNNlDIA4d33OgY2iH5HnbxfpG8agGhUsuEmoSVOcXtxfKk0NPEfxKHtn9Or9nXYQkvZzZcg7ZCM+d80EHD/zoyudhyXwv8XRJZDceAl3jLCAjBBns2g4ul6wl2F3W6RwdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nVvwoMql; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1787848702; c=relaxed/simple;
+	bh=IuLBCG8fwivf7QD/EPSNHEsGg4a/dKCd3dCzYHyww5A=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=PmBiG6tuIxx0sV3Hhh+dORjQEIgxSPio1TezPHqSpWyz9pFoJGL8X4ukMVeS42YDYIFOnDwS9Jwcf0ukdkXuzmZFmb7h/vlrs2CjY8B9B3jd+aLHqo2qsxWNfapLUrnjmRBKh2mFNxhVALgF7GMBsvIESmM7BNDZDQBDVpx492w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kFmEosoG; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=I1+Pud5p; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nVvwoMql"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A09F41F00A3F;
-	Thu, 27 Aug 2026 14:39:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787841555;
-	bh=X3ZQPN6AFGtjHd4y95l29Jb5lUMLezaPvyPRtl/8seI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=nVvwoMqlk2UIZNrdBfIvjkaZ+8qULJhY6MvieEbF8RiXDCh0dOWWV2ok6CHDSCnEA
-	 xsMKkCQhpbs9vCf1hCULVkYJ+jwqwb6SgZoy/g826vM9ZdPtTnu645sbvpT1mXX45F
-	 Oh2sVf7eCpTeNBbTFjtjI/gUXgCF5++gnFCGNapKzAWe7mg3quutilvpBOg9xVBp8e
-	 ykgehE2av2EIl7jE/kJjXz8ILPfdhmsafZwGV9y5lsAYhcZI9F1BKenMwWfLj8TE/G
-	 Xgr17owP+gFamRO3btbFUiXdC1RDDWSGSDVJCCg5qJRW8ttjKiivGOjhQ3wiGBjkBR
-	 5H8eMtyysZmcw==
-Message-ID: <4a493c7f-a248-4896-890d-3aa55e074ddd@kernel.org>
-Date: Thu, 27 Aug 2026 22:38:54 +0800
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kFmEosoG";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="I1+Pud5p"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 67RFbrIA058955
+	for <linux-clk@vger.kernel.org>; Thu, 27 Aug 2026 16:38:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=XgLhebGOrPjpndKIk3O4PW
+	v8zb8BOpN1xx0Y0zBAdl4=; b=kFmEosoGmPUGPAYYv7npWKg15PDaL7cveL5kkj
+	bnMpS0ABsw0SC/sNknOKLbM0TEtIoMPyIrJZkqBmYcyRY7AtOqlOHwCT4CwwRX77
+	c2/ggd3qDZqJTbSk+0uzPpHJ84vSKS1PphjfvvkyXgaGLrOxIiZdflUkYI4oL8z2
+	jWdOU5LqcMKJtxAF4+GPLfBVW+Ag+1UUSUb9g+OH6vyUjIfDUq1WV+mLq/SzH3Py
+	1AIjIl5+8dmQwFOblKV2CDCL8PBrClq7+pcwRn1ha0dGejvy42hVbfgdCJ5nkPGQ
+	ToGhNyR8CTPHO6NqQmZD9lhRL9Qgi7JOo5WxPj6yH9Brg8zg==
+Received: from mail-ot1-f70.google.com (mail-ot1-f70.google.com [209.85.210.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gak561et3-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Thu, 27 Aug 2026 16:38:19 +0000 (GMT)
+Received: by mail-ot1-f70.google.com with SMTP id 46e09a7af769-7ee1e335245so113279a34.1
+        for <linux-clk@vger.kernel.org>; Thu, 27 Aug 2026 09:38:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1787848699; x=1788453499; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=XgLhebGOrPjpndKIk3O4PWv8zb8BOpN1xx0Y0zBAdl4=;
+        b=I1+Pud5pw5b1vS0v2lK95w61BJ2uEaOAVRILVDUL0x91bHodO8OYbDwkuL88KHM+Ww
+         gY2MArQiDzZwueZw3SIaA0ol/pPqA3sb7b10FcAWXDBmKoPxQHc92BvXU9XSQvkBmCfb
+         XKAcyd3QQZDzTbHVq/nJ7c2ul7ymuD8d52iLbZUnUkOapwHqaCvSAy5BqDJW2LzBvkUM
+         PnFGqDOoWwX9c+tTOiq5LuVMnL+moUYBWLGSsVd2ZWSAgBQYeGFqXPPPUgtsBDI2nrtE
+         FoELBX44o+EN6e1s/b9Hoth6BVuYQMC6ZqaIcbc5wvd9g/7oVQvWg2hyt8YKf57lqn9L
+         q3cA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787848699; x=1788453499;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=XgLhebGOrPjpndKIk3O4PWv8zb8BOpN1xx0Y0zBAdl4=;
+        b=rSxhVYxoCgHOprQ4q2aGNDyrVq0YV+EnW8IhK1oylHJwbWgp3+Gr38GZ6/WlXnhaOA
+         3XbFDBFQW3KJdelW/hfuzXWhBCPLPixkv7MQ0D3Kkl+RWVSBetJEOV/8WXuCCpMRUYOW
+         Ls+6F4HDDIANvtldzMeZEsG7VzZYaHpxd0AhiVd04GN1dHSfo2QJIPCqzd4aXRy14kox
+         x+XATqLmO6XRRDcPgUFZ6cJxGT2H5ZVPfv+xJmmKvUiFWKxUCvM+zc5n0GErr6an0Wsu
+         DN3u9HjafhjT+PrYim2HVRWNVyN1A9BdOM9D+ahavG0mAzBBH2svrFfbn0zhoRd9Lx2G
+         4HLQ==
+X-Forwarded-Encrypted: i=1; AHgh+RpAT3CKsnH/WqNcUbl2k+Ockt58I/mXjHZOcYK0HzY1jrcZ+lKP1oiiZW5F1U9tp3pR4g/pseDZOTw=@vger.kernel.org
+X-Gm-Message-State: AFuF++nFuVfGYPmsKow02EHUs3AQKO7XTkn6s6hglj7iQhjskw42+zDN
+	qvZX7qFZ3skG28kIgjA1Q/oRrilXwWPyA+hCt1x7nVDaOgCOLPV/eizUJcWNGEB6lTE7ML59CWL
+	poLNRtfVnmsMTYqndneNpau2N8617/roKb7lC0QEYuuJRK3rXhwmGjIDo04YB7JY=
+X-Gm-Gg: AR+sD11ccuztaXjA69XBfZu94mQn2H5H7277YDkcA0PFGX6rRhe/cFLwWLhh4FoYMOs
+	KQmV2kQNE+rn4YbjUkZ31Nr14lTF4IYve6jw+Bs2ALjinMb1ygxR3CpYHv/ETAxs3+3SI94rrjw
+	OiOe17dWdkZ18uYfznFrNgMfbVn72XKfu9w8lA19n4cHQP+PG5VHzDV8BM/tUH1V/+jLnANz1MC
+	vvNCbVToZs3+nKbfWjj3ioR7CIiey0nVwdOEY42iN6teqjJVL755GhVA/+HRcwjSCD0cS6Lj9Sy
+	Kt0eeaHRVYbUX1u9jXLx9t6ruPaK6VQd6b89c8d2G+x11TLqQakDIh2zymTQCCXg5810jzTwWA+
+	Lu5/pIIvqiJcxHnlT0Vj1G61l8HFSHSudxH1WqIXjVi1QAoCexQHAzIr0zPDBJVUt9Ezo3z6dni
+	UcqS9Ugb3ifuvElS295VpRoms=
+X-Received: by 2002:a05:6820:1c9e:b0:6b1:c1b5:7f96 with SMTP id 006d021491bc7-6b1c1b58a27mr263720eaf.14.1787848699024;
+        Thu, 27 Aug 2026 09:38:19 -0700 (PDT)
+X-Received: by 2002:a05:6820:1c9e:b0:6b1:c1b5:7f96 with SMTP id 006d021491bc7-6b1c1b58a27mr263650eaf.14.1787848698450;
+        Thu, 27 Aug 2026 09:38:18 -0700 (PDT)
+Received: from hu-hardshar-blr.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-6b1a24bce78sm4253171eaf.3.2026.08.27.09.38.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Aug 2026 09:38:17 -0700 (PDT)
+From: Hardeep Sharma <hardeep.sharma@oss.qualcomm.com>
+Subject: [PATCH v4 00/15] Add initial support for Qualcomm Kuno SoC
+Date: Thu, 27 Aug 2026 22:08:01 +0530
+Message-Id: <20260827-kuno-soc-support-v4-0-dd34f235fc1a@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] clk: socfpga: agilex72: add clock manager driver for
- Agilex72
-Content-Language: en-US
-To: evon.chiam@altera.com, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>
-Cc: Lothar Rubusch <l.rubusch@gmail.com>, Ng Tze Yee <tzeyee.ng@altera.com>,
- Nazim Amirul <muhammad.nazim.amirul.nazle.asmade@altera.com>,
- Adrian Ng Ho Yin <adrian.ho.yin.ng@altera.com>,
- Brian Masney <bmasney@redhat.com>, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1786006669.git.evon.chiam@altera.com>
- <97675c0efd40a9407b6b1a1941cc73b73dd45d39.1786006669.git.evon.chiam@altera.com>
-From: Dinh Nguyen <dinguyen@kernel.org>
-In-Reply-To: <97675c0efd40a9407b6b1a1941cc73b73dd45d39.1786006669.git.evon.chiam@altera.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOlnkGoC/33NQQ6CMBAF0KuYri2ZtljAlfcwLqAMWhWKHSAaw
+ t0tuHGBbib5yZ/3R0boLRLbb0bmcbBkXRNCvN0wc8mbM3JbhswkSA0pZPzWN46TM5z6tnW+46L
+ Mi1TqEqGoWHhrPVb2uZDH0ydTX1zRdLMzNy6WOudfy+Yg5t4ffhAc+A4BS4xzMIk8OKLo0ed34
+ +o6CofNK4P8ckS84sjgKEiyJIsrqBL1w1FfjhQrjgqOyDTKQoFWOl1xpml6A56YQ1FZAQAA
+X-Change-ID: 20260809-kuno-soc-support-1dab826de0bf
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Ulf Hansson <ulfh@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+        Georgi Djakov <djakov@kernel.org>,
+        Bartosz Golaszewski <brgl@kernel.org>,
+        Linus Walleij <linusw@kernel.org>, Thomas Gleixner <tglx@kernel.org>,
+        Radu Rendec <radu@rendec.net>, Robert Marko <robimarko@gmail.com>,
+        Guru Das Srinagesh <linux@gurudas.dev>,
+        Taniya Das <taniya.das@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org,
+        Hardeep Sharma <hardeep.sharma@oss.qualcomm.com>,
+        Mukesh Savaliya <mukesh.savaliya@oss.qualcomm.com>,
+        Abel Vesa <abel.vesa@oss.qualcomm.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+X-Mailer: b4 0.15-dev-47773
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1787848688; l=7023;
+ i=hardeep.sharma@oss.qualcomm.com; s=20260204; h=from:subject:message-id;
+ bh=IuLBCG8fwivf7QD/EPSNHEsGg4a/dKCd3dCzYHyww5A=;
+ b=6B8BxUlMPUMsylsRHyitMa2Od5NzIDaznMlx51zPqCnskxQq1AOXN9Rq2cA5EasT28/SZXnyU
+ iIQVr+Htp39AP7H9U2SQA67oKpJF9KYlSBsxh3K6AjTcRH4PqFrofAH
+X-Developer-Key: i=hardeep.sharma@oss.qualcomm.com; a=ed25519;
+ pk=IvwPDKA2xr6jWaCIBBY2ran/H0124QUzVfun+CtEikM=
+X-Proofpoint-Spam-Info: AW1haW4tMjYwODI3MDE0MCBTYWx0ZWRfX30oGMGBVnfzO
+ pUvtJAHCKLayqlPy/7otq79dem7aA1kBSQhorrwvzzADZfNu9lB91Qet5G3YHyZhyhIIsGJlgjk
+ LjkZmmaGyi5Tut73itHDURpCjITX73w=
+X-Proofpoint-ORIG-GUID: SjkAqlOv7xWL4VhlI2XH28dntKxyp21e
+X-Proofpoint-GUID: SjkAqlOv7xWL4VhlI2XH28dntKxyp21e
+X-Authority-Analysis: v=2.4 cv=G+Ms1dk5 c=1 sm=1 tr=0 ts=6a9067fb cx=c_pps
+ a=7uPEO8VhqeOX8vTJ3z8K6Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=IkcTkHD0fZMA:10 a=Sv0fKeRqtYgA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=ZpdpYltYx_vBUK5n70dp:22
+ a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=8riaqLHWwNYsoh2d4OYA:9 a=QEXdDO2ut3YA:10
+ a=O8hF6Hzn-FEA:10 a=EXS-LbY8YePsIyqnH6vw:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODI3MDE0MCBTYWx0ZWRfXwA2zf2ZFuxqw
+ E+VM4c/rJw18Oozp9HF561I8CijupvzevTFV9rV8Fyi43rkzUdP0Evh3weYJL6DVhLLMPYomlsm
+ QyqMaJZy4rYhjROe+owjcmZGXDopVsiUjHxrfqKZoZNbyNt4QHh0Zgqwl2aP6+BhiwURUnNIHt/
+ DVh1om87KzJ5oRrPzfnu99PO828Z8zpgC3Kktd1Jw1vGem5+P9/Ct+Pb6cPbm9HoO4yU/Pg1mza
+ HJnZ4gPIudO+j4rnScric4+ddSXYV53RY+aRDxo8xXrI4mRoeABZgBQRR2zCoSGeDRWKPA+Cglb
+ M9X9MZkSxEdlglw824ik8Gywj/v2fEpJ1VEE1HCMydDmMGj+nNWmSSK/hT/K8D/DS/So+lLJKrZ
+ fvYHAI9PkJMRBL1lvO4P9ibt5gS7fsA4gAl8GMZWLrJtvQwr3xONheD9+JP+2dqjQHFnmEBWGfd
+ bNnpIBZ34LhebmW9fKA==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-08-27_07,2026-08-27_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 lowpriorityscore=0 adultscore=0 clxscore=1015 bulkscore=0
+ phishscore=0 spamscore=0 impostorscore=0 malwarescore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2608270140
 
+This series adds initial support for the Qualcomm Kuno SoC and the Kuno
+IDP reference board.
 
+Kuno is a 32-bit ARM (Cortex-A7) Qualcomm platform. This series brings up
+the essential SoC infrastructure required to boot to a serial console:
 
-On 8/6/26 17:25, evon.chiam@altera.com wrote:
-> From: "Chiam, Evon" <evon.chiam@altera.com>
-> 
-> Add new Clock manager driver to support new Altera Agilex72 platform
-> 
-> Signed-off-by: Chiam, Evon <evon.chiam@altera.com>
-> ---
->   MAINTAINERS                        |    5 +
->   drivers/clk/socfpga/Kconfig        |    3 +-
->   drivers/clk/socfpga/Makefile       |    2 +-
->   drivers/clk/socfpga/clk-agilex72.c | 1181 ++++++++++++++++++++++++++++
->   drivers/clk/socfpga/clk-agilex72.h |   91 +++
->   5 files changed, 1280 insertions(+), 2 deletions(-)
->   create mode 100644 drivers/clk/socfpga/clk-agilex72.c
->   create mode 100644 drivers/clk/socfpga/clk-agilex72.h
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 15011f5752a9..1b850dc3d6b6 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -3581,6 +3581,11 @@ S:	Maintained
->   F:	Documentation/devicetree/bindings/media/samsung,s5p-mfc.yaml
->   F:	drivers/media/platform/samsung/s5p-mfc/
->   
-> +ARM/SOCFPGA AGILEX72 CLOCK DRIVER
-> +M:	Chiam, Evon <evon.chiam@altera.com>
-> +S:	Maintained
-> +F:	drivers/clk/socfpga/clk-agilex72.[ch]
-> +
+  - Global Clock Controller (GCC) and RPMh clock controller
+  - RPMh power domains
+  - Interconnect (NoC) provider
+  - TLMM pin controller
+  - PDC interrupt controller and SCM firmware interface
+  - Devicetree for the SoC and the Kuno IDP board
 
-I'll just maintain it for now under all socfpga.
->   ARM/SOCFPGA ARCHITECTURE
->   M:	Dinh Nguyen <dinguyen@kernel.org>
->   S:	Maintained
-> diff --git a/drivers/clk/socfpga/Kconfig b/drivers/clk/socfpga/Kconfig
-> index d88277e2a898..40cac9428fbe 100644
-> --- a/drivers/clk/socfpga/Kconfig
-> +++ b/drivers/clk/socfpga/Kconfig
-> @@ -13,7 +13,8 @@ config CLK_INTEL_SOCFPGA32
->   	default ARM && ARCH_INTEL_SOCFPGA
->   
->   config CLK_INTEL_SOCFPGA64
-> -	bool "Intel Stratix / Agilex / N5X / Agilex5 clock controller support" if COMPILE_TEST && (!ARM64 || !ARCH_INTEL_SOCFPGA)
-> +	bool "Intel Stratix / Agilex / N5X / Agilex5 / Agilex72 clock controller support" \
-> +		if COMPILE_TEST && (!ARM64 || !ARCH_INTEL_SOCFPGA)
->   	default ARM64 && ARCH_INTEL_SOCFPGA
->   
->   endif # CLK_INTEL_SOCFPGA
-> diff --git a/drivers/clk/socfpga/Makefile b/drivers/clk/socfpga/Makefile
-> index a1ea2b988eaf..97af3dfdbbad 100644
-> --- a/drivers/clk/socfpga/Makefile
-> +++ b/drivers/clk/socfpga/Makefile
-> @@ -3,4 +3,4 @@ obj-$(CONFIG_CLK_INTEL_SOCFPGA32) += clk.o clk-gate.o clk-pll.o clk-periph.o \
->   				     clk-pll-a10.o clk-periph-a10.o clk-gate-a10.o
->   obj-$(CONFIG_CLK_INTEL_SOCFPGA64) += clk-s10.o \
->   				     clk-pll-s10.o clk-periph-s10.o clk-gate-s10.o \
-> -				     clk-agilex.o clk-agilex5.o
-> +				     clk-agilex.o clk-agilex5.o clk-agilex72.o
-> diff --git a/drivers/clk/socfpga/clk-agilex72.c b/drivers/clk/socfpga/clk-agilex72.c
-> new file mode 100644
-> index 000000000000..e350d8a9bb4d
-> --- /dev/null
-> +++ b/drivers/clk/socfpga/clk-agilex72.c
-> @@ -0,0 +1,1181 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2026, Altera Corporation
-> + */
-> +#include <linux/slab.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/io.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/string.h>
-> +#include <dt-bindings/clock/altr,agilex72-clkmgr.h>
-> +#include "clk-agilex72.h"
-> +
-> +#define EMAC_BYPASS_OFFSET          0x10
-> +#define CLK_MGR_FREE_SHIFT          16
-> +#define CLK_MGR_FREE_MASK           0x7
-> +#define PERI_CLK_CNT_DIV_WIDTH      11
-> +#define BOOTCLKSRC_MASK             0x2000000
-> +#define BOOTCLKSRC_SHIFT            25
-> +#define SOCFPGA_PLL_POWER           0
-> +#define BOOT_CLK                    "boot_clk"
-> +#define CLK_MGR_PLL_CLK_SRC_SHIFT   27
-> +#define CLK_MGR_PLL_CLK_SRC_MASK    0x3
-> +#define PLL_RATE_REG_OFFSET         0x4
-> +#define PLL_CR_N_HI_MASK            0xFF
-> +#define PLL_CR_N_LO_MASK            0x1FE00
-> +#define PLL_CR_N_LO_SHIFT           9
-> +#define PLL_CRHI_M_MASK             0x1FF00000
-> +#define PLL_CRHI_M_SHIFT            20
-> +#define PLL_CR_C_MASK               0xFF
-> +#define PLL_CR_BYPASS_DIV_MASK      0x100
-> +#define PLL_FRACT_DIV_REG_OFFSET    0x5c
-> +#define PLL_CR_FRACT_DIV_MASK       0xFFFFFF
-> +
-> +static bool agilex72_gate_is_emac(const char *name);
-> +static u8 agilex72_parent_index(const char * const *parents,
-> +				size_t num_parents, const char *parent_name);
-> +static unsigned long agilex72_boot_clk_recalc_rate(struct clk_hw *hwclk,
-> +						   unsigned long parent_rate);
-> +static unsigned long agilex72_clk_pll_recalc_rate(struct clk_hw *hwclk,
-> +						  unsigned long parent_rate);
-> +static unsigned long agilex72_peri_c_clk_recalc_rate(struct clk_hw *hwclk,
-> +						     unsigned long parent_rate);
-> +static unsigned long
-> +agilex72_clk_peri_cnt_clk_recalc_rate(struct clk_hw *hwclk,
-> +				      unsigned long parent_rate);
-> +static unsigned long agilex72_gate_clk_recalc_rate(struct clk_hw *hwclk,
-> +						   unsigned long parent_rate);
-> +static u8 agilex72_boot_get_parent(struct clk_hw *hwclk);
-> +static u8 agilex72_clk_pll_get_parent(struct clk_hw *hwclk);
-> +static u8 agilex72_peri_c_clk_get_parent(struct clk_hw *hwclk);
-> +static u8 agilex72_clk_periclk_get_parent(struct clk_hw *hwclk);
-> +static u8 agilex72_gate_get_parent(struct clk_hw *hwclk);
-> +
-> +/* External parent clocks come from DT via fw_name */
-> +static const char * const boot_pll_parents[] = {
-> +	"osc1",
-> +	"cb-intosc-div2-clk",
-> +};
-> +
-> +static const char * const gppll0_clk_parents[] = {
-> +	"osc1",
-> +	"cb-intosc-div10-clk",
-> +	"f2s-free-clk",
-> +};
-> +
-> +static const char * const gppll1_clk_parents[] = {
-> +	"osc1",
-> +	"cb-intosc-div10-clk",
-> +	"f2s-free-clk",
-> +};
-> +
-> +static const char * const gppll2_clk_parents[] = {
-> +	"osc1",
-> +	"cb-intosc-div10-clk",
-> +	"f2s-free-clk",
-> +};
-> +
-> +/* Core free muxes */
-> +static const char * const comp0_free_mux[] = {
+The soc: qcom: geni-se patch allows the GENI serial engine driver to be
+selected on 32-bit ARM Qualcomm SoCs, which the debug UART console
+depends on.
 
-Do you mean core0 here?
+Signed-off-by: Hardeep Sharma <hardeep.sharma@oss.qualcomm.com>
+---
+Changes in v4:
+- Addressed v3 review feedback:
+  - Registered the interconnect NoC provider from an explicit
+    core_initcall() instead of module_platform_driver(), matching the
+    established qcom interconnect driver convention.
+  - Replaced the NA mux-slot placeholder with _ across the pinctrl
+    PINGROUP table, matching the upstream qcom pinctrl convention.
+  - Added minItems: 1 to the interconnect binding clocks property so a
+    single clock is valid (system-noc), and aligned the binding
+    examples with the sdx75 labelled-node style.
+  - Added GDSC power-domain support to the Kuno GCC: the binding now
+    defines GDSC macros and the driver registers the EMAC0, PCIe and
+    USB20 GDSCs, so #power-domain-cells has real backing providers.
+  - Split the cpu-idle-states phandle list so each phandle is on its
+    own line.
+  - Collected Acked-by / Reviewed-by tags from v3.
+- Link to v3: https://lore.kernel.org/all/20260821-kuno-soc-support-v3-0-196e2b306368@oss.qualcomm.com/
 
-> +	"gppll1-c0",
-> +	"osc1",
-> +	"cb-intosc-div2-clk",
-> +	"f2s-free-clk",
-> +};
-> +
-> +static const char * const core2_free_mux[] = {
-> +	"gppll2-c0",
-> +	"osc1",
-> +	"cb-intosc-div2-clk",
-> +	"f2s-free-clk",
-> +};
-> +
-> +static const char * const core3_free_mux[] = {
-> +	"gppll2-c1",
-> +	"osc1",
-> +	"cb-intosc-div2-clk",
-> +	"f2s-free-clk",
-> +};
-> +
-> +static const char * const dsu_free_mux[] = {
-> +	"gppll1-c1",
-> +	"osc1",
-> +	"cb-intosc-div2-clk",
-> +	"f2s-free-clk",
-> +};
-> +
-> +static const char * const ccu_free_mux[] = {
-> +	"gppll0-c0",
-> +	"osc1",
-> +	"cb-intosc-div2-clk",
-> +	"f2s-free-clk",
-> +};
-> +
-> +static const char * const hsp_noc_free_mux[] = {
-> +	"gppll0-c0",
-> +	"osc1",
-> +	"cb-intosc-div2-clk",
-> +	"f2s-free-clk",
-> +};
-> +
-> +static const char * const lsp_noc_free_mux[] = {
-> +	"gppll0-c1",
-> +	"osc1",
-> +	"cb-intosc-div2-clk",
-> +	"f2s-free-clk",
-> +};
-> +
-> +static const char * const trace_free_mux[] = {
-> +	"gppll0-c2",
-> +	"osc1",
-> +	"cb-intosc-div2-clk",
-> +	"f2s-free-clk",
-> +};
-> +
-> +static const char * const emaca_free_mux[] = {
-> +	"gppll0-c0",
-> +	"osc1",
-> +	"cb-intosc-div2-clk",
-> +	"f2s-free-clk",
-> +};
-> +
-> +static const char * const emacb_free_mux[] = {
-> +	"gppll0-c0",
-> +	"osc1",
-> +	"cb-intosc-div2-clk",
-> +	"f2s-free-clk",
-> +};
-> +
-> +static const char * const emac_ptp_free_mux[] = {
-> +	"gppll0-c0",
-> +	"osc1",
-> +	"cb-intosc-div2-clk",
-> +	"f2s-free-clk",
-> +};
-> +
-> +static const char * const gpio_db_free_mux[] = {
-> +	"gppll0-c1",
-> +	"osc1",
-> +	"cb-intosc-div2-clk",
-> +	"f2s-free-clk",
-> +};
-> +
-> +static const char * const usb31_free_mux[] = {
-> +	"gppll0-c0",
-> +	"osc1",
-> +	"cb-intosc-div2-clk",
-> +	"f2s-free-clk",
-> +};
-> +
-> +static const char * const s2f_user0_free_mux[] = {
-> +	"gppll0-c1",
-> +	"osc1",
-> +	"cb-intosc-div2-clk",
-> +	"f2s-free-clk",
-> +};
-> +
-> +static const char * const s2f_user1_free_mux[] = {
-> +	"gppll0-c1",
-> +	"osc1",
-> +	"cb-intosc-div2-clk",
-> +	"f2s-free-clk",
-> +};
-> +
-> +static const char * const xspi_phy_clk_mux[] = {
-> +	"gppll0-c3",
-> +	"osc1",
-> +	"cb-intosc-div2-clk",
-> +	"f2s-free-clk",
-> +};
-> +
-> +static const char * const memdevice_phy_clk_mux[] = {
-> +	"gppll0-c3",
-> +	"osc1",
-> +	"cb-intosc-div2-clk",
-> +	"f2s-free-clk",
-> +};
-> +
-> +/* Secondary muxes between free_clk and boot_clk */
-> +static const char * const comp0_mux[] = {
+Changes in v3:
+- Addressed v2 review feedback:
+  - Reworked the interconnect binding clocks: dropped clock-names and
+    replaced the flexible min/maxItems list with fixed per-compatible
+    clocks (aggre-noc: 2, system-noc: 1), required where present and
+    disallowed otherwise, matching the sdx75/glymur shape.
+  - Made #power-domain-cells required on the Kuno GCC binding and
+    declared it on the SoC gcc node, since the Kuno GCC hosts GDSCs and
+    is a power-domain provider (following qcom,sdx75-gcc); the driver's
+    GDSC support will follow separately.
+  - Made the GPIO65/66 QDSS CTI trig1 funcsel-3 route selectable: added
+    a distinct qdss_cti_trig1_mire pin function (and allowed it in the
+    TLMM binding enum), as the duplicate funcsel-2/3 entry left
+    funcsel-3 unreachable.
+  - Collected Acked-by / Reviewed-by tags from v2.
+- Link to v2: https://lore.kernel.org/all/20260814-kuno-soc-support-v2-0-3079794f0f73@oss.qualcomm.com/
 
-core0?
+Changes in v2:
+- Addressed v1 review feedback:
+  - Reworked soc: qcom: geni-se commit message; dropped the Fixes: tag.
+  - Reworded dt-bindings commit messages to the "Document X for the
+    Qualcomm Kuno SoC" one-liner form.
+  - Canonicalized copyright headers on interconnect binding / driver /
+    NoC ID header to the single-line Qualcomm Technologies form.
+  - Dropped unused <linux/mod_devicetable.h> from the interconnect
+    driver.
+  - Fixed MODULE_DESCRIPTION casing "KUNO" -> "Kuno" in the interconnect
+    driver.
+  - Extended interconnect binding to optionally allow up to four QoS AHB
+    clocks (matches sdx75/glymur shape).
+  - Cleaned up brace/space style in gcc-kuno.c to match peer clock
+    drivers.
+  - Reworked initial DTS: moved idle-states / domain-idle-states inside
+    cpus{}, wrapped fixed clocks in a clocks{} container with peer node
+    names (xo-board, sleep-clk), dropped the pcie_pipe_clk fixed-clock
+    stub (the GCC 4th clock now uses <0> in DTS to match the sdx75
+    idiom; the YAML example uses a named placeholder), dropped the
+    RPMHPD_CX power-domain reference on GCC (Kuno GCC has no GDSCs /
+    no corner votes / no pm_runtime, so the reference was inert), and
+    added a bootloader hand-off comment on the memory node.
+  - Collected Acked-by / Reviewed-by tags from v1.
+- Link to v1: https://lore.kernel.org/all/20260809-kuno-soc-support-v1-0-5e0ede4a0c72@oss.qualcomm.com/
 
-> +	"comp0_free_clk",
-> +	BOOT_CLK,
-> +};
-> +
-> +static const char * const core2_mux[] = {
-> +	"core2_free_clk",
-> +	BOOT_CLK,
-> +};
-> +
-> +static const char * const core3_mux[] = {
-> +	"core3_free_clk",
-> +	BOOT_CLK,
-> +};
-> +
-> +static const char * const mpu_mux[] = {
-> +	"dsu_free_clk",
-> +	BOOT_CLK,
-> +};
-> +
-> +static const char * const ccu_mux[] = {
-> +	"ccu_free_clk",
-> +	BOOT_CLK,
-> +};
-> +
-> +static const char * const hsp_noc_mux[] = {
-> +	"hsp_noc_free_clk",
-> +	BOOT_CLK,
-> +};
-> +
-> +static const char * const lsp_noc_mux[] = {
-> +	"lsp_noc_free_clk",
-> +	BOOT_CLK,
-> +};
-> +
-> +static const char * const cs_at_mux[] = {
-> +	"lsp_noc_free_clk",
-> +	BOOT_CLK,
-> +};
-> +
-> +static const char * const cs_pdbg_mux[] = {
-> +	"lsp_noc_free_clk",
-> +	BOOT_CLK,
-> +};
-> +
-> +static const char * const cs_trace_mux[] = {
-> +	"trace_free_clk",
-> +	BOOT_CLK,
-> +};
-> +
-> +static const char * const emac_mux[] = {
-> +	"emaca_div_clk",
-> +	"emacb_div_clk",
-> +	BOOT_CLK,
-> +};
-> +
-> +static const char * const emac_ptp_mux[] = {
-> +	"emac_ptp_free_clk",
-> +	BOOT_CLK,
-> +};
-> +
-> +static const char * const gpio_db_mux[] = {
-> +	"gpio_db_free_clk",
-> +	BOOT_CLK,
-> +};
-> +
-> +static const char * const usb31_mux[] = {
-> +	"usb31_free_clk",
-> +	BOOT_CLK,
-> +};
-> +
-> +static const char * const s2f_user0_mux[] = {
-> +	"s2f_user0_free_clk",
-> +	BOOT_CLK,
-> +};
-> +
-> +static const char * const s2f_user1_mux[] = {
-> +	"s2f_user1_free_clk",
-> +	BOOT_CLK,
-> +};
-> +
-> +static const char * const xspi_mux[] = {
-> +	"xspi_phy_free_clk",
-> +	BOOT_CLK,
-> +};
-> +
-> +static const char * const memdevice_phy_mux[] = {
-> +	"memdevice_phy_free_clk",
-> +	BOOT_CLK,
-> +};
-> +
-> +static const struct agilex72_pll_clock pll_clks[] = {
-> +	{
-> +		.id = AGILEX72_BOOT_CLK,
-> +		.name = BOOT_CLK,
-> +		.parent_names = boot_pll_parents,
-> +		.num_parents = ARRAY_SIZE(boot_pll_parents),
-> +		.offset = 0x4,
-> +	},
-> +	{
-> +		.id = AGILEX72_GPPLL0_CLK,
-> +		.name = "gppll0",
-> +		.parent_names = gppll0_clk_parents,
-> +		.num_parents = ARRAY_SIZE(gppll0_clk_parents),
-> +		.offset = 0x160,
-> +	},
-> +	{
-> +		.id = AGILEX72_GPPLL1_CLK,
-> +		.name = "gppll1",
-> +		.parent_names = gppll1_clk_parents,
-> +		.num_parents = ARRAY_SIZE(gppll1_clk_parents),
-> +		.offset = 0x80,
-> +	},
-> +	{
-> +		.id = AGILEX72_GPPLL2_CLK,
-> +		.name = "gppll2",
-> +		.parent_names = gppll2_clk_parents,
-> +		.num_parents = ARRAY_SIZE(gppll2_clk_parents),
-> +		.offset = 0x60,
-> +	},
-> +};
-> +
-> +static const struct agilex72_perip_c_clock main_perip_c_clks[] = {
-> +	{ AGILEX72_GPPLL0_C0_CLK,
-> +	  "gppll0-c0", "gppll0", 1, 0x24, 23,  0, 8, 8 },
-> +	{ AGILEX72_GPPLL0_C1_CLK,
-> +	  "gppll0-c1", "gppll0", 1, 0x28, 14, 23, 8, 8 },
-> +	{ AGILEX72_GPPLL0_C2_CLK,
-> +	  "gppll0-c2", "gppll0", 1, 0x2c,  0,  9, 8, 8 },
-> +	{ AGILEX72_GPPLL0_C3_CLK,
-> +	  "gppll0-c3", "gppll0", 1, 0x30,  0,  9, 8, 8 },
-> +	{ AGILEX72_GPPLL0_C4_CLK,
-> +	  "gppll0-c4", "gppll0", 1, 0x38,  0,  9, 8, 8 },
-> +	{ AGILEX72_GPPLL0_C5_CLK,
-> +	  "gppll0-c5", "gppll0", 1, 0x3c,  0,  9, 8, 8 },
-> +	{ AGILEX72_GPPLL0_C6_CLK,
-> +	  "gppll0-c6", "gppll0", 1, 0x40,  0,  9, 8, 8 },
-> +	{ AGILEX72_GPPLL1_C0_CLK,
-> +	  "gppll1-c0", "gppll1", 1, 0x24, 23,  0, 8, 8 },
-> +	{ AGILEX72_GPPLL1_C1_CLK,
-> +	  "gppll1-c1", "gppll1", 1, 0x28, 14, 23, 8, 8 },
-> +	{ AGILEX72_GPPLL2_C0_CLK,
-> +	  "gppll2-c0", "gppll2", 1, 0x24, 23,  0, 8, 8 },
-> +	{ AGILEX72_GPPLL2_C1_CLK,
-> +	  "gppll2-c1", "gppll2", 1, 0x28, 14, 23, 8, 8 },
-> +};
-> +
-> +/* Non-SW clock-gated enabled clocks */
-> +static const struct agilex72_perip_cnt_clock main_perip_cnt_clks[] = {
-> +	{ AGILEX72_COMP0_FREE_CLK, "comp0_free_clk",
-> +	  comp0_free_mux, ARRAY_SIZE(comp0_free_mux), 0xbc },
-> +	{ AGILEX72_CORE2_FREE_CLK, "core2_free_clk",
-> +	  core2_free_mux, ARRAY_SIZE(core2_free_mux), 0xb8 },
-> +	{ AGILEX72_CORE3_FREE_CLK, "core3_free_clk",
-> +	  core3_free_mux, ARRAY_SIZE(core3_free_mux), 0xb4 },
-> +	{ AGILEX72_DSU_FREE_CLK, "dsu_free_clk",
-> +	  dsu_free_mux, ARRAY_SIZE(dsu_free_mux), 0xc0 },
-> +	{ AGILEX72_CCU_FREE_CLK, "ccu_free_clk",
-> +	  ccu_free_mux, ARRAY_SIZE(ccu_free_mux), 0xc4 },
-> +	{ AGILEX72_HSP_NOC_FREE_CLK, "hsp_noc_free_clk",
-> +	  hsp_noc_free_mux, ARRAY_SIZE(hsp_noc_free_mux), 0x104 },
-> +	{ AGILEX72_LSP_NOC_FREE_CLK, "lsp_noc_free_clk",
-> +	  lsp_noc_free_mux, ARRAY_SIZE(lsp_noc_free_mux), 0x108 },
-> +	{ AGILEX72_TRACE_FREE_CLK, "trace_free_clk",
-> +	  trace_free_mux, ARRAY_SIZE(trace_free_mux), 0x144 },
-> +	{ AGILEX72_EMAC_A_FREE_CLK, "emaca_free_clk",
-> +	  emaca_free_mux, ARRAY_SIZE(emaca_free_mux), 0x128 },
-> +	{ AGILEX72_EMAC_B_FREE_CLK, "emacb_free_clk",
-> +	  emacb_free_mux, ARRAY_SIZE(emacb_free_mux), 0x12c },
-> +	{ AGILEX72_EMAC_PTP_FREE_CLK, "emac_ptp_free_clk",
-> +	  emac_ptp_free_mux, ARRAY_SIZE(emac_ptp_free_mux), 0x130 },
-> +	{ AGILEX72_GPIO_DB_FREE_CLK, "gpio_db_free_clk",
-> +	  gpio_db_free_mux, ARRAY_SIZE(gpio_db_free_mux), 0x134 },
-> +	{ AGILEX72_USB31_FREE_CLK, "usb31_free_clk",
-> +	  usb31_free_mux, ARRAY_SIZE(usb31_free_mux), 0x140 },
-> +	{ AGILEX72_S2F_USER0_FREE_CLK, "s2f_user0_free_clk",
-> +	  s2f_user0_free_mux, ARRAY_SIZE(s2f_user0_free_mux), 0x138 },
-> +	{ AGILEX72_S2F_USER1_FREE_CLK, "s2f_user1_free_clk",
-> +	  s2f_user1_free_mux, ARRAY_SIZE(s2f_user1_free_mux), 0x13c },
-> +	{ AGILEX72_XSPI_PHY_FREE_CLK, "xspi_phy_free_clk",
-> +	  xspi_phy_clk_mux, ARRAY_SIZE(xspi_phy_clk_mux), 0x154 },
-> +	{ AGILEX72_MEMDEVICE_PHY_FREE_CLK, "memdevice_phy_free_clk",
-> +	  memdevice_phy_clk_mux, ARRAY_SIZE(memdevice_phy_clk_mux), 0x148 },
-> +};
-> +
-> +static const char * const hsp_mp_clk_parent[] = { "hsp_mp_clk" };
-> +static const char * const lsp_main_parent[] = { "lsp_main_clk" };
-> +static const char * const lsp_mp_parent[] = { "lsp_mp_clk" };
-> +static const char * const lsp_sp_parent[] = { "lsp_sp_clk" };
-> +static const char * const usb31_bus_clk_early_parents[] = { "hsp_main_clk" };
-> +static const char * const emaca_div_parents[] = { "emaca_free_clk" };
-> +static const char * const emacb_div_parents[] = { "emacb_free_clk" };
-> +
-> +/* SW Clock gate enabled clocks */
-> +static const struct agilex72_gate_clock gate_clks[] = {
-> +	{ AGILEX72_COMP0_CLK, "comp0_clk", comp0_mux,
+---
+Hardeep Sharma (15):
+      soc: qcom: geni-se: allow selection on 32-bit ARM Qualcomm SoCs
+      dt-bindings: power: rpmpd: Document Kuno RPMh power domains
+      pmdomain: qcom: rpmhpd: Add power domains for Kuno
+      dt-bindings: clock: qcom,rpmhcc: Add Kuno RPMh clock controller
+      clk: qcom: clk-rpmh: Add support for Kuno RPMh clocks
+      dt-bindings: interconnect: Add Qualcomm Kuno NoC
+      interconnect: qcom: Add Kuno interconnect provider driver
+      dt-bindings: pinctrl: qcom: Add Kuno TLMM
+      pinctrl: qcom: Add Kuno pinctrl driver
+      dt-bindings: clock: qcom: Add Kuno Global Clock Controller
+      clk: qcom: Add Global Clock Controller driver for Kuno
+      dt-bindings: interrupt-controller: qcom,pdc: Add Kuno compatible string
+      dt-bindings: firmware: qcom,scm: Document SCM on Kuno SoC
+      dt-bindings: arm: qcom: Document Kuno IDP board
+      ARM: dts: qcom: Add initial device tree for Kuno SoC
 
-CORE0?
+ .../devicetree/bindings/arm/qcom-soc.yaml          |    4 +-
+ Documentation/devicetree/bindings/arm/qcom.yaml    |    5 +
+ .../devicetree/bindings/clock/qcom,kuno-gcc.yaml   |   52 +
+ .../devicetree/bindings/clock/qcom,rpmhcc.yaml     |    1 +
+ .../devicetree/bindings/firmware/qcom,scm.yaml     |    1 +
+ .../bindings/interconnect/qcom,kuno-rpmh.yaml      |  118 ++
+ .../bindings/interrupt-controller/qcom,pdc.yaml    |    1 +
+ .../bindings/pinctrl/qcom,kuno-tlmm.yaml           |  110 ++
+ .../devicetree/bindings/power/qcom,rpmpd.yaml      |    1 +
+ arch/arm/boot/dts/qcom/Makefile                    |    1 +
+ arch/arm/boot/dts/qcom/qcom-kuno-idp.dts           |   25 +
+ arch/arm/boot/dts/qcom/qcom-kuno.dtsi              |  423 ++++++
+ drivers/clk/qcom/Kconfig                           |   10 +
+ drivers/clk/qcom/Makefile                          |    1 +
+ drivers/clk/qcom/clk-rpmh.c                        |   15 +
+ drivers/clk/qcom/gcc-kuno.c                        | 1483 ++++++++++++++++++++
+ drivers/interconnect/qcom/Kconfig                  |   13 +
+ drivers/interconnect/qcom/Makefile                 |    2 +
+ drivers/interconnect/qcom/kuno.c                   |  988 +++++++++++++
+ drivers/pinctrl/qcom/Kconfig.msm                   |   11 +
+ drivers/pinctrl/qcom/Makefile                      |    1 +
+ drivers/pinctrl/qcom/pinctrl-kuno.c                |  801 +++++++++++
+ drivers/pmdomain/qcom/rpmhpd.c                     |   16 +
+ drivers/soc/qcom/Kconfig                           |    1 -
+ include/dt-bindings/clock/qcom,kuno-gcc.h          |  100 ++
+ include/dt-bindings/interconnect/qcom,kuno.h       |   89 ++
+ 26 files changed, 4270 insertions(+), 3 deletions(-)
+---
+base-commit: f82a5da2f04960df9fb57489992d03dd5e64ec6f
+change-id: 20260809-kuno-soc-support-1dab826de0bf
 
-> +	  ARRAY_SIZE(comp0_mux), 0x30, 8, 0, 0, 0, 0x3c, 5, 0 },
-> +	{ AGILEX72_CORE2_CLK, "core2_clk", core2_mux,
-> +	  ARRAY_SIZE(core2_mux), 0x30, 10, 0, 0, 0, 0x3c, 10, 0 },
-> +	{ AGILEX72_CORE3_CLK, "core3_clk", core3_mux,
-> +	  ARRAY_SIZE(core3_mux), 0x30, 11, 0, 0, 0, 0x3c, 11, 0 },
-> +	{ AGILEX72_MPU_CLK, "mpu_clk", mpu_mux,
-> +	  ARRAY_SIZE(mpu_mux), 0x30, 7, 0, 0, 0, 0x3c, 4, 0 },
-> +	{ AGILEX72_CCU_CLK, "ccu_clk", ccu_mux,
-> +	  ARRAY_SIZE(ccu_mux), 0x30, 6, 0, 0, 0, 0x3c, 3, 0 },
-> +	{ AGILEX72_APU_SYS_FREE_CLK, "apu_sys_free_clk", ccu_mux,
-> +	  ARRAY_SIZE(ccu_mux), 0, 0, 0x50, 22, 2, 0x3c, 3, 0 },
-> +	{ AGILEX72_HSP_SYS_FREE_CLK, "hsp_sys_free_clk", hsp_noc_mux,
-> +	  ARRAY_SIZE(hsp_noc_mux), 0, 0, 0x10c, 8, 2, 0xf0, 9, 0 },
-> +	{ AGILEX72_HSP_MAIN_FREE_CLK, "hsp_main_free_clk", hsp_noc_mux,
-> +	  ARRAY_SIZE(hsp_noc_mux), 0, 0, 0, 0, 0, 0xf0, 9, 0 },
-> +	{ AGILEX72_HSP_MAIN_CLK, "hsp_main_clk", hsp_noc_mux,
-> +	  ARRAY_SIZE(hsp_noc_mux), 0xe0, 1, 0, 0, 0, 0xf0, 9, 0 },
-> +	{ AGILEX72_HSP_MP_CLK, "hsp_mp_clk", hsp_noc_mux,
-> +	  ARRAY_SIZE(hsp_noc_mux), 0xe0, 2, 0x10c, 10, 2, 0xf0, 9, 0 },
-> +	{ AGILEX72_HSP_SP_CLK, "hsp_sp_clk", hsp_noc_mux,
-> +	  ARRAY_SIZE(hsp_noc_mux), 0xe0, 3, 0x10c, 12, 2, 0xf0, 9, 0 },
-Are any of these clock critical? Meaning, they cannot get gated off?
+Best regards,
+--  
+Hardeep Sharma <hardeep.sharma@oss.qualcomm.com>
 
-
-> +	{ AGILEX72_USB2OTG_HCLK, "usb2otg_hclk", hsp_mp_clk_parent,
-> +	  1, 0xe0, 0, 0, 0, 0, 0, 0, 0 },
-> +	{ AGILEX72_LSP_SYS_FREE_CLK, "lsp_sys_free_clk", lsp_noc_mux,
-> +	  ARRAY_SIZE(lsp_noc_mux), 0, 0, 0x10c, 2, 2, 0xf0, 9, 0 },
-> +	{ AGILEX72_LSP_MAIN_FREE_CLK, "lsp_main_free_clk", lsp_noc_mux,
-> +	  ARRAY_SIZE(lsp_noc_mux), 0xe0, 0, 0, 0, 0, 0xf0, 9, 0 },
-
-Does this clock really share the same gate as the usb2otg_hclk?
-> +	{ AGILEX72_LSP_MAIN_CLK, "lsp_main_clk", lsp_noc_mux,
-> +	  ARRAY_SIZE(lsp_noc_mux), 0xe0, 1, 0, 0, 0, 0xf0, 9, 0 },
-
-Are you sure this clock share the same enable bit as the hsp_main_clk?
-
-> +	{ AGILEX72_LSP_MP_CLK, "lsp_mp_clk", lsp_noc_mux,
-> +	  ARRAY_SIZE(lsp_noc_mux), 0xe0, 2, 0x10c, 4, 2, 0xf0, 9, 0 },
-
-Also here, the hsp_mp_clk has the same enable bit?
-
-> +	{ AGILEX72_LSP_SP_CLK, "lsp_sp_clk", lsp_noc_mux,
-> +	  ARRAY_SIZE(lsp_noc_mux), 0xe0, 3, 0x10c, 6, 2, 0xf0, 9, 0 },
-> +	{ AGILEX72_SPIM_0_CLK, "spim_0_clk", lsp_main_parent,
-> +	  1, 0xd0, 11, 0, 0, 0, 0, 0, 0 },
-> +	{ AGILEX72_SPIM_1_CLK, "spim_1_clk", lsp_main_parent,
-> +	  1, 0xd0, 12, 0, 0, 0, 0, 0, 0 },
-> +	{ AGILEX72_SPIS_0_CLK, "spis_0_clk", lsp_main_parent,
-> +	  1, 0xd0, 13, 0, 0, 0, 0, 0, 0 },
-> +	{ AGILEX72_SPIS_1_CLK, "spis_1_clk", lsp_main_parent,
-> +	  1, 0xd0, 14, 0, 0, 0, 0, 0, 0 },
-> +	{ AGILEX72_DMA_0_CORE_CLK, "dma_0_core_clk", lsp_main_parent,
-> +	  1, 0xd0, 15, 0, 0, 0, 0, 0, 0 },
-> +	{ AGILEX72_DMA_0_HS_CLK, "dma_0_hs_clk", lsp_mp_parent,
-> +	  1, 0xd0, 15, 0, 0, 0, 0, 0, 0 },
-> +	{ AGILEX72_DMA_1_CORE_CLK, "dma_1_core_clk", lsp_main_parent,
-> +	  1, 0xd0, 16, 0, 0, 0, 0, 0, 0 },
-> +	{ AGILEX72_DMA_1_HS_CLK, "dma_1_hs_clk", lsp_mp_parent,
-> +	  1, 0xd0, 16, 0, 0, 0, 0, 0, 0 },
-> +	{ AGILEX72_I3C_0_CORE_CLK, "i3c_0_core_clk", lsp_mp_parent,
-> +	  1, 0xd0, 22, 0, 0, 0, 0, 0, 0 },
-> +	{ AGILEX72_I3C_1_CORE_CLK, "i3c_1_core_clk", lsp_mp_parent,
-> +	  1, 0xd0, 23, 0, 0, 0, 0, 0, 0 },
-> +	{ AGILEX72_I2C_0_PCLK, "i2c_0_pclk", lsp_sp_parent,
-> +	  1, 0xd0, 17, 0, 0, 0, 0, 0, 0 },
-> +	{ AGILEX72_I2C_1_PCLK, "i2c_1_pclk", lsp_sp_parent,
-> +	  1, 0xd0, 18, 0, 0, 0, 0, 0, 0 },
-> +	{ AGILEX72_I2C_EMAC0_PCLK, "i2c_emac0_pclk", lsp_sp_parent,
-> +	  1, 0xd0, 19, 0, 0, 0, 0, 0, 0 },
-> +	{ AGILEX72_I2C_EMAC1_PCLK, "i2c_emac1_pclk", lsp_sp_parent,
-> +	  1, 0xd0, 20, 0, 0, 0, 0, 0, 0 },
-> +	{ AGILEX72_I2C_EMAC2_PCLK, "i2c_emac2_pclk", lsp_sp_parent,
-> +	  1, 0xd0, 21, 0, 0, 0, 0, 0, 0 },
-> +	{ AGILEX72_UART_0_PCLK, "uart_0_pclk", lsp_sp_parent,
-> +	  1, 0xd0, 23, 0, 0, 0, 0, 0, 0 },
-
-Are you sure this clock share the same enable bit as the i3c_1_core_clk?
-
-> +	{ AGILEX72_UART_1_PCLK, "uart_1_pclk", lsp_sp_parent,
-> +	  1, 0xd0, 24, 0, 0, 0, 0, 0, 0 },
-> +	{ AGILEX72_UART_2_PCLK, "uart_2_pclk", lsp_sp_parent,
-> +	  1, 0xd0, 25, 0, 0, 0, 0, 0, 0 },
-> +	{ AGILEX72_SPTIMER_0_PCLK, "sptimer_0_pclk", lsp_sp_parent,
-> +	  1, 0xd0, 29, 0, 0, 0, 0, 0, 0 },
-> +	{ AGILEX72_SPTIMER_1_PCLK, "sptimer_1_pclk", lsp_sp_parent,
-> +	  1, 0xd0, 30, 0, 0, 0, 0, 0, 0 },
-> +	{ AGILEX72_CS_AT_CLK, "cs_at_clk", cs_at_mux,
-> +	  ARRAY_SIZE(cs_at_mux), 0xe0, 4, 0x10c, 24, 2, 0xf0, 9, 0 },
-> +	{ AGILEX72_CS_PDBG_CLK, "cs_pdbg_clk", cs_pdbg_mux,
-> +	  ARRAY_SIZE(cs_pdbg_mux), 0xe0, 4, 0x10c, 28, 2, 0xf0, 9, 0 },
-> +	{ AGILEX72_CS_TRACE_CLK, "cs_trace_clk", cs_trace_mux,
-> +	  ARRAY_SIZE(cs_trace_mux), 0xe0, 4, 0x10c, 26, 2, 0xf0, 10, 0 },
-> +	{ AGILEX72_EMACA_DIV_CLK, "emaca_div_clk", emaca_div_parents,
-> +	  1, 0, 0, 0x118, 8, 2, 0, 0, 0 },
-> +	{ AGILEX72_EMACB_DIV_CLK, "emacb_div_clk", emacb_div_parents,
-> +	  1, 0, 0, 0x118, 10, 2, 0, 0, 0 },
-> +	{ AGILEX72_EMAC0_CLK, "emac0_clk", emac_mux,
-> +	  ARRAY_SIZE(emac_mux), 0xd0, 0, 0, 0, 0, 0x100, 26, 0 },
-> +	{ AGILEX72_EMAC1_CLK, "emac1_clk", emac_mux,
-> +	  ARRAY_SIZE(emac_mux), 0xd0, 1, 0, 0, 0, 0x100, 27, 0 },
-> +	{ AGILEX72_EMAC2_CLK, "emac2_clk", emac_mux,
-> +	  ARRAY_SIZE(emac_mux), 0xd0, 2, 0, 0, 0, 0x100, 28, 0 },
-> +	{ AGILEX72_EMAC_PTP_CLK, "emac_ptp_clk", emac_ptp_mux,
-> +	  ARRAY_SIZE(emac_ptp_mux), 0xd0, 3, 0, 0, 0, 0xf0, 2, 0 },
-> +	{ AGILEX72_GPIO_DB_CLK, "gpio_db_clk", gpio_db_mux,
-> +	  ARRAY_SIZE(gpio_db_mux), 0xd0, 4, 0x114, 0, 16, 0xf0, 3, 1 },
-> +	{ AGILEX72_USB31_SUSPEND_CLK, "usb31_suspend_clk", usb31_mux,
-> +	  ARRAY_SIZE(usb31_mux), 0xe0, 7, 0x118, 12, 6, 0xf0, 7, 1 },
-> +	{ AGILEX72_USB31_BUS_CLK_EARLY, "usb31_bus_clk_early",
-> +	  usb31_bus_clk_early_parents, 1, 0xe0, 7, 0, 0, 0, 0, 0, 0 },
-> +	{ AGILEX72_S2F_USER0_CLK, "s2f_user0_clk", s2f_user0_mux,
-> +	  ARRAY_SIZE(s2f_user0_mux), 0xd0, 27, 0, 0, 0, 0xf0, 4, 0 },
-> +	{ AGILEX72_S2F_USER1_CLK, "s2f_user1_clk", s2f_user1_mux,
-> +	  ARRAY_SIZE(s2f_user1_mux), 0xd0, 28, 0, 0, 0, 0xf0, 5, 0 },
-> +	{ AGILEX72_XSPI_PCLK, "xspi_pclk", lsp_mp_parent,
-> +	  1, 0xd0, 9, 0, 0, 0, 0, 0, 0 },
-> +	{ AGILEX72_XSPI_CLK, "xspi_clk", xspi_mux,
-> +	  ARRAY_SIZE(xspi_mux), 0xd0, 9, 0x110, 8, 2, 0xf0, 14, 0 },
-> +	{ AGILEX72_XSPI_PHY_CLK, "xspi_phy_clk", xspi_mux,
-> +	  ARRAY_SIZE(xspi_mux), 0xd0, 9, 0x110, 8, 2, 0xf0, 14, 0 },
-> +	{ AGILEX72_SDMMC0_SDPHY_REG_CLK, "sdmmc0_sdphy_reg_clk",
-> +	  lsp_mp_parent, 1, 0xd0, 5, 0, 0, 0, 0, 0, 0 },
-> +	{ AGILEX72_SDMMC1_SDPHY_REG_CLK, "sdmmc1_sdphy_reg_clk",
-> +	  lsp_mp_parent, 1, 0xd0, 7, 0, 0, 0, 0, 0, 0 },
-> +	{ AGILEX72_SDMMC0_SDMCLK, "sdmmc0_sdmclk", memdevice_phy_mux,
-> +	  ARRAY_SIZE(memdevice_phy_mux), 0xd0, 5, 0x110, 4, 2, 0xf0, 15, 0 },
-> +	{ AGILEX72_SDMMC1_SDMCLK, "sdmmc1_sdmclk", memdevice_phy_mux,
-> +	  ARRAY_SIZE(memdevice_phy_mux), 0xd0, 7, 0x110, 6, 2, 0xf0, 15, 0 },
-> +	{ AGILEX72_SDMMC0_PHY_CLK, "sdmmc0_phy_clk", memdevice_phy_mux,
-> +	  ARRAY_SIZE(memdevice_phy_mux), 0xd0, 5, 0x110, 4, 2, 0xf0, 15, 0 },
-> +	{ AGILEX72_SDMMC1_PHY_CLK, "sdmmc1_phy_clk", memdevice_phy_mux,
-> +	  ARRAY_SIZE(memdevice_phy_mux), 0xd0, 7, 0x110, 6, 2, 0xf0, 15, 0 },
-> +};
-> +
-
-<snip>
-
-> diff --git a/drivers/clk/socfpga/clk-agilex72.h b/drivers/clk/socfpga/clk-agilex72.h
-> new file mode 100644
-> index 000000000000..e120fe97fd65
-> --- /dev/null
-> +++ b/drivers/clk/socfpga/clk-agilex72.h
-> @@ -0,0 +1,91 @@
-> +/* SPDX-License-Identifier:    GPL-2.0 */
-> +/*
-> + * Copyright (C) 2026, Altera Corporation
-> + */
-> +
-> +#ifndef	__AGILEX72_CLK_H
-> +#define	__AGILEX72_CLK_H
-> +
-> +#include <linux/clk-provider.h>
-> +
-> +struct agilex72_clock_data {
-> +	/*
-> +	 * MMIO bases ioremapped from DT resources with "reg-names" property
-> +	 * in probe:
-> +	 *   [0] - "clkmgr"  : main clock manager register block
-> +	 *   [1] - "gppll0"  : GP PLL 0 register block
-> +	 *   [2] - "gppll1"  : GP PLL 1 register block
-> +	 *   [3] - "gppll2"  : GP PLL 2 register block
-> +	 */
-> +	void __iomem *base[4];
-> +
-> +	/* Must be last */
-> +	struct clk_hw_onecell_data	clk_data;
-> +};
-> +
-> +struct agilex72_pll {
-> +	struct clk_gate     hw;
-> +	void __iomem       *pll_base;
-> +};
-> +
-> +struct agilex72_periph_clk {
-> +	struct clk_gate  hw;
-> +	void __iomem    *div_reg;
-> +	u8               div_lo_shift;
-> +	u8               div_hi_shift;
-> +};
-> +
-> +struct agilex72_gate_clk {
-> +	struct clk_gate hw;
-> +	bool div_linear;
-> +	void __iomem *div_reg;
-> +	void __iomem *bypass_reg;
-> +	u8  div_width;	/* only valid if div_reg != 0 */
-> +	u8  div_shift;	/* only valid if div_reg != 0 */
-> +	u8  bypass_shift;      /* only valid if bypass_reg != 0 */
-> +};
-> +
-> +struct agilex72_pll_clock {
-> +	unsigned int	id;
-> +	const char	*name;
-> +	const char	* const *parent_names;
-> +	u8	num_parents;
-> +	unsigned long   offset;
-> +};
-> +
-> +struct agilex72_perip_c_clock {
-> +	unsigned int		id;
-> +	const char		*name;
-> +	const char		*parent_name;
-> +	u8			num_parents;
-> +	unsigned long		div_offset;
-> +	u8			div_lo_shift;
-> +	u8			div_hi_shift;
-> +	u8			div_lo_width;
-> +	u8			div_hi_width;
-
-I don't see div_lo_width and div_hi_width get used at all?
-
-> +};
-> +
-> +struct agilex72_perip_cnt_clock {
-> +	unsigned int		id;
-> +	const char		*name;
-> +	const char	* const *parent_names;
-> +	u8			num_parents;
-> +	unsigned long		offset;
-> +};
-> +
-> +struct agilex72_gate_clock {
-> +	unsigned int		id;
-> +	const char		*name;
-> +	const char	* const *parent_names;
-> +	u8			num_parents;
-> +	unsigned long		gate_reg;
-> +	u8			gate_idx;
-> +	unsigned long		div_reg;
-> +	u8			div_offset;
-> +	u8			div_width;
-> +	unsigned long		bypass_reg;
-> +	u8			bypass_shift;
-> +	bool			div_linear;
-> +};
-> +
-> +#endif	/* __AGILEX72_CLK_H */
-
-If clk-agilex72.c is the only consumer of this .h file, then just move 
-the declarations to the top of the C file. Or take a look at
-2050b57ecda0 ("clk: socfpga: agilex5: add clock driver for Agilex5") as 
-an example.
-
-Dinh
