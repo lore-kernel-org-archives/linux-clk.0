@@ -1,123 +1,140 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F30E47D95F;
-	Thu, 27 Aug 2026 16:49:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CA343812C2;
+	Thu, 27 Aug 2026 16:53:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787849345; cv=none; b=CXmH6Gr09sj3xe4u03H7KEuQU81lH8zJCfUNWBL7W6bLhCXXSuEhZWCvKMkGw6uVS1ULjSL6Aof8iAktk1soNXzgon7Wd1M6CO5Lg6nhDEArhlIvKyyfW2ldf7rB/BOCUzfJYJCRYQLHYmw2AJ3CnTpem0x82xCZYNL9WusDQuQ=
+	t=1787849587; cv=none; b=Oy63JoAkZm07+3XlpeEgh0aZatG6iiCbEPJJnyGQBeS6Vj+RjeJhir62IDOj6c8HJoSljujAstgjTyKxC1XRGpDhBfi4+VfYO1voZbOzBjDVZl8+UPehx0Vxwu/H0aJlnUUTzSbqRiPsI1oOtMGKXhTStPOuP+J3HvDkfypnCW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787849345; c=relaxed/simple;
-	bh=bdRpD/SNicCWyscM0zlGYrGsHNMoJW8tcupEZLTo/Qs=;
+	s=arc-20240116; t=1787849587; c=relaxed/simple;
+	bh=ayLr9ZTQ9Ir57DUhUxclxJ95yYFos9ZRy1DTtfooskc=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=n4oOv5ZuqAO+CMj7fPnnZfiZWgyl3DSJlRA3c2gqWXCgHfWlyH0aPgCHNy6H/nTzUm2soKxY8ySbSqftBg9ODBVDB44OaavjJ7jDHNQNCsLV4R0OhvKGGc/W6imPX3BJasERf7r9qgEABV2ETpljEUSlcOLczUqAdxR5iXBHMvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ak+klxCr; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=VYSh48E+B6X9T1pAuaOJsBwuNObvb0HZxZWubJFc3H/8wfR4DcazcAepOLms1Po6MpNXVQVVH1xDCWBPkIBM/sP0QdVtdl7Su1r6LS7qb7FRCMs8zte+1e7sKIEk9R1/Hp/s/wGadkVXSNZZZmPiCr1v+jY6+MezKUDffiZ8yY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bD5BnM1N; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ak+klxCr"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A73D21F000E9;
-	Thu, 27 Aug 2026 16:49:03 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bD5BnM1N"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A23901F000E9;
+	Thu, 27 Aug 2026 16:53:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787849344;
-	bh=RPbl9RTyAbIF9RIyLDur6Ybeb+BbGsN9alZUZEkesc0=;
+	s=k20260515; t=1787849586;
+	bh=HOsDr9JqeKAfCsvXuPSqufqm5M4JQ7Kxh6lSFisFYtU=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=ak+klxCrtL1ZxmRriu0c0EER20S7pmYVhD8mzvcuMrY7qKaQ2jxOelkmPbzLaB/NP
-	 Ig4TabQRuVfxxNTX3t1QEsbjMvSEV+cPARFu8z4JrvxRgxY5co4LQPL2clPpvUHN4N
-	 87levQlASHueh0v2Dq/HdXpu7Ug2+nIAsvmVmfHWS1AZpiHNqYeuksN8WZdf/0WY64
-	 LeW5MlUCTWgMLuO04e3wnwoZhLGmrYx8moFyM/Kxh+c70ME3telQUo33iEu8FdrjK3
-	 M90MMoviNumzbHpF3RQrne1CZvshJs0OAJIXs6XTrjiPUKoYtLLG1Rmeuye3mEgNZU
-	 oyP/rr9ZVQlMA==
+	b=bD5BnM1NbMMNEbqGDQGyZeHo138YFdLrUSKboPYR88cqfRiNAcn6Uf/5pFNcpvlG4
+	 PHccw/HqRKqRvp1wpDuBEnGxHpQUAoBerTwD1DgWpYUmoaZN+ydtJCC+yvB3jJREmR
+	 lTxL9aoFgo7Zf0XOTexcLCPdWnhe5riHW0uYM7xTwZ+6FYJUZ+RBVZmUYJpWr/NVUv
+	 5NXDtJZjDMuD8ZXy1WP8K6PqscxTzVHCcGFzZ0DRHuav2X+lCzfakkZUjqnxEdh2zV
+	 Gktp/ejXx61kEmEFitxG3e2NLrneirzBukC9sfqvBpZLsI6Mt8lsLTdGtXx3stF7Co
+	 8jtD2x8U6MiiA==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v4 05/15] clk: qcom: clk-rpmh: Add support for Kuno RPMh
- clocks
+Subject: Re: [PATCH v4 11/15] clk: qcom: Add Global Clock Controller driver
+ for Kuno
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Hardeep Sharma" <hardeep.sharma@oss.qualcomm.com>
 Cc: robh@kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, conor+dt@kernel.org
-In-Reply-To: <20260827-kuno-soc-support-v4-5-dd34f235fc1a@oss.qualcomm.com>
+In-Reply-To: <20260827-kuno-soc-support-v4-11-dd34f235fc1a@oss.qualcomm.com>
 References: <20260827-kuno-soc-support-v4-0-dd34f235fc1a@oss.qualcomm.com>
- <20260827-kuno-soc-support-v4-5-dd34f235fc1a@oss.qualcomm.com>
+ <20260827-kuno-soc-support-v4-11-dd34f235fc1a@oss.qualcomm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Thu, 27 Aug 2026 16:49:03 +0000
-Message-Id: <20260827164903.A73D21F000E9@smtp.kernel.org>
+Date: Thu, 27 Aug 2026 16:53:05 +0000
+Message-Id: <20260827165305.A23901F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+Thank you for your contribution! Sashiko AI review found 2 potential issue(=
 s) to consider:
-
-Pre-existing issues:
-- [High] This problem wasn't introduced by this patch, but this patch adds =
-new instances of static arrays (like `kuno_rpmh_clocks`) that are subjected=
- to the same corruption. Global static structures and arrays in clk-rpmh ar=
-e permanently mutated during probe, leading to resource address corruption =
-and dropped clocks across unbind/rebind or probe deferrals.
+- [High] The CLK_KUNO_GCC Kconfig entry is missing `select QCOM_GDSC`, whic=
+h leads to a silent runtime probe failure if QCOM_GDSC is not enabled.
+- [High] The SDCC (Secure Digital) apps clock uses `clk_rcg2_ops` instead o=
+f `clk_rcg2_floor_ops`, which can cause SD card overclocking and data corru=
+ption.
 --
 
-commit 05d4af4c482cb487c2654eee526d1d872c910869
+commit e6e05944bec5f5d0474370120050ea04e9b3eb87
 Author: Hardeep Sharma <hardeep.sharma@oss.qualcomm.com>
 
-clk: qcom: clk-rpmh: Add support for Kuno RPMh clocks
+clk: qcom: Add Global Clock Controller driver for Kuno
+   =20
+Add the global clock controller (GCC) driver for the Qualcomm Kuno SoC,
+providing the PLLs, root clock generators, gate/branch clocks and resets
+used by the peripheral devices such as UART, SPI, I2C, USB, SD, PCIe and
+Ethernet.
 
-Add the RPMh clock description for the Qualcomm Kuno SoC so the
-qcom,kuno-rpmh-clk compatible can provide the RPMh-managed clocks to
-consumers.
+> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> index e609a7819e072..1f31bf09de0cd 100644
+> --- a/drivers/clk/qcom/Kconfig
+> +++ b/drivers/clk/qcom/Kconfig
 
-> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-> index a224a94ae2733..ec8700b6186d8 100644
-> --- a/drivers/clk/qcom/clk-rpmh.c
-> +++ b/drivers/clk/qcom/clk-rpmh.c
-> @@ -937,6 +937,20 @@ static const struct clk_rpmh_desc clk_rpmh_kaanapali=
- =3D {
->  	.num_clks =3D ARRAY_SIZE(kaanapali_rpmh_clocks),
->  };
+[ ... ]
+
+> @@ -212,6 +212,16 @@ config CLK_KAANAPALI_VIDEOCC
+>  	  Say Y if you want to support video devices and functionality such as
+>  	  video encode/decode.
 > =20
-> +static struct clk_hw *kuno_rpmh_clocks[] =3D {
-> +	[RPMH_CXO_CLK]		=3D &clk_rpmh_bi_tcxo_div2.hw,
-> +	[RPMH_CXO_CLK_A]	=3D &clk_rpmh_bi_tcxo_div2_ao.hw,
-> +	[RPMH_RF_CLK1]		=3D &clk_rpmh_rf_clk1_a.hw,
-> +	[RPMH_RF_CLK1_A]	=3D &clk_rpmh_rf_clk1_a_ao.hw,
-> +	[RPMH_QPIC_CLK]		=3D &clk_rpmh_qpic_clk.hw,
-> +	[RPMH_IPA_CLK]		=3D &clk_rpmh_ipa.hw,
-> +};
-> +
-> +static const struct clk_rpmh_desc clk_rpmh_kuno =3D {
-> +	.clks =3D kuno_rpmh_clocks,
+> +config CLK_KUNO_GCC
+> +	tristate "Kuno Global Clock Controller"
+> +	depends on ARM || COMPILE_TEST
+> +	default ARCH_QCOM
 
 [Severity: High]
-This is a pre-existing issue, but adding this new array subjects it to a bug
-in the clk-rpmh driver's probe path.
+Should this config also select QCOM_GDSC?
 
-Will this statically allocated array and the clocks it points to be corrupt=
-ed
-during probe deferrals or driver unbind/rebind cycles?
+If CONFIG_QCOM_GDSC is not enabled, the static inline stub for gdsc_registe=
+r()
+in gdsc.h unconditionally returns -ENOSYS. When qcom_cc_really_probe() calls
+gdsc_register() for the GDSCs declared in gcc_kuno_desc, it receives -ENOSYS
+and aborts the probe entirely. This can leave dependent peripherals without
+clocks or resets at runtime.
 
-In clk_rpmh_probe(), the globally shared static array and the structures it
-references are permanently mutated:
+> +	help
+> +	  Support for the global clock controller (GCC) on Kuno devices.
+> +	  Say Y if you want to use peripheral devices such as UART, SPI,
+> +	  I2C, USB, SD, PCIe and Ethernet on the Kuno SoC. This clock
+> +	  controller supplies the clocks and resets to those peripherals.
+> +
+>  config CLK_NORD_DISPCC
+>  	tristate "Nord Display Clock Controller"
+>  	depends on ARM64 || COMPILE_TEST
 
-drivers/clk/qcom/clk-rpmh.c:clk_rpmh_probe() {
-    ...
-		if (!has_state_changed && rpmh_clk->state) {
-			hw_clks[i] =3D NULL;
-			continue;
-		}
+> diff --git a/drivers/clk/qcom/gcc-kuno.c b/drivers/clk/qcom/gcc-kuno.c
+> new file mode 100644
+> index 0000000000000..787111397df96
+> --- /dev/null
+> +++ b/drivers/clk/qcom/gcc-kuno.c
 
-		rpmh_clk->res_addr +=3D res_addr;
-    ...
-}
+[ ... ]
 
-Because kuno_rpmh_clocks is a static array, hw_clks[i] =3D NULL permanently
-drops the clock for all subsequent probe attempts.
+> +static struct clk_rcg2 gcc_sdcc4_apps_clk_src =3D {
+> +	.cmd_rcgr =3D 0x6a01c,
+> +	.mnd_width =3D 8,
+> +	.hid_width =3D 5,
+> +	.parent_map =3D gcc_parent_map_0,
+> +	.freq_tbl =3D ftbl_gcc_sdcc4_apps_clk_src,
+> +	.clkr.hw.init =3D &(const struct clk_init_data) {
+> +		.name =3D "gcc_sdcc4_apps_clk_src",
+> +		.parent_data =3D gcc_parent_data_0,
+> +		.num_parents =3D ARRAY_SIZE(gcc_parent_data_0),
+> +		.ops =3D &clk_rcg2_ops,
 
-Additionally, rpmh_clk->res_addr +=3D res_addr incorrectly accumulates the
-hardware resource address multiple times across probes, which can cause the
-driver to write to out-of-bounds addresses when sending RPMh commands.
+[Severity: High]
+Should gcc_sdcc4_apps_clk_src use clk_rcg2_floor_ops instead of clk_rcg2_op=
+s?
 
-> +	.num_clks =3D ARRAY_SIZE(kuno_rpmh_clocks),
+When the MMC core requests a clock rate for the SD card, the standard
+clk_rcg2_ops uses qcom_find_freq(), which rounds up to the nearest available
+frequency greater than or equal to the requested rate. If the requested rate
+isn't an exact match in the frequency table, it will exceed the maximum safe
+frequency mandated by the SD specification, which can cause SD card
+overclocking and potential data corruption.
+
+> +	},
 > +};
+> +
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260827-kuno-soc-s=
-upport-v4-0-dd34f235fc1a@oss.qualcomm.com?part=3D5
+upport-v4-0-dd34f235fc1a@oss.qualcomm.com?part=3D11
