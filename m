@@ -1,43 +1,43 @@
 Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0A3046D087;
-	Fri, 28 Aug 2026 13:48:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E8BD46D2B8;
+	Fri, 28 Aug 2026 13:48:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787924910; cv=none; b=UHYfUWu2Q/mCGUjAlZcSEtPXHVXlE/VTn9lR3Cs6AI6UPluHTqbb3HbKJjLbUGTLIHFEJjRrfxbI/Xxj8r8yocfA1klFbUI+f0xqsi4Ae+b5DJA+ZZSXUgFyroWz+361QFem4LXKBA/2n3TPZe9RCkkOIxRCwtiNGPpUAQByARw=
+	t=1787924911; cv=none; b=A3DnDVC90s3/KKYOBWOEA4iVEIsdr2nOGV23vY2/tY7mq9Iy8xpgU16r2vYdEFnngv2E0TfIQQH17yynfLXWBYQLpzes17Yd6K9DAFBRMXyNlWrJ0vnd+PUeSMs/LMBln+WgNKdqsIO9THfjqjdUbNQPmltggaL2ejCo9J8fkVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787924910; c=relaxed/simple;
-	bh=GZU9xaartKe/V1R/ERw8+l7s0XF6lcnEJbJwTrauCv0=;
+	s=arc-20240116; t=1787924911; c=relaxed/simple;
+	bh=+n/qXmHjWCbl3/bjmeM4XKH6DHupgynh4l0qVH6GsNY=;
 	h=From:Date:Subject:MIME-Version:Message-Id:In-Reply-To:To:Cc:
-	 Content-Type:References; b=XFfkNZcMbcpehavaxl+T32+908I1eZy7CNFNBpiTJJjjYbjAtcVon8FPjKwJtHohAPx0oA/o18R1ar3cSg8DEERlYb1sgpyoVdOHj4Yc80y1NNmhksFrRt7x4IfZcwYS9EFgT/fF/GjW3Aixiw0kdWkANZxaj2jcpY/AaE1T9bc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=rd73HZgu; arc=none smtp.client-ip=210.118.77.11
+	 Content-Type:References; b=tVgXyMvmvYsyI0AyLH9Rf+N1HhZtRLW7xfpfA9RxPGZ/ozd6/k2oNfkHTK+VK6xDcy35MgKvPhLF6MSzrZbiqB5mqHppNStoUY7AvYZCVh8azhoXG9TBLwDMyWY9rV8jRqMyizYmP5AU2rBi6/6EXUf3DEnJv6EqZuegiFPJmVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=mMxMN4lf; arc=none smtp.client-ip=210.118.77.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="rd73HZgu"
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20260828134825euoutp01131a8281d71cc243fd3c992956908b91~P-DqKSelq2468024680euoutp01L;
-	Fri, 28 Aug 2026 13:48:25 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20260828134825euoutp01131a8281d71cc243fd3c992956908b91~P-DqKSelq2468024680euoutp01L
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="mMxMN4lf"
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20260828134827euoutp014a4b5c80ef670eea8290aaf3839255e8~P-Drsb42R2677926779euoutp01-;
+	Fri, 28 Aug 2026 13:48:27 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20260828134827euoutp014a4b5c80ef670eea8290aaf3839255e8~P-Drsb42R2677926779euoutp01-
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1787924905;
-	bh=6gbd7QP4pOb96FpaylStgb7YIuTsKGkkd9nkhPrIfIo=;
+	s=mail20170921; t=1787924907;
+	bh=BQN5VETO3LSm+6pEAAZet5I9WEZ1wS31Jtg5LRZKsNw=;
 	h=From:Date:Subject:In-Reply-To:To:Cc:References:From;
-	b=rd73HZgu6g+snRU1G+jCrbPftJ0twDPYN9BlFoFr8PWobFY9dR807JEdCja7mul5C
-	 xw9iUPfrEu/LsSfIUQ5L1652jiNeCmIlP8qfdiPVfj8ON0JVwG76J4m53W8MQf0Od+
-	 pDs0aVA+RiT/mv3QO6rWy5emkDHTJQFqeYpdtqG8=
+	b=mMxMN4lfbUqK9rSd3brrfj7ltqkAiDPamjF21dmBvSxpBoGakfQ0UQ5ekE8Sj4UtH
+	 n1aFKQTVAjMmODcJpg5h1m5O4jSQdmOpZqMpCYky96P322SY5Dybu1C7DVsX/qkDMV
+	 cOcH1mTYHkpCvLfWUClMAiaLUUgO+9YPA+u7G1BU=
 Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
 	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20260828134824eucas1p12730831aa4d01856e0c0e6b678c82bdb~P-DpeEIZW2451124511eucas1p1i;
-	Fri, 28 Aug 2026 13:48:24 +0000 (GMT)
+	20260828134826eucas1p1ed3a0c4a3207dc01d1ccb33e45ae462e~P-DrXSfyV1888618886eucas1p1x;
+	Fri, 28 Aug 2026 13:48:26 +0000 (GMT)
 Received: from AMDC4942.eu.corp.samsungelectronics.net (unknown
 	[106.210.136.40]) by eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20260828134822eusmtip16d10b6e2edf0f5b1ef542fb28a68ac72~P-Dn2yF3V3269332693eusmtip1E;
-	Fri, 28 Aug 2026 13:48:22 +0000 (GMT)
+	20260828134824eusmtip10b3f7cc48d893bbf2eaecea4eba6c337~P-DpiAXd-2831928319eusmtip1Z;
+	Fri, 28 Aug 2026 13:48:24 +0000 (GMT)
 From: Michal Wilczynski <m.wilczynski@samsung.com>
-Date: Fri, 28 Aug 2026 15:47:30 +0200
-Subject: [PATCH v2 06/15] drm/bridge: inno-hdmi: Add .disable platform
+Date: Fri, 28 Aug 2026 15:47:31 +0200
+Subject: [PATCH v2 07/15] drm/bridge: inno-hdmi: Add .mode_valid platform
  operation
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -46,7 +46,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260828-jh7110-clean-send-v2-6-331680c8b9d1@samsung.com>
+Message-Id: <20260828-jh7110-clean-send-v2-7-331680c8b9d1@samsung.com>
 In-Reply-To: <20260828-jh7110-clean-send-v2-0-331680c8b9d1@samsung.com>
 To: Vinod Koul <vkoul@kernel.org>,  Neil Armstrong
 	<neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>,  Krzysztof
@@ -75,57 +75,83 @@ Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
 	Spierings <maudspierings@gocontroll.com>,  Graham Markall
 	<hello@big-grey.co.uk>,  Michal Wilczynski <m.wilczynski@samsung.com>
 X-Mailer: b4 0.15-dev
-X-CMS-MailID: 20260828134824eucas1p12730831aa4d01856e0c0e6b678c82bdb
+X-CMS-MailID: 20260828134826eucas1p1ed3a0c4a3207dc01d1ccb33e45ae462e
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20260828134824eucas1p12730831aa4d01856e0c0e6b678c82bdb
+X-RootMTR: 20260828134826eucas1p1ed3a0c4a3207dc01d1ccb33e45ae462e
 X-EPHeader: CA
-X-CMS-RootMailID: 20260828134824eucas1p12730831aa4d01856e0c0e6b678c82bdb
+X-CMS-RootMailID: 20260828134826eucas1p1ed3a0c4a3207dc01d1ccb33e45ae462e
 References: <20260828-jh7110-clean-send-v2-0-331680c8b9d1@samsung.com>
-	<CGME20260828134824eucas1p12730831aa4d01856e0c0e6b678c82bdb@eucas1p1.samsung.com>
+	<CGME20260828134826eucas1p1ed3a0c4a3207dc01d1ccb33e45ae462e@eucas1p1.samsung.com>
 
-The Innosilicon HDMI driver supports platform-specific behavior through
-the `inno_hdmi_plat_ops`. While it provides an `.enable` hook for
-platform-specific power up sequences (like enabling PHYs), it lacks a
-corresponding hook for power down.
+inno_hdmi_bridge_mode_valid() validates the pixel clock against
+hdmi->refclk, but that clock is optional and is only present on
+platforms that describe a "ref" clock. Platforms where the pixel clock
+is produced by a separate device - such as the StarFive JH7110, whose
+PHY is both the clock and the PHY provider - have no "ref" clock, so
+the check is skipped entirely and every mode is reported as valid.
 
-This patch adds a new `.disable` op to the `inno_hdmi_plat_ops` struct
-and calls it at the beginning of `inno_hdmi_bridge_atomic_disable()`.
+A mode the platform cannot generate is then advertised to userspace.
+The subsequent modeset appears to succeed, since the atomic enable path
+cannot fail, and the display silently stays blank.
 
-This allows platform specific drivers, such as the StarFive JH7110,
-to implement their own power down sequence (e.g., calling
-phy_power_off() and clk_disable_unprepare()).
+Add a .mode_valid platform operation so platforms can reject modes they
+are unable to drive. Platforms that do not implement it are unaffected.
 
 Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
 ---
- drivers/gpu/drm/bridge/inno-hdmi.c | 4 ++++
- include/drm/bridge/inno_hdmi.h     | 1 +
- 2 files changed, 5 insertions(+)
+ drivers/gpu/drm/bridge/inno-hdmi.c | 9 +++++++++
+ include/drm/bridge/inno_hdmi.h     | 5 ++++-
+ 2 files changed, 13 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/gpu/drm/bridge/inno-hdmi.c b/drivers/gpu/drm/bridge/inno-hdmi.c
-index ebc5093f13ac4f263b903fb727629dfb83d051e1..952cc55c10f7dc07de6ebe943aae3e54df2edc8d 100644
+index 952cc55c10f7dc07de6ebe943aae3e54df2edc8d..6da1ef923c99676a2133b4c0e3ba5744195a335c 100644
 --- a/drivers/gpu/drm/bridge/inno-hdmi.c
 +++ b/drivers/gpu/drm/bridge/inno-hdmi.c
-@@ -884,6 +884,10 @@ static void inno_hdmi_bridge_atomic_disable(struct drm_bridge *bridge,
- 					    struct drm_atomic_commit *state)
+@@ -821,6 +821,7 @@ static enum drm_mode_status inno_hdmi_bridge_mode_valid(struct drm_bridge *bridg
+ 							const struct drm_display_mode *mode)
  {
  	struct inno_hdmi *hdmi = bridge_to_inno_hdmi(bridge);
 +	const struct inno_hdmi_plat_ops *plat_ops = hdmi->plat_data->ops;
-+
-+	if (plat_ops && plat_ops->disable)
-+		plat_ops->disable(hdmi->dev);
+ 	unsigned long mpixelclk, max_tolerance;
+ 	long rounded_refclk;
  
- 	inno_hdmi_standby(hdmi);
- }
+@@ -836,6 +837,14 @@ static enum drm_mode_status inno_hdmi_bridge_mode_valid(struct drm_bridge *bridg
+ 	if (inno_hdmi_find_phy_config(hdmi, mpixelclk) < 0)
+ 		return MODE_CLOCK_HIGH;
+ 
++	if (plat_ops && plat_ops->mode_valid) {
++		enum drm_mode_status status;
++
++		status = plat_ops->mode_valid(hdmi->dev, mode);
++		if (status != MODE_OK)
++			return status;
++	}
++
+ 	if (hdmi->refclk) {
+ 		rounded_refclk = clk_round_rate(hdmi->refclk, mpixelclk);
+ 		if (rounded_refclk < 0)
 diff --git a/include/drm/bridge/inno_hdmi.h b/include/drm/bridge/inno_hdmi.h
-index 81da9d9bcd79db8fe26c6dff4569371e484df608..5fca651c56b056d814124aa9c7e91aa7fd7ed1cd 100644
+index 5fca651c56b056d814124aa9c7e91aa7fd7ed1cd..1e9974401c39e3773bb339eaec0b45ff1dd9c975 100644
 --- a/include/drm/bridge/inno_hdmi.h
 +++ b/include/drm/bridge/inno_hdmi.h
-@@ -16,6 +16,7 @@ struct platform_device;
+@@ -8,15 +8,18 @@
+ 
+ #include <linux/types.h>
+ 
++#include <drm/drm_modes.h>
++
+ struct device;
+ struct drm_encoder;
+-struct drm_display_mode;
+ struct inno_hdmi;
+ struct platform_device;
  
  struct inno_hdmi_plat_ops {
  	void (*enable)(struct device *pdev, struct drm_display_mode *mode);
-+	void (*disable)(struct device *pdev);
+ 	void (*disable)(struct device *pdev);
++	enum drm_mode_status (*mode_valid)(struct device *pdev,
++					   const struct drm_display_mode *mode);
  };
  
  struct inno_hdmi_phy_config {
