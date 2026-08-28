@@ -1,70 +1,99 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D2A727A47F;
-	Fri, 28 Aug 2026 13:52:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D3FD2C031E;
+	Fri, 28 Aug 2026 13:54:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787925154; cv=none; b=odClVO4pofqZXyLPl9FUaEf+mSSwc4tUBJY4nWwQK8jsynesep2pgFG8Z19mE/8ZW7O4zqxlqL8yFFOIAAAutgZuMS3qPzrYC9V96pSsnS7qxB1VJkMeuKA3J/ZgnhtnlkubjjfpmB1cPOwwpk/U88371yedQ3e+sgXf/kjPZBY=
+	t=1787925246; cv=none; b=BldqBX9Sog8bHyD1Xxd/UpAYdVPyl51+GZ1VdsjnhZNUIFu9EWg09vwKhPAlqAz0eZ9u+iU4rR4smMA893E9itYGjrHPinuUtWtASIg8pojskzeYiJB2c0iJI5rJHMAstA+TrtC+M2NhbSy3H2RIRtZz4obCeFJfjx8xWlWUSBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787925154; c=relaxed/simple;
-	bh=v5B/fiOqedgCBxcCieptb7KGyc9EvkPc2fTNjN6aglI=;
+	s=arc-20240116; t=1787925246; c=relaxed/simple;
+	bh=mLpZyvcHJbhF+acLQ5W8TeqwwoCClYINwLWY5zXEipU=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=YR7lirCdNNxi2ySA+aO1zTWgbzce8iLM0QZtKPbgnZ+KcHFkzS4a4NgEP5gfqrcfGQAzkrGEdBTRx/7oiC5pekA+A7QZ2Bi5dHkhkg9cqAr7yWZ/Wd1Ly1k4PAbOgvX6hXVvdkmycoTTO3yP+DVEjQVdevz6v92JE0JjgFBlmyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DpkrMTyk; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=GoPYTS1RjPbGMMulYWQj+pSQYCR7fEgvxWlJV2q+PJIsNW8RCGZ5gwegdVDgr0mJml3I1I8qfTbDf37MZnPKCCDuE2ImNQ88odln6w1+d/Kz0lD6NxIiqBfw2aYDwsEUcSTSj067VTbkd6/Pt7zBGBGio81R6D6HiTV/Zxp7HBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QF4fewV3; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DpkrMTyk"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A50281F000E9;
-	Fri, 28 Aug 2026 13:52:32 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QF4fewV3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F12C1F000E9;
+	Fri, 28 Aug 2026 13:54:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787925153;
-	bh=v5B/fiOqedgCBxcCieptb7KGyc9EvkPc2fTNjN6aglI=;
+	s=k20260515; t=1787925244;
+	bh=2c8diSklvVUd6K6I6bSdgpwdYZU6SUVzQlMEjE+KPWA=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=DpkrMTykW2r8Pzk9IvIE3hcAJtoRhIwOvD96MRnYZI1pTXm4WfTbyGmvO4D74VcVt
-	 58gtXRg5zdJoh4b/oiUT3kaVb3W93Pn4lg9HLCkiXFgUIA7TRdSHta4nUXE6SeeU23
-	 ZM6xkOa64XUL3Zrn39v1QkfuTqvOF6gzWQHpZE64XcEv0nZLOHCY+E/z/0xBq8ydOj
-	 QnabfkHLd5h7nVmKpB3zcC/E7tPVjXxokrQjtUXBhD5T2/CQUK5pGCpJZ640qubwoE
-	 3wDQV141E9M+D3gjvWKlXOtv3Ga1SEral+cn9hw4CSpKKsNv2qRN950Ya6sz6uiRMp
-	 d/wBlFPEmxpcw==
+	b=QF4fewV3m9gBHaINgD97JHB3uR/xyDcmpuJKAR5IGoBnglde8KYq9Wu5FNZ/ZDL9o
+	 axes+Ku5Awi2vrgnlRXUp9jifxGsrIsFzgCIrgJzCMALs5LDxiPV2RjLC/rBoVtYWZ
+	 ZXZ9xdX5I/dKFwfulnZLw+YglsXjur8c4ekU48lZhxVEY/HQU2FTweL+Itv+LNvb4i
+	 CCQh9KxJegNhbxxfqAMrdZebY7bo3bl+oXtOo+PoCcIItd+ovh2rVrZsjiA8QEOEKJ
+	 c7I3MP6ZJy676XVwqHpqbj8+S0osR6f1YlmYFZwo4lWD2IV5cEUZjId1nBYKYVl55f
+	 rqeqZQWM6seBg==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 07/15] drm/bridge: inno-hdmi: Add .mode_valid
- platform operation
+Subject: Re: [PATCH v2 03/15] dt-bindings: mfd: Add
+ starfive,jh7110-hdmi-subsystem
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Michal Wilczynski" <m.wilczynski@samsung.com>
-Cc: robh@kernel.org, conor+dt@kernel.org, lee@kernel.org, mfd@lists.linux.dev, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org, olteanv@gmail.com, vkoul@kernel.org, linux-phy@lists.infradead.org, neil.armstrong@linaro.org
-In-Reply-To: <20260828-jh7110-clean-send-v2-7-331680c8b9d1@samsung.com>
+Cc: dri-devel@lists.freedesktop.org, olteanv@gmail.com, robh@kernel.org, conor+dt@kernel.org, linux-phy@lists.infradead.org, vkoul@kernel.org, neil.armstrong@linaro.org, devicetree@vger.kernel.org, mfd@lists.linux.dev, lee@kernel.org, linux-clk@vger.kernel.org
+In-Reply-To: <20260828-jh7110-clean-send-v2-3-331680c8b9d1@samsung.com>
 References: <20260828-jh7110-clean-send-v2-0-331680c8b9d1@samsung.com>
- <CGME20260828134826eucas1p1ed3a0c4a3207dc01d1ccb33e45ae462e@eucas1p1.samsung.com>
- <20260828-jh7110-clean-send-v2-7-331680c8b9d1@samsung.com>
+ <CGME20260828134819eucas1p2c8e2bb95dd957981ec5e60e1da03223c@eucas1p2.samsung.com>
+ <20260828-jh7110-clean-send-v2-3-331680c8b9d1@samsung.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 28 Aug 2026 13:52:32 +0000
-Message-Id: <20260828135232.A50281F000E9@smtp.kernel.org>
+Date: Fri, 28 Aug 2026 13:54:03 +0000
+Message-Id: <20260828135404.2F12C1F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 
-> inno_hdmi_bridge_mode_valid() validates the pixel clock against
-> hdmi->refclk, but that clock is optional and is only present on
-> platforms that describe a "ref" clock. Platforms where the pixel clock
-> is produced by a separate device - such as the StarFive JH7110, whose
-> PHY is both the clock and the PHY provider - have no "ref" clock, so
-> the check is skipped entirely and every mode is reported as valid.
->=20
-> A mode the platform cannot generate is then advertised to userspace.
-> The subsequent modeset appears to succeed, since the atomic enable path
-> cannot fail, and the display silently stays blank.
->=20
-> Add a .mode_valid platform operation so platforms can reject modes they
-> are unable to drive. Platforms that do not implement it are unaffected.
->=20
-> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
+- [Low] The compatible string 'starfive,jh7110-hdmi-subsystem' embeds softw=
+are architecture details into the hardware description.
+--
 
-Sashiko has reviewed this patch and found no issues. It looks great!
+commit f244c8f1868df1c7d5507202956114ed3dbd675e
+Author: Michal Wilczynski <m.wilczynski@samsung.com>
+
+dt-bindings: mfd: Add starfive,jh7110-hdmi-subsystem
+
+This commit adds a device tree binding for the StarFive JH7110 HDMI subsyst=
+em.
+The binding describes a parent device acting as an MFD to hold shared
+registers for PHY and controller children, addressing a circular clock
+dependency.
+
+> diff --git a/Documentation/devicetree/bindings/mfd/starfive,jh7110-hdmi-s=
+ubsystem.yaml b/Documentation/devicetree/bindings/mfd/starfive,jh7110-hdmi-=
+subsystem.yaml
+> new file mode 100644
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/starfive,jh7110-hdmi-subsyste=
+m.yaml
+[ ... ]
+> +description:
+> +  The StarFive JH7110 HDMI block is a monolithic IP containing both
+> +  the digital controller logic and the analog PHY logic in a single
+> +  register space.
+> +
+> +properties:
+> +  compatible:
+> +    const: starfive,jh7110-hdmi-subsystem
+
+[Severity: Low]
+Is the use of "subsystem" in this compatible string intentional?
+
+Device tree bindings typically describe the physical hardware block rather
+than the software architecture. Since the commit message and description
+indicate the HDMI IP is a monolithic physical block, encoding a Linux-speci=
+fic
+driver concept like a subsystem or an MFD parent into the compatible string
+appears to embed software details into the hardware description.
+
+Could this compatible string be updated to reflect the actual hardware bloc=
+k's
+designation without the "subsystem" suffix?
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260828-jh7110-cle=
-an-send-v2-0-331680c8b9d1@samsung.com?part=3D7
-
+an-send-v2-0-331680c8b9d1@samsung.com?part=3D3
