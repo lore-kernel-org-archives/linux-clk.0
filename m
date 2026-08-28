@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EEA2360EED;
-	Fri, 28 Aug 2026 16:43:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D82454785;
+	Fri, 28 Aug 2026 16:48:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787935393; cv=none; b=fhN+AOsp7YLevfS9k+/DCvoXstJkfISRKUywiHDZJczE/lmpefUqAPt7SWXs09focFY8Cuvqh6TxH/4Kcedum7EerVRKeyZEt4qac2Jl78wIfTnsTMfXEAWbY6u0MZEZLh2xuzuC/MFVi8+lxrmoBXfVQcH44rlbt65Jp154JK4=
+	t=1787935688; cv=none; b=j7naIZ8u18EO+ubk3NNg3JzbI4PXoDmiupNhj4OxIMuuo69MfC9PnTfhxUyt6QyHccS2y0cFLt+NSC62CTpna1l0SNOT0Mxau2ueT3I3u/RRCL1Ld5XuHNJmlXjlmVKyHoZ0Oi+FlCj7wlojNDSN3EPcsNONogSf+D5LPpaTbq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787935393; c=relaxed/simple;
-	bh=DbFHuBt91lj3USprpB9lZyuz3ekarI2nJ42r1c8Chfk=;
+	s=arc-20240116; t=1787935688; c=relaxed/simple;
+	bh=rxX1i9PvSSUYmtC21uY+55SrgwsvqEpSyTVGtUrJWzw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PmrNizM4GDsJ5N1dor+xfX6x+Tsx4/FauUgNPNb0U4ZH//fbpfV74eWO4XtcA5uE6bO1YgrUOsC45H8KBKaMNGc/QK2kCO+XBtXgTB4G+ksgVNEy0ZBkUBJebt8Kb+aqAJmCa3EAdRh1iiFAWiammGt0jLRQNP+YHsL0fadDQKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YlMEhQmZ; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ph8pO8uIm5TkLM0pstXu8+9Wi34/qm/xJDjhBcDOFN7RoGhiBP/aqIO+lQrqMrbEfo7D0nXgO+pbM1xaWkv4nluYtdzaad+CY9MUMfjKfgZgPRHNMCdzJF3fHi3zaRWbj52ChVjOS7Gsq+MRL46s5bmG1jSuEhbMi35Wgq2NeB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jr4xjUxH; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YlMEhQmZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 019661F000E9;
-	Fri, 28 Aug 2026 16:43:03 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jr4xjUxH"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03B351F000E9;
+	Fri, 28 Aug 2026 16:47:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787935391;
-	bh=sZhi+PUsJgvLChAVERL3VabJ3ZhgAoRELKqEbZMxnag=;
+	s=k20260515; t=1787935686;
+	bh=3uZJ8IQ3rvAOLqsuwriJVKPiTt7W+7qGrB0uMuNGIIA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=YlMEhQmZgmm8ZzYGm9XHtqqhGRckC4bAQ+2tUg5K9WWnx3i8IFHQErCPNXbQ/m8LA
-	 rDmNM+DRmpFH5oxKu9wxdRgNTMCysYsHE8CZlvITZVAVvbu1/FxU4lN3p5hXZNabiH
-	 WzVIXVrPJ5nDda2avE3yQSR+GTcyzdNQdWvus/iPvtteE2HxIvfQ+oto3Dg81f4RwV
-	 kVDOlthv20IolO1phhNMzZKAI5xu5nu4QTcG7WmTVMm07VOMe9fEU+lbFDCNEcqSzB
-	 B3TpR4V6b0Q3LaSucLQmMQe+YDRBVjzRrx/JchTfrRWuTFNC7Y5tuV2vn1dHe39oXJ
-	 KMMTS2owO02nQ==
-Date: Fri, 28 Aug 2026 17:43:02 +0100
+	b=Jr4xjUxHKAt1Q7DFDYX2Upl28VPMnkSAzFFonEzlkqnkbv0NPiiPJ2IOsnd/72/XD
+	 47B9qGO4dBvV3NAmBTkc5P9Q3KF7rRewXQZO7sDxF76axLKw/vYn4GaAQPb8+/NdpX
+	 tpkafavH+lTmRdl6xGC9+atGOWEkwytEN8eKuh27gKfW0PIUQKIHZg9bI3EvC+eX14
+	 LpBDqvJCWP3NJDkbBxRlOOws+ekUArnw0iKxUoIV1bkdxMQo6RNyMJhw/z+wsRhtCi
+	 G1gpytYmfDAk+dsLtw/Dwz+EmAxGa+CFkYqp53SEBqT86gEm2YaXoIAEK2edIfvaiq
+	 3kTjKoOOyJlVg==
+Date: Fri, 28 Aug 2026 17:47:57 +0100
 From: Conor Dooley <conor@kernel.org>
 To: Michal Wilczynski <m.wilczynski@samsung.com>
 Cc: Vinod Koul <vkoul@kernel.org>,
@@ -62,12 +62,12 @@ Cc: Vinod Koul <vkoul@kernel.org>,
 	Marek Szyprowski <m.szyprowski@samsung.com>,
 	Maud Spierings <maudspierings@gocontroll.com>,
 	Graham Markall <hello@big-grey.co.uk>
-Subject: Re: [PATCH v2 01/15] dt-bindings: phy: Add
- starfive,jh7110-inno-hdmi-phy
-Message-ID: <20260828-unnoticed-reputable-37156d7953a6@spud>
+Subject: Re: [PATCH v2 02/15] dt-bindings: display: bridge: Add
+ starfive,jh7110-inno-hdmi-controller
+Message-ID: <20260828-stylus-bonfire-b71cbfe8b983@spud>
 References: <20260828-jh7110-clean-send-v2-0-331680c8b9d1@samsung.com>
- <CGME20260828134815eucas1p2b2aabc17e9cc6346e5a93bde5c650958@eucas1p2.samsung.com>
- <20260828-jh7110-clean-send-v2-1-331680c8b9d1@samsung.com>
+ <CGME20260828134817eucas1p2e2756deff8871be4ea8bb5c65f9c179d@eucas1p2.samsung.com>
+ <20260828-jh7110-clean-send-v2-2-331680c8b9d1@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -75,39 +75,183 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="IjnpyshY8lzNsBCD"
+	protocol="application/pgp-signature"; boundary="hmXiyWp5HkfjJgGf"
 Content-Disposition: inline
-In-Reply-To: <20260828-jh7110-clean-send-v2-1-331680c8b9d1@samsung.com>
+In-Reply-To: <20260828-jh7110-clean-send-v2-2-331680c8b9d1@samsung.com>
 
---IjnpyshY8lzNsBCD
+--hmXiyWp5HkfjJgGf
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 28, 2026 at 03:47:25PM +0200, Michal Wilczynski wrote:
-
+On Fri, Aug 28, 2026 at 03:47:26PM +0200, Michal Wilczynski wrote:
+> Add the dt-binding for the StarFive JH7110 Innosilicon HDMI controller
+> (DRM bridge).
+>=20
+> This device is the second child of the starfive,jh7110-hdmi-subsystem nod=
+e.
+> It consumes register access clocks (sys, mclk, bclk) from the voutcrg and
+> both the pixel clock (pclk) and the PHY from its hdmi_phy sibling.
+>=20
+> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+> ---
+>  .../starfive,jh7110-inno-hdmi-controller.yaml      | 109 +++++++++++++++=
+++++++
+>  1 file changed, 109 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/display/bridge/starfive,jh=
+7110-inno-hdmi-controller.yaml b/Documentation/devicetree/bindings/display/=
+bridge/starfive,jh7110-inno-hdmi-controller.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..0e584e7b756e24e2f99a62daa=
+b3117bbf4b472b6
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/bridge/starfive,jh7110-in=
+no-hdmi-controller.yaml
+> @@ -0,0 +1,109 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/display/bridge/starfive,jh7110-inno-h=
+dmi-controller.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: StarFive JH7110 Innosilicon HDMI Controller
+> +
+> +maintainers:
+> +  - Michal Wilczynski <m.wilczynski@samsung.com>
+> +
+> +description:
+> +  The controller portion of the StarFive JH7110 INNO HDMI IP.
+> +
+> +properties:
+> +  compatible:
+> +    const: starfive,jh7110-inno-hdmi-controller
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    items:
+> +      - description: System clock for register access
+> +      - description: Module clock
+> +      - description: Bus clock
+> +      - description: Pixel clock from PHY
+> +
 > +  clock-names:
-> +    const: refoclk
+> +    items:
+> +      - const: sys
+> +      - const: mclk
+> +      - const: bclk
+> +      - const: pclk
 
-> +  clock-output-names:
-> +    const: hdmi_pclk
+"module" "bus" "pixel" would be more informative than spending most of
+your characters regurgitating what these are by definition?
 
-Can you drop the obvious "clk" suffixes from these please? Although,
-with one input and one output clock, what's the point of the -names
-proeprties anyway?
+> +
+> +  resets:
+> +    maxItems: 1
+> +
+> +  reset-names:
+> +    const: hdmi_tx
+> +
+> +  phys:
+> +    maxItems: 1
+> +
+> +  phy-names:
+> +    const: hdmi-phy
+
+With the trend of ?pointless? -names properties, I'm surprised you don't
+have interrupt-names? I'd ditch 'em all where there's only a single
+clock. The _ rather than - in the reset name triggers my OCD.
+pw-bot: changes-requested
+
+> +
+> +  ports:
+> +    $ref: /schemas/graph.yaml#/properties/ports
+> +    description:
+> +      A graph node with one input port and one output port.
+> +
+> +required:
+> +  - compatible
+> +  - interrupts
+> +  - clocks
+> +  - clock-names
+> +  - resets
+> +  - reset-names
+> +  - phys
+> +  - phy-names
+> +  - ports
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  # Shown as a child of the HDMI subsystem node; see
+> +  # Documentation/devicetree/bindings/mfd/starfive,jh7110-hdmi-subsystem=
+=2Eyaml
+> +  # for the full node.
+> +  - |
+> +    #include <dt-bindings/clock/starfive,jh7110-crg.h>
+> +    #include <dt-bindings/reset/starfive,jh7110-crg.h>
+> +
+> +    controller {
+
+"controller" seems over generic for a node, but I guess if the parent is
+"hdmi-subsystem" or something it makes sense in that context.
 
 Cheers,
 Conor.
 
 
---IjnpyshY8lzNsBCD
+> +        compatible =3D "starfive,jh7110-inno-hdmi-controller";
+> +        clocks =3D <&voutcrg JH7110_VOUTCLK_HDMI_TX_SYS>,
+> +                 <&voutcrg JH7110_VOUTCLK_HDMI_TX_MCLK>,
+> +                 <&voutcrg JH7110_VOUTCLK_HDMI_TX_BCLK>,
+> +                 <&hdmi_phy>;
+> +        clock-names =3D "sys", "mclk", "bclk", "pclk";
+> +        interrupts =3D <99>;
+> +        phys =3D <&hdmi_phy>;
+> +        phy-names =3D "hdmi-phy";
+> +        resets =3D <&voutcrg JH7110_VOUTRST_HDMI_TX_HDMI>;
+> +        reset-names =3D "hdmi_tx";
+> +
+> +        ports {
+> +            #address-cells =3D <1>;
+> +            #size-cells =3D <0>;
+> +
+> +            port@0 {
+> +                reg =3D <0>;
+> +
+> +                endpoint {
+> +                    remote-endpoint =3D <&dpu_out_dpi0>;
+> +                };
+> +            };
+> +
+> +            port@1 {
+> +                reg =3D <1>;
+> +
+> +                endpoint {
+> +                    remote-endpoint =3D <&hdmi_con_in>;
+> +                };
+> +            };
+> +        };
+> +    };
+> +
+> +...
+>=20
+> --=20
+> 2.34.1
+>=20
+
+--hmXiyWp5HkfjJgGf
 Content-Type: application/pgp-signature; name=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCapG6lQAKCRB4tDGHoIJi
-0sm8AP4oliWIKMzgp8Ut3A394llDZYxdfr4HRcVVe7khXDrtiQEAnHjEzjNSnHhx
-0TyqrToY++PvSu1CTCWyTFL6ZUf3FAU=
-=a1Yl
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCapG7vAAKCRB4tDGHoIJi
+0pUPAP44G7D1YksuTLzwXOQE0xjkY41H5I6ctxD3+HMYzXvYMwD/dGnps9J8VkOV
++p7sgoW/Ih4VAyXMlP+NpyZEU8ULFgY=
+=mMUh
 -----END PGP SIGNATURE-----
 
---IjnpyshY8lzNsBCD--
+--hmXiyWp5HkfjJgGf--
