@@ -1,88 +1,88 @@
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 344B23C818D
-	for <linux-clk@vger.kernel.org>; Fri, 28 Aug 2026 06:00:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02AEC3CB563
+	for <linux-clk@vger.kernel.org>; Fri, 28 Aug 2026 06:00:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787896848; cv=none; b=oql8299Ht7gr44R1KvZS1hUHl245Xp1LKPSAnUJAohsTBcAfWjbW4I33WZAqasKonhqzJxzCDuQe3hBh3alhkCVqesvc4hkFzX8xKGpz0LkFgIzM2yjswV/SL3jzlKqo7brn3I2IEDHsLa/Dkt+879owN50GER1G2JqCPPtROqM=
+	t=1787896848; cv=none; b=kMuRaKc4/XNFEwtBeqKHFAThjHcXzCs1bCwkCr/15GmkwMWUNCLGRD1YeM6N0iIuPX24auNdAXyDPvtyFrPxjtH8oTE08FfnfwE6175dme8yDaVpegRHV+3nnHH9L0Sj0zqo6OwY+rPcTirCPdekrWLWgkRxJWte4TUwt4iqGoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1787896848; c=relaxed/simple;
-	bh=hUgMZ4VN5Liy3X8evZo89cfzTiLq5GALmn3wgJjAQis=;
+	bh=tElI37nrURGsXExW6LrMpMh8iriigV4g+ArjmBAGwbw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WF/GCoSUUh5rGpkui28HEay1h4aoFKBGsUPSPjBTQqLEdtCUifGv7D0WFq+kE4Fa6YJTz7D29SooroFEOUQOrl1PrOLdsXYDGBATTxNzXnOw51jfeg6w2BuM7UbkrN/LEEONGB6XDD/CuGrwBfHdNrnUNC7BR/DRzp9mrfcTy0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=bLk/gk3n; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=I2udG6A3; arc=none smtp.client-ip=205.220.168.131
+	 In-Reply-To:To:Cc; b=n+nt0xLLLx5m4P/rFq8aLDueqDAC79T/lFdtOQnR+kWiHS65034MAef3StPIBQa6eufVjoP/FXajwwOi9x/LcbgH3RlYcU/j0AQdFhGf1AlAG83Dvyrd6f/rpkF8ZlUwUiMFaIkVxRdbp87W5BpGcPiRSDWmZ5JlsTSDAIcK8qU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=JL60yp0I; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=kTOfCiSH; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="bLk/gk3n";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="I2udG6A3"
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 67S4mkTT1352863
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="JL60yp0I";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="kTOfCiSH"
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 67S3JxSL1811896
 	for <linux-clk@vger.kernel.org>; Fri, 28 Aug 2026 06:00:45 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	igaTs1zMayZ+XF3KQoqMSWdbrKkySvfvzbcB4KjbaQA=; b=bLk/gk3nyvXGINWQ
-	tbcc0j5KNsS/kLVqg0+SH2uevOpj5C8tTIaeviHkjQr/f5UxY1VPOQFxkd2jfKrw
-	sKjKa5uj3TUKsKYvOR5TNWHa8ARuNTNt9+ew03sFWnbJBjpx+IR8UwNvwGVCB7Du
-	wQozt1MhmozP7Pth9/BqPBkNH73sApj9gX1MvCwKki45Sv1qa9yuFPSmDvP2HKOW
-	kCas7Pchy+MxjMBqTlKs//suldfvJXPklNXstnJAsUmZJSTqrvHu0fDa+M/Qmod1
-	xwAy4/57bY2Bd2jaJsSXCPR04VLqG114K5LvX2/YPy94KrHG6tGM24zs9FdrJJyX
-	ejjoNw==
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gb3mu875d-1
+	+nX/W0DUHa48GsWzQpcXK6EO7naaFxR0scFJHtDqMa4=; b=JL60yp0I11jc+Y38
+	evmudoOG8U3vmO1HQ+rP5UmYowVuzLGB1ix/hexUMMyWwoIEtuORzcBFnqFzsLwa
+	lVa4uAXeJDgfi6JncJstANvcHOt/u9slXgwAXq/q9SdQ4W5YBN85AIL/rl7k+5aa
+	ybSBT5ZnSHCJObSEx86sdRiR2Snm0dC1qFlMZgEeUcdxtal2nv4oAWavO4CkFHRR
+	jiUNXwouyyxbFqFXQcsy2dVcTXK72h1pOkyQPQBew93FGXdXwBbQoevoKyAJD+9z
+	TaXGQDxYdVQpgEhqrrcNxBAdERS8ZAKp/RSPJIao1IV+4ucP6AQH8/sXk4ZAaG1Z
+	i2Rv0g==
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4garee3ckp-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Fri, 28 Aug 2026 06:00:44 +0000 (GMT)
-Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-cc1c1cc5206so758624a12.3
-        for <linux-clk@vger.kernel.org>; Thu, 27 Aug 2026 23:00:44 -0700 (PDT)
+	for <linux-clk@vger.kernel.org>; Fri, 28 Aug 2026 06:00:43 +0000 (GMT)
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-2d733799ebfso8512915ad.2
+        for <linux-clk@vger.kernel.org>; Thu, 27 Aug 2026 23:00:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1787896844; x=1788501644; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1787896843; x=1788501643; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=igaTs1zMayZ+XF3KQoqMSWdbrKkySvfvzbcB4KjbaQA=;
-        b=I2udG6A3n1sx056A0N3QJ7hLzqIPUOS7oogfHZhtdaxUOFYA97JRiijeg87Por7aVj
-         AnLlbbutu60/l4BffiKJggTmUNMkKupV3koGsOMVqF4vs0/xjaNVfKIvDcewsDVuHLdT
-         1EnMCP4WPNof7VohL7tgI8g8QImwSo4cYSMaQtc4y1lXV6RGku6cU6yu/gN2ZKmieK09
-         RUUoUIMTVnLBqk6Z+KyoSQIllZKx0YftJ9nbndQ/Ue044xkAIbHLPPRZEdkqUD4WUwAg
-         fxJ409q+sHxHiFNRJ8T5nfyebV6mYTXCrLvChubRs9exzPfkihrAT+Sj/z34BcYEb+yU
-         L99g==
+        bh=+nX/W0DUHa48GsWzQpcXK6EO7naaFxR0scFJHtDqMa4=;
+        b=kTOfCiSHC6siVnowHD4KNf6GuTR3bzAuUCXvnKv0t79iDaue0M7COinSqmjfbgSBPC
+         fPclzhkJMpAWZNyCE/4fujsM7OggSRR9K81s8SHW/WJr1t/mQX0G3D1c/kzZJ0hb4uAq
+         2O3Fq56+znR1jtwZSe4FQ1sXW/hNoB58bSNfexBl5Ct9/x7osQkF3raa+EfDLbWAVNQp
+         9cPMBYszvOErWRFRq05rWhSDpG/Lr56zio/v4e8mkCsOMolceiLP9hGe6Mzm841CJPEP
+         Ccglkl0r/ReQuXc4xTDtJmZ3sM11oZtfVtO2rrIay1Te/dwXEcesrO56z5+yXSfKBZjM
+         MWXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787896844; x=1788501644;
+        d=1e100.net; s=20251104; t=1787896843; x=1788501643;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=igaTs1zMayZ+XF3KQoqMSWdbrKkySvfvzbcB4KjbaQA=;
-        b=m8klJov8h1hVHj0CwOkHmzbNy1AI9GZ8Ct1z+PHuOtzR+TMupdnZoAgYMhZ+tEAb6p
-         BITAUo6euRV5Oq5d35mRuIZyBafGMgq8uHUxriwKJSWsx/wddDnJ4qBvNJGBUJNo0Civ
-         pbyIFXolcq3CAvXdOVrSDDCqERW3yXImDtmLYuUYeU4wdJinwYXiZFT87FFajc4g0H6d
-         0gD+9ZDuJqm5F/QS7CrfwJR7Qg9Ly9htICsZasU4N832t+4ahCJ7+NOM8x11+LucWuNb
-         NsnS9GQhGqxV0VQQ1OMWTIaXMsQXm9/v5saiO9a0Aule4KjA/70YBWDUTfayhPRukR/u
-         nGyg==
-X-Forwarded-Encrypted: i=1; AHgh+RoDJSptZwxSt3IEzzZfcdhbXgRlkqcmnB6mi1lnHV3rg+RucIzlH5B0vgIbXapeFBHv48HFDT7u2No=@vger.kernel.org
-X-Gm-Message-State: AFuF++ljvFLodyseyoeAASeWvPTXb62k1HSOW2/uoPOCebxtzK281dHi
-	bUZBzNwvaUDPyduiZcdl9HNnYQhFGr77+DcTbutNz+pVMGPyJfjvl2orsbk6M87SY7Xwvx140Is
-	bo4VDcMiFU4N3HI45Zm/hoH5Sjn8DSg1m+3qMicgQP8hDpixHcGFhleUQHh+zvpM=
-X-Gm-Gg: AR+sD12Aot9Ex8b5pDNLNpnhlh0rTCKSLHsjFpEvw0PS6+QmoMQHe8UcYdTsYbKW7If
-	DWy82OWforBPYC9J0oKuO8o4PNo+9MLI0Z2sRBWZfr2wy1vtYx6dk90oIH8n36b0O35ZxO42zYT
-	K8hJCttbXsIQpy0R+gibtZt9+3rafSRddUfFKHHFylGVZOvpAiK6jI8gsEZbbNPPLQWutzB0F+k
-	NjyKH5Ic+gutNSFx1QO5YuWY33tdY95iDNiyB+/miA9sjsBVKumOkh4QEpLUZRrK5FcczCB8A52
-	q/o9J4asy8VL81Y385Tw6vMJoDBLOdfz5b536SH5bvOirJVsmCJyWfXPZL/wI0g+SOd3p6aXDQx
-	aF9DzXY9tGBqcX5kMacYHWIpprm+TR9xnplWaGfBIAUwLC0Y=
-X-Received: by 2002:a05:6a20:748d:b0:3bf:7bf7:7913 with SMTP id adf61e73a8af0-3d26951c53dmr6522321637.14.1787896843980;
-        Thu, 27 Aug 2026 23:00:43 -0700 (PDT)
-X-Received: by 2002:a05:6a20:748d:b0:3bf:7bf7:7913 with SMTP id adf61e73a8af0-3d26951c53dmr6522222637.14.1787896843568;
-        Thu, 27 Aug 2026 23:00:43 -0700 (PDT)
-Received: from hu-qianyu-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-328713b0451sm1759033eec.16.2026.08.27.23.00.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        bh=+nX/W0DUHa48GsWzQpcXK6EO7naaFxR0scFJHtDqMa4=;
+        b=snvYaHJa36SeRUgos5eiheGl0DEFhiZRdnpNyNRdVd9LwTQencaOf4BeDQS94F4VIh
+         LiSiza/F35aLvWbxhuQBwbtl+AIK8uvSk7OFyVvZXkKeh5EUfdoSu1t0DJvKxXNDg3pk
+         7rXA6PVNBYjWKjtT+q7yRHmrOJL4Filg2ZMihXakK3PQy7mlWh+YaESzikntpsFwzJv0
+         MGjhJ+UABl2C4Ly3ftU8Vtmknu1TTMDpj70jjeNP5ll6FwRh+zfPAdUlvl2aQbRuwQhH
+         R/6cqNKWPnn09So+X7HV9/V/LX2gZCF0k4huG0+NMlonP+Eon5qbqhWIKa+t4d78OLT7
+         d8Tw==
+X-Forwarded-Encrypted: i=1; AHgh+Rq2WZKPTv04P8yaBgWUgy1hHalYFCDRPyt34EbaqXWZGz1TOJdDM8SUPraY62el0MSd68n9Hbc+WZg=@vger.kernel.org
+X-Gm-Message-State: AFuF++maS7jY8LWlQM4GfO6ZiKK/dr2st7pRKq5q6HNDzZ+9QIEYXJYO
+	tCLFGqYZdXcW1ZL39/NsL4Ok29vbEu5HYHZnwgLnUCr+dceNehOG04IskXpm1KflaVG0NXcJcee
+	cUGSF0BxiuD9bTcKbPeS86QcEnXVT5LS11vgYtmqadAUrZurHl8X+8hisz7e2pHM=
+X-Gm-Gg: AR+sD12/TCw2PCVqc3MclDcdKvCstSA7P51kdCIfVfcmAN9zgm+dEArwMZhqFhgcA+B
+	1Z7FRkTNQm5REjEtIv+s1J6WZsCEXLiD2RorCJ6X0SPCITifsq6TUt/hrMzUOj8/q4yrMAfmUgE
+	yYYG1vvWVorYs/k4PO6kKcu+JauJWhsIQMFK2MvPSpCdZEKXmJd/t4fG20kQIO3ceSbxtaRECV5
+	cKCRL7wdU+ZB4IcsyPxAxHgq2FzCsVZz5l1QXHD2evQVS2NoW+gIw1EujSeRC6Bcz7YV2rlg//J
+	gz7XmAaJxzCqgpvfl2Frq8iht/227iTS70qkKYKI/4/pTb/2f6V2mdcQ4pBa9tBfjNteRK3cF/I
+	YgIIEXkjyk08rocrxfHzlaFND8HlkOl3GqkqTOmUEmjblCaI=
+X-Received: by 2002:a17:903:228e:b0:2d6:fed1:7127 with SMTP id d9443c01a7336-2d74ce1ba62mr81492925ad.0.1787896842707;
         Thu, 27 Aug 2026 23:00:42 -0700 (PDT)
+X-Received: by 2002:a17:903:228e:b0:2d6:fed1:7127 with SMTP id d9443c01a7336-2d74ce1ba62mr81491685ad.0.1787896842208;
+        Thu, 27 Aug 2026 23:00:42 -0700 (PDT)
+Received: from hu-qianyu-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-328713b0451sm1759033eec.16.2026.08.27.23.00.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Aug 2026 23:00:40 -0700 (PDT)
 From: Qiang Yu <qiang.yu@oss.qualcomm.com>
-Date: Thu, 27 Aug 2026 23:00:35 -0700
-Subject: [PATCH v4 3/4] arm64: dts: qcom: hamoa: Drop unused #reset-cells
- from TCSR node
+Date: Thu, 27 Aug 2026 23:00:34 -0700
+Subject: [PATCH v4 2/4] clk: qcom: tcsrcc-x1e80100: Migrate to clk_ref
+ helper
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -91,7 +91,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260827-hamoa_tcsr_qref_0826-v4-3-663c9d30468d@oss.qualcomm.com>
+Message-Id: <20260827-hamoa_tcsr_qref_0826-v4-2-663c9d30468d@oss.qualcomm.com>
 References: <20260827-hamoa_tcsr_qref_0826-v4-0-663c9d30468d@oss.qualcomm.com>
 In-Reply-To: <20260827-hamoa_tcsr_qref_0826-v4-0-663c9d30468d@oss.qualcomm.com>
 To: Bjorn Andersson <andersson@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
@@ -104,66 +104,437 @@ To: Bjorn Andersson <andersson@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
         Konrad Dybcio <konradybcio@kernel.org>
 Cc: Qiang Yu <qiang.yu@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+        linux-kernel@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Abel Vesa <abel.vesa@oss.qualcomm.com>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1787896837; l=851;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1787896837; l=12513;
  i=qiang.yu@oss.qualcomm.com; s=20250513; h=from:subject:message-id;
- bh=hUgMZ4VN5Liy3X8evZo89cfzTiLq5GALmn3wgJjAQis=;
- b=iBicsAMu/N59YTxIfLvuy8sJ5GTMN/WmYOJLBkkBQyEuh0AEzJZ/mI4fitiBSkP7qIGi/Y/3B
- 2Al4kmMW4KRBAPiV2av1y7TO6CPqJzz30ySMRLUu/ydTrgXPCrfo+VZ
+ bh=tElI37nrURGsXExW6LrMpMh8iriigV4g+ArjmBAGwbw=;
+ b=bcxPtFYb7VS6T9aKQQIbK1iBl5y0axr6XD5wceqihvw+ni7sfyAUsm830lx/pka8JerFd1oyN
+ Phbnl0SdT8fATrCv6NIUlue1OEOcpuVut/ldKUfHwMdAsg0UMFjSHEc
 X-Developer-Key: i=qiang.yu@oss.qualcomm.com; a=ed25519;
  pk=Rr94t+fykoieF1ngg/bXxEfr5KoQxeXPtYxM8fBQTAI=
-X-Authority-Analysis: v=2.4 cv=ZbMt8MVA c=1 sm=1 tr=0 ts=6a91240c cx=c_pps
- a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODI4MDA0OSBTYWx0ZWRfXz5XXLJna8TUx
+ pzI6kB7qZ6vQ0CBxEXv+CEKTydJUusLXaXQSttC7Qq2f5YZiHn+SKeiHHx1FXQreX2CiykSfb9a
+ K2Pbjr17IgmERYFgo6wCsjXzwZQPpm7TUiVOrCSxVndADMz7atCuAUfGekE5l7d6hEiH0Ygt3FM
+ HCfkG8eoHDe/P85NsiPqr9ufZu7DHf8AGcBKYMDIdRc6KVzcCqwJyGwFt4WUu9zmsWufxdz6KX/
+ Oi90Au0LZozZvN8oQqg1oUTx7l/U5LRzQzBsyMO0Zm6JhNyk1915Oj5Fs66XJKNYYNOHCu4iOBw
+ icQmOBBX8Ef6+bwrKXbbQFN6P7hj6vpd/qCBMoilaTLnQ5CXOkfN9GV1p/cn1EBrhrhayBmYrlv
+ SoZqI5P9tzlrsmf4bwr7i6okZrOjm6s2MUGirmJ1C8/fRWPKo1pDX7hD0rMj4Ho6jDj8KGsV+wG
+ WXPygj61tB/imhcfekg==
+X-Proofpoint-Spam-Info: AW1haW4tMjYwODI4MDA0OSBTYWx0ZWRfXxrJERf/pWVkT
+ h8H12kaQqHHKmTObbzg7U+xhTrXrwcceYiepDxVIjc9dD9gW10jRIec6G2KLYwQFS+3uqYt7ZQ1
+ E4IZK2mba7+EPL0/zUKED/lDImUOZ9c=
+X-Proofpoint-ORIG-GUID: ej6kFyoqFwv-CG2rQ5TLZIMqXZ_kWo5g
+X-Proofpoint-GUID: ej6kFyoqFwv-CG2rQ5TLZIMqXZ_kWo5g
+X-Authority-Analysis: v=2.4 cv=e8E2j6p/ c=1 sm=1 tr=0 ts=6a91240b cx=c_pps
+ a=JL+w9abYAAE89/QcEU+0QA==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
  a=IkcTkHD0fZMA:10 a=Sv0fKeRqtYgA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=YMgV9FUhrdKAYTUUvYB2:22
- a=EUspDBNiAAAA:8 a=xPGDdNgMfJHLDNzms_AA:9 a=QEXdDO2ut3YA:10
- a=_Vgx9l1VpLgwpw_dHYaR:22
-X-Proofpoint-ORIG-GUID: uVuqh3Q6RywgjJAO_zDndIY6hY-Bs7zZ
-X-Proofpoint-GUID: uVuqh3Q6RywgjJAO_zDndIY6hY-Bs7zZ
-X-Proofpoint-Spam-Info: AW1haW4tMjYwODI4MDA0OSBTYWx0ZWRfXwPVvIVaLFXOq
- ViCI91VeXurR34U2u5v9TuzvZUaxv7CZXQhHuipuDoPoVMZdwNAbU/scY1WWw0TEHvO5lKOxz4b
- EEa3io1aqJC9dZ9d7TlIDTwDjepj8Y0=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODI4MDA0OSBTYWx0ZWRfX8M5alZuB8D1h
- 4mCanCogXbiCpWcZbeBGFYldQehaCftZyjVyS+F57ua3w62pQLZKtH6qcur1IULlJSQOlxzflAy
- i5/Un07lNev0DGbljEIzP6+DZtgX+vpCweiBzowuT93M2Nq22buelqiZbE/WV5dkMXK4+LBg77R
- 7fw40FJ7i1bUwYT5zuvqP9DavrTQ1TIXK20nbILQMu8Apxm/DfRoqYR/GBCEN8oS+rCLWkUnDez
- 3qIuVsJLKq2UkPCAZed5TiSBMKo4pRiFbPHcO5zzE3bfaDHkoYSGxVW1ou5Ecls5no0rvugTxUa
- ENSVrzwXLhTa0JYBXAvrpTR0nXfCXEkD5GmEvR4dDNgh5Zml3YrxQ+lJ7U9m9uVaA480pTAgWCS
- 5qb9NDuhQbT1e0jFeZ73/rfcO5RHzXRSJImJV7O8sjKBhgoPzbaQcVKdQD8S3Yfab6msoenRahl
- Bg1QVBADESchaPPd32g==
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=yOCtJkima9RkubShWh1s:22
+ a=EUspDBNiAAAA:8 a=48_MYvKuBCZC4ZtyZX0A:9 a=QEXdDO2ut3YA:10
+ a=324X-CrmTo6CU4MGRt3R:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
  definitions=2026-08-28_01,2026-08-27_02,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 impostorscore=0 clxscore=1015 priorityscore=1501
- lowpriorityscore=0 bulkscore=0 adultscore=0 malwarescore=0 suspectscore=0
- phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
- definitions=main-2608280049
+ lowpriorityscore=0 clxscore=1015 phishscore=0 adultscore=0 priorityscore=1501
+ bulkscore=0 malwarescore=0 suspectscore=0 spamscore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2608280049
 
-TCSR does not act as a reset provider on x1e80100: the driver never
-registered a reset controller for it, and no consumer references
-&tcsr as a reset. Drop the stale #reset-cells property to match the
-qcom,x1e80100-tcsr binding, which no longer declares it either.
+Replace local clk_branch-based clkref definitions with descriptor-based
+registration via qcom_clk_ref_probe().
 
+This keeps the x1e80100 driver focused on clock metadata and reuses
+common runtime logic for regulator handling, enable/disable sequencing,
+and OF provider wiring.
+
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Reviewed-by: Abel Vesa <abel.vesa@oss.qualcomm.com>
 Signed-off-by: Qiang Yu <qiang.yu@oss.qualcomm.com>
 ---
- arch/arm64/boot/dts/qcom/hamoa.dtsi | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/clk/qcom/tcsrcc-x1e80100.c | 335 +++++++++++++------------------------
+ 1 file changed, 113 insertions(+), 222 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/hamoa.dtsi b/arch/arm64/boot/dts/qcom/hamoa.dtsi
-index 8a96ea1bdb9c..7f62c624e4ca 100644
---- a/arch/arm64/boot/dts/qcom/hamoa.dtsi
-+++ b/arch/arm64/boot/dts/qcom/hamoa.dtsi
-@@ -3984,7 +3984,6 @@ tcsr: clock-controller@1fc0000 {
- 			reg = <0 0x01fc0000 0 0x30000>;
- 			clocks = <&rpmhcc RPMH_CXO_CLK>;
- 			#clock-cells = <1>;
--			#reset-cells = <1>;
- 		};
+diff --git a/drivers/clk/qcom/tcsrcc-x1e80100.c b/drivers/clk/qcom/tcsrcc-x1e80100.c
+index 0b05c27b619b..ad1f6be83a53 100644
+--- a/drivers/clk/qcom/tcsrcc-x1e80100.c
++++ b/drivers/clk/qcom/tcsrcc-x1e80100.c
+@@ -5,252 +5,141 @@
+  */
  
- 		gpu: gpu@3d00000 {
+ #include <linux/clk-provider.h>
++#include <linux/clk/qcom.h>
+ #include <linux/module.h>
++#include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+ 
+ #include <dt-bindings/clock/qcom,x1e80100-tcsr.h>
+ 
+-#include "clk-branch.h"
+-#include "clk-regmap.h"
+-#include "common.h"
+-#include "reset.h"
+-
+-enum {
+-	DT_BI_TCXO_PAD,
++static const char * const x1e80100_tcsr_tx1_rpt0_rx0_regulators[] = {
++	"vdda-refgen0-0p9",
++	"vdda-refgen0-1p2",
++	"vdda-qreftx1-0p9",
++	"vdda-qreftx1-1p2",
++	"vdda-qrefrpt0-0p9",
++	"vdda-qrefrx0-0p9",
+ };
+ 
+-static struct clk_branch tcsr_edp_clkref_en = {
+-	.halt_reg = 0x15130,
+-	.halt_check = BRANCH_HALT_DELAY,
+-	.clkr = {
+-		.enable_reg = 0x15130,
+-		.enable_mask = BIT(0),
+-		.hw.init = &(const struct clk_init_data) {
+-			.name = "tcsr_edp_clkref_en",
+-			.parent_data = &(const struct clk_parent_data){
+-				.index = DT_BI_TCXO_PAD,
+-			},
+-			.num_parents = 1,
+-			.ops = &clk_branch2_ops,
+-		},
+-	},
++static const char * const x1e80100_tcsr_tx1_rpt1_rx1_regulators[] = {
++	"vdda-refgen0-0p9",
++	"vdda-refgen0-1p2",
++	"vdda-qreftx1-0p9",
++	"vdda-qreftx1-1p2",
++	"vdda-qrefrpt1-0p9",
++	"vdda-qrefrx1-0p9",
+ };
+ 
+-static struct clk_branch tcsr_pcie_2l_4_clkref_en = {
+-	.halt_reg = 0x15100,
+-	.halt_check = BRANCH_HALT_DELAY,
+-	.clkr = {
+-		.enable_reg = 0x15100,
+-		.enable_mask = BIT(0),
+-		.hw.init = &(struct clk_init_data){
+-			.name = "tcsr_pcie_2l_4_clkref_en",
+-			.parent_data = &(const struct clk_parent_data){
+-				.index = DT_BI_TCXO_PAD,
+-			},
+-			.num_parents = 1,
+-			.ops = &clk_branch2_ops,
+-		},
+-	},
++static const char * const x1e80100_tcsr_tx1_rpt12_rx2_regulators[] = {
++	"vdda-refgen0-0p9",
++	"vdda-refgen0-1p2",
++	"vdda-qreftx1-0p9",
++	"vdda-qreftx1-1p2",
++	"vdda-qrefrpt1-0p9",
++	"vdda-qrefrpt2-0p9",
++	"vdda-qrefrx2-0p9",
+ };
+ 
+-static struct clk_branch tcsr_pcie_2l_5_clkref_en = {
+-	.halt_reg = 0x15104,
+-	.halt_check = BRANCH_HALT_DELAY,
+-	.clkr = {
+-		.enable_reg = 0x15104,
+-		.enable_mask = BIT(0),
+-		.hw.init = &(struct clk_init_data){
+-			.name = "tcsr_pcie_2l_5_clkref_en",
+-			.parent_data = &(const struct clk_parent_data){
+-				.index = DT_BI_TCXO_PAD,
+-			},
+-			.num_parents = 1,
+-			.ops = &clk_branch2_ops,
+-		},
+-	},
++static const char * const x1e80100_tcsr_tx0_rpt3_rx3_regulators[] = {
++	"vdda-refgen2-0p9",
++	"vdda-refgen2-1p2",
++	"vdda-qreftx0-0p9",
++	"vdda-qreftx0-1p2",
++	"vdda-qrefrpt3-0p9",
++	"vdda-qrefrx3-0p9",
+ };
+ 
+-static struct clk_branch tcsr_pcie_8l_clkref_en = {
+-	.halt_reg = 0x15108,
+-	.halt_check = BRANCH_HALT_DELAY,
+-	.clkr = {
+-		.enable_reg = 0x15108,
+-		.enable_mask = BIT(0),
+-		.hw.init = &(struct clk_init_data){
+-			.name = "tcsr_pcie_8l_clkref_en",
+-			.parent_data = &(const struct clk_parent_data){
+-				.index = DT_BI_TCXO_PAD,
+-			},
+-			.num_parents = 1,
+-			.ops = &clk_branch2_ops,
+-		},
+-	},
++static const char * const x1e80100_tcsr_tx0_rpt4_rx4_regulators[] = {
++	"vdda-refgen2-0p9",
++	"vdda-refgen2-1p2",
++	"vdda-qreftx0-0p9",
++	"vdda-qreftx0-1p2",
++	"vdda-qrefrpt4-0p9",
++	"vdda-qrefrx4-0p9",
+ };
+ 
+-static struct clk_branch tcsr_usb3_mp0_clkref_en = {
+-	.halt_reg = 0x1510c,
+-	.halt_check = BRANCH_HALT_DELAY,
+-	.clkr = {
+-		.enable_reg = 0x1510c,
+-		.enable_mask = BIT(0),
+-		.hw.init = &(struct clk_init_data){
+-			.name = "tcsr_usb3_mp0_clkref_en",
+-			.parent_data = &(const struct clk_parent_data){
+-				.index = DT_BI_TCXO_PAD,
+-			},
+-			.num_parents = 1,
+-			.ops = &clk_branch2_ops,
+-		},
+-	},
++static const struct regmap_config tcsr_cc_x1e80100_regmap_config = {
++	.reg_bits = 32,
++	.reg_stride = 4,
++	.val_bits = 32,
++	.max_register = 0x2f000,
++	.fast_io = true,
+ };
+ 
+-static struct clk_branch tcsr_usb3_mp1_clkref_en = {
+-	.halt_reg = 0x15110,
+-	.halt_check = BRANCH_HALT_DELAY,
+-	.clkr = {
+-		.enable_reg = 0x15110,
+-		.enable_mask = BIT(0),
+-		.hw.init = &(struct clk_init_data){
+-			.name = "tcsr_usb3_mp1_clkref_en",
+-			.parent_data = &(const struct clk_parent_data){
+-				.index = DT_BI_TCXO_PAD,
+-			},
+-			.num_parents = 1,
+-			.ops = &clk_branch2_ops,
+-		},
++static const struct qcom_clk_ref_desc * const tcsr_cc_x1e80100_clk_descs[] = {
++	[TCSR_EDP_CLKREF_EN] = &(const struct qcom_clk_ref_desc) {
++		.name = "tcsr_edp_clkref_en",
++		.offset = 0x15130,
++		.regulator_names = x1e80100_tcsr_tx0_rpt3_rx3_regulators,
++		.num_regulators = ARRAY_SIZE(x1e80100_tcsr_tx0_rpt3_rx3_regulators),
+ 	},
+-};
+-
+-static struct clk_branch tcsr_usb2_1_clkref_en = {
+-	.halt_reg = 0x15114,
+-	.halt_check = BRANCH_HALT_DELAY,
+-	.clkr = {
+-		.enable_reg = 0x15114,
+-		.enable_mask = BIT(0),
+-		.hw.init = &(struct clk_init_data){
+-			.name = "tcsr_usb2_1_clkref_en",
+-			.parent_data = &(const struct clk_parent_data){
+-				.index = DT_BI_TCXO_PAD,
+-			},
+-			.num_parents = 1,
+-			.ops = &clk_branch2_ops,
+-		},
++	[TCSR_PCIE_2L_4_CLKREF_EN] = &(const struct qcom_clk_ref_desc) {
++		.name = "tcsr_pcie_2l_4_clkref_en",
++		.offset = 0x15100,
++		.regulator_names = x1e80100_tcsr_tx1_rpt1_rx1_regulators,
++		.num_regulators = ARRAY_SIZE(x1e80100_tcsr_tx1_rpt1_rx1_regulators),
+ 	},
+-};
+-
+-static struct clk_branch tcsr_ufs_phy_clkref_en = {
+-	.halt_reg = 0x15118,
+-	.halt_check = BRANCH_HALT_DELAY,
+-	.clkr = {
+-		.enable_reg = 0x15118,
+-		.enable_mask = BIT(0),
+-		.hw.init = &(struct clk_init_data){
+-			.name = "tcsr_ufs_phy_clkref_en",
+-			.parent_data = &(const struct clk_parent_data){
+-				.index = DT_BI_TCXO_PAD,
+-			},
+-			.num_parents = 1,
+-			.ops = &clk_branch2_ops,
+-		},
++	[TCSR_PCIE_2L_5_CLKREF_EN] = &(const struct qcom_clk_ref_desc) {
++		.name = "tcsr_pcie_2l_5_clkref_en",
++		.offset = 0x15104,
++		.regulator_names = x1e80100_tcsr_tx1_rpt12_rx2_regulators,
++		.num_regulators = ARRAY_SIZE(x1e80100_tcsr_tx1_rpt12_rx2_regulators),
+ 	},
+-};
+-
+-static struct clk_branch tcsr_usb4_1_clkref_en = {
+-	.halt_reg = 0x15120,
+-	.halt_check = BRANCH_HALT_DELAY,
+-	.clkr = {
+-		.enable_reg = 0x15120,
+-		.enable_mask = BIT(0),
+-		.hw.init = &(struct clk_init_data){
+-			.name = "tcsr_usb4_1_clkref_en",
+-			.parent_data = &(const struct clk_parent_data){
+-				.index = DT_BI_TCXO_PAD,
+-			},
+-			.num_parents = 1,
+-			.ops = &clk_branch2_ops,
+-		},
++	[TCSR_PCIE_8L_CLKREF_EN] = &(const struct qcom_clk_ref_desc) {
++		.name = "tcsr_pcie_8l_clkref_en",
++		.offset = 0x15108,
++		.regulator_names = x1e80100_tcsr_tx1_rpt0_rx0_regulators,
++		.num_regulators = ARRAY_SIZE(x1e80100_tcsr_tx1_rpt0_rx0_regulators),
+ 	},
+-};
+-
+-static struct clk_branch tcsr_usb4_2_clkref_en = {
+-	.halt_reg = 0x15124,
+-	.halt_check = BRANCH_HALT_DELAY,
+-	.clkr = {
+-		.enable_reg = 0x15124,
+-		.enable_mask = BIT(0),
+-		.hw.init = &(struct clk_init_data){
+-			.name = "tcsr_usb4_2_clkref_en",
+-			.parent_data = &(const struct clk_parent_data){
+-				.index = DT_BI_TCXO_PAD,
+-			},
+-			.num_parents = 1,
+-			.ops = &clk_branch2_ops,
+-		},
++	[TCSR_USB3_MP0_CLKREF_EN] = &(const struct qcom_clk_ref_desc) {
++		.name = "tcsr_usb3_mp0_clkref_en",
++		.offset = 0x1510c,
++		.regulator_names = x1e80100_tcsr_tx1_rpt0_rx0_regulators,
++		.num_regulators = ARRAY_SIZE(x1e80100_tcsr_tx1_rpt0_rx0_regulators),
+ 	},
+-};
+-
+-static struct clk_branch tcsr_usb2_2_clkref_en = {
+-	.halt_reg = 0x15128,
+-	.halt_check = BRANCH_HALT_DELAY,
+-	.clkr = {
+-		.enable_reg = 0x15128,
+-		.enable_mask = BIT(0),
+-		.hw.init = &(struct clk_init_data){
+-			.name = "tcsr_usb2_2_clkref_en",
+-			.parent_data = &(const struct clk_parent_data){
+-				.index = DT_BI_TCXO_PAD,
+-			},
+-			.num_parents = 1,
+-			.ops = &clk_branch2_ops,
+-		},
++	[TCSR_USB3_MP1_CLKREF_EN] = &(const struct qcom_clk_ref_desc) {
++		.name = "tcsr_usb3_mp1_clkref_en",
++		.offset = 0x15110,
++		.regulator_names = x1e80100_tcsr_tx1_rpt0_rx0_regulators,
++		.num_regulators = ARRAY_SIZE(x1e80100_tcsr_tx1_rpt0_rx0_regulators),
+ 	},
+-};
+-
+-static struct clk_branch tcsr_pcie_4l_clkref_en = {
+-	.halt_reg = 0x1512c,
+-	.halt_check = BRANCH_HALT_DELAY,
+-	.clkr = {
+-		.enable_reg = 0x1512c,
+-		.enable_mask = BIT(0),
+-		.hw.init = &(struct clk_init_data){
+-			.name = "tcsr_pcie_4l_clkref_en",
+-			.parent_data = &(const struct clk_parent_data){
+-				.index = DT_BI_TCXO_PAD,
+-			},
+-			.num_parents = 1,
+-			.ops = &clk_branch2_ops,
+-		},
++	[TCSR_USB2_1_CLKREF_EN] = &(const struct qcom_clk_ref_desc) {
++		.name = "tcsr_usb2_1_clkref_en",
++		.offset = 0x15114,
++		.regulator_names = x1e80100_tcsr_tx0_rpt3_rx3_regulators,
++		.num_regulators = ARRAY_SIZE(x1e80100_tcsr_tx0_rpt3_rx3_regulators),
++	},
++	[TCSR_UFS_PHY_CLKREF_EN] = &(const struct qcom_clk_ref_desc) {
++		.name = "tcsr_ufs_phy_clkref_en",
++		.offset = 0x15118,
++		.regulator_names = x1e80100_tcsr_tx1_rpt12_rx2_regulators,
++		.num_regulators = ARRAY_SIZE(x1e80100_tcsr_tx1_rpt12_rx2_regulators),
++	},
++	[TCSR_USB4_1_CLKREF_EN] = &(const struct qcom_clk_ref_desc) {
++		.name = "tcsr_usb4_1_clkref_en",
++		.offset = 0x15120,
++		.regulator_names = x1e80100_tcsr_tx0_rpt4_rx4_regulators,
++		.num_regulators = ARRAY_SIZE(x1e80100_tcsr_tx0_rpt4_rx4_regulators),
++	},
++	[TCSR_USB4_2_CLKREF_EN] = &(const struct qcom_clk_ref_desc) {
++		.name = "tcsr_usb4_2_clkref_en",
++		.offset = 0x15124,
++		.regulator_names = x1e80100_tcsr_tx0_rpt3_rx3_regulators,
++		.num_regulators = ARRAY_SIZE(x1e80100_tcsr_tx0_rpt3_rx3_regulators),
++	},
++	[TCSR_USB2_2_CLKREF_EN] = &(const struct qcom_clk_ref_desc) {
++		.name = "tcsr_usb2_2_clkref_en",
++		.offset = 0x15128,
++		.regulator_names = x1e80100_tcsr_tx0_rpt3_rx3_regulators,
++		.num_regulators = ARRAY_SIZE(x1e80100_tcsr_tx0_rpt3_rx3_regulators),
++	},
++	[TCSR_PCIE_4L_CLKREF_EN] = &(const struct qcom_clk_ref_desc) {
++		.name = "tcsr_pcie_4l_clkref_en",
++		.offset = 0x1512c,
++		.regulator_names = x1e80100_tcsr_tx0_rpt4_rx4_regulators,
++		.num_regulators = ARRAY_SIZE(x1e80100_tcsr_tx0_rpt4_rx4_regulators),
+ 	},
+-};
+-
+-static struct clk_regmap *tcsr_cc_x1e80100_clocks[] = {
+-	[TCSR_EDP_CLKREF_EN] = &tcsr_edp_clkref_en.clkr,
+-	[TCSR_PCIE_2L_4_CLKREF_EN] = &tcsr_pcie_2l_4_clkref_en.clkr,
+-	[TCSR_PCIE_2L_5_CLKREF_EN] = &tcsr_pcie_2l_5_clkref_en.clkr,
+-	[TCSR_PCIE_8L_CLKREF_EN] = &tcsr_pcie_8l_clkref_en.clkr,
+-	[TCSR_USB3_MP0_CLKREF_EN] = &tcsr_usb3_mp0_clkref_en.clkr,
+-	[TCSR_USB3_MP1_CLKREF_EN] = &tcsr_usb3_mp1_clkref_en.clkr,
+-	[TCSR_USB2_1_CLKREF_EN] = &tcsr_usb2_1_clkref_en.clkr,
+-	[TCSR_UFS_PHY_CLKREF_EN] = &tcsr_ufs_phy_clkref_en.clkr,
+-	[TCSR_USB4_1_CLKREF_EN] = &tcsr_usb4_1_clkref_en.clkr,
+-	[TCSR_USB4_2_CLKREF_EN] = &tcsr_usb4_2_clkref_en.clkr,
+-	[TCSR_USB2_2_CLKREF_EN] = &tcsr_usb2_2_clkref_en.clkr,
+-	[TCSR_PCIE_4L_CLKREF_EN] = &tcsr_pcie_4l_clkref_en.clkr,
+-};
+-
+-static const struct regmap_config tcsr_cc_x1e80100_regmap_config = {
+-	.reg_bits = 32,
+-	.reg_stride = 4,
+-	.val_bits = 32,
+-	.max_register = 0x2f000,
+-	.fast_io = true,
+-};
+-
+-static const struct qcom_cc_desc tcsr_cc_x1e80100_desc = {
+-	.config = &tcsr_cc_x1e80100_regmap_config,
+-	.clks = tcsr_cc_x1e80100_clocks,
+-	.num_clks = ARRAY_SIZE(tcsr_cc_x1e80100_clocks),
+ };
+ 
+ static const struct of_device_id tcsr_cc_x1e80100_match_table[] = {
+@@ -261,7 +150,9 @@ MODULE_DEVICE_TABLE(of, tcsr_cc_x1e80100_match_table);
+ 
+ static int tcsr_cc_x1e80100_probe(struct platform_device *pdev)
+ {
+-	return qcom_cc_probe(pdev, &tcsr_cc_x1e80100_desc);
++	return qcom_clk_ref_probe(pdev, &tcsr_cc_x1e80100_regmap_config,
++				  tcsr_cc_x1e80100_clk_descs,
++				  ARRAY_SIZE(tcsr_cc_x1e80100_clk_descs));
+ }
+ 
+ static struct platform_driver tcsr_cc_x1e80100_driver = {
 
 -- 
 2.34.1
