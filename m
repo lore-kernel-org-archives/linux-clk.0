@@ -1,160 +1,113 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AF2245C6F7;
-	Fri, 28 Aug 2026 14:12:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EEA2360EED;
+	Fri, 28 Aug 2026 16:43:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787926381; cv=none; b=tiJG1dUJJ2Qcmh6TpJWoF1F84RmU+ojRJEHpkL6OxWjBRC4eI7hxZt2nn3/jkQ3LneGxTxA7IntvFfyFho76lxDeO2vXDTo5GpMzKlFAgDo/wiuT8t6w8y2wSZeMvVXV2FwWWmrFeJZESRa7QmDZLaxWoL5lRGF19Le0w2YDpXM=
+	t=1787935393; cv=none; b=fhN+AOsp7YLevfS9k+/DCvoXstJkfISRKUywiHDZJczE/lmpefUqAPt7SWXs09focFY8Cuvqh6TxH/4Kcedum7EerVRKeyZEt4qac2Jl78wIfTnsTMfXEAWbY6u0MZEZLh2xuzuC/MFVi8+lxrmoBXfVQcH44rlbt65Jp154JK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787926381; c=relaxed/simple;
-	bh=gkbDRMk7nwXfJgndT++gv8hrcXL4qTRLGpNmUZu2py4=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=dMromaYSBZ6lJFLxIRXVFGHqYKAQ53z3oeenBCPeF4v6tyJ97sZ9OhUYXJogxYsrhKtetCiVOFf8N6EobitDnzujeHj6NdxQM4Fo2Z5zfkwElxYnx7iNrz/EWnTGzMr27deNqsN4sukbqiyxrgP1Aju4HOuyQtI7s2rx/xJv2l4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bi6hHuRE; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1787935393; c=relaxed/simple;
+	bh=DbFHuBt91lj3USprpB9lZyuz3ekarI2nJ42r1c8Chfk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PmrNizM4GDsJ5N1dor+xfX6x+Tsx4/FauUgNPNb0U4ZH//fbpfV74eWO4XtcA5uE6bO1YgrUOsC45H8KBKaMNGc/QK2kCO+XBtXgTB4G+ksgVNEy0ZBkUBJebt8Kb+aqAJmCa3EAdRh1iiFAWiammGt0jLRQNP+YHsL0fadDQKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YlMEhQmZ; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bi6hHuRE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BE9A1F000E9;
-	Fri, 28 Aug 2026 14:12:54 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YlMEhQmZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 019661F000E9;
+	Fri, 28 Aug 2026 16:43:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787926374;
-	bh=aM8XEFJ0qJZcpu0Sj/0mV5jOXotIxwuMFgdJBSFfZxU=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=bi6hHuREj6ut9QnGiNpns5g233BYEFbLt820Lwad5fg0Jy0i/npLfrm29W3f+Ul3c
-	 9SyjkY7e3r8JZwcxx3M232iLVWUXckZ+diHlf5ocD0+qYQC4U0Tb3aBtPPSqvJuTBX
-	 kand2TtcuwEnvCjdIxGbHYvnecQsOO920tsjFDQHPebnoa90Ras4kjZWPO7o7zMuvV
-	 Dr8rIZKgfdzbGy6XvIK/LxEBCgTQ/w08csQEB4QngvhnUpBrTH8vopUgKC2aQNwQmG
-	 vNSbUSg1SeHYeUS/gaKPitt0WVoRdf3tvUmSnGqxpzcKfkWp1B3J3mPrrp/1SULGEG
-	 4NLUBjfgOXykg==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 12/15] phy: rockchip: inno-hdmi: Use the common
- Innosilicon PHY helpers
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Michal Wilczynski" <m.wilczynski@samsung.com>
-Cc: lee@kernel.org, conor+dt@kernel.org, olteanv@gmail.com, vkoul@kernel.org, mfd@lists.linux.dev, linux-clk@vger.kernel.org, robh@kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, neil.armstrong@linaro.org, linux-phy@lists.infradead.org
-In-Reply-To: <20260828-jh7110-clean-send-v2-12-331680c8b9d1@samsung.com>
+	s=k20260515; t=1787935391;
+	bh=sZhi+PUsJgvLChAVERL3VabJ3ZhgAoRELKqEbZMxnag=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=YlMEhQmZgmm8ZzYGm9XHtqqhGRckC4bAQ+2tUg5K9WWnx3i8IFHQErCPNXbQ/m8LA
+	 rDmNM+DRmpFH5oxKu9wxdRgNTMCysYsHE8CZlvITZVAVvbu1/FxU4lN3p5hXZNabiH
+	 WzVIXVrPJ5nDda2avE3yQSR+GTcyzdNQdWvus/iPvtteE2HxIvfQ+oto3Dg81f4RwV
+	 kVDOlthv20IolO1phhNMzZKAI5xu5nu4QTcG7WmTVMm07VOMe9fEU+lbFDCNEcqSzB
+	 B3TpR4V6b0Q3LaSucLQmMQe+YDRBVjzRrx/JchTfrRWuTFNC7Y5tuV2vn1dHe39oXJ
+	 KMMTS2owO02nQ==
+Date: Fri, 28 Aug 2026 17:43:02 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: Vinod Koul <vkoul@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, Lee Jones <lee@kernel.org>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Hal Feng <hal.feng@starfivetech.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+	Heiko Stuebner <heiko@sntech.de>, Paul Walmsley <pjw@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Dominique Belhachemi <db@domibel.de>, linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, mfd@lists.linux.dev,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-riscv@lists.infradead.org,
+	Icenowy Zheng <uwu@icenowy.me>, Andy Yan <andyshrk@163.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Maud Spierings <maudspierings@gocontroll.com>,
+	Graham Markall <hello@big-grey.co.uk>
+Subject: Re: [PATCH v2 01/15] dt-bindings: phy: Add
+ starfive,jh7110-inno-hdmi-phy
+Message-ID: <20260828-unnoticed-reputable-37156d7953a6@spud>
 References: <20260828-jh7110-clean-send-v2-0-331680c8b9d1@samsung.com>
- <CGME20260828134835eucas1p27736632121c17e11f554e295994a7d8d@eucas1p2.samsung.com>
- <20260828-jh7110-clean-send-v2-12-331680c8b9d1@samsung.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 28 Aug 2026 14:12:53 +0000
-Message-Id: <20260828141254.2BE9A1F000E9@smtp.kernel.org>
+ <CGME20260828134815eucas1p2b2aabc17e9cc6346e5a93bde5c650958@eucas1p2.samsung.com>
+ <20260828-jh7110-clean-send-v2-1-331680c8b9d1@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="IjnpyshY8lzNsBCD"
+Content-Disposition: inline
+In-Reply-To: <20260828-jh7110-clean-send-v2-1-331680c8b9d1@samsung.com>
 
-Thank you for your contribution! Sashiko AI review found 2 potential issue(=
-s) to consider:
+--IjnpyshY8lzNsBCD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Pre-existing issues:
-- [High] Kernel panic or division-by-zero exception due to division by zero=
- in clock rate recalculation if hardware registers are uninitialized or zer=
-oed.
-- [High] Multiplication of unsigned long values silently overflows on 32-bi=
-t architectures before assignment to a 64-bit variable in VCO rate calculat=
-ion.
---
+On Fri, Aug 28, 2026 at 03:47:25PM +0200, Michal Wilczynski wrote:
 
-commit 65afb8fac5b8b08e9749e00354df9fbca4121dd2
-Author: Michal Wilczynski <m.wilczynski@samsung.com>
+> +  clock-names:
+> +    const: refoclk
 
-phy: rockchip: inno-hdmi: Use the common Innosilicon PHY helpers
+> +  clock-output-names:
+> +    const: hdmi_pclk
 
-This commit replaces the local RK3328 pre-PLL implementations for calculati=
-ng
-and setting rates with the generic shared Innosilicon helpers. It keeps the
-RK3228 register-level code separate due to different register addresses but
-shares the table lookup.
+Can you drop the obvious "clk" suffixes from these please? Although,
+with one input and one output clock, what's the point of the -names
+proeprties anyway?
 
-> diff --git a/drivers/phy/rockchip/phy-rockchip-inno-hdmi.c b/drivers/phy/=
-rockchip/phy-rockchip-inno-hdmi.c
-> index 1483907413faa..fae766607b0ea 100644
-> --- a/drivers/phy/rockchip/phy-rockchip-inno-hdmi.c
-> +++ b/drivers/phy/rockchip/phy-rockchip-inno-hdmi.c
-[ ... ]
-> @@ -870,39 +850,11 @@ unsigned long inno_hdmi_phy_rk3328_clk_recalc_rate(=
-struct clk_hw *hw,
->  						   unsigned long parent_rate)
->  {
->  	struct inno_hdmi_phy *inno =3D to_inno_hdmi_phy(hw);
-[ ... ]
-> +	inno->pixclock =3D inno_hdmi_phy_pre_pll_recalc_rate(&inno->pre_pll,
-> +							   parent_rate);
+Cheers,
+Conor.
 
-[Severity: High]
-This is a pre-existing issue, but since we are switching to the shared help=
-er
-inno_hdmi_phy_pre_pll_recalc_rate(), can this code cause a division by zero?
 
-If the bootloader has not initialized the PHY, the hardware registers may
-contain their default 0 values. When the clock framework calls recalc_rate
-during registration at boot, would the following logic in the helper result=
- in
-a division by zero:
+--IjnpyshY8lzNsBCD
+Content-Type: application/pgp-signature; name=signature.asc
 
-drivers/phy/phy-inno-hdmi.c:inno_hdmi_phy_pre_pll_recalc_rate() {
-    ...
-	nd =3D inno_read(pll, INNO_PRE_PLL_DIV_1) & INNO_PRE_PLL_PRE_DIV_MASK;
-    ...
-	if (inno_read(pll, INNO_PRE_PLL_CONTROL) & INNO_PCLK_VCO_DIV_5_MASK) {
-		do_div(vco, nd * 5);
-	} else {
-		no_a =3D inno_read(pll, INNO_PCLK_DIV_AB) & INNO_PCLK_DIV_A_MASK;
-		no_b =3D FIELD_GET(INNO_PCLK_DIV_B_MASK,
-				 inno_read(pll, INNO_PCLK_DIV_AB)) + 2;
-		no_d =3D inno_read(pll, INNO_PCLK_DIV_CD) & INNO_PCLK_DIV_D_MASK;
+-----BEGIN PGP SIGNATURE-----
 
-		do_div(vco, nd * (no_a =3D=3D 1 ? no_b : no_a) * no_d * 2);
-	}
-    ...
-}
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCapG6lQAKCRB4tDGHoIJi
+0sm8AP4oliWIKMzgp8Ut3A394llDZYxdfr4HRcVVe7khXDrtiQEAnHjEzjNSnHhx
+0TyqrToY++PvSu1CTCWyTFL6ZUf3FAU=
+=a1Yl
+-----END PGP SIGNATURE-----
 
-If nd, no_a, or no_d evaluate to 0, the denominator becomes 0, which could
-lead to a kernel panic or exception on some architectures.
-
-[Severity: High]
-This isn't a bug introduced by this patch, but does the rate recalculation
-silently overflow on 32-bit architectures?
-
-Inside the same helper, the VCO rate is calculated as:
-
-drivers/phy/phy-inno-hdmi.c:inno_hdmi_phy_pre_pll_recalc_rate() {
-    ...
-	vco =3D parent_rate * nf;
-
-	if (!(inno_read(pll, INNO_PRE_PLL_DIV_2) &
-	      INNO_PRE_PLL_FRAC_DIV_DISABLE)) {
-		frac =3D inno_read(pll, INNO_PRE_PLL_FRAC_DIV_7_0) |
-		       (inno_read(pll, INNO_PRE_PLL_FRAC_DIV_15_8) << 8) |
-		       (inno_read(pll, INNO_PRE_PLL_FRAC_DIV_23_16) << 16);
-		vco +=3D DIV_ROUND_CLOSEST(parent_rate * frac,
-					 BIT(INNO_FRAC_DIV_WIDTH));
-	}
-    ...
-}
-
-The parent_rate is typically 24,000,000, while nf can be up to 757 and
-frac up to ~14.6 million. Since parent_rate is an unsigned long and nf is a
-u16, the multiplication is performed as 32-bit unsigned math on 32-bit
-platforms (like RK3228 which uses ARM32).
-
-Would parent_rate * nf and parent_rate * frac wrap around ULONG_MAX before
-being assigned to the 64-bit vco variable or before the division in
-DIV_ROUND_CLOSEST?
-
-> =20
-> -	inno->pixclock =3D DIV_ROUND_CLOSEST((unsigned long)vco, 1000) * 1000;
-> -
-> -	dev_dbg(inno->dev, "%s rate %lu vco %llu\n",
-> -		__func__, inno->pixclock, vco);
-> +	dev_dbg(inno->dev, "%s rate %lu\n", __func__, inno->pixclock);
-> =20
->  	return inno->pixclock;
->  }
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260828-jh7110-cle=
-an-send-v2-0-331680c8b9d1@samsung.com?part=3D12
+--IjnpyshY8lzNsBCD--
