@@ -1,177 +1,108 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C180746D2C5;
-	Fri, 28 Aug 2026 14:01:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA4BE46D544;
+	Fri, 28 Aug 2026 14:01:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787925681; cv=none; b=UefXuyb2TW6WCHpNG0T8yZgi9JnQ9gGjWTMFm0BGHM48BYn+R8tvkvMWMMS0qSmoqtIktPDgKywXyVmcfnS0FHKs2aeN2CVKEPohhsp4sTbHDkAELyFXnpanEBf1gQjmb+tszh0xcVe26YNDZBBtV8NqWZj4i3ds0LUKozJUK7A=
+	t=1787925698; cv=none; b=cPcikE0jlYrhTaq/hudCoNTqZmq/ndsGsEpgK9VUFGl2KdYRsVei/XOyiuEojvgfCNftmzH7jO6vKsTecjGh7boaixxdT+F46uoOxhUD4wXecsHv3Na02ziJqpetBUyrX2dDDZckSi5CBiNDgGELK2eIeCZFC37xaQjI4XpdX5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787925681; c=relaxed/simple;
-	bh=nSGwrlc0HSM9dwuszlpCdhjgBIbG8htdmO4yi4z0JOI=;
+	s=arc-20240116; t=1787925698; c=relaxed/simple;
+	bh=lWNsberH33bUrWdLxTIxxzbC0e9dWOp9reONsXLk4qY=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=T3VghrLi6/EKhhTwyQ9Rip79rxMkU8uO/Je3H2uv1nIWd/8Kdzm6n0dsNxf2lYcK+YtEC5qSFJe80KRjvJsoggZrdMqgTtItUgY7wYiLT5Zrx4MgTQ4hmk5ILtQGQfzmiC+q04o+hc2n/05PLq2xpSUxpjGHFmcNlSNZNOioGq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OB4qG1sp; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=F7fasdfRys+ULe2U7nafRhip9gxHFyaKa4y6Wsn+Et66n8Ejvhak7n2lurJKLBUv4Jh4D2Vewk+r4F2SL+MLfp0/jUyms/9V2SMQLxFAaGPMTSWTq1YDRnSuPzJm+HEQnDBF22cfUjRYDypBdbtQVJKQcS69plPb9O9caQ3u/P4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GsAOb+Fn; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OB4qG1sp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64C641F000E9;
-	Fri, 28 Aug 2026 14:01:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GsAOb+Fn"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 977481F000E9;
+	Fri, 28 Aug 2026 14:01:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787925678;
-	bh=9ekEJRd5FMjnbwKp4zU4Nj6ot2XimkwzMO04o1f9lNI=;
+	s=k20260515; t=1787925694;
+	bh=yQd6qsG83TrABDNJhnMxz4ZOai3+liNS/8tuJVDfUkk=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=OB4qG1spJDL2GiHu0RseVakg4F52NZzuZ58eOik2Qse6ngpg+q9k0XVtXSLBLaFGB
-	 LIJjkW8sqG75c0PzNqzV6cZB7SMchalusi2EJXt0dCu+oh0lzwmT3HPl3/bG57wenN
-	 dx1jgKELEYB8ixjZCEukoKLehcVMq6TE8mG+mbNxDAGSTEIXdO3tOPUFYZzCvIiOq8
-	 SmayeT6ieN8WKW5ZxedUizdQCcSz0Lvg8UbZkQ5woMNn2iZenLqYPP1tPQDjhA02+T
-	 MV52n0lSuhTiCk8ZdXZ7AJA+Y0WnzK9Te0GPIUqztdq9HOlF+PYYICC4qUV2pzgD2Y
-	 Z0egWlwxKxTlw==
+	b=GsAOb+Fn7op6wFEOlD3sNtVrsQ/rKtwUm10Xy3L7xcHO752Uar0bNGbAYgzqrYdRS
+	 fh4t7hXWmD/2yoBDCCdg1FPxQoxcvmo6rarWs9Cy10SBmfa6tgnWWitprAMfHmcEjp
+	 x+L45W/ykzQDpGTCqk5aGDJEEVtZjFvuS3sVwPANx2Drhgj7VyHNvXbeZrKUBdLKkX
+	 1tlLho6167nfyzGwV8BMNfd7g2+Ga/ZXraw9BFRK2dAuPkuHCfHJgwHfAOMdI1MFhA
+	 sX4Xj3EUyeNr+fQ213EcCHZD1GpIJlTID9Y7pOJScVLIGR9PZaUom/ZtmG1zGd8uiL
+	 3UjEvZbYEVO4A==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 04/15] drm/bridge: inno-hdmi: Split probe out of bind
+Subject: Re: [PATCH v2 09/15] clk: starfive: jh7110-vout: Allow pixel clock
+ rate propagation
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Michal Wilczynski" <m.wilczynski@samsung.com>
-Cc: conor+dt@kernel.org, vkoul@kernel.org, olteanv@gmail.com, devicetree@vger.kernel.org, robh@kernel.org, linux-phy@lists.infradead.org, mfd@lists.linux.dev, lee@kernel.org, dri-devel@lists.freedesktop.org, neil.armstrong@linaro.org, linux-clk@vger.kernel.org
-In-Reply-To: <20260828-jh7110-clean-send-v2-4-331680c8b9d1@samsung.com>
+Cc: lee@kernel.org, linux-clk@vger.kernel.org, linux-phy@lists.infradead.org, neil.armstrong@linaro.org, dri-devel@lists.freedesktop.org, conor+dt@kernel.org, mfd@lists.linux.dev, devicetree@vger.kernel.org, vkoul@kernel.org, olteanv@gmail.com, robh@kernel.org
+In-Reply-To: <20260828-jh7110-clean-send-v2-9-331680c8b9d1@samsung.com>
 References: <20260828-jh7110-clean-send-v2-0-331680c8b9d1@samsung.com>
- <CGME20260828134821eucas1p2a29505e5487f9e773a36b5dde7257df1@eucas1p2.samsung.com>
- <20260828-jh7110-clean-send-v2-4-331680c8b9d1@samsung.com>
+ <CGME20260828134830eucas1p1188cde4642239a10afedf46b415dfde4@eucas1p1.samsung.com>
+ <20260828-jh7110-clean-send-v2-9-331680c8b9d1@samsung.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 28 Aug 2026 14:01:16 +0000
-Message-Id: <20260828140117.64C641F000E9@smtp.kernel.org>
+Date: Fri, 28 Aug 2026 14:01:33 +0000
+Message-Id: <20260828140133.977481F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 
-Thank you for your contribution! Sashiko AI review found 5 potential issue(=
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
 s) to consider:
-
-New issues:
-- [High] Missing `inno_hdmi_remove` implementation leads to hardware interr=
-upt storms and violates API contract.
-
-Pre-existing issues:
-- [Critical] HPD IRQ is requested and enabled before bridge attach, leading=
- to NULL pointer dereference in the interrupt handler.
-- [High] Resource leak of devm_-managed allocations during component bind r=
-etries.
-- [High] TOCTOU race exposing the I2C adapter to userspace before internal =
-initialization completes.
-- [High] Use-after-free in the interrupt handler during device teardown due=
- to incorrect devres registration order.
+- [High] Adding CLK_SET_RATE_PARENT without CLK_SET_RATE_NO_REPARENT on har=
+dware signal-routing muxes allows clk_set_rate() to dynamically hijack the =
+active clock parent.
 --
 
-commit 355630a3f7bbfe2d55d6902048b35afc6cb4d58d
+commit 09b0c9046fefb467ad795def912713bba900bd11
 Author: Michal Wilczynski <m.wilczynski@samsung.com>
 
-drm/bridge: inno-hdmi: Split probe out of bind
-   =20
-inno_hdmi_bind() both sets up the bridge and attaches it to a DRM
-encoder. A platform whose HDMI controller is a child of a larger device
-needs the first half without the second, since it registers as its own
-platform driver and lets the DRM core bind the bridge later.
-   =20
-Move the setup into a new exported inno_hdmi_probe(), with a matching
-inno_hdmi_remove(), and reduce inno_hdmi_bind() to a wrapper around it.
-   =20
-No functional change intended.
+clk: starfive: jh7110-vout: Allow pixel clock rate propagation
 
-> Move the setup into a new exported inno_hdmi_probe(), with a matching
-> inno_hdmi_remove(), and reduce inno_hdmi_bind() to a wrapper around it.
+This commit adds CLK_SET_RATE_PARENT to the dc8200_pix0 and dc8200_pix1
+MUXes, allowing display controller rate requests to propagate to the
+parent clock.
 
-[Severity: High]
-The commit message mentions adding a matching inno_hdmi_remove() function,
-but it does not appear to be implemented in this patch.
-
-Without an exported remove function to safely tear down the hardware and
-unmask interrupts, could this lead to hardware interrupt storms if the
-platform module is removed or the driver is unbound?
-
-> diff --git a/drivers/gpu/drm/bridge/inno-hdmi.c b/drivers/gpu/drm/bridge/=
-inno-hdmi.c
-> index 9a62bf59a4033..12fd208d5e852 100644
-> --- a/drivers/gpu/drm/bridge/inno-hdmi.c
-> +++ b/drivers/gpu/drm/bridge/inno-hdmi.c
-[ ... ]
-> +struct inno_hdmi *inno_hdmi_probe(struct platform_device *pdev,
-> +				  const struct inno_hdmi_plat_data *plat_data)
->  {
-> -	struct platform_device *pdev =3D to_platform_device(dev);
-> +	struct device *dev =3D &pdev->dev;
+> diff --git a/drivers/clk/starfive/clk-starfive-jh7110-vout.c b/drivers/cl=
+k/starfive/clk-starfive-jh7110-vout.c
+> index bad20d5d794a7..b608fe3580311 100644
+> --- a/drivers/clk/starfive/clk-starfive-jh7110-vout.c
+> +++ b/drivers/clk/starfive/clk-starfive-jh7110-vout.c
+> @@ -40,10 +40,10 @@ static const struct jh71x0_clk_data jh7110_voutclk_da=
+ta[] =3D {
+>  	JH71X0_GATE(JH7110_VOUTCLK_DC8200_AXI, "dc8200_axi", 0, JH7110_VOUTCLK_=
+VOUT_TOP_AXI),
+>  	JH71X0_GATE(JH7110_VOUTCLK_DC8200_CORE, "dc8200_core", 0, JH7110_VOUTCL=
+K_VOUT_TOP_AXI),
+>  	JH71X0_GATE(JH7110_VOUTCLK_DC8200_AHB, "dc8200_ahb", 0, JH7110_VOUTCLK_=
+VOUT_TOP_AHB),
+> -	JH71X0_GMUX(JH7110_VOUTCLK_DC8200_PIX0, "dc8200_pix0", 0, 2,
+> +	JH71X0_GMUX(JH7110_VOUTCLK_DC8200_PIX0, "dc8200_pix0", CLK_SET_RATE_PAR=
+ENT, 2,
+>  		    JH7110_VOUTCLK_DC8200_PIX,
+>  		    JH7110_VOUTCLK_HDMITX0_PIXELCLK),
+> -	JH71X0_GMUX(JH7110_VOUTCLK_DC8200_PIX1, "dc8200_pix1", 0, 2,
+> +	JH71X0_GMUX(JH7110_VOUTCLK_DC8200_PIX1, "dc8200_pix1", CLK_SET_RATE_PAR=
+ENT, 2,
+>  		    JH7110_VOUTCLK_DC8200_PIX,
+>  		    JH7110_VOUTCLK_HDMITX0_PIXELCLK),
 
 [Severity: High]
-This isn't a bug introduced by this patch, but there appears to be a
-time-of-check to time-of-use (TOCTOU) race condition during I2C adapter
-registration within this setup path.
+Does adding CLK_SET_RATE_PARENT without CLK_SET_RATE_NO_REPARENT on these
+hardware signal-routing muxes allow CCF to unexpectedly reparent the active
+clock parent?
 
-In inno_hdmi_i2c_adapter(), devm_i2c_add_adapter() publishes the adapter
-to userspace before assigning hdmi->i2c =3D i2c. If a userspace tool
-initiates an I2C transaction concurrently during this small window,
-inno_hdmi_i2c_xfer() will attempt to lock i2c->lock using the still-NULL
-hdmi->i2c pointer.
+When the display driver calls clk_set_rate() on the dc8200_pix0 or
+dc8200_pix1 clock, __clk_mux_determine_rate() will evaluate all parents
+because CLK_SET_RATE_NO_REPARENT is not set.
 
-Can this lead to a NULL pointer dereference?
+Because the HDMI PHY PLL is highly adjustable, it will likely offer a
+mathematically closer rate than the generic DC8200_PIX divider. CCF will
+then select the HDMI PHY as the best parent and dynamically reparent the
+clock by calling clk_core_reparent().
 
-[Severity: Critical]
-This is a pre-existing issue, but requesting the IRQ before the bridge
-is attached seems to cause a crash on decoupled platforms.
-
-During the hardware setup in this path, devm_request_threaded_irq()
-requests the hotplug interrupt. If a monitor is already connected, the
-interrupt can fire immediately. The handler, inno_hdmi_irq(), unconditional=
-ly
-calls drm_helper_hpd_irq_event(hdmi->bridge.dev). However, hdmi->bridge.dev
-remains NULL until drm_bridge_attach() is called later.
-
-Since this patch explicitly supports decoupled drivers that register
-the bridge without immediately attaching it, does this guarantee a boot-time
-NULL pointer dereference if a display is connected?
-
-[Severity: High]
-This is a pre-existing issue, but there appears to be a devres registration
-order issue that leads to a use-after-free.
-
-The IRQ is requested via devm_request_threaded_irq() before the I2C
-adapter memory is allocated with devm_kzalloc(). During device teardown,
-devres cleans up resources in reverse order, meaning the I2C memory is freed
-while the IRQ remains active.
-
-If a hardware interrupt fires during this teardown window,
-inno_hdmi_hardirq() will check the dangling pointer and call
-inno_hdmi_i2c_irq(), which accesses the already freed memory.
-
-Should the IRQ be requested after all resources it depends on are allocated?
-
-[ ... ]
-> +struct inno_hdmi *inno_hdmi_bind(struct device *dev,
-> +				 struct drm_encoder *encoder,
-> +				 const struct inno_hdmi_plat_data *plat_data)
-> +{
-> +	struct platform_device *pdev =3D to_platform_device(dev);
-> +	struct inno_hdmi *hdmi;
-> +	int ret;
-> +
-> +	hdmi =3D inno_hdmi_probe(pdev, plat_data);
-> +	if (IS_ERR(hdmi))
-> +		return hdmi;
-> +
-> +	ret =3D drm_bridge_attach(encoder, &hdmi->bridge, NULL,
-> +				DRM_BRIDGE_ATTACH_NO_CONNECTOR);
-> +	if (ret)
-> +		return ERR_PTR(ret);
-
-[Severity: High]
-This isn't a bug introduced by this patch, but if drm_bridge_attach() fails
-(for example, due to probe deferral of another bridge), this returns an
-error directly without explicitly destroying the devm_ resources allocated
-during inno_hdmi_probe().
-
-Since devm_ allocations are tied to the component device's lifetime rather
-than the component bind cycle, won't this leak memory and accumulate
-duplicate IRQ registrations on each component bind retry?
+Could this silently override the display driver's physical routing
+configuration and sever the physical routing, breaking the display output?
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260828-jh7110-cle=
-an-send-v2-0-331680c8b9d1@samsung.com?part=3D4
+an-send-v2-0-331680c8b9d1@samsung.com?part=3D9
