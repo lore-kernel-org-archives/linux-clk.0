@@ -1,156 +1,175 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BCD94418E6;
-	Fri, 28 Aug 2026 14:04:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 346F346C4C2;
+	Fri, 28 Aug 2026 14:05:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787925892; cv=none; b=qnVnFfDOKHCuozfxEVH9/5tjIcKMhk6QfNBT33iTrmwZ3qX5Bsogn+6ghTYgDr27byxPnzQuCXtHP9H0yM+Lfsh16m96gpGjV2u4aVa8LkzJUg83ATSCSywnX5vAREvlgVHgZPmr9cco6Kl/pdBcj9ouE0A1HdkDHMDzohPuE/U=
+	t=1787925918; cv=none; b=B6aaREutJrqoYxxc/J2YAsjuQr0uegDpxqnljnMYrDS5O858v1GBtKFfBJkAtoO4mmLnsbHAEO3C2eXDakKIhMaKapOODQ/e7KtXF49sgxZls8hSl4qduVJnJS7US6EjJJnnd2GRRyh5e99dcljli+N8EGx3gNOpaaW5YeQ+mdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787925892; c=relaxed/simple;
-	bh=YqXOfslhXneev4dhWePnZlamBZiXrfj6E4wxD0E7QvI=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=AipT/hFvLSxYNXLfa9d9M8dnQUJ2Ylkro9hMC2OwvZRX/dMvIYqmWuiF4uXkhPs2zJgZJkdCQfsU2ywUUSMnRaLIZrzxyP+CQcxXVYEjDYt9vmleQBzRPXxYBYGmE3KD/XA2KGOSMzTH6Llj9TEkek1iKZi7MrYQ8UnC0tnZ8QE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fr2CRQfu; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fr2CRQfu"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66CAE1F00A3A;
-	Fri, 28 Aug 2026 14:04:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787925891;
-	bh=BEf7wsmWGyjenIb5dVc/Hd41acSlqCKQek2mD9YF+6s=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=fr2CRQfurqqiCNqIcuSDQwpRQGwS2JdQ+mp2F+gah+FXcTH19fHXsFzsqQP4j3i66
-	 sNhQmiPOiqY9s7nQRbZyoLniHnm/6mXtwgn4cPKu6BZOerLV/25RPiztz84yrSloDJ
-	 b2ogDKPObTvlc9B/DO501n0eD/5MSOJeKGlnbfC9wmxD8P8Gxh/FhdOudZWCx5fTLJ
-	 hojEvulsRR7U1HUnulRjSTyBJ4rTBHhNGMemDnzJCSi5BmHTgU0KIwGu32CKQFHhkP
-	 DLGC3aBAgKRdlctj+5Cy0mwDheddQrLzUXECfu0oCy3EOQmm6TFcR7NNS8xB7Dh+5/
-	 qqSFf5yRuE0XQ==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 13/15] phy: starfive: Add jh7110-inno-hdmi-phy driver
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Michal Wilczynski" <m.wilczynski@samsung.com>
-Cc: mfd@lists.linux.dev, linux-phy@lists.infradead.org, neil.armstrong@linaro.org, linux-clk@vger.kernel.org, conor+dt@kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, lee@kernel.org, olteanv@gmail.com, vkoul@kernel.org, robh@kernel.org
-In-Reply-To: <20260828-jh7110-clean-send-v2-13-331680c8b9d1@samsung.com>
+	s=arc-20240116; t=1787925918; c=relaxed/simple;
+	bh=QCnOTL9RmlnpNzyf0o0KmGshiONzlJMr+E+QWnmkBOw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Htivq3kBDb3QY2VWJg/3DnYle0MdgyWEIoeKypEkAqxAHkZ/rEnre2rioa/fP49Xp3WP9LtZn5vM1KCAKaaZ6rcrq/jnMIsW/g1hHeU2sBsJ/kuB5JYyMq9mQ7H8Neb9v04xX3mDSadEGc/vvhnw2JQjWRP3NliDfXwZTdjycio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from edelgard.fodlan.icenowy.me (unknown [120.85.97.201])
+	by APP-05 (Coremail) with SMTP id zQCowACX_zlmlZFqA_PgBg--.2413S2;
+	Fri, 28 Aug 2026 22:04:24 +0800 (CST)
+Message-ID: <b41dff8e5f62be2da467e48631a79677c5066422.camel@iscas.ac.cn>
+Subject: Re: [PATCH v2 02/15] dt-bindings: display: bridge: Add
+ starfive,jh7110-inno-hdmi-controller
+From: Icenowy Zheng <zhengxingda@iscas.ac.cn>
+To: Michal Wilczynski <m.wilczynski@samsung.com>, Vinod Koul
+ <vkoul@kernel.org>,  Neil Armstrong <neil.armstrong@linaro.org>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski	 <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Andrzej Hajda	 <andrzej.hajda@intel.com>,
+ Robert Foss <rfoss@kernel.org>, Laurent Pinchart	
+ <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>, Luca Ceresoli
+ <luca.ceresoli@bootlin.com>, David Airlie	 <airlied@gmail.com>, Simona
+ Vetter <simona@ffwll.ch>, Maarten Lankhorst	
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, Lee Jones <lee@kernel.org>, Andy
+ Yan <andy.yan@rock-chips.com>, Philipp Zabel	 <p.zabel@pengutronix.de>,
+ Emil Renner Berthing <kernel@esmil.dk>, Hal Feng	
+ <hal.feng@starfivetech.com>, Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, Heiko
+ Stuebner <heiko@sntech.de>,  Conor Dooley <conor@kernel.org>, Paul Walmsley
+ <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,  Albert Ou
+ <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, Dominique
+ Belhachemi <db@domibel.de>
+Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	mfd@lists.linux.dev, linux-clk@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, Andy Yan <andyshrk@163.com>, Marek
+ Szyprowski	 <m.szyprowski@samsung.com>, Maud Spierings
+ <maudspierings@gocontroll.com>,  Graham Markall <hello@big-grey.co.uk>
+Date: Fri, 28 Aug 2026 22:04:21 +0800
+In-Reply-To: <20260828-jh7110-clean-send-v2-2-331680c8b9d1@samsung.com>
 References: <20260828-jh7110-clean-send-v2-0-331680c8b9d1@samsung.com>
- <CGME20260828134837eucas1p18f352f4ffb04ca5e55386ed3423f5d1a@eucas1p1.samsung.com>
- <20260828-jh7110-clean-send-v2-13-331680c8b9d1@samsung.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 28 Aug 2026 14:04:49 +0000
-Message-Id: <20260828140450.66CAE1F00A3A@smtp.kernel.org>
+		<CGME20260828134817eucas1p2e2756deff8871be4ea8bb5c65f9c179d@eucas1p2.samsung.com>
+	 <20260828-jh7110-clean-send-v2-2-331680c8b9d1@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.58.3 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-CM-TRANSID:zQCowACX_zlmlZFqA_PgBg--.2413S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxKr15Xr1Uury8Xr4UWFWDXFb_yoW7AFW3pF
+	18JrW7JrW8Jr1fXr4Utr1UGFyrJr1kA3Wqqr1xXF1Utr1UWFyjqr1jvF1vgF1UJr4xXr1U
+	Jr1UXr43uF17Jw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUPCb7Iv0xC_Zr1lb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I2
+	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xII
+	jxv20xvEc7CjxVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I
+	8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
+	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8Jw
+	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFcxC0VAYjxAxZF0Ew4CEw7xC0wAC
+	Y4xI67k04243AVC20s07M4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS14v26rWY6F
+	y7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_
+	Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWrXVW8Jr1lIxkGc2
+	Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_
+	Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMI
+	IF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UMVCEFcxC0VAYjxAxZFUvcSsGvfC2KfnxnUUI
+	43ZEXa7IUnK0PDUUUUU==
+X-CM-SenderInfo: x2kh0wp0lqwv3d6l2u1dvotugofq/
 
-Thank you for your contribution! Sashiko AI review found 3 potential issue(=
-s) to consider:
-- [High] Missing cleanup on the clk_set_rate error path in probe leaves a d=
-angling clock provider.
-- [High] Clock operations incorrectly modify analog PHY state without synch=
-ronization, risking state corruption and power leaks.
-- [Medium] Hardware PHY resources are left powered on if starfive_hdmi_phy_=
-power_on() fails.
---
+5ZyoIDIwMjYtMDgtMjjkupTnmoQgMTU6NDcgKzAyMDDvvIxNaWNoYWwgV2lsY3p5bnNraeWGmemB
+k++8mgo+IEFkZCB0aGUgZHQtYmluZGluZyBmb3IgdGhlIFN0YXJGaXZlIEpINzExMCBJbm5vc2ls
+aWNvbiBIRE1JCj4gY29udHJvbGxlcgo+IChEUk0gYnJpZGdlKS4KPiAKPiBUaGlzIGRldmljZSBp
+cyB0aGUgc2Vjb25kIGNoaWxkIG9mIHRoZSBzdGFyZml2ZSxqaDcxMTAtaGRtaS1zdWJzeXN0ZW0K
+PiBub2RlLgo+IEl0IGNvbnN1bWVzIHJlZ2lzdGVyIGFjY2VzcyBjbG9ja3MgKHN5cywgbWNsaywg
+YmNsaykgZnJvbSB0aGUgdm91dGNyZwo+IGFuZAo+IGJvdGggdGhlIHBpeGVsIGNsb2NrIChwY2xr
+KSBhbmQgdGhlIFBIWSBmcm9tIGl0cyBoZG1pX3BoeSBzaWJsaW5nLgo+IAo+IFNpZ25lZC1vZmYt
+Ynk6IE1pY2hhbCBXaWxjenluc2tpIDxtLndpbGN6eW5za2lAc2Ftc3VuZy5jb20+Cj4gLS0tCj4g
+wqAuLi4vc3RhcmZpdmUsamg3MTEwLWlubm8taGRtaS1jb250cm9sbGVyLnlhbWzCoMKgwqDCoMKg
+IHwgMTA5Cj4gKysrKysrKysrKysrKysrKysrKysrCj4gwqAxIGZpbGUgY2hhbmdlZCwgMTA5IGlu
+c2VydGlvbnMoKykKPiAKPiBkaWZmIC0tZ2l0Cj4gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUv
+YmluZGluZ3MvZGlzcGxheS9icmlkZ2Uvc3RhcmZpdmUsamg3MTEwLQo+IGlubm8taGRtaS1jb250
+cm9sbGVyLnlhbWwKPiBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5
+L2JyaWRnZS9zdGFyZml2ZSxqaDcxMTAtCj4gaW5uby1oZG1pLWNvbnRyb2xsZXIueWFtbAo+IG5l
+dyBmaWxlIG1vZGUgMTAwNjQ0Cj4gaW5kZXgKPiAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAw
+MDAwMDAwMDAwMDAwLi4wZTU4NGU3Yjc1NmUyNGUyZjk5YTYyZGFhYjMKPiAxMTdiYmY0YjQ3MmI2
+Cj4gLS0tIC9kZXYvbnVsbAo+ICsrKwo+IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRp
+bmdzL2Rpc3BsYXkvYnJpZGdlL3N0YXJmaXZlLGpoNzExMC0KPiBpbm5vLWhkbWktY29udHJvbGxl
+ci55YW1sCj4gQEAgLTAsMCArMSwxMDkgQEAKPiArIyBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjog
+KEdQTC0yLjAtb25seSBPUiBCU0QtMi1DbGF1c2UpCj4gKyVZQU1MIDEuMgo+ICstLS0KPiArJGlk
+Ogo+IGh0dHA6Ly9kZXZpY2V0cmVlLm9yZy9zY2hlbWFzL2Rpc3BsYXkvYnJpZGdlL3N0YXJmaXZl
+LGpoNzExMC1pbm5vLWhkbWktY29udHJvbGxlci55YW1sIwo+ICskc2NoZW1hOiBodHRwOi8vZGV2
+aWNldHJlZS5vcmcvbWV0YS1zY2hlbWFzL2NvcmUueWFtbCMKPiArCj4gK3RpdGxlOiBTdGFyRml2
+ZSBKSDcxMTAgSW5ub3NpbGljb24gSERNSSBDb250cm9sbGVyCj4gKwo+ICttYWludGFpbmVyczoK
+PiArwqAgLSBNaWNoYWwgV2lsY3p5bnNraSA8bS53aWxjenluc2tpQHNhbXN1bmcuY29tPgo+ICsK
+PiArZGVzY3JpcHRpb246Cj4gK8KgIFRoZSBjb250cm9sbGVyIHBvcnRpb24gb2YgdGhlIFN0YXJG
+aXZlIEpINzExMCBJTk5PIEhETUkgSVAuCj4gKwo+ICtwcm9wZXJ0aWVzOgo+ICvCoCBjb21wYXRp
+YmxlOgo+ICvCoMKgwqAgY29uc3Q6IHN0YXJmaXZlLGpoNzExMC1pbm5vLWhkbWktY29udHJvbGxl
+cgo+ICsKPiArwqAgaW50ZXJydXB0czoKPiArwqDCoMKgIG1heEl0ZW1zOiAxCj4gKwo+ICvCoCBj
+bG9ja3M6Cj4gK8KgwqDCoCBpdGVtczoKPiArwqDCoMKgwqDCoCAtIGRlc2NyaXB0aW9uOiBTeXN0
+ZW0gY2xvY2sgZm9yIHJlZ2lzdGVyIGFjY2Vzcwo+ICvCoMKgwqDCoMKgIC0gZGVzY3JpcHRpb246
+IE1vZHVsZSBjbG9jawo+ICvCoMKgwqDCoMKgIC0gZGVzY3JpcHRpb246IEJ1cyBjbG9jawo+ICvC
+oMKgwqDCoMKgIC0gZGVzY3JpcHRpb246IFBpeGVsIGNsb2NrIGZyb20gUEhZCj4gKwo+ICvCoCBj
+bG9jay1uYW1lczoKPiArwqDCoMKgIGl0ZW1zOgo+ICvCoMKgwqDCoMKgIC0gY29uc3Q6IHN5cwo+
+ICvCoMKgwqDCoMKgIC0gY29uc3Q6IG1jbGsKPiArwqDCoMKgwqDCoCAtIGNvbnN0OiBiY2xrCj4g
+K8KgwqDCoMKgwqAgLSBjb25zdDogcGNsawo+ICsKPiArwqAgcmVzZXRzOgo+ICvCoMKgwqAgbWF4
+SXRlbXM6IDEKPiArCj4gK8KgIHJlc2V0LW5hbWVzOgo+ICvCoMKgwqAgY29uc3Q6IGhkbWlfdHgK
+PiArCj4gK8KgIHBoeXM6Cj4gK8KgwqDCoCBtYXhJdGVtczogMQo+ICsKPiArwqAgcGh5LW5hbWVz
+Ogo+ICvCoMKgwqAgY29uc3Q6IGhkbWktcGh5Cj4gKwo+ICvCoCBwb3J0czoKPiArwqDCoMKgICRy
+ZWY6IC9zY2hlbWFzL2dyYXBoLnlhbWwjL3Byb3BlcnRpZXMvcG9ydHMKPiArwqDCoMKgIGRlc2Ny
+aXB0aW9uOgo+ICvCoMKgwqDCoMKgIEEgZ3JhcGggbm9kZSB3aXRoIG9uZSBpbnB1dCBwb3J0IGFu
+ZCBvbmUgb3V0cHV0IHBvcnQuCgpNYXliZSB0aGlzIGRldmljZSBzaG91bGQgaGFuZGxlIHRoZSBk
+aXNwbGF5IG11eCBpbiB0aGUgZG9tX3ZvdXRfc3lzY29uCnBhcnQuIFRoaXMgc3lzY29uIGlzIGRv
+Y3VtZW50ZWQgaW4gdGhlIEpINzExMCBUUk0sIGFuZCB0aGUgYWRkcmVzcyBpcwphdCAweDI5NWIw
+MDAwLgoKQWNjb3JkaW5nIHRvIHRoZSBtYW51YWwsIGJpdCAzMDoyNSBvZiByZWdpc3RlciAweDQg
+YW5kIGJpdCA0IG9mCnJlZ2lzdGVyIDB4OCAod2hpY2ggaXMgbWFya2VkIGFzIHUyX2Rpc3BsYXlf
+cGFuZWxfbXV4X3BhbsKtZWxfc2VsLCBidXQKaW4gdGhlIGJsb2NrIGRpYWdyYW0gb2YgZGlzcGxh
+eSBzdWJzeXN0ZW0sIGl0IGNvdWxkIGJlIHNlZW4gdGhhdCB0aGUKbXV4IGNvbnRyb2xsaW5nIHRo
+ZSBpbnB1dCBvZiBIRE1JX0N0cmwgaXMgdTJfZGlzcGxheV9wYW5lbF9tdXgpIGlzCnJlbGF0ZWQg
+dG8gdGhlIEhETUkgZGlzcGxheSwgd2l0aCB0aGUgc2V0dXAgb2YgOC1iaXQgRFBJMCBjb25uZWN0
+ZWQgdG8KSERNSSBjb250cm9sbGVyIGFzIHRoZSBkZWZhdWx0IHZhbHVlICh1MF9oZG1pX2RhdGFf
+bWFwcGluZ19kwq1waV9kcF9zZWwKPSAwIChEUEkpLCB1MF9oZG1pX2RhdGFfbWFwcGluZ19kwq1w
+aV9iaXRfZGVwdGggPSAwICg4LWJpdCksCnUyX2Rpc3BsYXlfcGFuZWxfbXV4X3BhbsKtZWxfc2Vs
+ID0gMCAoUGFuZWwgMCkpLCBhbmQgdGhpcyBpcyBjdXJyZW50bHkKeW91ciBleGFtcGxlIHNldHVw
+LgoKQXQgbGVhc3QgbGVhdmUgYSBzeXNjb24gcHJvcGVydHkgcG9pbnRpbmcgdG8gdGhlIHN5c2Nv
+biB3b3VsZCBiZSB0aGVuCnVzZWZ1bCwgYW5kIG1heWJlIGl0J3MgYmV0dGVyIHRvIHNldHVwIHRo
+ZSBzeXNjb24gdmFsdWVzIGJhc2VkIG9uIHdoaWNoCkRDODIwMCBvdXRwdXQgaW50ZXJmYWNlIGlz
+IGluIHVzZS4KClRoYW5rcywKSWNlbm93eQoKPiArCj4gK3JlcXVpcmVkOgo+ICvCoCAtIGNvbXBh
+dGlibGUKPiArwqAgLSBpbnRlcnJ1cHRzCj4gK8KgIC0gY2xvY2tzCj4gK8KgIC0gY2xvY2stbmFt
+ZXMKPiArwqAgLSByZXNldHMKPiArwqAgLSByZXNldC1uYW1lcwo+ICvCoCAtIHBoeXMKPiArwqAg
+LSBwaHktbmFtZXMKPiArwqAgLSBwb3J0cwo+ICsKPiArYWRkaXRpb25hbFByb3BlcnRpZXM6IGZh
+bHNlCj4gKwo+ICtleGFtcGxlczoKPiArwqAgIyBTaG93biBhcyBhIGNoaWxkIG9mIHRoZSBIRE1J
+IHN1YnN5c3RlbSBub2RlOyBzZWUKPiArwqAgIyBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmlu
+ZGluZ3MvbWZkL3N0YXJmaXZlLGpoNzExMC1oZG1pLQo+IHN1YnN5c3RlbS55YW1sCj4gK8KgICMg
+Zm9yIHRoZSBmdWxsIG5vZGUuCj4gK8KgIC0gfAo+ICvCoMKgwqAgI2luY2x1ZGUgPGR0LWJpbmRp
+bmdzL2Nsb2NrL3N0YXJmaXZlLGpoNzExMC1jcmcuaD4KPiArwqDCoMKgICNpbmNsdWRlIDxkdC1i
+aW5kaW5ncy9yZXNldC9zdGFyZml2ZSxqaDcxMTAtY3JnLmg+Cj4gKwo+ICvCoMKgwqAgY29udHJv
+bGxlciB7Cj4gK8KgwqDCoMKgwqDCoMKgIGNvbXBhdGlibGUgPSAic3RhcmZpdmUsamg3MTEwLWlu
+bm8taGRtaS1jb250cm9sbGVyIjsKPiArwqDCoMKgwqDCoMKgwqAgY2xvY2tzID0gPCZ2b3V0Y3Jn
+IEpINzExMF9WT1VUQ0xLX0hETUlfVFhfU1lTPiwKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqAgPCZ2b3V0Y3JnIEpINzExMF9WT1VUQ0xLX0hETUlfVFhfTUNMSz4sCj4gK8KgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIDwmdm91dGNyZyBKSDcxMTBfVk9VVENMS19IRE1J
+X1RYX0JDTEs+LAo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCA8JmhkbWlfcGh5
+PjsKPiArwqDCoMKgwqDCoMKgwqAgY2xvY2stbmFtZXMgPSAic3lzIiwgIm1jbGsiLCAiYmNsayIs
+ICJwY2xrIjsKPiArwqDCoMKgwqDCoMKgwqAgaW50ZXJydXB0cyA9IDw5OT47Cj4gK8KgwqDCoMKg
+wqDCoMKgIHBoeXMgPSA8JmhkbWlfcGh5PjsKPiArwqDCoMKgwqDCoMKgwqAgcGh5LW5hbWVzID0g
+ImhkbWktcGh5IjsKPiArwqDCoMKgwqDCoMKgwqAgcmVzZXRzID0gPCZ2b3V0Y3JnIEpINzExMF9W
+T1VUUlNUX0hETUlfVFhfSERNST47Cj4gK8KgwqDCoMKgwqDCoMKgIHJlc2V0LW5hbWVzID0gImhk
+bWlfdHgiOwo+ICsKPiArwqDCoMKgwqDCoMKgwqAgcG9ydHMgewo+ICvCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgICNhZGRyZXNzLWNlbGxzID0gPDE+Owo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgICNz
+aXplLWNlbGxzID0gPDA+Owo+ICsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBwb3J0QDAgewo+
+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgcmVnID0gPDA+Owo+ICsKPiArwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGVuZHBvaW50IHsKPiArwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqAgcmVtb3RlLWVuZHBvaW50ID0gPCZkcHVfb3V0X2RwaTA+Owo+
+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfTsKPiArwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoCB9Owo+ICsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBwb3J0QDEgewo+ICvCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgcmVnID0gPDE+Owo+ICsKPiArwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgIGVuZHBvaW50IHsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqAgcmVtb3RlLWVuZHBvaW50ID0gPCZoZG1pX2Nvbl9pbj47Cj4gK8KgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB9Owo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIH07Cj4g
+K8KgwqDCoMKgwqDCoMKgIH07Cj4gK8KgwqDCoCB9Owo+ICsKPiArLi4uCg==
 
-commit 7c46f9e86f09391b8c542e940da1457e36661874
-Author: Michal Wilczynski <m.wilczynski@samsung.com>
-
-phy: starfive: Add jh7110-inno-hdmi-phy driver
-
-This commit adds the HDMI PHY driver for the StarFive JH7110. It provides
-the variable pixel clock from the Pre-PLL and the PHY operations for the
-Post-PLL and analog blocks.
-
-> diff --git a/drivers/phy/starfive/phy-jh7110-inno-hdmi.c b/drivers/phy/st=
-arfive/phy-jh7110-inno-hdmi.c
-> new file mode 100644
-> --- /dev/null
-> +++ b/drivers/phy/starfive/phy-jh7110-inno-hdmi.c
-[ ... ]
-> +static int starfive_hdmi_phy_clk_set_rate(struct clk_hw *hw, unsigned lo=
-ng rate,
-> +					  unsigned long parent_rate)
-> +{
-[ ... ]
-> +	if (inno->pixclock =3D=3D rate && inno->tmdsclock =3D=3D cfg->tmdsclock)
-> +		return 0;
-> +
-> +	inno_update_bits(inno, STF_INNO_BIAS_CONTROL,
-> +			 STF_INNO_BIAS_ENABLE, STF_INNO_BIAS_ENABLE);
-> +	inno_write(inno, STF_INNO_RX_CONTROL, STF_INNO_RX_ENABLE);
-
-[Severity: High]
-Does this incorrectly modify analog PHY state during clock operations?
-
-Since clk_set_rate() is unconditionally called during starfive_hdmi_phy_pro=
-be(),
-these analog blocks are powered on immediately at boot, which could cause a
-permanent power leak until the power_off callback happens to be called.
-
-Furthermore, do these state modifications race with the PHY callbacks? The
-common clock framework callbacks execute under the CCF prepare_lock, while =
-PHY
-callbacks execute under the phy->mutex lock. A concurrent clk_set_rate() and
-starfive_hdmi_phy_power_on() could race on hardware registers and shared dr=
-iver
-state like inno->pixclock.
-
-[ ... ]
-> +static int starfive_hdmi_phy_power_on(struct phy *phy)
-> +{
-[ ... ]
-> +	inno_write(inno, STF_INNO_POST_PLL_DIV_1, reg_1aa_value);
-> +
-> +	/* Wait for post PLL lock */
-> +	ret =3D inno_poll(inno, STF_INNO_POST_PLL_LOCK_STATUS, v,
-> +			v & STF_INNO_POST_PLL_LOCK, 1000, 100000);
-> +	if (ret) {
-> +		dev_err(inno->dev, "Post-PLL locking failed\n");
-> +		return ret;
-> +	}
-
-[Severity: Medium]
-Are the hardware PHY resources left powered on if the Post-PLL lock times o=
-ut?
-
-If inno_poll() fails, the function returns immediately. The PHY core framew=
-ork
-does not automatically call the power_off callback if the power_on callback
-fails, because the power_count remains 0.
-
-Does this error path need to explicitly undo the register writes that enabl=
-ed
-the BIAS, RX, and Post-PLL blocks earlier in this function?
-
-[ ... ]
-> +static int starfive_hdmi_phy_probe(struct platform_device *pdev)
-> +{
-[ ... ]
-> +	ret =3D clk_set_rate(inno->phyclk, 297000000);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to set default rate: %d\n", ret);
-> +		goto err_disable_refoclk;
-> +	}
-[ ... ]
-> +err_del_clk_provider:
-> +	of_clk_del_provider(dev->of_node);
-> +err_disable_refoclk:
-> +	clk_disable_unprepare(inno->refoclk);
-> +	return ret;
-> +}
-
-[Severity: High]
-Does this error path leave a dangling clock provider in the global list?
-
-If clk_set_rate() fails, the code jumps to err_disable_refoclk, bypassing
-the required of_clk_del_provider() cleanup. The devres framework will then
-unregister and free inno->phyclk, but the device node will remain in the
-system-wide of_clk_providers list pointing to freed memory. Any subsequent
-clock lookup could trigger a use-after-free crash.
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260828-jh7110-cle=
-an-send-v2-0-331680c8b9d1@samsung.com?part=3D13
