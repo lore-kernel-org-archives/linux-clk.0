@@ -1,128 +1,103 @@
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCEC1271A94
-	for <linux-clk@vger.kernel.org>; Fri, 28 Aug 2026 13:14:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 720D6275870
+	for <linux-clk@vger.kernel.org>; Fri, 28 Aug 2026 13:23:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787922879; cv=none; b=pP6LVyONokXRJWe7dQF7CYvId/puHxrCQmgvgb8O+xic68k3+IxCxVg1eq/5Xyo2xJU3ofuqeq0QKvDkcQ/2ggW5Zg0vLwPcNJw0RtXEi+KycudzxNNJQ35IRn1mdrlpwCIG1v2GTYi9An3ezjqr9qKo2lWGbu/zz3Gq21TRGps=
+	t=1787923428; cv=none; b=A+ZkqbkJmsSeovzkHPxMB5vJ2gk4ZqOOgjTKNnxgX533+udOta/VRFOO1BNQN/h+7fk38k2SGTziXGEPWLnUOBTxbW+WaTuzmu/Q97Uwfv3UB8q5n6g9RBykKRhHK8Z3U/ePolAJLIFjxsq1qfhDTV9qUr/zFxxNMJDug9Y5gCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787922879; c=relaxed/simple;
-	bh=D4QUybtwdaEGeFdOBILEBAa96aMUCabEn4IKFQTSTqQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
-	 References; b=g6aF1Bj3lJ0Oa/EE4Y6CEjVjMKTH4eQgkVoPuYSCpf6UxW8H4l8qasmbL9nJr62gTRCwYq3MWecJXfYL3OGpEoFwFrx8Hk30ej4hxC+Hk+FCylL/4fbZp0xJen3ybZNz+0MfuDRiCerAdAaNvQQnziD8CHhe/yOxWoIZmwJOIT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=G9WfxMU+; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1787923428; c=relaxed/simple;
+	bh=v7YEdZNqO2mDkew4bb3svzN5OPVXaZ1JprLegsMZiwU=;
+	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=kkEc5iDyrN0i89sPiyVfuJkNr4PM2EQweo3iJTYqQb+099xVLCK2os78BiQJ+iQLryFSOKot6By7i9zAsuh1zeQoFp3wnYoJt+HbIRv3Z7rY9sgSZ3whxDmls77icrNT5XIiX/dGQLz1b7XCaznq0skYeR7e+bsOOLeN9mtlUZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bhlC9zTd; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="G9WfxMU+"
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20260828131429euoutp027f317e5918ba2e4c0aacf3c736da7214~P_mB0dgpC2411124111euoutp02R
-	for <linux-clk@vger.kernel.org>; Fri, 28 Aug 2026 13:14:29 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20260828131429euoutp027f317e5918ba2e4c0aacf3c736da7214~P_mB0dgpC2411124111euoutp02R
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1787922869;
-	bh=lwl9ZR836nXomiAuieh4El+iSMRVFsDG8HllN7ocCco=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=G9WfxMU+ufl7buuH3N4EZ28j7RN2elpdzcYXFBksv+UhFV54sgY8Ncl1WqPrM+Hhh
-	 ReqnNU0qIB+ewC0S+rJsrLfiNBaGQ4wrqr30UeEvIMPsQ8cfAFp7lvcISp+DqLNl2s
-	 /YSvcsUTMAqvak6ICW53OJtJym/LyfBIlH0X1rrs=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20260828131428eucas1p2cc2d9767d5ed62b8297c2cff0295226d~P_mBgz0Nf2835228352eucas1p2P;
-	Fri, 28 Aug 2026 13:14:28 +0000 (GMT)
-Received: from AMDC4653.digital.local (unknown [106.120.51.32]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20260828131428eusmtip175545c44f75392432a02ffdf32bacde6~P_mA87mUu1290512905eusmtip1T;
-	Fri, 28 Aug 2026 13:14:28 +0000 (GMT)
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pwm@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Stephen Boyd
-	<sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet
-	<jbrunet+clk@baylibre.com>, Peter Zijlstra <peterz@infradead.org>, Ingo
-	Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long
-	<longman@redhat.com>, =?UTF-8?q?we=20Kleine-K=C3=B6nig?=
-	<ukleinek@kernel.org>
-Subject: [RFC/PATCH] clk: add lockdep_ignore_clk_prepare_lock cmdline option
-Date: Fri, 28 Aug 2026 15:14:07 +0200
-Message-ID: <20260828131409.962825-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bhlC9zTd"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E33271F000E9;
+	Fri, 28 Aug 2026 13:23:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1787923427;
+	bh=I5FlGuOFBXzKqU8FnOI3v1TxLJmc5E/vQODYAOD9pOg=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=bhlC9zTdkkRvT+PuHiS4J7h6Q2WJr6v1gFRzCc+rTBgiSb+3cR53JJuun7NmoiKlw
+	 V31wfom9cvd0OurTP6jhdidjs1u8zG9OXrEoKwipTtvoci7PcUdngsDdJLk4kI1NKF
+	 hgR3vcNTcuW67hkyC3qY4nywW2X/RJharJxSlTieydHc8RDnVMZxg+FQ7heu6IOxER
+	 ZQHQ3VVHVGCgclHeFw7vNTuBFcxEVOtxbiuwbIY5kCUi3TIDCLSm7KXP15EC1snxF5
+	 FKsEDBqEABrJBe/4CjO7NkZV/AIFKVLMZ7EsfZ7XL9g+GvfqKacddcuWhfd/k9Tzgx
+	 qX2XK9I0OJy/Q==
+From: sashiko-bot@kernel.org
+Subject: Re: [RFC/PATCH] clk: add lockdep_ignore_clk_prepare_lock cmdline
+ option
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Marek Szyprowski" <m.szyprowski@samsung.com>
+Cc: linux-clk@vger.kernel.org
+In-Reply-To: <20260828131409.962825-1-m.szyprowski@samsung.com>
+References: <CGME20260828131428eucas1p2cc2d9767d5ed62b8297c2cff0295226d@eucas1p2.samsung.com>
+ <20260828131409.962825-1-m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 28 Aug 2026 13:23:46 +0000
+Message-Id: <20260828132346.E33271F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20260828131428eucas1p2cc2d9767d5ed62b8297c2cff0295226d
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20260828131428eucas1p2cc2d9767d5ed62b8297c2cff0295226d
-X-EPHeader: CA
-X-CMS-RootMailID: 20260828131428eucas1p2cc2d9767d5ed62b8297c2cff0295226d
-References: <CGME20260828131428eucas1p2cc2d9767d5ed62b8297c2cff0295226d@eucas1p2.samsung.com>
 
-The clock framework uses a single global re-entrant mutex, prepare_lock,
-to serialize all operations on the whole clock tree. It is taken by
-nearly every clk API call and it is held while calling into the clock
-providers, which in turn often take their own locks or trigger runtime
-PM. As a result prepare_lock sits in the middle of a large number of
-lock chains and lockdep frequently reports possible circular locking
-dependencies involving it.
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
+- [High] The conditionally compiled `__setup` parameter leaks to the init p=
+rocess when CONFIG_LOCKDEP is disabled, breaking systemd boots.
+--
 
-Such reports are often not real deadlocks, but once the first one is hit
-lockdep turns itself off and all subsequent locking problems - including
-the ones actually being investigated - are no longer reported.
+commit 85a755ef5489c876625f9877594712083467cf23
+Author: Marek Szyprowski <m.szyprowski@samsung.com>
 
-Add a "lockdep_ignore_clk_prepare_lock" kernel command line parameter,
-which marks the prepare_lock class as novalidate, so lockdep skips the
-dependency tracking for it and keeps validating the rest of the system.
+clk: add lockdep_ignore_clk_prepare_lock cmdline option
 
-The option is only available when CONFIG_LOCKDEP is enabled and is meant
-purely as a debugging aid.
+This commit introduces a new kernel command line parameter,
+lockdep_ignore_clk_prepare_lock, to skip dependency tracking for the
+prepare_lock class in the clock subsystem. This helps prevent lockdep
+from turning itself off due to false positive circular dependencies.
 
-Assisted-by: Claude:claude-opus-5
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
-The problems with clock framework's prepare_lock are well known and
-there are machines that always report lockdep issues related to it. A
-good example are Khadas VIM3/VIM3l boards, on which prepare_lock
-interferes with locks used in PWM subsytem:
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 048adfa86a5d0..adf7d83c854a9 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -117,6 +117,17 @@ struct clk {
+>  	struct hlist_node clks_node;
+>  };
+> =20
+> +#ifdef CONFIG_LOCKDEP
+> +static int __init lockdep_ignore_clk_prepare_lock_setup(char *__unused)
+> +{
+> +	lockdep_set_novalidate_class(&prepare_lock);
+> +	pr_warn("lockdep: ignoring prepare_lock class in clock subsystem\n");
+> +	return 1;
+> +}
+> +__setup("lockdep_ignore_clk_prepare_lock",
+> +	lockdep_ignore_clk_prepare_lock_setup);
+> +#endif
 
-https://lore.kernel.org/all/adqtn6iljcguv3m3ovhltusbbf4mljzlwg73yklaudvjjtazxv@vyf5fvuzic6x/
+[Severity: High]
+Will this break the boot process if a user passes the parameter on a kernel
+built without CONFIG_LOCKDEP?
 
-This new cmdline option allows to hide prepare_lock related issues on
-the test machines possibly enabling lockdep to catch other issues.
+Because the __setup() macro is conditionally compiled inside the
+#ifdef CONFIG_LOCKDEP block, the parameter handler is completely omitted wh=
+en
+lockdep is disabled.=20
 
-Best regards,
-Marek Szyprowski
----
- drivers/clk/clk.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+When this happens, the kernel treats the unrecognized parameter as an unkno=
+wn
+positional argument and passes it to the init process.
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index fef87167a60b..a5c8c4256102 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -168,6 +168,17 @@ struct clk {
- 	struct hlist_node clks_node;
- };
- 
-+#ifdef CONFIG_LOCKDEP
-+static int __init lockdep_ignore_clk_prepare_lock_setup(char *__unused)
-+{
-+	lockdep_set_novalidate_class(&prepare_lock);
-+	pr_warn("lockdep: ignoring prepare_lock class in clock subsystem\n");
-+	return 1;
-+}
-+__setup("lockdep_ignore_clk_prepare_lock",
-+	lockdep_ignore_clk_prepare_lock_setup);
-+#endif
-+
- /***           runtime pm          ***/
- static int clk_pm_runtime_get(struct clk_core *core)
- {
--- 
-2.43.0
+Standard init systems like systemd strictly interpret unknown positional
+arguments as the default boot target (for example, attempting to load
+lockdep_ignore_clk_prepare_lock.target). Since this target does not exist,
+the system will fail to boot and instead drop into an emergency shell.
 
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260828131409.9628=
+25-1-m.szyprowski@samsung.com?part=3D1
