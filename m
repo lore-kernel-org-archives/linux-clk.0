@@ -1,120 +1,188 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail2.ecloud.global (mail2.ecloud.global [135.181.6.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69CE63AB5B2
-	for <linux-clk@vger.kernel.org>; Sat, 29 Aug 2026 09:48:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787996887; cv=none; b=MEuAAKxyO3Gfwhnhvd/BCvHdfJDD8icDCN6I45hB+81AP865SNf+1VKugejrY+wyMi+G9gR0xpBYie028x9pFvg1F5MSWqYUQwl8TW3QYQa2zeTZV0877UPJgPv4YGvZNc1IazHZVsSlt0InclUdRZ2kzCD29uC7vs+9g+19k0Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787996887; c=relaxed/simple;
-	bh=uRkFH0DF+K2gkCSbCc3So4UXlflNMUCL+wxSJBWvLro=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BsdL5EJ12RmCeqf7fUCLG8BN4NRNlPl09kc+zNJuKMr9Ip6Fd2xPppbwRhPyQcQWhn7AjiDzm1VPlAXKfAkFmeCbbvUPBORjDSgf0w+Mm37AOX3Bv6CwCQcJK7mLVTrhTcEBQ5y3Vdbq5zhNDuc3kt5vFN/OPa+JWFBIgYR4ZI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-49b0dd3c9a0so12968675e9.1
-        for <linux-clk@vger.kernel.org>; Sat, 29 Aug 2026 02:48:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787996883; x=1788601683;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=w58IcK8ZE/FUFrG95ZGCGEBUQTz0E4TGMIPiEQMb1Vg=;
-        b=omdUYkWlhZINmwW4mk9bdbYDVWdrLcfXTRVYlBKExlbsqKkCmKE4Xbgn0hy9ltBPkH
-         GO1KrDcOjtV0Fg/toOwwzVwRvW6qlMoZ8kKq9m7a8nzqm1DScJa+JUNYgFIc88zdtnXo
-         BOQHtYibTzzLwAVHCzF55VdoTAcPxM0Yt6cPUPQNQKj+Uvh+8zk0f6J+LXtqpGopjcDP
-         /Car+kHrKrbDDvprFXw7UpLYfHQRoT7aK0FcIyWrdgJIRu32vV5qiKIWdk5slLYOCrfl
-         jmRXxt0Ez2oPnpXy5ZSeZkTb3RDGBsWY+ZxNWpH7XzozxHUFo2f+/KJ3tV35rdnPg1Gn
-         3c3g==
-X-Forwarded-Encrypted: i=1; AHgh+RqJTXEljOE71+zPz7bUO2bp43ihjwGrbazAo9C7OIQLu+s/4tmrI5Vsvjr0f5HSeSAS0y/6JQxqMZs=@vger.kernel.org
-X-Gm-Message-State: AFuF++mjwcyG5EgPweJrrTVxAfPQNckgbr5MekcsvIBKgqvrEMHtAJ22
-	Ne8iHIpBCFYvzQNM42thzzx7HBJaApx8o3Y1z8K4Y6GnH1C2NTe/3ESK
-X-Gm-Gg: AR+sD12tsNichzazec4CS4mVjWdQnFhz5OHm4fQhTJ5w7HNDx2cSIjYJ8al4PBEl1X6
-	rCJKlgvpwubrn/GqArwkPEkYQGbi6DnRYwBiUyTkGyexEm2DGRhpDDb+K3T3S3tF6yZpzo+Etwy
-	2jj46zG06L4eWJXk1bdlJDBn9oGZVS3gpqA3Ot1tbW45p9TckIwJ4920QKDBuo+nMgaNw6jjZB1
-	cOef2wzrMLPxWZyP5jSVoJNWwDqMR2PPInDOH42oHjk0ua2AYnhY7VMPul/nW1jVDyURBZZWROb
-	hNfw+oJlLIve8Pk9Z81D5Ha/MeXDMpCzTJDfPItT+M6LsYRJouC8DJNnkD2+j/wPzhqwCv+Z5z3
-	VpQ57elF48UUvo1tZmNJyMtOiJ6SsNNROG2rj/kocd+qkGrYPooi5wd63hGGz1J9KqzT5vf3TNm
-	YDXZVqKRSki2IoHseXhfbKH64j20oNLPxeOp3g9rSRFMu1eMzPbMkzgMC/2373q2KjOoWO0Al6E
-	U6TgNzW8aD/JiztrMSEshVBpMdCaocZv7SCJw==
-X-Received: by 2002:a05:600c:8587:b0:499:dbae:43d3 with SMTP id 5b1f17b1804b1-49b91c489bbmr177775515e9.9.1787996883483;
-        Sat, 29 Aug 2026 02:48:03 -0700 (PDT)
-Received: from threads.localdomain ([83.106.158.114])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-482fbb20784sm9661562f8f.18.2026.08.29.02.48.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 29 Aug 2026 02:48:02 -0700 (PDT)
-From: Lucas Tanure <tanure@linux.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Jian Hu <jian.hu@amlogic.com>,
-	Ronald Claveau <linux-kernel-dev@aliel.fr>,
-	Brian Masney <bmasney@redhat.com>,
-	Chuan Liu <chuan.liu@amlogic.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 4/4] arm64: dts: amlogic: t7: fix the pin groups of the vsync PWM
-Date: Sat, 29 Aug 2026 10:47:58 +0100
-Message-ID: <20260829094758.23248-5-tanure@linux.com>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20260829094758.23248-1-tanure@linux.com>
-References: <20260829094758.23248-1-tanure@linux.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DF91369990;
+	Sat, 29 Aug 2026 18:53:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=135.181.6.248
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788029586; cv=pass; b=Ba5n8lQy8PXkqyEgDXlVQvoZceCX0PPdaP3rtlkzhNkjCIgZozoJmEUItSQbQOfOUn8dq9Z9wP4pIA2IH8GNIBkXapWr8sx2crbnl5OjOhuR2gh+7MZBqcvgW/3urgNHWVw1QTs1zwkcIhYHftn/skaUa8ANLolsMTq75gN5UHo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788029586; c=relaxed/simple;
+	bh=0S3rarkLgm8hZjcdbYjo6il3n4s7fIzlMMRW75K0Z14=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=KYHcN/Bks5SSfgnX75kUKEDxZTLOIIjiuNTQODJSa3//FSdhoNnEasHnkI+Kj7l2Kso2VZx0YuG2nad86pa08Rf4vunbSIYsUlMOK9gR38xRQ3xVuORj7kL8rl9c0optMHWSW8wyAkM27k/FWvwIOmvqf+m39BGTHCXIK9QiboU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=murena.io; spf=pass smtp.mailfrom=murena.io; dkim=pass (1024-bit key) header.d=murena.io header.i=@murena.io header.b=kJRJxTyy; arc=pass smtp.client-ip=135.181.6.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=murena.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=murena.io
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=murena.io header.i=@murena.io header.b="kJRJxTyy"
+Received: from authenticated-user (mail2.ecloud.global [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail2.ecloud.global (Postfix) with ESMTPSA id 5727E721211;
+	Sat, 29 Aug 2026 18:46:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=murena.io; s=mail2;
+	t=1788029216;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=b4Ex6rfFvTScbg5DzrJ4/DiARiXFmhIWSUitin0MvHk=;
+	b=kJRJxTyyQMcIlC2MG6VJ+b+oMXJ54a/2zuFGwzTwuo9CZxVz3F08ZVm8APsh+MsNYKfln7
+	tpIsv3BQSMkVO12LdgK9AGcG0V01enJJzYdvOZtfj3rnOzMRJOcEh6TrpCo01U2nha2zrQ
+	J0KsfHnCEfM1FmgUODuLp2W5PkBY6k4=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=murena.io;
+	s=mail2; t=1788029216;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=b4Ex6rfFvTScbg5DzrJ4/DiARiXFmhIWSUitin0MvHk=;
+	b=iKSP3zjFE39ry20mmXNOJsboV+El7n+ksWSaf4BjAJtPYNi4skVmgJEw/IqLzCMs+NZ86y
+	cHJ15QP8zMHswrrFu0FfNfjOSV/qEbV8Ek28lmHwqTAZKytJ5ty9O6AZACMRpf/g7ac69l
+	DPEMrfrnitQFB0w62FocUPfUBN3mVcU=
+ARC-Authentication-Results: i=1;
+	mail2.ecloud.global;
+	auth=pass smtp.mailfrom=maud_spierings@murena.io
+ARC-Seal: i=1; s=mail2; d=murena.io; t=1788029216; a=rsa-sha256; cv=none;
+	b=PBSzIckDQ9J/rtP8kgKk6YirF5KsP0xzXMGk/+beKynJrp5wESTe2ODak8XzOi5hl0vL2A
+	AuJUpLcNj2cEiZwG9EPCnizlv2HGbZHD4eFqrDaZ7+XptJc8z0BTYKf2fnW0YghpcFzZER
+	e1LilsNtpR7oiPTe54yrwUcb9BlYx2Q=
+Message-ID: <b9d39858-3531-4538-a4ab-eb34a0be6ad5@murena.io>
+Date: Sat, 29 Aug 2026 20:46:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+To: m.wilczynski@samsung.com
+Cc: Laurent.pinchart@ideasonboard.com, airlied@gmail.com, alex@ghiti.fr,
+ andrzej.hajda@intel.com, andy.yan@rock-chips.com, andyshrk@163.com,
+ aou@eecs.berkeley.edu, bmasney@redhat.com, conor+dt@kernel.org,
+ conor@kernel.org, db@domibel.de, devicetree@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, hal.feng@starfivetech.com, heiko@sntech.de,
+ hello@big-grey.co.uk, jernej.skrabec@gmail.com, jonas@kwiboo.se,
+ kernel@esmil.dk, krzk+dt@kernel.org, lee@kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+ linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ luca.ceresoli@bootlin.com, m.szyprowski@samsung.com,
+ maarten.lankhorst@linux.intel.com, maudspierings@gocontroll.com,
+ mfd@lists.linux.dev, mripard@kernel.org, mturquette@baylibre.com,
+ neil.armstrong@linaro.org, p.zabel@pengutronix.de, palmer@dabbelt.com,
+ pjw@kernel.org, rfoss@kernel.org, robh@kernel.org, sboyd@kernel.org,
+ simona@ffwll.ch, tzimmermann@suse.de, uwu@icenowy.me, vkoul@kernel.org
+References: <20260828-jh7110-clean-send-v2-14-331680c8b9d1@samsung.com>
+Subject: Re: [PATCH v2 14/15] riscv: dts: starfive: jh7110: Update DT for
+ display subsystem
+Content-Language: en-US
+From: Maud Spierings <maud_spierings@murena.io>
+In-Reply-To: <20260828-jh7110-clean-send-v2-14-331680c8b9d1@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The vsync PWM output can appear on either of two pins, but the
-description named a single group that does not exist, so anything using
-it would refuse to start.
+Hi Michal,
 
-Name the real groups instead, one entry per pin. No board describes this
-output yet, so nothing changes today.
+Very happy to see an update to this series!
 
-Fixes: 2a2a7b9701a7 ("arm64: dts: amlogic: t7: Add PWM pinctrl nodes")
-Assisted-by: Claude:claude-opus-5
-Signed-off-by: Lucas Tanure <tanure@linux.com>
----
- arch/arm64/boot/dts/amlogic/amlogic-t7.dtsi | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+I have some very minor nitpicks I found in the devicetree
 
-diff --git a/arch/arm64/boot/dts/amlogic/amlogic-t7.dtsi b/arch/arm64/boot/dts/amlogic/amlogic-t7.dtsi
-index 8c4bd683cce0..719e111bc3dd 100644
---- a/arch/arm64/boot/dts/amlogic/amlogic-t7.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/amlogic-t7.dtsi
-@@ -546,9 +546,17 @@ mux {
- 					};
- 				};
- 
--				pwm_vs_pins: pwm-vs {
-+				pwm_vs_y_pins: pwm-vs-y {
- 					mux {
--						groups = "pwm_vs";
-+						groups = "pwm_vs_y";
-+						function = "pwm_vs";
-+						bias-disable;
-+					};
-+				};
-+
-+				pwm_vs_h_pins: pwm-vs-h {
-+					mux {
-+						groups = "pwm_vs_h";
- 						function = "pwm_vs";
- 						bias-disable;
- 					};
--- 
-2.55.0
+> Activate the display subsystem by adding the dc8200, hdmi and voutcrg
+> nodes as direct soc children. Each references the PD_VOUT power domain
+> through power-domains, so genpd powers the domain on demand, and the
+> HDMI-PHY -> voutcrg -> HDMI-controller probe order is resolved by
+> deferred probe.
+> 
+> The monolithic hdmi node is modelled as a container with hdmi_phy
+> and hdmi_controller children. This lets the PHY (clock provider,
+> depending only on xin24m) and the controller (clock consumer) probe
+> independently, breaking the circular clock dependency with voutcrg.
+> 
+> voutcrg consumes the pixel clock from the &hdmi_phy node instead of the
+> old fixed-clock, and dc8200 gets its pixel clocks from voutcrg's MUXes
+> and is marked dma-noncoherent for framebuffer DMA. The old, incorrect
+> hdmitx0-pixel-clock fixed-clock node is removed.
+> 
+> Co-developed-by: Dominique Belhachemi <db@domibel.de>
+> Signed-off-by: Dominique Belhachemi <db@domibel.de>
+> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+> ---
+>  arch/riscv/boot/dts/starfive/jh7110-common.dtsi | 119 +++++++++++++++++++++++-
+>  arch/riscv/boot/dts/starfive/jh7110.dtsi        |  87 +++++++++++++++--
+>  2 files changed, 196 insertions(+), 10 deletions(-)
+> 
 
+[snip]
+
+>  
+> +&dc8200 {
+> +	status = "okay";
+> +
+> +	ports {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		dpu_port0: port@0 {
+> +			reg = <0>;
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +
+> +			dpu_out_dpi0: endpoint@0 {
+> +				reg = <0>;
+> +				remote-endpoint = <&hdmi_in>;
+> +			};
+> +		};
+> +
+> +		dpu_port1: port@1 {
+> +			reg = <1>;
+> +		};
+> +	};
+> +};
+> +
+>  &dvp_clk {
+>  	clock-frequency = <74250000>;
+>  };
+> @@ -99,8 +153,31 @@ &gmac1_rmii_refin {
+>  	clock-frequency = <50000000>;
+>  };
+>  
+> -&hdmitx0_pixelclk {
+> -	clock-frequency = <297000000>;
+> +&hdmi_controller {
+> +	status = "okay";
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&hdmi_pins>;
+> +
+> +	ports {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		port@0 {
+> +			reg = <0>;
+> +
+> +			hdmi_in: endpoint {
+> +				remote-endpoint = <&dpu_out_dpi0>;
+> +			};
+> +		};
+> +
+> +		hdmi_out_port: port@1 {
+> +			reg = <1>;
+
+missing newline here
+
+> +			hdmi_out_con: endpoint {
+> +				remote-endpoint = <&hdmi_con_in>;
+> +			};
+> +
+
+one newline to much here
+
+> +		};
+> +	};
+>  };
+>  
+
+Kind regards,
+Maud
