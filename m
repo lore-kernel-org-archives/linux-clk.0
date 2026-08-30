@@ -1,67 +1,67 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0413E3B47C1
-	for <linux-clk@vger.kernel.org>; Sun, 30 Aug 2026 13:04:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57B073AA9E2
+	for <linux-clk@vger.kernel.org>; Sun, 30 Aug 2026 13:06:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788095086; cv=none; b=SgwpPPi3AC9AYM4R2Yc4IBGyHuovtYzeYNf/0qmGkYnd41+/oECwXH7blYWy29kjA1vSxE8JlheCRh2Sd7TvI77Mj7kK5vxJRc3wXcwpftl2+KNZll3SMn79Kf9Q7lMS4h5kyZWWqwO+K6iDQbGYdD21ZWJ/AYBDniqhCq5JV/I=
+	t=1788095204; cv=none; b=GATorX016Q6H9Id3zpZDIv7a5x67WPExjhov937OJu8BLwVsq0pvIGZY/kBzl57/vUd2ug/BDTzcOtPveYP9gPT4zLAQEdEVfnQa90gKkoowToU0zJ3v5D7GlBO8WxxyEPPjBDqJkG9+kGzmGS0b9OiWzsep0V9dbmsjE++6IVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788095086; c=relaxed/simple;
-	bh=Lh/QdKDKUhi+nstzx0NETNDyYUB5yLFuyQqV576Cz3g=;
+	s=arc-20240116; t=1788095204; c=relaxed/simple;
+	bh=WjEdZj/N+aOfZRtaHCBCBk/U7+N/dXvDf3LoxLpJh4Y=;
 	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=csvimfMVnWmkLmdaC5znXhs/yo2M3eo0d9rkByGOLuCAjVAgE+RUpoiaJNpKOqcCTwbDDAwJ6mq96X9lkRVl+/29d0SsW+UjQP+0vHBeK6rQ0LCN5RRZqEoKRIHPh8SM64qoO02lZ2mpvsn2SbZuh0nx5XIOGx7a2W3udvU90v8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=d4w1cqA8; arc=none smtp.client-ip=209.85.128.52
+	 In-Reply-To:Content-Type; b=OaOauq9BMAR+Nhi+OAHM1WkAsMf6JKnPw77M7hPZh8kgjm2fYTQpqVW9GSobawrwzfFwQWw3HQux0zV7z5PtZqSutJzNjEQoIbQzUqmfKcWGvLyYsBzveD3gLsEUOGK8U/7tQmpSNBMIO2naaL5iaAYS3v1+n4w8yW/iFYr3YJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aK1cIaHn; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d4w1cqA8"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4954a9e8490so19269745e9.1
-        for <linux-clk@vger.kernel.org>; Sun, 30 Aug 2026 06:04:44 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aK1cIaHn"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-49b9320423cso25047025e9.0
+        for <linux-clk@vger.kernel.org>; Sun, 30 Aug 2026 06:06:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1788095083; x=1788699883; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1788095201; x=1788700001; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:in-reply-to:organization
          :autocrypt:content-language:references:cc:to:subject:reply-to:from
          :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=BGEZNmWTNMZMXanzrEPwQbHM5u7d/Ry5Or1T+0Vsl9w=;
-        b=d4w1cqA8Gr2WlVB/J3GPJJsnw8be1LaomneXeoWWY1mIon5XW+OKErMadRhdX62thc
-         vs3VNPhbyUTMqFZSD0mA/VHmx7c+Jh0WPClnIRs9RDCakf249XJ13gd8VDofk+SCXULb
-         AM3MbV1wold7gcst4oHsNbSiCB4ezdQr7EfTsDd3TtcMrZ5yC2Bos4UGqzKl/nbvOCGV
-         zRGWpn9th4QIjrybtS9vV4JRURoKDDm7KWDaYKkxH20VyjFykzI/dgUZeWt9z4ZH8pLf
-         GtKcSOPMbdX9MANr5BN1cq0U9zIsfcfY3sdg9jHtMk8SkRKnxwRPzc5L+97zth+yaOXI
-         LiAg==
+        bh=jq+ZfaXrZvTkZsYgTJsjcj34MHFpmYRP4Z0eWcu7sE0=;
+        b=aK1cIaHnG0w75USItbRI0E+X1hYDgQkdqMGGamw3fzLpFXI9NNq9tz2gWRiNE97lCY
+         0vGhj10NtHt/ZRD7ghLbtHcz7qnv+LnOWkFuGKhWV/pU5HoiadiGNGvYA3PHAuUZTg/I
+         aJhIQoo70Mq73/XciZzdxvRcVjg7XCmD1qfJMwKcx2x/ibD9j5vMLpYU2EFj/4FivuA8
+         k+UPaw2m29qvE+AFj3MKpJ2wi4AjRA3BbwiuPdfR+EPffzk2YBo0HXUVXEfPVdRBb4RG
+         ilDcuj+5bJq4+85d24mkR9I6Yu+GzfRf6i9rZE+rYlTYbBknM6Q04+Z7nABv7joWzith
+         yDDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788095083; x=1788699883;
+        d=1e100.net; s=20251104; t=1788095201; x=1788700001;
         h=content-transfer-encoding:content-type:in-reply-to:organization
          :autocrypt:content-language:references:cc:to:subject:reply-to:from
          :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=BGEZNmWTNMZMXanzrEPwQbHM5u7d/Ry5Or1T+0Vsl9w=;
-        b=UOUeMrwOgR9wC3ZClzKXAdxcipfYuTB5WfdcKgT94oAWot97TLyChExnE4da0CgVJi
-         tgxpFyuURrcmYwpooANtLGEAu/VvY3J3iqKFAUeUvIGexBSk9YEkmCp1W6IUIoGPJrAS
-         Tp3sT9ZGNYmCjgbyLphr0WCzssaXlexIaHABKTwDuD6yB5VgD5DeaDbO4fv5aY246QRw
-         n8pJZHSG0FyGbaaAshh/d+n/Ob/eq/k9ihuNxs9Y7LBsuU86PINvy9YbLpzl06tNDSto
-         PvARZzqjyjcVMMF7HAKha6A0HkkMIllDYGkvpBNwZCPIrjFcLw52DeCGxWRxEBeFH7QQ
-         Szgw==
-X-Forwarded-Encrypted: i=1; AHgh+RooyqgmZSG1rfWZczK/borMgID+UVnvSwlqjNPJrOFELfUsaU58plcw8BEexKiHZUEhZXdMnFQkyJI=@vger.kernel.org
-X-Gm-Message-State: AFuF++ncMyu2q7jFMlxwi0sOWIO2bgkLlv9PWqi0Rdl8EeEFbdGnLsGb
-	UkqAZRVo5DY7LMZA/qf30HL3H105X0Jp+fXw+VqoA1B2mxERvuG/6ZBIGGkpKFGH8vw=
-X-Gm-Gg: AR+sD12RyIFv9w7qazkPiGu0n1VMocuV2lu+xRaUL4GZgmhNlXx+pCTAUlv4Afb+hsd
-	WACjqgMFCBobU0Hr6UZI2V+exZyGTJot+XWP/BgJh0EAjtD3DPz+yYv11jYox1i+6Ey1hJ8/PCg
-	J6/dk1Xs3fHIEwRXJwB/ng5TyiwL6FzPA9c5zSKdM+BkLnRT0DA+WfkPr1NWF+hNR31Y1czrw3f
-	YxgzxpKZ7DQJIDIsKlnXMCX5bv2aZNiz/kVFcqOY8ZuwGYlkp0LujuEEhI+1aCVLH43gyYukG+X
-	GWx7VuWfEx9xyY1h6WG4awT2TUFXeyElfrRwbuICbMAKdpFj6Rx4XC6pmu1/qeulc5FSuKaJVQV
-	tBkuaAJX/Zt+RssuhuUjbwDZw4/4R1xdB1/priGOa9/pSAW8htQzPL7p3mQ1J6Z16p6hzfrx0aX
-	Dm9k0skbYc/lgHvly2SfR0fYc/RM/r7e0SuH/XMXNZC+zvgKcsJaturB6hcR7dgEAj9EsE/WCF
-X-Received: by 2002:a05:600c:8b63:b0:49c:ced9:ab7f with SMTP id 5b1f17b1804b1-49cd53c438bmr35600565e9.8.1788095083121;
-        Sun, 30 Aug 2026 06:04:43 -0700 (PDT)
+        bh=jq+ZfaXrZvTkZsYgTJsjcj34MHFpmYRP4Z0eWcu7sE0=;
+        b=K3XGq1hrHjrJrTh+xJliu05a93C4C+PAAi9uovQuUZJS8sq8YYjr0xK6SaG4Pjq+NM
+         1z+sx4DW2fdJQwvoXmQaB+3SE89UUejEJxT+XQMA5wk023Pq3mJxxShJLhHK1BASaK09
+         giK4xaHdRDYGgS65CRCyZtw2Fp62yOsks/SXufgo7mWQfEyMgTNmQgLt+Ps1/DNVWl9Q
+         QbDBfiY27crJiOEddOR4Nn8V7p/kI6csSVczTU10E54TA0UGqDKTb57oIr9jVyw2i0Ry
+         ZzfyX5FBXNYGt+aHm/7mG+atT3Td3XfTujeqk7kg4gdBmzkzYIK5KOv7G8AnQn6Gp9ok
+         d+xg==
+X-Forwarded-Encrypted: i=1; AHgh+RqkYpzKRa41SruS/zmSg7RvqpxcHRrISxQoynVBy88ZOnbVb96lpuSn279yWMVr1u4SlivRMcgtmIA=@vger.kernel.org
+X-Gm-Message-State: AFuF++l0D35NVaO2b8jopCYZvi3olqbVRaUWb+hdaMD2169mXK9emiG1
+	j5zhqE2OtwvhLtMxsQDcJGALTI2FcDuCUV6QM3aDe5dTBHYHVrxV7j2HOO74IRJaVPQ=
+X-Gm-Gg: AR+sD10SKkLveUwCr9VdIS+IhqJQJT3onx0i7RuzN6phiFHHWM3CWWoLAK8XzwtuPEm
+	1ClocCr3WqUXtq9HlRFU8mJAsrTtCOCVyIIw03KPY44bzRESztyRiSf8bYkuCPZZCJ8iISvg6Ux
+	hZjriIf79p5fi6BeGUQbw9Eyq+c0utrqxJZQQEJTbLS4ks9w3mnG1ugEkpOn2us+jkGW7Ncim4h
+	BIEIxCarPRYO8Xz9s7moyr6mjFShQMSAWJBWGcyR1qD/VfxiyNt5LGiy9RmuvkOGMW/TVzajooH
+	Qrv8Ql2FvEvcBvO5FTe/YVPGzMpYv6KhUnuHZ7DV9Putq8uMyoYkUPjc9gZksrEcpQ1hxiLf7Hj
+	c+TbrtCSuZPhsYiL7BicAeDTwQ8WXaER81/GTwEh/PPrWm+0F66YWRrOfiizzAF5vWtIhV2Sxac
+	S7ebH2ECTHI/BUhH2KMkg5WTgYMMEFNVCkPNiROskQHnoZmDarigp4kRy+6WgOecpMxDlFLHRJ
+X-Received: by 2002:a05:600c:19ca:b0:495:52a5:8829 with SMTP id 5b1f17b1804b1-49b91c47b3dmr274079255e9.11.1788095201493;
+        Sun, 30 Aug 2026 06:06:41 -0700 (PDT)
 Received: from [192.168.1.36] ([83.214.235.72])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49b95018ee8sm205342395e9.15.2026.08.30.06.04.41
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-482fbb20713sm15406915f8f.21.2026.08.30.06.06.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 30 Aug 2026 06:04:42 -0700 (PDT)
-Message-ID: <d4ba8298-fb80-4fed-b1ce-7fc5d0adf5a0@linaro.org>
-Date: Sun, 30 Aug 2026 15:02:26 +0200
+        Sun, 30 Aug 2026 06:06:41 -0700 (PDT)
+Message-ID: <b9270c4d-bb7c-4c69-ad18-8481b43a48ea@linaro.org>
+Date: Sun, 30 Aug 2026 15:06:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -71,8 +71,8 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 From: Neil Armstrong <neil.armstrong@linaro.org>
 Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH 4/4] arm64: dts: amlogic: t7: fix the pin groups of the
- vsync PWM
+Subject: Re: [PATCH 2/4] arm64: dts: amlogic: t7: fix the pin groups of two
+ PWM outputs
 To: Lucas Tanure <tanure@linux.com>, Kevin Hilman <khilman@baylibre.com>,
  Jerome Brunet <jbrunet@baylibre.com>,
  Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
@@ -84,7 +84,7 @@ Cc: Jian Hu <jian.hu@amlogic.com>, Ronald Claveau
  linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
 References: <20260829094758.23248-1-tanure@linux.com>
- <20260829094758.23248-5-tanure@linux.com>
+ <20260829094758.23248-3-tanure@linux.com>
 Content-Language: en-US, fr
 Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
@@ -111,47 +111,75 @@ Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
  QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
 Organization: Linaro
-In-Reply-To: <20260829094758.23248-5-tanure@linux.com>
+In-Reply-To: <20260829094758.23248-3-tanure@linux.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 8/29/26 11:47, Lucas Tanure wrote:
-> The vsync PWM output can appear on either of two pins, but the
+> Two of the PWM outputs can each appear on more than one pin, but the
 > description named a single group that does not exist, so anything using
-> it would refuse to start.
+> it refused to start.
 > 
-> Name the real groups instead, one entry per pin. No board describes this
-> output yet, so nothing changes today.
+> Name the real groups instead, one entry per pin, the same way the other
+> multi-pin PWM output is already described.
 > 
 > Fixes: 2a2a7b9701a7 ("arm64: dts: amlogic: t7: Add PWM pinctrl nodes")
 > Assisted-by: Claude:claude-opus-5
 > Signed-off-by: Lucas Tanure <tanure@linux.com>
 > ---
->   arch/arm64/boot/dts/amlogic/amlogic-t7.dtsi | 12 ++++++++++--
->   1 file changed, 10 insertions(+), 2 deletions(-)
+>   arch/arm64/boot/dts/amlogic/amlogic-t7.dtsi | 32 ++++++++++++++++++---
+>   1 file changed, 28 insertions(+), 4 deletions(-)
 > 
 > diff --git a/arch/arm64/boot/dts/amlogic/amlogic-t7.dtsi b/arch/arm64/boot/dts/amlogic/amlogic-t7.dtsi
-> index 8c4bd683cce0..719e111bc3dd 100644
+> index c3dc479b137d..8c4bd683cce0 100644
 > --- a/arch/arm64/boot/dts/amlogic/amlogic-t7.dtsi
 > +++ b/arch/arm64/boot/dts/amlogic/amlogic-t7.dtsi
-> @@ -546,9 +546,17 @@ mux {
+> @@ -458,9 +458,25 @@ mux {
 >   					};
 >   				};
 >   
-> -				pwm_vs_pins: pwm-vs {
-> +				pwm_vs_y_pins: pwm-vs-y {
+> -				pwm_ao_g_pins: pwm-ao-g {
+> +				pwm_ao_g_d11_pins: pwm-ao-g-d11 {
 >   					mux {
-> -						groups = "pwm_vs";
-> +						groups = "pwm_vs_y";
-> +						function = "pwm_vs";
+> -						groups = "pwm_ao_g";
+> +						groups = "pwm_ao_g_d11";
+> +						function = "pwm_ao_g";
 > +						bias-disable;
 > +					};
 > +				};
 > +
-> +				pwm_vs_h_pins: pwm-vs-h {
+> +				pwm_ao_g_d7_pins: pwm-ao-g-d7 {
 > +					mux {
-> +						groups = "pwm_vs_h";
->   						function = "pwm_vs";
+> +						groups = "pwm_ao_g_d7";
+> +						function = "pwm_ao_g";
+> +						bias-disable;
+> +					};
+> +				};
+> +
+> +				pwm_ao_g_e_pins: pwm-ao-g-e {
+> +					mux {
+> +						groups = "pwm_ao_g_e";
+>   						function = "pwm_ao_g";
+>   						bias-disable;
+>   					};
+> @@ -474,9 +490,17 @@ mux {
+>   					};
+>   				};
+>   
+> -				pwm_ao_h_pins: pwm-ao-h {
+> +				pwm_ao_h_d5_pins: pwm-ao-h-d5 {
+> +					mux {
+> +						groups = "pwm_ao_h_d5";
+> +						function = "pwm_ao_h";
+> +						bias-disable;
+> +					};
+> +				};
+> +
+> +				pwm_ao_h_d10_pins: pwm-ao-h-d10 {
+>   					mux {
+> -						groups = "pwm_ao_h";
+> +						groups = "pwm_ao_h_d10";
+>   						function = "pwm_ao_h";
 >   						bias-disable;
 >   					};
 
