@@ -1,98 +1,118 @@
-Received: from hall.aurel32.net (hall.aurel32.net [195.154.119.183])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60149340282;
-	Sun, 30 Aug 2026 17:29:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.154.119.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62A172D838E
+	for <linux-clk@vger.kernel.org>; Sun, 30 Aug 2026 17:36:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788110982; cv=none; b=Sr40EAnBZVK9tX1t4r6kyUJensYz0m9xCRHw8AccH44W3osVHIpqnIrw2v9SIj+BTx2AbDwRJpyEh6mASo1QWBipuoZWqmrSj/ovAm3YyFI9G45/Oh70f6GYoyDmfp691BPSUTaGHc73880nikrCWkrZxT9QGkNCpCxJQHMDCHY=
+	t=1788111405; cv=none; b=YDKtgbMP3S0ySXQ/Fa6lsu247i/7K/SkZY+KRXH77q0CnlgPhuj8iLaERpO0WORqQPPgxEKQvLog9SMS9aig1gPtXgW2opBVUZgLT7jxld2fwO3Au3BPAii258k8F30x4kwm00GEiYSOhEYZ/OnCJR8XGdOQVKsXCKXrfzPOWfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788110982; c=relaxed/simple;
-	bh=7mZhCSlLWzot9SAVOkb7Yd/v9zqlyaXu2WWRQ3+CS9c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jhDJ9+y5vFufpkN5c2yCqlpv8Hi4LIvNsVFbDU0cNivDFoeyhrxYMBB3039Q38qFcWkwMfC5U1jtyO0pnjKnaCdLiCt4Mvpg4WwuUJGM2ccmhj4O1c1N/aRdhbCtFDosfs1fDHyaQmq3+I+Lpn/Tj447B7pUISmy2K7g1EvaHDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net; spf=pass smtp.mailfrom=aurel32.net; dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b=VJ2Y3h/s; arc=none smtp.client-ip=195.154.119.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aurel32.net
+	s=arc-20240116; t=1788111405; c=relaxed/simple;
+	bh=25vhgxBnzMDKKvsO0TrFDFpUt4xZoFtlNplQCV0sxas=;
+	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=SfbLJDA6kGQXpEXXR/BfVz5Wk44UyhC416oR2UYADB+Up31WaaAv5BQjK61Wkc+os3fUioHmI1Ir4s+yUnzpwFZMR0fByX0azj935QUHM/tVvZG24vQGHUaANeAKQVMbY7c4tzLdlpOu0jbfzxF4FhjsXOCbOp/cbwipk4Qvocw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AOoAI17R; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b="VJ2Y3h/s"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=aurel32.net
-	; s=202004.hall; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
-	Subject:Cc:To:From:Content-Type:From:Reply-To:Subject:Content-ID:
-	Content-Description:In-Reply-To:References:X-Debbugs-Cc;
-	bh=y8EWALKMsn0yqDus0dEK4QAKpzd7V5rJBTqkM69q4yw=; b=VJ2Y3h/sKsuShouVP+qsI5feF8
-	07lGE4m9SSc3zoeeIiPkTebNEkflogG4Tl1LVrJuS+Asx0tCrqqdUFuipcSUQ59nhz30/WVOEngjP
-	QEpCvWiab4PwtoWhEJR2G0Ya8G2JOfUE5yFa9viPgRpjL1O/EGfq70w7ZdQ95hS/OMtMa5KHl26uD
-	GZD+MC18iBWox9uZ5Pn5u830EH1Kpza/hw/fAdVxrHbrkdGc8xaVKe1kxtdmEWh7Pwd1Q+kZXUTfQ
-	OlMXXOi5s/QiOSOMsHZc9CAu/HxVSqn36iJL13Z1IPzFsAQfd5JuQhMbsd40TaMzaYqSk1qRpObre
-	kMBKl7wA==;
-Received: from authenticated user
-	by hall.aurel32.net with esmtpsa  (TLS1.3)  tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <aurelien@aurel32.net>)
-	id 1x0jLd-0000000AClZ-1vsa;
-	Sun, 30 Aug 2026 19:29:37 +0200
-From: Aurelien Jarno <aurelien@aurel32.net>
-To: linux-kernel@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney@redhat.com>,
-	Yixun Lan <dlan@kernel.org>
-Cc: Aurelien Jarno <aurelien@aurel32.net>,
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>,
-	stable@kernel.org,
-	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
-	linux-riscv@lists.infradead.org (open list:RISC-V SPACEMIT SoC Support),
-	spacemit@lists.linux.dev (open list:RISC-V SPACEMIT SoC Support)
-Subject: [PATCH] clk: spacemit: k3: add 2.0 GHz PLL3 and PLL4 rates
-Date: Sun, 30 Aug 2026 19:28:54 +0200
-Message-ID: <20260830172925.3245444-1-aurelien@aurel32.net>
-X-Mailer: git-send-email 2.53.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AOoAI17R"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 193B21F000E9;
+	Sun, 30 Aug 2026 17:36:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788111404;
+	bh=994hvr0q7oeRoGstuzWZebE6c+gmh/3Os92ZVxb8YTk=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=AOoAI17RTsZZABXvL5y1pIL0d2xBKJydAc0VuPVE/ZZqzHX0mB2WA0gZsS66+O9jZ
+	 BQrK19GRFuoQbK2XR8sI1jY5vAW8sBV3zm+rYJWEB1Vxwxp/CfQzocNCh9NrKdl/eL
+	 yzFdLq0c5dHTKphXsePCGwGUgZmqXr1aGzXXzanQqPHSvlaO5ZU1D8rbOb+aBYcE2g
+	 BjgxgAveC26aN1XyUxkiSEprLagJJbtp3W3YGBNk7veD+zkLyk+t9CVxV0+iefmf/f
+	 r0M70l6UJSA5vUeuykmdjyJdvVOB+6R1CtNmTZCt52FGFhviISfmO3sCgaO4Ah8f4F
+	 OPUg8GN9M3wOg==
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH] clk: spacemit: k3: add 2.0 GHz PLL3 and PLL4 rates
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Aurelien Jarno" <aurelien@aurel32.net>
+Cc: linux-clk@vger.kernel.org
+In-Reply-To: <20260830172925.3245444-1-aurelien@aurel32.net>
+References: <20260830172925.3245444-1-aurelien@aurel32.net>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Sun, 30 Aug 2026 17:36:43 +0000
+Message-Id: <20260830173644.193B21F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
+
+Pre-existing issues:
+- [High] Dangerous Clock Initialization Causing Kernel Panic on Unmatched R=
+ates
+--
+
+commit 3c3a6a2413682e8647573306b4c79569d6255e7d
+Author: Aurelien Jarno <aurelien@aurel32.net>
+
+clk: spacemit: k3: add 2.0 GHz PLL3 and PLL4 rates
+   =20
 Starting with version k3-br-v1.0.7, the vendor U-Boot configures the C0
 and C1 CPU clock domains (X100 cores) to 2.0 GHz instead of 2.2 GHz.
 PLL3 feeds C0 and PLL4 feeds C1, but their rate tables currently contain
 only the 2.2 GHz overclocking operating point. This causes the linux
 kernel to hang at boot.
 
-Add the 2.0 GHz configuration in both tables to fix the issue. Tested
-with both k3-br-v1.0.5 (X100 running at 2.2 GHz) and k3-br-v1.0.7 (X100
-cores running at 2.0 GHz).
+> diff --git a/drivers/clk/spacemit/ccu-k3.c b/drivers/clk/spacemit/ccu-k3.c
+> index cb0c4277f72a8..e42a1404aca89 100644
+> --- a/drivers/clk/spacemit/ccu-k3.c
+> +++ b/drivers/clk/spacemit/ccu-k3.c
+> @@ -30,10 +30,12 @@ static const struct ccu_pll_rate_tbl pll2_rate_tbl[] =
+=3D {
+>  };
+> =20
+>  static const struct ccu_pll_rate_tbl pll3_rate_tbl[] =3D {
+> +	CCU_PLLA_RATE(2000000000UL, 0x0b292aaa, 0x0000ab00, 0xa0558686),
 
-Cc: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Cc: stable@kernel.org
-Fixes: e371a77255b8 ("clk: spacemit: k3: add the clock tree")
-Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
----
- drivers/clk/spacemit/ccu-k3.c | 2 ++
- 1 file changed, 2 insertions(+)
+[Severity: High]
+This isn't a bug introduced by this patch, but this patch only masks the
+issue for U-Boot versions currently using 2.0 GHz by ensuring a match is
+found. The underlying structural flaw remains: unconditionally disabling a
+potentially vital clock during init just because its rate is unmatched is
+dangerous.
 
-The related U-Boot change is available at:
-https://github.com/spacemit-com/uboot-2022.10/commit/274f664150dade144df265baf7dc8e15dd9cce52
+If the bootloader configures a PLL to a frequency not explicitly defined in
+the driver's static rate table, ccu_plla_lookup_matched_entry() returns a
+null pointer. When this occurs, the initialization logic falls back to
+unconditionally calling ccu_plla_disable() directly, bypassing
+framework-level protections:
 
-diff --git a/drivers/clk/spacemit/ccu-k3.c b/drivers/clk/spacemit/ccu-k3.c
-index d676a692bccb4..40a2dab1a2a71 100644
---- a/drivers/clk/spacemit/ccu-k3.c
-+++ b/drivers/clk/spacemit/ccu-k3.c
-@@ -30,10 +30,12 @@ static const struct ccu_pll_rate_tbl pll2_rate_tbl[] = {
- };
- 
- static const struct ccu_pll_rate_tbl pll3_rate_tbl[] = {
-+	CCU_PLLA_RATE(2000000000UL, 0x0b292aaa, 0x0000ab00, 0xa0558686),
- 	CCU_PLLA_RATE(2200000000UL, 0x0b2d3555, 0x00005500, 0xa0558787),
- };
- 
- static const struct ccu_pll_rate_tbl pll4_rate_tbl[] = {
-+	CCU_PLLA_RATE(2000000000UL, 0x0b292aaa, 0x0000ab00, 0xa0558686),
- 	CCU_PLLA_RATE(2200000000UL, 0x0b2d3555, 0x00005500, 0xa0558787),
- };
- 
--- 
-2.53.0
+drivers/clk/spacemit/ccu_pll.c:ccu_plla_init() {
+	...
+	if (ccu_plla_lookup_matched_entry(pll))
+		return 0;
 
+	ccu_plla_disable(hw);
+	ccu_plla_update_param(pll, &pll->config.rate_tbl[0]);
+	...
+}
+
+This exhibits the same unsafe fallback logic for standard PLLs in
+ccu_pll_init(), blindly shutting off the clock if it doesn't recognize the
+hardware's configuration:
+
+drivers/clk/spacemit/ccu_pll.c:ccu_pll_init() {
+	...
+	if (ccu_pll_lookup_matched_entry(pll))
+		return 0;
+
+	ccu_pll_disable(hw);
+	ccu_pll_update_param(pll, &pll->config.rate_tbl[0]);
+	...
+}
+
+Should the initialization logic be updated to handle unknown rates without
+abruptly disabling vital clocks like the CPU clock?
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260830172925.3245=
+444-1-aurelien@aurel32.net?part=3D1
