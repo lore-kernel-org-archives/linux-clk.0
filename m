@@ -1,106 +1,98 @@
 Received: from hall.aurel32.net (hall.aurel32.net [195.154.119.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19BC13B3BEF;
-	Sun, 30 Aug 2026 17:25:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60149340282;
+	Sun, 30 Aug 2026 17:29:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.154.119.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788110722; cv=none; b=q4FRvRsegkaWIe+wk1Dd96FcM3y7+S0Lz59JdIq3JP6Z7aAFQbIqTutgODLdP+L2gOS9yXlLe/z3svSIG76C0rWP4gCW5F95xss3v0Bdb2vLBW5Cbr1zSJ9pzRzOou0gyV0fk5ksVcpgDd1Uslvv6yWpfUj/kgvIUfwwuhRGsLI=
+	t=1788110982; cv=none; b=Sr40EAnBZVK9tX1t4r6kyUJensYz0m9xCRHw8AccH44W3osVHIpqnIrw2v9SIj+BTx2AbDwRJpyEh6mASo1QWBipuoZWqmrSj/ovAm3YyFI9G45/Oh70f6GYoyDmfp691BPSUTaGHc73880nikrCWkrZxT9QGkNCpCxJQHMDCHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788110722; c=relaxed/simple;
-	bh=7Kcxt4n4z1wUxpiPg8IIO3Kpa7/+jVPmblGMAR1TAAk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l6xazcc6JT/jCWRSuKOtNShFkL9nGCQ1WEVORFdPsGBlEKm1ZlZyL5+qVYkJS72LI0ucgGEKE5/1eS7yQ9rV5W/tstlUj/noF76vmw7wQJTqJW7/BsXvF912xI1vAsCev+VWhs7C8lxtAyzxUwb4Y8YUFZ+jJaaO2LUjbQ1zP5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net; spf=pass smtp.mailfrom=aurel32.net; dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b=GAo4sAYp; arc=none smtp.client-ip=195.154.119.183
+	s=arc-20240116; t=1788110982; c=relaxed/simple;
+	bh=7mZhCSlLWzot9SAVOkb7Yd/v9zqlyaXu2WWRQ3+CS9c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jhDJ9+y5vFufpkN5c2yCqlpv8Hi4LIvNsVFbDU0cNivDFoeyhrxYMBB3039Q38qFcWkwMfC5U1jtyO0pnjKnaCdLiCt4Mvpg4WwuUJGM2ccmhj4O1c1N/aRdhbCtFDosfs1fDHyaQmq3+I+Lpn/Tj447B7pUISmy2K7g1EvaHDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net; spf=pass smtp.mailfrom=aurel32.net; dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b=VJ2Y3h/s; arc=none smtp.client-ip=195.154.119.183
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aurel32.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b="GAo4sAYp"
+	dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b="VJ2Y3h/s"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=aurel32.net
-	; s=202004.hall; h=In-Reply-To:Content-Type:MIME-Version:References:
-	Message-ID:Subject:Cc:To:From:Date:Content-Transfer-Encoding:From:Reply-To:
-	Subject:Content-ID:Content-Description:X-Debbugs-Cc;
-	bh=QQV/uWRS7tgfezg/sawm+VTmjnW6NBkrHD0CZvG0/go=; b=GAo4sAYpo7eX+8qk04GvnaEk2z
-	dbpNKa9EoHp7mQBVIhlLLlmUa0NwEBc1NxubyY67SeWjNyitZcQEUV/9hT9aUOt5Grh9l7qFn7cwh
-	1Gs6b+DS7TTczjg1kkWSozcp1/upncYkp1siitfK9BbGgE4MqEmdpJKAGHpRofd3PhsJia4kHTyL2
-	e3tkOjG/vRbllxlYen5j2JFJrK4QpjK1CBNnRs8pHNCXsrK49IfeOZYI6+iTUYovjP0/8jfqKeDRU
-	DI+w7pWD98ZT49yqwjpwnQBfWakzDgsk4oMpQj350IMPq+uMeXT7m4YciFKgvdpqtqlAF0CgmWpv2
-	RxSz7S2w==;
+	; s=202004.hall; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+	Subject:Cc:To:From:Content-Type:From:Reply-To:Subject:Content-ID:
+	Content-Description:In-Reply-To:References:X-Debbugs-Cc;
+	bh=y8EWALKMsn0yqDus0dEK4QAKpzd7V5rJBTqkM69q4yw=; b=VJ2Y3h/sKsuShouVP+qsI5feF8
+	07lGE4m9SSc3zoeeIiPkTebNEkflogG4Tl1LVrJuS+Asx0tCrqqdUFuipcSUQ59nhz30/WVOEngjP
+	QEpCvWiab4PwtoWhEJR2G0Ya8G2JOfUE5yFa9viPgRpjL1O/EGfq70w7ZdQ95hS/OMtMa5KHl26uD
+	GZD+MC18iBWox9uZ5Pn5u830EH1Kpza/hw/fAdVxrHbrkdGc8xaVKe1kxtdmEWh7Pwd1Q+kZXUTfQ
+	OlMXXOi5s/QiOSOMsHZc9CAu/HxVSqn36iJL13Z1IPzFsAQfd5JuQhMbsd40TaMzaYqSk1qRpObre
+	kMBKl7wA==;
 Received: from authenticated user
 	by hall.aurel32.net with esmtpsa  (TLS1.3)  tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.98.2)
 	(envelope-from <aurelien@aurel32.net>)
-	id 1x0jHF-0000000ACVU-0Zvn;
-	Sun, 30 Aug 2026 19:25:05 +0200
-Date: Sun, 30 Aug 2026 19:25:04 +0200
+	id 1x0jLd-0000000AClZ-1vsa;
+	Sun, 30 Aug 2026 19:29:37 +0200
 From: Aurelien Jarno <aurelien@aurel32.net>
-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
-	Yixun Lan <dlan@kernel.org>, Inochi Amaoto <inochiama@outlook.com>,
-	Alex Elder <elder@riscstar.com>, Haylen Chu <heylenay@4d2.org>,
-	linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>
-Subject: Re: [PATCH v2] clk: spacemit: k3: add 1.8 GHz PLL5 and PLL8 rates
-Message-ID: <apRncBmtm7w0Emwf@aurel32.net>
-Mail-Followup-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>,
+To: linux-kernel@vger.kernel.org,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
-	Yixun Lan <dlan@kernel.org>, Inochi Amaoto <inochiama@outlook.com>,
-	Alex Elder <elder@riscstar.com>, Haylen Chu <heylenay@4d2.org>,
-	linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>
-References: <20260810-k3-pll5-pll8-1800mhz-v2-1-aabff510a797@linux.spacemit.com>
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney@redhat.com>,
+	Yixun Lan <dlan@kernel.org>
+Cc: Aurelien Jarno <aurelien@aurel32.net>,
+	Troy Mitchell <troy.mitchell@linux.spacemit.com>,
+	stable@kernel.org,
+	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
+	linux-riscv@lists.infradead.org (open list:RISC-V SPACEMIT SoC Support),
+	spacemit@lists.linux.dev (open list:RISC-V SPACEMIT SoC Support)
+Subject: [PATCH] clk: spacemit: k3: add 2.0 GHz PLL3 and PLL4 rates
+Date: Sun, 30 Aug 2026 19:28:54 +0200
+Message-ID: <20260830172925.3245444-1-aurelien@aurel32.net>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260810-k3-pll5-pll8-1800mhz-v2-1-aabff510a797@linux.spacemit.com>
-User-Agent: Mutt/2.4.1 (2026-07-04)
+Content-Transfer-Encoding: 8bit
 
-Hi Troy,
+Starting with version k3-br-v1.0.7, the vendor U-Boot configures the C0
+and C1 CPU clock domains (X100 cores) to 2.0 GHz instead of 2.2 GHz.
+PLL3 feeds C0 and PLL4 feeds C1, but their rate tables currently contain
+only the 2.2 GHz overclocking operating point. This causes the linux
+kernel to hang at boot.
 
-On 2026-08-10 16:46, Troy Mitchell wrote:
-> K3 boot firmware configures the C2 and C3 CPU clock domains at
-> 1.8 GHz. PLL5 feeds C2 and PLL8 feeds C3, but their rate tables
-> currently contain only the 2 GHz overclocking operating point.
-> 
-> Add the nominal 1.8 GHz configuration as the first entry in both
-> tables. This lets determine_rate() and set_rate() select the firmware
-> operating point while retaining 2 GHz as a supported overclocking rate.
-> 
-> Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-> ---
-> The related U-Boot change is available at:
-> https://github.com/spacemit-com/uboot-2022.10/commit/fb95cf3d848b771c61b5a1b3e5cbbee223faf352
-> ---
-> Changes in v2:
-> - Drop "clk: spacemit: re-enable PLLs after init"; the PLL init issue
->   will be handled in a separate series.
-> - Send the K3 PLL5 and PLL8 1.8 GHz rate-table update as a standalone
->   patch.
-> - Clarify that 1.8 GHz is nominal and 2 GHz is an overclocking rate.
-> - Link to v1: https://patch.msgid.link/20260804-k3-pll5-pll8-1800mhz-v1-0-a3a75866ce32@linux.spacemit.com
+Add the 2.0 GHz configuration in both tables to fix the issue. Tested
+with both k3-br-v1.0.5 (X100 running at 2.2 GHz) and k3-br-v1.0.7 (X100
+cores running at 2.0 GHz).
 
-This make sense and looks good:
+Cc: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Cc: stable@kernel.org
+Fixes: e371a77255b8 ("clk: spacemit: k3: add the clock tree")
+Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
+---
+ drivers/clk/spacemit/ccu-k3.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Reviewed-by: Aurelien Jarno <aurelien@aurel32.net>
-Tested-by: Aurelien Jarno <aurelien@aurel32.net>
+The related U-Boot change is available at:
+https://github.com/spacemit-com/uboot-2022.10/commit/274f664150dade144df265baf7dc8e15dd9cce52
 
-I wonder if it should be backported to stable, as users will deploy 
-newer firmware.
-
-Regards
-Aurelien
-
+diff --git a/drivers/clk/spacemit/ccu-k3.c b/drivers/clk/spacemit/ccu-k3.c
+index d676a692bccb4..40a2dab1a2a71 100644
+--- a/drivers/clk/spacemit/ccu-k3.c
++++ b/drivers/clk/spacemit/ccu-k3.c
+@@ -30,10 +30,12 @@ static const struct ccu_pll_rate_tbl pll2_rate_tbl[] = {
+ };
+ 
+ static const struct ccu_pll_rate_tbl pll3_rate_tbl[] = {
++	CCU_PLLA_RATE(2000000000UL, 0x0b292aaa, 0x0000ab00, 0xa0558686),
+ 	CCU_PLLA_RATE(2200000000UL, 0x0b2d3555, 0x00005500, 0xa0558787),
+ };
+ 
+ static const struct ccu_pll_rate_tbl pll4_rate_tbl[] = {
++	CCU_PLLA_RATE(2000000000UL, 0x0b292aaa, 0x0000ab00, 0xa0558686),
+ 	CCU_PLLA_RATE(2200000000UL, 0x0b2d3555, 0x00005500, 0xa0558787),
+ };
+ 
 -- 
-Aurelien Jarno                          GPG: 4096R/1DDD8C9B
-aurelien@aurel32.net                     http://aurel32.net
+2.53.0
+
