@@ -1,400 +1,233 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D2B51E426;
-	Mon, 31 Aug 2026 13:43:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F2B4560AD8
+	for <linux-clk@vger.kernel.org>; Mon, 31 Aug 2026 13:47:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788183829; cv=none; b=byifGnzFU7mtY3hW1wAiHjBnruLcBz8lJOqN4fzZZcWPinshf+T/QkFusn2S8cWO70R6fJuAyImJiTbbfvaygpEhvYeEP5Ri05QpOBliqw3kUjttOO/8WpHGrAsIbPTuFX7SXUaNb3w2BDjDqKuorNACdDT81SRdLtbA3v/gcWU=
+	t=1788184060; cv=none; b=IvDVZsbjj5UrxBBn0wso263XvybW1WS6ETIBds+YnI/Ye6OLoT7ib6rn5dt6eULKxJKz2woJ6kzNfnOhF/lyx6RgfavHxY0pBdw5n3LDLveq/InqS2l8R75LYNq8zZsDfZ7wk0uYKu01hEvZw4B6AfYn0gP6je/qr5hvBFthxfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788183829; c=relaxed/simple;
-	bh=CGt0N1tLOFpwGA8/d4GAdlCO8d3EpknSs7/J7jBe4OM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MAJADYHWX0wll+Tm9euoZvusZrMQwcG2SGVYTWRhDYdjH0ufbXr33pO3IsQMTwhALRE4T5eMkWB6l79N/yw58JW7XpCAs+voIUoDQDOCoNpTyab2aMHKvTdMYwIlHlyqsDKqJB9DJVOMUaG9BK1nw9R/jr+f4KV/ROz05qNLWvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WS9Lrsog; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1788184060; c=relaxed/simple;
+	bh=/nO0Cpff0yx61nS6yN0kn4Y/CRuWwctaTI+ET6wFJi8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pQQGAhhnJLVh0nyFWlLBp+OFevrMkP5kBRAkn6EUlugBkF5mlhwvVO5eB6mnYJFSXSov1TemxhMBbem24AtDe7qoUSuqX0GdMTuif+16YsJnXf6g8e1WfxpfEBoWgfuvq44HS/A/PRFDcmB9+x2645EGAhqziwMVzxLWl+TUcsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=imywTNVq; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=jQdVjos6; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WS9Lrsog"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92DD21F00A3E;
-	Mon, 31 Aug 2026 13:43:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788183827;
-	bh=ydfY7BP33vtEWqKTd0X509IVv9E5NYTqO71gDIaSIrI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=WS9Lrsog3kLykR0jf5npacD7P4gkC8BnFu+OVHzjIOdRscGS3XojWfFKEZTXpxoOa
-	 AcaBtZzrj26PbrUoxIf3w+O7GS0a4695paP1iJc58Ag/6d0ritfYtdbmJyxxXeBnyz
-	 ucD0CJYq9VSv+jOeBQ4XERq4RZymrQlRqlMSlLz80gIyFNFH+k7s/LTmkhUYNQiIbu
-	 J9gDmjUUjTDyfgTCNgqw/+U9IZ8KKH3tHyehLPhduZiya7WAJXq3QUmsQ6VdpJnktH
-	 vqqgNg6NoUjJgoeboQwk/N20qHto0uoo6x4g8tWA2o0sker+ITTH9rcicgPpYOZb0J
-	 jwzKxhwZQTF8A==
-From: Sasha Levin <sashal@kernel.org>
-To: patches@lists.linux.dev,
-	stable@vger.kernel.org
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Sasha Levin <sashal@kernel.org>,
-	sboyd@kernel.org,
-	bmasney+clk@redhat.com,
-	jbrunet+clk@baylibre.com,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.18-5.10] clk: renesas: cpg-mssr: Add number of clock cells check
-Date: Mon, 31 Aug 2026 09:25:56 -0400
-Message-ID: <20260831133314.4125787-328-sashal@kernel.org>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260831133314.4125787-1-sashal@kernel.org>
-References: <20260831133314.4125787-1-sashal@kernel.org>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="imywTNVq";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="jQdVjos6"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 67VBASOg3255800
+	for <linux-clk@vger.kernel.org>; Mon, 31 Aug 2026 13:47:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=ElUpCCZ5QXQFa0YF2BRx6zqlfZx9TQTRG0x
+	3mmrf68k=; b=imywTNVq9ISTGUdJzE1fuV72RCsBezqjlN2xM4Bk0y2ft1ixezh
+	D2hnPIYrrAdQ+ehwJCgyzE+22cCvT3cfs+hz7bFeCt9ast9pIQZmvG0jwT5bRSnI
+	KfRa/m6fV5SF+K886S5JGZuSKGa4u8G/DY5SE/6q09VIYihCIb0C218uFJvRD5Ao
+	syij61uoc4BI/9TaV+7I5Kj9IcwRF5GQqBmLUv/d3SWxci3ZNkM0l9gO1sIUlKp3
+	7ZSBbIiI2f4C+eGc3PwmZngNGwf+Z2bOsRN35mGdsn9oE7Xd3z/uqN3S3VpAHZpy
+	WxTsGn/EarfR7no41Wo9oc1x5kiZhidzD3g==
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gd6yas2ap-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Mon, 31 Aug 2026 13:47:37 +0000 (GMT)
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-cc12e8e22b7so8866123a12.0
+        for <linux-clk@vger.kernel.org>; Mon, 31 Aug 2026 06:47:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1788184056; x=1788788856; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=ElUpCCZ5QXQFa0YF2BRx6zqlfZx9TQTRG0x3mmrf68k=;
+        b=jQdVjos6q0iYT8QniMZGzqbEb+yWglYeMOcBwJWsrykncHG5XkDjj5xUgNilxmXbkp
+         UV9kJM06oFqLeshsCDpo7rAdudFSRuhZxFK2+trPjaZcJWj0Ao9t+DBSLWEQ/1EWEy//
+         AX95RXcaqVcAJQUh9dx7Uz50T0yLptG11t0Dt2NtakRn9SiEccvXxCIICpYBykyVI6bc
+         6V+VCrkNzeUHgbbGwvh/OpYK6fNZyjzOUHB7W9GNcO0vzNYzuBjGZYJ2iPnRI6iRLZ5F
+         aSph99yADWDxXWGXMVQeX2OMEK799Rwy9IumtCKn1ice3+ewcjmraqiijgdmSyjC+xOi
+         140w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788184056; x=1788788856;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=ElUpCCZ5QXQFa0YF2BRx6zqlfZx9TQTRG0x3mmrf68k=;
+        b=rpzQSHdGQEg89jBE66IgIxUKXjb7YZZT5JOGUPXWK5wXbYmUH72rq16k9qaKTTgzO9
+         B8nDNjFtqt/pPlykycTprRKbrEkFI+GDc3G7dglOHoJxO6jkN23zjtKMjHvZ6ORBib9a
+         7FL7ta9lia2yr4RYucRGwBkP0Bc3uaVPjKC8zQJBfmEy30gzlTT+laC+5o4UnyZ4xHGd
+         KMEML9ED9S+jbW1fisz+ChyT+MMPHSPamyvmKLqxMcCUXcU4S+47Cio8WlMNGuY/2P2V
+         zDbZYNFwtKXLb3/DAwNHoNtfBZvRj7LpXBFoW0yb22qLLPGlGs8HYoGPdi7wXyyzfllS
+         gH6A==
+X-Forwarded-Encrypted: i=1; AHgh+Rrjnb3vQvsNgskesmqBiNBLtDobk58I62bMvQaks4cqn46mgDAPrUXPMPaDD0MiRUwrjuTZRqEX714=@vger.kernel.org
+X-Gm-Message-State: AFuF++n/WLNff5K5q/C/8/s1ezKcjVG0hSUBc9FhOgnvfPKqgoh6PJ9q
+	t56Fu+BPgrfNuVLfWXrt/fRUmLpW705sYHudUVrwVJzRo0beK7XaGsOHNweKuoPIbi5DXt3/O3j
+	1jmLH1O2kXSBwjc+UZLAwhIEBLVF/zZHhtAxpzw3hyCxaN+KzMee2/hB33YNU8Vc=
+X-Gm-Gg: AR+sD13lqqQpFp7lfPd2RRshI64i/CTTLVgY/tCmuCWNFJdzBDNx0pofZYWoWC42vO2
+	x54YVzBVInFnVN4uMP4npI6eD7BqteP4SFcWvj+x3n5KmEJaM+XV58Xy4CVpkBVITC1n1nVPFzM
+	VCDKxkKVPRM8O8t44N6rdfCcE8BqJx/99RmZj3ns3IV8ePOitaX9q/pBHv64tTZawV2bvXA+l55
+	9zyKQaVufe5YNHHb23IwRTItnF+V/h8r5IzZcl1J47BMYfT8kFSJdNb3oEGbcFpFG5LeKSnE9xb
+	leMGuunEgDe9juNuy/hDdYRydk8EznC/Q9KZ2Rox1dXnGKP2TXptT4Tz+aNahbp57Jxgd3c7+lP
+	9pvXM4QoNGGWy6Vu5B4/XAIG0ReA9xOqO4rqwzQT15BbQV9Nvng/nzyUDxBHC
+X-Received: by 2002:a05:6a20:a123:b0:3d0:d0ed:f141 with SMTP id adf61e73a8af0-3d265329781mr43053623637.2.1788184056249;
+        Mon, 31 Aug 2026 06:47:36 -0700 (PDT)
+X-Received: by 2002:a05:6a20:a123:b0:3d0:d0ed:f141 with SMTP id adf61e73a8af0-3d265329781mr43053539637.2.1788184055698;
+        Mon, 31 Aug 2026 06:47:35 -0700 (PDT)
+Received: from QCOM-aGQu4IUr3Y.qualcomm.com (i-global052.qualcomm.com. [199.106.103.52])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-328713b0451sm36548784eec.16.2026.08.31.06.47.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 31 Aug 2026 06:47:35 -0700 (PDT)
+From: Shawn Guo <shengchao.guo@oss.qualcomm.com>
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+        Jerome Brunet <jbrunet+clk@baylibre.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Shawn Guo <shengchao.guo@oss.qualcomm.com>
+Subject: [PATCH] clk: qcom: Sort Nord clock driver entries in Kconfig
+Date: Mon, 31 Aug 2026 21:47:17 +0800
+Message-ID: <20260831134717.510383-1-shengchao.guo@oss.qualcomm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.18.48
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Info: AW1haW4tMjYwODMxMDExOSBTYWx0ZWRfX41ch9iGMi2i1
+ Ya8Gf17fJnMh4PHkqPzhcLoNy5Wh6UROawN2u8Bqu2VpWDCU6mVr/whDfThxPwbns03aomw79rQ
+ ZqajCEAmQgCAwnlF5Zfb3vTryR7eZsg=
+X-Authority-Analysis: v=2.4 cv=CpaPtH4D c=1 sm=1 tr=0 ts=6a9585f9 cx=c_pps
+ a=oF/VQ+ItUULfLr/lQ2/icg==:117 a=b9+bayejhc3NMeqCNyeLQQ==:17
+ a=Sv0fKeRqtYgA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=ZpdpYltYx_vBUK5n70dp:22 a=EUspDBNiAAAA:8
+ a=vrDzJWvLJd9NzFkxaDYA:9 a=3WC7DwWrALyhR5TkjVHa:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODMxMDExOSBTYWx0ZWRfX2TDDCqaOTTUq
+ bpGlvQBW6S9c63CkS3h4JU28FC9dpWYymGUc80gP0amKYs2gpmfhXWI1h4LUdrAtQ9gkEGCPKgb
+ ox1Rf8aVGabiet5kdhUnvcZzxMCQFNAyjx/6TIU40SQgTDKBIJIUwUZoMOyFeSTcfTlm0s6Ujy5
+ Gbp9IgbGDrvzbvxaY2AV9JlT9iVF4ktMQ30tbFrJu5bjDqg0LctmTWV4qcTx2X4WK688RFMTrUl
+ vCU3DBNqMKLqhyGpkcR1T1c68OjQSgy9vJkQBFPTCvZK7gBbcVfZU9nGboKgWxZjX8HQJSNVECG
+ jNc/WqJRkU3LFZwYHXz0dB/bOJcEzgCZZUu/89DoeTwSq6nD++rCD8FbigAVv8Fpxs2iqdRNylZ
+ AA4r6VxFpJNiKyS/FfSrQKNn1GuYCIpT/FNBDMQsq5IxQQP8KN/rm96jw/PjmjQz4nP98IGBqYQ
+ 6rKmnpsWBzqOOFSXkfg==
+X-Proofpoint-ORIG-GUID: 7z_gP97BDUdNUB7dm5tl7fP5xgKYS3tB
+X-Proofpoint-GUID: 7z_gP97BDUdNUB7dm5tl7fP5xgKYS3tB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-08-31_04,2026-08-27_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 adultscore=0 lowpriorityscore=0 clxscore=1015 priorityscore=1501
+ malwarescore=0 phishscore=0 suspectscore=0 spamscore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2608310119
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+The Nord clock driver entries in Kconfig were out of alphabetical order.
+Reorder these symbols so Kconfig follows the same order as Makefile,
+making it easier to locate and add entries consistently.
 
-[ Upstream commit 7f0c422c7fbfd9294ff9321ada0c63561e5c6ea0 ]
-
-The number of clock cells is not validated in the clock provider's
-clk_src_get() callback.  Add the missing check.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-Link: https://patch.msgid.link/46e010659ffdffd5e3541369f3b65d43ebe236ec.1777562043.git.geert+renesas@glider.be
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Shawn Guo <shengchao.guo@oss.qualcomm.com>
 ---
-
-LLM Generated explanations, may be completely bogus:
-
-## Phase 1: Commit Message Forensics
-
-### Step 1.1: Subject line
-**Record:** `[clk: renesas: cpg-mssr]` `[Add]` — add missing validation
-of clock specifier cell count in the CPG/MSSR clock provider callback.
-
-### Step 1.2: Tags
-**Record:**
-- **Signed-off-by:** Geert Uytterhoeven `<geert+renesas@glider.be>`
-  (author)
-- **Reviewed-by:** Biju Das `<biju.das.jz@bp.renesas.com>` (Renesas
-  maintainer)
-- **Link:** https://patch.msgid.link/46e010659ffdffd5e3541369f3b65d43ebe
-  236ec.1777562043.git.geert+renesas@glider.be
-- No Fixes:, Reported-by:, Tested-by:, Cc: stable@vger.kernel.org, or
-  syzbot tags
-- Notable: maintainer review present; no external bug report
-
-### Step 1.3: Body analysis
-**Record:**
-- **Bug:** `cpg_mssr_clk_src_twocell_get()` uses `clkspec->args[0]` and
-  `clkspec->args[1]` without verifying `clkspec->args_count == 2`
-- **Symptom:** malformed or short clock specifiers can reach the
-  callback; `args[1]` is read unconditionally at function entry
-- **Root cause:** missing input validation in the OF clock provider
-  `clk_src_get` callback
-- No kernel version, stack trace, or reproduction steps in the message
-
-### Step 1.4: Hidden bug fix?
-**Record:** Yes. Although the subject says "Add … check", this is a real
-correctness bug: the function dereferences two specifier cells without
-confirming two cells were supplied. Same-file helper
-`cpg_mssr_is_pm_clk()` already enforces `args_count == 2`.
-
----
-
-## Phase 2: Diff Analysis
-
-### Step 2.1: Inventory
-**Record:**
-- **File:** `drivers/clk/renesas/renesas-cpg-mssr.c` (+3 / -0)
-- **Function:** `cpg_mssr_clk_src_twocell_get()`
-- **Scope:** single-file, surgical (3 lines)
-
-### Step 2.2: Code flow change
-**Record:**
-- **Before:** reads `clkspec->args[1]` immediately, then switches on
-  `args[0]`
-- **After:** returns `-EINVAL` if `args_count != 2`, then same logic
-- **Path affected:** every clock lookup through this provider (probe,
-  consumer `clocks` properties, `of_clk_get_from_provider()`)
-
-### Step 2.3: Bug mechanism
-**Record:** **Category:** input validation / logic correctness
-**Mechanism:** with `args_count < 2`, `args[1]` may not have been
-populated by the caller; with `args_count > 2`, extra cells are silently
-ignored. Either can yield wrong clock index/type selection. Not a
-classic buffer overflow (`args[]` is fixed-size), but can return the
-wrong `struct clk *` or pass bad indices into `priv->clks[]` lookup.
-
-### Step 2.4: Fix quality
-**Record:** Obviously correct, minimal, matches existing pattern in the
-same file (`cpg_mssr_is_pm_clk`, line 561) and `ux500_twocell_get()`.
-Regression risk: very low; only rejects previously-accepted invalid
-specifiers.
-
----
-
-## Phase 3: Git History Investigation
-
-### Step 3.1: Blame
-**Record:** Current function body dates to merge `5d324e5159d9e` in this
-tree's limited history; file copyright shows CPG/MSSR driver present
-since 2015. The missing validation is long-standing, not a recent
-regression.
-
-### Step 3.2: Fixes: tag
-**Record:** N/A — no Fixes: tag.
-
-### Step 3.3: Related file history
-**Record:** Recent `renesas-cpg-mssr.c` changes in this tree are reset-
-timing fixes (`f57b5f2ad106a`, `b1c7a8145137c`). No related args_count
-fix already present. Patch is standalone (3/3 in series; patches 1–2 are
-rzg2l refactors).
-
-### Step 3.4: Author context
-**Record:** Geert Uytterhoeven is the Renesas clock subsystem
-maintainer. Biju Das reviewed.
-
-### Step 3.5: Dependencies
-**Record:** None. Applies cleanly (`git apply --check` on upstream
-commit `7f0c422c7fbfd` succeeded). Self-contained.
-
----
-
-## Phase 4: Mailing List and External Research
-
-### Step 4.1: Original discussion
-**Record:**
-- **URL:** https://patch.msgid.link/46e010659ffdffd5e3541369f3b65d43ebe2
-  36ec.1777562043.git.geert+renesas@glider.be
-- **Series:** v1, 3 patches — "clk: renesas: Miscellaneous fixes and
-  cleanups"
-- **Reviewer feedback:** Biju Das: "Thanks for the patch" + `Reviewed-
-  by`
-- **Stable nomination:** none in thread
-- **NAKs/concerns:** none
-
-### Step 4.2: Reviewers (b4 dig -w)
-**Record:** CC'd: Michael Turquette, Stephen Boyd (clk maintainers),
-Biju Das, linux-renesas-soc, linux-clk.
-
-### Step 4.3: Bug report
-**Record:** N/A — no external bug report or syzbot link.
-
-### Step 4.4: Related patches
-**Record:** Patches 1–2 are rzg2l refactors/cleanups, not required for
-this fix.
-
-### Step 4.5: Stable list
-**Record:** Not searched separately; no stable discussion found in patch
-thread.
-
----
-
-## Phase 5: Code Semantic Analysis
-
-### Step 5.1: Key functions
-**Record:** `cpg_mssr_clk_src_twocell_get()` (modified); context:
-`cpg_mssr_is_pm_clk()`, `cpg_mssr_attach_dev()`,
-`cpg_mssr_common_init()`.
-
-### Step 5.2: Callers
-**Record:** Registered via `of_clk_add_provider(np,
-cpg_mssr_clk_src_twocell_get, priv)` at line 1192. Invoked indirectly by
-`of_clk_get_hw_from_clkspec()` → `of_clk_get()`, `of_clk_get_by_name()`,
-`of_clk_get_from_provider()` (exported). Reachable during device
-probe/boot on Renesas DT platforms.
-
-### Step 5.3: Callees
-**Record:** array indexing into `priv->clks[]`, `dev_err()`,
-`clk_get_rate()`, `IS_ERR()` checks.
-
-### Step 5.4: Reachability
-**Record:** Yes — common boot/probe path for Renesas R-Car/RZ boards
-using `renesas,cpg-mssr` with `#clock-cells = <2>`. Normal OF parsing
-usually supplies correct `args_count`, but `of_clk_get_from_provider()`
-is exported and the callback has no framework-level cell-count guard.
-
-### Step 5.5: Similar patterns
-**Record:** Same file: `cpg_mssr_is_pm_clk()` checks `args_count != 2`.
-Other Renesas drivers (`rzg2l-cpg.c`, `rzv2h-cpg.c`) check in PM paths
-but not in their `*_twocell_get()` callbacks. `ux500_twocell_get()` does
-check in the provider callback.
-
----
-
-## Phase 6: Cross-Reference Against Local Tree
-
-### Step 6.1: Buggy code present?
-**Record:** **Yes.** Tree is **linux-6.18.y** (`git describe HEAD` →
-`v6.18.43-1-gc7f0dac02d232`, `make kernelversion` → `6.18.43`).
-`cpg_mssr_clk_src_twocell_get()` at line 341 lacks the `args_count`
-check. Upstream fix commits `7f0c422c7fbfd` / stable `1c79ea845f76d` are
-**not** ancestors of current HEAD.
-
-### Step 6.2: Backport complications
-**Record:** Clean apply verified. Function is non-`static` in current
-tree (was `static` in patch context); hunk still applies.
-
-### Step 6.3: Related fixes already present?
-**Record:** No — `git log --grep="clock cells check"` finds nothing on
-current branch; grep confirms no `args_count` check in
-`cpg_mssr_clk_src_twocell_get()`.
-
----
-
-## Phase 7: Subsystem Context
-
-### Step 7.1: Subsystem / criticality
-**Record:** `drivers/clk/renesas/` — **IMPORTANT** (platform clock
-provider for Renesas SoCs; affects boot and all clocked peripherals).
-
-### Step 7.2: Activity
-**Record:** Active in 6.18.y (recent reset-timing fixes in same file).
-
----
-
-## Phase 8: Impact and Risk Assessment
-
-### Step 8.1: Who is affected
-**Record:** Users of Renesas CPG/MSSR platforms (R-Car, RZ families)
-with `CONFIG_CLK_RENESAS`. Not universal, but real production embedded
-hardware.
-
-### Step 8.2: Trigger conditions
-**Record:** Malformed clock specifier (`args_count != 2`) reaching the
-provider callback — e.g. direct `of_clk_get_from_provider()` misuse, or
-non-standard caller paths. Normal DT parsing with `#clock-cells = <2>`
-(binding-mandated) usually provides 2 cells. **Likelihood: low** for
-well-formed DT; **non-zero** for internal/exported API misuse.
-
-### Step 8.3: Failure mode severity
-**Record:** Wrong clock returned or invalid index used → peripheral mis-
-clocking, probe failure, or subtle hardware misbehavior. Unlikely kernel
-panic (index range checks exist), but **MEDIUM** severity for embedded
-correctness; not CRITICAL (no demonstrated crash/CVE).
-
-### Step 8.4: Risk-benefit
-**Record:**
-- **Benefit:** closes a real validation gap; aligns with same-file and
-  cross-driver practice
-- **Risk:** negligible (3-line guard, returns `-EINVAL`)
-- **Ratio:** favorable, though absolute benefit is modest without a
-  reported failure
-
----
-
-## Phase 9: Final Synthesis
-
-### Step 9.1: Evidence summary
-
-**FOR:**
-- Real missing validation in a clock provider callback
-- Same file already validates `args_count` in `cpg_mssr_is_pm_clk()`
-- Trivial, maintainer-reviewed, applies cleanly
-- Buggy code confirmed in 6.18.43
-- Wrong clock lookup on SoC platforms is a meaningful failure mode
-
-**AGAINST:**
-- No user report, crash, or syzbot finding
-- Normal OF/DT paths enforce cell count via `#clock-cells`
-- Borderline on stable "important issue" threshold
-- Part of a "fixes and cleanups" series alongside pure refactors
-
-**UNRESOLVED:** No proof of real-world trigger on production boards.
-
-### Step 9.2: Stable rules checklist
-1. Obviously correct and tested? **PASS** — 3-line guard; reviewed by
-   subsystem maintainer (no runtime test cited)
-2. Fixes a real bug? **PASS** — uses specifier cells without validating
-   count
-3. Important issue? **PASS (borderline)** — correctness/hardware mis-
-   clocking, not demonstrated crash/security
-4. Small and contained? **PASS** — 3 lines, one function
-5. No new features/APIs? **PASS**
-6. Can apply to local tree? **PASS** — verified clean apply
-
-### Step 9.3: Exception categories
-**Record:** None (not device ID, quirk, DT, build, or docs fix).
-
-### Step 9.4: Decision rationale
-For **linux-6.18.y**, the vulnerable code exists, the fix is surgical
-and maintainer-vetted, and it closes an inconsistency that could yield
-incorrect clock resolution on Renesas platforms. While no crash report
-exists and normal DT parsing mitigates exposure, the fix is zero-risk
-defensive correctness in a hardware-critical path — appropriate for
-stable.
-
----
-
-## Verification
-
-- [Phase 1] Parsed commit message and tags from user query and `git show
-  7f0c422c7fbfd`
-- [Phase 2] Read current `renesas-cpg-mssr.c` lines 341–393; confirmed
-  unconditional `args[1]` read
-- [Phase 2] Compared with `cpg_mssr_is_pm_clk()` line 561 `args_count`
-  check
-- [Phase 3] `git blame` on function; `git log` on file
-- [Phase 3] `git apply --check` on upstream patch: clean apply
-- [Phase 3] `git merge-base --is-ancestor 7f0c422c7fbfd HEAD` → exit 1
-  (fix not in tree)
-- [Phase 4] `b4 dig -c 1c79ea845f76d`: found lore URL
-- [Phase 4] `b4 dig -a`: v1 series, patch 3/3 standalone
-- [Phase 4] `b4 dig -w`: clk + Renesas maintainers CC'd
-- [Phase 4] Read `/tmp/cpg-mssr-thread.mbox`: Biju Das Reviewed-by, no
-  stable nomination
-- [Phase 5] Traced `of_clk_add_provider` → `of_clk_get_hw_from_clkspec`
-  call chain in `clk.c`
-- [Phase 5] Grep `args_count != 2` across `drivers/clk/`
-- [Phase 6] `git describe HEAD` → v6.18.43; `make kernelversion` →
-  6.18.43
-- [Phase 6] Confirmed missing check in checked-out tree
-- [Phase 6] Read DT binding `renesas,cpg-mssr.yaml`: `#clock-cells`
-  const 2
-- [Phase 8] Read `struct of_phandle_args` in `include/linux/of.h`:
-  `args_count` + `args[MAX_PHANDLE_ARGS]`
-
-**YES****Result:** Backport to **linux-6.18.y** is recommended.
-
-The missing `args_count != 2` check in `cpg_mssr_clk_src_twocell_get()`
-is a real validation gap (the function reads `args[1]` unconditionally).
-The fix is 3 lines, applies cleanly to 6.18.43, and matches the existing
-check in `cpg_mssr_is_pm_clk()` in the same file. No crash reports, but
-it's low-risk defensive correctness on Renesas CPG/MSSR platforms.
-
-**YES****Upstream commit:** `7f0c422c7fbfd` — *clk: renesas: cpg-mssr:
-Add number of clock cells check* (Geert Uytterhoeven, Apr 30 2026).
-There is also a stable-prepared variant at `1c79ea845f76d` referencing
-that upstream SHA.
-
-In the checked-out **linux-6.18.y** tree (`v6.18.43`), neither commit is
-present yet; the missing validation is still in
-`cpg_mssr_clk_src_twocell_get()`. Backport recommendation remains
-**YES**.
-
- drivers/clk/renesas/renesas-cpg-mssr.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index a0a68ec0490f7..87ede1ee64d7a 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -349,6 +349,9 @@ struct clk *cpg_mssr_clk_src_twocell_get(struct of_phandle_args *clkspec,
- 	struct clk *clk;
- 	int range_check;
+The patch is based on v7.3-rc1
+
+ drivers/clk/qcom/Kconfig | 58 ++++++++++++++++++++--------------------
+ 1 file changed, 29 insertions(+), 29 deletions(-)
+
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index d1fc9bf87126..54f20a6f2bc4 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -181,6 +181,16 @@ config CLK_KAANAPALI_VIDEOCC
+ 	  Say Y if you want to support video devices and functionality such as
+ 	  video encode/decode.
  
-+	if (clkspec->args_count != 2)
-+		return ERR_PTR(-EINVAL);
++config CLK_MAILI_VIDEOCC
++	tristate "Maili Video Clock Controller"
++	depends on ARM64 || COMPILE_TEST
++	select CLK_HAWI_GCC
++	default m if ARCH_QCOM
++	help
++	  Support for the video clock controller on Maili devices.
++	  Say Y if you want to support video devices and functionality such as
++	  video encode/decode.
 +
- 	switch (clkspec->args[0]) {
- 	case CPG_CORE:
- 		type = "core";
+ config CLK_NORD_DISPCC
+ 	tristate "Nord Display Clock Controller"
+ 	depends on ARM64 || COMPILE_TEST
+@@ -192,16 +202,6 @@ config CLK_NORD_DISPCC
+ 	  Say Y if you want to support display devices and functionality such as
+ 	  splash screen.
+ 
+-config CLK_MAILI_VIDEOCC
+-	tristate "Maili Video Clock Controller"
+-	depends on ARM64 || COMPILE_TEST
+-	select CLK_HAWI_GCC
+-	default m if ARCH_QCOM
+-	help
+-	  Support for the video clock controller on Maili devices.
+-	  Say Y if you want to support video devices and functionality such as
+-	  video encode/decode.
+-
+ config CLK_NORD_GCC
+ 	tristate "Nord Global Clock Controller"
+ 	depends on ARM64 || COMPILE_TEST
+@@ -213,6 +213,25 @@ config CLK_NORD_GCC
+ 	  SPI, I2C, USB, SD/UFS, PCIe etc. The clock controller is a combination
+ 	  of GCC, SE_GCC, NE_GCC and NW_GCC.
+ 
++config CLK_NORD_GPUCC
++	tristate "Nord Graphics Clock Controller"
++	depends on ARM64 || COMPILE_TEST
++	select CLK_NORD_GCC
++	default m if ARCH_QCOM
++	help
++	  Support for the graphics clock controllers on Nord devices. There are two
++	  graphics clock controllers on Nord SoC.
++	  Say Y if you want to support graphics controller devices and
++	  functionality such as 3D graphics.
++
++config CLK_NORD_TCSRCC
++	tristate "Nord TCSR Clock Controller"
++	depends on ARM64 || COMPILE_TEST
++	default m if ARCH_QCOM
++	help
++	  Support for the TCSR clock controller on Nord devices.
++	  Say Y if you want to use peripheral devices such as PCIe, USB, UFS etc.
++
+ config CLK_SHIKRA_AUDIOCORECC
+ 	tristate "Shikra Audio Core Clock Controller"
+ 	depends on ARM64 || COMPILE_TEST
+@@ -233,17 +252,6 @@ config CLK_SHIKRA_GCC
+ 	  Say Y if you want to use multimedia devices or peripheral
+ 	  devices such as Camera, Video, UART, SPI, I2C, USB, SD/eMMC etc.
+ 
+-config CLK_NORD_GPUCC
+-	tristate "Nord Graphics Clock Controller"
+-	depends on ARM64 || COMPILE_TEST
+-	select CLK_NORD_GCC
+-	default m if ARCH_QCOM
+-	help
+-	  Support for the graphics clock controllers on Nord devices. There are two
+-	  graphics clock controllers on Nord SoC.
+-	  Say Y if you want to support graphics controller devices and
+-	  functionality such as 3D graphics.
+-
+ config CLK_X1E80100_CAMCC
+ 	tristate "X1E80100 Camera Clock Controller"
+ 	depends on ARM64 || COMPILE_TEST
+@@ -895,14 +903,6 @@ config QCS_GCC_404
+ 	  Say Y if you want to use multimedia devices or peripheral
+ 	  devices such as UART, SPI, I2C, USB, SD/eMMC, PCIe etc.
+ 
+-config CLK_NORD_TCSRCC
+-	tristate "Nord TCSR Clock Controller"
+-	depends on ARM64 || COMPILE_TEST
+-	default m if ARCH_QCOM
+-	help
+-	  Support for the TCSR clock controller on Nord devices.
+-	  Say Y if you want to use peripheral devices such as PCIe, USB, UFS etc.
+-
+ config SA_CAMCC_8775P
+ 	tristate "SA8775P Camera Clock Controller"
+ 	depends on ARM64 || COMPILE_TEST
 -- 
-2.53.0
+2.43.0
 
