@@ -1,238 +1,121 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B48E4B146D
-	for <linux-clk@vger.kernel.org>; Mon, 31 Aug 2026 15:48:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF67D391836
+	for <linux-clk@vger.kernel.org>; Mon, 31 Aug 2026 16:57:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788191296; cv=none; b=OJjswHairsERxYAReUQt9D9TeapIccsTTnGgeXs/IvGi9z0CNKInAb6Fp9ZYvL7QEMo2esqZH3NmXbTr7cI5TiNYYCe8frCt9JuH7IG1aKNu2uURh6PO/goh8eQ1OPcoKTNq+pOYXRPFEtmronnIKXzAa2kJ/yEHuH/ECpfb/7U=
+	t=1788195443; cv=none; b=kHDbIEcssGzOlWXfTfF39xriA9hMDK0tRLdw0pGOf/LWPWVbz5ubhK92XQshAnSlRpcgFXcmhP+mlz8NJrhUkEPRh1E8nkwksAA4iApw/Jz/bS2XElX/vccQOCc/DO/tSBefXAaq0nWGkG2BZAzxrLzDtbKlJxjMkN7Bon2PzU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788191296; c=relaxed/simple;
-	bh=nlCxMmVRBCR3ngQYUpa889Txd4ozU/oUdzTV9qa2+co=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mSK6QM/MKkRMtpIW71NDyL76QxeF1c68BKDbc/cpjFhdcpFAD8dUY2GhhyzYRHLFMc4zPSdheHFiMbgEe4w/f6Njyy/PAP05BptKcxRdy5uQH2NKi0veceokk3FmX2yqDgb5ful15v6EhVUGRGDsaOHG8Widj3LH2QLcNGhEMZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=Qw646jz+; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+	s=arc-20240116; t=1788195443; c=relaxed/simple;
+	bh=Yps6jnL85K4UDHuZDkjj/GwXtHEA7ZWe5UxzvuzL9mM=;
+	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=Bz2Rxcr0DZilHGOkPvQDDhcP0x9VTYL02WdGicSkncaNaFF9eTkCJ1X/8iyaWJtpcdCakHToUhg4pxKnf+4138WkMLjVVYZm/iQxvD9mOaAKMSBCCvYOlr/PLpjSnAyy5RCowZ5u2qinMfK6vRXkShz2v6fJAOgZKx9eoAYxee0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FLqDkW7Q; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="Qw646jz+"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-499ac87c92bso33978545e9.1
-        for <linux-clk@vger.kernel.org>; Mon, 31 Aug 2026 08:48:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1788191293; x=1788796093; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=N/h+0+I7fXQ52AgonO29/UsUwGiBzhMLYBL0Aiheh2c=;
-        b=Qw646jz+crJXQ6yvrlj4JposB8/HeHVHfrDVxra1ACErzPvEHogqmurN0nYWpxFTe5
-         eMPNOaCN1ODkhN0rYTPGiMDfe5/K32YrvGc2Qdf3xPLc9ILkea5BTBaidAcrJe42w6c8
-         qCSdl/sUehz+j36hFGbtwJEi1n3/+MTYTdffM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788191293; x=1788796093;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=N/h+0+I7fXQ52AgonO29/UsUwGiBzhMLYBL0Aiheh2c=;
-        b=akwdxL9h/6AzEaNfP/09wxxn3wJeiPA7IfAqjPEvvg02jp2k3VKX573Zk2NuUVcYav
-         m3RJw4o6sf0OYp1LpvMqgC8r8z5uwEBmOxWJ3dK8WT0nfHnlLRqgDQStHmwe18hfVhuO
-         GXSol1dokLecOS4k2bIyMTcaE5Qkgp98ISPAxbyaV9cK0wp+fUERcCmp3HLlsih9ybdy
-         2Bf/PH5TAVSf/HLd5G3DAORWH8BBb6RXhUgKbKD8lbl1BgO1DVO6VfxTOt02n2ITbWjB
-         MN8xj+r5Wfg3abGHMpYRvc8zoRBGCqS9stOMYZTy8SYtk/elpDeD3i3ndj2dXYJ8LIxw
-         m4gQ==
-X-Forwarded-Encrypted: i=1; AHgh+Rp0l81Vwo6M8OSXo0ZUiRF7WJMCdqrapHU3icbOWZDGi3IoYPRkdA6D/CQNEz/pWW5km35jDGfV+ew=@vger.kernel.org
-X-Gm-Message-State: AFuF++kBcPmCFaE1JoQwYvtDaNRF2yTmyyXtaImo06cj7rUUsGfcWaCM
-	gU7Mh8nbuqP1zQZ4BZDNXSSbBquqPBOiMNDc0i3xl4iAUO4vMg86bHD8xEyGE3w+ZhU=
-X-Gm-Gg: AR+sD10n8MWgAbTSWlk32kktLrMrWlRjcs89Q1F3TgOya2Kn3UL9GINTBOcol1D03/H
-	WWnGkpvr1XirjhrZdsCBKhurvjw01aIJR/YSJbIlQXlhszTNCj2TA+w8IgZi9khpYfS9KLYoiS0
-	g48DM4RF+3MD1aH4MVTTbWVp+FgIJST7pIi44vT/u1gpr8kOZtduYR3Gy6x3jqLlwxjvMo7m4d/
-	mebybK7FA7TBUryo7tjJOtFIHvqfhXk8a/96QfYF/9a3razbnzJeCcQ37aksVL0kurrcSJsSydG
-	YysrKl3SUaqOqYaAai6+loo2ZAbBPRct/Vy2W/0Y9i/rSZz/uBopvDyVZMX9rWSTVm5ygjxv9nb
-	h/ax9WXjTSTsJgp3y5dv/b9POtqGWRY67VLstaffNbhsUGIoPUWvM5ySxAzLSAh3zGawwu84CBZ
-	2xXwzfu6Sc8A3g6EV7tbLZLK+WlgBfxpZ++o6MoJYTdW5Ftby5I2V4+hijjHTBp5bKTU9Iieja4
-	AKCXGus7OWuawX9DYkBnIGLqR4Ijv6nSzp1oTA9dDLLMu09dtLuaH9g8zy0jaP8CGdKMY/Mlz6r
-	12LToJOmIWDN7ydiuP4yucKlr/VWxvAqVitSc4EoGdLgLvhfAt3w0kWkS7B/
-X-Received: by 2002:a05:600c:4e01:b0:49c:cedc:768a with SMTP id 5b1f17b1804b1-49ccedc76a1mr324658675e9.16.1788191293295;
-        Mon, 31 Aug 2026 08:48:13 -0700 (PDT)
-Received: from dario-ThinkPad-P14s-Gen-5.homenet.telecomitalia.it (host-87-9-102-148.retail.telecomitalia.it. [87.9.102.148])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49b9269f1b6sm220191845e9.4.2026.08.31.08.48.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Aug 2026 08:48:11 -0700 (PDT)
-From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-amarula@amarulasolutions.com,
-	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-	Abel Vesa <abelvesa@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Frank Li <Frank.Li@nxp.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Peng Fan <peng.fan@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Stephen Boyd <sboyd@kernel.org>,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v10 1/1] clk: imx: pll14xx: support spread spectrum clock generation
-Date: Mon, 31 Aug 2026 17:27:01 +0200
-Message-ID: <20260831154752.15401-2-dario.binacchi@amarulasolutions.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260831154752.15401-1-dario.binacchi@amarulasolutions.com>
-References: <20260831154752.15401-1-dario.binacchi@amarulasolutions.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FLqDkW7Q"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B1851F000E9;
+	Mon, 31 Aug 2026 16:57:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788195442;
+	bh=V5R0MlG9bk/3ekVueuWnv9Bw2qrVNc6T1Bk57oNyP64=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=FLqDkW7QlG3NYsp9eR6VV3LQOW1bdKosIMMtrMuhqiJfkYK4lfZJI8SZzsJ293aMR
+	 4sS8qANfG+lMBOK6SEKoBMhTqIv/CLU0+u+eAQVLTBn7fwwQPTUv09PaMIXHcrgEDC
+	 +CDqOMrxfjvTGWCATE/RjWS+Otfztnt5H12XK2Bjj5oqgP43jdCE+PuwX8caZzpqH6
+	 gNjyZ313eAbwM+ih3vdWypEp6V/jZGjyTdOA6x5QTVrZ4FmJgJM/6P+CEylKbjTQAA
+	 QIryEISm4Q3mazKqIe/pC/3iiAtNo+Ca465/jhdO0aahumgJmCze7/FxDEqtl6PkhI
+	 JG5fPTYWLulrA==
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH AUTOSEL 6.18] clk: samsung: exynos990: Fix PERIC0/1 USI
+ clock types
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Sasha Levin" <sashal@kernel.org>
+Cc: linux-clk@vger.kernel.org
+In-Reply-To: <20260831133314.4125787-512-sashal@kernel.org>
+References: <20260831133314.4125787-1-sashal@kernel.org>
+ <20260831133314.4125787-512-sashal@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 31 Aug 2026 16:57:21 +0000
+Message-Id: <20260831165722.2B1851F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Add support for spread spectrum clock (SSC) generation to the pll14xx
-driver.
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
+- [Medium] The patch introduces a significant mismatch between the commit m=
+essage and the code by failing to add the CLK_SET_RATE_PARENT flag to the U=
+ART dividers and leaf gate clocks.
+--
 
-Tested on the video PLL of i.MX8MN and i.MX8MP based boards.
+commit 2775b50651cf5053c13e282c77800e616a6622f6
+Author: Denzeel Oliva <wachiturroxd150@gmail.com>
 
-Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+clk: samsung: exynos990: Fix PERIC0/1 USI clock types
 
----
+This commit changes USI and UART user muxes to use nMUX() to allow
+reparenting between OSC and CMU IP. It also updates USI dividers to use
+DIV_F() with CLK_SET_RATE_PARENT so rate requests propagate upward.
 
-Changes in v10:
-- Drop 'Reviewed-by' tag of Peng Fan.
-- Adapt the driver to the new infrastructure. Implement the
-  set_spread_spectrum() and get the modulation parameters from
-  struct clk_spread_spectrum.
+Link: https://patch.msgid.link/20260528-perics-usi-v1-1-13a6ee4d1a6f@gmail.=
+com
 
-Changes in v9:
-- Add 'Reviewed-by' tag of Peng Fan.
+> Use nMUX() for USI and UART user muxes to allow reparenting between
+> OSC and CMU IP output when changing rates, and use DIV_F() with
+> CLK_SET_RATE_PARENT on their dividers and gates so rate requests
+> propagate upward.
 
- drivers/clk/imx/clk-pll14xx.c | 58 +++++++++++++++++++++++++++++++++++
- 1 file changed, 58 insertions(+)
+[Severity: Medium]
+The commit message states that CLK_SET_RATE_PARENT is applied to both the
+dividers and the gates for USI and UART. However, the patch does not modify
+any of the leaf gate clocks (such as CLK_GOUT_PERIC0_TOP0_IPCLK_5 for USI or
+the UART gates) to include the CLK_SET_RATE_PARENT flag.
 
-diff --git a/drivers/clk/imx/clk-pll14xx.c b/drivers/clk/imx/clk-pll14xx.c
-index b6f1cc9f5700..27a637847f57 100644
---- a/drivers/clk/imx/clk-pll14xx.c
-+++ b/drivers/clk/imx/clk-pll14xx.c
-@@ -5,6 +5,7 @@
- 
- #define pr_fmt(fmt) "pll14xx: " fmt
- 
-+#include <dt-bindings/clock/clock.h>
- #include <linux/bitfield.h>
- #include <linux/bits.h>
- #include <linux/clk-provider.h>
-@@ -22,6 +23,8 @@
- #define GNRL_CTL	0x0
- #define DIV_CTL0	0x4
- #define DIV_CTL1	0x8
-+#define SSCG_CTRL	0xc
-+
- #define LOCK_STATUS	BIT(31)
- #define LOCK_SEL_MASK	BIT(29)
- #define CLKE_MASK	BIT(11)
-@@ -33,6 +36,13 @@
- #define KDIV_MASK	GENMASK(15, 0)
- #define KDIV_MIN	SHRT_MIN
- #define KDIV_MAX	SHRT_MAX
-+#define SSCG_ENABLE	BIT(31)
-+#define MFREQ_CTL_MASK	GENMASK(19, 12)
-+#define MRAT_CTL_MASK	GENMASK(9, 4)
-+#define SEL_PF_DOWN_SPREAD	0
-+#define SEL_PF_UP_SPREAD	1
-+#define SEL_PF_CENTER_SPREAD	2
-+#define SEL_PF_MASK	GENMASK(1, 0)
- 
- #define LOCK_TIMEOUT_US		10000
- 
-@@ -44,6 +54,7 @@ struct clk_pll14xx {
- 	int rate_count;
- 	s16 delta_k;
- 	spinlock_t lock;
-+	struct clk_spread_spectrum ss_conf;
- };
- 
- #define to_clk_pll14xx(_hw) container_of(_hw, struct clk_pll14xx, hw)
-@@ -366,6 +377,37 @@ static int clk_pll1416x_set_rate(struct clk_hw *hw, unsigned long drate,
- 	return 0;
- }
- 
-+static void __clk_pll1443x_set_spread_spectrum(struct clk_hw *hw,
-+					       unsigned long parent_rate,
-+					       unsigned int pdiv,
-+					       unsigned int mdiv)
-+{
-+	struct clk_pll14xx *pll = to_clk_pll14xx(hw);
-+	struct clk_spread_spectrum *conf = &pll->ss_conf;
-+	u32 sscg_ctrl, mfr, mrr, sel_pf;
-+
-+	if (conf->method == CLK_SSC_CENTER_SPREAD)
-+		sel_pf = SEL_PF_CENTER_SPREAD;
-+	else if (conf->method == CLK_SSC_UP_SPREAD)
-+		sel_pf = SEL_PF_UP_SPREAD;
-+	else if (conf->method == CLK_SSC_DOWN_SPREAD)
-+		sel_pf = SEL_PF_DOWN_SPREAD;
-+	else
-+		return;
-+
-+	sscg_ctrl = readl_relaxed(pll->base + SSCG_CTRL);
-+	sscg_ctrl &= ~(SSCG_ENABLE | MFREQ_CTL_MASK | MRAT_CTL_MASK | SEL_PF_MASK);
-+
-+	mfr = parent_rate / (conf->modfreq_hz * pdiv * BIT(5));
-+	mrr = (conf->spread_bp * mdiv * BIT(6)) / (10000 * mfr);
-+
-+	sscg_ctrl |= SSCG_ENABLE | FIELD_PREP(MFREQ_CTL_MASK, mfr) |
-+		FIELD_PREP(MRAT_CTL_MASK, mrr) |
-+		FIELD_PREP(SEL_PF_MASK, sel_pf);
-+
-+	writel_relaxed(sscg_ctrl, pll->base + SSCG_CTRL);
-+}
-+
- static int clk_pll1443x_set_rate(struct clk_hw *hw, unsigned long drate,
- 				 unsigned long prate)
- {
-@@ -390,6 +432,9 @@ static int clk_pll1443x_set_rate(struct clk_hw *hw, unsigned long drate,
- 		writel_relaxed(FIELD_PREP(KDIV_MASK, rate.kdiv),
- 			       pll->base + DIV_CTL1);
- 
-+		__clk_pll1443x_set_spread_spectrum(hw, prate, rate.pdiv,
-+						   rate.mdiv);
-+
- 		spin_unlock_irqrestore(&pll->lock, flags);
- 
- 		return 0;
-@@ -411,6 +456,8 @@ static int clk_pll1443x_set_rate(struct clk_hw *hw, unsigned long drate,
- 
- 	writel_relaxed(FIELD_PREP(KDIV_MASK, rate.kdiv), pll->base + DIV_CTL1);
- 
-+	__clk_pll1443x_set_spread_spectrum(hw, prate, rate.pdiv, rate.mdiv);
-+
- 	spin_unlock_irqrestore(&pll->lock, flags);
- 
- 	/*
-@@ -437,6 +484,16 @@ static int clk_pll1443x_set_rate(struct clk_hw *hw, unsigned long drate,
- 	return 0;
- }
- 
-+static int clk_pll1443x_set_spread_spectrum(struct clk_hw *hw,
-+					    const struct clk_spread_spectrum *ss_conf)
-+{
-+	struct clk_pll14xx *pll = to_clk_pll14xx(hw);
-+
-+	memcpy(&pll->ss_conf, ss_conf, sizeof(pll->ss_conf));
-+
-+	return 0;
-+}
-+
- static int clk_pll14xx_prepare(struct clk_hw *hw)
- {
- 	struct clk_pll14xx *pll = to_clk_pll14xx(hw);
-@@ -509,6 +566,7 @@ static const struct clk_ops clk_pll1443x_ops = {
- 	.recalc_rate	= clk_pll14xx_recalc_rate,
- 	.determine_rate = clk_pll1443x_determine_rate,
- 	.set_rate	= clk_pll1443x_set_rate,
-+	.set_spread_spectrum = clk_pll1443x_set_spread_spectrum,
- };
- 
- struct clk_hw *imx_dev_clk_hw_pll14xx(struct device *dev, const char *name,
--- 
-2.43.0
+Without this flag on the gates, when a peripheral driver calls clk_set_rate=
+()
+on the leaf gate clock provided by the device tree, clk_calc_new_rates() wi=
+ll
+return -EINVAL because the gate lacks the flag and has no .set_rate callbac=
+k.
+Does this code also need to update the gate clocks to match the commit
+message and ensure upward rate requests propagate correctly?
 
+> diff --git a/drivers/clk/samsung/clk-exynos990.c b/drivers/clk/samsung/cl=
+k-exynos990.c
+> index 6277dd557fab6..4385c3b76dd68 100644
+> --- a/drivers/clk/samsung/clk-exynos990.c
+> +++ b/drivers/clk/samsung/clk-exynos990.c
+> @@ -1602,42 +1592,42 @@ static const struct samsung_div_clock peric0_div_=
+clks[] __initconst =3D {
+>  	DIV(CLK_DOUT_PERIC0_UART_DBG, "dout_peric0_uart_dbg",
+>  	    "mout_peric0_uart_dbg",
+>  	    CLK_CON_DIV_DIV_CLK_PERIC0_UART_DBG,
+>  	    0, 4),
+
+[Severity: Medium]
+The commit message mentions applying DIV_F() and CLK_SET_RATE_PARENT to the
+UART dividers as well, but CLK_DOUT_PERIC0_UART_DBG is left as a standard
+DIV() here. Does this UART divider also need to be converted to DIV_F()
+with CLK_SET_RATE_PARENT so that its rate requests propagate upward?
+
+[ ... ]
+
+> @@ -2167,46 +2146,46 @@ static const struct samsung_div_clock peric1_div_=
+clks[] __initconst =3D {
+>  	DIV(CLK_DOUT_PERIC1_UART_BT, "dout_peric1_uart_bt",
+>  	    "mout_peric1_uart_bt_user",
+>  	    CLK_CON_DIV_DIV_CLK_PERIC1_UART_BT,
+>  	    0, 4),
+
+[Severity: Medium]
+Similarly, CLK_DOUT_PERIC1_UART_BT was left unmodified. Does this divider
+also need the CLK_SET_RATE_PARENT flag for rate propagation to function
+correctly?
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260831133314.4125=
+787-512-sashal@kernel.org?part=3D1
