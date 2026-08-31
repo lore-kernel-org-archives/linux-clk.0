@@ -1,141 +1,284 @@
-Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C61231B101;
-	Mon, 31 Aug 2026 03:41:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.16.166
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA1E53AFB07;
+	Mon, 31 Aug 2026 06:33:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788147714; cv=none; b=bN4wmKxE9+2cDnn5aQqmfiMMEmrhTVT4ISOnco8sxqcjG0BJ74t5YeTq+LQJ8/LYKRMY2aeYuwidv53Pqd1L3rQekI12cSzYMRRUD0+qZz6FM1GbjJDj43GIt/7/WE2KFrHS/X81qXl46oQj4BtmzwYrdJhgc9AbtkA7vTOXExY=
+	t=1788157983; cv=none; b=sz8b4swocXX7VhqPsOcMa00Cu+qjO5vuN50IcujaStYq41N9ehQDxLqyVN9smW50L+HZPjjI7xQfsHpiKxZgyI6Lv4eWLPfns54Wkas5LZRCzfYs6MhXOPalVnqxpZNGVGccvienH8lI0lIRGA1gzjYm059+s+uhH+j0v+fRnhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788147714; c=relaxed/simple;
-	bh=BQqSfNw7698Sa/HXE9sQWxU1pHqkCDM/++aa3ehKA9Q=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=s8DUJ5FJT9upBzdnde3wTcyhi6VBghhP/uU9rHPf49VHoMJ6bai2wEHf6DTt+hJN1X1xKF4NeiqhNBKcuG/OO3jjCx/l+N+ZzZUYkb37s7Qy/I+RCTl3+/jN6PJrXF1sZ/Z0xS1nh/hKUuveJqIWo3kXwOUDm2Uc8gi24qYdeEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=yGkPIQmE; arc=none smtp.client-ip=54.206.16.166
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
+	s=arc-20240116; t=1788157983; c=relaxed/simple;
+	bh=OLCnniBXgpd2aD6q4JEaIlFxl6jzgtO71uj2qZWPDsY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=B2TFOiTD1gu2P0EGiy+m7KjOihhmbF412x6rJrdKm8e+kDW3wIYwgvtj0taIXN88iYtRSlACoDY75LJHp/PWC/KqAMEsOhCzz8hRDmZs2hmDt8Vw7nRD4w2JfsXdFXmqUCZ1qdnxec3/+N+hvhkpKQi/H8OUteAFFzRX9wtQDnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vCbughyB; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="yGkPIQmE"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1788147653;
-	bh=NnwaB5ujAvJmVoXXw/A5RDLqLJgznXnQE/ZxtU6ybE0=;
-	h=Mime-Version:Date:Message-Id:Subject:From:To;
-	b=yGkPIQmExOaTkwbdhWCa6ATbsYK3mxUNchv46ryjHsKuGIc6m3fx09y3joCLe6l5G
-	 Q8HaT/EDppW4pWio6h4j/5C438HyHiH9VZ4UE8UWoB9vP2KuL1/XXiV6ShUFb6ZWNF
-	 mFKTpkxxwWAny9ggL3WNaAlRedONkFm02vAR5P48=
-X-QQ-mid: esmtpsz16t1788147647t12fcc224
-X-QQ-Originating-IP: r/8jVrT4i8gNmZxm/dFB1QWDjJiD0EoKNYpdcbUmelk=
-Received: from = ( [183.48.245.118])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 31 Aug 2026 11:40:45 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 10785841376019705639
-EX-QQ-RecipientCnt: 17
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vCbughyB"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 2F850C2BCFC;
+	Mon, 31 Aug 2026 06:33:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1788157983;
+	bh=OLCnniBXgpd2aD6q4JEaIlFxl6jzgtO71uj2qZWPDsY=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=vCbughyB7rwdOvF81cMqvyTbN3wVI7j1FhiZkVFZyeOux2s4bfo2CpWz/IYk+zA7F
+	 Amz8lrAWb0ERuaeAdVEhQ7dd+qz5N4y01rBh9BWQSmdrdUNJmkLmwwdtdak36sA7PV
+	 0yCdX9KqOcKcviUEEHawgLrL8/6oIfkS6dXMpW254kOg3B0JxSNSFT6HeyjdfgSolA
+	 zB+JSYUMIPgEyWSokJl56Zs4sPxXxyxjakCTaQcAlO2JKPkF6gmJ1uxxt0bJkG9DEL
+	 HpdB/Uxz8fmCwcAq9NxhnXKZxZ0Nvv9Vc2ig08LrcMNz5nyBVKljCR+5Jp1/DT5sKQ
+	 hqVCNG74t73gQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19A80C61DD3;
+	Mon, 31 Aug 2026 06:33:03 +0000 (UTC)
+From: Sarath Ganapathiraju via B4 Relay <devnull+sarath.ganapathiraju.oss.qualcomm.com@kernel.org>
+Date: Mon, 31 Aug 2026 12:03:02 +0530
+Subject: [PATCH v7 2/2] clk: qcom: Add LPASS VA CSR heartbeat pulse clock
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed;
- boundary=76c5c7c6483ed5fd9eb1e185aa1b9ece1314890f287a7c78af87385efe71;
- micalg=pgp-sha512; protocol="application/pgp-signature"
-Date: Mon, 31 Aug 2026 11:06:00 +0800
-Message-Id: <DL2SP646WOSO.2762R9GD5RXSI@linux.spacemit.com>
-Cc: "Michael Turquette" <mturquette@baylibre.com>, "Stephen Boyd"
- <sboyd@kernel.org>, "Brian Masney" <bmasney@redhat.com>, "Yixun Lan"
- <dlan@kernel.org>, "Inochi Amaoto" <inochiama@outlook.com>, "Alex Elder"
- <elder@riscstar.com>, "Haylen Chu" <heylenay@4d2.org>,
- <linux-clk@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
- <spacemit@lists.linux.dev>, <linux-kernel@vger.kernel.org>, "Paul Walmsley"
- <pjw@kernel.org>, "Palmer Dabbelt" <palmer@dabbelt.com>, "Albert Ou"
- <aou@eecs.berkeley.edu>, "Alexandre Ghiti" <alex@ghiti.fr>
-Subject: Re: [PATCH v2] clk: spacemit: k3: add 1.8 GHz PLL5 and PLL8 rates
-From: "Troy Mitchell" <troy.mitchell@linux.spacemit.com>
-To: "Aurelien Jarno" <aurelien@aurel32.net>, "Troy Mitchell"
- <troy.mitchell@linux.spacemit.com>
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20260810-k3-pll5-pll8-1800mhz-v2-1-aabff510a797@linux.spacemit.com> <apRncBmtm7w0Emwf@aurel32.net>
-In-Reply-To: <apRncBmtm7w0Emwf@aurel32.net>
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpsz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
-X-QQ-XMAILINFO: NDcdydrNm/XtFmDWDwG77Y3qnBeQf5lPsnF07Lnr7kH6dWJ3t470x8rg
-	oZCmOoa35/xxf5nhi44yg4lsOPXKfHaZZXnU+Fujc32UG/EPR/PAfbv3f0xtYz7825myR+Y
-	gSAmE2ko8K+yf94AflJPOcfioLMbxW3fpMiUsmTddQA14a7tENN0/sac2InpiLuXDeizCUC
-	c+UpYMl6O4a+PIpFMz/weM6jUtiUQhhBLnWUp6LG6/tCGsl6d7yEqeeePcn3Aw1Z7UPsbvL
-	J5SS9Z+cRXrDv1pnULHcHb2l7AOmdiAsofmXZ7eN48gAdHJWsTq+FyaEdPZtwpAbePK4DiW
-	zs9GN5gQRyDsFMJOhtlTULyi6U6BFak6yTh6CQY+9YDPyL9FpttjRWO/D+Zok9jxTvDsp4N
-	CFqfTRUNTN2Z7PVb+rTgiFA7yomxnX89gku0lH2e8OU7fIjmt3aRj0hiMgMuoMl/mR0fnnd
-	eedhP48uQt6pEl+iW+dTRp8DO/0WqjcDLjAXgaQzTW74PtVtCEa2ZcR89WJD8a4FGxV2AVZ
-	/yfvgA/MU6GH/6VtkGFPySVBAc0bPl9iVh4Gzi0vLJ934PfszngAEWFkTTGqJnPC+vFiI9x
-	CA7W8mWT9qWKIDUS5i69Sl6OlKtc/duyEAPg/zFWxTIoCeB9A1yCLmEBhTaP3fpmveEyoTX
-	klygI1Yu/8wzxgbUScIsbOmugieRnkk8ij3LS5PZbWAZ7+h454Mtp+FydCVnMpe9022PMy2
-	WWG6iLePfPaEm0P3M5CFkeP1RpsCnXPaj+R+CYudx9hP3csY4veVQ9NK8NEfPS1w3a/Twtz
-	I4QZGvrF9pyHiAfz1q40TFGp7ydAwWcCCpqt5t3POfmXiR12s1ZPwaA2K6uOW6q67psgxXc
-	ODzegRiqxajATKwc4bIUGXXFb0OdsCFekjK2yZHVe0ykWKl/j8KbzJFLMX4sjVuvnQGvxMF
-	EYshqQDLEDCtvbLkaDTkB8PvEFISjNwNY/7tfbOJ4yldGdtzYswjRZWmvH4srHgcTE2Ni7I
-	mhsvgm6DhrtghH3EKVHluNHSJP1vK0GfK0mUM0xfs2Ow17ilpupYpQdYluT7EC+6UmI2+ky
-	P4+GxWLX0RiYoASVdygvYBs3hQHhMPghP7bURwg00CHZSLYrZK0uKfQOb+c0+kw/vPKHm4Y
-	y+VdV4e5IqKBM3VRJoR5PwkhuRg+PxS9hCxyQRotrx0tn674VnLsNIRawT9mFzkK/LW/
-X-QQ-XMRINFO: NI4Ajvh11aEjEMj13RCX7UuhPEoou2bs1g==
-X-QQ-RECHKSPAM: 0
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260831-heartbeat-v7-next-20260828-v7-2-e3ffeac46a51@oss.qualcomm.com>
+References: <20260831-heartbeat-v7-next-20260828-v7-0-e3ffeac46a51@oss.qualcomm.com>
+In-Reply-To: <20260831-heartbeat-v7-next-20260828-v7-0-e3ffeac46a51@oss.qualcomm.com>
+To: Bjorn Andersson <andersson@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+ Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Sarath Ganapathiraju <sarath.ganapathiraju@oss.qualcomm.com>, 
+ prasad.kumpatla@oss.qualcomm.com
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1788157981; l=6795;
+ i=sarath.ganapathiraju@oss.qualcomm.com; s=default;
+ h=from:subject:message-id;
+ bh=QdN7xBQec0vqbQDx1s/X5efKWIU5bY8+fIaBoQhZiAg=;
+ b=UYkqBRy/awjlGFnRzCsxRhYfnszQKu1l0C+h0HCZmLHNBg/lVNztC2CqCK7L3w2RLtMzBvCYD
+ Kk+d38i5pMeBDeiTRZvYTiadZW4jjWQUj/WSl169NBzVX7uxFQ7aBFZ
+X-Developer-Key: i=sarath.ganapathiraju@oss.qualcomm.com; a=ed25519;
+ pk=4p2FWGXM+F2sir13Lu5stw5aKX5trUymK/ttESvgxQg=
+X-Endpoint-Received: by B4 Relay for
+ sarath.ganapathiraju@oss.qualcomm.com/default with auth_id=870
+X-Original-From: Sarath Ganapathiraju <sarath.ganapathiraju@oss.qualcomm.com>
+Reply-To: sarath.ganapathiraju@oss.qualcomm.com
 
---76c5c7c6483ed5fd9eb1e185aa1b9ece1314890f287a7c78af87385efe71
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+From: Sarath Ganapathiraju <sarath.ganapathiraju@oss.qualcomm.com>
 
-On Mon Aug 31, 2026 at 1:25 AM +08, Aurelien Jarno wrote:
-> Hi Troy,
->
-> On 2026-08-10 16:46, Troy Mitchell wrote:
->> K3 boot firmware configures the C2 and C3 CPU clock domains at
->> 1.8 GHz. PLL5 feeds C2 and PLL8 feeds C3, but their rate tables
->> currently contain only the 2 GHz overclocking operating point.
->>=20
->> Add the nominal 1.8 GHz configuration as the first entry in both
->> tables. This lets determine_rate() and set_rate() select the firmware
->> operating point while retaining 2 GHz as a supported overclocking rate.
->>=20
->> Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
->> ---
->> The related U-Boot change is available at:
->> https://github.com/spacemit-com/uboot-2022.10/commit/fb95cf3d848b771c61b=
-5a1b3e5cbbee223faf352
->> ---
->> Changes in v2:
->> - Drop "clk: spacemit: re-enable PLLs after init"; the PLL init issue
->>   will be handled in a separate series.
->> - Send the K3 PLL5 and PLL8 1.8 GHz rate-table update as a standalone
->>   patch.
->> - Clarify that 1.8 GHz is nominal and 2 GHz is an overclocking rate.
->> - Link to v1: https://patch.msgid.link/20260804-k3-pll5-pll8-1800mhz-v1-=
-0-a3a75866ce32@linux.spacemit.com
->
-> This make sense and looks good:
->
-> Reviewed-by: Aurelien Jarno <aurelien@aurel32.net>
-> Tested-by: Aurelien Jarno <aurelien@aurel32.net>
->
-> I wonder if it should be backported to stable, as users will deploy=20
-> newer firmware.
-Yes. I'll Cc: stable@vger.kernel.org in the next version.
+The HeartBeat Pulse (also known as RateGen Pulse) synchronizes the
+start of the DMAs and Codec Interfaces for the audio usecases and can
+serve as a periodic wakeup source for the DSP.
 
-Thanks for your tags.
+Add the LPASS VA CSR driver that models the rate generator as a clock
+provider so it is enabled and disabled automatically alongside the other
+clocks during runtime PM resume and suspend.
 
---=20
-Troy Mitchell
+Reviewed-by: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
+Tested-by: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
+Signed-off-by: Sarath Ganapathiraju <sarath.ganapathiraju@oss.qualcomm.com>
+---
+ drivers/clk/qcom/Kconfig        |  14 ++++
+ drivers/clk/qcom/Makefile       |   1 +
+ drivers/clk/qcom/lpass-va-csr.c | 148 ++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 163 insertions(+)
+
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index e609a7819e07..502acd86efd6 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -2105,6 +2105,20 @@ config CLK_GFM_LPASS_SM8250
+ 	  Support for the Glitch Free Mux (GFM) Low power audio
+           subsystem (LPASS) clocks found on SM8250 SoCs.
+ 
++config QCOM_CLK_LPASS_HEARTBEAT_PULSE
++	tristate "Qualcomm LPASS VA CSR heartbeat pulse clock provider"
++	depends on COMMON_CLK
++	depends on ARM64 || COMPILE_TEST
++	select REGMAP_MMIO
++	default m if ARCH_QCOM
++	help
++	  Qualcomm LPASS VA CSR block contains the rate generator hardware
++	  that produces the HeartBeat Pulse (also known as RateGen Pulse).
++	  This driver models the rate generator as a clock provider so
++	  that consumers can enable or disable it via the common clock
++	  framework, and it can be used to synchronize the start of DMAs
++	  and Codec Interfaces or as a periodic wakeup source for the DSP.
++
+ config SM_VIDEOCC_8450
+ 	tristate "SM8450 Video Clock Controller"
+ 	depends on ARM64 || COMPILE_TEST
+diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+index b8590963736a..3f6a52cc7ec7 100644
+--- a/drivers/clk/qcom/Makefile
++++ b/drivers/clk/qcom/Makefile
+@@ -28,6 +28,7 @@ obj-$(CONFIG_CLK_ELIZA_GPUCC) += gpucc-eliza.o
+ obj-$(CONFIG_CLK_ELIZA_TCSRCC) += tcsrcc-eliza.o
+ obj-$(CONFIG_CLK_ELIZA_VIDEOCC) += videocc-eliza.o
+ obj-$(CONFIG_CLK_GFM_LPASS_SM8250) += lpass-gfm-sm8250.o
++obj-$(CONFIG_QCOM_CLK_LPASS_HEARTBEAT_PULSE) += lpass-va-csr.o
+ obj-$(CONFIG_CLK_GLYMUR_CAMCC) += camcc-glymur.o
+ obj-$(CONFIG_CLK_GLYMUR_DISPCC) += dispcc-glymur.o
+ obj-$(CONFIG_CLK_GLYMUR_EVACC) += evacc-glymur.o
+diff --git a/drivers/clk/qcom/lpass-va-csr.c b/drivers/clk/qcom/lpass-va-csr.c
+new file mode 100644
+index 000000000000..8438d000814e
+--- /dev/null
++++ b/drivers/clk/qcom/lpass-va-csr.c
+@@ -0,0 +1,148 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/device.h>
++#include <linux/module.h>
++#include <linux/of_clk.h>
++#include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
++#include <linux/regmap.h>
++
++#define LPASS_RATE_GEN_CTRL		0xd000
++#define LPASS_RATE_GEN_COUNTER_0	0xd004
++#define LPASS_RATE_GEN_DELAY		0xd010
++
++#define LPASS_RATE_GEN_MAX_REG		LPASS_RATE_GEN_DELAY
++
++#define LPASS_RG_CTRL_EN		BIT(0)
++
++struct lpass_va_csr_data {
++	u32 counter_0;
++	u32 delay;
++};
++
++static const struct lpass_va_csr_data hawi_csr_data = {
++	.counter_0 = 0x960,
++	.delay = 0x16,
++};
++
++static const struct regmap_config lpass_rate_gen_regmap_config = {
++	.name = "lpass_rate_gen",
++	.reg_bits = 32,
++	.val_bits = 32,
++	.reg_stride = 4,
++	.max_register = LPASS_RATE_GEN_MAX_REG,
++	.cache_type = REGCACHE_MAPLE,
++};
++
++struct lpass_va_csr {
++	struct regmap *regmap;
++	const struct lpass_va_csr_data *data;
++	struct clk_hw hb_hw;
++};
++
++#define to_lpass_va_csr(_hw) container_of(_hw, struct lpass_va_csr, hb_hw)
++
++static int heartbeat_pulse_prepare(struct clk_hw *hw)
++{
++	struct lpass_va_csr *csr = to_lpass_va_csr(hw);
++	int ret;
++
++	ret = regmap_write(csr->regmap, LPASS_RATE_GEN_COUNTER_0, csr->data->counter_0);
++	if (ret)
++		return ret;
++
++	ret = regmap_write(csr->regmap, LPASS_RATE_GEN_DELAY, csr->data->delay);
++	if (ret)
++		return ret;
++
++	return regmap_set_bits(csr->regmap, LPASS_RATE_GEN_CTRL, LPASS_RG_CTRL_EN);
++}
++
++static void heartbeat_pulse_unprepare(struct clk_hw *hw)
++{
++	struct lpass_va_csr *csr = to_lpass_va_csr(hw);
++
++	regmap_clear_bits(csr->regmap, LPASS_RATE_GEN_CTRL, LPASS_RG_CTRL_EN);
++}
++
++static int heartbeat_pulse_is_prepared(struct clk_hw *hw)
++{
++	struct lpass_va_csr *csr = to_lpass_va_csr(hw);
++
++	return regmap_test_bits(csr->regmap, LPASS_RATE_GEN_CTRL, LPASS_RG_CTRL_EN);
++}
++
++static const struct clk_ops heartbeat_pulse_ops = {
++	.prepare = heartbeat_pulse_prepare,
++	.unprepare = heartbeat_pulse_unprepare,
++	.is_prepared = heartbeat_pulse_is_prepared,
++};
++
++static int lpass_va_csr_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct lpass_va_csr *csr;
++	struct clk_init_data init = {
++		.name = "lpass_heartbeat_pulse",
++		.ops = &heartbeat_pulse_ops,
++	};
++	void __iomem *base;
++	int ret;
++
++	csr = devm_kzalloc(dev, sizeof(*csr), GFP_KERNEL);
++	if (!csr)
++		return -ENOMEM;
++
++	csr->data = of_device_get_match_data(dev);
++	if (!csr->data)
++		return dev_err_probe(dev, -EINVAL, "no variant data for compatible\n");
++
++	base = devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(base))
++		return PTR_ERR(base);
++
++	csr->regmap = devm_regmap_init_mmio(dev, base,
++					    &lpass_rate_gen_regmap_config);
++	if (IS_ERR(csr->regmap))
++		return dev_err_probe(dev, PTR_ERR(csr->regmap),
++				     "failed to init regmap\n");
++
++	csr->hb_hw.init = &init;
++
++	ret = devm_pm_runtime_enable(dev);
++	if (ret)
++		return dev_err_probe(dev, ret, "failed to enable PM runtime\n");
++
++	ret = devm_clk_hw_register(dev, &csr->hb_hw);
++	if (ret)
++		return dev_err_probe(dev, ret, "failed to register heartbeat clock\n");
++
++	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, &csr->hb_hw);
++	if (ret)
++		return dev_err_probe(dev, ret, "failed to add clock provider\n");
++
++	return 0;
++}
++
++static const struct of_device_id lpass_va_csr_dt_match[] = {
++	{ .compatible = "qcom,hawi-lpass-va-csr", .data = &hawi_csr_data },
++	{}
++};
++MODULE_DEVICE_TABLE(of, lpass_va_csr_dt_match);
++
++static struct platform_driver lpass_va_csr_driver = {
++	.driver = {
++		.name = "qcom-lpass-va-csr",
++		.of_match_table = lpass_va_csr_dt_match,
++	},
++	.probe = lpass_va_csr_probe,
++};
++
++module_platform_driver(lpass_va_csr_driver);
++
++MODULE_DESCRIPTION("Qualcomm LPASS VA CSR heartbeat pulse clock provider");
++MODULE_LICENSE("GPL");
+
+-- 
+2.34.1
 
 
---76c5c7c6483ed5fd9eb1e185aa1b9ece1314890f287a7c78af87385efe71
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iIMEABYKACsWIQSL4Ay2cExaPXAQcU2YCe+A+TM0LwUCapTvmA0caUB0cm95LXku
-b3JnAAoJEJgJ74D5MzQvQDIA/3RL7VXwzHuHjnzdOwa1VtWuQpzXbNq9GItBdCdH
-0H0gAQDz6KseX2X3tpAb+avR3WoWXHlYlpXdXrZQ7y29Mk+zCg==
-=sgJs
------END PGP SIGNATURE-----
-
---76c5c7c6483ed5fd9eb1e185aa1b9ece1314890f287a7c78af87385efe71--
