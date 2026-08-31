@@ -1,52 +1,45 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 146FC4E80CE;
-	Mon, 31 Aug 2026 13:40:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C754F210E;
+	Mon, 31 Aug 2026 13:40:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788183617; cv=none; b=oaF4wUGxQO+hKv5VttyzdsEmbdKnOZIpLkuOtXztJy1qs8uEcoV0lPOvXABdtMYNpTJykVdTXUkFda9eH38kirkLdxo696lVXug57hxTP+QNhozltIYf26/vfOFsSPI0D8aXxSuEyx23KgDLxiCtWrVCXOmLXw1DN5sb3f7f620=
+	t=1788183658; cv=none; b=YoZSxWw4ZgperOCLry9ArtlHeXFclOQxftA9bmpmy7RrFhFDDwrmpnKAEu8RuEwJG8eFILIgRnzTaIjdbvsrGKv85QcQQ6rMUA2a3Wy3jd80lEPVedPqBCoEkgchtjT0d0TAVnPX4/zMP/7hA53ot+mrNp2EUZQo8AEgQKtadIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788183617; c=relaxed/simple;
-	bh=FF0rj7jkhCJv5WeBMBcyBA3vfUyV1mDNwa9GNRVpfts=;
+	s=arc-20240116; t=1788183658; c=relaxed/simple;
+	bh=NGygtitpRytc0TLalzd6mxJZJG5Am9qOjNkmlbs+jUg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LmNaJhwnHQyZECnqw6inJoSyINj5iid8iWPtL8XZErNhz2yPTQ4AxGHx4giZovAIKhtd0T2DfkJ4OL4lvKtn0DLDA4HLqb2HhTnyC6Op7ULRhU/Cm/xjsEORtulYWcfupVbtlWEjf6bxtBoQ2Q66cFbXhefa8c/HbYPsG6DGRmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WAxSGlzk; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version:Content-Type; b=E68hr/xFcxXXtVB8/LNIpZdsQalnFZgTMp2Ow0pA2wydAXGpkF5JsIz/AU4laeqv2vf/GWrYibYfPhnZvFd8afWbOjCaMuxaNIbDmpcNZ2Ex4K7fM2WyquNQKL8zy/87j7SHo0Yi5Gid36YIxU/ZidNFFOM9trcWf3GaYPMbfTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XdoMskVk; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WAxSGlzk"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E67D1F00A3E;
-	Mon, 31 Aug 2026 13:40:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XdoMskVk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B4271F00A3F;
+	Mon, 31 Aug 2026 13:40:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788183614;
-	bh=9tQOm1ZLIVOY99xhF85nCz+7Wr8eSSAaqPMF364hkyg=;
+	s=k20260515; t=1788183655;
+	bh=HGOBFmnZOh2RuIqahVn2N5Pz7MRumnhnDhwZFjgMxXY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=WAxSGlzkTR6qQ5UUYM5Y2LRdABUEkwvBUKY4qb6q8CRSi1pY6P2XiJjZcuswz8DOu
-	 fcsn8VfuZOyThRCI8RAF13B2khoIwwRB9n1izymbPqOeqbI3raazEzWjqDmAsmQAid
-	 wfWJRVkTesHSHDF+2C53Wv0tai4bB4aK+tR2k9Nl4vEyFEeyafYwqw50p9jiDiW0Yl
-	 g/LWNF+KJsymOXfArWPx1dJSUGvD9CWCJQbIh9ypRaQvPC4h3sF1dRb0/uinDcTKj/
-	 1wPh6JhtbEx3T35WVvOZQ4a6fEz2l7cBrqdar2873i/wu67mwJh+p9eBWD9MqF3HEn
-	 kgftRU4U3Tb2Q==
+	b=XdoMskVkJG3NCq2C9YAN2WGyYL1VlkX4szGR/kR1onGwwPH2xJ803TF4B+b8no4ye
+	 ae0+uNIOORjPO99m6hEAtxKbfKDcNBfQevy9rABG+zy3+tNQI6SN0z4WI6Eo3YK931
+	 +ARgcFdH470DbH4N0VerP3IJbbFjevUW2CpYndVhTiuIuBDNHygQ9f9/97qQXtZS9/
+	 4FW8la6Onr1Y7hPuD3IWGyrdVvPPCbqj6xROHrVuhBze3AwlfJTuvYw7NHzyPg7nsu
+	 Smt1j4SoyGmTzvcaQquuS4TeQXcT5P/GG+6dDZ+nQI45YOagBTnTWNkbA7nsllJugN
+	 a/aXR/MNgR0BA==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: Alexey Klimov <alexey.klimov@linaro.org>,
-	Sam Protsenko <semen.protsenko@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
+Cc: =?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+	Brian Masney <bmasney@redhat.com>,
+	Stephen Boyd <sboyd@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
-	s.nawrocki@samsung.com,
-	cw00.choi@samsung.com,
-	peter.griffin@linaro.org,
-	sboyd@kernel.org,
 	bmasney+clk@redhat.com,
 	jbrunet+clk@baylibre.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.18-6.1] clk: samsung: exynos850: mark APM I3C clocks as critical
-Date: Mon, 31 Aug 2026 09:23:47 -0400
-Message-ID: <20260831133314.4125787-199-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.18] clk: clk-axi-clkgen: Add support versal timings
+Date: Mon, 31 Aug 2026 09:24:12 -0400
+Message-ID: <20260831133314.4125787-224-sashal@kernel.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260831133314.4125787-1-sashal@kernel.org>
 References: <20260831133314.4125787-1-sashal@kernel.org>
@@ -56,375 +49,425 @@ List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.18.48
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Alexey Klimov <alexey.klimov@linaro.org>
+From: Nuno Sá <nuno.sa@analog.com>
 
-[ Upstream commit 44984aaf1aa727ff944dd4b72fcf069d08b0056d ]
+[ Upstream commit 0aef2f0db6db22c2a441e067d8e8458106fb0483 ]
 
-The Exynos850 APM co-processor relies on the I3C bus to communicate with
-the PMIC. Currently, there is no dedicated PMIC consumer driver managing
-these clocks, so the clock subsystem automatically gates them during the
-initialisation. Once gated, any subsequent ACPM communication with APM
-results in timeouts.
+Add proper VCO and PFD limits for versal based platforms. For that we
+need to add new Technology and Speed grade defines.
 
-As a temporary workaround (and let's hope it doesn't become permanent),
-mark both `gout_i3c_pclk` and `gout_i3c_sclk` as CLK_IS_CRITICAL ones to
-prevent the clock subsystem from disabling them. This makes the ACPM
-communication functional. This workaround should be reverted once a
-proper ACPM PMIC driver is implemented to manage these clocks.
-
-Cc: Sam Protsenko <semen.protsenko@linaro.org>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>
-Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
-Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-Link: https://patch.msgid.link/20260430-exynos850-i3c-criticalclocks-v1-1-6e1fd8dfa21b@linaro.org
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Nuno Sá <nuno.sa@analog.com>
+Reviewed-by: Brian Masney <bmasney@redhat.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
 LLM Generated explanations, may be completely bogus:
 
-## Phase 1: Commit Message Forensics
+# Stable Backport Analysis: `clk: clk-axi-clkgen: Add support versal
+timings`
+
+**Local tree:** `v6.18.43` (`linux-6.18.y` stable, HEAD `7b923c78b50d`)
+
+---
+
+## PHASE 1: COMMIT MESSAGE FORENSICS
 
 ### Step 1.1: Subject Line
-**Record:** `[clk: samsung: exynos850]` `[mark]` — Mark APM I3C clocks
-(`gout_i3c_pclk`, `gout_i3c_sclk`) as `CLK_IS_CRITICAL` to prevent the
-clock core from gating them.
+**Record:** `[clk: clk-axi-clkgen]` `[Add]` — Add support for Versal
+FPGA VCO/PFD timing limits in the existing AXI clkgen driver.
 
 ### Step 1.2: Commit Message Tags
 **Record:**
-- **Fixes:** — not present (expected for manual review)
-- **Reported-by:** — none
-- **Tested-by:** — none
-- **Reviewed-by:** Sam Protsenko \<semen.protsenko@linaro.org\>, Tudor
-  Ambarus \<tudor.ambarus@linaro.org\>
-- **Acked-by:** — none
-- **Cc:** Sam Protsenko, Tudor Ambarus (not stable@vger.kernel.org)
-- **Link:** https://patch.msgid.link/20260430-exynos850-i3c-
-  criticalclocks-v1-1-6e1fd8dfa21b@linaro.org
-- **Signed-off-by:** Alexey Klimov, Krzysztof Kozlowski (ignore
-  pipeline-added SOBs)
+- **Signed-off-by:** Nuno Sá `<nuno.sa@analog.com>` (author)
+- **Reviewed-by:** Brian Masney `<bmasney@redhat.com>`
+- **Signed-off-by:** Stephen Boyd `<sboyd@kernel.org>` (clk maintainer
+  merge)
+- **No** Fixes:, Reported-by:, Tested-by:, Link:, Cc:
+  stable@vger.kernel.org
 
-Notable: two Reviewed-by tags from Linaro Exynos850 platform developers;
-no syzbot or user bug reports.
+Notable: Reviewed by a Red Hat contributor; merged by clk subsystem
+maintainer. No user/fuzzer bug reports in the message.
 
 ### Step 1.3: Commit Body Analysis
 **Record:**
-- **Bug:** With no PMIC consumer driver holding references, the clock
-  framework gates `gout_i3c_pclk` and `gout_i3c_sclk` during init.
-- **Symptom:** After gating, all ACPM communication with the Exynos850
-  APM co-processor times out.
-- **Root cause:** APM uses I3C to talk to the PMIC; those bus clocks
-  must stay enabled but nothing claims them.
-- **Fix approach:** Temporary `CLK_IS_CRITICAL` workaround until a
-  proper ACPM PMIC driver manages the clocks.
-- **Version info:** none in the message.
+- **Bug described:** Versal-based platforms need correct VCO and PFD
+  limits; current driver lacks the technology/speed-grade definitions
+  and limit overrides.
+- **Symptom/failure mode:** Without proper limits, the driver either
+  rejects unknown speed grades at probe time or programs the MMCM/PLL
+  with out-of-spec VCO frequency bounds for Versal silicon.
+- **Version info:** None stated.
+- **Root cause:** `axi_clkgen_setup_limits()` handles
+  Series7/Ultrascale/Ultrascale+ but not Versal
+  (`ADI_AXI_FPGA_TECH_VERSAL`) or the Versal-specific
+  `ADI_AXI_FPGA_SPEED_2MP` speed grade.
 
 ### Step 1.4: Hidden Bug Fix Detection
-**Record:** Yes — described as a workaround, but it fixes real broken
-platform behavior (ACPM timeouts). Same pattern as other
-`CLK_IS_CRITICAL` entries in this file for clocks that must stay on
-without a consumer driver.
+**Record:** **Yes — disguised as "Add support".** The subject says "add
+support," but the change corrects two concrete failures in existing
+code:
+1. Speed grade `2MP` (value 23) falls through the `switch` to `default`
+   → probe returns `-ENODEV`.
+2. Versal technology is not recognized → VCO limits stay at
+   Series7/Ultrascale defaults (e.g. `fvco_min=600000`,
+   `fvco_max≤1600000`) instead of Versal-required `2160000–4320000` kHz.
 
 ---
 
-## Phase 2: Diff Analysis
+## PHASE 2: DIFF ANALYSIS
 
 ### Step 2.1: Change Inventory
 **Record:**
-- **File:** `drivers/clk/samsung/clk-exynos850.c` (+3 / −2, net +1 line)
-- **Functions:** `apm_gate_clks[]` static init table (inside
-  `exynos850_cmu_apm` init path)
-- **Scope:** Single-file, surgical hardware workaround
+| File | Changes |
+|------|---------|
+| `drivers/clk/clk-axi-clkgen.c` | +4 / -1 (7 lines touched) |
+| `include/linux/adi-axi-common.h` | +2 enum entries |
 
-### Step 2.2: Code Flow Change
-**Record:**
-- **Hunk 1 (I3C PCLK gate):** `GATE(..., 0, 0)` → `GATE(...,
-  CLK_IS_CRITICAL, 0)` for `gout_i3c_pclk`
-- **Hunk 2 (I3C SCLK gate):** `GATE(..., 0, 0)` → `GATE(...,
-  CLK_IS_CRITICAL, 0)` for `gout_i3c_sclk`
-- **Path affected:** Boot-time APM CMU clock registration; prevents
-  automatic disable of I3C clocks after init.
+**Functions modified:** `axi_clkgen_setup_limits()` only.
+**Scope:** Single-function, two-file surgical fix.
 
-### Step 2.3: Bug Mechanism
-**Record:**
-- **Category:** Hardware workaround / clock-gating correctness
-- **Mechanism:** Ungated clocks with no consumer get disabled by
-  `clk_disable_unused()`; APM I3C to PMIC then stops working and ACPM
-  mailbox traffic times out.
+### Step 2.2: Code Flow Change (per hunk)
 
-### Step 2.4: Fix Quality
-**Record:**
-- Obviously correct: mirrors `gout_pmu_alive_pclk` on line 698 in the
-  same table.
-- Minimal, no API changes.
-- **Regression risk:** Low — keeps two clocks enabled that must remain
-  on; minor power cost on Exynos850 only.
+**Hunk 1 — speed grade range (`clk-axi-clkgen.c:524`):**
+- **Before:** `ADI_AXI_FPGA_SPEED_2 ... ADI_AXI_FPGA_SPEED_2LV` (20–22)
+- **After:** `ADI_AXI_FPGA_SPEED_2 ... ADI_AXI_FPGA_SPEED_2MP` (20–23)
+- **Path:** Probe-time limit setup for speed-grade 2 variants.
+
+**Hunk 2 — Versal VCO override (`clk-axi-clkgen.c:546-549`):**
+- **Before:** Only Ultrascale+ gets a technology-specific VCO override.
+- **After:** Versal gets `fvco_min=2160000`, `fvco_max=4320000`.
+- **Path:** Post-switch technology override in
+  `axi_clkgen_setup_limits()`.
+
+**Hunk 3 — header enums (`adi-axi-common.h`):**
+- **Before:** No `ADI_AXI_FPGA_TECH_VERSAL` or `ADI_AXI_FPGA_SPEED_2MP`.
+- **After:** Both defined.
+
+### Step 2.3: Bug Mechanism Classification
+**Record:** **(h) Hardware workaround / correctness fix**
+- Missing enum value → probe failure (`-ENODEV`) for speed grade 23.
+- Missing technology branch → wrong PLL constraint window used by
+  `axi_clkgen_calc_params()` in `set_rate()` and `determine_rate()`.
+
+### Step 2.4: Fix Quality Assessment
+**Record:** Fix is minimal, mirrors the existing Ultrascale+ override
+pattern, and is obviously correct from a hardware-spec perspective.
+Regression risk is very low: only affects platforms reporting Versal
+technology or 2MP speed grade. No lock-order or API changes.
 
 ---
 
-## Phase 3: Git History Investigation
+## PHASE 3: GIT HISTORY INVESTIGATION
 
-### Step 3.1: Blame
-**Record:** In this checkout, I3C gate lines are at 687–690 with flags
-`0, 0`. Blame points to `a112b91dd6349` (history is flattened in this
-stable checkout). Verified directly: buggy code is present at HEAD.
+### Step 3.1: Blame / Introduction of Buggy Code
+**Record:** `axi_clkgen_setup_limits()` exists in `v6.18.0` without
+Versal handling (verified via `git show v6.18:drivers/clk/clk-axi-
+clkgen.c`). Current tree at `v6.18.43` is identical in the affected
+region. The omission has been present since at least the 6.18 release.
+Shallow history in this checkout prevents identifying the original
+introducing commit beyond the squashed import.
 
 ### Step 3.2: Fixes: Tag
-**Record:** N/A — no `Fixes:` tag.
+**Record:** Not applicable — no Fixes: tag present.
 
 ### Step 3.3: Related File History
-**Record:**
-- Commit `44984aaf1aa72` on `master` is this fix.
-- Related on master: `e57c36bc1a3e4` (APM-to-AP mailbox clock).
-- Fix is **not** an ancestor of HEAD (`fix NOT in HEAD`).
-- Standalone 1/1 patch (b4 dig `-a` shows only v1).
+**Record:** No changes to these files on `v6.18..HEAD` (stable queue).
+The patch diff base blob `fa5ccef73e60d` matches the current file
+content in the affected region — patch applies cleanly.
 
 ### Step 3.4: Author Context
-**Record:** Alexey Klimov (Linaro). Reviewed by Sam Protsenko (original
-Exynos850 clk author per file copyright). Krzysztof Kozlowski (Samsung
-clk maintainer) committed it.
+**Record:** Nuno Sá is an active Analog Devices contributor (dma-axi-
+dmac, iio, hwmon commits in this tree). Brian Masney (reviewer) is a
+regular ADI/FPGA driver contributor.
 
 ### Step 3.5: Dependencies
-**Record:** No prerequisites. Uses existing `CLK_IS_CRITICAL` and
-`GATE()` macro. Applies standalone.
+**Record:** **Standalone.** No series dependencies, no prerequisite
+commits required. The driver, `axi_clkgen_setup_limits()`, and
+`ADI_AXI_REG_FPGA_INFO` infrastructure all exist in 6.18.y.
 
 ---
 
-## Phase 4: Mailing List and External Research
+## PHASE 4: MAILING LIST AND EXTERNAL RESEARCH
 
-### Step 4.1: Original Discussion
+### Step 4.1: Original Patch Discussion
 **Record:**
-- **URL:** https://patch.msgid.link/20260430-exynos850-i3c-
-  criticalclocks-v1-1-6e1fd8dfa21b@linaro.org
-- **Revisions:** v1 only
-- **Feedback:** Sam Protsenko Reviewed-by (May 8); Tudor Ambarus
-  Reviewed-by (May 6); Krzysztof Kozlowski "Applied, thanks!" (May 14)
-- **Stable nomination:** none in thread
-- **NAKs:** none
+- v1: https://www.spinics.net/lists/kernel/msg6122732.html (2026-03-26)
+- RESEND: https://www.spinics.net/lists/kernel/msg6169958.html
+  (2026-04-24)
+- `b4 dig` could not be run (commit hash not in local tree);
+  lore.kernel.org blocked by bot protection.
+- Follow-ups from Stephen Boyd and Brian Masney are listed on spinics
+  but individual reply bodies were not retrieved.
+- Patch is a single standalone commit (not a series).
 
 ### Step 4.2: Reviewers
-**Record:** CC'd: Krzysztof Kozlowski, Sylwester Nawrocki, Chanwoo Choi,
-Alim Akhtar, Michael Turquette, Stephen Boyd, linux-clk@vger.kernel.org,
-linux-samsung-soc@vger.kernel.org. Appropriate maintainers were
-included.
+**Record:** CC'd to `linux-clk@`, Michael Turquette, Stephen Boyd.
+Reviewed-by: Brian Masney in committed version.
 
-### Step 4.3: Bug Report
-**Record:** No external bug report or syzbot link. Issue comes from
-platform bring-up experience (Linaro/Samsung Exynos850 work).
+### Step 4.3: Bug Reports
+**Record:** No Reported-by, syzbot, or bugzilla links. No external user
+crash reports found.
 
 ### Step 4.4: Related Patches
-**Record:** Standalone; not part of a multi-patch series.
+**Record:** Single patch; change-id `20260326-clk-axi-clk-versal-
+support-8eaef1530870`. v1 and RESEND are identical in content.
 
 ### Step 4.5: Stable List History
-**Record:** Lore fetch blocked by bot protection for web search; mbox
-thread has no stable discussion. UNVERIFIED for lore.kernel.org/stable
-search.
+**Record:** Not searched (no stable nomination found in available patch
+posts). Absence of Cc: stable is expected per review instructions.
 
 ---
 
-## Phase 5: Code Semantic Analysis
+## PHASE 5: CODE SEMANTIC ANALYSIS
 
-### Step 5.1: Key Functions
-**Record:** `apm_gate_clks[]` in `drivers/clk/samsung/clk-exynos850.c`;
-registered via `exynos850_cmu_apm` `CLK_OF_DECLARE` path.
+### Step 5.1: Key Functions Modified
+**Record:** `axi_clkgen_setup_limits()` (only function changed).
 
 ### Step 5.2: Callers
-**Record:** Samsung CMU init during early DT clock probe for
-`samsung,exynos850-cmu-apm` (present in
-`arch/arm64/boot/dts/exynos/exynos850.dtsi`). Runs at boot on Exynos850
-boards.
+**Record:** Called once from `axi_clkgen_probe()` when
+`ADI_AXI_PCORE_VER_MAJOR(pcore_version) > 0x04`:
 
-### Step 5.3: Callees
-**Record:** `GATE()` macro populates `samsung_gate_clock` with `.flags =
-CLK_IS_CRITICAL`, preventing disable when unused.
-
-### Step 5.4: Reachability
-**Record:** Boot path on Exynos850 (`exynos850-e850-96.dts`,
-`exynosautov920*.dts`, etc.). ACPM (`drivers/firmware/samsung/exynos-
-acpm.c`) uses mailbox to APM; PMIC access depends on APM I3C staying up.
-
-### Step 5.5: Similar Patterns
-**Record:** Same file already uses `CLK_IS_CRITICAL` for
-`gout_pmu_alive_pclk` (line 698) and many other gates. GPIO gates use
-`CLK_IGNORE_UNUSED` with TODO comments for the same class of problem.
-
----
-
-## Phase 6: Cross-Reference Against Local Tree
-
-### Step 6.1: Buggy Code Present?
-**Record:** **Yes.** Local tree is **v6.18.43** (`git describe HEAD` →
-`v6.18.43-1-gc7f0dac02d232`, Makefile 6.18.43). At HEAD lines 687–690:
-
-```687:690:drivers/clk/samsung/clk-exynos850.c
-        GATE(CLK_GOUT_I3C_PCLK, "gout_i3c_pclk", "dout_apm_bus",
-             CLK_CON_GAT_GOUT_APM_I3C_APM_PMIC_I_PCLK, 21, 0, 0),
-        GATE(CLK_GOUT_I3C_SCLK, "gout_i3c_sclk", "mout_apm_i3c",
-             CLK_CON_GAT_GOUT_APM_I3C_APM_PMIC_I_SCLK, 21, 0, 0),
+```616:619:drivers/clk/clk-axi-clkgen.c
+        if (ADI_AXI_PCORE_VER_MAJOR(pcore_version) > 0x04) {
+                ret = axi_clkgen_setup_limits(axi_clkgen, &pdev->dev);
+                if (ret)
+                        return ret;
 ```
 
-Also confirmed at `v6.18` and `v6.18.43` tags. Exynos850 DT and drivers
-are present in this tree.
+Probe-time, platform driver init path.
+
+### Step 5.3: Callees / Downstream Impact
+**Record:** Limits set here are consumed by `axi_clkgen_calc_params()`
+via `axi_clkgen_set_rate()` and `axi_clkgen_determine_rate()`. Wrong
+limits → `-EINVAL` from rate setting or incorrect PLL divider values
+programmed to MMCM registers.
+
+### Step 5.4: Reachability
+**Record:** Triggered at device probe for any platform with `adi,axi-
+clkgen-2.00.a` or `adi,zynqmp-axi-clkgen-2.00.a` compatible and pcore
+version > 4. Requires `CONFIG_COMMON_CLK_AXI_CLKGEN`. No in-tree Versal
+DTS nodes use this compatible string (verified by grep), but the driver
+reads technology directly from FPGA hardware registers — custom ADI
+reference designs on Versal are the target.
+
+### Step 5.5: Similar Patterns
+**Record:** Identical pattern already exists for
+`ADI_AXI_FPGA_TECH_ULTRASCALE_PLUS` in the same function (lines
+545–549). This commit extends that pattern to Versal.
+
+---
+
+## PHASE 6: CROSS-REFERENCE AGAINST LOCAL TREE (6.18.y)
+
+### Step 6.1: Does Buggy Code Exist?
+**Record:** **Yes.** Current tree lacks `ADI_AXI_FPGA_TECH_VERSAL`,
+`ADI_AXI_FPGA_SPEED_2MP`, and the Versal VCO override. Confirmed in both
+HEAD and `v6.18.0`.
 
 ### Step 6.2: Backport Complications
-**Record:** Clean apply expected — 5-line change, no conflicts. File is
-2338 lines with no recent churn in this stable branch.
+**Record:** **Clean apply expected.** Diff base matches current source
+exactly in affected hunks.
 
 ### Step 6.3: Related Fixes Already Present?
-**Record:** No — `git merge-base --is-ancestor 44984aaf1aa72 HEAD` → fix
-**NOT** in HEAD.
+**Record:** **No.** Grep found no `VERSAL` or `2MP` symbols in the tree.
 
 ---
 
-## Phase 7: Subsystem and Maintainer Context
+## PHASE 7: SUBSYSTEM AND MAINTAINER CONTEXT
 
 ### Step 7.1: Subsystem Criticality
-**Record:** `drivers/clk/samsung/` — **IMPORTANT** (platform-specific
-clock driver). Exynos850 is ARM64 SoC support (consumer boards +
-automotive `exynosautov920`).
+**Record:** **clk** / **PERIPHERAL** — Analog Devices AXI clock
+generator for Xilinx FPGAs (`CONFIG_COMMON_CLK_AXI_CLKGEN`, tristate,
+OF-based). Niche industrial/SDR embedded hardware.
 
 ### Step 7.2: Subsystem Activity
-**Record:** Exynos850 clk driver is actively maintained; recent master
-commits add mailbox clocks and this I3C fix.
+**Record:** clk subsystem is actively maintained in 6.18.y (many stable
+backports), but this specific driver has seen no stable-queue changes
+since 6.18.0.
 
 ---
 
-## Phase 8: Impact and Risk Assessment
+## PHASE 8: IMPACT AND RISK ASSESSMENT
 
 ### Step 8.1: Who Is Affected
-**Record:** Exynos850 platform users only — WinLink E850-96, Exynos Auto
-V920, and other `samsung,exynos850` boards using ACPM/APM PMIC
-communication.
+**Record:** **Driver-specific / platform-specific** — users of Analog
+Devices AXI clkgen IP on Versal FPGAs with pcore version > 4. Not a
+universal kernel path.
 
 ### Step 8.2: Trigger Conditions
-**Record:** Every boot on affected hardware after clock init completes
-and `clk_disable_unused()` runs. Deterministic, not a race. Unprivileged
-users cannot trigger directly, but all Exynos850 boots hit this path.
+**Record:**
+- FPGA info register reports `ADI_AXI_FPGA_TECH_VERSAL`, and/or
+- Speed grade `ADI_AXI_FPGA_SPEED_2MP` (23).
+- Triggered at every probe of matching hardware. Not userspace-
+  triggerable; not a security issue.
 
 ### Step 8.3: Failure Mode Severity
-**Record:** ACPM communication timeouts → broken PMIC co-processor path.
-**Severity: HIGH** for affected platforms (essential firmware
-communication broken; power/PMIC management non-functional). Not a
-kernel oops, but platform is effectively broken for ACPM consumers.
+**Record:**
+| Failure | Mode | Severity |
+|---------|------|----------|
+| Speed grade 2MP unrecognized | Probe fails `-ENODEV`, no clock
+provider | **HIGH** for affected hardware (device unusable) |
+| Wrong VCO limits on Versal | Rate requests fail (`-EINVAL`) or PLL
+programmed out of spec | **MEDIUM-HIGH** (functional failure, possible
+peripheral misbehavior) |
+
+Not a kernel oops/panic/data-corruption class bug.
 
 ### Step 8.4: Risk-Benefit
 **Record:**
-- **Benefit:** HIGH for Exynos850 users on 6.18.y
-- **Risk:** VERY LOW — 2 flag changes + comment; established pattern
-- **Ratio:** Strong benefit for affected hardware, negligible risk
-  elsewhere
+- **Benefit:** Enables correct clock operation on Versal ADI designs;
+  fixes hard probe failure for 2MP speed grade. High value for the small
+  affected population.
+- **Risk:** Very low — 7 lines, isolated to Versal detection path,
+  follows proven Ultrascale+ pattern.
+- **Ratio:** Favorable for affected users; negligible risk to everyone
+  else.
 
 ---
 
-## Phase 9: Final Synthesis
+## PHASE 9: FINAL SYNTHESIS
 
 ### Step 9.1: Evidence Summary
 
 **FOR backport:**
-- Real, reproducible platform bug in this tree (6.18.43)
-- Breaks ACPM/APM PMIC communication on every affected boot
-- Tiny, obviously correct hardware workaround
-- Reviewed by Exynos850 platform experts and committed by clk maintainer
-- Fits hardware-quirk exception (clock must stay on)
-- Clean backport, no dependencies
-- Fix not yet in stable/linux-6.18.y
+- Real, verifiable bugs in existing driver logic (probe failure + wrong
+  PLL limits).
+- Hardware quirk/workaround — same category as existing Ultrascale+
+  override.
+- Tiny, surgical, reviewed, maintainer-merged patch.
+- Applies cleanly to 6.18.y; all prerequisite code present.
+- Fixes broken behavior on hardware the driver is already designed to
+  auto-detect.
 
 **AGAINST backport:**
-- Platform-specific (Exynos850 only)
-- Labeled "temporary workaround"
-- No kernel crash/oops/security issue — functional timeout
-- No explicit stable nomination in review thread
-
-**Unresolved:** Stable mailing list search blocked by lore bot
-protection.
+- Framed as "add support" for a new FPGA generation.
+- No bug reports, fuzzer findings, or in-tree DTS users.
+- Very niche hardware (ADI reference designs on Versal).
+- Does not cause kernel crashes or security issues — device-level
+  functional failure.
+- Versal was never supported in 6.18.y (not a regression fix).
 
 ### Step 9.2: Stable Rules Checklist
-1. Obviously correct and tested? **PASS** — matches existing
-   `CLK_IS_CRITICAL` pattern; reviewed by platform developers
-2. Fixes a real bug affecting users? **PASS** — ACPM timeouts on
-   Exynos850
-3. Important issue? **PASS** — breaks essential APM/PMIC communication
-   on affected SoCs
-4. Small and contained? **PASS** — 5 lines, one file
-5. No new features or APIs? **PASS** — flag change only
-6. Can apply to local tree? **PASS** — buggy code present, clean apply
+
+| Criterion | Result |
+|-----------|--------|
+| 1. Obviously correct and tested? | **PASS** — mirrors Ultrascale+
+pattern; Reviewed-by present; no Tested-by |
+| 2. Fixes a real bug affecting users? | **PASS** — probe failure and
+incorrect PLL limits on Versal hardware |
+| 3. Important issue? | **PASS (borderline)** — device unusable on
+affected Versal platforms; not crash/security class |
+| 4. Small and contained? | **PASS** — 7 lines, 2 files, 1 function |
+| 5. No new features/APIs? | **PASS** — hardware quirk exception; no
+userspace API changes |
+| 6. Can apply to local tree? | **PASS** — code exists, clean apply |
 
 ### Step 9.3: Exception Category
-**Record:** Hardware quirk/workaround — clocks that must remain enabled
-for PMIC I3C on APM, analogous to existing `CLK_IS_CRITICAL` entries in
-the same table.
+**Record:** **Hardware quirk/workaround** — adding correct timing limits
+for a new FPGA technology variant in an existing driver, analogous to
+the Ultrascale+ VCO override already in stable.
 
 ### Step 9.4: Decision Rationale
-Exynos850 support is fully present in this 6.18.43 stable tree, and the
-I3C clock gating bug is present without the fix. Without this patch,
-ACPM communication with the APM co-processor fails after boot-time clock
-initialization — a serious functional defect for every Exynos850
-deployment on 6.18.y. The fix is minimal, follows an established pattern
-in the same file, and carries negligible regression risk.
+
+For **linux-6.18.y**: the driver already reads FPGA technology and speed
+grade from hardware and configures PLL limits accordingly. Versal
+platforms are a real deployment target for Analog Devices IP (per
+Kconfig: "commonly used in Analog Devices' reference designs"). Without
+this patch:
+
+1. Versal boards reporting speed grade 2MP fail probe outright.
+2. All Versal boards get VCO limits roughly 2–3× too low, breaking clock
+   rate configuration.
+
+This is a correctness fix in existing auto-detection logic, not a new
+driver. It is small, low-risk, and directly analogous to stable-
+acceptable hardware quirk fixes. The niche audience and lack of bug
+reports lower priority but do not negate technical merit.
 
 ---
 
 ## Verification
 
-- [Phase 1] Parsed subject, tags, body; no Fixes:/Reported-by/syzbot;
-  two Reviewed-by from Linaro
-- [Phase 2] Diff: 5 lines in `clk-exynos850.c`, `CLK_IS_CRITICAL` on two
-  I3C gates
-- [Phase 3] `git describe HEAD` → v6.18.43; `44984aaf1aa72` on master;
-  `fix NOT in HEAD`
-- [Phase 3] `git show 44984aaf1aa72` — full commit message and patch
-  confirmed
-- [Phase 3] `git cat-file -e v6.18:drivers/clk/samsung/clk-exynos850.c`
-  — file exists (2338 lines)
-- [Phase 3] `git show v6.18.43:...` — I3C gates have `0, 0` flags
-  (buggy)
-- [Phase 4] `b4 dig -c 44984aaf1aa72` — lore URL found
-- [Phase 4] `b4 dig -c 44984aaf1aa72 -w` — maintainers CC'd
-- [Phase 4] `b4 dig -c 44984aaf1aa72 -a` — v1 only, standalone
-- [Phase 4] `/tmp/exynos850-i3c.mbox` — Reviewed-by from Sam Protsenko
-  and Tudor Ambarus; Krzysztof applied; no stable nomination
-- [Phase 5] Grep: `gout_i3c_pclk` at lines 687–690 with flags `0, 0`;
-  `gout_pmu_alive_pclk` uses `CLK_IS_CRITICAL` at line 698
-- [Phase 5] DT: `exynos850.dtsi`, `exynos850-e850-96.dts`,
-  `exynosautov920.dtsi` present
-- [Phase 5] ACPM driver present at `drivers/firmware/samsung/exynos-
-  acpm.c`
-- [Phase 6] HEAD detached from `stable/linux-6.18.y` at Linux 6.18.43
-- [Phase 6] Buggy code verified at HEAD; fix absent from tree
-- [Phase 8] Failure mode: ACPM timeouts, HIGH severity for Exynos850
-  platforms
-- UNVERIFIED: lore.kernel.org/stable search (bot protection)
+- **[Phase 1]** Parsed subject, tags (SOB, Reviewed-by), body; no
+  Fixes/Reported-by/Link tags.
+- **[Phase 2]** Diff analysis: 7 lines, `axi_clkgen_setup_limits()`
+  only; classified as hardware workaround.
+- **[Phase 3]** `git describe HEAD` → v6.18.43; `git show v6.18:...`
+  confirms buggy code at 6.18.0; no VERSAL/2MP in tree (grep); diff base
+  `fa5ccef73e60d` matches current file; no changes on v6.18..HEAD for
+  these files.
+- **[Phase 4]** Fetched v1 and RESEND from spinics.net; lore.kernel.org
+  blocked; b4 dig not run (commit not in tree); no bug reports in patch
+  posts.
+- **[Phase 5]** Read `axi_clkgen_probe`, `set_rate`, `determine_rate`;
+  traced limits → `axi_clkgen_calc_params`; grep found no in-tree
+  Versal+adi-clkgen DTS.
+- **[Phase 6]** Confirmed `CONFIG_COMMON_CLK_AXI_CLKGEN` and driver
+  exist; patch applies cleanly; no prior fix present.
+- **[Phase 7]** Kconfig confirms peripheral ADI/Xilinx driver.
+- **[Phase 8]** Probe failure = -ENODEV (verified in code); wrong limits
+  affect rate calculation (verified call chain).
+- **UNVERIFIED:** Individual review reply bodies from Brian
+  Masney/Stephen Boyd (listed but not fetched); original commit SHA on
+  mainline; exact kernel version that introduced
+  `axi_clkgen_setup_limits()` (shallow history).
 
 **YES**
 
- drivers/clk/samsung/clk-exynos850.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/clk/clk-axi-clkgen.c   | 5 ++++-
+ include/linux/adi-axi-common.h | 2 ++
+ 2 files changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos850.c b/drivers/clk/samsung/clk-exynos850.c
-index 56f27697c76b1..413faf14eded9 100644
---- a/drivers/clk/samsung/clk-exynos850.c
-+++ b/drivers/clk/samsung/clk-exynos850.c
-@@ -684,10 +684,11 @@ static const struct samsung_gate_clock apm_gate_clks[] __initconst = {
- 	     CLK_CON_GAT_GOUT_APM_APBIF_RTC_PCLK, 21, 0, 0),
- 	GATE(CLK_GOUT_TOP_RTC_PCLK, "gout_top_rtc_pclk", "dout_apm_bus",
- 	     CLK_CON_GAT_GOUT_APM_APBIF_TOP_RTC_PCLK, 21, 0, 0),
-+	/* TODO: Should be dealt with or enabled in PMIC ACPM driver */
- 	GATE(CLK_GOUT_I3C_PCLK, "gout_i3c_pclk", "dout_apm_bus",
--	     CLK_CON_GAT_GOUT_APM_I3C_APM_PMIC_I_PCLK, 21, 0, 0),
-+	     CLK_CON_GAT_GOUT_APM_I3C_APM_PMIC_I_PCLK, 21, CLK_IS_CRITICAL, 0),
- 	GATE(CLK_GOUT_I3C_SCLK, "gout_i3c_sclk", "mout_apm_i3c",
--	     CLK_CON_GAT_GOUT_APM_I3C_APM_PMIC_I_SCLK, 21, 0, 0),
-+	     CLK_CON_GAT_GOUT_APM_I3C_APM_PMIC_I_SCLK, 21, CLK_IS_CRITICAL, 0),
- 	GATE(CLK_GOUT_SPEEDY_PCLK, "gout_speedy_pclk", "dout_apm_bus",
- 	     CLK_CON_GAT_GOUT_APM_SPEEDY_APM_PCLK, 21, 0, 0),
- 	/* TODO: Should be enabled in GPIO driver (or made CLK_IS_CRITICAL) */
+diff --git a/drivers/clk/clk-axi-clkgen.c b/drivers/clk/clk-axi-clkgen.c
+index fa5ccef73e60d..26f76a6db8202 100644
+--- a/drivers/clk/clk-axi-clkgen.c
++++ b/drivers/clk/clk-axi-clkgen.c
+@@ -521,7 +521,7 @@ static int axi_clkgen_setup_limits(struct axi_clkgen *axi_clkgen,
+ 		axi_clkgen->limits.fvco_max = 1200000;
+ 		axi_clkgen->limits.fpfd_max = 450000;
+ 		break;
+-	case ADI_AXI_FPGA_SPEED_2 ... ADI_AXI_FPGA_SPEED_2LV:
++	case ADI_AXI_FPGA_SPEED_2 ... ADI_AXI_FPGA_SPEED_2MP:
+ 		axi_clkgen->limits.fvco_max = 1440000;
+ 		axi_clkgen->limits.fpfd_max = 500000;
+ 		if (family == ADI_AXI_FPGA_FAMILY_KINTEX || family == ADI_AXI_FPGA_FAMILY_ARTIX) {
+@@ -546,6 +546,9 @@ static int axi_clkgen_setup_limits(struct axi_clkgen *axi_clkgen,
+ 	if (tech == ADI_AXI_FPGA_TECH_ULTRASCALE_PLUS) {
+ 		axi_clkgen->limits.fvco_max = 1600000;
+ 		axi_clkgen->limits.fvco_min = 800000;
++	} else if (tech == ADI_AXI_FPGA_TECH_VERSAL) {
++		axi_clkgen->limits.fvco_max = 4320000;
++		axi_clkgen->limits.fvco_min = 2160000;
+ 	}
+ 
+ 	return 0;
+diff --git a/include/linux/adi-axi-common.h b/include/linux/adi-axi-common.h
+index 37962ba530dfc..e7ba393061ee6 100644
+--- a/include/linux/adi-axi-common.h
++++ b/include/linux/adi-axi-common.h
+@@ -51,6 +51,7 @@ enum adi_axi_fpga_technology {
+ 	ADI_AXI_FPGA_TECH_SERIES7,
+ 	ADI_AXI_FPGA_TECH_ULTRASCALE,
+ 	ADI_AXI_FPGA_TECH_ULTRASCALE_PLUS,
++	ADI_AXI_FPGA_TECH_VERSAL,
+ };
+ 
+ enum adi_axi_fpga_family {
+@@ -71,6 +72,7 @@ enum adi_axi_fpga_speed_grade {
+ 	ADI_AXI_FPGA_SPEED_2    = 20,
+ 	ADI_AXI_FPGA_SPEED_2L   = 21,
+ 	ADI_AXI_FPGA_SPEED_2LV  = 22,
++	ADI_AXI_FPGA_SPEED_2MP  = 23,
+ 	ADI_AXI_FPGA_SPEED_3    = 30,
+ };
+ 
 -- 
 2.53.0
 
