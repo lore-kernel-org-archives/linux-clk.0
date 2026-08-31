@@ -1,165 +1,130 @@
-Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEB193AA9F8;
-	Mon, 31 Aug 2026 03:27:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.22.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 529AC3B5302
+	for <linux-clk@vger.kernel.org>; Mon, 31 Aug 2026 03:35:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788146881; cv=none; b=cHHc3qW6Jh9aFN0awV9kT0eKNzlWXDyBgMo/iJesZjVgHtLi5wGL9ASIma7brPeEXzoX++/d95i9jI9yt0gqrtUiOHnnaU7XNqadtzRClNtWUXZ0Qvr+DAFVhRVENbInU9ynWhw/4+oG5o3q8It9TQlPwYyY2mw1chxNRHakECw=
+	t=1788147336; cv=none; b=Fw8yZPP/Vf8NksR8sm60463Py81S2Od6YVOYfrYenxT9MqpVeE4a/fSyB/BAN2dGOo9+AROC+hLFih0pgZBefpRo3b0dQQ4/k0CL9bIDlDhRRfNjIfNY6tbWzPofpET21GjwnHaI79MuRKJcnWdIjweO34J5OI7bdC5uH7PI5gI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788146881; c=relaxed/simple;
-	bh=KNTgq+/0Kuouzn61el1yz5cV3CZE6r84n255mD/gSww=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=RhRZjB5yOsEL8MHbK85j7rv7qVMg2GiyF4/xXVECTl9+tDgaR0IVZkI9+6F8qQYtYQ72d//Gw3Ng0vxLxtRHQED85Mg1wqK3RWxId6ntvrbmu0LU9KhjGdgJuLU0lkQX6bl7pzG5xz88W8iT3YzGSy4BhAoHa6bDqVlMzDpOmxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=cvRjX/dL; arc=none smtp.client-ip=54.207.22.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
+	s=arc-20240116; t=1788147336; c=relaxed/simple;
+	bh=/hlG6PQtgJAI+VzCwWx283vr638+UDMgqfVTN9wdZdY=;
+	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=UlSxlD/lKszjwxMhohUsgXIvIvsU9caoRvQl6hL28ikMZSGQus4f3HtAkOXQ/lkMq9LdLhTP42NiLEu6gp6UtKtfNwkMy12E/YuFmj8VjFLY4C3GZ1o/e7Iw6fzKidTgRU1fVtvHoz+9sUzRQCHcvFYxb0uziOgVmSESQznTvj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XUhM0FCp; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="cvRjX/dL"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1788146814;
-	bh=FvM3PUyvegHAq8oz4A0YkG+fZ8ENWHND2m9+xtLaGUA=;
-	h=From:Date:Subject:MIME-Version:Message-Id:To;
-	b=cvRjX/dLXH95CsdVjKYhTGQCgsUrAIIBNxsSmshdVrIlWprIevufCdDMvUuJP7fbO
-	 KvbbgF70giZv9R3eHaCDeNfwpHfC6uok5GuBYJPYpwNwOFgfdjoP9bSQGhlOPS3z5F
-	 0jIptt4LjVR5svLerDEEHbBnDy19qm1KGK6yDXzg=
-X-QQ-mid: esmtpgz14t1788146807t62575c63
-X-QQ-Originating-IP: mdvl2m5PSw8hny9/qhqo0Ig0a0QY6rf0hYVmTKpGJmk=
-Received: from = ( [183.48.245.118])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 31 Aug 2026 11:26:43 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 13306223604564133587
-EX-QQ-RecipientCnt: 20
-From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Date: Mon, 31 Aug 2026 11:26:41 +0800
-Subject: [PATCH v3] clk: spacemit: k3: add 1.8 GHz PLL5 and PLL8 rates
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XUhM0FCp"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A6551F000E9;
+	Mon, 31 Aug 2026 03:35:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788147305;
+	bh=f8YZR+Z0IcmQ+4H7+hYqIHieGRECWJu4nEzN07VOvbA=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=XUhM0FCpTOSyZcvcoI8Leo8h30oD8ZTRWC6isWyc1D94Xez/gz37RjbLQ6XqLXd5M
+	 Pg7+TwR4qgsFzmg/0XTdsc2rbibJHAsLgVtrelSR42gR/EFUiA5Uguumf9l6McYbaA
+	 PBJil1gngNrGWd/ClBq+UOHEl9xfaxj18TjMyXF8HiXb55Xt8rHuxU/cNUkPnnBNkD
+	 i979PGjNeOeDHS5mLyJyrinqSfEwR6nho7gRm84HuM0Es5iNWd6ayEPo1KKMSkWwkx
+	 V+O80jjqeKjJOa2TO0JdixxE+fPqz4UczDw1WlUZlI0db2LczCgGWKAoyxlV6sD54t
+	 wZQ2K7LuCEX8Q==
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v3] clk: spacemit: k3: add 1.8 GHz PLL5 and PLL8 rates
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Troy Mitchell" <troy.mitchell@linux.spacemit.com>
+Cc: linux-clk@vger.kernel.org
+In-Reply-To: <20260831-k3-pll5-pll8-1800mhz-v3-1-530ed0978615@linux.spacemit.com>
+References: <20260831-k3-pll5-pll8-1800mhz-v3-1-530ed0978615@linux.spacemit.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 31 Aug 2026 03:35:04 +0000
+Message-Id: <20260831033505.2A6551F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260831-k3-pll5-pll8-1800mhz-v3-1-530ed0978615@linux.spacemit.com>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/3WNyw6CMBBFf4V07ZBpeRVX/odxMdQiVV6hQFDCv
- 0sxJi5wM8lJ7pwzM6s7oy07ejPr9GisaeoVgoPHVEH1TYO5rswEihglCngE0JZl5I4ELhGr4gV
- KcplEhJSGIVtf207nZtq058uH7ZDdteqdyy0KY/ume27dkbvdNxHuJ0YOCBRQEsk4VjoQp9LUw
- +TblpSuTO+rpmKuNYofG8c/NgEciLI8jzhSkia7tmVZ3v3dTJohAQAA
-X-Change-ID: 20260802-k3-pll5-pll8-1800mhz-c81875a0a944
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
- Yixun Lan <dlan@kernel.org>, Inochi Amaoto <inochiama@outlook.com>, 
- Alex Elder <elder@riscstar.com>, Haylen Chu <heylenay@4d2.org>, 
- Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, 
- Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>
-Cc: Aurelien Jarno <aurelien@aurel32.net>, linux-clk@vger.kernel.org, 
- linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
- linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
- Troy Mitchell <troy.mitchell@linux.spacemit.com>, 
- Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2740;
- i=troy.mitchell@linux.spacemit.com; h=from:subject:message-id;
- bh=KNTgq+/0Kuouzn61el1yz5cV3CZE6r84n255mD/gSww=;
- b=owGbwMvMwCU2g/N9w09jE33G02pJDFlTvhQmXYxRXMqwYsvXBYvY3qyKn6B04e7Dj5IBdx71b
- zBONis82FHKwiDGxSArpsjS/YBnW4FPlG2BQKEvzBxWJpAhDFycAjARHVaGvyJHC26u5poVyfFx
- wxnHg38Lb9ar7dx+/HPTWvO7UY2ymyYyMkz6NeHtm1aptmh2rQmePIvar5fLLXq2ckU8k/EzNi1
- /Ry4A
-X-Developer-Key: i=troy.mitchell@linux.spacemit.com; a=openpgp;
- fpr=3FE5535CF1B0E658E57DB59BAE1C2FBEA7DB42E1
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpgz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
-X-QQ-XMAILINFO: N+U/QWJ6RP+kQ836Kwwm3AcWBTOGOGO97xDCcr9fzZ9n080CwsqN/XxU
-	h6SMekBpdheDbOXL1G0UE4wD11kKyIDE1dYWTjbbehMLM8i+nw0qh2vGyVUiNJc4Q06POuT
-	ueUykx24wjjVZ1jFwZKdpeQdlXbaO8SHJHn6LhjMES0wFvE6MCIQhcw2x3cLUkR4ipZ0o2w
-	OT+nnaTl2MkhmUVbFLwgVODQXdyPq36T1xEanovRk64fqBKnV2nTUg9xGCQXLXiikEz2ypE
-	DvbdrFKJ0vdIMzIodq+hFoMVB4LYz6EuadmDOqUd0LeF4FBIpSSI+c0o72+lg9iOH9Pr8d+
-	naQ/YFlB/L0YNYpSGrnyppp5jkp+7ilOjicA+NwhCKbrIeRMRrctXn+eQzKFLCxWV3lM0s6
-	nxprzwxDRm7veAYuSwoic6j15WNSMEO/3dLufjHXIcNndSwMmnp7qTSU/O+2Ok1DuNcdDyg
-	XgHIlP676FpYvvOTwPyCnW44KLcMPlr+tSVoazK6XLP/dqBWtXb6O3xuV1uNS7J+gPmddyj
-	dL2Cmen7/EytKqiMeeg2hYgZbkE6N8KxlDEiYEwtkDEEAePi6n2DnA6MwqypywTQ73KShT/
-	rWxB/t2XVqebIGdC55hihYblsQ6+ZFHD0SzZOWfCKIeYhRNfL30n3ZPq4o9PxV8J2MUx4Bw
-	LCVCmQqgTLrwsDgfm0pkXB7bXeyIhws1eQ5+195kvYz002dTvSeTzt9kwVhwG6lMPTmzRqx
-	+oOgYTfXa9wO6FJWdTJqc92HZEDoFS26owdlCf/UQKcm5zT8sWY2NwQgZxg21oYuvQeCRzd
-	NsPmvDwc1RCy9rFUm2A0EGcsWK0B5hnHpuvOVpypPZIDXHSGvmBYZoGkIYzaiJYgtqXvPtA
-	PX4ALQpxLV8Bg/+v+ioOMKWhvAOd2ctgH1ET9AQ23907h7W7ZOYWwvX4oLKFk4iUKeecVtv
-	2SJJLDspXV1xgMAow2sOwKy03U2HFxD+XezDZexnmZAaGKe8PRM+RcZghWbsbyHIoei8s49
-	HBmkw1DEeFw+gVnxYc/kgwaFYcnpLXZo63+tin4ZuT+D4CpXXoRhsEtQQjXA6YMByQTv/py
-	D1ytnYIWSNdKxQM/W5m097LL+aiSyzkLw==
-X-QQ-XMRINFO: MPJ6Tf5t3I/ylTmHUqvI8+Wpn+Gzalws3A==
-X-QQ-RECHKSPAM: 0
+
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
+
+Pre-existing issues:
+- [High] This problem wasn't introduced by this patch, but `ccu_plla_init()=
+` and `ccu_pll_init()` unconditionally disable the PLL without re-enabling =
+it if the bootloader-configured hardware state is not found in the rate tab=
+le. If this PLL feeds a critical component (e.g., CPU C2/C3 cores via PLL5/=
+PLL8), disabling it during clock registration will instantly lock up the sy=
+stem.
+--
+
+commit 6e193fb72f81d59157c0ebe259d1101a840915f0
+Author: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+
+clk: spacemit: k3: add 1.8 GHz PLL5 and PLL8 rates
 
 K3 boot firmware configures the C2 and C3 CPU clock domains at
 1.8 GHz. PLL5 feeds C2 and PLL8 feeds C3, but their rate tables
 currently contain only the 2 GHz overclocking operating point.
 
-Add the nominal 1.8 GHz configuration as the first entry in both
-tables. This lets determine_rate() and set_rate() select the firmware
-operating point while retaining 2 GHz as a supported overclocking rate.
+> diff --git a/drivers/clk/spacemit/ccu-k3.c b/drivers/clk/spacemit/ccu-k3.c
+> index 92b930d5ff305..1796236d8dc55 100644
+> --- a/drivers/clk/spacemit/ccu-k3.c
+> +++ b/drivers/clk/spacemit/ccu-k3.c
+> @@ -38,6 +38,7 @@ static const struct ccu_pll_rate_tbl pll4_rate_tbl[] =
+=3D {
+>  };
+> =20
+>  static const struct ccu_pll_rate_tbl pll5_rate_tbl[] =3D {
+> +	CCU_PLLA_RATE(1800000000UL, 0x0b4b0000, 0x00000000, 0xa0458585),
 
-Reviewed-by: Aurelien Jarno <aurelien@aurel32.net>
-Tested-by: Aurelien Jarno <aurelien@aurel32.net>
-Cc: stable@vger.kernel.org # 7.0+
-Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
----
-The related U-Boot change is available at:
-https://github.com/spacemit-com/uboot-2022.10/commit/fb95cf3d848b771c61b5a1b3e5cbbee223faf352
----
-Changes in v3:
-- Mark the change for stable kernels starting with v7.0.
-- Add Aurelien Jarno's Reviewed-by and Tested-by trailers.
-- Rebase onto v7.3-rc1.
-- Link to v2: https://patch.msgid.link/20260810-k3-pll5-pll8-1800mhz-v2-1-aabff510a797@linux.spacemit.com
+[Severity: High]
+This isn't a bug introduced by this patch, but ccu_plla_init() and
+ccu_pll_init() unconditionally disable the PLL without re-enabling it if the
+bootloader-configured hardware state is not found in the rate table.
 
-Changes in v2:
-- Drop "clk: spacemit: re-enable PLLs after init"; the PLL init issue
-  will be handled in a separate series.
-- Send the K3 PLL5 and PLL8 1.8 GHz rate-table update as a standalone
-  patch.
-- Clarify that 1.8 GHz is nominal and 2 GHz is an overclocking rate.
-- Link to v1: https://patch.msgid.link/20260804-k3-pll5-pll8-1800mhz-v1-0-a3a75866ce32@linux.spacemit.com
+If the bootloader configures a clock rate that is not present in the driver=
+'s
+rate table, the clock initialization callback will disable it abruptly:
 
-To: Stephen Boyd <sboyd@kernel.org>
-To: Brian Masney <bmasney+clk@redhat.com>
-To: Jerome Brunet <jbrunet+clk@baylibre.com>
-To: Yixun Lan <dlan@kernel.org>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-riscv@lists.infradead.org
-Cc: spacemit@lists.linux.dev
-Cc: linux-kernel@vger.kernel.org
----
- drivers/clk/spacemit/ccu-k3.c | 2 ++
- 1 file changed, 2 insertions(+)
+drivers/clk/spacemit/ccu_pll.c:ccu_plla_init() {
+    ...
+	if (ccu_plla_lookup_matched_entry(pll))
+		return 0;
 
-diff --git a/drivers/clk/spacemit/ccu-k3.c b/drivers/clk/spacemit/ccu-k3.c
-index 92b930d5ff30..1796236d8dc5 100644
---- a/drivers/clk/spacemit/ccu-k3.c
-+++ b/drivers/clk/spacemit/ccu-k3.c
-@@ -38,6 +38,7 @@ static const struct ccu_pll_rate_tbl pll4_rate_tbl[] = {
- };
- 
- static const struct ccu_pll_rate_tbl pll5_rate_tbl[] = {
-+	CCU_PLLA_RATE(1800000000UL, 0x0b4b0000, 0x00000000, 0xa0458585),
- 	CCU_PLLA_RATE(2000000000UL, 0x0b292aaa, 0x0000ab00, 0xa0558686),
- };
- 
-@@ -50,6 +51,7 @@ static const struct ccu_pll_rate_tbl pll7_rate_tbl[] = {
- };
- 
- static const struct ccu_pll_rate_tbl pll8_rate_tbl[] = {
-+	CCU_PLLA_RATE(1800000000UL, 0x0b4b0000, 0x00000000, 0xa0458585),
- 	CCU_PLLA_RATE(2000000000UL, 0x0b292aaa, 0x0000ab00, 0xa0558686),
- };
- 
+	ccu_plla_disable(hw);
+	ccu_plla_update_param(pll, &pll->config.rate_tbl[0]);
 
----
-base-commit: cee9395acd8043be0644b25c34bfa86623f2b935
-change-id: 20260802-k3-pll5-pll8-1800mhz-c81875a0a944
+	return 0;
+}
 
-Best regards,
---  
-Troy Mitchell <troy.mitchell@linux.spacemit.com>
+The same pattern occurs in ccu_pll_init():
 
+drivers/clk/spacemit/ccu_pll.c:ccu_pll_init() {
+    ...
+	if (ccu_pll_lookup_matched_entry(pll))
+		return 0;
+
+	ccu_pll_disable(hw);
+	ccu_pll_update_param(pll, &pll->config.rate_tbl[0]);
+
+	return 0;
+}
+
+Since these PLLs (such as PLL5 and PLL8) feed vital components like the CPU
+C2/C3 cores, disabling them during clock registration instantly locks up the
+system.
+
+Can this be addressed to prevent a system hang if a custom firmware sets an
+unlisted clock rate?
+
+While the patch notes mention leaving the PLL init regression for a separate
+series, does it make sense to fix the structural problem before adding new
+rates?
+
+>  	CCU_PLLA_RATE(2000000000UL, 0x0b292aaa, 0x0000ab00, 0xa0558686),
+>  };
+> =20
+
+[ ... ]
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260831-k3-pll5-pl=
+l8-1800mhz-v3-1-530ed0978615@linux.spacemit.com?part=3D1
