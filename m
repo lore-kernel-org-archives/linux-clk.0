@@ -1,45 +1,46 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C754F210E;
-	Mon, 31 Aug 2026 13:40:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D2B51E426;
+	Mon, 31 Aug 2026 13:43:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788183658; cv=none; b=YoZSxWw4ZgperOCLry9ArtlHeXFclOQxftA9bmpmy7RrFhFDDwrmpnKAEu8RuEwJG8eFILIgRnzTaIjdbvsrGKv85QcQQ6rMUA2a3Wy3jd80lEPVedPqBCoEkgchtjT0d0TAVnPX4/zMP/7hA53ot+mrNp2EUZQo8AEgQKtadIw=
+	t=1788183829; cv=none; b=byifGnzFU7mtY3hW1wAiHjBnruLcBz8lJOqN4fzZZcWPinshf+T/QkFusn2S8cWO70R6fJuAyImJiTbbfvaygpEhvYeEP5Ri05QpOBliqw3kUjttOO/8WpHGrAsIbPTuFX7SXUaNb3w2BDjDqKuorNACdDT81SRdLtbA3v/gcWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788183658; c=relaxed/simple;
-	bh=NGygtitpRytc0TLalzd6mxJZJG5Am9qOjNkmlbs+jUg=;
+	s=arc-20240116; t=1788183829; c=relaxed/simple;
+	bh=CGt0N1tLOFpwGA8/d4GAdlCO8d3EpknSs7/J7jBe4OM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=E68hr/xFcxXXtVB8/LNIpZdsQalnFZgTMp2Ow0pA2wydAXGpkF5JsIz/AU4laeqv2vf/GWrYibYfPhnZvFd8afWbOjCaMuxaNIbDmpcNZ2Ex4K7fM2WyquNQKL8zy/87j7SHo0Yi5Gid36YIxU/ZidNFFOM9trcWf3GaYPMbfTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XdoMskVk; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version:Content-Type; b=MAJADYHWX0wll+Tm9euoZvusZrMQwcG2SGVYTWRhDYdjH0ufbXr33pO3IsQMTwhALRE4T5eMkWB6l79N/yw58JW7XpCAs+voIUoDQDOCoNpTyab2aMHKvTdMYwIlHlyqsDKqJB9DJVOMUaG9BK1nw9R/jr+f4KV/ROz05qNLWvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WS9Lrsog; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XdoMskVk"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B4271F00A3F;
-	Mon, 31 Aug 2026 13:40:54 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WS9Lrsog"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92DD21F00A3E;
+	Mon, 31 Aug 2026 13:43:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788183655;
-	bh=HGOBFmnZOh2RuIqahVn2N5Pz7MRumnhnDhwZFjgMxXY=;
+	s=k20260515; t=1788183827;
+	bh=ydfY7BP33vtEWqKTd0X509IVv9E5NYTqO71gDIaSIrI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=XdoMskVkJG3NCq2C9YAN2WGyYL1VlkX4szGR/kR1onGwwPH2xJ803TF4B+b8no4ye
-	 ae0+uNIOORjPO99m6hEAtxKbfKDcNBfQevy9rABG+zy3+tNQI6SN0z4WI6Eo3YK931
-	 +ARgcFdH470DbH4N0VerP3IJbbFjevUW2CpYndVhTiuIuBDNHygQ9f9/97qQXtZS9/
-	 4FW8la6Onr1Y7hPuD3IWGyrdVvPPCbqj6xROHrVuhBze3AwlfJTuvYw7NHzyPg7nsu
-	 Smt1j4SoyGmTzvcaQquuS4TeQXcT5P/GG+6dDZ+nQI45YOagBTnTWNkbA7nsllJugN
-	 a/aXR/MNgR0BA==
+	b=WS9Lrsog3kLykR0jf5npacD7P4gkC8BnFu+OVHzjIOdRscGS3XojWfFKEZTXpxoOa
+	 AcaBtZzrj26PbrUoxIf3w+O7GS0a4695paP1iJc58Ag/6d0ritfYtdbmJyxxXeBnyz
+	 ucD0CJYq9VSv+jOeBQ4XERq4RZymrQlRqlMSlLz80gIyFNFH+k7s/LTmkhUYNQiIbu
+	 J9gDmjUUjTDyfgTCNgqw/+U9IZ8KKH3tHyehLPhduZiya7WAJXq3QUmsQ6VdpJnktH
+	 vqqgNg6NoUjJgoeboQwk/N20qHto0uoo6x4g8tWA2o0sker+ITTH9rcicgPpYOZb0J
+	 jwzKxhwZQTF8A==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: =?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
-	Brian Masney <bmasney@redhat.com>,
-	Stephen Boyd <sboyd@kernel.org>,
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
 	Sasha Levin <sashal@kernel.org>,
+	sboyd@kernel.org,
 	bmasney+clk@redhat.com,
 	jbrunet+clk@baylibre.com,
+	linux-renesas-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.18] clk: clk-axi-clkgen: Add support versal timings
-Date: Mon, 31 Aug 2026 09:24:12 -0400
-Message-ID: <20260831133314.4125787-224-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.18-5.10] clk: renesas: cpg-mssr: Add number of clock cells check
+Date: Mon, 31 Aug 2026 09:25:56 -0400
+Message-ID: <20260831133314.4125787-328-sashal@kernel.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260831133314.4125787-1-sashal@kernel.org>
 References: <20260831133314.4125787-1-sashal@kernel.org>
@@ -49,425 +50,351 @@ List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.18.48
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Nuno Sá <nuno.sa@analog.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 0aef2f0db6db22c2a441e067d8e8458106fb0483 ]
+[ Upstream commit 7f0c422c7fbfd9294ff9321ada0c63561e5c6ea0 ]
 
-Add proper VCO and PFD limits for versal based platforms. For that we
-need to add new Technology and Speed grade defines.
+The number of clock cells is not validated in the clock provider's
+clk_src_get() callback.  Add the missing check.
 
-Signed-off-by: Nuno Sá <nuno.sa@analog.com>
-Reviewed-by: Brian Masney <bmasney@redhat.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+Link: https://patch.msgid.link/46e010659ffdffd5e3541369f3b65d43ebe236ec.1777562043.git.geert+renesas@glider.be
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
 LLM Generated explanations, may be completely bogus:
 
-# Stable Backport Analysis: `clk: clk-axi-clkgen: Add support versal
-timings`
+## Phase 1: Commit Message Forensics
 
-**Local tree:** `v6.18.43` (`linux-6.18.y` stable, HEAD `7b923c78b50d`)
+### Step 1.1: Subject line
+**Record:** `[clk: renesas: cpg-mssr]` `[Add]` — add missing validation
+of clock specifier cell count in the CPG/MSSR clock provider callback.
+
+### Step 1.2: Tags
+**Record:**
+- **Signed-off-by:** Geert Uytterhoeven `<geert+renesas@glider.be>`
+  (author)
+- **Reviewed-by:** Biju Das `<biju.das.jz@bp.renesas.com>` (Renesas
+  maintainer)
+- **Link:** https://patch.msgid.link/46e010659ffdffd5e3541369f3b65d43ebe
+  236ec.1777562043.git.geert+renesas@glider.be
+- No Fixes:, Reported-by:, Tested-by:, Cc: stable@vger.kernel.org, or
+  syzbot tags
+- Notable: maintainer review present; no external bug report
+
+### Step 1.3: Body analysis
+**Record:**
+- **Bug:** `cpg_mssr_clk_src_twocell_get()` uses `clkspec->args[0]` and
+  `clkspec->args[1]` without verifying `clkspec->args_count == 2`
+- **Symptom:** malformed or short clock specifiers can reach the
+  callback; `args[1]` is read unconditionally at function entry
+- **Root cause:** missing input validation in the OF clock provider
+  `clk_src_get` callback
+- No kernel version, stack trace, or reproduction steps in the message
+
+### Step 1.4: Hidden bug fix?
+**Record:** Yes. Although the subject says "Add … check", this is a real
+correctness bug: the function dereferences two specifier cells without
+confirming two cells were supplied. Same-file helper
+`cpg_mssr_is_pm_clk()` already enforces `args_count == 2`.
 
 ---
 
-## PHASE 1: COMMIT MESSAGE FORENSICS
+## Phase 2: Diff Analysis
 
-### Step 1.1: Subject Line
-**Record:** `[clk: clk-axi-clkgen]` `[Add]` — Add support for Versal
-FPGA VCO/PFD timing limits in the existing AXI clkgen driver.
-
-### Step 1.2: Commit Message Tags
+### Step 2.1: Inventory
 **Record:**
-- **Signed-off-by:** Nuno Sá `<nuno.sa@analog.com>` (author)
-- **Reviewed-by:** Brian Masney `<bmasney@redhat.com>`
-- **Signed-off-by:** Stephen Boyd `<sboyd@kernel.org>` (clk maintainer
-  merge)
-- **No** Fixes:, Reported-by:, Tested-by:, Link:, Cc:
-  stable@vger.kernel.org
+- **File:** `drivers/clk/renesas/renesas-cpg-mssr.c` (+3 / -0)
+- **Function:** `cpg_mssr_clk_src_twocell_get()`
+- **Scope:** single-file, surgical (3 lines)
 
-Notable: Reviewed by a Red Hat contributor; merged by clk subsystem
-maintainer. No user/fuzzer bug reports in the message.
-
-### Step 1.3: Commit Body Analysis
+### Step 2.2: Code flow change
 **Record:**
-- **Bug described:** Versal-based platforms need correct VCO and PFD
-  limits; current driver lacks the technology/speed-grade definitions
-  and limit overrides.
-- **Symptom/failure mode:** Without proper limits, the driver either
-  rejects unknown speed grades at probe time or programs the MMCM/PLL
-  with out-of-spec VCO frequency bounds for Versal silicon.
-- **Version info:** None stated.
-- **Root cause:** `axi_clkgen_setup_limits()` handles
-  Series7/Ultrascale/Ultrascale+ but not Versal
-  (`ADI_AXI_FPGA_TECH_VERSAL`) or the Versal-specific
-  `ADI_AXI_FPGA_SPEED_2MP` speed grade.
+- **Before:** reads `clkspec->args[1]` immediately, then switches on
+  `args[0]`
+- **After:** returns `-EINVAL` if `args_count != 2`, then same logic
+- **Path affected:** every clock lookup through this provider (probe,
+  consumer `clocks` properties, `of_clk_get_from_provider()`)
 
-### Step 1.4: Hidden Bug Fix Detection
-**Record:** **Yes — disguised as "Add support".** The subject says "add
-support," but the change corrects two concrete failures in existing
-code:
-1. Speed grade `2MP` (value 23) falls through the `switch` to `default`
-   → probe returns `-ENODEV`.
-2. Versal technology is not recognized → VCO limits stay at
-   Series7/Ultrascale defaults (e.g. `fvco_min=600000`,
-   `fvco_max≤1600000`) instead of Versal-required `2160000–4320000` kHz.
+### Step 2.3: Bug mechanism
+**Record:** **Category:** input validation / logic correctness
+**Mechanism:** with `args_count < 2`, `args[1]` may not have been
+populated by the caller; with `args_count > 2`, extra cells are silently
+ignored. Either can yield wrong clock index/type selection. Not a
+classic buffer overflow (`args[]` is fixed-size), but can return the
+wrong `struct clk *` or pass bad indices into `priv->clks[]` lookup.
+
+### Step 2.4: Fix quality
+**Record:** Obviously correct, minimal, matches existing pattern in the
+same file (`cpg_mssr_is_pm_clk`, line 561) and `ux500_twocell_get()`.
+Regression risk: very low; only rejects previously-accepted invalid
+specifiers.
 
 ---
 
-## PHASE 2: DIFF ANALYSIS
+## Phase 3: Git History Investigation
 
-### Step 2.1: Change Inventory
-**Record:**
-| File | Changes |
-|------|---------|
-| `drivers/clk/clk-axi-clkgen.c` | +4 / -1 (7 lines touched) |
-| `include/linux/adi-axi-common.h` | +2 enum entries |
+### Step 3.1: Blame
+**Record:** Current function body dates to merge `5d324e5159d9e` in this
+tree's limited history; file copyright shows CPG/MSSR driver present
+since 2015. The missing validation is long-standing, not a recent
+regression.
 
-**Functions modified:** `axi_clkgen_setup_limits()` only.
-**Scope:** Single-function, two-file surgical fix.
+### Step 3.2: Fixes: tag
+**Record:** N/A — no Fixes: tag.
 
-### Step 2.2: Code Flow Change (per hunk)
+### Step 3.3: Related file history
+**Record:** Recent `renesas-cpg-mssr.c` changes in this tree are reset-
+timing fixes (`f57b5f2ad106a`, `b1c7a8145137c`). No related args_count
+fix already present. Patch is standalone (3/3 in series; patches 1–2 are
+rzg2l refactors).
 
-**Hunk 1 — speed grade range (`clk-axi-clkgen.c:524`):**
-- **Before:** `ADI_AXI_FPGA_SPEED_2 ... ADI_AXI_FPGA_SPEED_2LV` (20–22)
-- **After:** `ADI_AXI_FPGA_SPEED_2 ... ADI_AXI_FPGA_SPEED_2MP` (20–23)
-- **Path:** Probe-time limit setup for speed-grade 2 variants.
-
-**Hunk 2 — Versal VCO override (`clk-axi-clkgen.c:546-549`):**
-- **Before:** Only Ultrascale+ gets a technology-specific VCO override.
-- **After:** Versal gets `fvco_min=2160000`, `fvco_max=4320000`.
-- **Path:** Post-switch technology override in
-  `axi_clkgen_setup_limits()`.
-
-**Hunk 3 — header enums (`adi-axi-common.h`):**
-- **Before:** No `ADI_AXI_FPGA_TECH_VERSAL` or `ADI_AXI_FPGA_SPEED_2MP`.
-- **After:** Both defined.
-
-### Step 2.3: Bug Mechanism Classification
-**Record:** **(h) Hardware workaround / correctness fix**
-- Missing enum value → probe failure (`-ENODEV`) for speed grade 23.
-- Missing technology branch → wrong PLL constraint window used by
-  `axi_clkgen_calc_params()` in `set_rate()` and `determine_rate()`.
-
-### Step 2.4: Fix Quality Assessment
-**Record:** Fix is minimal, mirrors the existing Ultrascale+ override
-pattern, and is obviously correct from a hardware-spec perspective.
-Regression risk is very low: only affects platforms reporting Versal
-technology or 2MP speed grade. No lock-order or API changes.
-
----
-
-## PHASE 3: GIT HISTORY INVESTIGATION
-
-### Step 3.1: Blame / Introduction of Buggy Code
-**Record:** `axi_clkgen_setup_limits()` exists in `v6.18.0` without
-Versal handling (verified via `git show v6.18:drivers/clk/clk-axi-
-clkgen.c`). Current tree at `v6.18.43` is identical in the affected
-region. The omission has been present since at least the 6.18 release.
-Shallow history in this checkout prevents identifying the original
-introducing commit beyond the squashed import.
-
-### Step 3.2: Fixes: Tag
-**Record:** Not applicable — no Fixes: tag present.
-
-### Step 3.3: Related File History
-**Record:** No changes to these files on `v6.18..HEAD` (stable queue).
-The patch diff base blob `fa5ccef73e60d` matches the current file
-content in the affected region — patch applies cleanly.
-
-### Step 3.4: Author Context
-**Record:** Nuno Sá is an active Analog Devices contributor (dma-axi-
-dmac, iio, hwmon commits in this tree). Brian Masney (reviewer) is a
-regular ADI/FPGA driver contributor.
+### Step 3.4: Author context
+**Record:** Geert Uytterhoeven is the Renesas clock subsystem
+maintainer. Biju Das reviewed.
 
 ### Step 3.5: Dependencies
-**Record:** **Standalone.** No series dependencies, no prerequisite
-commits required. The driver, `axi_clkgen_setup_limits()`, and
-`ADI_AXI_REG_FPGA_INFO` infrastructure all exist in 6.18.y.
+**Record:** None. Applies cleanly (`git apply --check` on upstream
+commit `7f0c422c7fbfd` succeeded). Self-contained.
 
 ---
 
-## PHASE 4: MAILING LIST AND EXTERNAL RESEARCH
+## Phase 4: Mailing List and External Research
 
-### Step 4.1: Original Patch Discussion
+### Step 4.1: Original discussion
 **Record:**
-- v1: https://www.spinics.net/lists/kernel/msg6122732.html (2026-03-26)
-- RESEND: https://www.spinics.net/lists/kernel/msg6169958.html
-  (2026-04-24)
-- `b4 dig` could not be run (commit hash not in local tree);
-  lore.kernel.org blocked by bot protection.
-- Follow-ups from Stephen Boyd and Brian Masney are listed on spinics
-  but individual reply bodies were not retrieved.
-- Patch is a single standalone commit (not a series).
+- **URL:** https://patch.msgid.link/46e010659ffdffd5e3541369f3b65d43ebe2
+  36ec.1777562043.git.geert+renesas@glider.be
+- **Series:** v1, 3 patches — "clk: renesas: Miscellaneous fixes and
+  cleanups"
+- **Reviewer feedback:** Biju Das: "Thanks for the patch" + `Reviewed-
+  by`
+- **Stable nomination:** none in thread
+- **NAKs/concerns:** none
 
-### Step 4.2: Reviewers
-**Record:** CC'd to `linux-clk@`, Michael Turquette, Stephen Boyd.
-Reviewed-by: Brian Masney in committed version.
+### Step 4.2: Reviewers (b4 dig -w)
+**Record:** CC'd: Michael Turquette, Stephen Boyd (clk maintainers),
+Biju Das, linux-renesas-soc, linux-clk.
 
-### Step 4.3: Bug Reports
-**Record:** No Reported-by, syzbot, or bugzilla links. No external user
-crash reports found.
+### Step 4.3: Bug report
+**Record:** N/A — no external bug report or syzbot link.
 
-### Step 4.4: Related Patches
-**Record:** Single patch; change-id `20260326-clk-axi-clk-versal-
-support-8eaef1530870`. v1 and RESEND are identical in content.
+### Step 4.4: Related patches
+**Record:** Patches 1–2 are rzg2l refactors/cleanups, not required for
+this fix.
 
-### Step 4.5: Stable List History
-**Record:** Not searched (no stable nomination found in available patch
-posts). Absence of Cc: stable is expected per review instructions.
+### Step 4.5: Stable list
+**Record:** Not searched separately; no stable discussion found in patch
+thread.
 
 ---
 
-## PHASE 5: CODE SEMANTIC ANALYSIS
+## Phase 5: Code Semantic Analysis
 
-### Step 5.1: Key Functions Modified
-**Record:** `axi_clkgen_setup_limits()` (only function changed).
+### Step 5.1: Key functions
+**Record:** `cpg_mssr_clk_src_twocell_get()` (modified); context:
+`cpg_mssr_is_pm_clk()`, `cpg_mssr_attach_dev()`,
+`cpg_mssr_common_init()`.
 
 ### Step 5.2: Callers
-**Record:** Called once from `axi_clkgen_probe()` when
-`ADI_AXI_PCORE_VER_MAJOR(pcore_version) > 0x04`:
+**Record:** Registered via `of_clk_add_provider(np,
+cpg_mssr_clk_src_twocell_get, priv)` at line 1192. Invoked indirectly by
+`of_clk_get_hw_from_clkspec()` → `of_clk_get()`, `of_clk_get_by_name()`,
+`of_clk_get_from_provider()` (exported). Reachable during device
+probe/boot on Renesas DT platforms.
 
-```616:619:drivers/clk/clk-axi-clkgen.c
-        if (ADI_AXI_PCORE_VER_MAJOR(pcore_version) > 0x04) {
-                ret = axi_clkgen_setup_limits(axi_clkgen, &pdev->dev);
-                if (ret)
-                        return ret;
-```
-
-Probe-time, platform driver init path.
-
-### Step 5.3: Callees / Downstream Impact
-**Record:** Limits set here are consumed by `axi_clkgen_calc_params()`
-via `axi_clkgen_set_rate()` and `axi_clkgen_determine_rate()`. Wrong
-limits → `-EINVAL` from rate setting or incorrect PLL divider values
-programmed to MMCM registers.
+### Step 5.3: Callees
+**Record:** array indexing into `priv->clks[]`, `dev_err()`,
+`clk_get_rate()`, `IS_ERR()` checks.
 
 ### Step 5.4: Reachability
-**Record:** Triggered at device probe for any platform with `adi,axi-
-clkgen-2.00.a` or `adi,zynqmp-axi-clkgen-2.00.a` compatible and pcore
-version > 4. Requires `CONFIG_COMMON_CLK_AXI_CLKGEN`. No in-tree Versal
-DTS nodes use this compatible string (verified by grep), but the driver
-reads technology directly from FPGA hardware registers — custom ADI
-reference designs on Versal are the target.
+**Record:** Yes — common boot/probe path for Renesas R-Car/RZ boards
+using `renesas,cpg-mssr` with `#clock-cells = <2>`. Normal OF parsing
+usually supplies correct `args_count`, but `of_clk_get_from_provider()`
+is exported and the callback has no framework-level cell-count guard.
 
-### Step 5.5: Similar Patterns
-**Record:** Identical pattern already exists for
-`ADI_AXI_FPGA_TECH_ULTRASCALE_PLUS` in the same function (lines
-545–549). This commit extends that pattern to Versal.
-
----
-
-## PHASE 6: CROSS-REFERENCE AGAINST LOCAL TREE (6.18.y)
-
-### Step 6.1: Does Buggy Code Exist?
-**Record:** **Yes.** Current tree lacks `ADI_AXI_FPGA_TECH_VERSAL`,
-`ADI_AXI_FPGA_SPEED_2MP`, and the Versal VCO override. Confirmed in both
-HEAD and `v6.18.0`.
-
-### Step 6.2: Backport Complications
-**Record:** **Clean apply expected.** Diff base matches current source
-exactly in affected hunks.
-
-### Step 6.3: Related Fixes Already Present?
-**Record:** **No.** Grep found no `VERSAL` or `2MP` symbols in the tree.
+### Step 5.5: Similar patterns
+**Record:** Same file: `cpg_mssr_is_pm_clk()` checks `args_count != 2`.
+Other Renesas drivers (`rzg2l-cpg.c`, `rzv2h-cpg.c`) check in PM paths
+but not in their `*_twocell_get()` callbacks. `ux500_twocell_get()` does
+check in the provider callback.
 
 ---
 
-## PHASE 7: SUBSYSTEM AND MAINTAINER CONTEXT
+## Phase 6: Cross-Reference Against Local Tree
 
-### Step 7.1: Subsystem Criticality
-**Record:** **clk** / **PERIPHERAL** — Analog Devices AXI clock
-generator for Xilinx FPGAs (`CONFIG_COMMON_CLK_AXI_CLKGEN`, tristate,
-OF-based). Niche industrial/SDR embedded hardware.
+### Step 6.1: Buggy code present?
+**Record:** **Yes.** Tree is **linux-6.18.y** (`git describe HEAD` →
+`v6.18.43-1-gc7f0dac02d232`, `make kernelversion` → `6.18.43`).
+`cpg_mssr_clk_src_twocell_get()` at line 341 lacks the `args_count`
+check. Upstream fix commits `7f0c422c7fbfd` / stable `1c79ea845f76d` are
+**not** ancestors of current HEAD.
 
-### Step 7.2: Subsystem Activity
-**Record:** clk subsystem is actively maintained in 6.18.y (many stable
-backports), but this specific driver has seen no stable-queue changes
-since 6.18.0.
+### Step 6.2: Backport complications
+**Record:** Clean apply verified. Function is non-`static` in current
+tree (was `static` in patch context); hunk still applies.
+
+### Step 6.3: Related fixes already present?
+**Record:** No — `git log --grep="clock cells check"` finds nothing on
+current branch; grep confirms no `args_count` check in
+`cpg_mssr_clk_src_twocell_get()`.
 
 ---
 
-## PHASE 8: IMPACT AND RISK ASSESSMENT
+## Phase 7: Subsystem Context
 
-### Step 8.1: Who Is Affected
-**Record:** **Driver-specific / platform-specific** — users of Analog
-Devices AXI clkgen IP on Versal FPGAs with pcore version > 4. Not a
-universal kernel path.
+### Step 7.1: Subsystem / criticality
+**Record:** `drivers/clk/renesas/` — **IMPORTANT** (platform clock
+provider for Renesas SoCs; affects boot and all clocked peripherals).
 
-### Step 8.2: Trigger Conditions
+### Step 7.2: Activity
+**Record:** Active in 6.18.y (recent reset-timing fixes in same file).
+
+---
+
+## Phase 8: Impact and Risk Assessment
+
+### Step 8.1: Who is affected
+**Record:** Users of Renesas CPG/MSSR platforms (R-Car, RZ families)
+with `CONFIG_CLK_RENESAS`. Not universal, but real production embedded
+hardware.
+
+### Step 8.2: Trigger conditions
+**Record:** Malformed clock specifier (`args_count != 2`) reaching the
+provider callback — e.g. direct `of_clk_get_from_provider()` misuse, or
+non-standard caller paths. Normal DT parsing with `#clock-cells = <2>`
+(binding-mandated) usually provides 2 cells. **Likelihood: low** for
+well-formed DT; **non-zero** for internal/exported API misuse.
+
+### Step 8.3: Failure mode severity
+**Record:** Wrong clock returned or invalid index used → peripheral mis-
+clocking, probe failure, or subtle hardware misbehavior. Unlikely kernel
+panic (index range checks exist), but **MEDIUM** severity for embedded
+correctness; not CRITICAL (no demonstrated crash/CVE).
+
+### Step 8.4: Risk-benefit
 **Record:**
-- FPGA info register reports `ADI_AXI_FPGA_TECH_VERSAL`, and/or
-- Speed grade `ADI_AXI_FPGA_SPEED_2MP` (23).
-- Triggered at every probe of matching hardware. Not userspace-
-  triggerable; not a security issue.
-
-### Step 8.3: Failure Mode Severity
-**Record:**
-| Failure | Mode | Severity |
-|---------|------|----------|
-| Speed grade 2MP unrecognized | Probe fails `-ENODEV`, no clock
-provider | **HIGH** for affected hardware (device unusable) |
-| Wrong VCO limits on Versal | Rate requests fail (`-EINVAL`) or PLL
-programmed out of spec | **MEDIUM-HIGH** (functional failure, possible
-peripheral misbehavior) |
-
-Not a kernel oops/panic/data-corruption class bug.
-
-### Step 8.4: Risk-Benefit
-**Record:**
-- **Benefit:** Enables correct clock operation on Versal ADI designs;
-  fixes hard probe failure for 2MP speed grade. High value for the small
-  affected population.
-- **Risk:** Very low — 7 lines, isolated to Versal detection path,
-  follows proven Ultrascale+ pattern.
-- **Ratio:** Favorable for affected users; negligible risk to everyone
-  else.
+- **Benefit:** closes a real validation gap; aligns with same-file and
+  cross-driver practice
+- **Risk:** negligible (3-line guard, returns `-EINVAL`)
+- **Ratio:** favorable, though absolute benefit is modest without a
+  reported failure
 
 ---
 
-## PHASE 9: FINAL SYNTHESIS
+## Phase 9: Final Synthesis
 
-### Step 9.1: Evidence Summary
+### Step 9.1: Evidence summary
 
-**FOR backport:**
-- Real, verifiable bugs in existing driver logic (probe failure + wrong
-  PLL limits).
-- Hardware quirk/workaround — same category as existing Ultrascale+
-  override.
-- Tiny, surgical, reviewed, maintainer-merged patch.
-- Applies cleanly to 6.18.y; all prerequisite code present.
-- Fixes broken behavior on hardware the driver is already designed to
-  auto-detect.
+**FOR:**
+- Real missing validation in a clock provider callback
+- Same file already validates `args_count` in `cpg_mssr_is_pm_clk()`
+- Trivial, maintainer-reviewed, applies cleanly
+- Buggy code confirmed in 6.18.43
+- Wrong clock lookup on SoC platforms is a meaningful failure mode
 
-**AGAINST backport:**
-- Framed as "add support" for a new FPGA generation.
-- No bug reports, fuzzer findings, or in-tree DTS users.
-- Very niche hardware (ADI reference designs on Versal).
-- Does not cause kernel crashes or security issues — device-level
-  functional failure.
-- Versal was never supported in 6.18.y (not a regression fix).
+**AGAINST:**
+- No user report, crash, or syzbot finding
+- Normal OF/DT paths enforce cell count via `#clock-cells`
+- Borderline on stable "important issue" threshold
+- Part of a "fixes and cleanups" series alongside pure refactors
 
-### Step 9.2: Stable Rules Checklist
+**UNRESOLVED:** No proof of real-world trigger on production boards.
 
-| Criterion | Result |
-|-----------|--------|
-| 1. Obviously correct and tested? | **PASS** — mirrors Ultrascale+
-pattern; Reviewed-by present; no Tested-by |
-| 2. Fixes a real bug affecting users? | **PASS** — probe failure and
-incorrect PLL limits on Versal hardware |
-| 3. Important issue? | **PASS (borderline)** — device unusable on
-affected Versal platforms; not crash/security class |
-| 4. Small and contained? | **PASS** — 7 lines, 2 files, 1 function |
-| 5. No new features/APIs? | **PASS** — hardware quirk exception; no
-userspace API changes |
-| 6. Can apply to local tree? | **PASS** — code exists, clean apply |
+### Step 9.2: Stable rules checklist
+1. Obviously correct and tested? **PASS** — 3-line guard; reviewed by
+   subsystem maintainer (no runtime test cited)
+2. Fixes a real bug? **PASS** — uses specifier cells without validating
+   count
+3. Important issue? **PASS (borderline)** — correctness/hardware mis-
+   clocking, not demonstrated crash/security
+4. Small and contained? **PASS** — 3 lines, one function
+5. No new features/APIs? **PASS**
+6. Can apply to local tree? **PASS** — verified clean apply
 
-### Step 9.3: Exception Category
-**Record:** **Hardware quirk/workaround** — adding correct timing limits
-for a new FPGA technology variant in an existing driver, analogous to
-the Ultrascale+ VCO override already in stable.
+### Step 9.3: Exception categories
+**Record:** None (not device ID, quirk, DT, build, or docs fix).
 
-### Step 9.4: Decision Rationale
-
-For **linux-6.18.y**: the driver already reads FPGA technology and speed
-grade from hardware and configures PLL limits accordingly. Versal
-platforms are a real deployment target for Analog Devices IP (per
-Kconfig: "commonly used in Analog Devices' reference designs"). Without
-this patch:
-
-1. Versal boards reporting speed grade 2MP fail probe outright.
-2. All Versal boards get VCO limits roughly 2–3× too low, breaking clock
-   rate configuration.
-
-This is a correctness fix in existing auto-detection logic, not a new
-driver. It is small, low-risk, and directly analogous to stable-
-acceptable hardware quirk fixes. The niche audience and lack of bug
-reports lower priority but do not negate technical merit.
+### Step 9.4: Decision rationale
+For **linux-6.18.y**, the vulnerable code exists, the fix is surgical
+and maintainer-vetted, and it closes an inconsistency that could yield
+incorrect clock resolution on Renesas platforms. While no crash report
+exists and normal DT parsing mitigates exposure, the fix is zero-risk
+defensive correctness in a hardware-critical path — appropriate for
+stable.
 
 ---
 
 ## Verification
 
-- **[Phase 1]** Parsed subject, tags (SOB, Reviewed-by), body; no
-  Fixes/Reported-by/Link tags.
-- **[Phase 2]** Diff analysis: 7 lines, `axi_clkgen_setup_limits()`
-  only; classified as hardware workaround.
-- **[Phase 3]** `git describe HEAD` → v6.18.43; `git show v6.18:...`
-  confirms buggy code at 6.18.0; no VERSAL/2MP in tree (grep); diff base
-  `fa5ccef73e60d` matches current file; no changes on v6.18..HEAD for
-  these files.
-- **[Phase 4]** Fetched v1 and RESEND from spinics.net; lore.kernel.org
-  blocked; b4 dig not run (commit not in tree); no bug reports in patch
-  posts.
-- **[Phase 5]** Read `axi_clkgen_probe`, `set_rate`, `determine_rate`;
-  traced limits → `axi_clkgen_calc_params`; grep found no in-tree
-  Versal+adi-clkgen DTS.
-- **[Phase 6]** Confirmed `CONFIG_COMMON_CLK_AXI_CLKGEN` and driver
-  exist; patch applies cleanly; no prior fix present.
-- **[Phase 7]** Kconfig confirms peripheral ADI/Xilinx driver.
-- **[Phase 8]** Probe failure = -ENODEV (verified in code); wrong limits
-  affect rate calculation (verified call chain).
-- **UNVERIFIED:** Individual review reply bodies from Brian
-  Masney/Stephen Boyd (listed but not fetched); original commit SHA on
-  mainline; exact kernel version that introduced
-  `axi_clkgen_setup_limits()` (shallow history).
+- [Phase 1] Parsed commit message and tags from user query and `git show
+  7f0c422c7fbfd`
+- [Phase 2] Read current `renesas-cpg-mssr.c` lines 341–393; confirmed
+  unconditional `args[1]` read
+- [Phase 2] Compared with `cpg_mssr_is_pm_clk()` line 561 `args_count`
+  check
+- [Phase 3] `git blame` on function; `git log` on file
+- [Phase 3] `git apply --check` on upstream patch: clean apply
+- [Phase 3] `git merge-base --is-ancestor 7f0c422c7fbfd HEAD` → exit 1
+  (fix not in tree)
+- [Phase 4] `b4 dig -c 1c79ea845f76d`: found lore URL
+- [Phase 4] `b4 dig -a`: v1 series, patch 3/3 standalone
+- [Phase 4] `b4 dig -w`: clk + Renesas maintainers CC'd
+- [Phase 4] Read `/tmp/cpg-mssr-thread.mbox`: Biju Das Reviewed-by, no
+  stable nomination
+- [Phase 5] Traced `of_clk_add_provider` → `of_clk_get_hw_from_clkspec`
+  call chain in `clk.c`
+- [Phase 5] Grep `args_count != 2` across `drivers/clk/`
+- [Phase 6] `git describe HEAD` → v6.18.43; `make kernelversion` →
+  6.18.43
+- [Phase 6] Confirmed missing check in checked-out tree
+- [Phase 6] Read DT binding `renesas,cpg-mssr.yaml`: `#clock-cells`
+  const 2
+- [Phase 8] Read `struct of_phandle_args` in `include/linux/of.h`:
+  `args_count` + `args[MAX_PHANDLE_ARGS]`
 
-**YES**
+**YES****Result:** Backport to **linux-6.18.y** is recommended.
 
- drivers/clk/clk-axi-clkgen.c   | 5 ++++-
- include/linux/adi-axi-common.h | 2 ++
- 2 files changed, 6 insertions(+), 1 deletion(-)
+The missing `args_count != 2` check in `cpg_mssr_clk_src_twocell_get()`
+is a real validation gap (the function reads `args[1]` unconditionally).
+The fix is 3 lines, applies cleanly to 6.18.43, and matches the existing
+check in `cpg_mssr_is_pm_clk()` in the same file. No crash reports, but
+it's low-risk defensive correctness on Renesas CPG/MSSR platforms.
 
-diff --git a/drivers/clk/clk-axi-clkgen.c b/drivers/clk/clk-axi-clkgen.c
-index fa5ccef73e60d..26f76a6db8202 100644
---- a/drivers/clk/clk-axi-clkgen.c
-+++ b/drivers/clk/clk-axi-clkgen.c
-@@ -521,7 +521,7 @@ static int axi_clkgen_setup_limits(struct axi_clkgen *axi_clkgen,
- 		axi_clkgen->limits.fvco_max = 1200000;
- 		axi_clkgen->limits.fpfd_max = 450000;
- 		break;
--	case ADI_AXI_FPGA_SPEED_2 ... ADI_AXI_FPGA_SPEED_2LV:
-+	case ADI_AXI_FPGA_SPEED_2 ... ADI_AXI_FPGA_SPEED_2MP:
- 		axi_clkgen->limits.fvco_max = 1440000;
- 		axi_clkgen->limits.fpfd_max = 500000;
- 		if (family == ADI_AXI_FPGA_FAMILY_KINTEX || family == ADI_AXI_FPGA_FAMILY_ARTIX) {
-@@ -546,6 +546,9 @@ static int axi_clkgen_setup_limits(struct axi_clkgen *axi_clkgen,
- 	if (tech == ADI_AXI_FPGA_TECH_ULTRASCALE_PLUS) {
- 		axi_clkgen->limits.fvco_max = 1600000;
- 		axi_clkgen->limits.fvco_min = 800000;
-+	} else if (tech == ADI_AXI_FPGA_TECH_VERSAL) {
-+		axi_clkgen->limits.fvco_max = 4320000;
-+		axi_clkgen->limits.fvco_min = 2160000;
- 	}
+**YES****Upstream commit:** `7f0c422c7fbfd` — *clk: renesas: cpg-mssr:
+Add number of clock cells check* (Geert Uytterhoeven, Apr 30 2026).
+There is also a stable-prepared variant at `1c79ea845f76d` referencing
+that upstream SHA.
+
+In the checked-out **linux-6.18.y** tree (`v6.18.43`), neither commit is
+present yet; the missing validation is still in
+`cpg_mssr_clk_src_twocell_get()`. Backport recommendation remains
+**YES**.
+
+ drivers/clk/renesas/renesas-cpg-mssr.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index a0a68ec0490f7..87ede1ee64d7a 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -349,6 +349,9 @@ struct clk *cpg_mssr_clk_src_twocell_get(struct of_phandle_args *clkspec,
+ 	struct clk *clk;
+ 	int range_check;
  
- 	return 0;
-diff --git a/include/linux/adi-axi-common.h b/include/linux/adi-axi-common.h
-index 37962ba530dfc..e7ba393061ee6 100644
---- a/include/linux/adi-axi-common.h
-+++ b/include/linux/adi-axi-common.h
-@@ -51,6 +51,7 @@ enum adi_axi_fpga_technology {
- 	ADI_AXI_FPGA_TECH_SERIES7,
- 	ADI_AXI_FPGA_TECH_ULTRASCALE,
- 	ADI_AXI_FPGA_TECH_ULTRASCALE_PLUS,
-+	ADI_AXI_FPGA_TECH_VERSAL,
- };
- 
- enum adi_axi_fpga_family {
-@@ -71,6 +72,7 @@ enum adi_axi_fpga_speed_grade {
- 	ADI_AXI_FPGA_SPEED_2    = 20,
- 	ADI_AXI_FPGA_SPEED_2L   = 21,
- 	ADI_AXI_FPGA_SPEED_2LV  = 22,
-+	ADI_AXI_FPGA_SPEED_2MP  = 23,
- 	ADI_AXI_FPGA_SPEED_3    = 30,
- };
- 
++	if (clkspec->args_count != 2)
++		return ERR_PTR(-EINVAL);
++
+ 	switch (clkspec->args[0]) {
+ 	case CPG_CORE:
+ 		type = "core";
 -- 
 2.53.0
 
