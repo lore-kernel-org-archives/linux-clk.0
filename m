@@ -1,53 +1,45 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57DBD49502D;
-	Mon, 31 Aug 2026 17:54:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D7514968EE;
+	Mon, 31 Aug 2026 17:54:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788198859; cv=none; b=A1FTEt8TS1wpQ8au9OPM5EDzYdaI0kI5oOHot0YCFzKxmy06TPie/blsTyOQtSCyi8gzUZfV1QRZet/sBgpPvrGlGTNm2d0AOorCB8716WLjsd84jviwrs1z4zBytrIveOu386TwRqVLDb1x2f2PnelnI5ih8iBA1VNhrPUKlsE=
+	t=1788198862; cv=none; b=TjSdeuW790azqCqsntRd5pys9d0p6M91xexNpL20AgZ5POiGaMPu2RXnfqobnG6p2rdekfbAeWbRWeu5Z7VT5m/aOjITktEC6LYfk5PN53HcXD7smLjp6U9cD592kEnKtx+Z/ZY33HwJw1eB4qfeOlupGN9eHgG0mb63MZdHXc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788198859; c=relaxed/simple;
-	bh=D2XwsJwUWkH4ZsX70D5LEFPI8vRkCXM7yPBS3/nzISU=;
+	s=arc-20240116; t=1788198862; c=relaxed/simple;
+	bh=UBw8U4P1zzMBUxbXAbA5GnrUday+gMb0sML5kDFVsko=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cm/1A0IvC8fJ7EPLgvK5N1AFpXUwiXEiw2ofHVYURfRL5/IkW3RQVCtNOe2mD/DM/hP9sCrh9IFjcVMkTFtTTtqnxxBUwJedmpH0gJHAUS+6n0lpya9qcP+CPnAg8C2sgDH8KpDJ3yT9ugM+aUdlJ44JOfwqF0fvhKtS/AohweE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G61CwDEJ; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version:Content-Type; b=GiKreQ1xdvMRhvg9RuoIB7IrAVfwNGaX2gWfRMGgKH8W29jDjcUzk71ehqdT7Je3bS4ONTT0vMoHX/5EBknz5KLnAieYqCdSsH3avnj+YxdCLXLTHrBokr3Br9rpVyTI0jg+fIz15c3jFueZ+gM/zYSuwFT2Pw22P23OgSthEUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oPVHHNpD; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G61CwDEJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9B3A1F00ADB;
-	Mon, 31 Aug 2026 17:54:16 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oPVHHNpD"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79B3A1F00A3F;
+	Mon, 31 Aug 2026 17:54:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788198857;
-	bh=xzXeQ+KYmDl1STI9Wrb6xOHJ/Z+bbGwdO6kq02zCP7o=;
+	s=k20260515; t=1788198861;
+	bh=2N7Q2ZMDgn7jMiRiGogUoaXP6JblA9mljddMuVcH0lc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=G61CwDEJaBzlRY5E+CVaCXXK2uETcmu+MpwqWItdU9cH1wVdZL7ipBAXizuLePB1M
-	 AGUtUYWMoB7HFrC9nQecZ7zGj6EY2rcdYUTrPg3wqE/0bDVA+3efNYsLmBBoP/clhy
-	 kvwAyTbdHNGYeLppbVZcnlufCXX6SDpLVumaINEBG5up9NTUwigvLYONIKyskci5w/
-	 L7gRMCxqNPmgwsAS9DxefolCn7W169REU6zlHegP2rz+JqjqxX4WKotqjyx3KHI5BK
-	 ZcyEp9qViE0QEGk/y28iJ6rF25TRy28RZoLP4eC17fAOfFv1TMOtcbDs0mhkEM/rwT
-	 6IEkq/g7ctSOg==
+	b=oPVHHNpDE7P0PHqQcRk+cMQybdD35eeHZQHf2Oks7f3lp0bSsetHmWkIHhFwdrLFa
+	 68Zg/Qt6GL11LXnLsoFuJTu1x59kAJxGIBvxQdSARwntUvop8+9IaAvoh6QkKKSUZ2
+	 q7aWGyAWkKCYxo6EE1AksqztD3YeedFiJsB1hHdcqF7SMqyDrhbWzwNLjUgDQ1980I
+	 G5HBky5k8JWvHPvJHoUttnwjR+bYTefbaI/LV1fA1KD1zwACUxFJGSrKieZ0R3SiQV
+	 GWameGtsJYr4leX/4166wjIk9P4NzfRAPMtFxw7CwOHpD9jkHgWgb4Wy79BVwBWCb2
+	 y2kE3/9vuiWIA==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Stephen Boyd <sboyd@kernel.org>,
+To: Shawn Guo <shengchao.guo@oss.qualcomm.com>
+Cc: Stephen Boyd <sboyd@kernel.org>,
 	Brian Masney <bmasney+clk@redhat.com>,
 	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Taniya Das <taniya.das@oss.qualcomm.com>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Qiang Yu <qiang.yu@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Abel Vesa <abel.vesa@oss.qualcomm.com>
-Subject: Re: (subset) [PATCH v4 0/4] clk: qcom: Migrate x1e80100 TCSR to clk_ref helper
-Date: Mon, 31 Aug 2026 12:53:47 -0500
-Message-ID: <178819882975.1411250.14880639483367583448.b4-ty@kernel.org>
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: Sort Nord clock driver entries in Kconfig
+Date: Mon, 31 Aug 2026 12:53:50 -0500
+Message-ID: <178819882997.1411250.8262023626369697707.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260827-hamoa_tcsr_qref_0826-v4-0-663c9d30468d@oss.qualcomm.com>
-References: <20260827-hamoa_tcsr_qref_0826-v4-0-663c9d30468d@oss.qualcomm.com>
+In-Reply-To: <20260831134717.510383-1-shengchao.guo@oss.qualcomm.com>
+References: <20260831134717.510383-1-shengchao.guo@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -58,22 +50,17 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Thu, 27 Aug 2026 23:00:32 -0700, Qiang Yu wrote:
-> The QREF block on X1E80100 supplies reference clocks to PCIe/USB/UFS
-> PHYs and requires dedicated LDO supplies to operate. The digital
-> control interface for QREF (clkref_en registers) resides in TCSR on
-> X1E80100. This series migrates the x1e80100 TCSR driver to the common
-> clkref_en helper introduced for Glymur/Mahua, and wires up the
-> required regulator supplies.
+On Mon, 31 Aug 2026 21:47:17 +0800, Shawn Guo wrote:
+> The Nord clock driver entries in Kconfig were out of alphabetical order.
+> Reorder these symbols so Kconfig follows the same order as Makefile,
+> making it easier to locate and add entries consistently.
 > 
-> [...]
+> 
 
 Applied, thanks!
 
-[1/4] dt-bindings: clock: qcom: Move x1e80100 TCSR to own binding
-      commit: fcbd3151c9beffca044ea7a085d7e595ebf34f74
-[2/4] clk: qcom: tcsrcc-x1e80100: Migrate to clk_ref helper
-      commit: 011ed2a61f44b352bda71a82213f621bbfdb40f9
+[1/1] clk: qcom: Sort Nord clock driver entries in Kconfig
+      commit: c0f912e6a2088cd8aa356a47ce9325ec9b739686
 
 Best regards,
 -- 
