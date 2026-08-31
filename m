@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0C453909A9;
-	Mon, 31 Aug 2026 20:21:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E151438AC8D;
+	Mon, 31 Aug 2026 20:21:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788207700; cv=none; b=sXm6QU85vK7BmoVrHd4ctUMULtQfxo+T7/5OORtIoS/8LBrpS1KyzPjPrDb58IdwFYrJIuH95vvU9SbAVcJPA2iEaq7P5Sv6GyT6uog5Urlr/9PSXSnt/j67q4JhJhx2OPU7/CUsnaklLNsNNTM0jSILMP1GQ540/1xwD/YJEeg=
+	t=1788207702; cv=none; b=rVHwO6azlCy2M9mgaqSk88n5VCpfM9X+vcA4/zfZ0YQoRNIbh3C6lRc0i677k46iKn/C286c0BKlnYGOaXgWHg8pmdtxTT5VPGGkq+9U3g2doXC2WSKCvCc1PUrV31IbQkkt5rTrS11LdiQ2sNUvg3Jv66SwF18bQ/svaUmjQhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788207700; c=relaxed/simple;
-	bh=cBWk4otnye8lseCxjHqxNulN/gktNmCfLgu7wOmhal0=;
+	s=arc-20240116; t=1788207702; c=relaxed/simple;
+	bh=+SIHKattbaBzmkjM7vuLFCcDiwu3VzkgW5SMQhGNs0U=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FxXeak/Zb5738fwvtC6PXTUO5WTFQ2pVzEN8wwtFH/HwXqVTOyzS/7A63tR6fJr48M7qVQupBjDhVp/hpjK/mdEFTDQzOnvxERpkh8T7MgoGeXJ6xUH0W6kotLhW1T0sgwNUbZdhzXDslTnX4H7oJJoUkpUsNY4SAu7l3VZ3uDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iN0lSxCi; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version:Content-Type; b=O71s9YWDEeogx92XX27lTbJZNLHvZT/+GcXfAn8ljAx++GzoNLHps9WCviOjvpIyCga/Sj0hXiH0XNlh2UsUTAjFOPnzXGJeKGAPAiL716tu+WutjCHpqy266S44WOzL/4Pck46wWfbNmA0+INyevH2I13lSD26d3j5kVWJWiW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SkUEVi6m; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iN0lSxCi"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D4071F01559;
-	Mon, 31 Aug 2026 20:21:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SkUEVi6m"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1B691F00A3D;
+	Mon, 31 Aug 2026 20:21:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788207699;
-	bh=gofPZ54GoW5FgyQjBSXkv70fyxiRppdlIONHv3An1ZM=;
+	s=k20260515; t=1788207700;
+	bh=WQME0PTl19syN+oMA8B3zFqQ4lamzKCEe2v/b6baZKQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=iN0lSxCiP2wX9zulOEia0nLG+j3UQEm5TVlJQYJZtoTeDhY9odhgL0j9UQ2iYdFdk
-	 qqS+Ob0Oqr10AULVioQ4KytCv3pX7TXl3UTs9aKU+fuWRkHM6oDtraCGDk1i6hcnJu
-	 s5ZDb0nA6siZv0MVlbof1SZ2j5mb51qE1zP+3vI6o+YPeRMDFRlRp31lWt3kJ5PSb0
-	 3YahlqrgzjJKLr05lti27tEtiWNDF6iT4t986sNhQeVnVtY7B9PLPVYEYmN5/Bpn2c
-	 IuJhLEcSON8+Mq9BRLlm6XVTBaUHLlaePK+XYm9ODC9gy1k4kb6SG71qPI/8FuS+mW
-	 QH+M4T//ilwuA==
+	b=SkUEVi6mfj99ZjoI6TweQhMYs3SpxVgqgj7Jxy+10bZxTO6ZZv4AOoXNFlQKOCsMt
+	 tZ4lGDvCGNbEkZ/Gl0pl3/A3P0tVjlAI9qcc1W0SGFwDpD3rcOILmzNixjXaVFN9GW
+	 +xU+YVBlItlUfI7cXFnvpxLzCd3DlpgUy8VawC7svFcGJlQGbWRLs4Vu3HMZdQ4Dyt
+	 KfPego9O4epvZLp8cRVEHYVa6xSfOoqKt7uKyBZz2KP19h+LpwhidVkN40ojVTUEbC
+	 uR9uOPwaXHI45xeYdyD1mIzucmqjlqYbmw5qScBvoRBBDz2+YgKs/h3OQoSlo9B3cj
+	 pee8egaLyjKUQ==
 From: Bjorn Andersson <andersson@kernel.org>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
@@ -33,20 +33,19 @@ To: Michael Turquette <mturquette@baylibre.com>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Imran Shaik <imran.shaik@oss.qualcomm.com>
-Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+	Dongfang Zhao <dongfang.zhao@oss.qualcomm.com>,
 	Taniya Das <taniya.das@oss.qualcomm.com>,
-	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
-	linux-arm-msm@vger.kernel.org,
+	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: (subset) [PATCH 0/2] clk: qcom: gcc-qcs8300: Add support for TSCSS clocks
-Date: Mon, 31 Aug 2026 15:21:17 -0500
-Message-ID: <178820768664.1699313.10338261708273261456.b4-ty@kernel.org>
+Subject: Re: (subset) [PATCH 0/2] clk: qcom: Add Graphics clock controllers support for Qualcomm Maili SoC
+Date: Mon, 31 Aug 2026 15:21:18 -0500
+Message-ID: <178820768661.1699313.5103382541381473016.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260805-qcs8300-tsc-clks-v1-0-e7a5101ed479@oss.qualcomm.com>
-References: <20260805-qcs8300-tsc-clks-v1-0-e7a5101ed479@oss.qualcomm.com>
+In-Reply-To: <20260801-maili_gpucc-v1-0-9d8c37bded69@oss.qualcomm.com>
+References: <20260801-maili_gpucc-v1-0-9d8c37bded69@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -57,17 +56,22 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Wed, 05 Aug 2026 22:17:12 +0530, Imran Shaik wrote:
-> This series adds support for the GCC TSCSS clocks required for the
-> Timestamp Counter Subsystem (TSCSS) hardware functionality on Qualcomm
-> QCS8300 SoC.
+On Sat, 01 Aug 2026 00:42:44 +0530, Jagadeesh Kona wrote:
+> This series adds support for the Graphics clock controllers on the
+> upcoming Qualcomm Maili SoC.
+> 
+> This series is dependent on Hawi GPUCC series:
+> https://lore.kernel.org/all/20260730-gpucc-hawi-v2-0-7bf618ab8a34@oss.qualcomm.com/
 > 
 > 
+> [...]
 
 Applied, thanks!
 
-[2/2] clk: qcom: gcc-qcs8300: Add support for TSCSS clocks and resets
-      commit: c5d93fd3aac735fa643f5e1117bd34990d91b755
+[1/2] dt-bindings: clock: qcom: Add Maili Graphics Clock Controllers
+      commit: 74b41b78aabfaf021ca4ca2aebae75fdb538b9a9
+[2/2] clk: qcom: Add Graphics clock controller support on Qualcomm Maili SoC
+      commit: bc1cff907773a5d00475efa860d18def4f5f3b79
 
 Best regards,
 -- 
