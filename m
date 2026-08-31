@@ -1,233 +1,819 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F2B4560AD8
-	for <linux-clk@vger.kernel.org>; Mon, 31 Aug 2026 13:47:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEF6E5740AA;
+	Mon, 31 Aug 2026 13:48:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788184060; cv=none; b=IvDVZsbjj5UrxBBn0wso263XvybW1WS6ETIBds+YnI/Ye6OLoT7ib6rn5dt6eULKxJKz2woJ6kzNfnOhF/lyx6RgfavHxY0pBdw5n3LDLveq/InqS2l8R75LYNq8zZsDfZ7wk0uYKu01hEvZw4B6AfYn0gP6je/qr5hvBFthxfs=
+	t=1788184138; cv=none; b=YrthSnA3AIJhoz7KwVYMZwvxT3SfqZD/T7MFO7Sd0n1DnZKHip8KCtMfsREQGTMWuvProLaHyAJZMhwJJjvDZMvkx3Uq9KLbe6ro5/4C8z8vBeFDPptaD5guJjS2y209GXPDimpu85QGgJdebe1wlx8dMSgp0pxuBRB82OSnP7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788184060; c=relaxed/simple;
-	bh=/nO0Cpff0yx61nS6yN0kn4Y/CRuWwctaTI+ET6wFJi8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pQQGAhhnJLVh0nyFWlLBp+OFevrMkP5kBRAkn6EUlugBkF5mlhwvVO5eB6mnYJFSXSov1TemxhMBbem24AtDe7qoUSuqX0GdMTuif+16YsJnXf6g8e1WfxpfEBoWgfuvq44HS/A/PRFDcmB9+x2645EGAhqziwMVzxLWl+TUcsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=imywTNVq; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=jQdVjos6; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1788184138; c=relaxed/simple;
+	bh=1jDpXDiJt1A7Pbmrk3A4boKy0YANjOhgFv7bBY2OXsg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OGRkE8eTqj8ZLnj4q/OuE1YepW8ph4tNH3vcfVJt3IYJM25faxpT6Cg9I+2mzzamZheM5rzkn42TURoAouv6f76yfiJDdV/tQymnXEOUuTUrJsUbeUBrw697t2mCWPM6ztfoBAa4dCe7kPk/i3+cW0VQoEXuyGTFCo97t53ro5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZITkX+ZN; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="imywTNVq";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="jQdVjos6"
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 67VBASOg3255800
-	for <linux-clk@vger.kernel.org>; Mon, 31 Aug 2026 13:47:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=ElUpCCZ5QXQFa0YF2BRx6zqlfZx9TQTRG0x
-	3mmrf68k=; b=imywTNVq9ISTGUdJzE1fuV72RCsBezqjlN2xM4Bk0y2ft1ixezh
-	D2hnPIYrrAdQ+ehwJCgyzE+22cCvT3cfs+hz7bFeCt9ast9pIQZmvG0jwT5bRSnI
-	KfRa/m6fV5SF+K886S5JGZuSKGa4u8G/DY5SE/6q09VIYihCIb0C218uFJvRD5Ao
-	syij61uoc4BI/9TaV+7I5Kj9IcwRF5GQqBmLUv/d3SWxci3ZNkM0l9gO1sIUlKp3
-	7ZSBbIiI2f4C+eGc3PwmZngNGwf+Z2bOsRN35mGdsn9oE7Xd3z/uqN3S3VpAHZpy
-	WxTsGn/EarfR7no41Wo9oc1x5kiZhidzD3g==
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gd6yas2ap-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Mon, 31 Aug 2026 13:47:37 +0000 (GMT)
-Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-cc12e8e22b7so8866123a12.0
-        for <linux-clk@vger.kernel.org>; Mon, 31 Aug 2026 06:47:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1788184056; x=1788788856; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=ElUpCCZ5QXQFa0YF2BRx6zqlfZx9TQTRG0x3mmrf68k=;
-        b=jQdVjos6q0iYT8QniMZGzqbEb+yWglYeMOcBwJWsrykncHG5XkDjj5xUgNilxmXbkp
-         UV9kJM06oFqLeshsCDpo7rAdudFSRuhZxFK2+trPjaZcJWj0Ao9t+DBSLWEQ/1EWEy//
-         AX95RXcaqVcAJQUh9dx7Uz50T0yLptG11t0Dt2NtakRn9SiEccvXxCIICpYBykyVI6bc
-         6V+VCrkNzeUHgbbGwvh/OpYK6fNZyjzOUHB7W9GNcO0vzNYzuBjGZYJ2iPnRI6iRLZ5F
-         aSph99yADWDxXWGXMVQeX2OMEK799Rwy9IumtCKn1ice3+ewcjmraqiijgdmSyjC+xOi
-         140w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788184056; x=1788788856;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=ElUpCCZ5QXQFa0YF2BRx6zqlfZx9TQTRG0x3mmrf68k=;
-        b=rpzQSHdGQEg89jBE66IgIxUKXjb7YZZT5JOGUPXWK5wXbYmUH72rq16k9qaKTTgzO9
-         B8nDNjFtqt/pPlykycTprRKbrEkFI+GDc3G7dglOHoJxO6jkN23zjtKMjHvZ6ORBib9a
-         7FL7ta9lia2yr4RYucRGwBkP0Bc3uaVPjKC8zQJBfmEy30gzlTT+laC+5o4UnyZ4xHGd
-         KMEML9ED9S+jbW1fisz+ChyT+MMPHSPamyvmKLqxMcCUXcU4S+47Cio8WlMNGuY/2P2V
-         zDbZYNFwtKXLb3/DAwNHoNtfBZvRj7LpXBFoW0yb22qLLPGlGs8HYoGPdi7wXyyzfllS
-         gH6A==
-X-Forwarded-Encrypted: i=1; AHgh+Rrjnb3vQvsNgskesmqBiNBLtDobk58I62bMvQaks4cqn46mgDAPrUXPMPaDD0MiRUwrjuTZRqEX714=@vger.kernel.org
-X-Gm-Message-State: AFuF++n/WLNff5K5q/C/8/s1ezKcjVG0hSUBc9FhOgnvfPKqgoh6PJ9q
-	t56Fu+BPgrfNuVLfWXrt/fRUmLpW705sYHudUVrwVJzRo0beK7XaGsOHNweKuoPIbi5DXt3/O3j
-	1jmLH1O2kXSBwjc+UZLAwhIEBLVF/zZHhtAxpzw3hyCxaN+KzMee2/hB33YNU8Vc=
-X-Gm-Gg: AR+sD13lqqQpFp7lfPd2RRshI64i/CTTLVgY/tCmuCWNFJdzBDNx0pofZYWoWC42vO2
-	x54YVzBVInFnVN4uMP4npI6eD7BqteP4SFcWvj+x3n5KmEJaM+XV58Xy4CVpkBVITC1n1nVPFzM
-	VCDKxkKVPRM8O8t44N6rdfCcE8BqJx/99RmZj3ns3IV8ePOitaX9q/pBHv64tTZawV2bvXA+l55
-	9zyKQaVufe5YNHHb23IwRTItnF+V/h8r5IzZcl1J47BMYfT8kFSJdNb3oEGbcFpFG5LeKSnE9xb
-	leMGuunEgDe9juNuy/hDdYRydk8EznC/Q9KZ2Rox1dXnGKP2TXptT4Tz+aNahbp57Jxgd3c7+lP
-	9pvXM4QoNGGWy6Vu5B4/XAIG0ReA9xOqO4rqwzQT15BbQV9Nvng/nzyUDxBHC
-X-Received: by 2002:a05:6a20:a123:b0:3d0:d0ed:f141 with SMTP id adf61e73a8af0-3d265329781mr43053623637.2.1788184056249;
-        Mon, 31 Aug 2026 06:47:36 -0700 (PDT)
-X-Received: by 2002:a05:6a20:a123:b0:3d0:d0ed:f141 with SMTP id adf61e73a8af0-3d265329781mr43053539637.2.1788184055698;
-        Mon, 31 Aug 2026 06:47:35 -0700 (PDT)
-Received: from QCOM-aGQu4IUr3Y.qualcomm.com (i-global052.qualcomm.com. [199.106.103.52])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-328713b0451sm36548784eec.16.2026.08.31.06.47.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Aug 2026 06:47:35 -0700 (PDT)
-From: Shawn Guo <shengchao.guo@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
-        Jerome Brunet <jbrunet+clk@baylibre.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Shawn Guo <shengchao.guo@oss.qualcomm.com>
-Subject: [PATCH] clk: qcom: Sort Nord clock driver entries in Kconfig
-Date: Mon, 31 Aug 2026 21:47:17 +0800
-Message-ID: <20260831134717.510383-1-shengchao.guo@oss.qualcomm.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZITkX+ZN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC8F81F00ADB;
+	Mon, 31 Aug 2026 13:48:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788184134;
+	bh=hv05+zTA0Jb00LrEJVlNWMYzyTNPLjsQgkanl5k33tU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=ZITkX+ZNYlWjqH6DgI0EHwYULnZQb/gFcNY0as+yHpAJKo9PUJMsfuybHuzA70Ab0
+	 M3gkp6s8G8+MkA3od+WD+VFAwH1vdaxtuzyYmRSZisK62PcUGZxvB8FRf+V0lae3aW
+	 agk3lRPt+hcmzPp58T2N85pTYlIewBHN4YfcZYeb60k1s7kso0dSg8a3m0r/ZbxDkK
+	 6mgTxp41IZ+kAMa2GXpoTQ7lNb5hfoaGMGFRcYEAG2nkvG3ViY0zc3gmREVRYybszG
+	 cAqJxubhdbZFWtc3QPk73T6mrsvDlphJGAGVcIaihYxkO4tzM20DYeZIcxHLUJB01a
+	 HuLPxY5CjOOHg==
+From: Sasha Levin <sashal@kernel.org>
+To: patches@lists.linux.dev,
+	stable@vger.kernel.org
+Cc: Denzeel Oliva <wachiturroxd150@gmail.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Sasha Levin <sashal@kernel.org>,
+	s.nawrocki@samsung.com,
+	cw00.choi@samsung.com,
+	peter.griffin@linaro.org,
+	sboyd@kernel.org,
+	bmasney+clk@redhat.com,
+	jbrunet+clk@baylibre.com,
+	linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.18] clk: samsung: exynos990: Fix PERIC0/1 USI clock types
+Date: Mon, 31 Aug 2026 09:29:00 -0400
+Message-ID: <20260831133314.4125787-512-sashal@kernel.org>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260831133314.4125787-1-sashal@kernel.org>
+References: <20260831133314.4125787-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.18.48
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Info: AW1haW4tMjYwODMxMDExOSBTYWx0ZWRfX41ch9iGMi2i1
- Ya8Gf17fJnMh4PHkqPzhcLoNy5Wh6UROawN2u8Bqu2VpWDCU6mVr/whDfThxPwbns03aomw79rQ
- ZqajCEAmQgCAwnlF5Zfb3vTryR7eZsg=
-X-Authority-Analysis: v=2.4 cv=CpaPtH4D c=1 sm=1 tr=0 ts=6a9585f9 cx=c_pps
- a=oF/VQ+ItUULfLr/lQ2/icg==:117 a=b9+bayejhc3NMeqCNyeLQQ==:17
- a=Sv0fKeRqtYgA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=ZpdpYltYx_vBUK5n70dp:22 a=EUspDBNiAAAA:8
- a=vrDzJWvLJd9NzFkxaDYA:9 a=3WC7DwWrALyhR5TkjVHa:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODMxMDExOSBTYWx0ZWRfX2TDDCqaOTTUq
- bpGlvQBW6S9c63CkS3h4JU28FC9dpWYymGUc80gP0amKYs2gpmfhXWI1h4LUdrAtQ9gkEGCPKgb
- ox1Rf8aVGabiet5kdhUnvcZzxMCQFNAyjx/6TIU40SQgTDKBIJIUwUZoMOyFeSTcfTlm0s6Ujy5
- Gbp9IgbGDrvzbvxaY2AV9JlT9iVF4ktMQ30tbFrJu5bjDqg0LctmTWV4qcTx2X4WK688RFMTrUl
- vCU3DBNqMKLqhyGpkcR1T1c68OjQSgy9vJkQBFPTCvZK7gBbcVfZU9nGboKgWxZjX8HQJSNVECG
- jNc/WqJRkU3LFZwYHXz0dB/bOJcEzgCZZUu/89DoeTwSq6nD++rCD8FbigAVv8Fpxs2iqdRNylZ
- AA4r6VxFpJNiKyS/FfSrQKNn1GuYCIpT/FNBDMQsq5IxQQP8KN/rm96jw/PjmjQz4nP98IGBqYQ
- 6rKmnpsWBzqOOFSXkfg==
-X-Proofpoint-ORIG-GUID: 7z_gP97BDUdNUB7dm5tl7fP5xgKYS3tB
-X-Proofpoint-GUID: 7z_gP97BDUdNUB7dm5tl7fP5xgKYS3tB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-08-31_04,2026-08-27_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 adultscore=0 lowpriorityscore=0 clxscore=1015 priorityscore=1501
- malwarescore=0 phishscore=0 suspectscore=0 spamscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2608310119
 
-The Nord clock driver entries in Kconfig were out of alphabetical order.
-Reorder these symbols so Kconfig follows the same order as Makefile,
-making it easier to locate and add entries consistently.
+From: Denzeel Oliva <wachiturroxd150@gmail.com>
 
-Signed-off-by: Shawn Guo <shengchao.guo@oss.qualcomm.com>
+[ Upstream commit e11560b050ce867bd7d3ccea138231db54e2250a ]
+
+Use nMUX() for USI and UART user muxes to allow reparenting between
+OSC and CMU IP output when changing rates, and use DIV_F() with
+CLK_SET_RATE_PARENT on their dividers and gates so rate requests
+propagate upward.
+
+Consolidate identical USI parent arrays into shared
+mout_peric0_nonbususer_p and mout_peric1_nonbususer_p.
+
+Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
+Link: https://patch.msgid.link/20260528-perics-usi-v1-1-13a6ee4d1a6f@gmail.com
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
-The patch is based on v7.3-rc1
 
- drivers/clk/qcom/Kconfig | 58 ++++++++++++++++++++--------------------
- 1 file changed, 29 insertions(+), 29 deletions(-)
+LLM Generated explanations, may be completely bogus:
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index d1fc9bf87126..54f20a6f2bc4 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -181,6 +181,16 @@ config CLK_KAANAPALI_VIDEOCC
- 	  Say Y if you want to support video devices and functionality such as
- 	  video encode/decode.
+# Stable Backport Analysis: `clk: samsung: exynos990: Fix PERIC0/1 USI
+clock types`
+
+**Local tree:** `v6.18.44` (Linux 6.18.44)
+
+---
+
+## PHASE 1: COMMIT MESSAGE FORENSICS
+
+**Step 1.1 — Subject line**
+
+Record: `[clk: samsung: exynos990]` `[Fix]` — Correct PERIC0/1 USI clock
+types (mux/div clock framework flags).
+
+**Step 1.2 — Tags**
+
+Record:
+- `Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>` (author)
+- `Link: https://patch.msgid.link/20260528-perics-
+  usi-v1-1-13a6ee4d1a6f@gmail.com`
+- `Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>` (clk/samsung
+  maintainer)
+- No `Fixes:`, `Reported-by:`, `Tested-by:`, `Reviewed-by:`, `Cc:
+  stable@vger.kernel.org`
+
+Notable: maintainer commit; no fuzzer or user bug reports.
+
+**Step 1.3 — Body analysis**
+
+Record:
+- **Bug:** PERIC0/1 USI and UART user muxes use `MUX()`
+  (`CLK_SET_RATE_NO_REPARENT`) and plain `DIV()` without
+  `CLK_SET_RATE_PARENT`, so rate changes cannot reparent between
+  `oscclk` and `dout_cmu_peric*_ip`, and rate requests do not propagate
+  up the tree.
+- **Symptom:** USI peripherals (UART/SPI/I2C via Samsung USI blocks) and
+  UART debug cannot get correct clock rates when drivers call
+  `clk_set_rate()`.
+- **Root cause:** Wrong clock-type macros at PERIC bring-up (author's
+  earlier PERIC0/1 commit).
+- **Version info:** None explicit; bug introduced when PERIC0/1 support
+  landed in 6.18.
+
+**Step 1.4 — Hidden bug fix?**
+
+Record: **Yes.** Despite "Fix" in the subject, this is a functional
+clock-tree correctness bug, not cosmetic cleanup. Same class of bug
+fixed earlier on GS101 (`7b54d9113cd49`).
+
+---
+
+## PHASE 2: DIFF ANALYSIS
+
+**Step 2.1 — Inventory**
+
+Record:
+- **File:** `drivers/clk/samsung/clk-exynos990.c` only (+143 / −164
+  lines, net −21)
+- **Functions/sections:** `peric0_mux_clks[]`, `peric0_div_clks[]`,
+  `peric1_mux_clks[]`, `peric1_div_clks[]`, parent-name arrays
+- **Scope:** Single-file, mechanical clock registration fix
+
+**Step 2.2 — Code flow per hunk**
+
+Record:
+- **PERIC0/1 parent arrays:** 11+12 duplicate `PNAME()` arrays → 2
+  shared `mout_peric*_nonbususer_p` arrays (no behavior change).
+- **Mux clocks:** `MUX()` → `nMUX()` for UART_DBG and all USI user
+  muxes. Before: reparenting blocked on rate change. After: reparenting
+  between OSC (~24.5 MHz) and CMU IP output allowed.
+- **Div clocks:** `DIV()` → `DIV_F(..., CLK_SET_RATE_PARENT, 0)` for all
+  USI dividers. Before: rate requests stopped at divider. After:
+  propagate to parent mux.
+- **Gates:** unchanged (commit message mentions gates, but diff does not
+  modify `GATE()` entries).
+
+**Step 2.3 — Bug mechanism**
+
+Record: **Logic / correctness fix** in clock framework registration.
+- `MUX()` sets `CLK_SET_RATE_NO_REPARENT` (see `clk.h` line 145).
+- `nMUX()` clears that flag (line 151–152).
+- `DIV_F()` with `CLK_SET_RATE_PARENT` enables upward rate propagation.
+- Category: hardware clock configuration bug; analogous to GS101 PERIC0
+  USI SPI fix.
+
+**Step 2.4 — Fix quality**
+
+Record:
+- **Obviously correct:** Matches established GS101 pattern for the same
+  IP block family.
+- **Minimal:** Only affected clocks changed; parent arrays consolidated.
+- **Regression risk:** Low — enables intended CCF behavior; no API or
+  structural changes.
+- **Note:** Commit message overstates gate changes; gates remain plain
+  `GATE()` without `CLK_SET_RATE_PARENT` (unlike GS101). Maintainer
+  accepted as-is.
+
+---
+
+## PHASE 3: GIT HISTORY INVESTIGATION
+
+**Step 3.1 — Blame**
+
+Record: Buggy `MUX(CLK_MOUT_PERIC0_USI00_USI_USER, ...)` introduced in
+`b3b314ef13e46` (Denzeel Oliva, 2025-09-04) — "Add PERIC0 and PERIC1
+clock support". Present since v6.18.
+
+**Step 3.2 — Fixes: tag**
+
+Record: N/A — no `Fixes:` tag. Originating commit `b3b314ef13e46` is an
+ancestor of `v6.18.44`.
+
+**Step 3.3 — Related file history**
+
+Record:
+- `bdd03ebf721f7` (2024-12-14): Introduce Exynos990 clock driver
+- `b3b314ef13e46` (2025-09-07): Add PERIC0/PERIC1 — introduced bug
+- `44b0a8e433aaa`: Enable PERIC0/PERIC1 in exynos990 DT
+- Fix commit `e11560b050ce8` is the only change to this file between
+  `v6.18.44` and mainline
+- Standalone 1/1 patch, no series dependencies
+
+**Step 3.4 — Author context**
+
+Record: Denzeel Oliva authored both PERIC bring-up and this fix.
+Krzysztof Kozlowski (samsung-clk maintainer) committed it.
+
+**Step 3.5 — Prerequisites**
+
+Record: No dependencies. `nMUX`, `DIV_F`, and `CLK_SET_RATE_PARENT` all
+exist in this tree's `drivers/clk/samsung/clk.h`. Patch applies cleanly
+(`git apply --check` passed).
+
+---
+
+## PHASE 4: MAILING LIST AND EXTERNAL RESEARCH
+
+**Step 4.1 — Original discussion**
+
+Record:
+- `b4 dig -c e11560b050ce8` → https://patch.msgid.link/20260528-perics-
+  usi-v1-1-13a6ee4d1a6f@gmail.com
+- Single-patch series (v1, 1/1)
+- Krzysztof Kozlowski: "Applied, thanks!" — no review thread, no stable
+  nomination, no NAKs
+
+**Step 4.2 — Reviewers**
+
+Record: CC'd Krzysztof Kozlowski, Sylwester Nawrocki, Chanwoo Choi, Alim
+Akhtar, Michael Turquette, Stephen Boyd, Brian Masney; lists `linux-
+clk`, `linux-samsung-soc`, `linux-arm-kernel`.
+
+**Step 4.3 — Bug reports**
+
+Record: N/A — no `Reported-by:` or bugzilla/syzbot links.
+
+**Step 4.4 — Related patches**
+
+Record: Direct precedent — `7b54d9113cd49` "clk: samsung: gs101:
+propagate PERIC0 USI SPI clock rate" documents identical mechanism (nMUX
++ DIV_F + GATE CLK_SET_RATE_PARENT for USI on GS101 PERIC0).
+
+**Step 4.5 — Stable list**
+
+Record: No stable-list discussion found for this patch.
+
+---
+
+## PHASE 5: CODE SEMANTIC ANALYSIS
+
+**Step 5.1 — Key symbols**
+
+Record: PERIC0/1 mux/div clock tables in `clk-exynos990.c`; no new
+functions.
+
+**Step 5.2 — Callers**
+
+Record: Clocks registered at init via exynos990 CMU probe; consumed at
+runtime by device drivers via `clk_get()` / `clk_set_rate()`. PERIC0/1
+CMUs are enabled in `exynos990.dtsi` (`cmu_peric0`, `cmu_peric1`).
+
+**Step 5.3 — Callees**
+
+Record: Samsung CCF helpers (`samsung_clk_register_mux`,
+`samsung_clk_register_div`); standard Linux common clock framework
+rate/recalc paths.
+
+**Step 5.4 — Reachability**
+
+Record: Reachable when exynos990 drivers request peripheral clocks. USI
+device nodes are not yet in mainline exynos990 DTS, but PERIC clock
+controllers are live and UART_DBG mux is also fixed. Any future or out-
+of-tree USI/UART driver using these clocks hits the bug today.
+
+**Step 5.5 — Similar patterns**
+
+Record: GS101 PERIC0/1 USI clocks use `nMUX` +
+`DIV_F(CLK_SET_RATE_PARENT)` + `GATE(..., CLK_SET_RATE_PARENT)`.
+Exynos850 CMGP USI uses `MUX_F(CLK_SET_RATE_PARENT)` +
+`DIV_F(CLK_SET_RATE_PARENT)`. Exynos990 PERIC was the outlier using
+plain `MUX`/`DIV`.
+
+---
+
+## PHASE 6: CROSS-REFERENCE WITH LOCAL TREE (v6.18.44)
+
+**Step 6.1 — Buggy code present?**
+
+Record: **Yes.** Current HEAD still has `MUX()` for USI user muxes and
+`DIV()` for USI dividers (e.g. lines 1568–1640). Fix commit
+`e11560b050ce8` is **not** in HEAD. Bug introduced in 6.18 with PERIC
+support.
+
+**Step 6.2 — Backport complications**
+
+Record: **Clean apply** — `git apply --check` on `e11560b050ce8` patch
+succeeded against HEAD. Only one intervening commit on this file between
+v6.18.44 and the fix.
+
+**Step 6.3 — Related fixes already present?**
+
+Record: **No** equivalent fix in this tree.
+
+---
+
+## PHASE 7: SUBSYSTEM CONTEXT
+
+**Step 7.1 — Subsystem / criticality**
+
+Record: `drivers/clk/samsung` — **PERIPHERAL** (Exynos990 platform-
+specific), but PERIC clocks underpin UART/SPI/I2C for the SoC.
+
+**Step 7.2 — Activity**
+
+Record: exynos990 clk driver actively developed; PERIC support added in
+6.18 cycle.
+
+---
+
+## PHASE 8: IMPACT AND RISK
+
+**Step 8.1 — Who is affected**
+
+Record: Exynos990 users (Galaxy S21 family boards: x1s, c1s, r8s, etc.
+in `arch/arm64/boot/dts/exynos/`). Config/platform-specific, not
+universal.
+
+**Step 8.2 — Trigger conditions**
+
+Record: Any driver calling `clk_set_rate()` on a PERIC0/1 USI or
+UART_DBG clock. Common during SPI/UART/I2C device probe and transfer
+setup. Not security-relevant; unprivileged users cannot trigger
+directly.
+
+**Step 8.3 — Failure mode severity**
+
+Record: **Incorrect clock rates** → peripheral probe failure, wrong
+baud/SPI timing, device malfunction. **Severity: MEDIUM** (functional
+hardware breakage, not kernel crash/oops/corruption).
+
+**Step 8.4 — Risk vs benefit**
+
+Record:
+- **Benefit:** Fixes a regression introduced in 6.18 itself; unblocks
+  correct USI/UART clock operation on exynos990; matches proven GS101
+  fix pattern.
+- **Risk:** Very low — declarative flag changes only, clean apply,
+  maintainer-reviewed.
+- **Ratio:** Favorable for 6.18.y where the buggy PERIC code already
+  shipped.
+
+---
+
+## PHASE 9: FINAL SYNTHESIS
+
+**Step 9.1 — Evidence summary**
+
+**FOR:**
+- Real functional bug in clock registration
+- Bug introduced in this stable series (6.18) with PERIC0/1 support
+- Buggy code confirmed present in v6.18.44
+- Small, mechanical, obviously correct fix
+- Clean apply, no dependencies
+- Direct precedent (GS101 USI clock fix)
+- Samsung clk maintainer committed
+
+**AGAINST:**
+- No crash/security/corruption — functional hardware issue only
+- No user reports, syzbot, or Tested-by
+- exynos990 USI device nodes not yet in mainline DTS (limited immediate
+  impact)
+- Commit message inaccurately claims gate changes that aren't in the
+  diff
+- Platform-specific, narrow user base on mainline stable
+
+**Unresolved:** Whether gate clocks also need `CLK_SET_RATE_PARENT` (as
+on GS101) — not addressed by this commit; maintainer accepted without
+gate changes.
+
+**Step 9.2 — Stable rules checklist**
+
+| Criterion | Result |
+|-----------|--------|
+| 1. Obviously correct and tested? | **PASS** — matches GS101 pattern;
+no Tested-by |
+| 2. Fixes real bug affecting users? | **PASS** — broken clock rate
+setting for USI/UART |
+| 3. Important issue? | **PASS** (borderline) — MEDIUM severity hardware
+functionality bug, regression in 6.18 |
+| 4. Small and contained? | **PASS** — single file, mechanical |
+| 5. No new features/APIs? | **PASS** — corrects existing clock flags
+only |
+| 6. Applies to local tree? | **PASS** — clean apply verified |
+
+**Step 9.3 — Exception categories**
+
+Record: N/A — not a device ID, quirk, DT, build, or docs fix. Standard
+driver correctness fix.
+
+**Step 9.4 — Decision rationale**
+
+This is a regression fix for code that shipped broken in Linux 6.18. The
+PERIC0/1 USI and UART mux/div clocks were registered with flags that
+prevent the common clock framework from reparenting and propagating rate
+changes — exactly the problem documented and fixed on GS101. For the
+v6.18.44 tree, the buggy code is present, the fix applies cleanly, and
+exynos990 platform support (including PERIC CMUs in DT) is already in
+this release. While severity is functional rather than a kernel crash,
+correcting a driver bug introduced in the same stable series is
+appropriate stable material.
+
+---
+
+## Verification
+
+- [Phase 1] Parsed subject, tags, body from provided commit message
+- [Phase 2] Read `clk.h` lines 144–198: confirmed `MUX()` =
+  `CLK_SET_RATE_NO_REPARENT`, `nMUX()` allows reparenting, `DIV_F()`
+  supports `CLK_SET_RATE_PARENT`
+- [Phase 2] Full diff via `git show e11560b050ce8`: 143+/164−, no gate
+  changes despite message claim
+- [Phase 3] `git describe HEAD` → `v6.18.44`; Makefile → 6.18.44
+- [Phase 3] `git blame` lines 1568–1570 → `b3b314ef13e46` introduced
+  buggy MUX
+- [Phase 3] `git merge-base --is-ancestor b3b314ef13e46 v6.18.44` →
+  PERIC0 in tree; fix NOT in HEAD
+- [Phase 3] `git tag --contains b3b314ef13e46 | grep v6.18` → present
+  since v6.18-rc1
+- [Phase 3] `git show 7b54d9113cd49` — GS101 precedent with detailed
+  USI/SPI clk_set_rate explanation
+- [Phase 4] `b4 dig -c e11560b050ce8` → lore URL found
+- [Phase 4] `b4 dig -w` → maintainers CC'd
+- [Phase 4] `/tmp/perics-usi.mbx` — only maintainer "Applied, thanks!"
+  reply; no stable nomination
+- [Phase 5] Grep exynos990 DTS — `cmu_peric0`/`cmu_peric1` enabled; no
+  USI device nodes yet
+- [Phase 5] Grep `clk-gs101.c` — CLK_SET_RATE_PARENT on USI mux/div/gate
+  clocks
+- [Phase 6] Grep current tree — buggy `MUX()`/`DIV()` still present at
+  lines 1565–1640, 2123+
+- [Phase 6] `git apply --check` of fix patch against HEAD → clean apply
+- [Phase 6] `git log v6.18.44..e11560b050ce8 -- clk-exynos990.c` → 1
+  commit (the fix)
+- [Phase 8] Failure mode assessed as MEDIUM (functional), not CRITICAL
+  (no oops/corruption)
+
+**YES**The background searches finished and line up with the earlier
+analysis:
+
+- **PERIC0 history:** Buggy PERIC0/1 support came in with
+  `b3b314ef13e46` ("Add PERIC0 and PERIC1 clock support"), which is in
+  this `v6.18.44` tree.
+- **Fix commit:** The fix is `e11560b050ce8` on mainline; it is **not**
+  in the checked-out `v6.18.44` tree yet.
+- **GS101 precedent:** `7b54d9113cd49` ("propagate PERIC0 USI SPI clock
+  rate") is the same class of fix and is present in this tree's history.
+
+That supports the earlier verdict: **YES** for backport to this `6.18.y`
+tree.
+
+ drivers/clk/samsung/clk-exynos990.c | 307 +++++++++++++---------------
+ 1 file changed, 143 insertions(+), 164 deletions(-)
+
+diff --git a/drivers/clk/samsung/clk-exynos990.c b/drivers/clk/samsung/clk-exynos990.c
+index 6277dd557fab6..4385c3b76dd68 100644
+--- a/drivers/clk/samsung/clk-exynos990.c
++++ b/drivers/clk/samsung/clk-exynos990.c
+@@ -1546,54 +1546,44 @@ static const unsigned long peric0_clk_regs[] __initconst = {
  
-+config CLK_MAILI_VIDEOCC
-+	tristate "Maili Video Clock Controller"
-+	depends on ARM64 || COMPILE_TEST
-+	select CLK_HAWI_GCC
-+	default m if ARCH_QCOM
-+	help
-+	  Support for the video clock controller on Maili devices.
-+	  Say Y if you want to support video devices and functionality such as
-+	  video encode/decode.
-+
- config CLK_NORD_DISPCC
- 	tristate "Nord Display Clock Controller"
- 	depends on ARM64 || COMPILE_TEST
-@@ -192,16 +202,6 @@ config CLK_NORD_DISPCC
- 	  Say Y if you want to support display devices and functionality such as
- 	  splash screen.
+ /* Parent clock list for CMU_PERIC0 muxes */
+ PNAME(mout_peric0_bus_user_p) = { "oscclk", "dout_cmu_peric0_bus" };
+-PNAME(mout_peric0_uart_dbg_p) = { "oscclk", "dout_cmu_peric0_ip" };
+-PNAME(mout_peric0_usi00_user_p) = { "oscclk", "dout_cmu_peric0_ip" };
+-PNAME(mout_peric0_usi01_user_p) = { "oscclk", "dout_cmu_peric0_ip" };
+-PNAME(mout_peric0_usi02_user_p) = { "oscclk", "dout_cmu_peric0_ip" };
+-PNAME(mout_peric0_usi03_user_p) = { "oscclk", "dout_cmu_peric0_ip" };
+-PNAME(mout_peric0_usi04_user_p) = { "oscclk", "dout_cmu_peric0_ip" };
+-PNAME(mout_peric0_usi05_user_p) = { "oscclk", "dout_cmu_peric0_ip" };
+-PNAME(mout_peric0_usi13_user_p) = { "oscclk", "dout_cmu_peric0_ip" };
+-PNAME(mout_peric0_usi14_user_p) = { "oscclk", "dout_cmu_peric0_ip" };
+-PNAME(mout_peric0_usi15_user_p) = { "oscclk", "dout_cmu_peric0_ip" };
+-PNAME(mout_peric0_usi_i2c_user_p) = { "oscclk", "dout_cmu_peric0_ip" };
++PNAME(mout_peric0_nonbususer_p) = { "oscclk", "dout_cmu_peric0_ip" };
  
--config CLK_MAILI_VIDEOCC
--	tristate "Maili Video Clock Controller"
--	depends on ARM64 || COMPILE_TEST
--	select CLK_HAWI_GCC
--	default m if ARCH_QCOM
--	help
--	  Support for the video clock controller on Maili devices.
--	  Say Y if you want to support video devices and functionality such as
--	  video encode/decode.
--
- config CLK_NORD_GCC
- 	tristate "Nord Global Clock Controller"
- 	depends on ARM64 || COMPILE_TEST
-@@ -213,6 +213,25 @@ config CLK_NORD_GCC
- 	  SPI, I2C, USB, SD/UFS, PCIe etc. The clock controller is a combination
- 	  of GCC, SE_GCC, NE_GCC and NW_GCC.
+ static const struct samsung_mux_clock peric0_mux_clks[] __initconst = {
+ 	MUX(CLK_MOUT_PERIC0_BUS_USER, "mout_peric0_bus_user",
+ 	    mout_peric0_bus_user_p, PLL_CON0_MUX_CLKCMU_PERIC0_BUS_USER,
+ 	    4, 1),
+-	MUX(CLK_MOUT_PERIC0_UART_DBG, "mout_peric0_uart_dbg",
+-	    mout_peric0_uart_dbg_p, PLL_CON0_MUX_CLKCMU_PERIC0_UART_DBG,
+-	    4, 1),
+-	MUX(CLK_MOUT_PERIC0_USI00_USI_USER, "mout_peric0_usi00_usi_user",
+-	    mout_peric0_usi00_user_p, PLL_CON0_MUX_CLKCMU_PERIC0_USI00_USI_USER,
+-	    4, 1),
+-	MUX(CLK_MOUT_PERIC0_USI01_USI_USER, "mout_peric0_usi01_usi_user",
+-	    mout_peric0_usi01_user_p, PLL_CON0_MUX_CLKCMU_PERIC0_USI01_USI_USER,
+-	    4, 1),
+-	MUX(CLK_MOUT_PERIC0_USI02_USI_USER, "mout_peric0_usi02_usi_user",
+-	    mout_peric0_usi02_user_p, PLL_CON0_MUX_CLKCMU_PERIC0_USI02_USI_USER,
+-	    4, 1),
+-	MUX(CLK_MOUT_PERIC0_USI03_USI_USER, "mout_peric0_usi03_usi_user",
+-	    mout_peric0_usi03_user_p, PLL_CON0_MUX_CLKCMU_PERIC0_USI03_USI_USER,
+-	    4, 1),
+-	MUX(CLK_MOUT_PERIC0_USI04_USI_USER, "mout_peric0_usi04_usi_user",
+-	    mout_peric0_usi04_user_p, PLL_CON0_MUX_CLKCMU_PERIC0_USI04_USI_USER,
+-	    4, 1),
+-	MUX(CLK_MOUT_PERIC0_USI05_USI_USER, "mout_peric0_usi05_usi_user",
+-	    mout_peric0_usi05_user_p, PLL_CON0_MUX_CLKCMU_PERIC0_USI05_USI_USER,
+-	    4, 1),
+-	MUX(CLK_MOUT_PERIC0_USI13_USI_USER, "mout_peric0_usi13_usi_user",
+-	    mout_peric0_usi13_user_p, PLL_CON0_MUX_CLKCMU_PERIC0_USI13_USI_USER,
+-	    4, 1),
+-	MUX(CLK_MOUT_PERIC0_USI14_USI_USER, "mout_peric0_usi14_usi_user",
+-	    mout_peric0_usi14_user_p, PLL_CON0_MUX_CLKCMU_PERIC0_USI14_USI_USER,
+-	    4, 1),
+-	MUX(CLK_MOUT_PERIC0_USI15_USI_USER, "mout_peric0_usi15_usi_user",
+-	    mout_peric0_usi15_user_p, PLL_CON0_MUX_CLKCMU_PERIC0_USI15_USI_USER,
+-	    4, 1),
++	nMUX(CLK_MOUT_PERIC0_UART_DBG, "mout_peric0_uart_dbg",
++	     mout_peric0_nonbususer_p, PLL_CON0_MUX_CLKCMU_PERIC0_UART_DBG,
++	     4, 1),
++	nMUX(CLK_MOUT_PERIC0_USI00_USI_USER, "mout_peric0_usi00_usi_user",
++	     mout_peric0_nonbususer_p, PLL_CON0_MUX_CLKCMU_PERIC0_USI00_USI_USER,
++	     4, 1),
++	nMUX(CLK_MOUT_PERIC0_USI01_USI_USER, "mout_peric0_usi01_usi_user",
++	     mout_peric0_nonbususer_p, PLL_CON0_MUX_CLKCMU_PERIC0_USI01_USI_USER,
++	     4, 1),
++	nMUX(CLK_MOUT_PERIC0_USI02_USI_USER, "mout_peric0_usi02_usi_user",
++	     mout_peric0_nonbususer_p, PLL_CON0_MUX_CLKCMU_PERIC0_USI02_USI_USER,
++	     4, 1),
++	nMUX(CLK_MOUT_PERIC0_USI03_USI_USER, "mout_peric0_usi03_usi_user",
++	     mout_peric0_nonbususer_p, PLL_CON0_MUX_CLKCMU_PERIC0_USI03_USI_USER,
++	     4, 1),
++	nMUX(CLK_MOUT_PERIC0_USI04_USI_USER, "mout_peric0_usi04_usi_user",
++	     mout_peric0_nonbususer_p, PLL_CON0_MUX_CLKCMU_PERIC0_USI04_USI_USER,
++	     4, 1),
++	nMUX(CLK_MOUT_PERIC0_USI05_USI_USER, "mout_peric0_usi05_usi_user",
++	     mout_peric0_nonbususer_p, PLL_CON0_MUX_CLKCMU_PERIC0_USI05_USI_USER,
++	     4, 1),
++	nMUX(CLK_MOUT_PERIC0_USI13_USI_USER, "mout_peric0_usi13_usi_user",
++	     mout_peric0_nonbususer_p, PLL_CON0_MUX_CLKCMU_PERIC0_USI13_USI_USER,
++	     4, 1),
++	nMUX(CLK_MOUT_PERIC0_USI14_USI_USER, "mout_peric0_usi14_usi_user",
++	     mout_peric0_nonbususer_p, PLL_CON0_MUX_CLKCMU_PERIC0_USI14_USI_USER,
++	     4, 1),
++	nMUX(CLK_MOUT_PERIC0_USI15_USI_USER, "mout_peric0_usi15_usi_user",
++	     mout_peric0_nonbususer_p, PLL_CON0_MUX_CLKCMU_PERIC0_USI15_USI_USER,
++	     4, 1),
+ 	MUX(CLK_MOUT_PERIC0_USI_I2C_USER, "mout_peric0_usi_i2c_user",
+-	    mout_peric0_usi_i2c_user_p, PLL_CON0_MUX_CLKCMU_PERIC0_USI_I2C_USER,
++	    mout_peric0_nonbususer_p, PLL_CON0_MUX_CLKCMU_PERIC0_USI_I2C_USER,
+ 	    4, 1),
+ };
  
-+config CLK_NORD_GPUCC
-+	tristate "Nord Graphics Clock Controller"
-+	depends on ARM64 || COMPILE_TEST
-+	select CLK_NORD_GCC
-+	default m if ARCH_QCOM
-+	help
-+	  Support for the graphics clock controllers on Nord devices. There are two
-+	  graphics clock controllers on Nord SoC.
-+	  Say Y if you want to support graphics controller devices and
-+	  functionality such as 3D graphics.
-+
-+config CLK_NORD_TCSRCC
-+	tristate "Nord TCSR Clock Controller"
-+	depends on ARM64 || COMPILE_TEST
-+	default m if ARCH_QCOM
-+	help
-+	  Support for the TCSR clock controller on Nord devices.
-+	  Say Y if you want to use peripheral devices such as PCIe, USB, UFS etc.
-+
- config CLK_SHIKRA_AUDIOCORECC
- 	tristate "Shikra Audio Core Clock Controller"
- 	depends on ARM64 || COMPILE_TEST
-@@ -233,17 +252,6 @@ config CLK_SHIKRA_GCC
- 	  Say Y if you want to use multimedia devices or peripheral
- 	  devices such as Camera, Video, UART, SPI, I2C, USB, SD/eMMC etc.
+@@ -1602,42 +1592,42 @@ static const struct samsung_div_clock peric0_div_clks[] __initconst = {
+ 	    "mout_peric0_uart_dbg",
+ 	    CLK_CON_DIV_DIV_CLK_PERIC0_UART_DBG,
+ 	    0, 4),
+-	DIV(CLK_DOUT_PERIC0_USI00_USI, "dout_peric0_usi00_usi",
+-	    "mout_peric0_usi00_usi_user",
+-	    CLK_CON_DIV_DIV_CLK_PERIC0_USI00_USI,
+-	    0, 4),
+-	DIV(CLK_DOUT_PERIC0_USI01_USI, "dout_peric0_usi01_usi",
+-	    "mout_peric0_usi01_usi_user",
+-	    CLK_CON_DIV_DIV_CLK_PERIC0_USI01_USI,
+-	    0, 4),
+-	DIV(CLK_DOUT_PERIC0_USI02_USI, "dout_peric0_usi02_usi",
+-	    "mout_peric0_usi02_usi_user",
+-	    CLK_CON_DIV_DIV_CLK_PERIC0_USI02_USI,
+-	    0, 4),
+-	DIV(CLK_DOUT_PERIC0_USI03_USI, "dout_peric0_usi03_usi",
+-	    "mout_peric0_usi03_usi_user",
+-	    CLK_CON_DIV_DIV_CLK_PERIC0_USI03_USI,
+-	    0, 4),
+-	DIV(CLK_DOUT_PERIC0_USI04_USI, "dout_peric0_usi04_usi",
+-	    "mout_peric0_usi04_usi_user",
+-	    CLK_CON_DIV_DIV_CLK_PERIC0_USI04_USI,
+-	    0, 4),
+-	DIV(CLK_DOUT_PERIC0_USI05_USI, "dout_peric0_usi05_usi",
+-	    "mout_peric0_usi05_usi_user",
+-	    CLK_CON_DIV_DIV_CLK_PERIC0_USI05_USI,
+-	    0, 4),
+-	DIV(CLK_DOUT_PERIC0_USI13_USI, "dout_peric0_usi13_usi",
+-	    "mout_peric0_usi13_usi_user",
+-	    CLK_CON_DIV_DIV_CLK_PERIC0_USI13_USI,
+-	    0, 4),
+-	DIV(CLK_DOUT_PERIC0_USI14_USI, "dout_peric0_usi14_usi",
+-	    "mout_peric0_usi14_usi_user",
+-	    CLK_CON_DIV_DIV_CLK_PERIC0_USI14_USI,
+-	    0, 4),
+-	DIV(CLK_DOUT_PERIC0_USI15_USI, "dout_peric0_usi15_usi",
+-	    "mout_peric0_usi15_usi_user",
+-	    CLK_CON_DIV_DIV_CLK_PERIC0_USI15_USI,
+-	    0, 4),
++	DIV_F(CLK_DOUT_PERIC0_USI00_USI, "dout_peric0_usi00_usi",
++	      "mout_peric0_usi00_usi_user",
++	      CLK_CON_DIV_DIV_CLK_PERIC0_USI00_USI, 0, 4,
++	      CLK_SET_RATE_PARENT, 0),
++	DIV_F(CLK_DOUT_PERIC0_USI01_USI, "dout_peric0_usi01_usi",
++	      "mout_peric0_usi01_usi_user",
++	      CLK_CON_DIV_DIV_CLK_PERIC0_USI01_USI, 0, 4,
++	      CLK_SET_RATE_PARENT, 0),
++	DIV_F(CLK_DOUT_PERIC0_USI02_USI, "dout_peric0_usi02_usi",
++	      "mout_peric0_usi02_usi_user",
++	      CLK_CON_DIV_DIV_CLK_PERIC0_USI02_USI, 0, 4,
++	      CLK_SET_RATE_PARENT, 0),
++	DIV_F(CLK_DOUT_PERIC0_USI03_USI, "dout_peric0_usi03_usi",
++	      "mout_peric0_usi03_usi_user",
++	      CLK_CON_DIV_DIV_CLK_PERIC0_USI03_USI, 0, 4,
++	      CLK_SET_RATE_PARENT, 0),
++	DIV_F(CLK_DOUT_PERIC0_USI04_USI, "dout_peric0_usi04_usi",
++	      "mout_peric0_usi04_usi_user",
++	      CLK_CON_DIV_DIV_CLK_PERIC0_USI04_USI, 0, 4,
++	      CLK_SET_RATE_PARENT, 0),
++	DIV_F(CLK_DOUT_PERIC0_USI05_USI, "dout_peric0_usi05_usi",
++	      "mout_peric0_usi05_usi_user",
++	      CLK_CON_DIV_DIV_CLK_PERIC0_USI05_USI, 0, 4,
++	      CLK_SET_RATE_PARENT, 0),
++	DIV_F(CLK_DOUT_PERIC0_USI13_USI, "dout_peric0_usi13_usi",
++	      "mout_peric0_usi13_usi_user",
++	      CLK_CON_DIV_DIV_CLK_PERIC0_USI13_USI, 0, 4,
++	      CLK_SET_RATE_PARENT, 0),
++	DIV_F(CLK_DOUT_PERIC0_USI14_USI, "dout_peric0_usi14_usi",
++	      "mout_peric0_usi14_usi_user",
++	      CLK_CON_DIV_DIV_CLK_PERIC0_USI14_USI, 0, 4,
++	      CLK_SET_RATE_PARENT, 0),
++	DIV_F(CLK_DOUT_PERIC0_USI15_USI, "dout_peric0_usi15_usi",
++	      "mout_peric0_usi15_usi_user",
++	      CLK_CON_DIV_DIV_CLK_PERIC0_USI15_USI, 0, 4,
++	      CLK_SET_RATE_PARENT, 0),
+ 	DIV(CLK_DOUT_PERIC0_USI_I2C, "dout_peric0_usi_i2c",
+ 	    "mout_peric0_usi_i2c_user",
+ 	    CLK_CON_DIV_DIV_CLK_PERIC0_USI_I2C,
+@@ -2107,58 +2097,47 @@ static const unsigned long peric1_clk_regs[] __initconst = {
  
--config CLK_NORD_GPUCC
--	tristate "Nord Graphics Clock Controller"
--	depends on ARM64 || COMPILE_TEST
--	select CLK_NORD_GCC
--	default m if ARCH_QCOM
--	help
--	  Support for the graphics clock controllers on Nord devices. There are two
--	  graphics clock controllers on Nord SoC.
--	  Say Y if you want to support graphics controller devices and
--	  functionality such as 3D graphics.
--
- config CLK_X1E80100_CAMCC
- 	tristate "X1E80100 Camera Clock Controller"
- 	depends on ARM64 || COMPILE_TEST
-@@ -895,14 +903,6 @@ config QCS_GCC_404
- 	  Say Y if you want to use multimedia devices or peripheral
- 	  devices such as UART, SPI, I2C, USB, SD/eMMC, PCIe etc.
+ /* Parent clock list for CMU_PERIC1 muxes */
+ PNAME(mout_peric1_bus_user_p)  = { "oscclk", "dout_cmu_peric1_bus" };
+-PNAME(mout_peric1_uart_bt_user_p) = { "oscclk", "dout_cmu_peric1_ip" };
+-PNAME(mout_peric1_usi06_user_p)  = { "oscclk", "dout_cmu_peric1_ip" };
+-PNAME(mout_peric1_usi07_user_p)  = { "oscclk", "dout_cmu_peric1_ip" };
+-PNAME(mout_peric1_usi08_user_p)  = { "oscclk", "dout_cmu_peric1_ip" };
+-PNAME(mout_peric1_usi09_user_p)  = { "oscclk", "dout_cmu_peric1_ip" };
+-PNAME(mout_peric1_usi10_user_p)  = { "oscclk", "dout_cmu_peric1_ip" };
+-PNAME(mout_peric1_usi11_user_p)  = { "oscclk", "dout_cmu_peric1_ip" };
+-PNAME(mout_peric1_usi12_user_p)  = { "oscclk", "dout_cmu_peric1_ip" };
+-PNAME(mout_peric1_usi18_user_p)  = { "oscclk", "dout_cmu_peric1_ip" };
+-PNAME(mout_peric1_usi16_user_p)  = { "oscclk", "dout_cmu_peric1_ip" };
+-PNAME(mout_peric1_usi17_user_p)  = { "oscclk", "dout_cmu_peric1_ip" };
+-PNAME(mout_peric1_usi_i2c_user_p) = { "oscclk", "dout_cmu_peric1_ip" };
++PNAME(mout_peric1_nonbususer_p) = { "oscclk", "dout_cmu_peric1_ip" };
  
--config CLK_NORD_TCSRCC
--	tristate "Nord TCSR Clock Controller"
--	depends on ARM64 || COMPILE_TEST
--	default m if ARCH_QCOM
--	help
--	  Support for the TCSR clock controller on Nord devices.
--	  Say Y if you want to use peripheral devices such as PCIe, USB, UFS etc.
--
- config SA_CAMCC_8775P
- 	tristate "SA8775P Camera Clock Controller"
- 	depends on ARM64 || COMPILE_TEST
+ static const struct samsung_mux_clock peric1_mux_clks[] __initconst = {
+ 	MUX(CLK_MOUT_PERIC1_BUS_USER, "mout_peric1_bus_user",
+ 	    mout_peric1_bus_user_p, PLL_CON0_MUX_CLKCMU_PERIC1_BUS_USER,
+ 	    4, 1),
+-	MUX(CLK_MOUT_PERIC1_UART_BT_USER, "mout_peric1_uart_bt_user",
+-	    mout_peric1_uart_bt_user_p, PLL_CON0_MUX_CLKCMU_PERIC1_UART_BT_USER,
+-	    4, 1),
+-	MUX(CLK_MOUT_PERIC1_USI06_USI_USER, "mout_peric1_usi06_usi_user",
+-	    mout_peric1_usi06_user_p, PLL_CON0_MUX_CLKCMU_PERIC1_USI06_USI_USER,
+-	    4, 1),
+-	MUX(CLK_MOUT_PERIC1_USI07_USI_USER, "mout_peric1_usi07_usi_user",
+-	    mout_peric1_usi07_user_p, PLL_CON0_MUX_CLKCMU_PERIC1_USI07_USI_USER,
+-	    4, 1),
+-	MUX(CLK_MOUT_PERIC1_USI08_USI_USER, "mout_peric1_usi08_usi_user",
+-	    mout_peric1_usi08_user_p, PLL_CON0_MUX_CLKCMU_PERIC1_USI08_USI_USER,
+-	    4, 1),
+-	MUX(CLK_MOUT_PERIC1_USI09_USI_USER, "mout_peric1_usi09_usi_user",
+-	    mout_peric1_usi09_user_p, PLL_CON0_MUX_CLKCMU_PERIC1_USI09_USI_USER,
+-	    4, 1),
+-	MUX(CLK_MOUT_PERIC1_USI10_USI_USER, "mout_peric1_usi10_usi_user",
+-	    mout_peric1_usi10_user_p, PLL_CON0_MUX_CLKCMU_PERIC1_USI10_USI_USER,
+-	    4, 1),
+-	MUX(CLK_MOUT_PERIC1_USI11_USI_USER, "mout_peric1_usi11_usi_user",
+-	    mout_peric1_usi11_user_p, PLL_CON0_MUX_CLKCMU_PERIC1_USI11_USI_USER,
+-	    4, 1),
+-	MUX(CLK_MOUT_PERIC1_USI12_USI_USER, "mout_peric1_usi12_usi_user",
+-	    mout_peric1_usi12_user_p, PLL_CON0_MUX_CLKCMU_PERIC1_USI12_USI_USER,
+-	    4, 1),
+-	MUX(CLK_MOUT_PERIC1_USI18_USI_USER, "mout_peric1_usi18_usi_user",
+-	    mout_peric1_usi18_user_p, PLL_CON0_MUX_CLKCMU_PERIC1_USI18_USI_USER,
+-	    4, 1),
+-	MUX(CLK_MOUT_PERIC1_USI16_USI_USER, "mout_peric1_usi16_usi_user",
+-	    mout_peric1_usi16_user_p, PLL_CON0_MUX_CLKCMU_PERIC1_USI16_USI_USER,
+-	    4, 1),
+-	MUX(CLK_MOUT_PERIC1_USI17_USI_USER, "mout_peric1_usi17_usi_user",
+-	    mout_peric1_usi17_user_p, PLL_CON0_MUX_CLKCMU_PERIC1_USI17_USI_USER,
+-	    4, 1),
++	nMUX(CLK_MOUT_PERIC1_UART_BT_USER, "mout_peric1_uart_bt_user",
++	     mout_peric1_nonbususer_p, PLL_CON0_MUX_CLKCMU_PERIC1_UART_BT_USER,
++	     4, 1),
++	nMUX(CLK_MOUT_PERIC1_USI06_USI_USER, "mout_peric1_usi06_usi_user",
++	     mout_peric1_nonbususer_p, PLL_CON0_MUX_CLKCMU_PERIC1_USI06_USI_USER,
++	     4, 1),
++	nMUX(CLK_MOUT_PERIC1_USI07_USI_USER, "mout_peric1_usi07_usi_user",
++	     mout_peric1_nonbususer_p, PLL_CON0_MUX_CLKCMU_PERIC1_USI07_USI_USER,
++	     4, 1),
++	nMUX(CLK_MOUT_PERIC1_USI08_USI_USER, "mout_peric1_usi08_usi_user",
++	     mout_peric1_nonbususer_p, PLL_CON0_MUX_CLKCMU_PERIC1_USI08_USI_USER,
++	     4, 1),
++	nMUX(CLK_MOUT_PERIC1_USI09_USI_USER, "mout_peric1_usi09_usi_user",
++	     mout_peric1_nonbususer_p, PLL_CON0_MUX_CLKCMU_PERIC1_USI09_USI_USER,
++	     4, 1),
++	nMUX(CLK_MOUT_PERIC1_USI10_USI_USER, "mout_peric1_usi10_usi_user",
++	     mout_peric1_nonbususer_p, PLL_CON0_MUX_CLKCMU_PERIC1_USI10_USI_USER,
++	     4, 1),
++	nMUX(CLK_MOUT_PERIC1_USI11_USI_USER, "mout_peric1_usi11_usi_user",
++	     mout_peric1_nonbususer_p, PLL_CON0_MUX_CLKCMU_PERIC1_USI11_USI_USER,
++	     4, 1),
++	nMUX(CLK_MOUT_PERIC1_USI12_USI_USER, "mout_peric1_usi12_usi_user",
++	     mout_peric1_nonbususer_p, PLL_CON0_MUX_CLKCMU_PERIC1_USI12_USI_USER,
++	     4, 1),
++	nMUX(CLK_MOUT_PERIC1_USI18_USI_USER, "mout_peric1_usi18_usi_user",
++	     mout_peric1_nonbususer_p, PLL_CON0_MUX_CLKCMU_PERIC1_USI18_USI_USER,
++	     4, 1),
++	nMUX(CLK_MOUT_PERIC1_USI16_USI_USER, "mout_peric1_usi16_usi_user",
++	     mout_peric1_nonbususer_p, PLL_CON0_MUX_CLKCMU_PERIC1_USI16_USI_USER,
++	     4, 1),
++	nMUX(CLK_MOUT_PERIC1_USI17_USI_USER, "mout_peric1_usi17_usi_user",
++	     mout_peric1_nonbususer_p, PLL_CON0_MUX_CLKCMU_PERIC1_USI17_USI_USER,
++	     4, 1),
+ 	MUX(CLK_MOUT_PERIC1_USI_I2C_USER, "mout_peric1_usi_i2c_user",
+-	    mout_peric1_usi_i2c_user_p, PLL_CON0_MUX_CLKCMU_PERIC1_USI_I2C_USER,
++	    mout_peric1_nonbususer_p, PLL_CON0_MUX_CLKCMU_PERIC1_USI_I2C_USER,
+ 	    4, 1),
+ };
+ 
+@@ -2167,46 +2146,46 @@ static const struct samsung_div_clock peric1_div_clks[] __initconst = {
+ 	    "mout_peric1_uart_bt_user",
+ 	    CLK_CON_DIV_DIV_CLK_PERIC1_UART_BT,
+ 	    0, 4),
+-	DIV(CLK_DOUT_PERIC1_USI06_USI, "dout_peric1_usi06_usi",
+-	    "mout_peric1_usi06_usi_user",
+-	    CLK_CON_DIV_DIV_CLK_PERIC1_USI06_USI,
+-	    0, 4),
+-	DIV(CLK_DOUT_PERIC1_USI07_USI, "dout_peric1_usi07_usi",
+-	    "mout_peric1_usi07_usi_user",
+-	    CLK_CON_DIV_DIV_CLK_PERIC1_USI07_USI,
+-	    0, 4),
+-	DIV(CLK_DOUT_PERIC1_USI08_USI, "dout_peric1_usi08_usi",
+-	    "mout_peric1_usi08_usi_user",
+-	    CLK_CON_DIV_DIV_CLK_PERIC1_USI08_USI,
+-	    0, 4),
+-	DIV(CLK_DOUT_PERIC1_USI18_USI, "dout_peric1_usi18_usi",
+-	    "mout_peric1_usi18_usi_user",
+-	    CLK_CON_DIV_DIV_CLK_PERIC1_USI18_USI,
+-	    0, 4),
+-	DIV(CLK_DOUT_PERIC1_USI12_USI, "dout_peric1_usi12_usi",
+-	    "mout_peric1_usi12_usi_user",
+-	    CLK_CON_DIV_DIV_CLK_PERIC1_USI12_USI,
+-	    0, 4),
+-	DIV(CLK_DOUT_PERIC1_USI09_USI, "dout_peric1_usi09_usi",
+-	    "mout_peric1_usi09_usi_user",
+-	    CLK_CON_DIV_DIV_CLK_PERIC1_USI09_USI,
+-	    0, 4),
+-	DIV(CLK_DOUT_PERIC1_USI10_USI, "dout_peric1_usi10_usi",
+-	    "mout_peric1_usi10_usi_user",
+-	    CLK_CON_DIV_DIV_CLK_PERIC1_USI10_USI,
+-	    0, 4),
+-	DIV(CLK_DOUT_PERIC1_USI11_USI, "dout_peric1_usi11_usi",
+-	    "mout_peric1_usi11_usi_user",
+-	    CLK_CON_DIV_DIV_CLK_PERIC1_USI11_USI,
+-	    0, 4),
+-	DIV(CLK_DOUT_PERIC1_USI16_USI, "dout_peric1_usi16_usi",
+-	    "mout_peric1_usi16_usi_user",
+-	    CLK_CON_DIV_DIV_CLK_PERIC1_USI16_USI,
+-	    0, 4),
+-	DIV(CLK_DOUT_PERIC1_USI17_USI, "dout_peric1_usi17_usi",
+-	    "mout_peric1_usi17_usi_user",
+-	    CLK_CON_DIV_DIV_CLK_PERIC1_USI17_USI,
+-	    0, 4),
++	DIV_F(CLK_DOUT_PERIC1_USI06_USI, "dout_peric1_usi06_usi",
++	      "mout_peric1_usi06_usi_user",
++	      CLK_CON_DIV_DIV_CLK_PERIC1_USI06_USI, 0, 4,
++	      CLK_SET_RATE_PARENT, 0),
++	DIV_F(CLK_DOUT_PERIC1_USI07_USI, "dout_peric1_usi07_usi",
++	      "mout_peric1_usi07_usi_user",
++	      CLK_CON_DIV_DIV_CLK_PERIC1_USI07_USI, 0, 4,
++	      CLK_SET_RATE_PARENT, 0),
++	DIV_F(CLK_DOUT_PERIC1_USI08_USI, "dout_peric1_usi08_usi",
++	      "mout_peric1_usi08_usi_user",
++	      CLK_CON_DIV_DIV_CLK_PERIC1_USI08_USI, 0, 4,
++	      CLK_SET_RATE_PARENT, 0),
++	DIV_F(CLK_DOUT_PERIC1_USI18_USI, "dout_peric1_usi18_usi",
++	      "mout_peric1_usi18_usi_user",
++	      CLK_CON_DIV_DIV_CLK_PERIC1_USI18_USI, 0, 4,
++	      CLK_SET_RATE_PARENT, 0),
++	DIV_F(CLK_DOUT_PERIC1_USI12_USI, "dout_peric1_usi12_usi",
++	      "mout_peric1_usi12_usi_user",
++	      CLK_CON_DIV_DIV_CLK_PERIC1_USI12_USI, 0, 4,
++	      CLK_SET_RATE_PARENT, 0),
++	DIV_F(CLK_DOUT_PERIC1_USI09_USI, "dout_peric1_usi09_usi",
++	      "mout_peric1_usi09_usi_user",
++	      CLK_CON_DIV_DIV_CLK_PERIC1_USI09_USI, 0, 4,
++	      CLK_SET_RATE_PARENT, 0),
++	DIV_F(CLK_DOUT_PERIC1_USI10_USI, "dout_peric1_usi10_usi",
++	      "mout_peric1_usi10_usi_user",
++	      CLK_CON_DIV_DIV_CLK_PERIC1_USI10_USI, 0, 4,
++	      CLK_SET_RATE_PARENT, 0),
++	DIV_F(CLK_DOUT_PERIC1_USI11_USI, "dout_peric1_usi11_usi",
++	      "mout_peric1_usi11_usi_user",
++	      CLK_CON_DIV_DIV_CLK_PERIC1_USI11_USI, 0, 4,
++	      CLK_SET_RATE_PARENT, 0),
++	DIV_F(CLK_DOUT_PERIC1_USI16_USI, "dout_peric1_usi16_usi",
++	      "mout_peric1_usi16_usi_user",
++	      CLK_CON_DIV_DIV_CLK_PERIC1_USI16_USI, 0, 4,
++	      CLK_SET_RATE_PARENT, 0),
++	DIV_F(CLK_DOUT_PERIC1_USI17_USI, "dout_peric1_usi17_usi",
++	      "mout_peric1_usi17_usi_user",
++	      CLK_CON_DIV_DIV_CLK_PERIC1_USI17_USI, 0, 4,
++	      CLK_SET_RATE_PARENT, 0),
+ 	DIV(CLK_DOUT_PERIC1_USI_I2C, "dout_peric1_usi_i2c",
+ 	    "mout_peric1_usi_i2c_user",
+ 	    CLK_CON_DIV_DIV_CLK_PERIC1_USI_I2C,
 -- 
-2.43.0
+2.53.0
 
