@@ -1,44 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2283A41A547
-	for <linux-clk@vger.kernel.org>; Mon, 31 Aug 2026 14:15:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77A17463B8C
+	for <linux-clk@vger.kernel.org>; Mon, 31 Aug 2026 15:02:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788185744; cv=none; b=nRwdGmoyql9ZKGtIZ2xXDQqD7jAufzYExbMi7+Inf1M0VncZ3MDnoxFTpzN4AauUx3h6sP5wYbho6EiYco/x1QdGsUy+BaIldCfPJ5b36NANiHjsKH8pG9TifEz55KLf8q0YslxLRH0BRgPwFQYnTxn1nadqtiBPdpd0Cqp/tu4=
+	t=1788188570; cv=none; b=APTJR71AB9xb7ZH1XAmna67RJaICG72NzjKhBdmPeQaroFXVvLAaMaBxFy0HNbipE8O1W5z62sgq9cfPXVmJtt0NgBCOUfVDr5UtsVetFtb9CAF/gA/jxFvqYA2upaMbVOPPkwBVDT4yqVS/5vRNXlGjujsqVwy94W91frbq9fk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788185744; c=relaxed/simple;
-	bh=7xKFEB5gYQ33FF9CkgFDq6khTHiBJEU2afRDzZRxFV8=;
+	s=arc-20240116; t=1788188570; c=relaxed/simple;
+	bh=Hh8LRee+Jl+X6/MTGt47GzF+xojbjRbVq5ypeBx6aBc=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=CcHOE0cMA5pWPzN7MvGQGPh2XZvoIc7FnNvxFRBn9OjdLugCIdacf3ayJvPRFMPm5gVZSfln+Qw+jmk7kWrINaETD46STjsi396zzMSxK7N91iCs9ertJ7AP1ed5k8btl3VxWLFf6auaFydXdeZnKXDZorJVGi2FVBsfMaEdQNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hAOVCogM; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=NJdy24yfQDsDFfBG7GbSVthYfij4nXzUhumSbBwmxH2+K6evWVVMhiwKBgUuY/1mjlh5afeuxJp5OsjAUv0OGG+jBXz5fUS4BNQ2HkuCqbHhJtjIQ2PsumaWtVob1GXNeWH74+FDQZMNIIChVEPFBq2dwjsxm5xS5MGY8OOqemA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BFr4sy02; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hAOVCogM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 923BD1F000E9;
-	Mon, 31 Aug 2026 14:15:42 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BFr4sy02"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 061611F000E9;
+	Mon, 31 Aug 2026 15:02:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788185742;
-	bh=sXJdN091Sm54Dyp58mkauYufJcZ3KTqR27YMaI69W8k=;
+	s=k20260515; t=1788188569;
+	bh=huWCzO3qs1vrXJ1Yy79TQsub1vaV2eBQXJIqUCuOVqM=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=hAOVCogMsWeSHR+EJvpa9nXyA2sZCMwVIiAviUkKvTh2a2d8MSAcwMXCNXZ6tNLt3
-	 vUuZbVwEdT36sH3XUPQ2D5N2tUKWPmylGuwjcbdZt9naL/jSJfHRBMPugm9FgN0lDU
-	 AWfXq68faW3kK4lD2aHp8KCGhWbTwTiNq1H+sfPpS/bE8Mvt6rrWrZxseJ1RfMpE0b
-	 lkG2r20pAetKEm2Bgf0yXnVzN0T4VJtZjdy4oIVAiAJQhey2XMqyJiru5pdFGc7/CI
-	 iER/GhMisPflBMFxXWXJir0IFft7W6ZFHR5dTi5a5P42OAuGA+LBY4YN5O8rNjLbad
-	 qCgFELvVaYduQ==
+	b=BFr4sy02Ok3RTwMwJgZZc3d7U+KcuTO54EkjL0sSLU7q+CRe37pCK83rRmmpM9vRq
+	 7sBvBx+ahWP4VIHiB2la7PXG+NaWekpJj89UTctqn+d92GQ7iL1I6OJZK8ksXAMRie
+	 /JjM3QVQbDfWbVo1F2liJL4Mr38PJxhHVbUtDtR/xhXb5rVtkWqkLbmIujE6nKBEt7
+	 3f/U61tSWn6NHnCutFNT4J7FpsLKArzGlbPEowvGagQYjkruPduuUzjuqDncqjcENb
+	 vMlsQwfcm64QZMkzl02Y9WjkSK6Sg7DUINk9Xj1Rzpyz/VHIKxICyb96XOJCBmSchJ
+	 OeMro1Z6Ir9sQ==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH AUTOSEL 6.18] clk: qcom: clk-rpmh: Make all VRMs
- optional
+Subject: Re: [PATCH AUTOSEL 6.18] clk: clk-axi-clkgen: Add support versal
+ timings
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Sasha Levin" <sashal@kernel.org>
 Cc: linux-clk@vger.kernel.org
-In-Reply-To: <20260831133314.4125787-81-sashal@kernel.org>
+In-Reply-To: <20260831133314.4125787-224-sashal@kernel.org>
 References: <20260831133314.4125787-1-sashal@kernel.org>
- <20260831133314.4125787-81-sashal@kernel.org>
+ <20260831133314.4125787-224-sashal@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Mon, 31 Aug 2026 14:15:42 +0000
-Message-Id: <20260831141542.923BD1F000E9@smtp.kernel.org>
+Date: Mon, 31 Aug 2026 15:02:48 +0000
+Message-Id: <20260831150249.061611F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -49,65 +49,61 @@ Thank you for your contribution! Sashiko AI review found 1 potential issue(=
 s) to consider:
 
 Pre-existing issues:
-- [High] The clk-rpmh driver permanently mutates static global clock struct=
-ures during probe, leading to severe resource address corruption on probe d=
-eferral or unbind/rebind.
+- [High] Potential division by zero when calculating clock parameters if pa=
+rent_rate or requested rate is below 1000 Hz.
 --
 
-commit db440aeaf96923e7980cc52bc879e1c6dfac5bf7
-Author: Alexander Koskovich <akoskovich@pm.me>
+commit 0b1a53196b2b85f8a1c0c11b49ab42f0ef80e28c
+Author: Nuno S=C3=A1 <nuno.sa@analog.com>
 
-clk: qcom: clk-rpmh: Make all VRMs optional
+clk: clk-axi-clkgen: Add support versal timings
 
-This commit marks all VRM clocks as optional to prevent probe failures on
-boards where not all VRMs are present. It resolves issues on devices with
-different PMIC configurations by checking the VRM offset directly.
+Add proper VCO and PFD limits for versal based platforms by introducing
+new Technology and Speed grade defines.
 
-Link: https://lore.kernel.org/r/20260414-clk-rpmh-vrm-opt-v3-1-8ca21469ffbc=
-@pm.me
-
-> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-> index 63c38cb47bc45..82f18e15cd77b 100644
-> --- a/drivers/clk/qcom/clk-rpmh.c
-> +++ b/drivers/clk/qcom/clk-rpmh.c
-
+> diff --git a/drivers/clk/clk-axi-clkgen.c b/drivers/clk/clk-axi-clkgen.c
+> index fa5ccef73e60d..26f76a6db8202 100644
+> --- a/drivers/clk/clk-axi-clkgen.c
+> +++ b/drivers/clk/clk-axi-clkgen.c
 [ ... ]
-
-> @@ -943,8 +938,7 @@ static int clk_rpmh_probe(struct platform_device *pde=
-v)
->  		if (!res_addr) {
->  			hw_clks[i] =3D NULL;
+> @@ -546,6 +546,9 @@ static int axi_clkgen_setup_limits(struct axi_clkgen =
+*axi_clkgen,
+>  	if (tech =3D=3D ADI_AXI_FPGA_TECH_ULTRASCALE_PLUS) {
+>  		axi_clkgen->limits.fvco_max =3D 1600000;
+>  		axi_clkgen->limits.fvco_min =3D 800000;
+> +	} else if (tech =3D=3D ADI_AXI_FPGA_TECH_VERSAL) {
+> +		axi_clkgen->limits.fvco_max =3D 4320000;
+> +		axi_clkgen->limits.fvco_min =3D 2160000;
+>  	}
 > =20
+>  	return 0;
+
 [Severity: High]
-This is a pre-existing issue, but does this code permanently mutate static
-global structures during probe?
+This isn't a bug introduced by this patch, but can we hit a division by zero
+kernel oops in axi_clkgen_calc_params() if a requested rate or parent_rate =
+is
+less than 1000 Hz?
 
-Looking at clk_rpmh_probe(), it uses statically allocated arrays like
-sm8550_rpmh_clocks and static structures. When the assignment above is
-executed, it permanently clears missing clocks from the shared array.
+In drivers/clk/clk-axi-clkgen.c:axi_clkgen_calc_params(), the code calculat=
+es
+fin and fout by dividing the rates by 1000:
 
-Additionally, further down in this same function, the dynamic cmd-db address
-is added to the static structure's initial offset:
+	fin =3D parent_rate / 1000;
+	fout =3D rate / 1000;
 
-    rpmh_clk->res_addr +=3D res_addr;
+If a client driver or device tree properties (such as assigned-clock-rates)
+request a rate or parent_rate below 1000 Hz, fin or fout would become 0.
+This appears to lead to a division by zero later in the same function when
+calculating parameters:
 
-If the driver is unbound and rebound via sysfs, or if probe defers, the
-structure retains these mutated states. The probe path will erroneously add
-the cmd-db address a second time for existing clocks, and missing clocks
-will remain permanently NULL.
+	m_min =3D max(DIV_ROUND_UP(fvco_min_fract, fin) * d_min, 1);
+	m_max =3D min(fvco_max_fract * d_max / fin, 64 << fract_shift);
+	...
+	dout =3D DIV_ROUND_CLOSEST(fvco, fout);
 
-Could this lead to severe resource address corruption when issuing RPMh
-commands to these accumulated addresses? Could a privileged user trigger
-a sysfs unbind/bind cycle to corrupt the state and break SoC clock
-management?
-
-> -			if (desc->clka_optional &&
-> -			    !strncmp(rpmh_clk->res_name, "clka", sizeof("clka") - 1))
-> +			if (rpmh_clk->res_addr =3D=3D CLK_RPMH_VRM_EN_OFFSET)
->  				continue;
-> =20
->  			dev_err(&pdev->dev, "missing RPMh resource address for %s\n",
+Are there constraints that prevent clk_set_rate() or clk_determine_rate()
+from reaching this path with frequencies below 1000 Hz?
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260831133314.4125=
-787-81-sashal@kernel.org?part=3D1
+787-224-sashal@kernel.org?part=3D1
