@@ -1,42 +1,33 @@
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 949C23043DE;
-	Tue,  1 Sep 2026 14:15:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6742035C6B5;
+	Tue,  1 Sep 2026 14:15:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788272116; cv=none; b=kHJxV6L6VpzPhLpmz23mfTPyjFBMHAcnCtT4oTXhoIO1vt/slkfdET61D1uHkJLYkpPakwe2A57F78dtqnvAcCk7q6omZd/BmJSYgvyuR15m9zXlJion6Yh+uD0pLM/ZzUVn674gtBQs4YGH7ueNxJ2yhvV/U46wh6h9u5OgWIA=
+	t=1788272143; cv=none; b=JC2MJcDKGuPSjyGVZNnQLC+75J3zauL/Yrp95n9WK1gGvUXPGe0al34MkaPz37XP8k2j1uPHt16iheFTF6J9ASHk32NAJr5D+t+fWqILiBRpZx9G4YfpylkwybxLekeS1tLlTbzorwruxwRhWzMIO8HT6w/gJlYBvYRMu2viKis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788272116; c=relaxed/simple;
-	bh=PJDVS0bJN0XEfpHEOX7TFqDVTTUAwV93MzlnKQXI65I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=srdhM7JvTDGM3SUPnXGZBNS6syyH20H0sDaXgm03oYUpsVAVbcLMhsi7gH3lPFIFsxTMoP1+eB8qTTkcG7t6YwZt+w2AGbWvCusvsYQHf1riduZjsTXzqHLKqdxplZw+kKgJvHGPHyoOvDgA72QeDF5Q8joDx77e52GA1Mfz4FQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=FI9HGXNV; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1788272143; c=relaxed/simple;
+	bh=EaYOss7aH7U03m0jOw/MrmBI2dLv0izREs5ku7Vt+dE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Cdv7uxN2t98NJXCg8++VwWO7wfhTsK0YiWhcHHUWTlLi5KWjWjkWt+a2KYXBl3oKUqVVGsh6NwczMU93axAB6lTDDDAs5y+0a3QQOu50qK7ayP9g3lCTZxQn+6JkvaxZh8QdUfBwz+XItCzdHz5bdVvS4sqGKTy81trKiWhjHdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EqjBaBob; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="FI9HGXNV"
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20260901141504euoutp02f8cf59604fcc0bb3e97ba307ffda0a3a~ROAEy4Y3I1223512235euoutp02b;
-	Tue,  1 Sep 2026 14:15:04 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20260901141504euoutp02f8cf59604fcc0bb3e97ba307ffda0a3a~ROAEy4Y3I1223512235euoutp02b
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1788272104;
-	bh=2nW3DmaEwtQqmdcgqJ0ClmdaBE1cGoZ7pcvRuf3Yst4=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=FI9HGXNVyamhN2zlQXR4CDPmMvub+hQK2T7ZBv5DkCgQPnby1w+gTVZUh41hlg+KR
-	 5ny8AyyOmQlmxO76627Rk1f6+fa9NHdeszWgDcCUqsh3yBThzUR5IsBAQipbYRojBC
-	 INCm0GUIqJFBdpcJ/FMR+S//fjPKiXb3VraxvlOY=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20260901141504eucas1p156346e8510ccf68f19fc29333c31cfe7~ROAEgxzXG3199331993eucas1p12;
-	Tue,  1 Sep 2026 14:15:04 +0000 (GMT)
-Received: from [192.168.1.44] (unknown [106.210.136.40]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20260901141502eusmtip277e141767fe1c923ccc834fdf6eb451f~ROACyv4-D1277812778eusmtip20;
-	Tue,  1 Sep 2026 14:15:02 +0000 (GMT)
-Message-ID: <b41f260d-2308-4853-8d3b-22cba534e4e2@samsung.com>
-Date: Tue, 1 Sep 2026 16:15:02 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EqjBaBob"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC4D41F000E9;
+	Tue,  1 Sep 2026 14:15:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788272142;
+	bh=wEPsoFZba9/yqSSHYgLjMd77+coDdfrDIfHLQZLFoqY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=EqjBaBobNnxIhXg2HReRfrmWuNkClh0/dyfmvacmEArQMkOCK1CFBrbJYd1o3FMbO
+	 jTEhZb9Dt6iJcmfhsaz8cQ6XmHriTxH13dooxSjg4PT5kfPBQe5zBBeSpwMsaAB1UI
+	 6mC/n7i8EkWD0xrXk8Y5TZQUMt0jD9Lp0jAr36hDdvQZK4x5TE2cJAcpbhDGAPP9YD
+	 CaCJpVdiR9xKDxBXOq4qbaEJ4N2XxS9313fI6Vi2hbqXCshxPwhY4XYkDCjoRaGDYl
+	 P2ZWE7pxXb2m6/6JEmPeV22Qeq4b7P/NFM62N0TgZyEthzeZWdco/+NYcv8RR3E3qT
+	 7MgKY7FHOKSbg==
+Message-ID: <a7cc6bf8-706a-4b51-a0ce-d6246045d5da@kernel.org>
+Date: Tue, 1 Sep 2026 16:15:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -44,161 +35,198 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 14/15] riscv: dts: starfive: jh7110: Update DT for
- display subsystem
-To: Icenowy Zheng <uwu@icenowy.me>, Vinod Koul <vkoul@kernel.org>, Neil
-	Armstrong <neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss
-	<rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, Lee Jones <lee@kernel.org>, Andy
-	Yan <andy.yan@rock-chips.com>, Philipp Zabel <p.zabel@pengutronix.de>, Emil
-	Renner Berthing <kernel@esmil.dk>, Hal Feng <hal.feng@starfivetech.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, Heiko Stuebner
-	<heiko@sntech.de>, Conor Dooley <conor@kernel.org>, Paul Walmsley
-	<pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
-	<aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, Dominique
-	Belhachemi <db@domibel.de>
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	mfd@lists.linux.dev, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
-	linux-riscv@lists.infradead.org, Andy Yan <andyshrk@163.com>, Marek
-	Szyprowski <m.szyprowski@samsung.com>, Maud Spierings
-	<maudspierings@gocontroll.com>, Graham Markall <hello@big-grey.co.uk>
+Subject: Re: [PATCH 02/10] dt-bindings: power: Add r8a774a3 SYSC power domain
+ definitions
+To: Ayman Chaudhry <ayman.chaudhry.kc@renesas.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ "magnus.damm" <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+ Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Ulf Hansson <ulfh@kernel.org>
+Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+ Chris Paterson <Chris.Paterson2@renesas.com>,
+ Biju Das <biju.das.jz@bp.renesas.com>,
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+ Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20260821150408.73829-1-ayman.chaudhry.kc@renesas.com>
+ <20260821150408.73829-3-ayman.chaudhry.kc@renesas.com>
+ <b2f486b8-a391-41bc-8a7f-dc81c6752205@kernel.org>
+ <TYCPR01MB11865BD2FC199EFC6BE613A5DA2A82@TYCPR01MB11865.jpnprd01.prod.outlook.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-In-Reply-To: <e0e0c41c4c6b0b674c4cfc3b6927d60c40fbf733.camel@icenowy.me>
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20260901141504eucas1p156346e8510ccf68f19fc29333c31cfe7
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20260828134839eucas1p2d19363d17d4dbf5a7ae5228444af16fa
-X-EPHeader: CA
-X-CMS-RootMailID: 20260828134839eucas1p2d19363d17d4dbf5a7ae5228444af16fa
-References: <20260828-jh7110-clean-send-v2-0-331680c8b9d1@samsung.com>
-	<CGME20260828134839eucas1p2d19363d17d4dbf5a7ae5228444af16fa@eucas1p2.samsung.com>
-	<20260828-jh7110-clean-send-v2-14-331680c8b9d1@samsung.com>
-	<e0e0c41c4c6b0b674c4cfc3b6927d60c40fbf733.camel@icenowy.me>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGPBBMBCgA5AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJp2mE8AAoJEBuTQ307QWKbeaIP
+ /ihHTkTW4KsN/DQ945JJbyu5tI0J80Wue7QyyLPglyKfhgb5cLLNPpOC8cCIJsc7+W3i2P38
+ s2c1cOH6CYGE7E9ur3Vfme8NW2S2I/Z8VC7bZnzyS23wT17LrsdS/qCpx4o8U+pt/xdXDKph
+ EGRYrIEmMpUWvyYzyYKGIe25FtaayIIKpq8eZYyFcp2f/sG5IkOW5uZzHPMPdcm87jU7fyuQ
+ rAU2vx9r+ulUfQ/q9Z2roC/ode3l7t2pN7BCBCsUDp6JCrUyZrtT1e7EbA0ZRP3aOBNk2P2E
+ DQOgJGjGdO5Yx2Y9LFtltu6JbsBJHi1syGRX3AtQYOMc4Y1WGoeZJmMlvKj2ZqqXNkcWi2DS
+ IQEWB0uW6CqFsBBIMGDa+6OzdaVO/uAVXWDWml02Men3CILdI1MbVjoh8ECqYUY7OQ+JJvNN
+ vnliuq5WM3Ghd3jg/LZZrxXjdIginRHFQCjIJYLKpLZWm1/iDFedcfzqRNYmTtqscdCNHW41
+ oT3Z7BmO9xwdjuwBS6nmS6JJwkbf5Ot2QR4pB/DRU7ZwjT1qHe+9r9gF32wXVQatHNGK/VVu
+ sfwOnkdxCWkp/qb2gdQRmZh+SedStWshigH6sNfuHBloF/q+hjMRc8b2m326OZdrbSHwY1Sz
+ vti8Hn7n8NjdHO9LKB7BIdjkA9DA5WsqOuVCzsFNBFVDXDQBEADNkrQYSREUL4D3Gws46JEo
+ Z9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLueMNsWLJBv
+ BaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6eiOMheesVS
+ 5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wAGldWsRxb
+ f3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA6z6lBZn0
+ WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9YegxWKvX
+ XHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt91pFzBSO
+ IpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gUBLHFTg2h
+ YnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/JoFzZ4B0
+ p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu4vXVFBYI
+ GmpyNPYzRm0QPwARAQABwsF2BBgBCgAgAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtBYpsFAmna
+ YUkACgkQG5NDfTtBYptX+BAApg32CkxwNucNEi8WfWA8oKkW0y8YDuY6ORMo9FWNGiT/OTy0
+ vyJrLocrpn86zwfjVp+eCrssPYh8eqJfnWqmYv6ACQtHPYzPZQ3mSo8H97Z01oUxITzCxpXm
+ ZkLgPIqtDPcC2E3dPM/fVxcyowM8XsaMA9wcsaUYrta8toOq2b9tKcjleKMfMrm0gQ9u7wUc
+ QbLkwj6TCLOwucb07GXzLTNF9PZmaDUpKAZjMjmrW+le+SFvQbhamx0rxLWPR0NWntXpbCn+
+ +ACch03p/JyTBVktxFsFyCt7pTPE1kEaeuXBTe/a2D9iQvRxRW19LvuO2e59/u1wYUiH/orz
+ wbIC2S4dBsPAPihL3ztOU1yE86GPyQtSE0kU+/7snnLt4QGi6PChf3t5gnNjAzjUUovO8rgI
+ c+5yN5heq5loYHgK6OQ9OlHzsPHO9e9MOQcKlFycs1pyijFGzDwdNUm/SchK8iWT2QApTx4A
+ K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
+ n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
+ qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
+In-Reply-To: <TYCPR01MB11865BD2FC199EFC6BE613A5DA2A82@TYCPR01MB11865.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-
-On 8/28/26 16:06, Icenowy Zheng wrote:
-> 在 2026-08-28五的 15:47 +0200，Michal Wilczynski写道：
->> Activate the display subsystem by adding the dc8200, hdmi and voutcrg
->> nodes as direct soc children. Each references the PD_VOUT power
->> domain
->> through power-domains, so genpd powers the domain on demand, and the
->> HDMI-PHY -> voutcrg -> HDMI-controller probe order is resolved by
->> deferred probe.
->>
->> The monolithic hdmi node is modelled as a container with hdmi_phy
->> and hdmi_controller children. This lets the PHY (clock provider,
->> depending only on xin24m) and the controller (clock consumer) probe
->> independently, breaking the circular clock dependency with voutcrg.
->>
->> voutcrg consumes the pixel clock from the &hdmi_phy node instead of
->> the
->> old fixed-clock, and dc8200 gets its pixel clocks from voutcrg's
->> MUXes
->> and is marked dma-noncoherent for framebuffer DMA. The old, incorrect
->> hdmitx0-pixel-clock fixed-clock node is removed.
->>
->> Co-developed-by: Dominique Belhachemi <db@domibel.de>
->> Signed-off-by: Dominique Belhachemi <db@domibel.de>
->> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
->> +		compatible = "fixed-clock";
->> +		#clock-cells = <0>;
->> +		clock-frequency = <24000000>;
->> +		clock-output-names = "xin24m";
->> +	};
->> +
->>  	soc {
->>  		compatible = "simple-bus";
->>  		interrupt-parent = <&plic>;
->> @@ -1199,22 +1200,92 @@ csi_phy: phy@19820000 {
->>  			#phy-cells = <0>;
->>  		};
->>  
->> +		dc8200: display@29400000 {
->> +			compatible = "verisilicon,dc";
->> +			reg = <0x0 0x29400000 0x0 0x2800>;
->> +			interrupts = <95>;
->> +			dma-noncoherent;
->> +
->> +			power-domains = <&pwrc JH7110_PD_VOUT>;
->> +
->> +			clocks = <&voutcrg
->> JH7110_VOUTCLK_DC8200_CORE>,
->> +				<&voutcrg
->> JH7110_VOUTCLK_DC8200_AXI>,
->> +				<&voutcrg
->> JH7110_VOUTCLK_DC8200_AHB>,
->> +				<&voutcrg
->> JH7110_VOUTCLK_DC8200_PIX0>,
->> +				<&voutcrg
->> JH7110_VOUTCLK_DC8200_PIX1>;
->> +			clock-names = "core", "axi", "ahb", "pix0",
->> "pix1";
->> +
->> +			resets = <&voutcrg
->> JH7110_VOUTRST_DC8200_CORE>,
->> +				 <&voutcrg
->> JH7110_VOUTRST_DC8200_AXI>,
->> +				 <&voutcrg
->> JH7110_VOUTRST_DC8200_AHB>;
->> +			reset-names = "core", "axi", "ahb";
->> +		};
->> +
->> +		hdmi_subsystem: hdmi@29590000 {
->> +			compatible = "starfive,jh7110-hdmi-
->> subsystem";
->> +			reg = <0x0 0x29590000 0x0 0x4000>;
->> +
->> +			/*
->> +			 * This MFD's PHY child is the first device
->> in the vout
->> +			 * region to touch registers, so it owns the
->> NoC display
->> +			 * bus clock + reset that gate access to the
->> region.
->> +			 * PD_VOUT is powered on by genpd via power-
->> domains.
->> +			 */
->> +			power-domains = <&pwrc JH7110_PD_VOUT>;
->> +			clocks = <&syscrg
->> JH7110_SYSCLK_NOC_BUS_DISP_AXI>;
->> +			resets = <&syscrg
->> JH7110_SYSRST_NOC_BUS_DISP_AXI>;
+On 01/09/2026 16:11, Ayman Chaudhry wrote:
+> Hi Krzysztof,
 > 
-> I think the NOC clocks/resets should be also needed by the DC8200
-> either?
+> Thanks for the review.
 > 
-> Although patching the DC8200 driver to add support for these
-> clocks/resets looks a little dirty...
+>> From: Krzysztof Kozlowski <krzk@kernel.org>
+>> Sent: Saturday, August 22, 2026 8:30 AM
+>> To: Ayman Chaudhry <ayman.chaudhry.kc@renesas.com>; Geert
+>> Uytterhoeven <geert+renesas@glider.be>; magnus.damm
+>> <magnus.damm@gmail.com>; Rob Herring <robh@kernel.org>; Krzysztof
+>> Kozlowski <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>;
+>> Stephen Boyd <sboyd@kernel.org>; Brian Masney
+>> <bmasney+clk@redhat.com>; Jerome Brunet <jbrunet+clk@baylibre.com>;
+>> Ulf Hansson <ulfh@kernel.org>
+>> Cc: linux-renesas-soc@vger.kernel.org; devicetree@vger.kernel.org; linux-
+>> kernel@vger.kernel.org; linux-clk@vger.kernel.org; linux-pm@vger.kernel.org;
+>> Chris Paterson <Chris.Paterson2@renesas.com>; Biju Das
+>> <biju.das.jz@bp.renesas.com>; Fabrizio Castro
+>> <fabrizio.castro.jz@renesas.com>; Prabhakar Mahadev Lad
+>> <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>> Subject: Re: [PATCH 02/10] dt-bindings: power: Add r8a774a3 SYSC power
+>> domain definitions
+>>
+>> On 21/08/2026 17:03, Ayman Chaudhry wrote:
+>>> This patch adds power domain indices for the Renesas RZ/G2M v3.0
+>>
+>>
+>> Please do not use "This commit/patch/change", but imperative mood. See
+>> longer explanation here:
+>> https://elixir.bootlin.com/linux/v6.16/source/Documentation/process/submi
+>> tting-patches.rst#L94
+>>
 > 
-> Maybe it's still good to have a vout subsys instead of a hdmi subsys...
+> Agreed, I will update the commit message.
+> 
+>>> (a.k.a. R8A774A3) SoC.
+>>>
+>>> Signed-off-by: Ayman Chaudhry <ayman.chaudhry.kc@renesas.com>
+>>> ---
+>>>  include/dt-bindings/power/r8a774a3-sysc.h | 30
+>>> +++++++++++++++++++++++
+>>
+>> Filename must match compatible.
+>>
+> 
+> Agreed, I will rename the file.
+> 
+> The bindings specify the filename, should I add an exception for this platform?
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=981a340540381532652731a500ba9df768bcef7d
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=61cada8da2f4c67026e41915f91673f045d4b18c
+> 
+>>
+>>>  1 file changed, 30 insertions(+)
+>>>  create mode 100644 include/dt-bindings/power/r8a774a3-sysc.h
+>>>
+>>> diff --git a/include/dt-bindings/power/r8a774a3-sysc.h
+>>> b/include/dt-bindings/power/r8a774a3-sysc.h
+>>> new file mode 100644
+>>> index 000000000000..5694a422b771
+>>> --- /dev/null
+>>> +++ b/include/dt-bindings/power/r8a774a3-sysc.h
+>>> @@ -0,0 +1,30 @@
+>>> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+>>> +/*
+>>> + * Copyright (C) 2026 Renesas Electronics Corp.
+>>> + */
+>>> +#ifndef __DT_BINDINGS_POWER_R8A774A3_SYSC_H__
+>>> +#define __DT_BINDINGS_POWER_R8A774A3_SYSC_H__
+>>> +
+>>> +/*
+>>> + * These power domain indices match the numbers of the interrupt bits
+>>
+>> No, that's not a binding then.
+>>
+>> Also, why is this sent separately from the binding?
+> 
+> The binding is already present in the kernel:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=3eb434de00b39c843249e89cf151757410e8a6ad
 
-Yeah that was the idea as it was modeling hardware correctly, however
-indirectly it works thanks to the probing order. The problem with the
-extra vout subsys as shown in the RFC was that an extra driver and extra
-dt-binding were needed which seemed to complicate things a bit. But it
-does seem more correct in a sense that it's modeling the relationship
-correctly so I'll bring it back for v3.
+And where is it explained? Bindings are supposed to be complete so why
+they were not posted complete?
 
+> 
+>>
+>>> + * representing the power areas in the various Interrupt Registers
+>>> + * (e.g. SYSCISR, Interrupt Status Register) */
+>>> +
+>>> +#define R8A774A3_PD_CA57_CPU0		 0
+>>> +#define R8A774A3_PD_CA57_CPU1		 1
+>>> +#define R8A774A3_PD_CA53_CPU0		 5
+>>
+>> No, value is 2. Or not a binding.
+> 
+> The values are pulled directly from the R8A774A3 hardware manual and
+> as a result are not sequential.
+
+So not really a binding.
+
+> 
+> This is compliant with header files for similar devices, so if we were to change
+> the approach now it would probably make things more confusing for the
+
+No, it is not compliant. Maybe it is done the same way as old devices,
+but feedback was provided already for a few years, so plenty of time to
+accept it.
+
+
+> user and it would also require some special handling. Given that this is
+> compliant with the style for similar devices adopting the same bindings,
+
+It is not compliant.
+
+> it's easy to understand as the numbers come straight from the HW manual,
+> I would actually prefer if we could stick with this numbering scheme if
+> possible.
+
+Nope, as explained many times already for obvious reasons. Otherwise
+provide me clear pieces of code which you bind here (as in DT bindings
+header purpose).
 
 Best regards,
--- 
-Michal Wilczynski <m.wilczynski@samsung.com>
-
-> 
-> Thanks,
-> Icenowy
-> 
-
-
+Krzysztof
