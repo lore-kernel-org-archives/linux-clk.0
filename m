@@ -1,142 +1,107 @@
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A79D83BB107
-	for <linux-clk@vger.kernel.org>; Tue,  1 Sep 2026 12:52:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788267174; cv=pass; b=KMoYgynq4PxetHcPp6RlbWVNhf0Nl7uCcBXg13GYFP9gPhYFXV/FVFbxBllg+0xnMX6tiCUEu9TG1EVP1cKiQ3AHFGEfYgV8cZ0m/IUA8Kvc3VizhnpTuzfrnEK2fU0qD34HCwUbV/v7ZipBVJOYZIlxdaheDrsyyL0Ej+1ZX3A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788267174; c=relaxed/simple;
-	bh=VG0JGy9V9Ess42oO7HJ1M9+yUlNIwa8iKwJ+GuLfhQ4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SPaUa/voC3MHHMlJPws8njSIhFg2GwqbPf8B9A7fZPblN/GT9DdLVGLc9ud1WXMXawtKk92IJMxWCTDICY42TcORYvw+qmtw/ZfR4Q+D33sEPi8RJmP/r4sWGo7wHdqi+bJfKyITUEt8Lbp+vSRqExJR5MD6rz7hGEqNrtOEKc0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=APws7sjm; arc=pass smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="APws7sjm"
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-6a601ba6870so1466823a12.0
-        for <linux-clk@vger.kernel.org>; Tue, 01 Sep 2026 05:52:50 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1788267168; cv=none;
-        d=google.com; s=arc-20260327;
-        b=KS3JsXqotlFXrRwKX2rZ7KmkmeotxdVNAsWdH7MxDxguDJOTNRmdLpMka1wYUCGQku
-         SobKGUlQnTUuO28mGKX6Ps8/V3UbFkBBji62Lz46zunIeLebmUJuBj1iPYEQkmwtTTId
-         4aYriRiz8TSe+A1EApKNsMjPk8qayWnxQdzVFj/qfWlEnnFuAdu9EWbOln9d7eN8KVFO
-         J6bGa5/tnp57utUyc1LFImyB2QiB0SOEVTPlqvs9UMiz8h1BgQyXWBfkrTIgakXtjEAY
-         KHYOTkheuWPj4rUMP12fVflAlTKSL0AahG/EWEwqC6oh36dYvvId3jjYj6LAnwTgArgb
-         q/9g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=ssbA7eNLUxksYHjRqY8p3X4V4mfnV6KUS7EHrqUvZgc=;
-        fh=xUY+Nn083Nijg45In98DohM8wcPmSsC9pBlwcuDOjPI=;
-        b=OHZlabuMd6VEthPMTYUJHYRt/L2T/hxEosTE0IxM7s5Ik5WX5n+WUna/oPIjInA2Yd
-         V4nlKl3zxc+dUwYOCf1HjVY9louuve3MMCtNKajhLHKiDPRWizoHW7ZoiVvHNz4oLjwg
-         f8c7l7gsWIaKeGL97YF1jiIvLBtbREfNEx50n5Fmk2YWzS4JL1H+wQ/o3cZc+V2zOLZS
-         pOdE6CjlvEcyDz5US++5KjCiDuMGqKGvfqkRLLrBd+B8sIekhkIZmg2iJH5sDrYMPxOv
-         kYImUo+s9u2KpljpQFtQFM9LyUmF57pp7rte1hbvygbvtrTKi1HrB5yOy3segzd1a8r2
-         NpLw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788267168; x=1788871968; darn=vger.kernel.org;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=ssbA7eNLUxksYHjRqY8p3X4V4mfnV6KUS7EHrqUvZgc=;
-        b=APws7sjm7FGRX6eDqzMDTJ6cLbEvx5rf0JczDmKeh6lwitsuvAm68EWNBoHlcj9TZQ
-         ryXUqotI5ZY1D783wL43Eqz9xwj2S9Ho3jCdeo2in8E+GMEDFdRa69LUAnc5UA2KwjzO
-         HahJHGS0h7NSTdJ4fTQJ4AikeQWZihGAZwL7nEDnrjQNo0/3+OGPHFPoKh/R6H8v2k79
-         YnnjDF3ZMrcQ9gfRiTmtODyPPoNCMiEcaDb/1ZIhjPr9an0sNK5/TgYfz8BsTOleITAt
-         VAzFDN8mZUuUIqK6xijgMDpq5UXwiKPesyLA1o2p9BmtRoaZQ6OtUiOMcDt2p5o5Q7GA
-         cDzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788267168; x=1788871968;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=ssbA7eNLUxksYHjRqY8p3X4V4mfnV6KUS7EHrqUvZgc=;
-        b=S2L6oCjq36tStJeT06ZGDHR8rCg/hpJqvA8P7EERyvsxOaTHjOlnJ3DFFZxcLLT/ko
-         foV4oWI15woTFB7V1Y70OV5H/Bc4vmaQT7oWv1kESOvF8zjcAujiomg3YJywhrMeHRZV
-         /Qq3CP/xk87g5/PrH8AFOFndmb0/wsTW97w6pcKPMkQFbui70X5WjEcRLB/tvpCgZFsy
-         i3aVMxn7eKzEPc7H4hkINVQI3jQfe63YtL6vDFWDSL2eLg/SoeZg0BYjWlz0yMTNXk+d
-         QriR0ZycWh/qMbdnJ/RWh1kTyXNEu8cXuPKrPQsta/HKCprA6en28Rw+c0HNrPR0rWNG
-         I4Vw==
-X-Forwarded-Encrypted: i=1; AKwUvByL8ZgaKGSKRHnCHaidBbJec6/tUpov9WKLZyo29gKwvY6c0XY30zvkJ+eoHHGSbUlZPvIH6SW9RZ4=@vger.kernel.org
-X-Gm-Message-State: AFuF++m0oHkRWr36LQ91UxEQYLvhYpGFSqu90hSAb74HzpkfkAR+Ac/Y
-	Hov/PmEMt0QXabbTZsFBoDpY8rW7RTVWIAZAgrFKsodQhVw6W6ONLqfa45t1v6kv40H1OBqMak5
-	mQZX+uk15wDV/Y1tO95mObz1x/JPrNnk=
-X-Gm-Gg: AYBFou0BUYLb19td9TC8G1mnKCLvYRiGsMxHXXbXvHUgtumEYX9WBu6CMTWSNQqrslF
-	VNpkrpRYb2v+cjDqxVprwg3tHFoBm7MPA+B2BoHTtCJPvnwohFCB9XUXAYHiYybHCijViQx+orU
-	P7ecsl/rzk79LDcqePM0mAlBRvLsyPM2fQorigS9F3d0Y9Mm860deO3SFZxHbdbgxrZy9seeStA
-	RxpQs5zx9pY/vvWK/XNrobPEJZnYQbawrn8wK7PKxLr28m8+lc1oawP0Kn2J/K4ReRhpJjpzU8n
-	HQADVOi7TrKpJZYbyoE2YvwuRMPv8Q6YbOlhtsErbT2ZkIlgsbB76nSZcZ0wOKZhvXepKTnQaMX
-	6rco=
-X-Received: by 2002:a05:6402:44c2:b0:6a6:32f6:c with SMTP id
- 4fb4d7f45d1cf-6a632f6013amr11282461a12.18.1788267168126; Tue, 01 Sep 2026
- 05:52:48 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F23BB4CCDC1;
+	Tue,  1 Sep 2026 12:53:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788267219; cv=none; b=IG7n2WN5LZeADVhzlTuv8Aq82fZqiyH/ezvR/sz3qnPf3k81pgHY4S4eFBs4a3xEKnKUPZYJitY0S+Lw3BuFUhEVgccRgdEI4hLu40I/NRQHfbhUNKkNaejxKV/55QXShj5FzaVFHY7Mz/clEaeaGrBo1rJ2Wx5wtZs5N/Co0Ao=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788267219; c=relaxed/simple;
+	bh=mN3J3PFtyTtR5hSD7jhOkZ9LwE/np8fv9UIW9RabCBI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lkBfWOFDyq0dPe/oURAHUK/v4ZHtKRBJotyNAc8JROX81uO12cj6p9rfOVTYjOf/BplR7tl4wz7C5i0/oguEbxTzKkTAjzfivqg9/N/3BsKMgTouqVi6CZC0IKX+2YIzDExDNBXqnq42KmqfweVO9hPVPkD0c0N6fcaioxKwj4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 20ea352ca60411f19a56ed5b684f684d-20260901
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.19,REQID:e9e9f435-0a87-416b-a713-5c522781e1ad,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:7db8b62,CLOUDID:25c1092264eb615d526a984f18807bf6,BulkI
+	D:nil,BulkQuantity:0,SF:102|850|865|898,TC:nil,Content:0|15|50,EDM:-3,IP:n
+	il,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LE
+	S:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 20ea352ca60411f19a56ed5b684f684d-20260901
+X-User: gonglinkai@kylinos.cn
+Received: from localhost.localdomain [(10.44.16.150)] by mailgw.kylinos.cn
+	(envelope-from <gonglinkai@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 1294518346; Tue, 01 Sep 2026 20:53:28 +0800
+From: Linkai Gong <gonglinkai@kylinos.cn>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Michal Simek <michal.simek@amd.com>
+Cc: Kees Cook <kees@kernel.org>,
+	Babanpreet Singh <bbnpreetsingh@gmail.com>,
+	Mike Turquette <mturquette@linaro.org>,
+	Soren Brinkmann <soren.brinkmann@xilinx.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	gonglinkai@kylinos.cn
+Subject: [PATCH] clk: zynq: return -ETIMEDOUT if the PLL never locks
+Date: Tue,  1 Sep 2026 20:53:23 +0800
+Message-Id: <20260901125323.1556551-1-gonglinkai@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260901092447.3028-1-sreeshankar0910@gmail.com> <prxk6xpxeoebz5da52a6bjgmaaop6mj55eemxdm5cjxm276tyi@jfeziqcrxtfv>
-In-Reply-To: <prxk6xpxeoebz5da52a6bjgmaaop6mj55eemxdm5cjxm276tyi@jfeziqcrxtfv>
-From: Sreeshankar K <sreeshankar0910@gmail.com>
-Date: Tue, 1 Sep 2026 18:22:34 +0530
-X-Gm-Features: AcwNN1U55mxl5Buv8KaT17jt0XFpq4P8gD6bW6R2dqKayvNk2vS1r-azwArTaqc
-Message-ID: <CAA-+ukJWFm1YOoWTO5TmuF8ymNuRGtsvOm4zruwUUEGpcmKNjA@mail.gmail.com>
-Subject: Re: [PATCH v9 00/12] Add initial support for Qualcomm SM7250 SoC
-To: Abel Vesa <abel.vesa@oss.qualcomm.com>
-Cc: andersson@kernel.org, sboyd@kernel.org, bmasney+clk@redhat.com, 
-	jbrunet+clk@baylibre.com, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, rafael@kernel.org, viresh.kumar@linaro.org, 
-	konradybcio@kernel.org, tglx@kernel.org, ulfh@kernel.org, radu@rendec.net, 
-	taniya.das@oss.qualcomm.com, danila@mainlining.org, davidwronek@gmail.com, 
-	mani@kernel.org, robimarko@gmail.com, linux@gurudas.dev, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, 1 Sept 2026 at 17:32, Abel Vesa <abel.vesa@oss.qualcomm.com> wrote:
->
-> On 26-09-01 09:24:35, Sreeshankar K wrote:
-> > This patchset introduces foundational upstream support for the Qualcomm SM7250
-> > SoC (internally codenamed Lito).
-> >
-> > SM7250 is an ARMv8.2-A platform manufactured on a 7nm process, featuring an
-> > octa-core Kryo 475 CPU configuration (1x Prime Cortex-A76, 1x Gold Cortex-A76,
-> > and 6x Silver Cortex-A55) and Adreno 620 GPU.
-> >
-> > This patchset is organized as follows:
-> > > Document relevant device tree bindings (SoC ID, Kryo 475 CPUs, SCM, PDC,
-> > RPMh clocks/power domains, GCC and cpufreq hardware).
-> > > Add driver support for SM7250 in socinfo, rpmh-clk, rpmhpd, and GCC.
-> > > Add the base SoC DTSI (sm7250.dtsi) defining the cpus, PSCI,
-> > interrupt controllers, clock providers, power domains, and reserved memory.
-> >
-> > Dependencies:
-> > This patchset depends on the following patch:
-> > > [PATCH] dt-bindings: clock: qcom,sm6375-gcc: Merge SM7150 into SM6375
-> >   Link: https://lore.kernel.org/linux-arm-msm/20260817082457.64797-2-krzysztof.kozlowski@oss.qualcomm.com/T/#t
-> >
-> > Changelog [v9]:
-> > > [PATCH v9 04/13]: clk: qcom: Add Global Clock Controller (GCC) driver for SM7250
-> >   Make all clk_init_data instances const across the driver.
->
-> You sent 3 versions in less than 24 hours. Please slow down.
->
-> Give a chance to the reviewers to have a look at each version before
-> sending a new one.
+zynq_pll_enable() waits for lock under a spinlock with no
+timeout. Poll with a 1ms bound and return the error.
 
+Fixes: 3682af46d55f ("clk: zynq: Factor out PLL driver")
+Signed-off-by: Linkai Gong <gonglinkai@kylinos.cn>
+---
+ drivers/clk/zynq/pll.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-I apologize for my actions. v7 was the intended new patchset. Unfortunately
-there was an interruption during submission of patches, only 08/12
-patches submitted.
-That's why I submitted the v8 patchset.
+diff --git a/drivers/clk/zynq/pll.c b/drivers/clk/zynq/pll.c
+index 44c609378364..96cf45088ba0 100644
+--- a/drivers/clk/zynq/pll.c
++++ b/drivers/clk/zynq/pll.c
+@@ -10,6 +10,7 @@
+ #include <linux/clk-provider.h>
+ #include <linux/slab.h>
+ #include <linux/io.h>
++#include <linux/iopoll.h>
+ 
+ /**
+  * struct zynq_pll - pll clock
+@@ -119,6 +120,7 @@ static int zynq_pll_enable(struct clk_hw *hw)
+ 	unsigned long flags = 0;
+ 	u32 reg;
+ 	struct zynq_pll *clk = to_zynq_pll(hw);
++	int ret;
+ 
+ 	if (zynq_pll_is_enabled(hw))
+ 		return 0;
+@@ -131,12 +133,12 @@ static int zynq_pll_enable(struct clk_hw *hw)
+ 	reg = readl(clk->pll_ctrl);
+ 	reg &= ~(PLLCTRL_RESET_MASK | PLLCTRL_PWRDWN_MASK);
+ 	writel(reg, clk->pll_ctrl);
+-	while (!(readl(clk->pll_status) & (1 << clk->lockbit)))
+-		;
++	ret = readl_poll_timeout_atomic(clk->pll_status, reg,
++					reg & (1 << clk->lockbit), 10, 1000);
+ 
+ 	spin_unlock_irqrestore(clk->lock, flags);
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ /**
+-- 
+2.25.1
 
-Regards,
-Sreeshankar K
