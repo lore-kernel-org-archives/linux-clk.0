@@ -1,254 +1,204 @@
-Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011054.outbound.protection.outlook.com [40.107.74.54])
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50FB4306764;
-	Tue,  1 Sep 2026 14:11:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.74.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788271900; cv=fail; b=Uwct0g6AuW6anECmmt6rEZc5YTR5tuDW4ESSvFxxUVLLwFzarWxoVDjPcN9sGSKZE0xvt2hC3LuPMv/FDFKdXN/t1uClDyxup852iAeuPPR4Gn9UB/qqVvM65i6qiETPlSFsQA40LG0JVsbwwWakxZciXtHXsHujbXg5jTTnQJ4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788271900; c=relaxed/simple;
-	bh=q3BVu1POFwS6/Do2W4uqaywOhLEkYlmvZ8ZZi+xlhtQ=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=jZYbRojkkj5m/JX9TliZz7wfGI79BF+RPdcddq0ZQY1Fy20zW5p/tUHnqzeZxtbtDRn2lpnHR2LQN4FzsD1mAmQIbtqK4xsrpG9c4EGIDp4BEI9XDFD4ApFyIfhtBl0PgP6x35EYIV8JmPk/NRmFSAokzOqvg4tYxkbmLQNVvPs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=RzA1LAbh; arc=fail smtp.client-ip=40.107.74.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 949C23043DE;
+	Tue,  1 Sep 2026 14:15:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788272116; cv=none; b=kHJxV6L6VpzPhLpmz23mfTPyjFBMHAcnCtT4oTXhoIO1vt/slkfdET61D1uHkJLYkpPakwe2A57F78dtqnvAcCk7q6omZd/BmJSYgvyuR15m9zXlJion6Yh+uD0pLM/ZzUVn674gtBQs4YGH7ueNxJ2yhvV/U46wh6h9u5OgWIA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788272116; c=relaxed/simple;
+	bh=PJDVS0bJN0XEfpHEOX7TFqDVTTUAwV93MzlnKQXI65I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=srdhM7JvTDGM3SUPnXGZBNS6syyH20H0sDaXgm03oYUpsVAVbcLMhsi7gH3lPFIFsxTMoP1+eB8qTTkcG7t6YwZt+w2AGbWvCusvsYQHf1riduZjsTXzqHLKqdxplZw+kKgJvHGPHyoOvDgA72QeDF5Q8joDx77e52GA1Mfz4FQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=FI9HGXNV; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="RzA1LAbh"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gocgRzgoenNt3i6T5SxNwmpD/GyzVzHK0EKjDutGfbo6Rjk5xX9+hNzH0woyeuoU84AKgJAv20B3On0IN6GpyvuzaFGSL1Qu2PyFnSMLBRanAOCWp+POC6LQ9Q3n0uihrSJt9Ud3vEhKhO5/rgUQTbZi5rQYI3IQ0F9rwvxJsZuWOT382oqyTmYhwr/1rsEZhYWHT2pXUdYzpQ1Nb8XZFiyN1PzsJt/WhH4hGyh1yhuLRHaOQFp+KzVMTz915uLjrC+GmKvg/y80Bakd3zmWPcjRTFmHJxEvUEf7VOMrWZeNIrf4vwU2JUnftcoi4c8rGckqZaE4jgjre6Plrxiuaw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=eENDf7LxN5BaT6FIkC/FoWCiYXcU/4rmPUxe0cNlQgc=;
- b=oEIJhs+tTLnQwKGxd7QCkvdw4YJEKdUY/AjzkR6GqR1QKeIqFFjo02JW9dvwzZLnA2BpZIv8oT6KaXtwQNjJQDSlFyBPtuK78Hi/bonLeSWvp0zlYfsSiseO9zkifcnZ8eQ4KRdjYiLyuaE6qMe+le12OT+jOm1fLmK5ASdr987xPWmppPNXFXPKmiQtJgw8nhRKyF6ovoiST61t9RuatqezVnHtJzjjfMNwhHTi+KdJ8+nAaU3vvHfPzEmMIi9Ex2/ZSySAPHv1ORrymYWmK+2sNVb8pwe9o7b7kuFm1Nf6MA3Vem9J299p4CXmZ0i2tBVwvZ5pvfpXTqVl7lndTA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eENDf7LxN5BaT6FIkC/FoWCiYXcU/4rmPUxe0cNlQgc=;
- b=RzA1LAbhV7ZYhzH+zt+Q78kcZyXMsjftd2axJXudtg7Hh4pzok5tAB81GIbkYtcS6E0qHv8BkK7zlDAwiMbnZl0iiQgVinWdhmk2VkHlQq4P38lPD5qoj4+JAmF62+zG30kujGTQlfSSVMpUxYTij11Xlzn8bWvO2aIljQSmCIM=
-Received: from TYCPR01MB11865.jpnprd01.prod.outlook.com (2603:1096:400:38c::6)
- by OSCPR01MB14950.jpnprd01.prod.outlook.com (2603:1096:604:3ac::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.360.13; Tue, 1 Sep
- 2026 14:11:35 +0000
-Received: from TYCPR01MB11865.jpnprd01.prod.outlook.com
- ([fe80::981:1b9:f809:a0c3]) by TYCPR01MB11865.jpnprd01.prod.outlook.com
- ([fe80::981:1b9:f809:a0c3%5]) with mapi id 15.21.0360.008; Tue, 1 Sep 2026
- 14:11:35 +0000
-From: Ayman Chaudhry <ayman.chaudhry.kc@renesas.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Geert Uytterhoeven
-	<geert+renesas@glider.be>, "magnus.damm" <magnus.damm@gmail.com>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Brian Masney
-	<bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, Ulf
- Hansson <ulfh@kernel.org>
-CC: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Chris Paterson
-	<Chris.Paterson2@renesas.com>, Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, Prabhakar Mahadev Lad
-	<prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: RE: [PATCH 02/10] dt-bindings: power: Add r8a774a3 SYSC power domain
- definitions
-Thread-Topic: [PATCH 02/10] dt-bindings: power: Add r8a774a3 SYSC power domain
- definitions
-Thread-Index: AQHdMX5892WN4kO9QE20wnaOSC1ofraprQeAgBAdPGA=
-Date: Tue, 1 Sep 2026 14:11:35 +0000
-Message-ID:
- <TYCPR01MB11865BD2FC199EFC6BE613A5DA2A82@TYCPR01MB11865.jpnprd01.prod.outlook.com>
-References: <20260821150408.73829-1-ayman.chaudhry.kc@renesas.com>
- <20260821150408.73829-3-ayman.chaudhry.kc@renesas.com>
- <b2f486b8-a391-41bc-8a7f-dc81c6752205@kernel.org>
-In-Reply-To: <b2f486b8-a391-41bc-8a7f-dc81c6752205@kernel.org>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYCPR01MB11865:EE_|OSCPR01MB14950:EE_
-x-ms-office365-filtering-correlation-id: 485ca316-a500-4b14-9a77-08df0832ee77
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|23010399003|366016|1800799024|376014|7416014|921020|38070700021|11063799006|4143699003|10067099003|56012099006|22082099003|18002099003;
-x-microsoft-antispam-message-info:
- 9yi/KQ0MbtTdex9Dmlo7o07zSEA12RmNM6o4XWu20yzSafXHQvPfNzTn2RMtb+OZkchTlMd0Me8Dbz8VBMCB8CZgEPFR5dZTyrDv7fRURL4CwGIruR20pfl4eUMYVbR5yO7M6Jo9YrQsKg3DLbLbp/97bk+TuUM92TA5d9kB/RS2vqcA/gVGHJs95SF8xRSVqQ9wPeBkU5jNq1qNjRjd1j2jHfjXabWGAoeANpydmvuToScmr9jZmbTa4g7qLWMyS4bFqQze08cB0DjjXApK6cMdbR7XiqLmuvstDlmJaHF472LScxvpMjLG9NoOAw6rMXVVb0Ob8Ym4gSWqn8mrWmsaVfyHuqHxT/CI6t/ysePV40KrTegeX4YjypFmefJRxJbPb09rJ9S9Unjs4qFQPDvBjHxNY7mrvc46wFerSBjCj663YMDDmH3J+hYXMRN7zck7MeE8jFCjIACsGJQm4/ASsxaAsTKdUTJccz9tgxahC17h9par9Ns3qw1ty2mHSiEPK0JMifCx02M3l1qTumOHtU8kVQI+THA/Ms4voIG24pxiCidJ8bhC9EJP7UrUCvg4Tzr0RCnZoZZDbU69i2XJPdCq0b1M6+Q5a1E0ft0KgL9ce6nMc3mGh9kVB7mU8C4N+2yqlXnZAV9prQh2GWHZTuT7TePxJoAkHGynKfei7dcKP9njbe1cQf4tSirF
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB11865.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(366016)(1800799024)(376014)(7416014)(921020)(38070700021)(11063799006)(4143699003)(10067099003)(56012099006)(22082099003)(18002099003);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?qtfDzwHkieUKaMdU4+d89XWWMuuSB+DoBi5RymB67LrlElyuU2pRduKBhsik?=
- =?us-ascii?Q?dxpmNGE6cG8f8m8o6hIlZ8HkQBDKrSS3lCHbV4nR1yIaHvSEvHHklW4Aclr0?=
- =?us-ascii?Q?ncJsyRJQyiR+xxR5WJit+pmPgLxgL1hEzSY3Ci5BwG79batoLv7YFR2/mePA?=
- =?us-ascii?Q?7oUA6ymIQPgI/3SaJnLZCkRNquBhgwLscEBLvAKVj4AHPd0zQpO/K/mdLWpi?=
- =?us-ascii?Q?YHFoDVhCrQK3sGfTyZskCFZvDIlKMRGoRBrG4g3MGiInkpVu2916/0G5lpbY?=
- =?us-ascii?Q?Zx6rmdYmYYCMbCGm1cPiiqwJHppvWaHfOgBi86O0ebWQa1XF8Bu1/d7S8/bT?=
- =?us-ascii?Q?Y5tCOLGdHlBmZAxEwYfD7fV1ahOXpSc94aTBVlHM/nCkA+txfTJjiER9Pdb/?=
- =?us-ascii?Q?gnEsbrMMpfaIWZ4NEqOpu4GqrkHQE+v4BQ9O6tkP8t4Gt6XSdmkNEwNooR0I?=
- =?us-ascii?Q?pxI+2Lw1Czw9gNtxH3jHudTg9Ccqgzu/ik2DGcxk1viDEj6Bqd3HZ7Fzptdh?=
- =?us-ascii?Q?mM5cdglCFiTRr+TpyVOtL//EweyQPsfHvlHe5AqXpBOoFSDAI5sUR5ecIU1u?=
- =?us-ascii?Q?mdBQBPYXRkftuekgM0lNlrY09F8VgmgNwzf7KH+poeehhziIglUN7hJcCWNl?=
- =?us-ascii?Q?Ran1+MJ143cXWWwINu0+qiBcrd88AfpcWJpD7IfO8G2ISYA7Iaj4SxzjBIFM?=
- =?us-ascii?Q?p2ZQEHL25PToSK7lNu1iR6D8XoWtDqNTPqCu6aLZmdItLd/917EWnLyrvTmw?=
- =?us-ascii?Q?nyKBqMIjYku4ETuuSs/W1RKV7ddaEuuJbmHBYaqErsGNEFkVfTRL/g0go6ZF?=
- =?us-ascii?Q?4GXrtoiRz9RiQBrQoOblC8embPKP0bf+Zm5YoxJbpTKVddZfkYUL2YvxIqeX?=
- =?us-ascii?Q?zC4tERvQsYHNVOkd+A2Rh4nhJRjF1EZE/8L33fAyFQzWfSw0wSSTXbemb8ug?=
- =?us-ascii?Q?8S4XSucsW2L7qqw2KJ+oxZxIEdBPK1b136qhAbPWLGlKrcU3JeATz934/xgM?=
- =?us-ascii?Q?ewTvRgLdxtD01Ax7tV/y65qUCFp2fR2+6kLyBP2PO0aH2je7CBfISKcqfGjz?=
- =?us-ascii?Q?iX9o1wOiUM4/NABLdF3BQYIxUMnS6TOU2qAr3x2sHKspY4Os3/kwJi4bGqOI?=
- =?us-ascii?Q?Y9eN/8R/NJsNfZi16S+Lb6VbeqCAwMryYQV8BA0Lb0js1/r8LOK3rfB/jvZv?=
- =?us-ascii?Q?cI3aJCvvpgVkW5TQVs+Y6Ojx1x2l4sSL3Ly+a0/+Lvuji4Tj1/NODtj+ioMn?=
- =?us-ascii?Q?Vw3xrlwlhbkuS3BWN/xMku/o9u8cdZ5dELNWNvsqcLOzcw61A9Dbw04uoU9t?=
- =?us-ascii?Q?tnxse5rv3HZowbrV0WnrEYE4Ar7qH52HLC/amPHarXmE+w5MDhbwfmOe1MSz?=
- =?us-ascii?Q?70Vs8SWpN8A0Q0UEsiKeFra30fCy9SzBYIPoZ7ZKZSDlyDXGY3icsHPIK5eO?=
- =?us-ascii?Q?QwUWU01s/Bhx3+FJekDaH9CXRb7Uk35A+YiTdvBmr69tdwCicVmrpO0KGtE6?=
- =?us-ascii?Q?ylUMyjwEAwaLOlySFoBjOZko8FAFSSIS/aSrq/iVEO4Uuj3iHNTML/yT8V4B?=
- =?us-ascii?Q?I2l/ve1wPLU3qy2zspWF8U08LKz0//Z5p0vjE8Ou6jTrmtL0SmAUV72WnTP5?=
- =?us-ascii?Q?nGpnz6/BZR/0JRSjfGx4kUZgRyMozhru4CHHF52ZYS9gouXmbkH1EcMdAKi5?=
- =?us-ascii?Q?R1VDLdYITwn5Iq/haEu6FRGPpBT+bs8KCXAKHsPjhrv/96Ii0KzJIZ7zb/+l?=
- =?us-ascii?Q?LusIN8tc9+fnP/hnBZlpI1Ce2oNUSoQ=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="FI9HGXNV"
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20260901141504euoutp02f8cf59604fcc0bb3e97ba307ffda0a3a~ROAEy4Y3I1223512235euoutp02b;
+	Tue,  1 Sep 2026 14:15:04 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20260901141504euoutp02f8cf59604fcc0bb3e97ba307ffda0a3a~ROAEy4Y3I1223512235euoutp02b
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1788272104;
+	bh=2nW3DmaEwtQqmdcgqJ0ClmdaBE1cGoZ7pcvRuf3Yst4=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=FI9HGXNVyamhN2zlQXR4CDPmMvub+hQK2T7ZBv5DkCgQPnby1w+gTVZUh41hlg+KR
+	 5ny8AyyOmQlmxO76627Rk1f6+fa9NHdeszWgDcCUqsh3yBThzUR5IsBAQipbYRojBC
+	 INCm0GUIqJFBdpcJ/FMR+S//fjPKiXb3VraxvlOY=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20260901141504eucas1p156346e8510ccf68f19fc29333c31cfe7~ROAEgxzXG3199331993eucas1p12;
+	Tue,  1 Sep 2026 14:15:04 +0000 (GMT)
+Received: from [192.168.1.44] (unknown [106.210.136.40]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20260901141502eusmtip277e141767fe1c923ccc834fdf6eb451f~ROACyv4-D1277812778eusmtip20;
+	Tue,  1 Sep 2026 14:15:02 +0000 (GMT)
+Message-ID: <b41f260d-2308-4853-8d3b-22cba534e4e2@samsung.com>
+Date: Tue, 1 Sep 2026 16:15:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB11865.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 485ca316-a500-4b14-9a77-08df0832ee77
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Sep 2026 14:11:35.1620
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ZsJMsuHt+42BQNNhqEvvYSitgmPE7ohF7jqJDd7nhGO6P7CigW96sOE4sY6aET1llVYxDLRBVudDEOMWPd+sYy42qNpcKc2Vv0wT8/I5Ls0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSCPR01MB14950
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 14/15] riscv: dts: starfive: jh7110: Update DT for
+ display subsystem
+To: Icenowy Zheng <uwu@icenowy.me>, Vinod Koul <vkoul@kernel.org>, Neil
+	Armstrong <neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss
+	<rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, Lee Jones <lee@kernel.org>, Andy
+	Yan <andy.yan@rock-chips.com>, Philipp Zabel <p.zabel@pengutronix.de>, Emil
+	Renner Berthing <kernel@esmil.dk>, Hal Feng <hal.feng@starfivetech.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, Heiko Stuebner
+	<heiko@sntech.de>, Conor Dooley <conor@kernel.org>, Paul Walmsley
+	<pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
+	<aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, Dominique
+	Belhachemi <db@domibel.de>
+Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	mfd@lists.linux.dev, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+	linux-riscv@lists.infradead.org, Andy Yan <andyshrk@163.com>, Marek
+	Szyprowski <m.szyprowski@samsung.com>, Maud Spierings
+	<maudspierings@gocontroll.com>, Graham Markall <hello@big-grey.co.uk>
+Content-Language: en-US
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+In-Reply-To: <e0e0c41c4c6b0b674c4cfc3b6927d60c40fbf733.camel@icenowy.me>
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20260901141504eucas1p156346e8510ccf68f19fc29333c31cfe7
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20260828134839eucas1p2d19363d17d4dbf5a7ae5228444af16fa
+X-EPHeader: CA
+X-CMS-RootMailID: 20260828134839eucas1p2d19363d17d4dbf5a7ae5228444af16fa
+References: <20260828-jh7110-clean-send-v2-0-331680c8b9d1@samsung.com>
+	<CGME20260828134839eucas1p2d19363d17d4dbf5a7ae5228444af16fa@eucas1p2.samsung.com>
+	<20260828-jh7110-clean-send-v2-14-331680c8b9d1@samsung.com>
+	<e0e0c41c4c6b0b674c4cfc3b6927d60c40fbf733.camel@icenowy.me>
 
-Hi Krzysztof,
 
-Thanks for the review.
 
-> From: Krzysztof Kozlowski <krzk@kernel.org>
-> Sent: Saturday, August 22, 2026 8:30 AM
-> To: Ayman Chaudhry <ayman.chaudhry.kc@renesas.com>; Geert
-> Uytterhoeven <geert+renesas@glider.be>; magnus.damm
-> <magnus.damm@gmail.com>; Rob Herring <robh@kernel.org>; Krzysztof
-> Kozlowski <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>;
-> Stephen Boyd <sboyd@kernel.org>; Brian Masney
-> <bmasney+clk@redhat.com>; Jerome Brunet <jbrunet+clk@baylibre.com>;
-> Ulf Hansson <ulfh@kernel.org>
-> Cc: linux-renesas-soc@vger.kernel.org; devicetree@vger.kernel.org; linux-
-> kernel@vger.kernel.org; linux-clk@vger.kernel.org; linux-pm@vger.kernel.o=
-rg;
-> Chris Paterson <Chris.Paterson2@renesas.com>; Biju Das
-> <biju.das.jz@bp.renesas.com>; Fabrizio Castro
-> <fabrizio.castro.jz@renesas.com>; Prabhakar Mahadev Lad
-> <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Subject: Re: [PATCH 02/10] dt-bindings: power: Add r8a774a3 SYSC power
-> domain definitions
->=20
-> On 21/08/2026 17:03, Ayman Chaudhry wrote:
-> > This patch adds power domain indices for the Renesas RZ/G2M v3.0
->=20
->=20
-> Please do not use "This commit/patch/change", but imperative mood. See
-> longer explanation here:
-> https://elixir.bootlin.com/linux/v6.16/source/Documentation/process/submi
-> tting-patches.rst#L94
->=20
+On 8/28/26 16:06, Icenowy Zheng wrote:
+> 在 2026-08-28五的 15:47 +0200，Michal Wilczynski写道：
+>> Activate the display subsystem by adding the dc8200, hdmi and voutcrg
+>> nodes as direct soc children. Each references the PD_VOUT power
+>> domain
+>> through power-domains, so genpd powers the domain on demand, and the
+>> HDMI-PHY -> voutcrg -> HDMI-controller probe order is resolved by
+>> deferred probe.
+>>
+>> The monolithic hdmi node is modelled as a container with hdmi_phy
+>> and hdmi_controller children. This lets the PHY (clock provider,
+>> depending only on xin24m) and the controller (clock consumer) probe
+>> independently, breaking the circular clock dependency with voutcrg.
+>>
+>> voutcrg consumes the pixel clock from the &hdmi_phy node instead of
+>> the
+>> old fixed-clock, and dc8200 gets its pixel clocks from voutcrg's
+>> MUXes
+>> and is marked dma-noncoherent for framebuffer DMA. The old, incorrect
+>> hdmitx0-pixel-clock fixed-clock node is removed.
+>>
+>> Co-developed-by: Dominique Belhachemi <db@domibel.de>
+>> Signed-off-by: Dominique Belhachemi <db@domibel.de>
+>> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+>> +		compatible = "fixed-clock";
+>> +		#clock-cells = <0>;
+>> +		clock-frequency = <24000000>;
+>> +		clock-output-names = "xin24m";
+>> +	};
+>> +
+>>  	soc {
+>>  		compatible = "simple-bus";
+>>  		interrupt-parent = <&plic>;
+>> @@ -1199,22 +1200,92 @@ csi_phy: phy@19820000 {
+>>  			#phy-cells = <0>;
+>>  		};
+>>  
+>> +		dc8200: display@29400000 {
+>> +			compatible = "verisilicon,dc";
+>> +			reg = <0x0 0x29400000 0x0 0x2800>;
+>> +			interrupts = <95>;
+>> +			dma-noncoherent;
+>> +
+>> +			power-domains = <&pwrc JH7110_PD_VOUT>;
+>> +
+>> +			clocks = <&voutcrg
+>> JH7110_VOUTCLK_DC8200_CORE>,
+>> +				<&voutcrg
+>> JH7110_VOUTCLK_DC8200_AXI>,
+>> +				<&voutcrg
+>> JH7110_VOUTCLK_DC8200_AHB>,
+>> +				<&voutcrg
+>> JH7110_VOUTCLK_DC8200_PIX0>,
+>> +				<&voutcrg
+>> JH7110_VOUTCLK_DC8200_PIX1>;
+>> +			clock-names = "core", "axi", "ahb", "pix0",
+>> "pix1";
+>> +
+>> +			resets = <&voutcrg
+>> JH7110_VOUTRST_DC8200_CORE>,
+>> +				 <&voutcrg
+>> JH7110_VOUTRST_DC8200_AXI>,
+>> +				 <&voutcrg
+>> JH7110_VOUTRST_DC8200_AHB>;
+>> +			reset-names = "core", "axi", "ahb";
+>> +		};
+>> +
+>> +		hdmi_subsystem: hdmi@29590000 {
+>> +			compatible = "starfive,jh7110-hdmi-
+>> subsystem";
+>> +			reg = <0x0 0x29590000 0x0 0x4000>;
+>> +
+>> +			/*
+>> +			 * This MFD's PHY child is the first device
+>> in the vout
+>> +			 * region to touch registers, so it owns the
+>> NoC display
+>> +			 * bus clock + reset that gate access to the
+>> region.
+>> +			 * PD_VOUT is powered on by genpd via power-
+>> domains.
+>> +			 */
+>> +			power-domains = <&pwrc JH7110_PD_VOUT>;
+>> +			clocks = <&syscrg
+>> JH7110_SYSCLK_NOC_BUS_DISP_AXI>;
+>> +			resets = <&syscrg
+>> JH7110_SYSRST_NOC_BUS_DISP_AXI>;
+> 
+> I think the NOC clocks/resets should be also needed by the DC8200
+> either?
+> 
+> Although patching the DC8200 driver to add support for these
+> clocks/resets looks a little dirty...
+> 
+> Maybe it's still good to have a vout subsys instead of a hdmi subsys...
 
-Agreed, I will update the commit message.
+Yeah that was the idea as it was modeling hardware correctly, however
+indirectly it works thanks to the probing order. The problem with the
+extra vout subsys as shown in the RFC was that an extra driver and extra
+dt-binding were needed which seemed to complicate things a bit. But it
+does seem more correct in a sense that it's modeling the relationship
+correctly so I'll bring it back for v3.
 
-> > (a.k.a. R8A774A3) SoC.
-> >
-> > Signed-off-by: Ayman Chaudhry <ayman.chaudhry.kc@renesas.com>
-> > ---
-> >  include/dt-bindings/power/r8a774a3-sysc.h | 30
-> > +++++++++++++++++++++++
->=20
-> Filename must match compatible.
->=20
 
-Agreed, I will rename the file.
+Best regards,
+-- 
+Michal Wilczynski <m.wilczynski@samsung.com>
 
-The bindings specify the filename, should I add an exception for this platf=
-orm?
+> 
+> Thanks,
+> Icenowy
+> 
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?=
-id=3D981a340540381532652731a500ba9df768bcef7d
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?=
-id=3D61cada8da2f4c67026e41915f91673f045d4b18c
-
->=20
-> >  1 file changed, 30 insertions(+)
-> >  create mode 100644 include/dt-bindings/power/r8a774a3-sysc.h
-> >
-> > diff --git a/include/dt-bindings/power/r8a774a3-sysc.h
-> > b/include/dt-bindings/power/r8a774a3-sysc.h
-> > new file mode 100644
-> > index 000000000000..5694a422b771
-> > --- /dev/null
-> > +++ b/include/dt-bindings/power/r8a774a3-sysc.h
-> > @@ -0,0 +1,30 @@
-> > +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> > +/*
-> > + * Copyright (C) 2026 Renesas Electronics Corp.
-> > + */
-> > +#ifndef __DT_BINDINGS_POWER_R8A774A3_SYSC_H__
-> > +#define __DT_BINDINGS_POWER_R8A774A3_SYSC_H__
-> > +
-> > +/*
-> > + * These power domain indices match the numbers of the interrupt bits
->=20
-> No, that's not a binding then.
->=20
-> Also, why is this sent separately from the binding?
-
-The binding is already present in the kernel:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?=
-id=3D3eb434de00b39c843249e89cf151757410e8a6ad
-
->=20
-> > + * representing the power areas in the various Interrupt Registers
-> > + * (e.g. SYSCISR, Interrupt Status Register) */
-> > +
-> > +#define R8A774A3_PD_CA57_CPU0		 0
-> > +#define R8A774A3_PD_CA57_CPU1		 1
-> > +#define R8A774A3_PD_CA53_CPU0		 5
->=20
-> No, value is 2. Or not a binding.
-
-The values are pulled directly from the R8A774A3 hardware manual and
-as a result are not sequential.
-
-This is compliant with header files for similar devices, so if we were to c=
-hange
-the approach now it would probably make things more confusing for the
-user and it would also require some special handling. Given that this is
-compliant with the style for similar devices adopting the same bindings,
-it's easy to understand as the numbers come straight from the HW manual,
-I would actually prefer if we could stick with this numbering scheme if
-possible.
-
-Thank you again.
-
-Kind Regards,
-Ayman
-
->=20
-> Best regards,
-> Krzysztof
