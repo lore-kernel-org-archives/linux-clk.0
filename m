@@ -1,80 +1,92 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 794894772A4
-	for <linux-clk@vger.kernel.org>; Tue,  1 Sep 2026 09:09:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D745947669A
+	for <linux-clk@vger.kernel.org>; Tue,  1 Sep 2026 09:25:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788253785; cv=none; b=VPyjRWAkM2B+MF4qaoerx36sS+dsbbIK/zdazD0RpHReIQLV/Si4LBYgCqcP0UP9C4HND3aZ0MxIeg6+pFtXN1w9JI7OaX/2sdJxwBXYjCF2oZxl/2X9H5M9GTbZMSxYMJGITocLGosfHY5ICEv1sZYyak7VCvccqsEiqpL9+XA=
+	t=1788254715; cv=none; b=Du2OJ3/W6GqObBsO2h5m7AfZ49UpfSASYFOvXccRwLVZtCq+Ib/tHBbBiAcIpr8cGa+TqU7kkhdCzBL15SLRkQthCSLJr0Lnt5Y2YuQayGOM1cbLUBOW3lGSA12bNLDmBhi2kMk2x4ImGRa7BlU4yvqmZrwXhZyT31p5s74OYyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788253785; c=relaxed/simple;
-	bh=s7OwmMd7z/CvhHqL8SqrmB96oUwRDyMihyU61UF48Os=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=C0+0dt6Wzl5SESJ0Qg0jG19w+dB51VG+UjEfyAVBT4HKofUFX2H2FkLIUBXTi5gofhh3TbhbIDE+I+zXS7x0U3szYQWM0UMOTGg9LLShSUdzsHzqSuXNI4kdFqczOpmb81nkIvFoQLDz7WNDFICAjAVRKKmm6ij6ucDFmFIB0bc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=eMqT0tGo; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+	s=arc-20240116; t=1788254715; c=relaxed/simple;
+	bh=REU9wsPaGJNSTwmn511u8FyP6qTye5YD87sITI9m9ZQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=b6YM7gXANJG+xo26ZGQc9PLczxHF6dz392PtX62DOhplVRQRNIEJ4hRp6pDs6UzOoBKIwTzc3Uh7w1YH4wNj44ypsn6Ow+TljeL8+kF+oH98ZIPudNx1Fyvm2PunFgMUcrG+wZrB/jYbkGq0X58CY6Ltj77aCk0JrYzDhFfI7QI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e8ZPY+wJ; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="eMqT0tGo"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-495590dde14so44683495e9.0
-        for <linux-clk@vger.kernel.org>; Tue, 01 Sep 2026 02:09:37 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e8ZPY+wJ"
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-ca766c1c9ccso3112393a12.0
+        for <linux-clk@vger.kernel.org>; Tue, 01 Sep 2026 02:25:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1788253774; x=1788858574; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1788254712; x=1788859512; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=T9TiGLOlBJPaa6ACMJt76ajLLQMGHpzZnyu3DaDv9wI=;
-        b=eMqT0tGoQS7uoYSWORui1JssXLeUfMin/saqc7XiNtm2Y/v0ahwzKgV79QeMmOBLta
-         L/AD3HLXi+rEUlLzExkNPEyX5YdmlZ0BqfNUeROcTLEYUZ0yNxCuUPItlnCBqaHXs3f4
-         AVpZMYTFxqDaXT+fLGV6q5BpxhRp6Hq7/Hq2I=
+        bh=z60FD1fUHm9+bC0HRYA7KQCUR9Tk0sZxFZNLgaVknjk=;
+        b=e8ZPY+wJzu1SRJP5X72gehxlvrce2e53sW86p8Ph+67FMqMfUnTymMQed/5lGAILSb
+         t6rFkJQIRg5nhoiUjV9dYYlgjZ8tPv2NS7QwubcCGIkgdw1QhFqtFE0mmGmV/wNP7NoZ
+         vnJNwoJekJT8LnHsqH0hgyvughwpCLrC9nsBs+xVENF7SnIb3NUMZaLzrQ3rQyV/rgPU
+         X3oh35k5RaZ6ie0udJIbY1d88HV3/dSIZswuTi1CVd79mRkDDfNkLTrt4MNdENQrgOld
+         1LCwh6bvvtgnZtu3F40eoKPsU4pvXfuiaxqPAeresBY756B8a4kUgP3TBQ1/UsoJXkT0
+         wGYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788253774; x=1788858574;
+        d=1e100.net; s=20251104; t=1788254712; x=1788859512;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=T9TiGLOlBJPaa6ACMJt76ajLLQMGHpzZnyu3DaDv9wI=;
-        b=E/xbc32RP0Da7gzwToQTAHRrP2gPVlk8zIdO5b8+/7t/PDOU0cb+reLW6HOz9l8tZQ
-         vFUvXQy5i06Sfn+puNTnoRzAOufP4dChrcjAG0P8oUR+U6bBOqTQ4/DAubn6t8MhaJoz
-         D4gunz+0mcF03BaHuK5011hsJyf/O8UGkoPSD2f0eBO6Hy+7CnCCDc9Tq0nA4w3BtbfQ
-         KKnQnnES9dgt6ePcLRayuEaUqpCs3vloWZuKq+30PXU3hrzLSxF4baCiv7xgGihRIht4
-         yQmpYS2ega6VIduzMZCcSFD9ywenoTOq9jN5kU5a5QxVllyAOPhUFOIE21a79meTYaFM
-         x4/w==
-X-Forwarded-Encrypted: i=1; AHgh+RqwBuugYFYMARPsRZ6cntKOXdFd8GVdMAJKqIkgjp/1LFQzs/ZSXMwzsM8eeleh0igvSkV6QotM2dM=@vger.kernel.org
-X-Gm-Message-State: AFuF++lKBZD36+sIPzHy8wy/lHv60QUndD7LZ2ZFNyj4tb5hJYjWUn54
-	BgtUw7c0moKQDGC6mz1FgzoQtoE6LgVFyb9ptB80WsSfYY0JDRVl0+jeR4iSabmJXnQ=
-X-Gm-Gg: AR+sD12rsquErtRqKCidhLrqH5eRiPZChOND8AsUcWXdG6Sjv2x70yGnYh7u2TbMdux
-	Nz0WdKeuqBP7SSfvI7oaAnSEolY+iXTf368414p46S+9i48uBqqYOnSTWiMVAlMrW45rTrChasg
-	slqjYp8azftsPZW3B6Ao/XnYyAA3t1M5zYWvPYC4OrmYVMZL+G6thmM7ondkllXj5DTjECOo4DB
-	1QrwS/MWci9fpeuUToCtAs5ylAs6qU8Ele8CVwi6jVvHQByuD+Dpz0yourB6nqxTWynA46WFhlr
-	PQkL0Cgw8DqA37MxA/Sgp3youo0oNvaILLq4VCnDES9s5i9+NWdnhx4ckDHiLLMsy0/WNuejn0X
-	BHeBT3ig9qYsuWEGTdsosxgYG2bS4Ja2YCPmu2HN/65oUVnAc/o7PjGyG6zdHBgGyrT4ZEb6tXA
-	oGG3bmBmDW/pGXjsANxruHDFaxKAnq0w3/PXRAwp2ySsF8JsV03P7IZmuxwNBHyAZ/3ZaADXySN
-	IJIiwA7N1pbizfqa550MfyaJKgXh1ox4OxDQep8Z2MD6iu0oKK+rUNy2w5yBfFzhqcWBdx5iDHM
-	eWLEvKZHFysqFaEIOQDKRiG6fUPSmhq6R9K8dUrURevEAzGpJeVP3NW+L0CKX21C1Q==
-X-Received: by 2002:a05:600c:190a:b0:49c:e1f1:3dd5 with SMTP id 5b1f17b1804b1-49ce1f13dd6mr5345715e9.4.1788253767752;
-        Tue, 01 Sep 2026 02:09:27 -0700 (PDT)
-Received: from dario-ThinkPad-P14s-Gen-5.amarulasolutions.com (host-87-9-102-148.retail.telecomitalia.it. [87.9.102.148])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48442c425cesm3825273f8f.6.2026.09.01.02.09.25
+        bh=z60FD1fUHm9+bC0HRYA7KQCUR9Tk0sZxFZNLgaVknjk=;
+        b=C2bt8YDAji/9gx8NNfyTiPTwKefoA7M2qCeL0aP4sMvCtGjYDVzmeChGbu2p2iBGy8
+         BNYuGVPnlX0OhpNHdig7AoGt7T16CkWX4BczbrnLLvAWOoFW/DzfLDkvi4Um0FP4Mwoz
+         pRAKZKPtaKfGgvT4i5Gqs753Jb4+2X8SNo9AD+km3sA828a8MD8jgeZoMHx/+kpl9lua
+         oP8rJMX6X2wb5PLWoz/LA/G9bXz+7oPsVdZrd4WWgOSi2y3JUXgOqYIfEKZAzV8wNqlF
+         YF3vwEcuVzkJ+tZwp4gDZ+NomUfeON1gBH9Zh7tqJ3wUVeasy9xOwkTzPU/zqTa1ToNp
+         p43g==
+X-Forwarded-Encrypted: i=1; AKwUvBzF3a3tKGij9u5W9jlc77SPwRN7+jid7mmWf8PeXaMb0WfR0NsQwxfNGcN0W4pJSv5qDfReKO7V8Dw=@vger.kernel.org
+X-Gm-Message-State: AFuF++mRCXwTkV7Yw0JWYb1ZmRkrnr4KMUnD5lHqqAiN7S2qljPmTH6U
+	KW6xqLHsUtAR4GnclEOlwuSM1tQmOi+7LnTbECirsHO6sUUgKsaNP+6m
+X-Gm-Gg: AYBFou20ueXdqw+Kb7yIkzc8f6wGi3PFshgnT0sFWDYahaMMPq3KCNotKvAAAZZC6fE
+	+FjCiejee70/xhffN8g1mNB9sot0EjO9iYhP+xl/jqBHw/Q0NpB2zKMkqjsOCw/ax4DCEEVNy1w
+	jsi41+zzSG4NC/Hi/ElPm9Ej+dmgy10i4JF1t6whQxs65IT9HrZcktI5+6kIKue9VWFkiwDnozx
+	NYx0QUSOmSgdW5e6Se3gYLKpBnYZH3+hd7olPzCwOIGllJmUmOBabj9Rk6Jl8b2O8mf8/xyO+jD
+	hICXYiobiK0qGjIvz6SkfuKFh9POdPfKoRvcWuiBMN0eorffzXNvaiqI5oMIZElhUcNGSaVd1P3
+	wAKmx3/DvIJrnSizv5+lSvaDnNhJimWze2weaVwTnumEUhZ0eyQJk/Ois4UAWqWQg1Q9kZcGC+S
+	SMZ4xb+k+egy6KtUnxjRY4HP4EniYi17t1OxDwNS4ZplUW6vshWB+I2OOn4+0vpDnjyPr2loPP7
+	tJWyqIajVuVS0BGpYHQeyg=
+X-Received: by 2002:a17:90b:2f0f:b0:380:540:d499 with SMTP id 98e67ed59e1d1-396d0ed0023mr51208197a91.6.1788254712068;
+        Tue, 01 Sep 2026 02:25:12 -0700 (PDT)
+Received: from localhost.localdomain ([157.51.207.128])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-32b28ab0571sm30004560eec.4.2026.09.01.02.25.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Sep 2026 02:09:27 -0700 (PDT)
-From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-amarula@amarulasolutions.com,
-	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-	Abel Vesa <abelvesa@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Frank Li <Frank.Li@nxp.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Peng Fan <peng.fan@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Sebin Francis <sebin.francis@ti.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v11 0/2] Support spread spectrum clocking for i.MX8M PLLs
-Date: Tue,  1 Sep 2026 11:05:16 +0200
-Message-ID: <20260901090912.585681-1-dario.binacchi@amarulasolutions.com>
+        Tue, 01 Sep 2026 02:25:11 -0700 (PDT)
+From: Sreeshankar K <sreeshankar0910@gmail.com>
+To: andersson@kernel.org,
+	sboyd@kernel.org,
+	bmasney+clk@redhat.com,
+	jbrunet+clk@baylibre.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	rafael@kernel.org,
+	viresh.kumar@linaro.org,
+	konradybcio@kernel.org,
+	tglx@kernel.org,
+	ulfh@kernel.org
+Cc: radu@rendec.net,
+	abel.vesa@oss.qualcomm.com,
+	taniya.das@oss.qualcomm.com,
+	danila@mainlining.org,
+	davidwronek@gmail.com,
+	mani@kernel.org,
+	robimarko@gmail.com,
+	linux@gurudas.dev,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	Sreeshankar K <sreeshankar0910@gmail.com>
+Subject: [PATCH v9 00/12] Add initial support for Qualcomm SM7250 SoC
+Date: Tue,  1 Sep 2026 09:24:35 +0000
+Message-ID: <20260901092447.3028-1-sreeshankar0910@gmail.com>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -84,103 +96,119 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The series adds support for spread spectrum clocking for i.MX8M{M,N,P}
-PLLs (audio, video and DRAM). It has been tested for the video PLL on
-boards using i.MX8MN and i.MX8MP.
+This patchset introduces foundational upstream support for the Qualcomm SM7250
+SoC (internally codenamed Lito).
 
-Changes in v11:
- - Add patch "clk: validate spread spectrum configuration" to reject
-   invalid parameters in the clk core before they reach the providers.
- - Fix issues claimed by Sashiko. See the details in the patch changelog.
- 
-Changes in v10:
-- Drop patches 1-22, superseded by the generic spread spectrum clocking
-  support from Peng Fan, merged in 7.3, so the i.MX8M specific infrastructure
-  is no longer needed. This patch is now based on the following commits:
-  - ae794aa6e88d ("dt-bindings: clock: Add spread spectrum definition")
-  - c86814e70390 ("clk: Introduce clk_hw_set_spread_spectrum")
-  - a7f16660af39 ("clk: conf: Support assigned-clock-sscs")
-  - 7d98de6ffdab ("clk: Add KUnit tests for assigned-clock-sscs")
-  https://lore.kernel.org/all/20260826165611.236321-1-sboyd@kernel.org/
+SM7250 is an ARMv8.2-A platform manufactured on a 7nm process, featuring an
+octa-core Kryo 475 CPU configuration (1x Prime Cortex-A76, 1x Gold Cortex-A76,
+and 6x Silver Cortex-A55) and Adreno 620 GPU.
 
-Changes in v9:
-- Add 'Reviewed-by' tag of Peng Fan for imx8mn platform patches
-- Fix building warning raised by the kernel test robot for patch
-  v8, 11/18 clk: imx: add support for i.MX8MN anatop clock driver
-- Add patches for imx8m{m,p} platforms:
-  - 23/23 clk: imx8mm: support spread spectrum clock generation
-  - 22/23 clk: imx: add support for i.MX8MM anatop clock driver
-  - 21/23 clk: imx8mp: support spread spectrum clock generation
-  - 20/23 clk: imx8mp: rename ccm_base to base
-  - 19/23 clk: imx: add support for i.MX8MP anatop clock driver
+This patchset is organized as follows:
+> Document relevant device tree bindings (SoC ID, Kryo 475 CPUs, SCM, PDC,
+RPMh clocks/power domains, GCC and cpufreq hardware).
+> Add driver support for SM7250 in socinfo, rpmh-clk, rpmhpd, and GCC.
+> Add the base SoC DTSI (sm7250.dtsi) defining the cpus, PSCI,
+interrupt controllers, clock providers, power domains, and reserved memory.
 
-Changes in v8:
-- Drop the patches added in version 7:
-  - 10/23 dt-bindings: clock: imx8m-clock: add phandle to the anatop
-  - 11/23 arm64: dts: imx8mm: add phandle to anatop within CCM
-  - 12/23 arm64: dts: imx8mn: add phandle to anatop within CCM
-  - 13/23 arm64: dts: imx8mp: add phandle to anatop within CCM
-  - 14/23 arm64: dts: imx8mq: add phandle to anatop within CCM
+Dependencies:
+This patchset depends on the following patch:
+> [PATCH] dt-bindings: clock: qcom,sm6375-gcc: Merge SM7150 into SM6375
+  Link: https://lore.kernel.org/linux-arm-msm/20260817082457.64797-2-krzysztof.kozlowski@oss.qualcomm.com/T/#t
 
-Changes in v7:
-- Add and manage fsl,anatop property as phandle to the anatop node with
-  the new patches:
-  - 10/23 dt-bindings: clock: imx8m-clock: add phandle to the anatop
-  - 11/23 arm64: dts: imx8mm: add phandle to anatop within CCM
-  - 12/23 arm64: dts: imx8mn: add phandle to anatop within CCM
-  - 13/23 arm64: dts: imx8mp: add phandle to anatop within CCM
-  - 14/23 arm64: dts: imx8mq: add phandle to anatop within CCM
+Changelog [v9]:
+> [PATCH v9 04/13]: clk: qcom: Add Global Clock Controller (GCC) driver for SM7250
+  Make all clk_init_data instances const across the driver.
 
-Changes in v6:
-- Merge patches:
-  10/20 dt-bindings: clock: imx8mm: add binding definitions for anatop
-  11/20 dt-bindings: clock: imx8mn: add binding definitions for anatop
-  12/20 dt-bindings: clock: imx8mp: add binding definitions for anatop
-  to
-  05/20 dt-bindings: clock: imx8m-anatop: define clocks/clock-names
-  now renamed
-  05/18 dt-bindings: clock: imx8m-anatop: add oscillators and PLLs
-- Split the patch
-  15/20 dt-bindings-clock-imx8m-clock-support-spread-spectru.patch
-  into
-  12/18 dt-bindings: clock: imx8m-clock: add PLLs
-  16/18 dt-bindings: clock: imx8m-clock: support spread spectrum clocking
+Link [v8]: https://lore.kernel.org/linux-arm-msm/20260901070717.20513-1-sreeshankar0910@gmail.com/T/#t
+Changelog [v8]:
+Same as v7. Resending the full patchset as v8 due to a transmission interruption during v7.
 
-Changes in v5:
-- Fix compilation errors.
-- Separate driver code from dt-bindings
+Link [v7]: https://lore.kernel.org/linux-arm-msm/20260901064357.20055-1-sreeshankar0910@gmail.com/T/#t
+Changelog [v7]:
+[PATCH v7 04/13]: clk: qcom: Add Global Clock Controller (GCC) driver for SM7250
+> Fixed missing (struct device *dev) in gcc_sm7250_clk_regs_configure
+  Link: https://lore.kernel.org/linux-arm-msm/apYNXZ9TJEC6rVVf@baldur
+Drop applied patches
+1) [09/13] dt-bindings: arm: cpus: Document Kryo 475 CPUs (commit: 1c8fe8863780705aba77893fade65f728e82b67a)
+   Link: https://lore.kernel.org/linux-arm-msm/178822856275.1835959.3848131517961346933.b4-ty@kernel.org
 
-Changes in v4:
-- Add dt-bindings for anatop
-- Add anatop driver
-- Drop fsl,ssc-clocks from spread spectrum dt-bindings
+Link [v6]: https://lore.kernel.org/linux-arm-msm/20260824150156.1310-1-sreeshankar0910@gmail.com/T/#t
+Changelog [v6]:
+[PATCH v6 04/13]: clk: qcom: Add Global Clock Controller (GCC) driver for SM7250
+> Make all clk_init_data instances const across the driver.
 
-Changes in v3:
-- Patches 1/8 has been added in version 3. The dt-bindings have
-  been moved from fsl,imx8m-anatop.yaml to imx8m-clock.yaml. The
-  anatop device (fsl,imx8m-anatop.yaml) is indeed more or less a
-  syscon, so it represents a memory area accessible by ccm
-  (imx8m-clock.yaml) to setup the PLLs.
-- Patches {3,5}/8 have been added in version 3.
-- Patches {4,6,8}/8 use ccm device node instead of the anatop one.
+Link [v5]: https://lore.kernel.org/linux-arm-msm/20260824130437.2771-1-sreeshankar0910@gmail.com/T/#t
+Changelog [v5]:
+[PATCH v5 13/13]: arm64: dts: qcom: Add SM7250 devicetree file
+> Reformat multi-entry phandle lists (domain-idle-states) to '<&a>, <&b>'.
+> Reformat multi-entry tuples and string lists (qcom,pdc-ranges, qcom,tcs-config, reg-names)
+  to one item per line.
+> Enable QUPv3 wrapper globally by dropping 'status = "disabled"'.
+> Move compatible property to first.
+> Remove clock-frequency property for timer.
 
-Changes in v2:
-- Add "allOf:" and place it after "required:" block, like in the
-  example schema.
-- Move the properties definition to the top-level.
-- Drop unit types as requested by the "make dt_binding_check" command.
+Link [v4]: https://lore.kernel.org/linux-arm-msm/20260821154030.2514-1-sreeshankar0910@gmail.com/T/#t
+Changelog [v4]:
+[PATCH v4 04/13] clk: qcom: Add Global Clock Controller (GCC) driver for SM7250
+> Update .fw_name with .index
+[PATCH v4 13/13] arm64: dts: qcom: Add SM7250 devicetree file
+> Added missing capacity-dmips-mhz and dynamic-power-coefficient for cpu@300
+> Added power-domains for cpus and apps_rsc
 
-Dario Binacchi (2):
-  clk: validate spread spectrum configuration
-  clk: imx: pll14xx: support spread spectrum clock generation
+Link [v3]: https://lore.kernel.org/linux-arm-msm/20260821081125.4522-1-sreeshankar0910@gmail.com/T/#t
+Changelog [v3]:
+[PATCH v3 04/13] clk: qcom: Add Global Clock Controller (GCC) driver for SM7250
+> Updated the way of registering critical clocks.
+> Made some more clock critical.
+        GCC_VIDEO_XO_CLK
+        GCC_CAMERA_XO_CLK
+        GCC_DISP_XO_CLK
+        GCC_NPU_CFG_AHB_CLK
+        GCC_CPUSS_AHB_CLK
+        GCC_NPU_BWMON_CFG_AHB_CLK
+  These clocks are flagged as critical in gcc-lito.c
 
- drivers/clk/clk.c             | 14 +++++++
- drivers/clk/imx/clk-pll14xx.c | 79 +++++++++++++++++++++++++++++++++++
- 2 files changed, 93 insertions(+)
+Link [v2]: https://lore.kernel.org/linux-arm-msm/20260819152545.3934-1-sreeshankar0910@gmail.com/T/#t
+Changelog [v2]:
+[PATCH v2 12/13] dt-bindings: cpufreq: qcom-hw: Document SM7250 cpufreq hardware
+[PATCH v2 13/13] arm64: dts: qcom: Add SM7250 devicetree file
+> Added SM7250 cpufreq hardware
 
----
-base-commit: 786262be6048deab760f68c8acc2c85607165894
-branch: imx-pll14xx-spread-spectrum
+Link [v1]: https://lore.kernel.org/linux-arm-msm/20260818080754.4362-1-sreeshankar0910@gmail.com/T/#t
+
+Sreeshankar K (12):
+  dt-bindings: arm: qcom,ids: Add SoC ID for SM7250
+  soc: qcom: socinfo: Add SM7250 SoC ID
+  dt-bindings: clock: Add SM7250 global clock controller
+  clk: qcom: Add Global Clock Controller (GCC) driver for SM7250
+  dt-bindings: clock: qcom,rpmhcc: Document RPMHCC compatible for SM7250
+  clk: qcom: rpmh: Add SM7250 rpmh clocks
+  dt-bindings: power: qcom,rpmhpd: Document RPMh power domain for SM7250
+  pmdomain: qcom: rpmhpd: Add RPMh power domains for SM7250
+  dt-bindings: firmware: qcom,scm: Document SM7250 SCM
+  dt-bindings: interrupt-controller: qcom,pdc: Document SM7250 PDC
+  dt-bindings: cpufreq: qcom-hw: Document SM7250 cpufreq hardware
+  arm64: dts: qcom: Add SM7250 devicetree file
+
+ .../bindings/clock/qcom,rpmhcc.yaml           |    1 +
+ .../bindings/clock/qcom,sm6375-gcc.yaml       |    4 +-
+ .../bindings/cpufreq/cpufreq-qcom-hw.yaml     |    1 +
+ .../bindings/firmware/qcom,scm.yaml           |    1 +
+ .../interrupt-controller/qcom,pdc.yaml        |    1 +
+ .../devicetree/bindings/power/qcom,rpmpd.yaml |    1 +
+ arch/arm64/boot/dts/qcom/sm7250.dtsi          |  771 ++++++
+ drivers/clk/qcom/Kconfig                      |    9 +
+ drivers/clk/qcom/Makefile                     |    1 +
+ drivers/clk/qcom/clk-rpmh.c                   |   24 +
+ drivers/clk/qcom/gcc-sm7250.c                 | 2275 +++++++++++++++++
+ drivers/pmdomain/qcom/rpmhpd.c                |   19 +
+ drivers/soc/qcom/socinfo.c                    |    1 +
+ include/dt-bindings/arm/qcom,ids.h            |    1 +
+ include/dt-bindings/clock/qcom,sm7250-gcc.h   |  163 ++
+ 15 files changed, 3272 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm64/boot/dts/qcom/sm7250.dtsi
+ create mode 100644 drivers/clk/qcom/gcc-sm7250.c
+ create mode 100644 include/dt-bindings/clock/qcom,sm7250-gcc.h
 
 -- 
 2.43.0
