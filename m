@@ -1,52 +1,68 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EED5C3D3D0C;
-	Tue,  1 Sep 2026 02:09:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D89E40B0ED;
+	Tue,  1 Sep 2026 02:09:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788228601; cv=none; b=WF8Ehli3cKijSiczj/9uPgw5Pu80a3oBxRbAMYPf8NwLsQR0OHGgN5pRbUUbrJEhC5ro/LCLBkXkGqNUYESyqE0anQOyI9CX5lsCZms9xU6UmCiYThMCi5pE1L10QRF/nn6KO++DQqJDo5vZxcetmKFr4W0hlnNa4BkOz4S8ZRQ=
+	t=1788228604; cv=none; b=tSm3O10pxe+TYzxjbjAFzhWCMw6JxBYBwvAB4wxF46NtHNOIYX5vITS0mq+HthOFR+TKSZQYkOlb7dJeDPYMMtYWeiAsjHE51OeTNuEUK0c5fcVzYDNJLJ0/pLajn2QwanBK0a4o8+YFGJ0LFHfzfaenVT4f1NYetSnEgJoAwYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788228601; c=relaxed/simple;
-	bh=wVbLN2D4jHCRlejLKUvBvlZ1pZLGpnuuGIGMhz3ei8A=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=X0jZKkV6tFHnDRyKAgHcfIrcUgD4X5xamY2TuQ/HQa+Z5R6HO+HObTDvB+csA4uFAFPVVR5cr6YwxkB5P6w7Dcp7bGXeriFPRrypRUiir8vuwDLVEKUaNvw5kibe9fVomDvaxtvB4e/pKK3WgtlE1C8ZYzTvBs8gNt/Ki+pJvGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lsyDL09E; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1788228604; c=relaxed/simple;
+	bh=vM/b+8Lm9P5CL6sjrNCoXlhWVUIXWgvPTo9FewuChPY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NglycMX5pNKdiyQnNIqAgacptc2TitpjcuP3or4VpL+HINYD+PyyqujXblmpvZ0BIfDoHEk8OAKCAsA8fs+CaMQ92+rwXr4igsFHV9pOqIPyGQbWRhhZl/0Gvu8UnGhrUXNimt7bCwBPzJn+U1IjcwBEH+ZvWWzZEkUNMbb70MY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ok2cON5q; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lsyDL09E"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 970901F00ADB;
-	Tue,  1 Sep 2026 02:09:47 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ok2cON5q"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B25EF1F00ACA;
+	Tue,  1 Sep 2026 02:09:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788228588;
-	bh=1tfL03b0H6Bzca1n3w8rS5amCqzBzB/d7YtRljxtteU=;
-	h=From:To:Subject:Date:In-Reply-To:References;
-	b=lsyDL09EA0/rbOaXK5E5O4HIHl0Ac065OO/1ILXI/C0QMIE9ZMPjmFa5ZzAqnxU13
-	 pVfRI+xEmu4ZJUQov9WfAUN/hdb3hoBkOJZ9AziVHtgQCtEfJdJlXwwpHI0onmG8Hn
-	 Wjtp/XAQRILl6QPbK2Zi5C7JgaypWMnZ/kqHh559fF6Es5I2+7YcLnnA33m+yd1iKq
-	 PSdwUXJDwyaHkIuYodj2jQawR7SL1lym1/e7yPB/moxBrcr+BbZsNAZStccn4ZydkC
-	 TyCLRn0f7QnWdG6nwhb5Zy15wQvbfWy7cOCbG03idYqqeFkzAjTH7bCoWp5MRZmNwd
-	 FG5oM0cyfCAow==
+	s=k20260515; t=1788228585;
+	bh=imccdf2g1mEFtExQXUXHUdzPH5T3kvgztV71j7lsVdk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=Ok2cON5qzJUYs6HC/WtGf6nOZ+S7sog1jx06koojWhYpFvB1VjXlpU+vazbj6ys6X
+	 5NaeODhTcaoc/Wr0vJz6n2tNSs+/7uMVVIQEQCklowwFfSRTC0jihy6WpRwsDFJhTw
+	 utAT3OmjhjG2VfvLkMnFdFm2RfAE/kQ8ugvNCpyBdAyxBm35bEexK2wsO88UXt6SxC
+	 J4hGZZQOjQ4lmZzuEyH0vh5MC4F1UfYUlc9dkyf+/VqvKRw7gSogBmSItmpuQXFjV9
+	 sOqkbnoqyFXwJhzmXg95gCfi/FksnNECfYMWhmofd+jCJDZA4TWyC3W77+LTsVw++C
+	 /fi4xgOjY/I9A==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney@redhat.com>,
+To: Konrad Dybcio <konradybcio@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Danila Tikhonov <danila@mainlining.org>,
-	David Wronek <davidwronek@gmail.com>,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
+	Ulf Hansson <ulfh@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney@redhat.com>,
+	Georgi Djakov <djakov@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Thomas Gleixner <tglx@kernel.org>,
+	Radu Rendec <radu@rendec.net>,
+	Robert Marko <robimarko@gmail.com>,
+	Guru Das Srinagesh <linux@gurudas.dev>,
+	Taniya Das <taniya.das@oss.qualcomm.com>,
+	Hardeep Sharma <hardeep.sharma@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Subject: Re: [PATCH] dt-bindings: clock: qcom,sm6375-gcc: Merge SM7150 into SM6375
-Date: Mon, 31 Aug 2026 21:09:24 -0500
-Message-ID: <178822856272.1835959.1992609658937634640.b4-ty@kernel.org>
+	devicetree@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	Mukesh Savaliya <mukesh.savaliya@oss.qualcomm.com>,
+	Abel Vesa <abel.vesa@oss.qualcomm.com>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Subject: Re: (subset) [PATCH v5 00/15] Add initial support for Qualcomm Kuno SoC
+Date: Mon, 31 Aug 2026 21:09:22 -0500
+Message-ID: <178822856270.1835959.15842744749902984423.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260817082457.64797-2-krzysztof.kozlowski@oss.qualcomm.com>
-References: <20260817082457.64797-2-krzysztof.kozlowski@oss.qualcomm.com>
+In-Reply-To: <20260827-kuno-soc-support-v5-0-6d47636a8f09@oss.qualcomm.com>
+References: <20260827-kuno-soc-support-v5-0-6d47636a8f09@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -57,17 +73,30 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Mon, 17 Aug 2026 10:24:58 +0200, Krzysztof Kozlowski wrote:
-> Bindings for Qualcomm SM7150 and SM6375 GCC clock controllers are
-> identical, so this could be one file for less handling and encouraging
-> future grouping of similar devices (like SM7250 which also would fit here).
+On Thu, 27 Aug 2026 23:21:03 +0530, Hardeep Sharma wrote:
+> This series adds initial support for the Qualcomm Kuno SoC and the Kuno
+> IDP reference board.
 > 
+> Kuno is a 32-bit ARM (Cortex-A7) Qualcomm platform. This series brings up
+> the essential SoC infrastructure required to boot to a serial console:
 > 
+>   - Global Clock Controller (GCC) and RPMh clock controller
+>   - RPMh power domains
+>   - Interconnect (NoC) provider
+>   - TLMM pin controller
+>   - PDC interrupt controller and SCM firmware interface
+>   - Devicetree for the SoC and the Kuno IDP board
+> 
+> [...]
 
 Applied, thanks!
 
-[1/1] dt-bindings: clock: qcom,sm6375-gcc: Merge SM7150 into SM6375
-      commit: 0e094dd19e04348183dd3e35d4f66290098a21b6
+[04/15] dt-bindings: clock: qcom,rpmhcc: Add Kuno RPMh clock controller
+        commit: e304e8919043712191462224ce9d40bb5f5a6bc1
+[05/15] clk: qcom: clk-rpmh: Add support for Kuno RPMh clocks
+        commit: 12918d595ac96b819b9c3ba0df4c6a4bf50c43a9
+[11/15] clk: qcom: Add Global Clock Controller driver for Kuno
+        commit: 7db06b5f624b583fa2206f98de8437819acada9b
 
 Best regards,
 -- 
