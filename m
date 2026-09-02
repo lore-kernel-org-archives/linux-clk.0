@@ -1,98 +1,129 @@
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6589314D34;
-	Wed,  2 Sep 2026 06:27:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E29C317163;
+	Wed,  2 Sep 2026 07:18:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788330423; cv=none; b=E574hw6MSlyL0J6bicRcc7qbZmHQKxzSTyGcFPya5Lfen8MY8Xw7jkxkZ1hu4Grqh6d8jNB5R2Oio1LRDdzZcT5Ahs6ypyYRk4BHnKjxclqggbCRoQgbCYMSzl06Ok39g3re0drSH0qgg21OWiAAQm4Z1mRVgjxPAkF3bb2Z72E=
+	t=1788333519; cv=none; b=ofzCULc6/n8z3VU0dG49mWBtOkAkOe6FmVluJYDj/ag8/YFTO6XZFya7qsbyUI41PDO2gcVYu4c/DbKB2Y3ASjX4tG3wH4rkHJgintbbz4j+mHv0uVxIKjpy2bGBR2bbs63EpIIY/2pRCI5vUOxkNwtxsA5UnEgtnJ7CdTHYI/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788330423; c=relaxed/simple;
-	bh=EwgEK/M4R+ibVLOsyxFFIoPegK+UlLukoar6tG6T180=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cTiegaxwO+/4EHhnQ2BISGMePtbzBg79c137K13rnSZfSXV9rgSPm+uH2+R7bvVmawD9zDrvrtYgEEWszn3vMZ9T8MAg2CAKXU0FnsctFebopswEZK0ZGQtW4jL6G8xtz5IEzKeWIjPLi/ojNW6aX2E3ROrW5eZ8uih2KWRkZIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=GQgPH4vD; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+	s=arc-20240116; t=1788333519; c=relaxed/simple;
+	bh=FrU0vwTWiXNpJLDHmXBFEhZPNs4uimrpEWy63hvXxRg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jbSacaNtI4bB2J+ai+5lVDExrJWeTz3X5OcjTaLVOtnmO6QgOHIp8VsNiI/BkLunDcQeZ9hZQmhVZyOFkCxvqhVpiR0L70wtpaMw62rLkRLoDc4Bg20tMJ+zulffZrYbfqsikviioGG2ir8/I+tu4lbSwV0SSPIoBXkBXNFrl5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e7fYUwa6; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="GQgPH4vD"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Subject:Cc:To:From:
-	Reply-To:Content-ID:Content-Description;
-	bh=5ryKsfyArI7gxOFDLJhCI89EQrP756HMoQ9H0TpnbAw=; t=1788330422; x=1789540022; 
-	b=GQgPH4vDT6KVbnNjNWU2oIQa0NjlhPoGtkp+kWFKY07EAUc1256XNykqcJOGjij4gunXLzJkJlo
-	Yc4kD/EBaoRTd6wuW+YmSg6YygrJKIvaVv8YvRiE0OOpvb543Kp3wwp/zd1RVl10/cUdLDsRO0cdv
-	ZbuQc+uAc93cQtr+XGtNL8WZf+VvqGVOhHqxktaHvzLYSLbamjkY1gEQSnvvAR3EPVZO5nNr6SELz
-	OPcf01kVdecmwh+2a54JR43FrLe01kjRFkGTtPFp9HEjfm3bsqa7mi1WYYDfQ73D1Ovea+9T3McDC
-	t+qOHw3013ZfS0uockMRy6/JsGEHMVA93qRA==;
-Date: Wed, 2 Sep 2026 08:26:39 +0200
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Cc: Tero Kristo <kristo@kernel.org>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Brian Masney
- <bmasney@redhat.com>, Tony Lindgren <tony@atomide.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, =?UTF-8?B?VGjDqW8=?= Lebrun
- <theo.lebrun@bootlin.com>, =?UTF-8?B?R3LDqWdvcnk=?= Clement
- <gregory.clement@bootlin.com>, linux-omap@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, hns@goldecilo.com
-Subject: Re: [PATCH v2 0/2] clk: ti: mux: resolve parent clocks by DT index,
- not by name
-Message-ID: <20260902082639.69643254@kemnade.info>
-In-Reply-To: <20260727-mathieu-wdt-clock-theo-v2-0-c048a6394436@bootlin.com>
-References: <20260727-mathieu-wdt-clock-theo-v2-0-c048a6394436@bootlin.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; aarch64-unknown-linux-gnu)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e7fYUwa6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A4871F000E9;
+	Wed,  2 Sep 2026 07:18:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788333518;
+	bh=HL69uD1uJKKHK2MGV9jHTlVdAjJQsXCvWjdRatXtZi8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=e7fYUwa67YcCpJQnhksI8s5r9szKITxJpbFfZKbSZEUV+z5uyzc5KVa96Mmcx4OPa
+	 hUt+sVL9z7lmDGS9Suf7Q3aJpKPLexx3a/NMPJiJlaCJDXuxcuxyaxz84pEZBXSEgK
+	 hK46DbJNdrhDH2CyT6tHGkYccEzqAweJqh2ZaX6AlxXN/anm8MKc31fIhLosPvGg2y
+	 U14EJghhLQcVsFrGtCsS5GQ4yKDOMPcYW6i+hSEISmxkgXiK2vroFVIRmVO3euKPgd
+	 Hti3OS6v3ljm1ef3LsRJAnppDgU5JPV1KLX6nlwpvbkA5LtWwoLDgyTDi1QfJ1YQZy
+	 GAmqh7uM9xRJg==
+Date: Wed, 2 Sep 2026 08:18:24 +0100
+From: Sudeep Holla <sudeep.holla@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Ryan Chen <ryan_chen@aspeedtech.com>, Joel Stanley <joel@jms.id.au>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Billy Tsai <billy_tsai@aspeedtech.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Taichi Sugaya <sugaya.taichi@socionext.com>,
+	Takao Orito <orito.takao@socionext.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Avi Fishman <avifishman70@gmail.com>,
+	Tomer Maimon <tmaimon77@gmail.com>,
+	Tali Perry <tali.perry1@gmail.com>,
+	Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>,
+	Benjamin Fair <benjaminfair@google.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	David Lechner <david@lechnology.com>,
+	Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Vladimir Zapolskiy <vz@mleia.com>, Heiko Stuebner <heiko@sntech.de>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	Viresh Kumar <vireshk@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Thierry Reding <thierry.reding@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Ulf Hansson <ulfh@kernel.org>, Liviu Dudau <liviu.dudau@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Michal Simek <michal.simek@amd.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	linux-clk@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	openbmc@lists.ozlabs.org, arm-scmi@vger.kernel.org,
+	imx@lists.linux.dev, linux-mips@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH 30/45] clk: scpi: Make sure clk_init_data is fully
+ initialized
+Message-ID: <20260902-tiny-metal-silkworm-ffaadd@sudeepholla>
+References: <cover.1787239813.git.geert+renesas@glider.be>
+ <939f1be93abebc7967a889e9c24c34942df8229a.1787239813.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <939f1be93abebc7967a889e9c24c34942df8229a.1787239813.git.geert+renesas@glider.be>
 
-Hi,
+On Fri, Aug 21, 2026 at 10:53:40AM +0200, Geert Uytterhoeven wrote:
+> The clk_init_data structure contains several mutually-exclusive members
+> for different methods to specify the possible parents of a clock,
+> prompting drivers to initialize only the members they need.  However,
+> not initializing all members may cause subtle issues, which are only
+> exposed when CONFIG_INIT_STACK_ALL_PATTERN or CONFIG_INIT_STACK_NONE is
+> enabled.
+> 
+> Make sure all members are fully initialized, to avoid such bugs, and to
+> prevent future breakage when converting drivers to a different method
+> for specifying the parents.
+>
 
-this seems to produce on OMAP3 (DM3730), even with the init fix.
+FWIW:
 
-[    0.000000] clocksource: 32k_counter: mask: 0xffffffff max_cycles: 0xffffffff
-, max_idle_ns: 58327039986419 ns                                                
-[    0.000030] sched_clock: 32 bits at 33kHz, resolution 30517ns, wraps every 65
-535999984741ns                                                                  
-[    0.013488] clk: failed to reparent gpt1_fck to omap_32k_fck: -22            
-[    0.019805] Failed to initialize '/ocp@68000000/target-module@48318000/timer@
-0': -19                                                                         
+Reviewed-by: Sudeep Holla <sudeep.holla@kernel.org>
 
+-- 
 Regards,
-Andreas
-
-On Mon, 27 Jul 2026 09:41:39 +0200
-Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com> wrote:
-
-> This commit aims to solve an issue I've been describing a few months ago
-> on AM335x SoC [1]. I believe using the parent_data field of
-> clk_init_data structure is now the preferred way to convey that data,
-> and it should be more reliable than string comparisons.
-> 
-> [1]: https://lore.kernel.org/all/DI4RUFQNSSNP.2QMSSQWJW9I2O@bootlin.com/
-> 
-> Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-> ---
-> Changes in v2:
-> - Also use clk_parent_data structure in composite.c.
-> - Rebase on v7.2-rc5.
-> - Link to v1: https://lore.kernel.org/r/20260715-mathieu-wdt-clock-theo-v1-1-da65bba1828b@bootlin.com
-> 
-> ---
-> Mathieu Dubois-Briand (2):
->       clk: ti: mux: resolve parent clocks by DT index, not by name
->       clk: ti: composite: resolve parent clocks by DT index, not by name
-> 
->  drivers/clk/ti/composite.c | 26 ++++++++++++++------------
->  drivers/clk/ti/mux.c       | 20 +++++++++++---------
->  2 files changed, 25 insertions(+), 21 deletions(-)
-> ---
-> base-commit: f5098b6bae761e346ebcd9da7f95622c04733cff
-> change-id: 20260713-mathieu-wdt-clock-theo-f0c5ba58e258
-> 
-> Best regards,
-
+Sudeep
