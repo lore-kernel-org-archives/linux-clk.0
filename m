@@ -1,109 +1,149 @@
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 817CC41F349
-	for <linux-clk@vger.kernel.org>; Wed,  2 Sep 2026 22:20:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A15B48C8CA;
+	Wed,  2 Sep 2026 22:26:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788387645; cv=none; b=qfXr+4m9+FoW41OCnKNZp2ctwRjFNf2qvaqA+aXhX+I4xJM2L2as1Ry+wcMV2kgA07iAawQQ869YT8aMNB7VgEkq8s/35yfhEgY4x6LrmZeobuBDVSJ5EGl+dc8D/J1r9ocFE7jByja+vbtPRJl1CP8oDDYNtKLdq9F96MVs6Lk=
+	t=1788388003; cv=none; b=qvhEyJecdkX3TTh44/3kZHNEWB5Y10qurRfV0TdwisByw8eWw7XUDgSb5/VKCUd2N10zklXFtK1qu7pTPPZKbdVeN40xc/KtlWnVgiEJRdtp+q81ZZhdJrvcQpGz/4W4ekmJOdJAdTmfmlG9SDFjAE6Vct8aJxPxP2T7+095AbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788387645; c=relaxed/simple;
-	bh=iLpH8+9iA7ODTvTwUU36ZP/HgSshJOQEJAhWQZt/+g0=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=MVLNLYNfbw2hFNiJeKuOspqKmSYHCTElqH6lmXMBD7Yw+u4Fd5MH0FzNP4r/SfKmjhATVAin1lEUcEqF2RKoB3GlJVTOtwKBxmrR60L+rh176Ces67scN15zNUyLrFsUqZkh0d5d4JXfATzZsAgcDs6EjY3MoV1qVH/fnaQMXaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fYB2lVtz; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1788388003; c=relaxed/simple;
+	bh=i4XnAdPCSCXXhlSSpAFj+EABq9LYqe29rBAXKjPTtJo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SpyR0ojgLciMLntqscmEUXKx0B7ijE0yN9upyHJld8mQ9XAU/Bsi7NFKgLyAMIqKBPPCTyi/UBvSar/5hG+lrLFB2Xf8l/0Y0m0+ZYa5gZbEim+DEDae8csZn7gYHalD/xl4AYdfsVDUPUTZftloSJhMZT0AHikc3BUpn1+hdGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=EhG5mpwG; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fYB2lVtz"
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-398c1101c1bso1939481a91.1
-        for <linux-clk@vger.kernel.org>; Wed, 02 Sep 2026 15:20:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788387638; x=1788992438; darn=vger.kernel.org;
-        h=in-reply-to:references:from:subject:cc:to:message-id:date
-         :content-type:content-transfer-encoding:mime-version:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=iLpH8+9iA7ODTvTwUU36ZP/HgSshJOQEJAhWQZt/+g0=;
-        b=fYB2lVtzBNybJRBuKKb3j9WGXB3m0Z3179BXXtcA0CLc2xeMwwZwiVqPMiaxXKQXXC
-         J3RxjtE/JY+iRi6HILSlADNk5IG5s8Oonz8SJ4foVc1f4YAbtDUHg58p1fZVubTtGOpg
-         BDhcRfAQGWkiADQcRoBouNRvvlxDw+MXf1bVLoqB/RrlFhG/L9tEwEpe0cO7aGsctK3k
-         FMSj/Eo/rEBd42OTektr8MHeiRMphf8xzvPDpmc+bQysnjkynYQqvW5w7geWWqW+m5yJ
-         P+iJsUNQafR/CovKsjGHD7D/y0MNjjFbJ2yqfPK4EH/TJUb7XUj5Nl8HADoVztkQsdv6
-         2saQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788387638; x=1788992438;
-        h=in-reply-to:references:from:subject:cc:to:message-id:date
-         :content-type:content-transfer-encoding:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=iLpH8+9iA7ODTvTwUU36ZP/HgSshJOQEJAhWQZt/+g0=;
-        b=B3jD2b6/Nn9W+RGGSBm67+bD6xwR3HOOGNXYTeiIFHXpJGjQVzNo3vYSAbQ75BvTTZ
-         hT8ggBc532Re+7/fHqRlh3I0PQ7Cv/5cJEigVyKwCcKGdRdz8HKFtABVdjyj+pT4RfPY
-         5T6xXE0d3sUuT6IlrVWL2VDAz2viGzfbB93NURl4r1rBRf38+LIZ2sD0PL7V7r4mvXgu
-         dOjoNAsOIC4gKXN5zFaoDXi3Hm1BzbH/sYO7FyY7J3F0EB1YnCl/BJmXJFBF7RKqosAl
-         Dz1eGJwCl7n8h4bvMfmD2Jhz8Tp6sLRLj94SUPbPyxdcjhpDVDPxxqql9mtc8rQIJRbV
-         a+LQ==
-X-Gm-Message-State: AFuF++n8zwRuapeV0Isy57DaMNoy5FCwWTJfvCNOoZ6tytGtn83wQyrC
-	/7WJELOs3C65T+7jyLLms8Wp3SxhAO/INixaxnYh2/0DtwfGh6ex9rhJ
-X-Gm-Gg: AYBFou15CQomizZa4w1EAtcg38TPYtYedNGgxJ4y4g/fqlCRe0Nw4R9sxXb0ACnFiwI
-	Z+N3+MjfKPcgWY791kyAopibXbtC3oE3ZjsV/yx7IVPJMw+ICbHT6s5hv0UTR0WB73tK9ohWium
-	477W/8VjuNVXVrbmw9srH/f+ubcxL9bjsCtbm8FslMgm9caY6t2Q8mCc5j3ezeMEp45pWehUyS1
-	Sj1qLJY4jTFe/dr04AqXCrWb7AGqB+LVR2NsEtEwCBAAi30wTEwyKxnbg6NpAUhfQk04RTOx6R3
-	6fwphTMmhG5foW+OsEQlff+X5xlpt8KDjNWQaCJyzatEwybVzejGUeig8qdWWOTKm76Xp9ONVVX
-	r5co+CfI/VxSUyNckMZqo76v/mMwxY4lfVLXcPMHVam6Hf8x33ODiViTGjAtFpyDqYPiFOf9RPf
-	NS/FGcjhAwN9TNJhMyaU/yWIPcNoakvGZkIkSVX62m3pmJiEVBnAfZRLAtBolZasy0S4hosdObc
-	nBopK9lkQvnJtx1nOzxNv6eo1OqaEQBkiX06JaZz8Py5FCFJ1vuFeJLV5PY25pwy+Iq/O0QdFsj
-	wGwWDH7Hiom6Ns0Mxw1WBs16pH2i+LwnkI+uKw==
-X-Received: by 2002:a17:90b:4c41:b0:381:cef1:11ac with SMTP id 98e67ed59e1d1-39aedfb9a24mr9812596a91.10.1788387638104;
-        Wed, 02 Sep 2026 15:20:38 -0700 (PDT)
-Received: from localhost ([2601:644:8000:7a86::e34])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-39b07ac1174sm1485087a91.0.2026.09.02.15.20.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Sep 2026 15:20:37 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="EhG5mpwG"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Subject:Cc:To:From:
+	Reply-To:Content-ID:Content-Description;
+	bh=ctmXGPbo7OIYgEQDCW0LBaFoEMOTs0bTZttwnqakCXk=; t=1788388001; x=1789597601; 
+	b=EhG5mpwGlSDJoqKN5nlA+/2UikZT6n1iK9cj6RE6QOC1SO/DzBLeIZ3E8H08YTlW+TREcymap28
+	bKLEUKk6m0DHsi36lL7mD4HPehRrGCgFVRMRhfigBUjoUWH3zhZzBxxR4GZ94dINqh1PmLDfkTDt1
+	tDqAxMQHW9U35VAPuLkGX7iP46okTXW+B3XzORyclfmArv47nwVbY8xLDDhf+impTcb+O0EcT1AxO
+	LLryjoUy+Q88IFxF+Qhlu/vq1BWYcuvYni7MGx6ZPY9W0ERkQUSEa0tUp98ra0+GW/MH89IQNfis8
+	8hN2irxEY9zpN3RBlVQa+C0mLHnuxb+qGcFA==;
+Date: Thu, 3 Sep 2026 00:26:26 +0200
+From: Andreas Kemnade <andreas@kemnade.info>
+To: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>
+Cc: "Tero Kristo" <kristo@kernel.org>, "Michael Turquette"
+ <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Brian
+ Masney" <bmasney@redhat.com>, "Tony Lindgren" <tony@atomide.com>, "Thomas
+ Petazzoni" <thomas.petazzoni@bootlin.com>, =?UTF-8?B?VGjDqW8=?= Lebrun
+ <theo.lebrun@bootlin.com>, =?UTF-8?B?R3LDqWdvcnk=?= Clement
+ <gregory.clement@bootlin.com>, <linux-omap@vger.kernel.org>,
+ <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <hns@goldelico.com>
+Subject: Re: [PATCH v2 0/2] clk: ti: mux: resolve parent clocks by DT index,
+ not by name
+Message-ID: <20260903002626.18f51816@kemnade.info>
+In-Reply-To: <20260902111556.38645f32@kemnade.info>
+References: <20260727-mathieu-wdt-clock-theo-v2-0-c048a6394436@bootlin.com>
+	<20260902082639.69643254@kemnade.info>
+	<DL4OUCXRGBEA.2G2WHI4FH2AY8@bootlin.com>
+	<20260902111556.38645f32@kemnade.info>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; aarch64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 02 Sep 2026 15:20:36 -0700
-Message-Id: <DL56IA99IWH9.22TJJI2Z54XM8@gmail.com>
-To: "Brian Masney" <bmasney@redhat.com>, "Rosen Penev" <rosenp@gmail.com>
-Cc: <linux-clk@vger.kernel.org>, "Michael Turquette"
- <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "David
- Lechner" <david@lechnology.com>, "open list" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCHv3] clk: davinci: add COMPILE_TEST support
-From: "Rosen Penev" <rosenp@gmail.com>
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20260812184001.75093-1-rosenp@gmail.com>
- <apidn5onRt_p4FOL@redhat.com>
-In-Reply-To: <apidn5onRt_p4FOL@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed Sep 2, 2026 at 3:05 PM PDT, Brian Masney wrote:
-> Hi Rosen,
->
-> On Wed, Aug 12, 2026 at 11:40:01AM -0700, Rosen Penev wrote:
->> Add a driver-scoped Kconfig symbol for the DaVinci clock drivers so
->> they can be built through COMPILE_TEST without selecting the ARM
->> DaVinci platform symbols.
->>
->> Keep the existing ARM platform behavior by defaulting the new symbol
->> from ARCH_DAVINCI, and use it for the davinci clock Makefile entries.
->> ARCH_DAVINCI_DA850 is the only remaining DaVinci platform symbol, so a
->> single COMMON_CLK_DAVINCI symbol suffices; the whole directory builds
->> together just fine.
->>
->> Assisted-by: Codex:GPT-5.5
->> Signed-off-by: Rosen Penev <rosenp@gmail.com>
->> Reviewed-by: Brian Masney <bmasney@redhat.com>
->
-> This doesn't apply against the latest clk tree. Can you post a new
-> version that applies? I'll be able to pick it up.
-Sent v4.
->
-> Thanks,
->
-> Brian
+On Wed, 2 Sep 2026 11:15:56 +0200
+Andreas Kemnade <andreas@kemnade.info> wrote:
 
+> On Wed, 02 Sep 2026 10:30:02 +0200
+> "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com> wrote:
+> 
+> > On Wed Sep 2, 2026 at 8:26 AM CEST, Andreas Kemnade wrote:  
+> > > Hi,
+> > >
+> > > this seems to produce on OMAP3 (DM3730), even with the init fix.
+> > >
+> > > [    0.000000] clocksource: 32k_counter: mask: 0xffffffff max_cycles: 0xffffffff
+> > > , max_idle_ns: 58327039986419 ns                                                
+> > > [    0.000030] sched_clock: 32 bits at 33kHz, resolution 30517ns, wraps every 65
+> > > 535999984741ns                                                                  
+> > > [    0.013488] clk: failed to reparent gpt1_fck to omap_32k_fck: -22            
+> > > [    0.019805] Failed to initialize '/ocp@68000000/target-module@48318000/timer@
+> > > 0': -19                                                                         
+> > >
+> > > Regards,
+> > > Andreas    
+> > 
+> > Hi Andreas,
+> > 
+> > That one will be a bit harder for me to debug, as I'm not sure I can
+> > easily get this hardware. But looking at the device tree and the
+> > reference manual, I suspect something is wrong in the omap3 device tree.
+> > 
+> > In omap3.dtsi, we have this node [1]:
+> > 
+> > &timer1_target {
+> > 	ti,no-reset-on-init;
+> > 	ti,no-idle;
+> > 	timer@0 {
+> > 		assigned-clocks = <&gpt1_fck>;
+> > 		assigned-clock-parents = <&omap_32k_fck>;
+> > 	};
+> > };
+> > 
+> > I suspect that's the source of the error: __set_clk_parents() in
+> > drivers/clk/clk-conf.c will try to set &omap_32k_fck as a parent of
+> > &gpt1_fck. But looking at omap3xxx-clocks.dtsi [2], &omap_32k_fck is not
+> > a valid parent:
+> > 
+> > 	gpt1_fck: gpt1_fck {
+> > 		#clock-cells = <0>;
+> > 		compatible = "ti,composite-clock";
+> > 		clocks = <&gpt1_gate_fck>, <&gpt1_mux_fck>;
+> > 	};
+> >   
+> the composite clock is meant to combine the two clocks into one,
+> so you have one single clock with enable/disable functions and
+> parents. At least that seems to be the idea.
+> 
+> If the system fully boots, you see:
+> localhost:/sys/kernel/debug/clk/gpt1_fck# cat clk_possible_parents 
+> omap_32k_fck sys_ck
+> 
+> > Yet the &gpt1_mux_fck is a mux, and one of the parent is indeed
+> > &omap_32k_fck [3]. So I suspect the correct assigned clock parent in
+> > timer@0 should be &gpt1_mux_fck.
+> > 
+> > Can you try it that way?
+> >   
+> [    0.000000] OMAP clocksource: 32k_counter at 32768 Hz                        
+> [    0.000000] clocksource: 32k_counter: mask: 0xffffffff max_cycles: 0xfffffffs
+> [    0.000000] sched_clock: 32 bits at 33kHz, resolution 30517ns, wraps every 6s
+> [    0.013458] dmtimer_systimer_setup: clock source init failed: -517           
+> 
+> The system does not boot much further.
+> 
+I got this a bit further by fully replacing this composite clock.
+With the system having a system timer, it boots till login prompt.
+But:
+
+[   32.069946] omap_dm_timer_set_source: failed to set timer_32k_ck as parent
+[   32.094116] omap-dmtimer-pwm pwm-11: invalid pmtimer fclk rate
+[   32.094146] pwm-backlight backlight: error -EINVAL: failed to apply initial PWM state
+[   32.094177] pwm-backlight backlight: probe with driver pwm-backlight failed with error -22
+
+This clock comes from here:
+clk/ti/clk-3xxx.c:	DT_CLK(NULL, "timer_32k_ck", "omap_32k_fck"),
+
+So same pattern. A composite clock cannot get its parent because there
+is the expection that such behave like a combined clock made from mux + gate clock.
+
+
+I have not found out if the early registration stuff in timer-ti-dm-systimer.c
+is part of the mess. OMAP4 devicetrees I use, use assigned-clock-parents in
+combination with ti,clkctrl clocks. That seems to work.
+
+Regards,
+Andreas
