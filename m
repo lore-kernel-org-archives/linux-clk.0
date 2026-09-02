@@ -1,125 +1,212 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D044A4414
-	for <linux-clk@vger.kernel.org>; Wed,  2 Sep 2026 14:49:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788360564; cv=none; b=s59w+7bprmoiLIsS+rsHgOiWlGUaBs8ntQSda6kJZbsoqHvlBqNf8+AKsLtF6bhgHDEAdMFqu/nzMbn4f5A8rndc2fAObFOvQew4BkQvy9BIBLH7Q1DpwprsXGk8x5N6KaHPWBoKSZZscw/5KdW9dhwDJVt1GfQ7DQsFaOP7QrE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788360564; c=relaxed/simple;
-	bh=o3ilph5W2vSVFluZzVmnRj0Zf/2T3yXy4uJ/eJj36UI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=poEexRM+qJjLNh+hhxSBnSH4fP82KLry7AU0qxTJ2lOrWlnUcq1/yPAUB6hyD5sUV96/nMMjcxNDc3xvCjYDOKE4Y8L24ijZ6Q2oQ9H1Hb/Lh7gPw++5dawTcBqZMbLVuHaw6+L57N07JoOod5BORiDA57gsrbpTvNPPIrKn4xk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L9kbnnbO; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=Nck7uxVb; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E31E4A5EBA;
+	Wed,  2 Sep 2026 14:59:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788361153; cv=pass; b=XOpAAf3j2d5A6VFPcwAyOj7I32OaO2zTsUoK0jY3V/XPEQJzy+jhvLwUdLJ5CCRp1VM1MxlAQS6f2uVOykKq1jFy/fNS4xGUK5toTlfF1OV8hx934J5dQSzkTvu6+r5LzP+l4nx0KO2cBnW7fBDhhM/R/+PHnRIx8WlfxlQPGG0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788361153; c=relaxed/simple;
+	bh=du7i2CkkuXhTACL5xjLwkLIqGU9AdyAp19y9A1xZak4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=DDvPGacX8hfjKiCZAjy9WcSDXBcD+ABYh+iw7McGqdk6ojXir3UATKUFHqGVU5UArfRgF05bJtFe1oQJ7i3S1ANFQxJYNflLGbvyJj5kiG0r/EQ4i1UbDKwIRuXTcLaIcHDSNy8HmDMABImS+AXqgo5USJAc3a3VxNwU9kpJ7gQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech; spf=pass smtp.mailfrom=pigmoral.tech; dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b=qACYkUGw; arc=pass smtp.client-ip=136.143.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pigmoral.tech
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L9kbnnbO";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="Nck7uxVb"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1788360560;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bqFrysN/+2cVNmsG8C/cGiUNyDrof3Ao3d+7KzBs1dg=;
-	b=L9kbnnbOMr4eZBelfYGJ9k0y1oVeppzlgx9iYz1l8M6CrnjvDu0AIh2Av2aM7QH2SmSi1u
-	sRBOoG43v/R1VaPVK7z1vqegltmPRSwwO7RjNn1cg6TovIFU9LL1WE0Ol4/ngyJ/C1b3ae
-	nsGHi7hqdtqvzu7Z1MGEeeh+b2sok/o=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-369-l1SCuAMbP16rROCzzlr0mw-1; Wed, 02 Sep 2026 10:49:18 -0400
-X-MC-Unique: l1SCuAMbP16rROCzzlr0mw-1
-X-Mimecast-MFC-AGG-ID: l1SCuAMbP16rROCzzlr0mw_1788360558
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-90e8013741eso12124476d6.3
-        for <linux-clk@vger.kernel.org>; Wed, 02 Sep 2026 07:49:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1788360558; x=1788965358; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:date:message-id
-         :subject:references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=bqFrysN/+2cVNmsG8C/cGiUNyDrof3Ao3d+7KzBs1dg=;
-        b=Nck7uxVbOT95Jisqv+FV1qhJppIYU8HSPkF0c+Orl7YSQ6B4HthA7OgZdudlVZQrm4
-         iD02DQ9ApI0tuTDAruumtpohojgVu970JHvdZbtwhWwpIqGJWFlnSZkSb5sc8nnN/epH
-         wK5skCoXn78Hak25qB3wDsu0cFw47nB9aj8aaBQGfXIluarxXHvQ3wXXE9Gr4rL4TZOU
-         Hk3JKWdjmVE7VgheHcS2gGGyXVywQ8SyXJ1yIE0K8hW8c84OgEAMddRb8/MYbWlVE4jH
-         tbrG+xEsjU31QZhbmntKBmAWgK+kwKGglvr5B0iHbFxEIa1ay5750wE7DKi+ADIT5nM5
-         l64A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788360558; x=1788965358;
-        h=content-transfer-encoding:content-type:mime-version:date:message-id
-         :subject:references:in-reply-to:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=bqFrysN/+2cVNmsG8C/cGiUNyDrof3Ao3d+7KzBs1dg=;
-        b=j0eZU911SBxNmAtJECYrYIEVZV9gsiCqXB2dyxcoFI22DaL+qwPNvsoAkEFN/8jeqs
-         4YmoRrSUyPEb6dp9YCoWbk9Cjop2rLvS1qwNVADBThf8rU0S1Q1dCjrAKGkwfoo71ua9
-         1kgh6HyW0NKi/3bkFblzFfjvS2LZvKk8a6wtVURzrdEvKpkyYp8v9zS5xazKN0eA6gIw
-         ygcDMxZLCF4YYJPmOpdEPk3Zv3sWcRuXLkNCW8ExfZOTsEhn25wA0VBdx9lmGYCK3BYb
-         z20eZi7z8Hkjd4Ha5Z5xYMwVN4aFs6JsPC89I7f8PwQHxuYcT8U/CapoypxMhFb1TrHg
-         HjJw==
-X-Forwarded-Encrypted: i=1; AKwUvBxL433A/o9QFbPkPZVOymL3s3OyXcDuyieMCqOW2UAT5GIQYzjPTbH9qxH7k4gRwGm2xO2cLJBuudk=@vger.kernel.org
-X-Gm-Message-State: AFuF++nu/kK5Yjqf6XDxEjdsb0PoPFnfhZv8oqq7NVVP7uXQRK9D8TQT
-	fheRvtVSHUhuTNBSSWV9ZiXyRtISilLfi1hBq/glT7Q495p8DdycS99/SOjoRLhBMYo5TTptoUz
-	+zqIluIWi0mfdRZ4GR2g9Rd0OT/9hcnIy/iUTwkN77OY24dbsrloTpK5PiM9Xjw==
-X-Gm-Gg: AYBFou2OHl67ctOry9CkdHjGvRIlwTRfHhAG2chVqY9Yw9Nf11rf1BRwAjK/IjYFMij
-	HKKRiYtB7p/hG3fRTtxjZMHELdMTo6dgombrir8NcGPVm24lN5OXiEtwXdlltHB/WojU8S8vTb5
-	rjdUwTRt0BDyJilyfrvv909cSi82W5yjjTtrhDJMb/b0tOu90LiypEtGOjlqRXeLzP3hJwwoeER
-	pFOvIjn0jE96zb5cJhBFLXup4JK5zNaK4sIwp96sJkH3KoLf/o40hz6hXXNtifPNcMS9Nf/kIje
-	2Hz/c7B2o/Tbyi1E2ezB4nXwNIP+80KQV2BgyNsDKESOt8UbKqYkqSSg3TwlKoCfq+aH6F6wyCl
-	eh6jMMaJPc4kZp0QsDBA7cVvf+CCejuhjjBsmOzI=
-X-Received: by 2002:a05:6214:2b0a:b0:90e:8dcc:4e5 with SMTP id 6a1803df08f44-90ebafb8fefmr72182216d6.28.1788360558158;
-        Wed, 02 Sep 2026 07:49:18 -0700 (PDT)
-X-Received: by 2002:a05:6214:2b0a:b0:90e:8dcc:4e5 with SMTP id 6a1803df08f44-90ebafb8fefmr72181126d6.28.1788360557564;
-        Wed, 02 Sep 2026 07:49:17 -0700 (PDT)
-Received: from [192.168.1.3] (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-90e9eec8482sm19647986d6.31.2026.09.02.07.49.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Sep 2026 07:49:16 -0700 (PDT)
-From: Brian Masney <bmasney@redhat.com>
-To: Daniel Palmer <daniel@thingy.jp>, 
- Romain Perier <romain.perier@gmail.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, hanzhijian <hanzhijian1991@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-In-Reply-To: <20260824142800.3497263-1-hanzhijian1991@gmail.com>
-References: <20260824142800.3497263-1-hanzhijian1991@gmail.com>
-Subject: Re: [PATCH v2] clk: mstar: msc313-mpll: fix off-by-one in clock
- array allocation
-Message-Id: <178836054100.2017040.16035095251394555993.b4-ty@b4>
-Date: Wed, 02 Sep 2026 10:49:01 -0400
+	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b="qACYkUGw"
+ARC-Seal: i=1; a=rsa-sha256; t=1788361100; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=S3QT2xnqapjWCt5br7N62PuBrrk/9qtRhbUZ0tLdJjAkdyn8BujS1mrgqWyhz07dljw/NP7WOK3LteyREHuSegPaB5HM29ePvLQs4r1wudYTm+IrRSBq7gQy8IwMEE1QVvw7mO6P8negJYTImrNpaXiBHH05Hr+vnsaF9DcCyoE=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1788361100; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=8HO2oXDKMUH/IBYP69UiPRfT2MLlZ9mi40/eACWvXEM=; 
+	b=b92bjwNpEO9fBCluP9ciiZ5sWudULCQpXOFi2mYF4ha9xqOIknar1RRQ4885UiWT33ZunTU/XrFg3p2vfcwW+7xf/qLGjF8cqJOG9OiahalSpCoHfA03PRfmxeLMecwV3em/6GPCWpE+zPbMA+Pb4gweYjN7wKrtrYnEk4nXKKw=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=pigmoral.tech;
+	spf=pass  smtp.mailfrom=junhui.liu@pigmoral.tech;
+	dmarc=pass header.from=<junhui.liu@pigmoral.tech>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1788361100;
+	s=zmail; d=pigmoral.tech; i=junhui.liu@pigmoral.tech;
+	h=Mime-Version:Content-Transfer-Encoding:Content-Type:Date:Date:Message-Id:Message-Id:Cc:Cc:Subject:Subject:From:From:To:To:In-Reply-To:Reply-To;
+	bh=8HO2oXDKMUH/IBYP69UiPRfT2MLlZ9mi40/eACWvXEM=;
+	b=qACYkUGwqEncwBwGhite6gjWfNXt9JXXjby68YUe1+OEKSieU1l/UGTyYe1eVbiE
+	uUD6/jVuQd9uCyHa3zLpJH3HkdbW4TcY7yS9vSmIY7Yg1W9m3LPCzt5WPMLNnSDn2R/
+	Z/LzbdirePQ+PKEk8zcitTJFlU0IiS4moaKyGCpM=
+Received: by mx.zohomail.com with SMTPS id 178836109677887.78200468721616;
+	Wed, 2 Sep 2026 07:58:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=332; i=bmasney@redhat.com;
- s=20250903; h=from:subject:message-id;
- bh=idLPkDsA8mhI1Ih+j5hSWIEMKho7R3PzR+kQbEfB5mg=;
- b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLJmmKdNeOt2NXwvq8a0uXzTGK91flEzf1zEn9/tJ7lxd
- uxx2eagjlIWBjEuBlkxRZYluUYFEamrbO/d0WSBmcPKBDKEgYtTACaS94jhn36ndiwDS89kU/kU
- 4xW5Rw2qK/X+qds+mnL19/FU5s3S6xgZGm8m+nMnrD7x/5+EmK2SqqDHZFsBaaMLxtKucwwemrY
- xAQA=
-X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
- fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 02 Sep 2026 22:58:04 +0800
+Message-Id: <DL4X3G8EL12W.GCHSR93W77W3@pigmoral.tech>
+Cc: "Stephen Boyd" <sboyd@kernel.org>, "Brian Masney" <bmasney@redhat.com>,
+ "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
+ <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Jernej
+ Skrabec" <jernej.skrabec@gmail.com>, "Samuel Holland"
+ <samuel@sholland.org>, "Philipp Zabel" <p.zabel@pengutronix.de>,
+ <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>, <linux-sunxi@lists.linux.dev>,
+ <linux-kernel@vger.kernel.org>, "Jerome Brunet" <jbrunet@baylibre.com>
+Subject: Re: [PATCH v2 4/8] clk: sunxi-ng: a733: Add PLL clocks support
+From: "Junhui Liu" <junhui.liu@pigmoral.tech>
+To: <wens@kernel.org>, "Junhui Liu" <junhui.liu@pigmoral.tech>
+X-Mailer: aerc 0.21.0
+References: <20260711-a733-clk-v2-0-974d188cbe0c@pigmoral.tech>
+ <20260711-a733-clk-v2-4-974d188cbe0c@pigmoral.tech>
+ <CAGb2v65KKifCUYUxnZ5Vm=XNqNdiNC1i+U9mgX2djtPkwvtN2g@mail.gmail.com>
+In-Reply-To: <CAGb2v65KKifCUYUxnZ5Vm=XNqNdiNC1i+U9mgX2djtPkwvtN2g@mail.gmail.com>
+X-ZohoMailClient: External
 
+Hi Chen-Yu,
+Thanks for your review. I will address the comments in v3.
 
-On Mon, 24 Aug 2026 22:28:00 +0800, hanzhijian wrote:
-> clk: mstar: msc313-mpll: fix off-by-one in clock array allocation
+On Sun Aug 23, 2026 at 5:38 PM CST, Chen-Yu Tsai wrote:
+> (trimmed recipient list a bit)
+>
+> On Sat, Jul 11, 2026 at 4:12=E2=80=AFPM Junhui Liu <junhui.liu@pigmoral.t=
+ech> wrote:
+>>
+>> Add PLL clock support for the main CCU of the Allwinner A733 SoC. The
+>> structure is mostly similar to the sun55i, with the addition of a
+>> PLL_REF clock that normalizes the hardware-detected DCXO/hosc frequency
+>> (19.2MHz, 24MHz, or 26MHz) into a consistent 24MHz reference for all
+>> subsequent PLLs.
+>>
+>> The behaviors of PLL_AUDIO0 and PLL_AUDIO1 are ported from the vendor
+>> driver. Specifically, PLL_AUDIO0 is configured with SDM parameters to
+>> provide a 22.5792MHz * 4 output, while PLL_AUDIO1 is integrated into
+>> the main CCU without using SDM.
+>>
+>> Tested-by: Jerome Brunet <jbrunet@baylibre.com>
+>> Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
+>> ---
+>>  drivers/clk/sunxi-ng/Kconfig           |   5 +
+>>  drivers/clk/sunxi-ng/Makefile          |   2 +
+>>  drivers/clk/sunxi-ng/ccu-sun60i-a733.c | 539 ++++++++++++++++++++++++++=
++++++++
+>>  3 files changed, 546 insertions(+)
 
-Applied, thanks!
+[...]
 
-[1/1] clk: mstar: msc313-mpll: fix off-by-one in clock array allocation
-      commit: 712b75152c00a8ab0c56dbfe34caf88e3870ddde
+>> +
+>> +/*
+>> + * There is no actual clock output with that frequency (2.4 GHz), inste=
+ad it
+>> + * has multiple outputs with adjustable dividers from that base frequen=
+cy.
+>> + * Model them separately as divider clocks based on that parent here.
+>> + */
+>> +#define SUN60I_A733_PLL_PERIPH0_REG    0x0a0
+>> +static struct ccu_nm pll_periph0_4x_clk =3D {
+>> +       .enable         =3D BIT(25) | BIT(26) | BIT(27),
+>
+> The gate helper sort of expects this to be just one bit. And the three
+> bits here are for the three individual outputs (2x, 800M, 480M). I think
+> you should move the bits to the individual outputs, and use BIT(31) here
+> instead (or just leave out the enable bit for this one).
 
+I will leave out the enable bit for the PLL core and move the three
+output gate bits to their corresponding child clocks.
+
+[...]
+
+>> +
+>> +static const struct clk_hw *pll_audio1_hws[] =3D {
+>> +       &pll_audio1_clk.common.hw
+>> +};
+>> +static SUNXI_CCU_M_HWS(pll_audio1_div2_clk, "pll-audio1-div2", pll_audi=
+o1_hws,
+>> +                      SUN60I_A733_PLL_AUDIO1_REG, 20, 3, 0);
+>> +static SUNXI_CCU_M_HWS(pll_audio1_div5_clk, "pll-audio1-div5", pll_audi=
+o1_hws,
+>> +                      SUN60I_A733_PLL_AUDIO1_REG, 16, 3, 0);
+>
+> Perhaps these should be made fixed? Otherwise the names don't apply corre=
+ctly.
+
+Agreed. Since the names explicitly describe fixed /2 and /5 divisions,
+I will model these two outputs as fixed-factor clocks and initialize the
+corresponding divider fields accordingly.
+
+[...]
+
+>> +       .lock           =3D BIT(28),
+>> +       .n              =3D _SUNXI_CCU_MULT_MIN(8, 8, 11),
+>> +       .m              =3D _SUNXI_CCU_DIV(1, 1), /* input divider */
+>> +       .common         =3D {
+>> +               .reg            =3D SUN60I_A733_PLL_DE_REG,
+>> +               .hw.init        =3D CLK_HW_INIT_PARENTS_HW("pll-de-12x",=
+ pll_ref_hws,
+>> +                                                        &ccu_nm_ops,
+>> +                                                        CLK_SET_RATE_GA=
+TE),
+>> +       },
+>> +};
+>> +
+>> +static const struct clk_hw *pll_de_hws[] =3D {
+>> +       &pll_de_12x_clk.common.hw
+>> +};
+>> +static SUNXI_CCU_M_HWS(pll_de_4x_clk, "pll-de-4x", pll_de_hws,
+>> +                      SUN60I_A733_PLL_DE_REG, 20, 3, 0);
+>> +static SUNXI_CCU_M_HWS(pll_de_3x_clk, "pll-de-3x", pll_de_hws,
+>> +                      SUN60I_A733_PLL_DE_REG, 16, 3, 0);
+>
+> Should we make the values fixed or the divider read-only?
+
+After checking the manual again, I don't think these dividers should be
+fixed or read-only.
+
+The 4X and 3X suffixes appear to be hardware output names rather than
+fixed multiplication factors. The manual describes both P0 and P1 as
+programmable dividers and only gives their default frequencies; it does
+not say that their values must remain fixed.
+
+For example, the default frequencies of DEPLL4X and DEPLL3X are
+1044 MHz and 696 MHz, respectively. If the suffixes represented
+multiples of a common base frequency, 1044 MHz / 4 * 3 would be
+783 MHz, not 696 MHz.
+
+[...]
+
+>> +
+>> +       /*
+>> +        * The PLL clock code does not model all bits, for instance it d=
+oes
+>> +        * not support a separate enable and gate bit. We present the
+>> +        * gate bit(27) as the enable bit, but then have to set the
+>> +        * PLL Enable, LDO Enable, and Lock Enable bits on all PLLs here=
+.
+>> +        */
+>> +       for (i =3D 0; i < ARRAY_SIZE(pll_regs); i++) {
+>> +               val =3D readl(reg + pll_regs[i]);
+>> +               val |=3D BIT(31) | BIT(30) | BIT(29);
+>> +               writel(val, reg + pll_regs[i]);
+>> +       }
+>> +
+>> +       /* Enforce m1 =3D 0 for PLL_AUDIO0 */
+>> +       val =3D readl(reg + SUN60I_A733_PLL_AUDIO0_REG);
+>> +       val &=3D ~BIT(1);
+>> +       writel(val, reg + SUN60I_A733_PLL_AUDIO0_REG);
+>
+> We should also force the divider for all the divN or Nx outputs.
+
+For the reasons above, I plan to force the divider values only for the
+divN outputs, whose names explicitly specify their division ratios, and
+leave the Nx output dividers programmable.
+
+>
+>
+> Thanks
+> ChenYu
+>
+
+--=20
 Best regards,
--- 
-Brian Masney <bmasney@redhat.com>
-
+Junhui Liu
