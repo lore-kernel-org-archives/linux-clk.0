@@ -1,224 +1,174 @@
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CEEB477E2D
-	for <linux-clk@vger.kernel.org>; Wed,  2 Sep 2026 11:50:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D591E489863
+	for <linux-clk@vger.kernel.org>; Wed,  2 Sep 2026 11:58:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788349837; cv=none; b=MWnvQ04NFO9lZaUv4AKv1R6CbwRJV8naXZPMSZZ/JZ2cCPq67PbrLoAQT87/2DNReNH32rnMmMXVaJPijLYzkTNIc+iC483XRYSNwNVCwUrVdTWnSZUvfPWyUdfsCF/CDm8T+blfjhYBLZf04Nw/2X/h8YT3xpIYbLzky3bw4ec=
+	t=1788350336; cv=none; b=ufWE+WvYYwG7JjijEuWsBLcAjEqRkfNJXZvcAXVJxY7q8cLw5/bSGpYHtX5hhLdsilw34VoO9yIagvKPtM6HBHk+iQ/EWuccncLpEGKIKbCYod7mxpaaOQxnX25JAskwcF3VrpgICSGSkbY0v/sHwRPYkMsnE0fvnaTC7AIITaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788349837; c=relaxed/simple;
-	bh=endY7gqq13GqgdJ/KG96fwZoTEb/cAVplHkhFQcBGpk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NFaX6bD3ETNYiqIJCdpyTa7y+jfCM0QCGwEK2w5ud0PYwV4kt5+s7zVjoJeUsJKX8Gr5NKmT7LwpIKeYmpSh7G3vZ1+XGaFdLCUMCzLPfyxiQfXXvHRZV3soo0TZyJSbJmZ21+nnB1L4VCDtQAodO3pWzUeVZyOo9hY8OrzG3vo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-90cd43bd740so10359776d6.1
-        for <linux-clk@vger.kernel.org>; Wed, 02 Sep 2026 04:50:18 -0700 (PDT)
+	s=arc-20240116; t=1788350336; c=relaxed/simple;
+	bh=JnRa08bIcjzzxfGRPFAlp0578fFiCK2SswzFgr9x5/k=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=NrAZAZI4A/MBxK+SIeks3FtQIN3V/+Fa5TmM3xWK4MlqeCTuXBIn38ng2B5zImpPNcS2BLPh2HJHSovKNq/r2RzSmOfHF9SHhnNLPxTIodzfUdFPUlDep6SmQ3Ey0yikhSWvWQ6N9ZsD0+yrFuL+aFD5PH+/i9jSowuEgtubbFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Yl/sYjzP; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=gJohobs3; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Yl/sYjzP";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="gJohobs3"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 682BMCVd1505603
+	for <linux-clk@vger.kernel.org>; Wed, 2 Sep 2026 11:58:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=iRI/+ArwwE+ptZgIHtQ+03
+	bm2VmcwrmWGTw0xv8R8iw=; b=Yl/sYjzPUfwC/Pn/Erux80RVVae4RH0Sda5dqH
+	7OHU9IJITRbEOmhz5rd9nghBaC89Yq3begQWoUigxm36EwVMz11IcZAZ8e8ThTkq
+	Fxyaud9YHRwZ2PR9lUsqUZju82hTZybiwlfPdfhgU3rQPAprlkM7K6N7njtt/clP
+	OYJxqttttrBdfAXnBqUZDqOCYgoazjqAkcdh4+1dsRCuTERXbp6iE3awZ6g+9ehD
+	hq5zkndkcrgDt7WSpp12V0MdgWtqepJS88w3qPhBj1uAeqmOtnR9ErPXDqUCe3Ia
+	wB+r1Ka8ALvsX86KMk6PdnmIG/J+OWNLpHaw0ATumIixSILA==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gejv884x5-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Wed, 02 Sep 2026 11:58:38 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-936aa34873bso157568185a.3
+        for <linux-clk@vger.kernel.org>; Wed, 02 Sep 2026 04:58:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1788350317; x=1788955117; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=iRI/+ArwwE+ptZgIHtQ+03bm2VmcwrmWGTw0xv8R8iw=;
+        b=gJohobs3IPJSqEEzeMvOFqHV4/t6eU6wogTA1O/7TomcuOgXWN3neHma+YtVD7r8cE
+         iT0gHNclhUhaFudU3rPxCs/UBC7Fjmx8WiGj6H4cPxo7+aDNn6jNGXHZH6m9dUirfNDu
+         nkxmZqqrjo5uhDtwHGeIQucCH1eEfY9/lTOz1T/yT1slkOk1VRfX76CchM0qGSVu58UH
+         syaeJlV54+o3WK2ogtDLM3bTD+iIgM31STVb5VfEzzqAUaTdLVMDK9bwG5v1ypJ48yMa
+         0J6I0kEE1qDJ123sHxg8lqWQeYDw8yS+z90uYsWZ4U+IhDzecsEgDstoxpCpwXXdh0AO
+         BLyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788349815; x=1788954615;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=d33A2cRSMy14qLiB29N4dNiBSipjfdSlz1gXIdUUM+M=;
-        b=oFBx0ncV47xIUslg9xdKYO2+1mlLUv3thYe3LZH8XbahpYMfMcaM+Qpr77Vbt5E7Bs
-         YP/yhWOeQs7OxsGU7rQh5fwPq/l5Ijy3mCvgNNc/TMyJtFZV2CnnO/SssPPlBaLTHN5V
-         WwzCCi3daDVojOpZfkt5pbuPjEMC2TCrmTTFFQpK9kOK0QCvbMLiumZ3GhLOyIZMQyCj
-         Is62hrGoxFGaIXh+jEHbHJisKCkfptvg3sgD4IVFLSWp3pV3pTTQoK7Pyup//+AceNJP
-         twmeZZVmlizxJaMn5p3m/mBwX1FcSZCq47bY+Qb6dJNVayOcorDlaf5rpQVGqudS6Mhn
-         NXyw==
-X-Forwarded-Encrypted: i=1; AKwUvBwg108xvJ7m/bVOcPfkB7fEQqxxcoa6KbYheQOM97x23PzHXzHMSNYdNCLOpl8PbLJT8XovYqpzSw0=@vger.kernel.org
-X-Gm-Message-State: AFuF++kgDzCDLmRRjooufmrUhfc0tm2/iwknUcy8/4JiFZPZ3Gez1gp4
-	xCDczjhnnFuDuQYFW1LfPJFYnZw9O559Wrdl0G2m4/5RTN7KRo5sMq8iC+GMtoJP
-X-Gm-Gg: AR+sD13s1pion7ew8lGSvMIJR3nYk/yIklRns1l/Nym06xEJMHKe8hkTT0FhypKhfqv
-	wfhxGojlWaDB5cKUGKIAaT3aEh3flJlUJeNyr0OO3p5o/0GtdnhfFEbRtgxr7pNSMgNT8hxs/F2
-	S+GAhqUz3qcCPdgkRb8vKNAEihU9sCGYsbeMfoB3k7fv44A51olgKuuHj5DeawzCcvhl2/cr+FL
-	TA9QBASTWDq5jG0B+yYv2iBiBProstcFbHAcNmiSD8Zs0mEf/rERx9Jt7O/1P2VfaNOYl7U3GPx
-	+1+c/VmOgHGY/KhVwNMkZNKAGRk39U0JHmax0l5czI6WhDcj5FhZxYGnjfwM0TRkOE3JV3pr75J
-	7zJVpbLqwTDCTWAh8jWhLH32mRqwGE9s4nVZjk7Wlt6G8+8uoLMOaUotovuGgwI7YTUZ7B7oqCR
-	SlirFQl3GDWa654Fz3MK2HCMNKiYyEpyTBtVTNjJ/QAHkftyMkC7RPBdMtGH9F1w8Dp1QQsgWq/
-	FQueO2ngGg2ckhP2yfTnd190w==
-X-Received: by 2002:a05:620a:70dc:b0:939:4890:98e1 with SMTP id af79cd13be357-93961022e70mr384845985a.42.1788349815358;
-        Wed, 02 Sep 2026 04:50:15 -0700 (PDT)
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com. [209.85.219.41])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-9395f360cadsm186069185a.29.2026.09.02.04.50.15
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Sep 2026 04:50:15 -0700 (PDT)
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-90cd43bd740so10359646d6.1
-        for <linux-clk@vger.kernel.org>; Wed, 02 Sep 2026 04:50:15 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBybuqg8huA/jAY/zzwyOiwPCNeIV+p275V7vMDSwZIfjplZnsTmc+u6pm91soep6Q3k407kbYMANlU=@vger.kernel.org
-X-Received: by 2002:a05:6102:2997:b0:784:a169:194a with SMTP id
- ada2fe7eead31-78a1f437b62mr1623913137.10.1788349475087; Wed, 02 Sep 2026
- 04:44:35 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1788350317; x=1788955117;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=iRI/+ArwwE+ptZgIHtQ+03bm2VmcwrmWGTw0xv8R8iw=;
+        b=IaHV8zFwWIwpa8Gq541j0lHT+2Wj8tY2lL1iEig/D2xt9XlYiw3U9839Ql/D0eNByt
+         tIHntf5DRB2Pv4NfESpvmcogyvJckRneLNKUApVjr8fmaxdMPajp73bQcrCmePbw5xTt
+         6fIud1oKUmsqHsRjvuCHmwXxlKY3PQJb0GxwTx3y2iLogRQkqzhw5eoLivARQaCVOOlF
+         +oL49FtHwup7Dx9oIbCv81v631TFgD3ElNsknAl/m4224WJbye4XUBOIGprT1YgL+bgR
+         c3syvR+FobZp8JdgMwWz1Es/w2TWxJUkOw4cTKopggzBsze+Z4fiRyu4IVpCllFQWaOV
+         azew==
+X-Forwarded-Encrypted: i=1; AHgh+RpjSBqlJtg8bMnLElpkdipemfd4lbu1f1tFbChRNVqxelm8MCaH+Ll5uluotZQHtdywrnooIoLcFys=@vger.kernel.org
+X-Gm-Message-State: AFuF++nVFSZ5FgjGb4Ycssa3Y/KDk+mqsPjOjd+NN6P/PIcSmIh3nAKH
+	G0MWhVf91hmvVz/UDpH9qiU9uI9j+Y+o90k7wdfGFZefyWUm0cNNjUoqOQmNWzr3Z1NTEghmbO5
+	9yIoTrAIyQTyCXw4jijCwXo7OZSTo95Ek8KmiLo9QgUAYQrjRcl8iu/6AnVOo+88=
+X-Gm-Gg: AR+sD13WhtpaKao0TPsd87bjCFbbDCZEiu5U3xoAekPsNhXlBzOU+XACXkbRGWjocCE
+	3tUG/sQ++Gj+1mw7OzqD0+UHhMoHHDxDYq5t0nyb3C6TstCzP0ilvoD8XkG8ZfPuihmZJsvONSS
+	G/ohmpyaGZN1uaOtYMbsptsrRoXh5jm+HsONBAEkkoHzoeQ/C5RhK05FSnesvJdOh9Ug6rZbYiu
+	9DomCtJ7zZqXak6xJngOYhx/joqG9R1XAWxB+jVinumGtEKJLAWXSl9/RrrWMlSx4Lstf1DJ/XL
+	lM96gRvv7lrP75JAU8+G5Pb69I7dtHmfMwv04PRcAJZTQd7x0yKIT+5+XEiGGxp6DwWBQuDZOgM
+	kH6F/TjQ=
+X-Received: by 2002:a05:620a:688e:b0:938:e95e:9377 with SMTP id af79cd13be357-93960fafb8emr542369785a.30.1788350316617;
+        Wed, 02 Sep 2026 04:58:36 -0700 (PDT)
+X-Received: by 2002:a05:620a:688e:b0:938:e95e:9377 with SMTP id af79cd13be357-93960fafb8emr542364185a.30.1788350316068;
+        Wed, 02 Sep 2026 04:58:36 -0700 (PDT)
+Received: from [127.0.1.1] ([86.121.170.178])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48448eeabbfsm5673815f8f.31.2026.09.02.04.58.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Sep 2026 04:58:35 -0700 (PDT)
+From: Abel Vesa <abel.vesa@oss.qualcomm.com>
+Date: Wed, 02 Sep 2026 14:58:23 +0300
+Subject: [PATCH] MAINTAINERS: add Abel as reviewer for Qualcomm clocks
+ drivers
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1788338320.git.geert+renesas@glider.be> <619a6e41495adfdae3e2e6c0fee97e0550a5c404.1788338320.git.geert+renesas@glider.be>
-In-Reply-To: <619a6e41495adfdae3e2e6c0fee97e0550a5c404.1788338320.git.geert+renesas@glider.be>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 2 Sep 2026 13:44:24 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVstZYufZWdD-ajwg74kU6pWtQE3WueCg-XUw9Lye5DAA@mail.gmail.com>
-X-Gm-Features: AcwNN1UuztEnaQfQ-OMWO4Fx0VqCWe7sLpxq0iVHzvAi1AhVOPaRJUxDUVxmfIc
-Message-ID: <CAMuHMdVstZYufZWdD-ajwg74kU6pWtQE3WueCg-XUw9Lye5DAA@mail.gmail.com>
-Subject: Re: [PATCH v3 07/12] reset: Add reset_control_get_from_provider_exclusive()
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
-	Sudeep Holla <sudeep.holla@kernel.org>, Cristian Marussi <cristian.marussi@arm.com>, 
-	Saravana Kannan <saravanak@kernel.org>, Ulf Hansson <ulfh@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, "Rafael J . Wysocki" <rafael@kernel.org>, 
-	Marek Vasut <marek.vasut+renesas@mailbox.org>, 
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, 
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Kevin Hilman <khilman@baylibre.com>, 
-	Vinod Koul <vkoul@kernel.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
-	=?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clegoffic@baylibre.com>, 
-	devicetree@vger.kernel.org, arm-scmi@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260902-maintainers-clk-qcom-add-reviewer-v1-1-dd6b6799b494@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIAF4PmGoC/yWNyQrCQBBEfyX02YZxwPVXxMMspbaaiemJC4T8u
+ x09VME71KuRKlRQad+MpHhJla4YLBcNpUsoZ7BkY/LOr93OeW6DlMECrZzuN+5T13LImec13lD
+ erCK20drnQOZ5KE7y+X0cjn+uz3hFGmYxTdMXt99dKYUAAAA=
+X-Change-ID: 20260902-maintainers-clk-qcom-add-reviewer-75be8b75b2da
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@oss.qualcomm.com>
+X-Mailer: b4 0.16-dev-0e65f
+X-Developer-Signature: v=1; a=openpgp-sha256; l=811;
+ i=abel.vesa@oss.qualcomm.com; h=from:subject:message-id;
+ bh=JnRa08bIcjzzxfGRPFAlp0578fFiCK2SswzFgr9x5/k=;
+ b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBqmA9plxkZmxskLaVdZmpr+MI6QvMX3sJUaD5nB
+ bCr5zYwPwCJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCapgPaQAKCRAbX0TJAJUV
+ ViMAD/91ZzG9rjKWH7icSFiZBE439+2dyXxRg9/PTP4A9dXcG6GP3yv2rJ5EphkeZvXA94+dh99
+ HLliDIpZDqrFZm/rultE8r9ZmcHO01zHR295CGfJJgRobaDDdoZ8hlFvTKFXL3QOZ7rUVV5B2tx
+ WNr7iS6uACDIqN7L4lfcnSm+tg9+ysFLM6U7QQhvdtlkDCJEGVdLd1coeNMcv//hMKH6RFm9oRI
+ sHdFu+GIKoHg4hd7TKichRYNjUuZbcUIn62LiSFr5hXeC6E8OE7VjqxGyOhscm6864mztYzsE6n
+ yuRaR1kMbX8PttX5sPkLzwtXTDvcD3Go2ZDE+ydWStS616VN+JuB7CfMJ5g9nWF1gEsQwntOPC2
+ MQrAwvV3v36WIpkhj+D/tqE1N+RZaVFfHy6IGCHAA+iJXF9BlsGEltaqDjiuV0XHbrkodmcZCPR
+ oXSm4b9eVeSnvJwgUy5GAjLM4rDNCfxBJuidlrAHuYqUGhmfLh+3lONZOFjm7j0uRRFzShRTpVm
+ iFza1+bxsQXS1vOliImXKwpBAKfVPxNyp7/4PUW1A19y+WvIfBxGC5bllbc6bg8yiiRV68zQtW5
+ wmMumGrm2mIlnbsuSDv+aiakLvIytcm3siw/oE7IaIz0v71XdsvkckxFhCAnK8Kjt3HGy0dbTPr
+ gEUFGjxcm1NfqfQ==
+X-Developer-Key: i=abel.vesa@oss.qualcomm.com; a=openpgp;
+ fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
+X-Proofpoint-GUID: oezMQ-Q1f--3LeMeFCw--nKvPQLcNdrI
+X-Authority-Analysis: v=2.4 cv=L+wtheT8 c=1 sm=1 tr=0 ts=6a980f6e cx=c_pps
+ a=HLyN3IcIa5EE8TELMZ618Q==:117 a=G5ilVN+faPP2Ze1SHB4iFQ==:17
+ a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=gowsoOTTUOVcmtlkKump:22
+ a=EUspDBNiAAAA:8 a=VwQbUJbxAAAA:8 a=-9fcZNnhvz7DZAqVOBgA:9 a=QEXdDO2ut3YA:10
+ a=bTQJ7kPSJx9SKPbeHEYW:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTAyMDEwNiBTYWx0ZWRfX3eBgqOevxe9a
+ CX67YJxX52Q6pA5nHCkirebp6QPsVH2p9+F/q31lwPFP/58pICGJVwrtlhAcuXOq7XBEqkH5MJZ
+ 5Qu9tBTVOLA6IFlvO6MPtSloDzYcuv5lbGsT1OcTjS7Q4xvfvPfgzR9pmIubS0JJevZgNfI3Xe4
+ jGJjPCmPbqoX8LByby+GIrkBEUZOETrljmEEo0bwh6v0KdJLlLDFT/ba3hue20PH/g8DAf48TEm
+ BEgniTOei5FT67NorQSEYETaHbt4e6b2KcxOks1AAbh97j4i78mC9i4G5N7RgUECphAl5ewSOZN
+ Y7M3M6l4Bd3C7D5QxeLZmqJ/fSxOu4DU6RuvBKvfe5eThaBdIGuGscz1rqEe2wuoA2YEsyvPvS8
+ ucUlzALj9yyft6M+Ccs0tFyPYPErjuy4IBEwimCz6BDjVeJHzzq/2dL+XWA2MivrTCv+zmfNB/B
+ FADHpRWkeYVZ/OOQ7BA==
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTAyMDEwNiBTYWx0ZWRfX561cjXC+gWCY
+ QSPn2I6Eqz9DYnze7dHycoacIOQuuZzqvCGodEs9H2hV6UrrwLeJJ5KaeqXx4tRYVpANLaO4ttK
+ nLgqEdTsze/XQLNKtERjKXSNEkkgaK4=
+X-Proofpoint-ORIG-GUID: oezMQ-Q1f--3LeMeFCw--nKvPQLcNdrI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-09-02_02,2026-09-01_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 clxscore=1015 bulkscore=0 impostorscore=0 phishscore=0
+ spamscore=0 suspectscore=0 adultscore=0 priorityscore=1501 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2609020106
 
-On Wed, 2 Sept 2026 at 13:30, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
-> When stacking two reset controllers, the upper one should go through the
-> proper channels: request exclusive reset controls and use them via the
-> reset_control_*() APIs.  However, unlike the clock subsystem, which has
-> of_clk_get_from_provider(), the reset subsystem does not offer a way to
-> lookup and obtain a reset from a reset provider.
->
-> Hence add a public helper reset_control_get_from_provider_exclusive()
-> to lookup and obtain an exclusive reference to a reset controller, based
-> on the recently introduced __reset_control_get_from_provider() helper.
-> This will be used by the R-Car X5H Module Controller driver.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> v3:
->   - Replace reset_controller_get_provider() by
->     reset_control_get_from_provider_exclusive(),
->   - Add kerneldoc,
->
-> v2:
->   - No changes.
-> ---
->  drivers/reset/core.c  | 37 ++++++++++++++++++++++++++++++++-----
->  include/linux/reset.h |  8 ++++++++
->  2 files changed, 40 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-> index 8af7cd2e8a5029df..6d4c95b3edb18248 100644
-> --- a/drivers/reset/core.c
-> +++ b/drivers/reset/core.c
-> @@ -1141,6 +1141,7 @@ __reset_control_get_from_provider(const struct fwnode_reference_args *args,
->                                   bool gpio_fallback,
->                                   enum reset_control_flags flags)
->  {
-> +       struct fwnode_handle *fwnode = consumer ?: args->fwnode;
->         struct reset_control *rstc = ERR_PTR(-EINVAL);
->         struct reset_controller_dev *rcdev;
->         int rstc_id = -EINVAL;
-> @@ -1154,18 +1155,26 @@ __reset_control_get_from_provider(const struct fwnode_reference_args *args,
->         if (WARN_ON(args->nargs != rcdev->fwnode_reset_n_cells))
->                 return ERR_PTR(-EINVAL);
->
-> -       if (rcdev->of_xlate && is_of_node(consumer)) {
-> -               struct device_node *np = to_of_node(consumer);
-> +       if (rcdev->of_xlate && is_of_node(fwnode)) {
-> +               struct device_node *np = to_of_node(fwnode);
->                 struct of_phandle_args of_args;
->                 int ret;
->
-> -               ret = of_parse_phandle_with_args(np,
-> +               if (consumer) {
-> +                       ret = of_parse_phandle_with_args(np,
->                                          gpio_fallback ? "reset-gpios" : "resets",
->                                          gpio_fallback ? "#gpio-cells" : "#reset-cells",
->                                          gpio_fallback ? 0 : index,
->                                          &of_args);
-> -               if (ret)
-> -                       return ERR_PTR(ret);
-> +                       if (ret)
-> +                               return ERR_PTR(ret);
-> +               } else {
-> +                       of_args.np = of_node_get(np);
-> +                       of_args.args_count = args->nargs;
-> +
-> +                       for (unsigned int i = 0; i < args->nargs; i++)
-> +                               of_args.args[i] = args->args[i];
-> +               }
->
->                 rstc_id = rcdev->of_xlate(rcdev, &of_args);
->                 of_node_put(of_args.np);
-> @@ -1257,6 +1266,24 @@ struct reset_control *__reset_control_get(struct device *dev, const char *id,
->  }
->  EXPORT_SYMBOL_GPL(__reset_control_get);
->
-> +/**
-> + * reset_control_get_from_provider_exclusive - Lookup and obtain an exclusive
-> + *                                            reference to a reset controller.
-> + * @args: Reference to the reset controller provider with all the args like
-> + *       reset number
-> + *
-> + * Returns a struct reset_control or IS_ERR() condition containing errno.
-> + * If this function is called more than once for the same reset control it will
-> + * return -EBUSY.
-> + */
-> +struct reset_control *
-> +reset_control_get_from_provider_exclusive(const struct fwnode_reference_args *args)
-> +{
-> +       return __reset_control_get_from_provider(args, NULL, 0, false,
-> +                                                RESET_CONTROL_EXCLUSIVE);
-> +}
-> +EXPORT_SYMBOL_GPL(reset_control_get_from_provider_exclusive);
-> +
->  int __reset_control_bulk_get(struct device *dev, int num_rstcs,
->                              struct reset_control_bulk_data *rstcs,
->                              enum reset_control_flags flags)
-> diff --git a/include/linux/reset.h b/include/linux/reset.h
-> index 9c391cf0c82298a0..09ee47b27f88d3b1 100644
-> --- a/include/linux/reset.h
-> +++ b/include/linux/reset.h
-> @@ -90,6 +90,8 @@ struct reset_control *__fwnode_reset_control_get(struct fwnode_handle *fwnode,
->                                      const char *id, int index, enum reset_control_flags flags);
->  struct reset_control *__reset_control_get(struct device *dev, const char *id,
->                                           int index, enum reset_control_flags flags);
-> +struct reset_control *reset_control_get_from_provider_exclusive(
-> +                               const struct fwnode_reference_args *args);
->  void reset_control_put(struct reset_control *rstc);
->  int __reset_control_bulk_get(struct device *dev, int num_rstcs,
->                              struct reset_control_bulk_data *rstcs,
-> @@ -173,6 +175,12 @@ static inline struct reset_control *__reset_control_get(
->         return optional ? NULL : ERR_PTR(-ENOTSUPP);
->  }
->
-> +static inline struct reset_control *reset_control_get_from_provider_exclusive(
-> +                               const struct fwnode_reference_args *args)
-> +{
-> +       return NULL;
+As agreed with Bjorn off-list, I'm stepping up as reviewer
+for Qualcomm clocks drivers.
 
-As reported by Sashiko, this dummy should return ERR_PTR(-ENOTSUPP)
-instead.
+Signed-off-by: Abel Vesa <abel.vesa@oss.qualcomm.com>
+---
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
-> +}
-> +
->  static inline int
->  reset_control_bulk_reset(int num_rstcs, struct reset_control_bulk_data *rstcs)
->  {
+diff --git a/MAINTAINERS b/MAINTAINERS
+index eb4e5a61056e..e1b97740f20a 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -22386,6 +22386,7 @@ F:	drivers/media/platform/qcom/camss/
+ 
+ QUALCOMM CLOCK DRIVERS
+ M:	Bjorn Andersson <andersson@kernel.org>
++R:	Abel Vesa <abelvesa@kernel.org>
+ L:	linux-arm-msm@vger.kernel.org
+ S:	Supported
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git
 
-Gr{oetje,eeting}s,
+---
+base-commit: 8b72f6626dc39b9e7e82b2721d4f7c3b86286012
+change-id: 20260902-maintainers-clk-qcom-add-reviewer-75be8b75b2da
 
-                        Geert
+Best regards,
+--  
+Abel Vesa <abel.vesa@oss.qualcomm.com>
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
