@@ -1,125 +1,165 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE84A4AD7F6
-	for <linux-clk@vger.kernel.org>; Wed,  2 Sep 2026 22:14:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F9044AD7D0
+	for <linux-clk@vger.kernel.org>; Wed,  2 Sep 2026 22:20:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788387276; cv=none; b=VcyLHWCFSQHmJx6fOl02RyqhHGj57goeeL7/Q5pjs9bGtEw8JKYGGO9HULGiM+dusF5fVh3gg5n1JdfdPtJ7qsRhOc2nBOuVGxNl2vNsmrS/4p93OT3BkQmn5tpMzqAhLwYbbHiW3slgeIxZVA7cjhFpzxq5RixOLqkG2wyzF20=
+	t=1788387620; cv=none; b=t6juwHbHOJed2DXCjd/LUK25cSw95aDBA7PLCv++T2eEBFYFfhal776+3mpFBFPtPVP+Nl+XelzlBOvaq6RHgczsR0aHXrmWACvtrdUJZUlL5C/vC8L8PCf5fqlayt6BCiJXOc+Ex8zhU8D+fe2QX4gu3I80kxr4hCs6f6ZA4kU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788387276; c=relaxed/simple;
-	bh=w/ceBMLpIes5srBdXu6ya4gaE3WHz8ljy9DnLslPOcg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Pm0QWWxebi63NSLzuL7ZYkZBm98bi6sUpHPndz1GPWlLpxTpUf4pkChazrMU5P8AHlzz05z5x92nWv+/rqcGxNb7ZF6Bvhd74vIbyjq480HkuEsjdlq87xKEUnHZhfT35Qu2aYtjuicaH0R6m9DCpu6fQQwiwkgJ4dOpypTJ6gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=M+8jtCSF; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=nFTDwLvG; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1788387620; c=relaxed/simple;
+	bh=vxK97kKjZ3lVGvkiTJiojCl0+uWyc0eS118X0/+w+oo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kMM/shl+o/JasTF+0/nqOemwLchW8JMDB2LsQsP9yNHalSB1Kf9NYvIuTfh7RLFyDKkruiBcPutmTSs6QDuMNi32c8Aq8/gdiKBulkX2oc2X80UZHsvnaXGCeGazP/yfIHjqpIRtYEbLiH0USmKKfrlqsESa8Z/AMg37wkihKbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HGchz8ss; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="M+8jtCSF";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="nFTDwLvG"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1788387270;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IMRUnS9h0I4E1M9rrYsru3/ZHmbTDkVOTPmvmnyeUFU=;
-	b=M+8jtCSFoi2+DM6aCYLbJ2XHvn2UnFpFKD7SI6njKBPNPW9m3GGwZ792I3JWg9iP3Jr5MR
-	8AiIKEYdwqQ8tJAlQOTGQIGP6TmOaDIUJha/nISpXPOQparIlzfDX2RTMn/3T2knDu9zqu
-	Q6rIrc4K0l+t2asXI3UqN3GAjZ00tPg=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-662-biS2QTEnMYOfoqVnUtaYqg-1; Wed, 02 Sep 2026 18:14:27 -0400
-X-MC-Unique: biS2QTEnMYOfoqVnUtaYqg-1
-X-Mimecast-MFC-AGG-ID: biS2QTEnMYOfoqVnUtaYqg_1788387267
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-930edb4362dso284451485a.3
-        for <linux-clk@vger.kernel.org>; Wed, 02 Sep 2026 15:14:27 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HGchz8ss"
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-396750cfee6so1415177a91.2
+        for <linux-clk@vger.kernel.org>; Wed, 02 Sep 2026 15:20:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1788387267; x=1788992067; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:date:message-id
-         :subject:references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=IMRUnS9h0I4E1M9rrYsru3/ZHmbTDkVOTPmvmnyeUFU=;
-        b=nFTDwLvGyPmsFxlcVbtxjEpE6eHPs0rWqBYZP0ka9tsR8MbHO51hVplBaF8TEQNzE1
-         e6FojsYOxz7vRAWvzCKXMKJ85jhTxp4dprwmoWL0stf//tnrx/nhfNowTjnuYIbndKQV
-         O66Nt+iOCyS9F8T6a1O62itaakRQjeCbAyODVmASxBzNa+D981/aowLRtaGxM6j2AiO1
-         2G057/ETJtPgIW7o5Xpa9SaN1PaFK9wNuEtUBbuVqSMjeOeil8hBEvsT7R5WOSmKn5cf
-         Hg7UjLG39IUnyKdFekdHRGk14ljugNVNXJCW+TFD66ntIPePpDZuGIvlF4/1lycFzm3t
-         p9dw==
+        d=gmail.com; s=20251104; t=1788387615; x=1788992415; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=fyRUPWtmRNwWz6B/B/Z+kuE2rtbBrZ9WaHMXlXktatE=;
+        b=HGchz8ss+vmykX5lTYhANf5aiNgsxyniR9sbRgLsPuPoyCdclPb0zNGTQBnQDGtUyG
+         M04YGByQ3qMPU+GQ34Id3MV9klgzscXN6Mm8Sv9j68lWMZ1Iav1GWwmEaM76czvyb9wM
+         PxA2XNDZsCXdI1d6S3YfQZZS4joglROHbzC1fAbte9jqgGlLVZr2RaQvuD11+z1ymptc
+         Uc2ecCE5XmietFZw0Sxuajwgoyto1pmycVk7YCe17r/zDyw7Ez1f3Lu6sizerAZXuEga
+         ppTXAwHD3LxntS12ZjbEtezxgqjpamdkEFzPFFUbW945kFdnMoVTkWx/+05Zjfh6iDwG
+         oqkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788387267; x=1788992067;
-        h=content-transfer-encoding:content-type:mime-version:date:message-id
-         :subject:references:in-reply-to:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=IMRUnS9h0I4E1M9rrYsru3/ZHmbTDkVOTPmvmnyeUFU=;
-        b=kVLAtXsk5g925EE+CmcGBQJNubSqiWs15WkNOjabh4Ncal1dfszwhvp56qfOdXii+g
-         tmz3YfwljV+zUPACTPl0CkHVbeBZeqG5uXUy3njxsCqp4OF/E6gik/Jy4PsG8NgKBQUh
-         W5bqFefHKsfxJ57BtBDklIPrCEre8cmoThWjlb+z+EIEnk8VDXfzN0PTK+0s8Vwf/pGN
-         GrQNZu87H9MrBkCNRhAROUoh0lK9MSoXOjfwNDR5gA+jfdw4lxwfIkWI3CYWM1NBAXR7
-         XmDvwA0QtguD4GNRxVkj+TJvvfbZVTNsArqFGsuAaa6URYKF9zhf5NKrXoir6VLhQt1l
-         /GLA==
-X-Gm-Message-State: AFuF++mGSQCE75ks3bjKUY8giJfAJhu7BEFSktgRxb8gCgQz6g1X1FB8
-	Ipa8M6bxBmNwXdG02fR97e7B5SHpGogfvlHJTEs1SwhzWlWs2w/0pts0QVx4+Awucv+9lGKkhcS
-	bi5cjxwXVIKLLvW7gAglypATSnYOiLrx+T5+67Lj7xuDBPbrc/Qsuob/WkVhWSQ==
-X-Gm-Gg: AYBFou0gHmYQUkZRccgOpgaEgdgvmjLwSTVX8vV+JR8QJAQrlD7YVUUhN+bZh9KuWzp
-	QIAEKR7/Bl6uKhLtGGDDAShkHBSI9QicA9XCUKC5fE+loqNJ1zxcy6sjXAQOpXiDqRo4MM2IzIL
-	e4/MlMfjCct4sPFfZ8fCxJejAZt5F4CFvk3dW8gYdB4hJjwL3VHPQEwygrSIfMXtzu/pdlS9jn5
-	CgViXPdB5XWHq9WZchpxVMfjUch9tYz0EQH4Jb+NPhPg3ikXZVZ676H+L2hD3h+sUS5FOX0aZPf
-	/ZEgiXlyfRk7spOCiZliu2sx4Ud/ugipPGpVCpfxBbLbHZfBtEyZf2sLb3Ek9OOwMS6HxTdx/lf
-	1Zg==
-X-Received: by 2002:a05:620a:224:b0:939:6dea:374b with SMTP id af79cd13be357-9396dea3871mr270245385a.47.1788387266585;
-        Wed, 02 Sep 2026 15:14:26 -0700 (PDT)
-X-Received: by 2002:a05:620a:224:b0:939:6dea:374b with SMTP id af79cd13be357-9396dea3871mr270241785a.47.1788387266148;
-        Wed, 02 Sep 2026 15:14:26 -0700 (PDT)
-Received: from [10.239.101.46] ([69.43.42.202])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-9395f1bb916sm333992485a.21.2026.09.02.15.14.24
+        d=1e100.net; s=20251104; t=1788387615; x=1788992415;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=fyRUPWtmRNwWz6B/B/Z+kuE2rtbBrZ9WaHMXlXktatE=;
+        b=TofnLe4kW5qtoVFz0awSIw6cJfOiunfFUbPF1kqTUQhEmqal9lhZ0BGfu0YW5UZFnH
+         dHZjKxONexbxevnxzdzVnVfYLj+aKBa/xtCKNF4zPzMgACdy9yZKRB6EsUKmu2i8iO7V
+         +4h3N1fw+zOCGv1+3qrWgFIktHnDQ/yiBMwm7C9MLcykMUbmXsiliaoNt+rZvwwjD/RO
+         qpqE7EIFwQ3vFnlWApv3zj9VPAT7nDnMW8+tMlIICQTwDkVTzQTd8xaorn0GKe6OpnpK
+         12RF1mbzIUhlhU9sGSvHbcJ1CAKXB1N/prnST33ts9dLUss+sQdxGODdNvxBK5qYNU6D
+         OcPQ==
+X-Gm-Message-State: AFuF++n2Iot29li9VpnHABLa1X70DYEIlMhgCkkr22zSzKB0qEcNTiuN
+	PLQbodHKoIr5G7z5s5Ex6J4Ge8/um+gQKvS9je12ja7nI+V1ce+uy3/q6CkGAA==
+X-Gm-Gg: AYBFou2QDM9ZD0l+vhaJI2sad+tIqZ0Ce7GqRqpALnMTaGisRctYHs0krNVQ1QpX6Ys
+	C3UCQOjsvZ2RHiAd8WSVUBpx/A8Prz+nDN6eTmUbyk33e9ckrx/llBKm6tECsUVN6I6Z+tjNVZi
+	R4MCWaKpf0l3KqTz/RbmxfUuPs5nVQtIFcAsWmA5nwrsp9QMsNDHdLl0Aib3q7MqUJfupTFUvKm
+	YM8X5eUP2b0eopSwueEmLxkaSlZKK2lX5xtixVLa/u/qrJ/pYhuEUejomME1N+G9+in9zDrr2II
+	i8v4j+enJUISeRFBbyh7pN36L9n/H2qsLTB/em60+IVtiIeXYlNpfRAZ1gyKvB4hQ2PAWSzx7Iu
+	vvZJpHxhz/A8F9O7DH0J8s3F8RQYFSU5tcy1PfZWBxM2ROMwH0oqm7It/Vju70BWR+1gfIe3j/c
+	B+MharCRF/o/V3J1peGhRsY6uPXpNYzMPv3e3w8tEkSj9y6EWbmkSwPwM8ltKbl0IGGVPzXiJFQ
+	6x3pwx3iBYI9IN8PKWAcs9rGTPAwmuRCrq7JCQb8uz2bLje5nCdwGGSknjp8g2yf9XFU2c+dJJ1
+	6OVgdTJ4zmCG+nNq7ZBliD0Kr3+l2u+tjZGhRA==
+X-Received: by 2002:a17:90b:6cc:b0:398:9bd5:490d with SMTP id 98e67ed59e1d1-39aee0eafb9mr12273618a91.20.1788387614634;
+        Wed, 02 Sep 2026 15:20:14 -0700 (PDT)
+Received: from ryzen.lan ([2601:644:8000:7a86::e34])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-39b08766a2dsm1381049a91.15.2026.09.02.15.20.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Sep 2026 15:14:25 -0700 (PDT)
-From: Brian Masney <bmasney@redhat.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, 
- =?utf-8?q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, 
- Manivannan Sadhasivam <mani@kernel.org>, 
- Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-actions@lists.infradead.org
-In-Reply-To: <dd9c25f164c46a80b4dd70c12af3196fcb398cc5.1786718502.git.geert+renesas@glider.be>
-References: <dd9c25f164c46a80b4dd70c12af3196fcb398cc5.1786718502.git.geert+renesas@glider.be>
-Subject: Re: [PATCH] clk: actions: Drop unneeded forward declarations for
- clk_fixed_factor_ops
-Message-Id: <178838725006.2050893.8055946747659778474.b4-ty@b4>
-Date: Wed, 02 Sep 2026 18:14:10 -0400
+        Wed, 02 Sep 2026 15:20:13 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	David Lechner <david@lechnology.com>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCHv4] clk: davinci: add COMPILE_TEST support
+Date: Wed,  2 Sep 2026 15:20:12 -0700
+Message-ID: <20260902222012.344765-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=356; i=bmasney@redhat.com;
- s=20250903; h=from:subject:message-id;
- bh=UWho1uqQ0CDENJKMvXX+YEGm4bA2kTI7CNsEm75ctQc=;
- b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLJmzN99cWbGSYXpOwItG+YHsChGTbuy2IzTfLGjVswqP
- 0aBAL20jlIWBjEuBlkxRZYluUYFEamrbO/d0WSBmcPKBDKEgYtTACayZBIjw6s/bcZVz26z/3+0
- YvFyl843TlmHH+8SPd145aSy0nPj+eaMDNNMq8q3vIp4/FgpODVs7Uod992W3PUHO/gmFNnzzql
- 5xQcA
-X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
- fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
+Content-Transfer-Encoding: 8bit
 
+Add a driver-scoped Kconfig symbol for the DaVinci clock drivers so
+they can be built through COMPILE_TEST without selecting the ARM
+DaVinci platform symbols.
 
-On Fri, 14 Aug 2026 16:43:30 +0200, Geert Uytterhoeven wrote:
-> clk: actions: Drop unneeded forward declarations for clk_fixed_factor_ops
+Keep the existing ARM platform behavior by defaulting the new symbol
+from ARCH_DAVINCI, and use it for the davinci clock Makefile entries.
+ARCH_DAVINCI_DA850 is the only remaining DaVinci platform symbol, so a
+single COMMON_CLK_DAVINCI symbol suffices; the whole directory builds
+together just fine.
 
-Applied, thanks!
+Assisted-by: Codex:GPT-5.5
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
+Reviewed-by: Brian Masney <bmasney@redhat.com>
+---
+ v4: rebase
+ v3: remove pointless symbols for single user.
+ v2: use COMMON_CLK prefix.
+ drivers/clk/Kconfig          |  1 +
+ drivers/clk/Makefile         |  2 +-
+ drivers/clk/davinci/Kconfig  | 10 ++++++++++
+ drivers/clk/davinci/Makefile |  8 +++-----
+ 4 files changed, 15 insertions(+), 6 deletions(-)
+ create mode 100644 drivers/clk/davinci/Kconfig
 
-[1/1] clk: actions: Drop unneeded forward declarations for clk_fixed_factor_ops
-      commit: e831ea3564120f5eb21a90eb7a46249b5b4f2878
-
-Best regards,
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 36b4801ee46e..c2edbd3393b5 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -517,6 +517,7 @@ source "drivers/clk/analogbits/Kconfig"
+ source "drivers/clk/aspeed/Kconfig"
+ source "drivers/clk/bcm/Kconfig"
+ source "drivers/clk/cix/Kconfig"
++source "drivers/clk/davinci/Kconfig"
+ source "drivers/clk/eswin/Kconfig"
+ source "drivers/clk/hisilicon/Kconfig"
+ source "drivers/clk/imgtec/Kconfig"
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 64095c805e6b..69a09b7d0097 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -132,7 +132,7 @@ obj-$(CONFIG_ARC_PLAT_AXS10X)		+= axs10x/
+ obj-y					+= bcm/
+ obj-$(CONFIG_ARCH_BERLIN)		+= berlin/
+ obj-y					+= cix/
+-obj-$(CONFIG_ARCH_DAVINCI)		+= davinci/
++obj-$(CONFIG_COMMON_CLK_DAVINCI)	+= davinci/
+ obj-$(CONFIG_COMMON_CLK_ESWIN)		+= eswin/
+ obj-$(CONFIG_COMMON_CLK_HISI)		+= hisilicon/
+ obj-y					+= imgtec/
+diff --git a/drivers/clk/davinci/Kconfig b/drivers/clk/davinci/Kconfig
+new file mode 100644
+index 000000000000..7b8c518ef6b4
+--- /dev/null
++++ b/drivers/clk/davinci/Kconfig
+@@ -0,0 +1,10 @@
++# SPDX-License-Identifier: GPL-2.0-only
++config COMMON_CLK_DAVINCI
++	bool "Clock drivers for TI DaVinci SoCs"
++	depends on ARCH_DAVINCI || COMPILE_TEST
++	depends on HAS_IOMEM
++	select REGMAP_MMIO
++	select RESET_CONTROLLER
++	default ARCH_DAVINCI
++	help
++	  Support for the clock controllers found on TI DaVinci SoCs.
+diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
+index f9d5c9a392e4..7cb030b5e046 100644
+--- a/drivers/clk/davinci/Makefile
++++ b/drivers/clk/davinci/Makefile
+@@ -1,11 +1,9 @@
+ # SPDX-License-Identifier: GPL-2.0
+ 
+-ifeq ($(CONFIG_COMMON_CLK), y)
+-obj-$(CONFIG_ARCH_DAVINCI_DA8XX)	+= da8xx-cfgchip.o
++obj-y += da8xx-cfgchip.o
+ 
+ obj-y += pll.o
+-obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= pll-da850.o
++obj-y += pll-da850.o
+ 
+ obj-y += psc.o
+-obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= psc-da850.o
+-endif
++obj-y += psc-da850.o
 -- 
-Brian Masney <bmasney@redhat.com>
+2.55.0
 
