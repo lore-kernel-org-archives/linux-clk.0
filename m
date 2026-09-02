@@ -1,354 +1,105 @@
-Received: from mta1.migadu.com (out-110.mta1.migadu.com [95.215.58.110])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D7CB43CE42
-	for <linux-clk@vger.kernel.org>; Wed,  2 Sep 2026 11:04:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3201B471264
+	for <linux-clk@vger.kernel.org>; Wed,  2 Sep 2026 11:04:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788347083; cv=none; b=pwYMCSofm/zR3ayNJMv5Yfu+UZAJx4F3z+iOgKIkvGO9SEbvqw9PLEQHTYTarwtPVZ+m3UFr8f18SLfErPeH7ZakSJ1YCGB33EgEDmt96U2RY0La58MY7EeUMZX8HwNhvq9en8AA0y9xLKOHSsmml9e5AIzynW//VSfZu5pMbMs=
+	t=1788347085; cv=none; b=ZFeBo57ZzHH4Ni7YWdvsW99FjdeeVGn4Jybh2WAU/s170Nt+/NiWR/Si3EVsesjd1qxEKJM+ENqK2bYegfIYOcO1IP8uBujOGfzsu2om/mHJRAMdtv0orHF+IZYXALQn/jzsdG8mExIt3VI2WsPxzpPLtRSdY+za5UabrDPGCOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788347083; c=relaxed/simple;
-	bh=fmI4DOuv9++hl02BcBWeRz5c2pa1UczaZyxWJbJ7/XM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gUknZqHvzTiua5edZc/n4v6hhl+aYI1Vqk5u9ZN9BHTmB2H7o9E54lpBPM/w1KX29+hxluoN02CxrjWOQCglLxVFqAIuHu7clz7ITG4iYKAJ9B+VxgXxrS8vQ921R3Mdu4m6QYE2aHIXO/D8q4FSys7A1uwlxcIMRh25anl2iko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ocu+AuKH; arc=none smtp.client-ip=95.215.58.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1788347085; c=relaxed/simple;
+	bh=DrhB9ZgUC5wNi9hnmxjDJH1nIIRwpM5CLD1SI7ZpTPg=;
+	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=nwu59Yach/Y57+yfRKW4cEPF8uLh5t42ufJmJgelmaeubHzzO/IX/RGTXDu0ctceNGtbd/Nc9l6W+Keg9OAJjRyqHylh8cx1VS+XA3EH0kvZ7TDc6RPDR1XKPcFg+6Bl8aNvfG4MjgfZ+D28rlFRVVhzjxRSYnGKLBLr3OZAgh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cdX1UUx0; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ocu+AuKH"
-X-Envelope-To: linux-clk@vger.kernel.org
-DKIM-Signature: a=rsa-sha256; bh=fmI4DOuv9++hl02BcBWeRz5c2pa1UczaZyxWJbJ7/XM=;
- c=simple/simple; d=linux.dev;
- h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1788347079; v=1; x=1788951879;
- b=ocu+AuKHsmu+luxgTCaPiFT5+MZkPdhYgvsxqwPZ9iqCPIQvizu0NdtCckQf+f0GaKCEWK8s
- JoKQAxWO20m5bQAw55qmRfUu9/jkSXh5oCdFT5HJYPsx+rMXpceeOx2zv4NOTBdpT6u00eFbIgM
- pJZTDLtS6N67jEQ6ZFg+FYaI=
-X-Envelope-To: linux-clk@vger.kernel.org
-Received: by mta10.migadu.com with ESMTPS id ff7c205f4979509a;
-	Wed, 02 Sep 2026 11:04:39 +0000
-X-Mizu-Trace-ID: ff7c205f4979509a
-X-Migadu-Flow: FLOW_OUT
-Date: Wed, 2 Sep 2026 14:04:30 +0300
-From: Matti Vaittinen <matti.vaittinen@linux.dev>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	Matti Vaittinen <matti.vaittinen@linux.dev>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Michael Walle <mwalle@kernel.org>, mfd@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-rtc@vger.kernel.org
-Subject: [PATCH v3 04/10] dt-bindings: mfd: ROHM BD73800 PMIC
-Message-ID: <bcb75af1ca9c030df83846528e896640f53eaa5b.1788346553.git.mazziesaccount@gmail.com>
-Reply-To: Matti Vaittinen <mazziesaccount@gmail.com>
-References: <cover.1788346553.git.mazziesaccount@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cdX1UUx0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 959CD1F00A3A;
+	Wed,  2 Sep 2026 11:04:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788347083;
+	bh=B3GzZzemlbI7fsrgLOlHSAVP67QXPUgbKvNmtPorbms=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=cdX1UUx0mpG5CnWiR/NIady4ljQLKRbHjuxSFFj5YuDjaoJ8jBUp8C6SJzKRkYRbv
+	 cgmypDHuS9kvXitscjLwKAdWVHIcNYHaLzjkfF7fV84EG5KSs9hgDCS8IsfgKqb81q
+	 jFB52j1MQ188/N4udPQh4Q1GoxuGMjpKba82Rd2TxCZ4MtDNeHNlVqZxFWandBMWG0
+	 tXU97YTc6G8FxrPbyUPA3J5+j/TiAndPScp7Dw2wOxqIG88dYUUq81BlugYj7YpSUa
+	 SQBEm1yER5ypaTQIPBCwKVveg9ZZg6U1b+hUahOlowrzRRWcan//XLCAhba58QRdkO
+	 lKBSAkzhjbjow==
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH 2/2] clk: renesas: rzv2h: Convert to clk_hw based
+ provider API
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Ovidiu Panait" <ovidiu.panait.rb@renesas.com>
+Cc: linux-clk@vger.kernel.org, wsa+renesas@sang-engineering.com
+In-Reply-To: <20260902104939.25522-3-ovidiu.panait.rb@renesas.com>
+References: <20260902104939.25522-1-ovidiu.panait.rb@renesas.com>
+ <20260902104939.25522-3-ovidiu.panait.rb@renesas.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 02 Sep 2026 11:04:43 +0000
+Message-Id: <20260902110443.959CD1F00A3A@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4bLmcPpxB6m05oMv"
-Content-Disposition: inline
-In-Reply-To: <cover.1788346553.git.mazziesaccount@gmail.com>
 
---4bLmcPpxB6m05oMv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
 
-=46rom: Matti Vaittinen <mazziesaccount@gmail.com>
+Pre-existing issues:
+- [High] Missing OF genpd provider cleanup on the probe error path leads to=
+ a Use-After-Free.
+--
 
-The ROHM BD73800 is a power management IC which integrates 8 BUCKs and 4
-LDOs. There is also an ADC and operation amplifier intended for current
-/ temperature measurement and accumulation. RTC and 32.768 kHz clock
-gate are also included. The PMIC can be customized via OTP and it has
-options for operating as a main PMIC in multi-PMIC installation. Some
-of the pins can also be used for GPO or GPI (including interrupt support).
+commit a63d8b10a46c55aa614df9d149b0a17736dc2cc5
+Author: John Madieu <john.madieu.xa@bp.renesas.com>
 
-There are also ROHM BD71851 and BD71885 PMICs out there. These are, from
-the SW-perspective, similar to the BD73800. There is only some different
-default values and OTP settings. The driver should be able to handle them
-just fine.
+clk: renesas: rzv2h: Convert to clk_hw based provider API
 
-Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+The driver mixes the clk consumer API with the clk_hw provider API for its
+internal clock storage and OF lookup callback. Convert it to use clk_hw
+consistently.
 
----
-Revision history:
-v3:
- - No changes
-v1 =3D> v2:
- - Reference commonly used ROHM bindings from a common binding file
- - Simplify compatible list
- - Move relevant comments to description so they can be shown in
-   generated human-readable doc.
- - Allow other clock-output-names besides "bd73800-32k-out"
----
- .../bindings/mfd/rohm,bd73800-pmic.yaml       | 218 ++++++++++++++++++
- 1 file changed, 218 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd73800-pmic=
-=2Eyaml
+> diff --git a/drivers/clk/renesas/rzv2h-cpg.c b/drivers/clk/renesas/rzv2h-=
+cpg.c
+> index 86f6f2f700a65..9b0d691b1f5d0 100644
+> --- a/drivers/clk/renesas/rzv2h-cpg.c
+> +++ b/drivers/clk/renesas/rzv2h-cpg.c
+[ ... ]
+> @@ -1547,19 +1542,13 @@ static int __init rzv2h_cpg_add_pm_domains(struct=
+ rzv2h_cpg_priv *priv)
+>  	return of_genpd_add_provider_simple(np, &pd->genpd);
 
-diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd73800-pmic.yaml b=
-/Documentation/devicetree/bindings/mfd/rohm,bd73800-pmic.yaml
-new file mode 100644
-index 000000000000..8371e7f2ab84
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/rohm,bd73800-pmic.yaml
-@@ -0,0 +1,218 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mfd/rohm,bd73800-pmic.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: ROHM BD73800 Power Management Integrated Circuit
-+
-+maintainers:
-+  - Matti Vaittinen <mazziesaccount@gmail.com>
-+
-+description:
-+  BD73800GW is a single-chip power management IC for battery-powered
-+  portable devices. It integrates 8 buck converters, 4 LDOs and a current
-+  sense amplifier with ADC. Also included is a Real Time Clock (RTC) and a
-+  32.768 kHz clock gate. Depending on the OTP configuration the BD73800
-+  may also have interrupt controller and GPIOs.
-+
-+  There are also different variants called BD71851 and BD71885 which are
-+  almost identical from the software point of view.
-+
-+allOf:
-+  - $ref: rohm,pmic-pins.yaml#
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - const: rohm,bd73800
-+
-+      - items:
-+          - enum:
-+              - rohm,bd71851
-+              - rohm,bd71885
-+          - const: rohm,bd73800
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  # The GPIO1, CLKOUT (GPIO2), FAULT_B and EXTEN_OUT pins can be
-+  # configured to interrupt pins by OTP.
-+  interrupt-controller: true
-+
-+  "#interrupt-cells":
-+    const: 1
-+    description:
-+      The IRQ number. 0 is GPIO1, 1 CLKOUT (GPIO2), 2 FAULT_B and 3 EXTEN_=
-OUT.
-+      NOTE, A pin can operate as IRQ source only when the OTP
-+      configuration for it has been set to GPI.
-+
-+  gpio-controller: true
-+
-+  "#gpio-cells":
-+    const: 2
-+
-+  rohm,pin-gpio1:
-+    $ref: /schemas/types.yaml#/definitions/string
-+    description:
-+      Indicate if the GPIO1 pin has been set to GPI or GPO at manufacturin=
-g.
-+      The GPIO1, CLKOUT, FAULT_B and EXTEN_OUT pins may be configured for a
-+      specific purpose (like ADC input, 32.768 clk output, fault indicator=
- or
-+      delivering power sequence to a companion PMIC when multiple PMICs are
-+      used) - but also to be either a GPO or GPI. (When used as a GPI the =
-pin
-+      can also be used as an IRQ source). The pin purpose is determined by
-+      OTP (One Time Programmable memory), typically during device
-+      manufacturing. The OTP can't be read at runtime so device-tree should
-+      describe the GPIO pins.
-+    enum: [gpi, gpo]
-+
-+  rohm,pin-clkout:
-+    enum: [gpi, gpo]
-+
-+  rohm,pin-fault_b:
-+    enum: [gpi, gpo]
-+
-+  rohm,pin-exten:
-+    enum: [gpi, gpo]
-+
-+  clocks:
-+    description:
-+      The CLKOUT pin may have its purpose overridden by OTP configuration.=
- It
-+      is possible the BD73800 does not output a clock signal. Hence the clk
-+      properties are optional.
-+    maxItems: 1
-+
-+  "#clock-cells":
-+    const: 0
-+
-+  clock-output-names:
-+    maxItems: 1
-+
-+  rohm,clkout-open-drain: true
-+
-+  regulators:
-+    $ref: /schemas/regulator/rohm,bd73800-regulator.yaml
-+    description:
-+      List of child nodes that specify the regulators.
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - regulators
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    #include <dt-bindings/leds/common.h>
-+    i2c {
-+        #address-cells =3D <1>;
-+        #size-cells =3D <0>;
-+        pmic: pmic@4b {
-+            compatible =3D "rohm,bd73800";
-+            reg =3D <0x4b>;
-+
-+            interrupt-parent =3D <&gpio1>;
-+            interrupts =3D <29 IRQ_TYPE_LEVEL_LOW>;
-+
-+            clocks =3D <&osc 0>;
-+            #clock-cells =3D <0>;
-+            clock-output-names =3D "bd73800-32k-out";
-+
-+            gpio-controller;
-+            #gpio-cells =3D <2>;
-+
-+            rohm,pin-gpio1 =3D "gpo";
-+            rohm,pin-exten =3D "gpi";
-+
-+            regulators {
-+                buck1: buck1 {
-+                    regulator-name =3D "buck1";
-+                    regulator-min-microvolt =3D <800000>;
-+                    regulator-max-microvolt =3D <2000000>;
-+                    regulator-always-on;
-+                    regulator-ramp-delay =3D <1250>;
-+                    rohm,dvs-run-voltage =3D <1150000>;
-+                    rohm,dvs-suspend-voltage =3D <950000>;
-+                };
-+                buck2: buck2 {
-+                    regulator-name =3D "buck2";
-+                    regulator-min-microvolt =3D <800000>;
-+                    regulator-max-microvolt =3D <2000000>;
-+                    regulator-always-on;
-+                    regulator-ramp-delay =3D <1250>;
-+                    rohm,dvs-run-voltage =3D <1150000>;
-+                    rohm,dvs-suspend-voltage =3D <950000>;
-+                };
-+                buck3: buck3 {
-+                    regulator-name =3D "buck3";
-+                    regulator-min-microvolt =3D <1200000>;
-+                    regulator-max-microvolt =3D <2700000>;
-+                    rohm,dvs-run-voltage =3D <1150000>;
-+                    rohm,dvs-idle-voltage =3D <1100000>;
-+                    rohm,dvs-suspend-voltage =3D <950000>;
-+                    regulator-always-on;
-+                };
-+                buck4: buck4 {
-+                    regulator-name =3D "buck4";
-+                    regulator-min-microvolt =3D <1100000>;
-+                    regulator-max-microvolt =3D <1850000>;
-+                    regulator-always-on;
-+                };
-+                buck5: buck5 {
-+                    regulator-name =3D "buck5";
-+                    regulator-min-microvolt =3D <1800000>;
-+                    regulator-max-microvolt =3D <3300000>;
-+                    regulator-always-on;
-+                };
-+                buck6: buck6 {
-+                    regulator-name =3D "buck6";
-+                    regulator-min-microvolt =3D <1800000>;
-+                    regulator-max-microvolt =3D <3300000>;
-+                    regulator-always-on;
-+                };
-+                buck7: buck7 {
-+                    regulator-name =3D "buck7";
-+                    regulator-min-microvolt =3D <1800000>;
-+                    regulator-max-microvolt =3D <3300000>;
-+                    regulator-always-on;
-+                };
-+                buck8: buck8 {
-+                    regulator-name =3D "buck8";
-+                    regulator-min-microvolt =3D <500000>;
-+                    regulator-max-microvolt =3D <1300000>;
-+                    regulator-always-on;
-+                };
-+                ldo1: ldo1 {
-+                    regulator-name =3D "ldo1";
-+                    rohm,ldo-range-high;
-+                    regulator-min-microvolt =3D <800000>;
-+                    regulator-max-microvolt =3D <3300000>;
-+                    regulator-always-on;
-+                };
-+                ldo2: ldo2 {
-+                    regulator-name =3D "ldo2";
-+                    regulator-min-microvolt =3D <800000>;
-+                    regulator-max-microvolt =3D <3300000>;
-+                    regulator-always-on;
-+                };
-+                ldo3: ldo3 {
-+                    regulator-name =3D "ldo3";
-+                    regulator-min-microvolt =3D <800000>;
-+                    regulator-max-microvolt =3D <3300000>;
-+                    regulator-always-on;
-+                };
-+                ldo4: ldo4 {
-+                    regulator-name =3D "ldo4";
-+                    regulator-min-microvolt =3D <650000>;
-+                    regulator-max-microvolt =3D <1750000>;
-+                    regulator-always-on;
-+                };
-+            };
-+        };
-+    };
+[Severity: High]
+This is a pre-existing issue, but does this missing OF genpd provider clean=
+up
+on the probe error path lead to a Use-After-Free?
+
+If a subsequent operation in rzv2h_cpg_probe() (such as
+rzv2h_cpg_reset_controller_register()) fails, the devm framework automatica=
+lly
+frees the struct rzv2h_cpg_pd that was allocated with devm_kzalloc().
+
+However, the cleanup action pm_genpd_remove() returns -EBUSY and aborts
+because of_genpd_add_provider_simple() sets genpd->has_provider =3D true.
+Because of_genpd_del_provider() is never called to unset this flag and
+remove the provider, the domain remains registered in the global
+of_genpd_providers list, gpd_list, and the device core.
+
+When a consumer device subsequently probes and looks up its PM domain, or
+when the PM domain core walks the lists, it could dereference the freed
+pd->genpd memory.
+
+>  }
+> =20
+> -static void rzv2h_cpg_del_clk_provider(void *data)
+> -{
+> -	of_clk_del_provider(data);
+> -}
+> -
+
 --=20
-2.55.0
-
-
---4bLmcPpxB6m05oMv
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmqYAr4ACgkQeFA3/03a
-ocXs9Qf/RJmOo/uKfYyBt7PGL5qwR4BMsWDhQDZWnZl135xWK9IOHx58Bp347fi9
-DHijPhTgXBiDYiD5R6r7NB3XyfN+FS8z6q69nxn5TBAg9+0rVRStcWkjzHb26ahy
-rSS6gQDao/hZxq+dqbiAorhCkVmgVg4+u6CnLVSlOXNgDNP1/qlLdQJh8UiXjw+D
-CBFvNPZ0hj/Zh4q+zliAgnVzt/LqjEqQ9Em1z2CqbJDVa9u3m/rcWlKVON/W4xKm
-c6qwNFNB+fS10EMHkijfQN25LFGxzEilnVNZAAgpgdRm3hPau4YpyrJTJsr5I6gt
-jd8sKm0lVrae0I+swQaUDudssvEHgg==
-=WgI8
------END PGP SIGNATURE-----
-
---4bLmcPpxB6m05oMv--
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260902104939.2552=
+2-1-ovidiu.panait.rb@renesas.com?part=3D2
