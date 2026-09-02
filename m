@@ -1,123 +1,120 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97804377A88
-	for <linux-clk@vger.kernel.org>; Wed,  2 Sep 2026 21:58:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A31BB405C5C
+	for <linux-clk@vger.kernel.org>; Wed,  2 Sep 2026 22:05:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788386308; cv=none; b=K+mKS8So4O30QaJ1CkzLmFDcU0ucGikZU7XC7qCI9yDYjTbr7f46sdBPekaQejxGiPmQWlPvGLtacJLFHiLuG41TmGY+UuLDD40BpCG47PowhjaQkcq/nTBp/R1RjQ9x/sqh6CdcZGw0X7ifhcu+oHKv1+pddORKECuBgPz6Y6U=
+	t=1788386732; cv=none; b=DuydHgzjCfK4uaJYKFjbi0oigdy6b1B6pyuXV8+4V+uC4eLCoVLjP2+tc4uAV1pwVz83m89GldzkMYJ1EqQLMNrJhUC/DvE7dfNWPZeOib0eUbn3yrnzHPoTdI298wxQVGy9fOWqS+3gjxbhZzwSK4SK35NAHOxuS2X3HhzOcLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788386308; c=relaxed/simple;
-	bh=nJEF77PfpRRAbuTXXrd04BQsuaZIOXXtm5YKYD1IaeE=;
+	s=arc-20240116; t=1788386732; c=relaxed/simple;
+	bh=5VUr1g1wC1nEP/ami6aHb3Q2voXt0cHbG0PQMdsphZk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bUXr3t/ssDQZ2s/6TcU+72yZwjUgbVYJi7eekV9m1uUTb5mBwMf/EhpmjwgNVrneh7haXV/ChfuGZQPlQkMJAq8hAzwl9/nK6e5uSvVuEcV3GAiaCraVVLqlfnD7MoiZT11/G9PF5vMrkNejC4T3vfQaWkOxkturAPcg3+6iUKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gdUfba+E; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=sTr8l4I6; arc=none smtp.client-ip=170.10.129.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=cJk0iTrryV7rMCaZRdMMSRIKfj2VzeNpAro+6vFdhUrExiGtrkncTCiVe/DIg0Brve42TjdwsA+T8t5b4r0oieltV++8WXyB8IdrDirzlHwEF6VB0lsbJLYUXMDUWovTatrlrCh3ehkl/JkgsmYqnERdOuP2DjL1yAvn57Agq8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AlhxEK1e; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=OZEae8o5; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gdUfba+E";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="sTr8l4I6"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AlhxEK1e";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="OZEae8o5"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1788386297;
+	s=mimecast20190719; t=1788386724;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=UHAUQm0rMnrWekinL4jFBl0Som7I+/lS1kJQKXSMwbg=;
-	b=gdUfba+EBT1nmdbmiSWAHUySuFFjQosGSvvZXwNpkAkh0dg2gk2CWu2tDs3TWTflO4Q5za
-	naSEzJWD516lnYE033xZEn3Zg9uXGC8dljYsPNk4431E6dJe7JPlXupxMJ602z1mxl+m4Y
-	f20rjCyMO4veOJQp7560AJ22YG8brns=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=+Di8U2A7Z3tpZBcs42uVo91xChtGCHTKjzJEmp7OKOE=;
+	b=AlhxEK1e66pkLl5UGBouCjbH7WCu/C6zLXVnTIlwpsJZZesh52MbJv599tBH9saDKQNPmz
+	jblq2Q8Y/KANM/rn5btTfHavWCh4PyLp4CmzvdQ5ykGQOuezZi1qfmxubgjyDM2b2WKJA/
+	rLEJ01AdcGxUoAGXVGurI7Hj9ecI7wM=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-253-pIc4Ux2WM8C5ENWcWlq3Lw-1; Wed, 02 Sep 2026 17:58:15 -0400
-X-MC-Unique: pIc4Ux2WM8C5ENWcWlq3Lw-1
-X-Mimecast-MFC-AGG-ID: pIc4Ux2WM8C5ENWcWlq3Lw_1788386295
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-90ce454cb83so6238506d6.1
-        for <linux-clk@vger.kernel.org>; Wed, 02 Sep 2026 14:58:15 -0700 (PDT)
+ us-mta-590-kNqjGraiNgWHegG2RaYs3w-1; Wed, 02 Sep 2026 18:05:23 -0400
+X-MC-Unique: kNqjGraiNgWHegG2RaYs3w-1
+X-Mimecast-MFC-AGG-ID: kNqjGraiNgWHegG2RaYs3w_1788386723
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-9390a2c895bso440638785a.0
+        for <linux-clk@vger.kernel.org>; Wed, 02 Sep 2026 15:05:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1788386295; x=1788991095; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:content-type:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=UHAUQm0rMnrWekinL4jFBl0Som7I+/lS1kJQKXSMwbg=;
-        b=sTr8l4I67pOrnPfC4365mSKmkCafrtNCUNW89tyOe/6XlhaOxGnpSKrvOvrTViUpHU
-         aY0K95BK4Y9dhcqAKo03Is481EGE3cCSs71gyHVinUjJdJkLbF0KBuCpcyYqVHIWYcGd
-         DNcrxWoCRwehUmQBA3QrnKzz4x5HR+9nqZfzIRn/LnaorAgFNekpEbT+keKh9Ae4iGGC
-         8fsT1glTG57bi/PVfHF2M2e4gteBQMa9m0RAI46LWeUNkro1PBuAfNr4zugo+x0y2wB+
-         WMDyxseFBmnfKr3K+47WJAGIFGGWWxNJVZdpim+uaB4zVBhGRFfyXWcSdtFl1xgvlI0B
-         cbeg==
+        d=redhat.com; s=google; t=1788386723; x=1788991523; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:content-type
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=+Di8U2A7Z3tpZBcs42uVo91xChtGCHTKjzJEmp7OKOE=;
+        b=OZEae8o57oUHEqQAnfpGiZP/Za5dv5RCqO1xpywu9TEWnWnvuSafy/J4tj1415tyWS
+         c7soNpsRihemuxEWoqiFSdSv1cIsj2zNUI8LpZyzkj5pghZ1jHzB4Lh08MsrLxiYUZHR
+         +OrJnry1dALgVJMPzbxdBKI7NOB3JUoZahWWGh/Hak0pF9hC0tZ9aOd+BDSnG4S86oOF
+         Bkkzlj27yh7ggs/rYc0IGC3rn9uR7vMtW1NczbbcUS4jvBCTscoc16LQ617Jh5rNXRJ5
+         IzFLCgi12AWu7DmPfaBBuwm2uJF9ElTu6OQzCahyeNRSMfNENS6IM6guIzRMiNIZ+c9P
+         4Ikw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788386295; x=1788991095;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:content-type:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=UHAUQm0rMnrWekinL4jFBl0Som7I+/lS1kJQKXSMwbg=;
-        b=hH7jXLPTNT4ZMSovvtBykNGEjQR2BYN9ozovfBxQ/V3II9UgGwclu9kcyiaXjmZi2g
-         YIO4OD/QHCKfc4rxCHwLLJe7dejgYi9h6CB/oLX9zAroHLiidU0xnnNf2jk47/9m0i2d
-         7cTXA2zYWh+UG+YeNEgr2aXuX4KYQDMsOOr+PPMW7bxNsVLbEkDzuh1cQcz4yeIh3lLb
-         qWAraAHe5zGob4abGS7D2ZdOZeaTE2GIPYOCU8X0c032ELU4IjQA0Zm3zF5OjHvtVlGZ
-         W0Ge2/VuMYeZiRruHhmdR5p1EaRfs70dx+X3lWpM41Hdm+da0JlIHplBxppVte4/rmes
-         F8Mw==
-X-Gm-Message-State: AFuF++kA2JYPFTcxUosjai1X+CeQMFZ0jsVGEiYArjlSQxvwOfZfFE6T
-	Q4Pbp1AdTVdz9KXdNIW4aYalvQGRl6QJN6GCCJ8jSzQPA4oQk3YdqoAWBc0pUiLLyiyYKu3fvuc
-	Arf5neuNg3X72mNEp36zC8lo69IwCb9OyqoVUKndvvs7k6a+uvGl6gU9cMV6yLw==
-X-Gm-Gg: AYBFou0eHgIbs4SxrpjcNKi5NXi+0K+ogD3tS+78aitoqrMeV6oyNxd/4ypZbnHxOC1
-	9k5dosL7nlugzkdJT8uFZojxRhXvwKYr20aAhUnydOJeGa+TdEDaatxkt1LKYnsJTXEKBut3Ghw
-	vVq2q/1VYjCNUNPDVL5LorDJDE5i0dfNi+gzsWKSVSyc9SBrZvJt/DJasVcAMT/GheJNd4BQL9J
-	hB9JiECyoMciqKS4g6w2aEYtry+TJZi7qxewi/Fr+5jf1WslbjU4h2asE3ZDSKgR12U7PsvPTdg
-	WRvMSnpQo4+GipuBdD6/zXiT/B6h3zXTuu0auUSUDz4cSfYSPAScF1iEGjkJk6YT6PxdE5M=
-X-Received: by 2002:a05:6214:4a05:b0:8f1:617b:2692 with SMTP id 6a1803df08f44-910346df863mr31472886d6.10.1788386295286;
-        Wed, 02 Sep 2026 14:58:15 -0700 (PDT)
-X-Received: by 2002:a05:6214:4a05:b0:8f1:617b:2692 with SMTP id 6a1803df08f44-910346df863mr31472586d6.10.1788386294831;
-        Wed, 02 Sep 2026 14:58:14 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1788386723; x=1788991523;
+        h=user-agent:in-reply-to:content-disposition:content-type
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=+Di8U2A7Z3tpZBcs42uVo91xChtGCHTKjzJEmp7OKOE=;
+        b=JXMmcrrgkbnIlmcYQ7cXJzXIxX+59eO++xxu2aam9BSgSwgpj8MPtQo8Zjad0rJ92u
+         2CG68C/xrFpqYMyCJK/Uu3DjfuQ3dCsteIUlCn8fiq39NuTHVTPs1+86tpDjh1egGIuf
+         qFut4VXPs3F7KYAOVf7A5gQ5OQX27fuBr9QGMib0mwQKVXzmAvDTlufVLaoH5YVn0j2V
+         KGIa1fsYji2vr1JvfNDWQOsWPZI63eRPk8Lcb7D1qsRZRjA9sYELfyxRrTigm1HFG8NA
+         DxNbJFx+kIpHkWVa6MxY9QcDhF5aO/PQdFgdCNv/tF21Efb+1NG/WCdC6Bce/FwfloDy
+         dm3Q==
+X-Gm-Message-State: AFuF++mD8tbi7iQpbbZxkIH5+1FtpYMlwJs/hWQrBta/ZgfKDNkcMrpA
+	S+SnFM1OGYMMmJIeDiCA/dioUDU2i/Hg9NrRcl45JUFvuuOwhlaOlKGUJZg7n4naE3qQooUylc1
+	D9exsSFSDb9GUavh9O0NX6FZDnl3Jn0MGSYEjrnp838D3x8Jn1Z8NBlUZhxO/thOMRvZPDQ==
+X-Gm-Gg: AYBFou1AvKBsFt6Pu0xnO4WvXoSb+YsHQfVNOLHTmDpYJfBZKx9WtFAlKaTBqkRSo5S
+	NkwS8vH9xdwEqxHn93QixV9uMYLwQPgnOQudFAXJKP+H5HKpeRmHeX7pW4kVz+E9WWJXJQ8PxKx
+	zwCbx9P4l83X9AlH9LyNWx+OZ+ocb8ZtW9emaob7hHM7P4rQpJWLK24JX9ELvBm13bCKW98aqRJ
+	TwFHnBf54KYavjQHWDTmHHcNsvcr2zmKwoj4/YCfbVCBGM7iOfbVOK1uDkrkli7ppiPR6HA7xvx
+	tzySC7BGRzEL9qD8ahM3CmxIgjjcki5zw/0d0ef2WnC0UvijkfsOh9MAxDFmavY8SmCL11c=
+X-Received: by 2002:a05:620a:29d2:b0:939:6de9:4cf9 with SMTP id af79cd13be357-9396de968e1mr286042785a.44.1788386722586;
+        Wed, 02 Sep 2026 15:05:22 -0700 (PDT)
+X-Received: by 2002:a05:620a:29d2:b0:939:6de9:4cf9 with SMTP id af79cd13be357-9396de968e1mr286036685a.44.1788386722116;
+        Wed, 02 Sep 2026 15:05:22 -0700 (PDT)
 Received: from redhat.com ([69.43.42.202])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-90e9eef5067sm28016056d6.34.2026.09.02.14.58.13
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-9395f1ae7f8sm321649685a.18.2026.09.02.15.05.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Sep 2026 14:58:14 -0700 (PDT)
-Date: Wed, 2 Sep 2026 17:58:13 -0400
+        Wed, 02 Sep 2026 15:05:20 -0700 (PDT)
+Date: Wed, 2 Sep 2026 18:05:19 -0400
 From: Brian Masney <bmasney@redhat.com>
-To: Onur =?iso-8859-1?Q?=D6zkan?= <work@onurozkan.dev>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	mturquette@baylibre.com, sboyd@kernel.org,
-	daniel.almeida@collabora.com
-Subject: Re: [PATCH v2] clk: devres: fix cleanup in
- devm_clk_get_optional_enabled_with_rate()
-Message-ID: <apib9XCsTNGA3-u3@redhat.com>
-References: <20260809095413.150069-1-work@onurozkan.dev>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	David Lechner <david@lechnology.com>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCHv3] clk: davinci: add COMPILE_TEST support
+Message-ID: <apidn5onRt_p4FOL@redhat.com>
+References: <20260812184001.75093-1-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260809095413.150069-1-work@onurozkan.dev>
+In-Reply-To: <20260812184001.75093-1-rosenp@gmail.com>
 User-Agent: Mutt/2.4.0 (2026-06-19)
 
-Hi Onur,
+Hi Rosen,
 
-On Sun, Aug 09, 2026 at 12:54:04PM +0300, Onur Özkan wrote:
-> devm_clk_get_optional_enabled_with_rate() registers its cleanup action
-> before setting the clock rate. If setting the rate fails, it attempts to
-> disable and unprepare a clock that was never enabled. This issue was
-> spotted while reviewing "rust: clk: add devres-managed clks" [1].
+On Wed, Aug 12, 2026 at 11:40:01AM -0700, Rosen Penev wrote:
+> Add a driver-scoped Kconfig symbol for the DaVinci clock drivers so
+> they can be built through COMPILE_TEST without selecting the ARM
+> DaVinci platform symbols.
 > 
-> Register the cleanup action only after successfully preparing and enabling
-> the clock.
+> Keep the existing ARM platform behavior by defaulting the new symbol
+> from ARCH_DAVINCI, and use it for the davinci clock Makefile entries.
+> ARCH_DAVINCI_DA850 is the only remaining DaVinci platform symbol, so a
+> single COMMON_CLK_DAVINCI symbol suffices; the whole directory builds
+> together just fine.
 > 
-> [1]: https://lore.kernel.org/rust-for-linux/20260706-clk-type-state-v5-3-67c5f326a16c@collabora.com
-> 
-> Fixes: 9934a1bd45b2 ("clk: provide devm_clk_get_optional_enabled_with_rate()")
+> Assisted-by: Codex:GPT-5.5
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
 > Reviewed-by: Brian Masney <bmasney@redhat.com>
-> Signed-off-by: Onur Özkan <work@onurozkan.dev>
 
-This series no longer applies against the latest clk-next branch. Can you
-rebase this, and submit a new version? I'll be able to pick it up quickly.
+This doesn't apply against the latest clk tree. Can you post a new
+version that applies? I'll be able to pick it up.
 
 Thanks,
 
