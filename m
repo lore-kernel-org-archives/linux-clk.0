@@ -1,61 +1,99 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C015B331EC0;
-	Wed,  2 Sep 2026 12:27:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3FF148B373
+	for <linux-clk@vger.kernel.org>; Wed,  2 Sep 2026 12:40:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788352060; cv=none; b=ff0E78jbLAWeveyXa6YMmzn+vRxD9QpAMWxRkSEoPviNXWI/weVNbCsuQMR++Iwukj6p4na7GEuzqSTzFv+PazifzucNbJlgffvrBQaxI2Mu7ZVmWL2lAgZmH6Yx7wK9iKacGtd6Ne1tsFvmyo/Uf7eOzBT48Qcjg2HmlEkI1es=
+	t=1788352809; cv=none; b=mlu1HHHyKVh6eH5Ww6S2kJtSNQ9Fg+F82E1TcNDlZ+khYsryTMrAHh1S+Nj+j+eqP6uW+CrBfT0RLJCWxeraF2dnsyuZ4qDqvj97a5Jvig4+3YDA1s8HdpYGXli13qKG+EvJT3HIDd1V0nc+J62Ro6xUG76bYzyxCZtzz1us2g8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788352060; c=relaxed/simple;
-	bh=4cq2HBhW+HrAcYFOG0hzBoWqbEEXw2VR6ZaRxyssg3k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hs1rq+Md0AzItY8lPp7u3Tus+mZE/UKvKnX6JNXPojKC1cuPqGwJzoXDia6idXvWzsf53LOHW6wO1u3QP1Mk36w0Xox/E1Y1RNvtYQ3oNEhbJ50RGxmPdXQKDwUN4WCKFqN7IbJwJcU/C3Np4z6XA0Rlzo2ZhIIgZsAasLx7HjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Txj2ypat; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1788352809; c=relaxed/simple;
+	bh=Klpe8gBA+2PNCx51bSzo/EuN3LxVCEYUTgBKdo6fIh8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=u6as6Pv7cIc+u00B2Ymw9ob1/4i3+rTPnL9HC3Se3KHtkg86JZI28CSURiSunEhSPkM3OWvwZ7HfWnbq5xjxFuKtuh9VwHSiYf7lauxzIkKN5k1bufYYlbT7HXTuN9bDvBnh9ezANwrNUTSLCevMKnTgZ8Dwa/P1+o7RPhRK6w0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MJz0oPUx; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Txj2ypat"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1F171F000E9;
-	Wed,  2 Sep 2026 12:27:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MJz0oPUx"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75E301F0155B
+	for <linux-clk@vger.kernel.org>; Wed,  2 Sep 2026 12:40:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788352059;
-	bh=cnKcgrQs5tMh3nA6DdHEwIWbMetx4pzMXVC7Ml8du0I=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=Txj2ypat54asZadW/Fn54L9/6HualZ8FALZ3ejT0POf2I9vfgy0s3FkIDhTNEeqdg
-	 o+gS6dx4FmmPZwdyqBABESwihvT2RKveMN10QLMFgeGIWafsjzjFcGii/mrZ3rfA6c
-	 iQQB9mxzcsaCJbuoESGHw04uK0bdfhAHQt0b71yMn/0rje+xcxV7td9erbOU6FX80L
-	 aiH+T9PumvqLCZDuEV37jPK5ZpTWKutORmshy/Toe13xHEBYKtBOxGqkrYgpSJrdQR
-	 s5/0TcXibaHpnDtfK53SRC3/NuknE3pQS9e65jPb+guW9sIrexCFLFR4H0GFMjDhFv
-	 n2GeC1mbdjvag==
-Message-ID: <3f6b4a6e-d4b2-4b2c-b4da-2a750f9afc96@kernel.org>
-Date: Wed, 2 Sep 2026 14:27:36 +0200
+	s=k20260515; t=1788352807;
+	bh=Klpe8gBA+2PNCx51bSzo/EuN3LxVCEYUTgBKdo6fIh8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=MJz0oPUxfO3QSEwUNGtpXHy+HuBfTpqV/zHYyEX7j08CkMxlewomCO4Q3E2RbN1Wp
+	 wEULcFHD710w/brCMoAevkIUzaZQIzAmn2JqiJ8GUKI8XPwwXQ+ZYbeJGczKCa7Ssp
+	 AMyYuc4AKZ/PpLDJH4JzWPivCY5C9eE1wJNsE2AfDJ7BxB/zR0leoCMApSuFA0S8mI
+	 JA0AEhQm8gaAW7SvhWlN4/Z2yt0Xy13B2JtwzI1s8fAslrUUp9e/XIW1ZQtMSI2KZG
+	 Cgm1TMpNWaZgecR+SQvDHgVINgZYSPrR/A0EeQLFUDY9BjHmKGgxzVOVQvDhsq/KW1
+	 I13nLOmrw4TJw==
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5b159850b16so944493e87.3
+        for <linux-clk@vger.kernel.org>; Wed, 02 Sep 2026 05:40:07 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvByWMWQuK1yqWENe6bl9k9KLMujiGOA1ozbcHS1kgDKRxsNyw/Un5IZYsMcTGUoWyt1V3phwAiYkTLc=@vger.kernel.org
+X-Gm-Message-State: AFuF++la+hoUgpM2inPaJHJcQNAZlHQlG4J9jTtnTHyETlfTRyAGxDmP
+	JwfnApqU9LAZCNgqSlSEyM45cu+x3puzT/pGPBUhLSbKKIsbNoclzbGXp9j/wlijxIkhLOh9MFx
+	cXgOHGmbD5UX3fHEmIZu2u7v33rKvnV8=
+X-Received: by 2002:a05:6512:1252:b0:5b4:ab2f:5bd5 with SMTP id
+ 2adb3069b0e04-5b608347bb7mr1568323e87.8.1788352806105; Wed, 02 Sep 2026
+ 05:40:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] MAINTAINERS: add Abel as reviewer for Qualcomm clocks
- drivers
-To: Abel Vesa <abel.vesa@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20260902-maintainers-clk-qcom-add-reviewer-v1-1-dd6b6799b494@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konradybcio@kernel.org>
-In-Reply-To: <20260902-maintainers-clk-qcom-add-reviewer-v1-1-dd6b6799b494@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <cover.1788346553.git.mazziesaccount@gmail.com> <5eb294e68b8d5d2c1d3a12b14a55dd2a9c075a09.1788346553.git.mazziesaccount@gmail.com>
+In-Reply-To: <5eb294e68b8d5d2c1d3a12b14a55dd2a9c075a09.1788346553.git.mazziesaccount@gmail.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Wed, 2 Sep 2026 14:39:52 +0200
+X-Gmail-Original-Message-ID: <CAD++jLkvELVwVD2B-OPF=mV8-F5xi7RZWJ7cvuyg2srnrJ2HLQ@mail.gmail.com>
+X-Gm-Features: AcwNN1XLITgbm1aOFoVQnd28TjU_0cWWW0RJDEA68aIrbre66YkBVpUmqod9dXc
+Message-ID: <CAD++jLkvELVwVD2B-OPF=mV8-F5xi7RZWJ7cvuyg2srnrJ2HLQ@mail.gmail.com>
+Subject: Re: [PATCH v3 09/10] gpio: bd73800: Support ROHM BD73800 PMIC GPIOs
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, 
+	Matti Vaittinen <matti.vaittinen@linux.dev>, Lee Jones <lee@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+	Jerome Brunet <jbrunet+clk@baylibre.com>, Bartosz Golaszewski <brgl@kernel.org>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Michael Walle <mwalle@kernel.org>, mfd@lists.linux.dev, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-rtc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/2/26 1:58 PM, Abel Vesa wrote:
-> As agreed with Bjorn off-list, I'm stepping up as reviewer
-> for Qualcomm clocks drivers.
-> 
-> Signed-off-by: Abel Vesa <abel.vesa@oss.qualcomm.com>
-> ---
+Hi Matti,
 
-Acked-by: Konrad Dybcio <konradybcio@kernel.org>
+thanks for your patch!
 
-Konrad
+On Wed, Sep 2, 2026 at 1:07=E2=80=AFPM Matti Vaittinen
+<matti.vaittinen@linux.dev> wrote:
+
+> From: Matti Vaittinen <mazziesaccount@gmail.com>
+>
+> The ROHM BD73800 PMIC has 4 pins (named GPIO1, CLKOUT, FAULT_B and
+> EXTEN_OUT) which might have been set to operate as a GPI or GPO when OTP
+> (One Time Programmable memory) is written at device manufacturing.
+> Support the GPI/GPO use-case via GPIO framework.
+>
+> The default OTP for these pins is to not use any of them as GPI or GPO.
+> (The GPIO1 defaults as an ADC input regardless the naming). Hence the
+> driver assumes none of these pins is a GPI/GPO unless explicitly pointed
+> as GPI or GPO via device tree.
+>
+> Furthermore, pin's direction can't be changed after OTP configuration is
+> done. Also the default drive type for a GPO (CMOS / Open Drain) is set
+> by the OTP configuration. The BD73800 has a set of undocumented test
+> registers which should allow changing the drive type. Access to the test
+> register area or the test registers aren't documented and so this driver
+> does not support configuring the drive type even though it might be
+> doable.
+>
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+
+Pretty neat with gpio-regmap isn't it? :)
+Reviewed-by: Linus Walleij <linusw@kernel.org>
+
+Yours,
+Linus Walleij
