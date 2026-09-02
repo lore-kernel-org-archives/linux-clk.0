@@ -1,44 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1715E47606D;
-	Wed,  2 Sep 2026 11:38:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55C8144E66A;
+	Wed,  2 Sep 2026 11:40:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788349137; cv=none; b=rwD74whdr6d1oyoRtDRnHnDjP5EqFyiZo+hWZLOXfeizwAO4E0+aeP43X/2u3SJEqjG/UU1tWFNoSBjepOb+AeDD1LyrlFg6peIfmi4aO6XdwN/h2N7lkydK7H+bnn32XFtDW5hC32q/66Tney49ASZ8xUtLyECDR5lkQP5rIKs=
+	t=1788349220; cv=none; b=s1GaTHQx/4YliYgs7eQA80Vu7fvyRd/nA54qStFhzVIVR/wuPVLi94/09ptkUuoB4yQqNNubZo5JXUszj1ecj8KdZspI5CBKvV938yDs4aCZl26IZlCeXV/17EPuycQmgtmeilZ2nQqguskiRV7RZZpENmMdyqwPg4A/fjuS0qU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788349137; c=relaxed/simple;
-	bh=d2+AWnU6uUo5V5AW/6m2Dh1KbJzRFbrLmBF0S8Rk4R4=;
+	s=arc-20240116; t=1788349220; c=relaxed/simple;
+	bh=+1CpZmj2E9rii//fMPAPFKjNARoI7W9NGmIojKyE+Sk=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=OYFxoZ/cjnOqdn1f+Q0nsicrKRKmmk3zJWKOKPpTNXPCdM/QCU/LQWVuYXmy634WT+dT5xEZ8d5Xt60AmxXqR6+/qUV4YcxiO9y/4+/2lCzWENFD07QzNUwwOIIIfw0BDHHynjpzAY+Jq4KWig4F/SmAQBiwpMZidO1Wj886//M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pe6J1kcW; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=sqFQbLUTbqWMSZmfyy+X/hYgTK6rGK5ALGFIH/MnwYA/BqL/Srej5D9YAp471aPesxX0Mimp0vVDeccmvKG/mi6o1iGt6ErgQ6JJa7JTrYbQDrWhQDbkoi98EKRXL9dIPtaUxL1moxpdPV6GFz3v+tGGmYEChHfz2SwqwCwHyf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XAxBZzbv; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pe6J1kcW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E75981F000E9;
-	Wed,  2 Sep 2026 11:38:52 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XAxBZzbv"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B38CE1F000E9;
+	Wed,  2 Sep 2026 11:40:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788349133;
-	bh=rtXYPn8hr7thIL6cnopmTaP04Ex4p3gPCRzYCt+hVu8=;
+	s=k20260515; t=1788349219;
+	bh=+3Y+pHxc2mOqqvoqm0AInQiCfF5yKVPQ6O3UGbgE6eU=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=Pe6J1kcWXUiciPDWuhlRtC5+9p+jThfkWN/ikCd+QVUscLHfyFH4QKMrqCh2ZKblh
-	 S2hO1azG38uYb0FcDE9w4pHciQBxpo8FgVluVUB5CZ6tDKYauJrtL76A0hAViIFsFp
-	 WtIWnY6yk4ccxqGE6rHtTfezw6aDScgn5CSD2Wkei07MUNIrZHFypB4dkOw3ElZCO3
-	 NOscsXVdtv7lLU3ERoHGqtBavsxhjHbTH3OLkksyVtDTrspV2JY9VyzbbHljRDNwm0
-	 mrSzQtvVUp83mTWE56Wk9eyvXqN7M42HYousVtshN2cAe68eZjEDmZEwUJqnHr8Reg
-	 CTyuxu0nSuuDQ==
+	b=XAxBZzbvI19EAmitL6c8L1TtINi2uP0gWdDR3L4i7lL2SOpfoXgGYc6com3gn0XXu
+	 yd7N47tcjmpxzciWoo0MoJOPea/xuuwnsDhoKBxfMSUYaZe/6KIwKdYyZx04tTT2ja
+	 +ek2qGPTfoHpZNXmeOQfonbi5kGOdy7IdHXB/7yefUawjK9PNb+2wCsBf/WCa6p+BE
+	 iXsam4NbPB8BOu4wbLEpTZ5pce+fMuST2HeBh0ewm9kpA7GIFve9S8OjViK0ST2V5g
+	 Y6lhx6/qEU8Z+comsJ9MAKaWDzb8l1EzQcH1kIRCi5QiBxxDlynfDxH2Mkz+VzRdZ2
+	 Jy8kTKcZL80xw==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v3 07/12] reset: Add
- reset_control_get_from_provider_exclusive()
+Subject: Re: [PATCH v3 12/12] arm64: dts: renesas: ironhide: Add CPG/MDLC
+ renesas,scmi-firmware properties
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Geert Uytterhoeven" <geert+renesas@glider.be>
-Cc: conor+dt@kernel.org, wsa+renesas@sang-engineering.com, devicetree@vger.kernel.org, robh@kernel.org, linux-clk@vger.kernel.org
-In-Reply-To: <619a6e41495adfdae3e2e6c0fee97e0550a5c404.1788338320.git.geert+renesas@glider.be>
+Cc: conor+dt@kernel.org, wsa+renesas@sang-engineering.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, robh@kernel.org
+In-Reply-To: <da82ca150ef0bae62ba61b60376103c262f60ebc.1788338320.git.geert+renesas@glider.be>
 References: <cover.1788338320.git.geert+renesas@glider.be>
- <619a6e41495adfdae3e2e6c0fee97e0550a5c404.1788338320.git.geert+renesas@glider.be>
+ <da82ca150ef0bae62ba61b60376103c262f60ebc.1788338320.git.geert+renesas@glider.be>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 02 Sep 2026 11:38:52 +0000
-Message-Id: <20260902113852.E75981F000E9@smtp.kernel.org>
+Date: Wed, 02 Sep 2026 11:40:18 +0000
+Message-Id: <20260902114018.B38CE1F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -47,56 +47,54 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 
 Thank you for your contribution! Sashiko AI review found 1 potential issue(=
 s) to consider:
-- [Medium] The dummy stub for `reset_control_get_from_provider_exclusive()`=
- incorrectly returns `NULL` instead of `ERR_PTR(-ENOTSUPP)` when `CONFIG_RE=
-SET_CONTROLLER` is disabled.
+- [Low] The device tree patch references node labels (`&cpg` and numerous `=
+&mdlc_*` nodes) that are never defined in the included `.dtsi` base files, =
+causing a Device Tree Compiler (DTC) build failure.
 --
 
-commit b2e455f4dc1ad499526bd8cbd50a8edaddca9cff
+commit 09da6ce12835b48b20d43a6bbc6347dc7ace67b7
 Author: Geert Uytterhoeven <geert+renesas@glider.be>
 
-reset: Add reset_control_get_from_provider_exclusive()
+arm64: dts: renesas: ironhide: Add CPG/MDLC renesas,scmi-firmware properties
 
-This commit adds a public helper reset_control_get_from_provider_exclusive()
-to lookup and obtain an exclusive reference to a reset controller. The
-implementation is based on the recently introduced
-__reset_control_get_from_provider() helper.
+This commit links the various Clock Pulse Generator (CPG) and Module
+Controller (MDLC) device nodes to their SCMI provider by appending the
+renesas,scmi-firmware properties.
 
-> diff --git a/include/linux/reset.h b/include/linux/reset.h
-> index 9c391cf0c8229..09ee47b27f88d 100644
-> --- a/include/linux/reset.h
-> +++ b/include/linux/reset.h
-[ ... ]
-> @@ -173,6 +175,12 @@ static inline struct reset_control *__reset_control_=
-get(
->  	return optional ? NULL : ERR_PTR(-ENOTSUPP);
->  }
+> diff --git a/arch/arm64/boot/dts/renesas/r8a78000-ironhide.dts b/arch/arm=
+64/boot/dts/renesas/r8a78000-ironhide.dts
+> index 04291f04da2b7..a6f055a1f38a8 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a78000-ironhide.dts
+> +++ b/arch/arm64/boot/dts/renesas/r8a78000-ironhide.dts
+> @@ -170,6 +170,10 @@ ecc@1e66660000 {
+>  	};
+>  };
 > =20
-> +static inline struct reset_control *reset_control_get_from_provider_excl=
-usive(
-> +				const struct fwnode_reference_args *args)
-> +{
-> +	return NULL;
-> +}
+> +&cpg {
+> +	renesas,scmi-firmware =3D <&scmi>;
+> +};
 > +
 
-[Severity: Medium]
-When CONFIG_RESET_CONTROLLER is disabled, should this stub return
-ERR_PTR(-ENOTSUPP) instead of NULL?
+[Severity: Low]
+Does this device tree compile cleanly? It appears the &cpg label is never
+defined in the included base device tree files, which usually causes a
+fatal "label or path not found" error during the dtbs build.
 
-In the reset framework, a NULL reset control is treated as a valid but
-optional no-op. If a driver calls reset_control_get_from_provider_exclusive=
-()
-during probing on a kernel compiled without the reset framework, and the st=
-ub
-returns NULL, IS_ERR() will evaluate to false.=20
+[ ... ]
 
-This would mislead the caller into believing it successfully acquired the
-mandatory exclusive reset control. The driver would skip error handling and
-proceed without actually performing the required hardware resets, potential=
-ly
-causing hardware malfunctions.
+> =20
+> +&mdlc_aon {
+> +	renesas,scmi-firmware =3D <&scmi>;
+> +};
+> +
+
+[Severity: Low]
+Similarly, are the &mdlc_aon node and the numerous other &mdlc_* nodes that
+follow defined in the base files? Attempting to modify nodes that do not
+exist will also trigger a build breakage in the Device Tree Compiler.
+
+[ ... ]
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/cover.1788338320.gi=
-t.geert+renesas@glider.be?part=3D7
+t.geert+renesas@glider.be?part=3D12
