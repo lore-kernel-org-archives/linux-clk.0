@@ -1,210 +1,102 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBD4047CC78;
-	Wed,  2 Sep 2026 11:30:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1715E47606D;
+	Wed,  2 Sep 2026 11:38:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788348661; cv=none; b=PN59yvfB6p7UF1fOVouMP/gfH46VBpOG7P6W8CG4dYoBOvLMoV33Q0WbqzS9YLjvgFPaxUPgEaqFJfVAWhcY70cWTU6jtk9GThj8LIj3hRb1kqj4tpGzBTm47ortN8ttfaInXwZhBMLPJuyvF3sIahM/8s/OtcJL7MRQ7iZyfGY=
+	t=1788349137; cv=none; b=rwD74whdr6d1oyoRtDRnHnDjP5EqFyiZo+hWZLOXfeizwAO4E0+aeP43X/2u3SJEqjG/UU1tWFNoSBjepOb+AeDD1LyrlFg6peIfmi4aO6XdwN/h2N7lkydK7H+bnn32XFtDW5hC32q/66Tney49ASZ8xUtLyECDR5lkQP5rIKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788348661; c=relaxed/simple;
-	bh=qSUGGCiyT2Hcvo0aCnkiMLLTcEWs3wCY//Dr6hwM1b4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hOJSyjRsembPA++bQKb/vSe5wdDDsTggIRXFRFP6kOFRVJ2ObX8NTXkGWnpc75kIQAgnPuqHRCI87iJAzpgmZOM0qJ6rkSylyI00BatUPOqCnQlaeu92dOeV1LDtiOAk2EzzQEbsliX0d5ITqdXj2dGDthuNfUCnkbSZudw1oFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DE291F00A3A;
-	Wed,  2 Sep 2026 11:30:46 +0000 (UTC)
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Sudeep Holla <sudeep.holla@kernel.org>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Saravana Kannan <saravanak@kernel.org>,
-	Ulf Hansson <ulfh@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	=?UTF-8?q?Cl=C3=A9ment=20Le=20Goffic?= <clegoffic@baylibre.com>
-Cc: devicetree@vger.kernel.org,
-	arm-scmi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 12/12] arm64: dts: renesas: ironhide: Add CPG/MDLC renesas,scmi-firmware properties
-Date: Wed,  2 Sep 2026 13:29:28 +0200
-Message-ID: <da82ca150ef0bae62ba61b60376103c262f60ebc.1788338320.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1788338320.git.geert+renesas@glider.be>
+	s=arc-20240116; t=1788349137; c=relaxed/simple;
+	bh=d2+AWnU6uUo5V5AW/6m2Dh1KbJzRFbrLmBF0S8Rk4R4=;
+	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=OYFxoZ/cjnOqdn1f+Q0nsicrKRKmmk3zJWKOKPpTNXPCdM/QCU/LQWVuYXmy634WT+dT5xEZ8d5Xt60AmxXqR6+/qUV4YcxiO9y/4+/2lCzWENFD07QzNUwwOIIIfw0BDHHynjpzAY+Jq4KWig4F/SmAQBiwpMZidO1Wj886//M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pe6J1kcW; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pe6J1kcW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E75981F000E9;
+	Wed,  2 Sep 2026 11:38:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788349133;
+	bh=rtXYPn8hr7thIL6cnopmTaP04Ex4p3gPCRzYCt+hVu8=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=Pe6J1kcWXUiciPDWuhlRtC5+9p+jThfkWN/ikCd+QVUscLHfyFH4QKMrqCh2ZKblh
+	 S2hO1azG38uYb0FcDE9w4pHciQBxpo8FgVluVUB5CZ6tDKYauJrtL76A0hAViIFsFp
+	 WtIWnY6yk4ccxqGE6rHtTfezw6aDScgn5CSD2Wkei07MUNIrZHFypB4dkOw3ElZCO3
+	 NOscsXVdtv7lLU3ERoHGqtBavsxhjHbTH3OLkksyVtDTrspV2JY9VyzbbHljRDNwm0
+	 mrSzQtvVUp83mTWE56Wk9eyvXqN7M42HYousVtshN2cAe68eZjEDmZEwUJqnHr8Reg
+	 CTyuxu0nSuuDQ==
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v3 07/12] reset: Add
+ reset_control_get_from_provider_exclusive()
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Geert Uytterhoeven" <geert+renesas@glider.be>
+Cc: conor+dt@kernel.org, wsa+renesas@sang-engineering.com, devicetree@vger.kernel.org, robh@kernel.org, linux-clk@vger.kernel.org
+In-Reply-To: <619a6e41495adfdae3e2e6c0fee97e0550a5c404.1788338320.git.geert+renesas@glider.be>
 References: <cover.1788338320.git.geert+renesas@glider.be>
+ <619a6e41495adfdae3e2e6c0fee97e0550a5c404.1788338320.git.geert+renesas@glider.be>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 02 Sep 2026 11:38:52 +0000
+Message-Id: <20260902113852.E75981F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Link the various Clock Pulse Generator (CPG) and Module Controller
-(MDLC) device nodes to their SCMI provider.
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
+- [Medium] The dummy stub for `reset_control_get_from_provider_exclusive()`=
+ incorrectly returns `NULL` instead of `ERR_PTR(-ENOTSUPP)` when `CONFIG_RE=
+SET_CONTROLLER` is disabled.
+--
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v3:
-  - s/firmware/renesas,scmi-firmware/,
+commit b2e455f4dc1ad499526bd8cbd50a8edaddca9cff
+Author: Geert Uytterhoeven <geert+renesas@glider.be>
 
-v2:
-  - No changes.
----
- .../boot/dts/renesas/r8a78000-ironhide.dts    | 116 ++++++++++++++++++
- 1 file changed, 116 insertions(+)
+reset: Add reset_control_get_from_provider_exclusive()
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a78000-ironhide.dts b/arch/arm64/boot/dts/renesas/r8a78000-ironhide.dts
-index 04291f04da2b7fb5..a6f055a1f38a8449 100644
---- a/arch/arm64/boot/dts/renesas/r8a78000-ironhide.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a78000-ironhide.dts
-@@ -170,6 +170,10 @@ ecc@1e66660000 {
- 	};
- };
- 
-+&cpg {
-+	renesas,scmi-firmware = <&scmi>;
-+};
-+
- &extal_clk {
- 	clock-frequency = <16666600>;
- };
-@@ -183,6 +187,118 @@ &hscif0 {
- 	status = "okay";
- };
- 
-+&mdlc_aon {
-+	renesas,scmi-firmware = <&scmi>;
-+};
-+
-+&mdlc_cmnn {
-+	renesas,scmi-firmware = <&scmi>;
-+};
-+
-+&mdlc_cmns {
-+	renesas,scmi-firmware = <&scmi>;
-+};
-+
-+&mdlc_ddr0 {
-+	renesas,scmi-firmware = <&scmi>;
-+};
-+
-+&mdlc_ddr1 {
-+	renesas,scmi-firmware = <&scmi>;
-+};
-+
-+&mdlc_ddr2 {
-+	renesas,scmi-firmware = <&scmi>;
-+};
-+
-+&mdlc_ddr3 {
-+	renesas,scmi-firmware = <&scmi>;
-+};
-+
-+&mdlc_ddr4 {
-+	renesas,scmi-firmware = <&scmi>;
-+};
-+
-+&mdlc_ddr5 {
-+	renesas,scmi-firmware = <&scmi>;
-+};
-+
-+&mdlc_ddr6 {
-+	renesas,scmi-firmware = <&scmi>;
-+};
-+
-+&mdlc_ddr7 {
-+	renesas,scmi-firmware = <&scmi>;
-+};
-+
-+&mdlc_dsp {
-+	renesas,scmi-firmware = <&scmi>;
-+};
-+
-+&mdlc_gpc {
-+	renesas,scmi-firmware = <&scmi>;
-+};
-+
-+&mdlc_hscn {
-+	renesas,scmi-firmware = <&scmi>;
-+};
-+
-+&mdlc_hscs {
-+	renesas,scmi-firmware = <&scmi>;
-+};
-+
-+&mdlc_imn {
-+	renesas,scmi-firmware = <&scmi>;
-+};
-+
-+&mdlc_ims {
-+	renesas,scmi-firmware = <&scmi>;
-+};
-+
-+&mdlc_mm {
-+	renesas,scmi-firmware = <&scmi>;
-+};
-+
-+&mdlc_npu0 {
-+	renesas,scmi-firmware = <&scmi>;
-+};
-+
-+&mdlc_npu1 {
-+	renesas,scmi-firmware = <&scmi>;
-+};
-+
-+&mdlc_pere {
-+	renesas,scmi-firmware = <&scmi>;
-+};
-+
-+&mdlc_perw {
-+	renesas,scmi-firmware = <&scmi>;
-+};
-+
-+&mdlc_rt {
-+	renesas,scmi-firmware = <&scmi>;
-+};
-+
-+&mdlc_scp {
-+	renesas,scmi-firmware = <&scmi>;
-+};
-+
-+&mdlc_top {
-+	renesas,scmi-firmware = <&scmi>;
-+};
-+
-+&mdlc_vio {
-+	renesas,scmi-firmware = <&scmi>;
-+};
-+
-+&mdlc_vipn {
-+	renesas,scmi-firmware = <&scmi>;
-+};
-+
-+&mdlc_vips {
-+	renesas,scmi-firmware = <&scmi>;
-+};
-+
- &mfis_scp {
- 	status = "okay";
- };
--- 
-2.43.0
+This commit adds a public helper reset_control_get_from_provider_exclusive()
+to lookup and obtain an exclusive reference to a reset controller. The
+implementation is based on the recently introduced
+__reset_control_get_from_provider() helper.
 
+> diff --git a/include/linux/reset.h b/include/linux/reset.h
+> index 9c391cf0c8229..09ee47b27f88d 100644
+> --- a/include/linux/reset.h
+> +++ b/include/linux/reset.h
+[ ... ]
+> @@ -173,6 +175,12 @@ static inline struct reset_control *__reset_control_=
+get(
+>  	return optional ? NULL : ERR_PTR(-ENOTSUPP);
+>  }
+> =20
+> +static inline struct reset_control *reset_control_get_from_provider_excl=
+usive(
+> +				const struct fwnode_reference_args *args)
+> +{
+> +	return NULL;
+> +}
+> +
+
+[Severity: Medium]
+When CONFIG_RESET_CONTROLLER is disabled, should this stub return
+ERR_PTR(-ENOTSUPP) instead of NULL?
+
+In the reset framework, a NULL reset control is treated as a valid but
+optional no-op. If a driver calls reset_control_get_from_provider_exclusive=
+()
+during probing on a kernel compiled without the reset framework, and the st=
+ub
+returns NULL, IS_ERR() will evaluate to false.=20
+
+This would mislead the caller into believing it successfully acquired the
+mandatory exclusive reset control. The driver would skip error handling and
+proceed without actually performing the required hardware resets, potential=
+ly
+causing hardware malfunctions.
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/cover.1788338320.gi=
+t.geert+renesas@glider.be?part=3D7
