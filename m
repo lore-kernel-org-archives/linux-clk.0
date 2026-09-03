@@ -1,280 +1,152 @@
-Received: from hall.aurel32.net (hall.aurel32.net [195.154.119.183])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE3A04F55C0;
-	Thu,  3 Sep 2026 17:28:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.154.119.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F15D64A384C
+	for <linux-clk@vger.kernel.org>; Thu,  3 Sep 2026 18:03:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788456494; cv=none; b=PLNiNnjwczsGudQ73mUsYm29i0135puTVYKSTE8WCZst90ivogMjUzTrXPbC4YpR1S+hGugSnyPQ1Ib6uT0ubaDpU+/jPdUs8pTjgnXlJlC472HgWVV1bo0/640KULBcoOwjELpBJgQ8XvZf9xArG83Q2Rxn3dvI7wqX0s/k6to=
+	t=1788458616; cv=none; b=nG8H0GZ1rcEhj/ZVDukv2IMCdpjkXNi1h5rymzmplFSBxXZuQEvmnq/RIteYxcRF5WYpcXCLWxIbfeNw4f0l25sHdTUFO0Ghgo+mOXXWTctB8P7DlZS7lDVi5BQx9ne+zrDtYQXXrqjpEWRKEL3A2nJn0zPMg39ltVctCG0y+aA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788456494; c=relaxed/simple;
-	bh=UN2yFs+CjxLdNQHVvA2p/QDc/Ekfx3+H4B8JEjwMEcc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DyEF03ekpoDNOECIFZ7+HQuJD0H65hibtlaUPrwbWJ+AKKEF0/JFHgs4WQ765ny749wwIVm+amZ7u9HdALD2EMCxlSWi9Gsu+vHQTvt8R7wpfLc1cphHPeSRxM248n+ZUVyyVkYorKKkgYajmVFrEoWzzcaKNymZsnQ8QuAvcvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net; spf=pass smtp.mailfrom=aurel32.net; dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b=kznrT9qY; arc=none smtp.client-ip=195.154.119.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aurel32.net
+	s=arc-20240116; t=1788458616; c=relaxed/simple;
+	bh=CwdE3Okoch7xrLK/qUNZUvKvP/5GRURsBtqJNWxxv0I=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=TlyOaVcEygahZGWGQtCiaPF3szh+UcvOJVn513avt3BPFKL95Y18gleS/UFSe7AwYbDon/wcvfMYJ9ZNoPemrHbeg3P3zIoUQAF8tTqUlzzk0oFtE85OsiK8Cn0XwywGzOLLDlEZGgvsrmF/oWZTx4p+bncP7lP3jhHXPjqhUQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IpCmhfwN; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=tH6oOTLL; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b="kznrT9qY"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=aurel32.net
-	; s=202004.hall; h=In-Reply-To:Content-Type:MIME-Version:References:
-	Message-ID:Subject:Cc:To:From:Date:Content-Transfer-Encoding:From:Reply-To:
-	Subject:Content-ID:Content-Description:X-Debbugs-Cc;
-	bh=KkPABGwemNUQ0ip/GlWnS3cY+MjjrMjAD9CrZqkw+bI=; b=kznrT9qYaP2qBayj49vjRDtMgR
-	TN3mC4zpISHFi68VgyysMrXTmbt7LMpWYemXhf6oVzpRx/qqQQBRIBexi6wkPJtxtxRde9Ragj6PB
-	QQMfmhG4LTWlnXEYeqFP/S4wHxIWlSjcpV7x9SxWToDjIpfG+H5UELWPjdJrhHDxu1lBBPVK0QAkf
-	q+c9EwTW2KM/KBrdOdpGUObysX+q0J+dODraSar+1b91CU7fsvQpHjA8eWnJqrCzXn7VEFZgdCws9
-	EmCScqVtIohYOzndBZwUgVrJeFfgWOONN3WfvQFVRHrgVkXfDSbU8hos2iXj7oYe/1DOQ5rrL1Td1
-	YEiLE95w==;
-Received: from authenticated user
-	by hall.aurel32.net with esmtpsa  (TLS1.3)  tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <aurelien@aurel32.net>)
-	id 1x2BEB-0000000Fhdv-3dP3;
-	Thu, 03 Sep 2026 19:27:55 +0200
-Date: Thu, 3 Sep 2026 19:27:55 +0200
-From: Aurelien Jarno <aurelien@aurel32.net>
-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Alex Elder <elder@riscstar.com>, Haylen Chu <heylenay@4d2.org>,
-	stable@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Yixun Lan <dlan@kernel.org>, Paul Walmsley <pjw@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] clk: spacemit: k3: add CPU PLL rate tables
-Message-ID: <apmuG46sBg2rGzCD@aurel32.net>
-Mail-Followup-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Alex Elder <elder@riscstar.com>, Haylen Chu <heylenay@4d2.org>,
-	stable@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Yixun Lan <dlan@kernel.org>, Paul Walmsley <pjw@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20260903-k3-pll5-pll8-1800mhz-v4-1-afafd9cb47d9@linux.spacemit.com>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IpCmhfwN";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="tH6oOTLL"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1788458614;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3JoPfOCY29A3Y3qiUx94yvtnxEMXNVAH5t6LGehu/9c=;
+	b=IpCmhfwNZc7zqufO5dOiOIbH2hlmwiMyfZF66kAHoScpz8cV7dK8FW/9VSoHWnVds/cCWD
+	wyOfEdQigo9zrVqM/QZ737bFrTyPDI+Xo4y1/V3OA6+eIFvAhVljMR1fHTroY5FXgm9CVM
+	ktRFTmd+uradjpC5YS42YoPAiP0A4k8=
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
+ [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-311-NV087EL0OSSRoI-1VKlLyw-1; Thu, 03 Sep 2026 14:03:32 -0400
+X-MC-Unique: NV087EL0OSSRoI-1VKlLyw-1
+X-Mimecast-MFC-AGG-ID: NV087EL0OSSRoI-1VKlLyw_1788458612
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-51c26012cd0so4105171cf.0
+        for <linux-clk@vger.kernel.org>; Thu, 03 Sep 2026 11:03:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1788458612; x=1789063412; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:date:message-id
+         :subject:references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=3JoPfOCY29A3Y3qiUx94yvtnxEMXNVAH5t6LGehu/9c=;
+        b=tH6oOTLLnentvSYgVc3HKcjaXdiewAxBw78Po2ye2l7OJhMx8mF+/PRLBG2nbL+Mop
+         4Q4u7I+4+4mSQF4tgwyZML/O6Hxe841tTQLZsFAx8xD1A6UdqsaXMDEoOkyLFR0YQCqw
+         EuZv+IbQydeEOiYeU1cpuM4r0JAO5bv1pJ8ArjMKIrNIcQqjmJtdyAU5rVJ39T/jIFGu
+         Ko/fgUGKNZihQLdSvBEg7xIuVY2KJCFRHaHmfKjaxEi9KR8lAysje24jAX4TtvtlVkj5
+         JoEBdxsRssRO94Ap7ilDzbfENJhLrQFMgb+nSl5RSDdtYM3f0z107ADbtObZtaQhOnqu
+         AZbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788458612; x=1789063412;
+        h=content-transfer-encoding:content-type:mime-version:date:message-id
+         :subject:references:in-reply-to:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=3JoPfOCY29A3Y3qiUx94yvtnxEMXNVAH5t6LGehu/9c=;
+        b=lOLsu66lUFmm2JYrwiUocNpd+cEsYqGFhGzJnHdBwHSW+o/w5CTLaks1Uz4a0U+xlC
+         ohb6scGJ+2Q9rR5oPXYsRxSLmm1R1GPi6LpLytdPrOX664VtlN0sEIh+14W6YpHQ19P8
+         isy3jIWolfIxM0yqmoiMcrNMIHGhrv/xcX0cFXKdrjd8OydSSTgtt655s8NLitPKqZaF
+         VZT4pFnQ25Ez9fZiWkv1M27SM3Qkr8E7BTubJ96OtXCYU8xzeIbzAk6ASAlTTyNlCfXO
+         SJZPn00egyeyD0zP6yR/3onr6DpgkoIPHf19MYmGSy+fvt3ToIPclafdWm2LmE0x4Eu2
+         hwBg==
+X-Forwarded-Encrypted: i=1; AKwUvBwYScXObAzqzTAVc/yuSd+FW29T8ASblWkQMiCYxWKp0Fem6O3ABR700svbxg2AtVLBco0SqBiUMZM=@vger.kernel.org
+X-Gm-Message-State: AFuF++l6897AS9sNs395oPlAzFu82Q9bFAERBKTg3lIhmNqRB4/RQ9PS
+	dzvxjarm+xBr34geDP5X3DCuSKV2LWuCEmsVY/zpYkbnA9EXDHULdRA2hPPV+/iBw94UsThBE/x
+	8zZBUZf4ZhE3nFyLNmb5PS1PsnUMHIsvO4pdSZUp9rSzN4C1xXpcZiPCPAZiW2w==
+X-Gm-Gg: AYBFou3g4/L+q/5Gu8GDVrcSqx2+3rKGqoyyZy6nYKd9DZbH8gc2LdHn0MBgJP2jw0T
+	b/j0oiuipdF8p7o4T6YQfUlEjRGF4K++s6hLwRIFbIxm0zGEnqQPTeGAX/pGzJHJcBTFsb36c1C
+	sBupPMpf7ZqoUkA1f7pawby7CfYfymPyCKKRbJG4/f/hRuK6tfhqq7dutQZh5iu+gv3Kg76QYSy
+	4V4hLmIPBu8GLbTMaONDIhc9+u8/82WZwgwJ6DIbjlTwhuZgqXcVXosPjOQ2+gbpD6nEBuMPK/2
+	WMaCdTekagWVmiyw4NzY3AcVDP+JvMIin/c1+j5QTh/HbRIvmpJd7EAap0/46mhFA4RITI7QOsL
+	rt7vL7JLuBFIPnlL5oYERGTVousBEoayxijDCNZs=
+X-Received: by 2002:ac8:570f:0:b0:530:3526:9ad4 with SMTP id d75a77b69052e-53054944a04mr6121101cf.27.1788458611944;
+        Thu, 03 Sep 2026 11:03:31 -0700 (PDT)
+X-Received: by 2002:ac8:570f:0:b0:530:3526:9ad4 with SMTP id d75a77b69052e-53054944a04mr6119851cf.27.1788458611330;
+        Thu, 03 Sep 2026 11:03:31 -0700 (PDT)
+Received: from [192.168.1.3] (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-5305418950fsm2243051cf.20.2026.09.03.11.03.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Sep 2026 11:03:30 -0700 (PDT)
+From: Brian Masney <bmasney@redhat.com>
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Brendan Higgins <brendan.higgins@linux.dev>, David Gow <david@davidgow.net>, 
+ Rae Moar <raemoar63@gmail.com>, 
+ "Miquel Raynal (Schneider Electric)" <miquel.raynal@bootlin.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Pascal EBERHARD <pascal.eberhard@se.com>, 
+ Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+ Fran Li <Frank.li@oss.nxp.com>, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+ Frank Li <Frank.Li@nxp.com>, Herve Codina <herve.codina@bootlin.com>
+In-Reply-To: <20260807-schneider-v7-2-rc1-eip201-upstream-v5-0-8785f9531cf0@bootlin.com>
+References: <20260807-schneider-v7-2-rc1-eip201-upstream-v5-0-8785f9531cf0@bootlin.com>
+Subject: Re: [PATCH v5 0/7] clk: Add support for clock nexus
+Message-Id: <178845859345.51586.16050131783608017430.b4-ty@b4>
+Date: Thu, 03 Sep 2026 14:03:13 -0400
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260903-k3-pll5-pll8-1800mhz-v4-1-afafd9cb47d9@linux.spacemit.com>
-User-Agent: Mutt/2.4.1 (2026-07-04)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.16.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1234; i=bmasney@redhat.com;
+ s=20250903; h=from:subject:message-id;
+ bh=8F+i4KUetkQ+0aPX5fdnN3d1y2UwrIbldYxHlQ8YsOA=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLJmbsvrsqsrqnh3r4VvUyAD82fFh/bmeQsLNe/Ir70bc
+ c5hsuXajlIWBjEuBlkxRZYluUYFEamrbO/d0WSBmcPKBDKEgYtTACaS7sfI8KQ4oviW9cWfXiom
+ 6mJPO0VeXjjhVn5N4WtfTN/DKT3y3YwMkzx2fd6e/WTvlJATFjmTdp5wlr47od1tvURCaZt3a7I
+ vCwA=
+X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
+ fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
-Hi Troy,
 
-On 2026-09-03 11:06, Troy Mitchell wrote:
-> The K3 CPU PLL rate tables currently describe only one rate per PLL,
-> although the hardware supports a wider range.
+On Fri, 07 Aug 2026 17:24:01 +0200, Miquel Raynal (Schneider Electric) wrote:
+> clk: Add support for clock nexus
 > 
-> PLL3 and PLL4 support rates from 1.05 to 2.4 GHz, while PLL5 and PLL8
-> support rates from 1.05 to 2 GHz. Populate the tables with every
-> supported rate in 50 MHz steps.
+> Adding support for clock nexus had some prerequisites requested by
+> Stephen, such as adding new selftests, the initial discussions come
+> from:
 > 
-> Cc: stable@vger.kernel.org # 7.0+
-> Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-> ---
-> The corresponding U-Boot changes are available at:
+> Link: https://lore.kernel.org/linux-clk/20260129201003.288605-1-miquel.raynal@bootlin.com/
 > 
-> - Add the CPU PLL rate tables:
->   https://github.com/spacemit-com/uboot-2022.10/commit/787b5cf44c8dbc99db886d5522c0c9cd5a96ffd6
-> - Correct the 1.10 GHz and 2.15 GHz table entries:
->   https://github.com/spacemit-com/uboot-2022.10/commit/16a775c20e9efb54ca55352215e76eb3f12e6cf0
-> ---
-> Changes in v4:
-> - Expand the update to every supported PLL3, PLL4, PLL5 and PLL8 rate.
-> - Drop Aurelien Jarno's Reviewed-by and Tested-by trailers because the
->   patch scope has expanded.
-> - Add U-Boot references for the complete tables and corrected entries.
-> - Link to v3: https://patch.msgid.link/20260831-k3-pll5-pll8-1800mhz-v3-1-530ed0978615@linux.spacemit.com
-> 
-> Changes in v3:
-> - Mark the change for stable kernels starting with v7.0.
-> - Add Aurelien Jarno's Reviewed-by and Tested-by trailers.
-> - Rebase onto v7.3-rc1.
-> - Link to v2: https://patch.msgid.link/20260810-k3-pll5-pll8-1800mhz-v2-1-aabff510a797@linux.spacemit.com
-> 
-> Changes in v2:
-> - Drop "clk: spacemit: re-enable PLLs after init"; the PLL init issue
->   will be handled in a separate series.
-> - Send the K3 PLL5 and PLL8 1.8 GHz rate-table update as a standalone
->   patch.
-> - Clarify that 1.8 GHz is nominal and 2 GHz is an overclocking rate.
-> - Link to v1: https://patch.msgid.link/20260804-k3-pll5-pll8-1800mhz-v1-0-a3a75866ce32@linux.spacemit.com
-> 
-> To: Stephen Boyd <sboyd@kernel.org>
-> To: Brian Masney <bmasney+clk@redhat.com>
-> To: Jerome Brunet <jbrunet+clk@baylibre.com>
-> To: Yixun Lan <dlan@kernel.org>
-> To: Paul Walmsley <pjw@kernel.org>
-> To: Palmer Dabbelt <palmer@dabbelt.com>
-> To: Albert Ou <aou@eecs.berkeley.edu>
-> To: Alexandre Ghiti <alex@ghiti.fr>
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-riscv@lists.infradead.org
-> Cc: spacemit@lists.linux.dev
-> Cc: linux-kernel@vger.kernel.org
-> ---
->  drivers/clk/spacemit/ccu-k3.c | 96 +++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 96 insertions(+)
+> [...]
 
-Thanks for the patch, it makes sense to add all the values, to support 
-future firmware changes. The values match the ones in the vendor kernel.
+Applied, thanks!
 
-> diff --git a/drivers/clk/spacemit/ccu-k3.c b/drivers/clk/spacemit/ccu-k3.c
-> index 92b930d5ff30..950bf531c734 100644
-> --- a/drivers/clk/spacemit/ccu-k3.c
-> +++ b/drivers/clk/spacemit/ccu-k3.c
-> @@ -29,15 +29,91 @@ static const struct ccu_pll_rate_tbl pll2_rate_tbl[] = {
->  	CCU_PLLA_RATE(3000000000UL, 0x0b3e2000, 0x00000000, 0xa0558c8c),
->  };
->  
-> +/* Keep the firmware default as the first entry. */
->  static const struct ccu_pll_rate_tbl pll3_rate_tbl[] = {
-> +	CCU_PLLA_RATE(2000000000UL, 0x0b292aaa, 0x0000ab00, 0xa0558686),
+[1/7] dt-bindings: clock: Introduce nexus nodes
+      commit: e0be7b4eedd3b7c6d1a3db0dd76babc35ff89bc6
+[2/7] clk: tests: Add clk_parse_clkspec() Kunit testing
+      commit: d0a15b827251de65bd39ce0555d656d5563c41dc
+[3/7] clk: tests: Add Kunit testing for of_clk_get_parent_name()
+      commit: 32d4598a48d63003e732f2de3608fcd184aa8061
+[4/7] clk: Improve a couple of comments
+      commit: 4ee1e9e1d614a6b3a6264bac5b070c67a89ce19a
+[5/7] clk: Use the generic OF phandle parsing in only one place
+      commit: 57d728b4ab15a8af890013bb0f302e7733f7c1c6
+[6/7] clk: Add support for clock nexus dt bindings
+      commit: aacc54c67869effe89c92c0d54bea40148c53475
+[7/7] clk: tests: Add Kunit testing for nexus nodes
+      commit: 91b1b8d437abe0cd83210d8f257b785a63047aa9
 
-Is it really necessary to put this entry first? I guess it's the current 
-default frequency, but we have seen it can evolve. From my tests, the 
-driver seems to just keep the value configured by the firmware 
-independently from the table order, so I am not sure it's necessary.
-
-> +	CCU_PLLA_RATE(1050000000UL, 0x0b2b3000, 0x00000000, 0xa0458080),
-> +	CCU_PLLA_RATE(1100000000UL, 0x0b2d3555, 0x00005500, 0xa0458181),
-> +	CCU_PLLA_RATE(1150000000UL, 0x0b2f3aaa, 0x0000ab00, 0xa0458181),
-> +	CCU_PLLA_RATE(1200000000UL, 0x0b320000, 0x00000000, 0xa0458181),
-> +	CCU_PLLA_RATE(1250000000UL, 0x0b340555, 0x00005500, 0xa0458181),
-> +	CCU_PLLA_RATE(1300000000UL, 0x0b360aaa, 0x0000ab00, 0xa0458282),
-> +	CCU_PLLA_RATE(1350000000UL, 0x0b381000, 0x00000000, 0xa0458282),
-> +	CCU_PLLA_RATE(1400000000UL, 0x0b3a1555, 0x00005500, 0xa0458282),
-> +	CCU_PLLA_RATE(1450000000UL, 0x0b3c1aaa, 0x0000ab00, 0xa0458383),
-> +	CCU_PLLA_RATE(1500000000UL, 0x0b3e2000, 0x00000000, 0xa0458383),
-> +	CCU_PLLA_RATE(1550000000UL, 0x0b402555, 0x00005500, 0xa0458383),
-> +	CCU_PLLA_RATE(1600000000UL, 0x0b422aaa, 0x0000ab00, 0xa0458484),
-> +	CCU_PLLA_RATE(1650000000UL, 0x0b443000, 0x00000000, 0xa0458484),
-> +	CCU_PLLA_RATE(1700000000UL, 0x0b463555, 0x00005500, 0xa0458484),
-> +	CCU_PLLA_RATE(1750000000UL, 0x0b483aaa, 0x0000ab00, 0xa0458585),
-> +	CCU_PLLA_RATE(1800000000UL, 0x0b4b0000, 0x00000000, 0xa0458585),
-> +	CCU_PLLA_RATE(1850000000UL, 0x0b4d0555, 0x00005500, 0xa0458585),
-> +	CCU_PLLA_RATE(1900000000UL, 0x0b4f0aaa, 0x0000ab00, 0xa0458686),
-> +	CCU_PLLA_RATE(1950000000UL, 0x0b511000, 0x00000000, 0xa0458686),
-> +	CCU_PLLA_RATE(2050000000UL, 0x0b2a2d55, 0x00005500, 0xa0558686),
-> +	CCU_PLLA_RATE(2100000000UL, 0x0b2b3000, 0x00000000, 0xa0558787),
-> +	CCU_PLLA_RATE(2150000000UL, 0x0b2c32aa, 0x0000ab00, 0xa0558787),
->  	CCU_PLLA_RATE(2200000000UL, 0x0b2d3555, 0x00005500, 0xa0558787),
-> +	CCU_PLLA_RATE(2250000000UL, 0x0b2e3800, 0x00000000, 0xa0558888),
-> +	CCU_PLLA_RATE(2300000000UL, 0x0b2f3aaa, 0x0000ab00, 0xa0558888),
-> +	CCU_PLLA_RATE(2350000000UL, 0x0b303d55, 0x00005500, 0xa0558888),
-> +	CCU_PLLA_RATE(2400000000UL, 0x0b320000, 0x00000000, 0xa0558989),
->  };
->  
-> +/* Keep the firmware default as the first entry. */
->  static const struct ccu_pll_rate_tbl pll4_rate_tbl[] = {
-> +	CCU_PLLA_RATE(2000000000UL, 0x0b292aaa, 0x0000ab00, 0xa0558686),
-> +	CCU_PLLA_RATE(1050000000UL, 0x0b2b3000, 0x00000000, 0xa0458080),
-> +	CCU_PLLA_RATE(1100000000UL, 0x0b2d3555, 0x00005500, 0xa0458181),
-> +	CCU_PLLA_RATE(1150000000UL, 0x0b2f3aaa, 0x0000ab00, 0xa0458181),
-> +	CCU_PLLA_RATE(1200000000UL, 0x0b320000, 0x00000000, 0xa0458181),
-> +	CCU_PLLA_RATE(1250000000UL, 0x0b340555, 0x00005500, 0xa0458181),
-> +	CCU_PLLA_RATE(1300000000UL, 0x0b360aaa, 0x0000ab00, 0xa0458282),
-> +	CCU_PLLA_RATE(1350000000UL, 0x0b381000, 0x00000000, 0xa0458282),
-> +	CCU_PLLA_RATE(1400000000UL, 0x0b3a1555, 0x00005500, 0xa0458282),
-> +	CCU_PLLA_RATE(1450000000UL, 0x0b3c1aaa, 0x0000ab00, 0xa0458383),
-> +	CCU_PLLA_RATE(1500000000UL, 0x0b3e2000, 0x00000000, 0xa0458383),
-> +	CCU_PLLA_RATE(1550000000UL, 0x0b402555, 0x00005500, 0xa0458383),
-> +	CCU_PLLA_RATE(1600000000UL, 0x0b422aaa, 0x0000ab00, 0xa0458484),
-> +	CCU_PLLA_RATE(1650000000UL, 0x0b443000, 0x00000000, 0xa0458484),
-> +	CCU_PLLA_RATE(1700000000UL, 0x0b463555, 0x00005500, 0xa0458484),
-> +	CCU_PLLA_RATE(1750000000UL, 0x0b483aaa, 0x0000ab00, 0xa0458585),
-> +	CCU_PLLA_RATE(1800000000UL, 0x0b4b0000, 0x00000000, 0xa0458585),
-> +	CCU_PLLA_RATE(1850000000UL, 0x0b4d0555, 0x00005500, 0xa0458585),
-> +	CCU_PLLA_RATE(1900000000UL, 0x0b4f0aaa, 0x0000ab00, 0xa0458686),
-> +	CCU_PLLA_RATE(1950000000UL, 0x0b511000, 0x00000000, 0xa0458686),
-> +	CCU_PLLA_RATE(2050000000UL, 0x0b2a2d55, 0x00005500, 0xa0558686),
-> +	CCU_PLLA_RATE(2100000000UL, 0x0b2b3000, 0x00000000, 0xa0558787),
-> +	CCU_PLLA_RATE(2150000000UL, 0x0b2c32aa, 0x0000ab00, 0xa0558787),
->  	CCU_PLLA_RATE(2200000000UL, 0x0b2d3555, 0x00005500, 0xa0558787),
-> +	CCU_PLLA_RATE(2250000000UL, 0x0b2e3800, 0x00000000, 0xa0558888),
-> +	CCU_PLLA_RATE(2300000000UL, 0x0b2f3aaa, 0x0000ab00, 0xa0558888),
-> +	CCU_PLLA_RATE(2350000000UL, 0x0b303d55, 0x00005500, 0xa0558888),
-> +	CCU_PLLA_RATE(2400000000UL, 0x0b320000, 0x00000000, 0xa0558989),
->  };
->  
-> +/* Keep the firmware default as the first entry. */
->  static const struct ccu_pll_rate_tbl pll5_rate_tbl[] = {
-> +	CCU_PLLA_RATE(1800000000UL, 0x0b4b0000, 0x00000000, 0xa0458585),
-
-Ditto
-
-> +	CCU_PLLA_RATE(1050000000UL, 0x0b2b3000, 0x00000000, 0xa0458080),
-> +	CCU_PLLA_RATE(1100000000UL, 0x0b2d3555, 0x00005500, 0xa0458181),
-> +	CCU_PLLA_RATE(1150000000UL, 0x0b2f3aaa, 0x0000ab00, 0xa0458181),
-> +	CCU_PLLA_RATE(1200000000UL, 0x0b320000, 0x00000000, 0xa0458181),
-> +	CCU_PLLA_RATE(1250000000UL, 0x0b340555, 0x00005500, 0xa0458181),
-> +	CCU_PLLA_RATE(1300000000UL, 0x0b360aaa, 0x0000ab00, 0xa0458282),
-> +	CCU_PLLA_RATE(1350000000UL, 0x0b381000, 0x00000000, 0xa0458282),
-> +	CCU_PLLA_RATE(1400000000UL, 0x0b3a1555, 0x00005500, 0xa0458282),
-> +	CCU_PLLA_RATE(1450000000UL, 0x0b3c1aaa, 0x0000ab00, 0xa0458383),
-> +	CCU_PLLA_RATE(1500000000UL, 0x0b3e2000, 0x00000000, 0xa0458383),
-> +	CCU_PLLA_RATE(1550000000UL, 0x0b402555, 0x00005500, 0xa0458383),
-> +	CCU_PLLA_RATE(1600000000UL, 0x0b422aaa, 0x0000ab00, 0xa0458484),
-> +	CCU_PLLA_RATE(1650000000UL, 0x0b443000, 0x00000000, 0xa0458484),
-> +	CCU_PLLA_RATE(1700000000UL, 0x0b463555, 0x00005500, 0xa0458484),
-> +	CCU_PLLA_RATE(1750000000UL, 0x0b483aaa, 0x0000ab00, 0xa0458585),
-> +	CCU_PLLA_RATE(1850000000UL, 0x0b4d0555, 0x00005500, 0xa0458585),
-> +	CCU_PLLA_RATE(1900000000UL, 0x0b4f0aaa, 0x0000ab00, 0xa0458686),
-> +	CCU_PLLA_RATE(1950000000UL, 0x0b511000, 0x00000000, 0xa0458686),
->  	CCU_PLLA_RATE(2000000000UL, 0x0b292aaa, 0x0000ab00, 0xa0558686),
->  };
->  
-> @@ -49,7 +125,27 @@ static const struct ccu_pll_rate_tbl pll7_rate_tbl[] = {
->  	CCU_PLLA_RATE(2800000000UL, 0x0b3a1555, 0x00005500, 0xa0558b8b),
->  };
->  
-> +/* Keep the firmware default as the first entry. */
->  static const struct ccu_pll_rate_tbl pll8_rate_tbl[] = {
-> +	CCU_PLLA_RATE(1800000000UL, 0x0b4b0000, 0x00000000, 0xa0458585),
-> +	CCU_PLLA_RATE(1050000000UL, 0x0b2b3000, 0x00000000, 0xa0458080),
-> +	CCU_PLLA_RATE(1100000000UL, 0x0b2d3555, 0x00005500, 0xa0458181),
-> +	CCU_PLLA_RATE(1150000000UL, 0x0b2f3aaa, 0x0000ab00, 0xa0458181),
-> +	CCU_PLLA_RATE(1200000000UL, 0x0b320000, 0x00000000, 0xa0458181),
-> +	CCU_PLLA_RATE(1250000000UL, 0x0b340555, 0x00005500, 0xa0458181),
-> +	CCU_PLLA_RATE(1300000000UL, 0x0b360aaa, 0x0000ab00, 0xa0458282),
-> +	CCU_PLLA_RATE(1350000000UL, 0x0b381000, 0x00000000, 0xa0458282),
-> +	CCU_PLLA_RATE(1400000000UL, 0x0b3a1555, 0x00005500, 0xa0458282),
-> +	CCU_PLLA_RATE(1450000000UL, 0x0b3c1aaa, 0x0000ab00, 0xa0458383),
-> +	CCU_PLLA_RATE(1500000000UL, 0x0b3e2000, 0x00000000, 0xa0458383),
-> +	CCU_PLLA_RATE(1550000000UL, 0x0b402555, 0x00005500, 0xa0458383),
-> +	CCU_PLLA_RATE(1600000000UL, 0x0b422aaa, 0x0000ab00, 0xa0458484),
-> +	CCU_PLLA_RATE(1650000000UL, 0x0b443000, 0x00000000, 0xa0458484),
-> +	CCU_PLLA_RATE(1700000000UL, 0x0b463555, 0x00005500, 0xa0458484),
-> +	CCU_PLLA_RATE(1750000000UL, 0x0b483aaa, 0x0000ab00, 0xa0458585),
-> +	CCU_PLLA_RATE(1850000000UL, 0x0b4d0555, 0x00005500, 0xa0458585),
-> +	CCU_PLLA_RATE(1900000000UL, 0x0b4f0aaa, 0x0000ab00, 0xa0458686),
-> +	CCU_PLLA_RATE(1950000000UL, 0x0b511000, 0x00000000, 0xa0458686),
->  	CCU_PLLA_RATE(2000000000UL, 0x0b292aaa, 0x0000ab00, 0xa0558686),
->  };
-
-I have tested the patch, and I confirm it fixes the boot hang with newer 
-firmware, and will fix it if the default firmware values change again. 
-My comments are just minor ones, so:
-
-Reviewed-by: Aurelien Jarno <aurelien@aurel32.net>
-Tested-by: Aurelien Jarno <aurelien@aurel32.net>
-
-Regards
-Aurelien 
-
+Best regards,
 -- 
-Aurelien Jarno                          GPG: 4096R/1DDD8C9B
-aurelien@aurel32.net                     http://aurel32.net
+Brian Masney <bmasney@redhat.com>
+
