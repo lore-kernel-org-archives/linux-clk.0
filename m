@@ -1,111 +1,103 @@
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 334174A5EAB;
-	Thu,  3 Sep 2026 13:04:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12AA94A8412
+	for <linux-clk@vger.kernel.org>; Thu,  3 Sep 2026 13:07:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788440679; cv=none; b=un/K0Ch0+8YvAcaXX3rz+QOt86qC6MPGnEvg7ntVx2S9wr4XXTh95rww/DS6lzbeAAJpht/k1R9oa3yfB+gDrbvgnD+Cqk40y9SU5PviFUDe8ofW9KXDC9iAve2Jkc8Ua3LvBp9ugmNWwaXE2G0v7lrlwZ3TsibFWmf1Z+0vHl4=
+	t=1788440861; cv=none; b=XPkRU8LPHgd79/hjLlWaG8HJnKRK6V8W4E9PbVhL4Mxwh1vaWlRvapKcWn7pPxA4Z/LANQVMSTY7gBjtSULn7oQMDRBMQjVSAsOZIJc0EbJPo3LZd53O8aDHJYfnk6Mh1D1gSukKbIxHDres+6BurHW71ElC2ZmagbExZJGs+Do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788440679; c=relaxed/simple;
-	bh=xL+CoTR59C4km0YBHA8/+2wEU5OAHfxf36Bb0007UXs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=ergBVZylHsMXL+ggqkeJlBeiIqCH7YH0O8/SoNMvYAXEN7Pyz9jGtqOl5707+9AHZqjLpwcjYbdLOgFFYNNGkBjNjt0r98NCIud19ai4bZw9jnYxQKR6E+lj0vzwVu8FCr7Vd8E5252jmRG/MnajjdzBbioShH313it/2K4cgvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=VTbqw2/F; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="VTbqw2/F"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=xL+CoTR59C4km0YBHA8/+2wEU5OAHfxf36Bb0007UXs=; b=V
-	Tbqw2/FmwS4BYiHW0rwmkxQUU0Vnv7sRkl9W17mQb+gRraw7iOPsVJH/rs7FQ/k7
-	lDtHJXYlEF52X63tlpJ4wpttQpf/FkF6NedBUeTYruurmpE7kWZ56aYIr/pGZE5z
-	KGl9m3KFo4lTw9AmXh7WBnFsSUJ4HWh5MA3OVGU89Q=
-Received: from zl020895$163.com ( [2408:84e2:4b0:1b4c:d51e:e49:24cd:960c] )
- by ajax-webmail-wmsvr-40-115 (Coremail) ; Thu, 3 Sep 2026 21:01:58 +0800
- (CST)
-Date: Thu, 3 Sep 2026 21:01:58 +0800 (CST)
-From: zl020895  <zl020895@163.com>
-To: "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>
-Cc: longzhao <longzhao@ambarella.com>, "Arnd Bergmann" <arnd@arndb.de>,
-	"Krzysztof Kozlowski" <krzk@kernel.org>,
-	"Alexandre Belloni" <alexandre.belloni@bootlin.com>,
-	soc <soc@lists.linux.dev>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	"Rob Herring" <robh@kernel.org>,
-	"Krzysztof Kozlowski" <krzk+dt@kernel.org>,
-	"Conor Dooley" <conor+dt@kernel.org>,
-	"Michael Turquette" <mturquette@baylibre.com>,
-	"Stephen Boyd" <sboyd@kernel.org>,
-	"Linus Walleij" <linusw@kernel.org>,
-	"Bartosz Golaszewski" <brgl@kernel.org>,
-	"Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-	"Jiri Slaby" <jirislaby@kernel.org>,
-	"Catalin Marinas" <catalin.marinas@arm.com>,
-	"Will Deacon" <will@kernel.org>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	linux-gpio <linux-gpio@vger.kernel.org>,
-	linux-serial <linux-serial@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	"Brian Masney" <bmasney@redhat.com>, "Lee Jones" <lee@kernel.org>,
-	mfd <mfd@lists.linux.dev>
-Subject: Re:Re: Re: Re: [PATCH v5 10/12] serial: 8250: add Ambarella UART
- driver
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2023.4-cmXT build
- 20260511(2e539873) Copyright (c) 2002-2026 www.mailtech.cn 163com
-In-Reply-To: <aplttDenvZHvn0mF@ashevche-desk.local>
-References: <20260818-cv75-v5-v5-0-7bbb12f0360f@ambarella.com>
- <20260818-cv75-v5-v5-10-7bbb12f0360f@ambarella.com>
- <aoRpc2RK2_X3CdAi@ashevche-desk.local>
- <162c0385.2c076.1a018b82fa7.Coremail.zl020895@163.com>
- <aplcxoINt0YAjvxL@ashevche-desk.local>
- <709278f9.9699.1a067207b4c.Coremail.zl020895@163.com>
- <aplttDenvZHvn0mF@ashevche-desk.local>
-X-NTES-SC: AL_Qu2TCvifv00q7iCeYekcn0wRhug/UMa4u/sm3YNXc/0Esj/kyz4scntFDXrp/eCXEz6OlTaJfwFx48pKcKVZvW+TqzbAigqlbyZHIiayZw==
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+	s=arc-20240116; t=1788440861; c=relaxed/simple;
+	bh=/hmoURmIl/bUQbh8UOa2R0+uRCpVJKU0vq8AlikjsbU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jFZILbzbWJrxwTYNCWMbo53FviN6lS+4lu9nZSWjwrWYWKJ5OeaMBSHt642uVS1FkSQh/DgkBNTcyd3lMNoovZlfJAPt6UXYfqcTvO+cKghkLo498/ApMzx/g5q2v+mCgYyIfwc8RvoxXp+P7PvSTC8BxSnkdtBbzaHIYfB4hBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-97ca72f2cd9so1161697241.2
+        for <linux-clk@vger.kernel.org>; Thu, 03 Sep 2026 06:07:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788440850; x=1789045650;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=neL+IFdaoh4oslsqt6WgBGKpzShvTB78/gz0eSfjqO0=;
+        b=IfCHqzCHSGZ7eObtEM0fOQjY7Yzpvoqljv49V6VEO7rlZSWU15Og2tSDn00eC14TGH
+         AmLqohsPtgG7kU0LevUYZCV8Vm68bRqxYY3Ilkz8H7FpaC4uUaiXXcsLowyDXEOq6eTn
+         Rlx7gS0WpxhTY6YHRvuoPBlCndWYeVbB80lgYsQecI/o7MYGCWX8oe6aNY+OFueItuMz
+         kq5pt4jiZjCDUGTJl4qE2xS0Gp4GZeUD8WrC0/3Yth8mk6lrSoxcfiKTRaEW4UyFV6OA
+         alk8sFGBijYLvI9mDCcJ7W32L6BzFzHDoqSYhgL14OLMcS6WfJtBpOLlulJdFGrhntas
+         WnhA==
+X-Forwarded-Encrypted: i=1; AKwUvBxCRjj9PvBF9NXKxLu2z3bJiDQ00JHNrXFxXT5qZJF8WgBWbpaE2x2bbz2LEh66hfI7eHMsVvzz1m4=@vger.kernel.org
+X-Gm-Message-State: AFuF++lebX+Rp1QlXf1n1xkrcTN1locsemeEJIwyvXDtDjlVO63SnZnr
+	4EQEwHRPanxDkl3Ohs52keAKOuYA+O4YSIsbGxCxfs9JMh/U+slQKFfgYKZ9cZiH+Io=
+X-Gm-Gg: AYBFou1SI8gESlopzAdaBd+D/rEdJGNB1Eyv4HQIpvHp67QLjHF8FaXofFf5rQYf8aK
+	qBDddVZMX1hR1MhyIRfTTfZFfe4scdNhMUPVeV45pvX7T8W+0Bz4D30B6jzpshcfxb8U/kd/Jwl
+	3f2QhXhFUrqCeSK2K3WQyzOtciPng/GLRdv6wAl9Ry1OGdAIAnLABy1VYrg7p7Lv2byZn1qHivi
+	eMaaKHy84iS2j/bZ6npEum/8H8yymvhAT2gneKM6yW5WLVjRDaGKUkTFXY6+Jc4Lyu1m8A7kI75
+	9UBCsUFbRnAdtPIh5aU7srz2rp0WEFMtpfwXFpGZh9NrAtc9I8YFKAU3dZW3oits/BifB7oTVrf
+	9cBdm0lZKgtdhmODVjm2ly5LdKamfTdAVOUN772onYTM0vsMaqfXF7Yq+Ro5NoP0b2+AXPZ5ks7
+	l3RQdFVRXqECtzNqEAjnhXTuynO6rrMKJk439Kszn3aVd133qsbesiRI+3NhMOVhJ7zIKwQxOxB
+	6MRgZm0NWrobWHmvOlyrzPIng==
+X-Received: by 2002:a05:6102:38c6:b0:783:79ac:9db2 with SMTP id ada2fe7eead31-78a1f19f882mr4359826137.3.1788440850044;
+        Thu, 03 Sep 2026 06:07:30 -0700 (PDT)
+Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com. [209.85.217.41])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-980673ca1fesm4233201241.10.2026.09.03.06.07.28
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Sep 2026 06:07:28 -0700 (PDT)
+Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-74ab99038afso1784252137.3
+        for <linux-clk@vger.kernel.org>; Thu, 03 Sep 2026 06:07:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBxunWGObfEUR5sgE1rHDpNGN9LvGVcwQdiODvAvWfClyTys5XigOYPyCLsPIf6aVw07/mePjUT5MSc=@vger.kernel.org
+X-Received: by 2002:a05:6102:3fa8:b0:785:d308:cc2e with SMTP id
+ ada2fe7eead31-78a1f363e2cmr4316460137.9.1788440848450; Thu, 03 Sep 2026
+ 06:07:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <3a51b3fb.9b8c.1a0675c9db8.Coremail.zl020895@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:cygvCgD3_4DGb5lqPuE+AA--.16267W
-X-CM-SenderInfo: d2oqjiqyzvqiywtou0bp/xtbC7gYOf2qZb8YJQwAA3J
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+References: <20260902104939.25522-1-ovidiu.panait.rb@renesas.com> <20260902104939.25522-2-ovidiu.panait.rb@renesas.com>
+In-Reply-To: <20260902104939.25522-2-ovidiu.panait.rb@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 3 Sep 2026 15:07:17 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUR59_-_HB8JcVi77B-Pa4UxPf64QO-cDn1ogQ8shFR7Q@mail.gmail.com>
+X-Gm-Features: AcwNN1U_nOCF9hyFbscO2alVpr_m0LN2_JeCdjkgGXp8PKg9yAEFa13OLTkKydA
+Message-ID: <CAMuHMdUR59_-_HB8JcVi77B-Pa4UxPf64QO-cDn1ogQ8shFR7Q@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clk: renesas: rzv2h: Drop duplicated parent lookup in fixed_mod_status_clk_register()
+To: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+Cc: sboyd@kernel.org, bmasney+clk@redhat.com, jbrunet+clk@baylibre.com, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, John Madieu <john.madieu.xa@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-SSBzZWUuIFRoYW5rIHlvdSwgQW5keS4KCkJlc3QgcmVnYXJkcywKTG9uZyBaaGFvCgpBdCAyMDI2
-LTA5LTAzIDIwOjUzOjA4LCAiQW5keSBTaGV2Y2hlbmtvIiA8YW5kcml5LnNoZXZjaGVua29AbGlu
-dXguaW50ZWwuY29tPiB3cm90ZToKPk9uIFRodSwgU2VwIDAzLCAyMDI2IGF0IDA3OjU2OjE3UE0g
-KzA4MDAsIHpsMDIwODk1IHdyb3RlOgo+PiAKPj4gVGhhbmtzIGZvciB0aGUgY29uZmlybWF0aW9u
-LiAKPj4gSSB3aWxsIGtlZXAgODI1MF9hbWJhcmVsbGEgYW5kIHVwZGF0ZSB0aGUgY29tbWl0IG1l
-c3NhZ2UgYXMgeW91Cj4+IHN1Z2dlc3RlZC4KPgo+Tm8sIEkgbWVhbiB0byBnbyBiYWNrIHRvIHRo
-ZSB2ZXJzaW9uIHRoYXQgbW9kaWZpZXMgODI1MF9kdy4KPgo+PiBBdCAyMDI2LTA5LTAzIDE5OjQw
-OjU0LCAiQW5keSBTaGV2Y2hlbmtvIiA8YW5kcml5LnNoZXZjaGVua29AbGludXguaW50ZWwuY29t
-PiB3cm90ZToKPj4gPk9uIFdlZCwgQXVnIDE5LCAyMDI2IGF0IDAyOjMxOjU5UE0gKzA4MDAsIHps
-MDIwODk1IHdyb3RlOgo+PiA+PiAKPj4gPj4gVGhhbmtzIGZvciB0aGUgcmV2aWV3Lgo+PiA+Cj4+
-ID4+IFRoaXMgaXMgQW1iYXJlbGxhIDgyNTAtY29tcGF0aWJsZSBJUCwgbm90IFN5bm9wc3lzIERl
-c2lnbldhcmUuIFdlCj4+ID4+IGZpcnN0IHRyaWVkIDgyNTBfZHcgYWZ0ZXIgTGludXMgYXNrZWQg
-dXMgdG8gbW92ZSB0byB0aGUgODI1MCBsaWJyYXJ5Owo+PiA+PiB5b3UgdGhlbiB0b2xkIHVzIG5v
-dCB0byB0b3VjaCA4MjUwX2R3IGFuZCB0byB1c2UgODI1MF9hbWJhcmVsbGEKPj4gPj4gaW5zdGVh
-ZC4gVGhhdCBpcyB3aGF0IHRoaXMgcGF0Y2ggaXMuCj4+ID4+IEJhY2tncm91bmQ6Cj4+ID4+IGh0
-dHBzOi8vbG9yZS5rZXJuZWwub3JnL3IvQ0FEKytqTG02SHpFVTFUTS1jPVZ0anYzRkpFQmVjVlA3
-VHl4U2dxX1EwekYtWXdUNk5BQG1haWwuZ21haWwuY29tLwo+PiA+PiBodHRwczovL2xvcmUua2Vy
-bmVsLm9yZy9saW51eC1zZXJpYWwvYW44S3Z2SFdYMG5hSDNYd0Bhc2hldmNoZS1kZXNrLmxvY2Fs
-Lwo+PiA+PiBodHRwczovL2xvcmUua2VybmVsLm9yZy9saW51eC1zZXJpYWwvN0U3NzQzMDUtMzky
-MC00QkI3LUJBNDYtRTA3NzJENkJFRDg0QGFtYmFyZWxsYS5jb20vCj4+ID4+IEkgd2lsbCBhbHNv
-IHN3aXRjaCB0byB1YXJ0X3JlYWRfcG9ydF9wcm9wZXJ0aWVzKCkgYW5kIHRyaW0gdGhlCj4+ID4+
-IDgyNTBfZHctZGVyaXZlZCBib2lsZXJwbGF0ZS4KPj4gPgo+PiA+VGhhbmtzIGZvciB0aGUgcmVn
-aXN0ZXIgZGVzY3JpcHRpb25zLCBpdCB3YXMgaGVscGZ1bC4gQWZ0ZXIgZ29pbmcgdGhyb3VnaCB0
-aGVtCj4+ID5pdCBzZWVtcyB0aGUgdjMgYXMgeW91IG1hZGUgaXQgaXMgZ29vZCBlbm91Z2ggKHNv
-cnJ5IGZvciBnb2luZyBiYWNrIGFuZCBmb3J0aCkuCj4+ID5XaGF0IGl0IG5lZWRzIGlzIGJldHRl
-ciBjb21taXQgbWVzc2FnZSBleHBsYWluaW5nIHRoYXQgd2hpbGUgaXQncyBub3QgYSBTeW5vcHN5
-cwo+PiA+RFcgSVAsIGl0IHdhcyBtYWRlIHRvIGJlIHF1aXRlIGNvbXBhdGlibGUgd2l0aCB0aGF0
-IChvbiByZWdpc3RlciBsZXZlbCkgYW5kIGhlbmNlCj4+ID5ubyBuZXcgZHJpdmVyIGlzIHJlcXVp
-cmVkLCBqdXN0IGEgc21hbGwgcXVpcmsuCj4KPi0tIAo+V2l0aCBCZXN0IFJlZ2FyZHMsCj5BbmR5
-IFNoZXZjaGVua28KPgo=
+On Wed, 2 Sept 2026 at 12:50, Ovidiu Panait
+<ovidiu.panait.rb@renesas.com> wrote:
+> From: John Madieu <john.madieu.xa@bp.renesas.com>
+>
+> rzv2h_cpg_fixed_mod_status_clk_register() looks up priv->clks[core->parent]
+> twice, with an IS_ERR() check after each lookup. The second lookup is a
+> leftover from an earlier refactor: the value cannot have changed between
+> the two reads, so the second IS_ERR() check is dead code.
+>
+> Drop the duplicated lookup and check.
+>
+> No functional change intended.
+>
+> Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
+> Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v7.4.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
