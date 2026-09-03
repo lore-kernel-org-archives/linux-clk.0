@@ -1,125 +1,174 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E3983431E6;
-	Thu,  3 Sep 2026 12:53:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48F304963A7
+	for <linux-clk@vger.kernel.org>; Thu,  3 Sep 2026 12:58:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788439999; cv=none; b=fnbdzd1DAs8JoPyRE/9HCgcJt5PUOaJICUI6vp+sGHXFdfnvLAB75IEKlDb1TqcVgNBIyA5yd1lAvcK4HrlXUCIOISHWqeTCA+We5V4nOjMxIZu23Eu8HlxpXrxxI1fbvBswoXsHIt5WbKdKA7P9C3gMdg+eNYcfzSd+T6exhXA=
+	t=1788440336; cv=none; b=SI16K57zunPL9RQ5arEfiiMkzN7jJZcMcp/CRyGh+Tb8qulLxI5qnp8dzUIbMcz8JUybv3xEok3BvcrVJjEnuuf2eN7LLnvLCAECrRi1ZWB9v9TxcRGqrOs6MgsbYH2zrGwcXCCFebtPy+QN6Xc8p9rflfMN40GU/oWIhTxmaK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788439999; c=relaxed/simple;
-	bh=tG43r3ybKL5uUT1O97RFbvlWYx+uuXHDv+04GQeYfAI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F8beYgGZvfYfV2Yp9Genx8kwV70nCUN+GB7z+Bbwh7j9Y8T2U1nOHHnWlkCHSNQKbqodn8JJI0/15snFBghaTahn33ipbo6xWSp+sCPs3gTsIDt3b5aKEaGRtm7BK+3DGeB8zcM0ah5MSoCCcvyxw2uQ5wCJ/3n1Gn738EpJRz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cGemzVTj; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1788440336; c=relaxed/simple;
+	bh=kIf/5SJJtGo1RiYkQqnGmcJ4G6mmuPYq6VWJp6j1Gfk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=A/rmvuB3f2eIZcFAem0Lq66u882mXr2UASxVz/jqmuv7CA1lwDwXnaJlsqmkDUAXDNTGfEsT+pnvkkTAQRpvDj1QfToAU2PIs4nJx5zVvsLxo0crp4W7W6rMb04wkSqczkJnGpvIxgbI/SF4I6OrweVXyNvsfXYCPl5X7SyKJas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=SPbgY895; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cGemzVTj"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1788439998; x=1819975998;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=tG43r3ybKL5uUT1O97RFbvlWYx+uuXHDv+04GQeYfAI=;
-  b=cGemzVTjhDdm/eKK4bNao3ZNAGnj6P2DnGgCd509ZXfEg/zhh7expQDY
-   aesXNjBG3S1Q0VKb/uRKUdcZxOPi3XRDMvB4ZVbikia/zSiZDklNICZ1E
-   3OGMTrrwZvEPO3KAu+sD8OWGP50UitVu4AfEwJln9ADF515UkGZs3VDUv
-   SQGbzQH6Mkdz0O8sIsoV5oDZRI6zrzOQe0FVr6kayPylqTRYBhl8zPcT+
-   tgUVEozUXzwtdLOxHDDImYtsElbYA0+zMmZWVgP+TMgTbHsd9I6BvHJ9V
-   2fKrrPGK1bFNt6fTxJVxHOS74AS9aztv+85tC20gBsGXNZOMxWr1ewQC0
-   Q==;
-X-CSE-ConnectionGUID: YL9PaXPcQViTXGaVv7CkqA==
-X-CSE-MsgGUID: 2JX6UsMcQ2GFouX/phKIBw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11894"; a="100079188"
-X-IronPort-AV: E=Sophos;i="6.25,260,1779174000"; 
-   d="scan'208";a="100079188"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2026 05:53:17 -0700
-X-CSE-ConnectionGUID: EG6UkGFQT6G/iLYPpVG6aQ==
-X-CSE-MsgGUID: Fv19EkL4QhedtceXVGp5ew==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,260,1779174000"; 
-   d="scan'208";a="265372033"
-Received: from smoticic-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.28])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2026 05:53:11 -0700
-Date: Thu, 3 Sep 2026 15:53:08 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: zl020895 <zl020895@163.com>
-Cc: longzhao <longzhao@ambarella.com>, Arnd Bergmann <arnd@arndb.de>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	soc <soc@lists.linux.dev>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	linux-gpio <linux-gpio@vger.kernel.org>,
-	linux-serial <linux-serial@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	Brian Masney <bmasney@redhat.com>, Lee Jones <lee@kernel.org>,
-	mfd <mfd@lists.linux.dev>
-Subject: Re: Re: Re: [PATCH v5 10/12] serial: 8250: add Ambarella UART driver
-Message-ID: <aplttDenvZHvn0mF@ashevche-desk.local>
-References: <20260818-cv75-v5-v5-0-7bbb12f0360f@ambarella.com>
- <20260818-cv75-v5-v5-10-7bbb12f0360f@ambarella.com>
- <aoRpc2RK2_X3CdAi@ashevche-desk.local>
- <162c0385.2c076.1a018b82fa7.Coremail.zl020895@163.com>
- <aplcxoINt0YAjvxL@ashevche-desk.local>
- <709278f9.9699.1a067207b4c.Coremail.zl020895@163.com>
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="SPbgY895"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-49cdc81f40eso16804365e9.2
+        for <linux-clk@vger.kernel.org>; Thu, 03 Sep 2026 05:58:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1788440330; x=1789045130; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :references:in-reply-to:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=fUOhnrIRug8NhLOWvB+hNSnIHP5x1LfuWaznHtYn7Ag=;
+        b=SPbgY895cr6WExgVy9G046xElGP7xbC9h3mS0NIGr07A/Xkz6D+ggcCZl9RlUpekTs
+         Cqlty0W59oUb6rUTJrkX3AyrEGw2u6Id+ppWMvrLHBc56543/ya5f576L18jcVGNZmS/
+         jNIgMYRLF0s5KtnIe7VbHJH0PylGJQMF9uQTDcRSrC/Zwk7wz6BapGvgsnMy+qFP4CdI
+         JoQkALurra/Uqn7LJYAd7xjJGcIuhgjCFttVeqnAtwEMMvWyKoC+9lzCIA0p4zr9Hkn2
+         YLHBohwO9u/Ew/RzqDkyHGQHvBpwQajaO1NZsBNzIbwmAmYPF+nFTzzksSkoiDO+eU+u
+         Bt6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788440330; x=1789045130;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :references:in-reply-to:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=fUOhnrIRug8NhLOWvB+hNSnIHP5x1LfuWaznHtYn7Ag=;
+        b=X8MtIDsKk5FmwXYjmPC40uoh/Gys3sxflc9VCdAcfXCFscGCbt30RpVccF9fduMODK
+         l7LPbnEetlGArzKBU91zlQPZgS2619rz/X5ggqwYEfnwsNFqCRgj1uyGk8fPPTG2PXzc
+         8vwchqUIkLhGrDetuwk8x76Oal12jDHza4mKQe8VxPvc3UrsJGpJeZKzwdxTQ6NnIDSX
+         3sl8wXnW9yXZhU4bK4LuOUAYjTqhHBHpJSx84LeyOlvvY5Ra9Q9TGbPBK9NhIY9PTrCC
+         mbO2ekGthOQcSEngdz2cJDHwwOrkG2sb68u1iPKUk2/XGdAPoHLX7eYYxE95C37eLS4B
+         l2lw==
+X-Forwarded-Encrypted: i=1; AKwUvByzHXDZvxfWcQWaZpe0CB6BdWinrHtGePEOKXsShaJJIsbXK1vK0ZPy6GOw2QFwSs79TxAhbQT0Iw4=@vger.kernel.org
+X-Gm-Message-State: AFuF++m4bh/hBtOv1ZKFV2jJcgzdTdmVt4LL6z95UD7g1Tm8jhvOnvaU
+	xpl2+q9e9NkgJb+A2SYAZbjnlsm5G5O7r7NPV+3C0bXtTGKrsKn5hN4HPQ1BjihcXxk=
+X-Gm-Gg: AYBFou3XZL1SuoMdyAHUXTix8yjIvjZi+A/x74/ICqxiD03DeGPd1/24QV2uL04cfbr
+	vl7uPllyRzhcKyPqK96LQnDCx9d+NtzkvMAszdImyNIjWeLyNOzpzfCb+RPWp80FnGCTlc2xl75
+	wi9BBcOdYNe4vhGYru3lUTXIx5R5xaAee0rm3uh8aIhjp9XimYegDtEXBFLzngtY0QHyQPdJ6Gy
+	OYjxtKfzj9Zy9ihxYDIsDUhIqktPS47lTwAVugcIDmQPqy5wtxwP3H2/4haj2jXrSiyZT5p4Z54
+	T+z9BkApbJhxQEX42wuRZvt5k6pQYpHSSErhC1wvHfe+jjCxkMqeI5HzeRERoLaqGwQk9kRxTnG
+	4rCa8BajdGkCoA0slaW7WGFui6WYNg0a30V4EBVYyiXJ5/Vy/tHfyOE+yI7pxclZjqO6vrhJ9lB
+	iduUvCneFIatdlLuJhb9NWzlgP1Ngj9sI8qMGiiLm85ewPavRJ+0hm4Viu8Tgk5/pgfYPCSnSL0
+	e4EgIs=
+X-Received: by 2002:a05:600c:83c8:b0:49c:d52e:d0ea with SMTP id 5b1f17b1804b1-49ce581779dmr225433345e9.4.1788440330042;
+        Thu, 03 Sep 2026 05:58:50 -0700 (PDT)
+Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49cee6023edsm67989285e9.7.2026.09.03.05.58.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Sep 2026 05:58:48 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: tanure@linux.com, Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Kevin Hilman <khilman@baylibre.com>, Martin Blumenstingl
+ <martin.blumenstingl@googlemail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Jian Hu
+ <jian.hu@amlogic.com>, Ronald Claveau <linux-kernel-dev@aliel.fr>, Brian
+ Masney <bmasney@redhat.com>, Chuan Liu <chuan.liu@amlogic.com>,
+ linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org
+Subject: Re: (subset) [PATCH 0/4] arm64: amlogic: t7: describe the VIM4
+ supplies and keep the fabric clocks running
+In-Reply-To: <CAJX_Q+17CLQ_4-rcj0KD6kzPWnChQfD3irCR7-h1bGH9hWiD7A@mail.gmail.com>
+References: <20260829094758.23248-1-tanure@linux.com>
+ <178818026093.2318126.3676223463693214854.b4-ty@b4>
+ <CAJX_Q+17CLQ_4-rcj0KD6kzPWnChQfD3irCR7-h1bGH9hWiD7A@mail.gmail.com>
+Date: Thu, 03 Sep 2026 14:58:47 +0200
+Message-ID: <1jecfa8pa0.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <709278f9.9699.1a067207b4c.Coremail.zl020895@163.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 03, 2026 at 07:56:17PM +0800, zl020895 wrote:
-> 
-> Thanks for the confirmation. 
-> I will keep 8250_ambarella and update the commit message as you
-> suggested.
+On jeu. 03 sept. 2026 at 11:05, Lucas Tanure <tanure@linux.com> wrote:
 
-No, I mean to go back to the version that modifies 8250_dw.
+> On Mon, Aug 31, 2026 at 1:44=E2=80=AFPM Neil Armstrong
+> <neil.armstrong@linaro.org> wrote:
+>>
+>> Hi,
+>>
+>> On Sat, 29 Aug 2026 10:47:54 +0100, Lucas Tanure wrote:
+>> > The Khadas VIM4 has needed clk_ignore_unused to boot reliably. Without=
+ it
+>> > the board hangs at random, loses storage and corrupts memory, and the
+>> > failures move around from boot to boot.
+>> >
+>> > Six of the SoC's PWM outputs drive the board's voltage regulators: the
+>> > always-on domain, both CPU clusters, the GPU, the NPU and the DRAM. No=
+ne
+>> > of them were described, so Linux saw the outputs as unused and switched
+>> > them off about a second into boot. The regulators then drifted away fr=
+om
+>> > the levels the bootloader had set, which is where the corruption and t=
+he
+>> > random hangs came from.
+>> > Thanks to Chuan Liu from Amlogic for helping me indetify which clocks =
+are
+>> > critical.
+>> >
+>> > [...]
+>>
+>> Thanks, Applied to https://git.kernel.org/pub/scm/linux/kernel/git/amlog=
+ic/linux.git (v7.3/fixes)
+>>
+>> [2/4] arm64: dts: amlogic: t7: fix the pin groups of two PWM outputs
+>>       https://git.kernel.org/amlogic/c/ae7be5c58a819259e5eb98a3abfa60842=
+478f2ae
+>> [3/4] arm64: dts: amlogic: t7: khadas-vim4: add the PWM-driven supplies
+>>       https://git.kernel.org/amlogic/c/1e5a53bd16ac501e68463e84023d1bff5=
+43cc696
+>> [4/4] arm64: dts: amlogic: t7: fix the pin groups of the vsync PWM
+>>       https://git.kernel.org/amlogic/c/406292fd75f95aa3010fec95b5beb5a8b=
+7e3ba3a
+>>
+>> These changes has been applied on the intermediate git tree [1].
+>>
+>> The v7.3/fixes branch will then be sent via a formal Pull Request to the=
+ Linux SoC maintainers
+>> for inclusion in their intermediate git branches in order to be sent to =
+Linus during
+>> the next merge window, or sooner if it's a set of fixes.
+>>
+>> In the cases of fixes, those will be merged in the current release candi=
+date
+>> kernel and as soon they appear on the Linux master branch they will be
+>> backported to the previous Stable and Long-Stable kernels [2].
+>>
+>> The intermediate git branches are merged daily in the linux-next tree [3=
+],
+>> people are encouraged testing these pre-release kernels and report issue=
+s on the
+>> relevant mailing-lists.
+>>
+>> If problems are discovered on those changes, please submit a signed-off-=
+by revert
+>> patch followed by a corrective changeset.
+>>
+>> [1] https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git
+>> [2] https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git
+>> [3] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+>>
+>> --
+>> Neil
+>>
+> Hi,
+> Please don't take this. I will submit a better version.
+> sys_ampipe_nand should not be critical.
 
-> At 2026-09-03 19:40:54, "Andy Shevchenko" <andriy.shevchenko@linux.intel.com> wrote:
-> >On Wed, Aug 19, 2026 at 02:31:59PM +0800, zl020895 wrote:
-> >> 
-> >> Thanks for the review.
-> >
-> >> This is Ambarella 8250-compatible IP, not Synopsys DesignWare. We
-> >> first tried 8250_dw after Linus asked us to move to the 8250 library;
-> >> you then told us not to touch 8250_dw and to use 8250_ambarella
-> >> instead. That is what this patch is.
-> >> Background:
-> >> https://lore.kernel.org/r/CAD++jLm6HzEU1TM-c=Vtjv3FJEBecVP7TyxSgq_Q0zF-YwT6NA@mail.gmail.com/
-> >> https://lore.kernel.org/linux-serial/an8KvvHWX0naH3Xw@ashevche-desk.local/
-> >> https://lore.kernel.org/linux-serial/7E774305-3920-4BB7-BA46-E0772D6BED84@ambarella.com/
-> >> I will also switch to uart_read_port_properties() and trim the
-> >> 8250_dw-derived boilerplate.
-> >
-> >Thanks for the register descriptions, it was helpful. After going through them
-> >it seems the v3 as you made it is good enough (sorry for going back and forth).
-> >What it needs is better commit message explaining that while it's not a Synopsys
-> >DW IP, it was made to be quite compatible with that (on register level) and hence
-> >no new driver is required, just a small quirk.
+Please submit a fixup change on top of what you've already sent, with
+the proper 'Fixes:' tag.
 
--- 
-With Best Regards,
-Andy Shevchenko
+>
+> Thanks,
+> Lucas
 
-
+--=20
+Jerome
