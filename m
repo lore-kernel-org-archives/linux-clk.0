@@ -1,144 +1,103 @@
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail-05.mail-europe.com (mail-05.mail-europe.com [85.9.206.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92C5A388898
-	for <linux-clk@vger.kernel.org>; Thu,  3 Sep 2026 05:02:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78A0342047A
+	for <linux-clk@vger.kernel.org>; Thu,  3 Sep 2026 07:41:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.9.206.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788411764; cv=none; b=ZYh4VhSr5ULF9rHXXdv7xElzVist/0pHKdvQtBbi3pPI0+PJWozCAASpm1JuRJOLiDT5+xT1WfrBfQV7Fx1vGC+h4W2o6mRM0VlWPqDcCyxwiXMB9U1Ff5syYNtvoC6kXupfceeHl7teqt3MauyOtg8U3O5huA3ksExvp2SoGOs=
+	t=1788421286; cv=none; b=RGVBtK95skv01ox0Q70GDaM4IYhuPKuYKksrGUmXsP/lmf+tVrIcdin5gbR1oda/gOJZbdQ6QOepH38CNKb9hTM3JQ7TDbqp4f+Zeokw1X+tLNNsNPndypdl6R2SsHurgUhzgnYrtzpQ96WdnIk+U/fOEIytASQc5EBs2is/3tw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788411764; c=relaxed/simple;
-	bh=j8QMTNW8XDHV+BH8mGTNiSJbNMOrQ1E2SamlbJ3guog=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RqijMbP8sieiBS5dK3nqQOCjA/ldv43ttSDMvG7RE/z6FJic2TFdulR6s3bgjapmsUhLzEIvteStAPT1snqEPjVeFUzkh2n7iVMAB1HtZENkzaq61NCzRMoAM3qfV0hvevaP9k4hoVOn48MQn7zIjPNTWEvaD4OTgOWTiFpWxdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hS9TovMd; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1788421286; c=relaxed/simple;
+	bh=unaWM7BrO6F4HYlrzqWPdL/PRtBfcelsNoWi1/wzGzo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SyBwH2qk65Y6gO04FV6XlS9MccMVsd6aZKSmlYG1JA4i4nDG7yEdoRyZYRgXocFdjab6NUZFY+saWVosgql+1tc7+TOnZFyIOF49g85a2Z9G/V7OVPFh3BJ5qWBDFdlnNnCY6A+UQWNVUsybRyzB0LJ4eLvOEQkouDEecRFPwOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (2048-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=IDd0MOAY; arc=none smtp.client-ip=85.9.206.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=onurozkan.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hS9TovMd"
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5b4b037a2c1so1778905e87.2
-        for <linux-clk@vger.kernel.org>; Wed, 02 Sep 2026 22:02:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788411760; x=1789016560; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=LwFiTvSfOdYmNglr5FoVqN597kWfjGSwy7pj4LDNId8=;
-        b=hS9TovMd5QZKIZNyOpwAJtQ57wR6xsF0NLxpWkjJu4Exxer+y0BAmxudl2pCbJZXB0
-         s8wHmZdgs62nqz5HLUL8CikyKRTmtWfxKYvHQpbvhMT4M9eLIt+xPStnUfjqImeyY8SJ
-         6BfRq71N/EKv1qxb6BGEorOvJAVGsuoE20AcBf1vmIhTfDld8Du7XIA/k2Qfr/1v6CQ7
-         fcg2ew6rq46UtaOg5tCt/aKdd75BMIzPLjM6FrbuTgenT7XvaTGqCYcjuul229whmLRU
-         sjs8OSK2lBQzCpQLt7bziAF2kArm6eWxxTC+Rt+UXE/DgVU0c1XWAQcTmJi4ONiTSP/P
-         tUMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788411760; x=1789016560;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=LwFiTvSfOdYmNglr5FoVqN597kWfjGSwy7pj4LDNId8=;
-        b=Fxfpb6klJSHAKJvEloNqoCtOAtOPnUoXjy8M4sMiCQen3Kf08u1in6HTxgOA+ycabk
-         qWAWm//TN390jQxAn/oDnkPIP5S++bCvOSRWWrR5yhU3vH2XzZNbxOkMQtVc1GwQ0FOA
-         LSIU4AbbIhfUmLIo+ceAX6qJdK9vqWuo/pJjolmTkQqNykwL2m0UH2up/30Hmem9fj4i
-         QRi/0kmHN4aaY4tqd0DXUl8Cjiqzd/PBRG+3LAAgoDbM1uAPl/oypzWCDREUfH6xIgzy
-         iR8rbTDSm58y7/xemnWd+ILCNlED6VCuKhVfw6nRM3cIhZtKAvgTCchgH/T3PRfBIVzJ
-         ZpNQ==
-X-Forwarded-Encrypted: i=1; AKwUvBzme8xgeokYJsfsJ75iABRxScu4hchfBkPqjUBrXrJ6H1VrpLWjfbh2BE8kUew1rcoEqbgHBEWV+cs=@vger.kernel.org
-X-Gm-Message-State: AFuF++mzt7zOLZHfa3rs3V1UPRYfQrWNKlKIlQHShq0U8kCTboeBbsru
-	jjpqgM9JL/R82fjYOs7ie1tK4zwENAwg28vlvM01RDbW8+6nU52FPQ3n
-X-Gm-Gg: AYBFou2L9s9zRG/ij6IGmbRW7ZnNAd1o3r/zBOaUdNyUoWNd6XoQ+2JILh95lTWdMa1
-	T4nN5cuLFJ2h2aBZ/tViIzww8gLSZ/AIs7uJ4QC86pst3JuyKdIIzJBBbw1jIzKKWZHJROrIDgN
-	tKeyZcYnoGO18/0NdsfEuTNawSAad9uPv4l+7Ex0wofCx0wQbkk/+I/1bnmy8NKpRHVEvoy8E+i
-	WBdwvXIZpw29MLw3bf71t+TcCrleEBQr9WUdR0B6HPUK9FkIO1zNVFG+9CG6Q838IMwTW2EukoF
-	aI4oxRe4wnsPMmLNoWjDuCXmmKHwCimmnb+fBjRdwaO9UCmQ8a0JmuwhlkXocTVYqeWHqfWu3w+
-	IRrTIeJG9XaBBGJYfzQ7Ct6g1tUUijxqgkWtJB7qehs+wBOZF8FPO7zx+V9awgKQslN85SHzwr8
-	QEFLJLXWKVNDOqJDHUXvOR+uVCWn2IDkIs/WJM4Ej4ROZiV04rtzpQDwbKbOVwpeifWNNYBu/vs
-	RWrCmHzPNNAOnVlvzZnkmvAALZvWJcPwZJi3G5LBBYM
-X-Received: by 2002:a05:6512:110d:b0:5b5:fae5:b241 with SMTP id 2adb3069b0e04-5b608559ac7mr3146149e87.14.1788411760490;
-        Wed, 02 Sep 2026 22:02:40 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5b606b1cd21sm1021897e87.29.2026.09.02.22.02.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Sep 2026 22:02:39 -0700 (PDT)
-Message-ID: <c2d07f77-1fe1-4d5c-af6b-703d4d767a83@gmail.com>
-Date: Thu, 3 Sep 2026 08:02:39 +0300
+	dkim=pass (2048-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="IDd0MOAY"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
+	s=protonmail; t=1788421273; x=1788680473;
+	bh=unaWM7BrO6F4HYlrzqWPdL/PRtBfcelsNoWi1/wzGzo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:From:To:
+	 Cc:Date:Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=IDd0MOAY5akUlOL70WgsQOXjtdCUMxerD7rkLet1xhynoIWleEh22Ownb54Nk7G76
+	 Udgjw+hVxDzr6j8lrKpGpCOIm/O4yxMPpGdR65XowD1iL/z4WShmQtWjeQCnkoPT8w
+	 txTl8y6Uo/9PQ1wqSfiTy3r2O7JYlsGdIuK/5NOnSQZPaRnaDR26npa2aEVF9POmPl
+	 x8cKyiLVXEcv1MRYi2m7pxNzpxbG5N6tOpahKz/NZYYX1aY+NIzdd5TqFjAQV6/4RW
+	 iY9fI35FiHsE82CzlEPvRe3yKF5Ow4LtDhHDO7DVY/TS/QS0aLmnl2wWJ3d7uBS3Y6
+	 BcIH8UVierCtw==
+X-Pm-Submission-Id: 4hbBNl5shzz2SdmB
+From: =?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>
+To: Brian Masney <bmasney@redhat.com>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	daniel.almeida@collabora.com
+Subject: Re: [PATCH v2] clk: devres: fix cleanup in devm_clk_get_optional_enabled_with_rate()
+Date: Thu,  3 Sep 2026 10:41:08 +0300
+Message-ID: <20260903074110.101285-1-work@onurozkan.dev>
+X-Mailer: git-send-email 2.51.2
+In-Reply-To: <apib9XCsTNGA3-u3@redhat.com>
+References: <20260809095413.150069-1-work@onurozkan.dev> <apib9XCsTNGA3-u3@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 09/10] gpio: bd73800: Support ROHM BD73800 PMIC GPIOs
-To: Linus Walleij <linusw@kernel.org>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Matti Vaittinen <matti.vaittinen@linux.dev>, Lee Jones <lee@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
- Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>,
- Bartosz Golaszewski <brgl@kernel.org>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Michael Walle <mwalle@kernel.org>, mfd@lists.linux.dev,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-rtc@vger.kernel.org
-References: <cover.1788346553.git.mazziesaccount@gmail.com>
- <5eb294e68b8d5d2c1d3a12b14a55dd2a9c075a09.1788346553.git.mazziesaccount@gmail.com>
- <CAD++jLkvELVwVD2B-OPF=mV8-F5xi7RZWJ7cvuyg2srnrJ2HLQ@mail.gmail.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <CAD++jLkvELVwVD2B-OPF=mV8-F5xi7RZWJ7cvuyg2srnrJ2HLQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On 02/09/2026 15:39, Linus Walleij wrote:
-> Hi Matti,
-> 
-> thanks for your patch!
-> 
-> On Wed, Sep 2, 2026 at 1:07 PM Matti Vaittinen
-> <matti.vaittinen@linux.dev> wrote:
-> 
->> From: Matti Vaittinen <mazziesaccount@gmail.com>
->>
->> The ROHM BD73800 PMIC has 4 pins (named GPIO1, CLKOUT, FAULT_B and
->> EXTEN_OUT) which might have been set to operate as a GPI or GPO when OTP
->> (One Time Programmable memory) is written at device manufacturing.
->> Support the GPI/GPO use-case via GPIO framework.
->>
->> The default OTP for these pins is to not use any of them as GPI or GPO.
->> (The GPIO1 defaults as an ADC input regardless the naming). Hence the
->> driver assumes none of these pins is a GPI/GPO unless explicitly pointed
->> as GPI or GPO via device tree.
->>
->> Furthermore, pin's direction can't be changed after OTP configuration is
->> done. Also the default drive type for a GPO (CMOS / Open Drain) is set
->> by the OTP configuration. The BD73800 has a set of undocumented test
->> registers which should allow changing the drive type. Access to the test
->> register area or the test registers aren't documented and so this driver
->> does not support configuring the drive type even though it might be
->> doable.
->>
->> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-> 
-> Pretty neat with gpio-regmap isn't it? :)
-
-Yep. I like the added flexibility now that it has got those callbacks a 
-driver can register... ;)
-
-> Reviewed-by: Linus Walleij <linusw@kernel.org>
-
-Thanks!
-
-Yours,
-	-- Matti
-
--- 
-Matti Vaittinen
-Linux kernel developer at ROHM Semiconductors
-Oulu Finland
-
-~~ When things go utterly wrong vim users can always type :help! ~~
+On Wed, 02 Sep 2026 17:58:13 -0400=0D
+Brian Masney <bmasney@redhat.com> wrote:=0D
+=0D
+> Hi Onur,=0D
+> =0D
+> On Sun, Aug 09, 2026 at 12:54:04PM +0300, Onur =C3=96zkan wrote:=0D
+> > devm_clk_get_optional_enabled_with_rate() registers its cleanup action=
+=0D
+> > before setting the clock rate. If setting the rate fails, it attempts t=
+o=0D
+> > disable and unprepare a clock that was never enabled. This issue was=0D
+> > spotted while reviewing "rust: clk: add devres-managed clks" [1].=0D
+> > =0D
+> > Register the cleanup action only after successfully preparing and enabl=
+ing=0D
+> > the clock.=0D
+> > =0D
+> > [1]: https://lore.kernel.org/rust-for-linux/20260706-clk-type-state-v5-=
+3-67c5f326a16c@collabora.com=0D
+> > =0D
+> > Fixes: 9934a1bd45b2 ("clk: provide devm_clk_get_optional_enabled_with_r=
+ate()")=0D
+> > Reviewed-by: Brian Masney <bmasney@redhat.com>=0D
+> > Signed-off-by: Onur =C3=96zkan <work@onurozkan.dev>=0D
+> =0D
+> This series no longer applies against the latest clk-next branch. Can you=
+=0D
+> rebase this, and submit a new version? I'll be able to pick it up quickly=
+.=0D
+> =0D
+> Thanks,=0D
+> =0D
+> Brian=0D
+> =0D
+=0D
+Hi Brian,=0D
+=0D
+It seems that the fix has already been applied, but v1 was picked instead o=
+f v2.=0D
+I sent v2 the next day after receiving warnings from the kernel bot [1], at=
+=0D
+which point v1 had not yet been applied anywhere.=0D
+=0D
+[1]: https://lore.kernel.org/all/202608090025.dwxdfqFr-lkp@intel.com=0D
+=0D
+So this patch itself is no longer necessary since the fix is already there.=
+ If=0D
+you still want to get rid of the warnings I can send another patch for it.=
+=0D
+=0D
+- Onur=0D
