@@ -1,165 +1,158 @@
-Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yx1-f44.google.com (mail-yx1-f44.google.com [74.125.224.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C53B74137AD;
-	Thu,  3 Sep 2026 10:03:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.200.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A0C13CEB99
+	for <linux-clk@vger.kernel.org>; Thu,  3 Sep 2026 10:05:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788429833; cv=none; b=tJY6y00Fr8aVb1osvBqqkCp0/xjuoVAA363ALoLk1HQk33TxICUAD1mcG0ahH/aZVbGj4ZJ6Ny5bHxM1FGPtsSg1rsN4ljk3YrxlqeuYJ4Qe0BA5NJD9e4HJd2odYRX3GkHZvhcVSOXL7hFq+3ruPUSi+kP8GjXd+tpY0Yhs/Bg=
+	t=1788429920; cv=none; b=cPSAauWMJi/Bk362of7pBBYgFK2s782fPiobgusEs6au+mPlrmfrECcSObBBp5G9kS3gLDJKJOE7ipF1s63PdWlPV3BSjHJplB6YJ/DBCdLq3yQlntiQrJn3DzaCahO+oykQ9GD8xK6URwlIL2iIqehsUpXhCM8zc2oaErnMISg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788429833; c=relaxed/simple;
-	bh=ID/ALhobsxfSAGQbWF+Z1Ci7Bfm1CH1TOIk+JV2Ef1o=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=c5P/BHVEa24msH+tGsGzBopdbjiWYvmN0tfgKgs/hnP47Bl5+jeiBXqn+Qjav+wXycUXPXBZxnsxvTGaESmrFLOMlBONJ49C9HADqAJ3jkQqagUPcBS5ud9MjXNv/F8dU0zss1Rkx/XpKFmSRepMmc8otYipKnfltyPbxz6Lu70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.200.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from [IPv6:2a0a:edc0:0:900:1d::4e] (lupine.office.stw.pengutronix.de [IPv6:2a0a:edc0:0:900:1d::4e])
-	(Authenticated sender: pza@pengutronix.de)
-	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id 83FE620177F;
-	Thu, 03 Sep 2026 12:03:32 +0200 (CEST)
-Message-ID: <9d734e555e9f074ffd93791a73c054ce92212f67.camel@pengutronix.de>
-Subject: Re: [PATCH v3 07/12] reset: Add
- reset_control_get_from_provider_exclusive()
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Geert Uytterhoeven <geert+renesas@glider.be>, Rob Herring
- <robh@kernel.org>,  Krzysztof Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Stephen Boyd	 <sboyd@kernel.org>, Brian Masney
- <bmasney+clk@redhat.com>, Jerome Brunet	 <jbrunet+clk@baylibre.com>, Sudeep
- Holla <sudeep.holla@kernel.org>, Cristian Marussi
- <cristian.marussi@arm.com>, Saravana Kannan <saravanak@kernel.org>, Ulf
- Hansson	 <ulfh@kernel.org>, "Rafael J . Wysocki" <rafael@kernel.org>, Marek
- Vasut	 <marek.vasut+renesas@mailbox.org>, Bartosz Golaszewski	
- <bartosz.golaszewski@oss.qualcomm.com>, Konrad Dybcio	
- <konrad.dybcio@oss.qualcomm.com>, Kevin Hilman <khilman@baylibre.com>,
- Vinod Koul <vkoul@kernel.org>, Wolfram Sang
- <wsa+renesas@sang-engineering.com>, Kuninori Morimoto	
- <kuninori.morimoto.gx@renesas.com>, =?ISO-8859-1?Q?Cl=E9ment?= Le Goffic	
- <clegoffic@baylibre.com>
-Cc: devicetree@vger.kernel.org, arm-scmi@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Thu, 03 Sep 2026 12:03:32 +0200
-In-Reply-To: <619a6e41495adfdae3e2e6c0fee97e0550a5c404.1788338320.git.geert+renesas@glider.be>
-References: <cover.1788338320.git.geert+renesas@glider.be>
-	 <619a6e41495adfdae3e2e6c0fee97e0550a5c404.1788338320.git.geert+renesas@glider.be>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-0+deb13u1 
+	s=arc-20240116; t=1788429920; c=relaxed/simple;
+	bh=wKv0G5pklL2Tau4nv5A69Up1Qi1EQE0aYPmrDPjRxmg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=D5Enr9rI/NxZ7jEuFcCc4enCiyo6E1RImzYirFxL6wGQGS6kpOPlLp9AE5TgQOq5oSkxZ6Lf4TFIHlbzV1nWymGcJanV72iFpSJakZpT8mPW3mXnve1tSF/FZMpgpfuLqrad6FnhfvuO90ItWa3deDDYyUN97TpstIzI/Og148M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.224.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yx1-f44.google.com with SMTP id 956f58d0204a3-66f984b263cso1409982d50.1
+        for <linux-clk@vger.kernel.org>; Thu, 03 Sep 2026 03:05:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788429915; x=1789034715;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:reply-to:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=sB2LZifEeupjsxCHsRGx0RoKXBpeYPjdfUIFuUgunMM=;
+        b=WyQKIqyFqLXBp1eMtaelL8vdx5ZXJq3NB38TwnJyJv5fxhyyvbz+MeGTX1SIpE7ew9
+         i+qmvqw9/Eo+1vQlmPAj1BB+rOEouU+zP2jPNjYPOXwdRbkOiUgIzQE5RctZN1dmrGO2
+         pBx8TzszjqfAf1/TIkZUtGnJt8p8YYVIAlcgDCkRqzzAkDaMMv9G1oIXuMk263qVQKxM
+         +ckYw/F/wRvvwm4PVcUpD6tr0veOUmo2hLlgI06edBTqlX/o5mF3FRlroVqCvziMTXaI
+         92P9fyB/sSn+I6YvyY5iIZ0IN2bIlrxiIgMvkcPTrBxap6qB2gkRGPl3ZAIYzhNpgii1
+         4SkQ==
+X-Forwarded-Encrypted: i=1; AKwUvBx0oNLoUABxrxAwtmWHej87ZiAbJO594IFxQhnhiMC2nu1suPet2jVK5L5BNzM71cCNIeMMHasTMt8=@vger.kernel.org
+X-Gm-Message-State: AFuF++kc7UQUIB7DrMdhzcVCjwcwUpBXbpbF6iXF2IOCglxheHIHDwE0
+	QJ2C2IGWQDJ0J2Nw0fCPFRZU1lvqhm9YM3sEh1O/WpZATYeaMq2zFLhvijI+OJSaZRE=
+X-Gm-Gg: AYBFou0e5Se25T+8FBxJ56rFpLZJi6WoDH32P6YOOLd24OvQpTyIbNA0LKQppqbEjRP
+	M25JzgbMUMmo5tH/yx8zG+dRGfMdTIb7rRjAg4qDSKDi35YLQ+6oDLPgFp94R2LwesVgDUbqxYL
+	pXJFkQYpiitSlpApO3QYGBJgIqsJB54ef6wpNcr3+R6sBQPSlCDiro8lYbcKfwFMIsrZhcU3LXu
+	Bz5NdRr4vaVAVtNU5NldorxW3xZOumvoI+qRk18fSt0mvlexhm7+EoatAvyBp94C6CRKLZS1Yoa
+	elReJnJm/q9Qub1OJ5T6/81ohJ6yY98j2Ar6m4lIWDydOh4U5m/CiJ5bnKHpC8bk030F9vcIUts
+	5S1/3OAH5/hzx99sIo8UjWHKELDx7YwcFi4KdEi47S1cdCFsQNh6bdszMhreU5z8KH1WtNINlp7
+	PbjWzHvlowxhqexamVFLUwLEVw6I57iXU++ZwmMcDYALfzw3KNjqN6IoMLXj1Hz4L2TRpGQ/8Do
+	zusvAFPwHM7M8Ekhr6Yi1mgQGMVQj77k8Aus+yBcIwjl6+FKEHh
+X-Received: by 2002:a05:690e:4502:10b0:66f:abd7:8de0 with SMTP id 956f58d0204a3-66fabd795a2mr870979d50.38.1788429914963;
+        Thu, 03 Sep 2026 03:05:14 -0700 (PDT)
+Received: from mail-yx1-f52.google.com (mail-yx1-f52.google.com. [74.125.224.52])
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-66faa50d633sm1331448d50.1.2026.09.03.03.05.14
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Sep 2026 03:05:14 -0700 (PDT)
+Received: by mail-yx1-f52.google.com with SMTP id 956f58d0204a3-66c7e3a2332so2325755d50.2
+        for <linux-clk@vger.kernel.org>; Thu, 03 Sep 2026 03:05:14 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBwKn4A4GoAIMosXU87OEfLmJxHjBNqeboTlztxx2A//07UkNGdZWe7+O0ZM+87Zma0Y19GfRE9Szyw=@vger.kernel.org
+X-Received: by 2002:a05:690e:4890:20b0:66f:afdc:b49b with SMTP id
+ 956f58d0204a3-66fafdcb54bmr290871d50.0.1788429913913; Thu, 03 Sep 2026
+ 03:05:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20260829094758.23248-1-tanure@linux.com> <178818026093.2318126.3676223463693214854.b4-ty@b4>
+In-Reply-To: <178818026093.2318126.3676223463693214854.b4-ty@b4>
+Reply-To: tanure@linux.com
+From: Lucas Tanure <tanure@linux.com>
+Date: Thu, 3 Sep 2026 11:05:02 +0100
+X-Gmail-Original-Message-ID: <CAJX_Q+17CLQ_4-rcj0KD6kzPWnChQfD3irCR7-h1bGH9hWiD7A@mail.gmail.com>
+X-Gm-Features: AcwNN1VRB2D0FTXRpcvHAcbTlWB5xZQpxaG0zutz7J3nfFbo_PpnG2ATadEMYz8
+Message-ID: <CAJX_Q+17CLQ_4-rcj0KD6kzPWnChQfD3irCR7-h1bGH9hWiD7A@mail.gmail.com>
+Subject: Re: (subset) [PATCH 0/4] arm64: amlogic: t7: describe the VIM4
+ supplies and keep the fabric clocks running
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Stephen Boyd <sboyd@kernel.org>, Jian Hu <jian.hu@amlogic.com>, 
+	Ronald Claveau <linux-kernel-dev@aliel.fr>, Brian Masney <bmasney@redhat.com>, 
+	Chuan Liu <chuan.liu@amlogic.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mi, 2026-09-02 at 13:29 +0200, Geert Uytterhoeven wrote:
-> When stacking two reset controllers, the upper one should go through the
-> proper channels: request exclusive reset controls and use them via the
-> reset_control_*() APIs.  However, unlike the clock subsystem, which has
-> of_clk_get_from_provider(), the reset subsystem does not offer a way to
-> lookup and obtain a reset from a reset provider.
->=20
-> Hence add a public helper reset_control_get_from_provider_exclusive()
-> to lookup and obtain an exclusive reference to a reset controller, based
-> on the recently introduced __reset_control_get_from_provider() helper.
-> This will be used by the R-Car X5H Module Controller driver.
->=20
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> v3:
->   - Replace reset_controller_get_provider() by
->     reset_control_get_from_provider_exclusive(),
->   - Add kerneldoc,
->=20
-> v2:
->   - No changes.
-> ---
->  drivers/reset/core.c  | 37 ++++++++++++++++++++++++++++++++-----
->  include/linux/reset.h |  8 ++++++++
->  2 files changed, 40 insertions(+), 5 deletions(-)
->=20
-> diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-> index 8af7cd2e8a5029df..6d4c95b3edb18248 100644
-> --- a/drivers/reset/core.c
-> +++ b/drivers/reset/core.c
-> @@ -1141,6 +1141,7 @@ __reset_control_get_from_provider(const struct fwno=
-de_reference_args *args,
->  				  bool gpio_fallback,
->  				  enum reset_control_flags flags)
->  {
-> +	struct fwnode_handle *fwnode =3D consumer ?: args->fwnode;
->  	struct reset_control *rstc =3D ERR_PTR(-EINVAL);
->  	struct reset_controller_dev *rcdev;
->  	int rstc_id =3D -EINVAL;
-> @@ -1154,18 +1155,26 @@ __reset_control_get_from_provider(const struct fw=
-node_reference_args *args,
->  	if (WARN_ON(args->nargs !=3D rcdev->fwnode_reset_n_cells))
->  		return ERR_PTR(-EINVAL);
-> =20
-> -	if (rcdev->of_xlate && is_of_node(consumer)) {
-> -		struct device_node *np =3D to_of_node(consumer);
-> +	if (rcdev->of_xlate && is_of_node(fwnode)) {
-> +		struct device_node *np =3D to_of_node(fwnode);
->  		struct of_phandle_args of_args;
->  		int ret;
-> =20
-> -		ret =3D of_parse_phandle_with_args(np,
-> +		if (consumer) {
-> +			ret =3D of_parse_phandle_with_args(np,
->  					 gpio_fallback ? "reset-gpios" : "resets",
->  					 gpio_fallback ? "#gpio-cells" : "#reset-cells",
->  					 gpio_fallback ? 0 : index,
->  					 &of_args);
-> -		if (ret)
-> -			return ERR_PTR(ret);
-> +			if (ret)
-> +				return ERR_PTR(ret);
-> +		} else {
-> +			of_args.np =3D of_node_get(np);
-> +			of_args.args_count =3D args->nargs;
-> +
-> +			for (unsigned int i =3D 0; i < args->nargs; i++)
-> +				of_args.args[i] =3D args->args[i];
+On Mon, Aug 31, 2026 at 1:44=E2=80=AFPM Neil Armstrong
+<neil.armstrong@linaro.org> wrote:
+>
+> Hi,
+>
+> On Sat, 29 Aug 2026 10:47:54 +0100, Lucas Tanure wrote:
+> > The Khadas VIM4 has needed clk_ignore_unused to boot reliably. Without =
+it
+> > the board hangs at random, loses storage and corrupts memory, and the
+> > failures move around from boot to boot.
+> >
+> > Six of the SoC's PWM outputs drive the board's voltage regulators: the
+> > always-on domain, both CPU clusters, the GPU, the NPU and the DRAM. Non=
+e
+> > of them were described, so Linux saw the outputs as unused and switched
+> > them off about a second into boot. The regulators then drifted away fro=
+m
+> > the levels the bootloader had set, which is where the corruption and th=
+e
+> > random hangs came from.
+> > Thanks to Chuan Liu from Amlogic for helping me indetify which clocks a=
+re
+> > critical.
+> >
+> > [...]
+>
+> Thanks, Applied to https://git.kernel.org/pub/scm/linux/kernel/git/amlogi=
+c/linux.git (v7.3/fixes)
+>
+> [2/4] arm64: dts: amlogic: t7: fix the pin groups of two PWM outputs
+>       https://git.kernel.org/amlogic/c/ae7be5c58a819259e5eb98a3abfa608424=
+78f2ae
+> [3/4] arm64: dts: amlogic: t7: khadas-vim4: add the PWM-driven supplies
+>       https://git.kernel.org/amlogic/c/1e5a53bd16ac501e68463e84023d1bff54=
+3cc696
+> [4/4] arm64: dts: amlogic: t7: fix the pin groups of the vsync PWM
+>       https://git.kernel.org/amlogic/c/406292fd75f95aa3010fec95b5beb5a8b7=
+e3ba3a
+>
+> These changes has been applied on the intermediate git tree [1].
+>
+> The v7.3/fixes branch will then be sent via a formal Pull Request to the =
+Linux SoC maintainers
+> for inclusion in their intermediate git branches in order to be sent to L=
+inus during
+> the next merge window, or sooner if it's a set of fixes.
+>
+> In the cases of fixes, those will be merged in the current release candid=
+ate
+> kernel and as soon they appear on the Linux master branch they will be
+> backported to the previous Stable and Long-Stable kernels [2].
+>
+> The intermediate git branches are merged daily in the linux-next tree [3]=
+,
+> people are encouraged testing these pre-release kernels and report issues=
+ on the
+> relevant mailing-lists.
+>
+> If problems are discovered on those changes, please submit a signed-off-b=
+y revert
+> patch followed by a corrective changeset.
+>
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git
+> [2] https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git
+> [3] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+>
+> --
+> Neil
+>
+Hi,
+Please don't take this. I will submit a better version.
+sys_ampipe_nand should not be critical.
 
-This should error out if args->args[i] > U32_MAX.
-
-> +		}
-> =20
->  		rstc_id =3D rcdev->of_xlate(rcdev, &of_args);
->  		of_node_put(of_args.np);
-> @@ -1257,6 +1266,24 @@ struct reset_control *__reset_control_get(struct d=
-evice *dev, const char *id,
->  }
->  EXPORT_SYMBOL_GPL(__reset_control_get);
-> =20
-> +/**
-> + * reset_control_get_from_provider_exclusive - Lookup and obtain an excl=
-usive
-> + *					       reference to a reset controller.
-> + * @args: Reference to the reset controller provider with all the args l=
-ike
-> + *	  reset number
-
-It is implied, but should this explicitly mention that this must not be
-a reference to a GPIO provider?
-
-> + *
-> + * Returns a struct reset_control or IS_ERR() condition containing errno=
-.
-> + * If this function is called more than once for the same reset control =
-it will
-> + * return -EBUSY.
-> + */
-> +struct reset_control *
-> +reset_control_get_from_provider_exclusive(const struct fwnode_reference_=
-args *args)
-> +{
-> +	return __reset_control_get_from_provider(args, NULL, 0, false,
-> +						 RESET_CONTROL_EXCLUSIVE);
-> +}
-> +EXPORT_SYMBOL_GPL(reset_control_get_from_provider_exclusive);
-
-regards
-Philipp
+Thanks,
+Lucas
