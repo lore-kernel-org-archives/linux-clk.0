@@ -1,152 +1,85 @@
-Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04DEB4156FB;
-	Thu,  3 Sep 2026 07:50:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.200.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4607A3750D6
+	for <linux-clk@vger.kernel.org>; Thu,  3 Sep 2026 07:53:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788421841; cv=none; b=DZT223+ILAyqFZv7vpj9Hp3VWLrDuC1Q8juHdBLDd3KHBEn/18PQ7UNGhTU2f3etRiPVYdJo5BVg3bvgPDYYB7Q7Ws3BlY/BbeV+sxBapJGU6UoM0oVoe28Q3XbJjQjjIV3+jjElZkG2nKqhU9pRxpHVsJCgPEfotvyNoEFzttI=
+	t=1788421987; cv=none; b=RyCuBuSv4aoSQKQuEaoBhlFpQRkz5rIcejfLjGMh5268gW3IrWXu+61D0267oZBvnNaBxjZ7HeUq3Vn63Ez+/BDqEXfGxvrb1W6nk/5cWr4yputyyVKXrSVk2nGN+yNayc0ZVKHlbu9Bk28Z431hgv1U4rZqOYqK2XSh1ACu4fo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788421841; c=relaxed/simple;
-	bh=blv4wdODRJoIJLSLs4PdhyTZCwXwZ/1oMYZyjK9NwJw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=hVM301QMjfgruJnIaOHd531VJHpaENU6aFKtmSaEMcHGp06hWCI5s/aVe6nVFaT1Hss2ZFB38wBi03ccqFMB4OGvnvr6BfvgbCt/T5yShfJV4QB1N8511KRBVg3RwTAOJRA4YVENJj0ZDxfRzggwcaZfODOOQRUo80f3N9lSZ0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.200.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from [IPv6:2a0a:edc0:0:900:1d::4e] (lupine.office.stw.pengutronix.de [IPv6:2a0a:edc0:0:900:1d::4e])
-	(Authenticated sender: pza@pengutronix.de)
-	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id 45462200571;
-	Thu, 03 Sep 2026 09:50:35 +0200 (CEST)
-Message-ID: <0ffb792adfafd06a0d7fc65153707e3c728fe0ac.camel@pengutronix.de>
-Subject: Re: [PATCH v2 08/15] soc: starfive: Add jh7110-hdmi-subsystem driver
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Michal Wilczynski <m.wilczynski@samsung.com>, Vinod Koul
- <vkoul@kernel.org>,  Neil Armstrong <neil.armstrong@linaro.org>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski	 <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Andrzej Hajda	 <andrzej.hajda@intel.com>,
- Robert Foss <rfoss@kernel.org>, Laurent Pinchart	
- <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Luca Ceresoli
- <luca.ceresoli@bootlin.com>, David Airlie	 <airlied@gmail.com>, Simona
- Vetter <simona@ffwll.ch>, Maarten Lankhorst	
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
- Thomas Zimmermann <tzimmermann@suse.de>, Lee Jones <lee@kernel.org>, Andy
- Yan <andy.yan@rock-chips.com>, Emil Renner Berthing <kernel@esmil.dk>, Hal
- Feng <hal.feng@starfivetech.com>, Michael Turquette	
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Brian Masney	
- <bmasney@redhat.com>, Heiko Stuebner <heiko@sntech.de>, Conor Dooley	
- <conor@kernel.org>, Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt	
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti	
- <alex@ghiti.fr>, Dominique Belhachemi <db@domibel.de>
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	mfd@lists.linux.dev, linux-clk@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, Icenowy Zheng <uwu@icenowy.me>, Andy Yan	
- <andyshrk@163.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Maud
- Spierings	 <maudspierings@gocontroll.com>, Graham Markall
- <hello@big-grey.co.uk>
-Date: Thu, 03 Sep 2026 09:50:35 +0200
-In-Reply-To: <20260828-jh7110-clean-send-v2-8-331680c8b9d1@samsung.com>
-References: <20260828-jh7110-clean-send-v2-0-331680c8b9d1@samsung.com>
-		<CGME20260828134828eucas1p1b4061de1538ef0d3322dc32f3db6140e@eucas1p1.samsung.com>
-	 <20260828-jh7110-clean-send-v2-8-331680c8b9d1@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-0+deb13u1 
+	s=arc-20240116; t=1788421987; c=relaxed/simple;
+	bh=WFDqwfiLhzlLAxGgLTojwoFhRArb9ZzqLhJka+qIiuk=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oZg6q9uemGSc3vZUjOcaoSR4klSgbSUhqRhE7WrLCZnGa7xwn4bFV1wBw3tyrHH//wbqJbSgQUG8JSjmoiqJRWEsY5iuse9QKd6krYtRKG60hwuC//NfVOmWC/R45NEseKnMn7PLCIev0KaegcsIVqLhqta8BAUDL2sVhfsMQ5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IF0Jy4lg; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IF0Jy4lg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABFD71F01562
+	for <linux-clk@vger.kernel.org>; Thu,  3 Sep 2026 07:53:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788421984;
+	bh=WFDqwfiLhzlLAxGgLTojwoFhRArb9ZzqLhJka+qIiuk=;
+	h=From:In-Reply-To:References:Date:Subject:To:Cc;
+	b=IF0Jy4lggG3pPTXJSNQn+Rwh3TEOTpmyYfE+DktBqwRfZizfuvky4VwQFHfIeBC9g
+	 1Nvf13iOUS0CPr1zHbrJNiAOxeOk7imw4esLbQkd7NNdIgJdl08bL1c2MuCMyv9MOt
+	 b8QgYJYpmquHHzxgaPdO3fmLu7DnkxCUXCtwzimGit5homuLPZhJYrnheqV6fAWKwx
+	 33isIPhWeQksPDx4G+0QmVXUiiBzMDajY+Y6nETg4Xg1apQi3keNH5aO3+Umy+WZ89
+	 OXZTXQPMGegc+JM8/erWgWF50CS+s7ayA3nQcK3i978tPyKVMJdNXyPXYBlS6RWH4w
+	 r5xFkQxPMOmSg==
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-3a20f56876eso19082821fa.2
+        for <linux-clk@vger.kernel.org>; Thu, 03 Sep 2026 00:53:04 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBykwiJxzHPXyzALIC1rqkrEkAuDty5ktMYJOvdHFQ0dIGLaskUjAqOZRpeURz4G6IKcofJ5DgCmevs=@vger.kernel.org
+X-Gm-Message-State: AFuF++nPFJAHmQ1V/jolNPwn0W8MT5xo2VJyaBKIScNrattR3VESrJEM
+	6up+TOLdSFZa40IurMt20AfI21C/Ndhf8jd0NJcJe62oPfjOSukzmn2xvymKlagVnXLUqUScj9q
+	0Pz6sI0YoxaRCR1UOpTSDcaut8M5BcdX3ZbT3d3VF5Q==
+X-Received: by 2002:a05:651c:2117:b0:3a3:52a7:3a1c with SMTP id
+ 38308e7fff4ca-3a352a73adfmr18741561fa.4.1788421983258; Thu, 03 Sep 2026
+ 00:53:03 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Thu, 3 Sep 2026 00:53:01 -0700
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Thu, 3 Sep 2026 00:53:01 -0700
+From: Bartosz Golaszewski <brgl@kernel.org>
+In-Reply-To: <57832670-6066-424d-a75f-4eb1f1f0cf73@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <cover.1788346553.git.mazziesaccount@gmail.com>
+ <5eb294e68b8d5d2c1d3a12b14a55dd2a9c075a09.1788346553.git.mazziesaccount@gmail.com>
+ <CAMRc=MchpaOib+jgMniG7=BBYwB1yqLvJG1sMkjXfRaMFPodgA@mail.gmail.com> <57832670-6066-424d-a75f-4eb1f1f0cf73@gmail.com>
+Date: Thu, 3 Sep 2026 00:53:01 -0700
+X-Gmail-Original-Message-ID: <CAMRc=McED871rSf-_3Ahjjxg7QO56cZRuf_2=Xc7+Q4kwMGqnQ@mail.gmail.com>
+X-Gm-Features: AcwNN1W51dTT611YKOF8alZj0OVA9lXPGK61Ff-vrlum5Ji76Da9N2L8zMOMPh4
+Message-ID: <CAMRc=McED871rSf-_3Ahjjxg7QO56cZRuf_2=Xc7+Q4kwMGqnQ@mail.gmail.com>
+Subject: Re: [PATCH v3 09/10] gpio: bd73800: Support ROHM BD73800 PMIC GPIOs
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@linux.dev>, Lee Jones <lee@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+	Jerome Brunet <jbrunet+clk@baylibre.com>, Linus Walleij <linusw@kernel.org>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Michael Walle <mwalle@kernel.org>, mfd@lists.linux.dev, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-rtc@vger.kernel.org, 
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Bartosz Golaszewski <brgl@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fr, 2026-08-28 at 15:47 +0200, Michal Wilczynski wrote:
-> Add the parent driver for the monolithic JH7110 HDMI IP block.
->=20
-> This driver binds to the starfive,jh7110-hdmi-subsystem node. It maps the
-> shared register block, creates a regmap, and calls
-> devm_of_platform_populate() to create its hdmi_phy and hdmi_controller
-> child devices, which retrieve the shared regmap from this parent.
->=20
-> The NoC display-bus clock and reset gate access to the whole vout registe=
-r
-> region, and this subsystem's PHY child is the first device there to touch
-> registers. Enable the bus before populating the children; PD_VOUT is
-> handled by genpd through the power-domains property.
->=20
-> Co-developed-by: Dominique Belhachemi <db@domibel.de>
-> Signed-off-by: Dominique Belhachemi <db@domibel.de>
-> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
-> ---
->  drivers/soc/Kconfig                          |   1 +
->  drivers/soc/Makefile                         |   1 +
->  drivers/soc/starfive/Kconfig                 |  27 +++++++
->  drivers/soc/starfive/Makefile                |   2 +
->  drivers/soc/starfive/jh7110-hdmi-subsystem.c | 114 +++++++++++++++++++++=
-++++++
->  5 files changed, 145 insertions(+)
->=20
-[...]
-> diff --git a/drivers/soc/starfive/jh7110-hdmi-subsystem.c b/drivers/soc/s=
-tarfive/jh7110-hdmi-subsystem.c
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..d893c1c29f98b072b09d26134=
-3d3317dbf4c75fe
-> --- /dev/null
-> +++ b/drivers/soc/starfive/jh7110-hdmi-subsystem.c
-> @@ -0,0 +1,114 @@
-[...]
-> +static int starfive_hdmi_subsys_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev =3D &pdev->dev;
-> +	struct reset_control *bus_rst;
-> +	void __iomem *regs;
-> +	struct regmap *regmap;
-> +	struct clk *bus_clk;
-> +	int ret;
-> +
-> +	/*
-> +	 * The NoC display-bus clock and reset gate access to the whole vout
-> +	 * register region, and this subsystem's PHY child is the first device =
-in
-> +	 * that region to touch registers. Bring the bus up here before
-> +	 * populating the children; PD_VOUT is powered on by genpd through the
-> +	 * power-domains property.
-> +	 */
-> +	bus_clk =3D devm_clk_get(dev, NULL);
-> +	if (IS_ERR(bus_clk))
-> +		return dev_err_probe(dev, PTR_ERR(bus_clk),
-> +				     "Failed to get NoC bus clock\n");
-> +
-> +	ret =3D clk_prepare_enable(bus_clk);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to enable NoC bus clock\n");
-> +
-> +	ret =3D devm_add_action_or_reset(dev, starfive_hdmi_subsys_clk_disable,=
- bus_clk);
-> +	if (ret)
-> +		return ret;
+On Thu, 3 Sep 2026 07:00:24 +0200, Matti Vaittinen
+<mazziesaccount@gmail.com> said:
+>>
+>> Why not return PTR_ERR_OR_ZERO(devm_gpio_regmap_register())?
+>
+> How strongly do you feel about it? It's not a big deal, but I always
+> find it a bit harder to read when functions / macros are called inside a
+> parameter list. Thus I'd rather keep it like this, just for the sake of
+> my own eyes :)
+>
 
-You can simplify this with devm_clk_get_enabled().
+If you need to respin, please change it, if not, I've given my Ack and LGTM.
+Same above.
 
-> +	bus_rst =3D devm_reset_control_get_exclusive(dev, NULL);
-> +	if (IS_ERR(bus_rst))
-> +		return dev_err_probe(dev, PTR_ERR(bus_rst),
-> +				     "Failed to get NoC bus reset\n");
-> +
-> +	ret =3D reset_control_deassert(bus_rst);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to deassert NoC bus reset\n");
-> +
-> +	ret =3D devm_add_action_or_reset(dev, starfive_hdmi_subsys_rst_assert, =
-bus_rst);
-> +	if (ret)
-> +		return ret;
-
-You can simplify this with
-devm_reset_control_get_exclusive_deasserted().
-
-regards
-Philipp
+Bart
