@@ -1,94 +1,96 @@
-Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
+Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 095494F30E8
-	for <linux-clk@vger.kernel.org>; Thu,  3 Sep 2026 21:59:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.161.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 048AD1F5825
+	for <linux-clk@vger.kernel.org>; Thu,  3 Sep 2026 22:19:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.160.44
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788472773; cv=pass; b=WcE0QHGzmf1znPV7LKEDQkzPGlrOkn4KSQxV4RkBd72yrmOJvOEiaMKQ7S65ApiWH1TVAOS3lMU2DDz9HODxxA5Jkb5rM5esh9p73zmG3KHkHjpHmLUvaCdsLySYNJaUobTYh/osmjhRhFeld7uaBf1z81sw0rO+j6gtC3UCpIw=
+	t=1788473983; cv=pass; b=t9OsGemY0B0YG1dtaVSGlxMRwgh0JMo95LLR1kuc6VgjhhHRRd4mH/RkGBU2FO5fyJOWGjOOGmDzWklmItlCy6XbO1jQHqW6WW5rUGi8SNl++2bVJ+79ZeuioY9xPzINTqFfqU7j1JwmFGnjb/3nW5Ti1i+Orop9TV83G8yGz2I=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788472773; c=relaxed/simple;
-	bh=ox/eEywvutHt3Hdw7M4QkMNCJaJVqMv3lPpacLx6nc8=;
+	s=arc-20240116; t=1788473983; c=relaxed/simple;
+	bh=qXKXaea9pu4/yiSszLFzxbNESK128UhjrOHcVCD6sDQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=T/IuiUvdD95MEFXEh0zG+vBq9G5UNFETL+VaGWi5Naru6gaaiAlNATr5MLH4hPh4qs7qOaea0VO/LzRa5W0yYCqAcR4Iwol7wmd4VjtW6t5tcCJ9O8G8JuUx6f7cNGXueLP/pawyUub5V0a7ojJ1ImFCr25ZRxSI7tle+i8ZxGY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P5HZrjCj; arc=pass smtp.client-ip=209.85.161.46
+	 To:Cc:Content-Type; b=uqSf/tk+JO8M2H8FMVIQncphQMEWKVOrC74oyuX9ybL5qz9cE7d7nF0CpcVR/q59tLaEMskSuHAQ++JtynHonEJ8uUj8yeQmcjPjB+w3LoZlJxqzMfu7D0hwxdVVL3ueNUxU4aWI+Woa7TgdxGb4CQEiocdWPcn7Bwk6qI6sgn8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OaD/w4fl; arc=pass smtp.client-ip=209.85.160.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P5HZrjCj"
-Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-6b1ab6d7239so258079eaf.1
-        for <linux-clk@vger.kernel.org>; Thu, 03 Sep 2026 14:59:31 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1788472771; cv=none;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OaD/w4fl"
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-46af2e2654cso172541fac.2
+        for <linux-clk@vger.kernel.org>; Thu, 03 Sep 2026 15:19:41 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1788473981; cv=none;
         d=google.com; s=arc-20260327;
-        b=ivyIZE9JGTcRMJiSk7uqYZ8opIn6aKs6sjh3zGArUoe2Ofr74NJ61lfV5KFLnCSf93
-         O2cmi422C69Zu26t/UgagQ8E8NF0MvOG0UsMM5h1mrHCNeaYpDbilpUpmBICKgTUMPWl
-         TsbM5ET2fh4bUcfaY/brgooerYC+bwDOmZFGkq/fnCm/mDbjHVSVor8fMV8c1AKI0SC2
-         Tdvk56VSpZmn9KSq29vyPjY8FngCUD+Kfsx7S4ftLVCtmuFBvObc96zfibr6l+Mh3x/o
-         EjJdsyXOEreSuJliU7M14YUVqVuiTSx73in/5mrQn2nNQo7+jKgWmswHbfLiv43Zdfc6
-         orPw==
+        b=Z6ZBgAdg/5dlTFMAJ9cP1k/hAiVAlrC6LSH2295hp4JVP19qbS/zDzLFnyu3PUJW0R
+         fVpcF3kb+PjWg00dhrIFZ40Fepc0fmYgrtp4s6Hbar8PLXUhkrmCTljByLtz8doIa/5W
+         KnCbClzDHQNnLZeuwzJDw6sHpSCgtTh8gDynTI8ufBNiUve6lCc9Y9g4sg6HjoYWXsVR
+         GD2eWuFKSEcH7Qq9ekiuTGs+3TN6qtyB9rG19WOLAaBE5Fxmm2Ki3mOcr9u7NIUaYeTY
+         3GQgKAqXN0KHr1LubilJ3cdjrqSTRug8c6YzRkVfaaK2iCAHuyu3gCe00Y2WNTwBRwOH
+         3F9w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:dkim-signature;
-        bh=5IbW3NpIDWGo8DaB9mXyMk24M3i04w8Ht2DmjrR5ZwU=;
-        fh=h2qNbetfRSRtrL4EK/32UYw1+d6PNfQ0qDrNto0tZAE=;
-        b=YPxaXNx8L8ke/Y9hN4TTP/7mCcWMpzHMmGu6mRqf+E8UR/oTtB9fyWgQwSw93cODrT
-         2YWzLArphsK1SYXJZXJobVI8OxTDmhG0r5MCMy417hwzysOCgiHxFIQk4ymxaDhbbkdn
-         GdBwvMaK1/iA/FOk1g4HRUf3BG2ILDQN4APrqDoL9McTmYTyiXJQDbBPtjFlMEsk3wuc
-         mx5bqWKsPcK6yuGCYpHi8c1fpXDRkJxtJ1ymtnfUBHqjH5nFOriUN7tJ28KEy4Fz+n3N
-         HAIGFL7HsysIh09NvcybXMfwprpWbhdg5lqATOGh808m3tue9IwjT7q2AcUQr2v1Ol+/
-         7aiw==;
+        bh=Cmks0OsbIu97NwE9xXK4Lv/LDxGFAge7gqd+ChMCoGc=;
+        fh=A+Y2A4gGJijy00Vwz5grDslDWjjCifT9HwOkv4cnFNA=;
+        b=EjIlA7fjI8V1fhYkkxCLEgSIXwShk4lW+b4DApSk6J474XvGPLOGiBJhebxyHKNir7
+         Ka3++AXISdoWF6MRXDcdy467bK5WJEsaOzHRBH087HZyTBpvIkflnEOQ575siqcQZOmt
+         T0Enhk/bJXtGVzzGBhA9SkP18JH4houc5VDvUObjjgs23GYr0Cdc6N2BhWeRaWqHxRX+
+         aRbyjCbGURRiZ93IgdzMtRY4msvh5URXMSLoFNPe3/sWat9AX4kSvvw8jCWIgZ8ncNwO
+         xL7MCZZ8yRVXZZxI20JJyfLWFahrYugeAeJUEKdwVNE7zeRfxI+SObdyw51oZ8ztSN+7
+         mgsw==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788472771; x=1789077571; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1788473981; x=1789078781; darn=vger.kernel.org;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=5IbW3NpIDWGo8DaB9mXyMk24M3i04w8Ht2DmjrR5ZwU=;
-        b=P5HZrjCj8D+mQUngic8tiwtiyh7Q+uffAXArIKzMRaGZ3gVXSBmOoZoUIQPuRxiKYs
-         Wpp/cAsAN0ynO0T3K9LPTpj2cxkwpYJDCfY7edxP63/cz3XCkq/IGZmcltvfq/m6c8/m
-         SZYKSe5gPYekDlljMLMllHQe4ahj94TslAysBWgVCCJjNWGTq3Ffrtxj36NycfoBtUq1
-         EvVFvFDsr6/dj/4FUiTlbOGWRL81z9/Ns7qNrQ4mJXHdbQ6R9cFUmokCLHBilknGeXMs
-         6W2lh53/1kxHKuR42FK/qpmx3zkIcj97xmoMPzFS8VI2jcbPdC6JaYzkZrB/6Ab7T7uU
-         MVZw==
+        bh=Cmks0OsbIu97NwE9xXK4Lv/LDxGFAge7gqd+ChMCoGc=;
+        b=OaD/w4flA0y9tI5XAikDDldhwCn5WXMVwLTtZ4vtPVhWeQ7e7slzm1w/vU9UBH0zQ1
+         VMdw8RaslWljJBMu/D0G+1LKy2nqJD2NVUhjBu/3Ujoa+agB/uYeXFviyX4P0xkMhnLD
+         QSZBgK/lgRSGAgkW7ixAGU4jVN1wMN9+M3hI0t8QDEiJL4cDnuDeu/rdoY0bJZyfEdpj
+         Hv3/nwPNrIhlc/GuvaNcS4OvzePB8/YpJPMGjnjp1wtGg6lRot3YPNOWS/DvxDrSeaHw
+         ShJwdTBn/eGHpUgekLtfRGWzzixWdMvwyqBBbiw8Ol7qeYWw/FELzVxWph8KSgaAalbb
+         tEnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788472771; x=1789077571;
+        d=1e100.net; s=20251104; t=1788473981; x=1789078781;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=5IbW3NpIDWGo8DaB9mXyMk24M3i04w8Ht2DmjrR5ZwU=;
-        b=WjSonwjJAUPLuDKwUgxAxHrLe8aDFcJ6XO2NWlrw/Gg5CVA9WfDUEAkXCVp6V7Dvmm
-         A327F2BRRP+7Wu1I4G/rf3A1oSmHu9nX7OgJe7Zose7+LXMu0whRYHm10X6tKfMZ1iy8
-         +kknNdC5jRBQnIPAj9p/8r5QosuZBwkUxASMhP4Qw0+OMhhgKfdB050PQHwosuPKeYct
-         1VRZm2i3yBU2v03cmlp/ddqtJY9ck5Re09tSNKTSQr9OTu1stxkpcG3RXwVG/XOPPTYc
-         tjTFf9AVagnlmlANR+eOIkoFS9B9Pr7Myr8Bg9hk6IjFMsosmRtxby1cL6kXGpXXzGZm
-         KJ4A==
-X-Forwarded-Encrypted: i=1; AKwUvBxaWAuuxFC/sBeVPDWCB6uElX34O2wvxCkLcx3GuoHQiCaw3OyIRuofr5/lvlqnTnyAW1nm93yiN6Y=@vger.kernel.org
-X-Gm-Message-State: AFuF++lBsyle+dYY32v6rlljObAzQuSUgDGCei483CZI8ikLOUAQLSuH
-	qCciDjdnKftlB+XXO+g/b6Elpy/4Zwb1W5Nk5v7CxBPG+f113/t+MP2trr0IiW33LzxELqlpwsw
-	jV2HooF2WVmKzzzjHEXON+kNeVM4mCXk=
-X-Gm-Gg: AYBFou2YndUReCG5ZHqW0XRI0ukPxzabjUef0x8qHWL7bF6tfFwcpaQx2g+AgubJLq7
-	R9/FHHFuUxd3aImr+kgUQcjcVEv/EzVZwCYGAUtUy5zshMJ7YkMhpMQyQoLGHOiAlb00eNKlYdJ
-	oiyIWhccNccQmpzZjILy1GmSZmPLFwANueguZy7CPdGFipVNibpnt22gBo/Pbb+66/6OK4RWJpW
-	Xq8cQJR+gnF5s46FknIVMw7Q4zURLS2m0eoBrVn+Bp8JCmNZYRVQcn5RciXgDgnobom1CcWPzvp
-	2hJKXVjRkXcVEcR7TuqaPbtr5uS887LmhjpzSFG/4IY=
-X-Received: by 2002:a05:6820:2912:b0:6b7:46fc:1cd with SMTP id
- 006d021491bc7-6b746fc03a5mr22396eaf.44.1788472770664; Thu, 03 Sep 2026
- 14:59:30 -0700 (PDT)
+        bh=Cmks0OsbIu97NwE9xXK4Lv/LDxGFAge7gqd+ChMCoGc=;
+        b=sUCHHBaymBJeJA4hEEUoGpS3WdVoENjtg3Y0agzpXlzd4M6XzoGY6sSZpnR8bzmxOj
+         J6m4E0be0wY8OfpfV03Jy67Nkx8k7KedOo1fP7NX8Oe9Pb9Uj9cwYVwlGGyGFwUNcHi9
+         gRR6ow7OvDtRsb5AdbPez+q3NgZrgWv7joyGYROuverfH6VUiZk+t10w9xdsJluQbyp3
+         +IpFrE0eHp5CKNCpwP4xKLaIIir9jOTl/AC8en/d69FbmxasRXOVFLLEfeWfaFJwZLe8
+         triweqC4wvHxbnvgl62Wd9YsEnFsOAKeQHn7zaGy4nrOOtUzQD9NuHyLcBGR8na4vOS9
+         V20g==
+X-Forwarded-Encrypted: i=1; AKwUvByA4zROXcQsr+I5F6N6MccvQK0uQRXO0thdL5A9kLDPUL9AsdbkIn0eXIfGdX9A9PJewM8quIYEbRQ=@vger.kernel.org
+X-Gm-Message-State: AFuF++naHzPtt38m5G6Phq3LjAn0DqWpJ+jOAeq1RvIZybFj81RE9Ktm
+	ooEQcEywtcMMEmvgMPOMwEVI7wsFTVglG6ueNT3vqJeSjU/YCCBRafn1bFW9okrrJtFQaQbYUcI
+	L+H6da5NQvk53KzAvQ9hIg7Ejv/riUOM=
+X-Gm-Gg: AYBFou37bmg3/qj9WTmtsgvDmUX+HLsT73JegHW7VvcJl94GxaUH6AVMv/nyEwWyWLW
+	VDbufu9WUem4oUojsE08qicCL71OPL0j2s7y7J54NaD6oRkXYcp4Ia+bl6X2/5AYUdh0kbLISvq
+	aRKWod85opMB8RtuumDXWojPLIGo/+d6RYL+nqSuYZFqJbsiuWtGG8dG+jXHDNgGqHqby9Kz1No
+	ywbBr/Re5ck41wKXUwwAH/GTSyn87/g5j+WPe1Duw8Sg+RHCI920i62sqPAW/GdkQot32stA+fC
+	Mm4/FB3gnStGby9g57wevUzNVw6E+SnGVpg+TWB6xto=
+X-Received: by 2002:a05:6870:3349:b0:45e:6cd1:9a3f with SMTP id
+ 586e51a60fabf-4754ece1b35mr2311301fac.0.1788473980595; Thu, 03 Sep 2026
+ 15:19:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260901234351.190506-1-anarsoul@gmail.com> <CAKTNdwFqSBt4QVCuYJxTyEDsxkW96JbUirFNAgJYWVLHzGpk4A@mail.gmail.com>
-In-Reply-To: <CAKTNdwFqSBt4QVCuYJxTyEDsxkW96JbUirFNAgJYWVLHzGpk4A@mail.gmail.com>
+References: <20260901234351.190506-1-anarsoul@gmail.com> <20260901234351.190506-2-anarsoul@gmail.com>
+ <02c265f6-0898-4f11-9954-df7d99d082a0@rock-chips.com>
+In-Reply-To: <02c265f6-0898-4f11-9954-df7d99d082a0@rock-chips.com>
 From: Vasily Khoruzhick <anarsoul@gmail.com>
-Date: Thu, 3 Sep 2026 14:59:03 -0700
-X-Gm-Features: AcwNN1XyC2liHjVEPMsa0mYlnrD-hC48vv3ysxC0C491CrBT-fujRAHPISz7e68
-Message-ID: <CA+E=qVcizyQZytw8M6DA72YGrRDDNx_cCvYj565zf9wjMWh8tg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] clk: rockchip: rk3399: add 85.5 MHz rate to PLL rate table
-To: Alexey Charkov <alchark@flipper.net>
+Date: Thu, 3 Sep 2026 15:19:13 -0700
+X-Gm-Features: AcwNN1WMy61DcYd4_qYjAudu0evy49LX87olXAJLUiEt3DrGMFQ7X5yXTct3_8w
+Message-ID: <CA+E=qVeqOahu7v4ser0zxxUU6Fr4dGAVA9m_mgHgu70ChYv9Gg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] drm/rockchip: vop: don't round the pixel clock when
+ the encoder owns the PLL
+To: Chaoyi Chen <chaoyi.chen@rock-chips.com>
 Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
 	Jerome Brunet <jbrunet+clk@baylibre.com>, Heiko Stuebner <heiko@sntech.de>, 
 	Sandy Huang <hjc@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>, 
@@ -96,179 +98,137 @@ Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
 	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
 	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
 	linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
-Content-Type: multipart/mixed; boundary="0000000000002fe194065a9b4456"
+Content-Type: multipart/mixed; boundary="0000000000004dc8c0065a9b8ce3"
 
---0000000000002fe194065a9b4456
+--0000000000004dc8c0065a9b8ce3
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 2, 2026 at 1:43=E2=80=AFAM Alexey Charkov <alchark@flipper.net>=
- wrote:
+On Tue, Sep 1, 2026 at 8:50=E2=80=AFPM Chaoyi Chen <chaoyi.chen@rock-chips.=
+com> wrote:
 >
-> Hi Vasily,
+> Hello Vasily,
 
-Hey Alexey,
+Hi Chaoyi,
 
-> > diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/c=
-lk-rk3399.c
-> > index c2b243d7a5e2..db241d2df625 100644
-> > --- a/drivers/clk/rockchip/clk-rk3399.c
-> > +++ b/drivers/clk/rockchip/clk-rk3399.c
-> > @@ -98,6 +98,7 @@ static struct rockchip_pll_rate_table rk3399_pll_rate=
-s[] =3D {
-> >         RK3036_PLL_RATE( 148500000, 1, 99, 4, 4, 1, 0),
-> >         RK3036_PLL_RATE( 106500000, 1, 71, 4, 4, 1, 0),
-> >         RK3036_PLL_RATE(  96000000, 1, 64, 4, 4, 1, 0),
-> > +       RK3036_PLL_RATE(  85500000, 1, 57, 4, 4, 1, 0),
+> On 9/2/2026 7:42 AM, Vasily Khoruzhick wrote:
+> > On RK3399 the HDMI reference clock is VPLL, a dedicated PLL that is a
+> > parent of the VOP dclk. dw_hdmi_rockchip_mode_valid() accepts a mode
+> > only if VPLL can produce its pixel clock, and encoder mode_set() then
+> > programs VPLL to that rate. However vop_crtc_mode_fixup() ran first,
+> > in the check phase, and rounded adjusted_mode->clock through
+> > clk_round_rate() on the dclk. At that point VPLL still sits at its
+> > previous rate, so the dclk composite picks whichever of VPLL/CPLL/GPLL
+> > gets closest at its *current* rate and stores that inexact value.
+> >
 >
-> There is already an entry for 1368000000, which is 16x your rate, and
-> the 16x divisor should fit comfortably into the downstream clock's
-> 8-bit divisor field. Do you really need a separate PLL rate? Have you
-> checked what the hardware arrives at with the unmodified PLL table -
-> e.g. via /sys/kernel/debug/clk/clk_summary?
+> Why did vop_crtc_mode_fixup() run first? Within drm_atomic_helper_check_m=
+odeset(),
+> mode_valid() is executed before mode_fixup().
 
-See arch/arm64/boot/dts/rockchip/rk3399-base.dtsi, hdmi ref clock is
-wired directly to VPLL, and dw_hdmi-rockchip calls clk_set_rate() with
-pixel clock for ref clock, see
-dw_hdmi_rockchip_encoder_atomic_mode_set(). So at least in the rk3399
-case VPLL is supposed to support the required pixel clock. Without the
-first patch 1366x768 mode with 85.5MHz pixel clock is just rejected.
+Sorry, ambiguous wording on my part - "first" meant before the
+encoder's mode_set() programs the VPLL, not before mode_valid(). The
+order is as you say, and that's exactly the problem: mode_valid()
+rounds the pixel clock on the ref clock (the VPLL itself), whose rate
+table can produce 85.5 MHz, so the mode is accepted. mode_fixup()
+however rounds on the dclk composite - a different clock - which
+evaluates its mux parents at their current rates. During check the
+VPLL still runs at the previous mode's rate, so GPLL/7 =3D 84.857 MHz
+wins and gets stored in adjusted_mode->clock. mode_set() then programs
+the VPLL to that corrupted value in the commit phase. I can reword the
+commit message to make this clearer.
 
-Please see clk_summary attached for 1280x800 (no patches applied),
-broken 1366x768 (just the first patch applied), and working 1366x768
-(both patches applied)
+> > For 1366x768 (85.5 MHz) this yields GPLL/7 =3D 84.857 MHz. mode_set()
+> > then requests 84.857 MHz from VPLL, which the PLL rate table snaps
+> > down to 74.25 MHz, and the VOP ends up on GPLL/7. The panel receives a
+> > timing 0.75% slow, which some monitors misdetect (e.g. as 1195x768)
+> > and display distorted. Only modes whose clock happens to be an exact
+> > GPLL or CPLL fraction (74.25, 148.5, 297 MHz, ...) were unaffected.
+> >
+>
+> Did you designate VPLL as the parent clock of the VOP dclk in the DTS?
+
+No, and it isn't needed: in the commit phase the encoder's
+atomic_mode_set() sets the VPLL to exactly the pixel clock before
+vop_crtc_atomic_enable() sets the dclk (mode-set runs before enables
+in the atomic helpers), so by then the dclk composite finds vpll/1 as
+an exact match and the mux selects VPLL by itself. Verified via
+clk_summary on the patched kernel: vpll =3D 85500000 feeding dclk_vop0 =3D
+85500000. Pinning the parent in DT also wouldn't have fixed the bug -
+without CLK_SET_RATE_PARENT the check-phase clk_round_rate() against
+the still-stale VPLL would return the same wrong value.
+
+See clk_summary for broken and working cases attached.
+
+> > @@ -327,6 +327,12 @@ dw_hdmi_rockchip_encoder_atomic_check(struct drm_e=
+ncoder *encoder,
+> >
+> >       s->output_type =3D DRM_MODE_CONNECTOR_HDMIA;
+> >       s->bus_format =3D bus_format;
+> > +     /*
+> > +      * The reference clock (e.g. VPLL on RK3399) is a parent of the V=
+OP
+> > +      * dclk, and mode_set() programs it to the pixel clock, which
+> > +      * mode_valid() already guaranteed it can produce.
+> > +      */
+> > +     s->dclk_exact =3D !!hdmi->ref_clk;
+> >
+>
+> What about RK3328? It uses hdmi->hdmiphy_clk.
+
+RK3328 clock ownership is the inverse of RK3399's. hdmiphy_clk is only
+ever consulted (in mode_valid()); the encoder's mode_set() programs
+just ref_clk, which is NULL on RK3328, so the encoder never sets the
+PHY PLL - the promise dclk_exact expresses ("the encoder will program
+this rate itself at mode_set time") wouldn't be true there.
+
+> >  static bool vop_dsp_lut_is_enabled(struct vop *vop)
+> > @@ -1558,6 +1554,19 @@ static int vop_crtc_atomic_check(struct drm_crtc=
+ *crtc,
+> >       s =3D to_rockchip_crtc_state(crtc_state);
+> >       s->enable_afbc =3D afbc_planes > 0;
+> >
+> > +     /*
+> > +      * Round the pixel clock to what the dclk can really produce, unl=
+ess
+> > +      * the encoder will program a dedicated dclk parent PLL to exactl=
+y
+> > +      * this rate at mode_set time. In that case the clock tree seen h=
+ere
+> > +      * (with that PLL still at its old rate) would pick a worse, inex=
+act
+> > +      * source and bake that rate into adjusted_mode, defeating the PL=
+L.
+> > +      *
+> > +      * Same condition the atomic helpers use for the mode_fixup callb=
+ack.
+> > +      */
+> > +     if ((crtc_state->mode_changed || crtc_state->connectors_changed) =
+&&
+> > +         !s->dclk_exact)
+> > +             vop_crtc_adjust_clock(vop, &crtc_state->adjusted_mode);
+> > +
+> >       return 0;
+> >  }
+> >
+>
+> What about other display interfaces? For example, the .mode_fixup
+> corresponding to cdn-dp will not be called.
+
+The rounding still runs for cdn-dp and all other interfaces: it moved
+into vop_crtc_atomic_check(), which is a CRTC callback and is invoked
+by drm_atomic_helper_check() regardless of the attached encoder - same
+as the old CRTC-level .mode_fixup was.
 
 Regards,
 Vasily
 
---0000000000002fe194065a9b4456
-Content-Type: application/gzip; name="clk_summary_1280x800.gz"
-Content-Disposition: attachment; filename="clk_summary_1280x800.gz"
-Content-Transfer-Encoding: base64
-Content-ID: <f_mtm255n30>
-X-Attachment-Id: f_mtm255n30
-
-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
-r3sW5/8BHxyD1o/lAQA=
---0000000000002fe194065a9b4456
+--0000000000004dc8c0065a9b8ce3
 Content-Type: application/gzip; name="clk_summary_1366x768_broken.gz"
 Content-Disposition: attachment; filename="clk_summary_1366x768_broken.gz"
 Content-Transfer-Encoding: base64
-Content-ID: <f_mtm255ns1>
-X-Attachment-Id: f_mtm255ns1
+Content-ID: <f_mtm2q4y10>
+X-Attachment-Id: f_mtm2q4y10
 
 H4sICN/9lGoAA2Nsa19zdW1tYXJ5XzEzNjZ4NzY4X2Jyb2tlbgDtndtyq7qyhu/nU+gFkgLsxM6+
 yhOs+3VFEQ4xNYxhg51k7KffIAzWEWNo4dZ0VDVXsmAQPrd/tVqnFiFXSnwIPvYxIUUZF0FJf8mP
@@ -385,12 +345,12 @@ wt7DWjg9HLM4c2EDeJOVrgYV/QR6YPFxnMCaSG0Y2H19GzUcYWSJkSJMY+EUy2Cm0F6L0zSX7+Qf
 AG2rGuuHt+1ghPbvtO13mqQDeYoU46iXMb9laxkLPDqYHEtryOv2wJrESgontup57+J1FWM8w8Bv
 r3UjsfbergGD64GbCKBD7f2IsJ527JA1FG3T7Kb1tapw/e8yKIpYzsKup3UU/0pHOwOShgZhGvuK
 c+vhIP87H7Ld3c9mwEEGSZgsBBpGoK97Fuf/A8tIJ8mP5QEA
---0000000000002fe194065a9b4456
+--0000000000004dc8c0065a9b8ce3
 Content-Type: application/gzip; name="clk_summary_1366x768_working.gz"
 Content-Disposition: attachment; filename="clk_summary_1366x768_working.gz"
 Content-Transfer-Encoding: base64
-Content-ID: <f_mtm255o22>
-X-Attachment-Id: f_mtm255o22
+Content-ID: <f_mtm2q4z61>
+X-Attachment-Id: f_mtm2q4z61
 
 H4sICKUilmoAA2Nsa19zdW1tYXJ5XzEzNjZ4NzY4X3dvcmtpbmcA7Z3bdqO6sobv51PoBZIB2Imd
 fZUnWPfrikE4xIw2hg12kt5Pv0EYrCPGUMKl6WiMudILmuZL8atUOpUIuVLiQ/CxjwkpyrgISvqH
@@ -507,4 +467,4 @@ KvoJ9MDi4ziBNZHaMLD7+jZqOMLIEiNFmMbCKZbBTKG9FqdpLt/JPwDaVjXWD2/bwQjt32nb7zRJ
 B/IUKcZRL2N+y9YyFnh0MDmW1pDX7YE1iZUUTmzV897F6yrGeIaB317rRmLtvV0DBtcDNxFAh9r7
 EWE97dghayjaptlN62tV4frfZVAUsZyFXU/rKP6WjnYGJA0NwjT2FefWw0H+dz5ku7ufzYCDDJIw
 WQg0jECfexbn/wN3/7UIj+UBAA==
---0000000000002fe194065a9b4456--
+--0000000000004dc8c0065a9b8ce3--
