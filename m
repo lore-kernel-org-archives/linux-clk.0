@@ -1,18 +1,19 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECA8747ECC7;
-	Thu,  3 Sep 2026 10:09:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A300247DD77;
+	Thu,  3 Sep 2026 10:09:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788430179; cv=none; b=ivUFkGWDDXaXWjb6kXxpwISuvOt+Cki6apHvC0m6J8PgpWktnpdFM2AmE8OduSlb2ZrEwPtWELw9S4h8tVvDKgInzBkVCZTnrJm43qmyd+kLTWPx5SObm/wM/eDohO8li9vhQQCa7ll+yg1tf8LfvUpeUUH5JMkra2+5vyc3Vxo=
+	t=1788430181; cv=none; b=MpSoZehvfUs4qxVQT5n66osiN/wGiigENAXu8tUo0vsCO11CBvBe0qHxZnCtHYjRdPoV9CoS9zKlzW4FSFjjFQHgF0nJXgUZu3veE5dF85jYv5iew37awdVe9DjDGgtch2eIq88DqbEyS+3V9g/W8RTya3Ae7pDSmkY7DXf6W7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788430179; c=relaxed/simple;
-	bh=eHyxEDveUJTvMpfggET9Bhsf8fTbZi9UqhWy1h+Oekw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ftFH8/BbDXrDQZdc8IALhMI7y2cM0MuyPhfaqGn3k9piZuGGVTgOBDMc3vD75qVEMcrrbf53zRBe2OsmcdzIcyptUg+tJOZQGBNw/lJ3W7dATUr8jOgfJAaZ8QsC8FtCp9drW0VLj5s2Mck2/8OhSXae7/NLyRMW3itsNHBtXnc=
+	s=arc-20240116; t=1788430181; c=relaxed/simple;
+	bh=firzj4xSvDGQhXajrKAIayV4E6r6g8TCCZVDrdzgq94=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=EFjmjqy51ByzK8j7OhFk2/chnqxO0g2z8pUOnUHh7esLs9qlsQSNiJ/pauPhUoXb2DR5h1kgWY9R2xoxxkiQPSrGn5Gwnxp8XHNCgDeDUHly+Wfxc9v/mKvNna+ovisvt2xnwhmu+Vs0XEuUMXOHgfF2u/eGjDEPGhbhjygWIRo=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15DB51F000E9;
-	Thu,  3 Sep 2026 10:09:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E60101F00A3A;
+	Thu,  3 Sep 2026 10:09:32 +0000 (UTC)
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Stephen Boyd <sboyd@kernel.org>,
 	Brian Masney <bmasney+clk@redhat.com>,
@@ -20,11 +21,14 @@ To: Stephen Boyd <sboyd@kernel.org>,
 	Marek Vasut <marex@denx.de>
 Cc: linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v5 0/2] clk: rs9: Fix and of_clk_hw_onecell_get() conversion
-Date: Thu,  3 Sep 2026 12:09:24 +0200
-Message-ID: <cover.1788429994.git.geert+renesas@glider.be>
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Marek Vasut <marek.vasut+renesas@mailbox.org>
+Subject: [PATCH v5 1/2] clk: rs9: Add clock index range check to rs9_of_clk_get()
+Date: Thu,  3 Sep 2026 12:09:25 +0200
+Message-ID: <fe0172a31f5151af4b771a74362c2ec54ab80055.1788429994.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1788429994.git.geert+renesas@glider.be>
+References: <cover.1788429994.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -33,38 +37,52 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-	Hi all,
+rs9_of_clk_get() does not validate the clock index in the passed
+DT clock specifier.  If DT specifies an incorrect and out-of-range
+index, this will access memory beyond the end of the clk_dif[] array.
 
-This patch series contains a fix and further development for the Renesas
-9-series PCIe clock generator driver, which were submitted before as
-separate patches  As the fix hasn't been picked up yet, and the further
-development depends on the fix, I am resending them as a series.
+Fix by this adding a range check to rs9_of_clk_get().
 
-Changes compared to v4[1]:
-  - Add Reviewed-by.
+Fixes: 892e0ddea1aa6f70 ("clk: rs9: Add Renesas 9-series PCIe clock generator driver")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+---
+v5:
+  - Add Reviewed-by,
 
-Thanks for your comments!
+v4:
+  - Put in a series,
 
-[1] "[PATCH v4 0/2] clk: rs9: Fix and of_clk_hw_onecell_get() conversion"
-    https://lore.kernel.org/r/cover.1773241119.git.geert+renesas@glider.be
+v3:
+  - Add error message,
 
-Geert Uytterhoeven (2):
-  clk: rs9: Add clock index range check to rs9_of_clk_get()
-  clk: rs9: Convert to clk_hw_onecell_data and of_clk_hw_onecell_get()
+v2:
+  - Just add the missing range check; the conversion to
+    of_clk_hw_onecell_get() can be done later.
 
- drivers/clk/clk-renesas-pcie.c | 39 ++++++++++++++++------------------
- 1 file changed, 18 insertions(+), 21 deletions(-)
+v1: "[PATCH] clk: rs9: Convert to clk_hw_onecell_data and
+     of_clk_hw_onecell_get()"
+    https://lore.kernel.org/a6dce17b15d29a257d09fe0edc199a14c297f1a8.1768836042.git.geert+renesas@glider.be
+---
+ drivers/clk/clk-renesas-pcie.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
+diff --git a/drivers/clk/clk-renesas-pcie.c b/drivers/clk/clk-renesas-pcie.c
+index 564550c803896756..f3376c29007aa92d 100644
+--- a/drivers/clk/clk-renesas-pcie.c
++++ b/drivers/clk/clk-renesas-pcie.c
+@@ -276,6 +276,11 @@ rs9_of_clk_get(struct of_phandle_args *clkspec, void *data)
+ 	struct rs9_driver_data *rs9 = data;
+ 	unsigned int idx = clkspec->args[0];
+ 
++	if (idx >= rs9->chip_info->num_clks) {
++		pr_err("%s: Invalid clock index %u\n", __func__, idx);
++		return ERR_PTR(-EINVAL);
++	}
++
+ 	return rs9->clk_dif[idx];
+ }
+ 
 -- 
 2.43.0
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
