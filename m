@@ -1,99 +1,66 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from hall.aurel32.net (hall.aurel32.net [195.154.119.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40B144B129F
-	for <linux-clk@vger.kernel.org>; Thu,  3 Sep 2026 17:20:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE3A04F55C0;
+	Thu,  3 Sep 2026 17:28:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.154.119.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788456019; cv=none; b=SRjiSl4OuNlAWa7MoHOGnQD6fjfxgQU5giKqxarSlVPrJZFh/lXuRXlUwL+3KcPkol00+fFPVBJ6U4eZS2xNqSElQUw81znyLBCqIpNaHYK5fz7pAYY7y6iMR26K9A4Il1rjInn7LlUDxORWHBLs2w+NLkWtDthUdrogEAVy5nA=
+	t=1788456494; cv=none; b=PLNiNnjwczsGudQ73mUsYm29i0135puTVYKSTE8WCZst90ivogMjUzTrXPbC4YpR1S+hGugSnyPQ1Ib6uT0ubaDpU+/jPdUs8pTjgnXlJlC472HgWVV1bo0/640KULBcoOwjELpBJgQ8XvZf9xArG83Q2Rxn3dvI7wqX0s/k6to=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788456019; c=relaxed/simple;
-	bh=XckZyXRA0wdQ2t/rQ8UQFXAwi1VWzGG6EOxNNhqHRbU=;
+	s=arc-20240116; t=1788456494; c=relaxed/simple;
+	bh=UN2yFs+CjxLdNQHVvA2p/QDc/Ekfx3+H4B8JEjwMEcc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jOc6tXAewQPDFNmGmxKnpZ4pSMwPJt4VMLxq1VN7tnQ0p8uEU4DbHG3hqXbPWwHAHBIp4EmyEfAJo0gtimLfUAr4SeufdXvxX/i8FZsRerpK1EMJ0LfirZSvd2HwyKuJP2ete647M2TB0p541dRj+ysfV4kE3P6Yp59rOtKaqSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TGzcKVkI; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=fnJZmp4w; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=DyEF03ekpoDNOECIFZ7+HQuJD0H65hibtlaUPrwbWJ+AKKEF0/JFHgs4WQ765ny749wwIVm+amZ7u9HdALD2EMCxlSWi9Gsu+vHQTvt8R7wpfLc1cphHPeSRxM248n+ZUVyyVkYorKKkgYajmVFrEoWzzcaKNymZsnQ8QuAvcvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net; spf=pass smtp.mailfrom=aurel32.net; dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b=kznrT9qY; arc=none smtp.client-ip=195.154.119.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aurel32.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TGzcKVkI";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="fnJZmp4w"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1788456016;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=U9SlpKBC41ZAAv9XrMQhlqWr3QRc3I1Zse/kq3Web2k=;
-	b=TGzcKVkId9CySOy1rB4TXgFNhvmUBTADYMaYI9LcVj9fQAocq37/50zYVZQV0jfxDEIwyX
-	BQUbEVQXsZS50pYIeEukT9KTjYbzawffa6QNNdC+kK+RA8SrStOyEjv7M7IXey1bHm7zhJ
-	iZ4juAcpI/fEJYNcUC3BTAc7vXZ20mE=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-341-BuVvtw0tM1CQrpaDRKd3gA-1; Thu, 03 Sep 2026 13:20:14 -0400
-X-MC-Unique: BuVvtw0tM1CQrpaDRKd3gA-1
-X-Mimecast-MFC-AGG-ID: BuVvtw0tM1CQrpaDRKd3gA_1788456014
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-52ff59f2c47so1508531cf.1
-        for <linux-clk@vger.kernel.org>; Thu, 03 Sep 2026 10:20:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1788456014; x=1789060814; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:content-type
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=U9SlpKBC41ZAAv9XrMQhlqWr3QRc3I1Zse/kq3Web2k=;
-        b=fnJZmp4wkDw1bZ6SG+5eSW+WBpsCBlKmL6KlcAIc+QVPCHxsnrATYEZLBTKcOP3SyQ
-         4QCZTUrAJsz9gEgNbFEFSubbdv9nxDfICWY+QzC14zwDoWkck4kEUvxcgrTt0Roi9Pgy
-         IXwxiRixSZ+BCYEEG2mYo6Q94iDdEdLoxJZZsnyrNfyb6NKeTm7fQeb3k9Y+0DAFyh9k
-         XQmSGoC/prKzj+7+hLhG3HjKt5s80sT1ekoV8zEfM9RNTDwAMfWGe7oYMcAZZ8wcu9Xn
-         aNbBGRKxOdZFAup0ZjZBhqDxDRpcdaXuXd4Ddn+ikpuxVE8nLO5F5tY3k3Y8zwsNpqDQ
-         n0GQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788456014; x=1789060814;
-        h=user-agent:in-reply-to:content-disposition:content-type
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=U9SlpKBC41ZAAv9XrMQhlqWr3QRc3I1Zse/kq3Web2k=;
-        b=eFo7uHhF/fpPm/0fpkBGhKjrItaELQfKqC4tIjR1AaNX+sjXWBxGtzGgakSnaseDB0
-         Fjhjmt9OX37VyHRXvwwC2LCKSto/j5H5P6Z62m9a0L3/un2ayYsKyAgZuRklNnaoa9ls
-         jFmnbGMPZE6DAnVqir5C0LIWuC9tv1Q+LAs9IynzfQHflkY4bPv+8AI5vCORS5i8o0SJ
-         lhENCg0C5X5tXEeFWWml6TsadC415hdyWsNvTSTKkTlBerttJRa+xMHowjFQB6hneBrU
-         RS6cMQjCShg7MYZCGc1BW2dp7xUl1A10jKWYQsYbny47aDwZs7aR4nmrPeKWDoIMW01J
-         J7vQ==
-X-Forwarded-Encrypted: i=1; AKwUvBzsg3gD55uJuaPBhte/13w7j/S9DLqKGjK6A0QvzhFlh2kdiV8VO7XbChjr/owzGulPNFHxT3PO64o=@vger.kernel.org
-X-Gm-Message-State: AFuF++lv6k1HAgPhzFDiouSuiEHlXpuxMWToUqbFYHaTThCJEOd3g+4P
-	iiwVTwSCKjcABN41vwedRwhfdLhNgNdWgNuXg8nxFiV/4+M2BKQwK1aP1ZyNxGQIqZf0qCD6JMv
-	FIKvHjG0zqCKGi2UjXnc7r1/hkRMGrlyUBPfLeBg/cwxRIUrQFMak0ve8BmtJMw==
-X-Gm-Gg: AYBFou1BOV6mANkEJ1Jwya4nxteEmGmf+0nZGHxF0OnBDGB4Zs/VnpXf4B6/ObEgdKI
-	AnaFdoLS+e8MoHlfDzL8XflYxbPLmXz4imeSPC8evWFVNieAF0B+avOf0SJDx0FGRDEAfBuTjEu
-	hqiyKkaYKAxyN0Qv73mp95AQkL4wQuXkAUHOdIAb72DgQpjPc+mpdjb1PFQPfhgg58zfzvU9LYH
-	y+QxMjGC8D39fqf1uOkQAmiokvc54k5CWoj8x+qySBRKIvnhu5lefXCPNkSanb/vU69qECq0jkq
-	54w7+zA2rp/KT+Ei70KB+64lVZvNZlLzjLySi9tkA7LylFCaNdduWU5NgwcU9diu6Z05iqS6/dw
-	aTWXKsgtADxcWvV7JMIbs6Ywo4J8fRIg/rBw=
-X-Received: by 2002:a05:622a:3d3:b0:516:82e2:7788 with SMTP id d75a77b69052e-53042f6ed28mr70698511cf.1.1788456013911;
-        Thu, 03 Sep 2026 10:20:13 -0700 (PDT)
-X-Received: by 2002:a05:622a:3d3:b0:516:82e2:7788 with SMTP id d75a77b69052e-53042f6ed28mr70697611cf.1.1788456013149;
-        Thu, 03 Sep 2026 10:20:13 -0700 (PDT)
-Received: from redhat.com (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-530541eab6csm1956071cf.26.2026.09.03.10.20.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Sep 2026 10:20:11 -0700 (PDT)
-Date: Thu, 3 Sep 2026 13:20:10 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
-	Stephen Boyd <sboyd@kernel.org>,
+	dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b="kznrT9qY"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=aurel32.net
+	; s=202004.hall; h=In-Reply-To:Content-Type:MIME-Version:References:
+	Message-ID:Subject:Cc:To:From:Date:Content-Transfer-Encoding:From:Reply-To:
+	Subject:Content-ID:Content-Description:X-Debbugs-Cc;
+	bh=KkPABGwemNUQ0ip/GlWnS3cY+MjjrMjAD9CrZqkw+bI=; b=kznrT9qYaP2qBayj49vjRDtMgR
+	TN3mC4zpISHFi68VgyysMrXTmbt7LMpWYemXhf6oVzpRx/qqQQBRIBexi6wkPJtxtxRde9Ragj6PB
+	QQMfmhG4LTWlnXEYeqFP/S4wHxIWlSjcpV7x9SxWToDjIpfG+H5UELWPjdJrhHDxu1lBBPVK0QAkf
+	q+c9EwTW2KM/KBrdOdpGUObysX+q0J+dODraSar+1b91CU7fsvQpHjA8eWnJqrCzXn7VEFZgdCws9
+	EmCScqVtIohYOzndBZwUgVrJeFfgWOONN3WfvQFVRHrgVkXfDSbU8hos2iXj7oYe/1DOQ5rrL1Td1
+	YEiLE95w==;
+Received: from authenticated user
+	by hall.aurel32.net with esmtpsa  (TLS1.3)  tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <aurelien@aurel32.net>)
+	id 1x2BEB-0000000Fhdv-3dP3;
+	Thu, 03 Sep 2026 19:27:55 +0200
+Date: Thu, 3 Sep 2026 19:27:55 +0200
+From: Aurelien Jarno <aurelien@aurel32.net>
+To: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Alex Elder <elder@riscstar.com>, Haylen Chu <heylenay@4d2.org>,
+	stable@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
 	Brian Masney <bmasney+clk@redhat.com>,
 	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>,
-	we =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>
-Subject: Re: [RFC/PATCH] clk: add lockdep_ignore_clk_prepare_lock cmdline
- option
-Message-ID: <apmsSsXdc32Z09_f@redhat.com>
-References: <CGME20260828131428eucas1p2cc2d9767d5ed62b8297c2cff0295226d@eucas1p2.samsung.com>
- <20260828131409.962825-1-m.szyprowski@samsung.com>
- <20260828133803.GT776954@noisy.programming.kicks-ass.net>
+	Yixun Lan <dlan@kernel.org>, Paul Walmsley <pjw@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] clk: spacemit: k3: add CPU PLL rate tables
+Message-ID: <apmuG46sBg2rGzCD@aurel32.net>
+Mail-Followup-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Alex Elder <elder@riscstar.com>, Haylen Chu <heylenay@4d2.org>,
+	stable@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Yixun Lan <dlan@kernel.org>, Paul Walmsley <pjw@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20260903-k3-pll5-pll8-1800mhz-v4-1-afafd9cb47d9@linux.spacemit.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -102,56 +69,212 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260828133803.GT776954@noisy.programming.kicks-ass.net>
-User-Agent: Mutt/2.4.0 (2026-06-19)
+In-Reply-To: <20260903-k3-pll5-pll8-1800mhz-v4-1-afafd9cb47d9@linux.spacemit.com>
+User-Agent: Mutt/2.4.1 (2026-07-04)
 
-Hi Peter,
+Hi Troy,
 
-On Fri, Aug 28, 2026 at 03:38:03PM +0200, Peter Zijlstra wrote:
-> On Fri, Aug 28, 2026 at 03:14:07PM +0200, Marek Szyprowski wrote:
-> > The clock framework uses a single global re-entrant mutex, prepare_lock,
+On 2026-09-03 11:06, Troy Mitchell wrote:
+> The K3 CPU PLL rate tables currently describe only one rate per PLL,
+> although the hardware supports a wider range.
 > 
-> There is no such primitive in the kernel -- this means the clock people
-> rolled their own. Why ?!
+> PLL3 and PLL4 support rates from 1.05 to 2.4 GHz, while PLL5 and PLL8
+> support rates from 1.05 to 2 GHz. Populate the tables with every
+> supported rate in 50 MHz steps.
 > 
-> > to serialize all operations on the whole clock tree. It is taken by
-> > nearly every clk API call and it is held while calling into the clock
-> > providers, which in turn often take their own locks or trigger runtime
-> > PM. As a result prepare_lock sits in the middle of a large number of
-> > lock chains and lockdep frequently reports possible circular locking
-> > dependencies involving it.
-> > 
-> > Such reports are often not real deadlocks, but once the first one is hit
-> > lockdep turns itself off and all subsequent locking problems - including
-> > the ones actually being investigated - are no longer reported.
-> > 
-> > Add a "lockdep_ignore_clk_prepare_lock" kernel command line parameter,
-> > which marks the prepare_lock class as novalidate, so lockdep skips the
-> > dependency tracking for it and keeps validating the rest of the system.
-> > 
-> > The option is only available when CONFIG_LOCKDEP is enabled and is meant
-> > purely as a debugging aid.
-> > 
-> > Assisted-by: Claude:claude-opus-5
-> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> > ---
-> > The problems with clock framework's prepare_lock are well known and
-> > there are machines that always report lockdep issues related to it. A
-> > good example are Khadas VIM3/VIM3l boards, on which prepare_lock
-> > interferes with locks used in PWM subsytem:
-> > 
-> > https://lore.kernel.org/all/adqtn6iljcguv3m3ovhltusbbf4mljzlwg73yklaudvjjtazxv@vyf5fvuzic6x/
-> > 
-> > This new cmdline option allows to hide prepare_lock related issues on
-> > the test machines possibly enabling lockdep to catch other issues.
+> Cc: stable@vger.kernel.org # 7.0+
+> Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+> ---
+> The corresponding U-Boot changes are available at:
 > 
-> This is horrible. Why not fix the clock framework?
+> - Add the CPU PLL rate tables:
+>   https://github.com/spacemit-com/uboot-2022.10/commit/787b5cf44c8dbc99db886d5522c0c9cd5a96ffd6
+> - Correct the 1.10 GHz and 2.15 GHz table entries:
+>   https://github.com/spacemit-com/uboot-2022.10/commit/16a775c20e9efb54ca55352215e76eb3f12e6cf0
+> ---
+> Changes in v4:
+> - Expand the update to every supported PLL3, PLL4, PLL5 and PLL8 rate.
+> - Drop Aurelien Jarno's Reviewed-by and Tested-by trailers because the
+>   patch scope has expanded.
+> - Add U-Boot references for the complete tables and corrected entries.
+> - Link to v3: https://patch.msgid.link/20260831-k3-pll5-pll8-1800mhz-v3-1-530ed0978615@linux.spacemit.com
+> 
+> Changes in v3:
+> - Mark the change for stable kernels starting with v7.0.
+> - Add Aurelien Jarno's Reviewed-by and Tested-by trailers.
+> - Rebase onto v7.3-rc1.
+> - Link to v2: https://patch.msgid.link/20260810-k3-pll5-pll8-1800mhz-v2-1-aabff510a797@linux.spacemit.com
+> 
+> Changes in v2:
+> - Drop "clk: spacemit: re-enable PLLs after init"; the PLL init issue
+>   will be handled in a separate series.
+> - Send the K3 PLL5 and PLL8 1.8 GHz rate-table update as a standalone
+>   patch.
+> - Clarify that 1.8 GHz is nominal and 2 GHz is an overclocking rate.
+> - Link to v1: https://patch.msgid.link/20260804-k3-pll5-pll8-1800mhz-v1-0-a3a75866ce32@linux.spacemit.com
+> 
+> To: Stephen Boyd <sboyd@kernel.org>
+> To: Brian Masney <bmasney+clk@redhat.com>
+> To: Jerome Brunet <jbrunet+clk@baylibre.com>
+> To: Yixun Lan <dlan@kernel.org>
+> To: Paul Walmsley <pjw@kernel.org>
+> To: Palmer Dabbelt <palmer@dabbelt.com>
+> To: Albert Ou <aou@eecs.berkeley.edu>
+> To: Alexandre Ghiti <alex@ghiti.fr>
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-riscv@lists.infradead.org
+> Cc: spacemit@lists.linux.dev
+> Cc: linux-kernel@vger.kernel.org
+> ---
+>  drivers/clk/spacemit/ccu-k3.c | 96 +++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 96 insertions(+)
 
-I'm one of the two new co-maintainers for the clk subsystem. Do you have
-a suggestion for how you would change this locking in the core clk
-framework? Long term I'd like to see more fine grained locking since I
-see at boot up on my Thinkpad x13s laptop that it takes ~10ms in some
-cases to acquire the prepare lock.
+Thanks for the patch, it makes sense to add all the values, to support 
+future firmware changes. The values match the ones in the vendor kernel.
 
-Brian
+> diff --git a/drivers/clk/spacemit/ccu-k3.c b/drivers/clk/spacemit/ccu-k3.c
+> index 92b930d5ff30..950bf531c734 100644
+> --- a/drivers/clk/spacemit/ccu-k3.c
+> +++ b/drivers/clk/spacemit/ccu-k3.c
+> @@ -29,15 +29,91 @@ static const struct ccu_pll_rate_tbl pll2_rate_tbl[] = {
+>  	CCU_PLLA_RATE(3000000000UL, 0x0b3e2000, 0x00000000, 0xa0558c8c),
+>  };
+>  
+> +/* Keep the firmware default as the first entry. */
+>  static const struct ccu_pll_rate_tbl pll3_rate_tbl[] = {
+> +	CCU_PLLA_RATE(2000000000UL, 0x0b292aaa, 0x0000ab00, 0xa0558686),
 
+Is it really necessary to put this entry first? I guess it's the current 
+default frequency, but we have seen it can evolve. From my tests, the 
+driver seems to just keep the value configured by the firmware 
+independently from the table order, so I am not sure it's necessary.
+
+> +	CCU_PLLA_RATE(1050000000UL, 0x0b2b3000, 0x00000000, 0xa0458080),
+> +	CCU_PLLA_RATE(1100000000UL, 0x0b2d3555, 0x00005500, 0xa0458181),
+> +	CCU_PLLA_RATE(1150000000UL, 0x0b2f3aaa, 0x0000ab00, 0xa0458181),
+> +	CCU_PLLA_RATE(1200000000UL, 0x0b320000, 0x00000000, 0xa0458181),
+> +	CCU_PLLA_RATE(1250000000UL, 0x0b340555, 0x00005500, 0xa0458181),
+> +	CCU_PLLA_RATE(1300000000UL, 0x0b360aaa, 0x0000ab00, 0xa0458282),
+> +	CCU_PLLA_RATE(1350000000UL, 0x0b381000, 0x00000000, 0xa0458282),
+> +	CCU_PLLA_RATE(1400000000UL, 0x0b3a1555, 0x00005500, 0xa0458282),
+> +	CCU_PLLA_RATE(1450000000UL, 0x0b3c1aaa, 0x0000ab00, 0xa0458383),
+> +	CCU_PLLA_RATE(1500000000UL, 0x0b3e2000, 0x00000000, 0xa0458383),
+> +	CCU_PLLA_RATE(1550000000UL, 0x0b402555, 0x00005500, 0xa0458383),
+> +	CCU_PLLA_RATE(1600000000UL, 0x0b422aaa, 0x0000ab00, 0xa0458484),
+> +	CCU_PLLA_RATE(1650000000UL, 0x0b443000, 0x00000000, 0xa0458484),
+> +	CCU_PLLA_RATE(1700000000UL, 0x0b463555, 0x00005500, 0xa0458484),
+> +	CCU_PLLA_RATE(1750000000UL, 0x0b483aaa, 0x0000ab00, 0xa0458585),
+> +	CCU_PLLA_RATE(1800000000UL, 0x0b4b0000, 0x00000000, 0xa0458585),
+> +	CCU_PLLA_RATE(1850000000UL, 0x0b4d0555, 0x00005500, 0xa0458585),
+> +	CCU_PLLA_RATE(1900000000UL, 0x0b4f0aaa, 0x0000ab00, 0xa0458686),
+> +	CCU_PLLA_RATE(1950000000UL, 0x0b511000, 0x00000000, 0xa0458686),
+> +	CCU_PLLA_RATE(2050000000UL, 0x0b2a2d55, 0x00005500, 0xa0558686),
+> +	CCU_PLLA_RATE(2100000000UL, 0x0b2b3000, 0x00000000, 0xa0558787),
+> +	CCU_PLLA_RATE(2150000000UL, 0x0b2c32aa, 0x0000ab00, 0xa0558787),
+>  	CCU_PLLA_RATE(2200000000UL, 0x0b2d3555, 0x00005500, 0xa0558787),
+> +	CCU_PLLA_RATE(2250000000UL, 0x0b2e3800, 0x00000000, 0xa0558888),
+> +	CCU_PLLA_RATE(2300000000UL, 0x0b2f3aaa, 0x0000ab00, 0xa0558888),
+> +	CCU_PLLA_RATE(2350000000UL, 0x0b303d55, 0x00005500, 0xa0558888),
+> +	CCU_PLLA_RATE(2400000000UL, 0x0b320000, 0x00000000, 0xa0558989),
+>  };
+>  
+> +/* Keep the firmware default as the first entry. */
+>  static const struct ccu_pll_rate_tbl pll4_rate_tbl[] = {
+> +	CCU_PLLA_RATE(2000000000UL, 0x0b292aaa, 0x0000ab00, 0xa0558686),
+> +	CCU_PLLA_RATE(1050000000UL, 0x0b2b3000, 0x00000000, 0xa0458080),
+> +	CCU_PLLA_RATE(1100000000UL, 0x0b2d3555, 0x00005500, 0xa0458181),
+> +	CCU_PLLA_RATE(1150000000UL, 0x0b2f3aaa, 0x0000ab00, 0xa0458181),
+> +	CCU_PLLA_RATE(1200000000UL, 0x0b320000, 0x00000000, 0xa0458181),
+> +	CCU_PLLA_RATE(1250000000UL, 0x0b340555, 0x00005500, 0xa0458181),
+> +	CCU_PLLA_RATE(1300000000UL, 0x0b360aaa, 0x0000ab00, 0xa0458282),
+> +	CCU_PLLA_RATE(1350000000UL, 0x0b381000, 0x00000000, 0xa0458282),
+> +	CCU_PLLA_RATE(1400000000UL, 0x0b3a1555, 0x00005500, 0xa0458282),
+> +	CCU_PLLA_RATE(1450000000UL, 0x0b3c1aaa, 0x0000ab00, 0xa0458383),
+> +	CCU_PLLA_RATE(1500000000UL, 0x0b3e2000, 0x00000000, 0xa0458383),
+> +	CCU_PLLA_RATE(1550000000UL, 0x0b402555, 0x00005500, 0xa0458383),
+> +	CCU_PLLA_RATE(1600000000UL, 0x0b422aaa, 0x0000ab00, 0xa0458484),
+> +	CCU_PLLA_RATE(1650000000UL, 0x0b443000, 0x00000000, 0xa0458484),
+> +	CCU_PLLA_RATE(1700000000UL, 0x0b463555, 0x00005500, 0xa0458484),
+> +	CCU_PLLA_RATE(1750000000UL, 0x0b483aaa, 0x0000ab00, 0xa0458585),
+> +	CCU_PLLA_RATE(1800000000UL, 0x0b4b0000, 0x00000000, 0xa0458585),
+> +	CCU_PLLA_RATE(1850000000UL, 0x0b4d0555, 0x00005500, 0xa0458585),
+> +	CCU_PLLA_RATE(1900000000UL, 0x0b4f0aaa, 0x0000ab00, 0xa0458686),
+> +	CCU_PLLA_RATE(1950000000UL, 0x0b511000, 0x00000000, 0xa0458686),
+> +	CCU_PLLA_RATE(2050000000UL, 0x0b2a2d55, 0x00005500, 0xa0558686),
+> +	CCU_PLLA_RATE(2100000000UL, 0x0b2b3000, 0x00000000, 0xa0558787),
+> +	CCU_PLLA_RATE(2150000000UL, 0x0b2c32aa, 0x0000ab00, 0xa0558787),
+>  	CCU_PLLA_RATE(2200000000UL, 0x0b2d3555, 0x00005500, 0xa0558787),
+> +	CCU_PLLA_RATE(2250000000UL, 0x0b2e3800, 0x00000000, 0xa0558888),
+> +	CCU_PLLA_RATE(2300000000UL, 0x0b2f3aaa, 0x0000ab00, 0xa0558888),
+> +	CCU_PLLA_RATE(2350000000UL, 0x0b303d55, 0x00005500, 0xa0558888),
+> +	CCU_PLLA_RATE(2400000000UL, 0x0b320000, 0x00000000, 0xa0558989),
+>  };
+>  
+> +/* Keep the firmware default as the first entry. */
+>  static const struct ccu_pll_rate_tbl pll5_rate_tbl[] = {
+> +	CCU_PLLA_RATE(1800000000UL, 0x0b4b0000, 0x00000000, 0xa0458585),
+
+Ditto
+
+> +	CCU_PLLA_RATE(1050000000UL, 0x0b2b3000, 0x00000000, 0xa0458080),
+> +	CCU_PLLA_RATE(1100000000UL, 0x0b2d3555, 0x00005500, 0xa0458181),
+> +	CCU_PLLA_RATE(1150000000UL, 0x0b2f3aaa, 0x0000ab00, 0xa0458181),
+> +	CCU_PLLA_RATE(1200000000UL, 0x0b320000, 0x00000000, 0xa0458181),
+> +	CCU_PLLA_RATE(1250000000UL, 0x0b340555, 0x00005500, 0xa0458181),
+> +	CCU_PLLA_RATE(1300000000UL, 0x0b360aaa, 0x0000ab00, 0xa0458282),
+> +	CCU_PLLA_RATE(1350000000UL, 0x0b381000, 0x00000000, 0xa0458282),
+> +	CCU_PLLA_RATE(1400000000UL, 0x0b3a1555, 0x00005500, 0xa0458282),
+> +	CCU_PLLA_RATE(1450000000UL, 0x0b3c1aaa, 0x0000ab00, 0xa0458383),
+> +	CCU_PLLA_RATE(1500000000UL, 0x0b3e2000, 0x00000000, 0xa0458383),
+> +	CCU_PLLA_RATE(1550000000UL, 0x0b402555, 0x00005500, 0xa0458383),
+> +	CCU_PLLA_RATE(1600000000UL, 0x0b422aaa, 0x0000ab00, 0xa0458484),
+> +	CCU_PLLA_RATE(1650000000UL, 0x0b443000, 0x00000000, 0xa0458484),
+> +	CCU_PLLA_RATE(1700000000UL, 0x0b463555, 0x00005500, 0xa0458484),
+> +	CCU_PLLA_RATE(1750000000UL, 0x0b483aaa, 0x0000ab00, 0xa0458585),
+> +	CCU_PLLA_RATE(1850000000UL, 0x0b4d0555, 0x00005500, 0xa0458585),
+> +	CCU_PLLA_RATE(1900000000UL, 0x0b4f0aaa, 0x0000ab00, 0xa0458686),
+> +	CCU_PLLA_RATE(1950000000UL, 0x0b511000, 0x00000000, 0xa0458686),
+>  	CCU_PLLA_RATE(2000000000UL, 0x0b292aaa, 0x0000ab00, 0xa0558686),
+>  };
+>  
+> @@ -49,7 +125,27 @@ static const struct ccu_pll_rate_tbl pll7_rate_tbl[] = {
+>  	CCU_PLLA_RATE(2800000000UL, 0x0b3a1555, 0x00005500, 0xa0558b8b),
+>  };
+>  
+> +/* Keep the firmware default as the first entry. */
+>  static const struct ccu_pll_rate_tbl pll8_rate_tbl[] = {
+> +	CCU_PLLA_RATE(1800000000UL, 0x0b4b0000, 0x00000000, 0xa0458585),
+> +	CCU_PLLA_RATE(1050000000UL, 0x0b2b3000, 0x00000000, 0xa0458080),
+> +	CCU_PLLA_RATE(1100000000UL, 0x0b2d3555, 0x00005500, 0xa0458181),
+> +	CCU_PLLA_RATE(1150000000UL, 0x0b2f3aaa, 0x0000ab00, 0xa0458181),
+> +	CCU_PLLA_RATE(1200000000UL, 0x0b320000, 0x00000000, 0xa0458181),
+> +	CCU_PLLA_RATE(1250000000UL, 0x0b340555, 0x00005500, 0xa0458181),
+> +	CCU_PLLA_RATE(1300000000UL, 0x0b360aaa, 0x0000ab00, 0xa0458282),
+> +	CCU_PLLA_RATE(1350000000UL, 0x0b381000, 0x00000000, 0xa0458282),
+> +	CCU_PLLA_RATE(1400000000UL, 0x0b3a1555, 0x00005500, 0xa0458282),
+> +	CCU_PLLA_RATE(1450000000UL, 0x0b3c1aaa, 0x0000ab00, 0xa0458383),
+> +	CCU_PLLA_RATE(1500000000UL, 0x0b3e2000, 0x00000000, 0xa0458383),
+> +	CCU_PLLA_RATE(1550000000UL, 0x0b402555, 0x00005500, 0xa0458383),
+> +	CCU_PLLA_RATE(1600000000UL, 0x0b422aaa, 0x0000ab00, 0xa0458484),
+> +	CCU_PLLA_RATE(1650000000UL, 0x0b443000, 0x00000000, 0xa0458484),
+> +	CCU_PLLA_RATE(1700000000UL, 0x0b463555, 0x00005500, 0xa0458484),
+> +	CCU_PLLA_RATE(1750000000UL, 0x0b483aaa, 0x0000ab00, 0xa0458585),
+> +	CCU_PLLA_RATE(1850000000UL, 0x0b4d0555, 0x00005500, 0xa0458585),
+> +	CCU_PLLA_RATE(1900000000UL, 0x0b4f0aaa, 0x0000ab00, 0xa0458686),
+> +	CCU_PLLA_RATE(1950000000UL, 0x0b511000, 0x00000000, 0xa0458686),
+>  	CCU_PLLA_RATE(2000000000UL, 0x0b292aaa, 0x0000ab00, 0xa0558686),
+>  };
+
+I have tested the patch, and I confirm it fixes the boot hang with newer 
+firmware, and will fix it if the default firmware values change again. 
+My comments are just minor ones, so:
+
+Reviewed-by: Aurelien Jarno <aurelien@aurel32.net>
+Tested-by: Aurelien Jarno <aurelien@aurel32.net>
+
+Regards
+Aurelien 
+
+-- 
+Aurelien Jarno                          GPG: 4096R/1DDD8C9B
+aurelien@aurel32.net                     http://aurel32.net
