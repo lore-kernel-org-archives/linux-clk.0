@@ -1,174 +1,157 @@
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011061.outbound.protection.outlook.com [52.101.65.61])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFC6E4F054C;
-	Thu,  3 Sep 2026 16:54:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.61
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788454487; cv=fail; b=Cd6Neh9X4WhCYgi+6Qr6SEdmvFTQOPZr6N/Sk83/KQ96ViSNO/BBs9xOIbKNO+M//H3MAhMExdt3NSPs+5LQaqr8UzJ8ehogh6a+ZXoFcJ4+gCon1ZHljynESNK7etjndIRNvh9mJlH1W99FeAu1gnskvQQtPBJGXb1Gq7LzHnw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788454487; c=relaxed/simple;
-	bh=qxGFKtIwqexIyanabnkAvaMG13BpEdCZDONgyI9oWR4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=cbZxpWtW9fZF/74D5F0b2/H7Yl/fFm3kXhTTvap6H72CBvnhQhNHrcuy6L/JlURSCYYwLJY8WFKOxgFqlvcEY313OF2ITNmdwtux3RpuHvcn3M6TfTVArBs16CUOaJGsbRxma2hHmcYt1hCbAj5ksdMac9QLAeDMS13tqmaQE2M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=t0fa7f6s; arc=fail smtp.client-ip=52.101.65.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40B144B129F
+	for <linux-clk@vger.kernel.org>; Thu,  3 Sep 2026 17:20:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788456019; cv=none; b=SRjiSl4OuNlAWa7MoHOGnQD6fjfxgQU5giKqxarSlVPrJZFh/lXuRXlUwL+3KcPkol00+fFPVBJ6U4eZS2xNqSElQUw81znyLBCqIpNaHYK5fz7pAYY7y6iMR26K9A4Il1rjInn7LlUDxORWHBLs2w+NLkWtDthUdrogEAVy5nA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788456019; c=relaxed/simple;
+	bh=XckZyXRA0wdQ2t/rQ8UQFXAwi1VWzGG6EOxNNhqHRbU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jOc6tXAewQPDFNmGmxKnpZ4pSMwPJt4VMLxq1VN7tnQ0p8uEU4DbHG3hqXbPWwHAHBIp4EmyEfAJo0gtimLfUAr4SeufdXvxX/i8FZsRerpK1EMJ0LfirZSvd2HwyKuJP2ete647M2TB0p541dRj+ysfV4kE3P6Yp59rOtKaqSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TGzcKVkI; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=fnJZmp4w; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="t0fa7f6s"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FD79NWkdCvvzIbU9R/KQUefFdKE2KgdghcKlsrNIUracpR0frQC8+GcRMgr4SVPnbnj+I4SuYxmW5qUtqsoSU+wGlEAquoP+CisGJlJVTyc5UnyL99k8ddqbGNadltNcJIFm/fs0w9WAxzR8sMsKkfV54Hsr4ZYegi7VPvd/G0we8nRzyxkrE0vpTqf4i/t4FE896jjjab3PheL1xLk/AoVKnStQcm+Ux9s5QDdaA4xJPXZPHcnAcAlgEIJ8weDMnUXdN/VqL0TOWGxeJoBfChLFQqmw25RVttXieIKa3qUu6IE2z57YpGbu45U0/FwAOqacfLg6PTgrZQCjJ0YP7A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tPmhGFVhzsX/eNvethW0/UVQcKFKSMvaxttR0hcC59I=;
- b=YJlW8VKv56xDSFpCYgvaXlJkxSoacyp6JH87S86aiCisKNZejUUDhjBj7MYxsecKDOpMScb5PPCJOOrq3xnHp7H0+m01rq0iFH4NWp6EJQ58eNpytv9GRuNBfhsE+7Z+ozGhr3jGF1sqOVc6mJc6QturQ00CrdSpb0zT933rANCmLeFGXVxHcxAVHtHLXurQ0lZpodRLZq5HOYZ9psvvOA7o/RylTnQT2lZhyt7bWkx1CzKHZu8d5TWL8XWxw6zVIyfVPfPmlcwuYVDrN/WBbTt54g4bMw3ob3xhdXWtqQKiFQiEbjeOQHvX8oc40mjZW0S4iTjyvafeusiZWSJImA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tPmhGFVhzsX/eNvethW0/UVQcKFKSMvaxttR0hcC59I=;
- b=t0fa7f6s8PeIE7ri9OHLjRa+cLcpG1YPC0qWpj15U+jJoN2BqPnd/qg8KsEJR0gG98Ou7SwDhMKCByc/P+TRw7v3vZKa2fDXL3JDW2uG60SmRJkXGNt0aupLnytbkbCVcMNiwZRX2pR4W7nw5+KHJfQosSlQPq/0CGPX3k0J2PRgf3XLVlQMHAL85OR7gz2KAz7DTV+Cp8rZ9sedToYswrqsdi7LzF/gvdfRxUknI0j8z2GJvtMb9sVJ4YGxl3fjE6tkOOctfqISlrPqaHPCqftimom1Ohdc2rTMavhF9OrfGMZKqEx6pMs8mtLfpigQwMXUhuNOdJUvtQhuDq1Kgg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from GV2PR04MB11799.eurprd04.prod.outlook.com (2603:10a6:150:2cf::9)
- by AM0PR04MB11915.eurprd04.prod.outlook.com (2603:10a6:20b:701::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.360.13; Thu, 3 Sep
- 2026 16:54:41 +0000
-Received: from GV2PR04MB11799.eurprd04.prod.outlook.com
- ([fe80::2146:83a2:5329:b7c]) by GV2PR04MB11799.eurprd04.prod.outlook.com
- ([fe80::2146:83a2:5329:b7c%7]) with mapi id 15.21.0360.008; Thu, 3 Sep 2026
- 16:54:40 +0000
-Date: Thu, 3 Sep 2026 11:54:30 -0500
-From: Frank Li <Frank.li@oss.nxp.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TGzcKVkI";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="fnJZmp4w"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1788456016;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=U9SlpKBC41ZAAv9XrMQhlqWr3QRc3I1Zse/kq3Web2k=;
+	b=TGzcKVkId9CySOy1rB4TXgFNhvmUBTADYMaYI9LcVj9fQAocq37/50zYVZQV0jfxDEIwyX
+	BQUbEVQXsZS50pYIeEukT9KTjYbzawffa6QNNdC+kK+RA8SrStOyEjv7M7IXey1bHm7zhJ
+	iZ4juAcpI/fEJYNcUC3BTAc7vXZ20mE=
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
+ [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-341-BuVvtw0tM1CQrpaDRKd3gA-1; Thu, 03 Sep 2026 13:20:14 -0400
+X-MC-Unique: BuVvtw0tM1CQrpaDRKd3gA-1
+X-Mimecast-MFC-AGG-ID: BuVvtw0tM1CQrpaDRKd3gA_1788456014
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-52ff59f2c47so1508531cf.1
+        for <linux-clk@vger.kernel.org>; Thu, 03 Sep 2026 10:20:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1788456014; x=1789060814; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:content-type
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=U9SlpKBC41ZAAv9XrMQhlqWr3QRc3I1Zse/kq3Web2k=;
+        b=fnJZmp4wkDw1bZ6SG+5eSW+WBpsCBlKmL6KlcAIc+QVPCHxsnrATYEZLBTKcOP3SyQ
+         4QCZTUrAJsz9gEgNbFEFSubbdv9nxDfICWY+QzC14zwDoWkck4kEUvxcgrTt0Roi9Pgy
+         IXwxiRixSZ+BCYEEG2mYo6Q94iDdEdLoxJZZsnyrNfyb6NKeTm7fQeb3k9Y+0DAFyh9k
+         XQmSGoC/prKzj+7+hLhG3HjKt5s80sT1ekoV8zEfM9RNTDwAMfWGe7oYMcAZZ8wcu9Xn
+         aNbBGRKxOdZFAup0ZjZBhqDxDRpcdaXuXd4Ddn+ikpuxVE8nLO5F5tY3k3Y8zwsNpqDQ
+         n0GQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788456014; x=1789060814;
+        h=user-agent:in-reply-to:content-disposition:content-type
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=U9SlpKBC41ZAAv9XrMQhlqWr3QRc3I1Zse/kq3Web2k=;
+        b=eFo7uHhF/fpPm/0fpkBGhKjrItaELQfKqC4tIjR1AaNX+sjXWBxGtzGgakSnaseDB0
+         Fjhjmt9OX37VyHRXvwwC2LCKSto/j5H5P6Z62m9a0L3/un2ayYsKyAgZuRklNnaoa9ls
+         jFmnbGMPZE6DAnVqir5C0LIWuC9tv1Q+LAs9IynzfQHflkY4bPv+8AI5vCORS5i8o0SJ
+         lhENCg0C5X5tXEeFWWml6TsadC415hdyWsNvTSTKkTlBerttJRa+xMHowjFQB6hneBrU
+         RS6cMQjCShg7MYZCGc1BW2dp7xUl1A10jKWYQsYbny47aDwZs7aR4nmrPeKWDoIMW01J
+         J7vQ==
+X-Forwarded-Encrypted: i=1; AKwUvBzsg3gD55uJuaPBhte/13w7j/S9DLqKGjK6A0QvzhFlh2kdiV8VO7XbChjr/owzGulPNFHxT3PO64o=@vger.kernel.org
+X-Gm-Message-State: AFuF++lv6k1HAgPhzFDiouSuiEHlXpuxMWToUqbFYHaTThCJEOd3g+4P
+	iiwVTwSCKjcABN41vwedRwhfdLhNgNdWgNuXg8nxFiV/4+M2BKQwK1aP1ZyNxGQIqZf0qCD6JMv
+	FIKvHjG0zqCKGi2UjXnc7r1/hkRMGrlyUBPfLeBg/cwxRIUrQFMak0ve8BmtJMw==
+X-Gm-Gg: AYBFou1BOV6mANkEJ1Jwya4nxteEmGmf+0nZGHxF0OnBDGB4Zs/VnpXf4B6/ObEgdKI
+	AnaFdoLS+e8MoHlfDzL8XflYxbPLmXz4imeSPC8evWFVNieAF0B+avOf0SJDx0FGRDEAfBuTjEu
+	hqiyKkaYKAxyN0Qv73mp95AQkL4wQuXkAUHOdIAb72DgQpjPc+mpdjb1PFQPfhgg58zfzvU9LYH
+	y+QxMjGC8D39fqf1uOkQAmiokvc54k5CWoj8x+qySBRKIvnhu5lefXCPNkSanb/vU69qECq0jkq
+	54w7+zA2rp/KT+Ei70KB+64lVZvNZlLzjLySi9tkA7LylFCaNdduWU5NgwcU9diu6Z05iqS6/dw
+	aTWXKsgtADxcWvV7JMIbs6Ywo4J8fRIg/rBw=
+X-Received: by 2002:a05:622a:3d3:b0:516:82e2:7788 with SMTP id d75a77b69052e-53042f6ed28mr70698511cf.1.1788456013911;
+        Thu, 03 Sep 2026 10:20:13 -0700 (PDT)
+X-Received: by 2002:a05:622a:3d3:b0:516:82e2:7788 with SMTP id d75a77b69052e-53042f6ed28mr70697611cf.1.1788456013149;
+        Thu, 03 Sep 2026 10:20:13 -0700 (PDT)
+Received: from redhat.com (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-530541eab6csm1956071cf.26.2026.09.03.10.20.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Sep 2026 10:20:11 -0700 (PDT)
+Date: Thu, 3 Sep 2026 13:20:10 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
 	Stephen Boyd <sboyd@kernel.org>,
 	Brian Masney <bmasney+clk@redhat.com>,
 	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Frank Li <Frank.Li@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	"open list:NXP i.MX CLOCK DRIVERS" <linux-clk@vger.kernel.org>,
-	"open list:NXP i.MX CLOCK DRIVERS" <imx@lists.linux.dev>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	"moderated list:ARM/FREESCALE IMX / MXC / LAYERSCAPE ARM ARCHIT..." <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/1] dt-bindings: clock: imx5: add assigned-clock*
- properties
-Message-ID: <apmmRsFTqSIxvfi3@SMW015318>
-References: <20260901193720.1066686-1-Frank.Li@oss.nxp.com>
- <20260902-wonderful-tangible-warthog-d927f3@quoll>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260902-wonderful-tangible-warthog-d927f3@quoll>
-X-ClientProxiedBy: CY5PR16CA0027.namprd16.prod.outlook.com
- (2603:10b6:930:10::10) To GV2PR04MB11799.eurprd04.prod.outlook.com
- (2603:10a6:150:2cf::9)
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>,
+	we =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>
+Subject: Re: [RFC/PATCH] clk: add lockdep_ignore_clk_prepare_lock cmdline
+ option
+Message-ID: <apmsSsXdc32Z09_f@redhat.com>
+References: <CGME20260828131428eucas1p2cc2d9767d5ed62b8297c2cff0295226d@eucas1p2.samsung.com>
+ <20260828131409.962825-1-m.szyprowski@samsung.com>
+ <20260828133803.GT776954@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: GV2PR04MB11799:EE_|AM0PR04MB11915:EE_
-X-MS-Office365-Filtering-Correlation-Id: c3efac39-6f9e-403f-8105-08df09dc0b95
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|19092799006|376014|23010399003|7416014|1800799024|366016|4143699003|10067099003|11063799006|6133799003|18002099003|22082099003|56012099006|3023799007;
-X-Microsoft-Antispam-Message-Info:
-	59of2igAhTmM3lxsRJtUGPIyKbj7Qb1KB34GnoMaX2yqsLmD4XbzIzddL5wuDlz/oWyDEeKQwDvt1yitZqlo02EKljEFjPRZeSH5+IJ6lzcAQl9r7LsrMXjuL7VHxyI5izHJstiB10Q9FyudgnpJeJYJ+FR7izGjcn6Dzk77d7AFt0/G16v7TPXmPZv/miIkyD132CZd9Vv3vjonkUgvSPidC7YOHpLZXguK1Qx2Oz6ztpyX2rNbRQYH7TNfm+oSglv58KC4fcuNrtBKCQqjpcSv0I7OvGm2rPalw6Vik/fx+zKLvpaWH9wH3omWv62vbwpBIdE/bouv+ScQesVIa24s8gu5xa5UQuCeeSFdsIvwtWe9TrX9TyeRWLfc8z+GHUHCKlzDnZ1yfq4EaBqkHWMVzUBQzkZ2mH7phUDEUsrB7KhwveeVJa3SG9tolkGRCLplGz2gE1XsTYfBu0NADXalO8afQCCQrN0EUJ8ao585Pa+em9uzYx0WExhbQyTl5ZnWtRR1WeSwN8VNkUQe8b5cF0+E3kzgPzXPtAay/2qqGzbhprmFzh2fiVaM8Tu3JV/WGy5cdV3Yny6lUDmM/iV/WWbj3lIC4h6xuX5xI/yWw4QWbqz+ewqgs0AIP9gq/tnUanF9BNT3LhRMXIjxq4GWN7DjQD7RCgAeOT/cKf8=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR04MB11799.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(376014)(23010399003)(7416014)(1800799024)(366016)(4143699003)(10067099003)(11063799006)(6133799003)(18002099003)(22082099003)(56012099006)(3023799007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?vpp+ynTLjV5y9Yh/xXqkWBcuPl8K1bt06W6XqaDH233BbIMbuVZStcNlSCGW?=
- =?us-ascii?Q?8TE0z65LoD/93FkF4fviHlaifGE01q2mUkjzgiaG5JDAVrGjzzp6KQZ0IXaT?=
- =?us-ascii?Q?JIVwGuawHRioHJA3kUHkyGquwK30APxBl3LrEv3ai7JZlPk8Y7i0jjxDYc+0?=
- =?us-ascii?Q?W16M6pjWUNC4iTIi6flhRQGDQyAXn9t/OJ2khkx3fiBq/30ATXO/1s6uMyi5?=
- =?us-ascii?Q?HnwSAsiJt29F5viUlFR3R+qg6RaHwbnQ4LObGbeVuS90wHL2Qj0Hin1bDt0E?=
- =?us-ascii?Q?ZJ+D1auaG89A8Uuy5fzC6UBauQPLULY48nIQalQiJkOpq5pXxPhXVEBGOQ/5?=
- =?us-ascii?Q?VPdHkOcRqhkHs/M1bOdZJQBZD2qJAGCZfW4ZhcFOf/BcLKfPHC7QbWRpD1kH?=
- =?us-ascii?Q?WWbazoysgbyQcjSbGZ8AmW/nHSbMr88ljX8w25TAbHi8w1YbrWhci+suQgJd?=
- =?us-ascii?Q?Gq5ookAcC6LhM4JoO0BNe/ZLl65UPbzhA5euPvne5QNnACRVFjDqZF7xwfFQ?=
- =?us-ascii?Q?Gkpyg05Z9e+kmy7uKARm/HybpJgq2BB5fPaCT5joEZ6sFODraJWc56ORKyAd?=
- =?us-ascii?Q?LxsxAGZ/mVt65Gt54ETF7wGHdzO4Ym0kIWwhsVeKibYrFFsF++vQ13FOyz2V?=
- =?us-ascii?Q?d9Q1RxUqdZZJrnWaqmHh4DHwAVsq36es36PXdabImvod+0bZYBH/fK+Npxce?=
- =?us-ascii?Q?hqkE4Tq4qr93v4k3hl+fPuMtx04dCUzZeJx7WyDPeGF1OVphSCpDEwaQS2PD?=
- =?us-ascii?Q?aQN3rfJ9YT0+tMPjg/rd0rPr582LDqlOQwLA7sL92ijiy0B1LPJKldeECYhN?=
- =?us-ascii?Q?xTKeRudeeSNjMhKbwtYyWWg08zaeNovtJGfv1/ss/iVbrD6/h8W1X4650Ktj?=
- =?us-ascii?Q?PpTJ7GlKePq+t08iKt1WYMYhxVxZn1tA3P8uQ0DhjNVWsyowPKaDQ0mI5+oG?=
- =?us-ascii?Q?VJUviCtkxHo66jlev9E3DTQn4ark7DtMXP/upv07trB6sSQrHWGQfwjzrhv5?=
- =?us-ascii?Q?tLh/TceQS9zQdKS4lC+J6dJOIWj1OQ9KRwMjZ2kYO4QEWcKoG3yO26E8HU63?=
- =?us-ascii?Q?mEqU6/BvPCWem8snEw/IplxZ2LeQOTFtt5H0OI+ATR8vvujkef/GGogAHFYH?=
- =?us-ascii?Q?zf/0NNKVJiUTtfntiokNqzrO2tL35sPGLT4SR1ZgpyoPn4o31IXvFx7a6keh?=
- =?us-ascii?Q?6hycH0PtbNlatwOaZBBsR5OIpdzyqOzSNhLDpRfFKd9AL1KvPh+9rohZnjjp?=
- =?us-ascii?Q?TnhmIScUsY5/3se+mv5UnWfwr+UKyP+Ut97301V8utpQKajwgZi1NjZf2hVb?=
- =?us-ascii?Q?impFRdPo/NfHBUJnuqSBKqfRWEjv82686wAT74oG6jXe6dRIzKPg6/6CC6Pv?=
- =?us-ascii?Q?qiKP062ujgCV12hawzoyx0Q83BoJObRSFAcAmBjoa99Vq2DV03z3c3LQyX5c?=
- =?us-ascii?Q?r7UAeMby8rnK8DjeQOy0752Zh8APSD4k8jYCLglrwEN0IvN9Sr8A6Gp1D9tv?=
- =?us-ascii?Q?vtKLz9XqzpkIb87ZNNZ3QkKwVh97/iowrov0jmm98Xyw/iylOvOmq8f0on+l?=
- =?us-ascii?Q?qE9LYmb/sOVKCiqYQsTJ4+ycJsbg0+kCBRSTcUNr2+Hxd5FUKymLuVNYTc7c?=
- =?us-ascii?Q?tIb803yfVkce/4+IQKWemYTNtao858pogSZEgRQ2+qQYQzu8f9mVrIz/AX0Q?=
- =?us-ascii?Q?NRLYpoHxItfdlA+cBpVZvqEIhAZHIQ3dcNfhgwhFhJFwAPHw2N/cTxOVjFvC?=
- =?us-ascii?Q?K+OQXYNaL08ezqmBdAirTm9xar9y+rQGoOkiQxTgspix2lQrSHtj?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c3efac39-6f9e-403f-8105-08df09dc0b95
-X-MS-Exchange-CrossTenant-AuthSource: GV2PR04MB11799.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2026 16:54:40.5878
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: aOAChDn9gm7vUJT5WMnBA+8XKD30snEhCJBpAJb1o9QdvxuI4m/Ny+na2Z8lZCVAMSZOd9z7CVfd/lpVsdRCR+u0TO+daPg+h/U9iFGJjUXDFHB2S2yFYC/k5loItsAf
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB11915
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260828133803.GT776954@noisy.programming.kicks-ass.net>
+User-Agent: Mutt/2.4.0 (2026-06-19)
 
-On Wed, Sep 02, 2026 at 08:14:46AM +0200, Krzysztof Kozlowski wrote:
-> On Tue, Sep 01, 2026 at 03:37:19PM -0400, Frank.Li@oss.nxp.com wrote:
-> > From: Frank Li <Frank.Li@nxp.com>
-> >
-> > The i.MX5 CCM is a pure clock provider with no 'clocks' consumer
-> > property in its binding. The dtschema framework only merges the
-> > clocks.yaml meta-schema properties (which include assigned-clocks,
-> > assigned-clock-parents, and assigned-clock-rates) into a binding
-> > when the binding itself declares 'clocks:'.
-> >
-> > For example, imx53-m53menlo.dts configures the CKO1 output clock
-> > by setting assigned-clocks on the &clks node:
-> >
-> >   &clks {
-> >     assigned-clocks = <&clks IMX5_CLK_CKO1_SEL>, ...;
-> >     assigned-clock-parents = <&clks IMX5_CLK_AHB>;
-> >     assigned-clock-rates = <133333334>, <33333334>, <33333334>;
-> >   };
-> >
-> > Without explicit declarations this triggers a dtbs_check error:
-> >   arch/arm/boot/dts/nxp/imx/imx53-m53menlo.dtb: ccm@53fd4000 (fsl,imx53-ccm): 'assigned-clock-parents', 'assigned-clock-rates', 'assigned-clocks' do not match any of the regexes: '^pinctrl-[0-9]+$'
-> >
-> > Assisted-by: Claude:claude-sonnet-4.6
-> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
->
-> Then the DTS is wrong. If this device does not have a parent clock
-> input, then assigning clock parents is wrong because it is either
-> contradictory (you said no parents) or misplaced (clock consumer should
-> set it).
+Hi Peter,
 
-Make sense, CLKO may just use for debug to measure one of internal clock.
+On Fri, Aug 28, 2026 at 03:38:03PM +0200, Peter Zijlstra wrote:
+> On Fri, Aug 28, 2026 at 03:14:07PM +0200, Marek Szyprowski wrote:
+> > The clock framework uses a single global re-entrant mutex, prepare_lock,
+> 
+> There is no such primitive in the kernel -- this means the clock people
+> rolled their own. Why ?!
+> 
+> > to serialize all operations on the whole clock tree. It is taken by
+> > nearly every clk API call and it is held while calling into the clock
+> > providers, which in turn often take their own locks or trigger runtime
+> > PM. As a result prepare_lock sits in the middle of a large number of
+> > lock chains and lockdep frequently reports possible circular locking
+> > dependencies involving it.
+> > 
+> > Such reports are often not real deadlocks, but once the first one is hit
+> > lockdep turns itself off and all subsequent locking problems - including
+> > the ones actually being investigated - are no longer reported.
+> > 
+> > Add a "lockdep_ignore_clk_prepare_lock" kernel command line parameter,
+> > which marks the prepare_lock class as novalidate, so lockdep skips the
+> > dependency tracking for it and keeps validating the rest of the system.
+> > 
+> > The option is only available when CONFIG_LOCKDEP is enabled and is meant
+> > purely as a debugging aid.
+> > 
+> > Assisted-by: Claude:claude-opus-5
+> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > ---
+> > The problems with clock framework's prepare_lock are well known and
+> > there are machines that always report lockdep issues related to it. A
+> > good example are Khadas VIM3/VIM3l boards, on which prepare_lock
+> > interferes with locks used in PWM subsytem:
+> > 
+> > https://lore.kernel.org/all/adqtn6iljcguv3m3ovhltusbbf4mljzlwg73yklaudvjjtazxv@vyf5fvuzic6x/
+> > 
+> > This new cmdline option allows to hide prepare_lock related issues on
+> > the test machines possibly enabling lockdep to catch other issues.
+> 
+> This is horrible. Why not fix the clock framework?
 
-The boards is too old, not sure if it is really used for some periphal.
+I'm one of the two new co-maintainers for the clk subsystem. Do you have
+a suggestion for how you would change this locking in the core clk
+framework? Long term I'd like to see more fine grained locking since I
+see at boot up on my Thinkpad x13s laptop that it takes ~10ms in some
+cases to acquire the prepare lock.
 
-Frank
+Brian
 
->
-> Best regards,
-> Krzysztof
->
