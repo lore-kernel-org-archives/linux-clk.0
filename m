@@ -1,112 +1,109 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E69914DF4D0
-	for <linux-clk@vger.kernel.org>; Thu,  3 Sep 2026 15:51:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 514504D8DB5;
+	Thu,  3 Sep 2026 15:56:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788450718; cv=none; b=HxRVYE4rQIEBLEIUiQf+VOsQGFc4l6qjA2qUPCR6zXB66ycW86DyuwucoArijua66sgm+aK68JBsZTeYUf3NvtTiIoTnlJcg2TFgNgp2pDTQtJKI5Y7BHsN+WKMZ6sU+tRvmTSiKtrymYdvVLIRREONpnsMEvBSDrwowK+lDBEo=
+	t=1788450993; cv=none; b=MNZAP/4H0eRPQkpoLr4p4Ab0zt9gAhPpzmDVYksfz+4KZSymrKha2bWVNQwiIDXI25MUaTHErcaQvDMBlcT6gotI42LnjYLGzmvcLm1DfLbg42fO3K7Ts1ITWNXGsW7wTKQJxJqBHbLH75EOrx/75yWx89HreeHgr1vzI+WtnnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788450718; c=relaxed/simple;
-	bh=L+cXZycWoCrjgpdTkYmGwpI9LVlJwHX8aBjPv9+ft1s=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=ms/tAEtVrH8vRXIWoJBJXn8mtdQy2ski03QlONyCcne34FO4ss9fzb+P2iLpzbRusHafHrFxFAEIESc3hT+qvgHyyf60nErjSVZSLgAE2McRjzWdGZ+Wt254CYRk/BlNbqoaDsBotWH48HoKqmInX05TYHciLzUh+TNSmCNhkEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YcyDcNwM; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1788450993; c=relaxed/simple;
+	bh=DQLgwFyklyQY+Ul3sU7ZxseEkrVOZ6GPPNvBm61Thvk=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=XRffBYnpR9L+v3wkdNnJ63bAitFEqVn3tjfP10JR4pPNUAgRQkJDO/fqOelb4UqV5/0neCgVhgtJB4oNRhMkXqAF4qY6kPmvmMsofQ53CcxiHvlhiEL/cIWe64h/Ufbn2j22/eZuCsztjLH/VWBECcaFN9b7gJP6CkYDW6fb6T0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bmf/f666; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YcyDcNwM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92AD21F000E9;
-	Thu,  3 Sep 2026 15:51:56 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bmf/f666"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DEB31F000E9;
+	Thu,  3 Sep 2026 15:56:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788450716;
-	bh=QNwWKrf6/eLKslPvo3opu6P/FHG4C0LR/M15jNOIISc=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=YcyDcNwMQF3+LyLXynMoRD02jMsNcgHrrb2grRYiDX3tQ/LamrS2AVgg9S+37wbW0
-	 mnJVjjEw6bb20JQzVSG3dEPJddWdapYbuQo+V94S+60IFg0Z5HupJQF4CTn93O6QVe
-	 kdU7/RyequxPJZtqNp9EECqFyyEZnXkeq8oacE3tz+UUdYuCYxqn4R8wOyCf3Bcun0
-	 fky6WPM7qk8TQVynTYloF0S5xY4DUFZxoZbRXP8zkLROu4BRCR9+xIpjN3cfB874eC
-	 5SgcpDlTCWL47Fdf0rymXwBA2mqhI8helzeCPRDnbKYID3JcYF4RptgJqaEd63j259
-	 MxuAe9lH71dzw==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v13 2/4] clk: scmi: reject SSC configuration out of the
- OEM field range
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Dario Binacchi" <dario.binacchi@amarulasolutions.com>
-Cc: linux-clk@vger.kernel.org
-In-Reply-To: <20260903153836.373267-3-dario.binacchi@amarulasolutions.com>
-References: <20260903153836.373267-1-dario.binacchi@amarulasolutions.com>
- <20260903153836.373267-3-dario.binacchi@amarulasolutions.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 03 Sep 2026 15:51:56 +0000
-Message-Id: <20260903155156.92AD21F000E9@smtp.kernel.org>
+	s=k20260515; t=1788450991;
+	bh=bhTCUaiiZ8A0gGUxDFrs3mg1RzINT0VFaxoNylx2xNU=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject;
+	b=bmf/f666i5KsF1D9J1jgfnJU5WzmYmsn2GVaC3M2Bjo0mBeMEaA7qjVs6ba7A1YWM
+	 6inYhBqR5dLgfnB9e+1pczT7b/NF3WOKNrYCvBQaDWQ0lN/fl+auPqqf8aNEfXPqWQ
+	 EBvrdKsKPZyfkQi/irV9bdklW2sd+g/z9MUlLUKuw+JXefX6vrmsCmKDyL/124Xgbr
+	 50l/wSM2zy+gBOAgej7u/2WKtPLmni+cNVY5aExVPUHZoOKK/jwjGDhfKU9e2M0lHp
+	 BPqjbV8hWgjnFyXVbwFUi7/+ps26a90QVw+Pm8WEQAOdTZfgh+3zFA/GjjjM4a/j9C
+	 kjOZl7FA9VeTQ==
+Date: Thu, 03 Sep 2026 10:56:31 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Fabio Estevam <festevam@gmail.com>, 
+ devicetree@vger.kernel.org, Abel Vesa <abelvesa@kernel.org>, 
+ Brian Masney <bmasney+clk@redhat.com>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, linux-clk@vger.kernel.org, 
+ Conor Dooley <conor+dt@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, 
+ linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev, 
+ Frank Li <Frank.Li@nxp.com>
+To: Frank.Li@oss.nxp.com
+In-Reply-To: <20260901193720.1066686-1-Frank.Li@oss.nxp.com>
+References: <20260901193720.1066686-1-Frank.Li@oss.nxp.com>
+Message-Id: <178845094493.3613943.7561968637437394338.robh@kernel.org>
+Subject: Re: [PATCH 1/1] dt-bindings: clock: imx5: add assigned-clock*
+ properties
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
-- [High] Unconditional rejection of `spread_pm =3D=3D 0` breaks the ability=
- to disable Spread Spectrum Clocking (SSC).
---
 
-commit bf8cfe80822f02414072ae479a6270e985c74e54
-Author: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+On Tue, 01 Sep 2026 15:37:19 -0400, Frank.Li@oss.nxp.com wrote:
+> From: Frank Li <Frank.Li@nxp.com>
+> 
+> The i.MX5 CCM is a pure clock provider with no 'clocks' consumer
+> property in its binding. The dtschema framework only merges the
+> clocks.yaml meta-schema properties (which include assigned-clocks,
+> assigned-clock-parents, and assigned-clock-rates) into a binding
+> when the binding itself declares 'clocks:'.
+> 
+> For example, imx53-m53menlo.dts configures the CKO1 output clock
+> by setting assigned-clocks on the &clks node:
+> 
+>   &clks {
+>     assigned-clocks = <&clks IMX5_CLK_CKO1_SEL>, ...;
+>     assigned-clock-parents = <&clks IMX5_CLK_AHB>;
+>     assigned-clock-rates = <133333334>, <33333334>, <33333334>;
+>   };
+> 
+> Without explicit declarations this triggers a dtbs_check error:
+>   arch/arm/boot/dts/nxp/imx/imx53-m53menlo.dtb: ccm@53fd4000 (fsl,imx53-ccm): 'assigned-clock-parents', 'assigned-clock-rates', 'assigned-clocks' do not match any of the regexes: '^pinctrl-[0-9]+$'
+> 
+> Assisted-by: Claude:claude-sonnet-4.6
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  .../devicetree/bindings/clock/imx5-clock.yaml        | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
 
-clk: scmi: reject SSC configuration out of the OEM field range
+My bot found errors running 'make dt_binding_check' on your patch:
 
-This commit adds validation to reject spread spectrum configurations that
-exceed the 8-bit OEM field range or the 16-bit modulation frequency field.
-It aims to prevent silent truncation and incorrect programming of the
-firmware.
+yamllint warnings/errors:
 
-> diff --git a/drivers/clk/clk-scmi-oem.c b/drivers/clk/clk-scmi-oem.c
-> index c1ebbdc6bbc5f..4dac608edd4ce 100644
-> --- a/drivers/clk/clk-scmi-oem.c
-> +++ b/drivers/clk/clk-scmi-oem.c
-> @@ -35,6 +35,7 @@ scmi_clk_imx_set_spread_spectrum(struct clk_hw *hw,
->  				 const struct clk_spread_spectrum *ss_conf)
->  {
->  	struct scmi_clk *clk =3D to_scmi_clk(hw);
-> +	u32 spread_pm =3D ss_conf->spread_bp / 10;
->  	int ret;
->  	u32 val;
-> =20
-> @@ -44,7 +45,19 @@ scmi_clk_imx_set_spread_spectrum(struct clk_hw *hw,
->  	 * extConfigValue[24]    - Enable/Disable
->  	 * extConfigValue[31:25] - Reserved
->  	 */
-> -	val =3D FIELD_PREP(SCMI_CLOCK_IMX_SS_PERCENTAGE_MASK, ss_conf->spread_b=
-p / 10);
-> +	if (!spread_pm || spread_pm > FIELD_MAX(SCMI_CLOCK_IMX_SS_PERCENTAGE_MA=
-SK)) {
-> +		dev_warn(clk->dev, "%s: spread (%u permyriad) out of range\n",
-> +			 clk_hw_get_name(hw), ss_conf->spread_bp);
-> +		return -EINVAL;
-> +	}
+dtschema/dtc warnings/errors:
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/imx5-clock.yaml: properties: 'clocks' is a dependency of 'assigned-clocks'
+	from schema $id: http://devicetree.org/meta-schemas/clocks.yaml
 
-[Severity: High]
-Does this unconditional rejection of spread_pm =3D=3D 0 break the ability to
-disable Spread Spectrum Clocking (SSC)?
+doc reference errors (make refcheckdocs):
 
-When a caller (or device tree via assigned-clock-sscs) requests to disable
-SSC, it generally sets method =3D CLK_SPREAD_NO and spread_bp =3D 0. Because
-spread_pm is calculated as ss_conf->spread_bp / 10, a 0 spread results in
-spread_pm =3D=3D 0, triggering this -EINVAL return.
+See https://patchwork.kernel.org/project/devicetree/patch/20260901193720.1066686-1-Frank.Li@oss.nxp.com
 
-Since the driver contains logic to handle method =3D=3D CLK_SPREAD_NO by om=
-itting
-the SCMI_CLOCK_IMX_SS_ENABLE_MASK bit, it appears designed to support disab=
-ling
-SSC. This new check prevents that valid path from executing and could abort
-device probing if triggered during initialization.
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
 
-Should the !spread_pm check be restricted to cases where
-ss_conf->method !=3D CLK_SPREAD_NO?
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
 
-[ ... ]
+pip3 install dtschema --upgrade
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260903153836.3732=
-67-1-dario.binacchi@amarulasolutions.com?part=3D2
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
