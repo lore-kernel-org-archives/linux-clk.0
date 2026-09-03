@@ -1,68 +1,68 @@
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 165423839BA
-	for <linux-clk@vger.kernel.org>; Thu,  3 Sep 2026 05:00:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92C5A388898
+	for <linux-clk@vger.kernel.org>; Thu,  3 Sep 2026 05:02:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788411633; cv=none; b=QAqNnIMYucUVeFVF2IjZbnFAl2aFw1lNJq53gkOmYQy6l/zMc405tAF8X17ZBgEuYRnONRDCQz8GnMk+b+7bOV0DP7GjQeEPY2vZhcXQYInfzUpf05e9U71hTb79ULW+3JTmavaIGeYKwcHsRf/EUNhHm7MCAv0p42hCXjl1dC0=
+	t=1788411764; cv=none; b=ZYh4VhSr5ULF9rHXXdv7xElzVist/0pHKdvQtBbi3pPI0+PJWozCAASpm1JuRJOLiDT5+xT1WfrBfQV7Fx1vGC+h4W2o6mRM0VlWPqDcCyxwiXMB9U1Ff5syYNtvoC6kXupfceeHl7teqt3MauyOtg8U3O5huA3ksExvp2SoGOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788411633; c=relaxed/simple;
-	bh=Do6DIyYheb72ubQenuc39X/h+3c0RITXfqxUusCBwQ0=;
+	s=arc-20240116; t=1788411764; c=relaxed/simple;
+	bh=j8QMTNW8XDHV+BH8mGTNiSJbNMOrQ1E2SamlbJ3guog=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AfQDJuo7AYAKoSK3vsLVAPXiq5ezalnhDbO/i/2SQvGX3Inx+oeAnb2So39SxTnqbagB8e95xHCVQY0HoXVBiJzXZjOGJ4daJ9t5LcEurG19xcppSWqpnEKDFEFZZeqD2x8UbXZViOYCZPx1IruRyCg3ShAjzEyVHao85S+zVCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=My0FBi5E; arc=none smtp.client-ip=209.85.167.54
+	 In-Reply-To:Content-Type; b=RqijMbP8sieiBS5dK3nqQOCjA/ldv43ttSDMvG7RE/z6FJic2TFdulR6s3bgjapmsUhLzEIvteStAPT1snqEPjVeFUzkh2n7iVMAB1HtZENkzaq61NCzRMoAM3qfV0hvevaP9k4hoVOn48MQn7zIjPNTWEvaD4OTgOWTiFpWxdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hS9TovMd; arc=none smtp.client-ip=209.85.167.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="My0FBi5E"
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5aeb98460c6so2918841e87.2
-        for <linux-clk@vger.kernel.org>; Wed, 02 Sep 2026 22:00:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hS9TovMd"
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5b4b037a2c1so1778905e87.2
+        for <linux-clk@vger.kernel.org>; Wed, 02 Sep 2026 22:02:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788411629; x=1789016429; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1788411760; x=1789016560; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:in-reply-to:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=Aw9gpVGru8xiZcUq3dSpmW3TOUrgw1owBT+0w2fdvGo=;
-        b=My0FBi5E6ceep2eAoKtxAwze+bPhLRYCaPXTsjOaQqVZ8ryTz+lRaxOnfXEt+284B5
-         U7n/U6MzfdDFFohQTuaH0IOnEuwciKck08RiW19oW1b9BbQxqqS+7CLNBg0NJRQV66KZ
-         GeT8bgS69DdHa2eUqXBtwS4eQfnQVXIpjhYBo05l4bk72Nfb/8ZoDr6n/bLRDXc45xgY
-         qh2ywezmDvFCQu6Lkai2TZfZyOs1dXf9V1w4uXKnoQ6/emjl8zpf0utEcJMl6ZLavcXa
-         85arZA43rRRHYxcYZIrOIo0a7VQVgrEQMlURageYQiagMm0G74u2ih509vZuKvL/Fede
-         jaQQ==
+        bh=LwFiTvSfOdYmNglr5FoVqN597kWfjGSwy7pj4LDNId8=;
+        b=hS9TovMd5QZKIZNyOpwAJtQ57wR6xsF0NLxpWkjJu4Exxer+y0BAmxudl2pCbJZXB0
+         s8wHmZdgs62nqz5HLUL8CikyKRTmtWfxKYvHQpbvhMT4M9eLIt+xPStnUfjqImeyY8SJ
+         6BfRq71N/EKv1qxb6BGEorOvJAVGsuoE20AcBf1vmIhTfDld8Du7XIA/k2Qfr/1v6CQ7
+         fcg2ew6rq46UtaOg5tCt/aKdd75BMIzPLjM6FrbuTgenT7XvaTGqCYcjuul229whmLRU
+         sjs8OSK2lBQzCpQLt7bziAF2kArm6eWxxTC+Rt+UXE/DgVU0c1XWAQcTmJi4ONiTSP/P
+         tUMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788411629; x=1789016429;
+        d=1e100.net; s=20251104; t=1788411760; x=1789016560;
         h=content-transfer-encoding:content-type:in-reply-to:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=Aw9gpVGru8xiZcUq3dSpmW3TOUrgw1owBT+0w2fdvGo=;
-        b=IBOuNLnUjc69FiSwS3wlgvX/2/d63CXQ5LxMfOji+jrSnWgbYvCFm4MU8V/RxJ95Zp
-         NVHLojPlZSCfn6eOgeizFf2RhjQDfFOruvehy/CyAQwJB/2VYlecc+NvAJGbCi5WGZfp
-         2vleTUcV0orLyqpo0RXp8WJVaz42aDVXSZwVTDF4NPj58db7qlmYtgN/zpWlatShOe6U
-         dOQORSKmzj4hfyiIF/f2CZv5JXlgBSlAZcW5XED7e4OLCTD6m+5TYX506C0foSrxcOuR
-         GwXG3WE3BEZ6sY5hjiokfTFlVkBHjwoHCKcuzoko8BoEpLwwXc56ukpQkUt8Y7/n9jKn
-         TS8Q==
-X-Forwarded-Encrypted: i=1; AKwUvByzkdbfiGKzSk/ynFaLqKG6mB3RCwbEO96WAS3jCHOzBKJj8M75wPOGQrfUQw0dtMS2G3qRFZxTMVQ=@vger.kernel.org
-X-Gm-Message-State: AFuF++knbO2cHBRack8/mhlKTim0JVb8Dj0EYHyuM5wJ3MrTLYo7cNqx
-	rbDx/mFq2Uf2MuwdI1wLRkTMdw6DODbXSCIVotXUy1WDTCsdtOtBwvvP
-X-Gm-Gg: AYBFou23ziNYP/FWj8x2O1p3Cx30/HX5MExKEsVtVR5Bf6DRZM2GMrq/FU3ueVD4f/Z
-	eDMwqz/aqiTWAX1q9OUI2yYi9uUj4aOTczyaQy5yMCi6oqtacT3mgBlwH9obj9rQhNmQGgdl4Sj
-	KTjyAvUp7lh1EZD4Txb6r6YXdudYTAXuFJBASo3x7F9RJfnS6WRTbDFezdtCIsyhA87vvGcbBaX
-	0KT5bbtjiT4sA1npKyiS47yoMP5SNQ8kC6XBkRi8MUhsPwo0ceD9pUNkP/hgjrEQyfrUd0yxziv
-	xrAhHk4dJxGJEshfe6AiTWvpN6suMF3t+Q6DHXjZcbBdbUqYdno3Zoa/qYAQAdpIhzwku9i5a6g
-	dfbjPSqjy2nZc2IYI6o6U+D4MWLcWRm3dhD5Vd1FKxpRbrSp9b+O8A58mllA7w2/Edb5HnUdycM
-	ohwqleyRhgZh2ye1vQf6OKrYvxuC5TCD661mnCB8gs2zXxKkYrFWDH7+RF6gmHYlOmq5ab/TO8y
-	C8qeC4+y5vMsRLYBhoD314QI51sPUYgVFcTSgdnpoPY
-X-Received: by 2002:ac2:5685:0:b0:5b5:e393:2284 with SMTP id 2adb3069b0e04-5b60832fcfemr3051273e87.3.1788411628714;
-        Wed, 02 Sep 2026 22:00:28 -0700 (PDT)
+        bh=LwFiTvSfOdYmNglr5FoVqN597kWfjGSwy7pj4LDNId8=;
+        b=Fxfpb6klJSHAKJvEloNqoCtOAtOPnUoXjy8M4sMiCQen3Kf08u1in6HTxgOA+ycabk
+         qWAWm//TN390jQxAn/oDnkPIP5S++bCvOSRWWrR5yhU3vH2XzZNbxOkMQtVc1GwQ0FOA
+         LSIU4AbbIhfUmLIo+ceAX6qJdK9vqWuo/pJjolmTkQqNykwL2m0UH2up/30Hmem9fj4i
+         QRi/0kmHN4aaY4tqd0DXUl8Cjiqzd/PBRG+3LAAgoDbM1uAPl/oypzWCDREUfH6xIgzy
+         iR8rbTDSm58y7/xemnWd+ILCNlED6VCuKhVfw6nRM3cIhZtKAvgTCchgH/T3PRfBIVzJ
+         ZpNQ==
+X-Forwarded-Encrypted: i=1; AKwUvBzme8xgeokYJsfsJ75iABRxScu4hchfBkPqjUBrXrJ6H1VrpLWjfbh2BE8kUew1rcoEqbgHBEWV+cs=@vger.kernel.org
+X-Gm-Message-State: AFuF++mzt7zOLZHfa3rs3V1UPRYfQrWNKlKIlQHShq0U8kCTboeBbsru
+	jjpqgM9JL/R82fjYOs7ie1tK4zwENAwg28vlvM01RDbW8+6nU52FPQ3n
+X-Gm-Gg: AYBFou2L9s9zRG/ij6IGmbRW7ZnNAd1o3r/zBOaUdNyUoWNd6XoQ+2JILh95lTWdMa1
+	T4nN5cuLFJ2h2aBZ/tViIzww8gLSZ/AIs7uJ4QC86pst3JuyKdIIzJBBbw1jIzKKWZHJROrIDgN
+	tKeyZcYnoGO18/0NdsfEuTNawSAad9uPv4l+7Ex0wofCx0wQbkk/+I/1bnmy8NKpRHVEvoy8E+i
+	WBdwvXIZpw29MLw3bf71t+TcCrleEBQr9WUdR0B6HPUK9FkIO1zNVFG+9CG6Q838IMwTW2EukoF
+	aI4oxRe4wnsPMmLNoWjDuCXmmKHwCimmnb+fBjRdwaO9UCmQ8a0JmuwhlkXocTVYqeWHqfWu3w+
+	IRrTIeJG9XaBBGJYfzQ7Ct6g1tUUijxqgkWtJB7qehs+wBOZF8FPO7zx+V9awgKQslN85SHzwr8
+	QEFLJLXWKVNDOqJDHUXvOR+uVCWn2IDkIs/WJM4Ej4ROZiV04rtzpQDwbKbOVwpeifWNNYBu/vs
+	RWrCmHzPNNAOnVlvzZnkmvAALZvWJcPwZJi3G5LBBYM
+X-Received: by 2002:a05:6512:110d:b0:5b5:fae5:b241 with SMTP id 2adb3069b0e04-5b608559ac7mr3146149e87.14.1788411760490;
+        Wed, 02 Sep 2026 22:02:40 -0700 (PDT)
 Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3a350e4caacsm7622581fa.21.2026.09.02.22.00.24
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5b606b1cd21sm1021897e87.29.2026.09.02.22.02.39
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Sep 2026 22:00:26 -0700 (PDT)
-Message-ID: <57832670-6066-424d-a75f-4eb1f1f0cf73@gmail.com>
-Date: Thu, 3 Sep 2026 08:00:24 +0300
+        Wed, 02 Sep 2026 22:02:39 -0700 (PDT)
+Message-ID: <c2d07f77-1fe1-4d5c-af6b-703d4d767a83@gmail.com>
+Date: Thu, 3 Sep 2026 08:02:39 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -71,35 +71,37 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v3 09/10] gpio: bd73800: Support ROHM BD73800 PMIC GPIOs
-To: Bartosz Golaszewski <brgl@kernel.org>
-Cc: Matti Vaittinen <matti.vaittinen@linux.dev>, Lee Jones <lee@kernel.org>,
+To: Linus Walleij <linusw@kernel.org>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+ Matti Vaittinen <matti.vaittinen@linux.dev>, Lee Jones <lee@kernel.org>,
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
  Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
  Mark Brown <broonie@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
  Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>, Linus Walleij <linusw@kernel.org>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>,
+ Bartosz Golaszewski <brgl@kernel.org>,
  Alexandre Belloni <alexandre.belloni@bootlin.com>,
  Michael Walle <mwalle@kernel.org>, mfd@lists.linux.dev,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-rtc@vger.kernel.org,
- Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+ linux-rtc@vger.kernel.org
 References: <cover.1788346553.git.mazziesaccount@gmail.com>
  <5eb294e68b8d5d2c1d3a12b14a55dd2a9c075a09.1788346553.git.mazziesaccount@gmail.com>
- <CAMRc=MchpaOib+jgMniG7=BBYwB1yqLvJG1sMkjXfRaMFPodgA@mail.gmail.com>
+ <CAD++jLkvELVwVD2B-OPF=mV8-F5xi7RZWJ7cvuyg2srnrJ2HLQ@mail.gmail.com>
 Content-Language: en-US, en-AU, en-GB, en-BW
 From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <CAMRc=MchpaOib+jgMniG7=BBYwB1yqLvJG1sMkjXfRaMFPodgA@mail.gmail.com>
+In-Reply-To: <CAD++jLkvELVwVD2B-OPF=mV8-F5xi7RZWJ7cvuyg2srnrJ2HLQ@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi dee Ho Bartosz,
-
-Thanks for the reviews!
-
-On 02/09/2026 15:58, Bartosz Golaszewski wrote:
-> On Wed, 2 Sep 2026 13:07:32 +0200, Matti Vaittinen
-> <matti.vaittinen@linux.dev> said:
+On 02/09/2026 15:39, Linus Walleij wrote:
+> Hi Matti,
+> 
+> thanks for your patch!
+> 
+> On Wed, Sep 2, 2026 at 1:07 PM Matti Vaittinen
+> <matti.vaittinen@linux.dev> wrote:
+> 
 >> From: Matti Vaittinen <mazziesaccount@gmail.com>
 >>
 >> The ROHM BD73800 PMIC has 4 pins (named GPIO1, CLKOUT, FAULT_B and
@@ -121,91 +123,15 @@ On 02/09/2026 15:58, Bartosz Golaszewski wrote:
 >> doable.
 >>
 >> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
->>
-
-//snip
-
->> +
->> +static const char * const bd73800_gpio_properties[BD73800_GPIO_MAX_PINS] = {
->> +	"rohm,pin-gpio1", "rohm,pin-clkout", "rohm,pin-fault_b", "rohm,pin-exten"
 > 
-> Can you put the properties on separate lines?
+> Pretty neat with gpio-regmap isn't it? :)
 
-Sure, no problem, thanks. I just wonder if I should re-spin the whole 
-series for this. I suppose I'll wait until the next week, to see if I'll 
-get any other comments.
->> +};
->> +
+Yep. I like the added flexibility now that it has got those callbacks a 
+driver can register... ;)
 
-//snip
+> Reviewed-by: Linus Walleij <linusw@kernel.org>
 
->> +
->> +static int gpo_bd73800_probe(struct platform_device *pdev)
->> +{
->> +	struct gpio_regmap_config config = { };
->> +	struct bd73800_gpio *data;
->> +	struct device *parent, *dev;
->> +	struct gpio_regmap *gpio;
->> +	int ret;
->> +
->> +	dev = &pdev->dev;
->> +	/* The device-tree and regmap come from MFD => use parent for that */
->> +	parent = dev->parent;
->> +
->> +	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
->> +	if (!data)
->> +		return -ENOMEM;
->> +
->> +	data->dev = dev;
->> +	data->regmap = dev_get_regmap(parent, NULL);
->> +	if (!data->regmap)
->> +		return dev_err_probe(dev, -ENODEV, "no parent regmap\n");
->> +
->> +	ret = bd73800_gpio_get_pins(data);
->> +	if (ret)
->> +		return ret;
->> +
->> +	if (bitmap_empty(data->valid_mask, BD73800_GPIO_MAX_PINS)) {
->> +		/*
->> +		 * The BD73800 may or may not have pins allocated for GPIO
->> +		 * depending on the OTP used at manufacturing.
->> +		 * If there are no pins, then we have nothing to do.
->> +		 */
->> +		dev_dbg(dev, "no GPIO pins\n");
->> +		return -ENODEV;
->> +	}
->> +
->> +	config.parent = parent;
->> +	config.regmap = data->regmap;
->> +	config.label = "bd73800";
->> +	config.ngpio = BD73800_GPIO_MAX_PINS;
->> +	config.reg_dat_base = BD73800_REG_INT_5_SRC;
->> +	config.reg_set_base = BD73800_REG_GPO_OUT;
->> +	config.reg_mask_xlate = bd73800_gpio_reg_mask_xlate;
->> +	config.init_valid_mask = bd73800_gpio_init_valid_mask;
->> +	/* All pins that are valid GPIO lines also have a fixed direction */
->> +	config.fixed_direction_mask = data->valid_mask;
->> +	config.fixed_direction_output = data->output_mask;
->> +	config.drvdata = data;
->> +
->> +	gpio = devm_gpio_regmap_register(dev, &config);
->> +
->> +	return PTR_ERR_OR_ZERO(gpio);
-> 
-> Why not return PTR_ERR_OR_ZERO(devm_gpio_regmap_register())?
-
-How strongly do you feel about it? It's not a big deal, but I always 
-find it a bit harder to read when functions / macros are called inside a 
-parameter list. Thus I'd rather keep it like this, just for the sake of 
-my own eyes :)
-
->> +}
->> +
-
-> 
-> With that:
-> 
-> Acked-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Thanks!
 
 Yours,
 	-- Matti
