@@ -1,156 +1,98 @@
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07C274A263F;
-	Thu,  3 Sep 2026 12:10:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788437434; cv=pass; b=p7ZKcIhmjoMbwCqaDzwalj/Bl++D29SPtxJNyiYI+otnzSosP9k9IwxCh75mWiAmWd00bj4VThc/1g0qe53LqU1O5Pn/AKU2vudxH/9UXX6tHhzAqRMDa1Q7ee90/ic1epJBC4BrVZ+d/tzZQ5WHYQkBZRm43YO7OEr9sZKyh5Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788437434; c=relaxed/simple;
-	bh=63YRcxrFcbqSkKQOUbtiKeloTiw2IC7QOnv7nHbacC0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=t8jU6lJK15JVLYn6IKsD6qqtnRJdTQRWWa0uGHwBKudtf4RXLgyu8jVdO4vuvKUt0wBsiN0qe3aRNkTJUf/rdRUaETpVSEj0HuMVagsSbPj4BhVl9eS0p9npEu6zhvftMZDhPd7y9MVnGyWqIUJ/FYSsSRGR1TEETyv1WWrThVw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=hTGjefJu; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="hTGjefJu"
-ARC-Seal: i=1; a=rsa-sha256; t=1788437392; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Zc6xuJ3xl49VRPhcniB/3ZakchN1aZhf0cfhA9pujCw8BTWIBbuOJNaEZD7FBgBuMmflkIaIj0t/I1Zr5MXrPnXM2ZVpY0kcXn7r1pBHlbdZK9sA3PGFsax4Sg4pYf7q6xx1TV6/7mt0FzHtTziNgdXNZco/t9RBvPg7KKaLJZo=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1788437392; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=udLpqyCAmF5x6NjypD7ZgtL4WKgcLBmXurRxSamaIC8=; 
-	b=VX8V98MFSDeLC7wSiSHo3oJo/P3uGJu3G+RCcjOqPG3lTkTQKWcS4997IRLXg5MqrSLEhW1eXMbaSXe+0iCCCRbDi+aJBIckRX9GYBrLTmek3+2RA6Ppo6eLZHtvWTQQCJXs2RSP316zCkNTCtChOYoNduQQdss0ssaYhgd6LX0=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=icenowy.me;
-	spf=pass  smtp.mailfrom=uwu@icenowy.me;
-	dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1788437392;
-	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=udLpqyCAmF5x6NjypD7ZgtL4WKgcLBmXurRxSamaIC8=;
-	b=hTGjefJujyRPquMYHt1PxDjFJRQiLBSiwixit7f44eOGk/AkBVY7n+YwleID99bG
-	SXjZo446kyxFCFYE5T7XX3whUoRj5fh9RteO+romCHm3gMD/o8HfCe8nhTXDAJ+Ss3G
-	Cztc9JEW5MTmjIYsLxV2Jfb86fEKSiIc2LtdvEcMRutiARlEeyhQtcf1UYCVQnTHqn2
-	1sJ1Pnq5vW46tfI/a9JqouniyOcZDn98v/P0tU8iz/w/Z4YCtm7E00zcIIdJVuSqzgl
-	WY/s/rRSl6bZlTxkrFZYdN2EXPX1fiTpaNizRi1NSLxKNV0zNvZ5aPR7GpFJnokQbU9
-	Rb8Jd0Klzg==
-Received: by mx.zohomail.com with SMTPS id 1788437390405973.4421037897633;
-	Thu, 3 Sep 2026 05:09:50 -0700 (PDT)
-Message-ID: <576146d4f2752c3c3f6ec6c42812cb9956406383.camel@icenowy.me>
-Subject: Re: [PATCH v2 15/17] riscv: dts: spacemit: k3-pico-itx: enable the
- DisplayPort output
-From: Icenowy Zheng <uwu@icenowy.me>
-To: codykang.hk@gmail.com, David Airlie <airlied@gmail.com>, Simona Vetter	
- <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann
- <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski	
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Yixun Lan	
- <dlan@kernel.org>, Vinod Koul <vkoul@kernel.org>, Neil Armstrong	
- <neil.armstrong@linaro.org>, Haylen Chu <heylenay@4d2.org>, Michael
- Turquette	 <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Brian Masney	 <bmasney@redhat.com>, Philipp Zabel <p.zabel@pengutronix.de>,
- Paul Walmsley	 <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou	 <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, Yao Zi
- <me@ziyao.cc>,  Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?=	
- <u.kleine-koenig@baylibre.com>, Guodong Xu <docular.xu@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, linux-riscv@lists.infradead.org, 
-	devicetree@vger.kernel.org, spacemit@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
-	linux-clk@vger.kernel.org
-Date: Thu, 03 Sep 2026 20:09:42 +0800
-In-Reply-To: <20260809-k3-display-v2-15-327d7910bf71@gmail.com>
-References: <20260809-k3-display-v2-0-327d7910bf71@gmail.com>
-	 <20260809-k3-display-v2-15-327d7910bf71@gmail.com>
-Organization: Anthon Open-Source Community
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.3 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CD3C3FBB6B
+	for <linux-clk@vger.kernel.org>; Thu,  3 Sep 2026 12:42:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788439362; cv=none; b=TFkNqoWKt0QFW2l14Kf7AAWb2qCK+v4VAA6+qBmlK6RC3axaloq9t/DtWYSPzkQvUBzKzN5aQskqYqG5aT4llDwMEFBlBLKV8RNzspxixIRclOVjk8Uy+OHNltEzTZNBs4TlpOn/nWGrxQT1tt5YP8GktM0MeEJntcEGGRkX79w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788439362; c=relaxed/simple;
+	bh=qBY/ZVj6ldHQ7SGOT/ev/wk35ZQLrgQzNtpOY5WeOOs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aWoAPqNJd41uMkEucWSlqngCi15NNYngRv8wFrWoQt32psGXyqdPX6sZ9otzyQVPPZIwlbANuTSivj1JjD9Nz+fq4jJYc+pVEAnZoJaNtHko8haAjfTHYBj2+F4QpZGc0qvn6OxvMAWzcukuLCJE9lpgyD0nXyjc0mcg3U0Y4tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-5bfc5b77c02so2004914e0c.0
+        for <linux-clk@vger.kernel.org>; Thu, 03 Sep 2026 05:42:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788439359; x=1789044159;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=EaPjeR7aztkudYOj6lZEtq7c15pwwZNcBINmpVVqLi4=;
+        b=PLZndC4Q0eFWLZheEtcxdGJnH7EJVUKRT6K3WSJWg11e4p5iGIDPecl1Ngcao7f0mH
+         hRgcQDfXAVcyJ6aU1DqCe+ygP/zenAK5c4ppkOESm0I6xMhnNK5Iq7r10kIHgmLNbFQF
+         Ms/kzWaTlSdPLmtzkblzaA7AYqoeElGwk91XHTDIkJK4yVT5jfU/VAu4W6Tf8IFDHVLg
+         y626hqrmZkC9W0F2/Wyirr1lUhBZX+eDQIxgHM5kWtnT6dbM28PddZbcpREpHcPHrETT
+         +gvWZR4hmCKH/QibPZB6k636UAJ0Wmvu+mXUqSnXpYNMMWzyW62hxQVWxWqVEb9IupNC
+         VcPQ==
+X-Forwarded-Encrypted: i=1; AKwUvBwxNedIlw6aVUA8wchJAjIGC11An57DmRlMBt6ImVYR4cH4EIt2RDYCkWcO9ZX0kUBecgecs5c07Yw=@vger.kernel.org
+X-Gm-Message-State: AFuF++l4f2xZ3Qj17qr3B7HgTz4X3mEwkiGSqgQG0JascnKLGjb1P557
+	JcjDdGrHwQbvW0ukw0LUrjU+pytn0AXaHfywdB2y/mTp6MWSy3Kk1RY2ucP7kzdGImk=
+X-Gm-Gg: AYBFou3bCfISTvkLToWB6zjpfuW5oUZ3/4jlqCgBjOIbryGJoP9yq+ML+ttSrVFi6pG
+	Qg7MjQclGxkMXi3k0TfPjP3ZBCXaWbIS5B8SD2SAp7wsr4jJLbVCJPxg0WuS8kYh3Yj10jZbXQX
+	5ImXv2E+cAX29JZfipHbqj8Y6UkKgmv+V+630jkhmV5TszS6P4djnLZ0+8RcpWthb/zz6AXmtQ0
+	3qX49xdjrzix5OJETNoTW1v0ovIE03Hpz4NsC9+p+52T6QnebWjnZvmT+TaOPKEJYWaSOtHb7o0
+	CooYYmw+meaXqzS8idmZ7Xfa5UTKgE0fGE/S9iabU+Ofd7CO2y9pHH8yebFs18plgAz/hAulzLg
+	cd7EVBhmoee0b8qN12eFIuHSFANfzIuSU3152rVabef/WY83zanrWadPWf2deGeTZadRKjG6StQ
+	gE5G/YV/a6aH2E1w9mXZfeZcY7sBYugglyygNahDsq23wo4UHtPK80uZTLjP5zqxjfxZDaRwmas
+	87Jw1vT1i1jWK63OvSLRERKYg==
+X-Received: by 2002:a05:6122:2907:b0:5c6:8480:35c8 with SMTP id 71dfb90a1353d-5c7d2809235mr5521189e0c.8.1788439359072;
+        Thu, 03 Sep 2026 05:42:39 -0700 (PDT)
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com. [209.85.222.43])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c7d21c9ea8sm3515390e0c.5.2026.09.03.05.42.38
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Sep 2026 05:42:38 -0700 (PDT)
+Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-98084f8ab1fso195304241.1
+        for <linux-clk@vger.kernel.org>; Thu, 03 Sep 2026 05:42:38 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBzs92ApeOdFDfL9kDfIbApDjjZsyEz9WmB6astTuPPf+bhi+ssWZKZEqpJrjBToRNbzwXhHPwpOaZc=@vger.kernel.org
+X-Received: by 2002:a05:6102:f86:b0:786:dfc0:2ece with SMTP id
+ ada2fe7eead31-78a1f3b9b05mr5106487137.11.1788439357897; Thu, 03 Sep 2026
+ 05:42:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ZohoMailClient: External
+References: <20260825095047.9971-1-biju.das.jz@bp.renesas.com> <20260825095047.9971-3-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20260825095047.9971-3-biju.das.jz@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 3 Sep 2026 14:42:27 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXH8ouMnu6Ey=GfMKFwbU2N_nWFSNM-AcYv2ngAcJK_pg@mail.gmail.com>
+X-Gm-Features: AcwNN1UULql7__dDtfLgJSgkoosulVVoZxCW8pWB1eO0ZbqrsKHQCSZJ81CuyNM
+Message-ID: <CAMuHMdXH8ouMnu6Ey=GfMKFwbU2N_nWFSNM-AcYv2ngAcJK_pg@mail.gmail.com>
+Subject: Re: [PATCH 2/4] clk: renesas: r9a08g046: Add PCIe clocks and reset
+To: Biju <biju.das.au@gmail.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+	Jerome Brunet <jbrunet+clk@baylibre.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-=E5=9C=A8 2026-08-09=E6=97=A5=E7=9A=84 21:14 +0800=EF=BC=8CCody Kang via B4=
- Relay=E5=86=99=E9=81=93=EF=BC=9A
-> From: Cody Kang <codykang.hk@gmail.com>
->=20
-> Pico-ITX brings the second DPU's output to an external DisplayPort
-> connector. Enable that DPU and the DisplayPort controller it feeds.
+On Tue, 25 Aug 2026 at 11:50, Biju <biju.das.au@gmail.com> wrote:
+> From: Biju Das <biju.das.jz@bp.renesas.com>
+>
+> Add the PCIe module clocks (ACLK, CLKL1PM, CLK_PMU) and the PCIe
+> reset signal for the RZ/G3L (R9A08G046) SoC, along with the P8
+> fixed clock required as the parent for CLKL1PM.
+>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-The connector available on the Pico-ITX mainboard isn't a DisplayPort
-port -- it's a USB Type-C port instead.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v7.4.
 
-I think you need to model the Type-C port and alt functions of it.
+Gr{oetje,eeting}s,
 
-Thanks,
-Icenowy
+                        Geert
 
->=20
-> Signed-off-by: Cody Kang <codykang.hk@gmail.com>
->=20
-> ---
-> v2:
-> - no change
-> ---
-> =C2=A0arch/riscv/boot/dts/spacemit/k3-pico-itx.dts | 11 +++++++++++
-> =C2=A0arch/riscv/boot/dts/spacemit/k3-pinctrl.dtsi | 11 +++++++++++
-> =C2=A02 files changed, 22 insertions(+)
->=20
-> diff --git a/arch/riscv/boot/dts/spacemit/k3-pico-itx.dts
-> b/arch/riscv/boot/dts/spacemit/k3-pico-itx.dts
-> index b89c1521e6649..6c31460990a75 100644
-> --- a/arch/riscv/boot/dts/spacemit/k3-pico-itx.dts
-> +++ b/arch/riscv/boot/dts/spacemit/k3-pico-itx.dts
-> @@ -6,6 +6,7 @@
-> =C2=A0#include <dt-bindings/gpio/gpio.h>
-> =C2=A0
-> =C2=A0#include "k3.dtsi"
-> +#include "k3-display.dtsi"
-> =C2=A0#include "k3-pinctrl.dtsi"
-> =C2=A0
-> =C2=A0/ {
-> @@ -221,3 +222,13 @@ hub@1 {
-> =C2=A0&usb2_phy {
-> =C2=A0	status =3D "okay";
-> =C2=A0};
-> +
-> +&dpu1_crtc0 {
-> +	status =3D "okay";
-> +};
-> +
-> +&dp1 {
-> +	pinctrl-names =3D "default";
-> +	pinctrl-0 =3D <&dp1_1_cfg>;
-> +	status =3D "okay";
-> +};
-> diff --git a/arch/riscv/boot/dts/spacemit/k3-pinctrl.dtsi
-> b/arch/riscv/boot/dts/spacemit/k3-pinctrl.dtsi
-> index 3ee1471f37985..2f36eba20f1ee 100644
-> --- a/arch/riscv/boot/dts/spacemit/k3-pinctrl.dtsi
-> +++ b/arch/riscv/boot/dts/spacemit/k3-pinctrl.dtsi
-> @@ -11,6 +11,17 @@
-> =C2=A0#define K3_GPIO(x)	(x / 32) (x % 32)
-> =C2=A0
-> =C2=A0&pinctrl {
-> +	/omit-if-no-ref/
-> +	dp1_1_cfg: dp1-1-cfg {
-> +		dp1-pins {
-> +			pinmux =3D <K3_PADCONF(24, 6)>;	/* dp1 hpd
-> */
-> +
-> +			bias-disable;
-> +			drive-strength =3D <25>;
-> +			power-source =3D <3300>;
-> +		};
-> +	};
-> +
-> =C2=A0	gmac0_rgmii_0_cfg: gmac0-rgmii-0-cfg {
-> =C2=A0		gmac0-rgmii-0-pins {
-> =C2=A0			pinmux =3D <K3_PADCONF(0, 1)>,	/*
-> gmac0_rxdv */
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
