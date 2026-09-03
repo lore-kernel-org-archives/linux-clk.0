@@ -1,282 +1,218 @@
-Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF4691DCB24;
-	Thu,  3 Sep 2026 03:07:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.22.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 165423839BA
+	for <linux-clk@vger.kernel.org>; Thu,  3 Sep 2026 05:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788404861; cv=none; b=bxRfhD4i9dJf1dSsi7P/SPt67vBMk+iScXQymmesME8hMMtMFlLM35oi1kRdmAlNyVc61TpE56SY3r1zGjiRU8cH55i80r7fSzBdAAq/JesKKz17kX0/ew6UCM9RLzj0mwckSZLp4f2sZ6Upx1nqrruBbeTXQwP3OrBjE9BsBsg=
+	t=1788411633; cv=none; b=QAqNnIMYucUVeFVF2IjZbnFAl2aFw1lNJq53gkOmYQy6l/zMc405tAF8X17ZBgEuYRnONRDCQz8GnMk+b+7bOV0DP7GjQeEPY2vZhcXQYInfzUpf05e9U71hTb79ULW+3JTmavaIGeYKwcHsRf/EUNhHm7MCAv0p42hCXjl1dC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788404861; c=relaxed/simple;
-	bh=AYVuTRo93DbErgNAym134QGDBTmnOER6GCL1ZICH6RQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=mTgr2i2KOFIca2wbJ5Syinq/AtJcJfmRvLyzGPFv2UDl7kdFWzMNSOYMACaPu0dbXh9hUtOprE1zxFGo4Cio3aRb4iZcaq9xiB/FUgngO6jlQ6M4H9URQxPkdwRTLyBKafrpPbHW0DUNG/9tkgnWhKZJQO1X/Kgc+HdH9ZLh6cQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=TVvsUY97; arc=none smtp.client-ip=54.207.22.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
+	s=arc-20240116; t=1788411633; c=relaxed/simple;
+	bh=Do6DIyYheb72ubQenuc39X/h+3c0RITXfqxUusCBwQ0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AfQDJuo7AYAKoSK3vsLVAPXiq5ezalnhDbO/i/2SQvGX3Inx+oeAnb2So39SxTnqbagB8e95xHCVQY0HoXVBiJzXZjOGJ4daJ9t5LcEurG19xcppSWqpnEKDFEFZZeqD2x8UbXZViOYCZPx1IruRyCg3ShAjzEyVHao85S+zVCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=My0FBi5E; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="TVvsUY97"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1788404801;
-	bh=iBShIJ2d+BzB2SF86DEbL9Cr3jsm4doMaMu+2XL052I=;
-	h=From:Date:Subject:MIME-Version:Message-Id:To;
-	b=TVvsUY97/dYnghNseodXeQUgWjNY1u7bYpxFDQI6t9w9XVyzE6rc8mqLtaoH4GKBy
-	 snpMjm2yUAcI8lao0oaUfahI4GKWSqEsp+iCWzBV2L3si0wWKXEfFoJMuZ/lmGPccA
-	 sYoCvelo4v2DIVlzOP6B6TFWCJwfurzUnHA2pXwk=
-X-QQ-mid: zesmtpgz4t1788404798tc132e466
-X-QQ-Originating-IP: K8Ail5GM7w1X5jisPHX0MXDA+essN8k4gh/zW3TFcFo=
-Received: from = ( [58.254.69.95])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 03 Sep 2026 11:06:35 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 7870038824526874509
-EX-QQ-RecipientCnt: 19
-From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Date: Thu, 03 Sep 2026 11:06:24 +0800
-Subject: [PATCH v4] clk: spacemit: k3: add CPU PLL rate tables
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="My0FBi5E"
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5aeb98460c6so2918841e87.2
+        for <linux-clk@vger.kernel.org>; Wed, 02 Sep 2026 22:00:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1788411629; x=1789016429; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=Aw9gpVGru8xiZcUq3dSpmW3TOUrgw1owBT+0w2fdvGo=;
+        b=My0FBi5E6ceep2eAoKtxAwze+bPhLRYCaPXTsjOaQqVZ8ryTz+lRaxOnfXEt+284B5
+         U7n/U6MzfdDFFohQTuaH0IOnEuwciKck08RiW19oW1b9BbQxqqS+7CLNBg0NJRQV66KZ
+         GeT8bgS69DdHa2eUqXBtwS4eQfnQVXIpjhYBo05l4bk72Nfb/8ZoDr6n/bLRDXc45xgY
+         qh2ywezmDvFCQu6Lkai2TZfZyOs1dXf9V1w4uXKnoQ6/emjl8zpf0utEcJMl6ZLavcXa
+         85arZA43rRRHYxcYZIrOIo0a7VQVgrEQMlURageYQiagMm0G74u2ih509vZuKvL/Fede
+         jaQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788411629; x=1789016429;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=Aw9gpVGru8xiZcUq3dSpmW3TOUrgw1owBT+0w2fdvGo=;
+        b=IBOuNLnUjc69FiSwS3wlgvX/2/d63CXQ5LxMfOji+jrSnWgbYvCFm4MU8V/RxJ95Zp
+         NVHLojPlZSCfn6eOgeizFf2RhjQDfFOruvehy/CyAQwJB/2VYlecc+NvAJGbCi5WGZfp
+         2vleTUcV0orLyqpo0RXp8WJVaz42aDVXSZwVTDF4NPj58db7qlmYtgN/zpWlatShOe6U
+         dOQORSKmzj4hfyiIF/f2CZv5JXlgBSlAZcW5XED7e4OLCTD6m+5TYX506C0foSrxcOuR
+         GwXG3WE3BEZ6sY5hjiokfTFlVkBHjwoHCKcuzoko8BoEpLwwXc56ukpQkUt8Y7/n9jKn
+         TS8Q==
+X-Forwarded-Encrypted: i=1; AKwUvByzkdbfiGKzSk/ynFaLqKG6mB3RCwbEO96WAS3jCHOzBKJj8M75wPOGQrfUQw0dtMS2G3qRFZxTMVQ=@vger.kernel.org
+X-Gm-Message-State: AFuF++knbO2cHBRack8/mhlKTim0JVb8Dj0EYHyuM5wJ3MrTLYo7cNqx
+	rbDx/mFq2Uf2MuwdI1wLRkTMdw6DODbXSCIVotXUy1WDTCsdtOtBwvvP
+X-Gm-Gg: AYBFou23ziNYP/FWj8x2O1p3Cx30/HX5MExKEsVtVR5Bf6DRZM2GMrq/FU3ueVD4f/Z
+	eDMwqz/aqiTWAX1q9OUI2yYi9uUj4aOTczyaQy5yMCi6oqtacT3mgBlwH9obj9rQhNmQGgdl4Sj
+	KTjyAvUp7lh1EZD4Txb6r6YXdudYTAXuFJBASo3x7F9RJfnS6WRTbDFezdtCIsyhA87vvGcbBaX
+	0KT5bbtjiT4sA1npKyiS47yoMP5SNQ8kC6XBkRi8MUhsPwo0ceD9pUNkP/hgjrEQyfrUd0yxziv
+	xrAhHk4dJxGJEshfe6AiTWvpN6suMF3t+Q6DHXjZcbBdbUqYdno3Zoa/qYAQAdpIhzwku9i5a6g
+	dfbjPSqjy2nZc2IYI6o6U+D4MWLcWRm3dhD5Vd1FKxpRbrSp9b+O8A58mllA7w2/Edb5HnUdycM
+	ohwqleyRhgZh2ye1vQf6OKrYvxuC5TCD661mnCB8gs2zXxKkYrFWDH7+RF6gmHYlOmq5ab/TO8y
+	C8qeC4+y5vMsRLYBhoD314QI51sPUYgVFcTSgdnpoPY
+X-Received: by 2002:ac2:5685:0:b0:5b5:e393:2284 with SMTP id 2adb3069b0e04-5b60832fcfemr3051273e87.3.1788411628714;
+        Wed, 02 Sep 2026 22:00:28 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3a350e4caacsm7622581fa.21.2026.09.02.22.00.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Sep 2026 22:00:26 -0700 (PDT)
+Message-ID: <57832670-6066-424d-a75f-4eb1f1f0cf73@gmail.com>
+Date: Thu, 3 Sep 2026 08:00:24 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 09/10] gpio: bd73800: Support ROHM BD73800 PMIC GPIOs
+To: Bartosz Golaszewski <brgl@kernel.org>
+Cc: Matti Vaittinen <matti.vaittinen@linux.dev>, Lee Jones <lee@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+ Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Linus Walleij <linusw@kernel.org>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Michael Walle <mwalle@kernel.org>, mfd@lists.linux.dev,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-rtc@vger.kernel.org,
+ Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+References: <cover.1788346553.git.mazziesaccount@gmail.com>
+ <5eb294e68b8d5d2c1d3a12b14a55dd2a9c075a09.1788346553.git.mazziesaccount@gmail.com>
+ <CAMRc=MchpaOib+jgMniG7=BBYwB1yqLvJG1sMkjXfRaMFPodgA@mail.gmail.com>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <CAMRc=MchpaOib+jgMniG7=BBYwB1yqLvJG1sMkjXfRaMFPodgA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260903-k3-pll5-pll8-1800mhz-v4-1-afafd9cb47d9@linux.spacemit.com>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/3XNTW7CMBAF4Ksgrxk0Y8exw4p7IBaDcRqX/CkOE
- RTl7o2pKrEgm5Ge9OZ7TxH9EHwU+81TDH4KMXTtErLtRriK2y8P4bJkIVHmaFHCVUFf1zodC2Q
- Rm+oHnCVrNCMXWSaW137wZbi/2OPpL8fb+du7MVmpUYU4dsPjtTtR6v1PZJ8nJgIEVmy0zXPnl
- TzUob3dd7Fn55sw7lzXiLQ1yTeNcEWTQMB8LktNyKYwq5p60xStaGrRtEJ/wcLYnPRHbZ7nX16
- AbwBvAQAA
-X-Change-ID: 20260802-k3-pll5-pll8-1800mhz-c81875a0a944
-To: Michael Turquette <mturquette@baylibre.com>, 
- Inochi Amaoto <inochiama@outlook.com>, Alex Elder <elder@riscstar.com>, 
- Haylen Chu <heylenay@4d2.org>
-Cc: Aurelien Jarno <aurelien@aurel32.net>, stable@vger.kernel.org, 
- Troy Mitchell <troy.mitchell@linux.spacemit.com>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, Yixun Lan <dlan@kernel.org>, 
- Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, 
- Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
- linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org, 
- spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=10027;
- i=troy.mitchell@linux.spacemit.com; h=from:subject:message-id;
- bh=AYVuTRo93DbErgNAym134QGDBTmnOER6GCL1ZICH6RQ=;
- b=owGbwMvMwCU2g/N9w09jE33G02pJDFkznljN2CP2d4Pjs1QhvQgJkSA+8Q72hg8ireEKFaFnf
- zQuDMvuKGVhEONikBVTZOl+wLOtwCfKtkCg0BdmDisTyBAGLk4BmIh5BSPD076p2ZYRnRYMAWUn
- Sz0vNb4xXlF3YaKQXOqZjbvy2pl/M/zPnMiSV7lmV8SkCrcK3ssW4mdr5uad5Po92e6A5rON3gl
- sAA==
-X-Developer-Key: i=troy.mitchell@linux.spacemit.com; a=openpgp;
- fpr=3FE5535CF1B0E658E57DB59BAE1C2FBEA7DB42E1
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpgz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
-X-QQ-XMAILINFO: Msr5cRGAMwRoKoBTG7dioCq6sNLlmj73S25UsNL48iaFCZa5/0y/eIPr
-	W7dzJCOhoro7VMmp+4hbVq7JBeOptRaCNwNZbHOuXNPlvn3TN1hKuBnVlZbJUEE8bDwpjVb
-	ucE1s2CvdlGJOdxdxb9cTrIJP9+KkWMxorLfE7swjUyJfqTS5ACEbOhwLdQaNsmMEfdJP+L
-	ETfVnIehOP1S8iLkSv984YmZ1ytKZkCXv9WYelduq9GS9KUZQDI7gqQ35NZxZoOQbUCZeCz
-	vpwrZT6AV32Y0nDuc6SdkZ1MTvjzDcBAlF19IUKl9+NOf7RTVDzcD4uePFVECZO3U6EQztg
-	3Jo1nyUDMYBIsekZMmWQlymjp4CXTyYn3rv9H/bK+zzRynpHVeRHFrKLg6i/KFYUskFbq2j
-	Bu89czRqNU7MVSezrouY+48Sl0nvi6rC/A0b9ZSyjqewpCTsuPhOGdmupr/2QWRLCH0YrPY
-	n/4xSGS9mlAaEKGlY+uoSe6lWXLV8j0+i+8SfhFqPmhsraTYCbbt4zdFVCp1l8ypwwoKq0X
-	uhZdu1jyAiTjfnFmJzszBqlyZDEgAVhpboKlVHoQ2tpQCKP19w6ZuqFJwbAze4OvGV1zsZD
-	SQQ6mvAXkVEr2kKm3xcV1gvVCqyxyvFVLcSwa/bM8Xu634rvFNgj10YOd+LQXiPgr/MVXlJ
-	j5Dvk0hhc/9eBhY2XUCum0ZvuH5MPgk923bIrKYZ2LE7DuxHy7WFoLuCkQEbrYkyqikLhAB
-	ihx9eXMjOfRcRGyKui/HcmNCkSxLhICBtHDbfAqKB4hUBcJ5U1+ajmWELeI5y+JmceeWd2N
-	4rglvK5RiI6a+yr94tGwg/SKxICFlkbsbpi2ARceug1srVROwRwe2t36cuOG3mlwfJbZ6Zo
-	4JbCmN2Ph6IVsFXYWhOKZM7zkoDFgmOEgv5o0/pD18CjzES68U6aU2DD/JcloJY+Hd/dWYX
-	zdajdtxtVDbvR5gFvh4B7q2908KcbO3s5FOrBDJd/8Uh9r/cOMDInNCdbfbe2c4Lg/6OW0T
-	OjmNQAeSqjelkOnNCRQkz/VBdX5zpHh5EFMkiu0rhJAvpvP3/JNyxwubdXYXcdRjynmC6pv
-	/aZChh6gCDN9EJovyzRtgtaAoTa6YzswGdkvKH49E/3CA6UFtXbsta097L8p9P799YjNrdl
-	MPLJ+XG93042hcub4R0v/3qJXL8fDxaQ3ZEj
-X-QQ-XMRINFO: MPJ6Tf5t3I/ylTmHUqvI8+Wpn+Gzalws3A==
-X-QQ-RECHKSPAM: 0
 
-The K3 CPU PLL rate tables currently describe only one rate per PLL,
-although the hardware supports a wider range.
+Hi dee Ho Bartosz,
 
-PLL3 and PLL4 support rates from 1.05 to 2.4 GHz, while PLL5 and PLL8
-support rates from 1.05 to 2 GHz. Populate the tables with every
-supported rate in 50 MHz steps.
+Thanks for the reviews!
 
-Cc: stable@vger.kernel.org # 7.0+
-Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
----
-The corresponding U-Boot changes are available at:
+On 02/09/2026 15:58, Bartosz Golaszewski wrote:
+> On Wed, 2 Sep 2026 13:07:32 +0200, Matti Vaittinen
+> <matti.vaittinen@linux.dev> said:
+>> From: Matti Vaittinen <mazziesaccount@gmail.com>
+>>
+>> The ROHM BD73800 PMIC has 4 pins (named GPIO1, CLKOUT, FAULT_B and
+>> EXTEN_OUT) which might have been set to operate as a GPI or GPO when OTP
+>> (One Time Programmable memory) is written at device manufacturing.
+>> Support the GPI/GPO use-case via GPIO framework.
+>>
+>> The default OTP for these pins is to not use any of them as GPI or GPO.
+>> (The GPIO1 defaults as an ADC input regardless the naming). Hence the
+>> driver assumes none of these pins is a GPI/GPO unless explicitly pointed
+>> as GPI or GPO via device tree.
+>>
+>> Furthermore, pin's direction can't be changed after OTP configuration is
+>> done. Also the default drive type for a GPO (CMOS / Open Drain) is set
+>> by the OTP configuration. The BD73800 has a set of undocumented test
+>> registers which should allow changing the drive type. Access to the test
+>> register area or the test registers aren't documented and so this driver
+>> does not support configuring the drive type even though it might be
+>> doable.
+>>
+>> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+>>
 
-- Add the CPU PLL rate tables:
-  https://github.com/spacemit-com/uboot-2022.10/commit/787b5cf44c8dbc99db886d5522c0c9cd5a96ffd6
-- Correct the 1.10 GHz and 2.15 GHz table entries:
-  https://github.com/spacemit-com/uboot-2022.10/commit/16a775c20e9efb54ca55352215e76eb3f12e6cf0
----
-Changes in v4:
-- Expand the update to every supported PLL3, PLL4, PLL5 and PLL8 rate.
-- Drop Aurelien Jarno's Reviewed-by and Tested-by trailers because the
-  patch scope has expanded.
-- Add U-Boot references for the complete tables and corrected entries.
-- Link to v3: https://patch.msgid.link/20260831-k3-pll5-pll8-1800mhz-v3-1-530ed0978615@linux.spacemit.com
+//snip
 
-Changes in v3:
-- Mark the change for stable kernels starting with v7.0.
-- Add Aurelien Jarno's Reviewed-by and Tested-by trailers.
-- Rebase onto v7.3-rc1.
-- Link to v2: https://patch.msgid.link/20260810-k3-pll5-pll8-1800mhz-v2-1-aabff510a797@linux.spacemit.com
+>> +
+>> +static const char * const bd73800_gpio_properties[BD73800_GPIO_MAX_PINS] = {
+>> +	"rohm,pin-gpio1", "rohm,pin-clkout", "rohm,pin-fault_b", "rohm,pin-exten"
+> 
+> Can you put the properties on separate lines?
 
-Changes in v2:
-- Drop "clk: spacemit: re-enable PLLs after init"; the PLL init issue
-  will be handled in a separate series.
-- Send the K3 PLL5 and PLL8 1.8 GHz rate-table update as a standalone
-  patch.
-- Clarify that 1.8 GHz is nominal and 2 GHz is an overclocking rate.
-- Link to v1: https://patch.msgid.link/20260804-k3-pll5-pll8-1800mhz-v1-0-a3a75866ce32@linux.spacemit.com
+Sure, no problem, thanks. I just wonder if I should re-spin the whole 
+series for this. I suppose I'll wait until the next week, to see if I'll 
+get any other comments.
+>> +};
+>> +
 
-To: Stephen Boyd <sboyd@kernel.org>
-To: Brian Masney <bmasney+clk@redhat.com>
-To: Jerome Brunet <jbrunet+clk@baylibre.com>
-To: Yixun Lan <dlan@kernel.org>
-To: Paul Walmsley <pjw@kernel.org>
-To: Palmer Dabbelt <palmer@dabbelt.com>
-To: Albert Ou <aou@eecs.berkeley.edu>
-To: Alexandre Ghiti <alex@ghiti.fr>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-riscv@lists.infradead.org
-Cc: spacemit@lists.linux.dev
-Cc: linux-kernel@vger.kernel.org
----
- drivers/clk/spacemit/ccu-k3.c | 96 +++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 96 insertions(+)
+//snip
 
-diff --git a/drivers/clk/spacemit/ccu-k3.c b/drivers/clk/spacemit/ccu-k3.c
-index 92b930d5ff30..950bf531c734 100644
---- a/drivers/clk/spacemit/ccu-k3.c
-+++ b/drivers/clk/spacemit/ccu-k3.c
-@@ -29,15 +29,91 @@ static const struct ccu_pll_rate_tbl pll2_rate_tbl[] = {
- 	CCU_PLLA_RATE(3000000000UL, 0x0b3e2000, 0x00000000, 0xa0558c8c),
- };
- 
-+/* Keep the firmware default as the first entry. */
- static const struct ccu_pll_rate_tbl pll3_rate_tbl[] = {
-+	CCU_PLLA_RATE(2000000000UL, 0x0b292aaa, 0x0000ab00, 0xa0558686),
-+	CCU_PLLA_RATE(1050000000UL, 0x0b2b3000, 0x00000000, 0xa0458080),
-+	CCU_PLLA_RATE(1100000000UL, 0x0b2d3555, 0x00005500, 0xa0458181),
-+	CCU_PLLA_RATE(1150000000UL, 0x0b2f3aaa, 0x0000ab00, 0xa0458181),
-+	CCU_PLLA_RATE(1200000000UL, 0x0b320000, 0x00000000, 0xa0458181),
-+	CCU_PLLA_RATE(1250000000UL, 0x0b340555, 0x00005500, 0xa0458181),
-+	CCU_PLLA_RATE(1300000000UL, 0x0b360aaa, 0x0000ab00, 0xa0458282),
-+	CCU_PLLA_RATE(1350000000UL, 0x0b381000, 0x00000000, 0xa0458282),
-+	CCU_PLLA_RATE(1400000000UL, 0x0b3a1555, 0x00005500, 0xa0458282),
-+	CCU_PLLA_RATE(1450000000UL, 0x0b3c1aaa, 0x0000ab00, 0xa0458383),
-+	CCU_PLLA_RATE(1500000000UL, 0x0b3e2000, 0x00000000, 0xa0458383),
-+	CCU_PLLA_RATE(1550000000UL, 0x0b402555, 0x00005500, 0xa0458383),
-+	CCU_PLLA_RATE(1600000000UL, 0x0b422aaa, 0x0000ab00, 0xa0458484),
-+	CCU_PLLA_RATE(1650000000UL, 0x0b443000, 0x00000000, 0xa0458484),
-+	CCU_PLLA_RATE(1700000000UL, 0x0b463555, 0x00005500, 0xa0458484),
-+	CCU_PLLA_RATE(1750000000UL, 0x0b483aaa, 0x0000ab00, 0xa0458585),
-+	CCU_PLLA_RATE(1800000000UL, 0x0b4b0000, 0x00000000, 0xa0458585),
-+	CCU_PLLA_RATE(1850000000UL, 0x0b4d0555, 0x00005500, 0xa0458585),
-+	CCU_PLLA_RATE(1900000000UL, 0x0b4f0aaa, 0x0000ab00, 0xa0458686),
-+	CCU_PLLA_RATE(1950000000UL, 0x0b511000, 0x00000000, 0xa0458686),
-+	CCU_PLLA_RATE(2050000000UL, 0x0b2a2d55, 0x00005500, 0xa0558686),
-+	CCU_PLLA_RATE(2100000000UL, 0x0b2b3000, 0x00000000, 0xa0558787),
-+	CCU_PLLA_RATE(2150000000UL, 0x0b2c32aa, 0x0000ab00, 0xa0558787),
- 	CCU_PLLA_RATE(2200000000UL, 0x0b2d3555, 0x00005500, 0xa0558787),
-+	CCU_PLLA_RATE(2250000000UL, 0x0b2e3800, 0x00000000, 0xa0558888),
-+	CCU_PLLA_RATE(2300000000UL, 0x0b2f3aaa, 0x0000ab00, 0xa0558888),
-+	CCU_PLLA_RATE(2350000000UL, 0x0b303d55, 0x00005500, 0xa0558888),
-+	CCU_PLLA_RATE(2400000000UL, 0x0b320000, 0x00000000, 0xa0558989),
- };
- 
-+/* Keep the firmware default as the first entry. */
- static const struct ccu_pll_rate_tbl pll4_rate_tbl[] = {
-+	CCU_PLLA_RATE(2000000000UL, 0x0b292aaa, 0x0000ab00, 0xa0558686),
-+	CCU_PLLA_RATE(1050000000UL, 0x0b2b3000, 0x00000000, 0xa0458080),
-+	CCU_PLLA_RATE(1100000000UL, 0x0b2d3555, 0x00005500, 0xa0458181),
-+	CCU_PLLA_RATE(1150000000UL, 0x0b2f3aaa, 0x0000ab00, 0xa0458181),
-+	CCU_PLLA_RATE(1200000000UL, 0x0b320000, 0x00000000, 0xa0458181),
-+	CCU_PLLA_RATE(1250000000UL, 0x0b340555, 0x00005500, 0xa0458181),
-+	CCU_PLLA_RATE(1300000000UL, 0x0b360aaa, 0x0000ab00, 0xa0458282),
-+	CCU_PLLA_RATE(1350000000UL, 0x0b381000, 0x00000000, 0xa0458282),
-+	CCU_PLLA_RATE(1400000000UL, 0x0b3a1555, 0x00005500, 0xa0458282),
-+	CCU_PLLA_RATE(1450000000UL, 0x0b3c1aaa, 0x0000ab00, 0xa0458383),
-+	CCU_PLLA_RATE(1500000000UL, 0x0b3e2000, 0x00000000, 0xa0458383),
-+	CCU_PLLA_RATE(1550000000UL, 0x0b402555, 0x00005500, 0xa0458383),
-+	CCU_PLLA_RATE(1600000000UL, 0x0b422aaa, 0x0000ab00, 0xa0458484),
-+	CCU_PLLA_RATE(1650000000UL, 0x0b443000, 0x00000000, 0xa0458484),
-+	CCU_PLLA_RATE(1700000000UL, 0x0b463555, 0x00005500, 0xa0458484),
-+	CCU_PLLA_RATE(1750000000UL, 0x0b483aaa, 0x0000ab00, 0xa0458585),
-+	CCU_PLLA_RATE(1800000000UL, 0x0b4b0000, 0x00000000, 0xa0458585),
-+	CCU_PLLA_RATE(1850000000UL, 0x0b4d0555, 0x00005500, 0xa0458585),
-+	CCU_PLLA_RATE(1900000000UL, 0x0b4f0aaa, 0x0000ab00, 0xa0458686),
-+	CCU_PLLA_RATE(1950000000UL, 0x0b511000, 0x00000000, 0xa0458686),
-+	CCU_PLLA_RATE(2050000000UL, 0x0b2a2d55, 0x00005500, 0xa0558686),
-+	CCU_PLLA_RATE(2100000000UL, 0x0b2b3000, 0x00000000, 0xa0558787),
-+	CCU_PLLA_RATE(2150000000UL, 0x0b2c32aa, 0x0000ab00, 0xa0558787),
- 	CCU_PLLA_RATE(2200000000UL, 0x0b2d3555, 0x00005500, 0xa0558787),
-+	CCU_PLLA_RATE(2250000000UL, 0x0b2e3800, 0x00000000, 0xa0558888),
-+	CCU_PLLA_RATE(2300000000UL, 0x0b2f3aaa, 0x0000ab00, 0xa0558888),
-+	CCU_PLLA_RATE(2350000000UL, 0x0b303d55, 0x00005500, 0xa0558888),
-+	CCU_PLLA_RATE(2400000000UL, 0x0b320000, 0x00000000, 0xa0558989),
- };
- 
-+/* Keep the firmware default as the first entry. */
- static const struct ccu_pll_rate_tbl pll5_rate_tbl[] = {
-+	CCU_PLLA_RATE(1800000000UL, 0x0b4b0000, 0x00000000, 0xa0458585),
-+	CCU_PLLA_RATE(1050000000UL, 0x0b2b3000, 0x00000000, 0xa0458080),
-+	CCU_PLLA_RATE(1100000000UL, 0x0b2d3555, 0x00005500, 0xa0458181),
-+	CCU_PLLA_RATE(1150000000UL, 0x0b2f3aaa, 0x0000ab00, 0xa0458181),
-+	CCU_PLLA_RATE(1200000000UL, 0x0b320000, 0x00000000, 0xa0458181),
-+	CCU_PLLA_RATE(1250000000UL, 0x0b340555, 0x00005500, 0xa0458181),
-+	CCU_PLLA_RATE(1300000000UL, 0x0b360aaa, 0x0000ab00, 0xa0458282),
-+	CCU_PLLA_RATE(1350000000UL, 0x0b381000, 0x00000000, 0xa0458282),
-+	CCU_PLLA_RATE(1400000000UL, 0x0b3a1555, 0x00005500, 0xa0458282),
-+	CCU_PLLA_RATE(1450000000UL, 0x0b3c1aaa, 0x0000ab00, 0xa0458383),
-+	CCU_PLLA_RATE(1500000000UL, 0x0b3e2000, 0x00000000, 0xa0458383),
-+	CCU_PLLA_RATE(1550000000UL, 0x0b402555, 0x00005500, 0xa0458383),
-+	CCU_PLLA_RATE(1600000000UL, 0x0b422aaa, 0x0000ab00, 0xa0458484),
-+	CCU_PLLA_RATE(1650000000UL, 0x0b443000, 0x00000000, 0xa0458484),
-+	CCU_PLLA_RATE(1700000000UL, 0x0b463555, 0x00005500, 0xa0458484),
-+	CCU_PLLA_RATE(1750000000UL, 0x0b483aaa, 0x0000ab00, 0xa0458585),
-+	CCU_PLLA_RATE(1850000000UL, 0x0b4d0555, 0x00005500, 0xa0458585),
-+	CCU_PLLA_RATE(1900000000UL, 0x0b4f0aaa, 0x0000ab00, 0xa0458686),
-+	CCU_PLLA_RATE(1950000000UL, 0x0b511000, 0x00000000, 0xa0458686),
- 	CCU_PLLA_RATE(2000000000UL, 0x0b292aaa, 0x0000ab00, 0xa0558686),
- };
- 
-@@ -49,7 +125,27 @@ static const struct ccu_pll_rate_tbl pll7_rate_tbl[] = {
- 	CCU_PLLA_RATE(2800000000UL, 0x0b3a1555, 0x00005500, 0xa0558b8b),
- };
- 
-+/* Keep the firmware default as the first entry. */
- static const struct ccu_pll_rate_tbl pll8_rate_tbl[] = {
-+	CCU_PLLA_RATE(1800000000UL, 0x0b4b0000, 0x00000000, 0xa0458585),
-+	CCU_PLLA_RATE(1050000000UL, 0x0b2b3000, 0x00000000, 0xa0458080),
-+	CCU_PLLA_RATE(1100000000UL, 0x0b2d3555, 0x00005500, 0xa0458181),
-+	CCU_PLLA_RATE(1150000000UL, 0x0b2f3aaa, 0x0000ab00, 0xa0458181),
-+	CCU_PLLA_RATE(1200000000UL, 0x0b320000, 0x00000000, 0xa0458181),
-+	CCU_PLLA_RATE(1250000000UL, 0x0b340555, 0x00005500, 0xa0458181),
-+	CCU_PLLA_RATE(1300000000UL, 0x0b360aaa, 0x0000ab00, 0xa0458282),
-+	CCU_PLLA_RATE(1350000000UL, 0x0b381000, 0x00000000, 0xa0458282),
-+	CCU_PLLA_RATE(1400000000UL, 0x0b3a1555, 0x00005500, 0xa0458282),
-+	CCU_PLLA_RATE(1450000000UL, 0x0b3c1aaa, 0x0000ab00, 0xa0458383),
-+	CCU_PLLA_RATE(1500000000UL, 0x0b3e2000, 0x00000000, 0xa0458383),
-+	CCU_PLLA_RATE(1550000000UL, 0x0b402555, 0x00005500, 0xa0458383),
-+	CCU_PLLA_RATE(1600000000UL, 0x0b422aaa, 0x0000ab00, 0xa0458484),
-+	CCU_PLLA_RATE(1650000000UL, 0x0b443000, 0x00000000, 0xa0458484),
-+	CCU_PLLA_RATE(1700000000UL, 0x0b463555, 0x00005500, 0xa0458484),
-+	CCU_PLLA_RATE(1750000000UL, 0x0b483aaa, 0x0000ab00, 0xa0458585),
-+	CCU_PLLA_RATE(1850000000UL, 0x0b4d0555, 0x00005500, 0xa0458585),
-+	CCU_PLLA_RATE(1900000000UL, 0x0b4f0aaa, 0x0000ab00, 0xa0458686),
-+	CCU_PLLA_RATE(1950000000UL, 0x0b511000, 0x00000000, 0xa0458686),
- 	CCU_PLLA_RATE(2000000000UL, 0x0b292aaa, 0x0000ab00, 0xa0558686),
- };
- 
+>> +
+>> +static int gpo_bd73800_probe(struct platform_device *pdev)
+>> +{
+>> +	struct gpio_regmap_config config = { };
+>> +	struct bd73800_gpio *data;
+>> +	struct device *parent, *dev;
+>> +	struct gpio_regmap *gpio;
+>> +	int ret;
+>> +
+>> +	dev = &pdev->dev;
+>> +	/* The device-tree and regmap come from MFD => use parent for that */
+>> +	parent = dev->parent;
+>> +
+>> +	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+>> +	if (!data)
+>> +		return -ENOMEM;
+>> +
+>> +	data->dev = dev;
+>> +	data->regmap = dev_get_regmap(parent, NULL);
+>> +	if (!data->regmap)
+>> +		return dev_err_probe(dev, -ENODEV, "no parent regmap\n");
+>> +
+>> +	ret = bd73800_gpio_get_pins(data);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	if (bitmap_empty(data->valid_mask, BD73800_GPIO_MAX_PINS)) {
+>> +		/*
+>> +		 * The BD73800 may or may not have pins allocated for GPIO
+>> +		 * depending on the OTP used at manufacturing.
+>> +		 * If there are no pins, then we have nothing to do.
+>> +		 */
+>> +		dev_dbg(dev, "no GPIO pins\n");
+>> +		return -ENODEV;
+>> +	}
+>> +
+>> +	config.parent = parent;
+>> +	config.regmap = data->regmap;
+>> +	config.label = "bd73800";
+>> +	config.ngpio = BD73800_GPIO_MAX_PINS;
+>> +	config.reg_dat_base = BD73800_REG_INT_5_SRC;
+>> +	config.reg_set_base = BD73800_REG_GPO_OUT;
+>> +	config.reg_mask_xlate = bd73800_gpio_reg_mask_xlate;
+>> +	config.init_valid_mask = bd73800_gpio_init_valid_mask;
+>> +	/* All pins that are valid GPIO lines also have a fixed direction */
+>> +	config.fixed_direction_mask = data->valid_mask;
+>> +	config.fixed_direction_output = data->output_mask;
+>> +	config.drvdata = data;
+>> +
+>> +	gpio = devm_gpio_regmap_register(dev, &config);
+>> +
+>> +	return PTR_ERR_OR_ZERO(gpio);
+> 
+> Why not return PTR_ERR_OR_ZERO(devm_gpio_regmap_register())?
 
----
-base-commit: cee9395acd8043be0644b25c34bfa86623f2b935
-change-id: 20260802-k3-pll5-pll8-1800mhz-c81875a0a944
+How strongly do you feel about it? It's not a big deal, but I always 
+find it a bit harder to read when functions / macros are called inside a 
+parameter list. Thus I'd rather keep it like this, just for the sake of 
+my own eyes :)
 
-Best regards,
---  
-Troy Mitchell <troy.mitchell@linux.spacemit.com>
+>> +}
+>> +
 
+> 
+> With that:
+> 
+> Acked-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+
+Yours,
+	-- Matti
+
+-- 
+Matti Vaittinen
+Linux kernel developer at ROHM Semiconductors
+Oulu Finland
+
+~~ When things go utterly wrong vim users can always type :help! ~~
