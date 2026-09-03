@@ -1,184 +1,176 @@
-Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2C944E66BB;
-	Thu,  3 Sep 2026 15:50:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F0FC4AA006;
+	Thu,  3 Sep 2026 15:51:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788450604; cv=none; b=C+c7+G0hwD6pVngoyssU5/GXExwpCzl0aguxwhYHJ3I4yO6bMJg2VjidgItWE98F3LaIFPIuE5n+NZLvIY0m+/vIdCtlfYaR7xTl3RnPGIeeK76GIzBoSp6NQzQhIdgHqm1Gq35HmptDk46ZEsuwwXYUn+WmJ73BAWMC4mMxeuw=
+	t=1788450681; cv=none; b=OGLBoS1Bu3BH4VYkBoyU4UAen3sb6daC/FXhQV5JgjuANuzEc3s82p3fAau87skjf/ZtI1yPQIc7nTgrvBRcLpRe3Kex2vuqI6pN7dkOSpUpa9nloDkh+uCgsF4eov1sdL3k34autzZDpZs1p9rLwA9XBDrIC5q/g7ANb+qfulg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788450604; c=relaxed/simple;
-	bh=P5yL6XM+HFZD2EJo3mgYDXyrzkgPSp5EI8Wlswg1ons=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c5KAgwF5hABApONCk23EP4WsO3iVyHeDdlUHcO9BW4arTJpf+01xrPODc4hN4ww2uhWsPntm3lvxFBfjw3hNNt696P6QtTN9IgTjjbH8GAF7ouSFdLS4ntGvpGuH99dXMVmbZoRuYQkZ7Mkyzk+qwh0t2uJwoVumjKY0TmxcZZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=Y+LRzX5x; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Z9gdxPc8; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+	s=arc-20240116; t=1788450681; c=relaxed/simple;
+	bh=gfV8lbxdOIUklmvVCKFw0CBK5E4ztLJwusEP7Qv29oI=;
+	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=OmSDCvZPXODwLDGqV7yI/qeyMvlLrdOAC6Vgi2i1j4T7646OkPuyyZDoS16UwcuNUFfCWVLamg6XVDyIK+sx+u8nuKwZu0YlVXKjhbwLTMuZxtxse/uj532AGCSxWScSXsP3E8L5sf4ZmVhUUi7Vug+4wu6KpDKtdAdFpR+ofXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KmKMukAp; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="Y+LRzX5x";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Z9gdxPc8"
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfout.phl.internal (Postfix) with ESMTP id EBA2DEC0238;
-	Thu,  3 Sep 2026 11:50:00 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-04.internal (MEProxy); Thu, 03 Sep 2026 11:50:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1788450600;
-	 x=1788537000; bh=wPaKRwmdtsp1vBm6EBvKaf7R0Kdtczf/LA21lHbOp6w=; b=
-	Y+LRzX5xXrXNqayPe7KMXhQ/+VURhxMAgD0ouM2uz/50gHIgx6YbABbiyMMOXR1n
-	a62FqLUqkD5wWgT2vYK68ItICcEiLtaaur7gr1X4uNDroxw8do+W+vLveKTo7EPx
-	Sbcdsu9eyzYh8/+nYrO/dvdzAXbVviuSCN5cC1PKGN50g6kcP9QN9SffMZUBytKA
-	eitoKI86Sv0Oz024heau6EJUYkyji/8cuY0dyXEC6fPwPJM9e8QOM8XKA0OJsAqI
-	3dLYFULnT4HTI9P7GB7GEV6cWZAA5U/qXYtIISToY/UUX8709akWpnvihHPv8j2/
-	wi84HN0OocBuE8VO0U4G/A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1788450600; x=
-	1788537000; bh=wPaKRwmdtsp1vBm6EBvKaf7R0Kdtczf/LA21lHbOp6w=; b=Z
-	9gdxPc8qT4qcXSUK4pJjIKUZA7ps5P7Hj4MRy4YH/XdqaH1bQxW76li8Mfuc/ZF4
-	9QHYb5cBxEP0YjeqayeT5DTxvZaRn/r/oqnmpR/wSwElb/KadB/+AG6WWEnBrmuL
-	L1gcPyr+jVPqTiLzDwTrefksTVkffwpeReiVWreZoGWNIJMRPT/SwCR29gnlKFi9
-	+GdNJoeOyzcakBvLwfGnOvPajhgPqucUGyIAzdNoaFm6SzUY6mKnlqxpDXO9Xmp8
-	oAJgQRjtNe91wFtgnOengMBGcoDM1J7gAmz6zUZdjdbutqEJUH4m1abFdnz186m6
-	PCl6AWggSZm6Ls56takfA==
-X-ME-Sender: <xms:KJeZavHlyvyQp1ITFAuWKHqGWF30QMATEV5ve-6B4q4v8iZufmvNnA>
-    <xme:KJeZatDb1XPu0wiq2DEhbo2VPGHjtI0WBc9bJJqlrIgkpDxNmczsualM1raAuwL4y
-    n98CDEqcx09KOfm-Qh1XoquWRz_ycZwtihLcPuhaYJU9BsnImp-6dir>
-X-ME-Received: <xmr:KJeZavVLAMGn5ROfkGFNygK9_hz4s760hvCyX0JDGCv4TChCuca79hEbnSDq2cR9M7j1hNwS1l9-JsqeHt_pda0n21XARj0>
-X-ME-Proxy-Cause: dmFkZTEKFNFBziP3Hnm5AxBg2sOgHcF9oUDXzJd61wy6hyexaRStyPEYfzZyFEEdEoTapN
-    egHacyPulcZ2GKXuuvQOWha3eill4kuuVHLBl50Qkyqh3QI7U4+y82Rg9GOmZ9lEmxosy2
-    LV5IqBSLogMY+bS5t9+REPNqkXe+PKHh2HEn8rX84EW2uOBT/DFTO19KuUAmjE4zzGRm6P
-    mSSmrzltrnA46Eto7106GnTVygTolp1Lm2U4/TY/3L4wIMkWM4sPORwpjrSBUdn3q6UxZc
-    36eYCchSuy7xETYPlQWwmTApU2tj4YE4f6M0IBGQ+l5kdaAAgv6TsEbiMagvTn/EHmjqoC
-    SJ4AUPSj8PQdwFFifVCmCmLch4a3KEl92ZrfhEhURsHD/7BoT0QscUJ/Rno1jcguv53K/+
-    9HAT7zYx9jAE+l5xZwkxg2UthHEDsw6jrVcYo4huSVBGPIRMIlduNiNPhtWa94zpszOeFL
-    3K1w1VBGdIJBKGm/O4/ciGRAfJKkjs3yxYmbbaQ9s+48lmCu9myXI12XCJoeFd4+nVnim6
-    VjDjtSDBFvCHgNWPpsYK+BomZb9G4WPYSMh+Zyqxb9Ikk3LVFdFsla+iEXI4tj1YnAho47
-    J0UKC4sqA8FBfFCPX6+3cHIPxQhn5mbb63yLSHfhkNCZjxc7YWSL7h+2AQxg
-X-ME-Proxy: <xmx:KJeZahrVhz9_kCC5MMh89piSc_xcj3LNN3QTP1kI9NSnxB1swPkCaA>
-    <xmx:KJeZarRzHYrlswsrGnxcyu5cTEXFPH8ltA0Ef3Sp40MLI-bIf4gtlw>
-    <xmx:KJeZar321pRvz1s0r3DDSXyWumz6MeL-OMdNnzOuYAhRttnIdj2-Nw>
-    <xmx:KJeZanCa_XCXiZsc5LDFgUYkTAlFpNZhbCARYrHn7UVG6GcRoP46lA>
-    <xmx:KJeZak0ehqF0Eo7H5f0G5mDxvK51lNkbbeqeGWC76xRXU0iJqtChtgLu>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 3 Sep 2026 11:49:59 -0400 (EDT)
-Date: Thu, 3 Sep 2026 17:49:57 +0200
-From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: renesas: rcar-gen3: Use FIELD_GET()
-Message-ID: <20260903154957.GA3497753@ragnatech.se>
-References: <17c50847f86b814150573e34cc64913f09598f0f.1788437047.git.geert+renesas@glider.be>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KmKMukAp"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADA4C1F000E9;
+	Thu,  3 Sep 2026 15:51:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788450679;
+	bh=OkTZE4ypwPyLM5Qf7df3BuIci4sZOqTNp+6IhiqM/6U=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=KmKMukAprycX9mJrg/Y3F600M+PqwvsH7EseLIzWfghCl3kB3Mxwnj4KG9I7BnZHL
+	 61wwM/Buu9l7iKqWblynGlISwnD2KSDi9IpIKlBK9OG12GxafO3uQrMszrgZRyxMUE
+	 uB7tCG+LIlbtCiOnEVQisSa88weX7mXJH9wNdufyEeu4j/VIAF5/eE20VtvEn3vVtt
+	 86QjP2FWSWDF2Rj4Tj/sq1PEUjFiB6+o4ha3rkHLen7U+dXfhgPKQjSncFpbdA0F0N
+	 L4k1HWckJNiPWneOiry9I0/y3E8hxZdidoQNLDtNf1RdLQFc5RmklDUQobQvP5Lulx
+	 21rFijRtn3jVg==
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v13 4/4] clk: imx: pll14xx: support spread spectrum
+ clock generation
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Dario Binacchi" <dario.binacchi@amarulasolutions.com>
+Cc: linux-clk@vger.kernel.org, Frank.Li@kernel.org, imx@lists.linux.dev
+In-Reply-To: <20260903153836.373267-5-dario.binacchi@amarulasolutions.com>
+References: <20260903153836.373267-1-dario.binacchi@amarulasolutions.com>
+ <20260903153836.373267-5-dario.binacchi@amarulasolutions.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 03 Sep 2026 15:51:19 +0000
+Message-Id: <20260903155119.ADA4C1F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <17c50847f86b814150573e34cc64913f09598f0f.1788437047.git.geert+renesas@glider.be>
 
-Hi Geert,
+Thank you for your contribution! Sashiko AI review found 2 potential issue(=
+s) to consider:
+- [Medium] Potential 32-bit integer overflow in the numerator of the mrr ca=
+lculation escapes bounds checking.
+- [Medium] Invalid SSC configurations generate repeated warnings on every c=
+lock rate change.
+--
 
-Thanks for your work.
+commit 769a49cba9b51c72357919447fa12a82a6548ced
+Author: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 
-On 2026-09-03 14:05:25 +0200, Geert Uytterhoeven wrote:
-> Improve readability by using the FIELD_GET() helper instead of
-> open-coding the same operation, and by adding field definitions to get
-> rid of hardcoded values.
-> 
-> While at it, move register definitions that are only used inside the
-> rcar-gen3-cpg.c source file out of the rcar-gen3-cpg.h header file.
-> Add comments where appropriate.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+    clk: imx: pll14xx: support spread spectrum clock generation
+   =20
+    Add support for spread spectrum clock (SSC) generation to the pll14xx
+    driver.
 
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> diff --git a/drivers/clk/imx/clk-pll14xx.c b/drivers/clk/imx/clk-pll14xx.c
+> index b6f1cc9f57005..5b187101c558c 100644
+> --- a/drivers/clk/imx/clk-pll14xx.c
+> +++ b/drivers/clk/imx/clk-pll14xx.c
 
-> ---
-> To be queued in renesas-clk for v7.4.
-> 
->  drivers/clk/renesas/rcar-gen3-cpg.c | 15 +++++++++------
->  drivers/clk/renesas/rcar-gen3-cpg.h |  3 +--
->  2 files changed, 10 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-> index e5b503332217dcdc..bbb76e4fa333553d 100644
-> --- a/drivers/clk/renesas/rcar-gen3-cpg.c
-> +++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-> @@ -36,7 +36,11 @@
->  
->  #define CPG_PLLnCR_STC_MASK	GENMASK(30, 24)	/* PLL Circuit Mult. Ratio */
->  
-> -#define CPG_RCKCR_CKSEL	BIT(15)	/* RCLK Clock Source Select */
-> +#define CPG_RPCCKCR		0x238	/* RPC-IF Clock Frequency Control Reg */
-> +#define CPG_RPCCKCR_DIV_RPCSRC	GENMASK(4, 3)	/* RPCSRC divider */
+[ ... ]
+
+> @@ -366,6 +377,58 @@ static int clk_pll1416x_set_rate(struct clk_hw *hw, =
+unsigned long drate,
+>  	return 0;
+>  }
+> =20
+> +static void __clk_pll1443x_set_spread_spectrum(struct clk_hw *hw,
+> +					       unsigned long parent_rate,
+> +					       unsigned int pdiv,
+> +					       unsigned int mdiv)
+> +{
+> +	struct clk_pll14xx *pll =3D to_clk_pll14xx(hw);
+> +	struct clk_spread_spectrum *conf =3D &pll->ss_conf;
+> +	u32 sscg_ctrl, mfr, mrr, sel_pf;
+
+[ ... ]
+
+> +	if (!mfr || mfr > FIELD_MAX(MFREQ_CTL_MASK)) {
+> +		pr_warn("%s: SSC disabled, modulation frequency (%u Hz) out of range\n=
+",
+> +			clk_hw_get_name(hw), conf->modfreq_hz);
+> +		goto out;
+> +	}
 > +
-> +#define CPG_RCKCR_CKSEL		BIT(15)		/* RCLK Clock Source Select */
-> +#define CPG_RCKCR_DIV		GENMASK(5, 0)	/* RCLK Division Ratio */
->  
->  /* PLL Clocks */
->  struct cpg_pll_clk {
-> @@ -395,7 +399,7 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
->  		 * the multiplier value.
->  		 */
->  		value = readl(base + CPG_PLL4CR);
-> -		mult = (((value >> 24) & 0x7f) + 1) * 2;
-> +		mult = (FIELD_GET(CPG_PLLnCR_STC_MASK, value) + 1) * 2;
->  		break;
->  
->  	case CLK_TYPE_GEN3_SDH:
-> @@ -420,7 +424,7 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
->  			 * RINT is default.
->  			 * Only if EXTALR is populated, we switch to it.
->  			 */
-> -			value = readl(csn->reg) & 0x3f;
-> +			value = readl(csn->reg) & CPG_RCKCR_DIV;
->  
->  			if (clk_get_rate(clks[cpg_clk_extalr])) {
->  				parent = clks[cpg_clk_extalr];
-> @@ -496,9 +500,8 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
->  		 * MD[4:1] pins and CPG_RPCCKCR[4:3] register value for
->  		 * which has been set prior to booting the kernel.
->  		 */
-> -		value = (readl(base + CPG_RPCCKCR) & GENMASK(4, 3)) >> 3;
-> -
-> -		switch (value) {
-> +		value = readl(base + CPG_RPCCKCR);
-> +		switch (FIELD_GET(CPG_RPCCKCR_DIV_RPCSRC, value)) {
->  		case 0:
->  			div = 5;
->  			break;
-> diff --git a/drivers/clk/renesas/rcar-gen3-cpg.h b/drivers/clk/renesas/rcar-gen3-cpg.h
-> index d15a5d1df71c788b..fa25911b993edfb9 100644
-> --- a/drivers/clk/renesas/rcar-gen3-cpg.h
-> +++ b/drivers/clk/renesas/rcar-gen3-cpg.h
-> @@ -76,8 +76,7 @@ struct rcar_gen3_cpg_pll_config {
->  	u8 osc_prediv;
->  };
->  
-> -#define CPG_RPCCKCR	0x238
-> -#define CPG_RCKCR	0x240
-> +#define CPG_RCKCR		0x240	/* RCLK Frequency Control Register */
->  
->  struct clk *rcar_gen3_cpg_clk_register(struct device *dev,
->  	const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
-> -- 
-> 2.43.0
-> 
-> 
+> +	mrr =3D (conf->spread_bp * mdiv * BIT(6)) / (10000 * mfr);
 
--- 
-Kind Regards,
-Niklas Söderlund
+[Severity: Medium]
+Could this calculation overflow 32-bit arithmetic?
+
+If conf->spread_bp from the device tree is a large invalid value, the
+left-to-right evaluated multiplication conf->spread_bp * mdiv occurs
+in 32-bit arithmetic before being promoted.
+
+Furthermore, on 32-bit architectures where BIT(6) is a 32-bit type,
+the entire numerator conf->spread_bp * mdiv * BIT(6) is evaluated in 32 bit=
+s,
+which can overflow for spread_bp values as low as 65600. This wrapped value
+could then inadvertently pass the mrr > FIELD_MAX(...) bounds check that
+follows.
+
+While typical values are well within bounds, the commit message mentions
+a goal of using 64-bit arithmetic to prevent 32-bit wrapping from
+out-of-range DT values. It appears this code misses that protection
+for spread_bp.
+
+> +	if (!mrr || mrr > FIELD_MAX(MRAT_CTL_MASK)) {
+> +		pr_warn("%s: SSC disabled, spread (%u permyriad) out of range\n",
+> +			clk_hw_get_name(hw), conf->spread_bp);
+> +		goto out;
+> +	}
+> +
+> +	sscg_ctrl |=3D SSCG_ENABLE | FIELD_PREP(MFREQ_CTL_MASK, mfr) |
+> +		FIELD_PREP(MRAT_CTL_MASK, mrr) |
+> +		FIELD_PREP(SEL_PF_MASK, sel_pf);
+> +
+> +out:
+> +	writel_relaxed(sscg_ctrl, pll->base + SSCG_CTRL);
+> +}
+
+[ ... ]
+
+> +static int clk_pll1443x_set_spread_spectrum(struct clk_hw *hw,
+> +					    const struct clk_spread_spectrum *ss_conf)
+> +{
+> +	struct clk_pll14xx *pll =3D to_clk_pll14xx(hw);
+> +	struct clk_hw *parent =3D clk_hw_get_parent(hw);
+> +	unsigned long parent_rate =3D parent ? clk_hw_get_rate(parent) : 0;
+> +	unsigned long flags;
+> +	u32 div_ctl0;
+> +
+> +	spin_lock_irqsave(&pll->lock, flags);
+> +
+> +	pll->ss_conf =3D *ss_conf;
+
+[Severity: Medium]
+Will caching an invalid configuration here cause excessive log spam?
+
+If an out-of-bounds spread spectrum configuration is provided, it is
+unconditionally cached to pll->ss_conf and 0 is returned instead of an erro=
+r.
+
+Subsequent runtime calls to clk_pll1443x_set_rate() will re-evaluate this
+cached invalid configuration via __clk_pll1443x_set_spread_spectrum(), which
+will repeatedly trigger the un-ratelimited pr_warn() calls on every clock
+rate change.
+
+> +
+> +	/*
+> +	 * Apply the configuration to the hardware right away, using the
+> +	 * current PLL dividers: the clock framework does not call set_rate()
+> +	 * if the requested rate is unchanged, so relying on it would leave
+> +	 * the SSC settings unapplied when the PLL is already at the target
+> +	 * rate (e.g. configured by the bootloader).
+> +	 */
+> +	div_ctl0 =3D readl_relaxed(pll->base + DIV_CTL0);
+> +	__clk_pll1443x_set_spread_spectrum(hw, parent_rate,
+> +					   FIELD_GET(PDIV_MASK, div_ctl0),
+> +					   FIELD_GET(MDIV_MASK, div_ctl0));
+> +
+> +	spin_unlock_irqrestore(&pll->lock, flags);
+> +
+> +	return 0;
+> +}
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260903153836.3732=
+67-1-dario.binacchi@amarulasolutions.com?part=3D4
