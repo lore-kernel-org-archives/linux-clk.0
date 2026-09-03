@@ -1,109 +1,126 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 514504D8DB5;
-	Thu,  3 Sep 2026 15:56:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D1C04F0531
+	for <linux-clk@vger.kernel.org>; Thu,  3 Sep 2026 16:43:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788450993; cv=none; b=MNZAP/4H0eRPQkpoLr4p4Ab0zt9gAhPpzmDVYksfz+4KZSymrKha2bWVNQwiIDXI25MUaTHErcaQvDMBlcT6gotI42LnjYLGzmvcLm1DfLbg42fO3K7Ts1ITWNXGsW7wTKQJxJqBHbLH75EOrx/75yWx89HreeHgr1vzI+WtnnY=
+	t=1788453811; cv=none; b=Yb6nvJD/N5xep35t79yab4Z7R869/nR6PCwASttMk0yfqmxFjDxkwndvYtOuvHn34z5qXYXL4CpTPNxZeTRe3o7ZJkCJdNr2ufvBPXVX55Cy+EZg0yvEh2u+fjy0LWy18OT5HWzisJMgsh55i/qrvpR2/iOR2twQ+zrFSkjlHEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788450993; c=relaxed/simple;
-	bh=DQLgwFyklyQY+Ul3sU7ZxseEkrVOZ6GPPNvBm61Thvk=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=XRffBYnpR9L+v3wkdNnJ63bAitFEqVn3tjfP10JR4pPNUAgRQkJDO/fqOelb4UqV5/0neCgVhgtJB4oNRhMkXqAF4qY6kPmvmMsofQ53CcxiHvlhiEL/cIWe64h/Ufbn2j22/eZuCsztjLH/VWBECcaFN9b7gJP6CkYDW6fb6T0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bmf/f666; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1788453811; c=relaxed/simple;
+	bh=CXulU9ugcVs/yCyjMFB12dfhXuE9IH7phZFtkCoFrBI=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=QRFML0/cEXmvvw+js/uSTgULLg+1KL+/3RFlIimCx0wHrXXpdoS5wDeT/D7BMPa/nWdptPPFf9qfuc0Bk25nB2b8IEM3/ta4w9AKtEOUCD+1q/RFmdIE/+WKgOWG56cEIktl4+GCGIZhQ9SKq9v7urzwmbTahE6JZfR2hUp7nzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c6+ROWQ5; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=tdylXGNq; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bmf/f666"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DEB31F000E9;
-	Thu,  3 Sep 2026 15:56:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788450991;
-	bh=bhTCUaiiZ8A0gGUxDFrs3mg1RzINT0VFaxoNylx2xNU=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject;
-	b=bmf/f666i5KsF1D9J1jgfnJU5WzmYmsn2GVaC3M2Bjo0mBeMEaA7qjVs6ba7A1YWM
-	 6inYhBqR5dLgfnB9e+1pczT7b/NF3WOKNrYCvBQaDWQ0lN/fl+auPqqf8aNEfXPqWQ
-	 EBvrdKsKPZyfkQi/irV9bdklW2sd+g/z9MUlLUKuw+JXefX6vrmsCmKDyL/124Xgbr
-	 50l/wSM2zy+gBOAgej7u/2WKtPLmni+cNVY5aExVPUHZoOKK/jwjGDhfKU9e2M0lHp
-	 BPqjbV8hWgjnFyXVbwFUi7/+ps26a90QVw+Pm8WEQAOdTZfgh+3zFA/GjjjM4a/j9C
-	 kjOZl7FA9VeTQ==
-Date: Thu, 03 Sep 2026 10:56:31 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c6+ROWQ5";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="tdylXGNq"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1788453808;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=V8sg4Ic+uUI0uGmJLbnp+7IK0wyVe9CAzpqU2xH+Oy4=;
+	b=c6+ROWQ5UUQdmGn2N8jgzQ4WsIZpogGpMaJ7r51XcFdwEmEHQ8gWwj4Dv39yqfCY9JZthM
+	KT3U6uWRA2su9WiQPNsCSeLVESsmXwHfTKp2hcUPNoOxyhCgKY55a9ZJUeq6bYr7xDWwiL
+	sr3+s170a+WZOmADRWnAtxV3xc8KCIc=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-661-Hqq2rZigPDa6nzrDjuhQtw-1; Thu, 03 Sep 2026 12:43:27 -0400
+X-MC-Unique: Hqq2rZigPDa6nzrDjuhQtw-1
+X-Mimecast-MFC-AGG-ID: Hqq2rZigPDa6nzrDjuhQtw_1788453807
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-9390a2c895bso1101585a.0
+        for <linux-clk@vger.kernel.org>; Thu, 03 Sep 2026 09:43:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1788453807; x=1789058607; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:date:message-id
+         :subject:references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=V8sg4Ic+uUI0uGmJLbnp+7IK0wyVe9CAzpqU2xH+Oy4=;
+        b=tdylXGNqqpvXvwpy0/7+K9soCjiiFW9jZ0tjkd01krRIZ7wMX0K0MPjinnArDUJUSN
+         5AT4E9O4qOf8xxnNMjsSOIDwpgsVwwTtRlKhQ7SK/ptVvS1Yi8wDmV4DSY+6sHlWUVHM
+         F+atvAF8ogtaXR3xr848mEypY2pvxELyhfg+r7x2Bai/NO6qcSidMwRzQySQ5XKkmTGf
+         aZr8mvwr/Oq5bxp7MzMZFr9JUAV+sDZopaU6lD/5nc7MCa8pdUW28s4PU+0TyT6SzO79
+         rguRUw3fR0N6rd7o+ZlycTawrF1n195EMSe+Cuazs7G+SAH1aQIMfKEtBjvqCrP/JH0E
+         RiJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788453807; x=1789058607;
+        h=content-transfer-encoding:content-type:mime-version:date:message-id
+         :subject:references:in-reply-to:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=V8sg4Ic+uUI0uGmJLbnp+7IK0wyVe9CAzpqU2xH+Oy4=;
+        b=nGSwDAXwUzrP90+EV9n/0g9oLdLHwPah7Y5NLZN3Hw9/+NBYI9K5g/hRV+uQQHdwak
+         NxNGHx3HztwEq/PDDwKaXh/r4q//Sr18Ri/eHykMuR8/GN7A+XAEUCwZf0HzLHquywA/
+         RResiqET0dFayoqlIqRpkvQ0X2DlfX4rlSq3LBbKmFlJdtbV6KUiq0vxgomHwSPVKi1K
+         krpcDZ2xon0Fld6JpcNQrdIZeYlljB8QqZFdjR7URFWKmFQv+aNDklzU8ACjfOyUyANr
+         H5iRR9jQIB2L9kqnO8rwsYqYaaI/TlaCUS1Pb1lYkpTxahJMjRt+kM0SGwspVlCCR0nf
+         tMyw==
+X-Gm-Message-State: AFuF++ke23gcMt/HYJKAYpWZfYo6wYwhVwWiCu0zt4Ud7zbMiU56qp8C
+	iTRfC2Eh/uc9IbXZeArSjHsx5bXl8kkWWqkR2PwOHzB2Nc/TS95MOw5tGRULqVec1Ih9/CoEP2P
+	QfgqZZn21lvPO1Z6YucA/PUvmnqnCq48diUOm6/tXDqVTxqShAqiglVRGvSY6kA==
+X-Gm-Gg: AYBFou1R2xEgqOzh0i7+tNDo97Q9iw1EHRqmwHJ7fUsBKjjbgeQ8LN9i5HS2aUbn9kP
+	JODGf7tQIvImSRV6O6jHExy0TzhZ4ZUDGL1Ppdxd9AojZIs4UAmvc6OGZMvPGGRi4RmJpFq8R+F
+	IzlNn/72SuVSmhf9dODqZ6zuKkWsRDlWbIjm1WFf3m32Aun6txA9gm23HpO98CxnbOomQXB+urj
+	r0qBelxvVyQll3NWzvuzfij+XVFcnGCciDzDj0SiWQQOHcL281grvn2AXxmhDr2b6lSrCN1W4U1
+	ffq9A0rnShxn08N69BzioZOskIfTsppL+8zIVdHAzLAEkBFDfDycps4a6WjmZAYJAKoFWfpnP/I
+	oEG37Kq7xCZl1rRrwpj1j2LThuWA2DGMhItV7n+4=
+X-Received: by 2002:a05:620a:6187:b0:939:6df3:d7f6 with SMTP id af79cd13be357-9396df3de25mr992395685a.49.1788453801839;
+        Thu, 03 Sep 2026 09:43:21 -0700 (PDT)
+X-Received: by 2002:a05:620a:6187:b0:939:6df3:d7f6 with SMTP id af79cd13be357-9396df3de25mr992386285a.49.1788453801386;
+        Thu, 03 Sep 2026 09:43:21 -0700 (PDT)
+Received: from [192.168.1.3] (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-90e9ee270d0sm47491336d6.18.2026.09.03.09.43.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Sep 2026 09:43:20 -0700 (PDT)
+From: Brian Masney <bmasney@redhat.com>
+To: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Chen-Yu Tsai <wenst@chromium.org>, Ricardo Ribalda <ribalda@chromium.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ stable@vger.kernel.org
+In-Reply-To: <20260831-common_clk_mt8173-v1-1-2d7241f70379@chromium.org>
+References: <20260831-common_clk_mt8173-v1-1-2d7241f70379@chromium.org>
+Subject: Re: [PATCH] clk: mediatek: Add missing depend for
+ COMMON_CLK_MT8173
+Message-Id: <178845378565.22448.12859439275506649984.b4-ty@b4>
+Date: Thu, 03 Sep 2026 12:43:05 -0400
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Fabio Estevam <festevam@gmail.com>, 
- devicetree@vger.kernel.org, Abel Vesa <abelvesa@kernel.org>, 
- Brian Masney <bmasney+clk@redhat.com>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, linux-clk@vger.kernel.org, 
- Conor Dooley <conor+dt@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, 
- linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev, 
- Frank Li <Frank.Li@nxp.com>
-To: Frank.Li@oss.nxp.com
-In-Reply-To: <20260901193720.1066686-1-Frank.Li@oss.nxp.com>
-References: <20260901193720.1066686-1-Frank.Li@oss.nxp.com>
-Message-Id: <178845094493.3613943.7561968637437394338.robh@kernel.org>
-Subject: Re: [PATCH 1/1] dt-bindings: clock: imx5: add assigned-clock*
- properties
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.16.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=317; i=bmasney@redhat.com;
+ s=20250903; h=from:subject:message-id;
+ bh=Y+oggqG3Z8L+JxkjNpwIvq7dXqEwG7Da2Hajvvt/Msg=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLJmLp4vln/w9uWnFpMnBh3+s5IzyCRo3jTeQ88mBbj8y
+ GR/EvCgvqOUhUGMi0FWTJFlSa5RQUTqKtt7dzRZYOawMoEMYeDiFICJ3Ahg+O86/dGb5RGeNw8x
+ nv+Y6dMhWWrzZE5A6oGlMo+NmKP7Cl8y/PfOydx3s8egMeH7vrvRv2R+z3jEeTuj8P9/m8aGvU3
+ r23kB
+X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
+ fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
 
-On Tue, 01 Sep 2026 15:37:19 -0400, Frank.Li@oss.nxp.com wrote:
-> From: Frank Li <Frank.Li@nxp.com>
-> 
-> The i.MX5 CCM is a pure clock provider with no 'clocks' consumer
-> property in its binding. The dtschema framework only merges the
-> clocks.yaml meta-schema properties (which include assigned-clocks,
-> assigned-clock-parents, and assigned-clock-rates) into a binding
-> when the binding itself declares 'clocks:'.
-> 
-> For example, imx53-m53menlo.dts configures the CKO1 output clock
-> by setting assigned-clocks on the &clks node:
-> 
->   &clks {
->     assigned-clocks = <&clks IMX5_CLK_CKO1_SEL>, ...;
->     assigned-clock-parents = <&clks IMX5_CLK_AHB>;
->     assigned-clock-rates = <133333334>, <33333334>, <33333334>;
->   };
-> 
-> Without explicit declarations this triggers a dtbs_check error:
->   arch/arm/boot/dts/nxp/imx/imx53-m53menlo.dtb: ccm@53fd4000 (fsl,imx53-ccm): 'assigned-clock-parents', 'assigned-clock-rates', 'assigned-clocks' do not match any of the regexes: '^pinctrl-[0-9]+$'
-> 
-> Assisted-by: Claude:claude-sonnet-4.6
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  .../devicetree/bindings/clock/imx5-clock.yaml        | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
+On Mon, 31 Aug 2026 08:50:56 +0000, Ricardo Ribalda wrote:
+> clk: mediatek: Add missing depend for COMMON_CLK_MT8173
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Applied, thanks!
 
-yamllint warnings/errors:
+[1/1] clk: mediatek: Add missing depend for COMMON_CLK_MT8173
+      commit: 84964d0ce3faed815e1b8e048ce5ce1c93badb18
 
-dtschema/dtc warnings/errors:
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/imx5-clock.yaml: properties: 'clocks' is a dependency of 'assigned-clocks'
-	from schema $id: http://devicetree.org/meta-schemas/clocks.yaml
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.kernel.org/project/devicetree/patch/20260901193720.1066686-1-Frank.Li@oss.nxp.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+Best regards,
+-- 
+Brian Masney <bmasney@redhat.com>
 
