@@ -1,176 +1,112 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F0FC4AA006;
-	Thu,  3 Sep 2026 15:51:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E69914DF4D0
+	for <linux-clk@vger.kernel.org>; Thu,  3 Sep 2026 15:51:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788450681; cv=none; b=OGLBoS1Bu3BH4VYkBoyU4UAen3sb6daC/FXhQV5JgjuANuzEc3s82p3fAau87skjf/ZtI1yPQIc7nTgrvBRcLpRe3Kex2vuqI6pN7dkOSpUpa9nloDkh+uCgsF4eov1sdL3k34autzZDpZs1p9rLwA9XBDrIC5q/g7ANb+qfulg=
+	t=1788450718; cv=none; b=HxRVYE4rQIEBLEIUiQf+VOsQGFc4l6qjA2qUPCR6zXB66ycW86DyuwucoArijua66sgm+aK68JBsZTeYUf3NvtTiIoTnlJcg2TFgNgp2pDTQtJKI5Y7BHsN+WKMZ6sU+tRvmTSiKtrymYdvVLIRREONpnsMEvBSDrwowK+lDBEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788450681; c=relaxed/simple;
-	bh=gfV8lbxdOIUklmvVCKFw0CBK5E4ztLJwusEP7Qv29oI=;
+	s=arc-20240116; t=1788450718; c=relaxed/simple;
+	bh=L+cXZycWoCrjgpdTkYmGwpI9LVlJwHX8aBjPv9+ft1s=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=OmSDCvZPXODwLDGqV7yI/qeyMvlLrdOAC6Vgi2i1j4T7646OkPuyyZDoS16UwcuNUFfCWVLamg6XVDyIK+sx+u8nuKwZu0YlVXKjhbwLTMuZxtxse/uj532AGCSxWScSXsP3E8L5sf4ZmVhUUi7Vug+4wu6KpDKtdAdFpR+ofXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KmKMukAp; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=ms/tAEtVrH8vRXIWoJBJXn8mtdQy2ski03QlONyCcne34FO4ss9fzb+P2iLpzbRusHafHrFxFAEIESc3hT+qvgHyyf60nErjSVZSLgAE2McRjzWdGZ+Wt254CYRk/BlNbqoaDsBotWH48HoKqmInX05TYHciLzUh+TNSmCNhkEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YcyDcNwM; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KmKMukAp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADA4C1F000E9;
-	Thu,  3 Sep 2026 15:51:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YcyDcNwM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92AD21F000E9;
+	Thu,  3 Sep 2026 15:51:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788450679;
-	bh=OkTZE4ypwPyLM5Qf7df3BuIci4sZOqTNp+6IhiqM/6U=;
+	s=k20260515; t=1788450716;
+	bh=QNwWKrf6/eLKslPvo3opu6P/FHG4C0LR/M15jNOIISc=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=KmKMukAprycX9mJrg/Y3F600M+PqwvsH7EseLIzWfghCl3kB3Mxwnj4KG9I7BnZHL
-	 61wwM/Buu9l7iKqWblynGlISwnD2KSDi9IpIKlBK9OG12GxafO3uQrMszrgZRyxMUE
-	 uB7tCG+LIlbtCiOnEVQisSa88weX7mXJH9wNdufyEeu4j/VIAF5/eE20VtvEn3vVtt
-	 86QjP2FWSWDF2Rj4Tj/sq1PEUjFiB6+o4ha3rkHLen7U+dXfhgPKQjSncFpbdA0F0N
-	 L4k1HWckJNiPWneOiry9I0/y3E8hxZdidoQNLDtNf1RdLQFc5RmklDUQobQvP5Lulx
-	 21rFijRtn3jVg==
+	b=YcyDcNwMQF3+LyLXynMoRD02jMsNcgHrrb2grRYiDX3tQ/LamrS2AVgg9S+37wbW0
+	 mnJVjjEw6bb20JQzVSG3dEPJddWdapYbuQo+V94S+60IFg0Z5HupJQF4CTn93O6QVe
+	 kdU7/RyequxPJZtqNp9EECqFyyEZnXkeq8oacE3tz+UUdYuCYxqn4R8wOyCf3Bcun0
+	 fky6WPM7qk8TQVynTYloF0S5xY4DUFZxoZbRXP8zkLROu4BRCR9+xIpjN3cfB874eC
+	 5SgcpDlTCWL47Fdf0rymXwBA2mqhI8helzeCPRDnbKYID3JcYF4RptgJqaEd63j259
+	 MxuAe9lH71dzw==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v13 4/4] clk: imx: pll14xx: support spread spectrum
- clock generation
+Subject: Re: [PATCH v13 2/4] clk: scmi: reject SSC configuration out of the
+ OEM field range
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Dario Binacchi" <dario.binacchi@amarulasolutions.com>
-Cc: linux-clk@vger.kernel.org, Frank.Li@kernel.org, imx@lists.linux.dev
-In-Reply-To: <20260903153836.373267-5-dario.binacchi@amarulasolutions.com>
+Cc: linux-clk@vger.kernel.org
+In-Reply-To: <20260903153836.373267-3-dario.binacchi@amarulasolutions.com>
 References: <20260903153836.373267-1-dario.binacchi@amarulasolutions.com>
- <20260903153836.373267-5-dario.binacchi@amarulasolutions.com>
+ <20260903153836.373267-3-dario.binacchi@amarulasolutions.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Thu, 03 Sep 2026 15:51:19 +0000
-Message-Id: <20260903155119.ADA4C1F000E9@smtp.kernel.org>
+Date: Thu, 03 Sep 2026 15:51:56 +0000
+Message-Id: <20260903155156.92AD21F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 
-Thank you for your contribution! Sashiko AI review found 2 potential issue(=
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
 s) to consider:
-- [Medium] Potential 32-bit integer overflow in the numerator of the mrr ca=
-lculation escapes bounds checking.
-- [Medium] Invalid SSC configurations generate repeated warnings on every c=
-lock rate change.
+- [High] Unconditional rejection of `spread_pm =3D=3D 0` breaks the ability=
+ to disable Spread Spectrum Clocking (SSC).
 --
 
-commit 769a49cba9b51c72357919447fa12a82a6548ced
+commit bf8cfe80822f02414072ae479a6270e985c74e54
 Author: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 
-    clk: imx: pll14xx: support spread spectrum clock generation
-   =20
-    Add support for spread spectrum clock (SSC) generation to the pll14xx
-    driver.
+clk: scmi: reject SSC configuration out of the OEM field range
 
-> diff --git a/drivers/clk/imx/clk-pll14xx.c b/drivers/clk/imx/clk-pll14xx.c
-> index b6f1cc9f57005..5b187101c558c 100644
-> --- a/drivers/clk/imx/clk-pll14xx.c
-> +++ b/drivers/clk/imx/clk-pll14xx.c
+This commit adds validation to reject spread spectrum configurations that
+exceed the 8-bit OEM field range or the 16-bit modulation frequency field.
+It aims to prevent silent truncation and incorrect programming of the
+firmware.
 
-[ ... ]
-
-> @@ -366,6 +377,58 @@ static int clk_pll1416x_set_rate(struct clk_hw *hw, =
-unsigned long drate,
->  	return 0;
->  }
+> diff --git a/drivers/clk/clk-scmi-oem.c b/drivers/clk/clk-scmi-oem.c
+> index c1ebbdc6bbc5f..4dac608edd4ce 100644
+> --- a/drivers/clk/clk-scmi-oem.c
+> +++ b/drivers/clk/clk-scmi-oem.c
+> @@ -35,6 +35,7 @@ scmi_clk_imx_set_spread_spectrum(struct clk_hw *hw,
+>  				 const struct clk_spread_spectrum *ss_conf)
+>  {
+>  	struct scmi_clk *clk =3D to_scmi_clk(hw);
+> +	u32 spread_pm =3D ss_conf->spread_bp / 10;
+>  	int ret;
+>  	u32 val;
 > =20
-> +static void __clk_pll1443x_set_spread_spectrum(struct clk_hw *hw,
-> +					       unsigned long parent_rate,
-> +					       unsigned int pdiv,
-> +					       unsigned int mdiv)
-> +{
-> +	struct clk_pll14xx *pll =3D to_clk_pll14xx(hw);
-> +	struct clk_spread_spectrum *conf =3D &pll->ss_conf;
-> +	u32 sscg_ctrl, mfr, mrr, sel_pf;
+> @@ -44,7 +45,19 @@ scmi_clk_imx_set_spread_spectrum(struct clk_hw *hw,
+>  	 * extConfigValue[24]    - Enable/Disable
+>  	 * extConfigValue[31:25] - Reserved
+>  	 */
+> -	val =3D FIELD_PREP(SCMI_CLOCK_IMX_SS_PERCENTAGE_MASK, ss_conf->spread_b=
+p / 10);
+> +	if (!spread_pm || spread_pm > FIELD_MAX(SCMI_CLOCK_IMX_SS_PERCENTAGE_MA=
+SK)) {
+> +		dev_warn(clk->dev, "%s: spread (%u permyriad) out of range\n",
+> +			 clk_hw_get_name(hw), ss_conf->spread_bp);
+> +		return -EINVAL;
+> +	}
+
+[Severity: High]
+Does this unconditional rejection of spread_pm =3D=3D 0 break the ability to
+disable Spread Spectrum Clocking (SSC)?
+
+When a caller (or device tree via assigned-clock-sscs) requests to disable
+SSC, it generally sets method =3D CLK_SPREAD_NO and spread_bp =3D 0. Because
+spread_pm is calculated as ss_conf->spread_bp / 10, a 0 spread results in
+spread_pm =3D=3D 0, triggering this -EINVAL return.
+
+Since the driver contains logic to handle method =3D=3D CLK_SPREAD_NO by om=
+itting
+the SCMI_CLOCK_IMX_SS_ENABLE_MASK bit, it appears designed to support disab=
+ling
+SSC. This new check prevents that valid path from executing and could abort
+device probing if triggered during initialization.
+
+Should the !spread_pm check be restricted to cases where
+ss_conf->method !=3D CLK_SPREAD_NO?
 
 [ ... ]
-
-> +	if (!mfr || mfr > FIELD_MAX(MFREQ_CTL_MASK)) {
-> +		pr_warn("%s: SSC disabled, modulation frequency (%u Hz) out of range\n=
-",
-> +			clk_hw_get_name(hw), conf->modfreq_hz);
-> +		goto out;
-> +	}
-> +
-> +	mrr =3D (conf->spread_bp * mdiv * BIT(6)) / (10000 * mfr);
-
-[Severity: Medium]
-Could this calculation overflow 32-bit arithmetic?
-
-If conf->spread_bp from the device tree is a large invalid value, the
-left-to-right evaluated multiplication conf->spread_bp * mdiv occurs
-in 32-bit arithmetic before being promoted.
-
-Furthermore, on 32-bit architectures where BIT(6) is a 32-bit type,
-the entire numerator conf->spread_bp * mdiv * BIT(6) is evaluated in 32 bit=
-s,
-which can overflow for spread_bp values as low as 65600. This wrapped value
-could then inadvertently pass the mrr > FIELD_MAX(...) bounds check that
-follows.
-
-While typical values are well within bounds, the commit message mentions
-a goal of using 64-bit arithmetic to prevent 32-bit wrapping from
-out-of-range DT values. It appears this code misses that protection
-for spread_bp.
-
-> +	if (!mrr || mrr > FIELD_MAX(MRAT_CTL_MASK)) {
-> +		pr_warn("%s: SSC disabled, spread (%u permyriad) out of range\n",
-> +			clk_hw_get_name(hw), conf->spread_bp);
-> +		goto out;
-> +	}
-> +
-> +	sscg_ctrl |=3D SSCG_ENABLE | FIELD_PREP(MFREQ_CTL_MASK, mfr) |
-> +		FIELD_PREP(MRAT_CTL_MASK, mrr) |
-> +		FIELD_PREP(SEL_PF_MASK, sel_pf);
-> +
-> +out:
-> +	writel_relaxed(sscg_ctrl, pll->base + SSCG_CTRL);
-> +}
-
-[ ... ]
-
-> +static int clk_pll1443x_set_spread_spectrum(struct clk_hw *hw,
-> +					    const struct clk_spread_spectrum *ss_conf)
-> +{
-> +	struct clk_pll14xx *pll =3D to_clk_pll14xx(hw);
-> +	struct clk_hw *parent =3D clk_hw_get_parent(hw);
-> +	unsigned long parent_rate =3D parent ? clk_hw_get_rate(parent) : 0;
-> +	unsigned long flags;
-> +	u32 div_ctl0;
-> +
-> +	spin_lock_irqsave(&pll->lock, flags);
-> +
-> +	pll->ss_conf =3D *ss_conf;
-
-[Severity: Medium]
-Will caching an invalid configuration here cause excessive log spam?
-
-If an out-of-bounds spread spectrum configuration is provided, it is
-unconditionally cached to pll->ss_conf and 0 is returned instead of an erro=
-r.
-
-Subsequent runtime calls to clk_pll1443x_set_rate() will re-evaluate this
-cached invalid configuration via __clk_pll1443x_set_spread_spectrum(), which
-will repeatedly trigger the un-ratelimited pr_warn() calls on every clock
-rate change.
-
-> +
-> +	/*
-> +	 * Apply the configuration to the hardware right away, using the
-> +	 * current PLL dividers: the clock framework does not call set_rate()
-> +	 * if the requested rate is unchanged, so relying on it would leave
-> +	 * the SSC settings unapplied when the PLL is already at the target
-> +	 * rate (e.g. configured by the bootloader).
-> +	 */
-> +	div_ctl0 =3D readl_relaxed(pll->base + DIV_CTL0);
-> +	__clk_pll1443x_set_spread_spectrum(hw, parent_rate,
-> +					   FIELD_GET(PDIV_MASK, div_ctl0),
-> +					   FIELD_GET(MDIV_MASK, div_ctl0));
-> +
-> +	spin_unlock_irqrestore(&pll->lock, flags);
-> +
-> +	return 0;
-> +}
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260903153836.3732=
-67-1-dario.binacchi@amarulasolutions.com?part=3D4
+67-1-dario.binacchi@amarulasolutions.com?part=3D2
