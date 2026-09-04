@@ -1,43 +1,43 @@
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2D7B4A2A49;
-	Fri,  4 Sep 2026 13:27:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3080D4A385F;
+	Fri,  4 Sep 2026 13:27:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788528454; cv=none; b=UzHOBlrqQcnsmAQ8bD5sFvdQarSbOc0bL+5nRqx9tjIBM+0ZF4cuT6b5Jlm9FcYlpHrDcYEZaNyPSXi8SPbBC7LDkp5CR7aGqKtDjYJpMPyvtbj/duaF+Sd8rxAjp5lgEkYdNQ1iITED32BxsZmDIMNqocaVHENgT9Gidso9las=
+	t=1788528456; cv=none; b=dTSHx0sFAHjmPguYSQqYFvx3yEhgeAYkEH6tcUKX4mzRgiT8nt0y8Ki4edKKhGaGVDOs/iqbFYfRggoCDQXS456P61PNcfG9he/SO4C+B+PRtqQU1Yy2XtMUUq7tz+pUHmPaeUMwvJ3EdR23bkJg40VHN6GlJpvBvjfDxlHAXKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788528454; c=relaxed/simple;
-	bh=rW68T+CQl/JZFy44Fl6t0JF3AAOPknHq2T7cRqnVj4Y=;
+	s=arc-20240116; t=1788528456; c=relaxed/simple;
+	bh=5YJjVQvHgGK4YAlFSkkh4VVFOC+oCAldYmTKvNJB9Bk=;
 	h=From:Date:Subject:MIME-Version:Message-Id:In-Reply-To:To:Cc:
-	 Content-Type:References; b=EmqP8dQihXrg+RRS5boY3J1v5V38HLUkTKQlwCdOWgVI6IHgWRJaJJfB4MZpvdBtTxrAAe6PLsiLl76OR9853NVsofRQ4MB1RMQHCVzGHFSo9gw0aUkf86KuUvH+urF6zQGq30z1ZP/+5BpXXRXT/Z3dZ3NSIwn19iiAXxLTK0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ZUt6s6R1; arc=none smtp.client-ip=210.118.77.12
+	 Content-Type:References; b=WgBJreIa0pVMgERRVmtjBVpw29ikPvUn6r6dElKL2khcl56y4o4dI4GeWVPxsLoI2jH0Q5EtD7OMkVsKUD1zm+nza+YUcJGVZWqnnW3WrKjQmKN8Ei4+rEhEVIqPRj9WFuQt6JrRVWn2T5gwUt/99+sNJTj0mGvTZgzxWP488ts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=CZ2qyi77; arc=none smtp.client-ip=210.118.77.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ZUt6s6R1"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="CZ2qyi77"
 Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20260904132729euoutp02217e3dccd13b0ed5c10cc05c7aca1a4e~SISYvct2p2055520555euoutp02g;
-	Fri,  4 Sep 2026 13:27:29 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20260904132729euoutp02217e3dccd13b0ed5c10cc05c7aca1a4e~SISYvct2p2055520555euoutp02g
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20260904132732euoutp016b94b6eea6d301ef844ab4a4ee092e17~SISbA6lLm0362603626euoutp01C;
+	Fri,  4 Sep 2026 13:27:32 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20260904132732euoutp016b94b6eea6d301ef844ab4a4ee092e17~SISbA6lLm0362603626euoutp01C
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1788528450;
-	bh=2HzZ2ovwZGRS3Yj0MIe1QfSgCQSTou9AgMA0OuShVCc=;
+	s=mail20170921; t=1788528452;
+	bh=ypGcT3UxzfVHXNPscr5ihi9eUxTKbUxPQYkjqNuGzOk=;
 	h=From:Date:Subject:In-Reply-To:To:Cc:References:From;
-	b=ZUt6s6R1oH7j71O3eICYz9CICSz26MhPWsM9FO/nauznX+2UC+LwIOpFFRdgaoVB9
-	 pC3SpLROZJTxO1xV00oC1mq9M2K+tcdVKIm8kfkQ8faV2roKTLKWJUc3T0+WY3OdLZ
-	 nPZwfsIbDLCQqPG4/jcr/bEY/MGP6E0vqvc4SIxI=
+	b=CZ2qyi77h5p5/iia84eB+/w5weNcVdB6pEY7HvPvuPC/dsj3rKanGI0dTbwhVogZY
+	 vp7n3dbVoM7tohUGA6HPaUk7e51viR7FwSs6odh57QAD0UW6nzRK3SmKL0arLbHJZ8
+	 CtVlBR7HLYtPP2oX15BKJ6igdXKkkeOkjgV4A/dI=
 Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
 	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20260904132729eucas1p1bd78eb90feaf90b6265c13fc7bf43ada~SISYdp2EF1560815608eucas1p1q;
-	Fri,  4 Sep 2026 13:27:29 +0000 (GMT)
+	20260904132731eucas1p182c607567520f7c6f482a9c85ab64ece~SISanBd-s1857218572eucas1p1t;
+	Fri,  4 Sep 2026 13:27:31 +0000 (GMT)
 Received: from AMDC4942.eu.corp.samsungelectronics.net (unknown
 	[106.210.136.40]) by eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20260904132727eusmtip19f7112f97a84d744e40546887453c7a7~SISWvscFl1747217472eusmtip1T;
-	Fri,  4 Sep 2026 13:27:27 +0000 (GMT)
+	20260904132729eusmtip15675af28cde7076604ae709554daa3bf~SISYhcejx1778317783eusmtip1-;
+	Fri,  4 Sep 2026 13:27:29 +0000 (GMT)
 From: Michal Wilczynski <m.wilczynski@samsung.com>
-Date: Fri, 04 Sep 2026 15:27:12 +0200
-Subject: [PATCH v3 11/19] soc: starfive: Add jh7110-hdmi-subsystem driver
+Date: Fri, 04 Sep 2026 15:27:13 +0200
+Subject: [PATCH v3 12/19] soc: starfive: Add jh7110-vout-subsystem driver
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -45,7 +45,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260904-jh7110-clean-send-v3-11-484f9ae72715@samsung.com>
+Message-Id: <20260904-jh7110-clean-send-v3-12-484f9ae72715@samsung.com>
 In-Reply-To: <20260904-jh7110-clean-send-v3-0-484f9ae72715@samsung.com>
 To: Vinod Koul <vkoul@kernel.org>,  Neil Armstrong
 	<neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>,  Krzysztof
@@ -76,183 +76,155 @@ Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
 	Zheng <zhengxingda@iscas.ac.cn>,  Michal Wilczynski
 	<m.wilczynski@samsung.com>
 X-Mailer: b4 0.15-dev
-X-CMS-MailID: 20260904132729eucas1p1bd78eb90feaf90b6265c13fc7bf43ada
+X-CMS-MailID: 20260904132731eucas1p182c607567520f7c6f482a9c85ab64ece
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20260904132729eucas1p1bd78eb90feaf90b6265c13fc7bf43ada
+X-RootMTR: 20260904132731eucas1p182c607567520f7c6f482a9c85ab64ece
 X-EPHeader: CA
-X-CMS-RootMailID: 20260904132729eucas1p1bd78eb90feaf90b6265c13fc7bf43ada
+X-CMS-RootMailID: 20260904132731eucas1p182c607567520f7c6f482a9c85ab64ece
 References: <20260904-jh7110-clean-send-v3-0-484f9ae72715@samsung.com>
-	<CGME20260904132729eucas1p1bd78eb90feaf90b6265c13fc7bf43ada@eucas1p1.samsung.com>
+	<CGME20260904132731eucas1p182c607567520f7c6f482a9c85ab64ece@eucas1p1.samsung.com>
 
-Add the parent driver for the monolithic JH7110 HDMI IP block.
+Nothing in the video output subsystem can reach its own registers until
+the NoC display bus clock and reset are up and PD_VOUT is powered, and
+those are shared by every device in the region. Leaving them to whichever
+consumer probes first works by accident and stops working as soon as the
+probe order changes.
 
-This driver binds to the starfive,jh7110-hdmi-subsystem node. It maps the
-shared register block, creates a regmap, and calls
-devm_of_platform_populate() to create its hdmi_phy and hdmi_controller
-child devices, which retrieve the shared regmap from this parent.
+Add a driver for the subsystem node that takes the bus clock and reset,
+holds a runtime PM reference so genpd keeps PD_VOUT powered, and then
+populates its children. All three are released only once the last child
+is gone.
 
-The NoC display bus clock and reset that gate access to this region, and
-the PD_VOUT power domain it sits in, are held by the video output
-subsystem parent for as long as this device exists, so there is nothing
-for this driver to bring up itself.
-
-Co-developed-by: Dominique Belhachemi <db@domibel.de>
-Signed-off-by: Dominique Belhachemi <db@domibel.de>
 Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
 ---
- drivers/soc/Kconfig                          |  1 +
- drivers/soc/Makefile                         |  1 +
- drivers/soc/starfive/Kconfig                 | 28 +++++++++++
- drivers/soc/starfive/Makefile                |  2 +
- drivers/soc/starfive/jh7110-hdmi-subsystem.c | 74 ++++++++++++++++++++++++++++
- 5 files changed, 106 insertions(+)
+ drivers/soc/starfive/Kconfig                 | 15 +++++
+ drivers/soc/starfive/Makefile                |  1 +
+ drivers/soc/starfive/jh7110-vout-subsystem.c | 83 ++++++++++++++++++++++++++++
+ 3 files changed, 99 insertions(+)
 
-diff --git a/drivers/soc/Kconfig b/drivers/soc/Kconfig
-index a2d65adffb8052c0ac5a6b60bf33fa9c644701bb..b3b01fc38139d98076c14f626a42ae3b7ef7c5d6 100644
---- a/drivers/soc/Kconfig
-+++ b/drivers/soc/Kconfig
-@@ -24,6 +24,7 @@ source "drivers/soc/renesas/Kconfig"
- source "drivers/soc/rockchip/Kconfig"
- source "drivers/soc/samsung/Kconfig"
- source "drivers/soc/sophgo/Kconfig"
-+source "drivers/soc/starfive/Kconfig"
- source "drivers/soc/sunxi/Kconfig"
- source "drivers/soc/tegra/Kconfig"
- source "drivers/soc/ti/Kconfig"
-diff --git a/drivers/soc/Makefile b/drivers/soc/Makefile
-index c9e689080ceb759384f690c2b65a82b3cb451c74..009f85ff891a15e0455f92c5d5a4059d8b1fcd3f 100644
---- a/drivers/soc/Makefile
-+++ b/drivers/soc/Makefile
-@@ -30,6 +30,7 @@ obj-y				+= renesas/
- obj-y				+= rockchip/
- obj-$(CONFIG_SOC_SAMSUNG)	+= samsung/
- obj-y				+= sophgo/
-+obj-y				+= starfive/
- obj-y				+= sunxi/
- obj-$(CONFIG_ARCH_TEGRA)	+= tegra/
- obj-y				+= ti/
 diff --git a/drivers/soc/starfive/Kconfig b/drivers/soc/starfive/Kconfig
-new file mode 100644
-index 0000000000000000000000000000000000000000..e738638ab0f755fbbabca259264abb56f3b6101f
---- /dev/null
+index e738638ab0f755fbbabca259264abb56f3b6101f..cf5e626b8a39a75768917eee188a79256b36f1aa 100644
+--- a/drivers/soc/starfive/Kconfig
 +++ b/drivers/soc/starfive/Kconfig
-@@ -0,0 +1,28 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+#
-+# Starfive SoC drivers
-+#
-+
-+if ARCH_STARFIVE || COMPILE_TEST
-+menu "Starfive SoC drivers"
-+
-+config SOC_STARFIVE_JH7110_HDMI_SUBSYSTEM
-+	tristate "StarFive JH7110 HDMI subsystem driver"
+@@ -6,6 +6,21 @@
+ if ARCH_STARFIVE || COMPILE_TEST
+ menu "Starfive SoC drivers"
+ 
++config SOC_STARFIVE_JH7110_VOUT_SUBSYSTEM
++	tristate "StarFive JH7110 video output subsystem driver"
 +	depends on OF
-+	select REGMAP_MMIO
++	select PM
 +	help
-+	  This option enables the parent driver
-+	  for the monolithic StarFive JH7110 HDMI peripheral.
++	  This option enables the parent driver for the StarFive JH7110
++	  video output subsystem, which the documentation calls dom_vout_top.
 +
-+	  The JH7110 HDMI IP block contains both the digital controller
-+	  (DRM bridge) and the analog PHY (clock/phy provider) logic within
-+	  a single shared register space.
++	  The subsystem covers the DC8200 display controller, the HDMI
++	  transmitter, the video output clock generator and the video output
++	  system controller. They share one NoC port whose clock and reset
++	  gate access to the whole register region, and the region sits in
++	  the PD_VOUT power domain. This driver owns those resources and
++	  holds them for as long as any of its children exist.
 +
-+	  This driver acts as a wrapper. Its only job is to map the
-+	  shared registers and create separate logical child devices
-+	  for the "PHY" and the "controller". This is required to
-+	  correctly manage resources and break a circular clock dependency
-+	  between the PHY and the VOUT clock generator at probe time.
-+
-+endmenu
-+endif
+ config SOC_STARFIVE_JH7110_HDMI_SUBSYSTEM
+ 	tristate "StarFive JH7110 HDMI subsystem driver"
+ 	depends on OF
 diff --git a/drivers/soc/starfive/Makefile b/drivers/soc/starfive/Makefile
-new file mode 100644
-index 0000000000000000000000000000000000000000..be89d8119212b7a7038817c2f0e8eac1984ada88
---- /dev/null
+index be89d8119212b7a7038817c2f0e8eac1984ada88..6c229020c1e563b37df43f6ac1665465a11333cc 100644
+--- a/drivers/soc/starfive/Makefile
 +++ b/drivers/soc/starfive/Makefile
-@@ -0,0 +1,2 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+obj-$(CONFIG_SOC_STARFIVE_JH7110_HDMI_SUBSYSTEM) += jh7110-hdmi-subsystem.o
-diff --git a/drivers/soc/starfive/jh7110-hdmi-subsystem.c b/drivers/soc/starfive/jh7110-hdmi-subsystem.c
+@@ -1,2 +1,3 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ obj-$(CONFIG_SOC_STARFIVE_JH7110_HDMI_SUBSYSTEM) += jh7110-hdmi-subsystem.o
++obj-$(CONFIG_SOC_STARFIVE_JH7110_VOUT_SUBSYSTEM) += jh7110-vout-subsystem.o
+diff --git a/drivers/soc/starfive/jh7110-vout-subsystem.c b/drivers/soc/starfive/jh7110-vout-subsystem.c
 new file mode 100644
-index 0000000000000000000000000000000000000000..e05b91825be4db31043c5d1512de269d3e151da2
+index 0000000000000000000000000000000000000000..d06ce43d80b1637995a4c5f100d89945d27a192a
 --- /dev/null
-+++ b/drivers/soc/starfive/jh7110-hdmi-subsystem.c
-@@ -0,0 +1,74 @@
++++ b/drivers/soc/starfive/jh7110-vout-subsystem.c
+@@ -0,0 +1,83 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Driver for the StarFive JH7110 HDMI subsystem
++ * Driver for the StarFive JH7110 video output subsystem
 + *
 + * Copyright (c) 2025 Samsung Electronics Co., Ltd.
 + * Author: Michal Wilczynski <m.wilczynski@samsung.com>
 + *
-+ * This driver binds to the monolithic HDMI block and creates separate
-+ * logical platform devices for the HDMI Controller (bridge) and the
-+ * HDMI PHY (clock/phy provider), allowing them to share a single regmap
-+ * and breaking the probing circular dependency.
++ * The display hardware sits behind a single NoC port whose clock and reset
++ * gate access to every register in the region, inside the PD_VOUT power
++ * domain. Nothing below this node can reach its own registers until all three
++ * are up, so bring them up here and hold them for as long as any child device
++ * exists, rather than leaving them to whichever consumer happens to probe
++ * first.
 + */
 +
++#include <linux/clk.h>
 +#include <linux/mod_devicetable.h>
 +#include <linux/module.h>
-+#include <linux/of.h>
 +#include <linux/of_platform.h>
 +#include <linux/platform_device.h>
-+#include <linux/regmap.h>
++#include <linux/pm_runtime.h>
++#include <linux/reset.h>
 +
-+static const struct regmap_config starfive_hdmi_regmap_config = {
-+	.reg_bits = 32,
-+	.val_bits = 8,
-+	.max_register = 0x3fff,
-+};
++static void jh7110_vout_subsys_pm_put(void *data)
++{
++	pm_runtime_put_sync(data);
++}
 +
-+static int starfive_hdmi_subsys_probe(struct platform_device *pdev)
++static int jh7110_vout_subsys_probe(struct platform_device *pdev)
 +{
 +	struct device *dev = &pdev->dev;
-+	struct regmap *regmap;
-+	void __iomem *regs;
++	struct reset_control *bus_rst;
++	struct clk *bus_clk;
 +	int ret;
 +
 +	/*
-+	 * The NoC display bus clock and reset that gate access to this region,
-+	 * and the PD_VOUT power domain it sits in, are held by the video
-+	 * output subsystem parent for as long as this device exists.
++	 * Take a runtime PM reference for the lifetime of this device. genpd
++	 * only keeps PD_VOUT powered while something actually holds it, and
++	 * an unclocked or unpowered access to this region wedges the bus.
 +	 */
-+	regs = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(regs))
-+		return PTR_ERR(regs);
-+
-+	regmap = devm_regmap_init_mmio(dev, regs,
-+				       &starfive_hdmi_regmap_config);
-+	if (IS_ERR(regmap))
-+		return dev_err_probe(dev, PTR_ERR(regmap),
-+				     "Failed to init shared regmap\n");
-+
-+	ret = devm_of_platform_populate(dev);
++	ret = devm_pm_runtime_enable(dev);
 +	if (ret)
-+		return dev_err_probe(dev, ret,
-+				     "Failed to populate child devices\n");
++		return ret;
 +
-+	return 0;
++	ret = pm_runtime_resume_and_get(dev);
++	if (ret)
++		return dev_err_probe(dev, ret, "Failed to power on PD_VOUT\n");
++
++	ret = devm_add_action_or_reset(dev, jh7110_vout_subsys_pm_put, dev);
++	if (ret)
++		return ret;
++
++	bus_clk = devm_clk_get_enabled(dev, NULL);
++	if (IS_ERR(bus_clk))
++		return dev_err_probe(dev, PTR_ERR(bus_clk),
++				     "Failed to enable NoC bus clock\n");
++
++	bus_rst = devm_reset_control_get_exclusive_deasserted(dev, NULL);
++	if (IS_ERR(bus_rst))
++		return dev_err_probe(dev, PTR_ERR(bus_rst),
++				     "Failed to deassert NoC bus reset\n");
++
++	return devm_of_platform_populate(dev);
 +}
 +
-+static const struct of_device_id starfive_hdmi_subsys_of_match[] = {
-+	{ .compatible = "starfive,jh7110-hdmi-subsystem", },
++static const struct of_device_id jh7110_vout_subsys_of_match[] = {
++	{ .compatible = "starfive,jh7110-vout-subsystem", },
 +	{ /* sentinel */ }
 +};
-+MODULE_DEVICE_TABLE(of, starfive_hdmi_subsys_of_match);
++MODULE_DEVICE_TABLE(of, jh7110_vout_subsys_of_match);
 +
-+static struct platform_driver starfive_hdmi_subsys_driver = {
-+	.probe = starfive_hdmi_subsys_probe,
++static struct platform_driver jh7110_vout_subsys_driver = {
++	.probe = jh7110_vout_subsys_probe,
 +	.driver = {
-+		.name = "starfive-hdmi-subsystem",
-+		.of_match_table = starfive_hdmi_subsys_of_match,
++		.name = "jh7110-vout-subsystem",
++		.of_match_table = jh7110_vout_subsys_of_match,
 +	},
 +};
-+module_platform_driver(starfive_hdmi_subsys_driver);
++module_platform_driver(jh7110_vout_subsys_driver);
 +
 +MODULE_AUTHOR("Michal Wilczynski <m.wilczynski@samsung.com>");
-+MODULE_DESCRIPTION("StarFive JH7110 HDMI subsystem Driver");
++MODULE_DESCRIPTION("StarFive JH7110 video output subsystem driver");
 +MODULE_LICENSE("GPL");
 
 -- 
