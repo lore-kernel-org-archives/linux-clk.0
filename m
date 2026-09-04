@@ -1,210 +1,193 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mail-m15577.qiye.163.com (mail-m15577.qiye.163.com [101.71.155.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 924542BFC7B;
-	Thu,  3 Sep 2026 23:14:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2E8535201E
+	for <linux-clk@vger.kernel.org>; Fri,  4 Sep 2026 02:51:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788477296; cv=none; b=WjsFiF1S2e+6ELO4+deplUZkjmAx0jVrHFlwiveSsMBwGM43sCGm4W2UVJiamo5O54cAhp0MU74GHcNQsZtsd0JqWixHQ/XrSYYjrHNFilcUMVsarxa0WShdYffFm0LWvoC19XWnMvsJvt5Sr/bhCB8bCcKKlkZeyG1OKid03Xs=
+	t=1788490286; cv=none; b=h72LZyMAAU9xRslqkemE4ABJI6Z4C+QCLI/MP7dHD20mMACIfg1/VltNZLXTOY8DDdqOy0J5OjlF2pRmuFBYvqDo0dsUfwu4KxiPXcdTGAw8+oh+bJSMddBVmX2xMGW7Kp1Eq34kV+d6FMRormk/j01YyowZXFmVkmVOydqrdLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788477296; c=relaxed/simple;
-	bh=CL7iZ/BeTokLaIvZlj0KogQBKIo6IwH0FkJa+50oP3A=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=ci3JxB4VZUse/u7Y0/xCTBThViI0Ey+IUUjDhBTg0KGqzHnMhAW7Fstd1R4pOZI+vvECZt+VuL6ETA4HnsaouS8GSF4UU89rPX8G1oDJ+Xg+jtiH9IrMbAOjQ5IK6n3+jKpzGXZ4c5Z0+UAKPQ8r31tHNHvTSEBKeL+HEUcAmy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Az3+5AU1; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1788490286; c=relaxed/simple;
+	bh=uEc1pz8bGTuTLdPsvxkjPt++yDSGexAsOpr1KiMyjDY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X4zhIeXfRXhtbMiTznh4hDnCACRC0trNyXsT0FQVRkhaGHPCXZar0a0FuiiJXoNCtRP82PurJg4Gmi5yevaqsf/IbUg/GseLf3h/lqAoLYOwViF2+YUIcT3ddowQfJNJaBpZ2KT7sH3CelOOuiJnI6wx59gIicPK/y4gXJEzRKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=i0xSyO6x; arc=none smtp.client-ip=101.71.155.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Az3+5AU1"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA9321F000E9;
-	Thu,  3 Sep 2026 23:14:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788477295;
-	bh=TRghEdnx3gqfkVD9icW/T9NrPQTeDKGKNaNxbM3ms3Y=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=Az3+5AU1F7XcCmlRMAHQb5Xovknp+pMIzADTGe++FapptFEWfUgw3EiqylM8qRRY8
-	 q7AzR1n8UzagXe3c4ddk8otpCIgiAoNlXBmNCpYv6m75t70Zkmy2mD5r1berhaJyoK
-	 vSYl+Ll4IIPs4GUe+CwCXZyANoItH1akYQtFJs2kL6mgX4LcAgbgQbJA9iaUngzuCW
-	 rhJuSfEKRTGmnbFUH4hmSAo6G829Ng9lQyP4Ztsk1iGzQpPgzGdgox1b1SmKu3uSg5
-	 erAqpoyylNeiNQUjpijTXL+oZRz8eVXkCUZyMgJv+H9KYjwk7T+uYALpe1LwDdQSaL
-	 3PhOLVKzFqBug==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v14 4/4] media: qcom: camss: Add support for PHY API
- devices
-Reply-To: sashiko-reviews@lists.linux.dev
-To: =?utf-8?b?QnJ5YW4gTydEb25vZ2h1ZQ==?= <bryan.odonoghue@linaro.org>
-Cc: linux-phy@lists.infradead.org, conor+dt@kernel.org, olteanv@gmail.com, neil.armstrong@linaro.org, devicetree@vger.kernel.org, vkoul@kernel.org, robh@kernel.org, linux-clk@vger.kernel.org, media-ci@linuxtv.org
-In-Reply-To: <20260903-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v14-4-01ef1eced075@linaro.org>
-References: <20260903-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v14-0-01ef1eced075@linaro.org>
- <20260903-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v14-4-01ef1eced075@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 03 Sep 2026 23:14:54 +0000
-Message-Id: <20260903231454.CA9321F000E9@smtp.kernel.org>
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="i0xSyO6x"
+Received: from [172.16.12.90] (unknown [61.154.14.86])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 4c7eb8f85;
+	Fri, 4 Sep 2026 10:46:08 +0800 (GMT+08:00)
+Message-ID: <f2cdc86f-1f8f-405d-a9c1-3e9059d62f96@rock-chips.com>
+Date: Fri, 4 Sep 2026 10:46:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] drm/rockchip: vop: don't round the pixel clock when
+ the encoder owns the PLL
+To: Vasily Khoruzhick <anarsoul@gmail.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Heiko Stuebner <heiko@sntech.de>,
+ Sandy Huang <hjc@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
+References: <20260901234351.190506-1-anarsoul@gmail.com>
+ <20260901234351.190506-2-anarsoul@gmail.com>
+ <02c265f6-0898-4f11-9954-df7d99d082a0@rock-chips.com>
+ <CA+E=qVeqOahu7v4ser0zxxUU6Fr4dGAVA9m_mgHgu70ChYv9Gg@mail.gmail.com>
+Content-Language: en-US
+From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+In-Reply-To: <CA+E=qVeqOahu7v4ser0zxxUU6Fr4dGAVA9m_mgHgu70ChYv9Gg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0aa06a4f2a9003a7kunm70e050c89bd3e
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVlCTE0dVkgYSkhOQ0pCSRpLS1YVFA
+	kWGhdVEwETFhoSFyQUDg9ZV1kYEgtZQVlNSlVKTk9VSk9VQ01ZV1kWGg8SFR0UWUFZT0tIVUJCSU
+	5LVUpLS1VKQktCWQY+
+DKIM-Signature: a=rsa-sha256;
+	b=i0xSyO6xr+xQMg0Itknu5ALMXB46Nbr8PgbY6KTxEP7jRDixR7wfqEuhzxks5DVCKXq2b+HF8tv4mDcLioBHAlTE+qBwxn25g2m9I9LImEf1AgtwYIdGlJ4FGZz1dywgvScF7fqOxAKhL0ySS8Ofz/HR77PhWhirq066G7BQ+B0=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=iRizJp23wPSCe5WsFPxEB6JBq79SZp7y8nKA/UZLjq0=;
+	h=date:mime-version:subject:message-id:from;
 
-Thank you for your contribution! Sashiko AI review found 3 potential issue(=
-s) to consider:
-- [High] Kconfig symbol `VIDEO_QCOM_CAMSS` selects a non-existent configura=
-tion `PHY_QCOM_MIPI_CSI2`.
-- [Medium] Missing `phy_exit()` cleanup on error paths leading to leaked PH=
-Y hardware state.
-- [Medium] Unchecked return value of `phy_mipi_dphy_get_default_config_for_=
-hsclk()` leads to uninitialized PHY configuration.
---
+Hello Vasily,
 
-commit 23536801ceab899563c72768f20e4c404c373978
-Author: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+On 9/4/2026 6:19 AM, Vasily Khoruzhick wrote:
+> On Tue, Sep 1, 2026 at 8:50 PM Chaoyi Chen <chaoyi.chen@rock-chips.com> wrote:
+>>
+>> Hello Vasily,
+> 
+> Hi Chaoyi,
+> 
+>> On 9/2/2026 7:42 AM, Vasily Khoruzhick wrote:
+>>> On RK3399 the HDMI reference clock is VPLL, a dedicated PLL that is a
+>>> parent of the VOP dclk. dw_hdmi_rockchip_mode_valid() accepts a mode
+>>> only if VPLL can produce its pixel clock, and encoder mode_set() then
+>>> programs VPLL to that rate. However vop_crtc_mode_fixup() ran first,
+>>> in the check phase, and rounded adjusted_mode->clock through
+>>> clk_round_rate() on the dclk. At that point VPLL still sits at its
+>>> previous rate, so the dclk composite picks whichever of VPLL/CPLL/GPLL
+>>> gets closest at its *current* rate and stores that inexact value.
+>>>
+>>
+>> Why did vop_crtc_mode_fixup() run first? Within drm_atomic_helper_check_modeset(),
+>> mode_valid() is executed before mode_fixup().
+> 
+> Sorry, ambiguous wording on my part - "first" meant before the
+> encoder's mode_set() programs the VPLL, not before mode_valid(). The
+> order is as you say, and that's exactly the problem: mode_valid()
+> rounds the pixel clock on the ref clock (the VPLL itself), whose rate
+> table can produce 85.5 MHz, so the mode is accepted. mode_fixup()
+> however rounds on the dclk composite - a different clock - which
+> evaluates its mux parents at their current rates. During check the
+> VPLL still runs at the previous mode's rate, so GPLL/7 = 84.857 MHz
+> wins and gets stored in adjusted_mode->clock. mode_set() then programs
+> the VPLL to that corrupted value in the commit phase. I can reword the
+> commit message to make this clearer.
+> 
 
-media: qcom: camss: Add support for PHY API devices
+I think I understand your point now. The encoder's
+mode_fixup() yields 85.5 MHz, while the CRTC's mode_fixup() yields 
+84.857 MHz. The patch effectively bypasses the CRTC mode_fixup(), 
+so that both the encoder's mode_set() and the CRTC's atomic_enable() 
+clk_set_rate() end up using 85.5 MHz. I think it's worth mentioning
+this in the commit message.
 
-This commit adds the ability to use a PHY pointer which interacts with the
-standard PHY API. In the first instance the code will try to use the new
-PHY interface, falling back to the legacy method if no PHYs are present in
-the DT.
+>>> For 1366x768 (85.5 MHz) this yields GPLL/7 = 84.857 MHz. mode_set()
+>>> then requests 84.857 MHz from VPLL, which the PLL rate table snaps
+>>> down to 74.25 MHz, and the VOP ends up on GPLL/7. The panel receives a
+>>> timing 0.75% slow, which some monitors misdetect (e.g. as 1195x768)
+>>> and display distorted. Only modes whose clock happens to be an exact
+>>> GPLL or CPLL fraction (74.25, 148.5, 297 MHz, ...) were unaffected.
+>>>
+>>
+>> Did you designate VPLL as the parent clock of the VOP dclk in the DTS?
+> 
+> No, and it isn't needed: in the commit phase the encoder's
+> atomic_mode_set() sets the VPLL to exactly the pixel clock before
+> vop_crtc_atomic_enable() sets the dclk (mode-set runs before enables
+> in the atomic helpers), so by then the dclk composite finds vpll/1 as
+> an exact match and the mux selects VPLL by itself. Verified via
+> clk_summary on the patched kernel: vpll = 85500000 feeding dclk_vop0 =
+> 85500000. Pinning the parent in DT also wouldn't have fixed the bug -
+> without CLK_SET_RATE_PARENT the check-phase clk_round_rate() against
+> the still-stale VPLL would return the same wrong value.
+> 
+> See clk_summary for broken and working cases attached.
+> 
+>>> @@ -327,6 +327,12 @@ dw_hdmi_rockchip_encoder_atomic_check(struct drm_encoder *encoder,
+>>>
+>>>       s->output_type = DRM_MODE_CONNECTOR_HDMIA;
+>>>       s->bus_format = bus_format;
+>>> +     /*
+>>> +      * The reference clock (e.g. VPLL on RK3399) is a parent of the VOP
+>>> +      * dclk, and mode_set() programs it to the pixel clock, which
+>>> +      * mode_valid() already guaranteed it can produce.
+>>> +      */
+>>> +     s->dclk_exact = !!hdmi->ref_clk;
+>>>
+>>
+>> What about RK3328? It uses hdmi->hdmiphy_clk.
+> 
+> RK3328 clock ownership is the inverse of RK3399's. hdmiphy_clk is only
+> ever consulted (in mode_valid()); the encoder's mode_set() programs
+> just ref_clk, which is NULL on RK3328, so the encoder never sets the
+> PHY PLL - the promise dclk_exact expresses ("the encoder will program
+> this rate itself at mode_set time") wouldn't be true there.
+>
 
-> diff --git a/drivers/media/platform/qcom/camss/Kconfig b/drivers/media/pl=
-atform/qcom/camss/Kconfig
-> --- a/drivers/media/platform/qcom/camss/Kconfig
-> +++ b/drivers/media/platform/qcom/camss/Kconfig
-> @@ -7,3 +7,4 @@ config VIDEO_QCOM_CAMSS
->  	select VIDEO_V4L2_SUBDEV_API
->  	select VIDEOBUF2_DMA_SG
->  	select V4L2_FWNODE
-> +	select PHY_QCOM_MIPI_CSI2
+Given the complexity of clock trees across different platforms,
+I think a better approach would be to implement functions like
+rockchip_drm_dclk_round_rate() and rockchip_drm_dclk_set_rate(), 
+which properly configure the parent clock to meet the frequency
+requirements. Of course, the current approach is okay for me. :)
 
-[Severity: High]
-Does the config PHY_QCOM_MIPI_CSI2 actually exist?
+>>>  static bool vop_dsp_lut_is_enabled(struct vop *vop)
+>>> @@ -1558,6 +1554,19 @@ static int vop_crtc_atomic_check(struct drm_crtc *crtc,
+>>>       s = to_rockchip_crtc_state(crtc_state);
+>>>       s->enable_afbc = afbc_planes > 0;
+>>>
+>>> +     /*
+>>> +      * Round the pixel clock to what the dclk can really produce, unless
+>>> +      * the encoder will program a dedicated dclk parent PLL to exactly
+>>> +      * this rate at mode_set time. In that case the clock tree seen here
+>>> +      * (with that PLL still at its old rate) would pick a worse, inexact
+>>> +      * source and bake that rate into adjusted_mode, defeating the PLL.
+>>> +      *
+>>> +      * Same condition the atomic helpers use for the mode_fixup callback.
+>>> +      */
+>>> +     if ((crtc_state->mode_changed || crtc_state->connectors_changed) &&
+>>> +         !s->dclk_exact)
+>>> +             vop_crtc_adjust_clock(vop, &crtc_state->adjusted_mode);
+>>> +
+>>>       return 0;
+>>>  }
+>>>
+>>
+>> What about other display interfaces? For example, the .mode_fixup
+>> corresponding to cdn-dp will not be called.
+> 
+> The rounding still runs for cdn-dp and all other interfaces: it moved
+> into vop_crtc_atomic_check(), which is a CRTC callback and is invoked
+> by drm_atomic_helper_check() regardless of the attached encoder - same
+> as the old CRTC-level .mode_fixup was.
+>
 
-Selecting a non-existent symbol can leave the required PHY driver unbuilt,
-leading to silent dependency failures where the hardware driver will lack i=
-ts
-required PHY counterpart at runtime.
+I still don't quite understand why we need to move this to CRTC atomic_check().
+What's wrong with checking !s->dclk_exact in CRTC mode_fixup()? Thanks.
 
-> diff --git a/drivers/media/platform/qcom/camss/camss-csiphy.c b/drivers/m=
-edia/platform/qcom/camss/camss-csiphy.c
-> --- a/drivers/media/platform/qcom/camss/camss-csiphy.c
-> +++ b/drivers/media/platform/qcom/camss/camss-csiphy.c
+> Regards,
+> Vasily
 
-[ ... ]
-
-> @@ -306,11 +308,88 @@ static int csiphy_stream_on(struct csiphy_device *c=
-siphy)
->  {
->  	u8 bpp =3D csiphy_get_bpp(csiphy->res->formats->formats, csiphy->res->f=
-ormats->nformats,
->  				csiphy->fmt[MSM_CSIPHY_PAD_SINK].code);
->  	struct csiphy_lanes_cfg *lncfg =3D &csiphy->cfg.csi2->lane_cfg;
->  	struct phy_configure_opts_mipi_dphy *dphy_cfg;
->  	union phy_configure_opts dphy_opts =3D { 0 };
->  	struct device *dev =3D csiphy->camss->dev;
->  	u8 num_lanes =3D lncfg->num_data;
->  	s64 link_freq;
->  	int ret;
-> =20
->  	dphy_cfg =3D &dphy_opts.mipi_dphy;
-> =20
->  	link_freq =3D camss_get_link_freq(&csiphy->subdev.entity, bpp, num_lane=
-s);
-> =20
->  	if (link_freq < 0) {
->  		dev_err(dev,
->  			"Cannot get CSI2 transmitter's link frequency\n");
->  		return -EINVAL;
->  	}
-> =20
->  	phy_mipi_dphy_get_default_config_for_hsclk(link_freq, num_lanes, dphy_c=
-fg);
-> =20
->  	phy_set_mode(csiphy->phy, PHY_MODE_MIPI_DPHY);
-> =20
->  	ret =3D phy_configure(csiphy->phy, &dphy_opts);
-
-[Severity: Medium]
-Should we check the return value of
-phy_mipi_dphy_get_default_config_for_hsclk() here in csiphy_stream_on()?
-
-If this calculation helper fails, for example due to an unsupported link
-frequency, it returns a negative error code and leaves dphy_cfg
-zero-initialized. Because the error isn't checked, the zeroed configuration
-would be passed down to phy_configure(), risking an invalid hardware state =
-or
-a failure to start the video stream.
-
-> diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/pl=
-atform/qcom/camss/camss.c
-> --- a/drivers/media/platform/qcom/camss/camss.c
-> +++ b/drivers/media/platform/qcom/camss/camss.c
-
-[ ... ]
-
-> @@ -4832,14 +4890,21 @@ static int camss_init_subdevices(struct camss *ca=
-mss)
->  	unsigned int i;
->  	int ret;
-> =20
-> +	camss_detect_legacy_phy(camss);
-> +
->  	for (i =3D 0; i < camss->res->csiphy_num; i++) {
-> -		ret =3D msm_csiphy_subdev_init(camss, &camss->csiphy[i],
-> -					     &res->csiphy_res[i],
-> -					     res->csiphy_res[i].csiphy.id);
-> +		if (!camss->legacy_phy) {
-> +			ret =3D msm_csiphy_subdev_init(camss, i);
-> +		} else {
-> +			ret =3D msm_csiphy_subdev_init_legacy(camss,
-> +							    &camss->csiphy[i],
-> +							    &res->csiphy_res[i],
-> +							    res->csiphy_res[i].csiphy.id);
-> +		}
-> +
->  		if (ret < 0) {
-> -			dev_err(camss->dev,
-> -				"Failed to init csiphy%d sub-device: %d\n",
-> -				i, ret);
-> +			dev_err(camss->dev, "csiphy %d init fail\n",
-> +				res->csiphy_res[i].csiphy.id);
->  			return ret;
->  		}
->  	}
-
-[Severity: Medium]
-If msm_csiphy_subdev_init() fails on a later iteration, does this loop leak
-the PHY hardware state of the previously initialized PHYs?
-
-The msm_csiphy_subdev_init() function now calls phy_init(). If we return
-early here, we never call phy_exit() for the PHYs that successfully
-initialized in prior loop iterations.
-
-Additionally, this initialization state appears to leak on other error paths
-too. For example, if camss_register_entities() fails:
-
-> @@ -5131,8 +5207,10 @@ static int camss_register_entities(struct camss *c=
-amss)
-> =20
->  	i =3D camss->res->csiphy_num;
->  err_reg_csiphy:
-> -	for (i--; i >=3D 0; i--)
-> -		msm_csiphy_unregister_entity(&camss->csiphy[i]);
-> +	for (i--; i >=3D 0; i--) {
-> +		if (csiphy_enabled(camss, &camss->csiphy[i]))
-> +			msm_csiphy_unregister_entity(&camss->csiphy[i]);
-> +	}
-> =20
->  	return ret;
->  }
-
-If camss_register_entities() fails on the very first PHY (i=3D0), the clean=
-up
-loop skips msm_csiphy_unregister_entity() for all PHYs because i becomes -1.
-
-Since msm_csiphy_unregister_entity() is what currently calls phy_exit(), th=
-is
-means all PHYs that were phy_init()ed during camss_init_subdevices() are
-never torn down, leaking their initialization state and reference counts.
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260903-b4-linux-n=
-ext-25-03-13-dtsi-x1e80100-camss-v14-0-01ef1eced075@linaro.org?part=3D4
+-- 
+Best, 
+Chaoyi
