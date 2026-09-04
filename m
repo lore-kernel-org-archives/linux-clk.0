@@ -1,218 +1,159 @@
-Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
+Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012032.outbound.protection.outlook.com [52.101.53.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78E9D3B28D;
-	Fri,  4 Sep 2026 03:25:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.34.216
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788492336; cv=none; b=BvzMRk4t5naZwYMrZ+4N+PFP5ESiCBlynQPoub4cTwCMEPq+TNgOd5I1pvMAF4cK45+6ArajUNvxt9nR30X8Tzu2yalYJeo5Wc1k9bLrLYPASGmIcd4YfzwM5yjRLW7lg6dxVxEfF1ZDFf7P44ShsRHthLKn4Ahmlaedf3dxFfA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788492336; c=relaxed/simple;
-	bh=6RFwegYkZvXOWUnvdsJi8ZI8LqlLw0kxnIMTaIT7GiQ=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=oExyDQoOxkxEF4rM0b7AgLYtPBwoOX/rSwPnYmcrfi123zmPsk1MAgBNoJDSCmdt5esm/YetmMdsVf/acRLtpQSyduuwTqw3p+yRYbxJfYuG/hlMar/iOkcU4Fyf6wMQWIhETwyEfgo5igcuNNrkZ3se8cSE70djcHUX9Sf5l9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=Zj8yLUQl; arc=none smtp.client-ip=54.206.34.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69D613B71AC;
+	Fri,  4 Sep 2026 03:29:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788492546; cv=fail; b=ZNc+PPHRnJB5G36nfgOhCY6DxpfiLkP5tRKs8L4rVQF2kyg21Seije7u4tOSNM9tF/kRvXsGVMcItVLfzBnPLZUAef0tb/d91b23xpSU3gIpQxCuYwZ4YZkzuJ8r+vpTliPtqmJs/VrGxV6uhtzN/qzYisRaFLSYuf1kp98uj2Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788492546; c=relaxed/simple;
+	bh=Gu4Ljd7QBKrEfMbSD+HOTqj8JDyqkOzlFzzz+Z7H3qo=;
+	h=From:To:Subject:Date:Message-Id:Content-Type:MIME-Version; b=JN2GSoelN+ln1no6x29cyzLaH8HMnMgpVLLqWnWTFptLqSokwM2Izkn768j4ZrgNzzjJBy2+/PiI3z+9dIGAHeP/paSC6spj+HybEVPEDAz+SwH8BeMQm6+UJv/UixYHnfS/w2KOJYD6h8nSd4ztYeKkypdjKFJCJY1/EMlGnOc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=OiECqC91; arc=fail smtp.client-ip=52.101.53.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="Zj8yLUQl"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1788492269;
-	bh=+fjce5Gv68gDb4c/l/fe5+Q4SZGtlsosTF1WEjjxUK8=;
-	h=Mime-Version:Date:Message-Id:Subject:From:To;
-	b=Zj8yLUQlyL2m6aW139jNLntDDWwOrrsU4IJ5v7dA4/ogtjFSLT7ga397YGm8m0fLP
-	 VR6QQcq+e07+VFKYPKW3A2kPtwwOWmw7ucELMob7u3CQdStIYPfjxTLBn7xtKkK+yP
-	 rjcANDqptKp07AifhFMujrBNb72RNpM8HH/TXIRA=
-X-QQ-mid: zesmtpsz4t1788492267t97a1c389
-X-QQ-Originating-IP: UUFOhxrmyWmafniu2RpwCuAxO+jazOpB/m3P/JOKzfU=
-Received: from = ( [120.237.158.181])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 04 Sep 2026 11:24:25 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 16749050241281996791
-EX-QQ-RecipientCnt: 19
+	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="OiECqC91"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=m7yYU7KdsNwCnQrsu884skPwViblMNGu21OR/VugUv274iI0VywvT3QacMOxBBQwiQo/u33sQNW1Grib8cER40zYzC4nZD6ZBmHDTp8d+vCIUpNZVPQTaCk6oCOSjqlpkBpMolw229+HcbmaHdhw96qrFanXNP1fwrZXN7/oqkfLiaKnuQmNzqo5TEDliDK/HXewpk8cOZjWYa3L3K5COGoQfMOBAiAE9TCFJQj5oEHxnrSq9dKLsP1lcGjyBV32t5e1unNVeqk6q2L6G57Y+3g4iWXvkn3/KXyz+njIbnbGDsT3BeVpESo2ijqDKj5yUKcG1wRdtXOqVngsf8lYQw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WS1msHvUKJ07kpL+KD/jy84mu21HNZfe26hgOCUSyRU=;
+ b=uKT6rcPRQX5RTG9WUISepdN3QVIiiAOEBD23KZMCYiAzXCSkilrRfJoid+NrH06CtJPOQGpGZh9509xda6J1nlX5nwOGlltI3r2O0lxLWtn4WsX8008lzE0r5uu74oLFGklC7ChQmaVRE5R5fyP35EDd1bmpBdu9x58B8GqCXj8Hm+MdK84WjTkHHxxD83EkfEh5SAvAsL34iWoX88gfnwacdvU6OD5vqY0n2+Ji8zdm71wMEP6UgGcyJlwT2rdBM/2KgGC2rBxJWM8CJfpcMrMqUhNRnHMZEmF9lfnEQ32kN2pA6qCn9x7EyqVaL2BMvrITy+rdDA7rKqaigy0njg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
+ dkim=pass header.d=altera.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WS1msHvUKJ07kpL+KD/jy84mu21HNZfe26hgOCUSyRU=;
+ b=OiECqC91DPkBQy8DxedMmB/qtvaFt7ECJ++v2KaNR3CnmbcMzeiCFNZmQisIXqFEzHqAY07FpWXJRIEwxTu8jHMJBBtkXmGzpstZT+ozwfNrKsxnP8H4TrD6izSdM05P240MpHKbL8EpPK5YNtaxN/aoeN1wIlnXsfTZK+nLoIJp98HQLJVff3GsDkOrZ3h8M9MGjmMVdfSKfuM1MiBWteBWsqq8Kgl+rAtQ+P4TBbQon5h3OY+KYRXAMm6GiurHt1a5JBUj90hwILwSg6GkAmz7fZcfssxEsuhMeyQz8WkrO1S3vo01MMlZLLzPG9pWtzDhJGra/iNHDFqL1zrR+w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=altera.com;
+Received: from LV8PR03MB7398.namprd03.prod.outlook.com (2603:10b6:408:18f::13)
+ by CH4PR03MB7698.namprd03.prod.outlook.com (2603:10b6:610:244::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.382.10; Fri, 4 Sep
+ 2026 03:28:58 +0000
+Received: from LV8PR03MB7398.namprd03.prod.outlook.com
+ ([fe80::9d6:b5c1:7f72:e982]) by LV8PR03MB7398.namprd03.prod.outlook.com
+ ([fe80::9d6:b5c1:7f72:e982%4]) with mapi id 15.21.0360.008; Fri, 4 Sep 2026
+ 03:28:58 +0000
+From: genevieve.chan@altera.com
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH RESEND v2] dt-bindings: clock: agilex: mark mpu_l2ram_clk deprecated
+Date: Fri,  4 Sep 2026 11:28:49 +0800
+Message-Id: <20260904032849.10554-1-genevieve.chan@altera.com>
+X-Mailer: git-send-email 2.32.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI1PR02CA0039.apcprd02.prod.outlook.com
+ (2603:1096:4:1f6::9) To LV8PR03MB7398.namprd03.prod.outlook.com
+ (2603:10b6:408:18f::13)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed;
- boundary=a1891db0d9ec175249303eb0426fd87ee9cd330fcbf1e2986c4b86e25967;
- micalg=pgp-sha512; protocol="application/pgp-signature"
-Date: Fri, 04 Sep 2026 11:24:22 +0800
-Message-Id: <DL67LEVCXFA5.39M5FO7JGKWZS@linux.spacemit.com>
-Subject: Re: [PATCH v4] clk: spacemit: k3: add CPU PLL rate tables
-From: "Troy Mitchell" <troy.mitchell@linux.spacemit.com>
-To: "Aurelien Jarno" <aurelien@aurel32.net>, "Troy Mitchell"
- <troy.mitchell@linux.spacemit.com>
-Cc: "Michael Turquette" <mturquette@baylibre.com>, "Inochi Amaoto"
- <inochiama@outlook.com>, "Alex Elder" <elder@riscstar.com>, "Haylen Chu"
- <heylenay@4d2.org>, <stable@vger.kernel.org>, "Stephen Boyd"
- <sboyd@kernel.org>, "Brian Masney" <bmasney+clk@redhat.com>, "Jerome
- Brunet" <jbrunet+clk@baylibre.com>, "Yixun Lan" <dlan@kernel.org>, "Paul
- Walmsley" <pjw@kernel.org>, "Palmer Dabbelt" <palmer@dabbelt.com>, "Albert
- Ou" <aou@eecs.berkeley.edu>, "Alexandre Ghiti" <alex@ghiti.fr>,
- <linux-clk@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
- <spacemit@lists.linux.dev>, <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20260903-k3-pll5-pll8-1800mhz-v4-1-afafd9cb47d9@linux.spacemit.com> <apmuG46sBg2rGzCD@aurel32.net>
-In-Reply-To: <apmuG46sBg2rGzCD@aurel32.net>
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpsz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
-X-QQ-XMAILINFO: MOsVgoF62rlXg2jMy+En6/iirgDaQNRxZyXqrMP91f3S8ZHwZMVbtaJr
-	7xM27fIaocapgAnzKqQp5stV87/ZpBc/zKO6PJuvevedWvY9zw5FFoz/3JV0FOolmEnfyGC
-	KjDSRkS7G/2zDvIQYc3c4B43MSMHXs+QROIIVuMkfPItNf6WkF9Y7SStWvLuxgOpFKYstbO
-	E8ya/Mp+URQBbu6hVxKByMG0w+zbXAdmPf4QIWRia/xGiAoA12zo5abK8p5vKQw175Y/fqy
-	QhpqPQ7UJt2FJz9OOEJ/4y1oK3RUMbKLQ9qE2VzjsksyZfQLQ+L7WkXbBGnLnwwC16AdJQL
-	c3om90lp2j49lBfkHhaXBT7xKbsguaHKhqILVfhS/FVpujLYZ2JPS+QfDKgQETZtj6uqOxh
-	kg6X35hm8x8RgX2peklC9yHTyQ3f3e/fdPc7s87d3fTANlIn/T8XqpEl/3/bGsPnONcXa7B
-	0sXLQttbLYKutcn0LixM7wet4tI/8mKTCd3h41glH6cC7jGk8rlri4LtHSnzkd1jZcKripf
-	j7xzsm+0gP1mZZk/bF5J9/xb2RSeGI6hWIsllNWajCGLR9ti/kF4k2PvomRof0NrYDxxKro
-	W6KEdmFMWSElR4hqEOvGx1ZOYr+w5X7FeR5N8RSwpQe1dSyyrM+gEZHcSvJylse8N9FQik2
-	2PcCN3bSLovT8BTREGCD3WTHja5a50R/R/KpXxpI5+QRi5gzv3Hm/sSnLiBVPsf12OqNpyS
-	3KakqTIoiABkNOmDDT8RHZAfjdN+kZDsUFc1ALiUafPZ6gkvJ1JyAwRJ98NRSbV+78b8Phx
-	ZPdnVCBsgFGHCQ4Rf12cdikVShykaPvkxFI+XLlvYy+FKt1oWpbdqslGxmNZwFH95egsF/T
-	6VBlf4GICSzNhi9PV+KiqZX88el5Wuso/zbDHiYVf6lzHJ/w6BtvayOw1V7/gR/NZgx9px2
-	JLd+d7MiCfKzoOmm1Feg3zd+IJ9kHQAfgo8M5sadAOwNonVfZoPYpXdoNwGjciuTFzjgjrf
-	XysuNksj4lxi/ZCYbN2eZu3ZD0rjZd35uug+7OwcN6CVmuRDz1lpqsHCNPFuuWfG3kT/8nV
-	WrB8WGoZVJunAMSLegddIhyZNsCfJsctV3Zpd4M/EhdJybl7oSG+olr+UCqxZK7nw==
-X-QQ-XMRINFO: Mp0Kj//9VHAxzExpfF+O8yhSrljjwrznVg==
-X-QQ-RECHKSPAM: 0
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV8PR03MB7398:EE_|CH4PR03MB7698:EE_
+X-MS-Office365-Filtering-Correlation-Id: f1bca1d0-46b9-4abd-fe88-08df0a34a7b9
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|7416014|23010399003|366016|921020|10067099003|56012099006|11063799006|55112099003|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	VWahQ/bLwPXaZtIXIgveFUA5CwCxKNrxIkGtwCIB3/KXDeX93qdd/mv2QE3k7MrF0teDAAYGmmbt4PhSAMGfZu8jxK3wwswTuGjmpse5W90JRxoSCDI/aQZJQNdGqoGF6Q8ziv6yhgSt4dPID0o3zIlARTdAVtk2zT0HzpGU2u1aZGg3EQsOrO5QtaJ4Q8vl0Biv3G64+/H+NfUkKBQSFs7yp2HX2fJeZESF1NfL5TO/r9S7JjQL0Y73er1rOkd0fCEhdkZZ0oD90r7JgUKJRkzK9d8fP5kL1k1298iR/ChdWSndySBpGPIy2P2Nd7D3PLRS48jDS+1cn5pbmUOvCTmm3pzp4hDuYxuREXgPw9S1AQkHetUw+Dnvow0buL3kY4eEFBVq8VSrm0CEp1TGusS5SBI1Y+gfOK8/XWbLrqxvlx8yZc/7Apqag/l96M3XHUUVDFof9BX/Jccehtvgef1Jjd/VO8Sv5LY8rZr0e7ulhpEsXWJQM0nNJuADrPQPhQ6zxfsQljZHHKJpggnTK/L33OCnj+dcSY3J9pDFnrPUpVWqw+v3hvMxCmP3KdpylxcVlN0VRp6T8TVkUsXjPi2V9R21PAbJri7rhTDZ47eGeS6vML++thHyRRMgNxWvu7TeooYxTgTszfwzX5PBXBuxnp6orfCWO1/r7P7DzUfD9hWG8r33p3ni8eZajJdMH0Yl0onSnlNxwbYIrkyPqw==
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR03MB7398.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(23010399003)(366016)(921020)(10067099003)(56012099006)(11063799006)(55112099003)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?3PvxzVWXi8IUjazPPknawnpZqF/dMz5jOoaFkda84Rtj+sNeYdkuH+8HW2fV?=
+ =?us-ascii?Q?Jnwm9vlSwUdxbBfl6SlXg4QEgkB9c+O/MZZGa31j6Fh/A4qhL0XHF8FL5TI0?=
+ =?us-ascii?Q?D9999NDZrKwTUWwco7rKsp05nquVMMLbeknwRVJYXKCtEWiMILdqmROSH5wn?=
+ =?us-ascii?Q?+QTG0bTFIxMFxr8tGK5hCIGjagAwgupfWdpIXb5+Gj7MSCvMFBajG/CEl2tk?=
+ =?us-ascii?Q?TEY1eO7nvifFB3E42jZvwXDDKXjR2+ICSxNRcLggM3jSUPRomhj+tveD1DDW?=
+ =?us-ascii?Q?xYrAgxfmJlRO8+azzh/VjVWAQ95/keZNKCgY/OzTidmVFlWShvZG3SIElCZI?=
+ =?us-ascii?Q?LAE0DnL7iKG8/ERX8YxhBMav1/6a7eDlyGUYS3YgPKSewCt1xJq9QiAc3HyR?=
+ =?us-ascii?Q?1GPA/KzwWovphk7lLN3ttGzaXxuWDHfEYpdqU4oCQdxoDtx6Jy7eEcB6rxOF?=
+ =?us-ascii?Q?6/5nuvVSiMuYSxEYJbum/OZSP4QVlSaAySyP7yiU9yL81lQGrr1nb0EUlkcF?=
+ =?us-ascii?Q?5wcOtn8SbonxVCjlnuvOZUE3ELKbt4mAxEtN5w+ZRdBCNicNLhyAGe9ca60W?=
+ =?us-ascii?Q?1Jc1X4D2ierYg1icg+CsNSr3SAlPdszmhnwfn9y78e51Kx6xgcaPeI44hZFu?=
+ =?us-ascii?Q?VxQzP0rpTJ7gdLDU+upi7TvHpdB+4W8TjBMtzscvs75E+xnQ7FqAFZyn9Et9?=
+ =?us-ascii?Q?pmXHzJoSXgvIiP4eXzIqFrQtNTtTzs2lpwyNAtONnpH2VE/rgQS1gF98Ebeo?=
+ =?us-ascii?Q?n/YAk4sg9uZlBH9Uo+OSRYUntPpfDwZKx8xfhyo+bs2B8jPxVMiq+rA0k8dg?=
+ =?us-ascii?Q?yEvZffAHrdv+XPW9Nh6HvjgNAwbCXp40EGy3M7WGCn9RN4KJuT34yOkrcxLf?=
+ =?us-ascii?Q?USi9e+FC+Wt2D3wjc3qIxmVZjBKW4NLzDJizIrLqHXZ68O1Wh4KIjGTBlu4l?=
+ =?us-ascii?Q?h+rffOvHIQmPbTpd55enEOUC7CbPdY8ShJJc7qp2IPgfDYKztRgwui0PSfOo?=
+ =?us-ascii?Q?5HEh7PVYfMngsdLd6WItLoM/ksnwVO8MW5F88Xn4pq9Te7Taix2P6Q6F4e3U?=
+ =?us-ascii?Q?wWmXJpgpn5J1Lw5hXV5JSF9HG37SdqamIJOLdPBUtxVaRC43+dZlFqtk30fT?=
+ =?us-ascii?Q?/HEZWcDl5w7v/0PdtmwA63lfiaAdq0xvSnMGLxjCD0g7hTGzM+bZ0vLQSE94?=
+ =?us-ascii?Q?UB05iX/TCWDt+QSza3fUhab4roKaROMwwGGylsoHl51JfBD2C97sURGCfsCX?=
+ =?us-ascii?Q?Bya5Z4Fhn5UrQ54kPjAz6HV0v5gAE2S9w7tY6TpQ6fh3OwcT2v9o0xm4vTfA?=
+ =?us-ascii?Q?xVSfFlzAbtj0Gwnegc8YYB6auxqeh58Xkb5+p4AqwN8hEmxaALoAgFC9r4Wl?=
+ =?us-ascii?Q?1F7DBxXNmUaZyquIz5iHTd22LewTRGYoi3qDMp0OjXkV7rZE4yZOXhRtIoYb?=
+ =?us-ascii?Q?RQNrf+aE8+EOeeYuRXbUC49ASnW+Wa0jgu6HISuglU1UkteXl5tuInpKfCht?=
+ =?us-ascii?Q?ET7fWxEXLc1zovN1KHV/Dep8jQZgtvRIQ69DTyUxpcvLBXbDxd72wHCJt+4n?=
+ =?us-ascii?Q?Gg/pNJ791dvQPy4kzP+gnsj0e782basOVVzjVyG1TXBAimgWNWe0ufmxfCtq?=
+ =?us-ascii?Q?Q7mxHNF2ch2x41annu1NLGVMMWar0OIwE95I6S5vTilBuLNPIMdIXh7PT8Zq?=
+ =?us-ascii?Q?MJQcVHmWU4ObmpvLMh1apYEcGPVdeFm8Rzffr99ZjayvWk1U2m7m9c5A2JPf?=
+ =?us-ascii?Q?StgxKui+Gn5nQ9V6n5R5M1D4MmTxK6M=3D?=
+X-OriginatorOrg: altera.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f1bca1d0-46b9-4abd-fe88-08df0a34a7b9
+X-MS-Exchange-CrossTenant-AuthSource: LV8PR03MB7398.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2026 03:28:58.3216
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: UsMdfXiXdRM5AfqVcTYR4/QSDCRD8kSz6G5d+Afc8QwHVk55P0jQ/C9DCzcIUl4xJAEfZGCPWJkR7XzBlKQwy3RnUAzsG23ulspbuqDosV4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH4PR03MB7698
 
---a1891db0d9ec175249303eb0426fd87ee9cd330fcbf1e2986c4b86e25967
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+From: Genevieve Chan <genevieve.chan@altera.com>
 
-Hi Aurelien,
+Preliminary documentation referred to mpu_l2ram_clk, but that clock is
+now mpu_ccu_clk and is already represented by AGILEX_MPU_CCU_CLK.
+Keep AGILEX_MPU_L2RAM_CLK as a legacy ABI-preserved ID (do not use in
+new DTs).
 
-On Fri Sep 4, 2026 at 1:27 AM +08, Aurelien Jarno wrote:
-> Hi Troy,
->
-> On 2026-09-03 11:06, Troy Mitchell wrote:
->> The K3 CPU PLL rate tables currently describe only one rate per PLL,
->> although the hardware supports a wider range.
->>=20
->> PLL3 and PLL4 support rates from 1.05 to 2.4 GHz, while PLL5 and PLL8
->> support rates from 1.05 to 2 GHz. Populate the tables with every
->> supported rate in 50 MHz steps.
->>=20
->> Cc: stable@vger.kernel.org # 7.0+
->> Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
->> ---
->> The corresponding U-Boot changes are available at:
->>=20
->> - Add the CPU PLL rate tables:
->>   https://github.com/spacemit-com/uboot-2022.10/commit/787b5cf44c8dbc99d=
-b886d5522c0c9cd5a96ffd6
->> - Correct the 1.10 GHz and 2.15 GHz table entries:
->>   https://github.com/spacemit-com/uboot-2022.10/commit/16a775c20e9efb54c=
-a55352215e76eb3f12e6cf0
->> ---
->> Changes in v4:
->> - Expand the update to every supported PLL3, PLL4, PLL5 and PLL8 rate.
->> - Drop Aurelien Jarno's Reviewed-by and Tested-by trailers because the
->>   patch scope has expanded.
->> - Add U-Boot references for the complete tables and corrected entries.
->> - Link to v3: https://patch.msgid.link/20260831-k3-pll5-pll8-1800mhz-v3-=
-1-530ed0978615@linux.spacemit.com
->>=20
->> Changes in v3:
->> - Mark the change for stable kernels starting with v7.0.
->> - Add Aurelien Jarno's Reviewed-by and Tested-by trailers.
->> - Rebase onto v7.3-rc1.
->> - Link to v2: https://patch.msgid.link/20260810-k3-pll5-pll8-1800mhz-v2-=
-1-aabff510a797@linux.spacemit.com
->>=20
->> Changes in v2:
->> - Drop "clk: spacemit: re-enable PLLs after init"; the PLL init issue
->>   will be handled in a separate series.
->> - Send the K3 PLL5 and PLL8 1.8 GHz rate-table update as a standalone
->>   patch.
->> - Clarify that 1.8 GHz is nominal and 2 GHz is an overclocking rate.
->> - Link to v1: https://patch.msgid.link/20260804-k3-pll5-pll8-1800mhz-v1-=
-0-a3a75866ce32@linux.spacemit.com
->>=20
->> To: Stephen Boyd <sboyd@kernel.org>
->> To: Brian Masney <bmasney+clk@redhat.com>
->> To: Jerome Brunet <jbrunet+clk@baylibre.com>
->> To: Yixun Lan <dlan@kernel.org>
->> To: Paul Walmsley <pjw@kernel.org>
->> To: Palmer Dabbelt <palmer@dabbelt.com>
->> To: Albert Ou <aou@eecs.berkeley.edu>
->> To: Alexandre Ghiti <alex@ghiti.fr>
->> Cc: linux-clk@vger.kernel.org
->> Cc: linux-riscv@lists.infradead.org
->> Cc: spacemit@lists.linux.dev
->> Cc: linux-kernel@vger.kernel.org
->> ---
->>  drivers/clk/spacemit/ccu-k3.c | 96 ++++++++++++++++++++++++++++++++++++=
-+++++++
->>  1 file changed, 96 insertions(+)
->
-> Thanks for the patch, it makes sense to add all the values, to support=20
-> future firmware changes. The values match the ones in the vendor kernel.
-I forgot that you had a similar patch as well..
+Fixes: 6b3c59780ed3 ("dt-bindings: documentation: add clock bindings information for Agilex")
+Cc: stable@vger.kernel.org # 5.8+
+Signed-off-by: Genevieve Chan <genevieve.chan@altera.com>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+---
+Changes in v2:
+- Remove comment on unused clock ID 42
+- Reword commit message
+---
+ include/dt-bindings/clock/agilex-clock.h | 1 +
+ 1 file changed, 1 insertion(+)
 
->
->> diff --git a/drivers/clk/spacemit/ccu-k3.c b/drivers/clk/spacemit/ccu-k3=
-.c
->> index 92b930d5ff30..950bf531c734 100644
->> --- a/drivers/clk/spacemit/ccu-k3.c
->> +++ b/drivers/clk/spacemit/ccu-k3.c
->> @@ -29,15 +29,91 @@ static const struct ccu_pll_rate_tbl pll2_rate_tbl[]=
- =3D {
->>  	CCU_PLLA_RATE(3000000000UL, 0x0b3e2000, 0x00000000, 0xa0558c8c),
->>  };
->> =20
->> +/* Keep the firmware default as the first entry. */
->>  static const struct ccu_pll_rate_tbl pll3_rate_tbl[] =3D {
->> +	CCU_PLLA_RATE(2000000000UL, 0x0b292aaa, 0x0000ab00, 0xa0558686),
->
-> Is it really necessary to put this entry first? I guess it's the current=
-=20
-> default frequency, but we have seen it can evolve. From my tests, the=20
-> driver seems to just keep the value configured by the firmware=20
-> independently from the table order, so I am not sure it's necessary.
-I think keeping it first is necessary. If the current register settings do
-not match any entry in the table, ccu_plla_init() falls back to the first
-entry:
+diff --git a/include/dt-bindings/clock/agilex-clock.h b/include/dt-bindings/clock/agilex-clock.h
+index 06feca07e08e..6206a45e007c 100644
+--- a/include/dt-bindings/clock/agilex-clock.h
++++ b/include/dt-bindings/clock/agilex-clock.h
+@@ -44,6 +44,7 @@
 
+ /* Gate clocks */
+ #define AGILEX_MPU_CLK			30
++/* Legacy ABI ID; do not use in new DTs, use AGILEX_MPU_CCU_CLK */
+ #define AGILEX_MPU_L2RAM_CLK		31
+ #define AGILEX_MPU_PERIPH_CLK		32
+ #define AGILEX_L4_MAIN_CLK		33
+--
+2.32.0
 
-	ccu_plla_update_param(pll, &pll->config.rate_tbl[0]);
-
-[...]
-
->>  };
->
-> I have tested the patch, and I confirm it fixes the boot hang with newer=
-=20
-> firmware, and will fix it if the default firmware values change again.=20
-> My comments are just minor ones, so:
->
-> Reviewed-by: Aurelien Jarno <aurelien@aurel32.net>
-> Tested-by: Aurelien Jarno <aurelien@aurel32.net>
-Thanks for the tags.
-
->
-> Regards
-> Aurelien=20
-
-
---=20
-Troy Mitchell
-
---a1891db0d9ec175249303eb0426fd87ee9cd330fcbf1e2986c4b86e25967
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iIMEABYKACsWIQSL4Ay2cExaPXAQcU2YCe+A+TM0LwUCapo55g0caUB0cm95LXku
-b3JnAAoJEJgJ74D5MzQvWBABAOrdMzrm+oSmpz+4PbCFYU/sKXN1r/pnmybu2iWq
-K9rlAQDr7ekCrcf/gUilgr3y2rN7N0vIvjxWJ3Sylb1GzzXXAA==
-=DS8M
------END PGP SIGNATURE-----
-
---a1891db0d9ec175249303eb0426fd87ee9cd330fcbf1e2986c4b86e25967--
