@@ -1,78 +1,74 @@
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4521D45562F
-	for <linux-clk@vger.kernel.org>; Fri,  4 Sep 2026 10:12:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A68C8455637
+	for <linux-clk@vger.kernel.org>; Fri,  4 Sep 2026 10:12:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788516775; cv=none; b=WEqZUf7e5fXmOg+QyI7N3aSMvGDz23v6+/Ql+Bg4EVa2QjygfpEqk0GiI2UUirE58a6VUenSmInnIlFJWEPpgQV9OxQiOMJTfot4wsh6hXnpNYS2bXEBh4AjypURLM1KHCNhS+sCDLWUQJnklKeM6bdysz5JVDbQWbA6zRZ1VSw=
+	t=1788516778; cv=none; b=p44ehfrBGj+EY8YR5X2aDrhl2U9wSD65RYZ/H2mbq+ZCiqoHCoL1PmZbo3lb9UiT1ic3lDLe1DbB5rtYXc4/BNM3/gtEBdJiVkrK/o4BatlOAWOkkuWmUKCAOxlHgGUqTLxM5jvQEHsqWIGpHuialgVV/8L1w7FoLNNZA96ociA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788516775; c=relaxed/simple;
-	bh=JOoI2fQ3bWoSNiNb4j+XTtCV5WPlewq2Kxd7FdUTZYA=;
+	s=arc-20240116; t=1788516778; c=relaxed/simple;
+	bh=NiMVJbmVsoK8R121qi2cF+5KCHnnjg8UxRitDRHK/AI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BgWvNLffUwwSYwMwIacluIVfauKf0xsu/HbmvBzrTnrkdiZKO33G5g04P4R4qZeIROEH/Ca8xJudrKGpKqg7Mx02MyhrlHw0LCoesKQPS1ZpMxghd8dZBa07yicB9LLMgOz2ZBbpq6vpWSt8b4qo65GWyJ82iANGf177iICpRJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=DmMak626; arc=none smtp.client-ip=209.85.221.41
+	 MIME-Version; b=MC3pAZqS2NS+zAOH0T4OPFpp+hZQDuyhfENDizNnR59hdNUlNgZY4hS/XvmRzTUntsjCvnhuhi5Z+92QzODe4Twpbu3C0kYYnSYnyYcTvpwLmijOnqCbpKYJq/PAdPCuhFaYldQNZOEmp0b/BIma3f1UbvtCYXGIhOfyu0OeinE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=jkv57C+4; arc=none smtp.client-ip=209.85.221.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="DmMak626"
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-47fe89fb333so495359f8f.3
-        for <linux-clk@vger.kernel.org>; Fri, 04 Sep 2026 03:12:52 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="jkv57C+4"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-482e257a23aso575156f8f.0
+        for <linux-clk@vger.kernel.org>; Fri, 04 Sep 2026 03:12:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1788516771; x=1789121571; darn=vger.kernel.org;
+        d=amarulasolutions.com; s=google; t=1788516775; x=1789121575; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=trMLdDdWbBp5aYskl2hpYhEKm0ijNRyi5bjjWx05fj4=;
-        b=DmMak626qAsG77i5dAhWAlPlfCMsx2Oz348NUbAba/CD4zmHwh1PMqhB0I7NZeLFjQ
-         D0R1QVQ8GAWGzc/iAAbnZo9Ekv8TBuIUWcKRCbmvxBVvxpmeZzwV80gAZNBs8FpTlF5F
-         cRmx7eNC3o9JArisZz1Ctbv5EoFixFxHJWpHk=
+        bh=fjBHI89nbApApOn8aT/Os8kMb1n8Jfct1CD1+zTK8UU=;
+        b=jkv57C+48mN347W1j2kWJcKnKw9Mvsl73qJPHmMXY2Gcoa3RMwpxHduWxkalOt+IUm
+         F0dzGMy26cOjWffdB8fGy+fp489u73jQ9rV4l+Lro7u5NxNXIleNx0w+iRG/L/YH6dzx
+         Wb7eR1+vP3fiVcYx8GvxSj3edvn2X2X93SfMc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788516771; x=1789121571;
+        d=1e100.net; s=20251104; t=1788516775; x=1789121575;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=trMLdDdWbBp5aYskl2hpYhEKm0ijNRyi5bjjWx05fj4=;
-        b=jNuONp0CDUKjlb5YRU6NLbLqqvFc/obNHbOH9wk0N7obQebclqYU2oXiNU7AWAC24w
-         Wwh+vJnpygcKHQYY/s6Iqp4zUWmwgJksb9NeBmZyLS+/z8Vo1zlXk4HMhrsxPOV3Jpn5
-         IpAHI3tzbjQf4U1cgroVFuT2EL3+xwbI95iMtk1xqNLN+HcZyJWvOos7TXpPhJ9L6HnM
-         K7ya0exiDzAtmCQXQoybU2YgdZjIlz937CyBu78YqeoItlcQJixrW0UGh3/hFAQQnoex
-         ya3+etwUZ76CChEJDhP8PdwZJks5YdsGCMeeXj75aY0RGsUB6VQPmIY7VB9L2u/54fRs
-         2QAQ==
-X-Forwarded-Encrypted: i=1; AKwUvBxeF3zl3Gh1ZhDQhOTFmjJgHi3VOaq2gE53rK2srEJRMLHyT6JOkEnDP/kim3Lm3P8p5B1PYd3MPYA=@vger.kernel.org
-X-Gm-Message-State: AFuF++nbsUU7bKb6EdHf8XUgKDGu7i+kOQ+xw+2sBrIvLtgLYgWuPxoy
-	Vlug2Fl64JDFW5BC6LUOjr8YL5Q29GLJnbAozvYBK9F0P5f4yz/2G6JsIqsY46pts0Q=
-X-Gm-Gg: AYBFou3CtsnnM7TEKPWc5m6GNrDtdbprhNBg1F2lsTCX19DyBk6KKCaAf64uiGkm90J
-	Br3n9m1qQ9Rx3zbauVeVOHgbVrJAkJkW2TzE2SgXJPuXMoI7n/8XO6qRrDuRF0utZCwsEZtvt/j
-	yUWmcxF8ugrfYf/1UDVQLzyIgL51d6u4VvVq4LUAwVEp/EyNb5jP+XkTJZ0QoufaaYv8G3jf8pw
-	WyJxuolcBaooFQ/aZyv8Y29d46fyJ2o2BiUEMuVuc5lapCKLhJFqxRTe5mW/cjfpGeu6GQScslh
-	yNv4rLZay75VGZZL0KfgG0GytGhaOnyrjl91UcJKqpLsFe+pkaHhSGjBGRNEr6+gNpKm1LyEPi9
-	k5D1ilQ936T3s4xpObQBRAPNa0Sp0ihrplR/PWS9erCNwmHOBq6rvwfs0YYPg9AYFm8BRFw+wiB
-	Cwh0Bgwa2IE2g9q3jrt01NCFungPWaxsoOWYL3eYKldSa8QxDSB+cV8SAU4pt67M2mv/Ky0ssC1
-	wuUvkher6VY1CAv4VGgxF6y4tTG9ctzK28zOyuJWZBrLrS0/Ei3MDOGIm8p9V4k3QPm0bnsv+F/
-	P4xZdAIqDB+rueT/Og86TnNa7ql08SxAWmgnP0loc/DbS5UUudGo+20RtqsZZypAuw==
-X-Received: by 2002:a05:6000:41d8:b0:485:8a47:5b96 with SMTP id ffacd0b85a97d-4858a475cc1mr2833945f8f.51.1788516771007;
-        Fri, 04 Sep 2026 03:12:51 -0700 (PDT)
+        bh=fjBHI89nbApApOn8aT/Os8kMb1n8Jfct1CD1+zTK8UU=;
+        b=EHnp+5T6f40AcQW3tjWw8ejOKMfxf3ERu+bkCZ1fL/6SNuNPtvXAnjuih2hPTNCMcv
+         6Gt5/hILw9+wybn5IO/EU2mfbAKfOrRMuhIPPCtcc+/QTOkF473Kk8LHMqKBxM4ug4fO
+         ncJB8vL0jGFIhcb1cDVNN11WEfHA7gbndNnD6zQ1M+6cIx1TsXgACXnuLatSdf1ImplH
+         uotilYjKaxgu06RxzJRItnwFmNgny+pG00W7wpqW4ZWg3bUqdEnqU3hGPZaA5HADKWAD
+         +kc1Hsd6XoCUyek6ej6U7nG304uePHFJCy/8qMkuiwl86kMoSUiowrwwpnS8XMBuGU+D
+         mDxg==
+X-Forwarded-Encrypted: i=1; AKwUvBwzRg7a5C0UYyVZLhlw1Pv5FTIkez24R7eSMUn8MU5RcNBdICoLwB4GWCL67IPHWId3NC2H7oQf2zo=@vger.kernel.org
+X-Gm-Message-State: AFuF++lmgdov2DYOl7nDau4bbrnTQdGhBu5DlCa+UwLGehZKpaA6LNMB
+	0dXfUGVX5lAC0ppMQafxlUW1ykOFaKNJzODgLyTN9MqH5wiOPwRaxLNDO/YPlG8XU68=
+X-Gm-Gg: AYBFou3IugGuWfSvDl7AH/F6wpWhTpzGB4655aSAUrSApMNxsEj7s0tBPRKbei043px
+	UXhIU/Xdia2r+hWoKQzdIDGqnLF2EWlN8sU6/Rth65zRgHVV7UPG6lk0tzS+UBEce7Hyd/FJ7fI
+	xLuhYcRd5ufWmkGZXns1Jr8bmBYwkUQqy9tNfkS3izjMW8Tmc2sThJfvdIJic3XFfXdn5THVV1g
+	brkRV0Ypu9kfcckh6lTND0TRVkIl7ngNcQlc+e7AqekjnWD8y6w29FWD7UMDFwpSkMB3+UEi+xi
+	mrEBgJPHxn4BiXhmOd4mnAVs9cj+Cp0Itj2+a1CKFlN2buCdhAN/IpI5dGtbsMvyHBygi+Xkzjg
+	2T57ub5RieHqKv912dv8L1cCIckrB0YkkbODfqlM/jWX2Wvfq+UOmpBGNzBiROeBwPKbJnIeCd4
+	S75shWPPGG0eVBBTlyteriQ4G1Wej5QV6LZeWkV95VkpKJPk3nw810y+tOwt252jpHlQOR4AKnU
+	N9S7gsuMgeMFYXsIpk56RpXS6OtwJBu+Exx2TTDCLgJEHeQZqQFuMZlomCffXK0QsHucLJEkgir
+	v+ot6YNIusJ6PPoCZARlQ6FscRzqACgQ/TYSJpzSUcxUOO1RQ81qkSE=
+X-Received: by 2002:a05:6000:26d3:b0:482:f5f6:d253 with SMTP id ffacd0b85a97d-4858728a2ddmr6662967f8f.12.1788516774774;
+        Fri, 04 Sep 2026 03:12:54 -0700 (PDT)
 Received: from dario-ThinkPad-P14s-Gen-5.amarulasolutions.com (host-95-245-93-90.retail.telecomitalia.it. [95.245.93.90])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48588390e30sm5317990f8f.7.2026.09.04.03.12.49
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48588390e30sm5317990f8f.7.2026.09.04.03.12.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Sep 2026 03:12:50 -0700 (PDT)
+        Fri, 04 Sep 2026 03:12:53 -0700 (PDT)
 From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 To: linux-kernel@vger.kernel.org
 Cc: michael@amarulasolutions.com,
 	linux-amarula@amarulasolutions.com,
 	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-	Sashiko <sashiko-bot@kernel.org>,
-	Peng Fan <peng.fan@nxp.com>,
 	Brian Masney <bmasney+clk@redhat.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
 	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Sebin Francis <sebin.francis@ti.com>,
 	Stephen Boyd <sboyd@kernel.org>,
 	linux-clk@vger.kernel.org
-Subject: [PATCH v14 1/4] clk: scmi: fix SSC spread conversion
-Date: Fri,  4 Sep 2026 12:06:30 +0200
-Message-ID: <20260904101243.412006-2-dario.binacchi@amarulasolutions.com>
+Subject: [PATCH v14 3/4] clk: scmi: reject SSC configuration out of the OEM field range
+Date: Fri,  4 Sep 2026 12:06:32 +0200
+Message-ID: <20260904101243.412006-4-dario.binacchi@amarulasolutions.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260904101243.412006-1-dario.binacchi@amarulasolutions.com>
 References: <20260904101243.412006-1-dario.binacchi@amarulasolutions.com>
@@ -84,58 +80,81 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The spread_bp field of struct clk_spread_spectrum holds the modulation
-depth in permyriad (1/100 of a percent), as documented in
-clk-provider.h and in the assigned-clock-sscs binding, while the i.MX
-SCMI OEM extension expects a value in tenths of a percent, as pointed
-out by Peng Fan.
+The i.MX SCMI OEM extension stores the spread in an 8-bit field, in
+tenths of a percent, and the modulation frequency in a 16-bit field.
 
-The conversion divides spread_bp by 10000 instead of 10, as reported by
-Sashiko, so any valid configuration is truncated to 0 and the hardware
-is silently programmed with no spread at all.
+FIELD_PREP() silently truncates values that do not fit in the target
+field. Moreover, the conversion from permyriad to tenths of a percent
+turns values below 10 permyriad into zero, which is then passed to the
+firmware as no spread at all.
 
-Divide by 10 and fix the comment accordingly.
+Reject these cases with a warning instead of silently programming a
+configuration different from the requested one.
 
-Fixes: 77369b1e6a37 ("clk: scmi: Add i.MX95 OEM extension support for SCMI clock driver")
-Reported-by: Sashiko <sashiko-bot@kernel.org>
-Closes: https://lore.kernel.org/r/20260901155657.6A5981F00A3A@smtp.kernel.org
-Reported-by: Peng Fan <peng.fan@nxp.com>
-Closes: https://lore.kernel.org/r/ZR6PR04MB375776A27E98F140534E8F7FE488B62@ZR6PR04MB375776.eurprd04.prod.outlook.com
-Reviewed-by: Peng Fan <peng.fan@nxp.com>
+A request with no spread method disables SSC, so send a zeroed
+configuration to the firmware in that case, without checking the
+spread and the modulation frequency, which are meaningless then.
+
 Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 
 ---
 
 Changes in v14:
- - Add Reviewed-by of Peng Fan
+ - Send a zeroed configuration when no spread method is requested,
+   instead of rejecting it, so that SSC can still be disabled.
 
 Changes in v13:
- - Divide spread_bp by 10 instead of 100 as requested by Peng Fan.
- - Rename the patch title and reword the description accordingly.
- - Add the Reported-by/Closes tags for Sashiko and Peng Fan.
+ - New patch
 
- drivers/clk/clk-scmi-oem.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/clk-scmi-oem.c | 25 ++++++++++++++++++++++---
+ 1 file changed, 22 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/clk/clk-scmi-oem.c b/drivers/clk/clk-scmi-oem.c
-index be11d359b4ec..c1ebbdc6bbc5 100644
+index c1ebbdc6bbc5..29acd2923fd6 100644
 --- a/drivers/clk/clk-scmi-oem.c
 +++ b/drivers/clk/clk-scmi-oem.c
-@@ -39,12 +39,12 @@ scmi_clk_imx_set_spread_spectrum(struct clk_hw *hw,
+@@ -35,19 +35,38 @@ scmi_clk_imx_set_spread_spectrum(struct clk_hw *hw,
+ 				 const struct clk_spread_spectrum *ss_conf)
+ {
+ 	struct scmi_clk *clk = to_scmi_clk(hw);
++	u32 spread_pm = ss_conf->spread_bp / 10;
+ 	int ret;
  	u32 val;
  
++	if (ss_conf->method == CLK_SPREAD_NO) {
++		val = 0;
++		goto oem_set;
++	}
++
  	/*
--	 * extConfigValue[7:0]   - spread percentage (%)
-+	 * extConfigValue[7:0]   - spread percentage in tenths of a percent
+ 	 * extConfigValue[7:0]   - spread percentage in tenths of a percent
  	 * extConfigValue[23:8]  - Modulation Frequency
  	 * extConfigValue[24]    - Enable/Disable
  	 * extConfigValue[31:25] - Reserved
  	 */
--	val = FIELD_PREP(SCMI_CLOCK_IMX_SS_PERCENTAGE_MASK, ss_conf->spread_bp / 10000);
-+	val = FIELD_PREP(SCMI_CLOCK_IMX_SS_PERCENTAGE_MASK, ss_conf->spread_bp / 10);
+-	val = FIELD_PREP(SCMI_CLOCK_IMX_SS_PERCENTAGE_MASK, ss_conf->spread_bp / 10);
++	if (!spread_pm || spread_pm > FIELD_MAX(SCMI_CLOCK_IMX_SS_PERCENTAGE_MASK)) {
++		dev_warn(clk->dev, "%s: spread (%u permyriad) out of range\n",
++			 clk_hw_get_name(hw), ss_conf->spread_bp);
++		return -EINVAL;
++	}
++
++	if (ss_conf->modfreq_hz > FIELD_MAX(SCMI_CLOCK_IMX_SS_MOD_FREQ_MASK)) {
++		dev_warn(clk->dev, "%s: modulation frequency (%u Hz) out of range\n",
++			 clk_hw_get_name(hw), ss_conf->modfreq_hz);
++		return -EINVAL;
++	}
++
++	val = FIELD_PREP(SCMI_CLOCK_IMX_SS_PERCENTAGE_MASK, spread_pm);
  	val |= FIELD_PREP(SCMI_CLOCK_IMX_SS_MOD_FREQ_MASK, ss_conf->modfreq_hz);
- 	if (ss_conf->method != CLK_SPREAD_NO)
- 		val |= SCMI_CLOCK_IMX_SS_ENABLE_MASK;
+-	if (ss_conf->method != CLK_SPREAD_NO)
+-		val |= SCMI_CLOCK_IMX_SS_ENABLE_MASK;
++	val |= SCMI_CLOCK_IMX_SS_ENABLE_MASK;
++
++oem_set:
+ 	ret = scmi_proto_clk_ops->config_oem_set(clk->ph, clk->id,
+ 						 SCMI_CLOCK_CFG_IMX_SSC,
+ 						 val, false);
 -- 
 2.43.0
 
