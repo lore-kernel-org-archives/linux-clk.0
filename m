@@ -1,193 +1,218 @@
-Received: from mail-m15577.qiye.163.com (mail-m15577.qiye.163.com [101.71.155.77])
+Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2E8535201E
-	for <linux-clk@vger.kernel.org>; Fri,  4 Sep 2026 02:51:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78E9D3B28D;
+	Fri,  4 Sep 2026 03:25:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.34.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788490286; cv=none; b=h72LZyMAAU9xRslqkemE4ABJI6Z4C+QCLI/MP7dHD20mMACIfg1/VltNZLXTOY8DDdqOy0J5OjlF2pRmuFBYvqDo0dsUfwu4KxiPXcdTGAw8+oh+bJSMddBVmX2xMGW7Kp1Eq34kV+d6FMRormk/j01YyowZXFmVkmVOydqrdLA=
+	t=1788492336; cv=none; b=BvzMRk4t5naZwYMrZ+4N+PFP5ESiCBlynQPoub4cTwCMEPq+TNgOd5I1pvMAF4cK45+6ArajUNvxt9nR30X8Tzu2yalYJeo5Wc1k9bLrLYPASGmIcd4YfzwM5yjRLW7lg6dxVxEfF1ZDFf7P44ShsRHthLKn4Ahmlaedf3dxFfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788490286; c=relaxed/simple;
-	bh=uEc1pz8bGTuTLdPsvxkjPt++yDSGexAsOpr1KiMyjDY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X4zhIeXfRXhtbMiTznh4hDnCACRC0trNyXsT0FQVRkhaGHPCXZar0a0FuiiJXoNCtRP82PurJg4Gmi5yevaqsf/IbUg/GseLf3h/lqAoLYOwViF2+YUIcT3ddowQfJNJaBpZ2KT7sH3CelOOuiJnI6wx59gIicPK/y4gXJEzRKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=i0xSyO6x; arc=none smtp.client-ip=101.71.155.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+	s=arc-20240116; t=1788492336; c=relaxed/simple;
+	bh=6RFwegYkZvXOWUnvdsJi8ZI8LqlLw0kxnIMTaIT7GiQ=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=oExyDQoOxkxEF4rM0b7AgLYtPBwoOX/rSwPnYmcrfi123zmPsk1MAgBNoJDSCmdt5esm/YetmMdsVf/acRLtpQSyduuwTqw3p+yRYbxJfYuG/hlMar/iOkcU4Fyf6wMQWIhETwyEfgo5igcuNNrkZ3se8cSE70djcHUX9Sf5l9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=Zj8yLUQl; arc=none smtp.client-ip=54.206.34.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="i0xSyO6x"
-Received: from [172.16.12.90] (unknown [61.154.14.86])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 4c7eb8f85;
-	Fri, 4 Sep 2026 10:46:08 +0800 (GMT+08:00)
-Message-ID: <f2cdc86f-1f8f-405d-a9c1-3e9059d62f96@rock-chips.com>
-Date: Fri, 4 Sep 2026 10:46:06 +0800
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="Zj8yLUQl"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
+	s=mxsw2412; t=1788492269;
+	bh=+fjce5Gv68gDb4c/l/fe5+Q4SZGtlsosTF1WEjjxUK8=;
+	h=Mime-Version:Date:Message-Id:Subject:From:To;
+	b=Zj8yLUQlyL2m6aW139jNLntDDWwOrrsU4IJ5v7dA4/ogtjFSLT7ga397YGm8m0fLP
+	 VR6QQcq+e07+VFKYPKW3A2kPtwwOWmw7ucELMob7u3CQdStIYPfjxTLBn7xtKkK+yP
+	 rjcANDqptKp07AifhFMujrBNb72RNpM8HH/TXIRA=
+X-QQ-mid: zesmtpsz4t1788492267t97a1c389
+X-QQ-Originating-IP: UUFOhxrmyWmafniu2RpwCuAxO+jazOpB/m3P/JOKzfU=
+Received: from = ( [120.237.158.181])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 04 Sep 2026 11:24:25 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 16749050241281996791
+EX-QQ-RecipientCnt: 19
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] drm/rockchip: vop: don't round the pixel clock when
- the encoder owns the PLL
-To: Vasily Khoruzhick <anarsoul@gmail.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>, Heiko Stuebner <heiko@sntech.de>,
- Sandy Huang <hjc@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
-References: <20260901234351.190506-1-anarsoul@gmail.com>
- <20260901234351.190506-2-anarsoul@gmail.com>
- <02c265f6-0898-4f11-9954-df7d99d082a0@rock-chips.com>
- <CA+E=qVeqOahu7v4ser0zxxUU6Fr4dGAVA9m_mgHgu70ChYv9Gg@mail.gmail.com>
-Content-Language: en-US
-From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
-In-Reply-To: <CA+E=qVeqOahu7v4ser0zxxUU6Fr4dGAVA9m_mgHgu70ChYv9Gg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed;
+ boundary=a1891db0d9ec175249303eb0426fd87ee9cd330fcbf1e2986c4b86e25967;
+ micalg=pgp-sha512; protocol="application/pgp-signature"
+Date: Fri, 04 Sep 2026 11:24:22 +0800
+Message-Id: <DL67LEVCXFA5.39M5FO7JGKWZS@linux.spacemit.com>
+Subject: Re: [PATCH v4] clk: spacemit: k3: add CPU PLL rate tables
+From: "Troy Mitchell" <troy.mitchell@linux.spacemit.com>
+To: "Aurelien Jarno" <aurelien@aurel32.net>, "Troy Mitchell"
+ <troy.mitchell@linux.spacemit.com>
+Cc: "Michael Turquette" <mturquette@baylibre.com>, "Inochi Amaoto"
+ <inochiama@outlook.com>, "Alex Elder" <elder@riscstar.com>, "Haylen Chu"
+ <heylenay@4d2.org>, <stable@vger.kernel.org>, "Stephen Boyd"
+ <sboyd@kernel.org>, "Brian Masney" <bmasney+clk@redhat.com>, "Jerome
+ Brunet" <jbrunet+clk@baylibre.com>, "Yixun Lan" <dlan@kernel.org>, "Paul
+ Walmsley" <pjw@kernel.org>, "Palmer Dabbelt" <palmer@dabbelt.com>, "Albert
+ Ou" <aou@eecs.berkeley.edu>, "Alexandre Ghiti" <alex@ghiti.fr>,
+ <linux-clk@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
+ <spacemit@lists.linux.dev>, <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20260903-k3-pll5-pll8-1800mhz-v4-1-afafd9cb47d9@linux.spacemit.com> <apmuG46sBg2rGzCD@aurel32.net>
+In-Reply-To: <apmuG46sBg2rGzCD@aurel32.net>
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpsz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
+X-QQ-XMAILINFO: MOsVgoF62rlXg2jMy+En6/iirgDaQNRxZyXqrMP91f3S8ZHwZMVbtaJr
+	7xM27fIaocapgAnzKqQp5stV87/ZpBc/zKO6PJuvevedWvY9zw5FFoz/3JV0FOolmEnfyGC
+	KjDSRkS7G/2zDvIQYc3c4B43MSMHXs+QROIIVuMkfPItNf6WkF9Y7SStWvLuxgOpFKYstbO
+	E8ya/Mp+URQBbu6hVxKByMG0w+zbXAdmPf4QIWRia/xGiAoA12zo5abK8p5vKQw175Y/fqy
+	QhpqPQ7UJt2FJz9OOEJ/4y1oK3RUMbKLQ9qE2VzjsksyZfQLQ+L7WkXbBGnLnwwC16AdJQL
+	c3om90lp2j49lBfkHhaXBT7xKbsguaHKhqILVfhS/FVpujLYZ2JPS+QfDKgQETZtj6uqOxh
+	kg6X35hm8x8RgX2peklC9yHTyQ3f3e/fdPc7s87d3fTANlIn/T8XqpEl/3/bGsPnONcXa7B
+	0sXLQttbLYKutcn0LixM7wet4tI/8mKTCd3h41glH6cC7jGk8rlri4LtHSnzkd1jZcKripf
+	j7xzsm+0gP1mZZk/bF5J9/xb2RSeGI6hWIsllNWajCGLR9ti/kF4k2PvomRof0NrYDxxKro
+	W6KEdmFMWSElR4hqEOvGx1ZOYr+w5X7FeR5N8RSwpQe1dSyyrM+gEZHcSvJylse8N9FQik2
+	2PcCN3bSLovT8BTREGCD3WTHja5a50R/R/KpXxpI5+QRi5gzv3Hm/sSnLiBVPsf12OqNpyS
+	3KakqTIoiABkNOmDDT8RHZAfjdN+kZDsUFc1ALiUafPZ6gkvJ1JyAwRJ98NRSbV+78b8Phx
+	ZPdnVCBsgFGHCQ4Rf12cdikVShykaPvkxFI+XLlvYy+FKt1oWpbdqslGxmNZwFH95egsF/T
+	6VBlf4GICSzNhi9PV+KiqZX88el5Wuso/zbDHiYVf6lzHJ/w6BtvayOw1V7/gR/NZgx9px2
+	JLd+d7MiCfKzoOmm1Feg3zd+IJ9kHQAfgo8M5sadAOwNonVfZoPYpXdoNwGjciuTFzjgjrf
+	XysuNksj4lxi/ZCYbN2eZu3ZD0rjZd35uug+7OwcN6CVmuRDz1lpqsHCNPFuuWfG3kT/8nV
+	WrB8WGoZVJunAMSLegddIhyZNsCfJsctV3Zpd4M/EhdJybl7oSG+olr+UCqxZK7nw==
+X-QQ-XMRINFO: Mp0Kj//9VHAxzExpfF+O8yhSrljjwrznVg==
+X-QQ-RECHKSPAM: 0
+
+--a1891db0d9ec175249303eb0426fd87ee9cd330fcbf1e2986c4b86e25967
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0aa06a4f2a9003a7kunm70e050c89bd3e
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVlCTE0dVkgYSkhOQ0pCSRpLS1YVFA
-	kWGhdVEwETFhoSFyQUDg9ZV1kYEgtZQVlNSlVKTk9VSk9VQ01ZV1kWGg8SFR0UWUFZT0tIVUJCSU
-	5LVUpLS1VKQktCWQY+
-DKIM-Signature: a=rsa-sha256;
-	b=i0xSyO6xr+xQMg0Itknu5ALMXB46Nbr8PgbY6KTxEP7jRDixR7wfqEuhzxks5DVCKXq2b+HF8tv4mDcLioBHAlTE+qBwxn25g2m9I9LImEf1AgtwYIdGlJ4FGZz1dywgvScF7fqOxAKhL0ySS8Ofz/HR77PhWhirq066G7BQ+B0=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=iRizJp23wPSCe5WsFPxEB6JBq79SZp7y8nKA/UZLjq0=;
-	h=date:mime-version:subject:message-id:from;
 
-Hello Vasily,
+Hi Aurelien,
 
-On 9/4/2026 6:19 AM, Vasily Khoruzhick wrote:
-> On Tue, Sep 1, 2026 at 8:50 PM Chaoyi Chen <chaoyi.chen@rock-chips.com> wrote:
->>
->> Hello Vasily,
-> 
-> Hi Chaoyi,
-> 
->> On 9/2/2026 7:42 AM, Vasily Khoruzhick wrote:
->>> On RK3399 the HDMI reference clock is VPLL, a dedicated PLL that is a
->>> parent of the VOP dclk. dw_hdmi_rockchip_mode_valid() accepts a mode
->>> only if VPLL can produce its pixel clock, and encoder mode_set() then
->>> programs VPLL to that rate. However vop_crtc_mode_fixup() ran first,
->>> in the check phase, and rounded adjusted_mode->clock through
->>> clk_round_rate() on the dclk. At that point VPLL still sits at its
->>> previous rate, so the dclk composite picks whichever of VPLL/CPLL/GPLL
->>> gets closest at its *current* rate and stores that inexact value.
->>>
->>
->> Why did vop_crtc_mode_fixup() run first? Within drm_atomic_helper_check_modeset(),
->> mode_valid() is executed before mode_fixup().
-> 
-> Sorry, ambiguous wording on my part - "first" meant before the
-> encoder's mode_set() programs the VPLL, not before mode_valid(). The
-> order is as you say, and that's exactly the problem: mode_valid()
-> rounds the pixel clock on the ref clock (the VPLL itself), whose rate
-> table can produce 85.5 MHz, so the mode is accepted. mode_fixup()
-> however rounds on the dclk composite - a different clock - which
-> evaluates its mux parents at their current rates. During check the
-> VPLL still runs at the previous mode's rate, so GPLL/7 = 84.857 MHz
-> wins and gets stored in adjusted_mode->clock. mode_set() then programs
-> the VPLL to that corrupted value in the commit phase. I can reword the
-> commit message to make this clearer.
-> 
-
-I think I understand your point now. The encoder's
-mode_fixup() yields 85.5 MHz, while the CRTC's mode_fixup() yields 
-84.857 MHz. The patch effectively bypasses the CRTC mode_fixup(), 
-so that both the encoder's mode_set() and the CRTC's atomic_enable() 
-clk_set_rate() end up using 85.5 MHz. I think it's worth mentioning
-this in the commit message.
-
->>> For 1366x768 (85.5 MHz) this yields GPLL/7 = 84.857 MHz. mode_set()
->>> then requests 84.857 MHz from VPLL, which the PLL rate table snaps
->>> down to 74.25 MHz, and the VOP ends up on GPLL/7. The panel receives a
->>> timing 0.75% slow, which some monitors misdetect (e.g. as 1195x768)
->>> and display distorted. Only modes whose clock happens to be an exact
->>> GPLL or CPLL fraction (74.25, 148.5, 297 MHz, ...) were unaffected.
->>>
->>
->> Did you designate VPLL as the parent clock of the VOP dclk in the DTS?
-> 
-> No, and it isn't needed: in the commit phase the encoder's
-> atomic_mode_set() sets the VPLL to exactly the pixel clock before
-> vop_crtc_atomic_enable() sets the dclk (mode-set runs before enables
-> in the atomic helpers), so by then the dclk composite finds vpll/1 as
-> an exact match and the mux selects VPLL by itself. Verified via
-> clk_summary on the patched kernel: vpll = 85500000 feeding dclk_vop0 =
-> 85500000. Pinning the parent in DT also wouldn't have fixed the bug -
-> without CLK_SET_RATE_PARENT the check-phase clk_round_rate() against
-> the still-stale VPLL would return the same wrong value.
-> 
-> See clk_summary for broken and working cases attached.
-> 
->>> @@ -327,6 +327,12 @@ dw_hdmi_rockchip_encoder_atomic_check(struct drm_encoder *encoder,
->>>
->>>       s->output_type = DRM_MODE_CONNECTOR_HDMIA;
->>>       s->bus_format = bus_format;
->>> +     /*
->>> +      * The reference clock (e.g. VPLL on RK3399) is a parent of the VOP
->>> +      * dclk, and mode_set() programs it to the pixel clock, which
->>> +      * mode_valid() already guaranteed it can produce.
->>> +      */
->>> +     s->dclk_exact = !!hdmi->ref_clk;
->>>
->>
->> What about RK3328? It uses hdmi->hdmiphy_clk.
-> 
-> RK3328 clock ownership is the inverse of RK3399's. hdmiphy_clk is only
-> ever consulted (in mode_valid()); the encoder's mode_set() programs
-> just ref_clk, which is NULL on RK3328, so the encoder never sets the
-> PHY PLL - the promise dclk_exact expresses ("the encoder will program
-> this rate itself at mode_set time") wouldn't be true there.
+On Fri Sep 4, 2026 at 1:27 AM +08, Aurelien Jarno wrote:
+> Hi Troy,
 >
-
-Given the complexity of clock trees across different platforms,
-I think a better approach would be to implement functions like
-rockchip_drm_dclk_round_rate() and rockchip_drm_dclk_set_rate(), 
-which properly configure the parent clock to meet the frequency
-requirements. Of course, the current approach is okay for me. :)
-
->>>  static bool vop_dsp_lut_is_enabled(struct vop *vop)
->>> @@ -1558,6 +1554,19 @@ static int vop_crtc_atomic_check(struct drm_crtc *crtc,
->>>       s = to_rockchip_crtc_state(crtc_state);
->>>       s->enable_afbc = afbc_planes > 0;
->>>
->>> +     /*
->>> +      * Round the pixel clock to what the dclk can really produce, unless
->>> +      * the encoder will program a dedicated dclk parent PLL to exactly
->>> +      * this rate at mode_set time. In that case the clock tree seen here
->>> +      * (with that PLL still at its old rate) would pick a worse, inexact
->>> +      * source and bake that rate into adjusted_mode, defeating the PLL.
->>> +      *
->>> +      * Same condition the atomic helpers use for the mode_fixup callback.
->>> +      */
->>> +     if ((crtc_state->mode_changed || crtc_state->connectors_changed) &&
->>> +         !s->dclk_exact)
->>> +             vop_crtc_adjust_clock(vop, &crtc_state->adjusted_mode);
->>> +
->>>       return 0;
->>>  }
->>>
->>
->> What about other display interfaces? For example, the .mode_fixup
->> corresponding to cdn-dp will not be called.
-> 
-> The rounding still runs for cdn-dp and all other interfaces: it moved
-> into vop_crtc_atomic_check(), which is a CRTC callback and is invoked
-> by drm_atomic_helper_check() regardless of the attached encoder - same
-> as the old CRTC-level .mode_fixup was.
+> On 2026-09-03 11:06, Troy Mitchell wrote:
+>> The K3 CPU PLL rate tables currently describe only one rate per PLL,
+>> although the hardware supports a wider range.
+>>=20
+>> PLL3 and PLL4 support rates from 1.05 to 2.4 GHz, while PLL5 and PLL8
+>> support rates from 1.05 to 2 GHz. Populate the tables with every
+>> supported rate in 50 MHz steps.
+>>=20
+>> Cc: stable@vger.kernel.org # 7.0+
+>> Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+>> ---
+>> The corresponding U-Boot changes are available at:
+>>=20
+>> - Add the CPU PLL rate tables:
+>>   https://github.com/spacemit-com/uboot-2022.10/commit/787b5cf44c8dbc99d=
+b886d5522c0c9cd5a96ffd6
+>> - Correct the 1.10 GHz and 2.15 GHz table entries:
+>>   https://github.com/spacemit-com/uboot-2022.10/commit/16a775c20e9efb54c=
+a55352215e76eb3f12e6cf0
+>> ---
+>> Changes in v4:
+>> - Expand the update to every supported PLL3, PLL4, PLL5 and PLL8 rate.
+>> - Drop Aurelien Jarno's Reviewed-by and Tested-by trailers because the
+>>   patch scope has expanded.
+>> - Add U-Boot references for the complete tables and corrected entries.
+>> - Link to v3: https://patch.msgid.link/20260831-k3-pll5-pll8-1800mhz-v3-=
+1-530ed0978615@linux.spacemit.com
+>>=20
+>> Changes in v3:
+>> - Mark the change for stable kernels starting with v7.0.
+>> - Add Aurelien Jarno's Reviewed-by and Tested-by trailers.
+>> - Rebase onto v7.3-rc1.
+>> - Link to v2: https://patch.msgid.link/20260810-k3-pll5-pll8-1800mhz-v2-=
+1-aabff510a797@linux.spacemit.com
+>>=20
+>> Changes in v2:
+>> - Drop "clk: spacemit: re-enable PLLs after init"; the PLL init issue
+>>   will be handled in a separate series.
+>> - Send the K3 PLL5 and PLL8 1.8 GHz rate-table update as a standalone
+>>   patch.
+>> - Clarify that 1.8 GHz is nominal and 2 GHz is an overclocking rate.
+>> - Link to v1: https://patch.msgid.link/20260804-k3-pll5-pll8-1800mhz-v1-=
+0-a3a75866ce32@linux.spacemit.com
+>>=20
+>> To: Stephen Boyd <sboyd@kernel.org>
+>> To: Brian Masney <bmasney+clk@redhat.com>
+>> To: Jerome Brunet <jbrunet+clk@baylibre.com>
+>> To: Yixun Lan <dlan@kernel.org>
+>> To: Paul Walmsley <pjw@kernel.org>
+>> To: Palmer Dabbelt <palmer@dabbelt.com>
+>> To: Albert Ou <aou@eecs.berkeley.edu>
+>> To: Alexandre Ghiti <alex@ghiti.fr>
+>> Cc: linux-clk@vger.kernel.org
+>> Cc: linux-riscv@lists.infradead.org
+>> Cc: spacemit@lists.linux.dev
+>> Cc: linux-kernel@vger.kernel.org
+>> ---
+>>  drivers/clk/spacemit/ccu-k3.c | 96 ++++++++++++++++++++++++++++++++++++=
++++++++
+>>  1 file changed, 96 insertions(+)
 >
+> Thanks for the patch, it makes sense to add all the values, to support=20
+> future firmware changes. The values match the ones in the vendor kernel.
+I forgot that you had a similar patch as well..
 
-I still don't quite understand why we need to move this to CRTC atomic_check().
-What's wrong with checking !s->dclk_exact in CRTC mode_fixup()? Thanks.
+>
+>> diff --git a/drivers/clk/spacemit/ccu-k3.c b/drivers/clk/spacemit/ccu-k3=
+.c
+>> index 92b930d5ff30..950bf531c734 100644
+>> --- a/drivers/clk/spacemit/ccu-k3.c
+>> +++ b/drivers/clk/spacemit/ccu-k3.c
+>> @@ -29,15 +29,91 @@ static const struct ccu_pll_rate_tbl pll2_rate_tbl[]=
+ =3D {
+>>  	CCU_PLLA_RATE(3000000000UL, 0x0b3e2000, 0x00000000, 0xa0558c8c),
+>>  };
+>> =20
+>> +/* Keep the firmware default as the first entry. */
+>>  static const struct ccu_pll_rate_tbl pll3_rate_tbl[] =3D {
+>> +	CCU_PLLA_RATE(2000000000UL, 0x0b292aaa, 0x0000ab00, 0xa0558686),
+>
+> Is it really necessary to put this entry first? I guess it's the current=
+=20
+> default frequency, but we have seen it can evolve. From my tests, the=20
+> driver seems to just keep the value configured by the firmware=20
+> independently from the table order, so I am not sure it's necessary.
+I think keeping it first is necessary. If the current register settings do
+not match any entry in the table, ccu_plla_init() falls back to the first
+entry:
 
-> Regards,
-> Vasily
 
--- 
-Best, 
-Chaoyi
+	ccu_plla_update_param(pll, &pll->config.rate_tbl[0]);
+
+[...]
+
+>>  };
+>
+> I have tested the patch, and I confirm it fixes the boot hang with newer=
+=20
+> firmware, and will fix it if the default firmware values change again.=20
+> My comments are just minor ones, so:
+>
+> Reviewed-by: Aurelien Jarno <aurelien@aurel32.net>
+> Tested-by: Aurelien Jarno <aurelien@aurel32.net>
+Thanks for the tags.
+
+>
+> Regards
+> Aurelien=20
+
+
+--=20
+Troy Mitchell
+
+--a1891db0d9ec175249303eb0426fd87ee9cd330fcbf1e2986c4b86e25967
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iIMEABYKACsWIQSL4Ay2cExaPXAQcU2YCe+A+TM0LwUCapo55g0caUB0cm95LXku
+b3JnAAoJEJgJ74D5MzQvWBABAOrdMzrm+oSmpz+4PbCFYU/sKXN1r/pnmybu2iWq
+K9rlAQDr7ekCrcf/gUilgr3y2rN7N0vIvjxWJ3Sylb1GzzXXAA==
+=DS8M
+-----END PGP SIGNATURE-----
+
+--a1891db0d9ec175249303eb0426fd87ee9cd330fcbf1e2986c4b86e25967--
