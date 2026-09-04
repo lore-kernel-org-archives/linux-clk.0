@@ -1,45 +1,45 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EB751EFF93;
-	Fri,  4 Sep 2026 13:49:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 711213F12DE;
+	Fri,  4 Sep 2026 13:52:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788529757; cv=none; b=hNedG842fOfXFPDkZne2Uj9ALz8BpxtfNgH+SeCdn3P1SRKtuIV+PAkaJnP/QBs0RXwVjXAgSCax0sM6U23ik3WObKZx7pSHMOXyb6VImV20Y56JxgLutrLLtlBI0rJL//ZdFm8hR1uYY8bUthfxIfg6YM7GjriLSFmk/GCFy6U=
+	t=1788529956; cv=none; b=djf4jEHGsCUmfuYSH+7A/9WdpfSO9OzMLuLjOOlgGv794qaVvvh0H/aHH7qGtW1xg+MFyTI8jXoFvtwxxIIiO8jSkSeivXJs7ugbMS/5Z3knDiAP/Doy9b5BDd1vu8qyH9h/M4dyRyxFKf3VvLXSWyM/8EPSte3ZrRs6OSibjrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788529757; c=relaxed/simple;
-	bh=z9CgBpz4nRqmjxa+GUDa+CNQc6T9g1IawNE+NP7l1ZI=;
+	s=arc-20240116; t=1788529956; c=relaxed/simple;
+	bh=U3BHcGzy0XpbIDqERAPq2BemblqMmpns070yQ0jg+UI=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=bXHf/A8USQuS52LV5LWr+2WfsIycPi2y9C0aV/2Ggof8irb9jJOvGiCOf98dKEiZ63PfdihCIOZUvpcU9itYu+2MCB4qgAQrLPOFXME0nkJzUbUfehZyoEpiVVri0+SImNpgojjMgNxfGlwkDuDLPFMLu87wy5pP3p5uRoUVBE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hsuPaBNl; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=Yu0Z+1cMcczFEsGGBp3/Xpr2qs/JASXKhZXxrddvvMVQaMJ65Va9YJFJOp3qFsFbZziZIVBpZhyLFbPtuOdfccjI6VNP2zhhta9Ux0F87lyw97Ajsm38RQ4UcrAHoW3NqF/FrUpsbFguVxFdafizw8n8rjElxZIjiKG32lDeam0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gpBXPqMS; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hsuPaBNl"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5944F1F00A3D;
-	Fri,  4 Sep 2026 13:49:15 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gpBXPqMS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D8241F00A3D;
+	Fri,  4 Sep 2026 13:52:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788529756;
-	bh=Kc0jjiNx6Kq8ngc29fQqe8dP+shw+RZ+vD1GVe3R4AQ=;
+	s=k20260515; t=1788529955;
+	bh=JLgwTSSCpM3L6iDJ0ynlXolF/uJm18acCEZZpWdVymM=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=hsuPaBNlbrjz5g+9i85O5q/yR8Q6LkFhDoPvRU2JHxuTyXryLdg+Wd6WG4I6CLlXI
-	 7VA07bBwh/q46u5NBjqN6Mz/SLBdKbrp3UdPvNA1afKyUF9jWSA0bgOkO9/9Le1OJ4
-	 YIFLGnm/0HliUrpBrOWGoqxj00AV5lDTAfPKTLA783scNa0kCstiF6YGUVah6ufWj/
-	 zwxY5XeE+DByIQctFnwEp5Jf6xCbEwXFpn/ZbpLSDtglDEj39lg0NIYD8XL0Ie0iub
-	 9YbIzkmAfe5vXKlZEWvnCedeVAIgKgnCCpTkBQQ9Al6rG2uG7/nLmaU+UYL9VGNUW6
-	 sG2PyVdzFU1Uw==
+	b=gpBXPqMS9xzgulJaIs2j+/CHJyl9XJXcCIVop/7FoAmnGIGxVjkGQ0Bt1M3HHXZU5
+	 0szWoycEbq0vzieUVJayBYrhMw6lrAUWTc6CVrWItFRaUJ0/xyxyP21URl5HAjCeIi
+	 4+GaztiJvJvT+NwE72sl5AVtstCxs2iD5F0AbxJpR/+6J1Sut+AuX+txXwkAs5nuhp
+	 tcprpCwS+eLJ442vVGtmiYiIo9ghEacZaF65eMZ8+KhzKuSL5qvzj2ATVyO78te9MD
+	 fJnbQO3t+DYnCJspgko0DhxABsc9yGxx9Q8/I/rjfE0mLelE175kHc8IY5hP0Ev8CR
+	 e0UlTKnHDPSnA==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v3 09/19] drm/bridge: inno-hdmi: Add .disable platform
- operation
+Subject: Re: [PATCH v3 11/19] soc: starfive: Add jh7110-hdmi-subsystem
+ driver
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Michal Wilczynski" <m.wilczynski@samsung.com>
-Cc: vkoul@kernel.org, dri-devel@lists.freedesktop.org, neil.armstrong@linaro.org, olteanv@gmail.com, lee@kernel.org, linux-clk@vger.kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org, mfd@lists.linux.dev, linux-phy@lists.infradead.org, robh@kernel.org
-In-Reply-To: <20260904-jh7110-clean-send-v3-9-484f9ae72715@samsung.com>
+Cc: dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org, lee@kernel.org, mfd@lists.linux.dev, linux-phy@lists.infradead.org, vkoul@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org, robh@kernel.org, neil.armstrong@linaro.org, olteanv@gmail.com
+In-Reply-To: <20260904-jh7110-clean-send-v3-11-484f9ae72715@samsung.com>
 References: <20260904-jh7110-clean-send-v3-0-484f9ae72715@samsung.com>
- <CGME20260904132725eucas1p19c8f66b7844108641dec1d2c39989dd5@eucas1p1.samsung.com>
- <20260904-jh7110-clean-send-v3-9-484f9ae72715@samsung.com>
+ <CGME20260904132729eucas1p1bd78eb90feaf90b6265c13fc7bf43ada@eucas1p1.samsung.com>
+ <20260904-jh7110-clean-send-v3-11-484f9ae72715@samsung.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 04 Sep 2026 13:49:14 +0000
-Message-Id: <20260904134915.5944F1F00A3D@smtp.kernel.org>
+Date: Fri, 04 Sep 2026 13:52:33 +0000
+Message-Id: <20260904135234.5D8241F00A3D@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -48,55 +48,46 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 
 Thank you for your contribution! Sashiko AI review found 1 potential issue(=
 s) to consider:
-- [High] Hardware Teardown Order Inversion Risking MMIO Aborts
+- [High] Incorrect regmap configuration (.val_bits =3D 8) forces byte-wise =
+accesses on a 32-bit register file, which may cause bus faults or ignored w=
+rites.
 --
 
-commit 3edb8b3d87e91fedec7589ce07bc351965b21765
+commit 83ac96938fc0f15d53cdae0501c6e430a17c1c1d
 Author: Michal Wilczynski <m.wilczynski@samsung.com>
+soc: starfive: Add jh7110-hdmi-subsystem driver
 
-drm/bridge: inno-hdmi: Add .disable platform operation
+This commit introduces a parent driver for the monolithic StarFive JH7110
+HDMI IP block. It maps the shared register block and creates child devices
+for the PHY and controller using a shared regmap.
 
-This commit adds a new .disable platform operation to the Innosilicon HDMI
-driver to support platform-specific power down sequences. The new callback
-is executed during the bridge's atomic disable phase.
-
-> diff --git a/drivers/gpu/drm/bridge/inno-hdmi.c b/drivers/gpu/drm/bridge/=
-inno-hdmi.c
-> --- a/drivers/gpu/drm/bridge/inno-hdmi.c
-> +++ b/drivers/gpu/drm/bridge/inno-hdmi.c
+> diff --git a/drivers/soc/starfive/jh7110-hdmi-subsystem.c b/drivers/soc/s=
+tarfive/jh7110-hdmi-subsystem.c
+> new file mode 100644
+> index 0000000000000..e05b91825be4d
+> --- /dev/null
+> +++ b/drivers/soc/starfive/jh7110-hdmi-subsystem.c
 [ ... ]
-> @@ -886,6 +886,10 @@ static void inno_hdmi_bridge_atomic_disable(struct d=
-rm_bridge *bridge,
->  					    struct drm_atomic_commit *state)
->  {
->  	struct inno_hdmi *hdmi =3D bridge_to_inno_hdmi(bridge);
-> +	const struct inno_hdmi_plat_ops *plat_ops =3D hdmi->plat_data->ops;
-> +
-> +	if (plat_ops && plat_ops->disable)
-> +		plat_ops->disable(hdmi->dev);
-> =20
->  	inno_hdmi_standby(hdmi);
+> +static const struct regmap_config starfive_hdmi_regmap_config =3D {
+> +	.reg_bits =3D 32,
+> +	.val_bits =3D 8,
 
 [Severity: High]
-Does calling the platform disable callback before inno_hdmi_standby() risk
-MMIO aborts?
+Will this regmap configuration cause byte-wise memory accesses on a 32-bit
+register file?=20
 
-The platform disable hook (such as the JH7110 implementation mentioned in t=
-he
-commit message) typically powers off the PHY and disables clocks. However,
-inno_hdmi_standby() attempts to perform MMIO writes to PHY registers like
-HDMI_PHY_DRIVER and HDMI_PHY_PRE_EMPHASIS.
+Setting .val_bits =3D 8 forces the regmap core to use 8-bit readb()/writeb()
+accesses instead of 32-bit readl()/writel(). The underlying Innosilicon
+HDMI IP has registers spaced by 4 bytes and natively expects 32-bit
+accesses.
 
-Accessing hardware registers after the PHY has been powered off and clocks
-disabled can cause a synchronous external abort (bus hang) or silent
-failures on many SoC architectures.
+On RISC-V platforms like the JH7110, byte-wise access to 32-bit APB
+peripherals typically triggers a Store/Load Access Fault or results in
+silently ignored writes.
 
-Since plat_ops->enable() is called prior to configuring the PHY registers
-during setup, should the teardown follow a strict LIFO order where
-inno_hdmi_standby() is called before plat_ops->disable()?
-
->  }
+> +	.max_register =3D 0x3fff,
+> +};
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260904-jh7110-cle=
-an-send-v3-0-484f9ae72715@samsung.com?part=3D9
+an-send-v3-0-484f9ae72715@samsung.com?part=3D11
