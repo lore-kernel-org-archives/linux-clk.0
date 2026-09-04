@@ -1,201 +1,105 @@
-Received: from mail-yx1-f42.google.com (mail-yx1-f42.google.com [74.125.224.42])
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49F7B3DB641
-	for <linux-clk@vger.kernel.org>; Fri,  4 Sep 2026 08:14:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.224.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788509651; cv=pass; b=OC+inptcDJXP50tAUjRWm1O8196oBIvjyt6PQIf6U43k95/jJnq4E4s219KmXv7ZQzZNAfBITZ+TQHLYy7wltGNWrGkK7OjZSV0vEuZzwgAkyvZsrCI8mFhTK/LpYUciqOEIeQE+MM49tn83TvFuBa6wWIqLLzJs2nMFxS7SHdI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788509651; c=relaxed/simple;
-	bh=cODYgkqioxaFXfwJn7xnB9uWDLxGNrCsLV4W2VTwJEM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FAQsw7w/ZQPThpFjvjyAzoQMU4KzB0Xby7hW2wxkTvy/Jz1YgrwuFpQ9LbpOpKiwqycGuiCqKogFutIIVm4F7xX4I8wpD5oVFetFioBKazbJS8tnTSJHqdj+rtasRJsc1QXhdPeZclrs6UioWeV2pOpvrra3GwZsVQp8akcIDxo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hp/XmOUL; arc=pass smtp.client-ip=74.125.224.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB3A93CF210
+	for <linux-clk@vger.kernel.org>; Fri,  4 Sep 2026 08:24:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788510249; cv=none; b=JrT8PSNxtC+YeVRm9E4uYNLOgpXDo34HCFFlp5gOngLYpwy1J6Cwbru3bqkT2lQwO4MiO3+tWGbCgpdSDSLb7CXHfdKGnloBfrgT9dJ4kwAyORvqmNHvJbooC1a6vuq0q2YG9J1yA1xIj2K0sOlXqGesEPu/5TnRwyCQSyF8ZDA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788510249; c=relaxed/simple;
+	bh=bOFX6B1cMLWK/8rdWZyVjQRxmhZreHCtlJQd0747/0g=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=rbge8wujvjfunGaZMkJBLrX8wtY+eTZA7MBX8uWsA6EBhvbf8R5KsdP4cHQucOIYQt3Lh106sdMhEJnT7Xre98nOq6n6rN/FisHWiv0xg/rbAIop/ZSC4mnZg/Urgxs6ieBQwxo8rSaqr7ZQff+sgzbjbdJCHv7+/XHjmfwFCU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=RZT2XFGa; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hp/XmOUL"
-Received: by mail-yx1-f42.google.com with SMTP id 956f58d0204a3-66f7f62e915so658654d50.3
-        for <linux-clk@vger.kernel.org>; Fri, 04 Sep 2026 01:14:10 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1788509649; cv=none;
-        d=google.com; s=arc-20260327;
-        b=lXU/zu/U3fnt1qd8Ybx0sifu7riOuDAxUywGHJrtJrqDVUkcccZL3w2bp1eQrsiX1N
-         jeEiNtlgUuO0DHTPDZSQ/YFfNXpvjgI8T1FbSHhgPSL6Mll1y3Cik/Q5rofVmrsqRI9j
-         paMNcxE9nEoAblHC9QOIFv865DJYsHHdXLWbzUnVULTG2QYYOkiZ2GHuFHtDNyHelpVP
-         nty+8IANxX+5e+BWfxmQ+b+xKWQLkFU1u9TRUbz+pkfI7hbXFD5n3Zc+Jebc+qpBPb85
-         NbjBbqVXkHdHH7FC4/796UEwLx1tsI65Z85Fgm00AcRv33/cxoIheqrZKGUXuhN7kEqN
-         Uh+Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=tBqFv7ZNVkf8/OWug/8l6emlj27SIx7U4VNemvpWjT4=;
-        fh=9dfzLEOyZzYFSMoJA66+xhvBhLuhwVrI9N6FSI2ThkI=;
-        b=kz06t0UxAm8TpCAZILlFAqoCRK8XVTgVvmkN+qAfbvPGlE22Z7TNsRGd+WspH73l3y
-         gfe18AjzPglqVKD/vtcAlaRm7y2jd+f3sNIvlM2u56CA3EaBuKtIFkIK97ntQ1McJ5gD
-         X0qUe4d4BvMQ06UuiJINJE9wZHTYPScCYvi+bTqx8jCZWqaRSPH/Ctg17UJaB8xgzoU1
-         EggCdFwyYKl75uGtQ9EdgemXEeAIUkA4JJ7mdulpSpkJDBcr5tukmbjut13Eb57KbNvw
-         aipGecRJp2Bpz7c5pIj/qUjaDDRqOHe9V31WautNMYlTdqDOuYg572OlbhEVOL/02qTt
-         2K7Q==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="RZT2XFGa"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4956869750eso5614955e9.2
+        for <linux-clk@vger.kernel.org>; Fri, 04 Sep 2026 01:24:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1788509649; x=1789114449; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=tBqFv7ZNVkf8/OWug/8l6emlj27SIx7U4VNemvpWjT4=;
-        b=hp/XmOULl8hos6ueQMCEt77YRd351d0QwD4CL8Yy2gzsVvec+jhdaCNrh4Yca7MN/k
-         YhB7tlNKiaM7GQ3zRXyHKeyjCaxZJ/cA0ZIRA0nm6AuTFPVL1ldlfas1DpOLHB/0kpd0
-         Ob74Fx912i3fzzb/UVa0abPBSIp99phjuhVgY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788509649; x=1789114449;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+        d=baylibre.com; s=google; t=1788510246; x=1789115046; darn=vger.kernel.org;
+        h=content-type:mime-version:message-id:date:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=tBqFv7ZNVkf8/OWug/8l6emlj27SIx7U4VNemvpWjT4=;
-        b=IjVT0zV/xc4PSpYD9VhMRQph/Bqs4Fgj69d+pkhS79oyTQKjF+SqnOhSjEb0wFc3MX
-         N2e3yIj3Yh8OkJl8fik4aCqbQLygvyejE5bxD3L9s1kEeeFnQZwauQrx5w9dGL0VE2P6
-         qBIvdP7O0G2i6RTXrTA3hDP5cTJpvgzhKlUnlYBU74M39pJ/Q3GGyl4uJ3IHTGeJjd/2
-         laqcnX6LLJASejImMfakVr1+Q40CI23GkXadEZiwyy8AUNcU39zkFCSMmArQsjo9psj6
-         ve3XzD46h5z4x5Eo4+geQ5t0gqwu+dEi4TONZAby8dgPBrcqbHycdzCiPFUbf8O+K7uh
-         aMgA==
-X-Forwarded-Encrypted: i=1; AKwUvBwZMdy2HomZx4+cxBrPnvy9b3y8wuO/gg3qb1SocS6XR1jXz0SFNnZwNXcyqHnQe+aVHMsnoF80/Hg=@vger.kernel.org
-X-Gm-Message-State: AFuF++lIIFiJA7jhxbBFHf6Tyl+ibPJvqZieMjfnmSAZx12n76D+9N0B
-	0JCvvMfpptSRZDD2v66beO4mWAAOEIbJXCIBLCQ0xk7pfmFms0eEXMJjES9OGOvkbIobtRHvE3E
-	Gl1TBCLCdJu5uaHO134/jQF+mIAX2MLUSiHuBhr4E
-X-Gm-Gg: AYBFou0QDyVmhvuRbY8wQJN6tbWzMtf1Ci/NnFaafx8a1sORlmi1LSJ5uIdnuJ5gGAv
-	keH0YL2stFIu34ZSbfD9fvuL6AoOv/A7SYPpKHtsedvX2eh0BDG0U5zZGKmzhMGzv+Qggxk30Nv
-	xJ6EMF8HIvk4nZDReKxKw5H7Rs25F0OrpV+3BHteS5IOXvkpujCG/L7QCH0wRs/rKWxyIgFKWKl
-	8O5bIpcgksXsemC3xZgAMzNmgE9hXy2/AqtR/PvrXvy/cdaI8sm5KGxnjtSnbwpttB1DHoWpnJd
-	rw9p6qJO0rDxovTemDyqVZlopWFl0IXOs3cjHAJvSiDOeo4+0sjMS/oeC/YKIN56Vsff+s4kCsk
-	MUWVtGGSJ
-X-Received: by 2002:a05:690e:168d:b0:667:770c:f88e with SMTP id
- 956f58d0204a3-66fb5aeafe7mr1463610d50.45.1788509649151; Fri, 04 Sep 2026
- 01:14:09 -0700 (PDT)
+        bh=bOFX6B1cMLWK/8rdWZyVjQRxmhZreHCtlJQd0747/0g=;
+        b=RZT2XFGabeGVMYnYuvbApCELKeWCwlHJ7lJ6KrQziN9fgyhdIvkR2XBo8FB+9O/j9K
+         txor+j0jFmjyAs51yleBFwGr3x1C53w2WPWPpZUK5tphVzsn6ty8xAz54bkohQgLzxgr
+         gzQzpiVnhNF6Ckntq5i2mdVGVxuUPUHg7iO+CCstjqAO6U+xeoJwsrov1RlpSVDc4JId
+         cYDPl+BppRR12QBd6HVdiAPWBVguDj+/7xRZZ+UawR9CudjeTm1NCxPj0jAVjDNvPcM1
+         1pcg0JE+xooZ1PI1wjH/8cbUB/XMO/yyqsnllSQvJhvwEjMOHlLldTLUw4D0vofurr6N
+         aQwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788510246; x=1789115046;
+        h=content-type:mime-version:message-id:date:references:in-reply-to
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=bOFX6B1cMLWK/8rdWZyVjQRxmhZreHCtlJQd0747/0g=;
+        b=GknOZgEuJQMM2FxKtK2YdYavBAPuiEDSKLVfp8K/IjbsxPr2GSKOdnHS/vKbLRBA/R
+         8aq7K6E3DGZOUefTS3ovXfNNFThCHi14RGULL4WxZEo5Q7OIZZJBZUJ55lDGgZ+iz4ZF
+         3RDkkCwnrtH+KEwHPY37NtZE7isqHeYojbPtk0fZZAMeuZNetdK+jRnU5Sws7z2fk1S3
+         MFDMAh+FlQ2oq6zAm/vhGhZY0331xilP5zf81YnEZKk/tKSuyByNrj5m7R3LACRqsME6
+         bbqGBM1PDUpaymBUTc4Q/9N6B9BliVNbkbKBYGdRX6PNDoER3vmT9xWBPciDfP21+21f
+         BGyg==
+X-Forwarded-Encrypted: i=1; AKwUvBzLr95aq9ngxNrm2ct3H+BdVy6xO5PtFjWEcLcNsb5JrIRYzqfXbS8RMvgPq+6e9xGbvLLuGxpVeQ0=@vger.kernel.org
+X-Gm-Message-State: AFuF++lYZDGJt5EoQ3Sd5aXYs0CR2jUO29HjvY3Uh5rkAJl/oQGp7vf0
+	iDWUDEvU6iTp1YXwZ7pTs+/vbmK5QBaW5BSlR1bJORKUn4XGwAhKq8nQyrJ7uYjFkEk=
+X-Gm-Gg: AYBFou2OcErUAGAoukTyZ30vftdceK0WBOnwN3yP+QRix9nMCGgKVHooIfjZN1AC3Ky
+	0QluE2oDaGy3nKwQ4aiENfA/A3LUFwTxL+Xr7aVwWhZHcKZCsIc6Sbx4jC6pTeqK3R0+YH+Ngsa
+	Empiwkw1D+742kOIsnqO5W76SQGCxOsihVV6Khq20hThgW0C51OnOZoOWkGZs0uhLGULCf+LbRk
+	V0sKs1ZB1idLFlepXfgymjnhGwWyr9CFaMOCFpS/xGIg9o1JCD9fvXUVee3OTbx5RwOObaw3jeR
+	5D9FQe6856nsiEaYWa+Ox3qddS0eRKPB/xc8Ok1gCj5w0g+Pf2rc3gO31gOlvc5de40CTs69VtD
+	zb4ysHA55OwFdJKEFQM88bzT/ap8NpsL/l+BpvBsDHWs+Jm2pi7ZAxVAwur8lx3Fs8l8quWEo25
+	rddXVktP7oziwUrOcpzNOkifWBOK+3k+uRYlWVK+lDXiaVCoOQ5Y8jxhbQLIjkZEuHHlBxjrDxI
+	QRNqL2T6eB+slA7Hw==
+X-Received: by 2002:a05:600c:a44:b0:49c:dcec:bd27 with SMTP id 5b1f17b1804b1-49cf821e7a5mr40764145e9.8.1788510246002;
+        Fri, 04 Sep 2026 01:24:06 -0700 (PDT)
+Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-485885bfe14sm4632933f8f.35.2026.09.04.01.24.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Sep 2026 01:24:05 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Matti Vaittinen <matti.vaittinen@linux.dev>, Matti Vaittinen
+ <mazziesaccount@gmail.com>, Matti Vaittinen
+ <matti.vaittinen@fi.rohmeurope.com>, Matti Vaittinen
+ <matti.vaittinen@linux.dev>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Liam
+ Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Matti
+ Vaittinen <mazziesaccount@gmail.com>, Stephen Boyd <sboyd@kernel.org>,
+ Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet
+ <jbrunet+clk@baylibre.com>, Linus Walleij <linusw@kernel.org>, Bartosz
+ Golaszewski <brgl@kernel.org>, Alexandre Belloni
+ <alexandre.belloni@bootlin.com>, Michael Walle <mwalle@kernel.org>,
+ mfd@lists.linux.dev, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org
+Subject: Re: [PATCH v3 08/10] clk: bd718x7: Support ROHM BD73800
+In-Reply-To: <2a74fea679420d147ab1029943ff071628dc8c5a.1788346553.git.mazziesaccount@gmail.com>
+References: <cover.1788346553.git.mazziesaccount@gmail.com>
+ <2a74fea679420d147ab1029943ff071628dc8c5a.1788346553.git.mazziesaccount@gmail.com>
+Date: Fri, 04 Sep 2026 10:24:03 +0200
+Message-ID: <1jik4ll90c.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260728091804.382753-1-wenst@chromium.org> <amiqKRkFItYwD6oL@redhat.com>
- <CAGb2v64zUO-azpTuei6LCypad2noGFbg+EmaBC1iidoZ2stQzw@mail.gmail.com>
- <c1048eae-72c5-4e2e-ac49-25e2c4297018@collabora.com> <CAGXv+5EgGYFVt4TJCysQgRqA1J5=Qz9c0oWY5YTxgc5PnNC_AQ@mail.gmail.com>
- <36f2775a-d332-4913-8e9e-ca0429c3f713@collabora.com>
-In-Reply-To: <36f2775a-d332-4913-8e9e-ca0429c3f713@collabora.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Fri, 4 Sep 2026 16:13:58 +0800
-X-Gm-Features: AcwNN1XC4LXAm1BwVIM4UDg-tlD1lttg9AE64QKW3tHBF46eVGyIPLVMv5NqRcM
-Message-ID: <CAGXv+5FEx=H9r5MGequDpH3i62FAWbXdwkk66eBj8+ziT1fhMA@mail.gmail.com>
-Subject: Re: [PATCH v4 0/5] powervr: MT8173 GPU support
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Brian Masney <bmasney@redhat.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, Alessio Belle <alessio.belle@imgtec.com>, 
-	Luigi Santivetti <luigi.santivetti@imgtec.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	imagination@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, Icenowy Zheng <zhengxingda@iscas.ac.cn>, 
-	YoungJoon Lee <getfeus@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-Hi,
+On mer. 02 sept. 2026 at 14:05, Matti Vaittinen <matti.vaittinen@linux.dev> wrote:
 
-On Thu, Jul 30, 2026 at 4:23=E2=80=AFPM AngeloGioacchino Del Regno
-<angelogioacchino.delregno@collabora.com> wrote:
+> From: Matti Vaittinen <mazziesaccount@gmail.com>
 >
-> On 7/30/26 06:51, Chen-Yu Tsai wrote:
-> > On Tue, Jul 28, 2026 at 10:33=E2=80=AFPM AngeloGioacchino Del Regno
-> > <angelogioacchino.delregno@collabora.com> wrote:
-> >>
-> >> On 7/28/26 15:13, Chen-Yu Tsai wrote:
-> >>> On Tue, Jul 28, 2026 at 9:10=E2=80=AFPM Brian Masney <bmasney@redhat.=
-com> wrote:
-> >>>>
-> >>>> Hi Chen-Yu,
-> >>>>
-> >>>> On Tue, Jul 28, 2026 at 05:17:58PM +0800, Chen-Yu Tsai wrote:
-> >>>>> Hi everyone,
-> >>>>>
-> >>>>> This is v4 of my MT8173 PowerVR GPU support series.
-> >>>>>
-> >>>>> This time around Mesa was ready for basic testing, using both vulka=
-nmark
-> >>>>> and glmark2-es2-drm (with Zink). Details below.
-> >>>>>
-> >>>>> Changes since v3 (all in the clk driver patch):
-> >>>>> - Changed pm_runtime_put() to pm_runtime_put_sync()
-> >>>>> - Added missing of_node_put() in remove function
-> >>>>>
-> >>>>> Changes since v2 (all in the clk driver patch):
-> >>>>> - Made COMMON_CLK_MT8173_MFGTOP depend on PM
-> >>>>>     - Needed since the driver implements PM domains using the gener=
-ic PM
-> >>>>>       domain library, which also depends on PM
-> >>>>>     - Fixes build breakage (kernel test robot)
-> >>>>> - Fixed "RST_DELAY_CNT" name (Brian)
-> >>>>> - Dropped unused mfg_desc (Brian)
-> >>>>> - Added check of clk_prepare_enable()'s return value in
-> >>>>>     clk_mt8173_mfgtop_power_on() (Brian)
-> >>>>> - Saved error value for return in IS_ERR(data->clk_26m) branch
-> >>>>>     (Dan Carpenter / kernel test robot w/ smatch)
-> >>>>>
-> >>>>> Changes since v1:
-> >>>>> - Adapted to changed DT bindings
-> >>>>> - Dropped driver change
-> >>>>> - Use same power domain for "a" and "b" GPU power domains
-> >>>>>
-> >>>>>
-> >>>>> This series enables the PowerVR GPU found in the MT8173 SoC, found =
-in
-> >>>>> some Chromebooks.
-> >>>>
-> >>>> I'm making a pull for Stephen for the clk changes. Should patches 1,=
-2,4
-> >>>> go through the clk tree? Patches 3,5 go through the DRM tree?
-> >>>
-> >>> Only patches 1 and 2 should go through the clock tree.
-> >>>
-> >>> Patch 3, 4, 5 can all go through the soc tree if Angelo wants to pick=
- up
-> >>> DT binding patches. Otherwise I can push patch 3 through drm-misc.
-> >>>
-> >>
-> >> Not sure if I can really take the DRM bindings patch through soc.
-> >>
-> >> I will take the devicetree ones exactly right now, even though it's go=
-ing to
-> >> give warnings.
-> >
-> > Apologies for missing this, but the first DT patch depends on the clk D=
-T
-> > bindings patch for the clk ID macros. This is causing build errors in
-> > linux-next right now.
-> >
-> > Not sure how we can fix this right now.
-> >
-> > Brian, would it be possible for you to split out that patch into a
-> > separate immutable branch for Angelo to merge?
-> >
-> > Otherwise Angelo might need to drop the DT patches until the next cycle=
-.
-> >
-> >
-> Yeah, that's so bad.
-> I'd be happy to be able to resolve this, but it's too late on my side.
+> The ROHM BD73800 PMIC has a 32.768 kHz clock gate. Add support for
+> controlling this clock.
 >
-> I should've checked the DT patches more carefully, my bad: I got a bit to=
-o excited
-> to finally see this PowerVR stuff working on MT8173 and going upstream.
+> NOTE: The CLKOUT pin can be muxed by an OTP option. On some OTP
+> configurations the CLKOUT is not outputting the clk signal.
 >
-> Sadly, I have to drop the devicetree patches :-(
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+>
 
-This is a reminder to re-apply the device tree patches from this series.
-
-
-ChenYu
+Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
