@@ -1,114 +1,83 @@
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F0313DDDC1
-	for <linux-clk@vger.kernel.org>; Fri,  4 Sep 2026 21:50:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9182D3CF032
+	for <linux-clk@vger.kernel.org>; Fri,  4 Sep 2026 22:39:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788558617; cv=none; b=bXLbZTY8Rh0G0cdXF26PFNnsEa8+7cuAdu+solsFpdw+07nzlnAhmDvCZQYLgf3D7d3EX6xJ9QJsPsm/PQHTk3Exc14y7BO9Ypig+Z0c3i/A/ARxkudovpRhRAFE9CVjzfPWbe2ldwCD9qvaA4dTGcc2gF8di+0RL2PUpvVuZMg=
+	t=1788561569; cv=none; b=NQnj3ki+/CthU69emSxv8prRrm6txsSCwBrNlB13CKCHQaPCExFfOSECcdd+M/uuCJ8miMHIURV6qJYY5FBKzvocAgBiOhfRUgelbbkZV8WopNtLVYl1piIks1qDHaeZC8VBKNsHq1eWwBhhfPXN27IGB5maYwcbLCVt+wGI3HM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788558617; c=relaxed/simple;
-	bh=HRpm/PikTeid4SxhtPG58lLWj9vHexiupAlM1DtQk2E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qHSpiPyatpm1FhP2TJIyXULpL+QoqFFPF9ktj9nkM96oeFv+iQXg/0uOL2lYJgsY7c9at88pP0pfHoEPDGhuNJRxyG2ZdnIP6soBzUCkRvE3mnNdm6JNT8N7YAlmOD7r86rp/uP4lk+uMMjiuPtm68QUIQv1kZIyzGJrTzHOtuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ed03kEpI; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1788561569; c=relaxed/simple;
+	bh=llV8+t5XVFTw1AVjhesFZp1A/YnFQGo0lCxhv7P61wE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YsIMyyrmTAciCM00bVtE8a6O/eEidXSY1YXl9Uv3xnxHqQBuluRbYbETnnGJGfiWpyPvoy+XuaYLyySSGZHB0VPWuWry6DsduqDuIDkwnrKjQXlJXTEyuE2M3WW7WXVm9c3rLLxe9CSve7Hf/C5LRoiqM8YFm36JydBpv7k8ltk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TmQSKZ88; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ed03kEpI"
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2db18e5cb56so11318345ad.0
-        for <linux-clk@vger.kernel.org>; Fri, 04 Sep 2026 14:50:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788558615; x=1789163415; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=sD9Hx1FwVR5Eafl6UTBAMgGfntaRlJCf0MQwhh/QWi0=;
-        b=Ed03kEpIXy8yQrPvpbmFjdXOdxNu53kcAR1f2iBbxbOjJ+oX2Whpgjlv4eYvrav6Xn
-         liKmE1GvXDvuwvPxc7/rjhU40nlNYNweKM+5lMS8xxZM9CdaGQJ+p4E2UHEZ2pTIGIIl
-         ZmANXFkTcXMp81OXZ7Tp/wKFw05Bp4/FaU0pAWi+cSOgo5QuHtBkGjU+iEGdqA7bCme7
-         5TonwIiAOeTwCOcweDUSVraB+XkV0mKXszMlvV/gWjWCMXOySwbJAJJ2oj/Vckq4iWab
-         F8HvxeRe24g1Lzuk4p4NjDfN6PGTYY4Phx9tnYThLVG8dvKmzCFYg+/nLD8oWmr3Al5f
-         l+VA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788558615; x=1789163415;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=sD9Hx1FwVR5Eafl6UTBAMgGfntaRlJCf0MQwhh/QWi0=;
-        b=Eu+nrBUo7Ktu7K6o/JE3bZP+tG0QDHj7UZO26XfxWQ/okrln/PmYExldxEMQkXP5He
-         PQw7mfa6PQt0cjG0hu2kuPQdLH+xLh2MLwjcrAeVXnl6bP+A5dCdH6zZUAgiZ+JP2fFN
-         oWaKsFxNadhhfRyq+hkmujSMTxbmbuwXhpaN6aFzL7l56hs1RWX2gE1OpaxdBBBjZxdT
-         QGVe5SpTNH1WzWwxD0EpbhqJL+HPs7pskzw4O2GOy/WFvVr+a2Ur12jeFbM5ZK6/f+XP
-         oYUnAtbVqoD7yNJYpRdRF7FyTzaqILm90itJ2B+6P7oUN1K6TgELDMUilh4owvbBr4Ic
-         FgzA==
-X-Gm-Message-State: AFuF++mmCPx2xbPKPMdZG930bJdqWINefxm3YnKXk0z/C1djVv2c42BL
-	hNyA18an7rieZe8Hs4r1e+BZtIMz6VkwhT7TiyBlRjG0W/70+UHlGWfRid0BFQ==
-X-Gm-Gg: AYBFou2+M2DAYoseTvEu4YUs8Hq1tYg6fRU+WREQu58/R03EFltQhQFYIiw5nLWRGvm
-	BpPzZtbScK/LMmyeN3RmZNIkB+t0j10S4izrKSnVsUZjd7htyDS/g+YGjdNiwntfmJUc4fyYfrS
-	r2Or28Fv4QlVF1WPJDZ9RYyytsgTEmiQtJ67tTzCvCVZ6hj5VS49djYYeBgx8HOJOV3fTYDnloO
-	bmcasNeeZdiYluMJvHNXsKXEDMiPmJOUw894iX5ibfqxpg5hPGIjwW5pLvXV7i4wDsowonak9F+
-	cltLYSco389yG6z9BIDbkem2ygXV/LoVAOOI2s5HVvoGz+SYxmqSpgCbPQMMSlAIxclW/Yjjc29
-	TeCDocL/auMg6HctcpD4y00WaSny6/BhIrzkgGC+aotE0cpo0/KMFsA6pBnHPsAXGhcWZfGj7wY
-	cnKd6FR8Fqy+3fh/WDCKTYMP1QEBhbW7jEvMnnHozdwllRvg5uz8a0C9hy/vxgw4sQuPgFzFLtY
-	CngyjbWaDV924/DdcUedcEiZWJkVfKCioweh5Y0XYZrKEdG9HDiMHjDsNxPYOMuLnPueECwgaxD
-	aWPfHF+bPUlVNJP0jnZDTHAJCnfEiS1SDvgiAQ==
-X-Received: by 2002:a17:902:f64d:b0:2ca:e19c:986 with SMTP id d9443c01a7336-2db125c83dfmr131050775ad.1.1788558615405;
-        Fri, 04 Sep 2026 14:50:15 -0700 (PDT)
-Received: from ryzen.lan ([2601:644:8000:7a86::e34])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2db149cb5f0sm14512185ad.67.2026.09.04.14.50.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Sep 2026 14:50:14 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	=?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM/ACTIONS SEMI ARCHITECTURE),
-	linux-actions@lists.infradead.org (moderated list:ARM/ACTIONS SEMI ARCHITECTURE),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] clk: actions: owl-pll: cast delay to unsigned long for uelay()
-Date: Fri,  4 Sep 2026 14:50:13 -0700
-Message-ID: <20260904215013.98283-1-rosenp@gmail.com>
-X-Mailer: git-send-email 2.55.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TmQSKZ88"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 382A11F00ADE
+	for <linux-clk@vger.kernel.org>; Fri,  4 Sep 2026 22:39:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788561568;
+	bh=llV8+t5XVFTw1AVjhesFZp1A/YnFQGo0lCxhv7P61wE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=TmQSKZ88V4EGqJifsEp+kZ1YixheuM0ONQhC6ST5IL01g+nhibxZhhf862xYvGKiH
+	 zsL6NdJqRE+8cN1+VwhP5RbcocJ2qECR7DnI8Iv+IHuT7vV9bFqiv6IxNyNxc7AnKC
+	 jvnCWfirZFg+sfpoGgMmQfw5FMbvxJKL8jrVzg6wCknRaHWEIQW+26xRLPkPp6IIA0
+	 1Ij41r0fZpIF5xen12KtRMK1loX6JFhp82ACkNDplK8bRD363CGaVx4pITobwiNhEO
+	 UkWhB7Xwkr33bWh7UYYSA9OPrUsRBgpEwUZDefYoz68AWWve8POgu7uDBwiSMOKzcx
+	 qryaovYBoxAsg==
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5b4a0e5aefeso1741760e87.3
+        for <linux-clk@vger.kernel.org>; Fri, 04 Sep 2026 15:39:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvByfYL0eWmCDBV2j7Yf3GCnQOrSfNZIEnWy+/JVfxPMKl7VDT1IOUfgJ36/2BOha976gXWpuGG9ZpbA=@vger.kernel.org
+X-Gm-Message-State: AFuF++nFF5BWmnVjfGzwdxgxgg4SXOKDylIpWvUmNXcFdfwrTg1AjOl1
+	AsCCS3Ft1gm4SAW8+TbALkhGlsJQHphHukbfLohN/cA8A6yTmLcB4/G944I81TlVUUOLO3A4nSE
+	xBLxyYikHus7Au1z2HLCmuFq4rv11zmI=
+X-Received: by 2002:a05:6512:6186:b0:5b6:1a7c:3b with SMTP id
+ 2adb3069b0e04-5b61a7c02e6mr1037141e87.62.1788561566902; Fri, 04 Sep 2026
+ 15:39:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260904-cv75-v5-v6-0-e918514cb3b1@ambarella.com> <20260904-cv75-v5-v6-1-e918514cb3b1@ambarella.com>
+In-Reply-To: <20260904-cv75-v5-v6-1-e918514cb3b1@ambarella.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Sat, 5 Sep 2026 00:39:15 +0200
+X-Gmail-Original-Message-ID: <CAD++jLm3KLqaQZFsb2Yu0pERjCfrskL=x3arMtrY3Gq6X4rgZg@mail.gmail.com>
+X-Gm-Features: AcwNN1WuNL_yJJgNrKZTtl_t_1Ngwep6ljsejiCgS8bZ3EgANbDs_npxnarBzq8
+Message-ID: <CAD++jLm3KLqaQZFsb2Yu0pERjCfrskL=x3arMtrY3Gq6X4rgZg@mail.gmail.com>
+Subject: Re: [PATCH v6 01/13] dt-bindings: arm: add Ambarella CV75 platforms
+To: longzhao@ambarella.com
+Cc: Arnd Bergmann <arnd@arndb.de>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, soc@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jiri Slaby <jirislaby@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Long Zhao <zl020895@163.com>, 
+	Lee Jones <lee@kernel.org>, mfd@lists.linux.dev, devicetree@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The 'delay' field in struct owl_pll_hw is u8, but udelay() internally
-compares its argument against MAX_UDELAY_MS * 1000 (2000). Since a u8
-can never exceed 255, the compiler warns of a tautological comparison
-that is always false:
+On Fri, Sep 4, 2026 at 8:39=E2=80=AFAM Long Zhao via B4 Relay
+<devnull+longzhao.ambarella.com@kernel.org> wrote:
 
-  drivers/clk/actions/owl-pll.c:189:2: error: result of comparison of
-  constant 2000 with expression of type 'u8' is always false
+> From: Long Zhao <longzhao@ambarella.com>
+>
+> Add the Ambarella vendor prefix and CV75 EVK board compatible for the
+> initial SoC bring-up.
+>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+> Signed-off-by: Long Zhao <longzhao@ambarella.com>
 
-Cast the delay value to unsigned long to widen the type and silence the
-warning without changing behavior.
+Reviewed-by: Linus Walleij <linusw@kernel.org>
 
-Assisted-by: opencode:big-pickle
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- drivers/clk/actions/owl-pll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/actions/owl-pll.c b/drivers/clk/actions/owl-pll.c
-index 869690b79cc1..5e30ce35f2f5 100644
---- a/drivers/clk/actions/owl-pll.c
-+++ b/drivers/clk/actions/owl-pll.c
-@@ -186,7 +186,7 @@ static int owl_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 
- 	regmap_write(common->regmap, pll_hw->reg, reg);
- 
--	udelay(pll_hw->delay);
-+	udelay((unsigned long)pll_hw->delay);
- 
- 	return 0;
- }
--- 
-2.55.0
-
+Yours,
+Linus Walleij
