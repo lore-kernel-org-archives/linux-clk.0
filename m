@@ -1,71 +1,72 @@
-Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
+Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AECF0451071
-	for <linux-clk@vger.kernel.org>; Fri,  4 Sep 2026 15:16:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F5574F30C8
+	for <linux-clk@vger.kernel.org>; Fri,  4 Sep 2026 15:23:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788534992; cv=none; b=brzOv5t2yfxYy083+pZRyDFdToqUm5CemnoU2GBUwQrW+xmWeMjILrXGmMx+CGK0QBYVmGll69PZA8RIwMPzuBGa8uV3+D49zlfFJrhoacrrE8/wPisSUF47GFs3+EWqE99w1vFRVOtX2ClFPDG8mhg8nNcmYKx1Fnkbjkaf9GI=
+	t=1788535420; cv=none; b=irz1cw7RFhtmpVLhZzwkkxtFBK4XM6Bjx8eGDdfxily8Ri2pWR+ugELsCOiWCDm1/lBZSlFjeT0i2mdiw6A5rtdM9pzmeggTEALYEEljkqdz2rc2AByve5mdXWLVA2ifovd0WgXZ7hCeBzGM2yS4tTuDmrZwHVszTUO96eQT5rI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788534992; c=relaxed/simple;
-	bh=3zmx8Z2M3ZeRzOKqpOgR2P10M5x7/5/EKeh+dHIiZJ0=;
+	s=arc-20240116; t=1788535420; c=relaxed/simple;
+	bh=nCrntIDhyuwP8BQpdMv2tSN81fhquB9QOVe0SeizZYU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RMBC14cJCeu3GAKYljemqWaXrSgyNJzmaCXlrweU5kPnxHLMk2Mk8J6qhZOToHu1jvaoj6hCOXgz+Bi1/ulsqaGxqvYbYdQ7kPl4XaM0BWCvJbrornlSmegx9Jw0tZR8e4L/+IjxUHnqL6SiQzAtlusxewGQ6qiCmXxpIZnwd1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.177
+	 To:Cc:Content-Type; b=IaIpOLBw7qpUFjpvMLFzff7qldFopdgZBLxAgbL71PunZpiByrdj4+rsqK6fswor0h1r2hu6YENA8VJ/CTDTKS4lD4TGLtmWQCG5tJhK0dkedfzJkBWi6P6vOOqSjH4fTo2zY46VDzLxuuV+9Dsyf3HY4syeQlhhoCOPSiNGd30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-5c66eefc868so1055196e0c.3
-        for <linux-clk@vger.kernel.org>; Fri, 04 Sep 2026 08:16:30 -0700 (PDT)
+Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-75e2905c09aso271486137.2
+        for <linux-clk@vger.kernel.org>; Fri, 04 Sep 2026 08:23:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788534989; x=1789139789;
+        d=1e100.net; s=20251104; t=1788535418; x=1789140218;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=VtnOZM9WfbSwC1inxRe0geJOr1JfkMHDy+62es74nYc=;
-        b=S/SOXPBoAWyHZClpfzZlj4JJJQS6wGbRRGcqryVPN2DAIZQtHkX77s3gMLgHCEFkja
-         1QDcODZ9esg0eFezjiYuUfM+pLGX70iMallqKuxscNY8uOtDZ6DPeGgZ+e6rnZAqvhVh
-         8qndrw1HZ4ewva2pLomrBE5vv2ysZUwMiISdQfIeRIoXg7SzaLRBv5SGsEr3yVlpRa5I
-         lcGgbUnfJGWOq+lVCHSJIntuv/98pBktCuPGFcBLMPDrOSk0XeDFqmAuJ6OydhATdT75
-         NADguKRy1yMsD0ex1zWijeej+9iUCQ2YIoEv9pmmBEFL9y6sgLYeMi1wiXAOxG1wly9X
-         pd1g==
-X-Forwarded-Encrypted: i=1; AKwUvBz3uvBMHwsuVh1gHM9kKzB1eJbP0xwbzENifq4thGt1h9L8dYmbNr19oR7JrTHxKAEqc5M04oTYpZQ=@vger.kernel.org
-X-Gm-Message-State: AFuF++kocmT0aRLiSCWbDuKopjC+lrOqVBx+H1+d/Eikyk6jg8dz5/22
-	q4DIEZNlQ1TWWqaP0yAZ6a+kTewzSZYZ5Og8prRIEkCojNEcN5ES47qZ5m0+BLe2
-X-Gm-Gg: AYBFou1r0fZXysbXaqCxgt1IzEsGX0F+hRNcsen35u9/hSMyT/caxvQ9xxXU2jBQttJ
-	dUkr0gbjBPg3H4vhoOx2da2s+0a4ub0DeuLEqcbd1XLsNT6aevfUVnreM3kRbOuNd+z7vZJiqs+
-	maPNDW3tWdfAfLfPl4oo9qBQQjumy/hf48qH/ZbltbuDaTrI0WAgQH+fFplKWY4M1YnGLCnk3Rb
-	O/+1ZaMn9SMrcOla2xKHrCP/7p9wQM1cmMN/pY4KBp2W5NojABOlzwCnsezdK0oI1srC89eg1fJ
-	irFj71YJVWRBbfnCIhn477RqNK7e4QVqMOrun+S9VDMOt8VFWdNbxgCOTy+nGemh4ZO/XR872yy
-	0gyBcpkzQqFoqK2Rp1XxCclv2OpHySoqQcuCRf9cDx2CqvUKOVrs8BJV/epjmNxRZch0oO08txE
-	itxT8CuXcXEqBP/XnHRjMZwOPsbYxuYg4dT3/dbSc2SP6ReKHTBwkvzR3OfQdCpNB5D8Fk4sjG/
-	uCY5A27jlIspWYHzaZb7XveCkIlAw==
-X-Received: by 2002:a05:6122:da0:b0:5bd:a5e1:c7c7 with SMTP id 71dfb90a1353d-5c7ed485cdemr2966496e0c.1.1788534989445;
-        Fri, 04 Sep 2026 08:16:29 -0700 (PDT)
-Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com. [209.85.221.170])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c7ec24254fsm2296404e0c.10.2026.09.04.08.16.29
+        bh=Mr7nrVkZKYZ/vaRmGYmX7E824Q9vDG1RqRG5Sn6gSeM=;
+        b=gBdJb+2+T0FZmyT8QEJ/uOV+yzB1XYTFsOD4cg5J90WlCgcZx3VNxwsW7NGfBOWlza
+         pZssaT06WHTPZ74SjvbrA1e4cwoWifhR58heTXkfocSk/GqDpPHmSPTYwue8Xu24AD4U
+         O4EEx5z641yoQ+T/PcNNFPOScjITZoW/a/W3VkFltgX5o9fzynw/bwVLsmjTCc1HpYmI
+         y+G3iblRTjNO3qGvPFeDLWVIHRE4i4BWw9mycS+s7ppyG4K0QFBSksF56tfEMz9DcxhR
+         Xzad7g/rxD6ep5mCd6H6utl8dAqT3wqI4IREQdjlxOaC0xjjqDrGqR6AuQ1Nrs81ZoVK
+         PW3A==
+X-Forwarded-Encrypted: i=1; AKwUvBw0N0oUtrC2VOWQmSIMiv67YEnFVVg1hl8ReUuVaYb7YKnWn4fxvB9BPRWeN1j5dRPW6hUlkzV8Pws=@vger.kernel.org
+X-Gm-Message-State: AFuF++lzVO6XdtkLukK+iwEtlO6KpImw/VFPScgitlPneBQBMc/AinPK
+	5It0qaFYrFY69XacuYN44pxucB3ul1xd9YT1qZ0/K2MYEhwXH0HkjCITb7tX0VhT
+X-Gm-Gg: AYBFou00W0R12cmlt/4HzLYIbVFCI9g1eFCNpd2JqgLkfYPU0EsiEZr7eK9uPX8UOZK
+	pTi7zpZYsueAAGXIl1/XCK7F22XOnhhFY8otTl8fUsEy/pyrAjt046HGUlHSRab6RDwIzXw+1hJ
+	xwIB3TFUrUv+h2LXTHRIvqYgt1QOCSaoS5+XBs+sxKlbttFTtr/hNLTPInwDpRH1X5eklhjs723
+	31zTNv8w1O6V2gWAkLsQ8Z5bR8SmCED076e1/4i48hRyC3VrL+Nh3CT2PV5lWWawDhm2N+oeKa9
+	WRbxpSi+JGBbcQvh2BCCT4d44UXq6MtG5RJLx0yw+rfgXSRSjSfkhBA8OpQz/jod5YZ61BqlPAB
+	5ciqUNCdZb3acx9+QkuVCIPP5K0qmwl3/aWqA3S7Vn9p6B90y83wFlsvlRsLm2OKq5u8sJDdQZj
+	lz/O6kAdC9ttW0XHzWZ83tW4bEh/3gBJUogz3i8Pygvxz5NyR+FmNgkXxqT3m34BUN0eoem9QP2
+	Dq8c0Ri2oAO8X8FXIEa3oPe8QW5UeE6IcNV8NWh
+X-Received: by 2002:a05:6102:508a:b0:779:dc0d:2b2d with SMTP id ada2fe7eead31-78a4a917628mr1890453137.8.1788535417837;
+        Fri, 04 Sep 2026 08:23:37 -0700 (PDT)
+Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com. [209.85.221.179])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-78a478ad217sm2011781137.2.2026.09.04.08.23.35
         for <linux-clk@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Sep 2026 08:16:29 -0700 (PDT)
-Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-5c664b8c3f3so1027251e0c.0
-        for <linux-clk@vger.kernel.org>; Fri, 04 Sep 2026 08:16:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBwAeZXt79EV5Ofq8CHIaTvP6ovzKgmg/o0TwF1UlLvPlrWymFG3e7fQHIj3zJzKc9SH71oWMmf/6s8=@vger.kernel.org
-X-Received: by 2002:a05:6122:e189:b0:5bb:eebe:7ffd with SMTP id
- 71dfb90a1353d-5c7ed846723mr3533958e0c.8.1788534988918; Fri, 04 Sep 2026
- 08:16:28 -0700 (PDT)
+        Fri, 04 Sep 2026 08:23:36 -0700 (PDT)
+Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-5c7afda4515so704076e0c.1
+        for <linux-clk@vger.kernel.org>; Fri, 04 Sep 2026 08:23:35 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBw6fnhzX5axhqH6ugR1QY5C03eFVnR/2xQTptm8Wih3xzGlColQyZVVkfnau4aMNWkvcNfFjBgEa3s=@vger.kernel.org
+X-Received: by 2002:a05:6122:32d6:b0:5c7:a3a3:a4bd with SMTP id
+ 71dfb90a1353d-5c7ed3a528fmr2695851e0c.4.1788535415032; Fri, 04 Sep 2026
+ 08:23:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260821150408.73829-1-ayman.chaudhry.kc@renesas.com> <20260821150408.73829-8-ayman.chaudhry.kc@renesas.com>
-In-Reply-To: <20260821150408.73829-8-ayman.chaudhry.kc@renesas.com>
+References: <20260821150408.73829-1-ayman.chaudhry.kc@renesas.com> <20260821150408.73829-9-ayman.chaudhry.kc@renesas.com>
+In-Reply-To: <20260821150408.73829-9-ayman.chaudhry.kc@renesas.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 4 Sep 2026 17:16:17 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdX6GACqU4VTEk0hUO2A74RDmO3twMhEvkFAp2xiP=PN8g@mail.gmail.com>
-X-Gm-Features: AcwNN1XsJHROGLoqiw2JCifUELiKV7YahAKrRzR2A5vM8Z-pkJl7ddzQiPC7x18
-Message-ID: <CAMuHMdX6GACqU4VTEk0hUO2A74RDmO3twMhEvkFAp2xiP=PN8g@mail.gmail.com>
-Subject: Re: [PATCH 07/10] clk: renesas: Add support for RZ/G2M v3.0
+Date: Fri, 4 Sep 2026 17:23:23 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWyPbUEy1sPZWmosVtL9GQviEB+d8RW8Xus9wpxZREgRA@mail.gmail.com>
+X-Gm-Features: AcwNN1VarzxavclKk9EMuPnWIySi6CxTEUYbBFaUC14MO-nuKk5tEQAZbU7dyfM
+Message-ID: <CAMuHMdWyPbUEy1sPZWmosVtL9GQviEB+d8RW8Xus9wpxZREgRA@mail.gmail.com>
+Subject: Re: [PATCH 08/10] arm64: dts: renesas: Add initial SoC DTSI for
+ RZ/G2M v3.0
 To: Ayman Chaudhry <ayman.chaudhry.kc@renesas.com>
 Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
@@ -79,15 +80,18 @@ Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 21 Aug 2026 at 17:05, Ayman Chaudhry
+Hi Ayman,
+
+On Fri, 21 Aug 2026 at 17:06, Ayman Chaudhry
 <ayman.chaudhry.kc@renesas.com> wrote:
-> Add initial support for Renesas RZ/G2M v3.0 (a.k.a. R8A774A3) SoC,
-> including basic core clocks, and SCIF2 (serial console) and INTC-AP
-> (GIC) module clocks. The RZ/G2M v3.0 CPG is similar to the RZ/G2M v1.3,
-> however it lacks some modules such as the FCPCI.
+> Add initial Device Tree Source Include (DTSI) file for the Renesas
+> RZ/G2M v3.0 (a.k.a. R8A774A3) SoC with basic support.
 >
 > Signed-off-by: Ayman Chaudhry <ayman.chaudhry.kc@renesas.com>
 
+Thanks for your patch!
+
+With the cosmetics pointed out by Krzysztof fixed:
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Gr{oetje,eeting}s,
