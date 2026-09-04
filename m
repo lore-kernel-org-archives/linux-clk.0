@@ -1,120 +1,117 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB07A48A2BE
-	for <linux-clk@vger.kernel.org>; Fri,  4 Sep 2026 12:39:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2B7532F764
+	for <linux-clk@vger.kernel.org>; Fri,  4 Sep 2026 12:40:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=205.220.180.131
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788525562; cv=pass; b=rSTBuzJ6zZYCJmbpVMLZv/s77CNsDJtSgHp55IOUGt+BNJ1h0xHaen1Y11LZCKCnnZCjT/U5yWfsJU/fxJorHsQsaYMdOcHjFjEJvUVYhHjDN2WdAUF9Wf6V35zXbvIRte9hY7sD9emUJFpUrNYUzYC/zPoi2lXxW7UnSxtJY2Q=
+	t=1788525638; cv=pass; b=mqIDnc+uGEgelEJR8tMULMnjhwuHObisc5EspwwuhHplIoHkPD5ISccuNgTUNMPraV+GqyjQfxndR0atvZQ0c4gQD89q4N9yggl4huc4aHqPQAGr8t3OQQxBy1W0NF6UM4dze6cMNtt7pQKt+EGuko2ljokJfIp1hA6pxrnLXyA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788525562; c=relaxed/simple;
-	bh=VUcBB0vOW6MkjtjLDRFaCy6FaOEhAXU/YjiYrkHQqRM=;
+	s=arc-20240116; t=1788525638; c=relaxed/simple;
+	bh=tlSwqxAiw604cpb1dgd/H8C/UkaGdvxpywU0LdEuBW4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G/4dmyFOb1rzl2iNaRf5iPfpQOqMOedx0/+sK04IPtmHk6KRqo9ObAVdPrfZWur91OjEYP374Q9e9uEozyLYZbkNrnuWLhDdH16ts0zdAePxPf/NYtOKNwU8wO8Ueeb9HXpwTw4BTy8Q4pVoX5oVos7wlZMDbRgWmPsa9A3pBkw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=K0XJ4tXG; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=bs6ICLq1; arc=pass smtp.client-ip=205.220.168.131
+	 To:Cc:Content-Type; b=iCa4QcoDeIZP+ggy//rrOdFv/Ma5Ar/CoXbmYNh01Tf9eTdf2K9BKA82D3B4rQkXOojVSpzIdrM998jF0mg1NvwFtnSihs13ke+OxY5IIqDtpcbkLwqUGxf82+EV1QG682bIQdp0vD7ShbJ5IhP/3wxOpDSnwGo1m4mIQYeDljA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=a+XeAnzc; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=E64j6sqB; arc=pass smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="K0XJ4tXG";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="bs6ICLq1"
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 684AIGHN2616090
-	for <linux-clk@vger.kernel.org>; Fri, 4 Sep 2026 12:39:20 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="a+XeAnzc";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="E64j6sqB"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 684AIFk23442519
+	for <linux-clk@vger.kernel.org>; Fri, 4 Sep 2026 12:40:33 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	G64/bNzWu0MVWc4hGb1QXCkMcnWhjiEk88kN6xUqbpE=; b=K0XJ4tXGEidqOsXZ
-	b032oR5V1rqvQce0EcA9gAHTKUvpdP1vfUI2NvqJy9w/gP6XHjbadQgX9dOh+sH2
-	U0udof4CD8CAWQvCHepl4wCV5X3ApQBfEkUitnWsclRsnOxoVB+V5GMzJ++6e2Re
-	3mQUMOjyswcZbavDWSMq4x329nxo9nfG2K4bI5NTW7pUROmGarJHDQX5Yx6XXn7A
-	hGQSNZhHyd7cmP+Qf4qbuxe1qskxzB/YsHswpsfOspQ1rDXbM/FcVJ62NSaVpeAJ
-	azWw3CIV/wasFEdMSeRe759zAFUe/X8vfVoeVM2jXo/U5ZMfaNS//ACUzGzVRc9P
-	rLTDZQ==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gfdyp3gc1-1
+	j0+GeMl6zOe/BFRxRXazQ5C0aLdugDFg6DqX1FNOkk0=; b=a+XeAnzcyW2zl6jE
+	UY3r8ydj+u+BsEl/DKXlOKXvLl/iAfayC+PwBPzqTLuYa5rmvdHqY293PJK9tWWd
+	Glyf15PS/3SszWklDQ3g+ELtYfYXfUVk3dZZfPAzo0oMfPHz92AHb52eDEpjBApn
+	LkSLbb7k1ZZIJm4/21qWDRB0L9ZarRTzsJ5m2NDSNbrC4GuYFQOlVmSZ5UdDtyyu
+	3uxC7uR4ICIKvU3kWlmQXAVmjJm0vPKaE7P0naEJ8qhUMoc2aF9rUUG4B0lgLfPp
+	xzwBwJJk7QmMeDCqU75FBLiEsPqWUdwG7cjnm8kKMXHpWsIKjQfXp0/fDTM52aDs
+	Iz6whg==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gfp781ngm-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Fri, 04 Sep 2026 12:39:19 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-52ce3c7cb2eso23011541cf.3
-        for <linux-clk@vger.kernel.org>; Fri, 04 Sep 2026 05:39:19 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1788525559; cv=none;
+	for <linux-clk@vger.kernel.org>; Fri, 04 Sep 2026 12:40:33 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-92e53b8a302so186282185a.1
+        for <linux-clk@vger.kernel.org>; Fri, 04 Sep 2026 05:40:33 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1788525633; cv=none;
         d=google.com; s=arc-20260327;
-        b=rYv2rmo753zb3YKggr+jIk2QZvY2FE4dB5YDxXWQrLHdGG/2rAJIPKzZne8Wwhf0q5
-         GbDF3SV16B8IKkw//ocYdSDuf9SMm6LP4bds5yDI3DuNQams8ys092jrYX4B+CEjP1uf
-         i9O+ZVsALt67x0zZLkMYXvuevuxGXGS7/RFViTtha/d2bFWDoGWlbUz3TyhojHZvACuH
-         YtId6rd6bfHNLoR3MJnnoSzoYJS62usbv2gyW/JYGnEaAJYPkOGWoRh16XF6B4mhKNX+
-         4Y6YOO1qelG77s9+S10NoZZCc2FOdI/e0/NuGs9G+J6AvJkXIgNDtyN6jp3oDCUUIB9m
-         Ixzg==
+        b=ZIWuYNrDAklsI2PPjv8/EFp3GQrsNjTxcwFPv2qmLPWGad8BWh4BmEaw+BUlSrmStH
+         HzRlcNn/Esqk1noOKEOBp4WPfbWnUoQwS4e9Z9hoY2fB62gEkaKrMODHg7kpqMq3e2IR
+         st4lJoIXDKTz0pPIR6EBjvu6QpGxtxwgmdDs9YwlGsmv80Hi/plvFrF+19fUpg8tiF2O
+         U14wlNUvVvp9gkWfeQ9kIS0OUUnRQs5Gb4gjweMwWPfD2oHx/x3Brjz/O1/VC+BoT+kb
+         K1bJi8Qp5XcLk7wUMRW2CCIS3Hc++b5MFmSykspNovF7UXBHXzb3qqOF9S8QJ9K24IUE
+         EoWw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=G64/bNzWu0MVWc4hGb1QXCkMcnWhjiEk88kN6xUqbpE=;
-        fh=v4CNJrohNgivN1Pqv511aExK2cZ6cSIh4S+q+Mk5m0I=;
-        b=auonGhJVg1OQ7/lumMG1lNAwvGYA03eXcs54Ub/i4VcQNjSMak2FUGDUBZhlI1LbJ6
-         JtS/KCWJR06z99r7UEUzkXCD/EVrj3s/zs72Ym9FuoSFood+f0TEtAbFoPNrW/aNNFYr
-         v7WOToq9xMbZ6LVxYvRHI+sSLj0mpJGoFuIcnNPAcd0+G08fl//aFSkanT3TueFAOEO+
-         4vhoYPh+kFKdtco4Brq08HrAB49xgAMj34V8iml/O1ev7pTXVnuU9F91yAK9iO0Mrv7c
-         jFivpHhXc+FMn9ZLo2HiMvXOjGFDPeOzhL5F/6m4QNpfrWMyCvwc5ZzQ49AhRisgl+uS
-         RBww==;
+        bh=j0+GeMl6zOe/BFRxRXazQ5C0aLdugDFg6DqX1FNOkk0=;
+        fh=HcPrdw2lvVCbbo90tzIc4HYeHaKOCPWsTWKU4EHnrIQ=;
+        b=Nw4Yqlyh9av0XdzbutYWmGXQDcCc1vX2Jm6/RtU5bLNQ1FW+unJHMt0zsCBiENgVfQ
+         ESCpLHk4BuinnPanW8enr7oPbI4V5ESdK4AQ6LCq0N8LTRjJYRZL5yxx8kJ4hlf0rNYs
+         MRE8w21rtiSczxNqDWQb+hw9QvzPa2dwDHjlI1tDr0Nx1fcKndYhkkSCQuXhMNJB9UOh
+         sPjYKqimDurbm3L6hSKP/W3hFW2KF99wK1etpcqRUZqE3XJQSAfsSHjOKHVbY7H2x+GI
+         vE5154aEPff47ttLs+5z3Aq2ud/MtZk24YTjIO8O6GVT+LGu7VPYpmwLqrGDR4N5qI19
+         7kyw==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1788525559; x=1789130359; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1788525633; x=1789130433; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=G64/bNzWu0MVWc4hGb1QXCkMcnWhjiEk88kN6xUqbpE=;
-        b=bs6ICLq1Rcpo6h+NJ2NAsIwXSG8ONm3ZBYr4slddu1Dj0FY7PzwsFcqVE2iNOtiu5Y
-         nofWPOHx3vrWyr9cRT9lEh5CvPCbxV10P9AccSVmu8DUIOD32F2iHYxrrGB6SOodrhbl
-         tUji8woJ0E+7WI2yWxeGSuVwEt75H/NoQAkweFbosavuNvk2nqtETGni8+/ORWTQLr9u
-         fBDkIiWgUaiFOINw2U6xvfttuSJcxaq64oK111DpDa/GkZeJpiaRuCXFomuDFsB/jiEM
-         1EszKH+jPwJjFXjbzrOw5uOYKqGTRC38BRtLGjCArL2e+E8Ny9SmHZzF/61y6/Icsu9E
-         5jOw==
+        bh=j0+GeMl6zOe/BFRxRXazQ5C0aLdugDFg6DqX1FNOkk0=;
+        b=E64j6sqBghW59tVlAgxDk6N3kHk+qVnlgkQPRjdj2kW1QmCefYqSafeBFMFKQaZEat
+         8E69pBkAr78iSbRefvLnx60Xl9CgEadokn6LmDzlvV9wGLthf+Aj517uwbo9PbGklWHV
+         Evg0bWXYXBd+K5cv7NJRBSPSeqWGAAsy64cLhuxz3CfrlRV7S1jVrZuc4KZtETeBrH1D
+         JzqKQY69J7nWtm0w7LYOk/eF/RYmtEendVMiou8Wgg39MrdkORLFjdeEr0Axa14pvG/o
+         G1kV4zZ3jGTeS9H9Zr4YME+VACHFRVcwWpG/RPtwYeYMmQLzOBopGHK46PHCYvxQ/cKU
+         fGnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788525559; x=1789130359;
+        d=1e100.net; s=20251104; t=1788525633; x=1789130433;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=G64/bNzWu0MVWc4hGb1QXCkMcnWhjiEk88kN6xUqbpE=;
-        b=GU7k1gMqpaSkHdfRC+JOhf9Yi8mY769xej1Z+lADvdBGZwbLtNC7IQKnz5gKGXE/Iz
-         UilihsRhWOxWzLh2+5fQCd10WFRi73e4RrCE67ljtW0hzS4ar9VAc2UW7FnNVmJqWtcd
-         a4WSvvwzLtOe7ztRTZfUabwhak/ivv4z+OVZ2vtM4uaASONRRI9CvehBVmfWRB4j9Y5q
-         5s55tvX+F4SyxW5mAHrYh1A5GHpA666jID0zsq+DyBTSvzNMyS9AlVuw+eVhEqLUQHok
-         l0F7E63etutTJJo9hWdeVOxD71kL0nKamEP58vzfA1TRWjwur2+MhIuHNYzdeW162kpu
-         Zj9w==
-X-Forwarded-Encrypted: i=1; AKwUvBzBJTpIGm7chnck38UG/nvQELWnG0GuUfqUHJa2cladPCNKL+Nv7Va44zrMmCYtDuRh7yL9YtcseDA=@vger.kernel.org
-X-Gm-Message-State: AFuF++ntLQcg1rGFXqkLJpttwB07jzWR3IEEPItb2rDqS8hDQp6SPIj5
-	RvzHQxaEIDH2eUEbgnzzAX65D9B41EwkKI6MqIcYg/Ay4xpfuqYFy0I3V1TshrnSqPOGJ7A/DGD
-	cBfkvOUwhD6kGkYDtNd0lS3/H1ecrsw9QA7QQeHc9Xl5t4OIez3UwSxjVhRAtGJixA4d9ncnzHU
-	+zvv+dICNysLlwRdl8TtAnlyya7ldaNSISkNZaxg==
-X-Gm-Gg: AYBFou2RXLJ9Lsg8IGy2NtMrnyJm4ox8lciUAVh8lMnfyF95Q48Xju0/7Sno3VbrI3N
-	ADd/1nHPnGa5/cumLaf4UrvIjy36E73VAtsWKztmK6vb1vf9bDsElP5vpcPE+N6Et8YNrIthU9M
-	l9FzRRDvSAKW7n9I4qaeCGTXO7tOdfUKn+7+Rfw3AwEDtgRLGSIQxI7sZNmxVyZ7j5fuQX4Urhd
-	eFNKbFRwhWOnvt4zY02eNxiJahwA0aWh5u/aDG1OcvOUJhzxQT9lZm/mtXocSzrKDrGR4WVRaus
-X-Received: by 2002:a05:622a:286:b0:51c:1fd1:e755 with SMTP id d75a77b69052e-530549fd6c2mr61916271cf.36.1788525558781;
-        Fri, 04 Sep 2026 05:39:18 -0700 (PDT)
-X-Received: by 2002:a05:622a:286:b0:51c:1fd1:e755 with SMTP id
- d75a77b69052e-530549fd6c2mr61915361cf.36.1788525558050; Fri, 04 Sep 2026
- 05:39:18 -0700 (PDT)
+        bh=j0+GeMl6zOe/BFRxRXazQ5C0aLdugDFg6DqX1FNOkk0=;
+        b=qLhiB8tIEnG3kbhbfP1LY6p4fUcrOVtyLs3JnafIdm8dXcKzNxsAuwg5zh6LstOUFV
+         tHahVfIREw8xY09x5an2XhfGdAIplP2/jswrzyteGGzvqGByepRgzPOImicXcVmpztnh
+         S+W9bUenOu0ywwveGMcfYhWiSVMiQGJms2a0jeuvNTsNgQb9BHbvqwbsGp3AmQcLpqm/
+         glk4IKd42VPip1dek6NH4GO8gE09srVj0oe5GMDZvI4Ax3bYPAz0g+kGNiZbQmee8Af7
+         eCpjDfDeukcTrpfwkuxmiGk8Ln+rBxbaWEEQ6XUokKWn978STyeGxnFE91I1503RRx1Y
+         akUQ==
+X-Forwarded-Encrypted: i=1; AKwUvBxvTlVZqkuQqXt5knp3O+m9EmHJMCFDOmmsgVkocJJCG65N6ojPfuUdElRFOfvbivA3UnOcKwd4a/U=@vger.kernel.org
+X-Gm-Message-State: AFuF++n83NQwF+KnKBEc7dDXNm1tA2qpOVN3b5v9txymBuzLntIlxn53
+	ntZVNBXx1Aqbe1XJCByC58Ig1hOSX83cNr6m+fU2QZ1B4aCtUI5Xg4aZBSkSwfkttoz0ueE5UNm
+	jjCi5cvftAIlqHzPdaBdmUzmTOcLBjebQufjNWWbRNw9p8aIvxZwIm09UYImYA+2kGmNjv+7EDi
+	MC+5LlD0jZDbOWEaGmws0w9dpDkgBzMe14RyE5Nv9hAg8qg/bo
+X-Gm-Gg: AYBFou378MY6WMo3Hrnu9UzHhuCm7v+T09G5Ku6BVMS/W3ZbQ1uaDfrfkIo25Mo92zq
+	CQ3ILvxiyMbVQQtUOY4umDyQUrFK4n67MTo4mjyEHkfaeYWHmgKqS5vaMhcIOZwUZWTmMnGioVm
+	UZxV0GVZAs6pSaUVpXRPtxz4TaluhztaznPDHtnPHk0YNh9n6ZsaE3hIoHGU3OeCKyQGonuBG+J
+	gMiHBZdItBA0sVOUv8OeUeFlZAinZIoAOFSIFBw6SkQa3fKOK4rcSHBQDW1HWCdzQ3RGWbZTquH
+X-Received: by 2002:a05:620a:690a:b0:936:dc16:206b with SMTP id af79cd13be357-9398043f64fmr553876485a.26.1788525632530;
+        Fri, 04 Sep 2026 05:40:32 -0700 (PDT)
+X-Received: by 2002:a05:620a:690a:b0:936:dc16:206b with SMTP id
+ af79cd13be357-9398043f64fmr553866185a.26.1788525631793; Fri, 04 Sep 2026
+ 05:40:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260903-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v14-0-01ef1eced075@linaro.org>
- <20260903-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v14-1-01ef1eced075@linaro.org>
- <2aXo5I_5YqQ6uikqbIOWs7L__EwJV2oTs24Jqa-YRqGIU2FOT1O4bixGBbTzbaiBuENyW0XkWbqAJJQnxgSnWQ==@protonmail.internalid>
- <CAFEp6-2nWfjF18R9pw0xFt92GcPORKKa+ix8czQ=m512TYuP8Q@mail.gmail.com> <51b3dd1a-5595-4538-b792-a679b6813a6f@kernel.org>
-In-Reply-To: <51b3dd1a-5595-4538-b792-a679b6813a6f@kernel.org>
+References: <20260904-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v15-0-68b7916e7a3f@linaro.org>
+ <20260904-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v15-1-68b7916e7a3f@linaro.org>
+In-Reply-To: <20260904-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v15-1-68b7916e7a3f@linaro.org>
 From: Loic Poulain <loic.poulain@oss.qualcomm.com>
-Date: Fri, 4 Sep 2026 14:39:04 +0200
-X-Gm-Features: AcwNN1Xi0ZnbHcNu1xFGVtcHdZiZF7hrQekcNJq1YSDgANQhTlSn5NmxIbSBScw
-Message-ID: <CAFEp6-2_XTMnxqcoNFwu=BfWki2U7U=iuQL8n6QcR-CZSMsX-Q@mail.gmail.com>
-Subject: Re: [PATCH v14 1/4] phy: core: Fix use-after-free in phy_get paths
-To: "Bryan O'Donoghue" <bod@kernel.org>
-Cc: "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
+Date: Fri, 4 Sep 2026 14:40:20 +0200
+X-Gm-Features: AcwNN1UPiDdyGKcq8V93lMRdj7jZ5WTUE_ubspKx3Qn_j0cuDTBr-ZQNMU5Z3Uo
+Message-ID: <CAFEp6-0NyozWY7DVoFbNNuDkVY3nmHsvys5=84mM7OVH6cHfGA@mail.gmail.com>
+Subject: Re: [PATCH v15 1/4] phy: core: Fix use-after-free in phy_get paths
+To: "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
         Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -123,7 +120,7 @@ Cc: "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         Konrad Dybcio <konradybcio@kernel.org>,
         Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>,
+        "Bryan O'Donoghue" <bod@kernel.org>, Vinod Koul <vkoul@kernel.org>,
         Neil Armstrong <neil.armstrong@linaro.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Kishon Vijay Abraham I <kishon@kernel.org>,
@@ -134,55 +131,230 @@ Cc: "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
         stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-ORIG-GUID: 97DfR0CuXZkw8fZYrlTkAaIZrF8SBh69
-X-Proofpoint-GUID: 97DfR0CuXZkw8fZYrlTkAaIZrF8SBh69
-X-Authority-Analysis: v=2.4 cv=Q5XiJY2a c=1 sm=1 tr=0 ts=6a9abbf7 cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTA0MDExNCBTYWx0ZWRfX7EsHMCNANFmC
+ fh2jHikqrjQ/Im4KJPtTNftH4sxeH3MKKrNOL9FfTaK52xaxR/XXI6KM6Yy6gXAcZVxlI9GwKX9
+ AoiM76rkjY/JXFsNs2Pj8X+PMhNzXZk=
+X-Proofpoint-ORIG-GUID: VS4XH0ED7KW7-i0eQceUoIT9IvVtl7ZF
+X-Authority-Analysis: v=2.4 cv=ab5RWxot c=1 sm=1 tr=0 ts=6a9abc41 cx=c_pps
+ a=50t2pK5VMbmlHzFWWp8p/g==:117 a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10
  a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22
- a=YMgV9FUhrdKAYTUUvYB2:22 a=VwQbUJbxAAAA:8 a=4B6qI-Qak-9ifnyKK3wA:9
- a=QEXdDO2ut3YA:10 a=uxP6HrT_eTzRwkO_Te1X:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTA0MDExNCBTYWx0ZWRfX8899cd4CZfgw
- CR+jFr5C8RdTUcpTVIEql+yjq7Oj5uiEvG1PodaABo0e8USv+3+WP+E8qK8iDPOzNvj0xK/+OBC
- Lxk82d2qiIajyXchIcPlsIIXdWxMD02Mbl5FnPmnV88SnVoKTxgbBLmzUnt8S0Dq1wM0SUw6JWl
- 7aHuSOUj9RZYbk4veOb2V58p7CzyZTquI2APN0ZrMSfCkd9R2MkeSXPJwhrlD6XymRiMY/ILNUo
- TnMsejJpayp1RNRWbmEuDIGjMyku/2jVAdxoPCc6UO+eZVqcRZx4EkQAk+MN4MicIOPd7ikHp1g
- sanpO5QrRJFzT1XE4ioWyEQglwC1yleTi/Vc/oViNj01E1Z2TAYqLuAzsTFs/U+oCf0I8mSs8yI
- /tyl5krjQcn32I2SguTE+7E33WhjMHpt1AQnLj4PpqcL8Z2nT/T/pdqQpQWmhFGPbhFZSiLHDbH
- 5Yd1VMHD/O8g9I6kbew==
-X-Proofpoint-Spam-Info: AW1haW4tMjYwOTA0MDExNCBTYWx0ZWRfX1+csAKFkvvmE
- l4RC+oq8m0AaFJEp+i/eND1yaT6Sn/cSRA7oJjs9M+QGhxj3ZqeP5k5xk8vsnXnGHXZqTcQYiLx
- qWm8/wut7L8t7EGDM5nZInRb1SXK2OQ=
+ a=gowsoOTTUOVcmtlkKump:22 a=KKAkSRfTAAAA:8 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=uuK-gh7oNHpeqQh_G3oA:9 a=QEXdDO2ut3YA:10 a=IoWCM6iH3mJn3m4BftBB:22
+ a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-GUID: VS4XH0ED7KW7-i0eQceUoIT9IvVtl7ZF
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTA0MDExNCBTYWx0ZWRfX4v+piNnVrsVA
+ jcDEN+T3ser7WUMKug3PVrZtVhqLJeqP3uV/kmhhpVlWJMOZNpGX3cIJ299/DxgBET2mKs/c1Ku
+ zadWxXoWBdQBeDE6RkewMnmHC8ukr1x/QvqGe5baVrBCWbdWlMev9QlpqNiopXpu5gcOMDidoFa
+ sXyVO3FlL2LdLJbg0QdyTHXJ7Sq42eBU8Cp/MdTuR7Yag9u3HgDsIA8HDzjfldWsJ/UUnKd5G0L
+ p4AovsJyb9xu2LaxtssMzSbbKwWjlhiEx0rCE4/NB5YYOLLDrPkawssM/5/rMC96aYWWrsowjRT
+ 9y2r8LJZAj9jelymP64enKIfBBUhUqPXNz8tN/cH4R4w/UUL49CJO+IVxLGjuPvVrlgzTFnD7Mw
+ WlHk1QOOuN8Xw0jU4kcdLsjfpBfOC+M51NPh2j8NXz3bzS8qEpb/Ec2Zt6NMmz+9oI3ypsdD7aN
+ YkCyRz5/9A4OyhAEYLQ==
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
  definitions=2026-09-04_03,2026-09-03_01,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 phishscore=0 priorityscore=1501 lowpriorityscore=0
- clxscore=1015 impostorscore=0 adultscore=0 bulkscore=0 spamscore=0
- suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
- definitions=main-2609040114
+ malwarescore=0 phishscore=0 clxscore=1015 impostorscore=0 suspectscore=0
+ lowpriorityscore=0 adultscore=0 bulkscore=0 priorityscore=1501 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2609040114
 
-On Fri, Sep 4, 2026 at 11:41=E2=80=AFAM Bryan O'Donoghue <bod@kernel.org> w=
-rote:
+On Fri, Sep 4, 2026 at 1:53=E2=80=AFPM Bryan O'Donoghue
+<bryan.odonoghue@linaro.org> wrote:
 >
-> On 04/09/2026 08:45, Loic Poulain wrote:
-> >> -       mutex_lock(&phy_provider_mutex);
-> > Then, now we're moving the responsibility to the callers, maybe we shou=
-ld have:
-> >      lockdep_assert_held(&phy_provider_mutex)
+> Sashiko asked during a patch review if the existing usage pattern had a
+> race condition; specifically in of_phy_get() if it was possible between
+> returning from _of_phy_get() and running try_module_get() that a module
+> might be unbound leading to use-after-free.
 >
-> An LLM suggested the same thing to me but, I thought the resulting patch
-> "looked messy".
+> Looking at the code this appears to be so, there is no linkage between th=
+e
+> phy and module under a synchronisation primitive.
 >
-> Do you want it added, its only three additional callsites.
+> Using the phy_provider_mutex in phy_get() will ensure there is a link bet=
+ween
+> the returned phy pointer and the module_get() bumping the module referenc=
+e
+> count.
+>
+> Amend phy_get(), of_phy_get() and devm_of_phy_get_by_index() to fix the
+> same usage pattern.
+>
+> phy_provider_unregister() must take the phy_provider_mutex so amending
+> phy_get()/of_phy_get() to take that same mutex guarantees there is no
+> use-after-free.
+>
+> Fixes: ff764963479a1 ("drivers: phy: add generic PHY framework")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
-It's only a minor suggestion, but if you end up submitting a new
-version, it might be worth including.
+Reviewed-by: Loic Poulain <loic.poulain@oss.qualcomm.com>
 
-I would also probably use a scoped/guarded locking pattern for the
-mutex, as it tends to simplify the error paths. That said, it's mostly
-a matter of personal preference, and some maintainers prefer explicit
-lock/unlock pairs for clarity.
-
-Regards,
-Loic
+> ---
+>  drivers/phy/phy-core.c | 45 ++++++++++++++++++++++++++++++--------------=
+-
+>  1 file changed, 30 insertions(+), 15 deletions(-)
+>
+> diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
+> index 21aaf2f76e53e..89addd732bff3 100644
+> --- a/drivers/phy/phy-core.c
+> +++ b/drivers/phy/phy-core.c
+> @@ -124,13 +124,13 @@ static struct phy *phy_find(struct device *dev, con=
+st char *con_id)
+>         const char *dev_id =3D dev_name(dev);
+>         struct phy_lookup *p, *pl =3D NULL;
+>
+> -       mutex_lock(&phy_provider_mutex);
+> +       lockdep_assert_held(&phy_provider_mutex);
+> +
+>         list_for_each_entry(p, &phys, node)
+>                 if (!strcmp(p->dev_id, dev_id) && !strcmp(p->con_id, con_=
+id)) {
+>                         pl =3D p;
+>                         break;
+>                 }
+> -       mutex_unlock(&phy_provider_mutex);
+>
+>         return pl ? pl->phy : ERR_PTR(-ENODEV);
+>  }
+> @@ -624,6 +624,8 @@ static struct phy *_of_phy_get(struct device_node *np=
+, int index)
+>         struct phy *phy =3D NULL;
+>         struct of_phandle_args args;
+>
+> +       lockdep_assert_held(&phy_provider_mutex);
+> +
+>         ret =3D of_parse_phandle_with_args(np, "phys", "#phy-cells",
+>                 index, &args);
+>         if (ret)
+> @@ -635,11 +637,10 @@ static struct phy *_of_phy_get(struct device_node *=
+np, int index)
+>                 goto out_put_node;
+>         }
+>
+> -       mutex_lock(&phy_provider_mutex);
+>         phy_provider =3D of_phy_provider_lookup(args.np);
+>         if (IS_ERR(phy_provider) || !try_module_get(phy_provider->owner))=
+ {
+>                 phy =3D ERR_PTR(-EPROBE_DEFER);
+> -               goto out_unlock;
+> +               goto out_put_node;
+>         }
+>
+>         if (!of_device_is_available(args.np)) {
+> @@ -653,8 +654,6 @@ static struct phy *_of_phy_get(struct device_node *np=
+, int index)
+>  out_put_module:
+>         module_put(phy_provider->owner);
+>
+> -out_unlock:
+> -       mutex_unlock(&phy_provider_mutex);
+>  out_put_node:
+>         of_node_put(args.np);
+>
+> @@ -678,15 +677,21 @@ struct phy *of_phy_get(struct device_node *np, cons=
+t char *con_id)
+>         if (con_id)
+>                 index =3D of_property_match_string(np, "phy-names", con_i=
+d);
+>
+> +       mutex_lock(&phy_provider_mutex);
+> +
+>         phy =3D _of_phy_get(np, index);
+>         if (IS_ERR(phy))
+> -               return phy;
+> +               goto out_unlock;
+>
+> -       if (!try_module_get(phy->ops->owner))
+> -               return ERR_PTR(-EPROBE_DEFER);
+> +       if (!try_module_get(phy->ops->owner)) {
+> +               phy =3D ERR_PTR(-EPROBE_DEFER);
+> +               goto out_unlock;
+> +       }
+>
+>         get_device(&phy->dev);
+>
+> +out_unlock:
+> +       mutex_unlock(&phy_provider_mutex);
+>         return phy;
+>  }
+>  EXPORT_SYMBOL_GPL(of_phy_get);
+> @@ -786,6 +791,7 @@ struct phy *phy_get(struct device *dev, const char *s=
+tring)
+>         struct phy *phy;
+>         struct device_link *link;
+>
+> +       mutex_lock(&phy_provider_mutex);
+>         if (dev->of_node) {
+>                 if (string)
+>                         index =3D of_property_match_string(dev->of_node, =
+"phy-names",
+> @@ -796,15 +802,18 @@ struct phy *phy_get(struct device *dev, const char =
+*string)
+>         } else {
+>                 if (string =3D=3D NULL) {
+>                         dev_WARN(dev, "missing string\n");
+> -                       return ERR_PTR(-EINVAL);
+> +                       phy =3D ERR_PTR(-EINVAL);
+> +                       goto out_unlock;
+>                 }
+>                 phy =3D phy_find(dev, string);
+>         }
+>         if (IS_ERR(phy))
+> -               return phy;
+> +               goto out_unlock;
+>
+> -       if (!try_module_get(phy->ops->owner))
+> -               return ERR_PTR(-EPROBE_DEFER);
+> +       if (!try_module_get(phy->ops->owner)) {
+> +               phy =3D ERR_PTR(-EPROBE_DEFER);
+> +               goto out_unlock;
+> +       }
+>
+>         get_device(&phy->dev);
+>
+> @@ -813,6 +822,8 @@ struct phy *phy_get(struct device *dev, const char *s=
+tring)
+>                 dev_dbg(dev, "failed to create device link to %s\n",
+>                         dev_name(phy->dev.parent));
+>
+> +out_unlock:
+> +       mutex_unlock(&phy_provider_mutex);
+>         return phy;
+>  }
+>  EXPORT_SYMBOL_GPL(phy_get);
+> @@ -961,15 +972,17 @@ struct phy *devm_of_phy_get_by_index(struct device =
+*dev, struct device_node *np,
+>         if (!ptr)
+>                 return ERR_PTR(-ENOMEM);
+>
+> +       mutex_lock(&phy_provider_mutex);
+>         phy =3D _of_phy_get(np, index);
+>         if (IS_ERR(phy)) {
+>                 devres_free(ptr);
+> -               return phy;
+> +               goto out_unlock;
+>         }
+>
+>         if (!try_module_get(phy->ops->owner)) {
+>                 devres_free(ptr);
+> -               return ERR_PTR(-EPROBE_DEFER);
+> +               phy =3D ERR_PTR(-EPROBE_DEFER);
+> +               goto out_unlock;
+>         }
+>
+>         get_device(&phy->dev);
+> @@ -982,6 +995,8 @@ struct phy *devm_of_phy_get_by_index(struct device *d=
+ev, struct device_node *np,
+>                 dev_dbg(dev, "failed to create device link to %s\n",
+>                         dev_name(phy->dev.parent));
+>
+> +out_unlock:
+> +       mutex_unlock(&phy_provider_mutex);
+>         return phy;
+>  }
+>  EXPORT_SYMBOL_GPL(devm_of_phy_get_by_index);
+>
+> --
+> 2.55.0
+>
