@@ -1,142 +1,201 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-yx1-f42.google.com (mail-yx1-f42.google.com [74.125.224.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57C2E3D6662
-	for <linux-clk@vger.kernel.org>; Fri,  4 Sep 2026 08:12:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788509552; cv=none; b=uNUXCptji5vOnK+mR5mea9CP4DWOCWbFBYel3SfiE1ca5ztPxs3Xo0RiYsm3CxU+c4p4tdgK5cdna/dSD7P1WmbrJUAF2G2KRpx2pMd9gdFdThskAW7omhw+6ttBDvsZElG99GTon+lRaLAW/mvYZaV3wuUJGNyO5zFeKgb6wSg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788509552; c=relaxed/simple;
-	bh=vpR0KuN+ln6lHcQtjSULttF6OUz2pD2N1HwMAgl0w3Y=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=AehvhTV2e3nU3ScEx8wO2sj5onbgnVZRgZUJ4z1BeDhhq/3+FMKf/1bnKlO32jIwmr24Y/3Z21pWTpwZEbSfSOvJPH5wGo7cuzITSuNabJWABk/a4a5ytMTkg5ddBglEgES9jCDMQlnksU3we0iRGEOAULJ66j6utCX6hmj0M/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=YiiAK3In; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49F7B3DB641
+	for <linux-clk@vger.kernel.org>; Fri,  4 Sep 2026 08:14:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.224.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788509651; cv=pass; b=OC+inptcDJXP50tAUjRWm1O8196oBIvjyt6PQIf6U43k95/jJnq4E4s219KmXv7ZQzZNAfBITZ+TQHLYy7wltGNWrGkK7OjZSV0vEuZzwgAkyvZsrCI8mFhTK/LpYUciqOEIeQE+MM49tn83TvFuBa6wWIqLLzJs2nMFxS7SHdI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788509651; c=relaxed/simple;
+	bh=cODYgkqioxaFXfwJn7xnB9uWDLxGNrCsLV4W2VTwJEM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FAQsw7w/ZQPThpFjvjyAzoQMU4KzB0Xby7hW2wxkTvy/Jz1YgrwuFpQ9LbpOpKiwqycGuiCqKogFutIIVm4F7xX4I8wpD5oVFetFioBKazbJS8tnTSJHqdj+rtasRJsc1QXhdPeZclrs6UioWeV2pOpvrra3GwZsVQp8akcIDxo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hp/XmOUL; arc=pass smtp.client-ip=74.125.224.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="YiiAK3In"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4956869750eso5532005e9.2
-        for <linux-clk@vger.kernel.org>; Fri, 04 Sep 2026 01:12:28 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hp/XmOUL"
+Received: by mail-yx1-f42.google.com with SMTP id 956f58d0204a3-66f7f62e915so658654d50.3
+        for <linux-clk@vger.kernel.org>; Fri, 04 Sep 2026 01:14:10 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1788509649; cv=none;
+        d=google.com; s=arc-20260327;
+        b=lXU/zu/U3fnt1qd8Ybx0sifu7riOuDAxUywGHJrtJrqDVUkcccZL3w2bp1eQrsiX1N
+         jeEiNtlgUuO0DHTPDZSQ/YFfNXpvjgI8T1FbSHhgPSL6Mll1y3Cik/Q5rofVmrsqRI9j
+         paMNcxE9nEoAblHC9QOIFv865DJYsHHdXLWbzUnVULTG2QYYOkiZ2GHuFHtDNyHelpVP
+         nty+8IANxX+5e+BWfxmQ+b+xKWQLkFU1u9TRUbz+pkfI7hbXFD5n3Zc+Jebc+qpBPb85
+         NbjBbqVXkHdHH7FC4/796UEwLx1tsI65Z85Fgm00AcRv33/cxoIheqrZKGUXuhN7kEqN
+         Uh+Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=tBqFv7ZNVkf8/OWug/8l6emlj27SIx7U4VNemvpWjT4=;
+        fh=9dfzLEOyZzYFSMoJA66+xhvBhLuhwVrI9N6FSI2ThkI=;
+        b=kz06t0UxAm8TpCAZILlFAqoCRK8XVTgVvmkN+qAfbvPGlE22Z7TNsRGd+WspH73l3y
+         gfe18AjzPglqVKD/vtcAlaRm7y2jd+f3sNIvlM2u56CA3EaBuKtIFkIK97ntQ1McJ5gD
+         X0qUe4d4BvMQ06UuiJINJE9wZHTYPScCYvi+bTqx8jCZWqaRSPH/Ctg17UJaB8xgzoU1
+         EggCdFwyYKl75uGtQ9EdgemXEeAIUkA4JJ7mdulpSpkJDBcr5tukmbjut13Eb57KbNvw
+         aipGecRJp2Bpz7c5pIj/qUjaDDRqOHe9V31WautNMYlTdqDOuYg572OlbhEVOL/02qTt
+         2K7Q==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1788509547; x=1789114347; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:message-id:date
-         :references:in-reply-to:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=TjS/Wss53RdL4gmLmah8vA+JE9KhD5i1oEQt4QZujmE=;
-        b=YiiAK3In/pYBUhXuXs6yquMgzIYulL94kdCAircHmsK6/nI7GV/F7qHJnNVyvfUwul
-         gY3HBLcQfofcKUimHWXcEYWvVQ5wssgxIaD4EgzFshOhNdulwqzb79cR9QoW+XIwq7GG
-         nYvMladQvjdMlKN6K6scj4D4lMz6mQLKxN1mL3iiBLbubdxT094IbaIqH2DzlAUa9PB+
-         VWstPU0RgQZSxCwyhKYmVWbIOiFki3hW7H23iKVqFdM8tdLqUiaV56WZpATJZ776Wpjm
-         p+37Qk1m2a6EP+Jg4WOC7HMAORvnSDu1fJdMqvqWYJ7VPVQx5YkeAh0ZScjoMKcAZVWP
-         GfcA==
+        d=chromium.org; s=google; t=1788509649; x=1789114449; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=tBqFv7ZNVkf8/OWug/8l6emlj27SIx7U4VNemvpWjT4=;
+        b=hp/XmOULl8hos6ueQMCEt77YRd351d0QwD4CL8Yy2gzsVvec+jhdaCNrh4Yca7MN/k
+         YhB7tlNKiaM7GQ3zRXyHKeyjCaxZJ/cA0ZIRA0nm6AuTFPVL1ldlfas1DpOLHB/0kpd0
+         Ob74Fx912i3fzzb/UVa0abPBSIp99phjuhVgY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788509547; x=1789114347;
-        h=content-transfer-encoding:content-type:mime-version:message-id:date
-         :references:in-reply-to:subject:cc:to:from:x-gm-gg
+        d=1e100.net; s=20251104; t=1788509649; x=1789114449;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=TjS/Wss53RdL4gmLmah8vA+JE9KhD5i1oEQt4QZujmE=;
-        b=RSSEGOTsaOKtdUJMhRgMS19xG7c0lC3xDfo5hVH0y9PZk+GVhFcyVdJxCHEd4gkFIF
-         42+mcqO+EP+biLqcOjuFYQqC7VXqRjnJPovgXNuFa9UxbtU+J61B1OzhNjeeWZLPgYZX
-         bCu4hJff7kcpwuelrdftKCiAKXRTM8/ejV/1bzUzoe0tOpstTQLCttw+6vfBP4MRRh38
-         T6PnMEScPxDfhFH2t2EYPHd2+9jKqd5JlYOOz+XlPdWpNCr/HLzkCbJjgAE8INQwy75q
-         CDMPe9xZ5gfp4RM0PLFAQUmIKFD++YhBzERTYTbcaR+pGfCdO4FBiHR1ilNz5rF4vFbB
-         lXUA==
-X-Gm-Message-State: AFuF++muMWZJ0SQEPwxSujdRQTuAuRTmKcFZRMmSBbrIiUE8e8XJVRbN
-	AhP7d8cS2WEh15q0cbHceY8jcLL6oVKK35otU0NvdGluiikqe7WlVlNmrn+4lnS8tuI=
-X-Gm-Gg: AYBFou2lzmx0atrSBnFvnkGJnHjb9TQ/kpN6E2/tF+O6rJKt7SDcy0zVIj1rYddOjYR
-	APhbHUBu7ZUXUwd3iCwZVF9MIDmJhZb7FceuC8//Jdf+ecSBJoNvoumMBfV7w46VtYNzykkOuvI
-	p1UAB4qgVIIOOerUEP+PM4NPQ+Zngj9yDMX0aAGNNHCCH7xAZDt7A/UTjTVQ2loIVmoPmQyLCGC
-	ONJxgtlRWtnDV6XAPQr7a0idVzptPDB3ckdKL9Yl5rdkH1u4I5Gxy2YUgnYfVt1PRXIthQJDI3Y
-	/Xa10WYfj8J5P8wr4lhK55+RLzgP9EDNaCV5xlXPrix1MHQ1dgubxVdotvK8EGORqM6iTecDub7
-	pAZ8ULnSub6g9Na39a7pNxNjbIbcbvEGQpn1xtzkDOoD5p3tLwa8s0ChQGLjusTdOBgA82a7Ba/
-	xzmLIZPUxhU2QiUW+ZaooVPZyOGkQCDq3nmX0hi5gR45WHJQR4oy7MlsXmoZAjjASPLbIcQ/wXd
-	49FLNo=
-X-Received: by 2002:a05:600c:3b07:b0:49c:fa20:cbfb with SMTP id 5b1f17b1804b1-49cfa20cd04mr23123115e9.18.1788509547190;
-        Fri, 04 Sep 2026 01:12:27 -0700 (PDT)
-Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49cfd3f8192sm11446335e9.3.2026.09.04.01.12.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Sep 2026 01:12:26 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: sashiko-reviews@lists.linux.dev, Onur =?utf-8?Q?=C3=96zkan?=
- <work@onurozkan.dev>
-Cc: linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: devres: make clock cleanup explicit on failure
-In-Reply-To: <20260904080129.A84381F00A3E@smtp.kernel.org>
-References: <20260904075026.60793-1-work@onurozkan.dev>
- <20260904080129.A84381F00A3E@smtp.kernel.org>
-Date: Fri, 04 Sep 2026 10:12:25 +0200
-Message-ID: <1jld9hl9jq.fsf@starbuckisacylon.baylibre.com>
+        bh=tBqFv7ZNVkf8/OWug/8l6emlj27SIx7U4VNemvpWjT4=;
+        b=IjVT0zV/xc4PSpYD9VhMRQph/Bqs4Fgj69d+pkhS79oyTQKjF+SqnOhSjEb0wFc3MX
+         N2e3yIj3Yh8OkJl8fik4aCqbQLygvyejE5bxD3L9s1kEeeFnQZwauQrx5w9dGL0VE2P6
+         qBIvdP7O0G2i6RTXrTA3hDP5cTJpvgzhKlUnlYBU74M39pJ/Q3GGyl4uJ3IHTGeJjd/2
+         laqcnX6LLJASejImMfakVr1+Q40CI23GkXadEZiwyy8AUNcU39zkFCSMmArQsjo9psj6
+         ve3XzD46h5z4x5Eo4+geQ5t0gqwu+dEi4TONZAby8dgPBrcqbHycdzCiPFUbf8O+K7uh
+         aMgA==
+X-Forwarded-Encrypted: i=1; AKwUvBwZMdy2HomZx4+cxBrPnvy9b3y8wuO/gg3qb1SocS6XR1jXz0SFNnZwNXcyqHnQe+aVHMsnoF80/Hg=@vger.kernel.org
+X-Gm-Message-State: AFuF++lIIFiJA7jhxbBFHf6Tyl+ibPJvqZieMjfnmSAZx12n76D+9N0B
+	0JCvvMfpptSRZDD2v66beO4mWAAOEIbJXCIBLCQ0xk7pfmFms0eEXMJjES9OGOvkbIobtRHvE3E
+	Gl1TBCLCdJu5uaHO134/jQF+mIAX2MLUSiHuBhr4E
+X-Gm-Gg: AYBFou0QDyVmhvuRbY8wQJN6tbWzMtf1Ci/NnFaafx8a1sORlmi1LSJ5uIdnuJ5gGAv
+	keH0YL2stFIu34ZSbfD9fvuL6AoOv/A7SYPpKHtsedvX2eh0BDG0U5zZGKmzhMGzv+Qggxk30Nv
+	xJ6EMF8HIvk4nZDReKxKw5H7Rs25F0OrpV+3BHteS5IOXvkpujCG/L7QCH0wRs/rKWxyIgFKWKl
+	8O5bIpcgksXsemC3xZgAMzNmgE9hXy2/AqtR/PvrXvy/cdaI8sm5KGxnjtSnbwpttB1DHoWpnJd
+	rw9p6qJO0rDxovTemDyqVZlopWFl0IXOs3cjHAJvSiDOeo4+0sjMS/oeC/YKIN56Vsff+s4kCsk
+	MUWVtGGSJ
+X-Received: by 2002:a05:690e:168d:b0:667:770c:f88e with SMTP id
+ 956f58d0204a3-66fb5aeafe7mr1463610d50.45.1788509649151; Fri, 04 Sep 2026
+ 01:14:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20260728091804.382753-1-wenst@chromium.org> <amiqKRkFItYwD6oL@redhat.com>
+ <CAGb2v64zUO-azpTuei6LCypad2noGFbg+EmaBC1iidoZ2stQzw@mail.gmail.com>
+ <c1048eae-72c5-4e2e-ac49-25e2c4297018@collabora.com> <CAGXv+5EgGYFVt4TJCysQgRqA1J5=Qz9c0oWY5YTxgc5PnNC_AQ@mail.gmail.com>
+ <36f2775a-d332-4913-8e9e-ca0429c3f713@collabora.com>
+In-Reply-To: <36f2775a-d332-4913-8e9e-ca0429c3f713@collabora.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Fri, 4 Sep 2026 16:13:58 +0800
+X-Gm-Features: AcwNN1XC4LXAm1BwVIM4UDg-tlD1lttg9AE64QKW3tHBF46eVGyIPLVMv5NqRcM
+Message-ID: <CAGXv+5FEx=H9r5MGequDpH3i62FAWbXdwkk66eBj8+ziT1fhMA@mail.gmail.com>
+Subject: Re: [PATCH v4 0/5] powervr: MT8173 GPU support
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Brian Masney <bmasney@redhat.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, Alessio Belle <alessio.belle@imgtec.com>, 
+	Luigi Santivetti <luigi.santivetti@imgtec.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	imagination@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, Icenowy Zheng <zhengxingda@iscas.ac.cn>, 
+	YoungJoon Lee <getfeus@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On ven. 04 sept. 2026 at 08:01, sashiko-bot@kernel.org wrote:
+Hi,
 
-> Thank you for your contribution! Sashiko AI review found 1 potential issu=
-e(s) to consider:
-> - [Low] Replaces devm_add_action_or_reset() with open-coded error handlin=
-g to pacify a static analyzer.
-> --
+On Thu, Jul 30, 2026 at 4:23=E2=80=AFPM AngeloGioacchino Del Regno
+<angelogioacchino.delregno@collabora.com> wrote:
 >
-> commit f91fcabb46a07cc1fa1a03a8bac1f236304fd974
-> Author: Onur =C3=96zkan <work@onurozkan.dev>
-> Subject: clk: devres: make clock cleanup explicit on failure
+> On 7/30/26 06:51, Chen-Yu Tsai wrote:
+> > On Tue, Jul 28, 2026 at 10:33=E2=80=AFPM AngeloGioacchino Del Regno
+> > <angelogioacchino.delregno@collabora.com> wrote:
+> >>
+> >> On 7/28/26 15:13, Chen-Yu Tsai wrote:
+> >>> On Tue, Jul 28, 2026 at 9:10=E2=80=AFPM Brian Masney <bmasney@redhat.=
+com> wrote:
+> >>>>
+> >>>> Hi Chen-Yu,
+> >>>>
+> >>>> On Tue, Jul 28, 2026 at 05:17:58PM +0800, Chen-Yu Tsai wrote:
+> >>>>> Hi everyone,
+> >>>>>
+> >>>>> This is v4 of my MT8173 PowerVR GPU support series.
+> >>>>>
+> >>>>> This time around Mesa was ready for basic testing, using both vulka=
+nmark
+> >>>>> and glmark2-es2-drm (with Zink). Details below.
+> >>>>>
+> >>>>> Changes since v3 (all in the clk driver patch):
+> >>>>> - Changed pm_runtime_put() to pm_runtime_put_sync()
+> >>>>> - Added missing of_node_put() in remove function
+> >>>>>
+> >>>>> Changes since v2 (all in the clk driver patch):
+> >>>>> - Made COMMON_CLK_MT8173_MFGTOP depend on PM
+> >>>>>     - Needed since the driver implements PM domains using the gener=
+ic PM
+> >>>>>       domain library, which also depends on PM
+> >>>>>     - Fixes build breakage (kernel test robot)
+> >>>>> - Fixed "RST_DELAY_CNT" name (Brian)
+> >>>>> - Dropped unused mfg_desc (Brian)
+> >>>>> - Added check of clk_prepare_enable()'s return value in
+> >>>>>     clk_mt8173_mfgtop_power_on() (Brian)
+> >>>>> - Saved error value for return in IS_ERR(data->clk_26m) branch
+> >>>>>     (Dan Carpenter / kernel test robot w/ smatch)
+> >>>>>
+> >>>>> Changes since v1:
+> >>>>> - Adapted to changed DT bindings
+> >>>>> - Dropped driver change
+> >>>>> - Use same power domain for "a" and "b" GPU power domains
+> >>>>>
+> >>>>>
+> >>>>> This series enables the PowerVR GPU found in the MT8173 SoC, found =
+in
+> >>>>> some Chromebooks.
+> >>>>
+> >>>> I'm making a pull for Stephen for the clk changes. Should patches 1,=
+2,4
+> >>>> go through the clk tree? Patches 3,5 go through the DRM tree?
+> >>>
+> >>> Only patches 1 and 2 should go through the clock tree.
+> >>>
+> >>> Patch 3, 4, 5 can all go through the soc tree if Angelo wants to pick=
+ up
+> >>> DT binding patches. Otherwise I can push patch 3 through drm-misc.
+> >>>
+> >>
+> >> Not sure if I can really take the DRM bindings patch through soc.
+> >>
+> >> I will take the devicetree ones exactly right now, even though it's go=
+ing to
+> >> give warnings.
+> >
+> > Apologies for missing this, but the first DT patch depends on the clk D=
+T
+> > bindings patch for the clk ID macros. This is causing build errors in
+> > linux-next right now.
+> >
+> > Not sure how we can fix this right now.
+> >
+> > Brian, would it be possible for you to split out that patch into a
+> > separate immutable branch for Angelo to merge?
+> >
+> > Otherwise Angelo might need to drop the DT patches until the next cycle=
+.
+> >
+> >
+> Yeah, that's so bad.
+> I'd be happy to be able to resolve this, but it's too late on my side.
 >
-> This commit replaces the standard devm_add_action_or_reset() helper with
-> devm_add_action() and an explicitly open-coded clock disable and unprepare
-> sequence on failure. This change was made to address a smatch warning.
+> I should've checked the DT patches more carefully, my bad: I got a bit to=
+o excited
+> to finally see this PowerVR stuff working on MT8173 and going upstream.
 >
-> Link: https://lore.kernel.org/all/apmUPdYtdIM0dQbF@redhat.com
-> Closes: https://lore.kernel.org/r/202608090025.dwxdfqFr-lkp@intel.com
+> Sadly, I have to drop the devicetree patches :-(
 
-Note that when you are fixing something, it usually needs a Fixes tag too.
+This is a reminder to re-apply the device tree patches from this series.
 
->
->> diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
->> index 4cc3863bd7da9..9ed9a7b7b23f4 100644
->> --- a/drivers/clk/clk-devres.c
->> +++ b/drivers/clk/clk-devres.c
->> @@ -123,9 +123,11 @@ struct clk *devm_clk_get_optional_enabled_with_rate=
-(struct device *dev,
->>  	if (ret)
->>  		goto out_put_clk;
->>=20=20
->> -	ret =3D devm_add_action_or_reset(dev, devm_clk_disable_unprepare, clk);
->> -	if (ret)
->> +	ret =3D devm_add_action(dev, devm_clk_disable_unprepare, clk);
->> +	if (ret) {
->> +		clk_disable_unprepare(clk);
->>  		goto out_put_clk;
->> +	}
->
-> [Severity: Low]
-> Is it necessary to open-code this cleanup logic in
-> devm_clk_get_optional_enabled_with_rate() just to satisfy a static analyz=
-er?
->
-> Replacing standard kernel abstractions like devm_add_action_or_reset() wi=
-th
-> manual error handling to pacify a false positive degrades code structure =
-and
-> reverts the benefits of the devres pattern.
->
-> Should the analyzer be fixed instead of open-coding the manual cleanup
-> sequence here?
 
-I tend to agree. If we are missing something, please ellaborate.
-
->
-> --=20
-> Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260904075026.60=
-793-1-work@onurozkan.dev?part=3D1
-
---=20
-Jerome
+ChenYu
