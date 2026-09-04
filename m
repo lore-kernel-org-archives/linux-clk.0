@@ -1,125 +1,212 @@
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AC064AD4AB;
-	Fri,  4 Sep 2026 13:41:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EC3349F117;
+	Fri,  4 Sep 2026 13:42:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788529298; cv=none; b=EyLgwl5GiSvZFo6QkXo3JrnPMRPtildAehiYifafhCaTkL5eB0vYrXKSC1udq2G6aSl4Kj6TFEy5JE9V1TizZimSx6n+CXosB2zEX3dx4knf6W44+X871KFTgjb9cc2XCOx3wDbGwMvM0z1HDi8bGEZwwxCM60Qviu9TeyhQqK0=
+	t=1788529374; cv=none; b=J+FtUcIOWC/neH2Yrxv3dZ4S74sAXX+aMzwtTj7o8Kl+4bh5eIVfnmU3hK+tpdbIFDlCFH2U6GUcMGu/io0cah1/mUMPf1UZkByTwQPbTZrxXQsH5hMw0XsBEMEShhcVAqvfRnSqJdf02yFSI76IpZJN7/BOXwUdkKn+m8uApZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788529298; c=relaxed/simple;
-	bh=D9iL8gkIMoSahIxAXwEZ4rZ5DC/fLiu/XF4LdcYsNr8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OoaPkY+E2PLOI86BFfK2ChmKKr4VOC47jJ5TGqHsv+nHLjTxMUqIkQmpoFJa9IbqmukvBYUcDHbCiQynUx9hAPiN3IO3zcD26WlVXPL8eAZfKylePdy3CvapNJNwVvX5KshmIY4McEolKMNEOIdvqtsap/KWWPQSAgH8ghGkUUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=f6ODtQC5; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+	s=arc-20240116; t=1788529374; c=relaxed/simple;
+	bh=xQKdPmM5bn8Oj29fPxT4ju6zr11MoxWpobAaVR0xrVk=;
+	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=U9jMUr09uDjdrh8g8Q3bZUbLym2iGkaBAhzRx9Ajn/lDmiyoALEOzBMZ5eBcqeR+GWSWCjI5Vmn8MwcwLPVBG/dp/agwluniT/jlfSDv0j+t306e2EP/50z7dpTYw9ViMezk2y0phQzzWUy7qtRWhXSVCE/05sg3B2Fvt4P+PiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZX01FCF+; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="f6ODtQC5"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Subject:Cc:To:From:
-	Reply-To:Content-ID:Content-Description;
-	bh=bwrYwvf4EE3LnWiuBDhZo+bPLoXTv8Ui/JdisuZmKag=; t=1788529296; x=1789738896; 
-	b=f6ODtQC5aBMfC6veE0amOWpCYLr8dA4J7VlvUPg7Ch2+AgkjxJ6UYIh6PTw+XHrkos2wGa7u9pt
-	E6Py4bLhu2kgCVXaF/hn/qetqkoblpcLWKwW7MhUPxWPs4FPl9Bq9C35A1RKrQpNtuneV6jnKhJah
-	NeGbYldptBL5Fw52iZZgfEQNPmN+lUgJAt5MfD65N50FYPDItkHxa3EE0aWkQQ9lLjnDGvTJn6DNU
-	jhYOdPGaQnA0f/7L3fKEfTDBhA/UUegDNI+yGSqZcf8dpScMUi3X2BjeanAmQSEU0YxQcg8hwLkoz
-	PnqaeEHi4uIfuXTBS6HFs9m5xj9dMIFjmPfA==;
-Date: Fri, 4 Sep 2026 15:41:14 +0200
-From: Andreas Kemnade <andreas@kemnade.info>
-To: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>
-Cc: "Tero Kristo" <kristo@kernel.org>, "Michael Turquette"
- <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Brian
- Masney" <bmasney@redhat.com>, "Tony Lindgren" <tony@atomide.com>, "Thomas
- Petazzoni" <thomas.petazzoni@bootlin.com>, =?UTF-8?B?VGjDqW8=?= Lebrun
- <theo.lebrun@bootlin.com>, =?UTF-8?B?R3LDqWdvcnk=?= Clement
- <gregory.clement@bootlin.com>, <linux-omap@vger.kernel.org>,
- <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <hns@goldelico.com>
-Subject: Re: [PATCH v2 0/2] clk: ti: mux: resolve parent clocks by DT index,
- not by name
-Message-ID: <20260904154114.2d771ee1@kemnade.info>
-In-Reply-To: <DL6D90JSIJCC.FE91IM9ILYSI@bootlin.com>
-References: <20260727-mathieu-wdt-clock-theo-v2-0-c048a6394436@bootlin.com>
-	<20260902082639.69643254@kemnade.info>
-	<DL4OUCXRGBEA.2G2WHI4FH2AY8@bootlin.com>
-	<20260902111556.38645f32@kemnade.info>
-	<20260903115308.2a569a30@kemnade.info>
-	<DL6D90JSIJCC.FE91IM9ILYSI@bootlin.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; aarch64-unknown-linux-gnu)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZX01FCF+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61DAD1F00A3D;
+	Fri,  4 Sep 2026 13:42:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788529372;
+	bh=wzU4YjPnSETRdodZme4TDyvK+QC9EtY4n+yRYCubHZg=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=ZX01FCF+BY26ep95y1j0Ggg5eTyVHVdVJNvbhbJ6wkGZ22mcxeEQKocLLLDnWI8uM
+	 Z9B0QGZDOrgeJmcl9JjMvUc3f9cUOAOkbUfaBUd3eFCWMSXk/yCdFKvl5M2fOiJOFq
+	 6mMYqbNj9mYsO1aIvyr8h2Pyd3CjZsGujPjk2Za6NsKsnyXsJRZSHUz/m27Wa8gRfs
+	 rGpDdru+IlzblBtoLG9glzq4Na7zs1FqQpoIiFpwOqP4rDOGeJckwpqoos2Lsdv+l5
+	 Bv4ljVAf9cqJVmJGYMIo7l6Rq4Q02+rkP2PznBwboOk03RIM1pMRgJLWe3pOsgP4Nx
+	 jjCLs4liQ04kA==
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v3 07/19] drm/bridge: inno-hdmi: Split probe out of bind
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Michal Wilczynski" <m.wilczynski@samsung.com>
+Cc: lee@kernel.org, linux-phy@lists.infradead.org, robh@kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, vkoul@kernel.org, neil.armstrong@linaro.org, olteanv@gmail.com, mfd@lists.linux.dev, conor+dt@kernel.org, dri-devel@lists.freedesktop.org
+In-Reply-To: <20260904-jh7110-clean-send-v3-7-484f9ae72715@samsung.com>
+References: <20260904-jh7110-clean-send-v3-0-484f9ae72715@samsung.com>
+ <CGME20260904132721eucas1p2e5f5bb9d907e641c4488908403b9d52f@eucas1p2.samsung.com>
+ <20260904-jh7110-clean-send-v3-7-484f9ae72715@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 04 Sep 2026 13:42:50 +0000
+Message-Id: <20260904134251.61DAD1F00A3D@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
-On Fri, 04 Sep 2026 09:50:17 +0200
-"Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com> wrote:
+Thank you for your contribution! Sashiko AI review found 3 potential issue(=
+s) to consider:
 
-> On Thu Sep 3, 2026 at 11:53 AM CEST, Andreas Kemnade wrote:
-> > We have:
-> > localhost:/sys/kernel/debug/clk# grep '(' */clk_possible_parents 
-> > clkout2_src_ck/clk_possible_parents:(missing) (missing) (missing) (missing)
-> > gpt10_fck/clk_possible_parents:(missing) (missing)
-> > gpt11_fck/clk_possible_parents:(missing) (missing)
-> > gpt2_fck/clk_possible_parents:(missing) (missing)
-> > gpt3_fck/clk_possible_parents:(missing) (missing)
-> > gpt4_fck/clk_possible_parents:(missing) (missing)
-> > gpt5_fck/clk_possible_parents:(missing) (missing)
-> > gpt6_fck/clk_possible_parents:(missing) (missing)
-> > gpt7_fck/clk_possible_parents:(missing) (missing)
-> > gpt8_fck/clk_possible_parents:(missing) (missing)
-> > gpt9_fck/clk_possible_parents:(missing) (missing)
-> > mcbsp1_fck/clk_possible_parents:(missing) (missing)
-> > mcbsp2_fck/clk_possible_parents:(missing) (missing)
-> > mcbsp3_fck/clk_possible_parents:(missing) (missing)
-> > mcbsp4_fck/clk_possible_parents:(missing) (missing)
-> > mcbsp5_fck/clk_possible_parents:(missing) (missing)
-> > sgx_fck/clk_possible_parents:(missing) (missing) (missing) (missing) (missing) (missing) (missing) (missing)
-> > usim_fck/clk_possible_parents:(missing) (missing) (missing) (missing) (missing) (missing) (missing) (missing) (missing) (missing)
-> > localhost:/sys/kernel/debug/clk# 
-> >
-> > All these clocks are composite clocks.
-> >
-> > so the early-registration of timer-ti-dm-systimer seems not to be
-> > the main issue here. Looking around what might be affected,
-> > mux clocks build into composite clocks:
-> > :~/linux/arch/arm/boot/dts/ti/omap$ grep -l ti,composite-mux *.dts*
-> > omap2420-clocks.dtsi
-> > omap2430-clocks.dtsi
-> > omap24xx-clocks.dtsi
-> > omap36xx-am35xx-omap3430es2plus-clocks.dtsi
-> > omap36xx-omap3430es2plus-clocks.dtsi
-> > omap3xxx-clocks.dtsi
-> > omap44xx-clocks.dtsi
-> > omap54xx-clocks.dtsi
-> >
-> > So havoc all over the place, just worst in omap3 because more critical
-> > clocks are affected.
-> >
-> > So I think we need either a revert of these patches or a some
-> > kind of quirk in clk_hw_register_composite_pdata to pass throuch something
-> > between the mux component and the composite.
-> >
-> > Regrads,
-> > Andreas  
-> 
-> Hi Andreas,
-> 
-> Thanks for taking the time to investigate this issue.
-> 
-> I believe I won't have much time to dive into it in the coming days, so
-> I fear you are right and we will have to revert this patch for now.
-> Except if someone else want to have a look at this.
-> 
-I looked once more: I will try with just the composite patch reverted.
-The composite patch looks more independent than I thought initially.
+Pre-existing issues:
+- [High] Using `devm_` APIs during the component bind phase causes permanen=
+t resource leaks and breaks EPROBE_DEFER.
+- [High] The hotplug interrupt handler `inno_hdmi_irq` can fire before the =
+bridge is attached, leading to a NULL pointer dereference.
+- [High] The I2C adapter is exposed before its private data is initialized,=
+ leading to a NULL pointer dereference on concurrent access.
+--
 
-The composite one does not affect anything else than OMAP2/3/4/5, so
-your AM3 problem will still get solved.
+commit 72f1334365740cfcdf0865d9dfd6562b9c3b40a8
+Author: Michal Wilczynski <m.wilczynski@samsung.com>
+Subject: drm/bridge: inno-hdmi: Split probe out of bind
 
-Regards,
-Andreas 
+This commit splits the hardware setup of the inno-hdmi driver into a new
+inno_hdmi_probe() function. This separates the bridge registration from its
+attachment in inno_hdmi_bind(), allowing decoupled MFD/glue drivers to mana=
+ge
+them independently.
+
+> diff --git a/drivers/gpu/drm/bridge/inno-hdmi.c b/drivers/gpu/drm/bridge/=
+inno-hdmi.c
+> index dd35f5a875d3d..aab474740f7f5 100644
+> --- a/drivers/gpu/drm/bridge/inno-hdmi.c
+> +++ b/drivers/gpu/drm/bridge/inno-hdmi.c
+> @@ -1061,11 +1061,24 @@ static struct i2c_adapter *inno_hdmi_i2c_adapter(=
+struct inno_hdmi *hdmi)
+>  	return adap;
+>  }
+
+[Severity: High]
+This is a pre-existing issue, but the I2C adapter is exposed before its pri=
+vate
+data is initialized, which can lead to a NULL pointer dereference on concur=
+rent
+access.
+
+Just above this line, devm_i2c_add_adapter() makes the bus visible to the s=
+ystem
+before hdmi->i2c is assigned:
+
+    ret =3D devm_i2c_add_adapter(hdmi->dev, adap);
+    if (ret) {
+        ...
+    }
+
+    hdmi->i2c =3D i2c;
+
+If a concurrent I2C transfer is initiated (e.g. via udev running i2cdetect),
+inno_hdmi_i2c_xfer() can be invoked. It will read the uninitialized hdmi->i=
+2c
+and attempt to lock its mutex:
+
+drivers/gpu/drm/bridge/inno-hdmi.c:inno_hdmi_i2c_xfer() {
+    struct inno_hdmi_i2c *i2c =3D hdmi->i2c;
+    ...
+    mutex_lock(&i2c->lock);
+    ...
+}
+
+Could hdmi->i2c be assigned before calling devm_i2c_add_adapter() to prevent
+this race?
+
+> -struct inno_hdmi *inno_hdmi_bind(struct device *dev,
+> -				 struct drm_encoder *encoder,
+> -				 const struct inno_hdmi_plat_data *plat_data)
+> +/**
+> + * inno_hdmi_probe - Internal helper to perform common setup
+> + * @pdev: platform device
+> + * @plat_data: SoC-specific platform data
+> + *
+> + * This function handles all the common hardware setup: allocating the m=
+ain
+> + * struct, mapping registers, getting clocks, initializing the hardware,
+> + * setting up the IRQ, and initializing the DDC adapter and bridge struc=
+t.
+> + * It returns a pointer to the inno_hdmi struct on success, or an ERR_PTR
+> + * on failure.
+> + *
+> + * This function is used by modern, decoupled MFD/glue drivers. It regis=
+ters
+> + * the bridge but does not attach it.
+> + */
+> +struct inno_hdmi *inno_hdmi_probe(struct platform_device *pdev,
+> +				  const struct inno_hdmi_plat_data *plat_data)
+>  {
+
+[Severity: High]
+This isn't a bug introduced by this patch, but using devm_ APIs in the
+component bind phase (now moved to inno_hdmi_probe()) causes permanent
+resource leaks and breaks EPROBE_DEFER.
+
+Because inno_hdmi_bind() is called from inno_hdmi_rockchip_bind() (a
+component bind callback), the platform device is not removed when a compone=
+nt
+unbinds. If another component in the DRM pipeline defers, the devm_ resourc=
+es
+are not freed.
+
+Subsequent bind attempts will fail with -EBUSY when re-requesting the IRQ or
+I/O regions:
+
+drivers/gpu/drm/bridge/inno-hdmi.c:inno_hdmi_probe() {
+    ...
+    ret =3D devm_request_threaded_irq(dev, irq, inno_hdmi_hardirq,
+                                    inno_hdmi_irq, IRQF_SHARED,
+                                    dev_name(dev), hdmi);
+    ...
+}
+
+Should this driver be converted to request resources during the actual probe
+phase rather than bind?
+
+[ ... ]
+
+> +struct inno_hdmi *inno_hdmi_bind(struct device *dev,
+> +				 struct drm_encoder *encoder,
+> +				 const struct inno_hdmi_plat_data *plat_data)
+> +{
+> +	struct platform_device *pdev =3D to_platform_device(dev);
+> +	struct inno_hdmi *hdmi;
+> +	int ret;
+> +
+> +	hdmi =3D inno_hdmi_probe(pdev, plat_data);
+> +	if (IS_ERR(hdmi))
+> +		return hdmi;
+> +
+> +	ret =3D drm_bridge_attach(encoder, &hdmi->bridge, NULL,
+> +				DRM_BRIDGE_ATTACH_NO_CONNECTOR);
+
+[Severity: High]
+This is a pre-existing issue, but this refactoring significantly widens the=
+ race
+window for a NULL pointer dereference. The hotplug interrupt handler can fi=
+re
+before the bridge is attached.
+
+inno_hdmi_probe() unmasks the HPD interrupt and registers the IRQ handler w=
+ith
+devm_request_threaded_irq(). If a monitor is physically connected, the
+interrupt can fire immediately.
+
+The IRQ handler then attempts to dereference hdmi->bridge.dev:
+
+drivers/gpu/drm/bridge/inno-hdmi.c:inno_hdmi_irq() {
+    ...
+    drm_helper_hpd_irq_event(hdmi->bridge.dev);
+    ...
+}
+
+However, hdmi->bridge.dev is only assigned when drm_bridge_attach() is call=
+ed.
+Since this patch decouples probe from attach for modern MFD/glue drivers, t=
+he
+attach phase happens much later, leaving a dangerous race window.
+
+Should the IRQ registration be moved to after the bridge is attached, or sh=
+ould
+the IRQ handler check if the bridge is attached before proceeding?
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260904-jh7110-cle=
+an-send-v3-0-484f9ae72715@samsung.com?part=3D7
