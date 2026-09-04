@@ -1,71 +1,71 @@
-Received: from mail-yx1-f50.google.com (mail-yx1-f50.google.com [74.125.224.50])
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DD7B36F434
-	for <linux-clk@vger.kernel.org>; Fri,  4 Sep 2026 15:12:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 126844F30E3
+	for <linux-clk@vger.kernel.org>; Fri,  4 Sep 2026 15:13:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788534748; cv=none; b=ufLLVaAT0K0H1aDtUfV8kNtJWQj9A6NqPomZKyhWcrGrPWzTeTTG96Bw0XA0zsaIMdVZ/6a8PFpgUHHQr6VINyuYQEiVp72/S5ambz2K/isYLV6hqnrW8sEg/bJf4IZJX/pnQ0tRVXf+qXtis7xZpOBKfOf0LSV7khFAjq17TsA=
+	t=1788534803; cv=none; b=IWg+P8gjy9UnigQMTxx3mc1BiiJHihUDeEg1rW9hK6rA9zs7pYakHmx68ChqqIspwuccdp9scq6tIvjjCv+Uuldjdo0fNyXz4oR3WTUjwmp02HVDhZSOlcSVRGXe9qdH+PAa8yNUlCTxf+pbc8iN4PDYxF8KP2rJaIK/xQnlSjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788534748; c=relaxed/simple;
-	bh=d1r8YLCgRIdy4KEcRiU5xhMZDzm5Ir3G6LE/EtLImp0=;
+	s=arc-20240116; t=1788534803; c=relaxed/simple;
+	bh=JKMK2CnzL8ftNzdqEBL6ZbY15a40r3hgTJf4pBsjvSE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YI/aNz5nIH9ROnOcErWhPfaK5hSwj9jF0UhwkF0RPlJcnt0QrMsed9h2kMSiIU27a0bOW76kJT6g1GA545OYTVQL5IFyGfSkmYsArCcXBjawSireVk81aMn3UPc7r65XGBr7LmUICj+4I+99k587SqHvmmCEwy68dDwah6WFILI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.224.50
+	 To:Cc:Content-Type; b=kz5djjPAGtsrQi5NwZPLCEnyIrZCHaYpQV3VV9hm7H7aldybegP8czcK+D0S4FgS6d85I5urGJWAqHwiRTAqZXYO0WdqbOc2nCRLvI3jcQ3iSnRsZ2/E8WFf+fUG9Yt9Lx6U0enamjsQUk+eVnm6v3iLWzD3Uk95DiUD1rpnkOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yx1-f50.google.com with SMTP id 956f58d0204a3-66fb8a78ad2so1001875d50.2
-        for <linux-clk@vger.kernel.org>; Fri, 04 Sep 2026 08:12:26 -0700 (PDT)
+Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-5c67175d176so526075e0c.0
+        for <linux-clk@vger.kernel.org>; Fri, 04 Sep 2026 08:13:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788534746; x=1789139546;
+        d=1e100.net; s=20251104; t=1788534798; x=1789139598;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=DBpBma5dCQR0Szv2MO2Socgh1RkSDenfZa0jgmlXBh4=;
-        b=JbL+Fkx4FTnJsB52c1bFz2U7NXWgD45c8RezJQ1rMe2/C/3slLUOohSI1dKytFGP7U
-         8RcttZPmxhimvDwWGfo+rSc0164mu1GQ47jz5o8W8tDbxP7baBbNFjis5TzXiRJSXVml
-         Vm94b3tBVyjtf9OsQL+touTTXZNoasvYSc9ubdXs30ROOqtdh7p06HO3Q/j+YB1bBOsa
-         Z032wwyHZGnLaTGNkRHgN5pORWs2U83vtpPlg/85Ghk8vlvym/EZ0SCDsv86wIWCNRFI
-         AUwrkEoWB8UE5gHWI0OMnQATL5NYZcEpk0XRkjfej/rGu61oU9v9fxbCiKNHvl43Vfio
-         Uesg==
-X-Forwarded-Encrypted: i=1; AKwUvBxtDA4RqhzlKgkPGd1lRG0kT9blj1ClPiQVXIL5BsEpc3sMDbtNDFtqkMdPvc8sXR4cFR8vdVL78UY=@vger.kernel.org
-X-Gm-Message-State: AFuF++lnYSr0Q2TKOckECedSMqVIeBjX7z3tRfNw38LAoZp38aG2WxLZ
-	A2IEX0QxdaYoDqya1R4wRgz/AB30qza3sZKSq0qMYLdcruArvFITRiD5phGZwvBB
-X-Gm-Gg: AYBFou3Xsh+GlkvPBBYunyVKlr+m+kl8KYVWBUCy3ExQM1K99kZrzq9/3OzLmuahiBN
-	KvenoEbRk5PX4WD0kn39ypByKkmOyd73n/Gn/IARxKPf0P3nms3QmFY1VhVt+F+wDzOapjTLCt5
-	Z4lV3GoBEIBfx8HuUobN/TW49MF9s6Zr1j90HW8HzcjCV6JPb1BB8dWj2eVkhr5iP5hVAuBWi9K
-	miwyD2kjNljzOl3mhYtGjZ0zC/2L2VIHsfQbbdcTzPV02kGquewN14aDd0THkJgYPuGyi3Z2dqK
-	tQmoNsTj1AL+ZaEZi4DY38X3lyb7r/WxhLnHQ3SURm3e8tVPJbn6Y5nCuzrzCCKmlwzD3aZE/U6
-	Q27h3czrnD8uf5GuCOsbychl1GbrXfv5HPAV6D1CCgwxAUzLfdYnmkIaD1uV7EIuWXVHYzyrGF2
-	LelJEv9jtIdWAjzZqLdxPSmh5D0R7kVdMpTptBWOlxXItBuzGSg8OQ+uqwL3fjLR/eWWhogqTGW
-	tT+vxVPzYCxi6iWYQO2+qhRSTN+Su38CUfzGwxShd51I+Gb
-X-Received: by 2002:a05:690e:4010:b0:66f:a8e8:7140 with SMTP id 956f58d0204a3-66fb58e9544mr2552691d50.5.1788534745778;
-        Fri, 04 Sep 2026 08:12:25 -0700 (PDT)
-Received: from mail-yx1-f41.google.com (mail-yx1-f41.google.com. [74.125.224.41])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-66fb4914af4sm2434547d50.13.2026.09.04.08.12.25
+        bh=EH26aGan0gGqVYE0IjLU+OD6hNNld1CIjczwNKp7Quo=;
+        b=S5TOBp0/D2S8SIjByaUcqbjGA68alZ94bfpB2+YJ/l0tNN24krzPHLTOcwZu3zZ0Ks
+         gV9jtC77WSvcU4GrUnNyN+15KDKQEwK/oE/adJuF8+c5KArKwDinNdTBobiWovcI3kbF
+         u6frfC9x5dSouGYo1xMnWRPVnUZyitTyI65PO9SGlkcRA+++3IRn1tJ7C5BGr9qrjdi4
+         UwjZojKI2lvtbDNUzVn5nvN/ZgMJ/m7qJ27VRiTT1BiI1JetcyVrBWwulmN++pBANaeL
+         iZqJLMJozBntuStHfcjJSFoYavLC5s65sVVek2bYQN07IjN5SZwA/GagulLR0yGyZDFl
+         5Yvg==
+X-Forwarded-Encrypted: i=1; AKwUvBz/nFxgjVeBcN4ra6L8Ebm3509e48AEmS3F/OF8rA0WL5OyJ1LkxXy6VHsX66VjJVKRNQrCifaRjc8=@vger.kernel.org
+X-Gm-Message-State: AFuF++ltmQXdTa/9UxrFxsDVL9mJx2z5s5ssENyxlzCVLwsC7PFI/IbI
+	AKC3Uvz9NLQXjEOrPYdlCxlF0vuQFLYluskmswbyja5mlL3AiQUzpcEBiGPHwx1z
+X-Gm-Gg: AYBFou3KUIFG0nsW1gLkxfXvPPd2gLINIf/NozQCTIKaumAQajlN+10uCcf2DNDvVXg
+	EwbckgKIhK1GhZwyQF2G2UVD+5iwb2a7GRJHeeJjc3TGUMd9UaNgWJMQpcD8E/qav5MC2ZFOvIn
+	tm2wE7XiSR+7GiLnaSZ9920NZCF2yGQid5zL7SyW+7ppVs+ja9xIa4NsgTswWycp5ETKRXMgj6A
+	S/2Je+e2t03aEUFYu0l4+v/fSTm/W2U/p5CLYBu1BDoAA4MzwysS4VS+/PdNUy3yTtXUDrso9QS
+	inB2Ph156ryviDFzdIaYJ0F4PYF0SkxZVuHmRgBTRMqVHjM+1i1vEEvotbhOFVyYGOutqZhrzD/
+	k8yoMFB33i6JvkjKpCBa1mXudEWaP5ojscme3jbuuVMJCdulRBEN42tGcxLOyD+Q6L7/nCrnLEF
+	btw7YH3BlCVafhhpvp8uS+jnPTYUAkNW/3LGioYs47c7CAluvF6P4DCLoMaGOKW76Aa4U81UN8E
+	EsEZWFBdz/yUN/mVJLDauYz8h9SFQ==
+X-Received: by 2002:a05:6122:794:b0:5bd:af82:fd9e with SMTP id 71dfb90a1353d-5c7ed437367mr2590413e0c.8.1788534798179;
+        Fri, 04 Sep 2026 08:13:18 -0700 (PDT)
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com. [209.85.221.181])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c7ebf559cbsm2361276e0c.0.2026.09.04.08.13.16
         for <linux-clk@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Sep 2026 08:12:25 -0700 (PDT)
-Received: by mail-yx1-f41.google.com with SMTP id 956f58d0204a3-66fb8a78ad2so1001819d50.2
-        for <linux-clk@vger.kernel.org>; Fri, 04 Sep 2026 08:12:25 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvByty1aFJRBEyOAapAW2bueiHsY6+7AmkGT63ZDRBB1fRkf1cc/xSojacaxmM6t0rHJ566jvfhSmqvE=@vger.kernel.org
-X-Received: by 2002:a05:6102:f06:b0:785:eb33:8794 with SMTP id
- ada2fe7eead31-78a4a91756dmr2264959137.10.1788534332492; Fri, 04 Sep 2026
- 08:05:32 -0700 (PDT)
+        Fri, 04 Sep 2026 08:13:17 -0700 (PDT)
+Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-5c67175d176so526042e0c.0
+        for <linux-clk@vger.kernel.org>; Fri, 04 Sep 2026 08:13:16 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBw/2PMP0qRN+roPuDm2pAXd5HixqHSZ6/UKjR/bsBJ8N9cbLAp2WuQgiUCWqEpNgMqaTRRrC/LtkhY=@vger.kernel.org
+X-Received: by 2002:a05:6102:2b9c:b0:784:b9ec:913f with SMTP id
+ ada2fe7eead31-78a4a6c8e9cmr2072720137.5.1788534796061; Fri, 04 Sep 2026
+ 08:13:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260821150408.73829-1-ayman.chaudhry.kc@renesas.com> <20260821150408.73829-6-ayman.chaudhry.kc@renesas.com>
-In-Reply-To: <20260821150408.73829-6-ayman.chaudhry.kc@renesas.com>
+References: <20260821150408.73829-1-ayman.chaudhry.kc@renesas.com> <20260821150408.73829-7-ayman.chaudhry.kc@renesas.com>
+In-Reply-To: <20260821150408.73829-7-ayman.chaudhry.kc@renesas.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 4 Sep 2026 17:05:21 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVch5xkg3p0+9mvEk9393ZuV2TO-kcyVci+VBAMCG4RPg@mail.gmail.com>
-X-Gm-Features: AcwNN1XC5gp_Xk8OzyKjoKwIynG-nLTbzWvj7aLGFiNz0LjJGn_EivdUH3_smAk
-Message-ID: <CAMuHMdVch5xkg3p0+9mvEk9393ZuV2TO-kcyVci+VBAMCG4RPg@mail.gmail.com>
-Subject: Re: [PATCH 05/10] soc: renesas: rcar-rst: Add support for RZ/G2M v3.0
+Date: Fri, 4 Sep 2026 17:13:05 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWOLRH5CWwUBkb6odaX=4t6eDnd4onrkgGfvwgPc37i_w@mail.gmail.com>
+X-Gm-Features: AcwNN1VLaUGS5m2MWtdAilN8Kk2snIGRLTUTYNqUMsLJBTkMdKQbkgJo-6rNerQ
+Message-ID: <CAMuHMdWOLRH5CWwUBkb6odaX=4t6eDnd4onrkgGfvwgPc37i_w@mail.gmail.com>
+Subject: Re: [PATCH 06/10] dt-bindings: clock: Add r8a774a3 CPG Core Clock definitions
 To: Ayman Chaudhry <ayman.chaudhry.kc@renesas.com>
 Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
@@ -79,15 +79,35 @@ Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 
+Hi Ayman,
+
 On Fri, 21 Aug 2026 at 17:05, Ayman Chaudhry
 <ayman.chaudhry.kc@renesas.com> wrote:
-> Add support for Renesas RZ/G2M v3.0 (a.k.a. R8A774A3) SoC to the R-Car
-> RST driver.
+> Add all the Renesas RZ/G2M v3.0 (a.k.a. R8A774A3) SoC Clock Pulse
+> Generator Core Clock Outputs, as listed in Table 11.3 ("List of Clocks
+> [RZ/G2M V1.3, RZ/G2M V3.0]") of the RZ/G2 Hardware User's Manual.
 >
 > Signed-off-by: Ayman Chaudhry <ayman.chaudhry.kc@renesas.com>
 
+Thanks for your patch!
+
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/r8a774a3-cpg-mssr.h
+
+Missing "renesas," vendor prefix.
+
+> @@ -0,0 +1,59 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +/*
+> + * Copyright (C) 2026 Renesas Electronics Corp.
+> + */
+> +#ifndef __DT_BINDINGS_CLOCK_R8A774A3_CPG_MSSR_H__
+> +#define __DT_BINDINGS_CLOCK_R8A774A3_CPG_MSSR_H__
+
+Missing "RENESAS_" vendor prefix.
+
+For the contents:
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v7.4.
 
 Gr{oetje,eeting}s,
 
