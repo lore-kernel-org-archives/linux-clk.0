@@ -1,213 +1,108 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EC7230CD81;
-	Sat,  5 Sep 2026 12:54:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11FEB4A205E
+	for <linux-clk@vger.kernel.org>; Sat,  5 Sep 2026 12:57:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788612880; cv=none; b=aVx+9JkrpcwuHjKbDWj029Ic8deYj2W2eQfaM7VLtri6cm3NuvUBmPgzXFxA40eCwdmySRuY1Zo5oMZujF6/O8m8WH2ijtXnlMuug1Yqp3OK35Y6R98q1MsnG2IAEMzaeiLECVPxliRNwUTucwiphJSZaSw8MSGbfnQGd+DEWcs=
+	t=1788613039; cv=none; b=R9Sg5qcY2i41QUUHl006CxGUP/N4ujzEPveTjlLHZIxnpiCz/dES6sDz5r2ipTWBCLm9Ah951YI+vnxUHoUDarLnSqj86aZ5lveyiHFGmsd4gYL7sSu0isrT5rqMyajbvDL6aQ+vMELDDZKZs2N0YQtAcaE/Ofu39bbB2D6LlFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788612880; c=relaxed/simple;
-	bh=nudWVbA+xOSmAJu2klERHAMQitNEzhW9CQ1GUuisBDQ=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=lwb2nLf600kEI6dY54oh7xj8/qY/3WBQs4F9eHfPD3n3X61Mc+TbZXvCkHNnwLDEt7qrOTs7Oxl+mGlgjP1ZEKOmsiPYfwY0ahr0cEFf3vgv66jydwNT3RYXf46aWYXYcBxiGbLKRx6w1SPna4SpvnSk+GcWvT4rWC/EFfGIaIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ay+N7mU7; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1788613039; c=relaxed/simple;
+	bh=6f5p//qeeEhJiLT6hla2lNz47zEGEWS2WmSvXXHcHig=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=b61CqNhN5dFX5rE24w4FeSAaNWAqBQB4Q590HUM2sX1O+h9oSz6IPUOWCT7VTyb5iI8EYWgfswgArVmNXavzBfoMvJO/gfreluHiUMWUpPYlgJHpB4W/XkC0fidEhr8WKTi5erJUw7KlTJVknTVaqmpGFJ2ifnLVVKtr8wriVP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kL8ASA3Z; arc=none smtp.client-ip=209.85.221.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ay+N7mU7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 978591F00A3D;
-	Sat,  5 Sep 2026 12:54:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788612879;
-	bh=BkTM9xa/tB0gIimEm2HcjWnynQXEzijTVj4bJ5tzlB8=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=ay+N7mU7VlSszXh0g60u1f/7+mG0+5qIwYalQlUxlDKc0SRt2l7+zOzkc1Qr4qDRW
-	 mX+vquPjn13GjKuZ26EgakRGdBEAOQG0cr27omuzjFw6P6+uQVLzvSPLnH57Qs6xBs
-	 2dqT1PTMDOJnrjojMwMPZ06Ns5/AGGJ9n4t+8o9sem8wPMiVbmfxL5bFZq0QGfAZFK
-	 wuqmkcDrSlWR4Ps0CZod5ONzCuLQEPYTmdRHXZL5zi8dkecUKpb4ZhnE3OEUhEblAg
-	 VRnF6NrH8OJEcxguz0MU6IANMNY8O7E7sTBovGM8Wu9kCneXD3LmPILl06p8GA2MGD
-	 pQ5CRK5Y1YdDQ==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v7 3/3] media: dvb-core: extirpate defective and unsafe
- ULE debug block
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Breno Rodrigues Alves" <breno3011alves@gmail.com>
-Cc: linux-pci@vger.kernel.org, linux-input@vger.kernel.org, dmitry.torokhov@gmail.com, linux-clk@vger.kernel.org, media-ci@linuxtv.org
-In-Reply-To: <20260905124434.6163-3-breno3011alves@gmail.com>
-References: <20260905124434.6163-1-breno3011alves@gmail.com>
- <20260905124434.6163-3-breno3011alves@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Sat, 05 Sep 2026 12:54:38 +0000
-Message-Id: <20260905125438.978591F00A3D@smtp.kernel.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kL8ASA3Z"
+Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-5bfa4c51c2aso837183e0c.0
+        for <linux-clk@vger.kernel.org>; Sat, 05 Sep 2026 05:57:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1788613036; x=1789217836; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=sCkeW/rlDEZbQRwhNQlqYVSLXnulFlxF+aDVtk4kLrI=;
+        b=kL8ASA3ZzaDORw3JpnCIdBM1mjUHwetTUGXP1cwZET4VOCUvyFczdeNhMTX6ISdq58
+         zN92li02djVah3SvxyGVjnc3hgWWk40ksdMDbqP7oYHDEyDNUuAvmNC/0bjRp3lCJojR
+         v+Ec3RLj4vzkC/wJGT35ieS+N5mcTSO/4XYX3g3lw9i3m2bnSC+j8goSkZGDZ8ClqNST
+         f1aotRGpCvbsMLJp5+pp0UVXapEnNrTWrGVPyn1pB+bo8eCesMhbAv7Rde8YW+CIRO1e
+         IeyG5rs6guNZH92u2ieioeO5ytwQCMCfbFkc6+YSE7g/oGUjV+EWxwOOMx/Xgd7IGw3Q
+         pUEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788613036; x=1789217836;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=sCkeW/rlDEZbQRwhNQlqYVSLXnulFlxF+aDVtk4kLrI=;
+        b=O4pVSB3eZ2+HQ0MlQ2k/tXwUOlaj/XY0t+dT8NrglaYEw+bikqzftxl5fahH2AtMD8
+         AC6/JTIqYkWfy35gGeY/a4DvUPxt4hzAR8PcpMuZU0ASB6opIZNXRe7R8sumNGvV7/Bm
+         xc/ezr1ZWph8jh2+idyN0OUToE09kufVBz1oXINgib7uFILvNYjGVCEp3SXRAn1XRo5H
+         YRPP/FdYlO6TtMaGrhxYV87miC01fkRR8RxjC7KOKwexKMbOPTh1Td8Hg1IQlY/VIXn3
+         0fIuzYwH4fZvrL63GWppayB4icyVthfNJvSbBLNavIF/EwtAPvUM1Ijh0YW+4eMFOjXy
+         tR4A==
+X-Forwarded-Encrypted: i=1; AKwUvBwAUn6vfprnIPbTQzGprYpkgk8dSW6KeU1PbNhvxIwd1uFpqqUUsubcGJnK4D838t5saKyOrLQwGVY=@vger.kernel.org
+X-Gm-Message-State: AFuF++mB/596LdxGMDFQy8MVuwgGpu6XP/3Jh4p7RNv2d6GqN2qe2aG2
+	n6bAjQderUw+IKL5+iEbbLHNjY70zWv2A89xws213e8WYppU3nKXhwEG
+X-Gm-Gg: AYBFou0yyhtyvzif5ALEALHmujUzbNzcTMglvc1dbB3MQ1/PEg9vSQsz9SK6a8HONor
+	zgboTSzZ1ND55KEPM7UMbkT1neXypQm+odcZYZ2qE46DqSmpoiFR6Dh0nBnlYppioxz7x8u9SLT
+	bu3tQ0Li48eDm+A4Xlldci4cElfT+2NuJk9Euvtf5Vk5FFLd7Nnecu5Sxc3uxYt9O/4axU+yvM2
+	754kYn0+0aj/PKAkpowSbyDfsowclI7TFFY9WR11ywDdDysFpbAHtuK+d5bThtBZjc8cx2uc5x3
+	gDev0FmV7hm6+5wtF5TRAF1JJvdbbyUBpyjZdRZ6h9zCGgdK3fam0VwMFAASql96GWFA810lqY9
+	0Q9scQYI0OdWKYQsXFVDQdSBlJuAu6yFH8EGndQp37zLClwp6VbSTIwEneaJDtUYFHmRS4vJ5gm
+	YlPdRg65IHccWQyHE6yYgI2djo+IvZcho5OeU8BciTuSd99DdyNzIVvbWKH2kYCdj38dgXn7KhE
+	5k7OCS8y6Q6nA9Jn5+zwSYQl0nkQkG6sbDUFPupVuU=
+X-Received: by 2002:a05:6122:32cc:b0:5bd:aba5:3830 with SMTP id 71dfb90a1353d-5c7ed0c4c20mr6435898e0c.0.1788613035512;
+        Sat, 05 Sep 2026 05:57:15 -0700 (PDT)
+Received: from Biostar-A520MT.. ([187.94.13.245])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c7ec1ef7a5sm4349416e0c.5.2026.09.05.05.57.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 05 Sep 2026 05:57:14 -0700 (PDT)
+From: Breno Rodrigues Alves <breno3011alves@gmail.com>
+To: gregkh@linuxfoundation.org
+Cc: torvalds@linux-foundation.org,
+	linux-kernel@vger.kernel.org,
+	arnd@arndb.de,
+	linux-clk@vger.kernel.org,
+	linux-input@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	linux-fbdev@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	Breno Rodrigues Alves <breno3011alves@gmail.com>
+Subject: [PATCH v8 1/3] interconnect: mediatek: fix Makefile typo for mt8196
+Date: Sat,  5 Sep 2026 09:57:04 -0300
+Message-ID: <20260905125706.6550-1-breno3011alves@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Thank you for your contribution! Sashiko AI review found 5 potential issue(=
-s) to consider:
+Correct a copy-paste typo in the MediaTek interconnect Makefile that
+mapped mt8196.o to CONFIG_INTERCONNECT_MTK_MT8195 instead of MT8196.
 
-New issues:
-- [Medium] The patch silently includes an unrelated modification in the LED=
- subsystem Kconfig.
-- [Low] The commit removes the `DVB_ULE_DEBUG` code blocks from `dvb_net.c`=
- but fails to remove the corresponding Kconfig option from `drivers/media/d=
-vb-core/Kconfig`.
-- [Low] The parameter `iov` in `dvb_net_ule_check_crc()` is now unused afte=
-r the removal of the debug block.
+Assisted-by: OpenCode AI
+Signed-off-by: Breno Rodrigues Alves <breno3011alves@gmail.com>
+---
+ drivers/interconnect/mediatek/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Pre-existing issues:
-- [Critical] The ULE SNDU payload parser lacks robust bounds checking on us=
-er-controlled length fields, allowing an attacker to underflow `skb->len` v=
-ia `skb_pull()` and read/write out-of-bounds memory.
-- [High] Dereferencing a casted `unsigned short *` pointer from an unaligne=
-d byte stream causes a kernel panic due to alignment faults on strict archi=
-tectures.
---
+diff --git a/drivers/interconnect/mediatek/Makefile b/drivers/interconnect/mediatek/Makefile
+index 6bd656668..64170ab16 100644
+--- a/drivers/interconnect/mediatek/Makefile
++++ b/drivers/interconnect/mediatek/Makefile
+@@ -3,4 +3,4 @@
+ obj-$(CONFIG_INTERCONNECT_MTK_DVFSRC_EMI) += icc-emi.o
+ obj-$(CONFIG_INTERCONNECT_MTK_MT8183) += mt8183.o
+ obj-$(CONFIG_INTERCONNECT_MTK_MT8195) += mt8195.o
+-obj-$(CONFIG_INTERCONNECT_MTK_MT8195) += mt8196.o
++obj-$(CONFIG_INTERCONNECT_MTK_MT8196) += mt8196.o
+-- 
+2.43.0
 
-commit fe63e38a3f8932fddc46f48a9206976093b6c1c6
-Author: Breno Rodrigues Alves <breno3011alves@gmail.com>
-
-    media: dvb-core: extirpate defective and unsafe ULE debug block
-
-    Completely purge the unmaintained DVB_ULE_DEBUG code block from
-    dvb_net.c to eliminate severe lockless race conditions and buffer overf=
-low
-    vulnerabilities on global network state variables.
-
->     Completely purge the unmaintained DVB_ULE_DEBUG code block from
->     dvb_net.c to eliminate severe lockless race conditions and buffer ove=
-rflow
->     vulnerabilities on global network state variables.
-
-[Severity: Low]
-Did this commit miss removing the config DVB_ULE_DEBUG definition from
-drivers/media/dvb-core/Kconfig? Leaving it in makes the Kconfig option
-selectable but has no effect.
-
-> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-> index d0d3182236be4..800fbd56093ec 100644
-> --- a/drivers/leds/Kconfig
-> +++ b/drivers/leds/Kconfig
-> @@ -873,7 +873,6 @@ config LEDS_UPBOARD
->  	  This driver can also be built as a module. If so the module will be
->  	  called leds-upboard.
-> =20
-> -comment "LED driver for blink(1) USB RGB LED is under Special HID driver=
-s (HID_THINGM)"
-> =20
->  config LEDS_BLINKM
->  	tristate "LED support for the BlinkM I2C RGB LED"
-
-[Severity: Medium]
-Is this unrelated modification in the LED subsystem Kconfig intentional? It
-doesn't seem to be documented in the commit message and introduces an
-undocumented side effect in an unrelated subsystem.
-
-> diff --git a/drivers/media/dvb-core/dvb_net.c b/drivers/media/dvb-core/dv=
-b_net.c
-> index a2159b2bc1766..ae0073b949a50 100644
-> --- a/drivers/media/dvb-core/dvb_net.c
-> +++ b/drivers/media/dvb-core/dvb_net.c
-
-[ ... ]
-
-> @@ -659,23 +636,6 @@ static void dvb_net_ule_check_crc(struct dvb_net_ule=
-_handle *h,
->  			h->ts_remain > 2 ?
->  				*(unsigned short *)h->from_where : 0);
-
-[Severity: High]
-This isn't a bug introduced by this patch, but does the unaligned pointer c=
-ast
-here cause a fatal alignment fault on strict architectures?
-
-In drivers/media/dvb-core/dvb_net.c:dvb_net_ule_check_crc(), when an attack=
-er
-sends a ULE packet with an invalid CRC, the error path unsafely casts the
-unaligned h->from_where pointer to an unsigned short * and dereferences it:
-
-    h->ts_remain > 2 ? *(unsigned short *)h->from_where : 0);
-
-This can cause a kernel panic (Denial of Service) on architectures like SPA=
-RC
-or older ARM that do not support unaligned accesses.
-
-[Severity: Low]
-With the removal of the DVB_ULE_DEBUG block below, is the parameter iov in
-dvb_net_ule_check_crc() now unused?
-
-drivers/media/dvb-core/dvb_net.c:dvb_net_ule_check_crc(struct dvb_net_ule_h=
-andle *h,
-                                  struct kvec iov[3],
-                                  u32 ule_crc, u32 expected_crc)
-
-> -	#ifdef DVB_ULE_DEBUG
-> -		hexdump(iov[0].iov_base, iov[0].iov_len);
-> -		hexdump(iov[1].iov_base, iov[1].iov_len);
-> -		hexdump(iov[2].iov_base, iov[2].iov_len);
-> -
-> -		if (ule_where =3D=3D ule_hist) {
-> -			hexdump(&ule_hist[98*TS_SZ], TS_SZ);
-> -			hexdump(&ule_hist[99*TS_SZ], TS_SZ);
-> -		} else if (ule_where =3D=3D &ule_hist[TS_SZ]) {
-> -			hexdump(&ule_hist[99*TS_SZ], TS_SZ);
-> -			hexdump(ule_hist, TS_SZ);
-> -		} else {
-> -			hexdump(ule_where - TS_SZ - TS_SZ, TS_SZ);
-> -			hexdump(ule_where - TS_SZ, TS_SZ);
-> -		}
-> -		ule_dump =3D 1;
-> -	#endif
-> =20
->  		h->dev->stats.rx_errors++;
->  		h->dev->stats.rx_crc_errors++;
-
-[Severity: Critical]
-This is a pre-existing issue, but does the ULE SNDU payload parser lack
-robust bounds checking on user-controlled length fields?
-
-In drivers/media/dvb-core/dvb_net.c:dvb_net_ule_new_payload(), the minimum
-length check fails to account for the 6-byte MAC address when ule_dbit is 0:
-
-    if (h->priv->ule_sndu_len < 5) {
-
-If an attacker sends a malformed packet with ule_dbit =3D=3D 0 and a payload
-length of 5, after the 4-byte CRC is removed in dvb_net_ule_check_crc(),
-skb->len becomes 1. Then skb_pull(h->priv->ule_skb, ETH_ALEN) subtracts 6,
-causing skb->len to underflow:
-
-drivers/media/dvb-core/dvb_net.c:dvb_net_ule_check_crc() {
-    ...
-    if (!h->priv->ule_dbit) {
-        ...
-        skb_pull(h->priv->ule_skb, ETH_ALEN);
-    ...
-}
-
-Similarly, in handle_ule_extensions(), the loop accumulates lengths without
-validating they fit in the payload buffer:
-
-drivers/media/dvb-core/dvb_net.c:handle_ule_extensions() {
-    ...
-        total_ext_len +=3D l;
-    ...
-}
-
-This unbounded length is then passed to skb_pull() in dvb_net_ule_check_crc=
-(),
-again causing an skb->len underflow:
-
-drivers/media/dvb-core/dvb_net.c:dvb_net_ule_check_crc() {
-    ...
-        skb_pull(h->priv->ule_skb, l);
-    ...
-}
-
-This allows an attacker to underflow skb->len and read or write
-out-of-bounds memory, leading to network stack memory corruption.
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260905124434.6163=
--1-breno3011alves@gmail.com?part=3D3
