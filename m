@@ -1,45 +1,45 @@
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6457D3815D8;
-	Sat,  5 Sep 2026 13:35:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 186003812F6;
+	Sat,  5 Sep 2026 13:35:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788615325; cv=none; b=MbxzfaiembMEdUMDpGb5wyfNGXhiFdPJArSxTNeNaXT22LD+pQpRqMM9mD2bS82hwkJQUtIhdyHiikaTu9zOn0ZbDR+n9qE9toif9eOy9ReM7gRrDaHgZj2cAsJjB/DXKzTnk0K/0N/AM6L2L/zEH5UYT7tsTL8mPsnHRocI/b8=
+	t=1788615364; cv=none; b=Uq4mw3hMDvChA9JiXN24cE4vbGF1xxZ7oZs2WYUDCtkKP1Ke5SLythYvFroGTkz1l1yiGz4hySG7DIvDUXjWLqWdRDpJzvxMcg1ucXbchjihhEkcd1gJzmAtrg2l4tKc3KonAkedn0vfrZQkmoyow/fesB15mhwn8BzA0IWMOuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788615325; c=relaxed/simple;
-	bh=Wt6I/aU/G1XMdfSJMQIJsUTd0Z2usiR3V6RUU90FSl4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tefPDgfCma69mcNlzFNP02UxQ9o1guGuP+sLkISdTf52hDe17ZdvBSGEerNGaVI2HPQFTK4VHaaaa6EUx0fJxMbHuaclPgn1SxbgITSKQeNRTV0HosjbLswSF/z1ygZb8TVfcysEJwPO8gGciKJZvpwHIeIqwRhZ6/iaoivdKUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=HZe6aquM; arc=none smtp.client-ip=220.197.31.4
+	s=arc-20240116; t=1788615364; c=relaxed/simple;
+	bh=E4NOIZw0MoIJK44BtS9/uuvw4Y/ed4AG5hDSunS1C2I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Xx7PoiAx8LvclmwqTGauLoEGNmF8kfYnGiGVQdAx6dvp7B8/we9I7+EqQ61r3mRw9zbEMFZryPVj+N1iFneDLwEe17clptsmXUB21O9G4xOj90E6OH6aboKXicup4yxtD26/FC+B3NWeS6v3TwEhwFUb0yC+LzCWKc05WBouKyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=mH/aEyBS; arc=none smtp.client-ip=220.197.31.2
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="HZe6aquM"
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="mH/aEyBS"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=FO
-	br8zk9lwX0SnKtG4JNGHiNnmnoWGmqHJglX3yyxo4=; b=HZe6aquM6Sh+cv781J
-	CParfciaUTDsKmtySjBC7rS/zOhx1VkF46q9PC9ol36HIQf7MBdrwWb00jMDx1J2
-	GcjqiJtCe40S/zXYwPK5eAaWhtMKv29bHJUljVAY3lej3icbAU2R5nctiFtGLAdL
-	AzVkb3dnr1md9LWGxm1fhuYh8=
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=ue
+	C5lIuArC4NcqzIcMwBR70F4cNYRtDiIKMXLIakGak=; b=mH/aEyBS9/bpfl6S0P
+	eDwFxpjmwSSuv2g/jxoO5JsoaowSIVMai8x79y8DGpX3MlW48s9ZQeWTX/rBIUUs
+	1n42y7Ll8M+c/CuRrYNTK4UUiK0r9NSmY8DYDB4XQXBs09lfVD4HPyX2zzIiUuzf
+	ctdT7rmCU+pdoNXjZTohPkY3o=
 Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wA3rmtcGpxqLTNrAw--.54824S2;
-	Sat, 05 Sep 2026 21:34:21 +0800 (CST)
+	by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id _____wD3_41+GpxqLJ+DAw--.3882S2;
+	Sat, 05 Sep 2026 21:34:55 +0800 (CST)
 From: "hpp.iscas" <hppiscas@163.com>
 To: Stephen Boyd <sboyd@kernel.org>
 Cc: "hpp.iscas" <hppiscas@163.com>,
 	Brian Masney <bmasney+clk@redhat.com>,
 	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Sam Shih <sam.shih@mediatek.com>,
-	Daniel Golle <daniel@makrotopia.org>
-Subject: [PATCH] clk: mediatek: mt7988-apmixed: Publish the OF module alias
-Date: Sat,  5 Sep 2026 21:34:17 +0800
-Message-ID: <20260905133417.64373-1-hppiscas@163.com>
+	linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Andre Przywara <andre.przywara@arm.com>
+Subject: [PATCH] clk: sunxi-ng: a523: Publish the main CCU module alias
+Date: Sat,  5 Sep 2026 21:34:52 +0800
+Message-ID: <20260905133452.64544-1-hppiscas@163.com>
 X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -48,38 +48,38 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-CM-TRANSID:_____wA3rmtcGpxqLTNrAw--.54824S2
-X-Coremail-Antispam: 1Uf129KBjvdXoW7XrW3tF17WrW8KFy7XF45GFg_yoWDZFg_uw
-	4DZr4xuryDKF9Yvr4Fya1fZr9IkrWavrWDXFyrtw1ava4DuFsrZ39FvwsYqr17GryvvF1D
-	JFnY9Fy8Cry5ujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+X-CM-TRANSID:_____wD3_41+GpxqLJ+DAw--.3882S2
+X-Coremail-Antispam: 1Uf129KBjvdXoW7XrWUCFWDKw1xJFWfXFyUtrb_yoWDGrg_CF
+	n2qrZ7WFy8CFWDAF1jya1rurZYv34rZrnYqF12934Yq3W8uFyfAF1v9wn5X345Xay7AFy7
+	J3Z0gFW8uw1UKjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
 	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7xRRk9NDUUUUU==
-X-CM-SenderInfo: 5kssx2xfdvqiywtou0bp/xtbCxh1fKGqcGl0TVAAA3a
+X-CM-SenderInfo: 5kssx2xfdvqiywtou0bp/xtbCxQBoMWqcGoAiPwAA3t
 
-COMMON_CLK_MT7988 is tristate and builds apmixed as a separate object.=0D
-The apmixed platform driver has an OF match table but exports no OF=0D
-alias, so that table cannot be used to select the module on a device=0D
-event.=0D
+The A523 main CCU driver supports module builds and registers an OF=0D
+match table. The table is not exported, leaving the module without an=0D
+alias for its OF device.=0D
 =0D
-Publish the table. Keep the existing initialization entry point.=0D
+Publish the main CCU table without changing clock initialization.=0D
 =0D
-Fixes: 4b4719437d85 ("clk: mediatek: add drivers for MT7988 SoC")=0D
+Fixes: 7cae1e2b5544 ("clk: sunxi-ng: Add support for the A523/T527 CCU PLLs=
+")=0D
 Signed-off-by: hpp.iscas <hppiscas@163.com>=0D
 ---=0D
- drivers/clk/mediatek/clk-mt7988-apmixed.c | 1 +=0D
+ drivers/clk/sunxi-ng/ccu-sun55i-a523.c | 1 +=0D
  1 file changed, 1 insertion(+)=0D
 =0D
-diff --git a/drivers/clk/mediatek/clk-mt7988-apmixed.c b/drivers/clk/mediat=
-ek/clk-mt7988-apmixed.c=0D
-index 416a4b8..24f4e7b 100644=0D
---- a/drivers/clk/mediatek/clk-mt7988-apmixed.c=0D
-+++ b/drivers/clk/mediatek/clk-mt7988-apmixed.c=0D
-@@ -75,6 +75,7 @@ static const struct of_device_id of_match_clk_mt7988_apmi=
-xed[] =3D {=0D
- 	{ .compatible =3D "mediatek,mt7988-apmixedsys" },=0D
- 	{ /* sentinel */ }=0D
+diff --git a/drivers/clk/sunxi-ng/ccu-sun55i-a523.c b/drivers/clk/sunxi-ng/=
+ccu-sun55i-a523.c=0D
+index 20dad06..d0c4c70 100644=0D
+--- a/drivers/clk/sunxi-ng/ccu-sun55i-a523.c=0D
++++ b/drivers/clk/sunxi-ng/ccu-sun55i-a523.c=0D
+@@ -1685,6 +1685,7 @@ static const struct of_device_id sun55i_a523_ccu_ids[=
+] =3D {=0D
+ 	{ .compatible =3D "allwinner,sun55i-a523-ccu" },=0D
+ 	{ }=0D
  };=0D
-+MODULE_DEVICE_TABLE(of, of_match_clk_mt7988_apmixed);=0D
++MODULE_DEVICE_TABLE(of, sun55i_a523_ccu_ids);=0D
  =0D
- static int clk_mt7988_apmixed_probe(struct platform_device *pdev)=0D
- {=0D
+ static struct platform_driver sun55i_a523_ccu_driver =3D {=0D
+ 	.probe	=3D sun55i_a523_ccu_probe,=0D
 
