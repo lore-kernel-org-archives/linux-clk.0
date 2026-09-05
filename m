@@ -1,70 +1,211 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mail2.ecloud.global (mail2.ecloud.global [135.181.6.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58FC326ED3C;
-	Sat,  5 Sep 2026 00:41:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788568864; cv=none; b=figgfxZT0sJXXDRtWemMZSaYLSpadfIoJ4YDoR477axfdi1Yy6A3ZUhV4DBokvlSeNs7f69SfiCHczAeu0/m1hGwgJen4FI8JaYEUPsGkt0WJFjaTPwxjTOjsXeC+ieWOVz9qlBwci4t+5Ql3kLP2aZpYR2pp2fze3qjLkmtnK8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788568864; c=relaxed/simple;
-	bh=i1PQkZzDbDZ86Fo2e/cOeQmuYEvYACmQhy/2qhCmb+w=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=nT7XEjOrdjdwAePnEKhBrrg5S9paAyFZrp33noqwzRFgUbF4dYdyv0eChlHK6EjIcboYbDpjCzb7tJU9eolTa3iFZLRWjdkfjJZAyO7iBQz0h8rvbV56GFOXIa3s7u2/c7LwPXKNJP2AbzgyfxZcjAL6d3h4CYi5OnhMrYJ97Z4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B+sbqsos; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7732314B63;
+	Sat,  5 Sep 2026 05:21:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=135.181.6.248
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788585709; cv=pass; b=V9gLu/QHogxbIMsD63E1XmYqHV6perCJOUD+pgCOgSxkSRcPgJXMZiWPiEOYQh0Hdk/X1Dh0e7nOY8Ul4+ExsnLhGiJauvbJupj+t1jwJbexHqP841I9tgemTJ2Yb98MpVO6z2JdLg+pYSrWPHPp83CyDNc1p74sYZeBqHK5yr8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788585709; c=relaxed/simple;
+	bh=PG0Nvk57+SdvlADJPXiKahtxKVSStSRUEYmsxuh/emo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F6zFvsC2YItsPjzEv9FGZwHJDHyFm/reMtWOqLGXbNraGW0CFvovH5lrhQloNkH1ZBRukYMkH1KD50PPOOFMDuPZ4geB3u9NL0qmYo5LDHCSOYo4sVKFw4OOvU3ifIh98y1OhNrZ8mLpG/E9iENS+amGgrN/A2HJ/kG2nKDoUoU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=murena.io; spf=pass smtp.mailfrom=murena.io; dkim=pass (1024-bit key) header.d=murena.io header.i=@murena.io header.b=e09BHDAH; arc=pass smtp.client-ip=135.181.6.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=murena.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=murena.io
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B+sbqsos"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FDEC1F00A3D;
-	Sat,  5 Sep 2026 00:41:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788568862;
-	bh=Cf7L/9rZsJFtzg7jjzjMop2JQwP8+qkeIufnq/s05L8=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=B+sbqsosqNgadropp9I14zQVRmZKhAnrapFWXJrLZ8l8lmU2FVCehkDcnwtLpK9z8
-	 kpGxDu4nBCFKMjjpUm6CH15imrHkyooKMHhiDkNLQcYjAD8jDWa+qmZiNhq9GxTZIE
-	 Ele+y8v2JeNeJVc3bcBUjoeG5d+xYUg0so/X/PLmdoXWs8X6v7JIq87hUXhfDGVg7M
-	 eSWLhb/yjTYr5Z64RjHVdamr31qj0Ym9yc5eVpoBfg6SKRCE08sLfqUEQvBQ+x51eT
-	 rxymZ47bcAR3quh45JLIY3Fp/CIsQQ13D1WnFtet+ruVRBgq4Ie7GPZQM72VFu3VoF
-	 w5hE/Z7jNP37g==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v5] Kconfig: fix typos in core makefiles and purge
- defective DVB debug (v5)
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Breno Rodrigues Alves" <breno3011alves@gmail.com>
-Cc: linux-clk@vger.kernel.org, dmitry.torokhov@gmail.com, linux-pci@vger.kernel.org, linux-input@vger.kernel.org, media-ci@linuxtv.org
-In-Reply-To: <20260905003005.118245-1-breno3011alves@gmail.com>
-References: <20260905003005.118245-1-breno3011alves@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Sat, 05 Sep 2026 00:41:02 +0000
-Message-Id: <20260905004102.8FDEC1F00A3D@smtp.kernel.org>
+	dkim=pass (1024-bit key) header.d=murena.io header.i=@murena.io header.b="e09BHDAH"
+Received: from authenticated-user (mail2.ecloud.global [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail2.ecloud.global (Postfix) with ESMTPSA id B8626721285;
+	Sat,  5 Sep 2026 05:21:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=murena.io; s=mail2;
+	t=1788585699;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KCOIseHcTnUxxa8UzPwtOfVQnt/pNmZAJdUPIg+XLqo=;
+	b=e09BHDAHB8rW8CJ877ybXQO9BIhYTyEJyZ1UfCDGFBXGQp83jw90VJvx43GTmCwSaQjzmZ
+	vZpB35WoTlow0wOgePmLAALvOVX4UDG1WLETkdYfE0Yms42sgAvS1PemSzA2A12krn4rTT
+	1cf3fVX7lS+xZMHPIc92+QnIa3PDUgs=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=murena.io;
+	s=mail2; t=1788585699;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KCOIseHcTnUxxa8UzPwtOfVQnt/pNmZAJdUPIg+XLqo=;
+	b=jP8u0+6IUTg6AgiXIbTGUEcfBSMqo7Nmd7Jr3DYd3CWjZY43q91uDjoMKSmOPb7C2g5uaR
+	iIEJS2tWhm2RJi0GFGMGg4N9fF1QxzfQ74UijbJC18veoZSi49xvXSRP1T4Cl2WVqw+irA
+	xNMCko+5QoxwijbilgirxAp71w2JUOQ=
+ARC-Authentication-Results: i=1;
+	mail2.ecloud.global;
+	auth=pass smtp.mailfrom=maud_spierings@murena.io
+ARC-Seal: i=1; s=mail2; d=murena.io; t=1788585699; a=rsa-sha256; cv=none;
+	b=Ky3gcQbu+iQn3gGJSjO38x37++V52aS5N/nQCOx3J6XxPIqfFy1ZbkijYRzWOWiFT+pVmT
+	7YFhfuIVisKc3ETR/8jHzo+pemFPQ34KVfBmoujMt5BFDBSdKw+v6R/9q4pnc6yOtpxUSR
+	njWiXCniQ4hrwKE4/mkGqbMrN0fifdM=
+Message-ID: <ea529e06-2eab-4e3b-92af-ba17de44091c@murena.io>
+Date: Sat, 5 Sep 2026 07:21:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Subject: Re: [PATCH v3 00/19] drm: starfive: jh7110: Enable display subsystem
+To: Michal Wilczynski <m.wilczynski@samsung.com>,
+ Vinod Koul <vkoul@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Andrzej Hajda <andrzej.hajda@intel.com>,
+ Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Lee Jones <lee@kernel.org>, Andy Yan <andy.yan@rock-chips.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Emil Renner Berthing <kernel@esmil.dk>, Hal Feng
+ <hal.feng@starfivetech.com>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+ Heiko Stuebner <heiko@sntech.de>, Conor Dooley <conor@kernel.org>,
+ Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+ Dominique Belhachemi <db@domibel.de>, Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>
+Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ mfd@lists.linux.dev, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-riscv@lists.infradead.org, Andy Yan <andyshrk@163.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Graham Markall <hello@big-grey.co.uk>,
+ Icenowy Zheng <zhengxingda@iscas.ac.cn>
+References: <CGME20260904132708eucas1p1adfa26ef0fe5109eca63a3aeadf74915@eucas1p1.samsung.com>
+ <20260904-jh7110-clean-send-v3-0-484f9ae72715@samsung.com>
+Content-Language: en-US
+From: Maud Spierings <maud_spierings@murena.io>
+In-Reply-To: <20260904-jh7110-clean-send-v3-0-484f9ae72715@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> Automated review from Sashiko AI revealed that re-enabling the legacy
-> DVB_ULE_DEBUG code via CONFIG_DVB_ULE_DEBUG exposes severe race conditions
-> on global state variables, leading to out-of-bounds memory corruption.
-> Additionally, the debug block suffers from undeclared identifiers (TS_SZ).
->=20
-> Following the core kernel principle of eliminating dangerous, unmaintained
-> code, this patch completely extirpates the defective DVB_ULE_DEBUG block
-> from dvb_net.c and purges its corresponding configuration symbol from
-> the Kconfig tree.
->=20
-> This version retains the verified MediaTek bugfixes and ghost purges:
->   - Fixes MediaTek interconnect typo mapping mt8196.o to MT8196.
->   - Fixes MediaTek regulator typo mapping mt6316-regulator to MT6316.
->   - Cleans up the dangling comment in drivers/leds/Kconfig.
->   - Purges verified legacy ghost weight.
->=20
-> Signed-off-by: Breno Rodrigues Alves <breno3011alves@gmail.com>
+Hello Michal,
 
-Sashiko has reviewed this patch and found no issues. It looks great!
+This new version added some more issues on my fml13v01 board, this time 
+2 registers in the VOUT_CRG are misconfigured that were correct in v2, 
+namely:
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260905003005.1182=
-45-1-breno3011alves@gmail.com?part=3D1
+0x295c0004 was 0x00000004 on the previous version but is now 0x00000006
+0x295c001c was 0x81000000 on the previous version but is now 0x80000000
 
+xx04 sets a slightly different clock divider, but it doesn't seem to 
+matter, display also works with this changed value.
+
+xx1c seems to select the wrong clock mux?
+
+After correcting 0x295c001c (and the ones that I mentioned before in the 
+hdmitx block), the display comes to life again.
+
+Not sure why these are changed.
+
+Besides that it works great!
+
+Kind regards,
+Maud
+
+On 9/4/26 15:27, Michal Wilczynski wrote:
+> This series enables the display subsystem on the StarFive JH7110.
+> 
+> The dom_vout block holds the display controller (dc8200), the clock
+> generator (voutcrg) and the HDMI IP, all inside PD_VOUT. The HDMI IP is
+> a single register block containing both the controller and the PHY, and
+> it has a circular clock dependency with voutcrg:
+> 
+>    - the HDMI controller needs pclk/mclk/bclk from voutcrg
+>    - voutcrg needs the pixel clock for its dc8200 pixel MUXes, and that
+>      clock is generated by the HDMI PHY
+> 
+> The loop only exists if the HDMI block is treated as one device. The
+> PHY's reference clock is xin24m, not a voutcrg output, so splitting the
+> node into a parent plus phy and controller children gives deferred probe
+> a linear order: hdmi-phy, then voutcrg, then hdmi-controller.
+> 
+> The parent maps the register block and owns the regmap its two children
+> share. Everything in the region sits behind one NoC port whose clock and
+> reset gate access to it, inside PD_VOUT, so the vout subsystem node from
+> the RFC is back and owns those for as long as any child exists.
+> 
+> Patch 10 adds a .mode_valid platform op to inno-hdmi.
+> inno_hdmi_bridge_mode_valid() checks the pixel clock against
+> hdmi->refclk, but that clock only exists where a "ref" clock is
+> described. The JH7110 gets its pixel clock from the PHY, so refclk is
+> NULL and the check was skipped: unsupported modes were advertised, the
+> modeset then "succeeded" because the atomic enable path cannot fail, and
+> the display stayed blank.
+> 
+> Patches 15-17 drop the PHY duplication from the RFC. The JH7110 has the
+> same Innosilicon PHY as the RK3328, offset by 0x100 because it sits
+> behind the controller in the shared register block. Patch 15 factors out
+> the pre-PLL config format, table lookup, determine_rate, recalc_rate and
+> the pre-PLL programming; patch 16 moves Rockchip onto it; patch 17 adds
+> the JH7110 driver. Pixel clock tables, post-PLL and analog config stay
+> SoC specific.
+> 
+> Patch 16 should be a no-op for Rockchip - same writes, same order, same
+> values - and RK3228, whose pre-PLL is at different addresses, keeps its
+> own register code and shares only the lookup. I have no Rockchip
+> hardware, so it is build tested only (arm and riscv). A Tested-by would
+> help.
+> 
+> The dc8200 driver, th1520 reset controller and inno-hdmi bridge that the
+> RFC listed as prerequisites are all upstream now, so there are no
+> out-of-tree dependencies.
+> 
+> Testing
+> =======
+> 
+> Tested on a VisionFive 2 v1.3B using modetest.
+> 
+> All 42 modes the sink advertises work, with nothing in dmesg. Pixel
+> clocks run from 25.175 MHz (640x480@59.94) up to 297 MHz
+> (4096x2160@30), including 3840x2160 and the full 1920x1080 and 1280x720
+> rate families.
+> 
+> The four modes the RFC reported as broken work now too: 2560x1440@59.95,
+> 2048x1080@60.00, 2048x1080@24.00 and 720x400@70.08.
+> 
+> Before patch 10, four of the advertised modes failed: 1680x1050@59.95
+> (146.250 MHz), 1400x1050@59.98 (121.750), 1152x864@59.97 (81.768) and
+> 1280x768@60.35 (80.140). Those pixel clocks are not in the PHY pre-PLL
+> table, so clk_set_rate() returned -EINVAL and the screen stayed black
+> while userspace saw a successful modeset. They are rejected in
+> .mode_valid now; the other refresh rates of those resolutions still work.
+> 
+> Every commit builds for riscv, and the Rockchip PHY also for arm.
+> 
+> Notes
+> =====
+> 
+> The JH7110 has no central MAINTAINERS entry and maintainership is
+> fragmented, so patch 19 adds one for the display subsystem and I am
+> happy to help maintain it. The new PHY library lives under drivers/phy/,
+> already covered by the generic PHY framework entry.
+> 
+> checkpatch warns "does MAINTAINERS need updating?" on the patches adding
+> files, because that entry comes in patch 19.
+> 
+> Thanks to Icenowy Zheng for the dc8200 driver and for explaining how the
+> SoC and the display pipeline fit together.
+> 
+> Thanks also to Dominique Belhachemi, who got rid of the vout-subsystem
+> wrapper and helped with the testing, to Maud Spierings for testing on a
+> Framework 13 panel, and to Graham Markall for testing
+> the JH7110 display patches independently and writing up the results:
+> https://big-grey.co.uk/2026/01/26/testing-starfive-jh7110-display-controller-patches/
+> 
