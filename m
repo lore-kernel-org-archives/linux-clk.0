@@ -1,85 +1,100 @@
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20B6737996C;
-	Sat,  5 Sep 2026 13:36:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7256F380FC1
+	for <linux-clk@vger.kernel.org>; Sat,  5 Sep 2026 13:44:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788615386; cv=none; b=by7UXwbMx2oG5FQ7LQcJaIrfh6y6E3M7bYpceN8h+73rKzSX5HLOoaI21rdy7UOB2kJtTzbHynPMix/r65pCmfcmCX7oCCwqWwQnrbWL6LULGQHYlH6SJlmdEiTx+NYMuu1NC4LsHwyB5zajcHtUjy7m3tdIo+qS1226ZY/k6zk=
+	t=1788615894; cv=none; b=Q/yc7/gOxGy1A4sTTo1kO6mx66nUQihkOekIzrkEZUIH+BSNn1u2lE7T1QTKAxAaNf2ho9u1d4qIFYrEvvyW0ucvTI4XfufmQPOToFngxaj8Gx0kxMZW9xIfiYrW0n/G34XhFPRRp8e1NNa0KiJPr94LJ0cKDUml9e9rmXkFT6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788615386; c=relaxed/simple;
-	bh=O6Cg52f3EnVkRNyZ3KIoqCCSnjeM0wVmpV9MVOGSq/M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SCrjqw/Xw6aTgktOxwsn+S9hSE7VT5dwOT6xeb18ADZQeJXs8YlF2S9LvX5Ww+Y+cODvlnSfSOUGjAFPAfhROYh39SRlLnNND04UTfm0fOHov52XjGqsqd1UExgjvOzgjB6Hx4h2Ub78yOCykz3HkSxT6z0hlDTXR7C3wJw8y1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=HwncwR6y; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+	s=arc-20240116; t=1788615894; c=relaxed/simple;
+	bh=BBJ5frkdOwxfZlpEBYp8EwVQUqInmWoFj/rFGUmWbj8=;
+	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=cdVNDeB48TlSpM7FFiLMeLQ4dC5gDDMYdKlJ1NmzevNEk3+oFaoCUW7CpIOLpmvX2n1ZJdagMhJYKpPU6FvCBybwi8PDgbubAmGbHU9Yx1dTdCkEAy3VHPy7niaL1JI2TN3DFlIoj9bA8F82barVWRUe7cd7rn5ZAwfdsXGzKfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lNpAuLLM; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="HwncwR6y"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=dJ
-	jbs7F/aSeREhZ4M4hX91XsW5vUHNRiOu4hPmmpt0Q=; b=HwncwR6yTjqlh4t2lr
-	7kFWgKNfa7ZqR0434Jsqro3uBPiYmx0W+uu3Jc4pMYl/s49GrviT8VdefhIKy+ij
-	VCK3FloFhoyDpPrYaOzIskGGXZRh+TnsOtcYaiSIydZ9APl02+T3Z3zjzPILerct
-	l9GZybUFcIujlW56DlXFzxtG8=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id _____wBn7IehGpxqqn1WAw--.53861S2;
-	Sat, 05 Sep 2026 21:35:30 +0800 (CST)
-From: "hpp.iscas" <hppiscas@163.com>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: "hpp.iscas" <hppiscas@163.com>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Chen-Yu Tsai <wens@kernel.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: sunxi-ng: a523: Publish the MCU CCU module alias
-Date: Sat,  5 Sep 2026 21:35:27 +0800
-Message-ID: <20260905133527.64811-1-hppiscas@163.com>
-X-Mailer: git-send-email 2.50.1
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lNpAuLLM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D28C71F00A3D;
+	Sat,  5 Sep 2026 13:44:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788615893;
+	bh=LHOKh/VRwhybcjVs/7iZ8e3Rv1V/lVVIMMqu2NXe1EQ=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=lNpAuLLMCzo9s/ZvSKmrVTT4qKYWPx6hCu4N+r3PziTT9Sz96PVhFaPmTfJbR+u7y
+	 C+YKVI5iPcjYGzfBnzHULD30JO6kJCkCMrH83joGYyKpExgrQf2DtZyoq9O06tp6Lv
+	 8X0xStJ4P0iEYaHqnk+FwS4pfoondx/842YsyU+9dgVLM70xJYB8nuvFsku81gwR8q
+	 EKF5wc3B82tCZnWm2k8Xzby6d17J+0LmS7D2SwSY7/6z2CJga79qvYr/hk/dJ49c1Y
+	 tk1ns1xJ03hEirUNKfyjAEMjcnTWtEQ6Gy80V+9UkpqvJQqa2mcTRBw5K1+mOS0pru
+	 VdKrShR1wN94w==
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH] clk: mediatek: mt6735-imgsys: Publish the OF module
+ alias
+Reply-To: sashiko-reviews@lists.linux.dev
+To: hpp.iscas <hppiscas@163.com>
+Cc: linux-clk@vger.kernel.org
+In-Reply-To: <20260905133250.63975-1-hppiscas@163.com>
+References: <20260905133250.63975-1-hppiscas@163.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Sat, 05 Sep 2026 13:44:52 +0000
+Message-Id: <20260905134452.D28C71F00A3D@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-CM-TRANSID:_____wBn7IehGpxqqn1WAw--.53861S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWrZryrWF1xKry5WF13Jw18Xwb_yoWDuFc_u3
-	WxZrWDGa48CFWDAF15Aws5ur9Yv34rXrnYgryj9ryaqa4UZFyfAr4vqr1DJ34rZayxAFyD
-	GF1kGFW8u3y5tjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7xRRk9NDUUUUU==
-X-CM-SenderInfo: 5kssx2xfdvqiywtou0bp/xtbCxQJwOWqcGqIkOgAA3e
 
-The A523 MCU CCU is built as a separate module. Its platform driver=0D
-uses sun55i_a523_mcu_ccu_ids, but the table is not exported for module=0D
-autoloading.=0D
-=0D
-Publish the existing OF table. The main and PRCM CCU modules do not=0D
-provide alias metadata for this module.=0D
-=0D
-Fixes: 598e4b6713b5 ("clk: sunxi-ng: add support for the A523/T527 MCU CCU"=
-)=0D
-Signed-off-by: hpp.iscas <hppiscas@163.com>=0D
----=0D
- drivers/clk/sunxi-ng/ccu-sun55i-a523-mcu.c | 1 +=0D
- 1 file changed, 1 insertion(+)=0D
-=0D
-diff --git a/drivers/clk/sunxi-ng/ccu-sun55i-a523-mcu.c b/drivers/clk/sunxi=
--ng/ccu-sun55i-a523-mcu.c=0D
-index 197844f..f5f0f87 100644=0D
---- a/drivers/clk/sunxi-ng/ccu-sun55i-a523-mcu.c=0D
-+++ b/drivers/clk/sunxi-ng/ccu-sun55i-a523-mcu.c=0D
-@@ -453,6 +453,7 @@ static const struct of_device_id sun55i_a523_mcu_ccu_id=
-s[] =3D {=0D
- 	{ .compatible =3D "allwinner,sun55i-a523-mcu-ccu" },=0D
- 	{ }=0D
- };=0D
-+MODULE_DEVICE_TABLE(of, sun55i_a523_mcu_ccu_ids);=0D
- =0D
- static struct platform_driver sun55i_a523_mcu_ccu_driver =3D {=0D
- 	.probe	=3D sun55i_a523_mcu_ccu_probe,=0D
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
 
+Pre-existing issues:
+- [High] The patch adds MODULE_DEVICE_TABLE to the MT6735 imgsys driver to =
+enable module autoloading, but fails to fix the identical missing module al=
+ias issue in the MT6735 mfgcfg driver introduced in the same commit.
+--
+
+commit 313e810d99540550a408b36b94980a65e251935e
+Author: hpp.iscas <hppiscas@163.com>
+
+clk: mediatek: mt6735-imgsys: Publish the OF module alias
+
+This commit adds the MODULE_DEVICE_TABLE macro to the MT6735 imgsys
+driver to publish the OF match table. This enables module autoloading
+when the driver is built as a separately selectable tristate driver.
+
+> diff --git a/drivers/clk/mediatek/clk-mt6735-imgsys.c b/drivers/clk/media=
+tek/clk-mt6735-imgsys.c
+> index c564f8f724324..813241d526cf4 100644
+> --- a/drivers/clk/mediatek/clk-mt6735-imgsys.c
+> +++ b/drivers/clk/mediatek/clk-mt6735-imgsys.c
+> @@ -41,6 +41,7 @@ static const struct of_device_id of_match_mt6735_imgsys=
+[] =3D {
+>  	{ .compatible =3D "mediatek,mt6735-imgsys", .data =3D &imgsys_clks },
+>  	{ /* sentinel */ }
+>  };
+> +MODULE_DEVICE_TABLE(of, of_match_mt6735_imgsys);
+
+[Severity: High]
+This is a pre-existing issue, but since this patch fixes the missing module
+autoloading introduced in commit 0bd9b1211f74, should it also fix the
+identical issue in the MT6735 mfgcfg driver that was added in the same comm=
+it?
+
+Without a similar MODULE_DEVICE_TABLE(of, of_match_mt6735_mfgcfg) declarati=
+on,
+the clk-mt6735-mfgcfg driver will fail to automatically load when built as a
+module, which can break dependent subsystems like the GPU and media blocks
+that rely on these clocks:
+
+drivers/clk/mediatek/clk-mt6735-mfgcfg.c:
+static const struct of_device_id of_match_mt6735_mfgcfg[] =3D {
+	{ .compatible =3D "mediatek,mt6735-mfgcfg", .data =3D &mfgcfg_clks },
+	{ /* sentinel */ }
+};
+/* Missing MODULE_DEVICE_TABLE(of, of_match_mt6735_mfgcfg); */
+
+static struct platform_driver clk_mt6735_mfgcfg =3D {
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260905133250.6397=
+5-1-hppiscas@163.com?part=3D1
