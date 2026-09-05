@@ -1,193 +1,85 @@
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95356368958
-	for <linux-clk@vger.kernel.org>; Sat,  5 Sep 2026 13:28:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E519A362156;
+	Sat,  5 Sep 2026 13:33:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788614901; cv=none; b=llYRQY4amNZt3aSO1ZK5F3HZBJTdRM4/ngUdiwG09M2VJ6yVMhmVwDhsGW+y4nfWgOfLD3QzLpMAVVTtijm1AV95mRg2jSr63lwJDx58zHHShLsX6Si0rh6teDR+xwGFKh83xXsuOAPAO+b3XE/hvQZ2THEI70MjeLS2h2hSp9o=
+	t=1788615222; cv=none; b=aIbwgCNWLb4c5kUZCferGX18o0G4tGDnsbt2r0wMarBkr9+RLTjxXpDJksuRvhXoDPn0l48VbLNmqsHHFFCx+f2ZC4te+mk1FhiFKS+OdEV790WbVYkkTO7S/eudU+BHBjsvOM4lyqAjilYW1txNXPPsGh9cyJ2xfF2Cdc6Ls7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788614901; c=relaxed/simple;
-	bh=onVBlW7MOcXY/4u/1wLc1luNV8JQgXpPbl+Dwq4jXa0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mGnlYjEP2SPryAbuYik5YCaaXsQAqeVcPhNvZZKpYEu/hTDjpT/d5hyki45URDNR9pFEE3723B3n8uLqIbynDfP5kGPedWczdaQUShfpmLdGN98xOpP6eFnvR1Ryr7edMSSJxfZIj0sT5RkoEUpkNF+1GPGPevmro4ColJfp8lQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=proxrBbi; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1788615222; c=relaxed/simple;
+	bh=Z1ZAX2uEYyVMv4TdY2rwsi2q9yHKRszxqfQwgQrGiBo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KYRW1uGX4HPjZIEe0jW6+Ik+GTy5UdLwg/9/o/nYI1yhgHXi4PJLMduRtTxdvzXYtiAEmtQ6aX87JkAWGduvxLF6dLkdyXhCgBxT/KgvpBZ8PoSJN/Aco74punJRHVL48gRqYGNGlxeORP44eiYCbgA0d74dTpJwurPXmvLa1Oo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=fvSJ78Z2; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="proxrBbi"
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-3990fe066ebso1541730a91.1
-        for <linux-clk@vger.kernel.org>; Sat, 05 Sep 2026 06:28:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788614899; x=1789219699; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=005z03CIhBd04YrgIq3DK9hNQnxi1U/rfpjn1baG6tI=;
-        b=proxrBbiH3O8aIhSVBd7bwFR1sNFBFytnO0dkOCjos3EQURKq3hak/q53uBEwkQFLX
-         CwJTjRaqg6QEkTNg0X0Wrzeh+b7HZzl4Rp9GU9okMeLvooArfXDn7mWHY2+OvAog3z3J
-         aePdSgCD4Xkg/MouWROmUf1dVfEJEKNVJnF66EH02ZHnt/YZPsYs1YUyvErTBd1dYGmV
-         o3zc5b+n9576xEatU3DZ5T8ZiO42kYVoOlEy281bq2UHsqfDukFGCevkC5qW6xb0Gc4h
-         CgaCE4qlURCOMBykT8Ftev8MpZHp/xC2kRI9cvKHoU0bQ8khCFq464AGfA8Pelat2vaB
-         PU3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788614899; x=1789219699;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=005z03CIhBd04YrgIq3DK9hNQnxi1U/rfpjn1baG6tI=;
-        b=N6B376/L3EfJSl4u6MYWJEQBVC1aFH3o7eIsSoCipoaPQW15EBCI/ACzmP3k0hKejn
-         Wvfe0QEoTV+DMsZuxsTlnNoDoOHU2WqrWBf0cEWaSfJNS349ULfY/teZ0aW78ec8bE3H
-         s+9Pf6rkanQTp8Oi729mISLQRhH88oJUo/FRSdx6NPxDs1a+UjbM0H7SXYPkIX3X3cjI
-         RijAMu4cpDnYJ3YB9sjGLRcG3BtJliRak2I/wV6wgHqA/YxTfx5Z8Ti6YBLYmaDgnG8Y
-         sjHUqdbpvcTDv3e66wJH/LBTC6xlMFJGjz3bRIOxSGR6a1p1Ix7WlLbdJrVNm7xQSA8f
-         ANMw==
-X-Forwarded-Encrypted: i=1; AKwUvByIPbfeOZz3JNXQBvcKOHWCq5gg3M20e01no+Iy/40f4mSh3S5Ca+tTWLWnbZGR7A0aDlWTXWvKIYI=@vger.kernel.org
-X-Gm-Message-State: AFuF++n7eiZXfPk3PT0DNqYmZoUqDRPBZjmHUq+CqDBLE2ReIbDh5U31
-	H/lcF27sY+015p8dFaEQEqto2Pk5CZhNv2FOakYyvBh02rGG8NPTj9Sg
-X-Gm-Gg: AYBFou09R3Ee4qfu49ofjySFWEPduoUMYhAC0m2yZpUrLVZ9D9P74/RSI3R+GWiydj3
-	xRhlq8k9i6Orma/QHT7WrYW4SrM7Ny4QZhv8tZQGJdLgBUJahQB5bo5vNpJ1hW4GR1jW5mbmDt8
-	eaMc2j3+RuJ/OICdAehE9njAKRnJCnmDohlKXgmYhFONWoPpYMS+uydyg6AWB/AFalhBpWEGLz6
-	zmunroOwCMj4ao4STH5vgPyDrcERDXoWdBZeM3Fn0Z98Ai1wFbRttphmOldh4fc3anmOW3tysZm
-	/pCvaWa0FzYioB+TKys31j9zNv8MwFRs1tMULYykqDGPZ3Uotn5gvv7W+zRGQ7PaarfPi3i6D7v
-	9rN7k5cPGp//15RTm7B83RTI2TAaOgqBMELnf1NuQwVP44uo/yoy49PDmWWeGi12Ei24wT5Lnty
-	2rgEN6nd1uRabyTRyKOCeu3O7z5zZAa0hpxxpPFbRs/jJxjpgwp7IHRXLZ/UhUUBTCuDTupkyNb
-	PJwKuzhzJGJt+rt++RO1KOwV4RgQ4r0m6fGmXMVHcRZ
-X-Received: by 2002:a17:90b:2d07:b0:398:ceed:6d44 with SMTP id 98e67ed59e1d1-39b262abd26mr18147120a91.25.1788614898686;
-        Sat, 05 Sep 2026 06:28:18 -0700 (PDT)
-Received: from Biostar-A520MT.. ([187.94.13.245])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1433171a97esm7243548c88.12.2026.09.05.06.28.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 05 Sep 2026 06:28:18 -0700 (PDT)
-From: Breno Rodrigues Alves <breno3011alves@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: torvalds@linux-foundation.org,
-	linux-kernel@vger.kernel.org,
-	arnd@arndb.de,
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="fvSJ78Z2"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=u4
+	uq7fmGlh/XA4usOS9KLTTti8JWGLl4olBoqOeznME=; b=fvSJ78Z21fx0Jfmfq0
+	UMDmcoKpLtF7sumJQ2HaxhS4mFm2LVH7D+9a3pkapPASKGWYM2dsbWIEcsi+80I6
+	daVABUGBZzsznT6wuuIMMmZpmMF4NDpLg6HXKza/woLQheZMgrlhMwAzVRPuQHtd
+	Q7fiGiOIBLx62bFAmiMuXK7VE=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wD3P5sEGpxqJrZuAw--.15361S2;
+	Sat, 05 Sep 2026 21:32:53 +0800 (CST)
+From: "hpp.iscas" <hppiscas@163.com>
+To: Yassine Oudjana <y.oudjana@protonmail.com>
+Cc: "hpp.iscas" <hppiscas@163.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
 	linux-clk@vger.kernel.org,
-	linux-input@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	linux-staging@lists.linux.dev,
-	linux-fbdev@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	Breno Rodrigues Alves <breno3011alves@gmail.com>
-Subject: [PATCH v10] media: dvb-core: extirpate defective and unsafe ULE debug block
-Date: Sat,  5 Sep 2026 10:28:12 -0300
-Message-ID: <20260905132812.8521-1-breno3011alves@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	linux-mediatek@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] clk: mediatek: mt6735-imgsys: Publish the OF module alias
+Date: Sat,  5 Sep 2026 21:32:50 +0800
+Message-ID: <20260905133250.63975-1-hppiscas@163.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-CM-TRANSID:_____wD3P5sEGpxqJrZuAw--.15361S2
+X-Coremail-Antispam: 1Uf129KBjvdXoW7Wr47Zw4kAry8ur1xWw4fuFg_yoWkJFX_C3
+	WDXryxZw1UtrZY9FWfK3WfZayxKw45ZFykXa45trW3Xry7CF1DXwsFv3yvvr1UWa40vF4D
+	JF93uF48CFnrAjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7xRRvtCDUUUUU==
+X-CM-SenderInfo: 5kssx2xfdvqiywtou0bp/xtbCxgVJEmqcGgUObQAA3S
 
-Completely purge the unmaintained DVB_ULE_DEBUG code block from
-dvb_net.c and its Kconfig definition to eliminate severe lockless race
-conditions and clean up the unused function signature parameter.
-
-Assisted-by: OpenCode AI
-Signed-off-by: Breno Rodrigues Alves <breno3011alves@gmail.com>
----
- drivers/media/dvb-core/Kconfig   | 11 ---------
- drivers/media/dvb-core/dvb_net.c | 42 +-------------------------------
- 2 files changed, 1 insertion(+), 52 deletions(-)
-
-diff --git a/drivers/media/dvb-core/Kconfig b/drivers/media/dvb-core/Kconfig
-index 8b3f2d53c..c6a97add8 100644
---- a/drivers/media/dvb-core/Kconfig
-+++ b/drivers/media/dvb-core/Kconfig
-@@ -67,14 +67,3 @@ config DVB_DEMUX_SECTION_LOSS_LOG
- 
- 	  If you are unsure about this, say N here.
- 
--config DVB_ULE_DEBUG
--	bool "Enable DVB net ULE packet debug messages"
--	depends on DVB_CORE
--	help
--	  Enable extra log messages meant to detect problems while
--	  handling DVB network ULE packet loss inside the Kernel.
--
--	  Should not be enabled on normal cases, as logs can
--	  be very verbose.
--
--	  If you are unsure about this, say N here.
-diff --git a/drivers/media/dvb-core/dvb_net.c b/drivers/media/dvb-core/dvb_net.c
-index a2159b2bc..5060b8866 100644
---- a/drivers/media/dvb-core/dvb_net.c
-+++ b/drivers/media/dvb-core/dvb_net.c
-@@ -68,19 +68,6 @@ static inline __u32 iov_crc32( __u32 c, struct kvec *iov, unsigned int cnt )
- 
- #define DVB_NET_MULTICAST_MAX 10
- 
--#ifdef DVB_ULE_DEBUG
--/*
-- * The code inside DVB_ULE_DEBUG keeps a history of the
-- * last 100 TS cells processed.
-- */
--static unsigned char ule_hist[100*TS_SZ] = { 0 };
--static unsigned char *ule_where = ule_hist, ule_dump;
--
--static void hexdump(const unsigned char *buf, unsigned short len)
--{
--	print_hex_dump_debug("", DUMP_PREFIX_OFFSET, 16, 1, buf, len, true);
--}
--#endif
- 
- struct dvb_net_priv {
- 	int in_use;
-@@ -320,16 +307,6 @@ static int dvb_net_ule_new_ts_cell(struct dvb_net_ule_handle *h)
- {
- 	/* We are about to process a new TS cell. */
- 
--#ifdef DVB_ULE_DEBUG
--	if (ule_where >= &ule_hist[100*TS_SZ])
--		ule_where = ule_hist;
--	memcpy(ule_where, h->ts, TS_SZ);
--	if (ule_dump) {
--		hexdump(ule_where, TS_SZ);
--		ule_dump = 0;
--	}
--	ule_where += TS_SZ;
--#endif
- 
- 	/*
- 	 * Check TS h->error conditions: sync_byte, transport_error_indicator,
-@@ -659,23 +636,6 @@ static void dvb_net_ule_check_crc(struct dvb_net_ule_handle *h,
- 			h->ts_remain > 2 ?
- 				*(unsigned short *)h->from_where : 0);
- 
--	#ifdef DVB_ULE_DEBUG
--		hexdump(iov[0].iov_base, iov[0].iov_len);
--		hexdump(iov[1].iov_base, iov[1].iov_len);
--		hexdump(iov[2].iov_base, iov[2].iov_len);
--
--		if (ule_where == ule_hist) {
--			hexdump(&ule_hist[98*TS_SZ], TS_SZ);
--			hexdump(&ule_hist[99*TS_SZ], TS_SZ);
--		} else if (ule_where == &ule_hist[TS_SZ]) {
--			hexdump(&ule_hist[99*TS_SZ], TS_SZ);
--			hexdump(ule_hist, TS_SZ);
--		} else {
--			hexdump(ule_where - TS_SZ - TS_SZ, TS_SZ);
--			hexdump(ule_where - TS_SZ, TS_SZ);
--		}
--		ule_dump = 1;
--	#endif
- 
- 		h->dev->stats.rx_errors++;
- 		h->dev->stats.rx_crc_errors++;
-@@ -843,7 +803,7 @@ static void dvb_net_ule(struct net_device *dev, const u8 *buf, size_t buf_len)
- 				       *(tail - 2) << 8 |
- 				       *(tail - 1);
- 
--			dvb_net_ule_check_crc(&h, iov, ule_crc, expected_crc);
-+			dvb_net_ule_check_crc(&h, ule_crc, expected_crc);
- 
- 			/* Prepare for next SNDU. */
- 			reset_ule(h.priv);
--- 
-2.43.0
+The MT6735 imgsys driver is a separately selectable tristate driver.=0D
+Its OF table is registered with the platform bus, but is not published=0D
+for module autoloading. Loading the main MT6735 clock driver does not=0D
+load the separate imgsys module.=0D
+=0D
+Publish the existing OF match table.=0D
+=0D
+Fixes: 0bd9b1211f74 ("clk: mediatek: Add drivers for MT6735 syscon clock an=
+d reset controllers")=0D
+Signed-off-by: hpp.iscas <hppiscas@163.com>=0D
+---=0D
+ drivers/clk/mediatek/clk-mt6735-imgsys.c | 1 +=0D
+ 1 file changed, 1 insertion(+)=0D
+=0D
+diff --git a/drivers/clk/mediatek/clk-mt6735-imgsys.c b/drivers/clk/mediate=
+k/clk-mt6735-imgsys.c=0D
+index c564f8f..813241d 100644=0D
+--- a/drivers/clk/mediatek/clk-mt6735-imgsys.c=0D
++++ b/drivers/clk/mediatek/clk-mt6735-imgsys.c=0D
+@@ -41,6 +41,7 @@ static const struct of_device_id of_match_mt6735_imgsys[]=
+ =3D {=0D
+ 	{ .compatible =3D "mediatek,mt6735-imgsys", .data =3D &imgsys_clks },=0D
+ 	{ /* sentinel */ }=0D
+ };=0D
++MODULE_DEVICE_TABLE(of, of_match_mt6735_imgsys);=0D
+ =0D
+ static struct platform_driver clk_mt6735_imgsys =3D {=0D
+ 	.probe =3D mtk_clk_simple_probe,=0D
 
