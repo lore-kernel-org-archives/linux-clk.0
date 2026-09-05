@@ -1,98 +1,108 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CE103E00A5;
-	Sat,  5 Sep 2026 11:30:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED6C449F109
+	for <linux-clk@vger.kernel.org>; Sat,  5 Sep 2026 12:34:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788607858; cv=none; b=JYSszwqa3Z/E5Ox6zflXxZRvIZJi8jhTuSxDpSohRaMhstPvBRgmWT9s9HdjVt11HeKmCHUHFkKZYPym9jqq5gatV1Xu2ymHTgFUJveRoYrHAqcIG4YqJLuKnEr2Nfd5Q2OUhxoWjXkN1t5a/M1hMVkeG3pwutMjVDqBYpuova0=
+	t=1788611700; cv=none; b=LYjha/s0pWi2J+wzumvon0pLIQX03GKN0USTgE4lUXCHPsjkM1eFtkCyKhl2s/a9wj75IgVOmVXd7NffhKFwJvy8VGAVcktlD8705AJZlUvyL9lwS1DMh599h8GiaYcsBtXKtpcNpedTpb+eSiXrPHU2YODAjbci6PeB/w4EAbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788607858; c=relaxed/simple;
-	bh=maFTYAXrslngym6UpC8jN+SMqgee7/aOIO+WCHPCdcM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jbWzSt8+SSyebILk8xBK4tmGjk4s5sydU+lnDDSK6d2dQr2syBG9T0Nm5uG0oswXnT6VYnI889+pjqf1XfZSLsWeTfT+yQDUcQZ3tanok9nzOMHUtf89+4h2E45o4x78cV3LBbcdPm77W2n54Dbk4wKx2wLcE9fgI7JgtjNkUNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ljyzQ61h; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1788611700; c=relaxed/simple;
+	bh=6f5p//qeeEhJiLT6hla2lNz47zEGEWS2WmSvXXHcHig=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qWYUPkfPbVX2FYdJTnZigfJ/odzxODj0e7VAGLfCs8jPNjd1l801TAzC2kull/n7SK8By2MndeE5Jiddt61DZzKjD8S83ktxAMZjMb0Mi9mhjHayglupM81w2Q1PZT0WrB6vch31/Iicbx6Ot209yoy0ECxliF6q275EwcNjuI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YtbnSs8q; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ljyzQ61h"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C6561F00A3D;
-	Sat,  5 Sep 2026 11:30:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxfoundation.org;
-	s=korg; t=1788607856;
-	bh=cjQbOv3OS+Rkr81lmfPRnC5MozHa05tocJXmiA0asO4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=ljyzQ61hM09ESjFJs65ThgWUZDNoEDzICBUfHo/ulPccb0xn7jkTnroPMrzBW6Ir3
-	 4oA6vDclfjOGYg76awApxJuR8CvsUyKBGUN0vjCn0rhefGK2h7LitSacHVUmsuhfnK
-	 bN495BehPGVK4Vuk94Juezhzz2dZoR7+lESotFIs=
-Date: Sat, 5 Sep 2026 13:29:11 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Breno Rodrigues Alves <breno3011alves@gmail.com>
-Cc: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-	arnd@arndb.de, linux-clk@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-media@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-usb@vger.kernel.org,
-	linux-sound@vger.kernel.org, linux-staging@lists.linux.dev,
-	linux-fbdev@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH] Kconfig: purge twenty-nine legacy ghost options
-Message-ID: <2026090551-abrasion-fool-3586@gregkh>
-References: <20260904231240.87106-1-breno3011alves@gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YtbnSs8q"
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-cc1d57602e8so1781359a12.3
+        for <linux-clk@vger.kernel.org>; Sat, 05 Sep 2026 05:34:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1788611696; x=1789216496; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=sCkeW/rlDEZbQRwhNQlqYVSLXnulFlxF+aDVtk4kLrI=;
+        b=YtbnSs8qfPdzgH+oeRaodn+q8Vb2tox19c9H6lxT0EFKc+LY1/TEPedO12k3EV0weq
+         ZubHW2aMvu5d9wRdvZ2JZKz7OYJGt9lSYnONx4iIPgTgklB3Zi9nQUeDscBHQNI2nipN
+         8PAydIGehlYBeD+FYQjwg6pUJGFz8Zv+UkkQ3/NrLop+gj8ozrTjmwWo2IbPI+M0RoI2
+         BN+5/uzNIMcpl8wO3T4RqLVBYURIS6zQbCgT+MIiipkpQV3o9deat8Ivesk3Ege7KHGV
+         agTdBI1D8e/AHP9rHdTaJMom7wYS+xvDGlXRUX3Io89bY3cqjDkY4ewjOrVt3ANdSDC6
+         BPIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788611696; x=1789216496;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=sCkeW/rlDEZbQRwhNQlqYVSLXnulFlxF+aDVtk4kLrI=;
+        b=IsFk1hMObaHT/rF0Al2eMZkniGh5o6MIPL6zbI5aXfK4/NMRlQ0pGNatPnmEjIYlw3
+         jimIn/sTk9nXoRRlC2w1hfCWFeDQgCbdScMqJU8uOUKrNv6vfnXfbnkZik7XXk6gYHX7
+         IcirCXDn/+/p4NpmF9eQ8uEapXYRAL7Z6Ia1Z9jy96jfE36qROT7F3ed76bZnObXBphH
+         SwsoG/dEKNRRDGmkQW2+FgE6DikIxaRdzxKzSO6qXy6++Rm0Hy8SyAuiJU1nX7m30DeJ
+         Vmq8/X5SBfrniR/Mb9++osyCNyo7gLgyocmjcd2kz29VF5U1nRq0LDB1v7LmNWPBE0ho
+         xLCw==
+X-Forwarded-Encrypted: i=1; AKwUvBwSi8+nNO7uHNFelVSf5yeAYhJwiUXHcXQyHYVPZ9bdT0AUrMR4TBqSlf4cZYfcH/S4Rm+riM64SJ0=@vger.kernel.org
+X-Gm-Message-State: AFuF++kMbFvdNYKMiiC6D1lkzXFS3Jyje8pi6EtHmVrhNlJEGBEa7vNx
+	FFug9mKYvReRCYiMBMxKqsA5SjY15cYQjV9q1lS1CC1ZTsitClq5KSuZ
+X-Gm-Gg: AYBFou2AP36v+VwV+Ki9C2vz5J5n+Vko4FLKcR0dvS4ALtu/HYdW5Lq1k42/aXpEi2x
+	iZJ/fCBsAjiHO7QrJB5X30KnZesp0qMbwpjGd4pbiH/C+PL4a21HSqM6kPjtPn0JhVOEsLGntW/
+	AGmlUVkcTK4DQ/go9wCQ9XLNQZPdngC64fRdjaKbV6JKp6F8mUoCrHYe1YcClWx8zIPGZUnh/S0
+	vxEI+q86z/cT8aysXHba75khcxJPZ+RYBC6X7wl8kPneRZ6b3Fj0SB86ifE2RWORIaj75Dx05J7
+	0a/XAeqtVLrlo39+I/iuq+XWPawo5DTiid7EBxF83+f1pznr7RaS4va24PXubHz4JLsyB06UGTW
+	dpRVnBAvjgayw1m03TFcUdt6YT7tGyk6x5NIPDWNyWdyiWI+yACudRdJWlFpTivXxvbHjlDFW3Z
+	3HsNRO3GJaNKs2FYkc9XmPOySnrH4LWn7QU9VF52PmtchDsl127t7Qm8jM/A3e5JrFs/5B+gQ13
+	bJgq1rRqEF9TVAcbjyFAhBVmko6Rfzq
+X-Received: by 2002:a17:90b:5905:b0:398:9bd5:490b with SMTP id 98e67ed59e1d1-39b262133ccmr17366120a91.18.1788611696373;
+        Sat, 05 Sep 2026 05:34:56 -0700 (PDT)
+Received: from Biostar-A520MT.. ([187.94.13.245])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3339bdf26c5sm13829815eec.27.2026.09.05.05.34.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 05 Sep 2026 05:34:55 -0700 (PDT)
+From: Breno Rodrigues Alves <breno3011alves@gmail.com>
+To: gregkh@linuxfoundation.org
+Cc: torvalds@linux-foundation.org,
+	linux-kernel@vger.kernel.org,
+	arnd@arndb.de,
+	linux-clk@vger.kernel.org,
+	linux-input@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	linux-fbdev@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	Breno Rodrigues Alves <breno3011alves@gmail.com>
+Subject: [PATCH v6 1/4] interconnect: mediatek: fix Makefile typo for mt8196
+Date: Sat,  5 Sep 2026 09:34:47 -0300
+Message-ID: <20260905123450.5620-1-breno3011alves@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260904231240.87106-1-breno3011alves@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 04, 2026 at 08:12:40PM -0300, Breno Rodrigues Alves wrote:
-> You can keep a dead config option around for a while out of sympathy.
-> After a couple of releases it stops being "transitional" and starts
-> being "you are confusing every user who greps for it". These options
-> select nothing, gate nothing, and -- I checked by hand, this is not a
-> regex accident -- are referenced by exactly nobody in the tree.
-> 
-> Evidence for each removal:
->   * no CONFIG_<sym> reference outside the Kconfig definition itself
->   * no <sym> reference as an 'if'/'select'/'depends on' target
->   * no mention in any defconfig, any Documentation, or any source build
->   * the code they used to gate is gone (removed or folded into a real
->     driver that already has its own, functioning config symbol)
-> 
-> Headliners of the graveyard:
->   - HID_THINGM: help text literally said "will be removed soon". Well.
->     Gone now. The blink(1) driver is HJID_LED.
->   - USB_CONFIGFS_F_TCM: the real fabric always built via USB_F_TCM; the
->     "CONFIGFS" name was a leftover from when someone could not decide
->     what to call the thing.
->   - USB_EHCI_TEGRA, USB_OCTEON_OHCI, USB_OHCI_HCD_SSB: help text says
->     "driver was removed, use X instead". The other X already exists.
->   - PANEL: proudly labeled "OLD OPTION" with its own "Deprecated
->     options" section in the file. The actual parport lcd driver has
->     always been PARPORT_PANEL.
->   - COMMON_CLK_MT6765_*: seven sysclk entries with no matching object
->     in the Makefile. Zero files built, zero regrets.
->   - The usual kconfig-vandalism suspects (HAVE_PWRCTL, REGULATOR_MT6316,
->     INTERCONNECT_MTK_MT8196, CLK_SUNXI_PRCM_SUN9I, DVB_ULE_DEBUG, ...).
-> 
-> Validated: defconfig, olddefconfig and randconfig parse clean on both
-> x86_64 and arm64; headers_install (the target that replaced the dearly
-> departed headers_check, which this tree does not have) succeeds with a
-> clean UAPI on both architectures. Because someone will ask: yes, I
-> checked the s390/arm/riscv No, I did not delete any arch/* Kconfig, and
-> no, I did not touch a single include/uapi/ file.
-> 
-> Why should you care? Because "make menuconfig" allegedly lets people
-> configure the kernel, and leaving a menu full of options that do
-> nothing makes them feel like they have a choice when they really are
-> just being sold snake oil. Clean it up.
-> 
-> Signed-off-by: Breno Rodrigues Alves <breno3011alves@gmail.com>
+Correct a copy-paste typo in the MediaTek interconnect Makefile that
+mapped mt8196.o to CONFIG_INTERCONNECT_MTK_MT8195 instead of MT8196.
 
-Did you forget the Assisted-by: tag here?
+Assisted-by: OpenCode AI
+Signed-off-by: Breno Rodrigues Alves <breno3011alves@gmail.com>
+---
+ drivers/interconnect/mediatek/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-ANd this should be broken up per subsystem please.
+diff --git a/drivers/interconnect/mediatek/Makefile b/drivers/interconnect/mediatek/Makefile
+index 6bd656668..64170ab16 100644
+--- a/drivers/interconnect/mediatek/Makefile
++++ b/drivers/interconnect/mediatek/Makefile
+@@ -3,4 +3,4 @@
+ obj-$(CONFIG_INTERCONNECT_MTK_DVFSRC_EMI) += icc-emi.o
+ obj-$(CONFIG_INTERCONNECT_MTK_MT8183) += mt8183.o
+ obj-$(CONFIG_INTERCONNECT_MTK_MT8195) += mt8195.o
+-obj-$(CONFIG_INTERCONNECT_MTK_MT8195) += mt8196.o
++obj-$(CONFIG_INTERCONNECT_MTK_MT8196) += mt8196.o
+-- 
+2.43.0
 
-thanks,
-
-greg k-h
