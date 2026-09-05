@@ -1,211 +1,148 @@
-Received: from mail2.ecloud.global (mail2.ecloud.global [135.181.6.248])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7732314B63;
-	Sat,  5 Sep 2026 05:21:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=135.181.6.248
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788585709; cv=pass; b=V9gLu/QHogxbIMsD63E1XmYqHV6perCJOUD+pgCOgSxkSRcPgJXMZiWPiEOYQh0Hdk/X1Dh0e7nOY8Ul4+ExsnLhGiJauvbJupj+t1jwJbexHqP841I9tgemTJ2Yb98MpVO6z2JdLg+pYSrWPHPp83CyDNc1p74sYZeBqHK5yr8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788585709; c=relaxed/simple;
-	bh=PG0Nvk57+SdvlADJPXiKahtxKVSStSRUEYmsxuh/emo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F6zFvsC2YItsPjzEv9FGZwHJDHyFm/reMtWOqLGXbNraGW0CFvovH5lrhQloNkH1ZBRukYMkH1KD50PPOOFMDuPZ4geB3u9NL0qmYo5LDHCSOYo4sVKFw4OOvU3ifIh98y1OhNrZ8mLpG/E9iENS+amGgrN/A2HJ/kG2nKDoUoU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=murena.io; spf=pass smtp.mailfrom=murena.io; dkim=pass (1024-bit key) header.d=murena.io header.i=@murena.io header.b=e09BHDAH; arc=pass smtp.client-ip=135.181.6.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=murena.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=murena.io
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 057F938B14C
+	for <linux-clk@vger.kernel.org>; Sat,  5 Sep 2026 05:45:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788587152; cv=none; b=ATzeJcLXaN75Ykf3jUY7F/Y4/fduAlWPX3wKeGJzVluex2uQK1S9FBBuOcPFy1HfnBjGsnW1ULfeDr0CYWIHPETmTHHuMGqQbCASsNnev2sfRulwaH4KPo8xwVErpdBcDpQkn3fRTPU/eQxrXxDZ55E/89S9cijTZ4VzVqG86ro=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788587152; c=relaxed/simple;
+	bh=V7DMQm1HfmyW+rSb8H7jkVdhFD+25OFon4uY7cjC+dg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tgrkO3wkYVU+0THahqZQ6ONeVAARzCAVMLhhpK+Z2dF78v8AaiNKVyDOYGAt5wzunjFrfH279TzIiHE8D4KI198AAtZ9nWhYMPx7Ak/+F7RzqzheHk0EREotJb8ABnRB9yt1idOYqNB8wXZNnXdqUK0QPboZegyZ5TaBkkM5guU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Lb794P8I; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=aSRfPMsZ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=murena.io header.i=@murena.io header.b="e09BHDAH"
-Received: from authenticated-user (mail2.ecloud.global [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail2.ecloud.global (Postfix) with ESMTPSA id B8626721285;
-	Sat,  5 Sep 2026 05:21:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=murena.io; s=mail2;
-	t=1788585699;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KCOIseHcTnUxxa8UzPwtOfVQnt/pNmZAJdUPIg+XLqo=;
-	b=e09BHDAHB8rW8CJ877ybXQO9BIhYTyEJyZ1UfCDGFBXGQp83jw90VJvx43GTmCwSaQjzmZ
-	vZpB35WoTlow0wOgePmLAALvOVX4UDG1WLETkdYfE0Yms42sgAvS1PemSzA2A12krn4rTT
-	1cf3fVX7lS+xZMHPIc92+QnIa3PDUgs=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=murena.io;
-	s=mail2; t=1788585699;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KCOIseHcTnUxxa8UzPwtOfVQnt/pNmZAJdUPIg+XLqo=;
-	b=jP8u0+6IUTg6AgiXIbTGUEcfBSMqo7Nmd7Jr3DYd3CWjZY43q91uDjoMKSmOPb7C2g5uaR
-	iIEJS2tWhm2RJi0GFGMGg4N9fF1QxzfQ74UijbJC18veoZSi49xvXSRP1T4Cl2WVqw+irA
-	xNMCko+5QoxwijbilgirxAp71w2JUOQ=
-ARC-Authentication-Results: i=1;
-	mail2.ecloud.global;
-	auth=pass smtp.mailfrom=maud_spierings@murena.io
-ARC-Seal: i=1; s=mail2; d=murena.io; t=1788585699; a=rsa-sha256; cv=none;
-	b=Ky3gcQbu+iQn3gGJSjO38x37++V52aS5N/nQCOx3J6XxPIqfFy1ZbkijYRzWOWiFT+pVmT
-	7YFhfuIVisKc3ETR/8jHzo+pemFPQ34KVfBmoujMt5BFDBSdKw+v6R/9q4pnc6yOtpxUSR
-	njWiXCniQ4hrwKE4/mkGqbMrN0fifdM=
-Message-ID: <ea529e06-2eab-4e3b-92af-ba17de44091c@murena.io>
-Date: Sat, 5 Sep 2026 07:21:35 +0200
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Lb794P8I";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="aSRfPMsZ"
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6854raOo1973469
+	for <linux-clk@vger.kernel.org>; Sat, 5 Sep 2026 05:45:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=AFrExlz4GMAX4ru7ZKdbL+nW
+	MkWlCx4pgO+xZDaWALU=; b=Lb794P8IZIRKWlRjXlnBMXCbiItCuDywJfhA0Tqu
+	/NG6N8VXIb1atXMzAu+qqfAiUb3Cbp9xu1TKNGu9T0/tjwc6DspQn7lOzl1M9mbq
+	ucxfQ7lOMFAHvGgGdwutsPPXtF2cZ2mB1igQY/vAFCSjJ8CGiWFk8C9p97d87Lzk
+	qoEr5cVrzS0AGKLiJoMhn7YN2EaBgjkzj6qTDwRrEtoEa7uU8zlAJUmUKtoLSw7D
+	4nzn9g/EavPaSb77D29gyK48aNVzffCYu2JJI0Fb2nO/SBLrPUNIRSRdEoTXHOdz
+	5GUa3v2yDTxY3G5zxfL9BfM7QAG7ZCNc0027KuU9bIIabQ==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ggany09pr-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Sat, 05 Sep 2026 05:45:49 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-9396e0515dcso102721885a.1
+        for <linux-clk@vger.kernel.org>; Fri, 04 Sep 2026 22:45:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1788587149; x=1789191949; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=AFrExlz4GMAX4ru7ZKdbL+nWMkWlCx4pgO+xZDaWALU=;
+        b=aSRfPMsZPt02NVo+okqpnKLNyfaLPAqtv8gqdVCszILYy0OAPqH1DhmpAeEaE51UBO
+         lEFEEkgug5Lq9w9rhTHFdeOAMy1PZ3KoI01GLy+1KgnGty12HfRrOD+8kTQuZKqEqKUq
+         0O7mFn6EXYLcyImejAGa7FKU+Y4pfZcfkjMXgj3/qG9sC+raBywlph/ffmISb1aC2kib
+         vEjoxfVSt77eD04Kw4IojEc02kILF5HCqZfqGhRQJuFgWlIK5QJwhGbX9erYIbRnbDlI
+         NBRo2lyaX/Nu8y/iOGUlB9o5pp1exIEnaRb9s/Ui6AtWyGOPnOrFi8sl1Memlr8jd8qf
+         Jliw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788587149; x=1789191949;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=AFrExlz4GMAX4ru7ZKdbL+nWMkWlCx4pgO+xZDaWALU=;
+        b=grB9vbpoFZquu9X5LObZEepS9kUrFxk323w5baOBVpKPE1IvGZPfWVaDZ/QtuTnDwz
+         eH8vLaJvuOwOBgakVtfPN901KVZTzJqcJLhxR+ytjVPATDLgWco0L04oLkwBKgKqpE0R
+         lMPP5g2PcLurM66RdUkaA/mmpywTZsHXQm12lI09aB905fy0ecKqoH4OG+x5BpR7GLet
+         qOqXbcY/l7PvXSXkwclLaFyUFPH+OmxKUIC5Zcro5PfU0hijXFHmoELNR6P2RYSareYM
+         lOEF+M2OWwDgvqphYLM75BsWyRAywVN4a1qL55xq3+JgsYI+HcOkTzC9towYNmA0RHXR
+         7vbQ==
+X-Forwarded-Encrypted: i=1; AKwUvBx/RoeNXG5xKPdAV0Lute2w7B/0ZlDD6obnnF7XxG4ciH/pie8nk+D0fAglrTsUmdr9o+zXUQ0WE/I=@vger.kernel.org
+X-Gm-Message-State: AFuF++mBxnQNF3frwHYejpJNSg3gNydCyjNV/QZGan0oV3Dhdc4WVguC
+	p9kxgqu7k2Tkz3CrIHj8SYdmrW/jE2n2L6zWCfReQvOC8WdZHHSAg0Ny4YDJ7AKboIC0u1jS/fS
+	6BfB6wQ+yKD0DQpQosLcBgOO8jgRuvvbeMC8Vah2FnFfVejaLyOBainM2B/C0kc4=
+X-Gm-Gg: AYBFou3jPprqksvuc/jZcisE+eWTxB53FJpyAaRRXnttkAU+vR8ho5lBtxwpirZC2nY
+	ih+RI6d0xdEW0glZn8u03XXehRhkcMCXOW0fxNv0+8y2c4t4HZ200lYQHpCGQoCsK8jFf8s/Waw
+	Tt1ON0elnyfnGWZqeBAz0uSKe1O+jn/Y8y1S1J3psPY2l/jzjZA5uYBKWx79XSwJvjkkDfrOovV
+	ItR0/lCfep69S5Dfe24Sfjz4tOgE+HnOh0ujTzq5GjZUvbJCamBPpV6pIyvtlH0czXnuwSoF4d1
+	wPIN+Rr45VU4vrRpcfRvX9nDYQMrAc3N/EQ9UgJ+cr1u7gU2gGQfs7mJZp89ErXWVWhUGXQaYWb
+	3hXb6rZAwDllQ
+X-Received: by 2002:a05:620a:3193:b0:939:7e19:ac3 with SMTP id af79cd13be357-9398053f7c5mr1036236785a.45.1788587149067;
+        Fri, 04 Sep 2026 22:45:49 -0700 (PDT)
+X-Received: by 2002:a05:620a:3193:b0:939:7e19:ac3 with SMTP id af79cd13be357-9398053f7c5mr1036219985a.45.1788587145599;
+        Fri, 04 Sep 2026 22:45:45 -0700 (PDT)
+Received: from oss.qualcomm.com ([86.121.170.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49ce554d52esm167658815e9.3.2026.09.04.22.45.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Sep 2026 22:45:44 -0700 (PDT)
+Date: Sat, 5 Sep 2026 08:45:42 +0300
+From: Abel Vesa <abel.vesa@oss.qualcomm.com>
+To: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Brian Masney <bmasney+clk@redhat.com>,
+        Jerome Brunet <jbrunet+clk@baylibre.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Taniya Das <taniya.das@oss.qualcomm.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/4] clk: qcom: gcc-glymur: use shared ops for GCC UFS
+ RCGs
+Message-ID: <kx7uoucnsif3atqsocuavdwvsdny4snav5ncl6e2tappaxdkxe@vpaahkdzj5xf>
+References: <20260905-glymur-ufs-clk-changes-v1-0-cdff2c67a8c2@oss.qualcomm.com>
+ <20260905-glymur-ufs-clk-changes-v1-4-cdff2c67a8c2@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v3 00/19] drm: starfive: jh7110: Enable display subsystem
-To: Michal Wilczynski <m.wilczynski@samsung.com>,
- Vinod Koul <vkoul@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Andrzej Hajda <andrzej.hajda@intel.com>,
- Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Lee Jones <lee@kernel.org>, Andy Yan <andy.yan@rock-chips.com>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Emil Renner Berthing <kernel@esmil.dk>, Hal Feng
- <hal.feng@starfivetech.com>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
- Heiko Stuebner <heiko@sntech.de>, Conor Dooley <conor@kernel.org>,
- Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
- Dominique Belhachemi <db@domibel.de>, Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- mfd@lists.linux.dev, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-riscv@lists.infradead.org, Andy Yan <andyshrk@163.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Graham Markall <hello@big-grey.co.uk>,
- Icenowy Zheng <zhengxingda@iscas.ac.cn>
-References: <CGME20260904132708eucas1p1adfa26ef0fe5109eca63a3aeadf74915@eucas1p1.samsung.com>
- <20260904-jh7110-clean-send-v3-0-484f9ae72715@samsung.com>
-Content-Language: en-US
-From: Maud Spierings <maud_spierings@murena.io>
-In-Reply-To: <20260904-jh7110-clean-send-v3-0-484f9ae72715@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260905-glymur-ufs-clk-changes-v1-4-cdff2c67a8c2@oss.qualcomm.com>
+X-Authority-Analysis: v=2.4 cv=X45i7mTe c=1 sm=1 tr=0 ts=6a9bac8d cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=q7XEBjOi5DRkXzmV0jSBjQ==:17
+ a=kj9zAlcOel0A:10 a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=3WHJM1ZQz_JShphwDgj5:22
+ a=EUspDBNiAAAA:8 a=7NOcbVF-i3gUCoNk4r0A:9 a=CjuIK1q_8ugA:10
+ a=PEH46H7Ffwr30OY-TuGO:22
+X-Proofpoint-ORIG-GUID: 8-7PQUH2hC2y-TGzAwgpKo6IT010OIhi
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTA1MDA1NyBTYWx0ZWRfX9KMi+GID4JzO
+ ouLok/rxkGY/5LGz2N8c27O3Sbm8wdzyOsj6FZSn/VxH+z1KAa/u3Xaq/v2rqbwWp7o+dLWTvso
+ hQpq5h9UScko4TP9sBwrarqosPtJIY//Mn0Z3KQIen4FCLSQMyRQLWEoa19nrEqzPccVdxpSe9O
+ krvuc3z/R7lw/0YJ6Dp4a13zzT0Z61dS/OdSKAj4Xqiw7PAwRTgB9dw9VUB8kwW8z3IjBfHwmlU
+ 5Zu8R9amuxyI8WpISqUAa2mFi5I4rtHvN8dggA0vKtVVfs8MMB7rGDRqKslIKiHnQU2LkgqTkEn
+ GV1APjC31XO3qfw8T8JegLYGqa4SkdCslsJ8GCmAlY+mbtM2Ir4aAiyjMw+ntAvJBXzMtxBvA6l
+ m7S6hiKMERG3yjszAf7nGupqQS/Eubat6cEpWtD8ewHpEAP2mAmq4rSSy8ujHwzRxyJDJQyhOdp
+ rF1ES4MOkJkZsVZTZrg==
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTA1MDA1NyBTYWx0ZWRfX+MpT3502aiqi
+ lFkCkgKFDF+V3TQhKp6oVW86Kk5VcZ7XFf62qpUCMztiFDi0XT+5GNkd7jFgrfXkEvGmYvLkrl6
+ jEwHzmoBZUYKdKVZFNKjaX1cpMO3prg=
+X-Proofpoint-GUID: 8-7PQUH2hC2y-TGzAwgpKo6IT010OIhi
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-09-05_02,2026-09-03_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 bulkscore=0 suspectscore=0 clxscore=1015 adultscore=0
+ impostorscore=0 malwarescore=0 lowpriorityscore=0 spamscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2609050057
 
-Hello Michal,
+On 26-09-05 00:20:45, Jagadeesh Kona wrote:
+> Switch GCC UFS RCGs to shared ops so that they are safely parked at XO
+> during clk registration.
+> 
+> This ensures the RCGs are connected to a valid running source clk before
+> the UFS GDSC is enabled, which is a requirement for the UFS GDSC power-on
+> sequence.
+> 
+> Fixes: efe504300a17 ("clk: qcom: gcc: Add support for Global Clock Controller")
+> Signed-off-by: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
 
-This new version added some more issues on my fml13v01 board, this time 
-2 registers in the VOUT_CRG are misconfigured that were correct in v2, 
-namely:
-
-0x295c0004 was 0x00000004 on the previous version but is now 0x00000006
-0x295c001c was 0x81000000 on the previous version but is now 0x80000000
-
-xx04 sets a slightly different clock divider, but it doesn't seem to 
-matter, display also works with this changed value.
-
-xx1c seems to select the wrong clock mux?
-
-After correcting 0x295c001c (and the ones that I mentioned before in the 
-hdmitx block), the display comes to life again.
-
-Not sure why these are changed.
-
-Besides that it works great!
-
-Kind regards,
-Maud
-
-On 9/4/26 15:27, Michal Wilczynski wrote:
-> This series enables the display subsystem on the StarFive JH7110.
-> 
-> The dom_vout block holds the display controller (dc8200), the clock
-> generator (voutcrg) and the HDMI IP, all inside PD_VOUT. The HDMI IP is
-> a single register block containing both the controller and the PHY, and
-> it has a circular clock dependency with voutcrg:
-> 
->    - the HDMI controller needs pclk/mclk/bclk from voutcrg
->    - voutcrg needs the pixel clock for its dc8200 pixel MUXes, and that
->      clock is generated by the HDMI PHY
-> 
-> The loop only exists if the HDMI block is treated as one device. The
-> PHY's reference clock is xin24m, not a voutcrg output, so splitting the
-> node into a parent plus phy and controller children gives deferred probe
-> a linear order: hdmi-phy, then voutcrg, then hdmi-controller.
-> 
-> The parent maps the register block and owns the regmap its two children
-> share. Everything in the region sits behind one NoC port whose clock and
-> reset gate access to it, inside PD_VOUT, so the vout subsystem node from
-> the RFC is back and owns those for as long as any child exists.
-> 
-> Patch 10 adds a .mode_valid platform op to inno-hdmi.
-> inno_hdmi_bridge_mode_valid() checks the pixel clock against
-> hdmi->refclk, but that clock only exists where a "ref" clock is
-> described. The JH7110 gets its pixel clock from the PHY, so refclk is
-> NULL and the check was skipped: unsupported modes were advertised, the
-> modeset then "succeeded" because the atomic enable path cannot fail, and
-> the display stayed blank.
-> 
-> Patches 15-17 drop the PHY duplication from the RFC. The JH7110 has the
-> same Innosilicon PHY as the RK3328, offset by 0x100 because it sits
-> behind the controller in the shared register block. Patch 15 factors out
-> the pre-PLL config format, table lookup, determine_rate, recalc_rate and
-> the pre-PLL programming; patch 16 moves Rockchip onto it; patch 17 adds
-> the JH7110 driver. Pixel clock tables, post-PLL and analog config stay
-> SoC specific.
-> 
-> Patch 16 should be a no-op for Rockchip - same writes, same order, same
-> values - and RK3228, whose pre-PLL is at different addresses, keeps its
-> own register code and shares only the lookup. I have no Rockchip
-> hardware, so it is build tested only (arm and riscv). A Tested-by would
-> help.
-> 
-> The dc8200 driver, th1520 reset controller and inno-hdmi bridge that the
-> RFC listed as prerequisites are all upstream now, so there are no
-> out-of-tree dependencies.
-> 
-> Testing
-> =======
-> 
-> Tested on a VisionFive 2 v1.3B using modetest.
-> 
-> All 42 modes the sink advertises work, with nothing in dmesg. Pixel
-> clocks run from 25.175 MHz (640x480@59.94) up to 297 MHz
-> (4096x2160@30), including 3840x2160 and the full 1920x1080 and 1280x720
-> rate families.
-> 
-> The four modes the RFC reported as broken work now too: 2560x1440@59.95,
-> 2048x1080@60.00, 2048x1080@24.00 and 720x400@70.08.
-> 
-> Before patch 10, four of the advertised modes failed: 1680x1050@59.95
-> (146.250 MHz), 1400x1050@59.98 (121.750), 1152x864@59.97 (81.768) and
-> 1280x768@60.35 (80.140). Those pixel clocks are not in the PHY pre-PLL
-> table, so clk_set_rate() returned -EINVAL and the screen stayed black
-> while userspace saw a successful modeset. They are rejected in
-> .mode_valid now; the other refresh rates of those resolutions still work.
-> 
-> Every commit builds for riscv, and the Rockchip PHY also for arm.
-> 
-> Notes
-> =====
-> 
-> The JH7110 has no central MAINTAINERS entry and maintainership is
-> fragmented, so patch 19 adds one for the display subsystem and I am
-> happy to help maintain it. The new PHY library lives under drivers/phy/,
-> already covered by the generic PHY framework entry.
-> 
-> checkpatch warns "does MAINTAINERS need updating?" on the patches adding
-> files, because that entry comes in patch 19.
-> 
-> Thanks to Icenowy Zheng for the dc8200 driver and for explaining how the
-> SoC and the display pipeline fit together.
-> 
-> Thanks also to Dominique Belhachemi, who got rid of the vout-subsystem
-> wrapper and helped with the testing, to Maud Spierings for testing on a
-> Framework 13 panel, and to Graham Markall for testing
-> the JH7110 display patches independently and writing up the results:
-> https://big-grey.co.uk/2026/01/26/testing-starfive-jh7110-display-controller-patches/
-> 
+Reviewed-by: Abel Vesa <abel.vesa@oss.qualcomm.com>
