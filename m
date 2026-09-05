@@ -1,143 +1,224 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from hall.aurel32.net (hall.aurel32.net [195.154.119.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ACCB314B63
-	for <linux-clk@vger.kernel.org>; Sat,  5 Sep 2026 05:52:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B5FD453A5D;
+	Sat,  5 Sep 2026 08:40:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.154.119.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788587533; cv=none; b=dCHTCqpY3AgGBYRpV36PvQyLrQOCcrNUgu+qOjqpu8HDZsxAxgNy2ThHjJjfaUvvZ/uH6N4kXbXp3zPiDgq9TqTh25mpb3j7oGGltgzOeBcRRuCAM/yS9OXmCZbnPGBxpcL/uaYHnQdURpvruPlzZjlpUyLDpF0LeuNhDA5RN3I=
+	t=1788597619; cv=none; b=Qli4ec2suHPT1tyd5Z7EyPsCaULal+5iGv5h+pDAAFgfr2qT+13lvhXOnx796zpS2Xepm9Zyz8vom9pIA9J4SmrGfDA/zyPpa01/RTkqRkJzTRgYx//gcievKrm+1AoNV73OqHZMXqVHT8+fqMLajXnvM33CwY+MT839bh/Tv6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788587533; c=relaxed/simple;
-	bh=VCgZulhWjhzIIXGSC8xV/CQTNWImQRFANTcRARb/d2A=;
+	s=arc-20240116; t=1788597619; c=relaxed/simple;
+	bh=bk0Ouotjoxu1esIV6U1bVjhwYvT7zeApUPizjjGMCSA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=biWBcPfiB6ngjkcAYoWFSQQXQ3ZrFL3sOQl72BObJjXDyUe/xsLhic7kZ1TbGmCYFqFsBgBE/Mu4urXc+/psVAhipI34i0xRTMYsDu9Lq5OZ3OwZTxXXE7NCYCbbfyt/SPSzu2vYWFpheWepjTMDnhlOC5Hp4yqjUNcppQglQLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=iYFVUoth; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=B9ETN3jw; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=C+PQ5uBi1Xg65uqeW5rr1c/SWQeKyeW6ek2a0dhTpIP48CD39+nuGWCwI/v6YjCiYxk5SFnm7oTSS/Cv1f32/PGVATJlVbVlBo1zRtSc9oz3yvvO4W+yGK8NR6FyqlyE8UhRQfANQxoBYGgKhNFMgySKHAnDRdpsdEFPd+up94Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net; spf=pass smtp.mailfrom=aurel32.net; dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b=QDHMnrMp; arc=none smtp.client-ip=195.154.119.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aurel32.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="iYFVUoth";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="B9ETN3jw"
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6854qQVr1634610
-	for <linux-clk@vger.kernel.org>; Sat, 5 Sep 2026 05:52:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=j7nsHNNxpI/tRDTwXhjFh0B0
-	jwLc40QNi8z6YFniWdI=; b=iYFVUothyuaD8EDR8yd/nN6Xqb9Z6ZtOPbcXFtPW
-	6GqnDA2KcS8odx08io1yY6Ihvir7wNegTZ+k316NyqGuSp0VUvVvUKe8t6jm310u
-	3JwhqgpXDfodUplwSHs+JkP6mT2Pd8cbmJu3jy5zp5uTlyM9Ej7beri0YbZc5XiZ
-	4Cmt2xYlHGV14XxpbSWM0Hez3HisrInt2frJQOtJThDl5IFnHA6HgshJTU5joGNC
-	9gasHi4xDzD4oXH6kXqaH1npRnudRxKFT6JLB4WIUOD+QpMIKmtLc9t2DpiwP/GS
-	KZvb6NjWcVFXoK0FRCPBRAOyb0r3ZJHx+z37WGYpm6aK0w==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ggb5v888r-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Sat, 05 Sep 2026 05:52:11 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-933023a5980so318461485a.3
-        for <linux-clk@vger.kernel.org>; Fri, 04 Sep 2026 22:52:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1788587531; x=1789192331; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=j7nsHNNxpI/tRDTwXhjFh0B0jwLc40QNi8z6YFniWdI=;
-        b=B9ETN3jwRMPKAmBK4+MT5mqnpCcGXn+v4P7qUcl3sDj5TtKiafNmcJaYFCviR53jpn
-         rupBlcKgpq8lm5EoEjoKv0ipDrNHXyCzX8Clu7XzXkm5Jut0uRhqQjBUWqVmJbjXc08Z
-         ehhc9eKSQtevOf6bS/9rSATTFuIJcstlzWavh23yTaqLaIp+TJdQmordxUnt/gJARjE0
-         KLhLj8CavURGNi+IDUHdZGKlNrl/FTfWdBDRRd/tU81kbaPc347ogJowJUVtWoG/N4Tk
-         jqlY30pNOdq8HiToFnE6UzJn9kVq2O+b7d+XXGLLz//IidrF/cUGXiMM+VhbOrbufzGX
-         4Qvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788587531; x=1789192331;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=j7nsHNNxpI/tRDTwXhjFh0B0jwLc40QNi8z6YFniWdI=;
-        b=ASaqfdfH/GL2oTZ41eabYCj/5GjspIDZu/Jg3cfVIVVDDXKVedZrnmTXDMCxjvRta+
-         rLRu40jyfUv1w+ynYZG+5qxXAsjLfElUc2YdFStl5OqYZx+UscjGkgFC9MC3e8fCFcEi
-         D5Ck9Bn3VCGwk5Ig8905OUFdqxyYobUCWtjcRcK9q6JyajMCGdonahXjOZcrfL5WOBYH
-         Agxto5Ur9h3/XnfqeKxzLnvdi568HrsJxDtb15yJR5Foq8GL0RAGqJNvIi62V1686PZL
-         W9k9UOd4bYlr3fWUVLikBuouQYFn1SDYVL3EInW53I4meKT42ix2t3/mpH2YYnxquepm
-         KCTg==
-X-Forwarded-Encrypted: i=1; AKwUvBxxZliOQdFfvmlKUGiGjIofq0KOsFcpEis/mQCpcPmSU22uNHhrHgsAgW2F1qeCyF6EkmPAeOKKivM=@vger.kernel.org
-X-Gm-Message-State: AFuF++k3xSjwY2Jj4jlYdruMN9LUOH55L+UKy+mIO9E/8+GIG1UHimUR
-	Yw3neeWSKL0i95FzWwldJJMgWbsiQbGZwlG1fP9zPkdnlETJVYj6XAjDBd/zuWBQKa6vIaUUhtw
-	VvV3//5OPfSw7E65tdZk+ka05n7iy1SEQRynkU6a0kO4rfW09yJMx+GtPelZQkko=
-X-Gm-Gg: AYBFou1lr4c49DyOOuehBeXZghqEq3IPsjyhbBO9OR/T8k8oG3BJovT1JqcmH9g+mM5
-	tYs0S89Ef9YPFsKvEaGXBelnLiUffEK0H7XsR9tzwflwc2zjHVGm8/z5EduLWANKhe1mJcyMPOe
-	0k55liMSxDXyeI/wxuzRN9OYWSyctGCG7kC2LoAEhHPgl7sv9ih/HE5xHdCbXaMvkf7FvEcXbEy
-	sTMHXk/Ap+6k8d10fJo/Bj8vLzZuvgYd8AFUyz0SFZf8P0iARFbxmHSY+KSVurobhSRhMxy1/qz
-	1P+SRQwRuq/0+2Nz6IZvbB5JZlB5czNA1c3+qAJgYlk3+mOgq0ZBecDcZvuXphiUoykdf3JnSM+
-	XfaV/2v7V4qns
-X-Received: by 2002:a05:620a:3d16:b0:939:6de8:43dc with SMTP id af79cd13be357-939804e54c0mr754289285a.48.1788587530674;
-        Fri, 04 Sep 2026 22:52:10 -0700 (PDT)
-X-Received: by 2002:a05:620a:3d16:b0:939:6de8:43dc with SMTP id af79cd13be357-939804e54c0mr754287685a.48.1788587530212;
-        Fri, 04 Sep 2026 22:52:10 -0700 (PDT)
-Received: from oss.qualcomm.com ([86.121.170.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49ce58da3acsm497881635e9.0.2026.09.04.22.52.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Sep 2026 22:52:09 -0700 (PDT)
-Date: Sat, 5 Sep 2026 08:52:07 +0300
-From: Abel Vesa <abel.vesa@oss.qualcomm.com>
-To: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Brian Masney <bmasney+clk@redhat.com>,
-        Jerome Brunet <jbrunet+clk@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Taniya Das <taniya.das@oss.qualcomm.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] clk: qcom: rpmhcc: Add LNBB clocks support for Glymur
-Message-ID: <he3muoyyhyd4rclkrvy2ut36rzvp4kdusabpvevcrfo7tw3plp@yddqy4afyuym>
-References: <20260905-glymur-ufs-clk-changes-v1-0-cdff2c67a8c2@oss.qualcomm.com>
- <20260905-glymur-ufs-clk-changes-v1-2-cdff2c67a8c2@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b="QDHMnrMp"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=aurel32.net
+	; s=202004.hall; h=In-Reply-To:Content-Type:MIME-Version:References:
+	Message-ID:Subject:Cc:To:From:Date:Content-Transfer-Encoding:From:Reply-To:
+	Subject:Content-ID:Content-Description:X-Debbugs-Cc;
+	bh=OAtLd3Ez46NTrxK5K3EUQO0fzQ/WT0nfCRvsp1/GzcE=; b=QDHMnrMpYnFG13HetmTJjIhNgR
+	UxI8DmKjBJOfihDnDTzJB2ko48fUwLYIF3Y1t+2ho+eSWGBMgtnlS9w/+0DlrEi5o19wCMvGm4zBI
+	owCMlbG9jTRE7wLlKysBzvS7romnk4qvTqPvhHi3nzxMl/3ikLkKviWWT5xWElMLhYZT/6wQ+6Eui
+	cqSAciacn73tarFevWe39zT0xXreeHvpuRERL9NsSjGQ9Gv4WmC91dHoArU6P+ISBP+DIxNZKH6mG
+	+r75pZPPYHKS7P4X5YUqo3f+4i+2sdd5Fw30QXsP+pg1VjP2VoH2NRBoXG2C8uZ+tWuSlitVO8nBi
+	PZHqE+xg==;
+Received: from authenticated user
+	by hall.aurel32.net with esmtpsa  (TLS1.3)  tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <aurelien@aurel32.net>)
+	id 1x2lwO-00000000IbO-0dYX;
+	Sat, 05 Sep 2026 10:40:00 +0200
+Date: Sat, 5 Sep 2026 10:39:59 +0200
+From: Aurelien Jarno <aurelien@aurel32.net>
+To: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Alex Elder <elder@riscstar.com>, Haylen Chu <heylenay@4d2.org>,
+	stable@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Yixun Lan <dlan@kernel.org>, Paul Walmsley <pjw@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] clk: spacemit: k3: add CPU PLL rate tables
+Message-ID: <apvVSlYm3ChVgErH@aurel32.net>
+Mail-Followup-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Alex Elder <elder@riscstar.com>, Haylen Chu <heylenay@4d2.org>,
+	stable@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Yixun Lan <dlan@kernel.org>, Paul Walmsley <pjw@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20260903-k3-pll5-pll8-1800mhz-v4-1-afafd9cb47d9@linux.spacemit.com>
+ <apmuG46sBg2rGzCD@aurel32.net>
+ <DL67LEVCXFA5.39M5FO7JGKWZS@linux.spacemit.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="aPZdChsJ4jnX0xUn"
+Content-Disposition: inline
+In-Reply-To: <DL67LEVCXFA5.39M5FO7JGKWZS@linux.spacemit.com>
+User-Agent: Mutt/2.4.1 (2026-07-04)
+
+--aPZdChsJ4jnX0xUn
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260905-glymur-ufs-clk-changes-v1-2-cdff2c67a8c2@oss.qualcomm.com>
-X-Proofpoint-ORIG-GUID: JFunGDgUN-LVx8AqgDJQWNjWPYsUkJ2P
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTA1MDA1OSBTYWx0ZWRfXzA2WOxjv0hFB
- 2nqWR3ZFB22qf8b4oKalYC9EpeK+Feis4fWYyDYWJ2fIWX4/cTd0AG/gQyDke9KHSuOTX1YS7WV
- 3IVTAi3Y1YRGc+Udk5zPvDS3NGiHt/727SjO5fkIPVCru/K8CU9zuX7VUtTR6954OlWq6a4WbBD
- aQVhS49bD5NQOm7nDTSQfdYnLJr1zrcDlOCIFNDEjzJtY9x/7T6zICgN2gOzjzXmXZebqRX/kKh
- oOb014ldjAkhNDyBXkOSaS/m8xnny18HbAL/Nc5PT5FOT4/kwSnv6oAX4oxQF/TIMeiodqHy4h1
- Y6F6zqRUUcn/SwBjqV4i2SQzgKDVZ6RKHjBFItk790lCKPS4FeSJXFGikblhsKDJ5XVOGL8PzhR
- hHgnW74LvDF2DHpohxCle9lY9z9MxdlI3ZBv9L7dXYE3Rgz7kpoP/AVJc15mkF7dp3V4vTI7jmf
- b6fETdT3b7VoLaUzYKQ==
-X-Authority-Analysis: v=2.4 cv=UO3t2ify c=1 sm=1 tr=0 ts=6a9bae0b cx=c_pps
- a=qKBjSQ1v91RyAK45QCPf5w==:117 a=q7XEBjOi5DRkXzmV0jSBjQ==:17
- a=kj9zAlcOel0A:10 a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=gowsoOTTUOVcmtlkKump:22
- a=EUspDBNiAAAA:8 a=hGZaFhyMRkl_5wbcdfwA:9 a=CjuIK1q_8ugA:10
- a=NFOGd7dJGGMPyQGDc5-O:22
-X-Proofpoint-GUID: JFunGDgUN-LVx8AqgDJQWNjWPYsUkJ2P
-X-Proofpoint-Spam-Info: AW1haW4tMjYwOTA1MDA1OSBTYWx0ZWRfX0VPQVHUD3eiy
- iD2LiA1kvERhfEAqNy3bebiVGrBqtaektRFMwezztkG9RlB7QiXejCZS4gw5a1lnvUf0i347D2Q
- FNPo2RTpI6J0I+6Ja31t+UFcFNzugTo=
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-09-05_02,2026-09-03_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 suspectscore=0 clxscore=1015 lowpriorityscore=0
- impostorscore=0 bulkscore=0 spamscore=0 priorityscore=1501 adultscore=0
- phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
- definitions=main-2609050059
+Content-Transfer-Encoding: quoted-printable
 
-On 26-09-05 00:20:43, Jagadeesh Kona wrote:
-> Add support for rpmh LN_BB_CLK2 and LN_BB_CLK3 clocks on Qualcomm Glymur
-> platform.
-> 
-> Signed-off-by: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
+Hi Troy,
 
-No fixes tag?
+On 2026-09-04 11:24, Troy Mitchell wrote:
+> Hi Aurelien,
+>=20
+> On Fri Sep 4, 2026 at 1:27 AM +08, Aurelien Jarno wrote:
+> > Hi Troy,
+> >
+> > On 2026-09-03 11:06, Troy Mitchell wrote:
+> >> The K3 CPU PLL rate tables currently describe only one rate per PLL,
+> >> although the hardware supports a wider range.
+> >>=20
+> >> PLL3 and PLL4 support rates from 1.05 to 2.4 GHz, while PLL5 and PLL8
+> >> support rates from 1.05 to 2 GHz. Populate the tables with every
+> >> supported rate in 50 MHz steps.
+> >>=20
+> >> Cc: stable@vger.kernel.org # 7.0+
+> >> Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+> >> ---
+> >> The corresponding U-Boot changes are available at:
+> >>=20
+> >> - Add the CPU PLL rate tables:
+> >>   https://github.com/spacemit-com/uboot-2022.10/commit/787b5cf44c8dbc9=
+9db886d5522c0c9cd5a96ffd6
+> >> - Correct the 1.10 GHz and 2.15 GHz table entries:
+> >>   https://github.com/spacemit-com/uboot-2022.10/commit/16a775c20e9efb5=
+4ca55352215e76eb3f12e6cf0
+> >> ---
+> >> Changes in v4:
+> >> - Expand the update to every supported PLL3, PLL4, PLL5 and PLL8 rate.
+> >> - Drop Aurelien Jarno's Reviewed-by and Tested-by trailers because the
+> >>   patch scope has expanded.
+> >> - Add U-Boot references for the complete tables and corrected entries.
+> >> - Link to v3: https://patch.msgid.link/20260831-k3-pll5-pll8-1800mhz-v=
+3-1-530ed0978615@linux.spacemit.com
+> >>=20
+> >> Changes in v3:
+> >> - Mark the change for stable kernels starting with v7.0.
+> >> - Add Aurelien Jarno's Reviewed-by and Tested-by trailers.
+> >> - Rebase onto v7.3-rc1.
+> >> - Link to v2: https://patch.msgid.link/20260810-k3-pll5-pll8-1800mhz-v=
+2-1-aabff510a797@linux.spacemit.com
+> >>=20
+> >> Changes in v2:
+> >> - Drop "clk: spacemit: re-enable PLLs after init"; the PLL init issue
+> >>   will be handled in a separate series.
+> >> - Send the K3 PLL5 and PLL8 1.8 GHz rate-table update as a standalone
+> >>   patch.
+> >> - Clarify that 1.8 GHz is nominal and 2 GHz is an overclocking rate.
+> >> - Link to v1: https://patch.msgid.link/20260804-k3-pll5-pll8-1800mhz-v=
+1-0-a3a75866ce32@linux.spacemit.com
+> >>=20
+> >> To: Stephen Boyd <sboyd@kernel.org>
+> >> To: Brian Masney <bmasney+clk@redhat.com>
+> >> To: Jerome Brunet <jbrunet+clk@baylibre.com>
+> >> To: Yixun Lan <dlan@kernel.org>
+> >> To: Paul Walmsley <pjw@kernel.org>
+> >> To: Palmer Dabbelt <palmer@dabbelt.com>
+> >> To: Albert Ou <aou@eecs.berkeley.edu>
+> >> To: Alexandre Ghiti <alex@ghiti.fr>
+> >> Cc: linux-clk@vger.kernel.org
+> >> Cc: linux-riscv@lists.infradead.org
+> >> Cc: spacemit@lists.linux.dev
+> >> Cc: linux-kernel@vger.kernel.org
+> >> ---
+> >>  drivers/clk/spacemit/ccu-k3.c | 96 ++++++++++++++++++++++++++++++++++=
++++++++++
+> >>  1 file changed, 96 insertions(+)
+> >
+> > Thanks for the patch, it makes sense to add all the values, to support=
+=20
+> > future firmware changes. The values match the ones in the vendor kernel.
+> I forgot that you had a similar patch as well..
+>=20
+> >
+> >> diff --git a/drivers/clk/spacemit/ccu-k3.c b/drivers/clk/spacemit/ccu-=
+k3.c
+> >> index 92b930d5ff30..950bf531c734 100644
+> >> --- a/drivers/clk/spacemit/ccu-k3.c
+> >> +++ b/drivers/clk/spacemit/ccu-k3.c
+> >> @@ -29,15 +29,91 @@ static const struct ccu_pll_rate_tbl pll2_rate_tbl=
+[] =3D {
+> >>  	CCU_PLLA_RATE(3000000000UL, 0x0b3e2000, 0x00000000, 0xa0558c8c),
+> >>  };
+> >> =20
+> >> +/* Keep the firmware default as the first entry. */
+> >>  static const struct ccu_pll_rate_tbl pll3_rate_tbl[] =3D {
+> >> +	CCU_PLLA_RATE(2000000000UL, 0x0b292aaa, 0x0000ab00, 0xa0558686),
+> >
+> > Is it really necessary to put this entry first? I guess it's the curren=
+t=20
+> > default frequency, but we have seen it can evolve. From my tests, the=
+=20
+> > driver seems to just keep the value configured by the firmware=20
+> > independently from the table order, so I am not sure it's necessary.
+> I think keeping it first is necessary. If the current register settings do
+> not match any entry in the table, ccu_plla_init() falls back to the first
+> entry:
+>=20
+>=20
+> 	ccu_plla_update_param(pll, &pll->config.rate_tbl[0]);
+>=20
+> [...]
+
+For the A100 cores, that indeed makes sense. For the X100 cores this=20
+line is never reached, as the line above just stops the PLL, basically=20
+stopping the cores:
+
+        if (ccu_plla_lookup_matched_entry(pll))
+                return 0;
+
+        ccu_plla_disable(hw);
+        ccu_plla_update_param(pll, &pll->config.rate_tbl[0]);
+
+Regards
+Aurelien
+
+--=20
+Aurelien Jarno                          GPG: 4096R/1DDD8C9B
+aurelien@aurel32.net                     http://aurel32.net
+
+--aPZdChsJ4jnX0xUn
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEUryGlb40+QrX1Ay4E4jA+JnoM2sFAmqb1VsACgkQE4jA+Jno
+M2uixQ//RES8WuLUie3AuTbbVUU6IEn1sygwhNK59UGLSk29TXVz+3VON6s2OmTq
+GMdxB1n29RGXgMA18bU7rOaRkfVLIcY+hoRz0TU2nx3zxxV6AUD6QT8b0155iSGh
+KNG62S7LxgfbFX8/0PupM5otRdNLoSpDkR/cayfVo11BdnEI+yfpT0K0qEd79vYN
+MjNzi3xZzyT/92goW1gZvK3m/ZM8ZgYje0tkD0iWANlb6GZEiaCT1Y4rqmCxnicd
+G1zA2j0ifn+HdO5uAHLLU80I4nsN7cPxsBFYO5sHsAErWThO1PEFqRIxeVl52JwN
+gzt8LEZyr/hOqqcR2u8Lylq5DBwMDg5efztqq7rzDoTQnubtZ8iMo+Eh5vtUKY8V
++2dcBryJInjLSYz2I0inkQVogwR49QEl3U5DBrufZg4NyLZqQHACXdTQQ3ruh9M3
+ieZO5RrAWuAisTcqVpl92CNt/dskruNvkDbIONOpe2a2Jo11Qxf29X8tVIfQReO9
+ba2YDQFkYOz48j3RJ2qJOcA4uKHP1ySiVBE7I8TY85NUAizgbFMLQodvctbA1JkC
+RowF/E7qD1/EoGFiXBoYHdXFQzT9iZP2Dw5dPkDvzcMYkhQUKsMKNmg8xqqtPQha
+p+Lnbcifd5eU/osmu6aIQW/wevYNJH9asZDcg43cL3i34s54Uf0=
+=gEDa
+-----END PGP SIGNATURE-----
+
+--aPZdChsJ4jnX0xUn--
