@@ -1,174 +1,403 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AB433CBE95
-	for <linux-clk@vger.kernel.org>; Sun,  6 Sep 2026 13:04:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6C2E377541
+	for <linux-clk@vger.kernel.org>; Sun,  6 Sep 2026 14:17:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788699847; cv=none; b=SBf9mrmMqnr0x63IixAOwEZAmEzCsD/vOszAjfDvCrn0SEfQK+JXexYYvZciE9CoR2ni8zlUb/uK73G5O4kt85DxhHUNKso321qS+iBbviMC+czoM8BIX65D5WgDR9pdm7pZcbF39Q3HFP6togg79CM8KxPd9OUQ+2vC/deMyM8=
+	t=1788704240; cv=none; b=kVwfLUeOGp026fQOWqOU9YhWOSmxuJKWg9wiTcmJkrE/F5fj9ttrCY7hsb1Xi9wRy3sQEsMeMnQwyGpSH11TCkh4Xbr/wVAs/C9eVM6YRS4WNbZ/XCFvz9cftG6YHU5JqmSBpOob5pHx/COrRsUBhoVyQylKpv5CjEgZ5SKLj6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788699847; c=relaxed/simple;
-	bh=QjW6DhwnX9n+G3RTO3v8j0+GcYFZ9juol3cYQRMGnGE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RvalifdA7SAhqkeynEUWsB27YRU57FosxnaM+FQbxmzkH5k7YK9k76ww1b/3ZrmTyqWWb1RG/WVxQwjfPqX62/vbQ3jMBG1T5MA2gYZsPQbPjpZQVFit9HX9UOdCWG1wHCvC76nDp2F7j4wJwQEBAV9PCIWfY0wUiY1dBKG1aSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=JyojFKwt; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=LABD1LQ2; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1788704240; c=relaxed/simple;
+	bh=QzfDs6k5TFAeL+vuY8sXI5YQTonsepH5lY/SYALUrTU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=sS+Jb4AlecFLIyGyYb0mgY7t4L2S37ogqQF/3sdDbQi7X7palDJLDPVmmUjZrWPITUfZoIxPH77JBDH2VEBsd2AVEV/wYMCc3AN9xLJK+Tq1iYlk5F/AXsFxM/IdUv1bE4tZcStkL/bQqh5H8WeoHgalIVJDRD1z8QS/uS/WysQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IcLZjExB; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="JyojFKwt";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="LABD1LQ2"
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68600BkP3937928
-	for <linux-clk@vger.kernel.org>; Sun, 6 Sep 2026 13:04:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	R2ysWDTJuB6llFpSgzIb+oRVd/8wf1+tQbxSGKnBlYo=; b=JyojFKwtf2ifnGD9
-	rqNm9nNk553PPGh/DWczZPq9i1dXHl11Fa3JS9d46iDfFj4UCTqWWb3vN40k9rOS
-	EopsvEIDaS2A5Atg1ooeu0sQo8Chp6a3toS93qRXad+6uZkZa0AzTkSTyQbh1jl3
-	2NMQR3W6rl9dLKq5JX3ZzjJT74fJ9RwNotrS7kaSFZqOix62CjC+urMDtuGWyes2
-	RhPObL4xyDmTAVStl6YJeOFFa2ePJldo1EljxnRDJUxHcKi7GVNlh3P/ZGPXcuiA
-	WR7khhR+7HQVFNjFDzWqD3jKwa7kO0P3oBOht2iNS5AIaB61MbNvGalb4PeUQIep
-	fKzgMQ==
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ggb5vbb49-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Sun, 06 Sep 2026 13:04:04 +0000 (GMT)
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-2d6f80c76e6so50159575ad.3
-        for <linux-clk@vger.kernel.org>; Sun, 06 Sep 2026 06:04:04 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IcLZjExB"
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-4843e397f74so3303764f8f.1
+        for <linux-clk@vger.kernel.org>; Sun, 06 Sep 2026 07:17:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1788699844; x=1789304644; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=R2ysWDTJuB6llFpSgzIb+oRVd/8wf1+tQbxSGKnBlYo=;
-        b=LABD1LQ29kzBTN4Xy3jFhzc5wQo1idpBuR+ReI1Ukwkj+wUW/YLWqfVd0o5teeeP7E
-         /YwJNFRNN+tkrDkLW5Y5ZVXauED20BALoXaw8e2UcuaeUX26AQGkpSKIpp1RcvGwx485
-         1YfzPjWZFVSfOKn9hmKUpdio52qiZsMIMwHfBY4WKv4JzSot0tInzeKIInburWtq9Zxz
-         KpeHloKQ0NKdOEX1e2SRpoShAS+SibsILVOob4BliuU7RJSUc0jD2l0BvlBLKGSBuzs7
-         o4EIID8Pq1TXTaOYVpoPygoU9i6u0w7lrjfs9uJyypATQLTxc9CzhtRlbS8AfJSQKHH7
-         6yPg==
+        d=linaro.org; s=google; t=1788704235; x=1789309035; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=+Q9IesXl0s51rpgEUizCvjpTb7zaidBWBRjceEFg5+0=;
+        b=IcLZjExBHDG92KOdRSe06fPqQQVYa4EZr3ZPCspfT+9Qm2GYL3j97VA9w5JaBD+e0Z
+         BY0gPY+LeFp8w9xF1pMnh0hGv5AuOw1Tjrbxy7ze/TUp6Sy5uDxS3U4sIzbkUhXiR6fW
+         YOUGFF0SUaC69d1WZpd0/XopIjmrjcsjCsys6BOch0Qie79TBp/icH2AfZLvvIfcdsEZ
+         vp8OBZLlG1ew9RV7cQ3HkoQj8odqrKjB/bDT3SzkQ+We9JZvvtjaGIwksqFP64FLPPMM
+         eDnKClezjk+Igv4E7/cOv0y/DYgowm93cQnddSRT8oraf5+xXTrZKT0xtPhtagOpUV0D
+         sgFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788699844; x=1789304644;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=R2ysWDTJuB6llFpSgzIb+oRVd/8wf1+tQbxSGKnBlYo=;
-        b=tJqL3Ib7wB2Kpx1LJSGRTpFKCFmwJeG2cChFj6bPtObL6+AXRYuJkKu8C/6C3fQgNE
-         0ry9sNZI85F/1PbBqC3fUoJ1sspvXhw2bxvgVqzsAeTR7H/Me57ascNLciX3CMVz+xYC
-         lRQXOBjCo6QJZPWEUDS94BR8DKJ3b5FpqgVqjd+v1pFgOQui92/i6L7cVYGgn6q4ozTv
-         ltMDP/8hM0DDnHEvp1GJ+EY5k3RZXjSh/joDY5Uow/ZHnHpYA2ocvwRaapbM1IXep81u
-         wVzBwmo9jBwWl7KnNM3ae4jJ642NXRB4WQPqglHfzuRD/5a7DGl7CIScSkxz8vk9PXSS
-         1kPw==
-X-Forwarded-Encrypted: i=1; AKwUvBz3QcU1or1CPdkRLnoaK0aOowENCOY5Lo6v+oBtpegURqB59dAiUVakrwBYu1h90P+WqEo5jqWVAko=@vger.kernel.org
-X-Gm-Message-State: AFuF++noGpopeCNJmjmDj51vZZlii+1cuf7MzVV4tSvLKbxAHm1Y/tKb
-	kK8uuJFsQ5DAGlQVq2+Ru/n5YzwG68fXTiPR2ovOlSur4lxn3e14MMTMbGjI2a5v2QKvtxcdI4j
-	Ijrxq6M0oD9ewW02dIX4o5sJT36SwbTF0HedpspOfFSt3kqnltgMelkgLP5KuGNc=
-X-Gm-Gg: AYBFou0o5l5GJbuqvqHBug4/zq70uu5d+1yWHyJ6s+7jDVAHCgVRjbq0k8SXshhik3f
-	BGJfJztEOpoP+HyJ322vctRBXHnS58iusYu42T/VWeGRsppN1mMwYqh8QD1zZxN7Hup/BMZDimE
-	3M8q3IC5Mn7H1amEWwhkVmql7Wd7Ie+m7MgDBJzdyM1wzi+hjUTp76+IRgZ8O62WrMJxr5snukB
-	TOoekuXOperWIwTWlpi9r9+KzWu+PRitGUE4+84+a25McStlDPi+4Hczr1TNQ3+AWvQZU6lyvXL
-	5+LSSdDkLVTTdsvXd4u6tYPe/07EIlZgrCaKn+0KFWipP8oeLy6DOdLq1/c8NyysFTgg2xKwllO
-	3oyy5h3i6fRjrSzqqB/+j8wuG0ulH
-X-Received: by 2002:a17:902:c403:b0:2db:2c09:98ad with SMTP id d9443c01a7336-2db2c099a0fmr129398975ad.12.1788699844056;
-        Sun, 06 Sep 2026 06:04:04 -0700 (PDT)
-X-Received: by 2002:a17:902:c403:b0:2db:2c09:98ad with SMTP id d9443c01a7336-2db2c099a0fmr129398165ad.12.1788699843535;
-        Sun, 06 Sep 2026 06:04:03 -0700 (PDT)
-Received: from [192.168.1.11] ([103.211.19.41])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-33688cfc714sm4104133eec.20.2026.09.06.06.03.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 06 Sep 2026 06:04:03 -0700 (PDT)
-Message-ID: <03368f56-5542-4c02-a4a0-f57d5cfa5766@oss.qualcomm.com>
-Date: Sun, 6 Sep 2026 18:33:52 +0530
+        d=1e100.net; s=20251104; t=1788704235; x=1789309035;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=+Q9IesXl0s51rpgEUizCvjpTb7zaidBWBRjceEFg5+0=;
+        b=B/iEb3h6upSNIQhYCt4ilsiDftDqrndoD9xNHryM31ka6y+92odmFxadyKaJYpT5PU
+         JWfG8PStrMTLL5VsbWs4AwMyopWFQzkZ2WENoNfE8rcV1seLByEbw9Y4VcsV6ddT8pTi
+         Zw0YLN7LpwXRZApGimj/ZUu1o4HNaRjNRc+gz4L8vh6feuHYiUhY4pV9LwYF6QRjRDjr
+         5pYBkTzTN2CntZlo8MSfnRM2YyT+vBcAL3uDbzmgOdE2e0LQKyJ/rOUZlmdY1KlVlUvD
+         X08Is8aP4WbnodOrYxFF4bSJ2StGLhouMnjIBCLGNav1B1MZAM7QJNjkl9witgRcfDYz
+         LfPQ==
+X-Forwarded-Encrypted: i=1; AKwUvBzmKOxDGuHSZNF+Psqfs/h0OD3lX2J/UpLUuAN1C+WHFE49tPrLmtg9g4XtsXzoew7dGTC7ztm2Q1Y=@vger.kernel.org
+X-Gm-Message-State: AFuF++n9cKyshxOX1HkoD4Pa9tTGzDqVdgZFFHV7ju2jPZIo0Xf1yEOU
+	N8Sond5Ix7LkPSUVfiSPVeleFB8W+wLJLidSZtQNSOwLTMl/tjnh495CU2gcMqnu2R0=
+X-Gm-Gg: AYBFou0ckzTR/F3ZqLINNESe+7vDUXWr8aUBa+oDfksnCoF2RfS84nr74XwcgbYadjJ
+	yxWlxBv6GTa5SFiak2NmU9lD+uyrxIyWLT8Crnulbd6R6OXYS4PrHIJq21EZH/X0uJ4WBbax/ML
+	Lq5EmN3s4kFypbetU4mUs9TnZuIixmo/05QIClV2MhAplFlQgfcI8KC9OxVltgvKYI+45W7x8Qo
+	y3YcOYRbjKUgE6CQ5dbA9H48oV9cq/LlP5rtaqVqd7Tvkfe3w1i0D7mpxPuKWybKj1jstXXWBWU
+	kbIqN0yZ6GFrLIgskJs2o7UMR6ydTAweC28m2cJtZlw4PzWHRvoBety4nuY5i2zfTpO8eIVANB8
+	JqYF2csgLOL3RrMWwlK7MLN95qUKhHSei2xO13U2WatIFwUKcKevMdOl+QV0T6TZvMixG2rcffZ
+	5LPqEhw2DlfFr8+otbL/78Lup7DLz4FeyMD6OnQmNyTzFupIU24P4Vcl1Yy7tvo0/RMhzzR1Ls
+X-Received: by 2002:adf:e18e:0:b0:485:82c0:190d with SMTP id ffacd0b85a97d-4858922dbc1mr17917815f8f.20.1788704234778;
+        Sun, 06 Sep 2026 07:17:14 -0700 (PDT)
+Received: from [192.168.0.35] ([109.76.250.151])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48588390e30sm21669763f8f.7.2026.09.06.07.17.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 06 Sep 2026 07:17:14 -0700 (PDT)
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: [PATCH v17 0/5] Add phy_get_by_of_node and devm helper
+Date: Sun, 06 Sep 2026 15:17:04 +0100
+Message-Id: <20260906-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v17-0-e2197a3e2551@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v16 5/5] media: qcom: camss: Use data-lanes starting at 1
- for new CSIPHY mode
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>,
-        Todor Tomov <todor.too@gmail.com>,
-        Mauro Carvalho Chehab
- <mchehab@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-        Bryan O'Donoghue <bod@kernel.org>,
-        Loic Poulain <loic.poulain@oss.qualcomm.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Felipe Balbi <balbi@ti.com>,
-        Vikram Sharma <vikram.sharma@oss.qualcomm.com>,
-        Suresh Vankadara <svankada@qti.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-phy@lists.infradead.org,
-        Krzysztof Kozlowski <krzk@kernel.org>
-References: <20260906-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v16-0-f7bd68b5369f@linaro.org>
- <20260906-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v16-5-f7bd68b5369f@linaro.org>
-Content-Language: en-US
-From: Nihal Kumar Gupta <nihal.gupta@oss.qualcomm.com>
-In-Reply-To: <20260906-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v16-5-f7bd68b5369f@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: qGXdcA_giIKPaJ5UbDbzEK68YN9GnkZN
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTA2MDE0NCBTYWx0ZWRfX/8VAAnp40m6i
- 8yfbYm3h79+Xyl33wTYGUkQKonnhPRZ7hYqkgFF2B6JFrh4iwbECW6f/bNHLSCkEs15F+JrA5hi
- 9uzGgL/oHuUKIQj/hlS+4XZxhy2yHl2+N0x4GYgn/7eXDVbxFXcIeZQGswusNnDrPDJSr9j/Ndt
- niNGXJsiggbkfEDE78iHXmC9Ftgif+eKqictDGO3CAOFtb21wSPPibhhvaZtMcyZ4QwJjUJuAlF
- M9anuwOoJvJ6tMAav9aLjPaFXmH1yyGWU4BeXK56nfLbLhuJ3tKr+htrVA7HLYZDY/X0PP1rXFo
- HFyZ4HmsVI7lYXsrBMcgDQW8+h8V5mKIayKnPe+zazl+XD3ts20F9GYkbUQyZwit/b/oO73klDs
- 4FLtZySmBfbQDW79VGgN68X4n0/fj7f7OXbCBPFpgbFSJAvxXG9aS9CUzTdUbQEXaMw9GjWDjYy
- R7sJ6IsbnDb4h6KdguQ==
-X-Authority-Analysis: v=2.4 cv=UO3t2ify c=1 sm=1 tr=0 ts=6a9d64c5 cx=c_pps
- a=JL+w9abYAAE89/QcEU+0QA==:117 a=HcLy/BXbbKFjgnJyaMb84Q==:17
- a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=gowsoOTTUOVcmtlkKump:22
- a=uHPnOIaY-gHs_qv2vRMA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=324X-CrmTo6CU4MGRt3R:22
-X-Proofpoint-GUID: qGXdcA_giIKPaJ5UbDbzEK68YN9GnkZN
-X-Proofpoint-Spam-Info: AW1haW4tMjYwOTA2MDE0NCBTYWx0ZWRfX+jgPiwQ0mVtC
- Cxy9FXMPuWQYywIqQMdWLjrXPm3GcCbYeqE+QA/e8gEPPBRjuGPJ9XGC2s+AKvFNGyOme1V+i4e
- HqbrrXQJiRGmQkpNf59FEBA3lKlAz0M=
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-09-05_08,2026-09-03_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 suspectscore=0 clxscore=1015 lowpriorityscore=0
- impostorscore=0 bulkscore=0 spamscore=0 priorityscore=1501 adultscore=0
- phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
- definitions=main-2609060144
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/53TzUrEMBAA4FeRno3M5D+efA/xkN/dgrbSrqWy7
+ Ls7XZBWcoqXQCbkm2GGuXZznvo8d88P127KSz/340AXNI8PXTz74ZRZnyjQceAKBAoWJHvvh6+
+ VDXm9MK4YCEbhdJl7tmK2gAAs+o95ZqhAFyNDSMJ3BH5OufTrPdvrG93P/XwZp+978kVt0X+lW
+ eiRWamj81o64e0L/fTT+DROp27Ls+ijLZtsTXZOMfBYokDOK9vstkFssg3ZEKJK3vKiuK5s+2t
+ r4ES12JZspxQa4USg8ivbHW3dZDuyvXJRFBAmQahshB0X2IYj9YSVVLKzkg6JtY4HvbF0mhAwF
+ ZyQqELWKdU633UDtk3nW+1WWZu8xIL1RFEcdN6oi63v2SJmXsA4V+ty1x20LRHtBXUec8EccwK
+ jal0d9bY1wm1HtQ3Goc7Gi1Lr+qg3TnXb0mJCogxKaPdXv91uP77OWMLoBAAA
+X-Change-ID: 20250313-b4-linux-next-25-03-13-dtsi-x1e80100-camss-1506f74bbd3a
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>, 
+ Todor Tomov <todor.too@gmail.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, 
+ Bryan O'Donoghue <bod@kernel.org>, 
+ Loic Poulain <loic.poulain@oss.qualcomm.com>, Vinod Koul <vkoul@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, Felipe Balbi <balbi@ti.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-media@vger.kernel.org, linux-phy@lists.infradead.org, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, stable@vger.kernel.org, 
+ Nihal Kumar Gupta <nihal.gupta@oss.qualcomm.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=13429;
+ i=bryan.odonoghue@linaro.org; h=from:subject:message-id;
+ bh=QzfDs6k5TFAeL+vuY8sXI5YQTonsepH5lY/SYALUrTU=;
+ b=owEBbQKS/ZANAwAKASJxO7Ohjcg6AcsmYgBqnXXmyouA6F8uefUYfdXgQJaSPG79TdiMB1BY9
+ 5WE2hMQXhOJAjMEAAEKAB0WIQTmk/sqq6Nt4Rerb7QicTuzoY3IOgUCap115gAKCRAicTuzoY3I
+ OrguEACz9d5o9SvKLiQI3TYE8Yip/iyqya+v2K0VsVrMiiQbMBzl5czHMrT2GeaQ4yoZugWKQyR
+ 8lC/QfTULxCSng7vRHQUnf1Rz0vndzTrGObBI4O6JfAHWneuRkf5JiKaU5j+M8HC3hn7Zo2kbgL
+ 6k+cLjcGwPVxkdsafoVoiLLqShjcSv95ZKrNEcc7Scxa6F2nP3Z+ShTb/j+qT+I2DOe+X36X5fq
+ A1Dso2c9K1RfpNQQzVgj2ckHapjp803EWueo1G5cRECyR9UQnKEBnFb7WuGfyGsskIH6UFWrdqF
+ 9n74IK05TlnPHtcwxeZX8I7NHzzBvPc6yUacVsrcyEZz1uGzzCGqL6U+f4kIMWjHtiaskEdidf1
+ GJ8FeuIwLm+ULXO//DdtDe7+TZF5aEivwUXi+52jGhIhEUPzu8yWDxFK0yuvMTiedasifP/Og6n
+ IjoOrf2g6UHLE889PtqZvkp1fJHTBE3QEce5lX1VGWshW/MIaYS20XvVT8gcw9/kHRM2bO3vmxM
+ wcFAzu+t6rMTcVCh8oip1nFmLmCosdp/vqtz03xjCpWLe3AzVrdH1z2lBytKq+3k/L+t11zXM9e
+ sftpi4SrnUGlVBjEhYjCZL16gMTAPIZuVdHvRuQ3D0K+cxZBHiNCgEKn3wEhIUw2il+Zm3fSESe
+ iMLmyzwfigMbXFA==
+X-Developer-Key: i=bryan.odonoghue@linaro.org; a=openpgp;
+ fpr=E693FB2AABA36DE117AB6FB422713BB3A18DC83A
 
+This series has evolved from a CAMSS standalone series to a series that is
+mostly on the PHY side now, so I've split the series up to reflect that
+fact.
 
+Starting off by fixing a long-standing use-after-free race-condition in the
+phy core flagged by Sashiko in v13. While my series doesn't introduce the
+bug it seems appropriate to address it anyway once flagged.
 
-On 06-09-2026 17:22, Bryan O'Donoghue wrote:
-> +		if (lane < lane_base || lane - lane_base >= CSI2_MAX_DATA_LANES) {
-> +			dev_err(dev, "invalid data-lane %u\n", lane);
-> +			return -EINVAL;
-  CC [M]  drivers/media/platform/qcom/camss/camss.o
-../drivers/media/platform/qcom/camss/camss.c: In function ‘camss_parse_endpoint_node’:
-../drivers/media/platform/qcom/camss/camss.c:4783:61: error: ‘CSI2_MAX_DATA_LANES’ undeclared (first use in this function)
- 4783 |                 if (lane < lane_base || lane - lane_base >= CSI2_MAX_DATA_LANES) {
-      |                                                             ^~~~~~~~~~~~~~~~~~~
-../drivers/media/platform/qcom/camss/camss.c:4783:61: note: each undeclared identifier is reported only once for each function it appears in
-make[8]: *** [../scripts/Makefile.build:290: drivers/media/platform/qcom/camss/camss.o] Error 1
+Once addressed two new helper functions are introduced to the PHY core to
+enable finding of a PHY using the media graph.
 
-CSI2_MAX_DATA_LANES is undeclared here, causing a build failure.
+Finally the usage of that new API is shown with CAMSS.
 
+Changes in v17:
+- Cherry-picked the wrong commit for patch#5 didn't compile - fixed here.
+- Depends-on: https://lore.kernel.org/r/20260903-x1e-csi2-phy-v17-0-26606fa9a039@linaro.org
+- Link to v16: https://patch.msgid.link/20260906-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v16-0-f7bd68b5369f@linaro.org
+
+Changes in v16:
+- Changes CAMSS CSID to enable lanes based on indexing starting at 1.
+  Since the new patch depends on the antecedent patch bundling in this series - Nihal
+- Depends-on: https://lore.kernel.org/r/20260903-x1e-csi2-phy-v17-0-26606fa9a039@linaro.org
+- Link to v15: https://patch.msgid.link/20260904-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v15-0-68b7916e7a3f@linaro.org
+
+Changes in v15:
+- Adds lockdep_assert - Loic 
+- Depends-on: https://lore.kernel.org/r/20260903-x1e-csi2-phy-v17-0-26606fa9a039@linaro.org
+- Link to v14: https://patch.msgid.link/20260903-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v14-0-01ef1eced075@linaro.org
+
+Changes in v14:
+- Fixes existing bug highlited by Sashiko in v13.
+  The bug has appropriate Fixes: tags applied for back-porting.
+- RB accumulated from v13 for the now standalone CAMSS patch.
+- YAML changes carried thus far will instead be posted with dtsi changes
+  where they 'feel' more logical.
+- Depends-on: https://lore.kernel.org/r/20260903-x1e-csi2-phy-v17-0-26606fa9a039@linaro.org
+- Link to v13: https://patch.msgid.link/20260728-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v13-0-ae811e2f0799@linaro.org
+
+Changes in v13:
+- Introduces struct device_node phy helper lookup.
+  This allows for finding a phy from a device_node entry.
+- Uses media-graph exclusively to reference phys. - Neil, Vlad, Vinod
+- Performs runtime check for legacy v non-legacy phys - Krzysztof
+- Link to v12: https://patch.msgid.link/20260708-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v12-0-f8588da41f16@linaro.org
+
+Changes in v12:
+- Updates camss sensor find method to find the sensor in the CSIPHY port. -
+  Neil, Vlad, Bryan
+- Drops dependency on passing polarities and positions. Moved into CSIPHY
+  port as agreed. Neil, Vlad, Bryan
+- Omitted mux to CSID as discussed this will be done when splitting CSID
+  out as its own individual node. Neil, Bryan
+- Updated Reviewed-by: - Loic
+- Link to v11: https://lore.kernel.org/r/20260326-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v11-0-5b93415be6dd@linaro.org
+
+Changes in v11:
+- Dropped simple-mfd in dts for devm_of_platform_populate() - Krzysztof
+- Pass polarity and position for data and clock lanes - bod
+- Remove check for PHY_TYPE_DPHY - PHY driver validates its own mode - bod
+- Depends-on: https://lore.kernel.org/r/20260325-dphy-params-extension-v1-0-c6df5599284a@linaro.org
+- Depends-on: https://lore.kernel.org/r/20260326-x1e-csi2-phy-v5-0-0c0fc7f5c01b@linaro.org
+- Link to v10: https://lore.kernel.org/r/20260316-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v10-0-fdfe984fe941@linaro.org
+
+Changes in v10:
+- compat simple-mfd added to CAMSS allows probing sub-nodes.
+  The other way to do this would be simple-bus however, CAMSS
+  is really a collection of devices in a block as opposed to a
+  discoverable bus.
+- csiphy nodes are sub-nodes of CAMSS.
+  Sub-nodes as pointed out by Dmitry will allow us to show some love to
+  older platforms.
+- Depends-on: https://lore.kernel.org/r/20260315-x1e-csi2-phy-v4-0-90c09203888d@linaro.org
+- Link to v9: https://lore.kernel.org/r/20260226-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v9-0-a59c3f037d0b@linaro.org
+
+v9:
+- Adds phy handles as optional nodes
+- Adds minItems: 5 for iommu entries
+  I believe this should be acceptable as maxItems: 8 continues
+  to be valid
+- Makes CAMSS-level rails optional for x1e
+  Similarly I think this should be OK as the legacy binding
+  is still valid it is simply optional instead of mandatory now
+- Supports CSIPHY nodes adjacent to CAMSS while leaving
+  csiphy regs intact.
+- Pushes dtsi drop to another series everything in this series
+  can go through linux-media
+- Depends-on: https://lore.kernel.org/r/20260226-x1e-csi2-phy-v3-0-11e608759410@linaro.org
+- Link to v8: https://lore.kernel.org/r/20260225-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v8-0-95517393bcb2@linaro.org
+
+v8:
+
+- This version rebases on latest media-committers/next - bod
+- Adds support for "combo-mode" PHYs in the YAML.
+  It will be possible to build out the code to support this later - Vlad
+- Maintains the upstream model of connecting sensors to CSI decoders.
+  Every other upstream implementation does it this way so
+  CAMSS will do it this way too.
+- Reduces the number of IOMMU entires in CAMSS to those required for
+  CSID, VFE/RDI/PIX respectively.
+  Including all of the IOMMUs implies we will also "stuff" CAMSS
+  with ever increasing lists of registers but a better approach
+  is to have individual nodes for functional blocks.
+  For example this series supports CSIPHy as a separate block
+  CCI is already a separate block - and we will add ICP, BPS, IPE
+  etc as additional standalone nodes.
+  camss@someaddr {
+        //existing bindings vfe, csid, csiphy go here
+        iommus = <just what's needed for this>;
+  };
+  bps@some_other_address {
+        iommus = <bps specific iommus>;
+  }
+  In particular this model will save us from going down the same
+  path as the vpu which has ended up tripping over the total size
+  an iommu entry may span.
+
+  Nobody really likes the legacy binding much so instead of
+  continuing to bludgeon more entries into it, I've conciously
+  not included BPS, IPE, ICP etc.
+
+Depends-on: https://lore.kernel.org/r/20260225-x1e-csi2-phy-v2-0-7756edb67ea9@linaro.org
+Link to v7: https://lore.kernel.org/r/20250711-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-0-0bc5da82f526@linaro.org
+Working tree: https://gitlab.com/Linaro/arm64-laptops/linux/-/tree/qcom-laptops-v6.19-rc8-camss?ref_type=heads
+
+v7:
+
+- Reimagine the PHYs as individual nodes.
+  A v1 of the schmea and driver for the CSI PHY has been published with
+  some review feedback from Rob Herring and Konrad Dybcio
+
+  https://lore.kernel.org/r/20250710-x1e-csi2-phy-v1-0-74acbb5b162b@linaro.org
+
+  Both the clock name changes from Rob and OPP changes suggested by Konrad
+  are _not_ yet present in this submission however stipulating to those
+  changes, I think publishing this v7 of the CAMSS/DT changes is warranted.
+
+  Its important to publish a whole view of changes for reviewers without
+  necessarily munging everything together in one sprawling series.
+
+  TL;DR I moved the PHY driver to its own series review comments there
+  are not reflected here yet but "shouldn't" have a big impact here.
+
+- Having separate nodes in the DT for the PHYS allows for switching on PHYs
+  as we do for just about every other PHYs.
+  &csiphyX {
+      status = "okay";
+  };
+
+  We just list phys = <> in the core dtsi and enable the PHYs we want in
+  the platform dts.
+
+- The level of code change in CAMSS itself turns out to be quite small.
+  Adding the PHY structure to the CSIPHY device
+  Differentiating the existing camss.c -> camss-csiphy.c init functions
+  A few new function pointers to facilitate parallel support of legacy
+  and new PHY interfaces.
+
+- A key goal of this updated series is both to introduce a new PHY method
+  to CAMSS but to do it _only_ for a new SoC while taking care to ensure
+  that legacy CAMSS-PHY and legacy DT ABI continues to work.
+
+  This is a key point coming from the DT people which I've slowly imbibed
+  and hopefully succeeded in implementing.
+
+- In addition to the CRD both T14s and Slim7x are supported.
+  I have the Inspirion14 working and the XPS but since we haven't landed
+  the Inspirion upstream yet, I've chosen to hold off on the XPS too.
+
+- There is another proposal on the list to make PHY devices as sub-devices
+
+  I believe having those separate like most of our other PHYs
+  is the more appropriate way to go.
+
+  Similarly there is less code change to the CAMSS driver with this change.
+
+  Finally I believe we should contine to have endpoints go from the sensor
+  to CAMSS not the PHY as CAMSS' CSI decoder is the consumer of the data
+  not the PHY.
+
+- Working tree: https://git.codelinaro.org/bryan.odonoghue/kernel/-/tree/x1e80100-6.16-rcX-dell-inspiron14-camss-ov02c10-ov02e10-audio-iris-phy-v3
+- Link to v6: https://lore.kernel.org/r/20250314-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v6-0-edcb2cfc3122@linaro.org
+
+v6:
+- Removes 'A phandle to an OPP node describing' per Krzysztof's comment
+  on patch #1
+- Drops Fixes: from patch #1 - Krzysztof
+- The ordering of opp description MXC and MMXC is kept as it matches the
+  power-domain ordering - Krzysztof/bod
+- Link to v5: https://lore.kernel.org/r/20250313-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v5-0-846c9a6493a8@linaro.org
+
+v5:
+- Picks up a Fixes: that is a valid precursor for this series - Vlad
+- Applies RB from Vlad
+- Drops "cam" prefix in interconnect names - Krzysztof/Vlad
+- Amends sorting of regs, clocks consistent with recent 8550 - Depeng/Vlad
+- Link to v4: https://lore.kernel.org/r/20250119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v4-0-c2964504131c@linaro.org
+
+v4:
+- Applies RB from Konrad
+- Adds the second CCI I2C bus to CCI commit log description.
+  I previously considered leaving out the always on pins but, decided
+  to include them in the end and forgot to align the commit log.
+- Alphabetises the camcc.h included in the dtsi. - Vlad
+- Link to v3: https://lore.kernel.org/r/20250102-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v3-0-cb66d55d20cc@linaro.org
+
+v3:
+- Fixes ordering of headers in dtsi - Vlad
+- Changes camcc to always on - Vlad
+- Applies RB as indicated - Krzysztof, Konrad
+- Link to v2: https://lore.kernel.org/r/20241227-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v2-0-06fdd5a7d5bb@linaro.org
+
+v2:
+
+I've gone through each comment and implemented each suggestion since IMO
+they were all good/correct comments.
+
+Detail:
+
+- Moves x1e80100 camcc to its own yaml - Krzysztof
+- csid_wrapper comes first because it is the most relevant
+  register set - configuring all CSID blocks subordinate to it - bod, Krzysztof
+- Fixes missing commit log - Krz
+- Updates to latest format established @ sc7280 - bod
+- Includes CSID lite which I forgot to add @ v1 - Konrad, bod
+- Replaces static ICC parameters with defines - Konrad
+- Drops newlines between x and x-name - Konrad
+- Drops redundant iommu extents - Konrad
+- Leaves CAMERA_AHB_CLK as-is - Kronrad, Dmitry
+  Link: https://lore.kernel.org/r/3f1a960f-062e-4c29-ae7d-126192f35a8b@oss.qualcomm.com
+- Interrupt EDGE_RISING - Vladimir
+- Implements suggested regulator names pending refactor to PHY API - Vladimir
+- Drop slow_ahb_src clock - Vladimir
+
+Link to v1:
+https://lore.kernel.org/r/20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-0-54075d75f654@linaro.org
+
+Working tree:
+https://git.codelinaro.org/bryan.odonoghue/kernel/-/tree/arm-laptop/wip/x1e80100-6.13-rc3
+
+v1:
+
+This series adds dt-bindings and dtsi for CAMSS on x1e80100.
+
+The primary difference between x1e80100 and other platforms is a new VFE
+and CSID pair at version 680.
+
+Some minor driver churn will be required to support outside of the new VFE
+and CSID blocks but nothing too major.
+
+The CAMCC in this silicon requires two, not one power-domain requiring
+either this fix I've proposed here or something similar:
+
+https://lore.kernel.org/linux-arm-msm/bad60452-41b3-42fb-acba-5b7226226d2d@linaro.org/T/#t
+
+That doesn't gate adoption of the binding description though.
+
+A working tree in progress can be found here:
+https://git.codelinaro.org/bryan.odonoghue/kernel/-/tree/x1e80100-6.12-rc7+camss?ref_type=heads
+
+Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 ---
-Regards,
-Nihal Kumar Gupta
+Bryan O'Donoghue (5):
+      phy: core: Fix use-after-free in phy_get paths
+      phy: core: Add phy_get_by_of_node()
+      phy: core: Add devm_phy_get_by_of_node()
+      media: qcom: camss: Add support for PHY API devices
+      media: qcom: camss: Use data-lanes starting at 1 for new CSIPHY mode
+
+ drivers/media/platform/qcom/camss/Kconfig        |   1 +
+ drivers/media/platform/qcom/camss/camss-csiphy.c | 177 +++++++++++++++++++++--
+ drivers/media/platform/qcom/camss/camss-csiphy.h |  11 +-
+ drivers/media/platform/qcom/camss/camss.c        | 119 +++++++++++++--
+ drivers/media/platform/qcom/camss/camss.h        |   1 +
+ drivers/phy/phy-core.c                           | 172 +++++++++++++++++-----
+ include/linux/phy/phy.h                          |  13 ++
+ 7 files changed, 423 insertions(+), 71 deletions(-)
+---
+base-commit: 2e41fb778334db3d260c52c6be4c4d44fbed87ac
+change-id: 20250313-b4-linux-next-25-03-13-dtsi-x1e80100-camss-1506f74bbd3a
+
+Best regards,
+--  
+Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+
