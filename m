@@ -1,109 +1,111 @@
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86D4039183B;
-	Sun,  6 Sep 2026 03:39:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E539B363C48
+	for <linux-clk@vger.kernel.org>; Sun,  6 Sep 2026 03:45:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788666002; cv=none; b=L8bY69p8HP0jLWcL3KdPYruSjm7UKiYxpROlZcKMHj6yO73l5GAg3h4YPLhaO4+fR5YRoT+QEHXxp4G6GOk8xcQeq/tgmoZRm9D55BEhOWFYHw3F1lJoJFAlvb93Qn9YTMWcdEACtfCk8Hh3pEW9KAkosGcMqjR2oC/JwDRaRH8=
+	t=1788666320; cv=none; b=LH+WQYQ4WMRLSryqJUuI7Mhq7e+0TBU8wJ/1MrIG6TPHhDRC00S/EMky9WVWW861cmHEYs4t3td7N7RFMNKdAtEYa6c/8TMleMnf/akl4Bt115Mrsn3Rsu/9UstOHmj68elsNT4tq4NW838TadI4zmhDi217n5t46IKPpiFZK28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788666002; c=relaxed/simple;
-	bh=vzkAnz+6EYeyUnGnZnIWxwrD+AOVOdoBL6rk6szskmM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q7VNWLVBtM9ymBKsthA49L1y2t473u5HRy1aV/FkLUNUnazjJuzhfOZEagYJK9yc3oqxKY8aahsWA9qGdC4vEnIVL77kFCNlxjCgM4G6Dv7mwvTv9cWjQFf6iDMwt0ve7CqORnvjYtupti52gFSwInmNYR2+5ogLkcsbDSfZLQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=ZzL7WsKZ; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+	s=arc-20240116; t=1788666320; c=relaxed/simple;
+	bh=/3pMbXfhkpx7XK5gjuiSTzOPkK+4V2e7x5ODko9vB5c=;
+	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=EB7X0p8LOMgHus/Au9f5hzCYejPseC+Ohn0D5h+PSuRjpc15PaE/pdsBhGAKr9ygQHW1zfuU5spcINFruumdoPZDcfQya0TP4EwHs+7Xgj/xo7JGQHPri6+p3kzaaittjfYuauE4W9J8oT9RHHs09Fl1mJVcX0NPtTeV/eOmOLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TC7X+AaP; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="ZzL7WsKZ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=h5
-	UtvNOj7koMAg3tl5lCsazgNOBs9X9XUd+uAthO1zE=; b=ZzL7WsKZfbSSZziDgt
-	4R46THA1km+q4DtKteyjxEQnCqf7N/2Ln1UDrYJkSz70/KMZ7GbY11YM1z7rLgIU
-	MeQ8/ml1qB7BJXHR7cp8zMwmjwDJ5fHrhjrGIEaLNnYTqx6qM3nqLC1pjAk+wqAi
-	lrFZv3O6VG4qPOptpVBs8LoRU=
-Received: from localhost.localdomain (unknown [])
-	by gzsmtp3 (Coremail) with SMTP id PigvCgC3X2lu4Jxqh6TERA--.30651S2;
-	Sun, 06 Sep 2026 11:39:27 +0800 (CST)
-From: Pengpeng Hou <hppiscas@163.com>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Pengpeng Hou <hppiscas@163.com>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Taichi Sugaya <sugaya.taichi@socionext.com>,
-	Takao Orito <orito.takao@socionext.com>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: milbeaut: Return divider update timeouts
-Date: Sun,  6 Sep 2026 11:39:24 +0800
-Message-ID: <20260906033924.84982-1-hppiscas@163.com>
-X-Mailer: git-send-email 2.50.1
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TC7X+AaP"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FB351F00A3A;
+	Sun,  6 Sep 2026 03:45:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788666318;
+	bh=detQELwSsjQEEfm7gen4lIkXRu87rv6iNGv6E3x3zXs=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=TC7X+AaPUepN1KHzmNFtsKmHY2rCvhGk1cdkRHtnQWCTjNO3uz+vT512U5vkPZQbx
+	 L6RjobnNEcytLdhJiX2J7OCGsauap5UK/4Pf3BCXt1R8bvOI5KwlVDDytWhNlggvLZ
+	 gRm3kfEXltls8B8EvMb+wLlsvZ9Muhw0R75PE1H6JrQMZ+b2SgLoWIZqLKlaa5x30q
+	 x4Q4HZR1jZCFcwrB5SZun6m/P1jCHhGijHuc08Ws2HPIHBFW2c2dQpys1UyPg4LCeg
+	 TkrU+dhWxOO7XBecUOMmXsExuj1h7I/vKCY3bxfX2w2OIzefbFD+MewejNQIKEeNK+
+	 GnTYggp0JsBLQ==
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH] clk: s2mps11: Propagate OF provider registration
+ failures
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Pengpeng Hou" <hppiscas@163.com>
+Cc: linux-clk@vger.kernel.org
+In-Reply-To: <20260906033651.84082-1-hppiscas@163.com>
+References: <20260906033651.84082-1-hppiscas@163.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Sun, 06 Sep 2026 03:45:17 +0000
+Message-Id: <20260906034518.5FB351F00A3A@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PigvCgC3X2lu4Jxqh6TERA--.30651S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7WFWrGw15uFyxXFW5AFyDAwb_yoW8Zr18pr
-	WS9398tFWjqw4UG3ZxtF42gF95Gasrta43GrZrK348uF15Xay5tF1Sv3s29a1UtFyxWF4f
-	J3yIvr48AF48tFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UDEfOUUUUU=
-X-CM-SenderInfo: 5kssx2xfdvqiywtou0bp/xtbC7Q8V3Wqc4G+l-AAA3K
 
-m10v_clk_divider_set_rate() logs when the hardware does not clear its
-write-valid request, but still returns success to the clock framework. It
-also uses the sleeping poll helper while holding the divider spinlock.
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
 
-Use the atomic poll helper under the lock and return its timeout so the
-rate change is not reported as successful before the hardware accepts it.
+Pre-existing issues:
+- [High] of_clk_add_hw_provider() unconditionally marks fwnode as initializ=
+ed on failure.
+--
 
-The issue was found by our static-analysis tool and manually reviewed.
+commit 70cc7ee16e2987b440f1878c683c89d530c69a34
+Author: Pengpeng Hou <hppiscas@163.com>
 
-Fixes: 6a6ba5b55a72 ("clock: milbeaut: Add Milbeaut M10V clock controller")
-Assisted-by: gpt 5
-Signed-off-by: Pengpeng Hou <hppiscas@163.com>
----
- drivers/clk/clk-milbeaut.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+clk: s2mps11: Propagate OF provider registration failures
 
-diff --git a/drivers/clk/clk-milbeaut.c b/drivers/clk/clk-milbeaut.c
-index 4265bc442dfd..b3bf569ef747 100644
---- a/drivers/clk/clk-milbeaut.c
-+++ b/drivers/clk/clk-milbeaut.c
-@@ -410,8 +410,8 @@ static int m10v_clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
- 				unsigned long parent_rate)
- {
- 	struct m10v_clk_divider *divider = to_m10v_div(hw);
--	int value;
- 	unsigned long flags = 0;
-+	int value, ret = 0;
- 	u32 val;
- 	u32 write_en = BIT(divider->width - 1);
- 
-@@ -433,8 +433,10 @@ static int m10v_clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
- 
- 	if (divider->write_valid_reg) {
- 		writel(M10V_DCHREQ, divider->write_valid_reg);
--		if (readl_poll_timeout(divider->write_valid_reg, val,
--			!val, M10V_UPOLL_RATE, M10V_UTIMEOUT))
-+		ret = readl_poll_timeout_atomic(divider->write_valid_reg, val,
-+						!val, M10V_UPOLL_RATE,
-+						M10V_UTIMEOUT);
-+		if (ret)
- 			pr_err("%s:%s couldn't stabilize\n",
- 				__func__, clk_hw_get_name(hw));
- 	}
-@@ -444,7 +446,7 @@ static int m10v_clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
- 	else
- 		__release(divider->lock);
- 
--	return 0;
-+	return ret;
- }
- 
- static const struct clk_ops m10v_clk_divider_ops = {
--- 
-2.50.1 (Apple Git-155)
+This commit updates s2mps11_clk_probe() to correctly check the return value
+of of_clk_add_hw_provider() and propagate registration failures. It also
+adjusts the cleanup path to handle omitted clocks.
 
+> diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
+> index fa5ac8f673f6e..94969d97d6e99 100644
+> --- a/drivers/clk/clk-s2mps11.c
+> +++ b/drivers/clk/clk-s2mps11.c
+[ ... ]
+> @@ -192,8 +192,10 @@ static int s2mps11_clk_probe(struct platform_device =
+*pdev)
+>  		clk_data->hws[i] =3D &s2mps11_clks[i].hw;
+>  	}
+> =20
+> -	of_clk_add_hw_provider(s2mps11_clks->clk_np, of_clk_hw_onecell_get,
+> -			       clk_data);
+> +	ret =3D of_clk_add_hw_provider(s2mps11_clks->clk_np,
+> +				     of_clk_hw_onecell_get, clk_data);
+> +	if (ret)
+> +		goto err_reg;
+
+[Severity: High]
+This is a pre-existing issue, but by properly propagating the error from
+of_clk_add_hw_provider(), could this cause dependent consumers to fail their
+probe instead of deferring?
+
+Looking at of_clk_add_hw_provider() in drivers/clk/clk.c, if it fails, it
+unconditionally marks the fwnode as initialized before returning the error:
+
+drivers/clk/clk.c:of_clk_add_hw_provider() {
+    ...
+	ret =3D of_clk_set_defaults(np, true);
+	if (ret < 0)
+		of_clk_del_provider(np);
+
+	fwnode_dev_initialized(&np->fwnode, true);
+
+	return ret;
+}
+
+If of_clk_set_defaults() fails (e.g., returning -EPROBE_DEFER),
+of_clk_del_provider() unregisters the provider and correctly marks the fwno=
+de
+uninitialized, but it is then unconditionally forced to true.
+
+Since fw_devlink relies on this initialized state, does this trick consumers
+into thinking the supplier is ready, thereby breaking the EPROBE_DEFER
+mechanism for dependent devices when this failure path is taken?
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260906033651.8408=
+2-1-hppiscas@163.com?part=3D1
