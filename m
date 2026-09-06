@@ -1,202 +1,128 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mail2.ecloud.global (mail2.ecloud.global [135.181.6.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E80E2C15B0;
-	Sun,  6 Sep 2026 14:32:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788705159; cv=none; b=QFfT2bb/zln2it9+3xCn8CSeGrEOo63AGuKBO+m6s5M7rE29AgF4m01/5ZLWjfkFzTcNKC55V9vEaWx598hiG2I2FyyrAFHDpILI965HEuMkGzYDUMwEjfvurT6WIBds+ilLgjJaS1IqYU+KG+A19jEaFHdeZy4h3nDjkP9fsVc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788705159; c=relaxed/simple;
-	bh=DGPe4aOP1AagD4XeveSJcP+v6TFFlajcLTKJ7GrnILw=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=ZmOlyOLkRN9fwRAdC08pMtRgdY3gO/mbeCjeFRgt1fPgUqweu+i+KD6GnvEoIBPWkQItcPRQSaHj5Y19D6ah/QtncZwZFyP2cyt0JT6lKsFQdfb6Yn2JMhlDaN5GOCgEj46hh0Mc20Ynlaq0wTvfUbrX4wFi153WKtJyW8TLy78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JaaHYcFh; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DFEB2F9C37;
+	Sun,  6 Sep 2026 14:59:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=135.181.6.248
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788706781; cv=pass; b=j+x8Buu53RBEe+yHRJVkdJDK/4OTwLWx60oFY9N5QUUNLRplF7zw0WEINBfvIRleMk4bRJHFe2LCDPK23oN5Jkv/Vplwqu7qaSO4YMHWaQIEGhK+YvuohhEE2MkRd4ZuQL70f6/MXTxRW1Aa9lQRWJhm6AUW+hg2uAlqNxhhjm4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788706781; c=relaxed/simple;
+	bh=trUhg+DZ4DJN2v5PDlwdx+2pEBTd0PIFaRmDesDqEfU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=B5gc64S6z6xJ68JVw2KSqTDrFI775dnffWb+1kTOmGlFaf3Zcq8Y4xbWCWXwHWkw9RfUW0rbRlHe7KL+ivYbLdweiAK72ju7HEn19sF42ZMdNjNM9WMAnmM278OMvisoVI6tw3O4P3AdBNBV+EUqCtTTzsvH5M5UFQeVgyuE2fw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=murena.io; spf=pass smtp.mailfrom=murena.io; dkim=pass (1024-bit key) header.d=murena.io header.i=@murena.io header.b=a0Splrg6; arc=pass smtp.client-ip=135.181.6.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=murena.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=murena.io
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JaaHYcFh"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 523A21F00A3A;
-	Sun,  6 Sep 2026 14:32:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788705153;
-	bh=hYlU9slo2AdfTZdkflGPEyEjS1r8Sh9sxlLoD1PyPjI=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=JaaHYcFhcQAIFgwwlOG52BLNL97LGGxyL1mZIDqllf+soBi3ebOglmWR7UCcuyf/e
-	 J2XXfqeO0d0Dl+NthyVmyEE0yt8yC5OlljbOXypcxFUL3zFweMzq3w3uMJJyu2ujbm
-	 hTBVBTp1CaEMJhKJOdYUqBr9+TFir1jL0xoCRfmjHKVjkdH9eDzDixl1vWkBQ9PFPH
-	 WzGV4yAHplNsZRW34JzaMrO3eCafCrAVJdvJSwktwHAH6CBQfBoLtz8tId0Wv71flt
-	 FPgMKjnYW0SGoRoLmKoatVfI7mpDsMxRHerKg2QOArefK7KfW4wVSDmXNMZ58vdMu5
-	 ovTI/vkho6U8g==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v17 4/5] media: qcom: camss: Add support for PHY API
- devices
-Reply-To: sashiko-reviews@lists.linux.dev
-To: =?utf-8?b?QnJ5YW4gTydEb25vZ2h1ZQ==?= <bryan.odonoghue@linaro.org>
-Cc: olteanv@gmail.com, neil.armstrong@linaro.org, devicetree@vger.kernel.org, media-ci@linuxtv.org, linux-clk@vger.kernel.org, linux-phy@lists.infradead.org, vkoul@kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20260906-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v17-4-e2197a3e2551@linaro.org>
-References: <20260906-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v17-0-e2197a3e2551@linaro.org>
- <20260906-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v17-4-e2197a3e2551@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Sun, 06 Sep 2026 14:32:32 +0000
-Message-Id: <20260906143233.523A21F00A3A@smtp.kernel.org>
+	dkim=pass (1024-bit key) header.d=murena.io header.i=@murena.io header.b="a0Splrg6"
+Received: from authenticated-user (mail2.ecloud.global [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail2.ecloud.global (Postfix) with ESMTPSA id E594C72128A;
+	Sun,  6 Sep 2026 14:59:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=murena.io; s=mail2;
+	t=1788706771;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zVMGfeFZrB58Lk7o3G3a6wdkQDsZOBW4TUrkVV5ZwgQ=;
+	b=a0Splrg6zB00oeVpK4FriY8N+4GX17As20bPsA8Vx68XwCxzPSyZuXZgKfTgxovlJtlesN
+	bxEs+wzrGffdT8Ih5QE30TKCExhKjyzbY4otFGSd4YbqpIKaQ+RA4/s7K6HAQBMS8FtR1X
+	CSWgY5ki1wIZLfpJGmpXWo8D0uBPuhw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=murena.io;
+	s=mail2; t=1788706771;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zVMGfeFZrB58Lk7o3G3a6wdkQDsZOBW4TUrkVV5ZwgQ=;
+	b=THJSY92/A/bjlj/pBTmUxyu7CCDs80zoyeYMIggATaIpL8vqJFlBrJhaPBJPGEI6RyIMtR
+	NAU+Lsj5+v0YaaS4T+naMaa4I6xDz4kCMWURKf1LKkssivQ9G1gjaQ/S0TqUwpXElYkKGN
+	iejrNvcdKwjMq5n3hnEPRs5vl0+GPmY=
+ARC-Authentication-Results: i=1;
+	mail2.ecloud.global;
+	auth=pass smtp.mailfrom=maud_spierings@murena.io
+ARC-Seal: i=1; s=mail2; d=murena.io; t=1788706771; a=rsa-sha256; cv=none;
+	b=AyIWxjPgvVFrVvAxTXlq0c74VZgXwUKhdAsaAo7owEu5lfVisTLR+RN6ywUsHXhiMJkRFL
+	dLC4XUaP3ekFGA1Jjk/HdAWNPCsR/hNMIYi7EFT4SXTQoHtELqbI3vmzjEzvEMPKBN16Z4
+	TzdFhlnMtX3Oyh73K4IEa6RNY6VrHLU=
+Message-ID: <cb0884b3-c9be-4cfd-ba43-27add3821ddd@murena.io>
+Date: Sun, 6 Sep 2026 16:59:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Subject: Re: [PATCH v2 13/15] phy: starfive: Add jh7110-inno-hdmi-phy driver
+To: Dominique Belhachemi <domibel@debian.org>
+Cc: m.wilczynski@samsung.com, Laurent.pinchart@ideasonboard.com,
+ airlied@gmail.com, alex@ghiti.fr, andrzej.hajda@intel.com,
+ andy.yan@rock-chips.com, andyshrk@163.com, aou@eecs.berkeley.edu,
+ bmasney@redhat.com, conor+dt@kernel.org, conor@kernel.org,
+ devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ hal.feng@starfivetech.com, heiko@sntech.de, hello@big-grey.co.uk,
+ jernej.skrabec@gmail.com, jonas@kwiboo.se, kernel@esmil.dk,
+ krzk+dt@kernel.org, lee@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-phy@lists.infradead.org, linux-riscv@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, luca.ceresoli@bootlin.com,
+ m.szyprowski@samsung.com, maarten.lankhorst@linux.intel.com,
+ maudspierings@gocontroll.com, mfd@lists.linux.dev, mripard@kernel.org,
+ mturquette@baylibre.com, neil.armstrong@linaro.org, p.zabel@pengutronix.de,
+ palmer@dabbelt.com, pjw@kernel.org, rfoss@kernel.org, robh@kernel.org,
+ sboyd@kernel.org, simona@ffwll.ch, tzimmermann@suse.de, uwu@icenowy.me,
+ vkoul@kernel.org
+References: <20260828-jh7110-clean-send-v2-13-331680c8b9d1@samsung.com>
+ <0ccb4168-ff88-459c-972d-3c091c155db2@murena.io>
+ <e780ecb8-918f-4816-99c8-b69b10b25a18@murena.io>
+ <CAAvaLCwvVUddS14MPx0FHdnp+QeZ99+ox17pXt2hSWPTCFcHtw@mail.gmail.com>
+Content-Language: en-US
+From: Maud Spierings <maud_spierings@murena.io>
+In-Reply-To: <CAAvaLCwvVUddS14MPx0FHdnp+QeZ99+ox17pXt2hSWPTCFcHtw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Thank you for your contribution! Sashiko AI review found 3 potential issue(=
-s) to consider:
-- [High] Selects a non-existent Kconfig symbol PHY_QCOM_MIPI_CSI2.
-- [High] Hardware PHY state and resources are leaked on early probe and reg=
-istration error paths.
-- [Medium] Missing return value checks for phy_mipi_dphy_get_default_config=
-_for_hsclk() and phy_set_mode() can lead to uninitialized PHY configuration.
---
+On 9/6/26 07:39, Dominique Belhachemi wrote:
+> On Sun, Aug 30, 2026 at 10:17 AM Maud Spierings 
+> <maud_spierings@murena.io <mailto:maud_spierings@murena.io>> wrote:
+> 
+>     I was still having some glitching happening on the display, but I've
+>     found the way to fix that, the question is what is actually
+>     happening here.
+> 
+>         0x29590020 <- 0x00000005
+>     This one I have no idea, it is 0x00000009 with this patch series but
+>     with the vendor kernel I get the value above. When I hook up my
+>     external
+>     display (regular 1440p) this becomes 0x0000000D on the vendor kernel.
+> 
+>     But I can't find this register being written to anywhere there?
+> 
+> 
+> Maybe this needs to be swapped?
+> 
+> drivers/gpu/drm/bridge/inno-hdmi.c
+>    -#define v_HSYNC_POLARITY(n)          ((n) << 3)
+>    -#define v_VSYNC_POLARITY(n)          ((n) << 2)
+>    +#define v_HSYNC_POLARITY(n)          ((n) << 2)
+>    +#define v_VSYNC_POLARITY(n)          ((n) << 3)
+> 
 
-commit cc3786ea5902bcb687c49374e8e8db29c5127496
-Author: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Those seem to only be relevant the 0x08 register:
+ > #define HDMI_VIDEO_TIMING_CTL		0x08
 
-media: qcom: camss: Add support for PHY API devices
+also in the code:
 
-Add the ability to use a PHY pointer which interacts with the standard PHY
-API. In the first instance the code will try to use the new PHY interface.
-If no PHYs are present in the DT then the legacy method will be attempted.
-
-> diff --git a/drivers/media/platform/qcom/camss/Kconfig b/drivers/media/pl=
-atform/qcom/camss/Kconfig
-> index 4eda48cb1adf0..1edc5e5a1829e 100644
-> --- a/drivers/media/platform/qcom/camss/Kconfig
-> +++ b/drivers/media/platform/qcom/camss/Kconfig
-> @@ -7,3 +7,4 @@ config VIDEO_QCOM_CAMSS
->  	select VIDEO_V4L2_SUBDEV_API
->  	select VIDEOBUF2_DMA_SG
->  	select V4L2_FWNODE
-> +	select PHY_QCOM_MIPI_CSI2
-
-[Severity: High]
-Does this select a nonexistent config symbol? Selecting a symbol that isn't
-defined anywhere in the kernel causes a silent build dependency failure,
-which will leave the required PHY infrastructure unbuilt.
-
-[ ... ]
-
-> diff --git a/drivers/media/platform/qcom/camss/camss-csiphy.c b/drivers/m=
-edia/platform/qcom/camss/camss-csiphy.c
-> index 539ac4888b608..e00748dd83b02 100644
-> --- a/drivers/media/platform/qcom/camss/camss-csiphy.c
-> +++ b/drivers/media/platform/qcom/camss/camss-csiphy.c
-
-[ ... ]
-
-> @@ -306,11 +308,88 @@ static int csiphy_stream_on(struct csiphy_device *c=
-siphy)
-> +	link_freq =3D camss_get_link_freq(&csiphy->subdev.entity, bpp, num_lane=
-s);
-> +
-> +	if (link_freq < 0) {
-> +		dev_err(dev,
-> +			"Cannot get CSI2 transmitter's link frequency\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	phy_mipi_dphy_get_default_config_for_hsclk(link_freq, num_lanes, dphy_c=
-fg);
-> +
-> +	phy_set_mode(csiphy->phy, PHY_MODE_MIPI_DPHY);
-> +
-> +	ret =3D phy_configure(csiphy->phy, &dphy_opts);
-
-[Severity: Medium]
-Should we check the return values of phy_mipi_dphy_get_default_config_for_h=
-sclk()
-and phy_set_mode() here?=20
-
-If link_freq evaluates to 0, it appears phy_mipi_dphy_get_default_config_fo=
-r_hsclk()
-could return -EINVAL and leave the output dphy_opts structure zero-filled. =
-Passing
-this uninitialized configuration directly to phy_configure() could lead to
-erratic hardware behavior.
-
-[ ... ]
-
-> @@ -709,6 +788,56 @@ int msm_csiphy_subdev_init(struct camss *camss,
-> +	ret =3D phy_init(csiphy->phy);
-> +	if (ret)
-> +		dev_err(dev, "%s init fail %d\n", csiphy->name, ret);
-> +
-> +done:
-> +	return ret;
-> +}
-
-[ ... ]
-
-> diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/pl=
-atform/qcom/camss/camss.c
-> index 2123f6388e3d7..84097d82d99c9 100644
-> --- a/drivers/media/platform/qcom/camss/camss.c
-> +++ b/drivers/media/platform/qcom/camss/camss.c
-
-[ ... ]
-
-> @@ -4832,14 +4890,21 @@ static int camss_init_subdevices(struct camss *ca=
-mss)
->  	unsigned int i;
->  	int ret;
-> =20
-> +	camss_detect_legacy_phy(camss);
-> +
->  	for (i =3D 0; i < camss->res->csiphy_num; i++) {
-> -		ret =3D msm_csiphy_subdev_init(camss, &camss->csiphy[i],
-> -					     &res->csiphy_res[i],
-> -					     res->csiphy_res[i].csiphy.id);
-> +		if (!camss->legacy_phy) {
-> +			ret =3D msm_csiphy_subdev_init(camss, i);
-> +		} else {
-> +			ret =3D msm_csiphy_subdev_init_legacy(camss,
-> +							    &camss->csiphy[i],
-> +							    &res->csiphy_res[i],
-> +							    res->csiphy_res[i].csiphy.id);
-> +		}
-> +
->  		if (ret < 0) {
-> -			dev_err(camss->dev,
-> -				"Failed to init csiphy%d sub-device: %d\n",
-> -				i, ret);
-> +			dev_err(camss->dev, "csiphy %d init fail\n",
-> +				res->csiphy_res[i].csiphy.id);
->  			return ret;
->  		}
->  	}
-
-[Severity: High]
-Does this error path leak the PHY initialization state?
-
-When msm_csiphy_subdev_init() succeeds, it calls phy_init() to acquire the =
-PHY.
-If a subsequent iteration of this loop fails, or if a later initialization =
-step
-like camss_probe() fails, the code returns immediately or goes to an error =
-label
-without rolling back the previously initialized PHYs (which require phy_exi=
-t()).
-
-Additionally, in msm_csiphy_register_entity() located in camss-csiphy.c:
-
-	ret =3D csiphy_init_formats(sd, NULL);
-	if (ret < 0) {
-		dev_err(dev, "Failed to init format: %d\n", ret);
-		return ret;
-	}
-
-A failure here returns early without calling phy_exit(). When the calling c=
-ode
-in camss_register_entities() rolls back, it decrements the index and skips =
-this
-failing entity, which seems to permanently leak its PHY initialization stat=
-e.
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260906-b4-linux-n=
-ext-25-03-13-dtsi-x1e80100-camss-v17-0-e2197a3e2551@linaro.org?part=3D4
+ > /* Set detail external video timing polarity and interlace mode */
+ > value = v_EXTERANL_VIDEO(1);
+ > value |= mode->flags & DRM_MODE_FLAG_PHSYNC ?
+ > 	 v_HSYNC_POLARITY(1) : v_HSYNC_POLARITY(0);
+ > value |= mode->flags & DRM_MODE_FLAG_PVSYNC ?
+ > 	 v_VSYNC_POLARITY(1) : v_VSYNC_POLARITY(0);
+ > value |= mode->flags & DRM_MODE_FLAG_INTERLACE ?
+ > 	 v_INETLACE(1) : v_INETLACE(0);
+ > hdmi_writeb(hdmi, HDMI_VIDEO_TIMING_CTL, value);
