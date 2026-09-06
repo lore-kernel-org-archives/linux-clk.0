@@ -1,88 +1,87 @@
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A50F3DAACB
-	for <linux-clk@vger.kernel.org>; Sun,  6 Sep 2026 14:18:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA5D841D647
+	for <linux-clk@vger.kernel.org>; Sun,  6 Sep 2026 14:18:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788704298; cv=none; b=N90KV2hs2F6f22f3FY8rYI2pL9Bz1iI7PTV7rbl1FSQfuEydMeaCf9lSxA6bVw+1RLnz8cLsGPCnFbZ+cGBDlyZe7Ya5FdX4K3x26tj7fx8LwYdZ1yNPlG1Nef5YPRbB4nYSWl8YGMyYGcIX3Q92IoFG7NGDtH7RpFC3I3GCmtI=
+	t=1788704300; cv=none; b=sdmduTGW7ulehnIiER9LmIsbDZq4lYjlhZG3UqAxAOt+dE201XA7ABJNV4/grKczqMjBIIAM+YM9ZxK/P3417U5Ubq7DM78ug+ifl3K/7Utz8dCJArSUwteERBC2auNT5nUp9xk3y0ePBxLTS8EdvE33RWDWULXoD6b4T5oZaLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788704298; c=relaxed/simple;
-	bh=jkU+fUoOwa28jJYemXg69Wlafd0L7CgVOA0rnavRrGs=;
+	s=arc-20240116; t=1788704300; c=relaxed/simple;
+	bh=gxoQSeMomlLlSgismEZYS34EWU7wg4s4uQ+gewbEBP0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=E76B8oWsx/ncjnxzdslr3tbRhKEq/ksno66w+rhcw2XnfLB+trN2nm+Vctd4WeJ6owcgMZ1Gi2A3CeL2m/ypIhMFUH+eaJFMGsM48EU8yO8SG9dMHJcY9p3mUcU6t65ZATOZZQgokTwvpLH3vTPiPIY7CBQUYnaZbzSurLzhFiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ans61Gzs; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=haOllgaE; arc=none smtp.client-ip=205.220.180.131
+	 In-Reply-To:To:Cc; b=PXY/KahflsmJZtCHa1U2sQDC7KSa2X9MHNqv0vTvczWBQfTLhJ3O4XGshszS4Gq+xQb/JnjWPOoNZBUsOct4aLaLx9C/T1sV/VLmt+Z0Xu2mFK9A1GvqUbNtIf7U9ovb1hqVxcVQ4/skomJSjayqzhdVuduLUwW0Rt7yh5uS/Lg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=dk/0w84e; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=PqhCt8vk; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ans61Gzs";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="haOllgaE"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="dk/0w84e";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="PqhCt8vk"
 Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6861PK45258960
-	for <linux-clk@vger.kernel.org>; Sun, 6 Sep 2026 14:18:15 GMT
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68600Cue088003
+	for <linux-clk@vger.kernel.org>; Sun, 6 Sep 2026 14:18:16 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Ef5PxdtSb89BiUF4S335PG6FA5fQdwCuZoW2i3J5LK8=; b=ans61GzsC8q0zBdo
-	RqsQrH8ZxWT7Tr4kVB1D4Ne5U/RUNrSdDTtXrv4vFzc+1qosHt3paPwPNqfvBbdE
-	k1tqm7y9kB16wtnrbhJsJfdVUe4p3g96UY9j7YDZAK1o3VKwM98ZMXyuAnFGk2bx
-	i7EprEsMKdfSM88j9v5xBlGvn4ZWrilPU+QMVH/XC5fXZfsN6elnlbRStXMSNA+t
-	4zscfwXFsc9cBoqPPiRwH/vFxau0AAyzxSN3IpRtTLbQlwI3MBVqXKJroSWfFxUf
-	ZOSkyXRn9DGEijyWKRA6gsD+dqe3j0Wq+2Yopvsuu+LFBBq3+ya/ztMJv3AzhNpj
-	oDBjCg==
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ggany3gww-1
+	h2LmOSNQ0tfPY2I8tKBVudBy9g7Ot7SAmrJJh3YTOxc=; b=dk/0w84euvhzt7/s
+	3cZDvVyTBBXDZ4jtXQQfQx1qMzwYA+CDjwhO5RZ12+q9x6TTi82VrKpHerdkx2Z/
+	9lpGmmFQdiLf+K51Y49bDXSRh7NlWZjrOVya3mxoR0QFtA3M3QydCwVMNqB5hWHt
+	DTV//3EvI/UGX2TiObRK2SVgrqW2hXB27vMTZq8KYMKoEwiU/beo93LQc3B05FpR
+	y20AMpaYTU3m+vEdWXw7lwOeMFZSWxymu6UZrmnfCK1u7Maf2vdNkP1qcDbwXAaH
+	qz2C9TKdQFr/kOhkH59a+7xtFrm+Ajbw4n347rfHF424XzJvzXtn/03kRLVz5cH/
+	KS43tQ==
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ggany3gx0-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Sun, 06 Sep 2026 14:18:15 +0000 (GMT)
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-38ecc48b3c2so4415085a91.1
-        for <linux-clk@vger.kernel.org>; Sun, 06 Sep 2026 07:18:15 -0700 (PDT)
+	for <linux-clk@vger.kernel.org>; Sun, 06 Sep 2026 14:18:16 +0000 (GMT)
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-38e1118e4abso4525349a91.0
+        for <linux-clk@vger.kernel.org>; Sun, 06 Sep 2026 07:18:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1788704294; x=1789309094; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1788704296; x=1789309096; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=Ef5PxdtSb89BiUF4S335PG6FA5fQdwCuZoW2i3J5LK8=;
-        b=haOllgaEXg36kInRpK7zexSCi4otbfqItQXZusDiMUc6eVlg7YUheJGEsr8UoVVIhz
-         vneIWUR16wRlQ42IStmW29jdFfmJ3cwUWcP+ssp0n4YuYKYvbe37cjU+qsK4yXL1r3UC
-         6YD841JSk4W5YKhhaJj2AoylCOcbrINQemMwtxYyozldry+zVfqdoCBEAWrsEhmFlxaF
-         WNgA9hrWcsVL9zEe4QlA7AdiNNCeRuD6giTPbeAa/Q733BdCUC9fLpjCblqgezGEveEm
-         mYqJQudnV08/kfk52876ECTc+05TTIp/JQsQfKF/nLRNl/sgG/CH+rBruJdIBhC2tMtN
-         nIuQ==
+        bh=h2LmOSNQ0tfPY2I8tKBVudBy9g7Ot7SAmrJJh3YTOxc=;
+        b=PqhCt8vknPyeZxZ9FUjGkl3BBGDhbCeKwh2AQE5ftVo+SLRl0HBjwbDoYEUwuX0Rmu
+         +XykZsBvQ8sjlN5iTGyoAGO9LPyzIe8z7hBQ+9HZb8DqR2e+SAvPEbjNNdg2IqTtwE7t
+         0HDQNbWpNsMVO0bG3LXby2bRkyNTf81Ke2yjWDyKk+BJZxjNfVRfCxlsPrw6MhNkeZj7
+         WcUtnGp5pQNQ8V1MxQY9JQLyJxL1GjfCbzT8LLOsJmOs9NLP6jLM3G9lcHbpSGV4c8MY
+         e5FWHEUiMJO/588aj+U4AHk0cxlnbxWmciXNkYgfCivd/xdC4RNQ6piHXQzfPZoXF50/
+         3QrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788704294; x=1789309094;
+        d=1e100.net; s=20251104; t=1788704296; x=1789309096;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=Ef5PxdtSb89BiUF4S335PG6FA5fQdwCuZoW2i3J5LK8=;
-        b=cU4cvzHMQdDbWGqadK9I1c/vwwuOb8A162aqMiW4LGAUy8mg+jzIo7RFXE6XDv4bMw
-         /BkgUrL2NunIijDA74VZkPGOBJrZdaDKgbZJtDbohIEmho9ixxcBpn1bmf4rVVZKGMVH
-         b1U5m6rvViNy24J40skyB7GBJZz+llGATjyyiyfVl+XSkt0H7JFG2MkEM5q00Ra1G/jp
-         qb9g/hkyGyiMsieh8OeMn/A3E7FudWFWFyPmCkohKs4L2tKe6G8oev/LJfRSukEy7abF
-         AH/A3YzUh9MqvANFPhQTpC5hn2wko+zqUOXX+qlKo2IuwtPMzSxr57WnGg05QFYRpVhl
-         tgkQ==
-X-Forwarded-Encrypted: i=1; AKwUvBw1OHh7n8C4ZDQDBC00bX9NHVpHQmCVyNiVI95Xb/YxY0TW0IArB1hHJYxa73f6M9xNkhR15ZAj7jc=@vger.kernel.org
-X-Gm-Message-State: AFuF++nehFBYqn2UXN3eiBAR34YBgoDJk/m4QdLVSn+oYbJAYtVwUjwH
-	gTfq1pIBvszxYoxVsIOQwnL5YupgUd8pFMdkV+XTxmaLSd2+g2BLkvWk9QZkybA/DpS4YiT8diK
-	cn0eTLSVq8Olg3BH0HE0NPQ3+YVU1qQFkbLnXMy8E6MpH1LZi20wrpfMm2ebeYuI=
-X-Gm-Gg: AYBFou0nXhFXacIiLkSckqezPQHUS8okcJQgciexKZxRjLAiDYJ6wu68kBtzO8/R3EC
-	vhTxKisKQDWBEeL3Gx5jCj702AQPpmWGBX+qH0/NFCmSg3p3gZ6XhOUdoQ2gB6vYhuzTgRLpH/N
-	4udezgTOMMcsONnYxAIWZLBQO21ukoBrLcvbifISGC29LRd1ieGJTtMpfGNwp2/5ktXUewfrQeL
-	mfpOafZmAU5p/zAlnptpluNSJ5ho3vbP5SuvwBTWuOcyvxZCkoahhuqN2PI6X7S2SgOR+ZZYVil
-	i8ov/iG8Gqq9fHKqTHLTMtVtp/4JX9yqh1f1fMxp9oZ1gkEQ2fzwdsAHNELeHQiS4iAgfVQKZg+
-	NxX2Uo8Ozh3gPf7qcsyP2nsssd/lPnYXypFzTOFNE74Y=
-X-Received: by 2002:a17:90a:1c81:b0:39b:2c00:c3f5 with SMTP id 98e67ed59e1d1-39b2c00ed40mr15915445a91.18.1788704294380;
-        Sun, 06 Sep 2026 07:18:14 -0700 (PDT)
-X-Received: by 2002:a17:90a:1c81:b0:39b:2c00:c3f5 with SMTP id 98e67ed59e1d1-39b2c00ed40mr15915386a91.18.1788704293965;
-        Sun, 06 Sep 2026 07:18:13 -0700 (PDT)
+        bh=h2LmOSNQ0tfPY2I8tKBVudBy9g7Ot7SAmrJJh3YTOxc=;
+        b=CCQ0QTVhdqijheMWQOzUvbRVZPqYS8t7h3+mzl1WQg1FF8o2wiGa7Uf6vKFzBDpkKh
+         Dx3Wckoh1aWmlWJ/xFx5lrTPO3rFBJlsIS7XS3J9Q3WRg5M+e9Tn2UEmWOAGpM3qrPpu
+         gQQE5j7jLOnuM01Q/vtNuddB6JZpsTKei31V40UlWd1g7/0ZDyRefRfag7fzfA37zyRb
+         WBxxPONOLxrBdF9JhbfuC7fiEWZzzSII2Meqw41nNrSRRjx8PY12Uy3FQ/6qus/MyZVV
+         N5vrgqewjTarGsEzLYGEobWljxwQtF84nDPyKN4wsf7qDxQIrqz8RjkP9zx9wfEomDl4
+         zNPw==
+X-Forwarded-Encrypted: i=1; AKwUvBywc5jgt3R3RF1HWs7x5NeJrkAX/tPka/KjjDYKhMPMT1FAoNp20RMT+ZBAVQNNs+y8NlizczM8AxE=@vger.kernel.org
+X-Gm-Message-State: AFuF++ldCh1IzAZs+vYQYCHij3EGzj1HpItuREpu6tfXKmfcOVfxdKqw
+	bf+0tSK24Z28egYsJrWpFfLF7TthMrt2tDH/AC393orBFUp7yCz2HY8WDfe6RxJVysXvCT6gIuq
+	3TP5FZq66+wGn+lz/9EOW0HWsUfpnJvD20e/4pqC3kt656VID4q4Brt37tzgn8+g=
+X-Gm-Gg: AYBFou1tS7XsUdvOia2KlMlX2sYKiXgIQ9czZ40561pG3Y91GNjXOIUzp2VOugPzjc3
+	0wMg52AmBgU1K8PLTYZRpLP9RvXRWxXipVFUD5vHSdlXBEJMQU0G34mfTC7tSuPyCz0uyy4x6Y9
+	ZEO+wVhAdhXY/UQk5Scu7W45/FcpawmQ5DcPhdx8HJQZumOjh91bPdFNdG6t025+WGfvV87lL2N
+	k+jFUFYaes7Q0tP7esSN9faX/nhm6wYjw8fobDt6p7fJrSQiqZJ2Tf9QApvTuKryTaAKZfwbVCx
+	qqeeIK+0oMco9U8wJTKK+Kvf6YlKdnUzM5Fpjtzr18CotBGIHgldZ6R6znSSvBQas2wzJ5N0xD+
+	k4ZeyIz/T73p7cdi9nccBQ7BtyNYabz2jhCTKOtXxNz0=
+X-Received: by 2002:a17:90b:17c2:b0:38e:659b:f366 with SMTP id 98e67ed59e1d1-39b25f1c5bdmr25232882a91.0.1788704295797;
+        Sun, 06 Sep 2026 07:18:15 -0700 (PDT)
+X-Received: by 2002:a17:90b:17c2:b0:38e:659b:f366 with SMTP id 98e67ed59e1d1-39b25f1c5bdmr25232829a91.0.1788704295315;
+        Sun, 06 Sep 2026 07:18:15 -0700 (PDT)
 Received: from hu-luoj-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1432435ec2bsm17904550c88.3.2026.09.06.07.18.12
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1432435ec2bsm17904550c88.3.2026.09.06.07.18.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Sep 2026 07:18:13 -0700 (PDT)
+        Sun, 06 Sep 2026 07:18:14 -0700 (PDT)
 From: Luo Jie <jie.luo@oss.qualcomm.com>
-Date: Sun, 06 Sep 2026 07:18:09 -0700
-Subject: [PATCH v4 03/12] clk: qcom: clk-regmap-divider: Support
- CLK_DIVIDER_* flags
+Date: Sun, 06 Sep 2026 07:18:10 -0700
+Subject: [PATCH v4 04/12] clk: qcom: ipq-cmn-pll: Register CMN PLL /2 clock
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -91,7 +90,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260906-qcom_ipq5210_cmnpll-v4-3-aec5ed642f4f@oss.qualcomm.com>
+Message-Id: <20260906-qcom_ipq5210_cmnpll-v4-4-aec5ed642f4f@oss.qualcomm.com>
 References: <20260906-qcom_ipq5210_cmnpll-v4-0-aec5ed642f4f@oss.qualcomm.com>
 In-Reply-To: <20260906-qcom_ipq5210_cmnpll-v4-0-aec5ed642f4f@oss.qualcomm.com>
 To: Bjorn Andersson <andersson@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
@@ -104,35 +103,34 @@ To: Bjorn Andersson <andersson@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
 Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         quic_kkumarcs@quicinc.com, quic_linchen@quicinc.com,
-        quic_leiwei@quicinc.com, quic_suruchia@quicinc.com,
-        Abel Vesa <abel.vesa@oss.qualcomm.com>
+        quic_leiwei@quicinc.com, quic_suruchia@quicinc.com
 X-Mailer: b4 0.17-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1788704288; l=3160;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1788704288; l=2809;
  i=jie.luo@oss.qualcomm.com; s=20251128; h=from:subject:message-id;
- bh=jkU+fUoOwa28jJYemXg69Wlafd0L7CgVOA0rnavRrGs=;
- b=j2leIUEhfSDDDrGD4b8B8t3cw90gTQJOvq/BrwUvMJr982mw+sKUjJnDXhj0PrOBZGX5BsJQ1
- dNuNJ7Rh6n3DpMKWk7k7BgWvG6lOa81O+i4zfvLjcTeAktcQKL/b6Rh
+ bh=gxoQSeMomlLlSgismEZYS34EWU7wg4s4uQ+gewbEBP0=;
+ b=lL2f7yhu577Z3kaxQivGtNNGXXMQoDyrqm59F3pdMyZFS856aGeWn8pM//2J+WBUniT9uJXjX
+ BSFvE02wcDXAkXpm8pDrjhPQV+Dit/p9Tu1vAzAJh6Z7qLMp8/ds1Vc
 X-Developer-Key: i=jie.luo@oss.qualcomm.com; a=ed25519;
  pk=gSsYMDakxtd6UDFYDdA9y9yjIs5Etp5GK/3DoXWPyS0=
-X-Authority-Analysis: v=2.4 cv=X45i7mTe c=1 sm=1 tr=0 ts=6a9d7627 cx=c_pps
- a=vVfyC5vLCtgYJKYeQD43oA==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+X-Authority-Analysis: v=2.4 cv=X45i7mTe c=1 sm=1 tr=0 ts=6a9d7628 cx=c_pps
+ a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
  a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10
  a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=3WHJM1ZQz_JShphwDgj5:22
- a=EUspDBNiAAAA:8 a=vx7U0BMSOfWHh9VQJyQA:9 a=QEXdDO2ut3YA:10
- a=rl5im9kqc5Lf4LNbBjHf:22
-X-Proofpoint-ORIG-GUID: W6CeNsixgheOS_1XbPjHUvQgv-uGF64a
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTA2MDE1OSBTYWx0ZWRfX8HiG975xcuyt
- p07X+n0en8UWH+Y3GRn5+ptdferDrwl44Ld/hk1R0NIvx1tGpBjXyxJ0cZJUHIuX5al1GIk/cdO
- UR3tbRZG0R3s+5bjs9v4ZIipcUE8aPX+DwUfmcTTX7oALozqMP62yAAiwaTW/C2V4VxFaHp0xjG
- RjKv2wyGxABMi42Y9Ck3btoog7/0sRy656RD2zCmouZZZ3JM/ks3/kutl5EziyNyGaohCYSzCXa
- 1UenCykPLmLn/+9O0OMMOx3n4j5VQOWgQmeBu9gSdtuKnWYxdgSU3zWWjnodtUQXHIwRatQWvpD
- 3xDJl5m2PqaG9WVljJ3UQtSyjKtENcwe8CEl7UgBqfnhGQoCpVhTIqVW0fFiA8KI+inl7SlJCfJ
- xtn1v99nlSZYT711GuYxdUx8iI+xa8e2zbqGg9Zn0zoW4AV3MoRHXKwpnU0zImOPWbpmOZc/0Mo
- qR0bVHkMtx66Wy/653g==
-X-Proofpoint-Spam-Info: AW1haW4tMjYwOTA2MDE1OSBTYWx0ZWRfX+SMurmZB4yqa
- EVhkfJ5TwbtA49jlADY42KuF+xyj0us31ivIKkXat2Y/DNNokQtaMPhBmlYeRbw5DPk4j/ZYT+y
- BJ1IZ8nePfTYfGOIuQssjQ/tkY/AqXE=
-X-Proofpoint-GUID: W6CeNsixgheOS_1XbPjHUvQgv-uGF64a
+ a=EUspDBNiAAAA:8 a=LIjNjOY4wKn3Yy6eg_0A:9 a=QEXdDO2ut3YA:10
+ a=uKXjsCUrEbL0IQVhDsJ9:22
+X-Proofpoint-ORIG-GUID: OgIlkc3JPAFmbLzHBh2dui5IrdwMC2jm
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTA2MDE1OSBTYWx0ZWRfX49lMWxMLPPti
+ oPwphRoDfZAo8dxXg6FkkVtU5tV2v5fJgzKlQpYPtxHJFvRGqbGs22RKD9h0oq/q5oSepuEwBDW
+ WoyfZO2ugRoOIScuTvdoU+Q3xhccwCjYiyWXay+uTXkNMgrc5/5vq6yCdau2yR6KLyiJtVA/wUG
+ lVUky9tS5BZuuiC9sHXHVndnfc0E/AP8zkYsX2bpYee9YZKE/6gu3pN8LI7z5bQKtJusNdHEV5E
+ 5cfJm148Feo6ubSDLa6Bj3D2Gero4zGuyG33dhHLOWPYWWG7dVciSgMGdSxqiJln3tb7+R4AwBY
+ 4Pz1vLCC1qLvhEqioAciSKccGu3pDhC+3klCorhDxSLiI71dw90wfNSGvEeJSYndEKtlC6DOdaT
+ 2Qmwy0AUvMvesaZjFGBeesICfMhqoqpH75dCefqIpeevBk8pGKOt8UFLZs/w+FGn6zCAi4S2hYF
+ 7eQvJKW8MIV/c7CSuxA==
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTA2MDE1OSBTYWx0ZWRfX7HCrSnoDXIE9
+ OO8y50jScA9VgDOF26TRRQ6VTBP6BpsGfEEiek9rJHXwz3Q9c0Z0Q80WYSTTF+KdrJwPy7Oa0xm
+ mUTNEwh7mWkXdM9rDuwjZHF5sNOC3ZI=
+X-Proofpoint-GUID: OgIlkc3JPAFmbLzHBh2dui5IrdwMC2jm
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
  definitions=2026-09-05_08,2026-09-03_01,2025-10-01_01
@@ -142,88 +140,72 @@ X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2609060159
 
-Add a flags field to struct clk_regmap_div and OR it into the
-CLK_DIVIDER_ROUND_CLOSEST flag passed to divider_determine_rate(),
-divider_ro_determine_rate(), divider_get_val(), and
-divider_recalc_rate(), so that qcom drivers can opt into
-CLK_DIVIDER_* behavior variants such as CLK_DIVIDER_ONE_BASED.
+Most CMN PLL output clocks are derived from the 12 GHz PLL output
+through a shared, physical /2 stage, ahead of any further per-clock
+processing: a gated fixed rate (PCS/ETH0/ETH1/ETH2/EPHY/ETH), a
+configurable divider (NSS/PPE/PON), or a rate-select bit (EPHY-RAW).
+This /2 stage is present in the CMN PLL block on every SoC supported
+by this driver.
 
-This is additive and backward compatible: existing clk_regmap_div
-users don't initialize .flags, so it defaults to 0, and
-CLK_DIVIDER_ROUND_CLOSEST | 0 is identical to current behavior.
+Register this /2 stage once as a fixed-factor clock, "cmn_pll_div2",
+and store it on struct clk_cmn_pll so the output clock types can parent
+on it. The two plain fixed-rate outputs, xo-24mhz and sleep-32khz, are
+the exception on IPQ5210 SoC: they stay parented directly on the main
+PLL clock.
 
-Reviewed-by: Abel Vesa <abel.vesa@oss.qualcomm.com>
+On SoCs other than IPQ5210, every output clock is a plain fixed-rate
+clock (CMN_PLL_CLK_FIXED_RATE) whose rate is a hardcoded absolute
+value rather than one computed from the parent rate, so this /2 clock
+is registered there but currently has no consumers; IPQ5210 is simply
+the first SoC in this driver whose output clocks are modeled as
+depending on parent_rate, which is what makes the /2 stage significant.
+
 Signed-off-by: Luo Jie <jie.luo@oss.qualcomm.com>
 ---
- drivers/clk/qcom/clk-regmap-divider.c | 16 ++++++++++------
- drivers/clk/qcom/clk-regmap-divider.h |  1 +
- 2 files changed, 11 insertions(+), 6 deletions(-)
+ drivers/clk/qcom/ipq-cmn-pll.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/clk/qcom/clk-regmap-divider.c b/drivers/clk/qcom/clk-regmap-divider.c
-index 672e82caf205..6e12aebf14b6 100644
---- a/drivers/clk/qcom/clk-regmap-divider.c
-+++ b/drivers/clk/qcom/clk-regmap-divider.c
-@@ -27,7 +27,8 @@ static int div_ro_determine_rate(struct clk_hw *hw,
- 	val &= BIT(divider->width) - 1;
- 
- 	return divider_ro_determine_rate(hw, req, NULL, divider->width,
--					 CLK_DIVIDER_ROUND_CLOSEST, val);
-+					 CLK_DIVIDER_ROUND_CLOSEST | divider->flags,
-+					 val);
- }
- 
- static int div_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
-@@ -35,7 +36,7 @@ static int div_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
- 	struct clk_regmap_div *divider = to_clk_regmap_div(hw);
- 
- 	return divider_determine_rate(hw, req, NULL, divider->width,
--				      CLK_DIVIDER_ROUND_CLOSEST);
-+				      CLK_DIVIDER_ROUND_CLOSEST | divider->flags);
- }
- 
- static int div_set_rate(struct clk_hw *hw, unsigned long rate,
-@@ -43,14 +44,16 @@ static int div_set_rate(struct clk_hw *hw, unsigned long rate,
- {
- 	struct clk_regmap_div *divider = to_clk_regmap_div(hw);
- 	struct clk_regmap *clkr = &divider->clkr;
--	u32 div;
-+	int div;
- 
- 	div = divider_get_val(rate, parent_rate, NULL, divider->width,
--			      CLK_DIVIDER_ROUND_CLOSEST);
-+			      CLK_DIVIDER_ROUND_CLOSEST | divider->flags);
-+	if (div < 0)
-+		return div;
- 
- 	return regmap_update_bits(clkr->regmap, divider->reg,
- 				  (BIT(divider->width) - 1) << divider->shift,
--				  div << divider->shift);
-+				  (u32)div << divider->shift);
- }
- 
- static unsigned long div_recalc_rate(struct clk_hw *hw,
-@@ -65,7 +68,8 @@ static unsigned long div_recalc_rate(struct clk_hw *hw,
- 	div &= BIT(divider->width) - 1;
- 
- 	return divider_recalc_rate(hw, parent_rate, div, NULL,
--				   CLK_DIVIDER_ROUND_CLOSEST, divider->width);
-+				   CLK_DIVIDER_ROUND_CLOSEST | divider->flags,
-+				   divider->width);
- }
- 
- const struct clk_ops clk_regmap_div_ops = {
-diff --git a/drivers/clk/qcom/clk-regmap-divider.h b/drivers/clk/qcom/clk-regmap-divider.h
-index e75a65c3839c..4fde766b2633 100644
---- a/drivers/clk/qcom/clk-regmap-divider.h
-+++ b/drivers/clk/qcom/clk-regmap-divider.h
-@@ -13,6 +13,7 @@ struct clk_regmap_div {
- 	u32			reg;
- 	u32			shift;
- 	u32			width;
-+	unsigned long		flags;
- 	struct clk_regmap	clkr;
+diff --git a/drivers/clk/qcom/ipq-cmn-pll.c b/drivers/clk/qcom/ipq-cmn-pll.c
+index 4fdf78f6829e..c86f7982607c 100644
+--- a/drivers/clk/qcom/ipq-cmn-pll.c
++++ b/drivers/clk/qcom/ipq-cmn-pll.c
+@@ -96,10 +96,13 @@ struct cmn_pll_fixed_output_clk {
+  * struct clk_cmn_pll - CMN PLL hardware specific data
+  * @regmap: hardware regmap.
+  * @hw: handle between common and hardware-specific interfaces
++ * @div2_hw: fixed /2 clock derived from the CMN PLL output; present on
++ *           every supported SoC.
+  */
+ struct clk_cmn_pll {
+ 	struct regmap *regmap;
+ 	struct clk_hw hw;
++	struct clk_hw *div2_hw;
  };
  
+ #define CLK_PLL_OUTPUT(_id, _name, _rate) {		\
+@@ -362,6 +365,7 @@ static int ipq_cmn_pll_register_clks(struct platform_device *pdev)
+ 	const struct cmn_pll_fixed_output_clk *p, *fixed_clk;
+ 	struct clk_hw_onecell_data *hw_data;
+ 	struct device *dev = &pdev->dev;
++	struct clk_cmn_pll *cmn_pll;
+ 	struct clk_hw *cmn_pll_hw;
+ 	unsigned int num_clks;
+ 	struct clk_hw *hw;
+@@ -388,6 +392,14 @@ static int ipq_cmn_pll_register_clks(struct platform_device *pdev)
+ 	if (IS_ERR(cmn_pll_hw))
+ 		return PTR_ERR(cmn_pll_hw);
+ 
++	cmn_pll = to_clk_cmn_pll(cmn_pll_hw);
++	cmn_pll->div2_hw = devm_clk_hw_register_fixed_factor_parent_hw(dev,
++								       "cmn_pll_div2",
++								       cmn_pll_hw,
++								       0, 1, 2);
++	if (IS_ERR(cmn_pll->div2_hw))
++		return PTR_ERR(cmn_pll->div2_hw);
++
+ 	/* Register the fixed rate output clocks. */
+ 	for (i = 0; i < num_clks; i++) {
+ 		struct clk_parent_data pdata = { .hw = cmn_pll_hw };
 
 -- 
 2.43.0
