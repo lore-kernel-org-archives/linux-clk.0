@@ -1,204 +1,120 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1D0244A41A;
-	Mon,  7 Sep 2026 09:30:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2BDA448CE9;
+	Mon,  7 Sep 2026 09:42:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788773434; cv=none; b=elJLaRpZsZJ5ne5PLXbZsTlB1V3s8Qw42uHEzdiXB5c5uNG3UhS53dN7N1JTYJ9gSreiXpUIzg86vUPIigTPPFfDiaS3vM5K2BgO8HaOysJZELGE5COhFcgoNQgz1RbbjhIX8IqqmHVx5UfKaQoVhMThCVOvdVqhDO/hf+bdXRQ=
+	t=1788774174; cv=none; b=X1fwyq/mtj//Hv91tW6tVNbihN3HQrIYfbT/Zp9USQo2b72gUfx4cJwhudcL+Fyx1JOQq/pXguscZt1Os/5i6znp4qRLzs2Z3gKuQkPxnDEZx8QDrHYD/tG1nQ9odSDDdRobmpPXdTGHU3eNr/ZQqsA7Nozs5fwnNU9mqY+fHlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788773434; c=relaxed/simple;
-	bh=r5QjrFAZtSkTFwOWAs/qFvVvo8FOH/iWvMtmoLDe4uU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=KT9dsxHw6lp6Da2hQ6pTE2rtxjFs3n9Etulkv1NBrldcImKX4buvx3q2o9APXhQKd/KUGqKtSBVsqO7Bf/UhI4aJ22tlCwUIo3Irz/ojGJ7grsgDr5Cu03DkpFvBH86XzOhp/Tgtjyw68Wu8JWPoJ8fNk/a6VCwRg1uF7AGbsvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=JUptlJ+n; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1788774174; c=relaxed/simple;
+	bh=c+v5bmdUa3LX5kSeck4CYkmcvzmWAY945c2isXce0KA=;
+	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=bXpHds+/p7tpyrTy4newUHqsaYnKDvlGNU3Jn4BZWIufQEoA26gbbXPh2qD9eQEN5yXvMODYJ4hBf7fC9sSO4Mj1Xih+zQAdtcANMRG09oe9lbhvi/q+S/W5/aSJarmspIuCV5/xkxpkgspHZbA9+qQPF6xeAsbW3CgL8hBk9XQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ThXAav+V; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="JUptlJ+n"
-Received: from [127.0.1.1] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id B9D8C153F;
-	Mon,  7 Sep 2026 11:28:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1788773333;
-	bh=r5QjrFAZtSkTFwOWAs/qFvVvo8FOH/iWvMtmoLDe4uU=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=JUptlJ+ngrtn2ey+0GQH+CsU1MWdqaOuTnY65LyMwuddIbYGqkgYMqdAQz5rC+Jf+
-	 tAkwcvp7+45tGNvGm1Itb1dU2PR33ug0yecajsFrOwJeQ91OGHb1iWwfDg2Yaco42P
-	 4+5LQGo0gjP6GhqLfnvrKPNugfe4yx05Dvum09vA=
-From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Date: Mon, 07 Sep 2026 12:29:45 +0300
-Subject: [PATCH v6 6/6] arm64: dts: renesas: white-hawk: Add second mini-DP
- output support
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ThXAav+V"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 049221F00A3A;
+	Mon,  7 Sep 2026 09:42:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788774172;
+	bh=UkvRBTt8pkA8VEUwAYaOuhNKPkFMbDmktaGuHho3y1s=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=ThXAav+Vm7TqfWfMzyyxY2Ahg/SAvyCsqFdt4apHOU+/9J/7qB4E2gncOdRSMwe+7
+	 hc7j0miuCfDH7tnGZV/J0UUEPwyYfytjB8CEewiATb6jv+uKHNxga6AsLG9g309701
+	 CWXBAT+fYZOfNCslYKQO+TJlAQcOWhGPm3X6MYTFCqClY9DDtsEeI1VuWybzZXmGRg
+	 FwjSB5C1ZkmELhRzK0Q/x8W4Q2oJTVxQG5AfU5e/rMGG3hqB8ViPmadc+AvOmobotg
+	 ssesRkePWa/6pA8010VP+LLvd/C+AhJB4tvKHzZfdj3ahjJZYeamlANOuqxoetj6aC
+	 DeZSE9eN/uJPw==
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v6 2/6] drm/rcar-du: dsc: Add rudimentary Renesas R-Car
+ V4H DSC driver
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Tomi Valkeinen" <tomi.valkeinen+renesas@ideasonboard.com>
+Cc: dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org, wsa+renesas@sang-engineering.com
+In-Reply-To: <20260907-rcar-du-dsc-v6-2-f8ef711a7494@ideasonboard.com>
+References: <20260907-rcar-du-dsc-v6-0-f8ef711a7494@ideasonboard.com>
+ <20260907-rcar-du-dsc-v6-2-f8ef711a7494@ideasonboard.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 07 Sep 2026 09:42:51 +0000
+Message-Id: <20260907094252.049221F00A3A@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260907-rcar-du-dsc-v6-6-f8ef711a7494@ideasonboard.com>
-References: <20260907-rcar-du-dsc-v6-0-f8ef711a7494@ideasonboard.com>
-In-Reply-To: <20260907-rcar-du-dsc-v6-0-f8ef711a7494@ideasonboard.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
- Marek Vasut <marek.vasut+renesas@mailbox.org>, 
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
- Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- devicetree@vger.kernel.org, 
- Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2815;
- i=tomi.valkeinen+renesas@ideasonboard.com; h=from:subject:message-id;
- bh=wbg5CCdU/74bk2tdhUnSaOwNMuA62RxSenB5kl7Y1u8=;
- b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBqnoQoXmAApt41W4hmFgpQ0vzEduDxOxe1zFM3J
- 9tyggU/B0GJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCap6EKAAKCRD6PaqMvJYe
- 9UMhEACj0GwqXa3no24EXYHQ5Aoj0q6XN+fUvOTZUM4kvoRpfzNdAtuY5jtAO4bIqJP3+cW/X31
- akFzubpWBe9ARVFyrm4bVCoWKjTsKjSPF0gQyO75jXqiyZBL/4Ui+tJ5o2U0TUkJo6VYEohoIcb
- I1XFuvU53YpcuMr8edTZRCm3g6p1GBR1WFLpgrsZQWZyJHUXWtmV/E1E/1BLnXtUt01nOpBcsFf
- mN5nnVVZGLs5to7dngSsM/ZNEpnxhqCiYReh62sIkJIe0HXSfAuXdMr8Lne+1+ehMpEmjzhj3jS
- EXwuipqKmP3J7bomO7TmST2yc+FOD/vfIVD6lSRrBqA9ERIMTCSTfP03/Z0BkqTpOJslw827IkS
- /dm11P85NQXmHpgAVVI8wYiYDpXEOA3IptY4cG9hTPsxrewOUe0obbv3Jkbq9JNb6MgEP17YwZu
- ToV6kv7ygmvvviXMgz6yjPgUPPaes2++uSPEp6KnXIPAX/ryKuvFLMhVPkssQwaajuHqFhY+nEA
- lY5c92NEazTiKZBov2OXE2xfYu1Ij/tRjA8xeEWfNMtWL+2n4Gg8k0e31UV8udx8SYN7gKMuBae
- GKUWx8rcHP9+G5cNdAgRmbjaRELSbMKwqnhmPLcSJei4zq9yPDpZ9SWicAFGnUc6LOlwig/KM2h
- dPjmzrqKjeiPH2A==
-X-Developer-Key: i=tomi.valkeinen+renesas@ideasonboard.com; a=openpgp;
- fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
+- [High] Lifecycle teardown order inversion between manual PM runtime disab=
+le and devres bridge removal.
+--
 
-Add support for the mini-DisplayPort connector on the White Hawk
-BreakOut board. This connector is driven by a TI SN65DSI86 DSI to eDP
-bridge, which in turn gets the pixel data from the second DSI channel on
-the R-Car V4H SoC. Note that this port is not present on the White Hawk
-Single development board.
+commit a2a78077050a0efecae114552f483f67a6423d4c
+Author: Marek Vasut <marek.vasut+renesas@mailbox.org>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[tomi.valkeinen: added status=okay for dsc]
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
----
- .../arm64/boot/dts/renesas/r8a779g0-white-hawk.dts | 94 ++++++++++++++++++++++
- 1 file changed, 94 insertions(+)
+drm/rcar-du: dsc: Add rudimentary Renesas R-Car V4H DSC driver
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk.dts b/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk.dts
-index 784d4e8b204c..89d60b83ac4f 100644
---- a/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk.dts
-@@ -12,4 +12,98 @@
- / {
- 	model = "Renesas White Hawk CPU and Breakout boards based on r8a779g0";
- 	compatible = "renesas,white-hawk-breakout", "renesas,white-hawk-cpu", "renesas,r8a779g0";
-+
-+	sn65dsi86_refclk2: clk-x16 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <38400000>;
-+	};
-+
-+	mini-dp-con2 {
-+		compatible = "dp-connector";
-+		label = "CN15";
-+		type = "mini";
-+
-+		port {
-+			mini_dp_con_in2: endpoint {
-+				remote-endpoint = <&sn65dsi86_out2>;
-+			};
-+		};
-+	};
-+};
-+
-+&dsc {
-+	status = "okay";
-+};
-+
-+&dsi1 {
-+	status = "okay";
-+
-+	ports {
-+		port@1 {
-+			dsi1_out: endpoint {
-+				remote-endpoint = <&sn65dsi86_in2>;
-+				data-lanes = <1 2 3 4>;
-+			};
-+		};
-+	};
-+};
-+
-+&i2c4 {
-+	pinctrl-0 = <&i2c4_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+	clock-frequency = <400000>;
-+
-+	bridge@2c {
-+		pinctrl-0 = <&irq1_pins>;
-+		pinctrl-names = "default";
-+
-+		compatible = "ti,sn65dsi86";
-+		reg = <0x2c>;
-+
-+		clocks = <&sn65dsi86_refclk2>;
-+		clock-names = "refclk";
-+
-+		interrupts-extended = <&intc_ex 1 IRQ_TYPE_LEVEL_HIGH>;
-+
-+		enable-gpios = <&gpio1 27 GPIO_ACTIVE_HIGH>;
-+
-+		vccio-supply = <&reg_1p8v>;
-+		vpll-supply = <&reg_1p8v>;
-+		vcca-supply = <&reg_1p2v>;
-+		vcc-supply = <&reg_1p2v>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				sn65dsi86_in2: endpoint {
-+					remote-endpoint = <&dsi1_out>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+				sn65dsi86_out2: endpoint {
-+					remote-endpoint = <&mini_dp_con_in2>;
-+				};
-+			};
-+		};
-+	};
-+};
-+
-+&pfc {
-+	i2c4_pins: i2c4 {
-+		groups = "i2c4";
-+		function = "i2c4";
-+	};
-+
-+	irq1_pins: irq1 {
-+		groups = "intc_ex_irq1_a";
-+		function = "intc_ex";
-+	};
- };
+The Renesas DSC Display Stream Compression is a bridge embedded in the
+Renesas R-Car V4H SoC. The bridge performs VESA DSC encoding of up to
+8k or 400 Mpixel/s. Add rudimentary driver, which currently acts as a
+pass-through bridge and allows DSI1 to be operational on R-Car V4H.
 
--- 
-2.43.0
+> diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_dsc.c b/drivers/gpu/drm=
+/renesas/rcar-du/rcar_dsc.c
+> new file mode 100644
+> index 0000000000000..1882ae34ce8f5
+> --- /dev/null
+> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_dsc.c
+[ ... ]
+> +static void rcar_dsc_atomic_enable(struct drm_bridge *bridge,
+> +				   struct drm_atomic_commit *commit)
+> +{
+> +	struct rcar_dsc *dsc =3D bridge_to_rcar_dsc(bridge);
+> +
+> +	WARN_ON(pm_runtime_get_sync(dsc->dev) < 0);
+> +}
+[ ... ]
+> +static int rcar_dsc_probe(struct platform_device *pdev)
+> +{
+[ ... ]
+> +	pm_runtime_enable(&pdev->dev);
+> +
+> +	ret =3D devm_drm_bridge_add(dev, &dsc->bridge);
+> +	if (ret)
+> +		goto err_runtime_disable;
+> +
+> +	return 0;
+> +
+> +err_runtime_disable:
+> +	pm_runtime_disable(&pdev->dev);
+> +
+> +	return ret;
+> +}
+> +
+> +static void rcar_dsc_remove(struct platform_device *pdev)
+> +{
+> +	pm_runtime_disable(&pdev->dev);
+> +}
 
+[Severity: High]
+Does this create a lifecycle teardown order inversion during driver unbind?
+
+When the driver is unbound, the driver core executes the manual
+rcar_dsc_remove() callback first, which calls pm_runtime_disable(). Only
+afterwards does the devres infrastructure execute drm_bridge_remove()
+(registered via devm_drm_bridge_add() in rcar_dsc_probe()), removing the
+bridge from the system.
+
+During this window, the DRM bridge remains active and accessible to the DRM
+core after its power management has been disabled. If an atomic commit occu=
+rs
+during this time, rcar_dsc_atomic_enable() will invoke pm_runtime_get_sync(=
+),
+which will fail since PM runtime is disabled. This triggers a WARN_ON and
+leaves the hardware unpowered.
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260907-rcar-du-ds=
+c-v6-0-f8ef711a7494@ideasonboard.com?part=3D2
