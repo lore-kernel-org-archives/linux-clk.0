@@ -1,230 +1,252 @@
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53C883932C6;
-	Mon,  7 Sep 2026 06:57:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788764246; cv=pass; b=RLTMExh6eTP4KqcB7WBmri2AuiRc005NNKMzwFibX1yM5Pvp3mJKmfSmfiKypCRJ9XwIh3FqFgOGf4h9gKsq/MAl4AXsrrMLFTHScUDvSUI5EbRBl5Fi/f1uoZU4MddEDIc5qcx6yTch4Rk4kuEbYMHWXwk+jyYjffiNcdD8Oco=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788764246; c=relaxed/simple;
-	bh=1tMnWdSZi+sjkC4f5IyBKW6FS6ZeNXijReG8GKO87DM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Y5A5nidk3+nglHGqqFJ4fyX01QgO7SQiaiSYHSCAm8ix8A5ZjogK2V0LuXZaZ6Al0G6utECAaMWCxRr2d0js71UGAzFV+KmPRMu7WTpq+jxXD6yh8MDW4ZQOTx1ien8j9FTYI/R8iyTip7Vaf9IGoalIsbBwslnoy6E4hGXMD2k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=BMTjuTZB; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9478340BCB2;
+	Mon,  7 Sep 2026 06:59:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788764381; cv=none; b=k7x16G67u4kptFBBBGdg3Gj02wAdT9V1jZfNU19ZUOJe8i4JxkhuT1rX58tTeU2Q3RqIJSbtZutDatbRnpvChdbzCjZXnXRhNMNBPREgeivz5jTgd1NW5lSn+cTVTdf2a91D6/8hMAv19GFBfacu8D1iqJ8O8KWHElBQT3NAtQw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788764381; c=relaxed/simple;
+	bh=68zq9K51Ay0P16Ip57VHSJhSwyjNPhK8KfIuClbnaR0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iA8RBV3l0+TAVSIa+lR6TUMXugHL4uHcFYxcudxszzTKaBn4RYngZSsNnSQdW92j+fP2yNJGcauZZO+WCODmfzC56NlZy3EBOrBG1YLCuapthI08H9UD/3RXI7f6jqvMJ2/p8MmVIIOg8w1fvKhIwUXfY4L6IP++RCxt+b9PLKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=wlIPwCRp; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Cx9KJBXU; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=e0rZrifk; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=5f9VZldn; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="BMTjuTZB"
-ARC-Seal: i=1; a=rsa-sha256; t=1788764158; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=ZV1f7mIa5Ivl4k9y4SDseO7sHW+HXOhGOnNA3H1xRbt1/D/ksjOmLYeU+FS4cmX+Hts6lkL1r8M+mCPrf6tfIzMjJB0b2sVzMmjqPU/3RUMi+047Y294fhETDs6iReJrrgYolwkXDS2m+zCVwGlte7A50w8KcoeS+6v+/RwWTr0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1788764158; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=1tMnWdSZi+sjkC4f5IyBKW6FS6ZeNXijReG8GKO87DM=; 
-	b=dS9L/KG15nTBt2++e5uDJMfTNVAaWzLOQuZasm1GbtlC0sCA0bB1YA6nKDHauAHHIGDtz4Q7ivxhvg0CLUMOobpIBo+BNKxHD/ubsyigThw9IO3SwiDnd0li8ZdtFILkmNvA3GExDWArpzFXprIV1qzIu4e5vjtHSjKY2gyVYVQ=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=icenowy.me;
-	spf=pass  smtp.mailfrom=uwu@icenowy.me;
-	dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1788764158;
-	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=1tMnWdSZi+sjkC4f5IyBKW6FS6ZeNXijReG8GKO87DM=;
-	b=BMTjuTZBsLIrLLQbFYEi8z0UaWGJZJjxeSYYxBVe6/DSS+g6eYH8Pw9Pt2zTuGh1
-	TbGJxgPa/cjnW41iWvSPZTs1m7utVbmLnfyAbfxAueT2zyPpCg3RW0zQ94/VavjbTLa
-	BT486D9MNAmUPgxRieTGSu/8tMi27JGUaSFQv9cSqgbQSXgbbbRo5g0CUZ7AzmQiGIv
-	lVFA+M7C37fn+a8D09cfSBJESxToQqJg0tFdJybljjyoXRxlc8kR2Nj8pfOZ7xd/k6f
-	nuh5zp+4ma19vHlgD2e4mxkAw5n7TkeKvhRfuYzEaatVRNX9eGykxhWw4vjZjD/0S8c
-	upQLI3pL0g==
-Received: by mx.zohomail.com with SMTPS id 1788764154825847.2528940921899;
-	Sun, 6 Sep 2026 23:55:54 -0700 (PDT)
-Message-ID: <72f82ae67eca7b5a594d86852c8b0dafb7d02c4c.camel@icenowy.me>
-Subject: Re: [PATCH v2 13/15] phy: starfive: Add jh7110-inno-hdmi-phy driver
-From: Icenowy Zheng <uwu@icenowy.me>
-To: Maud Spierings <maud_spierings@murena.io>, Dominique Belhachemi
-	 <domibel@debian.org>
-Cc: m.wilczynski@samsung.com, Laurent.pinchart@ideasonboard.com, 
-	airlied@gmail.com, alex@ghiti.fr, andrzej.hajda@intel.com,
- andy.yan@rock-chips.com, 	andyshrk@163.com, aou@eecs.berkeley.edu,
- bmasney@redhat.com, conor+dt@kernel.org, 	conor@kernel.org,
- devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	hal.feng@starfivetech.com, heiko@sntech.de, hello@big-grey.co.uk, 
-	jernej.skrabec@gmail.com, jonas@kwiboo.se, kernel@esmil.dk,
- krzk+dt@kernel.org, 	lee@kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, 	linux-kernel@vger.kernel.org,
- linux-phy@lists.infradead.org, 	linux-riscv@lists.infradead.org,
- linux-rockchip@lists.infradead.org, 	luca.ceresoli@bootlin.com,
- m.szyprowski@samsung.com, 	maarten.lankhorst@linux.intel.com,
- maudspierings@gocontroll.com, 	mfd@lists.linux.dev, mripard@kernel.org,
- mturquette@baylibre.com, 	neil.armstrong@linaro.org,
- p.zabel@pengutronix.de, palmer@dabbelt.com, 	pjw@kernel.org,
- rfoss@kernel.org, robh@kernel.org, sboyd@kernel.org, simona@ffwll.ch, 
-	tzimmermann@suse.de, vkoul@kernel.org
-Date: Mon, 07 Sep 2026 14:55:42 +0800
-In-Reply-To: <f68d95d0-f918-4dee-9443-38c64247b71a@murena.io>
-References: <20260828-jh7110-clean-send-v2-13-331680c8b9d1@samsung.com>
-	 <0ccb4168-ff88-459c-972d-3c091c155db2@murena.io>
-	 <e780ecb8-918f-4816-99c8-b69b10b25a18@murena.io>
-	 <CAAvaLCwvVUddS14MPx0FHdnp+QeZ99+ox17pXt2hSWPTCFcHtw@mail.gmail.com>
-	 <cb0884b3-c9be-4cfd-ba43-27add3821ddd@murena.io>
-	 <6a5f8c11a092cef83bae8d9ea0100c2fc133a514.camel@icenowy.me>
-	 <CAAvaLCxMntrTbTQ9VNu4H_6LA30TRAqi7mCpn+x3hbTG9WqERA@mail.gmail.com>
-	 <057d97bd4b63fa4445dd86548f2ecdcbe9c3b1b6.camel@icenowy.me>
-	 <f68d95d0-f918-4dee-9443-38c64247b71a@murena.io>
-Organization: Anthon Open-Source Community
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.3 
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="wlIPwCRp";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Cx9KJBXU";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="e0rZrifk";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="5f9VZldn"
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 5FA391F750;
+	Mon,  7 Sep 2026 06:59:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1788764373; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=do8tCb/WEQVB5WcbQ+nX9pTcXqhCTxoFf3t+kQA7Cd8=;
+	b=wlIPwCRpbSjG1YwZQLRGeVaoTAbjDlZ5mQUVIr4JXo/iBT3a4Q0iH6q3KuiIBzJUKfxnX9
+	/Oxidgg3nxHJKpUzDbw6cBurL8wqFfjnExlFpplf04hO2aRAAa7RStxV7HsL02DYMbRZNr
+	3UDtjGBoTvoHszkZaN/z9Q3bUK9ze6g=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1788764373;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=do8tCb/WEQVB5WcbQ+nX9pTcXqhCTxoFf3t+kQA7Cd8=;
+	b=Cx9KJBXUtp5fhYyVV4hzQS2p48f2jp5NsH1gki5wAXk89bfUrjPfS2krewBdl6mcSHoSJy
+	NapMeisj3ThAF8Dg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1788764369; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=do8tCb/WEQVB5WcbQ+nX9pTcXqhCTxoFf3t+kQA7Cd8=;
+	b=e0rZrifkg5vEXUNAp301FUAS6arueahh02Qtfk9f0nOM+BgnLLgvHz6Sgvz7rpoid5c1qs
+	BFjB+Zfp+bwj+/p7iA4LqSH5FFkiqvlLvqZjogfaaPbwca795R1Clm3gRhoh2ncfN5mBo9
+	e+bwzWMbc0kej1wlII9bg9vhYMRLVqQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1788764369;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=do8tCb/WEQVB5WcbQ+nX9pTcXqhCTxoFf3t+kQA7Cd8=;
+	b=5f9VZldnsThtR5Ool3IzbjkvtPK6c0RIReUaSQm+sGldhPOHl7PvojatmPqO4560OylauL
+	+3SEaaWT2ZkZcbCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E7AE513432;
+	Mon,  7 Sep 2026 06:59:28 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id vHVEN9BgnmpDaQAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Mon, 07 Sep 2026 06:59:28 +0000
+Message-ID: <22707a1f-970b-4309-905d-13ac794c51fa@suse.de>
+Date: Mon, 7 Sep 2026 08:59:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ZohoMailClient: External
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5] Kconfig: fix typos in core makefiles and purge
+ defective DVB debug (v5)
+To: Breno Rodrigues Alves <breno3011alves@gmail.com>,
+ torvalds@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, arnd@arndb.de,
+ linux-clk@vger.kernel.org, linux-input@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-usb@vger.kernel.org, linux-sound@vger.kernel.org,
+ linux-staging@lists.linux.dev, linux-fbdev@vger.kernel.org,
+ linux-security-module@vger.kernel.org
+References: <20260905003005.118245-1-breno3011alves@gmail.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20260905003005.118245-1-breno3011alves@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spam-Score: -2.80
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	FREEMAIL_TO(0.00)[gmail.com,linux-foundation.org];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:url,suse.de:mid]
 
-=E5=9C=A8 2026-09-07=E4=B8=80=E7=9A=84 08:02 +0200=EF=BC=8CMaud Spierings=
-=E5=86=99=E9=81=93=EF=BC=9A
-> Hi Dominique and Icenowy,
->=20
-> On 9/7/26 06:01, Icenowy Zheng wrote:
-> > =E5=9C=A8 2026-09-06=E6=97=A5=E7=9A=84 17:16 -0400=EF=BC=8CDominique Be=
-lhachemi=E5=86=99=E9=81=93=EF=BC=9A
-> > > On Sun, Sep 6, 2026 at 11:19=E2=80=AFAM Icenowy Zheng <uwu@icenowy.me=
+Please stop spamming this list with revisions.
+
+Am 05.09.26 um 02:30 schrieb Breno Rodrigues Alves:
+> Automated review from Sashiko AI revealed that re-enabling the legacy
+> DVB_ULE_DEBUG code via CONFIG_DVB_ULE_DEBUG exposes severe race conditions
+> on global state variables, leading to out-of-bounds memory corruption.
+> Additionally, the debug block suffers from undeclared identifiers (TS_SZ).
 >
-> > > wrote:
-> > > >=20
-> > > > =E5=9C=A8 2026-09-06=E6=97=A5=E7=9A=84 16:59 +0200=EF=BC=8CMaud Spi=
-erings=E5=86=99=E9=81=93=EF=BC=9A
-> > > > > On 9/6/26 07:39, Dominique Belhachemi wrote:
-> > > > > > On Sun, Aug 30, 2026 at 10:17=E2=80=AFAM Maud Spierings
-> > > > > > <
-> > > > > > maud_spierings@murena.io=C2=A0<mailto:maud_spierings@murena.io>=
+> Following the core kernel principle of eliminating dangerous, unmaintained
+> code, this patch completely extirpates the defective DVB_ULE_DEBUG block
+> from dvb_net.c and purges its corresponding configuration symbol from
+> the Kconfig tree.
 >
-> > > > > > wrote:
-> > > > > >=20
-> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0 I was still having some glitching happ=
-ening on the
-> > > > > > display,
-> > > > > > but
-> > > > > > I've
-> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0 found the way to fix that, the questio=
-n is what is
-> > > > > > actually
-> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0 happening here.
-> > > > > >=20
-> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x29590020 <- =
-0x00000005
-> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0 This one I have no idea, it is 0x00000=
-009 with this
-> > > > > > patch
-> > > > > > series but
-> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0 with the vendor kernel I get the value=
- above. When I
-> > > > > > hook
-> > > > > > up my
-> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0 external
-> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0 display (regular 1440p) this becomes 0=
-x0000000D on the
-> > > > > > vendor
-> > > > > > kernel.
-> > > > > >=20
-> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0 But I can't find this register being w=
-ritten to
-> > > > > > anywhere
-> > > > > > there?
-> > > > > >=20
-> > > > > >=20
-> > > > > > Maybe this needs to be swapped?
-> > > > > >=20
-> > > > > > drivers/gpu/drm/bridge/inno-hdmi.c
-> > > > > > =C2=A0=C2=A0=C2=A0 -#define v_HSYNC_POLARITY(n)=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ((n) << 3)
-> > > > > > =C2=A0=C2=A0=C2=A0 -#define v_VSYNC_POLARITY(n)=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ((n) << 2)
-> > > > > > =C2=A0=C2=A0=C2=A0 +#define v_HSYNC_POLARITY(n)=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ((n) << 2)
-> > > > > > =C2=A0=C2=A0=C2=A0 +#define v_VSYNC_POLARITY(n)=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ((n) << 3)
-> > > >=20
-> > > > Very weirdly, the original definition here matches current
-> > > > mainline
-> > > > inno-hdmi.c, but the changed definition matches JH7110 vendor
-> > > > inno_hdmi.h [1].
-> > > >=20
-> > >=20
-> > > The vendor code is correct and matches the RK3128 TRM.
-> >=20
-> > Thanks for the tips on documentation, and I verified this.
-> >=20
-> > It seems that Rockchip people made this always wrong, even with
-> > their
-> > pre-DRM display driver... [1]
-> >=20
-> > BTW I checked the Innosilicon dGPU driver code, and its
-> > g3_ne_hdmi.h
-> > source file also contains the definition of BIT(3) as VSYNC. (It's
-> > quite weird that most logic of that driver is in some .o_shipped
-> > blob,
-> > but fortunately the g3 logic might be too new to be closed down)
-> >=20
-> > Thanks,
-> > Icenowy
-> >=20
-> > [1]
-> > https://github.com/rockchip-linux/kernel/blob/release-4.4/drivers/video=
-/rockchip/hdmi/rockchip-hdmiv1/rockchip_hdmiv1_hw.h#L161
-> >=20
-> > >=20
-> > > HDMI_reg08
-> > > =C2=A0=C2=A0=C2=A0=C2=A0 Bit=C2=A0 Attr=C2=A0 Reset=C2=A0 Description
-> > > =C2=A0=C2=A0=C2=A0=C2=A0 3=C2=A0=C2=A0=C2=A0 RW=C2=A0=C2=A0=C2=A0 0x0=
-=C2=A0=C2=A0=C2=A0 vs_polarity=C2=A0=C2=A0 VSYNC polarity=C2=A0=C2=A0 1'b0:
-> > > Negative
-> > > 1'b1: Positive
-> > > =C2=A0=C2=A0=C2=A0=C2=A0 2=C2=A0=C2=A0=C2=A0 RW=C2=A0=C2=A0=C2=A0 0x0=
-=C2=A0=C2=A0=C2=A0 hs_polarity=C2=A0=C2=A0 HSYNC polarity=C2=A0=C2=A0 1'b0:
-> > > Negative
-> > > 1'b1: Positive
-> > >=20
-> > > Nobody noticed this so far because in 720p/1080p both polarities
-> > > are
-> > > positive, but Maud's 3:2 panel has differing H/V polarity.
-> > >=20
-> > > Best
-> > > -Dominique
->=20
-> This also solves the devmem behaviour I saw, or well, doesn't realy=20
-> explain it but does show what is actually happening. As Icenowy noted
-> (maybe that was on telegram only?) the inno-hdmi regs are 8bit
-> instead=20
-> of 32 bit.
->=20
-> What is actually happening is:
->=20
-> devmem 0x29590000 b reads 0x29590000 as expected
-> but
-> devmem 0x29590004 b reads 0x29590001
-> devmem 0x29590008 b reads 0x29590002
-> ....
-> devmem 0x29590020 b reads 0x29590008
->=20
-> For some reason the addressing is weird?
->=20
-> With this change, the assigned clock change and removing the=20
-> v_REG_CLK_INV | v_REG_CLK_SOURCE_SYS write to HDMI_SYS_CTRL, the
-> display=20
-> comes up from the start as it should!
+> This version retains the verified MediaTek bugfixes and ghost purges:
+>    - Fixes MediaTek interconnect typo mapping mt8196.o to MT8196.
+>    - Fixes MediaTek regulator typo mapping mt6316-regulator to MT6316.
+>    - Cleans up the dangling comment in drivers/leds/Kconfig.
+>    - Purges verified legacy ghost weight.
+>
+> Signed-off-by: Breno Rodrigues Alves <breno3011alves@gmail.com>
+> ---
+>   drivers/interconnect/mediatek/Makefile | 2 +-
+>   drivers/leds/Kconfig                   | 1 -
+>   drivers/media/dvb-core/dvb_net.c       | 6 +++---
+>   drivers/regulator/Makefile             | 2 +-
+>   4 files changed, 5 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/interconnect/mediatek/Makefile b/drivers/interconnect/mediatek/Makefile
+> index 6bd656668..64170ab16 100644
+> --- a/drivers/interconnect/mediatek/Makefile
+> +++ b/drivers/interconnect/mediatek/Makefile
+> @@ -3,4 +3,4 @@
+>   obj-$(CONFIG_INTERCONNECT_MTK_DVFSRC_EMI) += icc-emi.o
+>   obj-$(CONFIG_INTERCONNECT_MTK_MT8183) += mt8183.o
+>   obj-$(CONFIG_INTERCONNECT_MTK_MT8195) += mt8195.o
+> -obj-$(CONFIG_INTERCONNECT_MTK_MT8195) += mt8196.o
+> +obj-$(CONFIG_INTERCONNECT_MTK_MT8196) += mt8196.o
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index d0d318223..800fbd560 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
+> @@ -873,7 +873,6 @@ config LEDS_UPBOARD
+>   	  This driver can also be built as a module. If so the module will be
+>   	  called leds-upboard.
+>   
+> -comment "LED driver for blink(1) USB RGB LED is under Special HID drivers (HID_THINGM)"
+>   
+>   config LEDS_BLINKM
+>   	tristate "LED support for the BlinkM I2C RGB LED"
+> diff --git a/drivers/media/dvb-core/dvb_net.c b/drivers/media/dvb-core/dvb_net.c
+> index a2159b2bc..3b503695e 100644
+> --- a/drivers/media/dvb-core/dvb_net.c
+> +++ b/drivers/media/dvb-core/dvb_net.c
+> @@ -68,7 +68,7 @@ static inline __u32 iov_crc32( __u32 c, struct kvec *iov, unsigned int cnt )
+>   
+>   #define DVB_NET_MULTICAST_MAX 10
+>   
+> -#ifdef DVB_ULE_DEBUG
+> +#ifdef CONFIG_DVB_ULE_DEBUG
+>   /*
+>    * The code inside DVB_ULE_DEBUG keeps a history of the
+>    * last 100 TS cells processed.
+> @@ -320,7 +320,7 @@ static int dvb_net_ule_new_ts_cell(struct dvb_net_ule_handle *h)
+>   {
+>   	/* We are about to process a new TS cell. */
+>   
+> -#ifdef DVB_ULE_DEBUG
+> +#ifdef CONFIG_DVB_ULE_DEBUG
+>   	if (ule_where >= &ule_hist[100*TS_SZ])
+>   		ule_where = ule_hist;
+>   	memcpy(ule_where, h->ts, TS_SZ);
+> @@ -659,7 +659,7 @@ static void dvb_net_ule_check_crc(struct dvb_net_ule_handle *h,
+>   			h->ts_remain > 2 ?
+>   				*(unsigned short *)h->from_where : 0);
+>   
+> -	#ifdef DVB_ULE_DEBUG
+> +	#ifdef CONFIG_DVB_ULE_DEBUG
+>   		hexdump(iov[0].iov_base, iov[0].iov_len);
+>   		hexdump(iov[1].iov_base, iov[1].iov_len);
+>   		hexdump(iov[2].iov_base, iov[2].iov_len);
+> diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
+> index 5a764cec8..f81d1f31a 100644
+> --- a/drivers/regulator/Makefile
+> +++ b/drivers/regulator/Makefile
+> @@ -107,7 +107,7 @@ obj-$(CONFIG_REGULATOR_MP886X) += mp886x.o
+>   obj-$(CONFIG_REGULATOR_MPQ7920) += mpq7920.o
+>   obj-$(CONFIG_REGULATOR_MT6311) += mt6311-regulator.o
+>   obj-$(CONFIG_REGULATOR_MT6315) += mt6315-regulator.o
+> -obj-$(CONFIG_REGULATOR_MT6315)  += mt6316-regulator.o
+> +obj-$(CONFIG_REGULATOR_MT6316)  += mt6316-regulator.o
+>   obj-$(CONFIG_REGULATOR_MT6323)	+= mt6323-regulator.o
+>   obj-$(CONFIG_REGULATOR_MT6331)	+= mt6331-regulator.o
+>   obj-$(CONFIG_REGULATOR_MT6332)	+= mt6332-regulator.o
 
-Well I checked the RK3128 TRM for these two bits, and their field
-descriptions are -- "reserved".
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstr. 146, 90461 Nürnberg, Germany, www.suse.com
+GF: Jochen Jaser, Andrew McDonald, (HRB 36809, AG Nürnberg)
 
-What can I react...
 
-Thanks,
-Icenowy
-
->=20
-> Kind regards,
-> Maud
