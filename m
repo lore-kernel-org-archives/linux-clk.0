@@ -1,44 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA7C71A0BF3;
-	Mon,  7 Sep 2026 08:38:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0DDC4457A6;
+	Mon,  7 Sep 2026 08:55:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788770291; cv=none; b=k2tIIzAf3pb3doZiHjtDbRRJEQ9HwTggKk4TG+T9A/DT8VfI9IRQB+xSwg5Ay2PXsz7bpsXOYSoocugK5lBnZOYzC+HXrwwepdbiPpab+g3BJ/QINUDCygtg0yetfiFabIg7sX3DBaRMkFANVn2lWxUmsz02Sz7RHq9V01tUyM8=
+	t=1788771317; cv=none; b=EecvYTGQWWmqr6CFSFWGYL4CWFoRh6u34o2BAf5WSzRdKforXKImaj/oSdxIpVbBfzn16b/JFuSGYkjsvSiiuHLu/YQLDwfSFQXHoVk5n9Yh4jlVI6KVQO7Uhyw0g+/fvNkkOCNtoJdGFpOEBn60l1epT7KFA1reNpx6UdAGc6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788770291; c=relaxed/simple;
-	bh=+6Q7P0Y/6VPRMf+xlH1P3A058uEwIR5Aa+OWaBILzX0=;
+	s=arc-20240116; t=1788771317; c=relaxed/simple;
+	bh=eiGMjcZOlAyp41DSqqfFnp7ZC3WMC8whtvMKWZxe4yo=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=Jg163YaUvWilZrnrkp/PDfZmY/1uTwLNG3ZDE2KurcusCY8KStFpUfM0TcR56qXRQocB4VvoNwo1WOij715BHHbPAylDxnGKh8/I3KcUbYLVtxqx4K6kojrSvOLDZJpKiwz5MUhwQKHJB8LnJGDc8aeoTMVUm86Wj3VEJpmoTag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ogJ/vDCX; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=uyLU73I3EtbGOnRzLBw0muq59VyBnn6P8bA+jEQ10uzEGpKSB7DCGLShv8OhAPFpyh/8Y32J9Qs8YrdTwutG/mXtHAFpa1ErtypmyHEgLxq5wmEP2DvPUR7OtSDZcmDeqK+P3jnEhNL1L1RNreAa3R/S6szpHAjkZSERpTbI644=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AV51JbOF; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ogJ/vDCX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BE931F00A3D;
-	Mon,  7 Sep 2026 08:38:09 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AV51JbOF"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C1281F00A3A;
+	Mon,  7 Sep 2026 08:55:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788770289;
-	bh=ZhxaM6qTAZTAXEu6QlTnKt8izppG25MKny5Y37a/p9M=;
+	s=k20260515; t=1788771316;
+	bh=zfw1rO4zgSu2EK6ukXUFO8r3gRLmj4NYDL7wk+A/pkI=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=ogJ/vDCXUkO8mtOQmjkAVdCm0FvH0K4hNQxArTYrqCoU+SStT5O+tCGyXtwDCk3t4
-	 Gw5YXoV0basO0KQBXS/tRXPnjfReGVxZIRbz+fcbZ1f3qzKQ0qAFRUaBjCWkp6GM5q
-	 y3gUul/JNl/IeGB5/0tTPAs0CsmQGoQW26kMPND0zRXMpZzhsyXcaELrXJK9Y3Jvbw
-	 8oKKNc0anMG6GOwtCQOEVPn/qInV+3a5UbNe6kEAwrmNCiTLICWpmYhylx4HnHnoRq
-	 3hv5ZP3PCrB55DwrRWs68y3GOiKurA9kQeWfvuc77NVq9BZ4HjyYRDmylq4RsDV29K
-	 zo3gmPBIqWiLQ==
+	b=AV51JbOF2zVg6+AG/8Dc2a0YAhyygvSKSCJ6sgdVUeJB9oaMJnPYYnnOD6Scm3Dv6
+	 rFbRS796UFqDiQBlJSX5tJ/HuDujF2dkF9QIafzLdaUCtYDg6Th4DNq5/frPhHU3KR
+	 XskeBGxba3iabFjKbihIHDP5zjv5DXCFKrbDs82H0XKTI91XHuc8HuNpQvCxHEfVQi
+	 ftGQms/GomPQTEWUk55vVSMFmq6Yk3LnDqxp5y90bRbYLWgi5jgz7e3U71n0okuTNx
+	 eBNJGzOfr0oHx/jCQcSjntRwj5UvHFALG8aQ6+OUKphar6wQNYzHj8ordjvqBXPA4s
+	 pHBirGNclhsug==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 1/3] clk: qcom: clk-alpha-pll: support a 28-bit
- ALPHA_VAL width
+Subject: Re: [PATCH 3/3] clk: qcom: dprxcc: Add Nord DPRX clock controller
+ support
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Taniya Das" <taniya.das@oss.qualcomm.com>
-Cc: conor+dt@kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org
-In-Reply-To: <20260907-nords_dprx-v1-1-d472af3f01b1@oss.qualcomm.com>
+Cc: linux-clk@vger.kernel.org, conor+dt@kernel.org, robh@kernel.org, devicetree@vger.kernel.org
+In-Reply-To: <20260907-nords_dprx-v1-3-d472af3f01b1@oss.qualcomm.com>
 References: <20260907-nords_dprx-v1-0-d472af3f01b1@oss.qualcomm.com>
- <20260907-nords_dprx-v1-1-d472af3f01b1@oss.qualcomm.com>
+ <20260907-nords_dprx-v1-3-d472af3f01b1@oss.qualcomm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Mon, 07 Sep 2026 08:38:08 +0000
-Message-Id: <20260907083809.1BE931F00A3D@smtp.kernel.org>
+Date: Mon, 07 Sep 2026 08:55:15 +0000
+Message-Id: <20260907085516.0C1281F00A3A@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -47,67 +47,73 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 
 Thank you for your contribution! Sashiko AI review found 1 potential issue(=
 s) to consider:
-
-Pre-existing issues:
-- [High] The function `zonda_pll_adjust_l_val` incorrectly adds the unscale=
-d target frequency `rate` instead of the divided `quotient` to the L-value =
-multiplier.
+- [High] Missing `.use_rpm =3D true` causes register accesses while the pow=
+er domain is disabled.
 --
 
-commit 661ff85b8608f1b3893f18020783320b39a04c99
+commit f58a0767efa8984edb8bffb65390c86a685205cd
 Author: Taniya Das <taniya.das@oss.qualcomm.com>
 
-clk: qcom: clk-alpha-pll: support a 28-bit ALPHA_VAL width
+    clk: qcom: dprxcc: Add Nord DPRX clock controller support
    =20
-This commit introduces support for an optional 28-bit ALPHA_VAL width in the
-clk-alpha-pll driver by adding an alpha_width field. This allows correct
-scaling and calculation for PLLs like the Zonda instances that use a wider
-register for finer fractional resolution.
+    Add support for the DisplayPort Receiver (DPRX) clock controllers on
+    Nord devices. There are two identical DPRX clock controller
+    instances (DPRX0 and DPRX1), each providing clocks for the DPRX core,
+    audio, AHB and video memory paths, along with core PLLs.
 
-> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alph=
-a-pll.c
-> index 60173b076cc5f..981f973da02f3 100644
-> --- a/drivers/clk/qcom/clk-alpha-pll.c
-> +++ b/drivers/clk/qcom/clk-alpha-pll.c
+> diff --git a/drivers/clk/qcom/dprxcc0-nord.c b/drivers/clk/qcom/dprxcc0-n=
+ord.c
+> new file mode 100644
+> index 0000000000000..85cfa8f3be26b
+> --- /dev/null
+> +++ b/drivers/clk/qcom/dprxcc0-nord.c
 
 [ ... ]
 
-> @@ -2290,7 +2291,7 @@ static int clk_zonda_pll_set_rate(struct clk_hw *hw=
-, unsigned long rate,
->  	if (ret < 0)
->  		return ret;
-> =20
-> -	if (a & PLL_ALPHA_MSB)
-> +	if (a & BIT(alpha_width - 1))
->  		zonda_pll_adjust_l_val(rate, prate, &l);
+> +static const struct qcom_cc_desc dprx_cc_0_nord_desc =3D {
+> +	.config =3D &dprx_cc_0_nord_regmap_config,
+> +	.clks =3D dprx_cc_0_nord_clocks,
+> +	.num_clks =3D ARRAY_SIZE(dprx_cc_0_nord_clocks),
+> +	.resets =3D dprx_cc_0_nord_resets,
+> +	.num_resets =3D ARRAY_SIZE(dprx_cc_0_nord_resets),
+> +	.driver_data =3D &dprx_cc_0_nord_driver_data,
+> +};
 
 [Severity: High]
-This isn't a bug introduced by this patch, but while reviewing this L-adjust
-MSB check, does zonda_pll_adjust_l_val() incorrectly add the unscaled target
-frequency to the L-value multiplier?
+Should .use_rpm =3D true be set in dprx_cc_0_nord_desc?
 
-When this condition is met and zonda_pll_adjust_l_val() is invoked, it appe=
-ars
-to overwrite the previously calculated integer divider with the raw rate
-instead of the local quotient:
+During device probe, qcom_cc_really_probe() directly calls
+dprx_cc_0_nord_regs_configure(), which executes regmap_write() to hardware
+registers. Without setting .use_rpm to true, the driver core does not call
+pm_runtime_resume_and_get() to enable the device power domain prior to
+these writes. Can this lead to a system crash (external abort) when
+accessing unclocked hardware registers?
 
-drivers/clk/qcom/clk-alpha-pll.c:zonda_pll_adjust_l_val() {
-	u64 remainder, quotient;
+> diff --git a/drivers/clk/qcom/dprxcc1-nord.c b/drivers/clk/qcom/dprxcc1-n=
+ord.c
+> new file mode 100644
+> index 0000000000000..573d66bb97c90
+> --- /dev/null
+> +++ b/drivers/clk/qcom/dprxcc1-nord.c
 
-	quotient =3D rate;
-	remainder =3D do_div(quotient, prate);
+[ ... ]
 
-	*l =3D rate + (u32)(remainder * 2 >=3D prate);
-}
+> +static const struct qcom_cc_desc dprx_cc_1_nord_desc =3D {
+> +	.config =3D &dprx_cc_1_nord_regmap_config,
+> +	.clks =3D dprx_cc_1_nord_clocks,
+> +	.num_clks =3D ARRAY_SIZE(dprx_cc_1_nord_clocks),
+> +	.resets =3D dprx_cc_1_nord_resets,
+> +	.num_resets =3D ARRAY_SIZE(dprx_cc_1_nord_resets),
+> +	.driver_data =3D &dprx_cc_1_nord_driver_data,
+> +};
 
-Should this final assignment use the `quotient` variable instead of `rate`?
-Writing an astronomically unscaled value (like the target rate in Hz) to the
-L-value register would severely corrupt the PLL hardware configuration and
-cause it to fail to lock.
+[Severity: High]
+Does dprx_cc_1_nord_desc also need .use_rpm =3D true?
 
-> =20
->  	regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL(pll), a);
+Similar to dprx_cc_0_nord_desc above, without enabling the power
+domain, calling dprx_cc_1_nord_regs_configure() during probe could cause a
+crash when writing to unclocked hardware registers.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260907-nords_dprx=
--v1-0-d472af3f01b1@oss.qualcomm.com?part=3D1
+-v1-0-d472af3f01b1@oss.qualcomm.com?part=3D3
