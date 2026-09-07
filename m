@@ -1,119 +1,123 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0DDC4457A6;
-	Mon,  7 Sep 2026 08:55:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDCA9340401;
+	Mon,  7 Sep 2026 08:56:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788771317; cv=none; b=EecvYTGQWWmqr6CFSFWGYL4CWFoRh6u34o2BAf5WSzRdKforXKImaj/oSdxIpVbBfzn16b/JFuSGYkjsvSiiuHLu/YQLDwfSFQXHoVk5n9Yh4jlVI6KVQO7Uhyw0g+/fvNkkOCNtoJdGFpOEBn60l1epT7KFA1reNpx6UdAGc6E=
+	t=1788771371; cv=none; b=m1+O9igUlCLIttphFUGu3jDV8t0fKjfy/EIBvyfCSv/KG7bVsJWArjpT9Vw8MgP9Lt68gIqrjaZersfcSqEUTzhy3kCXdLyOMVZHm+qxIlPeAiXx3o7TcwuPh8sd+VBV1lvtYYDT3794Rl/eX5J4lOfY3ID93FeW9eJJ/gOr/k4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788771317; c=relaxed/simple;
-	bh=eiGMjcZOlAyp41DSqqfFnp7ZC3WMC8whtvMKWZxe4yo=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=uyLU73I3EtbGOnRzLBw0muq59VyBnn6P8bA+jEQ10uzEGpKSB7DCGLShv8OhAPFpyh/8Y32J9Qs8YrdTwutG/mXtHAFpa1ErtypmyHEgLxq5wmEP2DvPUR7OtSDZcmDeqK+P3jnEhNL1L1RNreAa3R/S6szpHAjkZSERpTbI644=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AV51JbOF; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1788771371; c=relaxed/simple;
+	bh=LPy1QYj8h9WRnPhuSyM1KA02fpP7BZQ1RBj0j9dXDU4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Jzb+uazZkcJUULwJpfYADIpkAvoNLLWAE+aca+31ZMzBIGAcPBdQEUpSPSDeISZ3KIOCq7/VdeRp8rbHyogUELmi0a+7fSrPrptGz3y6aB3Leb0dC5IqMtnVONXMpaWuKAezVCjdfH/4fsZ8i8TxUFPVvXYrKWXVvP7Im6bijGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ao+klHHt; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AV51JbOF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C1281F00A3A;
-	Mon,  7 Sep 2026 08:55:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788771316;
-	bh=zfw1rO4zgSu2EK6ukXUFO8r3gRLmj4NYDL7wk+A/pkI=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=AV51JbOF2zVg6+AG/8Dc2a0YAhyygvSKSCJ6sgdVUeJB9oaMJnPYYnnOD6Scm3Dv6
-	 rFbRS796UFqDiQBlJSX5tJ/HuDujF2dkF9QIafzLdaUCtYDg6Th4DNq5/frPhHU3KR
-	 XskeBGxba3iabFjKbihIHDP5zjv5DXCFKrbDs82H0XKTI91XHuc8HuNpQvCxHEfVQi
-	 ftGQms/GomPQTEWUk55vVSMFmq6Yk3LnDqxp5y90bRbYLWgi5jgz7e3U71n0okuTNx
-	 eBNJGzOfr0oHx/jCQcSjntRwj5UvHFALG8aQ6+OUKphar6wQNYzHj8ordjvqBXPA4s
-	 pHBirGNclhsug==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 3/3] clk: qcom: dprxcc: Add Nord DPRX clock controller
- support
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Taniya Das" <taniya.das@oss.qualcomm.com>
-Cc: linux-clk@vger.kernel.org, conor+dt@kernel.org, robh@kernel.org, devicetree@vger.kernel.org
-In-Reply-To: <20260907-nords_dprx-v1-3-d472af3f01b1@oss.qualcomm.com>
-References: <20260907-nords_dprx-v1-0-d472af3f01b1@oss.qualcomm.com>
- <20260907-nords_dprx-v1-3-d472af3f01b1@oss.qualcomm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 07 Sep 2026 08:55:15 +0000
-Message-Id: <20260907085516.0C1281F00A3A@smtp.kernel.org>
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ao+klHHt"
+Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id C1D2B981;
+	Mon,  7 Sep 2026 10:54:29 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1788771271;
+	bh=LPy1QYj8h9WRnPhuSyM1KA02fpP7BZQ1RBj0j9dXDU4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ao+klHHtf0/LfqLHlZZsRvu5FjcZ5G4MGfV3Mu8A+jh2dmln7YeResjoTX3Ejhqij
+	 gTbpyBHSlMWDjb3PInlaB9+mD8Mi215zof4DLpy6pk7jkoSOK/byrzormqveKyX14C
+	 2MPo75RzokQo8TM/uTDob0+4zHEy4nw9GIowQxJU=
+Message-ID: <7be9a590-2c27-4725-89eb-dad9dc3632b9@ideasonboard.com>
+Date: Mon, 7 Sep 2026 11:56:01 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 4/7] drm/rcar-du: dsi: Support DSC in the pipeline
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
+ Marek Vasut <marek.vasut+renesas@mailbox.org>,
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, linux-renesas-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
+References: <20260615-rcar-du-dsc-v5-0-aed1a28610e4@ideasonboard.com>
+ <20260615-rcar-du-dsc-v5-4-aed1a28610e4@ideasonboard.com>
+ <20260702212423.GA3662157@killaraus.ideasonboard.com>
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Content-Language: en-US
+In-Reply-To: <20260702212423.GA3662157@killaraus.ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
-- [High] Missing `.use_rpm =3D true` causes register accesses while the pow=
-er domain is disabled.
---
+Hi,
 
-commit f58a0767efa8984edb8bffb65390c86a685205cd
-Author: Taniya Das <taniya.das@oss.qualcomm.com>
+On 03/07/2026 00:24, Laurent Pinchart wrote:
+> Hi Tomi,
+> 
+> Thank you for the patch.
+> 
+> On Mon, Jun 15, 2026 at 04:11:57PM +0300, Tomi Valkeinen wrote:
+>> Enabling DSI clocks on rcar-du needs some tricks as the DU dot clock is
+>> provided by the DSI. Thus, we call rcar_mipi_dsi_pclk_enable() from the
+>> crtc, when enabling the crtc.
+>>
+>> With DSC (added in upcoming patch) in the pipeline, between the DU and
+>> the DSI, the above call path is broken as the crtc tries to call
+>> rcar_mipi_dsi_pclk_enable() on the DSC.
+>>
+>> To solve this problem, make sure we store the DSI bridge to the
+>> rcdu->dsi[] array, instead of the first bridge in the DSI pipeline
+>> (which can be DCS), by checking the bridge's bridge->type.
+>>
+>> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+>> ---
+>>   drivers/gpu/drm/renesas/rcar-du/rcar_du_encoder.c | 18 ++++++++++++++++--
+>>   drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c   |  1 +
+>>   2 files changed, 17 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_du_encoder.c b/drivers/gpu/drm/renesas/rcar-du/rcar_du_encoder.c
+>> index db2088529b48..ac85838ab3b8 100644
+>> --- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_encoder.c
+>> +++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_encoder.c
+>> @@ -89,9 +89,23 @@ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
+>>   				drm_bridge_get(bridge);
+>>   
+>>   		if (output == RCAR_DU_OUTPUT_DSI0 ||
+>> -		    output == RCAR_DU_OUTPUT_DSI1)
+>> +		    output == RCAR_DU_OUTPUT_DSI1) {
+>> +			struct drm_bridge *dsi_bridge;
+>> +
+>> +			/*
+>> +			 * When we have a DSC block between the DU and the DSI,
+>> +			 * the "bridge" points to the DSC. Detect the DSC by looking
+>> +			 * at the bridge type, and skip the DSC if the bridge is not
+>> +			 * the DSI bridge.
+>> +			 */
+>> +
+>> +			dsi_bridge = bridge->type == DRM_MODE_CONNECTOR_DSI ?
+>> +						     bridge :
+>> +						     bridge->next_bridge;
+> 
+> The indentation looks weird.
+> 
+> 			dsi_bridge = bridge->type == DRM_MODE_CONNECTOR_DSI
+> 				   ? bridge : bridge->next_bridge;
+That looks even weirder, you are associating = and ? there. What about:
 
-    clk: qcom: dprxcc: Add Nord DPRX clock controller support
-   =20
-    Add support for the DisplayPort Receiver (DPRX) clock controllers on
-    Nord devices. There are two identical DPRX clock controller
-    instances (DPRX0 and DPRX1), each providing clocks for the DPRX core,
-    audio, AHB and video memory paths, along with core PLLs.
+dsi_bridge = bridge->type == DRM_MODE_CONNECTOR_DSI ?
+	     bridge : bridge->next_bridge;
 
-> diff --git a/drivers/clk/qcom/dprxcc0-nord.c b/drivers/clk/qcom/dprxcc0-n=
-ord.c
-> new file mode 100644
-> index 0000000000000..85cfa8f3be26b
-> --- /dev/null
-> +++ b/drivers/clk/qcom/dprxcc0-nord.c
+  Tomi
 
-[ ... ]
-
-> +static const struct qcom_cc_desc dprx_cc_0_nord_desc =3D {
-> +	.config =3D &dprx_cc_0_nord_regmap_config,
-> +	.clks =3D dprx_cc_0_nord_clocks,
-> +	.num_clks =3D ARRAY_SIZE(dprx_cc_0_nord_clocks),
-> +	.resets =3D dprx_cc_0_nord_resets,
-> +	.num_resets =3D ARRAY_SIZE(dprx_cc_0_nord_resets),
-> +	.driver_data =3D &dprx_cc_0_nord_driver_data,
-> +};
-
-[Severity: High]
-Should .use_rpm =3D true be set in dprx_cc_0_nord_desc?
-
-During device probe, qcom_cc_really_probe() directly calls
-dprx_cc_0_nord_regs_configure(), which executes regmap_write() to hardware
-registers. Without setting .use_rpm to true, the driver core does not call
-pm_runtime_resume_and_get() to enable the device power domain prior to
-these writes. Can this lead to a system crash (external abort) when
-accessing unclocked hardware registers?
-
-> diff --git a/drivers/clk/qcom/dprxcc1-nord.c b/drivers/clk/qcom/dprxcc1-n=
-ord.c
-> new file mode 100644
-> index 0000000000000..573d66bb97c90
-> --- /dev/null
-> +++ b/drivers/clk/qcom/dprxcc1-nord.c
-
-[ ... ]
-
-> +static const struct qcom_cc_desc dprx_cc_1_nord_desc =3D {
-> +	.config =3D &dprx_cc_1_nord_regmap_config,
-> +	.clks =3D dprx_cc_1_nord_clocks,
-> +	.num_clks =3D ARRAY_SIZE(dprx_cc_1_nord_clocks),
-> +	.resets =3D dprx_cc_1_nord_resets,
-> +	.num_resets =3D ARRAY_SIZE(dprx_cc_1_nord_resets),
-> +	.driver_data =3D &dprx_cc_1_nord_driver_data,
-> +};
-
-[Severity: High]
-Does dprx_cc_1_nord_desc also need .use_rpm =3D true?
-
-Similar to dprx_cc_0_nord_desc above, without enabling the power
-domain, calling dprx_cc_1_nord_regs_configure() during probe could cause a
-crash when writing to unclocked hardware registers.
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260907-nords_dprx=
--v1-0-d472af3f01b1@oss.qualcomm.com?part=3D3
