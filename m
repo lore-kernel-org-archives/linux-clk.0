@@ -1,161 +1,183 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 746D7448B84
-	for <linux-clk@vger.kernel.org>; Mon,  7 Sep 2026 09:24:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40CD138F935;
+	Mon,  7 Sep 2026 09:30:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788773089; cv=none; b=HZzDa1/vYcey/eVrbAvkCEqU3QF69qnkDOoZBYJQSHqPmerF391tVWpK5fVmDl2swsRxECeuroe4zMWzJp0/gGes6L1Flw+QnIHvBgMrjqu6qe3hB8FTfQKn0ZoELyrOjB9nwq/ShG2kedHte9gv57uJ2Zu3bYugdHG42fIo2fk=
+	t=1788773424; cv=none; b=kn2VXqv/kHAnzCBZsudcV69FhBE7NbdisRivMpkL3kCr606jSkDQppKfY3LaAQdJXTE9+0p3BB5aJXLF7IHaRYSHPv8fg7JMJBpZA/FN1EuUEbVJmkw3t037mgxWkJIpSWJjgzgmlSSHDzq4gfoB+vf0nDZyBaETPYHf3ESqyDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788773089; c=relaxed/simple;
-	bh=Esx+dtM0TYwdO57j6xnTXvlu/TzjID1CmstR5RvhL0k=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DcUVmp4p1Pg3RWS0QwglvUyHQSMlhMz7tQdmGiXzz2TEJ07k1D1nWLtYdhSHYXGPH5q4IyeNz8luIVlF4Z0cQrnxOD+wFWRVhpkUEQpqKMhTP2Jw+U8urwPUCGhay342JHDqgWlTNaFJBpLo9KTClh3dnNwd3UpYblr5v6KUhjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QyNOXyZx; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1788773424; c=relaxed/simple;
+	bh=ovABkjJQOwgz2Rl7QrXo+phQjTOEQxYwHSTkCXNqCao=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=cY67HeCsg5W2JzDKCS/P+IkUxOsG2ZEUTwrxC30Mjgdo3Z0PwNEmmtoVEpFBy5EWLmqcFp+qOkBWQDQC4J8NpZJJtvSPwR1sKeT/RU6pjEGp/MOtdVcd4Z2FaJDE9ZbsGKIis9k1vLYFY2dYqtr2gXnlogMd0tt8pKmJE7MeEn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=S1e7UYsm; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QyNOXyZx"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-49d05d51553so13385225e9.2
-        for <linux-clk@vger.kernel.org>; Mon, 07 Sep 2026 02:24:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788773085; x=1789377885; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:subject:cc:to:from:date:message-id:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=oRUYERj4W2ZSChyYrd8ZBUDzTcb+VBgjaS3zm4CIBsE=;
-        b=QyNOXyZxk/VY3LypHInkRb2EunLm1ieDNALCC4W7lD56GpTbLVPHAeoyeBfqLUwLe+
-         de2c0gR5veh/0oXJal6zKnL2U9E+zhykrWILMAKzA3aSAhNOVDIjvs0vsXtjxhy8jOtg
-         ozKndcZn2U9yIRZaV2pdkVbxQAYKGyGXBLHmIH5riH1nEQGUG/XjtWBRFYIGUgLCapRu
-         Bq3RGYjcbgykIeqTlCxiFewhWFeEvPy4bDnVEV2w38u6tdncMBjjBKEkbSabex7gkbZG
-         +jgrreiWu1FnGhy8c8GTVot9Cf+9oxgj4z5R2qsXVD+mf0Qypbkjih6C+IsEuLEKpfaN
-         2Jyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788773085; x=1789377885;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:subject:cc:to:from:date:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=oRUYERj4W2ZSChyYrd8ZBUDzTcb+VBgjaS3zm4CIBsE=;
-        b=KSz55xpdKaa1ErlmqFVbErsBLmRWUZYy70kl0uh2FFK8xRRt1ezpin8Jgav5Jpgb2t
-         DxgF6W3yrC8Fh7zceu8iqmfkvtA/pebbozZfY3BKDH5DW4mqmhjn0wNG8U1ONvoDcihF
-         sHC2koxEkfylkfCFiRX5NXNHy9WiTc/CEiATmFcQURK+gPjlojNZ9DLramflN8FWVEuu
-         Epmas4NbaMSjHIxB1onY/rwHy+QvFxFtq8n214e5QfOLZPp0xYJVcQ33ExP6+sTtL3AL
-         pXa7CJbTiExq+Ltdgc9OqAtLx/81t9OiTi7nVbVqSLutm/W0vtfa1u10BlL11tHG3UVT
-         PWKQ==
-X-Forwarded-Encrypted: i=1; AKwUvByGyuxcgJg0sym1YjEMXlf0NX75WmeQ/qqglvYWXylOGas/jsEnGBdJfWzkFgeHl8lX2HugPoraCh4=@vger.kernel.org
-X-Gm-Message-State: AFuF++kF3tSApboQnIX0HSSPBlj8YGq6AywlNpjeeFQc8TKcPNV+ndTm
-	QOz2TJlMdTbpqs+J45+uneqf9tHxjjv4EHG0XTiOdC63BVF9lyYYZafG
-X-Gm-Gg: AYBFou3pgQ3MkhUl2WJNF1jCf7+SLtLrmBzJJ7adXgFtTJOnjLVByu9Jiz+fyp/hNpJ
-	P4hLv+FHdsNuJfv0Kex0l36gS4tFSJ6hmfe1GTMyMousAsBAQRTqnO1Vms3e4nYSerUm8W8kY4M
-	zd+sLYl1mskZrHJDZLOCeMWtTMNfAEzMnIlpb05Yo4FdOYxa2MyAU5g4kCn8C/z73zj+8a2plSk
-	vsXZ9jbClsOlIPRimiigAAbCb4XWmiRtX5JH6Xq4+75ZbMbQx2fYfqFHy1MHV71EBdWkbI7Jrjs
-	0j2v1q2VPmhzhWgZA/JR4qXiZD7NoVeHq8PiQ4f8JPG/9mOPXE1irN2a6Tgho6IV4jgWxZ19Sp8
-	9Asc26mpkyvz0TixPNIvAPOLJn2zWfQLdV96sRqYsP/MSRmXc7vW6SXy4OMWghaR0vfc0V/FG1J
-	KNmLdlMnZldcYYyIcwsppZQav/WYtN6QTzPR8AQ1K0LVZb8TXw8CGiVJC7pLQL56IMdUJlVOOsE
-	5/5SpVH9B8aBIheBEPnQasvZu8bqADDxhbV
-X-Received: by 2002:a05:600c:310d:b0:49c:dc14:d681 with SMTP id 5b1f17b1804b1-49cf81e5449mr213057725e9.3.1788773085428;
-        Mon, 07 Sep 2026 02:24:45 -0700 (PDT)
-Received: from Ansuel-XPS. (host-79-26-252-140.retail.telecomitalia.it. [79.26.252.140])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49cf755c22esm294849975e9.0.2026.09.07.02.24.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Sep 2026 02:24:44 -0700 (PDT)
-Message-ID: <6a9e82dc.8fb0a6ce.a0d71.1d0a@mx.google.com>
-X-Google-Original-Message-ID: <ap6C2YKs_NPS0pm9@Ansuel-XPS.>
-Date: Mon, 7 Sep 2026 11:24:41 +0200
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Felix Fietkau <nbd@nbd.name>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 1/3] dt-bindings: clock: airoha: Document support for
- AN7583 clock
-References: <20260819221458.30040-1-ansuelsmth@gmail.com>
- <20260819221458.30040-2-ansuelsmth@gmail.com>
- <20260827-expert-ruby-grasshopper-954aa2@quoll>
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="S1e7UYsm"
+Received: from [127.0.1.1] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 62573981;
+	Mon,  7 Sep 2026 11:28:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1788773323;
+	bh=ovABkjJQOwgz2Rl7QrXo+phQjTOEQxYwHSTkCXNqCao=;
+	h=From:Subject:Date:To:Cc:From;
+	b=S1e7UYsmAfJwa8mJgo5Nm25SKiLv5VWT3Mx/EdnliXTnN9TxI1Ays2pWPV3Br5RtR
+	 y9q/dJqEm6in6aGNUPy7Clspg9JUzUCu1Dt2ojY0RPIkD9vRYTsXs+neW10cjKh8OB
+	 JU18grlp1tP/E61wlt8MtPJ+4VV9vgszEH4oAxrk=
+From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Subject: [PATCH v6 0/6] drm/rcar-du: Add support for DSI pipelines with DSC
+Date: Mon, 07 Sep 2026 12:29:39 +0300
+Message-Id: <20260907-rcar-du-dsc-v6-0-f8ef711a7494@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260827-expert-ruby-grasshopper-954aa2@quoll>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAOEnmoC/33MwW4CIRDG8VcxnEvDsDBCT76H6WEWhsqhSwO6a
+ WP23YtetI3rZZL/JN/vLBrXzE28bc6i8pxbLlMPfNmIcKDpg2WOvYVWGpUFI2ugKuNJxhaksWN
+ IKujEDkVffFVO+fuq7d97H3I7lvpzxWe4fB87M0glI9q0Jc/eGdjlyNTKNBaq8TWUT3HhZn1P2
+ L+E7kTC0WujCPpZIYYnxNAJQAN267Qy3q0Q5kbgf8J0wg/KI8FokYYVwj4hbCeII5B2CIrNA2J
+ Zll+FDhxDuQEAAA==
+X-Change-ID: 20260514-rcar-du-dsc-45bcf0c2fe86
+To: Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
+ Marek Vasut <marek.vasut+renesas@mailbox.org>, 
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ devicetree@vger.kernel.org, 
+ Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+ Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.16.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4419;
+ i=tomi.valkeinen+renesas@ideasonboard.com; h=from:subject:message-id;
+ bh=ovABkjJQOwgz2Rl7QrXo+phQjTOEQxYwHSTkCXNqCao=;
+ b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBqnoQjP3UWjvF2zTKilwELqDLccSxBoS1ZjfCRm
+ ylAV0rMUfOJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCap6EIwAKCRD6PaqMvJYe
+ 9bJrD/4r8VrBbyxQ3Ei6g6lOH/qJJsKc1gFTrJ9qrIBAhj1EVvUPF74l/Se3qw6m0EmJ4KZB3ui
+ xt2neNLmoCLi4F6FQU/Rb9i9/h3lkApSSSPFrpEV1CmpMDHQfIIQjNUeevznVUC1RFVCaP+XSdi
+ /+Wj6JDbFId07EleOmKnkM5PLNywmyJO7m5DyaGH4tTleZ2vkOd/eXkSlM/go7//mwPe5RKYvAg
+ R/nJO9JxleIZhUs7qgqmCq+WQ0jFlWsv7xokliLALjOTkV7Ka1/2Y7D7eZxRqd5DMqHzLjsSnKt
+ wQLU3YPmIseSq8n076/PXKqRYEOOIlKfHphTDm1+NqFPEhsB6L5m+cMdYTZlwwujEQXtsRPbhOo
+ HiEg8NHn5ejh5S6JLwbqBXQ3ggrBUTHXt9MjRCJ5NFiaUCa0TFrxxGOs0zA4uVHx7V1AmxKwvp2
+ IbAaiiMkmYS/hjCREoGlwYz0y0hIk2re7mfmhF1su1+VAUJzDvVCQDJGG1oVJhZFUzR7fHh6Cv0
+ RFBJh5pVFRAASVkZwlMPuEjsE3gOzfpS1aPxqL3jSeORxt+9YpFYYY4bHUZJPZmhjcwtWhvOlnB
+ tZAnrEgqDw3w1x9toljk1xQ2lnB4KWovK8LP8WvYRw4pBpvMNUm4/mUWNZd1MXRio9iuZSEmsY9
+ oO0rpj+vM5E7qXw==
+X-Developer-Key: i=tomi.valkeinen+renesas@ideasonboard.com; a=openpgp;
+ fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
 
-On Thu, Aug 27, 2026 at 11:52:13AM +0200, Krzysztof Kozlowski wrote:
-> On Thu, Aug 20, 2026 at 12:14:54AM +0200, Christian Marangi wrote:
-> > Document support for Airoha AN7583 clock. This is based on the EN7523
-> > clock schema with the new requirement of the "airoha,chip-scu".
-> > 
-> > Add additional binding for additional clock and reset lines.
-> > 
-> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> > ---
-> >  .../bindings/clock/airoha,en7523-scu.yaml     | 20 ++++++
-> >  include/dt-bindings/clock/en7523-clk.h        |  3 +
-> >  .../dt-bindings/reset/airoha,an7583-reset.h   | 65 +++++++++++++++++++
-> >  3 files changed, 88 insertions(+)
-> >  create mode 100644 include/dt-bindings/reset/airoha,an7583-reset.h
-> > 
-> > diff --git a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
-> > index eb24a5687639..edecc635807b 100644
-> > --- a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
-> > +++ b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
-> > @@ -30,6 +30,7 @@ properties:
-> >    compatible:
-> >      items:
-> >        - enum:
-> > +          - airoha,an7583-scu
-> >            - airoha,en7523-scu
-> >            - airoha,en7581-scu
-> >            - econet,en751221-scu
-> > @@ -50,12 +51,30 @@ properties:
-> >      description: ID of the controller reset line
-> >      const: 1
-> >  
-> > +  airoha,chip-scu:
-> > +    $ref: /schemas/types.yaml#/definitions/phandle
-> > +    description: phandle to the Chip SCU providing the registers required
-> > +      for configuring the PCIe related clocks and resets.
-> 
-> This is the clock provider. Clock provider should not be accessing
-> registers of other device to configure its clocks. Either you
-> misrepresented clock hierarchy or devices.
-> 
-> I did search for DTS to try to understand the big pictuer - nothing, no
-> results, no upstream submission to Linux kernel.
->
+Some DSI pipelines have DSC (Display Stream Compression) IP block
+between the DU and the DSI. Even if DSC is not needed, the IP must be
+enabled for the DSI output to work.
 
-Hi, you can use en7581 as an example as the implementation is exactly the
-same register wise.
+This series adds a basic DSC driver, so that the DSC IP gets enabled in
+bypass mode. This enables DisplayPort output on Sparrow Hawk board, as
+the DP output comes from DSI and sn65dsi86 bridge, and also White Hawk
+board's second mini-DP output.
 
-The register for clock and reset for normal system and PCIe are scattered
-between the "SCU" and "chip SCU" registers (they are 2 different register
-block, the name is taken from the programming guide)
+Original series from Marek.
 
-- Chip SCU provide register access to some clk gate and clk rate
-- SCU provide register for reset, PCIe clock, other clock gate and PHY
-  SERDES.
+Note: I see that not every run of kms++'s kmstest gives me a picture on
+my monitor. Sometimes the monitor seems to be trying to repeatedly sync,
+but fails, and the screen stays black. However, I see this same issue on
+WhiteHawk, which uses DSI0 pipeline, without DSC, so I think that is a
+separate issue.
 
-Upcoming and current airoha clock driver all follow this pattern of
-declaring one of the 2 register and use a sysconf for the other as the 2
-register block are tighlty coupled.
+ Tomi
 
-There was a similar phandle in another series adding support for pinctrl
-for econet EN7528.
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+---
+Changes in v6:
+- Rebased on latest drm-misc-next, fixing the compile issues caused by
+  the rebase
+- Minor things: commit desc cleanups, indentation change, dropping
+  unused include.
+- Link to v5: https://patch.msgid.link/20260615-rcar-du-dsc-v5-0-aed1a28610e4@ideasonboard.com
 
-This phandle is not present for en7581 just because it's hidden by a direct
-call to the syscon with syscon_regmap_lookup_by_compatible API.
+Changes in v5:
+- Drop the "renesas,rcar-dsc" compatible, and rename the binding file to renesas,r8a779g0-dsc.yaml
+- Check pm_runtime_get_sync() < 0 for error, instead of
+  pm_runtime_get_sync() != 0
+- Move pm_runtime_enable() before drm_bridge_add(), so that runtime PM
+  is ready when we publish the bridge
+- Fix "DCS" typo in commit desc
+- Rewrite "drm/rcar-du: dsi: Support DSC in the pipeline" again, this
+  time solving the DSI/DSC question in rcar_du_encoder_init()
+- Link to v4: https://patch.msgid.link/20260615-rcar-du-dsc-v4-0-93096a1b56a3@ideasonboard.com
 
-With AN7583 I'm trying to fix this by making it more explicit.
+Changes in v4:
+- Add 'renesas,rcar-dsc' compatible, in addition to the SoC specific
+  compatible
+- Use 'bridge' as the name of the DT node
+- Arrange Kconfig and Makefile entries alphabetically
+- Rebase on drm-misc-next, and fix the drm_atomic_state rename issue
+- Use pm_runtime_get_sync() in .atomic_enable() instead of
+  pm_runtime_resume_and_get() to fix the possible runtime PM get/put
+  discrepancy
+- Drop ioremap and mmio field, as the driver does not touch the
+  registers
+- Use of_drm_get_bridge_by_endpoint() to get the next bridge
+- Rewrite "drm/rcar-du: dsi: Support DSC in the pipeline" to use
+  bridge->type to detect the DSI and the DSC
+- And some cosmetic fixes pointed out in the review comments
+- Link to v3: https://patch.msgid.link/20260515-rcar-du-dsc-v3-0-164157820498@ideasonboard.com
 
-Does this makes the situation more clear? 
+Changes in v3:
+- Simplify DSC driver: drop reset control, drop clk handling, use runtime PM
+- Split dts changes for r8a779g0 and sparrow-hawk to separate patches
+- Add "arm64: dts: renesas: white-hawk: Add second mini-DP output
+  support"
+- Link to v2: https://patch.msgid.link/20260515-rcar-du-dsc-v2-0-f6b9240a1240@ideasonboard.com
 
--- 
-	Ansuel
+Changes in v2:
+- Fixed the dts example in "dt-bindings: display: bridge: Document
+  Renesas R-Car V4H DSC bindings"
+- Link to v1: https://lore.kernel.org/r/20260514-rcar-du-dsc-v1-0-d65f7a9e9841@ideasonboard.com
+
+---
+Geert Uytterhoeven (1):
+      arm64: dts: renesas: white-hawk: Add second mini-DP output support
+
+Marek Vasut (4):
+      dt-bindings: display: bridge: Document Renesas R-Car V4H DSC bindings
+      drm/rcar-du: dsc: Add rudimentary Renesas R-Car V4H DSC driver
+      arm64: dts: renesas: r8a779g0: Add DSC
+      arm64: dts: renesas: sparrow-hawk: Enable DisplayPort by adding DSC
+
+Tomi Valkeinen (1):
+      drm/rcar-du: dsi: Support DSC in the pipeline
+
+ .../display/bridge/renesas,r8a779g0-dsc.yaml       |  96 +++++++++++++
+ .../arm64/boot/dts/renesas/r8a779g0-white-hawk.dts |  94 +++++++++++++
+ arch/arm64/boot/dts/renesas/r8a779g0.dtsi          |  31 ++++-
+ .../boot/dts/renesas/r8a779g3-sparrow-hawk.dts     |   5 +
+ drivers/gpu/drm/renesas/rcar-du/Kconfig            |  12 ++
+ drivers/gpu/drm/renesas/rcar-du/Makefile           |   1 +
+ drivers/gpu/drm/renesas/rcar-du/rcar_dsc.c         | 153 +++++++++++++++++++++
+ drivers/gpu/drm/renesas/rcar-du/rcar_du_encoder.c  |  17 ++-
+ drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c    |   1 +
+ 9 files changed, 407 insertions(+), 3 deletions(-)
+---
+base-commit: a9f09b5ea0c3db1e2d4c0f8d3ebdd612d8aa0366
+change-id: 20260514-rcar-du-dsc-45bcf0c2fe86
+
+Best regards,
+--  
+Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+
