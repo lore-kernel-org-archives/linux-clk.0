@@ -1,35 +1,35 @@
 Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B051E449B21;
-	Mon,  7 Sep 2026 09:30:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1D0244A41A;
+	Mon,  7 Sep 2026 09:30:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788773433; cv=none; b=D3+B03sJ/ypHNGYNAbsAmC0wEmZFlikhgDw9NEPI3LfBp1d6xVf/jcADctiX17LqO5Ce2EKpNhEea8TP68LlVcgX+algMcd7ZXx8YOsuJDv58I1gebKzBRmbjXS77VhEKJoaHI7ndt9/3qv1wD9nnC8o8Ek88PEnZsLsjEzopVk=
+	t=1788773434; cv=none; b=elJLaRpZsZJ5ne5PLXbZsTlB1V3s8Qw42uHEzdiXB5c5uNG3UhS53dN7N1JTYJ9gSreiXpUIzg86vUPIigTPPFfDiaS3vM5K2BgO8HaOysJZELGE5COhFcgoNQgz1RbbjhIX8IqqmHVx5UfKaQoVhMThCVOvdVqhDO/hf+bdXRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788773433; c=relaxed/simple;
-	bh=E4l62o+sxS+bPEPN3Rlb+RatxgF6zDPhb0MAy+QFUv8=;
+	s=arc-20240116; t=1788773434; c=relaxed/simple;
+	bh=r5QjrFAZtSkTFwOWAs/qFvVvo8FOH/iWvMtmoLDe4uU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hQTrHScsx4dX7sEY74FEuzbmMr9x+LHoiSqu2ciJON0xe0okxwaMt25VtEPEvtj1/gRVGcdSKYL7dB85ux57tw+e86wNwoBpHErW/QnRfEC7QCJ9Xe1hqJ2ye/VG6XPLsAVi51zg6qMCUS+q+XMlypME7VAJ6nNovPk05dbhM7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=sac3TfrM; arc=none smtp.client-ip=213.167.242.64
+	 In-Reply-To:To:Cc; b=KT9dsxHw6lp6Da2hQ6pTE2rtxjFs3n9Etulkv1NBrldcImKX4buvx3q2o9APXhQKd/KUGqKtSBVsqO7Bf/UhI4aJ22tlCwUIo3Irz/ojGJ7grsgDr5Cu03DkpFvBH86XzOhp/Tgtjyw68Wu8JWPoJ8fNk/a6VCwRg1uF7AGbsvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=JUptlJ+n; arc=none smtp.client-ip=213.167.242.64
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="sac3TfrM"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="JUptlJ+n"
 Received: from [127.0.1.1] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 3D64F13BA;
-	Mon,  7 Sep 2026 11:28:50 +0200 (CEST)
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id B9D8C153F;
+	Mon,  7 Sep 2026 11:28:51 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1788773331;
-	bh=E4l62o+sxS+bPEPN3Rlb+RatxgF6zDPhb0MAy+QFUv8=;
+	s=mail; t=1788773333;
+	bh=r5QjrFAZtSkTFwOWAs/qFvVvo8FOH/iWvMtmoLDe4uU=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=sac3TfrMtL/YnoGEyRE99e4FuwRIwyvwInDD4Fg3Hzae/FYlilpFrskO+5D4RCEku
-	 vHqQVZFppIb94hH6G9FdppMmKxclWRqEV1lx8ZtCBpXZyfSsxjY8agiV+RTFSWFgbP
-	 rt9a5L5DQQ6MuzwdBNHY+G8xPgN5r6RsqZy+kC6k=
+	b=JUptlJ+ngrtn2ey+0GQH+CsU1MWdqaOuTnY65LyMwuddIbYGqkgYMqdAQz5rC+Jf+
+	 tAkwcvp7+45tGNvGm1Itb1dU2PR33ug0yecajsFrOwJeQ91OGHb1iWwfDg2Yaco42P
+	 4+5LQGo0gjP6GhqLfnvrKPNugfe4yx05Dvum09vA=
 From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Date: Mon, 07 Sep 2026 12:29:44 +0300
-Subject: [PATCH v6 5/6] arm64: dts: renesas: sparrow-hawk: Enable
- DisplayPort by adding DSC
+Date: Mon, 07 Sep 2026 12:29:45 +0300
+Subject: [PATCH v6 6/6] arm64: dts: renesas: white-hawk: Add second mini-DP
+ output support
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -38,7 +38,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260907-rcar-du-dsc-v6-5-f8ef711a7494@ideasonboard.com>
+Message-Id: <20260907-rcar-du-dsc-v6-6-f8ef711a7494@ideasonboard.com>
 References: <20260907-rcar-du-dsc-v6-0-f8ef711a7494@ideasonboard.com>
 In-Reply-To: <20260907-rcar-du-dsc-v6-0-f8ef711a7494@ideasonboard.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>, 
@@ -61,59 +61,143 @@ Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, 
  Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
 X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1310;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2815;
  i=tomi.valkeinen+renesas@ideasonboard.com; h=from:subject:message-id;
- bh=spwA6S6xpukisy7pkedqiZJctKlACrqVu7cRL2eEc4Y=;
- b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBqnoQn7hRat5DOSUGwCtbdOIXjldd8M3qJfHJGT
- 3xoeFRziJOJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCap6EJwAKCRD6PaqMvJYe
- 9QYyD/4sh1tijIaSFJDVKns8PpiUK1txHmylyBdSsKfVBI1B8PrvZefNjcllEPDed5Z3j24T0fL
- yPppCCavEWQC1F+Y5lxAMqmseVNYhl8RQniY8FjoIiuM0igjf5+E5r7QFXopivep/NmUu6tSN0Y
- zvzNKhf0QJm7A99nv9LL9yARd675O61RlVAqtO1AMa9YecU96+KGFAPQedfHcphv4gvC7RDo5s2
- zzlCrKbsnVKmiW0i4ESMnJv9yEmQMD8+Ub/Sqs7qYkU9Q5TquNm0vIAyVnEAYAZ/VdbyXG67aSU
- 0YOsigUY1u/ro9FSEbjJ8kooUZyuzkwc2Cvwpn9ELgQrJ+xwAFCI1KPnFaLZxU2eLKBKjMUUO72
- xZWdZnSabyu54gKt2B2cOEUiPu2QA00uL1OKsbzRMJkrgLyONxjh3tN2Jf5d4+mNwHYiqW6MHmm
- C6ZmYMNHyLtuRpQEGnwuQJnRy+QBsmfzF/5O64xozyIFnED2oSNhmOuzFzBJB1f/62SIGjsK8ON
- RLMw6F9v987V1DNecRZjG3ZDaFp8nIn8yX3c4N86H3sxdEaK81S+b9L2b416BxmNelA3Xsm41p/
- Dsz5SS9mQq1zBP5N2csSnTYN5Z1mti2OVSWE8lHlT4XYNUokZu5UyFNbvNTi4z0lsgUZEH6CLmG
- uhELzpYbbdHiGUg==
+ bh=wbg5CCdU/74bk2tdhUnSaOwNMuA62RxSenB5kl7Y1u8=;
+ b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBqnoQoXmAApt41W4hmFgpQ0vzEduDxOxe1zFM3J
+ 9tyggU/B0GJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCap6EKAAKCRD6PaqMvJYe
+ 9UMhEACj0GwqXa3no24EXYHQ5Aoj0q6XN+fUvOTZUM4kvoRpfzNdAtuY5jtAO4bIqJP3+cW/X31
+ akFzubpWBe9ARVFyrm4bVCoWKjTsKjSPF0gQyO75jXqiyZBL/4Ui+tJ5o2U0TUkJo6VYEohoIcb
+ I1XFuvU53YpcuMr8edTZRCm3g6p1GBR1WFLpgrsZQWZyJHUXWtmV/E1E/1BLnXtUt01nOpBcsFf
+ mN5nnVVZGLs5to7dngSsM/ZNEpnxhqCiYReh62sIkJIe0HXSfAuXdMr8Lne+1+ehMpEmjzhj3jS
+ EXwuipqKmP3J7bomO7TmST2yc+FOD/vfIVD6lSRrBqA9ERIMTCSTfP03/Z0BkqTpOJslw827IkS
+ /dm11P85NQXmHpgAVVI8wYiYDpXEOA3IptY4cG9hTPsxrewOUe0obbv3Jkbq9JNb6MgEP17YwZu
+ ToV6kv7ygmvvviXMgz6yjPgUPPaes2++uSPEp6KnXIPAX/ryKuvFLMhVPkssQwaajuHqFhY+nEA
+ lY5c92NEazTiKZBov2OXE2xfYu1Ij/tRjA8xeEWfNMtWL+2n4Gg8k0e31UV8udx8SYN7gKMuBae
+ GKUWx8rcHP9+G5cNdAgRmbjaRELSbMKwqnhmPLcSJei4zq9yPDpZ9SWicAFGnUc6LOlwig/KM2h
+ dPjmzrqKjeiPH2A==
 X-Developer-Key: i=tomi.valkeinen+renesas@ideasonboard.com; a=openpgp;
  fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
 
-From: Marek Vasut <marek.vasut+renesas@mailbox.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-DisplayPort on the Sparrow Hawk board uses sn65dsi86 bridge, which in
-turn gets the video stream from the SoC's DSI1 port. DSI1 pipeline has a
-DSC block in between the DU and the DSI1. However, there was no DSC
-driver in Linux and also the DSC was not defined in the dts files, and
-thus the DisplayPort output did not work.
+Add support for the mini-DisplayPort connector on the White Hawk
+BreakOut board. This connector is driven by a TI SN65DSI86 DSI to eDP
+bridge, which in turn gets the pixel data from the second DSI channel on
+the R-Car V4H SoC. Note that this port is not present on the White Hawk
+Single development board.
 
-Now that we have DSC defined in the SoC dts file (r8a779g0.dtsi), we can
-enable DSC for sparrowhawk.
-
-Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
-[tomi.valkeinen: separated the sparrow hawk changes from the soc changes]
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+[tomi.valkeinen: added status=okay for dsc]
 Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
 ---
- arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk.dts | 5 +++++
- 1 file changed, 5 insertions(+)
+ .../arm64/boot/dts/renesas/r8a779g0-white-hawk.dts | 94 ++++++++++++++++++++++
+ 1 file changed, 94 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk.dts b/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk.dts
-index af680290ce81..0a5ebe0460ca 100644
---- a/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a779g3-sparrow-hawk.dts
-@@ -288,6 +288,11 @@ channel4 {
- 	};
- };
- 
-+/* Page 27 / DSI to Display */
+diff --git a/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk.dts b/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk.dts
+index 784d4e8b204c..89d60b83ac4f 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk.dts
++++ b/arch/arm64/boot/dts/renesas/r8a779g0-white-hawk.dts
+@@ -12,4 +12,98 @@
+ / {
+ 	model = "Renesas White Hawk CPU and Breakout boards based on r8a779g0";
+ 	compatible = "renesas,white-hawk-breakout", "renesas,white-hawk-cpu", "renesas,r8a779g0";
++
++	sn65dsi86_refclk2: clk-x16 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <38400000>;
++	};
++
++	mini-dp-con2 {
++		compatible = "dp-connector";
++		label = "CN15";
++		type = "mini";
++
++		port {
++			mini_dp_con_in2: endpoint {
++				remote-endpoint = <&sn65dsi86_out2>;
++			};
++		};
++	};
++};
++
 +&dsc {
 +	status = "okay";
 +};
 +
- /* Page 27 / DSI to Display */
- &dsi1 {
- 	status = "okay";
++&dsi1 {
++	status = "okay";
++
++	ports {
++		port@1 {
++			dsi1_out: endpoint {
++				remote-endpoint = <&sn65dsi86_in2>;
++				data-lanes = <1 2 3 4>;
++			};
++		};
++	};
++};
++
++&i2c4 {
++	pinctrl-0 = <&i2c4_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++	clock-frequency = <400000>;
++
++	bridge@2c {
++		pinctrl-0 = <&irq1_pins>;
++		pinctrl-names = "default";
++
++		compatible = "ti,sn65dsi86";
++		reg = <0x2c>;
++
++		clocks = <&sn65dsi86_refclk2>;
++		clock-names = "refclk";
++
++		interrupts-extended = <&intc_ex 1 IRQ_TYPE_LEVEL_HIGH>;
++
++		enable-gpios = <&gpio1 27 GPIO_ACTIVE_HIGH>;
++
++		vccio-supply = <&reg_1p8v>;
++		vpll-supply = <&reg_1p8v>;
++		vcca-supply = <&reg_1p2v>;
++		vcc-supply = <&reg_1p2v>;
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++				sn65dsi86_in2: endpoint {
++					remote-endpoint = <&dsi1_out>;
++				};
++			};
++
++			port@1 {
++				reg = <1>;
++				sn65dsi86_out2: endpoint {
++					remote-endpoint = <&mini_dp_con_in2>;
++				};
++			};
++		};
++	};
++};
++
++&pfc {
++	i2c4_pins: i2c4 {
++		groups = "i2c4";
++		function = "i2c4";
++	};
++
++	irq1_pins: irq1 {
++		groups = "intc_ex_irq1_a";
++		function = "intc_ex";
++	};
+ };
 
 -- 
 2.43.0
