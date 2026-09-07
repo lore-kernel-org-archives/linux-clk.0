@@ -1,207 +1,143 @@
-Received: from mail-m15588.qiye.163.com (mail-m15588.qiye.163.com [101.71.155.88])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21400448D01;
-	Mon,  7 Sep 2026 08:15:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.88
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0517643B6CB
+	for <linux-clk@vger.kernel.org>; Mon,  7 Sep 2026 08:23:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788768955; cv=none; b=gAPHc/erem1g+5EMEXlSLDPCG585tSCizBnnBn4PZDJDiImZ+084OD3SP5AplCeaGaxDobWAyRf0SdVfl5YcJDU5aXjL8QOUjb/iF92tFQ4+Ii5MP8K3d0DnU5gtRtk+QksepPAvFjDSFyfht9L8z67wzOhp+UB8jS5DJvciUHc=
+	t=1788769430; cv=none; b=RRNBoOI41BHNkCPAELxC3eglgkM//t2J//cJwN6xv4/fvkQa5x8FljObe6QIyBxr+E3cDtaG8MUeML48LPrarQTPu/0r90sbBDbTrIaDNawUoGjWSdVbWicxCJ5Nuvt6Qinz2DDdOtLeuZg1oAEiDwPD8oC0GMwPAL+LDcy7EEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788768955; c=relaxed/simple;
-	bh=XopvcVj4xqwi7IBJjsec+aRvrgJcTz1ao3mcsm3l+Bg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Tj8B8ft3pTDJ0mI/JuIBypLo7AD2adZyPBGXvyDAFeZjjQU5ff7+ARisA4i05Ha2RYkZpRW6xOMuBqcmhwEG+HsneM3oERMFSjdWXof+1xgiMXMQyL3Gi/3VSMZv8FRLfz/e2EzjWlV+iIdDHgmagiN619n9B9959esrAXWGYto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=R9o5yi+G; arc=none smtp.client-ip=101.71.155.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+	s=arc-20240116; t=1788769430; c=relaxed/simple;
+	bh=toPH+1ZArk/DDhOFULiU+peDd7xkrEZ/LBY2wlar/aY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K0KNwmwd8u4S8Rphg1yBxdZsV4lMXzEfnxYcEAosKmEZRtw+OIxICBFlNHBaiFpJDp36maKE/bfAjaPgC9TngkFEZbNn/jna3gTafvrrveo4ZctGwzXANjoh9LtWnaEvPGwJ32+qEtnpFCEmS61lf/nq94lZ9CVGFHw5fzAf30c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=jSlQjCUU; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="R9o5yi+G"
-Received: from [172.16.12.90] (unknown [61.154.14.86])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 4ccabc703;
-	Mon, 7 Sep 2026 16:10:29 +0800 (GMT+08:00)
-Message-ID: <745c232e-d2ff-4d32-b997-55d4d37a39fa@rock-chips.com>
-Date: Mon, 7 Sep 2026 16:10:28 +0800
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="jSlQjCUU"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-49cd77e0f95so27415645e9.3
+        for <linux-clk@vger.kernel.org>; Mon, 07 Sep 2026 01:23:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1788769427; x=1789374227; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=toPH+1ZArk/DDhOFULiU+peDd7xkrEZ/LBY2wlar/aY=;
+        b=jSlQjCUU8NaKB9qSeaTa8q2TcqNyVNCrH5YlPuPk+DVIxHacKi5p6my2jigEtg5oIi
+         9wK784TvLkbMNjSAntxrTLBgyrju0g47xM51ay4Tjpblbrt2f+ohxXEu8GyD7hvQq/Km
+         moG50Y+Mq1xJXGgOdgCyzuKcsZXuBNlsxIEyziqceVo1mnSm/xHAQVshhiDHK9cDqqqF
+         l7yMQz5PDsdkdt7uVESFiRElzKDLjBPSy+MvNh9MA8tIDpRSZGdIbTrRnqpzdrMG+MBy
+         Au7hifIfCvAk0cz0fzCADnRQl9C+KRNwmGSJ8fum+EvTYs2R0+ZmWboDBLG+5YyqgDmk
+         8nOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788769427; x=1789374227;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=toPH+1ZArk/DDhOFULiU+peDd7xkrEZ/LBY2wlar/aY=;
+        b=htnIWYBvL55ZiOqMU8GZvpyun3k2iso2WCXSit946rCDXE/ftc0w17lyTwCepHWoI6
+         1nEy5Vg13qkK2+gOQR47QpA9kkZhC3CvqBHkCf0S8nWdEPdttwxcM5XtT1D60vg+Kb+x
+         LoWAWkgYLzaSfBaXClZYS2PZ5eUCRl72Dr7IxMVnMMHOfrgWzOz7QNCHlorHmzaC9P9V
+         rCK+S+RzpCNs0Z6sUpYbvYQ+HbDJSQ3EOxBYG8GtRBVobrIf0iJFm7LqV+zvIIidMD5H
+         JTW/KJ48O59kfMNJhuzBePo2Lri4CzV/ZPhFTxC5ZMD7deIeuvuJa+9IW9qbmp7dbnjT
+         ui+A==
+X-Forwarded-Encrypted: i=1; AKwUvBy2qIwXiQslGK2+kcJyx9h3utC2dE6t72J5/jgYE1uzRjZpfuRdIl+D1PW5BAy8TF9n2SjBpAiLETA=@vger.kernel.org
+X-Gm-Message-State: AFuF++kTIpFCYFqy828txf0UVo9Hr9cbp1T0RJYKFCDANxKKDaGSFfRp
+	tBaghCz0M3tLIehIPxZIj7DJ7gsSAtmERziPrXlk5gQFFApACUwQiJ9l3B7tgXSdLek=
+X-Gm-Gg: AYBFou1HXmLghdLzmNDFLQm0aapuoS7Xy0dq3lm+ACZZSIlsvtHbSz/3tBGAbtlBHlm
+	VYD1/BVMHSym3hN8MtmtMC8VAU0YUGCx1HJh3Wz0OeBO0P9rJ9zuMUSm/TucLmDNXAV4hoRdOTi
+	nkgUvRI4GjGRz68N9Um0ZtLlmF30X/+eSt7Xg/r0CjrP1DHTeT25x1MrNitS2+50RuOzCIPyl1h
+	39fo405qRTkmmIt/lbwYRKCpKquVg8h+wM1K5MhWz3TU7V2nDtwhBHWBexTg8jBU3ecZ1p9S/EV
+	ZLHEgn96ny+6IPdESehLPqKGr5BJGYmH2vlI3c4YX/UV3AGtwdXo7NOgZAz7iC96gvE6UuhrYQS
+	H9ZBrnnfwhpUwP6O7NbDG3XaqKvKXbzIm5tKqqY4P4iCFcQMyWB4pbJSoww4WGIHGFV1e0TzQ1M
+	IP0Nj4zEv4KtJTLSh0hyxwnuyb0r1qma+ze2bRjp8ymOlQoMkf02HX8gDt3shOgYsEMCQESLzKx
+	RdvX98/MT4kY9VUF7NTkImLL1jJnnFEQ6jqEZBNjkXluDucLWIRS9+Roe91Nw==
+X-Received: by 2002:a05:600c:348e:b0:49d:622:df25 with SMTP id 5b1f17b1804b1-49d0622dff1mr104970285e9.1.1788769427009;
+        Mon, 07 Sep 2026 01:23:47 -0700 (PDT)
+Received: from localhost (p200300f65f19a9047ae53bb37ada872a.dip0.t-ipconnect.de. [2003:f6:5f19:a904:7ae5:3bb3:7ada:872a])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-485883953cfsm22327326f8f.13.2026.09.07.01.23.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Sep 2026 01:23:46 -0700 (PDT)
+Date: Mon, 7 Sep 2026 10:23:45 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: Vinod Koul <vkoul@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Lee Jones <lee@kernel.org>, Andy Yan <andy.yan@rock-chips.com>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Emil Renner Berthing <kernel@esmil.dk>, 
+	Hal Feng <hal.feng@starfivetech.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
+	Heiko Stuebner <heiko@sntech.de>, Conor Dooley <conor@kernel.org>, Paul Walmsley <pjw@kernel.org>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Alexandre Ghiti <alex@ghiti.fr>, Dominique Belhachemi <db@domibel.de>, 
+	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
+	linux-phy@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, mfd@lists.linux.dev, linux-clk@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, Andy Yan <andyshrk@163.com>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, Maud Spierings <maud_spierings@murena.io>, 
+	Graham Markall <hello@big-grey.co.uk>, Icenowy Zheng <zhengxingda@iscas.ac.cn>
+Subject: Re: [PATCH v3 11/19] soc: starfive: Add jh7110-hdmi-subsystem driver
+Message-ID: <ap50F4QOw7jbcvI6@monoceros>
+References: <20260904-jh7110-clean-send-v3-0-484f9ae72715@samsung.com>
+ <CGME20260904132729eucas1p1bd78eb90feaf90b6265c13fc7bf43ada@eucas1p1.samsung.com>
+ <20260904-jh7110-clean-send-v3-11-484f9ae72715@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 13/15] phy: starfive: Add jh7110-inno-hdmi-phy driver
-To: Icenowy Zheng <uwu@icenowy.me>, Maud Spierings
- <maud_spierings@murena.io>, Dominique Belhachemi <domibel@debian.org>
-Cc: m.wilczynski@samsung.com, Laurent.pinchart@ideasonboard.com,
- airlied@gmail.com, alex@ghiti.fr, andrzej.hajda@intel.com,
- andy.yan@rock-chips.com, andyshrk@163.com, aou@eecs.berkeley.edu,
- bmasney@redhat.com, conor+dt@kernel.org, conor@kernel.org,
- devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
- hal.feng@starfivetech.com, heiko@sntech.de, hello@big-grey.co.uk,
- jernej.skrabec@gmail.com, jonas@kwiboo.se, kernel@esmil.dk,
- krzk+dt@kernel.org, lee@kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-riscv@lists.infradead.org,
- linux-rockchip@lists.infradead.org, luca.ceresoli@bootlin.com,
- m.szyprowski@samsung.com, maarten.lankhorst@linux.intel.com,
- maudspierings@gocontroll.com, mfd@lists.linux.dev, mripard@kernel.org,
- mturquette@baylibre.com, neil.armstrong@linaro.org, p.zabel@pengutronix.de,
- palmer@dabbelt.com, pjw@kernel.org, rfoss@kernel.org, robh@kernel.org,
- sboyd@kernel.org, simona@ffwll.ch, tzimmermann@suse.de, vkoul@kernel.org
-References: <20260828-jh7110-clean-send-v2-13-331680c8b9d1@samsung.com>
- <0ccb4168-ff88-459c-972d-3c091c155db2@murena.io>
- <e780ecb8-918f-4816-99c8-b69b10b25a18@murena.io>
- <CAAvaLCwvVUddS14MPx0FHdnp+QeZ99+ox17pXt2hSWPTCFcHtw@mail.gmail.com>
- <cb0884b3-c9be-4cfd-ba43-27add3821ddd@murena.io>
- <6a5f8c11a092cef83bae8d9ea0100c2fc133a514.camel@icenowy.me>
- <CAAvaLCxMntrTbTQ9VNu4H_6LA30TRAqi7mCpn+x3hbTG9WqERA@mail.gmail.com>
- <057d97bd4b63fa4445dd86548f2ecdcbe9c3b1b6.camel@icenowy.me>
- <f68d95d0-f918-4dee-9443-38c64247b71a@murena.io>
- <72f82ae67eca7b5a594d86852c8b0dafb7d02c4c.camel@icenowy.me>
-Content-Language: en-US
-From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
-In-Reply-To: <72f82ae67eca7b5a594d86852c8b0dafb7d02c4c.camel@icenowy.me>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0aa07aeb328603a7kunma6aa1bc239fa0d
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVkaGkIdVk9ITEtLGh4eHU5PHlYVFA
-	kWGhdVEwETFhoSFyQUDg9ZV1kYEgtZQVlNSlVKTk9VSk9VQ01ZV1kWGg8SFR0UWUFZT0tIVUpLSE
-	pKQkxVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=R9o5yi+G+F8zZyawx3whCVV/olFPrerxkAmSHzyaoP+qbbbFH+YbmhSzuasWco4g2ROixc1HaVg3Nk57qQfVWoyw147x+rkDDlxVI/S0hnMtjX9juxpUqfyv6S//I3qqIuaSa56RUA+YvW7x4fEuPAtkPm8AgKLXPFAQYdGtlmY=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=PAs6cpRutX6Xy3xUaS1PXdj4b2ODwk4xwVldcIzzW7w=;
-	h=date:mime-version:subject:message-id:from;
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="dohx7bkeczkqrdqr"
+Content-Disposition: inline
+In-Reply-To: <20260904-jh7110-clean-send-v3-11-484f9ae72715@samsung.com>
 
-Hello Icenowy, Maud, Dominique,
 
-On 9/7/2026 2:55 PM, Icenowy Zheng wrote:
-> 在 2026-09-07一的 08:02 +0200，Maud Spierings写道：
->> Hi Dominique and Icenowy,
->>
->> On 9/7/26 06:01, Icenowy Zheng wrote:
->>> 在 2026-09-06日的 17:16 -0400，Dominique Belhachemi写道：
->>>> On Sun, Sep 6, 2026 at 11:19 AM Icenowy Zheng <uwu@icenowy.me>
->>>> wrote:
->>>>>
->>>>> 在 2026-09-06日的 16:59 +0200，Maud Spierings写道：
->>>>>> On 9/6/26 07:39, Dominique Belhachemi wrote:
->>>>>>> On Sun, Aug 30, 2026 at 10:17 AM Maud Spierings
->>>>>>> <
->>>>>>> maud_spierings@murena.io <mailto:maud_spierings@murena.io>>
->>>>>>> wrote:
->>>>>>>
->>>>>>>      I was still having some glitching happening on the
->>>>>>> display,
->>>>>>> but
->>>>>>> I've
->>>>>>>      found the way to fix that, the question is what is
->>>>>>> actually
->>>>>>>      happening here.
->>>>>>>
->>>>>>>          0x29590020 <- 0x00000005
->>>>>>>      This one I have no idea, it is 0x00000009 with this
->>>>>>> patch
->>>>>>> series but
->>>>>>>      with the vendor kernel I get the value above. When I
->>>>>>> hook
->>>>>>> up my
->>>>>>>      external
->>>>>>>      display (regular 1440p) this becomes 0x0000000D on the
->>>>>>> vendor
->>>>>>> kernel.
->>>>>>>
->>>>>>>      But I can't find this register being written to
->>>>>>> anywhere
->>>>>>> there?
->>>>>>>
->>>>>>>
->>>>>>> Maybe this needs to be swapped?
->>>>>>>
->>>>>>> drivers/gpu/drm/bridge/inno-hdmi.c
->>>>>>>     -#define v_HSYNC_POLARITY(n)          ((n) << 3)
->>>>>>>     -#define v_VSYNC_POLARITY(n)          ((n) << 2)
->>>>>>>     +#define v_HSYNC_POLARITY(n)          ((n) << 2)
->>>>>>>     +#define v_VSYNC_POLARITY(n)          ((n) << 3)
->>>>>
->>>>> Very weirdly, the original definition here matches current
->>>>> mainline
->>>>> inno-hdmi.c, but the changed definition matches JH7110 vendor
->>>>> inno_hdmi.h [1].
->>>>>
->>>>
->>>> The vendor code is correct and matches the RK3128 TRM.
->>>
->>> Thanks for the tips on documentation, and I verified this.
->>>
->>> It seems that Rockchip people made this always wrong, even with
->>> their
->>> pre-DRM display driver... [1]
->>>
->>> BTW I checked the Innosilicon dGPU driver code, and its
->>> g3_ne_hdmi.h
->>> source file also contains the definition of BIT(3) as VSYNC. (It's
->>> quite weird that most logic of that driver is in some .o_shipped
->>> blob,
->>> but fortunately the g3 logic might be too new to be closed down)
->>>
->>> Thanks,
->>> Icenowy
->>>
->>> [1]
->>> https://github.com/rockchip-linux/kernel/blob/release-4.4/drivers/video/rockchip/hdmi/rockchip-hdmiv1/rockchip_hdmiv1_hw.h#L161
->>>
->>>>
->>>> HDMI_reg08
->>>>      Bit  Attr  Reset  Description
->>>>      3    RW    0x0    vs_polarity   VSYNC polarity   1'b0:
->>>> Negative
->>>> 1'b1: Positive
->>>>      2    RW    0x0    hs_polarity   HSYNC polarity   1'b0:
->>>> Negative
->>>> 1'b1: Positive
->>>>
->>>> Nobody noticed this so far because in 720p/1080p both polarities
->>>> are
->>>> positive, but Maud's 3:2 panel has differing H/V polarity.
->>>>
->>>> Best
->>>> -Dominique
->>
->> This also solves the devmem behaviour I saw, or well, doesn't realy 
->> explain it but does show what is actually happening. As Icenowy noted
->> (maybe that was on telegram only?) the inno-hdmi regs are 8bit
->> instead 
->> of 32 bit.
->>
->> What is actually happening is:
->>
->> devmem 0x29590000 b reads 0x29590000 as expected
->> but
->> devmem 0x29590004 b reads 0x29590001
->> devmem 0x29590008 b reads 0x29590002
->> ....
->> devmem 0x29590020 b reads 0x29590008
->>
->> For some reason the addressing is weird?
->>
->> With this change, the assigned clock change and removing the 
->> v_REG_CLK_INV | v_REG_CLK_SOURCE_SYS write to HDMI_SYS_CTRL, the
->> display 
->> comes up from the start as it should!
-> 
-> Well I checked the RK3128 TRM for these two bits, and their field
-> descriptions are -- "reserved".
-> 
-> What can I react...
-> 
+--dohx7bkeczkqrdqr
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Subject: Re: [PATCH v3 11/19] soc: starfive: Add jh7110-hdmi-subsystem driver
+MIME-Version: 1.0
 
-You can take a look at the TRM of the RK61X[0]. 
-I think it contains the register descriptions you're looking for :)
+Hello Michael,
 
-[0]: https://dl.radxa.com/rock/docs/hw/ds/Rockchip%20RK61X%20TRM%20V1.3.1.pdf
+On Fri, Sep 04, 2026 at 03:27:12PM +0200, Michal Wilczynski wrote:
+> +#include <linux/mod_devicetable.h>
+> [...]
+> +#include <linux/platform_device.h>
 
--- 
-Best, 
-Chaoyi
+Please don't add includes for <linux/mod_devicetable.h> as it introduces
+many unneeded build dependencies. Either rely on
+<linux/platform_device.h> providing of_device_id (IMHO preferred), or
+include <linux/device-id/of.h> directly.
 
+The same applies to two more patches in this series.
+
+Best regards
+Uwe
+
+--dohx7bkeczkqrdqr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmqedI8ACgkQj4D7WH0S
+/k4SQAf+JxaOkTt0KXEdMeiFgnBOg/VvLQ2tgwyYbYV25ymCW6f+E/Oz3WAI4IDD
+S5sDwYSMfEN2g+u3IdIzE3kZhVEAdkv+iyA6MExPzaVz9qaS/A5RwGIGRO8EtmbY
+OnW/GTowIQWQH8Fs2w7pe+ITRAhjl+9OOwdM2Y5h4x+EZD4CUz4apRozxIz62mu0
+rv5S6v/JdJiz/WNpikSdNzKKIKdq56RUI2KHXKfjqnvCkAHwAVnPfgCH+HNcpJSX
+wljKv3FOemKlAJV4uNgIjZs2QqmcGZbZ0acdyNWZ++YujYR8wLjOkQ0loi8lNg/x
+i6GGu8ylq1Jcpp7HF98D268WTb+1Fg==
+=jV7I
+-----END PGP SIGNATURE-----
+
+--dohx7bkeczkqrdqr--
