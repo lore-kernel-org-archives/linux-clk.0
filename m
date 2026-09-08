@@ -1,86 +1,87 @@
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F3D59B672
-	for <linux-clk@vger.kernel.org>; Tue,  8 Sep 2026 17:47:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E6DC59B691
+	for <linux-clk@vger.kernel.org>; Tue,  8 Sep 2026 17:47:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788889676; cv=none; b=fDuJo67egLy/7aZ9IgJm8qHz+fGeRMvHVamVBp20s6mGjZsknMKTKrlOr+vbSsdt6AO2NQ2FrYd2gXMkRhhOmJQs5Bh5TuQtD3bP9SpG4/im/ykSs/tG5HT7wlUQDVZBdyxJxIvuM4JCaOABG30jB+G9pnPLHbgt2SUe2N4VPGg=
+	t=1788889678; cv=none; b=qJ3Ii1+aGFsf3EVY9cjI6nTT9xmE5n6Zcl+dXMh1/cJCY5iCycYMIbAP+8AM7/W/1QfI/qY4sKhjId7JLrJ0s39/roqJkAtqhG2lml/b2RI+d3OATMP+SFKrX9MmbjKzJUDPWW0RbvEPRzphd/rNIB/jdFT162jw+doVXq9ATUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788889676; c=relaxed/simple;
-	bh=a7E1cAnanYVVkRWaKkPGdq4ia4gYC62syLjr8jr85LY=;
+	s=arc-20240116; t=1788889678; c=relaxed/simple;
+	bh=rrY1owvxS07jbIpCbpLvTgnzot37t+bLysMBqFgi+Qo=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=G1gMIk9CswO3Yo0Y8W3e3HDbqwRw4BcLGdGx3xk94O9pCB9JicfobptYNTDCmxuLOsZoYB3bd43mel4vsZMqHt2U7uAoaJEXGC5n4asqv8bfIDAPc1onkhGfZ0a4dNF8QQitDxn77CN9CZwaYYlmVs7saDe+xyPfI1yo2jjjDrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fEpD3lv0; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=INZTmeAr; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:To:Cc; b=tdmY2q0EeoZDTlIBFuWe38JkASJaHjXL1xxXqnS12kDfLidTy54g0qFoI3aYiB/fSdHj/njs2v6ss+d247VeUDPclY+7Nu/rkxbeLTKLx4r+DJrGROaz8/LQxQs2r6hF8xQ8+M+BlFm+Uv9BMATl9eRRO4hdrHD+jbnjcduANWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R0JyWmFQ; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=aqzEd+HK; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fEpD3lv0";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="INZTmeAr"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R0JyWmFQ";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="aqzEd+HK"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
 	s=mimecast20190719; t=1788889673;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=JmkVIyJpnqsnRkQ/AN9eH6zCUWkahngJ6micUwzJvZg=;
-	b=fEpD3lv02f04aYjZUVDaJ0R9SYa4aDVRsg65vmkOQMPwoEQm3Au4jIomW0c8DcTJOUnZys
-	HesPnXLSekdbMKESz+SiThvPnnkaqK+0mKwgLMY4sbExcru+vt+itLhNOJKmsxOUKVp3QV
-	y6v9+nMBSpvLFhX2VD32ROOYPBM/Bzw=
+	bh=CS/10M/g4Wr/wq9hJUaikpGp/lR/pIXDB913LdXZJIU=;
+	b=R0JyWmFQKJkZon5nY6ckSUWQnnCIhGlPw0Baoms49+Nbf7lPDPxRHHU2/x4UawgSTo4NE2
+	81MeJeuS43rACk3HF8rg3bBW2Sk5iPxBlwi+3J/XLDXVxSygPlD6mkxFabXjkitjeJCfHY
+	az2WVRjzHJxlQCg3yA7fnPLUdGpFSc8=
 Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
  [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-332-Z0R-bn9jPPydgHROhtmxhA-1; Tue, 08 Sep 2026 13:47:52 -0400
-X-MC-Unique: Z0R-bn9jPPydgHROhtmxhA-1
-X-Mimecast-MFC-AGG-ID: Z0R-bn9jPPydgHROhtmxhA_1788889671
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-9394ad7f64aso765415785a.3
+ us-mta-422-GJkCe-u6OO6sszJCnR0Jig-1; Tue, 08 Sep 2026 13:47:52 -0400
+X-MC-Unique: GJkCe-u6OO6sszJCnR0Jig-1
+X-Mimecast-MFC-AGG-ID: GJkCe-u6OO6sszJCnR0Jig_1788889672
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-93915f50a5cso1163936585a.1
         for <linux-clk@vger.kernel.org>; Tue, 08 Sep 2026 10:47:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1788889670; x=1789494470; darn=vger.kernel.org;
+        d=redhat.com; s=google; t=1788889672; x=1789494472; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=JmkVIyJpnqsnRkQ/AN9eH6zCUWkahngJ6micUwzJvZg=;
-        b=INZTmeArUqdr7G9C5GPpTY8peKGyjO7G373EkSRbssiKYjZrXVdS9Oia+fyi21Rlmu
-         SsaDmPaJX0ETC9qr3bAA9uRhJoSliZjF+q9mP7P0ZZlybFq3DVGMBuNie8jN7z7oZyNR
-         +oSu5+SBDh2NjXODQpxMPlvqGf2ucc9CIudWijAG58zGD1BPIYgAVTgioUi9vY7VVseI
-         gAHjvAJs2cLodaoP9/E45nylgyF3/Egvcg+Y8fW9SP1PFvvMsoJvcIu3M8ULqKKRfKyh
-         LJlXIOprMV6LZLjTQvyZXiqNqqOH7lf2/4JxpvJHKdlOo/tKk2AhWUjLCXPG20T5WM64
-         8G0A==
+        bh=CS/10M/g4Wr/wq9hJUaikpGp/lR/pIXDB913LdXZJIU=;
+        b=aqzEd+HKXnfwVLgp+JQ13AYRiNrSGq5HLSkoXyH0ftgeECn31om9OdrtzZi4lfSr04
+         WWyEw00N0cEG6Mc8zawCijcu0Fp5zDh05ZZZrZpDRwhTticRZNXJzbSWfTxKoRg80dl6
+         hqaGv4NTGFIj7Ys7prwaV4wR5ZX6oaFo2xnM5YaUANAN765lZD9CgQ+nFfqddDJBnIDJ
+         uppBNlvAo0hfa/7PJ1S03OThkxdCDWeU43dTR8mijgikRnuz/l/yzfHRDJ6ElL8S4FUd
+         JTYa7HWZWmT+Ecv5dxojgWkiVji6EOyWRG7rS/NPpeExZyJKnh9VTYlvx1cPGW40SsXF
+         TG4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788889670; x=1789494470;
+        d=1e100.net; s=20251104; t=1788889672; x=1789494472;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=JmkVIyJpnqsnRkQ/AN9eH6zCUWkahngJ6micUwzJvZg=;
-        b=LM82tGnH/VtnNM1qoowFt5Yq0VA7OE9xkNmu8waxDax4ZOW0fOwdsyB945keWHL4F2
-         aoyor1FxSRnsXvCMRic6RP8Tlp27L6JmYzs8ZbNx1qV+hxYmfXyTf5IZwfyFVSBGtoZ+
-         mqgjbhMPR3BIt+aNuqFX9I/r6mrTTfWHbKMmvPs1I7LwZEK9xp4LDYKq1XealSgIJ32G
-         1nBBEWgpgZTKyleseHxirTQixFFAk43h+zWLClP3IQKD2bdzqvI8x8zvhbgPTbPIftew
-         F+P16reNmcX25zNozUW9nYlCH/A7oSteTWIHF/qlo+KB3BVl2cv264MMUpNY2oQGjgk+
-         MtZQ==
-X-Forwarded-Encrypted: i=1; AKwUvByroeoAiJwNnCwRghpfOaDdrLb3GpRDK9PzK3YfHxhYDA5/UxBwWr1if6OzdB+yJlqOPsczb9IHcXg=@vger.kernel.org
-X-Gm-Message-State: AFuF++lUsNA4gR+n7PWuOmk24YcItPcCgRT8cNI+bDu8UAmVb6YW55aO
-	le+fNc8FlHh6hWq4jlM83ZK4n/YwJ2QixlniGmyr8v6FnuC5VMFvQEiyiPUWy/g0X8tIzP8XoQ0
-	BeTYLYyUrtPvJbM9vF0owr0FlotEUxTZP1udszjkKO1hmx6Lol7HMbzKUkPSrNw==
-X-Gm-Gg: AYBFou0/wRzSQhn2tA43ev70BcuzKFuGthYoqv3hFatRvRd9cL3qQB9iD+yhh9JQMBC
-	mSFKF4iUrg/W/PA9yNwHxSE+SNgrXrZSEJSt6zj5vplqu9dAiUW7kkxPzY/Xdsupp1YTIxbNaH8
-	scXOhQc4Ks5pBoBrKIhnFdbIv1QMFsld3Dv8zNHv+ILkW7hGik/yPaLhwgZZbr/8X7CvaY4W3pl
-	ny0PwJaRca3ir+2AUBETT7cUbPwB7By1+pvW/44YVUizV/Vt7hyJ5jJF0ZI6oWUsu8ujqz/Sxbc
-	V+6Tdvcb2cWQhj2DhrWwMqDt76+CZT7HZG9rqvbAEwkUIwDvcaUV929QauXXCNKu8pKRagDDO2s
-	5z0eB0lTLe1NaBFYdvqtST4mDAk6kAxF/5e3b1xA=
-X-Received: by 2002:a05:620a:46a2:b0:939:3712:77df with SMTP id af79cd13be357-939803405c3mr3213678285a.21.1788889667415;
-        Tue, 08 Sep 2026 10:47:47 -0700 (PDT)
-X-Received: by 2002:a05:620a:46a2:b0:939:3712:77df with SMTP id af79cd13be357-939803405c3mr3213671985a.21.1788889666833;
-        Tue, 08 Sep 2026 10:47:46 -0700 (PDT)
+        bh=CS/10M/g4Wr/wq9hJUaikpGp/lR/pIXDB913LdXZJIU=;
+        b=qOfe1dsDB8Vm/PMRmKl/ZtGXitmM3XoUSQVyZLYulMxQ0ASA/DtU1R7ER/SR10Vzg3
+         KImODkj9h1KYB1lTEjsvAbB4AuyZhyArhxPxktGMvKV20g/Pj6d2b9QnWHaYSJSA6UL8
+         ZJXTIPODSb3XLZ4NNuU5bIzXbI9oQk9WA7uNVPbYi9SXmB46v4c0P7j/v7oRaNMOoe3z
+         dOzqM4L4iAV7ZSQh6RewKFOi8uKQrQLUI/g/pfMCcq/XzF7BaXVQPx+9um2HHYhS5lfe
+         QvqFCgS6iP/ftpglqr/Iq7hRCfnkrRnZ3ODkA3KbIi0i5jH5qKQkvxUV4v0Q9Pm8D6uS
+         wJSQ==
+X-Forwarded-Encrypted: i=1; AKwUvBzhKxZg87rwQwJiY/HwT4uIwYhhTxULRdVoFXwM4kzn4GmkPoD2+a3QNOPEJuJq7RjS3qTE7Q4q9+k=@vger.kernel.org
+X-Gm-Message-State: AFuF++mpB/EtpfPTquiRyWDXU43F+ZXRYLmroObRPIDpLcKc6IBkIzvK
+	/2OYEOIqsejwWMRkkKbPM+SzPDnu9V0V3kkpyKn6QLwOFHstGRp5PMwzHgQlyaWH38boJVBaDvS
+	Z3udqFirlbkJiOmt7HrpV5Aq0W1vcETcv+3obHZTeh7FABu8LpwKMY4JdhCAcnw==
+X-Gm-Gg: AYBFou3qGaqVkTnRCdZnLEypW+s0gD9hSdci9i7bGxxQ9+xCutLtMUCRyfDmZm+Ekvz
+	7pZRvUFlDWuumdNmBxWaq5hw6Ikbyo5jsxHNCflrqymdhrdzCTLkzEbz11Nrhovq9AkjnBk+x4d
+	aIvSWoaZA5fDf3vQc0Q4vz3G/GgBdjKWU+bqA9+3bs09M71Vb120AS5FImdkWzkqp7FhvgzxoZU
+	T/2/uJo3oMNOi36s0o3D9dqSf90ztmPrcMIScJGA5HyT+1W8dVj66ariyLuRGvnf7agDaTO+NtC
+	FixkxqVIdl/xFU9+bsHyFkNLyzpoHGXS86jM6vUPY+KwJR6CbfMSRzIqqU1PvG2cMD8mR9tX0YQ
+	huhCScqV/IEDOyWAvezR0mb0VJUsB1sjgcWBlSuo=
+X-Received: by 2002:a05:620a:46a5:b0:939:72cb:baeb with SMTP id af79cd13be357-93972cbbcabmr2833249985a.34.1788889672094;
+        Tue, 08 Sep 2026 10:47:52 -0700 (PDT)
+X-Received: by 2002:a05:620a:46a5:b0:939:72cb:baeb with SMTP id af79cd13be357-93972cbbcabmr2833244485a.34.1788889671455;
+        Tue, 08 Sep 2026 10:47:51 -0700 (PDT)
 Received: from [192.168.1.3] (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-9397fb9bac1sm1194093685a.35.2026.09.08.10.47.45
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-9397fb9bac1sm1194093685a.35.2026.09.08.10.47.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Sep 2026 10:47:46 -0700 (PDT)
+        Tue, 08 Sep 2026 10:47:50 -0700 (PDT)
 From: Brian Masney <bmasney@redhat.com>
-Date: Tue, 08 Sep 2026 13:47:18 -0400
-Subject: [PATCH 1/4] driver: core: add subsys_driver() macro
+Date: Tue, 08 Sep 2026 13:47:21 -0400
+Subject: [PATCH 4/4] clk: renesas: convert drivers over to use
+ subsys_platform_driver()
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -89,7 +90,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260908-subsys_initcall-v1-1-cbccf4cd4288@redhat.com>
+Message-Id: <20260908-subsys_initcall-v1-4-cbccf4cd4288@redhat.com>
 References: <20260908-subsys_initcall-v1-0-cbccf4cd4288@redhat.com>
 In-Reply-To: <20260908-subsys_initcall-v1-0-cbccf4cd4288@redhat.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
@@ -101,66 +102,96 @@ Cc: driver-core@lists.linux.dev, linux-kernel@vger.kernel.org,
  linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
  linux-renesas-soc@vger.kernel.org, Brian Masney <bmasney@redhat.com>
 X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2040; i=bmasney@redhat.com;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2826; i=bmasney@redhat.com;
  s=20250903; h=from:subject:message-id;
- bh=a7E1cAnanYVVkRWaKkPGdq4ia4gYC62syLjr8jr85LY=;
- b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLIWeNn2tBU1Ni1/dSggNbqg+dfChvjbuQt/uU6Q59qeu
- buBSUCwo5SFQYyLQVZMkWVJrlFBROoq23t3NFlg5rAygQxh4OIUgIlUcTMynEjas5VdRKHyXNSp
- jwynb6XoznuXmfJN85R/9wbxuKPTTjAyzIwrYIzpUotZnHuvkkEkgW9DRFtASu7/n+a/65dJC07
- nBQA=
+ bh=rrY1owvxS07jbIpCbpLvTgnzot37t+bLysMBqFgi+Qo=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLIWeNl/XMezhn1zYsGtX80ei091LkxnfKvOcIY9mvH5O
+ auzVZ6eHaUsDGJcDLJiiixLco0KIlJX2d67o8kCM4eVCWQIAxenAEzkRjAjw8w1per1JTesE1OS
+ lj27piPfMPvGTsNPXX8nB0r//p46/yXD/4RZf9ZskF6m2PKfMWbh093KwmY9CS78O+6I73h+enE
+ TMysA
 X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
  fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
-Add a new macro subsys_driver() to eliminate some boilerplate code in
-drivers that need to register earlier in the boot at the subsys_initcall
-level.
+Reduce boilerplate code in the drivers and convert them over to use
+subsys_platform_driver().
 
 Signed-off-by: Brian Masney <bmasney@redhat.com>
 Assisted-by: Claude:claude-opus-4-8
 ---
- include/linux/device/driver.h | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+ drivers/clk/renesas/r9a06g032-clocks.c | 8 +-------
+ drivers/clk/renesas/renesas-cpg-mssr.c | 7 +------
+ drivers/clk/renesas/rzg2l-cpg.c        | 7 +------
+ drivers/clk/renesas/rzv2h-cpg.c        | 7 +------
+ 4 files changed, 4 insertions(+), 25 deletions(-)
 
-diff --git a/include/linux/device/driver.h b/include/linux/device/driver.h
-index 768a1334c0a1..29fbc01ef06f 100644
---- a/include/linux/device/driver.h
-+++ b/include/linux/device/driver.h
-@@ -297,4 +297,35 @@ static int __init __driver##_init(void) \
- } \
- device_initcall(__driver##_init);
+diff --git a/drivers/clk/renesas/r9a06g032-clocks.c b/drivers/clk/renesas/r9a06g032-clocks.c
+index 1da25e4fb4d7..3df3f2b2c6de 100644
+--- a/drivers/clk/renesas/r9a06g032-clocks.c
++++ b/drivers/clk/renesas/r9a06g032-clocks.c
+@@ -1419,10 +1419,4 @@ static struct platform_driver r9a06g032_clock_driver = {
+ 	},
+ };
  
-+/**
-+ * subsys_driver() - Helper macro for drivers that don't do anything special
-+ * in init/exit but have to register earlier, at subsys_initcall level, when
-+ * built in. This eliminates a lot of boilerplate. Each driver may only use
-+ * this macro once, and calling it replaces the init/exit boilerplate.
-+ *
-+ * @__driver: driver name
-+ * @__register: register function for this driver type
-+ * @__unregister: unregister function for this driver type
-+ * @...: Additional arguments to be passed to __register and __unregister.
-+ *
-+ * This is meant to be a direct parallel of module_driver() above, but with
-+ * the init call promoted to subsys_initcall() for built-in drivers so they
-+ * are available earlier during boot. When built as a module subsys_initcall()
-+ * collapses to module_init() and the normal module init/exit paths are used.
-+ *
-+ * Use this macro to construct bus specific macros for registering drivers,
-+ * and do not use it on its own.
-+ */
-+#define subsys_driver(__driver, __register, __unregister, ...) \
-+static int __init __driver##_init(void) \
-+{ \
-+	return __register(&(__driver), ##__VA_ARGS__); \
-+} \
-+subsys_initcall(__driver##_init) \
-+static void __exit __driver##_exit(void) \
-+{ \
-+	__unregister(&(__driver), ##__VA_ARGS__); \
-+} \
-+module_exit(__driver##_exit)
-+
- #endif	/* _DEVICE_DRIVER_H_ */
+-static int __init r9a06g032_clocks_init(void)
+-{
+-	return platform_driver_probe(&r9a06g032_clock_driver,
+-			r9a06g032_clocks_probe);
+-}
+-
+-subsys_initcall(r9a06g032_clocks_init);
++subsys_platform_driver_probe(r9a06g032_clock_driver, r9a06g032_clocks_probe);
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index 80f4403ea2ba..87b555e38980 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -1428,12 +1428,7 @@ static struct platform_driver cpg_mssr_driver = {
+ 	},
+ };
+ 
+-static int __init cpg_mssr_init(void)
+-{
+-	return platform_driver_probe(&cpg_mssr_driver, cpg_mssr_probe);
+-}
+-
+-subsys_initcall(cpg_mssr_init);
++subsys_platform_driver_probe(cpg_mssr_driver, cpg_mssr_probe);
+ 
+ void __init mssr_mod_nullify(struct mssr_mod_clk *mod_clks,
+ 			     unsigned int num_mod_clks,
+diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
+index 7f8decef92fd..f6293c968bcf 100644
+--- a/drivers/clk/renesas/rzg2l-cpg.c
++++ b/drivers/clk/renesas/rzg2l-cpg.c
+@@ -2758,11 +2758,6 @@ static struct platform_driver rzg2l_cpg_driver = {
+ 	},
+ };
+ 
+-static int __init rzg2l_cpg_init(void)
+-{
+-	return platform_driver_probe(&rzg2l_cpg_driver, rzg2l_cpg_probe);
+-}
+-
+-subsys_initcall(rzg2l_cpg_init);
++subsys_platform_driver_probe(rzg2l_cpg_driver, rzg2l_cpg_probe);
+ 
+ MODULE_DESCRIPTION("Renesas RZ/G2L CPG Driver");
+diff --git a/drivers/clk/renesas/rzv2h-cpg.c b/drivers/clk/renesas/rzv2h-cpg.c
+index 63f13fe4e4b0..7ce94680c79a 100644
+--- a/drivers/clk/renesas/rzv2h-cpg.c
++++ b/drivers/clk/renesas/rzv2h-cpg.c
+@@ -1643,11 +1643,6 @@ static struct platform_driver rzv2h_cpg_driver = {
+ 	},
+ };
+ 
+-static int __init rzv2h_cpg_init(void)
+-{
+-	return platform_driver_probe(&rzv2h_cpg_driver, rzv2h_cpg_probe);
+-}
+-
+-subsys_initcall(rzv2h_cpg_init);
++subsys_platform_driver_probe(rzv2h_cpg_driver, rzv2h_cpg_probe);
+ 
+ MODULE_DESCRIPTION("Renesas RZ/V2H CPG Driver");
 
 -- 
 2.55.0
