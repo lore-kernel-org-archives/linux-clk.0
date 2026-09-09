@@ -1,204 +1,179 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACE40568528
-	for <linux-clk@vger.kernel.org>; Wed,  9 Sep 2026 13:30:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DABB531AFC
+	for <linux-clk@vger.kernel.org>; Wed,  9 Sep 2026 13:37:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788960660; cv=none; b=pxG0f2WYla6XA8NTbRwqT3o3pegNAnnRZ+/Z896/TSiowl80CljrhaP55BZzyR7rTP8e0gwOZEPE6HxK2S6mkdN7RNC8tOkwyyoi1a/vBxPSNiNGuthQxVIRBNGRwp4YJod5dbyegLduCTYGZv0J2sBUvhRllNMXJa9wRdHha5Y=
+	t=1788961059; cv=none; b=tCr23NY4s1SBpkKT/2HsdYLs6Dta5p9HTQw5MsMFsbkPnDfWmem2eCzYfRu5bEiS1hbZltEdG0CZmGBjxhSOlNk7oCgrQf0FIinga4qo+1/pE7mhq40p1grqbbGvFX03W6aT8rG9FC4zt/lW4n8fDxdA+YTnIydCEUqbM/I/z9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788960660; c=relaxed/simple;
-	bh=tlCe4WjdkO4qFLxgeVU0jAIMugK3txyQr6JCuOS6X6o=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=ZERpTTS/UerwrP1WSBdszovxwCKoGLb+Z1YapniCXgbNg/rBW5a57Z5b/y5kFPe32n1zoBtNx8xC0VIJEBCPbOgODL8jeHKqCAZLd3XBRoLO/ZKLicIBIUrGPAQQ7Rn3GAo1QsLtjrjcXfD0iJWwtAUuxWctLzaQtp8Sf3VnoLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=esSYGs9/; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1788961059; c=relaxed/simple;
+	bh=O7CTYYww6kbvbIlbWW7DJQj/nWqn1Zl5VNdZA+L0TkA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sPqRAjyDFQDCq8G7pIlzx1aRs1Wy0L0zRiFzQuPX4IEoTClxvMSQhXyJMvTZNrCXA1mPAmXZVxmTXy9t9Gpzg3Ua5GxgIZCxz40QkoxxHzBc95yRAO8d5vV4juq5N2zrkiYwIQg5+Dl/ZhCqAfCFC2h1Z1+hOL0R7L2xO67baR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hEIvFy+h; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=ddUXav12; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="esSYGs9/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68F7F1F00A3D;
-	Wed,  9 Sep 2026 13:30:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788960658;
-	bh=wdAHAe6Deiwo4ROSs0ZIL6DyeJBFNNhvenbb55muDIc=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=esSYGs9/QUHrfoIhgb3YCgeuCgAS09+lnwPTkDFT5XBdgqXlDxKcagLhCw8lIHJWM
-	 2qxO/pMlMjer0bh5a4Yq6x/YMH+2c+IgH3IW1cqSJx/YQUFMkF+zm9kXdwXc9ha7p/
-	 mKOU8gjKKN1w0ZoR3Dxyx58v2WOnsCHcvaaZ9NaXCXE3HILROgl2wodldNvQpYHl3r
-	 VLiilpbATzF6GzmiqI6gwC6qlNAe6CFYzug7HGmppFucVuBbXU8PsIDMO8yy/mCeug
-	 HUrGCK0pxuSW0BKoD9Tg7QOTAtqnc5W0HRdE2FUVlvAxkPAcl4a2KVZjMPKfj52qNu
-	 Y9cYDXVcN8xgQ==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH] clk: clocking-wizard: Fix overflow in clockout0 divisor
- calculation
-Reply-To: sashiko-reviews@lists.linux.dev
-To: shaopeijie@gmail.com
-Cc: linux-clk@vger.kernel.org
-In-Reply-To: <20260909131412.3051635-1-shaopeijie@gmail.com>
-References: <20260909131412.3051635-1-shaopeijie@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 09 Sep 2026 13:30:57 +0000
-Message-Id: <20260909133058.68F7F1F00A3D@smtp.kernel.org>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hEIvFy+h";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="ddUXav12"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 689BU4Dq1723123
+	for <linux-clk@vger.kernel.org>; Wed, 9 Sep 2026 13:37:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	iygAIsZQGVJ3KWkHRH+o0viu20ln2A5UI2v41yNoOPM=; b=hEIvFy+hGRl7UivC
+	xvoY1NvSocAfvPTKn4kBVjpF00Z8wJRPupUSQWiGz8ScOW9BGZMRhiMDZp51p+2n
+	Quiaf3dlVWvo29BI6iZIVHARai+8W82J0sbLJLJcfCN1z5Z3TpZT+vaQTxkBLSBD
+	7eQndcMbdFpUYyIU8+CxccwVY8ml9nMCR9q+2yJi7TkRsmF2EjKzbLKm3DZgYSqq
+	aD8Dzu+RYfvUIMgIs5OP55YkGCwDXNsoy37UMsmy/XdquisOs2onEXa+KKKkhRki
+	se5nqvJQkr0c4svBQWiCsqfkZAzGPRF6LT0RsWVwkSrH4nRt1MUD1ttgFM8SuiNZ
+	go/HNA==
+Received: from mail-vk1-f197.google.com (mail-vk1-f197.google.com [209.85.221.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gk5cnrthm-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Wed, 09 Sep 2026 13:37:37 +0000 (GMT)
+Received: by mail-vk1-f197.google.com with SMTP id 71dfb90a1353d-5c7d6767d06so176217e0c.2
+        for <linux-clk@vger.kernel.org>; Wed, 09 Sep 2026 06:37:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1788961056; x=1789565856; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=iygAIsZQGVJ3KWkHRH+o0viu20ln2A5UI2v41yNoOPM=;
+        b=ddUXav12elXcIY/krpmJ2PxoSQwDeP4qRMpgdfwUr0/UE5h24EhnkRrOFS7vIyIcH0
+         Bd50eJvBdLroH66nhtLi73IUy99bqemelk/HvzlypL+kPypxUczaBOzh1mNrjDeIR6uq
+         7Y6nemDB/n/VzxJRftuPtD5wGXtp8iRZH+NIg9mkgz2BPJm+6mc4VgeazEPJlfF7lyR0
+         Lzca9vGvNuOodJF2kurIu1c4L5c9ti8YU/so93iebUnEBKWB1bC+82hgljbDD5h5jdvX
+         NqC45hdHE4x9bgV0ysYVFxjlYIfuWvynDwtdK3jOhJa65VosvlyZt97JNTkQHF1h/N3L
+         XJpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788961056; x=1789565856;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=iygAIsZQGVJ3KWkHRH+o0viu20ln2A5UI2v41yNoOPM=;
+        b=iCQcGw/W7EQHVigEsp3fa/ldH8h7WkPVe/MmAWALw0V0oQcQkhJie4wwkUyf/07vVO
+         KfxeiJHRRFLqYHlb2cuXnyO2+Yv3WHYLnaD6ycBGb5jBRDaw/+6pH29lR/WCk2BEEvbf
+         UnoZi5P32jM0mkmmRa0Rn6lJndHp9vr+nUaVSJR2WRYytpNrD3zU9ke1tIbMKQfdPJRk
+         zysW+/5H3q5nv4J3s9aFJPbFR42NWLTM3UxYux26pJgdD/sCqTeJfgDHxpSiwTCKJvMD
+         xxy3Ep6qZZNjM9vUMW4qZ8JiRFHqcgklf+F1JyRCFxv2ZkTpAKPWX+6kkCmRCyhy+wUI
+         dZLg==
+X-Forwarded-Encrypted: i=1; AKwUvBwnXdy9E+/2J5yTHWxK4J/fDZFQzNJJ74wpWpfxPUfX94HsYqfnbNfQK9YOW0BZfFT1XokLp5M6oJk=@vger.kernel.org
+X-Gm-Message-State: AFuF++kS4fBfchkjtiTnt+o4XE4fGnDCKGLYQ127xhwtKSzazDIeyJkt
+	0rYQthAGAeqspsRysLgu3afmqagzL+JKEUfb4OXnfZDeMzu1zzkeyAuknrUI1rRhwKiQXje1XyR
+	mdA80COtPH0oAYwqsNEQxB0gh+wERZrRiUoG4Vur/DMgmHTOm6/fS+DiDlsYwYqE=
+X-Gm-Gg: AYBFou1UHDsBO+Vt/11ekAThNH+IdzWDu/FQUsfDUU2GlbR8viIYH0f30SdneUrufu0
+	GP0S8vQZ+ep1GwIKo00/glWhcwCUu4icbYm6D9XmDOpxCF1wn/qa8vtdD2UY9SsIdCs4kCROBMR
+	8tw1eFsl9Y+7MrD6yu+CKoxWxf7FOHWOF3XhzrSZs+VGK1BXuBQaNsyEqe8nYubRPsLnRpyCbTs
+	IkharLIaXlyQsu/Fv3PE5bvNatGI9x+EBF6R6cg4/dS3AkDkduW5zxJSs2gOqJsQtUaCOBWHIXE
+	bo4PtaS/JGOTSepa6bcSpi8ax2FrkOn3KvMZK4tCZtgMtgHFIqeF5bJRwpJ0xG0WIchPC5s/WCp
+	Ahc0LqYYhct/pI9nLeo+0UA==
+X-Received: by 2002:a05:6122:6b14:b0:5c3:a1f5:7569 with SMTP id 71dfb90a1353d-5c8148141a8mr3923754e0c.1.1788961056439;
+        Wed, 09 Sep 2026 06:37:36 -0700 (PDT)
+X-Received: by 2002:a05:6122:6b14:b0:5c3:a1f5:7569 with SMTP id 71dfb90a1353d-5c8148141a8mr3923741e0c.1.1788961056058;
+        Wed, 09 Sep 2026 06:37:36 -0700 (PDT)
+Received: from [192.168.202.12] ([178.235.128.140])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5b7673bd6e5sm438764e87.22.2026.09.09.06.37.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Sep 2026 06:37:35 -0700 (PDT)
+Message-ID: <fcd7eb6b-95ab-43eb-91f7-f9a0ffe18ead@oss.qualcomm.com>
+Date: Wed, 9 Sep 2026 15:37:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: qcom: ipq-cmn-pll: keep the CMN block bus clocks
+ enabled
+To: Stanislaw Pal <kuncy7@gmail.com>, Jie Luo <jie.luo@oss.qualcomm.com>,
+        Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+Cc: Mieczyslaw Nalewaj <namiltd@yahoo.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Georg Seema <georgseema@gmail.com>, Brian Masney <bmasney@redhat.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <b58e3f64-1a5c-4db4-a51b-7138fb3609da@oss.qualcomm.com>
+ <20260909132049.37611-1-kuncy7@gmail.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20260909132049.37611-1-kuncy7@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: 7a_w0o3F4aTG1zbs15B1gsysg0tDgBf1
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTA5MDE1MiBTYWx0ZWRfX6pdtru8Bu1KU
+ xGW/vDGT8/3emBK0r0Nt1l3HLtOWQAkxkgOpzLqA3rd3BB6ERiAxDY/UBG5LNWoskrkU1GeGZ2W
+ NTHiQWifq5s0NVthWAvErf+ULqrDlOo=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTA5MDE1MiBTYWx0ZWRfX5ufOQk0tAFr0
+ qHk1lOIjhCIWi/4Q3uWOVeQylIFQEkUCmtH+APXYzCwKWWwIaI3WS4AKviDnzDuKT/8RRZpdfP7
+ NaGxYzWTRMOAQKZXX42Gd7ZVNOduoScUALs1tj2ASkd/lJQ9sji1w9jPHx+VHqSeNCZSJGMu//C
+ HNKMVBSzrPAlnygN6gFuMEnK5h+PYiiKY1d71We7xRwO53YPNHvkCPkkzHQd2S2Wy39rSO3S0w5
+ 22CtEQz6Q8MQLFdfbPQrINuEtF5CvetfkA/CRpJK7VdfY+qIEsVwznNoa79z0IsciG42r+5O4nZ
+ y7f4DdiCWIPR9k6xEVHUGrzk8PiLJKppY9nTX/RXUOX0B/2GfDkCDbVWM71LR36Cmg5r5D/dHuR
+ JBNA0ASHD03OCGvS0lB1t+h/QN9t8Qoknvh//YpcMLrmJew5JPbzFEXK31rcQo8xwx/ljNxpUfT
+ 35d/Mum7lMAOwIsZGLQ==
+X-Authority-Analysis: v=2.4 cv=S+jpBosP c=1 sm=1 tr=0 ts=6aa16121 cx=c_pps
+ a=JIY1xp/sjQ9K5JH4t62bdg==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
+ a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=ZpdpYltYx_vBUK5n70dp:22
+ a=oVlbBDgyKwfZh0hzoKgA:9 a=QEXdDO2ut3YA:10 a=tNoRWFLymzeba-QzToBc:22
+X-Proofpoint-ORIG-GUID: 7a_w0o3F4aTG1zbs15B1gsysg0tDgBf1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-09-08_03,2026-09-09_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 spamscore=0 impostorscore=0 phishscore=0 lowpriorityscore=0
+ priorityscore=1501 suspectscore=0 clxscore=1015 bulkscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2609090152
 
-Thank you for your contribution! Sashiko AI review found 3 potential issue(=
-s) to consider:
+On 9/9/26 3:20 PM, Stanislaw Pal wrote:
+> On 9/9/26 2:12 PM, Konrad Dybcio wrote:
+>> Is it only the UNIPHY consuming the 50 MHz one?
+>>
+>> What consumes the XO clock? What consumes the sleep clock?
+> 
+> Nothing in Linux consumes any of the three today.
 
-Pre-existing issues:
-- [High] The return value of `min_t()` is ignored, failing to cap `value` t=
-o the maximum limit.
-- [High] Uncasted 32-bit integer overflows in multiple clock calculation fu=
-nctions.
-- [High] Lack of rate validation causes divide-by-zero kernel panics.
---
+Yes, that's more than clear :)
 
-commit 4504b18bf7e5e8a384d6dae3f8540a24668aa024
-Author: Peijie Shao <shaopeijie@gmail.com>
+I'm trying to ask Jie about the platform details, to which I
+unfortunately don't have access at the moment..
 
-clk: clocking-wizard: Fix overflow in clockout0 divisor calculation
+or maybe +Kathiravan?
 
-This patch fixes a 32-bit overflow issue when calculating the divisor by
-casting parent_rate to u64 and using the ULL version of DIV_ROUND macros.
-
-> diff --git a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c b/drivers/clk/xil=
-inx/clk-xlnx-clock-wizard.c
-> index edf8c0eaca27c..5abbc6b83b728 100644
-> --- a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
-> +++ b/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
-> @@ -881,10 +881,10 @@ static int clk_wzrd_dynamic_reconfig_f(struct clk_h=
-w *hw, unsigned long rate,
->  	struct clk_wzrd_divider *divider =3D to_clk_wzrd_divider(hw);
->  	void __iomem *div_addr =3D divider->base + divider->offset;
-> =20
-> -	rate_div =3D DIV_ROUND_DOWN_ULL(parent_rate * 1000, rate);
-> +	rate_div =3D DIV_ROUND_DOWN_ULL((u64)parent_rate * 1000, rate);
-
-[Severity: High]
-This isn't a bug introduced by this patch, but if rate is 0,
-DIV_ROUND_DOWN_ULL will trigger a divide-by-zero kernel panic.=20
-
-In clk_wzrd_determine_rate_f(), the rate request is just an empty stub that
-returns 0 without validating req->rate:
-
-drivers/clk/xilinx/clk-xlnx-clock-wizard.c:clk_wzrd_determine_rate_f() {
-    ...
-    static int clk_wzrd_determine_rate_f(struct clk_hw *hw,
-                                         struct clk_rate_request *req)
-    {
-        return 0;
-    }
-    ...
-}
-
-Can this allow a rate of 0 to reach clk_wzrd_dynamic_reconfig_f() and panic
-the kernel?
-
-A similar lack of rate validation exists in clk_wzrd_determine_rate():
-
-drivers/clk/xilinx/clk-xlnx-clock-wizard.c:clk_wzrd_determine_rate() {
-    ...
-    div =3D DIV_ROUND_CLOSEST(req->best_parent_rate, req->rate);
-
-    req->rate =3D req->best_parent_rate / div;
-    ...
-}
-
-[Severity: High]
-This is a pre-existing issue, but if req->rate is 0, DIV_ROUND_CLOSEST
-divides by zero. Additionally, if an out-of-bounds large rate evaluates div
-to 0, does the subsequent line trigger another divide-by-zero?
-
->  	clockout0_div =3D rate_div / 1000;
-> =20
-> -	pre =3D DIV_ROUND_CLOSEST((parent_rate * 1000), rate);
-> +	pre =3D DIV_ROUND_CLOSEST_ULL((u64)parent_rate * 1000, rate);
->  	f =3D (u32)(pre - (clockout0_div * 1000));
->  	f =3D f & WZRD_CLKOUT_FRAC_MASK;
->  	f =3D f << WZRD_CLKOUT_DIVIDE_WIDTH;
+[...]
 
 
-While reviewing this file, I noticed another pre-existing issue in
-clk_wzrd_dynamic_reconfig():
+> I would rather this did not decide the patch, though, because the
+> failure it fixes is not a later register access to the CMN block.
+> Mieczyslaw's summary in the v4 thread put it that way; the mechanism I
+> measured is narrower, and it is what the v4 commit message describes:
+> 
+>  - gating those same two clocks on an idle, fully booted GL-B3000
+>    (runtime PM autosuspend, gate landing ~75 s after probe) is
+>    harmless - runtime_status "suspended", both radios still serving
+>    clients;
+>  - with UNIPHY0 disabled in the device tree, so that no uniphy driver
+>    exists in that boot at all, the board still dies in 6 of 7 boots;
+>  - stretching the end of probe by 15 ms, or by a full 2 s, still ends
+>    in a watchdog reset, 8 of 8 boots each.
+> 
+> So what hangs the SoC is the gate transition landing amid early-boot
+> bus activity, not any consumer's access afterwards.
 
-drivers/clk/xilinx/clk-xlnx-clock-wizard.c:clk_wzrd_dynamic_reconfig() {
-    ...
-    /* Cap the value to max */
-    min_t(u32, value, WZRD_DR_MAX_INT_DIV_VALUE);
+I would be more inclined to believe it's racing against some other
+driver enabling/disabling something else, perhaps a register that
+depends on a clock derived from these two.
 
-    /* Set divisor and clear phase offset */
-    writel(value, div_addr);
-    ...
-}
+When that crash occurs does the device enter crashdump mode (USB
+PID 0x900e)?
 
-[Severity: High]
-This is a pre-existing issue, but the return value of min_t() is silently
-discarded here. Does this mean the hardware register receives an uncapped
-value that could exceed WZRD_DR_MAX_INT_DIV_VALUE?
-
-
-Since this patch fixes a 32-bit arithmetic overflow, I noticed similar
-overflows in other clock calculation functions. In
-clk_wzrd_get_divisors_ver():
-
-drivers/clk/xilinx/clk-xlnx-clock-wizard.c:clk_wzrd_get_divisors_ver() {
-    ...
-    for (m =3D mmin; m <=3D mmax; m++) {
-        for (d =3D dmin; d <=3D dmax; d++) {
-            vco_freq =3D DIV_ROUND_CLOSEST((parent_rate * m), d);
-    ...
-}
-
-[Severity: High]
-This is a pre-existing issue, but does parent_rate * m suffer from the exact
-same 32-bit overflow on 32-bit platforms before it gets divided?
-
-There are also similar uncasted multiplications in
-clk_wzrd_recalc_rate_all_ver():
-
-drivers/clk/xilinx/clk-xlnx-clock-wizard.c:clk_wzrd_recalc_rate_all_ver() {
-    ...
-        parent_rate =3D DIV_ROUND_CLOSEST((parent_rate * mult), WZRD_FRAC_G=
-RADIENT);
-    } else {
-        parent_rate =3D parent_rate * mult;
-    }
-    ...
-}
-
-And in clk_wzrd_determine_rate_all():
-
-drivers/clk/xilinx/clk-xlnx-clock-wizard.c:clk_wzrd_determine_rate_all() {
-    ...
-    req->rate =3D mult_frac(req->best_parent_rate, m * 1000 + divider->m_fr=
-ac,
-                          d * (o * 1000 + divider->o_frac));
-    ...
-}
-
-And in clk_wzrd_ver_determine_rate_all():
-
-drivers/clk/xilinx/clk-xlnx-clock-wizard.c:clk_wzrd_ver_determine_rate_all(=
-) {
-    ...
-    int_freq =3D  divider_recalc_rate(hw, req->best_parent_rate * m, div,
-                                    divider->table,
-                                    divider->flags, divider->width);
-
-    if (req->rate > int_freq) {
-        f =3D DIV_ROUND_CLOSEST_ULL(req->rate * WZRD_FRAC_POINTS,
-                                  int_freq);
-        req->rate =3D DIV_ROUND_CLOSEST(int_freq * f, WZRD_FRAC_POINTS);
-    }
-    ...
-}
-
-[Severity: High]
-These are also pre-existing issues, but should they be cast to u64 as well
-to prevent silent wraparounds during clock calculations?
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260909131412.3051=
-635-1-shaopeijie@gmail.com?part=3D1
+Konrad
