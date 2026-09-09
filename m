@@ -1,41 +1,41 @@
-Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
+Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 153B156B852
-	for <linux-clk@vger.kernel.org>; Wed,  9 Sep 2026 14:08:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 369C556C622
+	for <linux-clk@vger.kernel.org>; Wed,  9 Sep 2026 14:08:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.34.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788962925; cv=none; b=BwuhBoziqyJDVzv4Naspm5UZ2JnHslT8AhB6Mob348/Jc7i0BFFm9TA0eILSNWON56EwxtRBOvszf+7a3maNyyHRYaERJ4ZS7ff3Ln7eQ0LIUKWeDUB8vOkKB7vy9VX8cuWEFsgEbFQza+Ao4eJLLGRx2Tfn4glK43FKxK48W/k=
+	t=1788962927; cv=none; b=au8kViLWbVzYmOU0g2zu3JyThzixky7SN/cz6LCOTTTgA/QCtDc0TbscRNADzSmylTEylAwNLFU7J6c5dPhE3GWAXC+FC9YlSjL1QRzDiGe6TNbzok/QXnDjadysJXT5f/Poj9M4PwTMuE40OKAMMace6UnH00tNSyqgl8SbVgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788962925; c=relaxed/simple;
-	bh=wQNud0kEsTSOp1R+Gv0Q92P1f5sdKHbucbO9OsVAuq4=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=gkI2VU+bjMu8KLW7GkLqMB1vTIWwcxopH3zyoBBj144y8ZGQMYjP7RYpYx/O6JaUhcxrn3xYSEzS6hRRwXQkp+pQ6IJUJMmZqsDfPLbI60ehRWkOtk9o14n+ZE/QIJpAsCDITK/34IIuJoPKCploY/C+0QsfBowxwqicITYEg98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=T/V5F4AN; arc=none smtp.client-ip=54.92.39.34
+	s=arc-20240116; t=1788962927; c=relaxed/simple;
+	bh=HcMGpQWFpVaKN+ZuQCSNEuXR6Mis65bMQ5jbV2jMtaI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=OLkZVF877YxO4XDDkt8Z9mLczNWDCwXseN09UtiQlPYeFS7PI/NMI/liZEjzX22/a2mvZI1DKa3oF3C1P3+73ay98oHGRrSSg0AU5qI4IxiD0PmM/zve/+K7GL4t166TMpCdZSPwxcFuCvwHLz5VLgN3GOHWn3YXOtAdyhgWRZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=Reht52Ml; arc=none smtp.client-ip=54.206.34.216
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="T/V5F4AN"
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="Reht52Ml"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1788962834;
-	bh=rdxtsC5FGSM610q9x9cjd+jqKpTMaFc1fUwPTup7fho=;
-	h=From:Subject:Date:Message-Id:MIME-Version:To;
-	b=T/V5F4ANRbs3TmRh8jo76Yq4Ja6HBp31figQ9mS6QGGGVRa9cs+EatbwKxlWZ08Ho
-	 9hgCA8yEbkDyzg29mG6kNpFaBoizHPtzjIOIJLOrT82efJepeg6LEXF8MGX8H9HHUP
-	 mf8LeWf31W9Jj9DW5Lh4IgTvqupBBNfPXg5yJ5/U=
-X-QQ-mid: zesmtpgz6t1788962832t950897d7
-X-QQ-Originating-IP: 46inqLcoNwJCWbThTDJYTUkHgzGHF8rQss84kWW0nCU=
+	s=mxsw2412; t=1788962851;
+	bh=GrJe/zGuOLChEqPY2kuCKE1B/uVgBajiPVFz4of7w88=;
+	h=From:Date:Subject:MIME-Version:Message-Id:To;
+	b=Reht52MlX1g/aikIbTNg8mO/J9uOhN/YIcl2L/Z4CtMtvRa+ZXzft1Rq2q00FgspL
+	 t34ziIlbXEUkvjHIPZb9Xn1FJn8naJsvC4zWLKEY6VCbqJLm3MH/e30rdn931sb4Wk
+	 22OlYUjSp/PB6g46XqAk6X1eVdzbunWUIOxolcBQ=
+X-QQ-mid: zesmtpsz9t1788962849t68360cbb
+X-QQ-Originating-IP: sLsoD0HDmN9VygtU83mXe6+BU5Tsu8vKAe2RTOBchSU=
 Received: from = ( [120.237.158.181])
 	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 09 Sep 2026 22:07:09 +0800 (CST)
+	id ; Wed, 09 Sep 2026 22:07:26 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 11212110114369243432
+X-BIZMAIL-ID: 8200674829812587946
 EX-QQ-RecipientCnt: 12
 From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Subject: [PATCH 0/5] clk: spacemit: preserve and safely synchronize
- firmware PLLs
-Date: Wed, 09 Sep 2026 22:07:00 +0800
-Message-Id: <20260909-spacemit-pll-init-v1-0-b3065ad5a4ac@linux.spacemit.com>
+Date: Wed, 09 Sep 2026 22:07:04 +0800
+Subject: [PATCH 4/5] clk: spacemit: reject rate changes to running firmware
+ PLLs
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -44,10 +44,9 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMQQqDMBCF4avIrA2kQ6jEq4gLE6d1RGPIxFIQ7
- 25qd+9bvP8AocQk0FYHJPqw8BYKHnUFfhrCmxSPxYAan9rqRkkcPK2cVVwWxaEMbw06h8aiMVB
- +MdGLv3ez6/+W3c3k8y8E53kBYMoYInUAAAA=
-X-Change-ID: 20260907-spacemit-pll-init-c942bb249244
+Message-Id: <20260909-spacemit-pll-init-v1-4-b3065ad5a4ac@linux.spacemit.com>
+References: <20260909-spacemit-pll-init-v1-0-b3065ad5a4ac@linux.spacemit.com>
+In-Reply-To: <20260909-spacemit-pll-init-v1-0-b3065ad5a4ac@linux.spacemit.com>
 To: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
  Jerome Brunet <jbrunet+clk@baylibre.com>, Yixun Lan <dlan@kernel.org>, 
  Alex Elder <elder@riscstar.com>, Inochi Amaoto <inochiama@outlook.com>, 
@@ -56,77 +55,240 @@ Cc: linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
  spacemit@lists.linux.dev, linux-kernel@vger.kernel.org, 
  Troy Mitchell <troy.mitchell@linux.spacemit.com>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1885;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6831;
  i=troy.mitchell@linux.spacemit.com; h=from:subject:message-id;
- bh=wQNud0kEsTSOp1R+Gv0Q92P1f5sdKHbucbO9OsVAuq4=;
- b=owGbwMvMwCU2g/N9w09jE33G02pJDFkLM1iXdUzZ4LTLJfp4yMfj/2NeTdYxkOe8Zuef8q9WT
- s+PMep4RykLgxgXg6yYIkv3A55tBT5RtgUChb4wc1iZQIYwcHEKwER2fmBk+CO9wdHJ48jkXAc+
- 5yxnL/adxzznvnZImqVskSXlKPPGgZFhBYeaoOn/d5X1T0/NUlwh6KLcOiEvPEG+Jn96TZTOWnY
- mAA==
+ bh=HcMGpQWFpVaKN+ZuQCSNEuXR6Mis65bMQ5jbV2jMtaI=;
+ b=owGbwMvMwCU2g/N9w09jE33G02pJDFkLM7iyma+a6QW+OX3FSd/C/ITI7E4VrjTBulW9Fw8eU
+ dhwc21PRykLgxgXg6yYIkv3A55tBT5RtgUChb4wc1iZQIYwcHEKwEQsbRgZplZNLpqx2vrxtj2N
+ XL0XixmCVbxC6neeNGTlUuedtSMwheEPXxBfXrVr+IeSyy88n96Y/eBW3eydn6IOn1ggu3VR/Ro
+ tHgA=
 X-Developer-Key: i=troy.mitchell@linux.spacemit.com; a=openpgp;
  fpr=3FE5535CF1B0E658E57DB59BAE1C2FBEA7DB42E1
 X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpgz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
-X-QQ-XMAILINFO: MUZVN6GmaGOthUDQyPAmlFeYynRItECDOFA3oHm5nWlc4bGCoibTXueH
-	+mXaq8iaAZHZlFi6bpykLepkfGVsDnfXZmBUCKSAjMLTAxRFGc7LMOUF94bCfsjESfXA3cp
-	NUQtlWknTbKg/HiiTOLuWJcrAe9wmsgnXCYpbTDq0VdFAvYgCkYps8aEetdj8VLtN3c0nKb
-	CgtrJGMVVcime2TeA5H6MtAhDVUh7A00w4UgUt+ZbodUmoPyXdyp/6XBBTHEM3rI2kA5B/B
-	GaoW2N79R+QOCTxZUtgVLf2nfQxmsUAtvABfC2Q+ACgS+A5P6s1DCZsLlRGRGzIqBKtoWWa
-	ggp3qRowbnNFIrLZMIj9Zv3wrM5lIoOTKXIkgjLJlxws5mpr43EzVV0/Ag7+Y0gDZ69dW3y
-	6Ra9SxKpSqtKGj6AUd9aPlAzMRnpYDJF+lSF1tShapdfh848Dp3zHOTQSByWez1rxShEfUx
-	6fNbxxIHpo4JY4SOkqcR05Ps6SaOw/DKJo2ncY//USrMXdJaZeuf0jU2ywht5/xXT5Zwbtn
-	Hrl7mcmAB6wZXuMCLVdTygGjzgBB+MIsUMMu+QR1tf8q2V7kKid/qsVCOIu0gC6E1pD5qdN
-	ld7KSskWRaDhCMqY/wNfaMG2tyOqYU1glBLPU1ZO0s1l7y2mv6mamJb5rM7dQfeJAilNqwT
-	cY3VTHsvJ7uV7jUezbHq8MkjCrQ5o+1tI1xm65ofF94Uu5tqG3ia28A8nEdviItrwlN5rgE
-	laZwL5rlHCWlPo+c46Eps36yu4ataJTxwlaJMhzt6/LuBHsdldJL7ImV5wx7AzfIpR2uAzz
-	rXABNffHbhgMcp44NpRAAC1RQ+/1aC3MfftUy3bhrH4N8oGa3qWE3ZIDiu9tnDsGyFj5sMP
-	k5iEtlFrCSuJbglMJbgXrMbgHb3iLpxS+0VrK0viJggqAhSrCL9TNIciHJyLF0+hGr70O1O
-	Ma4EwsaFEI0I5daqpIBZUCL8rPJKRW9b5xxoFLQTNCnJ8qZSfYOrv3n40S7lfbhAtVDhph9
-	swMSnpdiMl7PBDWYaq8/CkU27v0wCX0KvDrXNiQE4X41nKqqgB3+GhcZDfUzcd8xXhk2X1v
-	BIs4he8p8AqksHvCdktXHONjTzb3zP311OISleOZ85kNJKuknbAOELbx4Jj+gGtW8xFwl8b
-	3ofF
-X-QQ-XMRINFO: NI4Ajvh11aEjEMj13RCX7UuhPEoou2bs1g==
+Feedback-ID: zesmtpsz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
+X-QQ-XMAILINFO: OFelQXFBryTbxi/HmdjrW4ddW3zF9yvTZXPMATgbRonHZK1lm/veoRrD
+	fJsnb7Um4k8hm1QRlqXIMlFrv9zH15Vz0Q8hsTlrzcPY9J39r0p8KmFNrAdcGO1wLsmh6/c
+	X4pFyP6fbhkp5W37nxKBKmT4Lkk4T2HkaBHLAOq7zN0dB1eX34eAB8jDKutkcTWkzFOMisM
+	1D2HbFTGlUkZS+vVuTGmhTyThxxpQqZieIoFx+R0pbQOXmlr5yzKjYw4k5XE/1adOYlBcml
+	6pKRBAuNY31L7X2gj329328MgLNufWDAZQpOE1tb3hCKy2VdiV26cMAlCaqnHTaZA7u+9Lm
+	xclNxUi5pD/JCCHxl7yETd+xVoKgCI5Am24bu50ry4W5cCBqn8aB82aldbU7bjceIr3Mh6l
+	5hxPB4Zj48ohnrr3lOGs8kEkCXOMkiBJmZt4QjMTM+8pdHsrt89sKGxv8oNXEtl3ZXmmcfY
+	t7Qa2l+8ayB+2DP6NVHGzZi24iKg1Szrllv/lYSH5fTtbTsTZa0Q7Bo797xJHJS9GIpLLjA
+	ve+8iegsNC8odtSHVVc99XnEFI8t9BEcOEyMpA+gqYbi+JDs1OKc67EuZBki4gshnwR3Kie
+	Mkv1FqlVZT4KojP/CfyL/xCeOHbi2CfgOBrW+YTjG6TDFg7XCnaOERbxbao4VFrGdKiv57K
+	DPnvWLnJDQwiE2TVUWPzVfcSvGXYOgT7RoPX8VpAObTOPC74aIzIQ3d70eA2xIXWXDM8qgn
+	USOfHTLOgvUG7E8Fha9gTO1AxBtosLuTN2I60VaQET7V2hyTGopeUUM8S/dMb5e4f5QSJKD
+	9a1Uynja3CgIRnAglVrXN9XoZzaCIRWMJ0dxFB7UG6fpHCE0a2c1N9O0urvdfzpPz+8EmHT
+	PODb0htWVYQajGHhlS0kjpHkHiqyTLaAXw6v8bXcU2iXKe1XFvVfekUb31gVrhqp/jaDDFm
+	eRHzciwe9x1QmRa5PpH3oyv1e2t6ShGZpE3++veY1ZK/Sd73aVHPBEX/Ka5t7EymadEhDgc
+	ZFwn+jtk/mpDrS8wKPfzIkUIRXo/TzYNAQJ+s9JLzu7ibRt9Jff8GLfe06AOBxyJbIWwnsT
+	tmheaVAo796tpdMBbePrIYYv7++ThvUdOAjI6pkHu50USjPunxpcDmjrOPceqRUyFe2orra
+	Z0jLaBu1fRAZTFV9kHsi0qYg4w==
+X-QQ-XMRINFO: NyFYKkN4Ny6FuXrnB5Ye7Aabb3ujjtK+gg==
 X-QQ-RECHKSPAM: 0
 
-Firmware may leave PLLs running with valid settings absent from Linux's
-rate tables. Replacing those settings during clock registration can
-stop CPUs that depend on them.
+CLK_SET_RATE_GATE only protects clocks prepared through CCF. A PLL left
+running by firmware can have a zero prepare count, so this flag alone
+cannot prevent set_rate() from reprogramming a live PLL.
 
-This series removes the init fallback to the first rate-table entry,
-decodes hardware rates directly and preserves unlisted rates. Opt-in
-synchronization applies only to differing parameters for the same
-decoded rate. It temporarily moves mapped CPU consumers to validated
-PLL1 branches and restores their parents after the reprogrammed PLL
-locks. PLL1 itself is not synchronized, and enabled outputs outside the
-managed CPU paths prevent synchronization.
+Check the hardware state and reject set_rate() while either the enable
+or lock bit is set on K1 PLLs and K3 PLLAs. Propagate register read/write
+failures and reject rate requests with no table candidate. Callers must
+still move consumers away and stop the PLL before changing its rate.
 
-The series also corrects CPU divider and shared-parent modeling and
-makes MIX rate selection agree with programming. Runtime PLL rate
-changes still require a stopped PLL; automatic DVFS switching and new
-rate-table entries are outside this series.
-
+Fixes: 1b72c59db0ad ("clk: spacemit: Add clock support for SpacemiT K1 SoC")
+Fixes: 3a086236c600 ("clk: spacemit: ccu_pll: add plla type clock")
+Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
 ---
-Troy Mitchell (5):
-      clk: spacemit: derive PLL rates from hardware
-      clk: spacemit: make MIX rate selection consistent
-      clk: spacemit: describe CPU clock dividers and shared PLL muxes
-      clk: spacemit: reject rate changes to running firmware PLLs
-      clk: spacemit: safely synchronize PLL parameters during init
+ drivers/clk/spacemit/ccu_pll.c | 92 +++++++++++++++++++++++++++++++++---------
+ 1 file changed, 72 insertions(+), 20 deletions(-)
 
- drivers/clk/spacemit/ccu-k1.c     |  60 +++--
- drivers/clk/spacemit/ccu-k3.c     | 137 +++++++---
- drivers/clk/spacemit/ccu_common.c |  12 +
- drivers/clk/spacemit/ccu_common.h |   2 +
- drivers/clk/spacemit/ccu_mix.c    |  35 ++-
- drivers/clk/spacemit/ccu_mix.h    |  18 ++
- drivers/clk/spacemit/ccu_pll.c    | 535 +++++++++++++++++++++++++++++++-------
- drivers/clk/spacemit/ccu_pll.h    |  43 ++-
- 8 files changed, 689 insertions(+), 153 deletions(-)
----
-base-commit: cee9395acd8043be0644b25c34bfa86623f2b935
-change-id: 20260907-spacemit-pll-init-c942bb249244
+diff --git a/drivers/clk/spacemit/ccu_pll.c b/drivers/clk/spacemit/ccu_pll.c
+index c9852fed31017..2573b8396cefa 100644
+--- a/drivers/clk/spacemit/ccu_pll.c
++++ b/drivers/clk/spacemit/ccu_pll.c
+@@ -38,9 +38,9 @@ static const struct ccu_pll_rate_tbl *ccu_pll_lookup_best_rate(struct ccu_pll *p
+ 							       unsigned long rate)
+ {
+ 	struct ccu_pll_config *config = &pll->config;
+-	const struct ccu_pll_rate_tbl *best_entry;
++	const struct ccu_pll_rate_tbl *best_entry = NULL;
+ 	unsigned long best_delta = ULONG_MAX;
+-	int i;
++	u32 i;
+ 
+ 	for (i = 0; i < config->tbl_num; i++) {
+ 		const struct ccu_pll_rate_tbl *entry = &config->rate_tbl[i];
+@@ -75,19 +75,25 @@ static const struct ccu_pll_rate_tbl *ccu_pll_lookup_matched_entry(struct ccu_pl
+ 	return NULL;
+ }
+ 
+-static void ccu_pll_update_param(struct ccu_pll *pll, const struct ccu_pll_rate_tbl *entry)
++static int ccu_pll_update_param(struct ccu_pll *pll, const struct ccu_pll_rate_tbl *entry)
+ {
+ 	struct ccu_common *common = &pll->common;
++	int ret;
+ 
+-	regmap_write(common->regmap, common->reg_swcr1, entry->swcr1);
+-	ccu_update(common, swcr3, PLL_SWCR3_MASK, entry->swcr3);
++	ret = regmap_write(common->regmap, common->reg_swcr1, entry->swcr1);
++	if (ret)
++		return ret;
++	return ccu_update(common, swcr3, PLL_SWCR3_MASK, entry->swcr3);
+ }
+ 
+ static int ccu_pll_is_enabled(struct clk_hw *hw)
+ {
+ 	struct ccu_common *common = hw_to_ccu_common(hw);
++	u32 val;
++	int ret;
+ 
+-	return ccu_read(common, swcr3) & PLL_SWCR3_EN;
++	ret = regmap_read(common->regmap, common->reg_swcr3, &val);
++	return ret ? ret : !!(val & PLL_SWCR3_EN);
+ }
+ 
+ static int ccu_pll_enable(struct clk_hw *hw)
+@@ -95,8 +101,11 @@ static int ccu_pll_enable(struct clk_hw *hw)
+ 	struct ccu_pll *pll = hw_to_ccu_pll(hw);
+ 	struct ccu_common *common = &pll->common;
+ 	unsigned int tmp;
++	int ret;
+ 
+-	ccu_update(common, swcr3, PLL_SWCR3_EN, PLL_SWCR3_EN);
++	ret = ccu_update(common, swcr3, PLL_SWCR3_EN, PLL_SWCR3_EN);
++	if (ret)
++		return ret;
+ 
+ 	/* check lock status */
+ 	return regmap_read_poll_timeout_atomic(common->lock_regmap,
+@@ -113,6 +122,17 @@ static void ccu_pll_disable(struct clk_hw *hw)
+ 	ccu_update(common, swcr3, PLL_SWCR3_EN, 0);
+ }
+ 
++static int ccu_pll_check_stopped(struct ccu_pll *pll)
++{
++	u32 val;
++	int ret;
++
++	ret = regmap_read(pll->common.lock_regmap, pll->config.reg_lock, &val);
++	if (ret)
++		return ret;
++	return val & pll->config.mask_lock ? -EBUSY : 0;
++}
++
+ /*
+  * PLLs must be gated before changing rate, which is ensured by
+  * flag CLK_SET_RATE_GATE.
+@@ -122,11 +142,20 @@ static int ccu_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ {
+ 	struct ccu_pll *pll = hw_to_ccu_pll(hw);
+ 	const struct ccu_pll_rate_tbl *entry;
++	int ret;
+ 
+-	entry = ccu_pll_lookup_best_rate(pll, rate);
+-	ccu_pll_update_param(pll, entry);
++	/* CLK_SET_RATE_GATE does not account for firmware-only users. */
++	ret = ccu_pll_is_enabled(hw);
++	if (ret)
++		return ret < 0 ? ret : -EBUSY;
++	ret = ccu_pll_check_stopped(pll);
++	if (ret)
++		return ret;
+ 
+-	return 0;
++	entry = ccu_pll_lookup_best_rate(pll, rate);
++	if (!entry)
++		return -EINVAL;
++	return ccu_pll_update_param(pll, entry);
+ }
+ 
+ static int ccu_pll_get_params(struct ccu_pll *pll,
+@@ -207,8 +236,12 @@ static int ccu_pll_determine_rate(struct clk_hw *hw,
+ 				  struct clk_rate_request *req)
+ {
+ 	struct ccu_pll *pll = hw_to_ccu_pll(hw);
++	const struct ccu_pll_rate_tbl *entry;
+ 
+-	req->rate = ccu_pll_lookup_best_rate(pll, req->rate)->rate;
++	entry = ccu_pll_lookup_best_rate(pll, req->rate);
++	if (!entry)
++		return -EINVAL;
++	req->rate = entry->rate;
+ 
+ 	return 0;
+ }
+@@ -249,20 +282,28 @@ static const struct ccu_pll_rate_tbl *ccu_plla_lookup_matched_entry(struct ccu_p
+ 	return NULL;
+ }
+ 
+-static void ccu_plla_update_param(struct ccu_pll *pll, const struct ccu_pll_rate_tbl *entry)
++static int ccu_plla_update_param(struct ccu_pll *pll, const struct ccu_pll_rate_tbl *entry)
+ {
+ 	struct ccu_common *common = &pll->common;
++	int ret;
+ 
+-	regmap_write(common->regmap, common->reg_swcr1, entry->swcr1);
+-	regmap_write(common->regmap, common->reg_swcr3, entry->swcr3);
+-	ccu_update(common, swcr2, PLLA_SWCR2_MASK, entry->swcr2);
++	ret = regmap_write(common->regmap, common->reg_swcr1, entry->swcr1);
++	if (ret)
++		return ret;
++	ret = regmap_write(common->regmap, common->reg_swcr3, entry->swcr3);
++	if (ret)
++		return ret;
++	return ccu_update(common, swcr2, PLLA_SWCR2_MASK, entry->swcr2);
+ }
+ 
+ static int ccu_plla_is_enabled(struct clk_hw *hw)
+ {
+ 	struct ccu_common *common = hw_to_ccu_common(hw);
++	u32 val;
++	int ret;
+ 
+-	return ccu_read(common, swcr2) & PLLA_SWCR2_EN;
++	ret = regmap_read(common->regmap, common->reg_swcr2, &val);
++	return ret ? ret : !!(val & PLLA_SWCR2_EN);
+ }
+ 
+ static int ccu_plla_enable(struct clk_hw *hw)
+@@ -270,8 +311,11 @@ static int ccu_plla_enable(struct clk_hw *hw)
+ 	struct ccu_pll *pll = hw_to_ccu_pll(hw);
+ 	struct ccu_common *common = &pll->common;
+ 	unsigned int tmp;
++	int ret;
+ 
+-	ccu_update(common, swcr2, PLLA_SWCR2_EN, PLLA_SWCR2_EN);
++	ret = ccu_update(common, swcr2, PLLA_SWCR2_EN, PLLA_SWCR2_EN);
++	if (ret)
++		return ret;
+ 
+ 	/* check lock status */
+ 	return regmap_read_poll_timeout_atomic(common->lock_regmap,
+@@ -297,11 +341,19 @@ static int ccu_plla_set_rate(struct clk_hw *hw, unsigned long rate,
+ {
+ 	struct ccu_pll *pll = hw_to_ccu_pll(hw);
+ 	const struct ccu_pll_rate_tbl *entry;
++	int ret;
+ 
+-	entry = ccu_pll_lookup_best_rate(pll, rate);
+-	ccu_plla_update_param(pll, entry);
++	ret = ccu_plla_is_enabled(hw);
++	if (ret)
++		return ret < 0 ? ret : -EBUSY;
++	ret = ccu_pll_check_stopped(pll);
++	if (ret)
++		return ret;
+ 
+-	return 0;
++	entry = ccu_pll_lookup_best_rate(pll, rate);
++	if (!entry)
++		return -EINVAL;
++	return ccu_plla_update_param(pll, entry);
+ }
+ 
+ static unsigned long ccu_plla_recalc_rate(struct clk_hw *hw,
 
-Best regards,
---  
-Troy Mitchell <troy.mitchell@linux.spacemit.com>
+-- 
+2.55.0
 
