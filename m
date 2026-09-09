@@ -1,73 +1,82 @@
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F005552947
-	for <linux-clk@vger.kernel.org>; Wed,  9 Sep 2026 13:14:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD95C442FD1
+	for <linux-clk@vger.kernel.org>; Wed,  9 Sep 2026 13:20:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788959662; cv=none; b=rjRCH9V+ydKAlygbEAdbItK2zYpUUyroVwB0NN3OfHcMLPrXKGgyeGY6SVHpmo7dQT36KXEvvsS5P/QMlQEGOg1laWdXfYN4TPNjhzwkkyYUUiyUg4X0PwV3kQ4ef3Fgmv21zZi0bx6ux+s05nkJ/ED8rr+wEsV7KuJCOhtfK70=
+	t=1788960059; cv=none; b=Li9l9v1BV+xS9Ms/uSOdkat2DhFJpba2VMmmOopnPP869c9tV861UG1ZcRNqiruKFtFiQQEVyNoFrd6ZZW2+keC4/x+kavNV8mU6/WNXoggjqh9aPDXUPXYDW9+rDoppmInkptg2oNWfWKAOC2uTE8KfHpfd78nsVj1pG9i02Ms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788959662; c=relaxed/simple;
-	bh=AKMhHGbu6wwvL+v2qkm2nawtiZ7eESFgO0bgi+Z3x0A=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MCc7155r3iXL+YcEHFFDntYA5CNwYol1YCHsTeek4MarbWCQ12xNAVMAZV9Z2W9TWYKfHTLgiqKbi2irG8ZhUlDz9COrVuBxzCIAqPWnoT0BD4E2f6lKDDASkgDB+w8MmFdKIjYWiFdqDAWeo/T9RilcmEw18Nh3C08PaKHGv+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kMuTJuxY; arc=none smtp.client-ip=209.85.214.170
+	s=arc-20240116; t=1788960059; c=relaxed/simple;
+	bh=1rpYp9/x6QZBAeabDSXxOvoteEpsLsPbNU50Cm/Tks4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ZcwZMpFI+n38oMp7P36Bv7M+FUUOVkxXxXaq8rkFyxYQ2EA4+M/evQy86eezXgHOb5kgaYHWwMQxOe3KINqktYf/d7KAa//qzkS5eWfVQLiZDbpI0PSxZPwbAmUZcG+m4GfjLLIVqTOydrjDXQyd2Cnnsg5Nfp3R9otnqGMRLQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iKiostL2; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kMuTJuxY"
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2db858d60e0so17453565ad.0
-        for <linux-clk@vger.kernel.org>; Wed, 09 Sep 2026 06:14:21 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iKiostL2"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-49b96837ca3so46070555e9.3
+        for <linux-clk@vger.kernel.org>; Wed, 09 Sep 2026 06:20:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788959661; x=1789564461; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=TdxIn0BZ6mG5tW5oexMUWl9FnSMl6rOPl062FM+q3lY=;
-        b=kMuTJuxYud2pWYrlAeE1qFoKIICjZEfX4ZWH1xelAplZn80UeBI9ceYg4NX+w+4IZN
-         ia5gjvVju7H49ho5zLId1YljbBND1CnD7RKPhmjbkEFa/b1Wpk0KI84RgKai0mn8qQqo
-         ApL/D8UTTHlif+h6L/GIHOG2guA5AO0U1BEsKzEAk/uhY8IsRlDmFT4wzJtNKgBt7yMP
-         xI41OMZ1C9fxRYD1h3EGU2pLxDB6CDJVdSn6zKgP/lYs4yg+lvK7nVuwx4bfzaNARzsV
-         PhQfsxf9waTZID87kfP90ZLYju5J8zTbnAtPM4DTmoTLlaDP890n0JZZOyGh2SSzP4g0
-         b/8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788959661; x=1789564461;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1788960055; x=1789564855; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=TdxIn0BZ6mG5tW5oexMUWl9FnSMl6rOPl062FM+q3lY=;
-        b=dcuoD+U1I6/+mTgWfJqxwBTd/VTr5TsnYx+ttwq5L25SDRYtO++8BK0cube1oeFQi2
-         xqQJ2WGLXSLcO/n+WKlzAOZnFyPdKUto2ROL39lEaE2dRFWcDJM3GVuf97bNgrMSWHWu
-         u9aScIotBbSiQsLf/abM6ogfayfUygx7sA4DAcKK8R2YgjOl4m5HRd1JTrEPvw59RSQo
-         o1GPGRrgcWGlLZ877MeV5LlAoq8/EjfK0f30h8Cg4NBa3PF/xLH363QCEafa3tHMM9dA
-         T4HhEiwRacV1bjA9twvcU43pT/96wkjLokd/F9uA8oUch/20XYMfsBXYE53U2eaZXKYv
-         PGnA==
-X-Gm-Message-State: AFuF++mDdkQyMKdqSiDIsIfrioNqfQfAaG8zxsj5YwWWamIHiyEWV83s
-	DQa7iyAsHLKzm4XipX4ulwl2EThjU9IBdbws7G1ceMP24QkXfaIoEfkJ
-X-Gm-Gg: AYBFou2NCkm50YeQoD3sDI/dnc/J45I065pDRM45ZRIxXvDNNnxUMEQO+wgbxdPwNVH
-	kRjSaDNEjQNoN16D69nRAdFNldfAh4fPRTisUyqFiKndAiupPjcC94VlAy6PFlqnb7UEsfz0qa8
-	7B4t9U/wJFJWiL4mgiLOi54TG6XgNvFlai5wIdJYpsLb6he05j8xQnKqGr38UJiDCUAaBD7Ztf2
-	EApUxgbQW1ahGKeiAbFd5nNBNtHGibkO3E8Uxr5cobq67IoU2TqBxFGe2gQ4C6/i+SlwWBLAS6E
-	Vj2ttFN+fqBrNnTt9ffDGp/T4qMRoxiDAh3CGyyDQRdHIrWBhlOQvs7tyq2I/eTDyS1Ushqq9zm
-	x3B7Wqr0WcjKUy+VNaoEtUBVsbDRFcYtJw5mKRdCzx5Lxha8gIJcrhRSkkNXPu+5L5MfNcxMVj6
-	5jh1ioRn3AyVgT/7lL7pTqHnnPIli9dtqlOVcnCbcFR8jYLfvVbv9zYUHk6Abpp/c/XgI=
-X-Received: by 2002:a17:903:2c9:b0:2c9:e846:a57e with SMTP id d9443c01a7336-2db12147668mr533464705ad.0.1788959660640;
-        Wed, 09 Sep 2026 06:14:20 -0700 (PDT)
-Received: from zynq-vm.. ([101.71.232.51])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2db14ae8af3sm72283255ad.80.2026.09.09.06.14.17
+        bh=xqcFgIRraimIxFzTBpazVCLFmRgJ8bu+hLdgiYiQiYQ=;
+        b=iKiostL2iShBz5U7B+fqlBWmvWLfjAN0C5KJIomug0nbS/uaSDFEcv79uDjBQVqYBZ
+         inGJr6bEINe4aOUmERVgS6HZxY8ixN1G/9LJKFytADUt+FNct3Ej2/ct2cQQm2TJYPi3
+         eVl745xC9ICVSAKFfJPXu1YcQVew48NYH1XJfeYpeLtDAJXHsPvHrr7CaQ1GXCfO4QEQ
+         zqJxCqiASVHG7P5XLC9XTWBtNmbxIoheEkip9mWlQFAY/1J3UfN92Ex57lMNPw7HxJ/2
+         9nTVkflibCDZMmOnG/RW1PEhOA1/7hkCOG1Xnli6KNk1Uva/oHkOxMV63gIicRGoLk3f
+         GCQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788960055; x=1789564855;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=xqcFgIRraimIxFzTBpazVCLFmRgJ8bu+hLdgiYiQiYQ=;
+        b=mUQB82aKNkO3+knA3BDSLYSw6VcrGEGZcxXWRT9wp2JWueLtkVO/Pwhov2TWpq9Fow
+         StUuIt0D+f+VJA3dnKxW2ktXZpaIH68Z2z90VH1JK9Yg1sg8hVBqIgtSUHHbPO7GtAvY
+         Cu1eJ+69GFXnaKOj4mIMIjviKNW9cvid92z+QfMUSayWH/pNOZVh/tBQC/WFSE8uOTl1
+         R7wTU47OOrYepyknC2GUnxWzi/falo5vPz9NQ4YE1Cujv+vDyV8ib/21ARMsnattRQj5
+         Aga3NA+9zz6YPl5cEq1rjhiE0arAlbJ8E8WHMsNnBUIUEaoG38qVKH65gMZNF2MPIDWK
+         ViHg==
+X-Forwarded-Encrypted: i=1; AKwUvBx4GiTdN+FW6cpDmuwL2XxNVERXpMHk4jMz9rPtsY1LDwaBR7JKqjLeozIW5hvTFLni7zr/HRoahHg=@vger.kernel.org
+X-Gm-Message-State: AFuF++l1kH+WtUbxsVEwI96yCUOeCpoAEHqaPZENc0VgdjHcAh7x24pZ
+	VJFy/B4l6noPedx9r22R+hgzOLI5zop6pwvKGHgxSkh1PXeZcDI8I7IL
+X-Gm-Gg: AYBFou1sMODGVEfcFnzlgEBwl73SQJVoACtdTUYyoCth25TJPqbwu9frnMx3tLEKSVG
+	WhxKsFR0vPvaNN/uEgUkbRMuk21xJPkfdBtpZ1wDxbKfhsS1s5wbWxPEk+ardVqB+4B25i8TMor
+	7ISwi+JZmKueu4znM2MoJ6Nl+0XQv+3qZrXJqTjEUNMWPoAd0QTx8oHt1wDEmDXrnlfUfS9REyD
+	n6h4WhOD4VEIUbexyVlIJdMnFCLNqRJ+sp0cRh0WeeqL/45ZDwUe7vtRHQJ9bP0snGNchIqEftq
+	qBs3xSyhCSkh02LAEFDgpSxiwK7mD7ZTkOEz3d4CwkjWev3+m68bU9XzKt0EwehLIq/w623Xvp0
+	0SWNz0rpwr1sDEMdKB16zd++CMP3Wy1M+elmfQUOvJcYLMBi4NYvH452KJdtgEdaIQOn8JVjPln
+	t25PY0oyYBSLOTVU1/uhOtjfaT0CH2BjZg2gu8xnfrG5zQevoKX5cIR1Me9VVMGlUWXIMRaGp7v
+	oM1mA==
+X-Received: by 2002:a05:600c:3ba5:b0:49c:dada:f581 with SMTP id 5b1f17b1804b1-49cf7f39c8bmr434366595e9.0.1788960054671;
+        Wed, 09 Sep 2026 06:20:54 -0700 (PDT)
+Received: from VivoBook-ASUS-X712UA-M712UA.lan ([2a00:f44:c51:e108:176f:2adf:3ca6:dc52])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49d1e002d25sm93156835e9.1.2026.09.09.06.20.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Sep 2026 06:14:20 -0700 (PDT)
-From: shaopeijie@gmail.com
-To: sboyd@kernel.org,
-	bmasney+clk@redhat.com,
-	jbrunet+clk@baylibre.com,
-	michal.simek@amd.com
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Peijie Shao <shaopeijie@gmail.com>
-Subject: [PATCH] clk: clocking-wizard: Fix overflow in clockout0 divisor calculation
-Date: Wed,  9 Sep 2026 21:14:12 +0800
-Message-Id: <20260909131412.3051635-1-shaopeijie@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        Wed, 09 Sep 2026 06:20:53 -0700 (PDT)
+From: Stanislaw Pal <kuncy7@gmail.com>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Jie Luo <jie.luo@oss.qualcomm.com>
+Cc: Mieczyslaw Nalewaj <namiltd@yahoo.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Georg Seema <georgseema@gmail.com>,
+	Brian Masney <bmasney@redhat.com>,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: ipq-cmn-pll: keep the CMN block bus clocks enabled
+Date: Wed,  9 Sep 2026 15:20:49 +0200
+Message-ID: <20260909132049.37611-1-kuncy7@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <b58e3f64-1a5c-4db4-a51b-7138fb3609da@oss.qualcomm.com>
+References: <b58e3f64-1a5c-4db4-a51b-7138fb3609da@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -76,39 +85,71 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Peijie Shao <shaopeijie@gmail.com>
+On 9/9/26 2:12 PM, Konrad Dybcio wrote:
+> Is it only the UNIPHY consuming the 50 MHz one?
+>
+> What consumes the XO clock? What consumes the sleep clock?
 
-On 32-bit platforms (e.g., Zynq 7000 series), parent_rate * 1000
-may overflow, leading to incorrect divisor calculation.
+Nothing in Linux consumes any of the three today.
 
-The issue was first found on Zynq7020 with "parent_rate=1GHz"
-and "xlnx,nr-outputs=2".
+grep -rn '&cmn_pll' arch/arm64/boot/dts/qcom/ on v6.18 gives, in full:
 
-Cast parent_rate to u64 and use the ULL version of DIV_ROUND*
-instead.
+  ipq5018.dtsi:258:  assigned-clocks = <&cmn_pll IPQ5018_CMN_PLL_CLK>;
+  ipq5424.dtsi:288:  assigned-clocks = <&cmn_pll IPQ5424_CMN_PLL_CLK>;
+  ipq9574.dtsi:359:  assigned-clocks = <&cmn_pll CMN_PLL_CLK>;
+  ipq9574.dtsi:1253:                   <&cmn_pll NSS_1200MHZ_CLK>,
+  ipq9574.dtsi:1254:                   <&cmn_pll PPE_353MHZ_CLK>,
 
-Signed-off-by: Peijie Shao <shaopeijie@gmail.com>
----
- drivers/clk/xilinx/clk-xlnx-clock-wizard.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+The first three are the provider setting its own VCO rate. The only
+real consumer anywhere is the IPQ9574 NSS clock controller. No device
+tree in the tree references XO_24MHZ_CLK or SLEEP_32KHZ_CLK, on any
+SoC - and of the five compatibles the driver carries, only ipq5018,
+ipq5424 and ipq9574 have a cmn_pll node in mainline at all.
 
-diff --git a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c b/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
-index edf8c0eaca27..5abbc6b83b72 100644
---- a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
-+++ b/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
-@@ -881,10 +881,10 @@ static int clk_wzrd_dynamic_reconfig_f(struct clk_hw *hw, unsigned long rate,
- 	struct clk_wzrd_divider *divider = to_clk_wzrd_divider(hw);
- 	void __iomem *div_addr = divider->base + divider->offset;
- 
--	rate_div = DIV_ROUND_DOWN_ULL(parent_rate * 1000, rate);
-+	rate_div = DIV_ROUND_DOWN_ULL((u64)parent_rate * 1000, rate);
- 	clockout0_div = rate_div / 1000;
- 
--	pre = DIV_ROUND_CLOSEST((parent_rate * 1000), rate);
-+	pre = DIV_ROUND_CLOSEST_ULL((u64)parent_rate * 1000, rate);
- 	f = (u32)(pre - (clockout0_div * 1000));
- 	f = f & WZRD_CLKOUT_FRAC_MASK;
- 	f = f << WZRD_CLKOUT_DIVIDE_WIDTH;
--- 
-2.43.5
+On IPQ5018 specifically:
 
+ - eth-50mhz: Jie is right that the UNIPHY takes it, and it will become
+   a clk_get() consumer once IPQ5018 UNIPHY/PCS support lands. The node
+   in the pending work has
+
+	clocks = <&gcc GCC_UNIPHY_AHB_CLK>, <&gcc GCC_UNIPHY_SYS_CLK>,
+		 <&gcc GCC_UNIPHY_RX_CLK>, <&gcc GCC_UNIPHY_TX_CLK>,
+		 <&cmn_pll IPQ5018_ETH_50MHZ_CLK>;
+	clock-names = "ahb", "sys", "port5_rx", "port5_tx", "ref";
+
+   In mainline there is no such node yet - the only "uniphy" nodes on
+   IPQ5018 are the two PCIe PHYs - so that 50 MHz path exists in
+   silicon with nothing holding a handle on it from Linux.
+
+ - xo-24mhz and sleep-32khz: I know of no consumer, in tree or out.
+   Worth noting these are not what the rest of the SoC runs on: the
+   platform's 24 MHz XO and 32 kHz sleep clock come from the board
+   oscillators described separately in ipq5018.dtsi (xo_clk ->
+   ref_96mhz_clk -> xo_board_clk, and sleep_clk), not from the CMN
+   block. The CMN outputs at the same nominal rates look like
+   re-exports for hard-wired internal use.
+
+I would rather this did not decide the patch, though, because the
+failure it fixes is not a later register access to the CMN block.
+Mieczyslaw's summary in the v4 thread put it that way; the mechanism I
+measured is narrower, and it is what the v4 commit message describes:
+
+ - gating those same two clocks on an idle, fully booted GL-B3000
+   (runtime PM autosuspend, gate landing ~75 s after probe) is
+   harmless - runtime_status "suspended", both radios still serving
+   clients;
+ - with UNIPHY0 disabled in the device tree, so that no uniphy driver
+   exists in that boot at all, the board still dies in 6 of 7 boots;
+ - stretching the end of probe by 15 ms, or by a full 2 s, still ends
+   in a watchdog reset, 8 of 8 boots each.
+
+So what hangs the SoC is the gate transition landing amid early-boot
+bus activity, not any consumer's access afterwards. That is also why
+no consumer-side scheme can help: the window is between the CMN PLL
+probe returning and the first clk_get() by anybody, whichever consumer
+eventually turns up.
+
+Thanks for the Ack on v4.
+
+Best regards,
+Stanislaw
