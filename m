@@ -1,71 +1,71 @@
-Received: from mail-vs2-f12.google.com (mail-vs2-f12.google.com [74.125.227.12])
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A086553D0C4
-	for <linux-clk@vger.kernel.org>; Wed,  9 Sep 2026 15:17:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC15223A564
+	for <linux-clk@vger.kernel.org>; Wed,  9 Sep 2026 15:19:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788967039; cv=none; b=p/yaBtkSaCNCMjiyebzb2dJ7ajKlhnx7UQxo+1D+usz0E3+sotCiVpJYFeQ4RWpr4qXPgp9roF8pZQCEgo56e8QpdWOe0UvXUljFouG+fLr4akV4CEZ9TLINLlofPKnGqBOs7jckFXzABbhFk5TRNzwonG0Qz6689tkXnAt2FRo=
+	t=1788967193; cv=none; b=BR3Ms3CZnz5AMs11fyBnP2Nr6be9G4WmcqRtLwMPk/a42V2+HE3bSKabPLGu5PzEICZkfHQ6p4bZGVlKyDyrJ4cIDQ/pLl+pPALYOQYNhh1vZMTA8ImrI2j5YCz5+GoAYZ8Mq5vVZcfsmzep3ihPlnFYWUcHQbDDGiUFyefSikQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788967039; c=relaxed/simple;
-	bh=50PWHOPz89VAgzShHbqe1+05LKceXOJguW/0waoh4rs=;
+	s=arc-20240116; t=1788967193; c=relaxed/simple;
+	bh=mQVTvUE5EMefp3N9PRRXFy1qIjow9eV0PSCua1TgAD8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=la2pzCdus9ryVsl1+t4SZgXPBp1GgJ8BoDPgFoT1vJ1ugnKP++cnDnYIwALDagYoDATybSWKRod93JvOSmqETrIZ3FjFhOc01+bjgYKsoZshD0ClVGbyR7gxr7j5+rrz2NAT84l6l1kvk3ubofBhYaikrt/GUq9YWU3ALH/TJ3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.227.12
+	 To:Cc:Content-Type; b=n+kOEsC2Y8BdNVQ2++Rvzs6FDeL/g/okI7HTxmfTgHtVxrXXFPfuXiw5uACK5Gcnh+4JqJvoon58SMN5PM2XZJOqTRR6ZeO//zjidoF1jcto4ydgD2V9UTFsdi0UNxg6mWcF4SqC7z5t4x6ISzt1+/RGf9F1n7Kk3+n/gNUXqcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs2-f12.google.com with SMTP id ada2fe7eead31-79028ca939aso189574137.3
-        for <linux-clk@vger.kernel.org>; Wed, 09 Sep 2026 08:17:17 -0700 (PDT)
+Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-779d18ef706so4241638137.2
+        for <linux-clk@vger.kernel.org>; Wed, 09 Sep 2026 08:19:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788967036; x=1789571836;
+        d=1e100.net; s=20251104; t=1788967191; x=1789571991;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=xngvRGlem5QBe9w72ZS3ISg4Zt8dZwRC6gUDQpCph0s=;
-        b=QG1f3QITBSY8LowfVeg63iRN7U8YGhj3oHpMmKCnnrR2sq5CmLRYzeJmti6tVH9gNC
-         Gpkma/yPIJzrs44I0GomTX0g/SFbpXJf8rR+8NYiqcvO8wzT6tUD8w4Pv66E9EFd6V3k
-         ejw89pfpRU6YNJj85HZQpbc7jjLVSU3XP1cnNH1Hvwtr8CruWnUd+o+b915YY4sOvpcP
-         EzRlI4HSNVPaSjlplLM/B2szH9PmTI81EbXkktVl+1VmgaXGrxNQAr5yXMJ/nZqs/w60
-         T3hMEWtqIW1lptDA3sIX1eXU5gho0JIPlml8nYn2aUj77AtnEEnJI+3hj0LKcNfWiYXy
-         VfyQ==
-X-Forwarded-Encrypted: i=1; AKwUvByKOaWsIbP6f8jzlfvy+kj/Wh3xacWcFmrY1OoV9NiI4pw3hPwERMlBQt2lCCMqpPJVuLq3olluVhA=@vger.kernel.org
-X-Gm-Message-State: AFuF++lTaMTT3MY59VwrPgAoVVHSecUKcDzn/IBBGfg0fYs82UME8uzW
-	u9YrI/lgQCML722gycZQHa/cA02tCEm47iIGazUjVze/mb6i8l1IUPSBnGfI5wj8DtIfiQ==
-X-Gm-Gg: AYBFou3ajFtYiNcwkCEyf+CXhbtPEY3v5UC3XtFOk9rC+ssZYq4DQJNc2aTHKeD62Bq
-	d/BPzsAHbDr/Svk0jQ7l9wB3CcXgFHuRWQuvEpjemMuIy8wIz27R1CPaE/xYpqkVM/u7SHfnYxW
-	gM9pD01gQAtQfZGQ7XCb02+VZWq3XoZ/eAVw4HOYXPCevg36sJFzt6jNG765RpeGIUU9jeCrNAz
-	dkUKYRk6i+re4cnXUCwfcbI7NiN33m18w572D13+J+SCRhdcTW5fsI1r5GRVtrrz3cdTO5tsavM
-	L7vcf1lQRhTU+clHLaAoFpTQjsHr6Dbst/Sw/loW64tET6xrjXbQJCkLl2nErxe9SDI2D8f0BDz
-	oC6eePSK6mn5nzXFFObf8Nu+reBOeULzXQpYqt0Pw1l/UnBeGPat7H8nNC6X9BJvdNDZVEE2gvM
-	Ovzg8gSY0UxLBAFen5b0WtSpCoaKYshMsg5tmwiKhpANKfz1TRwUQI+MbitREOINVVlfg0/kFii
-	fwsjhD/ubKYv64rb9RyiHWDLCZxio9Xme1JYw==
-X-Received: by 2002:a05:6102:5698:b0:785:a48a:e3b9 with SMTP id ada2fe7eead31-79076abb7a2mr974923137.4.1788967031403;
-        Wed, 09 Sep 2026 08:17:11 -0700 (PDT)
-Received: from mail-vs2-f12.google.com (mail-vs2-f12.google.com. [74.125.227.12])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-78a47a76487sm11167054137.5.2026.09.09.08.17.10
+        bh=ck7KwbjNu626e6RdS1sR80rNpHN5osHYGNVSLeBH+E4=;
+        b=n3CL8rU+k93+SPlRWggKfIUDLZ5EOuFtOwZbAXlGtGlwvz06TEHQmxDOEtDDNXiJ+3
+         JET60Rheq92oofRfpTSFEqrF4ew0UGhQy+MgwHdaSMC+oYRuqkXQej6BSwny/t1RYVLE
+         u1vFeCZnqA96walJOX+FGFmmRP8bkLNaffKUyPHB9pEi2qxZuP2Cj885DXrtkmdDObZa
+         P9K0liKDAhKOO9E/ZeulS2iI84xMgPD1NQiuHgjUXFbboaGxXG91o1nV8uD7gwjhoGX7
+         OIwSAsI59PStQoj7/2Ii1qChu8y8GCAjmTETuF580ntqTgc6EKjpzD7sFSescchZV6UP
+         El1Q==
+X-Forwarded-Encrypted: i=1; AKwUvBzdf4OiDjB0jVGgT/0sJ4T7Z6UXLIdU+RZWRuej9ps/VhRgRQzF4RpfixlWxba+O7/vOCxTEk1WSPU=@vger.kernel.org
+X-Gm-Message-State: AFuF++kTAWyDHTUfpfp42wsf0SMhLAfb+fjUhel5kpcArdNwP3ULjwSB
+	69mf2k449n5yekrXymGvs2H7n1RSS19QQFkdHRnYljWaLW1OQzGugZrTy1ZWlI2qx0o=
+X-Gm-Gg: AYBFou0d3jAlH66UTKMFhdWQw7ACxtKAj5E/Jhq0t9chnJih3BLMCY75nyYDwJycVvv
+	yUzI12RnSRkql3OGeY0C1VyY+x6fdgBLgc1fmgvGw42gKyGYBx3biA/d0KJlkdS0V+rUMqYCJTy
+	Neebu+dd4MyM9CDe2+AqLK2vHL6g8OXVt88rJHeyVvOk7dxnOyZh8mjcfbq3333A29uf42frXuZ
+	TBl01ClBOnYX4g+Suz8e+A3W53S3BR52WraFKb2Zlzcwo8k1FZu7HrwpP0KCO9ftWwQk4o1NOHH
+	zP/bxxfBUIig5VB3SzI/U/4cn0gSGuKexeRmaAFnoXybzrAEFaL/cEbcAZyuwXFmhyU5bfKGBw5
+	1SDcDBrGS+PmGvG4hHqcxwt4Kwn6E7WjXzeeNr+hr3RkzF35c0NVWNX/KmIYf9Eq3qUhZDeFEx6
+	8d+Y+ZnuYtPFopNo1lSH0SaOfIKIOP3u5wnLiqo/8beEXjcW7jaee0hN2XGe2EvVPiX0d4PEEzV
+	ykLdj88z0J6k44hUyE1dGATRC08xmi5rUk6
+X-Received: by 2002:a05:6102:5126:b0:785:5a17:739b with SMTP id ada2fe7eead31-78a4a4944femr17703204137.0.1788967189812;
+        Wed, 09 Sep 2026 08:19:49 -0700 (PDT)
+Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com. [209.85.217.51])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-9808ee1c0cdsm12360517241.8.2026.09.09.08.19.49
         for <linux-clk@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Sep 2026 08:17:10 -0700 (PDT)
-Received: by mail-vs2-f12.google.com with SMTP id ada2fe7eead31-78a7003f9f5so233765137.1
-        for <linux-clk@vger.kernel.org>; Wed, 09 Sep 2026 08:17:10 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBz1CPyRkF/lsphj/9R+CqTepvOlsN+NE/yd764g+3uUSpl/enEttiEvDnXY/FcKHeu9SJXJpGrAptA=@vger.kernel.org
-X-Received: by 2002:a05:6102:159f:b0:77d:e064:2dc1 with SMTP id
- ada2fe7eead31-79072bd65e5mr1021149137.0.1788967030503; Wed, 09 Sep 2026
- 08:17:10 -0700 (PDT)
+        Wed, 09 Sep 2026 08:19:49 -0700 (PDT)
+Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-783fffcfb96so4593788137.0
+        for <linux-clk@vger.kernel.org>; Wed, 09 Sep 2026 08:19:49 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBxUIsPybjefTr6mLxifQyQwKr7/3WleQu8mFCRu37bV8/kms+t3bKuzJaxSOtTkfmRsRCInVxk+dUM=@vger.kernel.org
+X-Received: by 2002:a05:6102:6b09:b0:77b:28c1:210e with SMTP id
+ ada2fe7eead31-78f67ba56cbmr4525156137.1.1788967188938; Wed, 09 Sep 2026
+ 08:19:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260908-subsys_initcall-v1-0-cbccf4cd4288@redhat.com> <20260908-subsys_initcall-v1-2-cbccf4cd4288@redhat.com>
-In-Reply-To: <20260908-subsys_initcall-v1-2-cbccf4cd4288@redhat.com>
+References: <20260908-subsys_initcall-v1-0-cbccf4cd4288@redhat.com> <20260908-subsys_initcall-v1-4-cbccf4cd4288@redhat.com>
+In-Reply-To: <20260908-subsys_initcall-v1-4-cbccf4cd4288@redhat.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 9 Sep 2026 17:16:59 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUYJ-XSe22QnBREpxJH_hDVfV1CwkVjBqPK9AXTGJE1Aw@mail.gmail.com>
-X-Gm-Features: AcwNN1VLF1S9VM_rAd4lsusMxTGZ8B-oUTaocc800YUq_Bw4xg9-nPCuVEjF4tk
-Message-ID: <CAMuHMdUYJ-XSe22QnBREpxJH_hDVfV1CwkVjBqPK9AXTGJE1Aw@mail.gmail.com>
-Subject: Re: [PATCH 2/4] driver: core: platform: add subsys_platform_driver() macro
+Date: Wed, 9 Sep 2026 17:19:37 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVhEuiukgHN3_KjQbOmeJo_+i6exDtJeidfm42S8sEx9g@mail.gmail.com>
+X-Gm-Features: AcwNN1WrudhTWyzE-dMx-744iV6jE5_0S03_iG05gjwf1BiOXXU0ML55Tupw88U
+Message-ID: <CAMuHMdVhEuiukgHN3_KjQbOmeJo_+i6exDtJeidfm42S8sEx9g@mail.gmail.com>
+Subject: Re: [PATCH 4/4] clk: renesas: convert drivers over to use subsys_platform_driver()
 To: Brian Masney <bmasney@redhat.com>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
 	Danilo Krummrich <dakr@kernel.org>, Bjorn Andersson <andersson@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
@@ -77,47 +77,22 @@ Content-Type: text/plain; charset="UTF-8"
 Hi Brian,
 
 On Tue, 8 Sept 2026 at 19:47, Brian Masney <bmasney@redhat.com> wrote:
-> Add a new macro subsys_platform_driver() to eliminate some boilerplate
-> code in drivers that need to register earlier in the boot at the
-> subsys_initcall level.
+> Reduce boilerplate code in the drivers and convert them over to use
+> subsys_platform_driver().
 >
 > Signed-off-by: Brian Masney <bmasney@redhat.com>
 > Assisted-by: Claude:claude-opus-4-8
 
-Thanks for your patch!
+Nice, thanks!
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> --- a/include/linux/platform_device.h
-> +++ b/include/linux/platform_device.h
-> @@ -376,6 +389,23 @@ static int __init __platform_driver##_init(void) \
->  } \
->  device_initcall(__platform_driver##_init); \
->
-> +/*
-> + * subsys_platform_driver_probe() - Helper macro for drivers that don't do
-> + * anything special in device init and have no exit, but need to register
-> + * earlier, at subsys_initcall level.  This eliminates some boilerplate.  Each
-> + * driver may only use this macro once, and using it replaces subsys_initcall.
-> + * This is meant to be a parallel of builtin_platform_driver_probe above, but
-> + * with the init call promoted to subsys_initcall so the provider is available
-> + * earlier during boot.
-> + */
-> +#define subsys_platform_driver_probe(__platform_driver, __platform_probe) \
-> +static int __init __platform_driver##_init(void) \
-> +{ \
-> +       return platform_driver_probe(&(__platform_driver), \
-> +                                    __platform_probe);    \
-> +} \
-> +subsys_initcall(__platform_driver##_init) \
+Works fine, and no change in generated code (besides renaming a few
+functions), so
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Nit: The backslash is not needed.
-Yeah, builtin_platform_driver_probe() has it, too...
-
-> +
->  #define platform_create_bundle(driver, probe, res, n_res, data, size) \
->         __platform_create_bundle(driver, probe, res, n_res, data, size, THIS_MODULE, KBUILD_MODNAME)
->  extern struct platform_device *__platform_create_bundle(
+As conflicts with renesas-clk are unlikely:
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Gr{oetje,eeting}s,
 
