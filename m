@@ -1,148 +1,197 @@
-Received: from mail-yx1-f41.google.com (mail-yx1-f41.google.com [74.125.224.41])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7A54373BE0
-	for <linux-clk@vger.kernel.org>; Thu, 10 Sep 2026 03:37:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.224.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789011481; cv=pass; b=hlVGo7tAoUHxPwUR+YDKqqylGL25TxX/FTR1tyS8vYvYKxyhWthYiz3rHo2pMhn//lt1EvPrTlxeMmN7n5sMNFjIEccc0H2eYaHJIQVttiID3aG5nc+xIao6PauWENNl+u72aT07mKXGsXQc6qGUkjPDsgctz5tuHFs/xQ+iI8Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789011481; c=relaxed/simple;
-	bh=WVugDbv7ZX0IU+zDPoow8D0UiVs389UElI4gBI6b4QE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=baNKdxSQF0EWbm2bxfxsbIZZqzqOXCuJgxEZjAYOhowHYk8Uh87wfhkoMP3ajMSzBvtna25dZS88KKVAm5Pv+iUSNHC+LSab8EZYcEAGUVRLFM44h+0Jca//xM+KCYXW7t0DE/IpZA3UQ4i03BnFQ0jBHFBdFBG7mZwyjuEz150=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=VSBxbjul; arc=pass smtp.client-ip=74.125.224.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49EF9336EDA
+	for <linux-clk@vger.kernel.org>; Thu, 10 Sep 2026 07:13:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1789024397; cv=none; b=NVpcq1codL3iTx/s+7FHx7lsg+zPM2vW6I6PfVAziJciawGop28AiGup9FFUf841+u1rSLzoHtH1hVeFlffJIoG1/8D5DjS6iDt+fXgWsr9pPj82k0U6xJuEWhsUBgyJ5QfbfpG8wFAaYGCRnDSDV3azIPegLeQsPuVk0sdWdWw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1789024397; c=relaxed/simple;
+	bh=gpk4QCTkMMoVEQ2hU/PY3Bgu//ErkeN2hdFFYL0E0/g=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ECaVFFcbau+OWNuKR6HbXrYusQocoxROACuZh5dDud7aqu3Bdf2O/9wsO/8Rxjm8eIWoqF4Ftjzl28lczlfkz5cBC/twiE1+DrQMc60AhqxHILnwBoZ4YNfMMQd8FGWaJY7T1frq92KDCmGPpiQsO3JUCRr+PjK22Hq674/Ke1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xNNGKL/O; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VSBxbjul"
-Received: by mail-yx1-f41.google.com with SMTP id 956f58d0204a3-6711693e489so315155d50.1
-        for <linux-clk@vger.kernel.org>; Wed, 09 Sep 2026 20:37:59 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1789011478; cv=none;
-        d=google.com; s=arc-20260327;
-        b=lXwJi7AC8OmvpoDpi5oHa7SpLsIhzaaqJNdmchu9ulrknA0btsFuUVxtn0xwUd5zeM
-         gneSV2nhEwp7v6rgpkJ4ftsWQQH/8TJDQM/ijvaswCSW34NwlWnuy7fqIiDtaKC1q7Xs
-         6f8GTn0kEQyhfY2UFOEmQMMIQwhmdiI6MYLmZawzlCXvxm4q+ZdNfhn37V+vr32dlX0N
-         EXRv5Y3nln3pwyxVYK715UDDNuVSn4iP+BbWZpr8X5VN5Sh3lHfaSmuNP0Fjf/9F+kkw
-         yTl/m7dj5nmLcP+5oyC7aFp34mlWcajehjf5Gn/QP+zzHWeCmS2+hfEMHAaq8KRMVqid
-         t/Zw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=LvJiCgX3BpdJe3s12OP/yBUKE0PHp9qk9pkbDTxdTfA=;
-        fh=kvvpdgdyUDCh+WgxwMOG7S1x8luWNuznU0TkoYhZH20=;
-        b=T/Q6nn3kznd8Ca9Whs3zHly+5nZMc+sduz8iQuLPkCM2+pZ5wZ0oz+UEdaIBZQcIRh
-         JYiL9g5VdE7c+qyz/y/FdiIfK3uij1EdZELz15USzUVKuxn5lhmz1BXfUob61fP1msWr
-         iDZrFm6icU7KXS3RrSlEXrtFAyMxKdNfHQoxDoit84p1FBQnMiWdZo7Y6v3Pj0EecYvF
-         CCgKV12TkC3TFf9Z66WLuhhIu2tY0qPkYiOFkL2kR3996kRu6mbVh/hk5J9Uu5ocUjF+
-         EC8l4rYCGup6uYmE1rDsFLRKnkXBQGMdFGiDxGb+0SI1jIyPT1BNrlDaegPxZ8plP95B
-         d/vA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xNNGKL/O"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4995b0343c1so91901795e9.3
+        for <linux-clk@vger.kernel.org>; Thu, 10 Sep 2026 00:13:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1789011478; x=1789616278; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=LvJiCgX3BpdJe3s12OP/yBUKE0PHp9qk9pkbDTxdTfA=;
-        b=VSBxbjulj124IoBqzITXz5MX+bcYiDXV+R6P9MYmxZVINONqCB10LqjK7QZW8fqI6E
-         lMLKVmvj5Cz3rKpkWViOxg5WaWr7rJLtwqeMw35B4+t0CC6iQst4eVBk4YcqAAK/Bpk2
-         q+dbBjYCEAwz76zDMxaEMDaMRJ/blvyGGuKVM=
+        d=linaro.org; s=google; t=1789024392; x=1789629192; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:organization
+         :autocrypt:content-language:references:cc:to:subject:reply-to:from
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=udAblsmxBxBfrNPUP96gC45YbWeS/a2NvUFAIRjIBU8=;
+        b=xNNGKL/OgvZfEgwpuu83dNNxocsmP92+qtaHINbzckwCulhu9S1M9qfYxYHPdec4RH
+         ZYOAXEX42LKanydu6VbxIFT4FcjEOXVGs/B7CEzCY13293U+AIe9kYYm1MWfQK9ihfr1
+         07jHqlcGgOWKXmKcLxTpaWOSVq9fgtkBiLfBXQtzv0eRTBbhdUyfz1dNB149+0bqmofn
+         08d4QpRrvBAsg2dvhG6J4W+CnhdNVtkSbSS5V7r0N1yj5qs8dIZueMA3/XsRX8FW1Th+
+         2T2xahvLdBndziMdeyrd+4jUU/4YfgKmnTCAcZbuyhEBTYV4qF7PhQKJZNjczEvryGEc
+         mqKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1789011478; x=1789616278;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=LvJiCgX3BpdJe3s12OP/yBUKE0PHp9qk9pkbDTxdTfA=;
-        b=cYuApZhnl3+VhIh/CDwheOrNEwIYApSQBnixB9Z0AFvunlD4xKkm8iqBbzCvZALUcy
-         1Fn0N49Ps0FsaBWU9Ks/7QZBfaja1fYcwb4ShC1QAvBhScmKplAUuPEvMitudtC07Aq7
-         H8I3KrVWwPomkIXqJE/NzjwhNj9of3bSR2qi6PDxoGu74OdM+ppxQfDVwT923D831EW4
-         Mb5ATb2aUQjtTsvDQ9UALyVRYELnm8yOyq+WkXDdjSntx2bVFxdOEvQKBcsdyggfO52Z
-         +sZHYNLJLr+peXtBppL8K2+w++lPQ6UmwTdLXWcPcDa3+ElyHHrvKCD2ZK8WaBlle1QI
-         GomA==
-X-Forwarded-Encrypted: i=1; AKwUvBy/x9o/2vU7Jg11Im1GSOWiC7Lt2LUBSUvSOWNJDjUWJVxyRyUCfM1Rc05vLY9Nccn54fOu9uDTKaA=@vger.kernel.org
-X-Gm-Message-State: AFuF++nPMb6Gw8RdrdaOBsLTJSnVpEJpTpM82P8Uj1Q2RGVV3cdyCWZL
-	932JFeejMSYkCLGjdkFeyUcdwIWD9k8Tafk2oW9KFxmqmRLP0Bc3XhOmOD+8QNbuVYhFFZ1ZySn
-	OhiIpKHEDyZATTx3NyPjRO5yUs5/lnp1u8jQhscZv
-X-Gm-Gg: AYBFou3E+r8REE8kuC8oXXTq6UPiRsIswPX4Nv+HApt40EGAtnWoxzoSnzf5R/e+uEz
-	49M3UCvNJTf0yMWruZyWn5+/wD2ZaIFAITCQf5FrqHalKiSKFRGyMPkvu6rk4S8IHw5V0WJAedt
-	7qGRY2dDwlGEqVBt+ttqQS2ct7KGRt8fQJnd80uW2QPyE75Ebzj0Mb6No59ZPf+N+QC7Etb0oVu
-	1U0xb9taTpCQOS2a0/5d3lJUYiqzBi2Yop0yhUHvvsvC/EmTP5ubteF0Wan7q5uUkzHlng+dLkQ
-	r5FzfM81KahdfhyryAMJMn0ddf5Z4Ov8LMyvXKiHlJ8M/t23lI+L6+bqYBDO8So43qZ8WyhwBsp
-	HvoY9E57v
-X-Received: by 2002:a53:ad06:0:b0:66f:c1bc:408a with SMTP id
- 956f58d0204a3-66fc1bc4792mr7713835d50.77.1789011478612; Wed, 09 Sep 2026
- 20:37:58 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1789024392; x=1789629192;
+        h=content-transfer-encoding:content-type:in-reply-to:organization
+         :autocrypt:content-language:references:cc:to:subject:reply-to:from
+         :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=udAblsmxBxBfrNPUP96gC45YbWeS/a2NvUFAIRjIBU8=;
+        b=hBivpNDDDUBt9007zkqq0iCKBB6lkQ+dXTC5zivf+dzuMhVKD9fYklMTDlGVayn7Bl
+         qQOxxUSoaIbEzoe/LESMk9WCp15hLPKw4/bA3Lya5eLPpxeP6dAIusYwjbedIfM0/PWM
+         UsPERJEFRs/0ETlaLz1qiMguf0wrqkjEW8A/nmT12k7ZBWLx6hXLSl2HWBNqAjTj4r+V
+         f2LVuYfrqHvNlZzmF3mAz2mqzjj1PedYBIj0AduKw0LgfsqmTD9t5LlqJM4V4ABCErkV
+         YFJIt9lBmVNxPkSjMbxDa4m9E7oAEeSC508rI6q5NO2KUwpj9IV/Ub6oPnsyj9tBT7oI
+         s9BA==
+X-Forwarded-Encrypted: i=1; AKwUvBwHbJr8z8fXmAV/YXhRalYAYbUdCpZ9QA9A3AAqpbpRxPayUTS2mX6o9czRTc7W0zs8s9ijD3cAiWw=@vger.kernel.org
+X-Gm-Message-State: AFuF++k+VE+RP1wJgOaDagASpOxcYwh6ywqtyYapq9YHk0jzqQF4AeGk
+	zf5FTmBclXSqUs4Opgp+ObmyftqytB1tOfzWK4cq3ga1ssqwFg6H+mg6oO3lUYkSYfudE7Egle0
+	VbEYD
+X-Gm-Gg: AYBFou1Ip+IF6Z3UxnGkJPU53U/gnzprwf38S3WWqCCIZc3NRW1H70Ap79v33KM6v1k
+	9ZWohHRdhUH7LwoGYKC2FREXjDtAWfgg88DWMa6Vxisb3A909d27ifKXUGam6TmtjF+a5CZTu0N
+	Tj99KYl3lcxXGs4bie/UAet2yMPM4Gk9j60gimpjI0QjqWPiZuIqFS8HfHCxTxz+senzHbdOqdr
+	MOAkZ4l48BdUoSV4INALhCeks+KVyUMgAJJMa8VhhWfOJeD1BQu0SYWRBwk1Qe2KjxAJXXUrVEH
+	lH3LmgsPG8yrTfOtOZCRwMg72+Lomp+LxIL4v/4f29c8KRybfKuixlSdhB30eLl4MMkXNe450kj
+	bVdpvVrB4wglPttGqmj5Q0ldgFdRrdpKsV8An6Hr18KJsIBE4h8SSMfA9BOM7d+O4YDmwQZ8VhN
+	dFCVOAaIZKqfUY0W6DccJUXpfVw5UimAJgFkfQyVv2bDSq13IRc8tE7jvxXn+C6IOLkJLj8VyMS
+	pyV64WVXJfj/6jIIJGzdgjdSd+8dY3rkZcEmVMBHpm3INSvA6dvzA==
+X-Received: by 2002:a05:600c:4e4c:b0:499:621a:2ec2 with SMTP id 5b1f17b1804b1-49cf8206e4dmr412212555e9.3.1789024392371;
+        Thu, 10 Sep 2026 00:13:12 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:106d:1080:3caf:d840:c911:29a9? ([2a01:e0a:106d:1080:3caf:d840:c911:29a9])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49d26be64a5sm49914055e9.6.2026.09.10.00.13.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Sep 2026 00:13:09 -0700 (PDT)
+Message-ID: <cc06ba9b-c866-4c43-a7d4-e25188b84f22@linaro.org>
+Date: Thu, 10 Sep 2026 09:13:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260910033000.15926-1-kmehltretter@gmail.com>
-In-Reply-To: <20260910033000.15926-1-kmehltretter@gmail.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Thu, 10 Sep 2026 11:37:47 +0800
-X-Gm-Features: AcwNN1XQH0BdJFknR3BDHpgbH-5I3YT4kBpqbiKb-tpDhIaqt5ymHV136QVN-oI
-Message-ID: <CAGXv+5E7AjJLxKeq3TetBJEsPyNuKjyn_bSsQccg4g2g6xR-pg@mail.gmail.com>
-Subject: Re: [PATCH] clk: mediatek: reset: Fix device registration kernel-doc
-To: Karl Mehltretter <kmehltretter@gmail.com>
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
-	Rex-BC Chen <rex-bc.chen@mediatek.com>, linux-clk@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH v2 2/4] mmc: meson-gx: enable the bus pipeline clock on T7
+To: Lucas Tanure <tanure@linux.com>, Ulf Hansson <ulfh@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jerome Brunet <jbrunet@baylibre.com>,
+ Kevin Hilman <khilman@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Stephen Boyd <sboyd@kernel.org>
+Cc: Brian Masney <bmasney+clk@redhat.com>, Chuan Liu <chuan.liu@amlogic.com>,
+ Jian Hu <jian.hu@amlogic.com>, Ronald Claveau <linux-kernel-dev@aliel.fr>,
+ linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20260905153234.133217-1-tanure@linux.com>
+ <20260905153234.133217-3-tanure@linux.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20260905153234.133217-3-tanure@linux.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 10, 2026 at 11:30=E2=80=AFAM Karl Mehltretter
-<kmehltretter@gmail.com> wrote:
->
-> The comment for mtk_register_reset_controller_with_dev() names the
-> older helper and documents np rather than dev. The new helper takes
-> a struct device and obtains its device node internally.
->
-> Use the actual function and parameter names and clarify that failures
-> return negative error codes.
->
-> Fixes: 761bc64003e3 ("clk: mediatek: reset: Add new register reset functi=
-on with device")
-> Assisted-by: LLM
-> Signed-off-by: Karl Mehltretter <kmehltretter@gmail.com>
-
-Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
-
+On 9/5/26 17:32, Lucas Tanure wrote:
+> On the T7 SoC, the bus path between the SD/eMMC controllers and the
+> NIC_MATRIX fabric goes through a pipeline stage inserted by the hardware
+> design to help timing closure. The stage has its own gate clock and,
+> when that clock is disabled, a controller that starts a DMA transfer can
+> never complete it, hanging the storage devices and, from there, the
+> whole system.
+> 
+> Add a dedicated match data for the amlogic,t7-mmc compatible that makes
+> the driver claim and enable the "pipeline" clock for as long as the
+> device is bound.
+> 
+> The clock is deliberately not optional: the hardware cannot do DMA
+> without it, and failing the probe with a clear error is preferable to
+> booting and hitting an undiagnosable DMA hang later.
+> 
+> Assisted-by: Claude:claude-fable-5
+> Signed-off-by: Lucas Tanure <tanure@linux.com>
 > ---
->  drivers/clk/mediatek/reset.h | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/clk/mediatek/reset.h b/drivers/clk/mediatek/reset.h
-> index 562ffd290a22..b09cdcab0c4b 100644
-> --- a/drivers/clk/mediatek/reset.h
-> +++ b/drivers/clk/mediatek/reset.h
-> @@ -60,11 +60,11 @@ struct mtk_clk_rst_data {
->  };
->
->  /**
-> - * mtk_register_reset_controller - Register mediatek clock reset control=
-ler with device
-> - * @np: Pointer to device.
-> + * mtk_register_reset_controller_with_dev - Register a MediaTek reset co=
-ntroller
-> + * @dev: Device used to manage the reset controller resources.
->   * @desc: Constant pointer to description of clock reset.
->   *
-> - * Return: 0 on success and errorno otherwise.
-> + * Return: 0 on success, negative errno otherwise.
->   */
->  int mtk_register_reset_controller_with_dev(struct device *dev,
->                                            const struct mtk_clk_rst_desc =
-*desc);
->
-> base-commit: 50d05c7c76c96b90462f24debacca971d2e86713
-> --
-> 2.39.5 (Apple Git-154)
->
->
+>   drivers/mmc/host/meson-gx-mmc.c | 20 ++++++++++++++++++++
+>   1 file changed, 20 insertions(+)
+> 
+> diff --git a/drivers/mmc/host/meson-gx-mmc.c b/drivers/mmc/host/meson-gx-mmc.c
+> index 694bb443d5f3..c0f1e929fc13 100644
+> --- a/drivers/mmc/host/meson-gx-mmc.c
+> +++ b/drivers/mmc/host/meson-gx-mmc.c
+> @@ -139,6 +139,7 @@ struct meson_mmc_data {
+>   	unsigned int always_on;
+>   	unsigned int adjust;
+>   	unsigned int irq_sdio_sleep;
+> +	bool has_pipeline_clk;
+>   };
+>   
+>   struct sd_emmc_desc {
+> @@ -1204,6 +1205,15 @@ static int meson_mmc_probe(struct platform_device *pdev)
+>   	if (IS_ERR(core_clk))
+>   		return PTR_ERR(core_clk);
+>   
+> +	if (host->data->has_pipeline_clk) {
+> +		struct clk *pipe_clk;
+> +
+> +		pipe_clk = devm_clk_get_enabled(&pdev->dev, "pipeline");
+> +		if (IS_ERR(pipe_clk))
+> +			return dev_err_probe(&pdev->dev, PTR_ERR(pipe_clk),
+> +					     "missing pipeline clock\n");
+> +	}
+> +
+>   	ret = meson_mmc_clk_init(host);
+>   	if (ret)
+>   		return ret;
+> @@ -1322,12 +1332,22 @@ static const struct meson_mmc_data meson_axg_data = {
+>   	.irq_sdio_sleep	= CLK_V3_IRQ_SDIO_SLEEP,
+>   };
+>   
+> +static const struct meson_mmc_data meson_t7_data = {
+> +	.tx_delay_mask	= CLK_V3_TX_DELAY_MASK,
+> +	.rx_delay_mask	= CLK_V3_RX_DELAY_MASK,
+> +	.always_on	= CLK_V3_ALWAYS_ON,
+> +	.adjust		= SD_EMMC_V3_ADJUST,
+> +	.irq_sdio_sleep	= CLK_V3_IRQ_SDIO_SLEEP,
+> +	.has_pipeline_clk = true,
+> +};
+> +
+>   static const struct of_device_id meson_mmc_of_match[] = {
+>   	{ .compatible = "amlogic,meson-gx-mmc",		.data = &meson_gx_data },
+>   	{ .compatible = "amlogic,meson-gxbb-mmc", 	.data = &meson_gx_data },
+>   	{ .compatible = "amlogic,meson-gxl-mmc",	.data = &meson_gx_data },
+>   	{ .compatible = "amlogic,meson-gxm-mmc",	.data = &meson_gx_data },
+>   	{ .compatible = "amlogic,meson-axg-mmc",	.data = &meson_axg_data },
+> +	{ .compatible = "amlogic,t7-mmc",		.data = &meson_t7_data },
+>   	{}
+>   };
+>   MODULE_DEVICE_TABLE(of, meson_mmc_of_match);
+
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+
+Thanks,
+Neil
