@@ -1,169 +1,151 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A79DB39B969
-	for <linux-clk@vger.kernel.org>; Thu, 10 Sep 2026 07:13:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D05962F39B8
+	for <linux-clk@vger.kernel.org>; Thu, 10 Sep 2026 07:27:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789024432; cv=none; b=CBeTPsjpNNP3DBXJvJZh2SYQYskfk2lSnrulbRuilP3bwSx+1yscV/WRk3eUiFSDbFtcIsJ/0NryOvILT6Vx5nTBbv+iFQtt2Hutc742puFqyW5JHIyMsvyBO3nAVSufkJIxVWeFixE516dIGX4uLESrSZBjeFsRxBVdfrlD5t0=
+	t=1789025264; cv=none; b=Py5I9bzCi7UqvixkJNZ5HXYTvNYIJs2LRBPq27oNosAs9PLmEYPV4OQu4Aiavef4IgXqy17AQtDj797hVLIaT7NGPDPk+oWOBbxdGRfkcI0gIx4Dau8CsDAcL6FFI5TayBMcIBcjyUEkgPEDhYMWeXsrL/0Klt8YZ2mzHshS1dY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789024432; c=relaxed/simple;
-	bh=PXh2VO4rYITeX70Qory+PjUUOYjC1peCD6QzzIWZTGA=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=jJuk+snUWsrTGI57r38QGXD+h73VmL/OnQ8iEMK2JUKjFS6IpinMErA5lDCtFzJSAhiU1scBbMuXIuBsKQ1RayOnYcM4OfUn+k/q11JoPkGW3kfVdj4O9vMRhzN44GWFlIISs/nxGwj+TBwHtO74t7oX5qyiqUzpIvHguNDeuQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XnSubBxC; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1789025264; c=relaxed/simple;
+	bh=8tZKXRz1UY3pcsG5dhbObQ/mWujehrDf4DHfiM01ag0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jXcdp2MVz6h8AVOAHHgXp3sSm+wX9VZP3eKM5fqkeESNsMbwF3Dh/nCDZgPmzz9HCFYz9cESWm/5pIBqWCTzfj8MahFqqaISS0Zin4FvD1dez7nMlq7C1WKNVVe/3jPg0d74Az8GC8ac0dAyRxdxNnwZ5iNpVS2fz+uwtt9tEK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=RRyb8inN; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=a9nDQ5rN; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XnSubBxC"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4956869750eso59976095e9.2
-        for <linux-clk@vger.kernel.org>; Thu, 10 Sep 2026 00:13:49 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="RRyb8inN";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="a9nDQ5rN"
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68A5Gscu3520306
+	for <linux-clk@vger.kernel.org>; Thu, 10 Sep 2026 07:27:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=4e5vZnEtmxTdfneP1Eo9xvuv
+	EbGJBqVYovTmDgJ0EzU=; b=RRyb8inNZT/j4oQT/tHNehYQSGJ3yQVs4j2k1qdl
+	exhWPwvlBQq8+6/7CnAdn5ayOFbvNT5BR5iatZJkvkxzuHV6lw02WoVzkeZ6Hniz
+	HwVgIOeUh7yBDcZ6LtwJ1hOcvRXD6XzF90vrpkYmWI1rnA8etDwGPue5I4Dpx6jc
+	F/jbzaNHmqgEKStLI3ZsWyDDCi+LI+i2nttO6GK5DQLUBbdVa9nYcxArIwYMsbTl
+	R1/6eF66MnQg+ENVdrIVbfPNuNGxzjJEkVXKgzHzRIHhUk9YLd+w+sUpcTyAb5hJ
+	rQANX3t7ZxuDZHtSrYvMpEw/gCmgDnYzL821o0bNXghmDg==
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gkcyfjq81-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Thu, 10 Sep 2026 07:27:41 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-939d6c515deso172223285a.3
+        for <linux-clk@vger.kernel.org>; Thu, 10 Sep 2026 00:27:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1789024428; x=1789629228; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:organization
-         :autocrypt:content-language:references:cc:to:subject:reply-to:from
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=S9vc3vyc7s51kw3mexUDG6KTzAQ8qZ7SaFb2GyTr25M=;
-        b=XnSubBxC3C1UMzn4ifsusKXQhYpLF46DzrP7kZnCbJfwQIHH+eOzVojTe2uO8Gf0zV
-         eUvUdcWbIq0Ehq38oL1VU619DMYWI3xODqkY8zSzE63W0obJaAc4oCkBMrv5srV6C+2c
-         waEQlw/O1VbxlaJC2zylCN5m11FSah3tIk1OR9cczLLQaefD2/PkEz+/PKl3zUUtbko1
-         mWkMhhApDfrjR1M6XbyN8v1J9hI1c7Q4LpiFPQD8lLab1BTK1NfhCjDKah+EO3y/LhJz
-         0NVegKMFCTc1L55TTDJk1MvOJ70OLesgYgmopuSTHgi2t75KPbsQxFjePWRSdynd9e0P
-         VP8g==
+        d=oss.qualcomm.com; s=google; t=1789025261; x=1789630061; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=4e5vZnEtmxTdfneP1Eo9xvuvEbGJBqVYovTmDgJ0EzU=;
+        b=a9nDQ5rNogQuRd+uvuaZ4QPbByTRbkFhnNPwNIqcZIVEOKZV1+mqh3bDuTNHAXtVXQ
+         g+5SNROOfCzEHeHW6amU+o6t8yVrfZe6LcdI2pa0EowtzvSGUoVgAHYy8rZDOKSJ9FRP
+         YXRK1oKA/POf/QGYi3Zg8KDtuH6KntiVR1AuU756Ysn+VtTy3pEt8NRmrngrQCTWaMW+
+         28gYr4SpkcQwUC556m4ZO/+yHq3oVLSxq2E7vYoesVcjlJx0j+DiAkIvZtYdsb2EL2KJ
+         RnTJnRzA+dXSGD3utkHXi4xdWKP9w9jf0FnkwnokmBeRS8iNENFtBAn0Admpy2kdfCBy
+         jCRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1789024428; x=1789629228;
-        h=content-transfer-encoding:content-type:in-reply-to:organization
-         :autocrypt:content-language:references:cc:to:subject:reply-to:from
-         :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=S9vc3vyc7s51kw3mexUDG6KTzAQ8qZ7SaFb2GyTr25M=;
-        b=N0Fwz5RWGI4bBO+U/7ehF1y0h2L18/TqxMfQTJ8PxP4nJgDHoeCHRuzz8mO4GxJkEy
-         IM25SGqtweWnjKuWln064TtjpURtsGWhYIT8GNPHaX4YoBFv8tGYMeRB07q8P7scVgps
-         a2o0aTVDEi0JOQZDwzw/0RG4Ntxna7iXkgOLvz4J4gq/07oBx6xwn4lXcgkglHFR/Qy7
-         CIyOvjIeCeSYvZe4QfH+oZ90uz9B6QWuDUsL2DIg9XKSCe4NstP60kiZHTWxycUlD8WL
-         VTGE7hn3G5cxRICAedYpeqECaBmlekgUAzQ5RdGgNRJTbLenPyUDlUSgZ1aSJV41cyX7
-         iWpw==
-X-Forwarded-Encrypted: i=1; AKwUvBwnbWgKum+sBy755dUv4X1H09TJVYzsHZkWIN4rOGsIlcK+xlZit3H1vLi2mD22NrsrTftEyTd/nJo=@vger.kernel.org
-X-Gm-Message-State: AFuF++khmtv6F8cPliXtEnQA1tXl4M+TdWcBoWm60XGxuJOXc2fmB3sh
-	AX9rGzLDxWslhwfOtrUG43j5J0417fGXb7rdyrnRSCBFEylAAXA/YiJZAI69a1UcKMI=
-X-Gm-Gg: AYBFou1hmvpZqpnLkWjI3/5b5eJDj8o2IZauD7MYipHn2cQLxMKTmzlvYOQyFIbvUqb
-	qsZqiJLhEiiSDwoyjSUASbV30g8HKhDvdl1tx0AKBdG7AmqU139jWQZBKJbHL7AMqrJcTIn2GQe
-	Lqt3ZKP9GjehT8SeXovV1Y0UNmSMj7t5WdjovY+3aVHRtyg1BVeKZNWO+rB6BkjJFth2hY1ArGx
-	yHdr3jYEUZVsdmz6e9d3wcVxYqSKUtzjDdOnbwJyLH51dAvXmO+nMF92hQZLfPCek79JvKzdp3E
-	M8thbXed7WuYIFzQrJvkbgXyzNzM3HlTb7k6VymL6BFfajomwlsVIIzBy7cKoMmUbRq4yAnfld3
-	SRNemR+xtkMtAffPpnyhLF4MrFG78fme1o1tgwWA4K21Ri6Jj04KwQtWx7A8LuA8Z/yjlDeZwzp
-	1ZAIE2foNrSLQBUtN1P8RmwML8LHo2VIGFfrGb2mBEwNBijCraUKt3SCa29fVFL321XrAr2Hkkz
-	If2wnYgvUauSn+BJAn2U//AA6j2TVxgigftgUCQvW/uBa+PfNESwz2XCmmLPPjC0Q==
-X-Received: by 2002:a05:600c:37c8:b0:49c:cee2:a508 with SMTP id 5b1f17b1804b1-49cf826c4e2mr379662315e9.16.1789024427828;
-        Thu, 10 Sep 2026 00:13:47 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:106d:1080:3caf:d840:c911:29a9? ([2a01:e0a:106d:1080:3caf:d840:c911:29a9])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4858d312ca0sm51612002f8f.4.2026.09.10.00.13.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Sep 2026 00:13:47 -0700 (PDT)
-Message-ID: <d2e31f11-24ab-4d2e-8f49-d625e1aec930@linaro.org>
-Date: Thu, 10 Sep 2026 09:13:44 +0200
+        d=1e100.net; s=20251104; t=1789025261; x=1789630061;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=4e5vZnEtmxTdfneP1Eo9xvuvEbGJBqVYovTmDgJ0EzU=;
+        b=LDTZZTZ8VkjkrtXKoDlxZGgZSPiZrm9mgWYdruzcSPt28SmpqbV1YQdYWqzYGmImQB
+         teha1vj9rPfsUsl+T4Iklju8vrX5dBmt7UgdVf4p7dNduOx9agcinyRk+jsut7oCaGOP
+         nLLL93J+OVQS9SRD463g32cbqXdPqCFk9rsM8tXv0dsTNjJxlr1SKoEeh6Ppuo338R1Y
+         Be337IkVrRJz/mNL8lXp1+Zgq9Z+ceV04sw25j7pNf3d9T/jNsoLC7IoYJnIJwWC+sFm
+         teJ5bJsUTNS3C32/ndENjUQ8Nur7TDSjbRAoIm2NLK5pD3phy1ACD5EYYcQAPI/aEPca
+         P5xw==
+X-Forwarded-Encrypted: i=1; AKwUvByHVLvF/Kac6NiGjA6rNbK8mqm5XSMe4PvGvznj6dAjC9aW2O8WK+Rp+2JWvmcpK0wcnXncELSX9kE=@vger.kernel.org
+X-Gm-Message-State: AFuF++kELQt0r3rMZVmc/A2s3CwQ728a3w0YtcLuFW5v8g9kAo0ezdY1
+	VLa01HcY0+L061adOQN3jYGBx4TBrcXUfG+iaOAMHerrzZBRwi2jVz4DrIBvbEGzWCQ1satVTQ/
+	tde20WiDMM4X76oWO89DcMQ1bPihGpUXTRPg3Yk4EDR3WZbWv0XRjfN7PKSldMAQ=
+X-Gm-Gg: AYBFou0kUGptF6JBn1EdFSG+hsvEt/YnSOy1QEuL+je1UMz4rIDeYSR+j5Qab+tDD4M
+	xBvBd8xDtlqghJDOgGkkG9yV0Vubdh/D/3FC/QDEhHJIocbDUQehchk3TqwkP8eWaHxuh8dtXpu
+	8/k5w6Ltns+dCtZlDjC7WXZVG9Q8THGBYhAuso7p7GuawnNQzZqHx8yM+XcxvxWDqrlMokOunGm
+	eAgqO8/q+vmQw09//W063FH+u0W4RdW+7cCjFQRPfxBRebCr+uqXct8cXOoCTa4gqYuYsv3Nej5
+	Ts2JmFc1pqylwFmLg6i/BdIFvDDE4bwLuIoR5nh3WXHH7nKhnbXMeYMaDQmjXQKmlD+zzM7f/Mt
+	5juilyM3RSnyO
+X-Received: by 2002:a05:620a:4629:b0:939:6dea:ce78 with SMTP id af79cd13be357-939d4a8bd93mr701517085a.46.1789025260934;
+        Thu, 10 Sep 2026 00:27:40 -0700 (PDT)
+X-Received: by 2002:a05:620a:4629:b0:939:6dea:ce78 with SMTP id af79cd13be357-939d4a8bd93mr701513385a.46.1789025260392;
+        Thu, 10 Sep 2026 00:27:40 -0700 (PDT)
+Received: from oss.qualcomm.com ([86.121.7.210])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49d26bf332esm48153215e9.8.2026.09.10.00.27.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Sep 2026 00:27:39 -0700 (PDT)
+Date: Thu, 10 Sep 2026 10:27:36 +0300
+From: Abel Vesa <abel.vesa@oss.qualcomm.com>
+To: Vivek Aknurwar <vivek.aknurwar@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+        Taniya Das <taniya.das@oss.qualcomm.com>,
+        Brian Masney <bmasney+clk@redhat.com>,
+        Jerome Brunet <jbrunet+clk@baylibre.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH v2 2/2] clk: qcom: Add support for the camera clock
+ controller (CAMCC) on Hawi
+Message-ID: <dpvwirynsanzuu5pdtj5d4jrftlikm6fd6unk466bpq7ts7kv2@7ugxxjzxxxdw>
+References: <20260908-camcc-hawi-v2-0-f892ba1d118e@oss.qualcomm.com>
+ <20260908-camcc-hawi-v2-2-f892ba1d118e@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH v2 4/4] clk: meson: t7: don't mark sys_ampipe_nand as
- critical
-To: Lucas Tanure <tanure@linux.com>, Ulf Hansson <ulfh@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jerome Brunet <jbrunet@baylibre.com>,
- Kevin Hilman <khilman@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Stephen Boyd <sboyd@kernel.org>
-Cc: Brian Masney <bmasney+clk@redhat.com>, Chuan Liu <chuan.liu@amlogic.com>,
- Jian Hu <jian.hu@amlogic.com>, Ronald Claveau <linux-kernel-dev@aliel.fr>,
- linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20260905153234.133217-1-tanure@linux.com>
- <20260905153234.133217-5-tanure@linux.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20260905153234.133217-5-tanure@linux.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260908-camcc-hawi-v2-2-f892ba1d118e@oss.qualcomm.com>
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTEwMDA4MCBTYWx0ZWRfXyGm7DaWfU3sY
+ kkN/OMUmF2zkiF5SOd2Q4q5GHGSVoRVgKnqjqnwbDoadARjKXXW8H+P/2b3kvPMfYcaMV6ebPW9
+ kOyuuUaU306XUBWrrZNs9pRBM26777Y=
+X-Proofpoint-ORIG-GUID: Libsq6ox6y3Rj_UU6ohtJgA7c7rl-sOk
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTEwMDA4MCBTYWx0ZWRfX79VhgKsSDVnx
+ MBLsSRtYzFx9oh9QkFO7X6pWwP3BKmk4PJ7eDzA1OH0AtjWyI7ppL7ZuTcTUK3nh2vucbkSqH5m
+ li3F8amq4aKDUitLR1uNUM/TbLPTJbiU7eznTDl/x/X7Jn4vCApLRzMRSv/lthFAguN8u5703T5
+ CK+aYjhD3lZKwLaY285ooj+5Gl6auo/VXSjTfI14yrz9iz5LAw/zngBvVCBrAUF0LdxZAobbXxU
+ MaAvZoc4xg1LUuurpw6wGfCC90GHhWgiB5KkQ+M095qDSZ0kyAaLJsBWWeDWVGsUwvC4xX7onLd
+ 7VY0LlQNuBuVCsjWyhX9+c051xK7c6RsIz1yXV/YoqMbnclg4UvXfBWezCMUtZXfa6ALqrEjQAf
+ f1lo8W9F0gPqnGhoz8SpwqoBLIiCi0A688U/lUgAb+WAy9l6cu5LXK5tvOBU1N4bRlngqjhh/Zp
+ fcke3SO1fcHsBOMewEg==
+X-Authority-Analysis: v=2.4 cv=H5pOUOYi c=1 sm=1 tr=0 ts=6aa25bed cx=c_pps
+ a=qKBjSQ1v91RyAK45QCPf5w==:117 a=dePp4Gl7O00gmbwhyVsZwA==:17
+ a=kj9zAlcOel0A:10 a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=yx91gb_oNiZeI1HMLzn7:22
+ a=EUspDBNiAAAA:8 a=sCG5SDo0pyOWuBXq7UcA:9 a=CjuIK1q_8ugA:10
+ a=NFOGd7dJGGMPyQGDc5-O:22
+X-Proofpoint-GUID: Libsq6ox6y3Rj_UU6ohtJgA7c7rl-sOk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-09-10_02,2026-09-09_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 suspectscore=0 spamscore=0 priorityscore=1501 impostorscore=0
+ malwarescore=0 bulkscore=0 adultscore=0 lowpriorityscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2609040000 definitions=main-2609100080
 
-On 9/5/26 17:32, Lucas Tanure wrote:
-> sys_ampipe_nand clocks the pipeline stage inserted in the bus path
-> between the SD/eMMC controllers and the NIC_MATRIX fabric. It does have
-> identifiable consumers - the three MMC controllers - so marking it
-> critical was the wrong tool: the clock should be referenced from the
-> consumer nodes and claimed by the mmc driver instead.
+On 26-09-08 23:01:23, Vivek Aknurwar wrote:
+> The CAMCC block on the Qualcomm Hawi SoC provides the primary camera
+> clocks. The Camera BIST MCLK clock controller is identical to
+> Kaanapali's and hence reuses the cambistmclkcc-kaanapali driver to
+> provide the functional MCLK required for camera operations.
 > 
-> Drop the CLK_IS_CRITICAL flag and update the comment accordingly.
-> sys_am2axi0..2 remain critical as they clock the AXI DMA bus itself and
-> have no single identifiable consumer.
-> 
-> Assisted-by: Claude:claude-fable-5
-> Signed-off-by: Lucas Tanure <tanure@linux.com>
-> ---
-> This patch depends on the MMC controllers actually referencing the clock:
-> the dt-bindings, mmc driver and t7 DTS changes adding the "pipeline"
-> clock must land before this patch, otherwise the boot hangs and memory
-> corruption this clock caused are reintroduced.
-> 
->   drivers/clk/meson/t7-peripherals.c | 10 +++++-----
->   1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/clk/meson/t7-peripherals.c b/drivers/clk/meson/t7-peripherals.c
-> index 55d09e78593b..2f429ea86796 100644
-> --- a/drivers/clk/meson/t7-peripherals.c
-> +++ b/drivers/clk/meson/t7-peripherals.c
-> @@ -945,13 +945,13 @@ static T7_SYS_PCLK(sys_aucpu,		SYS_CLK_EN0_REG0, 14,	0);
->   static T7_SYS_PCLK(sys_cec,		SYS_CLK_EN0_REG0, 16,	0);
->   static T7_SYS_PCLK(sys_gdc,		SYS_CLK_EN0_REG0, 17,	0);
->   static T7_SYS_PCLK(sys_deswarp,		SYS_CLK_EN0_REG0, 18,	0);
-> +static T7_SYS_PCLK(sys_ampipe_nand,	SYS_CLK_EN0_REG0, 19,	0);
-> +static T7_SYS_PCLK(sys_ampipe_eth,	SYS_CLK_EN0_REG0, 20,	0);
->   /*
-> - * NOTE: sys_ampipe_nand and sys_am2axi0..2 provide the clock to the AXI bus
-> - * used for DMA between the peripherals and the DRAM. After the clocks are
-> - * disabled, a device that starts a transfer cannot complete it.
-> + * NOTE: sys_am2axi0..2 provide the clock to the AXI bus used for DMA between
-> + * the peripherals and the DRAM. After the clocks are disabled, a device that
-> + * starts a transfer cannot complete it.
->    */
-> -static T7_SYS_PCLK(sys_ampipe_nand,	SYS_CLK_EN0_REG0, 19,	CLK_IS_CRITICAL);
-> -static T7_SYS_PCLK(sys_ampipe_eth,	SYS_CLK_EN0_REG0, 20,	0);
->   static T7_SYS_PCLK(sys_am2axi0,		SYS_CLK_EN0_REG0, 21,	CLK_IS_CRITICAL);
->   static T7_SYS_PCLK(sys_am2axi1,		SYS_CLK_EN0_REG0, 22,	CLK_IS_CRITICAL);
->   static T7_SYS_PCLK(sys_am2axi2,		SYS_CLK_EN0_REG0, 23,	CLK_IS_CRITICAL);
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Reviewed-by: Taniya Das <taniya.das@oss.qualcomm.com>
+> Signed-off-by: Vivek Aknurwar <vivek.aknurwar@oss.qualcomm.com>
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
-
-Thanks,
-Neil
+Reviewed-by: Abel Vesa <abel.vesa@oss.qualcomm.com>
