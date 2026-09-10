@@ -1,107 +1,114 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0C673B6367;
-	Thu, 10 Sep 2026 09:24:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A417C3932D9;
+	Thu, 10 Sep 2026 09:27:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789032245; cv=none; b=h6xiE94cepV+8487br/1QABBtADZQeycl3LW9gmqpfQJyPhxeoXcJNU7MCqE81nN/i4tpSfn19N9xbrxQLZ5yRf3IWK1F0LKm//cB5eWyFDERLOhxkGzqgtQEbNOIst1UzOSjTV8yIBqW2SHZxtjw6ZsGU7B/lMFYdrfVDVATc0=
+	t=1789032443; cv=none; b=DNOh2iJDGJYBfjgdh0wtcIfLepxTi1bAfLSXiBY0Fb/ucB1kO6Drr68Fe9X/nRSq2Ks3TUl0+khwXVb7IIsPzE9oJnB7NmxoDfubU+oWaRJHqjG0GfNaKA3E8KsHSloJtIxDGGlpWTa207q6M0syK9bu2Hvwv9fAnh1RuxaL1EM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789032245; c=relaxed/simple;
-	bh=lO8k/xsn9vJJ5dce2sGr/gdsViGjIJvXorKknr/5sps=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l1+E4ZM2AcGG0aKgXqgLufhKgXKK2i/9iiJCvwZUXfVkZ7t7mZ+ZgjJoM583HMIWJNWOww3BjEVW7DP99/tkaEe2joxNyudRNKhtO7sL1NEMDEBgO1vBJsS8vwDbnArtvptEKfdgojJMSnnrk2Sca0e7NbFJBl7emI7qi+8P2uk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Az8d1rhU; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1789032443; c=relaxed/simple;
+	bh=g9Cp6K2YW/0ojAZM+PERC3yWY2MaFiW9F9EZGEa+wq0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oTMWPMTH6Y8G+fFzW6dotLdIuH47SXKRmCv/GEEmv0GBui4LCFmCmwnHQU0Mgi6kYMZl179tygq5HmO3D1yUpmYkMS7j0hiKOGVehwrjR6Aw09FQGwZkYobLT2rvqRDfwDNe8fHQr3luL7vvlJVOTJzqPDH1MW+QEN084+bHsIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X/DwY5Iy; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Az8d1rhU"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1789032239;
-	bh=lO8k/xsn9vJJ5dce2sGr/gdsViGjIJvXorKknr/5sps=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Az8d1rhUo17uOQhc71dhaEE2/xhUuVqKZFU2jsJXGj6zzmdUu0vv5IfPqtIn2uXEa
-	 PuGN14rcs/Nho2CLKqI5UbCVOuag1aft5jwFM4oyKSwR0wUTKdECpDJozQXuG80A5C
-	 GYzozCqc6/FLZj+45aO1o11ddToNbIJYL0FjwQpnCDILwBC6AbKidD5yG3bO4Bvkwt
-	 hqGPytp8V5855AXO6bPOF65il6//9ZX1/Qk3C8Qe6sPbdweJj3DZZkBocnDcNfFG2w
-	 l84/tKQpDr0qRjxKgVZz8WVoV7HSjdjzppuyAYJ8mnZDyTeBEIrZ+aHZzc6Bpc2nsp
-	 Wcp3VTZyTFu1Q==
-Received: from [100.64.1.21] (unknown [100.64.1.21])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id CFFA517E0CA6;
-	Thu, 10 Sep 2026 11:23:58 +0200 (CEST)
-Message-ID: <0c117dbc-facc-4465-a5e0-8fbb822d86a7@collabora.com>
-Date: Thu, 10 Sep 2026 11:23:58 +0200
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X/DwY5Iy"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1789032440; x=1820568440;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=g9Cp6K2YW/0ojAZM+PERC3yWY2MaFiW9F9EZGEa+wq0=;
+  b=X/DwY5Iy/2j8ziFdaKHzSaOBDjDyRNy5y/du+QcwaU+d5m3VIZtMoDsN
+   KW6Y7iKgtxh7Wbmv8Em90AjRjYLD76CmY9Z9eZkfjPscQQkUdAwXjsn8I
+   ykCLbPDjaInIiSdTVchRfTzqVtQ1NbAJkDcDBcpWPuLXY6LuCicgYJVMd
+   RV37g5QOAd6UYPB4bu9SihR3IbNnmQ91zhUboobw3gSUW6Lr+9hFF6D5C
+   C3RMkJ+dHNPEiG8YGvoF3Y37ptXSdiE0R5VhRbo2aKTDEhsZT+FVe0axd
+   0zz/FrXwBaCF241u7EqzW1ovEzTCwYbQW1jj+6eKXQIfCBBwNZ+dLzCg0
+   g==;
+X-CSE-ConnectionGUID: gAFrPp3VSOuuHGmX2LlD+Q==
+X-CSE-MsgGUID: yrUUlg1CTnin5KczD3M1lg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11900"; a="100068155"
+X-IronPort-AV: E=Sophos;i="6.27,95,1787036400"; 
+   d="scan'208";a="100068155"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2026 02:27:09 -0700
+X-CSE-ConnectionGUID: 9Lk46I8cT22DEwuQeaU5Rw==
+X-CSE-MsgGUID: YmZZHAgjTGqItji2nmnofw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,95,1787036400"; 
+   d="scan'208";a="273537486"
+Received: from ncintean-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.177])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2026 02:27:04 -0700
+Date: Thu, 10 Sep 2026 12:27:02 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: zl020895 <zl020895@163.com>
+Cc: longzhao@ambarella.com, Arnd Bergmann <arnd@arndb.de>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	soc@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Lee Jones <lee@kernel.org>,
+	mfd@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Re: [PATCH v6 11/13] serial: 8250_dw: add Ambarella CV75 quirks
+Message-ID: <aqJ35vMBiBZo2iUE@ashevche-desk.local>
+References: <20260904-cv75-v5-v6-0-e918514cb3b1@ambarella.com>
+ <20260904-cv75-v5-v6-11-e918514cb3b1@ambarella.com>
+ <aqJrSnr0rwv4BOJ3@ashevche-desk.local>
+ <122573f8.8232.1a08a9765fc.Coremail.zl020895@163.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: mediatek: reset: Fix device registration kernel-doc
-To: Karl Mehltretter <kmehltretter@gmail.com>,
- Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>,
- Rex-BC Chen <rex-bc.chen@mediatek.com>, linux-clk@vger.kernel.org,
- linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20260910033000.15926-1-kmehltretter@gmail.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20260910033000.15926-1-kmehltretter@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <122573f8.8232.1a08a9765fc.Coremail.zl020895@163.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On 9/10/26 05:30, Karl Mehltretter wrote:
-> The comment for mtk_register_reset_controller_with_dev() names the
-> older helper and documents np rather than dev. The new helper takes
-> a struct device and obtains its device node internally.
-> 
-> Use the actual function and parameter names and clarify that failures
-> return negative error codes.
-> 
-> Fixes: 761bc64003e3 ("clk: mediatek: reset: Add new register reset function with device")
-> Assisted-by: LLM
-> Signed-off-by: Karl Mehltretter <kmehltretter@gmail.com>
-> ---
->   drivers/clk/mediatek/reset.h | 6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/mediatek/reset.h b/drivers/clk/mediatek/reset.h
-> index 562ffd290a22..b09cdcab0c4b 100644
-> --- a/drivers/clk/mediatek/reset.h
-> +++ b/drivers/clk/mediatek/reset.h
-> @@ -60,11 +60,11 @@ struct mtk_clk_rst_data {
->   };
->   
->   /**
-> - * mtk_register_reset_controller - Register mediatek clock reset controller with device
-> - * @np: Pointer to device.
-> + * mtk_register_reset_controller_with_dev - Register a MediaTek reset controller
-> + * @dev: Device used to manage the reset controller resources.
->    * @desc: Constant pointer to description of clock reset.
->    *
-> - * Return: 0 on success and errorno otherwise.
-> + * Return: 0 on success, negative errno otherwise.
->    */
->   int mtk_register_reset_controller_with_dev(struct device *dev,
->   					   const struct mtk_clk_rst_desc *desc);
-> 
-> base-commit: 50d05c7c76c96b90462f24debacca971d2e86713
+On Thu, Sep 10, 2026 at 05:12:52PM +0800, zl020895 wrote:
 
-Hey, thanks for the patch!
-It's almost perfect - just change the first line with:
+> > Wondering if we should undo this in the port's .shutdown() callback.
+> I saw the shutdown path already covers it: dw8250_shutdown() calls
+> serial8250_do_shutdown(), which does
+> 	up->ier = 0;
+> 	serial_port_out(port, UART_IER, 0);
+> so both the IER shadow and hardware IER are cleared, including ETOI.
 
-* mtk_register_reset_controller_with_dev() - Register a MediaTek reset controller
+Depending on the answer to Ilpo the enabling may need an updated comment
+summarising the above.
 
-After which,
+> At 2026-09-10 16:33:14, "Andy Shevchenko" <andriy.shevchenko@linux.intel.com> wrote:
+> >On Fri, Sep 04, 2026 at 02:38:18PM +0800, Long Zhao via B4 Relay wrote:
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+...
 
-Cheers,
-Angelo
+> >> +	/*
+> >> +	 * Ambarella keeps variant IER bits (e.g. ETOI) set for correct RX
+> >> +	 * timeout behaviour. Force them into the 8250 IER shadow so later
+> >> +	 * generic IER updates do not clear them.
+> >> +	 */
+> >
+> >Wondering if we should undo this in the port's .shutdown() callback.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
