@@ -1,132 +1,149 @@
-Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B306D3515FD
-	for <linux-clk@vger.kernel.org>; Thu, 10 Sep 2026 14:21:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.129
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4BB249EC41;
+	Thu, 10 Sep 2026 14:28:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789050116; cv=none; b=EU8IotUAJbJbnxHIKrrfWoZK9HnVrKk9Lk7JrnlUNjpdEPq+X/kCbNw1UEVkvtZ00AnUtsSO4Q8Yjj/xaYrqaB/a3jolrm4YIrbbkmk4maJhYE+jff6lUu3ImN8hamjfr+hTtJ6GQjEnkpeU87aeAua1m1l4XKSLtVaf5kwu9ts=
+	t=1789050502; cv=none; b=ZyeQfDlPlr4QWi7WIcqzZ7Rr7Q8nmahHyUoPPfki4G8ZqerDXw1SZ+LFf4SVUKuKRMdKUo7YOsPp91jOfpbihaho/oQ6dRoJlH5/mSahWOslcYmtePUndsDln8bJOS00aZhNSkp9KtUOXOhyfwmxvg/iqV6OEC2xLJH189iWpMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789050116; c=relaxed/simple;
-	bh=xdNcRtr3Q1H8R8s6BA/OoSzY7Cs3ETsOgR+Zgda24Lc=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 In-Reply-To:References; b=NXfeDPaMNRqMsQiucLed+dcRWGyI0cgFAEQDdG7Z4odPDOv8jVQ+O9P/oz5GdCo++rpbOrNSFojhOPG0QwitV1NqsCgWYAJE3ZWYkfgq5pGdB1mzTDreJ2wUvXsLupq7wkF3qj1rUuXI7tm1OlICCJZZAMoT/g2UzQTDAzBvflQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=KTN31E0L; arc=none smtp.client-ip=54.204.34.129
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
+	s=arc-20240116; t=1789050502; c=relaxed/simple;
+	bh=IrgONwUxFROqmPU/wGCuO849jkWWb04u8oCXC6Wy2jU=;
+	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=pMOFCJwHv+6J5qPcPBTnqFGI7iPJYF4W8AA5myDyDPNU4zYqMxgj1Bw5Kyya3A/nZwdhzBeDt9T7lHJFTHTjFReeHKEpT7ylCD89fagOdQ/QRelgvSbpe+QqQ7x7d4O9dzz/PvxfjrjlUaILHim8gCJ5hw4gBw0/nUhZAYxf8aY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SFrSXjV+; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="KTN31E0L"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1789050006;
-	bh=3nZLJvFkotIH0hkZxh4gNEbBhFHsxNJJz5gCcWVLrcQ=;
-	h=Mime-Version:Date:Message-Id:Subject:From:To;
-	b=KTN31E0LzJqJ5+n6sdnQ3saxk21R5q3x8bRi4eaOvbKPNfj0ij7i1LCyn37otAv2z
-	 ptYKJ8ojNky2OY505bbcz0sK5mjUtnBtgRfm3pjYWLyEAX6L6ZNWtUZ5qpb0bm8lVC
-	 v15smPAg+Wx+zyJ3epWSUqIndOgYjVr5jSe92fGQ=
-X-QQ-mid: zesmtpgz7t1789049999t835cac00
-X-QQ-Originating-IP: LvFWhnr8GQtHVtD5AxbXjVM2HEzA8EvNtZbuG/ISU7U=
-Received: from = ( [120.237.158.181])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 10 Sep 2026 22:19:57 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 14213851598178055219
-EX-QQ-RecipientCnt: 13
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SFrSXjV+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFA381F000FF;
+	Thu, 10 Sep 2026 14:28:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789050500;
+	bh=4H3YWKqyh8XRjnyZtPNkmw61ua2BEvSRbEHmL/TAJ/w=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=SFrSXjV+Vuxtts2lCf6Al1YZ3Padi0tKwxLazGHUAvSFJ599aTvjavZbCS8cqQZxA
+	 ppd1S3rZ0Fah7LctH1o1zsII6lixti+l7ZUShBfJExRKlUxz+Fjhe2e6Y5dkXRduKK
+	 G/CpCqsEfCtrAF14j1cv4RRkqp396SYPR4gFSETfBLI2KqoMdV7P6IOSlY+eVU8jar
+	 WnBNhfAiSPTO98t5wDVXDmnXLbOS0dYu979W9/SrwjsHZdV5vVcnuyWnof+p2Aqb4o
+	 mXJryrAjhiuV4niilMdNHSJphe2mEZXTyI9/Nk+RDlPO03zkvtRALDoQZnzRDp35My
+	 kNEi2ksNRzuag==
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v2 1/7] of: property: fw_devlink: Follow GPIO nexus maps
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Ernest Van Hoecke" <ernestvanhoecke@gmail.com>
+Cc: robh@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+In-Reply-To: <20260910-fw-devlink-nexus-ready-v2-1-17ac82dbe226@toradex.com>
+References: <20260910-fw-devlink-nexus-ready-v2-0-17ac82dbe226@toradex.com>
+ <20260910-fw-devlink-nexus-ready-v2-1-17ac82dbe226@toradex.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 10 Sep 2026 14:28:19 +0000
+Message-Id: <20260910142819.DFA381F000FF@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed;
- boundary=9670b8df4f3eb1168009e4f7bd72c141133c505de3412c738ef408f1deee;
- micalg=pgp-sha512; protocol="application/pgp-signature"
-Date: Thu, 10 Sep 2026 22:19:54 +0800
-Message-Id: <DLBPALH9J84H.6CTB8GOVYSZ@linux.spacemit.com>
-Cc: <linux-clk@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
- <spacemit@lists.linux.dev>, <linux-kernel@vger.kernel.org>, "Troy Mitchell"
- <troy.mitchell@linux.spacemit.com>, "Yao Zi" <me@ziyao.cc>
-Subject: Re: [PATCH 2/5] clk: spacemit: make MIX rate selection consistent
-From: "Troy Mitchell" <troy.mitchell@linux.spacemit.com>
-To: "Stephen Boyd" <sboyd@kernel.org>, "Brian Masney"
- <bmasney+clk@redhat.com>, "Jerome Brunet" <jbrunet+clk@baylibre.com>,
- "Yixun Lan" <dlan@kernel.org>, "Alex Elder" <elder@riscstar.com>, "Inochi
- Amaoto" <inochiama@outlook.com>, "Haylen Chu" <heylenay@4d2.org>
-In-Reply-To: <aqKqKkXbTkcS-pnY@pie>
-References: <20260909-spacemit-pll-init-v1-0-b3065ad5a4ac@linux.spacemit.com>
-	<20260909-spacemit-pll-init-v1-2-b3065ad5a4ac@linux.spacemit.com>
-	<aqKqKkXbTkcS-pnY@pie>
-Content-Transfer-Encoding: 8bit
-X-Unsent: 1
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpgz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
-X-QQ-XMAILINFO: ND42uzdxTIzr9mYlDMBxYvGYaH25O3d4qbQeIVx9zCjRu1bKRQCQPQYr
-	9ThwbJ+HvmAa6+6QdJSCYZlE3A0Vw/IqS7JGGSDIDm0K0coYKWJy+xHRKmChsnJHWMY+7/x
-	vrl+V+YvkOjsd7lSIQtsBaB12FwJo4xB+283/kqP+3Zub1l0VFR2HZHVMdj9PJfZ1kV+DRW
-	XD3Q1f8Zs2lxtIjIh2C+zMb+snzW8OfbH9soHjShJ5/N3F5X6sntm3FW3kVQ2pCHkokBNad
-	wwvFe07YHxecDTIiTTBAj3OtVrXJ6be3eivV32C8rGqj7PTUJzBHmXVQ95PLKRTH+XdgqO5
-	BX3qVAoz/5+QGl9cEHk7oMIyv23CNPSa8ocmeqgCqKw9DAGkhgn4LZJpz6ENby7tLuhUzX4
-	nhNXrVzMGBBcQSOWbhLEDhQkra/SGTgoBzarMBEi1fzsDkzDdEaA1F+sQu2wCph5zs6d6xB
-	4vtgSdraQNI+oB7HC0heXTlnOWdetGfKjaTdkSJ+FWvTHIQPdd5KnwzYhpWFX1QRXgsYats
-	h8bywgGre1aks4Pya2pWDKeJ+r8CV1O8mfVh1X0ZUhH8lBCAfFhpCxEjyWClEGe7FRJpzuh
-	lRVG6vmqyJu8l5QKz3Tx/BAfRe9dUDPN8mggEILq3w4VIdSuRQz+3+x76SxHMdL3xvDV9uu
-	mzd6aOiSgMhu7sEQtaqgGNfvTfdT5R3JLbVxJ3L07kzHtreKObfusuFqTSFJ7WKafEFHeXe
-	kGTmTXx6W2z0rpxZIXQnlgTiRUTTnpDZDz8SBQEbJIqCq1CKUTsu2iBBLYjKWVdheq9EPuf
-	m9KqrZ8gUbrv1XxmNlujbRqELUCQDK1TEtf2cVP+sfD72p/vsVNXcGGX21Y41O7GanwpT6R
-	mHkQAKxSUvJUzGRWgECmfBzqKXHDeKSLUUh9dfJzJKyX74Hqhk66JyMtSt15L4Tmpdi2hmC
-	+GFV6JK+lOfY1ZsacL2Pt6YIfEcke6IlhkJJ34isheh06xxc0WTInU48jRdAzGI/5E0Eqsm
-	qIxUULVab5U1XrXshKACUatSqIA+wDO0WenEMpFg22CJAzm8+86Z2Pyl1YSND1rxJRFxsXG
-	PGw6F/iXUfWl1isEGEQbT8=
-X-QQ-XMRINFO: MSVp+SPm3vtSI1QTLgDHQqIV1w2oNKDqfg==
-X-QQ-RECHKSPAM: 0
 
---9670b8df4f3eb1168009e4f7bd72c141133c505de3412c738ef408f1deee
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+Thank you for your contribution! Sashiko AI review found 2 potential issue(=
+s) to consider:
 
-On Thu, Sep 10, 2026 at 01:01:30PM +0000, Yao Zi wrote:
-> [...]
->
-> > @@ -107,22 +107,27 @@ ccu_mix_calc_best_rate(struct clk_hw *hw, unsigne=
-d long rate,
-> >  	struct ccu_mix *mix =3D hw_to_ccu_mix(hw);
-> >  	unsigned int parent_num =3D clk_hw_get_num_parents(hw);
-> >  	struct ccu_div_config *div =3D &mix->div;
-> > -	u32 div_max =3D 1 << div->width;
-> >  	unsigned long best_rate =3D 0;
-> > +	unsigned long best_delta =3D ULONG_MAX;
-> > =20
-> >  	for (int i =3D 0; i < parent_num; i++) {
-> >  		struct clk_hw *parent =3D clk_hw_get_parent_by_index(hw, i);
-> >  		unsigned long parent_rate;
-> > +		u32 div_max =3D 1 << div->width;
->
-> div_max should be invariant across iterations. Is there a reason moving
-> it inside the loop?
+Pre-existing issues:
+- [High] Stack buffer overflow when parsing `#<stem>-cells` property.
+- [High] Infinite loop during device tree map traversal.
+--
 
-It is invariant in this patch. Moving the declaration was preparation
-for patch 3, which makes the limit depend on the parent being considered:
+commit 07389d4c4496496ba5a738fbae28d5c3df4427f8
+Author: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
 
-    u32 div_max =3D div->bypass & BIT(i) ? 1 : 1 << div->width;
+of: property: fw_devlink: Follow GPIO nexus maps
 
-K3 bypasses the divider for some parents, so those parents must only be
-considered with a divisor of one.
+This commit modifies fw_devlink to parse GPIO properties using a map-aware
+parser instead of direct phandle references. This ensures fw_devlink resolv=
+es
+the same provider as the GPIO consumer API, properly deferring consumers un=
+til
+the nexus translation node is available.
 
-I will keep the declaration outside the loop in patch 2 and move it
-inside when introducing the bypass handling in patch 3. This does not
-change the final code.
+Link: https://lore.kernel.org/all/juuc4af7ndbajcl7gzf4tg5qz2q2j5tt3rvql4jba=
+uradujrre@gc5nbdhhixaf/
 
-                                            - Troy
+> diff --git a/drivers/of/property.c b/drivers/of/property.c
+> index 72cf12907de03..380df0861ab97 100644
+> --- a/drivers/of/property.c
+> +++ b/drivers/of/property.c
+[ ... ]
+> @@ -1311,6 +1311,19 @@ static struct device_node *parse_prop_cells(struct=
+ device_node *np,
+>  	return sup_args.np;
+>  }
+> =20
+> +static struct device_node *parse_nexus_prop(struct device_node *np,
+> +					    const char *prop_name, int index,
+> +					    const char *stem_name)
+> +{
+> +	struct of_phandle_args sup_args;
+> +
+> +	if (of_parse_phandle_with_args_map(np, prop_name, stem_name, index,
+> +					   &sup_args))
+> +		return NULL;
+> +
+> +	return sup_args.np;
+> +}
 
---9670b8df4f3eb1168009e4f7bd72c141133c505de3412c738ef408f1deee
-Content-Type: application/pgp-signature; name="signature.asc"
+[Severity: High]
+This is a pre-existing issue, but by using of_parse_phandle_with_args_map()
+during early boot for all -gpio(s) properties, does this expose a stack
+buffer overflow to malformed Device Trees?
 
------BEGIN PGP SIGNATURE-----
+Looking at of_parse_phandle_with_args_map() in drivers/of/base.c, it reads
+list_size from a Device Tree property (e.g., #gpio-cells) without checking
+if it exceeds MAX_PHANDLE_ARGS:
 
-iIMEABYKACsWIQSL4Ay2cExaPXAQcU2YCe+A+TM0LwUCaqK8ig0caUB0cm95LXku
-b3JnAAoJEJgJ74D5MzQv5x4A/RFh51fufb9FcP636XKBGlniVIj2vsG1LHuvGbJC
-puCPAQDyBV2iTGZVCeXgQSOrvUYtmMpWmDu+kDhEiAGV7O8ZCQ==
-=jX00
------END PGP SIGNATURE-----
+drivers/of/base.c:of_parse_phandle_with_args_map() {
+    ...
+	ret =3D of_property_read_u32(cur, cells_name, &list_size);
+	if (ret < 0)
+		goto put;
 
---9670b8df4f3eb1168009e4f7bd72c141133c505de3412c738ef408f1deee--
+	/* Precalculate the match array - this simplifies match loop */
+	for (i =3D 0; i < list_size; i++)
+		initial_match_array[i] =3D cpu_to_be32(out_args->args[i]);
+    ...
+}
+
+If a malformed DT provides a cells property greater than 16, this loop will
+read past the end of out_args->args and write past the end of the
+initial_match_array stack buffer. Can this lead to memory corruption or a
+kernel panic during early boot?
+
+
+[Severity: High]
+This isn't a bug introduced by this patch, but does calling
+of_parse_phandle_with_args_map() here also expose an infinite loop when
+traversing cyclic maps?
+
+Looking at the map traversal loop in of_parse_phandle_with_args_map():
+
+drivers/of/base.c:of_parse_phandle_with_args_map() {
+    ...
+	while (cur) {
+		/* Get the <list>-map property */
+		map =3D of_get_property(cur, map_name, &map_len);
+    ...
+		/* Iterate again with new provider */
+		out_args->np =3D new;
+		of_node_put(cur);
+		cur =3D new;
+		new =3D NULL;
+	}
+    ...
+}
+
+Since there is no depth limit or cycle detection, if a Device Tree has a
+cyclic map structure (where Node A maps to Node B, which maps back to Node =
+A),
+will this loop hang infinitely and cause a hard lockup?
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260910-fw-devlink=
+-nexus-ready-v2-0-17ac82dbe226@toradex.com?part=3D1
