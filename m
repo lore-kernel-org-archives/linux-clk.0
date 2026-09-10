@@ -1,69 +1,68 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+Received: from mail-wm2-f12.google.com (mail-wm2-f12.google.com [74.125.225.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49EF9336EDA
-	for <linux-clk@vger.kernel.org>; Thu, 10 Sep 2026 07:13:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 452523A5E64
+	for <linux-clk@vger.kernel.org>; Thu, 10 Sep 2026 07:13:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.140
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789024397; cv=none; b=NVpcq1codL3iTx/s+7FHx7lsg+zPM2vW6I6PfVAziJciawGop28AiGup9FFUf841+u1rSLzoHtH1hVeFlffJIoG1/8D5DjS6iDt+fXgWsr9pPj82k0U6xJuEWhsUBgyJ5QfbfpG8wFAaYGCRnDSDV3azIPegLeQsPuVk0sdWdWw=
+	t=1789024416; cv=none; b=N8VhUkuMGWk1DuE/x7EkUQzQONOFJ28zNec6ruw1u/LNlbUh+dMxcyZhp+MJ78C44mSJszPS1jxXXNspDYbPwdOeK8Bu30Mu6IT0I6GAEcUeow6QPwD6wtJmelNvHEY+rk68w2rFPc4XWkdcEWyG/hds55ZAcRCBDL0Fbj2uUIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789024397; c=relaxed/simple;
-	bh=gpk4QCTkMMoVEQ2hU/PY3Bgu//ErkeN2hdFFYL0E0/g=;
+	s=arc-20240116; t=1789024416; c=relaxed/simple;
+	bh=ApElNDQ61Wl8YOJI75+dfJ9A1MMUh2shMw4qooG0uQw=;
 	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ECaVFFcbau+OWNuKR6HbXrYusQocoxROACuZh5dDud7aqu3Bdf2O/9wsO/8Rxjm8eIWoqF4Ftjzl28lczlfkz5cBC/twiE1+DrQMc60AhqxHILnwBoZ4YNfMMQd8FGWaJY7T1frq92KDCmGPpiQsO3JUCRr+PjK22Hq674/Ke1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xNNGKL/O; arc=none smtp.client-ip=209.85.128.42
+	 In-Reply-To:Content-Type; b=cU5PCKOlx7j+Qb49qcNNOCDFx+oX8qQ528LUvLzUCmrM9Mn7W5XovN32SE9mfCJfYg/psAfNWh+GBZGfZB5r2a41LxTOSy//ip5Bf1/ylgqsFuwsE9Y0VA0dL1++ngRMMdtZ/gp62vPUrVLJdSNAQgxFs0TbjYO1NILHcqT2lQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pwXLwocz; arc=none smtp.client-ip=74.125.225.140
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xNNGKL/O"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4995b0343c1so91901795e9.3
-        for <linux-clk@vger.kernel.org>; Thu, 10 Sep 2026 00:13:14 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pwXLwocz"
+Received: by mail-wm2-f12.google.com with SMTP id 5b1f17b1804b1-49b912e64ccso7436705e9.0
+        for <linux-clk@vger.kernel.org>; Thu, 10 Sep 2026 00:13:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1789024392; x=1789629192; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1789024410; x=1789629210; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:in-reply-to:organization
          :autocrypt:content-language:references:cc:to:subject:reply-to:from
          :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=udAblsmxBxBfrNPUP96gC45YbWeS/a2NvUFAIRjIBU8=;
-        b=xNNGKL/OgvZfEgwpuu83dNNxocsmP92+qtaHINbzckwCulhu9S1M9qfYxYHPdec4RH
-         ZYOAXEX42LKanydu6VbxIFT4FcjEOXVGs/B7CEzCY13293U+AIe9kYYm1MWfQK9ihfr1
-         07jHqlcGgOWKXmKcLxTpaWOSVq9fgtkBiLfBXQtzv0eRTBbhdUyfz1dNB149+0bqmofn
-         08d4QpRrvBAsg2dvhG6J4W+CnhdNVtkSbSS5V7r0N1yj5qs8dIZueMA3/XsRX8FW1Th+
-         2T2xahvLdBndziMdeyrd+4jUU/4YfgKmnTCAcZbuyhEBTYV4qF7PhQKJZNjczEvryGEc
-         mqKw==
+        bh=Z8Ga3BtRui77Q8Bka8GkpeTdclh0OZRER9FqEReJlpA=;
+        b=pwXLwoczjH/usPEciPgO9y7TDAdmYG/uw+UMacWPt6y048OPnK/zuegELXnp0fNAYM
+         3nCjOpbIy3xlAnzhII2IWASeFNhYAm3vSqS0oRd6VqPiimb9Cj9Cll85iF9nWvfn1KNZ
+         rz1qDRzKt4+Rk95nsNvTm18pH9Y9pK/Bj2Fxq93brrKHiU18hJWMFcwyKoiIfmUZcqlK
+         KPop02boH7L850KP7WnBt8ROnl4A1QSAvhn1cnyljFWOW2oveRgTVMYFIaIKUCGBlsIJ
+         +5J0XnkLY5i4ecwgTnMk+tgBPOudGwzHnnne7e5ZF6EfTbSUOzMQcci35kbOwaCGHS7j
+         z9uw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1789024392; x=1789629192;
+        d=1e100.net; s=20251104; t=1789024410; x=1789629210;
         h=content-transfer-encoding:content-type:in-reply-to:organization
          :autocrypt:content-language:references:cc:to:subject:reply-to:from
          :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=udAblsmxBxBfrNPUP96gC45YbWeS/a2NvUFAIRjIBU8=;
-        b=hBivpNDDDUBt9007zkqq0iCKBB6lkQ+dXTC5zivf+dzuMhVKD9fYklMTDlGVayn7Bl
-         qQOxxUSoaIbEzoe/LESMk9WCp15hLPKw4/bA3Lya5eLPpxeP6dAIusYwjbedIfM0/PWM
-         UsPERJEFRs/0ETlaLz1qiMguf0wrqkjEW8A/nmT12k7ZBWLx6hXLSl2HWBNqAjTj4r+V
-         f2LVuYfrqHvNlZzmF3mAz2mqzjj1PedYBIj0AduKw0LgfsqmTD9t5LlqJM4V4ABCErkV
-         YFJIt9lBmVNxPkSjMbxDa4m9E7oAEeSC508rI6q5NO2KUwpj9IV/Ub6oPnsyj9tBT7oI
-         s9BA==
-X-Forwarded-Encrypted: i=1; AKwUvBwHbJr8z8fXmAV/YXhRalYAYbUdCpZ9QA9A3AAqpbpRxPayUTS2mX6o9czRTc7W0zs8s9ijD3cAiWw=@vger.kernel.org
-X-Gm-Message-State: AFuF++k+VE+RP1wJgOaDagASpOxcYwh6ywqtyYapq9YHk0jzqQF4AeGk
-	zf5FTmBclXSqUs4Opgp+ObmyftqytB1tOfzWK4cq3ga1ssqwFg6H+mg6oO3lUYkSYfudE7Egle0
-	VbEYD
-X-Gm-Gg: AYBFou1Ip+IF6Z3UxnGkJPU53U/gnzprwf38S3WWqCCIZc3NRW1H70Ap79v33KM6v1k
-	9ZWohHRdhUH7LwoGYKC2FREXjDtAWfgg88DWMa6Vxisb3A909d27ifKXUGam6TmtjF+a5CZTu0N
-	Tj99KYl3lcxXGs4bie/UAet2yMPM4Gk9j60gimpjI0QjqWPiZuIqFS8HfHCxTxz+senzHbdOqdr
-	MOAkZ4l48BdUoSV4INALhCeks+KVyUMgAJJMa8VhhWfOJeD1BQu0SYWRBwk1Qe2KjxAJXXUrVEH
-	lH3LmgsPG8yrTfOtOZCRwMg72+Lomp+LxIL4v/4f29c8KRybfKuixlSdhB30eLl4MMkXNe450kj
-	bVdpvVrB4wglPttGqmj5Q0ldgFdRrdpKsV8An6Hr18KJsIBE4h8SSMfA9BOM7d+O4YDmwQZ8VhN
-	dFCVOAaIZKqfUY0W6DccJUXpfVw5UimAJgFkfQyVv2bDSq13IRc8tE7jvxXn+C6IOLkJLj8VyMS
-	pyV64WVXJfj/6jIIJGzdgjdSd+8dY3rkZcEmVMBHpm3INSvA6dvzA==
-X-Received: by 2002:a05:600c:4e4c:b0:499:621a:2ec2 with SMTP id 5b1f17b1804b1-49cf8206e4dmr412212555e9.3.1789024392371;
-        Thu, 10 Sep 2026 00:13:12 -0700 (PDT)
+        bh=Z8Ga3BtRui77Q8Bka8GkpeTdclh0OZRER9FqEReJlpA=;
+        b=lzB1IHri3DW+8etCFdTu0jSAV8eKE9Q2PuMPULpNsAQTl827AcfnuLXZzZhzKj3y2T
+         HFcpXP1wHsxoOYYQGrKWF87dEvlX/Pi5rWZeh4d32iX6ZfhnW0TPnVL1RLdnXJfxe8TQ
+         807lxSTHIgOpZTMtQcfTQytOfJal/fEpIZYd3yGicghEFTQqtMcIeuv9VqeddwA4AQZL
+         bMjZo/2dPkVJXiMk+OddVsGiECLCbd4t/hDHoPsCiKEA12/X6YzKt0O0dX4cdO2ryouN
+         G/62gCDBklkZV8WejzKjc+mK4M2hTj8+D3rp0jluZJX216q4ItWt2LbaltAOqmenlcsO
+         RNRw==
+X-Forwarded-Encrypted: i=1; AKwUvBw+Rpii3rULT3eQu7d3GT3k69SxfEWMg2WpR0753uK0YHxg6Flm3MvBEn7V5ZzaFWK/BlBtV09XtK8=@vger.kernel.org
+X-Gm-Message-State: AFuF++nk40xFN6yyXWme8CUkziYdEf95BVJOBybe7NhMHKWz0mOMNwiT
+	yHkSZ7M6IMOOp02d0r0SERTDJjpo590tXn243NcCMKWk4Xuo9EoGoy9QvzOjb3pG1x8=
+X-Gm-Gg: AYBFou2ddy1bxcdy4MbLhzgCIk1fMl1Ml7k6c8pl/iAqH0xoYtgSioOU2+Gco81wXba
+	LGsqOJqQ6a9UgmF4ICZoysTjvAB1CAggG6f/OIwATFDbeJ2wc7oB1Uw+XM7tL7a84zy8lo6NfSS
+	3OP+EdDb00if4hSgvtMqp27ec0M+ywaSyjycuL7zJuP4VMmhmEfXgmx8zz93tJAE8Su2JGdwv8y
+	uOGYe0R+qFZdYbmBkJvqEvE9aX54hvgxkAqzHcWLwou7TDinBWB7spjmwuek654njRo6wzet5OC
+	GzqXmQnoQIzdHEaHcxSKSFYgfo77bn7meLMBKnixUJ4BwmL8NYt83CdARuSZWIi8rI5NwRbohD9
+	t04o/Fw230kEkbJuqfo9eWouHl4qUlQUDTCcBkfwCpPtVGOQReOrtme4JtkBCT+pvVXvUsD3Lyy
+	XmuASDu/JJSrtNwQPj2bMSa+Z81Vt7AVa5r1XhTfn8wopvKAa09xyGmIn4GLoJIe2fZOTmxL79i
+	c0ArwsqiwGc/eBpL1+PJasJqInkN1IdjQJZ4spNt+LorLWG2RV12zntTuJWqugN
+X-Received: by 2002:a05:600c:a315:b0:499:a277:e8b5 with SMTP id 5b1f17b1804b1-49d258cefc8mr86177985e9.3.1789024410283;
+        Thu, 10 Sep 2026 00:13:30 -0700 (PDT)
 Received: from ?IPV6:2a01:e0a:106d:1080:3caf:d840:c911:29a9? ([2a01:e0a:106d:1080:3caf:d840:c911:29a9])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49d26be64a5sm49914055e9.6.2026.09.10.00.13.08
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49d20fc23fcsm99287025e9.3.2026.09.10.00.13.26
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Sep 2026 00:13:09 -0700 (PDT)
-Message-ID: <cc06ba9b-c866-4c43-a7d4-e25188b84f22@linaro.org>
-Date: Thu, 10 Sep 2026 09:13:06 +0200
+        Thu, 10 Sep 2026 00:13:28 -0700 (PDT)
+Message-ID: <22576e60-df08-4994-a7ce-130d5bae80d9@linaro.org>
+Date: Thu, 10 Sep 2026 09:13:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -73,7 +72,8 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 From: Neil Armstrong <neil.armstrong@linaro.org>
 Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH v2 2/4] mmc: meson-gx: enable the bus pipeline clock on T7
+Subject: Re: [PATCH v2 3/4] arm64: dts: amlogic: t7: add the pipeline clock to
+ the MMC controllers
 To: Lucas Tanure <tanure@linux.com>, Ulf Hansson <ulfh@kernel.org>,
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
  Conor Dooley <conor+dt@kernel.org>, Jerome Brunet <jbrunet@baylibre.com>,
@@ -86,7 +86,7 @@ Cc: Brian Masney <bmasney+clk@redhat.com>, Chuan Liu <chuan.liu@amlogic.com>,
  linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
  linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20260905153234.133217-1-tanure@linux.com>
- <20260905153234.133217-3-tanure@linux.com>
+ <20260905153234.133217-4-tanure@linux.com>
 Content-Language: en-US, fr
 Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
@@ -113,83 +113,66 @@ Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
  QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
 Organization: Linaro
-In-Reply-To: <20260905153234.133217-3-tanure@linux.com>
+In-Reply-To: <20260905153234.133217-4-tanure@linux.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 9/5/26 17:32, Lucas Tanure wrote:
-> On the T7 SoC, the bus path between the SD/eMMC controllers and the
-> NIC_MATRIX fabric goes through a pipeline stage inserted by the hardware
-> design to help timing closure. The stage has its own gate clock and,
-> when that clock is disabled, a controller that starts a DMA transfer can
-> never complete it, hanging the storage devices and, from there, the
-> whole system.
+> The SD/eMMC controllers reach the DRAM through a pipeline stage that
+> the hardware design inserts in the bus path to the NIC_MATRIX fabric,
+> clocked by CLKID_SYS_AMPIPE_NAND. When that clock is disabled, a
+> controller that starts a DMA transfer can never complete it.
 > 
-> Add a dedicated match data for the amlogic,t7-mmc compatible that makes
-> the driver claim and enable the "pipeline" clock for as long as the
-> device is bound.
-> 
-> The clock is deliberately not optional: the hardware cannot do DMA
-> without it, and failing the probe with a clear error is preferable to
-> booting and hitting an undiagnosable DMA hang later.
+> Reference the clock from the three MMC controller nodes so the driver
+> keeps it running, instead of relying on the clock being marked critical
+> in the clock controller.
 > 
 > Assisted-by: Claude:claude-fable-5
 > Signed-off-by: Lucas Tanure <tanure@linux.com>
 > ---
->   drivers/mmc/host/meson-gx-mmc.c | 20 ++++++++++++++++++++
->   1 file changed, 20 insertions(+)
+>   arch/arm64/boot/dts/amlogic/amlogic-t7.dtsi | 15 +++++++++------
+>   1 file changed, 9 insertions(+), 6 deletions(-)
 > 
-> diff --git a/drivers/mmc/host/meson-gx-mmc.c b/drivers/mmc/host/meson-gx-mmc.c
-> index 694bb443d5f3..c0f1e929fc13 100644
-> --- a/drivers/mmc/host/meson-gx-mmc.c
-> +++ b/drivers/mmc/host/meson-gx-mmc.c
-> @@ -139,6 +139,7 @@ struct meson_mmc_data {
->   	unsigned int always_on;
->   	unsigned int adjust;
->   	unsigned int irq_sdio_sleep;
-> +	bool has_pipeline_clk;
->   };
->   
->   struct sd_emmc_desc {
-> @@ -1204,6 +1205,15 @@ static int meson_mmc_probe(struct platform_device *pdev)
->   	if (IS_ERR(core_clk))
->   		return PTR_ERR(core_clk);
->   
-> +	if (host->data->has_pipeline_clk) {
-> +		struct clk *pipe_clk;
-> +
-> +		pipe_clk = devm_clk_get_enabled(&pdev->dev, "pipeline");
-> +		if (IS_ERR(pipe_clk))
-> +			return dev_err_probe(&pdev->dev, PTR_ERR(pipe_clk),
-> +					     "missing pipeline clock\n");
-> +	}
-> +
->   	ret = meson_mmc_clk_init(host);
->   	if (ret)
->   		return ret;
-> @@ -1322,12 +1332,22 @@ static const struct meson_mmc_data meson_axg_data = {
->   	.irq_sdio_sleep	= CLK_V3_IRQ_SDIO_SLEEP,
->   };
->   
-> +static const struct meson_mmc_data meson_t7_data = {
-> +	.tx_delay_mask	= CLK_V3_TX_DELAY_MASK,
-> +	.rx_delay_mask	= CLK_V3_RX_DELAY_MASK,
-> +	.always_on	= CLK_V3_ALWAYS_ON,
-> +	.adjust		= SD_EMMC_V3_ADJUST,
-> +	.irq_sdio_sleep	= CLK_V3_IRQ_SDIO_SLEEP,
-> +	.has_pipeline_clk = true,
-> +};
-> +
->   static const struct of_device_id meson_mmc_of_match[] = {
->   	{ .compatible = "amlogic,meson-gx-mmc",		.data = &meson_gx_data },
->   	{ .compatible = "amlogic,meson-gxbb-mmc", 	.data = &meson_gx_data },
->   	{ .compatible = "amlogic,meson-gxl-mmc",	.data = &meson_gx_data },
->   	{ .compatible = "amlogic,meson-gxm-mmc",	.data = &meson_gx_data },
->   	{ .compatible = "amlogic,meson-axg-mmc",	.data = &meson_axg_data },
-> +	{ .compatible = "amlogic,t7-mmc",		.data = &meson_t7_data },
->   	{}
->   };
->   MODULE_DEVICE_TABLE(of, meson_mmc_of_match);
+> diff --git a/arch/arm64/boot/dts/amlogic/amlogic-t7.dtsi b/arch/arm64/boot/dts/amlogic/amlogic-t7.dtsi
+> index c3dc479b137d..dbb4a95652c6 100644
+> --- a/arch/arm64/boot/dts/amlogic/amlogic-t7.dtsi
+> +++ b/arch/arm64/boot/dts/amlogic/amlogic-t7.dtsi
+> @@ -730,8 +730,9 @@ sd_emmc_a: mmc@88000 {
+>   				interrupts = <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>;
+>   				clocks = <&clkc_periphs CLKID_SYS_SD_EMMC_A>,
+>   					 <&clkc_periphs CLKID_SD_EMMC_A>,
+> -					 <&scmi_clk CLKID_FCLK_DIV2>;
+> -				clock-names = "core", "clkin0", "clkin1";
+> +					 <&scmi_clk CLKID_FCLK_DIV2>,
+> +					 <&clkc_periphs CLKID_SYS_AMPIPE_NAND>;
+> +				clock-names = "core", "clkin0", "clkin1", "pipeline";
+>   				resets = <&reset RESET_SD_EMMC_A>;
+>   				assigned-clocks = <&clkc_periphs CLKID_SD_EMMC_A_SEL>;
+>   				assigned-clock-parents = <&xtal>;
+> @@ -744,8 +745,9 @@ sd_emmc_b: mmc@8a000 {
+>   				interrupts = <GIC_SPI 177 IRQ_TYPE_EDGE_RISING>;
+>   				clocks = <&clkc_periphs CLKID_SYS_SD_EMMC_B>,
+>   					 <&clkc_periphs CLKID_SD_EMMC_B>,
+> -					 <&scmi_clk CLKID_FCLK_DIV2>;
+> -				clock-names = "core", "clkin0", "clkin1";
+> +					 <&scmi_clk CLKID_FCLK_DIV2>,
+> +					 <&clkc_periphs CLKID_SYS_AMPIPE_NAND>;
+> +				clock-names = "core", "clkin0", "clkin1", "pipeline";
+>   				resets = <&reset RESET_SD_EMMC_B>;
+>   				assigned-clocks = <&clkc_periphs CLKID_SD_EMMC_B_SEL>;
+>   				assigned-clock-parents = <&xtal>;
+> @@ -758,8 +760,9 @@ sd_emmc_c: mmc@8c000 {
+>   				interrupts = <GIC_SPI 178 IRQ_TYPE_EDGE_RISING>;
+>   				clocks = <&clkc_periphs CLKID_SYS_SD_EMMC_C>,
+>   					 <&clkc_periphs CLKID_SD_EMMC_C>,
+> -					 <&scmi_clk CLKID_FCLK_DIV2>;
+> -				clock-names = "core", "clkin0", "clkin1";
+> +					 <&scmi_clk CLKID_FCLK_DIV2>,
+> +					 <&clkc_periphs CLKID_SYS_AMPIPE_NAND>;
+> +				clock-names = "core", "clkin0", "clkin1", "pipeline";
+>   				resets = <&reset RESET_SD_EMMC_C>;
+>   				assigned-clocks = <&clkc_periphs CLKID_SD_EMMC_C_SEL>;
+>   				assigned-clock-parents = <&xtal>;
 
 Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
