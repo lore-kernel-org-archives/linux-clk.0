@@ -1,165 +1,123 @@
-Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4FE83914E1
-	for <linux-clk@vger.kernel.org>; Thu, 10 Sep 2026 03:24:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.19.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0568379C5D
+	for <linux-clk@vger.kernel.org>; Thu, 10 Sep 2026 03:30:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789010654; cv=none; b=cH7ybb8fh+B/+98196zXDo4cYu7By9BlSizSPBk77D1KBmct/Bmeviq4nsMP3i08xW0dOFCNWT+SxcoWZBSu7wtvUCJy/V8Yo13oHELZFJ9nefVv5p2nWrvpEDb8K/SAaF70uIsDtT2xPdTTpYkfuTpEhfyw85rniRct6JIHJUo=
+	t=1789011007; cv=none; b=s0QgQHz/cCMeSXykcRk7GTqRiMeId+GRKLJmX6LsiDWzoahjnq6C1WWJKImfabV8pIsIfK0IMbcNLi2F5ER/pXllThaUCPnvP+AGXP8xkilUo5/cd9M4A7DrXqXhfIWd2ilJrn07mqr22ryMXeQm4LWDCgR2OSmMVXnIYlGV8qY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789010654; c=relaxed/simple;
-	bh=vDfkLDJaOeZizfvAQxeCbGfASUqiL1kp5bzBm13U9kg=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=J3pvAN372PLe9ngjjvEdag5jmF6q7f2pAYy5/QcGtpBOWkoavGcxdwe086Yi6yiNZmcxxOu5D9iyUgn1L8te/+5OgRUxw8k1KumHrVVDr9MFgSAnIencwRS6yjmwsRALL4EgbPAAeEEQbvzKkOsq+aihMOoowGikR4iJIVazmGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=TII0fZFd; arc=none smtp.client-ip=54.207.19.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
+	s=arc-20240116; t=1789011007; c=relaxed/simple;
+	bh=/uY6JZ4dPGadrWONYZhC35t/6sJOFFSTHBE7n8OXDs0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ftle0remLD0W+H4EV+50L/z21ZbQlsvOEJNZ4kyGAK0k8LVrD22NYM/n2SqR/aD5NTdv77KCFZ9n2mO1dAZ2+dOOV2evwXQ1Im7nQCsnNke4B2ZjgC92AOFvCWi8I0f0asUrovTOYfxt9I7X/r+vJDipZPmtbDwMxvHTg0zwmR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BXbaRAAJ; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="TII0fZFd"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1789010624;
-	bh=JkKpYWlGjsNb0KvXkISJQTVrsGZtNUVjybFylagCGLU=;
-	h=Mime-Version:Date:Message-Id:Subject:From:To;
-	b=TII0fZFdbPQkK8V2wIA41tVL0g/OX66wqizAt6iP5si7K2e+z5MWcNDaj8XYN2hcw
-	 TkOlKA/K+rRHcdHFHH4ABeKOFVEIR7dpL0/1RdkskOOn+3wA0y9YawEKgYwNctSSdJ
-	 Ps2FqhV2ra3XXXmJE7tX87ssnRH0t/7naiI0T7yM=
-X-QQ-mid: esmtpsz21t1789010622ta65d0c4a
-X-QQ-Originating-IP: gN3PKgpqe5LUr3Xxvr5mtfTLUbno8h8E0IUkA9CNkHM=
-Received: from = ( [120.237.158.181])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 10 Sep 2026 11:23:41 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 2512009657120881219
-EX-QQ-RecipientCnt: 3
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BXbaRAAJ"
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-4869b6f8629so513076f8f.2
+        for <linux-clk@vger.kernel.org>; Wed, 09 Sep 2026 20:30:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1789011004; x=1789615804; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=YKJjaLrDLwATiTkeesDmHnGi32ozSCfkATjDcADW814=;
+        b=BXbaRAAJE9YB5jpHVoHeJ4441JJN3X8Zpm9pmOARNWfVxbuvaA4joOvYrg8pOgQAto
+         sPNQKnWmK59liiLIUPfhNoOikWX1edpO6a6oyi7k/cNVKrtwwF/hAPEJWueLD/o8+dpf
+         ppq6tpP2uPu+sVpAdoURZmLBVpBOCBitbFOaqds13diiHtf7PEytXFXd30B+al7zvDLc
+         iYmGDcGMwOdInl8bILUqtgR0KCUkqk5cETNsQPXapRo/e+qrSseMM0DGUp9tP+BlTQSD
+         f5p+pKYCDaBn+URJU5FSzI2VdvROFfW6J+XXAk2FzBRB59h3//ArJpUJ4wbvNLZKq6E6
+         +QDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1789011004; x=1789615804;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=YKJjaLrDLwATiTkeesDmHnGi32ozSCfkATjDcADW814=;
+        b=tU9ZAVvzBzAZe/fu8sy6sWnu3UNl7vAsEIEe7HI273Okcy7LQFA9J8x7z1A97cbJfd
+         gr37q939EQwDrEofcFEhOmu/n9K8ff2oumXBNH8/zf0b9Mg/Kdj+CMRNFPYx9tZj20lg
+         aOt1MxKWrB7bMOCooIWKrwc1CcYfe8813zygwAm5UIiJdm4sRlBdYj9eFXKz73/jiA+p
+         ODfUIOwurmTWKwemnY+VGd6WiEwGO6HH6W+oIpk2ZBDN3jb7fgEU8IoXwe04uDNbAHjo
+         bFNBhlyUJv+yy79niEBi1kvp4KbXXewONcWDZtOxaPb/koHsYveWxNc6QqyLucL1RuYu
+         md2A==
+X-Forwarded-Encrypted: i=1; AKwUvBwz0knSGeFJP6xv9OlmGpV+SXuV92cRFsHg2nLTXvvSEQVesar08jOMIwpdnpPstcDGkzb+cqBU9JM=@vger.kernel.org
+X-Gm-Message-State: AFuF++m9CrjmAa1rGjaf8QfoFML2P08Fnj+GLXBFNS83pTwXWc59RO8u
+	qXz55BCjQ5weLY3pCeSaNn6hNPzbfYmDZSedX2aos4z5UEwZ+TukpX/Q
+X-Gm-Gg: AYBFou2ov1GYTnrjOjWwhLQN2yIFWj1cdb+MBq0/6ZLp0kgv0FMzaBxt4AivJ5BHgxn
+	WKRCdpS5XsLuaaQTnorSxO8qXYMHXEUJBcJEHh7eWZ47dqA5YzYI+AN+FYWDvE32Mc6Byatmb+f
+	iyajHZCbRS/P1XcNa6vYPG8mf7c4eU3nYTbiUMVG7fPkgxyHiemu4Cy9gQuRPH4hP9QJtT11UhA
+	XxpTIJMeQdE1a3eYI6XPJMdT4iC3JUsDozzTQyIrXBYxy3VHZfRAovWVXU6GQ+snqUf4s+6e/SX
+	o/I9p5YeQymuJ13NIBHe+mP9e1CQrCtZQLFfS7DKv78WZUeHQAfEliU2v9YPeRfH1eMyl6HTshF
+	FSEPivRLILV8WsymJwquseoLFI2cPy42u4jxGKv44iawVfdmFQ+mr4I9/hRgs68saN/SlP36id1
+	PUeoj+6RkuRcz1gEIET+k+AGXYWaSQV6hYepCNKzimXgYdLyEmZBUn3TUeu/JUn5AdWb78V2/Ft
+	Y0arJMZC71l0iV3sUfUhgD+jXP52jAhCj4t6i/SJsB9jLpAKrW4SSuDy9v1geDvySDnG22R/ASw
+	2QcFi2DXD61++73PZOdD8V8s3K9ITzl08f/dvQFPYmPTOn1H2yBM6sCrS4OqLgaMzinkwDAUIBU
+	=
+X-Received: by 2002:a05:6000:46c2:b0:484:4769:18a4 with SMTP id ffacd0b85a97d-485872cd677mr30353937f8f.14.1789011003718;
+        Wed, 09 Sep 2026 20:30:03 -0700 (PDT)
+Received: from localhost.localdomain (dynamic-2a02-3100-b3d9-b901-0402-5aad-0ef4-88ac.310.pool.telefonica.de. [2a02:3100:b3d9:b901:402:5aad:ef4:88ac])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4858e239862sm42468266f8f.9.2026.09.09.20.30.02
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 09 Sep 2026 20:30:03 -0700 (PDT)
+From: Karl Mehltretter <kmehltretter@gmail.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>
+Cc: Karl Mehltretter <kmehltretter@gmail.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Rex-BC Chen <rex-bc.chen@mediatek.com>,
+	linux-clk@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: mediatek: reset: Fix device registration kernel-doc
+Date: Thu, 10 Sep 2026 05:30:00 +0200
+Message-Id: <20260910033000.15926-1-kmehltretter@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed;
- boundary=b27a31aff78db9385a11b35bd47a7dbc4cfa53b1ddfa541804de3f1bc0c9;
- micalg=pgp-sha512; protocol="application/pgp-signature"
-Date: Thu, 10 Sep 2026 11:23:38 +0800
-Message-Id: <DLBBC49OENDA.3SP65LNWNEYJY@linux.spacemit.com>
-Cc: <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH 3/5] clk: spacemit: describe CPU clock dividers and
- shared PLL muxes
-From: "Troy Mitchell" <troy.mitchell@linux.spacemit.com>
-To: <sashiko-reviews@lists.linux.dev>, "Troy Mitchell"
- <troy.mitchell@linux.spacemit.com>
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20260909-spacemit-pll-init-v1-0-b3065ad5a4ac@linux.spacemit.com> <20260909-spacemit-pll-init-v1-3-b3065ad5a4ac@linux.spacemit.com> <20260909142152.612951F00A3D@smtp.kernel.org>
-In-Reply-To: <20260909142152.612951F00A3D@smtp.kernel.org>
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpsz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
-X-QQ-XMAILINFO: NRN3UPsLzYKVc7sBO2hn1IIxHol3lanmW4AqEFZJ6tfPhEpLHS/biaMi
-	VedkzLfFBGXcwDRCBaJSF9+tjBBs+PK4OG0LMY2QSH2uPMy1caKooh2d8WpE0sEm7Z3movL
-	cgxs9FRKgG+XShCWxzZy5uQGBGrOebIMwyGMWRBioJ3WLKhnE2vDV/Z4rYlZOx4CejhAmrN
-	oJz3q55Vd2Q6ZsqR+Dyx2hf4uYO51cmfL9Zb72n3N5pKs5A830quP2zYN4iiqMnzTm2N3IZ
-	CF2Dhf4ryybljysh37Qw7eGzQidpWZLve7KHnApLVVIUmqkS3vkPdnjD0XZIvRrWKiO9NZ5
-	329CQiWRmS9DvguEM+Hg9M9s36YMatbiopYE55qIDM12XKFRoC/8Jdyma5ajqxKviDPP15J
-	NYv469l7OFzFmGaHdGDNsjBvlm25PA0MtKEUSK0+jIxX5XGu7jZHFBiTMlnoC8+pgcNo8Pc
-	Iu4cVE99/F8WbvOyBqAT9PNGLkkKBMZd/MotVV1Y/Tuov9w9ibfzXG4bqqRV5WEWPSkIoKJ
-	8g2g4CFRQC0jWbduSrTfEE0vDVfF7mAaa1uUvsibGmOCCaH2wPoAJ6JQNxa6+I0uS9nVZ54
-	9uL2QuA4VkCd0POUor+UxMGaVulSAx+KMfk45Pw9M2FI+WxO3dz8WX/h2yuEEHBbIlF+d43
-	zYAla0oabL8N/6Eij5ItI5J77lVTSetCuTTsPuFk5T+VXnCMSakY5y66oSKgMOvEK8j6CvD
-	NLSfnNjkBGfo4LkdqLMJEPrhBjoAtQAUr52TvmWY/98Ayw09kUd+wnWDYJQPYUONY2Uh79a
-	pxTAwRcm5HC2YecwmQUNPS5KGDEbmzNv6mCvutWqLCk6CPmoW7cOBLQ2ucwasJ0OBiz8435
-	ygZIpzMi4b1MhkvukfTF3rE2DtLdcovyj03ZzOFlZkvhIrbk8rXov5EBhtYYIHwPOh1nE6q
-	KKkCAKM08s1o5VfI8agB5MAteVAbSCMwd6CRXjmnenR8V61Hw+7UnCyO406BV+e6azJuHQA
-	UZbqKSVgGSQTDgSdf99fneCSkENvnoxWJYdBRltju8BUGvZnaoqTWebiPTwaRhU86VKd9oV
-	kxHk/U2cYvS
-X-QQ-XMRINFO: NI4Ajvh11aEjEMj13RCX7UuhPEoou2bs1g==
-X-QQ-RECHKSPAM: 0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
---b27a31aff78db9385a11b35bd47a7dbc4cfa53b1ddfa541804de3f1bc0c9
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+The comment for mtk_register_reset_controller_with_dev() names the
+older helper and documents np rather than dev. The new helper takes
+a struct device and obtains its device node internally.
 
-On Wed Sep 9, 2026 at 10:21 PM +08, sashiko-bot wrote:
-> Thank you for your contribution! Sashiko AI review found 1 potential issu=
-e(s) to consider:
-> - [High] Missing `.set_rate_and_parent` implementation causes non-atomic =
-updates of clock mux and divider, risking severe CPU over-clocking and cras=
-hes during frequency scaling.
-> --
->
-> commit caf894b03e44c8fc393822573e3c7ad1a85fe9f1
-> Author: Troy Mitchell <troy.mitchell@linux.spacemit.com>
->
-> clk: spacemit: describe CPU clock dividers and shared PLL muxes
->
-> This commit models the K1 and K3 CPU clock dividers and bypass conditions=
-.
-> It registers sharing muxes as internal clocks and excludes K3 selector 4
-> from the modeled parents to match BSP policy.
->
->> diff --git a/drivers/clk/spacemit/ccu-k1.c b/drivers/clk/spacemit/ccu-k1=
-.c
->> index dee14d25f75d4..40cc96c4ee876 100644
->> --- a/drivers/clk/spacemit/ccu-k1.c
->> +++ b/drivers/clk/spacemit/ccu-k1.c
->> @@ -391,8 +391,8 @@ static const struct clk_parent_data cpu_c0_clk_paren=
-ts[] =3D {
->>  	CCU_PARENT_HW(pll2_d3),
->>  	CCU_PARENT_HW(cpu_c0_hi_clk),
->>  };
->> -CCU_MUX_FC_DEFINE(cpu_c0_core_clk, cpu_c0_clk_parents, APMU_CPU_C0_CLK_=
-CTRL, BIT(12), 0, 3,
->> -		  CLK_IS_CRITICAL);
->> +CCU_MUX_DIV_FC_DEFINE(cpu_c0_core_clk, cpu_c0_clk_parents, APMU_CPU_C0_=
-CLK_CTRL,
->> +		      3, 3, BIT(12), 0, 3, CLK_IS_CRITICAL);
->
-> [Severity: High]
-> Does introducing the divider model to K1's CPU clock here risk severe CPU
-> over-clocking and crashes during frequency scaling?
->
-> The operations struct spacemit_ccu_mux_div_ops in
-> drivers/clk/spacemit/ccu_mix.c appears to lack .set_rate_and_parent,
-> which is required by the Common Clock Framework (CCF) to atomically updat=
-e
-> both mux and divider.
->
-> When cpufreq scales down frequency (e.g., from 614.4 MHz to 409.6 MHz), i=
-t
-> decreases the frequency before lowering the voltage. In K1,
-> ccu_mix_calc_best_rate() iterates parents and stops at the first exact ma=
-tch,
-> for example index 1 (pll1_d3_819p2, 819.2 MHz) with div=3D2.
->
-> Because spacemit_ccu_mux_div_ops lacks .set_rate_and_parent, CCF's
-> clk_change_rate() executes updates sequentially, calling .set_parent
-> before .set_rate. .set_parent changes the hardware mux to 819.2 MHz
-> while the divider remains at its previous value (div=3D1). The CPU tempor=
-arily
-> runs at 819.2 MHz at a voltage only sufficient for 614.4 MHz, causing an
-> immediate undervoltage crash.
->
-> Could spacemit_ccu_mux_div_ops be updated to include a
-> .set_rate_and_parent implementation to ensure the mux and divider are
-> updated atomically?
+Use the actual function and parameter names and clarify that failures
+return negative error codes.
 
-The intermediate 819.2 MHz state is possible with this callback ordering.
-I will add .set_rate_and_parent() in the next revision to update the mux
-and divider fields together, followed by a single FC handshake.
+Fixes: 761bc64003e3 ("clk: mediatek: reset: Add new register reset function with device")
+Assisted-by: LLM
+Signed-off-by: Karl Mehltretter <kmehltretter@gmail.com>
+---
+ drivers/clk/mediatek/reset.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/clk/mediatek/reset.h b/drivers/clk/mediatek/reset.h
+index 562ffd290a22..b09cdcab0c4b 100644
+--- a/drivers/clk/mediatek/reset.h
++++ b/drivers/clk/mediatek/reset.h
+@@ -60,11 +60,11 @@ struct mtk_clk_rst_data {
+ };
+ 
+ /**
+- * mtk_register_reset_controller - Register mediatek clock reset controller with device
+- * @np: Pointer to device.
++ * mtk_register_reset_controller_with_dev - Register a MediaTek reset controller
++ * @dev: Device used to manage the reset controller resources.
+  * @desc: Constant pointer to description of clock reset.
+  *
+- * Return: 0 on success and errorno otherwise.
++ * Return: 0 on success, negative errno otherwise.
+  */
+ int mtk_register_reset_controller_with_dev(struct device *dev,
+ 					   const struct mtk_clk_rst_desc *desc);
 
---=20
-Troy Mitchell
+base-commit: 50d05c7c76c96b90462f24debacca971d2e86713
+-- 
+2.39.5 (Apple Git-154)
 
-
---b27a31aff78db9385a11b35bd47a7dbc4cfa53b1ddfa541804de3f1bc0c9
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iIMEABYKACsWIQSL4Ay2cExaPXAQcU2YCe+A+TM0LwUCaqIiug0caUB0cm95LXku
-b3JnAAoJEJgJ74D5MzQv3UoBAM401bqRuFybbAA5KpnB4a0eoo5hZiw9zvRB1E72
-WCa4AQCmBwqd9lcdFScEl6IRweN4365vrpk3b6wd72XhYcoGCA==
-=Vh8m
------END PGP SIGNATURE-----
-
---b27a31aff78db9385a11b35bd47a7dbc4cfa53b1ddfa541804de3f1bc0c9--
