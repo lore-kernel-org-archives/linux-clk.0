@@ -1,152 +1,155 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011043.outbound.protection.outlook.com [52.101.125.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B304459AE6
-	for <linux-clk@vger.kernel.org>; Fri, 11 Sep 2026 13:34:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789133680; cv=none; b=InIpZkkN8GO2ALXAgd2Xx4pfx27fyAGCNcGehb1nvNvQqev4efEOFXd8cVZvZeurk+ShNimApAdcbETj9dOeIk8MizP76HdFZ9pyTzLxxjV4zXe/DxEZSr+S7eBjfh/zusTE8sQemj6pQY1sUm6XaGPBoCHP1SqYN1AidNIUV2Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789133680; c=relaxed/simple;
-	bh=CQQOsVNYXPWgs9fvED/8XjGSPi4MvN1+4E4vHhPw2T4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B7thDgi12KUwQ9rzIFV4c8aoMxfr6q2U7tH+kdgGE2k/DzNtNLIt1ThVzBEHBe/3Egee8XLT9BXNYkCMRSRsXAXO/PJ148iY1JZ0X/B2/+flUrdVugyMFYPDLuitgS25Dnei3BGOhdmzZ6XEgGiGonqK4vXiU/fSFZBTORIQaTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UXFLrFwc; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=B3N40qMm; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6700E48821C;
+	Fri, 11 Sep 2026 13:37:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1789133859; cv=fail; b=EYpRLL8FgBXZNTGo/s542tWB1SBEevlvqQRSEi1VTtu6JCwpM1EiNm98nt6VJSjAOcWuhwc1g8luGT6OgETX/gkrGcKhM2bp5lshMmz16++HmtvdHgmykCTBqaj0h+KX3HNRuFgXsFwtcEFY1QqXLsTJwucLqwb07/4gm748ayw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1789133859; c=relaxed/simple;
+	bh=Lxw6AO++aYjSxyMdBBD6q1oPmz0EUoi6gZvVbYb9+3Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kie2VV9naiKB0FLSMhW1v2z8NowCj+81G8W5Ufx+4MLo1jlsRT65DMlIrOZBG30S2iDt/ZTLYqu/8JWtnNydG9hN8St5JF7owKcmisrf5gaYml5bOKRrJL86lc9xem1ynzojcDJu0tXiOILsOyU5tYeLQFkb7sl0mLiUAgdHbVU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=KNUNaQlb; arc=fail smtp.client-ip=52.101.125.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UXFLrFwc";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="B3N40qMm"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68BCjZUV524794
-	for <linux-clk@vger.kernel.org>; Fri, 11 Sep 2026 13:34:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=nK0vFGtg5QgNaoNnYyvBeTW3
-	5yhfDRtCR7670jeoDy4=; b=UXFLrFwcDScuAvtfIug1g3gLhqLuH9gKDVVCAgkG
-	9evBkgMeujpIS2NBQrZFsA8cCSv38gZBIBUzIeqTiynFMzM1rNbFmaICqcL/PR9U
-	fAp0julQB02eim+cEKXrKGOXnz6LyFHWer3VLxOVkEwXuY/a47P90gQX9FeDH6kS
-	+sCDA2tdKYlkqv91fB8ytpFoce+UGQbKpKPqb6ETLr+yZ4Nif4jJnCugOyvKCQf+
-	XSFVg7tQ+X2bU72ur7kTt6EqB3qybb6hr28hG4EWGLruCFQ/Hi2EDP9rXb33HuhK
-	vdMdowrXxCxnfcl5TjDZcU73eNo7KBH3VsdzcvJMwfGoZQ==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gm2q13ras-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Fri, 11 Sep 2026 13:34:38 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-9394ad7f64aso132719985a.3
-        for <linux-clk@vger.kernel.org>; Fri, 11 Sep 2026 06:34:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1789133672; x=1789738472; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=nK0vFGtg5QgNaoNnYyvBeTW35yhfDRtCR7670jeoDy4=;
-        b=B3N40qMmht6ElT7v8DGl8wuKXTqWA5Wa9DR8eqjjVLGe0mTW8lwwZr2uaAr0TVqk1X
-         btzIyX5KGQxP2+Hapn/eSy0rWq2kvykLq6ii3dZTwVu5neL5+xYQVJvxSLut1RePeWvc
-         Bet2Np7LAGrGsoAqP+8PDwoGzG+floNfx3EibiTTqY60zBcLLQUFiPpeUgY8T4qJ5Hbc
-         Wt1Z10N+wm+HWu5RCzS1XJ0EIRwq8qw4dxbRzcTXgEO4FkGiNLkul09r2vhHl05EAfbZ
-         Q7aLvw+NmXYaZHyL9Ysakgpxa3s4smMRTz/d6pCYeJ1dDLS0xVfpajjUOCS4VKUbOzI/
-         E0aA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1789133672; x=1789738472;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=nK0vFGtg5QgNaoNnYyvBeTW35yhfDRtCR7670jeoDy4=;
-        b=c4ROI45LZ8mkg/FEUmElIXMo3f4UANU3Gs12SnsoMAN5qWDEBL5zBy7bbsB5V6MAjA
-         b8cWMBGRz5tR4buVk3sl7Uco3/o+7euoqRJmO/GYHYeOvlzQJMHqR28cWl/d4Cn1ZuSR
-         FYi38IAJhJt7lXIaZexINGDo8ndDVawk2JJSQcKJOo4DDJD2HI+peFNGMaF1N0GiEi/Z
-         DFGCjw5mrsVQFQ4A+DC76OEFBh+98/fVaG9lFrGdOexwbBSoWx3gwDrN89TcBNJUBt5/
-         ZXUg45D2rhQAEjTv7acncONL+pR8x/X4qKbZBOmxtGKHBWUrOzRiRMgJECIQiCnFdwRE
-         yAWQ==
-X-Forwarded-Encrypted: i=1; AKwUvBzQC1Wo5Qx1nuR05UtESIpIuerlijpM09TcjgwSZXUZkLeUmLgdXxbV3KELSVtgovSo6x86n+HiNW0=@vger.kernel.org
-X-Gm-Message-State: AFuF++mUL15yaP7aX4yJpuRa/u6xzQeEsAllSPg9LlY2WwrGZwGCmGsC
-	3ZFQjgVwauj08Y4TyPB7fAN3sSxGn0xhVRvplf3RC0xFNVRDmvIUO7envzoFSvGOo0VjLiAp/BU
-	t2h4+fGysCsaIPcHrMRWHD7r0vSzCl+Df/yiMIAnuCKiNC+3nNTSkl4TmcswafpQ=
-X-Gm-Gg: AYBFou0Jir9ZcRJG398+cCuLG6Z4R22b3NinsPW+NsmbvvMLMJs6Ljks2bRLoCA2rof
-	p7mAx3UvW25Gfx+yvDGk1tL2HUJBjLZ8ciNw+or1/10iw93+v+ZZOppd0+Uu4JZQTIFCst9kZP/
-	0G6rlH8OJ+UpH5f3lavk9ZgOcP5Cyf4BO8XMi3GIXoACHEkTVpaGreJZU6FcQR7OVSW6r+nNLlW
-	5YpFpGI0L73VdOiLEvzDLsl0NvZJn5GW4a8uDm7XCzY8HHLt4Vlglo15+oNPreJYoU6pQMp0HEb
-	kjwoPHtU6YK3OBN245zFCmwAVHnTCTnfbJflXoX4FvbYP2ya3zSZiWfyRZjiR+2Y3+woP5zIwc8
-	xYM7eyCVZVT2FhKE=
-X-Received: by 2002:a05:620a:6506:b0:936:ef9d:2c74 with SMTP id af79cd13be357-939ea212a7emr626817485a.30.1789133671685;
-        Fri, 11 Sep 2026 06:34:31 -0700 (PDT)
-X-Received: by 2002:a05:620a:6506:b0:936:ef9d:2c74 with SMTP id af79cd13be357-939ea212a7emr626809285a.30.1789133671102;
-        Fri, 11 Sep 2026 06:34:31 -0700 (PDT)
-Received: from oss.qualcomm.com ([86.121.170.232])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-486eb35f3d9sm5358056f8f.35.2026.09.11.06.34.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Sep 2026 06:34:30 -0700 (PDT)
-Date: Fri, 11 Sep 2026 16:34:27 +0300
-From: Abel Vesa <abel.vesa@oss.qualcomm.com>
-To: Imran Shaik <imran.shaik@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
-        Taniya Das <taniya.das@oss.qualcomm.com>,
-        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v5] arm64: dts: qcom: shikra: Add support for AudioCoreCC
- and AudioCoreCSR nodes
-Message-ID: <oa6xnrgves3llyn5ojc2urmv2yrkrcetwui6utx225r3hiqzjr@rlqlp63xqji7>
-References: <20260911-shikra-audiocorecc-v5-1-b0fc3a2251ca@oss.qualcomm.com>
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="KNUNaQlb"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=D07ENaYUDhZSrtWQEMblrpZHtmuWZUOWSYO2Cv/HGWUYB5j28Nu+wYOwhho8xle/MUqBxatkqVN24Df0w5ypEb6zS0bNfjI59PxtRl3CLm9BP+3h5TdsKYkCFFkvq/6lYW/cJ8M8e0olEcO0g5+9jhU0dCbjJudF8DEOg5sAQp5rF4l9QKMhb1gYtP5LiNFJHimxGHTa4U28E3WaIZQgaHc0iVpVkkX9PMha3WEksjXakZIv8waeiGQkrwJ1ivIQgGB9+ywFgpZ16jVErDD4C5icklE6JQuLeg/SrYxhvXvUuSG2Qskd+eZjlWZMYoY1xd4zkRLbiUFRrErDfnaz7A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=UnJWmmLvLBWxAs2vZuDsZCJIrSSGM1534MPrffzf94s=;
+ b=biwEC4dk+jNuMm99/9gj8LOSLIM0AjUjy9d5ghWbbY95ZrcZwOrKo5v/cgnXkrZ0fBS3xFoOL7dvl3MEe8OsWUS/Hw2PYQ0Ena7Zh5BmiKb/dgKRaBMVs3DX9GcxYugdX7t3EhJZTfs9zk9lcRJH5is5+9cgiq4EqtXVvItWKv1zqAw1vT75M6t5PubOkFaZi0yR/jyBjhs1/r9Eqbt9WWKH0uEbs26150WYYnNZYm07RlYzn/BbYh4ng8a0mL5+4J1oPt1/BOxQjbW1OssBGmBhm8YRpUSIU0rMAHUg8HYssXVocJfYjWmRG6WZDIm1abby/HYt5lcGO9Xmh+E2WA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 8.62.32.50) smtp.rcpttodomain=baylibre.com smtp.mailfrom=bp.renesas.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=bp.renesas.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UnJWmmLvLBWxAs2vZuDsZCJIrSSGM1534MPrffzf94s=;
+ b=KNUNaQlbHzjSF+fivg8AJcNO263Gf6jo6nddcXPsznvUmRsDBJFfrx8y5n7qER/MJ5dRWTV9/LWsx/YCgVtEzXI1WgXT2HRK+k1RwPFiJ7S1oYSACG0vUbIe2vgHrhE0o+V6KtHSHOK+tKFRr0lKD+bgO1siBTNoFmrc0SfPf5k=
+Received: from OS3P301CA0038.JPNP301.PROD.OUTLOOK.COM (2603:1096:604:21e::6)
+ by TY4PR01MB17199.jpnprd01.prod.outlook.com (2603:1096:405:333::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.406.9; Fri, 11 Sep
+ 2026 13:37:35 +0000
+Received: from OS1PEPF0000D20F.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:604:21e:cafe::36) by OS3P301CA0038.outlook.office365.com
+ (2603:1096:604:21e::6) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.406.10 via Frontend Transport; Fri,
+ 11 Sep 2026 13:37:35 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 8.62.32.50)
+ smtp.mailfrom=bp.renesas.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=bp.renesas.com;
+Received-SPF: Pass (protection.outlook.com: domain of bp.renesas.com
+ designates 8.62.32.50 as permitted sender) receiver=protection.outlook.com;
+ client-ip=8.62.32.50; helo=ejcrelay004p.adwin.renesas.com; pr=E
+Received: from ejcrelay004p.adwin.renesas.com (8.62.32.50) by
+ OS1PEPF0000D20F.mail.protection.outlook.com (10.167.240.38) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.21.406.5
+ via Frontend Transport; Fri, 11 Sep 2026 13:37:35 +0000
+Received: from biju-VirtualBox.adwin.renesas.com (ree-0065939.adwin.renesas.com [10.226.92.175])
+	by ejcrelay004p.adwin.renesas.com (Postfix) with ESMTP id 3E3CC3000250;
+	Fri, 11 Sep 2026 22:37:29 +0900 (JST)
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 4/5] clk: renesas: r9a08g046: Add TSU,ADC1 clocks and reset
+Date: Fri, 11 Sep 2026 14:36:47 +0100
+Message-ID: <20260911133653.115553-5-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260911133653.115553-1-biju.das.jz@bp.renesas.com>
+References: <20260911133653.115553-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260911-shikra-audiocorecc-v5-1-b0fc3a2251ca@oss.qualcomm.com>
-X-Authority-Analysis: v=2.4 cv=d6lgWhjE c=1 sm=1 tr=0 ts=6aa4036e cx=c_pps
- a=qKBjSQ1v91RyAK45QCPf5w==:117 a=po8fGBi+ks8MzcVQGuqtFQ==:17
- a=kj9zAlcOel0A:10 a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=3WHJM1ZQz_JShphwDgj5:22
- a=EUspDBNiAAAA:8 a=tlOuMNSg9W14aln77gIA:9 a=CjuIK1q_8ugA:10
- a=NFOGd7dJGGMPyQGDc5-O:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTExMDE4OSBTYWx0ZWRfX6eHveGDVvJ1u
- X3Xud06E0SPT9rPcVE8Yij+D3Qkok7Jw7y7iT7XRtCymkNOe4vM+bu/M7EGZMxX5I9lWH1OsSkp
- 5Zo+u7gqaad2DrOupobON2qpNkH/LzI3+6IZ5FuPNLs2cECcJXTtNS2DNaUSWGTSqPGJ8ETwpyU
- QVqZ7v/1F/AVqHqmUu9oNbPSmTwwbZeCQQ6EJgnmirk3bwpVInUCEEG+oICAbxy29cdSNgsl/yX
- YGbRahp2ei54SJYzFdjk1cWhzaJuvOlYi+/Ww09ciId4NRdqPZGMq9d5Bg4IdNQcPkR+2ObEd99
- pFY27iFJED3KB7RWbKTqWy8BW4RBXb2rLdTC9J3pYs3uvVrB/LS73khPIzEAyrDwhil8yqOORDZ
- TAf6RKVetJ/H+9usUeV+xJiLhbYmuhy4wwMvTEq8t0L0r2aEUxe/Yi8sHPIGgCHbbw7BW4sx7WY
- zgCsHTcxDd9yFab0RfQ==
-X-Proofpoint-Spam-Info: AW1haW4tMjYwOTExMDE4OSBTYWx0ZWRfX1/YLnecKEEj/
- Gd86P3zR6tIcnlvXEf/1tPn76vVIq/a3gH6Pw7sCPRk2Gu8k1wVQV6ETYsUl07DUPnY29AHEz5x
- 4ke8r9BQ9JHvYb+X3utWq8+XbDX6oTs=
-X-Proofpoint-GUID: LnPhD2zskP7eHHZdUzr-Civdl-_Ll8xr
-X-Proofpoint-ORIG-GUID: LnPhD2zskP7eHHZdUzr-Civdl-_Ll8xr
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-09-11_04,2026-09-11_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 suspectscore=0 spamscore=0 priorityscore=1501 bulkscore=0
- adultscore=0 lowpriorityscore=0 phishscore=0 clxscore=1015 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2609040000 definitions=main-2609110189
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: OS1PEPF0000D20F:EE_|TY4PR01MB17199:EE_
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: b847eab3-e4c1-4008-47d8-08df1009d6ce
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700016|23010399003|376014|1800799024|22082099003|18002099003|11063799006|56012099006|10067099003;
+X-Microsoft-Antispam-Message-Info:
+	4MWAiNzs5P6pXylVU2Hp2i4D2IkdAoufE/epyK0q+DNFfTr6RBMe5ijXy3HfFfaLVsd5hoyulA+6wGdA66CEDwSJscRkYzwbRyaY5D2mWU09GOrjyRnP/0zxPhviYz4xKBOAVRJnU8jENy73uw3lnYQ69X1m8k82Twl5izn+4/2j6TEgj1+rEo+Q4KWRLYwCG/adCmHFO5nh9lB8srJ9GszMB6qyYggnu2j13VOXTaHBmlOQh04tsmbO2qcPJiToBxR5IiljUwkNeh51VNnU9ogcIoX1F2AdAmWvRzL0U9YyjxwR8H84F3CD2dRuK18NG3BbJrR6AzWDwhYlS9lLqkrurB3HlR8YcRo6xrDD4bySAOlz8D+0j77MePyrkqZbUKVeHQR/vO9/UI5xleV3wqxBNLue38mGM+HUJFGPiWcvQdvoCoD9UafNrKJttYl8BGUy2MaDVS6LG9X2O470ka4oGn3nof6cjx2Q7ZZeQyCankf2WgosNgBXotac7Z5g1LCUD8a7z7XQFvEmrhQsb1qwYg3tk9INlS9b9kd6Cd/Qbf8TX1bxSrXl7S8YUczBeXcH4i/1smkKpnNQmBFzYPfXm8peY16QO0PJhsf3poF7tFtzxisq0neJWzRUz6KQnTOoIRihcfeMXZ/KAWMGqQ98eOYJegyHR+0MW/vKbmrPVrxH5J87tHREu6RbWP8FlQY662q8sZjpGVgE3Xk4VA==
+X-Forefront-Antispam-Report:
+	CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay004p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700016)(23010399003)(376014)(1800799024)(22082099003)(18002099003)(11063799006)(56012099006)(10067099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	3qnmUxKmbiWT26QHLmgtZOU5mMYbkBDwLfYlLSM8nUvYz98sXr3O7zFzYzsw/87j+ZW1xfUqKoxpw/kHH74zKiCMBrmmJ87401xB9k1q/EfcnDIpmkQqzQfTbctOOEwFB427W3bbgj9RWfZIU9gR7O7sQ2uVUP0XY4wIi0WaHjEnP1XHSvEfh1ioH75HYBA6CNc5gY924w8TFoi3VGk+pUoXbB/qs91h5veJ8QGx8HyxXsuuJIYfiCislSDEq/JGQsQpXXUEpk4vIypv7l1hViwQVoUP9qLJzEdrsvglBRicDjj6e0cTdnc093o+k3LzD3ElClCBv8ZYfp2bUMIFjovCFFPwJsib4reFexm/SWopWiAexeEHJa9uuc4wTIDK8T+HMhNaJaH/5vG/HiaQ1QnnwtA8dRT4cSMN2fXPw/grZ/h25Kp3L7JvS6L6dLSM
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2026 13:37:35.3860
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b847eab3-e4c1-4008-47d8-08df1009d6ce
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=53d82571-da19-47e4-9cb4-625a166a4a2a;Ip=[8.62.32.50];Helo=[ejcrelay004p.adwin.renesas.com]
+X-MS-Exchange-CrossTenant-AuthSource: OS1PEPF0000D20F.JPNP286.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY4PR01MB17199
 
-On 26-09-11 18:06:04, Imran Shaik wrote:
-> Add support for Audio Core Clock Controller (AudioCoreCC) and Audio Core
-> CSR nodes on Qualcomm Shikra SoC. The Audio Core Clocks and Resets support
-> differs across Shikra variants based on Audio subsystem enablement as
-> follows:
-> - CQM variant: The QAIF driver runs on HLOS, hence both clocks and resets
-> are required to be supported on HLOS.
-> - CQS variant: The QAIF driver runs on the Modem, and required clocks are
-> handled on Modem, so from HLOS only resets are needed.
-> - IQS variant: no soundwire codes, hence no clocks/resets are needed.
-> 
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> Signed-off-by: Imran Shaik <imran.shaik@oss.qualcomm.com>
+Add clock P20 (PLL2_DIV2/8), module clocks for ADC1 (ADCLK, PCLK)
+and TSU (PCLK), along with the corresponding module resets for
+ADC1 and TSU on the RZ/G3S (R9A08G046) SoC.
 
-Reviewed-by: Abel Vesa <abel.vesa@oss.qualcomm.com>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ drivers/clk/renesas/r9a08g046-cpg.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/drivers/clk/renesas/r9a08g046-cpg.c b/drivers/clk/renesas/r9a08g046-cpg.c
+index 22821321a1d3..2c5ca5ab5f57 100644
+--- a/drivers/clk/renesas/r9a08g046-cpg.c
++++ b/drivers/clk/renesas/r9a08g046-cpg.c
+@@ -350,6 +350,7 @@ static const struct cpg_core_clk r9a08g046_core_clks[] __initconst = {
+ 		    dtable_1_8, 0, 200000000UL, 0, NULL),
+ 	DEF_G3S_DIV("P19", R9A08G046_CLK_P19, CLK_SEL_RSPI2, G3L_DIV_RSPI2, G3L_DIV_RSPI2_STS,
+ 		    dtable_1_8, 0, 200000000UL, 0, NULL),
++	DEF_FIXED("P20", R9A08G046_CLK_P20, CLK_PLL2_DIV2, 1, 8),
+ 	DEF_G3S_DIV("SD0", R9A08G046_CLK_SD0, CLK_SEL_SDHI0, G3L_DIV_SDHI0, G3L_DIV_SDHI0_STS,
+ 		    dtable_1_4, 800000000UL, 600000000UL, CLK_SET_RATE_PARENT,
+ 		    rzg3s_cpg_div_clk_notifier),
+@@ -559,6 +560,12 @@ static const struct rzg2l_mod_clk r9a08g046_mod_clks[] = {
+ 					MSTOP(BUS_MCPU2, BIT(0))),
+ 	DEF_MOD("gpio_hclk",		R9A08G046_GPIO_HCLK, R9A08G046_OSCCLK, 0x598, 0,
+ 					MSTOP(BUS_PERI_CPU, BIT(6))),
++	DEF_MOD("adc1_adclk",		R9A08G046_ADC1_ADCLK, R9A08G046_CLK_P20, 0x5a8, 2,
++					MSTOP(BUS_PERI_VIDEO, BIT(14))),
++	DEF_MOD("adc1_pclk",		R9A08G046_ADC1_PCLK, R9A08G046_CLK_P20, 0x5a8, 3,
++					MSTOP(BUS_PERI_VIDEO, BIT(14))),
++	DEF_MOD("tsu_pclk",		R9A08G046_TSU_PCLK, R9A08G046_CLK_P20, 0x5ac, 0,
++					MSTOP(BUS_PERI_VIDEO, BIT(15))),
+ 	DEF_MOD("pci_aclk",		R9A08G046_PCI_ACLK, R9A08G046_CLK_P1, 0x608, 0,
+ 					MSTOP(BUS_PERI_COM, BIT(10))),
+ 	DEF_MOD("pci_clkl1pm",		R9A08G046_PCI_CLKL1PM, R9A08G046_CLK_P8, 0x608, 1,
+@@ -640,6 +647,9 @@ static const struct rzg2l_reset r9a08g046_resets[] = {
+ 	DEF_RST(R9A08G046_GPIO_RSTN, 0x898, 0),
+ 	DEF_RST(R9A08G046_GPIO_PORT_RESETN, 0x898, 1),
+ 	DEF_RST(R9A08G046_GPIO_SPARE_RESETN, 0x898, 2),
++	DEF_RST(R9A08G046_ADC1_PRESETN, 0x8a8, 2),
++	DEF_RST(R9A08G046_ADC1_ADRST_N, 0x8a8, 3),
++	DEF_RST(R9A08G046_TSU_PRESETN, 0x8ac, 0),
+ 	DEF_RST(R9A08G046_PCI_ARESETN, 0x908, 0),
+ 	DEF_RST(R9A08G046_RSCI0_PRESETN, 0x918, 0),
+ 	DEF_RST(R9A08G046_RSCI1_PRESETN, 0x918, 1),
+-- 
+2.43.0
+
