@@ -1,87 +1,87 @@
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75950469851
-	for <linux-clk@vger.kernel.org>; Fri, 11 Sep 2026 13:56:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0C5929B228
+	for <linux-clk@vger.kernel.org>; Fri, 11 Sep 2026 14:18:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789134970; cv=none; b=nv+Rcimt+o9O3Xo0CuMdEFPrqQjEVzWHiKWiDCipPBRox2j2YoGiY2mm/DUp3ZXfH8vobUtRkzFP9ut08ZNmyEdQPwCP5B4RVNCjghPdewedBXyUcn0AwJIduKmid+Kxz2TmpiS7UAt6odF/d0ChbAGlLDuk6YHLyubwPodTQ1Q=
+	t=1789136301; cv=none; b=NSGkxqRWeYEn2mAJ7PP1CHZ9mf4G90Fc0HPQBvE0BP5bnk4SJxYLT6SXdH+3IayaHtywdM6UWSKtFmkb7wORSmbNIpHJMZ/06/UwtosGrPzSaC47iXLsRn35b4u572rECtcYpGdBufkzIAMfl85Hf3UtTrpxfYmSC0u3vT7GWIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789134970; c=relaxed/simple;
-	bh=cukm5itfAPwrG7E4wMUta7WQ4h+mlPDdBSjVU2+d3cg=;
+	s=arc-20240116; t=1789136301; c=relaxed/simple;
+	bh=/jlOxmorn01P0oqnM8wboBQgCXBXKTHnzrbb14CijwE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q5K2RjrvtPMUUVDgdKNqraZfg9eRg9qQ7VbDPovVFeTdtOTFINWq6QdKuW2EOV03Dpm9BE5DtEJL4pd90kkBKR2+GWHG7vMNR361KUIxOpRvyaZq0JgGvIVzPtknV0PU+HCZdRXQcrVfM3948aSg5qQNu83H8E0o8a8YKm8E1WM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=li+lSFwN; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=AEee1ch/; arc=none smtp.client-ip=205.220.180.131
+	 In-Reply-To:Content-Type; b=DF1wWwtYunMFAh4weJhlEY3enYJDESsmjIemalfx3S7xhjAQDYVk3X+Jb7HIV2yhdFF7foYv2IGBo0nyxDMxRZsadngIbHZl8S+EO/Onv3Ud7joEI9riHM5kADogsbGoq9Q66FWSMYKIlZkgMvPMod2HlAwi3Mlb8OP3lIJaCxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Jh/PFFnn; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=g3Dud7Gz; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="li+lSFwN";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="AEee1ch/"
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68BCj9t4170735
-	for <linux-clk@vger.kernel.org>; Fri, 11 Sep 2026 13:56:02 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Jh/PFFnn";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="g3Dud7Gz"
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68BCjZah524794
+	for <linux-clk@vger.kernel.org>; Fri, 11 Sep 2026 14:18:18 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	WcoSTgZldw5sNhCNrDcKYu36cNESSbeb6L762/E+G7Q=; b=li+lSFwN7iDnJM4p
-	69OmGvPCOg98yLgAITzFGJL0RwBruJgghuMXp/50TE/9ITOjxcX8/BoPoh5/AiUT
-	BiPYHfKfmbrlBkiOcPpft+HYC1FmDoQhj1u65Ciqtxa4hnCBot7PYxf3nZdcmCvt
-	zZJM+ABVaiQCq+WJTha5z5DR5ing0ODwhZqad4tPyq/cNgtl5PxWUfoIIqOitwun
-	s8LSwIVDxNTgaxj09XxA772Zrgu+aqfY3sheGXI/tJRvaBIQ9mNR+yRNm9Hx4bGq
-	sSEdvlxEHgE8sIBHlae7T9ocgWNp+sngZ0n4r5CD/NIY3fVxYkdUAvdhiKWJjM5e
-	IccHfw==
-Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gmapg27dt-1
+	widYuhmWJa7lLm+8qgyJ46Hz07J1TePISepd47Ws5Ug=; b=Jh/PFFnnxHIQiPti
+	5e5vZVDCBa5hwi049UU58DsJnO1RMYYRkwqZtJRNq2HGU6yg4TtYNO3sSTXpuGj9
+	rIhwhPpHEsE6upgC4K08NWJz7b/ly8NEAhzD29d8DvN10H1rC9oLzyj5/uQRq2Qm
+	JeFra98j9iVS6Pn9mx1FLRiDGkDaccCb7QzAmmSi18N10AICK31ir2hMT/8G3wxi
+	ZTKiy+ymCHFU3wYInFupQKmBL+Xa/xJwpFCdOfWjdTImnd4Ow0uhornNjk5i5Mgt
+	KCmhjBCyeYyH7uwhsQCTYykZYbOa7V/sB2WpF2LJVnQbc8Pv/hlxo9hUG9OhcK42
+	cthU2A==
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gm2q13xep-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Fri, 11 Sep 2026 13:56:02 +0000 (GMT)
-Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-8645a62066dso1714432b3a.0
-        for <linux-clk@vger.kernel.org>; Fri, 11 Sep 2026 06:56:02 -0700 (PDT)
+	for <linux-clk@vger.kernel.org>; Fri, 11 Sep 2026 14:18:18 +0000 (GMT)
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-868db1b2c64so1543665b3a.3
+        for <linux-clk@vger.kernel.org>; Fri, 11 Sep 2026 07:18:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1789134962; x=1789739762; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1789136297; x=1789741097; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:in-reply-to:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=WcoSTgZldw5sNhCNrDcKYu36cNESSbeb6L762/E+G7Q=;
-        b=AEee1ch/4t8jYXgpG8CQYiZIG6ZkPAmXXOenhi8n2omDJ4zJcOS2lDUJF2R4UqXgmS
-         Jh3r5i7WivLOuMVOtcE5fcr7QS74OdiC3tCaPm31ycjZlN8TsuHyHK3Ld3PBw2RQlggl
-         6GPvlv5pdD7ec89stT6HpPGZ/WF3Rzb89uMVGFtnTmQooDE64ih/FSEeeOLPXxPYqKDm
-         fmDSU2X/HiQ03cIEr381+1K/tDxFdiL6K08Z/D6KVJGoxtammHFSun9IwioWK/OqOYZ6
-         +YvLl72E4ZruvlvbTJqXUY/+nTrtiqAlmzp+R+2stzDwCM0Wr7oLMWKQ4pRdNgSfhfUC
-         aPIw==
+        bh=widYuhmWJa7lLm+8qgyJ46Hz07J1TePISepd47Ws5Ug=;
+        b=g3Dud7GzknPZHzEJMJpZ5eDmcTAwx0V+DRinFVgx/7HOsuqFV/6ijMUddKAP6pqhyn
+         Rkos5lvsPu6VnehpSlGUON7T9QKVx5o3ID7kSMr0SiEN5Eu8Wn0DLHNK946NFQ6rJRx6
+         2/z2Myp7iYr2OTMuqZUPmQJrsWYXoMDkCvWkO9e4wGj7lELQP9G8IB/y7lCwXWE9OJCv
+         uaL/nmktI5YTrtXN6mautHFT2yrj52bPcNjuTQd3yO8d9woqNTeaVRSR+SmXax2+dbG1
+         GuV765Az8WFHgqvvB3j5Il7iWxkgott9/JTPVOxDjjlMlrYIvVcL5OmKH9NDyj20vdVP
+         6UjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1789134962; x=1789739762;
+        d=1e100.net; s=20251104; t=1789136297; x=1789741097;
         h=content-transfer-encoding:content-type:in-reply-to:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=WcoSTgZldw5sNhCNrDcKYu36cNESSbeb6L762/E+G7Q=;
-        b=BUVaGKNU0/TqZxaLzmArvOAmoR6WtQdgnV1cdM84LoeEW5TDloR/UZ9y4Dd969v0Uu
-         ZRf6nKtKW2e2Mxc657Knk7axsdkyhaqMUZ2d3/2ZS/vUZT1Iym0IAVMGoEXWchbYNqgm
-         OA3CniCtdjBjwNCB1AuQvrg0mZ6+HV6m1WCr4Kltq8Xh3RXKCvWuvJ1LJlXKbkimsQYw
-         m6VSnvnIS6umXbIIHBU+fKavR7+XqXBHp2KcjK6vZqxIQ2+uWoCwSGn7RDL/JaF5Xhs2
-         hDHSOJ5GY5qmHNInGd9NxxhNlDVEWNRdDdvLWHsFYar0wb3K2w7ySPI56+593PQe1aej
-         J5yg==
-X-Forwarded-Encrypted: i=1; AKwUvBw7hWK2q24X6xlt4OmvpNbVuAYohPl/4US125evfs/FjthUYzxn6ulEM07sxE9yr25kPjYvgRxwSx4=@vger.kernel.org
-X-Gm-Message-State: AFuF++na+pJM9/3qKXDBVPemheYfzn+qWW+bl0Ok/UIKVTavkjTPphPJ
-	ej4BwgnFMX/moP5BJGQ6VFG2p6iNUMIwk41NxmT+PU2b9fqUG6eGfdibh6ysVTu6eojUvHASGdW
-	in9FLgJ4KACKALGlbSqNzi4eXVYUq0vF2auH3f5XjjCO/cMpZ8vIY67PBJL7CINU=
-X-Gm-Gg: AYBFou29VUxOcUr6Fw2XTQv9V6c9cliK5gKubvm/GSkpD5wYPs9LkhxFjf/kFgllqlX
-	PeKptYgNL8XWuzfEHyd5cUDoCBuiAlCWI3OrRZ7M7bYKx/x7cAqGbpr9g5Ro/ZFBpuRM5atNZIj
-	j7Dw3geCLBhRqlkGBnR45nRoqVfVOvwuOphvQPS4vWaep9jQfyKDjEppqb1aMS3NEg+wNZhBWdH
-	8UMiRq43tOImUli5sXYMlDgBRddTtMRqtpR2dgo9cRx3nCrW9zf2Lu5EBe9mRvSp/Lvw8TfyZ0z
-	hPn5DWZSu9BiJ1Pwt6L4rjqMBOQE9H8Xf6yz1UbYYkG1tFZQ6NkMBmPdlMZgvfsqah6deY5s0Vh
-	Q43z0WiHsIo/cLLd36FSPIJqkRzac
-X-Received: by 2002:a05:6a00:12c6:b0:869:edb6:522f with SMTP id d2e1a72fcca58-86b304124f2mr6902781b3a.5.1789134961610;
-        Fri, 11 Sep 2026 06:56:01 -0700 (PDT)
-X-Received: by 2002:a05:6a00:12c6:b0:869:edb6:522f with SMTP id d2e1a72fcca58-86b304124f2mr6902725b3a.5.1789134961164;
-        Fri, 11 Sep 2026 06:56:01 -0700 (PDT)
-Received: from [10.218.30.203] ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-86b286c49e9sm1212856b3a.17.2026.09.11.06.55.55
+        bh=widYuhmWJa7lLm+8qgyJ46Hz07J1TePISepd47Ws5Ug=;
+        b=Ct5UKh8gEZHixLCW3sy1H5QlgqNmwKfIC8NaFL0A/qj6lRRU7HmYsSvB2P08hOQHbf
+         vrwEegXkvw2ByhMldv9m4wmO4+mr1DnQJSGUpwEPRrAa0JrdFlxZlZDZq2ii9kkTrDGc
+         PdF/5si8lFCAiWvtw+IqeL+B+GcJpxf+8+0DNvErbvL/bOcDplunzoqtRKZWFSSp6XzA
+         LyAW9EBC7jYAffKUvGMs5XtcrlnEuuU5adXiWjvdCgrk7N9IhB7T8V3ZIpkwT8OZ+1LD
+         7/sipU2FAtdc5vhLDtto+a5ZJvEnVsB7g+INmq/sSe70WHiPd9iXAUeAFj1xHhju+4aI
+         LB6w==
+X-Forwarded-Encrypted: i=1; AKwUvBwum5ngdwP1wxM3QisprzfRHSwf962j5IJrJrISA8w9rv0479Zc8W+/uhgqpRILaI9Dsh0nnxVck8Y=@vger.kernel.org
+X-Gm-Message-State: AFuF++mO59zZo1gBHy88nYvQ9/kbCdq6p2H4bLsH6lfQpHXUg6ZOwtD9
+	ChMSocmo8siqDteooUCQNS3LqtRSurm+U3NaNi6yb5rXNEc1qBu2KfCcWzftHZbT7D2fDOCwi8i
+	Kz4sxHNmjdOLzxgW4HSOk/LDnqNEfUTU0QmCPBkLuUJRYoNS3lGf0V8Aa8t1mfK0=
+X-Gm-Gg: AYBFou1FtE6u7mHG3ufxZxiyuIvy+Oyc/K3hb9TRyPiQVw+MRzdmpTPww3qqtHjgq4u
+	NfxmJGHSYxQS02Efjl1ryeXGyzm41cXpqNt0KamgVKIP+BFyhqk4GLANGxUIP/+xQlPU1jwMfhG
+	h7BPEAGvWA0Qj59oKpATdHxHaAFzdWxuBjm3bXmoN8S1cHNC5oCOFIXqKqbJ3/+nWcEHui6lLp9
+	RsHmCfI0ROxptTPDLDOVX7unCDu68DtsVhDBi06cpIt7WXXoKvgYjc2c1C8SbM/O55PyJ0l3mIf
+	2hcPYFq6uOtsQEIE1jrDet0Ywu4FQ/lVkQ62mCqDNjEsZ93i2847KlzU146cxZ3LTDHfaqeaga8
+	f5QecEtjW17OOdXkQAu9/2GzqHEwi4i9sEzZxLR5O4u1rpd0wz/CMylg1IlSiAzU=
+X-Received: by 2002:a05:6a00:c1c1:10b0:86b:4519:49d8 with SMTP id d2e1a72fcca58-86b45194b40mr5036340b3a.13.1789136297503;
+        Fri, 11 Sep 2026 07:18:17 -0700 (PDT)
+X-Received: by 2002:a05:6a00:c1c1:10b0:86b:4519:49d8 with SMTP id d2e1a72fcca58-86b45194b40mr5036295b3a.13.1789136297116;
+        Fri, 11 Sep 2026 07:18:17 -0700 (PDT)
+Received: from [10.133.33.95] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-86b29cbb933sm1183630b3a.41.2026.09.11.07.18.13
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Sep 2026 06:56:00 -0700 (PDT)
-Message-ID: <0fa0637d-b93b-47c7-8359-6ee70c5251ca@oss.qualcomm.com>
-Date: Fri, 11 Sep 2026 19:25:53 +0530
+        Fri, 11 Sep 2026 07:18:16 -0700 (PDT)
+Message-ID: <623490b3-d370-4ca9-80d5-44bb79cafaad@oss.qualcomm.com>
+Date: Fri, 11 Sep 2026 22:18:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -89,189 +89,70 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5] arm64: dts: qcom: shikra: Add support for AudioCoreCC
- and AudioCoreCSR nodes
-To: Imran Shaik <imran.shaik@oss.qualcomm.com>,
+Subject: Re: [PATCH] clk: qcom: ipq-cmn-pll: keep the CMN block bus clocks
+ enabled
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Stanislaw Pal <kuncy7@gmail.com>,
+        Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+Cc: Mieczyslaw Nalewaj <namiltd@yahoo.com>,
         Bjorn Andersson <andersson@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
-        Taniya Das <taniya.das@oss.qualcomm.com>,
-        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+        Georg Seema <georgseema@gmail.com>, Brian Masney <bmasney@redhat.com>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-References: <20260911-shikra-audiocorecc-v5-1-b0fc3a2251ca@oss.qualcomm.com>
+        linux-kernel@vger.kernel.org
+References: <b58e3f64-1a5c-4db4-a51b-7138fb3609da@oss.qualcomm.com>
+ <20260909132049.37611-1-kuncy7@gmail.com>
+ <fcd7eb6b-95ab-43eb-91f7-f9a0ffe18ead@oss.qualcomm.com>
 Content-Language: en-US
-From: Komal Bajaj <komal.bajaj@oss.qualcomm.com>
-In-Reply-To: <20260911-shikra-audiocorecc-v5-1-b0fc3a2251ca@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: c72YYezuVDtgKHBn16IlqOKaRp8zJlEO
-X-Proofpoint-Spam-Info: AW1haW4tMjYwOTExMDE5NCBTYWx0ZWRfX1kjrTGQpIQwR
- 54PeroMT1PPlYgnzR+mvb++zYKY93K4SkziTZdCKsmkLGGQ+5uprLhaO9qY2dOkUhukOLaWCGgr
- cLH7Si6UrBzUZHSVhSl9pkHjX+clReo=
-X-Proofpoint-GUID: c72YYezuVDtgKHBn16IlqOKaRp8zJlEO
-X-Authority-Analysis: v=2.4 cv=DLoacCNb c=1 sm=1 tr=0 ts=6aa40872 cx=c_pps
- a=m5Vt/hrsBiPMCU0y4gIsQw==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+From: Jie Luo <jie.luo@oss.qualcomm.com>
+In-Reply-To: <fcd7eb6b-95ab-43eb-91f7-f9a0ffe18ead@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=d6lgWhjE c=1 sm=1 tr=0 ts=6aa40daa cx=c_pps
+ a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
  a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=gowsoOTTUOVcmtlkKump:22
- a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=6Jtp9WtjP-3LHkia-DoA:9 a=QEXdDO2ut3YA:10
- a=IoOABgeZipijB_acs4fv:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTExMDE5NCBTYWx0ZWRfX83SGrVOu2n2x
- rktKjs7O7yafhM1lM1oC9gRnUk/OAr8XFj1CCj+l/G+SibpbRD6l4443NqFlicS6p1oJ32ps4wg
- viQ+9/r/DL9Ntf/CURC1xvyO4jWwKjSEL1tEg9F9ZE6GI8YCzy4ZaGT0al6WHaoW5nYOPPF0VFn
- gLcxAizzgVyrKBoVdG2sux96zrnqMZF3ohvr2hDZoOM3LVtoSUi+ezdoowSyzZLjA5IhkdGPJRl
- /Mxnq2dMhYWYlLZraCyONV85Kw/+evMJ5s+UjznuX/CKb4eOmfyuX21VdGwqDQytvkQ+Fq9dc8b
- i/z6UFz4+a0QetC7sXGsDctV8tHtovC2oBpJQeJSKOyder3C7sL4KkMYoAKnP0uJzzDcZliz3zj
- 1q/VGZFwwlz6rgSC/S/L10TqwT0u7biAOhp83y6ko3eIeSd1aQqIwYxLTt6DHQEX3YSqgJ/bIGz
- fbKfKLcgyhI3/XYdUaQ==
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=3WHJM1ZQz_JShphwDgj5:22
+ a=4Itt5vdypME_K62fSIsA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=zZCYzV9kfG8A:10 a=OpyuDcXvxspvyRM73sMx:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTExMDIwMCBTYWx0ZWRfXxToQJYWQ6k0H
+ XVrTk0VNl0xl498FHlPGTyLmer6Dbpkk1Yf3xOCOm4xvLJs5vtL2x+AnQvPbJFk/bz+xiBWjKrl
+ k6AZEcDCHkJyMQ0i7TGMWnByLmq6Wcs/HXTCQX6cL1/7O5UcTuHFwcerg24VoRJiFwYNhLduIoS
+ 6NE4nNldRBFiDj049F/aUV9rOQ5a1tCHj0T0FFTo46a6DhFq3/NPvAYetu6RboCPbiiVWk9DzEl
+ kImIgQ4h2aEna9UBlOtx69P1cGwMcP6LHCpV1MojuyROyBbqI6zCrQsupWYiEP6X+HDvACJ+OUz
+ ru8hh8yHaZoVRS2xGaxC88o8YPTFgh4rhW/JaH1WRntiSKW8HH+2gU791GXqKdBQkzrH7jZCLCu
+ fb2w07CkDXPk5XSlXdkYSBRi0RZbwKQLfFf5ESoicPYad9tlERNdESsa40Fjr209/vF5Q0siGkH
+ XMoT1fIfNUN1Cr8WqXA==
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTExMDIwMCBTYWx0ZWRfX3U1B0kEEVchw
+ FR/54CIo0m/i3SpqTkzRTW5LG12iyPj848FGaNxw8OaCSA53EAf/IlYVUn2QPIFJ4+AAg11dDou
+ E3tdXEogyHLLmfeLfGGWhlMjeJlUK8g=
+X-Proofpoint-GUID: hq5eO3-SFUA1kXv6ZXdypyb7HHrTkvJH
+X-Proofpoint-ORIG-GUID: hq5eO3-SFUA1kXv6ZXdypyb7HHrTkvJH
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
  definitions=2026-09-11_04,2026-09-11_01,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 priorityscore=1501 phishscore=0 adultscore=0 suspectscore=0
- spamscore=0 impostorscore=0 bulkscore=0 clxscore=1011 lowpriorityscore=0
+ impostorscore=0 suspectscore=0 spamscore=0 priorityscore=1501 bulkscore=0
+ adultscore=0 lowpriorityscore=0 phishscore=0 clxscore=1015 malwarescore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2609040000 definitions=main-2609110194
+ reason=mlx scancount=1 engine=8.22.0-2609040000 definitions=main-2609110200
 
 
-On 9/11/2026 6:06 PM, Imran Shaik wrote:
-> Add support for Audio Core Clock Controller (AudioCoreCC) and Audio Core
-> CSR nodes on Qualcomm Shikra SoC. The Audio Core Clocks and Resets support
-> differs across Shikra variants based on Audio subsystem enablement as
-> follows:
-> - CQM variant: The QAIF driver runs on HLOS, hence both clocks and resets
-> are required to be supported on HLOS.
-> - CQS variant: The QAIF driver runs on the Modem, and required clocks are
-> handled on Modem, so from HLOS only resets are needed.
-> - IQS variant: no soundwire codes, hence no clocks/resets are needed.
->
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> Signed-off-by: Imran Shaik <imran.shaik@oss.qualcomm.com>
-> ---
-> This patch is rebased on top of Shikra USB DT series [1] to avoid merge
-> conflicts, and there is no functional dependency.
->
-> [1]: https://lore.kernel.org/all/20260911-usb-shikra-v7-v8-0-851ee4bc0eec@oss.qualcomm.com/
-> ---
-> Changes in v5:
-> - Dropped the bindings and driver patches that are already merged.
-> - Link to v4: https://lore.kernel.org/r/20260724-shikra-audiocorecc-v4-0-0a89bb13d817@oss.qualcomm.com
->
-> Changes in v4:
-> - Dropped "clk: qcom: common: Register reset controller only when resets are present" patch
->    - Sashiko AI review pointed a valid GDSC-only corner case issue with this
->      change, will address it in a separate patch.
->    - This patch is not needed for this series, after splitting AudioCoreCC
->      clocks and resets into different devices.
-> - Added NULL check for device_get_match_data() in driver [Sashiko AI review]
-> - Removed unnecessary <linux/mod_devicetable.h> include in driver [Uwe]
-> - Collected the R-By tags received on v2.
-> - Link to v3: https://lore.kernel.org/r/20260723-shikra-audiocorecc-v3-0-90b878ae0d4e@oss.qualcomm.com
->
-> Changes in v3:
-> - Rebased on next-20260722, as the dependent RPMCC/GCC and Shikra base
->    DTS changes were merged.
-> - Separated the audiocorecc and audiocore_csr bindings into separate schema
->    docs [Rob]
-> - Moved the AudioCoreCSR schema to bindings/reset/, since it now only
->    describes a reset controller.
-> - Updated audiocorecc DTS node to use status reserved [Konrad]
-> - Kept audiocore_csr node globally enabled by default in DTS [Konrad]
-> - Collected all the R-By received on v1.
-> - Link to v2: https://lore.kernel.org/r/20260708-shikra-audiocorecc-v2-0-b320d822cdd0@oss.qualcomm.com
->
-> Changes in v2:
-> - Separated AudioCoreCC and AudioCoreCSR nodes as both resides in two
->    different register spaces. [Konrad]
-> - Updated bindings and driver patches to handle the separate node
->    compatibles.
-> - Updated resets in driver patch to handle HW_CTL bit.
-> - Link to v1: https://lore.kernel.org/r/20260605-shikra-audiocorecc-v1-0-7ee6b5f2d928@oss.qualcomm.com
->
-> To: Bjorn Andersson <andersson@kernel.org>
-> To: Konrad Dybcio <konradybcio@kernel.org>
-> To: Rob Herring <robh@kernel.org>
-> To: Krzysztof Kozlowski <krzk+dt@kernel.org>
-> To: Conor Dooley <conor+dt@kernel.org>
-> Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>
-> Cc: Imran Shaik <imran.shaik@oss.qualcomm.com>
-> Cc: Taniya Das <taniya.das@oss.qualcomm.com>
-> Cc: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
-> Cc: linux-arm-msm@vger.kernel.org
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> ---
->   arch/arm64/boot/dts/qcom/shikra-cqm-evk.dts |  4 ++++
->   arch/arm64/boot/dts/qcom/shikra.dtsi        | 17 +++++++++++++++++
->   2 files changed, 21 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/qcom/shikra-cqm-evk.dts b/arch/arm64/boot/dts/qcom/shikra-cqm-evk.dts
-> index 286ea46d0c36..079a1636cb6a 100644
-> --- a/arch/arm64/boot/dts/qcom/shikra-cqm-evk.dts
-> +++ b/arch/arm64/boot/dts/qcom/shikra-cqm-evk.dts
-> @@ -23,6 +23,10 @@ chosen {
->   	};
->   };
->   
-> +&audiocorecc {
-> +	status = "okay";
-> +};
-> +
->   &pm4125_hs_in {
->   	remote-endpoint = <&usb_1_dwc3_hs>;
->   };
-> diff --git a/arch/arm64/boot/dts/qcom/shikra.dtsi b/arch/arm64/boot/dts/qcom/shikra.dtsi
-> index 1395c182a2b1..999b478e1640 100644
-> --- a/arch/arm64/boot/dts/qcom/shikra.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/shikra.dtsi
-> @@ -6,6 +6,7 @@
->   #include <dt-bindings/clock/qcom,dispcc-qcm2290.h>
->   #include <dt-bindings/clock/qcom,qcm2290-gpucc.h>
->   #include <dt-bindings/clock/qcom,rpmcc.h>
-> +#include <dt-bindings/clock/qcom,shikra-audiocorecc.h>
->   #include <dt-bindings/clock/qcom,shikra-gcc.h>
->   #include <dt-bindings/interconnect/qcom,icc.h>
->   #include <dt-bindings/interconnect/qcom,osm-l3.h>
-> @@ -3594,6 +3595,22 @@ cti@9900000 {
->   			label = "cti_apss_2";
->   		};
->   
-> +		audiocorecc: clock-controller@a0a0000 {
-> +			compatible = "qcom,shikra-audiocorecc";
-> +			reg = <0x0 0x0a0a0000 0x0 0x10000>;
-> +			clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
-> +				 <&sleep_clk>,
-> +				 <0>;
-> +			#clock-cells = <1>;
-> +			status = "reserved"; /* Owned by Modem firmware */
-> +		};
-> +
-> +		audiocore_csr: reset-controller@a0b4000 {
-> +			compatible = "qcom,shikra-audiocore-csr";
-> +			reg = <0x0 0x0a0b4000 0x0 0x1000>;
-> +			#reset-cells = <1>;
-> +		};
-> +
->   		remoteproc_cdsp: remoteproc@b300000 {
->   			compatible = "qcom,shikra-cdsp-pas";
->   			reg = <0x0 0x0b300000 0x0 0x100000>;
->
-> ---
-> base-commit: ae800ad8819a6d89308031288a6ab6789eb5d2d4
-> change-id: 20260605-shikra-audiocorecc-85efef073474
->
-> Best regards,
-> --
-> Imran Shaik <imran.shaik@oss.qualcomm.com>
->
 
-Reviewed-by: Komal Bajaj <komal.bajaj@oss.qualcomm.com>
+On 9/9/2026 9:37 PM, Konrad Dybcio wrote:
+>> On 9/9/26 2:12 PM, Konrad Dybcio wrote:
+>>> Is it only the UNIPHY consuming the 50 MHz one?
+>>>
+>>> What consumes the XO clock? What consumes the sleep clock?
+>> Nothing in Linux consumes any of the three today.
+> Yes, that's more than clear 🙂
+> 
+> I'm trying to ask Jie about the platform details, to which I
+> unfortunately don't have access at the moment..
+> 
+> or maybe +Kathiravan?
+> 
+> [...]
 
+The XO and sleep clocks should be supplied to the GCC. We could try
+adding the GCC as a consumer to verify whether this resolves the issue.
