@@ -1,48 +1,48 @@
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012033.outbound.protection.outlook.com [52.101.66.33])
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011039.outbound.protection.outlook.com [52.101.65.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBE5035E1AD;
-	Fri, 11 Sep 2026 20:56:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0E423B635C;
+	Fri, 11 Sep 2026 21:09:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.39
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789160207; cv=fail; b=laQohqQzMt+uUZ9GldvK5/aPhMstJgAjQEJOicyATmqrHKIKrszVdAz2O+SzhIDetGBXbY85NuBz/tEtiwTt2UozQyRT/Ly1VWLtQse19nzXjV3uzK23ysXoCSTHwdYqDlupbYqobQbUt3oggHTAlooEuygVZSM8PCdprpHrb94=
+	t=1789160988; cv=fail; b=aX6xt9yK7iIngeLYDdqb5Kb8esrCq+UQMbsKnZSC/igQMtMXHVcAe9NGSoOt7vTMZPGbzQO1irhbIarTmNSS0GALnN4IMOEAXJ2EM77u4h11MoD7hblHdy+PiMYLwCD84YAPlIevZZ2VZkZm5Uy//4nFgZagMkGD3XMl2sICVVE=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789160207; c=relaxed/simple;
-	bh=1pCzwJZVXQQr81glOc72o6tR8Cj6K1vz9EQdX+fWu/0=;
+	s=arc-20240116; t=1789160988; c=relaxed/simple;
+	bh=4oIO8u/CXUN+sFy9VqDnA7SBcF6+DZKzknyoR2JrLxU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=riojnexGM+1Am8moLXAiNMYfQZPLiHxkarPti5O8Q2fX9fiz7FVZ5SkSKBkjZxxAZzl6vmVcV5Ft6OpMotKqB2q6a1zJ2N//jwu7NL/u4LL60Hb6y2rMhNA6K0SLKWkfUPdiGuR0tyGHsCYonz1qltVYducnM6bxkWxPFuCfAbQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=ERhMxtU+; arc=fail smtp.client-ip=52.101.66.33
+	 Content-Disposition:In-Reply-To:MIME-Version; b=EbCc92bhdx8RhFOcF5vLa39NTiyO5W7vN1SFTdHbly1H7hlUEMW6LM3P0DNmjYpV7geOWFmqCYxTNsQbpPaRT8pwL2YAaFdsWChOENXdnXJcaBSYpbOQW0KmYG8y9zNCofISch8ymj83PjEovcv1ywa+GyUaSfJD5Du7Tr11T5k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=XEKyvV2b; arc=fail smtp.client-ip=52.101.65.39
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="ERhMxtU+"
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="XEKyvV2b"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=T/Aa6qNHB2NCLpaD2P4pP3uej6KqdM5bxD++MeZo82oyjk064bBoVc3jkh35gmqWNi+R6IIBOu3n9Mmn67N6ozzbybGfVIPqs2YC7dgmk3jLWVbQ+uQr0nynH14disjAkMbx8GTOvok8wrszZYWapDKVolsbcs5BoIjIKs/BJD+BAWm04CHuZlNCRQv9u8L714hG+D6pBdv96RcL264OOaEjQbtaqKYTd6d2LqVUzYwVfIi9nGbLvW3LSwtSgTV69GW8kGrmJMVE8jeHUMWk+ZGYGe4u10rvxOWIKwzcUNV8COVO1ebz7qI65gZH3iSELaqsE7w7pRk9k7B2BAaoGA==
+ b=YgFriERYVLvc05lNvNBgqzut/xOy37iBeqgCEuQ5JpjnAFCiv3Uk0qAJffBFqUevYi4CqifZB6UDJYXcik2mGjJ5AVJeiEFacjeq7UEkzOXcQumu3jZdRNhDwSQyFw14iKOgAYQzq1Mi/gdr7qPYQHyO7rKTQEQ0CZg4wXL5vMK2pDuZ5085fyBGAaT5YWa9BjesjGoDvRDr8ymRSrlztPEts6sM3jOWxLDQqGhsRfWPhCb+BcUxKN7eGWaDYqaNpbPnK+KecSFaTmh9NBnSx0wEcIEyV/H3++YJfI+P4LkMcYqsNOJ8R1ernJpvfo6UucI3Sq2ODbLDY3/Ypg3Cjg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZsvxhL5QHRNg2DznB+jC/fE2X+6cscSUNYndryGnZqM=;
- b=Q9Wl7J0/jb6PAFZk4QkHPVs4H3Ggfy2rDi8pZs+/ziZZCyLcIE+lBiBdjNkBsngI6WQ+dSyKoNJ26cQ/e4IeKLvEsHv6z+Q5abCodSNzczBZ+2wXUJWDY6hPvPnFdCcSsLoUb0yYlmJvULXzslyfUzUGizxgJhkauBXj0vKMaX+kYkzKs0j6UDNFv/1k4xeLOy9DpDY+hIKYiBw6Xo/YBk9zwbyJPe2/XB559om3VY2a+SS/virVuTapCzuN2gWZXvzVLKK99LW9BRU52JXCUIjsD+ZVr/HRiI6ewhFhiN610VJdB9mP2xPB6NOKvqwxchuu75vatmkEkQoPK25jhA==
+ bh=VfLkcYfM7u5aEuWbCbfkAYsUun/5v0qdzreRhQJ17W4=;
+ b=nRHayyRjbk9kEVQ6tgreB9o8YlqPaHOyWPy3q7kxCLwPhIU2zlFurN/qwarwGt2J603OWD5wkHS9PXgZXBpgZaOE6OwlNz6f7rwHyx/WtM1mSoPAeYmP/qF7ARWQ52aRldPKhIo7ezyLNGIhSW69qYmvyAZMMFvH9/dRnSi6eudh92zAq/zAPM2LIBOo9Pea+LhjNGOlAWXlgTBvmTPoCN5wZfyDsdOwXgU/ut5fQUmr2hS9ZNP2d8d7jsE7dELI6KXel8Mvi21QgPPPIkoOcfxeKLle6mgWZVx9+aFnms920KKxE9KiClIeXLoHGYzPBs5gfQTVG3fNnoqeFp0ehw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
  dkim=pass header.d=oss.nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
  s=selector1-NXP1-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZsvxhL5QHRNg2DznB+jC/fE2X+6cscSUNYndryGnZqM=;
- b=ERhMxtU+rimng2HsAPFJza0z4CG9l5DjkrEr1dMXMpP5TK8Zu432Th/IJMq8EW2pc3FS0CVAd81o9Avm13+xOmr1moXVJVIYkGZ+Um8ir27gIOkV6dXuwB0durFYN2Ccg0SYejKUWov9T+YVEj7Srsd9DAKoEmhIrwDaNDD75yzZI5pOdWjKF4/lNJB7W1t2S5th75uR+aWoOztgdXeo75P9DoSxQRS1sGNZnJs0hJHjOU3IlVVcrRQvIquIia5FVn6zpkrlCRSIaZtBhV1ncToXyBvZbLaO+C89hRrOrQ1fiYd2/NZ57X26Aa570bPmHO26759fJVC972f3vRiAxQ==
+ bh=VfLkcYfM7u5aEuWbCbfkAYsUun/5v0qdzreRhQJ17W4=;
+ b=XEKyvV2bX0GlCGh2/3TsNVVrMEr2JFtw+wOU2nPjo16R0z6Gge2rg3V0Ft0hagG9HfQ4XPlmiO4jgB1hPYLh4vdmD914RgziOnFSi6YSH54bBuYXEurU1rbT3d7eYz92W2wNTmObL+dUYMiyUd1auFJRrcMi1a9jsfHHVqbPr+TbMBs2xQ6/8QFZhpQu8HnqPVkXAUuCxvALGn1N3vTQHKa6l66o8+8i15jqIJuLqOZcCMauWNx1mrDuGKNC9yYj2b82Lk7aE3vLli9A3oeE0ZN/9qxATTtrmmU0vMipZZnkxIrcXLxhl/lM42SMGR/Uc3pOsFPuQLFxuk5o8fNXzg==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=oss.nxp.com;
 Received: from GV2PR04MB11799.eurprd04.prod.outlook.com (2603:10a6:150:2cf::9)
- by VI2PR04MB10884.eurprd04.prod.outlook.com (2603:10a6:800:270::17) with
+ by AM9PR04MB7617.eurprd04.prod.outlook.com (2603:10a6:20b:286::6) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.406.9; Fri, 11 Sep
- 2026 20:56:39 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.406.10; Fri, 11 Sep
+ 2026 21:09:41 +0000
 Received: from GV2PR04MB11799.eurprd04.prod.outlook.com
  ([fe80::2146:83a2:5329:b7c]) by GV2PR04MB11799.eurprd04.prod.outlook.com
  ([fe80::2146:83a2:5329:b7c%7]) with mapi id 15.21.0406.007; Fri, 11 Sep 2026
- 20:56:39 +0000
-Date: Fri, 11 Sep 2026 16:56:27 -0400
+ 21:09:41 +0000
+Date: Fri, 11 Sep 2026 17:09:29 -0400
 From: Frank Li <Frank.li@oss.nxp.com>
 To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 Cc: Bjorn Andersson <andersson@kernel.org>,
@@ -64,16 +64,16 @@ Cc: Bjorn Andersson <andersson@kernel.org>,
 	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
 	linux-phy@lists.infradead.org,
-	Krzysztof Kozlowski <krzk@kernel.org>, stable@vger.kernel.org
-Subject: Re: [PATCH v16 1/5] phy: core: Fix use-after-free in phy_get paths
-Message-ID: <aqRq-xZRIDL1apdI@lizhi-Precision-Tower-5810>
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v16 3/5] phy: core: Add devm_phy_get_by_of_node()
+Message-ID: <aqRuCfmgPqa5h0y4@lizhi-Precision-Tower-5810>
 References: <20260906-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v16-0-f7bd68b5369f@linaro.org>
- <20260906-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v16-1-f7bd68b5369f@linaro.org>
+ <20260906-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v16-3-f7bd68b5369f@linaro.org>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260906-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v16-1-f7bd68b5369f@linaro.org>
-X-ClientProxiedBy: PH0PR07CA0093.namprd07.prod.outlook.com
- (2603:10b6:510:4::8) To GV2PR04MB11799.eurprd04.prod.outlook.com
+In-Reply-To: <20260906-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v16-3-f7bd68b5369f@linaro.org>
+X-ClientProxiedBy: PH7P220CA0157.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:510:33b::23) To GV2PR04MB11799.eurprd04.prod.outlook.com
  (2603:10a6:150:2cf::9)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -82,191 +82,150 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: GV2PR04MB11799:EE_|VI2PR04MB10884:EE_
-X-MS-Office365-Filtering-Correlation-Id: 083a9423-951f-44e0-2c1d-08df10472cc5
+X-MS-TrafficTypeDiagnostic: GV2PR04MB11799:EE_|AM9PR04MB7617:EE_
+X-MS-Office365-Filtering-Correlation-Id: 984bdb43-be3e-4649-1827-08df1048fee9
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|23010399003|366016|19092799006|376014|7416014|18002099003|22082099003|10067099003|11063799006|4143699003|56012099006;
+	BCL:0;ARA:13230040|19092799006|7416014|376014|1800799024|366016|23010399003|4143699003|11063799006|56012099006|10067099003|18002099003|22082099003;
 X-Microsoft-Antispam-Message-Info:
-	W+R981X1KHJ8wIx8j9kWemXLr3rBMI/TaFCmrIQWFkvXxK9LvQZsW0dWEDFZLSxEAkH1paztb/RqlCOjp7aOzhtNRVfhA801Ou33/N90r9BM10urdQo0H30JW3bKhcM9ohmRs+TcQQRyIEP1q2n6++oT3RyYw7YeGh058Be4NGqE0MPDj5eRmWdDjHT+h3+dpkgTittEJWd6LJI0SxdI1TdyUWjfx+PYo5wnYQwnIefkoqmmzsL03Cqg6QTPzwI5zT+ci4tPBfwbsCnMFcBAI1I09k8036/70+AiwHBSUkXPte2HceS5XwITbhYXJGaDaB/hN4e+G0QD5snC2L9XgSes76aYzOEYw7yquy4JD4ZoEHs+qZnyYJnIXoYXhpSmmn4U9AsfIREtgrr2zs2CYbeHuWgxVMqkTmdV/kGbv+g7UBiLzPwMYN2MerkXCBaGVChvy2ftUKOJNwq5I95SkVjPTS12m8203z+TxoLWqgjyR315Sjf8L541g+r4qCpvMO6ka1WfgV7p1a+mLXXzJfWgiHlYI8Uk97RomZb+xY2UxC0GTGnSxtMXRTXCchjOz4jNz/e23X6CD4Wh+IahR8zqa2VDo83xKOZkIPSXepd+rC5Ql7oNBJJB9xfVrDlIELLGTbjZUtwSA64AyAuROZbozm2NHiTMCfESlU6gw9E=
+	eiSVYMYoKl6jAJ36gHfnbCHShzahgUA7XfiQhvyRnil339Mf0m/ld6CLE1PqUdH0WM/hqF8vZ33si4AqDe5Dn5iQ/EnPONPN4OXKRGB8Qo5xJR4lwQfPRPubF0uZst1X/6d51uoHHi7VFDebhHhPkGkPJbtTFbdKYvHsj0M2RqwPHYJUsH8b1JbzTd7fUMpCLGNksffenvJwgn3/AmctBQuWxdwjMFEQ3elpbmbxGn10JwNi5qlLzpHyL0dE7FWvA2fpMsrBXOMKHHU6AqxOlDvLK9vK3lPti82iM25huatxbtdaqvRwgzkCqSlFgsMsLO8nw3UzOrllZV7bOm+J5CMd0bZ+d+vARr706VHas3vSd1yFR55UnhsM71M/BpuGq9Iokv6b1HroUzOkkeE9B9QuAc+vkL0NJyJPzmMNH/JqU9/d5agFvKwBcefpC0ogP3dLwFW1/WRhKvdww/UCWRjveEy47YBEREgAJ2SPo1q4mHIhnqJW32Tl98RTQL7sPgA3c0pPThQNWgTDq2K4fFFLwOELLh+EkdL6oYJeVn7KXqA8o/HqiDDmU/cC7zGL2AZlRRfN9GzAz7m3gX6JE5wcwL9+EtltUhb3EViiouKGnH7sxafzraMBmWb9/HpjF1G7/+Ghf7mc2GG8UnwO2W9/NClxak9b76aGhNXbIGM=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR04MB11799.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(23010399003)(366016)(19092799006)(376014)(7416014)(18002099003)(22082099003)(10067099003)(11063799006)(4143699003)(56012099006);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR04MB11799.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(7416014)(376014)(1800799024)(366016)(23010399003)(4143699003)(11063799006)(56012099006)(10067099003)(18002099003)(22082099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?UAPVGsKJEh/7r6Rz0Fy5A+4KVuTk+pSeVsgIHWfKMnrX40QjZvHS//a8k8zu?=
- =?us-ascii?Q?ebldOy+G5aimxphhgQvoNaKcxVgYJv4Aoxavb/nb5GPzZmOfNSOLWOrwUJEx?=
- =?us-ascii?Q?0MxlfEaE38YK8o0ob4woic8ZArIroKVQo5u8m2SO4b3CraluNLURBpN52rmj?=
- =?us-ascii?Q?BTdnI0JfoiVV65JBlbh4Tjpw+r9b83Gq5WR/BgT2S5jRslkwR5uLnPgaVEx8?=
- =?us-ascii?Q?RrZ7FOopWBvxr5nGnxBoCQScStBFr9C8+Y5N8W8hqLchtQ2tJCEgnA4gJOUn?=
- =?us-ascii?Q?vEEz4EMTxrinIvp5SAnzJMuMpDoT3xKPalvvKgMEPwNEC5b6c8O2PuR2dkwa?=
- =?us-ascii?Q?O0o1CznHQngr4e+nNAh66VLmYP8cpu2K8CMc1/JJa3Pagg6+VnkmdmMfvBoL?=
- =?us-ascii?Q?2UODtKwm+R5Ad1IrKkchj0m0lU+V55EYrwfD6xFl0017BcRWGDfmVJxtwusq?=
- =?us-ascii?Q?8PY8iOgjcCz/+nOAwUPbDG0d2Xt1eIepA76jA6XYnmPvBxAgPuIDKrH/ZxoY?=
- =?us-ascii?Q?IJkOE78g3L70TbEm4ZQk5OwAjLwlzlTSucFUZuz1F5rvKWr5YEsUc9+GuTGK?=
- =?us-ascii?Q?hvoSAz2rZ3Hr4b6K1+T9qlTtlPyjGsct+zL3khjPnOWSXZNp+ctFof3LTsXI?=
- =?us-ascii?Q?z95IwsFmLDXckZiyG54aoag6/sK7YmrhfjxbfZQGi3QBirX9m6zUMFjs02WH?=
- =?us-ascii?Q?BJ//vZLSphnwPPtofUu039dfJbtT074RzdOReRJi9xM8lMynViaJQTpfW4wr?=
- =?us-ascii?Q?w7HD7jGXAdHHkp53XJnTUw/3FliH7Q/zAVfhjztCG0mZhxNxWDPKpefplQ98?=
- =?us-ascii?Q?ZygqUX6VyLDd+/REOV31fQBf45QaErwfGAeiOgIMebDOvTsPn1xB1wDWqhQl?=
- =?us-ascii?Q?D6EROCkeeFgVmn9UVVdyb0ht7zfKd/lR/Hp4bu3b3E4+1cvPR7BLbya6NOtG?=
- =?us-ascii?Q?NXqrf/Rpwpds+OY+dkOlFSKECcXqDTmpz0Ner/KKcfoZ+N3Ar6XmrNERHg7q?=
- =?us-ascii?Q?n52mmnSo4sEjkJns82MzbdGC9O/Oja93BjZvQrNgSBkKWQIi0C2UuPFw0fKy?=
- =?us-ascii?Q?y+7enasDWFMD8LKwDIY2+lRndVSiLFKvc/lCsGkbLOCECcupMr+enw16ipkD?=
- =?us-ascii?Q?d3WrvP8Upr5Qs2PvJMFPWzeRR30FZlP9Ob9holIpr+xBcZOilHoso68czK5o?=
- =?us-ascii?Q?r1QtQGAMTUqITGeRaE7RlAb70UWWeXXtGA8u7fislpij6SpUaKmO1GPLzcYV?=
- =?us-ascii?Q?Jc6+NF20bc3jjaOoFYbpFvsHLfdmJ4L864INrM4zjw1Yjtst0yHJclugymY0?=
- =?us-ascii?Q?L/L2Qv38aQWw7B3Ts/zlEbCtay0SM2vgle5BWcabPxoZPPEoULwGOYG8LaY6?=
- =?us-ascii?Q?zwtHjVsN+1v34yKUDRKkFULKACDw0wGsRmLohxyQTMP6sXELR2ydFgXZMVAc?=
- =?us-ascii?Q?RsNkDKzsnwEEO3M4aGcaknfFfP+PF2gufgCwF8AhY1YvuSe7mxDcmAsPD476?=
- =?us-ascii?Q?gyEnia8UKiJyFFAzxakNOUzns5cezMJfC1+zhK20BQg36VKm69C//VGiZt8H?=
- =?us-ascii?Q?Fkwx3Mu2p86Wj3jrCkdkNna2Ixc5GWeJrOuajrl3t0f5djKeQbFFMs9AF0Ss?=
- =?us-ascii?Q?PR5vpYegxSUHyiSJknN2nA6EHO2y0AaBsEi/NHgV9ptgVtMvfAtx0lrI6v+0?=
- =?us-ascii?Q?P5sJxPwk5m6zxCctxHxlvYLs7yjfe07xtMVSorbCKitTXs8UMQspj/bjmpXg?=
- =?us-ascii?Q?tNryzj0W70cl3AerII3E9Aj9/1u52uIFmKmusEV3fr6FxxfOBDxe?=
+	=?us-ascii?Q?B4Z01PYrcR5Q99tuSy7lQnim8RFg7MVnLMbcjQXb4UT52fXXwBjiRWBLrQbq?=
+ =?us-ascii?Q?+4qOoLQhSIuUfBV6uz6pNI890zymA1SsNLelMR3PLkGYwD45NZUl4w9SF6Rb?=
+ =?us-ascii?Q?cBgBYL1OwTVXbul1y5ZAVT/1HQH/F9h8urf6neHCBRRmgK0UyEG22qDXzCEI?=
+ =?us-ascii?Q?6VgxpO8grbbvxt8LFreZGSZii0fO/O/d1nmjEX0/cz3qNBNKUF4urdYvqTEO?=
+ =?us-ascii?Q?IAD2pWQkVVZzE3XkD6zMqAeWfHXsCkwhgnwPswOJhB2luCtuM858to51Lb5J?=
+ =?us-ascii?Q?5iiQVHt1shH7Sh/ebU+xDs439iqY/Vqz5QwPIr6cn3CT9nqJJAtaSdwfndix?=
+ =?us-ascii?Q?2OrZI6tl2buivwDud6FYGzrfC6CplbmzI+PY1w++yJammhAPOU4O0Ui2Ah5A?=
+ =?us-ascii?Q?riarQJSQG2w9fLb/WdYzRk06Pihni/YDmz/7Z5HXI0KRuFNhGK6kKx2n1j/i?=
+ =?us-ascii?Q?wM4SM1NiW6a39JkbVWxuSC40ZgGcR05Q2TIdNA/w7UGoyiaJvetVY7yIKKMk?=
+ =?us-ascii?Q?6644CFT4mz1O19GZ+4UaB2cTOmizz1jTzfQWsAvacVdQv2MM45az/ENghZl+?=
+ =?us-ascii?Q?K6EzyyQmRWPb/r6VQAUNbRmT3WQra3/G0iKaVprr28LlTu/S0Q6oRNY3oNIo?=
+ =?us-ascii?Q?c7WsSX9eIUFAu+9Mii6+aA6NLlHi0dBLMeFPfHLMZiDn/foR8sJ6rUm6ETSm?=
+ =?us-ascii?Q?bALvrFoppGdD+En6UGIJGefV1+da4LS1H4LWgTgecQQSclJt6gH3j/YIYeQR?=
+ =?us-ascii?Q?5DVEPeelz36nbRvlPpSmle6s9MmJcex5qy7sb906CqE47agT7JX50LfLVagx?=
+ =?us-ascii?Q?x81KkeH3ZznBNGWIEXOtzkwpOTDmI7qk9x3+aTWlDt6IrHOEJPCaoUYqjEzE?=
+ =?us-ascii?Q?gRrKIfsnT241jUaSZr1UvReaLL0FSAhkyxHJYzLFjLU1VoVf8mXjkzpnukhY?=
+ =?us-ascii?Q?VyTwkxAYQIEfDshDglViNRhozChpyZvNkN9DyR4yAaPMfz1RedCrZoYpgdrE?=
+ =?us-ascii?Q?h/swjUxnw1rK8WIYZNtbVidBSDyXBY7MhG/L6UiLVr/EUAasH3cIw8smc/Zw?=
+ =?us-ascii?Q?8viFS2xEsuyVZ+uNvjdVRj6nZr29I/Mbscy+aYMIAvUOrzfNbIhvr+eAkwXR?=
+ =?us-ascii?Q?Qv2I0tMU081twcaCMgEzJ+Tz4NvIxOCyc7uZGX7RL29J8c8ihwqe5RhaZlB0?=
+ =?us-ascii?Q?ZofIdZR8KdqRvRwh86bqIRY9FX1+rYPiC5T4HjvpfCM3/ds6VNWAN3ZdL9s5?=
+ =?us-ascii?Q?dQABJEEPwNl2yMlGYuRBgRsr95t4zPOOKQUvuWYU9fAyMkWQNkNOWJRw+ipc?=
+ =?us-ascii?Q?zJPUDHgcNwionc3diKxUU7i8ArwdV2x3PqthGUUdyQ2ylecTgOAZrYauUCfH?=
+ =?us-ascii?Q?98vpYQqL/NikXbaBLMlwhP79MQTNkeX6917RnxTALIW6Tmq+qiwx5AOFVMrZ?=
+ =?us-ascii?Q?V3Y1BhxQ/0HuDkeLYwlCphmhzBCOLb1uDGF0jn1AYajHU8MoaLXxUTirLlq6?=
+ =?us-ascii?Q?khxEhiDsKC9gyuYtP7l9k4T5bMrJ4wL295y0fCrreM7cZa15Jq0yU0uqWTDY?=
+ =?us-ascii?Q?aZex/30DPyQxgk8F41Fdf6uw6FyBc913IdcRaIZy3u+GMllfELjWoxrWQLHV?=
+ =?us-ascii?Q?xrX7rVRITAjvFU4ZpM3yt4iXhuoDAnTeFIumtvzP8xH1ORKmV+A6nw3VaqhU?=
+ =?us-ascii?Q?trjPqHoF3DxMtL9uhn0RjMMOfQkgGGEy+AJsr0idvSnOhaaVcXJjgrkLRUsj?=
+ =?us-ascii?Q?kXTwtp1ndVgEf3XdNLfzbdsDbIZRyIzc1fXyQwcXJzTELomrQ8OM?=
 X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 083a9423-951f-44e0-2c1d-08df10472cc5
+X-MS-Exchange-CrossTenant-Network-Message-Id: 984bdb43-be3e-4649-1827-08df1048fee9
 X-MS-Exchange-CrossTenant-AuthSource: GV2PR04MB11799.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2026 20:56:39.1595
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2026 21:09:41.2335
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gr8yV+jjF5ScTAbC6fplsEgULBiQ6d9wYncIOtV+AkhDGkhd/YWWoy1GSeWGYzOSmw/73kf4tk7YXJTcJM4O9f57gPnmaReYqu1VY+KBsjiAuNdWKvNzXyO4YT5nx3Dy
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI2PR04MB10884
+X-MS-Exchange-CrossTenant-UserPrincipalName: gVO2nVGwhqMUqZlndwF5QUt5Tuou9Rv2neVOIRtdKVcTn9M3HslCVNSOnqEyZ2RoBTFQLcGL//W2w8wf6MdNL+6avG4iRnqIE4e+nXK2I+1y43iyTdoFSp3Oet8ukpd5
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB7617
 
-On Sun, Sep 06, 2026 at 12:52:02PM +0100, Bryan O'Donoghue wrote:
-
-suggested subject:
-
-phy: core: use phy_provider_mutex protect between _of_phy_get and try_module_get()
-
-> Sashiko asked during a patch review if the existing usage pattern had a
-> race condition; specifically in of_phy_get() if it was possible between
-> returning from _of_phy_get() and running try_module_get() that a module
-> might be unbound leading to use-after-free.
+On Sun, Sep 06, 2026 at 12:52:04PM +0100, Bryan O'Donoghue wrote:
+> Add a devm variant of phy_get_by_of_node() to allow for the familiar
+> pattern of having devres automatically release resources on the driver's
+> exit path.
 >
-> Looking at the code this appears to be so, there is no linkage between the
-> phy and module under a synchronisation primitive.
->
-> Using the phy_provider_mutex in phy_get() will ensure there is a link between
-> the returned phy pointer and the module_get() bumping the module reference
-> count.
->
-> Amend phy_get(), of_phy_get() and devm_of_phy_get_by_index() to fix the
-> same usage pattern.
->
-> phy_provider_unregister() must take the phy_provider_mutex so amending
-> phy_get()/of_phy_get() to take that same mutex guarantees there is no
-> use-after-free.
->
-> Fixes: ff764963479a1 ("drivers: phy: add generic PHY framework")
-> Cc: stable@vger.kernel.org
-> Reviewed-by: Loic Poulain <loic.poulain@oss.qualcomm.com>
 > Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 > ---
-...
+>  drivers/phy/phy-core.c  | 34 ++++++++++++++++++++++++++++++++++
+>  include/linux/phy/phy.h |  7 +++++++
+>  2 files changed, 41 insertions(+)
 >
-> @@ -678,15 +677,21 @@ struct phy *of_phy_get(struct device_node *np, const char *con_id)
->  	if (con_id)
->  		index = of_property_match_string(np, "phy-names", con_id);
+> diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
+> index 490a7cde6d40a..2e3581ecb42ee 100644
+> --- a/drivers/phy/phy-core.c
+> +++ b/drivers/phy/phy-core.c
+> @@ -1050,6 +1050,40 @@ struct phy *phy_get_by_of_node(struct device_node *np)
+>  }
+>  EXPORT_SYMBOL_GPL(phy_get_by_of_node);
 >
-> +	mutex_lock(&phy_provider_mutex);
+> +/**
+> + * devm_phy_get_by_of_node() - devm managed lookup and obtain phy reference by device node
+> + * @dev: device requesting the PHY
+> + * @np: device_node of the PHY provider
+> + *
+> + * Returns phy associated with the device_node or ERR_PTR. devres manages
+> + * releasing resources.
+> + */
+> +struct phy *devm_phy_get_by_of_node(struct device *dev, struct device_node *np)
+> +{
+> +	struct phy **ptr, *phy;
+> +	struct device_link *link;
 > +
->  	phy = _of_phy_get(np, index);
->  	if (IS_ERR(phy))
-> -		return phy;
-> +		goto out_unlock;
->
-> -	if (!try_module_get(phy->ops->owner))
-> -		return ERR_PTR(-EPROBE_DEFER);
-> +	if (!try_module_get(phy->ops->owner)) {
-> +		phy = ERR_PTR(-EPROBE_DEFER);
-> +		goto out_unlock;
-> +	}
+> +	ptr = devres_alloc(devm_phy_release, sizeof(*ptr), GFP_KERNEL);
+> +	if (!ptr)
+> +		return ERR_PTR(-ENOMEM);
 
-why no use auto cleanup guard() for mutex lock?
+Relate patches use devm_add_action_or_reset() instead manaully alloc
+devres_alloc().
+
+> +
+> +	phy = phy_get_by_of_node(np);
+> +	if (IS_ERR(phy)) {
+> +		devres_free(ptr);
+> +		return phy;
+> +	}
+> +
+> +	*ptr = phy;
+> +	devres_add(dev, ptr);
+> +	link = device_link_add(dev, &phy->dev, DL_FLAG_STATELESS);
+> +	if (!link)
+> +		dev_dbg(dev, "failed to create device link to %s\n",
+> +			dev_name(phy->dev.parent));
+
+Is it okay to print dbg message()? suppose return NULL or some error?
 
 Frank
 
->
->  	get_device(&phy->dev);
->
-> +out_unlock:
-> +	mutex_unlock(&phy_provider_mutex);
->  	return phy;
+> +
+> +	return phy;
+> +}
+> +EXPORT_SYMBOL_GPL(devm_phy_get_by_of_node);
+> +
+>  /**
+>   * phy_create() - create a new phy
+>   * @dev: device that is creating the new phy
+> diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
+> index 71c2e16397130..14b924a88411f 100644
+> --- a/include/linux/phy/phy.h
+> +++ b/include/linux/phy/phy.h
+> @@ -285,6 +285,7 @@ struct phy *devm_of_phy_optional_get(struct device *dev, struct device_node *np,
+>  struct phy *devm_of_phy_get_by_index(struct device *dev, struct device_node *np,
+>  				     int index);
+>  struct phy *phy_get_by_of_node(struct device_node *np);
+> +struct phy *devm_phy_get_by_of_node(struct device *dev, struct device_node *np);
+>  void of_phy_put(struct phy *phy);
+>  void phy_put(struct device *dev, struct phy *phy);
+>  void devm_phy_put(struct device *dev, struct phy *phy);
+> @@ -499,6 +500,12 @@ static inline struct phy *phy_get_by_of_node(struct device_node *np)
+>  	return ERR_PTR(-ENOSYS);
 >  }
->  EXPORT_SYMBOL_GPL(of_phy_get);
-> @@ -786,6 +791,7 @@ struct phy *phy_get(struct device *dev, const char *string)
->  	struct phy *phy;
->  	struct device_link *link;
 >
-> +	mutex_lock(&phy_provider_mutex);
->  	if (dev->of_node) {
->  		if (string)
->  			index = of_property_match_string(dev->of_node, "phy-names",
-> @@ -796,15 +802,18 @@ struct phy *phy_get(struct device *dev, const char *string)
->  	} else {
->  		if (string == NULL) {
->  			dev_WARN(dev, "missing string\n");
-> -			return ERR_PTR(-EINVAL);
-> +			phy = ERR_PTR(-EINVAL);
-> +			goto out_unlock;
->  		}
->  		phy = phy_find(dev, string);
->  	}
->  	if (IS_ERR(phy))
-> -		return phy;
-> +		goto out_unlock;
->
-> -	if (!try_module_get(phy->ops->owner))
-> -		return ERR_PTR(-EPROBE_DEFER);
-> +	if (!try_module_get(phy->ops->owner)) {
-> +		phy = ERR_PTR(-EPROBE_DEFER);
-> +		goto out_unlock;
-> +	}
->
->  	get_device(&phy->dev);
->
-> @@ -813,6 +822,8 @@ struct phy *phy_get(struct device *dev, const char *string)
->  		dev_dbg(dev, "failed to create device link to %s\n",
->  			dev_name(phy->dev.parent));
->
-> +out_unlock:
-> +	mutex_unlock(&phy_provider_mutex);
->  	return phy;
+> +static inline struct phy *devm_phy_get_by_of_node(struct device *dev,
+> +						  struct device_node *np)
+> +{
+> +	return ERR_PTR(-ENOSYS);
+> +}
+> +
+>  static inline void of_phy_put(struct phy *phy)
+>  {
 >  }
->  EXPORT_SYMBOL_GPL(phy_get);
-> @@ -961,15 +972,17 @@ struct phy *devm_of_phy_get_by_index(struct device *dev, struct device_node *np,
->  	if (!ptr)
->  		return ERR_PTR(-ENOMEM);
->
-> +	mutex_lock(&phy_provider_mutex);
->  	phy = _of_phy_get(np, index);
->  	if (IS_ERR(phy)) {
->  		devres_free(ptr);
-> -		return phy;
-> +		goto out_unlock;
->  	}
->
->  	if (!try_module_get(phy->ops->owner)) {
->  		devres_free(ptr);
-> -		return ERR_PTR(-EPROBE_DEFER);
-> +		phy = ERR_PTR(-EPROBE_DEFER);
-> +		goto out_unlock;
->  	}
->
->  	get_device(&phy->dev);
-> @@ -982,6 +995,8 @@ struct phy *devm_of_phy_get_by_index(struct device *dev, struct device_node *np,
->  		dev_dbg(dev, "failed to create device link to %s\n",
->  			dev_name(phy->dev.parent));
->
-> +out_unlock:
-> +	mutex_unlock(&phy_provider_mutex);
->  	return phy;
->  }
->  EXPORT_SYMBOL_GPL(devm_of_phy_get_by_index);
 >
 > --
 > 2.55.0
