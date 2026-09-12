@@ -1,125 +1,146 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96A344BEE3C
-	for <linux-clk@vger.kernel.org>; Sat, 12 Sep 2026 00:30:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7216425DB0D
+	for <linux-clk@vger.kernel.org>; Sat, 12 Sep 2026 00:34:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789173053; cv=none; b=YZnXrsMVLbPVhtT0mvrmRTd9C7834Tr4xlFB/F3Kf2r9UX4tpDP9R0lRN2czaxappdeM0bLgtAO+9n55TZAXBH0L/5MC+FYdwv+B34kx7+SiSVfhhfhBu4Itul5qPM8PjwSbaQa5zLJ3KRa+COk5NqFhXYpjbfr4v9OK3jd3nn0=
+	t=1789173260; cv=none; b=dubhS4JdhmijlwWgPu8oga5bRsR8r6NfRQNU3kkXB5TP/BqRtTzMyQdldd5a41CE6eGlCR3zRYYU1BKZTcmbQHVoy2Se88UH6VzpVfX5mLb/bCW0EAZX+fzrH9XGUgKQvGy2tZUJxUykzBjmakvXTjMV9TqHH7bfMv1mMvh/g/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789173053; c=relaxed/simple;
-	bh=vKZbfu339lBD3I+7owcC+zyR9DvZk2xDRM1VnbxoUD8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=m87WeWsRTkKjZ5eJQTYB6GDHnT9+7umFCTOdKgmFyhhtzBrFxuldC/LEmwWl8ML2o92iFN2PfMKt61dbl2nknQuviOQO2nfOzJNe15eig+jkofWw8wfFrKAvjzbOIbM8ZbK+ULN1jNwrgkxmbtlSLn7aXltHb3iGF/SxjrMSMrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QOdifYIa; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=i4o65T/R; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1789173260; c=relaxed/simple;
+	bh=zNSpQcnUk5X/pWgYkaTaH/fVSQtpiHrYBpAR6SvM4lo=;
+	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=p8ySLvPymXfwNgFTIFvKmxIQrYjT3l1DDv0hBeQ5ObLU0puk2E24K7Wuz3JuzalfExJrZcIG2YMUEO3whOwvL1rISwsGzNyESZKWX1cyusyVYDTWhNqEZIdFXnDNl9UOWf0U1lcKD71DjlVFYos6Jvv9x+8+XFDLcuVhj83dDJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VbjwPt69; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QOdifYIa";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="i4o65T/R"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1789173050;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1vMBB68k8eOZX9nX6OWvjbHaAOl4ORk95pI/5ECFBVo=;
-	b=QOdifYIa1Og9dht/Z0MIuMrCJVgtIaEG+HkT2sDWMNB0148iZEipIuMlpptyZ+dzL6At7/
-	DeiYtMjZxzHC9hbHYRzy9gII/y5mcKCFK7ISUoeInAnWvfdcdn01LRTai69RZb60XZqslI
-	e/QpO4cQTyO7mrXOgtzNkz6H6GSd0kc=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-7-i5OeeelrOi-BsjZmH7reoQ-1; Fri, 11 Sep 2026 20:30:49 -0400
-X-MC-Unique: i5OeeelrOi-BsjZmH7reoQ-1
-X-Mimecast-MFC-AGG-ID: i5OeeelrOi-BsjZmH7reoQ_1789173048
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-9104eedb5b0so25845036d6.0
-        for <linux-clk@vger.kernel.org>; Fri, 11 Sep 2026 17:30:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1789173048; x=1789777848; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:date:message-id
-         :subject:references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=1vMBB68k8eOZX9nX6OWvjbHaAOl4ORk95pI/5ECFBVo=;
-        b=i4o65T/RtU5DP+tcswUc3L6f4//7r+U7/+Zo0F3ddDYvbmG8JFCqst08Bs05uBZWGV
-         ucb3acHiRMX2RyMhe+SHy9Ei7FWFoJfGGKHzIgEV3odtf42u+ZO5sKgeiZYQ2SnvPD4s
-         teCXPbS9XV0+O+53jcONbwENXbS49RQyvs9YvQ1gTOrBFIjju2qZYA93ZHIEbJOTPcNk
-         ZUkKCoyxrFtzU8XAQYFP0Q/DCuGymsYX4FuKHSNbQZ8OBAGjJVnMwhjf+J3DdsPd7U7z
-         DWpaj60sGOuHy9WCk9tOSIIMXnZLfh7zo/UjgJt1/mlusQUBTriIB08jamOHZ7Nk7qgS
-         O28w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1789173048; x=1789777848;
-        h=content-transfer-encoding:content-type:mime-version:date:message-id
-         :subject:references:in-reply-to:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=1vMBB68k8eOZX9nX6OWvjbHaAOl4ORk95pI/5ECFBVo=;
-        b=SaKvLSLnPk1swj2/bkigQXkd+Qa/0HucC/iiVlaS62J54oWn0e8TK9jFkm11/sOC3V
-         PE7VMaodMviEFLE+3SF4qeAK921lvlp4qA0RGK3ljp/8Bveko50A2kQt6pOm9qlGZEvd
-         L1LgqeQMqgNq1zzyfHw9KWOjLwrPu1ITvo4Cs++d5WDXj1tXpFFvUdziTnJXovKNNdUl
-         UpZ/4Y+ucMFvMhiRjAiVeMMR1/npxwS1CVAXQN/us9w1vGtqS9s6mrSsib1fWWup/zTW
-         6L9u6meoGUh30wkRwzWlMU/4n5Wuej7KsgjSFGHbJUgd3qfYxe0np2VHBWrzufdMtSOM
-         eVhA==
-X-Forwarded-Encrypted: i=1; AKwUvBwcaKyyDuK2/iSIOYPm11A7GUPw3+jLXLFg9O285mh/NY2UmlV4LKIa0/6taUx1ohJr8jnpdbyTyVc=@vger.kernel.org
-X-Gm-Message-State: AFuF++kOlPs6MjepbfwjN/HXvta39hbMvSJk0jiGtTgO0EINRQ0wL+o4
-	+J+GzWty0mHnyv96YNC/cOwlcYD/b2Rm5iDmKYwobjKOxEwEA1sSk0Pc1/v9vcqkt81Bm3Dxh63
-	3fIhcEWrI4AwMv90sEaY6hib5hQM9shb23Nu3ZS20g/QG3VLK0ebyV2pNQO5Isw==
-X-Gm-Gg: AYBFou0rLCkYgx0B3D9wkuu9ABIZtW8A23sSHKUnvas8ITlhhhdAhmnW0GKnHVJIWCE
-	A1/MLNHKGiPdZxiQqLkQv2GhKlwPuY88Li1VlY4lh1s1qjESxA3Isww/brFj8e6CPM2HHfOStOg
-	pxbQlxuhZK+K7pdk9aO5e7Ytv9s66pqDH3SvrUMWdPPHotW+tUHac03+thoB+NFT0rK8t4KXaN+
-	WsuIonSoD55WBdyj+foOIDQ1XhVYusk7K3oPng1kwtgRAnJdBefZ4Al+11jt13t+2jJkjcF5fdi
-	wvQooZzgfb+yPHgxfU28oPJQGHks+AqRUS/H0bTzWCC0sscF26hlU7Ps5XnxB+lwTWqBfHCeCKq
-	2tl9/1+6HFwqAppcPyxPVTC5fRd9LTGGkt+tJruta
-X-Received: by 2002:a05:6214:f6e:b0:910:3fe4:e767 with SMTP id 6a1803df08f44-912120e27fcmr90307666d6.25.1789173048405;
-        Fri, 11 Sep 2026 17:30:48 -0700 (PDT)
-X-Received: by 2002:a05:6214:f6e:b0:910:3fe4:e767 with SMTP id 6a1803df08f44-912120e27fcmr90307096d6.25.1789173047878;
-        Fri, 11 Sep 2026 17:30:47 -0700 (PDT)
-Received: from [192.168.1.15] (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-9120f4d51f4sm32995096d6.46.2026.09.11.17.30.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Sep 2026 17:30:46 -0700 (PDT)
-From: Brian Masney <bmasney@redhat.com>
-To: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- Stephen Boyd <sboyd@kernel.org>, Pengpeng Hou <hppiscas@163.com>
-Cc: Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, Andi Shyti <andi@etezian.org>, 
- Krzysztof Kozlowski <krzk@kernel.org>, linux-samsung-soc@vger.kernel.org, 
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20260906033651.84082-1-hppiscas@163.com>
-References: <20260906033651.84082-1-hppiscas@163.com>
-Subject: Re: [PATCH] clk: s2mps11: Propagate OF provider registration
- failures
-Message-Id: <178917297065.837981.2231676629415391817.b4-ty@b4>
-Date: Fri, 11 Sep 2026 20:29:30 -0400
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VbjwPt69"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF42F1F000FF;
+	Sat, 12 Sep 2026 00:34:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789173259;
+	bh=+GzAtPrvQ/p6dkmTCglvpuyYxFFrTfJ+iXqJrAC+eew=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=VbjwPt69em/FJ+Fx0UMoR/58sPBolEXRPPEL0kKFpPYUBoaggercdVz5mmN8+G1CV
+	 ZyFf0Xl7NH25O1UX+J/C9EhEmxw0BuAr1DepKqtOpNI7QjMsTE/xYF79gcV6/TGbez
+	 wRAhdoAzJ07Z2KPZC9zLcCkZIMM8wD/oXDth3IaBaZxUZr0wJHsdUZ/ApqRoUg2cRB
+	 1GDoVSqPesukX+nOc44veNIZEoCx2orJnOjgkYcN3pILn/2iswN6XGdczPGZW+zNe0
+	 ZNxOcEl/dNiwwsDjBHrMDPL8s7XDAQW8jA6+gtE7SwwGB/hPmMXUQBvAVWdoB71Pm0
+	 kulOdBNkB8u4g==
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH RESEND] clk: nuvoton: ma35d1-divider: simplify
+ allocation
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Rosen Penev" <rosenp@gmail.com>
+Cc: linux-clk@vger.kernel.org
+In-Reply-To: <20260912002326.237419-1-rosenp@gmail.com>
+References: <20260912002326.237419-1-rosenp@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Sat, 12 Sep 2026 00:34:18 +0000
+Message-Id: <20260912003418.CF42F1F000FF@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=318; i=bmasney@redhat.com;
- s=20250903; h=from:subject:message-id;
- bh=cvd5XU2Bw/KJUcvrIFJB31t8tTRfednBzdTJ7JCC5hs=;
- b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLKWzDURVt1mW3yjumDLygmbfldOmyzUbt85xyBSICGmz
- Gfd6R9XO0pZGMS4GGTFFFmW5BoVRKSusr13R5MFZg4rE8gQBi5OAZgIyzpGhmlPCyZOv9PVaLG0
- m6mmMfbPI/Fbxl/+l7UsP7bp447U3OMM/3O3zl15LoHNoMDB1Z5rfl4oU+nUSwz2QpOtSzgMkq9
- 78wAA
-X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
- fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
+Thank you for your contribution! Sashiko AI review found 2 potential issue(=
+s) to consider:
 
-On Sun, 06 Sep 2026 11:36:04 +0800, Pengpeng Hou wrote:
-> clk: s2mps11: Propagate OF provider registration failures
+Pre-existing issues:
+- [High] Out-of-bounds bitwise shift due to evaluating BIT(mask_bit) with m=
+ask_bit =3D 0x1ffff.
+- [High] Massive 1MB contiguous memory allocation and O(N) linear search fo=
+r a simple linear clock divider.
+--
 
-Applied, thanks!
+commit c433ecbdd759eecab477bbeefb42c04e4a53b527
+Author: Rosen Penev <rosenp@gmail.com>
 
-[1/1] clk: s2mps11: Propagate OF provider registration failures
-      commit: 276741aac3b56ba50bef59715ba18ba3f0b953a2
+clk: nuvoton: ma35d1-divider: simplify allocation
 
-Best regards,
--- 
-Brian Masney <bmasney@redhat.com>
+This commit simplifies the allocation in the ma35d1-divider driver by repla=
+cing
+a separate kcalloc for the clock divider table with a flexible array member.
 
+> diff --git a/drivers/clk/nuvoton/clk-ma35d1-divider.c b/drivers/clk/nuvot=
+on/clk-ma35d1-divider.c
+> index e992e7c303419..6eaca5b35dd8c 100644
+> --- a/drivers/clk/nuvoton/clk-ma35d1-divider.c
+> +++ b/drivers/clk/nuvoton/clk-ma35d1-divider.c
+[ ... ]
+> @@ -83,30 +83,25 @@ struct clk_hw *ma35d1_reg_adc_clkdiv(struct device *d=
+ev, const char *name,
+[ ... ]
+>  	max_div =3D clk_div_mask(width) + 1;
+>  	min_div =3D 1;
+> =20
+> -	table =3D devm_kcalloc(dev, max_div + 1, sizeof(*table), GFP_KERNEL);
+> -	if (!table)
+> +	div =3D devm_kzalloc(dev, struct_size(div, table, max_div + 1), GFP_KER=
+NEL);
+
+[Severity: High]
+This isn't a bug introduced by this patch, but does this allocation request=
+ an
+excessively large amount of contiguous memory?
+
+In ma35d1_clocks_probe() from drivers/clk/nuvoton/clk-ma35d1.c, this functi=
+on
+is called with width set to 17:
+
+    hws[ADC_DIV] =3D ma35d1_reg_adc_clkdiv(dev, "adc_div", hws[PCLK0],
+                                         &ma35d1_lock, 0,
+                                         clk_base + REG_CLK_CLKDIV4,
+                                         4, 17, 0x1ffff);
+
+With width =3D 17, max_div becomes 131,072. The struct_size() calculation
+requests an array of 131,073 struct clk_div_table elements. At 8 bytes per
+element, this results in an order-8 allocation of slightly over 1MB.
+
+Contiguous allocations of this size using devm_kzalloc() with GFP_KERNEL
+are highly vulnerable to fragmentation and can frequently fail on long-runn=
+ing
+systems.
+
+Additionally, passing this massive table to generic clock helpers like
+divider_recalc_rate() and divider_determine_rate() causes an O(N) linear
+search over all 131,073 entries on every rate query. Could this be optimized
+to avoid generating the entire table in memory?
+
+> +	if (!div)
+>  		return ERR_PTR(-ENOMEM);
+> =20
+[ ... ]
+> @@ -122,7 +117,6 @@ struct clk_hw *ma35d1_reg_adc_clkdiv(struct device *d=
+ev, const char *name,
+>  	div->mask =3D mask_bit ? BIT(mask_bit) : 0;
+
+[Severity: High]
+This is a pre-existing issue, but does evaluating BIT(mask_bit) here cause
+an out-of-bounds shift?
+
+When ma35d1_clocks_probe() calls ma35d1_reg_adc_clkdiv(), it passes 0x1ffff
+(131071) as the mask_bit parameter. Evaluating BIT(131071) triggers undefin=
+ed
+behavior in C.=20
+
+On architectures like ARM64, this modulo-shifts into 1UL << 63, which trunc=
+ates
+to 0 when stored in the u32 mask, or 1UL << 31 on 32-bit systems.
+
+Since this is used to populate the hardware register mask in
+ma35d1_clkdiv_set_rate(), does this result in a corrupted clock configurati=
+on
+mask?
+
+>  	div->lock =3D lock;
+>  	div->hw.init =3D &init;
+> -	div->table =3D table;
+> =20
+>  	hw =3D &div->hw;
+>  	ret =3D devm_clk_hw_register(dev, hw);
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260912002326.2374=
+19-1-rosenp@gmail.com?part=3D1
