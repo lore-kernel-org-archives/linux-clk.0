@@ -1,139 +1,169 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej2-f12.google.com (mail-ej2-f12.google.com [74.125.228.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B7E917BB21
-	for <linux-clk@vger.kernel.org>; Sat, 12 Sep 2026 00:08:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789171713; cv=none; b=DHkJujd00QUbGgx8J0Pc1xYYh4LwM/sTZ1eeEEdDZb2J/lIcI/XaN5KHHBXmBQyoS75gv2IM+Jz6Pk4fLoO0sJeGdDcofhRKT2EgBy0SgxUAMtxHxxsF4jslBH7zOZ3outvDxRuNPcdp08AIsO72BJKt2jOT58PUPDHCz/XRMsM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789171713; c=relaxed/simple;
-	bh=qg2xXIZS9q8+FQ9NaVnqQx5QGT07BCa7Wy5M4wefSiM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zrj3+TjmqDz+JLRtuM1zamnxK7Jfe9LSuPoVonJv2fezER7B9XNT6k+s05t0LNvdTdwaAmXmCrgP+yyDPJo0KQWxJdYy+d8tFvw1JxbuRaSe0eY+ZeqXMIcMPjsJDjfCud4bkXRqw7OD84CuxDzVJfnUdvsjGHzdyHrGaxrS4vA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g8QQoOva; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=Viu3DDxX; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A176DCA6F
+	for <linux-clk@vger.kernel.org>; Sat, 12 Sep 2026 00:18:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.228.140
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1789172314; cv=pass; b=Rp6X5QMhwqfyevyZiGmHMnMhxZUKKPrhTrax3wy9lYdu3tfWs8f/BSy4sHPoHjsnW/A3B6w1B90E7pHCGZWLvI302EK7nIZ3aUEYNANgoACg2zx4+WTKO7asMKEMlM6Ns5rAPnAY6VSo5IMTXa4MUlWABDe/UExOiYDKd/bXAqs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1789172314; c=relaxed/simple;
+	bh=FKzkqU4YemmerA1tbvFMUJ1w1CS/IWoGJw9B7s8wdCY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kFtADmAj83DjHOcHK8BWMkuIoQJ/Ya3fUeJytaQrM/4abPRKeQ5ZcreU9lRECRvDlgvTveV9TtDaYJrkneASxtroy+Dck83YSkfkZfsYJfboOVzq9jyq08VefhbQVexHAH9G3Ps0nPdpfqiLlAKhB2QbrLzxQe4nIAeK/5SbFOE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hO1GsG7f; arc=pass smtp.client-ip=74.125.228.140
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g8QQoOva";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="Viu3DDxX"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1789171711;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=r+e6U5jGD86yqBXhoRz8wqGY9P2a9TSeSSbA20YZjfA=;
-	b=g8QQoOvacpz5TJpghxmtMh4vYA9oUyFX8TR1+LEfoEFYiZgM9nXw7jn3ow9X8027zWdS30
-	9jRwi4hX/yQXCS/sWJsSVO37wjhF8zPiwtsIWrWReMq8d4r2YRfsQSrp7fcg5r0g3ICKt1
-	I2by67xdUOx38q8aDGGA/aSVqjmgkO8=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-693-fDg2EDRxNu-kMB0CQw8o7w-1; Fri, 11 Sep 2026 20:08:30 -0400
-X-MC-Unique: fDg2EDRxNu-kMB0CQw8o7w-1
-X-Mimecast-MFC-AGG-ID: fDg2EDRxNu-kMB0CQw8o7w_1789171709
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-90e87478402so32760196d6.1
-        for <linux-clk@vger.kernel.org>; Fri, 11 Sep 2026 17:08:29 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hO1GsG7f"
+Received: by mail-ej2-f12.google.com with SMTP id a640c23a62f3a-c254fa4c24cso18108566b.2
+        for <linux-clk@vger.kernel.org>; Fri, 11 Sep 2026 17:18:32 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1789172311; cv=none;
+        d=google.com; s=arc-20260327;
+        b=st9xjcwFMWCsiQa+dKD9W+IYuDPJkeGAGg4JopFaRsvlMoDzafNUhnJvL+W23RAA3/
+         rhYCNqhKlbmvEuMqO0tPzNIrW6fLzqmzEi0qpRVNxrdZ4s7ujHOzUKZlBtZRYeL+kmCB
+         iJpDIIN30boDaato0VWoi6Y2FKXJhAEKi5oPzJslWi+4yKOeWrFuaMGezESXaf1Be4oj
+         wSRL7c7FjHjafSuP4x1NrGdVZXQapU2Mo731fEUE5QgctVA23pDBrPyqCNhb2IuybQDT
+         DESZSfKFODh4rcRxOU+jBn5Y+lshMoYxHueA+lJ1Syk+le7JVw8DadmOHlox0Qkpn/ng
+         Fzkw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=YaieaN1FqHtiGqiMiCwnr2vc1sRViEs9JV9afuzauDQ=;
+        fh=HXaphkOA7t2cM0oZMy7jO1DDqXHBhp+nBO0bD1r6jZE=;
+        b=r3NdABRf9rMz/oCXPmWMOYlNj2qyj8TCRapvdIgpjLHbLxvKGS+hN/z61FYEAt7rdG
+         f6/FSaJ56TWatV7zf/UYEMMsnFW0XTqYRtPmEONdg5ypl0RgI6s4ZAkeG1G82KSbFX/E
+         h7vo8oB9gZsr1iGmFmvt1HGRq3Ht1RS4GVVvq0CzAHxbAa4ocbJ1v45Wc2xXaMzElLWZ
+         HE/K7ri969fAK1N2uzMTCJdjX0kMz1JbIhc78D30ZLBaAb10zBJVTjcMzXg5Q0syN21C
+         fmdFzWwIZqlo/mqdHgOrdy9ZZcxoHnxHxG6sJr44w3ehw5BvfBZPk5ymXcPBxtDUQr76
+         bOrw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1789171709; x=1789776509; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:content-type
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=r+e6U5jGD86yqBXhoRz8wqGY9P2a9TSeSSbA20YZjfA=;
-        b=Viu3DDxXEFGseBmlMQxMTMPsPIU5fm7TqvE41+LFBzPYL/OgcGske6+LVxjTy4dAeQ
-         BQrOTnVZ5oV8qLKQkBnlBtlqng1jsY2bi/9ciT/J9Kzx/VsHOQYBvoSLtJ/qS0cvEE+X
-         cvKpWVW8rJMDRURfHcSY/XziCouHIzHN7ot4vpR1Vilh5kGbYBbonZ96ilqnFexC8W3n
-         U67O4Q9XxKQk/rGpJAHesCcFJ9WzDLsldcj39Q7MoLOBp8CpO0emtchNK3Y/T/gTTdsY
-         9uY/D6a7DebBXx0ofSvCkDEg/dhAvQlV9KI0RZq399YVtCevBgJn1SLVEJNOEXD0yc9l
-         +X9g==
+        d=gmail.com; s=20251104; t=1789172311; x=1789777111; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=YaieaN1FqHtiGqiMiCwnr2vc1sRViEs9JV9afuzauDQ=;
+        b=hO1GsG7fjV2ZeToDplrFW4r+q6Q5NsE9OBEcL4NRt5bqZpJ18skE54K3vU/daWGNwt
+         UaL6nvM8I86/IT68kZ5sbTdZbQ8NV/ABbax7Ybh9GssW8NL7nF5ev6xuUTLuWz14y0ni
+         hsMyLDnNhW+BwPRlsMJ0tEcqGMaWqsD3kgsVqeCAJR6HLD0+pVBqPcajKFvfB1q+9O8U
+         KvD3s1TocgId8AKf/yllyP/+Kbf9N77V/YaKhI2YOfb65opv/3WR0wUb5N8E34+sq/kk
+         whS3sRRgH0qAQhcHhgtwZBJf59Gpn/xZHfiu5fsLtFjTc1m8LMnyq7wh5QPMmqfFdmj3
+         mzbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1789171709; x=1789776509;
-        h=user-agent:in-reply-to:content-disposition:content-type
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+        d=1e100.net; s=20251104; t=1789172311; x=1789777111;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=r+e6U5jGD86yqBXhoRz8wqGY9P2a9TSeSSbA20YZjfA=;
-        b=Dw4ccdNr8i4xdrwpVALfTCMzVt9X1J2w6IYFel2sZ6GJ2bZK1wNMv/QUgeC4z3Krzy
-         jIShbqJ9K354axXBs8X+sTYxdL3k26WPvSPPIhtpx/5izC8Fg3uVlVNO99ah7iDxRSt1
-         nsiQMwkRrAdavRBNVDslhQH6epl5BQmGzY6uHFbI/nKtcL9lVKBuOgE40yUpzDfAwaNW
-         XkfLpZ0ueHgQlfO2xHLYNxnlsrLZ85MKHlSfX3LcioAwkq3gSESE0lP4HS1JgnUjlXjw
-         0jCPRTCHbTXmzQ0ImkGRzZTnWPTNxTftQOuduuR3d1a6AiyEzBnVd3tbhf3SyKQTWwjX
-         D9qA==
-X-Forwarded-Encrypted: i=1; AKwUvByh+G2yd2M3RYwojE9dBrLLrvFDnNR3wYq3CNYiORksASrzT0hDLEV6A6SA3eGNJTZ//r3bgbWARVM=@vger.kernel.org
-X-Gm-Message-State: AFuF++kHahDdkEH5Tw6rdGW9y30Poig324PoT/+IcGHLBomstDa/Vtia
-	bGFh6pRlhqCnQ+Ef6elII04nhC3X2FkOQtUba+1JeHggtUxrV6/W8rP57H3kCSt31XVFWNJPVJz
-	e+v5k/QOzGcxprNR0HKsCMsUu8Mg2iO3Y8QSvJyg6BkBI1N6HlHSXKL1YjTsp4Q==
-X-Gm-Gg: AYBFou3mCVpjohKOzKE6f+5WfcyT8J7ILoG+0Hvad18mg4oqPrg58yZwJk46eGyUQX9
-	S1UKkHwk8ngKj7I33h/kdSUMo3Q8LsAYM2q+RPzsyX12CIlROBQzBjUyBhcRsPhDI4715fOuS5W
-	hA8kGens+99ODvYxMb4pUscjkHlH6kSNB3tszHKnEiYmtA9X3N0HsrSWt8uXT5kpZj6OiYRXAad
-	hS+OlflXHNMsj4tkL1EMCOAZdRCLyoTzPSfA04Z4OYpGrnuZrtRMUl0+NKAa60YGX4ADbSXpQyb
-	0btt28+LjiQnNtLpK5rZDaM/yWpoV6TyMW1Uh8EsSPJXEdSECQBQHaHay98DmQLxXtIQVaXUKWQ
-	nUgGZ2Lni7mqgY7et3jzuqIEwBE83o5Nl+RA=
-X-Received: by 2002:a05:6214:2307:b0:910:722f:b8b with SMTP id 6a1803df08f44-9121da7621emr10925356d6.21.1789171709438;
-        Fri, 11 Sep 2026 17:08:29 -0700 (PDT)
-X-Received: by 2002:a05:6214:2307:b0:910:722f:b8b with SMTP id 6a1803df08f44-9121da7621emr10924946d6.21.1789171708976;
-        Fri, 11 Sep 2026 17:08:28 -0700 (PDT)
-Received: from redhat.com (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-9120f20367dsm32915306d6.6.2026.09.11.17.08.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Sep 2026 17:08:28 -0700 (PDT)
-Date: Fri, 11 Sep 2026 20:08:26 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Lucas Tanure <tanure@linux.com>
-Cc: Ulf Hansson <ulfh@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Chuan Liu <chuan.liu@amlogic.com>, Jian Hu <jian.hu@amlogic.com>,
-	Ronald Claveau <linux-kernel-dev@aliel.fr>,
-	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] clk: meson: t7: don't mark sys_ampipe_nand as
- critical
-Message-ID: <aqSX-kUvYaixESxe@redhat.com>
-References: <20260905153234.133217-1-tanure@linux.com>
- <20260905153234.133217-5-tanure@linux.com>
+        bh=YaieaN1FqHtiGqiMiCwnr2vc1sRViEs9JV9afuzauDQ=;
+        b=p7Q13S4xcVu4dpFAUZE2ScRemUM+jHE53SWzVcWvFhGegYTxJQOzgM5CFmGpvZdSd9
+         Y43UhJ7Z8CSlF9w2Z8W6CSjTakcwI5CC/q7qdmsGN/16cu+eWTCD5ddkyMbcpvYqSOzg
+         zfH3z6pRxmROs67Ii3fVZrAL4S19eG9cvbUNUPlsFIL3+JdTS+gRPnrvh05CAeuqCzon
+         hRFKtNpIOI5NJ+EKM1b+ax3nTV9Mglf+1lgUs/ZpWrXkSMoH7bE5uF/uzd6MxlKZK4he
+         4dWCGei7JiQpySM2mYjRpN2+zxUlrtJtYkQr9m+ubRPV4L1IHFW5NRA7nyqCq/t5/fYR
+         e+OQ==
+X-Gm-Message-State: AFuF++na0sG/CQeLkG73ClKbwlw6kLkFFZNf2Mh8OjWRFdkwnhXNNFmR
+	uiih2vIfCK0yyEe+9lN02B4NsIFY4Zvsh1Rzfn0O4OhQJh/1R8lFmxug6MwmpsdWOlxqTlJqJO1
+	aIBJXeG+iO5wAtszE0iV2BuhE9jjJm6XgOw==
+X-Gm-Gg: AYBFou04fS0yf1FhZnG6WEX3oY7/TdjvaeJSIc1VEkA2+8PTpqEP/Gq44S/je19zrsP
+	YkTy6s2PJ5VQtzE76CiC0pq+LUiHWlIPM6js7zvh+WrrNAGtvoLbDJ20Qb+xboiArPNyF76QH2R
+	At/EKHZkzu/AjHGusQvR0yXrkNTW8T4P0XCVwxsSHD3aJYZuPnntbvvBOKSLym+RbJF/vWdP8ar
+	O6h8M1XHRb4OW/5Vhjdazpx3TDN7tzNWNM9thuyXIKOQiVDfokDmObWD34idRIOC9NkfQDOtOab
+	4u6zhAL7XJprBLVsmt07TN7tRXM4tEqyVLnCRG+WYNkMAwyQj2EGfCS1YbVAba9R8BmBuEiot9F
+	EbUc/hrZW9JhXGir6sQ1KBg97H3qsMjxpJvBYEBRPxVMuOB2WBbc6VtNoggiD4tejQavEbqDGXs
+	uxwj1erIlyZ2Kd97OIHNLp6U8uDIVwjkEqW9lqB19fHgK5gnwSHxFC5foafLNNcUJTag==
+X-Received: by 2002:a17:907:3f21:b0:c28:fb3f:fe20 with SMTP id
+ a640c23a62f3a-c298587f908mr30570966b.30.1789172310754; Fri, 11 Sep 2026
+ 17:18:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260905153234.133217-5-tanure@linux.com>
-User-Agent: Mutt/2.4.0 (2026-06-19)
+References: <20260512010938.41114-1-rosenp@gmail.com>
+In-Reply-To: <20260512010938.41114-1-rosenp@gmail.com>
+From: Rosen Penev <rosenp@gmail.com>
+Date: Fri, 11 Sep 2026 17:18:19 -0700
+X-Gm-Features: AcwNN1VjGclVgDXoZc7y-ymy3Y4nPyfaHNvSijxFOUTu1oI1BkyysKJCgXiey70
+Message-ID: <CAKxU2N-n-yCL9CbuAzdN7jJqjx1p5noVNuAze3CKNQvHFd8P6w@mail.gmail.com>
+Subject: Re: [PATCH] clk: pistachio: Use flexible array for clock table
+To: linux-clk@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney@redhat.com>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Lucas,
-
-On Sat, Sep 05, 2026 at 04:32:34PM +0100, Lucas Tanure wrote:
-> sys_ampipe_nand clocks the pipeline stage inserted in the bus path
-> between the SD/eMMC controllers and the NIC_MATRIX fabric. It does have
-> identifiable consumers - the three MMC controllers - so marking it
-> critical was the wrong tool: the clock should be referenced from the
-> consumer nodes and claimed by the mmc driver instead.
-> 
-> Drop the CLK_IS_CRITICAL flag and update the comment accordingly.
-> sys_am2axi0..2 remain critical as they clock the AXI DMA bus itself and
-> have no single identifiable consumer.
-> 
-> Assisted-by: Claude:claude-fable-5
-> Signed-off-by: Lucas Tanure <tanure@linux.com>
+On Mon, May 11, 2026 at 6:09=E2=80=AFPM Rosen Penev <rosenp@gmail.com> wrot=
+e:
+>
+> Store the clock lookup table in the Pistachio clock provider
+> allocation instead of allocating it separately.
+>
+> This ties the table lifetime directly to the provider and removes a
+> separate allocation failure path while preserving the clk_onecell_data
+> lookup interface.
+>
+> Assisted-by: Codex:GPT-5.5
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+Should I resend?
 > ---
-> This patch depends on the MMC controllers actually referencing the clock:
-> the dt-bindings, mmc driver and t7 DTS changes adding the "pipeline"
-> clock must land before this patch, otherwise the boot hangs and memory
-> corruption this clock caused are reintroduced.
-
-This series should be merged together in one tree? Which tree? I can
-provide an Acked-by if it should go through the mmc tree.
-
-Brian
-
+>  drivers/clk/pistachio/clk.c | 15 ++++-----------
+>  drivers/clk/pistachio/clk.h |  1 +
+>  2 files changed, 5 insertions(+), 11 deletions(-)
+>
+> diff --git a/drivers/clk/pistachio/clk.c b/drivers/clk/pistachio/clk.c
+> index 80c722c77a1b..03e28779011f 100644
+> --- a/drivers/clk/pistachio/clk.c
+> +++ b/drivers/clk/pistachio/clk.c
+> @@ -17,28 +17,21 @@ pistachio_clk_alloc_provider(struct device_node *node=
+, unsigned int num_clks)
+>  {
+>         struct pistachio_clk_provider *p;
+>
+> -       p =3D kzalloc_obj(*p);
+> +       p =3D kzalloc_flex(*p, clks, num_clks);
+>         if (!p)
+>                 return p;
+>
+> -       p->clk_data.clks =3D kzalloc_objs(struct clk *, num_clks);
+> -       if (!p->clk_data.clks)
+> -               goto free_provider;
+> +       p->clk_data.clks =3D p->clks;
+>         p->clk_data.clk_num =3D num_clks;
+>         p->node =3D node;
+>         p->base =3D of_iomap(node, 0);
+>         if (!p->base) {
+>                 pr_err("Failed to map clock provider registers\n");
+> -               goto free_clks;
+> +               kfree(p);
+> +               return NULL;
+>         }
+>
+>         return p;
+> -
+> -free_clks:
+> -       kfree(p->clk_data.clks);
+> -free_provider:
+> -       kfree(p);
+> -       return NULL;
+>  }
+>
+>  void pistachio_clk_register_provider(struct pistachio_clk_provider *p)
+> diff --git a/drivers/clk/pistachio/clk.h b/drivers/clk/pistachio/clk.h
+> index 2f4ffbd98282..1b9b311b9656 100644
+> --- a/drivers/clk/pistachio/clk.h
+> +++ b/drivers/clk/pistachio/clk.h
+> @@ -142,6 +142,7 @@ struct pistachio_clk_provider {
+>         struct device_node *node;
+>         void __iomem *base;
+>         struct clk_onecell_data clk_data;
+> +       struct clk *clks[];
+>  };
+>
+>  extern struct pistachio_clk_provider *
+> --
+> 2.54.0
+>
