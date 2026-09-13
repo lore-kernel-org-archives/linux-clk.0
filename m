@@ -1,134 +1,97 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6160335E1D5
-	for <linux-clk@vger.kernel.org>; Sun, 13 Sep 2026 13:05:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2B03361DD0
+	for <linux-clk@vger.kernel.org>; Sun, 13 Sep 2026 15:52:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789304710; cv=none; b=bRLMCCpUTzCLTnxRlj/USSYEu1cDJkdlT4Oolas3C+CqPzG7gTqUARoa0wnEls4C43vZDKBnVAj21jdR9Q4M2J87+ZhtrV1B+tY1TqFuAXhHNBZXaGDa4gYka/tOaWdmxp4htsFFJN/eO22OuthN8JUVFCmwfNPJ+vImsSBTFPM=
+	t=1789314765; cv=none; b=N5ufYTn8p2FMfYQwd+1Loo+Gcp+dEyflnw7bchK5CRh9q/oGxGxuNj+DNNQkQL8r+72padxv75ux6fuOKvz+3zMI2SHC9KhECsYMfwDqYZZrEyvWfFVQbGz4WBkKFI9gCiAzEWeZP8Z0fuivI9a8TQhEdMIocWnnFSxE0LbtSDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789304710; c=relaxed/simple;
-	bh=D1Rt51EH//PvlTYC1bDz0IcfOp1LaKpZBHo7XTslpYI=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=faPxeqBOvbNyGjxL4pfrcTYoeF+wwXZyicwvRp+d8Gt2j2Z8i0E+mP4drfZ41mhZfzR61vR2/ED3beZDccSVIQ3f8zcjdE/ZQT9m/hnzBe27KWXGh/gMf08vpfI+9oPoR4rg+6OWHbb/ZGk4kqYy6WImZ2tCpnrSsZx7z3GMJvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f1OiNekm; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789314765; c=relaxed/simple;
+	bh=dg+2Qr+O5bIrEbgfYW8CzPaMnOhuJfox7xoYSIkTiT0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tpHWRFkw1nDrV+LayWxzjdutKLhj2gZ6jzBm7O2k3t9ITD7+ND3X4oMN0WIQ84S5rcwVcTpCwuQTNf20vNJmLANJqMVh4H/LzhcM55yBhCFb3VPqQLnWKo09U63+jaXmvfGXG59U4YEOluHsXIKaoe1Md7UIWKUqpj+jj5O00WY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WnMqGFnD; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f1OiNekm"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8B9B1F000FF;
-	Sun, 13 Sep 2026 13:05:08 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WnMqGFnD"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95CBA1F000FF
+	for <linux-clk@vger.kernel.org>; Sun, 13 Sep 2026 15:52:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789304709;
-	bh=Qn7SwRkHISWPgA6fVB8jk19/tXXOAFbi+cFLvvs1YKI=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=f1OiNekmDF83n62CcniouONJsmpiapREg9n9/BgTq/SBkzMAFDAOqg8qK1ZoRsYZO
-	 540G/lQriwSBu4gCAgdQhCNFG4v4opNnSy1MVF6Vmv5VVXPVN9deexoZRhWGnoOfgd
-	 wLOCnJS0CiqzMKXVOnqw4EW7P4jz4I/H0nX1BIV5Uf8i6VvAAkoG9oJCMVorAVFpHK
-	 Uj17ES+0iCqZcvG7mQ0uMNd1UBLh9DpxR076AUJTkn0itJK1ZPNF4/8vvraD7JUdYG
-	 DiQuBt0GH5PP5Mz2TZySkgPCn0CFJwR1k5LJVWivoT4EIfPuI1demHxPqSyGtnLO7y
-	 yixDSM+FyaW7w==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH] clk: starfive: jh7110: reject oscillator lookup errors
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Slavin Liu" <bolin.liu@seu.edu.cn>
-Cc: linux-clk@vger.kernel.org
-In-Reply-To: <20260913125112.109755-1-bolin.liu@seu.edu.cn>
-References: <20260913125112.109755-1-bolin.liu@seu.edu.cn>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Sun, 13 Sep 2026 13:05:08 +0000
-Message-Id: <20260913130508.D8B9B1F000FF@smtp.kernel.org>
+	s=k20260515; t=1789314763;
+	bh=J64BL22WjRfKK811Ckzq8S42IJIbfd0VtAbWuMwxY04=;
+	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc;
+	b=WnMqGFnDDFnHlfAReCslPgEvYzB1pDtjLj7mEgkFE4I6gUASFAo3u0ckrUZmGhDYy
+	 gVlfUH14BrgNT0TBB1QZuuUSZECSYFtL8PlwxDubxicNJqC8iJmDizon+Uu+TBJIpi
+	 /od0RWCSuOu8LOZ1NBdk0J8h1lxyyFNow3UG9BnR76uk31HIe8E6qP3J5NRoiOvyxY
+	 5CwLbWSP5QIjFZwPFo45DN7Whc5y4vMVOMOLLirjDu1Tm8cGVd5HFosZtORdTZa4Eb
+	 VJdKpbNDf9vxhiT0c4ybTOkAuzb1z+WlAagvUZH8WWhZyVflr1YNfyRDJSsT0ZVdE9
+	 7YWgaIJ76z8HQ==
+Received: by mail-lr2-f12.google.com with SMTP id 38308e7fff4ca-3a2ff15fadfso4367571fa.0
+        for <linux-clk@vger.kernel.org>; Sun, 13 Sep 2026 08:52:43 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBx6tcctUW+clm/2DjA8idajdEMDXoqTiGvFAsL7IQ+5liyX6SUoV+U44TtViHz1sXnR2WQ+zXDFTyE=@vger.kernel.org
+X-Gm-Message-State: AFuF++mDfc/Di7yRh49KY475/v42p65GKbqSJq+O60C1Qp2i6kMNQ05v
+	00GKDcxLh6J29uiop9Z6W+GE3WgGM+9mpA+gENeI0MRs4VTr9m4t20HzEakyAddoW5YRZmGUuS5
+	bH3e99mqKh24Z6e5Iao7SRa/6RkUvfpU=
+X-Received: by 2002:a05:651c:a205:20b0:3a3:61ec:7db5 with SMTP id
+ 38308e7fff4ca-3a5be1d65e6mr1540031fa.11.1789314761967; Sun, 13 Sep 2026
+ 08:52:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20260905133452.64544-1-hppiscas@163.com>
+In-Reply-To: <20260905133452.64544-1-hppiscas@163.com>
+Reply-To: wens@kernel.org
+From: Chen-Yu Tsai <wens@kernel.org>
+Date: Sun, 13 Sep 2026 23:52:28 +0800
+X-Gmail-Original-Message-ID: <CAGb2v65mRj72OrcCqXy3-Yo1UFJsLoeEiB0E_JhbYBuj-e182A@mail.gmail.com>
+X-Gm-Features: AcwNN1WDCOy2sNndiTJTzu6mT4VBlt5N2NICbAPIS69BxHec14lNArKCHBdII7k
+Message-ID: <CAGb2v65mRj72OrcCqXy3-Yo1UFJsLoeEiB0E_JhbYBuj-e182A@mail.gmail.com>
+Subject: Re: [PATCH] clk: sunxi-ng: a523: Publish the main CCU module alias
+To: "hpp.iscas" <hppiscas@163.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+	Jerome Brunet <jbrunet+clk@baylibre.com>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Samuel Holland <samuel@sholland.org>, linux-clk@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Thank you for your contribution! Sashiko AI review found 2 potential issue(=
-s) to consider:
+On Sat, Sep 5, 2026 at 9:35=E2=80=AFPM hpp.iscas <hppiscas@163.com> wrote:
+>
+> The A523 main CCU driver supports module builds and registers an OF
+> match table. The table is not exported, leaving the module without an
+> alias for its OF device.
+>
+> Publish the main CCU table without changing clock initialization.
+>
+> Fixes: 7cae1e2b5544 ("clk: sunxi-ng: Add support for the A523/T527 CCU PL=
+Ls")
+> Signed-off-by: hpp.iscas <hppiscas@163.com>
 
-Pre-existing issues:
-- [High] The clock notifier `jh7110_pll0_clk_notifier_cb` completely ignore=
-s the `ABORT_RATE_CHANGE` event, permanently leaving the CPU reparented to =
-the slow oscillator if a clock rate change fails.
-- [High] Missing cleanup in probe error paths causes a clock reference leak=
- and a Use-After-Free (UAF) vulnerability in the notifier.
---
+This and the patch author needs to be your actual name. Same for your other
+patch.
 
-commit ebd9f7e3f2dc35439009c9df2e84ee190db37687
-Author: Slavin Liu <bolin.liu@seu.edu.cn>
+See Documentation/process/submitting-patches.rst
 
-clk: starfive: jh7110: reject oscillator lookup errors
-
-Clock lookup may fail while allocating a consumer reference. Return
-a notifier error rather than passing ERR_PTR as the new clock parent.
-
-> diff --git a/drivers/clk/starfive/clk-starfive-jh7110-sys.c b/drivers/clk=
-/starfive/clk-starfive-jh7110-sys.c
-> index 03c17cd2032f5..847c0a39e5ab5 100644
-> --- a/drivers/clk/starfive/clk-starfive-jh7110-sys.c
-> +++ b/drivers/clk/starfive/clk-starfive-jh7110-sys.c
-> @@ -390,6 +390,9 @@ static int jh7110_pll0_clk_notifier_cb(struct notifie=
-r_block *nb,
->  	if (action =3D=3D PRE_RATE_CHANGE) {
->  		struct clk *osc =3D clk_get(priv->dev, "osc");
-> =20
-> +		if (IS_ERR(osc))
-> +			return notifier_from_errno(PTR_ERR(osc));
-> +
->  		priv->original_clk =3D clk_get_parent(cpu_root);
->  		ret =3D clk_set_parent(cpu_root, osc);
->  		clk_put(osc);
-
-[Severity: High]
-This isn't a bug introduced by this patch, but does the notifier ignore the
-ABORT_RATE_CHANGE event?
-
-If a PLL rate change is aborted (e.g., rejected by a downstream clock
-notifier returning NOTIFY_BAD, or failing at the hardware level), the
-core clock framework emits an ABORT_RATE_CHANGE notification.
-
-Because this event is ignored, the reparenting is never undone:
-
-	} else if (action =3D=3D POST_RATE_CHANGE) {
-		ret =3D clk_set_parent(cpu_root, priv->original_clk);
-	}
-
-Could the CPU clock remain permanently parented to the 24MHz slow oscillator
-instead of being restored, severely degrading system performance?
-
-
-[Severity: High]
-This is a pre-existing issue, but does jh7110_syscrg_probe() leave a dangli=
-ng
-notifier if a later registration fails?
-
-If probe fails after successfully registering the clock notifier
-(e.g., devm_clk_hw_register fails), the devres frees the priv structure.
-However, the notifier is never unregistered:
-
-drivers/clk/starfive/clk-starfive-jh7110-sys.c:jh7110_syscrg_probe() {
-	...
-	pllclk =3D clk_get(priv->dev, "pll0_out");
-	if (IS_ERR(pllclk)) {
-	...
-	} else {
-		priv->pll_clk_nb.notifier_call =3D jh7110_pll0_clk_notifier_cb;
-		ret =3D clk_notifier_register(pllclk, &priv->pll_clk_nb);
-		if (ret)
-			return ret;
-		priv->pll[0] =3D NULL;
-	}
-	...
-		ret =3D devm_clk_hw_register(&pdev->dev, &clk->hw);
-		if (ret)
-			return ret; /* priv freed, but notifier still active */
-	...
-}
-
-Could a subsequent rate change on pll0_out dereference the freed memory?
-Also, does the pllclk reference obtained via clk_get() leak since it is
-never freed with clk_put()?
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260913125112.1097=
-55-1-bolin.liu@seu.edu.cn?part=3D1
+> ---
+>  drivers/clk/sunxi-ng/ccu-sun55i-a523.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun55i-a523.c b/drivers/clk/sunxi-n=
+g/ccu-sun55i-a523.c
+> index 20dad06..d0c4c70 100644
+> --- a/drivers/clk/sunxi-ng/ccu-sun55i-a523.c
+> +++ b/drivers/clk/sunxi-ng/ccu-sun55i-a523.c
+> @@ -1685,6 +1685,7 @@ static const struct of_device_id sun55i_a523_ccu_id=
+s[] =3D {
+>         { .compatible =3D "allwinner,sun55i-a523-ccu" },
+>         { }
+>  };
+> +MODULE_DEVICE_TABLE(of, sun55i_a523_ccu_ids);
+>
+>  static struct platform_driver sun55i_a523_ccu_driver =3D {
+>         .probe  =3D sun55i_a523_ccu_probe,
+>
