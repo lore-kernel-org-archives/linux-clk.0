@@ -1,97 +1,78 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2B03361DD0
-	for <linux-clk@vger.kernel.org>; Sun, 13 Sep 2026 15:52:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A48E35E1D5;
+	Sun, 13 Sep 2026 16:16:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789314765; cv=none; b=N5ufYTn8p2FMfYQwd+1Loo+Gcp+dEyflnw7bchK5CRh9q/oGxGxuNj+DNNQkQL8r+72padxv75ux6fuOKvz+3zMI2SHC9KhECsYMfwDqYZZrEyvWfFVQbGz4WBkKFI9gCiAzEWeZP8Z0fuivI9a8TQhEdMIocWnnFSxE0LbtSDs=
+	t=1789316164; cv=none; b=qF+u4QpbfVP95txIC3vj2H8Aev4i/593BNo+WbL5pdG834GbnCtwgzuzSqaHgdtWAPcTyVGqKqQ1kexIvBJHLLTjia76EnfTUA0TUBWZShhmNzd16AlqKhfl+K9fhfcmiD/l5ycowmkJLj2sO5mW+D+MTdtLt9qv4MZ9fZoST94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789314765; c=relaxed/simple;
-	bh=dg+2Qr+O5bIrEbgfYW8CzPaMnOhuJfox7xoYSIkTiT0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tpHWRFkw1nDrV+LayWxzjdutKLhj2gZ6jzBm7O2k3t9ITD7+ND3X4oMN0WIQ84S5rcwVcTpCwuQTNf20vNJmLANJqMVh4H/LzhcM55yBhCFb3VPqQLnWKo09U63+jaXmvfGXG59U4YEOluHsXIKaoe1Md7UIWKUqpj+jj5O00WY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WnMqGFnD; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789316164; c=relaxed/simple;
+	bh=jpCqN3D19a2OiRZNhweu5IYUQ1umPGMKnHJ5S/I9hsA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=gP39iJGU1cIov+OvuNT0gzKIkyxFCUTXT8DwaXlmMes5/DWbNHa0XAw5LOBwJOn+1v86n0U0kC+yDYUCjHJvH9pIeYji+ZB6eVGq5QRG9NdiJZ85b7L9tB7Jgub725GJ3Fol6wAa4Rp9yaa2fugoWNvpDlLkUb5rBkaU4OSVU2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oRCCBoBz; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WnMqGFnD"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95CBA1F000FF
-	for <linux-clk@vger.kernel.org>; Sun, 13 Sep 2026 15:52:43 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oRCCBoBz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6C4A1F000FF;
+	Sun, 13 Sep 2026 16:16:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789314763;
-	bh=J64BL22WjRfKK811Ckzq8S42IJIbfd0VtAbWuMwxY04=;
-	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc;
-	b=WnMqGFnDDFnHlfAReCslPgEvYzB1pDtjLj7mEgkFE4I6gUASFAo3u0ckrUZmGhDYy
-	 gVlfUH14BrgNT0TBB1QZuuUSZECSYFtL8PlwxDubxicNJqC8iJmDizon+Uu+TBJIpi
-	 /od0RWCSuOu8LOZ1NBdk0J8h1lxyyFNow3UG9BnR76uk31HIe8E6qP3J5NRoiOvyxY
-	 5CwLbWSP5QIjFZwPFo45DN7Whc5y4vMVOMOLLirjDu1Tm8cGVd5HFosZtORdTZa4Eb
-	 VJdKpbNDf9vxhiT0c4ybTOkAuzb1z+WlAagvUZH8WWhZyVflr1YNfyRDJSsT0ZVdE9
-	 7YWgaIJ76z8HQ==
-Received: by mail-lr2-f12.google.com with SMTP id 38308e7fff4ca-3a2ff15fadfso4367571fa.0
-        for <linux-clk@vger.kernel.org>; Sun, 13 Sep 2026 08:52:43 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBx6tcctUW+clm/2DjA8idajdEMDXoqTiGvFAsL7IQ+5liyX6SUoV+U44TtViHz1sXnR2WQ+zXDFTyE=@vger.kernel.org
-X-Gm-Message-State: AFuF++mDfc/Di7yRh49KY475/v42p65GKbqSJq+O60C1Qp2i6kMNQ05v
-	00GKDcxLh6J29uiop9Z6W+GE3WgGM+9mpA+gENeI0MRs4VTr9m4t20HzEakyAddoW5YRZmGUuS5
-	bH3e99mqKh24Z6e5Iao7SRa/6RkUvfpU=
-X-Received: by 2002:a05:651c:a205:20b0:3a3:61ec:7db5 with SMTP id
- 38308e7fff4ca-3a5be1d65e6mr1540031fa.11.1789314761967; Sun, 13 Sep 2026
- 08:52:41 -0700 (PDT)
+	s=k20260515; t=1789316162;
+	bh=b2QN1R9cEP+65/eaKbkkpietz+IIKIO9R9b6vVssGVA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=oRCCBoBzGCO2WSuWyFbKyFY4UEl/Zz8HdyalS/m7VI4lHJFbXRF9FT8g/Ay2mjgbT
+	 POLU0wOnyTijCQBSXXAw0z9C76xOnDw0J8qGaF3/fEOubRusUB/BbWJlvfOFC4rR3B
+	 0YnDrbHpI7JCoYGpHeCkPuY+4JHIq5aue4aRjLzSJV4ClQnt8faIKbj+VLkhkdnlde
+	 +NFPA2YKHBjQ+ECA4oXTXje5dfjmF0Uq0NCc3mXm50X+mDm9rL/Q5sx/lg7FBYd00D
+	 3wYevpuOLNH2XvuJuKjb0H9e0JtA210EHq59Ypya+ZZVudMzlrIKdLfCT0411Zl39U
+	 k83Uud6h7ZTug==
+From: Chen-Yu Tsai <wens@kernel.org>
+To: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, 
+ Andre Przywara <andre.przywara@arm.com>, 
+ Junhui Liu <junhui.liu@pigmoral.tech>
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+In-Reply-To: <20260906-sunxi-clk-no-p-v1-0-cbde21c9fe69@pigmoral.tech>
+References: <20260906-sunxi-clk-no-p-v1-0-cbde21c9fe69@pigmoral.tech>
+Subject: Re: [PATCH 0/4] clk: sunxi-ng: a523: Fix single-divider clocks
+Message-Id: <178931616050.1372417.13697138134958064084.b4-ty@kernel.org>
+Date: Mon, 14 Sep 2026 00:16:00 +0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260905133452.64544-1-hppiscas@163.com>
-In-Reply-To: <20260905133452.64544-1-hppiscas@163.com>
-Reply-To: wens@kernel.org
-From: Chen-Yu Tsai <wens@kernel.org>
-Date: Sun, 13 Sep 2026 23:52:28 +0800
-X-Gmail-Original-Message-ID: <CAGb2v65mRj72OrcCqXy3-Yo1UFJsLoeEiB0E_JhbYBuj-e182A@mail.gmail.com>
-X-Gm-Features: AcwNN1WDCOy2sNndiTJTzu6mT4VBlt5N2NICbAPIS69BxHec14lNArKCHBdII7k
-Message-ID: <CAGb2v65mRj72OrcCqXy3-Yo1UFJsLoeEiB0E_JhbYBuj-e182A@mail.gmail.com>
-Subject: Re: [PATCH] clk: sunxi-ng: a523: Publish the main CCU module alias
-To: "hpp.iscas" <hppiscas@163.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
-	Jerome Brunet <jbrunet+clk@baylibre.com>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Samuel Holland <samuel@sholland.org>, linux-clk@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-On Sat, Sep 5, 2026 at 9:35=E2=80=AFPM hpp.iscas <hppiscas@163.com> wrote:
->
-> The A523 main CCU driver supports module builds and registers an OF
-> match table. The table is not exported, leaving the module without an
-> alias for its OF device.
->
-> Publish the main CCU table without changing clock initialization.
->
-> Fixes: 7cae1e2b5544 ("clk: sunxi-ng: Add support for the A523/T527 CCU PL=
-Ls")
-> Signed-off-by: hpp.iscas <hppiscas@163.com>
+On Sun, 06 Sep 2026 15:06:37 +0800, Junhui Liu wrote:
+> Sashiko pointed out two issues in my series adding clock driver support
+> for the Allwinner A733 SoC [1][2].
+> 
+> First, ccu_mp_set_rate() generates an invalid mask when an MP clock is
+> defined with a zero-width P divider, clearing unrelated register fields.
+> Second, ccu_mp_set_rate() does not handle CCU_FEATURE_UPDATE_BIT, so
+> divider changes are not latched by the hardware.
+> 
+> [...]
 
-This and the patch author needs to be your actual name. Same for your other
-patch.
+Applied to sunxi/clk-for-7.4 in sunxi, thanks!
 
-See Documentation/process/submitting-patches.rst
+[1/4] clk: sunxi-ng: div: Add feature support to M clock macro
+      https://git.kernel.org/sunxi/linux/c/da543a093f65
+[2/4] clk: sunxi-ng: sun55i-a523-ccu: Use M-only clocks for MBUS, IOMMU and DRAM
+      https://git.kernel.org/sunxi/linux/c/88735a2ffbea
+[3/4] clk: sunxi-ng: sun55i-a523-ccu: Use P-only clocks for high-speed timers
+      https://git.kernel.org/sunxi/linux/c/4b41d0ffa9d9
+[4/4] clk: sunxi-ng: sun55i-a523-r-ccu: Use P-only clocks for timers
+      https://git.kernel.org/sunxi/linux/c/b260db91603a
 
-> ---
->  drivers/clk/sunxi-ng/ccu-sun55i-a523.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun55i-a523.c b/drivers/clk/sunxi-n=
-g/ccu-sun55i-a523.c
-> index 20dad06..d0c4c70 100644
-> --- a/drivers/clk/sunxi-ng/ccu-sun55i-a523.c
-> +++ b/drivers/clk/sunxi-ng/ccu-sun55i-a523.c
-> @@ -1685,6 +1685,7 @@ static const struct of_device_id sun55i_a523_ccu_id=
-s[] =3D {
->         { .compatible =3D "allwinner,sun55i-a523-ccu" },
->         { }
->  };
-> +MODULE_DEVICE_TABLE(of, sun55i_a523_ccu_ids);
->
->  static struct platform_driver sun55i_a523_ccu_driver =3D {
->         .probe  =3D sun55i_a523_ccu_probe,
->
+Best regards,
+-- 
+Chen-Yu Tsai <wens@kernel.org>
+
