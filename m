@@ -1,42 +1,42 @@
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46B8B3F329C;
-	Mon, 14 Sep 2026 19:37:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46E723DB332;
+	Mon, 14 Sep 2026 19:38:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789414679; cv=none; b=vGDOaVfpKg0ci4uA6+jInNDUc9S2cRnpOwdmw2CTOZDVT6yAmPFdWgL929Vnot5I2bIagfCiFfp6ucfPz3mECf1cKlhisxLsFRjNdxXjzlpye4bvm+6R35GEKtD48tzoYGbMvtQa4iEGXoX3/A16GOjxizD3MdxiPppFFe45NpE=
+	t=1789414737; cv=none; b=EsJiy5ywc3Gz4hjDQ78BBzx98lM7DdbAQoHLQpHhBwdUpmBRkilKF9JOSV6O4JzMDuWtspfFCpdWmaHBzArQjRizSEohyQ7DgVwp69QnUMtb1DqGYXkePot6+e1pfBNxkO731+RX/dEFAMUhjXqcF0lSf4fKfbGgYhlBw19q2lo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789414679; c=relaxed/simple;
-	bh=esfTqUFnJaXqzB9sd63RRu6eFINaCWw/BiY6x3X4v3Q=;
+	s=arc-20240116; t=1789414737; c=relaxed/simple;
+	bh=slQN8zGDUmYs9br0zIMXRpsNo5O7uLthjpuA9U0b8rM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=e38XNLLDSHiud8U1kyR4p1rz4FEPSlp32MV3pVzXp1K/S9LcJXqI31ffD+c2XJJycmYPaCb4uHerQJaL/UWpmPwpEO6prDrSxHQUC0jse9U7KfIJl7Qla6tktlKeR4t9sgaDqkbCNFfzFuVHhxo48znkAjzjhrgI9CLSt7iz144=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=TZKarI6F; arc=none smtp.client-ip=210.118.77.12
+	 Content-Type:References; b=Vp/e1PJvm2SfLmALqW0ClQANvlbUudx6mC/lLXcn0NHMGMR+13oVGmqy54RINJt+FilvjEG04lzMSnNkQ863xmDHvM3BTRQ6nB68CWM7RGRb/IjZlcbaUtoVGHowD+IBmaLpDvUSSbqyIY5rpdTFXv/PEES+yi86UTwOF0jeYac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=WTY8xEi6; arc=none smtp.client-ip=210.118.77.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="TZKarI6F"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="WTY8xEi6"
 Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20260914193754euoutp02981281706c8e3139fb5b93cfbd25526a~VRyqJA0Bb0156301563euoutp02C;
-	Mon, 14 Sep 2026 19:37:54 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20260914193754euoutp02981281706c8e3139fb5b93cfbd25526a~VRyqJA0Bb0156301563euoutp02C
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20260914193842euoutp01953e61d38ec40643bc4d7157964f6df4~VRzWra7uK0314903149euoutp01E;
+	Mon, 14 Sep 2026 19:38:42 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20260914193842euoutp01953e61d38ec40643bc4d7157964f6df4~VRzWra7uK0314903149euoutp01E
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1789414675;
-	bh=5quPaYobLEbeMOu5MqGjHlx1gGO6GYM4Ci77INCJQLA=;
+	s=mail20170921; t=1789414722;
+	bh=l4wDoWVeNywfcIR5L4rg3J/vDfSoW2zWF07vjDkO78A=;
 	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=TZKarI6Fzswot9c4aVXuInO0XRxf9GfzbOMlt7onjkVzeL1ZbqAInBvs4atJ/oDi0
-	 AUtj/OANEEt5ewm+9Sk6Wb7zy4Ml9/IM+VLkFU4eqSkZba+0uuGUKYDcVqnkJKj0Lt
-	 oxPYASnd7d7htQ9OwYLZimxgp4UXzR/izU9JOwv4=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20260914193754eucas1p1c5e933b8753ce6d75f7c5f34e3bb72d6~VRypvtokG2298422984eucas1p1x;
-	Mon, 14 Sep 2026 19:37:54 +0000 (GMT)
+	b=WTY8xEi6jJOa1gLnOSUBPvlQpMk4v2dS5Nlb2zkZtStSIF1Pr3VZihsDFbmaj+Y4h
+	 48ffokqJfJoWOeBrkZRq1liliRT+IYnxf1/b09yAMsjlsgBoE69rhThGKgRG7auZzS
+	 XuVmAtFsH2iSO/zueW7kE3R3lnmCSs0qp5222L1M=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20260914193842eucas1p27f2871f925584e946f2bb24c04b38b90~VRzWUs-Iu3205232052eucas1p2N;
+	Mon, 14 Sep 2026 19:38:42 +0000 (GMT)
 Received: from [192.168.1.44] (unknown [106.210.136.40]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20260914193752eusmtip20be6a60002305f9f5bc9e993970a2799~VRynuwkCl0478104781eusmtip2P;
-	Mon, 14 Sep 2026 19:37:52 +0000 (GMT)
-Message-ID: <782506ab-70b8-40a0-98f6-239e74351c1e@samsung.com>
-Date: Mon, 14 Sep 2026 21:37:52 +0200
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20260914193840eusmtip1c6e3388713b55ee3f14ee6a855ba8b6e~VRzUiiOIx1812818128eusmtip1N;
+	Mon, 14 Sep 2026 19:38:40 +0000 (GMT)
+Message-ID: <fcfdd9da-8425-4cf9-94ba-23b06cd06185@samsung.com>
+Date: Mon, 14 Sep 2026 21:38:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -44,8 +44,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 06/19] dt-bindings: display: verisilicon: Add
- starfive,jh7110-dc8200
+Subject: Re: [PATCH v3 18/19] riscv: dts: starfive: jh7110: Update DT for
+ display subsystem
 To: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: Vinod Koul <vkoul@kernel.org>, Neil Armstrong
 	<neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>, Krzysztof
@@ -75,43 +75,59 @@ Cc: Vinod Koul <vkoul@kernel.org>, Neil Armstrong
 	Zheng <zhengxingda@iscas.ac.cn>
 Content-Language: en-US
 From: Michal Wilczynski <m.wilczynski@samsung.com>
-In-Reply-To: <20260910-amorphous-vigilant-jaybird-d65c4f@quoll>
+In-Reply-To: <20260910-determined-fantastic-seriema-3ff701@quoll>
 Content-Transfer-Encoding: 7bit
-X-CMS-MailID: 20260914193754eucas1p1c5e933b8753ce6d75f7c5f34e3bb72d6
+X-CMS-MailID: 20260914193842eucas1p27f2871f925584e946f2bb24c04b38b90
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20260904132719eucas1p1c900149ffa1b8771aca238e6441482ee
+X-RootMTR: 20260904132743eucas1p1e02218d3fb38af95c3dd4bfa24904cab
 X-EPHeader: CA
-X-CMS-RootMailID: 20260904132719eucas1p1c900149ffa1b8771aca238e6441482ee
+X-CMS-RootMailID: 20260904132743eucas1p1e02218d3fb38af95c3dd4bfa24904cab
 References: <20260904-jh7110-clean-send-v3-0-484f9ae72715@samsung.com>
-	<CGME20260904132719eucas1p1c900149ffa1b8771aca238e6441482ee@eucas1p1.samsung.com>
-	<20260904-jh7110-clean-send-v3-6-484f9ae72715@samsung.com>
-	<20260910-amorphous-vigilant-jaybird-d65c4f@quoll>
+	<CGME20260904132743eucas1p1e02218d3fb38af95c3dd4bfa24904cab@eucas1p1.samsung.com>
+	<20260904-jh7110-clean-send-v3-18-484f9ae72715@samsung.com>
+	<20260910-determined-fantastic-seriema-3ff701@quoll>
 
 
 
-On 9/10/26 10:34, Krzysztof Kozlowski wrote:
-> On Fri, Sep 04, 2026 at 03:27:07PM +0200, Michal Wilczynski wrote:
->> The JH7110 embeds a DC8200. The binding requires an SoC specific
->> compatible ahead of the generic one, so add the JH7110 to the enum.
->>
->> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
->> ---
->>  Documentation/devicetree/bindings/display/verisilicon,dc.yaml | 1 +
->>  1 file changed, 1 insertion(+)
+On 9/10/26 10:37, Krzysztof Kozlowski wrote:
+> On Fri, Sep 04, 2026 at 03:27:19PM +0200, Michal Wilczynski wrote:
+>> diff --git a/arch/riscv/boot/dts/starfive/jh7110.dtsi b/arch/riscv/boot/dts/starfive/jh7110.dtsi
+>> index 9c3e4598747eb5541effe697044484715569a285..0f981f4c89586269b987be8591037c9461e04703 100644
+>> --- a/arch/riscv/boot/dts/starfive/jh7110.dtsi
+>> +++ b/arch/riscv/boot/dts/starfive/jh7110.dtsi
+>> @@ -290,12 +290,6 @@ gmac1_rmii_refin: gmac1-rmii-refin-clock {
+>>  		#clock-cells = <0>;
+>>  	};
+>>  
+>> -	hdmitx0_pixelclk: hdmitx0-pixel-clock {
+>> -		compatible = "fixed-clock";
+>> -		clock-output-names = "hdmitx0_pixelclk";
+>> -		#clock-cells = <0>;
+>> -	};
+>> -
+>>  	i2srx_bclk_ext: i2srx-bclk-ext-clock {
+>>  		compatible = "fixed-clock";
+>>  		clock-output-names = "i2srx_bclk_ext";
+>> @@ -352,6 +346,13 @@ tdm_ext: tdm-ext-clock {
+>>  		#clock-cells = <0>;
+>>  	};
+>>  
+>> +	xin24m: xin24m {
 > 
-> And this one must be before patch #5 or switch in your patch #5 to
-> compatibles-style for children, instead of $ref (see some recent
-> display/msm/*mdss* bindings like sm8750).
+> Other clocks are called foo-clock, so follow this as well (even though
+> it does not follow recommended practice of clock-foo, but at least some
+> consistency).
+
+will rename to to xin24m-clock
+
 > 
 > Best regards,
 > Krzysztof
-
-Thanks, I think I can do both for the v4.
-
 > 
 > 
 
 Best regards,
 -- 
 Michal Wilczynski <m.wilczynski@samsung.com>
+
