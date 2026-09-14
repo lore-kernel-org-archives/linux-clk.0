@@ -1,200 +1,153 @@
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 412BB30E827;
-	Mon, 14 Sep 2026 21:48:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6887341D65C
+	for <linux-clk@vger.kernel.org>; Mon, 14 Sep 2026 23:05:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789422495; cv=none; b=rgKU6lIPKt5d/18LGigFXcrt51DCCxB6QVe8sMX3YOkrvpYyJtFbaLaeiIDCYxHqnLNQivxdc5IIIE/ZtIrU8xMHwB1c9F2pF5kfj9PNE0YvsBWxmo1NRJ+HNDIBrmpFKcnG7BEMmbH9smKe4vBNDFHQGAi+VlYOdru8jsrFOZM=
+	t=1789427156; cv=none; b=LO31ot5kQhp7k5mtXwZDR/NcLIRNp/BMtMuhhmKb1Ah1MvmCU92V+EllvtB8JlyKSYqpTfPJs6ZQ+kSviEYvugrrZ2YhHzlbiuio+58ermfQ7AwqEsxTYHWI40UJ8wCJDHnl/BeykU7biP+YOAgUUJpEjLA9wiF/pdBwcAm+Q7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789422495; c=relaxed/simple;
-	bh=h2Pcu5oT9ZtaKZboNPbD36SmpQmalemtNmD90bBaHGc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=LnKDPRxlp2UWp1fD+j6zpUHcU7sVrQpknTQ+N6GVEA+DDgiX5xEPiizXUMjfPC6ze37cKW8tYyNdq5gw6RKqMALAnJ8LkrT8SPbGo6Wl52GhOfNhU4XjZ9CVITw6NOPLj4jD2B8ykJhdwD+xBDToOSqdfCNHLbO6Bnj/zh2Hd6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=r6dkOUFA; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1789427156; c=relaxed/simple;
+	bh=uRkKK/nT+aV2RrivtfepLK8t9jM7+66Vx+qv84P/4mU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=XU8G3Ev9tOlBk2k78jibaIAkKd2vP0bOX7ow/gdbXdPXIp2I2PHsWAXO/ZUAzZXITychLe+Nl4/OhrfcMEi69VEq39OzdvZwZXaGIQDLInbhaWmfLXtD50T/1pmECG6mJOrPp7PITgB8IjLcJ5XGq+h7mfYHR957KeqJf8HSpKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xryHobFw; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="r6dkOUFA"
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20260914214810euoutp014ff49e2223f4f8180019e91812fcef1f~VTkYr5QQQ2280222802euoutp01a;
-	Mon, 14 Sep 2026 21:48:10 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20260914214810euoutp014ff49e2223f4f8180019e91812fcef1f~VTkYr5QQQ2280222802euoutp01a
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1789422490;
-	bh=8TZkNginDFdnLOsvcdP/UiXA2NQy9Wjc4iv1hpjrasw=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=r6dkOUFApQ564cxrtN6rYxMjd083iQt0SKXIDHMTQyQ0Mhmm64sSk4IoJORV1eqDM
-	 QYXEUTE7eiweJHOaotoScvkRvvVhhyccmhjrLm6mWzskoNeiwiCS487fkuQf3uSB2x
-	 plKJ9L78cQ7/WjdWCkYYu5h6jd0G1h5vmx8OTtAA=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20260914214809eucas1p1f9f9e91cd4f4d15fbe6b7489db12b126~VTkXpQxDx0077300773eucas1p1l;
-	Mon, 14 Sep 2026 21:48:09 +0000 (GMT)
-Received: from [192.168.1.44] (unknown [106.210.136.40]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20260914214806eusmtip22f86fc473aa0bd24e8d3cad7225a6972~VTkVfsV9Z2978529785eusmtip2x;
-	Mon, 14 Sep 2026 21:48:06 +0000 (GMT)
-Message-ID: <b4c80c88-9235-4ad0-bc23-53dddddfadb3@samsung.com>
-Date: Mon, 14 Sep 2026 23:48:06 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xryHobFw"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-49cd77e0f95so28851305e9.3
+        for <linux-clk@vger.kernel.org>; Mon, 14 Sep 2026 16:05:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1789427153; x=1790031953; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=P4bUmIM/8MrhNWBsCgZzU2roeZ3zMpS7wHfUs2pan0o=;
+        b=xryHobFw0ijtMYXto5WQqWs2WXYc5Br7gMQ72qTZPdUCGm2RSm3CCAus/YPShmmGsl
+         zhkdAE1ECCC5x9vYRnE3bKDrOnKZjjk3ZjRNmxIbbrxpgtNPiVWGUoa/7UqLLahmFLXu
+         U9v/f9LCvDSBY/0M5doHULq6OaIl1hwqVVxX65OJIxRtV7qiMUBsNgkxV4pnXqrDkxT1
+         FSeiP3cBRkG5wC6twvrRjgOtLeHbaANaTaIeusFGkbwXFVuvjtWM5pESbNVzem23NVWk
+         Dm1I+sH7uqj61l/LUZBKv3VV3nL7enXzNYPRbSM46MbJvmauXEygSWiAOx/i5/noAsJ5
+         LMug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1789427153; x=1790031953;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=P4bUmIM/8MrhNWBsCgZzU2roeZ3zMpS7wHfUs2pan0o=;
+        b=qWsh/5tEmPzqWblcPd6j0pb52A9dT4TgBwtH0mgh8uldwOhlZe0fK/oUozRnD/3Dvv
+         2x9D1Xvp+8YMHuLgNWQr1TbgfZ3/ZSZuhXCJ1ixuaMvWcen8ty9MFzzZBP3LQYbzmTQv
+         kFxpPvhp9jSXsInqmUPJchsMqSwDP7eFJRimu2rqk0yD0DF4DOMq4yn8b2qb9Jgm6TnM
+         MqI69/0ezElDO9wURKAWdTcjPI7kvGaH73jVE0SH0c/QuLNvkWk79vnFlMxNFMlRxB5s
+         76HOXnnUluTd2Zu0P8L8C/WoXahGR47sG7HTkD6E9kICMJuuD7KOQq1PJgX+n2qctjm4
+         RyTw==
+X-Forwarded-Encrypted: i=1; AKwUvBxCreYtO0bpIiwx9hk9zo7xfYgEI/IEer38hubqXcnyhGGlJ6ZpWAXiGZH4YK/A3RBUFdW8q1gtmCw=@vger.kernel.org
+X-Gm-Message-State: AFuF++kRYJvJ2XFwXedxg5jbwv2PVPvZYDP/GbtyN00tzEU2tnLCBEVH
+	E8d411+sU7zdR5bBu1gAYxN1ClNOOGOsViwrDFn+3Y4W5oXv7iYgep14Bme/9f2rBPI=
+X-Gm-Gg: AYBFou11LMgQVMRBIdpwAEkUmq2VdYQTJzOQt+c5iihUpkYkgTZJE2n/Btx7BfV9tK9
+	qX7f76H4Ve4/6ftvNV659hNX4XSH3noLYwBEI8DjfEH1e96gixM12xyPjVzFvtEOha0woR9SCxR
+	XGlVkJQvrI1uDsdwe5CCyKhmdXzp2mFJn9jVE0xXb8AqRUWySC8C1S+/miEPn6wdmB/2likdnII
+	PHulBPfx1J4CM8y0trXX0TIM1N90uD+EFfK5PPuAGfGSvlYLtUOAJxTNDTybBBgP6CCuQvWdlEM
+	bGIvJL9t6YQXnKzTG0os6YFTnpsNnD7/k9tRdUC27Wvnw+zkUBFWNTOsB/wwcTUDR9LdcJZ66Pj
+	H1pzOCEiXZwWGfsiTizRNHyLQk+gQWcoVuM5psJXY81pm5jsh/gVRuEAlU/Nmg26D+ZBaj2alkB
+	itReB6kCAXbSm+WiEAUnNfww1mpn20T32/oLVQAkIUg1dbdwRtq9Zm0gjLrVFtqNknVtnSR5pWx
+	jNeBZY9YsgpWuT4Lu8fGsti01s16Qiwyw4ORTjjuYeXrMtk0HWZI1gooeXz+pA=
+X-Received: by 2002:a05:600c:37c3:b0:49c:fc6e:a3d9 with SMTP id 5b1f17b1804b1-49e7a678879mr66917465e9.24.1789427152608;
+        Mon, 14 Sep 2026 16:05:52 -0700 (PDT)
+Received: from [127.0.1.1] ([94.4.85.166])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-486eb32d5f1sm32098817f8f.12.2026.09.14.16.05.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Sep 2026 16:05:51 -0700 (PDT)
+From: Alexey Klimov <alexey.klimov@linaro.org>
+Subject: [PATCH v2 0/2] Initial support for Exynos850 SoC in ACPM clk
+ driver
+Date: Tue, 15 Sep 2026 00:05:42 +0100
+Message-Id: <20260915-exynos850-acpm-clk-v2-0-ffad4a6b3fb1@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 14/19] drm/bridge: starfive: Add JH7110 HDMI
- controller driver
-To: Chaoyi Chen <chaoyi.chen@rock-chips.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Neil Armstrong
-	<neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>, Krzysztof
-	Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Andrzej
-	Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>, Laurent
-	Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
-	<jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Luca Ceresoli
-	<luca.ceresoli@bootlin.com>, David Airlie <airlied@gmail.com>, Simona Vetter
-	<simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
-	Lee Jones <lee@kernel.org>, Andy Yan <andy.yan@rock-chips.com>, Philipp
-	Zabel <p.zabel@pengutronix.de>, Emil Renner Berthing <kernel@esmil.dk>, Hal
-	Feng <hal.feng@starfivetech.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Brian Masney
-	<bmasney@redhat.com>, Heiko Stuebner <heiko@sntech.de>, Conor Dooley
-	<conor@kernel.org>, Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt
-	<palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti
-	<alex@ghiti.fr>, Dominique Belhachemi <db@domibel.de>, Brian Masney
-	<bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>,
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	mfd@lists.linux.dev, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
-	linux-riscv@lists.infradead.org, Andy Yan <andyshrk@163.com>, Marek
-	Szyprowski <m.szyprowski@samsung.com>, Maud Spierings
-	<maud_spierings@murena.io>, Graham Markall <hello@big-grey.co.uk>, Icenowy
-	Zheng <zhengxingda@iscas.ac.cn>
-Content-Language: en-US
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-In-Reply-To: <15741677-7f2c-4190-b77f-a496643593c6@rock-chips.com>
-Content-Transfer-Encoding: 7bit
-X-CMS-MailID: 20260914214809eucas1p1f9f9e91cd4f4d15fbe6b7489db12b126
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20260904132735eucas1p2c898afe4a4c6e957a7b9eedff321a6dc
-X-EPHeader: CA
-X-CMS-RootMailID: 20260904132735eucas1p2c898afe4a4c6e957a7b9eedff321a6dc
-References: <20260904-jh7110-clean-send-v3-0-484f9ae72715@samsung.com>
-	<CGME20260904132735eucas1p2c898afe4a4c6e957a7b9eedff321a6dc@eucas1p2.samsung.com>
-	<20260904-jh7110-clean-send-v3-14-484f9ae72715@samsung.com>
-	<15741677-7f2c-4190-b77f-a496643593c6@rock-chips.com>
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMZ9qGoC/32NTQqDMBBGryKz7pT8oJWueo/iwiSjDrWJJCUo4
+ t2beoAu34PvfTskikwJ7tUOkTInDr6AulRgp96PhOwKgxKqEbVUSOvmQ2prgb1d3mjnFxpy0ip
+ tmoYMlOESaeD1jD67whOnT4jb+ZHlz/7NZYkCW32rtXLODLp9zOz7GK4hjtAdx/EFK1baprUAA
+ AA=
+X-Change-ID: 20260512-exynos850-acpm-clk-bed1c23b66eb
+To: Sam Protsenko <semen.protsenko@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+X-Mailer: b4 0.14.3
 
+This series adds support for the Exynos850 SoC to the Samsung ACPM clock
+driver. 
 
+Currently, the driver hardcodes the GS101 clock variants directly within
+its probe() routine. To cleanly support Exynos850 (and potentially other
+SoCs that utilize the ACPM protocol in future), this series first
+refactors the driver a little bit to be SoC-agnostic, and then wires up
+the new Exynos850 data.
 
-On 9/7/26 05:51, Chaoyi Chen wrote:
-> Hello Michal,
-> 
-> On 9/4/2026 9:27 PM, Michal Wilczynski wrote:
->> Add the HDMI controller (bridge) driver for the StarFive JH7110.
->>
->> This driver binds to the starfive,jh7110-inno-hdmi-controller node.
->> It gets its shared regmap from its parent and its register access,
->> module and bus clocks from voutcrg. It consumes the pixel clock and the
->> PHY from its hdmi_phy sibling.
->>
->> The driver calls the generic inno_hdmi_probe function and passes the
->> shared regmap to it, registering as a DRM bridge. The .enable hook is
->> responsible for setting the PHY's pixel clock rate via clk_set_rate()
->> and powering on the PHY via phy_power_on().
->>
->> The DC8200 has two panels, each exposing a DP and a DPI interface, and a
->> mux in the video output system controller picks which of them drives the
->> HDMI transmitter. Program that mux from the port graph rather than
->> relying on whatever the bootloader left behind, taking the panel from the
->> remote port number and the interface from the remote endpoint number.
->>
->> The generic driver holds the clock it looks up as the register access
->> clock enabled for its lifetime, and derives the DDC divider from that
->> clock's rate, so point it at the system clock. Naming the pixel clock
->> there instead would keep the PHY pre-PLL powered from probe onwards and
->> size the divider from the wrong rate.
->>
->> The PHY can only generate the discrete set of pixel clocks described by
->> its pre-PLL table, so .mode_valid rejects any mode clk_round_rate()
->> cannot satisfy. Without it such a mode would be advertised to userspace
->> and the modeset would appear to succeed while the display stayed blank.
->>
->> .enable returns early when the rate is unsupported or the PHY fails to
->> power on, so track whether the pixel clock was actually enabled and let
->> .disable tear down only what was brought up, otherwise the clock
->> refcount underflows.
->>
->> The clocks and the reset are torn down through devm rather than from
->> .remove, so that they outlive the bridge that inno_hdmi_probe() adds with
->> devm_drm_bridge_add(). Releasing them in .remove runs before devres
->> unwinds and would leave the bridge registered with its clocks already
->> gated.
->>
->> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
->> ---
->>  drivers/gpu/drm/bridge/Kconfig            |  11 ++
->>  drivers/gpu/drm/bridge/Makefile           |   1 +
->>  drivers/gpu/drm/bridge/jh7110-inno-hdmi.c | 318 ++++++++++++++++++++++++++++++
->>  3 files changed, 330 insertions(+)
->>
+First patch introduces `driver_data` to dynamically extract clock lists,
+number of clocks, names of clocks, and mailbox channel id, removing the
+GS101 hardcoding.
 
-[snip]
+Second patch introduces the `exynos850_acpm_clks` array and
+"exynos850-acpm-clk" device ID.
 
->> +static enum drm_mode_status
->> +inno_hdmi_starfive_mode_valid(struct device *dev,
->> +			      const struct drm_display_mode *mode)
->> +{
->> +	struct stf_inno_hdmi_controller *ctrl = dev_get_drvdata(dev);
->> +	unsigned long pixelclk = mode->clock * 1000;
->> +	long rounded;
->> +
->> +	/*
->> +	 * The PHY can only generate the discrete set of pixel clocks described
->> +	 * by its pre-PLL table, and clk_round_rate() fails for anything else.
->> +	 * Reject those modes here: without this the modeset would appear to
->> +	 * succeed while the PHY never produces a signal.
->> +	 */
->> +	rounded = clk_round_rate(ctrl->clks[CLK_PCLK].clk, pixelclk);
->> +	if (rounded < 0 || rounded != pixelclk)
->> +		return MODE_NOCLOCK;
->> +
-> 
-> Using "if (rounded != pixelclk)" would be ok.
+This version also tries to handle missing ->recaclk_rate() implementation
+in ACPM firmware. Because the Exynos850 ACPM firmware does not support
+dynamic rate reads over ACPM IPC, the second patch introduces
+a ->get_rate() callback mechanism. For Exynos850, this falls back to
+parent CMU clock topology, registering parent data via pdata.fw_name.
 
-Thanks will fix.
+Tested with cpufreq for E850, with OPPs and cpufreq_dt on Winlink E850-96
+board.
 
-> 
->> +	return MODE_OK;
->> +}
->> +
+I decided not to add Tudor's trailer for the second patch because it seems
+that rework is quite important.
+The dt-bindings for clocks will be added as a separate commit in another
+series.
 
-[snip]
+Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+---
+Changes in v2:
+- changed commit message of second patch that adds support for Exynos850;
+- introduced ->get_rate() callback for Exynos850;
+  Rework of second patch and implementation of get_rate from parent clock;
+  ACPM clocks for Exynos850 now rely on clock topology and need parent
+  clocks to be provided;
+- reworked acpm_clk_recalc_rate() to use driver data calback if it is
+  available;
+- struct acpm_clk now has pointer to drv_data;
+- rebased and added changes associated with rebase;
+- added mod_devicetable.h as Tudor suggested, added trailer in the first
+  commit;
+- Link to v1: https://lore.kernel.org/r/20260512-exynos850-acpm-clk-v1-0-837532ddbf38@linaro.org
 
->> +/*
->> + * The DC8200 has two panels, each exposing a DP and a DPI interface, and a mux
->> + * in dom_vout_syscon picks which of them drives the HDMI transmitter. Derive
->> + * the mux setting from the port graph: the remote port number selects the
->> + * DC8200 panel, and the remote endpoint number the interface on that panel
->> + * (0 for DPI, 1 for DP). Both drive 8-bit RGB, the only format this driver
->> + * currently produces.
->> + */
->> +static int stf_inno_hdmi_setup_mux(struct device *dev)
->> +{
->> +	struct device_node *ep, *remote;
-> 
-> Using "struct device_node *ep __free(device_node)" can help you simplify
-> the processing of resource release.
-> 
+---
+Alexey Klimov (2):
+      clk: samsung: acpm: introduce driver data for SoC-specific clocks
+      clk: samsung: acpm: add Exynos850 support
 
-Sure, thanks !
-
-> 
+ drivers/clk/samsung/clk-acpm.c | 62 ++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 56 insertions(+), 6 deletions(-)
+---
+base-commit: 1a1de54f7369cd2b5bac0f265910e60ad3a6b4c3
+change-id: 20260512-exynos850-acpm-clk-bed1c23b66eb
 
 Best regards,
 -- 
-Michal Wilczynski <m.wilczynski@samsung.com>
+Alexey Klimov <alexey.klimov@linaro.org>
 
