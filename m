@@ -1,95 +1,70 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56F603FADE2
-	for <linux-clk@vger.kernel.org>; Mon, 14 Sep 2026 08:26:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2A6E41A93A;
+	Mon, 14 Sep 2026 09:44:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789374409; cv=none; b=QEcw173NlbW56G1rpT3mEZIhqwJT1P8KOBlIDvIjM9vODVSLD43b+boNS6oUvCYEj/yp353E1iorAVvRg6/Usd/VxpQwjjbN3kff8Lwi6SviBnt/facFhdk/1yavfW2ukTXtitg3XSs3AieJ1uYSzZzycwC9UWxFlYcFcPszrlY=
+	t=1789379093; cv=none; b=J06O2y+B3FNLNuU11s1p3Vv1Xp5AgiTEv2vqzdM+84bfIkqgPkWoKMj+zJIECCtPfGwlRRWVzVe00tXKEocWVfKraA11xM88Z+DC9zBCGeuZVOQqz9hxr/gcq5QG3YeTHfGwKe0vQTtA3U0Nlna+tGNhDNhvfYAcL9Db72YjvOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789374409; c=relaxed/simple;
-	bh=TA26xEZ/LjJXtkH+wc6rh6u0nbvSN8fi3WWcPpbpONU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GgMlphTfGUmJ8QPVNHPfL+ydRl2niurJLXVeCwI0IiWC6PyZ52DxeNMFQNqka7MAhWzYL+mgdy296O929584qlYGBU21YYCvanXpNckNncPD8T28cQurvvWxjjb4wrRRu6EMokgLqPE/s0hY5oupS1Y30K/ZMuotOabeDFk4/Xg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S7rZ64Er; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789379093; c=relaxed/simple;
+	bh=6nYt2qmvQiwbF8zdA1cWcafihjBF9zdHKhaWCkPbVsc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PffzBM2Rlkek4/BENBDcC+5wehVpbMt8q+MB/dxCHseNSU2WcbrHJu0+tXPAd4VeTExtbiLvC/y9DEwEnPDSg6BYEzumkZqTM5/pnKeorIsUsPY5OKC2IlBame4az2hDV4SDVfqIe/JmqDSZOx+E2iLeOXgTdb+tdv7PHSlAIA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AwJKXUYx; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S7rZ64Er"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 985501F00903
-	for <linux-clk@vger.kernel.org>; Mon, 14 Sep 2026 08:26:47 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AwJKXUYx"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C06121F000FF;
+	Mon, 14 Sep 2026 09:44:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789374407;
-	bh=e6EWldjLUV164UHYmg9SwSNk9vpahiavUGimVKHnqTs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=S7rZ64Er9f2J3r71j+Ra/t2dR0m3MCQd2lZWyIajqu/P1gyoxwditamSmJAhvxfLO
-	 oPuqEeUZCXSPfct5Y87skLbFYzdxrBs7ygzvAI1ulhvODDeH36Yy4wapVKHZPMta6V
-	 qIosKNt2T6yX/nNiiwHxrqRS5JDVDo+RH2e7LJLdLwtV5R1W0nJdzhIK2Vzu5m+ATB
-	 rfIubf7stDTGlVK6riX994NejNaH1p6zZQ7VN41kJTqT93rPJIumty0w/xQRmcW+dk
-	 /+zwsJ/MZoiBqKepzlCCkPLfbDXMjS0GneU9PtrZOkKHWMV7u/AmzKmfTX45sGS/ID
-	 DxVr/E2qiV97g==
-Received: by mail-lf2-f12.google.com with SMTP id 2adb3069b0e04-5b5e4f1651cso1249951e87.0
-        for <linux-clk@vger.kernel.org>; Mon, 14 Sep 2026 01:26:47 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBwrYWQ/ZeK2HFzPeJpVbYSdgWAytc2qN7lSkyx+0XKz7XKB9P7JqimTlqV6kUa5/OUluJMvce3tqMQ=@vger.kernel.org
-X-Gm-Message-State: AFuF++ksdpegsziJYADuIQTFq5NpXNGabxXUjW42WJ5EBQ44J4/PH/ve
-	lBxZ1mwqengulJL1xqtebUVFg9uihv/hMUdUiIOuKc+xVcDVEKXtYtUpp5GsVOuQpi8yyYqc8eQ
-	NFe1qNY7bv4wjR/3dzF33DalT1Zo08lk=
-X-Received: by 2002:a05:6512:239f:b0:5b6:184c:7da3 with SMTP id
- 2adb3069b0e04-5b8ae6afb21mr372849e87.44.1789374406193; Mon, 14 Sep 2026
- 01:26:46 -0700 (PDT)
+	s=k20260515; t=1789379092;
+	bh=7oTu0d+0Fng6387kjjfZt62xlgG4iwEnpYsY40VG/Ho=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=AwJKXUYxu2mk018JrvfobY4v2/1iitVaMT3IPdoEL9Dhptuk86dYWjE1hmwbGweip
+	 G9YbI8JCD/Roai2iKXzafYLn7VJDIHvKI17gT5I1gWWOYsXmzjqZSQhQNBsHzuyGDq
+	 1nK49n33KIeUVVdWn+taXyyAGZw0xq1efG6Py78j/samC5nea2i9H9TTuc80epxaRb
+	 hEp+8O4fOix1UsVy6dGnIcKEFqv+Mw9K0Dj4cnmNokkpRtYaxF3FRPeXgCa14aUi+9
+	 YahzdtRk++xKNYA3nR/U1gK6j6YXyqdOQR2zE9s0nL4s6nHAK0u6hyNkk9s1fTEPoH
+	 y8gLqWQpfryXQ==
+Date: Mon, 14 Sep 2026 11:44:48 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Long Zhao <longzhao@ambarella.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, soc@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linusw@kernel.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jiri Slaby <jirislaby@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Long Zhao <zl020895@163.com>, Lee Jones <lee@kernel.org>, 
+	mfd@lists.linux.dev, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 04/13] dt-bindings: pinctrl: add Ambarella CV75 pinctrl
+Message-ID: <20260914-refined-elite-seriema-0f7eaa@quoll>
+References: <20260904-cv75-v5-v6-0-e918514cb3b1@ambarella.com>
+ <20260904-cv75-v5-v6-4-e918514cb3b1@ambarella.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260827-kuno-soc-support-v5-0-6d47636a8f09@oss.qualcomm.com> <ac236a52-1293-4a70-b5ea-ec6118cb02e1@oss.qualcomm.com>
-In-Reply-To: <ac236a52-1293-4a70-b5ea-ec6118cb02e1@oss.qualcomm.com>
-From: Linus Walleij <linusw@kernel.org>
-Date: Mon, 14 Sep 2026 10:26:33 +0200
-X-Gmail-Original-Message-ID: <CAD++jLnmH31iNsOeB7CWWpxkav6qxRgU6-tp=gxZxwWz3KUupA@mail.gmail.com>
-X-Gm-Features: AcwNN1UxxQOsVcBHVbSaj8l-dq0hp_W-v71JNdK8T8AJOQnCtU1FStuksPYcjMI
-Message-ID: <CAD++jLnmH31iNsOeB7CWWpxkav6qxRgU6-tp=gxZxwWz3KUupA@mail.gmail.com>
-Subject: Re: [PATCH v5 00/15] Add initial support for Qualcomm Kuno SoC
-To: Hardeep Sharma <hardeep.sharma@oss.qualcomm.com>, Georgi Djakov <djakov@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Ulf Hansson <ulfh@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney@redhat.com>, Bartosz Golaszewski <brgl@kernel.org>, Thomas Gleixner <tglx@kernel.org>, 
-	Radu Rendec <radu@rendec.net>, Robert Marko <robimarko@gmail.com>, 
-	Guru Das Srinagesh <linux@gurudas.dev>, Taniya Das <taniya.das@oss.qualcomm.com>, 
-	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, 
-	Mukesh Savaliya <mukesh.savaliya@oss.qualcomm.com>, Abel Vesa <abel.vesa@oss.qualcomm.com>, 
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20260904-cv75-v5-v6-4-e918514cb3b1@ambarella.com>
 
-On Wed, Sep 9, 2026 at 8:43=E2=80=AFAM Hardeep Sharma
-<hardeep.sharma@oss.qualcomm.com> wrote:
+On Fri, Sep 04, 2026 at 02:38:11PM +0800, Long Zhao wrote:
+> Document the CV75 pin controller binding using generic function and
+> groups properties for pinmux configuration.
+> 
+> Signed-off-by: Long Zhao <longzhao@ambarella.com>
+> ---
+>  .../bindings/pinctrl/ambarella,cv75-pinctrl.yaml   | 239 +++++++++++++++++++++
+>  1 file changed, 239 insertions(+)
 
-> Several patches from the series have already been picked up and applied
-> through their respective subsystem trees.
->
-> The remaining patches listed below are ready to be picked up as well:
->
->   [PATCH v5 06/15] dt-bindings: interconnect: Add Qualcomm Kuno NoC
->   [PATCH v5 07/15] interconnect: qcom: Add Kuno interconnect provider dri=
-ver
->   [PATCH v5 14/15] dt-bindings: arm: qcom: Document Kuno IDP board
->
-> Since the majority of the series has already been applied, I would
-> appreciate it if the remaining patches could also be considered for
-> inclusion.
->
-> Please let me know if there are any outstanding concerns or additional
-> changes required from my side.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
-6+7 looks like stuff Georgi should pick up, patch 14 looks like something
-Bjorn should apply to the Qcom SoC tree.
+Best regards,
+Krzysztof
 
-Yours,
-Linus Walleij
