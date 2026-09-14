@@ -1,70 +1,109 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2A6E41A93A;
-	Mon, 14 Sep 2026 09:44:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDAFB400E11
+	for <linux-clk@vger.kernel.org>; Mon, 14 Sep 2026 11:03:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789379093; cv=none; b=J06O2y+B3FNLNuU11s1p3Vv1Xp5AgiTEv2vqzdM+84bfIkqgPkWoKMj+zJIECCtPfGwlRRWVzVe00tXKEocWVfKraA11xM88Z+DC9zBCGeuZVOQqz9hxr/gcq5QG3YeTHfGwKe0vQTtA3U0Nlna+tGNhDNhvfYAcL9Db72YjvOU=
+	t=1789383808; cv=none; b=TzMe/PE/SbF/13N1JufTIk7+BMJO6YgWAbqAq0Ua7snuEWYMmM4sSFDWN+RNrNSIB0ZF8KQ7Uf519UPPdctEFGgXtlwifyvu3+4eHSpo7o9+CoacQidXykbpwtl33wP0YMPDXOBkvO9EPXNf2w2SQjLKs3NeqzdKUHm1FrU4gc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789379093; c=relaxed/simple;
-	bh=6nYt2qmvQiwbF8zdA1cWcafihjBF9zdHKhaWCkPbVsc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PffzBM2Rlkek4/BENBDcC+5wehVpbMt8q+MB/dxCHseNSU2WcbrHJu0+tXPAd4VeTExtbiLvC/y9DEwEnPDSg6BYEzumkZqTM5/pnKeorIsUsPY5OKC2IlBame4az2hDV4SDVfqIe/JmqDSZOx+E2iLeOXgTdb+tdv7PHSlAIA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AwJKXUYx; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789383808; c=relaxed/simple;
+	bh=u1qAW3Ps1/ms8o++TePT35PSy+z+WCTmNWWT04eGCYg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TgNLM2U5liU2GMZRs7k/ZffVpyP6r2QiHVMArO3T1+slPxWn2Zem235ra0pjWHT7Wb/CBnqAt00tRlScDwHVmXDLvJLr9BEFF6m5KU8akK6M3MSEAFGq/l7g/U+30yWOkYSxrZqj+QevXmAf+0vGYGDPTflbZwxGBVmXI26lwxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vS0ld2F7; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AwJKXUYx"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C06121F000FF;
-	Mon, 14 Sep 2026 09:44:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789379092;
-	bh=7oTu0d+0Fng6387kjjfZt62xlgG4iwEnpYsY40VG/Ho=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=AwJKXUYxu2mk018JrvfobY4v2/1iitVaMT3IPdoEL9Dhptuk86dYWjE1hmwbGweip
-	 G9YbI8JCD/Roai2iKXzafYLn7VJDIHvKI17gT5I1gWWOYsXmzjqZSQhQNBsHzuyGDq
-	 1nK49n33KIeUVVdWn+taXyyAGZw0xq1efG6Py78j/samC5nea2i9H9TTuc80epxaRb
-	 hEp+8O4fOix1UsVy6dGnIcKEFqv+Mw9K0Dj4cnmNokkpRtYaxF3FRPeXgCa14aUi+9
-	 YahzdtRk++xKNYA3nR/U1gK6j6YXyqdOQR2zE9s0nL4s6nHAK0u6hyNkk9s1fTEPoH
-	 y8gLqWQpfryXQ==
-Date: Mon, 14 Sep 2026 11:44:48 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Long Zhao <longzhao@ambarella.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, soc@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linusw@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Long Zhao <zl020895@163.com>, Lee Jones <lee@kernel.org>, 
-	mfd@lists.linux.dev, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 04/13] dt-bindings: pinctrl: add Ambarella CV75 pinctrl
-Message-ID: <20260914-refined-elite-seriema-0f7eaa@quoll>
-References: <20260904-cv75-v5-v6-0-e918514cb3b1@ambarella.com>
- <20260904-cv75-v5-v6-4-e918514cb3b1@ambarella.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vS0ld2F7"
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-c294ad260fdso403725766b.1
+        for <linux-clk@vger.kernel.org>; Mon, 14 Sep 2026 04:03:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1789383803; x=1789988603; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=Xbly740beuemqSo1bscqb84tM6a/tiFHYniiF7SfuVo=;
+        b=vS0ld2F7cJuuK+ywGYMMAdd5Yi+fY+WhBzUAHWxaFr4PEJ/UpeToQjsjRt3xkBYX5b
+         p+Tgj6TVvRe/yNdPLIl1fb5LUIQSaXT3CZKQ8tawm2cS+/LDYspSAb2tl3Kp2Y7+tEvB
+         /O6ZYmMH1HNjJD0Os1SSe5z6BX6yrm9pi8spaC4c3K+adW9kgxTyv5kqLPE0zwP/ky2V
+         kxGaYHywiEolYwJyXT7FCmOA6wPW2FjaZcbnmG+AODyqxnIqDRS92s7jtp5+AsAxpho0
+         iEyURcYAAx6lskuaDffNKcpHBi2Tpqa2TXflnBqkOqlHJH2y8qsnhf6qALW4HizoQOYh
+         kzDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1789383803; x=1789988603;
+        h=content-transfer-encoding:content-type:in-reply-to:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=Xbly740beuemqSo1bscqb84tM6a/tiFHYniiF7SfuVo=;
+        b=d/je6YmNh/A/m4XZbM1LjRhFDl1VT3wIKP07uElRwBrMUOyMx91WTjvH0KgNNkqvTE
+         lRUPNpRZ0YGLpKW2g3eRpsPC8sjfGGxDLdpV0hB+7di0rVaK8wpjLYuLjXdiPG0NS3Lz
+         Af+R3hEMpwcl5drLWwG+t++U8YsU5QtkKjCpfYJd6wlkf7MFwyIq4y6Wr4n7ExXBBW5M
+         yIgWnGiMhA9LPN0gfQRaQ2UEepEzeJUMitGKwzzqQJvB4WRWeAwv0KUzplQGRZUCZehE
+         /4gdmLUY2HCbRY+11k7rIJitDMhnN8Cu2mwc6/2yUBHOsSzGuSePJ98Ptx9nzZTchi1V
+         PDzg==
+X-Forwarded-Encrypted: i=1; AKwUvBw9nyGCGn3ZOJ0+u1zpYr2CkmCPYIEEu2CbP1LRHDN83xhaUqr44QfWdmev2wm2dBB5Ri4TzH+j60Q=@vger.kernel.org
+X-Gm-Message-State: AFuF++l89aInp1UPj9uO3VgNJ9ZtqOs11//pqK+Ya4OuYyApnQ2guTeP
+	DOIczO47LbWV2viIeicu1rikVwBaGbeIFmqrCXXIBkvIky8O9eyPXHh6wPKMXBMOoRo=
+X-Gm-Gg: AYBFou326i7ZQ/KUTityNamrfJcTYNKbU615liPIlnOroUvRZO8w3Qf/QPm45CTACR6
+	hEbY9aecAfpiHZ+gXxgCLUI4RJ/Ddp6MGcjF4/U4LEYZ0DHzOVxwE7gqZ/DGwzVNJK+CUWWW+Ee
+	dRLU6OYOnfrfPIbqe9OHD5nSjAmNTnsiKlDNjr0Bk83ORkZssDbv7UDs1E3wLCchn+LUxZnw3CL
+	i4xpp/iAJHGRzyTHkj8wQEKaiT+v6Dp8bSh5IZp6mlJtk9lT/vpkqqKiWNjR7/PWJrDNonyVHz2
+	V970YwDXGGwD8rRe5OJAu1FMwnlEdt35aH7bHTdwynNrnITLNc2m3Q9g8vIrKv/HgG914gGVSl7
+	uXdXQXJC+8ltk0d1QY8gPFQEDnAwQhU0vg8FSClgmdN01eKIrHKhlzjB5OWY4eEAW4Qbntzq8LG
+	B5ktFyu6vVJdQ0hPRfxJ5AdP9DDs4J5YRnGCERePS+t8ZOo7fx2QLM+2YfU4Trn0nN7HDIc5ssS
+	iZpXF0peuiVbMxWka2R
+X-Received: by 2002:a17:906:c156:b0:c25:833d:3839 with SMTP id a640c23a62f3a-c29a437c67amr329463066b.15.1789383803122;
+        Mon, 14 Sep 2026 04:03:23 -0700 (PDT)
+Received: from [192.168.0.35] ([109.76.248.34])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c29852497b0sm286364666b.38.2026.09.14.04.03.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Sep 2026 04:03:22 -0700 (PDT)
+Message-ID: <ceca8547-ff15-4f5a-8844-8ec9061a5e6c@linaro.org>
+Date: Mon, 14 Sep 2026 12:03:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260904-cv75-v5-v6-4-e918514cb3b1@ambarella.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v16 3/5] phy: core: Add devm_phy_get_by_of_node()
+To: Frank Li <Frank.li@oss.nxp.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>,
+ Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Bryan O'Donoghue <bod@kernel.org>,
+ Loic Poulain <loic.poulain@oss.qualcomm.com>, Vinod Koul <vkoul@kernel.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>, Felipe Balbi <balbi@ti.com>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-phy@lists.infradead.org,
+ Krzysztof Kozlowski <krzk@kernel.org>
+References: <20260906-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v16-0-f7bd68b5369f@linaro.org>
+ <20260906-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v16-3-f7bd68b5369f@linaro.org>
+ <aqRuCfmgPqa5h0y4@lizhi-Precision-Tower-5810>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Content-Language: en-US
+In-Reply-To: <aqRuCfmgPqa5h0y4@lizhi-Precision-Tower-5810>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 04, 2026 at 02:38:11PM +0800, Long Zhao wrote:
-> Document the CV75 pin controller binding using generic function and
-> groups properties for pinmux configuration.
-> 
-> Signed-off-by: Long Zhao <longzhao@ambarella.com>
-> ---
->  .../bindings/pinctrl/ambarella,cv75-pinctrl.yaml   | 239 +++++++++++++++++++++
->  1 file changed, 239 insertions(+)
+On 11/09/2026 22:09, Frank Li wrote:
+>> +	if (!link)
+>> +		dev_dbg(dev, "failed to create device link to %s\n",
+>> +			dev_name(phy->dev.parent));
+> Is it okay to print dbg message()? suppose return NULL or some error?
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+This should be dev_err() for sure thx
 
-Best regards,
-Krzysztof
-
+---
+bod
