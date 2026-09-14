@@ -1,112 +1,114 @@
-Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41])
+Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D40E3F4DE6
-	for <linux-clk@vger.kernel.org>; Mon, 14 Sep 2026 07:38:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3AA53E9C05
+	for <linux-clk@vger.kernel.org>; Mon, 14 Sep 2026 08:12:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789371504; cv=none; b=bhrw5c2I/5zdX3bXbCBAdtTCZwKtC7GGaaT5uqiU85NDLQcwY+VY+bjc4JO4Qf4Nup1QucqfKEKz3/3znyGCqExW3wTlSpsj9/s6yoUHwkWKaqfn5MQ+bThpv9Fn2ARuUIi47CEYmMYURJOzukCGVA/klMPGpe6Z2CvxQFTOiZc=
+	t=1789373546; cv=none; b=sJxbQYrvGqnHkUobE6HC7+VTcIy9tBxaKXR89ZjMIE/1nvAlAVKCkuegZJxlLOWXIyYYx58dgLkrEyppMHrbhMaiEiYwmlCs4bFJo/qN46R8LXGmm+derUkxG8fZrLlODkFbfSQG88n6G3aKxs++HYxCyfSYQ5l0+lDUHW8C+7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789371504; c=relaxed/simple;
-	bh=am3YRQdfDAT3nmaBqC7y5nue7c7B51qzUVM5Eheco6c=;
+	s=arc-20240116; t=1789373546; c=relaxed/simple;
+	bh=qOxCYMeZioIGCmh0MxrsIyGPyaOCPaAbU6O6uizTRQE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=amLcjO4m7W93WXCljMwhxVrLVkjgdap5DIzLNm/vESHpq0zxP19TQG7ygmUHhIItVKqBK+8OBJu27r6iqIdTcBuOy5EtUMrRDyzPYg4nT8pD5rrapcaGTvYSrB9HW+RL+p247XOTF6gTvQWsFKgUqR9vaTdpfiHSRCgfRVT8eTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.41
+	 To:Cc:Content-Type; b=YdoNmcRIgfJcMZOYGAAuuzjX7PkT8bb60lO/GUkxkZc2fH1ONEA1YJXGzpxvoKLc8PSy+/9NQ78U1Rt0FwekjzjzIrj/m+1adITNmX2dwFaPqYt48u3RmMfW3WoWQCA0OnYcdau4lS4wntXl+Ib9TCs9y2+ver7Opr2fABs/rm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-797a7df7184so512397137.1
-        for <linux-clk@vger.kernel.org>; Mon, 14 Sep 2026 00:38:23 -0700 (PDT)
+Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-7f4f53975e6so3270226a34.3
+        for <linux-clk@vger.kernel.org>; Mon, 14 Sep 2026 01:12:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1789371502; x=1789976302;
+        d=1e100.net; s=20251104; t=1789373544; x=1789978344;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=ig0KNWBSwSP4iz1PoFYIig3Kn8oJ6i+WfrIPn0M81M0=;
-        b=nZqVx2mqGICahkBRBJkTOGxLk9psWlQtwozC4nnuecuvHWsRhGYonEJVrwPcQQj8R2
-         3TBxRJxkdiOi3gzV1yS2GfGi4HuuHJtYlil5zwjlIJKO7csk1QqIsw6fxF3Cez8EXR/S
-         2AmSkL/Jcy9SV13syqDLp/sDiYwHQREACIePNd8ZPn/HR/GaI9x5UI5fG86wRA1bFChG
-         Lo780NWOOXcbckMEKLutpahTVrL9oXm81j7CdT5yNlV7U7v0A6NwmMSlh/1eP8wwb+V4
-         ROfI9h+YB7lCXSBE+CZagxMh6yQIT6EF0NnzaMZmExuMS5nRtfvzup9uVJ9J7KYDGQR+
-         3Xlw==
-X-Forwarded-Encrypted: i=1; AKwUvBzGVM7XHj2KYGRNk0NTCZUeykNeNufRcEEOtAFaqH6S8M2mRX2WFNrm763xJYo5rjCeUAVYvElATi4=@vger.kernel.org
-X-Gm-Message-State: AFuF++kFJ7eKNCzZUNxhex5keKyRI0dck18oebhq5vhul1COwLG2vTNb
-	s7lBM/dTCPApQ1mC+8bobr4bB0thERfTnY8Elp3h+mRK6ybZrkIwExdJT2LMO1rJ
-X-Gm-Gg: AYBFou2yRBj0Vm4PBdA67DLZkmdFu2K++mCA5tP7cicqsCtuDax/QTq2aw7CU6pcmcY
-	QTqpV2y2IesPCiBBzPeW6cLsUi7qtR90HWWDT2R8UtoHzvK7OTcZP4ZCtN8jJDtdNO9HrJuoxdx
-	jjmisNSKdBiWX0tbdVCF0bi8cWJ5NrBpjCbLvyesdxtM7UrQ6sGt0s/5EtvcfNz+uKwgOXCx3Y6
-	+nC5a39UyYyRwKuWah9MT/pMj8AHS0MZnX0w21t1+mTx+2g9Wpd9BYXteyb6I+grmDkUinLBXGO
-	DMdCx5o+A3Pd1MyTs9rA7U2gXs1JG5aS2/9JoOSUHmys+DHC6BZS//QThzVQUY33temDXWm+cpL
-	4ZXmyECIuf9l050cZA0+DV+TIoLYUqv3BlT5xXi50XFCV5+Lf4KJVTsVxaAmQzhoXtNISWkrkHH
-	5ktuMUc2qHE6j8Ng/qozBDCuhMCPgd/UaIIny4xn27NBT6He9Bj2bcE4ayMUFaTeBmmw/P3HQBi
-	VdiyGwjPUX4alyERYkeZU6HBUEtYrq4NHcLkY75bA==
-X-Received: by 2002:a05:6102:50ab:b0:79b:1b6c:4f66 with SMTP id ada2fe7eead31-79b57ea2220mr636856137.1.1789371497200;
-        Mon, 14 Sep 2026 00:38:17 -0700 (PDT)
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com. [209.85.221.175])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-982b9f4239esm10884895241.7.2026.09.14.00.38.16
+        bh=G2JcK4+UnTdYFj4YxjDgOg657J6kp6BHITWmwnB32W8=;
+        b=GnGMhMMoioKi6Hj4/jJHIZa9lKs13N4Hrfdp/PlXywz9tbGiVgoomTRaI6AEyqzcxL
+         PoAK7U1Z8eiyvUQP4hCiJdLEPJZ5SozsXTjUvFQpWx6Q+lCafF8WiMHBW6tk/zTLTCSh
+         7vcOXqucv7ntwc3PoNHjOcMOzKi6CJj3eFtjYXccCLyNHggDchEwtm/4wz8Vf6DCGWtt
+         sDJpSf+7WRYoJ7VxloiuRCo3wdDQa1sekISlWgMlI8h9L0JwzparxPhD3j65K6OWrqDf
+         7JoWrJCBvDlrrFnCv07BlsfkRQ5FaZp6czdC5u97Wk2jvGZBc/tfiPzIpBaAS99s1iI7
+         F+CA==
+X-Forwarded-Encrypted: i=1; AKwUvBwbQ6fOcyZyP5WrAwAm6nBJTz6bX4HtzOKqmZyGo+ZqraSPcQabfF2oQVjhY3ISE6T3zAKPwSWbiAE=@vger.kernel.org
+X-Gm-Message-State: AFuF++kets0haSB8KZbc0gIAy6cwrK6UYNGEfUU5ypWk/adMbfZND0mG
+	zFs3m76G2CRElTNdLH9WRFAMOWLaMWTzuViZktZ1yvHtc1qjjzulQZEhuwPp32mx
+X-Gm-Gg: AYBFou2vsJUbrNJPfiyEmh3mrBNGgqc2a3V1AwzO5DSzrclpyEryS+B6N4Vy6sWhtFK
+	IneMkyNab7BtiAugAkPA8/Hff5Ra/F/I9PeUsS2pvn4Zfw2f4zww4stvLhXxeOwjNn2KBL6aO8E
+	9oVTx1+UoF7Kr9NEhVmUik8rebkMY2TEL17lqpQ+JG0+XYeYFKuk/wt508NklqNEy16A0JCZ2HW
+	z1E88ycANQmF59XshoQ8rGtzkNClQel2yAFNkDDxj3ObPniYiQMQSZfRdasKTynMo60ONS5PsrS
+	hBkd0mWkjJOhXt/Cl5MMZwb6VJag4I3IhkDilZ0CPblp3nzOrmlfW4eGRYa0+1YiPzjxAVEC4Z4
+	H2i3orSF3xkyL5zZCIm5aZ+kLEHSpgodzDupBsXtQnjzD1Ql/zPIAKn2pNtuMGG2qneD6FazoRz
+	0mcHxT/UrO2EneSSakyA8XgC6Y3wsYQAX9NqDOGkmn/KD3LKQzkxX1zgNJwYt1kRqT8PFzjDc6B
+	nSbLtnTvu9NwnLzm4468FuM6hEzu3V9Af3V
+X-Received: by 2002:a05:6830:4c18:b0:804:bb22:6d42 with SMTP id 46e09a7af769-80899165940mr834591a34.17.1789373543835;
+        Mon, 14 Sep 2026 01:12:23 -0700 (PDT)
+Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com. [209.85.161.52])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-807ba3acfe4sm2518845a34.23.2026.09.14.01.12.23
         for <linux-clk@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Sep 2026 00:38:17 -0700 (PDT)
-Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-5c7d1512dbfso3012606e0c.1
-        for <linux-clk@vger.kernel.org>; Mon, 14 Sep 2026 00:38:16 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBySSvEN7KdN0lribtP9/7d22Oqk1NgIU9BPm1H0jZX7iVgRZMlVeWorKWMZDG6970GlqFHS+eMQYJY=@vger.kernel.org
-X-Received: by 2002:a05:6102:2b89:b0:785:e444:15de with SMTP id
- ada2fe7eead31-79b588868b0mr615690137.6.1789371496720; Mon, 14 Sep 2026
- 00:38:16 -0700 (PDT)
+        Mon, 14 Sep 2026 01:12:23 -0700 (PDT)
+Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-6c20a9c464fso1572817eaf.0
+        for <linux-clk@vger.kernel.org>; Mon, 14 Sep 2026 01:12:23 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBx2w4LiYqLiojvJ7sbkxbAaFZzjfiFMSl3NWcJk1TuPLL3sE1/g6pjgnZZ7l4qAXa1C9aNP2Wjracc=@vger.kernel.org
+X-Received: by 2002:a05:6122:4905:b0:5bd:cb34:1b70 with SMTP id
+ 71dfb90a1353d-5c981a7ddc0mr603320e0c.1.1789373084860; Mon, 14 Sep 2026
+ 01:04:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260913173009.1164899-1-sashal@kernel.org>
-In-Reply-To: <20260913173009.1164899-1-sashal@kernel.org>
+References: <20260907-rcar-du-dsc-v6-0-f8ef711a7494@ideasonboard.com> <2489cf57-65f1-4502-86ae-1e3673899b87@ideasonboard.com>
+In-Reply-To: <2489cf57-65f1-4502-86ae-1e3673899b87@ideasonboard.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 14 Sep 2026 09:38:05 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXvDrscWWod8HAqpTRH-VZfyVC+pKJuQy9enD8tbyhsng@mail.gmail.com>
-X-Gm-Features: AcwNN1X-8Qz82mGtefbPfDrQ5FfGVFMErWxdtZEnRaKLFMPVj7qmjR9TiGuLaw8
-Message-ID: <CAMuHMdXvDrscWWod8HAqpTRH-VZfyVC+pKJuQy9enD8tbyhsng@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r9a09g077: Add missing slab.h and cleanup.h includes
-To: Sasha Levin <sashal@kernel.org>
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
-	Jerome Brunet <jbrunet+clk@baylibre.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, kernel test robot <lkp@intel.com>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+Date: Mon, 14 Sep 2026 10:04:33 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWfmVHsJBtnn0sB1f6YwnVpQOY5coP0pu6qOsknc-XfaA@mail.gmail.com>
+X-Gm-Features: AcwNN1UjvEXLwhrFNF_ZKWONSXtVIhmEHRxBRtfYrWrrOz2Bml4dSuA03jjsOBQ
+Message-ID: <CAMuHMdWfmVHsJBtnn0sB1f6YwnVpQOY5coP0pu6qOsknc-XfaA@mail.gmail.com>
+Subject: Re: [PATCH v6 0/6] drm/rcar-du: Add support for DSI pipelines with DSC
+To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, Marek Vasut <marek.vasut+renesas@mailbox.org>, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	Conor Dooley <conor.dooley@microchip.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Sasha,
+Hi Tomi,
 
-On Sun, 13 Sept 2026 at 19:30, Sasha Levin <sashal@kernel.org> wrote:
-> r9a09g077_post_init() uses kzalloc_obj() and __free(kfree), but the file
-> includes neither <linux/slab.h> nor <linux/cleanup.h>. It only builds
-> where those happen to be pulled in transitively; on arm allmodconfig
-> they are not, and the build fails:
+On Fri, 11 Sept 2026 at 09:07, Tomi Valkeinen
+<tomi.valkeinen+renesas@ideasonboard.com> wrote:
+> On 07/09/2026 12:29, Tomi Valkeinen wrote:
+> > Some DSI pipelines have DSC (Display Stream Compression) IP block
+> > between the DU and the DSI. Even if DSC is not needed, the IP must be
+> > enabled for the DSI output to work.
+> >
+> > This series adds a basic DSC driver, so that the DSC IP gets enabled in
+> > bypass mode. This enables DisplayPort output on Sparrow Hawk board, as
+> > the DP output comes from DSI and sn65dsi86 bridge, and also White Hawk
+> > board's second mini-DP output.
+> >
+> > Original series from Marek.
+> >
+> > Note: I see that not every run of kms++'s kmstest gives me a picture on
+> > my monitor. Sometimes the monitor seems to be trying to repeatedly sync,
+> > but fails, and the screen stays black. However, I see this same issue on
+> > WhiteHawk, which uses DSI0 pipeline, without DSC, so I think that is a
+> > separate issue.
 >
->   drivers/clk/renesas/r9a09g077-cpg.c:966:35: error: use of undeclared
->   identifier '__free_kfree'; did you mean '__free_pages'?
->   drivers/clk/renesas/r9a09g077-cpg.c:966:35: error: 'cleanup' function
->   '__free_pages' must take 1 parameter
->   drivers/clk/renesas/r9a09g077-cpg.c:966:51: error: call to undeclared
->   function 'kzalloc_obj'; ISO C99 and later do not support implicit
->   function declarations [-Wimplicit-function-declaration]
->   drivers/clk/renesas/r9a09g077-cpg.c:966:24: error: incompatible integer
->   to pointer conversion initializing 'struct regmap_config *' with an
->   expression of type 'int' [-Wint-conversion]
->
-> gcc reports the same thing as "cleanup argument not a function" plus an
-> implicit declaration of kzalloc_obj().
->
-> Include both headers explicitly rather than relying on an incidental
-> include chain.
->
-> Fixes: 810b8b6c4e02 ("clk: renesas: r9a09g077: Register SYSC regmap")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202609101334.xgbNoC4e-lkp@intel.com/
+> Pushed the first three patches to drm-misc-next. I'll leave the dts ones
+> to Geert.
 
-See my reply to that message:
-https://lore.kernel.org/oe-kbuild-all/CAMuHMdVBFCKA5gjQeXuTrOYbaY_sZg-Gnz-fgOCSKhF3cV8jhg@mail.gmail.com/
-
-> Assisted-by: LLM
+Thanks, will queue in renesas-devel for v7.4.
 
 Gr{oetje,eeting}s,
 
