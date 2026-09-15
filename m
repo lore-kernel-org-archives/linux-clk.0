@@ -1,127 +1,60 @@
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB8DE4AD4CD;
-	Tue, 15 Sep 2026 15:32:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 583154AA571;
+	Tue, 15 Sep 2026 15:35:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789486378; cv=none; b=KA/APjuOedms4w3cwrx0mAlUpwOuZ8LRaeZttf5FaXL5d41JQNCCBRJ7NK0/kHV2J5mvnPArTmjf0+1zEd5ry09+kuoFQ9Yh76LcsSvr82WYHDaqhs2+duyCZrqKf519KdXSU9EDGnP7LdRAvyDxlKmCNvusMaHDdEbnmqlNQSU=
+	t=1789486512; cv=none; b=uMaJ5HLMapr5AAw1XA8Z13rqyGy9oJ5mQAuV69KsD+CtGiOOJN59zLGj+ZwsgeaLbHi1hnbPQSqaedsb7qhK0t8lZxhKDVVbbVSS8UV+6N6xMqwuG2Z6zMePCSegCrfg7v4UbLtA0YhkpEzcXUd8cSdx+4erMg3cdTvVFoGySig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789486378; c=relaxed/simple;
-	bh=T3FWi+MGga/vWkcz6kD8F2qUbpGzTquRqGo3JD2nSdo=;
-	h=From:Date:Subject:MIME-Version:Message-Id:In-Reply-To:To:Cc:
-	 Content-Type:References; b=t/xqTUDobu2NjWGmOnyCYpv6DnAM3fajJLou64EeesXmLzeQxpS7koAnmwzBv9ttziVPK9w6nz3yCS8yE5D9TJM6vBBo6aXJXiUeozbk3uMUZpycQGuvaiIP3WhUhVQqd/RO5t6y40c2z5OfEokPvtsnXM1eubqdFTv3Cpcco0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=TbL4tjHB; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1789486512; c=relaxed/simple;
+	bh=b8MGX+xCFQOMeqSYPH2BZXF5sDNIBn+JgMTA6JKV2sk=;
+	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=thH49yZeAQ6EVqrgmai0+aTsj2JkV2YIf/i7g03c/4SNAsxw08LA3rEmUQzK7wBE91vDfjazaSF4AO9iojw6TeysaYPR6ZWfSp5FbtRO3f4hSd3hs7EdbYnE/IwHB37HybDofaXIjViDMRgKpDfDM5pDG0k6qBnuwrB8+dYwm8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nI1gSoAT; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="TbL4tjHB"
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20260915153251euoutp02084125f938320b2f7a85111b008d57c9~ViF_sja9S0483104831euoutp02V;
-	Tue, 15 Sep 2026 15:32:51 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20260915153251euoutp02084125f938320b2f7a85111b008d57c9~ViF_sja9S0483104831euoutp02V
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1789486371;
-	bh=5VJr9vBmbACanL0MeXx4ma5BlMfN70MxN8Z8af1jAN8=;
-	h=From:Date:Subject:In-Reply-To:To:Cc:References:From;
-	b=TbL4tjHB3FlMrYe92qC+NybVosVgaDcvWJfq2ZNFthYqUgBvSrdrWpSttXsWTIAiN
-	 jj9qXzq5SaDUQy/UITupzA5ZlwmNWj9+fHFBeoSIer90sZgh2kCWvy2Da3l93Wi3wT
-	 7gI0Zkmzo2ogOIboFW6nnJiI7BIfKnAdBQ/CpQsQ=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20260915153250eucas1p2132ca4040b3c35a3aed471cb816b7857~ViF9fvU4I1454914549eucas1p2X;
-	Tue, 15 Sep 2026 15:32:50 +0000 (GMT)
-Received: from AMDC4942.eu.corp.samsungelectronics.net (unknown
-	[106.210.136.40]) by eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20260915153248eusmtip1ff29e81b00d983d86a6897dddbc876f8~ViF74X4zS0616306163eusmtip1e;
-	Tue, 15 Sep 2026 15:32:48 +0000 (GMT)
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-Date: Tue, 15 Sep 2026 17:32:28 +0200
-Subject: [PATCH v4 20/20] MAINTAINERS: Add StarFive JH7110 display subsystem
- entry
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nI1gSoAT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38D2A1F000FF;
+	Tue, 15 Sep 2026 15:35:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789486510;
+	bh=b8MGX+xCFQOMeqSYPH2BZXF5sDNIBn+JgMTA6JKV2sk=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=nI1gSoATvWgHYfuidAE0oPRxuYsTnAh1IQF6VS/hpqxQTL7St+XDu45ezG18IxyWg
+	 2UQsshK71EW1wdWdkaM/yB34jo6+haB+cjA83zTNdDFX4GOBrLlfTl8R/ZnXoLgLpJ
+	 mUuolrACU32pWPbttuPirhedylKwnfA0JC8hdcKC4MIFUd8z33c5dT5JCQHXCWe0RR
+	 gjeFGhxrsMe3+fpHIjw9PJV4Tj5KWUkwxQ+hHwTwOOg/ugXdh5CVSd9LaznmzKPRKj
+	 gIvkz37KEBCPfO25D2O1UEvKitF09wM7AT8rT3+kfc+Zq2OewupsZXSmc26gy/gEiI
+	 G0hrdRCMAFJ9Q==
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v4 05/20] dt-bindings: display: verisilicon: Add
+ starfive,jh7110-dc8200
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Michal Wilczynski" <m.wilczynski@samsung.com>
+Cc: neil.armstrong@linaro.org, conor+dt@kernel.org, linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org, mfd@lists.linux.dev, robh@kernel.org, olteanv@gmail.com, lee@kernel.org, devicetree@vger.kernel.org, vkoul@kernel.org
+In-Reply-To: <20260915-jh7110-clean-send-v4-5-f0e4fd6f2cc8@samsung.com>
+References: <20260915-jh7110-clean-send-v4-0-f0e4fd6f2cc8@samsung.com>
+ <CGME20260915153222eucas1p213b95b05ea7eb9a18700af8888ef5a44@eucas1p2.samsung.com>
+ <20260915-jh7110-clean-send-v4-5-f0e4fd6f2cc8@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 15 Sep 2026 15:35:09 +0000
+Message-Id: <20260915153510.38D2A1F000FF@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260915-jh7110-clean-send-v4-20-f0e4fd6f2cc8@samsung.com>
-In-Reply-To: <20260915-jh7110-clean-send-v4-0-f0e4fd6f2cc8@samsung.com>
-To: Vinod Koul <vkoul@kernel.org>,  Neil Armstrong
-	<neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>,  Krzysztof
-	Kozlowski <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>, Andrzej
-	Hajda <andrzej.hajda@intel.com>,  Robert Foss <rfoss@kernel.org>,  Laurent
-	Pinchart <Laurent.pinchart@ideasonboard.com>,  Jonas Karlman
-	<jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,  Luca Ceresoli
-	<luca.ceresoli@bootlin.com>,  Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,  Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,  Lee Jones <lee@kernel.org>, Andy
-	Yan <andy.yan@rock-chips.com>,  Philipp Zabel <p.zabel@pengutronix.de>, 
-	Emil Renner Berthing <kernel@esmil.dk>,  Hal Feng
-	<hal.feng@starfivetech.com>,  Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Heiko Stuebner <heiko@sntech.de>,  Paul
-	Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,  Albert Ou
-	<aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,  Dominique
-	Belhachemi <db@domibel.de>, Brian Masney <bmasney+clk@redhat.com>,  Jerome
-	Brunet <jbrunet+clk@baylibre.com>
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	mfd@lists.linux.dev, linux-clk@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	linux-riscv@lists.infradead.org,  Marek Szyprowski
-	<m.szyprowski@samsung.com>,  Maud Spierings <maud_spierings@murena.io>, 
-	Graham Markall <hello@big-grey.co.uk>,  Icenowy Zheng
-	<zhengxingda@iscas.ac.cn>,  Chaoyi Chen <chaoyi.chen@rock-chips.com>, 
-	Joshua Peisach <jpeisach@ubuntu.com>,  =?utf-8?q?Uwe_Kleine-K=C3=B6nig?=
-	<u.kleine-koenig@baylibre.com>,  Michal Wilczynski
-	<m.wilczynski@samsung.com>
-X-Mailer: b4 0.15-dev
-X-CMS-MailID: 20260915153250eucas1p2132ca4040b3c35a3aed471cb816b7857
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20260915153250eucas1p2132ca4040b3c35a3aed471cb816b7857
-X-EPHeader: CA
-X-CMS-RootMailID: 20260915153250eucas1p2132ca4040b3c35a3aed471cb816b7857
-References: <20260915-jh7110-clean-send-v4-0-f0e4fd6f2cc8@samsung.com>
-	<CGME20260915153250eucas1p2132ca4040b3c35a3aed471cb816b7857@eucas1p2.samsung.com>
 
-The JH7110 display subsystem spans a PHY driver, a DRM bridge driver,
-a parent device and their bindings, and has no existing maintainer entry.
+> The JH7110 embeds a DC8200. The binding requires an SoC specific
+> compatible ahead of the generic one, so add the JH7110 to the enum.
+>=20
+> Reviewed-by: Joshua Peisach <jpeisach@ubuntu.com>
+> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
 
-Add an entry covering them so patches reach someone who can review them.
+Sashiko has reviewed this patch and found no issues. It looks great!
 
-Reviewed-by: Joshua Peisach <jpeisach@ubuntu.com>
-Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
----
- MAINTAINERS | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c2414447892c24d58595059ca27b18775919ac12..3706b5787a25de7acba023bc4049f0fcdd078672 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -26072,6 +26072,19 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/net/starfive,jh7110-dwmac.yaml
- F:	drivers/net/ethernet/stmicro/stmmac/dwmac-starfive.c
- 
-+STARFIVE JH7110 DISPLAY SUBSYSTEM
-+M:	Michal Wilczynski <m.wilczynski@samsung.com>
-+R:	Icenowy Zheng <zhengxingda@iscas.ac.cn>
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/display/bridge/starfive,jh7110-inno-hdmi-controller.yaml
-+F:	Documentation/devicetree/bindings/mfd/starfive,jh7110-hdmi-subsystem.yaml
-+F:	Documentation/devicetree/bindings/phy/starfive,jh7110-inno-hdmi-phy.yaml
-+F:	Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-vout-subsystem.yaml
-+F:	drivers/gpu/drm/bridge/jh7110-inno-hdmi.c
-+F:	drivers/phy/starfive/phy-jh7110-inno-hdmi.c
-+F:	drivers/soc/starfive/jh7110-hdmi-subsystem.c
-+F:	drivers/soc/starfive/jh7110-vout-subsystem.c
-+
- STARFIVE JH7110 DPHY RX DRIVER
- M:	Jack Zhu <jack.zhu@starfivetech.com>
- M:	Changhuang Liang <changhuang.liang@starfivetech.com>
-
--- 
-2.34.1
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260915-jh7110-cle=
+an-send-v4-0-f0e4fd6f2cc8@samsung.com?part=3D5
 
