@@ -1,67 +1,66 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7285F396B70;
-	Tue, 15 Sep 2026 15:38:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13AD84A92C7;
+	Tue, 15 Sep 2026 15:40:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789486689; cv=none; b=cd5q1RTo0svdP6WZZ1kpa5qDgIx4fsxFQpskieN9/9qKUFyMLoM+XNTTNCrr9qE/2F+9jDSSqD3WknaAmSQyHIGZODSU8zwjGHxxGU/BOz89Wzw0AFcA7OXwz1XHC5e8pz5vQnAcg9GtjODfUCKVsjRkXbCDMiTZn2OCVyAF10M=
+	t=1789486852; cv=none; b=gShU0moj1vhN9aNQvBr4YACKNSXnco2Ahr1kigw/csdy2hdibHqoBlSKmOgjSPTXiGCV9zWnCvfCs/xJeZ5cLoOFU5+d10kzmwNxmbFxQqoHMjAYGuFIFDEAQYr0IhNwOSHCefSXB7Wpb/+rDH16GS9NqHjfSowtZZQ6q+ZpfuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789486689; c=relaxed/simple;
-	bh=nzC7oa+r/phCJ/7hvumhpU+FA2dyGXGpPMkboLtxjyU=;
+	s=arc-20240116; t=1789486852; c=relaxed/simple;
+	bh=yPAbk7xHpMR4UIVrHHyhM9TISgEmvd92P6HdWfgzRAA=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=uR4pawsN8tgP+jmSyUN042Y8yGvk/Lol6kQ2nxRlLeyp3B00oiDNxbzuJXgQBUTYm2vpZcPfFme6YBaYa1KD9he77CNbCk/+lKS9C41o8OwOvhgiIRcTQEOMUWhcwaJi3pL6xHHsKdU66f7Gm3iXRnwHjXU4rO1GCOeweGC5Yg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HhV2LUZr; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=ICgkg3IAId5UqGVfqQQbSDttNBvcJTp/Nf/cGDxlkDqsUriMdDeiaNBkELfBteCc5ARyj4/3hc2AgSh6ODsiwr1IejfxSA2k9rir0ldYl2ZYbikvY/1QICxaW4fviGZ4ydaP5WTpJArV8aSRdmMavvDwXwHC1dkvcBMjVIs72BE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EwVsqkgl; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HhV2LUZr"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78BE31F000FF;
-	Tue, 15 Sep 2026 15:38:07 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EwVsqkgl"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD4731F000FF;
+	Tue, 15 Sep 2026 15:40:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789486688;
-	bh=nzC7oa+r/phCJ/7hvumhpU+FA2dyGXGpPMkboLtxjyU=;
+	s=k20260515; t=1789486849;
+	bh=yPAbk7xHpMR4UIVrHHyhM9TISgEmvd92P6HdWfgzRAA=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=HhV2LUZrxpzeI/MrBTkg/qrVe/GDGYUlQXpQoKi+DdGmOq4b7dcPJ0lLeetG6LRWg
-	 9MVWaGr4Fovtyj/ZLIiHCdv4j/LxmKmtr4LGC9t5YZ3iHyxRYSzRnEOuPfrxtgSqgj
-	 fSIyjOj6MGKqw2ZDj7fRoYukkZnUkRZDPFlpq8D+6xWhjXFA7I4rbFbH7FF0/0Xky0
-	 jO95nu5zFYj+B6THmubNoBk7YqSxRJy1ygDbVJTFVt8RCm6ervarDk/3zSY4Cdq74q
-	 Z/ZCsMWDbH6klPQPi0gnWLbNuizuDD9tdd89UrPn9MytxjNmGRc8tgwfGaCNHZRmT1
-	 HwL2YijEpLx6w==
+	b=EwVsqkglB8nG7QQhouls1YoCYwZp6BueS50C5QZ2LEnxBF4uK8Rk0HOPKvNdYquTC
+	 skVctbFd3T19TaI4YqtaKiVKMNMdFCbTUgjgNSkHoet7fqhLeybmJj6udQaKTa+8Yp
+	 2ROddcj722mbG1T1EAFWl2B7MPRIpJj9woTRWrJKs3cs66jmyc5CRsCfLOLPSVtqfe
+	 8xHRks81n7WSpy51DObQ6LGP0VqHc7m1v8QJGZfVl2O9XsR0THaldnj3nX49rbCg19
+	 vgJV/zhhzu7HdFKLmn9c23q+jxZcDcMZz4P+q6OY87lIJe8sN+uRHQJEVCIAyz7HFG
+	 DmRr1t/IWr+7A==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v4 14/20] clk: starfive: jh7110-vout: Allow pixel clock
- rate propagation
+Subject: Re: [PATCH v4 11/20] drm/bridge: inno-hdmi: Make the PHY
+ configuration table optional
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Michal Wilczynski" <m.wilczynski@samsung.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, olteanv@gmail.com, conor+dt@kernel.org, neil.armstrong@linaro.org, mfd@lists.linux.dev, vkoul@kernel.org, robh@kernel.org, linux-phy@lists.infradead.org, linux-clk@vger.kernel.org, lee@kernel.org
-In-Reply-To: <20260915-jh7110-clean-send-v4-14-f0e4fd6f2cc8@samsung.com>
+Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, olteanv@gmail.com, robh@kernel.org, lee@kernel.org, vkoul@kernel.org, linux-phy@lists.infradead.org, neil.armstrong@linaro.org, linux-clk@vger.kernel.org, mfd@lists.linux.dev
+In-Reply-To: <20260915-jh7110-clean-send-v4-11-f0e4fd6f2cc8@samsung.com>
 References: <20260915-jh7110-clean-send-v4-0-f0e4fd6f2cc8@samsung.com>
- <CGME20260915153238eucas1p29917a31d10ce1aa55c1dcb44b62180f9@eucas1p2.samsung.com>
- <20260915-jh7110-clean-send-v4-14-f0e4fd6f2cc8@samsung.com>
+ <CGME20260915153233eucas1p2e26a6953a31c5f836aeaed03a4ae325e@eucas1p2.samsung.com>
+ <20260915-jh7110-clean-send-v4-11-f0e4fd6f2cc8@samsung.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Tue, 15 Sep 2026 15:38:06 +0000
-Message-Id: <20260915153807.78BE31F000FF@smtp.kernel.org>
+Date: Tue, 15 Sep 2026 15:40:48 +0000
+Message-Id: <20260915154048.DD4731F000FF@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 
-> The dc8200_pix0 and dc8200_pix1 MUXes feed the display controller, and
-> the rate they carry is ultimately produced by the HDMI PHY, which
-> registers hdmitx0_pixelclk as a clock provider.
+> The pre-emphasis and drive-strength values in inno_hdmi_phy_config, and
+> the registers they are written to, belong to the PHY integrated into the
+> controller. A platform whose PHY is a separate device has neither, and
+> its own .mode_valid already validates the pixel clock against the real
+> PHY, so the table only bounds the generic check.
 >=20
-> Add CLK_SET_RATE_PARENT to both MUXes so a rate requested on them
-> reaches that parent, instead of being clamped to whatever rate the
-> parent already happens to run at.
+> Let such a platform omit the table: skip the integrated-PHY register
+> writes in the power-up path and the table lookup in .mode_valid when it
+> is absent. Platforms that supply one are unaffected.
 >=20
-> Co-developed-by: Dominique Belhachemi <db@domibel.de>
-> Signed-off-by: Dominique Belhachemi <db@domibel.de>
-> Reviewed-by: Joshua Peisach <jpeisach@ubuntu.com>
 > Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
 
 Sashiko has reviewed this patch and found no issues. It looks great!
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260915-jh7110-cle=
-an-send-v4-0-f0e4fd6f2cc8@samsung.com?part=3D14
+an-send-v4-0-f0e4fd6f2cc8@samsung.com?part=3D11
 
