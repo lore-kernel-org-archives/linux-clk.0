@@ -1,38 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81802495026;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4274496D3F;
 	Tue, 15 Sep 2026 11:15:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789470941; cv=none; b=ufdFCghxLKXB0jR8VqCCi4DVy8oydRoacZCbX7klsUlyesGwJuiHXGc6xO1q5X4qqnuROuBUFHoqA6DrOTZBKfkMBwgRdWDV9Adnhsfnq7ZgbblRCv9dO7TAJJ/R/vrsdoHGy/g0FqSqoxPwv1/3wYpTBDAnbA2xEg6xzklwTrY=
+	t=1789470941; cv=none; b=ChE68L+JXnJO/YgydU189sfVa/BcVdZVChM6vY61A6Mrh+uFNXgMVAxhzkwvAgdmNlvtbWU4UoKC7MrRWmGadsrMhi+n2A94gJWO8Dny4BQJiij0gRFf9UD3dHoqCwt7YqlvWXa28OmI+/Xig2P/q9WcWlOss3iWHrmX2llFC8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1789470941; c=relaxed/simple;
-	bh=Y99LIShZBZhPmmdMk5Ppx+DA9Tlbp2khrm8XeVm1tJE=;
+	bh=VayeLJi6dF/5DfY+Xg7ilDAh5xT1Cx0pCzYaDRReLiU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=PDvu74isEnC74M5pRVMKeZ2bxLhYliLvBbD/AeIwdsLd6cJLA0/WqCIxzx04C06Z9lvh9K96DhHMih3GAsoANl6vUOTCVKkiVRaCZ8/bb7Xqj5uHSyC7KWiZ42vk+PZtB42xJ8BNCUOFDTCKFilN3Zwcv3dVjIA0RREXCYcBxME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JtEn4NBq; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=pMPhXIDQ/LRMzJ70OVpgjBeaIu0S3DJNkZvIX4j6CncZFY0kXNlX9XFrM8trEM4iVm6xvtayFUZKN21E0U6mDypaiCRZt3+g2mCxEEYZOf5wtmMf0RNJplQQfk6M4nRa4fjCIBTI/q7VvAglk9VTGV/fLY5+3Q7hlPr3DaZgQ1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WOLJaYpd; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JtEn4NBq"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 25DC6C2BCFF;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WOLJaYpd"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 530F0C4AF65;
 	Tue, 15 Sep 2026 11:15:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1789470941;
-	bh=Y99LIShZBZhPmmdMk5Ppx+DA9Tlbp2khrm8XeVm1tJE=;
+	bh=VayeLJi6dF/5DfY+Xg7ilDAh5xT1Cx0pCzYaDRReLiU=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=JtEn4NBqbLOQ+UbYHK1/qZZ9rwtvsKPl0XeRqysXoAKnFyIN2Pi09x3vfao0/xQtX
-	 k/ejbqOfqqMAtguIbk+yUXfBFV0pC9NuT4bkbuLfY33lKbSnl7Cau8GWhwtaL4CBck
-	 yw1717F4R5GJNIfZTBx1aZU3eTRED8lTo49qVxe51qM0k5THrvGMjSVgjgp+J8nhZM
-	 J60CbdJqMeZ/CeNQ3/xVq8E3uxodo0tVLuGzz1JFkIEQMefMB95qwRGs+PXfvGrx06
-	 GKGokCb2SB9DFZhwmicfWY/nqxKzJebEH+HDaEl0H7pXUiV29HH6kCeFS2zglTSNid
-	 qCw1/c0tw1STg==
+	b=WOLJaYpdfs4XlGqHDPe6PaqUJv60fneV2vOF9lS5avSdaeDFyucf8iSg2DkArz2nm
+	 1opbFJnZYV8yFtZiwOKCrjQQLoK3BUgUX6IX/XFqzJkQHeYRrjaOuW7FcL2fBV6nYA
+	 m8+ZJWeyDaulFnuTAqcykeg8VKfzD4GlvNYQTry+2XWa73q/2AqJOD/rK1ag4o53Bf
+	 HSC9irI1limkbn/fnLwtVzRlBo+gcH3pxjQzsoj9xMkHsPBB53FQlv8L76FAW7e3oW
+	 kgztNwLKR1MCKUy3/gFJ2WWcEU8dWAcifGGd6mUP9tKddbZw7k7/vMZ1Fmc9K/Vvcj
+	 EjsCy8uxcQirg==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DF6CC982C1;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F686C88E7F;
 	Tue, 15 Sep 2026 11:15:41 +0000 (UTC)
 From: Long Zhao via B4 Relay <devnull+longzhao.ambarella.com@kernel.org>
-Date: Tue, 15 Sep 2026 19:15:35 +0800
-Subject: [PATCH v7 05/15] dt-bindings: gpio: pl061: add Ambarella CV75
- variant
+Date: Tue, 15 Sep 2026 19:15:38 +0800
+Subject: [PATCH v7 08/15] gpiolib: regmap: add write_data_after_dir quirk
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -41,7 +40,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260915-cv75-v5-v7-5-3297d3fbc9c0@ambarella.com>
+Message-Id: <20260915-cv75-v5-v7-8-3297d3fbc9c0@ambarella.com>
 References: <20260915-cv75-v5-v7-0-3297d3fbc9c0@ambarella.com>
 In-Reply-To: <20260915-cv75-v5-v7-0-3297d3fbc9c0@ambarella.com>
 To: Arnd Bergmann <arnd@arndb.de>, Krzysztof Kozlowski <krzk@kernel.org>, 
@@ -63,11 +62,11 @@ Cc: Long Zhao <longzhao@ambarella.com>, Rob Herring <robh@kernel.org>,
  linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, 
  linux-kernel@vger.kernel.org
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1789470938; l=1618;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1789470938; l=3083;
  i=longzhao@ambarella.com; s=20260730; h=from:subject:message-id;
- bh=aAqprMpaSLw5qFZ97734U35wOILQfn5VOtCzk0qgTJQ=;
- b=wjwZC5nSO0mnA+lQUBhAJnLHm7BRubRNaWWlThrxybkhqfwzBEiTuU0zmV2NXrMINNlxJ9tqC
- U7oJQTHLJSGDJ5MgZuPXeCrG0kq/AYF0BK3+VcEs4UW+PQIYcW4OvZn
+ bh=G8eJneH1FEGvIrQmo2BCujbmuD8SZZsDUEFPHDAW3B8=;
+ b=I0+BtY/IonIrgaL+mpBYWVB7SCJp5ipOngd4RH40wiQK4hLcT8kkwCrhV9Ovw0BQ6IEPAVEMN
+ E6hTkDzmqnlAso1wmlTsMAiehCpESh997U4Ue2sXCIOaE/LCS6p5a8M
 X-Developer-Key: i=longzhao@ambarella.com; a=ed25519;
  pk=/xGhPTOX0/eYsyTWzyjjgAIW1Z/YD+IlnOnvcdRozow=
 X-Endpoint-Received: by B4 Relay for longzhao@ambarella.com/20260730 with
@@ -77,66 +76,88 @@ Reply-To: longzhao@ambarella.com
 
 From: Long Zhao <longzhao@ambarella.com>
 
-Add ambarella,cv75-gpio as a PrimeCell-compatible PL061 variant, with
-arm,primecell-periphid and gpio-ranges required. Reference
-primecell.yaml and use unevaluatedProperties.
+Some controllers ignore data-register writes while a line is still an
+input. Optionally write the output value again after switching the
+direction, matching the existing PL061 behaviour.
 
 Signed-off-by: Long Zhao <longzhao@ambarella.com>
 ---
- .../devicetree/bindings/gpio/pl061-gpio.yaml       | 25 +++++++++++++++++++---
- 1 file changed, 22 insertions(+), 3 deletions(-)
+ drivers/gpio/gpio-regmap.c  | 20 ++++++++++++++++++--
+ include/linux/gpio/regmap.h |  8 ++++++++
+ 2 files changed, 26 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/gpio/pl061-gpio.yaml b/Documentation/devicetree/bindings/gpio/pl061-gpio.yaml
-index 4d970e55104b..00d0d8ddd2c9 100644
---- a/Documentation/devicetree/bindings/gpio/pl061-gpio.yaml
-+++ b/Documentation/devicetree/bindings/gpio/pl061-gpio.yaml
-@@ -15,17 +15,36 @@ select:
-   properties:
-     compatible:
-       contains:
--        const: arm,pl061
-+        enum:
-+          - arm,pl061
-+          - ambarella,cv75-gpio
-   required:
-     - compatible
+diff --git a/drivers/gpio/gpio-regmap.c b/drivers/gpio/gpio-regmap.c
+index 51b4d69b8740..dfcc1f1122ec 100644
+--- a/drivers/gpio/gpio-regmap.c
++++ b/drivers/gpio/gpio-regmap.c
+@@ -31,6 +31,7 @@ struct gpio_regmap {
+ 	unsigned int reg_clr_base;
+ 	unsigned int reg_dir_in_base;
+ 	unsigned int reg_dir_out_base;
++	bool write_data_after_dir;
+ 	unsigned long *fixed_direction_mask;
+ 	unsigned long *fixed_direction_output;
  
-+allOf:
-+  - $ref: /schemas/arm/primecell.yaml#
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: ambarella,cv75-gpio
-+    then:
-+      properties:
-+        arm,primecell-periphid:
-+          const: 0x000e8061
-+      required:
-+        - arm,primecell-periphid
-+        - gpio-ranges
+@@ -271,9 +272,22 @@ static int gpio_regmap_direction_output(struct gpio_chip *chip,
+ 			return ret;
+ 	}
+ 
+-	gpio_regmap_set(chip, offset, value);
++	ret = gpio_regmap_set(chip, offset, value);
++	if (ret)
++		return ret;
 +
- properties:
-   $nodename:
-     pattern: "^gpio@[0-9a-f]+$"
++	ret = gpio_regmap_set_direction(chip, offset, true);
++	if (ret)
++		return ret;
  
-   compatible:
-     items:
--      - const: arm,pl061
-+      - enum:
-+          - ambarella,cv75-gpio
-+          - arm,pl061
-       - const: arm,primecell
+-	return gpio_regmap_set_direction(chip, offset, true);
++	/*
++	 * gpio value is set again, because pl061 doesn't allow to set value of
++	 * a gpio pin before configuring it in OUT mode.
++	 */
++	if (gpio->write_data_after_dir)
++		return gpio_regmap_set(chip, offset, value);
++
++	return 0;
+ }
  
-   reg:
-@@ -64,6 +83,6 @@ required:
-   - "#gpio-cells"
-   - gpio-controller
+ void *gpio_regmap_get_drvdata(struct gpio_regmap *gpio)
+@@ -376,6 +390,8 @@ struct gpio_regmap *gpio_regmap_register(const struct gpio_regmap_config *config
+ 			    config->fixed_direction_output, chip->ngpio);
+ 	}
  
--additionalProperties: false
-+unevaluatedProperties: false
- 
- ...
++	gpio->write_data_after_dir = config->write_data_after_dir;
++
+ 	/* if not set, assume there is only one register */
+ 	gpio->ngpio_per_reg = config->ngpio_per_reg;
+ 	if (!gpio->ngpio_per_reg)
+diff --git a/include/linux/gpio/regmap.h b/include/linux/gpio/regmap.h
+index 06255756710d..d7ffc12b00a2 100644
+--- a/include/linux/gpio/regmap.h
++++ b/include/linux/gpio/regmap.h
+@@ -48,6 +48,13 @@ struct regmap;
+  *			(Optional) Bitmap representing the fixed direction of
+  *			the GPIO lines. Useful when there are GPIO lines with a
+  *			fixed direction mixed together in the same register.
++ * @write_data_after_dir:
++ *			(Optional) Write the output value again after
++ *			switching a line to output in ->direction_output().
++ *			Needed for hardware which ignores data register
++ *			writes while the line is configured as an input.
++ *			This is a legacy quirk (e.g. ARM PL061); new hardware
++ *			must not use it. Direction changes will glitch.
+  * @drvdata:		(Optional) Pointer to driver specific data which is
+  *			not used by gpio-remap but is provided "as is" to the
+  *			driver callback(s).
+@@ -94,6 +101,7 @@ struct gpio_regmap_config {
+ 	unsigned int reg_dir_out_base;
+ 	int reg_stride;
+ 	int ngpio_per_reg;
++	bool write_data_after_dir;
+ 	struct irq_domain *irq_domain;
+ 	unsigned long *fixed_direction_mask;
+ 	unsigned long *fixed_direction_output;
 
 -- 
 2.34.1
