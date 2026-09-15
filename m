@@ -1,43 +1,44 @@
 Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E7804AE8B6;
-	Tue, 15 Sep 2026 15:32:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79B1B4A8A2C;
+	Tue, 15 Sep 2026 15:32:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789486365; cv=none; b=ZOyAN/mQl2Xo3lvfBbtzJlASzgdq1jrTN5sWJrPpU2lN+PaovIwdaT78PksNqrq6zgVCERLSOPiAbxULkZY1fgZ0zH5flvzsEXm0FJez/q2tDtg1oa9cOrnhtFHU1i6T25oZc00t0/AwKfPEtQ+yI3XkB/OHXCknjjXur47pI5U=
+	t=1789486365; cv=none; b=ACow+fP1CwbaPKHJQLy3WmMg8AGY5EFtiF1GpoGP1ZObY5+IOXZjhtwawAO8ig71EdYk3QP16084slcPMI0x75HI5VqBOeeI+OPNo30Q/f0mXuuY+B1AjVhxLjqOn9gcYPEw7yGVUKVpwrpHpD4k3xkt8ilXWFhU+Ew9Jx+/ufM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1789486365; c=relaxed/simple;
-	bh=U009sHYxfhbcceI4maE3+6fGVkAosyQHEZSWw3gH9Rg=;
+	bh=pmFs/wr+kt2Pr2NEXyBFwGcUizCzs1N8HbOoD5M5hFU=;
 	h=From:Date:Subject:MIME-Version:Message-Id:In-Reply-To:To:Cc:
-	 Content-Type:References; b=fJMb0vgEm3NFqQMQXxo2BXFG0WXOZUsvD4FVBKguOpxeTFvrfKHxXkcZ3I/vwMhNRoDrSO+f3UsxrZGZQcdWfQTCMPVzOVHuyvxSTu/+532PIT/HugrSiQrmWz97Jsd2iw86LUZnQqAzJ/sqgPSEP51Y3pJefBkBd87UQBwDaFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=dS1E0sBa; arc=none smtp.client-ip=210.118.77.12
+	 Content-Type:References; b=p1N3fFRWUiYIXKgD0ohjfE0ju3F/0za6DmSqhZPNrKEBgZR2AmBSbg89n0stjnMQxW4vSzIrvOd6eoidm/xlvVaPNFxRCFTVUZhegkJ2Mr1qa58+/3r7y6EUxPQRIvLXlUhbb8FpfJJkGNUtGFGrNhKNrKuyX6OPQEB5l/Qo1kE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=MgUE7O//; arc=none smtp.client-ip=210.118.77.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="dS1E0sBa"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="MgUE7O//"
 Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20260915153237euoutp021f898f945810932a29bcdaec616822bd~ViFxttyFk0389103891euoutp02W;
-	Tue, 15 Sep 2026 15:32:37 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20260915153237euoutp021f898f945810932a29bcdaec616822bd~ViFxttyFk0389103891euoutp02W
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20260915153239euoutp028c9a2a1f5ba5a981d65b4ee3784cdc39~ViFz5U5fS0392703927euoutp02h;
+	Tue, 15 Sep 2026 15:32:39 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20260915153239euoutp028c9a2a1f5ba5a981d65b4ee3784cdc39~ViFz5U5fS0392703927euoutp02h
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1789486357;
-	bh=q9+/6FCnUTxlS3RGu5OA+lvly9b9O4D2U3b+XpBHAXw=;
+	s=mail20170921; t=1789486359;
+	bh=JcSXHVMDqv6KSfxLj3MK5INKK9EFwX8I0N6g2xkU6Kk=;
 	h=From:Date:Subject:In-Reply-To:To:Cc:References:From;
-	b=dS1E0sBaqIkVPV0YbtY8yPaMqLqQBX0hf/UdXoLcmYzUgNwmT+VOzU0b7El72nRCW
-	 q1wRWGZQXJtHF/p9wkXyKXbybQm1660zOi5RLzJjsvqMHGUv7MjGg3JQXzVUzcNqpd
-	 uewIrUYdlQ8ej/Iv0D1qhrNfN7R9lYSo+bH1M4SU=
+	b=MgUE7O//cUy4rTHrEiCnRpYaxzokcH6wvdIzFDm/DphRUPTBDU+0DSYinsYpDvIVq
+	 GgU5c1ARllh0Ti83WtCJJ/DgOSxbV12xBQW1ApiKL6yOoU37+AMBOIhu5JmJY8Lozp
+	 yfB22pDmUmtqz//XMd/IzixnyYrc4XjJY6ga/ArA=
 Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20260915153236eucas1p1712930425e569f894c870299f245e99f~ViFw6KHiz1408514085eucas1p1R;
-	Tue, 15 Sep 2026 15:32:36 +0000 (GMT)
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20260915153238eucas1p29917a31d10ce1aa55c1dcb44b62180f9~ViFylzEdz1456714567eucas1p2W;
+	Tue, 15 Sep 2026 15:32:38 +0000 (GMT)
 Received: from AMDC4942.eu.corp.samsungelectronics.net (unknown
 	[106.210.136.40]) by eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20260915153234eusmtip137e58b559923b6dba9493d40b872a270~ViFvSgyWa0441604416eusmtip1n;
-	Tue, 15 Sep 2026 15:32:34 +0000 (GMT)
+	20260915153236eusmtip152220ca6bbe3751e6dc90fe7c7a6eff2~ViFw96L6d0616606166eusmtip1V;
+	Tue, 15 Sep 2026 15:32:36 +0000 (GMT)
 From: Michal Wilczynski <m.wilczynski@samsung.com>
-Date: Tue, 15 Sep 2026 17:32:21 +0200
-Subject: [PATCH v4 13/20] soc: starfive: Add jh7110-vout-subsystem driver
+Date: Tue, 15 Sep 2026 17:32:22 +0200
+Subject: [PATCH v4 14/20] clk: starfive: jh7110-vout: Allow pixel clock rate
+ propagation
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -45,7 +46,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260915-jh7110-clean-send-v4-13-f0e4fd6f2cc8@samsung.com>
+Message-Id: <20260915-jh7110-clean-send-v4-14-f0e4fd6f2cc8@samsung.com>
 In-Reply-To: <20260915-jh7110-clean-send-v4-0-f0e4fd6f2cc8@samsung.com>
 To: Vinod Koul <vkoul@kernel.org>,  Neil Armstrong
 	<neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>,  Krzysztof
@@ -76,155 +77,50 @@ Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
 	<u.kleine-koenig@baylibre.com>,  Michal Wilczynski
 	<m.wilczynski@samsung.com>
 X-Mailer: b4 0.15-dev
-X-CMS-MailID: 20260915153236eucas1p1712930425e569f894c870299f245e99f
+X-CMS-MailID: 20260915153238eucas1p29917a31d10ce1aa55c1dcb44b62180f9
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20260915153236eucas1p1712930425e569f894c870299f245e99f
+X-RootMTR: 20260915153238eucas1p29917a31d10ce1aa55c1dcb44b62180f9
 X-EPHeader: CA
-X-CMS-RootMailID: 20260915153236eucas1p1712930425e569f894c870299f245e99f
+X-CMS-RootMailID: 20260915153238eucas1p29917a31d10ce1aa55c1dcb44b62180f9
 References: <20260915-jh7110-clean-send-v4-0-f0e4fd6f2cc8@samsung.com>
-	<CGME20260915153236eucas1p1712930425e569f894c870299f245e99f@eucas1p1.samsung.com>
+	<CGME20260915153238eucas1p29917a31d10ce1aa55c1dcb44b62180f9@eucas1p2.samsung.com>
 
-Nothing in the video output subsystem can reach its own registers until
-the NoC display bus clock and reset are up and PD_VOUT is powered, and
-those are shared by every device in the region. Leaving them to whichever
-consumer probes first works by accident and stops working as soon as the
-probe order changes.
+The dc8200_pix0 and dc8200_pix1 MUXes feed the display controller, and
+the rate they carry is ultimately produced by the HDMI PHY, which
+registers hdmitx0_pixelclk as a clock provider.
 
-Add a driver for the subsystem node that takes the bus clock and reset,
-holds a runtime PM reference so genpd keeps PD_VOUT powered, and then
-populates its children. All three are released only once the last child
-is gone.
+Add CLK_SET_RATE_PARENT to both MUXes so a rate requested on them
+reaches that parent, instead of being clamped to whatever rate the
+parent already happens to run at.
 
+Co-developed-by: Dominique Belhachemi <db@domibel.de>
+Signed-off-by: Dominique Belhachemi <db@domibel.de>
+Reviewed-by: Joshua Peisach <jpeisach@ubuntu.com>
 Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
 ---
- drivers/soc/starfive/Kconfig                 | 15 +++++
- drivers/soc/starfive/Makefile                |  1 +
- drivers/soc/starfive/jh7110-vout-subsystem.c | 82 ++++++++++++++++++++++++++++
- 3 files changed, 98 insertions(+)
+ drivers/clk/starfive/clk-starfive-jh7110-vout.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/soc/starfive/Kconfig b/drivers/soc/starfive/Kconfig
-index e738638ab0f755fbbabca259264abb56f3b6101f..cf5e626b8a39a75768917eee188a79256b36f1aa 100644
---- a/drivers/soc/starfive/Kconfig
-+++ b/drivers/soc/starfive/Kconfig
-@@ -6,6 +6,21 @@
- if ARCH_STARFIVE || COMPILE_TEST
- menu "Starfive SoC drivers"
- 
-+config SOC_STARFIVE_JH7110_VOUT_SUBSYSTEM
-+	tristate "StarFive JH7110 video output subsystem driver"
-+	depends on OF
-+	select PM
-+	help
-+	  This option enables the parent driver for the StarFive JH7110
-+	  video output subsystem, which the documentation calls dom_vout_top.
-+
-+	  The subsystem covers the DC8200 display controller, the HDMI
-+	  transmitter, the video output clock generator and the video output
-+	  system controller. They share one NoC port whose clock and reset
-+	  gate access to the whole register region, and the region sits in
-+	  the PD_VOUT power domain. This driver owns those resources and
-+	  holds them for as long as any of its children exist.
-+
- config SOC_STARFIVE_JH7110_HDMI_SUBSYSTEM
- 	tristate "StarFive JH7110 HDMI subsystem driver"
- 	depends on OF
-diff --git a/drivers/soc/starfive/Makefile b/drivers/soc/starfive/Makefile
-index be89d8119212b7a7038817c2f0e8eac1984ada88..6c229020c1e563b37df43f6ac1665465a11333cc 100644
---- a/drivers/soc/starfive/Makefile
-+++ b/drivers/soc/starfive/Makefile
-@@ -1,2 +1,3 @@
- # SPDX-License-Identifier: GPL-2.0-only
- obj-$(CONFIG_SOC_STARFIVE_JH7110_HDMI_SUBSYSTEM) += jh7110-hdmi-subsystem.o
-+obj-$(CONFIG_SOC_STARFIVE_JH7110_VOUT_SUBSYSTEM) += jh7110-vout-subsystem.o
-diff --git a/drivers/soc/starfive/jh7110-vout-subsystem.c b/drivers/soc/starfive/jh7110-vout-subsystem.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..af632692e2139d9d07edd478a299b170ad1b7104
---- /dev/null
-+++ b/drivers/soc/starfive/jh7110-vout-subsystem.c
-@@ -0,0 +1,82 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Driver for the StarFive JH7110 video output subsystem
-+ *
-+ * Copyright (c) 2025 Samsung Electronics Co., Ltd.
-+ * Author: Michal Wilczynski <m.wilczynski@samsung.com>
-+ *
-+ * The display hardware sits behind a single NoC port whose clock and reset
-+ * gate access to every register in the region, inside the PD_VOUT power
-+ * domain. Nothing below this node can reach its own registers until all three
-+ * are up, so bring them up here and hold them for as long as any child device
-+ * exists, rather than leaving them to whichever consumer happens to probe
-+ * first.
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/module.h>
-+#include <linux/of_platform.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/reset.h>
-+
-+static void jh7110_vout_subsys_pm_put(void *data)
-+{
-+	pm_runtime_put_sync(data);
-+}
-+
-+static int jh7110_vout_subsys_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct reset_control *bus_rst;
-+	struct clk *bus_clk;
-+	int ret;
-+
-+	/*
-+	 * Take a runtime PM reference for the lifetime of this device. genpd
-+	 * only keeps PD_VOUT powered while something actually holds it, and
-+	 * an unclocked or unpowered access to this region wedges the bus.
-+	 */
-+	ret = devm_pm_runtime_enable(dev);
-+	if (ret)
-+		return ret;
-+
-+	ret = pm_runtime_resume_and_get(dev);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Failed to power on PD_VOUT\n");
-+
-+	ret = devm_add_action_or_reset(dev, jh7110_vout_subsys_pm_put, dev);
-+	if (ret)
-+		return ret;
-+
-+	bus_clk = devm_clk_get_enabled(dev, NULL);
-+	if (IS_ERR(bus_clk))
-+		return dev_err_probe(dev, PTR_ERR(bus_clk),
-+				     "Failed to enable NoC bus clock\n");
-+
-+	bus_rst = devm_reset_control_get_exclusive_deasserted(dev, NULL);
-+	if (IS_ERR(bus_rst))
-+		return dev_err_probe(dev, PTR_ERR(bus_rst),
-+				     "Failed to deassert NoC bus reset\n");
-+
-+	return devm_of_platform_populate(dev);
-+}
-+
-+static const struct of_device_id jh7110_vout_subsys_of_match[] = {
-+	{ .compatible = "starfive,jh7110-vout-subsystem", },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, jh7110_vout_subsys_of_match);
-+
-+static struct platform_driver jh7110_vout_subsys_driver = {
-+	.probe = jh7110_vout_subsys_probe,
-+	.driver = {
-+		.name = "jh7110-vout-subsystem",
-+		.of_match_table = jh7110_vout_subsys_of_match,
-+	},
-+};
-+module_platform_driver(jh7110_vout_subsys_driver);
-+
-+MODULE_AUTHOR("Michal Wilczynski <m.wilczynski@samsung.com>");
-+MODULE_DESCRIPTION("StarFive JH7110 video output subsystem driver");
-+MODULE_LICENSE("GPL");
+diff --git a/drivers/clk/starfive/clk-starfive-jh7110-vout.c b/drivers/clk/starfive/clk-starfive-jh7110-vout.c
+index bad20d5d794a72f071b4d547b7304786a8ba9afa..aeba42cd3c44ba205ced52b1826d2d2de82ad78f 100644
+--- a/drivers/clk/starfive/clk-starfive-jh7110-vout.c
++++ b/drivers/clk/starfive/clk-starfive-jh7110-vout.c
+@@ -40,10 +40,12 @@ static const struct jh71x0_clk_data jh7110_voutclk_data[] = {
+ 	JH71X0_GATE(JH7110_VOUTCLK_DC8200_AXI, "dc8200_axi", 0, JH7110_VOUTCLK_VOUT_TOP_AXI),
+ 	JH71X0_GATE(JH7110_VOUTCLK_DC8200_CORE, "dc8200_core", 0, JH7110_VOUTCLK_VOUT_TOP_AXI),
+ 	JH71X0_GATE(JH7110_VOUTCLK_DC8200_AHB, "dc8200_ahb", 0, JH7110_VOUTCLK_VOUT_TOP_AHB),
+-	JH71X0_GMUX(JH7110_VOUTCLK_DC8200_PIX0, "dc8200_pix0", 0, 2,
++	JH71X0_GMUX(JH7110_VOUTCLK_DC8200_PIX0, "dc8200_pix0",
++		    CLK_SET_RATE_PARENT | CLK_SET_RATE_NO_REPARENT, 2,
+ 		    JH7110_VOUTCLK_DC8200_PIX,
+ 		    JH7110_VOUTCLK_HDMITX0_PIXELCLK),
+-	JH71X0_GMUX(JH7110_VOUTCLK_DC8200_PIX1, "dc8200_pix1", 0, 2,
++	JH71X0_GMUX(JH7110_VOUTCLK_DC8200_PIX1, "dc8200_pix1",
++		    CLK_SET_RATE_PARENT | CLK_SET_RATE_NO_REPARENT, 2,
+ 		    JH7110_VOUTCLK_DC8200_PIX,
+ 		    JH7110_VOUTCLK_HDMITX0_PIXELCLK),
+ 	/* LCD */
 
 -- 
 2.34.1
