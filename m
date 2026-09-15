@@ -1,37 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4590497B96;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA7CA496D42;
 	Tue, 15 Sep 2026 11:15:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789470941; cv=none; b=VzYVNEMf9KW899LlP6CsxqBW3EPoUEnV54z6sVr34oyxyTk44Ht0U7i8mGVGeYj0/PKcQ1KU3MCcmDr3Eg8z3SgZea2SnBxvTRgZ8ObDJ1igunaO2UTp+Le1zQj19Nso0MzrdfnWtcE4Tx6A+5vBiqv+OZifc7ScJhtc5ArlVoc=
+	t=1789470941; cv=none; b=Yok6PYVgpqiD7tjT1kN/Qj0uDokfT5GvkB/3893//jqbDIDqY26Qc7c+oOPc3p3D0VqdyelOC7qV891SxhZMdz8CIKFz6ZGrDMer3MkXeONNlQhN11J4L0HjOq5j5yXbZB20UMOxeMCQI6mM59K42Pwg+L6/5hz5s3bk3QNXRkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1789470941; c=relaxed/simple;
-	bh=apLWzdvgb1s6ZZhPE9IW2ykFDz8tGxdLt1ms1gbZrRo=;
+	bh=LUTYyx7IUszLj18vliZRT7NGoCzFSb20fbqbsAodfU0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mSZ/J7OZIWApkbWZtCqplvlpi4OdvqlBGws2XFTeA7kJpd7NnAXlL0l1L8S9HeHb0IW7eazucLpPD+3mjzNRwrUKfgRZyBWs+36BREzctcYDx1/3gqDbi1OPInPlu4LXqStKVoVSgWBV+np2TbL2SMKXY4fxGFxQys8Ush09ZGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y9BO/s29; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=MDDF/7ics4NqDjElMkzk71UN0XWeWT6xfurNVilg7ULEiq/tiOQ2+IRlZtlskS0G8laYVqMyZcA/Q+jPiAdg5ygJ6QINA5eOnKjuOfprL96PuV+N+4S7sn8Y/xhhjzI/S5r9Ohf2TNOtFfYuh06T+95f4eXBI1bG2o1uG8+ifXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YvfyI4Hd; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y9BO/s29"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 65688C2BCB9;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YvfyI4Hd"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 48ED4C4AF53;
 	Tue, 15 Sep 2026 11:15:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1789470941;
-	bh=apLWzdvgb1s6ZZhPE9IW2ykFDz8tGxdLt1ms1gbZrRo=;
+	bh=LUTYyx7IUszLj18vliZRT7NGoCzFSb20fbqbsAodfU0=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=Y9BO/s29j57o78qggRkGKful6hGXP2r6a2OTsdz/w/y9S8ebKCvw0F8c61dpp3OIV
-	 zbxy+hRDzxQrxrUnfKki8IUzYeZC3ZJ9MAlEzqIJ6YmCaJSDjnx4Znr6BMQODaHMWb
-	 uMiHlUIuWQAQ+p9myh4436uTs2ObGxevnlj5Edmwus73cH/SHn3PhKsUJ5Vjupw88C
-	 ibET0FHNqg/oRjC3KwZDglZiT/180loBJ3oTlzJKqLm5LASWcxMZpMf2EnrgbubZWH
-	 ziDPugAxDOvSGxqzfrc6TWqbvXZ8wEq4JdvDyD5XkuwKLKV8HDkI4mjmbnvo1KNG5U
-	 vvetE8L+Kzr7g==
+	b=YvfyI4HdpqtR+ylkoR23uGQ6Ctw8hnsFY9qPHa/VgCPlaSSToeOf1jeyNkNi/1fCg
+	 b2lu41a4n+cQkBrTp9Zb9h9rM85rZ9htBXlDCsytShqOofJNeT56Kj5c5f8hryD7cb
+	 iEm9AEFu527mXauFTqXKtzE7o5OYYUcX3aQV8JFpTUx8JdD0TtO/ApCbQUuYtIDDGD
+	 b3VEwqlwKh4xZR2hw6VfTnZIFe8nIpjIDBbiQvSilINoXF5RclSjkiL2rBokMdc+tt
+	 NhahfyCUZ+VPnol3PsDBlpF30f7JGDCz5M2yaeUGr4o37rF62CHT+dVrZ6T/Key++s
+	 ogMDNxVt93quQ==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 517CBC88E7B;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E872C88E53;
 	Tue, 15 Sep 2026 11:15:41 +0000 (UTC)
 From: Long Zhao via B4 Relay <devnull+longzhao.ambarella.com@kernel.org>
-Date: Tue, 15 Sep 2026 19:15:39 +0800
-Subject: [PATCH v7 09/15] gpiolib: regmap: add gpio_regmap_get_chip()
+Date: Tue, 15 Sep 2026 19:15:37 +0800
+Subject: [PATCH v7 07/15] clk: ambarella: add CV75 RCT clock controller
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -40,7 +40,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260915-cv75-v5-v7-9-3297d3fbc9c0@ambarella.com>
+Message-Id: <20260915-cv75-v5-v7-7-3297d3fbc9c0@ambarella.com>
 References: <20260915-cv75-v5-v7-0-3297d3fbc9c0@ambarella.com>
 In-Reply-To: <20260915-cv75-v5-v7-0-3297d3fbc9c0@ambarella.com>
 To: Arnd Bergmann <arnd@arndb.de>, Krzysztof Kozlowski <krzk@kernel.org>, 
@@ -62,11 +62,11 @@ Cc: Long Zhao <longzhao@ambarella.com>, Rob Herring <robh@kernel.org>,
  linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, 
  linux-kernel@vger.kernel.org
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1789470938; l=2769;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1789470938; l=12313;
  i=longzhao@ambarella.com; s=20260730; h=from:subject:message-id;
- bh=nq9zwoYxD+NQm8KCrReHWkDIjxPc8aBRQx3slgbQG5I=;
- b=UeddQ/k7Bfy8M1+7iO6pMfuGpWJDosaPnbR8AD5YXnJ+tU3kaZLmZlTKQJxKltmA4XbkZBtYx
- 5KaLQ39XmhGAPEeZoRCm0OWLNLWcAdP+3CeBaRHKRGIQRJmtn+/dY9O
+ bh=6UC1n5QrGXKfHcoP1CWaGD5V1MLCNDLdq4V8g2deIdI=;
+ b=gGoZipSbD6VjMEgLnL3qo9Rr2VbZejlaPkxVEh0sUKCuUNB3mBSuxOvVGOFojoFe2Z8j9Xfrj
+ uakAAXy2rCHCtdkEactb3zFjVv0w7Neg1zYnBUTOD4KfAQX9XjjgG3Y
 X-Developer-Key: i=longzhao@ambarella.com; a=ed25519;
  pk=/xGhPTOX0/eYsyTWzyjjgAIW1Z/YD+IlnOnvcdRozow=
 X-Endpoint-Received: by B4 Relay for longzhao@ambarella.com/20260730 with
@@ -76,81 +76,439 @@ Reply-To: longzhao@ambarella.com
 
 From: Long Zhao <longzhao@ambarella.com>
 
-Let drivers that implement a custom irqchip retrieve the gpio_chip
-after registration. Attach a caller-provided irq_domain only when it
-is present.
+Add a table-driven CCF driver for the CV75 root clock tree. Register
+the core PLL, AHB/APB fixed factors and UART0 composite clock, with
+osc supplied via clk_parent_data.
 
 Signed-off-by: Long Zhao <longzhao@ambarella.com>
 ---
- drivers/gpio/gpio-regmap.c  | 20 +++++++++++++++-----
- include/linux/gpio/regmap.h |  1 +
- 2 files changed, 16 insertions(+), 5 deletions(-)
+ drivers/clk/Kconfig              |   1 +
+ drivers/clk/Makefile             |   1 +
+ drivers/clk/ambarella/Kconfig    |   9 +
+ drivers/clk/ambarella/Makefile   |   3 +
+ drivers/clk/ambarella/clk-cv75.c | 366 +++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 380 insertions(+)
 
-diff --git a/drivers/gpio/gpio-regmap.c b/drivers/gpio/gpio-regmap.c
-index dfcc1f1122ec..56c2c873cbfa 100644
---- a/drivers/gpio/gpio-regmap.c
-+++ b/drivers/gpio/gpio-regmap.c
-@@ -296,6 +296,12 @@ void *gpio_regmap_get_drvdata(struct gpio_regmap *gpio)
- }
- EXPORT_SYMBOL_GPL(gpio_regmap_get_drvdata);
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 1717ce75a907..fbbf4963716c 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -506,6 +506,7 @@ config COMMON_CLK_RPMI
+ 	  the RISC-V platform management interface (RPMI) specification.
  
-+struct gpio_chip *gpio_regmap_get_chip(struct gpio_regmap *gpio)
-+{
-+	return &gpio->gpio_chip;
+ source "drivers/clk/actions/Kconfig"
++source "drivers/clk/ambarella/Kconfig"
+ source "drivers/clk/analogbits/Kconfig"
+ source "drivers/clk/aspeed/Kconfig"
+ source "drivers/clk/bcm/Kconfig"
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index cc108a75a900..30d823ee606f 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -112,6 +112,7 @@ obj-$(CONFIG_COMMON_CLK_XGENE)		+= clk-xgene.o
+ 
+ # please keep this section sorted lexicographically by directory path name
+ obj-y					+= actions/
++obj-y					+= ambarella/
+ obj-y					+= analogbits/
+ obj-y					+= aspeed/
+ obj-$(CONFIG_COMMON_CLK_AT91)		+= at91/
+diff --git a/drivers/clk/ambarella/Kconfig b/drivers/clk/ambarella/Kconfig
+new file mode 100644
+index 000000000000..720eebdc5c9c
+--- /dev/null
++++ b/drivers/clk/ambarella/Kconfig
+@@ -0,0 +1,9 @@
++# SPDX-License-Identifier: GPL-2.0-only
++
++config CLK_AMBARELLA_CV75
++	bool "Ambarella CV75 RCT clock controller"
++	depends on ARCH_AMBARELLA || COMPILE_TEST
++	default ARCH_AMBARELLA
++	help
++	  Say Y to enable the Ambarella CV75 RCT clock controller for
++	  early bring-up clocks (core PLL, AHB, APB, UART0).
+diff --git a/drivers/clk/ambarella/Makefile b/drivers/clk/ambarella/Makefile
+new file mode 100644
+index 000000000000..29555e452441
+--- /dev/null
++++ b/drivers/clk/ambarella/Makefile
+@@ -0,0 +1,3 @@
++# SPDX-License-Identifier: GPL-2.0-only
++
++obj-$(CONFIG_CLK_AMBARELLA_CV75) += clk-cv75.o
+diff --git a/drivers/clk/ambarella/clk-cv75.c b/drivers/clk/ambarella/clk-cv75.c
+new file mode 100644
+index 000000000000..80afe037c16a
+--- /dev/null
++++ b/drivers/clk/ambarella/clk-cv75.c
+@@ -0,0 +1,366 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Ambarella CV75 RCT clock controller
++ *
++ * Copyright (C) 2026 Ambarella, Inc.
++ */
++
++#include <linux/array_size.h>
++#include <linux/bitfield.h>
++#include <linux/bits.h>
++#include <linux/clk-provider.h>
++#include <linux/container_of.h>
++#include <linux/device.h>
++#include <linux/err.h>
++#include <linux/io.h>
++#include <linux/math64.h>
++#include <linux/mod_devicetable.h>
++#include <linux/module.h>
++#include <linux/overflow.h>
++#include <linux/platform_device.h>
++#include <linux/slab.h>
++#include <linux/spinlock.h>
++#include <linux/types.h>
++
++#include <dt-bindings/clock/ambarella,cv75-rct.h>
++
++#define CV75_NUM_CLKS		(CV75_GCLK_APB + 1)
++
++#define PLL_CTRL_BYPASS		BIT(2)
++#define PLL_CTRL_FRAC_MODE	BIT(3)
++#define PLL_CTRL_FORCE_RESET	BIT(4)
++#define PLL_CTRL_POWER_DOWN	BIT(5)
++#define PLL_CTRL_HALT_VCO	BIT(6)
++#define PLL_CTRL_SDIV		GENMASK(15, 12)
++#define PLL_CTRL_SOUT		GENMASK(19, 16)
++#define PLL_CTRL_INTP		GENMASK(30, 24)
++
++#define PLL_CTRL2_VCODIV_DIV2	BIT(8)
++#define PLL_CTRL2_FSDIV_DIV2	BIT(9)
++#define PLL_CTRL2_FSOUT_DIV2	BIT(11)
++#define PLL_CTRL2_BYPASS_HSDIV	BIT(12)
++
++struct cv75_pll_hw {
++	struct clk_hw hw;
++	u32 ctrl;
++	u32 frac;
++	u32 ctrl2;
++};
++
++struct cv75_clk {
++	void __iomem *base;
++	spinlock_t lock;
++	struct cv75_pll_hw core;
++	struct cv75_pll_hw enet;
++	struct cv75_pll_hw sd;
++};
++
++struct cv75_pll {
++	const char *name;
++	struct cv75_pll_hw *hw;
++	unsigned long flags;
++	u32 ctrl;
++	u32 frac;
++	u32 ctrl2;
++	int id;
++};
++
++struct cv75_fixed_factor {
++	const char *name;
++	u32 id;
++	u16 mult;
++	u16 div;
++};
++
++struct cv75_composite {
++	const char *name;
++	const struct clk_parent_data *parents;
++	unsigned long flags;
++	u32 id;
++	u16 mux_reg;
++	u16 div_reg;
++	u8 num_parents;
++	u8 mux_shift;
++	u8 mux_width;
++	u8 div_shift;
++	u8 div_width;
++};
++
++struct cv75_composite_hw {
++	struct clk_mux mux;
++	struct clk_divider div;
++	struct clk_gate gate;
++};
++
++static struct cv75_clk cv75_ccu;
++
++#define CV75_PLL(_id, _name, _ctrl, _frac, _ctrl2, _flags, _hw) {	\
++	.name	= _name,						\
++	.hw	= _hw,							\
++	.flags	= _flags,						\
++	.ctrl	= _ctrl,						\
++	.frac	= _frac,						\
++	.ctrl2	= _ctrl2,						\
++	.id	= _id,							\
 +}
-+EXPORT_SYMBOL_GPL(gpio_regmap_get_chip);
 +
- /**
-  * gpio_regmap_register() - Register a generic regmap GPIO controller
-  * @config: configuration for gpio_regmap
-@@ -304,7 +310,6 @@ EXPORT_SYMBOL_GPL(gpio_regmap_get_drvdata);
-  */
- struct gpio_regmap *gpio_regmap_register(const struct gpio_regmap_config *config)
- {
--	struct irq_domain *irq_domain;
- 	struct gpio_regmap *gpio;
- 	struct gpio_chip *chip;
- 	int ret;
-@@ -412,6 +417,8 @@ struct gpio_regmap *gpio_regmap_register(const struct gpio_regmap_config *config
- 
- #ifdef CONFIG_REGMAP_IRQ
- 	if (config->regmap_irq_chip) {
-+		struct irq_domain *irq_domain;
++static const struct cv75_pll cv75_plls[] = {
++	CV75_PLL(CV75_GCLK_CORE, "core", 0x000, 0x004, 0x100,
++		 CLK_GET_RATE_NOCACHE | CLK_IS_CRITICAL, &cv75_ccu.core),
++	CV75_PLL(-1, "pll_enet", 0x520, 0x524, 0x528,
++		 CLK_GET_RATE_NOCACHE, &cv75_ccu.enet),
++	CV75_PLL(-1, "pll_sd", 0x4ac, 0x4b0, 0x4b4,
++		 CLK_GET_RATE_NOCACHE, &cv75_ccu.sd),
++};
 +
- 		gpio->regmap_irq_line = config->regmap_irq_line;
- 		ret = regmap_add_irq_chip_fwnode(dev_fwnode(config->parent), config->regmap,
- 						 config->regmap_irq_line, config->regmap_irq_flags,
-@@ -420,12 +427,15 @@ struct gpio_regmap *gpio_regmap_register(const struct gpio_regmap_config *config
- 			goto err_remove_gpiochip;
- 
- 		irq_domain = regmap_irq_get_domain(gpio->irq_chip_data);
-+		if (irq_domain) {
-+			ret = gpiochip_irqchip_add_domain(chip, irq_domain);
-+			if (ret)
-+				goto err_remove_gpiochip;
-+		}
- 	} else
- #endif
--	irq_domain = config->irq_domain;
--
--	if (irq_domain) {
--		ret = gpiochip_irqchip_add_domain(chip, irq_domain);
-+	if (config->irq_domain) {
-+		ret = gpiochip_irqchip_add_domain(chip, config->irq_domain);
- 		if (ret)
- 			goto err_remove_gpiochip;
- 	}
-diff --git a/include/linux/gpio/regmap.h b/include/linux/gpio/regmap.h
-index d7ffc12b00a2..6bc00b9775a5 100644
---- a/include/linux/gpio/regmap.h
-+++ b/include/linux/gpio/regmap.h
-@@ -128,5 +128,6 @@ void gpio_regmap_unregister(struct gpio_regmap *gpio);
- struct gpio_regmap *devm_gpio_regmap_register(struct device *dev,
- 					      const struct gpio_regmap_config *config);
- void *gpio_regmap_get_drvdata(struct gpio_regmap *gpio);
-+struct gpio_chip *gpio_regmap_get_chip(struct gpio_regmap *gpio);
- 
- #endif /* _LINUX_GPIO_REGMAP_H */
++static const struct cv75_fixed_factor cv75_fixed_factors[] = {
++	{ .id = CV75_GCLK_AHB, .name = "ahb", .mult = 1, .div = 2 },
++	{ .id = CV75_GCLK_APB, .name = "apb", .mult = 1, .div = 4 },
++};
++
++static const struct clk_parent_data cv75_uart_parents[] = {
++	{ .fw_name = "osc" },
++	{ .hw = &cv75_ccu.core.hw },
++	{ .hw = &cv75_ccu.enet.hw },
++	{ .hw = &cv75_ccu.sd.hw },
++};
++
++#define CV75_COMPOSITE(_id, _name, _parents, _mreg, _mshift, _mwidth,	\
++		       _dreg, _dshift, _dwidth, _flags)			\
++{									\
++	.id		= _id,						\
++	.name		= _name,					\
++	.parents	= _parents,					\
++	.num_parents	= ARRAY_SIZE(_parents),				\
++	.mux_reg	= _mreg,					\
++	.mux_shift	= _mshift,					\
++	.mux_width	= _mwidth,					\
++	.div_reg	= _dreg,					\
++	.div_shift	= _dshift,					\
++	.div_width	= _dwidth,					\
++	.flags		= _flags,					\
++}
++
++static const struct cv75_composite cv75_composites[] = {
++	CV75_COMPOSITE(CV75_GCLK_UART0, "uart0", cv75_uart_parents,
++		       0x1c8, 0, 2, 0x038, 0, 24,
++		       CLK_SET_RATE_NO_REPARENT),
++};
++
++#define to_cv75_pll(_hw) container_of(_hw, struct cv75_pll_hw, hw)
++
++static unsigned long cv75_pll_recalc_rate(struct clk_hw *hw,
++					  unsigned long parent_rate)
++{
++	struct cv75_pll_hw *pll = to_cv75_pll(hw);
++	u32 ctrl, ctrl2, frac_val;
++	u32 intp, sdiv, sout;
++	u32 vcodiv, fsdiv, fsout;
++	u64 vco, frac = 0;
++
++	ctrl = readl_relaxed(cv75_ccu.base + pll->ctrl);
++	if (ctrl & (PLL_CTRL_POWER_DOWN | PLL_CTRL_HALT_VCO | PLL_CTRL_FORCE_RESET))
++		return 0;
++
++	if (ctrl & PLL_CTRL_BYPASS)
++		return parent_rate;
++
++	ctrl2 = readl_relaxed(cv75_ccu.base + pll->ctrl2);
++	intp = FIELD_GET(PLL_CTRL_INTP, ctrl) + 1;
++	sdiv = FIELD_GET(PLL_CTRL_SDIV, ctrl) + 1;
++	sout = FIELD_GET(PLL_CTRL_SOUT, ctrl) + 1;
++	vcodiv = (ctrl2 & PLL_CTRL2_VCODIV_DIV2) ? 2 : 1;
++	fsdiv = (ctrl2 & PLL_CTRL2_FSDIV_DIV2) ? 2 : 1;
++	fsout = (ctrl2 & PLL_CTRL2_FSOUT_DIV2) ? 2 : 1;
++
++	vco = (u64)parent_rate * vcodiv * fsdiv * intp * sdiv;
++	if (ctrl & PLL_CTRL_FRAC_MODE) {
++		frac_val = readl_relaxed(cv75_ccu.base + pll->frac);
++		frac = mul_u64_u32_shr((u64)parent_rate * vcodiv * fsdiv * sdiv,
++				       frac_val, 32);
++		vco += frac;
++	}
++
++	if (!(ctrl2 & PLL_CTRL2_BYPASS_HSDIV))
++		vco = div_u64(vco, (u64)vcodiv * fsout * sout);
++
++	return vco;
++}
++
++static const struct clk_ops cv75_pll_ops = {
++	.recalc_rate = cv75_pll_recalc_rate,
++};
++
++static int cv75_register_plls(struct device *dev,
++			      struct clk_hw_onecell_data *data)
++{
++	struct clk_parent_data parent_data = { .fw_name = "osc" };
++	unsigned int i;
++
++	for (i = 0; i < ARRAY_SIZE(cv75_plls); i++) {
++		const struct cv75_pll *desc = &cv75_plls[i];
++		struct cv75_pll_hw *pll = desc->hw;
++		struct clk_init_data init = {};
++		int ret;
++
++		pll->ctrl = desc->ctrl;
++		pll->frac = desc->frac;
++		pll->ctrl2 = desc->ctrl2;
++
++		init.name = desc->name;
++		init.ops = &cv75_pll_ops;
++		init.parent_data = &parent_data;
++		init.num_parents = 1;
++		init.flags = desc->flags;
++		pll->hw.init = &init;
++
++		ret = devm_clk_hw_register(dev, &pll->hw);
++		if (ret)
++			return ret;
++
++		if (desc->id >= 0)
++			data->hws[desc->id] = &pll->hw;
++	}
++
++	return 0;
++}
++
++static int cv75_register_fixed_factors(struct device *dev,
++				       struct clk_hw_onecell_data *data)
++{
++	unsigned int i;
++
++	for (i = 0; i < ARRAY_SIZE(cv75_fixed_factors); i++) {
++		const struct cv75_fixed_factor *f = &cv75_fixed_factors[i];
++		struct clk_hw *hw;
++
++		hw = devm_clk_hw_register_fixed_factor_parent_hw(dev, f->name,
++								 &cv75_ccu.core.hw, 0,
++								 f->mult, f->div);
++		if (IS_ERR(hw))
++			return PTR_ERR(hw);
++
++		data->hws[f->id] = hw;
++	}
++
++	return 0;
++}
++
++static struct clk_hw *cv75_register_composite(struct device *dev,
++					      const struct cv75_composite *c)
++{
++	const struct clk_ops *mux_ops = NULL, *div_ops = NULL, *gate_ops = NULL;
++	struct clk_hw *mux_hw = NULL, *div_hw = NULL, *gate_hw = NULL;
++	struct cv75_composite_hw *comp;
++
++	comp = devm_kzalloc(dev, sizeof(*comp), GFP_KERNEL);
++	if (!comp)
++		return ERR_PTR(-ENOMEM);
++
++	if (c->mux_width) {
++		comp->mux.reg = cv75_ccu.base + c->mux_reg;
++		comp->mux.shift = c->mux_shift;
++		comp->mux.mask = GENMASK(c->mux_width - 1, 0);
++		comp->mux.lock = &cv75_ccu.lock;
++		mux_hw = &comp->mux.hw;
++		mux_ops = &clk_mux_ops;
++	}
++
++	if (c->div_width) {
++		comp->div.reg = cv75_ccu.base + c->div_reg;
++		comp->div.shift = c->div_shift;
++		comp->div.width = c->div_width;
++		comp->div.flags = CLK_DIVIDER_ONE_BASED;
++		comp->div.lock = &cv75_ccu.lock;
++		div_hw = &comp->div.hw;
++		div_ops = &clk_divider_ops;
++
++		comp->gate.reg = cv75_ccu.base + c->div_reg;
++		comp->gate.bit_idx = c->div_shift + c->div_width;
++		comp->gate.flags = CLK_GATE_SET_TO_DISABLE;
++		comp->gate.lock = &cv75_ccu.lock;
++		gate_hw = &comp->gate.hw;
++		gate_ops = &clk_gate_ops;
++	}
++
++	return devm_clk_hw_register_composite_pdata(dev, c->name, c->parents,
++						    c->num_parents,
++						    mux_hw, mux_ops,
++						    div_hw, div_ops,
++						    gate_hw, gate_ops, c->flags);
++}
++
++static int cv75_register_composites(struct device *dev,
++				    struct clk_hw_onecell_data *data)
++{
++	unsigned int i;
++
++	for (i = 0; i < ARRAY_SIZE(cv75_composites); i++) {
++		const struct cv75_composite *c = &cv75_composites[i];
++		struct clk_hw *hw;
++
++		hw = cv75_register_composite(dev, c);
++		if (IS_ERR(hw))
++			return PTR_ERR(hw);
++
++		data->hws[c->id] = hw;
++	}
++
++	return 0;
++}
++
++static int cv75_rct_probe(struct platform_device *pdev)
++{
++	struct clk_hw_onecell_data *data;
++	struct device *dev = &pdev->dev;
++	int ret;
++
++	spin_lock_init(&cv75_ccu.lock);
++
++	cv75_ccu.base = devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(cv75_ccu.base))
++		return PTR_ERR(cv75_ccu.base);
++
++	data = devm_kzalloc(dev, struct_size(data, hws, CV75_NUM_CLKS),
++			    GFP_KERNEL);
++	if (!data)
++		return -ENOMEM;
++	data->num = CV75_NUM_CLKS;
++
++	ret = cv75_register_plls(dev, data);
++	if (ret)
++		return dev_err_probe(dev, ret, "failed to register plls\n");
++
++	ret = cv75_register_fixed_factors(dev, data);
++	if (ret)
++		return dev_err_probe(dev, ret, "failed to register fixed factors\n");
++
++	ret = cv75_register_composites(dev, data);
++	if (ret)
++		return dev_err_probe(dev, ret, "failed to register composites\n");
++
++	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, data);
++	if (ret)
++		return dev_err_probe(dev, ret, "failed to add clock provider\n");
++
++	return 0;
++}
++
++static const struct of_device_id cv75_rct_match[] = {
++	{ .compatible = "ambarella,cv75-rct" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, cv75_rct_match);
++
++static struct platform_driver cv75_rct_driver = {
++	.probe = cv75_rct_probe,
++	.driver = {
++		.name = "ambarella-cv75-rct",
++		.of_match_table = cv75_rct_match,
++	},
++};
++module_platform_driver(cv75_rct_driver);
++
++MODULE_AUTHOR("Long Zhao <longzhao@ambarella.com>");
++MODULE_DESCRIPTION("Ambarella CV75 RCT clock controller");
++MODULE_LICENSE("GPL");
 
 -- 
 2.34.1
