@@ -1,422 +1,243 @@
-Received: from mail-ej2-f12.google.com (mail-ej2-f12.google.com [74.125.228.140])
+Received: from mail-wm2-f12.google.com (mail-wm2-f12.google.com [74.125.225.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 927D93BB69F
-	for <linux-clk@vger.kernel.org>; Tue, 15 Sep 2026 12:52:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.228.140
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 136CC3AE1BC
+	for <linux-clk@vger.kernel.org>; Tue, 15 Sep 2026 12:54:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.140
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789476759; cv=none; b=QpQGMp8K6Q2OOixwuJhmR43S7eT0S1vcP2mYfCsDcCen35PCFu/f5ED31m1gPVRh0ucxSLw53XHclrtJsvjO2x46fnuX1D233N+YwvFTA0bPdQIu9Z7aLMeB9slDacojoeu5cfUmBPJFAJHGGqoEDWQTBNVbrEFSxQ+jh/veAFc=
+	t=1789476844; cv=none; b=WxBrHr81zvEfqRYTdbdIbE0E4ckfSdluz7sDvQYU6xelL8Gthj7g00cg9b5bUkCPkjnB01yvcjnjmxTnb+86duxxyA5dFT527t5vnef96GcOVtgGBAzQQXx13DIprJn5fZmadSrgbyAULPJuF/Q+Nll6shBQgL82G3d8XpzyrHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789476759; c=relaxed/simple;
-	bh=TKosStvcDTO5obgERHr8Bfw8JxgQBt7ikfSUeiQSvgk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gmjajP5jv+C774wJY1Krsg4VBx27UzM7E5WXeXSNs2EnA37ZzxgDyxplR/bqODs/noe8y/r6ujuTveyQRbpHHP4QlHdCNEo23LogV+3UnEvYRQcUc1q8LV6LMvZc0hjRXu4DBxY/NHUpWTpXzJ+/8NVKHOUTI7vf4m8C3t+8BfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c+FBK5RQ; arc=none smtp.client-ip=74.125.228.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1789476844; c=relaxed/simple;
+	bh=M0IzIsWiPP1002jx1x32ohvsScyH0p5PmYjJWCPWxCs=;
+	h=MIME-Version:Content-Type:Subject:From:To:Cc:In-Reply-To:
+	 References:Date:Message-Id; b=rWuFWAm6fllqTCBWi+c9bxZZ5J6oK6C+WfgHgqWs8dOkTB6OEJnIurYKjZwlT8xyGvwSNTigjKiKXHL/GkZ0W2APK62Za+fXxtTgpxiSscopOBlQhLZD44EdUdVv0arCx8QyJSw9qaXCDOl4UcX8DjFlEkVcUAU15I/8kKpCwy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=FiVME32X; arc=none smtp.client-ip=74.125.225.140
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c+FBK5RQ"
-Received: by mail-ej2-f12.google.com with SMTP id a640c23a62f3a-c29703cb796so536048766b.2
-        for <linux-clk@vger.kernel.org>; Tue, 15 Sep 2026 05:52:37 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="FiVME32X"
+Received: by mail-wm2-f12.google.com with SMTP id 5b1f17b1804b1-49b912df756so1653265e9.3
+        for <linux-clk@vger.kernel.org>; Tue, 15 Sep 2026 05:54:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1789476756; x=1790081556; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=2C8z0u16/ATPXIQwJTUgp1EH2ZZxhLUD/YnSweKb5A4=;
-        b=c+FBK5RQZeqZlx8mSGPLeG01Qj8MsBA26qTm5VXMxZSKY0B/RO+7sN2aeUMLGv8BR8
-         2VjV2O6+N1sVZrILDk4map14VE7dtXuGYaJ5non9e2MfPCZyWvLBWllJSEtG8Hf3+6Nl
-         MHCVKEYlAb1hbPxHlXQ72/Z9tgJ/Ohj1cqXVmparBNzw2SYztcytmnhD4FMOxURVJeZN
-         8BbsKuaq64VCpkCrTVJaBx0jNeW27iT3vOOYaz43Y/mS4sMDJ8dHNBECJpKA5cCtFZuX
-         gpqe51vIts6bYVfgimx2fgOSL+LxsfVEXujR3HPZoN8Kg/QR7wAGSvyavCoPPH9iKZn1
-         PL4g==
+        d=baylibre.com; s=google; t=1789476839; x=1790081639; darn=vger.kernel.org;
+        h=message-id:date:references:in-reply-to:cc:to:from:subject
+         :content-transfer-encoding:content-type:mime-version:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=ruipU1u5W9byyxX9qPeGPH+nhoQRgzgXh/OFxRteDPg=;
+        b=FiVME32XVD1iAVGitvogCHAwq/awfFUzLl+DoXa52u4fOQuVTx8ZhEGNI4Xb7ba2da
+         ceMRzg8zkPzVG19uUCv7IAVzfq+2HI3gFKdCAUPLJp+wfWouKTmUNezoFuSTl+ImliKX
+         Xj/00EFOcmMIpXWnJUDN00mtQANb1Q+EKbaQTlp48R2d3PyY7PQejbAwcgw7tGtalX3N
+         SE8sffIsMOWoc1EREk8yQ8Ozzas3X7Mzz2Y2nMaVZuUfh+1LGvZqHMlUYClePVzx7iAz
+         nzcyb0J68+LzrKA+lBqeSlP0Ao0NZVodFRdXYcGwzahnP6ydTZsy9DoY+USM7gE1wGPI
+         J4JA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789476756; x=1790081556;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=2C8z0u16/ATPXIQwJTUgp1EH2ZZxhLUD/YnSweKb5A4=;
-        b=h0zT5ByDvlagG1SyIVXlAapkyFr5cIHMN2od05t6U/Psx8F5bo63tVnEP+YQSN+CdB
-         7SMigGjiHNom6lwb9I+vxuoA9RxSU4aLuOrxdaOPzhnUrhI9cLgKVrMPIAczNJTKO1rn
-         ZReSWSE8x//hKmlRQMS6tCF5FFqmuYsApXu+hIyRBe0lsr4R3Z6085i+0iYbsef/zteM
-         pKp7FUsZPQEvFwVjgjh+zFvvNvz69HEzUIBWDd42y/Fby05eZIWW1IwQxzzmuHi7jzkP
-         6M/xDrQ8dWBz76hEP7FB4yQZSlqbxT+cQLzlFovuMMq+Ik5hqrg0UdiU2pTwd9aygPsL
-         ks4g==
-X-Forwarded-Encrypted: i=1; AKwUvBx8hCyPQoHWeCfrcycTW13pG3cHtvPwOpAaVewxvcTxwacab82D1jAPnqG8NU7eyUPnCq8KVm3bCi4=@vger.kernel.org
-X-Gm-Message-State: AFuF++ktUYDHg+ZN9SLqCTe37DpJHPfFOSJFpyhw6uiBpwhpLekb30zY
-	coLsEfGrw8gcb1J2E9HzMeiDF5LkKIa/x0+89pLqG5J9a6SgYIY0BVJc
-X-Gm-Gg: AYBFou1qtC8uQXaKU23D7doUyhgVR5BmfkpZxxy5ZCrHZNb/ZwhsRQKQy6Y3NSUZjXY
-	yC/j+eoyS8g4qBnMY1dUyP2Wl4jbCMG60h+CCQW/zkj7Ziph38gtUxy9giapZ+nCPKvhkjoDhuQ
-	Lb3tEW+cA1ukEATGwumGah0xDXGa9SC5dsdyyS6QO1pSF6GI8S6rshi6hDZ16iYBI0ttok1cWr2
-	wejLIDtfvJ8W/vJ6fHbe1Nbn+4MIb3LKZVMYV3pc1sqpxS7bwncmpbRxhTJOJ3mcU4Edoe5jqkg
-	+0M03GKl8YMde6EpQXKAO8nvUF0g3TbqZobBByEB5RO79whomYschjIp12sAZWi6p2GgSvOEFvt
-	7VtAJQDYIOJPIxRMTAmIC8AyaC1RmccbAwzcW3Ed26zgE3HXDHPfDVboZstkti4lqJWpNMeeaNU
-	Sm3dE8jHFMEDADjjFeYAeucA4ETJhfYCxzweqJmwblI8nvgWDoK5DyiY+JWg0q2vao26pSNtMaa
-	ul46QO48DjPauwf7J7XhKeRGC5z5tHT3MAvupNWQT0P22iFOQEy57JqNZ/vfNyjZw==
-X-Received: by 2002:a17:907:dab:b0:c26:1648:a065 with SMTP id a640c23a62f3a-c29b87267demr463483366b.32.1789476755376;
-        Tue, 15 Sep 2026 05:52:35 -0700 (PDT)
-Received: from Ansuel-XPS24.localdomain (host-79-26-252-140.retail.telecomitalia.it. [79.26.252.140])
-        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-c296605b9a6sm587969266b.25.2026.09.15.05.52.34
+        d=1e100.net; s=20260707; t=1789476839; x=1790081639;
+        h=message-id:date:references:in-reply-to:cc:to:from:subject
+         :content-transfer-encoding:content-type:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=ruipU1u5W9byyxX9qPeGPH+nhoQRgzgXh/OFxRteDPg=;
+        b=gYVjoFSpOTm1tAMvNjyBDBvlhPOByFEOtvlxQVuKoyrvAHrOHaTXFGD8OyA2qeKykb
+         BVzlXIQfMhh8JFL2EmtDLjKcDK9ebRzc59Sn0SVnJLI88li+h2s0wHoYNXtWTF2ysTki
+         +UUp0bqbLylR5zW0eiGNQRxafA0FkNJxbtYBSgvtXOBXCFwBIA0T/TK9c/hu7SU6s/J7
+         /zxPhWDjEup/QZPgO5FugVW9wnFjAmPI2hsBKxAdggRVVakRs2zHkxwfy5M16buG86s8
+         qM/9GW0Gc2zXISR/7nmPlGBg+4ZtSnS+vzxy0Go6TQ1PaZ+NX6O60tjbOtvd1ssOtxkF
+         2BCg==
+X-Forwarded-Encrypted: i=1; AKwUvBw8cEbS50ev7UtnvcxVPVDBCHxvhxDBIZr81sBtNZcrg5OxXxcHxnZHNIXyXbFvjinCG/s7D24CX/4=@vger.kernel.org
+X-Gm-Message-State: AFuF++kzDiQ+1EZkPwny1TLRmTZ3HZHJtNawd5qGjGhlgYeJ5bq4ZGZg
+	Qe8DlDi1zlVph916e3Ml4zMXeEdQHXK8X1kPyv5ffKAE/1uGDkgi0pvl+gI1nJo/P/Q=
+X-Gm-Gg: AYBFou0XNIq0NYWJfaQL6a27+d5yZyGx91+tzI7Rl1D7EGTOJBW1YOUNlJ02GWs4J6r
+	v1Z7GkdQoj86B6hd+ck03UzQIqwm5Va3gMDZbf07bXxcZOw3PhIeHwS/7raDs4BR3S5tzJ5pXYH
+	/QS58IB9AYz9BtmnvFQI2ML4CUHP5B6Oka/TycohpOeRYsH9duQvmif0cfS3jtlOB9GoNaThQAW
+	3vs2PJ602C3kiQkSATEWPNM0RPRvcoN8fopQ6S0ZQhVtQ7XWj/hxSwtaIFCjPNtMuWl02PeuVnK
+	VrDYUZyFSae6zrkijzD98cvbllxRZQQMDe6//KskDdqOr8nDuAOrU9TLw6DTcPy5ls6O5G5RHbN
+	DAx2w+nq5ztkGuh3+ir8rmyhGAyqkp4xC9pI0MhGBDNijNF31WmupFdPPz5kYIJIQaihs6cMyf8
+	7v+7T02JQm/r6PLaJ4uykgp+uP7xU2w54UkdCnxhD3ShanwVmFC8AaZBOxu0kwb1dU7lHSiYYZH
+	lh9MkoENRgPnNVt7w==
+X-Received: by 2002:a05:600c:1c26:b0:49c:f4ff:e872 with SMTP id 5b1f17b1804b1-49e82213842mr16348805e9.5.1789476839476;
+        Tue, 15 Sep 2026 05:53:59 -0700 (PDT)
+Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49e7d6a9d1dsm73406825e9.10.2026.09.15.05.53.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Sep 2026 05:52:34 -0700 (PDT)
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	Felix Fietkau <nbd@nbd.name>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Brian Masney <bmasney@redhat.com>
-Subject: [PATCH v2 2/2] clk: en7523: Add support for selecting the Serdes port in SCU
-Date: Tue, 15 Sep 2026 14:52:24 +0200
-Message-ID: <20260915125226.20579-3-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260915125226.20579-1-ansuelsmth@gmail.com>
-References: <20260915125226.20579-1-ansuelsmth@gmail.com>
+        Tue, 15 Sep 2026 05:53:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v14 07/11] clk: realtek: Add support for mux clock
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Yu-Chun Lin <eleanor.lin@realtek.com>
+Cc: sboyd@kernel.org, bmasney+clk@redhat.com, jbrunet+clk@baylibre.com, 
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+ p.zabel@pengutronix.de, cylee12@realtek.com, afaerber@suse.com, 
+ jyanchou@realtek.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-realtek-soc@lists.infradead.org, james.tai@realtek.com, 
+ cy.huang@realtek.com, stanley_chang@realtek.com, 
+ Brian Masney <bmasney@redhat.com>
+In-Reply-To: <20260901072446.2563145-8-eleanor.lin@realtek.com>
+References: <20260901072446.2563145-1-eleanor.lin@realtek.com>
+ <20260901072446.2563145-8-eleanor.lin@realtek.com>
+Date: Tue, 15 Sep 2026 14:53:56 +0200
+Message-Id: <178947683646.448573.8652586338644531668.b4-reply@b4>
+X-Mailer: b4 0.16.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4922; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=M0IzIsWiPP1002jx1x32ohvsScyH0p5PmYjJWCPWxCs=;
+ b=owEBbQKS/ZANAwAKAeb8Dxw38tqFAcsmYgBqqT/kIj2H05/TQ42wyCS3cLOfpVaD8wrOMQ3y+
+ Ny8dTCQUReJAjMEAAEKAB0WIQT04VmuGPP1bV8btxvm/A8cN/LahQUCaqk/5AAKCRDm/A8cN/La
+ he81D/45r9CNZwZIVBcLR0EH1/ZBwuxMLr2LG9h4TeHpWHTcEMtRCnWHjpnlVR9r/MRkZM/5dxv
+ J3ITQ2RCLm0YArSa+h6lzIQPyon1HsMu4WhNvHt3IxjliQ3r9VWrn5hSP8YARJZBP7EddBboad5
+ LHVi0mWjIh8j8DsGUMs8ShpLE5W8AOmaR62C9AViwhEznxzyz3w9MCDnq5hgmSzpYVHS3aDat5Q
+ d5c/L+INQNYBIEY3DmSfV2CiY50Xg3NZYhEnv0ZjYtOEQ4v/A1VVR7+yZxxA0hRDhEYYLJfqpyL
+ 2JGmOm9ST3nEPTB2QVJHrRXFcVWJzrz1S1lkaaczkzQa7w9x/72P0AaFv2JdQ5PDnTgZBelgylG
+ DzH1uZXCIkxIsvUwHJMv/iDRwA52DphXgdiXzUZzmNc0FdL0txxPPNJ0eBixDbuMn7T8VMhemIt
+ OA3NDET+hDgzz+xCJ7F2sOyLhqpXVl0SB4DL4aaz/MQjDPsr0/XOh0J/9C7tJcCFzn0YmvWdEtp
+ /CZi/IbgYuw04Ql+j+Izsr2UmSk005u7rzwGXa2c25RYrUD2FoedEUTwbx6aSzO81pW9e97gooZ
+ EriyMjYVl2D+cYSRN1YGN77gxpz/aOvAXq0F6zBCgedZ0Tt4YLY200PqACAI4be+lZE/9S8maXx
+ 4xTnCvcV44d+iVA==
+X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
+ fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-In the SCU register for clock and reset, there are also some register to
-select the Serdes port mode. The Airoha AN7581 SoC have 4 different Serdes
-that can switch between PCIe, USB or Ethernet mode.
+On 2026-09-01 15:24 +0800, Yu-Chun Lin wrote:
+> From: Cheng-Yu Lee <cylee12@realtek.com>
+> 
+> Add a simple regmap-based clk_ops implementation for Realtek mux clocks.
+> 
+> The implementation supports parent selection and rate determination through
+> regmap-backed register access.
+> 
+> Signed-off-by: Cheng-Yu Lee <cylee12@realtek.com>
+> Co-developed-by: Yu-Chun Lin <eleanor.lin@realtek.com>
+> Reviewed-by: Brian Masney <bmasney@redhat.com>
+> Signed-off-by: Yu-Chun Lin <eleanor.lin@realtek.com>
+> ---
+> Changes in v14:
+> - Move Reviewed-by tag to the correct position.
+> ---
+>  drivers/clk/realtek/Makefile         |  1 +
+>  drivers/clk/realtek/clk-regmap-mux.c | 41 ++++++++++++++++++++++++++
+>  drivers/clk/realtek/clk-regmap-mux.h | 43 ++++++++++++++++++++++++++++
+>  3 files changed, 85 insertions(+)
+>  create mode 100644 drivers/clk/realtek/clk-regmap-mux.c
+>  create mode 100644 drivers/clk/realtek/clk-regmap-mux.h
+> 
+> diff --git a/drivers/clk/realtek/Makefile b/drivers/clk/realtek/Makefile
+> index 840aff067b61..217ccaf5644a 100644
+> --- a/drivers/clk/realtek/Makefile
+> +++ b/drivers/clk/realtek/Makefile
+> @@ -4,4 +4,5 @@ obj-$(CONFIG_RTK_CLK_COMMON) += clk-rtk.o
+>  clk-rtk-y += clk-rtk-common.o
+>  clk-rtk-y += clk-pll.o
+>  clk-rtk-y += clk-regmap-gate.o
+> +clk-rtk-y += clk-regmap-mux.o
+>  clk-rtk-y += freq_table.o
+> diff --git a/drivers/clk/realtek/clk-regmap-mux.c b/drivers/clk/realtek/clk-regmap-mux.c
+> new file mode 100644
+> index 000000000000..1069c95595aa
+> --- /dev/null
+> +++ b/drivers/clk/realtek/clk-regmap-mux.c
+> @@ -0,0 +1,41 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (C) 2017-2026 Realtek Semiconductor Corporation
+> + * Author: Cheng-Yu Lee <cylee12@realtek.com>
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/export.h>
+> +#include <linux/regmap.h>
+> +#include "clk-regmap-mux.h"
+> +
+> +static u8 rtk_clk_regmap_mux_get_parent(struct clk_hw *hw)
+> +{
+> +	struct rtk_clk_regmap_mux *clkm = to_rtk_clk_regmap_mux(hw);
+> +	unsigned int num_parents = clk_hw_get_num_parents(hw);
+> +	u32 val;
+> +	int ret;
+> +
+> +	ret = regmap_read(clkm->clkr.regmap, clkm->mux_ofs, &val);
+> +	if (ret)
+> +		return 0xff;
+> +
+> +	val = (val >> clkm->shift) & clkm->mask;
+> +
+> +	return val >= num_parents ? 0xff : val;
 
-Add a simple PHY provider that expose the .set_mode OP to toggle the
-requested mode for the Serdes port.
+This is not really useful, the core already rejects val >= num_parent.
+So returning a higher number changes nothing as it stands
 
-Reviewed-by: Brian Masney <bmasney@redhat.com>
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
- drivers/clk/Kconfig      |   1 +
- drivers/clk/clk-en7523.c | 218 ++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 216 insertions(+), 3 deletions(-)
+> +}
+> +
+> +static int rtk_clk_regmap_mux_set_parent(struct clk_hw *hw, u8 index)
+> +{
+> +	struct rtk_clk_regmap_mux *clkm = to_rtk_clk_regmap_mux(hw);
+> +
+> +	return regmap_update_bits(clkm->clkr.regmap, clkm->mux_ofs,
+> +				  clkm->mask << clkm->shift, (u32)index << clkm->shift);
+> +}
+> +
+> +const struct clk_ops rtk_clk_regmap_mux_ops = {
+> +	.set_parent = rtk_clk_regmap_mux_set_parent,
+> +	.get_parent = rtk_clk_regmap_mux_get_parent,
+> +	.determine_rate = __clk_mux_determine_rate,
+> +};
+> +EXPORT_SYMBOL_NS_GPL(rtk_clk_regmap_mux_ops, "CLK_REALTEK");
+> diff --git a/drivers/clk/realtek/clk-regmap-mux.h b/drivers/clk/realtek/clk-regmap-mux.h
+> new file mode 100644
+> index 000000000000..ad524bb86a19
+> --- /dev/null
+> +++ b/drivers/clk/realtek/clk-regmap-mux.h
+> @@ -0,0 +1,43 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * Copyright (C) 2017-2026 Realtek Semiconductor Corporation
+> + * Author: Cheng-Yu Lee <cylee12@realtek.com>
+> + */
+> +
+> +#ifndef __CLK_REALTEK_CLK_REGMAP_MUX_H
+> +#define __CLK_REALTEK_CLK_REGMAP_MUX_H
+> +
+> +#include "clk-rtk-common.h"
+> +
+> +struct rtk_clk_regmap_mux {
+> +	struct rtk_clk_regmap clkr;
+> +	unsigned int mux_ofs;
+> +	unsigned int mask;
+> +	unsigned int shift;
+> +};
+> +
+> +#define __rtk_clk_regmap_mux_hw(_p) __rtk_clk_regmap_hw(&(_p)->clkr)
+> +
+> +#define __RTK_CLK_REGMAP_MUX(_name, _parents, _ops, _flags, _ofs, _sft, _mask) \
+> +	struct rtk_clk_regmap_mux _name = {                                    \
+> +		.clkr.hw.init =                                                \
+> +			CLK_HW_INIT_PARENTS(#_name, _parents, _ops, _flags),   \
+> +		.mux_ofs = _ofs,                                               \
+> +		.shift = _sft,                                                 \
+> +		.mask = _mask,                                                 \
+> +	}
+> +
+> +#define RTK_CLK_REGMAP_MUX(_name, _parents, _flags, _ofs, _sft, _mask)               \
+> +	__RTK_CLK_REGMAP_MUX(_name, _parents, &rtk_clk_regmap_mux_ops, _flags, _ofs, \
+> +			     _sft, _mask)
+> +
+> +static inline struct rtk_clk_regmap_mux *to_rtk_clk_regmap_mux(struct clk_hw *hw)
+> +{
+> +	struct rtk_clk_regmap *clkr = to_rtk_clk_regmap(hw);
+> +
+> +	return container_of(clkr, struct rtk_clk_regmap_mux, clkr);
+> +}
+> +
+> +extern const struct clk_ops rtk_clk_regmap_mux_ops;
+> +
+> +#endif /* __CLK_REALTEK_CLK_REGMAP_MUX_H */
+> -- 
+> 2.43.0
+> 
+> 
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 252f6a1f21b8..e0cc4ebafb5e 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -221,6 +221,7 @@ config COMMON_CLK_EN7523
- 	bool "Clock driver for Airoha/EcoNet SoC system clocks"
- 	depends on OF
- 	depends on ARCH_AIROHA || ECONET || COMPILE_TEST
-+	select GENERIC_PHY
- 	default ARCH_AIROHA
- 	help
- 	  This driver provides the fixed clocks and gates present on Airoha
-diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
-index 5c45aacb6409..24fdec2e6198 100644
---- a/drivers/clk/clk-en7523.c
-+++ b/drivers/clk/clk-en7523.c
-@@ -6,14 +6,18 @@
- #include <linux/io.h>
- #include <linux/mfd/syscon.h>
- #include <linux/platform_device.h>
-+#include <linux/phy.h>
-+#include <linux/phy/phy.h>
- #include <linux/property.h>
- #include <linux/regmap.h>
- #include <linux/reset-controller.h>
-+#include <linux/spinlock.h>
- #include <dt-bindings/clock/en7523-clk.h>
- #include <dt-bindings/reset/airoha,en7523-reset.h>
- #include <dt-bindings/reset/airoha,en7581-reset.h>
- #include <dt-bindings/clock/econet,en751221-scu.h>
- #include <dt-bindings/reset/econet,en751221-scu.h>
-+#include <dt-bindings/soc/airoha,scu-ssr.h>
- 
- #define RST_NR_PER_BANK			32
- 
-@@ -40,9 +44,22 @@
- #define   REG_HIR_MASK			GENMASK(31, 16)
- /* EN7581 */
- #define REG_NP_SCU_PCIC			0x88
-+#define REG_NP_SCU_SSR3			0x94
-+#define REG_SSUSB_HSGMII_SEL_MASK	BIT(29)
-+#define REG_SSUSB_HSGMII_SEL_HSGMII	FIELD_PREP_CONST(REG_SSUSB_HSGMII_SEL_MASK, 0x0)
-+#define REG_SSUSB_HSGMII_SEL_USB	FIELD_PREP_CONST(REG_SSUSB_HSGMII_SEL_MASK, 0x1)
- #define REG_NP_SCU_SSTR			0x9c
- #define REG_PCIE_XSI0_SEL_MASK		GENMASK(14, 13)
-+#define REG_PCIE_XSI0_SEL_PCIE		FIELD_PREP_CONST(REG_PCIE_XSI0_SEL_MASK, 0x0)
-+#define REG_PCIE_XSI0_SEL_XFI		FIELD_PREP_CONST(REG_PCIE_XSI0_SEL_MASK, 0x1)
-+#define REG_PCIE_XSI0_SEL_HSGMII	FIELD_PREP_CONST(REG_PCIE_XSI0_SEL_MASK, 0x2)
- #define REG_PCIE_XSI1_SEL_MASK		GENMASK(12, 11)
-+#define REG_PCIE_XSI1_SEL_PCIE		FIELD_PREP_CONST(REG_PCIE_XSI1_SEL_MASK, 0x0)
-+#define REG_PCIE_XSI1_SEL_XFI		FIELD_PREP_CONST(REG_PCIE_XSI1_SEL_MASK, 0x1)
-+#define REG_PCIE_XSI1_SEL_HSGMII	FIELD_PREP_CONST(REG_PCIE_XSI1_SEL_MASK, 0x2)
-+#define REG_USB_PCIE_SEL_MASK		BIT(3)
-+#define REG_USB_PCIE_SEL_PCIE		FIELD_PREP_CONST(REG_USB_PCIE_SEL_MASK, 0x0)
-+#define REG_USB_PCIE_SEL_USB		FIELD_PREP_CONST(REG_USB_PCIE_SEL_MASK, 0x1)
- #define REG_CRYPTO_CLKSRC2		0x20c
- /* EN751221 */
- #define EN751221_REG_SPI_DIV		0x0cc
-@@ -82,6 +99,8 @@ enum en_hir {
- 	HIR_MAX		= 14,
- };
- 
-+#define EN_SERDES_PHY_NUM		4
-+
- struct en_clk_desc {
- 	int id;
- 	const char *name;
-@@ -114,6 +133,18 @@ struct en_rst_data {
- 	struct reset_controller_dev rcdev;
- };
- 
-+struct en_serdes_phy_instance {
-+	struct phy *phy;
-+	unsigned int serdes_port;
-+};
-+
-+struct en_clk_priv {
-+	void __iomem *base;
-+	/* protect SCU register */
-+	spinlock_t lock;
-+	struct en_serdes_phy_instance *serdes_phys[EN_SERDES_PHY_NUM];
-+};
-+
- struct en_clk_soc_data {
- 	u32 num_clocks;
- 	const struct clk_ops pcie_ops;
-@@ -847,12 +878,179 @@ static int en7581_reset_register(struct device *dev, void __iomem *base,
- 	return devm_reset_controller_register(dev, &rst_data->rcdev);
- }
- 
-+static int en7581_serdes_phy_set_mode(struct phy *phy, enum phy_mode mode,
-+				      int submode)
-+{
-+	struct en_serdes_phy_instance *instance = phy_get_drvdata(phy);
-+	struct en_clk_priv *priv = dev_get_drvdata(phy->dev.parent);
-+	u32 reg, mask, sel, val;
-+	unsigned long flags;
-+
-+	switch (instance->serdes_port) {
-+	case AIROHA_SCU_SERDES_PCIE1:
-+		reg = REG_NP_SCU_SSTR;
-+		mask = REG_PCIE_XSI0_SEL_MASK;
-+
-+		if (mode != PHY_MODE_ETHERNET && mode != PHY_MODE_PCIE)
-+			return -EINVAL;
-+
-+		if (mode == PHY_MODE_ETHERNET) {
-+			switch (submode) {
-+			case PHY_INTERFACE_MODE_USXGMII:
-+			case PHY_INTERFACE_MODE_10GBASER:
-+				sel = REG_PCIE_XSI0_SEL_XFI;
-+				break;
-+			case PHY_INTERFACE_MODE_SGMII:
-+			case PHY_INTERFACE_MODE_1000BASEX:
-+			case PHY_INTERFACE_MODE_2500BASEX:
-+				sel = REG_PCIE_XSI0_SEL_HSGMII;
-+				break;
-+			default:
-+				return -EINVAL;
-+			}
-+		} else {
-+			sel = REG_PCIE_XSI0_SEL_PCIE;
-+		}
-+
-+		break;
-+	case AIROHA_SCU_SERDES_PCIE2:
-+		reg = REG_NP_SCU_SSTR;
-+		mask = REG_PCIE_XSI1_SEL_MASK;
-+
-+		if (mode != PHY_MODE_ETHERNET && mode != PHY_MODE_PCIE)
-+			return -EINVAL;
-+
-+		if (mode == PHY_MODE_ETHERNET) {
-+			switch (submode) {
-+			case PHY_INTERFACE_MODE_USXGMII:
-+			case PHY_INTERFACE_MODE_10GBASER:
-+				sel = REG_PCIE_XSI1_SEL_XFI;
-+				break;
-+			case PHY_INTERFACE_MODE_SGMII:
-+			case PHY_INTERFACE_MODE_1000BASEX:
-+			case PHY_INTERFACE_MODE_2500BASEX:
-+				sel = REG_PCIE_XSI1_SEL_HSGMII;
-+				break;
-+			default:
-+				return -EINVAL;
-+			}
-+		} else {
-+			sel = REG_PCIE_XSI1_SEL_PCIE;
-+		}
-+
-+		break;
-+	case AIROHA_SCU_SERDES_USB1:
-+		reg = REG_NP_SCU_SSR3;
-+		mask = REG_SSUSB_HSGMII_SEL_MASK;
-+
-+		if (mode != PHY_MODE_ETHERNET && mode != PHY_MODE_USB_DEVICE &&
-+		    mode != PHY_MODE_USB_DEVICE_SS)
-+			return -EINVAL;
-+
-+		if (mode == PHY_MODE_ETHERNET)
-+			sel = REG_SSUSB_HSGMII_SEL_HSGMII;
-+		else
-+			sel = REG_SSUSB_HSGMII_SEL_USB;
-+
-+		break;
-+	case AIROHA_SCU_SERDES_USB2:
-+		reg = REG_NP_SCU_SSTR;
-+		mask = REG_USB_PCIE_SEL_MASK;
-+
-+		if (mode != PHY_MODE_PCIE && mode != PHY_MODE_USB_DEVICE &&
-+		    mode != PHY_MODE_USB_DEVICE_SS)
-+			return -EINVAL;
-+
-+		if (mode == PHY_MODE_PCIE)
-+			sel = REG_USB_PCIE_SEL_PCIE;
-+		else
-+			sel = REG_USB_PCIE_SEL_USB;
-+
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	spin_lock_irqsave(&priv->lock, flags);
-+	val = readl(priv->base + reg);
-+	val &= ~mask;
-+	val |= sel;
-+	writel(val, priv->base + reg);
-+	spin_unlock_irqrestore(&priv->lock, flags);
-+
-+	return 0;
-+}
-+
-+static const struct phy_ops en7581_serdes_phy_ops = {
-+	.set_mode	= en7581_serdes_phy_set_mode,
-+	.owner		= THIS_MODULE,
-+};
-+
-+static struct phy *en7581_serdes_phy_xlate(struct device *dev,
-+					   const struct of_phandle_args *args)
-+{
-+	struct en_clk_priv *priv = dev_get_drvdata(dev);
-+	struct en_serdes_phy_instance *instance;
-+	unsigned int serdes_port;
-+
-+	if (args->args_count != 1) {
-+		dev_err(dev, "invalid number of cells in 'phy' property\n");
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	serdes_port = args->args[0];
-+	if (serdes_port >= EN_SERDES_PHY_NUM) {
-+		dev_err(dev, "invalid serdes port: %d\n", serdes_port);
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	instance = priv->serdes_phys[serdes_port];
-+	if (!instance) {
-+		dev_err(dev, "failed to find appropriate serdes phy\n");
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	return instance->phy;
-+}
-+
-+static int en7581_serdes_phy_register(struct device *dev)
-+{
-+	struct en_clk_priv *priv = dev_get_drvdata(dev);
-+	struct phy_provider *phy_provider;
-+	int i;
-+
-+	for (i = 0; i < EN_SERDES_PHY_NUM; i++) {
-+		struct en_serdes_phy_instance *instance;
-+
-+		instance = devm_kzalloc(dev, sizeof(*instance),
-+					GFP_KERNEL);
-+		if (!instance)
-+			return -ENOMEM;
-+
-+		instance->phy = devm_phy_create(dev, NULL,
-+						&en7581_serdes_phy_ops);
-+		if (IS_ERR(instance->phy))
-+			return dev_err_probe(dev, PTR_ERR(instance->phy), "failed to create phy\n");
-+
-+		instance->serdes_port = i;
-+		priv->serdes_phys[i] = instance;
-+
-+		phy_set_drvdata(instance->phy, instance);
-+	}
-+
-+	phy_provider = devm_of_phy_provider_register(dev, en7581_serdes_phy_xlate);
-+
-+	return PTR_ERR_OR_ZERO(phy_provider);
-+}
-+
- static int en7581_clk_hw_init(struct platform_device *pdev,
- 			      struct clk_hw_onecell_data *clk_data)
- {
-+	struct en_clk_priv *priv = platform_get_drvdata(pdev);
- 	struct regmap *map;
- 	void __iomem *base;
- 	u32 val;
-+	int ret;
- 
- 	map = syscon_regmap_lookup_by_compatible("airoha,en7581-chip-scu");
- 	if (IS_ERR(map))
-@@ -862,6 +1060,8 @@ static int en7581_clk_hw_init(struct platform_device *pdev,
- 	if (IS_ERR(base))
- 		return PTR_ERR(base);
- 
-+	priv->base = base;
-+
- 	en7581_register_clocks(&pdev->dev, clk_data, map, base);
- 
- 	val = readl(base + REG_NP_SCU_SSTR);
-@@ -876,9 +1076,12 @@ static int en7581_clk_hw_init(struct platform_device *pdev,
- 	val &= ~REG_PCIE_HB_RST;
- 	writel(val, base + REG_RST_CTRL1);
- 
--	return en7581_reset_register(&pdev->dev, base, en7581_rst_map,
--				     ARRAY_SIZE(en7581_rst_map),
--				     en7581_rst_ofs);
-+	ret = en7581_reset_register(&pdev->dev, base, en7581_rst_map,
-+				    ARRAY_SIZE(en7581_rst_map), en7581_rst_ofs);
-+	if (ret)
-+		return ret;
-+
-+	return en7581_serdes_phy_register(&pdev->dev);
- }
- 
- static enum en_hir get_hw_id(void __iomem *np_base)
-@@ -985,16 +1188,25 @@ static int en7523_clk_probe(struct platform_device *pdev)
- 	struct device_node *node = pdev->dev.of_node;
- 	const struct en_clk_soc_data *soc_data;
- 	struct clk_hw_onecell_data *clk_data;
-+	struct en_clk_priv *priv;
- 	int r;
- 
- 	soc_data = device_get_match_data(&pdev->dev);
- 
-+	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	spin_lock_init(&priv->lock);
-+
- 	clk_data = devm_kzalloc(&pdev->dev,
- 				struct_size(clk_data, hws, soc_data->num_clocks),
- 				GFP_KERNEL);
- 	if (!clk_data)
- 		return -ENOMEM;
- 
-+	platform_set_drvdata(pdev, priv);
-+
- 	clk_data->num = soc_data->num_clocks;
- 	r = soc_data->hw_init(pdev, clk_data);
- 	if (r)
--- 
-2.53.0
 
