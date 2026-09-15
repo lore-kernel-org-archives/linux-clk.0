@@ -1,45 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9C4E4A3F03;
-	Tue, 15 Sep 2026 15:43:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08FF73DEFF1;
+	Tue, 15 Sep 2026 15:44:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789486985; cv=none; b=cqX2vOT2uiYufCV7pTp2oL8xwN/fufchPijfKwmUz5YkmXMLobWDW2Kt2vEg8adFSqa47JqUNR2on0su4FK1Y0jEWnatvzCNKtFg7JZKA3q090Gavm2dIHBgB64i38NgKsqDe7DYkrGnVdRbXGEhL9RVgcP4VgtPVrCiLCdBfBw=
+	t=1789487063; cv=none; b=OTWhjXCJ07zeDR8Z1kR8LjqmLsLwQ+bJYNgGs1v7J42gD6AfZEvZH1AelbibImxu/iC9MUsM/8tN3L7kLo6I9dlhlfchYs+Ui0g7WYIQnZd1L5lm4v4mZEFiJjwcOxOeljLhCRWHRWUeyAkad8pZk8Q9BMMVhiMs17mjV8mxqqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789486985; c=relaxed/simple;
-	bh=cdf5+rGDxhzMWd72yjv0Z6iqlsVPPWfAuPjsQpChQaU=;
+	s=arc-20240116; t=1789487063; c=relaxed/simple;
+	bh=xhvLaEbBO5E77W3QHjcuwPClE7tkRn0Lz3G58K0jrho=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=OxdvOfLWsFKJVu3SCAb/usegdF1AJMVubDp2zwb/bFpfLL5BeyGLvWIaIm8P6KTobY+fb03OfckrfgKsw8SBrD+IerCMPhB2xf949MtRpzPXvEwEPSJHTYRkZkMakHwdWbCiU/FmrM5eUB2HzkG+V0UN1SyaMANGU3YLhlEya28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FWoFG9h8; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=IRqc/UL3Z+0a8xJCa0cCX/YJkZuuhFiLTgA3ukivNfyLL0cJ4IMTt5p4syqmamddh2B3oSJ7ho5gWuT6KD8Jj8zFEtSJ4mO9itmMjpqr8sdq/qutF5G2YAPP+oyJ/Kr3PiYy9qNKVj5w58q8fo6L7UxuMD0j26tB8m1i52nMGCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CyllVRyV; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FWoFG9h8"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F07CD1F000FF;
-	Tue, 15 Sep 2026 15:43:02 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CyllVRyV"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95DE91F000FF;
+	Tue, 15 Sep 2026 15:44:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789486983;
-	bh=/Q+TKB0dTqPeN8L0VQL0IxsQ2XnGw89/lImhUA0TRIc=;
+	s=k20260515; t=1789487061;
+	bh=WgCqCrUZSkqdjRCU1o3q/FLPXpvAuImoRHsybLFffg0=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=FWoFG9h81W+EkeK6xWljLNGhi+4q24AllFDgLT9ezExiwRZj9G8qbHkRePJo+7VL+
-	 YTbDGrwWdrikTHq6JsHf9EAERMMq6nazGfDxgx9UPbk/OvyJ7qaNpwon+330J+G67h
-	 UgU00QlM4ZwrbAjfZtwwpzsDAk3gSk+oS6dlx67YrMZDPLHs7eGby3nUIOhvtzsSmP
-	 mRyQ9RVjZ3tKQwrMLOQGQXpRqJgCRIDnrdDCJwy3Mx/TMJI6WPvuROLSRrnkatSeVW
-	 SEREuibAJD8pc607CF+dQ0o/8oPZJcpELssrY1oQYmI4/T/oeuCtmnpPRcsDRHl6Sq
-	 PG8Z8Do4o3nwg==
+	b=CyllVRyVxXF7DxuPZckfjzCPBAB9QayLE187PkFja5TRn0szrz/k7lA0tYtszFOmh
+	 DVyFikJWXGgsLb0E3IBxMK6kK/pMkrwIl6Rp3347La2RpONTaoRorC5/sQjeLmyHLN
+	 cFrobng9CQE0y7oaTRW4Yq77NSDqeceZlN/scE4HQN8AL8N738tak8hmXPuEYU51V/
+	 mUvHUvowYPNlcU9PVECM0TxuHxcp04y2uSOWUI92ADvclAZacFmXQYY8J46jHGASJR
+	 xppWyWbtuxPWgREx8LxZmhVNa87UzDs6LqxmMTOXEeSjyk/wJdB0P7gEwt+0YIVZVQ
+	 KmCMu9R9VX2Gw==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v4 09/20] drm/bridge: inno-hdmi: Add .disable platform
- operation
+Subject: Re: [PATCH v4 07/20] drm/bridge: inno-hdmi: Split probe out of bind
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Michal Wilczynski" <m.wilczynski@samsung.com>
-Cc: devicetree@vger.kernel.org, lee@kernel.org, dri-devel@lists.freedesktop.org, olteanv@gmail.com, robh@kernel.org, mfd@lists.linux.dev, linux-phy@lists.infradead.org, vkoul@kernel.org, linux-clk@vger.kernel.org, neil.armstrong@linaro.org, conor+dt@kernel.org
-In-Reply-To: <20260915-jh7110-clean-send-v4-9-f0e4fd6f2cc8@samsung.com>
+Cc: conor+dt@kernel.org, neil.armstrong@linaro.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, robh@kernel.org, olteanv@gmail.com, linux-phy@lists.infradead.org, mfd@lists.linux.dev, linux-clk@vger.kernel.org, vkoul@kernel.org, lee@kernel.org
+In-Reply-To: <20260915-jh7110-clean-send-v4-7-f0e4fd6f2cc8@samsung.com>
 References: <20260915-jh7110-clean-send-v4-0-f0e4fd6f2cc8@samsung.com>
- <CGME20260915153229eucas1p2d1b02b6f3871d6b536f678b9ea293c1c@eucas1p2.samsung.com>
- <20260915-jh7110-clean-send-v4-9-f0e4fd6f2cc8@samsung.com>
+ <CGME20260915153226eucas1p1d69e9e853b4b5cfb1d42c2c585b57f95@eucas1p1.samsung.com>
+ <20260915-jh7110-clean-send-v4-7-f0e4fd6f2cc8@samsung.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Tue, 15 Sep 2026 15:43:02 +0000
-Message-Id: <20260915154302.F07CD1F000FF@smtp.kernel.org>
+Date: Tue, 15 Sep 2026 15:44:20 +0000
+Message-Id: <20260915154420.95DE91F000FF@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -48,57 +47,67 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 
 Thank you for your contribution! Sashiko AI review found 2 potential issue(=
 s) to consider:
-- [High] drm/bridge: inno-hdmi: sleep in atomic context via .disable hook
-- [Medium] drm/bridge: inno-hdmi: hardware teardown LIFO ordering violation
+- [Medium] drm/bridge: inno-hdmi: Meaningful code and commit message mismat=
+ch for inno_hdmi_remove()
+- [Medium] drm/bridge: inno-hdmi: TOCTOU race on hdmi->bridge.dev leading t=
+o potential NULL pointer dereference
 --
 
-commit f7201b9edd5364bfbb0fe7f6dfc6706a0f43adf3
+commit 619d70bf74f8f0e498489e8aa8a7c0c9e4e2d3fb
 Author: Michal Wilczynski <m.wilczynski@samsung.com>
 
-drm/bridge: inno-hdmi: Add .disable platform operation
+drm/bridge: inno-hdmi: Split probe out of bind
 
-This commit introduces a new .disable platform operation to the Innosilicon
-HDMI driver and invokes it in inno_hdmi_bridge_atomic_disable(). It allows
-platform-specific drivers to implement power down sequences for PHYs and
-clocks.
+This commit splits the bridge setup into a new exported inno_hdmi_probe()
+function and reduces inno_hdmi_bind() to a wrapper around it. This
+decoupling allows a platform device to register its own bridge without
+attaching it to the DRM encoder immediately.
+
+>     Move the setup into a new exported inno_hdmi_probe(), with a matching
+>     inno_hdmi_remove(), and reduce inno_hdmi_bind() to a wrapper around i=
+t.
+
+[Severity: Medium]
+Is the commit message description accurate regarding the removal function?
+
+The commit message explicitly claims to introduce a matching
+inno_hdmi_remove() function for teardown alongside inno_hdmi_probe(), but
+this function appears to be missing from the patch. Does this break the
+expected API contract described for external decoupled drivers?
 
 > diff --git a/drivers/gpu/drm/bridge/inno-hdmi.c b/drivers/gpu/drm/bridge/=
 inno-hdmi.c
-> index 1264152fb1434..06917e83c5e53 100644
+> index dd35f5a875d3d..840f1c7bc2029 100644
 > --- a/drivers/gpu/drm/bridge/inno-hdmi.c
 > +++ b/drivers/gpu/drm/bridge/inno-hdmi.c
-> @@ -886,6 +886,10 @@ static void inno_hdmi_bridge_atomic_disable(struct d=
-rm_bridge *bridge,
->  					    struct drm_atomic_commit *state)
+> @@ -929,7 +929,14 @@ static irqreturn_t inno_hdmi_irq(int irq, void *dev_=
+id)
 >  {
->  	struct inno_hdmi *hdmi =3D bridge_to_inno_hdmi(bridge);
-> +	const struct inno_hdmi_plat_ops *plat_ops =3D hdmi->plat_data->ops;
-> +
-> +	if (plat_ops && plat_ops->disable)
-> +		plat_ops->disable(hdmi->dev);
-
-[Severity: High]
-Does this code introduce a sleep in atomic context? The
-inno_hdmi_bridge_atomic_disable() function runs from
-drm_atomic_helper_commit_tail(), which is an atomic context where sleeping =
-is
-strictly forbidden. However, the commit message mentions this hook is meant
-for calling phy_power_off() and clk_disable_unprepare(), which can sleep.
+>  	struct inno_hdmi *hdmi =3D dev_id;
+> =20
+> -	drm_helper_hpd_irq_event(hdmi->bridge.dev);
+> +	/*
+> +	 * The interrupt is requested in probe, but bridge.dev is only set once
+> +	 * the DRM master binds and attaches the bridge, which may never happen.
+> +	 * Drop hotplug events that arrive before then rather than dereference a
+> +	 * NULL drm_device.
+> +	 */
+> +	if (hdmi->bridge.dev)
+> +		drm_helper_hpd_irq_event(hdmi->bridge.dev);
 
 [Severity: Medium]
-Will this break LIFO teardown ordering? Disabling the platform PHY and cloc=
-ks
-via plat_ops->disable() before calling inno_hdmi_standby() leaves the inter=
-nal
-HDMI controller configured while its underlying hardware is powered down. To
-maintain proper LIFO ordering, shouldn't inno_hdmi_standby() be called first
-to put the internal PHY registers in standby before disabling the platform
-clocks and PHY?
+Can this lockless check of hdmi->bridge.dev lead to a NULL pointer
+dereference?
 
-> =20
->  	inno_hdmi_standby(hdmi);
->  }
+Without READ_ONCE(), the compiler might double-fetch the pointer. If the
+pointer is cleared concurrently (for example, during a failed
+drm_bridge_attach() or a teardown path) after the check but before it is
+passed to drm_helper_hpd_irq_event(), it could result in a NULL pointer
+dereference.
+
+Could we use READ_ONCE() and a local variable to prevent a potential race
+condition in inno_hdmi_irq()?
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260915-jh7110-cle=
-an-send-v4-0-f0e4fd6f2cc8@samsung.com?part=3D9
+an-send-v4-0-f0e4fd6f2cc8@samsung.com?part=3D7
