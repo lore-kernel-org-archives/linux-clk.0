@@ -1,187 +1,105 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98938330B09
-	for <linux-clk@vger.kernel.org>; Tue, 15 Sep 2026 06:58:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5F0838A702;
+	Tue, 15 Sep 2026 07:01:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789455521; cv=none; b=g8skAwnOv5YHyrCA18Z2j3wtccHPiJeAsh/mypC8GZv/7s4QCg96bDTfWSGvzeAyWv/mkSoeGlCZsDnMoKfnS8mRN6xlNqFyqr1RmIsVDF8E9P6TtRcZGUIbQxt5AVDT/JzsxYWxIGPPtXm+QmIEnf+qdqDni7CoIFgjSzX7WoY=
+	t=1789455703; cv=none; b=WGAobpZkP1SRSZiDxXBGR39GX4FIwysTwgTGaVV+a1oUKGMWmCL2LXYKPQly6YSxdHOhGyW2AttQ2TwGKvdGCaFQQMCaiL2eoCWLmeYp1wmO6ZvbvQ/aLv0GldvUEFca0SJmy2EPg8wtTIc5/pCo7WohDCaNAhqgnXZQ8gtdOpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789455521; c=relaxed/simple;
-	bh=eM8m5PJNe9Wj4UEcHZ8+zCCkgTYp6JXWect4NlrR9N0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=JiaD9oATckRuYPos4w3bHISddxtdmWxWy219DZARU+fTbORoAtjXWuiVrKa0iXl4cMlc2uIjkhaizAM2tLUyERC88JEEa6nyo4sHZiCbXC8xnydzKn71AQilQK4WQIZZ7huljhNTCKfXeCRXHLVNBFpw8AJONx8woZDHe2rHHM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=aRQw4uFP; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=PvxvM7Ur; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="aRQw4uFP";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="PvxvM7Ur"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68F6ZcHC3824031
-	for <linux-clk@vger.kernel.org>; Tue, 15 Sep 2026 06:58:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=ZCsc65uA8MgDXlMUwl8dFF
-	0FCP7ZAaM9H+LcuyiyhxI=; b=aRQw4uFPcvpoXuTefXtEYYBbSocvongtDAeUIh
-	D5ucGGyNya5M+EtKqGwVvQk2aURNhiE3EJonnhNL0UVk2NvDDziItQ8Q5Vd/oZhm
-	3qpPMeuUoAfljJy3S5RcV6sTndAcrUdfRtPnSya6zNalzur4/iPOvPhQLa9OgrcC
-	3N6eqzkaY8FEs7pPYRcAYfGKn+6QWPgxSD/C9ekhB2AT6Bt5bIneunIxAGzT3PlR
-	FyeUZipURMOHpcPNPmphHaxQy/1D+ksWaLjOtXkAjqkA1tjN7XASy/NH7hxtnQLV
-	grFyB963A52u8KI7UEKwPBuoKipgxyLnxHDqz1xpTzgJzZSw==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gpn41tx1d-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Tue, 15 Sep 2026 06:58:39 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2d94f086fedso57822415ad.1
-        for <linux-clk@vger.kernel.org>; Mon, 14 Sep 2026 23:58:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1789455519; x=1790060319; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=ZCsc65uA8MgDXlMUwl8dFF0FCP7ZAaM9H+LcuyiyhxI=;
-        b=PvxvM7UrTmO7xIoSP3D5G6Ity7G0nWFIir1b4nJAxGg4kBPHrPhd0HIUQXmgUtHxIB
-         h100TgzSA3tQ0PoN07EpeLDHkGx7XKoCEMREZvG2yVddILw6aXcgtHLgDtTw7kfmN70U
-         5fgFMY/kZn2eou7yeXAq9l0P20hFjmwivP+Ok4/ZkRUOhq8nnsnJkiYkMSQgaMR1Gjxs
-         iUvwyBZOhQwJpKLPe0Gv04aTBTXLlP341DTsSL5i+EzSxQ49JIuDpJ0748HqQq2XM0je
-         eHvXo81sfFvI6qF+rabe7DzEYsVX2lUf5UA+vdGAkGmyXovLYna56ZGwX+XdAHrRoloI
-         EGmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789455519; x=1790060319;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=ZCsc65uA8MgDXlMUwl8dFF0FCP7ZAaM9H+LcuyiyhxI=;
-        b=QdR93h79+qa3TvpGleGWW1vjlx6+clL53ES6j+0CIX2cUfnk5BDTRJz/0z64p6v/WG
-         yaROyh6McA0qMofN3RDP4B5d6RS2A/3rkfw21ovWxmFfaqZ9DejPrQpseyS6eB3A1dqd
-         t0MaAvLetz7nmAdHD6IQfV0RX1xuuJQYBEy8k8xvAXzvC+e5lexC9HRfontIgHAVSLcK
-         saNjzlHkXtQoyRjnHiec9Ujuuj65SEtVXnM9j+VNFih69roD6B+Yn0CDTTLhcsQfNzeL
-         4X/TaGh2SZSNF3vwd4RA1x7NatBk4EluOUon26ble4ak2hFMZYs0gxqRBT6rnIJYFYZZ
-         lJbA==
-X-Forwarded-Encrypted: i=1; AKwUvBxqMZInsCUnGs6ArivlcvySqSsElL+eZc8WCfs3YqgW2M2qLmzVoFZ+yKA0h4aRmHt2jDfdB2JouHw=@vger.kernel.org
-X-Gm-Message-State: AFuF++lrM5apKxi4ihTdQEm1nNsjb0+nkSEEkBKDXunBSsr/N54t5Juv
-	xnUe3GAGtJzTQCycFe4BF6ycKkjqnf9c6PFOKxzlmCnFIk7BuIY+gD/mr9RQDRGXRoqATykEitg
-	wzq1CIhKvA16NmtKEcwMa/vhlC8RzJSl0/k/TPhXcf0RdUc1cb1SDF01MgOGZsxo=
-X-Gm-Gg: AYBFou2j4GEoCNvHV/saBO/BpbHLgUKNehbeJ9cFUjFa10Tr7rqfLAE2kaCrqlEqFZN
-	pK49xHR7T6MRCQ6IPXq0+khI66T+zV4PJ6WbPuxFkrYHPHkHH64RGGGohXNTh6x2m521TCGAPc3
-	UR79TAsGrXdkUAtYFYeRHi1LtoM85Ctn5kkiP/eUOr0+lw/OCuNyeT3b520zipw8wxv7F4Yvmxm
-	8Vk47lsDvaSAVjE4umjKI/YOsOIzFNTghafjUeNLirt2wo6SGGC6WLpND1cNOpxIQ4Vzy3+UU/I
-	y/FakZLIeklfh4OwvgqzhyOJS1r+emuX/xUsEwG7+n+y9B+kS8FIi2RsWtCKmuOp+bO/GwO6C/T
-	zValn/yWRVeohdxUKL7O7L2Y6
-X-Received: by 2002:a17:902:f54b:b0:2da:e553:c70f with SMTP id d9443c01a7336-2dd6c77899bmr118888155ad.22.1789455519271;
-        Mon, 14 Sep 2026 23:58:39 -0700 (PDT)
-X-Received: by 2002:a17:902:f54b:b0:2da:e553:c70f with SMTP id d9443c01a7336-2dd6c77899bmr118887585ad.22.1789455518881;
-        Mon, 14 Sep 2026 23:58:38 -0700 (PDT)
-Received: from hu-tdas-hyd.qualcomm.com ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-33ba4b1f409sm36268092eec.0.2026.09.14.23.58.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Sep 2026 23:58:38 -0700 (PDT)
-From: Taniya Das <taniya.das@oss.qualcomm.com>
-Date: Tue, 15 Sep 2026 12:28:22 +0530
-Subject: [PATCH] clk: qcom: Fix default entries for Glymur EVACC and GPUCC
+	s=arc-20240116; t=1789455703; c=relaxed/simple;
+	bh=vF1V0ylTTKs8GE4BBdhZti8reEXrmv6XKYpSFkNibZo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=D9twnqDTxmbc8giqVmj2u5JgEYtIcJgPbI1P5IHgKwr//ApzE3CdoUKdWwMHRcJZw9EW4nB2xoGb4zCO/BjSbdXje0YB3ttwCru4ZfO4He+DewEOCFumhB2dBDWMQ1q/s9Lyc1KplPbBEoZDoxSbymvJg5OoDGeTS+IeR1BzMTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from dfae2b116770.home.arpa (unknown [36.110.52.2])
+	by APP-03 (Coremail) with SMTP id rQCowABnaTdL7ahq9KLIBw--.59459S2;
+	Tue, 15 Sep 2026 15:01:31 +0800 (CST)
+From: Wentao Liang <vulab@iscas.ac.cn>
+To: bmasney@redhat.com
+Cc: linusw@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	Wentao Liang <vulab@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH] clk: versatile: clk-icst: Fix node reference leak in of_syscon_icst_setup()
+Date: Tue, 15 Sep 2026 07:01:03 +0000
+Message-Id: <20260915070103.1733176-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260915-kconfig_updates-v1-1-b9bdf35db955@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIAI3sqGoC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIzMDS0NT3ezk/Ly0zPT40oKUxJLUYl1jy0QzC5NEcxOLFAMloK6CotS0zAq
- widGxtbUAtl6xA2EAAAA=
-X-Change-ID: 20260915-kconfig_updates-39a684a748d0
-To: Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abelvesa@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
-        Jerome Brunet <jbrunet+clk@baylibre.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
-        Imran Shaik <imran.shaik@oss.qualcomm.com>,
-        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Taniya Das <taniya.das@oss.qualcomm.com>
-X-Mailer: b4 0.15-dev-aa3f6
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTE1MDA5NyBTYWx0ZWRfX/f1I3BpKqn/I
- jU1sz9BE+aCHkoQ8riQRt77CU8vmuHEfh9BpnpEaD7bN7vlW2X18FP9NvmTBuGfr8Yq/k0wV2U8
- z+Om51vapYHsLnMVYfqWzc0vQ9xL5lCdx3cyKdhHirpnR6o+6aOYySY5JejEOBJ+hjcBTRAwJ6K
- UUK7cqhkEY9FzwgwlJb8oaptmPnuh7RSYI0pLhc+fLZ4H/SsNNXPuKzCJ01w8a10LkkWTmtilXG
- i98w1hEJri3WVevdHa4hgOA+M8Yreq9NOAlvDqhkgJZedZfc25750EHKqQSmyMJhKRfb9Zef8g2
- eNGH+lSSXMdYT3+P/uvEWYHcUkWQtNivCu/NhzydRsmHDyXwwf4H9ufhHv3cDexxn1TaqcM8i8P
- rPlkQHYU6eGRHu0BC4wMc4suj+qXbFiCD9yT3/EM+wHV/lGqvwJbgriaa5gnak8NlmsLdq5jRti
- eZfCHYN9xGf3KG3IxNw==
-X-Proofpoint-GUID: XaR_wdZm2d9qGeXDiNOAyBffONffIy9Z
-X-Authority-Analysis: v=2.4 cv=cqQOAF4i c=1 sm=1 tr=0 ts=6aa8ec9f cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22
- a=EUspDBNiAAAA:8 a=SEz4QtLsNbRT_sFNAkgA:9 a=QEXdDO2ut3YA:10
- a=uG9DUKGECoFWVXl0Dc02:22
-X-Proofpoint-ORIG-GUID: XaR_wdZm2d9qGeXDiNOAyBffONffIy9Z
-X-Proofpoint-Spam-Info: AW1haW4tMjYwOTE1MDA5NyBTYWx0ZWRfXwZybadKegFpP
- w2mZDUtUJUE8VnxOiqKOHRhZ61YXnZY0nMGe/K4+IgEGPigcrHzRNuRpFduvD1OXc/5tp/wmcZ2
- alMLYEzRsvcf5exBfIwi7GQqx6SCayw=
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-09-15_02,2026-09-14_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 adultscore=0 phishscore=0 priorityscore=1501 malwarescore=0
- suspectscore=0 spamscore=0 lowpriorityscore=0 impostorscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2609040000 definitions=main-2609150097
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowABnaTdL7ahq9KLIBw--.59459S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7uw1xKF1fAFy5Aw43ZryfXrb_yoW8Wr43pr
+	ZF9rZ0yr48Kr1Ut3y8trWDuFyFvan7GFWrCa4xKan7ZrZ5JFy5JrWUWa4UuF4UAF95uayr
+	tr4qk3yxZr4UJrUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkK14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r126r1DMcIj6I8E87Iv67AKxVW8Jr0_Cr1UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_
+	Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67
+	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIY
+	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14
+	v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWx
+	JwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7VU11rW7
+	UUUUU==
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiCRULA2qowd2jhwAAsu
 
-The EVA clock controller (CLK_GLYMUR_EVACC) config carried a duplicate
-'default m if ARCH_QCOM' line, one of them misplaced before the 'select'
-statement, while the graphics clock controller (CLK_GLYMUR_GPUCC) config
-was missing the 'default m if ARCH_QCOM' line altogether.
+of_get_parent() takes a reference on the syscon parent node. The
+reference is intentionally kept on the success path, but the error paths
+return without dropping it, leaking the node reference. Release the
+reference before returning on the error paths.
 
-Drop the duplicate on EVACC and add the missing default on GPUCC so both
-Qualcomm Glymur clock controllers follow the same
-depends on / select / default / help ordering used by the other entries.
-
-Fixes: e291ec812dec ("clk: qcom: Add EVA clock controller driver for Glymur SoC")
-Fixes: 67e645285dd0 ("clk: qcom: Add support for GPUCC and GXCLK for Glymur")
-Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+Fixes: d430819d69a5 ("clk: versatile-icst: add device tree support")
+Cc: stable@vger.kernel.org
+Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
 ---
-Fix Kconfig ordering/consistency issues for the Qualcomm Glymur clock
-controllers: the EVA clock controller (CLK_GLYMUR_EVACC) carried a
-duplicate 'default m if ARCH_QCOM' line, one of them misplaced before the
-'select' statement, and the graphics clock controller (CLK_GLYMUR_GPUCC)
-was missing the 'default m if ARCH_QCOM' line altogether.
+ drivers/clk/versatile/clk-icst.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-With this change both entries follow the same
-depends on / select / default / help ordering used by the other Glymur
-clock controller Kconfig entries.
----
- drivers/clk/qcom/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index 6ef083f5d9e251d2d2c5592a3f3dd51845dc743b..b3ffe1dced017e6f4bd3f0fa9c11bed5948391fc 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -104,7 +104,6 @@ config CLK_GLYMUR_DISPCC
- config CLK_GLYMUR_EVACC
- 	tristate "Glymur EVA Clock Controller"
- 	depends on ARM64 || COMPILE_TEST
--	default m if ARCH_QCOM
- 	select CLK_GLYMUR_GCC
- 	default m if ARCH_QCOM
- 	help
-@@ -127,6 +126,7 @@ config CLK_GLYMUR_GPUCC
- 	tristate "Glymur Graphics Clock Controller"
- 	depends on ARM64 || COMPILE_TEST
- 	select CLK_GLYMUR_GCC
-+	default m if ARCH_QCOM
- 	help
- 	  Support for the graphics clock controller on Glymur devices.
- 	  Say Y if you want to support graphics controller devices and
-
----
-base-commit: 1a1de54f7369cd2b5bac0f265910e60ad3a6b4c3
-change-id: 20260915-kconfig_updates-39a684a748d0
-
-Best regards,
+diff --git a/drivers/clk/versatile/clk-icst.c b/drivers/clk/versatile/clk-icst.c
+index 6bd3db54dd22..8c84377f3ec1 100644
+--- a/drivers/clk/versatile/clk-icst.c
++++ b/drivers/clk/versatile/clk-icst.c
+@@ -516,16 +516,19 @@ static void __init of_syscon_icst_setup(struct device_node *np)
+ 	map = syscon_node_to_regmap(parent);
+ 	if (IS_ERR(map)) {
+ 		pr_err("no regmap for syscon ICST clock parent\n");
++		of_node_put(parent);
+ 		return;
+ 	}
+ 
+ 	if (of_property_read_u32(np, "reg", &icst_desc.vco_offset) &&
+ 	    of_property_read_u32(np, "vco-offset", &icst_desc.vco_offset)) {
+ 		pr_err("no VCO register offset for ICST clock\n");
++		of_node_put(parent);
+ 		return;
+ 	}
+ 	if (of_property_read_u32(np, "lock-offset", &icst_desc.lock_offset)) {
+ 		pr_err("no lock register offset for ICST clock\n");
++		of_node_put(parent);
+ 		return;
+ 	}
+ 
+@@ -552,6 +555,7 @@ static void __init of_syscon_icst_setup(struct device_node *np)
+ 		ctype = ICST_INTEGRATOR_CP_CM_MEM;
+ 	} else {
+ 		pr_err("unknown ICST clock %pOF\n", np);
++		of_node_put(parent);
+ 		return;
+ 	}
+ 
 -- 
-Taniya Das <taniya.das@oss.qualcomm.com>
+2.34.1
 
