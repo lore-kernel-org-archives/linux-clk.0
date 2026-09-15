@@ -1,65 +1,61 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 413952BD00C;
-	Tue, 15 Sep 2026 15:37:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7285F396B70;
+	Tue, 15 Sep 2026 15:38:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789486628; cv=none; b=h/BePALQwnSSDcNEN8yNgdVV547OtGXlVOV066JPLo739oN49J94/lTeVavMdn1XLqZBJ+sZQWBvx4Eb+lBShUmX13pYiO/xP82+rlzMC/3O0P8v7P5jGu0QbOjbE9Wc8vsFl/t3vzWZTFizUAPPul9i1szvMBi5lgjWW79zsDA=
+	t=1789486689; cv=none; b=cd5q1RTo0svdP6WZZ1kpa5qDgIx4fsxFQpskieN9/9qKUFyMLoM+XNTTNCrr9qE/2F+9jDSSqD3WknaAmSQyHIGZODSU8zwjGHxxGU/BOz89Wzw0AFcA7OXwz1XHC5e8pz5vQnAcg9GtjODfUCKVsjRkXbCDMiTZn2OCVyAF10M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789486628; c=relaxed/simple;
-	bh=4CrTuEZSFu9uoLUwd8D9N7dRg15ETOXWQTzotPiLW0g=;
+	s=arc-20240116; t=1789486689; c=relaxed/simple;
+	bh=nzC7oa+r/phCJ/7hvumhpU+FA2dyGXGpPMkboLtxjyU=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=DPBN30lBWMR87Pq2KpvuZsvYEICFukadLU7GrTwcr5TI21OTgvfeLSZTFx6st/mgyQf+2oTnUbUKQ/L+ETsfo8TTuzO5TaokMbyXAT6G6h/wN9axhDmh6C91MiHmvzgtbEv5oH4tSIIAvzsQq+7V5wuecBphMYbAIecdNsSn/sg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ibC5vlZU; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=uR4pawsN8tgP+jmSyUN042Y8yGvk/Lol6kQ2nxRlLeyp3B00oiDNxbzuJXgQBUTYm2vpZcPfFme6YBaYa1KD9he77CNbCk/+lKS9C41o8OwOvhgiIRcTQEOMUWhcwaJi3pL6xHHsKdU66f7Gm3iXRnwHjXU4rO1GCOeweGC5Yg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HhV2LUZr; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ibC5vlZU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EFC11F000FF;
-	Tue, 15 Sep 2026 15:37:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HhV2LUZr"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78BE31F000FF;
+	Tue, 15 Sep 2026 15:38:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789486626;
-	bh=4CrTuEZSFu9uoLUwd8D9N7dRg15ETOXWQTzotPiLW0g=;
+	s=k20260515; t=1789486688;
+	bh=nzC7oa+r/phCJ/7hvumhpU+FA2dyGXGpPMkboLtxjyU=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=ibC5vlZUdyOkLs5sqekYWmSBsu57nxQ5tiEzp8lroSkfdxR4Y2Br8prUaCJTs+5Xe
-	 Ilxo47omY2qYUJJqnrcj7DcIupfnAEiBPZvamBw3U0qcclxHP0JVXqYWVIgq22rR8K
-	 rLXsdE6pDcM31MoNAkVGCvUxihTvp+9sHec3EGePsBRXx9fODrq7j8tKajwLNUOTvU
-	 DFrIvO2bQNjUPe9uRwT8MSECIpv5vKJ4KGUCFcQq2BdW2lCYpIxLbkV8AYjdkJxMdy
-	 EhpNKGhitYQaTy5dY7XQ330DhU4hVFswj1yDsWlTNXYG+Q8Ws41fzudlyFRULjaH2C
-	 YpLBFP7j0/5FQ==
+	b=HhV2LUZrxpzeI/MrBTkg/qrVe/GDGYUlQXpQoKi+DdGmOq4b7dcPJ0lLeetG6LRWg
+	 9MVWaGr4Fovtyj/ZLIiHCdv4j/LxmKmtr4LGC9t5YZ3iHyxRYSzRnEOuPfrxtgSqgj
+	 fSIyjOj6MGKqw2ZDj7fRoYukkZnUkRZDPFlpq8D+6xWhjXFA7I4rbFbH7FF0/0Xky0
+	 jO95nu5zFYj+B6THmubNoBk7YqSxRJy1ygDbVJTFVt8RCm6ervarDk/3zSY4Cdq74q
+	 Z/ZCsMWDbH6klPQPi0gnWLbNuizuDD9tdd89UrPn9MytxjNmGRc8tgwfGaCNHZRmT1
+	 HwL2YijEpLx6w==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v4 10/20] drm/bridge: inno-hdmi: Add .mode_valid
- platform operation
+Subject: Re: [PATCH v4 14/20] clk: starfive: jh7110-vout: Allow pixel clock
+ rate propagation
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Michal Wilczynski" <m.wilczynski@samsung.com>
-Cc: lee@kernel.org, linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org, olteanv@gmail.com, robh@kernel.org, linux-phy@lists.infradead.org, conor+dt@kernel.org, devicetree@vger.kernel.org, neil.armstrong@linaro.org, mfd@lists.linux.dev, vkoul@kernel.org
-In-Reply-To: <20260915-jh7110-clean-send-v4-10-f0e4fd6f2cc8@samsung.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, olteanv@gmail.com, conor+dt@kernel.org, neil.armstrong@linaro.org, mfd@lists.linux.dev, vkoul@kernel.org, robh@kernel.org, linux-phy@lists.infradead.org, linux-clk@vger.kernel.org, lee@kernel.org
+In-Reply-To: <20260915-jh7110-clean-send-v4-14-f0e4fd6f2cc8@samsung.com>
 References: <20260915-jh7110-clean-send-v4-0-f0e4fd6f2cc8@samsung.com>
- <CGME20260915153231eucas1p1e106fee2d6f7db2aa8bb93d18d0f5dc1@eucas1p1.samsung.com>
- <20260915-jh7110-clean-send-v4-10-f0e4fd6f2cc8@samsung.com>
+ <CGME20260915153238eucas1p29917a31d10ce1aa55c1dcb44b62180f9@eucas1p2.samsung.com>
+ <20260915-jh7110-clean-send-v4-14-f0e4fd6f2cc8@samsung.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Tue, 15 Sep 2026 15:37:05 +0000
-Message-Id: <20260915153706.3EFC11F000FF@smtp.kernel.org>
+Date: Tue, 15 Sep 2026 15:38:06 +0000
+Message-Id: <20260915153807.78BE31F000FF@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 
-> inno_hdmi_bridge_mode_valid() validates the pixel clock against
-> hdmi->refclk, but that clock is optional and is only present on
-> platforms that describe a "ref" clock. Platforms where the pixel clock
-> is produced by a separate device - such as the StarFive JH7110, whose
-> PHY is both the clock and the PHY provider - have no "ref" clock, so
-> the check is skipped entirely and every mode is reported as valid.
+> The dc8200_pix0 and dc8200_pix1 MUXes feed the display controller, and
+> the rate they carry is ultimately produced by the HDMI PHY, which
+> registers hdmitx0_pixelclk as a clock provider.
 >=20
-> A mode the platform cannot generate is then advertised to userspace.
-> The subsequent modeset appears to succeed, since the atomic enable path
-> cannot fail, and the display silently stays blank.
+> Add CLK_SET_RATE_PARENT to both MUXes so a rate requested on them
+> reaches that parent, instead of being clamped to whatever rate the
+> parent already happens to run at.
 >=20
-> Add a .mode_valid platform operation so platforms can reject modes they
-> are unable to drive. Platforms that do not implement it are unaffected.
->=20
+> Co-developed-by: Dominique Belhachemi <db@domibel.de>
+> Signed-off-by: Dominique Belhachemi <db@domibel.de>
 > Reviewed-by: Joshua Peisach <jpeisach@ubuntu.com>
 > Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
 
@@ -67,5 +63,5 @@ Sashiko has reviewed this patch and found no issues. It looks great!
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260915-jh7110-cle=
-an-send-v4-0-f0e4fd6f2cc8@samsung.com?part=3D10
+an-send-v4-0-f0e4fd6f2cc8@samsung.com?part=3D14
 
