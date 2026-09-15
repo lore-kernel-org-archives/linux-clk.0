@@ -1,102 +1,182 @@
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+Received: from mail-pz2-f43.google.com (mail-pz2-f43.google.com [74.125.228.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFBB0433E7C;
-	Tue, 15 Sep 2026 04:32:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D05A40802B
+	for <linux-clk@vger.kernel.org>; Tue, 15 Sep 2026 05:26:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.228.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789446731; cv=none; b=JfC3/VDEzPHqduca2JrxLIRgg/iQYWVfPMaiemqwuDQGvPdRlFY3+saWHBF8/LnGgl5W0p0gtdq2IHSNKzR7+L7qLyAXsrd4NVZbMote9FFIyTOJ7K7LqB3mAS9kenj8TrRam7jj6F400B+WDpLOVlAIahmuWDk0tXwIaEVmd0M=
+	t=1789450008; cv=none; b=rbdzgmUUBCXMjPI1CDdbj6xOKymi75B6mM/BQuNgVPuNSIOaj/lrX6jtsVECEUsohW7CQFIH72jGtfzGXlypFqfEcRfs+8/V4NJRyWgpKlkjAjVfOGytHP31hsmX8Or4me37NnRtLkg1QhwpAD5uNSIW9igbVsfXXz0TIRZRkMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789446731; c=relaxed/simple;
-	bh=nkzg3a8+LvTNt/8oYVAeAj+HXIyWYCIf+6oPPLRiOuQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=O3Ij1KWsELSUfzhWhWUIxPRPF+wDnqy2iSea59W+Ldv0uZ//QsKzEfhOFUwuUD6yIYzsc6EYGS52caapKW1bohQ17NezVWGBvBHZHOwflf5hwdKfcjhWmihFtooF/TQwOH5a0WZ0oElvynaGb7M66TXemhYi4M4AhFK17s4cqAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from dfae2b116770.home.arpa (unknown [36.110.52.2])
-	by APP-01 (Coremail) with SMTP id qwCowACnfvI8yqhqTa4ICA--.59909S2;
-	Tue, 15 Sep 2026 12:31:56 +0800 (CST)
-From: Wentao Liang <vulab@iscas.ac.cn>
-To: andy.tang@nxp.com
-Cc: bmasney@redhat.com,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	mturquette@baylibre.com,
-	oss@buserror.net,
-	robh@kernel.org,
-	sboyd@kernel.org,
-	lkml@vger.kernel.org,
-	Wentao Liang <vulab@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH 3/6] clk: qoriq: Fix clock reference leak in input_clock_by_name()
-Date: Tue, 15 Sep 2026 04:31:27 +0000
-Message-Id: <20260915043127.1725773-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1789450008; c=relaxed/simple;
+	bh=vbzQq012R+ejKYv+RlREDKeINIqzcTFsS8nbpKDjfuY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XA/dvB331u65xDpQbfiG6OK9LcqtJ4DnKvZqlOvuUlKsWp4ULOjHPmtlM5ciBzDe6yKBu3Ypbe6DGyyX9cCbhGvSMdMajjop52yyB9uK+482y19T6CH5p/qsqUsed/kijOo+AcLxqr79bDbMyQzTjS4hyooHPF4dIugJZjZs7Ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NLfBalj4; arc=none smtp.client-ip=74.125.228.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NLfBalj4"
+Received: by mail-pz2-f43.google.com with SMTP id d2e1a72fcca58-85469e211a0so2572978b3a.1
+        for <linux-clk@vger.kernel.org>; Mon, 14 Sep 2026 22:26:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1789450006; x=1790054806; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=vbzQq012R+ejKYv+RlREDKeINIqzcTFsS8nbpKDjfuY=;
+        b=NLfBalj4BfZCD/b2o5nqg/+zSMQdl35l4ZYTEVeEgFOTeJGFYK/MUKRF6KjWnyn/25
+         LXFWz0VwTWveiXfFEqIxtujuxkkf4qvDBJhkvaSHxqpIUkFOb1yRrDEn7DcwU08wWqN8
+         IyWMUVCPUdQM9N6m4lumHcITDqddrtBZRHKUcE3IuU/K8q6tXA6SA2AyHQNoGIPex5ks
+         GtKsrr6T/lyw9Ov87Qbfa/Ki/2rmRxXUd5hEFlfjYT6pszaad7AITGaUGZQZMI1NaaAe
+         RiUNs7YwacO8qLbH1EZm/vwaQfFmLqeUZmEyPKzhBDR7aFFfQ3wYImY/ch31CtAOcTyW
+         h3OA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1789450006; x=1790054806;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=vbzQq012R+ejKYv+RlREDKeINIqzcTFsS8nbpKDjfuY=;
+        b=ffU6yt2sXtLvyjtRE9mVZzg9V3NHxmInkkK/GrZ/MfcTJROZ+nxCr1aUcD29b2C+sr
+         GEl+reimztZPkARss6o/o4lUlOIZKZE5HlqSBs5PN1MpN3z5imFwiKMRyfkCQspIGcgp
+         GoWBrufd+Gy8wUDYukZnUbsKoJusI2T6q6OxDn//H7mSO541gDAmSjS4okRJtRb/fGkh
+         IOwisIQCGmwaKSllk5K3cs9ePTeiH5h5dAKoUKWCYj3vLH3PO63QLbGuK2nMeuFx90C/
+         tCGhh2AdEqioEoV+FbTcraOHo9d8v4s2JITlXjMXg9DLwqIqmPIOpVBpla/q5ficuqP3
+         OS4Q==
+X-Forwarded-Encrypted: i=1; AKwUvBzD3skuqs/4H3tg15UU0p6OwCfSg7LWCsu4TBHjGfhSZ9rQXVwbbjUmD3fEz1ZyS3QRqbjjU4ZsySI=@vger.kernel.org
+X-Gm-Message-State: AFuF++nbrKxfkt/O5fD9YP92CGxTXsmICvl1wSNKcZUiL4I0hGWFb+LO
+	iR4R3H29LyQtp539uJEneZQ6xi7FP08vuOvu5AN+KXOgdAYUU/OXDakr
+X-Gm-Gg: AYBFou3uMt8YL/RrbC4xyYfOH+hdohrANo9Y+yIin61e5xw4+02nVScD/ey/AViDsop
+	7ijV6a9R0nSUAh5ZEksEJ+h155XxsRgjZM/tbwNdI34KJq0wY3dzgBw5qlwfUhykO8hSspwVZoQ
+	iyGHslpz+um4WLEj9DNsyNT0K1lcqMWDpSMGl5ceFOTh8e3kbWFKmuG8GYNIzt03PPiPk2ILa/a
+	v5Zsuv1oBnZQ7C9qf9V/Q517pmd5SiRw9rgeVd9RGcIpp+r6od1UmSOaBq6ezZjFXsy35WcLtIs
+	ARXQLmYwJkLSZjnPDOK3p0qlyjSppuADH8z0mLMgb25G0gV62hyEkqXyiMTigZ9FYtXRCQE2nnC
+	VGqSnVASttakodoa0KKCEkWHl95JPYJ34YJV7kgNIhbkoCYVDG+JCuN9bHG7fZ29byNIDOAXNh1
+	91HaGy5ksPX5mYJmzJfiJ2B0rYWiU6hx2E+IB7vdgy/wjmdPQfxufIHdYT4e/PqztWCEkwDtsen
+	iMqjzO2l0fbF/DfuPIAP9hngWHN2AohHrJUtTE7smZ4bW7lYIp1Z64=
+X-Received: by 2002:a05:6a00:420c:b0:855:eb7b:5804 with SMTP id d2e1a72fcca58-86f8314fd92mr12578546b3a.4.1789450005819;
+        Mon, 14 Sep 2026 22:26:45 -0700 (PDT)
+Received: from [172.19.1.47] (60-250-196-139.hinet-ip.hinet.net. [60.250.196.139])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-86b287c06d9sm5675699b3a.15.2026.09.14.22.26.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Sep 2026 22:26:45 -0700 (PDT)
+Message-ID: <b8a8a65b-e302-4747-bc90-4920fc48795a@gmail.com>
+Date: Tue, 15 Sep 2026 13:26:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: nuvoton: ma35d1: Use clk_hw pointers as mux parents
+To: Miquel Raynal <miquel.raynal@bootlin.com>,
+ Jacky Huang <ychuang3@nuvoton.com>
+Cc: Shan-Chun Hung <schung@nuvoton.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+ Richard Cochran <richardcochran@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Steam Lin <STLin2@winbond.com>, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, stable@vger.kernel.org
+References: <20260813-perso-ma35d1-upstream-clk-v1-1-e78e5e6172ea@bootlin.com>
+ <87o6e0nfe4.fsf@bootlin.com>
+Content-Language: en-US
+From: Jacky Huang <ychuang570808@gmail.com>
+In-Reply-To: <87o6e0nfe4.fsf@bootlin.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowACnfvI8yqhqTa4ICA--.59909S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7AF1rAFyxZryDJw15tw45trb_yoW8Gw47pF
-	Z5A34Yvw17Ar4DuF17tF4UuFnI9w48CFy3K3y8Can7ZF13W34xJF1rCFyYvFs0y3yfWw4j
-	qFW2yF48CF4kArUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9F14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Cr0_Gr1UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
-	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
-	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
-	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
-	CwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcS
-	sGvfC2KfnxnUUI43ZEXa7VU19Xo7UUUUU==
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiCRULA2qowd0d1AABsC
 
-input_clock_by_name() obtains a consumer clock with of_clk_get_by_name()
-and hands it to input_clock(), which only uses __clk_get_name() to read
-the clock name and then registers a new fixed factor clock.  The
-consumer clock itself is discarded without clk_put(), so the reference
-returned by of_clk_get_by_name() is never released.
+>> The MA35D1 clock provider registers its muxes with parent data
+>> structures filling .fw_name. This is not the ideal approach since that
+>> would require a massive amount of internal clock names declaration in
+>> the DT. Since the DT does not play the game of exposing all these names,
+>> none of the parent lookups performed when instantiating the muxes
+>> succeed. As a result, these muxes get registered as root clocks, leading
+>> to a sadly flat clock tree and no frequency assigned to most of the
+>> peripheral clocks:
+> Jacky, this is an actual fix which is a month old now, the SPI
+> controller (and maybe other blocks as well) does not work without this
+> patch. Would you mind giving this a bit of feedback?
+>
 
-Release the reference with clk_put() once input_clock() is done with
-the clock, mirroring the pattern used by of_clk_get_parent_name().
+Hi Miquel,
 
-Fixes: 80b4ae7acea4 ("clk: qoriq: Separate root input clock for core PLLs on ls1012a")
-Cc: stable@vger.kernel.org
-Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
----
- drivers/clk/clk-qoriq.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+Thanks for working on this clock parent conversion and for testing the
+MA35D1 hardware.
 
-diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
-index 2ed8f93bc861..d0091b388cef 100644
---- a/drivers/clk/clk-qoriq.c
-+++ b/drivers/clk/clk-qoriq.c
-@@ -1124,13 +1124,16 @@ static struct clk __init *input_clock(const char *name, struct clk *clk)
- static struct clk __init *input_clock_by_name(const char *name,
- 					      const char *dtname)
- {
--	struct clk *clk;
-+	struct clk *clk, *ret;
- 
- 	clk = of_clk_get_by_name(clockgen.node, dtname);
- 	if (IS_ERR(clk))
- 		return clk;
- 
--	return input_clock(name, clk);
-+	ret = input_clock(name, clk);
-+	clk_put(clk);
-+
-+	return ret;
- }
- 
- static struct clk __init *input_clock_by_index(const char *name, int idx)
--- 
-2.34.1
+While reviewing the conversion against the existing clk_parent_data
+tables and section 6.5 of the MA35D1 TRM, I noticed an existing issue in
+the WDT/WWDT clock definitions.
+
+The original driver contains valid parent names:
+
+     "pclk3_div4096"
+     "pclk4_div4096"
+
+For example:
+
+     static const struct clk_parent_data wdt1_sel_clks[] = {
+             { .index = -1, },
+             { .fw_name = "lxt", },
+             { .fw_name = "pclk3_div4096", },
+             { .fw_name = "lirc", },
+     };
+
+The TRM lists PCLK3/4096 and PCLK4/4096 as valid selectable parent
+clocks for the WDT/WWDT blocks.
+
+However, the new conversion changes these entries to -1:
+
+     static const int wdt1_parent_idx[] = {
+             -1, LXT, -1, LIRC
+     };
+
+This loses a valid hardware parent. I understand that the current
+driver does not register corresponding clocks, so this is an existing
+driver issue that became visible during this conversion.
+
+Would it be possible to cover this in the series? One possible
+implementation would be to add a preparatory patch that registers these
+fixed-factor clocks before converting the WDT/WWDT parent tables:
+
+     hws[PCLK3_DIV4096] =
+             ma35d1_clk_fixed_factor(dev, "pclk3_div4096",
+                                     "pclk3", 1, 4096);
+
+     hws[PCLK4_DIV4096] =
+             ma35d1_clk_fixed_factor(dev, "pclk4_div4096",
+                                     "pclk4", 1, 4096);
+
+The corresponding clock IDs should be appended to
+include/dt-bindings/clock/nuvoton,ma35d1-clk.h without renumbering any
+existing IDs, for example:
+
+     #define PCLK3_DIV4096  236
+     #define PCLK4_DIV4096  237
+     #define CLK_MAX_IDX   238
+
+The WDT/WWDT parent tables could then preserve the original mappings,
+for example:
+
+     static const int wdt1_parent_idx[] = {
+             -1, LXT, PCLK3_DIV4096, LIRC
+     };
+
+This could be submitted as patch 1/2, with the parent conversion as
+patch 2/2, although please use your judgement on the final patch
+organisation.
+
+The other parent_idx definitions and their ordering match the existing
+clock parent tables.
+I have also tested this version on an MA35D1 board, and the clock
+parent conversion appears to work correctly for the peripherals I
+tested.
+
+Thanks again for working on this.
+
+Best regards,
+Jacky Huang
 
