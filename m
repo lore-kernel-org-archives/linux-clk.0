@@ -1,113 +1,106 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08FF73DEFF1;
-	Tue, 15 Sep 2026 15:44:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DDE436E49B;
+	Tue, 15 Sep 2026 15:44:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789487063; cv=none; b=OTWhjXCJ07zeDR8Z1kR8LjqmLsLwQ+bJYNgGs1v7J42gD6AfZEvZH1AelbibImxu/iC9MUsM/8tN3L7kLo6I9dlhlfchYs+Ui0g7WYIQnZd1L5lm4v4mZEFiJjwcOxOeljLhCRWHRWUeyAkad8pZk8Q9BMMVhiMs17mjV8mxqqI=
+	t=1789487096; cv=none; b=j6O0LywZ0HV0fEeC0ho7dtssg1EY7yoDP0qFYbpJQqM8VOOXVfZWjNH6wUhtu11yeq9YXybTMYXPDjKNulxUVHnzBov9/uqusakifkzkhQLaJcGG9buHsbQC+DAkKWMxm0eMj5krssUos8R42rAie6CXcpY83XGESz4JEAhh+VM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789487063; c=relaxed/simple;
-	bh=xhvLaEbBO5E77W3QHjcuwPClE7tkRn0Lz3G58K0jrho=;
+	s=arc-20240116; t=1789487096; c=relaxed/simple;
+	bh=GvuoUipLDuYtu3iX26Vf6qEhYNBdGvGU3cMz59AmzU4=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=IRqc/UL3Z+0a8xJCa0cCX/YJkZuuhFiLTgA3ukivNfyLL0cJ4IMTt5p4syqmamddh2B3oSJ7ho5gWuT6KD8Jj8zFEtSJ4mO9itmMjpqr8sdq/qutF5G2YAPP+oyJ/Kr3PiYy9qNKVj5w58q8fo6L7UxuMD0j26tB8m1i52nMGCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CyllVRyV; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=ed9eGrWjErZy+zo8YqO4EPX6IqPoJTLKeVusJzMhky7Su0LIN1IwLJMPGZUzzfKpuE9IESj+Qna3QvInnI8oz21AICIA4D35U16X8cHBGNdhoddpqUE8L0XGQb1OvQmybdiEfGQ1qnTjSVQiOQ6xZIqbiZSZqXJFxrXMlO2ygTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RxB4aWbE; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CyllVRyV"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95DE91F000FF;
-	Tue, 15 Sep 2026 15:44:20 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RxB4aWbE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E758B1F00893;
+	Tue, 15 Sep 2026 15:44:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789487061;
-	bh=WgCqCrUZSkqdjRCU1o3q/FLPXpvAuImoRHsybLFffg0=;
+	s=k20260515; t=1789487093;
+	bh=QEBXUCGA3t5aIDeoUC+JSqnO28lAavBO8vWCn83qxws=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=CyllVRyVxXF7DxuPZckfjzCPBAB9QayLE187PkFja5TRn0szrz/k7lA0tYtszFOmh
-	 DVyFikJWXGgsLb0E3IBxMK6kK/pMkrwIl6Rp3347La2RpONTaoRorC5/sQjeLmyHLN
-	 cFrobng9CQE0y7oaTRW4Yq77NSDqeceZlN/scE4HQN8AL8N738tak8hmXPuEYU51V/
-	 mUvHUvowYPNlcU9PVECM0TxuHxcp04y2uSOWUI92ADvclAZacFmXQYY8J46jHGASJR
-	 xppWyWbtuxPWgREx8LxZmhVNa87UzDs6LqxmMTOXEeSjyk/wJdB0P7gEwt+0YIVZVQ
-	 KmCMu9R9VX2Gw==
+	b=RxB4aWbEruBsnXKfNLqbKvd6g9+7Poo7Pnm3+LUo9+LVGTrgtFDCaKPkmxzdVW7ne
+	 Dsy6w+dNLDG0aYz1QO9z3U1dx7JLTtyXyCGuvx3fmueF+pFM3KZQUD4wzaRatbfs21
+	 ZdeQ3lYggrSs0YE+aTjFnpL0A0xEmiibJQyRGcrF+78htalUhqvCp4exAGrMf1Asqn
+	 w120kqakOTpg+sYPWjbPp9hOl1XdK8ddze5sdqzTfQKTG6OQuAw5NHCfJhMPKkDCqK
+	 /JbNrXTSXBSzwyjkNELDcSDZOs9kgUfRX7+wD5PGvd02D40E7VnjzIH9/RFhM5aLiE
+	 Zn3mg6Pnw9CVQ==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v4 07/20] drm/bridge: inno-hdmi: Split probe out of bind
+Subject: Re: [PATCH v4 12/20] soc: starfive: Add jh7110-hdmi-subsystem
+ driver
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Michal Wilczynski" <m.wilczynski@samsung.com>
-Cc: conor+dt@kernel.org, neil.armstrong@linaro.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, robh@kernel.org, olteanv@gmail.com, linux-phy@lists.infradead.org, mfd@lists.linux.dev, linux-clk@vger.kernel.org, vkoul@kernel.org, lee@kernel.org
-In-Reply-To: <20260915-jh7110-clean-send-v4-7-f0e4fd6f2cc8@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, mfd@lists.linux.dev, conor+dt@kernel.org, neil.armstrong@linaro.org, linux-phy@lists.infradead.org, robh@kernel.org, olteanv@gmail.com, dri-devel@lists.freedesktop.org, vkoul@kernel.org, lee@kernel.org
+In-Reply-To: <20260915-jh7110-clean-send-v4-12-f0e4fd6f2cc8@samsung.com>
 References: <20260915-jh7110-clean-send-v4-0-f0e4fd6f2cc8@samsung.com>
- <CGME20260915153226eucas1p1d69e9e853b4b5cfb1d42c2c585b57f95@eucas1p1.samsung.com>
- <20260915-jh7110-clean-send-v4-7-f0e4fd6f2cc8@samsung.com>
+ <CGME20260915153234eucas1p221dd53b5f1bccb6228c0a5a7d0be8394@eucas1p2.samsung.com>
+ <20260915-jh7110-clean-send-v4-12-f0e4fd6f2cc8@samsung.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Tue, 15 Sep 2026 15:44:20 +0000
-Message-Id: <20260915154420.95DE91F000FF@smtp.kernel.org>
+Date: Tue, 15 Sep 2026 15:44:52 +0000
+Message-Id: <20260915154452.E758B1F00893@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 
-Thank you for your contribution! Sashiko AI review found 2 potential issue(=
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
 s) to consider:
-- [Medium] drm/bridge: inno-hdmi: Meaningful code and commit message mismat=
-ch for inno_hdmi_remove()
-- [Medium] drm/bridge: inno-hdmi: TOCTOU race on hdmi->bridge.dev leading t=
-o potential NULL pointer dereference
+- [High] soc: starfive: unsafe 8-bit regmap MMIO accesses for 32-bit HDMI IP
 --
 
-commit 619d70bf74f8f0e498489e8aa8a7c0c9e4e2d3fb
+commit 0e53205c6430272fda82936e32d4dd11694a8847
 Author: Michal Wilczynski <m.wilczynski@samsung.com>
 
-drm/bridge: inno-hdmi: Split probe out of bind
+    soc: starfive: Add jh7110-hdmi-subsystem driver
 
-This commit splits the bridge setup into a new exported inno_hdmi_probe()
-function and reduces inno_hdmi_bind() to a wrapper around it. This
-decoupling allows a platform device to register its own bridge without
-attaching it to the DRM encoder immediately.
+This commit adds the parent driver for the monolithic JH7110 HDMI IP block.
+It binds to the starfive,jh7110-hdmi-subsystem node, maps the shared
+register block, creates a regmap, and populates child devices.
 
->     Move the setup into a new exported inno_hdmi_probe(), with a matching
->     inno_hdmi_remove(), and reduce inno_hdmi_bind() to a wrapper around i=
-t.
+> diff --git a/drivers/soc/starfive/jh7110-hdmi-subsystem.c b/drivers/soc/s=
+tarfive/jh7110-hdmi-subsystem.c
+> new file mode 100644
+> index 0000000000000..e64a222630459
+> --- /dev/null
+> +++ b/drivers/soc/starfive/jh7110-hdmi-subsystem.c
+[ ... ]
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +
+> +static const struct regmap_config starfive_hdmi_regmap_config =3D {
+> +	.reg_bits =3D 32,
+> +	.val_bits =3D 8,
 
-[Severity: Medium]
-Is the commit message description accurate regarding the removal function?
+[Severity: High]
+Does configuring .val_bits =3D 8 cause the regmap-mmio backend to select 8-=
+bit
+memory accessors (writeb()/readb())?=20
 
-The commit message explicitly claims to introduce a matching
-inno_hdmi_remove() function for teardown alongside inno_hdmi_probe(), but
-this function appears to be missing from the patch. Does this break the
-expected API contract described for external decoupled drivers?
+On many 32-bit APB/AHB bus fabrics, issuing byte-wide memory transactions to
+32-bit IP registers triggers synchronous external aborts (bus errors leading
+to a kernel panic) or results in partial register corruption. This can be
+triggered autonomously when the child drivers probe and attempt to read or
+write HDMI registers via the shared regmap.
 
-> diff --git a/drivers/gpu/drm/bridge/inno-hdmi.c b/drivers/gpu/drm/bridge/=
-inno-hdmi.c
-> index dd35f5a875d3d..840f1c7bc2029 100644
-> --- a/drivers/gpu/drm/bridge/inno-hdmi.c
-> +++ b/drivers/gpu/drm/bridge/inno-hdmi.c
-> @@ -929,7 +929,14 @@ static irqreturn_t inno_hdmi_irq(int irq, void *dev_=
-id)
->  {
->  	struct inno_hdmi *hdmi =3D dev_id;
-> =20
-> -	drm_helper_hpd_irq_event(hdmi->bridge.dev);
-> +	/*
-> +	 * The interrupt is requested in probe, but bridge.dev is only set once
-> +	 * the DRM master binds and attaches the bridge, which may never happen.
-> +	 * Drop hotplug events that arrive before then rather than dereference a
-> +	 * NULL drm_device.
-> +	 */
-> +	if (hdmi->bridge.dev)
-> +		drm_helper_hpd_irq_event(hdmi->bridge.dev);
+Since the fallback MMIO implementation in the inno-hdmi child driver uses
+readl_relaxed() and writel_relaxed(), it appears the IP natively expects
+32-bit physical accesses.
 
-[Severity: Medium]
-Can this lockless check of hdmi->bridge.dev lead to a NULL pointer
-dereference?
+Should .val_bits =3D 32 be used here to guarantee regmap-mmio maps to safe
+32-bit physical accessors?
 
-Without READ_ONCE(), the compiler might double-fetch the pointer. If the
-pointer is cleared concurrently (for example, during a failed
-drm_bridge_attach() or a teardown path) after the check but before it is
-passed to drm_helper_hpd_irq_event(), it could result in a NULL pointer
-dereference.
-
-Could we use READ_ONCE() and a local variable to prevent a potential race
-condition in inno_hdmi_irq()?
+> +	.max_register =3D 0x3fff,
+> +};
+> +
+> +static int starfive_hdmi_subsys_probe(struct platform_device *pdev)
+[ ... ]
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260915-jh7110-cle=
-an-send-v4-0-f0e4fd6f2cc8@samsung.com?part=3D7
+an-send-v4-0-f0e4fd6f2cc8@samsung.com?part=3D12
