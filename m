@@ -1,309 +1,109 @@
-Received: from mail-wm2-f12.google.com (mail-wm2-f12.google.com [74.125.225.140])
+Received: from mail-ed2-f12.google.com (mail-ed2-f12.google.com [74.125.228.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775093B1006
-	for <linux-clk@vger.kernel.org>; Tue, 15 Sep 2026 10:09:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.140
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3159538C438
+	for <linux-clk@vger.kernel.org>; Tue, 15 Sep 2026 10:33:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.228.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789466972; cv=none; b=O2hTYUZKG+eRo4MECPn25pcZGaS6uoaHEbR9v/dm+3G9sNx7qvp+Ncy2QrNtJE73HMjMBfMKJ8e3efjY1AZsB4W7wWHD5kTBB6MKNQfQbbwUE2Us5Zq2ABxUy+CmMAF1/IbjNfzVRKy/Tf4pNjfIKoqobhRa8/8h8Joe+/7bsRE=
+	t=1789468435; cv=none; b=M4hTDBSddm37fSgmurr7Sv+NG2VZrUIar4OwkNf/XD2ZnzeIeei5JCEPzgu9EeWxhvMTd7aWTkrKzyJo2FvA4pugZaQVpH5C82DJ8pV4BBK3Q/EAZZTpVXpqq9AgVjX7L90yxrSaWtFz8AhHRlbEXJw1PDXQz2C7M8lcsv0DarQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789466972; c=relaxed/simple;
-	bh=1mBrGMk3HUwiIsljAmzu72Mm2rJ6jyYvNcsRP6+3Pqk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=NJZWp1s9jt14CVFfKzIFwHZsEhQOl0wxGA0Vd6JV2Ok+BPzF8G+FqZCK3c6jaMrBTS/choe72oDDGaUjNHXtgXyCiVBUhdLAyPFAMaUmtn1lH360D2ZEcN0e51/rOkdy/Rdbx9i2wSYTlY+LQdwn7xbOiG91fbezzQCSXCVvhD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=gwDBZCDH; arc=none smtp.client-ip=74.125.225.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1789468435; c=relaxed/simple;
+	bh=rMBxBiuiDq4omRt4799HznSfkajEM8cXWvJc5zo6Fcw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tRNC/ulrY4MyLtYaQDTUO+bTAk06jyEBfzzR8cRnhJUX/17jvdsIqjLXwYVEbknge1NAYeWLldaRPew6oQ2SdfblHRr8jkvjsuNnpSq20b6Nv7qMiYAWbaEIRsgFRFOTqw/EAOjNtc86voIMiK7cjDQU5tL9MCUQT1UTMsm4Ct0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QdRFWuia; arc=none smtp.client-ip=74.125.228.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="gwDBZCDH"
-Received: by mail-wm2-f12.google.com with SMTP id 5b1f17b1804b1-49cd5462b69so18330075e9.1
-        for <linux-clk@vger.kernel.org>; Tue, 15 Sep 2026 03:09:28 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QdRFWuia"
+Received: by mail-ed2-f12.google.com with SMTP id 4fb4d7f45d1cf-6a6056c2064so189471a12.2
+        for <linux-clk@vger.kernel.org>; Tue, 15 Sep 2026 03:33:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1789466966; x=1790071766; darn=vger.kernel.org;
-        h=content-type:mime-version:message-id:date:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=iZGHM22Ck2JSJxxurSXjHFPsuFXdIFhR8GNZX+3HR2Q=;
-        b=gwDBZCDHUCnuzR3AlAfdeie6Q4G5UuP/02rLyl9H336BPmICbMB9UPAr+7sffy9Hcf
-         DHXdz3fmaoKAxzetVa55PWtwILTvvwA63MdfrcUy1cFyQHrnNdG25YhmrfTFwMORcfM7
-         PPuTEmktoLv/qCLeFpnldZtXTLlbkzeeHpexgvlw87pRVDKl6CyEq6Xjf892HSyav90A
-         leucKgL9kU615rNgUzSAfyaovIGL7p5HmJPOjWLq4Cch35gaD/iDD0zqOB4MGZB2McGb
-         u2f4qvUCwX+J/n/xHsWITLTtehy9nsqPFPb7lXsJ+19fFLYgpikQb30pjngnrFyc11Re
-         rHlw==
+        d=gmail.com; s=20251104; t=1789468431; x=1790073231; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=f75fQgzk5PMT2bUGTVE35Rs8Li1ghntLsZOgXFHTcEQ=;
+        b=QdRFWuia39XWvJOOhE9G5ozho//qCq38VCwn8Rfu49EBNeTOZffNJ5fAQZYscu5MpS
+         eqr91eL6pBLxPujcjS2fTL/+KXaeKrqHXiCcVTVjLiirD8YachRPaW1jA1onTGHI87ei
+         b5eXNiLj2iI7t7unWQ8zFFU/5aNQPequ+/at5Jj0dTr+LvfU0W9S5+gqMQVzG3SWhKmU
+         6nBwcrOAa+s8kQxo+lrKXWq3ZovN7CEKSOQQYyXlh9Vc1J2YQU2uSTiXtdcJWnU+XoJA
+         A9hHpk6Xvg9YjCe4HaV4v+xPRqpF92beogzUUbKu5CE00aALIWMrGnByszFn+Jlix5k5
+         Z/KQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789466966; x=1790071766;
-        h=content-type:mime-version:message-id:date:references:in-reply-to
-         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=iZGHM22Ck2JSJxxurSXjHFPsuFXdIFhR8GNZX+3HR2Q=;
-        b=X3+X4uTdbMESg4409OCEiOd9baFdjddHGLJHLCJkcnpUkbDJIzlboTQpvDGnAX1un1
-         wFKlYpY5hLL1yya0aBAKUp1po2ZxqGPmfZvCla3oeQbZHe+ww4zTr+bc63BXFmNstk9N
-         PfTu+4I/Zj3DT4ctfZLNI30XyWYkca7nYSgsrx2kCeDMuroplZ1GFvTBVr7l/a9iYbR+
-         VgovwtXd/3Wn/JEqrKdvCVDBa/9wnoXm3gWnrxKeP3p1OCYJJBmJpxAcuqEuzDjQS119
-         7PS4+hPPbFbDC95/JtfxJvyKp0PzbHKBVTHlSoh22tNhodbOusgsLpFOl1U5r7MtwaLl
-         Mwvg==
-X-Forwarded-Encrypted: i=1; AKwUvBzT9BsTJeOUBFKvSJlRcR/Pdxme8FnnZRow+n9Q26JRIJWLophovM9kQO7+Nqp2BtZXX2cUIiL1koo=@vger.kernel.org
-X-Gm-Message-State: AFuF++mDbAlZSa460/0oL0rRffe7k1p0cf2f4iQr+BfAbHX/rmvuZmqR
-	8EfgSo/pV5Q9URabXWdDLTnypiblXqfYyECKbZ28mzVr4Z5eX5J8tbCV17AVGQ0PoQk=
-X-Gm-Gg: AYBFou2UJ2/SMvaYFN2HBSSwNWPZMhaakudSr866HdN/+a45Qpy6w7yp2oNc/65rMNP
-	L1JJik4bQnPwyIH+nbmH12LCJKGAOxqo6QKlUJtu+lTa0vntvTNl42X4cQeSpYD3lWZ939f9D2B
-	3vSFSxv2QG0hF+KPwMtLQLCJw08jrM+AT3UcGwc08EpoYAPb672xRSj5ADSIunz+iOUfy1G6TnI
-	nsk+e7K5tHvq5+N8vyZcyW/LkNITFgRXaD8z3pNWUSb3Tt2bET7Il3D1vjuimAYucGgeGrogZe5
-	sQ8kpOnb+15b0prm+E0KCVkJIxDdaNPDZyIUbnj1esZpiSAt3OH/JsIRPLPEgDXpuGHaVOB7DW2
-	T3Pla5rdJn7mEKsFiNv6z/gtOVca++NfJ4kNfsVv6zTNpzxryhERqU1zmTc6zyY4BN48BslUREU
-	Mg3UopJHUj0CYjkvqA3+3tH1mDMb871Zs7VmvsSCwVfgvZa8d7QX+fi51EFQ/KAmbDlV8JPqGIH
-	svb04IfAMjgb/QLQlbvHeqZ8RhP
-X-Received: by 2002:a05:600c:8716:b0:49e:6692:27fd with SMTP id 5b1f17b1804b1-49e7a657f9dmr180400155e9.2.1789466966542;
-        Tue, 15 Sep 2026 03:09:26 -0700 (PDT)
-Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49e7ef735cesm53989815e9.6.2026.09.15.03.09.25
+        d=1e100.net; s=20260707; t=1789468431; x=1790073231;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=f75fQgzk5PMT2bUGTVE35Rs8Li1ghntLsZOgXFHTcEQ=;
+        b=XI+2T66ffRhLc7iPtWfRckD2eVw177HBg8a49ZtKbML0lKQp+elmFKUuSeq57urML8
+         flUS0S6xskFftmvr/6NZSF95h4rTmIbosgR/K9g9MRd8Ke0RHLVNQAP3juAnLbVH3F5T
+         OLdxNiK0o5+TT6a4RybrSwsYJaCImXwercADkHC9Aysd18m5k7I5plmu8Zvp2AsK5qPP
+         DeNHArf5Wx54/zUX2M5jTQWvwqjgkkLOYhopsrMQswm1T48B11huzSv+o8tE1fE5IGCx
+         KYRadZUpJR8lcwxbiGRIm5p8dDDupEaaWfm+9kSdJWEf9yO3/ZMRNo0v809IR1MiwN1q
+         PXng==
+X-Gm-Message-State: AFuF++kDFIhuZcwKJ+HHGNQ3WCXHDsdRutP/pjIt85ymCvKsajpkBlI/
+	0CYYmbLP1ags8wNQBl2KaRM9OavJcFMjXpJ41KCcdGt4Vv6Dd73qrlRs
+X-Gm-Gg: AYBFou0BaXDJsYGFxAskALrcobblgGchAIebztV78Aqr/6Eag0OzQM8LL3mshkRmlr+
+	guDVN3DOi99gLTi4hpo396rbwVBQ/BFLjpYtWEXaVQX4FtqFCIN2AUQ32NlAvypBaRT0NAGGnfT
+	mNAKgoIMVu5XcDpUs8R6g5+yCv4f22le/Cppl2QdDBZggBKkAJcL8LW6VM/D7CQ4dQT9qwJJfYf
+	N6+MHCo4E3ShO5wdCJ1vzot9RU0wILaRfAtAwV4guWl/xJXxUcdjqezXYc5u+/d8W3+0gyU45ka
+	sVdqvkf3kqfqDzyMEUQ8wnKeEZvEavUlCthZ7IepRqsY/RqIX5XOPOpCSZ6HAHxO896NDuO0a/m
+	FwIoGNwlo+da36a2cOp7Y1l51bWKshPLRsEm9bI8btWssgJqVzVHC5MnIVes3XeyfYAKIhjK8uT
+	ihm5k8r4IZfACxbJg5bHa8S/Po09xG1Dq60XDkXJ1plGEkRM3lcK80rdaCEjKr9FlepgeKKosfW
+	hSvbU98/UUbhB2hbW4ACnGxgT647ksrAc4DZa/CoN70w+zGz6N530ykeRh0MtbkEbdXckcoE+Pk
+	2bl5UVWNnldn+Lewkbl34Imr3oO1HiZTDeI+jwukf345T1RXok43puvXYr8auhi7h8TcvQpLxrU
+	dNUsEKzGgzKFyTLWAVY5AP2Y1zc8bmlNMiw7Db1urQRUBLlw72KWBvrlx9LlpZ87s2mMIBleOy/
+	usyN3xSk+KvsWpNUkdaKSB1X3Up2MlR74x7+/r+HZP+/VeRZKESdPwyUM79kRYmRG2xlpMtQ02k
+	yLYZcKu6nwo92bS
+X-Received: by 2002:a17:907:6d1d:b0:c29:44b0:1428 with SMTP id a640c23a62f3a-c29d79b8aa1mr40465866b.42.1789468430983;
+        Tue, 15 Sep 2026 03:33:50 -0700 (PDT)
+Received: from cs-280612103108-default.europe-west4-a.c.oa7bb030819b2a894-tp.internal (219.40.147.34.bc.googleusercontent.com. [34.147.40.219])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c2965c4e8a1sm566041866b.6.2026.09.15.03.33.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Sep 2026 03:09:26 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Vyacheslav Yurkov via B4 Relay
- <devnull+V.Yurkov.EXT.bruker.com@kernel.org>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Brian Masney <bmasney@redhat.com>, Brian Masney
- <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, Jyri
- Sarha <jsarha@ti.com>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, Vyacheslav Yurkov <uvv.mail@gmail.com>,
- Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>
-Subject: Re: [PATCH v5 2/2] clk: Add gpio-locked fixed clock driver
-In-Reply-To: <20260915-feature-clock-guard-v5-2-42ab5dc3a6aa@bruker.com>
-References: <20260915-feature-clock-guard-v5-0-42ab5dc3a6aa@bruker.com>
- <20260915-feature-clock-guard-v5-2-42ab5dc3a6aa@bruker.com>
-Date: Tue, 15 Sep 2026 12:09:24 +0200
-Message-ID: <1j33vaesh7.fsf@starbuckisacylon.baylibre.com>
+        Tue, 15 Sep 2026 03:33:50 -0700 (PDT)
+From: Joshua Crofts <joshua.crofts1@gmail.com>
+To: Abel Vesa <abelvesa@kernel.org>,
+	Peng Fan <peng.fan@nxp.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Frank Li <Frank.Li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>
+Cc: linux-clk@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] clk: imx: add missing pm_runtime_dont_use_autosuspend() calls
+Date: Tue, 15 Sep 2026 10:33:43 +0000
+Message-ID: <20260915103345.1334-1-joshua.crofts1@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On mar. 15 sept. 2026 at 09:27, Vyacheslav Yurkov via B4 Relay <devnull+V.Yurkov.EXT.bruker.com@kernel.org> wrote:
+Several drivers in the clk subsystem forget to call dont_use_autosuspend()
+on teardown or error, causing potential resource leaks. This series adds
+the missing calls.
 
-> From: Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>
->
-> A gpio-locked clock exposes a clock, which status is determined by a
-> GPIO signal. The common use-case is a FPGA-assisted clocking design
-> where peripheral clocks are generated by FPGA PLLs that are outside
-> CPU control, with clock-valid/PLL-lock status exposed through GPIO signals.
-> Consumers can use the output clock to wait until the input clock is locked
-> and only then initialize dependent peripherals.
->
+The offending drivers were found using a semantic patch for Coccinelle
+I'm working on [1].
 
-We already have gpio gate driver in drivers/clk/clk-gpio.c
+[1] https://lore.kernel.org/all/20260915064327.1377-1-joshua.crofts1@gmail.com/
 
-It would be much better if you could just extend that one that take
-optionally take a clock input like you do here.
+Joshua Crofts (2):
+  clk: imx: clk-imx8qxp-lpcg: add missing
+    pm_runtime_dont_use_autosuspend()
+  clk: imx: scu: add missing pm_runtime_dont_use_autosuspend() call
 
-> Signed-off-by: Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>
-> ---
->  drivers/clk/Makefile          |   1 +
->  drivers/clk/clk-gpio-locked.c | 169 ++++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 170 insertions(+)
->
-> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> index b18af485d7f0..b904f292d683 100644
-> --- a/drivers/clk/Makefile
-> +++ b/drivers/clk/Makefile
-> @@ -46,6 +46,7 @@ obj-$(CONFIG_CLK_FD_KUNIT_TEST) += clk-fractional-divider_test.o
->  obj-$(CONFIG_COMMON_CLK)	+= clk-gpio.o
->  ifeq ($(CONFIG_OF), y)
->  obj-$(CONFIG_COMMON_CLK)	+= clk-conf.o
-> +obj-$(CONFIG_COMMON_CLK)	+= clk-gpio-locked.o
->  endif
->  
->  # KUnit specific helpers
-> diff --git a/drivers/clk/clk-gpio-locked.c b/drivers/clk/clk-gpio-locked.c
-> new file mode 100644
-> index 000000000000..b648f8763922
-> --- /dev/null
-> +++ b/drivers/clk/clk-gpio-locked.c
-> @@ -0,0 +1,169 @@
-> +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +/*
-> + * Clock Controller Guard Driver
-> + *
-> + * Copyright 2026 Bruker Corporation
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/device.h>
-> +#include <linux/gpio/consumer.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/slab.h>
-> +
-> +/**
-> + * struct gpio_locked_clk_priv - private state for the whole driver
-> + * @dev:		platform device
-> + *
-> + * @input_clk	input clock
-> + * @gpios:		input GPIO descriptor
-> + *
-> + * @output_hw_clk:      output clock HW descriptor
-> + * @output_clock_name:  output clock name
-> + */
-> +struct gpio_locked_clk_priv {
-> +	struct device *dev;
-> +
-> +	struct clk *input_clk;
-> +	struct gpio_desc *gpios;
-> +
-> +	struct clk_hw output_hw_clk;
-> +	const char *output_clock_name;
-> +};
-> +
-> +#define to_gpio_locked_clk_priv(_hw) \
-> +	container_of(_hw, struct gpio_locked_clk_priv, output_hw_clk)
-> +
-> +static int gpio_locked_clk_is_enabled(struct clk_hw *hw)
-> +{
-> +	struct gpio_locked_clk_priv *priv = to_gpio_locked_clk_priv(hw);
-> +
-> +	int data = gpiod_get_value(priv->gpios);
-> +
-> +	if (data < 0) {
-> +		dev_err(priv->dev, "Failed to get data gpio val: %d\n",
-> +				data);
-> +		return data;
-> +	} else if (!data) {
-> +		dev_warn(priv->dev, "GPIO is not ready");
-> +		return -EBUSY;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +/* We can't enable the clock, but the Common Clock Framework calls only
-> + * enable() not is_enabled()
-> + */
-> +static int gpio_locked_clk_enable(struct clk_hw *hw)
-> +{
-> +	return gpio_locked_clk_is_enabled(hw);
-> +}
-> +
-> +/* We have to implement it, but we are not going to control
-> + * parent clock selection
-> + */
-> +static u8 gpio_locked_clk_get_parent(struct clk_hw *hw)
-> +{
-> +	return 0;
-> +}
-> +
-> +static const struct clk_ops gpio_locked_clk_ops = {
-> +	.enable =	gpio_locked_clk_enable,
-> +	.is_enabled =	gpio_locked_clk_is_enabled,
-> +	.get_parent =	gpio_locked_clk_get_parent,
-> +};
-> +
-> +static int gpio_locked_clk_parse_outputs(struct gpio_locked_clk_priv *priv)
-> +{
-> +	struct device *dev = priv->dev;
-> +	struct device_node *np = dev->of_node;
-> +	int ret;
-> +
-> +	of_property_read_string_index(np, "clock-output-names", 0,
-> +		&priv->output_clock_name);
-> +
-> +	if (!priv->output_clock_name)
-> +		priv->output_clock_name = dev_name(priv->dev);
-> +
-> +	priv->output_hw_clk.init =
-> +		CLK_HW_INIT_FW_NAME(priv->output_clock_name,
-> +				    __clk_get_name(priv->input_clk),
-> +				    &gpio_locked_clk_ops, 0);
-> +
-> +	ret = devm_clk_hw_register(dev, &priv->output_hw_clk);
-> +	if (ret) {
-> +		dev_err(dev, "failed to register output clk'%s': %d\n",
-> +			priv->output_clock_name, ret);
-> +		return ret;
-> +	}
-> +
-> +	dev_info(priv->dev, "Output clock '%s' registered\n", priv->output_clock_name);
-> +
-> +	return 0;
-> +}
-> +
-> +static int gpio_locked_clk_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct gpio_locked_clk_priv *priv;
-> +	int ret;
-> +
-> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +
-> +	priv->dev = dev;
-> +	platform_set_drvdata(pdev, priv);
-> +
-> +	priv->input_clk = devm_clk_get_enabled(priv->dev, NULL);
-> +	if (IS_ERR(priv->input_clk))
-> +		return dev_err_probe(priv->dev, PTR_ERR(priv->input_clk),
-> +				"Failed to get locked fixed clock, not yet ready\n");
-
-In your use case it might be fixed, but nothing says it is in general
-
-> +
-> +	priv->gpios = devm_gpiod_get(priv->dev, "locked", GPIOD_ASIS);
-> +	if (IS_ERR(priv->gpios)) {
-> +		dev_err(dev, "failed to get locked gpios: %ld\n",
-> +				PTR_ERR(priv->gpios));
-> +		return PTR_ERR(priv->gpios);
-> +	}
-> +
-> +	ret = gpio_locked_clk_parse_outputs(priv);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = devm_of_clk_add_hw_provider(priv->dev, of_clk_hw_simple_get,
-> +		&priv->output_hw_clk);
-> +	if (ret) {
-> +		dev_err(priv->dev, "failed to register clock provider '%s': %d\n",
-> +			priv->output_clock_name, ret);
-> +		return ret;
-> +	}
-> +
-> +	dev_info(dev, "registered %s gpio locked clock\n",
-> +		 clk_hw_get_name(&priv->output_hw_clk));
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct of_device_id gpio_locked_clk_of_match[] = {
-> +	{ .compatible = "gpio-locked-fixed-clock" },
-> +	{ /* sentinel */ }
-> +};
-> +MODULE_DEVICE_TABLE(of, gpio_locked_clk_of_match);
-> +
-> +static struct platform_driver gpio_locked_clk_driver = {
-> +	.probe  = gpio_locked_clk_probe,
-> +	.driver = {
-> +		.name           = "gpio-locked-fixed-clock",
-> +		.of_match_table = gpio_locked_clk_of_match,
-> +	},
-> +};
-> +module_platform_driver(gpio_locked_clk_driver);
-> +
-> +MODULE_AUTHOR("Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>");
-> +MODULE_DESCRIPTION("GPIO-locked clock driver");
-> +MODULE_LICENSE("Dual BSD/GPL");
->
-> -- 
-> 2.34.1
->
->
-
-pw-bot: changes-requested
+ drivers/clk/imx/clk-imx8qxp-lpcg.c | 1 +
+ drivers/clk/imx/clk-scu.c          | 2 ++
+ 2 files changed, 3 insertions(+)
 
 -- 
-Jerome
+2.47.3
+
