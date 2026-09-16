@@ -1,134 +1,316 @@
-Received: from mail-wr2-f32.google.com (mail-wr2-f32.google.com [74.125.225.96])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D8884C6EFC
-	for <linux-clk@vger.kernel.org>; Wed, 16 Sep 2026 10:04:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.96
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 426B94E80BF;
+	Wed, 16 Sep 2026 10:21:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789553084; cv=none; b=baZoFmeBH5gjs3WOHmgaIfIiiE1ElqvYMOILiqgecAZ6RAuH8F0Oy6yy9neiijsdANrOGelAH/rMM8pHF1T4S4UAgEAD4GCYfg3paCOux2xnBvk03EeCANOsi3tJZyMYnx23TP9RzT8wTWZbsbyk8tAeOIZxWIRYOe4F694iNhE=
+	t=1789554112; cv=none; b=OsmLvLZc1XJ2dv9bj4F3prYAtC5Yesjrmvro5+d0TgeDT3KCl7bUa3vInAM9Eh38GvzwAh811mHmCDSl9zQ3OyA/PGZITXfVs8WasdFYIiqT8noYI+M1fg3pPFvmzq163zXxgQufWBUHtywdJ1cFYxLeT4abgA6DbAl7/K7s9qs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789553084; c=relaxed/simple;
-	bh=0xWacLHVFg8yDFBVQgT0xxVbDKKkqpluoE/q6wHsbhg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=uahXv2C6LyPZGs8vBcjRubr1EG0UMsDvPk0WhzFP9F3yNf/IBZwJWLqaD2wi3KmsKurire4WTdslI/ox6q7WZ4dpVw5gad/Hr7aLkw/sA/bUkrOosMSe9kOCwwaJSdsSUs/yQIcKIQ1TffdlbLW8Hsgu/sSZkaXg7NCk7ISbgIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rz7f5OMs; arc=none smtp.client-ip=74.125.225.96
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1789554112; c=relaxed/simple;
+	bh=n152J+oW0inBpcepl+1yWkdMqbhm6d/xZ403pWrV3Ew=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T5O3pF5JLmMFyV74eljYMuqeHIHUtIRNdjLbHb5Ur8HW8UXbTj+w1fgnfyVqCIFXUrHfPu6CPtsTDJTz4riNYguiCsOJSKEVGbxJBTJ0DRw12QLuNcLzNN95yjfYigWFbrwHUypn1XfP2Ynm8I/j2mNT643/djgX90tWuR3w7Ec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iNz56Cnk; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rz7f5OMs"
-Received: by mail-wr2-f32.google.com with SMTP id ffacd0b85a97d-482f6350f91so379450f8f.1
-        for <linux-clk@vger.kernel.org>; Wed, 16 Sep 2026 03:04:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1789553061; x=1790157861; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:date:message-id
-         :subject:references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=1+LP4xptQa+2C+BD1oGDKA67ZCLFNM3ainCw+VzoD2s=;
-        b=rz7f5OMs2TdV8OQaCPcRnBg32hKNobVW3fGBmuPOw5RGP5Bzc/i2qrzkE3s+9yMCpa
-         SYOVguZAiA87Qk5mfbMgld2b42Go3u8LRCZCRubshh8DJY3+apqQfZKSGbQ3XvkpczCs
-         uq2IxYooCj3QLScMeu99AiASBhXLEgWlVBv7ti6VIpJjm+uOWZa5zSbDeHsqTPcoCsRS
-         e/0R5IR1RLHYczJnUmg2S/pUc4fNxe6Y9KN0Vahkb6wRTnU7+7TCGMRO5Wd0U/rPVtaQ
-         Hp82EGeFYJmyeN9gunejD+vzsHEyd9S8WUXZRY+tj2HQ7X1sH3ixCguO2fuAct0Be6o9
-         nFng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789553061; x=1790157861;
-        h=content-transfer-encoding:content-type:mime-version:date:message-id
-         :subject:references:in-reply-to:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=1+LP4xptQa+2C+BD1oGDKA67ZCLFNM3ainCw+VzoD2s=;
-        b=JQr+fPUoUNEtTt6oyjWoAMZieLg39+nSmXu1SM8Fge46nYnxlfP6MDZq8pwoQiloUs
-         XqYCBxJmuWx8q/jxEgd9fxZgFzfTWAK7B7T+3WLKqrEUZYOtAM7mrFeiehit5tKsu5a/
-         g+T2hbMl9cOzHujqY5kN10luCCWAUvUUvosl/IOUC+tTT/ydHeiyB/QrepHhXHcPGroq
-         gDBSC7B5WTiKSQnoKVoCr6SRjiq01MNIMnboqYH3EibJfkVwZuRpkIwV4OPNqiBNQOnc
-         C5ixbK5TX5yMulehh9UIUrtVkiqQYO3XKGTSVQ6eJm8Q9FMxTh1IqlQSJ8dyZPUt2Taj
-         VghQ==
-X-Forwarded-Encrypted: i=1; AKwUvBy6FshmUOkrDdyokLJcuz8+CSRG3Y0758L7JEidpFODeD7ateqt6Q7LfyfggMdM+KWvVMrCU4ZmdRk=@vger.kernel.org
-X-Gm-Message-State: AFuF++lObL96FDgFUID/JgHEFwxPj3DdxulibizQBrhfjN95bLxY29RJ
-	vKacXrKFqCU0niFDXxPp6K3iFM2UecWHJECXvpQpy+S7ggLalkurMjCIrAzI+Vv5o+U=
-X-Gm-Gg: AYBFou0qB03qpdAaQr4LQwxVfvvLTctazd4lI+EE4RVuXgLgxQu6dHmhm2MvI7sc7uM
-	aemWqLTEVg3WY5oNQE+eldInsBjQB24HaIQ+9DlITzbBCDvM4tCmiefd2qAeKMh2XnhO1LQ7HLx
-	/w5zDTl4Hg8Fv5hZoC9Fhr1bevwIKxb92iDOu25wpMrGYa0WvxGywYDURdBQA7K2tNk6uQEuc2h
-	CD0h18InQBa05+G/hIh/q2HWJgTyfwxdaujM/ZTpZpqAXiygExGCZyuyQSxVH/0WU6XDM4hQgpz
-	7u/sA70Uyl+USURRcs25RZh1c79hK0+4EiDwxX76Xax329B8zKd1WUsvW5fp/KVsbU3ZgEsrtKH
-	fYEkOC6vRnxQajccYJCf6C+0rmyGlwGpNMI+AUMBuaePThnSSXalddACdpW+y9vKcRhhDLhmrs7
-	5LqW1OzA8vNmhMSx6NxmTJVtP8WuA42FlA0V3dS24TLTPvJib7Y3BbAqc0CkLxX6DKsjICkm0Ab
-	FOTI4LDC55e
-X-Received: by 2002:a05:600c:3584:b0:49c:ee36:10fc with SMTP id 5b1f17b1804b1-49eac4678b6mr26145655e9.8.1789553057754;
-        Wed, 16 Sep 2026 03:04:17 -0700 (PDT)
-Received: from arrakeen-2.home ([2a01:e0a:106d:1080:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49e84805db6sm35844635e9.3.2026.09.16.03.04.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Sep 2026 03:04:17 -0700 (PDT)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-To: Ulf Hansson <ulfh@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Jerome Brunet <jbrunet@baylibre.com>, 
- Kevin Hilman <khilman@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Stephen Boyd <sboyd@kernel.org>, Lucas Tanure <tanure@linux.com>
-Cc: Brian Masney <bmasney+clk@redhat.com>, 
- Chuan Liu <chuan.liu@amlogic.com>, Jian Hu <jian.hu@amlogic.com>, 
- Ronald Claveau <linux-kernel-dev@aliel.fr>, linux-mmc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20260905153234.133217-1-tanure@linux.com>
-References: <20260905153234.133217-1-tanure@linux.com>
-Subject: Re: (subset) [PATCH v2 0/4] amlogic: t7: give the MMC bus pipeline
- clock real consumers
-Message-Id: <178955305678.2918771.10810230842213506975.b4-ty@b4>
-Date: Wed, 16 Sep 2026 12:04:16 +0200
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iNz56Cnk"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1789554094; x=1821090094;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=n152J+oW0inBpcepl+1yWkdMqbhm6d/xZ403pWrV3Ew=;
+  b=iNz56CnkopDNW1QLXWeZ72rrUCZndyI3DOTe7pKnXKArlq1SvHhhffwq
+   ih5iolx4Y9dPQRIttQQeDzwNxngOsAGsGxhurv42Y7XdLuW8T4T9ro37q
+   JBVtwDWAWloAFxI19HdR2ziT4wlnIfTiMB6cVjIDDgYw4Sl6scxJEvjhc
+   fCUNhChcRltb3fEOVf1FvwssKqHVsT0rLj92i/1UceEHHY52x2piUwQZu
+   VwPiPGeicNqEfgMNe3pRySXZ3QQy/nro417nMQDj3Dt/9HBpcIhaoWnld
+   088iFY3lQXOVGtFJ29DjmjWo0WbDizOvLkuPW8H1m8TD14Lr/yHxZzBlT
+   A==;
+X-CSE-ConnectionGUID: vXszHvNLRh+aZdznTx1vVQ==
+X-CSE-MsgGUID: /M0pCoGMRUeYk4eRSvs0rA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11905"; a="89062964"
+X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; 
+   d="scan'208";a="89062964"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2026 03:21:29 -0700
+X-CSE-ConnectionGUID: DcsR/rdNR8SqKlqBIDDynw==
+X-CSE-MsgGUID: 6lqV8nerQouNtUP4U2SofA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; 
+   d="scan'208";a="273266901"
+Received: from ettammin-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.244.145])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2026 03:21:24 -0700
+Date: Wed, 16 Sep 2026 13:21:21 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: longzhao@ambarella.com
+Cc: Arnd Bergmann <arnd@arndb.de>, Krzysztof Kozlowski <krzk@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	soc@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Long Zhao <zl020895@163.com>,
+	Lee Jones <lee@kernel.org>, mfd@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 10/15] gpio: pl061: convert to gpio-regmap and a
+ custom irqchip
+Message-ID: <aqptoZYyclWSE_-A@ashevche-desk.local>
+References: <20260915-cv75-v5-v7-0-3297d3fbc9c0@ambarella.com>
+ <20260915-cv75-v5-v7-10-3297d3fbc9c0@ambarella.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15.1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260915-cv75-v5-v7-10-3297d3fbc9c0@ambarella.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Hi,
-
-On Sat, 05 Sep 2026 16:32:30 +0100, Lucas Tanure wrote:
-> The previous series for the intermittent boot hangs on the VIM4
-> marked sys_ampipe_nand as critical. But as Chuan Liu from Amlogic
-> explained, sys_ampipe_nand clocks a pipeline stage that the
-> hardware design inserts in the bus path between the SD/eMMC
-> controllers and the NIC_MATRIX fabric to help timing closure.
+On Tue, Sep 15, 2026 at 07:15:40PM +0800, Long Zhao via B4 Relay wrote:
 > 
-> So the clock has real consumers: reference it from the three MMC
-> controller nodes and drop CLK_IS_CRITICAL instead.
+> Move line get/set/direction onto gpio-regmap. Keep the existing ARM
+> masked data addresses and write-after-direction behaviour.
 > 
-> [...]
+> Do not use gpiochip irqchip setup (girq) or regmap-irq. gpio-regmap
+> owns gpiochip registration, so girq would have to be plumbed through
+> that helper. PL061 IRQ type programming needs IS/IBE/IEV, including
+> both-edge, plus a hardirq chained demux from the parent AMBA IRQ;
+> regmap-irq is a poor fit for that.
+> 
+> Create a linear irq_domain with gpio_chip as host data, attach it with
+> gpiochip_irqchip_add_domain(), and chain the parent IRQ in this driver.
 
-Thanks, Applied to https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git (v7.4/arm64-dt)
+Besides some comments below about splitting more of this patch to better
+isolated logical changes, this one can also be split to a few stages. For
+example, one stage is to move to regmap (from direct MMIO access) without
+really switching over to gpio-regmap.
 
-[3/4] arm64: dts: amlogic: t7: add the pipeline clock to the MMC controllers
-      https://git.kernel.org/amlogic/c/065957517880dc7053e0723cc9532b6e78c8855c
+...
 
-These changes has been applied on the intermediate git tree [1].
+> +#include <linux/err.h>
+>  #include <linux/errno.h>
 
-The v7.4/arm64-dt branch will then be sent via a formal Pull Request to the Linux SoC maintainers
-for inclusion in their intermediate git branches in order to be sent to Linus during
-the next merge window, or sooner if it's a set of fixes.
+Now errno.h can be removed as basic errno is provided by err.h.
 
-In the cases of fixes, those will be merged in the current release candidate
-kernel and as soon they appear on the Linux master branch they will be
-backported to the previous Stable and Long-Stable kernels [2].
+...
 
-The intermediate git branches are merged daily in the linux-next tree [3],
-people are encouraged testing these pre-release kernels and report issues on the
-relevant mailing-lists.
+> -#include <linux/irqchip/chained_irq.h>
 
-If problems are discovered on those changes, please submit a signed-off-by revert
-patch followed by a corrective changeset.
+> +#include <linux/irqchip/chained_irq.h>
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git
-[3] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+Unneeded churn.
+
+...
+
+> -	if ((trigger & (IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW)) &&
+> -	    (trigger & (IRQ_TYPE_EDGE_RISING | IRQ_TYPE_EDGE_FALLING)))
+> -	{
+
+> +	if ((trigger & IRQ_TYPE_LEVEL_MASK) && (trigger & IRQ_TYPE_EDGE_BOTH)) {
+
+See below, this belongs to a separate change.
+
+...
+
+> @@ -142,14 +121,19 @@ static int pl061_irq_type(struct irq_data *d, unsigned trigger)
+>  		return -EINVAL;
+>  	}
+>  
+> -
+>  	raw_spin_lock_irqsave(&pl061->lock, flags);
+
+Stray change. If required, should be in a separate patch.
+
+...
+
+> -	if (trigger & (IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW)) {
+> +	if (trigger & IRQ_TYPE_LEVEL_MASK) {
+
+This change should be in a separate patch.
+
+...
+
+> -	writeb(gpiois, pl061->base + GPIOIS);
+> -	writeb(gpioibe, pl061->base + GPIOIBE);
+> -	writeb(gpioiev, pl061->base + GPIOIEV);
+> +	ret = regmap_write(pl061->regmap, regs->is, gpiois);
+> +	if (ret)
+> +		goto out;
+> +	ret = regmap_write(pl061->regmap, regs->ibe, gpioibe);
+> +	if (ret)
+> +		goto out;
+> +	ret = regmap_write(pl061->regmap, regs->iev, gpioiev);
+> +	if (ret)
+> +		goto out;
+> +	if (pl061->data->clear_irq_on_type)
+> +		ret = regmap_write(pl061->regmap, regs->ic, bit);
+>  
+> +out:
+>  	raw_spin_unlock_irqrestore(&pl061->lock, flags);
+> -
+> -	return 0;
+> +	return ret;
+
+Make an additional patch to move current driver to use cleanup.h, id est
+guard()() and possibly scoped_guard() from there.
+
+Then in this patch those ton's of goto:s should be replaced with simple
+'return ret;'.`
+
+>  }
+
+...
+
+> +	if (!regmap_read(pl061->regmap, pl061->data->regs->mis, &mis) && mis) {
+
+Why not handling error properly here?
+
+	ret = regmap_read(...);
+	if (ret)
+		goto out_irq_exit;
+
+> +		pending = mis;
+> +		for_each_set_bit(offset, &pending, pl061->data->ngpio)
+> +			generic_handle_domain_irq(pl061->irq_domain, offset);
+>  	}
+
+...
+
+> +static int pl061_irq_domain_map(struct irq_domain *d, unsigned int virq,
+> +				irq_hw_number_t hwirq)
+> +{
+> +	struct gpio_chip *gc = d->host_data;
+> +	struct pl061 *pl061 = pl061_from_gpio_chip(gc);
+> +
+> +	irq_set_chip_data(virq, gc);
+> +	irq_set_chip_and_handler(virq, &pl061_irqchip, handle_bad_irq);
+> +	irq_set_noprobe(virq);
+> +	irq_set_parent(virq, pl061->parent_irq);
+
+
+Is lockdep happy with this?
+
+> +	return 0;
+> +}
+
+...
+
+> +static void pl061_remove_irq(void *data)
+> +{
+> +	struct pl061 *pl061 = data;
+> +
+> +	irq_set_chained_handler_and_data(pl061->parent_irq, NULL, NULL);
+> +
+> +	for (unsigned int i = 0; i < pl061->data->ngpio; i++) {
+
+> +		unsigned int virq = irq_find_mapping(pl061->irq_domain, i);
+
+Split assignment
+
+		unsigned int virq;
+
+		virq = irq_find_mapping(pl061->irq_domain, i);
+		if (virq)
+
+> +		if (virq)
+> +			irq_dispose_mapping(virq);
+> +	}
+> +
+> +	irq_domain_remove(pl061->irq_domain);
+> +}
+
+...
+
+>  	struct device *dev = &adev->dev;
+> +	const struct pl061_drvdata *data = id->data;
+
+Split assignment as it is validated later on.
+
+> +	const struct pl061_regs *regs;
+> +	struct gpio_regmap_config config = {};
+> +	struct gpio_regmap *gpio_regmap;
+> +	struct gpio_chip *gc;
+>  	struct pl061 *pl061;
+> -	struct gpio_irq_chip *girq;
+> +	void __iomem *base;
+>  	int ret, irq;
+>  
+> +	if (!data)
+> +		return -EINVAL;
+
+-ENODATA?
+
+> +	regs = data->regs;
+
+...
+
+> +	for (offset = 0; offset < pl061->data->ngpio; offset++) {
+> +		if (!(dir & BIT(offset)))
+> +			continue;
+
+for_each_set_bit(), but make sure the type of the variable is unsigned long
+(might require a temporary one).
+
+> +		ret = regmap_read_bypassed(pl061->regmap,
+> +					   BIT(offset + PL061_DATA_OFFSET),
+> +					   &val);
+> +		if (ret)
+> +			return ret;
+> +		pl061->saved_dat |= val;
+>  	}
+
+...
+
+> +	for (offset = 0; offset < pl061->data->ngpio; offset++) {
+> +		if (!(dir & BIT(offset)))
+> +			continue;
+
+Ditto.
+
+> +		ret = regmap_write(pl061->regmap,
+> +				   BIT(offset + PL061_DATA_OFFSET),
+> +				   !!(pl061->saved_dat & BIT(offset)) << offset);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	return regcache_sync_region(pl061->regmap, regs->is, regs->ie);
+>  }
+
+...
+
+> static const struct amba_id pl061_ids[] = {
+>  	{
+>  		.id	= 0x00041061,
+>  		.mask	= 0x000fffff,
+> +		.data	= (void *)&pl061_arm,
+
+Oh, this is something that needs to be fixed (but it's not your issue).
+Why on earth this is not const?
+
+>  	},
+>  	{ 0, 0 },
+>  };
 
 -- 
-Neil
+With Best Regards,
+Andy Shevchenko
+
 
