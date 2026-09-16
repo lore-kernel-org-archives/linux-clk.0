@@ -1,181 +1,152 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7F503546D6;
-	Wed, 16 Sep 2026 14:49:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DDC43AEF54;
+	Wed, 16 Sep 2026 15:20:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789570168; cv=none; b=cpoKGcGwZfZ6BEgTQkZYTpfaHXjlXn9i61whVdiPfG0UVZbbXzRDuNgaAdESWMK9OcL8kYanFJW2vo0D+9jFfbGOW7WfQo+JWpAu+xFOVUGsQzfoSuGS2u4UGCBIUVqaKNgYsFXZgILAmp4lE/DOHqe72lAGEmpWa08oUfTDKd0=
+	t=1789572059; cv=none; b=pYI26Z29TnyLLLUniCU+1Y9YAbpQEK75EG6SQ0lC/rBPUned/kjdfeMVpKqmxf7HLgWVd/Ir1Lw+UMv9Q/Mk8lTGXEliVzmbOt2HH+wZF3I7VbliAkQ9+UF5kO7VRr6P13UrYOoWLj0bPTCqC39BMI6LlqAa9CoPrkKwA45XuCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789570168; c=relaxed/simple;
-	bh=kKf8q40ivlUve7sk8VUJ8prieyyC82f9wIB0uY5g3v4=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=ahTlH5x0ly1Gr8go4lIR1KA0AtMpdbzwgysku4GhB7FjLQ5MOwMtf46Wngv8HIkF4hBdc+iglgwOL6TEjEb3hbJzeiqfyJrdX4PWwuQtjN/dL+3s6hj6tAnSgp2y8D8kFVGB7SNntn3V6s/6c0NQYA51A2RXB7l2Ra+zg9TJrtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n3J6kFAc; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789572059; c=relaxed/simple;
+	bh=ABPqlFY+qgVQVQriZmgkEfnyudsflUMPcXg+FS+S01s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OUMmFZverZb+L17NmWhMVvZZiVAQHiPO6Rfh42P6SJgcl7KNcJKKHak95RUmSSVfzaLm7rIek309DodCpxudedt0EcgdgQrmC140KgcedSrewwZpkz5rmLqsYTVAEubguTa4kaZWQ5hSOC1IrJMHGBCPs0adda06jCBXieg/c2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=P9R1Ie7d; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n3J6kFAc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E67BA1F00898;
-	Wed, 16 Sep 2026 14:49:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789570166;
-	bh=uihw067Bjjkxp+tfN4OE3iIGmuUHKnGVX8YN0FWRMbo=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=n3J6kFAcDjpT+D2Od4dyZNn95WhwUA7DSNsPtz6Zt64NhkXMUeEUSD4ZXdHpP/SFh
-	 Lr0NXeiTKM0BYpSVcvB7sUjdv/mc4gV8cJv2jgP1FjNnljpEKjiEwVReomTYyv9hAj
-	 xq3uFLSo4HuFWmc9pCwHBqHFLjjviBcIrJJdJq2hjrz0UtHc59whjOjdh2jx0h16bF
-	 +UtC+sdPFXMxYNp7FDotv9XLtovltrwxKNdnjeP7no0QPomTmJx4dyG0K8lfmbrZZg
-	 Hd9c5gxr9rIn0gJxHXLo4H/arO7jRCzkQxvjxGTME3lyuN3i40anjKbzdV++n7dDwE
-	 7Z9XdrRT2emSg==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 17/19] arm64: dts: qcom: Add initial support for
- MSM8952
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Muzaffer Kadir" <muzafferkadir@mainlining.org>
-Cc: robh@kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, conor+dt@kernel.org, mfd@lists.linux.dev, lee@kernel.org, dmitry.torokhov@gmail.com, linux-clk@vger.kernel.org, linux-input@vger.kernel.org
-In-Reply-To: <20260916-msm8952-initial-support-v2-17-798c2602dde1@mainlining.org>
-References: <20260916-msm8952-initial-support-v2-0-798c2602dde1@mainlining.org>
- <20260916-msm8952-initial-support-v2-17-798c2602dde1@mainlining.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 16 Sep 2026 14:49:25 +0000
-Message-Id: <20260916144925.E67BA1F00898@smtp.kernel.org>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="P9R1Ie7d"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1789572055; x=1821108055;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=ABPqlFY+qgVQVQriZmgkEfnyudsflUMPcXg+FS+S01s=;
+  b=P9R1Ie7dh/WuZ/gm4VrKfwWkQjGWNtJaDLJPWL1UMlgR2iVm+wKCmRbQ
+   fgbMCIzChwCNsdz9CEm8vNgB+RBtxuOwcQ+FuyIJrva8kn72p6jWTSh4t
+   zOE3FHoEZ4aD94u9uJf6prRjpm+hgwshy4v8nDzKvEzrnqwfjcrqSocfq
+   8aVQ0UQfYh048ni2IirXb58Ol+1xO90YqGZCk0I0nj7DY69bfvEuGt4P6
+   8LkYGN0z/EXfOowtasDLApIqrwHieDkmsWteEbx5r/NbbRGClayYzVtxf
+   9h5BbOw+ixYyoZSgl1arfiGmHQJru56FDXD57EbbI1HO2JMpMoB+gLqiU
+   A==;
+X-CSE-ConnectionGUID: AxT9WPvfQcGmdQFfABdgLQ==
+X-CSE-MsgGUID: +P4sgKO0Tk+U4oPjYzFuvA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11905"; a="93653712"
+X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; 
+   d="scan'208";a="93653712"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2026 08:20:49 -0700
+X-CSE-ConnectionGUID: JwexR3oJQzatmu4g5LEWDA==
+X-CSE-MsgGUID: vFlYH9tyRkangFMS75Q85w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; 
+   d="scan'208";a="296853472"
+Received: from ettammin-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.244.145])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2026 08:20:43 -0700
+Date: Wed, 16 Sep 2026 18:20:40 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: zl020895 <zl020895@163.com>
+Cc: Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>, soc@lists.linux.dev,
+	longzhao@ambarella.com,
+	Long Zhao via B4 Relay <devnull+longzhao.ambarella.com@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Lee Jones <lee@kernel.org>,
+	mfd@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: Re: [PATCH v7 00/15] Ambarella CV75 SoC minimal bring-up
+Message-ID: <aqqzyPR-2JKr-2Me@ashevche-desk.local>
+References: <20260915-cv75-v5-v7-0-3297d3fbc9c0@ambarella.com>
+ <CAMRc=McEOcWq8i3B01AR1PnfBzSQaLEaOzE6Qa+QdVXrvS_YrA@mail.gmail.com>
+ <CAD++jLnRL_s9zPNkSj2UnHWPx+QHAXV19DA7dEmGZu0AkxxyaA@mail.gmail.com>
+ <aqpuMcqbra9i6UDq@ashevche-desk.local>
+ <23d61058.962b.1a0a9e0b355.Coremail.zl020895@163.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <23d61058.962b.1a0a9e0b355.Coremail.zl020895@163.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Thank you for your contribution! Sashiko AI review found 2 potential issue(=
-s) to consider:
-- [High] dt-bindings: msm8952: truncated GIC memory map breaks virtualizati=
-on and GICC_DIR
-- [High] dt-bindings: msm8952: cpu cooling maps bound to hot trips bypass t=
-hrottling
---
+On Wed, Sep 16, 2026 at 07:01:10PM +0800, zl020895 wrote:
 
-commit 73b8bd2eec3d6e15eddbef720325773b07756c99
-Author: Muzaffer Kadir <muzafferkadir@mainlining.org>
+> ACK: GPIO bits through the GPIO tree, then an IB for the SoC tree.
+> I will keep a unified series for now.
+> 
+> regmap-irq cannot do PL061 type (IS/IBE/IEV, both-edge) plus the
+> AMBA chained demux.
+> 
+> Two options for v8 — Andy, which do you prefer?
+>   1) Convert PL061 MMIO to regmap only. Keep the existing gpio_chip
+>      and irqchip/girq (double-write stays in the driver). Ambarella
+>      layout can be a follow-up on that. No gpio-regmap yet.
+> 
+>   2) After (1), also move get/set/direction to gpio-regmap. IRQ
+>      would stay a custom PL061 irqchip (not regmap-irq). I am not
+>      sure we can avoid a way to get the gpio_chip for
+>      gpiochip_*_irq() / the chained handler.
+> 
+> I am leaning to (1) for v8.
 
-arm64: dts: qcom: Add initial support for MSM8952
+I would prefer to see (2) and then we can discuss to roll-back if it looks not
+good enough.
 
-This commit adds initial support for the MSM8952 SoC. It introduces the
-device tree source file covering core components like CPUs, RPM, MDSS,
-USB, pinctrl, and basic thermal zones.
+Either way your PM runtime support for gpio-regmap is a good change.
 
-Link: https://github.com/Asderdd/android_kernel_generalmobile_shamrock/blob=
-/cm-14.1/arch/arm/boot/dts/qcom/msm8952.dtsi
-Link: https://android.googlesource.com/kernel/msm.git/+/refs/tags/android-w=
-ear-7.0.0_r0.3/arch/arm/boot/dts/qcom/msm8952.dtsi
-Link: https://android.googlesource.com/kernel/msm.git/+/refs/tags/android-w=
-ear-7.0.0_r0.3/drivers/thermal/msm-tsens.c#1621
+> 在 2026-09-16 18:23:45，"Andy Shevchenko" <andriy.shevchenko@linux.intel.com> 写道：
+> >On Wed, Sep 16, 2026 at 11:42:56AM +0200, Linus Walleij wrote:
+> >> On Wed, Sep 16, 2026 at 11:14 AM Bartosz Golaszewski <brgl@kernel.org> wrote:
+> >> > On Tue, 15 Sep 2026 13:15:30 +0200, Long Zhao via B4 Relay
+> >> > <devnull+longzhao.ambarella.com@kernel.org> said:
+> >> > > This series adds minimal Ambarella CV75 support for early bring-up with
+> >> > > a serial console: DT bindings, RCT clocks, pinctrl, PL061 GPIO via
+> >> > > gpio-regmap, 8250_dw UART quirks, ARCH_AMBARELLA, CV75 EVK DT, and
+> >> > > MAINTAINERS.
+> >> > >
+> >> > > This is a single unified series. Please apply via the SoC
+> >> > > tree; subsystem maintainers are Cc'd for their pieces.
+> >> >
+> >> > I would prefer to take the GPIO regmap bits through the GPIO tree and provide
+> >> > an immutable branch to the SoC tree as it has potential for conflicts that
+> >> > early into the cycle.
+> >> 
+> >> Queue them up and send us the IB if you think they are ready!
+> >> 
+> >> Long can probably send a PR based on that IB for the rest to the
+> >> SoC tree, a bit tricksy but it works.
+> >
+> >I'm still unsure why we can't use IRQ facility from gpio-regmap.
+> >Can you have a look there?
+> >
+> >With that being said, I'm not sure that the patch that exposing gpio_chip
+> >from gpio-regmap is justified.
+> >
+> >The whole GPIO rework needs a bit more routine work (resplitting, refactoring,
+> >et cetera), so later we may see clearer what's going on.
 
-> diff --git a/arch/arm64/boot/dts/qcom/msm8952.dtsi b/arch/arm64/boot/dts/=
-qcom/msm8952.dtsi
-> new file mode 100644
-> index 0000000000000..a73032f75a8b7
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/msm8952.dtsi
-[ ... ]
-> +		intc: interrupt-controller@b000000 {
-> +			compatible =3D "qcom,msm-qgic2";
-> +			interrupt-controller;
-> +			#interrupt-cells =3D <3>;
-> +			reg =3D <0x0b000000 0x1000>,
-> +			      <0x0b002000 0x1000>;
-> +		};
+-- 
+With Best Regards,
+Andy Shevchenko
 
-[Severity: High]
-Does this node omit the GICH and GICV mappings along with the maintenance
-interrupt?=20
 
-Additionally, the CPU interface size at 0x0b002000 appears to be truncated =
-to
-0x1000 instead of 0x2000. Mapping only 0x1000 bytes for the CPU interface
-prevents access to the GICC_DIR register, which breaks interrupt deactivati=
-on
-if the kernel uses EOI mode 1.=20
-
-Without the 0x2000-sized CPU interface mapping and the missing GICH/GICV
-regions and maintenance interrupt, KVM initialization will fail and guest V=
-Ms
-cannot run.
-
-[ ... ]
-> +		cpu4-thermal {
-> +			polling-delay-passive =3D <250>;
-> +
-> +			thermal-sensors =3D <&tsens 5>;
-> +
-> +			cooling-maps {
-> +				map0 {
-> +					trip =3D <&cpu4_alert1>;
-> +					cooling-device =3D <&cpu4 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-> +				};
-> +			};
-> +
-> +			trips {
-> +				cpu4_alert0: trip-point0 {
-> +					temperature =3D <75000>;
-> +					hysteresis =3D <2000>;
-> +					type =3D "passive";
-> +				};
-> +
-> +				cpu4_alert1: trip-point1 {
-> +					temperature =3D <85000>;
-> +					hysteresis =3D <2000>;
-> +					type =3D "hot";
-> +				};
-
-[Severity: High]
-Are these cooling maps binding to the correct trip points?=20
-
-The cooling device is bound to cpu4_alert1, which is a hot trip point. The
-kernel thermal governors (like step_wise or power_allocator) explicitly ign=
-ore
-THERMAL_TRIP_HOT trips for cooling device actuation. Cooling maps must be
-bound to passive or active trips to invoke throttling.=20
-
-By binding to a hot trip instead of the alert0 passive trip, the CPUs will
-never be thermally throttled, allowing the system to overheat until it hits
-the critical trip and forcefully shuts down.
-
-[ ... ]
-> +		cpu0-3-thermal {
-> +			polling-delay-passive =3D <250>;
-> +
-> +			thermal-sensors =3D <&tsens 9>;
-> +
-> +			cooling-maps {
-> +				map0 {
-> +					trip =3D <&cpu0_alert1>;
-> +					cooling-device =3D <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +							 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +							 <&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +							 <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-> +				};
-> +			};
-> +
-> +			trips {
-> +				cpu0_alert0: trip-point0 {
-> +					temperature =3D <75000>;
-> +					hysteresis =3D <2000>;
-> +					type =3D "passive";
-> +				};
-> +
-> +				cpu0_alert1: trip-point1 {
-> +					temperature =3D <85000>;
-> +					hysteresis =3D <2000>;
-> +					type =3D "hot";
-> +				};
-
-[Severity: High]
-Does this face the same throttling issue as cpu4-thermal?=20
-
-Binding the cpu0-3 cluster to the cpu0_alert1 hot trip point will also bypa=
-ss
-thermal throttling for these CPUs, resulting in unmanaged heating until a
-critical thermal shutdown is triggered.
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260916-msm8952-in=
-itial-support-v2-0-798c2602dde1@mainlining.org?part=3D17
