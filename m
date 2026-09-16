@@ -1,83 +1,75 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCCE34A7C9F
-	for <linux-clk@vger.kernel.org>; Wed, 16 Sep 2026 17:15:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA5F36D503
+	for <linux-clk@vger.kernel.org>; Wed, 16 Sep 2026 17:25:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789578913; cv=none; b=Fuh5MCDQK7X5mtSSOX6L0kMof41mnP2WxgkgnpQx47NBX04yy8nd8d57mvt7R0/N3OGmt6n5XRc86COQqSWzWRze013W4qDJrekFxOOIR7EiBZgWDIevNeQitEXPaVK1V48nIbQ4oIOTBGNES25kJWMd4aSijYSYC+qx7O+3vMs=
+	t=1789579556; cv=none; b=pUpkL9Pc1+NyBOnBlK3An9DOo07obhp+fLYaKNxlwaAzKy7mB3wDb2h8YHLjz1VrKRUZ6C29bku3X3jYPo5BjssfTOY8gtBrr7rCPscitzeFhwuBglW7G+B2BuhrBDUGJ6DC6vgRKmbnglSHkJVdw27jf7rQiZixVcUSWsyu1Ds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789578913; c=relaxed/simple;
-	bh=x+RzZmHnqaIFv/afq4EE1msbYj1HqtHQnuxnErsonnM=;
+	s=arc-20240116; t=1789579556; c=relaxed/simple;
+	bh=oIs6fzy+l+1Pv5fYJ/81fnDfgGbi5VGvlBD2/CZN9ek=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JjKK4/HHprt90d2a43evROm37bXEZlk5dzuTqk30GE3U9ahRfy/7NWWozKYoZm8HH4HIDttcAioDRWYsFj9MrZg+niTfsuoiurIDZ+oFpCIMP/1CYEQOr3nch59USL83892jiwKw2SZt+e7Ds3JINfYa4/2hFo232nz6ukjCWyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fJWKyUQG; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=NKp+CVsIwzdwhBB5LAKmhsS6NjO4h3X8uSkLWaFeykIw9GlNrg/tjrnSbwn0FtDXAQYF/nD2YZz0r3fc06EuKDM4QFLpS8wuRGgpnWlmEWPqC123VbllgVEkdXegmVLy7+s4FPzrtDUp5fitnkoLL3oex3mOoehnNznIi6QTwu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eBetjFx4; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fJWKyUQG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EA311F0089F
-	for <linux-clk@vger.kernel.org>; Wed, 16 Sep 2026 17:15:11 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eBetjFx4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5D201F0089A
+	for <linux-clk@vger.kernel.org>; Wed, 16 Sep 2026 17:25:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789578911;
-	bh=x+RzZmHnqaIFv/afq4EE1msbYj1HqtHQnuxnErsonnM=;
+	s=k20260515; t=1789579554;
+	bh=oIs6fzy+l+1Pv5fYJ/81fnDfgGbi5VGvlBD2/CZN9ek=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=fJWKyUQGkPoGP6Y6CKkbMqnqk0M61nrKSbxnHjagrEGHJbkxh2gmxnq+2sBMXzN1Z
-	 Qz2mT0p9yrfu8kVSu40m5cIhXgOSeqCmYnNDCC+rciMkhrLs0p+dcBdoN1vVayVBVt
-	 N+d6tLIHjwuKx2KEFKfarXY6aKGGJQr9I6ZxAlXvUMMZLLUY5kv5hwPIysLW2BsVeg
-	 MGNEuRRKp8UVTSz51bvHgHX3WwwSqqMl3q7XHvNdY/hy9VyasfbQH6PYP0ppfJjeZb
-	 gqM4N2Sy8rxyPTLehUtbIuvkIJakxSI/S6RjBJZmFFESkhSMFGoXksEure1UOiIk8f
-	 Gq8jo4oKDZJDg==
-Received: by mail-lf2-f12.google.com with SMTP id 2adb3069b0e04-5b5e4f13d76so1369572e87.3
-        for <linux-clk@vger.kernel.org>; Wed, 16 Sep 2026 10:15:11 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBzzwf7zj2IXYbRL343Hvj/LwGnrC74mAcKLvlaljgIB+Dw32U2y5zCyjg9IEqM22vE/k+vH4jNVNcM=@vger.kernel.org
-X-Gm-Message-State: AFuF++noOcJIz4iFMhHvCMlcuLhW+blxhDa58/1ueOx6NnYK7G3w7XS0
-	Y5byf2UU16oO4VpLP7NgjC3kvqzag8TfQB7p2hyMyBI2f5En9UpMTP2OnIewMSSIhROgDRk48OF
-	bOeZqsRxEZfW85LmPVLPtWcRQGqIjeH4=
-X-Received: by 2002:a05:6512:4023:b0:5b8:b419:c8ad with SMTP id
- 2adb3069b0e04-5b8b6617917mr991899e87.17.1789578909833; Wed, 16 Sep 2026
- 10:15:09 -0700 (PDT)
+	b=eBetjFx4k3JtGQO7sy5AQjaqkBY0p70iFo6+boeVoENF0Aq/orTvbXnhFAh6ZmUOq
+	 8cbGxphcP9hIG/8VcEry9YmJ8JiyUNJpCjKCbIW7JZHhUOL9OFtj8N3P/ZLSwqzXRE
+	 pWVK4+KZ5gOE7eQkpHJ9oWTnVrb/Utor8j/ulyrsPJWL+L8gpM0o5oxZcIBStefH8R
+	 dKv88D2I1OsbxxH3aCX7y6k9rm8pB+rEV4+6yg2Oo67zIqPrN67IUEQG6F4Ck4gz6w
+	 5h2NmGZ9ELWwxM+bKafcwGYj1sVocgg6SeO+wm1OtxqrLl4KRGLQ52s7aaqPUBwNw9
+	 u3YWOYK0MoX+w==
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5b76694fb7aso2073881e87.0
+        for <linux-clk@vger.kernel.org>; Wed, 16 Sep 2026 10:25:54 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBxJC6kgVpZhb+Aux8VO7XBR8Sj6R/i4DZa6SBfklTxiP1rLmrOpizNf6zz/6JjVIgJq+aaM8grbBDY=@vger.kernel.org
+X-Gm-Message-State: AFuF++l4EI5GDCXjvvtMp1Vit7klLLLQRTpD+8B4FPHSil2ns2Q7DgHi
+	PqQt23HHkr8JrCsiGMbXYERCiduihGnpIHOMc6OHP39pm3EPri7qPlzTPBilhzOFFhElhe2OC1g
+	M2Nxm5GtnUF4Jq08dd1B4y3KeiVP3Is8=
+X-Received: by 2002:a19:5518:0:b0:5b1:4c14:9b3d with SMTP id
+ 2adb3069b0e04-5b8ba5de63amr78323e87.11.1789579553533; Wed, 16 Sep 2026
+ 10:25:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260910-fw-devlink-nexus-ready-v2-0-17ac82dbe226@toradex.com> <20260910-fw-devlink-nexus-ready-v2-3-17ac82dbe226@toradex.com>
-In-Reply-To: <20260910-fw-devlink-nexus-ready-v2-3-17ac82dbe226@toradex.com>
+References: <20260915070103.1733176-1-vulab@iscas.ac.cn>
+In-Reply-To: <20260915070103.1733176-1-vulab@iscas.ac.cn>
 From: Linus Walleij <linusw@kernel.org>
-Date: Wed, 16 Sep 2026 19:14:57 +0200
-X-Gmail-Original-Message-ID: <CAD++jL=PV_BEw6pa=M7dDEMNMg2xfbBESGanXE2sajTav5hPBg@mail.gmail.com>
-X-Gm-Features: AcwNN1VY_W0_it0rWdRRWdWtRhIbKagoTA3QAM941QSR0htK7aD0JhAkkSfT2YY
-Message-ID: <CAD++jL=PV_BEw6pa=M7dDEMNMg2xfbBESGanXE2sajTav5hPBg@mail.gmail.com>
-Subject: Re: [PATCH v2 3/7] of: unittest: Test fw_devlink with GPIO nexus maps
-To: Ernest Van Hoecke <ernestvanhoecke@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@kernel.org>, 
-	"Miquel Raynal (Schneider Electric)" <miquel.raynal@bootlin.com>, Frank Li <Frank.li@oss.nxp.com>, 
-	Kieran Bingham <kieran.bingham@ideasonboard.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney@redhat.com>, Bartosz Golaszewski <brgl@kernel.org>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	Herve Codina <herve.codina@bootlin.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, Leonardo Costa <leonardo.costa@toradex.com>, 
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
+Date: Wed, 16 Sep 2026 19:25:39 +0200
+X-Gmail-Original-Message-ID: <CAD++jLns9S7ba9G+wcnsfrDBjtDWbM-qzg+NeW9vHFHKcOz3NQ@mail.gmail.com>
+X-Gm-Features: AcwNN1U5p1jQNWfJDBDBcokXqdBha7CDbxJEl7eNgY0-Nuq3oH3fx3OcCRj68Ks
+Message-ID: <CAD++jLns9S7ba9G+wcnsfrDBjtDWbM-qzg+NeW9vHFHKcOz3NQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: versatile: clk-icst: Fix node reference leak in of_syscon_icst_setup()
+To: Wentao Liang <vulab@iscas.ac.cn>
+Cc: bmasney@redhat.com, linux-arm-kernel@lists.infradead.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	mturquette@baylibre.com, sboyd@kernel.org, stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 10, 2026 at 4:16=E2=80=AFPM Ernest Van Hoecke
-<ernestvanhoecke@gmail.com> wrote:
+On Tue, Sep 15, 2026 at 9:01=E2=80=AFAM Wentao Liang <vulab@iscas.ac.cn> wr=
+ote:
 
-> From: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
+> of_get_parent() takes a reference on the syscon parent node. The
+> reference is intentionally kept on the success path, but the error paths
+> return without dropping it, leaking the node reference. Release the
+> reference before returning on the error paths.
 >
-> Add OF unit tests that call the fw_devlink add_links operation for GPIOs
-> routed through nexus maps. Verify that each mapped consumer has exactly
-> one link to the final GPIO provider rather than to the nexus.
->
-> Also cover direct references and all GPIO property spellings recognized
-> by fw_devlink, including the deprecated singular and unprefixed forms.
->
-> Signed-off-by: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
+> Fixes: d430819d69a5 ("clk: versatile-icst: add device tree support")
+> Cc: stable@vger.kernel.org
+
+Stable? Really? It's no big deal.
+
+> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
 
 Reviewed-by: Linus Walleij <linusw@kernel.org>
 
