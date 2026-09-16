@@ -1,166 +1,199 @@
-Received: from mail-wm2-f13.google.com (mail-wm2-f13.google.com [74.125.225.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 211DA4C1505
-	for <linux-clk@vger.kernel.org>; Wed, 16 Sep 2026 14:22:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8548850C28D;
+	Wed, 16 Sep 2026 14:23:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789568535; cv=none; b=IYdbuc+byEBo+p/gdpfiMehiaeeBIIDb7x/ZA3xF90bL5do4piInkPv/5JjPoNcwm4GJVUKCShVTswV1EFk3RiboNbVV+XEihcsDdxUN4rgE2eeGfojrcxpHDIjUxqGMgVELQWMfZGW7rDtdTVkeXidjXqCfmXVB+H3clR1jeJ8=
+	t=1789568582; cv=none; b=LDyzWMeV/twHJeUlpAtRNwkwvmJrfm+XYHlai9nVKCahEYck0CDAuPIXespFb/xbhJ2j3CiNiVdY0RXo8O9km29PXQpLYDaJrXFcBeIs2E7nEaL1bMBBmlpdHL2IJmZekQKpQemo+GzUi0pgaDtW5+0R90e8i+N3qphxD24qrWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789568535; c=relaxed/simple;
-	bh=tQm+SUjJhqlfSnnyRbTVMTyJzx51Yfv7VQK1ltt+dY8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=CDLPU0uqKLzSujH1rBaAEv2cSXTESvhe4EwBzA8D2myUou8VVEpcyswdPjbfL8Du9uTaWPY7l+IZ6s7jCc9G638eGaIq81CyQgUDIKNAVrsQSz50ad92zDTb1BmaN5s04UIgvDqM+WBmI00plEh36764+fgKb6XFpTESvF1QbXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=V8miW70Q; arc=none smtp.client-ip=74.125.225.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1789568582; c=relaxed/simple;
+	bh=APrimV7r9j/JDntzPd0f09aiQ+Q+YLOAvyz5vdDyQb8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=HdwWq1Mb6GkYa/xJdlPxyBeohu97kWnRpGIvYOH9zAN9lqbTHgql2BH/96nANTBw1gMo90HSIRzvCduz+uy36jJQpIHvMsd+h3aKD/T1a6Bi97QFJm3dDYGPBLY7KYsKTcfnIjl1LGqgoIdA7h/Fbw2Ws0UvyMi2rnEMwqJ0Zqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ssRLWlh1; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="V8miW70Q"
-Received: by mail-wm2-f13.google.com with SMTP id 5b1f17b1804b1-49ccfd61ecaso9216255e9.3
-        for <linux-clk@vger.kernel.org>; Wed, 16 Sep 2026 07:22:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1789568531; x=1790173331; darn=vger.kernel.org;
-        h=content-type:mime-version:message-id:date:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=P0uZ4BnvDof5wiqfMQXLES5jMiUYascBq/gJHlhVBLY=;
-        b=V8miW70QddG/j8ICrGFb0+NrK3xjiZ+j7BL+GQD9R5la3SzC10H/rmq5S/ng9fInt/
-         aiB+wlVhZGoUKvIXgLoTqRhRfLsCM8XKwRHgcFEGbaUgw+hiunI1oL4z33SoF6KrLs/B
-         2tfzyDdYhR0GdbOcC4b3WRWEJtgkjP/4RMyZGDTezeeDMkbQBL6IlGzv0fV+mD/rO2r4
-         rbKS/O1vs5+Bses/nTUHzgzMrIUvO3Z4QidIIhhvm3EmQh4EHIXPG5Wm978w/oZQhCs6
-         7FaWy89EK86exb5UCjeatZIy+usHsOl32gBnGCqmD5GUURPGwKKkCNP/ps+k357onnk2
-         txAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789568531; x=1790173331;
-        h=content-type:mime-version:message-id:date:references:in-reply-to
-         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=P0uZ4BnvDof5wiqfMQXLES5jMiUYascBq/gJHlhVBLY=;
-        b=JKXSLms04A4EiUASMVIdxAqqNUuyDhYYGq9kcaObvleCPmmtr4OlVCr7m9LMu0W2/X
-         7Bs16pRlkC+x8+kBn0wcgnlzC+bTouKj1PlWIjkaaGnTBdmTgajk8UXaFXKg2mKsnUa5
-         sEOK/PSwz/Bch5LCab+aE9nYJGV6HvLRDfZGnVpC7Hek8xyERZKJBsvmbKrSySGRTLqc
-         qc5BMwEth10BpxvgziBLPDfdTGl9Yx0YFh0t76vszn82f1VwNJc4iNLAyfJ0k7VfH8wq
-         IbeLEkJ9DOHd+QW+C0/bOcJa6+HKJDuhpWjfZ5T8xiNUziMHJiKz3RwP3VsSBYW3KLPe
-         F6WQ==
-X-Forwarded-Encrypted: i=1; AKwUvBxwtLgpPmO9k6dvC3ATthsam1ij3TH06+cOmhx18SpqM6HAjOegCTQTUXQkvJWfQw32UivePM3lhgA=@vger.kernel.org
-X-Gm-Message-State: AFuF++kXahXhlRPXKGQ3JThpml7fE9bgaObYJai3/YCitGJ2MpOCDLvN
-	aqHBYsJWCpry8jGhQrwOY+qWiv3n4Q3cCeqTBtzE4IaLh96lNzhO8KXXmFK2ru4IUng=
-X-Gm-Gg: AYBFou2BsqgMPkdF6hiNyOIelE6LN4nrc4OcNN8XUn/1Y5loUgfpR+R/r3jV5mr+3KS
-	ohlyK4BDsbg2q1FAqj10hEp5ZacOO2KU2z7BjBzcKVvvF6oqLQ/vo9huDu9ctYMAZk9DkiFZClm
-	TRR0/DWveMut9W+7ZcOFJpE7VtDvwz+9NFGFSoc9iOF4dtE8Kwsnaj+4Gxx8fcgkKCNnrBy3/1p
-	xnkWKrvwbcKxkDS4oW2lXVavqgDUz4GhXgHKA7wOEBLiaVS5QmzwDZAnpJrGQTleLDP/XjDD12d
-	9B+IgmGTB501xVSPvIuS+Per76MOjwJqpNznbfhUupqecTS0f3DJXzvonpRPcIe3V3vzCd/rts1
-	z+zOcxTcorV2lz3FP/v7UHAHQa1MN/XBqXkpeuzz/8xvnrr0Hp85sN59NVVZPvkNTwGMddpk+bU
-	/B8Ad0PQgewH+XNc5rPXp2LYEN5C7aQNR6qyw++EFaCnXOddik6CAFjKzQBoRVyaCjlJQVlwzgO
-	XkrUmknNpSERrNjRA==
-X-Received: by 2002:a05:600c:1f96:b0:49d:243a:e4f9 with SMTP id 5b1f17b1804b1-49eb6e2c8e4mr31133135e9.10.1789568531214;
-        Wed, 16 Sep 2026 07:22:11 -0700 (PDT)
-Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49e83aead50sm92828195e9.7.2026.09.16.07.22.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Sep 2026 07:22:10 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Dan Carpenter <error27@gmail.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] clk: Document of_clk_get_by_name() return values
-In-Reply-To: <aqpJ_pupkr8HDIz2@stanley.mountain>
-References: <cover.1789451862.git.error27@gmail.com>
- <b3de48fdbaaade69cce126b59bd6dfb8f437b495.1789451862.git.error27@gmail.com>
- <1jzexhd58n.fsf@starbuckisacylon.baylibre.com>
- <aqpJ_pupkr8HDIz2@stanley.mountain>
-Date: Wed, 16 Sep 2026 16:22:09 +0200
-Message-ID: <1jqzitcm3y.fsf@starbuckisacylon.baylibre.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ssRLWlh1"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 1AA1AC2BCB3;
+	Wed, 16 Sep 2026 14:23:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1789568582;
+	bh=APrimV7r9j/JDntzPd0f09aiQ+Q+YLOAvyz5vdDyQb8=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=ssRLWlh1+Y+w+X+oyT8PAE5abljdmV7SggUBajixOAoECKjgze1fO46CaQ8CpApbX
+	 nIuw9o9I7fICTkd/qxUoyuMkrKdrVUtJOgCUo3M1zYNZA+c4WbTizbQyVEDexpVMKw
+	 qDgDweyClLksk8PzZkwoy76gnQBsu7+l+S+bC9TJDgmnwBMhXh/OS1DrfUCUG01tHT
+	 h9wzMCztl33QrKyWi4XBo3/EhIyfYWpbO5SWldyQMP2OUX3LxAla9UpNXksj4yMSb2
+	 457icuecQpdkCZkNiPrwv2+HYMAQBM5N+cR2T2MY5VWYms2RxmVAUVe8DBbdsUheES
+	 NdeAchN1qt38g==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDE83C88E7D;
+	Wed, 16 Sep 2026 14:23:01 +0000 (UTC)
+From: Muzaffer Kadir via B4 Relay <devnull+muzafferkadir.mainlining.org@kernel.org>
+Subject: [PATCH v2 00/19] Add Initial Support For MSM8952, Add General
+ Mobile Shamrock
+Date: Wed, 16 Sep 2026 17:22:05 +0300
+Message-Id: <20260916-msm8952-initial-support-v2-0-798c2602dde1@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/3WNwQ6CMBBEf8Xs2TXthgL15H8YDhVX2ARa0iLRE
+ P7dSrx6fJOZNyskjsIJzocVIi+SJPgMdDxA2zvfMco9M5CiUlllcUxjbQ2heJnFDZie0xTijKV
+ yytiWWBuGvJ4iP+S1m69N5l7SHOJ7P1r0N/05Nf11LhoVKq4KMlV9M1RcRid+yDXfnULsoNm27
+ QMXm3EfwwAAAA==
+X-Change-ID: 20260909-msm8952-initial-support-60a059c2e15e
+To: Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abelvesa@kernel.org>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Srinivas Kandagatla <srini@kernel.org>, 
+ Ulf Hansson <ulfh@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+ "Joerg Roedel (AMD)" <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+ Robin Murphy <robin.murphy@arm.com>, Lee Jones <lee@kernel.org>, 
+ Rob Clark <robin.clark@oss.qualcomm.com>, 
+ Dmitry Baryshkov <lumag@kernel.org>, 
+ Abhinav Kumar <abhinav.kumar@linux.dev>, 
+ Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Robert Marko <robimarko@gmail.com>, Guru Das Srinagesh <linux@gurudas.dev>, 
+ Amit Kucheria <amitk@kernel.org>, Thara Gopinath <thara.gopinath@gmail.com>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Daniel Lezcano <daniel.lezcano@kernel.org>, Zhang Rui <rui.zhang@intel.com>, 
+ Lukasz Luba <lukasz.luba@arm.com>, Kees Cook <kees@kernel.org>, 
+ Tony Luck <tony.luck@intel.com>, 
+ "Guilherme G. Piccoli" <gpiccoli@igalia.com>, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: David Heidelberg <david@ixit.cz>, Dang Huynh <danct12@riseup.net>, 
+ phone-devel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, 
+ iommu@lists.linux.dev, mfd@lists.linux.dev, dri-devel@lists.freedesktop.org, 
+ freedreno@lists.freedesktop.org, Krzysztof Kozlowski <krzk@kernel.org>, 
+ linux-pm@vger.kernel.org, linux-input@vger.kernel.org, 
+ Muzaffer Kadir <muzafferkadir@mainlining.org>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+ Abel Vesa <abel.vesa@oss.qualcomm.com>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1789568578; l=4824;
+ i=muzafferkadir@mainlining.org; s=20260816; h=from:subject:message-id;
+ bh=APrimV7r9j/JDntzPd0f09aiQ+Q+YLOAvyz5vdDyQb8=;
+ b=hxQTWuCmnN5RxaTfxCbRvKqSYfp1IkgodMwMDO5M+dIh8pOkb/NbEkdfS6Y+DnDxoID5n8Czt
+ jiYXe7Dj3twA8ZSQOohs7Ew3vSH3o1Qln+Dg/iZ8hy5ZkZyMqCIqLpT
+X-Developer-Key: i=muzafferkadir@mainlining.org; a=ed25519;
+ pk=4zkv4suQ3cYcO4Z7CrV8JSSjEGLBGepUtvQCFjgnYIU=
+X-Endpoint-Received: by B4 Relay for muzafferkadir@mainlining.org/20260816
+ with auth_id=954
+X-Original-From: Muzaffer Kadir <muzafferkadir@mainlining.org>
+Reply-To: muzafferkadir@mainlining.org
 
-On mer. 16 sept. 2026 at 10:49, Dan Carpenter <error27@gmail.com> wrote:
+MSM8952 is a SoC with 8 core cpu and Adreno 405 gpu.
 
-> On Wed, Sep 16, 2026 at 09:28:56AM +0200, Jerome Brunet wrote:
->> On mar. 15 sept. 2026 at 19:38, Dan Carpenter <error27@gmail.com> wrote:
->> 
->> > Callers should test the return from of_clk_get_by_name() with IS_ERR().
->> > The function returns a valid clock on success and an error pointer on
->> > failure; NULL is not a valid return value.
->> >
->> > Document this explicitly to prevent callers from treating NULL as a
->> > separate failure case.
->> >
->> > Assisted-by: ChatGPT:gpt-5
->> > Signed-off-by: Dan Carpenter <error27@gmail.com>
->> > ---
->> > There are a few other functions which look like they return NULL but
->> > never actually do.  This is one which has caused some confusion in
->> > the past.
->> >
->> >  drivers/clk/clk.c | 3 +++
->> >  1 file changed, 3 insertions(+)
->> >
->> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
->> > index f1756fe59372..a71bcf780de4 100644
->> > --- a/drivers/clk/clk.c
->> > +++ b/drivers/clk/clk.c
->> > @@ -5430,6 +5430,9 @@ EXPORT_SYMBOL(of_clk_get);
->> >   * This function parses the clocks and clock-names properties,
->> >   * and uses them to look up the struct clk from the registered list of clock
->> >   * providers.
->> > + *
->> > + * Returns: A clock pointer on success or an error pointer on failure.  This
->> > + * function never returns NULL.
->> 
->> Thanks Dan. I was about to apply the change but it feels a bit strange
->> to document what a function never does.
->> 
->> Is this a documentation that should be added everywhere the return value
->> is to be tested with IS_ERR() ?
->> 
->> What about being more direct then:
->> 
->> "Returns: A clock pointer on success or an error pointer on failure.
->>  Caller should test the return value with IS_ERR()"
->
-> First of all, I just want to confirm that actually it's true, right?
-> I've read the code but this isn't my background so I might have been
-> confused.
+Ported without uart connection. ramoops and usb
+mainly used to debug.
+USB is not enabled in this series because it
+depends on the not yet upstreamed (and not developed by me)
+pmi8950_smbcharger.
 
-I think you got it right. Instead of NULL, it should return
-ERR_PTR(-ENOENT).
+General Mobile shamrock display panel driver
+is generated using MSM8916's mdss dsi panel
+driver generator and tested with it. I didn't
+include it.
 
-Looking more closely, It is not entirely impossible to get NULL. If a
-provider returns NULL instead of ERR_PTR(-ENOENT), we will just pass it
-back.
+The GCC and DTS files are derived from existing
+Qualcomm source files. Original copyright notices
+are retained.
 
-clk_hw_create_clk() has this
+GCC is based on msm8939's gcc file.
+SoC device tree is based on MSM8937 file.
 
-	if (IS_ERR_OR_NULL(hw))
-		return ERR_CAST(hw);
+in some downstreams MSM8952 GCC is merged with
+MSM8917 and MSM8937's. But upstreamed MSM8917 is
+based on different GCC and different pll structure.
+I have no way to verify MSM8952 pll so I am not sure
+about how correct pll structure is.
 
-I could turn it into
+Pinctrl driver was submitted and merged here:
+https://lore.kernel.org/all/20260907-msm8952-pinctrl-v5-0-9a2d8d72ffdb@mainlining.org/
 
-	if (!hw)
-		return ERR_PTR(-ENOENT);
-        else if (IS_ERR(hw))
-		return ERR_CAST(hw);
+Signed-off-by: Muzaffer Kadir <muzafferkadir@mainlining.org>
+---
+Changes in v2:
+- Changed device dts file as David's and Konrad's suggestions
+- Removed accidental duplicated clock assigments and fixed wrong gcc gp1,gp2
+  and gp3 parent_maps
+- Updated commit messages to make it wrapped at 72 character.
+- Fixed spi1 tlmm node naming
+- Added remaining spi and i2c nodes
+- Wired up mpm
+- Add mmio-sram to rpm_msg_ram
+- Reformatted msm8952.dtsi
+- Removed rpmcc-msm8952 driver entry and replaced it with rpmcc-msm8976
+- Merged sdhci tlmm pins to single nodes, now it is similar to existing SoCs
+- Rebased to latest linux-next, now storage works
+- Removed polling-delay properties from tsens
+- Link to v1: https://lore.kernel.org/r/20260912-msm8952-initial-support-v1-0-0e742578b524@mainlining.org
 
->
-> If it only returns an error pointer then, it's obvious that it should
-> only be tested with IS_ERR().  I would be fine with just saying the
-> first part:
->
-> Returns: A clock pointer on success or an error pointer on failure
+---
+Muzaffer Kadir (19):
+      dt-bindings: clock: qcom: Add MSM8952 global clock controller
+      clk: qcom: Add global clock controller driver for MSM8952
+      dt-bindings: nvmem: Add compatible for MSM8952
+      dt-bindings: power: rpmpd: Add MSM8952 power domains
+      dt-bindings: mmc: sdhci-msm: Add MSM8952 compatible
+      dt-bindings: vendor-prefixes: Add General Mobile
+      dt-bindings: arm: qcom: Document MSM8952 SoC binding
+      dt-bindings: iommu: qcom,iommu: Add MSM8952 IOMMU to SMMUv2 compatibles
+      dt-bindings: mfd: qcom,tcsr: Add compatible for MSM8952
+      dt-bindings: display/msm: qcom, mdp5: Add MSM8952 compatible
+      dt-bindings: firmware: qcom,scm: Document MSM8952 SCM
+      dt-bindings: clock: qcom,rpmcc: Add MSM8952 compatible
+      drm: msm: mdp5: Add MDP5 configuration for MSM8952
+      soc: qcom: ubwc: Add UBWC config for MSM8952
+      dt-bindings: thermal: tsens: Add MSM8952
+      thermal: qcom: tsens: Add support for MSM8952 tsens
+      arm64: dts: qcom: Add initial support for MSM8952
+      dt-bindings: input: touchscreen: goodix: Add binding for GT970
+      arm64: dts: qcom: generalmobile-shamrock: new device
 
-Even better. 
+ Documentation/devicetree/bindings/arm/qcom.yaml    |    6 +
+ .../bindings/clock/qcom,gcc-msm8952.yaml           |   56 +
+ .../devicetree/bindings/clock/qcom,rpmcc.yaml      |    5 +
+ .../devicetree/bindings/display/msm/qcom,mdp5.yaml |    1 +
+ .../devicetree/bindings/firmware/qcom,scm.yaml     |    3 +
+ .../bindings/input/touchscreen/goodix.yaml         |   35 +-
+ .../devicetree/bindings/iommu/qcom,iommu.yaml      |    1 +
+ .../devicetree/bindings/mfd/qcom,tcsr.yaml         |    1 +
+ .../devicetree/bindings/mmc/qcom,sdhci-msm.yaml    |    1 +
+ .../devicetree/bindings/nvmem/qcom,qfprom.yaml     |    1 +
+ .../devicetree/bindings/power/qcom,rpmpd.yaml      |    1 +
+ .../devicetree/bindings/thermal/qcom-tsens.yaml    |    1 +
+ .../devicetree/bindings/vendor-prefixes.yaml       |    2 +
+ arch/arm64/boot/dts/qcom/Makefile                  |    1 +
+ .../dts/qcom/msm8952-generalmobile-shamrock.dts    |  436 +++
+ arch/arm64/boot/dts/qcom/msm8952.dtsi              | 2679 +++++++++++++++
+ drivers/clk/qcom/Kconfig                           |   10 +
+ drivers/clk/qcom/Makefile                          |    1 +
+ drivers/clk/qcom/gcc-msm8952.c                     | 3550 ++++++++++++++++++++
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_cfg.c           |   81 +
+ drivers/soc/qcom/ubwc_config.c                     |    1 +
+ drivers/thermal/qcom/tsens-v1.c                    |   44 +
+ drivers/thermal/qcom/tsens.c                       |    3 +
+ drivers/thermal/qcom/tsens.h                       |    2 +-
+ include/dt-bindings/clock/qcom,gcc-msm8952.h       |  217 ++
+ 25 files changed, 7123 insertions(+), 16 deletions(-)
+---
+base-commit: e6e35979777d646fe3c7c94dca7dd32fb25d45f4
+change-id: 20260909-msm8952-initial-support-60a059c2e15e
 
->
-> regards,
-> dan carpenter
->
+Best regards,
+--  
+Muzaffer Kadir <muzafferkadir@mainlining.org>
 
--- 
-Jerome
+
