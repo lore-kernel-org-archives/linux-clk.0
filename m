@@ -1,157 +1,231 @@
-Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010071.outbound.protection.outlook.com [52.101.228.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 247C144B66B;
-	Wed, 16 Sep 2026 11:37:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.71
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789558654; cv=fail; b=YbTBBy5FhhEciPrC6xw2edv24guWl0qJjaR8OcImrHYQJqvP1uUAlvFcSuGpUC14Oi5SzHaFcrMGGt+FukQQxIdHA0Gx+vLLnYFICooh2l5II1LdQTCN6B6pz190mO8ksAgYOG4u6dHFuELNhWuLn+fkSS/GatHJDg4M1HBT2Nw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789558654; c=relaxed/simple;
-	bh=8NLVU2iMenIyya9CPc4OAkt7XVamWgkEMZqzOM6bVkg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JERA5rm5AndMEdQcPxFIgiAj+1JJxAXveMgKjJZtVVRwwdsgro/CFFBouFbfwnZpSbJW298fJSooIE7vFFfzldIgHysXIXBfkLPWF27G72+KAN3ZATZiekvzwfdh0U5ZN/zEgIbEAwPWjjMB0k5j53xuO2380/rwst/FT8kiD1E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=CFveK/oC; arc=fail smtp.client-ip=52.101.228.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FD734A92C7
+	for <linux-clk@vger.kernel.org>; Wed, 16 Sep 2026 11:44:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1789559071; cv=none; b=LLbFDgsCmRddbEIcwhXWpUuBwvpxw7A20cPgu1ASNp8qDvXN372vAtgpt9NhMeq108B/YU4jPp4UTnVIt044/4ay6Tnc8G6DH6amXiW8gps3AK9g1T/4rqvxryuw2lzKLZFMbwRwx7dWmR79lPaXLtFfQ5QedkWRHKOWzqS5o6w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1789559071; c=relaxed/simple;
+	bh=p9+KEa8/8Dyrx6vfvDzmtoHvB1DxFmQKzIxJDGWSSvo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=On9vvY6/30xS1T+e7Esdf92+GwhgzJiZl98hZVAjZigOvccs2qAmeLlHjpmEUXdnkyrZuZL5JsdkPzW5yW/sgs6BVuLMZvotxdkyyxPA63y7Le7z7nMfyR0e21L72Pm1sUGnShDYs1/q4X4M2OezDoWesTf5OtzHSR69+v1koI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=M6mwqufz; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="CFveK/oC"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=I22KuAZh31+v9Pd+fBUKIdGH1PkZV5iHZO0xRrG8pQ66RlUGqMliI1s3DXmBxjZ+1s7JJwFy9tdaDjKwswHdkMvZNLexIYCh++v6uGko3fzZEmhqMsHgpcNaiPIvItT43uIm61z8T+aWMwSwccgRRXVbbO3sTcuEWUPbGAs9nO/u+L4uP7SVsYch9CXLsjx4TzASfuw7EPf22oE0doma9UFNDqU1tiyb8biBI2WuYl4AE4f6cSbfKaP7rr77ri5iOX9pmh/KQYj2yRW3AqShV3h+s+68X0Yfx+xULQvQNt6s4NO6xs65nE98rX82DP22AyFNilYdurak1eM+biGWVQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PbmcSxLGv1kWsaWjoLBg+aRRoNZ0mDh0k6mrtGax8N4=;
- b=ngi4o0jiUV7XXXMv6RFD6i304JoomHMpsQWfOoBsOjjfTC+Vtw+hUyf+w5twc79dG6pzyO6/sA2IHIRWLFsx0jr9fAK09+T0Ulj2HX9v0XVZFQ7KT247U30T46sGcDe9g2OOX6mzNSyb+7JUNsH8uVvtLTuvZVutM4/tQltX18l7I6OIJlfWO5ly0MNfZL6UDWbFzBhOxa3YdcLPn91+mSYy36+c1Nff6rfDBlAExxcHmxcpXXf5rYIzQwgqPstC3wWsKbA0+eRlYrz4cKHsGh4i6kek3jWa7vXbnsxDB/yraCGob71rGg4K2YY/J0bq5+QYKx7q3svCszhbpysLsw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 8.62.32.50) smtp.rcpttodomain=baylibre.com smtp.mailfrom=renesas.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=renesas.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PbmcSxLGv1kWsaWjoLBg+aRRoNZ0mDh0k6mrtGax8N4=;
- b=CFveK/oC66t/FTKszqece43CnkN6/M45/Bm/tA2cD9lei7jgSQ+cA7Sd0a04SuNlJyJsZTXlyKOC+a/IQImbeWSsJ5Y3WBNnffQI+A8/i8PX0JI3lrpHHNT5B8gygIH/1mZhriAHknwHeq9kod5x0/OeStknAn7Sh6tpMDDv7wk=
-Received: from TYCP286CA0224.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:3c5::8)
- by TYWPR01MB8558.jpnprd01.prod.outlook.com (2603:1096:400:171::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.428.11; Wed, 16 Sep
- 2026 11:37:10 +0000
-Received: from TY2PEPF00005621.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:3c5:cafe::a5) by TYCP286CA0224.outlook.office365.com
- (2603:1096:400:3c5::8) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.428.11 via Frontend Transport; Wed,
- 16 Sep 2026 11:37:10 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 8.62.32.50)
- smtp.mailfrom=renesas.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=renesas.com;
-Received-SPF: Pass (protection.outlook.com: domain of renesas.com designates
- 8.62.32.50 as permitted sender) receiver=protection.outlook.com;
- client-ip=8.62.32.50; helo=ejcrelay005p.adwin.renesas.com; pr=E
-Received: from ejcrelay005p.adwin.renesas.com (8.62.32.50) by
- TY2PEPF00005621.mail.protection.outlook.com (10.167.240.52) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.21.428.7
- via Frontend Transport; Wed, 16 Sep 2026 11:37:10 +0000
-Received: from vm01.adwin.renesas.com (DEU-5CG20946WF.adwin.renesas.com [10.226.92.205])
-	by ejcrelay005p.adwin.renesas.com (Postfix) with ESMTP id 48FF03000442;
-	Wed, 16 Sep 2026 20:37:06 +0900 (JST)
-From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-To: geert+renesas@glider.be,
-	sboyd@kernel.org,
-	bmasney+clk@redhat.com,
-	jbrunet+clk@baylibre.com,
-	prabhakar.mahadev-lad.rj@bp.renesas.com,
-	biju.das.jz@bp.renesas.com,
-	p.zabel@pengutronix.de,
-	niklas.soderlund+renesas@ragnatech.se
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-Subject: [PATCH 2/3] clk: renesas: rzg2l: Add missing of_genpd_del_provider() call
-Date: Wed, 16 Sep 2026 11:36:36 +0000
-Message-ID: <20260916113637.86947-3-ovidiu.panait.rb@renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260916113637.86947-1-ovidiu.panait.rb@renesas.com>
-References: <20260916113637.86947-1-ovidiu.panait.rb@renesas.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M6mwqufz"
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-6a5e971c970so2284313a12.0
+        for <linux-clk@vger.kernel.org>; Wed, 16 Sep 2026 04:44:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1789559047; x=1790163847; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=+OkjIpCELnuJRozHROd7rQfIVtAzAlx7qACUrTNgcPM=;
+        b=M6mwqufzRXFGPxlkJzFuxdGmBSc5hTsZKnXWJiYA87Ue8TSmNMqb0kEs3plnSPOinb
+         FXKzZ1QXfDOgnYgYpK3xfg9IRQ5AplqM6Vop0ycWAItq3Cse7eRlxkbwgES8tuvUwiP7
+         kfjTZ2/u0r4HI5J3UtW4tvMYmE67k9QvrgtVUVbzAgATTuUeTlSyl7dAq49eue1XOilO
+         dtWYENx3sUQnVpZoiZc/uzr5s+bcKUfkZoREZM3ok5jnpG4nZp7rDmYdQyxFK+RBds3W
+         bOJ3zM9hv18M0VeJaijRhpUil3cc34bbmSKr3EKhuskGMI+N/U3yiQpfjUOUDfHWPgOZ
+         RT6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1789559047; x=1790163847;
+        h=content-transfer-encoding:content-type:in-reply-to:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=+OkjIpCELnuJRozHROd7rQfIVtAzAlx7qACUrTNgcPM=;
+        b=Zjrbk9WrwystjrhTSrlV+qyvlRe4HB8tsHN1aILAl7mi8qk43DVp2TCvkthd5L2pWN
+         d4TUeX/ykFZPMqfm0eHsT78A4WbygrB/Ycr6nuraj30uGOVVUfOYCYJFRo0KQxPfXMyu
+         vaiwSphenUm5IFvugNWqsKeSLBrfaqHW3+m4ytbmjeNBaoFcu6LrQGvw+GIwwBsllQvz
+         0qgY8+UYi5F3t1bfi0mkDBYJGQlXGFJ68pYbhlDohF49YqtN544OJ35EOzYzeBtVDrO0
+         Ea6yTQThxVnBvcEWIYZ7lOhNFV1JS1OCeaTdbbG7YfRx3cy7loDHa/Wslg9kMxnNT1es
+         45Qw==
+X-Forwarded-Encrypted: i=1; AKwUvBxaRzZSZ0x21Qm0lb4iVxq1HI9rhZ+o7JvylAwWxlmKh8lQnUcjLD+FteICXIffomVehI+BxY2jFLA=@vger.kernel.org
+X-Gm-Message-State: AFuF++nmNhkyzWWvD1RukRyVwrI5alYTSElwMp0dS29PE8HHiodRFOog
+	8Enf5lUzrWAKmOiycg6ZuI7UYX/I0DYF8GYs/u+bHYVR8+TO1eIcZZ3RQ81+Y2+nQpU=
+X-Gm-Gg: AYBFou0PQD1lS/n6mSjj6syGsuKtOlkU6fOH3UWbFy42kxnpCclpMATYdHvTeqLNjf0
+	gJAm02RQm9V+y3xJ6fb6OVpVf+AtqlfJM3YxyFTHkaHsb90ZNi7vUStL3yr8hNTzXMRsdQ6p0+U
+	SQVZnaxvo3N83NO/r6CyDmzCD2ySOC1Z8Yujm/du6FqgV265Mo3rwUzeFywqFO7rQb4bxlURlH+
+	k9Jy82ishGq68uhcwiAFULgbeibFVsmy7F4pQohyY2Ev1yJMq6CIaHFSGy29MwDFNMUO2w0kE/S
+	p2c3obktBuw1RSX53CQlZVAd6Nf3bcULgMuD+LWHb155Nj5XqN9pCRWW0HQxAEAy6Bm/cla3fJM
+	DafaUFQiQkx7kP8XWmXpfAIfSQbduU24amyj+nK3osaO1xIZ6P0w04eW0O/OzXJyW63XTzzz8OI
+	9oimgN0VaqnORnzeVnHIpN6Y3q/mM3VFwavXnyF0okunRVTabWO9QfbPN+mV1HEhq2QbcKSC5gb
+	BmQyOFfIKAq
+X-Received: by 2002:a05:6402:114a:b0:6a9:8c23:e0c0 with SMTP id 4fb4d7f45d1cf-6aa04039ddamr3843480a12.19.1789559046925;
+        Wed, 16 Sep 2026 04:44:06 -0700 (PDT)
+Received: from [192.168.0.167] ([109.76.116.194])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6aa1d228de9sm1631723a12.6.2026.09.16.04.44.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Sep 2026 04:44:06 -0700 (PDT)
+Message-ID: <1a2b8244-0e8b-49d0-8dce-775abb070c76@linaro.org>
+Date: Wed, 16 Sep 2026 12:44:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TY2PEPF00005621:EE_|TYWPR01MB8558:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 81995b83-9a17-41f5-0c75-08df13e6d847
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|36860700016|376014|23010399003|56012099006|11063799006|10067099003|18002099003|22082099003;
-X-Microsoft-Antispam-Message-Info:
-	0aeEIt6mSYiiLYtc/h/pjb9hulCbVBQ3dTG/6ExHuOW8IK7hSG+CLdheLpfsxL6MStIynQjeSmN3f72Le5Q6jp2wzb6ynNtpIHM2nhH36e5AxyWSh0ibK8t2A2Hu/o+qHa/1Ct8KLf4oNDOQO80bjREcXLQZ0dyjLJV46KIulixo6MFBXLQtusgdm1KHgXD6nS1MjdpXuSHCeqAhf/gU86NnbsmQgydEoWo+jqLLXBgAYeMsbeGxHXd8BTz8ovwxwLlW2VlPKZum9hHxoZ3MwHL33th6oyXrzKSeGM2rtSreWL2Eq6CNJ67QAz++q0DOLR0Jj4bNDxj4iMBwsBnx7zojPwh0paVGUP/JOdwEOXJuGCTokxLl07qHoS9wJRykkyBfO7t+y8xmu8e8yb9NB8S67crsg6NZ5mzxHcigQh+LF5oLc95Ey8ute3/uC0/alPdufsl2T7oTI8po+81IXuxTGRuf6blJXf4HWNERwwkS79ptHASQMlvf4ctyigeNoGLdmcSpLVdIN17mxOfgeZEl8TmZJWPPWBhp3kCj1GQlJoAYe9qCq+x6WWm5acQnKog6h7mvMB0UYqCQS6aFCBOG2TgbaHMJuYMEqx7ut0DgAPIqVkNo3D5oVc+pW6uuNbilwEdMZ2/7ygZg0KcjMg0scrxOridh0EWCNpWouz6OupToBKwSnvD4zdn7wPHFisW+6xApvylO4qyPB+RuFA==
-X-Forefront-Antispam-Report:
-	CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay005p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700016)(376014)(23010399003)(56012099006)(11063799006)(10067099003)(18002099003)(22082099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	gnTY8Uyf5zH2mDv1Zgyb9oKnOw9mPLBEeoUANbuRY4qldFplBAUX2c/MuffMsvlVvMRdOWVm0/KMWg7bjyd8LmzPnqOTHk57QnAPlwY8NzAz4wjQsC8A0DRBu8VdR+JHTILHimujEpvcXSIsG2q1zmeN898ctxKu7UgFokRzZpscJ1N8PxKPJFtwlCucOh5mHONNKlRV55NbcL5SzTpz3sam+RvOdqhZ4UrZg39vMROn0YPQkB/QeuKpX0OUNuElG+jId+VOLBi9WkLiKDAO858H4GnXlblwonOWwH4KWY/xDgdDWAFcvt6EHc2lG3EvRF6jQYHVVa0xIggUwT1qh1rtLuYvBCHBpf9JnqnRN5NxcRaYEm6tjxyrNok1MRdfxBQos50RG0PRQLF3NASirRI4C9kzYmH1lKVQpI+ELvgahYSbOGv0c2Q+uhaNEov0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2026 11:37:10.1346
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 81995b83-9a17-41f5-0c75-08df13e6d847
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=53d82571-da19-47e4-9cb4-625a166a4a2a;Ip=[8.62.32.50];Helo=[ejcrelay005p.adwin.renesas.com]
-X-MS-Exchange-CrossTenant-AuthSource: TY2PEPF00005621.JPNP286.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB8558
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v17 4/5] media: qcom: camss: Add support for PHY API
+ devices
+To: sashiko-reviews@lists.linux.dev
+Cc: olteanv@gmail.com, neil.armstrong@linaro.org, devicetree@vger.kernel.org,
+ media-ci@linuxtv.org, linux-clk@vger.kernel.org,
+ linux-phy@lists.infradead.org, vkoul@kernel.org, robh@kernel.org,
+ conor+dt@kernel.org
+References: <20260906-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v17-0-e2197a3e2551@linaro.org>
+ <20260906-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v17-4-e2197a3e2551@linaro.org>
+ <20260906143233.523A21F00A3A@smtp.kernel.org>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Content-Language: en-GB
+In-Reply-To: <20260906143233.523A21F00A3A@smtp.kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The RZ/G2L CPG driver registers the PM domain provider, but doesn't
-remove it on probe failure, leaving a stale provider behind.
+On 06/09/2026 15:32, sashiko-bot@kernel.org wrote:
+> Thank you for your contribution! Sashiko AI review found 3 potential issue(s) to consider:
+> - [High] Selects a non-existent Kconfig symbol PHY_QCOM_MIPI_CSI2.
+> - [High] Hardware PHY state and resources are leaked on early probe and registration error paths.
+> - [Medium] Missing return value checks for phy_mipi_dphy_get_default_config_for_hsclk() and phy_set_mode() can lead to uninitialized PHY configuration.
+> --
+> 
+> commit cc3786ea5902bcb687c49374e8e8db29c5127496
+> Author: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> 
+> media: qcom: camss: Add support for PHY API devices
+> 
+> Add the ability to use a PHY pointer which interacts with the standard PHY
+> API. In the first instance the code will try to use the new PHY interface.
+> If no PHYs are present in the DT then the legacy method will be attempted.
+> 
+>> diff --git a/drivers/media/platform/qcom/camss/Kconfig b/drivers/media/platform/qcom/camss/Kconfig
+>> index 4eda48cb1adf0..1edc5e5a1829e 100644
+>> --- a/drivers/media/platform/qcom/camss/Kconfig
+>> +++ b/drivers/media/platform/qcom/camss/Kconfig
+>> @@ -7,3 +7,4 @@ config VIDEO_QCOM_CAMSS
+>>   	select VIDEO_V4L2_SUBDEV_API
+>>   	select VIDEOBUF2_DMA_SG
+>>   	select V4L2_FWNODE
+>> +	select PHY_QCOM_MIPI_CSI2
+> 
+> [Severity: High]
+> Does this select a nonexistent config symbol? Selecting a symbol that isn't
+> defined anywhere in the kernel causes a silent build dependency failure,
+> which will leave the required PHY infrastructure unbuilt.
 
-Add the missing of_genpd_del_provider() call on the probe error path.
+No the dependency is described in the cover-letter
+> 
+> [ ... ]
+> 
+>> diff --git a/drivers/media/platform/qcom/camss/camss-csiphy.c b/drivers/media/platform/qcom/camss/camss-csiphy.c
+>> index 539ac4888b608..e00748dd83b02 100644
+>> --- a/drivers/media/platform/qcom/camss/camss-csiphy.c
+>> +++ b/drivers/media/platform/qcom/camss/camss-csiphy.c
+> 
+> [ ... ]
+> 
+>> @@ -306,11 +308,88 @@ static int csiphy_stream_on(struct csiphy_device *csiphy)
+>> +	link_freq = camss_get_link_freq(&csiphy->subdev.entity, bpp, num_lanes);
+>> +
+>> +	if (link_freq < 0) {
+>> +		dev_err(dev,
+>> +			"Cannot get CSI2 transmitter's link frequency\n");
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	phy_mipi_dphy_get_default_config_for_hsclk(link_freq, num_lanes, dphy_cfg);
+>> +
+>> +	phy_set_mode(csiphy->phy, PHY_MODE_MIPI_DPHY);
+>> +
+>> +	ret = phy_configure(csiphy->phy, &dphy_opts);
+> 
+> [Severity: Medium]
+> Should we check the return values of phy_mipi_dphy_get_default_config_for_hsclk()
+> and phy_set_mode() here?
+> 
+> If link_freq evaluates to 0, it appears phy_mipi_dphy_get_default_config_for_hsclk()
+> could return -EINVAL and leave the output dphy_opts structure zero-filled. Passing
+> this uninitialized configuration directly to phy_configure() could lead to
+> erratic hardware behavior.
 
-Fixes: ef3c613ccd68 ("clk: renesas: Add CPG core wrapper for RZ/G2L SoC")
-Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+Yeah but no link_freq <= 0 should cover that case. I'll add the 
+evaluation of the return types anyway.
+
+> 
+> [ ... ]
+> 
+>> @@ -709,6 +788,56 @@ int msm_csiphy_subdev_init(struct camss *camss,
+>> +	ret = phy_init(csiphy->phy);
+>> +	if (ret)
+>> +		dev_err(dev, "%s init fail %d\n", csiphy->name, ret);
+>> +
+>> +done:
+>> +	return ret;
+>> +}
+> 
+> [ ... ]
+> 
+>> diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
+>> index 2123f6388e3d7..84097d82d99c9 100644
+>> --- a/drivers/media/platform/qcom/camss/camss.c
+>> +++ b/drivers/media/platform/qcom/camss/camss.c
+> 
+> [ ... ]
+> 
+>> @@ -4832,14 +4890,21 @@ static int camss_init_subdevices(struct camss *camss)
+>>   	unsigned int i;
+>>   	int ret;
+>>   
+>> +	camss_detect_legacy_phy(camss);
+>> +
+>>   	for (i = 0; i < camss->res->csiphy_num; i++) {
+>> -		ret = msm_csiphy_subdev_init(camss, &camss->csiphy[i],
+>> -					     &res->csiphy_res[i],
+>> -					     res->csiphy_res[i].csiphy.id);
+>> +		if (!camss->legacy_phy) {
+>> +			ret = msm_csiphy_subdev_init(camss, i);
+>> +		} else {
+>> +			ret = msm_csiphy_subdev_init_legacy(camss,
+>> +							    &camss->csiphy[i],
+>> +							    &res->csiphy_res[i],
+>> +							    res->csiphy_res[i].csiphy.id);
+>> +		}
+>> +
+>>   		if (ret < 0) {
+>> -			dev_err(camss->dev,
+>> -				"Failed to init csiphy%d sub-device: %d\n",
+>> -				i, ret);
+>> +			dev_err(camss->dev, "csiphy %d init fail\n",
+>> +				res->csiphy_res[i].csiphy.id);
+>>   			return ret;
+>>   		}
+>>   	}
+> 
+> [Severity: High]
+> Does this error path leak the PHY initialization state?
+> 
+> When msm_csiphy_subdev_init() succeeds, it calls phy_init() to acquire the PHY.
+> If a subsequent iteration of this loop fails, or if a later initialization step
+> like camss_probe() fails, the code returns immediately or goes to an error label
+> without rolling back the previously initialized PHYs (which require phy_exit()).
+> 
+> Additionally, in msm_csiphy_register_entity() located in camss-csiphy.c:
+> 
+> 	ret = csiphy_init_formats(sd, NULL);
+> 	if (ret < 0) {
+> 		dev_err(dev, "Failed to init format: %d\n", ret);
+> 		return ret;
+> 	}
+> 
+> A failure here returns early without calling phy_exit(). When the calling code
+> in camss_register_entities() rolls back, it decrements the index and skips this
+> failing entity, which seems to permanently leak its PHY initialization state.
+> 
+
+yes missed the unwind.
+
 ---
- drivers/clk/renesas/rzg2l-cpg.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index 7f8decef92fd..01304b078d6f 100644
---- a/drivers/clk/renesas/rzg2l-cpg.c
-+++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -2590,7 +2590,10 @@ static void rzg2l_cpg_detach_dev(struct generic_pm_domain *unused, struct device
- 
- static void rzg2l_cpg_genpd_remove(void *data)
- {
--	pm_genpd_remove(data);
-+	struct rzg2l_cpg_priv *priv = data;
-+
-+	of_genpd_del_provider(priv->dev->of_node);
-+	pm_genpd_remove(&priv->genpd);
- }
- 
- static int __init rzg2l_cpg_add_clk_domain(struct rzg2l_cpg_priv *priv)
-@@ -2609,11 +2612,13 @@ static int __init rzg2l_cpg_add_clk_domain(struct rzg2l_cpg_priv *priv)
- 	if (ret)
- 		return ret;
- 
--	ret = devm_add_action_or_reset(dev, rzg2l_cpg_genpd_remove, genpd);
--	if (ret)
-+	ret = of_genpd_add_provider_simple(np, genpd);
-+	if (ret) {
-+		pm_genpd_remove(genpd);
- 		return ret;
-+	}
- 
--	return of_genpd_add_provider_simple(np, genpd);
-+	return devm_add_action_or_reset(dev, rzg2l_cpg_genpd_remove, priv);
- }
- 
- static int __init rzg2l_cpg_probe(struct platform_device *pdev)
--- 
-2.34.1
-
+bod
