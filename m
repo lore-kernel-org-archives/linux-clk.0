@@ -1,28 +1,28 @@
-Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010051.outbound.protection.outlook.com [52.101.228.51])
+Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010071.outbound.protection.outlook.com [52.101.228.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2D204A92C3;
-	Wed, 16 Sep 2026 11:37:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 247C144B66B;
+	Wed, 16 Sep 2026 11:37:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.71
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789558646; cv=fail; b=lFSw+stBlhpwVtA9FYC9gqQqTmvJ/Pqm9FLx39iWE80kOrrsJhRfHje39FpyoRCBwi+RJRElyso+mbDweH77gaQLkfmUDAYyhOo7uJclm87191OxsvOpVjap/7WEY8D/M28Mi7MypDmuJW9/glJbDR3cjKGqlpRKhuuCVuBIi5Q=
+	t=1789558654; cv=fail; b=YbTBBy5FhhEciPrC6xw2edv24guWl0qJjaR8OcImrHYQJqvP1uUAlvFcSuGpUC14Oi5SzHaFcrMGGt+FukQQxIdHA0Gx+vLLnYFICooh2l5II1LdQTCN6B6pz190mO8ksAgYOG4u6dHFuELNhWuLn+fkSS/GatHJDg4M1HBT2Nw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789558646; c=relaxed/simple;
-	bh=Gz8mu2sPmxKqFYQdgPFLd7VtgOeqtbfBnj2XYqnQOC8=;
+	s=arc-20240116; t=1789558654; c=relaxed/simple;
+	bh=8NLVU2iMenIyya9CPc4OAkt7XVamWgkEMZqzOM6bVkg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=e44ttNM29BMNXUrA0Ew6Mf0aNsB38hJJ6iIBybeQ6NdDeURGkpTZjPKJhvOCwOoeuKvg8s9npRLAu+Qc+fBKsssjyfTJrWvgNuzc2Nz5GYPk6MDk1br5cJUJBjW88V6+VH3Fk3bWnSAKzigPDwq7lzmN2O9QzamK8TOThSl0VYM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=McdBwDGQ; arc=fail smtp.client-ip=52.101.228.51
+	 MIME-Version:Content-Type; b=JERA5rm5AndMEdQcPxFIgiAj+1JJxAXveMgKjJZtVVRwwdsgro/CFFBouFbfwnZpSbJW298fJSooIE7vFFfzldIgHysXIXBfkLPWF27G72+KAN3ZATZiekvzwfdh0U5ZN/zEgIbEAwPWjjMB0k5j53xuO2380/rwst/FT8kiD1E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=CFveK/oC; arc=fail smtp.client-ip=52.101.228.71
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="McdBwDGQ"
+	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="CFveK/oC"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wE861NFwrBlEHfAE0L7wwgzHgKwrLrQ7hu7gZmGqYu6aUWA3hET0T8AYCNiv5lnLCT3T3SvDnZrIBemmEFw6FYt2UTQarIlHjX+skUoNqDOecCOsQYgz/pqK1EWhZs+viQmqTl/hJq2uz2bhJTfoJMGRXfjB4PvVnECBCod+vgPje1EEaGneo8s+q5SxeX5Nv9A6VU9u9RQivU5J11O36kDYWuFlu4+a7Qci7rYwMMFawBIV2bo5PXqJqdL4UfEpWT86p162lxotHfOK0jfQ3tO1xvlgUtW8Y6bRFGeObdNk0cJ6UH3Iu8qtzMUps3diKIt3CiHaBIHvQ/PhSeDjRw==
+ b=I22KuAZh31+v9Pd+fBUKIdGH1PkZV5iHZO0xRrG8pQ66RlUGqMliI1s3DXmBxjZ+1s7JJwFy9tdaDjKwswHdkMvZNLexIYCh++v6uGko3fzZEmhqMsHgpcNaiPIvItT43uIm61z8T+aWMwSwccgRRXVbbO3sTcuEWUPbGAs9nO/u+L4uP7SVsYch9CXLsjx4TzASfuw7EPf22oE0doma9UFNDqU1tiyb8biBI2WuYl4AE4f6cSbfKaP7rr77ri5iOX9pmh/KQYj2yRW3AqShV3h+s+68X0Yfx+xULQvQNt6s4NO6xs65nE98rX82DP22AyFNilYdurak1eM+biGWVQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Ji45jdBP/0ogDlQ5nTfmEovgo34tfwsnuIoarWHIpak=;
- b=B6Ohe6Vtoat9Jcaql0owI7qb/DMSBEAz9OFDrVSGFXHXmDtiKGYRhuLBnQlgNLXz3zTy3rsQ1y/ry05tguMlB4DLnOjgAMoqaiibjbYL2ThODx0sgLqP0rONyaLxM7Zg7F/K6+8dv60Zaok4+HUdQDK1pw0+3GK/K+FjW7+PuMbIAgm3Qc2CXhZ1GVyuL85hp8M1c5V22jlRYaGX9fRqMGlDZk3D3UysIL7FPuCAUwYzg7WAu9XOGtar5w5zsx+25QOUyqcQcoeKXN+GG1t3+iOezl1mI8RfIM0TFeyIOOTPPofEOP3wswUM4hBPdOVJPSsfvHsk/FDkZDmEtFUN0A==
+ bh=PbmcSxLGv1kWsaWjoLBg+aRRoNZ0mDh0k6mrtGax8N4=;
+ b=ngi4o0jiUV7XXXMv6RFD6i304JoomHMpsQWfOoBsOjjfTC+Vtw+hUyf+w5twc79dG6pzyO6/sA2IHIRWLFsx0jr9fAK09+T0Ulj2HX9v0XVZFQ7KT247U30T46sGcDe9g2OOX6mzNSyb+7JUNsH8uVvtLTuvZVutM4/tQltX18l7I6OIJlfWO5ly0MNfZL6UDWbFzBhOxa3YdcLPn91+mSYy36+c1Nff6rfDBlAExxcHmxcpXXf5rYIzQwgqPstC3wWsKbA0+eRlYrz4cKHsGh4i6kek3jWa7vXbnsxDB/yraCGob71rGg4K2YY/J0bq5+QYKx7q3svCszhbpysLsw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  8.62.32.50) smtp.rcpttodomain=baylibre.com smtp.mailfrom=renesas.com;
  dmarc=pass (p=none sp=none pct=100) action=none header.from=renesas.com;
@@ -30,18 +30,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ji45jdBP/0ogDlQ5nTfmEovgo34tfwsnuIoarWHIpak=;
- b=McdBwDGQg17fnO0I4t/ho7HZeCXVmXcUfNFKcovSCbuhV02PRDhfQUr55EDRAsq2Ys6Jzwuf2NsOXVRqm733hDu30f5GPIXAUcK60n9ZEJGkzHrh53TzkRaczQ//8lrom8DoJjOrkmPMI9+JhSiwo401GSvRem3JR2WU3lueDIU=
-Received: from OS7PR01CA0144.jpnprd01.prod.outlook.com (2603:1096:604:25c::20)
- by TYCPR01MB8190.jpnprd01.prod.outlook.com (2603:1096:400:103::9) with
+ bh=PbmcSxLGv1kWsaWjoLBg+aRRoNZ0mDh0k6mrtGax8N4=;
+ b=CFveK/oC66t/FTKszqece43CnkN6/M45/Bm/tA2cD9lei7jgSQ+cA7Sd0a04SuNlJyJsZTXlyKOC+a/IQImbeWSsJ5Y3WBNnffQI+A8/i8PX0JI3lrpHHNT5B8gygIH/1mZhriAHknwHeq9kod5x0/OeStknAn7Sh6tpMDDv7wk=
+Received: from TYCP286CA0224.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:3c5::8)
+ by TYWPR01MB8558.jpnprd01.prod.outlook.com (2603:1096:400:171::12) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.428.9; Wed, 16 Sep
- 2026 11:37:06 +0000
-Received: from OS1PEPF0000D215.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:604:25c:cafe::66) by OS7PR01CA0144.outlook.office365.com
- (2603:1096:604:25c::20) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.428.11; Wed, 16 Sep
+ 2026 11:37:10 +0000
+Received: from TY2PEPF00005621.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:3c5:cafe::a5) by TYCP286CA0224.outlook.office365.com
+ (2603:1096:400:3c5::8) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.21.428.11 via Frontend Transport; Wed,
- 16 Sep 2026 11:37:06 +0000
+ 16 Sep 2026 11:37:10 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 8.62.32.50)
  smtp.mailfrom=renesas.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=renesas.com;
@@ -49,12 +49,12 @@ Received-SPF: Pass (protection.outlook.com: domain of renesas.com designates
  8.62.32.50 as permitted sender) receiver=protection.outlook.com;
  client-ip=8.62.32.50; helo=ejcrelay005p.adwin.renesas.com; pr=E
 Received: from ejcrelay005p.adwin.renesas.com (8.62.32.50) by
- OS1PEPF0000D215.mail.protection.outlook.com (10.167.240.22) with Microsoft
+ TY2PEPF00005621.mail.protection.outlook.com (10.167.240.52) with Microsoft
  SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.21.428.7
- via Frontend Transport; Wed, 16 Sep 2026 11:37:05 +0000
+ via Frontend Transport; Wed, 16 Sep 2026 11:37:10 +0000
 Received: from vm01.adwin.renesas.com (DEU-5CG20946WF.adwin.renesas.com [10.226.92.205])
-	by ejcrelay005p.adwin.renesas.com (Postfix) with ESMTP id EA6193000441;
-	Wed, 16 Sep 2026 20:37:01 +0900 (JST)
+	by ejcrelay005p.adwin.renesas.com (Postfix) with ESMTP id 48FF03000442;
+	Wed, 16 Sep 2026 20:37:06 +0900 (JST)
 From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 To: geert+renesas@glider.be,
 	sboyd@kernel.org,
@@ -68,9 +68,9 @@ Cc: linux-renesas-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-Subject: [PATCH 1/3] clk: renesas: rzv2h: Add missing of_genpd_del_provider() call
-Date: Wed, 16 Sep 2026 11:36:35 +0000
-Message-ID: <20260916113637.86947-2-ovidiu.panait.rb@renesas.com>
+Subject: [PATCH 2/3] clk: renesas: rzg2l: Add missing of_genpd_del_provider() call
+Date: Wed, 16 Sep 2026 11:36:36 +0000
+Message-ID: <20260916113637.86947-3-ovidiu.panait.rb@renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260916113637.86947-1-ovidiu.panait.rb@renesas.com>
 References: <20260916113637.86947-1-ovidiu.panait.rb@renesas.com>
@@ -83,77 +83,75 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: OS1PEPF0000D215:EE_|TYCPR01MB8190:EE_
+X-MS-TrafficTypeDiagnostic: TY2PEPF00005621:EE_|TYWPR01MB8558:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: f0c9f3c1-17b4-45ba-2827-08df13e6d5c0
+X-MS-Office365-Filtering-Correlation-Id: 81995b83-9a17-41f5-0c75-08df13e6d847
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700016|376014|1800799024|23010399003|22082099003|18002099003|13003099007|10067099003|56012099006|11063799006;
+	BCL:0;ARA:13230040|1800799024|82310400026|36860700016|376014|23010399003|56012099006|11063799006|10067099003|18002099003|22082099003;
 X-Microsoft-Antispam-Message-Info:
-	AGEhMvPp30caAMRIDQTi03gCXAGTV34S4bU9VnGkHta9PP7OIw3yxFGH4LaIIACDVDbKNkmn4lRPaQf+ykkmmpa9h+MN7flI9u5WukedsKiRNArfXXkVLgMyBRR1KE/zoiJWaw/PE1ss87TcgcVTGsFNXDWm2nSXzFqtELSnvrEhibG77P0qBCjvHBYLnh/9cVOHZRuoR8+w0r33buf5DVWvdCCb6Ci1WeT3waH0pUO02uXlKNq0F+oFGQk1CvgKrSvF2cXU2IZWKNu0hViMU7JACyFNrLQSCYYtnTFfACDDnvlJ1a7XqEXXnvG3dvc/M4RxkrN6B1WVj4ROptr6qkykjbjz10MBBaQ0/RkcQt14FN4N8ISUxVtxgEo+gnrhqx5mFyOtv/8VawhLOc3zEfXIoCxebCcI4/7XPV3HF3TfCKNKVm8s2simU1/+tF6cyGDKHP/TXo5vdmF9UaPzIyncM2jKLbdWzNQnl5sOyNf3flU8tmrOBxq9aWmnibENfVYblUQgSeTe2q3VbVqYdOq/z0l44JZqqsMhrGUs8R/nicHmHWKtcw7F2halt7jXlHAgTqp722biHdr/aOFGenQqHbdVK4tPz/xxOrdO+7fPMKpTC/HHdLFIMq7yFaghOvSGzZgON28rcQbLLPlzIw==
+	0aeEIt6mSYiiLYtc/h/pjb9hulCbVBQ3dTG/6ExHuOW8IK7hSG+CLdheLpfsxL6MStIynQjeSmN3f72Le5Q6jp2wzb6ynNtpIHM2nhH36e5AxyWSh0ibK8t2A2Hu/o+qHa/1Ct8KLf4oNDOQO80bjREcXLQZ0dyjLJV46KIulixo6MFBXLQtusgdm1KHgXD6nS1MjdpXuSHCeqAhf/gU86NnbsmQgydEoWo+jqLLXBgAYeMsbeGxHXd8BTz8ovwxwLlW2VlPKZum9hHxoZ3MwHL33th6oyXrzKSeGM2rtSreWL2Eq6CNJ67QAz++q0DOLR0Jj4bNDxj4iMBwsBnx7zojPwh0paVGUP/JOdwEOXJuGCTokxLl07qHoS9wJRykkyBfO7t+y8xmu8e8yb9NB8S67crsg6NZ5mzxHcigQh+LF5oLc95Ey8ute3/uC0/alPdufsl2T7oTI8po+81IXuxTGRuf6blJXf4HWNERwwkS79ptHASQMlvf4ctyigeNoGLdmcSpLVdIN17mxOfgeZEl8TmZJWPPWBhp3kCj1GQlJoAYe9qCq+x6WWm5acQnKog6h7mvMB0UYqCQS6aFCBOG2TgbaHMJuYMEqx7ut0DgAPIqVkNo3D5oVc+pW6uuNbilwEdMZ2/7ygZg0KcjMg0scrxOridh0EWCNpWouz6OupToBKwSnvD4zdn7wPHFisW+6xApvylO4qyPB+RuFA==
 X-Forefront-Antispam-Report:
-	CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay005p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700016)(376014)(1800799024)(23010399003)(22082099003)(18002099003)(13003099007)(10067099003)(56012099006)(11063799006);DIR:OUT;SFP:1101;
+	CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay005p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700016)(376014)(23010399003)(56012099006)(11063799006)(10067099003)(18002099003)(22082099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	fD0S2kk3U8l6yxZrkBf9n3u9Wfx707xvhrtjezMNBLA0xVkp4XQEwQi8P6F7WTAiy0rj6GtQZ3d94vUytINo53Kwu6731MjABR7GzzJn1zI7wUuBXCjeMFH5xRTjfyKHi8bSiGR9ZqmvXC0KMLhgyL7qA8vfIhi8qHMObv3V7kAYzAT1WkjqZdSbbMF98Jr2GWJ9g58d1xhzX/ytzefRpRGG6UhesIZrrspFRxhPJCIQ+7kN0i3u74h7LA7PoEf19CLeRn/1bpRkgdnNxKeXxQZhQp7ayfNAqxyyLvtRkvBZpgblrVZxOJhBX8pRB5JV7Rv+PDm4o/13GHSm58ewn9hhoR1qIW9KcgCPzB/n9jLRfp5nqJB9r1BvfQoA0V16z02bJQSx9cPjzj/+zBQ6zXBHjootvlJ3W/bqrRUF1eyZsmnhrtINXen44r+EF+K2
+	gnTY8Uyf5zH2mDv1Zgyb9oKnOw9mPLBEeoUANbuRY4qldFplBAUX2c/MuffMsvlVvMRdOWVm0/KMWg7bjyd8LmzPnqOTHk57QnAPlwY8NzAz4wjQsC8A0DRBu8VdR+JHTILHimujEpvcXSIsG2q1zmeN898ctxKu7UgFokRzZpscJ1N8PxKPJFtwlCucOh5mHONNKlRV55NbcL5SzTpz3sam+RvOdqhZ4UrZg39vMROn0YPQkB/QeuKpX0OUNuElG+jId+VOLBi9WkLiKDAO858H4GnXlblwonOWwH4KWY/xDgdDWAFcvt6EHc2lG3EvRF6jQYHVVa0xIggUwT1qh1rtLuYvBCHBpf9JnqnRN5NxcRaYEm6tjxyrNok1MRdfxBQos50RG0PRQLF3NASirRI4C9kzYmH1lKVQpI+ELvgahYSbOGv0c2Q+uhaNEov0
 X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2026 11:37:05.8809
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2026 11:37:10.1346
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f0c9f3c1-17b4-45ba-2827-08df13e6d5c0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 81995b83-9a17-41f5-0c75-08df13e6d847
 X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=53d82571-da19-47e4-9cb4-625a166a4a2a;Ip=[8.62.32.50];Helo=[ejcrelay005p.adwin.renesas.com]
-X-MS-Exchange-CrossTenant-AuthSource: OS1PEPF0000D215.JPNP286.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthSource: TY2PEPF00005621.JPNP286.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB8190
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB8558
 
-Sashiko reported that the RZ/V2H CPG driver registers the PM domain
-provider, but doesn't remove it on probe failure, leaving a stale
-provider behind.
+The RZ/G2L CPG driver registers the PM domain provider, but doesn't
+remove it on probe failure, leaving a stale provider behind.
 
 Add the missing of_genpd_del_provider() call on the probe error path.
 
-Link: https://sashiko.dev/#/patchset/20260902104939.25522-1-ovidiu.panait.rb%40renesas.com
-Fixes: dd22e5621749 ("clk: renesas: Add family-specific clock driver for RZ/V2H(P)")
+Fixes: ef3c613ccd68 ("clk: renesas: Add CPG core wrapper for RZ/G2L SoC")
 Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 ---
- drivers/clk/renesas/rzv2h-cpg.c | 13 +++++++++----
+ drivers/clk/renesas/rzg2l-cpg.c | 13 +++++++++----
  1 file changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/renesas/rzv2h-cpg.c b/drivers/clk/renesas/rzv2h-cpg.c
-index 63f13fe4e4b0..827e274ba744 100644
---- a/drivers/clk/renesas/rzv2h-cpg.c
-+++ b/drivers/clk/renesas/rzv2h-cpg.c
-@@ -1512,7 +1512,10 @@ static void rzv2h_cpg_detach_dev(struct generic_pm_domain *unused, struct device
+diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
+index 7f8decef92fd..01304b078d6f 100644
+--- a/drivers/clk/renesas/rzg2l-cpg.c
++++ b/drivers/clk/renesas/rzg2l-cpg.c
+@@ -2590,7 +2590,10 @@ static void rzg2l_cpg_detach_dev(struct generic_pm_domain *unused, struct device
  
- static void rzv2h_cpg_genpd_remove_simple(void *data)
+ static void rzg2l_cpg_genpd_remove(void *data)
  {
 -	pm_genpd_remove(data);
-+	struct rzv2h_cpg_pd *pd = data;
++	struct rzg2l_cpg_priv *priv = data;
 +
-+	of_genpd_del_provider(pd->priv->dev->of_node);
-+	pm_genpd_remove(&pd->genpd);
++	of_genpd_del_provider(priv->dev->of_node);
++	pm_genpd_remove(&priv->genpd);
  }
  
- static int __init rzv2h_cpg_add_pm_domains(struct rzv2h_cpg_priv *priv)
-@@ -1535,11 +1538,13 @@ static int __init rzv2h_cpg_add_pm_domains(struct rzv2h_cpg_priv *priv)
+ static int __init rzg2l_cpg_add_clk_domain(struct rzg2l_cpg_priv *priv)
+@@ -2609,11 +2612,13 @@ static int __init rzg2l_cpg_add_clk_domain(struct rzg2l_cpg_priv *priv)
  	if (ret)
  		return ret;
  
--	ret = devm_add_action_or_reset(dev, rzv2h_cpg_genpd_remove_simple, &pd->genpd);
+-	ret = devm_add_action_or_reset(dev, rzg2l_cpg_genpd_remove, genpd);
 -	if (ret)
-+	ret = of_genpd_add_provider_simple(np, &pd->genpd);
++	ret = of_genpd_add_provider_simple(np, genpd);
 +	if (ret) {
-+		pm_genpd_remove(&pd->genpd);
++		pm_genpd_remove(genpd);
  		return ret;
 +	}
  
--	return of_genpd_add_provider_simple(np, &pd->genpd);
-+	return devm_add_action_or_reset(dev, rzv2h_cpg_genpd_remove_simple, pd);
+-	return of_genpd_add_provider_simple(np, genpd);
++	return devm_add_action_or_reset(dev, rzg2l_cpg_genpd_remove, priv);
  }
  
- static int __init rzv2h_cpg_probe(struct platform_device *pdev)
+ static int __init rzg2l_cpg_probe(struct platform_device *pdev)
 -- 
 2.34.1
 
