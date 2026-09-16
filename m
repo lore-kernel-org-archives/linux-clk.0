@@ -1,167 +1,127 @@
-Received: from mail-ej2-f39.google.com (mail-ej2-f39.google.com [74.125.228.167])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011030.outbound.protection.outlook.com [40.107.74.30])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C90A47604E
-	for <linux-clk@vger.kernel.org>; Wed, 16 Sep 2026 11:35:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.228.167
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789558521; cv=none; b=USgOul3UneHorCS++rtDangtEsI4VwePvkQug1Uc09lUngFAupl+3erTvtFGX5QhO+1iOJiTDaeAf/FHErcIYL6zlb8RRc1f2Bg8QvhLN3YM2GTPCqLuYmaC0KH7Rn5Xxe/ki1Vf++Rr5GM6E7g0+LHhASsufZVTLhX+pXoRm7g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789558521; c=relaxed/simple;
-	bh=JxFaW/WYqlOtA984BXiqHodpwCvgbe1pUjpcetQOGtE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AKI+P/U1Bt/xFf5aCRPa3D2gn96fbMwkqWLYsXjjkM4oNGOBEv6BoDihmR9E5OBUpRtupL5cd7h3LoBVoAc6qCxSXc5Rx0aPhBL9wdZ4b/wgQ8It8HmGQXFQqt2APf+5EDybpm2w2RaMOQJEavIBscYJj9RL+SRvG9iq8+Rmp8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=g8w6Whk1; arc=none smtp.client-ip=74.125.228.167
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EF70485CE7;
+	Wed, 16 Sep 2026 11:37:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.74.30
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1789558643; cv=fail; b=FJtz+bdSiAx/psByhcDw9DPvRotw7AtKw7Lkr1cGpaEd+vX1FR7ygSd0zbmiJehqdp0ttmCAYbff4Kd5lZ5izLCsEsc+Gn1FY0C7OQnD0p2CbFbepkwrtNv8WJJqcX1Bg5uxPLI2NZ+Ci/FkItXnoEEv/qYIH24gvq42Mc5Uwzk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1789558643; c=relaxed/simple;
+	bh=NB5CeRLEjs8wuqi3BiHIJtqIwm5sgLuBxpbObxqHvNo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SUHihmeSGPpZ6BzmH+cBWg9mkrX9MjSbNr1ioL5VCtrg2xevvQVuyQdZwkGFFXRXIwc09WG4/LzN7lJUDK+dHZ5Zu4pSH/DY5smb5qy+0OFX/1INmFQUoZSdX2IdUy9CyKc2xh78wBU39lyW1HI8n25hgILg8X1du3SDlUoGKpA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=VpxkpRl/; arc=fail smtp.client-ip=40.107.74.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="g8w6Whk1"
-Received: by mail-ej2-f39.google.com with SMTP id a640c23a62f3a-c2940ef15c1so116436666b.1
-        for <linux-clk@vger.kernel.org>; Wed, 16 Sep 2026 04:35:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1789558506; x=1790163306; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=I+ON5LylyLSRvB3Oy5FN+PptZ1PxOVJXbkytbHhMasY=;
-        b=g8w6Whk1NXiS+r03W7LHSadISSNNdCcuyP+2QyoIr6Ja+0qXoeDqTvTM8ciHye3ZcZ
-         H7f+LLrv6RoFQ7BQm+hpm1022MYEZn0bJ/3qv6TtC7kBJ45qkX/oaqk92qArVXB97mqh
-         K6hESofwUV3tTZTaX8oNmMqbRsnMSYIyXKagV0doq1ESzmAaPn6S+dUvLbldT1njDdkY
-         3JEY3ZLqwGaZz0gGoAVCb926rv1c8Tq9Dd8yBPiH4bthCmdFA9knY8YsR/kbaGbHRQ/c
-         oocBsfBr6mDjTBmCL5CFgRdBI5KSgQDpZGs97/8yhSavJ+xX0r6Mx8uwdwU+/xeCZl0G
-         9MOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789558506; x=1790163306;
-        h=content-transfer-encoding:content-type:in-reply-to:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=I+ON5LylyLSRvB3Oy5FN+PptZ1PxOVJXbkytbHhMasY=;
-        b=P01aimCe/vHPsJJeOG+ot/b6FTfTbDNEFw3qi+5VqUMpG4cV1AUZXAFNME26gtCkhU
-         TeX8iusw4ci1goXSrVaGnwiXC1w8Msamlfnr7zzvVg6Wn4MBy2FkgiPs8VHAasa2gSsO
-         KdLBnxv5Yz7a/t99zqSWRUaUK/w1acTqbd3iclnIpmkDHVzQ/1gVUCmRttgfAB6pPwaH
-         UwZDgcEMo8Dr/U07W4H567AF8g6sXEsdMM/zNOvttbPLbx/85XsWJQNP0rV23krsDBZq
-         q6LxSTXzJu70PH02vRkd2O73kegHBA1tWSwXDVwipCR+sSdLs8r/Y+GBn8ViaRaH3z08
-         41yQ==
-X-Forwarded-Encrypted: i=1; AKwUvBxSYxY16PSvOl0wzBdSpctYbcaD4mGpdquUUIDcEkJXTILXHStVBhFM6QELwLK6WuzwPQ7+s2j+jT8=@vger.kernel.org
-X-Gm-Message-State: AFuF++mSf67PIwpfW46TUKADg2JdBW+jLRWr4+SutXJhwYLAYjKolYk6
-	qntgmPpT2WfcrivFwN4iWFcKbVo5GRs1pl7Djw3EXYnPK0Vlen515p5nZoLIZFG3zMQ=
-X-Gm-Gg: AYBFou3Pw6iaeIYAdBxLPDB6MjeHcQnr66G7EFmlEg/BB7yym1nWgFlie43O2Bj/oiV
-	jDT4e/hHi5p5iJ7orXZhf4LEYnt1mXfrVHafz8BPhJQKH3YprnrLY/wCS+IiUhOOqs0Me9dn0KQ
-	WyG8MF8x4bFxLLy/a+k4yUOd/y2NR6u2PvxWQk3g2KsuVPZQfVbXx1CIpp5br1k72OZ/SF3XXKR
-	BiEpyaESFVVNNX8vYmPnO3gB+J+/n0wfJvGa0tlHrKmpIc+ZsTL45gJyVWhz0MSFkMQQT4D+yLJ
-	nHgdneihws2ariXKc7EV9ILF1yZEFwcBJgML7BoZFVASBtRXkGEsPN9RVpTBnjTVeGBEVnB7mDK
-	9TD2qV746fBMkS394ljSskvm6zVJGk8Y/eHKkWL9ncJgd71nRoiCFlAo37aCH+/8mwBnA3QXkIv
-	3pE7FKlbo6dInMv+JLFUsOH4sSomLuRaiPgF3OM+8giwOKKEQopiTaehReezc3s0OrrVa+3f7S6
-	M4qrSSWTMIipphjGdYUh9M=
-X-Received: by 2002:a17:907:d0b:b0:c25:c54d:d1a2 with SMTP id a640c23a62f3a-c29e5236f43mr142950366b.18.1789558506076;
-        Wed, 16 Sep 2026 04:35:06 -0700 (PDT)
-Received: from [192.168.0.167] ([109.76.116.194])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c29de0850ccsm117462366b.8.2026.09.16.04.35.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Sep 2026 04:35:05 -0700 (PDT)
-Message-ID: <92a4b3dd-4661-4a4e-90fd-83249acf0dbe@linaro.org>
-Date: Wed, 16 Sep 2026 12:35:04 +0100
+	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="VpxkpRl/"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=H3dgjLEF3qSbzTu0FfOC9nhHNkSKz/OESzMFlMGkBI7guEkyNdmJoGf+sbsuQMHHwx+SGxH4/vd95vpKe6yOoySROWkkJxbqO6Kq+eGvfL2aivrIalnaX6y06DjtVx4L8R2DEKvGS4EcasT1PIZEAnpaL/2q1bZpaQI/lMb3VSO3zCjBntDPdrdztAOcRzU9YCLG1nBBUSbccWK2DYzrN6uixCQei4TroTWLGHM65I1zkyJNyBp7I4bmLv5pQFVxQWB6+ZGOujfvO4bx9wir5M+FG9RRMj2hohPRiIcN/Unqgr4I56R7mU+n+vCBtklGphZosH/l5w1YmOxLkMJXrw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wawPGXmY7GS6HqtjHuTpmERU0a7vLBDhUObVQDhsT8E=;
+ b=SZVBM2Fithrv64JphBD+Xbt5ib8oBALyJiIbJWW/5ylByEEQuL3WV+T7V56R4fq1jJxwgfv828d3Xv3N7IYwrmDnskGH3/Exr45S+4253eOC1hEZo/kDRnNenj4+6q9lwEPJc3WnZdM+f5whVhJfOT6Dc1rLQW5Tmj/TwSWwarYw8UUlt49BRqxIrjPJukLpssUmmMIaPRsrzfcI+cO7QTBLuNA76KHJzCBwU4vp6UwvbAp5KxQnn0xVj9oN4Yowpae3uw4t2kz7dk9A7IcVok9LCEhxNE3nyh15sbpfzM1wg0gX0BeQMIpWyGwwqIcwUbAD6NCprMnehgdZEn4Sfw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 8.62.32.50) smtp.rcpttodomain=baylibre.com smtp.mailfrom=renesas.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=renesas.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wawPGXmY7GS6HqtjHuTpmERU0a7vLBDhUObVQDhsT8E=;
+ b=VpxkpRl/u5mGDJW8Bz8j2nbcaN+E3MxqNYAlrPmOdWMbGDTg3quaehfIVHZMfoLOnhqhbf22CKWih4h2DKxa4YAbPkthEfSGXJEL66olSmBXlpUwGZ/Jpbchodqd40nPDwZ6HUbahsfYzRHXz+gTNfXQ09uj/yCQF4zoadGwz8I=
+Received: from OS7PR01CA0107.jpnprd01.prod.outlook.com (2603:1096:604:258::9)
+ by OS3PR01MB10091.jpnprd01.prod.outlook.com (2603:1096:604:1e5::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.406.13; Wed, 16 Sep
+ 2026 11:37:02 +0000
+Received: from OS1PEPF0000D213.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:604:258:cafe::6e) by OS7PR01CA0107.outlook.office365.com
+ (2603:1096:604:258::9) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.428.11 via Frontend Transport; Wed,
+ 16 Sep 2026 11:37:02 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 8.62.32.50)
+ smtp.mailfrom=renesas.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=renesas.com;
+Received-SPF: Pass (protection.outlook.com: domain of renesas.com designates
+ 8.62.32.50 as permitted sender) receiver=protection.outlook.com;
+ client-ip=8.62.32.50; helo=ejcrelay005p.adwin.renesas.com; pr=E
+Received: from ejcrelay005p.adwin.renesas.com (8.62.32.50) by
+ OS1PEPF0000D213.mail.protection.outlook.com (10.167.240.20) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.21.428.7
+ via Frontend Transport; Wed, 16 Sep 2026 11:37:01 +0000
+Received: from vm01.adwin.renesas.com (DEU-5CG20946WF.adwin.renesas.com [10.226.92.205])
+	by ejcrelay005p.adwin.renesas.com (Postfix) with ESMTP id 971773000442;
+	Wed, 16 Sep 2026 20:36:57 +0900 (JST)
+From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+To: geert+renesas@glider.be,
+	sboyd@kernel.org,
+	bmasney+clk@redhat.com,
+	jbrunet+clk@baylibre.com,
+	prabhakar.mahadev-lad.rj@bp.renesas.com,
+	biju.das.jz@bp.renesas.com,
+	p.zabel@pengutronix.de,
+	niklas.soderlund+renesas@ragnatech.se
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+Subject: [PATCH 0/3] clk: renesas: Add missing of_genpd_del_provider() calls
+Date: Wed, 16 Sep 2026 11:36:34 +0000
+Message-ID: <20260916113637.86947-1-ovidiu.panait.rb@renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v17 2/5] phy: core: Add phy_get_by_of_node()
-To: sashiko-reviews@lists.linux.dev
-Cc: vkoul@kernel.org, conor+dt@kernel.org, neil.armstrong@linaro.org,
- devicetree@vger.kernel.org, linux-phy@lists.infradead.org,
- media-ci@linuxtv.org, robh@kernel.org, linux-clk@vger.kernel.org,
- olteanv@gmail.com
-References: <20260906-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v17-0-e2197a3e2551@linaro.org>
- <20260906-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v17-2-e2197a3e2551@linaro.org>
- <20260906143127.2B5691F00A3A@smtp.kernel.org>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Content-Language: en-GB
-In-Reply-To: <20260906143127.2B5691F00A3A@smtp.kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: OS1PEPF0000D213:EE_|OS3PR01MB10091:EE_
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: 74fa516a-2fd8-422e-e505-08df13e6d329
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700016|376014|82310400026|23010399003|1800799024|13003099007|10067099003|56012099006|11063799006|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	V2AqsNkoQx+KvKVGeJgDGNmEPsQ9EiI+m8Ej5y3ra/z/k9BHPB0GpuTM+atETjsv4p6g1tO7Ul62aqmwKCrEa1SvHc+m2YfkefuW0jcVzc0D/uayu7tPKx3SfPN8TIU/Mlu+K9c75NWqJwC/LF2jWPyXdmlRlDSvQHjbJg7+mgPAlSED2jbRYZ3zsUyFDCJ13YcBRQ2ZLEtvkDBYdiZdCq/PNsfWHgMSH0S0mySBnBlfpReh2cpaptoNdjZUZOXYw4oHwMVANHj1IpKSSdtkRSlAPXjftYlqXwub3mTKvVwB5cQM1HtmUwTIAIOUmX3U0Ygm+mHLpkqN/COPkIXrjgkQX6en1Acr6z8SlXhBYLBioVwCPX8ColwSaTTWEZPpztmp2V81ZMPmSSBSWwq5K4kTXVRUDCp2Sh1fUZ71QBXrhcf3UnSYbhbGnqP83uPgmAjx9OPppDtNKMM4YRf0u6jvnCp9Y2jWTsetHeC/NuJy1+hmUtSfOciWCRjbuwMRlWdAVmyRnFE6Gja1IzzOyUAasASV9ZLFZ2+zl/oPDpww8tTNjZe521jSKl37siW//IPkFKGgkQGn5sOvj/WLBRTrl/djKUWdnEWq+1maR0h0i2RFyHvBBPKKbHBuvm9LGe44xWOvmgPS0OMbVeVoxA7SPzIzwZUB5GLgXct8LSxSY6LuNHM9n3CWvIj1jlPM65Q23/lifvbIZqhfP2ke5A==
+X-Forefront-Antispam-Report:
+	CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay005p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700016)(376014)(82310400026)(23010399003)(1800799024)(13003099007)(10067099003)(56012099006)(11063799006)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	pfavnA4E96FUXGe7DjIgIyqwIrowAfk+8vtDOG7HqIA3uaT9t60SdxxEh7/ByTu1Q245Zj2hn+gXajNTbmukhcTZCQMFcHivcyW+HIDtWq6goSuJD1vuGtVFHb0KJv754M/ALE8cy42MrqKCqwLvG+g8rOCt/ypeSfKWccsKD5ELXI1KavaZ05EtYiGFcsx69/neKTtD+DRBy5WP+sMfIQxNYlgCT+vRBnH945bdmRBYw/Zi2BtXpEINfTYx65jsP6lZVWiVZWH3Wk0+smKdJ3hgE86OSab++KON3ruI4pdq1PWtWQy8ZhAsBPLzBGJSc0s4oevJnFAL3+qV2XJ83OGMFMen1MVNQW/qBk/fBri1JINONcgGBoNNsS5JlcuGEpXo97rcjZOq5lPaHPI7/VYEIKRuo9jmUmmoaeplEMQYz+5LDbdiEd/7t+UvmYGf
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2026 11:37:01.5411
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 74fa516a-2fd8-422e-e505-08df13e6d329
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=53d82571-da19-47e4-9cb4-625a166a4a2a;Ip=[8.62.32.50];Helo=[ejcrelay005p.adwin.renesas.com]
+X-MS-Exchange-CrossTenant-AuthSource: OS1PEPF0000D213.JPNP286.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB10091
 
-On 06/09/2026 15:31, sashiko-bot@kernel.org wrote:
-> Thank you for your contribution! Sashiko AI review found 1 potential issue(s) to consider:
-> - [Medium] phy_get_by_of_node() misses the legacy usb-nop-xceiv workaround, causing infinite -EPROBE_DEFER loops.
-> --
-> 
-> commit a021b561c8a9bfb36addca720d49ea935b34a131
-> Author: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> 
-> phy: core: Add phy_get_by_of_node()
-> 
-> This commit introduces phy_get_by_of_node() to allow looking up a phy
-> directly by its device node. It refactors the existing lookup logic in
-> _of_phy_get() into a new shared helper function called
-> _of_phy_get_with_args().
-> 
->> diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
->> index 89addd732bff3..490a7cde6d40a 100644
->> --- a/drivers/phy/phy-core.c
->> +++ b/drivers/phy/phy-core.c
-> [ ... ]
->> @@ -1001,6 +1015,41 @@ struct phy *devm_of_phy_get_by_index(struct device *dev, struct device_node *np,
->>   }
->>   EXPORT_SYMBOL_GPL(devm_of_phy_get_by_index);
->>   
->> +/**
->> + * phy_get_by_of_node() - lookup and obtain a reference to a phy by device_node
->> + * @np: node containing the phy
->> + *
->> + * Returns the phy associated with the device node or ERR_PTR.
->> + */
->> +struct phy *phy_get_by_of_node(struct device_node *np)
->> +{
->> +	struct of_phandle_args args = { .np = np, .args_count = 0 };
->> +	struct phy *phy;
->> +
->> +	if (!np)
->> +		return ERR_PTR(-EINVAL);
->> +
->> +	mutex_lock(&phy_provider_mutex);
->> +
->> +	phy = _of_phy_get_with_args(&args);
-> 
-> [Severity: Medium]
-> Does this new API miss the legacy compatibility check for usb-nop-xceiv?
-> 
-> In _of_phy_get(), there is a workaround that returns -ENODEV if the
-> device is compatible with "usb-nop-xceiv". Because this workaround was
-> left in _of_phy_get() rather than being relocated into the shared
-> _of_phy_get_with_args() helper, phy_get_by_of_node() bypasses it
-> completely.
-> 
-> Could this cause drivers looking up a "usb-nop-xceiv" node via this new
-> API to receive -EPROBE_DEFER instead of -ENODEV, leading to infinite
-> probe deferrals and breaking fallback to the usb-phy subsystem?
+Sashiko reported that the RZ/V2H CPG driver registers a PM domain provider
+but doesn't remove it on probe failure:
+https://lore.kernel.org/all/20260902110443.959CD1F00A3A@smtp.kernel.org/
 
-I don't agree with this.
+The RZ/G2L and the CPG/MSSR drivers have the same issue. Add the missing
+of_genpd_del_provider() calls to all of them.
 
-The compat string workaround should live where it is used, not be pushed 
-down into generic layers where it is not.
+Ovidiu Panait (3):
+  clk: renesas: rzv2h: Add missing of_genpd_del_provider() call
+  clk: renesas: rzg2l: Add missing of_genpd_del_provider() call
+  clk: renesas: cpg-mssr: Add missing of_genpd_del_provider() call
 
-No media-graph lookup needs this hack.
-> 
->> +
->> +	if (IS_ERR(phy))
->> +		goto out_unlock;
->> +
->> +	if (!try_module_get(phy->ops->owner)) {
->> +		phy = ERR_PTR(-EPROBE_DEFER);
->> +		goto out_unlock;
->> +	}
->> +
->> +	get_device(&phy->dev);
->> +
->> +out_unlock:
->> +	mutex_unlock(&phy_provider_mutex);
->> +
->> +	return phy;
->> +}
->> +EXPORT_SYMBOL_GPL(phy_get_by_of_node);
-> 
+ drivers/clk/renesas/renesas-cpg-mssr.c | 17 +++++++++++------
+ drivers/clk/renesas/rzg2l-cpg.c        | 13 +++++++++----
+ drivers/clk/renesas/rzv2h-cpg.c        | 13 +++++++++----
+ 3 files changed, 29 insertions(+), 14 deletions(-)
+
+-- 
+2.34.1
 
