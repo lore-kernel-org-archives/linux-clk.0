@@ -1,121 +1,127 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18B2E4D0CE1;
-	Thu, 17 Sep 2026 12:22:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0F4B4D37DB;
+	Thu, 17 Sep 2026 12:25:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789647769; cv=none; b=Bnx/9LBU/rVQqmot8lPifp7Pgq5ls55NI4ODHPMI49h67yfagLz6H+fgpPZlUKNqi3Nd27Nr9SP8amXvB9gcORPuFOfkJSq3M6ngrhsWSQl+DIfdc1D3g4cU+Z6b23+3m639aElzU/xxRxkwRi0HnQLsUvrg2ybTud1plP5H8TY=
+	t=1789647957; cv=none; b=JUqQAH0zbHIAUxdC8Is1junGFgtzvRwoMc7MedbgaZzIWUbPNvpK8h0QsAdPAOH78xCdY0FSzIoxwQ5r8fRa/FGPtmwG83IfYaee7oo4wh/zy24xPIa7O3B6wAJ7Kan5CHCxgJYbNbskUWfFHpJNv+KeelPD0Tf6g648a0jfQpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789647769; c=relaxed/simple;
-	bh=Zo57ptsMztytzJ66q7w7TElsqXFNRm3Xo9NSI9URBfc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tdYfMgM+M9M7LRaJIntLKZoKIRzU4zLjc5KNOPzMS5mR4tVp6PLSk6Jq5Z/w+JZCtwDy3J0N3slhNEHkCIT1CvXAbw8JKVsLjpW0Hm4na1d8YGsnJK7nwJcvxzfvNwpBFt5c0UfWBXWqTAtIp2iOtiv+YUC+rS+ByZ74V/gGmRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WUoFjf/D; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WUoFjf/D"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1789647758; x=1821183758;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Zo57ptsMztytzJ66q7w7TElsqXFNRm3Xo9NSI9URBfc=;
-  b=WUoFjf/D+A8cGMwOHsbcFnVmlQDGG/GCwFTp6irPIqvQlhGHOIYhmOpG
-   DrJtMmpjmZfmD1TyB0rU3/8kJDhFQGxaPDpSn1l6/JfA/RyULr6jIeMDS
-   Yc9xGBGTguRpjL/WFGdJDJSRL/EsSdIcTKaH6Sr63M/i3HB9lrN86EiJr
-   lwnEcw1pY2yfJpqGA6fM4hKIKAqs+gmwJFugtnZnOHaRz1RcR07FFGweb
-   qz1uAyKhlkZ3OQYEGMBecVai82X17g6HpfvrFdow23a5+RT730r2J6JPs
-   dbDhQ4VcO4bDKmDzyvhV9H3CgCLfrYoZwSJcxAIZnN3G/Ck+gFnUVVgq8
-   Q==;
-X-CSE-ConnectionGUID: dsJS1BZTRnexRAiWhT3Bbg==
-X-CSE-MsgGUID: /5swGE2nQs6ADQzOSYCRLw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11905"; a="107569071"
-X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; 
-   d="scan'208";a="107569071"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2026 05:22:28 -0700
-X-CSE-ConnectionGUID: BfjX0q2oSlax1Hx0fa4JPQ==
-X-CSE-MsgGUID: C6UIlR4DSgmHmuVzv984bA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; 
-   d="scan'208";a="270450345"
-Received: from abityuts-desk1.ger.corp.intel.com (HELO localhost) ([10.245.245.11])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2026 05:22:22 -0700
-Date: Thu, 17 Sep 2026 15:22:20 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: zl020895 <zl020895@163.com>
-Cc: longzhao@ambarella.com, Arnd Bergmann <arnd@arndb.de>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	soc@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Lee Jones <lee@kernel.org>,
-	mfd@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Re: [PATCH v7 12/15] pinctrl: ambarella: add CV75 pin controller
-Message-ID: <aqvbfCQ6cxfGYJeC@ashevche-desk.local>
-References: <20260915-cv75-v5-v7-0-3297d3fbc9c0@ambarella.com>
- <20260915-cv75-v5-v7-12-3297d3fbc9c0@ambarella.com>
- <aqp0VlwWotnuK9t7@ashevche-desk.local>
- <40f1f819.7f85.1a0ae9e4dae.Coremail.zl020895@163.com>
+	s=arc-20240116; t=1789647957; c=relaxed/simple;
+	bh=MO544Wsk/Oafa0bUboIOlCkH6j/N7fUKxAhwOhrTIWQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D/8eVkICDMcul1s65I7SkNsGDjatglrrDv/Ke6I6xnGTg0Psp+hs/016KLo8eps0fS+K7ItrKLnXz0kv6Hv176M7ggzTy/6MMqswd5aF7pkClQuSu71Ip/iBlBKNlgKh/TKDkiB2KVIlrComTOLOo5DwboWD9ZQZ4CtpojXEHD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.helo=mail.mainlining.org; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.helo=mail.mainlining.org
+Message-ID: <a47a1a0e-559b-410c-aa99-9230908c2fe6@mainlining.org>
+Date: Thu, 17 Sep 2026 15:25:32 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <40f1f819.7f85.1a0ae9e4dae.Coremail.zl020895@163.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 02/19] clk: qcom: Add global clock controller driver
+ for MSM8952
+To: Taniya Das <taniya.das@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abelvesa@kernel.org>,
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Srinivas Kandagatla <srini@kernel.org>,
+ Ulf Hansson <ulfh@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ "Joerg Roedel (AMD)" <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, Lee Jones <lee@kernel.org>,
+ Rob Clark <robin.clark@oss.qualcomm.com>, Dmitry Baryshkov
+ <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>,
+ Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Robert Marko <robimarko@gmail.com>, Guru Das Srinagesh <linux@gurudas.dev>,
+ Amit Kucheria <amitk@kernel.org>, Thara Gopinath <thara.gopinath@gmail.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Kees Cook <kees@kernel.org>,
+ Tony Luck <tony.luck@intel.com>, "Guilherme G. Piccoli"
+ <gpiccoli@igalia.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ David Heidelberg <david@ixit.cz>, Dang Huynh <danct12@riseup.net>,
+ phone-devel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
+ iommu@lists.linux.dev, mfd@lists.linux.dev, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, Krzysztof Kozlowski <krzk@kernel.org>,
+ linux-pm@vger.kernel.org, linux-input@vger.kernel.org
+References: <20260916-msm8952-initial-support-v2-0-798c2602dde1@mainlining.org>
+ <20260916-msm8952-initial-support-v2-2-798c2602dde1@mainlining.org>
+ <af3f7261-e4b0-42fc-818d-80e760cddc2c@oss.qualcomm.com>
+From: Muzaffer Kadir <muzafferkadir@mainlining.org>
+Content-Language: en-US
+In-Reply-To: <af3f7261-e4b0-42fc-818d-80e760cddc2c@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 17, 2026 at 05:06:45PM +0800, zl020895 wrote:
-> Thanks for the review. The small comments will be in v8,
-> including pinconf set via regmap_assign_bits.
+Hi Taniya,
+
+On Thu, 17 Sep 2026 09:49:07 +0530, Taniya Das wrote:
+>> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+>> index a6c676f68b79..3c3f27dcc68d 100644
+>> --- a/drivers/clk/qcom/Makefile
+>> +++ b/drivers/clk/qcom/Makefile
+>> @@ -89,6 +89,7 @@ obj-$(CONFIG_MSM_GCC_8909) += gcc-msm8909.o
+>>  obj-$(CONFIG_MSM_GCC_8916) += gcc-msm8916.o
+>>  obj-$(CONFIG_MSM_GCC_8917) += gcc-msm8917.o
+>>  obj-$(CONFIG_MSM_GCC_8939) += gcc-msm8939.o
+>> +obj-$(CONFIG_MSM_GCC_8952) += gcc-msm8952.o
+>>  obj-$(CONFIG_MSM_GCC_8953) += gcc-msm8953.o
+>>  obj-$(CONFIG_MSM_GCC_8960) += gcc-msm8960.o
+>>  obj-$(CONFIG_MSM_GCC_8974) += gcc-msm8974.o
+>> diff --git a/drivers/clk/qcom/gcc-msm8952.c b/drivers/clk/qcom/gcc-msm8952.c
+>> new file mode 100644
+>> index 000000000000..6b82606dfadb
+>> --- /dev/null
+>> +++ b/drivers/clk/qcom/gcc-msm8952.c
+>> @@ -0,0 +1,3550 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +/*
+>> + * Copyright 2020 Linaro Limited
 > 
-> PINCTRL_PINGROUP does not fit here: groups carry
-> AMBA_PINMUX(pin, alt), not a pin-number list, so I will keep
-> CV75_GROUP.
+> https://android.googlesource.com/kernel/msm/+/android-msm-shamrock-3.10-nougat-release/drivers/clk/qcom/clock-gcc-8952.c
+> 
+> This is our original copyright.
+> 
+>> + * Copyright 2026 Muzaffer Kadir <muzafferkadir@mainlining.org>
+>> + */
+>> +
+>> +#include <linux/kernel.h>
+>> +#include <linux/bitops.h>
+>> +#include <linux/err.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/module.h>
+>> +#include <linux/of.h>
+>> +#include <linux/clk-provider.h>
+>> +#include <linux/regmap.h>
+>> +#include <linux/reset-controller.h>
+>> +
+>> +#include <dt-bindings/clock/qcom,gcc-msm8952.h>
+>> +
+>> +#include "common.h"
+>> +#include "clk-regmap.h"
+>> +#include "clk-pll.h"
+>> +#include "clk-alpha-pll.h"
+>> +#include "clk-rcg.h"
+>> +#include "clk-branch.h"
+>> +#include "reset.h"
+>> +#include "gdsc.h"
+>> +
+> 
+> Add DT_BI_TCXO enum.
 
-I didn't get. It takes a pin as a parameter and adds the function on top
-of it. It is a combo, but I think it still fits the purpose. Please, use
-existing data structure and a macro.
+Should I rename the clock name to bi_tcxo?
+Or should I use DT_XO for enum?
 
-> At 2026-09-16 18:49:58, "Andy Shevchenko" <andriy.shevchenko@linux.intel.com> wrote:
-> >On Tue, Sep 15, 2026 at 07:15:42PM +0800, Long Zhao via B4 Relay wrote:
-
-...
-
-> >> +#define AMBA_PINMUX(pin, alt)		(((alt) << 12) | (pin))
-> >> +#define AMBA_PINMUX_TO_PIN(mux)		((mux) & 0xfff)
-> >> +#define AMBA_PINMUX_TO_ALT(mux)		(((mux) >> 12) & 0x7)
-> >> +
-> >> +struct amb_pinmux_group {
-> >> +	const char *name;
-> >> +	const u32 *mux;
-> >> +	unsigned int nmux;
-> >> +};
-
-^^^ left for the context.
-
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Best regards,
+Muzaffer Kadir
