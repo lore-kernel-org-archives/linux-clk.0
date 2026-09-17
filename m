@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94EE63161BF;
-	Thu, 17 Sep 2026 06:54:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C18D43B38B1;
+	Thu, 17 Sep 2026 06:55:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789628049; cv=none; b=MXSwNFRm+rHO8g90dHq9rfw9gnKQ6o+RhXc4xVSnR6fFUDHl8Qa0W3WbjsFRbi1WWzyQS5Sa0HXb59O9EiHYMhF90ESbBa28rI/qkLoTRFwDqFkfMvTgtW8iXJysdZZqWh/jI0qdxnJekoE2UBHbS0ayNIC8wm1j9cdKZ7bGOJE=
+	t=1789628118; cv=none; b=Lc2vkQq4ThytvnwWSnK/zwpEFrenD7FlvE+Ge4T48tgzQ/RTkxEpP6szn/Mrol8ouS5tA1tg5qFBzuSDVxzWYbb6WErMlBKsqt5onMIdZjps5P+mVrQGAS29MQ75CVO/kniTLC27rSYg71Qi+27fbC3XsJwd+CXHz9vwEK5mKl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789628049; c=relaxed/simple;
-	bh=TA3ekDgQoou/brU8V/tAxnQf7YkcwolViT1lb/xQg6U=;
+	s=arc-20240116; t=1789628118; c=relaxed/simple;
+	bh=HM1fKyYrPv8uf1vivasevvyzAoFBsZ9p3FoIxkBk9HM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BtxYfg1U22HkrDSVY+bcOJiqzHuPlNqrtGX8EJmcnJU8vSH1AIfTfAXmo51c9gIIg8KAr6VhVvk2rh2V6JpaOVi/hpe2HUY0B3mE12wfTK9UfhMCznH3EkvZhM2745Omdq7bKe1+Zw/crE/yX/xXfjvKO7PZwKPqzRoDfXUFhsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BYQFrk84; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=FLshU9NxbewZCVRx7Uff5HqqiZEjxnzNxWVzhkDhgxVRNNO3Mnm7YX7U6qZuqzbH7l7PnEjFf/x2g6uhHip57HDVFe8CtZ9i14qHum+VuKwTLp91q8CLsMnfb6LzOno7dOIvTBE1xXspsVH/E5bfApn3wfjXWuOa5VDRraGxHSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K+tHetcK; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BYQFrk84"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8B6B1F00893;
-	Thu, 17 Sep 2026 06:54:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K+tHetcK"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BC1C1F000FF;
+	Thu, 17 Sep 2026 06:55:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789628047;
-	bh=i4O8U0MAhOl2eGKyRFael2sPT5jAuyl8qT2oFFIB9dU=;
+	s=k20260515; t=1789628116;
+	bh=0cpgHu6US2Uily33ztbXw+ldbSJYhicXWHuvO/gNsVk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=BYQFrk844ugfaT6DeR5Ft1dspJCO7mkNvKkEWiSRYfJEObqmoAO8iKBYCdfKArq7D
-	 0WPM4VGXSASZc6WIQHDopchjqu3GYLh42OP+xh02fhP1Euq8KAmQglwftymtG+EBqc
-	 sDE++Mp5Wr3eG6kIvmgwD3puh2C5J+eZPQD8i6yy0mQqUp4hKEfemG2UTQecWiKcEe
-	 uX/3W0ULVC4asOMa2RCLACdnkXzV2aPiC50CkHJFr1xcoCbYk98NF4SXBxTaqqYOlL
-	 WUHdTXIwUZPDP85sBpAmsjOpFdXOjYmtxb365QAKppO8ve2+zxc1rv5vlNDiJP9IWo
-	 xqPZtVC8ZFffQ==
-Date: Thu, 17 Sep 2026 08:54:03 +0200
+	b=K+tHetcK34nXqZBo42umrkNZLCznX3OoUq60qydN7AWoh72XWvcHTY/HcOOnlVtde
+	 qVJDbPHGv5E5c68XcmAedHb6xb4daXvABWGiXNaLlYUpAdnbZogBFYd115b3AE+shz
+	 lWQfEnWIe6toV9HtZ1f/1chhdhHOg6d1ZtV1Z8ZNoNEaXe+qazVRUDdYXl7shlvtfS
+	 aR+wVMFKp+rYB+FgjNa7kjeoqO3gvs/tK0lWB37KVziPoHtKU2JdgCuI5gAlFSvgyp
+	 TwNNJ7vybPmM2yKYtZzl/vGyfuN2r2q19v8Ma1zKH8xpqdbIND17H4cD4tByqqW3N9
+	 jgF9iWc/O7F2A==
+Date: Thu, 17 Sep 2026 08:55:12 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Michal Wilczynski <m.wilczynski@samsung.com>
 Cc: Vinod Koul <vkoul@kernel.org>, 
@@ -50,12 +50,12 @@ Cc: Vinod Koul <vkoul@kernel.org>,
 	Maud Spierings <maud_spierings@murena.io>, Graham Markall <hello@big-grey.co.uk>, 
 	Icenowy Zheng <zhengxingda@iscas.ac.cn>, Chaoyi Chen <chaoyi.chen@rock-chips.com>, 
 	Joshua Peisach <jpeisach@ubuntu.com>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Subject: Re: [PATCH v4 03/20] dt-bindings: mfd: Add
- starfive,jh7110-hdmi-subsystem
-Message-ID: <20260917-colossal-phenomenal-rattlesnake-7aca88@quoll>
+Subject: Re: [PATCH v4 04/20] dt-bindings: soc: starfive: Add
+ starfive,jh7110-vout-syscon
+Message-ID: <20260917-crazy-meteoric-trout-3c041d@quoll>
 References: <20260915-jh7110-clean-send-v4-0-f0e4fd6f2cc8@samsung.com>
- <CGME20260915153218eucas1p278c4870936afe1aaa52438660418f8c8@eucas1p2.samsung.com>
- <20260915-jh7110-clean-send-v4-3-f0e4fd6f2cc8@samsung.com>
+ <CGME20260915153220eucas1p1f5b0e03015500d9d66db8993426c8734@eucas1p1.samsung.com>
+ <20260915-jh7110-clean-send-v4-4-f0e4fd6f2cc8@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -64,68 +64,20 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260915-jh7110-clean-send-v4-3-f0e4fd6f2cc8@samsung.com>
+In-Reply-To: <20260915-jh7110-clean-send-v4-4-f0e4fd6f2cc8@samsung.com>
 
-On Tue, Sep 15, 2026 at 05:32:11PM +0200, Michal Wilczynski wrote:
-> Add the dt-binding for the StarFive JH7110 HDMI subsystem.
-
-Your cover letter, in the first paragraph, should explain the
-merging/dependencies constraints - this depends on previous patches and
-cannot be taken alone.
-
+On Tue, Sep 15, 2026 at 05:32:12PM +0200, Michal Wilczynski wrote:
+> The video output subsystem has its own system controller, documented as
+> dom_vout_syscon. Among other things it holds the mux that selects which
+> DC8200 output drives the HDMI transmitter, so the HDMI controller needs
+> to reach it.
 > 
-> The JH7110 HDMI IP is a monolithic block containing both the digital
-> controller and analog PHY in a single register space. This binding
-> defines the parent device, which holds the shared register map and
-> populates its two children: the PHY and the controller. This is
-> necessary to resolve a circular clock dependency between the HDMI block
-> and the VOUT clock generator.
-> 
-> Reviewed-by: Joshua Peisach <jpeisach@ubuntu.com>
 > Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
 > ---
->  .../mfd/starfive,jh7110-hdmi-subsystem.yaml        | 95 ++++++++++++++++++++++
->  1 file changed, 95 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/starfive,jh7110-hdmi-subsystem.yaml b/Documentation/devicetree/bindings/mfd/starfive,jh7110-hdmi-subsystem.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..18034d8273b860b71d386cfc63a125f21b20a6b1
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/starfive,jh7110-hdmi-subsystem.yaml
-> @@ -0,0 +1,95 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mfd/starfive,jh7110-hdmi-subsystem.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: StarFive JH7110 HDMI subsystem
-> +
-> +maintainers:
-> +  - Michal Wilczynski <m.wilczynski@samsung.com>
-> +
-> +description:
-> +  The StarFive JH7110 HDMI block is a monolithic IP containing both
-> +  the digital controller logic and the analog PHY logic in a single
-> +  register space. It sits inside the video output subsystem, which owns
-> +  the NoC bus clock and reset gating this region and the power domain it
-> +  belongs to.
-> +
-> +properties:
-> +  compatible:
-> +    const: starfive,jh7110-hdmi-subsystem
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  phy:
-> +    $ref: /schemas/phy/starfive,jh7110-inno-hdmi-phy.yaml#
-> +
-> +  controller:
-> +    $ref: /schemas/display/bridge/starfive,jh7110-inno-hdmi-controller.yaml#
+>  .../devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml         | 1 +
+>  1 file changed, 1 insertion(+)
 
-This node is just too empty... but let's discuss this in the phy patch,
-where I already commented.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
 Best regards,
 Krzysztof
