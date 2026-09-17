@@ -1,157 +1,132 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm2-f13.google.com (mail-wm2-f13.google.com [74.125.225.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5995D4908A2;
-	Thu, 17 Sep 2026 08:39:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B14948F001
+	for <linux-clk@vger.kernel.org>; Thu, 17 Sep 2026 08:42:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789634369; cv=none; b=gMYrBa7KizHcwBLGWAWm8JqoA5IlvMg61mby9r7mhxBQU1/B3SYo5sOKOAv6NiNSyM53CKZBfOjQqDNGhFxxDHVp741/K9tC0lMxwDp40LuBR0sAFF4O4JORyJNWzGClG0cOqoHzDNfKFOmbcUlUpvIfvxwRoU056wA1A3npwEA=
+	t=1789634572; cv=none; b=ugl6f4hn0oscJDlHfdH96Rjm64f0Cq3JmEQNyO9oJgXsd0Eu4Fdkyom5scJd2Yo5Ts6utYjQMWkFJHb2sDN7J3k3stMEovDqL3+uCgd8olUH2AiloIXwVAv+TL/d6eqEX6MtLlLGt6CjkGZQKfpw10WO3bXLjAg1wVcMyztQiKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789634369; c=relaxed/simple;
-	bh=VOIt5Ueo84n51MFKJuHQvwxVAUjNMQhMgUwGhvuj4U0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=oX3DpDLutkQFHTuTu6Bo1gjwgXCFdZ668Bu8QQzWS6cxyshkUVmzr1LLCRaGSmJhu58HzPevYjPTRCKfKc9xZgAicoGVe+fdM660CV5nab+17SVT2VuP/289wBHckG0EYLsHEnldVPRV1gCgGjwdCJHGLngxF4AKctCZy9MzGGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=op4rD8uE; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1789634572; c=relaxed/simple;
+	bh=nVMG1SbekNaLvNRQlQ39Yo+Gy2z6qKasZ304GKCy2GQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FGqXx3l1A/+qXhnp+nOz5OzW+x/xzt19VV1zCRW5jxSpc9/hsssclkBK9edynF/9zztR8jxB2AlUvIQEX2WMMcQ6KJRgzQkTWxe8Ks0yHvmt1Qkid2/6idjGP1zDsdTSaBG5TlVQ8WZaGUMsKEZrksOMsTXPQH/iW5F+lKKSEus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=He8UH1C3; arc=none smtp.client-ip=74.125.225.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="op4rD8uE"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 9323EC2BCB9;
-	Thu, 17 Sep 2026 08:39:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1789634368;
-	bh=VOIt5Ueo84n51MFKJuHQvwxVAUjNMQhMgUwGhvuj4U0=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=op4rD8uEUK/AzE43MHX1I9PC4JU96Ro7LGZYPP2WsNqMVftFZdPt+OQEzHiQVfe0F
-	 CCf3ZZupv+nE+xTjsVSShPRWfRhDp2vqQ7HZxYtWtoBJFIifPR/T2DA54k2oByeEtt
-	 GrP6hnPAAyPe95qwfwBmkE/mfG+JNQ7Q4eP1eWcMz7HgPFtEUmcNlxDaaGZpXAWpTl
-	 +aFhRQ/5kbGY+arZ2I41sRCmK4IYPkPT4J0dqx6Ru0lz/sNWqiAlPO6qXXMDLRSN5M
-	 HaF8eunC1qG16QPm4khVdyF16nQdDNYmm+0Tz/BjGk0rqkqp9kZsSDBOMZoUNZeCcJ
-	 BdoImS9cS5Qsw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E17BC88E72;
-	Thu, 17 Sep 2026 08:39:28 +0000 (UTC)
-From: Jian Hu via B4 Relay <devnull+jian.hu.amlogic.com@kernel.org>
-Date: Thu, 17 Sep 2026 16:39:09 +0800
-Subject: [PATCH v3] dt-bindings: clock: Add Amlogic A9 SCMI clock
- controller
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="He8UH1C3"
+Received: by mail-wm2-f13.google.com with SMTP id 5b1f17b1804b1-49e721b5503so5259425e9.0
+        for <linux-clk@vger.kernel.org>; Thu, 17 Sep 2026 01:42:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1789634555; x=1790239355; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=qhnvHXmqUmnS9g4y5J7KmcXx39UVV4BRbHPaDoXYC7Y=;
+        b=He8UH1C3TTEZOxKwlduC92ahxT5UbiUOC7rtz6FAidL5Z3omGGvbgw9944Emm15S7N
+         JwRcshv1tk8TY0Pj1l2YGEAZeVZY8yHhlaSSqgyfFClN4Z+QGO7sgwTC9VJ/+XPNT0oa
+         mNjyKZM7wfckQ5De/YI1mzPjOez4YepfoizBAGiV+lrb3drSgKhEPM9SYLLFZx9MwrWG
+         asNF0f9ZOhWfK8LXEbfQgydZjfTTeNuj0OkLjCE5/hcZtrEISdFffBb7vBfiv569iK4G
+         7u5cD1mWdOtZFqWkTpM5VSyqQTWy0zsowKATO5srX3ZogVEsbdiXjfkRgUYaJVR0DUuN
+         fzUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1789634555; x=1790239355;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=qhnvHXmqUmnS9g4y5J7KmcXx39UVV4BRbHPaDoXYC7Y=;
+        b=ASHIKDaDX3ztYYgWJVgG3laGcZZZmhm9oWSrqDINdEm/zxM7f0z96+128v0sjmP9LF
+         NkmqSUYsS8JmOiM1sWsXQs3mAzI62V6zf78/MPT5ixjIs3JSz61okhsz1HDNClclFoQ4
+         zOxRy/5Nijdsv85NUMw0B/FlEZr8L8ep9oGJ5VI7p4IGNBRJS9PV8b78I5bWl6k1pWPq
+         rM+ih9c4YocKqut56+UNvO/fKgI0C4zjt8xBPxn6F/4h/2XiWENtYs2XixNcRUEXwRjk
+         M7spe+Y3Y5CdNgubIfqCdqtNTWk0ok2HZM1YPUyvkv91I+SyFoUSOfTzAssoNmUayObY
+         8pCg==
+X-Forwarded-Encrypted: i=1; AKwUvBwHhvYwjfh9OVabXYl7gQxchpVwzmoyuzNeNYijKMB4E6W7CfUP2AHT7+D9pgmJIlBvcKLfA3qQhMQ=@vger.kernel.org
+X-Gm-Message-State: AFuF++kf57mmwW2h2VYgBOKVAkbF4Nx0H7Z5w7dZH1Ngzlm3V9bYiktr
+	rEoPhjMha//J6OxcB+lzhbu79TFH3tKhrN6sUP2+q7P/v8tmI1ADn638
+X-Gm-Gg: AYBFou3ciaUkqWJUvPTI1aceBHKTDw68SbgO+y0wOgTZXdhSU20VlGkMyTZnSV0Aobm
+	y3GD61LFfUvf54XJjcdPEV2YjfB6Nymcldl2cTIhoVOKVq7zOr+g0MNb8V5AhY+ldnPmZqmsUdY
+	8B1vERxp80l7E/uwu7yy2waf7IpdoAT9ASMWJWnyXa4xIGqM3S48y0KcBN4KbUDe/hfkYcQGY9N
+	p5mpoRB6oIIlpp4NtAcBLFoXXMUSrYoqCf6lndc2Uxi+H5JyRAsoTy8TjBQH9zeVsTsWTdapblr
+	n3Yxb4AIq5y6vFhd3Cb//O9WWWLzNSK1q0n6y9SUNdfNCf8S4mfeNe9MDSBleyzIOK+cdMRyyJT
+	VzFy3l2IMD68pM8X88OClD8WFoNgbeze3PSUxF56v/MuIL0+I0bT0NyMbuCh9frkY11xLhOO3SP
+	c/Lkxsgg6zQmQunur+UOsHTbklUSezRgV+yJ4pmgrRnYhhXPO/JbTciYCPMZd06/uK5WPdIqFe8
+	pLuMVZdLRLNW4O6wAsDifFBquhII4jFHxQrakAyzuqadBGRd65aXTksZpgFQ9wQcy1+mw5VdOiE
+	WlEAr734SDSNAvaPw7VZ5asrpQbiCU1JEsIJk60uQuCwaI14fhn+P2oZFp2PVSrHyoU0/1vgTPT
+	jCUrvDG4Df+6RBgD1XpWjp+r4MOmo1vtYyHl4Ic7bpKIELRHIfoJcHx8AhWbw9DkTleb0s4Vlhf
+	OC37a67iOm+ABypaQ=
+X-Received: by 2002:a05:600d:6446:10b0:49f:bc43:9e8e with SMTP id 5b1f17b1804b1-49fbc439f6dmr34380115e9.26.1789634555063;
+        Thu, 17 Sep 2026 01:42:35 -0700 (PDT)
+Received: from localhost (90-182-112-124.rcp.o2.cz. [90.182.112.124])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49fbd1d0978sm56898145e9.2.2026.09.17.01.42.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Sep 2026 01:42:34 -0700 (PDT)
+Date: Thu, 17 Sep 2026 10:42:33 +0200
+From: Joshua Crofts <joshua.crofts1@gmail.com>
+To: Frank Li <Frank.li@oss.nxp.com>
+Cc: Johan Hovold <johan@kernel.org>, Abel Vesa <abelvesa@kernel.org>, Peng
+ Fan <peng.fan@nxp.com>, Stephen Boyd <sboyd@kernel.org>, Brian Masney
+ <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, Frank
+ Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
+ Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
+ linux-clk@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] clk: imx: add missing
+ pm_runtime_dont_use_autosuspend() calls
+Message-ID: <20260917104233.00007a85@gmail.com>
+In-Reply-To: <20260917102429.00002faf@gmail.com>
+References: <20260915103345.1334-1-joshua.crofts1@gmail.com>
+	<aqpgUPWUGZp5Cjzt@hovoldconsulting.com>
+	<aqq_ymTi1I951uQp@SMW015318>
+	<20260917102429.00002faf@gmail.com>
+X-Mailer: Claws Mail 4.4.0 (GTK 3.24.51; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260917-a9_scmi-v3-1-5ad843766774@amlogic.com>
-X-B4-Tracking: v=1; b=H4sIACynq2oC/2XMQQrCMBCF4auUWRuZJrW0rryHFJmmYztgGkkkK
- CV3N3br8n88vg0iB+EI52qDwEmi+LWEOVRgF1pnVjKVBo26xRaNov4WrRPVkG5MPWI3cQfl/Qx
- 8l/cuXYfSi8SXD58dTvq3/htJq1qZExLbnsYa6ULu4WexR+sdDDnnL5hzRWqgAAAA
-X-Change-ID: 20260603-a9_scmi-4a2431b08de8
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>, 
- Jian Hu <jian.hu@amlogic.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1789634366; l=2919;
- i=jian.hu@amlogic.com; s=20260415; h=from:subject:message-id;
- bh=WQM5jl9E8gItT5ANuR7GZhx7n8JoVv2XfXGNwu6d1P4=;
- b=i/KIdVkG2b96oq/izhj1bcE1ZkVA1v5Ve8xYqMnFWGApZWJaIXYUIAbiX6LELtXvgkzAxlzDX
- L0FTn9MOAM2BdQSkxT50WnOFjr2jpeoR5t4ILIqtXG035TmpkTXEIIK
-X-Developer-Key: i=jian.hu@amlogic.com; a=ed25519;
- pk=zHUE+rNtH9z+Sb8au1/elWknjFQmy5QDVkBoxleuOIA=
-X-Endpoint-Received: by B4 Relay for jian.hu@amlogic.com/20260415 with
- auth_id=735
-X-Original-From: Jian Hu <jian.hu@amlogic.com>
-Reply-To: jian.hu@amlogic.com
 
-From: Jian Hu <jian.hu@amlogic.com>
+On Thu, 17 Sep 2026 10:24:29 +0200
+Joshua Crofts <joshua.crofts1@gmail.com> wrote:
 
-Add the SCMI clock controller dt-bindings for the Amlogic A9 SoC family.
+> On Wed, 16 Sep 2026 11:11:54 -0500
+> Frank Li <Frank.li@oss.nxp.com> wrote:
+> 
+> > On Wed, Sep 16, 2026 at 11:24:32AM +0200, Johan Hovold wrote:  
+> > > On Tue, Sep 15, 2026 at 10:33:43AM +0000, Joshua Crofts wrote:    
+> > > > Several drivers in the clk subsystem forget to call dont_use_autosuspend()
+> > > > on teardown or error, causing potential resource leaks. This series adds
+> > > > the missing calls.    
+> > >
+> > > No, as I've explained repeatedly elsewhere, it does not cause any
+> > > resource leaks. [1][2]
+> > >
+> > > The autosuspend setting leaks if you will, but that only matters in the
+> > > theoretical corner case of someone rebinding a different driver (which
+> > > will soon also taint the kernel).
+> > >
+> > > So don't exaggerate the impact, this is essentially just a cleanup,
+> > > which is fine in itself.    
+> > 
+> > Is it possilbe to create/improve runtime pm API, let runtime_pm enable/disable
+> > include these pair functions.
+> > 
+> > I get many similar patches since scan tools is more powerful now.  
+> 
+> I suppose that could work. One would still have to scrub the kernel of legacy
+> use/dont_use_autosuspend() calls though, so it could end up being a large
+> patchset.
+> 
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-Signed-off-by: Jian Hu <jian.hu@amlogic.com>
----
-Changes in v3:
-- Add Conor Dooley's Acked-by tag.
-- Link to v2: https://lore.kernel.org/r/20260603-a9_scmi-v2-1-350aec9ab10a@amlogic.com
+On second thought, some drivers do tend to disable PM runtime system sleep
+etc. so it probably isn't as simple as adding the autosuspend stuff to
+enable/disable.
 
-Changes in v2:
-- Split the A9 clock driver and send the SCMI clock separately.
-  The A9 PLL introduces several new features, and the Meson PLL framework
-  needs to be refactored to support them. Since this work requires more
-  time and there is no hard dependency between the different A9 clock
-  controllers, split out the A9 clock driver and submit it separately to
-  ease review.
-- Link to v1: https://lore.kernel.org/all/20260511-b4-a9_clk-v1-1-41cb4071b7c9@amlogic.com/
----
- include/dt-bindings/clock/amlogic,a9-scmi-clkc.h | 51 ++++++++++++++++++++++++
- 1 file changed, 51 insertions(+)
-
-diff --git a/include/dt-bindings/clock/amlogic,a9-scmi-clkc.h b/include/dt-bindings/clock/amlogic,a9-scmi-clkc.h
-new file mode 100644
-index 000000000000..d543db9fe035
---- /dev/null
-+++ b/include/dt-bindings/clock/amlogic,a9-scmi-clkc.h
-@@ -0,0 +1,51 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/*
-+ * Copyright (C) 2026 Amlogic, Inc. All rights reserved.
-+ */
-+
-+#ifndef __AMLOGIC_A9_SCMI_CLKC_H
-+#define __AMLOGIC_A9_SCMI_CLKC_H
-+
-+#define CLKID_GP0_PLL_OSC			0
-+#define CLKID_GP1_PLL_OSC			1
-+#define CLKID_HIFI_PLL_OSC			2
-+#define CLKID_GP2_PLL_OSC			3
-+#define CLKID_MCLK_PLL_OSC			4
-+#define CLKID_FIXED_PLL				5
-+#define CLKID_FCLK_50M_PREDIV			6
-+#define CLKID_FCLK_50M_DIV			7
-+#define CLKID_FCLK_50M				8
-+#define CLKID_FCLK_DIV2_DIV			9
-+#define CLKID_FCLK_DIV2				10
-+#define CLKID_FCLK_DIV2P5_DIV			11
-+#define CLKID_FCLK_DIV2P5			12
-+#define CLKID_FCLK_DIV3_DIV			13
-+#define CLKID_FCLK_DIV3				14
-+#define CLKID_FCLK_DIV4_DIV			15
-+#define CLKID_FCLK_DIV4				16
-+#define CLKID_FCLK_DIV5_DIV			17
-+#define CLKID_FCLK_DIV5				18
-+#define CLKID_FCLK_DIV7_DIV			19
-+#define CLKID_FCLK_DIV7				20
-+#define CLKID_SYS_CLK				21
-+#define CLKID_SYS_AO_SYS			22
-+#define CLKID_SYS_MMC_APB			23
-+#define CLKID_SYS_CPU_APB			24
-+#define CLKID_SYS_GIC				25
-+#define CLKID_AXI_CLK				26
-+#define CLKID_AXI_SYS_NIC			27
-+#define CLKID_AXI_RAMA				28
-+#define CLKID_CPU_CLK				29
-+#define CLKID_A78_CLK				30
-+#define CLKID_DSU_CLK				31
-+#define CLKID_ACLKM				32
-+#define CLKID_GP1_PLL				33
-+#define CLKID_GP2_PLL				34
-+#define CLKID_SYS_PLL_DIV16			35
-+#define CLKID_CPU_CLK_DIV16			36
-+#define CLKID_A78_CLK_DIV16			37
-+#define CLKID_DSU_CLK_DIV16			38
-+#define CLKID_GIC_CLK				39
-+#define CLKID_RTC				40
-+
-+#endif /* __AMLOGIC_A9_SCMI_CLKC_H */
-
----
-base-commit: 43e1705ecab981c66baee89041e6f728c0436f19
-change-id: 20260603-a9_scmi-4a2431b08de8
-
-Best regards,
 -- 
-Jian Hu <jian.hu@amlogic.com>
-
-
+Kind regards,
+Joshua Crofts
