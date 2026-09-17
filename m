@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71B8D40EB8D;
-	Thu, 17 Sep 2026 08:32:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0DFF41A50A;
+	Thu, 17 Sep 2026 08:32:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789633947; cv=none; b=KVaKj5HZ6UhsMsOQGiCEJNEVAky4i/Co6QkGDEcGMJjm16h4PzEuHTiprkyhGSi3kTUleUW/bDrS25Ro7hy0s7G9cnVK177OI4BjeEx/0jno+vLLqhqpbhxI6fJ/OO6JT9/+M/nDGvVPHzHI+222ZNNqEVtl1THac6Vws8wAiL8=
+	t=1789633967; cv=none; b=iWSaDTJi0svdu07ytYQuV5UeRdJl/hWc7oe0vbyNnQuGlUtJPQMRQaWR+Y0oQIMz0hQYhKBsBbEZZMxiGrfUNYu18Uc5EITcQ39Ni9IVbAHX/2vWizzrM44e798t9fxhbktm9UuKFN+JJAUa4IBY7vPm/t6jYx8ZSrJVM0T0zbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789633947; c=relaxed/simple;
-	bh=FL8jHSeXwMN2nhXl9d/OOr2sr3Omu0NSl22DIDOqdz4=;
+	s=arc-20240116; t=1789633967; c=relaxed/simple;
+	bh=pBhV7pV5tteP4rdQ5/EnENLRnRz288ytRWIVhLfqVR0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fTqyNUKwbPWJlrzjhYwYXMrTUrr9Td9VEBO8FXOiFNXZEIpvTC9VcGuGmAH5ZtebhHQA+nkhS4xlOIf4i4DEPsSocGcOl+idRXIcS0kf4Op1BO+kwFWC+myKIO440l1PKrrrYcqIwMFWVARsulSahpd4oYEQW3IFO5e57KUALS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l2qFbU+b; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=swQUFxVSbp3P77ARDoAPVfqvzMFvDU4W29gkTXgQQDM66fwJRKYrkmtLonrD4DcrTbKPxcOeFuhb6bD781RyPoA9kKmowShLQlRMZO5mWffEbgvlhQooTauHCzi0RSERTnTmJ2bkEctYaBTVhe0uwgqlFGcbczxGZimWEueMKgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iCOBPGV5; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l2qFbU+b"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D06041F000FF;
-	Thu, 17 Sep 2026 08:32:13 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iCOBPGV5"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90C681F000FF;
+	Thu, 17 Sep 2026 08:32:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789633934;
-	bh=Cor0ZEb/IRiMpjE4CO+Yrv/RhrardI2IO8isZKQ1WZw=;
+	s=k20260515; t=1789633957;
+	bh=XDaej2kYZx06q0/J5jvQ+NA8pencnIXePgZlLeVqX6o=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=l2qFbU+bH0kyhEG1HsUJT0nlLfFCrd/Z6AW8/f5G7i4aPkvQPFiaMlGrcno6eDzNE
-	 bUP7UDzplRKYe7XNRcUKVtaTm31B3ZKAZVLeEN35vmdg0prwxctDYY6tX8fCrYKqHy
-	 MAN5ePcUHH7BXYuy4cEfAKqC+FBG9KR+cJOekCAUfpQ2xUHIATfdqgjVj0xl18k+yH
-	 EVaHsoABToUh0xFn+jpxgUNzJrNtPuLFReJ95AbbYXBggnwnBLWGu2TkjO1E2x/5DS
-	 jgDqQeiSLrPKfxNL5JEvgi5r2Ss9aFGw931usGTsjmL+yrqBJkvkY6s/z0GlZmF8r8
-	 FpVk1RWuexKOg==
-Date: Thu, 17 Sep 2026 10:32:10 +0200
+	b=iCOBPGV5PzIObhixwzptQ/Yb6j1Gey+pdo4lZmjTk7wR7V9FcUebw2o7T3Q041kcL
+	 iqthbjW5HicWNJLcVbd4ZKmCQTaj55r5/cmVg4apm96QXooWpE0ZdG2I2IIORVl8sr
+	 LyRvhr1kLEzFeADULcA8gPQtqZmMY7dazEXRhkUhfR/dL6y5qzzgMwmfcfqG5bRscY
+	 trl3os8F/gD4WS4DzvVmPgPsLWQ3sspaXMqs35yLAQriPlVjYIH/RYzF9DGGWmyN0U
+	 S6ZJNqdqXcgGt7Hm4gdwh+kV1Ja7ccgAwXpzKcSAWSz0CKshFvlL4mch+FnGHvnMMe
+	 FAoeNOeFxJFOA==
+Date: Thu, 17 Sep 2026 10:32:33 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Abel Vesa <abel.vesa@oss.qualcomm.com>
 Cc: Bjorn Andersson <andersson@kernel.org>, 
@@ -40,11 +40,11 @@ Cc: Bjorn Andersson <andersson@kernel.org>,
 	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Tengfei Fan <tengfei.fan@oss.qualcomm.com>, 
 	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 11/52] dt-bindings: clock: qcom: gcc-sm6350: Add CX
+Subject: Re: [PATCH v4 12/52] dt-bindings: clock: qcom: qcs8300-gcc: Add CX
  power domain
-Message-ID: <20260917-curious-nautilus-of-will-b1c356@quoll>
+Message-ID: <20260917-wandering-cooperative-bird-89755e@quoll>
 References: <20260914-qcom-tie-cx-to-gcc-v4-0-9d5a606ada33@oss.qualcomm.com>
- <20260914-qcom-tie-cx-to-gcc-v4-11-9d5a606ada33@oss.qualcomm.com>
+ <20260914-qcom-tie-cx-to-gcc-v4-12-9d5a606ada33@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -53,10 +53,10 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260914-qcom-tie-cx-to-gcc-v4-11-9d5a606ada33@oss.qualcomm.com>
+In-Reply-To: <20260914-qcom-tie-cx-to-gcc-v4-12-9d5a606ada33@oss.qualcomm.com>
 
-On Mon, Sep 14, 2026 at 03:47:10PM +0300, Abel Vesa wrote:
-> The GDSCs provided by the SM6350 GCC are supplied by the RPMh CX
+On Mon, Sep 14, 2026 at 03:47:11PM +0300, Abel Vesa wrote:
+> The GDSCs provided by the QCS8300 GCC are supplied by the RPMh CX
 > power domain. Model that parent domain in the GCC binding so the
 > provider can describe the dependency in devicetree.
 > 
@@ -66,7 +66,7 @@ On Mon, Sep 14, 2026 at 03:47:10PM +0300, Abel Vesa wrote:
 > 
 > Signed-off-by: Abel Vesa <abel.vesa@oss.qualcomm.com>
 > ---
->  Documentation/devicetree/bindings/clock/qcom,gcc-sm6350.yaml | 7 +++++++
+>  Documentation/devicetree/bindings/clock/qcom,qcs8300-gcc.yaml | 7 +++++++
 >  1 file changed, 7 insertions(+)
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
