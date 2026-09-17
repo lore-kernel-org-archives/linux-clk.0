@@ -1,113 +1,99 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 809D34E2F01;
-	Thu, 17 Sep 2026 12:17:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B54AC2EA15C;
+	Thu, 17 Sep 2026 12:20:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789647476; cv=none; b=OchPlI7Qxh40EH5ihRzzlBBMTDKxfwi+W5NZaQImG3v448qkxR1P4niFuJ503DljZdq+Mj9dYTThdFQCWQjFjB+n6rsDK4O9mfrnSCWbqZfnc7YBOhCp3TjiLi6dl8yqAkY3tR58JqOtfyC8+eqygPeLL6l+gipX//bv+lkandY=
+	t=1789647656; cv=none; b=COnc2prSoyRJYFTlK6nDKKEjk/iJqXvh8nN9tYpyWsZr3xQr0XNg4whiAHbY52fuWwH/JwzOzqLZl89ApEOYz3CQ34p7bIgxb0lE89J+CvJpwDGb7ycojhC9XH0fPfXu0wba6S2sTSRZREbetxKFXazGCJ0o3DKWlp1o7z0ceKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789647476; c=relaxed/simple;
-	bh=pJhDjtEfI3y/JufdwLLfcoX28rId297lZF6Ojq5idWk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iNHCJpYPh4vDNoceQ7aF0siP2QhrS2BiYqLciixKBdxw8slUjz3fUZ1GT7bvARSW+joWJomdQMztRM3/hb7CKdbJrKrxrlM8hH56qhPLsydCviZK6IQENRDozx3ttpdGLnJCJF6oh1wzuC4t2vIrZWwAwV49YxlPlS+/w7wpYao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=nZ6F752Z; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1789647656; c=relaxed/simple;
+	bh=HTs1Ltxxpoubxx93SVWaXFYXNJYsNMQz13NnRDCz9qI=;
+	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=ep2iKWeW/a7OLAh3kLVfZXRtsjRZ4v+23swn1e2kgebpoxnTvJHhZsPO9+xTf/NjqNwqYz25rBK1/yPetjE8evD2zhOclunLZhvFyWjXEigIoG/SMM1nm4M5+Tprq6SRqeOJ16f1q2A6RiAlEjtmvQ/J/2CEfOhTeAk0Xo79NC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AvNmdrPw; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="nZ6F752Z"
-Received: from killaraus.ideasonboard.com (2001-14ba-70f3-e800--a06.rev.dnainternet.fi [IPv6:2001:14ba:70f3:e800::a06])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1959F2C6;
-	Thu, 17 Sep 2026 14:15:57 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1789647357;
-	bh=pJhDjtEfI3y/JufdwLLfcoX28rId297lZF6Ojq5idWk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nZ6F752ZtElaAUm6diuaB4eUGYTulF1GRH97dfMKLfFjIEWMlDW+Jv4ge6Tn2VWH8
-	 pBQReX2ZMk0xeqVZQsN73mjKODnJrxyJqMXvp+8H8VxNDOfb/7Sr2y4LQazH+7t3pR
-	 v3mGlAlaAciE8asKKJTcyuD3jMLcauYzi0sv4fMo=
-Date: Thu, 17 Sep 2026 15:17:37 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Paul Elder <paul.elder+renesas@ideasonboard.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>, Ulf Hansson <ulfh@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH 00/10] media: rcar-fcp, vsp1: Enable on R-Car X5H
-Message-ID: <20260917121737.GB44274@killaraus.ideasonboard.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AvNmdrPw"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 305591F000FF;
+	Thu, 17 Sep 2026 12:20:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789647632;
+	bh=n3+IMej8FKw+H7EY6KDO0qhxO3eul7RlOk5+A+sLSIM=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=AvNmdrPwj1ndlHUZlEopWdAPJIbvcjJ44jgaw3qDbifY52Cu2pB1V6TuWcwVDmmRH
+	 o3qxysDOCrbgBuAbgB3bNi8jHYvVYMaTlDeT+a+uWYr/etsgs0EqJMT8GZyemUQXy/
+	 rvm6xtDmY/2QEX886zmK1tychpP8LQicN46I2p0EsDyb2E4uDpSDYoLQCWjRGI0/f9
+	 Uc/pMNp/6LPmpfhWzsTFQt5RjBSG2Ya4g8mI5oYb9KDQZKZP4MAQEKW1XOSFtjXi2w
+	 RpmtVM4YImH9D0sPuN4aFIrQNN9LhzmsU6kFMEzLMYchoRcbGoR5xciaZVYuS9DO/Z
+	 fyTehHruL68hA==
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH 02/10] clk: renesas: r8a78000: Add clock for FCPV and
+ VSP for SCP FW SDKv4.36
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Paul Elder" <paul.elder+renesas@ideasonboard.com>
+Cc: linux-clk@vger.kernel.org, media-ci@linuxtv.org, robh@kernel.org, wsa+renesas@sang-engineering.com, devicetree@vger.kernel.org, conor+dt@kernel.org
+In-Reply-To: <20260917-epaul-v7-3-rc1-x5h-vsp-fcp-v1-2-4c72d4e086dd@ideasonboard.com>
 References: <20260917-epaul-v7-3-rc1-x5h-vsp-fcp-v1-0-4c72d4e086dd@ideasonboard.com>
+ <20260917-epaul-v7-3-rc1-x5h-vsp-fcp-v1-2-4c72d4e086dd@ideasonboard.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 17 Sep 2026 12:20:31 +0000
+Message-Id: <20260917122032.305591F000FF@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260917-epaul-v7-3-rc1-x5h-vsp-fcp-v1-0-4c72d4e086dd@ideasonboard.com>
 
-On Thu, Sep 17, 2026 at 09:04:39PM +0900, Paul Elder wrote:
-> This series is based on Geert's
-> "topic/rcar-x5h-ironhide-scmi-cpg-mdlc-remapping-v3" branch [0]. A
-> branch including this series is available here [1].
-> 
-> This series enables the FCPV[BI] and the VSP[BI] blocks on the Renesas
-> R-Car X5H SoC.
-> 
-> This has been tested on an Ironhide with the vsp-tests test suite [2]:
-> 148 tests: 142 passed, 0 failed, 6 skipped
-> 
-> There was some odd behavior with the clocks, where from what I
-> understood was that the clocks for the FCPV[BI] and VSP[BI] are
-> always-on, but the tests would hang unless I explicitly enabled...  the
-> always-on clock (or fsleep). Then after I removed the patch that
-> explicitly enabled the always-on clock everything ran fine. Just
-> reporting that this happened just in case it's relevant.
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
+- [Medium] clk: renesas: cpg: SDKv4.36 clocks applied to SDKv4.31 firmware =
+map
+--
 
-Well, it's always worrying, but as you can't reproduce it now it's hard
-to debug it. Let's keep an eye on that during further VSP work.
+commit b14958e73ed5111dda065cb1076a7ab55add431c
+Author: Paul Elder <paul.elder+renesas@ideasonboard.com>
 
-> [0] https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/log/?h=topic/rcar-x5h-ironhide-scmi-cpg-mdlc-remapping-v3
-> [1] https://git.ideasonboard.com/epaul/linux/src/branch/epaul/v7.3-rc1/x5h/vsp/fcp
-> [2] https://git.ideasonboard.com/renesas/vsp-tests/commit/900168f58c9d96be0592c2593f4d8f34edc9c69e
-> 
-> Signed-off-by: Paul Elder <paul.elder+renesas@ideasonboard.com>
-> ---
-> Paul Elder (10):
->       dt-bindings: clock: renesas,r8a78000-cpg: Add CPG_SGD4_VIO_DP_{TX,OTHER}
->       clk: renesas: r8a78000: Add clock for FCPV and VSP for SCP FW SDKv4.36
->       pmdomain: renesas: r8a78000: Add maps for VIO for SCP FW SDKv4.36
->       arm64: renesas: r8a78000: Add FCPV[BI] nodes
->       arm64: renesas: r8a78000: Add VSP[BI] nodes
->       media: rcar-fcp: Check device revision at probe time
->       media: rcar-fcp: Handle resets
->       media: vsp1: Support full VSPB on R-Car M3-W, M3-N and E3
->       media: vsp1: Document X5H SoC ID
->       media: rcar-fcp: Add R-Car X5H support
-> 
->  arch/arm64/boot/dts/renesas/r8a78000.dtsi        | 171 +++++++++++++++++++++++
->  drivers/clk/renesas/r8a78000-cpg.c               |   2 +
->  drivers/media/platform/renesas/rcar-fcp.c        | 162 +++++++++++++++++++--
->  drivers/media/platform/renesas/vsp1/vsp1_drv.c   |  13 +-
->  drivers/media/platform/renesas/vsp1/vsp1_regs.h  |   3 +-
->  drivers/pmdomain/renesas/r8a78000-mdlc.c         |  34 ++++-
->  include/dt-bindings/clock/renesas,r8a78000-cpg.h |   2 +
->  7 files changed, 372 insertions(+), 15 deletions(-)
-> ---
-> base-commit: 02c5d61866607bce0b3271e7c1b838c53dbedc55
-> change-id: 20260917-epaul-v7-3-rc1-x5h-vsp-fcp-8afdeb2740f7
+clk: renesas: r8a78000: Add clock for FCPV and VSP for SCP FW SDKv4.36
 
--- 
-Regards,
+This commit adds fixed clocks for FCPV and VSP components. It explicitly
+targets the SCP firmware version SDKv4.36, adding the 266MHz variants of
+the clocks to the static mappings.
 
-Laurent Pinchart
+> diff --git a/drivers/clk/renesas/r8a78000-cpg.c b/drivers/clk/renesas/r8a=
+78000-cpg.c
+> index b820d09e1a195..17792ff6ab8ae 100644
+> --- a/drivers/clk/renesas/r8a78000-cpg.c
+> +++ b/drivers/clk/renesas/r8a78000-cpg.c
+> @@ -326,6 +326,8 @@ static const struct clk_map_in r8a78000_cpg_fw_4_31_0=
+[] =3D {
+>  	{ R8A78000_CPG_SGASYNCD16_PERW_BUS,	FIXED_CLK(66M) },
+>  	{ R8A78000_CPG_S0D4_PERE_MAIN,		FIXED_CLK(200M) },
+>  	{ R8A78000_CPG_MSOCK_PERW_BUS,		1667 },
+> +	{ R8A78000_CPG_SGD4_VIO_DP_TX,		FIXED_CLK(266M)},
+> +	{ R8A78000_CPG_SGD4_VIO_DP_OTHER,	FIXED_CLK(266M)},
+
+[Severity: Medium]
+Does this accidentally leak SDKv4.36 clocks to older firmware versions?
+
+The commit message explicitly targets SDKv4.36, but r8a78000_cpg_fw_4_31_0
+is shared by older firmware versions in r8a78000_cpg_fw_map:
+
+drivers/clk/renesas/r8a78000-cpg.c:
+	{ 0x010d0000, r8a78000_cpg_fw_4_31_0 },	/* SCP FW SDKv4.31.0 */
+	{ 0x010e0000, r8a78000_cpg_fw_4_31_0 },	/* SCP FW SDKv4.32.0 */
+	{ 0x01100000, r8a78000_cpg_fw_4_31_0 },	/* SCP FW SDKv4.36.0 */
+
+Modifying the shared array applies the new clocks to versions 4.31.0 and 4.=
+32.0
+as well.
+
+Should a new dedicated map be introduced for SDKv4.36.0 instead?
+
+>  	{ -1 }
+>  };
+>
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260917-epaul-v7-3=
+-rc1-x5h-vsp-fcp-v1-0-4c72d4e086dd@ideasonboard.com?part=3D2
