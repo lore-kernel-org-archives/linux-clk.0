@@ -1,43 +1,44 @@
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE97152B1E9;
-	Thu, 17 Sep 2026 13:49:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A53A548541;
+	Thu, 17 Sep 2026 13:49:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789652970; cv=none; b=oV3t1Vp5sBQkEbntiSJGGTPcVA4cNjCFJgODXiQkQU/KR2FPuN5jGHafRPZIQUO72ylpLSRblBDHUt/mLuozY8QrwzL7aCi66xDQPZWbuBP4HR/49sSHASeHJ0LsmKkX8g5LCkZnniTNF98wIh9gG0/JNP/JfVxI7pB8n8WAgZw=
+	t=1789652971; cv=none; b=nI8I2FmFIgskp5OwYvg2KAYS5qKB7HEewkaigPsrQLzBYItuPqya5g2vaGoJbdlcvfLmDIe9aKHYatwmOVbj00pfO7YNMrHGgK42+eL61pqFQer6XjdG8k5NlsjMAk58ErDVTlLn28/LKHHp9Ll0geMFE7tCgC9UfK3i2YTbEFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789652970; c=relaxed/simple;
-	bh=UNAUWNTqDPEuEuXC9mWoAT2pgMMEmi++BoO2+4ivAP0=;
+	s=arc-20240116; t=1789652971; c=relaxed/simple;
+	bh=I5wKmiysBTuYLPKycTb4r8SCqRgtc3YcQ663wjfvpFY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=l/vJ6bRAYxOqR9AAJ2xtiHY4kZPiEg4E/1t6z6Hs84xRD2B8npKojppw0o1tcTq4VyPhOZJuBa/HWCxswx83DtMmN0kEaKJUAloXPymdiSviEcCAU//sanN3Jh+59sPgbsj5n4WNLwdNUGj9zevMIy8lJ+8Gd2Zy7iPrjUXnLJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=QWtL5Hv6; arc=none smtp.client-ip=148.251.105.195
+	 In-Reply-To:To:Cc; b=IP8aBE9OgXXPETkHPynAak90OEYhfnB6WGuRgloIQiM5jg4BdWQlC8Y44TQ68BolasYAmjIzwGQGoxdM1XYk2rI45U/JiRmIU5OtV/hXZTxJpTLnL+kPzRfil6k5EkqdXTuy4e68Kuacn/XZUmIZe1DvW9T9IufzYA5FrqRifL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=fmY0pZ0i; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="QWtL5Hv6"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="fmY0pZ0i"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
 	s=mail; t=1789652961;
-	bh=UNAUWNTqDPEuEuXC9mWoAT2pgMMEmi++BoO2+4ivAP0=;
+	bh=I5wKmiysBTuYLPKycTb4r8SCqRgtc3YcQ663wjfvpFY=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=QWtL5Hv64RSxvsWPTnFge8bSBeiW7EN9/oozxPtun3Kl0YtP1o69BpM3NYl/+XIuX
-	 fuPVXt5eUbwlXp8GX4/2eRNuC6RuD/guFJF8xGSf8XEyVfXSMQse//35ODOi9+LV/j
-	 PNbYM5zLPhmmENuQKahj6FbE/bBdeUyuRPGdU5mJQBuX6ns8RWm+9FExgLS3Jx+YmD
-	 xRaJtDMuIKaNaXM0q6QHdecBYOcN01+QP6UUI7Sh1Xpuq7TnqAq7OU6YDFxnN29Ve/
-	 tdTlMlYkBHDZ2RO+XCZZRQ6o/Vuj2Y3JpKYqsNW+9Mt6xpxhufGtH2BR2tpJOmV50e
-	 vTQWC5moqS/Lw==
+	b=fmY0pZ0ijzex4HtptD/UaC0jxHsIKAnVKRmVtmxi+ObVR6pvnHypESo33jMrxO6xO
+	 MYvtlyJTET0DxpBrQXjH66LFnmunjq/9HGnMvVB70Gg+7h5Gb9QHttNPNRIy7rQb6E
+	 SR7/+6GvJUJaDrkjwFRcFenjuM5g0oFARGh6P63/l/ow9HQUjYcKmSVLVjfV1Uo8bf
+	 W3tdUlvxr8gvH1uJ3sg/pOHZTBYw8ubsbnevItrQP6/c1sjeJBeTt6LOWIbT9GUHQ1
+	 iROOd32glafkfuwh2hHJsQRuAxzRPte/qfVHnPFV2i6rhX6daaHnUKiFCGgWUYk8HY
+	 s0OhYFuEns5Dg==
 Received: from jupiter.universe (unknown [100.64.1.62])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: sre)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id C4EC717E01C5;
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id C623017E07DB;
 	Thu, 17 Sep 2026 15:49:21 +0200 (CEST)
 Received: by jupiter.universe (Postfix, from userid 1000)
-	id 7B372480029; Thu, 17 Sep 2026 15:49:21 +0200 (CEST)
+	id 7BE6348002F; Thu, 17 Sep 2026 15:49:21 +0200 (CEST)
 From: Sebastian Reichel <sebastian.reichel@collabora.com>
-Date: Thu, 17 Sep 2026 15:49:13 +0200
-Subject: [PATCH 1/8] dt-bindings: clock: rk3588: add PCLK_DDR_MON_CH clocks
+Date: Thu, 17 Sep 2026 15:49:14 +0200
+Subject: [PATCH 2/8] dt-bindings: devfreq: event: rockchip,dfi: add clocks
+ to rk3588
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -46,7 +47,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260917-rockchip-dfi-cleanup-v1-1-4f00a97a69a6@collabora.com>
+Message-Id: <20260917-rockchip-dfi-cleanup-v1-2-4f00a97a69a6@collabora.com>
 References: <20260917-rockchip-dfi-cleanup-v1-0-4f00a97a69a6@collabora.com>
 In-Reply-To: <20260917-rockchip-dfi-cleanup-v1-0-4f00a97a69a6@collabora.com>
 To: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
@@ -63,51 +64,152 @@ Cc: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
  linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
  kernel@collabora.com, Sebastian Reichel <sebastian.reichel@collabora.com>
 X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=973;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3824;
  i=sebastian.reichel@collabora.com; h=from:subject:message-id;
- bh=C8FVn7J52GHndEtJHzBBi/WU5EQNwPsmo9I3eNfLHLk=;
- b=owJ4nAFtApL9kA0DAAoB2O7X88g7+poByyZiAGqr7+G5gRT1Y4SWiCAXtzY+PZrOUVvQFThyX
- 3ZOnEBDhOdfyokCMwQAAQoAHRYhBO9mDQdGP4tyanlUE9ju1/PIO/qaBQJqq+/hAAoJENju1/PI
- O/qavMYP/AzsS7ugEUE3K3xXEw6TD5yZa8uBWSquhlmiqN5Auuyx7WMZR7HIeQU9Af+oDbqsDC2
- UXrIuELVmKvxF3F9Sv4+f2zmLKnHIrbvf3Oh8uCeEPHcdnkudRDcSLWg+2Lv0dUY12kSgiZcDtv
- USUDx7WRjKSIvE+YsbDk2NtRU9DidmeWVej7Q8PvLsBGGfyola+lczebuEtXGy0n1CMvyUGLtkt
- QXRz3elKmfN7wXLnsNWN3SKjC/CF/9+2vSyIFMMMXwOR4s2+CsUKYa4XgMci7wO5W0E69gMWVim
- bx2AuSOKFt4mJgC//ARlzq06jEkPd0cRghW27LkxLbidVkV+qZIgezz2I4tN+Ca1QoP5dqSlWME
- vInOIo6gYPC6QPp9xSNjRB7UE3GCRybgdsVu5Zm9Cla42FyCawaHm2Hs3a4Z82uB9pgK9kmNvP/
- DDi1rJrk6RFK80U6tzYweqPeA2nPJTqn5hHZXfyhmriUtpl7eevmcaoKnFBu654dajaD2xCoxlb
- KifHY7ABV09ioBEeIWoNckhHUXN7Zj0E6wc9bBsVftPnXz28shCDyDBRTS1IaUfqkOyXf80hqgN
- bH8PFnHB9vINmMI9fJskWnt/aI3XogEB5MdEWI+AFBciiP1r6BLK+2YU5TbLF1UN1+3vvr8rr/Q
- bMc/s/Ix26Gbo/6DQrTkn5g==
+ bh=CMJKlCe6bEkR7uYuohkbQVDQ2FF/s+dLQ5XKL7udDIg=;
+ b=kA0DAAoB2O7X88g7+poByyZiAGqr7+GjOYD9XgQwPQo4FjhjYoSNVwOC73J35EGjf1ULcUn+T
+ IkCMwQAAQoAHRYhBO9mDQdGP4tyanlUE9ju1/PIO/qaBQJqq+/hAAoJENju1/PIO/qaDRIP/iF+
+ L3Z3wPL14QCK2IB9xToLK1Mqu5oCNh+8aeBgN0cywq5NCujKDyT6nFPngIeAKrHTee0vKdYNquf
+ W5wOrwwwDtuMZIS9G5hkJLaqSOuClUNVlDvWay0uyIWh13cS3eMSdEEIs1R9xYziyHrS8kJC80w
+ abkCpCRd+cDfBBGBdV+1Y6JRavDl8DzPbql91RUlinkTc8wr8eKGjBYTE6oHC2DqEzxddsGsPTx
+ FNciqNMzXtrZxEu39JupEN2zgyuiEFp+2qde7JyBePmyuGsQ5RachDXkZi0TzrWfK88+S3/2rbV
+ M7VD1Jyg3vYVRwcCAc1FeJXE3kBzgYUauA9eOGnQiWeg7Sj2a5b68SzuB6me1DgUqUG27aER3dB
+ IK5o6U9kiGdnQ6FtFoS+aWnJJKMlUXdkjNTqxo1KNZD2KV9LdwnXs5vEcdtABI/CVc5BN9XGJUO
+ RSWxIdjUh1bxSvGLk4lMD5Zt8phLTux5SmXDXZr1Metsdvul9HPTpPRHvz0QKkl2aJ6QTo4H+Hw
+ EUysmUCFKzctrKPWPd55V0WZ8lIlXZROvTZueMEa7IVNiwl5yzvzCw2VmSw4sPnx3TvCCtEZKa8
+ eyEfekjgjwYqxNTVFVC5i5eucnpugBF92jBzcMF8B1xj8+c1K4+FttqO6sa1KIhouZaCY3IDvkf
+ TGz7p
 X-Developer-Key: i=sebastian.reichel@collabora.com; a=openpgp;
  fpr=EF660D07463F8B726A795413D8EED7F3C83BFA9A
 
 From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 
-On RK3588, each memory channel has its own DDR bandwidth monitor
-silicon, and each instance of that has its own clock gate that drives
-the monitor logic.
+RK3588's DFI has pclks for each channel. They just weren't noticed as
+missing until now because nothing ever gates them, and they're ungated
+by default on power-on.
+
+The RK3399 clock situation needs no changes, as there the hardware
+really just has one monitoring unit for both channels.
+
+Add these clocks to the binding, so that drivers for this device can
+properly know about their existence.
 
 Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 ---
- include/dt-bindings/clock/rockchip,rk3588-cru.h | 4 ++++
- 1 file changed, 4 insertions(+)
+ .../bindings/devfreq/event/rockchip,dfi.yaml       | 84 ++++++++++++++++++----
+ 1 file changed, 72 insertions(+), 12 deletions(-)
 
-diff --git a/include/dt-bindings/clock/rockchip,rk3588-cru.h b/include/dt-bindings/clock/rockchip,rk3588-cru.h
-index 7528034cff56..6ea25019ebb4 100644
---- a/include/dt-bindings/clock/rockchip,rk3588-cru.h
-+++ b/include/dt-bindings/clock/rockchip,rk3588-cru.h
-@@ -738,6 +738,10 @@
- #define I2S1_8CH_MCLKOUT_TO_IO		723
- #define I2S2_2CH_MCLKOUT_TO_IO		724
- #define I2S3_2CH_MCLKOUT_TO_IO		725
-+#define PCLK_DDR_MON_CH0		726
-+#define PCLK_DDR_MON_CH1		727
-+#define PCLK_DDR_MON_CH2		728
-+#define PCLK_DDR_MON_CH3		729
+diff --git a/Documentation/devicetree/bindings/devfreq/event/rockchip,dfi.yaml b/Documentation/devicetree/bindings/devfreq/event/rockchip,dfi.yaml
+index 50d3fabe958d..d6e06a9bea19 100644
+--- a/Documentation/devicetree/bindings/devfreq/event/rockchip,dfi.yaml
++++ b/Documentation/devicetree/bindings/devfreq/event/rockchip,dfi.yaml
+@@ -17,11 +17,19 @@ properties:
+       - rockchip,rk3588-dfi
  
- /* scmi-clocks indices */
+   clocks:
+-    maxItems: 1
++    minItems: 1
++    maxItems: 4
  
+   clock-names:
++    minItems: 1
++    maxItems: 4
+     items:
+-      - const: pclk_ddr_mon
++      - enum:
++          - pclk_ddr_mon
++          - pclk_ddr_mon_ch0
++      - const: pclk_ddr_mon_ch1
++      - const: pclk_ddr_mon_ch2
++      - const: pclk_ddr_mon_ch3
+ 
+   interrupts:
+     minItems: 1
+@@ -40,17 +48,50 @@ required:
+   - interrupts
+   - reg
+ 
+-if:
+-  properties:
+-    compatible:
+-      contains:
+-        enum:
+-          - rockchip,rk3399-dfi
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - rockchip,rk3399-dfi
++    then:
++      properties:
++        clocks:
++          items:
++            - description:
++                clock driving the DDR monitoring logic for all channels
++        clock-names:
++          items:
++            - const: pclk_ddr_mon
++      required:
++        - clocks
++        - clock-names
+ 
+-then:
+-  required:
+-    - clocks
+-    - clock-names
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - rockchip,rk3588-dfi
++    then:
++      properties:
++        clocks:
++          items:
++            - description:
++                clock driving the DDR monitoring logic for memory channel 0
++            - description:
++                clock driving the DDR monitoring logic for memory channel 1
++            - description:
++                clock driving the DDR monitoring logic for memory channel 2
++            - description:
++                clock driving the DDR monitoring logic for memory channel 3
++        clock-names:
++          items:
++            - const: pclk_ddr_mon_ch0
++            - const: pclk_ddr_mon_ch1
++            - const: pclk_ddr_mon_ch2
++            - const: pclk_ddr_mon_ch3
+ 
+ additionalProperties: false
+ 
+@@ -72,3 +113,22 @@ examples:
+         clock-names = "pclk_ddr_mon";
+       };
+     };
++
++  - |
++    bus {
++      #address-cells = <2>;
++      #size-cells = <2>;
++
++      dfi_rk3588: dfi@fe060000 {
++        compatible = "rockchip,rk3588-dfi";
++        reg = <0x00 0xfe060000 0x00 0x10000>;
++        clocks = <&cru 0x53>, <&cru 0x48>, <&cru 0x49>, <&cru 0x54>;
++        clock-names = "pclk_ddr_mon_ch0", "pclk_ddr_mon_ch1",
++                      "pclk_ddr_mon_ch2", "pclk_ddr_mon_ch3";
++        interrupts =  <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH 0>,
++                      <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH 0>,
++                      <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH 0>,
++                      <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH 0>;
++        rockchip,pmu = <&pmugrf>;
++      };
++    };
 
 -- 
 2.53.0
