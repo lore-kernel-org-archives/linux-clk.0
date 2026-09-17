@@ -1,136 +1,139 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B2A756329A;
-	Thu, 17 Sep 2026 14:08:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BE845964E4
+	for <linux-clk@vger.kernel.org>; Thu, 17 Sep 2026 14:39:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789654085; cv=none; b=WiQehSY5xI3WWmcwg293ILXSv5UcvOuhhdq/pYuPFcKHpobvnLc8Y32JgRYG3iW6Km6Q3l5fUwMSYO+MOcn+G+dOxjsVDBB7dRVPf8POyeZMdanJNsGwgXIk2Dt0l47876S0xwrUf3ey4U1oFghd1oztYiswJH3imCTSFguo7aA=
+	t=1789655999; cv=none; b=QwIFpbUmtNE7titY8EMhsMDr6yx66YG8czhzu9jVGx7dK0D7TKh5196pCcahC9I94LMmaVNT2fnKEDMW512x6e6hnuTJ6upS7XhY3i4D8O+YnIrys9ipoITFZ3/nZYHmOxl+3hlgwgHyd7pQ/XdciaPF9Ra735EPNPT+AF7rZ9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789654085; c=relaxed/simple;
-	bh=YTdhMdJzY4ydQAK8RKlhvMFELRRpmXAqtNhRAIPv/GQ=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=qt1OI8HUBZE/6/RY4wSBfqMULBpXSUPfADDTNvLVyUjTlWxoGeDeJ24gFA9BNavahhH34NSoz1+isPwtow9tFGdyZ+zScRqM1saV0H+eWB0NaboHFaRWfEv7Va5SP+KG7eNFA+iYYZx1ySk9G4HZgp/2m6hTF/+yEnQEIQ3kMdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Exy+OuPG; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789655999; c=relaxed/simple;
+	bh=e1nEcm+47VRM3YuQ3OIfZ1Eloo/rMsg4M8gV3g0+0Jk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=hZV/11U0BVQcqjJHTOtTM1Rwbber+H6plNsIi9NAtfz/eDquG/PNCT+xfTG+WCaq6aVgX4qpoxj/Gtqqs5f7NGr8gmLTNEHxlHF1ZT/fv60W4uAbLy5uqQsW3te7upU405MEjbJGCNtvtDGrBClTCDpidtC7ukBupa1GxB8bGLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L48/9nCZ; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=L7EpXpel; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Exy+OuPG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0C651F00893;
-	Thu, 17 Sep 2026 14:07:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789654079;
-	bh=/s2CueMCsjQaX0fqgZ5Of3hQBkzdN60bvadbT5rcLbU=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=Exy+OuPGm13Ya8cRvoXFKunEjMUSRwtEEXp4Hzd93REQYlpJGYJtQPeE96+arQhY4
-	 CTWi4EXTkmXFffVtXlDM/+3wifwi3GNstS+1f9VHr2t/I/s5oxu54k4S/Ys/Sc4lLr
-	 ttVcnpofg4DMA+kMfbBMCeWPXnUXCebO0WAjM4D8YrLnKVJ/+94RNFQsRZ61/1gAQL
-	 isOhxtoWA9jOwZ8FbOdKaiCmKZPvzDvR3MCY3aDxim4DJ5BnaKSKsCYlyeBQEmPThp
-	 zjZY1yQ/fYVnEmSvQB7G0U17JV9GQnYILSkmDGWte0W86VcuR6h8ffzo64wlMFkb7h
-	 gF9zC0d92ZyMw==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v8 2/2] clk: qcom: Add LPASS VA CSR heartbeat pulse
- clock
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Sarath Ganapathiraju" <sarath.ganapathiraju@oss.qualcomm.com>
-Cc: conor+dt@kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org
-In-Reply-To: <20260917-master-v8-2-823d2c5d090a@oss.qualcomm.com>
-References: <20260917-master-v8-0-823d2c5d090a@oss.qualcomm.com>
- <20260917-master-v8-2-823d2c5d090a@oss.qualcomm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 17 Sep 2026 14:07:58 +0000
-Message-Id: <20260917140758.A0C651F00893@smtp.kernel.org>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L48/9nCZ";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="L7EpXpel"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1789655981;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8KGR+CeC95ZWBixGwVA0LL51D5yK2uYqoswbmkSb/ZA=;
+	b=L48/9nCZZBFqoZOuAdrB7+jIpvVuxDIxF3fmJL+YrSs92Q5B4b0p8m6Tia317HNE95TEmN
+	IUtHqXGoeaB+vvNyKDLbQhu+ptQIuE0DiCDJuI1VxEdk4VCh5G3ejWnJBhyn/RNgTIA2IL
+	ig0Z8UU51Voj4L8CkFU50zuOU+nBWhc=
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
+ [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-263-sG6WrUprN32gW0ub4O6yEg-1; Thu, 17 Sep 2026 10:39:39 -0400
+X-MC-Unique: sG6WrUprN32gW0ub4O6yEg-1
+X-Mimecast-MFC-AGG-ID: sG6WrUprN32gW0ub4O6yEg_1789655978
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-53124d6a362so30639831cf.0
+        for <linux-clk@vger.kernel.org>; Thu, 17 Sep 2026 07:39:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1789655978; x=1790260778; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:date:message-id
+         :subject:references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=8KGR+CeC95ZWBixGwVA0LL51D5yK2uYqoswbmkSb/ZA=;
+        b=L7EpXpelvoFaFcpieOxOPxuFCsY2xb+zIBxMoT5r5JRIfrFMnOBf/PY9tKrET9yeGa
+         efF6y45/UMC771RGAXoGt6lYE5P0hQGk5AYnoU0kMHlJHeRbK+Qj7VHGxAjlDFONjUdE
+         klwGmMRWUCkyTh9sNaSWKpRemBawXaDxaHIm+WcNYtPQwwHP3F9NCNd9Zz0629lBy0bJ
+         XQH07BsyLsL7XnfwRuSF/N+RK6N1uiQj5fW1cWahMZGom9dIKIvcG+j3CP5Cz8tjb93g
+         D9A8wUVRgbxFATDi1pHRUsSFyWhB3BHW0sXouAdVHikgQhvaXesQweu2ml1AjiP76HOQ
+         NFPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1789655978; x=1790260778;
+        h=content-transfer-encoding:content-type:mime-version:date:message-id
+         :subject:references:in-reply-to:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=8KGR+CeC95ZWBixGwVA0LL51D5yK2uYqoswbmkSb/ZA=;
+        b=OxbzGPp59xAmXVfIWqEm4Gb4pCSjV+32twzFJMbPwAb/R+4sGpELrq0oZkbjiRA5Wn
+         GK2zPV4B+kQqZCMCdD5hzzy+eLNQNV+TmeUohFPcM1r0weRwdhvvPj8gD3eDzkBekO/K
+         zawb9ieR2NO8nZvFlh5xxmUh6n65Y7a4DWpLp4TVU6bHI6wPLrAwbq/g8c/Q8D4mKxKJ
+         Qj9QvYcFSp28kkK9tKbnjFT0w70VPRIfDUKxv3CzGedQVNGYZ4vUOkkaUpt8K1o4Vy+m
+         2g4d9M+ZEpiuKN6k1grLJdgE4+3dLS56wVIyrvhq5Pr6VyJs0Fra75EtJPa8jsmABpsL
+         8WxA==
+X-Forwarded-Encrypted: i=1; AKwUvBy3O0MI7Yb98SMQD0mC2Ud9JZoLSqkpC1lkCePwv/UZhyhZjNEkXfKrU7bX/vfXcNe8UPtEByV8Md8=@vger.kernel.org
+X-Gm-Message-State: AFuF++lUNs/FaRkwC2DjInYEBDZzbsOM6Mg5ZL0wUaYVBtaIiOlatQF+
+	Uhy95vY24Qifq3fcX0vtM9DHuRBeKZtZa/0eAPPMzQP34JjvMv7un1kDhxOEFazjLEKr08wRGWR
+	lPJWds475DU8+84tvkQarwx3kwLweeseqIJkPTdyQSzL6sPLWd93Hd/HgjecUicyxehpQmHgqtz
+	912OoO+AVH2aGd0QQvi3/ybvT+58wPiSe0O6vXY07WaY20
+X-Gm-Gg: AYBFou1aQVo+gBDK3tgckx0j9ZkGYfZ4SnEhJd7pZj5WgSjPyibCRG6ST3RJ/ruoBiF
+	f4Yra5CvN83DeGPEqHiXUt2Mnvt9I0m7pNlzxjNjwKcNmd/QoKBFhhxN47SBRFdTAfiQUPhHx87
+	UZfYj3aqWsuYfYIKAGSC4aZzQQkIVEphSHJk2aRyvimJbrEz/C5XyT1+pq3rvIw0Ef1O6QEz1D9
+	7HiZr6kyo0f44SaUmYY481pjy56iX/RdZE8l9Ch96kMalAnlF+R/RfHrUb7mFGpiMMcpkNCU0Q1
+	w2H0IrRYp1PDhLon6teXe5BQxLh1FBd4Ab9TP+TJVJ1LAUHH2buoKsF4k6XpKOfPigR4Ah4Awkn
+	Ii3ouUoDlPVzH0IPuT2Don2J/MTkuQYBJ3TOZSDQ=
+X-Received: by 2002:ac8:59c8:0:b0:530:42e4:f000 with SMTP id d75a77b69052e-5327f1e4523mr119767091cf.45.1789655978587;
+        Thu, 17 Sep 2026 07:39:38 -0700 (PDT)
+X-Received: by 2002:ac8:59c8:0:b0:530:42e4:f000 with SMTP id d75a77b69052e-5327f1e4523mr119766521cf.45.1789655977993;
+        Thu, 17 Sep 2026 07:39:37 -0700 (PDT)
+Received: from [192.168.1.3] (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-5326204cc73sm49839641cf.19.2026.09.17.07.39.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Sep 2026 07:39:37 -0700 (PDT)
+From: Brian Masney <bmasney@redhat.com>
+To: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+ Gregory CLEMENT <gregory.clement@bootlin.com>, 
+ =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, 
+ =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>, linux-mips@vger.kernel.org, 
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20260916-clk-eyeq-res-v3-0-93a3b831a5d0@bootlin.com>
+References: <20260916-clk-eyeq-res-v3-0-93a3b831a5d0@bootlin.com>
+Subject: Re: [PATCH v3 0/2] clk: eyeq: Reserve OLB memory regions
+Message-Id: <178965594692.360090.15483787518804021390.b4-ty@b4>
+Date: Thu, 17 Sep 2026 10:39:06 -0400
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.16.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=803; i=bmasney@redhat.com;
+ s=20250903; h=from:subject:message-id;
+ bh=zv5XFnjC/JAkcy5rF9GDLkUufKHGuN1RVfY0nq2leS8=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLJW/14UH6wc3bVp49s2u/TMCfGTAqenbfuz+D3zkltPn
+ kxvT+4+1lHKwiDGxSArpsiyJNeoICJ1le29O5osMHNYmUCGMHBxCsBEJnIx/K9YfvnHstef539N
+ 1L9QuiNcq73JWUHBPGOxzjfnsLKsl48Z/rtty7LL3VTpW1acLDj7cvTty5YWW+/f/WjHOfOSusn
+ +FjYA
+X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
+ fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
-Thank you for your contribution! Sashiko AI review found 2 potential issue(=
-s) to consider:
-- [High] clk: qcom: lpass: missing pm_clk callbacks causes unclocked hardwa=
-re access
-- [Medium] clk: qcom: lpass: async pm_runtime_put() races with devres pm_ru=
-ntime_disable()
---
 
-commit 5684759a56eb84ac05a7585939de6fdaa87b92de
-Author: Sarath Ganapathiraju <sarath.ganapathiraju@oss.qualcomm.com>
+On Wed, 16 Sep 2026 14:08:53 +0200, Benoît Monin wrote:
+> clk: eyeq: Reserve OLB memory regions
+> 
+> The Other Logic Blocks of Mobileye SoCs are clock providers, and some of
+> them are registered early with CLK_OF_DECLARE_DRIVER(). Their early init
+> maps the registers with of_iomap(), which does not request the memory
+> region. On the platform device side, eqc_probe() used a plain ioremap()
+> too, so none of the OLB regions were reserved in the iomem_resource
+> tree.
+> 
+> [...]
 
-clk: qcom: Add LPASS VA CSR heartbeat pulse clock
+Applied, thanks!
 
-The HeartBeat Pulse, also known as RateGen Pulse, synchronizes the
-start of DMAs and Codec Interfaces for the audio usecases and can
-serve as a periodic wakeup source for the DSP. Add the LPASS VA CSR
-driver that models the rate generator as a clock provider so it is
-enabled and disabled automatically alongside the other clocks during
-runtime PM resume and suspend. Attach the DT vote clocks to runtime PM
-and resume the device before programming the rate generator registers,
-so register accesses happen only after the LPASS votes are active.
+[1/2] clk: eyeq: Use devm_platform_ioremap_resource()
+      commit: b8bd186778e74492a2bbeaed7e00d87dbe46b6f2
+[2/2] clk: eyeq: Add mobileye,eyeq6h-central-olb compatible
+      commit: 07bdb358bc50f17442b6b685d18a6f141b6f276b
 
-> diff --git a/drivers/clk/qcom/lpass-va-csr.c b/drivers/clk/qcom/lpass-va-=
-csr.c
-> new file mode 100644
-> index 0000000000000..3c87c3319f156
-> --- /dev/null
-> +++ b/drivers/clk/qcom/lpass-va-csr.c
+Best regards,
+-- 
+Brian Masney <bmasney@redhat.com>
 
-[ ... ]
-
-> +	ret =3D devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, &csr->hb=
-.hw);
-> +	if (ret)
-> +		goto err_pm_runtime_put;
-> +
-> +	pm_runtime_put(dev);
-> +
-> +	return 0;
-> +
-> +err_pm_runtime_put:
-> +	pm_runtime_put(dev);
-> +
-> +	return ret;
-> +}
-
-[Severity: Medium]
-Will this asynchronous pm_runtime_put() race with the devres cleanup?
-
-When probe fails, err_pm_runtime_put calls pm_runtime_put(), which queues an
-asynchronous suspend. The probe function also uses devm_pm_runtime_enable(),
-which queues a devres cleanup action that calls pm_runtime_disable() on
-failure.
-
-After the function returns, devres cleanup will invoke pm_runtime_disable(),
-cancelling the pending asynchronous suspend request. This leaves the device
-permanently active and its vote clocks enabled.
-
-Could pm_runtime_put_sync() be used here instead to ensure the suspend
-completes synchronously before devres cleanup?
-
-[ ... ]
-
-> +static struct platform_driver lpass_va_csr_driver =3D {
-> +	.driver =3D {
-> +		.name =3D "qcom-lpass-va-csr",
-> +		.of_match_table =3D lpass_va_csr_dt_match,
-> +	},
-> +	.probe =3D lpass_va_csr_probe,
-> +};
-
-[Severity: High]
-Does this driver need a dev_pm_ops structure assigned to handle the PM clock
-callbacks?
-
-The driver registers DT vote clocks using of_pm_clk_add_clks(), relying on =
-the
-PM framework to enable them during runtime resume. Without assigning a
-dev_pm_ops structure mapped to pm_clk_suspend and pm_clk_resume in the
-platform_driver, pm_runtime_resume_and_get() sets the device state to active
-but leaves the clocks physically disabled.
-
-Will the subsequent regmap_write() attempts in probe try to access unclocked
-hardware registers and trigger a synchronous external abort on Qualcomm
-platforms?
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260917-master-v8-=
-0-823d2c5d090a@oss.qualcomm.com?part=3D2
