@@ -1,145 +1,123 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC1B53DC4B3
-	for <linux-clk@vger.kernel.org>; Thu, 17 Sep 2026 14:51:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9AB151FCBB
+	for <linux-clk@vger.kernel.org>; Thu, 17 Sep 2026 14:55:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789656702; cv=none; b=NDjeYF7+GwOUcrryAf8NbgQvB4A51YV3fmm0Ru9cKLYmTil7CtlzPF5Ac59b4IAy5Zvxf8Fg6v/6nE6qVUAPAOMwOahJnoWHWiFjrzASdiaVAOcul4V9Qenmyoa0BcNF7ktPSH3JYvDcXv0e6ccB5Sr4XXWH9u4MYZ4C/aaPwPs=
+	t=1789656915; cv=none; b=Ix1WmJqzc6BWLzGlnmbv6OMYitR1yEN4mShoa+cAzAtvHhrUt9P6O3eCI943dnHBRwccegxXCd1FwwI7tI2kbbsKVd3F7HZXcLlYOmitcyAoD1kPzIehwpvRJK62DsooUoyIUO+s3r2w5M+NtgUx7KoPj6xEfU6o1kTZRkWu2kE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789656702; c=relaxed/simple;
-	bh=nRW+Dh/T9OOlCe+gd5fNSYYqJmLpddkfGlq/GGrFu5M=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=hHWUEAegZtUCQdw/mFUrByA3qZXr+usAc/5EKDY9wVKODBk1gZ9mnoRIxsKy8SfaAd+IybjExlpfSAKHz0MC7DHM/cfYTqT0rCvg1i2pfNddt6DVwmQMDlpiETaj1WLn2EmcshpjM/+pwSFpzz86jYY9g1n6cuSx0IKsO4kBrQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y6Qtf8KG; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789656915; c=relaxed/simple;
+	bh=6mUCiPfgFcR53z0p0wqDnczQ1/FekAVwOl0ASYekEMA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=uX68aphoAoe8jm9tDOftaxyvK0ToEeqvGMAGXcHX4GvcLFtwofCH0k8fFo+/DzXiyWuqcMuO/YydbVHJ5OC2aUlscK8YH/+tNnOBToHjdO6MW92Jb5TA2azcCBIplCr26Hjv6tRe6txU6PnFCnNLUrXc8MaH9mQD6eMhay+z2p8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CCH0/CG2; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=LF4kmRhS; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y6Qtf8KG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7135C1F000FF;
-	Thu, 17 Sep 2026 14:51:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789656688;
-	bh=ZuWaTLGJBbUAYe5rb163FRZIUs4/pQPa+JsEEwGFDfE=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=Y6Qtf8KGz6y4LRjz8E8y5YFw/g8pOpRFPLAd8vS0UozOvPNNxQaKbtVZO/uYfnaGy
-	 Yj0zZyqPpHoEn2XBHFB8POrWLNoLcazHuIwdR2F8Lf6pI8BxE2ISDXklgCU0BZ2QRn
-	 JI4TDbT+pzxM2q6TrYukcZz+Ug6Jl/w5EQ26EOTpDmgyNuzKwjmRcSoGod4gFnX9qy
-	 UYHSCGMZLckHsJPLwuFuvY2BvD0qQ9RehlLqvxPQnT2A8uUZi6x8V+sAiO+9kOV5hJ
-	 IYcHe4mNMp8ub2m/gVJbQsvdbrJtyBViFhNF8T3bPY8bhrUh21IqEdA/Y2Nw6GcGPs
-	 1+lkMA+Cm+/ag==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH] clk: disable unused clocks registered after boot
-Reply-To: sashiko-reviews@lists.linux.dev
-To: alexandre.belloni@bootlin.com
-Cc: linux-clk@vger.kernel.org
-In-Reply-To: <20260917144011.3014860-1-alexandre.belloni@bootlin.com>
-References: <20260917144011.3014860-1-alexandre.belloni@bootlin.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 17 Sep 2026 14:51:28 +0000
-Message-Id: <20260917145128.7135C1F000FF@smtp.kernel.org>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CCH0/CG2";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="LF4kmRhS"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1789656896;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9AXFSc42fFXOGOg/f+O9pg18PTmXdnbb3QObGTFVGu4=;
+	b=CCH0/CG2J2i7SQO0ljcrpOQPRF7gpyIEumKLRaYE4+I8Mjp65sx+jHPbFQnVTju+Tziszi
+	9l8wRObz35FQflpOgOsHmoO8yZa/WvUmasjTFCu34rk+7Qs58dBs1deGchh4Bjgx7RNw87
+	yCDypW4zuGUiw78m3IZlsRZtiEvY4JY=
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
+ [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-144-PhWw6L0WNaa5qksySHuV3Q-1; Thu, 17 Sep 2026 10:54:55 -0400
+X-MC-Unique: PhWw6L0WNaa5qksySHuV3Q-1
+X-Mimecast-MFC-AGG-ID: PhWw6L0WNaa5qksySHuV3Q_1789656894
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-53094ff7090so26212741cf.1
+        for <linux-clk@vger.kernel.org>; Thu, 17 Sep 2026 07:54:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1789656894; x=1790261694; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:date:message-id
+         :subject:references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=9AXFSc42fFXOGOg/f+O9pg18PTmXdnbb3QObGTFVGu4=;
+        b=LF4kmRhS2iorgtdJ9GUMVK01qbt/noWh/hWZKD4h8ta2lILeuh/9APABpJnTSzIXg4
+         W0kkw37hFDLtPxfGyBd5yavcDl+OQVYlGrf0NKrEkIzPU6c/pPnat+l6zE4UdW2OJxEb
+         y5io8J0f5KeWgS35TJy9LY4xxb8n2Cgz80QGBZ31Gl0q4zOvMKgS8HnzmOXdc/tFd4ld
+         G3rYCYtkwV8PtL3WqRJXE7JIl8ILasmUiKMe6hVTgxQ3w5xYkAoA1aFJOg/h4Azo2EyY
+         l35km2RmZ4O1UeeezxYO6UPpDtyfCesyuFWxdx8Kmx3zQe60NIy1u0tajY8q8H+XJGFS
+         4XaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1789656894; x=1790261694;
+        h=content-transfer-encoding:content-type:mime-version:date:message-id
+         :subject:references:in-reply-to:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=9AXFSc42fFXOGOg/f+O9pg18PTmXdnbb3QObGTFVGu4=;
+        b=sg+1IaZ/7pru2MGAw5v6fcI2fsSi9Ugx12Hx5ESnCMr+XwlZRqnB6JsNpJwAYHg+h6
+         jco9nWGVRZHMp6u1pZJlsgoaDZVkknVy/Axju8mPfQQAT44fnccJD1jXMiwRCJnHwAJ9
+         N0+zSRpjciBZ5elvlXakKc7ClUpj1snwg/2Z+ZmQ1y14NtApaf0TxezR9G4bdOxR61dV
+         am1ycea9riKNOt6JhU/3io+Q76oxtsrZ2cd8bFweGHvdyDxctiW6JZF4SglGMdhLMbqW
+         0S7TaiT0Yh78Yt5o8U6zKn49qNt1342SzN1G4Q4Z7ifheoQMiM9CGpVdnTk5LfCK5McA
+         4fXA==
+X-Forwarded-Encrypted: i=1; AKwUvBzUhVOxXYrBDRS9jV6M2e9dAyobt0r6Pe8LSKO/uP07OsPl2WleE9Q+4fhTCmDxHHM5nN+pW13JzRI=@vger.kernel.org
+X-Gm-Message-State: AFuF++nOGzi715Hrd5Gjl8S4QHfvs67bTmJr2qSrnltWFXRAiVQUfOKE
+	Nc88NPmXk23g1G30SbqX/uTg3qy42JCPA5ZcQNdwVCGeYyqKS7oNEBPz72ZelJeAGb/7o2ZV0eo
+	cbzUe+NPvgBzGb/EEiksShPXpstaCiV4tPtIYe785nQo1MO1XjSG3YAhk6ZTBeA==
+X-Gm-Gg: AYBFou0XZtYwpufqzLklregq54JrMzLfBQr1nEAu9KaevWpJtlwhlG7RWGmFkhRufFF
+	v3V4hkm+uIXJiXJ7NdCpu1wU3HOE405aigCGeAMUvpyD6cO2VoaJ/TTt4pckRP1cbKWJxM2VJBT
+	k1uq+Dr2dQG9Q5x4cS5MVC3N0PyJBCZJfSJeXEESN+AgSgxw/PVCJO01iFmRPmQC5e5Uje3BIsO
+	Mzj9rlwELyy1KAAwS5epl0EFMk64keLHbCQFpGB/HrWm0CMaX9Kd0xh+/hB5Ih+JzQjWzQUZJAv
+	QFMmSwVetOpHIlNUk+uycmtrNDwuMrClp5eyWyFHR9RnZBCpC5P5dUtnuCTVw32DAUZgXzR/i75
+	EbbhquGtAOpNFFuEl0dp27k8Ep+b8V3CY236uNrg=
+X-Received: by 2002:a05:622a:17c4:b0:52d:f484:eefe with SMTP id d75a77b69052e-5327f54b73emr119219281cf.35.1789656894281;
+        Thu, 17 Sep 2026 07:54:54 -0700 (PDT)
+X-Received: by 2002:a05:622a:17c4:b0:52d:f484:eefe with SMTP id d75a77b69052e-5327f54b73emr119219001cf.35.1789656893856;
+        Thu, 17 Sep 2026 07:54:53 -0700 (PDT)
+Received: from [192.168.1.3] (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-53259aee19dsm53067881cf.3.2026.09.17.07.54.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Sep 2026 07:54:52 -0700 (PDT)
+From: Brian Masney <bmasney@redhat.com>
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Pengpeng Hou <pengpeng@iscas.ac.cn>
+Cc: Marek Vasut <marex@denx.de>, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20260813153650.44793-1-pengpeng@iscas.ac.cn>
+References: <20260813153650.44793-1-pengpeng@iscas.ac.cn>
+Subject: Re: [PATCH v2] clk: si521xx: correct the SI52147 OF output enable
+ map
+Message-Id: <178965684879.360090.5503590837229538426.b4-ty@b4>
+Date: Thu, 17 Sep 2026 10:54:08 -0400
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.16.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=312; i=bmasney@redhat.com;
+ s=20250903; h=from:subject:message-id;
+ bh=HRHMuNqDMyQ7VrNZVdhFpU18W+ly5/8zYF2raxiGR1Q=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLJW/zeVuDNf/qB/xFU97jszO922X1pz33/LyflLGSdE3
+ tQWy+pR6yhlYRDjYpAVU2RZkmtUEJG6yvbeHU0WmDmsTCBDGLg4BWAi7HcZGb7MWfDfe++TvoQ7
+ Ns99Ax7LGVn83DihZtWloKzWH9ERT1QYGba+rX9xN20F85R1W2580ZGVsL+4cIlXb1fLJKM1bOo
+ lLWwA
+X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
+ fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
-- [Medium] clk: unused clocks can bypass disable due to TOCTOU race in regi=
-stration
---
 
-commit 757dd3574808273e528cadee01291d010712df6b
-Author: Alexandre Belloni <alexandre.belloni@bootlin.com>
+On Thu, 13 Aug 2026 23:36:50 +0800, Pengpeng Hou wrote:
+> clk: si521xx: correct the SI52147 OF output enable map
 
-clk: disable unused clocks registered after boot
+Applied, thanks!
 
-This commit introduces a delayed work task to periodically scan for and dis=
-able
-unused clocks registered by dynamically loaded modules after boot. It uses a
-flag, clk_disable_unused_done, to determine whether the initial late_initca=
-ll
-scan has completed.
+[1/1] clk: si521xx: correct the SI52147 OF output enable map
+      commit: 744e436077af1af06b38589d1e034e4f8ea7b3ae
 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index fef87167a60b5..f455d2482a5a5 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-[ ... ]
-> @@ -1621,10 +1619,31 @@ static int __init clk_disable_unused(void)
->  	clk_prepare_unlock();
-> =20
->  	clk_pm_runtime_put_all();
-> +}
-> +
-> +static void clk_disable_unused_workfn(struct work_struct *work)
-> +{
-> +	clk_disable_unused();
-> +}
-> +
-> +static DECLARE_DELAYED_WORK(clk_disable_unused_work, clk_disable_unused_=
-workfn);
-> +
-> +static int __init clk_disable_unused_init(void)
-> +{
-> +	if (clk_ignore_unused) {
-> +		pr_warn("clk: Not disabling unused clocks\n");
-> +		return 0;
-> +	}
-> +
-> +	pr_info("clk: Disabling unused clocks\n");
-> +
-> +	clk_disable_unused();
-> +
-> +	WRITE_ONCE(clk_disable_unused_done, true);
+Best regards,
+-- 
+Brian Masney <bmasney@redhat.com>
 
-[Severity: Medium]
-Does setting clk_disable_unused_done after clk_disable_unused() returns and
-drops prepare_lock open up a time-of-check to time-of-use race?
-
-If a driver registering a clock (such as via an async probe thread) adds the
-clock right after the boot scan completes, could it slip through before this
-flag is updated?
-
-> =20
->  	return 0;
->  }
-> -late_initcall_sync(clk_disable_unused);
-> +late_initcall_sync(clk_disable_unused_init);
-[ ... ]
-> @@ -4462,8 +4481,13 @@ __clk_register(struct device *dev, struct device_n=
-ode *np, struct clk_hw *hw)
->  	clk_core_link_consumer(core, hw->clk);
-> =20
->  	ret =3D __clk_core_init(core);
-> -	if (!ret)
-> +	if (!ret) {
-> +		if (READ_ONCE(clk_disable_unused_done))
-> +			mod_delayed_work(system_power_efficient_wq,
-> +					 &clk_disable_unused_work,
-> +					 CLK_DISABLE_UNUSED_DELAY);
->  		return hw->clk;
-> +	}
-
-[Severity: Medium]
-Can a concurrent registration complete __clk_core_init() after the boot
-scan finishes, but read clk_disable_unused_done as false?
-
-In this sequence, __clk_core_init() takes the prepare_lock after
-clk_disable_unused() has already dropped it. The clock is added to the
-internal lists, but the boot scan has already passed it by.
-
-Then, __clk_register() reads clk_disable_unused_done. If
-clk_disable_unused_init() hasn't updated the flag yet, it will read false
-and skip scheduling the delayed work.
-
-Would this leave the newly registered unused clock permanently enabled since
-it missed both the boot scan and the delayed work?
-
-> =20
->  	clk_prepare_lock();
->  	clk_core_unlink_consumer(hw->clk);
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260917144011.3014=
-860-1-alexandre.belloni@bootlin.com?part=3D1
