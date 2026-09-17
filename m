@@ -1,44 +1,44 @@
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B89C4E06D6;
-	Thu, 17 Sep 2026 13:49:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A580A5519B6;
+	Thu, 17 Sep 2026 13:49:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789652971; cv=none; b=FSNlr5Q7J7hZ+AGxavfh/AlaAEixEugZKjc7t1SUYG0hidC51UdawUtP23P2u8738AgP0XlhTPGlh96cItVnabArSw6Iahxo6xnWY7QUmcn3b7DgS67sY/ReQHHLY5x55F0y44sIodHcR0ZVT1D6nT2Gu/8Cq+PP2MyLHrC4DVI=
+	t=1789652975; cv=none; b=s30gFEar68RNvlFvzAxdVbpPVrg+72+gdSiyQTyvKhB//fLUPdKPHwlqTGai+E4VM5R7j5C5OKX9897Y6AT4228fmbS+LBBJoHM13Vk4AvFR5iujTKnkXpt8yDQDTSSO6/oeVbatsCGIhXrBWUnyrr0snhT9ZsQWe1jZgKDovTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789652971; c=relaxed/simple;
-	bh=R+0ORjkMahdOCQPNUtjC94W9dr82Rbx5na9hVn3u/Ng=;
+	s=arc-20240116; t=1789652975; c=relaxed/simple;
+	bh=VXjQmgPNcP6TxrE9fEJyZi07Hi5P0Q3culnMpUj9c98=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Z6b9tqxDw1WSucavhUqmdyn1cNCIcrRK26Duh4cuxnSua+1OnaFibGYnMTp+gCTpSmT25q65b9XBiA58IAiPLZtYv1n6d7WJJfhb/xGlccCnzCXn73jr4yvopVGkuilwCjYTgWtuTNE1jGZZrzxBxs9b13+79QYPL1f8LTvhPc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=G/4NqSBO; arc=none smtp.client-ip=148.251.105.195
+	 In-Reply-To:To:Cc; b=G09+iO00wbzqhUoCbOAphbDpdtkrHLCuJVRTfT3F3b0UTRfFv8Ui1fm3R1JGUG7s2GRPj6clcSRy8KCYtUykNcjPmo5v4PJ/ynxzDAStnHMj5GgJRBxSbSAHfmVUVLZ/Mt0mDhLdtmzReW6aZ+8RjoLkk0kf2/+D9DA/urcRgVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=L/TADqrj; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="G/4NqSBO"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="L/TADqrj"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
 	s=mail; t=1789652962;
-	bh=R+0ORjkMahdOCQPNUtjC94W9dr82Rbx5na9hVn3u/Ng=;
+	bh=VXjQmgPNcP6TxrE9fEJyZi07Hi5P0Q3culnMpUj9c98=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=G/4NqSBOfGgULBF4gDeB4Y73jKgWBtHyCvlOVnyWEaPREAGjUYQ1UtWk8zCXpKMI9
-	 roQ02NIDWO8cT5Q33R17Vvz1D1oBCMOif7o5pNJhimbeaY35xqYbPnk1Fh48zQzJ5s
-	 R72eU0IclAgiSobRoQZ0lAoV9hyidMqzk3ICxDm0X2kjhASpbqSNGRrj7aTmCDXx0R
-	 6cVRd3aaxPBVk6FepSjY8oBeJhHfUGyF9k3JxA51eJH/k47U2rYyLt0FoeIx8ZECDz
-	 eYcdrAnfzNfUsa+FoN9Vs0SSnfPBQZtUyILlut9NycPVDFDjIpG4KHdz4d/XAlOpAX
-	 4PQKJl6s3Wl6Q==
+	b=L/TADqrjmFPk2K1ZX7k+LW5ZVhcd2vFs6kFuZZA6Jlhddudj5mKXh83EctWmN0tqt
+	 5rMwd1BHGe+slfldSeYdjDPi0oWUZZCCdMgsNvPyofWih3Wgx7LpkvAednoRqRxPeE
+	 aQ7sm3sRmykZOJG5NhjLapX/c6W22z6JVknnsw2SjFVJUD+KQVEa7u0fIcMzbIFdaG
+	 qcDysICHQsCWfIZXY2loWh61qOZKX4NvI6AvXn475qG+ud4TBKhP/rxSOKm1r++m64
+	 tpJYKsVTFVoafTpDDIs1FC3siumxQrosMrib23Jup1YdVziIgI6qI2P2jfwLiNyUv0
+	 MmFc5c7eJuW+Q==
 Received: from jupiter.universe (unknown [100.64.1.62])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange x25519)
 	(No client certificate requested)
 	(Authenticated sender: sre)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id C898A17E0C7E;
-	Thu, 17 Sep 2026 15:49:21 +0200 (CEST)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 222FB17E0D43;
+	Thu, 17 Sep 2026 15:49:22 +0200 (CEST)
 Received: by jupiter.universe (Postfix, from userid 1000)
-	id 7F89E480031; Thu, 17 Sep 2026 15:49:21 +0200 (CEST)
+	id 83215480038; Thu, 17 Sep 2026 15:49:21 +0200 (CEST)
 From: Sebastian Reichel <sebastian.reichel@collabora.com>
-Date: Thu, 17 Sep 2026 15:49:16 +0200
-Subject: [PATCH 4/8] PM / devfreq: rockchip-dfi: add NO_INTERRUPT perf
- capability
+Date: Thu, 17 Sep 2026 15:49:18 +0200
+Subject: [PATCH 6/8] clk: rockchip: rk3588: add PCLK_DDR_MON_CH gate
+ branches
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -47,7 +47,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260917-rockchip-dfi-cleanup-v1-4-4f00a97a69a6@collabora.com>
+Message-Id: <20260917-rockchip-dfi-cleanup-v1-6-4f00a97a69a6@collabora.com>
 References: <20260917-rockchip-dfi-cleanup-v1-0-4f00a97a69a6@collabora.com>
 In-Reply-To: <20260917-rockchip-dfi-cleanup-v1-0-4f00a97a69a6@collabora.com>
 To: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
@@ -64,61 +64,62 @@ Cc: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
  linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
  kernel@collabora.com, Sebastian Reichel <sebastian.reichel@collabora.com>
 X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1817;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1856;
  i=sebastian.reichel@collabora.com; h=from:subject:message-id;
- bh=tS8n9fy0LBJivuuQhw0+orcBEclVJquJmZ0El2PFwMU=;
- b=owJ4nAFtApL9kA0DAAoB2O7X88g7+poByyZiAGqr7+FtYWVZhqL58bgqY/9AAoAVrODLk/2bk
- /G12vDhTY+kGIkCMwQAAQoAHRYhBO9mDQdGP4tyanlUE9ju1/PIO/qaBQJqq+/hAAoJENju1/PI
- O/qaQvcP/2ts/3qzSSPMQStKfeSOQqsfgNzziQqNcGI0S5KntolvAXoYDfkvsfwy8Jy5ClGTjMA
- 5SKjGmVdDk1mPtm+I+K1+VsmsQ6CzAyW9+HW24itXgkBcjkc2W+eM7MjXxz8fyQr2jhWaJTHZSq
- CT3EIyYisTO1wvrUCtzRokHvsUlehB23uDk4ireeq7XaI3Q1QVKdsWTWhiaGmfdGJXpHC7oZn6f
- ek4J8J+INfYt+icxfNDiPpUS+mPjTYwoGeSpZ46Rv/5mcySSZJh5lBcrmm/UjheYd5tYSqdVi7E
- k1GarZzQbsHrpPQ8Ekmt9Phlg2JmpJT7ju3bB5JQQktVta942gk59V1n0wdnWM16jXkjFrPDwrI
- mripyUDRu6nIVo/oM0RrsYp4nRp6uOFHIJGytaNh5J9aZeaUAFvf+Y8DYaRfQ3zy2ZQvJxk386k
- DEl+ID5BF8klKmWOseyWAePwokQ/RkXEw8SdKOtYx8KjbW6M8QMj0lcAEJYVygoBrbdEnLHXoPP
- h4Nio2FwwGvFP9slvuyVQtQdXifS/JjmYq4+I2y+tg+s23s6i52/aiAnh6OBqC/nhlTca+aSih2
- mch6cCkUhpaTs+7kIFMWl8AWgoXfBZRzPn1nAPKgUg4YxI+t6uzQI/MmtbRt3NGmewKj6FrktqA
- eMLBQk1MYrFh2g8LsPgI0Ug==
+ bh=WfqRSjYFz7+ljRQE5uaOc11qdMoKK31EtGs4gkDrNM4=;
+ b=owJ4nAFtApL9kA0DAAoB2O7X88g7+poByyZiAGqr7+FXLCthP7tD49VfVvHeEO0xRiIMMWLgb
+ bnWmG28Z5g7+okCMwQAAQoAHRYhBO9mDQdGP4tyanlUE9ju1/PIO/qaBQJqq+/hAAoJENju1/PI
+ O/qaTb0P/A/x5egj1nQnkPWKzWJD+O+aQG9ru/DmIrFaBLMjgGQrkSHhtEIZ8awBiU0V3dMMoH+
+ IDh/siTsRM7qE5prdXcGNwomi4yfg2uhlfSNAKfXSXMEWfA3W2dqypLAPqoepd4Nwb125f9+tU3
+ NRgBy6NZRNnXfY1cdeqLtLEcuGT5xXVzS0T3xMIGRPErATCCwG826QuCv5qV0d/8dpswZW/f6fz
+ K3Df5RDIa/jLXjpA262tTj+BFgz2TI+ISm9oYvLtISL1ACHRUxDTMlbZ+euWTaoySFa6XcWcbpo
+ h8bgi5d8K0YkW6t7lwgCmtK4WeAGHLthgQCQa2ndYiz9mMRlrk0p6cqV9xOJwJrTJElzrt3yAeE
+ E775KVtDdK+JhhFWwnSRl0drOyZOIE5khUf1KJyn/N5RA+GTNc3lcoQ3x0JWilijOiM7dQYTR/q
+ RzUe+xEWItOEDnpmtfkwHo86FzBH2DHEC/ht3ZFu1hz126rDKjvK7ZHnY1SsGwuw0uiOgb0aE51
+ 7LbAXuouUGATBzvyJ9Hb27Kfd3bHYjDKezCA2OiI0udmD1EyTenElgTNi3G4iF+BuIRABkCB4o7
+ 4DLTPUSRI+LnSIOkJBKRDowlqsr6O4u/z2UMstpgKjQW3folhlQ+QT0iEUmA1HRmV043byt8Qoi
+ rBK2hfyG7aKXuLpeFftkuKA==
 X-Developer-Key: i=sebastian.reichel@collabora.com; a=openpgp;
  fpr=EF660D07463F8B726A795413D8EED7F3C83BFA9A
 
 From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 
-The perf subsystem's PERF_PMU_CAP_NO_INTERRUPT is a bit of a
-misnomer.[1] Instead of meaning that the PMU has no interrupt, it
-actually means that the PMU does support sampling. On CPU PMUs, this is
-equivalent to not having an interrupt, but for uncore PMUs like the
-rockchip-dfi PMU is, no meaningful sample data could ever be generated
-regardless of whether or not there is an interrupt, as it is not a CPU.
+On the Rockchip RK3588, each memory channel has some bandwidth
+monitoring silicon (hence the "DDR_MON"), which is driven by a clock
+gated by PCLK_DDR_MON_CH0/1/2/3.
 
-Since rockchip-dfi doesn't seem to make use of the interrupt the DT
-provides it with anyway, this was probably never a confusion that
-existed in this case; the capability flag was likely just forgotten.
+These clock branches were left out of the mainline clock tree until now.
 
-Add PERF_PMU_CAP_NO_INTERRUPT to the set flags for the pmu struct's
-capabilities member, so that the perf core knows about this limitation.
+Add them, with the proper CRU reg bits, and the proper parent.  They are
+given the "CLK_IGNORE_UNUSED" flag, so that older device trees with
+newer kernels don't turn off the clocks because they're seen as not in
+use.
 
-Fixes: 4d586b5724d3 ("PM / devfreq: rockchip-dfi: Add perf support")
-Link: https://lore.kernel.org/all/20250619140442.GH1613376@noisy.programming.kicks-ass.net/ [1]
 Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 ---
- drivers/devfreq/event/rockchip-dfi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/rockchip/clk-rk3588.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/devfreq/event/rockchip-dfi.c b/drivers/devfreq/event/rockchip-dfi.c
-index 5339616f7ca6..dd9edfd6a674 100644
---- a/drivers/devfreq/event/rockchip-dfi.c
-+++ b/drivers/devfreq/event/rockchip-dfi.c
-@@ -646,7 +646,7 @@ static int rockchip_ddr_perf_init(struct rockchip_dfi *dfi)
- 	seqlock_init(&dfi->count_seqlock);
- 
- 	pmu->module = THIS_MODULE;
--	pmu->capabilities = PERF_PMU_CAP_NO_EXCLUDE;
-+	pmu->capabilities = PERF_PMU_CAP_NO_EXCLUDE | PERF_PMU_CAP_NO_INTERRUPT;
- 	pmu->task_ctx_nr = perf_invalid_context;
- 	pmu->attr_groups = attr_groups;
- 	pmu->event_init  = rockchip_ddr_perf_event_init;
+diff --git a/drivers/clk/rockchip/clk-rk3588.c b/drivers/clk/rockchip/clk-rk3588.c
+index 24baa0ef9bf3..0485faf27163 100644
+--- a/drivers/clk/rockchip/clk-rk3588.c
++++ b/drivers/clk/rockchip/clk-rk3588.c
+@@ -1349,6 +1349,14 @@ static struct rockchip_clk_branch rk3588_early_clk_branches[] __initdata = {
+ 	COMPOSITE(CLK_DDR_CM0_RTC, "clk_ddr_cm0_rtc", mux_24m_32k_p, CLK_IS_CRITICAL,
+ 			RK3588_CLKSEL_CON(166), 5, 1, MFLAGS, 0, 5, DFLAGS,
+ 			RK3588_CLKGATE_CON(70), 4, GFLAGS),
++	GATE(PCLK_DDR_MON_CH0, "pclk_ddr_mon_ch0", "pclk_center_root", CLK_IGNORE_UNUSED,
++			RK3588_CLKGATE_CON(20), 1, GFLAGS),
++	GATE(PCLK_DDR_MON_CH1, "pclk_ddr_mon_ch1", "pclk_center_root", CLK_IGNORE_UNUSED,
++			RK3588_CLKGATE_CON(20), 14, GFLAGS),
++	GATE(PCLK_DDR_MON_CH2, "pclk_ddr_mon_ch2", "pclk_center_root", CLK_IGNORE_UNUSED,
++			RK3588_CLKGATE_CON(23), 1, GFLAGS),
++	GATE(PCLK_DDR_MON_CH3, "pclk_ddr_mon_ch3", "pclk_center_root", CLK_IGNORE_UNUSED,
++			RK3588_CLKGATE_CON(23), 14, GFLAGS),
+ 	GATE(PCLK_WDT, "pclk_wdt", "pclk_center_root", 0,
+ 			RK3588_CLKGATE_CON(70), 7, GFLAGS),
+ 	GATE(PCLK_TIMER, "pclk_timer", "pclk_center_root", 0,
 
 -- 
 2.53.0
