@@ -1,109 +1,123 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm2-f12.google.com (mail-wm2-f12.google.com [74.125.225.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41C91421229;
-	Thu, 17 Sep 2026 08:23:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2142417366
+	for <linux-clk@vger.kernel.org>; Thu, 17 Sep 2026 08:24:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.140
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789633394; cv=none; b=DvAFYpOUPgH/GlcCblzVWzsQkoHbH5Z/qGCHTB26ooKx3+Iz/EMLBNMxQDL3xi2ovm5nm6n5OcqjxvUjTzdrzlIHXpog76vTZK6b4Xovd60D+lPEsoZICKVHm3z1ZvtSgpE5wjvoxJhb7pA8YOcjLCzM7JGiz5Fo4a1Clu5T2rk=
+	t=1789633482; cv=none; b=jjqw+7LP0YX1GoVbuYZGE02W/ImIOzdhiSfjdMnCNfaQilRGNjTJ/BlaS9fjAxQgVbJsOJppWGcE6vFC0BoNBX6gw3Fzk+4WXD79m3OrJ8/LMUB+1MX8qz4rjT8bGXtrEfUIpEy2EepU/yqwhY9ufcSB3aBn3h/dBsZ3izzt43I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789633394; c=relaxed/simple;
-	bh=g1co1jzH7U1K18tKATjRSARI6guUiPRLxJTf+3GujnI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YNGWV/z7AH3EJkbvDsHqDR3woF7ei3O0sxZtPVq+IxSoxtZM+j2ksvkKP70y+6fLMxCDExNOH2jjA7u3+dIS2G358xplSpc8igr3dx0qL41+LXV6WaC0HZjR7cN6NcNwliTatfZZY7jR8dnLTJTlTqcGBU0HCtrHcxjLm0PX4KY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ma88aExs; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789633482; c=relaxed/simple;
+	bh=L9v9q98gPrJzJTT1P+rysIIc1Lf8YnVgiDYtobB54jQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MhENvokWPxLoESKyRTqvCCCj/E1geJR2lXHN9HP0eKDSyKuyN9reW4b+/xqDgD4WdlafcL5jpUeOmhANLmeKfZdaom1CqkVtpBirw1k2NgmMVTwFCDHA6mcXD6sFjqTl1x7ybEe2EVuGzr7wALqgH8R8d57bRdy9rqEtRiOK7tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bE57fl7Y; arc=none smtp.client-ip=74.125.225.140
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ma88aExs"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 982D11F000FF;
-	Thu, 17 Sep 2026 08:23:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789633387;
-	bh=62ejS+gQZ18rqUWud6FQTYSOrMgOR5ZniszKprxfiyQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Ma88aExs8lQ9yv5XG3Y60kIpNEUk9Mtpwuhb+xm7fCrX6C9jPpnPAiQuOYlZuCQU1
-	 7rAF6d1MNH7basfamWJKcVoHh1pw7FrkwfDDOlyxXLUSrQzBkUhxUMYKtH3aO1t3du
-	 G0kjs4EXWQ9ZQT0fT9TCkafofdMugJmjTp/KxlDnw3XzCxO7CNe2Gn+DWDLsR2vMcn
-	 7jKSb7ikMFAA+qg/qYcyiteFyL6HC1po3FAU51b17iEhAP26ZnlJNTxxXq3QlF8RB9
-	 xgHT45YOBCiaWZGzVSdO0ozXpHQbRsY4Vf+rArVdS1wahHAU13KkaWCCVuvw63MuMG
-	 e9zq6nHuYU/sw==
-Date: Thu, 17 Sep 2026 10:23:03 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Abel Vesa <abel.vesa@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Abel Vesa <abelvesa@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Taniya Das <taniya.das@oss.qualcomm.com>, 
-	Vinod Koul <vkoul@kernel.org>, Jingyi Wang <jingyi.wang@oss.qualcomm.com>, 
-	Ajit Pandey <quic_ajipan@quicinc.com>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Imran Shaik <quic_imrashai@quicinc.com>, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Tengfei Fan <tengfei.fan@oss.qualcomm.com>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 01/52] dt-bindings: clock: qcom: gcc-sdm845: Add CX
- power domain
-Message-ID: <20260917-flexible-unbiased-grebe-3a5dbc@quoll>
-References: <20260914-qcom-tie-cx-to-gcc-v4-0-9d5a606ada33@oss.qualcomm.com>
- <20260914-qcom-tie-cx-to-gcc-v4-1-9d5a606ada33@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bE57fl7Y"
+Received: by mail-wm2-f12.google.com with SMTP id 5b1f17b1804b1-49e69b9e16aso5287785e9.1
+        for <linux-clk@vger.kernel.org>; Thu, 17 Sep 2026 01:24:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1789633472; x=1790238272; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=DFlrcxSZmPD5dZXM5GhCeqxfFV5r+Gw3spLtAai033g=;
+        b=bE57fl7YT2VHCDXMweQkJ6TSCAvOwhs7l9Zkr4F5IU7l8QEr0fvlbLIhRAZQo9SsfG
+         fGqOzBIHpSU1qGIF57Kuo1G8kT5TSjma0K4fwgqBzMvfbHRkNQirYy2jg3sDZCCxNiAa
+         UgCwdTlqiypXSA7UnXfv4DBF6UNbloDBrfU/Ghqy/+7IFSnXTsAGbbcNINUFhMg+Kgrh
+         hgCWjyDLfKiiJKpmISDg53AgzT/NvKBHMblZ0+/M86sQNnLFr1qGTc1UdZkU3artMQ7C
+         dDBR0zqRV65qqhXSprm2ZUOjxy2Nze68CxTlCXSCZZBDVvL5+sv5CLWBUyidLxpZHP7F
+         w+wA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1789633472; x=1790238272;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=DFlrcxSZmPD5dZXM5GhCeqxfFV5r+Gw3spLtAai033g=;
+        b=CMG3C36EjCEUfvfPdq6QfaLGP9upFM1HgJXHddcllzn3UxJUN4+F+rZCT0WxzSssVv
+         nsVpWHqAnyxDZLvrqthtmjBx3SfCgShi0t84uepYVPjThbAN/dD7/Lxz0FkURhaEb8Y1
+         EpWn6IiqwafaMhEQsl4UEi50FvnWJ0Xhf+qHyIAEFCYjnfqDRTXH1+1QsWYSrcbGkDYP
+         XIFI6IaMOh/shzQt4Hd+5JoLQF7vg6C/aww0PyZ55162q/Euk0o9EC0B0uYyk4dDfADU
+         k7m51d27heovzE7ptXAZDQcSfvxP2GnBrN2liYdH4TEixjbSXKA8omi3S6D4XasLOG9Q
+         owbQ==
+X-Forwarded-Encrypted: i=1; AKwUvBzS6cTglDhGP+e1Tqc71dXlNtyvRsbWmq8xnOtK5DJin6FQSWwk5gkR/d8PKyIgoe2/pcqzyCUAVNA=@vger.kernel.org
+X-Gm-Message-State: AFuF++mYmhSAzvJBhZAzdCRVS+1aQBw2RL7N90Kd5sQaSCmQMWq0CK1q
+	ilNJwQoDO8Xe+NXObu9/fD8jGwKQ76112M3QVNPeXsxXGL4EepjKP0fb
+X-Gm-Gg: AYBFou1RHGZVIvfqlQWqcNMYtDNrw2sKzhJ82oWT102M+yOZ3JF8Xi+2z52dPzJJ3zr
+	jCIhiMomP0dUyZVW346DkxE3ksgVWS/coA/PHgp+JpPK484sop3pxMs/CwGJ7HAtxZ/OYK+gLFw
+	KPpPWvdXEMFL6iBeidlcYHoTYLNszRXj2wYJO3P7j0tOgvVbxiQFCESRhmm8QxZuYET6pouICpC
+	CjtzXzVNHzsxrDj1Q+IqlOHH8y+/pm/YSxp/vPzvsVT1pEE/rPmiuoZiqd/6xKsRzyzawQvAJhc
+	EfWQpn7yhl42kc/3RxApXXReWpgz+hKP+SFxXsDNlhC8ldiBE/DrYXHcj/adsiBkKpWqCyFIUHZ
+	mIjX3UACU1headX87Y1D7tGBgeMWJWGVMdJeTQpWe3EbRoC4ebj3MS1enpyBcySGY4/HwOpjj1y
+	L1rkXDaR29n+ITWYOM0lqscu0FnaszoTP/6UAy31JIUhNnrfAcT70zNOEonJgFjjeDgpsWqvkWk
+	6FkQzaDYY7vNYo6xfCNSlxrpFtrTFf31+W6npT9tPI8Q3qctCfZ/0njGspIY7hLDEZ+qmdWyVSm
+	xymRFRmq1+Q+7TGd2tSwGcQj6/1UCJwxMMGibX1bBXJKBRE7G5/PRsUUOj9YaIEfFZUa97cD+OV
+	ojLgi0I1+DDP+oDfqHxE6Z/jDifH8M59WBf5wtBmW7Wsof+HH70jC/+HR0vU//E3Ii+GQ0bY9Eg
+	XyJFfABubmr/yqiPY=
+X-Received: by 2002:a05:600c:35d0:b0:49d:827:e5b6 with SMTP id 5b1f17b1804b1-49eb7320b76mr75942795e9.20.1789633471744;
+        Thu, 17 Sep 2026 01:24:31 -0700 (PDT)
+Received: from localhost (90-182-112-124.rcp.o2.cz. [90.182.112.124])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49fbefe1791sm38435265e9.1.2026.09.17.01.24.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Sep 2026 01:24:31 -0700 (PDT)
+Date: Thu, 17 Sep 2026 10:24:29 +0200
+From: Joshua Crofts <joshua.crofts1@gmail.com>
+To: Frank Li <Frank.li@oss.nxp.com>
+Cc: Johan Hovold <johan@kernel.org>, Abel Vesa <abelvesa@kernel.org>, Peng
+ Fan <peng.fan@nxp.com>, Stephen Boyd <sboyd@kernel.org>, Brian Masney
+ <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, Frank
+ Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
+ Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
+ linux-clk@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] clk: imx: add missing
+ pm_runtime_dont_use_autosuspend() calls
+Message-ID: <20260917102429.00002faf@gmail.com>
+In-Reply-To: <aqq_ymTi1I951uQp@SMW015318>
+References: <20260915103345.1334-1-joshua.crofts1@gmail.com>
+	<aqpgUPWUGZp5Cjzt@hovoldconsulting.com>
+	<aqq_ymTi1I951uQp@SMW015318>
+X-Mailer: Claws Mail 4.4.0 (GTK 3.24.51; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260914-qcom-tie-cx-to-gcc-v4-1-9d5a606ada33@oss.qualcomm.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 14, 2026 at 03:47:00PM +0300, Abel Vesa wrote:
-> Describe the CX power-domain dependency for SDM845 and SDM670 GCCs, and
+On Wed, 16 Sep 2026 11:11:54 -0500
+Frank Li <Frank.li@oss.nxp.com> wrote:
 
-The domain is already there thus first part "describe ..." is not
-accurate. You changed nothing.
-
-> require it for both compatibles.
+> On Wed, Sep 16, 2026 at 11:24:32AM +0200, Johan Hovold wrote:
+> > On Tue, Sep 15, 2026 at 10:33:43AM +0000, Joshua Crofts wrote:  
+> > > Several drivers in the clk subsystem forget to call dont_use_autosuspend()
+> > > on teardown or error, causing potential resource leaks. This series adds
+> > > the missing calls.  
+> >
+> > No, as I've explained repeatedly elsewhere, it does not cause any
+> > resource leaks. [1][2]
+> >
+> > The autosuspend setting leaks if you will, but that only matters in the
+> > theoretical corner case of someone rebinding a different driver (which
+> > will soon also taint the kernel).
+> >
+> > So don't exaggerate the impact, this is essentially just a cleanup,
+> > which is fine in itself.  
 > 
-> Without this dependency, GCC GDSC consumers cannot vote for CX and RPMh may
-> undervolt it.
+> Is it possilbe to create/improve runtime pm API, let runtime_pm enable/disable
+> include these pair functions.
 > 
-> Signed-off-by: Abel Vesa <abel.vesa@oss.qualcomm.com>
-> ---
->  Documentation/devicetree/bindings/clock/qcom,gcc-sdm845.yaml | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sdm845.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-sdm845.yaml
-> index a7523a414341..356af877353d 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,gcc-sdm845.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sdm845.yaml
-> @@ -31,7 +31,8 @@ properties:
->      maxItems: 5
->  
->    power-domains:
-> -    maxItems: 1
-> +    items:
-> +      - description: CX power domain
->  
->  required:
->    - compatible
-> @@ -56,6 +57,8 @@ allOf:
->              - const: bi_tcxo
->              - const: bi_tcxo_ao
->              - const: sleep_clk
-> +      required:
-> +        - power-domains
->  
->    - if:
->        properties:
-> @@ -78,6 +81,8 @@ allOf:
->              - const: sleep_clk
->              - const: pcie_0_pipe_clk
->              - const: pcie_1_pipe_clk
-> +      required:
-> +        - power-domains
+> I get many similar patches since scan tools is more powerful now.
 
-Why is this required per each "if" branch, but not in the top-level?
-There are only two compatibles here.
+I suppose that could work. One would still have to scrub the kernel of legacy
+use/dont_use_autosuspend() calls though, so it could end up being a large
+patchset.
 
-Best regards,
-Krzysztof
-
+-- 
+Kind regards,
+Joshua Crofts
