@@ -1,34 +1,34 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 525084718EE;
-	Thu, 17 Sep 2026 09:07:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83BB14A7C97;
+	Thu, 17 Sep 2026 09:07:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789636047; cv=none; b=HizgGiTb1pb088QS+aZtMlEr3TiKVKh2Af9ESo/Ea+Co/AtJNmENydC+E7Bfjycr4dQ26KS0dYd+St9srFh7jpn5pch6q7KWPxSzy2MCeY1HPv6gWcS0PU/WgMBdeJ/YikWQj3HqIw0y4SXvM+twvpnEP4vbQ49YzwcO9pzQa0E=
+	t=1789636050; cv=none; b=VrirCJeKtsjmx1eAwuvsGSzXzcJI6A//PK3cEPV9VnrHLVKggxj8It4HLjWjpohskS8KaBomh8IFzhdmHYHeFzmcnYLaWY8jVclOfAGEgzVyHWhkOQyBe06KogaKt6lih8jYcqXuHE/NBaIQJyjReowbeF3WU+RFzu0FBw2JCKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789636047; c=relaxed/simple;
-	bh=GHLtme7NDMufS6DWbRTLTYLKLClTqWKEGfOqK73WaTI=;
+	s=arc-20240116; t=1789636050; c=relaxed/simple;
+	bh=jl1SET3aMU2rf5BYvCbgNwzyyOEysVrMLiay0sfUraU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=iUiGfGpVagw9tn8TTM8AlQQz3dBvnGRiWa6RlNDzi23Kt9Dx7NJ5ObOmJTS07emlKqgk0Sl6pA/xHdvZ3+o7heWUIsg18Us5go3OJosHiSjNeQRB8vTlRErfZBrnHASveFF7gHeLlNIYlooBKJ7sFaJK+NIYQwx5PgG+noh8Hag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lRt0zySM; arc=none smtp.client-ip=100.103.45.18
+	 In-Reply-To:To:Cc; b=MyMt6LiUd3Ev+HbBVRM5Wfkca0g/h0C6fSxiwjxJbfPj0a5n0GB9p/VEQ9oWsaxbdglZ0P8W3+/kdA/E7EXRilaxCoxK4wT0gq5mq1ekNcTU8zW4pcG0cBZoFcWam29CoeR2+iWQZNyDcm1TLD5Fqu6UmCFwYtidHsNf7AgIy5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tr/K9blg; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lRt0zySM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B4791F00893;
-	Thu, 17 Sep 2026 09:07:21 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tr/K9blg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7ED3D1F00899;
+	Thu, 17 Sep 2026 09:07:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789636046;
-	bh=JLK9Gif7xz707Dqma1dcllSycd1rrGEmnGWxi/D/qSg=;
+	s=k20260515; t=1789636049;
+	bh=DS6Tk7psUmOCja00oDnad5txvkzZohUhHFTHbS3dslE=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=lRt0zySMa+BGnlh9QjzQeRNwLRg7IjOvn/6XlrVHKLKAn+YD6eE16F8s1DzLvE49F
-	 9pcpWeKJ7IKHjivftdsSX913uy2yk607jn7ZMCmx//6zkhPnkwsBoDZnnt5UamG10L
-	 E8CMtD36UJff0fjghi8KmJDmRgfTgetQ44Hqt0SXAoYNcnqXPFO+lkrZE8erKj1eKr
-	 SXRDsMYzRBEM2uLD2U/khcwbv4GCIaA4zwhMrOWSx+3pMJ5nObI/sjrPJP58OhAC8H
-	 VWnzrYN5/jTIh6YX5jgymycDoiXz9co+MEWtoK52wLYHv7OEhQ6tTyTgZRr3zIsIS/
-	 Q/hrnK8Q8D5OQ==
+	b=Tr/K9blgWVh1KzXpZub2ejnqvHHYZRhTT9Mwh4dBX+l6KPrMMeRjzKxcLDkxJUw92
+	 pyT1960pBsYprG9z6vqShi0BrrRy2W6jY+swluuaJovMbDxUANxxPmw1ivFT9ootBS
+	 1VOgr3m9Y4Sw3wx5+UvFxNN4sUdOrehmWiUSPUeLJtsHrO0AUePTwJO9yZpgOw980j
+	 6aMcMbCJWGpLFGGOx/z374u/YoY0zEzAbo+okvDlu0nX6fmkFp2+4sHrfYkVwm1H/J
+	 k9+q29jfJ9cOL64onXLJ6Ds9CSSzpFW3JzwNtfU1KGkdPN9p7ijCeP93HjASLX4WBC
+	 K/7UEusC5ocWA==
 From: Konrad Dybcio <konradybcio@kernel.org>
-Date: Thu, 17 Sep 2026 11:06:53 +0200
-Subject: [PATCH 1/3] clk: qcom: rcg2: Initialize shared floor clock state
+Date: Thu, 17 Sep 2026 11:06:54 +0200
+Subject: [PATCH 2/3] clk: qcom: rcg2: Propagate force-enable status errors
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -37,7 +37,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260917-topic-qc_clk_fixes-v1-1-5531cb00514b@oss.qualcomm.com>
+Message-Id: <20260917-topic-qc_clk_fixes-v1-2-5531cb00514b@oss.qualcomm.com>
 References: <20260917-topic-qc_clk_fixes-v1-0-5531cb00514b@oss.qualcomm.com>
 In-Reply-To: <20260917-topic-qc_clk_fixes-v1-0-5531cb00514b@oss.qualcomm.com>
 To: Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abelvesa@kernel.org>, 
@@ -50,78 +50,48 @@ Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  linux-kernel@vger.kernel.org, 
  Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1789636037; l=2220;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1789636037; l=1169;
  i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
- bh=tfh3/y1GaAsjd2wJBp33BDTZSBpDeCti9KhPKvCTPPU=;
- b=N13hvY2ui53EQFPsSSXBa0vDWSmJQ5kp7JDmARvQRIuW05X3mpzaw3VDx0giiN5t1zLAphRcG
- JFNQLVi3k2eAWgUU9xrParRq3RakCV6rixg395d6tOrm2wD4d3Gd+IG
+ bh=QEd+weplDuuDvh09gpIOH6CC+ZLTmttPHaCiqYgZ0OE=;
+ b=MFe6v2N879J9NkeBVPklnd6aTvNyBO0oy7zfe19ZU7JawgmwmXWPp4LTcYpG0EqSsr01JUVHd
+ E8eAhzs+sSWDDPBgLcSQdipAFXFmlcPEokCuxT6iWUpDZaIFiqoXY6o
 X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
  pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
 From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-Shared floor RCGs use the cached parked_cfg whenever CCF considers the
-clock disabled. Unlike the other shared RCG variants, their ops do not
-initialize that cache, leaving it zeroed until the first disable or rate
-change. This can make registration report an undivided XO configuration
-instead of the boot-programmed parent and divider.
+clk_rcg2_is_enabled() returns either a hardware status or a negative
+regmap error. The force-enable polling loop treats every nonzero return as
+an enabled clock, so a failed status read is incorrectly reported as
+success and clock reconfiguration can continue with unknown hardware
+state.
 
-Initialize parked_cfg from CFG_REG without parking or otherwise changing
-the hardware. Propagate read failures so a clock with unknown initial
-state is not registered.
+Check for negative returns before testing the enabled status and propagate
+the read error to the caller.
 
-Fixes: aec8c0e28ce4 ("clk: qcom: rcg2: add clk_rcg2_shared_floor_ops")
+Fixes: 7ef6f11887bd ("clk: qcom: Configure the RCGs to a safe source as needed")
 Assisted-by: LLM
 Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 ---
- drivers/clk/qcom/clk-rcg2.c | 26 +++++++++++++-------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
+ drivers/clk/qcom/clk-rcg2.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index d7914e59129f..adb03c3aa0dc 100644
+index adb03c3aa0dc..54d122e2e0d6 100644
 --- a/drivers/clk/qcom/clk-rcg2.c
 +++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -1555,7 +1555,20 @@ const struct clk_ops clk_rcg2_shared_ops = {
- };
- EXPORT_SYMBOL_GPL(clk_rcg2_shared_ops);
+@@ -1332,7 +1332,10 @@ static int clk_rcg2_set_force_enable(struct clk_hw *hw)
  
-+static int clk_rcg2_shared_no_init_park(struct clk_hw *hw)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+
-+	/*
-+	 * Read the config register so that the parent is properly mapped at
-+	 * registration time.
-+	 */
-+	return regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG,
-+			   &rcg->parked_cfg);
-+}
-+
- const struct clk_ops clk_rcg2_shared_floor_ops = {
-+	.init = clk_rcg2_shared_no_init_park,
- 	.enable = clk_rcg2_shared_enable,
- 	.disable = clk_rcg2_shared_disable,
- 	.get_parent = clk_rcg2_shared_get_parent,
-@@ -1567,19 +1580,6 @@ const struct clk_ops clk_rcg2_shared_floor_ops = {
- };
- EXPORT_SYMBOL_GPL(clk_rcg2_shared_floor_ops);
+ 	/* wait for RCG to turn ON */
+ 	for (count = 500; count > 0; count--) {
+-		if (clk_rcg2_is_enabled(hw))
++		ret = clk_rcg2_is_enabled(hw);
++		if (ret < 0)
++			return ret;
++		if (ret)
+ 			return 0;
  
--static int clk_rcg2_shared_no_init_park(struct clk_hw *hw)
--{
--	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
--
--	/*
--	 * Read the config register so that the parent is properly mapped at
--	 * registration time.
--	 */
--	regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG, &rcg->parked_cfg);
--
--	return 0;
--}
--
- /*
-  * Like clk_rcg2_shared_ops but skip the init so that the clk frequency is left
-  * unchanged at registration time.
+ 		udelay(1);
 
 -- 
 2.55.0
