@@ -1,113 +1,122 @@
-Received: from mail-ej2-f20.google.com (mail-ej2-f20.google.com [74.125.228.148])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 113CA52B1F4
-	for <linux-clk@vger.kernel.org>; Thu, 17 Sep 2026 13:27:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.228.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 346D05505D5;
+	Thu, 17 Sep 2026 13:49:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789651684; cv=none; b=O9n6LcQnTR9LPVgbBo5OYuaN/BnwMtNUyP26WJ4fH5qwQCnXLHQS0RLI/uZJYbTqv9nn+PvUGSeb+heFg2ltWCcwrC0gKwrJEK3xz1KNW2w2rro6A1OCwm/r3ZZiF834HBsFLthKBf8gpNP6DyRCUIXDiUgyvGwznBLfeQlIPs8=
+	t=1789652969; cv=none; b=okNWqi42ZpxD0nqMEBk+fS2nHdNOJS+kfEhBz6HUml1/CGybQ57AinQO7Ox/BZ54t0KlWITOdXvjkTFOlE+ojIAFLZtaYu2Cmt6oq0gzj9uUa3EgSQvKFLyh2+8cODFuHQiW5EU4q+UGCA5D09CM/4lPx3yKTuAo7GgLzsZPrXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789651684; c=relaxed/simple;
-	bh=TX6xhS4Vhis/cVqkO7iD2bmIOPGH7N8MJNCWfFGrVr0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mTdRLj7AISWH/W39hedn7brJTmpFXAoAcsU97iIb7GbqSUcfs6d9x8+K7d8KCpC3uYf9iCS5epm0u2bRVzx8oXvcEMvugYHG371I4YOR4+j21F1c5Ur65LH+wmfyIQJYxHJuigfilkFMmpKPLUGuYl6QbIwEOd+TVCIrGqLhETk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OJPx/VkR; arc=none smtp.client-ip=74.125.228.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1789652969; c=relaxed/simple;
+	bh=3W2f0MAd/j+4iELbcrQn9aunsEIzQRT+obAqYgIAROM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=njioaXcjKaU/1+uwZRlC9uJmgR/P0VtR4/0hzMPWiFKGENhTpCU5nsE2P5YHhPyxLkelPkW+BgKRL05iXsuOqEmV7Q+C9pMhbbOuYdCKdoPwc38L5uzzg3Q/dwoPnjV4j8qe6KABA4uSUiyZXbrNIUMBdCpjPqnm/3dsgAWPrxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=FTb1GP4b; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OJPx/VkR"
-Received: by mail-ej2-f20.google.com with SMTP id a640c23a62f3a-c293c683202so129936066b.3
-        for <linux-clk@vger.kernel.org>; Thu, 17 Sep 2026 06:27:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1789651676; x=1790256476; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=rajuo6bzngXrBhLYotQd0SgbFpshLprnWII6O4/hths=;
-        b=OJPx/VkRtQ1fIdASIxegqFHT0i3xYB+awFm099+ZIEeVsYTarq+xHv0polyYdj22JM
-         BHvYD3HpW5LLY1/Aq8nBlVzmuN57UM6PNT5gIDypU8XJwCcRqvqCmU7RAddDDNNjgdrS
-         l+cZxshTdscz6asGb3tqJaQeBOYVFwmuFO0GPKGphIrO9LfQv81y+dlfRDREHa1+jy1Y
-         ALBFDSqNVCwkuWI7zjO2/kwMmxKRnYoe+9z+Ugs8VuwC6HHpsOkYI48vRu0NwfJ1pk75
-         M/AG25D3IuNO7Ftmcd8Oo0IgT18PvFy/PPpoj833Kj7kh8Eil9yogKdpr9WEo8d+BaXY
-         8DpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789651676; x=1790256476;
-        h=content-transfer-encoding:content-type:in-reply-to:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=rajuo6bzngXrBhLYotQd0SgbFpshLprnWII6O4/hths=;
-        b=hKQ0df7LoVfvOzKEVcOpba6VHZQX1zv5URYAUob1v9NXyhTaISiYuJQBGafM5vsmVY
-         ui/LYX2iYg3QIZDGI7QRmhmHmaQM07lmMHu3jvP7kuyFOpeqldkiT7cBYCqtjio5iKSx
-         Ku/i8XAAPd9JQvB4vWqVJY+5qobB+9Lrae3RKnqfSgwB2PqrwfqTFz+vLxdoPWWkaMu+
-         kn2TdUpcXxbKF6i9Tk2ltSJ8dDLV6aetne5+NyEyAqDgCA2migMMEjYN9znP5InV61c5
-         Y1CppIfNWGJ++SpYaXYBFaRijD7ETOtPO0LmdBhF7gJYLYTjcmjZtauhjm8EpF1I/BKW
-         0cBg==
-X-Forwarded-Encrypted: i=1; AKwUvBwuNj9imDsMju1s7GTnTlp1Lb6hnQWJrgfza2uch59aWqPRHIu7q76xZVsocer1AbhpHLEJdBZJR9w=@vger.kernel.org
-X-Gm-Message-State: AFuF++lNucqcGGTKIEcOu/05Su1zeNQuoZu0IDTH5+owSkDtVEAu5g63
-	yGDjgmxr50lp0r17e8zOAE4O5L4fCdZwFZ2OUDmd8I8ML59Vg5mwOH34dxLzyPwsvIM=
-X-Gm-Gg: AYBFou3R0Fwsqq8ZjcDhSTKY8NAhBqYy9gQtMRENumfHO1mfgjZEbG9U5YL+/4J95v1
-	jyWuGWlrwAqHzSeRujJZTKVGebmu59Nbs8B1+uXipitz+bQ8khUZ28nyg2zmx03/cFEJM7hOZPc
-	YD0KaYWoxGRCJolSQenD90zwC1xzrWwdNOgjHslaTKKX0H/4gY8a7Dewq982J6rsKJDrVhoGBdI
-	HYYopJgo3vlHXPYSoSj9Fp0UcwomkXtzEPifuCQMUUZevGA4g6gvkQs2THbWG80e+gGBXMznKFN
-	r2bpYOKUWPhqWg4nmzHqrdVm8BSXN7DDPfC0FbM2waP3h99mM5IhGIPRNtWjbkD10KXc93Qzmcf
-	vhdnjOVXC7+9HDB8YvAzL79b1ltQDL35P4Qx3WnkNuQ8dCoDAK0GOQMjcXKZEd7sQ75ZY67uID5
-	IaPAbma9oQYIspmsPjcDSkOmOKTxFbJBWrt5QVC/cK+ezHcuss5MJonkzukKsJyZXSfAnBSBsy8
-	JY+XFLpx7o=
-X-Received: by 2002:a17:907:d0b:b0:c26:19de:9acd with SMTP id a640c23a62f3a-c29e5308381mr463526666b.37.1789651676039;
-        Thu, 17 Sep 2026 06:27:56 -0700 (PDT)
-Received: from [192.168.0.167] ([109.76.29.130])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c29de453f04sm293940366b.15.2026.09.17.06.27.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Sep 2026 06:27:55 -0700 (PDT)
-Message-ID: <37f182ad-a137-4066-9e94-b06be2cd03da@linaro.org>
-Date: Thu, 17 Sep 2026 14:27:54 +0100
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="FTb1GP4b"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1789652961;
+	bh=3W2f0MAd/j+4iELbcrQn9aunsEIzQRT+obAqYgIAROM=;
+	h=From:Subject:Date:To:Cc:From;
+	b=FTb1GP4brkFWQbicGPdBD4UGPyDUQUtTCq7HOTdN40XE31utUs8K72+0naAGWmWQp
+	 7DjM0ZlF6xKRdeLyL9jdUDtr8rDFKNhpGf7LmaigbtTHcTu7p8YUfaWeI6ddDAQBwR
+	 9vnYiylZB2SYS3+2Z4RKF9BP1lyZ7VaABQQr5XO+eXoGXKqIorBHh+8PJzzYGkkFCO
+	 pt5AOFndErQYi3Q7zBriaKNMJpu9Owck2p9Fg4C9sm0wn7KRs8kz03u38Pt3ZrIKWz
+	 lxGLROnJqzhZ74kzx3XbVSWcWLf7PL/pRGfKS9DKHmB0NFxlkA2sPKmLzAdAlOQUJv
+	 O4f/lKdIL1/0Q==
+Received: from jupiter.universe (unknown [100.64.1.62])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sre)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id C3BF017E0074;
+	Thu, 17 Sep 2026 15:49:21 +0200 (CEST)
+Received: by jupiter.universe (Postfix, from userid 1000)
+	id 7987148002B; Thu, 17 Sep 2026 15:49:21 +0200 (CEST)
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+Subject: [PATCH 0/8] PM / devfreq: rockchip-dfi: cleanups
+Date: Thu, 17 Sep 2026 15:49:12 +0200
+Message-Id: <20260917-rockchip-dfi-cleanup-v1-0-4f00a97a69a6@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v18 3/5] phy: core: Add devm_phy_get_by_of_node()
-To: Neil Armstrong <neil.armstrong@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>,
- Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Bryan O'Donoghue <bod@kernel.org>,
- Loic Poulain <loic.poulain@oss.qualcomm.com>, Vinod Koul <vkoul@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Felipe Balbi <balbi@ti.com>,
- Manivannan Sadhasivam <mani@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, linux-phy@lists.infradead.org,
- Krzysztof Kozlowski <krzk@kernel.org>
-References: <20260917-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v18-0-f85c9103177e@linaro.org>
- <20260917-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v18-3-f85c9103177e@linaro.org>
- <9e8ae55f-6d95-48a9-bef1-ab653d0f1c7d@linaro.org>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Content-Language: en-GB
-In-Reply-To: <9e8ae55f-6d95-48a9-bef1-ab653d0f1c7d@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMQQqDMBBG4avIrDugLix6FXGRjn90bIkhqSIE7
+ 25al9/ivUQRQRGpKxIF7Bp1dRnVoyCZjZvAOmZTXdZN2VZPDqu8ZVbPo1WWD4zbPFsYNIA1aIV
+ y6gOsHv9tP9yO22uBfH8vOs8Luw4py3gAAAA=
+X-Change-ID: 20260917-rockchip-dfi-cleanup-feae6eefae9c
+To: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, 
+ MyungJoo Ham <myungjoo.ham@samsung.com>, 
+ Kyungmin Park <kyungmin.park@samsung.com>, 
+ Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, 
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+ kernel@collabora.com, Sebastian Reichel <sebastian.reichel@collabora.com>
+X-Mailer: b4 0.16.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1846;
+ i=sebastian.reichel@collabora.com; h=from:subject:message-id;
+ bh=3W2f0MAd/j+4iELbcrQn9aunsEIzQRT+obAqYgIAROM=;
+ b=owJ4nAFtApL9kA0DAAoB2O7X88g7+poByyZiAGqr7+G/yDfpsZ794SvTCOLXgxCZftsZzOK/G
+ hPSHHcl6U3/5IkCMwQAAQoAHRYhBO9mDQdGP4tyanlUE9ju1/PIO/qaBQJqq+/hAAoJENju1/PI
+ O/qaqzMP/2g61okvGwUd0WJq6OBMB2CN3yCavL+mEw1uNG23b3iZL3ARcMyN0xmRrhGSqidt3yD
+ weVkBxPCABW1lBc5bwHvwS0ewq2LdDhKa2G6IguXm1bA1KewClmitCTfmvhzjGLWTD7/RL1PEFY
+ /Anww/cvsNMY9hRUxTTcQ8Yl0j1JxSDNNlkSfYzqordRFqOfjCrwvGwZxvOf7e5u698DRVIjpZL
+ cYNxckC9/Ez22IeXlNJcBlkguR4SVg543D4C5pmSQIp/r+GtiGVHDC70fv+MDGBE48dneSGaFsx
+ x7L4M1kVabWVC+m9q40tEybX0dBNLFOpYKEojY7vznyWdsoaOzmEg1tijH3Z4L2z21TEGdgcX2Y
+ J6x6GXKJPl6XhoJIEoJowgtYYTPf8tSm0rEGXF26Ok3DISn9LykSMkVvNUSbtrKiNuhBgRERnGq
+ bGyEhu71fcVT9/a4vBkOLDExLX3lkYhV+r/o4+YSyPZ3Qjz891jOaXj1bZndhCcisjl0PuFIiPI
+ SHyG3K0uhKvyXHPGqPsJMhulC349cF4z2DXMCEd0WoZa/g7CN8HQNpR9zuVwDBFJ4RBOYNq1Xtt
+ 7W5DhCjMFnq6Av3T/tuWfuEoo/0J9D9vKJYbWHwIQ3cDtRp+RqSO3h7tmtPry+RylsL3DMZMWlN
+ IhXxrtsS2OPsqjYBsMVYvjA==
+X-Developer-Key: i=sebastian.reichel@collabora.com; a=openpgp;
+ fpr=EF660D07463F8B726A795413D8EED7F3C83BFA9A
 
-On 17/09/2026 13:32, Neil Armstrong wrote:
->> -        dev_dbg(dev, "failed to create device link to %s\n",
->> +        dev_err(dev, "failed to create device link to %s\n",
->>               dev_name(phy->dev.parent));
-> 
-> This change belongs in another patch.
+This adds proper handling of the RK3588 clocks required for DDR memory
+monitoring, which involves adding them to the clock driver and the DT
+bindings first. The change is done in a backwards compatible way by
+marking them as CLK_IGNORE_UNUSED and using optional clock get in the
+DFI driver. The series also applies a few cleanups to the DFI driver
+while at it. This is done in preparation for RK3576 support, which
+will also come with some DFI specific clocks.
 
-Doh Frank gave me a comment on this and I just changed it without 
-realising this isn't in my series at all.
+As everything is done backwards compatible, patches do not need to
+be merged together. So Heiko can take the Rockchip specific patches
+and Chanwoo Choi can take the DFI driver patches.
 
-I'll drop this altogether
-
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 ---
-bod
+Nicolas Frattaroli (8):
+      dt-bindings: clock: rk3588: add PCLK_DDR_MON_CH clocks
+      dt-bindings: devfreq: event: rockchip,dfi: add clocks to rk3588
+      PM / devfreq: rockchip-dfi: move to per-variant const structs
+      PM / devfreq: rockchip-dfi: add NO_INTERRUPT perf capability
+      PM / devfreq: rockchip-dfi: use bulk clock APIs
+      clk: rockchip: rk3588: add PCLK_DDR_MON_CH gate branches
+      PM / devfreq: rockchip-dfi: make RK3588 use its clocks
+      arm64: dts: rockchip: add dfi clocks on RK3588
+
+ .../bindings/devfreq/event/rockchip,dfi.yaml       |  84 +++++++++--
+ arch/arm64/boot/dts/rockchip/rk3588-base.dtsi      |   4 +
+ drivers/clk/rockchip/clk-rk3588.c                  |   8 ++
+ drivers/devfreq/event/rockchip-dfi.c               | 160 ++++++++++++++-------
+ include/dt-bindings/clock/rockchip,rk3588-cru.h    |   4 +
+ 5 files changed, 198 insertions(+), 62 deletions(-)
+---
+base-commit: cee9395acd8043be0644b25c34bfa86623f2b935
+change-id: 20260917-rockchip-dfi-cleanup-feae6eefae9c
+
+Best regards,
+--  
+Sebastian Reichel <sebastian.reichel@collabora.com>
+
