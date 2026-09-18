@@ -1,116 +1,109 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9685B3B27D4;
-	Fri, 18 Sep 2026 01:50:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A18823859D4
+	for <linux-clk@vger.kernel.org>; Fri, 18 Sep 2026 03:51:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789696237; cv=none; b=NWAEPzDxJRf7bchVKl4zJ7hz16hcTAm3RacGIdoPYa3+grcM56EXgMmYooeK3bsclWy3xTGXJ3BzmWaHITXtJMPgGAherpHoRj1Ad/enP5pj3Wvq4gpDgiDuLNQqEv9ogbUw9CEZ5u47d7tGkQRAx6mCCS5Ff39AcCw2dRq71Ys=
+	t=1789703495; cv=none; b=II+OTW5mq9chJofii6c4yGfPUzJuoJIGgXMyz6vEqHuPiHoT+g0zGColaFAQbXrLFzEZ8CLnguiTAQBeU57DVP00aY2DBVn80GrRzP6Dz5VJO4FYBTWsKmypJ3NXad0FzHqMO1Gn8VGAIy+66X7AqoeO/U4AvpZLRnybFcmpnhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789696237; c=relaxed/simple;
-	bh=h2rnnvU1cABd1Qm85kshfAoTaocBNolJoMMn0SOrP2k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z7TrRS70NTmvX88sZQWbcD5nG+OLRQDS166szayJAfxbD1iR3qmjN02++ZVPrSofPmCQkAh0w0RmQoeysFpxr5RZIdnVzVOr85Sia54m8E8uVBHX8yfd/fxsO+1WZ5LAehxAbTrIn0FN5qwWf6gu0e5HKasWygI2AO7GA65yq8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=WK+s33XW; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1789703495; c=relaxed/simple;
+	bh=7hm+e5haj6Zd35caTcNALHPX1QE1gwXURphY8ZG4f1A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TxJXAu9RVHHowL45U5IJZQNEoFAYidUq/3dz7LNUVk0TQjdFVsM5b/eUKt4FIZjhQQMrvqnyUe+7Sg1jJJEYK19XwawOTIAIv1shiRE4Ltu+HVouyKbqJ4mW+kqGewxUdsYTnCsTBpmYofrkCWqPezHDEdvHqKuf+DJaKTHLZXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E6oHwiAa; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="WK+s33XW"
-Received: from killaraus.ideasonboard.com (2001-14ba-70f3-e800--a06.rev.dnainternet.fi [IPv6:2001:14ba:70f3:e800::a06])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 8585B4DC;
-	Fri, 18 Sep 2026 03:48:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1789696118;
-	bh=h2rnnvU1cABd1Qm85kshfAoTaocBNolJoMMn0SOrP2k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WK+s33XWYcpStYU868v7Jk2/7Ndecv2D71Ut07mRDZxnQnTkoO9IOzSXmEGGMeYye
-	 LXon4+ic+fxFC14w2LXuTacNjGh8IL2L91e/lFlXKbArSTShVemTWEZYAAWKi0xbVs
-	 aYN/RqZ8kMkC25Boz/HugRF6ty2zHyEgX8hO/E8M=
-Date: Fri, 18 Sep 2026 04:50:19 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Paul Elder <paul.elder+renesas@ideasonboard.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>, Ulf Hansson <ulfh@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH 00/10] media: rcar-fcp, vsp1: Enable on R-Car X5H
-Message-ID: <20260918015019.GA736264@killaraus.ideasonboard.com>
-References: <20260917-epaul-v7-3-rc1-x5h-vsp-fcp-v1-0-4c72d4e086dd@ideasonboard.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E6oHwiAa"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D7F01F00899
+	for <linux-clk@vger.kernel.org>; Fri, 18 Sep 2026 03:51:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789703494;
+	bh=llye9i9aXgouGRcz8NFjZ/wbpgSywkSkAscOcHmbV4s=;
+	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc;
+	b=E6oHwiAavZrq0lVaYiw+R7Om1iuRyBJXr60WqVvKcwLqyXQB59AGjyh7SPrh6tefJ
+	 lsSJS7dOT3mOaDd5l4XDlKar5Uv7Z71gasebq36ZHOzMDXja2Ww7UkZeovk3O1yUpT
+	 ppsR34/DYE/TLCIKCi1eHcQje7rOVCtf2xmUIRBS+IGkLa9baLKLHGMDGdqaNphGgx
+	 m7ZfpOjlDkCe8wA1wxZ3JHnG+ZC1Ek+FexhD8jKFz2fAqlpRKilEA0kNqOngdTmTAZ
+	 N2bl9980dwEx1KKtMDhXy16IbKooPv5RcKptngoMVDmV64Li6NPaAWOloALjdToDci
+	 xUkbj5BxDBuVA==
+Received: by mail-lr2-f28.google.com with SMTP id 38308e7fff4ca-3a2ff00b8d8so2881541fa.1
+        for <linux-clk@vger.kernel.org>; Thu, 17 Sep 2026 20:51:34 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvByWFG5s9W2LYaRvZ/8+lsYOY/l5Hjpg2srDXE48zxwTxTrxB+G63pIMkWbFssDuum4D7aTQmWWTGEE=@vger.kernel.org
+X-Gm-Message-State: AFuF++mj3tM7DO7kR4ajURcCrxccjVYqAhY7Mk8Sm3iSyU1tyXJmAxqZ
+	A/xmbgHbUfV7P1Kan45FOhCEFFnGV+OI+pFDXdNVjtDhy03Mwi7VPlkNnPtv/+kxxE2FhMJml5u
+	YSeu/P1aXZRomEL1wUUhUg854nSDMLe4=
+X-Received: by 2002:a2e:a99d:0:b0:3a3:7682:499e with SMTP id
+ 38308e7fff4ca-3a5fc0a7d91mr1738471fa.19.1789703492590; Thu, 17 Sep 2026
+ 20:51:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260917-epaul-v7-3-rc1-x5h-vsp-fcp-v1-0-4c72d4e086dd@ideasonboard.com>
+References: <20260917223913.1855301-1-andre.przywara@arm.com> <20260917223913.1855301-3-andre.przywara@arm.com>
+In-Reply-To: <20260917223913.1855301-3-andre.przywara@arm.com>
+Reply-To: wens@kernel.org
+From: Chen-Yu Tsai <wens@kernel.org>
+Date: Fri, 18 Sep 2026 11:51:19 +0800
+X-Gmail-Original-Message-ID: <CAGb2v67XsgfoYrJ6gJ_kshjnbSOOrJt9fK6RE1ErsTuHuVji5w@mail.gmail.com>
+X-Gm-Features: AcwNN1V8Mf2lfwWc7xgI8OxjluEZlzfKO7oVmRLjPeBHxGQzIMFTeAetat816ec
+Message-ID: <CAGb2v67XsgfoYrJ6gJ_kshjnbSOOrJt9fK6RE1ErsTuHuVji5w@mail.gmail.com>
+Subject: Re: [PATCH v2 2/5] clk: sunxi-ng: mp: support clocks with just a
+ shift register
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+	Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 17, 2026 at 09:04:39PM +0900, Paul Elder wrote:
-> This series is based on Geert's
-> "topic/rcar-x5h-ironhide-scmi-cpg-mdlc-remapping-v3" branch [0]. A
-> branch including this series is available here [1].
+On Fri, Sep 18, 2026 at 6:39=E2=80=AFAM Andre Przywara <andre.przywara@arm.=
+com> wrote:
+>
+> The "mp" clock models a mod clock with divider and a shift field. At
+> least one clock in the Allwinner A523 features just a power-of-2 divider
+> field, so support an initialisation of the clock without providing an
+> actual divider field.
 
-The series contains a mix of patches ready for upstream and patches that
-are not. The cover letter should explain this better to avoid wasting
-reviewers' time. Please organize the patches better in v2, mark the ones
-not ready for uptreaming with '[DNI]' or a similar prefix, and explain
-the rationale in the cover letter.
+Please just use the single divider clock type instead. It properly supports
+power-of-2 dividers.
 
-> This series enables the FCPV[BI] and the VSP[BI] blocks on the Renesas
-> R-Car X5H SoC.
-> 
-> This has been tested on an Ironhide with the vsp-tests test suite [2]:
-> 148 tests: 142 passed, 0 failed, 6 skipped
-> 
-> There was some odd behavior with the clocks, where from what I
-> understood was that the clocks for the FCPV[BI] and VSP[BI] are
-> always-on, but the tests would hang unless I explicitly enabled...  the
-> always-on clock (or fsleep). Then after I removed the patch that
-> explicitly enabled the always-on clock everything ran fine. Just
-> reporting that this happened just in case it's relevant.
-> 
-> [0] https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/log/?h=topic/rcar-x5h-ironhide-scmi-cpg-mdlc-remapping-v3
-> [1] https://git.ideasonboard.com/epaul/linux/src/branch/epaul/v7.3-rc1/x5h/vsp/fcp
-> [2] https://git.ideasonboard.com/renesas/vsp-tests/commit/900168f58c9d96be0592c2593f4d8f34edc9c69e
-> 
-> Signed-off-by: Paul Elder <paul.elder+renesas@ideasonboard.com>
+ChenYu
+
+> Add a check whether the "width" field is 0, and skip the divider
+> handling in this case, as the GENMASK macro will not work with a zero
+> length.
+>
+> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
 > ---
-> Paul Elder (10):
->       dt-bindings: clock: renesas,r8a78000-cpg: Add CPG_SGD4_VIO_DP_{TX,OTHER}
->       clk: renesas: r8a78000: Add clock for FCPV and VSP for SCP FW SDKv4.36
->       pmdomain: renesas: r8a78000: Add maps for VIO for SCP FW SDKv4.36
->       arm64: renesas: r8a78000: Add FCPV[BI] nodes
->       arm64: renesas: r8a78000: Add VSP[BI] nodes
->       media: rcar-fcp: Check device revision at probe time
->       media: rcar-fcp: Handle resets
->       media: vsp1: Support full VSPB on R-Car M3-W, M3-N and E3
->       media: vsp1: Document X5H SoC ID
->       media: rcar-fcp: Add R-Car X5H support
-> 
->  arch/arm64/boot/dts/renesas/r8a78000.dtsi        | 171 +++++++++++++++++++++++
->  drivers/clk/renesas/r8a78000-cpg.c               |   2 +
->  drivers/media/platform/renesas/rcar-fcp.c        | 162 +++++++++++++++++++--
->  drivers/media/platform/renesas/vsp1/vsp1_drv.c   |  13 +-
->  drivers/media/platform/renesas/vsp1/vsp1_regs.h  |   3 +-
->  drivers/pmdomain/renesas/r8a78000-mdlc.c         |  34 ++++-
->  include/dt-bindings/clock/renesas,r8a78000-cpg.h |   2 +
->  7 files changed, 372 insertions(+), 15 deletions(-)
-> ---
-> base-commit: 02c5d61866607bce0b3271e7c1b838c53dbedc55
-> change-id: 20260917-epaul-v7-3-rc1-x5h-vsp-fcp-8afdeb2740f7
-
--- 
-Regards,
-
-Laurent Pinchart
+>  drivers/clk/sunxi-ng/ccu_mp.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/clk/sunxi-ng/ccu_mp.c b/drivers/clk/sunxi-ng/ccu_mp.=
+c
+> index 7cdb0eedc69b5..3896cb94bf733 100644
+> --- a/drivers/clk/sunxi-ng/ccu_mp.c
+> +++ b/drivers/clk/sunxi-ng/ccu_mp.c
+> @@ -236,9 +236,11 @@ static int ccu_mp_set_rate(struct clk_hw *hw, unsign=
+ed long rate,
+>         spin_lock_irqsave(cmp->common.lock, flags);
+>
+>         reg =3D readl(cmp->common.base + cmp->common.reg);
+> -       reg &=3D ~GENMASK(cmp->m.width + cmp->m.shift - 1, cmp->m.shift);
+> +       if (cmp->m.width)
+> +               reg &=3D ~GENMASK(cmp->m.width + cmp->m.shift - 1, cmp->m=
+.shift);
+>         reg &=3D ~GENMASK(cmp->p.width + cmp->p.shift - 1, cmp->p.shift);
+> -       reg |=3D (m - cmp->m.offset) << cmp->m.shift;
+> +       if (cmp->m.width)
+> +               reg |=3D (m - cmp->m.offset) << cmp->m.shift;
+>         if (shift)
+>                 reg |=3D ilog2(p) << cmp->p.shift;
+>         else
+> --
+> 2.43.0
+>
