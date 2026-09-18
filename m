@@ -1,137 +1,155 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej2-f12.google.com (mail-ej2-f12.google.com [74.125.228.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17A083B42EB;
-	Fri, 18 Sep 2026 14:19:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8DD13A875B
+	for <linux-clk@vger.kernel.org>; Fri, 18 Sep 2026 14:27:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.228.140
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789741180; cv=none; b=Xie+Yc3TkCV/pRvntBVp6VXHtqWghCGlZzWUBQKqZs9amQgxFkii9x/TSmUi6TablDb6A3MQIYUTQYQ/a6xesNfzt66kAEXiAQ1GRZTYcgILvDbfkBchSiNnSLjGo+Gew78V/VjQ8K29ql6RDT6gOzIxEVBJ1OFUQ4oQI3v13MI=
+	t=1789741667; cv=none; b=cywtHi6jMy+Hno3L0rTaDwPfh8BmcccMLGewzG8nOdNyMbjeze2vaS0M/kqdd5S8FlvsNBGzJCbLy6Z2hDJcffylsHdr1JePhkru+lLp+ldZ2/XDZYWbeKg0ryHnbUhiN+TLNBv1IlNV2EIrk5VLbOBhmdatBqlkjovP5fg4dF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789741180; c=relaxed/simple;
-	bh=txavSXflCJ6B5E6G91PIsDCeWaOy6S7RCcpR2ErJo8Y=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=NSxcJdmRQWNREhfJHo4hRyrStTlDFUqxTfPuaRaYa4JIdak2NnuczoDlw6Q6XtDF0vnUU2oKpT6JcmFVne5tcm5RiqiNw/WxOZ78/yu8zbTjCvi+z4vFdkkQdDo6JsPWZuF/JnVHGJUp85Xzdp1aQN40qupyfsp9Bj8rhyQspd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jFWLfmkX; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789741667; c=relaxed/simple;
+	bh=sgunm2sNjagt46bq1ZIC/qX8k5vKqpE4P8hC394mvU8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tujMc5Qxdhdj5uRoO0qqElIa/m4OIDGv1bWfjBBayNAKE2xGr2A/4MU7+eBK6XfYEW+AJ2XGMjYsPWMOgK8nSi4UDkN/ZDUw2twHdMFjqA9ACV/3VoYA+IZcjbCvLgGV6JHmKSlxCit7661E7jqWf1Yiowkp6+qaIvXm1O9evHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Q0c/haM4; arc=none smtp.client-ip=74.125.228.140
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jFWLfmkX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 227071F00898;
-	Fri, 18 Sep 2026 14:19:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789741178;
-	bh=oBUlQpynhDAHb3Svjo0JkzyxPK6EYJ+2dxCIisYZPQg=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=jFWLfmkXO6EySpquV6kUrbXtDS7BYGtSrKeXlnLaSfLJgJJwvIlTE4VTjrvE+vAPo
-	 tvXCXPNzHX2Wne5YO7whkSvu/So05pWe3SMMYqJePsZUkvpO/P7ZitqidxTOsPPZHs
-	 x9hs59cyXIRVRsqEbX6tEi3vImtK96+I06UsWXnQMD4gyP+N7FT6F/H2/hsL9h8w4h
-	 kPCopeVIkllVSH1nWTlvYfuezMONXqOzuLWzgMdW7eGSVkPIdct8kiqtAR7Q9zPR5z
-	 P+wKjR4Hfb+JjCaCbOJuFFG9whwkROZbkxWvzBcaZmAdL0eu6JNhExRlL0gPhwuzGL
-	 EUEr4H5YxJWoA==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v20 5/6] media: qcom: camss: Add support for PHY API
- devices
-Reply-To: sashiko-reviews@lists.linux.dev
-To: =?utf-8?b?QnJ5YW4gTydEb25vZ2h1ZQ==?= <bryan.odonoghue@linaro.org>
-Cc: olteanv@gmail.com, conor+dt@kernel.org, robh@kernel.org, vkoul@kernel.org, devicetree@vger.kernel.org, linux-phy@lists.infradead.org, linux-clk@vger.kernel.org, media-ci@linuxtv.org, neil.armstrong@linaro.org
-In-Reply-To: <20260918-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v20-5-dc244e124e71@linaro.org>
-References: <20260918-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v20-0-dc244e124e71@linaro.org>
- <20260918-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v20-5-dc244e124e71@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 18 Sep 2026 14:19:37 +0000
-Message-Id: <20260918141938.227071F00898@smtp.kernel.org>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q0c/haM4"
+Received: by mail-ej2-f12.google.com with SMTP id a640c23a62f3a-c254fa650c8so126721266b.0
+        for <linux-clk@vger.kernel.org>; Fri, 18 Sep 2026 07:27:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1789741663; x=1790346463; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=BnD2Ei89mkiOFb1zZQQ79Aq7EmWfIQzBftxY+5mS48k=;
+        b=Q0c/haM434hFxRb9HrsA8HMhQ0aOYGv8PgHBrbqBJeyp/+aT5rApMn3T0JqghomwUW
+         q8y2OWHAWCdnBzrh1nqiidF/S8Hp98uwPim6fYZfFsVX690bH/yv3113Q00lT7nb3fNG
+         CRscyAc6emTw4eOnjRlzLsRVxc512gqkfkRZb8oypb7n9gFZJfIxA1B4OsUlwzlLOvFA
+         zJ12gqU0/I1Hr+dE+lUijjXGRIQ5yD3533ZduBBF9fOnaawbEWC3xH6nXnGF9l9rT3ua
+         qcY/rZJw9ABTJUHRati5Vdte22n0RM8V8fdXj/jf2ptSov9y9/iL+XoITfh6OSdpv4Ta
+         W04g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1789741663; x=1790346463;
+        h=content-transfer-encoding:content-type:in-reply-to:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=BnD2Ei89mkiOFb1zZQQ79Aq7EmWfIQzBftxY+5mS48k=;
+        b=RShw8mNFg9KxKn16K855HAqEMaTPBITx7iWk+OBG6ovrt8KINA5o8KUFXS9OcsVZMJ
+         a9MdAjQ9f0HEnPTd07sMG4F8AEYnfiYhfYmxt6iHWP7J78HMr2todQ4mgBexWqRgivQG
+         udm+GyYD/5tphAgHiM8zLWq/q3ZcLg/JrdR+jWRJ0kjoHfupx2rt7/tCn6KtGsj25ipp
+         5TwCFP89HKEnq8Vup8x6ejFgvUKABn+hmXdlSdAx11D9OoXrC0wTZCZdMOBuaXM8ArYH
+         LpsJP4QV9/xDdWMIJN78PLDBYSzBvIPswzKqbhO73wy8OU3nTZSuq4ah9wApHw/vKSE4
+         9W5A==
+X-Forwarded-Encrypted: i=1; AKwUvBxu7gPtMIg3Dg5zwJLlsfTOKpHBz3M6xYmumbtFnkz165zEib9D4s0evJq+lGcgyFMRvn7IYg6W5Yc=@vger.kernel.org
+X-Gm-Message-State: AFuF++mMBt0qh8Y2uHlD6BAuw5g0tJQRQMA3+V8RDuTvDIXV5a1mbFaA
+	aqZBHndGB42tsY6joNr0VyUG4y9Ru4i4SuihwG9Tyin6iQW/Gpecu1ZnilfW0LT8E3g=
+X-Gm-Gg: AYBFou2ngop+m7vBApJFLPn9CnFL/cKQHZ+H5zsOlMLw2blk1s3V5E8BuIMuaUHuVUt
+	sI2DY7eUz27CjolQsXsacc5ET4GdKFVbdOq6tm6mk+X+b50E/H/haLbm3/xAGFnxQcV4mDsnp8t
+	I16SQ0Vvj8cQij64R2Kbwo+RGyREMww8GEth2lLGRmoBpJmtJO9BH8Y+0dGjynobBdViONGVGwi
+	9nZU9mxdP+dATSirhNTd5/uSQOl3bZaPTNalxveKVde9agNablfTpL0CPROgJM6BEza3xO1T7ek
+	QJZuYv8A6Beo3oE8YQ211SKXg4fVaAF9SpDz8zqQMz+I1eCYq8kHc6p+JoOT5kSIIsm3r89B6HD
+	WDTu7IG+6XJcKG25TLJTnvfKFKeqz2YNqoyLrJ4TXYWHUAxvVnThk3BLsxBLjYEj4F9n6NIptuL
+	3wcjDr1nGJFQIsnHsbRELLkwUhtlRxH/SIUhixEIsanCbHtWFczh0KDjcU6JDr/8DPZXDqdF21Y
+	W/oMBry+w==
+X-Received: by 2002:a17:906:478d:b0:c29:5a76:72be with SMTP id a640c23a62f3a-c2a157c41a8mr252060066b.24.1789741662748;
+        Fri, 18 Sep 2026 07:27:42 -0700 (PDT)
+Received: from [192.168.0.167] ([109.76.4.225])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c2a1bb8ba5bsm61582566b.45.2026.09.18.07.27.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Sep 2026 07:27:42 -0700 (PDT)
+Message-ID: <fd6bf432-0ce8-4793-821f-f08321b13a5b@linaro.org>
+Date: Fri, 18 Sep 2026 15:27:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v20 2/6] phy: core: Add phy_get_by_of_node()
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>,
+ Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Bryan O'Donoghue <bod@kernel.org>,
+ Loic Poulain <loic.poulain@oss.qualcomm.com>, Vinod Koul <vkoul@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>, Felipe Balbi <balbi@ti.com>,
+ Manivannan Sadhasivam <mani@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-phy@lists.infradead.org,
+ Krzysztof Kozlowski <krzk@kernel.org>
+References: <20260918-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v20-0-dc244e124e71@linaro.org>
+ <20260918-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v20-2-dc244e124e71@linaro.org>
+ <211caa95-dfbc-427d-8ce8-49cc76c24124@linaro.org>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Content-Language: en-GB
+In-Reply-To: <211caa95-dfbc-427d-8ce8-49cc76c24124@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Thank you for your contribution! Sashiko AI review found 2 potential issue(=
-s) to consider:
-- [High] media: camss: incorrect data rate passed to PHY config
-- [Medium] kconfig: select of non-existent symbol PHY_QCOM_MIPI_CSI2
---
+On 18/09/2026 15:10, Neil Armstrong wrote:
+>>   EXPORT_SYMBOL_GPL(devm_of_phy_get_by_index);
+>> +/**
+>> + * phy_get_by_of_node() - lookup and obtain a reference to a phy by 
+>> device_node
+>> + * @np: node containing the phy
+>> + *
+>> + * Returns: the phy associated with the device node or ERR_PTR.
+>> + */
+>> +struct phy *phy_get_by_of_node(struct device_node *np)
+>> +{
+>> +    struct of_phandle_args args = { .np = np, .args_count = 0 };
+>> +    struct phy *phy;
+>> +
+>> +    mutex_lock(&phy_provider_mutex);
+> 
+> I don't really understand the usage of lockdep_assert_held(), but why
+> does _of_phy_get() uses lockdep_assert_held() and here you use mutex_lock()
+> like before patch 1 ?
+> 
+> Neil
 
-commit 53c91247e8179ba522478e54bb98836c106cd0ee
-Author: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+assert_lockdep_held() is just an assertion that the lock is held, Loic 
+suggested adding it BTW. It ensures that when another function calls 
+this function it holds phy_provider_mutex.
 
-media: qcom: camss: Add support for PHY API devices
+i.e.
 
-Add the ability to use a PHY pointer which interacts with the standard PHY
-API.
+phy_get_by_of_node()
+{
+	mutex_lock(&phy_provider_mutex);
+	_of_phy_get();
+	mutex_unlock(&phy_provider_mutex);
+}
+EXPORT_SYMBOL(phy_get_by_of_node);
 
-> diff --git a/drivers/media/platform/qcom/camss/Kconfig b/drivers/media/pl=
-atform/qcom/camss/Kconfig
-> index 4eda48cb1adf0..1edc5e5a1829e 100644
-> --- a/drivers/media/platform/qcom/camss/Kconfig
-> +++ b/drivers/media/platform/qcom/camss/Kconfig
-> @@ -7,3 +7,4 @@ config VIDEO_QCOM_CAMSS
->  	select VIDEO_V4L2_SUBDEV_API
->  	select VIDEOBUF2_DMA_SG
->  	select V4L2_FWNODE
-> +	select PHY_QCOM_MIPI_CSI2
+_of_phy_get()
+{
+	lockdep_assert_held(&phy_provider_mutex);
+	/* happy days */
+}
 
-[Severity: Medium]
-Does this Kconfig symbol exist? I am unable to find PHY_QCOM_MIPI_CSI2 anyw=
-here
-in the kernel tree.=20
+phy_broken_locking()
+{
+	_of_phy_get();
+}
+EXPORT_SYMBOL(phy_broken_locking);
 
-Selecting a non-existent symbol has no effect. This could lead to a silent
-failure where the required PHY driver is not built, potentially leaving the
-hardware non-functional when relying on this driver.
+_of_phy_get()
+{
+	lockdep_assert_held(&phy_provider_mutex);
+	/* wails plaintively into the void */
+}
 
-> diff --git a/drivers/media/platform/qcom/camss/camss-csiphy.c b/drivers/m=
-edia/platform/qcom/camss/camss-csiphy.c
-> index 539ac4888b608..aaed7d0309dd6 100644
-> --- a/drivers/media/platform/qcom/camss/camss-csiphy.c
-> +++ b/drivers/media/platform/qcom/camss/camss-csiphy.c
-[ ... ]
-> +static int csiphy_stream_on(struct csiphy_device *csiphy)
-> +{
-> +	u8 bpp =3D csiphy_get_bpp(csiphy->res->formats->formats, csiphy->res->f=
-ormats->nformats,
-> +				csiphy->fmt[MSM_CSIPHY_PAD_SINK].code);
-> +	struct csiphy_lanes_cfg *lncfg =3D &csiphy->cfg.csi2->lane_cfg;
-> +	struct phy_configure_opts_mipi_dphy *dphy_cfg;
-> +	union phy_configure_opts dphy_opts =3D { 0 };
-> +	struct device *dev =3D csiphy->camss->dev;
-> +	u8 num_lanes =3D lncfg->num_data;
-> +	s64 link_freq;
-> +	int ret;
-> +
-> +	dphy_cfg =3D &dphy_opts.mipi_dphy;
-> +
-> +	link_freq =3D camss_get_link_freq(&csiphy->subdev.entity, bpp, num_lane=
-s);
-> +
-> +	if (link_freq <=3D 0) {
-> +		dev_err(dev,
-> +			"Cannot get CSI2 transmitter's link frequency\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	ret =3D phy_mipi_dphy_get_default_config_for_hsclk(link_freq, num_lanes,
-> +							 dphy_cfg);
-
-[Severity: High]
-Are we passing the correct data rate here? The V4L2 camss_get_link_freq()
-helper returns the MIPI D-PHY link frequency (the clock lane frequency in H=
-z).
-
-However, the generic PHY framework's phy_mipi_dphy_get_default_config_for_h=
-sclk()
-function expects its hs_clk_rate argument to be the data rate per lane in b=
-its
-per second.
-
-Since MIPI D-PHY uses Double Data Rate, the data rate is exactly twice the
-clock frequency. Passing the clock frequency directly during csiphy_stream_=
-on()
-causes the calculated Unit Interval (UI) to be twice its correct value. This
-will result in completely incorrect MIPI D-PHY timing parameters (hs_prepar=
-e,
-hs_settle) and could cause physical layer synchronization failures with the
-sensor.
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260918-b4-linux-n=
-ext-25-03-13-dtsi-x1e80100-camss-v20-0-dc244e124e71@linaro.org?part=3D5
+---
+bod
