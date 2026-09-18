@@ -1,121 +1,261 @@
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85C8E31AF2D
-	for <linux-clk@vger.kernel.org>; Fri, 18 Sep 2026 22:33:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B2AD37FF68
+	for <linux-clk@vger.kernel.org>; Fri, 18 Sep 2026 22:42:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789770840; cv=none; b=J8dDjTWEJW07XfYWjPVhdqMrQIXrJkvC9CwFCda1xbV7VwHsfpPAUrozDyKJVkMFhkdkIDd0SBqU5XEucadQr9IkoJQ91rW5Ay/TCVMGefO5gd/F/eKIH445QK5H/xa9TgCmUpIzwT2JrOGVkBaocWCqDrhhjxuvTMjoFGmQNPQ=
+	t=1789771368; cv=none; b=bxSWIcYxMeWwxygu1rTNUKKHtuMg0owJ5ItVdRzjkm95tsTV/9GvvDImrt1xm4vAQ6K2MrPB6KvsXyZR0mx0/89hvehBX20+/XH3sQOqevZ8JpjGZnWEpRp9EZ/ACRoebIoM600e6szAIe/OCJbul16WraJiykEOrrDGI3W74uA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789770840; c=relaxed/simple;
-	bh=INJqXLOzCeVe+xylhlZPh25QRwnRX/J/LaqLgwxpFIY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=GD2ZN8Z5XcwZggbdMN3GC3g7KLrNyfI1NW20tyQ4kwhOcDBQWS+OtKL8SJbYWg48I9ogsfiqjFlTRIPG2yXq4t9TR+6NvZsV7oxY8/XewMzq76JEe3lQv/4wxwwRllJG/E8XqjMFOYePc61gkk/rb52rnW6acaY2En5ESeeSsgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CKWTpMf9; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=VO+e7i2d; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1789771368; c=relaxed/simple;
+	bh=MkPzqZeR3+qlWqlud+iPO/JWjWS7F6vl07CGk4gnzzk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qd7moAdElxhU9rm1tecTPtQIJSqabcct2KlQFr1LL0Bpdf90xESoFj9v6kcIvznoT2tLQUaAFK10UKwZPL/kS0VEVD5fO2EGowS95mDMWJoiZ9d4jHB+HD4B8rebOf30ZV+g/WwAZGeQ43f2ZfFjb3qNktyN7p2UJpcy2mSS9TM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MztgzOMi; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=C2LatyLH; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CKWTpMf9";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="VO+e7i2d"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MztgzOMi";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="C2LatyLH"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1789770838;
+	s=mimecast20190719; t=1789771366;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=uWIbl+NqjxFa+j1OOuPSWG4PAJNtr1JvOBX6u6e7mMM=;
-	b=CKWTpMf9T6ZwsHG+tNby2ba7BqgxB/a2KzY7tM73i9ykv3T5F6HfQtd4sNWhsRvAdapspL
-	OsZT24Q/ohIc7wpIG0cUZlY0HoddlsEm4h/9GLtnh4KvlYlX+WB8P2DkkNzzhzPlBrnTo8
-	w3zdXnS9oQ/4FNPjlZyGeX7+oX3XyUs=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=/n/7UN6+yP2YInvvqD1Jw1p+AQ2bWsxeusuuVpsPbog=;
+	b=MztgzOMiKtaDiAAaKnLqtxq4aLYEEB9flDc3wBmPop8oyBHJcrw6JW64VCzuFpyBYSqYlY
+	hzRwb9NjBWggdLT5E2b/qwS3nn0wnPCS2nUOsKBeDIK4AR9jc05dkW2Y/rKgxqnd2hp+Mf
+	JrUvLR+AY6kA/rlCtaxoNuysIbZTf+g=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-327-rUNLR4PvP3-uJVEG13ER2w-1; Fri, 18 Sep 2026 18:33:57 -0400
-X-MC-Unique: rUNLR4PvP3-uJVEG13ER2w-1
-X-Mimecast-MFC-AGG-ID: rUNLR4PvP3-uJVEG13ER2w_1789770836
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-93a0312937eso173316985a.1
-        for <linux-clk@vger.kernel.org>; Fri, 18 Sep 2026 15:33:57 -0700 (PDT)
+ us-mta-467-tP_TI3AANrm2v8692TkViQ-1; Fri, 18 Sep 2026 18:42:45 -0400
+X-MC-Unique: tP_TI3AANrm2v8692TkViQ-1
+X-Mimecast-MFC-AGG-ID: tP_TI3AANrm2v8692TkViQ_1789771364
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-9124b265371so26161836d6.0
+        for <linux-clk@vger.kernel.org>; Fri, 18 Sep 2026 15:42:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1789770836; x=1790375636; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:date:message-id
-         :subject:references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=uWIbl+NqjxFa+j1OOuPSWG4PAJNtr1JvOBX6u6e7mMM=;
-        b=VO+e7i2dDcD0IRR8HXqvTLfMt7K4Tldm5TnfmIrdVIJ5seLj5Hyot6KUJkPuDiEU7R
-         usTUTIhmo0NE1s6tQYy4H/jb7Lg3nbjXaZShLrlSKlv9qNXm7ydrBCR9ySbxjFabpj6g
-         LlvbbDukS/hdqy7Yv8B61xhc+h11vFzGeDjvZSaboz7FPn0gqv4o482c4kMlEOA2LNfX
-         x3T9ZFyF3A5q0WggXK/vbJUl0ah8+JdvjOJ8pCzvMN7oARUd6T0a/f0Cim75cEC0xLWt
-         FzR/dDhZQnR9xtoQs00iP55JEbtoDSRDZccKMcUn3xeu9qbDi98Ey+Z4s1e2lj4Rz19A
-         fhTw==
+        d=redhat.com; s=google; t=1789771364; x=1790376164; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:content-type
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=/n/7UN6+yP2YInvvqD1Jw1p+AQ2bWsxeusuuVpsPbog=;
+        b=C2LatyLHDJcnSv0mjZA3IEWV0+1wKf+qyPwCZTZAR0Bc19lyEMoQSocgsfM3MOOHMQ
+         5jaLv4y1dYQDwOuT36YjMqLkSZ7uxFSF9iO98re/NeqR6DoUDrdZEybyqjvJO6/aOdo+
+         b/DZWfB90YGvULRRxj5R6H1TWtiPBJtlXgB8oj4lWaysb4+09ZiVy4Pkn87jUJjsR8Ga
+         gvqnTdPqpLAhT6VjXotq5kOvsCUcwKFNtF+4HxLKJ2Luq04LUdjvxvAfq4pk2L01iO+Q
+         hi5tGA3QMSYpolhA3F+6NrSWfcz9VRF4UJANJImV9n26DUkX0rj7Tlhrl3yblRbX5N5Z
+         OsIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789770836; x=1790375636;
-        h=content-transfer-encoding:content-type:mime-version:date:message-id
-         :subject:references:in-reply-to:cc:to:from:x-gm-gg
+        d=1e100.net; s=20260707; t=1789771364; x=1790376164;
+        h=user-agent:in-reply-to:content-disposition:content-type
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=uWIbl+NqjxFa+j1OOuPSWG4PAJNtr1JvOBX6u6e7mMM=;
-        b=IKT/60JXuwjmB+DMOor7qcpwQq0FC7qXDRKSXOsZD7ybTKoYm81j7+9uFyJhRYKXFd
-         b0wly+2mD9tdQGWrLds++dtOwrIUsrwsd5/+3Nojkg1mG5WqyC/juPZmZFwzzb4cGy7n
-         L+aBKPRNEXhcuqxvLCVm4AKnykoA0Dan6DDcHQgQDhCVvV7OdpzGzKyYQ7ZLepUPLvdw
-         rFS8Gk2b5LH38UfF1+uMsG42lBieWy2jpWhXvAIQnkA0Q6ZWzkrJvYXgwO6RUNtZoDbA
-         7ilm5YxZjWJ6bIbrf4LBE79Ax20Y7IJjIA6qNGF5JM7ON9erCPPpWhAgMAL9o1hwtnkg
-         73Og==
-X-Gm-Message-State: AFuF++k/CdXvm4d+OOQJkpk+qtnQo3AJ1mFkGXOB96qjZHkL5lIqMpWj
-	lkvDmK3n4zL2koZjwy2qiHcn94KaAooIko5y/+qksGwqY9v9cJmfHyD0/I7dxwbZpzeTp1UzrxJ
-	3xhTeIPnQ6lQvwHv8XO51xlEp3akDjYM92I7c1PrUcxIkIJWj+g/42CCD2Efxaw==
-X-Gm-Gg: AYBFou247RH6gGsROyRJvZy70R1v/IbeU1j04kNtZPaDPGYzqEZlCClTuIQZRpEAUc6
-	SNy1reHFD040TJQr++RSg1T5/lPpz1ba2WgiGHPdZse5kM6YMuUZMi73EwPKeC6YVDlRJpUE5Ay
-	d5A3M7wRsu1OoQ2te/SmhLa8SnuuZn2he4Hp4yrcY/aMPaUwwCdzs00K2va1Cegc8vVSsbXF8y1
-	+263f9KY8QRpia4D2Vd3P0sQ3ta25DHNIfn4LKIvbLNZW+ChCGduDrv/hDRviLxpJ7kYdaKp09G
-	KZYn5Q0JynuBrt7aJuRmcZtA6cjdl7zDjMc7Ev8pzSOORlOlIWP57qV9Rwb20gDU0k0cUohF744
-	zGw==
-X-Received: by 2002:a05:620a:390b:b0:93b:d7a2:dd30 with SMTP id af79cd13be357-93bdca2f41amr674808685a.64.1789770836626;
-        Fri, 18 Sep 2026 15:33:56 -0700 (PDT)
-X-Received: by 2002:a05:620a:390b:b0:93b:d7a2:dd30 with SMTP id af79cd13be357-93bdca2f41amr674805385a.64.1789770836227;
-        Fri, 18 Sep 2026 15:33:56 -0700 (PDT)
-Received: from [10.239.101.46] ([69.43.42.202])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-93bed720979sm52774585a.3.2026.09.18.15.33.53
+        bh=/n/7UN6+yP2YInvvqD1Jw1p+AQ2bWsxeusuuVpsPbog=;
+        b=O8o6RKZLCv9Dnm1YyptczTl5Uo5EzXc1PW2pTMldKsyYTUcNgNUCGZrQYk95p3leNj
+         NVnNfrA/GS+up3XRDvU43lB6R89X46SQBoZi7BvOFFIngvVXY7FdK4+ikWzEATnLnMkl
+         MhkgeCK/27ElJ33NHE3p62JGidn16/43fQr2Yk5lc/RWvAmLRc+lKj3oQe06ZqZFon3O
+         f92Kqd3M3AcBxdbYsFm4Wg7Irllm2CAS4eTcaGBwgVkU1tpMlW1iH8TnWwkz6r8Fimrs
+         nB5kMD8xFtSS2a2kfXT/uHJ020d3wl3bODH4WQ6kN+plSZK+z971Nqqiel07IImPelCN
+         6MNg==
+X-Forwarded-Encrypted: i=1; AKwUvBzOdkLuU5fneFilc7OLNG16SIq0vjt7zKBXvUMHMOzyiifjKOg2qhO4uHlB0UCixZrFbk3mvZ+L2I0=@vger.kernel.org
+X-Gm-Message-State: AFuF++kThrIrGTpQqISiWeh9sgTvVMDR1WbEI6xVEhKwwiujPKTCjDbQ
+	xAhs5BdHTvxcZM4ST0/owCFfgUzbAzO66Z/FYB8bJ5zkdczUfpSwiCwYw7F5xnZ6z2RAG76NhPe
+	z4QAFrFLExyOJaMemMcEGj5s++kAqJdUplxZjhPmxJj67vQLveiK7kojp14tXhw==
+X-Gm-Gg: AYBFou1mh+ksItGObnDhRhxdqI/XitGGQwCcawmzFApGeOt/gfz/au8NzXtCk5obEoR
+	C3wTCWI93MoVABxyaZDrVSzsDSH2QYlV5ycHsviMNzBx6qTMrf/xet4VuWe4apLSDXwSL+C+1dY
+	d+SFN2R58hgCPg3Wdzzj72UX/X3JbdPTubkgofDZii3lj+rS92vPpyn5y/r1hqvQLOU63wyts35
+	aUjTndE5yf3uzTFWKVHPTd+NbwtGb+kIjk7poOBIEVkHN8dx8vwEOsMyMWk08Odtzwy1s6nxzbB
+	ddeadHPjoU3H5PID3SWtnLKTIRLWNFx1wLyGpojmwPvXFHM3Wh15UJtBGnzX4IgfadYIpKY=
+X-Received: by 2002:a05:620a:8399:b0:93b:d8b3:f9ca with SMTP id af79cd13be357-93bdc6db3b6mr634724685a.21.1789771364447;
+        Fri, 18 Sep 2026 15:42:44 -0700 (PDT)
+X-Received: by 2002:a05:620a:8399:b0:93b:d8b3:f9ca with SMTP id af79cd13be357-93bdc6db3b6mr634721885a.21.1789771364010;
+        Fri, 18 Sep 2026 15:42:44 -0700 (PDT)
+Received: from redhat.com ([69.43.42.202])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-9126078cab2sm6905196d6.0.2026.09.18.15.42.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Sep 2026 15:33:54 -0700 (PDT)
+        Fri, 18 Sep 2026 15:42:43 -0700 (PDT)
+Date: Fri, 18 Sep 2026 18:42:42 -0400
 From: Brian Masney <bmasney@redhat.com>
-To: kernel@esmil.dk, hal.feng@starfivetech.com, sboyd@kernel.org, 
- bmasney+clk@redhat.com, jbrunet+clk@baylibre.com, 
- Slavin Liu <bolin.liu@seu.edu.cn>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20260913125112.109755-1-bolin.liu@seu.edu.cn>
-References: <20260913125112.109755-1-bolin.liu@seu.edu.cn>
-Subject: Re: [PATCH] clk: starfive: jh7110: reject oscillator lookup errors
-Message-Id: <178977081281.517928.6939892827902684127.b4-ty@b4>
-Date: Fri, 18 Sep 2026 18:33:32 -0400
+To: adrian.ho.yin.ng@altera.com
+Cc: Dinh Nguyen <dinguyen@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] clk: socfpga: agilex: convert to CLK_OF_DECLARE()
+Message-ID: <aq2-Ysy2wbLeBWd1@redhat.com>
+References: <cover.1789096458.git.adrian.ho.yin.ng@altera.com>
+ <c7006ac0c353640f52902580564a85d6d23c57e5.1789096458.git.adrian.ho.yin.ng@altera.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=310; i=bmasney@redhat.com;
- s=20250903; h=from:subject:message-id;
- bh=7EWeT8I/x8N3qDmNa8W41HSYuVGHBmJDoXqc4/tpGtc=;
- b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLLW7gl49870YOHjnHN7/7EFnen6kH5k9WGpQ743LOWvu
- ZhUX6mc21HKwiDGxSArpsiyJNeoICJ1le29O5osMHNYmUCGMHBxCsBERGsZ/ruceyawPvO93BNN
- 7U2B+o4xTK/4jOW4FfazFz0y8sh4xsnIcOrrpiPrXsaq/5/9uyXg6Enb9bkSj9aY3Yh12nm1ZoX
- PbUYA
-X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
- fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c7006ac0c353640f52902580564a85d6d23c57e5.1789096458.git.adrian.ho.yin.ng@altera.com>
+User-Agent: Mutt/2.4.0 (2026-06-19)
 
+Hi Adrian,
 
-On Sun, 13 Sep 2026 20:51:12 +0800, Slavin Liu wrote:
-> clk: starfive: jh7110: reject oscillator lookup errors
+On Fri, Sep 11, 2026 at 03:01:18PM +0800, adrian.ho.yin.ng@altera.com wrote:
+> From: Adrian Ng Ho Yin <adrian.ho.yin.ng@altera.com>
+> 
+> Register Agilex and eASIC N5X clocks at of_clk_init() so they are
+> available before platform devices probe.
+> 
+> Signed-off-by: Adrian Ng Ho Yin <adrian.ho.yin.ng@altera.com>
+> ---
+>  drivers/clk/socfpga/clk-agilex.c | 83 +++++++++++---------------------
+>  1 file changed, 28 insertions(+), 55 deletions(-)
+> 
+> diff --git a/drivers/clk/socfpga/clk-agilex.c b/drivers/clk/socfpga/clk-agilex.c
+> index 2bdea1997b5e..64a20c727d16 100644
+> --- a/drivers/clk/socfpga/clk-agilex.c
+> +++ b/drivers/clk/socfpga/clk-agilex.c
+> @@ -4,8 +4,9 @@
+>   */
+>  #include <linux/slab.h>
+>  #include <linux/clk-provider.h>
+> +#include <linux/io.h>
+>  #include <linux/of.h>
+> -#include <linux/platform_device.h>
+> +#include <linux/of_address.h>
+>  
+>  #include <dt-bindings/clock/agilex-clock.h>
+>  
+> @@ -454,24 +455,26 @@ static int n5x_clk_register_pll(const struct stratix10_pll_clock *clks,
+>  	return 0;
+>  }
+>  
+> -static int agilex_clkmgr_init(struct platform_device *pdev)
+> +static void __init agilex_clkmgr_init(struct device_node *np)
+>  {
+> -	struct device_node *np = pdev->dev.of_node;
+> -	struct device *dev = &pdev->dev;
+>  	struct stratix10_clock_data *clk_data;
+>  	void __iomem *base;
+>  	int i, num_clks;
+>  
+> -	base = devm_platform_ioremap_resource(pdev, 0);
+> -	if (IS_ERR(base))
+> -		return PTR_ERR(base);
+> +	base = of_iomap(np, 0);
+> +	if (!base) {
+> +		pr_err("%s: failed to map clock registers\n", __func__);
+> +		return;
+> +	}
+>  
+>  	num_clks = AGILEX_NUM_CLKS;
+>  
+> -	clk_data = devm_kzalloc(dev, struct_size(clk_data, clk_data.hws,
+> -				num_clks), GFP_KERNEL);
+> -	if (!clk_data)
+> -		return -ENOMEM;
+> +	clk_data = kzalloc(struct_size(clk_data, clk_data.hws, num_clks),
+> +			   GFP_KERNEL);
+> +	if (!clk_data) {
+> +		iounmap(base);
+> +		return;
+> +	}
+>  
+>  	clk_data->clk_data.num = num_clks;
+>  	clk_data->base = base;
+> @@ -491,27 +494,28 @@ static int agilex_clkmgr_init(struct platform_device *pdev)
+>  	agilex_clk_register_gate(agilex_gate_clks, ARRAY_SIZE(agilex_gate_clks),
+>  			      clk_data);
+>  	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, &clk_data->clk_data);
+> -	return 0;
+>  }
+>  
+> -static int n5x_clkmgr_init(struct platform_device *pdev)
+> +static void __init n5x_clkmgr_init(struct device_node *np)
+>  {
+> -	struct device_node *np = pdev->dev.of_node;
+> -	struct device *dev = &pdev->dev;
+>  	struct stratix10_clock_data *clk_data;
+>  	void __iomem *base;
+>  	int i, num_clks;
+>  
+> -	base = devm_platform_ioremap_resource(pdev, 0);
+> -	if (IS_ERR(base))
+> -		return PTR_ERR(base);
+> +	base = of_iomap(np, 0);
+> +	if (!base) {
+> +		pr_err("%s: failed to map clock registers\n", __func__);
+> +		return;
+> +	}
+>  
+>  	num_clks = AGILEX_NUM_CLKS;
+>  
+> -	clk_data = devm_kzalloc(dev, struct_size(clk_data, clk_data.hws,
+> -				num_clks), GFP_KERNEL);
+> -	if (!clk_data)
+> -		return -ENOMEM;
+> +	clk_data = kzalloc(struct_size(clk_data, clk_data.hws, num_clks),
+> +			   GFP_KERNEL);
+> +	if (!clk_data) {
+> +		iounmap(base);
+> +		return;
+> +	}
+>  
+>  	clk_data->base = base;
+>  	clk_data->clk_data.num = num_clks;
+> @@ -531,38 +535,7 @@ static int n5x_clkmgr_init(struct platform_device *pdev)
+>  	agilex_clk_register_gate(agilex_gate_clks, ARRAY_SIZE(agilex_gate_clks),
+>  			      clk_data);
+>  	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, &clk_data->clk_data);
+> -	return 0;
+> -}
+> -
+> -static int agilex_clkmgr_probe(struct platform_device *pdev)
+> -{
+> -	int (*probe_func)(struct platform_device *init_func);
+> -
+> -	probe_func = of_device_get_match_data(&pdev->dev);
+> -	if (!probe_func)
+> -		return -ENODEV;
+> -	return	probe_func(pdev);
+>  }
+>  
+> -static const struct of_device_id agilex_clkmgr_match_table[] = {
+> -	{ .compatible = "intel,agilex-clkmgr",
+> -	  .data = agilex_clkmgr_init },
+> -	{ .compatible = "intel,easic-n5x-clkmgr",
+> -	  .data = n5x_clkmgr_init },
+> -	{ }
+> -};
+> -
+> -static struct platform_driver agilex_clkmgr_driver = {
+> -	.probe		= agilex_clkmgr_probe,
+> -	.driver		= {
+> -		.name	= "agilex-clkmgr",
+> -		.suppress_bind_attrs = true,
+> -		.of_match_table = agilex_clkmgr_match_table,
+> -	},
+> -};
+> -
+> -static int __init agilex_clk_init(void)
+> -{
+> -	return platform_driver_register(&agilex_clkmgr_driver);
+> -}
+> -core_initcall(agilex_clk_init);
+> +CLK_OF_DECLARE(agilex_clkmgr, "intel,agilex-clkmgr", agilex_clkmgr_init);
+> +CLK_OF_DECLARE(n5x_clkmgr, "intel,easic-n5x-clkmgr", n5x_clkmgr_init);
 
-Applied, thanks!
+Why do all of these clk providers need to be registered so early?
+CLK_OF_DECLARE is abused quite a bit today and the majority of the clk
+drivers that use it don't actually need it.
 
-[1/1] clk: starfive: jh7110: reject oscillator lookup errors
-      commit: 54d0b6903921d121fa750546f2b38cc3f5c7e64f
+core_initcall() is pretty early as well. Can you use subsys_initcall
+instead so that it's available by time the platform devices probe?
 
-Best regards,
--- 
-Brian Masney <bmasney@redhat.com>
+I recently introduced a subsys_platform_driver() macro to simplify the
+code that should do what you need.
+
+https://lore.kernel.org/linux-clk/20260908-subsys_initcall-v1-0-cbccf4cd4288@redhat.com/
+
+Brian
 
