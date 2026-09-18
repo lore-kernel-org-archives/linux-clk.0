@@ -1,160 +1,112 @@
-Received: from mail-wr2-f12.google.com (mail-wr2-f12.google.com [74.125.225.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4C392C031E
-	for <linux-clk@vger.kernel.org>; Fri, 18 Sep 2026 09:28:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 226803F5BFC;
+	Fri, 18 Sep 2026 09:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789723684; cv=none; b=pPSFtDkn6t4tNIhMwYR/7FsoDcrg0b1UTOYw/E9Q5h26mwV+1F61SwhoYdIsbptg6bQomAH+RvEJXGNybSARDUarJneqM1rD9j8jC0k6UD2ngdLnVmBNqVxqsjuYQpC6PEiCXrfmnD6ziNCNz9CsKt6ZVN4hXyx3jWS+gCI9Mvw=
+	t=1789724284; cv=none; b=uc5Uov4BQubiLuf0tYiCPTJFEk7HYPM2wGCTLYFRzd+vVwej056As8QnU9dXn05EqseQZmGXZDlrOI/AeWIWbZ0YucUno9mJSnBjfNhXBBBCY6jMeg4BvgXFabRrl7NV+yt2V7OM3zb+vI9kFGMuvDzy/y8Lj/73dgGXjFM4zDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789723684; c=relaxed/simple;
-	bh=gfyfmI/c9k+T3v97GqLFTmjkdngo/5etTTn9H2RVSBI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=KORIB88NVaGKkEiqOurb95fOcmgGLCvspxJuQHhABcZI7gouKM9pfgqP5/Rdj/M5Tzd5Dm8pxTq/6/zdK1wn5yymOW6LdD8JuZcyaPnQgnkaHrdX+ianexHoWj9n3QBT0swnjfxMt3RqP745ioUf96BZJ+NvNoENxmjPDN1nc+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LkZIorym; arc=none smtp.client-ip=74.125.225.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LkZIorym"
-Received: by mail-wr2-f12.google.com with SMTP id ffacd0b85a97d-485933b2522so339163f8f.0
-        for <linux-clk@vger.kernel.org>; Fri, 18 Sep 2026 02:28:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1789723680; x=1790328480; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=Ahb7X99xI5/f4Coc8xUhc23QGLKHkzyos4mwiCsRZng=;
-        b=LkZIorymI9RQ2X7d9aqviH80b1N659zUU/obFZH9a6TUOJGJyCl9TUvqwJcklyhfHh
-         BWwMQWqBVzPb1mV8L5D2jH8uypty1OqWITYo5yZ61Yc6N2JyO83Spxu37lsE9+8+LmIb
-         TueHSEJ5IqbX7XOiO3Gvkz7u9R4mBh4gJV6lrSrPLZPB+RduIzE1vSoYgSEoJrml/pGV
-         G7Si8oaHfrSfh6plj8ChGw397LgEpc7evZYaofTgMPDKK4ELhaLsG/voqwk98gXIlzJ7
-         aE72LSlszJ4FgENGbrbk//UBfNObtPYJQZw5tdI43BbjvtlwsEri8ESKLmsu0ZZR36lI
-         JY8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789723680; x=1790328480;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=Ahb7X99xI5/f4Coc8xUhc23QGLKHkzyos4mwiCsRZng=;
-        b=lwgtQtWfpu8d9zJI0P4aAZ09F8CcmRyYbXr25LJh3G+q5Xf1xzOWUrTXx/rX2O3zV5
-         cFODZBeZkqod2c3FzMZY9lXMZnOn9YnXezHbrgHXSBCngxQmAipOcCDKlxfhclnesunY
-         fBUpPCqZrbDFKUP8X1CoU5pb/lkc453Xv8J5retva+LM6qalELIvost3lZCDf9ivL1Qz
-         7Xlb7ri7HTBhOpG5reXj0JWNOmgr5H3swbFyAxOHtnZxxkGaw6N/5PaxO5pNP+LM2fDC
-         rQ8mozbO+9rC2LjjNN5I9GAwO3XB4y7lmZCOCP/FMSuqJX4ykFn2WZprNDOUYrmTZRTR
-         p5+Q==
-X-Forwarded-Encrypted: i=1; AKwUvByChqnHcsnxSU/+F+PIIsfD1aFftMLjhz6PF1v0SKfy8HnUfbkYTBiThRYBNwsEDIj0Lj1i4S7ri9o=@vger.kernel.org
-X-Gm-Message-State: AFuF++lfmobqYBYzJ1fh+sK5U24RGWLucSFEsFj8LVOhHqOfwl8oeQbk
-	S0AUp1ZLC2L6xlTKoNUxdZ2CBRJHgAaTGL9IWnUjW/UbqVm03VCdmBYY
-X-Gm-Gg: AYBFou07rysH8bRjEi/yMEtwnAS39lkPA/rYaaXu8XcF7ZJnDcjMKu3Bbrgvycbb6Yo
-	TTGwOFzlm5Td524jVOl3lmXmMi5OpZc4APBnE1Bpt4VIH5LPUeYnU82afyIqTaOCvTJyaXum12m
-	Q1FMv2V4eg8/UqW3HL4hlwbnRmzZRzizrl8RaZcStnQb3u+zzgV3VOIJ98Hx6vCG3/gqr8W2pvP
-	nwcYgt9Iu9nMkYUZDNOahlnLDBEQXSb0S51QlKPcTz4P2VdJisePf+2E9gesyIgqlCcdc752Aea
-	jnA2kxQtuOklXAg/gRFBtrTUrA+1UB1KxqE1/IxPtsXeS2Spwnx8TTKcchoBj58SLfqHAb0z0ne
-	f8CoA2sGnr/pAJSa9fkSk6PwpTYqhcRzmYZVnNdjCLqR3xYe5Fbn+R3ddpPGmw+y+2la6ZoENSr
-	VEbsz7xOlCrAgm4cEU/S7PXdQU34FxoSAqVX8A9GL0rXTLMHVAR+lZC+pNppN15SSbAfP/4moLr
-	Cxf3KCYtVooq5vQ8jfeM1N/opuUpQ==
-X-Received: by 2002:a5d:5d09:0:b0:486:e6a2:2d7c with SMTP id ffacd0b85a97d-4871e263c17mr3982801f8f.15.1789723679853;
-        Fri, 18 Sep 2026 02:27:59 -0700 (PDT)
-Received: from [192.168.0.253] (5403F394.catv.pool.telekom.hu. [84.3.243.148])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-4871ff56905sm2517653f8f.20.2026.09.18.02.27.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Sep 2026 02:27:59 -0700 (PDT)
-From: Gabor Juhos <j4g8y7@gmail.com>
-Date: Fri, 18 Sep 2026 11:27:49 +0200
-Subject: [PATCH] clk: qcom: gcc-ipq5018: mark 'gpll0_main' clock as
- critical
+	s=arc-20240116; t=1789724284; c=relaxed/simple;
+	bh=dLRgCHYBYt6zAVgzesW0L9ayGOHX0Es+F9XcsZwOjdE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nHSh7sue4IhE4/SCblwdZNOeBjmRt74VvfHg4jQU6roslXqufqX0xkeaN/kcB1QZiJZnp53LsoBpeW6mZj146vNfXsGNA3njCZ0fKXTE6ud66IysVdFpowg9GlS167w95aYHeLZFy/PXhfHxR5lzTzLqm22slUlpXAbHyBgu0n0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 523281F000FF;
+	Fri, 18 Sep 2026 09:38:01 +0000 (UTC)
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>
+Cc: linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [GIT PULL] clk: renesas: Updates for v7.4
+Date: Fri, 18 Sep 2026 11:37:46 +0200
+Message-ID: <cover.1789723268.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260918-ipq5018-mark-gpll0_main-critical-v1-1-fbe8f27a0106@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/x3N3QrCMAxA4VcZuTaQds6/VxGRWNMZ7Lqaighj7
- 27x8rs5Z4EqplLh1C1g8tGqc25wmw7Cg/MoqPdm8OR3dHR71PIayB1wYnviWFKi68SaMZi+NXD
- C2N+49+IiDVtomWIS9ftfnC/r+gNq6nO1cgAAAA==
-X-Change-ID: 20260917-ipq5018-mark-gpll0_main-critical-f3ba32e1f054
-To: Bjorn Andersson <andersson@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
- Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Abel Vesa <abel.vesa@oss.qualcomm.com>, 
- Varadarajan Narayanan <varadarajan.narayanan@oss.qualcomm.com>, 
- Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>, 
- Sricharan Ramabadhran <quic_srichara@quicinc.com>
-Cc: Stanislaw Pal <kuncy7@gmail.com>, 
- Mieczyslaw Nalewaj <namiltd@yahoo.com>, Jie Luo <jie.luo@oss.qualcomm.com>, 
- Georg Seema <georgseema@gmail.com>, linux-arm-msm@vger.kernel.org, 
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, Gabor Juhos <j4g8y7@gmail.com>
-X-Mailer: b4 0.14.3
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On IPQ5018, the APCS core clock feeds the CPUs. It can use
-different clocks as its parent, but during system boot it
-utilizes GPLL0.
+	Hi Stephen, Brian, Jérome,
 
-Under some cicumstances, the 'gpll0_main' clock is getting
-disabled during kernel start which results in a system hang
-then the hardware watchdog restarts the board after a while.
+The following changes since commit cee9395acd8043be0644b25c34bfa86623f2b935:
 
-This can happen when a driver gets a clock in its probe function,
-then releases it either directly or by devres cleanup on probe
-failure.
+  Linux 7.3-rc1 (2026-08-30 13:34:40 -0700)
 
-For example, since v6.18 the kernel often fails to boot on the
-TP-Link Archer AX55 v1 board by using the in-tree dts. In the
-failing configuration, the 'ipq-cmn-pll' driver is built into
-the kernel and the problem is caused by the pm_runtim_put()
-call in the ipq_cmn_pll_clk_probe() function. Due to this call,
-runtime pm disables the 'gcc_cmn_blk_ahb_clk' clock asynchronously
-which results in disabling 'gpll0_main' as well.
+are available in the Git repository at:
 
-Mark the clock as critical in order to avoid such hangs.
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v7.4-tag1
 
-Cc: stable@vger.kernel.org
-Fixes: e3fdbef1bab8 ("clk: qcom: Add Global Clock controller (GCC) driver for IPQ5018")
-Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
----
-Note:
-There is a patch [1] awaiting upstream which intends to solve the
-problem in the case of the 'ipq-cmn-pll' driver. However the same
-hang can be reproduced with several other drivers by triggering a
-probe failure in them.
+for you to fetch changes up to 8d90c0eeef104553d6b9137becd7f58b468aaa0b:
 
-The actual patch aims to solve the root cause.
+  clk: renesas: r9a09g077: Register SYSC regmap (2026-09-14 09:47:33 +0200)
 
-Link: https://lore.kernel.org/r/20260813093351.178419-1-kuncy7@gmail.com # [1]
----
- drivers/clk/qcom/gcc-ipq5018.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+----------------------------------------------------------------
+clk: renesas: Updates for v7.4
 
-diff --git a/drivers/clk/qcom/gcc-ipq5018.c b/drivers/clk/qcom/gcc-ipq5018.c
-index 594dae3bac4c..46da652956fb 100644
---- a/drivers/clk/qcom/gcc-ipq5018.c
-+++ b/drivers/clk/qcom/gcc-ipq5018.c
-@@ -68,6 +68,15 @@ static struct clk_alpha_pll gpll0_main = {
- 			.parent_data = gcc_xo_data,
- 			.num_parents = ARRAY_SIZE(gcc_xo_data),
- 			.ops = &clk_alpha_pll_stromer_ops,
-+			/*
-+			 * During system boot, this PLL feeds the CPUs.
-+			 * Mark it as critical to ensure that CCF does
-+			 * not disable it, even if there are no active
-+			 * consumers. This is needed to avoid a system
-+			 * hang caused by turning off the clock driving
-+			 * the CPUs.
-+			 */
-+			.flags = CLK_IS_CRITICAL,
- 		},
- 	},
- };
+  - Add display and PCIe clocks and resets on RZ/G3L,
+  - Make sure clk_init_data is fully initialized,
+  - Convert RZ/V2H to the clk_hw-based provider API,
+  - Add syscon regmap support for the System Controller (SYSC) on RZ/T2H
+    and RZ/N2H,
+  - Miscellaneous fixes and improvements.
 
----
-base-commit: 55981579b27b6541aeeab81c768f248dba0491ac
-change-id: 20260917-ipq5018-mark-gpll0_main-critical-f3ba32e1f054
+Thanks for pulling!
 
-Best regards,
--- 
-Gabor Juhos <j4g8y7@gmail.com>
+----------------------------------------------------------------
+Biju Das (10):
+      clk: renesas: rzg2l: Add DSI divider clock support for RZ/G3L
+      clk: renesas: rzg2l: Add PLL7 DSI clock support for RZ/G3L
+      clk: renesas: rzg2l: Rename cpg_core_clk::flag to core_flags
+      clk: renesas: rzg2l: Add support for divider flags
+      clk: renesas: rzg2l: Add support for LVDS fixed-factor divider with 4:7 duty cycle
+      clk: renesas: rzg2l: Add support for RZ/G3L DSI mux
+      clk: renesas: r9a08g046: Sort macro definitions alphabetically
+      clk: renesas: r9a08g046: Add MIPI DSI and LCDC clock/reset entries
+      clk: renesas: r9a08g046: Add clock and reset entries for LVDS
+      clk: renesas: r9a08g046: Add PCIe clocks and reset
 
+Geert Uytterhoeven (2):
+      clk: renesas: Make sure clk_init_data is fully initialized
+      clk: renesas: rcar-gen3: Use FIELD_GET()
+
+Jerome Brunet (1):
+      clk: renesas: Clean-up simple provider misuse of the consumer API
+
+John Madieu (2):
+      clk: renesas: rzv2h: Drop duplicated parent lookup in fixed_mod_status_clk_register()
+      clk: renesas: rzv2h: Convert to clk_hw based provider API
+
+Lad Prabhakar (1):
+      clk: renesas: r9a09g077: Register SYSC regmap
+
+ drivers/clk/renesas/Kconfig            |   2 +
+ drivers/clk/renesas/r9a06g032-clocks.c |   2 +-
+ drivers/clk/renesas/r9a08g046-cpg.c    |  92 +++++-
+ drivers/clk/renesas/r9a09g077-cpg.c    | 142 +++++++++
+ drivers/clk/renesas/rcar-gen3-cpg.c    |  15 +-
+ drivers/clk/renesas/rcar-gen3-cpg.h    |   3 +-
+ drivers/clk/renesas/renesas-cpg-mssr.c |   3 +
+ drivers/clk/renesas/renesas-cpg-mssr.h |   1 +
+ drivers/clk/renesas/rzg2l-cpg.c        | 554 ++++++++++++++++++++++++++++++++-
+ drivers/clk/renesas/rzg2l-cpg.h        |  51 ++-
+ drivers/clk/renesas/rzv2h-cpg.c        | 164 +++++-----
+ 11 files changed, 898 insertions(+), 131 deletions(-)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
