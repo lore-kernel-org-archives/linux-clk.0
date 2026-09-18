@@ -1,144 +1,111 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1847A46F483;
-	Fri, 18 Sep 2026 17:15:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D404D37B02A;
+	Fri, 18 Sep 2026 17:17:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789751717; cv=none; b=QA33GmqgTujSYp9Nac1Mji+DvOFk6Y7ln1twJLk1cR4wlObWjnpaPSOUbh12qCxsqj+rJ7nNGZJTYRjkyhtaGq/IuOcOjF7fEWUrereOUd9BaG9FCDtKz+pkJ/ibV7GWSCa3vDHv4IfEjElehq7A0kuekhquILH2QzhO872M7B4=
+	t=1789751877; cv=none; b=uT6ORkSDGucZdaLW2ibOZLvTXEynjcYFPZgFJfMUOHLod6ugj6rjkbyATfmIt64ILq+DPaacqGkoJtQDidBNRTlCaYzeOEdFicxg9gBRviR/t+2JkS/CfvmN3FCHb163jogxBzXc8CtHFBy/kmo+vbCSuYAgEbZ05p2ZwqIkZAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789751717; c=relaxed/simple;
-	bh=qspgTyuRu7XwR8ACfPkALjGOq+VRhCOa+r1C7BiJM7U=;
+	s=arc-20240116; t=1789751877; c=relaxed/simple;
+	bh=OsGRBU3r1RiQb3s5pIH9fFttv4sN7pT/Kkek+JSmDrw=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=AqkqbBgODvhHVa5om92tFijVdaHFyfDrcmP921jpzZbeELtjCyI4FyUFzqXAAPcYZJqYFJ5N9rBqjFVPPD+Vj3OSv6PNshbWKvRD/XShZTiM4mcihuWHIximR6SFvamhg5XxYJGn7HUYMYtnjXnXEXeRezPSqqowJK6t2JHbszo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j8o72ES0; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=mxH4YoHKx14x+r0qBHl+WTYRgLbMV6n3yDgheLV8jRnqJ8V78gY0/uiUtO83XBbY+LotM2gGBYts5+oBERrWXuvF+nv4c5MVYuronuj7K5YDQZ+9vkfUey9I6B+fh0yvrt9Qfr3NYamyBCumeHGSBHIwdrz8wXCM8jSgMo8Q3YY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LJW77chg; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j8o72ES0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81CC41F000FF;
-	Fri, 18 Sep 2026 17:15:14 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LJW77chg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A9401F000FF;
+	Fri, 18 Sep 2026 17:17:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789751715;
-	bh=YZ5yUEp2UopIB8xMVT3xbu3+W22kIx21Otqoefwf6H0=;
+	s=k20260515; t=1789751876;
+	bh=lUL2BG2GRMVlt9I99FYx0S+3aSrKKk/iYBNDCLDBfQk=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=j8o72ES0UFvJyN0H610UbgdyKBcp+35jFe78Z5RtlgK4XhT9XqRqcvpMSv25G+W0m
-	 8MTGvA0PWAFy7ZH5bfWlMd8JV0QvlFQzo4dncrUTa2eY8gV/L4XBF4RKZisCWvZ7Cu
-	 UVMAm0ZHUbNubQPNa1RlrZFD1QTC/08y86hEBzVpxKZxsvZtPGQ9MeI+s8+L5HbL9j
-	 nia0jj2QKF7YEy6HNQPouhwiWlIJ+yGuz6GbPU6i7uJrlxRLstlXsqBiK6YFAOOOq+
-	 LUal/Ard/VMCLt8k1u7gMfW1P+w1NWdwkKhBGKeq5fzMP1sXXxhcsFG1nr2k1Lkpk9
-	 pB++tKHggoJBg==
+	b=LJW77chgQAQ6HOaIessw8iWce9Ilcc8Tie9hmuer6VhZBHi8rxfPW/U4fM9fqjHXU
+	 m7m84qxXL+P6ogOwG5Q8sJ4OxwlHk9PrZ3458Sj+npE9eK4xq822MPobEEEMrYwiL+
+	 kgaF15SAETiqEigzD8Ee4F5rutkfB5q/iDNDknhqN3SeJtCxZkr1dr6eE14YuogviM
+	 7w28m9YPKspmPs88yeP/8PFdYJobwsR84+PEy8+atAMZYyfpAgW/DXJTs37v7jgix8
+	 wwaRVives8Q8sDKLcZ4RslGlqkzBqfgx7tyFBc4S055pmyz4acFOV477dDn1fNrJtA
+	 Z4zOA2SRwUG9Q==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH DNI v2 11/11] media: rcar-fcp: Check device revision at
- probe time
+Subject: Re: [PATCH v2 09/11] media: vsp1: Add device info entries for VSPD
+ on X5H
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Paul Elder" <paul.elder+renesas@ideasonboard.com>
-Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, media-ci@linuxtv.org, robh@kernel.org, linux-clk@vger.kernel.org, wsa+renesas@sang-engineering.com
-In-Reply-To: <20260919-epaul-v7-3-rc1-x5h-vsp-fcp-v2-11-dbe9236bfd22@ideasonboard.com>
+Cc: linux-clk@vger.kernel.org, wsa+renesas@sang-engineering.com, robh@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org, media-ci@linuxtv.org
+In-Reply-To: <20260919-epaul-v7-3-rc1-x5h-vsp-fcp-v2-9-dbe9236bfd22@ideasonboard.com>
 References: <20260919-epaul-v7-3-rc1-x5h-vsp-fcp-v2-0-dbe9236bfd22@ideasonboard.com>
- <20260919-epaul-v7-3-rc1-x5h-vsp-fcp-v2-11-dbe9236bfd22@ideasonboard.com>
+ <20260919-epaul-v7-3-rc1-x5h-vsp-fcp-v2-9-dbe9236bfd22@ideasonboard.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 18 Sep 2026 17:15:14 +0000
-Message-Id: <20260918171514.81CC41F000FF@smtp.kernel.org>
+Date: Fri, 18 Sep 2026 17:17:55 +0000
+Message-Id: <20260918171756.0A9401F000FF@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 
-Thank you for your contribution! Sashiko AI review found 3 potential issue(=
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
 s) to consider:
-- [Medium] pm: resource leak on probe error due to async pm_runtime_put()
-- [Low] macro: malformed macro RCAR_FCP_REG_PICINFO1_STRIDE_DIV16 missing p=
-arameter list
-- [Low] type: compiler warning from direct pointer-to-enum cast on 64-bit a=
-rchitectures
+- [High] media: vsp1: missing FCP soft reset for VSPDB_GEN4 in vsp1_reset_w=
+pf()
 --
 
-commit 4a6c9e446d9f471665024b004ad3e5842c693332
-Author: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+commit e44fed2186edca41909b450ebb5d732a1d4b0faa
+Author: Paul Elder <paul.elder+renesas@ideasonboard.com>
 
-media: rcar-fcp: Check device revision at probe time
+media: vsp1: Add device info entries for VSPD on X5H
 
-Verify that the device revision register reports a valid value,
-otherwise reject the device.
+Add device info entries for the VSPD so that the driver can match on the
+VSPD on the X5H and handle it slightly different hardware configuration.
+On the X5H there are two variants, the VSPD (a) and VSPD (b).
 
-> diff --git a/drivers/media/platform/renesas/rcar-fcp.c b/drivers/media/pl=
-atform/renesas/rcar-fcp.c
-> index 76d4c250b3081..5f2c483f71f42 100644
-> --- a/drivers/media/platform/renesas/rcar-fcp.c
-> +++ b/drivers/media/platform/renesas/rcar-fcp.c
-[ ... ]
-> +#define RCAR_FCP_REG_TL_CTRL			0x0070
-> +#define RCAR_FCP_REG_TL_CTRL_TLEN		BIT(31)
-> +#define RCAR_FCP_REG_TL_CTRL_VPOS_C(n)		((n) << 16)
-> +#define RCAR_FCP_REG_TL_CTRL_VPOS_Y(n)		((n) << 0)
-> +
-> +#define RCAR_FCP_REG_PICINFO1			0x00c4
-> +#define RCAR_FCP_REG_PICINFO1_STRIDE_DIV16	((n) << 0)
-
-[Severity: Low]
-Is this macro missing a parameter list? It looks like the missing (n) after
-the macro name will prevent it from taking arguments, treating ((n) << 0)
-as the literal expansion.
+> diff --git a/drivers/media/platform/renesas/vsp1/vsp1_drv.c b/drivers/med=
+ia/platform/renesas/vsp1/vsp1_drv.c
+> index 5597595414fe7..627771e305661 100644
+> --- a/drivers/media/platform/renesas/vsp1/vsp1_drv.c
+> +++ b/drivers/media/platform/renesas/vsp1/vsp1_drv.c
 
 [ ... ]
->  static int rcar_fcp_probe(struct platform_device *pdev)
->  {
->  	struct rcar_fcp_device *fcp;
-> +	int ret;
-> =20
->  	fcp =3D devm_kzalloc(&pdev->dev, sizeof(*fcp), GFP_KERNEL);
->  	if (fcp =3D=3D NULL)
->  		return -ENOMEM;
-> =20
->  	fcp->dev =3D &pdev->dev;
-> +	fcp->type =3D (enum rcar_fcp_type)device_get_match_data(&pdev->dev);
 
-[Severity: Low]
-Can this direct pointer-to-enum cast cause a compiler warning on 64-bit
-architectures?
+> @@ -870,6 +881,17 @@ static const struct vsp1_device_info vsp1_device_inf=
+os[] =3D {
+>  		.uif_count =3D 2,
+>  		.wpf_count =3D 1,
+>  		.num_bru_inputs =3D 5,
+> +	}, {
+> +		.version =3D VI6_IP_VERSION_MODEL_VSPDB_GEN4,
+> +		.model =3D "VSP2-D (b)",
+> +		.soc =3D VI6_IP_VERSION_SOC_X5H,
+> +		.gen =3D 4,
+> +		.features =3D VSP1_HAS_BRU | VSP1_HAS_EXT_DL,
+> +		.lif_count =3D 1,
+> +		.rpf_count =3D 5,
+> +		.uif_count =3D 1,
+> +		.wpf_count =3D 1,
+> +		.num_bru_inputs =3D 5,
+>  	}, {
 
-To avoid precision loss warnings on 64-bit platforms like ARM64, should the
-pointer be cast to an integer of the same size, such as unsigned long or
-uintptr_t, before being cast to the enum type?
+[Severity: High]
+Does vsp1_reset_wpf() also need to be updated to handle this new hardware
+variant?
 
->  	platform_set_drvdata(pdev, fcp);
-[ ... ]
->  	pm_runtime_enable(&pdev->dev);
-> +	ret =3D pm_runtime_resume_and_get(&pdev->dev);
-> +	if (ret < 0)
-> +		goto error_pm_disable;
-> +
-> +	ret =3D rcar_fcp_setup(fcp);
-> +	if (ret < 0)
-> +		goto error_pm_put;
-> +
-> +	pm_runtime_put(&pdev->dev);
-> =20
->  	mutex_lock(&fcp_lock);
->  	list_add_tail(&fcp->list, &fcp_devices);
->  	mutex_unlock(&fcp_lock);
-> =20
->  	return 0;
-> +
-> +error_pm_put:
-> +	pm_runtime_put(&pdev->dev);
-> +error_pm_disable:
-> +	pm_runtime_disable(&pdev->dev);
-> +	return ret;
+Looking at vsp1_reset_wpf() earlier in this file, the explicit version check
+bypasses the reset for VI6_IP_VERSION_MODEL_VSPDB_GEN4:
 
-[Severity: Medium]
-Does calling pm_runtime_put() immediately before pm_runtime_disable() leak
-the device power state?
+	if (version =3D=3D VI6_IP_VERSION_MODEL_VSPD_GEN3 ||
+	    version =3D=3D VI6_IP_VERSION_MODEL_VSPD_GEN4)
+		ret =3D rcar_fcp_soft_reset(vsp1->fcp);
 
-Since pm_runtime_put() queues an asynchronous suspend, the subsequent
-pm_runtime_disable() can cancel it, leaving the hardware active after a pro=
-be
-failure.
+This could leave the attached Frame Compression Processor (FCP) unreset dur=
+ing
+WPF resets.=20
 
-Should this use pm_runtime_put_sync() instead to ensure the device powers
-down correctly before being disabled?
+Since vsp1_reset_wpf() is executed on driver probe and V4L2 stream start/st=
+op,
+could this cause state desynchronization between the VSP and FCP, leading to
+pipeline stalls or failures during streaming operations?
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260919-epaul-v7-3=
--rc1-x5h-vsp-fcp-v2-0-dbe9236bfd22@ideasonboard.com?part=3D11
+-rc1-x5h-vsp-fcp-v2-0-dbe9236bfd22@ideasonboard.com?part=3D9
