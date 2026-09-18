@@ -1,107 +1,160 @@
-Received: from mail-ej2-f12.google.com (mail-ej2-f12.google.com [74.125.228.140])
+Received: from mail-wr2-f12.google.com (mail-wr2-f12.google.com [74.125.225.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD077426431
-	for <linux-clk@vger.kernel.org>; Fri, 18 Sep 2026 08:37:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.228.140
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4C392C031E
+	for <linux-clk@vger.kernel.org>; Fri, 18 Sep 2026 09:28:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789720651; cv=none; b=C0DgK0oTHHT3tWZDLpNUECjhcObRoX20I+gEzhOayaGhKe4qAUQ3IKyPBJYGgMaQnFYBdAzPT6L5nSBFCF5ZFS+WmrpqzX7qv/Nqoak+rPOn2Fpg5hWBeDrksTN9mjkjjsPEY2eJkt3qZmXOtZX69MwZoBC7+v2zzxNcddevccQ=
+	t=1789723684; cv=none; b=pPSFtDkn6t4tNIhMwYR/7FsoDcrg0b1UTOYw/E9Q5h26mwV+1F61SwhoYdIsbptg6bQomAH+RvEJXGNybSARDUarJneqM1rD9j8jC0k6UD2ngdLnVmBNqVxqsjuYQpC6PEiCXrfmnD6ziNCNz9CsKt6ZVN4hXyx3jWS+gCI9Mvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789720651; c=relaxed/simple;
-	bh=Uxr4WVyD/DNS/detS6ug+v7NOvEjI5JJaJV4V+VWxsU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qpllaAOKsYYxu2B/uOQ86v6S2n9Wtagrwri9Z/wsaSfb5uvGfvuFkmYq7upsi1tLpe66OV8pEffAE1TZNSQXJLlhP4iQr6lp6LMVJmhRSBTCWCDaKzot/Q5DZIHXkdG/H0sosyGNWkpDzEWoHHx741au9T9ItcoKABpNfSqI3M8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sUyKAVm5; arc=none smtp.client-ip=74.125.228.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1789723684; c=relaxed/simple;
+	bh=gfyfmI/c9k+T3v97GqLFTmjkdngo/5etTTn9H2RVSBI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=KORIB88NVaGKkEiqOurb95fOcmgGLCvspxJuQHhABcZI7gouKM9pfgqP5/Rdj/M5Tzd5Dm8pxTq/6/zdK1wn5yymOW6LdD8JuZcyaPnQgnkaHrdX+ianexHoWj9n3QBT0swnjfxMt3RqP745ioUf96BZJ+NvNoENxmjPDN1nc+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LkZIorym; arc=none smtp.client-ip=74.125.225.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sUyKAVm5"
-Received: by mail-ej2-f12.google.com with SMTP id a640c23a62f3a-c294496989aso67111366b.3
-        for <linux-clk@vger.kernel.org>; Fri, 18 Sep 2026 01:37:29 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LkZIorym"
+Received: by mail-wr2-f12.google.com with SMTP id ffacd0b85a97d-485933b2522so339163f8f.0
+        for <linux-clk@vger.kernel.org>; Fri, 18 Sep 2026 02:28:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1789720648; x=1790325448; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=EsGHbbePiTbUM57NiqY/i+2M/82wdnf8yfJzQr85VmA=;
-        b=sUyKAVm5UpfIhhx75ErJhS6MhdSrfjRXsde0yBrmtZLPEhSOoZwsTSeg2sPetwzmSS
-         zFDuCjaOq2pfNyh0hC1OWHKqPxYyh5Jf53eCycmrOTuDBreFIljsoVmr98FFBpKBftkE
-         dVPzK2Jg0MCAGFcU+cL7kYUvP5E3Re9QxSNA9+P/F4yo5GK53Up9tnhah2OpIna1ZYRX
-         JthbQcFArVC/Pmnc+4ANRjvUekvp65CzP1/3xVZfjXTG85PrTvTmuv6Me7DfQYG3g1S+
-         uXZKj+0eHTvrTYK0NSI0RAkp7P4GsNJNjunmdrh78Gw51scMd6otBM+8jYoCBR08b1yL
-         qXyQ==
+        d=gmail.com; s=20251104; t=1789723680; x=1790328480; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=Ahb7X99xI5/f4Coc8xUhc23QGLKHkzyos4mwiCsRZng=;
+        b=LkZIorymI9RQ2X7d9aqviH80b1N659zUU/obFZH9a6TUOJGJyCl9TUvqwJcklyhfHh
+         BWwMQWqBVzPb1mV8L5D2jH8uypty1OqWITYo5yZ61Yc6N2JyO83Spxu37lsE9+8+LmIb
+         TueHSEJ5IqbX7XOiO3Gvkz7u9R4mBh4gJV6lrSrPLZPB+RduIzE1vSoYgSEoJrml/pGV
+         G7Si8oaHfrSfh6plj8ChGw397LgEpc7evZYaofTgMPDKK4ELhaLsG/voqwk98gXIlzJ7
+         aE72LSlszJ4FgENGbrbk//UBfNObtPYJQZw5tdI43BbjvtlwsEri8ESKLmsu0ZZR36lI
+         JY8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789720648; x=1790325448;
-        h=content-transfer-encoding:content-type:in-reply-to:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=EsGHbbePiTbUM57NiqY/i+2M/82wdnf8yfJzQr85VmA=;
-        b=bIdG+qNAebu9q7tntH03XPoXv/nZ4Y8cEtncEwmxvTEtM4dd0BUjGkBA2+hdYiFQ/+
-         K5yH6cP1A4GWFLsdCtlXim+A2EDY9UG6gwNEOIx0rBq6GSIdrRA3WmuWhNyR1TIeyxxW
-         O8kLVp+uV67pJm/fZ4UQEVDRhAAYeOQJudRx56u3dmahCWZa8u4GO56TlUgOjp8pSYer
-         nQJXcWJmdtsVPMf7JpRFHv2zShGFWN7s9ei9+DRdJWHxl96dkXlAuXZglQuhwlCLOpoR
-         6iRzX9ii/eLJVrh/iRBj+kx3z74GUFmvasgyxvvd4rtNruBtbT7yLjQ+dm8AoA7OvMOC
-         NN2g==
-X-Forwarded-Encrypted: i=1; AKwUvBwzulVThET6T3Hu4/SPOncdZBCOWJnkONMuok+1vepfs3JwSML616vWT/LXvMjQM+THo4EUS5q4150=@vger.kernel.org
-X-Gm-Message-State: AFuF++lI6wklBSIU382ski4JQZqfK0QiT3nCCGrtA+zK/vKcPui7CMOc
-	ZVvtbN9OhWswGByZUbz4rMYzmx7Obqn0s3ZwSI6lFH7DaRlqb5lHSaeeBoNYHjaNEyQ=
-X-Gm-Gg: AYBFou1jm8TEXTaisQip2arhFFHFf2xZEdTJAkOzI5y6Xdx8hXJTy8eon9lghioDOxU
-	5nw4BVESORQ9/xMW+rGsmO+dgypOOmhdC85C7wz4p/CEAfCFXiVjqr5sd9hmmhiugr5q79KRFVp
-	YHVodUzFevg77TaP9F4tR9vvso681llFq/jGRarRN86uF0A205o+zKT3i7sCTgTn+ca69TDAACs
-	depnJ4udk89KuWTILrApfdaRPF4m6m2mDr09xWV9zJF66icgDtTQDOcttm5Yi7ifB2Ln/htgpfk
-	cW/rEARAphu+pnIS8Pd11wXbS48qtneafZ+jAV5F9dj92H5wf+szhjyjc38dk9AirxDUObqRFO8
-	AnyDSN8mB8KSw1OQSV6KAWfbk4Vf1H+/e6Dw9GcfRZJDqn2Q2Gmv5+mVhox3o2B9m/hbpmReUz7
-	rGsn0V+0zZHaYPVZ0t4D9RWvuAzk0c/7xnSLJy4DmJG2aS6nft5zbyNaFi6H4pL6wLfDsNX68y9
-	/xsOQzSvg==
-X-Received: by 2002:a17:907:1c1b:b0:c25:62db:772b with SMTP id a640c23a62f3a-c2a15846850mr191330566b.7.1789720648074;
-        Fri, 18 Sep 2026 01:37:28 -0700 (PDT)
-Received: from [192.168.0.167] ([109.76.4.225])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c2a1bbc6a06sm32784166b.53.2026.09.18.01.37.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Sep 2026 01:37:27 -0700 (PDT)
-Message-ID: <70284db7-a7d9-48a6-acdd-7a9850cdc7e4@linaro.org>
-Date: Fri, 18 Sep 2026 09:37:25 +0100
+        d=1e100.net; s=20260707; t=1789723680; x=1790328480;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=Ahb7X99xI5/f4Coc8xUhc23QGLKHkzyos4mwiCsRZng=;
+        b=lwgtQtWfpu8d9zJI0P4aAZ09F8CcmRyYbXr25LJh3G+q5Xf1xzOWUrTXx/rX2O3zV5
+         cFODZBeZkqod2c3FzMZY9lXMZnOn9YnXezHbrgHXSBCngxQmAipOcCDKlxfhclnesunY
+         fBUpPCqZrbDFKUP8X1CoU5pb/lkc453Xv8J5retva+LM6qalELIvost3lZCDf9ivL1Qz
+         7Xlb7ri7HTBhOpG5reXj0JWNOmgr5H3swbFyAxOHtnZxxkGaw6N/5PaxO5pNP+LM2fDC
+         rQ8mozbO+9rC2LjjNN5I9GAwO3XB4y7lmZCOCP/FMSuqJX4ykFn2WZprNDOUYrmTZRTR
+         p5+Q==
+X-Forwarded-Encrypted: i=1; AKwUvByChqnHcsnxSU/+F+PIIsfD1aFftMLjhz6PF1v0SKfy8HnUfbkYTBiThRYBNwsEDIj0Lj1i4S7ri9o=@vger.kernel.org
+X-Gm-Message-State: AFuF++lfmobqYBYzJ1fh+sK5U24RGWLucSFEsFj8LVOhHqOfwl8oeQbk
+	S0AUp1ZLC2L6xlTKoNUxdZ2CBRJHgAaTGL9IWnUjW/UbqVm03VCdmBYY
+X-Gm-Gg: AYBFou07rysH8bRjEi/yMEtwnAS39lkPA/rYaaXu8XcF7ZJnDcjMKu3Bbrgvycbb6Yo
+	TTGwOFzlm5Td524jVOl3lmXmMi5OpZc4APBnE1Bpt4VIH5LPUeYnU82afyIqTaOCvTJyaXum12m
+	Q1FMv2V4eg8/UqW3HL4hlwbnRmzZRzizrl8RaZcStnQb3u+zzgV3VOIJ98Hx6vCG3/gqr8W2pvP
+	nwcYgt9Iu9nMkYUZDNOahlnLDBEQXSb0S51QlKPcTz4P2VdJisePf+2E9gesyIgqlCcdc752Aea
+	jnA2kxQtuOklXAg/gRFBtrTUrA+1UB1KxqE1/IxPtsXeS2Spwnx8TTKcchoBj58SLfqHAb0z0ne
+	f8CoA2sGnr/pAJSa9fkSk6PwpTYqhcRzmYZVnNdjCLqR3xYe5Fbn+R3ddpPGmw+y+2la6ZoENSr
+	VEbsz7xOlCrAgm4cEU/S7PXdQU34FxoSAqVX8A9GL0rXTLMHVAR+lZC+pNppN15SSbAfP/4moLr
+	Cxf3KCYtVooq5vQ8jfeM1N/opuUpQ==
+X-Received: by 2002:a5d:5d09:0:b0:486:e6a2:2d7c with SMTP id ffacd0b85a97d-4871e263c17mr3982801f8f.15.1789723679853;
+        Fri, 18 Sep 2026 02:27:59 -0700 (PDT)
+Received: from [192.168.0.253] (5403F394.catv.pool.telekom.hu. [84.3.243.148])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-4871ff56905sm2517653f8f.20.2026.09.18.02.27.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Sep 2026 02:27:59 -0700 (PDT)
+From: Gabor Juhos <j4g8y7@gmail.com>
+Date: Fri, 18 Sep 2026 11:27:49 +0200
+Subject: [PATCH] clk: qcom: gcc-ipq5018: mark 'gpll0_main' clock as
+ critical
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v19 0/5] Add phy_get_by_of_node and devm helper
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>,
- Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Bryan O'Donoghue <bod@kernel.org>,
- Loic Poulain <loic.poulain@oss.qualcomm.com>, Vinod Koul <vkoul@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Felipe Balbi <balbi@ti.com>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, linux-phy@lists.infradead.org,
- Krzysztof Kozlowski <krzk@kernel.org>, stable@vger.kernel.org
-References: <20260917-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v19-0-21ad8a76e941@linaro.org>
- <cqoquu7hzclx54km763745dupaxahv7y4xbzq7vxg23isptgqz@j6los24mhnnn>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Content-Language: en-GB
-In-Reply-To: <cqoquu7hzclx54km763745dupaxahv7y4xbzq7vxg23isptgqz@j6los24mhnnn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20260918-ipq5018-mark-gpll0_main-critical-v1-1-fbe8f27a0106@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/x3N3QrCMAxA4VcZuTaQds6/VxGRWNMZ7Lqaighj7
+ 27x8rs5Z4EqplLh1C1g8tGqc25wmw7Cg/MoqPdm8OR3dHR71PIayB1wYnviWFKi68SaMZi+NXD
+ C2N+49+IiDVtomWIS9ftfnC/r+gNq6nO1cgAAAA==
+X-Change-ID: 20260917-ipq5018-mark-gpll0_main-critical-f3ba32e1f054
+To: Bjorn Andersson <andersson@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+ Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Abel Vesa <abel.vesa@oss.qualcomm.com>, 
+ Varadarajan Narayanan <varadarajan.narayanan@oss.qualcomm.com>, 
+ Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>, 
+ Sricharan Ramabadhran <quic_srichara@quicinc.com>
+Cc: Stanislaw Pal <kuncy7@gmail.com>, 
+ Mieczyslaw Nalewaj <namiltd@yahoo.com>, Jie Luo <jie.luo@oss.qualcomm.com>, 
+ Georg Seema <georgseema@gmail.com>, linux-arm-msm@vger.kernel.org, 
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ stable@vger.kernel.org, Gabor Juhos <j4g8y7@gmail.com>
+X-Mailer: b4 0.14.3
 
-On 18/09/2026 02:36, Manivannan Sadhasivam wrote:
-> Looks like you completely missed all my comments given in v17 :/
-> 
-> - Mani
+On IPQ5018, the APCS core clock feeds the CPUs. It can use
+different clocks as its parent, but during system boot it
+utilizes GPLL0.
 
-oops so I did, my apologies Mani, I will take those in now.
+Under some cicumstances, the 'gpll0_main' clock is getting
+disabled during kernel start which results in a system hang
+then the hardware watchdog restarts the board after a while.
+
+This can happen when a driver gets a clock in its probe function,
+then releases it either directly or by devres cleanup on probe
+failure.
+
+For example, since v6.18 the kernel often fails to boot on the
+TP-Link Archer AX55 v1 board by using the in-tree dts. In the
+failing configuration, the 'ipq-cmn-pll' driver is built into
+the kernel and the problem is caused by the pm_runtim_put()
+call in the ipq_cmn_pll_clk_probe() function. Due to this call,
+runtime pm disables the 'gcc_cmn_blk_ahb_clk' clock asynchronously
+which results in disabling 'gpll0_main' as well.
+
+Mark the clock as critical in order to avoid such hangs.
+
+Cc: stable@vger.kernel.org
+Fixes: e3fdbef1bab8 ("clk: qcom: Add Global Clock controller (GCC) driver for IPQ5018")
+Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
+---
+Note:
+There is a patch [1] awaiting upstream which intends to solve the
+problem in the case of the 'ipq-cmn-pll' driver. However the same
+hang can be reproduced with several other drivers by triggering a
+probe failure in them.
+
+The actual patch aims to solve the root cause.
+
+Link: https://lore.kernel.org/r/20260813093351.178419-1-kuncy7@gmail.com # [1]
+---
+ drivers/clk/qcom/gcc-ipq5018.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/drivers/clk/qcom/gcc-ipq5018.c b/drivers/clk/qcom/gcc-ipq5018.c
+index 594dae3bac4c..46da652956fb 100644
+--- a/drivers/clk/qcom/gcc-ipq5018.c
++++ b/drivers/clk/qcom/gcc-ipq5018.c
+@@ -68,6 +68,15 @@ static struct clk_alpha_pll gpll0_main = {
+ 			.parent_data = gcc_xo_data,
+ 			.num_parents = ARRAY_SIZE(gcc_xo_data),
+ 			.ops = &clk_alpha_pll_stromer_ops,
++			/*
++			 * During system boot, this PLL feeds the CPUs.
++			 * Mark it as critical to ensure that CCF does
++			 * not disable it, even if there are no active
++			 * consumers. This is needed to avoid a system
++			 * hang caused by turning off the clock driving
++			 * the CPUs.
++			 */
++			.flags = CLK_IS_CRITICAL,
+ 		},
+ 	},
+ };
 
 ---
-bod
+base-commit: 55981579b27b6541aeeab81c768f248dba0491ac
+change-id: 20260917-ipq5018-mark-gpll0_main-critical-f3ba32e1f054
+
+Best regards,
+-- 
+Gabor Juhos <j4g8y7@gmail.com>
+
