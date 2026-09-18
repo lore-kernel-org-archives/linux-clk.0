@@ -1,44 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D404D37B02A;
-	Fri, 18 Sep 2026 17:17:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A61736197F;
+	Fri, 18 Sep 2026 17:18:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789751877; cv=none; b=uT6ORkSDGucZdaLW2ibOZLvTXEynjcYFPZgFJfMUOHLod6ugj6rjkbyATfmIt64ILq+DPaacqGkoJtQDidBNRTlCaYzeOEdFicxg9gBRviR/t+2JkS/CfvmN3FCHb163jogxBzXc8CtHFBy/kmo+vbCSuYAgEbZ05p2ZwqIkZAE=
+	t=1789751914; cv=none; b=gWC5XDoqqdzhOojkyseMrXL0kP87GCS7GL7RDwFXTXHhvB77x/ZdcmtvJ+/xpmo0+itGJE7QKmLOQlgkpWQm9cnA1Ekv+wVnAelH8jnWWjmuIL4xf7Go9Xrab64+EOhnGHU8ihl3Ur4zpB69B5ZJqKXosjBmINW606pP+yYIwr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789751877; c=relaxed/simple;
-	bh=OsGRBU3r1RiQb3s5pIH9fFttv4sN7pT/Kkek+JSmDrw=;
+	s=arc-20240116; t=1789751914; c=relaxed/simple;
+	bh=JsXnY3cl3RRdbZ4LnmR0TxAf/7UP5+NVXUCc2gO2H8g=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=mxH4YoHKx14x+r0qBHl+WTYRgLbMV6n3yDgheLV8jRnqJ8V78gY0/uiUtO83XBbY+LotM2gGBYts5+oBERrWXuvF+nv4c5MVYuronuj7K5YDQZ+9vkfUey9I6B+fh0yvrt9Qfr3NYamyBCumeHGSBHIwdrz8wXCM8jSgMo8Q3YY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LJW77chg; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=ZieMDklpmipA43gc1ul3PnJzNxqhWiBNptFDHfDGiSHc656Bv5hIGi1wWDqqPD1KTK4TaUZHT+Z8GCW6FBDD6bXgBdsvmUtxFrg4nPbcRJsd0zYH0KTUVglOIs2JDzqcD6ZJJCw+NV1DIvtesRiNiloynhAMUCXtkTCLSVPBReQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qtz+oJIl; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LJW77chg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A9401F000FF;
-	Fri, 18 Sep 2026 17:17:55 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qtz+oJIl"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0716E1F000FF;
+	Fri, 18 Sep 2026 17:18:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789751876;
-	bh=lUL2BG2GRMVlt9I99FYx0S+3aSrKKk/iYBNDCLDBfQk=;
+	s=k20260515; t=1789751913;
+	bh=sss8ccV88h3LonxkKUZt2aTH+MJP1lwUp00YCxxLSn0=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=LJW77chgQAQ6HOaIessw8iWce9Ilcc8Tie9hmuer6VhZBHi8rxfPW/U4fM9fqjHXU
-	 m7m84qxXL+P6ogOwG5Q8sJ4OxwlHk9PrZ3458Sj+npE9eK4xq822MPobEEEMrYwiL+
-	 kgaF15SAETiqEigzD8Ee4F5rutkfB5q/iDNDknhqN3SeJtCxZkr1dr6eE14YuogviM
-	 7w28m9YPKspmPs88yeP/8PFdYJobwsR84+PEy8+atAMZYyfpAgW/DXJTs37v7jgix8
-	 wwaRVives8Q8sDKLcZ4RslGlqkzBqfgx7tyFBc4S055pmyz4acFOV477dDn1fNrJtA
-	 Z4zOA2SRwUG9Q==
+	b=Qtz+oJIl9t5kmSU29VUqcShq0mk7CtlyeJBJ0CxLo88BXmnhFj2YuY2zkHvbokDVM
+	 zMjXgvafQiqiavXDHUy2WQaOBUiWiYg/PcrmEb0QijXxR1kxw5X1ojwqqDovtJwKoA
+	 OX0RZCc7xI/EFefrzTML3gNnHfFFB73uQOxul8sh9SnmPeUUCGcliXyaj7PXmMu6vt
+	 uNB1+BqD07Zayteo7eEqkex3RKzFD8PHsCLsM2mleEH2JSQmTlEJkRRrqNVSDzD939
+	 qY40JsM28giJYnAa8ab3WK9q22am8iR5KOBHHzAg3CjneR/bN/DxzMN0l6mDe0tEUB
+	 te8OtYE9oQu9A==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 09/11] media: vsp1: Add device info entries for VSPD
- on X5H
+Subject: Re: [PATCH v2 03/11] pmdomain: renesas: r8a78000: Add maps for VIO
+ for SCP FW SDKv4.36
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Paul Elder" <paul.elder+renesas@ideasonboard.com>
-Cc: linux-clk@vger.kernel.org, wsa+renesas@sang-engineering.com, robh@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org, media-ci@linuxtv.org
-In-Reply-To: <20260919-epaul-v7-3-rc1-x5h-vsp-fcp-v2-9-dbe9236bfd22@ideasonboard.com>
+Cc: devicetree@vger.kernel.org, robh@kernel.org, wsa+renesas@sang-engineering.com, media-ci@linuxtv.org, conor+dt@kernel.org, linux-clk@vger.kernel.org
+In-Reply-To: <20260919-epaul-v7-3-rc1-x5h-vsp-fcp-v2-3-dbe9236bfd22@ideasonboard.com>
 References: <20260919-epaul-v7-3-rc1-x5h-vsp-fcp-v2-0-dbe9236bfd22@ideasonboard.com>
- <20260919-epaul-v7-3-rc1-x5h-vsp-fcp-v2-9-dbe9236bfd22@ideasonboard.com>
+ <20260919-epaul-v7-3-rc1-x5h-vsp-fcp-v2-3-dbe9236bfd22@ideasonboard.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 18 Sep 2026 17:17:55 +0000
-Message-Id: <20260918171756.0A9401F000FF@smtp.kernel.org>
+Date: Fri, 18 Sep 2026 17:18:31 +0000
+Message-Id: <20260918171832.0716E1F000FF@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -47,65 +47,59 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 
 Thank you for your contribution! Sashiko AI review found 1 potential issue(=
 s) to consider:
-- [High] media: vsp1: missing FCP soft reset for VSPDB_GEN4 in vsp1_reset_w=
-pf()
+- [Medium] pmdomain: r8a78000: probe regression on older SCMI firmware vers=
+ions
 --
 
-commit e44fed2186edca41909b450ebb5d732a1d4b0faa
+commit 15cae81644d1a9205daae4b85676910b2400fe02
 Author: Paul Elder <paul.elder+renesas@ideasonboard.com>
 
-media: vsp1: Add device info entries for VSPD on X5H
+pmdomain: renesas: r8a78000: Add maps for VIO for SCP FW SDKv4.36
 
-Add device info entries for the VSPD so that the driver can match on the
-VSPD on the X5H and handle it slightly different hardware configuration.
-On the X5H there are two variants, the VSPD (a) and VSPD (b).
+Add maps for VIO for the VSP and FCP power domains and reset domains.
 
-> diff --git a/drivers/media/platform/renesas/vsp1/vsp1_drv.c b/drivers/med=
-ia/platform/renesas/vsp1/vsp1_drv.c
-> index 5597595414fe7..627771e305661 100644
-> --- a/drivers/media/platform/renesas/vsp1/vsp1_drv.c
-> +++ b/drivers/media/platform/renesas/vsp1/vsp1_drv.c
-
+> diff --git a/drivers/pmdomain/renesas/r8a78000-mdlc.c b/drivers/pmdomain/=
+renesas/r8a78000-mdlc.c
+> index a0d83f27735e7..cabe6435ecd79 100644
+> --- a/drivers/pmdomain/renesas/r8a78000-mdlc.c
+> +++ b/drivers/pmdomain/renesas/r8a78000-mdlc.c
 [ ... ]
-
-> @@ -870,6 +881,17 @@ static const struct vsp1_device_info vsp1_device_inf=
-os[] =3D {
->  		.uif_count =3D 2,
->  		.wpf_count =3D 1,
->  		.num_bru_inputs =3D 5,
-> +	}, {
-> +		.version =3D VI6_IP_VERSION_MODEL_VSPDB_GEN4,
-> +		.model =3D "VSP2-D (b)",
-> +		.soc =3D VI6_IP_VERSION_SOC_X5H,
-> +		.gen =3D 4,
-> +		.features =3D VSP1_HAS_BRU | VSP1_HAS_EXT_DL,
-> +		.lif_count =3D 1,
-> +		.rpf_count =3D 5,
-> +		.uif_count =3D 1,
-> +		.wpf_count =3D 1,
-> +		.num_bru_inputs =3D 5,
+> @@ -997,8 +1047,8 @@ static const struct mdlc_info r8a78000_mdlc_fw_4_31_=
+0[] =3D {
+>  		/* FIXME .mod_map =3D r8a78000_mdlc_vips_mod_fw_4_31_0, */
 >  	}, {
+>  		.base =3D 0xc5000000 /* mdlc_vio */,
+> -		/* FIXME .power_map =3D r8a78000_mdlc_vio_power_fw_4_28_0, */
+> -		/* FIXME .mod_map =3D r8a78000_mdlc_vio_mod_fw_4_31_0, */
+> +		.power_map =3D r8a78000_mdlc_vio_power_fw_4_31_0,
+> +		.mod_map =3D r8a78000_mdlc_vio_mod_fw_4_31_0,
 
-[Severity: High]
-Does vsp1_reset_wpf() also need to be updated to handle this new hardware
-variant?
+[Severity: Medium]
+The commit message indicates these are maps for SCP FW SDKv4.36, but they a=
+re
+being unconditionally assigned to the r8a78000_mdlc_fw_4_31_0 struct.
 
-Looking at vsp1_reset_wpf() earlier in this file, the explicit version check
-bypasses the reset for VI6_IP_VERSION_MODEL_VSPDB_GEN4:
+If older firmware lacks the newly added VIO IDs, will this cause an immedia=
+te
+probe abort?
 
-	if (version =3D=3D VI6_IP_VERSION_MODEL_VSPD_GEN3 ||
-	    version =3D=3D VI6_IP_VERSION_MODEL_VSPD_GEN4)
-		ret =3D rcar_fcp_soft_reset(vsp1->fcp);
+In fill_power_map():
 
-This could leave the attached Frame Compression Processor (FCP) unreset dur=
-ing
-WPF resets.=20
+	genpd =3D of_genpd_get_from_provider(&scmi_spec);
+	if (IS_ERR(genpd))
+		return dev_err_cast_probe(dev, genpd,
+				"Failed to get SCMI power domain %u\n",
+				map[i].fw_id);
 
-Since vsp1_reset_wpf() is executed on driver probe and V4L2 stream start/st=
-op,
-could this cause state desynchronization between the VSP and FCP, leading to
-pipeline stalls or failures during streaming operations?
+If an older firmware (e.g. SDK v4.31) reports fewer SCMI domains than the n=
+ewly
+added VIO IDs, of_genpd_get_from_provider() will return -ENOENT, aborting t=
+he
+probe and rendering dependent devices unusable.
+
+Should these maps only be applied when the correct firmware version is
+detected?
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260919-epaul-v7-3=
--rc1-x5h-vsp-fcp-v2-0-dbe9236bfd22@ideasonboard.com?part=3D9
+-rc1-x5h-vsp-fcp-v2-0-dbe9236bfd22@ideasonboard.com?part=3D3
