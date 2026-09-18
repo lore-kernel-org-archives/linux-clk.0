@@ -1,158 +1,299 @@
-Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010043.outbound.protection.outlook.com [52.101.228.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr2-f15.google.com (mail-wr2-f15.google.com [74.125.225.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A9D437F011;
-	Fri, 18 Sep 2026 15:08:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBF0A25A2A2
+	for <linux-clk@vger.kernel.org>; Fri, 18 Sep 2026 15:19:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.225.79
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789744097; cv=fail; b=vBH1Xd9s3vOtu987GbGB2hFiINbbrKAsWlmDTEkJi/J923p0PuXikkvmlCg4qs+5ZRg0jE/UEN1V35br8+F8KobXtHkP7tS8d7L31cPIGTtvYeF+lSvvoSnR6FbWbilamRqADHPLwCmYhIWzCZupD+Cjm5t/Ujm+BXBVJIeDCiY=
+	t=1789744767; cv=pass; b=XdzmirJIlRUlkutdGPcpHnqhzh8Lnukd5v7cc/lUS8ZOEw4lvpMNz6eR81Ge/hAvL7CEHwmC7jX0eD0m0tIhsnfk8Tab4UI84QXvIr/uLqo91/zJ4nzVUoTW72a3GLapqV9F03zh7JuOGBvEmXe7LM3jt5jKuvA/rpmMCCN5+lc=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789744097; c=relaxed/simple;
-	bh=SqgCUHOlW2m9ngWw2zBrJMbQpjsE+j8V/a+E/Y6iBfk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=M/4eTKkUAdud5Dcc+RDWZi7B/+OwJpBZ54PrpxVewxN6duyjTqkY+pX1xGr+UGEYP4Qd0p/lIJw0jQvKT4J10hRZZUFCAgQ3ZKc07vzijtwq+qnhtJzFAJmaPEsls0UN0fHay5prTDQYqGwkGex0J+4V0QMgBOyYy3ScEgdX8w4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=r+Ky2uQO; arc=fail smtp.client-ip=52.101.228.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+	s=arc-20240116; t=1789744767; c=relaxed/simple;
+	bh=M4aq4A/LbcJULhQnFbEd+W9HD0oCATJZRy1jAmuOm6M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fsEd0NQCf4r5xy2jXrhfzQPtWeW8QyDxIiYdIkAzTI4an4YmW2OJPtN7CN8tgxd0Lm10HYlIPyzdHv1QL7JoSHY9rAlSXdcDC/7pahGYfk/MtuoHZ95Ong1irrtjvq8qKqHb6bOKzUJiA/FtaOonVekWroJJWRlCEi2Y5gBBqVs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d8/kRNOV; arc=pass smtp.client-ip=74.125.225.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="r+Ky2uQO"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PVK8j08koeZSaz+SzYSKfHyBOfJLZN41c3LZzY9lUEZxpXEiF1Gxd5EGsYblAnEdc++i2RY5nZ/6CY/hxgEvaEl3rua8ol3r7oCKcp7R2jBJTyxlcAg+SivJ73mE08EJ2tgtSUBSOwP+jSrQBACzWNQYXrZ/jKMYXLnwfnxmNDHqWLUBpk6ERVXqQS0cgTHf6DwcVZOAeVlw1nSYPvXCmG5H4AQcMigqBaJ9zZUsbDw0eBWVxKnvNNs53hUgZ0wG23Ogo79B7QoT+P+2KRl6vNUnlwJlst3JoOvlB/OZMFG4rEzGFbrSNGZzj3Dg9p8BE6r1gXRWsJCu5pB4pepXhg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=e1dCkunPsKyx+15enbLpIEcoKHPe7c1+NmIfRlxzdi4=;
- b=VQSYE5VCLIjRMlR7hEChtlwnP77Oa1D604WlRRuBhPUoe6/fAayDkQ7pAM8X3asHywuue6em7ppT0agyZcDqVdvVTZwZYHlfcilmZuSvnC3Iq6xPcu796+q3QSLT6A+Y4i7ttRoK4m71PrJkW415qYeow3gEZk61rgmdCD9NzHj35AKlICt95sBLkWVk1qXeN+fy+0FVftnAvKyZw5wPiINQfCijguvwDrHwOdtPzDWrOCvzp449+nsui5DK11GMYs9dlzq0oPJIDWzpVxQVBDyb7tBWTGlKXGlelI1zdLC/0ActSw0tTcwxWUtADvMm7KNhnoWqdCQowm8/pHXRew==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 8.62.32.50) smtp.rcpttodomain=baylibre.com smtp.mailfrom=bp.renesas.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=bp.renesas.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=e1dCkunPsKyx+15enbLpIEcoKHPe7c1+NmIfRlxzdi4=;
- b=r+Ky2uQOC6CV8+JkLZFqVA2FAsJ/NFDPF8lrDVdarP3STA3tpdN3ur8zlf5Bf8oS4ikfbqvgL66I3ULX6nbo526KHhPt8v+0eVIqWX/92p7SV3LcBPWBgePbx/EcNMyBF1WtuFSHBwrsPGbohvfViUuXw2udz3pvVPFmrT8L9TI=
-Received: from TY4P301CA0058.JPNP301.PROD.OUTLOOK.COM (2603:1096:405:36a::18)
- by OS3PR01MB10170.jpnprd01.prod.outlook.com (2603:1096:604:1e3::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.428.13; Fri, 18 Sep
- 2026 15:08:10 +0000
-Received: from TY2PEPF00005621.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:405:36a:cafe::66) by TY4P301CA0058.outlook.office365.com
- (2603:1096:405:36a::18) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.428.13 via Frontend Transport; Fri,
- 18 Sep 2026 15:08:10 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 8.62.32.50)
- smtp.mailfrom=bp.renesas.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=bp.renesas.com;
-Received-SPF: Pass (protection.outlook.com: domain of bp.renesas.com
- designates 8.62.32.50 as permitted sender) receiver=protection.outlook.com;
- client-ip=8.62.32.50; helo=ejcrelay005p.adwin.renesas.com; pr=E
-Received: from ejcrelay005p.adwin.renesas.com (8.62.32.50) by
- TY2PEPF00005621.mail.protection.outlook.com (10.167.240.52) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.21.451.8
- via Frontend Transport; Fri, 18 Sep 2026 15:08:10 +0000
-Received: from biju-VirtualBox.adwin.renesas.com (BGR-5CG2270RS1.adwin.renesas.com [10.226.92.53])
-	by ejcrelay005p.adwin.renesas.com (Postfix) with ESMTP id C575530007D2;
-	Sat, 19 Sep 2026 00:08:04 +0900 (JST)
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 1/8] clk: renesas: r9a08g046: Add TSU,ADC1 clocks and reset
-Date: Fri, 18 Sep 2026 16:07:18 +0100
-Message-ID: <20260918150730.122056-2-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260918150730.122056-1-biju.das.jz@bp.renesas.com>
-References: <20260918150730.122056-1-biju.das.jz@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d8/kRNOV"
+Received: by mail-wr2-f15.google.com with SMTP id ffacd0b85a97d-482f633ecdeso827086f8f.2
+        for <linux-clk@vger.kernel.org>; Fri, 18 Sep 2026 08:19:25 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1789744764; cv=none;
+        d=google.com; s=arc-20260327;
+        b=eLi5R8qqbrJUETvcxNGxWs2U5fegJsVQurx+70Mr+aOK7+2N1kg12UWGIaZ+WXZQiE
+         Y1CRKZ6iod016Lxvbzfy2uQI2KYpctULjb32ZQTTKTWfS08eqDOrPythRg5mhUh7lSgd
+         9W6czdH4MxggLXqSXUSBH6xxO2wt3H4wIY9GJu8aObT8iuTmNf6Pdug2JRUeFwx4bwSJ
+         4gK5EuPz1foikjRRgRkHttZLfsSzvCDE3iXeosCxgLnoNud2lCSvssoQ+7J67a5wUSBG
+         1UIv+BrlL2lQ8zhU3v35DDaaYfDY9BB3MvrzdrMcX7TlpTz85148bntItSbRxfJ5WMJP
+         m3zQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=32wpeurSi9/AJaqP3qp1V3FWvCN+eDyCm+NAKdXRSJE=;
+        fh=j6Cn5fBH/6xrZlpcbyujZd8HK7x6IhcxKxTxXFXyxbw=;
+        b=CWLt3E3j0v1X5OWrbEx36f6SaiM/edbLn8ilqJ1oddZgb9jVqTLJ2TzdPly/zgfpHP
+         PDaODoLGS0DWEmfZWLVZ6Npcefzhpi/C2XlR73sKOYhWYllSAAgH9ExjRBtqernavG9+
+         DZ9/9QXYPsTBFVHUUeFLYrOxlbcMpidKHCngs21h/GC3KV+cJhhbqZqqAsFmzqJ2QNHK
+         i4zc1KBDf2lFUrsptxnhnl0GltVf/YtMiuuFLA1PauTtroy3sGpDTDxD3wlF9vkHDSmD
+         IMwLKKmDu3CLyrDGseBxkuoz6CqoaC37oj1RtX6vH2bEyWvFhUmEdpHpTSRZFcsyuOPz
+         y5yA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1789744764; x=1790349564; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=32wpeurSi9/AJaqP3qp1V3FWvCN+eDyCm+NAKdXRSJE=;
+        b=d8/kRNOVBe/EMM66/k/ErzdM21GRBW/DSIYwo9HitktKOmuBa8tQET332kM9FW4AO4
+         HdZ5pgLP2oruPmiXfuD65L+HT1Kf/R5urr3VGe+AvoJeqKQczi46UzcZUnz2w4zRjldn
+         9jjPdCR0LrUgbWONczHyAOfVAROjHX0xDJ+WORVMVLfJ9uv1+5FkSEEWir0kKjKkAhLG
+         S0P4Ob2v5VSN9CzUBaUJce8cqonq4ESQUuALvW8s8uas/FgnDiNQP3D0RCOEjosbat9g
+         SN9wtydJ5p9H3ZDufoW+jPtLVn5YrclB1PZbTEKZMWueY7fvjLvTAeBlanqIdiorHXfV
+         X1ZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1789744764; x=1790349564;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=32wpeurSi9/AJaqP3qp1V3FWvCN+eDyCm+NAKdXRSJE=;
+        b=clk25hWDfNVGt4ch51NE8G7zTb36JeHCpeolISnxyywVuZzvrKZ2NygyzVxI1E3r3b
+         dhz/ZdWovAypAZ78EwrrHtR66qXmxnT96rR2gD5KgCYBfVdpgPrQhKLg3GBcllprZnLL
+         8w+G8YVgTZZNthG0e/DD/qpy0uzbYW9NRXR2Uqmb2aSI9gdDN1AiGoMmCQ2/Lfh3gAJ0
+         8VwanENccjxs2SOB1LBjlmmTpKI8AqUU0e2Bnuw4B4UBLGtSGcPbaAQU8jP4+xjHb/eQ
+         NQN5FHWDD5HC2qLYLRdb45yaNnC1B5de7hH7WTOY4l8L5tBTwH+nXTxpGaXtPYb9WW+K
+         e5aw==
+X-Forwarded-Encrypted: i=1; AKwUvBzVcF7IetGYowoug11X6h/tP3HaYLIHujsYYnKXFkQ/GPMFGogS1H/cOCNbGxNVcADJUjvvTVQmT7M=@vger.kernel.org
+X-Gm-Message-State: AFuF++mnztXhhx6Gg0cywVoNDgaL4/Kaerll3ZUiB/y5Hs7qxpHYMi5p
+	OpzBMFoJRouP37SEwIB+E55PlL/XTwuaMAhi+QQ6NHSi9h6vCrbno5jZmqxmDHbXhdWEnVyIHXG
+	FwFg8zuXxM/wfedHqDEi9xldvLJq9uHo=
+X-Gm-Gg: AYBFou3v00wLON4v1Ro4eth6fYenACEBkLYBbR5tOzMZe6aHT1zvT0rZ1DQylrOTJ3i
+	EgcBTVD9wW4r3vDOqbpHx730rfhGHTNIoYZmuxqYxKW9+XfM0TkDfyPw1kuF3j5O1yhn15eeits
+	Ju/liSkD+Pq2hgUkrWKEfK+y6dGUZ6jccVVC7gndY7ktgU502+f5a30XW9eM+Vn28545+wLm/ny
+	zYynxMpQsjibNLP2qbpOKO5uTr3HhqZ+3/OievBBc6bdVIH8NzfstvdiQnE1hOvNkldegmya1N2
+	3rSxeyoyQXwnfs7JPGMRLVVwfbFcMrC/LvNObCU14XKiWX5MZFiJNmtJVrp0SI8GC5YL/fi/CPm
+	OEmh/vtmedbtOStin/vx/WLXv1JEPS+CWRJW4JBo26rU=
+X-Received: by 2002:a05:6000:2407:b0:487:956:7e97 with SMTP id
+ ffacd0b85a97d-4871e2341f6mr4183772f8f.25.1789744763605; Fri, 18 Sep 2026
+ 08:19:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TY2PEPF00005621:EE_|OS3PR01MB10170:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 0aee1fdf-b5e0-4e76-65a5-08df1596a76d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|23010399003|1800799024|36860700016|82310400026|376014|10067099003|11063799006|56012099006|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	rAxKS6PiNoDM75sdSbCPv4j/b8I3Z7AwDE+ej5RLPaP9BhgijxMz5v5A1qKvqfKF0XFUNkP9nw4yCMSa6mnxsew1QVEAf0X3rswl3fPblzm88TzNEBhZ7fNFeEE3u2VlmRsT3SLzpVPlVmvi5Jp5vzrZH1jxzlE6GUq564tceVbRpgDUZdR7wZDH18QN6XJfWVBMf/1+F+xksivucTW0PzggCFRwipFy0cVSRsUi3mB/unQEJvvwPT2lr4EzEHBRM389WQjSJGEdm0co2eu3k3UYoKICPWZp73hVKlX7rIhpz+KYI0Y4V6X8JVazjXJw2u2KlwAmAF7qQ9J9JnXtYjNStQdR46tOoC1S83zNrCh8IKQEQiAciaRouj3NFElztPcFTX8vFSXChlofJnLS2P8fSjpcoTKwvK3rhEFd/cUSmUwPzfCegcnvXXxP9zip233c1MHCffaFmS3uTQvt8cY+FDcIEY8gz0Bu1D1Cl3Xm16Gv7pdJiMh6ozzW/CEQL3Quy4sz7tc3Qad83dflMF6ZM8VVxHV0ryICzXxoEbtxsag8rlr00DxxMUJHeqlZZ3XT8xitepCtzyqpBtfAb1cADvBxaCLv+lgqT4BG47mAB3I8vcAkA0fEBcqLYmwVUx+E3IcXrN/arLUPoE0HEZi0rQ+GloWK8hSUYMiF6a5Z1hgsbVXD1INKpvWQzBQz9m2GuIhIWQWjnEiUDXxm2A==
-X-Forefront-Antispam-Report:
-	CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay005p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(23010399003)(1800799024)(36860700016)(82310400026)(376014)(10067099003)(11063799006)(56012099006)(22082099003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	s5gpwENkaQpCK/lE6WUBO/7dPw8GYjxHLgWmzQUNlIXxwXRAsPPfaDeNC3ABD4P5GZyiLETbXTIQ92tUFpzch1bh/JlXeMLDwqliLyeprA6bPjExCBkTTen5rz8pxC3mRX8L7z/UN0gOEXYJrdWXuDOsA6OOGeFuL4nVWR1ImWtmFSfvBDoqfEH6i4boAeeQk1FnC9ag5Ms+dlhQV3KwOmtmkVRbhqzZIMlLV1aI4fGhONoU084DvjBOxEefJhy5IShyZWH1YVVfiKG+o+5wHLniT98VpKcAH2uhqKIisj4BpquSbmyVPwCK02mr1Ur27ixtAEpd3JUMTf6eV8XWwDgtDQfUmr6WS35rX6cxJp5Lmx+de1/kqKJ/GBzTojD52r9XC9UJxZyUsO4j7acHw5MvlXqQIF/8xt9jVmAnqcp6vS8CPB+YlI9JKh415psm
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2026 15:08:10.7636
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0aee1fdf-b5e0-4e76-65a5-08df1596a76d
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=53d82571-da19-47e4-9cb4-625a166a4a2a;Ip=[8.62.32.50];Helo=[ejcrelay005p.adwin.renesas.com]
-X-MS-Exchange-CrossTenant-AuthSource: TY2PEPF00005621.JPNP286.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB10170
+References: <20260817192540.423994-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20260817192540.423994-6-prabhakar.mahadev-lad.rj@bp.renesas.com> <87577cdb-7f1d-4a9f-8a61-ff1f272234d9@roeck-us.net>
+In-Reply-To: <87577cdb-7f1d-4a9f-8a61-ff1f272234d9@roeck-us.net>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Fri, 18 Sep 2026 16:18:56 +0100
+X-Gm-Features: AcwNN1U3hCdCxEGahTYWyhMlJW9-v5H9ysCq3io2__9dNvGl-uwLBemrbsMvbK8
+Message-ID: <CA+V-a8vVtjALarck6PE3it1si2hNbveZWoGjTaTUW68Q6yYjcQ@mail.gmail.com>
+Subject: Re: [PATCH v4 5/7] watchdog: rzv2h: Add syscon support for WDTDCR
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney@redhat.com>, Wim Van Sebroeck <wim@linux-watchdog.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, Prabhakar <prabhakar.csengg+renesas@gmail.com>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add clock P20 (PLL2_DIV2/8), module clocks for ADC1 (ADCLK, PCLK)
-and TSU (PCLK), along with the corresponding module resets for
-ADC1 and TSU on the RZ/G3S (R9A08G046) SoC.
+Hi Guenter,
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
-v1->v2:
- * No change.
----
- drivers/clk/renesas/r9a08g046-cpg.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+On Thu, Sep 17, 2026 at 2:12=E2=80=AFAM Guenter Roeck <linux@roeck-us.net> =
+wrote:
+>
+> Hi,
+>
+> On Mon, Aug 17, 2026 at 08:25:38PM +0100, Prabhakar wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > On RZ/T2H and RZ/N2H SoCs, the WDTDCR (WDT Debug Control Register) resi=
+des
+> > in the second register region of the CPG/MSSR block. Since this
+> > multi-function block is shared with other peripherals, it is exposed vi=
+a a
+> > syscon regmap interface.
+> >
+> > Look up the SYSC regmap using the optional "renesas,sysc" property and
+> > derive the WDTDCR offset from the watchdog instance index.
+> >
+> > Retain the existing MMIO-based access method when the "renesas,sysc"
+> > property is absent to preserve compatibility with existing DT's.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> Can I apply this patch without the other patches of the series ?
+>
+I posted the v5 series here addressing Sashiko's comments.
 
-diff --git a/drivers/clk/renesas/r9a08g046-cpg.c b/drivers/clk/renesas/r9a08g046-cpg.c
-index 22821321a1d3..2c5ca5ab5f57 100644
---- a/drivers/clk/renesas/r9a08g046-cpg.c
-+++ b/drivers/clk/renesas/r9a08g046-cpg.c
-@@ -350,6 +350,7 @@ static const struct cpg_core_clk r9a08g046_core_clks[] __initconst = {
- 		    dtable_1_8, 0, 200000000UL, 0, NULL),
- 	DEF_G3S_DIV("P19", R9A08G046_CLK_P19, CLK_SEL_RSPI2, G3L_DIV_RSPI2, G3L_DIV_RSPI2_STS,
- 		    dtable_1_8, 0, 200000000UL, 0, NULL),
-+	DEF_FIXED("P20", R9A08G046_CLK_P20, CLK_PLL2_DIV2, 1, 8),
- 	DEF_G3S_DIV("SD0", R9A08G046_CLK_SD0, CLK_SEL_SDHI0, G3L_DIV_SDHI0, G3L_DIV_SDHI0_STS,
- 		    dtable_1_4, 800000000UL, 600000000UL, CLK_SET_RATE_PARENT,
- 		    rzg3s_cpg_div_clk_notifier),
-@@ -559,6 +560,12 @@ static const struct rzg2l_mod_clk r9a08g046_mod_clks[] = {
- 					MSTOP(BUS_MCPU2, BIT(0))),
- 	DEF_MOD("gpio_hclk",		R9A08G046_GPIO_HCLK, R9A08G046_OSCCLK, 0x598, 0,
- 					MSTOP(BUS_PERI_CPU, BIT(6))),
-+	DEF_MOD("adc1_adclk",		R9A08G046_ADC1_ADCLK, R9A08G046_CLK_P20, 0x5a8, 2,
-+					MSTOP(BUS_PERI_VIDEO, BIT(14))),
-+	DEF_MOD("adc1_pclk",		R9A08G046_ADC1_PCLK, R9A08G046_CLK_P20, 0x5a8, 3,
-+					MSTOP(BUS_PERI_VIDEO, BIT(14))),
-+	DEF_MOD("tsu_pclk",		R9A08G046_TSU_PCLK, R9A08G046_CLK_P20, 0x5ac, 0,
-+					MSTOP(BUS_PERI_VIDEO, BIT(15))),
- 	DEF_MOD("pci_aclk",		R9A08G046_PCI_ACLK, R9A08G046_CLK_P1, 0x608, 0,
- 					MSTOP(BUS_PERI_COM, BIT(10))),
- 	DEF_MOD("pci_clkl1pm",		R9A08G046_PCI_CLKL1PM, R9A08G046_CLK_P8, 0x608, 1,
-@@ -640,6 +647,9 @@ static const struct rzg2l_reset r9a08g046_resets[] = {
- 	DEF_RST(R9A08G046_GPIO_RSTN, 0x898, 0),
- 	DEF_RST(R9A08G046_GPIO_PORT_RESETN, 0x898, 1),
- 	DEF_RST(R9A08G046_GPIO_SPARE_RESETN, 0x898, 2),
-+	DEF_RST(R9A08G046_ADC1_PRESETN, 0x8a8, 2),
-+	DEF_RST(R9A08G046_ADC1_ADRST_N, 0x8a8, 3),
-+	DEF_RST(R9A08G046_TSU_PRESETN, 0x8ac, 0),
- 	DEF_RST(R9A08G046_PCI_ARESETN, 0x908, 0),
- 	DEF_RST(R9A08G046_RSCI0_PRESETN, 0x918, 0),
- 	DEF_RST(R9A08G046_RSCI1_PRESETN, 0x918, 1),
--- 
-2.43.0
+https://lore.kernel.org/all/20260911111731.3404308-1-prabhakar.mahadev-lad.=
+rj@bp.renesas.com/
 
+Cheers,
+Prabhakar
+
+> Thanks,
+> Guenter
+>
+> > ---
+> > v3->v4:
+> > - No change
+> >
+> > v2->v3:
+> > - Made use of the new "renesas,sysc" phandle-array property to access t=
+he
+> >   WDTDCR register via the CPG/MSSR syscon node.
+> > - Updated commit message
+> >
+> > v1->v2:
+> > - No change.
+> > ---
+> >  drivers/watchdog/Kconfig     |  1 +
+> >  drivers/watchdog/rzv2h_wdt.c | 56 +++++++++++++++++++++++++++++-------
+> >  2 files changed, 46 insertions(+), 11 deletions(-)
+> >
+> > diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+> > index f7d0a0c2c0ef..3c4fc9916d8c 100644
+> > --- a/drivers/watchdog/Kconfig
+> > +++ b/drivers/watchdog/Kconfig
+> > @@ -1046,6 +1046,7 @@ config RENESAS_RZV2HWDT
+> >       depends on ARCH_RENESAS || COMPILE_TEST
+> >       depends on PM || COMPILE_TEST
+> >       select WATCHDOG_CORE
+> > +     select MFD_SYSCON
+> >       help
+> >         This driver adds watchdog support for the integrated watchdogs =
+in the
+> >         Renesas RZ/{G3E,V2H(P)} SoCs. These watchdogs can be used to re=
+set a
+> > diff --git a/drivers/watchdog/rzv2h_wdt.c b/drivers/watchdog/rzv2h_wdt.=
+c
+> > index 8af2f33b5680..04ea962da837 100644
+> > --- a/drivers/watchdog/rzv2h_wdt.c
+> > +++ b/drivers/watchdog/rzv2h_wdt.c
+> > @@ -8,6 +8,7 @@
+> >  #include <linux/delay.h>
+> >  #include <linux/io.h>
+> >  #include <linux/kernel.h>
+> > +#include <linux/mfd/syscon.h>
+> >  #include <linux/module.h>
+> >  #include <linux/of.h>
+> >  #include <linux/platform_device.h>
+> > @@ -44,6 +45,11 @@
+> >
+> >  #define WDT_DEFAULT_TIMEOUT  60U
+> >
+> > +#define RZT2H_WDT_MAX_INSTANCES      6
+> > +
+> > +#define RZT2H_SYS_BLOCK1(n)  (BIT(16) | (0x5100 + (n) * 4))
+> > +#define RZT2H_WDTDCR_OFFSET(n)       RZT2H_SYS_BLOCK1(n)
+> > +
+> >  static bool nowayout =3D WATCHDOG_NOWAYOUT;
+> >  module_param(nowayout, bool, 0);
+> >  MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once started (d=
+efault=3D"
+> > @@ -64,14 +70,19 @@ struct rzv2h_of_data {
+> >       bool wdtdcr;
+> >  };
+> >
+> > +struct rzv2h_sysc_wdtdcr {
+> > +     struct regmap *regmap;
+> > +     unsigned int offset;
+> > +};
+> > +
+> >  struct rzv2h_wdt_priv {
+> >       void __iomem *base;
+> > -     struct regmap *wdtdcr_regmap;
+> >       struct clk *pclk;
+> >       struct clk *oscclk;
+> >       struct reset_control *rstc;
+> >       struct watchdog_device wdev;
+> >       const struct rzv2h_of_data *of_data;
+> > +     struct rzv2h_sysc_wdtdcr sysc;
+> >  };
+> >
+> >  static int rzv2h_wdt_ping(struct watchdog_device *wdev)
+> > @@ -90,12 +101,16 @@ static int rzv2h_wdt_ping(struct watchdog_device *=
+wdev)
+> >
+> >  static int rzt2h_wdt_wdtdcr_count_stop(struct rzv2h_wdt_priv *priv)
+> >  {
+> > -     return regmap_set_bits(priv->wdtdcr_regmap, WDTDCR, WDTDCR_WDTSTO=
+PCTRL);
+> > +     struct rzv2h_sysc_wdtdcr *sysc =3D &priv->sysc;
+> > +
+> > +     return regmap_set_bits(sysc->regmap, sysc->offset, WDTDCR_WDTSTOP=
+CTRL);
+> >  }
+> >
+> >  static int rzt2h_wdt_wdtdcr_count_start(struct rzv2h_wdt_priv *priv)
+> >  {
+> > -     return regmap_clear_bits(priv->wdtdcr_regmap, WDTDCR, WDTDCR_WDTS=
+TOPCTRL);
+> > +     struct rzv2h_sysc_wdtdcr *sysc =3D &priv->sysc;
+> > +
+> > +     return regmap_clear_bits(sysc->regmap, sysc->offset, WDTDCR_WDTST=
+OPCTRL);
+> >  }
+> >
+> >  static void rzv2h_wdt_setup(struct watchdog_device *wdev, u16 wdtcr)
+> > @@ -284,17 +299,36 @@ static const struct regmap_config rzv2h_wdtdcr_re=
+gmap_config =3D {
+> >  static int rzt2h_wdt_wdtdcr_init(struct platform_device *pdev,
+> >                                struct rzv2h_wdt_priv *priv)
+> >  {
+> > -     void __iomem *wdtdcr;
+> > +     struct device_node *np =3D pdev->dev.of_node;
+> > +     bool syscon_present =3D of_property_present(np, "renesas,sysc");
+> > +     struct rzv2h_sysc_wdtdcr *sysc =3D &priv->sysc;
+> >       int ret;
+> >
+> > -     wdtdcr =3D devm_platform_ioremap_resource(pdev, 1);
+> > -     if (IS_ERR(wdtdcr))
+> > -             return PTR_ERR(wdtdcr);
+> > +     if (syscon_present) {
+> > +             unsigned int wdt_index;
+> >
+> > -     priv->wdtdcr_regmap =3D devm_regmap_init_mmio(&pdev->dev, wdtdcr,
+> > -                                                 &rzv2h_wdtdcr_regmap_=
+config);
+> > -     if (IS_ERR(priv->wdtdcr_regmap))
+> > -             return PTR_ERR(priv->wdtdcr_regmap);
+> > +             sysc->regmap =3D syscon_regmap_lookup_by_phandle_args(np,=
+ "renesas,sysc",
+> > +                                                                 1, &w=
+dt_index);
+> > +             if (IS_ERR(sysc->regmap))
+> > +                     return PTR_ERR(sysc->regmap);
+> > +
+> > +             if (wdt_index >=3D RZT2H_WDT_MAX_INSTANCES)
+> > +                     return -EINVAL;
+> > +
+> > +             sysc->offset =3D RZT2H_WDTDCR_OFFSET(wdt_index);
+> > +     } else {
+> > +             void __iomem *wdtdcr;
+> > +
+> > +             wdtdcr =3D devm_platform_ioremap_resource(pdev, 1);
+> > +             if (IS_ERR(wdtdcr))
+> > +                     return PTR_ERR(wdtdcr);
+> > +
+> > +             sysc->regmap =3D devm_regmap_init_mmio(&pdev->dev, wdtdcr=
+,
+> > +                                                  &rzv2h_wdtdcr_regmap=
+_config);
+> > +             if (IS_ERR(sysc->regmap))
+> > +                     return PTR_ERR(sysc->regmap);
+> > +             sysc->offset =3D WDTDCR;
+> > +     }
+> >
+> >       ret =3D pm_runtime_resume_and_get(&pdev->dev);
+> >       if (ret)
