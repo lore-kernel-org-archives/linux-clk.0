@@ -1,52 +1,49 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B18452D2488;
-	Fri, 18 Sep 2026 01:36:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC5A232A3C8;
+	Fri, 18 Sep 2026 01:36:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789695364; cv=none; b=aqlU+7Ka+x6t3BX9YMj0UIcTtIojtFgzz3gHYaMAQW1mZzXf7bNahZ9jFXZcSsbcLwAWT6aToqZuIa8XWMd7tm/sOjiEXJ9bOfX/1eokqZFeDK+8KY7Sl4xibf7Maw1sVw/AJefLWnqn1otF+mIOWZmXn+9jF+ST9Zjh0YImy/I=
+	t=1789695390; cv=none; b=g2vIunFTReECslVOyweS3C94MocMDlEFtnxTdfZffnmhoDFVEmRJdv6ZBSVZcJiXCIvwmFlYNBIUamWiu7KGg7w5TkrM5T3H75tNb+V9IWaxxjq5WZkkViYjvwoVzp3YtfEnRKoGboNUr1KXL1DnsErLMcOhBan3obltg1prmUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789695364; c=relaxed/simple;
-	bh=yypjweXNErL1B/GaPeOA5qYKGC2xod71mU7gPTsotck=;
+	s=arc-20240116; t=1789695390; c=relaxed/simple;
+	bh=DJyqlOQ3txseiN+o6Rk8JIESIVkn8Dq465dyxyYI9iY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NLlcwwq6AWqshr2jWR9uTq2tHz1wdg+znRT7D1JW7jDg8IuVjLkE8NxvQoLsjRLGo3IoXnCVMamtnRqxtGGJN5M4cpn1sS22ndRU5YuLza5QuJFI/NBGU6bg/SXkv+gRBli9XccZukK04qZZRuz+OqFYILEjB9Td8WHkHSapTTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=vaqXAAv5; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=YMZ41NGkocjzZHvi4/Zd2/+uH4yE/7Ii4n+4e7rtF4dnGQF5/OdJvkyRTrlifA1WgyNlsYU8gp2W1m+H6soMQnArj+D7tsH2WlK3OTACqvFld2wk4DH6uf4nYCOhsHO4whJrBYW0jIKtviKvy/5hg4tJJs26eiAigR2UgjrLWtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zf+ry3Kq; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="vaqXAAv5"
-Received: from killaraus.ideasonboard.com (2001-14ba-70f3-e800--a06.rev.dnainternet.fi [IPv6:2001:14ba:70f3:e800::a06])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1B23B4DC;
-	Fri, 18 Sep 2026 03:34:17 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1789695257;
-	bh=yypjweXNErL1B/GaPeOA5qYKGC2xod71mU7gPTsotck=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vaqXAAv5+95uztFO9foAS27GLc9+QG1nx9D4be2NYqIXqWnIUVCSExZBX6CLnjV6r
-	 XQPlt/DgZ09KpngOSgkjpjzHvdyjjrBG0DULdjS2ZHRnAUQAinVEfBcKMxEDEeJVvd
-	 7ZBosumjGjIcwY5QOR7YFIMtZKv3puYILlUx7AEA=
-Date: Fri, 18 Sep 2026 04:35:58 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Paul Elder <paul.elder+renesas@ideasonboard.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>, Ulf Hansson <ulfh@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH 10/10] media: rcar-fcp: Add R-Car X5H support
-Message-ID: <20260918013558.GJ145152@killaraus.ideasonboard.com>
-References: <20260917-epaul-v7-3-rc1-x5h-vsp-fcp-v1-0-4c72d4e086dd@ideasonboard.com>
- <20260917-epaul-v7-3-rc1-x5h-vsp-fcp-v1-10-4c72d4e086dd@ideasonboard.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zf+ry3Kq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 094971F000FF;
+	Fri, 18 Sep 2026 01:36:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789695388;
+	bh=6IaAWEaBiOKUnROTpq0L5Ofe2m/RZ5CV/7s5WMrgEQc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Zf+ry3KqTl5J/hsN3Wse1/Fla8guEupSU5Ey4/qM2FcS50i3QCmnovNNbKbomSfLj
+	 9wIrPW/1G7tPeB0S6zpvJcR277uqmDQd74JiPfarN4lg6BI+1SqwndJCCPI8swGM/4
+	 dLjUkL8qP0IYwfgXcN8eZyHvL3SpRVKvL3QX9SjoPoViH/eyhKi9keRGg15F9AScBh
+	 eepP9CCmxo2/bI5SmoTTLZYUZOBSxK9exgQA6yYkU4s5q+OVmdfNjDzms7IPYUR8ma
+	 0aV1Zf8cuOAz0nl35JoJb8fOQsuHJIxw/FJ9jZXRB8SZrypLhNDGi/Y1Y2/2cvqtP6
+	 byOeGpQZIRTRw==
+Date: Fri, 18 Sep 2026 03:36:09 +0200
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, Bryan O'Donoghue <bod@kernel.org>, 
+	Loic Poulain <loic.poulain@oss.qualcomm.com>, Vinod Koul <vkoul@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Felipe Balbi <balbi@ti.com>, linux-arm-msm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, linux-phy@lists.infradead.org, 
+	Krzysztof Kozlowski <krzk@kernel.org>, stable@vger.kernel.org
+Subject: Re: [PATCH v19 0/5] Add phy_get_by_of_node and devm helper
+Message-ID: <cqoquu7hzclx54km763745dupaxahv7y4xbzq7vxg23isptgqz@j6los24mhnnn>
+References: <20260917-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v19-0-21ad8a76e941@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -55,43 +52,27 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260917-epaul-v7-3-rc1-x5h-vsp-fcp-v1-10-4c72d4e086dd@ideasonboard.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260917-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v19-0-21ad8a76e941@linaro.org>
 
-On Thu, Sep 17, 2026 at 09:04:49PM +0900, Paul Elder wrote:
-
-Same comment about authorship.
-
-> The FCP instances found in the R-Car X5H v1.0 have a different device
-> ID. Add it to the devices list.
+On Thu, Sep 17, 2026 at 04:25:05PM +0100, Bryan O'Donoghue wrote:
+> This series has evolved from a CAMSS standalone series to a series that is
+> mostly on the PHY side now, so I've split the series up to reflect that
+> fact.
 > 
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> Signed-off-by: Paul Elder <paul.elder+renesas@ideasonboard.com>
-> ---
->  drivers/media/platform/renesas/rcar-fcp.c | 2 ++
->  1 file changed, 2 insertions(+)
+> Starting off by fixing a long-standing use-after-free race-condition in the
+> phy core flagged by Sashiko in v13. While my series doesn't introduce the
+> bug it seems appropriate to address it anyway once flagged.
 > 
-> diff --git a/drivers/media/platform/renesas/rcar-fcp.c b/drivers/media/platform/renesas/rcar-fcp.c
-> index 15bcbbda3b853f71780aae876f6440b33addf193..8d62f07d38b7881270e94331b0564e4665664646 100644
-> --- a/drivers/media/platform/renesas/rcar-fcp.c
-> +++ b/drivers/media/platform/renesas/rcar-fcp.c
-> @@ -33,6 +33,7 @@
->  #define RCAR_FCP_REG_VCR_REVISION_M3N		(6 << 0)
->  #define RCAR_FCP_REG_VCR_REVISION_V3H		(7 << 0)
->  #define RCAR_FCP_REG_VCR_REVISION_E3		(8 << 0)
-> +#define RCAR_FCP_REG_VCR_REVISION_X5H_V1	(12 << 0)
->  
->  #define RCAR_FCP_REG_CFG0			0x0004
->  #define RCAR_FCP_REG_CFG0_FCPVSEL		BIT(1)
-> @@ -223,6 +224,7 @@ static int rcar_fcp_setup(struct rcar_fcp_device *fcp)
->  		{ RCAR_FCP_REG_VCR_CATEGORY | RCAR_FCP_REG_VCR_REVISION_M3N, "M3N" },
->  		{ RCAR_FCP_REG_VCR_CATEGORY | RCAR_FCP_REG_VCR_REVISION_V3H, "V3H" },
->  		{ RCAR_FCP_REG_VCR_CATEGORY | RCAR_FCP_REG_VCR_REVISION_E3, "E3" },
-> +		{ RCAR_FCP_REG_VCR_CATEGORY | RCAR_FCP_REG_VCR_REVISION_X5H_V1, "X5H v1.0" },
->  	};
->  
->  	unsigned int i;
+> Once addressed two new helper functions are introduced to the PHY core to
+> enable finding of a PHY using the media graph.
+> 
+> Finally the usage of that new API is shown with CAMSS.
+> 
+
+Looks like you completely missed all my comments given in v17 :/
+
+- Mani
 
 -- 
-Regards,
-
-Laurent Pinchart
+மணிவண்ணன் சதாசிவம்
