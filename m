@@ -1,124 +1,123 @@
-Received: from mail-pz2-f12.google.com (mail-pz2-f12.google.com [74.125.228.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA1B7379ECD
-	for <linux-clk@vger.kernel.org>; Fri, 18 Sep 2026 05:01:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.228.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF5B02CCC5;
+	Fri, 18 Sep 2026 05:59:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789707671; cv=none; b=VmLVY6zTxja/O5yvvaWtUWuKBx8R7MPAawzj+HkCwDDqldhX+Axf9ZOe8AucHIOB34ir7Q+3nsVnCYv+vHig+5b6Ru0BzPIHBmkjT3Vuoump7FoGz3Y8yxXZNN3BNGAiw5RLmpf18+0un6Gi7ow6fI8V2ZkpW7OWMkq7ahuFDJs=
+	t=1789711156; cv=none; b=NXkxnZhh8fm7VX55UWmHUPib3oQfvyX4n5FIXotcL+zHlDiPyI5Ugs+2BUWPXozuvU7qvhIS1wqbPIRd/K1eFgD2Bw/b1MSU4yqg/dQ3E16x84MGykYGIE8vSnyRFcH+RFQjEEFjqtiUhwgtezZWeVqLd5HM0b1xsLTHHzg1SMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789707671; c=relaxed/simple;
-	bh=vLKslen7PBG3nSXhKe3ByGeSxA0QEtveFGGqGO5IELs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OjGMW+wSF9I8FBPIPBDpQGANC6R8F7AUBX23Sz04wTAvvZ/C+KPxUMppsIw+erbfKRDoIBM4F0VbgBdnU6NmwwtRhKwmjtFtIh/ji9k/TgYjhYVr34aHANEXut3TxAayQLx/AUsA9c3910GW+bxsFUJszzSI4Ije0PLsGjK5wmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iZ+XPbyH; arc=none smtp.client-ip=74.125.228.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iZ+XPbyH"
-Received: by mail-pz2-f12.google.com with SMTP id d2e1a72fcca58-85469a33c9cso519511b3a.0
-        for <linux-clk@vger.kernel.org>; Thu, 17 Sep 2026 22:01:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1789707668; x=1790312468; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=2PEaByhKxlg2O+w66oiofCngOTmz8xzHYd1tomOchxY=;
-        b=iZ+XPbyHcwvl2IXnDQdTCMOA86Tu0bhFLGQYGXSlK/d5kOEFQND1AJ0SUhUJbdUqtT
-         F8MH81ucTtwVGyCJKk7h2lakfXGICclBYS3Yy16Wu2yRBGtrtdPye12HAt6xHxvWmgyl
-         oeim8EX+sNhQubNXnbHZ/VM1aMhOpi+PUFhMUHMF4fFn1mMRFKWUe5LB+FKz5kEKM74a
-         Jja9g0Ata0lZA1XrnKZ23MAUyhdj8XZl2NoK1Z1NWpqCFDqmX8XW3O4+GOM33ieC+9+5
-         52LZL/m3BxYex7V9uwpb3GUvqCQAz2+jSEmNQ6ilopmK4bLvrpW65nTlPF4ziJy6DnpL
-         iQMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789707668; x=1790312468;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=2PEaByhKxlg2O+w66oiofCngOTmz8xzHYd1tomOchxY=;
-        b=PdKftdU/vdOWtg0MSwWtHmoI8uf0Y8JFXqPzMndD1sa9myCzzRKyf3pTZ7KA5tYH9K
-         DeFsCX3WzrV9pF6cYJc+wa/vrv7arz12CI54YAm9ea9AnOGfDFXlvxiIY4DKY5KXGo4X
-         9q1fx76C/pGh+L5tUjcKp8Hm3wIlsgrqJD70u130oK0px8UyuDU8jQpeo65MP3L7aIlN
-         o0uWnq/l/8gNrxjqyOuRY0BPuOCNMLjzkeVF3g3WL62OmRQ8NO0X8LQ/JvSOueaiuJEJ
-         4XcQQnhqh57WC/EZV9okQ9CBfoj/4J5ADa6dJhKRUREWR5PqxRITyI1lDIs8xl1DHvEi
-         JMuA==
-X-Forwarded-Encrypted: i=1; AKwUvBwbvoSueylqHpSkHLDAcYg9L3q9IZJIOYq9UA0FzQ945bs46QmYArg83WOqYtnn5hewggKA9lIxebI=@vger.kernel.org
-X-Gm-Message-State: AFuF++kmFPHjDOg0UreZpY0PqDjJOnGlic4OGapTB0rrJa46TVK3G/qQ
-	GuIDkZXLhfLZIR51guouxR65XAuXcNVWXswZNXkyCfggbGOyzRU6Ey2rcyhTQA==
-X-Gm-Gg: AYBFou2Aaisjs6t+KZlfdpP/4WpIGw8a0kX9L6U6wxlM0aba2Tag9JvJkE8Jos6oDpA
-	RrUo2HTgK2McJr4He/etA+KxIAWyA4EfzXIWmYTIc21UQEThaW2ioPtkiJPJgbd5zV03r1zi+9d
-	yYb+67Dry/GTQb8GIk7BMNnOuzxwdsNuo+bgiFrwm0j/JRZW7xDHNrAmQN7eTFBTc1rorIVKkxd
-	U7+Bxydfs17BPC3eBz+gA7YfsQhD8WgEZkSSUbBMRmVfWeKeLsW1mm7BPcnsNysH9dSp3bxeTz5
-	ktREYnf56cysntN+PLz3xSKHyQGC+SoLxVV/n/CP6Q/4vTj3coQe0lko5v8qgp8btCBoUj9tMGF
-	G1vrio9mefgoM7cd7wOxl7hfjqqjVMh9f7bVVp3Lpx+GKuR6/0Ii9VVnaLtPzlLH7OFFlW+kA+V
-	LlcSs2bRYASqqC2+Bk5irIXVQmRU4u1eXAFwVjnMxGOEkS/HlKeu093ofbpCpkBh/MJFGxgVQWZ
-	8wB3j2gT8Dwx0OuJyhXlB47nNcqX3pilH8YkEn3w3dJ5QMw3r5psNs5bI69FBux/y8GcJRneJS0
-	P4/TCmmlTuthA8s=
-X-Received: by 2002:a05:6a00:1da2:b0:857:726d:270c with SMTP id d2e1a72fcca58-874de8faa1dmr2970590b3a.24.1789707668021;
-        Thu, 17 Sep 2026 22:01:08 -0700 (PDT)
-Received: from phuc-desktop.. ([183.91.15.56])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-875dc8fa6acsm215958b3a.13.2026.09.17.22.01.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Sep 2026 22:01:07 -0700 (PDT)
-From: phucduc.bui@gmail.com
-To: Emil Renner Berthing <kernel@esmil.dk>,
-	Hal Feng <hal.feng@starfivetech.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Conor Dooley <conor.dooley@microchip.com>
-Cc: Palmer Dabbelt <palmer@rivosinc.com>,
-	Xingyu Wu <xingyu.wu@starfivetech.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bui duc phuc <phucduc.bui@gmail.com>
-Subject: [PATCH] clk: starfive: jh7110-isp: fix pm_runtime error handling
-Date: Fri, 18 Sep 2026 12:00:51 +0700
-Message-ID: <20260918050051.14986-1-phucduc.bui@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1789711156; c=relaxed/simple;
+	bh=JS8Rhd7b/HFoVVdP0RMjIv015cFtAfHlBy4pvpu4gbk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=PXtal17c4HRHyhXxytlBBlou6PxUxswYbKkMTkHZtn+suHUHfo9di/2DX0CCrBH2RdIILFC9GFDKJWKa7YjxQRXKPwMB35xluLwGIpefn2Jc12WGxUwngelGHdGThaNURQpajecfAXklZdbwZllX6LRKrhwmTQUC0F08n2BvDWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from edelgard.fodlan.icenowy.me (unknown [112.94.103.44])
+	by APP-01 (Coremail) with SMTP id qwCowAAn_O8C06xqtWNICA--.15380S2;
+	Fri, 18 Sep 2026 13:58:28 +0800 (CST)
+Message-ID: <1aa49a9bcf5c5a16ce38b57f8f508a31ca70c1ce.camel@iscas.ac.cn>
+Subject: Re: [PATCH v4 05/20] dt-bindings: display: verisilicon: Add
+ starfive,jh7110-dc8200
+From: Icenowy Zheng <zhengxingda@iscas.ac.cn>
+To: Michal Wilczynski <m.wilczynski@samsung.com>, Vinod Koul
+ <vkoul@kernel.org>,  Neil Armstrong <neil.armstrong@linaro.org>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski	 <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Andrzej Hajda	 <andrzej.hajda@intel.com>,
+ Robert Foss <rfoss@kernel.org>, Laurent Pinchart	
+ <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>, Luca Ceresoli
+ <luca.ceresoli@bootlin.com>, Maarten Lankhorst	
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, Lee Jones <lee@kernel.org>, Andy
+ Yan <andy.yan@rock-chips.com>, Philipp Zabel	 <p.zabel@pengutronix.de>,
+ Emil Renner Berthing <kernel@esmil.dk>, Hal Feng	
+ <hal.feng@starfivetech.com>, Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Paul
+ Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
+ <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,  Dominique
+ Belhachemi	 <db@domibel.de>, Brian Masney <bmasney+clk@redhat.com>, Jerome
+ Brunet	 <jbrunet+clk@baylibre.com>
+Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	mfd@lists.linux.dev, linux-clk@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, Marek Szyprowski
+ <m.szyprowski@samsung.com>,  Maud Spierings <maud_spierings@murena.io>,
+ Graham Markall <hello@big-grey.co.uk>, Chaoyi Chen	
+ <chaoyi.chen@rock-chips.com>, Joshua Peisach <jpeisach@ubuntu.com>, Uwe
+ =?ISO-8859-1?Q?Kleine-K=F6nig?=	 <u.kleine-koenig@baylibre.com>
+Date: Fri, 18 Sep 2026 13:58:26 +0800
+In-Reply-To: <20260915-jh7110-clean-send-v4-5-f0e4fd6f2cc8@samsung.com>
+References: <20260915-jh7110-clean-send-v4-0-f0e4fd6f2cc8@samsung.com>
+		<CGME20260915153222eucas1p213b95b05ea7eb9a18700af8888ef5a44@eucas1p2.samsung.com>
+	 <20260915-jh7110-clean-send-v4-5-f0e4fd6f2cc8@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.3 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qwCowAAn_O8C06xqtWNICA--.15380S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7ur4fJrW7tF1UKFykGFy5XFb_yoW8GF4xpF
+	sakFZrJFyIgrn3W3y8J3WUK3y7Wr1xA3W0gF1jq3W2grs8GFWFqr4Y9r1qgF4UJFW8CFW8
+	ZFsY9rWYvr1vyF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvGb7Iv0xC_Cr1lb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I2
+	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xII
+	jxv20xvEc7CjxVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwV
+	C2z280aVCY1x0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr
+	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7
+	MxkF7I0En4kS14v26rWY6Fy7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r
+	4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF
+	67AKxVWrXVW8Jr1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6x
+	IIjxv20xvEc7CjxVAFwI0_Cr0_Gr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY
+	6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa
+	73UjIFyTuYvjxUaGYpUUUUU
+X-CM-SenderInfo: x2kh0wp0lqwv3d6l2u1dvotugofq/
 
-From: bui duc phuc <phucduc.bui@gmail.com>
+=E5=9C=A8 2026-09-15=E4=BA=8C=E7=9A=84 17:32 +0200=EF=BC=8CMichal Wilczynsk=
+i=E5=86=99=E9=81=93=EF=BC=9A
+> The JH7110 embeds a DC8200. The binding requires an SoC specific
+> compatible ahead of the generic one, so add the JH7110 to the enum.
+>=20
+> Reviewed-by: Joshua Peisach <jpeisach@ubuntu.com>
+> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+> ---
+> =C2=A0Documentation/devicetree/bindings/display/verisilicon,dc.yaml | 1 +
+> =C2=A01 file changed, 1 insertion(+)
+>=20
+> diff --git
+> a/Documentation/devicetree/bindings/display/verisilicon,dc.yaml
+> b/Documentation/devicetree/bindings/display/verisilicon,dc.yaml
+> index
+> 919a9001220120054cb62d1d01b7293367266f95..05a202633cd273fec358c095c64
+> 584d959d96d90 100644
+> --- a/Documentation/devicetree/bindings/display/verisilicon,dc.yaml
+> +++ b/Documentation/devicetree/bindings/display/verisilicon,dc.yaml
+> @@ -16,6 +16,7 @@ properties:
+> =C2=A0=C2=A0 compatible:
+> =C2=A0=C2=A0=C2=A0=C2=A0 items:
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - enum:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - starfive,jh7110=
+-dc8200
 
-pm_runtime_get_sync() leaves the runtime PM usage counter incremented even
-when it fails, but the error path in jh7110_ispcrg_probe() does not call
-pm_runtime_put_noidle() to balance it, leaking a reference each time
-resume fails.
+Note: this binding is being refactored as part of MA35D1 support
+introduction (this SoC has a single-port DC like a DC8000), after the
+refactor the binding string might need to appear twice.
 
-Use pm_runtime_resume_and_get() instead, which automatically drops the
-usage counter on failure, fixing the leak.
+Thanks,
+Icenowy
 
-Also disable runtime PM before returning from the error path to balance
-the pm_runtime_enable() call.
-
-Fixes: 81279f5d0812 ("clk: starfive: Add StarFive JH7110 Image-Signal-Process clock driver")
-Signed-off-by: bui duc phuc <phucduc.bui@gmail.com>
----
- drivers/clk/starfive/clk-starfive-jh7110-isp.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/starfive/clk-starfive-jh7110-isp.c b/drivers/clk/starfive/clk-starfive-jh7110-isp.c
-index f3fa069db193..860c9ec897e8 100644
---- a/drivers/clk/starfive/clk-starfive-jh7110-isp.c
-+++ b/drivers/clk/starfive/clk-starfive-jh7110-isp.c
-@@ -130,9 +130,11 @@ static int jh7110_ispcrg_probe(struct platform_device *pdev)
- 
- 	/* enable power domain and clocks */
- 	pm_runtime_enable(priv->dev);
--	ret = pm_runtime_get_sync(priv->dev);
--	if (ret < 0)
-+	ret = pm_runtime_resume_and_get(priv->dev);
-+	if (ret < 0) {
-+		pm_runtime_disable(priv->dev);
- 		return dev_err_probe(priv->dev, ret, "failed to turn on power\n");
-+	}
- 
- 	ret = jh7110_isp_top_rst_init(priv);
- 	if (ret)
--- 
-2.43.0
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - thead,th15=
+20-dc8200
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: verisilicon,dc # DC IPs hav=
+e discoverable ID/revision
+> registers
+> =C2=A0
 
