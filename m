@@ -1,115 +1,109 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F6D851A130
-	for <linux-clk@vger.kernel.org>; Fri, 18 Sep 2026 17:40:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACCA151CF63
+	for <linux-clk@vger.kernel.org>; Fri, 18 Sep 2026 17:46:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789753247; cv=none; b=kb47drP4WgBPaUhQYSZEq29Jxm1Vc1D4Ddz9M0CEkR/aj691YOamuM6YCq8GBX4o63t7173NVdK4lODiC+EbbBemtDGxeT7kop81JOkdKltTdwYmOV9tQXfsUx4ro4Fj+5TYQMmHU4nIo/l3xLdXhhc5ohqj+iwBsw97hAI0nnw=
+	t=1789753588; cv=none; b=cdCDn4xfbrm4G0ZEIyKwzH5weKiN00Flu6HHxQavOXo+GB0QsvEYNkpf6MFo2dCrTgG1wnlx5BSIOwAVD1cVHSBOxa0401+w8oOiJTt9V8mBVhlk6xKYVZxEnWzc7IotJpQbl++Wgcw+mPGsPcYZIMGjajsskaKuZxf4MzNWDdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789753247; c=relaxed/simple;
-	bh=tukjza51ngGmnD3n2gVCf+uBLCZRkX8un5dih4QbPlw=;
+	s=arc-20240116; t=1789753588; c=relaxed/simple;
+	bh=1Xoph9Zzyoz401QMuFQFY0T58m+Pyq3jkWrPk367ZGE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pBRBqkJWiZyYdrShdVYn+BL+97lOxYFAMHwJRff+KwEEoNeEcKEl+WC0XEPeTGQb98r3t4dPAuVpj48AdjIGw/GC2cnRj79Je6pDd1sgDu8/+fTh7z2JCeO8dgENpa3jFjD6UGltnbKecXdnNefckDLsazZ3iLE0itMQNgCtXTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PeLOd/sR; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=gGjbTdMl; arc=none smtp.client-ip=170.10.129.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=mO/4aFQgisu0hiQJOyQgvXQ6kzFLGst9N4f2exxGefQ+e80trmJcl0QgsPY2ifpUUrtfwzBCBCt7k5uPRUPfuIIDcgRQ/D+/VPHR7+OQQtg7/NoS+BtTcwqoszGVBjPpnhC/IvbEzQytJCzivW9vsixLACuDOLTCJWw/xCjE5Hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hxrjI9ei; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=Rg1Rfulj; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PeLOd/sR";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="gGjbTdMl"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hxrjI9ei";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="Rg1Rfulj"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1789753241;
+	s=mimecast20190719; t=1789753576;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=UtUsYSimD6K1xLItLoYKB1WWd1TCjyyOy2jIzUuov2s=;
-	b=PeLOd/sRL7GULnMiNpZ7qPE5TWcO4K2wfPo8LgW9HMvJ/12IBnAhnDyupIOVpKLcSfsAur
-	ZqQPlP1gaZPuInhtHvy7hBx7QGqAvpO2CUbycDEeA+kVoap88mjWHWZQErM7H2VwLCA/Vf
-	4VygqW9RChGNeohTLd8yf49MV9oq3ng=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=5kE00NOrohgS0BTx8CbajGWpf7GfpFqU+s4VpEz/jUQ=;
+	b=hxrjI9eiMjSq4+fOvIj/f7Cqp0h18nhYeml7cJFaTIFdq6uuv5dle/tccVjb5Dhcc5A9ac
+	+54Y3Ha01kBd7sauJKhoTqu/JVX9Y1xK/Fkzyi8WJYrJITOxSKPOD5aUkRFv/Gq9ihG/dM
+	4uWmmLa/QmwRIlNtCGycAYSecllV0+I=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-679-QGkSkXKhOV2JU5wLgbz-fA-1; Fri, 18 Sep 2026 13:40:40 -0400
-X-MC-Unique: QGkSkXKhOV2JU5wLgbz-fA-1
-X-Mimecast-MFC-AGG-ID: QGkSkXKhOV2JU5wLgbz-fA_1789753240
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-530f968ccb3so14600631cf.2
-        for <linux-clk@vger.kernel.org>; Fri, 18 Sep 2026 10:40:40 -0700 (PDT)
+ us-mta-452-g1qitTgRNVqEuf6bfrb4Iw-1; Fri, 18 Sep 2026 13:46:14 -0400
+X-MC-Unique: g1qitTgRNVqEuf6bfrb4Iw-1
+X-Mimecast-MFC-AGG-ID: g1qitTgRNVqEuf6bfrb4Iw_1789753574
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-936aa34873bso182748185a.3
+        for <linux-clk@vger.kernel.org>; Fri, 18 Sep 2026 10:46:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1789753240; x=1790358040; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:content-type
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=UtUsYSimD6K1xLItLoYKB1WWd1TCjyyOy2jIzUuov2s=;
-        b=gGjbTdMlpT0CU0bWuHlyORmE6bmeQ5mQCHHtXpj2aMkRA320Wqeb/Kx809yKMOPCj7
-         DDT1GlCeXRNA4I0Indfo9AgNrR7cib6A4Mr/03nnxUBU9pwhxgbHZNYG1GMT7DN4zMi/
-         09dUkBqlxpnKhagJjpCkidTZ27sH8BhlJ+XFrAwN0Lyt9sCN7Gv8Y1zRP/Pe0FgedLIX
-         H4b5SkteaGcQi6ei5XMok9oKqt32DBH6/rZxt9IHdpAW4feojp3iQSIHwS6fI6iRpA0N
-         53kA7nGlTf944mJvoTlNT/Ddy2Dm7VDqGeweIMCgIFZW0HrE4tZ2jwfhs3tJ4GFKxHAY
-         5Mog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789753240; x=1790358040;
-        h=user-agent:in-reply-to:content-disposition:content-type
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+        d=redhat.com; s=google; t=1789753574; x=1790358374; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:content-type:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=UtUsYSimD6K1xLItLoYKB1WWd1TCjyyOy2jIzUuov2s=;
-        b=V9p3wLG1NWE90319EfiB3VBih1g/GlIMDD7UYg1Z/+RDyrXGYqJSRVivCxDza7vbz6
-         zw43auqSfB8/55hQmSuUt0iHk2PMNkApoNVWhbS3/tbJw2AwOVXOdzKDH/HqtsJ2Z3rC
-         IywGQ0M+HMzxg4DyYj7d3nfZJi8YexSz7Qo1oUNQdcFKv+1qzeE6YRv2FML0JJhxjuVT
-         9Bpw1kYRiO80wcsZN5BHwv8Dt05JlT5PwLLT8JoexZOZqvp0pd/csNj6XbkFAd3HC4jo
-         r5P64un/jQSHCVY4lUT5kG/h/TAU4lZ7jDADvRCqN+oAy5xQqV/FjWH0K+51YA6KxuNj
-         V3qw==
-X-Forwarded-Encrypted: i=1; AKwUvBxGis5kk8DIVmHIWi2rSrvEVTWTcaQmn++Ytnrxme9i90DDCkdC73lTJ6hZrFoK/xFlxvHjYFD5+OA=@vger.kernel.org
-X-Gm-Message-State: AFuF++laG4eWq3RPJlss1YccUSSMpvL2FLo+VedzCpOJ1p+oqRkobJXx
-	GYMhA85JwcS9Dnu2kj2r7E19yezmAL/qnTleyDq3mX0rVHYcRSmHoDBDw6RB1JB9ZCbbSR7X0F0
-	ZGq4XnDHT/vTD6UUAtW+RolHwIT+Z5ZDHCvcvUTkF4zf/8nVkoaRMXXA9KLjP/Q==
-X-Gm-Gg: AYBFou1hPYfHlUTuv4Ldq0DBm+IONJZyfY1gYzYCF/mKjoY7W1Nx0gYMLBVlD5CrSsZ
-	4l2THnOgTHZ3nFJ254V17gb1TWQtH/TU+8nepmMozDG3Nww5agTsj2xXWpLPuz3SsK4KbTOw3D6
-	S90hkrF1I7xuKpxtfHm2NVkvIDxpMks6Zt6n4qtmlarkdWSUda+9Nkdijlam974J4alHL6cklpW
-	jqdaPDPKF6kgqMqjHDEH9vauqyhwdqvc/Ty97ync54GKVqgHQ/2POTv32q5CL+b8ar/WdJH11bS
-	dsT1mmEvBkpCSkL3d9DrtnSwjubfSPUVSEuthZsxo4t+1s2oNHDuTkL3WAKLMV3thYFtIXrvmLG
-	dAd0X2MGhpGDZh30vNjx63DQv81B1QkVQJws=
-X-Received: by 2002:a05:622a:8cc:b0:532:9add:cdda with SMTP id d75a77b69052e-5329e3d11b0mr50950991cf.63.1789753240081;
-        Fri, 18 Sep 2026 10:40:40 -0700 (PDT)
-X-Received: by 2002:a05:622a:8cc:b0:532:9add:cdda with SMTP id d75a77b69052e-5329e3d11b0mr50950411cf.63.1789753239363;
-        Fri, 18 Sep 2026 10:40:39 -0700 (PDT)
+        bh=5kE00NOrohgS0BTx8CbajGWpf7GfpFqU+s4VpEz/jUQ=;
+        b=Rg1RfuljsQVhMZmauqQ4lby7wCVsie0wpTeKW/vJIQXKWmP7Ul/n7iDDdoyOlTwEAf
+         pQVLH3Br4VpL/q7/ciVTJSO2jz9pCexOFnJiVkh4GnhUaaINLoFfYJTDQdwD/J9LcTL+
+         af8UkEYj9NZILhd8KX/x7gb6HUMUoCmm34qLwrhczVOFknCfG77b2nQ3gjweoYj81P9L
+         LAeRFsfTmQmPrj4tPVTO+QpRxq5YcGslWwJnWo0oYrYDHwI967TP0k2R7Am21RS8yiVH
+         xYRdh+fN7N39k2owFxrwbjjINeuOK/UWukhVQolrh4XZCxdruU+4JNukz/FxaIM5sFpj
+         y6kQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1789753574; x=1790358374;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:content-type:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=5kE00NOrohgS0BTx8CbajGWpf7GfpFqU+s4VpEz/jUQ=;
+        b=AAMro9rEQFk1T83/X6ofR4ie7EB+dXXFShWzHXN/Rjckb2D8OfvkCwJpL9rDfhBjS/
+         wNUZ4BL7YkzmezYbAHL3geS/crTZfHKjz4FATcqzAWeYrwl6baLeaLQincM5Wm6hs+ot
+         JbIbKJfDdBe+hWx4/qVWeKHEQD/hDKwdlsOH/nvdIHXym/76Y0zXMCB9NTpAVkn1ZcFd
+         fPc2JSdhpqmKE/g4rWWDKd81wMJf72xJ/gg0JQ+DiiJOHYJ2qdpumVvnmP0ktEO8BFA3
+         7ZPWKTDTqhPMfgZ32kqbjN6VVKcfrjQG0TxPLuXvx73q56bYd+pfe6Sc8q5UDJEQcVrm
+         GlOw==
+X-Forwarded-Encrypted: i=1; AKwUvBxqNVsL4gOtB0nv6iRfJSEdTQkzN4Ytuqu0OG/EnIoenr9bvzR2JGvDf11t6AWUZLytTg2nXZatlOg=@vger.kernel.org
+X-Gm-Message-State: AFuF++ljfGGQ4omhuwdBTcdoVYcx1yq9zNRBXf9F+OhkQWxLmMpZ0N3z
+	TrKt2AlGNcIndA1VmoZtRT8JhEfBPffH1oT4HRCuUObURjgB++Rm8mx4xobp0btgta0gpHA+Hno
+	IZSufLqOrHEQl6PCQsW/fJc/BXz0Jq+1kFiuX4TYwfDLVG43ptxIoHpYxAI4GYQ==
+X-Gm-Gg: AYBFou3xzEkVwbjJONVJqkr9hIKMxVxrzdg3+VMrzD7XV0dqoFIpKBDIeWlM8QIpwJX
+	z1bpc8k5zePVhgeGNRjHrD8k4JtX5L8x903LpNVb2cShrk91oCGY5aGDFoUI8eLEqHpRvKaHAsp
+	EehttEa57C9YpDx0F6664Q2ZcAZ+0hEKagjoQ4ARZJaPLoMxpx8EHMlE+/2s3mwRK3hDBSNF1Jv
+	7o1xzmBkKO/VfKSpgkWn55yCQSGwZuWh6DcEEZl8aZQ7gC9QJ6fzQC+ljxK3egGnTIGXddTtaoc
+	TuEeEIEyavnhDsNg3Vrwlqr7WN5Di+m9t2jlesQdykDdrH/zlTu11DauM4h+/w8ZbIJo8h5oBBo
+	GjNHS8wjshQftNPKcahtXJdflwfmptTHIvoQ=
+X-Received: by 2002:a05:620a:1a07:b0:939:fce5:f6d2 with SMTP id af79cd13be357-93bdc6e5bdamr470100385a.27.1789753573722;
+        Fri, 18 Sep 2026 10:46:13 -0700 (PDT)
+X-Received: by 2002:a05:620a:1a07:b0:939:fce5:f6d2 with SMTP id af79cd13be357-93bdc6e5bdamr470095285a.27.1789753573025;
+        Fri, 18 Sep 2026 10:46:13 -0700 (PDT)
 Received: from redhat.com (c-73-183-53-213.hsd1.pa.comcast.net. [73.183.53.213])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-532ae730a9fsm2075781cf.20.2026.09.18.10.40.37
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-93be0e56a03sm192582085a.16.2026.09.18.10.46.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Sep 2026 10:40:38 -0700 (PDT)
-Date: Fri, 18 Sep 2026 13:40:36 -0400
+        Fri, 18 Sep 2026 10:46:12 -0700 (PDT)
+Date: Fri, 18 Sep 2026 13:46:11 -0400
 From: Brian Masney <bmasney@redhat.com>
-To: Yixun Lan <dlan@kernel.org>
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>,
-	Aurelien Jarno <aurelien@aurel32.net>,
-	Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>,
-	linux-clk@vger.kernel.org, spacemit@lists.linux.dev,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] clk: spacemit: Fixes for v7.3
-Message-ID: <aq13lDqmJjfDn4zI@redhat.com>
-References: <20260915004456-KYC0593228@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>, linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [GIT PULL] clk: renesas: Updates for v7.4
+Message-ID: <aq1443hvruNPF2ll@redhat.com>
+References: <cover.1789723268.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20260915004456-KYC0593228@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <cover.1789723268.git.geert+renesas@glider.be>
 User-Agent: Mutt/2.4.0 (2026-06-19)
 
-On Tue, Sep 15, 2026 at 12:54:54AM +0000, Yixun Lan wrote:
-> Hi Stephen,
-> 
->    Please pull SpacemiT's clock Fixes for v7.3. This solve an issue
-> that will trigger PLL clock closed due to the frequency not available
-> in kernel side, a shutdown of PLL will cause the system hang.
-> 
-> 
-> Yixun Lan
+On Fri, Sep 18, 2026 at 11:37:46AM +0200, Geert Uytterhoeven wrote:
+> 	Hi Stephen, Brian, Jérome,
 > 
 > The following changes since commit cee9395acd8043be0644b25c34bfa86623f2b935:
 > 
@@ -117,13 +111,25 @@ On Tue, Sep 15, 2026 at 12:54:54AM +0000, Yixun Lan wrote:
 > 
 > are available in the Git repository at:
 > 
->   https://git.kernel.org/pub/scm/linux/kernel/git/spacemit/linux.git/ tags/spacemit-clk-fixes-for-7.3-1
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v7.4-tag1
 > 
-> for you to fetch changes up to d558af8ee0bb1b2e88e696be84adb93cf2b7be6f:
+> for you to fetch changes up to 8d90c0eeef104553d6b9137becd7f58b468aaa0b:
 > 
->   clk: spacemit: k3: add CPU PLL rate tables (2026-09-15 00:09:55 +0000)
+>   clk: renesas: r9a09g077: Register SYSC regmap (2026-09-14 09:47:33 +0200)
+> 
+> ----------------------------------------------------------------
+> clk: renesas: Updates for v7.4
+> 
+>   - Add display and PCIe clocks and resets on RZ/G3L,
+>   - Make sure clk_init_data is fully initialized,
+>   - Convert RZ/V2H to the clk_hw-based provider API,
+>   - Add syscon regmap support for the System Controller (SYSC) on RZ/T2H
+>     and RZ/N2H,
+>   - Miscellaneous fixes and improvements.
+> 
+> Thanks for pulling!
 
-Pulled into clk-fixes.
+Merged into clk-next.
 
 Brian
 
