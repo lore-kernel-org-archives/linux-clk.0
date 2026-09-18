@@ -1,78 +1,85 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC5A232A3C8;
-	Fri, 18 Sep 2026 01:36:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46D763A9D83;
+	Fri, 18 Sep 2026 01:49:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789695390; cv=none; b=g2vIunFTReECslVOyweS3C94MocMDlEFtnxTdfZffnmhoDFVEmRJdv6ZBSVZcJiXCIvwmFlYNBIUamWiu7KGg7w5TkrM5T3H75tNb+V9IWaxxjq5WZkkViYjvwoVzp3YtfEnRKoGboNUr1KXL1DnsErLMcOhBan3obltg1prmUY=
+	t=1789696203; cv=none; b=fZ/YnQdQuuDmyfx228Wj6O8Dvt9VIfb1/PqpnSSwuYFLjIxMCrXZCOckKMXh2wzbySIXzTixSZLsirsYlwKalNCI28NUJe+SM6+YNsEEU+TqFj2ksyFu0KbHYB+FVCWvOSlVmPF8NSW/SW1yr48aMiV+ayv+A8jihjvRoKdI0cs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789695390; c=relaxed/simple;
-	bh=DJyqlOQ3txseiN+o6Rk8JIESIVkn8Dq465dyxyYI9iY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YMZ41NGkocjzZHvi4/Zd2/+uH4yE/7Ii4n+4e7rtF4dnGQF5/OdJvkyRTrlifA1WgyNlsYU8gp2W1m+H6soMQnArj+D7tsH2WlK3OTACqvFld2wk4DH6uf4nYCOhsHO4whJrBYW0jIKtviKvy/5hg4tJJs26eiAigR2UgjrLWtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zf+ry3Kq; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789696203; c=relaxed/simple;
+	bh=iDcjO7SQOM0BL8BXFxOYfo8RpBFZmH8NcvcYto9LC98=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AyAoonCppJmQ3KBfUig/hXj7ApSRYmKRtPLQ2xSuJRJQ62xkOKgH5ND8MDmC9dT41QVO6fBj5+F4M3gaY7nKc5ox37C3O+fiZdP/qIlIdbr2F+mUFAs8PEfkIBzIOCQfSfHP3F/LYc2B+M7p6deLGqGKVqCrSKTPskoMb0Z9XJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WAANUbdt; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zf+ry3Kq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 094971F000FF;
-	Fri, 18 Sep 2026 01:36:18 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WAANUbdt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8029E1F000FF;
+	Fri, 18 Sep 2026 01:49:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789695388;
-	bh=6IaAWEaBiOKUnROTpq0L5Ofe2m/RZ5CV/7s5WMrgEQc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Zf+ry3KqTl5J/hsN3Wse1/Fla8guEupSU5Ey4/qM2FcS50i3QCmnovNNbKbomSfLj
-	 9wIrPW/1G7tPeB0S6zpvJcR277uqmDQd74JiPfarN4lg6BI+1SqwndJCCPI8swGM/4
-	 dLjUkL8qP0IYwfgXcN8eZyHvL3SpRVKvL3QX9SjoPoViH/eyhKi9keRGg15F9AScBh
-	 eepP9CCmxo2/bI5SmoTTLZYUZOBSxK9exgQA6yYkU4s5q+OVmdfNjDzms7IPYUR8ma
-	 0aV1Zf8cuOAz0nl35JoJb8fOQsuHJIxw/FJ9jZXRB8SZrypLhNDGi/Y1Y2/2cvqtP6
-	 byOeGpQZIRTRw==
-Date: Fri, 18 Sep 2026 03:36:09 +0200
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, Bryan O'Donoghue <bod@kernel.org>, 
-	Loic Poulain <loic.poulain@oss.qualcomm.com>, Vinod Koul <vkoul@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Felipe Balbi <balbi@ti.com>, linux-arm-msm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, linux-phy@lists.infradead.org, 
-	Krzysztof Kozlowski <krzk@kernel.org>, stable@vger.kernel.org
-Subject: Re: [PATCH v19 0/5] Add phy_get_by_of_node and devm helper
-Message-ID: <cqoquu7hzclx54km763745dupaxahv7y4xbzq7vxg23isptgqz@j6los24mhnnn>
-References: <20260917-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v19-0-21ad8a76e941@linaro.org>
+	s=k20260515; t=1789696195;
+	bh=HjlJkfWxEJHuY15pqHOvaOL0dZgn3vW47MuqmveYFyk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=WAANUbdt77eHtm/ALgZAq0ESgwRqRCS/9O9xT04+vNooxbA2dGpqAahq23WFKLO/s
+	 m3yFwJViXzPC59wIEmfCw3l7LHN8bpv+gBUfxqss/tgs7D1X63N10HCnuX3evEg7oM
+	 B8aLvRadheVX7JmJOrxVGo0jIbTAxr6PLPHJuAPg9gepPw0uct0yXOh5JcgF1DusOk
+	 vxaFWpBvtLRtIR6U6dOEZE9Iht6NvTi2cXhPvlMiBfXQQspicZDvUVCneQ8CLGnwfb
+	 kdXwb1L28bg8JTyhEm8OmqwOuGBnQo+Q+uYgNSgMJ6WySxAsP21GqcMboXTKxuLIkz
+	 k59CDLxL3qplg==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Brian Masney <bmasney@redhat.com>
+Cc: driver-core@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 0/4] driver: core: add subsys_platform_driver() to reduce boilerplate code in drivers
+Date: Thu, 17 Sep 2026 20:49:44 -0500
+Message-ID: <178969618825.1582337.11100417882754456102.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260908-subsys_initcall-v1-0-cbccf4cd4288@redhat.com>
+References: <20260908-subsys_initcall-v1-0-cbccf4cd4288@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260917-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v19-0-21ad8a76e941@linaro.org>
 
-On Thu, Sep 17, 2026 at 04:25:05PM +0100, Bryan O'Donoghue wrote:
-> This series has evolved from a CAMSS standalone series to a series that is
-> mostly on the PHY side now, so I've split the series up to reflect that
-> fact.
-> 
-> Starting off by fixing a long-standing use-after-free race-condition in the
-> phy core flagged by Sashiko in v13. While my series doesn't introduce the
-> bug it seems appropriate to address it anyway once flagged.
-> 
-> Once addressed two new helper functions are introduced to the PHY core to
-> enable finding of a PHY using the media graph.
-> 
-> Finally the usage of that new API is shown with CAMSS.
-> 
 
-Looks like you completely missed all my comments given in v17 :/
+On Tue, 08 Sep 2026 13:47:17 -0400, Brian Masney wrote:
+> There are a fair number of clk drivers that are registered at the
+> subsys_initcall level since some clk drivers need to be initialized
+> early for other drivers. Let's add a new macro
+> subsys_platform_driver() similar module_platform_driver() to eliminate
+> some boilerplate code in the drivers.
+> 
+> This series converts the Qualcomm and Renesas clk drivers to show the
+> code savings that can be achieved. Once this lands, I'll convert the
+> remaining clk drivers this development cycle if all of this can go
+> through the clk tree.
+> 
+> [...]
 
-- Mani
+Applied, thanks!
 
+[1/4] driver: core: add subsys_driver() macro
+      commit: 255a14e7c16569f75248640dbd854c632b9d4bee
+[2/4] driver: core: platform: add subsys_platform_driver() macro
+      commit: 5065ca1325639b0341521f2057e6e2f3b52241a6
+[3/4] clk: qcom: convert drivers over to use subsys_platform_driver()
+      commit: 51c6b675682a9cf5546fb057fed8f99361b56cf2
+[4/4] clk: renesas: convert drivers over to use subsys_platform_driver()
+      commit: d11a91e088cefa4b56d7877b49492d8e1dc818dc
+
+Best regards,
 -- 
-மணிவண்ணன் சதாசிவம்
+Bjorn Andersson <andersson@kernel.org>
