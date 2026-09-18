@@ -1,119 +1,107 @@
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej2-f12.google.com (mail-ej2-f12.google.com [74.125.228.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6A743C942C;
-	Fri, 18 Sep 2026 08:34:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD077426431
+	for <linux-clk@vger.kernel.org>; Fri, 18 Sep 2026 08:37:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.228.140
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789720474; cv=none; b=sxVyNqOjivV9OwqL9KoGYFOMQBBjBtPcnMLo6Z7/5yl3w98qhlUz4BQprkq3rzZOdZLV58AVyy0jcE1/72GDuvwOPBJnamzU9YuBsisOumUnbOYFyG1GOHKmPc866hw20X6J6fNXPPXynIHcVxhxpfLGmCaB+mbLG0kfydyIWpY=
+	t=1789720651; cv=none; b=C0DgK0oTHHT3tWZDLpNUECjhcObRoX20I+gEzhOayaGhKe4qAUQ3IKyPBJYGgMaQnFYBdAzPT6L5nSBFCF5ZFS+WmrpqzX7qv/Nqoak+rPOn2Fpg5hWBeDrksTN9mjkjjsPEY2eJkt3qZmXOtZX69MwZoBC7+v2zzxNcddevccQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789720474; c=relaxed/simple;
-	bh=A+U9NeyCw2uUc/iR5VKPiZXuak/wBBYadp2bG6uegDY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=WJBu+yxNAPUpOqTHSWgY9QTfgm4Si2UHH1Ih1BedTszJE6HD2lPe7+V6Yp1oK1LZM3G6N41vLbrBDP7YQs+uDVH0Xb0E9Q9iUi6pNeU4SSVQXSgAYjyFZX7kNLLzBbTYxHpwfEbKVge2LmPg92/E+gcwjpHnDwl07YqFIwUYD0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=W60BaHoP; arc=none smtp.client-ip=220.197.31.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+	s=arc-20240116; t=1789720651; c=relaxed/simple;
+	bh=Uxr4WVyD/DNS/detS6ug+v7NOvEjI5JJaJV4V+VWxsU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qpllaAOKsYYxu2B/uOQ86v6S2n9Wtagrwri9Z/wsaSfb5uvGfvuFkmYq7upsi1tLpe66OV8pEffAE1TZNSQXJLlhP4iQr6lp6LMVJmhRSBTCWCDaKzot/Q5DZIHXkdG/H0sosyGNWkpDzEWoHHx741au9T9ItcoKABpNfSqI3M8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sUyKAVm5; arc=none smtp.client-ip=74.125.228.140
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="W60BaHoP"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=A+U9NeyCw2uUc/iR5VKPiZXuak/wBBYadp2bG6uegDY=; b=W
-	60BaHoParjrLUjIpIbGTR86wL4FMUqI3CTHzYhLCuakgAEm7b2KGZOm9QxFHF7Q7
-	nHMIP9B++Yf+DQVScw6asQW8f0C+zb40TNbLN+M02ux7nmA28szYUxuyAuIekado
-	TemWxt/GPOCYizg7vocTYzkUhIV8ljZsSBbhC87j/U=
-Date: Fri, 18 Sep 2026 16:33:13 +0800 (CST)
-From: zl020895  <zl020895@163.com>
-To: "Krzysztof Kozlowski" <krzk@kernel.org>
-Cc: "Long Zhao" <longzhao@ambarella.com>, "Arnd Bergmann" <arnd@arndb.de>,
-	"Alexandre Belloni" <alexandre.belloni@bootlin.com>,
-	soc@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	"Rob Herring" <robh@kernel.org>,
-	"Krzysztof Kozlowski" <krzk+dt@kernel.org>,
-	"Conor Dooley" <conor+dt@kernel.org>,
-	"Michael Turquette" <mturquette@baylibre.com>,
-	"Stephen Boyd" <sboyd@kernel.org>,
-	"Jerome Brunet" <jbrunet@baylibre.com>,
-	"Linus Walleij" <linusw@kernel.org>,
-	"Bartosz Golaszewski" <brgl@kernel.org>,
-	"Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-	"Jiri Slaby" <jirislaby@kernel.org>,
-	"Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
-	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	"Catalin Marinas" <catalin.marinas@arm.com>,
-	"Will Deacon" <will@kernel.org>, "Lee Jones" <lee@kernel.org>,
-	mfd@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re:Re: [PATCH v7 05/15] dt-bindings: gpio: pl061: add Ambarella
- CV75 variant
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2023.4-cmXT build
- 20260511(2e539873) Copyright (c) 2002-2026 www.mailtech.cn 163com
-In-Reply-To: <20260918-affable-aardvark-of-superiority-6a5ed2@quoll>
-References: <20260915-cv75-v5-v7-0-3297d3fbc9c0@ambarella.com>
- <20260915-cv75-v5-v7-5-3297d3fbc9c0@ambarella.com>
- <20260918-affable-aardvark-of-superiority-6a5ed2@quoll>
-X-NTES-SC: AL_Qu2TC/uZv0si5SebYOkcn0wRhug/UMa4u/sm3YNXc+4EmTLm2QYGZWdKNl/tzP+PED+yqxGsciBy6c5ic7Z9DiZ4Z4Mjf+qV5QMl6Un47w==
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sUyKAVm5"
+Received: by mail-ej2-f12.google.com with SMTP id a640c23a62f3a-c294496989aso67111366b.3
+        for <linux-clk@vger.kernel.org>; Fri, 18 Sep 2026 01:37:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1789720648; x=1790325448; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=EsGHbbePiTbUM57NiqY/i+2M/82wdnf8yfJzQr85VmA=;
+        b=sUyKAVm5UpfIhhx75ErJhS6MhdSrfjRXsde0yBrmtZLPEhSOoZwsTSeg2sPetwzmSS
+         zFDuCjaOq2pfNyh0hC1OWHKqPxYyh5Jf53eCycmrOTuDBreFIljsoVmr98FFBpKBftkE
+         dVPzK2Jg0MCAGFcU+cL7kYUvP5E3Re9QxSNA9+P/F4yo5GK53Up9tnhah2OpIna1ZYRX
+         JthbQcFArVC/Pmnc+4ANRjvUekvp65CzP1/3xVZfjXTG85PrTvTmuv6Me7DfQYG3g1S+
+         uXZKj+0eHTvrTYK0NSI0RAkp7P4GsNJNjunmdrh78Gw51scMd6otBM+8jYoCBR08b1yL
+         qXyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1789720648; x=1790325448;
+        h=content-transfer-encoding:content-type:in-reply-to:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=EsGHbbePiTbUM57NiqY/i+2M/82wdnf8yfJzQr85VmA=;
+        b=bIdG+qNAebu9q7tntH03XPoXv/nZ4Y8cEtncEwmxvTEtM4dd0BUjGkBA2+hdYiFQ/+
+         K5yH6cP1A4GWFLsdCtlXim+A2EDY9UG6gwNEOIx0rBq6GSIdrRA3WmuWhNyR1TIeyxxW
+         O8kLVp+uV67pJm/fZ4UQEVDRhAAYeOQJudRx56u3dmahCWZa8u4GO56TlUgOjp8pSYer
+         nQJXcWJmdtsVPMf7JpRFHv2zShGFWN7s9ei9+DRdJWHxl96dkXlAuXZglQuhwlCLOpoR
+         6iRzX9ii/eLJVrh/iRBj+kx3z74GUFmvasgyxvvd4rtNruBtbT7yLjQ+dm8AoA7OvMOC
+         NN2g==
+X-Forwarded-Encrypted: i=1; AKwUvBwzulVThET6T3Hu4/SPOncdZBCOWJnkONMuok+1vepfs3JwSML616vWT/LXvMjQM+THo4EUS5q4150=@vger.kernel.org
+X-Gm-Message-State: AFuF++lI6wklBSIU382ski4JQZqfK0QiT3nCCGrtA+zK/vKcPui7CMOc
+	ZVvtbN9OhWswGByZUbz4rMYzmx7Obqn0s3ZwSI6lFH7DaRlqb5lHSaeeBoNYHjaNEyQ=
+X-Gm-Gg: AYBFou1jm8TEXTaisQip2arhFFHFf2xZEdTJAkOzI5y6Xdx8hXJTy8eon9lghioDOxU
+	5nw4BVESORQ9/xMW+rGsmO+dgypOOmhdC85C7wz4p/CEAfCFXiVjqr5sd9hmmhiugr5q79KRFVp
+	YHVodUzFevg77TaP9F4tR9vvso681llFq/jGRarRN86uF0A205o+zKT3i7sCTgTn+ca69TDAACs
+	depnJ4udk89KuWTILrApfdaRPF4m6m2mDr09xWV9zJF66icgDtTQDOcttm5Yi7ifB2Ln/htgpfk
+	cW/rEARAphu+pnIS8Pd11wXbS48qtneafZ+jAV5F9dj92H5wf+szhjyjc38dk9AirxDUObqRFO8
+	AnyDSN8mB8KSw1OQSV6KAWfbk4Vf1H+/e6Dw9GcfRZJDqn2Q2Gmv5+mVhox3o2B9m/hbpmReUz7
+	rGsn0V+0zZHaYPVZ0t4D9RWvuAzk0c/7xnSLJy4DmJG2aS6nft5zbyNaFi6H4pL6wLfDsNX68y9
+	/xsOQzSvg==
+X-Received: by 2002:a17:907:1c1b:b0:c25:62db:772b with SMTP id a640c23a62f3a-c2a15846850mr191330566b.7.1789720648074;
+        Fri, 18 Sep 2026 01:37:28 -0700 (PDT)
+Received: from [192.168.0.167] ([109.76.4.225])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c2a1bbc6a06sm32784166b.53.2026.09.18.01.37.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Sep 2026 01:37:27 -0700 (PDT)
+Message-ID: <70284db7-a7d9-48a6-acdd-7a9850cdc7e4@linaro.org>
+Date: Fri, 18 Sep 2026 09:37:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <258a5ebc.76e6.1a0b3a5f810.Coremail.zl020895@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:aSgvCgBnH7lJ96xqT21HAA--.51648W
-X-CM-SenderInfo: d2oqjiqyzvqiywtou0bp/xtbC7QnVR2qs90mJ9AAA3z
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v19 0/5] Add phy_get_by_of_node and devm helper
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>,
+ Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Bryan O'Donoghue <bod@kernel.org>,
+ Loic Poulain <loic.poulain@oss.qualcomm.com>, Vinod Koul <vkoul@kernel.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>, Felipe Balbi <balbi@ti.com>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-phy@lists.infradead.org,
+ Krzysztof Kozlowski <krzk@kernel.org>, stable@vger.kernel.org
+References: <20260917-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v19-0-21ad8a76e941@linaro.org>
+ <cqoquu7hzclx54km763745dupaxahv7y4xbzq7vxg23isptgqz@j6los24mhnnn>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Content-Language: en-GB
+In-Reply-To: <cqoquu7hzclx54km763745dupaxahv7y4xbzq7vxg23isptgqz@j6los24mhnnn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-SGkgS3J6eXN6dG9mLAoKVGhhbmtzIGZvciB0aGUgcmV2aWV3LCB3aWxsIGZpeCB0aGUgY29tbWl0
-IG1lc3NhZ2UgYW5kIFlBTUwgb3JkZXIgaW4gdjguCgpUaGUgQU1CQSBjb3JlIG1hdGNoZXMgdGhl
-IFBMMDYxIGRyaXZlciBieSBQcmltZUNlbGwgSUQsIG5vdCBieSB0aGUgRFQgY29tcGF0aWJsZSBz
-dHJpbmcuIFRoZXNlIGJhbmtzIGRvIG5vdCBpbXBsZW1lbnQgdGhlIHN0YW5kYXJkIFBMMDYxIElE
-ICgweDAwMDQxMDYxKSwgc28gYXJtLHByaW1lY2VsbC1wZXJpcGhpZCBtdXN0IGJlIHNldDsgMHgw
-MDBlODA2MSBpcyB0aGUgSUQgdGhlIGRyaXZlciB1c2VzIGZvciB0aGUgQW1iYXJlbGxhIGxheW91
-dC4KClRoZXkgc2l0IG9uIHRoZSBQcmltZUNlbGwgYnVzIGJ1dCBhcmUgbm90IHJlZ2lzdGVyLWNv
-bXBhdGlibGUgd2l0aCBhcm0scGwwNjEgKDMyLWJpdCwgMzIgbGluZXMsIGV4dHJhIG1hc2svZW5h
-YmxlKSwgc28gYXJtLHBsMDYxIGlzIG5vdCBhIGZhbGxiYWNrLiBJIHdpbGwgc3BlbGwgdGhhdCBv
-dXQgaW4gdGhlIGNvbW1pdCBtZXNzYWdlLgoKYWxsT2Ygd2lsbCBtb3ZlIGFmdGVyIHRoZSByZXF1
-aXJlZDogYmxvY2suCgpCZXN0IHJlZ2FyZHMsCkxvbmcgWmhhbwoKQXQgMjAyNi0wOS0xOCAxNTox
-NToyMSwgIktyenlzenRvZiBLb3psb3dza2kiIDxrcnprQGtlcm5lbC5vcmc+IHdyb3RlOgo+T24g
-VHVlLCBTZXAgMTUsIDIwMjYgYXQgMDc6MTU6MzVQTSArMDgwMCwgTG9uZyBaaGFvIHdyb3RlOgo+
-PiBBZGQgYW1iYXJlbGxhLGN2NzUtZ3BpbyBhcyBhIFByaW1lQ2VsbC1jb21wYXRpYmxlIFBMMDYx
-IHZhcmlhbnQsIHdpdGgKPj4gYXJtLHByaW1lY2VsbC1wZXJpcGhpZCBhbmQgZ3Bpby1yYW5nZXMg
-cmVxdWlyZWQuIFJlZmVyZW5jZQo+Cj5Zb3UganVzdCBkZXNjcmliZWQgdGhlIGRpZmYsIGJ1dCB0
-aGlzIHNob3VsZCBleHBsYWluIHdoeSB5b3UgZG8gdGhlc2UKPmNoYW5nZXMuIFdoeSBhIGZpeGVk
-IHBlcmlwaGlkIGlzIG5lZWRlZD8gSXNuJ3QgaXQgaW1wbGllZCBieSBjb21wYXRpYmxlPwo+Cj4+
-IHByaW1lY2VsbC55YW1sIGFuZCB1c2UgdW5ldmFsdWF0ZWRQcm9wZXJ0aWVzLgo+PiAKPj4gU2ln
-bmVkLW9mZi1ieTogTG9uZyBaaGFvIDxsb25nemhhb0BhbWJhcmVsbGEuY29tPgo+PiAtLS0KPj4g
-IC4uLi9kZXZpY2V0cmVlL2JpbmRpbmdzL2dwaW8vcGwwNjEtZ3Bpby55YW1sICAgICAgIHwgMjUg
-KysrKysrKysrKysrKysrKysrKy0tLQo+PiAgMSBmaWxlIGNoYW5nZWQsIDIyIGluc2VydGlvbnMo
-KyksIDMgZGVsZXRpb25zKC0pCj4+IAo+PiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZp
-Y2V0cmVlL2JpbmRpbmdzL2dwaW8vcGwwNjEtZ3Bpby55YW1sIGIvRG9jdW1lbnRhdGlvbi9kZXZp
-Y2V0cmVlL2JpbmRpbmdzL2dwaW8vcGwwNjEtZ3Bpby55YW1sCj4+IGluZGV4IDRkOTcwZTU1MTA0
-Yi4uMDBkMGQ4ZGRkMmM5IDEwMDY0NAo+PiAtLS0gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUv
-YmluZGluZ3MvZ3Bpby9wbDA2MS1ncGlvLnlhbWwKPj4gKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZp
-Y2V0cmVlL2JpbmRpbmdzL2dwaW8vcGwwNjEtZ3Bpby55YW1sCj4+IEBAIC0xNSwxNyArMTUsMzYg
-QEAgc2VsZWN0Ogo+PiAgICBwcm9wZXJ0aWVzOgo+PiAgICAgIGNvbXBhdGlibGU6Cj4+ICAgICAg
-ICBjb250YWluczoKPj4gLSAgICAgICAgY29uc3Q6IGFybSxwbDA2MQo+PiArICAgICAgICBlbnVt
-Ogo+PiArICAgICAgICAgIC0gYXJtLHBsMDYxCj4+ICsgICAgICAgICAgLSBhbWJhcmVsbGEsY3Y3
-NS1ncGlvCj4+ICAgIHJlcXVpcmVkOgo+PiAgICAgIC0gY29tcGF0aWJsZQo+PiAgCj4+ICthbGxP
-ZjoKPgo+YWxsT2Ygc2hvdWxkIGJlIHBsYWNlZCBhZnRlciAicmVxdWlyZWQ6IiBibG9jay4KPgo+
-PiArICAtICRyZWY6IC9zY2hlbWFzL2FybS9wcmltZWNlbGwueWFtbCMKPj4gKyAgLSBpZjoKPj4g
-KyAgICAgIHByb3BlcnRpZXM6Cj4+ICsgICAgICAgIGNvbXBhdGlibGU6Cj4+ICsgICAgICAgICAg
-Y29udGFpbnM6Cj4+ICsgICAgICAgICAgICBjb25zdDogYW1iYXJlbGxhLGN2NzUtZ3Bpbwo+PiAr
-ICAgIHRoZW46Cj4+ICsgICAgICBwcm9wZXJ0aWVzOgo+PiArICAgICAgICBhcm0scHJpbWVjZWxs
-LXBlcmlwaGlkOgo+PiArICAgICAgICAgIGNvbnN0OiAweDAwMGU4MDYxCj4+ICsgICAgICByZXF1
-aXJlZDoKPj4gKyAgICAgICAgLSBhcm0scHJpbWVjZWxsLXBlcmlwaGlkCj4+ICsgICAgICAgIC0g
-Z3Bpby1yYW5nZXMKPj4gKwo+PiAgcHJvcGVydGllczoKPj4gICAgJG5vZGVuYW1lOgo+PiAgICAg
-IHBhdHRlcm46ICJeZ3Bpb0BbMC05YS1mXSskIgo+PiAgCj4+ICAgIGNvbXBhdGlibGU6Cj4+ICAg
-ICAgaXRlbXM6Cj4+IC0gICAgICAtIGNvbnN0OiBhcm0scGwwNjEKPj4gKyAgICAgIC0gZW51bToK
-Pj4gKyAgICAgICAgICAtIGFtYmFyZWxsYSxjdjc1LWdwaW8KPj4gKyAgICAgICAgICAtIGFybSxw
-bDA2MQo+Cj5TbyBhIFByaW1lQ2VsbC1jb21wYXRpYmxlIFBMMDYxIHZhcmlhbnQgd2hpY2ggaXMg
-bm90IGNvbXBhdGlibGUgd2l0aAo+UEwwNjE/IFlvdSBoYXZlIGVudGlyZSBjb21taXQgbXNnIHRv
-IGV4cGxhaW4gdGhhdCBhbmQgc2F5IHNvbWV0aGluZwo+bm9uLW9idmlvdXMgYWJvdXQgdGhlIGhh
-cmR3YXJlLgo+Cj4+ICAgICAgICAtIGNvbnN0OiBhcm0scHJpbWVjZWxsCj4+ICAKPgo+QmVzdCBy
-ZWdhcmRzLAo+S3J6eXN6dG9mCg==
+On 18/09/2026 02:36, Manivannan Sadhasivam wrote:
+> Looks like you completely missed all my comments given in v17 :/
+> 
+> - Mani
+
+oops so I did, my apologies Mani, I will take those in now.
+
+---
+bod
