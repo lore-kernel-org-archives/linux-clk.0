@@ -1,94 +1,92 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CD3F3D3302
-	for <linux-clk@vger.kernel.org>; Fri, 18 Sep 2026 22:29:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85C8E31AF2D
+	for <linux-clk@vger.kernel.org>; Fri, 18 Sep 2026 22:33:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789770573; cv=none; b=ll3J4oXpBmpuhY9+0HJL0wy/wqD0rZIsihpAw4TGWZKtnur8grQE/Ie5eK7RLC78eKxztlDvOzzbFwS7915MniSUnX6DJcgUEohb4pLvt8NT7Wp+2+aDO6WZ50E5/Cd/Em/PpPp5plA38nLmFlmDNWqktOVF9eSOp2M5qJwkJ8E=
+	t=1789770840; cv=none; b=J8dDjTWEJW07XfYWjPVhdqMrQIXrJkvC9CwFCda1xbV7VwHsfpPAUrozDyKJVkMFhkdkIDd0SBqU5XEucadQr9IkoJQ91rW5Ay/TCVMGefO5gd/F/eKIH445QK5H/xa9TgCmUpIzwT2JrOGVkBaocWCqDrhhjxuvTMjoFGmQNPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789770573; c=relaxed/simple;
-	bh=qJfvIkWQLChcJURKBe1+9TQo1Vq/0W077vbNcPpsImo=;
+	s=arc-20240116; t=1789770840; c=relaxed/simple;
+	bh=INJqXLOzCeVe+xylhlZPh25QRwnRX/J/LaqLgwxpFIY=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=mUASKKUWGYsuuoo7CgClSv7qeowys2u5WdK3NPPiurd3v8Ge5u7t+WyRY3KmvHpWzSGtLbRPql6sl2Pa58fhmoJff7/2Ze4LPzzwuM3OSjAPTdhG4o8KCyHq4dUaGPQICqWBG7jnWVHV4sHPZ5CZzmytRXYMHkbxv2rYfJq/Aks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=M6pEu83f; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=q9Wd90Ys; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version:Content-Type; b=GD2ZN8Z5XcwZggbdMN3GC3g7KLrNyfI1NW20tyQ4kwhOcDBQWS+OtKL8SJbYWg48I9ogsfiqjFlTRIPG2yXq4t9TR+6NvZsV7oxY8/XewMzq76JEe3lQv/4wxwwRllJG/E8XqjMFOYePc61gkk/rb52rnW6acaY2En5ESeeSsgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CKWTpMf9; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=VO+e7i2d; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="M6pEu83f";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="q9Wd90Ys"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CKWTpMf9";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="VO+e7i2d"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1789770570;
+	s=mimecast20190719; t=1789770838;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=p32LQHLzzMSNCQDrCQVRbQJDsxmVl9uccGFGyZXBagg=;
-	b=M6pEu83fRCIQ//8AFNjDsjLI5Juh+vy42LmOsPVEVON9SbLC43G/lIMaliKXbZKSFJTbVR
-	6X1Sv6E/C6GbBrF8oYp2StTYkMx0y1syBGV2v1ytnudOQ26/Xd5aE8lU513TAZ52TPe2nT
-	WyGSWmCvSCI0kITCZoOqJ1aKd8rVWto=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=uWIbl+NqjxFa+j1OOuPSWG4PAJNtr1JvOBX6u6e7mMM=;
+	b=CKWTpMf9T6ZwsHG+tNby2ba7BqgxB/a2KzY7tM73i9ykv3T5F6HfQtd4sNWhsRvAdapspL
+	OsZT24Q/ohIc7wpIG0cUZlY0HoddlsEm4h/9GLtnh4KvlYlX+WB8P2DkkNzzhzPlBrnTo8
+	w3zdXnS9oQ/4FNPjlZyGeX7+oX3XyUs=
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
+ [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-16-fGJ9CLUINReEOpEJUQ55LA-1; Fri, 18 Sep 2026 18:29:29 -0400
-X-MC-Unique: fGJ9CLUINReEOpEJUQ55LA-1
-X-Mimecast-MFC-AGG-ID: fGJ9CLUINReEOpEJUQ55LA_1789770569
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-52f9e903b02so36056321cf.0
-        for <linux-clk@vger.kernel.org>; Fri, 18 Sep 2026 15:29:29 -0700 (PDT)
+ us-mta-327-rUNLR4PvP3-uJVEG13ER2w-1; Fri, 18 Sep 2026 18:33:57 -0400
+X-MC-Unique: rUNLR4PvP3-uJVEG13ER2w-1
+X-Mimecast-MFC-AGG-ID: rUNLR4PvP3-uJVEG13ER2w_1789770836
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-93a0312937eso173316985a.1
+        for <linux-clk@vger.kernel.org>; Fri, 18 Sep 2026 15:33:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1789770569; x=1790375369; darn=vger.kernel.org;
+        d=redhat.com; s=google; t=1789770836; x=1790375636; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:mime-version:date:message-id
          :subject:references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=p32LQHLzzMSNCQDrCQVRbQJDsxmVl9uccGFGyZXBagg=;
-        b=q9Wd90YsCrPSKBVhyijmaFSfZAHkzSpI+1krsOFFUejQqUreZFEo43pqiCHSmELpP5
-         f41Mt2nE7DAzRKKmUb2woGdjAndq1qFE0S7jOaCPGMpzUonU2GdSJISZ6MYNxjN++cK7
-         w9OGbr0gHefj6ENmMXWj4eB6dVImN5bA3n0LjoGU34P4yXq0w1nJeimbUeFs8xlUMLRO
-         bWs1gjqYQojtuZz8+rAvjBBVrKbB8bDd5oii4hevyAppDWrk68UitZ79Fh9vguxK/FCw
-         GnAZC4i7kSlooetYGaIJAZ5nWc7CRbJ55e5NGQjZ1eeJ9CurEYvx4zKzby1XZ8Nuswuj
-         oeyw==
+        bh=uWIbl+NqjxFa+j1OOuPSWG4PAJNtr1JvOBX6u6e7mMM=;
+        b=VO+e7i2dDcD0IRR8HXqvTLfMt7K4Tldm5TnfmIrdVIJ5seLj5Hyot6KUJkPuDiEU7R
+         usTUTIhmo0NE1s6tQYy4H/jb7Lg3nbjXaZShLrlSKlv9qNXm7ydrBCR9ySbxjFabpj6g
+         LlvbbDukS/hdqy7Yv8B61xhc+h11vFzGeDjvZSaboz7FPn0gqv4o482c4kMlEOA2LNfX
+         x3T9ZFyF3A5q0WggXK/vbJUl0ah8+JdvjOJ8pCzvMN7oARUd6T0a/f0Cim75cEC0xLWt
+         FzR/dDhZQnR9xtoQs00iP55JEbtoDSRDZccKMcUn3xeu9qbDi98Ey+Z4s1e2lj4Rz19A
+         fhTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789770569; x=1790375369;
+        d=1e100.net; s=20260707; t=1789770836; x=1790375636;
         h=content-transfer-encoding:content-type:mime-version:date:message-id
          :subject:references:in-reply-to:cc:to:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=p32LQHLzzMSNCQDrCQVRbQJDsxmVl9uccGFGyZXBagg=;
-        b=gd+39bBsjVsrHU1LG+t2XxMpiqkhJCBnvGozMgq00s/jZwGbdY/FecdA0llcdlRJaM
-         xm4sbjwh5zd0js4AUW4asYGoFN/JblyOL5uEArh8CPZ0tr8oet6eSmu7rnnarzWjmoFu
-         30zL3mepUQGTYdolj3KKv/EkVXgG8WnjQlvH6Yol7kn17tMwzA4gBq93912syR2+S9Vh
-         W6a1025uhXhai2gYrprqkDHE7PnvetCmOvGQyv6Bhs0ijOwEMC+ZJzf2JYsuYhuD9QCt
-         BuV0wSQcRpvbcOztuQhGXcdcNUqk+C4a0p5RHl/aFF9lk5AWfQBNvmSZj1z1k620tzhx
-         +dzA==
-X-Forwarded-Encrypted: i=1; AKwUvBxjuaDMG65D/3vuRaPTUxUNxUBQold9Le6unZAMxH+VYtWzxkesV6JafWKZBunx6IOLYs2dxfeVmhg=@vger.kernel.org
-X-Gm-Message-State: AFuF++kf1JuDQFcI8s4tHx9kn8UdAyjFlNR3hx36WNcCTlE01R2dpztG
-	IVKOSF93ylon0hNSQMA2jV02FeRzFx6iney5dUDZjJBKxa85ooKgnFqOAPWC56+KkOnYqQcMIGy
-	ih0NUs+nd1iwrt9+ngLPVHIdhjlPQDBW+Q+0VvKq7P3ghK+66ZX7tOt3XvH8wvQ==
-X-Gm-Gg: AYBFou2wq5Uag7dN7Eh4i5EFXT/t0o+hNBrhKJ9+pbbtMXVwskYotZEXZ0hkN1YZ42r
-	8xlk3QUA6O2hJaVgFkSFA98bauQ6SJC3WkVGN8aKS+Vzuv5EMGvHQA48lFHHMijbKYWFZ9Xp5PU
-	2lqRbLzHxAUerpYvC1e9X4/L8SI0x5lMA/+aUot7ar/xc1hA12xu0KXxZsADtHep72aozYfWo3Y
-	3rB+qPa0X6ziAg3eLucyxBwckFT9mKG2Vnx2PEF9RLrfUYYrtnjKmzSsqmErOnslkAXkOXiek+W
-	+4nrZkdLPiX3POzPtT5AyACNY3QJd6I94j0Y7IBm+/IsCUesNcc6Xj9iqEBseinZNXWKdMm4eba
-	vxw==
-X-Received: by 2002:a05:622a:1115:b0:531:1e4a:8eea with SMTP id d75a77b69052e-5328d0015d9mr129233911cf.32.1789770569013;
-        Fri, 18 Sep 2026 15:29:29 -0700 (PDT)
-X-Received: by 2002:a05:622a:1115:b0:531:1e4a:8eea with SMTP id d75a77b69052e-5328d0015d9mr129233621cf.32.1789770568655;
-        Fri, 18 Sep 2026 15:29:28 -0700 (PDT)
+        bh=uWIbl+NqjxFa+j1OOuPSWG4PAJNtr1JvOBX6u6e7mMM=;
+        b=IKT/60JXuwjmB+DMOor7qcpwQq0FC7qXDRKSXOsZD7ybTKoYm81j7+9uFyJhRYKXFd
+         b0wly+2mD9tdQGWrLds++dtOwrIUsrwsd5/+3Nojkg1mG5WqyC/juPZmZFwzzb4cGy7n
+         L+aBKPRNEXhcuqxvLCVm4AKnykoA0Dan6DDcHQgQDhCVvV7OdpzGzKyYQ7ZLepUPLvdw
+         rFS8Gk2b5LH38UfF1+uMsG42lBieWy2jpWhXvAIQnkA0Q6ZWzkrJvYXgwO6RUNtZoDbA
+         7ilm5YxZjWJ6bIbrf4LBE79Ax20Y7IJjIA6qNGF5JM7ON9erCPPpWhAgMAL9o1hwtnkg
+         73Og==
+X-Gm-Message-State: AFuF++k/CdXvm4d+OOQJkpk+qtnQo3AJ1mFkGXOB96qjZHkL5lIqMpWj
+	lkvDmK3n4zL2koZjwy2qiHcn94KaAooIko5y/+qksGwqY9v9cJmfHyD0/I7dxwbZpzeTp1UzrxJ
+	3xhTeIPnQ6lQvwHv8XO51xlEp3akDjYM92I7c1PrUcxIkIJWj+g/42CCD2Efxaw==
+X-Gm-Gg: AYBFou247RH6gGsROyRJvZy70R1v/IbeU1j04kNtZPaDPGYzqEZlCClTuIQZRpEAUc6
+	SNy1reHFD040TJQr++RSg1T5/lPpz1ba2WgiGHPdZse5kM6YMuUZMi73EwPKeC6YVDlRJpUE5Ay
+	d5A3M7wRsu1OoQ2te/SmhLa8SnuuZn2he4Hp4yrcY/aMPaUwwCdzs00K2va1Cegc8vVSsbXF8y1
+	+263f9KY8QRpia4D2Vd3P0sQ3ta25DHNIfn4LKIvbLNZW+ChCGduDrv/hDRviLxpJ7kYdaKp09G
+	KZYn5Q0JynuBrt7aJuRmcZtA6cjdl7zDjMc7Ev8pzSOORlOlIWP57qV9Rwb20gDU0k0cUohF744
+	zGw==
+X-Received: by 2002:a05:620a:390b:b0:93b:d7a2:dd30 with SMTP id af79cd13be357-93bdca2f41amr674808685a.64.1789770836626;
+        Fri, 18 Sep 2026 15:33:56 -0700 (PDT)
+X-Received: by 2002:a05:620a:390b:b0:93b:d7a2:dd30 with SMTP id af79cd13be357-93bdca2f41amr674805385a.64.1789770836227;
+        Fri, 18 Sep 2026 15:33:56 -0700 (PDT)
 Received: from [10.239.101.46] ([69.43.42.202])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-532ae758a61sm7260371cf.26.2026.09.18.15.29.27
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-93bed720979sm52774585a.3.2026.09.18.15.33.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Sep 2026 15:29:28 -0700 (PDT)
+        Fri, 18 Sep 2026 15:33:54 -0700 (PDT)
 From: Brian Masney <bmasney@redhat.com>
-To: Wentao Liang <vulab@iscas.ac.cn>
-Cc: linusw@kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- mturquette@baylibre.com, sboyd@kernel.org, stable@vger.kernel.org
-In-Reply-To: <20260915070103.1733176-1-vulab@iscas.ac.cn>
-References: <20260915070103.1733176-1-vulab@iscas.ac.cn>
-Subject: Re: [PATCH] clk: versatile: clk-icst: Fix node reference leak in
- of_syscon_icst_setup()
-Message-Id: <178977052357.517928.2775331133276610419.b4-ty@b4>
-Date: Fri, 18 Sep 2026 18:28:43 -0400
+To: kernel@esmil.dk, hal.feng@starfivetech.com, sboyd@kernel.org, 
+ bmasney+clk@redhat.com, jbrunet+clk@baylibre.com, 
+ Slavin Liu <bolin.liu@seu.edu.cn>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20260913125112.109755-1-bolin.liu@seu.edu.cn>
+References: <20260913125112.109755-1-bolin.liu@seu.edu.cn>
+Subject: Re: [PATCH] clk: starfive: jh7110: reject oscillator lookup errors
+Message-Id: <178977081281.517928.6939892827902684127.b4-ty@b4>
+Date: Fri, 18 Sep 2026 18:33:32 -0400
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -98,24 +96,24 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=354; i=bmasney@redhat.com;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=310; i=bmasney@redhat.com;
  s=20250903; h=from:subject:message-id;
- bh=C+KFUpRy04Zo8PlhMyOdpcWavq81OHmCgPld83aOHow=;
- b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLLW7na5kVq75sCanhIhw7Zm1+124rpM7lUH3BpVzy1c5
- HziXGV5RykLgxgXg6yYIsuSXKOCiNRVtvfuaLLAzGFlAhnCwMUpABOx/cPwV0rousCtVRntK5yW
- Ty8slf/jddblmuDt7MiJ7kyz/zOuk2P4X6H1c6ea39vL0XltLBNCmUP3SSqX8tmKqZbd+60afJe
- NGQA=
+ bh=7EWeT8I/x8N3qDmNa8W41HSYuVGHBmJDoXqc4/tpGtc=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLLW7gl49870YOHjnHN7/7EFnen6kH5k9WGpQ743LOWvu
+ ZhUX6mc21HKwiDGxSArpsiyJNeoICJ1le29O5osMHNYmUCGMHBxCsBERGsZ/ruceyawPvO93BNN
+ 7U2B+o4xTK/4jOW4FfazFz0y8sh4xsnIcOrrpiPrXsaq/5/9uyXg6Enb9bkSj9aY3Yh12nm1ZoX
+ PbUYA
 X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
  fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
 
-On Tue, 15 Sep 2026 07:01:03 +0000, Wentao Liang wrote:
-> clk: versatile: clk-icst: Fix node reference leak in of_syscon_icst_setup()
+On Sun, 13 Sep 2026 20:51:12 +0800, Slavin Liu wrote:
+> clk: starfive: jh7110: reject oscillator lookup errors
 
 Applied, thanks!
 
-[1/1] clk: versatile: clk-icst: Fix node reference leak in of_syscon_icst_setup()
-      commit: c90a50d07f0c38c62ce13a60806ab5e3b841f70f
+[1/1] clk: starfive: jh7110: reject oscillator lookup errors
+      commit: 54d0b6903921d121fa750546f2b38cc3f5c7e64f
 
 Best regards,
 -- 
