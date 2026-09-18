@@ -1,112 +1,96 @@
-Received: from mail-pj2-f42.google.com (mail-pj2-f42.google.com [74.125.227.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B095F305677
-	for <linux-clk@vger.kernel.org>; Fri, 18 Sep 2026 04:42:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC8D63A7F60
+	for <linux-clk@vger.kernel.org>; Fri, 18 Sep 2026 04:48:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789706525; cv=none; b=JIu0mvghmeBCn4fQB2nt2iUZ1XDy4tArnb4eRuXjCUtgle9OR4rAaKZURWGYv7EOhXxVY//la6VuwA5HJdqz/45eYavwQT9LeKnljcl8HUZ5m+lvy1Riao0YhOgW1AXKwQxFvJ49P9T8Hr7Oraj/U1kFQTw7+hqGyTGywXQNLRM=
+	t=1789706940; cv=none; b=VXGUkT9eWfiMU6UqlKLXGbKutPNmwmLBW9JBNmwD/S2h7rXX9V9flYHCz45O63BeoWQWH7omchttor1VJmlhiqukFNHTyir0ZVrX9U3g0EYicEqIu02oeWhl+4RgEk3owegYX/FiCaXH6Fgh0DltIZKchAh0CHTbpkFhPrpvQoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789706525; c=relaxed/simple;
-	bh=EEwItVDn4j3sjRXIFX6oSgxd5iEJbZVXKN97spsMCpM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iZzschzeaVxoDj9ntCU0OW7bO16NiIMasQ3VrvXmnRkioB8vg687TZpGfNEQBlAQn7Imm06RWj4aWzSBGmKhaKXpuQphXP2OoGe7XbWGnmq/NYS/Nio/kGyyLoyDj49YS2XKEXdEFI3B0GJsDQ8vB8XSBAb7SJOqcyOSvvkQ23o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ULEDbFCn; arc=none smtp.client-ip=74.125.227.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1789706940; c=relaxed/simple;
+	bh=X1ob3WJmnDHyqp3Xde9ot+vpEIag/VUpI8n/3eISrdk=;
+	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=ldB3nm+J1ZZKTndUqFptTqPozgormdJX4dLVI9b6PktD+f78v7vpEE/DNrpnMF0B7TvAqM2KiwKE+I0T1SQR8sAjmGaIYQytSpi3z10DRJNEpkgXS0O59C+DaTU6zi6xlA2oMix1yoSDjbiBz/3M0atHg/vOV1gpE4WfIfEs950=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A/Tog2vp; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ULEDbFCn"
-Received: by mail-pj2-f42.google.com with SMTP id d9443c01a7336-2ddaa08c890so2633985ad.0
-        for <linux-clk@vger.kernel.org>; Thu, 17 Sep 2026 21:42:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1789706524; x=1790311324; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=jLhSQVS66izuo4+FI7QDBqq9bxYvfIHSP1AdZGaUGT4=;
-        b=ULEDbFCnojf41EW8LgBff1WUFxx0EjLxHQO6nR8smTdvHT85ZMLicU25QS/fR5Fn7e
-         cMtGWQQBq43wlI3w9bgL9EmWNGNHOc3vg+iuAEU8Fow/ZtypmGBiMb2ly33+OdpZUz9u
-         PN/vyNDaW3CfsWNbUhIthPRbOTc0wdZSQyjxSzCPJ5/gg2fSd5R/xvQvyN9HV2cCgBmj
-         TypjXFOr4VwqI4tHkDxcEvRfSBS5YlZT9bu4/9D32uyjmwO0US6ykSHYUC+d1B1EI8RG
-         T6eJwC7DqqBIqMHy/d5KZmyS21guiIsNJEYlpCxMANSU9ZCpYpZMnak6rFKJ9bi7itb6
-         se6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789706524; x=1790311324;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=jLhSQVS66izuo4+FI7QDBqq9bxYvfIHSP1AdZGaUGT4=;
-        b=Htxl/Xued9Ih6OynsISDLnknWt/FcA+gYoZ0nMl5K7uI6zCLtTWUq6G2ymFrFAx0Pd
-         6Jd71PwiJUDn257l13bov+7MRGAlcpfrn2xlxg/N7cH0e401L6+SZ/KuLoBUJNrIyLXK
-         EZWVs6xlgu0972H0ki6nZTGrd647akVVoaO6Mgb0Gkk9aw238hg5TOqPN3V1g+edEnTw
-         SWNIsjPwozbJ7+EUVBqvaLuuJxcTVTmcxOkFaa+MIQyTz5eAlRkJPRRxUJ2RDaQ7loIy
-         lrUl3N+i2Xdn9KgbbeIzxTyDTuraqq25HCnejL2pEkurN+onSoGUANBmRH2Y7Z5Cbj9w
-         b5lg==
-X-Forwarded-Encrypted: i=1; AKwUvBxxrpVg3WPQYCjRilN7uKs6IxgPNhpkBppE/ORw6OqD+G4iMu351AtZcwRQAvnbJGoqTIsjUNYwwMY=@vger.kernel.org
-X-Gm-Message-State: AFuF++l+UUCwYH7u6nHdNnxBIUGYQtwmDCiZdd81myeGNqfaXAD+k5jG
-	wbUS25nRdrnF7Lh4KNxV0AQkWb3QqIuDQVuAQwKzMVl4COhD3QpeqbM=
-X-Gm-Gg: AYBFou1ErY1LMmikBR61sEUpFPeQj9Vo7359gVvM+aLWKlV0p0qs/wJAI/iZdckCIKd
-	dzTyydfWIHGQY2DMMvNcTnkzy/RYqY8YkdexlaPtBByOyK0aRdMMSXZn4Suck95N1MhdHxtpXtk
-	c9vSC/MzVphtHKBolwE6fHYrEADN0mjZp5YKJ0mKnY1JxDMik5LK85Z+JCizPNOdTvaM3resoOD
-	AfvutlkdSAIHUvp8L8l6wCKcOkb0HeBP4adgkELugipmDAzR+i0Q7yHmrzHFZl+IMmx06OWUucb
-	6bzD6lNPGSwpuYF1pIMCLv6UBpFvUc8plbJp8eM09OCQbi44ByDksRCUpvf5+LR4l2USx/tmTH8
-	a+pISKY0bltqsiObtPBMHgaODtKROi3/DMY/l4Ifk/hjwfNIovWiMRSpF0NYt9mBH4LawG8VkjO
-	I8g5ZUtXZ2tWhcYCWwh62ZQilVktQZpTfJ7yHzPOspZ01UeZLOM2oTb9Ga1pFdH9XPMcYVdMZbm
-	MMd66K6tcDbjb2iHGk/H7g=
-X-Received: by 2002:a17:902:d4c2:b0:2d8:de9f:9a44 with SMTP id d9443c01a7336-2ddb1c15766mr23812395ad.19.1789706523953;
-        Thu, 17 Sep 2026 21:42:03 -0700 (PDT)
-Received: from DL2XHKPB4.dl.net ([103.63.104.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2ddb760d684sm1704675ad.81.2026.09.17.21.42.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Sep 2026 21:42:03 -0700 (PDT)
-From: Triet Hoang <triet.hoang.dev@gmail.com>
-To: sboyd@kernel.org
-Cc: bmasney+clk@redhat.com,
-	jbrunet+clk@baylibre.com,
-	florian.fainelli@broadcom.com,
-	bcm-kernel-feedback-list@broadcom.com,
-	mcanal@igalia.com,
-	wahrenst@gmx.net,
-	triet.hoang.dev@gmail.com,
-	linux-clk@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: raspberrypi: Handle cpufreq device registration failure
-Date: Fri, 18 Sep 2026 11:41:30 +0700
-Message-ID: <20260918044131.608482-1-triet.hoang.dev@gmail.com>
-X-Mailer: git-send-email 2.53.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A/Tog2vp"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F202E1F000FF;
+	Fri, 18 Sep 2026 04:48:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789706938;
+	bh=noCiZdFMxsCVUIDKh9LE4Pp+FqiZvyp4LR9Kayt9DQY=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=A/Tog2vpzV7o1lw/c/eKavonY7CcmWB1VyQZMC00B9J53YMMxGaH0xIUtRj35i56X
+	 2aOdPFbo8xi/k/j8QO3eK4gOvT6hPtiktbdMAfQEUY75bbJN7Bmh/apbnhRUt1BW5X
+	 azLMt7vzugLx/KDE7mwSPvLPPlHIxvD4QT0gFRJThOzedqZY2vPBvsjbrlcaSK0CU+
+	 MMP5fRInXxftY5fmxvPg21cdPq/oRBVsx2FLW488mXQmqRM+3IWYT0Xbp85c9HbO4v
+	 yT4RFJcIGmPeo3/qWQFSRZ/qiQ71B79TxRCxWHhlhh/rkWEyjWSw1QSqPxhjFJB4Fg
+	 L3SD2WOZEqg2w==
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH] clk: raspberrypi: Handle cpufreq device registration
+ failure
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Triet Hoang" <triet.hoang.dev@gmail.com>
+Cc: linux-clk@vger.kernel.org
+In-Reply-To: <20260918044131.608482-1-triet.hoang.dev@gmail.com>
+References: <20260918044131.608482-1-triet.hoang.dev@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 18 Sep 2026 04:48:57 +0000
+Message-Id: <20260918044857.F202E1F000FF@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Check the return value of platform_device_register_data() when
-registering the raspberrypi-cpufreq device and propagate the error
-if registration fails.
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
+- [Medium] clk: raspberrypi: core clock probe fails if optional cpufreq dev=
+ice fails
+--
 
-This prevents the clock driver from reporting a successful probe
-when the cpufreq device could not be registered.
+commit 9a3a7cc11a038dd3ae191483f044c2febc6c2ed1
+Author: Triet Hoang <triet.hoang.dev@gmail.com>
+clk: raspberrypi: Handle cpufreq device registration failure
 
-Signed-off-by: Triet Hoang <triet.hoang.dev@gmail.com>
----
- drivers/clk/bcm/clk-raspberrypi.c | 2 ++
- 1 file changed, 2 insertions(+)
+This commit adds an error check when registering the raspberrypi-cpufreq=20
+device in the clock driver probe function. It propagates the error if the=20
+cpufreq device fails to register, preventing a successful probe return.
 
-diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-raspberrypi.c
-index f1a99de6de4f..9882f243d681 100644
---- a/drivers/clk/bcm/clk-raspberrypi.c
-+++ b/drivers/clk/bcm/clk-raspberrypi.c
-@@ -553,6 +553,8 @@ static int raspberrypi_clk_probe(struct platform_device *pdev)
- 
- 	rpi->cpufreq = platform_device_register_data(dev, "raspberrypi-cpufreq",
- 						     -1, NULL, 0);
-+	if (IS_ERR(rpi->cpufreq))
-+		return PTR_ERR(rpi->cpufreq);
- 
- 	return 0;
- }
--- 
-2.53.0
+> diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-rasp=
+berrypi.c
+> index f1a99de6de4f1..9882f243d6813 100644
+> --- a/drivers/clk/bcm/clk-raspberrypi.c
+> +++ b/drivers/clk/bcm/clk-raspberrypi.c
+> @@ -553,6 +553,8 @@ static int raspberrypi_clk_probe(struct platform_devi=
+ce *pdev)
+> =20
+>  	rpi->cpufreq =3D platform_device_register_data(dev, "raspberrypi-cpufre=
+q",
+>  						     -1, NULL, 0);
+> +	if (IS_ERR(rpi->cpufreq))
+> +		return PTR_ERR(rpi->cpufreq);
 
+[Severity: Medium]
+Does this introduce a regression where fundamental core clocks might be
+unregistered if the optional cpufreq device fails?
+
+The raspberrypi-clk driver provides essential system clocks, such as arm,
+core, and pixel. By returning an error from raspberrypi_clk_probe(), devres
+will automatically unregister these clocks. This can prevent other fundamen=
+tal
+SoC devices that depend on these clocks from probing, which could severely
+degrade the system or prevent it from booting entirely.
+
+Is it safe to structurally tie the survival of the core clocks to an option=
+al
+dynamic frequency scaling child device?
+
+> =20
+>  	return 0;
+>  }
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260918044131.6084=
+82-1-triet.hoang.dev@gmail.com?part=3D1
