@@ -1,97 +1,95 @@
-Received: from mail-wm2-f13.google.com (mail-wm2-f13.google.com [74.125.225.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail-m49197.qiye.163.com (mail-m49197.qiye.163.com [45.254.49.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C867019CD0A
-	for <linux-clk@vger.kernel.org>; Sat, 19 Sep 2026 14:40:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A8342F1FE4;
+	Sat, 19 Sep 2026 16:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789828849; cv=none; b=EiZriHOXaHPt9vjvFYCWy8FSW7U9nCALSdLLYMvq9S6EuALkTN0/kt91KgHDNydzLQN1t9JeOtUkvo5w/qh6w0syZEz1w+IrvzL4/IGSk71YcSwcj/gI7ml2C6UC0VMC5sWrgfJf2azM8g6DSc89fAu93uQJvj4ZVVgyhabwwLc=
+	t=1789835482; cv=none; b=lmnwXbBZgSlM5XyvIZ4xSttu55bIpMkGe7PFA1Jelln7OVngpl4JKRX/Jb3CcVWbHN0v8n65C+ZgLkm0nSFTnWrLt1shJGLdIz8cHqByn0RUJICS/aOZ+UI96ta1CCBhTbLS/hP2stRzzE4NdV7A4WrUeXqy2UlJP2J7VqA8uoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789828849; c=relaxed/simple;
-	bh=4HF+6nYuBX2Y2b3IHAHrrAE8fZQwBLN3OIJieXuHQT4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sw58swCumfRVJhAw40xhAxU6KWEKzC96zCsG5Z1tI0pTpA/fdB8KFnp/mI/tpho/BrwgRfeO+Ja2ipeSFG0xz1wjQ090ZpZcgQZQO4pglKlwEHx+DxnLO7x1t0ENvrVCzzZx/fRXX+Votn0zgSJlU23VN2/i5iRAeMX37qVzpiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=H80uXjTH; arc=none smtp.client-ip=74.125.225.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1789835482; c=relaxed/simple;
+	bh=QEydRVe7szFnjbjMs68m3tM6OpM7LpIPSA3ouOsDKNc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MGeuVSqfq5JeIkfFnKRd39IW1i5GqZxe6nw6t8y0SgJVPdXRHFW0+mTBTIdWW0Ou3+XWGu2tr65Am2OlleXhcq57rMJam1ETjQqpuB7VS0mIfYIFhwflccd7oJLEdh6WOlZ7U51PXZ1p3nG41kM5nFNN8QL1b3MiGnCiHMWQ46w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tju.edu.cn; spf=pass smtp.mailfrom=tju.edu.cn; dkim=pass (1024-bit key) header.d=tju.edu.cn header.i=@tju.edu.cn header.b=H6nHROhR; arc=none smtp.client-ip=45.254.49.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tju.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tju.edu.cn
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="H80uXjTH"
-Received: by mail-wm2-f13.google.com with SMTP id 5b1f17b1804b1-49e8185e037so9193895e9.3
-        for <linux-clk@vger.kernel.org>; Sat, 19 Sep 2026 07:40:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1789828846; x=1790433646; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=jwmdQqglUsHFWpk5iMe/ySqB2I3J+4h1U7l6JuJEn8M=;
-        b=H80uXjTHNEFu/JlWtMzboPwkVXFSs42KkmRPiN4V+elIMYDwUFsQiH+I9vwaYS2jdB
-         ofnJ563zDwtsgr9RTwS5cCOUEWJnKgR5D/WNb/t6PNpEJ99mW40G9YjmTb8k5OxHt+TP
-         CbKMt4kGGotdQMQnws0HlYMQG2eTWV7mMhm0TprRi1le37KKa2Bk+M4FQwqIqVgOL0RO
-         AZmycFNZaSmQntV2lUd6UPEonAicIHGfz0Ig5+yzRXYAO6VTpd66/OjnuzIWGWYbov97
-         pfNj763ZtlD93uOo5X3jfYwasn3JsTXeR8+YdnTZ3gwwQJERBDNhRSbk6/M3ndgpAYQK
-         ptEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789828846; x=1790433646;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=jwmdQqglUsHFWpk5iMe/ySqB2I3J+4h1U7l6JuJEn8M=;
-        b=FbRpS9hxtRM/ZUL+CcwOQMV274MYDODIS7uU/Vwl29GQpbiJsriNBwaAxmlvSM3aoE
-         n0/oILdQR+hLI+uyZR9mcT3Vnja04pz98dGpoDETlr3+oQNujLrM9S88Vp0JG0ltAs8b
-         5c+eucV4+m9nohC4Wa6Xh/MoJeOyK3PHEaVr3U3N+MJBiaR6YkFmC1K6u0AqK8+/379W
-         Yk6HI1lmmM/iSmSIZCFGCWXJTMHro6VY2d8+C/ANXMwtpzocGI5ajvofeJMnD6AS0LPr
-         aC5zCFIHkPVvFGpm9msrukOubmF6zsKg9kosX9k7xNNVLWIaMkz/dJrPwKGR4Yatdhds
-         GkYA==
-X-Forwarded-Encrypted: i=1; AKwUvBx7Q1do64SHvNgl4F9Y7szbkqq1y+WF8DfkHkHP/GmGnSx+j7e/3LHzsIjSSBI9V/ddw9DSwGW6FMw=@vger.kernel.org
-X-Gm-Message-State: AFuF++mCDP6Urc8oUzkR13a3fYNj1+kc5ot1/kyV8/jE9VJjpLzho6j+
-	kbyS70kJt1p0CNTghCDKmFTn8XlQ8Ch3crrhaJhM6qHUPuFmjVCfmIDqVpRbLMpxl9M=
-X-Gm-Gg: AYBFou1DqW0UybXfcBSk7BYZQhK4Xn6ldYGG99tAPODpt/tsHL6qogretS+LikmrI8B
-	UDyEQw34R2zX3IUz5cIrBu6OGEPvQduM+AnRQgxLzuVENi5Bszjpzfx2I1byIrgJ4nOwLtUGHmX
-	z8BhBUMmAPikeyWhfF7O7G+cJ/FZqJLjX+S/vYvmQ6HqiPSE2ucE3DI5Km5wHRd8+tBuOsLF9Ip
-	3QVBxmfONsknLO7NGC6SxtDaa/BjTypOj4T5HUNjj2XZ9Kbp/K7n7/QBzhZEil6HVM6cLPYLPCr
-	iRNNCHs28dq+BmGYSBrFBscBfgCxY1Wp8OkFtNb1sAZYZMIDma4hRwSiPbQi9kP8S7ZI1Fcf3I0
-	kJ5nS0DTThA3M6q0DjVvtry8gsaND3J0ijy211Zlvc4LkWw4qHcMSYE1c6ZPy30XI0LH7sCL0OR
-	D9O8beJzMUSC1U8bCuL2lOVQ3uJFiltaKqr/2Uj+WyGEcnqncljGbYLEf9fvQVoYmB4WBlh8o6d
-	AyJqmEFL5zkIUmsY8mWt1D5rxt092l7qDpHbK1eOpwP0BmIqAvPRmA=
-X-Received: by 2002:a05:600c:4ecb:b0:49c:fc6c:be03 with SMTP id 5b1f17b1804b1-49fc5754e06mr75514935e9.26.1789828845928;
-        Sat, 19 Sep 2026 07:40:45 -0700 (PDT)
-Received: from ?IPV6:2a02:2f05:1204:e000:2cf7:c250:64a9:ae77? ([2a02:2f05:1204:e000:2cf7:c250:64a9:ae77])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49fc52a5b6esm67531315e9.4.2026.09.19.07.40.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 19 Sep 2026 07:40:44 -0700 (PDT)
-Message-ID: <be98fdf7-17d2-4b41-ba9f-df4c8bc276c6@tuxon.dev>
-Date: Sat, 19 Sep 2026 17:40:42 +0300
+	dkim=pass (1024-bit key) header.d=tju.edu.cn header.i=@tju.edu.cn header.b="H6nHROhR"
+Received: from tju.edu.cn (gy-adaptive-ssl-proxy-2-entmail-virt205.gy.ntes [183.242.150.9])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 4e612fa0e;
+	Sun, 20 Sep 2026 00:31:09 +0800 (GMT+08:00)
+From: Yibo Tan <lhfff@tju.edu.cn>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Elaine Zhang <zhangqing@rock-chips.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH v1] clk: rockchip: Unregister notifier on multi-PLL registration failure
+Date: Sun, 20 Sep 2026 00:31:06 +0800
+Message-Id: <20260919163106.1833104-1-lhfff@tju.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: at91: main: Drop unneeded cast in
- at91_clk_register_main_osc()
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>
-Cc: Kees Cook <kees@kernel.org>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <51abd9177801984889c2a0c321ea8587677178c8.1787316176.git.geert+renesas@glider.be>
-Content-Language: en-US
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <51abd9177801984889c2a0c321ea8587677178c8.1787316176.git.geert+renesas@glider.be>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0aa0ba81e1be03a1kunm005bdd813f1226
+X-HM-MType: 10
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVlDHUJIVkwYSR5DSx4ZHkMeSFYeHw
+	5VEwETFhoSFyQUDg9ZV1kYEgtZQVlKQ0hVSU9JVUpOS1VCWVdZFhoPEhUdFFlBWU9LSFVKS0lCQ0
+	NMVUpLS1VLWQY+
+DKIM-Signature: a=rsa-sha256;
+	b=H6nHROhRofFAqw6rSvIplm54SpLReIPjjZj3lPrj21YcJeIITjbW9yxWmgHWlFTnMvPaVnVM9228CCZp8gR5vRqSYIO0dCQty1I8FwdZcEj9TX8t9ZrH2g5iE1mW/mry9q9XXdMYVkON3lMgZrRx0U0MHiTVjO3zu5F7CrRNXAc=; c=relaxed/relaxed; s=default; d=tju.edu.cn; v=1;
+	bh=JMEurOe9ZHBP9Lzs52oCdL3QD0lTBynnDeFDQ6wWGQc=;
+	h=date:mime-version:subject:message-id:from;
 
+rockchip_clk_register_cpuclk_multi_pll() registers an embedded notifier
+block before duplicating the rate table. If that allocation fails, the
+error path frees the notifier owner and unregisters the watched composite
+clock without removing the notifier.
 
+The common clock framework retains both pointers in its global notifier
+state. A later rate change walks that state in __clk_notify() and reads the
+freed watched struct clk before it can compare the clock core. The notifier
+chain also retains the notifier block embedded in the freed cpuclk.
 
-On 8/21/26 15:44, Geert Uytterhoeven wrote:
-> When assigning a non-const pointer to a const pointer, no cast is
-> needed.
-> 
-> Signed-off-by: Geert Uytterhoeven<geert+renesas@glider.be>
+Unregister the notifier before freeing either object. This mirrors the
+rollback already used by the adjacent rockchip_clk_register_cpuclk()
+helper for its equivalent post-registration rate-table allocation failure.
 
-Reviewed-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+With controlled allocation failure injection, a later rate change produced
+two KASAN use-after-free reports in __clk_notify() in each of three runs.
+The same three runs completed without a kernel diagnostic with this change.
+
+Fixes: 826eaa8f5bac ("clk: rockchip: Implement rockchip_clk_register_armclk_multi_pll()")
+Cc: stable@vger.kernel.org
+Assisted-by: Codex:GPT-5
+Signed-off-by: Yibo Tan <lhfff@tju.edu.cn>
+---
+ drivers/clk/rockchip/clk-cpu.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/clk/rockchip/clk-cpu.c b/drivers/clk/rockchip/clk-cpu.c
+index eb6b8b878..2de7f2b4f 100644
+--- a/drivers/clk/rockchip/clk-cpu.c
++++ b/drivers/clk/rockchip/clk-cpu.c
+@@ -544,6 +544,7 @@ struct clk *rockchip_clk_register_cpuclk_multi_pll(const char *name,
+ 					     GFP_KERNEL);
+ 		if (!cpuclk->rate_table) {
+ 			ret = -ENOMEM;
++			clk_notifier_unregister(hw->clk, &cpuclk->clk_nb);
+ 			goto free_cpuclk;
+ 		}
+ 	}
+
+base-commit: 04721208427536c0f70db0efc5362c7f5a4997c9
+-- 
+2.39.5
+
