@@ -1,261 +1,104 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic303-20.consmr.mail.ne1.yahoo.com (sonic303-20.consmr.mail.ne1.yahoo.com [66.163.188.146])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B2AD37FF68
-	for <linux-clk@vger.kernel.org>; Fri, 18 Sep 2026 22:42:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 852D42741B6
+	for <linux-clk@vger.kernel.org>; Sat, 19 Sep 2026 05:31:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.188.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789771368; cv=none; b=bxSWIcYxMeWwxygu1rTNUKKHtuMg0owJ5ItVdRzjkm95tsTV/9GvvDImrt1xm4vAQ6K2MrPB6KvsXyZR0mx0/89hvehBX20+/XH3sQOqevZ8JpjGZnWEpRp9EZ/ACRoebIoM600e6szAIe/OCJbul16WraJiykEOrrDGI3W74uA=
+	t=1789795898; cv=none; b=YlsZQpNV8WWlW3LsQPEi9kEJahsiSrBfSpIILcwIdevOdbkJQrkHA05DCYvM8yFpEh27NHec2TTASCo6ubwKo42BK1H6SrJJum4NJe21bKP7DozWeQL6aoBI7PA2gclL8Tj2vPPEyC3pf/G2VDgYrXtLiZKHrhdshHtRq560aAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789771368; c=relaxed/simple;
-	bh=MkPzqZeR3+qlWqlud+iPO/JWjWS7F6vl07CGk4gnzzk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qd7moAdElxhU9rm1tecTPtQIJSqabcct2KlQFr1LL0Bpdf90xESoFj9v6kcIvznoT2tLQUaAFK10UKwZPL/kS0VEVD5fO2EGowS95mDMWJoiZ9d4jHB+HD4B8rebOf30ZV+g/WwAZGeQ43f2ZfFjb3qNktyN7p2UJpcy2mSS9TM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MztgzOMi; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=C2LatyLH; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1789795898; c=relaxed/simple;
+	bh=MMjUtHCs4/yDpCGHhPdiiHBAMqlZNMH0PrNv5RE8WeM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=armeL1bFfo1WZ3dvznn4wnOyfkkit7i/k2xGEQHiS6+CI+Lz2Bjr24PSNBAVvu/lUynecpN160sNYKrnDHWt7jAZ/PS+rKKaz8VKzTlOLiZEDYSrMX2a/zRxSaMM8HeClP/bb1F3rkQSoTnX+fF7D5bcV04csWlaSFjaL+FOlT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=CLPxbk3Y; arc=none smtp.client-ip=66.163.188.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MztgzOMi";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="C2LatyLH"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1789771366;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/n/7UN6+yP2YInvvqD1Jw1p+AQ2bWsxeusuuVpsPbog=;
-	b=MztgzOMiKtaDiAAaKnLqtxq4aLYEEB9flDc3wBmPop8oyBHJcrw6JW64VCzuFpyBYSqYlY
-	hzRwb9NjBWggdLT5E2b/qwS3nn0wnPCS2nUOsKBeDIK4AR9jc05dkW2Y/rKgxqnd2hp+Mf
-	JrUvLR+AY6kA/rlCtaxoNuysIbZTf+g=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-467-tP_TI3AANrm2v8692TkViQ-1; Fri, 18 Sep 2026 18:42:45 -0400
-X-MC-Unique: tP_TI3AANrm2v8692TkViQ-1
-X-Mimecast-MFC-AGG-ID: tP_TI3AANrm2v8692TkViQ_1789771364
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-9124b265371so26161836d6.0
-        for <linux-clk@vger.kernel.org>; Fri, 18 Sep 2026 15:42:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1789771364; x=1790376164; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:content-type
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=/n/7UN6+yP2YInvvqD1Jw1p+AQ2bWsxeusuuVpsPbog=;
-        b=C2LatyLHDJcnSv0mjZA3IEWV0+1wKf+qyPwCZTZAR0Bc19lyEMoQSocgsfM3MOOHMQ
-         5jaLv4y1dYQDwOuT36YjMqLkSZ7uxFSF9iO98re/NeqR6DoUDrdZEybyqjvJO6/aOdo+
-         b/DZWfB90YGvULRRxj5R6H1TWtiPBJtlXgB8oj4lWaysb4+09ZiVy4Pkn87jUJjsR8Ga
-         gvqnTdPqpLAhT6VjXotq5kOvsCUcwKFNtF+4HxLKJ2Luq04LUdjvxvAfq4pk2L01iO+Q
-         hi5tGA3QMSYpolhA3F+6NrSWfcz9VRF4UJANJImV9n26DUkX0rj7Tlhrl3yblRbX5N5Z
-         OsIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789771364; x=1790376164;
-        h=user-agent:in-reply-to:content-disposition:content-type
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=/n/7UN6+yP2YInvvqD1Jw1p+AQ2bWsxeusuuVpsPbog=;
-        b=O8o6RKZLCv9Dnm1YyptczTl5Uo5EzXc1PW2pTMldKsyYTUcNgNUCGZrQYk95p3leNj
-         NVnNfrA/GS+up3XRDvU43lB6R89X46SQBoZi7BvOFFIngvVXY7FdK4+ikWzEATnLnMkl
-         MhkgeCK/27ElJ33NHE3p62JGidn16/43fQr2Yk5lc/RWvAmLRc+lKj3oQe06ZqZFon3O
-         f92Kqd3M3AcBxdbYsFm4Wg7Irllm2CAS4eTcaGBwgVkU1tpMlW1iH8TnWwkz6r8Fimrs
-         nB5kMD8xFtSS2a2kfXT/uHJ020d3wl3bODH4WQ6kN+plSZK+z971Nqqiel07IImPelCN
-         6MNg==
-X-Forwarded-Encrypted: i=1; AKwUvBzOdkLuU5fneFilc7OLNG16SIq0vjt7zKBXvUMHMOzyiifjKOg2qhO4uHlB0UCixZrFbk3mvZ+L2I0=@vger.kernel.org
-X-Gm-Message-State: AFuF++kThrIrGTpQqISiWeh9sgTvVMDR1WbEI6xVEhKwwiujPKTCjDbQ
-	xAhs5BdHTvxcZM4ST0/owCFfgUzbAzO66Z/FYB8bJ5zkdczUfpSwiCwYw7F5xnZ6z2RAG76NhPe
-	z4QAFrFLExyOJaMemMcEGj5s++kAqJdUplxZjhPmxJj67vQLveiK7kojp14tXhw==
-X-Gm-Gg: AYBFou1mh+ksItGObnDhRhxdqI/XitGGQwCcawmzFApGeOt/gfz/au8NzXtCk5obEoR
-	C3wTCWI93MoVABxyaZDrVSzsDSH2QYlV5ycHsviMNzBx6qTMrf/xet4VuWe4apLSDXwSL+C+1dY
-	d+SFN2R58hgCPg3Wdzzj72UX/X3JbdPTubkgofDZii3lj+rS92vPpyn5y/r1hqvQLOU63wyts35
-	aUjTndE5yf3uzTFWKVHPTd+NbwtGb+kIjk7poOBIEVkHN8dx8vwEOsMyMWk08Odtzwy1s6nxzbB
-	ddeadHPjoU3H5PID3SWtnLKTIRLWNFx1wLyGpojmwPvXFHM3Wh15UJtBGnzX4IgfadYIpKY=
-X-Received: by 2002:a05:620a:8399:b0:93b:d8b3:f9ca with SMTP id af79cd13be357-93bdc6db3b6mr634724685a.21.1789771364447;
-        Fri, 18 Sep 2026 15:42:44 -0700 (PDT)
-X-Received: by 2002:a05:620a:8399:b0:93b:d8b3:f9ca with SMTP id af79cd13be357-93bdc6db3b6mr634721885a.21.1789771364010;
-        Fri, 18 Sep 2026 15:42:44 -0700 (PDT)
-Received: from redhat.com ([69.43.42.202])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-9126078cab2sm6905196d6.0.2026.09.18.15.42.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Sep 2026 15:42:43 -0700 (PDT)
-Date: Fri, 18 Sep 2026 18:42:42 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: adrian.ho.yin.ng@altera.com
-Cc: Dinh Nguyen <dinguyen@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] clk: socfpga: agilex: convert to CLK_OF_DECLARE()
-Message-ID: <aq2-Ysy2wbLeBWd1@redhat.com>
-References: <cover.1789096458.git.adrian.ho.yin.ng@altera.com>
- <c7006ac0c353640f52902580564a85d6d23c57e5.1789096458.git.adrian.ho.yin.ng@altera.com>
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="CLPxbk3Y"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1789795895; bh=MMjUtHCs4/yDpCGHhPdiiHBAMqlZNMH0PrNv5RE8WeM=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=CLPxbk3YbB5sc5eqcdBs9oLLOrWbgYThJKOf+4jn3FjLL9HFhWESLKwfUiovUtmfX/P7a99dLhzlbtY7BcEqHLlV6RuYmxnFDPvYdmC4efEnlq3qO3OmydpaobKoF9SQJHJIi9U2qTJycg6FWuzdPwqOB5nGzr+yiXOSh4qYXjSpO+NoWkQWoGDY+TAAFbiZ1sX9vMQcGz2M/Y8DpTe/FDkMk7gj+dLst1pdQYsBf7PTQByH+IdINWQGKP92EfcZVFSZC6HcErYNVcGnPXy+sdF6KA7Ebt848asRDvOc7LpcKx1ZYcll7w5i3Nrt7Oh3bVca0EQKBdxj/MnepBniNw==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1789795895; bh=8S+D5hQRMlfv3NLQVOb/ptuyRm8/jQL78nZopn6tpd8=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=iPwAtf8PdTWjPTqx7qTEhW3DmF5lxiBpnxIp3/H9ZGEmXSBrwCt6w+aP83NhcfJcQoYzdkq1SDXANYGJbdcxmza7b98eLS+CHX25uQirSSs8+oCWCz8/P190gZR6AwGdaFS+Hkms8dRKm5FlMfjtjWtXuqx/mWw5kCxY5lpRCysaYMks4dYnA36LaaxS0xurioBSYj9XXAOnK29pCpRSgT28wF0iaxQrHg/UY1f3JL0Opd06WSXAx/utHgRaUpCipQDSr5dPyesmcn1WLY2zk1zcsXiaOjEOk9QSNuts1R0EsI11WuHYwAY71VP5JVPkaBS4FfkzKKvSVg39ctaqBA==
+X-YMail-OSG: _OWMhakVM1mD4R8z4djYc7GWo3kFWQarpT_qVqscZRjEAFpyVp.frhqu5z9EfxQ
+ GxZfdCHsBkhr_0Fpmn5RCXq696_ZGvhOhskItxR9Jl0ejtHsqbCRZLHNnnJcUF9qLsZPA32PzDeD
+ J1Y2MerrEY30XyNLgCdoaUfCqRzKX0sZ.jQXligC4eXmn8WsiRIHT43TD9WzCqd4eKZKa9UzvKPn
+ NkHzUU3DyBvRHj_AqLruCerxLKvPzbyB5PHh84w8InlHsKcPCLO_eHeGwmEby_uwAB60pA65TrnN
+ peFP7B0iLDgCpkl0x2GB4cG8q_wrCsaH9mGxPj2bvoChkSsPH2DQ5j1IgzCNyToJZjp12jvUk3mE
+ UTkh0y3e8ldvaOSY3yWrzjxamI_SgLhVN5hav1iQXK6CQ_1YYtmwvsRVKkGbDKGlIKXT.u7a1Arh
+ oKO8jw16p0LfYqXei_jzH_9h4AkjNF_JzUDfiYc5aMxjaHeVty73nb.o.9oEsL9jAIqxI8HlA3A2
+ uEAHH0mIcni4SZ.vzg48vB2szMbeIkMYS3oMY6guCkTOysGHMeyxSp1RDEfCSpMz7ZBpwMQgN83D
+ r9u0GMxOShO0tVynLxMMG_shUHM.jGzTdrPpXAIiJ8_jRs2sfkNP0F5Cps.Mdk8JI2vstN9NQ8Yi
+ uQW9wbObprNJVEQUQHF8QdFARm8tnuO.M2GcdIO3pHEf_YApm3cd.IvKY2fa3zZZKvE00UKA45Aa
+ 0rAG2V0kPgC7w4dT5GxgwngpGtNfhfebVg_lKeQA.UAeIfPJO.oEwFvnYlr34T71ECEHwjJ4a532
+ uZf_LNHfSBjJiuYLki3UCAiBg18kmNWwaLCw.5IqlsyZUnb7selAdoTajKg1lo.jh1akGyjFPuqg
+ tq0wmdoX.5dTHyW9PZ0MgHNC1fT_liz0JYU6IahKZ8rbOLytXrF7XMJCZoc4Y0gLu4rcw9LiRVQY
+ jilRyacMlQdu_WOppMDVpWGptY2ID001k6vO6.JRmUBKB_MkvxOBsOXTPlbGD_8OwG_YmiOvaNyv
+ tS4Jw6Jni7479XE5vMlcPMEJj0Dst_klslI93OYzerlUnkMiixy06FmNXLv1MDJns7w7ba_v9pwj
+ 876vUT5S26HGTbeuXTqTALVXh42nPHwcTe_ZKPwKwn3v8IkzaiFRdEbZgNTHl047gouBlPyZ9hLX
+ 2qpmdbFyvrWEW3J1nFccqa6245Cq88N7TW8LyfFeTnm4EFLbqDZA41EpgoOpY2o4XFhFFRZ19dUx
+ bwi770GrjROL5.Wi8Ul8P6ZhXcvl1sOHA_dfucsnW6BFBfR5ohVtLg2_qN5ZpnMHEDxsjsux8svc
+ vS3z4NOnLvVXdnD4XcCINUOqxSyGephfXM1c55RxdlbF62sJ6rfI4BMCW9KB9IX0k0YC8nN0fels
+ 9zq_P3sIeSrIvZifVs4U8RNvV0mDmIxgaTuGzjXAc4ky2ezQnG6J3GI8m6NJQY5wLKkn2FkEYBt_
+ iB9cJtMoby.yTQASm2Yqp98QqM.7aZiMXwnUL7BZ622X7iIBwEVWoEYDYfxyZXCcBg5Kp2n2G05W
+ wKDYmYbELZmssC68vVmqEf2uWtvgJxhLDP2RRsotq9XHfKsnbz1AmBGXaXKF05isK4xJMVFlVRcz
+ etus.3l0jXwkmeC_EXY1zqbYbT1YkPXQjg8lNP90wYo8m40GRIY7xXsREwrWiZ9.3.yHzEFhPs4M
+ 67HxvYIU4HdQppwfX.OjXkZ4NbbMPwLQWY0ubKIt5hHghtVB7C3.85YDk3RtPemG_vOE7X_iavqk
+ tzYRGPEKR4EJvnhYL4yzzNEQo5R23W2nqGgroC5a1JVxSLkJFlX8pwU3zt.1UpeU_hBd6maedRmA
+ KStkvNmiLA3yVyjrynT58phi7qDcCF6DEnuv3z27l0JZqtv1DcVQYaHvsVkpEvhHGYb7QiYkyufr
+ 96_BNxL.RlQ3hnBYYk.VwQYEX5g4VoYtJOWyUkngFtSDER5v3XV.zAVx0n.WWC53_g_Eqfu_Rr7L
+ nNHSHu2G03pzmivXTXsltbov3t6XUR3mwb9JWEALKg9.ivCbZw4y1MuJvOLrUqKvcxY1TJkCf.KU
+ mB.Uy314B5Yzz9MFv3evYcZLUYT.fZV3c20u6TnbKslsaLfuhYPKStGYT5I0sXc5j8_D9jGyjgPt
+ sgAgtWXUM.FUBsv.G7HrUHqJJQRlYSFDfkGaQnkSQu9V.6NfYwUbBgv0Cx9UDNMJHL1CimvO12rj
+ YE5jXwZygeyjcpozHf6gCWVn6eIRwySmEiO8UzcZJZtqdVyLf2lA7UqMsruB0FIIQB.nAHMMmUlW
+ MYuh6ckuOqcnMVZpiLv7H__akYWjGIz2YruOC
+X-Sonic-MF: <namiltd@yahoo.com>
+X-Sonic-ID: fce36edf-97d5-4a87-9139-ccd619c6cdab
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.ne1.yahoo.com with HTTP; Sat, 19 Sep 2026 05:31:35 +0000
+Received: by hermes--production-ir2-cddf86dcf-fr2gr (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID e73ad44338b916ed2b4d933f7288d92d;
+          Sat, 19 Sep 2026 05:21:18 +0000 (UTC)
+Message-ID: <a1c85a02-dd0b-4528-b31e-ccbebd7b84ce@yahoo.com>
+Date: Sat, 19 Sep 2026 07:21:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c7006ac0c353640f52902580564a85d6d23c57e5.1789096458.git.adrian.ho.yin.ng@altera.com>
-User-Agent: Mutt/2.4.0 (2026-06-19)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: qcom: gcc-ipq5018: mark 'gpll0_main' clock as
+ critical
+To: Gabor Juhos <j4g8y7@gmail.com>, Bjorn Andersson <andersson@kernel.org>,
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Abel Vesa <abel.vesa@oss.qualcomm.com>,
+ Varadarajan Narayanan <varadarajan.narayanan@oss.qualcomm.com>,
+ Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>,
+ Sricharan Ramabadhran <quic_srichara@quicinc.com>
+Cc: Stanislaw Pal <kuncy7@gmail.com>, Jie Luo <jie.luo@oss.qualcomm.com>,
+ Georg Seema <georgseema@gmail.com>, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20260918-ipq5018-mark-gpll0_main-critical-v1-1-fbe8f27a0106@gmail.com>
+Content-Language: pl
+From: Mieczyslaw Nalewaj <namiltd@yahoo.com>
+In-Reply-To: <20260918-ipq5018-mark-gpll0_main-critical-v1-1-fbe8f27a0106@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.26541 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-Hi Adrian,
+On 9/18/2026 11:27 AM, Gabor Juhos wrote:
+> On IPQ5018, the APCS core clock feeds the CPUs. It can use
+> different clocks as its parent, but during system boot it
+> utilizes GPLL0.
+>
+> Under some cicumstances, the 'gpll0_main' clock is getting
+> disabled during kernel start which results in a system hang
+> then the hardware watchdog restarts the board after a while.
+[...]
+> Mark the clock as critical in order to avoid such hangs.
+>
+> Cc: stable@vger.kernel.org
+> Fixes: e3fdbef1bab8 ("clk: qcom: Add Global Clock controller (GCC) driver for IPQ5018")
+> Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
 
-On Fri, Sep 11, 2026 at 03:01:18PM +0800, adrian.ho.yin.ng@altera.com wrote:
-> From: Adrian Ng Ho Yin <adrian.ho.yin.ng@altera.com>
-> 
-> Register Agilex and eASIC N5X clocks at of_clk_init() so they are
-> available before platform devices probe.
-> 
-> Signed-off-by: Adrian Ng Ho Yin <adrian.ho.yin.ng@altera.com>
-> ---
->  drivers/clk/socfpga/clk-agilex.c | 83 +++++++++++---------------------
->  1 file changed, 28 insertions(+), 55 deletions(-)
-> 
-> diff --git a/drivers/clk/socfpga/clk-agilex.c b/drivers/clk/socfpga/clk-agilex.c
-> index 2bdea1997b5e..64a20c727d16 100644
-> --- a/drivers/clk/socfpga/clk-agilex.c
-> +++ b/drivers/clk/socfpga/clk-agilex.c
-> @@ -4,8 +4,9 @@
->   */
->  #include <linux/slab.h>
->  #include <linux/clk-provider.h>
-> +#include <linux/io.h>
->  #include <linux/of.h>
-> -#include <linux/platform_device.h>
-> +#include <linux/of_address.h>
->  
->  #include <dt-bindings/clock/agilex-clock.h>
->  
-> @@ -454,24 +455,26 @@ static int n5x_clk_register_pll(const struct stratix10_pll_clock *clks,
->  	return 0;
->  }
->  
-> -static int agilex_clkmgr_init(struct platform_device *pdev)
-> +static void __init agilex_clkmgr_init(struct device_node *np)
->  {
-> -	struct device_node *np = pdev->dev.of_node;
-> -	struct device *dev = &pdev->dev;
->  	struct stratix10_clock_data *clk_data;
->  	void __iomem *base;
->  	int i, num_clks;
->  
-> -	base = devm_platform_ioremap_resource(pdev, 0);
-> -	if (IS_ERR(base))
-> -		return PTR_ERR(base);
-> +	base = of_iomap(np, 0);
-> +	if (!base) {
-> +		pr_err("%s: failed to map clock registers\n", __func__);
-> +		return;
-> +	}
->  
->  	num_clks = AGILEX_NUM_CLKS;
->  
-> -	clk_data = devm_kzalloc(dev, struct_size(clk_data, clk_data.hws,
-> -				num_clks), GFP_KERNEL);
-> -	if (!clk_data)
-> -		return -ENOMEM;
-> +	clk_data = kzalloc(struct_size(clk_data, clk_data.hws, num_clks),
-> +			   GFP_KERNEL);
-> +	if (!clk_data) {
-> +		iounmap(base);
-> +		return;
-> +	}
->  
->  	clk_data->clk_data.num = num_clks;
->  	clk_data->base = base;
-> @@ -491,27 +494,28 @@ static int agilex_clkmgr_init(struct platform_device *pdev)
->  	agilex_clk_register_gate(agilex_gate_clks, ARRAY_SIZE(agilex_gate_clks),
->  			      clk_data);
->  	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, &clk_data->clk_data);
-> -	return 0;
->  }
->  
-> -static int n5x_clkmgr_init(struct platform_device *pdev)
-> +static void __init n5x_clkmgr_init(struct device_node *np)
->  {
-> -	struct device_node *np = pdev->dev.of_node;
-> -	struct device *dev = &pdev->dev;
->  	struct stratix10_clock_data *clk_data;
->  	void __iomem *base;
->  	int i, num_clks;
->  
-> -	base = devm_platform_ioremap_resource(pdev, 0);
-> -	if (IS_ERR(base))
-> -		return PTR_ERR(base);
-> +	base = of_iomap(np, 0);
-> +	if (!base) {
-> +		pr_err("%s: failed to map clock registers\n", __func__);
-> +		return;
-> +	}
->  
->  	num_clks = AGILEX_NUM_CLKS;
->  
-> -	clk_data = devm_kzalloc(dev, struct_size(clk_data, clk_data.hws,
-> -				num_clks), GFP_KERNEL);
-> -	if (!clk_data)
-> -		return -ENOMEM;
-> +	clk_data = kzalloc(struct_size(clk_data, clk_data.hws, num_clks),
-> +			   GFP_KERNEL);
-> +	if (!clk_data) {
-> +		iounmap(base);
-> +		return;
-> +	}
->  
->  	clk_data->base = base;
->  	clk_data->clk_data.num = num_clks;
-> @@ -531,38 +535,7 @@ static int n5x_clkmgr_init(struct platform_device *pdev)
->  	agilex_clk_register_gate(agilex_gate_clks, ARRAY_SIZE(agilex_gate_clks),
->  			      clk_data);
->  	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, &clk_data->clk_data);
-> -	return 0;
-> -}
-> -
-> -static int agilex_clkmgr_probe(struct platform_device *pdev)
-> -{
-> -	int (*probe_func)(struct platform_device *init_func);
-> -
-> -	probe_func = of_device_get_match_data(&pdev->dev);
-> -	if (!probe_func)
-> -		return -ENODEV;
-> -	return	probe_func(pdev);
->  }
->  
-> -static const struct of_device_id agilex_clkmgr_match_table[] = {
-> -	{ .compatible = "intel,agilex-clkmgr",
-> -	  .data = agilex_clkmgr_init },
-> -	{ .compatible = "intel,easic-n5x-clkmgr",
-> -	  .data = n5x_clkmgr_init },
-> -	{ }
-> -};
-> -
-> -static struct platform_driver agilex_clkmgr_driver = {
-> -	.probe		= agilex_clkmgr_probe,
-> -	.driver		= {
-> -		.name	= "agilex-clkmgr",
-> -		.suppress_bind_attrs = true,
-> -		.of_match_table = agilex_clkmgr_match_table,
-> -	},
-> -};
-> -
-> -static int __init agilex_clk_init(void)
-> -{
-> -	return platform_driver_register(&agilex_clkmgr_driver);
-> -}
-> -core_initcall(agilex_clk_init);
-> +CLK_OF_DECLARE(agilex_clkmgr, "intel,agilex-clkmgr", agilex_clkmgr_init);
-> +CLK_OF_DECLARE(n5x_clkmgr, "intel,easic-n5x-clkmgr", n5x_clkmgr_init);
-
-Why do all of these clk providers need to be registered so early?
-CLK_OF_DECLARE is abused quite a bit today and the majority of the clk
-drivers that use it don't actually need it.
-
-core_initcall() is pretty early as well. Can you use subsys_initcall
-instead so that it's available by time the platform devices probe?
-
-I recently introduced a subsys_platform_driver() macro to simplify the
-code that should do what you need.
-
-https://lore.kernel.org/linux-clk/20260908-subsys_initcall-v1-0-cbccf4cd4288@redhat.com/
-
-Brian
-
+Reviewed-by: Mieczyslaw Nalewaj <namiltd@yahoo.com>
