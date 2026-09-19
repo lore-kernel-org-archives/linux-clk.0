@@ -1,127 +1,97 @@
-Received: from mxout4.routing.net (mxout4.routing.net [134.0.28.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm2-f13.google.com (mail-wm2-f13.google.com [74.125.225.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 381803033F7;
-	Sat, 19 Sep 2026 11:47:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C867019CD0A
+	for <linux-clk@vger.kernel.org>; Sat, 19 Sep 2026 14:40:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789818481; cv=none; b=LntViNI+ufqZ/++8DK8tGrcJlW9lcVrx7Uwxhyg1dxN4ZmxJEA3a5ZIt4O5lhdFLNBdYjMEoImIoktiG6O2I4ichLeCxv2ntt3KKTfjYe8+JRfbe4gyFO7f9GLmIYhxIPGNAdmKcfMO8xVOD8uQ04MHIFouCK9s5Yi/9bc4QWHo=
+	t=1789828849; cv=none; b=EiZriHOXaHPt9vjvFYCWy8FSW7U9nCALSdLLYMvq9S6EuALkTN0/kt91KgHDNydzLQN1t9JeOtUkvo5w/qh6w0syZEz1w+IrvzL4/IGSk71YcSwcj/gI7ml2C6UC0VMC5sWrgfJf2azM8g6DSc89fAu93uQJvj4ZVVgyhabwwLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789818481; c=relaxed/simple;
-	bh=HicOuPCjYciEzFwYmDXJJKgo5gpc86Lafh62/v4a3io=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AQ/iQIfifk3Uv0sf/+e58RlVRat/ZH4o+ZjgCkd6TykARu8J4+rTJQBOq5ui0J7EhOZXxnzcGZTf2YEn2sb3+e/fu5+mir/B+FeFV2dHCAhRXxhhMAAN8+c9t01sqNofktgfe+5zkbn1ujFMmSycEZH2Bw/3Y29XvI+LR0H72lY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=nEfVRZBu; arc=none smtp.client-ip=134.0.28.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
+	s=arc-20240116; t=1789828849; c=relaxed/simple;
+	bh=4HF+6nYuBX2Y2b3IHAHrrAE8fZQwBLN3OIJieXuHQT4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sw58swCumfRVJhAw40xhAxU6KWEKzC96zCsG5Z1tI0pTpA/fdB8KFnp/mI/tpho/BrwgRfeO+Ja2ipeSFG0xz1wjQ090ZpZcgQZQO4pglKlwEHx+DxnLO7x1t0ENvrVCzzZx/fRXX+Votn0zgSJlU23VN2/i5iRAeMX37qVzpiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=H80uXjTH; arc=none smtp.client-ip=74.125.225.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="nEfVRZBu"
-Received: from mxbulk.masterlogin.de (unknown [192.168.10.85])
-	by mxout4.routing.net (Postfix) with ESMTP id 94750100C49;
-	Sat, 19 Sep 2026 11:47:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
-	s=routing; t=1789818476;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nHmouoyIZkq8xO+cvrVpMSbHmcIS9SGIHL64C19km20=;
-	b=nEfVRZBuUtFSO+b/bhxezBhBqCkkHanYU9s5wbvRgB23y78aiKNzatuW9pZ1bXS2eYOVra
-	AneI4AKCJRItokI0pYxeGoUxo2v6bLtjK7EV9x1AczZxdJwmVqqAc+a1E8zDliwqYW0vOQ
-	W4ldRpeV+kEE3F9WgjbGJB6Q4G7L6hc=
-Received: from frank-G5-5590 (fttx-pool-194.15.85.231.bambit.de [194.15.85.231])
-	by mxbulk.masterlogin.de (Postfix) with ESMTPSA id 542B81200CB;
-	Sat, 19 Sep 2026 11:47:56 +0000 (UTC)
-From: Frank Wunderlich <linux@fw-web.de>
-To: Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Mathias Nyman <mathias.nyman@intel.com>,
-	Chunfeng Yun <chunfeng.yun@mediatek.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Frank Wunderlich" <frank.wunderlich@linux.dev>,
-	Frank Wunderlich <frank-w@public-files.de>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Mihai Ordean <research@mihaiordean.com>,
-	Chen-Yu Tsai <wenst@chromium.org>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	linux-usb@vger.kernel.org
-Subject: [PATCH 1/2] clk: mediatek: mt7988: keep combo-lane U3 PHY ref clock enabled
-Date: Sat, 19 Sep 2026 13:47:40 +0200
-Message-ID: <20260919114744.46777-2-linux@fw-web.de>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260919114744.46777-1-linux@fw-web.de>
-References: <20260919114744.46777-1-linux@fw-web.de>
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="H80uXjTH"
+Received: by mail-wm2-f13.google.com with SMTP id 5b1f17b1804b1-49e8185e037so9193895e9.3
+        for <linux-clk@vger.kernel.org>; Sat, 19 Sep 2026 07:40:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1789828846; x=1790433646; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=jwmdQqglUsHFWpk5iMe/ySqB2I3J+4h1U7l6JuJEn8M=;
+        b=H80uXjTHNEFu/JlWtMzboPwkVXFSs42KkmRPiN4V+elIMYDwUFsQiH+I9vwaYS2jdB
+         ofnJ563zDwtsgr9RTwS5cCOUEWJnKgR5D/WNb/t6PNpEJ99mW40G9YjmTb8k5OxHt+TP
+         CbKMt4kGGotdQMQnws0HlYMQG2eTWV7mMhm0TprRi1le37KKa2Bk+M4FQwqIqVgOL0RO
+         AZmycFNZaSmQntV2lUd6UPEonAicIHGfz0Ig5+yzRXYAO6VTpd66/OjnuzIWGWYbov97
+         pfNj763ZtlD93uOo5X3jfYwasn3JsTXeR8+YdnTZ3gwwQJERBDNhRSbk6/M3ndgpAYQK
+         ptEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1789828846; x=1790433646;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=jwmdQqglUsHFWpk5iMe/ySqB2I3J+4h1U7l6JuJEn8M=;
+        b=FbRpS9hxtRM/ZUL+CcwOQMV274MYDODIS7uU/Vwl29GQpbiJsriNBwaAxmlvSM3aoE
+         n0/oILdQR+hLI+uyZR9mcT3Vnja04pz98dGpoDETlr3+oQNujLrM9S88Vp0JG0ltAs8b
+         5c+eucV4+m9nohC4Wa6Xh/MoJeOyK3PHEaVr3U3N+MJBiaR6YkFmC1K6u0AqK8+/379W
+         Yk6HI1lmmM/iSmSIZCFGCWXJTMHro6VY2d8+C/ANXMwtpzocGI5ajvofeJMnD6AS0LPr
+         aC5zCFIHkPVvFGpm9msrukOubmF6zsKg9kosX9k7xNNVLWIaMkz/dJrPwKGR4Yatdhds
+         GkYA==
+X-Forwarded-Encrypted: i=1; AKwUvBx7Q1do64SHvNgl4F9Y7szbkqq1y+WF8DfkHkHP/GmGnSx+j7e/3LHzsIjSSBI9V/ddw9DSwGW6FMw=@vger.kernel.org
+X-Gm-Message-State: AFuF++mCDP6Urc8oUzkR13a3fYNj1+kc5ot1/kyV8/jE9VJjpLzho6j+
+	kbyS70kJt1p0CNTghCDKmFTn8XlQ8Ch3crrhaJhM6qHUPuFmjVCfmIDqVpRbLMpxl9M=
+X-Gm-Gg: AYBFou1DqW0UybXfcBSk7BYZQhK4Xn6ldYGG99tAPODpt/tsHL6qogretS+LikmrI8B
+	UDyEQw34R2zX3IUz5cIrBu6OGEPvQduM+AnRQgxLzuVENi5Bszjpzfx2I1byIrgJ4nOwLtUGHmX
+	z8BhBUMmAPikeyWhfF7O7G+cJ/FZqJLjX+S/vYvmQ6HqiPSE2ucE3DI5Km5wHRd8+tBuOsLF9Ip
+	3QVBxmfONsknLO7NGC6SxtDaa/BjTypOj4T5HUNjj2XZ9Kbp/K7n7/QBzhZEil6HVM6cLPYLPCr
+	iRNNCHs28dq+BmGYSBrFBscBfgCxY1Wp8OkFtNb1sAZYZMIDma4hRwSiPbQi9kP8S7ZI1Fcf3I0
+	kJ5nS0DTThA3M6q0DjVvtry8gsaND3J0ijy211Zlvc4LkWw4qHcMSYE1c6ZPy30XI0LH7sCL0OR
+	D9O8beJzMUSC1U8bCuL2lOVQ3uJFiltaKqr/2Uj+WyGEcnqncljGbYLEf9fvQVoYmB4WBlh8o6d
+	AyJqmEFL5zkIUmsY8mWt1D5rxt092l7qDpHbK1eOpwP0BmIqAvPRmA=
+X-Received: by 2002:a05:600c:4ecb:b0:49c:fc6c:be03 with SMTP id 5b1f17b1804b1-49fc5754e06mr75514935e9.26.1789828845928;
+        Sat, 19 Sep 2026 07:40:45 -0700 (PDT)
+Received: from ?IPV6:2a02:2f05:1204:e000:2cf7:c250:64a9:ae77? ([2a02:2f05:1204:e000:2cf7:c250:64a9:ae77])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49fc52a5b6esm67531315e9.4.2026.09.19.07.40.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 19 Sep 2026 07:40:44 -0700 (PDT)
+Message-ID: <be98fdf7-17d2-4b41-ba9f-df4c8bc276c6@tuxon.dev>
+Date: Sat, 19 Sep 2026 17:40:42 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: at91: main: Drop unneeded cast in
+ at91_clk_register_main_osc()
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>
+Cc: Kees Cook <kees@kernel.org>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <51abd9177801984889c2a0c321ea8587677178c8.1787316176.git.geert+renesas@glider.be>
+Content-Language: en-US
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <51abd9177801984889c2a0c321ea8587677178c8.1787316176.git.geert+renesas@glider.be>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Mihai Ordean <research@mihaiordean.com>
 
-CLK_INFRA_USB_PIPE is the reference clock of xphyu3port0, the U3/PCIe
-combo serdes. On MT7988 that lane is shared between ssusb0's SuperSpeed
-side and pcie2, but only the consumer that claims the PHY holds the gate.
 
-On the BPI-R4 Pro, ssusb0 is configured USB2-only (u3p-dis-msk=1) and
-pcie2 claims the lane for the CN13/CN15 M.2 slot, so pcie2 is the sole
-holder. u3p-dis-msk does not remove ssusb0's SuperSpeed root hub: that is
-decided by xhci_has_one_roothub(), which keys off usb3_rhub.num_ports
-from the xHCI capability registers, so bus 2 is registered and live
-regardless. When the M.2 slot is empty, pcie2 fails link training (-110)
-and its error path calls phy_power_off()/phy_exit(), which gates this
-clock - and sspxtp_sel with it, as nothing else consumes it. The still
-registered SuperSpeed root hub is then left polling a serdes whose PHY
-reference clock has just stopped, and asserts the shared SSUSB interrupt
-outside the xHCI event ring; xhci_irq() reads USBSTS with EINT clear and
-returns IRQ_NONE, so the core disables the line ("nobody cared") and the
-next USB teardown blocks forever in xhci_disable_slot().
+On 8/21/26 15:44, Geert Uytterhoeven wrote:
+> When assigning a non-const pointer to a const pointer, no cast is
+> needed.
+> 
+> Signed-off-by: Geert Uytterhoeven<geert+renesas@glider.be>
 
-Boot logs show the storm threshold being crossed 86-107 ms after the
-pcie2 probe failure, while the earlier combo-mux switch to PCIe mode
-(~550 ms before) causes no trouble, pointing at the clock gating rather
-than the mux as the trigger.
-
-Mark the gate CLK_IS_CRITICAL so the combo lane keeps its reference clock.
-Only port 0's gate is affected; ssusb1 uses CLK_INFRA_USB_PIPE_CK_P1.
-
-Signed-off-by: Mihai Ordean <research@mihaiordean.com>
-Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
----
- drivers/clk/mediatek/clk-mt7988-infracfg.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/mediatek/clk-mt7988-infracfg.c b/drivers/clk/mediatek/clk-mt7988-infracfg.c
-index 13ffa9d88e24..a8cbcb64d90f 100644
---- a/drivers/clk/mediatek/clk-mt7988-infracfg.c
-+++ b/drivers/clk/mediatek/clk-mt7988-infracfg.c
-@@ -225,7 +225,17 @@ static const struct mtk_gate infra_clks[] = {
- 			  CLK_IS_CRITICAL),
- 	GATE_INFRA3_FLAGS(CLK_INFRA_USB_FRMCNT_CK_P1, "infra_usb_frmcnt_ck_p1", "usb_frmcnt_p1_sel",
- 			  9, CLK_IS_CRITICAL),
--	GATE_INFRA3(CLK_INFRA_USB_PIPE, "infra_usb_pipe", "sspxtp_sel", 10),
-+	/*
-+	 * Reference clock of the U3/PCIe combo serdes (xphyu3port0). The lane
-+	 * is shared between ssusb0 and pcie2, but only the PHY consumer that
-+	 * claims it holds this gate. On boards where pcie2 owns the lane, a
-+	 * failed pcie2 probe (e.g. empty M.2 slot) calls phy_exit() and gates
-+	 * this clock while ssusb0 still has a live SuperSpeed root hub on the
-+	 * same PHY, which wedges the shared SSUSB interrupt. CCF cannot model
-+	 * the cross-IP sharing, so keep the gate on.
-+	 */
-+	GATE_INFRA3_FLAGS(CLK_INFRA_USB_PIPE, "infra_usb_pipe", "sspxtp_sel", 10,
-+			  CLK_IS_CRITICAL),
- 	GATE_INFRA3(CLK_INFRA_USB_PIPE_CK_P1, "infra_usb_pipe_ck_p1", "usb_phy_sel", 11),
- 	GATE_INFRA3(CLK_INFRA_USB_UTMI, "infra_usb_utmi", "top_xtal", 12),
- 	GATE_INFRA3(CLK_INFRA_USB_UTMI_CK_P1, "infra_usb_utmi_ck_p1", "top_xtal", 13),
--- 
-2.53.0
-
+Reviewed-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
