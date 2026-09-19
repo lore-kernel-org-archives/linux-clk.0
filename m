@@ -1,37 +1,37 @@
-Received: from mxout3.routing.net (mxout3.routing.net [134.0.28.8])
+Received: from mxout4.routing.net (mxout4.routing.net [134.0.28.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC8907081A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 381803033F7;
 	Sat, 19 Sep 2026 11:47:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.8
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789818481; cv=none; b=JPvnxW/6TqAnllFluZinmvyxYfzleMy4orYePIw+BYRBYBxKl3UssZFblYs0vbj10msjP7v2tSUWR/fkfyql3asriUuEKSiKZ8S6B8oQLMwwcy98DBl5mn5wKy7o+3GL1dSs9wDHSV82A05aqv5A2DGQEme39Jq7DdQnow/kwO8=
+	t=1789818481; cv=none; b=LntViNI+ufqZ/++8DK8tGrcJlW9lcVrx7Uwxhyg1dxN4ZmxJEA3a5ZIt4O5lhdFLNBdYjMEoImIoktiG6O2I4ichLeCxv2ntt3KKTfjYe8+JRfbe4gyFO7f9GLmIYhxIPGNAdmKcfMO8xVOD8uQ04MHIFouCK9s5Yi/9bc4QWHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1789818481; c=relaxed/simple;
-	bh=Z/TRizmrXg+Bsd2IumXmZ0uTgR+p8ZOhFd0fZ0FY6Qs=;
+	bh=HicOuPCjYciEzFwYmDXJJKgo5gpc86Lafh62/v4a3io=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=j307qxwvkOfq9XBoFozo4dezY1pq40aT0b3xwkGdMU2MVkYfIOs0pvrvw25h/z22xZ1+XbxOn0LreEcqt115Q/cfxr+YJkfTVyA9AGzMgV6InbpUVP+j3tVjSRuZEgwMPP0SIfUody8qEUI0c5+ajzMzxFVRtokmSf4bmSPOxEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=Be5xim/O; arc=none smtp.client-ip=134.0.28.8
+	 MIME-Version; b=AQ/iQIfifk3Uv0sf/+e58RlVRat/ZH4o+ZjgCkd6TykARu8J4+rTJQBOq5ui0J7EhOZXxnzcGZTf2YEn2sb3+e/fu5+mir/B+FeFV2dHCAhRXxhhMAAN8+c9t01sqNofktgfe+5zkbn1ujFMmSycEZH2Bw/3Y29XvI+LR0H72lY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=nEfVRZBu; arc=none smtp.client-ip=134.0.28.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="Be5xim/O"
+	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="nEfVRZBu"
 Received: from mxbulk.masterlogin.de (unknown [192.168.10.85])
-	by mxout3.routing.net (Postfix) with ESMTP id 7D97A605DA;
-	Sat, 19 Sep 2026 11:47:57 +0000 (UTC)
+	by mxout4.routing.net (Postfix) with ESMTP id 94750100C49;
+	Sat, 19 Sep 2026 11:47:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
-	s=routing; t=1789818477;
+	s=routing; t=1789818476;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=8lvLoyNmO9WZfY0yU7JJZrlzQZGhrSGjy40UrHLMKiM=;
-	b=Be5xim/OskQ6ebSDGg2mm+GYs1LUnMt9dZzPX6ICurYjOI0BPH/c/LUfniJckvUcojuiaO
-	zJmUUhbdMpxa0m+2kNiexEm9Cm8Tg6QWpDUt8u5JUzQzX9JoesJK7sRUZtlex57CDaMxyk
-	WUetQFxmNRpNOmNZQkCLY+T7pALTxdQ=
+	bh=nHmouoyIZkq8xO+cvrVpMSbHmcIS9SGIHL64C19km20=;
+	b=nEfVRZBuUtFSO+b/bhxezBhBqCkkHanYU9s5wbvRgB23y78aiKNzatuW9pZ1bXS2eYOVra
+	AneI4AKCJRItokI0pYxeGoUxo2v6bLtjK7EV9x1AczZxdJwmVqqAc+a1E8zDliwqYW0vOQ
+	W4ldRpeV+kEE3F9WgjbGJB6Q4G7L6hc=
 Received: from frank-G5-5590 (fttx-pool-194.15.85.231.bambit.de [194.15.85.231])
-	by mxbulk.masterlogin.de (Postfix) with ESMTPSA id 455EE1200CB;
-	Sat, 19 Sep 2026 11:47:57 +0000 (UTC)
+	by mxbulk.masterlogin.de (Postfix) with ESMTPSA id 542B81200CB;
+	Sat, 19 Sep 2026 11:47:56 +0000 (UTC)
 From: Frank Wunderlich <linux@fw-web.de>
 To: Stephen Boyd <sboyd@kernel.org>,
 	Brian Masney <bmasney+clk@redhat.com>,
@@ -51,9 +51,9 @@ Cc: "Frank Wunderlich" <frank.wunderlich@linux.dev>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-mediatek@lists.infradead.org,
 	linux-usb@vger.kernel.org
-Subject: [PATCH 2/2] usb: xhci-mtk: power down u3 ports skipped by u3p-dis-msk
-Date: Sat, 19 Sep 2026 13:47:41 +0200
-Message-ID: <20260919114744.46777-3-linux@fw-web.de>
+Subject: [PATCH 1/2] clk: mediatek: mt7988: keep combo-lane U3 PHY ref clock enabled
+Date: Sat, 19 Sep 2026 13:47:40 +0200
+Message-ID: <20260919114744.46777-2-linux@fw-web.de>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260919114744.46777-1-linux@fw-web.de>
 References: <20260919114744.46777-1-linux@fw-web.de>
@@ -67,73 +67,61 @@ Content-Transfer-Encoding: 8bit
 
 From: Mihai Ordean <research@mihaiordean.com>
 
-xhci_mtk_host_enable() skips ports flagged in "mediatek,u3p-dis-msk"
-entirely: it neither powers them up nor powers them down, leaving them
-in their power-on/bootloader default state, which on MediaTek IPPC is
-powered up and host-selected. The mask exists precisely for ports whose
-USB3 PHY is not usable - on BPI-R4 Pro (MT7988A) ssusb0's U3 SerDes
-lane is shared with (and muxed to) PCIe2, so the board DT masks U3 port
-0 and omits the xphy U3 port from "phys".
+CLK_INFRA_USB_PIPE is the reference clock of xphyu3port0, the U3/PCIe
+combo serdes. On MT7988 that lane is shared between ssusb0's SuperSpeed
+side and pcie2, but only the consumer that claims the PHY holds the gate.
 
-The result on that board is a U3 port that is powered and host-selected
-but has no initialized PHY and a MAC clock domain that is never
-released from reset (the driver deliberately excludes STS1_U3_MAC_RST
-from its stability poll for masked ports). This holds the controller's
-level interrupt permanently asserted with a status the xHCI interrupt
-handler cannot acknowledge:
+On the BPI-R4 Pro, ssusb0 is configured USB2-only (u3p-dis-msk=1) and
+pcie2 claims the lane for the CN13/CN15 M.2 slot, so pcie2 is the sole
+holder. u3p-dis-msk does not remove ssusb0's SuperSpeed root hub: that is
+decided by xhci_has_one_roothub(), which keys off usb3_rhub.num_ports
+from the xHCI capability registers, so bus 2 is registered and live
+regardless. When the M.2 slot is empty, pcie2 fails link training (-110)
+and its error path calls phy_power_off()/phy_exit(), which gates this
+clock - and sspxtp_sel with it, as nothing else consumes it. The still
+registered SuperSpeed root hub is then left polling a serdes whose PHY
+reference clock has just stopped, and asserts the shared SSUSB interrupt
+outside the xHCI event ring; xhci_irq() reads USBSTS with EINT clear and
+returns IRQ_NONE, so the core disables the line ("nobody cared") and the
+next USB teardown blocks forever in xhci_disable_slot().
 
-  [    2.455798] xhci-mtk 11190000.usb: irq 120, io mem 0x11190000
-  [    2.861314] irq 120: nobody cared (try booting with the "irqpoll" option)
-  [    3.242105] [<0000000014dcb6ae>] usb_hcd_irq
-  [    3.246371] Disabling IRQ #120
+Boot logs show the storm threshold being crossed 86-107 ms after the
+pcie2 probe failure, while the earlier combo-mux switch to PCIe mode
+(~550 ms before) causes no trouble, pointing at the clock gating rather
+than the mux as the trigger.
 
-Once the spurious-IRQ detector disables the line, the fully functional
-USB2 bus on the same controller dies with it: xHC commands are queued
-but their completions never interrupt, the first hub_event needing a
-command parks in D state holding the hub lock
-
-  [  126.053644] Workqueue: usb_hub_wq hub_event
-  [  126.053742]  xhci_disable_slot+0xb4/0x188
-  [  126.053757]  xhci_free_dev+0xfc/0x2a4
-  [  126.053771]  hub_event+0x1364/0x1a0c
-
-and device_shutdown() blocks behind it on reboot, hanging the system.
-
-Explicitly park masked ports by setting CTRL_U3_PORT_PDN and
-CTRL_U3_PORT_DIS, mirroring what host_enable() does in reverse for
-active ports. xhci_mtk_host_disable() already skips masked ports, which
-remains correct as they are now already down.
+Mark the gate CLK_IS_CRITICAL so the combo lane keeps its reference clock.
+Only port 0's gate is affected; ssusb1 uses CLK_INFRA_USB_PIPE_CK_P1.
 
 Signed-off-by: Mihai Ordean <research@mihaiordean.com>
 Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
 ---
- drivers/usb/host/xhci-mtk.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/clk/mediatek/clk-mt7988-infracfg.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/usb/host/xhci-mtk.c b/drivers/usb/host/xhci-mtk.c
-index 60af5fe29bd4..016a4902fc4c 100644
---- a/drivers/usb/host/xhci-mtk.c
-+++ b/drivers/usb/host/xhci-mtk.c
-@@ -219,6 +219,19 @@ static int xhci_mtk_host_enable(struct xhci_hcd_mtk *mtk)
- 	/* power on and enable u3 ports except skipped ones */
- 	for (i = 0; i < mtk->num_u3_ports; i++) {
- 		if ((0x1 << i) & mtk->u3p_dis_msk) {
-+			/*
-+			 * Park skipped ports instead of leaving them in
-+			 * their power-on default state: the port's PHY may
-+			 * be uninitialized or its SerDes lane owned by
-+			 * another controller (e.g. PCIe), in which case a
-+			 * powered-up port whose MAC clock domain is never
-+			 * released from reset can hold the interrupt line
-+			 * asserted, getting it disabled by the spurious
-+			 * IRQ detector and killing the whole host.
-+			 */
-+			value = readl(&ippc->u3_ctrl_p[i]);
-+			value |= CTRL_U3_PORT_PDN | CTRL_U3_PORT_DIS;
-+			writel(value, &ippc->u3_ctrl_p[i]);
- 			u3_ports_disabled++;
- 			continue;
- 		}
+diff --git a/drivers/clk/mediatek/clk-mt7988-infracfg.c b/drivers/clk/mediatek/clk-mt7988-infracfg.c
+index 13ffa9d88e24..a8cbcb64d90f 100644
+--- a/drivers/clk/mediatek/clk-mt7988-infracfg.c
++++ b/drivers/clk/mediatek/clk-mt7988-infracfg.c
+@@ -225,7 +225,17 @@ static const struct mtk_gate infra_clks[] = {
+ 			  CLK_IS_CRITICAL),
+ 	GATE_INFRA3_FLAGS(CLK_INFRA_USB_FRMCNT_CK_P1, "infra_usb_frmcnt_ck_p1", "usb_frmcnt_p1_sel",
+ 			  9, CLK_IS_CRITICAL),
+-	GATE_INFRA3(CLK_INFRA_USB_PIPE, "infra_usb_pipe", "sspxtp_sel", 10),
++	/*
++	 * Reference clock of the U3/PCIe combo serdes (xphyu3port0). The lane
++	 * is shared between ssusb0 and pcie2, but only the PHY consumer that
++	 * claims it holds this gate. On boards where pcie2 owns the lane, a
++	 * failed pcie2 probe (e.g. empty M.2 slot) calls phy_exit() and gates
++	 * this clock while ssusb0 still has a live SuperSpeed root hub on the
++	 * same PHY, which wedges the shared SSUSB interrupt. CCF cannot model
++	 * the cross-IP sharing, so keep the gate on.
++	 */
++	GATE_INFRA3_FLAGS(CLK_INFRA_USB_PIPE, "infra_usb_pipe", "sspxtp_sel", 10,
++			  CLK_IS_CRITICAL),
+ 	GATE_INFRA3(CLK_INFRA_USB_PIPE_CK_P1, "infra_usb_pipe_ck_p1", "usb_phy_sel", 11),
+ 	GATE_INFRA3(CLK_INFRA_USB_UTMI, "infra_usb_utmi", "top_xtal", 12),
+ 	GATE_INFRA3(CLK_INFRA_USB_UTMI_CK_P1, "infra_usb_utmi_ck_p1", "top_xtal", 13),
 -- 
 2.53.0
 
