@@ -1,135 +1,175 @@
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+Received: from winds.org (winds.org [68.75.195.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 102C23290BA;
-	Sun, 20 Sep 2026 03:41:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E5030D3E5;
+	Sun, 20 Sep 2026 06:18:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.75.195.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789875715; cv=none; b=BrE0VTE4+npUSoUot/EGGcD2VI60bCbGMlgRafJq8vPDxnwfi1shrMJkCxwCikZRcnw5G1K2v0jqvLyZAdqtsC6Dm5Ksl4UjXedlyAzDP4FReSjapt5Mr3A0ltFgQ57kzRSKw0AG84SLIqY24/SVxUwd1RQbsWGmMSxOBr3k/FI=
+	t=1789885142; cv=none; b=u2eXhYeRuSm1aHStKu0S8Lamafwjokt9ZHbAm7QneskfJYvSEZBtw2M/Ww8oxLBMMY3sSzIKp2xMeLyXmT/zbIgwLRzxHZzau/P5B/VS9FXtSyV87n4nzGBb6tfDDpGcgRMlssMb0Dp0Rib/uN5rBI4ePqqiexwVZdTvDA+FJxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789875715; c=relaxed/simple;
-	bh=uMl7IBhHiCU7WRhNPZqV8c4Rh+y0j4ofSSjlT2inKfU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HPGtV2Uy6evJU+UBhs/7zFRI/l/EOcVLxXa9/VpD259JpZ0Y4jLNchm0bzqaqnWrEB/gt9SL9atbeW0oRU3ZH4Jrpm9GHL0rmKRIxbHPm/ou3N4OfLzLj9slwtRd6d1C3fjIjvX+DuDtDKXjYFwVPws0Rznv1LRFTpGYC3km7+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=kjL7sLxC; arc=none smtp.client-ip=220.197.31.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="kjL7sLxC"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=Sf
-	PlS0D1zxlDxgulMlJjztXs/42ET8MoGxltYIMTLwU=; b=kjL7sLxCOu4+y3hsoO
-	5AAX8lt6ktGB/tNUlT7ni7MWs1ibdqz37EES0peWCRZcANAERLLsIYlxeHWWDuml
-	R9mj6ZdXxjDnARlZcb+FOfQXNkoBD3a2Li2WBsVZjdn7IxDojVGxrvTwO3MBQcyt
-	WTppqXmWvHm5rX47G9xGRwAXc=
-Received: from localhost.localdomain (unknown [])
-	by gzsmtp1 (Coremail) with SMTP id PCgvCgDHjy_lVa9q46I6AQ--.6061S2;
-	Sun, 20 Sep 2026 11:41:26 +0800 (CST)
-From: Pengpeng Hou <hppiscas@163.com>
-To: sboyd@kernel.org
-Cc: bmasney+clk@redhat.com,
-	jbrunet+clk@baylibre.com,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	mturquette@baylibre.com,
-	s.hauer@pengutronix.de,
-	bmasney@redhat.com,
-	hppiscas@163.com
-Subject: [PATCH v2] clk: si5351: fail prepare when PLL reset times out
-Date: Sun, 20 Sep 2026 11:41:24 +0800
-Message-ID: <20260920034124.15700-1-hppiscas@163.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1789885142; c=relaxed/simple;
+	bh=aHiTWz6fAaJtimQT78uTVAOkrkue+I6y6LZVAbIUKTU=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=C0whZPURcDqwN6JG+MRSdLocF65c3Un2Tsi/SihAcqgdDptdjx/bxYEva4lUITxrwz06Z8m/CnUE9e1TRvj3bGnDq5U8RU0rru7R96Cv69vQI+Pf6JIwG9VX82vOB3jTQ1j61vj9pebaGLJ8vTT2yhlQhe3pCOXOxdxaCgsAuok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=winds.org; spf=pass smtp.mailfrom=winds.org; arc=none smtp.client-ip=68.75.195.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=winds.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=winds.org
+Received: by winds.org (Postfix, from userid 100)
+	id 858658F80256; Sun, 20 Sep 2026 02:09:19 -0400 (EDT)
+Received: from localhost (localhost [127.0.0.1])
+	by winds.org (Postfix) with ESMTP id 8415D1334AD4D;
+	Sun, 20 Sep 2026 02:09:19 -0400 (EDT)
+Date: Sun, 20 Sep 2026 02:09:19 -0400 (EDT)
+From: Byron Stanoszek <gandalf@winds.org>
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+cc: Vinod Koul <vkoul@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+    Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+    Conor Dooley <conor+dt@kernel.org>, 
+    Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>, 
+    Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+    Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+    Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+    Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+    Maxime Ripard <mripard@kernel.org>, 
+    Thomas Zimmermann <tzimmermann@suse.de>, Lee Jones <lee@kernel.org>, 
+    Andy Yan <andy.yan@rock-chips.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+    Emil Renner Berthing <kernel@esmil.dk>, 
+    Hal Feng <hal.feng@starfivetech.com>, 
+    Michael Turquette <mturquette@baylibre.com>, 
+    Stephen Boyd <sboyd@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+    Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, 
+    Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
+    Dominique Belhachemi <db@domibel.de>, 
+    Brian Masney <bmasney+clk@redhat.com>, 
+    Jerome Brunet <jbrunet+clk@baylibre.com>, linux-phy@lists.infradead.org, 
+    devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+    dri-devel@lists.freedesktop.org, mfd@lists.linux.dev, 
+    linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+    linux-rockchip@lists.infradead.org, linux-riscv@lists.infradead.org, 
+    Marek Szyprowski <m.szyprowski@samsung.com>, 
+    Maud Spierings <maud_spierings@murena.io>, 
+    Graham Markall <hello@big-grey.co.uk>, 
+    Icenowy Zheng <zhengxingda@iscas.ac.cn>, 
+    Chaoyi Chen <chaoyi.chen@rock-chips.com>, 
+    Joshua Peisach <jpeisach@ubuntu.com>, 
+    =?ISO-8859-15?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
+Subject: Re: [PATCH v4 00/20] drm: starfive: jh7110: Enable display
+ subsystem
+In-Reply-To: <20260915-jh7110-clean-send-v4-0-f0e4fd6f2cc8@samsung.com>
+Message-ID: <b8b046ee-c574-3e16-6079-2fc415633dae@winds.org>
+References: <CGME20260915153213eucas1p148f013af239a334fc78cdc249c0f8a61@eucas1p1.samsung.com> <20260915-jh7110-clean-send-v4-0-f0e4fd6f2cc8@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PCgvCgDHjy_lVa9q46I6AQ--.6061S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxZr4DGr18Gry8Cw1kWryfWFg_yoW5CF18pF
-	ZrW3yYvr4DJr9FvrsIyFWq9a4avw1fta42gw10k3y09r1YqrWjgF4ftFy29Fn0yr95Grsx
-	Jr4IyF1rCF1DtFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zil4ibUUUUU=
-X-CM-SenderInfo: 5kssx2xfdvqiywtou0bp/xtbCxgYV3WqvVeaUOQAA3T
+Content-Type: text/plain; charset=us-ascii; format=flowed
 
-The clock prepare path requests a PLL reset when the platform data
-requires a deterministic output phase. The reset helper logs polling
-errors but returns no status, so prepare still enables the output and
-reports success when the reset did not complete.
+On Tue, 15 Sep 2026, Michal Wilczynski wrote:
 
-Return the poll result to prepare, restore the output power-down bit on
-failure, and leave the output disabled. XTAL and CLKIN inputs continue
-to bypass PLL reset successfully.
+> This series enables the display subsystem on the StarFive JH7110.
 
-The issue was found by our static-analysis tool.
+Hi Michal,
 
-Fixes: 5142cbcea324 ("clk: si5351: Wait for bit clear after PLL reset")
-Reviewed-by: Brian Masney <bmasney@redhat.com>
-Assisted-by: gpt 5
-Signed-off-by: Pengpeng Hou <hppiscas@163.com>
----
-Changes since v1:
-https://lore.kernel.org/all/20260623135625.49610-1-pengpeng@iscas.ac.cn/
-Drop the unrelated alignment change requested by Brian; retain the
-bounded prepare failure path.
+I tested your v4 patch series on my VisionFive2 1.3B with kernel 7.3-rc3 today
+and it works very well, except for 2 issues. Note, to make the screen refresh
+properly, I am using the noncoherent cache fixes from
+https://github.com/ganboing-jh7110/linux/commits/ganboing-jh7110-cache-fix-v1/
+(specifically commits 3683d97, ef93e2c, 277db0b, and 26ce3e6) in addition to
+your patch.
 
- drivers/clk/clk-si5351.c |   20 ++++++++++++++++----
- 1 file changed, 16 insertions(+), 4 deletions(-)
+Issue 1: I have a Dell U2711 monitor which has limited HDMI 1.3 capability, so
+I invented my own Xorg mode to get a good frame rate:
 
-diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
-index 20b0c3c48b86..70daba62305c 100644
---- a/drivers/clk/clk-si5351.c
-+++ b/drivers/clk/clk-si5351.c
-@@ -907,7 +907,7 @@ static int _si5351_clkout_set_disable_state(
- 	return 0;
- }
- 
--static void _si5351_clkout_reset_pll(struct si5351_driver_data *drvdata, int num)
-+static int _si5351_clkout_reset_pll(struct si5351_driver_data *drvdata, int num)
- {
- 	u8 val = si5351_reg_read(drvdata, SI5351_CLK0_CTRL + num);
- 	u8 mask = val & SI5351_CLK_PLL_SELECT ? SI5351_PLL_RESET_B :
-@@ -918,7 +918,7 @@ static void _si5351_clkout_reset_pll(struct si5351_driver_data *drvdata, int num
- 	switch (val & SI5351_CLK_INPUT_MASK) {
- 	case SI5351_CLK_INPUT_XTAL:
- 	case SI5351_CLK_INPUT_CLKIN:
--		return;  /* pll not used, no need to reset */
-+		return 0;  /* pll not used, no need to reset */
- 	}
- 
- 	si5351_reg_write(drvdata, SI5351_PLL_RESET, mask);
-@@ -931,6 +931,8 @@ static void _si5351_clkout_reset_pll(struct si5351_driver_data *drvdata, int num
- 	dev_dbg(&drvdata->client->dev, "%s - %s: pll = %d\n",
- 		__func__, clk_hw_get_name(&drvdata->clkout[num].hw),
- 		(val & SI5351_CLK_PLL_SELECT) ? 1 : 0);
-+
-+	return err;
- }
- 
- static int si5351_clkout_prepare(struct clk_hw *hw)
-@@ -947,8 +949,18 @@ static int si5351_clkout_prepare(struct clk_hw *hw)
- 	 * Do a pll soft reset on the parent pll -- needed to get a
- 	 * deterministic phase relationship between the output clocks.
- 	 */
--	if (pdata->clkout[hwdata->num].pll_reset)
--		_si5351_clkout_reset_pll(hwdata->drvdata, hwdata->num);
-+	if (pdata->clkout[hwdata->num].pll_reset) {
-+		int ret;
-+
-+		ret = _si5351_clkout_reset_pll(hwdata->drvdata, hwdata->num);
-+		if (ret) {
-+			si5351_set_bits(hwdata->drvdata,
-+					SI5351_CLK0_CTRL + hwdata->num,
-+					SI5351_CLK_POWERDOWN,
-+					SI5351_CLK_POWERDOWN);
-+			return ret;
-+		}
-+	}
- 
- 	si5351_set_bits(hwdata->drvdata, SI5351_OUTPUT_ENABLE_CTRL,
- 			(1 << hwdata->num), 0);
+"2560x1440_40.22"  162.00  2560 2608 2640 2720  1440 1443 1448 1481 +hsync -vsync
 
-base-commit: 518e5b794c06c0f0eb40df3e202274a66202c137
--- 
-2.50.1 (Apple Git-155)
+With this mode and your new driver, I started getting rows of black pixels
+flickering in the upper-left corner of my LCD screen. These weren't there back
+when I was running the same mode under the Keith Zhao driver from StarFive
+(drm/verisilicon v5 plus a bunch of patches for dma cache coherency)
+(https://patchwork.kernel.org/project/dri-devel/cover/20241120061848.196754-1-keith.zhao@starfivetech.com/).
+
+The glitches I saw suggested the sync polarity was being set incorrectly; the
+number of glitched rows was exactly the vsync pulse width plus 1 (i.e.
+"1440 1443 1448 1481" produced 6 bad rows, "1440 1443 1456 1481" produced 14,
+"1440 1441 1442 1481" produced 2, and so forth).
+
+I did a register dump between the two drivers and found that, although the
+DC8200 HSYNC and VSYNC registers were identical between the two versions, the
+hsync and vsync bits on the inno hdmi tx were swapped between the two. When I
+manually set the VIDEO_TIMING_CTL register from 0x09 to 0x05 (matching the
+output of Keith's driver), the glitches went away.
+
+Keith Zhao driver:
+
+=== DC8200 display 0 ===
+DC   PANEL_CONFIG               0x1418 = 0x00001111
+DC   HSIZE                      0x1430 = 0x0AA00A00
+DC   HSYNC                      0x1438 = 0x45280A30
+DC   VSIZE                      0x1440 = 0x05C905A0
+DC   VSYNC                      0x1448 = 0xC2D405A3
+DC   DPI_CONFIG                 0x14B8 = 0x00000005
+DC   FB_CONFIG                  0x1518 = 0x14000000
+DC   FB_ADDRESS                 0x1400 = 0x71200000
+DC   FB_STRIDE                  0x1408 = 0x00002800
+DC   FB_SIZE                    0x1810 = 0x02D00A00
+DC   FB_CONFIG_EX               0x1CC0 = 0x00002000
+DC   PANEL_START                0x1CCC = 0x00000001
+DC   DP_CONFIG                  0x1CD0 = 0x0000000A
+DC   FB_WATER_MARK              0x1CE8 = 0x00000000
+DC   PANEL_CONFIG_EX            0x2518 = 0x00000000
+
+=== INNO HDMI TX video timing ===
+HDMI VIDEO_TIMING_CTL           0x08   = 0x05
+HDMI EXT_HTOTAL_L               0x09   = 0xA0
+HDMI EXT_HTOTAL_H               0x0A   = 0x0A
+HDMI EXT_HBLANK_L               0x0B   = 0xA0
+HDMI EXT_HBLANK_H               0x0C   = 0x00
+HDMI EXT_HDELAY_L               0x0D   = 0x70
+HDMI EXT_HDELAY_H               0x0E   = 0x00
+HDMI EXT_HDURATION_L            0x0F   = 0x20
+HDMI EXT_HDURATION_H            0x10   = 0x00
+HDMI EXT_VTOTAL_L               0x11   = 0xC9
+HDMI EXT_VTOTAL_H               0x12   = 0x05
+HDMI EXT_VBLANK                 0x13   = 0x29
+HDMI EXT_VDELAY                 0x14   = 0x26
+HDMI EXT_VDURATION              0x15   = 0x05
+
+Your driver (showing only the changed values):
+
+DC   DP_CONFIG                  0x1CD0 = 0x00000000
+DC   PANEL_CONFIG_EX            0x2518 = 0x00000001
+HDMI VIDEO_TIMING_CTL           0x08   = 0x09
+
+Specifically the bit#s are different between the two drivers:
+
+inno_hdmi-starfive.h (Keith Zhao):     inno-hdmi.c (generic):
+   v_HSYNC_POLARITY_SF(n)  ((n) << 2)     v_HSYNC_POLARITY  bit 3
+   v_VSYNC_POLARITY_SF(n)  ((n) << 3)     v_VSYNC_POLARITY  bit 2
+
+"_SF" suggests this change is specific to StarFive. The correct positions are
+HSYNC=bit 2 and VSYNC=bit 3 for the JH7110.
+
+I'm guessing that your 42-mode test passed because most CEA modes are +hsync
++vsync, and this wouldn't show any difference if the two bits were transposed.
+
+Once the sync polarity is sorted, I'd be happy to give a Tested-by: on the
+series.
+
+  --
+
+Issue 2: This is more a feature request than an issue. Originally, I tried
+running this Xorg modeline, which worked well under Keith's driver:
+
+"2560x1440_49.90"  201.00  2560 2608 2640 2720  1440 1443 1448 1481 +hsync -vsync
+
+However, your driver would not accept this pixel clock. I then noticed you have
+a pre-PLL table of fixed clocks. Is there any chance you can change the code to
+compute the pre-PLL on the fly like how Keith does it, rather than use a table?
+
+Thanks for all your great work!
+
+Best regards,
+  -Byron
 
