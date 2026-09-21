@@ -1,77 +1,85 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1684948E0FD;
-	Mon, 21 Sep 2026 15:52:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E05F48F015
+	for <linux-clk@vger.kernel.org>; Mon, 21 Sep 2026 16:02:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790005981; cv=none; b=HdjEHdw0RQcm7jSbg3wTqysU9pQQTIZWWNPqj6ldQB20u5k2g1Z5WJ63DtJivMmpj3cgFBbzKbMKC1PxmG7lzSkXYxqV/1vrz5wbHQDG8TNF9Zbw7aOq7Ujd0gV/6KioOxIDi7fWBEPIp/qYHf7e56RIaXSxDGsql/NU944gaZU=
+	t=1790006525; cv=none; b=TrpuJv9wd0P984h8bzwdbiAoZ2Y6o8ge0W8gI22W7SOY2j48uDeTjX1O8k8Ng4Apa7848t7sK2/GJTae07qd1Sx++i7Td1GxLfGuVcufF9JlBjsN1W7frJygP2wy8SXCgcje8OaZvb/NTjmiM30KiKHWg9j0TTb28bKUJz5ho+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790005981; c=relaxed/simple;
-	bh=nOzPEcGIoG6k1sHDGMuGV9ljX1lkGAwRWCGgaiX+YSI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=p9Gv2hOVzPo5TrN3vCrZ/t2q9lDRa9CYAl8mfG6uYfi8tMpUq/++t2i8uuJsgcC0mb9OPhkabr0L1HNBvyRI28xhjCBmzC+JlmS6lvvTSfedj+bbvJ1Oz1QJ/MoqMfFs/h1H+KLcH3QKdlo0lSndPL0UW4z0mYss48aA8BMh+gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cNfQol+0; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790006525; c=relaxed/simple;
+	bh=Eyf5HB7rWUuykO/B4yjrMsebEOm1V7kPMebLHZRCWQY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nAjdR9Nyl680iuUEPsA+2kdOAawJ4tIjV6orvzL2zbwRZhYJ2JB+L9+4vpcbv2mhOtv/8YTBKHIk2EIcB+7Y3Jfmt7+B6Jvz5/axAL4dJ4AijQRcom8v8suQCnrS6cVtZZ2AB8q6rzhXoeCbiARsF6e4323vUqXwQDtKz9G3Q1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MHVHrTUh; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cNfQol+0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8EB61F00898;
-	Mon, 21 Sep 2026 15:52:57 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MHVHrTUh"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51CB41F008BC
+	for <linux-clk@vger.kernel.org>; Mon, 21 Sep 2026 16:02:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790005979;
-	bh=hIi2nadaz9v+40zq6lBkL1D9SKdfdSIeq13JuEYLWgM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=cNfQol+0/dbhPr7tGbQyWQFtuRS1ayA/d4OnAEZ7bAMZDyVMydSz918Ly76J9LDt0
-	 k3lVzbO8m3ix+LIpOhR1XQdq4vcFcTD73OgtHIcxZYwqs8Fxydtwc7XmlKe6XONnlA
-	 ChkIZBix+f69C1AJDB35bAudUESRo+LIJG7D3B38iDBlVPjh11s/Wou78uB4tudJCR
-	 LafwSwciHWxN1rIWH1GOeIMfM2Z+AaqOdwMH+BlFUvcgeDXTkWbBQPw8PkbgbDjr+S
-	 ulNE4iE81x5iKrUgAHcXfRWzc0hZ7EdIh3UEevcXHdEE4qXBCIUoTimj4Mx036LfF9
-	 VX3W+RZRmnWCg==
-From: Chen-Yu Tsai <wens@kernel.org>
-To: Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Stephen Boyd <sboyd@kernel.org>, Alastair D'Silva <alastair@d-silva.org>
-Cc: linux-clk@vger.kernel.org, linux-sunxi@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, 
- Samuel Holland <samuel@sholland.org>
-In-Reply-To: <20260916042910.382744-1-alastair@d-silva.org>
-References: <20260916041104.239999-1-alastair@d-silva.org>
- <20260916042910.382744-1-alastair@d-silva.org>
-Subject: Re: [PATCH v2] clk: sunxi-ng: ccu_common: Use
- readl_relaxed_poll_timeout_atomic for PLL lock
-Message-Id: <179000597757.4029583.5932313029750743285.b4-ty@kernel.org>
-Date: Mon, 21 Sep 2026 23:52:57 +0800
+	s=k20260515; t=1790006524;
+	bh=Eyf5HB7rWUuykO/B4yjrMsebEOm1V7kPMebLHZRCWQY=;
+	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc;
+	b=MHVHrTUhgy8RLJSB9PCb96C+TwYoxk9OPxsY3WYUd2k1pUPyfhn1jxqcnLx12ZXbI
+	 C0zH7D0SYWucL6sTXnsFxG2XnRXG505wid63EKjGDRqyp94l78SpU5yfs9I3E9s5nE
+	 WXbF+pUOvv4AWZMdfjgwUSRby/OgOgpSqHRAX4SKAvSMpyq/zbOFoLZ/kYDzgMjRgz
+	 ugE5ZMnEKTcPpmROkZHM0DRhibmf7XlTswHDYXcMj4LvmRsBFPTpqMURa/KDisRLaW
+	 zz4Rlsh2QivIdiY/m5H9SAaOTlKAURKON3hAb7WOVVqnwGQhoDyprV4XVucAJ/LMi/
+	 Hwii7b6VQc6sw==
+Received: by mail-lr2-f12.google.com with SMTP id 38308e7fff4ca-3a36de66c0dso30742221fa.0
+        for <linux-clk@vger.kernel.org>; Mon, 21 Sep 2026 09:02:04 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBxEK3THxC3ElbFhsWh4Q0JMckmc4oQOrwUQwygU595YeWxbGWMltjZb+7E7wxOOE6LkHUUB7a//QBg=@vger.kernel.org
+X-Gm-Message-State: AFuF++kqWDuNeqAgU8SlEXqyHZxYJU3ezV5s1XznsPrBXojeNf0YvAsE
+	R9lcZz5cPeib6SAIDWZpUjaIlLI0pTo9jnxVTfm/wKoS1U0jnzrPWmBBTRqjkPG2uwoS0eGMHcI
+	n3U9WAXhResLucMqmZ2Mq+0iEg9KIkO8=
+X-Received: by 2002:a05:651c:1443:b0:3a5:afec:9cf9 with SMTP id
+ 38308e7fff4ca-3a5fbf36939mr24677701fa.7.1790006522575; Mon, 21 Sep 2026
+ 09:02:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+References: <20260921-a733-clk-v4-0-9c184ebe9ac1@pigmoral.tech> <20260921-a733-clk-v4-2-9c184ebe9ac1@pigmoral.tech>
+In-Reply-To: <20260921-a733-clk-v4-2-9c184ebe9ac1@pigmoral.tech>
+Reply-To: wens@kernel.org
+From: Chen-Yu Tsai <wens@kernel.org>
+Date: Tue, 22 Sep 2026 00:01:48 +0800
+X-Gmail-Original-Message-ID: <CAGb2v66wbv2W1mcZ_WzKnkgiSYYm89LGR67gYAgsNgSFYw5mfg@mail.gmail.com>
+X-Gm-Features: AcwNN1WJSlHI-NjxkeeWhPwtNL0p2-F5vEq-B0J5BRudScG0IjIZ4ZswOa7ekVg
+Message-ID: <CAGb2v66wbv2W1mcZ_WzKnkgiSYYm89LGR67gYAgsNgSFYw5mfg@mail.gmail.com>
+Subject: Re: [PATCH v4 2/8] clk: sunxi-ng: sdm: Add dual patterns support
+To: Junhui Liu <junhui.liu@pigmoral.tech>
+Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+	Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Paul Walmsley <pjw@kernel.org>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Alexandre Ghiti <alex@ghiti.fr>, Richard Cochran <richardcochran@gmail.com>, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, netdev@vger.kernel.org, 
+	Jerome Brunet <jbrunet@baylibre.com>, Enzo Adriano <enzo.adriano.code@gmail.com>, 
+	Andre Przywara <andre.przywara@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 16 Sep 2026 14:29:10 +1000, Alastair D'Silva wrote:
-> The Allwinner sunxi-ng CCU driver currently uses
-> readl_relaxed_poll_timeout() in ccu_helper_wait_for_lock() to wait for
-> PLLs to lock.
-> 
-> This non-atomic poll macro relies on ktime_get() and the kernel
-> timekeeping infrastructure. During early boot or sensitive clock
-> transitions (such as CPUfreq DVFS scaling) where timer interrupts or
-> timekeeping may be suspended or unstable, ktime_get() fails to advance.
-> This turns the timeout calculation into an infinite busy-wait loop,
-> causing RCU stalls and system freezes if the PLL lock bit does not
-> assert immediately.
-> 
-> [...]
+On Mon, Sep 21, 2026 at 11:39=E2=80=AFPM Junhui Liu <junhui.liu@pigmoral.te=
+ch> wrote:
+>
+> On newer Allwinner platforms like the A733, the Sigma-Delta Modulation
+> (SDM) control logic is more complex. The SDM enable bit, which was
+> previously located in the PLL register, is now moved to a second
+> pattern register (PATTERN1).
+>
+> To support this, rename the existing "tuning" members to "pattern0" to
+> align with the datasheet, and introduce the _SUNXI_CCU_SDM_DUAL_PAT
+> macro to provide pattern1 register support. Related operations are also
+> updated.
+>
+> Tested-by: Jerome Brunet <jbrunet@baylibre.com>
+> Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
 
-Applied to sunxi/clk-for-7.4 in sunxi, thanks!
-
-[1/1] clk: sunxi-ng: ccu_common: Use readl_relaxed_poll_timeout_atomic for PLL lock
-      https://git.kernel.org/sunxi/linux/c/9ef62592b80c
-
-Best regards,
--- 
-Chen-Yu Tsai <wens@kernel.org>
-
+Reviewed-by: Chen-Yu Tsai <wens@kernel.org>
