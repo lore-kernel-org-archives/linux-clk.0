@@ -1,106 +1,129 @@
-Received: from mail-oa2-f12.google.com (mail-oa2-f12.google.com [74.125.231.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03A9E3E1713
-	for <linux-clk@vger.kernel.org>; Mon, 21 Sep 2026 20:06:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.231.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 243D0446047;
+	Mon, 21 Sep 2026 20:33:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790021182; cv=none; b=CqwFVd+6Z5rl7j9P5MJbtnPee1vaRXoRB+P9t8t3xYpiMqgF/zbMbFMPA6gLc4erWEBfB5M/bhbCfWDhwUe6vW/K4XeIG4sp+8QPFPD9GhX4EBpPKoxPhTB4unCcKwNSlh8F8H5gdu1f8nIDNcr/GFwjfGfUHc7pGeYlno/HuuM=
+	t=1790022796; cv=none; b=CHyStavt9GGwTLJxo70K9tdx19VsVC2nwl1LJQX8upvqqKbGIcnO0Y9GGc0rLtZ+haPUxGH7T2+gFM110bEi1yElxzuzkxz0/Qc1zwxvNQs95Ra6BmiLR8m92RJZHWkiFKplWtSZW3arpx8xftG9+djeTuuaZ6X8kQ2NmSCA8jU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790021182; c=relaxed/simple;
-	bh=HpKDDkYCd2Pwbo5rNqtxh4mKk7ebKSKtL7Zw/QAn2D0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IJmekpT1OyaszMmJ3Oc+QEHI4Dl5MgVOVLJpp+B6jKAQxh0XLLk6Bl8BqFiOInWJJ78FUbhVQMFkJ5SNiTg7fl3345sLdenVJ14aa6hZHkQSWHrT+4+FlDKKglg5+pA+cCd7SP/IR9fLB+L1D9+5JltsG+M4HMJr4JlbTHeabQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=qlg8g9Aw; arc=none smtp.client-ip=74.125.231.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1790022796; c=relaxed/simple;
+	bh=Y2I7vCNExECwOXoayJrB0wiZpZqDSSU8P2y1UKi5Yb0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=RM3lkgvmqEPfXua0r5cf6Bz0DO+7nYRFfno6J7XlhycGc1YUusRx1VZWMSE/ozWZFrnGYEwAvs0PBTJprdyb7NNhAyk0ad0+z8LOw0JEZcmD6+/2EY6nUiLdVBdIHgje7APbfTkrwoFDo2wTJSZJ1oW+eyMjUHoL7BcF2ljOJw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Ma8IV8WM; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qlg8g9Aw"
-Received: by mail-oa2-f12.google.com with SMTP id 586e51a60fabf-469fdb78b1cso2357284fac.0
-        for <linux-clk@vger.kernel.org>; Mon, 21 Sep 2026 13:06:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790021180; x=1790625980; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=fv+RsZgscD5DVR4fjErqaR9WbVwonuHEK45e+ZT7GP4=;
-        b=qlg8g9AwPL9acSpqzohJoa7/BmsAIx7Ivq44IKs4uHxgfMlHVZleHZT9msBetSBMVk
-         a6LxI+/CYssMLO2otXlj2bZEV2qDs+wgUURpoaSdmBYUlqsJhlPlAdZVeQMkVZwnguZz
-         fmXhnAWEkfq1gGEeqGTnj0S0j4TesyPOHLblzV13K5DcB5zme18hE8i5OqVFwh6C7of3
-         rgvyLHicH4xYLEe3RJq4A59FzBbxOrpegnB7uYf3aKknQgyNjGjYZZGgzbUikuwexUHt
-         tRpCIn7/enr+rmFRRYRC9Hg+jMNlbDoRCkJzrphj6buB2kwAMeU4b1sQglXPyKOPClHV
-         nRYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790021180; x=1790625980;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=fv+RsZgscD5DVR4fjErqaR9WbVwonuHEK45e+ZT7GP4=;
-        b=K+iMfPh/mvbY7B2YSxFkojui1bTJz0wwGzoUEsNR+MNd9ikrSh7oqsJUn4ulthDee3
-         hxGBcHcdz14VXOJtQVIa7VcdrOybvTkwXz0raO7Nzq/R/vgDgt8O+ZoPQep84X5mCyEe
-         vYSlHCuUEAHzdRVvI19SBaHjLdxR2rffJFsVFYj93QDmxTo5HIsLXMUGHXKpRJBpjgp7
-         fy1KnwlyY3+g68ci/yB/DgNjsmpq+ANoL6PquM0tepFxTMJF+OT+lzbb3WLFTC00U3hJ
-         48jtbVF24rXo7jJPuTkRplQ1FoVWg/ICRvdsxE+0nfQ8hTT0cm0GdRXfhODGODxKN87H
-         c8kA==
-X-Forwarded-Encrypted: i=1; AKwUvByp9t/tahJc/79QrL3Z0PMBctFiqOU+/wmxMY/2lRGkvr5L0+EVH9FDEwewBW/1JeD9earnGt2VdgE=@vger.kernel.org
-X-Gm-Message-State: AFuF++l0IoKu2NKou4SV4sSd/7W8m4CaapFq0LZMxfuDkMFu1tElvGF/
-	luTNrFfy33v8MhRWoW5tPR6AU3vY392NmC3A9nMmaW2jWN6Dxo6ichu7
-X-Gm-Gg: AYBFou002G/2un9tH1QKDWUGZLQ92JfT6u/O+ZGeHQp6B6mwmBCHV9lzN2wDdnvzy/A
-	Q533lbjRUZxIKL9Ldx3zRQWA/op5Pd/xi+eLfvUpiTkkBql91v6PBwg0kymyG8qQbnHgWZ8ggsI
-	OJZHFAdET0lj3owcad0C2zRIWy7voX//M5k9Vy3bpKAHD62JFy7x4rAK4wXbOjhqHMYDdc6gKeU
-	nL3mw3bBYCg7KTEaLfavRUDRq1hyJQ4XW3a0rUJLNIv6EttZgn5XMx1gtxZ1sZMQDAFDObnEQRZ
-	ucwx6Rpa7s/3cymSrxafxaCO03zJRcvLQHXinFOK6/Xr2hCw67qzDVKgLack2OgxOOVJDC0Dlnv
-	eycnJ/HF3NdpvBoK9DHob59NtCWT4qrKe3LYlDYG0yqOu9Mm3ajgKT9bv4V41PVT4D2PjSxKlJM
-	XNtUoSZhtDiY/X7gCtSeY3PDT0/snHJFMQZJ61N1fapI3wgNB9j58Vj+Hnje2avLJ5e8qiXVq2l
-	kxeqoPlcFcb1+k2ug/cuNkEHI++bm+uvWPsrzqecj/VUA==
-X-Received: by 2002:a05:6870:5688:b0:488:5fb0:423c with SMTP id 586e51a60fabf-48f6c2071b8mr252272fac.29.1790021179689;
-        Mon, 21 Sep 2026 13:06:19 -0700 (PDT)
-Received: from AMD.home.local (dhcp-9-244-8-156.gobrightspeed.net. [9.244.8.156])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-48f6ce755e5sm170837fac.0.2026.09.21.13.06.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Sep 2026 13:06:18 -0700 (PDT)
-From: Enzo Adriano <enzo.adriano.code@gmail.com>
-To: andre.przywara@arm.com,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Chen-Yu Tsai <wens@kernel.org>
-Cc: Junhui Liu <junhui.liu@pigmoral.tech>,
-	Brian Masney <bmasney@redhat.com>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFT 0/2] clk: sunxi-ng: fix A523/T527 single-divider clocks
-Date: Mon, 21 Sep 2026 16:06:17 -0400
-Message-ID: <20260921200617.3180471-1-enzo.adriano.code@gmail.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260812201502.264919-1-enzo.adriano.code@gmail.com>
-References: <20260723004856.55158e84@ryzen.lan> <20260812201502.264919-1-enzo.adriano.code@gmail.com>
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Ma8IV8WM"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1790022792;
+	bh=Y2I7vCNExECwOXoayJrB0wiZpZqDSSU8P2y1UKi5Yb0=;
+	h=From:Subject:Date:To:Cc:From;
+	b=Ma8IV8WMKMH+ib6pPa59xr4eqDVc3GMOyx+ho/RNfk+VqFqIiIWvRv087CjXN18eB
+	 TqNyGUCqZgZUBtpFRq2K50HfIkXFGkBQv4GeukaPKOVMCu4cz8xp9qXFdUO6DXlgze
+	 g1xBmeVoS5+tp5lnVd69XkaXWeWlakuWxS6WBm/ub9fJUuDKOcLlm76GenU9ID8Vkj
+	 Oj3+bSUqZVH5ABNs3x9Mx4T3/Fm8nKxaX6tqofRyJo1MXM5CzMPSF+Ud+F0QMxE02U
+	 zcZEoHTafKqByv+hJbX5d/qQrSxXBu/O1n/q+1Cbvi4H+HBEtwvOJuZA0ck/hlTKZA
+	 krwjg/zhLHunw==
+Received: from jupiter.universe (unknown [100.64.1.62])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sre)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 3D7EE17E0104;
+	Mon, 21 Sep 2026 22:33:12 +0200 (CEST)
+Received: by jupiter.universe (Postfix, from userid 1000)
+	id E8F9E48002B; Mon, 21 Sep 2026 22:33:11 +0200 (CEST)
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+Subject: [PATCH v2 0/8] PM / devfreq: rockchip-dfi: cleanups
+Date: Mon, 21 Sep 2026 22:32:43 +0200
+Message-Id: <20260921-rockchip-dfi-cleanup-v2-0-43ff34ac8599@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/4WNQQ6CMBBFr0Jm7ZhCTE1deQ/DYhimMoqUtEA0h
+ LsLeACXL3n//RmSRJUEl2yGKJMmDd0KxSEDbqi7C2q9MhSmsMblZ4yBn9xoj7VX5FaoG3v0QmJ
+ FPIljWKd9FK/vPXsrf5zG6iE8bK3NaDQNIX723ynfvD8XU44GT94YcmeyjuyVQ9tSFSIdObygX
+ JblC/0TMTnOAAAA
+X-Change-ID: 20260917-rockchip-dfi-cleanup-feae6eefae9c
+To: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, 
+ MyungJoo Ham <myungjoo.ham@samsung.com>, 
+ Kyungmin Park <kyungmin.park@samsung.com>, 
+ Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, 
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+ kernel@collabora.com, Sebastian Reichel <sebastian.reichel@collabora.com>
+X-Mailer: b4 0.16.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2112;
+ i=sebastian.reichel@collabora.com; h=from:subject:message-id;
+ bh=Y2I7vCNExECwOXoayJrB0wiZpZqDSSU8P2y1UKi5Yb0=;
+ b=owJ4nAFtApL9kA0DAAoB2O7X88g7+poByyZiAGqxlHfqKO/2pN/JvmX9JE5b+1S7bENphHyLk
+ 2q49h4tYveZLokCMwQAAQoAHRYhBO9mDQdGP4tyanlUE9ju1/PIO/qaBQJqsZR3AAoJENju1/PI
+ O/qaMXUP/RjAjLOld60tYvyBtU98oEZLq4QKaahyomw107LJJwa0apBR84srWcmq5HRMw2CRIjX
+ RzEEGZAkhjfCc8HTP3W9aMzDeCNU+ly0A2u4jkI2tuKqgdLmw/mOLJMFjs/YJcBh+tu/dHQHc0E
+ csso8EQfaDTtPLYG7EW0DeYE4A5szhv8tSetdc8qlqV73LbV/ngP7K4xUteDhq9+NeHU+1FZKTA
+ 9OpcPx2LG40nAYlfFdP9xOxMDabm7RPXYWozvnbw4Pj7mk0S/fHOIk9pOpWhM2PI4CF37rTkZCr
+ S+3WsUezMpXXJ2UlE11zfG0UmcdvT6yocmx8KD8mJu+jq8ddTNQnBhXQ/9QGSGht9HDoXUAzNHh
+ dBhaBAEPgIvcrCO5/MQ9G4km6nBpWk6UsSSM47PieDDl3Pq9GStNjjBGWrud7CYtWHR1Ohf9FVc
+ ONpwPKM51mX/kolV6jKcNB+xAvz5oPrJ+wKrFv5rvmkuVdD6IPRW+n5tunwxfVTlpUr6oXenLO5
+ rpIzkOQo9ERYeRJ75serWVnFfei6RbbS7lkiQ+fdP6Ra2ZVr3BmGRZ8a3/ukpyjfpsJfqfZRXbM
+ DklaKgLM9tAIaEfjpBZloq2N+O0ZD6//y2TnDQdlzvk4WIUqkcFOfW9I1wC7Z7nDdPN9AyN4Qsn
+ TRU/b2hXUP1bMaoQQRKEwtw==
+X-Developer-Key: i=sebastian.reichel@collabora.com; a=openpgp;
+ fpr=EF660D07463F8B726A795413D8EED7F3C83BFA9A
 
-Hi all,
+This adds proper handling of the RK3588 clocks required for DDR memory
+monitoring, which involves adding them to the clock driver and the DT
+bindings first. The change is done in a backwards compatible way by
+marking them as CLK_IGNORE_UNUSED and using optional clock get in the
+DFI driver. The series also applies a few cleanups to the DFI driver
+while at it. This is done in preparation for RK3576 support, which
+will also come with some DFI specific clocks.
 
-This RFT series has been superseded by Junhui Liu's tested four-patch
-series:
+As everything is done backwards compatible, patches do not need to
+be merged together. So Heiko can take the Rockchip specific patches
+and Chanwoo Choi can take the DFI driver patches.
 
-  https://lore.kernel.org/r/20260906-sunxi-clk-no-p-v1-0-cbde21c9fe69@pigmoral.tech
+Changes in v2:
+- Link to v1: https://patch.msgid.link/20260917-rockchip-dfi-cleanup-v1-0-4f00a97a69a6@collabora.com
+- DT binding: Do not specify maxItems in the generic part as it has a list
+  of items
+- DT binding: Only set minItems/maxItems for specific SoCs
 
-That series implements the M-only and P-only clock conversions, was tested
-on the Radxa Cubie A5E, and has been applied to sunxi/clk-for-7.4. Please
-disregard this RFT series.
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+---
+Nicolas Frattaroli (8):
+      dt-bindings: clock: rk3588: add PCLK_DDR_MON_CH clocks
+      dt-bindings: devfreq: event: rockchip,dfi: add clocks to rk3588
+      PM / devfreq: rockchip-dfi: move to per-variant const structs
+      PM / devfreq: rockchip-dfi: add NO_INTERRUPT perf capability
+      PM / devfreq: rockchip-dfi: use bulk clock APIs
+      clk: rockchip: rk3588: add PCLK_DDR_MON_CH gate branches
+      PM / devfreq: rockchip-dfi: make RK3588 use its clocks
+      arm64: dts: rockchip: add dfi clocks on RK3588
 
-Thanks to Junhui for completing and testing the fix.
+ .../bindings/devfreq/event/rockchip,dfi.yaml       |  70 +++++++--
+ arch/arm64/boot/dts/rockchip/rk3588-base.dtsi      |   4 +
+ drivers/clk/rockchip/clk-rk3588.c                  |   8 ++
+ drivers/devfreq/event/rockchip-dfi.c               | 160 ++++++++++++++-------
+ include/dt-bindings/clock/rockchip,rk3588-cru.h    |   4 +
+ 5 files changed, 184 insertions(+), 62 deletions(-)
+---
+base-commit: cee9395acd8043be0644b25c34bfa86623f2b935
+change-id: 20260917-rockchip-dfi-cleanup-feae6eefae9c
 
-Assisted-by: Codex:gpt-5
-I reviewed this reply and take responsibility for its contents.
+Best regards,
+--  
+Sebastian Reichel <sebastian.reichel@collabora.com>
 
-Regards,
-Enzo
