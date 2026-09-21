@@ -1,94 +1,201 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 600A844E046;
-	Mon, 21 Sep 2026 07:51:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E2C0457E58
+	for <linux-clk@vger.kernel.org>; Mon, 21 Sep 2026 08:46:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789977107; cv=none; b=Wr38JXUy3G+/1ij7BTH399vX6Uh8YXImOg8Zd+h4sXgrzxxhLsK8OGsY7EldTfVyNLUtLETfduDPTp1l1iE0YErilZBmv5DyOQn7qoOEu1SthiGesf+PEpo69lVyF1tb8HWan6WPfgYu9YFzLwS0njYfUDGuMZqR6va1boPy3xI=
+	t=1789980381; cv=none; b=CNJg9rQsgJ2dYNT7CmF6NCoYMnY9BhA/ihSFReHJmeXfqxhJAB4JV9X0Q+eJxvmLnOgztjMQrOjktvG+YoHrEzNtrErVoNt/88yZcSV2b28RBEA4ZtdSMzXSOb0OGSajA3C0ora72i6yqgiSNaIVzsYhxYSTHgx6drzUgNLeKKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789977107; c=relaxed/simple;
-	bh=sZlS+5hBTeYamg0dI6hO+fZLWCFBhpnY6tKiaHd8tMY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=btNTEfa0o4ujZ2I/i7iRwJo8wjvmCq4PQqKkNCPStd+wDYljxJTXYB++uaRm5MZpSG22QKMUqaARDjJlnXIHz/kWamAL1qpY2e8+EolOBv6PFJA5AKJYyk4DVwD5J581j1uFSO/UuL76b3tbltk4im2wx/wKyqFyde8MPG78HCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=L+sK7M1R; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1789980381; c=relaxed/simple;
+	bh=H/Oq7DCmmKlvAofUgjpQ4iEZ6GqCaDK/Q4LrOcGlYX8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YMoBkSw8NWccxsPQkmSQgZECtte1TG4KcetjwyBdjo6L0fLjsU4OAqMDKmgLRbP95Nkl3rZ3C/GUjqwRtJrbgUs71bvJWvEwYoJ6LwC4TZgmuSP6WgWmFt9VyowOKyKdWVuAtjwbPzZJG99wO11jMqScv5Zf1kzqwVWYEmFwu64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kHtH7cie; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=cS+yi1VW; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="L+sK7M1R"
-Received: from killaraus.ideasonboard.com (2001-14ba-70f3-e800--a06.rev.dnainternet.fi [IPv6:2001:14ba:70f3:e800::a06])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 282A7153F;
-	Mon, 21 Sep 2026 09:49:58 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1789976998;
-	bh=sZlS+5hBTeYamg0dI6hO+fZLWCFBhpnY6tKiaHd8tMY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=L+sK7M1R0d3rjmIkUs23v4Y91mzJ9bHr8jjSxwK4aS2qXXoFtQHYCrGWRjnz0Byzx
-	 vNNimR4pBTHeG7SeHma/holVeUOWYrcU/oa6HMGMPLxwPNoAXKe5uYt2P4THeDt+p7
-	 QcgTtPmdb0AhxJaj4n835+aHRKYh3D1CTLc0YuqE=
-Date: Mon, 21 Sep 2026 10:51:41 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Paul Elder <paul.elder+renesas@ideasonboard.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>, Ulf Hansson <ulfh@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH DNI v2 00/11] media: rcar-fcp, vsp1: Enable on R-Car X5H
-Message-ID: <20260921075141.GF24505@killaraus.ideasonboard.com>
-References: <20260919-epaul-v7-3-rc1-x5h-vsp-fcp-v2-0-dbe9236bfd22@ideasonboard.com>
- <CAMuHMdVC2vNp2nTHUi3saTZ8UD4ggeB_aBEvN9XP+EToOr7G2w@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kHtH7cie";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="cS+yi1VW"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68L7EGYJ759193
+	for <linux-clk@vger.kernel.org>; Mon, 21 Sep 2026 08:46:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	qkBaXHoqMiFvjYL8zM/mOnKS4OOJMfb5HsorDcVrhUE=; b=kHtH7cieHkVvlPt4
+	amzlnKDl37IMwUn9NHB4e7xhpEeyJ293VQGD5i6HA24E12l+KpTEDyY8I/EFs0Dv
+	xYAvDI+A6eJMp0UEmRmYdW9WxPXs98Fcg8neSwBNeD2YYVqRRbqE7RQDzo8oW8ks
+	uUF0fK7SiLd0zv42+y9VlJgffgggRTzXWA8FBd2mndCIVNWbWMtNmRi1KQyEKZ8G
+	cuEv/0n3gWYUnzzbxXKxIworWDeYJOsuP28Sc+HQ+X1rPCdOseKB01QlXpTNOccW
+	n9o0/rjFtjf4xavMGQbrtO40u6HnMCgegUm3rde71VoOD5AsMMtLFBg+mdjFynV3
+	aKMkVg==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gu0118bfd-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Mon, 21 Sep 2026 08:46:18 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-9392788b3f8so82577885a.2
+        for <linux-clk@vger.kernel.org>; Mon, 21 Sep 2026 01:46:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1789980377; x=1790585177; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=qkBaXHoqMiFvjYL8zM/mOnKS4OOJMfb5HsorDcVrhUE=;
+        b=cS+yi1VWCNWAefQ4zml/gM0cc1QgOA7mf0JWtvdgtTlbmAqwQW1g0uOwNU/cFWq0uM
+         2ameIwJ8RfH6+DSv100NLpgMBGlmNOx4JYRCJ2quGYi4aYKrRliq4fwYSCH2VwpqWPSO
+         qtMZ7icxscUCMJL8XdCVEkC3nuxo3IbGAaqB1zxIIc7LiEOvz3m5zpn0EKFLwUdHfb0D
+         0iWuyacxs+kvwbrDN0ChgDnY8YxrCyqofn5fWWusTciJWspNK7HhHIES2DgUUkZ6xeeJ
+         S6HXLLdB/RTjKyLwzi6flcv3YbSQuTkGm34dDOEwcSGx7nbLy+9SdGEbFtswE4IIgAAb
+         dwgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1789980377; x=1790585177;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=qkBaXHoqMiFvjYL8zM/mOnKS4OOJMfb5HsorDcVrhUE=;
+        b=QXRfsxXBV4zOFuN8dHwx8eX8rzBeuNorQCcW8PABL5BlSWievNBaAQZ4vdDX3e250R
+         nbVMmv2pZX3pEAem98KUgKFZ8f2ijokSTpvI9jCe1jDnhIy+RuvV2lAGHB6Euou+R1w3
+         z32UXvyDPiI9YLCyK+X7wYxtdTr8hn81OgFybqJ25PxlRr/yn2vzvPAHwG4DQqyD1lqL
+         Az2lVf9JQWD9GcCACGIc5UILqQf1CFOFTluj7oeuMKvs4phfJPRfNz0/aRkOrQaSZjJC
+         AXve+boLAKY+e0I5Na0j4cun8FLHwYr66T+kA/pkXI1MRWS5IpWZlSZ7bf5RvvYtq3hA
+         tneg==
+X-Forwarded-Encrypted: i=1; AKwUvByEoaTY5DwRItzXWWvfhCkVvxLdP8/SPsmvvKKETA7JLr7Q9N2T2mAtYdEUF7jh7ertNEOaWaPT3SY=@vger.kernel.org
+X-Gm-Message-State: AFuF++nOz9XyszJKcLcoKr9mcF1TUNI/ugt7QH7aoxrPZlU73snd8BDO
+	4dnJoVzslwKCfkwxTbPRdhhx36fghpNeRGerXWqTyV9UqdkWfxtyCC+QtguBhmc8Zvxhbqbax5o
+	telRVvPFl31ax0xRrrIgxAjrw4FGvPg7h20sh0pBDNFogKR63egboB3ZgfG46Fu4=
+X-Gm-Gg: AYBFou3C//v/brH4hXsm80A74nHmiN2BIy20yBf6GYoku8CojXBuZhJj3kW8u4Rei+U
+	xGBjznrZAaAvmvgB1nmlcAfQPNPI4YX9zZj6WfaaVTFbKWoDxf109OBr8dXXrsuYULtKk6wsRjX
+	O6fMEz93lZfqAmOX359dXtiNLnPvJLC2aWy3mm6deD2gLQCN6VgcAQREWZpluBvdv6hf+MMw0Jl
+	vq52v+zIF9B2haUXae9h1kq5+UXQHPuYkke7iO/KYdF92vgfbBHNUwujjrUrwXCWaB7RDkgH1l8
+	lM4nUjp2DzisQVzn6W0Ir6ZSfBSgtR8KoI/31e0A6DfSqwRxB5Ypr0g3okBslR/daKgXK7nabCu
+	UCz32PzBbbuYLkXuCFLtMOA==
+X-Received: by 2002:a05:620a:1729:b0:93b:c6ec:780d with SMTP id af79cd13be357-93bf57df974mr940249985a.5.1789980377360;
+        Mon, 21 Sep 2026 01:46:17 -0700 (PDT)
+X-Received: by 2002:a05:620a:1729:b0:93b:c6ec:780d with SMTP id af79cd13be357-93bf57df974mr940246585a.5.1789980376913;
+        Mon, 21 Sep 2026 01:46:16 -0700 (PDT)
+Received: from [192.168.202.12] ([178.235.128.140])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c2a358ade5asm270916366b.51.2026.09.21.01.46.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Sep 2026 01:46:15 -0700 (PDT)
+Message-ID: <733a3b6c-4278-405a-be52-0bd22ad1584d@oss.qualcomm.com>
+Date: Mon, 21 Sep 2026 10:46:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdVC2vNp2nTHUi3saTZ8UD4ggeB_aBEvN9XP+EToOr7G2w@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 02/19] clk: qcom: Add global clock controller driver
+ for MSM8952
+To: Muzaffer Kadir <muzafferkadir@mainlining.org>,
+        Taniya Das <taniya.das@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abelvesa@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+        Jerome Brunet <jbrunet+clk@baylibre.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Srinivas Kandagatla <srini@kernel.org>, Ulf Hansson <ulfh@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        "Joerg Roedel (AMD)" <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>, Lee Jones <lee@kernel.org>,
+        Rob Clark <robin.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov
+ <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Robert Marko <robimarko@gmail.com>,
+        Guru Das Srinagesh <linux@gurudas.dev>,
+        Amit Kucheria <amitk@kernel.org>,
+        Thara Gopinath <thara.gopinath@gmail.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+        Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
+        "Guilherme G. Piccoli"
+ <gpiccoli@igalia.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        David Heidelberg <david@ixit.cz>, Dang Huynh <danct12@riseup.net>,
+        phone-devel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
+        iommu@lists.linux.dev, mfd@lists.linux.dev,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        Krzysztof Kozlowski <krzk@kernel.org>, linux-pm@vger.kernel.org,
+        linux-input@vger.kernel.org
+References: <20260916-msm8952-initial-support-v2-0-798c2602dde1@mainlining.org>
+ <20260916-msm8952-initial-support-v2-2-798c2602dde1@mainlining.org>
+ <af3f7261-e4b0-42fc-818d-80e760cddc2c@oss.qualcomm.com>
+ <a47a1a0e-559b-410c-aa99-9230908c2fe6@mainlining.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <a47a1a0e-559b-410c-aa99-9230908c2fe6@mainlining.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: gQN2m1kRFcKXAOrLVPhjswNHZGefcyry
+X-Authority-Analysis: v=2.4 cv=dPczC+Zb c=1 sm=1 tr=0 ts=6ab0eeda cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
+ a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=gowsoOTTUOVcmtlkKump:22
+ a=IpRBMZr9S9mwpYgRR9UA:9 a=QEXdDO2ut3YA:10 a=PEH46H7Ffwr30OY-TuGO:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTIxMDEyNSBTYWx0ZWRfXyUM1i9yxn2zJ
+ w9eT8sQ8NJXVKbucxsOC1bIt4BiNSAFT7DlGVYX+FdodEybLV9K3zxPqLlCId7eBxMWYQgyNmam
+ 3/aq43oeDiwSSXO6fEsaTa0CO4TKXFBwTf3Csw3u7W/40u4+c4ZcGEev/yYFxkMM59WRPkEhy6w
+ WkNiWwR8/CU7P7R9UT8ztIYEJXMkReb2vjLFzaCjhG8zCPEW11fMbBAO+ep9Z1qoV6CtS1z7Uy6
+ CkPihFBNeHvw+Y76n4wLHyTrn8KKm9oIkwLFziB6LKgtywIQ+Yo1KDz3G9fn8vas7tKrhJEPwDF
+ Cfa4Yb3yXuoYIl5/0nC/wTgxxAUBLueFsNFIRDQ1WLQnego5qI7Mrd0roo8W1c1uZvGRYbrzayz
+ ct8WrVrFG192MUbH9rt1pv1u4t/BipQDCzc0Krpy3lzFlRdgEsK2sYDuRjfsAHY93tlnq+A2XkQ
+ rSoIU/HOU5aZ/xaGc+Q==
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTIxMDEyNSBTYWx0ZWRfXyUEE7esuJDJE
+ K47JaizEEGkrcjw4YtSiIhK5yq0RsdUrbD5TDdjEWx4sxw2hU8rk/wmcFReolZ+0koVCCjlN3g9
+ 9Sra3M22WqWQEmlYiasU2lpYt5qJabI=
+X-Proofpoint-ORIG-GUID: gQN2m1kRFcKXAOrLVPhjswNHZGefcyry
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-09-21_03,2026-09-16_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 malwarescore=0 phishscore=0 lowpriorityscore=0
+ priorityscore=1501 bulkscore=0 clxscore=1015 adultscore=0 spamscore=0
+ suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2609040000
+ definitions=main-2609210125
 
-Hi Geert,
-
-On Mon, Sep 21, 2026 at 09:41:10AM +0200, Geert Uytterhoeven wrote:
-> On Fri, 18 Sept 2026 at 19:07, Paul Elder wrote:
-> > This series is based on Geert's
-> > "topic/rcar-x5h-ironhide-scmi-cpg-mdlc-remapping-v3" branch [0]. A
-> > branch including this series is available here [1].
-> >
-> > This series enables the FCPV{B,I,D} and the VSP{B,I,D} blocks on the Renesas
-> > R-Car X5H SoC.
-> >
-> > This has been tested on an Ironhide with the vsp-tests test suite [2].
-> > VSPI:
-> > 145 tests: 138 passed, 0 failed, 7 skipped
-> > VSPB:
-> > 115 tests: 104 passed, 0 failed, 11 skipped
-> > VSPD (a):
-> > 114 tests: 99 passed, 0 failed, 15 skipped
-> >
-> > VSPD (b) hangs on the tests, so that needs some investigation.
-> >
-> > The first couple patches add clocks that are used by the FCP and VSP,
-> > but as the upstream X5H CPG driver is barebones at the moment and we
-> > don't yet ensure that the parents are enabled, these are marked as DNI
-> > for the moment.
+On 9/17/26 2:25 PM, Muzaffer Kadir wrote:
+> Hi Taniya,
 > 
-> The DTS patches use DNI definitions of clocks, so they should be DNI, too.
+> On Thu, 17 Sep 2026 09:49:07 +0530, Taniya Das wrote:
+>>> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+>>> index a6c676f68b79..3c3f27dcc68d 100644
 
-Can we add non-DNI clock definitions in v3, or is that too early in the
-grand scheme of MDLC and SCMI development ?
+[...]
 
--- 
-Regards,
+>>> +#include "common.h"
+>>> +#include "clk-regmap.h"
+>>> +#include "clk-pll.h"
+>>> +#include "clk-alpha-pll.h"
+>>> +#include "clk-rcg.h"
+>>> +#include "clk-branch.h"
+>>> +#include "reset.h"
+>>> +#include "gdsc.h"
+>>> +
+>>
+>> Add DT_BI_TCXO enum.
+> 
+> Should I rename the clock name to bi_tcxo?
+> Or should I use DT_XO for enum?
 
-Laurent Pinchart
+BI_TCXO is the Qualcomm-conventional name for the clock sourced
+from the crystal oscillator. I'm not sure about the BI_ prefix,
+but TCXO stands for "Temperature-Controlled Crystal Oscillator"
+
+Konrad
