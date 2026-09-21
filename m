@@ -1,260 +1,155 @@
-Received: from mail-vs2-f12.google.com (mail-vs2-f12.google.com [74.125.227.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCE7F502788
-	for <linux-clk@vger.kernel.org>; Mon, 21 Sep 2026 19:02:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E713F3AB285
+	for <linux-clk@vger.kernel.org>; Mon, 21 Sep 2026 19:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790017347; cv=none; b=teNvFJBJdELrxmz8ymQcpPd8ODRK8FnQ7A5a0Q0+SaNjUytVGo06Ne0meUnaej2ynjkO6aaHWkeUljtU1o1BxemIZv5Re+W8rt0qVCIai8UGQCLaiCx5upmlhi3GN3j4nrA88kkFb2AnhOPAnQU1hJSJseL3t/tuIhk8ECjuU7s=
+	t=1790020665; cv=none; b=fVU8c/1yC2OVXo5JKTERVU2diaqQAIknYLu4a0WMxGVnyviaaO1JszBblbv27IDhkmB2Is9uM2nuNexd8yp7Gj5Y4/Fdro3c2GCEGiDZncBJjk17MsLxDymbuLtUAmoekdJB0kXJfD9upFipqs6T0ZxOSIrOzppVzgZlJLhjGac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790017347; c=relaxed/simple;
-	bh=Xt2My9d1ZnGzWqEb1isRLvU2Ix5KpWtA+uFdwmPk1pc=;
-	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=EZncA+ZdUKGWsryCYxLZ1SW8TAeoUEy3s7VWRE4EcixfPapyl7aI3jipMOOKkoxDzOSzcK2IIyskAB6a84+51RB0bM7PzVV2rJCR+Zwk6VT+ive14C8NCIxv5uck4sOmmdd2pSPCGX5mqXEauhNTFlH6v+Tfr9n5hNcNWXDrt6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brivo.com; spf=pass smtp.mailfrom=brivo.com; dkim=pass (2048-bit key) header.d=brivo.com header.i=@brivo.com header.b=x7e3d25Y; arc=none smtp.client-ip=74.125.227.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=brivo.com
+	s=arc-20240116; t=1790020665; c=relaxed/simple;
+	bh=dNq4bkulw35Cidxo9e2r5O87nv8tva9TJtkuLwU5vsE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gz/xX6CiWpkBkcVBgMrMQX2Ck7QP/29GWXYsmRz1YUB9zDbQ1u3+bLV9a6u4jQLuepXQYRaRmDG1jp2kvv+sp97WsTcsyU9dw2EfQ7J+WHy3Tlgl8pWKs3wdNS+A371geYmai4uA4fdYDBo8u3+iqAhZ+DsvAeZ1I8Gha5HVU4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Tlr6Wi8r; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=EdOV/a67; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brivo.com header.i=@brivo.com header.b="x7e3d25Y"
-Received: by mail-vs2-f12.google.com with SMTP id ada2fe7eead31-785692e5907so2038887137.0
-        for <linux-clk@vger.kernel.org>; Mon, 21 Sep 2026 12:02:23 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Tlr6Wi8r";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="EdOV/a67"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1790020660;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WAji1n7QV2IWerkWF2a/t4cm99jyoAVuQMXhUEtU/wE=;
+	b=Tlr6Wi8rRgPqlk01junDHvva9SCSRPFZZOct30qvKtVyEnwq0DDXVGDowvECjmgGklfCnV
+	r/VTUfX3fwodX/po3JNxVSZDum9SOWyaVU6o2Z7rtbJKxf13lCrwQxXF4H5/zcsXaVyrp4
+	RDJs9dQDH6IAc6gPseCsZ8wPckzVtlY=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-569-TuvFDjFZOgCFPSOOb5NnxQ-1; Mon, 21 Sep 2026 15:57:39 -0400
+X-MC-Unique: TuvFDjFZOgCFPSOOb5NnxQ-1
+X-Mimecast-MFC-AGG-ID: TuvFDjFZOgCFPSOOb5NnxQ_1790020659
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-93a0312937eso444018385a.1
+        for <linux-clk@vger.kernel.org>; Mon, 21 Sep 2026 12:57:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brivo.com; s=google; t=1790017341; x=1790622141; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:subject:cc:to:from
-         :content-language:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=GFcZ8v2IrQlVXsS28/gxish2Yf7RjcBy4ak1q2e8MoU=;
-        b=x7e3d25YPd75gL8HlZ1xRpCnjjWqYlhmInOSVC2ddsvhBGE5so2kUtibji2AC5t6Me
-         2Sq3TVxI2i2IxpLNruy9NVxiEtQIIOk5ecev0yBJ9VKKyXSXUqB0ZgIpbdgWHV6HH35r
-         JSQlDiJuJBIitTj5cfcjs9s7EoDjC5AcmRN+lJftkSStajXLg72+d8IxbAt8r/+pYTER
-         GGz41jmnLSDr1Gf3OZw0dfAak+9Lew5gF2x68JAOzNEfudwd8zv3xaHG5e4S1ABlyNem
-         7O1Ggnuwbjm2Cr4PDUmZz9GReBqjzyNGLXNQLSDMOBLOXzVmTdJjq6u4mfAs3xDzBr/3
-         lw0w==
+        d=redhat.com; s=google; t=1790020659; x=1790625459; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:content-type
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=WAji1n7QV2IWerkWF2a/t4cm99jyoAVuQMXhUEtU/wE=;
+        b=EdOV/a67MEnCMthefwtQqV3kimuQqYjGzaORMPDlnhrPcVHY8kOxaq1duvxbYke+GH
+         HcOezpho7WQIGFaxmwjJBwl2DXHVtSKjRy1jco9tOzbF9VODfXaV7TYbAEQYdzka78cs
+         RgEHuxRawQEhp3aJhEGiHwnU1GTgiGVk5zXQXhcAVYcXmIj1qMuP4+gTs75KMjNcIzQ1
+         zmu7zp2KslO7BQU+7jXGsHNlmx3J6TybWmgPl1+kcxiuSayzXoRFlGS6pFTNNai5flA+
+         MmNEa+V6XUM6g5OpMuOcivxaHsjhDm+/XLug9NXCJuk7yqOD3fYYIcrqgFSAnv5pCB96
+         tTeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790017341; x=1790622141;
-        h=content-transfer-encoding:content-type:subject:cc:to:from
-         :content-language:user-agent:mime-version:date:message-id:x-gm-gg
+        d=1e100.net; s=20260707; t=1790020659; x=1790625459;
+        h=user-agent:in-reply-to:content-disposition:content-type
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=GFcZ8v2IrQlVXsS28/gxish2Yf7RjcBy4ak1q2e8MoU=;
-        b=xOLXxDTg5Q2JFzIrJcoK1bjnskjJjykKoJhrYyAraWoz6Kv4LD+An5UhcctzhzPVrg
-         SQX9ZxAFy4FrZ3IKY8OiFjusZHbGYQvyJID+yAM0pH2ml+HAbtF3ixfVEM4OVi10TlJn
-         HyUto6TwjF/KIU3SrHWh1J+UOgstnofTXWuPXLimRad5goKYEIl4HFVgJiH+4RQGxk/D
-         5NFClZeQQuu4Hpc0kjsf/AwcEcBxt2KxVz/OA9L8LxpoNRCErcYwh4Iw4JgOj1MbGgv9
-         Kn/+Hd9cFUI30XD8MUxZQtGCbFUqcVd8oJhjMZG8g7UTKzqL3V7s1xfkQOacsvpRoMvc
-         BJ1Q==
-X-Forwarded-Encrypted: i=1; AKwUvBxkdFTjZfifhrBXOsWGiUUnJdFWD3jKO2xw5MBEN2kkei+kISLLAOO0looe+7OeauFD9hgu4eJIA9k=@vger.kernel.org
-X-Gm-Message-State: AFuF++mxJk+LJSRYA0ulyAgMkhWmQ4VBza+sLR5UC+i5vZ69JZ60LuGd
-	i+LxoT2NiFtjYUp3FCVqeJ4VSea4zT1Li30uHUn4FVoOatrc/bgJE8wVM0lXq4AvjDXJh8EOu+E
-	JI2LsMporsumBQqJ7te8xS+iaWf79MiFM1ag4bpHZMHyhj1hWZ1ezqCQ=
-X-Gm-Gg: AYBFou1w+J058PAwlanOqPc1WLGyCSzLFW/xwx8zam8Tqkd9bUZCDIb+D4h4Hbg+pEP
-	4SSoNvXcw52JAMp+9oPNf2haYQbLxM+A06CJ0Yz34SG0Rjvlq8RC9K60t9eefxSddvZDJOkJwRT
-	61hAUl5OqSk+NlNYHLgI+Ge+wq+C0zzBqpodmYC3P6E94ipi4unZx7nvyeg2wMZOGxxJ/sDVI+N
-	6+nW82Ft3ecgoGtg5mbN4jIKwT846gyviRRmUVM9/dvjh+J2gsR9hfEDy+3vYyskglKuOPcuKLr
-	l8vbHM36NKQQLA11Uw92CuSZkR44Qho3bHma6ZNJkP+uUeHTLDw1T8DPAUI6CCKBu0LSZptVwYx
-	imTWMd3BBh9A4AqPW/xV1kUWml4Oxih6JTvP/v6pSkC/w7/CtMt6FqXEScH2QN6h92oa1S4BPpY
-	JKctpsTDz1JAsrQezy5vzFt8n04FkebNnU9fBkFcINfURSRUaFz36xWh9n3a9yhVjwg2ES8DABz
-	3Fw
-X-Received: by 2002:a05:6102:2922:b0:7a3:4e75:d1f0 with SMTP id ada2fe7eead31-7a55d38b2b7mr6284952137.23.1790017341074;
-        Mon, 21 Sep 2026 12:02:21 -0700 (PDT)
-Received: from [10.200.233.210] ([71.163.254.246])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-7aad2e36ea7sm8429137.4.2026.09.21.12.02.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Sep 2026 12:02:20 -0700 (PDT)
-Message-ID: <d90c0eec-728b-4607-b480-86b2534559c4@brivo.com>
-Date: Mon, 21 Sep 2026 15:02:19 -0400
+        bh=WAji1n7QV2IWerkWF2a/t4cm99jyoAVuQMXhUEtU/wE=;
+        b=Tpl3uatfmOh/x8PePRCeVwcWJJk9Ubq7JoVNDHdOHQblBKMFKDlU4TvQuoROxbG3mN
+         USS4DyUO7hqOzRKp5fjGFNNV3pTzezC40J5pzMVhxL20AdeSGGr2+CKbZSN+prUs2Jqq
+         sfie43cKvbCNtkG1c3tUrPBHqWxy8rgIdCsIKWwCms885qEFf/jB5OXumv8FN41cK90X
+         5hoO2NkJXyID/wYtxNsgstsZ+iu+lXgBq2TCrccB0vANR+5DyCP5Pk/J9cf8BVVDR0HO
+         RGWgv9+g+0Xdz354Akh+PnXBFKknalF30l8iYoi1SDfrN+wS9I+i3hdxE9m6+PBEqrXj
+         I9KQ==
+X-Forwarded-Encrypted: i=1; AKwUvBz32FVO8nQlhzFkqNiysGQAadxVl3tmsQwlmmZtdX39pgZ0OhWcuTqsO3BaETgjypsKAgL4ELjLdr4=@vger.kernel.org
+X-Gm-Message-State: AFuF++nf8n2qBba7YXf+v4oqLbQYlO+DwdB/yWidNAuqI91nikVx+HxO
+	4FoB4O0Hlkb+MOCiXEK2Iscc6TbCR6iu9pyt2GsrDL+OzlTiumzEtyuR4F03jU+64GwijtAh12A
+	JIW6hBhne566NezOplmFO7lxByM/ZsHVtRioEY4O5UzN6Af/a7ebP0xq1cSiyJQ==
+X-Gm-Gg: AYBFou1hgD7Fti3/NtKsvMAy+4QKHp6NoJ6X+ywCeAjugURJTge4wBI7yXcyjHHw6ug
+	uQkhKeo0mv+jqxUe2pMBP+olFVBuA+Xv874rKDFL9xbrz7EWCXlsFZjydL4kF7hgvvlglohPG9h
+	Wlhs12E7TJ2aZ6gK4Ts7SPTV1HVIK/MUf/yS17xWxaBCCKJscGbBo/Z/PPnCs97br0XmFDCI2uB
+	7yy/YSXw5qqqi0c5AVGsjsgYGlHf8OijXdIJfgZvfFnIVE0KiP0gbAl9wqUQpotcI+TThvsyJEw
+	yrxkrbn9VUWaH1sKXzAX+ZevULyWxsCczg6BM1z+CsIZ/CiYWBDU93ZpvoYNAkbLgtNYvgpyHA=
+	=
+X-Received: by 2002:a05:620a:4686:b0:937:7e90:ecc with SMTP id af79cd13be357-93c15d9a15cmr243297985a.25.1790020658505;
+        Mon, 21 Sep 2026 12:57:38 -0700 (PDT)
+X-Received: by 2002:a05:620a:4686:b0:937:7e90:ecc with SMTP id af79cd13be357-93c15d9a15cmr243292185a.25.1790020657833;
+        Mon, 21 Sep 2026 12:57:37 -0700 (PDT)
+Received: from redhat.com ([2600:382:8127:317:3053:da10:47fd:5e79])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-91260a86f62sm74973656d6.33.2026.09.21.12.57.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Sep 2026 12:57:37 -0700 (PDT)
+Date: Mon, 21 Sep 2026 15:57:34 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Dinh Nguyen <dinguyen@kernel.org>
+Cc: "Ng, Adrian Ho Yin" <adrian.ho.yin.ng@altera.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Subject: Re: [PATCH 1/3] clk: socfpga: agilex: convert to CLK_OF_DECLARE()
+Message-ID: <arGMLthMgQvyQHuR@redhat.com>
+References: <cover.1789096458.git.adrian.ho.yin.ng@altera.com>
+ <c7006ac0c353640f52902580564a85d6d23c57e5.1789096458.git.adrian.ho.yin.ng@altera.com>
+ <aq2-Ysy2wbLeBWd1@redhat.com>
+ <1abffb74-3b9d-494d-a414-ea21d537ed74@altera.com>
+ <arFEwdu6EucK1G9x@redhat.com>
+ <c89f566b-9fd7-4824-ad19-bd8b055d2736@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-From: Sean Anderson <sanderson@brivo.com>
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
- linux-pwm@vger.kernel.org
-Cc: Brian Masney <bmasney@redhat.com>, linux-kernel@vger.kernel.org,
- Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Kevin Hilman <khilman@baylibre.com>, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org
-Subject: Potential deadlock in clk-pwm
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c89f566b-9fd7-4824-ad19-bd8b055d2736@kernel.org>
+User-Agent: Mutt/2.4.0 (2026-06-19)
 
-Hi,
+Hi Dinh,
 
-I found a potential deadlock in clk-pwm with lockdep. The problem occurs
-when a multi-channel PWM calls a clock function (such as clk_get_rate) in
-its apply callback. If one channel of the PWM is used for a clk-pwm, and
-another channel is used for some other purpose, then the following deadlock
-can occur:
+On Mon, Sep 21, 2026 at 11:59:50AM -0500, Dinh Nguyen wrote:
+> On 9/21/26 09:52, Brian Masney wrote:
+> > On Mon, Sep 21, 2026 at 11:17:13AM +0800, Ng, Adrian Ho Yin wrote:
+> > > subsys_initcall() / subsys_platform_driver() would not fix the failure we
+> > > are hitting. Both still run after time_init(), while the DW APB timer is
+> > > registered via TIMER_OF_DECLARE from timer_probe().
+> > > 
+> > > So moving from core_initcall() to subsys_initcall() changes nothing for
+> > > this consumer: the timer cannot defer, clk_get() still fails, and the timer
+> > > is never brought up. That is why these patches use CLK_OF_DECLARE(): the
+> > > provider must be registered from of_clk_init() so clocks exist before
+> > > TIMER_OF_DECLARE runs.
+> > > 
+> > > On the broader point about CLK_OF_DECLARE abuse: I agree it should not be
+> > > used merely to beat platform device probe. If the preferred approach is to
+> > > keep the clkmgr as a platform driver (subsys_platform_driver()) and give the
+> > > DW APB timer nodes a fixed clock-frequency instead of a clocks phandle, I
+> > > can respin that way. Please let me know which you prefer.
+> > 
+> > I wanted confirmation that you wanted to use CLK_OF_DECLARE() for the
+> > system timers.
+> > 
+> > Will you by chance be at Linux Plumbers Conference in two weeks? Bartosz
+> > is leading a discussion about the future of CLK_OF_DECLARE() and
+> > friends.
+> > 
+> > https://lpc.events/event/20/contributions/2503/
+> > 
+> > We want to minimize the use of CLK_OF_DECLARE(), so the preference is
+> > to keep this as a platform driver if possible. If you are able to get
+> > around using CLK_OF_DECLARE() by initially running the system timers
+> > with a fixed frequency then I think that would be preferable.
+> 
+> I originally pushed back on hard-coding a fixed frequency for these timers
+> because if the bootloader changed the frequency of the clocks for these
+> timers, we may run in to a problem. But I don't think the bootloader had
+> changed the clock frequency in a long time, so it may not really be a
+> problem. But it just feels wrong to not take in a frequency from the clock
+> driver.
+> 
+> The other option is perhaps adding the ability to defer probe these timers?
 
-CPU0                        CPU1
-====================== =========================
-pwm_get_state_hw(chip)
-  guard(pwmchip)(chip)
-		       clk_get_scaled_duty_cycle(clkb)
-		        clk_prepare_lock()
-		        clk_pwm_get_duty_cycle(clkb)
-		         pwm_get_state_hw(chip)
-		          guard(pwmchip)(chip)
-  chip->get_state()
-   clk_get_rate(clka)
-    clk_prepare_lock()
+Lets see what comes out the discussion at LPC about CLK_OF_DECLARE() in
+2+ weeks. I'll make sure to attend this particular discussion.
 
-The same scenario can play out with apply instead of get_state.  I don't
-think this can really be fixed in clk-pwm. That driver doesn't have control
-over whether it's called with prepare_lock held or not, and it has to call
-into the PWM API in order to do anything.
+Brian
 
-One approach could be to convert the PWM drivers to avoid calling any
-(sleeping) clock functions from apply. Fortunately, it seems like there are
-not that many drivers used in-tree:
-
-- pwm-imx27
-- pwm-meson (by far the most prolific user)
-- pwm-renesas-tpu
-- pwm-tiecap (doesn't call any clock functions from apply/get_state)
-
-and none of the in-tree users use any of the other channels AFAICT.
-
-Unfortunately, converting these drivers to be atomic is non-trivial.
-All of them enable/prepare their parent clock only when necessary to save
-power. Converting them to prepare/disable in request/free could result
-in increased power usage if the parent turns on in prepare instead of
-enable. Additionally, pwm-meson also sets the clock rate for improved
-accuracy, and this would have to be removed.
-
-I suspect that removing these features to fix a bug that can't occur on
-existing hardware would be well-received. On the other hand, pwms are
-exposed to userspace, so I think a privileged user could deadlock the
-system just by reading /sys/kernel/debug/pwm and
-/sys/kernel/debug/clk/<name>/clk_duty_cycle repeatedly.
-
-Does anyone have better ideas? I don't know if there's a way to catch this
-bug at runtime without lockdep. Non-atomic drivers are still OK as long as
-they don't take prepare_lock.
-
---Sean
-
-======================================================
-WARNING: possible circular locking dependency detected
-6.18.52-yocto-standard-00169-gbc0cb063dbe7-dirty #1 Not tainted
-------------------------------------------------------
-kworker/u16:2/47 is trying to acquire lock:
-ffff8000827d8968 (prepare_lock){+.+.}-{4:4}, at: clk_prepare_lock (drivers/clk/clk.c:228)
-
-but task is already holding lock:
-c5ff000002bc77c8 (&chip->nonatomic_lock){+.+.}-{4:4}, at: pwm_apply_might_sleep (drivers/pwm/core.c:43 drivers/pwm/core.c:54 drivers/pwm/core.c:747)
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #1 (&chip->nonatomic_lock){+.+.}-{4:4}:
-        __mutex_lock (kernel/locking/mutex.c:598 kernel/locking/mutex.c:760)
-        mutex_lock_nested (kernel/locking/mutex.c:812 (discriminator 1))
-        pwm_get_state_hw (drivers/pwm/core.c:43 drivers/pwm/core.c:54 drivers/pwm/core.c:812)
-        clk_pwm_get_duty_cycle (drivers/clk/clk-pwm.c:71)
-        clk_core_update_duty_cycle_nolock (drivers/clk/clk.c:3095)
-        __clk_register (drivers/clk/clk.c:4032 drivers/clk/clk.c:4380)
-        devm_clk_hw_register (drivers/clk/clk.c:4460 (discriminator 1) drivers/clk/clk.c:4684 (discriminator 1))
-        clk_pwm_probe (drivers/clk/clk-pwm.c:152)
-        platform_probe (drivers/base/platform.c:1377)
-        really_probe (drivers/base/dd.c:640 drivers/base/dd.c:718)
-        __driver_probe_device (drivers/base/dd.c:880)
-        driver_probe_device (drivers/base/dd.c:910)
-        __device_attach_driver (drivers/base/dd.c:1038)
-        bus_for_each_drv (drivers/base/bus.c:462)
-        __device_attach (drivers/base/dd.c:1110)
-        device_initial_probe (drivers/base/dd.c:1159)
-        bus_probe_device (drivers/base/bus.c:583)
-        deferred_probe_work_func (drivers/base/dd.c:124)
-        process_one_work (kernel/workqueue.c:3294)
-        worker_thread (kernel/workqueue.c:3377 kernel/workqueue.c:3458)
-        kthread (kernel/kthread.c:432)
-        ret_from_fork (/usr/src/debug/linux-yocto/6.18.52+git/arch/arm64/kernel/entry.S:860)
-
--> #0 (prepare_lock){+.+.}-{4:4}:
-        __lock_acquire (kernel/locking/lockdep.c:3167 kernel/locking/lockdep.c:3286 kernel/locking/lockdep.c:3910 kernel/locking/lockdep.c:5239)
-        lock_acquire (kernel/locking/lockdep.c:5872 kernel/locking/lockdep.c:5829)
-        __mutex_lock (kernel/locking/mutex.c:598 kernel/locking/mutex.c:760)
-        mutex_lock_nested (kernel/locking/mutex.c:812 (discriminator 1))
-        clk_prepare_lock (drivers/clk/clk.c:228)
-        clk_set_rate (drivers/clk/clk.c:2592 drivers/clk/clk.c:2584)
-        meson_pwm_enable.isra.0 (drivers/pwm/pwm-meson.c:235)
-        meson_pwm_apply (drivers/pwm/pwm-meson.c:328)
-        __pwm_apply (drivers/pwm/core.c:707)
-        pwm_apply_might_sleep (drivers/pwm/core.c:761)
-        pwm_adjust_config (drivers/pwm/core.c:897)
-        pwm_regulator_probe (drivers/regulator/pwm-regulator.c:403)
-        platform_probe (drivers/base/platform.c:1377)
-        really_probe (drivers/base/dd.c:640 drivers/base/dd.c:718)
-        __driver_probe_device (drivers/base/dd.c:880)
-        driver_probe_device (drivers/base/dd.c:910)
-        __device_attach_driver (drivers/base/dd.c:1038)
-        bus_for_each_drv (drivers/base/bus.c:462)
-        __device_attach_async_helper (drivers/base/dd.c:1067)
-        async_run_entry_fn (kernel/async.c:129)
-        process_one_work (kernel/workqueue.c:3294)
-        worker_thread (kernel/workqueue.c:3377 kernel/workqueue.c:3458)
-        kthread (kernel/kthread.c:432)
-        ret_from_fork (/usr/src/debug/linux-yocto/6.18.52+git/arch/arm64/kernel/entry.S:860)
-
-other info that might help us debug this:
-
-  Possible unsafe locking scenario:
-
-        CPU0                    CPU1
-        ----                    ----
-   lock(&chip->nonatomic_lock);
-                                lock(prepare_lock);
-                                lock(&chip->nonatomic_lock);
-   lock(prepare_lock);
-
-  *** DEADLOCK ***
-
-4 locks held by kworker/u16:2/47:
-  #0: 81ff0000003dc948 ((wq_completion)async){+.+.}-{0:0}, at: process_one_work (kernel/workqueue.c:3268)
-  #1: 02ff800083a37d10 ((work_completion)(&entry->work)){+.+.}-{0:0}, at: process_one_work (kernel/workqueue.c:3269 (discriminator 1))
-  #2: afff000000a57140 (&dev->mutex){....}-{4:4}, at: __device_attach_async_helper (include/linux/device.h:1013 drivers/base/dd.c:1053)
-  #3: c5ff000002bc77c8 (&chip->nonatomic_lock){+.+.}-{4:4}, at: pwm_apply_might_sleep (drivers/pwm/core.c:43 drivers/pwm/core.c:54 drivers/pwm/core.c:747)
-
-stack backtrace:
-CPU: 3 UID: 0 PID: 47 Comm: kworker/u16:2 Not tainted 6.18.52-yocto-standard-00169-gbc0cb063dbe7-dirty #1 PREEMPT
-Hardware name: Blaze Edge 3.0 (DT)
-Workqueue: async async_run_entry_fn
-Call trace:
-  show_stack (arch/arm64/kernel/stacktrace.c:499) (C)
-  dump_stack_lvl (lib/dump_stack.c:94 lib/dump_stack.c:120)
-  dump_stack (lib/dump_stack.c:129)
-  print_circular_bug (kernel/locking/lockdep.c:2045)
-  check_noncircular (kernel/locking/lockdep.c:2177)
-  __lock_acquire (kernel/locking/lockdep.c:3167 kernel/locking/lockdep.c:3286 kernel/locking/lockdep.c:3910 kernel/locking/lockdep.c:5239)
-  lock_acquire (kernel/locking/lockdep.c:5872 kernel/locking/lockdep.c:5829)
-  __mutex_lock (kernel/locking/mutex.c:598 kernel/locking/mutex.c:760)
-  mutex_lock_nested (kernel/locking/mutex.c:812 (discriminator 1))
-  clk_prepare_lock (drivers/clk/clk.c:228)
-  clk_set_rate (drivers/clk/clk.c:2592 drivers/clk/clk.c:2584)
-  meson_pwm_enable.isra.0 (drivers/pwm/pwm-meson.c:235)
-  meson_pwm_apply (drivers/pwm/pwm-meson.c:328)
-  __pwm_apply (drivers/pwm/core.c:707)
-  pwm_apply_might_sleep (drivers/pwm/core.c:761)
-  pwm_adjust_config (drivers/pwm/core.c:897)
-  pwm_regulator_probe (drivers/regulator/pwm-regulator.c:403)
-  platform_probe (drivers/base/platform.c:1377)
-  really_probe (drivers/base/dd.c:640 drivers/base/dd.c:718)
-  __driver_probe_device (drivers/base/dd.c:880)
-  driver_probe_device (drivers/base/dd.c:910)
-  __device_attach_driver (drivers/base/dd.c:1038)
-  bus_for_each_drv (drivers/base/bus.c:462)
-  __device_attach_async_helper (drivers/base/dd.c:1067)
-  async_run_entry_fn (kernel/async.c:129)
-  process_one_work (kernel/workqueue.c:3294)
-  worker_thread (kernel/workqueue.c:3377 kernel/workqueue.c:3458)
-  kthread (kernel/kthread.c:432)
-  ret_from_fork (/usr/src/debug/linux-yocto/6.18.52+git/arch/arm64/kernel/entry.S:860)
