@@ -1,236 +1,241 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk2-f13.google.com (mail-qk2-f13.google.com [74.125.230.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69803515986;
-	Mon, 21 Sep 2026 21:15:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98D2D515967
+	for <linux-clk@vger.kernel.org>; Mon, 21 Sep 2026 21:46:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.230.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790025314; cv=none; b=jQz8WdscELjKyhhyYYamzPiL+mh6Dz2oTTEf1+sKjugiuD9Id6w0v7+tiTbrZoHJ/KcKEEdsUjTe0HjoWvGJRuyWUxcUDfdGATg3kn/bNmN1BADfaT7LrGbj/8HE9UlCyuXFx3EjlDfYeD1dfm6GbVJ7Zi/alDLio48S5pOA1/Q=
+	t=1790027208; cv=none; b=R5pJM/BPHbeSbNklETsksgUKSGDgRFYm+SxPlIHXEDzz3UA+eIkE/tniStxHrni1RLFPnYXdzHJMS1btqCTWjbhLBlBVkcmQRfJPvjpcaikhgufs2Nel9rP9HlwHlzWX6s4TByRKPrJiFSSoBiRPfnbh8JCMZRE6s2iCnIQLZgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790025314; c=relaxed/simple;
-	bh=khr+bJaYjJjoJSh5v4LpM9wTDjoEkflVWzoe5WtEJgM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=PrP+7FXcM9fsnq7gv9CjQ+bApmcJjvo2zjySVMGatVcW2cNbq+y3VPk3PHeqH4xzSgT2hVAS0pnbrUPOWjvmmokEjHveRk4p3mkadXWFh0JpdxtIr4tg2lRgy2vzoCOYQ/Wqopu8TvDesNjVk49HpE1DOH6ApouMJUFgX0Nd5mU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=AEsJUcKZ; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1790027208; c=relaxed/simple;
+	bh=Yc5Uc7ZFw+ABZqHHGfrsDtaZfnUyH0lPgtl/XXBBFbM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RdgkS6oIwXoNJssKzHgoEZa4lIbrnpBDMYpLw5KDCziYOt/i6fhsgO6oMX0JdntPPdPKjpXu6d47xJR8x7jTiryLZdMVNyJdJ1IhAkORrVLqa/NI9x97s8t9pPN9O7Wk9Ow1SpSB9inFwW+tM8/eDSxoVjMqRgMcJynGmxyUnAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20251104.gappssmtp.com header.i=@riscstar-com.20251104.gappssmtp.com header.b=usOtonDa; arc=none smtp.client-ip=74.125.230.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="AEsJUcKZ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1790025307;
-	bh=khr+bJaYjJjoJSh5v4LpM9wTDjoEkflVWzoe5WtEJgM=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=AEsJUcKZz8jjPJQbEedMpIGnmClUf9kNzHGD66QDEMex5erhp/SEuGaXsZzI52W4t
-	 dJjad/hTkK9oxM21eJf2Z6FM6+FcyE7HQcbcS6DceH7qYp81jhWTkuYTlApprNazY0
-	 OqTD7rXuurpIcKNXnr7PHI+Qjz5ylnVUoK7Honyqk3KSWIcUh98oniVMLWFktZdjOs
-	 ZvJglaySkOI9GZ7CWWoZzeS7zdQSgrYhEy+0xPqyeYYJZe+4a/tR+IfBaVeKVLWPvr
-	 zltJDvj6yFPiC7Ea6BWO4KySHee7yAFTCFBt0D6UWoIWomSxzlDY+JCyfktNXqUR85
-	 XjMLPQWk7MlqA==
-Received: from jupiter.universe (unknown [100.64.1.62])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519)
-	(No client certificate requested)
-	(Authenticated sender: sre)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id E74D717E09D6;
-	Mon, 21 Sep 2026 23:15:06 +0200 (CEST)
-Received: by jupiter.universe (Postfix, from userid 1000)
-	id 5B136480038; Mon, 21 Sep 2026 23:15:06 +0200 (CEST)
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-Date: Mon, 21 Sep 2026 23:15:08 +0200
-Subject: [PATCH v2 6/7] PM / devfreq: rockchip-dfi: prepare support for v4
- DDRMON
+	dkim=pass (2048-bit key) header.d=riscstar-com.20251104.gappssmtp.com header.i=@riscstar-com.20251104.gappssmtp.com header.b="usOtonDa"
+Received: by mail-qk2-f13.google.com with SMTP id af79cd13be357-939109fafd6so287228585a.3
+        for <linux-clk@vger.kernel.org>; Mon, 21 Sep 2026 14:46:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20251104.gappssmtp.com; s=20251104; t=1790027204; x=1790632004; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=MZyT8k12LGsI6T36jz5Fg5RlaOjRcJ/zSXFiTQ+h2nQ=;
+        b=usOtonDaMYeMX3ZXgZaMup8ty4PM3XVEiN6I9tL/g6jEtooQtrH3AtpmkoV3OKDhGI
+         CzO8IsyvLopA/W4KWaJDJ0TOuGFmA8BP5aFb7z0qnz4WqAxVWyAKeU8rBM4xeYv1Wq18
+         T8psDYuiEpG+4hSUXXCkBp+RV89Kcmoqqw2Sng4JI5oVqP3kwkGwZ4ry9UsZkw/rZ78E
+         MCAsCOanEbPyYgdzjH00LujvZA1sCg5Eh2qGEptbkdreLbkHvf4zp+zoX3NnUaXAemV/
+         fozqoRz9M+kei7U5YJmCTtEHdTltjJojezjJOZtxhLi6CThD0oYhRnRkxNUxjQ30v5sd
+         uEEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790027204; x=1790632004;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=MZyT8k12LGsI6T36jz5Fg5RlaOjRcJ/zSXFiTQ+h2nQ=;
+        b=t2p2lmxu0XL3EXRcaHOnBfekGSIX7I2uk8UvH++wI15Dwy+tzuVLL28VDwAf9py/0y
+         yoIjcc2NuhTvtnHwyBuQA1jHDCeenL0gyXTPqfciF/FImHBfp1pd3InJzL2tnXzASaik
+         wpbXG1km4iuKhtE9yDEc5Pb79JlcdKlL8CJ49wFxxJgmWJF+pJdg1eF3QvCqhwpsp07f
+         1SgLk+iMjmt5DYI994PiI6qGLq0MY+cP+jGuy7p7Usl+IfNVNE19oepsz2C3bc98RcjD
+         +4fT9/Jos4P1QImFtzENLOIL7UhnzcVWWiJ4A2GX8woWRQWVP5QdPy1F/bWs1a19eH6X
+         AHlA==
+X-Forwarded-Encrypted: i=1; AKwUvBzGesAH0x3v5o+YQ26g92+JO6V2xVPAuVFgFZ8ZCP0KjoGel7Vy/SNZheEFDuqffjebAIUDijJ1HZs=@vger.kernel.org
+X-Gm-Message-State: AFuF++koUa1ptmlkkEtxDGjTVsnpZyAQK+SGNwTuLUQrTHrRZdMKWMYR
+	L0LyJ1SBO0QZzLrDAPidDsPWx05b1QL7vxwaYXMAO43TGcNdE05QaOKixtSe29uO6bY=
+X-Gm-Gg: AYBFou0jScmc46l5fRbpIWUqZKXYaCS3yNge+jVxN/aKMIQHnXkjNi3oskFZ+1gjp2c
+	roXrw6jR3GFwL6rPmJJxRQLBFB1OKVjEYAgu9Ov4vTKfCILZltvWoh62U5FKB5sgo9RxnBkvL0/
+	fB9DlVzIlpLb0YJ0GQY1mB9gVVhGkvEJ/9Kd3qHS+Omp8WVANrrMN7S+kopb71ttt/EXZzDsxvW
+	HqLxNt5c/gLbPXsFzyF62MVvb0ARaYBnp7bsq8CReNLrNZOvYb8GAVSWPMgpePA+usnzeARJyqu
+	t0PWYS2PamXXQYzy2Rp/H2Y7m7Gg3MMRp9E1zVPjiiT2hQHyc1yJsg3wjjzv6zcbKDFPWxzbUSB
+	Af+ZoNr59BbSw3igtu53zYdqBBiQ65KnDJYwGyuIVSgBbvoiL5ZW4a3gdStZTLYAq091jA00Q6R
+	Sgti8Erb2D4EZhscXqAqMiSqNBEQy3OhcKL5b3wEq/W03DYM8EYpBNKHWvHZV2kFwq5fhPPR4=
+X-Received: by 2002:a05:620a:4496:b0:93b:d7d7:8739 with SMTP id af79cd13be357-93c15e4296bmr271488185a.46.1790027203515;
+        Mon, 21 Sep 2026 14:46:43 -0700 (PDT)
+Received: from [172.22.22.28] ([73.62.185.64])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-93c19a604dasm24653985a.11.2026.09.21.14.46.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Sep 2026 14:46:43 -0700 (PDT)
+Message-ID: <85b0e7de-e4a8-4e08-b801-a9664d366e1a@riscstar.com>
+Date: Mon, 21 Sep 2026 16:46:41 -0500
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] dt-bindings: mfd: introduce the TC9564 config syscon
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: sboyd@kernel.org, bmasney+clk@redhat.com, jbrunet+clk@baylibre.com,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, lee@kernel.org,
+ andersson@kernel.org, konradybcio@kernel.org, abelvesa@kernel.org,
+ kees@kernel.org, gustavoars@kernel.org, p.zabel@pengutronix.de,
+ daniel@riscstar.com, mohd.anwar@oss.qualcomm.com,
+ lorenzo.bianconi@oss.qualcomm.com, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, mfd@lists.linux.dev,
+ linux-arm-msm@vger.kernel.org, linux-hardening@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20260918165234.687224-1-elder@riscstar.com>
+ <20260918165234.687224-2-elder@riscstar.com>
+ <20260920-fiery-fanatic-manticore-6abf0a@quoll>
+Content-Language: en-US
+From: Alex Elder <elder@riscstar.com>
+In-Reply-To: <20260920-fiery-fanatic-manticore-6abf0a@quoll>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260921-b4-rockchip-dfi-rk3576-support-v2-6-04f847016321@collabora.com>
-References: <20260921-b4-rockchip-dfi-rk3576-support-v2-0-04f847016321@collabora.com>
-In-Reply-To: <20260921-b4-rockchip-dfi-rk3576-support-v2-0-04f847016321@collabora.com>
-To: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
- Chanwoo Choi <cw00.choi@samsung.com>, 
- MyungJoo Ham <myungjoo.ham@samsung.com>, 
- Kyungmin Park <kyungmin.park@samsung.com>, 
- Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, 
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
- kernel@collabora.com, Sebastian Reichel <sebastian.reichel@collabora.com>
-X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5026;
- i=sebastian.reichel@collabora.com; h=from:subject:message-id;
- bh=khr+bJaYjJjoJSh5v4LpM9wTDjoEkflVWzoe5WtEJgM=;
- b=owJ4nAFtApL9kA0DAAoB2O7X88g7+poByyZiAGqxnlpFesZYsAxSYjmhkEgH6o+ssMm59D3j7
- b5eU7Of51MSE4kCMwQAAQoAHRYhBO9mDQdGP4tyanlUE9ju1/PIO/qaBQJqsZ5aAAoJENju1/PI
- O/qass0P/iyG1lRzao5MjQ1iRCSPCSbJip9pcDzwd1VhVCKq5EdtjZlYNT7pqzggKNH3XQev4br
- e13J+eqXjnkmyiYem+/dDku8++0p4kFXlWq63Vsk4QnditML6mg4S1QBEJle5vmGr+SUztp8tBM
- E6BMSAMHTK7A9A/BRGCxtZHt84Qx439yGOqCwOOQnjFavKf1REIK2neQQ65LaBmpTd5qsmx4xbV
- um3D94dFvIMoSdZel/d6xNOM3/DABc/4+s6C8FAM+woXevpM1EKTLPQY2k/5xZXnztHPtFo3QMm
- 8Kfr4N7oIuaDPombXo3pvpCDrZll6KXE4XQSdzHCzQ83MM7FSxnbSTRMn7wxWtudYwiSmAZ/A/v
- 5NCuS7IP+4+hgX4ZIhI/FZX08PCIlihLa2UURGJslIm5VDtphJ3P37fhCwUwYFOmtFRUxn/iK8O
- Fp1fkmMQwzZpUxumJlh2tmkA6CsPwbhVBhRQijoGXpDhdbWECJRw/CFhSqGlIHwlB6WI1nEfBhT
- sjCtrNYvnvpGq9MqJ8MAkQ6t6V9eY9wz/MtAoX0dt3QwYGugy8AyiGwu65dd/JXv+MhNRUkMQph
- iPjHww/MpMQL8tSzL5tAKVlSiBDW9fOelQ1TLom15NeKZSo3jyCVLWBsy5nb3zE1QPjLU4Tu+h5
- d5b0M9wkQ6Brdm8ZMmVEmaw==
-X-Developer-Key: i=sebastian.reichel@collabora.com; a=openpgp;
- fpr=EF660D07463F8B726A795413D8EED7F3C83BFA9A
 
-Add support for the new control register layout found for DDRMON
-controllers having version 0x40. This prepares the driver for
-adding RK3576 support.
+On 9/20/26 1:18 PM, Krzysztof Kozlowski wrote:
+> On Fri, Sep 18, 2026 at 11:52:30AM -0500, Alex Elder wrote:
+>> Define the binding for a system controller used in the Toshiba
+>> TC9564 SoC.
+>>
+>> Co-developed-by: Daniel Thompson <daniel@riscstar.com>
+>> Signed-off-by: Daniel Thompson <daniel@riscstar.com>
+>> Signed-off-by: Alex Elder <elder@riscstar.com>
 
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
----
- drivers/devfreq/event/rockchip-dfi.c | 85 ++++++++++++++++++++++++++----------
- 1 file changed, 62 insertions(+), 23 deletions(-)
+Thank you for your feedback, Krzysztof.
 
-diff --git a/drivers/devfreq/event/rockchip-dfi.c b/drivers/devfreq/event/rockchip-dfi.c
-index 8490219f61be..8ba97af78e3d 100644
---- a/drivers/devfreq/event/rockchip-dfi.c
-+++ b/drivers/devfreq/event/rockchip-dfi.c
-@@ -42,6 +42,19 @@
- #define DDRMON_CTRL_TIMER_CNT_EN	BIT(0)
- #define DDRMON_CTRL_LP5_BANK_MODE_MASK	GENMASK(8, 7)
- 
-+#define DDRMON_CTRL0	0x04
-+#define DDRMON_CTRL0_EXT_TRIGGER_EN		BIT(6)
-+#define DDRMON_CTRL0_DDR4			BIT(5)
-+#define DDRMON_CTRL0_LPDDR4			BIT(4)
-+#define DDRMON_CTRL0_HARDWARE_EN		BIT(3)
-+#define DDRMON_CTRL0_LPDDR23			BIT(2)
-+#define DDRMON_CTRL0_SOFTWARE_EN		BIT(1)
-+#define DDRMON_CTRL0_TIMER_CNT_EN		BIT(0)
-+#define DDRMON_CTRL0_HOT_RANK			GENMASK(8, 7)
-+
-+#define DDRMON_CTRL1	0x08
-+#define DDRMON_CTRL1_LPDDR5			BIT(0)
-+#define DDRMON_CTRL1_LP5_BANK_MODE_MASK		GENMASK(2, 1)
- 
- #define PERF_EVENT_CYCLES		0x0
- #define PERF_EVENT_READ_BYTES		0x1
-@@ -143,8 +156,6 @@ struct rockchip_dfi_variant {
- 
- static int rockchip_dfi_ddrtype_to_ctrl(struct rockchip_dfi *dfi, u32 *ctrl)
- {
--	u32 ddrmon_ver;
--
- 	switch (dfi->ddr_type) {
- 	case ROCKCHIP_DDRTYPE_LPDDR2:
- 	case ROCKCHIP_DDRTYPE_LPDDR3:
-@@ -159,26 +170,43 @@ static int rockchip_dfi_ddrtype_to_ctrl(struct rockchip_dfi *dfi, u32 *ctrl)
- 			FIELD_PREP_WM16(DDRMON_CTRL_LPDDR5, 0);
- 		break;
- 	case ROCKCHIP_DDRTYPE_LPDDR5:
--		ddrmon_ver = readl_relaxed(dfi->regs);
--		if (ddrmon_ver < 0x40) {
--			*ctrl = FIELD_PREP_WM16(DDRMON_CTRL_LPDDR23, 0) |
--				FIELD_PREP_WM16(DDRMON_CTRL_LPDDR4, 0) |
--				FIELD_PREP_WM16(DDRMON_CTRL_LPDDR5, 1) |
--				FIELD_PREP_WM16(DDRMON_CTRL_LP5_BANK_MODE_MASK,
--						dfi->lp5_bank_mode);
--			break;
--		}
--
--		/*
--		 * As it is unknown whether the unpleasant special case
--		 * behaviour used by the vendor kernel is needed for any
--		 * shipping hardware, ask users to report if they have
--		 * some of that hardware.
--		 */
--		dev_err(&dfi->edev->dev,
--			"unsupported DDRMON version 0x%04X, please let linux-rockchip know!\n",
--			ddrmon_ver);
-+		*ctrl = FIELD_PREP_WM16(DDRMON_CTRL_LPDDR23, 0) |
-+			FIELD_PREP_WM16(DDRMON_CTRL_LPDDR4, 0) |
-+			FIELD_PREP_WM16(DDRMON_CTRL_LPDDR5, 1) |
-+			FIELD_PREP_WM16(DDRMON_CTRL_LP5_BANK_MODE_MASK,
-+					dfi->lp5_bank_mode);
-+		break;
-+	default:
-+		dev_err(&dfi->edev->dev, "unsupported memory type 0x%X\n",
-+			dfi->ddr_type);
- 		return -EOPNOTSUPP;
-+	}
-+
-+	return 0;
-+}
-+
-+static int rockchip_dfi_v4_ddrtype_to_ctrl(struct rockchip_dfi *dfi, u32 *ctrl0, u32 *ctrl1)
-+{
-+	switch (dfi->ddr_type) {
-+	case ROCKCHIP_DDRTYPE_LPDDR2:
-+	case ROCKCHIP_DDRTYPE_LPDDR3:
-+		*ctrl0 = FIELD_PREP_WM16(DDRMON_CTRL0_LPDDR23, 1) |
-+			 FIELD_PREP_WM16(DDRMON_CTRL0_LPDDR4, 0);
-+		*ctrl1 = FIELD_PREP_WM16(DDRMON_CTRL1_LPDDR5, 0);
-+		break;
-+	case ROCKCHIP_DDRTYPE_LPDDR4:
-+	case ROCKCHIP_DDRTYPE_LPDDR4X:
-+		*ctrl0 = FIELD_PREP_WM16(DDRMON_CTRL0_LPDDR23, 0) |
-+			 FIELD_PREP_WM16(DDRMON_CTRL0_LPDDR4, 1);
-+		*ctrl1 = FIELD_PREP_WM16(DDRMON_CTRL1_LPDDR5, 0);
-+		break;
-+	case ROCKCHIP_DDRTYPE_LPDDR5:
-+		*ctrl0 = FIELD_PREP_WM16(DDRMON_CTRL0_LPDDR23, 0) |
-+			 FIELD_PREP_WM16(DDRMON_CTRL0_LPDDR4, 0);
-+		*ctrl1 = FIELD_PREP_WM16(DDRMON_CTRL1_LPDDR5, 1) |
-+			 FIELD_PREP_WM16(DDRMON_CTRL_LP5_BANK_MODE_MASK,
-+					dfi->lp5_bank_mode);
-+		break;
- 	default:
- 		dev_err(&dfi->edev->dev, "unsupported memory type 0x%X\n",
- 			dfi->ddr_type);
-@@ -188,11 +216,12 @@ static int rockchip_dfi_ddrtype_to_ctrl(struct rockchip_dfi *dfi, u32 *ctrl)
- 	return 0;
- }
- 
-+
- static int rockchip_dfi_enable(struct rockchip_dfi *dfi)
- {
- 	void __iomem *dfi_regs = dfi->regs;
-+	u32 ctrl, ctrl1, ddrmon_ver;
- 	int i, ret = 0;
--	u32 ctrl;
- 
- 	mutex_lock(&dfi->mutex);
- 
-@@ -207,10 +236,16 @@ static int rockchip_dfi_enable(struct rockchip_dfi *dfi)
- 		goto out;
- 	}
- 
--	ret = rockchip_dfi_ddrtype_to_ctrl(dfi, &ctrl);
-+	ddrmon_ver = readl_relaxed(dfi->regs);
-+	if (ddrmon_ver < 0x40)
-+		ret = rockchip_dfi_ddrtype_to_ctrl(dfi, &ctrl);
-+	else
-+		ret = rockchip_dfi_v4_ddrtype_to_ctrl(dfi, &ctrl, &ctrl1);
-+
- 	if (ret)
- 		goto out;
- 
-+
- 	for (i = 0; i < dfi->variant->max_channels; i++) {
- 
- 		if (!(dfi->channel_mask & BIT(i)))
-@@ -225,6 +260,10 @@ static int rockchip_dfi_enable(struct rockchip_dfi *dfi)
- 		writel_relaxed(ctrl, dfi_regs + i * dfi->variant->stride +
- 			       DDRMON_CTRL);
- 
-+		if (ddrmon_ver >= 0x40)
-+			writel_relaxed(ctrl1, dfi_regs + i * dfi->variant->stride +
-+				       DDRMON_CTRL1);
-+
- 		/* enable count, use software mode */
- 		writel_relaxed(FIELD_PREP_WM16(DDRMON_CTRL_SOFTWARE_EN, 1),
- 			       dfi_regs + i * dfi->variant->stride + DDRMON_CTRL);
+>> ---
+>>   .../bindings/mfd/toshiba,tc9564.yaml          | 56 +++++++++++++++++++
+>>   MAINTAINERS                                   |  1 +
+>>   2 files changed, 57 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/mfd/toshiba,tc9564.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/mfd/toshiba,tc9564.yaml b/Documentation/devicetree/bindings/mfd/toshiba,tc9564.yaml
+>> new file mode 100644
+>> index 0000000000000..32e73a727c82a
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/mfd/toshiba,tc9564.yaml
+>> @@ -0,0 +1,56 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/mfd/toshiba,tc9564.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Toshiba TC9564 System Controller
+>> +
+>> +maintainers:
+>> +  - Alex Elder <elder@riscstar.com>
+>> +  - Daniel Thompson <daniel@riscstar.com>
+>> +
+>> +description: |
+> 
+> Do not need '|' unless you need to preserve formatting.
 
--- 
-2.53.0
+OK.
+
+>> +  The Toshiba TC9564 is an SoC accessed by a host system through the
+>> +  upstream PCIe port on the PCIe switch it implements.  The switch includes
+>> +  an embedded PCIe endpoint on one of its downstream ports that provides
+>> +  access to various SoC peripherals (including a clock and reset controller)
+>> +  via one of its BARs.  A system controller provides managed access to the
+>> +  first two pages of this memory region to ensure accesses made by these
+>> +  peripherals produce well-defined results.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    items:
+>> +      - const: toshiba,tc9564-config
+>> +      - const: syscon
+>> +      - const: simple-mfd
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  ranges: true
+>> +
+>> +  '#address-cells':
+>> +    const: 1
+>> +
+>> +  '#size-cells':
+>> +    const: 1
+> 
+> Both properties and simple-mfd are redundant. You do not have children.
+
+I think ranges, #address-cells, and #size-cells might have
+been left here by mistake, and I hadn't noticed.  (They are
+required to be included within a pci-ep-bus sub-node, but
+even if that's why they're here, they're in the wrong place.)
+
+I will remove these three properties, as well as the
+"simple-mfd" compatible string in version 2.
+
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +
+>> +unevaluatedProperties: false
+> 
+> And this should be additionalProperties instead
+
+OK.
+>> +examples:
+>> +  - |
+>> +    syscon@0 {
+>> +        compatible = "toshiba,tc9564-config",
+>> +                     "syscon",
+>> +                     "simple-mfd";
+>> +        reg = <0x0 0x2000>;
+>> +        #address-cells = <1>;
+>> +        #size-cells = <1>;
+>> +        ranges;
+> 
+> As you can see here - no children.
+
+I have seen some examples of syscon nodes that incorporate
+sub-devices, while others do not.
+
+Our purpose for defining a syscon here is to coordinate
+access for multiple devices to several registers located
+within the same page of memory.
+
+I think this device was originally defined in a sub-node
+because the only memory accesses it requires are within
+the range covered by the syscon.
+
+Should we instead define the syscon to be a fairly trivial
+standalone thing, and then refer to it in the clock/reset
+device node by phandle?  (Or have the driver look it up
+by compatible string?)
+
+     tc9564_config_syscon0: syscon@0 {
+         compatible = "toshiba,tc9564-config",
+                      "syscon";
+         reg = <0x0 0x2000>;
+     };
+
+     clock@1004 {
+         compatible = "toshiba,tc9564-clock";
+         toshiba,config-syscon = <&tc9564_config_syscon0 0x1004>;
+         #clock-cells = <1>;
+         #reset-cells = <1>;
+     };
+> I also have doubts that this is needed - I see no updates to the misc
+> binding, which would be referencing it. But then another point would be,
+> that you do not need separate child node, which has no properties.
+
+I'm sorry if I'm missing something.  I saw other examples of
+syscon nodes being defined, and tried to copy what I saw, but
+obviously got it wrong.
+
+> Well, has one - address space.
+> 
+> Lack of full picture is not helping here.
+
+I will gladly provide a better picture, but I also want to
+stay focused on what's necessary for the binding.
+
+I have more in my next message.
+
+					-Alex
+
+> Best regards,
+> Krzysztof
 
