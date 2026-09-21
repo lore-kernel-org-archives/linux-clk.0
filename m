@@ -1,155 +1,134 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi2-f13.google.com (mail-oi2-f13.google.com [74.125.231.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E713F3AB285
-	for <linux-clk@vger.kernel.org>; Mon, 21 Sep 2026 19:57:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55E9F375ADD
+	for <linux-clk@vger.kernel.org>; Mon, 21 Sep 2026 20:05:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.231.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790020665; cv=none; b=fVU8c/1yC2OVXo5JKTERVU2diaqQAIknYLu4a0WMxGVnyviaaO1JszBblbv27IDhkmB2Is9uM2nuNexd8yp7Gj5Y4/Fdro3c2GCEGiDZncBJjk17MsLxDymbuLtUAmoekdJB0kXJfD9upFipqs6T0ZxOSIrOzppVzgZlJLhjGac=
+	t=1790021117; cv=none; b=Lhj0NQOINT5Ct1jJ9engYWlrTbdirEXWgntR4sMNgA9gG6F2RO9GmSDjnkMtpvtP+4LG/D+onIjBit82VDRUoQ8QrWoVN0eA0SAGWC9nU4+8YArYRWx10/G/Yg6u0lOdGuQTNFVbyibMzH0hr7VDl+K7kTEZOA4ZwpPX27cIHYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790020665; c=relaxed/simple;
-	bh=dNq4bkulw35Cidxo9e2r5O87nv8tva9TJtkuLwU5vsE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gz/xX6CiWpkBkcVBgMrMQX2Ck7QP/29GWXYsmRz1YUB9zDbQ1u3+bLV9a6u4jQLuepXQYRaRmDG1jp2kvv+sp97WsTcsyU9dw2EfQ7J+WHy3Tlgl8pWKs3wdNS+A371geYmai4uA4fdYDBo8u3+iqAhZ+DsvAeZ1I8Gha5HVU4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Tlr6Wi8r; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=EdOV/a67; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1790021117; c=relaxed/simple;
+	bh=7mw1SC7j2m+3fApFRtf/aio3nVzJa9ABqYViSIzMyeM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=rYDhdP6RWTMzWsUoeGzBRrfOYttnQxVfqmwlyxOqGyZv3P4ocnfBvHge+ScmiBhhEemqhFItJfsG1J7ho3Gp7l0nXVw9eKshDOyZAxpLn0cQAjqkchggeqUg5JMx0Q/FeTytRuqdoFcHTZ941aBpxw58iSUQjFJMycc/up1MWUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ARD8EeQn; arc=none smtp.client-ip=74.125.231.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Tlr6Wi8r";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="EdOV/a67"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1790020660;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WAji1n7QV2IWerkWF2a/t4cm99jyoAVuQMXhUEtU/wE=;
-	b=Tlr6Wi8rRgPqlk01junDHvva9SCSRPFZZOct30qvKtVyEnwq0DDXVGDowvECjmgGklfCnV
-	r/VTUfX3fwodX/po3JNxVSZDum9SOWyaVU6o2Z7rtbJKxf13lCrwQxXF4H5/zcsXaVyrp4
-	RDJs9dQDH6IAc6gPseCsZ8wPckzVtlY=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-569-TuvFDjFZOgCFPSOOb5NnxQ-1; Mon, 21 Sep 2026 15:57:39 -0400
-X-MC-Unique: TuvFDjFZOgCFPSOOb5NnxQ-1
-X-Mimecast-MFC-AGG-ID: TuvFDjFZOgCFPSOOb5NnxQ_1790020659
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-93a0312937eso444018385a.1
-        for <linux-clk@vger.kernel.org>; Mon, 21 Sep 2026 12:57:39 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ARD8EeQn"
+Received: by mail-oi2-f13.google.com with SMTP id 5614622812f47-4c4bf3dedf3so2154137b6e.3
+        for <linux-clk@vger.kernel.org>; Mon, 21 Sep 2026 13:05:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1790020659; x=1790625459; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:content-type
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=WAji1n7QV2IWerkWF2a/t4cm99jyoAVuQMXhUEtU/wE=;
-        b=EdOV/a67MEnCMthefwtQqV3kimuQqYjGzaORMPDlnhrPcVHY8kOxaq1duvxbYke+GH
-         HcOezpho7WQIGFaxmwjJBwl2DXHVtSKjRy1jco9tOzbF9VODfXaV7TYbAEQYdzka78cs
-         RgEHuxRawQEhp3aJhEGiHwnU1GTgiGVk5zXQXhcAVYcXmIj1qMuP4+gTs75KMjNcIzQ1
-         zmu7zp2KslO7BQU+7jXGsHNlmx3J6TybWmgPl1+kcxiuSayzXoRFlGS6pFTNNai5flA+
-         MmNEa+V6XUM6g5OpMuOcivxaHsjhDm+/XLug9NXCJuk7yqOD3fYYIcrqgFSAnv5pCB96
-         tTeQ==
+        d=gmail.com; s=20251104; t=1790021115; x=1790625915; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=QEqRIUud4Bp4XkJfTYRmT98hk05FTIWNPmdqE/L9jW8=;
+        b=ARD8EeQnt7st4LssyLm4BlT+NL4zdE6nN5ju0bU9MYkxXVk/6QFlFUcbTjMzrWYVwH
+         6EOAf1MoU9q2dPw2VQEDDZwE9nramCXrFUgQPwoNLtb+ciPIS42E6scVAKtX3UkfquuS
+         rtecAoeDkELB6ThBiXKhkbUZbb4CHPxY5gD0d5O+Ia5nxOFOkUm937YnJ0HVgQWaTEmQ
+         S9dHG+McO6ni3a2eWp4/ijBmQpsf97X3O6uyx38VwOT7V5buwkLUG7aNKqVzkdEvppu5
+         5683Qe7eZeCVVt3t2EXyl1Ll99Tn2RFV5FUvw/bhGN2SblUrmragUiwhAIMtd/Xi0D0x
+         8b0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790020659; x=1790625459;
-        h=user-agent:in-reply-to:content-disposition:content-type
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=WAji1n7QV2IWerkWF2a/t4cm99jyoAVuQMXhUEtU/wE=;
-        b=Tpl3uatfmOh/x8PePRCeVwcWJJk9Ubq7JoVNDHdOHQblBKMFKDlU4TvQuoROxbG3mN
-         USS4DyUO7hqOzRKp5fjGFNNV3pTzezC40J5pzMVhxL20AdeSGGr2+CKbZSN+prUs2Jqq
-         sfie43cKvbCNtkG1c3tUrPBHqWxy8rgIdCsIKWwCms885qEFf/jB5OXumv8FN41cK90X
-         5hoO2NkJXyID/wYtxNsgstsZ+iu+lXgBq2TCrccB0vANR+5DyCP5Pk/J9cf8BVVDR0HO
-         RGWgv9+g+0Xdz354Akh+PnXBFKknalF30l8iYoi1SDfrN+wS9I+i3hdxE9m6+PBEqrXj
-         I9KQ==
-X-Forwarded-Encrypted: i=1; AKwUvBz32FVO8nQlhzFkqNiysGQAadxVl3tmsQwlmmZtdX39pgZ0OhWcuTqsO3BaETgjypsKAgL4ELjLdr4=@vger.kernel.org
-X-Gm-Message-State: AFuF++nf8n2qBba7YXf+v4oqLbQYlO+DwdB/yWidNAuqI91nikVx+HxO
-	4FoB4O0Hlkb+MOCiXEK2Iscc6TbCR6iu9pyt2GsrDL+OzlTiumzEtyuR4F03jU+64GwijtAh12A
-	JIW6hBhne566NezOplmFO7lxByM/ZsHVtRioEY4O5UzN6Af/a7ebP0xq1cSiyJQ==
-X-Gm-Gg: AYBFou1hgD7Fti3/NtKsvMAy+4QKHp6NoJ6X+ywCeAjugURJTge4wBI7yXcyjHHw6ug
-	uQkhKeo0mv+jqxUe2pMBP+olFVBuA+Xv874rKDFL9xbrz7EWCXlsFZjydL4kF7hgvvlglohPG9h
-	Wlhs12E7TJ2aZ6gK4Ts7SPTV1HVIK/MUf/yS17xWxaBCCKJscGbBo/Z/PPnCs97br0XmFDCI2uB
-	7yy/YSXw5qqqi0c5AVGsjsgYGlHf8OijXdIJfgZvfFnIVE0KiP0gbAl9wqUQpotcI+TThvsyJEw
-	yrxkrbn9VUWaH1sKXzAX+ZevULyWxsCczg6BM1z+CsIZ/CiYWBDU93ZpvoYNAkbLgtNYvgpyHA=
-	=
-X-Received: by 2002:a05:620a:4686:b0:937:7e90:ecc with SMTP id af79cd13be357-93c15d9a15cmr243297985a.25.1790020658505;
-        Mon, 21 Sep 2026 12:57:38 -0700 (PDT)
-X-Received: by 2002:a05:620a:4686:b0:937:7e90:ecc with SMTP id af79cd13be357-93c15d9a15cmr243292185a.25.1790020657833;
-        Mon, 21 Sep 2026 12:57:37 -0700 (PDT)
-Received: from redhat.com ([2600:382:8127:317:3053:da10:47fd:5e79])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-91260a86f62sm74973656d6.33.2026.09.21.12.57.35
+        d=1e100.net; s=20260707; t=1790021115; x=1790625915;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=QEqRIUud4Bp4XkJfTYRmT98hk05FTIWNPmdqE/L9jW8=;
+        b=Wp0+8i15PMvPlXaGH1KCBLIeCFkT2eBijJEo7sPYKqMbRMxvnHV7aR7IeFvYLNgifZ
+         BVZidDLPT2rk3/5SBXo/XPC+rZNu3jGqVivLh7Ar3HTkqiMJtmHDcCA9xyzJXLUgQbp+
+         jN1DeZmMyvuQKOH40FM1CFC6J/DNaOtW00bA0QDUkgJdLIUMJx/YNhI3YtF2YL8shnVF
+         D2OG8XF/w74r8b0Vc61lIdeEtfAdMMv2BwjcSiTkumm0cu70LohGkbNA1KJCsUMS1lpj
+         GZ6mgS8Q8HZk5HaFYhknlNCRqFlOZvNT0svagwFOYnQyp3r2WHHLNlA7qPjd6pT0cEml
+         TT0Q==
+X-Forwarded-Encrypted: i=1; AKwUvBwd42BmesbPdgNjR0L6e52o9Tb3qH7IhwTzcdJqQ+ZPdwD+ajhHgM9c40KvSed2wGJNI9o0CiF9SBQ=@vger.kernel.org
+X-Gm-Message-State: AFuF++nHOGdV6iNK2yI3NYTX0F7MVddM6EhdbZ/0BXBOowsenORQuR99
+	WXa4/zpCx3zX4+WTvKxxQ6VXvAbS/NYLCN9OoN4WPIDo56NIC1pjiruY
+X-Gm-Gg: AYBFou1VrVZF9A9SuwmjYwzBAU5sXcdE+hIZPBuAWMeyK11x957khsuVhTQ7+UqU99r
+	r5OI/47YqiRvq0i2xkRQ5UEK74sa0KD6P/MxDjIXAKYbLr2aFbJOPBuJW5fhaWvM8gBcVnj+d71
+	uy0b449r7l/zI37IQS35neGjWNWl9fz2ptyMd0jVn7KN22T435OAzStZMRefyonZlDre2IetXT2
+	5ibRZIPZXVfGcSjQJHvAo+Wms8IIQ2fZa0+Pfg2Vfa+2+bhfqyS2JcaDWmzYKdggUHuDViSxoWV
+	DoZvtH7i8cap+7P+CizxLECt6XAKfcTQhZZxqOWb9ZSMNBocjMQCtf6s3DtntA3uOnR7PTFND5l
+	WgH8OUmf8Q+RnGWdnucOKH30vv6h9FB0wyi8XksoHLxBH2Fwy7gpLj5jv/Yb89GBc+tQJbVeib/
+	anknNnJHLLOWGyZOKJzsrBgb2WnmCVH4d2N8bK7RRhGgSnQCyR+iULka/7paL5/GrMrPvtdNFD6
+	TQSLYSlYxjTxtI3bJNFSR6CB0ctVIJ7bRnCrlOkHnEBUg==
+X-Received: by 2002:a05:6808:c167:b0:4c5:90f1:b9cb with SMTP id 5614622812f47-4ccf74b09a0mr10949649b6e.16.1790021114836;
+        Mon, 21 Sep 2026 13:05:14 -0700 (PDT)
+Received: from AMD.home.local (dhcp-9-244-8-156.gobrightspeed.net. [9.244.8.156])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-4d423604f7fsm1137266b6e.7.2026.09.21.13.05.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Sep 2026 12:57:37 -0700 (PDT)
-Date: Mon, 21 Sep 2026 15:57:34 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Dinh Nguyen <dinguyen@kernel.org>
-Cc: "Ng, Adrian Ho Yin" <adrian.ho.yin.ng@altera.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Subject: Re: [PATCH 1/3] clk: socfpga: agilex: convert to CLK_OF_DECLARE()
-Message-ID: <arGMLthMgQvyQHuR@redhat.com>
-References: <cover.1789096458.git.adrian.ho.yin.ng@altera.com>
- <c7006ac0c353640f52902580564a85d6d23c57e5.1789096458.git.adrian.ho.yin.ng@altera.com>
- <aq2-Ysy2wbLeBWd1@redhat.com>
- <1abffb74-3b9d-494d-a414-ea21d537ed74@altera.com>
- <arFEwdu6EucK1G9x@redhat.com>
- <c89f566b-9fd7-4824-ad19-bd8b055d2736@kernel.org>
+        Mon, 21 Sep 2026 13:05:14 -0700 (PDT)
+From: Enzo Adriano <enzo.adriano.code@gmail.com>
+To: junhui.liu@pigmoral.tech
+Cc: Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Andre Przywara <andre.przywara@arm.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 7/8] clk: sunxi-ng: a733: Add bus clock gates
+Date: Mon, 21 Sep 2026 16:05:12 -0400
+Message-ID: <20260921200512.3179109-1-enzo.adriano.code@gmail.com>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260921-a733-clk-v4-7-9c184ebe9ac1@pigmoral.tech>
+References: <20260921-a733-clk-v4-0-9c184ebe9ac1@pigmoral.tech> <20260921-a733-clk-v4-7-9c184ebe9ac1@pigmoral.tech>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c89f566b-9fd7-4824-ad19-bd8b055d2736@kernel.org>
-User-Agent: Mutt/2.4.0 (2026-06-19)
+Content-Transfer-Encoding: 8bit
 
-Hi Dinh,
+Hi Junhui,
 
-On Mon, Sep 21, 2026 at 11:59:50AM -0500, Dinh Nguyen wrote:
-> On 9/21/26 09:52, Brian Masney wrote:
-> > On Mon, Sep 21, 2026 at 11:17:13AM +0800, Ng, Adrian Ho Yin wrote:
-> > > subsys_initcall() / subsys_platform_driver() would not fix the failure we
-> > > are hitting. Both still run after time_init(), while the DW APB timer is
-> > > registered via TIMER_OF_DECLARE from timer_probe().
-> > > 
-> > > So moving from core_initcall() to subsys_initcall() changes nothing for
-> > > this consumer: the timer cannot defer, clk_get() still fails, and the timer
-> > > is never brought up. That is why these patches use CLK_OF_DECLARE(): the
-> > > provider must be registered from of_clk_init() so clocks exist before
-> > > TIMER_OF_DECLARE runs.
-> > > 
-> > > On the broader point about CLK_OF_DECLARE abuse: I agree it should not be
-> > > used merely to beat platform device probe. If the preferred approach is to
-> > > keep the clkmgr as a platform driver (subsys_platform_driver()) and give the
-> > > DW APB timer nodes a fixed clock-frequency instead of a clocks phandle, I
-> > > can respin that way. Please let me know which you prefer.
-> > 
-> > I wanted confirmation that you wanted to use CLK_OF_DECLARE() for the
-> > system timers.
-> > 
-> > Will you by chance be at Linux Plumbers Conference in two weeks? Bartosz
-> > is leading a discussion about the future of CLK_OF_DECLARE() and
-> > friends.
-> > 
-> > https://lpc.events/event/20/contributions/2503/
-> > 
-> > We want to minimize the use of CLK_OF_DECLARE(), so the preference is
-> > to keep this as a platform driver if possible. If you are able to get
-> > around using CLK_OF_DECLARE() by initially running the system timers
-> > with a fixed frequency then I think that would be preferable.
-> 
-> I originally pushed back on hard-coding a fixed frequency for these timers
-> because if the bootloader changed the frequency of the clocks for these
-> timers, we may run in to a problem. But I don't think the bootloader had
-> changed the clock frequency in a long time, so it may not really be a
-> problem. But it just feels wrong to not take in a frequency from the clock
-> driver.
-> 
-> The other option is perhaps adding the ability to defer probe these timers?
+I tested the exact v4 series on a Radxa Cubie A7S. I used v7.3-rc1,
+applied the four-patch A523 single-divider prerequisite, this eight-patch
+series, and Andre's current seven-patch A733 pinctrl series. The test DT is
+a minimal Cubie A7S harness with the main and R CCUs, RTC, pinctrl, UART0,
+and MMC0. The Image, DTB, and initramfs were loaded into RAM from U-Boot.
 
-Lets see what comes out the discussion at LPC about CLK_OF_DECLARE() in
-2+ weeks. I'll make sure to attend this particular discussion.
+The exact posted stack starts all eight CPUs, probes the RTC and the A733
+pinctrl driver, and binds UART0. Serial output then stops immediately after
+the 8250 driver replaces the boot console:
 
-Brian
+  sun60i-a733-pinctrl 2000000.pinctrl: initialized sunXi PIO driver
+  printk: console [ttyS0] disabled
+  2500000.serial: ttyS0 MMIO32:0x0000000002500000 ... is a 16550A
+  printk: console [ttyS0] enabled
+  printk: legacy bootconsole [uart8250] disabled
 
+It never reaches the initramfs `/bin/sh` readiness line. There is no panic or
+oops in the captured output.
+
+As a private comparator, I changed only `ahb_cpus_clk` at 0x5c0 bit 28 to
+`CLK_IS_CRITICAL`. That advances the same build to:
+
+  clk: Disabling unused clocks
+
+but serial output stops there and PID 1 is still not reached. I also added
+private begin/done tracing around each individual enabled clock in
+`clk_disable_unused_subtree()`. Neither trace marker appears, so the second
+loss occurs before the first individual unused-clock disable is attempted.
+
+Each run used the same RAM-only payload and was followed by an
+identity-checked 120-second power recovery. The board returned to its exact
+vendor kernel and eMMC root after all three runs.
+
+So I cannot add a Tested-by for v4 as posted. The `ahb-cpus` gate appears to
+be one issue, but marking it critical is not sufficient on this board. Could
+you please check the CPUS/AHB dependency and the path entered immediately
+after `clk: Disabling unused clocks`? I can retest a focused change or v5 on
+the Cubie A7S.
+
+Assisted-by: Codex:gpt-5
+I reviewed this report and take responsibility for its contents.
+
+Regards,
+Enzo
