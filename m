@@ -1,89 +1,89 @@
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1938D36923B
-	for <linux-clk@vger.kernel.org>; Mon, 21 Sep 2026 06:20:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86C9C37186A
+	for <linux-clk@vger.kernel.org>; Mon, 21 Sep 2026 06:20:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789971618; cv=none; b=SlhoxoaeETgYa2ODOPFC3rLkZB4Rt5kUk+/S8YhaSrLnjgqeXcrI2D/slag4gpeOVuTE87J1X4asFy5HpYf2iYbcPBdC6t8g+KYehXIYGx4cLFZUaKLx6uk8fbgPG6oJtt2c2XjXlxyPHOwdEWvVU1VLPLkRtRevONLEuvgtUyI=
+	t=1789971625; cv=none; b=UQ7ApxzrIPYq+EFCxnFgBj0RFmbIw4jMRz16B+vE2GNaJxq99EZC4RZCC+nJGl1vO0p+lPo9KDSru03vcBJBnmeIai7H7SUaL5m41tcVybuLZQ2LyCSFBd32crTArCOzXmTmi7S4dgPPYiddfqvOOoL73EXbXd3gly0cc+jRvK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789971618; c=relaxed/simple;
-	bh=yQBFMi0V1Q/34XT7l2xkr/OPRTO8ErCo82SZzAZN8PU=;
+	s=arc-20240116; t=1789971625; c=relaxed/simple;
+	bh=oh5Pm1MGo5brzkk9JyE/oefAJPHOCcWpo9TZGmNPa9M=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=uY/qQCk6+So2S9OM5UrwjQtMTHNxzQLypfRYCkdf6fbv2OvKxMMSvSBKMIDzr2GHXWbVYYFSOu1jgkHARoyxYEbUrOwhVcvPkJZJ0h5vxU5DUukvKAkucwTCIpju7C15U8IPmQVyC3k2hozawibGn/NxQYMj3DU5LRSL5FJ45lk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=JFBULBpD; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=TxbVDTzA; arc=none smtp.client-ip=205.220.168.131
+	 In-Reply-To:To:Cc; b=toU8cjqB1L7JRzRh3gB66DcXAkBgvahoe2PiVhcKD3jOWoLtObEnz2zI+Z1pxTN+d5JZdo8d0Ssjm7IWxxwuOxDUuUz1PGSAqTTzdIeQFX2rQNtU28mtVJ0QhRzhXhOZRN+iuALgUmbPlteBl4ySMk3gimGEgSk01e9ZquDoXLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Eqql0gGi; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=cCuzmHgu; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="JFBULBpD";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="TxbVDTzA"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Eqql0gGi";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="cCuzmHgu"
 Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68L3Z3kQ993413
-	for <linux-clk@vger.kernel.org>; Mon, 21 Sep 2026 06:20:16 GMT
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68L3Z1ML993262
+	for <linux-clk@vger.kernel.org>; Mon, 21 Sep 2026 06:20:23 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	3TMnVyIqj4oCOoXs32jIk9PhLPoRy53h9I9OmzdXVzE=; b=JFBULBpDRvWijOZu
-	nK5Ju9lbxSXz/Oyo+REGLyqeKRSpKZYiCdg88TLy1wsg+wY6+FSeD/84976D7owH
-	Yu8o54Vl2TtHtiAZ3h3DqrJCgEtZxb8951653I/TLSNFZirvz0IVXcO4yLVzDbEM
-	iaphkMCFg4o9K4ROlFPaZH8XJzxGVf1y5/gdOVrZ9mf/N3E6D7quOf0IDfe19MCK
-	6bvQbP3mzBCTq5jzhml/u67n5KOmZmm+9OdfjVrHA5z/Oa00UiVvFh/O4s8IOTeI
-	Mo9W7dyyQeEesPcya5lSE18R3oPHBdPrCKnuZ+hh20UScrbVeBk/jIRsYVj6acmw
-	vC6UQQ==
+	Uey2gqkHDQDDHIIK+N7Py82i/jmkDPiVZc6EZZrXCeQ=; b=Eqql0gGiuHrDIuza
+	Q80QusDE7BZgEDAmCQeP6DM6Gpt6eSPQg3s3lVLwKaaFt0cGNGI9uFmKxyxdkyIe
+	E/Qefu/p+ZSDDxibWcN3Whhcfub++DeR/RWRStUhqnx1aMk/n9cayjnnzbKc0QkG
+	esv4dsm741YIH4RjG4Fx4dThTTlLRXXKCSAKqk2pyuHDT1BJsYTXC04LqNigQ2TD
+	hycwNB3rLqbovKXwX50gxp4OJB5xn0mteCRYa1Uk+Q5MtzC/TEa3CJyO71ksTH8M
+	j63q2wfOy0Ppokx9lu6zQrHPPvmCU5tl6AT2W4lthLRw+8H9vvRk790cQc/zUOKi
+	/GKMjg==
 Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gtt3v8wmu-1
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gtt3v8wn4-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Mon, 21 Sep 2026 06:20:16 +0000 (GMT)
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-2cfc52ddc55so37421735ad.3
-        for <linux-clk@vger.kernel.org>; Sun, 20 Sep 2026 23:20:16 -0700 (PDT)
+	for <linux-clk@vger.kernel.org>; Mon, 21 Sep 2026 06:20:22 +0000 (GMT)
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-2dd1631d291so33040945ad.1
+        for <linux-clk@vger.kernel.org>; Sun, 20 Sep 2026 23:20:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1789971615; x=1790576415; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1789971622; x=1790576422; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=3TMnVyIqj4oCOoXs32jIk9PhLPoRy53h9I9OmzdXVzE=;
-        b=TxbVDTzAXUU3N0vprDEv6wpbyRHmH45ma6SWMMpVAPg7FCIe9oyjcrm8TV88YdutLS
-         O9OOUnE3VgB2wp2rv69i3eBjtyq1tt4iT77vBf3095G2YeiCEQApCka1rPeGFBFMrPdw
-         n5BB4QcyxcF+lkv1+WO2tiUBgsDYz3uUoZeTwLgaiEFaa264KjGXRNedGmWWsyPF2Z0G
-         TbOvz4M5cdk0+ywTE34Q2Q+kQgDtJmNXRzn0gOIZw1L8qFBKT9WsHw5DTEjT5tKzV0wE
-         gw8nuvOqIi8BjCOOkZs+6R4KHGeOJCVZpQ7POk5RsrgjIDB13MNtqdcsHaFrKuUeKPKv
-         sMHQ==
+        bh=Uey2gqkHDQDDHIIK+N7Py82i/jmkDPiVZc6EZZrXCeQ=;
+        b=cCuzmHguSVC6RA93t6GmlJ1ghQYTWeZmA9Xxled/1J5SOuGBPAs5FJPCFlo0ATzIEn
+         Wnzkyxilc2eU3R+StYLv3pGUMZxC900K3hDKPwoBFIY0znOcfFYdxJutr8fre45ZctjM
+         siXB5HnqkoJFcxacWXk9jtPY6+6YUUquoin64PBH0/ArMaqbNyM2HKtVcroJaw4UQRFD
+         HBbXu9M0/lHnyec7d0I3COdmTzNybu/JW+PqX+nq+GkrQ+5bh5jeOET36JjqfS7HDlnU
+         6b/fMhEh8qBcmAMlya+843/CyxW0GgMnxRPspgC8m5U3IyZZ7voW5VPsAtPZoW3ABEpt
+         aL0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789971615; x=1790576415;
+        d=1e100.net; s=20260707; t=1789971622; x=1790576422;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=3TMnVyIqj4oCOoXs32jIk9PhLPoRy53h9I9OmzdXVzE=;
-        b=GHeVNHE8SHu8zJs0K9U3vfiBqNPVnGY9LQ3ReQBaTpV9RvE2Y7COVgtEazw5fHUIT2
-         g/cOMC0wFtTBit8AoWO1ZGgbHp3gItPIl0al+qMM3v7n8K3V4a4Wv+7mevUlJ4tyNJrF
-         fn3SHBIO90N4VBMkDTkYevcHBrEV7rL6OhYe6V2F/g4BUkwgpDlQM6NhK5Lqzas0c3RU
-         uSV2BqmVBaxVhi+oTmT+vTlFdbldFzRtR/rk9gKODJekkyCpQJzTRR2gAWJ60Y+zPuGN
-         Jlj2/x5U9uXrle0NMXqI0erx+FqAnQVKS2u8PzZP/7wbPAXAG/mz3TA+HFDtT6ZJjDgF
-         9CZg==
-X-Forwarded-Encrypted: i=1; AKwUvBwlm6ZHPcdLuiqwl9g0Wy8yhq3LQ/J78uv2aCy27F2rdCJXVV/b6G4/p2ymsuWl0hjedgNqHVLaXYM=@vger.kernel.org
-X-Gm-Message-State: AFuF++leR3yKonyuU24ooAKcBkD+Eiz7Dz8WsPr/m1JKaCbehxkvCg24
-	XD5nO5pVQyoFLXumUgcDhTibZFohHMLX5gzHSIzus19lX7DoA7ijb8h0ahUBMtztoc/WuEDRQO8
-	nHg+cOVrCU24Y1SlCTQsnhy4mYP4ckodX2mNt6QwR/gLT9/uSsrCjccGBjs/nQJY=
-X-Gm-Gg: AYBFou3WQpT2ehtV1nQ2898nJ0rV5FHFKNk+Cv/atplm7X/2Wlvs+96c8eKH26RHC7r
-	aTc+mItR4DFNqSlhmYY9kaxQWVww+h0xpUBCWhR7IIRxNWb4vyx0XtBh0yjlFyFcbn+luWmK1qA
-	pDTid/54PkA/5iTDwFl/Xa8HKz20Bkhck/8HXQoMT9zl2K0xQxZN+hZc5IMb/QhGDzHk1zEJyLv
-	2oSXe8LbWLQfIX1EWmfC6guNlNDDzqvdXGnAp4EUa+IhN/NMxbidTrKAO01X4WPnut4YMjGIO7/
-	BMw8aO8qP2ydb2e/AbNSDCIf9GapW4UvBwzpAQ4M1YIs7r83DEsCuFqF84fRzm5uGbv//h7X3V5
-	JimlgaGohdp/d0wrgxgHFXGdu5/01rIt/s2e9zKRoucavAEzDnOOUAdGj0lsCE8VZjJrTyEFLZi
-	M/u5NkT+OIAHTb4ORoKt85K2htTJcKMVGGJA==
-X-Received: by 2002:a17:903:19f0:b0:2dd:7593:8634 with SMTP id d9443c01a7336-2ddb1b0f7efmr138780575ad.13.1789971615512;
-        Sun, 20 Sep 2026 23:20:15 -0700 (PDT)
-X-Received: by 2002:a17:903:19f0:b0:2dd:7593:8634 with SMTP id d9443c01a7336-2ddb1b0f7efmr138780115ad.13.1789971615035;
-        Sun, 20 Sep 2026 23:20:15 -0700 (PDT)
+        bh=Uey2gqkHDQDDHIIK+N7Py82i/jmkDPiVZc6EZZrXCeQ=;
+        b=FKXSpkh85pGAzUk65PeAr5UrxSYGBYOCHZdUp1HIIBR2Kgc4uqnP5goaaqTMHi3ye0
+         WGMjt3PzsBeTpZWHXIK5WiJGTKF2qZ06rPTYUSpDYp6a0JrZF5QhWi2VgXMjfqsXBxvt
+         mGLuhy9FwJRsXoBk3uhoaW6Z4JK+wS3XCfJuh7Hfs59leSSBeZAr9vXPLWr1d+73z0S+
+         NjHQFLtZK3vXMxfIXFGlEB97yMwPB8BtQ857VRtIzXpKDc6qZPdj8sDbc69jHRpUgtuj
+         fJC5DW1TMRH7lMpQU1RDJ1ZCol7vZeCbK590kPQNWNc5L2UOIFgUKEgczgE6xHmzUPYM
+         CJEg==
+X-Forwarded-Encrypted: i=1; AKwUvBzXVamPHw/uO8M2nh1CJYSJeG8eA3kivKAncvco+5doOqKbolW8oNNZd1Cx4yfwkGyGo6jYToYx8BQ=@vger.kernel.org
+X-Gm-Message-State: AFuF++m6+TSkl/TzxkELM/BxWrQjTvIPnPmjxDnVLX/W+RDY3W22aJJ+
+	RP9uD3IaLCNshBFmK6KhKNYQ7HlPedp9HAmuk+4gA2wBz+q6fQi9ngJUxfhe3WKOZrXTUA33Xb8
+	Ts4Ebj3QA88RfR4ClNQnvae9QUZf/LWbzt+zWTy7qqZZkx66yU5SEb89kIqHbIwk=
+X-Gm-Gg: AYBFou1LZkMrgWN2guYbNvtdllb/UDHIXgMlLKhHP38NDpbqV/JLJKPSSQRbOukjeY1
+	8ox4HCv/EUPRFMEqR/FE8PtuZiPaHm8NqMLop+GXLwaW4dZKRmB11XOfKRhgLprN+Mk/CpgANcw
+	9f8JtTnKrWt2rFQq20FtZLuuQvviVTReyM+Hipgd3kD/SPLDPJ6hNRfSHNn5/rFUp5oN4OYF2za
+	NV2+r9jZQS3qOe6rgTMSJCVfNLhopBIXj/gnC7EW5Qk/8MjrJ/xFbJA3h+sE15IgQBXh2jLg6p1
+	ethIO7zgTVgOdDxQeL/8g7wa1cTsQEIG+BKF7gRuxgPisjWZ7UOLCNmXcZ/iP0lsT21F1tfgoTK
+	SNp+h1iwpYU//gj6eJBxxGNqQoGCSuxqe1h05N1gmYwCe3fRMnZKjnIrIhBc7tngrDYefUBVIFZ
+	Bi01+mCp0fzbqVQZ+Rg7dwHeL8jYX2NP6ZSw==
+X-Received: by 2002:a17:903:32c5:b0:2dd:c100:80b8 with SMTP id d9443c01a7336-2ddc1008163mr79089435ad.51.1789971622228;
+        Sun, 20 Sep 2026 23:20:22 -0700 (PDT)
+X-Received: by 2002:a17:903:32c5:b0:2dd:c100:80b8 with SMTP id d9443c01a7336-2ddc1008163mr79089125ad.51.1789971621808;
+        Sun, 20 Sep 2026 23:20:21 -0700 (PDT)
 Received: from hu-kathirav-blr.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-33c331d3f2csm14091444eec.28.2026.09.20.23.20.07
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-33c331d3f2csm14091444eec.28.2026.09.20.23.20.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Sep 2026 23:20:14 -0700 (PDT)
+        Sun, 20 Sep 2026 23:20:21 -0700 (PDT)
 From: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
-Date: Mon, 21 Sep 2026 11:49:37 +0530
-Subject: [PATCH 04/11] arm64: dts: qcom: ipq9574: Wire up USB3 PHY PIPE
- clock to GCC
+Date: Mon, 21 Sep 2026 11:49:38 +0530
+Subject: [PATCH 05/11] dt-bindings: clock: qcom: ipq5332-gcc: Describe
+ clock inputs per compatible
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -92,7 +92,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260921-ipq_clk_changes-v1-4-d242e3d49648@oss.qualcomm.com>
+Message-Id: <20260921-ipq_clk_changes-v1-5-d242e3d49648@oss.qualcomm.com>
 References: <20260921-ipq_clk_changes-v1-0-d242e3d49648@oss.qualcomm.com>
 In-Reply-To: <20260921-ipq_clk_changes-v1-0-d242e3d49648@oss.qualcomm.com>
 To: Bjorn Andersson <andersson@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
@@ -110,28 +110,27 @@ To: Bjorn Andersson <andersson@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
 Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         linux-pm@vger.kernel.org,
-        Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>,
-        stable@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+        Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
 X-Mailer: b4 0.15.2
-X-Authority-Analysis: v=2.4 cv=Ytia1IYX c=1 sm=1 tr=0 ts=6ab0cca0 cx=c_pps
+X-Authority-Analysis: v=2.4 cv=Ytia1IYX c=1 sm=1 tr=0 ts=6ab0cca6 cx=c_pps
  a=JL+w9abYAAE89/QcEU+0QA==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
  a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10
  a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22
- a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=3OI4E87EZh46DsEagTIA:9 a=QEXdDO2ut3YA:10
+ a=EUspDBNiAAAA:8 a=GdSppTGlZM03nT4b0GsA:9 a=QEXdDO2ut3YA:10
  a=324X-CrmTo6CU4MGRt3R:22
-X-Proofpoint-ORIG-GUID: DKOoUbxNFVDftfh1O1bhdgUEOrNx_5rK
-X-Proofpoint-Spam-Info: AW1haW4tMjYwOTIxMDA4OSBTYWx0ZWRfX0j2HAl9JnUDH
- 1utlBBcgKVtEJh4McomCZw5/Sdyi1fJXweVClrLDto3v1/1zVqmXM50jyGBqM/llfTRoGjBmMPU
- 8jnT9FhqFfpGxny+DYJoIHL6m+wMXzA=
-X-Proofpoint-GUID: DKOoUbxNFVDftfh1O1bhdgUEOrNx_5rK
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTIxMDA4OSBTYWx0ZWRfX5BxbTgJeD64e
- SvGub2gNsg4EEqfQtmUeacyTFbgeItRlonPXbCj9LL3OhCIqNmU+P6k56jHUpkxCZIBDmZEq8uB
- QzUrjxaLiD0w2ak8qTE8kIKYULm9dU76n6hjLV2ZVJoFt9jrnH+M8INAhNgEze+x8XHJQFAtbsa
- sYMMS6jsv/QmA487bFVsHNybo8vnF08Ql90n6XccoAwGEJsE/RKtSsZpIBa0wAL7HUjc6bGLQkv
- LBSgjmyRJJFfajbSyW2POUEhvklEKe7vq47lneJnQN5otn04vY+wBYKJijQDjLyz/io8SFulbiZ
- YfkL+LJLbCVOEJCOPPptQig9ejrfBgrkGiZRuBMHxyz0cjUgagfcE6UVsarf4cqPnv7oZ/5qcO8
- TJYvxS7/zw1PvcFklqef3o2+VRKZ8Rfyc1/aQpcO/VcwfTkzDf9CNunUhKPyyLAUpIuyyq28gkU
- bubLMzOqSTUEz3O6dcw==
+X-Proofpoint-ORIG-GUID: DMlS0I0mPA7WiExMc1kwTrtj7k_RzNt3
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTIxMDA4OSBTYWx0ZWRfXxpcBya4Tgpfj
+ lBVAWb4+vTvc0gBFHaej1KPOHuhZKVrfXVCFIb9ZLG2CSZm6ljz0DmP+V9l9266y0H2mnpm0QHb
+ 0c2w8/MioQ580nDovk5DK3smsr3QFtI=
+X-Proofpoint-GUID: DMlS0I0mPA7WiExMc1kwTrtj7k_RzNt3
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTIxMDA4OSBTYWx0ZWRfX2TNY92YlNceS
+ my1xJDhjtpuSlPwhER0UQjZnh9tu1S1OtawUoyf7UAAKYA/1Rygql6FAeHzKIe3u5cWzI1QAEJq
+ 0/FQ7hPtJmED9+0Kfctb0YJ6AMPQphGNAN3lNaoeNHK/e8T4XJocLOhKX4Fd1YZrlgYN6hdhU62
+ OycnBDZFMQg71aNpazHioxcUvClRq//JDicIuXsxeZ1OElhIamLJWF0Ro/3yU+syzmMTIN3Wf5v
+ Kbw1+6QXIplEi57fQOKEkjIaJHJORWVZjN0DP+SrCjPo4aqWuT/NuSdkjFFFkGlDcG1Jm/9mBkZ
+ lhGOEQpAiYuHPzKUaz56o58gxhNs/OzzJELPrG77OIorT5GENqpPBzkvOXS60VTNy9qn9kEMrX9
+ FITktM6VPc+7Zcxv4Siz7loIbKCJ5wVRktxEwYfce4lv03ge6Mk+qnCQXzvtefawVYL6y7mpoPz
+ Rcl/oBHvoQmaaAZoSvg==
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
  definitions=2026-09-21_02,2026-09-16_02,2025-10-01_01
@@ -141,30 +140,72 @@ X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.22.0-2609040000 definitions=main-2609210089
 
-Connect the QMP PHY USB3 output to GCC so the USB3 PHY pipe clock can
-propagate to the USB controller.
+The IPQ5332 and IPQ5424 GCC blocks use different clock input orderings.
+Document the clock inputs in compatible-specific schema constraints instead
+of using a common clock description.
 
-Cc: stable@vger.kernel.org
-Fixes: a98bfb31f676 ("arm64: dts: qcom: ipq9574: Add USB related nodes")
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Also add the 375 MHz PPE clock generated by the CMN PLL to the IPQ5424
+clock input list.
+
+This keeps the binding aligned with the clock ordering used by the
+existing DTS and GCC driver implementations.
+
 Signed-off-by: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
 ---
- arch/arm64/boot/dts/qcom/ipq9574.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../bindings/clock/qcom,ipq5332-gcc.yaml           | 26 +++++++++++++---------
+ 1 file changed, 16 insertions(+), 10 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-index 5a5bda5f21a1..dd1dcd955c95 100644
---- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-@@ -428,7 +428,7 @@ gcc: clock-controller@1800000 {
- 				 <&pcie1_phy>,
- 				 <&pcie2_phy>,
- 				 <&pcie3_phy>,
--				 <0>;
-+				 <&usb_0_qmpphy>;
- 			#clock-cells = <1>;
- 			#reset-cells = <1>;
- 			#interconnect-cells = <1>;
+diff --git a/Documentation/devicetree/bindings/clock/qcom,ipq5332-gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,ipq5332-gcc.yaml
+index 1230183fc0a9..fb39dffca988 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,ipq5332-gcc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,ipq5332-gcc.yaml
+@@ -25,14 +25,7 @@ properties:
+ 
+   clocks:
+     minItems: 5
+-    items:
+-      - description: Board XO clock source
+-      - description: Sleep clock source
+-      - description: PCIE 2lane PHY pipe clock source
+-      - description: PCIE 2lane x1 PHY pipe clock source (For second lane)
+-      - description: USB PCIE wrapper pipe clock source
+-      - description: PCIE 2-lane PHY2 pipe clock source
+-      - description: PCIE 2-lane PHY3 pipe clock source
++    maxItems: 8
+ 
+   '#power-domain-cells': false
+   '#interconnect-cells':
+@@ -52,7 +45,12 @@ allOf:
+     then:
+       properties:
+         clocks:
+-          maxItems: 5
++          items:
++            - description: Board XO clock source
++            - description: Sleep clock source
++            - description: PCIE 2lane PHY pipe clock source
++            - description: PCIE 2lane x1 PHY pipe clock source (For second lane)
++            - description: USB PCIE wrapper pipe clock source
+ 
+   - if:
+       properties:
+@@ -63,7 +61,15 @@ allOf:
+       properties:
+         clocks:
+           minItems: 7
+-          maxItems: 7
++          items:
++            - description: Board XO clock source
++            - description: Sleep clock source
++            - description: PCIE 2lane PHY pipe clock source
++            - description: PCIE 2lane x1 PHY pipe clock source (For second lane)
++            - description: PCIE 2-lane PHY2 pipe clock source
++            - description: PCIE 2-lane PHY3 pipe clock source
++            - description: USB PCIE wrapper pipe clock source
++            - description: 375 MHz PPE clock generated from the CMN PLL
+ 
+ unevaluatedProperties: false
+ 
 
 -- 
 2.34.1
