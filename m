@@ -1,42 +1,26 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 727B436B93D;
-	Mon, 21 Sep 2026 06:45:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 823AB3537F8;
+	Mon, 21 Sep 2026 06:50:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.200.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789973109; cv=none; b=B45OlSTCstVvW3LSwgXe5SCM/iKOTYXLQzsb9rFLm+gXnwdmWw5wDD674dOhTX7mmWIGgd5yjRGyCwUemuElJ57Sqkq5rCpK6B079n9ro8nLQWiXa/CMErZxE3sWqM+J1doWZYQwewBGE5GZ1I5mhFgXpoM/rsL6mqxkVYL90hI=
+	t=1789973411; cv=none; b=WwCnKVB578xj+X/PWiStNM4CZyHHwT9NMZsVTslbqWjwM9tPU6wmWcjPT6lUiLHXASvao90PIU7NygRoN1hOVGRcKYjPzURNJVRtLhtRIVwn1uSUBePWV45dwmQHwNtIUx1SLnkC4Dc0z2QvwxaRYgw6IjdClWTGsYuZQusohp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789973109; c=relaxed/simple;
-	bh=peW1jNhTn70BpnD4GhOZifHibJ4alVb6Iv6FBdZLkdQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kMHp+9KkV02Ow86zZJLxNxcpe8cNgn8bIYTb98SwHcRB7LUTfnzg8iK0Fnd63xSth0kRTtd6YkyArsS3x44eTgSXiZYggKquxBMqocVke2qOlroPfUNmGcWZh0u5aA4pHCQPp0fZ5ILn4v8Pv/AobXFaJ2kYxFy+hpoGy+B4f50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=mLSVt3Nv; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="mLSVt3Nv"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 1198B4E40C5C;
-	Mon, 21 Sep 2026 06:45:06 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id D834760339;
-	Mon, 21 Sep 2026 06:45:05 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id EBD17103290BF;
-	Mon, 21 Sep 2026 08:45:01 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1789973104; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=UDplaWJfaunbrVntrk6zp9NxBt0dzB8llgC0vJ6omJM=;
-	b=mLSVt3NvznNsyukRDsWlt4K+0I9Pa3xrVTnGdtXcz1GQRZo2EAPl3+Z/a/rGQmwRJ+wrwz
-	ueT/pOSqPYcwnA+pay7Jv37SghzHgdhdqhDGrI7329L3LLIQJm/CamD+1Zifikd9sxjm1k
-	63u4g5Y08U0hBqJSJ/UUHnyE2DA1EtvPcMTzE9SHKySjhyS+xFJ+2JAL4DezoSm59fdf0k
-	0amBfwXWOILlzaxjFrMCTqBUliVx2ckjAFYAkDZsySHg3bf/T0zbUtBsCsxjlOumgDgAPb
-	+KC5B3eODNDXImfvNzv99qLigGUQYW25SOhmsXQheaiRs8Cih6nn/7jtJvSXLw==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-Date: Mon, 21 Sep 2026 08:44:47 +0200
-Subject: [PATCH v2 3/3] clk: nuvoton: ma35d1: Avoid possible error pointer
- dereferencing
+	s=arc-20240116; t=1789973411; c=relaxed/simple;
+	bh=YjBCVLqCHQD3Fetjj78+6WDxGt2H4Yqkq5DkhePkbwg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=oyp98lprH8a+hm3i/l4ZbIykw0niIsu17zWeBs30LqA5sknUY2CjN2cZYPFMwQP7vd5r2ERDoRynY2yHzPElJ4EusvWZcp4C3ftu+UYELT1/K7q69o7GsS5l7Aa+WRAeg5PapnXXc6e+6Czj//mtxRnRNrtRnrFYiuErxCY/g28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.200.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from [127.0.1.1] (unknown [IPv6:2a02:560:5dd5:4b00:9ebf:dff:fe00:fdb5])
+	(Authenticated sender: sha@pengutronix.de)
+	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id 2A902200291;
+	Mon, 21 Sep 2026 08:50:00 +0200 (CEST)
+From: Sascha Hauer <s.hauer@pengutronix.de>
+Subject: [PATCH v9 0/2] clk: add support for TI CDCE6214
+Date: Mon, 21 Sep 2026 08:49:58 +0200
+Message-Id: <20260921-clk-cdce6214-v9-0-f2ea74fd38a2@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -45,98 +29,154 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260921-perso-ma35d1-upstream-clk-v2-3-209fd32a8b00@bootlin.com>
-References: <20260921-perso-ma35d1-upstream-clk-v2-0-209fd32a8b00@bootlin.com>
-In-Reply-To: <20260921-perso-ma35d1-upstream-clk-v2-0-209fd32a8b00@bootlin.com>
-To: Jacky Huang <ychuang3@nuvoton.com>, Shan-Chun Hung <schung@nuvoton.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Richard Cochran <richardcochran@gmail.com>, 
- Arnd Bergmann <arnd@arndb.de>, Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
+X-B4-Tracking: v=1; b=H4sIAJbTsGoC/3XRy2rDMBAF0F8JWldlNHpn1f8oXeiZiBY72KlJC
+ f73yoE2QVWXd2AOw50rmdNU0kz2uyuZ0lLmMg412KcdCUc3HBItsWaCgBIEGBo+3mmIISlkgkL
+ QAgSPAZUmdeU0pVwuN+71reZjmc/j9HXTF7ZN/4EWRoH6KJIGi86y/HJKw+HzPI1DuTzHRDZtw
+ UfBNgJWQYBH6TViCr4r8AeBQSPwKkTNQ7Y582igK4gHgbdCbYTazGTSDJULqivIu6BY24PcBMu
+ NNymCt6IrqLtggTeC2prEEMCpjAb7PehfgQGwRtBVkNl4IaKz0smuYH4EVW9of2G2X8TsuJSBZ
+ fVXWNf1G/uAMdV7AgAA
+X-Change-ID: 20250408-clk-cdce6214-0c74043dc267
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Steam Lin <STLin2@winbond.com>, linux-arm-kernel@lists.infradead.org, 
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, 
- Miquel Raynal <miquel.raynal@bootlin.com>
+ Conor Dooley <conor+dt@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, kernel@pengutronix.de, 
+ linux-gpio@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Linus Walleij <linusw@kernel.org>, 
+ =?utf-8?q?Alvin_=C5=A0ipraga?= <alvin.sipraga@analog.com>
 X-Mailer: b4 0.14.3
-X-Last-TLS-Session-Version: TLSv1.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1789973400; l=5660;
+ i=s.hauer@pengutronix.de; s=20230412; h=from:subject:message-id;
+ bh=YjBCVLqCHQD3Fetjj78+6WDxGt2H4Yqkq5DkhePkbwg=;
+ b=bY27kLS2WhmfmwE3zATZIC589WzWGf4iVtRiZG1dJ0O1S2SyV8bROTPsjTLpuAY23lR68VzzS
+ Dvbq6agy0I2B6HW2tFBLm8Uik3ssz8qmDkTGAMnHHTkvHBUT8g4aSjY
+X-Developer-Key: i=s.hauer@pengutronix.de; a=ed25519;
+ pk=4kuc9ocmECiBJKWxYgqyhtZOHj5AWi7+d0n/UjhkwTg=
 
-MA35D1 registration helpers store their parent_hw
-argument straight into the parent data, without checking it first. In
-case of registration failure an error pointer will be stored in the
-table, which is then forwarded to the clk core, which treats any
-non-NULL parent as valid handles.
+The CDCE6214 is a Ultra-Low Power Clock Generator With One PLL, Four
+Differential Outputs, Two Inputs, and Internal EEPROM.
 
-Bail out early when the parent is an error pointer, instead of building
-the parent data.
+This series adds a common clk framework driver for this chip along with
+the dt-bindings document. The cdce6214 needs several pins to be
+configured for different input/output modes which are abstracted with a
+pinctrl driver.
 
-This issue is mostly theoretical in practice, since reaching such an
-error would involve a very early -ENOMEM.
+This version fixes several bugs found by the Sashiko AI review of v8,
+see the changelog below for details. As the binding changed
+non-trivially, the Reviewed-by tags are dropped.
 
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Sascha
+
+Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
 ---
- drivers/clk/nuvoton/clk-ma35d1-divider.c |  3 +++
- drivers/clk/nuvoton/clk-ma35d1-pll.c     |  3 +++
- drivers/clk/nuvoton/clk-ma35d1.c         | 13 +++++++++++--
- 3 files changed, 17 insertions(+), 2 deletions(-)
+Changes in v9:
+- Drop Reviewed-by tags from binding patch due to non-trivial binding changes
+- binding: apply per-pin constraints to ti,io-standard instead of the
+  non-existent io-standard property (Sashiko)
+- binding: reject 0 for ti,cmosp-mode and ti,cmosn-mode (Sashiko)
+- binding: disallow duplicate clock-names (Sashiko)
+- binding: fix ti,cmosp-mode description (Sashiko)
+- binding: reference the pin configuration from pinctrl-0 in the example
+  and sort example properties (dt-check-style --mode=strict)
+- fix OUT0 parent count, reading past the parent_data array (Sashiko)
+- fix OUT0 set_parent writing REF_CH_MUX instead of REFSEL_SW (Sashiko)
+- fix OUT0 doubler rate calculation (Sashiko)
+- fix LP-HCSL setup for OUT3 and OUT4 writing to wrong registers (Sashiko)
+- fix swapped CMOS N/P bits on OUT4 (Sashiko)
+- mark unused output mux input invalid instead of falling back to DT
+  clock index 0 (Sashiko)
+- avoid division by zero for rate 0 and orphaned parents (Sashiko)
+- fix PLL rate overflow on 32-bit (Sashiko)
+- allow more time for PLL lock (Sashiko)
+- write PSA/PSB register value instead of relying on FIELD_PREP()
+  truncation (Sashiko)
+- match XO property names with binding (ti,xo-cload-femtofarads,
+  ti,xo-bias-microamp)
+- fix reading back IO standard of PRIREF, SECREF, OUT2 and OUT3
+- fix default values of XO pinconf parameters
+- drop dead denominator check in PLL set_rate
+- Link to v8: https://lore.kernel.org/r/20260909-clk-cdce6214-v8-0-4dfa355c1f65@pengutronix.de
 
-diff --git a/drivers/clk/nuvoton/clk-ma35d1-divider.c b/drivers/clk/nuvoton/clk-ma35d1-divider.c
-index e992e7c30341..57a7b4ed3b5e 100644
---- a/drivers/clk/nuvoton/clk-ma35d1-divider.c
-+++ b/drivers/clk/nuvoton/clk-ma35d1-divider.c
-@@ -90,6 +90,9 @@ struct clk_hw *ma35d1_reg_adc_clkdiv(struct device *dev, const char *name,
- 	int ret;
- 	int i;
- 
-+	if (IS_ERR(parent_hw))
-+		return parent_hw;
-+
- 	div = devm_kzalloc(dev, sizeof(*div), GFP_KERNEL);
- 	if (!div)
- 		return ERR_PTR(-ENOMEM);
-diff --git a/drivers/clk/nuvoton/clk-ma35d1-pll.c b/drivers/clk/nuvoton/clk-ma35d1-pll.c
-index c7c0dc91a012..92424e9c669d 100644
---- a/drivers/clk/nuvoton/clk-ma35d1-pll.c
-+++ b/drivers/clk/nuvoton/clk-ma35d1-pll.c
-@@ -336,6 +336,9 @@ struct clk_hw *ma35d1_reg_clk_pll(struct device *dev, u32 id, u8 u8mode, const c
- 	struct clk_hw *hw;
- 	int ret;
- 
-+	if (IS_ERR(parent_hw))
-+		return parent_hw;
-+
- 	pll = devm_kzalloc(dev, sizeof(*pll), GFP_KERNEL);
- 	if (!pll)
- 		return ERR_PTR(-ENOMEM);
-diff --git a/drivers/clk/nuvoton/clk-ma35d1.c b/drivers/clk/nuvoton/clk-ma35d1.c
-index e45b3b12f359..f13e7040f71e 100644
---- a/drivers/clk/nuvoton/clk-ma35d1.c
-+++ b/drivers/clk/nuvoton/clk-ma35d1.c
-@@ -129,10 +129,19 @@ static struct clk_hw *ma35d1_clk_mux(struct device *dev, const char *name,
- 				     const int *parent_idx, int num_parents)
- {
- 	const struct clk_hw *parent_hws[MA35D1_MUX_MAX_PARENTS] = {};
-+	struct clk_hw *parent;
- 	int i;
- 
--	for (i = 0; i < num_parents; i++)
--		parent_hws[i] = (parent_idx[i] >= 0) ? hws[parent_idx[i]] : NULL;
-+	for (i = 0; i < num_parents; i++) {
-+		if (parent_idx[i] < 0)
-+			continue;
-+
-+		parent = hws[parent_idx[i]];
-+		if (IS_ERR(parent))
-+			return parent;
-+
-+		parent_hws[i] = parent;
-+	}
- 
- 	return clk_hw_register_mux_hws(dev, name, parent_hws, num_parents,
- 				       CLK_SET_RATE_NO_REPARENT, reg, shift,
+Changes in v8:
+- Add reviewed-by tags to binding patch
+- Link to v7: https://lore.kernel.org/r/20251001-clk-cdce6214-v7-0-5f8b44da95a5@pengutronix.de
 
+Changes in v7:
+- add missing blank line between properties in binding (Rob)
+- drop unnecessary #size-cells #address-cells in binding (Rob)
+- add vendor prefix to custom properties (Rob)
+- Use standard units where appropriate (Rob)
+- add dependency to PINCTRL and select GENERIC_PINCONF (0day bot)
+- re-add missing SPDX in ti,cdce6214.h
+- Link to v6: https://lore.kernel.org/r/20250903-clk-cdce6214-v6-0-b2cc0a6f282b@pengutronix.de
+
+Changes in v6:
+- merge split up patches back together (forgot to mention when sending v6)
+- use pinctrl subsystem to configure pins
+- Link to v5: https://lore.kernel.org/r/20250618-clk-cdce6214-v5-0-9938b8ed0b94@pengutronix.de
+
+Changes in v5:
+- Reword commit message for binding patch (Krzysztof)
+- Make clock binding yaml simpler (Krzysztof)
+- add link to datasheet to driver code (Stephen)
+- Drop inclusion of linux/clk.h (Stephen)
+- Add missing #include <linux/bitfield.h> (Kernel test robot)
+- simplify cdce6214_clk_out0_get_parent() (Stephen)
+- Use divider_get_val() where appropriate (Stephen)
+- Add Rxx defines for registers (Stephen)
+- Add define for magic value 24 (Stephen)
+- introduce and use cdce6214_clk_psx_mask() (Stephen)
+- Use clamp() instead of open code (Stephen)
+- declare const arrays const (Stephen)
+- more use of dev_err_probe() (Stephen)
+- use determine_rate() instead of round_rate (Stephen)
+- split out pin configuration to separate patches
+- Link to v4: https://lore.kernel.org/r/20250430-clk-cdce6214-v4-0-9f15e7126ac6@pengutronix.de
+
+Changes in v4:
+- add missing '>' modifier in include/dt-bindings/clock/ti,cdce6214.h
+- fix clocks maxItems should be 2
+- add missing license in include/dt-bindings/clock/ti,cdce6214.h
+- Fix checkpatch issues
+- Link to v3: https://lore.kernel.org/r/20250410-clk-cdce6214-v3-0-d73cf9ff3d80@pengutronix.de
+
+Changes in v3:
+- Use string properties instead of int for enums
+- Use units from property-units in dtschema
+- Link to v2: https://lore.kernel.org/r/20250409-clk-cdce6214-v2-0-40b25b722ecb@pengutronix.de
+
+Changes in v2:
+- Use consistent quotes in binding document
+- make clock-names an enum to make each clock fully optional
+- drop '|' in binding description where not needed
+- encode clock input mode into integer
+- encode clock output mode into integer
+- do not use defines for reg properties
+- support setting load capacity for the oscillator via device tree
+- support setting Bias current for the oscillator via device tree
+- support setting polarities of CMOS outputs via device tree
+- fix compatible string in driver
+- remove unused struct cdce6214_config
+- Link to v1: https://lore.kernel.org/r/20250408-clk-cdce6214-v1-0-bd4e7092a91f@pengutronix.de
+
+---
+Sascha Hauer (2):
+      dt-bindings: clock: add TI CDCE6214 binding
+      clk: add TI CDCE6214 clock driver
+
+ .../devicetree/bindings/clock/ti,cdce6214.yaml     |  198 +++
+ drivers/clk/Kconfig                                |    9 +
+ drivers/clk/Makefile                               |    1 +
+ drivers/clk/clk-cdce6214.c                         | 1594 ++++++++++++++++++++
+ include/dt-bindings/clock/ti,cdce6214.h            |   25 +
+ 5 files changed, 1827 insertions(+)
+---
+base-commit: 93f51579e7df248780214094418f205253383cc5
+change-id: 20250408-clk-cdce6214-0c74043dc267
+
+Best regards,
 -- 
-2.55.0
+Sascha Hauer <s.hauer@pengutronix.de>
 
