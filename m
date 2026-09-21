@@ -1,105 +1,210 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 586E53BFE2B;
-	Mon, 21 Sep 2026 16:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E18495AE9;
+	Mon, 21 Sep 2026 18:19:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790009993; cv=none; b=ZDxQ2T6lDpZIfLqa6FuHams8PWxKBcYdp1tlcSlNPkG/B2Bw4Oag/l5y+WoBRnztra9oB44XZ5nNsU7WsPNrttlH49u0FHw1bJsyOOFVc7E0PpnCODTdf2l20/0YHLM2eO5eKPcJxNMZ6C56QH2RtdKDtAjWy1f5Z9oCkc1ECIM=
+	t=1790014752; cv=none; b=RdbioLmPoYcGNX1j4tXE15+TQRh1MIvfAytAzuBWXms27uTyMYrJj4AnfVVVZkeS+SPQXFj+7iMuqyyeoXpea5q4bJMKD9qZjymQrvj7hHnloR0cnNh3uDwvcHr8q9vUjOvH66dw0pcTu8bzHYtN4JiOwVMM43QGFmtVhy/75oA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790009993; c=relaxed/simple;
-	bh=Tp+rMX4Gditawhvnl0IiyBKLYE7Z0Xkyr1eNWtD0ShA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QfxJl7cy4VhChWtBsh61kBw96/DDdVv1ZEqXb0p2XtkL7t4IYaugbmgLLDiHqNW963a+pykCRB+ZhaxghQlC3JcAZFVofJaEtuaKI7Y0t3DxIJcR2A57jEv/vCz4YvUJeFMF4n9ks4uJYqOhvizzXwg+A7F6kIFw1zyELPnEJrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kMLsAWVv; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790014752; c=relaxed/simple;
+	bh=BpRcOMKg3LS8V8DqNarIsVgSnibco3n89MGgkueN2dc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=moe0jViHK0FbBeJuizU71EQx1Pj1ScqL3XMM/vpituquXyixK8jWqOODy6kxd2eIsiP4J+2QQaaIMd3cX1UE+VAUr7lRBJ2E1mj88q3dz65L6gjkjtGF3GIMpaWYNNGMQpc/v3ezBPR5cXjgJKXhNIoU3fXQcRykUJdkVcPhLr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cExF5tZq; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kMLsAWVv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4877D1F000FF;
-	Mon, 21 Sep 2026 16:59:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790009991;
-	bh=N1ZQvKTl/H+B2fdxCeUt1XbbUIpLrTGXvpTDgKU994I=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=kMLsAWVvY7fAyGkcIxwyFnaXR5kYlw9MFNCfX5PLF1nIgC2UUUPbNe6g8/dwdox+g
-	 zQxUh5QnjuYC3C946b5y2oI/9EQ3lnyS0YVm1D0R6cS9VFCizxg7c28UFxnvFuFzw4
-	 AUNxNdtMBrAOB8HCHy4vtBRpwwvTuMVDikxbbmdBbjLavVn+R1qLPaD/4FcaUhKckp
-	 kbvvdryMCyNm62/hv9lx2aipNusXo1JeSS2DFfXmlLcrPsyYI1W0myewf+99P4NVfQ
-	 sL/juqV9wSSQYW3pA+dE1F0OIKIsr+R5hRvWVgYhziQ/Hwo9xn/MSHFUqJb1WhJWF7
-	 0GnBW9GL/oC+A==
-Message-ID: <c89f566b-9fd7-4824-ad19-bd8b055d2736@kernel.org>
-Date: Mon, 21 Sep 2026 11:59:50 -0500
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cExF5tZq"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id F1401C2BCB3;
+	Mon, 21 Sep 2026 18:19:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1790014752;
+	bh=BpRcOMKg3LS8V8DqNarIsVgSnibco3n89MGgkueN2dc=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=cExF5tZqDDGIWkrqVOUJS1uzg/RBkCnHzxT6HcXgoDtmN1LAJbnTTv6oGPJqVQxAl
+	 k18J2I6fmd8xuZbx3LY8px3h0AkJZLwFSEdVEtrTTD60vFI4lPtkrYm9CFWKnDETHI
+	 CG8a0JmNb1Oj3febBeqMvVUek5StYiMlQhsHNoRAoxNjroHt+11lxxSrCO9u8xPY47
+	 BEwpPejlaWUL2kojHyZuxNLPUuKKXdKPawgMAcjCTfhVoPpo92KoZopXADc7XW2K9E
+	 HaQTtJ8prLX+WqGmQ7iA17VDJOhk1rw8HR9NCQIEgTLf5O+PaF3wpDjR3zw3U14ClY
+	 +QGoKqhWOcxKA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCB63C982EE;
+	Mon, 21 Sep 2026 18:19:11 +0000 (UTC)
+From: Muzaffer Kadir via B4 Relay <devnull+muzafferkadir.mainlining.org@kernel.org>
+Subject: [PATCH v3 00/19] Add Initial Support For MSM8952, Add General
+ Mobile Shamrock
+Date: Mon, 21 Sep 2026 21:18:51 +0300
+Message-Id: <20260921-msm8952-initial-support-v3-0-b96fd3fe298b@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] clk: socfpga: agilex: convert to CLK_OF_DECLARE()
-To: Brian Masney <bmasney@redhat.com>,
- "Ng, Adrian Ho Yin" <adrian.ho.yin.ng@altera.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-References: <cover.1789096458.git.adrian.ho.yin.ng@altera.com>
- <c7006ac0c353640f52902580564a85d6d23c57e5.1789096458.git.adrian.ho.yin.ng@altera.com>
- <aq2-Ysy2wbLeBWd1@redhat.com>
- <1abffb74-3b9d-494d-a414-ea21d537ed74@altera.com>
- <arFEwdu6EucK1G9x@redhat.com>
-Content-Language: en-US
-From: Dinh Nguyen <dinguyen@kernel.org>
-In-Reply-To: <arFEwdu6EucK1G9x@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/3XNQQ6CMBAF0KuQrq1pRwrUlfcwLiqMMAm0pMVGQ
+ 7i7hbgwMSz/5P83MwvoCQM7ZzPzGCmQsymcDhmrO2Nb5NSkzEBAIbTQfAhDpRVwsjSR6Xl4jqP
+ zEy+EEUrXgFIhS+vR44Nem3y9pdxRmJx/b4+iXK9fU8KuGSUXXGCZgyqru4L8MhiyfarZ9uh8y
+ 1Y4wi9W7GOQsFJXdepB06D8w5Zl+QAMNnZ2EAEAAA==
+X-Change-ID: 20260909-msm8952-initial-support-60a059c2e15e
+To: Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abelvesa@kernel.org>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Srinivas Kandagatla <srini@kernel.org>, 
+ Ulf Hansson <ulfh@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+ "Joerg Roedel (AMD)" <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+ Robin Murphy <robin.murphy@arm.com>, Lee Jones <lee@kernel.org>, 
+ Rob Clark <robin.clark@oss.qualcomm.com>, 
+ Dmitry Baryshkov <lumag@kernel.org>, 
+ Abhinav Kumar <abhinav.kumar@linux.dev>, 
+ Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Robert Marko <robimarko@gmail.com>, Guru Das Srinagesh <linux@gurudas.dev>, 
+ Amit Kucheria <amitk@kernel.org>, Thara Gopinath <thara.gopinath@gmail.com>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Daniel Lezcano <daniel.lezcano@kernel.org>, Zhang Rui <rui.zhang@intel.com>, 
+ Lukasz Luba <lukasz.luba@arm.com>, Kees Cook <kees@kernel.org>, 
+ Tony Luck <tony.luck@intel.com>, 
+ "Guilherme G. Piccoli" <gpiccoli@igalia.com>, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: David Heidelberg <david@ixit.cz>, phone-devel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-mmc@vger.kernel.org, iommu@lists.linux.dev, mfd@lists.linux.dev, 
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+ Krzysztof Kozlowski <krzk@kernel.org>, linux-pm@vger.kernel.org, 
+ linux-input@vger.kernel.org, Muzaffer Kadir <muzafferkadir@mainlining.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+ Abel Vesa <abel.vesa@oss.qualcomm.com>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1790014748; l=5337;
+ i=muzafferkadir@mainlining.org; s=20260816; h=from:subject:message-id;
+ bh=BpRcOMKg3LS8V8DqNarIsVgSnibco3n89MGgkueN2dc=;
+ b=6d13bf2rcAw9hZjgCqRhx3KaAyNMRl7pBSwIaYokFdaChqCK+NJqUuNKUp/H2hb89vl9tkXXB
+ OZwD9zD3YBTDzCAbk2QST9OKaOBjHsbOO67kWdLyO/DWCgGUyfG7Vul
+X-Developer-Key: i=muzafferkadir@mainlining.org; a=ed25519;
+ pk=4zkv4suQ3cYcO4Z7CrV8JSSjEGLBGepUtvQCFjgnYIU=
+X-Endpoint-Received: by B4 Relay for muzafferkadir@mainlining.org/20260816
+ with auth_id=954
+X-Original-From: Muzaffer Kadir <muzafferkadir@mainlining.org>
+Reply-To: muzafferkadir@mainlining.org
 
-Hi Brian,
+MSM8952 is a SoC with 8 core cpu and Adreno 405 gpu.
 
-On 9/21/26 09:52, Brian Masney wrote:
-> + Bartosz
-> 
-> Hi Adrian,
-> 
-> On Mon, Sep 21, 2026 at 11:17:13AM +0800, Ng, Adrian Ho Yin wrote:
->> subsys_initcall() / subsys_platform_driver() would not fix the failure we
->> are hitting. Both still run after time_init(), while the DW APB timer is
->> registered via TIMER_OF_DECLARE from timer_probe().
->>
->> So moving from core_initcall() to subsys_initcall() changes nothing for
->> this consumer: the timer cannot defer, clk_get() still fails, and the timer
->> is never brought up. That is why these patches use CLK_OF_DECLARE(): the
->> provider must be registered from of_clk_init() so clocks exist before
->> TIMER_OF_DECLARE runs.
->>
->> On the broader point about CLK_OF_DECLARE abuse: I agree it should not be
->> used merely to beat platform device probe. If the preferred approach is to
->> keep the clkmgr as a platform driver (subsys_platform_driver()) and give the
->> DW APB timer nodes a fixed clock-frequency instead of a clocks phandle, I
->> can respin that way. Please let me know which you prefer.
-> 
-> I wanted confirmation that you wanted to use CLK_OF_DECLARE() for the
-> system timers.
-> 
-> Will you by chance be at Linux Plumbers Conference in two weeks? Bartosz
-> is leading a discussion about the future of CLK_OF_DECLARE() and
-> friends.
-> 
-> https://lpc.events/event/20/contributions/2503/
-> 
-> We want to minimize the use of CLK_OF_DECLARE(), so the preference is
-> to keep this as a platform driver if possible. If you are able to get
-> around using CLK_OF_DECLARE() by initially running the system timers
-> with a fixed frequency then I think that would be preferable.
+Ported without uart connection. ramoops and usb
+mainly used to debug.
+USB is not enabled in this series because it
+depends on the not yet upstreamed (and not developed by me)
+pmi8950_smbcharger.
 
-I originally pushed back on hard-coding a fixed frequency for these 
-timers because if the bootloader changed the frequency of the clocks for 
-these timers, we may run in to a problem. But I don't think the 
-bootloader had changed the clock frequency in a long time, so it may not 
-really be a problem. But it just feels wrong to not take in a frequency 
-from the clock driver.
+General Mobile shamrock display panel driver
+is generated using MSM8916's mdss dsi panel
+driver generator and tested with it. I didn't
+include it.
 
-The other option is perhaps adding the ability to defer probe these timers?
+The GCC and DTS files are derived from existing
+Qualcomm source files. Original copyright notices
+are retained.
 
-Thanks,
-Dinh
+GCC is based on msm8939's gcc file.
+SoC device tree is based on MSM8937 file.
+
+in some downstreams MSM8952 GCC is merged with
+MSM8917 and MSM8937's. But upstreamed MSM8917 is
+based on different GCC and different pll structure.
+I have no way to verify MSM8952 pll so I am not sure
+about how correct pll structure is.
+
+Pinctrl driver was submitted and merged here:
+https://lore.kernel.org/all/20260907-msm8952-pinctrl-v5-0-9a2d8d72ffdb@mainlining.org/
+
+Signed-off-by: Muzaffer Kadir <muzafferkadir@mainlining.org>
+---
+Changes in v3:
+- Improved GCC driver, also rewrote resets part
+- Rewrote the dt-binding side of gcc
+- Reformatted Device tree files with dt-check-style tool
+- Added reset to sdhci1 and sdhci2
+- Added cx regulator to gcc
+- Added gcc commit messages that it is a derived driver
+- Dropped adsp_mem, renamed lpass_mem to adsp_mem
+- Changed tusb320 interrupt from rising to falling as downstream uses
+- Link to v2: https://patch.msgid.link/20260916-msm8952-initial-support-v2-0-798c2602dde1@mainlining.org
+
+Changes in v2:
+- Changed device dts file as David's and Konrad's suggestions
+- Removed accidental duplicated clock assigments and fixed wrong gcc gp1,gp2
+  and gp3 parent_maps
+- Updated commit messages to make it wrapped at 72 character.
+- Fixed spi1 tlmm node naming
+- Added remaining spi and i2c nodes
+- Wired up mpm
+- Add mmio-sram to rpm_msg_ram
+- Reformatted msm8952.dtsi
+- Removed rpmcc-msm8952 driver entry and replaced it with rpmcc-msm8976
+- Merged sdhci tlmm pins to single nodes, now it is similar to existing SoCs
+- Rebased to latest linux-next, now storage works
+- Removed polling-delay properties from tsens
+- Link to v1: https://lore.kernel.org/r/20260912-msm8952-initial-support-v1-0-0e742578b524@mainlining.org
+
+---
+Muzaffer Kadir (19):
+      dt-bindings: clock: qcom: Add MSM8952 global clock controller
+      clk: qcom: Add global clock controller driver for MSM8952
+      dt-bindings: nvmem: Add compatible for MSM8952
+      dt-bindings: power: rpmpd: Add MSM8952 power domains
+      dt-bindings: mmc: sdhci-msm: Add MSM8952 compatible
+      dt-bindings: vendor-prefixes: Add General Mobile
+      dt-bindings: arm: qcom: Document MSM8952 SoC binding
+      dt-bindings: iommu: qcom,iommu: Add MSM8952 IOMMU to SMMUv2 compatibles
+      dt-bindings: mfd: qcom,tcsr: Add compatible for MSM8952
+      dt-bindings: display/msm: qcom, mdp5: Add MSM8952 compatible
+      dt-bindings: firmware: qcom,scm: Document MSM8952 SCM
+      dt-bindings: clock: qcom,rpmcc: Add MSM8952 compatible
+      drm: msm: mdp5: Add MDP5 configuration for MSM8952
+      soc: qcom: ubwc: Add UBWC config for MSM8952
+      dt-bindings: thermal: tsens: Add MSM8952
+      thermal: qcom: tsens: Add support for MSM8952 tsens
+      arm64: dts: qcom: Add initial support for MSM8952
+      dt-bindings: input: touchscreen: goodix: Add binding for GT970
+      arm64: dts: qcom: generalmobile-shamrock: new device
+
+ Documentation/devicetree/bindings/arm/qcom.yaml    |    6 +
+ .../bindings/clock/qcom,gcc-msm8952.yaml           |   65 +
+ .../devicetree/bindings/clock/qcom,rpmcc.yaml      |    5 +
+ .../devicetree/bindings/display/msm/qcom,mdp5.yaml |    1 +
+ .../devicetree/bindings/firmware/qcom,scm.yaml     |    3 +
+ .../bindings/input/touchscreen/goodix.yaml         |   35 +-
+ .../devicetree/bindings/iommu/qcom,iommu.yaml      |    1 +
+ .../devicetree/bindings/mfd/qcom,tcsr.yaml         |    1 +
+ .../devicetree/bindings/mmc/qcom,sdhci-msm.yaml    |    1 +
+ .../devicetree/bindings/nvmem/qcom,qfprom.yaml     |    1 +
+ .../devicetree/bindings/power/qcom,rpmpd.yaml      |    1 +
+ .../devicetree/bindings/thermal/qcom-tsens.yaml    |    1 +
+ .../devicetree/bindings/vendor-prefixes.yaml       |    2 +
+ arch/arm64/boot/dts/qcom/Makefile                  |    1 +
+ .../dts/qcom/msm8952-generalmobile-shamrock.dts    |  435 +++
+ arch/arm64/boot/dts/qcom/msm8952.dtsi              | 2696 +++++++++++++++
+ drivers/clk/qcom/Kconfig                           |   10 +
+ drivers/clk/qcom/Makefile                          |    1 +
+ drivers/clk/qcom/gcc-msm8952.c                     | 3548 ++++++++++++++++++++
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_cfg.c           |   81 +
+ drivers/soc/qcom/ubwc_config.c                     |    1 +
+ drivers/thermal/qcom/tsens-v1.c                    |   44 +
+ drivers/thermal/qcom/tsens.c                       |    3 +
+ drivers/thermal/qcom/tsens.h                       |    2 +-
+ include/dt-bindings/clock/qcom,gcc-msm8952.h       |  215 ++
+ 25 files changed, 7144 insertions(+), 16 deletions(-)
+---
+base-commit: e657a464aba873f5eaf3ca821b6e4016674492d6
+change-id: 20260909-msm8952-initial-support-60a059c2e15e
+
+Best regards,
+--  
+Muzaffer Kadir <muzafferkadir@mainlining.org>
+
 
