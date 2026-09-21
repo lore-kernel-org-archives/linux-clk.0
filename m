@@ -1,85 +1,127 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pz2-f41.google.com (mail-pz2-f41.google.com [74.125.228.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E05F48F015
-	for <linux-clk@vger.kernel.org>; Mon, 21 Sep 2026 16:02:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47AC64BA1F5
+	for <linux-clk@vger.kernel.org>; Mon, 21 Sep 2026 16:06:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.228.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790006525; cv=none; b=TrpuJv9wd0P984h8bzwdbiAoZ2Y6o8ge0W8gI22W7SOY2j48uDeTjX1O8k8Ng4Apa7848t7sK2/GJTae07qd1Sx++i7Td1GxLfGuVcufF9JlBjsN1W7frJygP2wy8SXCgcje8OaZvb/NTjmiM30KiKHWg9j0TTb28bKUJz5ho+0=
+	t=1790006794; cv=none; b=DkpVxiYx5JV+KrqT8HH+izBACdBl0kzV2q8qgxFJnqbTEav75qxyrYan9Por//O9OfBf5J6zNsCSBvnG4lrKdypj+jtzc6IH/45n4EBJ50tcHlD+iEeboLqTZpA+1Nyby4+znlLXkhl6BR5kY/Ofg40R3e3MTnl+6ESnf4yXfw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790006525; c=relaxed/simple;
-	bh=Eyf5HB7rWUuykO/B4yjrMsebEOm1V7kPMebLHZRCWQY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nAjdR9Nyl680iuUEPsA+2kdOAawJ4tIjV6orvzL2zbwRZhYJ2JB+L9+4vpcbv2mhOtv/8YTBKHIk2EIcB+7Y3Jfmt7+B6Jvz5/axAL4dJ4AijQRcom8v8suQCnrS6cVtZZ2AB8q6rzhXoeCbiARsF6e4323vUqXwQDtKz9G3Q1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MHVHrTUh; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790006794; c=relaxed/simple;
+	bh=UOTeQSx76a9v/ZV3YujOIEiYlAr7+SRsnm3/O5Z68jU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=LHRj5271k2xtjOOFjQ9J+JZkeEFLGTPhnunUkPkc9704gx9iL3tAtjevNtjGGnQOu1nXiPJyBJFvOgJmCRsixbXnNc3qqJCQJkjnRDWL5mQrCKy8UI9ki6aJXRuWqGe45+xtZHuxVHtlpqX/WlSwgSwNEaCf7rWiG5uACw/gSew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=jNIPkims; arc=none smtp.client-ip=74.125.228.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MHVHrTUh"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51CB41F008BC
-	for <linux-clk@vger.kernel.org>; Mon, 21 Sep 2026 16:02:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790006524;
-	bh=Eyf5HB7rWUuykO/B4yjrMsebEOm1V7kPMebLHZRCWQY=;
-	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc;
-	b=MHVHrTUhgy8RLJSB9PCb96C+TwYoxk9OPxsY3WYUd2k1pUPyfhn1jxqcnLx12ZXbI
-	 C0zH7D0SYWucL6sTXnsFxG2XnRXG505wid63EKjGDRqyp94l78SpU5yfs9I3E9s5nE
-	 WXbF+pUOvv4AWZMdfjgwUSRby/OgOgpSqHRAX4SKAvSMpyq/zbOFoLZ/kYDzgMjRgz
-	 ugE5ZMnEKTcPpmROkZHM0DRhibmf7XlTswHDYXcMj4LvmRsBFPTpqMURa/KDisRLaW
-	 zz4Rlsh2QivIdiY/m5H9SAaOTlKAURKON3hAb7WOVVqnwGQhoDyprV4XVucAJ/LMi/
-	 Hwii7b6VQc6sw==
-Received: by mail-lr2-f12.google.com with SMTP id 38308e7fff4ca-3a36de66c0dso30742221fa.0
-        for <linux-clk@vger.kernel.org>; Mon, 21 Sep 2026 09:02:04 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBxEK3THxC3ElbFhsWh4Q0JMckmc4oQOrwUQwygU595YeWxbGWMltjZb+7E7wxOOE6LkHUUB7a//QBg=@vger.kernel.org
-X-Gm-Message-State: AFuF++kqWDuNeqAgU8SlEXqyHZxYJU3ezV5s1XznsPrBXojeNf0YvAsE
-	R9lcZz5cPeib6SAIDWZpUjaIlLI0pTo9jnxVTfm/wKoS1U0jnzrPWmBBTRqjkPG2uwoS0eGMHcI
-	n3U9WAXhResLucMqmZ2Mq+0iEg9KIkO8=
-X-Received: by 2002:a05:651c:1443:b0:3a5:afec:9cf9 with SMTP id
- 38308e7fff4ca-3a5fbf36939mr24677701fa.7.1790006522575; Mon, 21 Sep 2026
- 09:02:02 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="jNIPkims"
+Received: by mail-pz2-f41.google.com with SMTP id d2e1a72fcca58-85469a33c9cso4239009b3a.0
+        for <linux-clk@vger.kernel.org>; Mon, 21 Sep 2026 09:06:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1790006791; x=1790611591; darn=vger.kernel.org;
+        h=content-type:mime-version:message-id:date:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=UOTeQSx76a9v/ZV3YujOIEiYlAr7+SRsnm3/O5Z68jU=;
+        b=jNIPkimsgzwGeAPw1T5J0ZZWbbWbvmf9gqRj40Y/atoUYgKG2yWh3HESwt6126nUDp
+         FD+Rmk79KRReyBBYIl4nF0UXejvRBciVXLpQ0x0P4HGhci5O8iuKBzqiPsMrmLMZpiFB
+         lTbphc8C5mH2TgoQvoSliu53nlAZUPM7gnPf6JVk1XoAUGXqWGbf8eYG4gdjGZ8Be6kE
+         0hW1vjiNk54/tiLuCoDH+rB/8p0unN4PncOQIY7I8fOQderqwGHSfRx+8mIky9QBPvd4
+         jWCVCSqDpodMotBD1r5UZ3EgftUBugTYiLbiO0CekAfIDwDxZ7IOPCqLCaPurh0VfluR
+         DhJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790006791; x=1790611591;
+        h=content-type:mime-version:message-id:date:references:in-reply-to
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=UOTeQSx76a9v/ZV3YujOIEiYlAr7+SRsnm3/O5Z68jU=;
+        b=DFsgoqS9fTMkYujF3zwisjqTxz6alObkqp+iraEHwIwmbI8z1h81M35ysbGN/fjGad
+         idBOJU+X2r/4An5O7mOAiqEXcQKEUzP3KBqjYA5nlHVckKb4g18FXMQcRR0ttV6ew1xq
+         U5xdqQGc5E+KZoiWK0Yq9KM7iYGjCIJGgaI+x0iBFG89kZfxDvhSlw9datpfGhSq0ob+
+         NeCbosLxUPLJZb89UXLG+LPJBcaL9syrgW0W/qCkeWHYyWJ6DLr+z8ARy3SBR4A6oeWb
+         YVrZxpov4GPWG1rTAr9cUxZGTeX+awx0Zhm9rS6hrC2Jyk6q90+pCfcFx8eSCIeFIuGJ
+         qdTA==
+X-Forwarded-Encrypted: i=1; AKwUvBydMSjFqjV0b7ZbOWsCiBTlvQeBUvEEJ5XaHNSITr65lDDd4ZLWhueBkp3MndhJrTyaIOCRYejGUAA=@vger.kernel.org
+X-Gm-Message-State: AFuF++mXURpI9xc0xe+GQcwc31BWzSdOUf/o1or5HVkJjnKpfaA8jE2I
+	SFhYIAY7BcfQkGnBxD44WWBubbmqF2YDELi5o0DG4uwtp7tpXL1+LAY7sekjoV06psU=
+X-Gm-Gg: AYBFou2prgILnq3k/oOTVpXaKcf8eWiBdSj9+9gGyboT83CeCsk509iJm+htsTb3mo3
+	+Dw98PiiyJxpvKnHEZOsdDKghrGZkPwHbBP6c13xehQvpIjBWHnVo9EZ08+hFNO0laa+H9qnt2M
+	9EoRVyY6RtysWwRip6zSMNrjoGEfpMHBrbunNAgIHBEYx9kAIWzIbX3TW8K9GD40OVjvdVsdhU9
+	3fEB/4RChb0spH5Rlg/VhfRsiekRfIKMF1gFaYCtvGn/95cqqOgraJ3hFCEYVlaQ3i3tas7cxAL
+	DHgBLyqQgySWDQSX6nq2Tp+FS9c9f2C4jwKShIeoePPv9KrrcUqDT9XmByGW1+hPw63Fl+0K9O6
+	VuHsxqpn0mIQTwzW488izDji8srw+v9YnkB9X1OXApgU0nmX+rJEujTOoqdEAHAnwuyW1Vhb03f
+	9/EDPfeNRRPbhJT+niFCSRJWXS4709xavxtFWvIO6EuqJ9T0etdQfP6wh3XuVh/JNqF3A=
+X-Received: by 2002:a05:6a00:ac8:b0:878:34d7:6a30 with SMTP id d2e1a72fcca58-87834d76f20mr8319100b3a.36.1790006791257;
+        Mon, 21 Sep 2026 09:06:31 -0700 (PDT)
+Received: from localhost ([71.212.197.238])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-877a95f915csm3487490b3a.29.2026.09.21.09.06.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Sep 2026 09:06:30 -0700 (PDT)
+From: Kevin Hilman <khilman@baylibre.com>
+To: Arnd Bergmann <arnd@kernel.org>, soc@lists.linux.dev
+Cc: Arnd Bergmann <arnd@arndb.de>, Andreas Kemnade <andreas@kemnade.info>,
+ Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>, Paul
+ Walmsley <paul@pwsan.com>, Herbert Xu <herbert@gondor.apana.org.au>,
+ "David S. Miller" <davem@davemloft.net>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Helge
+ Deller <deller@gmx.de>, Tero Kristo <kristo@kernel.org>, Stephen Boyd
+ <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-mtd@lists.infradead.org,
+ linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-clk@vger.kernel.org, Thomas Zimmermann <tzimmermann@suse.de>, Aaro
+ Koskinen <aaro.koskinen@iki.fi>
+Subject: Re: [PATCH v2 06/14] ARM: omap2: remove omap24xx support
+In-Reply-To: <20260914140821.1805449-7-arnd@kernel.org>
+References: <20260914140821.1805449-1-arnd@kernel.org>
+ <20260914140821.1805449-7-arnd@kernel.org>
+Date: Mon, 21 Sep 2026 09:06:30 -0700
+Message-ID: <7htsnid1x5.fsf@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260921-a733-clk-v4-0-9c184ebe9ac1@pigmoral.tech> <20260921-a733-clk-v4-2-9c184ebe9ac1@pigmoral.tech>
-In-Reply-To: <20260921-a733-clk-v4-2-9c184ebe9ac1@pigmoral.tech>
-Reply-To: wens@kernel.org
-From: Chen-Yu Tsai <wens@kernel.org>
-Date: Tue, 22 Sep 2026 00:01:48 +0800
-X-Gmail-Original-Message-ID: <CAGb2v66wbv2W1mcZ_WzKnkgiSYYm89LGR67gYAgsNgSFYw5mfg@mail.gmail.com>
-X-Gm-Features: AcwNN1WJSlHI-NjxkeeWhPwtNL0p2-F5vEq-B0J5BRudScG0IjIZ4ZswOa7ekVg
-Message-ID: <CAGb2v66wbv2W1mcZ_WzKnkgiSYYm89LGR67gYAgsNgSFYw5mfg@mail.gmail.com>
-Subject: Re: [PATCH v4 2/8] clk: sunxi-ng: sdm: Add dual patterns support
-To: Junhui Liu <junhui.liu@pigmoral.tech>
-Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
-	Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Paul Walmsley <pjw@kernel.org>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Richard Cochran <richardcochran@gmail.com>, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, netdev@vger.kernel.org, 
-	Jerome Brunet <jbrunet@baylibre.com>, Enzo Adriano <enzo.adriano.code@gmail.com>, 
-	Andre Przywara <andre.przywara@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Mon, Sep 21, 2026 at 11:39=E2=80=AFPM Junhui Liu <junhui.liu@pigmoral.te=
-ch> wrote:
->
-> On newer Allwinner platforms like the A733, the Sigma-Delta Modulation
-> (SDM) control logic is more complex. The SDM enable bit, which was
-> previously located in the PLL register, is now moved to a second
-> pattern register (PATTERN1).
->
-> To support this, rename the existing "tuning" members to "pattern0" to
-> align with the datasheet, and introduce the _SUNXI_CCU_SDM_DUAL_PAT
-> macro to provide pattern1 register support. Related operations are also
-> updated.
->
-> Tested-by: Jerome Brunet <jbrunet@baylibre.com>
-> Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
+Arnd Bergmann <arnd@kernel.org> writes:
 
-Reviewed-by: Chen-Yu Tsai <wens@kernel.org>
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> The omap24xx SoC platform was used in the Nokia N800 and N810 tablets
+> released on 2007 and was among the first ARMv6 CPUs in products that
+> made it into products.
+>
+> Unfortunately the early ARM1136r0 CPU cores had a number of quirks that
+> caused a disproportionate amount of work to keep them compatible with
+> later ARMv6K/v7/v8 implementations.
+>
+> Drop the support for this SoC in order to allow removing ARM1136r0.
+>
+> Cc: Andreas Kemnade <andreas@kemnade.info>
+> Cc: Kevin Hilman <khilman@baylibre.com>
+> Cc: Roger Quadros <rogerq@kernel.org>
+> Cc: Tony Lindgren <tony@atomide.com>
+> Cc: Paul Walmsley <paul@pwsan.com>
+> Cc: Herbert Xu <herbert@gondor.apana.org.au>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+> Cc: Kyungmin Park <kyungmin.park@samsung.com>
+> Cc: Helge Deller <deller@gmx.de>
+> Cc: Tero Kristo <kristo@kernel.org>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-omap@vger.kernel.org
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-media@vger.kernel.org
+> Cc: linux-mtd@lists.infradead.org
+> Cc: linux-fbdev@vger.kernel.org
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: linux-clk@vger.kernel.org
+> Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de> # omapfb
+> Acked-by: Aaro Koskinen <aaro.koskinen@iki.fi>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+Acked-by: Kevin Hilman <khilman@baylibre.com>
