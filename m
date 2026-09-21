@@ -1,135 +1,126 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pz2-f40.google.com (mail-pz2-f40.google.com [74.125.228.40])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F66344162A;
-	Mon, 21 Sep 2026 09:59:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E2F13BB10D
+	for <linux-clk@vger.kernel.org>; Mon, 21 Sep 2026 10:25:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.228.40
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789984774; cv=none; b=EvHtUpFW35iJkHQ1NoPkM63+sjkmJXeIms8uDiMvzOVTRfnNVx7sKVgRWG1f2a7MtOU7w3Y6s0acYRXl2OFsEbK7fNevdGd4tR0V8yphd9gFRTqXhUo+IJHtY/zTnGyCP6bjVV4DHFHYfSRm9h5uPAr1wKQ0ZHsLfr6YTD39hjU=
+	t=1789986330; cv=none; b=kGFPfoLjoZVKKqu4snGqnWHtIUy+PXFP5yEcRmvKmk95uDC9isMaIoS9EB20UYyqVSZovoq4N/ty5+p8j26kB5XWDU6rgLzzENEVh7lW2bRhyWX4hMdWktUNJDc7o3TyYIQSDK0gWwdvg0G1BxqFg+3kPVbTCv5Lc9Bh36PjLhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789984774; c=relaxed/simple;
-	bh=POq6O9lpYCG2fYcf29wFnU+bCnEivOJWg10hyj1xKyc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ASYYSnSj8RkJtTw+7ntr2vUAwISE7swHhiupPtmwBEnSkMs9eizPyMv0MwtW/57CQ0cOuolSrv5S9/Yqk+uTNvVdDoFpHlukmfQ2l3IdulqgWib1H8z9Zw2KnFPPVTnU5H3BYllABeF0U0VyzGqpOIfqHDGqfkI4KDpq9QRsuOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=aK7N5wbt; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1789986330; c=relaxed/simple;
+	bh=2eomYsKhtyUjg78mXiDsoL3CzLp2fP0U1GQBuUbeoJM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CbyAYu2Bj4fDSsBglPAmHaBiQ3CC8tBIpGik9dhY8mY8Tlo+hW9LgUlBX6TNLt94Fku4rFxq6e3hUAeU2pYt6xhope0UlzqR6gfh0Yk8IoiIF72hCqLv0XAmmkxgesnSuz4pUnP8DQOQPhPLksfFDNBfOJAK2xiVSLDrCZQLlbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eXpvxE8s; arc=none smtp.client-ip=74.125.228.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="aK7N5wbt"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1789984764;
-	bh=POq6O9lpYCG2fYcf29wFnU+bCnEivOJWg10hyj1xKyc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=aK7N5wbtB/yy0rCrOMurDcqvUilNxcDo1dNZ48Tm/X4gPKV6L/WYEtzMLQN9HnA0E
-	 xTRaP7MNsmhzC2zXnVq2oKQz796B7IpAcT1ZpkCtmIMt/m7YHxMXXsRVfUnUsm5YhR
-	 DBxbz5b9yjSQSOzMNZjmPwU4LG6cjt1mpE3Mv8fFv20lln6kJfezROaovIt4DzbAtF
-	 iM8FZIoClJ1Bf9zUJCYm61RqncZ9fAkQo8RSINIghYi8MZ/CTWWzevle86qTkMrt/i
-	 SQz5/qJn8Ahc1slat4uZR9Z4LGAFU5hgGGpnAqQ5v4kev2YvZGFl1TGHBBsJYF/59l
-	 D+ScIPTZKO37A==
-Received: from [100.64.1.21] (unknown [100.64.1.21])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id F1A5F17E047B;
-	Mon, 21 Sep 2026 11:59:23 +0200 (CEST)
-Message-ID: <a71b6552-ea57-4575-89e1-14d414d53569@collabora.com>
-Date: Mon, 21 Sep 2026 11:59:23 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eXpvxE8s"
+Received: by mail-pz2-f40.google.com with SMTP id d2e1a72fcca58-8748f34b1f2so2651549b3a.0
+        for <linux-clk@vger.kernel.org>; Mon, 21 Sep 2026 03:25:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1789986328; x=1790591128; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=TT5lRmym0T1mzXaOaX/8a6/gNfD3HTc1xl19TrAEELM=;
+        b=eXpvxE8sBD4ik3g/WHokPk6zdAIubfdm/S+e1wlUY+AjGnsaKXmwiJ+g4A9C0iBjQ8
+         kRR2X+hCX0A6sI0Qgwra4Mu1O/ComapYzd+CBMv3aYJ0OE9F4x5O5V/8m8Tm1NSWPM62
+         D/DfnudoHRslKf6bdso/0Oh4hwNjhpKK0pLiXls5wX6bC7ww/S+Y9/DpBRqq151ikxKz
+         GOliGE8XVzgt0Xiy2/pb7jehsZytoSwcnrSyM0phGDQHB29cfTyNJ1N72kEtVfOMsJvx
+         DeKHJMZDXhHGHaVWAjiX9+/Iph3yl9cYKj6/QcOmMEsMQc2YmdzMglH+RtDOoGl7EmTb
+         OyeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1789986328; x=1790591128;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=TT5lRmym0T1mzXaOaX/8a6/gNfD3HTc1xl19TrAEELM=;
+        b=01xUBg5f0BvqV1RRllzwUlGhMAjZVGUKHmGtrWeM+ZEI5qHarEawc1k83gzyuyFjsC
+         AIlwmUEIDsSSCOcBV5FzZWzgJYUNrOCufevo42hUJWCF1+O1rAhA8yN5HfVMH3JzL43P
+         Jc5jaZWtSWOCTKpXJVlUL3LOHYS+juHz0Shq6Jvw9HTQ9kQ0JeD//no0YUvWuMstLneM
+         rSr9+hAbcIADWPy35o4C3vxktwfLwpXfC0HjT6MvGgEi2kD3SbY/3joFk7AYKgRKieTv
+         g4vIGTGybz4T6Bw7oBGYraDlKfzEoiTV0qPfP0495RE2BZpUJx2Oot8kw5JAgyRjPZrV
+         +Msw==
+X-Forwarded-Encrypted: i=1; AKwUvBzVCAAxOuXaubH6v9yV8COWzpH0fiTDs0h5OyX+wN0ZujFQ2IHGON4o0uBV2/KZzJ3sDXh1pWoScWk=@vger.kernel.org
+X-Gm-Message-State: AFuF++lvoeK7OO0XIx3hMrttHsRRqF4awYie4QO7aSMXxK1N1uj7nDZR
+	3kofdUh3R4zKgquPi0Nt4I/QhST6NWkx6Y1Bkqu98ec8b9pzKFO3Z0La
+X-Gm-Gg: AYBFou2Js6hlpxBMkmVZ002DYiiOrTJXi+7kTsvL2kH3scidtP6eEJLI1TgfZgHPopf
+	sHaNj2ZFjt5P3DVfwlZK99ixHhaNIhtFY34866v83kOd+b3n4SODc8JijlXm+0NWK0yLBTwevFH
+	wbCMzAScbXmg+sdut23kcX5aaC336a6KbQIoi9uia++gzrwK5THiE5AV/L8mFslx5bN1hwbIm24
+	SqjwXRyyb0QcMfeIHVuqAhpeN6MDt0kLtc0GGt+Mp4C1NVIplBBASbkf0cx+GD33f07qIHA6FnO
+	/GTYgI5TxnS8Sd9OjmarCXC90zy4vGFsuBsyrBslWmzj36EwUrWCOHAbTGb/K1/tieeTh9CgjS3
+	JncSwgrWs/Mdb8XACm1nrN7OK1GKAyO71aILkz6ycVvbZf0F9Q8EhnSGIe2lyeso3OavSHo76o/
+	XppvbsPS00iov1aYsJFheu8BzJX3iAQg7VT8FsG6Zt28pB/3K60lTTkblBTI2KOyk8E0/G0t4MP
+	UTkoXllsCJFnpDGrZSNXK0tCzPU
+X-Received: by 2002:a05:6a00:1911:b0:878:34e7:9a3c with SMTP id d2e1a72fcca58-87834e7a3a3mr7459656b3a.53.1789986328468;
+        Mon, 21 Sep 2026 03:25:28 -0700 (PDT)
+Received: from buffalo-ssd.taila54753.ts.net ([240b:253:4760:f400:1ebf:ceff:fe7f:5e0b])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-877a94f238csm2909174b3a.21.2026.09.21.03.25.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Sep 2026 03:25:28 -0700 (PDT)
+From: Akari Tsuyukusa <akkun11.open@gmail.com>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+	Danilo Krummrich <dakr@kernel.org>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig=20=28The=20Capable=20Hub=29?= <u.kleine-koenig@baylibre.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Akari Tsuyukusa <akkun11.open@gmail.com>,
+	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+	Chen-Yu Tsai <wenst@chromium.org>,
+	Laura Nao <laura.nao@collabora.com>,
+	Sjoerd Simons <sjoerd@collabora.com>,
+	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
+	linux-kernel@vger.kernel.org (open list:ARM/Mediatek SoC support),
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM/Mediatek SoC support),
+	linux-mediatek@lists.infradead.org (moderated list:ARM/Mediatek SoC support)
+Subject: [PATCH 0/6] clk: mediatek: Fix descriptor clock ID allocation
+Date: Mon, 21 Sep 2026 19:25:16 +0900
+Message-ID: <20260921102522.1640072-1-akkun11.open@gmail.com>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] clk: mediatek: mt7988: keep combo-lane U3 PHY ref
- clock enabled
-To: Frank Wunderlich <linux@fw-web.de>, Stephen Boyd <sboyd@kernel.org>,
- Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- Mathias Nyman <mathias.nyman@intel.com>,
- Chunfeng Yun <chunfeng.yun@mediatek.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Frank Wunderlich <frank.wunderlich@linux.dev>,
- Frank Wunderlich <frank-w@public-files.de>,
- Daniel Golle <daniel@makrotopia.org>, Mihai Ordean
- <research@mihaiordean.com>, Chen-Yu Tsai <wenst@chromium.org>,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-usb@vger.kernel.org
-References: <20260919114744.46777-1-linux@fw-web.de>
- <20260919114744.46777-2-linux@fw-web.de>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20260919114744.46777-2-linux@fw-web.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 9/19/26 13:47, Frank Wunderlich wrote:
-> From: Mihai Ordean <research@mihaiordean.com>
-> 
-> CLK_INFRA_USB_PIPE is the reference clock of xphyu3port0, the U3/PCIe
-> combo serdes. On MT7988 that lane is shared between ssusb0's SuperSpeed
-> side and pcie2, but only the consumer that claims the PHY holds the gate.
-> 
-> On the BPI-R4 Pro, ssusb0 is configured USB2-only (u3p-dis-msk=1) and
-> pcie2 claims the lane for the CN13/CN15 M.2 slot, so pcie2 is the sole
-> holder. u3p-dis-msk does not remove ssusb0's SuperSpeed root hub: that is
-> decided by xhci_has_one_roothub(), which keys off usb3_rhub.num_ports
-> from the xHCI capability registers, so bus 2 is registered and live
-> regardless. When the M.2 slot is empty, pcie2 fails link training (-110)
-> and its error path calls phy_power_off()/phy_exit(), which gates this
-> clock - and sspxtp_sel with it, as nothing else consumes it. The still
-> registered SuperSpeed root hub is then left polling a serdes whose PHY
-> reference clock has just stopped,
+Several MediaTek clock providers have clock IDs that do not match the
+size of the clock array allocated by the common descriptor-based probe.
 
-I'm not sure why said clock cannot be assigned to the USB controller as well
-as the PCIe PHY to keep the refcount high, avoiding to gate it?
+Add dummy entries for missing IDs so that the allocated onecell data
+covers the complete clock ID space used by each provider.
 
-Cheers,
-Angelo
+Akari Tsuyukusa (6):
+  clk: mediatek: Fix MT6779 clock onecell IDs
+  clk: mediatek: Fix MT6797 clock onecell IDs
+  clk: mediatek: Reserve missing MT8167 clock ID
+  clk: mediatek: Reserve missing MT8173 topckgen IDs
+  clk: mediatek: Reserve missing MT8196 MDP clock IDs
+  clk: mediatek: Reserve missing MT8516 top clock IDs
 
-> and asserts the shared SSUSB interrupt
-> outside the xHCI event ring; xhci_irq() reads USBSTS with EINT clear and
-> returns IRQ_NONE, so the core disables the line ("nobody cared") and the
-> next USB teardown blocks forever in xhci_disable_slot().
-> 
-> Boot logs show the storm threshold being crossed 86-107 ms after the
-> pcie2 probe failure, while the earlier combo-mux switch to PCIe mode
-> (~550 ms before) causes no trouble, pointing at the clock gating rather
-> than the mux as the trigger.
-> 
-> Mark the gate CLK_IS_CRITICAL so the combo lane keeps its reference clock.
-> Only port 0's gate is affected; ssusb1 uses CLK_INFRA_USB_PIPE_CK_P1.
-> 
-> Signed-off-by: Mihai Ordean <research@mihaiordean.com>
-> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
-> ---
->   drivers/clk/mediatek/clk-mt7988-infracfg.c | 12 +++++++++++-
->   1 file changed, 11 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/mediatek/clk-mt7988-infracfg.c b/drivers/clk/mediatek/clk-mt7988-infracfg.c
-> index 13ffa9d88e24..a8cbcb64d90f 100644
-> --- a/drivers/clk/mediatek/clk-mt7988-infracfg.c
-> +++ b/drivers/clk/mediatek/clk-mt7988-infracfg.c
-> @@ -225,7 +225,17 @@ static const struct mtk_gate infra_clks[] = {
->   			  CLK_IS_CRITICAL),
->   	GATE_INFRA3_FLAGS(CLK_INFRA_USB_FRMCNT_CK_P1, "infra_usb_frmcnt_ck_p1", "usb_frmcnt_p1_sel",
->   			  9, CLK_IS_CRITICAL),
-> -	GATE_INFRA3(CLK_INFRA_USB_PIPE, "infra_usb_pipe", "sspxtp_sel", 10),
-> +	/*
-> +	 * Reference clock of the U3/PCIe combo serdes (xphyu3port0). The lane
-> +	 * is shared between ssusb0 and pcie2, but only the PHY consumer that
-> +	 * claims it holds this gate. On boards where pcie2 owns the lane, a
-> +	 * failed pcie2 probe (e.g. empty M.2 slot) calls phy_exit() and gates
-> +	 * this clock while ssusb0 still has a live SuperSpeed root hub on the
-> +	 * same PHY, which wedges the shared SSUSB interrupt. CCF cannot model
-> +	 * the cross-IP sharing, so keep the gate on.
-> +	 */
-> +	GATE_INFRA3_FLAGS(CLK_INFRA_USB_PIPE, "infra_usb_pipe", "sspxtp_sel", 10,
-> +			  CLK_IS_CRITICAL),
->   	GATE_INFRA3(CLK_INFRA_USB_PIPE_CK_P1, "infra_usb_pipe_ck_p1", "usb_phy_sel", 11),
->   	GATE_INFRA3(CLK_INFRA_USB_UTMI, "infra_usb_utmi", "top_xtal", 12),
->   	GATE_INFRA3(CLK_INFRA_USB_UTMI_CK_P1, "infra_usb_utmi_ck_p1", "top_xtal", 13),
+ drivers/clk/mediatek/clk-mt6779-aud.c      | 1 +
+ drivers/clk/mediatek/clk-mt6779-cam.c      | 1 +
+ drivers/clk/mediatek/clk-mt6779-img.c      | 1 +
+ drivers/clk/mediatek/clk-mt6779-ipe.c      | 1 +
+ drivers/clk/mediatek/clk-mt6779-mfg.c      | 1 +
+ drivers/clk/mediatek/clk-mt6779-mm.c       | 2 ++
+ drivers/clk/mediatek/clk-mt6779-vdec.c     | 1 +
+ drivers/clk/mediatek/clk-mt6779-venc.c     | 1 +
+ drivers/clk/mediatek/clk-mt6779.c          | 1 +
+ drivers/clk/mediatek/clk-mt6797-img.c      | 1 +
+ drivers/clk/mediatek/clk-mt6797-mm.c       | 1 +
+ drivers/clk/mediatek/clk-mt6797-vdec.c     | 1 +
+ drivers/clk/mediatek/clk-mt6797-venc.c     | 1 +
+ drivers/clk/mediatek/clk-mt8167.c          | 1 +
+ drivers/clk/mediatek/clk-mt8173-topckgen.c | 7 +++++++
+ drivers/clk/mediatek/clk-mt8196-mdpsys.c   | 2 ++
+ drivers/clk/mediatek/clk-mt8516.c          | 2 ++
+ 17 files changed, 26 insertions(+)
+
+-- 
+2.55.0
 
