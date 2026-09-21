@@ -1,127 +1,139 @@
-Received: from mail-pz2-f41.google.com (mail-pz2-f41.google.com [74.125.228.41])
+Received: from mail-lf2-f12.google.com (mail-lf2-f12.google.com [74.125.229.204])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47AC64BA1F5
-	for <linux-clk@vger.kernel.org>; Mon, 21 Sep 2026 16:06:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.228.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790006794; cv=none; b=DkpVxiYx5JV+KrqT8HH+izBACdBl0kzV2q8qgxFJnqbTEav75qxyrYan9Por//O9OfBf5J6zNsCSBvnG4lrKdypj+jtzc6IH/45n4EBJ50tcHlD+iEeboLqTZpA+1Nyby4+znlLXkhl6BR5kY/Ofg40R3e3MTnl+6ESnf4yXfw0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790006794; c=relaxed/simple;
-	bh=UOTeQSx76a9v/ZV3YujOIEiYlAr7+SRsnm3/O5Z68jU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=LHRj5271k2xtjOOFjQ9J+JZkeEFLGTPhnunUkPkc9704gx9iL3tAtjevNtjGGnQOu1nXiPJyBJFvOgJmCRsixbXnNc3qqJCQJkjnRDWL5mQrCKy8UI9ki6aJXRuWqGe45+xtZHuxVHtlpqX/WlSwgSwNEaCf7rWiG5uACw/gSew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=jNIPkims; arc=none smtp.client-ip=74.125.228.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC6674BEE58
+	for <linux-clk@vger.kernel.org>; Mon, 21 Sep 2026 16:09:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.229.204
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790006950; cv=pass; b=arS9pF6V19MLrVAJ8R8eLX66Rh7BHz0zCFLptdofsmPjpjqWXnVkPRzZHN55ZINVg04Pl4Nygmel7R6JLOu6ZdT/nHBSzK9chgqof6UwKrLODNZKI30Q/NPD/25SCnEavXfpoP0K1FWtOL9GoSV2mSWl6bzzyU9nuVeEo/BCxU4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790006950; c=relaxed/simple;
+	bh=AIjc3MXIEI1WNzfDBHDw6Y+wt0nahAW6usfM1evUcdQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Q+HF1fXrmOjlJEdE8BnDILk3Jg8AJmIE0OLxw6VB+oclVhQ+IZMTD18L1pAcbs91oftI1MqP+tILSgLMJRFeBHGJTTx2XnY+eMjHHDbQ2Ng7OtXGW6AfKMvWkLUlIP4iD7xP0uxhbEZGdHFw4134hkSEbFa7RxGbD6oCW7l/gjE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HyZzq0iI; arc=pass smtp.client-ip=74.125.229.204
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="jNIPkims"
-Received: by mail-pz2-f41.google.com with SMTP id d2e1a72fcca58-85469a33c9cso4239009b3a.0
-        for <linux-clk@vger.kernel.org>; Mon, 21 Sep 2026 09:06:31 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HyZzq0iI"
+Received: by mail-lf2-f12.google.com with SMTP id 2adb3069b0e04-5b89a8cf7c9so392796e87.0
+        for <linux-clk@vger.kernel.org>; Mon, 21 Sep 2026 09:09:08 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1790006947; cv=none;
+        d=google.com; s=arc-20260327;
+        b=Z0NjKKIYxXpmmTIeyOI6kEPSvYG6iu7WHnUFVI5By/ScRjgTQqh5Pi4dbrlV1HiTH3
+         4ByHKk6Crw5pjvHBXgjcbVbE3e77v+88r4J/1eOyxP6+RR9KuyyKq3Gy5NaRRR+3CQYE
+         NF7l9sXTdGvZKaUZ5BnHuVh2FPqPRvOAMJ6vRjfjcWW1RotA6OCblXJCx3Nkjcp3Hv1+
+         ztmmvtJ/bxG2/2eYM6Kl2+gVgD3GlMvSv3sUUvK/Q/hqG6GFMrtUXRZnPIOIquD6kzif
+         N7RW/SGe75cnQwKh4pGAd0+iAhY2ZkrxBcR55vR88yu3KoWAD++L7BNTc2OCPci3HiBV
+         wvhA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=AIjc3MXIEI1WNzfDBHDw6Y+wt0nahAW6usfM1evUcdQ=;
+        fh=/dhV1SXsVfJV7Dnj0bxpIX8sr1MPX5vdQcZCEWM58/4=;
+        b=La58ASkGE+tZXDy4RMGFeAL0H0qZz5BjkB7XRobd7elRozIJftx4ovYIgyTCT0/Ba0
+         l+IxSSx8Nw/WgsIQW+x9K2z+NYaNq0Y1tyybIOrjtMVqkKI7PbFaEtxpnN7JYVyjTWoK
+         vXI+DtELgoRaCqXaEEMzoiJQfBVnx+qkbDeQrWYE0y1X3F/dgoXp77CCQTw4t549iEJY
+         8qgZhEbepOKjmDm9Kw3odKdvXxXTx5PIMI+P3kWM+zYdm5mrMsQ7xMOWCzIV62yQa8yU
+         m4oS2WVpzDXSvvpRF5+dLQNGrV3SEABZnGvcvF75yGgI+svY0Lt992bP5s4JZGcVZa7o
+         DMhQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1790006791; x=1790611591; darn=vger.kernel.org;
-        h=content-type:mime-version:message-id:date:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=UOTeQSx76a9v/ZV3YujOIEiYlAr7+SRsnm3/O5Z68jU=;
-        b=jNIPkimsgzwGeAPw1T5J0ZZWbbWbvmf9gqRj40Y/atoUYgKG2yWh3HESwt6126nUDp
-         FD+Rmk79KRReyBBYIl4nF0UXejvRBciVXLpQ0x0P4HGhci5O8iuKBzqiPsMrmLMZpiFB
-         lTbphc8C5mH2TgoQvoSliu53nlAZUPM7gnPf6JVk1XoAUGXqWGbf8eYG4gdjGZ8Be6kE
-         0hW1vjiNk54/tiLuCoDH+rB/8p0unN4PncOQIY7I8fOQderqwGHSfRx+8mIky9QBPvd4
-         jWCVCSqDpodMotBD1r5UZ3EgftUBugTYiLbiO0CekAfIDwDxZ7IOPCqLCaPurh0VfluR
-         DhJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790006791; x=1790611591;
-        h=content-type:mime-version:message-id:date:references:in-reply-to
-         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+        d=gmail.com; s=20251104; t=1790006947; x=1790611747; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=UOTeQSx76a9v/ZV3YujOIEiYlAr7+SRsnm3/O5Z68jU=;
-        b=DFsgoqS9fTMkYujF3zwisjqTxz6alObkqp+iraEHwIwmbI8z1h81M35ysbGN/fjGad
-         idBOJU+X2r/4An5O7mOAiqEXcQKEUzP3KBqjYA5nlHVckKb4g18FXMQcRR0ttV6ew1xq
-         U5xdqQGc5E+KZoiWK0Yq9KM7iYGjCIJGgaI+x0iBFG89kZfxDvhSlw9datpfGhSq0ob+
-         NeCbosLxUPLJZb89UXLG+LPJBcaL9syrgW0W/qCkeWHYyWJ6DLr+z8ARy3SBR4A6oeWb
-         YVrZxpov4GPWG1rTAr9cUxZGTeX+awx0Zhm9rS6hrC2Jyk6q90+pCfcFx8eSCIeFIuGJ
-         qdTA==
-X-Forwarded-Encrypted: i=1; AKwUvBydMSjFqjV0b7ZbOWsCiBTlvQeBUvEEJ5XaHNSITr65lDDd4ZLWhueBkp3MndhJrTyaIOCRYejGUAA=@vger.kernel.org
-X-Gm-Message-State: AFuF++mXURpI9xc0xe+GQcwc31BWzSdOUf/o1or5HVkJjnKpfaA8jE2I
-	SFhYIAY7BcfQkGnBxD44WWBubbmqF2YDELi5o0DG4uwtp7tpXL1+LAY7sekjoV06psU=
-X-Gm-Gg: AYBFou2prgILnq3k/oOTVpXaKcf8eWiBdSj9+9gGyboT83CeCsk509iJm+htsTb3mo3
-	+Dw98PiiyJxpvKnHEZOsdDKghrGZkPwHbBP6c13xehQvpIjBWHnVo9EZ08+hFNO0laa+H9qnt2M
-	9EoRVyY6RtysWwRip6zSMNrjoGEfpMHBrbunNAgIHBEYx9kAIWzIbX3TW8K9GD40OVjvdVsdhU9
-	3fEB/4RChb0spH5Rlg/VhfRsiekRfIKMF1gFaYCtvGn/95cqqOgraJ3hFCEYVlaQ3i3tas7cxAL
-	DHgBLyqQgySWDQSX6nq2Tp+FS9c9f2C4jwKShIeoePPv9KrrcUqDT9XmByGW1+hPw63Fl+0K9O6
-	VuHsxqpn0mIQTwzW488izDji8srw+v9YnkB9X1OXApgU0nmX+rJEujTOoqdEAHAnwuyW1Vhb03f
-	9/EDPfeNRRPbhJT+niFCSRJWXS4709xavxtFWvIO6EuqJ9T0etdQfP6wh3XuVh/JNqF3A=
-X-Received: by 2002:a05:6a00:ac8:b0:878:34d7:6a30 with SMTP id d2e1a72fcca58-87834d76f20mr8319100b3a.36.1790006791257;
-        Mon, 21 Sep 2026 09:06:31 -0700 (PDT)
-Received: from localhost ([71.212.197.238])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-877a95f915csm3487490b3a.29.2026.09.21.09.06.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Sep 2026 09:06:30 -0700 (PDT)
-From: Kevin Hilman <khilman@baylibre.com>
-To: Arnd Bergmann <arnd@kernel.org>, soc@lists.linux.dev
-Cc: Arnd Bergmann <arnd@arndb.de>, Andreas Kemnade <andreas@kemnade.info>,
- Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>, Paul
- Walmsley <paul@pwsan.com>, Herbert Xu <herbert@gondor.apana.org.au>,
- "David S. Miller" <davem@davemloft.net>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Helge
- Deller <deller@gmx.de>, Tero Kristo <kristo@kernel.org>, Stephen Boyd
- <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
- linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
- linux-media@vger.kernel.org, linux-mtd@lists.infradead.org,
- linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-clk@vger.kernel.org, Thomas Zimmermann <tzimmermann@suse.de>, Aaro
- Koskinen <aaro.koskinen@iki.fi>
-Subject: Re: [PATCH v2 06/14] ARM: omap2: remove omap24xx support
-In-Reply-To: <20260914140821.1805449-7-arnd@kernel.org>
-References: <20260914140821.1805449-1-arnd@kernel.org>
- <20260914140821.1805449-7-arnd@kernel.org>
-Date: Mon, 21 Sep 2026 09:06:30 -0700
-Message-ID: <7htsnid1x5.fsf@baylibre.com>
+        bh=AIjc3MXIEI1WNzfDBHDw6Y+wt0nahAW6usfM1evUcdQ=;
+        b=HyZzq0iICYBObXLKZzkAbYdHutJgeMFWvA3srR1rgB9/G3D0DM4o72UNWCWsecRCUe
+         +NL6bE5yfhrSDsN32oKwXFadspCpfpFLd1FVlcIvBLJ0Z7zpuKMJivUJvf7NL9x4W3aT
+         n0SkrBqDJiMKlMJZ+9Vnx9t1OTZrqlzc6xcMW/Xupzv5oIDUAFLlltcbALfsGedOBKfi
+         yx1qMu7wOJ7UgTqd4fu6TQxQ7AYVp7fK1aKSGdhsKFSWt7HGUX/4fU5HgWD0O0HZeGWR
+         gO0jA3unzMgTiSzuVz/0MObUlTtmZ5KNhs5IHD6lr5HmeVx1e5ZkHgMBmKwANx4S8EXm
+         2oLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790006947; x=1790611747;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=AIjc3MXIEI1WNzfDBHDw6Y+wt0nahAW6usfM1evUcdQ=;
+        b=IFLQAhAdhXaKcyPilhsZWgOpMlFdFem5mkpYXoW7EGXNMHZ1CbSrcFSwJONDvpux8A
+         vAnBuut2U+Q3k1/8f/S3K+5NCKQoPCk1rocUlg8PiAQF/9Hr9Tp671h3mx6wCJpE/QPk
+         iWJXf/s1hvb6HyUwGfO5/jZRdC6mwdll623HIJODlmvW5o6HzxdbjLs+WZ2kWnzlP6dW
+         YDqj6vHRd7sdC20fvb0BerZsxmL5cw2KJXRlm7erOM/QLNwdhWqsKl2OglVh7JrwmmFA
+         9vkVB6XjzZ5p4LKkI8l0GqQgQjGDycERC5KIHKFatfxQ4GrNQ/tQr7hjkRwoP2BvOL+I
+         uT1w==
+X-Forwarded-Encrypted: i=1; AKwUvBwVYp2QsPMTixPdMCzgIFFYQOgsu1uk50huZ1BCpSjiQffjgye9kZt15eZaH1EE+TZ25UodCUryG+w=@vger.kernel.org
+X-Gm-Message-State: AFuF++lkZOMp+TNy3iFGyCMOJ8Q6EK5RMPE2ijFKaeC4uHtynJ/WG+SB
+	QU389eoORy2T/cT3VnjE5u6GKWGXH4O2yPnjCMXyCByujZVOmNDvZJ8g56+EsDrmzOLgJ8+cIxt
+	06X9YdlGfk2kQ/CSuW4AsibauWbT9KYo=
+X-Gm-Gg: AYBFou2SxTeKZAaGGZyfHt/xnuhyYmlJ6MprOHsweDWGj63KNJda1+P/goajTHKGXTE
+	mptonnlZqm2bzQM2EN2LckyCt/DKvqyfVe80GoQgZvd4KJjTYFhmaatt6NPxEk5l4A/V0WbRJp6
+	lUVrFi711tI/9cusancbedYRR6nBjjDLmgAuuhPzTx4/JL60ef8Erh09vapYddny0oZ8uRmLvg4
+	Dc3gwKX6l5Fjy0dQVEOjCW3//sB/9wPWFc6G7LCw+g36VOGovAt8/tXxKyKbtiI8vIiO9GGfoFm
+	mxRhFvblPF4oeiP+r4V3uu86y56f1qWFYfNJ+JWtdabn4WduG3Mtk1mGNPqgNT1kBdpyK9LfplC
+	/R/gZJfS1zdSoHAJaDuE810FFuUrMQhRONlVsvTAKUivVtb7yYEXeJTYVQU7sdD5dOCdjASgM63
+	FhzWA8qIZsoTKRguyfVG4bfQiFqW4OgeFtY/0w5aEFCXE77HMT3Q==
+X-Received: by 2002:a05:6512:65d3:20b0:5b8:c6de:48f9 with SMTP id
+ 2adb3069b0e04-5b8c6de4cc7mr1586547e87.4.1790006946532; Mon, 21 Sep 2026
+ 09:09:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20260908225615.1732105-1-georgeandrout13@gmail.com>
+ <DLHSL43HJVOM.2LMYD808W8FPN@nvidia.com> <arFPKcA1RCecTfMD@redhat.com> <CAH5fLggOMBVi3DjQSmLtstnntgJQzDsQjEt15nRkiNi7EuLB8w@mail.gmail.com>
+In-Reply-To: <CAH5fLggOMBVi3DjQSmLtstnntgJQzDsQjEt15nRkiNi7EuLB8w@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 21 Sep 2026 18:08:46 +0200
+X-Gm-Features: AcwNN1XQ73lDz4xpLQP5yNOyxGkJdAQw7Y0pwDB52hNn7bLVuCDQdmrVcz_Iz7g
+Message-ID: <CANiq72koa5rBohoBg4zaawBUPuhBatGouBzqTWi8djxMaaLacQ@mail.gmail.com>
+Subject: Re: [PATCH] rust: clk: document overflow panics in `Hertz` constructors
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Brian Masney <bmasney@redhat.com>, Alexandre Courbot <acourbot@nvidia.com>, 
+	Georgios Androutsopoulos <georgeandrout13@gmail.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun@kernel.org>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+	Daniel Almeida <daniel.almeida@collabora.com>, Tamir Duberstein <tamird@kernel.org>, 
+	=?UTF-8?Q?Onur_=C3=96zkan?= <work@onurozkan.dev>, linux-clk@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Arnd Bergmann <arnd@kernel.org> writes:
+On Mon, Sep 21, 2026 at 5:51=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> w=
+rote:
+>
+> My understanding is that the "default" way patches land is that the
+> subsystem also takes Rust patches related to the subsystem, and that
+> the rust tree is a fallback tree.
 
-> From: Arnd Bergmann <arnd@arndb.de>
->
-> The omap24xx SoC platform was used in the Nokia N800 and N810 tablets
-> released on 2007 and was among the first ARMv6 CPUs in products that
-> made it into products.
->
-> Unfortunately the early ARM1136r0 CPU cores had a number of quirks that
-> caused a disproportionate amount of work to keep them compatible with
-> later ARMv6K/v7/v8 implementations.
->
-> Drop the support for this SoC in order to allow removing ARM1136r0.
->
-> Cc: Andreas Kemnade <andreas@kemnade.info>
-> Cc: Kevin Hilman <khilman@baylibre.com>
-> Cc: Roger Quadros <rogerq@kernel.org>
-> Cc: Tony Lindgren <tony@atomide.com>
-> Cc: Paul Walmsley <paul@pwsan.com>
-> Cc: Herbert Xu <herbert@gondor.apana.org.au>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-> Cc: Kyungmin Park <kyungmin.park@samsung.com>
-> Cc: Helge Deller <deller@gmx.de>
-> Cc: Tero Kristo <kristo@kernel.org>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-omap@vger.kernel.org
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-media@vger.kernel.org
-> Cc: linux-mtd@lists.infradead.org
-> Cc: linux-fbdev@vger.kernel.org
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: linux-clk@vger.kernel.org
-> Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de> # omapfb
-> Acked-by: Aaro Koskinen <aaro.koskinen@iki.fi>
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Indeed, the idea on how we suggest setting up the `MAINTAINERS`
+entries is that, by default, maintainers keep control of both sides
+(they are the experts, after all) and that, hopefully, they get more
+involved on the Rust side etc.
 
-Acked-by: Kevin Hilman <khilman@baylibre.com>
+It makes sense for reworking the subsystem, too, since it may happen
+that a rework on the C side may need adjustments on the Rust side etc.
+
+The file is already under "COMMON CLK FRAMEWORK", so in this instance
+it seems fine.
+
+Brian: in case you want it (but it wouldn't be needed!):
+
+Acked-by: Miguel Ojeda <ojeda@kernel.org>
+
+As Alexandre said, we may want to rework how these work (instead of
+panicking), but documenting helps for now (and whether this counts as
+a Fix or not is, I guess, up to what you usually do in your
+subsystem).
+
+I hope that helps!
+
+Cheers,
+Miguel
