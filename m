@@ -1,119 +1,105 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4CBB425888;
-	Mon, 21 Sep 2026 16:50:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 586E53BFE2B;
+	Mon, 21 Sep 2026 16:59:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790009436; cv=none; b=pNMrwOCpHUR9X/Cnpmw6OMYFhLAWAb2M2abmY7ffsNa1vaMZhlTEtsuJ4Fhs/p3xnNq96po2KG+NsF+QbV56mdVigH3aaFBTPq3If3F6X9B1Jwb4Z+Cx1Ljy2MHHU3gyjGxw6bdc8wNYZ/R8i/k5kv+PU3itd2A3nzTX7d23O4c=
+	t=1790009993; cv=none; b=ZDxQ2T6lDpZIfLqa6FuHams8PWxKBcYdp1tlcSlNPkG/B2Bw4Oag/l5y+WoBRnztra9oB44XZ5nNsU7WsPNrttlH49u0FHw1bJsyOOFVc7E0PpnCODTdf2l20/0YHLM2eO5eKPcJxNMZ6C56QH2RtdKDtAjWy1f5Z9oCkc1ECIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790009436; c=relaxed/simple;
-	bh=tzEaQ78haQfPp9bau9Y5NopwAYQx6DU57qk2wbAgzA8=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=sxOIflp4jqGMzstlRcYT1Wjq5H1elHRHy/Z/NSJ26rQJJz8aJKN+ERk/wb+wmRClzkZK+j9HEbFldpVWZq+v0eN+mMcOTcFKejI0j2kolJ+gSuhex6zj8Ci+az4WPBDjSMeTqDXBlSCk+keQ/WeN9Gv35JtT2tcM1WjWiGVLDqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dtuE+kyq; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790009993; c=relaxed/simple;
+	bh=Tp+rMX4Gditawhvnl0IiyBKLYE7Z0Xkyr1eNWtD0ShA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QfxJl7cy4VhChWtBsh61kBw96/DDdVv1ZEqXb0p2XtkL7t4IYaugbmgLLDiHqNW963a+pykCRB+ZhaxghQlC3JcAZFVofJaEtuaKI7Y0t3DxIJcR2A57jEv/vCz4YvUJeFMF4n9ks4uJYqOhvizzXwg+A7F6kIFw1zyELPnEJrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kMLsAWVv; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dtuE+kyq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11B1E1F000FF;
-	Mon, 21 Sep 2026 16:50:32 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kMLsAWVv"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4877D1F000FF;
+	Mon, 21 Sep 2026 16:59:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790009432;
-	bh=evOcOug5HuQ7QipyqVv2PipPmrWdgiFen7VKh/pTWD8=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=dtuE+kyqiOpqLHGqXxrbVTuqarr3I0qBmoyMA+GNRHi3elfmPl0pgPFPKTv/r3Xnx
-	 c6nPDRYld4u7T6yz1TnHVS9Bh+YltwNZlqpUs3+Wg5OoICCoAa9WI2a4mzSsD8Eqsv
-	 JeT7DpqsbzB4X6w6NTii5PHZpd1OCKRv6ZWekjWCc58/rqqe1+7DfTiTV7CCsdLXqX
-	 oecV0EPly9JG2ODsebVU7MRu/7gi6UWyQW6XaWYDgunxyZJrFZW3iwMYyPhDXbqhY2
-	 izBDfalZ2qHZagqJI9LNvyjrT1GhCrGgy381uSR22QlvDKNoFOh9kQX97BhPSep0w5
-	 +NoR5dVnT6JdQ==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v3 2/2] clk: qcom: Add support for camera clock
- controller on Maili
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Jagadeesh Kona" <jagadeesh.kona@oss.qualcomm.com>
-Cc: devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org
-In-Reply-To: <20260921-maili_camcc-v3-2-2f8d739ac2d4@oss.qualcomm.com>
-References: <20260921-maili_camcc-v3-0-2f8d739ac2d4@oss.qualcomm.com>
- <20260921-maili_camcc-v3-2-2f8d739ac2d4@oss.qualcomm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 21 Sep 2026 16:50:31 +0000
-Message-Id: <20260921165032.11B1E1F000FF@smtp.kernel.org>
+	s=k20260515; t=1790009991;
+	bh=N1ZQvKTl/H+B2fdxCeUt1XbbUIpLrTGXvpTDgKU994I=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=kMLsAWVvY7fAyGkcIxwyFnaXR5kYlw9MFNCfX5PLF1nIgC2UUUPbNe6g8/dwdox+g
+	 zQxUh5QnjuYC3C946b5y2oI/9EQ3lnyS0YVm1D0R6cS9VFCizxg7c28UFxnvFuFzw4
+	 AUNxNdtMBrAOB8HCHy4vtBRpwwvTuMVDikxbbmdBbjLavVn+R1qLPaD/4FcaUhKckp
+	 kbvvdryMCyNm62/hv9lx2aipNusXo1JeSS2DFfXmlLcrPsyYI1W0myewf+99P4NVfQ
+	 sL/juqV9wSSQYW3pA+dE1F0OIKIsr+R5hRvWVgYhziQ/Hwo9xn/MSHFUqJb1WhJWF7
+	 0GnBW9GL/oC+A==
+Message-ID: <c89f566b-9fd7-4824-ad19-bd8b055d2736@kernel.org>
+Date: Mon, 21 Sep 2026 11:59:50 -0500
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] clk: socfpga: agilex: convert to CLK_OF_DECLARE()
+To: Brian Masney <bmasney@redhat.com>,
+ "Ng, Adrian Ho Yin" <adrian.ho.yin.ng@altera.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+References: <cover.1789096458.git.adrian.ho.yin.ng@altera.com>
+ <c7006ac0c353640f52902580564a85d6d23c57e5.1789096458.git.adrian.ho.yin.ng@altera.com>
+ <aq2-Ysy2wbLeBWd1@redhat.com>
+ <1abffb74-3b9d-494d-a414-ea21d537ed74@altera.com>
+ <arFEwdu6EucK1G9x@redhat.com>
+Content-Language: en-US
+From: Dinh Nguyen <dinguyen@kernel.org>
+In-Reply-To: <arFEwdu6EucK1G9x@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
-- [Medium] clk: qcom: missing frequency table update for cam_cc_cci_1_clk_s=
-rc on Maili
---
+Hi Brian,
 
-commit 9204e9b27b38229aa09fff0dc17f81cd19db9fc2
-Author: Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>
+On 9/21/26 09:52, Brian Masney wrote:
+> + Bartosz
+> 
+> Hi Adrian,
+> 
+> On Mon, Sep 21, 2026 at 11:17:13AM +0800, Ng, Adrian Ho Yin wrote:
+>> subsys_initcall() / subsys_platform_driver() would not fix the failure we
+>> are hitting. Both still run after time_init(), while the DW APB timer is
+>> registered via TIMER_OF_DECLARE from timer_probe().
+>>
+>> So moving from core_initcall() to subsys_initcall() changes nothing for
+>> this consumer: the timer cannot defer, clk_get() still fails, and the timer
+>> is never brought up. That is why these patches use CLK_OF_DECLARE(): the
+>> provider must be registered from of_clk_init() so clocks exist before
+>> TIMER_OF_DECLARE runs.
+>>
+>> On the broader point about CLK_OF_DECLARE abuse: I agree it should not be
+>> used merely to beat platform device probe. If the preferred approach is to
+>> keep the clkmgr as a platform driver (subsys_platform_driver()) and give the
+>> DW APB timer nodes a fixed clock-frequency instead of a clocks phandle, I
+>> can respin that way. Please let me know which you prefer.
+> 
+> I wanted confirmation that you wanted to use CLK_OF_DECLARE() for the
+> system timers.
+> 
+> Will you by chance be at Linux Plumbers Conference in two weeks? Bartosz
+> is leading a discussion about the future of CLK_OF_DECLARE() and
+> friends.
+> 
+> https://lpc.events/event/20/contributions/2503/
+> 
+> We want to minimize the use of CLK_OF_DECLARE(), so the preference is
+> to keep this as a platform driver if possible. If you are able to get
+> around using CLK_OF_DECLARE() by initially running the system timers
+> with a fixed frequency then I think that would be preferable.
 
-clk: qcom: Add support for camera clock controller on Maili
+I originally pushed back on hard-coding a fixed frequency for these 
+timers because if the bootloader changed the frequency of the clocks for 
+these timers, we may run in to a problem. But I don't think the 
+bootloader had changed the clock frequency in a long time, so it may not 
+really be a problem. But it just feels wrong to not take in a frequency 
+from the clock driver.
 
-Maili camcc is mostly identical to Hawi camcc, with a few clocks
-removed, frequency table updates for a few other clocks, and PLL
-configuration changes. Hence, reuse the Hawi camera clock controller
-driver and extend it for the Qualcomm Maili SoC.
+The other option is perhaps adding the ability to defer probe these timers?
 
-> diff --git a/drivers/clk/qcom/camcc-hawi.c b/drivers/clk/qcom/camcc-hawi.c
-> index aa52b99aec003..dc5c108ce608c 100644
-> --- a/drivers/clk/qcom/camcc-hawi.c
-> +++ b/drivers/clk/qcom/camcc-hawi.c
+Thanks,
+Dinh
 
-[ ... ]
-
-> @@ -3106,12 +3105,35 @@ static const struct of_device_id cam_cc_hawi_matc=
-h_table[] =3D {
-> =20
->  static int cam_cc_hawi_probe(struct platform_device *pdev)
->  {
-> +	if (device_is_compatible(&pdev->dev, "qcom,maili-camcc")) {
-> +		cam_cc_pll0.config =3D &cam_cc_pll0_config_maili;
-> +		cam_cc_pll1.config =3D &cam_cc_pll1_config_maili;
-> +		cam_cc_pll2.config =3D &cam_cc_pll2_config_maili;
-> +		cam_cc_pll3.config =3D &cam_cc_pll3_config_maili;
-> +		cam_cc_pll4.config =3D &cam_cc_pll4_config_maili;
-> +		cam_cc_pll5.config =3D &cam_cc_pll5_config_maili;
-> +		cam_cc_pll6.config =3D &cam_cc_pll6_config_maili;
-> +		cam_cc_pll7.config =3D &cam_cc_pll7_config_maili;
-> +		cam_cc_pll8.config =3D &cam_cc_pll8_config_maili;
-> +
-> +		cam_cc_camnoc_rt_axi_clk_src.freq_tbl =3D ftbl_cam_cc_camnoc_rt_axi_cl=
-k_src_maili;
-> +		cam_cc_cci_0_clk_src.freq_tbl =3D ftbl_cam_cc_cci_0_clk_src_maili;
-> +		cam_cc_ofe_clk_src.freq_tbl =3D ftbl_cam_cc_ofe_clk_src_maili;
-
-[Severity: Medium]
-Since cam_cc_cci_1_clk_src statically references ftbl_cam_cc_cci_0_clk_src,
-should it also be updated to use the new Maili table here?
-
-Without an update for cam_cc_cci_1_clk_src, it will continue using the old
-Hawi frequency table (ftbl_cam_cc_cci_0_clk_src). This means cci_0 gets the
-new P_CAM_CC_PLL0_OUT_EVEN with a /16 integer divider, while cci_1 remains
-on P_CAM_CC_PLL0_OUT_ODD with a 3/32 fractional divider.
-
-Could this mismatch and unintended configuration cause instability or failu=
-re
-for cameras attached to the second Camera Control Interface (CCI_1) on the
-Maili SoC?
-
-> +
-> +		cam_cc_hawi_clocks[CAM_CC_CCI_2_CLK_SRC] =3D NULL;
-> +		cam_cc_hawi_clocks[CAM_CC_CCI_2_CLK] =3D NULL;
-> +		cam_cc_hawi_clocks[CAM_CC_CSI5PHYTIMER_CLK_SRC] =3D NULL;
-> +		cam_cc_hawi_clocks[CAM_CC_CSI5PHYTIMER_CLK] =3D NULL;
-> +		cam_cc_hawi_clocks[CAM_CC_CSIPHY5_CLK] =3D NULL;
-> +	}
-> +
->  	return qcom_cc_probe(pdev, &cam_cc_hawi_desc);
->  }
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260921-maili_camc=
-c-v3-0-2f8d739ac2d4@oss.qualcomm.com?part=3D2
