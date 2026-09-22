@@ -1,163 +1,281 @@
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012037.outbound.protection.outlook.com [52.101.66.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm2-f12.google.com (mail-wm2-f12.google.com [74.125.225.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A8F74F85A0;
-	Tue, 22 Sep 2026 12:02:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.37
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790078529; cv=fail; b=npbRns61PAoNyusVxhErJYSr0xB1R3tvcGPYglz1y7sGQPdiF2d8IwITbGovxuU1TMfHt292bkV1lOpW6SoByt4U4SuTi8oiSzJygv9n3wjFOn0FbcJ+iODDdb2Ng4aCR4d/8q/+c3OYovQcR+iJIfbpmzdn1VWcKcme7sIVf6w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790078529; c=relaxed/simple;
-	bh=tnSoSGnslUooeiIJxmfzk8wCL5Vnr/nNAAVwmFaaHAY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ffAkhweIWlEZORt17olYHw8Wsovyv7A4GkInUDNFanL8x+nf/kV87p78/hw1q3L4XxOt1BF8jnwi5RVUT9shPKBUNlCYR5ZbuUvEwHK7P64jm6inRU5LjBJtUoswEf4tyvZ9rfgzAZR+iLYVm0AA9dayiVGNndQ6pOZ7ADyi6zI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b=nuDRvYcT; arc=fail smtp.client-ip=52.101.66.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siemens.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DF7753F69E
+	for <linux-clk@vger.kernel.org>; Tue, 22 Sep 2026 12:14:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.140
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790079253; cv=none; b=G9FTJtzDkbyUtqcCepP1DoctgJGQ096cUj/OaWGQLa6KlhX31BDKsTGESK3O/M3nEDR8BQFCWnj4um9A28g7H5p0DrOfVACmXUPYBGDabDR3LcxAr58FHOCvY5iMlyQon9r88hcbQ1mqtgAmXxvP53OjpOvxHQqs3gi+JJggk08=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790079253; c=relaxed/simple;
+	bh=SdPbQy0dro8OwS7NrMmaCOy56WkMTmkPc9JluEiYx9A=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=delpiZw6/6/pJ/N14fxNKhv2IxY/VR4VVyaPwRgu3wehxM1EyIwPnhOynGXdbJruaW0SaZWbjlof5lgE0aLzBmMQAQAp7xFLbNPMbCULVbmNOy3fm9f1n9UNLRm/n6Bidr5hRjJCywjxoLoTRRe87iWGuXqc02v3wiPieXur0Xo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CM+u+Ilr; arc=none smtp.client-ip=74.125.225.140
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b="nuDRvYcT"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=W9NP1v8HrhiJKEx45jk1Es+L9113otcigUgM/E4OAsYpZxjm6M07J3cgTk+ynBiyXjDRyQ6EkjzWtCWxuKgsUtb+r0TH/xLk0xw8ynzcip31PRipUu0P8PVe51NbNsNqvv91GqLu5dT1m7C/iTS+W/Id7+BtW5cGgjKWZyTlPl9k83AJg8P+9p28+2jbR/1c22eAH+9RalkkmNgM/hWZXqOQa9d5jqonSf21b1Em9c1TOC96IQKrc4hGh71a1a2kZDrv+H96qLAsnrMuOZy9vseMnre1Jn2xhFw4giSa1wjmn0h0IheLL4YjZbCynbcMAH+63V8njWJeQuyzcxhcFQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tnSoSGnslUooeiIJxmfzk8wCL5Vnr/nNAAVwmFaaHAY=;
- b=fPb3Ns5TghVocfKQXea9KctxN0BJpAgbZkz8ylf6uikj0AXoOHVXcdljniD55SIFUPKubIqOm5zxeRCWrEJvFWJdhTIv+KCvp2k4vXy+i2kbTiIwPpkte+ETqr/FCFx6kdWCad0vTwyXmc7MUFl79Cj1kqdIBcyqdy4veUD3jQGycwlBbfBP4ILGcWyjW6TFbDKdXML1QEbX0tPTOxW7sIO1e7Cvn4UnCOXU/w85MlakGCSpADzfPnmGtY/Y3jP+vd7J4tYFQXRl9AeAqy6yrMvEel0LQhkJBL9ruoZ0/+ZmasMV9dz6wuLJQqSnu//iHmmLKhgXDIRwgHrsb9e0zg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tnSoSGnslUooeiIJxmfzk8wCL5Vnr/nNAAVwmFaaHAY=;
- b=nuDRvYcT3cCz3lC5yLvPz96jpja/jWZguMIGXlCZdh1hLpTNNTVK0uRblM2K0mx8vrsGYvghvUw7KJlbG1rSEZYyR8NmKigK/C9mwVGFKd59bxQzMOCpCfdR5jD7lSL30ShGB8KaYgpKfdE0537m7QbYUg1VXpieiEqxn8sKYkF6HweNGTBKJ2eWwAxVMianoEy3SzIywOU8yUQUij2tuA2hqb9MyZIvUtM+qTRJbVXnjGONBJl5KNGzuADvymY9T9GaaM55jltZSzcy7uYg8tlWN+9RKvQ8S/cu6XZuqL0XhuC218SdP1BS3p1jB+q04+KIgnih2TlPz2CJTdp9og==
-Received: from AS8PR10MB6867.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:5b6::22)
- by PR3PR10MB4064.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:a5::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.451.13; Tue, 22 Sep
- 2026 12:02:02 +0000
-Received: from AS8PR10MB6867.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::9126:d21d:31c4:1b9f]) by AS8PR10MB6867.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::9126:d21d:31c4:1b9f%3]) with mapi id 15.21.0428.015; Tue, 22 Sep 2026
- 12:02:02 +0000
-From: "Sverdlin, Alexander" <alexander.sverdlin@siemens.com>
-To: "bmasney@redhat.com" <bmasney@redhat.com>
-CC: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"driver-core@lists.linux.dev" <driver-core@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH 3/4] driver: core: remove dev_set_drv_sync_state()
-Thread-Topic: [PATCH 3/4] driver: core: remove dev_set_drv_sync_state()
-Thread-Index: AQHdSootqSqtWqfmIUyFPC0Fb+v8SA==
-Date: Tue, 22 Sep 2026 12:02:02 +0000
-Message-ID: <d36835c319b8c92e20d981b1e59c169416da3f9e.camel@siemens.com>
-References: <20260626-clk-sync-state-v1-0-4156d8196dc8@redhat.com>
-	 <20260626-clk-sync-state-v1-3-4156d8196dc8@redhat.com>
-In-Reply-To: <20260626-clk-sync-state-v1-3-4156d8196dc8@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Evolution 3.58.3 (3.58.3-1.fc43) 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AS8PR10MB6867:EE_|PR3PR10MB4064:EE_
-x-ms-office365-filtering-correlation-id: 17beb6b0-b58a-46af-e284-08df18a1502f
-x-ms-exchange-atpmessageproperties: SA
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|23010399003|366016|1800799024|38070700021|4143699003|56012099006|11063799006|10067099003|22082099003|18002099003|55112099003;
-x-microsoft-antispam-message-info:
- 0//oUsRmHrHFgXiPYbHIxgh8IEojiKybS487pWfjwpmKQdNdDyUZg5f3JmbUZf0FkQXHfSNHXSEXAAP2zLUp+1Vfxek0qTbVCr1SzO57Q9Xw9JS1Y9OuGyGgHKOsNU517ZPYnkAH0CSMam8uW7Hj7Q9owN0p9Y5INrldwruRPzfak8QrMM3eZKd3rNm9rQRQpcc5k1VAwJ9BfHkLkWGsbc/+bdOt0J+mK5XcPU5NSpstOK/MbUeHWzQDgFmQafEh6woL+jU7u2xq8yIe+vjAsF3148dc2Nx+Io/nsO4tnGUYoP9489G7293W5sqiEFYytEBQCR0tobV5lBQFn2x2WRWiZkqluABcjuVEBQe8pKy8wXEi3Q6DrWMN/L6Mp21Jbpdxyy2haOcZIn2SDGR0z+gZ0FHCMWFYXbFiWJfuJEF04MKtGIiOD5aChqYX+LJz9cqIMEEsaBMWJnkaQ+tKqG5FpbC9+D37/ECCfW8aVx8DYQExDz94XeK2ZMo3U79fiU2maXk0oI7BxK3qL2c7i2zCI2Alc6pStM6l6KzDYpmBUYg8AXOVD8htq7LSCVx9tftljNUPx0NPWbqesXx1pNRvWRO4QTruXBfqDgLaZxvWYy4M8SlJcD9mKv2yeDmcDPpXmCeArQVmC9rxQfG+J9/l7gNFWE1njpjb/34WomI=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR10MB6867.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(23010399003)(366016)(1800799024)(38070700021)(4143699003)(56012099006)(11063799006)(10067099003)(22082099003)(18002099003)(55112099003);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?Nnlza3NMclcxK2ZHY2U5WlhQdzJ0a09JYmgyc2ZoZ0hBODRRT3BoaklwNU5r?=
- =?utf-8?B?cHYwWXdOemdlc2I3MmdXZnl1YlJSWTBtWlFhVTJSNVNrdVJ3b0twSUZtNzBX?=
- =?utf-8?B?QzlsZVo1V2hiQ0RWSURMa21SWjk4MlZWRWdkTThmazkrdjdHV01vRmJHRjlh?=
- =?utf-8?B?bm9qWllCTktsNFMzSHAwMFhaR0lVNDEwQkFEb2pua3lIOFBFWjQwNnI4dkNv?=
- =?utf-8?B?a01GS0VzcWtrTEc3bXR0QWxwL3NrZ3l0UmQ0TTVLYS9QM2FtNUdvZGhsYXBy?=
- =?utf-8?B?NGlUeG5JbWRSOGp2Ly9wS0NPVXRyaHc1YzdQSXlDSjFZVER6TTh5aUZlZS9U?=
- =?utf-8?B?UUVJWVlJZHpFYldqMzYvUVZOWFhIQ0dTemErdnRlT2xzbEwyOUoraVRTVkI0?=
- =?utf-8?B?NnlyZWpVTGNGL0Exbi8zOTNBQ1k1dk9oTXVFS3Z1VEdNWnFJb1owNjFmRWRu?=
- =?utf-8?B?M1RKNmxucnI0WFd0d2NhY0FUcjZCcERLS0tKNkdvRHVqbFFJV1VEVHZvKytB?=
- =?utf-8?B?TVpTMlRvSEVjWVlxNjhUZHdCbE4xYjdFbERFK0VJcEpFTUZuVFpDcHk2TlhY?=
- =?utf-8?B?ZXN3UUFWaVNOU3llWGpiWTJjQlRRTHQ0RlFHRUNZWkhVU0RvRHpzN0kxclBk?=
- =?utf-8?B?dFRlQ0s2NXJqTkRuOUU3b1M4QUdmQ1ZVNEZEaURqajRxd252OTEyNktTUnRN?=
- =?utf-8?B?czZZcnI4d2RoOXJUWDloenNxK2RUdEpQQVQ5UTJidi9VekRid2N6dEZDbVg5?=
- =?utf-8?B?RWgybHRxS0doTWZGclJUTzJuME9FaFNmeGpsbWpaVTVsT0tmUkc4a0IreHZj?=
- =?utf-8?B?dksweDFUSExWdk1rNnhFNVc5SU9GM01SMDJaMmV3SnRaM1pMeWpuM24wRTNh?=
- =?utf-8?B?NEY3N1FOd1BmVzc4THA3OWZzRmpvR3hFSHhDQTBwczY0ZDhLOURmMEs4UEtO?=
- =?utf-8?B?bkVvTWhrUFRYRVllMUluZlhqVFNOWkk0WmpYQ0tzNEhpY29mektkSTFseTRt?=
- =?utf-8?B?YXc0d2RNQVBSQXBIbUVEY0d1cGFyVEFSVGVMVE9oSURXSFByUUJqSHVuZ0s5?=
- =?utf-8?B?RjU2S0htNHc3YlBWMHl0V1hCR25YREpyNXkrWGpkTXdwUXc0UlVsSytscVR1?=
- =?utf-8?B?WU1SYmtHS1pLdVlzRE1LTUJJVW1zZFNMSEIxR0R3ajAyUEsrRjZMa0h0WHZZ?=
- =?utf-8?B?Q09Ba2NaMEkyMFpFUC91cTFiVWFSUVBhMHdTdTNydCsxOEhrTGlhNU5aQTBz?=
- =?utf-8?B?YTZQQ1YzQThHaExqWVY3ak1tNyt0MFVtMUpyc3BSdnFXQWRqeWp1a3g0VU4z?=
- =?utf-8?B?VFc3ZkpRdFYvUVY5NTlhaUFpVWlFT1l6M2JEdWpNUjhKVjVtaFJieUxnSExv?=
- =?utf-8?B?MlUyZEV1cnZIclliNEN6WURMUXN3NUh0RUx1V3pDYnBuUjhHUEJTRklIMmxm?=
- =?utf-8?B?Z1VCdzR0aEZJUEZjbXM4ZG9CNTFzVjJkU1RRV2U1Z0wrWCt5OGxxNWdhZ0hP?=
- =?utf-8?B?VE4yOENZb2ZOUnRKaUsyTlp4a3RSRUZuTkpEVTFpeWZWZ2tVQzdBQXRKS0ZT?=
- =?utf-8?B?Njl5ODYvc1pza1BkMGNmZnhTUFRVVUs0c0Nyc2hyNG5qeEY4VW9ndTNCclpY?=
- =?utf-8?B?QlFCdW9odEFhVE9HZlpORzRnT21DZFk1Tkg5OFFYRVRCWjRNODMzdVA4Slk4?=
- =?utf-8?B?VXNuUnV0MklZaWtMNUdFbWR4VVRRQ2V1VStTSEkyNmI5eXdhdllEMGR1ZkVR?=
- =?utf-8?B?ZTFrY0RadTZmZGluNkhjTWNBOVBIT09pRXdKL0RqcExvazBGRnh1V3Z1ZTla?=
- =?utf-8?B?em05UlVvUFBjYTFOdktSNEE4a3RLcEFKb1dFVEpJUUpjZzNQOWFzaGVzcGtu?=
- =?utf-8?B?Mm8xWVlhSWNRVlZDaTBpMU9CSXliQ0JFUVhzSUQyczdJbk5abDl0a0c0SlI1?=
- =?utf-8?B?SFkxVjl5VjVUMXBNZHNsemtRMjRuNzNtR0w3SFBiOVphd2s2R3VDc0Q2VmlU?=
- =?utf-8?B?dUdIWHBRdEgyYjhGT1ExaE56WGMyL0VWTlgvQ0RVSmxPbVN4Q3ZGRWZsbFlJ?=
- =?utf-8?B?dnRWRGZpRG0rYnVCdTF0UVRsaWRpNDVhdWNhRldRS0NHcDJQN2ZvUlZ6T2w3?=
- =?utf-8?B?R1RCVjJPNE42dVJGdldDQWhSVUN6ZkZvSFFBMVllWmxBTXFSMGxLNnNEN1Js?=
- =?utf-8?B?TUFzNkIxeitER0dsUlFVV3dMMFExallzc3F0dnJleVJncGY3K0lHWXk4b3kz?=
- =?utf-8?B?STRWazc2VGhGSWJxdG1YOU5IWkJJK1VJYWIwd1VFK1FtMTJVSnFTWkduaExz?=
- =?utf-8?B?ZGQ2SkdIOXhjWk03TWN6SjdpeWhhYzlVOWR5eGR6NlBPOU5pS0ZJbWN6MHpv?=
- =?utf-8?Q?pUwu/u/BGNHjCH+k=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <82EF54846908EF45B947FD9F6A9524C4@EURPRD10.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: base64
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CM+u+Ilr"
+Received: by mail-wm2-f12.google.com with SMTP id 5b1f17b1804b1-49b912e4b11so22413965e9.3
+        for <linux-clk@vger.kernel.org>; Tue, 22 Sep 2026 05:14:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1790079248; x=1790684048; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:organization
+         :autocrypt:content-language:references:cc:to:subject:reply-to:from
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=439w0jXQDSVQ/YyUnnVLCmsM8bZ02DVBQwb7bD5E5+c=;
+        b=CM+u+IlrykGaNfTeyPl3dq4foc71mfqSHNzqmdWyT/nFDzvIKC8OK4q8W9eOBTfCGS
+         dRhguMkJO4IHJjMCvkFE529M13fYmDVR3mxQrFVk2IZQFXRgwC/g9BYQAyntHGjjR+t/
+         JNvfZRXHkvF9firmG//VY6uNTr5iQXFUHUtmFIePcpCKCTSJ5cb5HbsofCImamV1vpDU
+         sGNqi8pWFOKfTytkg42CB7gJC3dzFcZ0O80uzrvUU9pUWGygun8w9X+LjPvQTteu3Zts
+         VURZ5NJCjO/5ZbXALl3LcNMLV/GWEUwXGf8Ax8k5rS8H1AYB5DaJckP5i9qnBoxvcpKk
+         wcCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790079248; x=1790684048;
+        h=content-transfer-encoding:content-type:in-reply-to:organization
+         :autocrypt:content-language:references:cc:to:subject:reply-to:from
+         :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=439w0jXQDSVQ/YyUnnVLCmsM8bZ02DVBQwb7bD5E5+c=;
+        b=K+za+Xz/Zte2QCLAoIQRyruK6AztiriMyKXV9L2oM8xr5N57XmUdl3mIpNNRth1Yya
+         4T7oHJRm7y92F+RX9XJJBabHqcP9ThLzoEuJLXnYZIdiyKWR+H8vi56P35nEPeEgt9+/
+         5ipxvwHFrVtK6GSfmX8e7JMi3QHwhf2GAkQ3aPiRlrb8QA9jO9svd3mRuuHrTUCkQVc5
+         GwTzllis6iPbtJ5nMxy2BRP8jh9q4Al9/PnC0IGIpOxH67m2lJenMuZlSkLkOctJbbIl
+         OOFgHnNzJyiEg+W9yzy11cv3cLH91UDNN344T3Qzx+5ExcAnZ0g5FiqxgfTwxllEpoNe
+         /xEw==
+X-Forwarded-Encrypted: i=1; AKwUvBynHV/r93iFRgkER5Okv+O6o/j37yDOs/IVCiTVXQ9lYJy4aY4QNCOEZtgO1D+OyaDmgd9do4aAGW0=@vger.kernel.org
+X-Gm-Message-State: AFuF++na23N9i/n0cLPpehjav1N2nXtdt4HdhsJq7bRTLJZZHXWqkszi
+	JZ/WNvXWjoLQfrSQc2y1GZSkugEQw/wdvpxaiVxlY2MDMP0MuqJk6b7EyVITF2exUL0=
+X-Gm-Gg: AYBFou0WXUuxIbtMIVtRPPy72VZmKaU8bQblnXUEeRWsxC60WtJSGjumxy5uJfWQcDh
+	gwm5gxBD+QJ33YSSx2jXzNW5UElG7pvPPhMMXPxYOlBwGTVAmBNjooi4VgGhxlrbvj8YVsYFKVz
+	KfkqvQ+CUG1Oi4g6u24ziGCR4mJW6dV3WInlowjJhdeysU2tiioLk/aQkUMHiWrkeMYL0orjRKn
+	SPhdAoT19CTgrasbuCnSya7s6XCvnsQbZpvzEL++S+kLavO3ReUs6+k3ugASUXkWRb/+XG2EF6F
+	ixPLqRiZ2hsK0SenVgcRDU49jAG6t7VepgSxifWJTYrU8eTfIebZI9Qdbk010bnSEnSqqPpXhdf
+	EJTUL5TnkDJRdvytt7dNFKC6yG1VEign8t7/YTRt1J+avvQ+xLx0tSRVGbSqDIP9Lw6gkE3tJ9K
+	gTzDljJ0l2C2bcOvUWsVtDgvcphRfWVlEL1irKbN2ZM+765t35dvMUxYC0Im0DbOKy+MAnqf0Pg
+	aQ9yvKT22IhVmiHSaCm6FGxl8Pne9wrZBDjO6xOz5xXs7VYCq4cSUigMecjHZ8s
+X-Received: by 2002:a05:600c:354e:b0:49c:fc6e:a3d8 with SMTP id 5b1f17b1804b1-49fc584f854mr189068335e9.23.1790079247126;
+        Tue, 22 Sep 2026 05:14:07 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:106d:1080:ddd0:8cc7:9887:fa82? ([2a01:e0a:106d:1080:ddd0:8cc7:9887:fa82])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49fd8cd5214sm80191765e9.9.2026.09.22.05.14.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Sep 2026 05:14:06 -0700 (PDT)
+Message-ID: <0a9bfc33-057d-4ce0-9b00-b1fafcf0da03@linaro.org>
+Date: Tue, 22 Sep 2026 14:14:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR10MB6867.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 17beb6b0-b58a-46af-e284-08df18a1502f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Sep 2026 12:02:02.3959
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: TEEiyTM3udpF72lrP1AfWnp/W0nFIWgSZJpEkF2D1GERhJnMvmbJ0q81e+qSeGgRpIVlUwWJtoC/VcWqj769Kgd2x9FBRa2Z92sxLu40EkE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR10MB4064
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH v20 2/6] phy: core: Add phy_get_by_of_node()
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>,
+ Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Bryan O'Donoghue <bod@kernel.org>,
+ Loic Poulain <loic.poulain@oss.qualcomm.com>, Vinod Koul <vkoul@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>, Felipe Balbi <balbi@ti.com>,
+ Manivannan Sadhasivam <mani@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-phy@lists.infradead.org,
+ Krzysztof Kozlowski <krzk@kernel.org>
+References: <20260918-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v20-0-dc244e124e71@linaro.org>
+ <20260918-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v20-2-dc244e124e71@linaro.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20260918-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v20-2-dc244e124e71@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-T24gRnJpLCAyMDI2LTA2LTI2IGF0IDEyOjMyIC0wNDAwLCBCcmlhbiBNYXNuZXkgd3JvdGU6DQo+
-IGRldl9zZXRfZHJ2X3N5bmNfc3RhdGUoKSBpcyBubyBsb25nZXIgdXNlZCBzaW5jZSBhbGwgdXNl
-cnMgaGF2ZSBiZWVuDQo+IG1pZ3JhdGVkIHRvIGRldl9hZGRfc3luY19zdGF0ZSgpLCBzbyBsZXQn
-cyBnbyBhaGVhZCBhbmQgcmVtb3ZlIGl0Lg0KPiANCj4gU2lnbmVkLW9mZi1ieTogQnJpYW4gTWFz
-bmV5IDxibWFzbmV5QHJlZGhhdC5jb20+DQo+IEFzc2lzdGVkLWJ5OiBDbGF1ZGU6Y2xhdWRlLW9w
-dXMtNC02DQoNCkFzc3VtaW5nIHRoaXMgaXMgdjMgKG5vdCBzcGVjaWZpZWQgaW4gdGhlIFN1Ympl
-Y3QpLA0KUmV2aWV3ZWQtYnk6IEFsZXhhbmRlciBTdmVyZGxpbiA8YWxleGFuZGVyLnN2ZXJkbGlu
-QHNpZW1lbnMuY29tPg0KDQo+IC0tLQ0KPiDCoGluY2x1ZGUvbGludXgvZGV2aWNlLmggfCAxMiAt
-LS0tLS0tLS0tLS0NCj4gwqAxIGZpbGUgY2hhbmdlZCwgMTIgZGVsZXRpb25zKC0pDQo+IA0KPiBk
-aWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC9kZXZpY2UuaCBiL2luY2x1ZGUvbGludXgvZGV2aWNl
-LmgNCj4gaW5kZXggYjdhM2RkNGI1NmVkLi43ZjcxMjE3ZWNkNDggMTAwNjQ0DQo+IC0tLSBhL2lu
-Y2x1ZGUvbGludXgvZGV2aWNlLmgNCj4gKysrIGIvaW5jbHVkZS9saW51eC9kZXZpY2UuaA0KPiBA
-QCAtMTEyOCwxOCArMTEyOCw2IEBAIHN0YXRpYyBpbmxpbmUgdm9pZCBkZXZpY2VfbG9ja19hc3Nl
-cnQoc3RydWN0IGRldmljZSAqZGV2KQ0KPiDCoAlsb2NrZGVwX2Fzc2VydF9oZWxkKCZkZXYtPm11
-dGV4KTsNCj4gwqB9DQo+IMKgDQo+IC1zdGF0aWMgaW5saW5lIGludCBkZXZfc2V0X2Rydl9zeW5j
-X3N0YXRlKHN0cnVjdCBkZXZpY2UgKmRldiwNCj4gLQkJCQkJIHZvaWQgKCpmbikoc3RydWN0IGRl
-dmljZSAqZGV2KSkNCj4gLXsNCj4gLQlpZiAoIWRldiB8fCAhZGV2LT5kcml2ZXIpDQo+IC0JCXJl
-dHVybiAwOw0KPiAtCWlmIChkZXYtPmRyaXZlci0+c3luY19zdGF0ZSAmJiBkZXYtPmRyaXZlci0+
-c3luY19zdGF0ZSAhPSBmbikNCj4gLQkJcmV0dXJuIC1FQlVTWTsNCj4gLQlpZiAoIWRldi0+ZHJp
-dmVyLT5zeW5jX3N0YXRlKQ0KPiAtCQlkZXYtPmRyaXZlci0+c3luY19zdGF0ZSA9IGZuOw0KPiAt
-CXJldHVybiAwOw0KPiAtfQ0KPiAtDQo+IMKgc3RydWN0IHN5bmNfc3RhdGVfZW50cnkgew0KPiDC
-oAlzdHJ1Y3QgbGlzdF9oZWFkCW5vZGU7DQo+IMKgCXZvaWQJCQkoKmZuKShzdHJ1Y3QgZGV2aWNl
-ICpkZXYpOw0KDQotLSANCkFsZXhhbmRlciBTdmVyZGxpbg0KU2llbWVucyBBRw0Kd3d3LnNpZW1l
-bnMuY29tDQo=
+On 9/18/26 15:56, Bryan O'Donoghue wrote:
+> Add new function phy_get_by_of_node() allowing lookup of a phy by
+> device_node. Separates existing logic in _of_phy_get() into an internal
+> helper method _of_phy_get_with_args() to allow for reuse in new method.
+> 
+> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> ---
+>   drivers/phy/phy-core.c  | 83 ++++++++++++++++++++++++++++++++++++++-----------
+>   include/linux/phy/phy.h |  6 ++++
+>   2 files changed, 71 insertions(+), 18 deletions(-)
+> 
+> diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
+> index 89addd732bff3..42c27a2b45159 100644
+> --- a/drivers/phy/phy-core.c
+> +++ b/drivers/phy/phy-core.c
+> @@ -606,6 +606,38 @@ int phy_validate(struct phy *phy, enum phy_mode mode, int submode,
+>   }
+>   EXPORT_SYMBOL_GPL(phy_validate);
+>   
+> +/**
+> + * _of_phy_get_with_args() - lookup and obtain a reference to a phy by of_phandle_args
+> + * @args: of_phandle_args to the phy
+> + *
+> + * Returns: the phy from the provider's of_xlate, -ENODEV if disabled,
+> + * -EPROBE_DEFER if the provider is not yet registered.
+> + */
+> +static struct phy *_of_phy_get_with_args(struct of_phandle_args *args)
+> +{
+> +	struct phy *phy;
+> +	struct phy_provider *phy_provider;
+> +
+> +	lockdep_assert_held(&phy_provider_mutex);
+> +
+> +	phy_provider = of_phy_provider_lookup(args->np);
+> +	if (IS_ERR(phy_provider) || !try_module_get(phy_provider->owner))
+> +		return ERR_PTR(-EPROBE_DEFER);
+> +
+> +	if (!of_device_is_available(args->np)) {
+> +		dev_warn(phy_provider->dev, "Requested PHY is disabled\n");
+> +		phy = ERR_PTR(-ENODEV);
+> +		goto out_put_module;
+> +	}
+> +
+> +	phy = phy_provider->of_xlate(phy_provider->dev, args);
+> +
+> +out_put_module:
+> +	module_put(phy_provider->owner);
+> +
+> +	return phy;
+> +}
+> +
+>   /**
+>    * _of_phy_get() - lookup and obtain a reference to a phy by phandle
+>    * @np: device_node for which to get the phy
+> @@ -620,8 +652,7 @@ EXPORT_SYMBOL_GPL(phy_validate);
+>   static struct phy *_of_phy_get(struct device_node *np, int index)
+>   {
+>   	int ret;
+> -	struct phy_provider *phy_provider;
+> -	struct phy *phy = NULL;
+> +	struct phy *phy;
+>   	struct of_phandle_args args;
+>   
+>   	lockdep_assert_held(&phy_provider_mutex);
+> @@ -637,22 +668,7 @@ static struct phy *_of_phy_get(struct device_node *np, int index)
+>   		goto out_put_node;
+>   	}
+>   
+> -	phy_provider = of_phy_provider_lookup(args.np);
+> -	if (IS_ERR(phy_provider) || !try_module_get(phy_provider->owner)) {
+> -		phy = ERR_PTR(-EPROBE_DEFER);
+> -		goto out_put_node;
+> -	}
+> -
+> -	if (!of_device_is_available(args.np)) {
+> -		dev_warn(phy_provider->dev, "Requested PHY is disabled\n");
+> -		phy = ERR_PTR(-ENODEV);
+> -		goto out_put_module;
+> -	}
+> -
+> -	phy = phy_provider->of_xlate(phy_provider->dev, &args);
+> -
+> -out_put_module:
+> -	module_put(phy_provider->owner);
+> +	phy = _of_phy_get_with_args(&args);
+>   
+>   out_put_node:
+>   	of_node_put(args.np);
+> @@ -1001,6 +1017,37 @@ struct phy *devm_of_phy_get_by_index(struct device *dev, struct device_node *np,
+>   }
+>   EXPORT_SYMBOL_GPL(devm_of_phy_get_by_index);
+>   
+> +/**
+> + * phy_get_by_of_node() - lookup and obtain a reference to a phy by device_node
+> + * @np: node containing the phy
+> + *
+> + * Returns: the phy associated with the device node or ERR_PTR.
+> + */
+> +struct phy *phy_get_by_of_node(struct device_node *np)
+> +{
+> +	struct of_phandle_args args = { .np = np, .args_count = 0 };
+> +	struct phy *phy;
+> +
+> +	mutex_lock(&phy_provider_mutex);
+> +
+> +	phy = _of_phy_get_with_args(&args);
+> +	if (IS_ERR(phy))
+> +		goto out_unlock;
+> +
+> +	if (!try_module_get(phy->ops->owner)) {
+> +		phy = ERR_PTR(-EPROBE_DEFER);
+> +		goto out_unlock;
+> +	}
+> +
+> +	get_device(&phy->dev);
+> +
+> +out_unlock:
+> +	mutex_unlock(&phy_provider_mutex);
+> +
+> +	return phy;
+> +}
+> +EXPORT_SYMBOL_GPL(phy_get_by_of_node);
+> +
+>   /**
+>    * phy_create() - create a new phy
+>    * @dev: device that is creating the new phy
+> diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
+> index ea47975e288ae..71c2e16397130 100644
+> --- a/include/linux/phy/phy.h
+> +++ b/include/linux/phy/phy.h
+> @@ -284,6 +284,7 @@ struct phy *devm_of_phy_optional_get(struct device *dev, struct device_node *np,
+>   				     const char *con_id);
+>   struct phy *devm_of_phy_get_by_index(struct device *dev, struct device_node *np,
+>   				     int index);
+> +struct phy *phy_get_by_of_node(struct device_node *np);
+>   void of_phy_put(struct phy *phy);
+>   void phy_put(struct device *dev, struct phy *phy);
+>   void devm_phy_put(struct device *dev, struct phy *phy);
+> @@ -493,6 +494,11 @@ static inline struct phy *devm_of_phy_get_by_index(struct device *dev,
+>   	return ERR_PTR(-ENOSYS);
+>   }
+>   
+> +static inline struct phy *phy_get_by_of_node(struct device_node *np)
+> +{
+> +	return ERR_PTR(-ENOSYS);
+> +}
+> +
+>   static inline void of_phy_put(struct phy *phy)
+>   {
+>   }
+> 
+
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+
+Thanks,
+Neil
