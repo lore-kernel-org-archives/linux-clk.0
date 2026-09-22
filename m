@@ -1,124 +1,92 @@
-Received: from ultrarisc.com (unknown [218.76.62.146])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BD8E3F0AAC;
-	Tue, 22 Sep 2026 07:02:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.76.62.146
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 571EB4F7CD3
+	for <linux-clk@vger.kernel.org>; Tue, 22 Sep 2026 07:11:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790060534; cv=none; b=A66SOBorGpJyKL0zJp13/UR4uWF5lGrXmesTRea21DZFJ9CwYGzY0v9e5Esp/Kymc4F1k9X2TuViD9yi6N39FUX2DjkKKK1MalmkoaehmBBJr6a/Hsl/ThRjF19VWtSH7L+8isib9+Xi9bswh+epZizKpAPbr5PkrBz/Ai4thNY=
+	t=1790061095; cv=none; b=IwKkCgq2IOCYXlZf/FtJp/Rc8VaoRHeVQD5M1HtNq8qG7a7Y70Oa5DBvtZflkMmkuIWExvV/2ebTd9v/IQnOW2n43r7SbHMRwn2Oswq9F32DV8avpeQDIpIL4ntWtD58E/L6/1TN0prWcPa+xG2e+6t9DnWyGWkzOWJhTs8rjpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790060534; c=relaxed/simple;
-	bh=jYRxjgdpR1NRlK2MqhyvlHb/+jMwHjghy3XCbIvhoBA=;
-	h=MIME-Version:Content-Type:Subject:From:To:Cc:In-Reply-To:
-	 References:Date:Message-Id; b=f8xFg0Ap2D3x94lv29yb3Wav1111GxxBlZwDUjF4SkKzHg1Gg4wGj8WoUYjVHHgskmp868t//zM9NIBEwbqT5iJJeKK2QFH/S+masNZSrPnrVzKiuoHwyn81Fg8MeIbcpiMjHDEiDrrsLzHQJMeSG9EjV18fNyBAJWWaWoZ2yeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ultrarisc.com; spf=none smtp.mailfrom=ultrarisc.com; dkim=pass (1024-bit key) header.d=ultrarisc.com header.i=@ultrarisc.com header.b=HjmCv2w4; arc=none smtp.client-ip=218.76.62.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ultrarisc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ultrarisc.com
+	s=arc-20240116; t=1790061095; c=relaxed/simple;
+	bh=1DQEnJFVllHwbW40pTjtz3mCOVWOR/ZxQR6GILf0wtA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=anwqEiiBWC5R+461oh6uhSj2rDOVddKMt3ytypvUy6xuimDBknKIo8tLa6HKIhYRE+Jo05CrJNON/e9S7oUISnjiArQ7QOy3pm2mZ/kbOyvsW828d5J3K39nsyUJ8EzWzGVftyHPgpJyuH4634KYGvk41owLfJVIRvbZSxpsiYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fNsaA6B7; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ultrarisc.com header.i=@ultrarisc.com header.b="HjmCv2w4"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=ultrarisc.com; s=dkim; h=Received:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:
-	References:Date:Message-Id; bh=7li0UCnmi3VEUDWeZQy13ygt8VMTgtExd
-	uQ0WnOVLXU=; b=HjmCv2w40+f/N8JfvU4uCg3vjeQ05o0pqPQ8I/n8aINib6MC6
-	bMN6L5PRw9pFE7COmgBkDAcxzBQJVvjSooCih8vvoCEe6waYSsHrGau7lOTUvFSr
-	ivHoGzs1m0orQFtSdxw0dH0Ledoook6PtbXeb4ozIBYrwokahXWa8FfcdU=
-Received: from [127.0.0.1] (unknown [192.168.100.1])
-	by localhost.localdomain (Coremail) with SMTP id AQAAfwDHQAe1J7JqJOYAAA--.631S2;
-	Tue, 22 Sep 2026 15:01:09 +0800 (CST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fNsaA6B7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 025D71F0089F
+	for <linux-clk@vger.kernel.org>; Tue, 22 Sep 2026 07:11:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790061093;
+	bh=1DQEnJFVllHwbW40pTjtz3mCOVWOR/ZxQR6GILf0wtA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=fNsaA6B7GRuwLvYuXQcayIRY4asybossgKMwLKRABuip02ua4A61yZWh4iesmCjft
+	 aaILkaPVfCUJUMa/KErN+dLjURjqguFpeVphaLeXZFaz4jzdbmv4d53daBHoydx06w
+	 XNtxbIB1HX0DTUiHgSkcYGIkYa8qwi96lFVVH+qz8KHECYPCRdSQgdl4dFweRhRmBH
+	 D2KIxl9rUkSjg9kbWqnkChinhE6PVPhb7EiW6jdf6LLY3IP3XYlJPRZXykjzhZqkeG
+	 jF7MgmoYvKj9R/a5zdIJ5WInRhvW5kqpbFwxeiDMXkxqDJA7zquY9XCeD9KEJXD4OG
+	 w0EVOxdf+oo8A==
+Received: by mail-lf2-f12.google.com with SMTP id 2adb3069b0e04-5b5e4f1e023so1393365e87.0
+        for <linux-clk@vger.kernel.org>; Tue, 22 Sep 2026 00:11:32 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBwBYRo6eR7SgW/x2rJDwM0Q5XEdrO2NduCZHHQwdq+T2khMLwYQZi8L5sq+LTCbok+qooTJRXsHBI4=@vger.kernel.org
+X-Gm-Message-State: AFuF++nT6HBaM1VzD2D+jfa2gaAgOFsdr5CE+T3DwqiDc1UYAhFoB7Fx
+	276tXF3kSypgUwJc9PVYTdHM9TnSrJ1L7z8wyukK+p+eXhHy310tB0/5f7OOK1EgZz7OXTm+gjp
+	RpUzUa2GXcbN9PwnExcX6DBGCGCWJyOI=
+X-Received: by 2002:a05:6512:669a:20b0:5b7:5cbb:661a with SMTP id
+ 2adb3069b0e04-5b8d28a2bd4mr380020e87.0.1790061091499; Tue, 22 Sep 2026
+ 00:11:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] clk: ultrarisc: Register DP1000 clock provider earlier
-From: Jia Wang <wangjia@ultrarisc.com>
-To: Brian Masney <bmasney@redhat.com>
-Cc: Jia Wang <wangjia@ultrarisc.com>, Stephen Boyd <sboyd@kernel.org>, 
- Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <aqBK9J1ZTJAGgxCu@redhat.com>
-References: <20260820-ultrarisc-clock-fix-v1-1-f27c6a980b42@ultrarisc.com>
- <aoxzTneslr61sZmd@redhat.com>
- <178876250098.2581040.1337852022443550878.b4-reply@b4>
- <aqBK9J1ZTJAGgxCu@redhat.com>
-Date: Tue, 22 Sep 2026 15:01:02 +0800
-Message-Id: <179006046258.2835418.14613906948117661504.b4-reply@b4>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1790060462; l=1835;
- i=wangjia@ultrarisc.com; s=20260515; h=from:subject:message-id;
- bh=jYRxjgdpR1NRlK2MqhyvlHb/+jMwHjghy3XCbIvhoBA=;
- b=7IsMh+zRAfc35+mA5hTMo6zaKyYmrrH9JATjhOwCiSaqBa+ghSZq5lmSKQJ7Td+QvHQhjiWRq
- NpeuVZ7IxgBC1jZ9QPAC1g4CllwL4WonGArj+N2u0TQNJyufVy1TIDH
-X-Developer-Key: i=wangjia@ultrarisc.com; a=ed25519;
- pk=wGVm18siRScehKOkOz0WKxgxDy7IezHEszhnN4/TUCY=
-X-CM-TRANSID:AQAAfwDHQAe1J7JqJOYAAA--.631S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7ArWxCrWfZr1ruFWxtryxKrg_yoW8AryfpF
-	WUKFW5tF4kJrW0yr9FvF18ZFnYqanrt34UW34UJ345uan09FnIgrs7tayUuF4DZrn7GwnI
-	yF409a43GFyjyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvI14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r1j
-	6r4UM28EF7xvwVC2z280aVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r
-	4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AKxVWU
-	AVWUtwCY02Avz4vE-syl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2
-	IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v2
-	6r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2
-	IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv
-	67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf
-	9x0JUG0PhUUUUU=
-X-CM-SenderInfo: pzdqwylld63zxwud2x1vfou0bp/1tbiAQAREWqw1CcADgABsn
+References: <20260921-cv75-v5-v8-0-282ff5d98dda@ambarella.com> <20260921-cv75-v5-v8-4-282ff5d98dda@ambarella.com>
+In-Reply-To: <20260921-cv75-v5-v8-4-282ff5d98dda@ambarella.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Tue, 22 Sep 2026 09:11:19 +0200
+X-Gmail-Original-Message-ID: <CAD++jLnUVOAtq-h_qDdWpEhZFZehFKo4qqgcTHD9zDQTdF4yhg@mail.gmail.com>
+X-Gm-Features: AclHuK8Ptv8BXFdyCOuHHolcneppaQqVWDApnFcw2pV5vhsl1672OQ5Dk_LeJfk
+Message-ID: <CAD++jLnUVOAtq-h_qDdWpEhZFZehFKo4qqgcTHD9zDQTdF4yhg@mail.gmail.com>
+Subject: Re: [PATCH v8 04/18] dt-bindings: pinctrl: add Ambarella CV75 pinctrl
+To: longzhao@ambarella.com
+Cc: Arnd Bergmann <arnd@arndb.de>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, soc@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Jerome Brunet <jbrunet@baylibre.com>, Bartosz Golaszewski <brgl@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Long Zhao <zl020895@163.com>, 
+	Lee Jones <lee@kernel.org>, mfd@lists.linux.dev, devicetree@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2026-09-08 13:50 -0400, Brian Masney wrote:
-> Hi Jia,
-> 
-> On Mon, Sep 07, 2026 at 02:28:20PM +0800, Jia Wang wrote:
-> > On 2026-08-24 12:37 -0400, Brian Masney wrote:
-> > > On Thu, Aug 20, 2026 at 10:50:47AM +0800, Jia Wang wrote:
-> > > > The DP1000 PCIe and clock drivers both register at the device initcall
-> > > > level. Since the PCIe driver is linked first, its probe runs before the
-> > > > clock provider is available and defers.
-> > > > 
-> > > > sysfb_init() runs at the same initcall level before deferred probes are
-> > > > retried. It claims the firmware framebuffer aperture, so the later PCIe
-> > > > host probe cannot allocate the overlapping prefetchable window and the
-> > > > GPU is not enumerated.
-> > > > 
-> > > > Register the clock provider with subsys_initcall() when built in so PCIe
-> > > > host probing completes before sysfb_init(). Keep module builds using the
-> > > > normal module init and exit paths.
-> > > > 
-> > > > Fixes: 3948a36be42b ("clk: ultrarisc: Add DP1000 clock driver")
-> > > > Signed-off-by: Jia Wang <wangjia@ultrarisc.com>
-> > > 
-> > > Reviewed-by: Brian Masney <bmasney@redhat.com>
-> > > 
-> > > I see this same pattern is also used by lots of qcom gcc drivers, 4
-> > > Renesas drivers, and a few other drivers.
-> > > 
-> > 
-> > A gentle ping on this fix.
-> > 
-> > Please let me know if any changes or a resend are needed.
-> 
-> I just posted this series to reduce some boilerplate code across all of
-> the clk drivers:
-> 
-> https://lore.kernel.org/linux-clk/20260908-subsys_initcall-v1-0-cbccf4cd4288@redhat.com/T/#t
-> 
-> Let's see what people think about this.
-> 
+Hi Long,
 
-Hi Brian,
+On Mon, Sep 21, 2026 at 6:23=E2=80=AFAM Long Zhao via B4 Relay
+<devnull+longzhao.ambarella.com@kernel.org> wrote:
 
-I noticed that your series has been applied to the qcom tree. I'll
-rebase the fix on top of it, use subsys_platform_driver(), and send v2.
+> From: Long Zhao <longzhao@ambarella.com>
+>
+> Document the CV75 pin controller binding using generic function and
+> groups properties for pinmux configuration.
+>
+> Reviewed-by: Linus Walleij <linusw@kernel.org>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+> Signed-off-by: Long Zhao <longzhao@ambarella.com>
 
-Best regards,
-Jia Wang
+Is this something I should just apply to the pinctrl tree?
 
+Same question about the driver.
 
+I'm not sure you'll get all of the Ambarella in for v7.4 anyway
+so what about putting some pieces in place to begin with?
+
+Yours,
+Linus Walleij
